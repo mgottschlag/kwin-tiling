@@ -97,6 +97,7 @@ public:
 
     QPointer<Kickoff::MenuView> menuview;
     Plasma::IconWidget *icon;
+    QString iconname;
     QPointer<Kickoff::UrlItemLauncher> launcher;
 
     KActionCollection* bookmarkcollection;
@@ -104,6 +105,7 @@ public:
     KBookmarkMenu* bookmarkmenu;
 
     QStringList viewtypes;//QList<MenuLauncherApplet::ViewType>
+    QString relativePath;
     MenuLauncherApplet::FormatType formattype;
     int maxRecentApps;
     bool showMenuTitles;
@@ -264,7 +266,14 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
     connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
     connect(this, SIGNAL(activate()), this, SLOT(toggleMenu()));
 
-    d->viewtypes << "RecentlyUsedApplications" << "Applications" << "Favorites" << "RunCommand" << "Leave";
+    if (args.count() < 2) { // assuming args is only used for passing in submenu paths
+        d->viewtypes << "RecentlyUsedApplications" << "Applications" << "Favorites" << "RunCommand" << "Leave";
+        d->iconname = "start-here-kde";
+    } else {
+        d->viewtypes << "Applications";
+        d->relativePath = args.value(0).toString();
+        d->iconname = args.value(1).toString();
+    }
     d->formattype = NameDescription;
 
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
@@ -283,15 +292,19 @@ MenuLauncherApplet::~MenuLauncherApplet()
 
 void MenuLauncherApplet::init()
 {
+    bool receivedArgs = false;
+    if (!d->relativePath.isEmpty()) {
+        receivedArgs = true;
+    }
+
     KConfigGroup cg = config();
-    QString iconname = "start-here-kde";
 
     const QStringList viewtypes = cg.readEntry("views", QStringList());
     if(viewtypes.isEmpty()) { // backward-compatibility to <KDE4.3
         QByteArray oldview = cg.readEntry("view", QByteArray());
         if (!oldview.isEmpty() && oldview != "Combined") {
             d->viewtypes = QStringList() << oldview;
-            iconname = d->viewIcon(d->viewType(oldview));
+            d->iconname = d->viewIcon(d->viewType(oldview));
         } // else we use the default d->viewtypes
     } else {
         d->viewtypes = viewtypes;
@@ -304,7 +317,13 @@ void MenuLauncherApplet::init()
     d->setMaxRecentApps(cg.readEntry("maxRecentApps", qMin(5, Kickoff::RecentApplications::self()->maximum())));
     d->showMenuTitles = cg.readEntry("showMenuTitles", false);
 
-    d->icon->setIcon(KIcon(cg.readEntry("icon", iconname)));
+    d->icon->setIcon(KIcon(cg.readEntry("icon", d->iconname)));
+
+    d->relativePath = cg.readEntry("relativePath", d->relativePath);
+    if (!d->relativePath.isEmpty()) {
+        d->viewtypes.clear();
+        d->viewtypes << "Applications";
+    }
 
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ExtensionHandler, "desktop", new Kickoff::ServiceItemHandler);
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ProtocolHandler, "leave", new Kickoff::LeaveItemHandler);
@@ -322,6 +341,12 @@ void MenuLauncherApplet::init()
 
     Plasma::ToolTipManager::self()->registerWidget(this);
     d->updateTooltip();
+
+    if (receivedArgs) {
+        cg.writeEntry("relativePath", d->relativePath);
+        cg.writeEntry("icon", d->iconname);
+        emit configNeedsSaving();
+    }
 
     constraintsEvent(Plasma::ImmutableConstraint);
 }
@@ -367,33 +392,47 @@ void MenuLauncherApplet::customContextMenuRequested(QMenu* menu, const QPoint& p
         return;
     }
 
+    // there are 2 possible cases
+    // 1) An an actual action is active - menu is the menu containing the action wanted
+    // 2) either a submenu is active, but none of its actions are active. menu is the submenu,
+    //    not the menu containing the submenu
     QAction* menuAction = menu->activeAction();
-    if (menuAction) {
+    if (menuAction) { // case 1)
         const QPersistentModelIndex index = menuAction->data().value<QPersistentModelIndex>();
         d->contextMenuFactory->showContextMenu(0, index, pos);
+    } else { // case 2)
+        menuAction = menu->menuAction();
+        if (menuAction) {
+            const QPersistentModelIndex index = menuAction->data().value<QPersistentModelIndex>();
+            d->contextMenuFactory->showContextMenu(0, index, pos);
+        }
     }
 }
 
 void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
 {
-    QWidget *viewpage = new QWidget(parent);
-    QVBoxLayout *l = new QVBoxLayout(viewpage);
-    l->setMargin(0);
-    viewpage->setLayout(l);
-    d->view = new QListWidget(viewpage);
-    d->view->resize(300,500);
-    l->addWidget(d->view);
+    d->view = 0;
+    d->recentApplicationsSpinBox = 0;
+    if (d->relativePath.isEmpty()) {
+        QWidget *viewpage = new QWidget(parent);
+        QVBoxLayout *l = new QVBoxLayout(viewpage);
+        l->setMargin(0);
+        viewpage->setLayout(l);
+        d->view = new QListWidget(viewpage);
+        d->view->resize(300,500);
+        l->addWidget(d->view);
 
-    QMetaEnum vte = metaObject()->enumerator(metaObject()->indexOfEnumerator("ViewType"));
-    for(int i = 0; i < vte.keyCount(); ++i) {
-        ViewType vt = (ViewType) vte.value(i);
-        const QByteArray vtname = vte.key(i);
-        QListWidgetItem *item = new QListWidgetItem(KIcon(d->viewIcon(vt)), d->viewText(vt), d->view);
-        item->setCheckState(d->viewtypes.contains(vtname) ? Qt::Checked : Qt::Unchecked);
-        item->setData(Qt::UserRole, vtname);
-        d->view->addItem(item);
+        QMetaEnum vte = metaObject()->enumerator(metaObject()->indexOfEnumerator("ViewType"));
+        for(int i = 0; i < vte.keyCount(); ++i) {
+            ViewType vt = (ViewType) vte.value(i);
+            const QByteArray vtname = vte.key(i);
+            QListWidgetItem *item = new QListWidgetItem(KIcon(d->viewIcon(vt)), d->viewText(vt), d->view);
+            item->setCheckState(d->viewtypes.contains(vtname) ? Qt::Checked : Qt::Unchecked);
+            item->setData(Qt::UserRole, vtname);
+            d->view->addItem(item);
+        }
+        parent->addPage(viewpage, i18n("View"), "view-list-details");
     }
-    parent->addPage(viewpage, i18n("View"), "view-list-details");
 
     QWidget *p = new QWidget(parent);
     QGridLayout *grid = new QGridLayout(p);
@@ -418,14 +457,16 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     d->setCurrentItem(d->formatComboBox, d->formattype);
     grid->addWidget(d->formatComboBox, 1, 1);
 
-    QLabel *recentLabel = new QLabel(i18n("Recently used applications:"), p);
-    grid->addWidget(recentLabel, 2, 0, Qt::AlignRight);
-    d->recentApplicationsSpinBox = new QSpinBox(p);
-    d->recentApplicationsSpinBox->setMaximum(10);
-    d->recentApplicationsSpinBox->setMinimum(0);
-    d->recentApplicationsSpinBox->setValue(d->maxRecentApps);
-    recentLabel->setBuddy(d->recentApplicationsSpinBox);
-    grid->addWidget(d->recentApplicationsSpinBox, 2, 1);
+    if (d->relativePath.isEmpty()) {
+        QLabel *recentLabel = new QLabel(i18n("Recently used applications:"), p);
+        grid->addWidget(recentLabel, 2, 0, Qt::AlignRight);
+        d->recentApplicationsSpinBox = new QSpinBox(p);
+        d->recentApplicationsSpinBox->setMaximum(10);
+        d->recentApplicationsSpinBox->setMinimum(0);
+        d->recentApplicationsSpinBox->setValue(d->maxRecentApps);
+        recentLabel->setBuddy(d->recentApplicationsSpinBox);
+        grid->addWidget(d->recentApplicationsSpinBox, 2, 1);
+    }
 
     QLabel *showMenuTitlesLabel = new QLabel(i18n("Show menu titles:"), p);
     grid->addWidget(showMenuTitlesLabel, 3, 0, Qt::AlignRight);
@@ -445,20 +486,22 @@ void MenuLauncherApplet::configAccepted()
     bool needssaving = false;
     KConfigGroup cg = config();
 
-    QStringList viewtypes;
-    for(int i = 0; i < d->view->count(); ++i) {
-        QListWidgetItem *item = d->view->item(i);
-        QByteArray vtname = item->data(Qt::UserRole).toByteArray();
-        if(item->checkState() == Qt::Checked)
-            viewtypes << vtname;
-        if( !needssaving && ((item->checkState() == Qt::Checked && ! d->viewtypes.contains(vtname)) || (item->checkState() == Qt::Unchecked && d->viewtypes.contains(vtname))) )
-            needssaving = true;    
-    }
-    if(needssaving) {
-        d->viewtypes = viewtypes;
-        d->updateTooltip();
-        cg.writeEntry("views", d->viewtypes);
-        cg.deleteEntry("view"); // "view" was from <KDE4.3, we are using "views" now
+    if (d->view) {
+        QStringList viewtypes;
+        for(int i = 0; i < d->view->count(); ++i) {
+            QListWidgetItem *item = d->view->item(i);
+            QByteArray vtname = item->data(Qt::UserRole).toByteArray();
+            if(item->checkState() == Qt::Checked)
+                viewtypes << vtname;
+            if( !needssaving && ((item->checkState() == Qt::Checked && ! d->viewtypes.contains(vtname)) || (item->checkState() == Qt::Unchecked && d->viewtypes.contains(vtname))) )
+                needssaving = true;    
+        }
+        if(needssaving) {
+            d->viewtypes = viewtypes;
+            d->updateTooltip();
+            cg.writeEntry("views", d->viewtypes);
+            cg.deleteEntry("view"); // "view" was from <KDE4.3, we are using "views" now
+        }
     }
 
     const QString iconname = d->iconButton->icon();
@@ -477,11 +520,13 @@ void MenuLauncherApplet::configAccepted()
         cg.writeEntry("format", QByteArray(e.valueToKey(d->formattype)));
     }
 
-    const int maxRecentApps = d->recentApplicationsSpinBox->value();
-    if (maxRecentApps != d->maxRecentApps) {
-        needssaving = true;
-        d->setMaxRecentApps(maxRecentApps);
-        cg.writeEntry("maxRecentApps", maxRecentApps);
+    if (d->recentApplicationsSpinBox) {
+        const int maxRecentApps = d->recentApplicationsSpinBox->value();
+        if (maxRecentApps != d->maxRecentApps) {
+            needssaving = true;
+            d->setMaxRecentApps(maxRecentApps);
+            cg.writeEntry("maxRecentApps", maxRecentApps);
+        }
     }
 
     const bool showMenuTitles = d->showMenuTitlesCheckBox->isChecked();
@@ -544,13 +589,15 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
                     appModel->setPrimaryNamePolicy(Kickoff::ApplicationModel::AppNamePrimary);
                 appModel->setSystemApplicationPolicy(Kickoff::ApplicationModel::ShowApplicationAndSystemPolicy);
 
-                d->menuview->addModel(appModel);
+                d->menuview->addModel(appModel, Kickoff::MenuView::None, d->relativePath);
 
-                if (d->showMenuTitles) {
-                    d->menuview->setModelTitleVisible(appModel, true);
-                    d->menuview->addTitle(i18n("Actions"));
-                } else {
-                    d->menuview->addSeparator();
+                if (d->relativePath.isEmpty()) {
+                    if (d->showMenuTitles) {
+                        d->menuview->setModelTitleVisible(appModel, true);
+                        d->menuview->addTitle(i18n("Actions"));
+                    } else {
+                        d->menuview->addSeparator();
+                    }
                 }
             } else if(vtname == "Favorites") {
                 d->addModel(new Kickoff::FavoritesModel(d->menuview), Favorites);

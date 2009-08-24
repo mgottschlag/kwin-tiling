@@ -64,9 +64,6 @@ public:
             connect(childMenu, SIGNAL(customContextMenuRequested(const QPoint&)),
                     q, SLOT(contextMenuRequested(const QPoint&)));
             action = childMenu->menuAction();
-            if (model->canFetchMore(index)) {
-                model->fetchMore(index);
-            }
             buildBranch(childMenu, model, index);
         } else {
             action = q->createLeafAction(index, parent);
@@ -76,12 +73,41 @@ public:
     }
 
     void buildBranch(KMenu *menu, QAbstractItemModel *model, const QModelIndex& parent) {
+        if (model->canFetchMore(parent)) {
+            model->fetchMore(parent);
+        }
         const int rowCount = model->rowCount(parent);
         for (int i = 0; i < rowCount; i++) {
             QAction *action = createActionForIndex(model, model->index(i, column, parent), menu);
             menu->addAction(action);
         }
     }
+
+    QModelIndex findByRelPath(QAbstractItemModel * model, const QModelIndex & parent, const QString & relPath)
+    {
+        QModelIndex newRoot;
+        if (model->canFetchMore(parent)) {
+            model->fetchMore(parent);
+        }
+        const int rowCount = model->rowCount(parent);
+        for (int row = 0; row < rowCount; row++) {
+            QModelIndex index = model->index(row, 0, parent);
+            Q_ASSERT(index.isValid());
+            if (index.data(Kickoff::RelPathRole).isValid()) {
+                QString indexRelPath = index.data(Kickoff::RelPathRole).toString();
+                if (relPath == indexRelPath) {
+                    newRoot = index;
+                    break;
+                }
+                if (!indexRelPath.isEmpty() && relPath.startsWith(indexRelPath)) {
+                    newRoot = findByRelPath(model, index, relPath);
+                    break;
+                }
+            }
+        }
+        return newRoot;
+    }
+
 
     MenuView * const q;
     int column;
@@ -233,7 +259,7 @@ bool MenuView::eventFilter(QObject *watched, QEvent *event)
     return KMenu::eventFilter(watched, event);
 }
 
-void MenuView::addModel(QAbstractItemModel *model, MenuView::ModelOptions options)
+void MenuView::addModel(QAbstractItemModel *model, MenuView::ModelOptions options, const QString & relativePath)
 {
     QString title = model->headerData(0, Qt::Horizontal, Qt::DisplayRole).toString();
 
@@ -259,7 +285,11 @@ void MenuView::addModel(QAbstractItemModel *model, MenuView::ModelOptions option
             d->buildBranch(this, model, index);
         }
     } else {
-        d->buildBranch(this, model, QModelIndex());
+        QModelIndex root;
+        if (!relativePath.isEmpty()) {
+            root = d->findByRelPath(model, root, relativePath);
+        }
+        d->buildBranch(this, model, root);
     }
 
 //connect(model, SIGNAL(rowsAboutToBeInserted(QModelIndex, int, int)), this, SLOT(rowsInserted(QModelIndex, int, int)));

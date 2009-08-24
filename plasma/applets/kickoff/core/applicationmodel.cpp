@@ -226,6 +226,7 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
                 icon = iconNameMap().value(icon);
             }
 
+            desktopEntry = serviceGroup->entryPath();
             genericName = serviceGroup->caption();
             relPath = serviceGroup->relPath();
             appName = serviceGroup->comment();
@@ -344,6 +345,12 @@ QVariant ApplicationModel::data(const QModelIndex &index, int role) const
         break;
     case Qt::DecorationRole:
         return node->icon;
+        break;
+    case Kickoff::RelPathRole:
+        return node->relPath;
+        break;
+    case Kickoff::IconNameRole:
+        return node->iconName;
         break;
     default:
         ;

@@ -122,17 +122,21 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
 
     QList<QAction*> actions;
 
-    // add to / remove from favorites
-    QAction *favoriteAction = new QAction(this);
-    if (isFavorite) {
-        favoriteAction->setText(i18n("Remove From Favorites"));
-        favoriteAction->setIcon(KIcon("list-remove"));
-        actions << favoriteAction;
-    //exclude stuff in the leave tab
-    } else if (KUrl(url).protocol() != "leave") {
-        favoriteAction->setText(i18n("Add to Favorites"));
-        favoriteAction->setIcon(KIcon("bookmark-new"));
-        actions << favoriteAction;
+    QAction *favoriteAction = 0;
+
+    if (url.endsWith(".desktop")) {
+        // add to / remove from favorites
+        favoriteAction = new QAction(this);
+        if (isFavorite) {
+            favoriteAction->setText(i18n("Remove From Favorites"));
+            favoriteAction->setIcon(KIcon("list-remove"));
+            actions << favoriteAction;
+            //exclude stuff in the leave tab
+        } else if (KUrl(url).protocol() != "leave") {
+            favoriteAction->setText(i18n("Add to Favorites"));
+            favoriteAction->setIcon(KIcon("bookmark-new"));
+            actions << favoriteAction;
+        }
     }
 
     // add to desktop
@@ -242,8 +246,12 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
                     Plasma::Containment *desktop = corona->containmentForScreen(containment->screen());
                     if (desktop) {
                         QVariantList args;
-                        args << kurl.url();
-                        desktop->addApplet("icon", args);
+                        args << kurl.url() << index.data(Kickoff::IconNameRole);
+                        if (kurl.scheme().isEmpty()) { // it's a service group
+                            desktop->addApplet("simplelauncher", args);
+                        } else {
+                            desktop->addApplet("icon", args);
+                        }
                     }
                 }
             }
@@ -254,11 +262,15 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
             Plasma::Containment *panel = d->applet->containment();
             if (panel) {
                 QVariantList args;
-                args << kurl.url();
+                args << kurl.url() << index.data(Kickoff::IconNameRole);
 
                 // move it to the middle of the panel
                 QRectF rect(panel->geometry().width() / 2, 0, 150, panel->boundingRect().height());
-                panel->addApplet("icon", args, rect);
+                if (kurl.scheme().isEmpty()) { // it's a service group
+                    panel->addApplet("simplelauncher", args);
+                } else {
+                    panel->addApplet("icon", args, rect);
+                }
             }
         }
     }

@@ -70,7 +70,10 @@ enum DataRole {
     SubTitleMandatoryRole = Qt::UserRole + 6,
     /** Is item a separator. **/
     SeparatorRole = Qt::UserRole + 7,
-    LastDataRole = SeparatorRole
+    /** relative path of the item */
+    RelPathRole = Qt::UserRole + 8,
+    IconNameRole = Qt::UserRole + 9,
+    LastDataRole = IconNameRole
 };
 
 /**

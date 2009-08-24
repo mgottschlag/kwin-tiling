@@ -66,7 +66,7 @@ public:
     };
 
     /** Adds a model to display within this menu. */
-    void addModel(QAbstractItemModel *model, ModelOptions options = None);
+    void addModel(QAbstractItemModel *model, ModelOptions options = None, const QString & relativePath = QString());
 
     /** Adds a QStandardItem to display within this menu. This menu will take over the ownership of the item. */
     void addItem(QStandardItem *item);
