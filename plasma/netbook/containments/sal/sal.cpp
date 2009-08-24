@@ -301,6 +301,10 @@ void SearchLaunch::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
         return;
     }
 
+    if (m_appletsLayout->count() == 0) {
+        m_mainLayout->addItem(m_appletsLayout);
+    }
+
     m_appletsLayout->addItem(applet);
     applet->setBackgroundHints(NoBackground);
     connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
@@ -308,13 +312,9 @@ void SearchLaunch::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 
 void SearchLaunch::appletRemoved(Plasma::Applet* applet)
 {
-    //shrink the SearchLaunch if possible
-    if (formFactor() == Plasma::Horizontal) {
-        resize(size().width() - applet->size().width(), size().height());
-    } else {
-        resize(size().width(), size().height() - applet->size().height());
+   if (m_appletsLayout->count() == 1) {
+        m_mainLayout->removeItem(m_appletsLayout);
     }
-    layout()->setMaximumSize(size());
 }
 
 void SearchLaunch::updateSize()
@@ -401,10 +401,11 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
             m_appletsLayout = new QGraphicsLinearLayout();
 
+
             // add our layouts to main vertical layout
             m_mainLayout->addItem(m_favourites);
             m_mainLayout->addItem(gridLayout);
-            m_mainLayout->addItem(m_appletsLayout);
+
 
             // correctly set margins
             themeUpdated();
