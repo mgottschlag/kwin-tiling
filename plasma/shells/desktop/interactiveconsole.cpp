@@ -21,7 +21,6 @@
 
 #include <QFile>
 #include <QHBoxLayout>
-#include <QScriptEngine>
 #include <QSplitter>
 #include <QVBoxLayout>
 
@@ -32,7 +31,7 @@
 
 #include <Plasma/Corona>
 
-QScriptValue constructQRectFClass(QScriptEngine *engine);
+#include "scriptengine.h"
 
 //TODO:
 // save and restore splitter sizes
@@ -42,17 +41,12 @@ QScriptValue constructQRectFClass(QScriptEngine *engine);
 
 InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     : KDialog(parent),
-      m_corona(corona),
-      m_engine(new QScriptEngine(this)),
-      m_scriptSelf(m_engine->newQObject(this, QScriptEngine::QtOwnership,
-                                        QScriptEngine::ExcludeSuperClassProperties |
-                                        QScriptEngine::ExcludeSuperClassMethods)),
+      m_engine(new ScriptEngine(corona, this)),
       m_editor(new KTextEdit(this)),
       m_output(new KTextBrowser(this)),
       m_clearButton(new KPushButton(KIcon("edit-clear"), i18n("&Clear"), this)),
       m_executeButton(new KPushButton(KIcon("system-run"), i18n("&Run Script"), this))
 {
-    Q_ASSERT(m_corona);
     setAttribute(Qt::WA_DeleteOnClose);
     setButtons(KDialog::None);
 
@@ -73,19 +67,18 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     splitter->addWidget(widget);
     splitter->addWidget(m_output);
     setMainWidget(splitter);
-    m_editor->setFocus();
 
     setInitialSize(QSize(500, 400));
     KConfigGroup cg(KGlobal::config(), "InteractiveConsole");
     restoreDialogSize(cg);
 
-    setupEngine();
     scriptTextChanged();
 
     connect(m_executeButton, SIGNAL(clicked()), this, SLOT(evaluateScript()));
     connect(m_clearButton, SIGNAL(clicked()), this, SLOT(clearEditor()));
     connect(m_editor, SIGNAL(textChanged()), this, SLOT(scriptTextChanged()));
-    connect(m_engine, SIGNAL(signalHandlerException(QScriptValue)), this, SLOT(exception(QScriptValue)));
+    connect(m_engine, SIGNAL(print(QString)), this, SLOT(print(QString)));
+    connect(m_engine, SIGNAL(printError(QString)), this, SLOT(print(QString)));
 }
 
 InteractiveConsole::~InteractiveConsole()
@@ -100,29 +93,18 @@ void InteractiveConsole::loadScript(const QString &script)
     if (file.open(QIODevice::ReadOnly | QIODevice::Text) ) {
         m_editor->setText(file.readAll());
     } else {
-        m_output->append(i18n("Unable to load script file %1", script));
+        m_output->append(i18n("Unable to load script file <b>%1</b>", script));
     }
+}
+
+void InteractiveConsole::showEvent(QShowEvent *)
+{
+    m_editor->setFocus();
 }
 
 void InteractiveConsole::print(const QString &string)
 {
     m_output->append(string);
-}
-
-int InteractiveConsole::screenCount() const
-{
-    return m_corona->numScreens();
-}
-
-QRectF InteractiveConsole::screenGeometry(int screen) const
-{
-    return m_corona->screenGeometry(screen);
-}
-
-void InteractiveConsole::setupEngine()
-{
-    m_engine->setGlobalObject(m_scriptSelf);
-    m_scriptSelf.setProperty("QRectF", constructQRectFClass(m_engine));
 }
 
 void InteractiveConsole::scriptTextChanged()
@@ -135,26 +117,12 @@ void InteractiveConsole::scriptTextChanged()
 void InteractiveConsole::evaluateScript()
 {
     //kDebug() << "evaluating" << m_editor->toPlainText();
-    m_engine->evaluate(m_editor->toPlainText());
-    if (m_engine->hasUncaughtException()) {
-        kDebug() << "catch the exception!";
-        QString error = i18n("Error: %1 at line %2<p>Backtrace:<br>%3",
-                             m_engine->uncaughtException().toString(),
-                             QString::number(m_engine->uncaughtExceptionLineNumber()),
-                             m_engine->uncaughtExceptionBacktrace().join("<br>"));
-        m_output->append(error);
-    }
+    m_engine->evaluateScript(m_editor->toPlainText());
 }
 
 void InteractiveConsole::clearEditor()
 {
     m_editor->clear();
-}
-
-void InteractiveConsole::exception(const QScriptValue &value)
-{
-    //kDebug() << "exception caught!" << value.toVariant();
-    m_output->append(value.toVariant().toString());
 }
 
 #include "interactiveconsole.moc"

@@ -24,7 +24,7 @@
 
 #include <KDialog>
 
-class QScriptEngine;
+class ScriptEngine;
 
 class KPushButton;
 class KTextEdit;
@@ -45,24 +45,19 @@ public:
 
     void loadScript(const QString &path);
 
+protected:
+    void showEvent(QShowEvent *);
+
 protected Q_SLOTS:
     void print(const QString &string);
-    int screenCount() const;
-    QRectF screenGeometry(int screen) const;
-
-private:
-    void setupEngine();
 
 private Q_SLOTS:
     void scriptTextChanged();
     void evaluateScript();
     void clearEditor();
-    void exception(const QScriptValue &value);
 
 private:
-    Plasma::Corona *m_corona;
-    QScriptEngine *m_engine;
-    QScriptValue m_scriptSelf;
+    ScriptEngine *m_engine;
     KTextEdit *m_editor;
     KTextBrowser *m_output;
     KPushButton *m_clearButton;
