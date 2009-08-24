@@ -37,8 +37,6 @@ ShellRunner::ShellRunner(QObject *parent, const QVariantList &args)
       m_inTerminal(false),
       m_asOtherUser(false)
 {
-    Q_UNUSED(args)
-
     setObjectName("Command");
     setPriority(AbstractRunner::HighestPriority);
     setHasRunOptions(true);
