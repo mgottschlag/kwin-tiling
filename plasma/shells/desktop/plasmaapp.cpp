@@ -343,7 +343,7 @@ void PlasmaApp::showInteractiveConsole()
     KWindowSystem::setOnDesktop(m_console->winId(), KWindowSystem::currentDesktop());
     m_console->show();
     m_console->raise();
-    KWindowSystem::activateWindow(m_console->winId());
+    KWindowSystem::forceActiveWindow(m_console->winId());
 }
 
 void PlasmaApp::loadScriptInInteractiveConsole(const QString &script)
