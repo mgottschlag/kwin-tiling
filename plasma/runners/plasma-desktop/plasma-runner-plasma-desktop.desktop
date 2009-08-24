@@ -1,0 +1,14 @@
+[Desktop Entry]
+Name=Plasma Desktp Shell
+Comment=Interact with the Plasma desktop shell
+X-KDE-ServiceTypes=Plasma/Runner
+Type=Service
+Icon=plasma
+X-KDE-Library=krunner_plasma-desktop
+X-Plasma-RunnerPhase=first
+X-KDE-PluginInfo-Author=Plasma Team
+X-KDE-PluginInfo-Email=panel-devel@kde.org
+X-KDE-PluginInfo-Name=plasma-desktop
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-License=LGPL
+X-KDE-PluginInfo-EnabledByDefault=true
