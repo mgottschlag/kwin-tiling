@@ -16,8 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SHELLRUNNER_H
-#define SHELLRUNNER_H
+#ifndef PLASMADESKTOPRUNNER_H
+#define PLASMADESKTOPRUNNER_H
 
 #include <Plasma/AbstractRunner>
 
