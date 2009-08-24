@@ -28,6 +28,8 @@ namespace Plasma
     class Corona;
 } // namespace Plasma
 
+class Containment;
+
 class ScriptEngine : public QScriptEngine
 {
     Q_OBJECT
@@ -38,13 +40,20 @@ public:
 
     void evaluateScript(const QString &script);
 
+public Q_SLOTS:
+    int screenCount() const;
+    QRectF screenGeometry(int screen) const;
+
+    QList<int> activityIds() const;
+    Containment *activityById(int id) const;
+    Containment *activityForScreen(int screen) const;
+
+    QList<int> panelIds() const;
+    Containment *panelById(int id) const;
+
 Q_SIGNALS:
     void print(const QString &string);
     void printError(const QString &string);
-
-protected Q_SLOTS:
-    int screenCount() const;
-    QRectF screenGeometry(int screen) const;
 
 private:
     void setupEngine();
@@ -55,6 +64,7 @@ private Q_SLOTS:
 private:
     Plasma::Corona *m_corona;
     QScriptValue m_scriptSelf;
+    Containment *m_dummyContainment;
 };
 
 #endif

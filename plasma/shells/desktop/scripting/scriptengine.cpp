@@ -19,6 +19,7 @@
 
 #include "scriptengine.h"
 
+#include <Plasma/Containment>
 #include <Plasma/Corona>
 
 QScriptValue constructQRectFClass(QScriptEngine *engine);
@@ -28,7 +29,8 @@ ScriptEngine::ScriptEngine(Plasma::Corona *corona, QObject *parent)
       m_corona(corona),
       m_scriptSelf(newQObject(this, QScriptEngine::QtOwnership,
                               QScriptEngine::ExcludeSuperClassProperties |
-                              QScriptEngine::ExcludeSuperClassMethods))
+                              QScriptEngine::ExcludeSuperClassMethods)),
+      m_dummyContainment(0) //FIXME
 {
     Q_ASSERT(m_corona);
 
@@ -49,6 +51,49 @@ int ScriptEngine::screenCount() const
 QRectF ScriptEngine::screenGeometry(int screen) const
 {
     return m_corona->screenGeometry(screen);
+}
+
+QList<int> ScriptEngine::activityIds() const
+{
+    QList<int> containments;
+
+    foreach (Plasma::Containment *c, m_corona->containments()) {
+        if (c->containmentType() != Plasma::Containment::PanelContainment &&
+            c->containmentType() != Plasma::Containment::CustomPanelContainment) {
+            containments.append(c->id());
+        }
+    }
+
+    return containments;
+}
+
+Containment *ScriptEngine::activityById(int id) const
+{
+    return m_dummyContainment;
+}
+
+Containment *ScriptEngine::activityForScreen(int screen) const
+{
+    return m_dummyContainment;
+}
+
+QList<int> ScriptEngine::panelIds() const
+{
+    QList<int> panels;
+
+    foreach (Plasma::Containment *c, m_corona->containments()) {
+        if (c->containmentType() == Plasma::Containment::PanelContainment ||
+            c->containmentType() == Plasma::Containment::CustomPanelContainment) {
+            panels.append(c->id());
+        }
+    }
+
+    return panels;
+}
+
+Containment *ScriptEngine::panelById(int id) const
+{
+    return m_dummyContainment;
 }
 
 void ScriptEngine::setupEngine()
