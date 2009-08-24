@@ -129,24 +129,32 @@ QMenu *SwitchWindow::makeMenu()
         int numDesktops = KWindowSystem::numberOfDesktops();
         if (m_mode == AllFlat) {
             for (int i = 1; i <= numDesktops; ++i) {
-                QString name = KWindowSystem::desktopName(i);
-                name = QString("%1: %2").arg(i).arg(name);
-                desktopMenu->addTitle(name);
-                desktopMenu->addActions(desktops.values(i));
+                if (desktops.contains(i)) {
+                    QString name = KWindowSystem::desktopName(i);
+                    name = QString("%1: %2").arg(i).arg(name);
+                    desktopMenu->addTitle(name);
+                    desktopMenu->addActions(desktops.values(i));
+                }
             }
-            desktopMenu->addTitle(i18n("All Desktops"));
-            desktopMenu->addActions(desktops.values(-1));
+            if (desktops.contains(-1)) {
+                desktopMenu->addTitle(i18n("All Desktops"));
+                desktopMenu->addActions(desktops.values(-1));
+            }
         } else { //submenus
             for (int i = 1; i <= numDesktops; ++i) {
-                QString name = KWindowSystem::desktopName(i);
-                name = QString("%1: %2").arg(i).arg(name);
-                KMenu *subMenu = new KMenu(name, desktopMenu);
-                subMenu->addActions(desktops.values(i));
+                if (desktops.contains(i)) {
+                        QString name = KWindowSystem::desktopName(i);
+                        name = QString("%1: %2").arg(i).arg(name);
+                        KMenu *subMenu = new KMenu(name, desktopMenu);
+                        subMenu->addActions(desktops.values(i));
+                        desktopMenu->addMenu(subMenu);
+                }
+            }
+            if (desktops.contains(-1)) {
+                KMenu *subMenu = new KMenu(i18n("All Desktops"), desktopMenu);
+                subMenu->addActions(desktops.values(-1));
                 desktopMenu->addMenu(subMenu);
             }
-            KMenu *subMenu = new KMenu(i18n("All Desktops"), desktopMenu);
-            subMenu->addActions(desktops.values(-1));
-            desktopMenu->addMenu(subMenu);
         }
     }
 
