@@ -101,6 +101,7 @@ private:
     QGraphicsLinearLayout *m_mainLayout;
     QGraphicsLinearLayout *m_appletsLayout;
     QGraphicsGridLayout *m_launchGrid;
+    QPointF m_buttonDownMousePos;
 };
 
 

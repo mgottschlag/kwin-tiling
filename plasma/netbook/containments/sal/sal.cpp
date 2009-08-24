@@ -25,6 +25,8 @@
 #include <QPainter>
 #include <QAction>
 #include <QTimer>
+#include <QGraphicsSceneMouseEvent>
+#include <QApplication>
 
 #include <KDebug>
 #include <KIcon>
@@ -494,6 +496,23 @@ bool SearchLaunch::eventFilter(QObject *watched, QEvent *event)
     } else if (event->type() == QEvent::GraphicsSceneHoverLeave &&
                qobject_cast<Plasma::Frame *>(watched)) {
                m_hoverIndicator->animatedSetVisible(false);
+    //pass click only if the user didn't move the mouse
+    } else if (event->type() == QEvent::GraphicsSceneMousePress && m_buttonDownMousePos == QPoint()) {
+        QGraphicsSceneMouseEvent *mp = static_cast<QGraphicsSceneMouseEvent *>(event);
+        m_buttonDownMousePos = mp->pos();
+        event->ignore();
+        return true;
+    } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
+        QGraphicsSceneMouseEvent *mr = static_cast<QGraphicsSceneMouseEvent *>(event);
+        if (QPoint(mr->pos().toPoint() - m_buttonDownMousePos.toPoint()).manhattanLength() < QApplication::startDragDistance()) {
+            QGraphicsSceneMouseEvent me(QEvent::GraphicsSceneMousePress);
+            me.setPos(mr->pos());
+            me.setButton(mr->button());
+            me.setButtons(mr->buttons());
+            me.setModifiers(mr->modifiers());
+            QApplication::sendEvent(watched, &me);
+        }
+        m_buttonDownMousePos = QPoint();
     }
 
     return false;
