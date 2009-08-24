@@ -212,11 +212,13 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
             m_maxColumnWidth = icon->size().width();
         }
 
-        // create action to add to favourites strip
-        QAction *action = new QAction(icon);
-        action->setIcon(KIcon("favorites"));
-        icon->addIconAction(action);
-        connect(action, SIGNAL(triggered()), this, SLOT(addFavourite()));
+        if (!m_runnermg->searchContext()->query().isEmpty()) {
+            // create action to add to favourites strip
+            QAction *action = new QAction(icon);
+            action->setIcon(KIcon("favorites"));
+            icon->addIconAction(action);
+            connect(action, SIGNAL(triggered()), this, SLOT(addFavourite()));
+        }
 
         // add to layout and data structures
 
