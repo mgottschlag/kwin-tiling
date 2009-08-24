@@ -741,7 +741,7 @@ KUrl::List QuicklaunchApplet::removeDuplicateUrls(const KUrl::List &urls)
         QString warningMessage;
         int count = duplicateWarningMessage.count();
 
-        foreach (QString str, duplicateWarningMessage) {
+        foreach (const QString &str, duplicateWarningMessage) {
             warningMessage += str + "\n";
         }
 
