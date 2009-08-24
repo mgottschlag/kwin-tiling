@@ -1,4 +1,4 @@
-include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/shells/common ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal)
+include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/shells/common ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/shells/desktop/bindings/ ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal)
 
 add_subdirectory(configupdates)
 
@@ -24,6 +24,7 @@ set(wallpaper_SRCS
 set(plasma_SRCS
     backgrounddialog.cpp
     bindings/rect.cpp
+    bindings/scriptengine.cpp
     checkbox.cpp
     dashboardview.cpp
     desktopcorona.cpp
