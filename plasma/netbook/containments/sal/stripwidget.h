@@ -82,6 +82,7 @@ private:
     Plasma::RunnerContext *m_context;
     ItemBackground *m_hoverIndicator;
     int m_shownIcons;
+    int m_offset;
 };
 
 #endif

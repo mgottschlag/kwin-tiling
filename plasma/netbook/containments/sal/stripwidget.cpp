@@ -36,7 +36,8 @@
 StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
     : QGraphicsWidget(parent),
       m_runnermg(rm),
-      m_shownIcons(5)
+      m_shownIcons(5),
+      m_offset(0)
 {
     m_background = new Plasma::Frame();
     m_background->setFrameShadow(Plasma::Frame::Raised);
@@ -158,7 +159,7 @@ void StripWidget::remove(Plasma::IconWidget *favourite)
     if (m_favouritesMatches.size() >= m_shownIcons) {
         // adds the new item to the end of the list
         int idx = m_favouritesMatches.indexOf(match);
-        int newpos = (idx + m_shownIcons) % m_favouritesMatches.size();
+        int newpos = (idx + m_shownIcons + m_offset) % (m_favouritesMatches.size()-1);
 
         match = m_favouritesMatches[newpos];
         // must be m_shownIcons here because at this point the icon was not deleted yet
@@ -202,7 +203,10 @@ void StripWidget::goRight()
 
     // adds the new item to the end of the list
     int idx = m_favouritesMatches.indexOf(match);
-    int newpos = (idx + m_shownIcons) % m_favouritesMatches.size();
+    int size = m_favouritesMatches.size();
+    int newpos = (idx + m_shownIcons) % size;
+    m_offset = (m_offset + 1) % size;
+
     match = m_favouritesMatches[newpos];
     createIcon(match, m_shownIcons-1);
 }
@@ -223,6 +227,8 @@ void StripWidget::goLeft()
     int idx = m_favouritesMatches.indexOf(match);
     int size = m_favouritesMatches.size();
     int newpos = (idx + size - m_shownIcons) % size;
+    m_offset = newpos;
+
     match = m_favouritesMatches[newpos];
     createIcon(match, 0);
 }
