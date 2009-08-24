@@ -747,6 +747,7 @@ KUrl::List QuicklaunchApplet::removeDuplicateUrls(const KUrl::List &urls)
 
         KMessageBox::createKMessageBox(warningDialog,
             QMessageBox::Warning,
+	    // xgettext:no-c-format
             i18np("%2is already in quicklaunch, ignore it!", 
                   "%2are already in quicklaunch, ignore them!", 
                   count, 
