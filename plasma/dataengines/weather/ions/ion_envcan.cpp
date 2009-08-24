@@ -20,7 +20,6 @@
 /* Ion for Environment Canada XML data */
 
 #include "ion_envcan.h"
-#include "../../time/solarposition.h"
 
 class EnvCanadaIon::Private : public QObject
 {
@@ -41,6 +40,7 @@ public:
     QMap<KJob *, QXmlStreamReader*> m_jobXml;
     QMap<KJob *, QString> m_jobList;
     QXmlStreamReader m_xmlSetup;
+    Plasma::DataEngine *m_timeEngine;
 
     QDateTime m_dateFormat;
     bool emitWhenSetup;
@@ -116,43 +116,7 @@ void EnvCanadaIon::init()
 {
     // Get the real city XML URL so we can parse this
     getXMLSetup();
-}
-
-static double calculateSunriseTime(const int & day, const int & month, const int & year, const double & latitude, const double & longitude)
-{
-
-    QDate d(year, month, day);
-    QDateTime dt(d);
-
-    double jd, century, eqTime, solarDec, azimuth, zenith;
-
-    NOAASolarCalc::calc(dt, longitude, latitude, 0.0,
-                        &jd, &century, &eqTime, &solarDec, &azimuth, &zenith);
-
-    double toReturn;
-    NOAASolarCalc::calcTimeUTC(zenith, true, &jd, &toReturn, latitude, longitude);
-
-    toReturn *= 60;
-    return toReturn;
-}
-
-static double calculateSunsetTime(const int & day, const int & month, const int & year, const double & latitude, const double & longitude)
-{
-
-    QDate d(year, month, day);
-    QDateTime dt(d);
-
-    double jd, century, eqTime, solarDec, azimuth, zenith;
-
-    NOAASolarCalc::calc(dt, longitude, latitude, 0.0,
-                        &jd, &century, &eqTime, &solarDec, &azimuth, &zenith);
-
-    double toReturn;
-    NOAASolarCalc::calcTimeUTC(zenith, false, &jd, &toReturn, latitude, longitude);
-
-    toReturn *= 60;
-    return toReturn;
-
+    d->m_timeEngine = dataEngine("time");
 }
 
 QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupConditionIconMappings(void) const
@@ -1401,19 +1365,14 @@ void EnvCanadaIon::updateWeather(const QString& source)
     QMap<QString, ConditionIcons> conditionList;
     conditionList = conditionIcons();
 
-    const double observationSeconds = 60.0 * (periodMinute(source) + 60.0 * periodHour(source));
-
     const double lati = latitude(source).replace(QRegExp("[^0-9.]"), NULL).toDouble();
     const double longi = longitude(source).replace(QRegExp("[^0-9.]"), NULL).toDouble();
     const QDate today = QDate::currentDate();
-   
-    const double sunrise = calculateSunriseTime(today.day(), today.month(), today.year(), lati, longi);
-    const double sunset = calculateSunsetTime(today.day(), today.month(), today.year(), lati, longi);
+    const Plasma::DataEngine::Data timeData = d->m_timeEngine->query(
+            QString("Local|Solar|Latitude=%1|Longitude=%2|DateTime=%3")
+                .arg(lati).arg(longi).arg(d->m_dateFormat.toString(Qt::ISODate)));
 
-    //kDebug() << "Calculated sunrise and sunset as " << sunrise << ", " << sunset;
-    //kDebug() << "Observation was made at " << observationSeconds;
-
-    if ((observationSeconds >= 0 && observationSeconds < sunrise) || observationSeconds >= sunset) {
+    if (timeData["Corrected Elevation"].toDouble() < 0.0) {
         conditionList["decreasing cloud"] = FewCloudsNight;
         conditionList["mostly cloudy"] = PartlyCloudyNight;
         conditionList["partly cloudy"] = PartlyCloudyNight;
@@ -1467,7 +1426,7 @@ void EnvCanadaIon::updateWeather(const QString& source)
     dataFields = wind(source);
     data.insert("Wind Speed", dataFields["windSpeed"]);
     data.insert("Wind Speed Unit", dataFields["windUnit"]);
-    
+
     data.insert("Wind Gust", dataFields["windGust"]);
     data.insert("Wind Direction", dataFields["windDirection"]);
     data.insert("Wind Degrees", dataFields["windDegrees"]);
@@ -1665,7 +1624,7 @@ QMap<QString, QString> EnvCanadaIon::temperature(const QString& source) const
     if (d->m_weatherData[source].comforttemp != i18n("N/A")) {
         temperatureInfo.insert("comfortTemperature", d->m_weatherData[source].comforttemp);
     }
-  
+
     // This is used for not just current temperature but also 8 days. Cannot be NoUnit.
     temperatureInfo.insert("temperatureUnit", QString::number(WeatherUtils::Celsius));
     return temperatureInfo;
@@ -1900,7 +1859,7 @@ QMap<QString, QString> EnvCanadaIon::yesterdayWeather(const QString& source) con
     } else {
         yesterdayInfo.insert("prevLow", d->m_weatherData[source].prevLow);
     }
-    
+
     if (d->m_weatherData[source].prevPrecipTotal == "Trace") {
         yesterdayInfo.insert("prevPrecip", i18nc("precipitation total, very little", "Trace"));
         return yesterdayInfo;

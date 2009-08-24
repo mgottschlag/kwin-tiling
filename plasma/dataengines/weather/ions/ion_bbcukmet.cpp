@@ -20,7 +20,7 @@
 /* Ion for BBC's Weather from the UK Met Office */
 
 #include "ion_bbcukmet.h"
-#include "../../time/solarposition.h"
+
 
 class UKMETIon::Private : public QObject
 {
@@ -51,46 +51,10 @@ public:
     QMap<KJob *, QString> m_forecastJobList;
 
     KIO::TransferJob *m_job;
+    Plasma::DataEngine *m_timeEngine;
 
     QDateTime m_dateFormat;
 };
-
-static double calculateSunriseTime(const int & day, const int & month, const int & year, const double & latitude, const double & longitude)
-{
-
-    QDate d(year, month, day);
-    QDateTime dt(d);
-
-    double jd, century, eqTime, solarDec, azimuth, zenith;
-
-    NOAASolarCalc::calc(dt, longitude, latitude, 0.0,
-                        &jd, &century, &eqTime, &solarDec, &azimuth, &zenith);
-
-    double toReturn;
-    NOAASolarCalc::calcTimeUTC(zenith, true, &jd, &toReturn, latitude, longitude);
-
-    toReturn *= 60;
-    return toReturn;
-}
-
-static double calculateSunsetTime(const int & day, const int & month, const int & year, const double & latitude, const double & longitude)
-{
-
-    QDate d(year, month, day);
-    QDateTime dt(d);
-
-    double jd, century, eqTime, solarDec, azimuth, zenith;
-
-    NOAASolarCalc::calc(dt, longitude, latitude, 0.0,
-                        &jd, &century, &eqTime, &solarDec, &azimuth, &zenith);
-
-    double toReturn;
-    NOAASolarCalc::calcTimeUTC(zenith, false, &jd, &toReturn, latitude, longitude);
-
-    toReturn *= 60;
-    return toReturn;
-
-}
 
 // ctor, dtor
 UKMETIon::UKMETIon(QObject *parent, const QVariantList &args)
@@ -137,6 +101,7 @@ void UKMETIon::reset()
 // Get the master list of locations to be parsed
 void UKMETIon::init()
 {
+    d->m_timeEngine = dataEngine("time");
     setInitialized(true);
 }
 
@@ -814,28 +779,23 @@ void UKMETIon::updateWeather(const QString& source)
     data.insert("Current Conditions", i18nc("weather condition", condition(source).toUtf8()));
     kDebug() << "i18n condition string: " << qPrintable(i18nc("weather condition", condition(source).toUtf8()));
 
-    const double observationSeconds = 60.0 * (periodMinute(source) + 60.0 * periodHour(source));
-
     const double lati = periodLatitude(source);
     const double longi = periodLongitude(source);
     const QDate today = QDate::currentDate();
-    const double sunrise = calculateSunriseTime(today.day(), today.month(), today.year(), lati, longi);
-    const double sunset = calculateSunsetTime(today.day(), today.month(), today.year(), lati, longi);
-
-    //kDebug() << "Calculated sunrise and sunset as " << sunrise << ", " << sunset;
-    //kDebug() << "Observation was made at " << observationSeconds;
+    const Plasma::DataEngine::Data timeData = d->m_timeEngine->query(
+            QString("Local|Solar|Latitude=%1|Longitude=%2|DateTime=%3")
+                .arg(lati).arg(longi).arg(d->m_dateFormat.toString(Qt::ISODate)));
 
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
-    if (observationSeconds >= 0 && observationSeconds < sunrise) {
-        //kDebug() << "Before sunrise - using night icons\n";
-        data.insert("Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
-    } else if (observationSeconds >= sunset) {
-        //kDebug() << "After sunset - using night icons\n";
-        data.insert("Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
-    } else {
+    if (timeData["Corrected Elevation"].toDouble() >= 0.0) {
         //kDebug() << "Using daytime icons\n";
         data.insert("Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
+    } else {
+        data.insert("Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
     }
+
+    data.insert("Latitude", lati);
+    data.insert("Longitude", longi);
 
     dataFields = humidity(source);
     data.insert("Humidity", dataFields["humidity"]);

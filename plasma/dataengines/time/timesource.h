@@ -24,28 +24,38 @@
 
 #include <Plasma/DataContainer>
 
+class Sun;
+class Moon;
+
 class TimeSource : public Plasma::DataContainer
 {
     Q_OBJECT
 
 public:
     explicit TimeSource(const QString &name, QObject *parent = 0);
+    ~TimeSource();
     void setTimeZone(const QString &name);
     void updateTime();
 
 private:
     QString parseName(const QString &name);
-    void addMoonPhaseData(const QDateTime &dt);
+    void addMoonPositionData(const QDateTime &dt);
+    void addDailyMoonPositionData(const QDateTime &dt);
     void addSolarPositionData(const QDateTime &dt);
     void addDailySolarPositionData(const QDateTime &dt);
+    Sun* sun();
+    Moon* moon();
 
     QString m_tzName;
     KTimeZone m_tz;
     int m_offset;
     double m_latitude;
     double m_longitude;
-    bool m_moonPhase : 1;
+    Sun *m_sun;
+    Moon *m_moon;
+    bool m_moonPosition : 1;
     bool m_solarPosition : 1;
+    bool m_userDateTime : 1;
 };
 
 #endif

@@ -34,6 +34,7 @@
 #include <plasma/dataengine.h>
 #include "ion.h"
 #include "weatherutils.h"
+#include "dataengineconsumer.h"
 
 class WeatherData
 {
@@ -133,7 +134,7 @@ public:
     float recordSnow;
 };
 
-class KDE_EXPORT EnvCanadaIon : public IonInterface
+class KDE_EXPORT EnvCanadaIon : public IonInterface, public Plasma::DataEngineConsumer
 {
     Q_OBJECT
 

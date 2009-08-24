@@ -34,6 +34,7 @@
 #include <plasma/dataengine.h>
 #include "ion.h"
 #include "weatherutils.h"
+#include "dataengineconsumer.h"
 
 class WeatherData
 {
@@ -73,7 +74,7 @@ public:
     QVector <WeatherData::ForecastInfo *> forecasts;
 };
 
-class KDE_EXPORT UKMETIon : public IonInterface
+class KDE_EXPORT UKMETIon : public IonInterface, public Plasma::DataEngineConsumer
 {
     Q_OBJECT
 

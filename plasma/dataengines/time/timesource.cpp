@@ -31,7 +31,7 @@
 #include <KDebug>
 #include <KSystemTimeZones>
 
-#include "solarposition.h"
+#include "solarsystem.h"
 
 //timezone is defined in msvc
 #ifdef timezone
@@ -43,7 +43,9 @@ TimeSource::TimeSource(const QString &name, QObject *parent)
       m_offset(0),
       m_latitude(0),
       m_longitude(0),
-      m_moonPhase(false),
+      m_sun(0),
+      m_moon(0),
+      m_moonPosition(false),
       m_solarPosition(false)
 {
     setObjectName(name);
@@ -78,18 +80,28 @@ void TimeSource::setTimeZone(const QString &tz)
     }
 }
 
+TimeSource::~TimeSource()
+{
+    delete m_sun;
+    delete m_moon;
+}
+
 void TimeSource::updateTime()
 {
     bool updateDailies = false;
     QDateTime dt = KDateTime::currentDateTime(m_tz).dateTime();
 
-    if (m_solarPosition || m_moonPhase) {
+    if (m_solarPosition || m_moonPosition) {
         QDate prev = data()["Date"].toDate();
         updateDailies = prev != dt.date();
     }
 
-    setData(I18N_NOOP("Time"), dt.time());
-    setData(I18N_NOOP("Date"), dt.date());
+    if (!m_userDateTime) {
+        setData(I18N_NOOP("Time"), dt.time());
+        setData(I18N_NOOP("Date"), dt.date());
+    } else {
+        dt = QDateTime(data()["Date"].toDate(), data()["Time"].toTime());
+    }
 
     int offset = m_tz.currentOffset();
     if (m_offset != offset) {
@@ -98,20 +110,24 @@ void TimeSource::updateTime()
     }
 
     if (m_solarPosition) {
-        addSolarPositionData(dt);
-
         if (updateDailies) {
             addDailySolarPositionData(dt);
         }
+        addSolarPositionData(dt);
     }
 
-    if (m_moonPhase && updateDailies) {
-        addMoonPhaseData(dt);
+    if (m_moonPosition) {
+        addMoonPositionData(dt);
+
+        if (updateDailies) {
+            addDailyMoonPositionData(dt);
+        }
     }
 }
 
 QString TimeSource::parseName(const QString &name)
 {
+    m_userDateTime = false;
     if (!name.contains('|')) {
         // the simple case where it's just a timezone request
         return name;
@@ -122,7 +138,7 @@ QString TimeSource::parseName(const QString &name)
     static const QString longitude = I18N_NOOP("Longitude");
     static const QString solar = I18N_NOOP("Solar");
     static const QString moon = I18N_NOOP("Moon");
-    static const QString datetime = I18N_NOOP("DataTime");
+    static const QString datetime = I18N_NOOP("DateTime");
 
     // now parse out what we got handed in
     const QStringList list = name.split('|', QString::SkipEmptyParts);
@@ -131,6 +147,7 @@ QString TimeSource::parseName(const QString &name)
     for (int i = 1; i < listSize; ++i) {
         const QString arg = list[i];
         const int n = arg.indexOf('=');
+
         if (n != -1) {
             const QString key = arg.mid(0, n);
             const QString value = arg.mid(n + 1);
@@ -139,18 +156,18 @@ QString TimeSource::parseName(const QString &name)
                 m_latitude = value.toDouble();
             } else if (key == longitude) {
                 m_longitude = value.toDouble();
-            } else if (arg == datetime) {
+            } else if (key == datetime) {
                 QDateTime dt = QDateTime::fromString(value, Qt::ISODate);
-
                 if (dt.isValid()) {
                     setData(I18N_NOOP("Date"), dt.date());
                     setData(I18N_NOOP("Time"), dt.time());
+                    m_userDateTime = true;
                 }
             }
         } else if (arg == solar) {
             m_solarPosition = true;
         } else if (arg == moon) {
-            m_moonPhase = true;
+            m_moonPosition = true;
         }
     }
 
@@ -158,178 +175,67 @@ QString TimeSource::parseName(const QString &name)
     return list.at(0);
 }
 
-
-// Moon phase support
-time_t JDtoDate(double jd, struct tm *event_date);
-double DatetoJD(struct tm *event_date);
-double moonphasebylunation(int lun, int phi);
-double moonphasebylunation(int lun, int phi);
-
-void TimeSource::addMoonPhaseData(const QDateTime &dt)
+Sun* TimeSource::sun()
 {
-    time_t time = dt.toTime_t();
-    int counter;
-
-    uint lun = 0;
-    time_t last_new = 0;
-    time_t next_new = 0;
-
-    do {
-        double JDE = moonphasebylunation(lun, 0);
-        last_new = next_new;
-        next_new = JDtoDate(JDE, 0);
-        lun++;
-    } while (next_new < time);
-
-    lun -= 2;
-
-    QDateTime ln;
-    ln.setTime_t(last_new);
-    //kDebug() << "last new " << KGlobal::locale()->formatDateTime(ln);
-
-    time_t first_quarter = JDtoDate(moonphasebylunation(lun, 1), 0);
-    QDateTime fq;
-    fq.setTime_t(first_quarter);
-    //kDebug() << "first quarter " << KGlobal::locale()->formatDateTime(fq);
-
-    time_t full_moon = JDtoDate(moonphasebylunation(lun, 2), 0);
-    QDateTime fm;
-    fm.setTime_t(full_moon);
-    //kDebug() << "full moon " << KGlobal::locale()->formatDateTime(fm);
-
-    time_t third_quarter = JDtoDate(moonphasebylunation(lun, 3), 0);
-    QDateTime tq;
-    tq.setTime_t(third_quarter);
-    //kDebug() << "third quarter " << KGlobal::locale()->formatDateTime(tq);
-
-    QDateTime nn;
-    nn.setTime_t(next_new);
-    //kDebug() << "next new " << KGlobal::locale()->formatDateTime(nn);
-
-    counter = ln.daysTo(dt);
-    //kDebug() << "counter " << counter << " " << fm.daysTo(now);
-
-    if (fm.daysTo(dt) == 0) {
-        counter = 14;
-        ///toolTipData.setMainText(i18n("Full Moon"));
-        return;
-    } else if (counter <= 15 && counter >= 13) {
-        counter = 14 + fm.daysTo(dt);
-        //kDebug() << "around full moon " << counter;
+    if (!m_sun) {
+        m_sun = new Sun();
     }
+    m_sun->setPosition(m_latitude, m_longitude);
+    return m_sun;
+}
 
-    int diff = fq.daysTo(dt);
-    if (diff  == 0) {
-        counter = 7;
-    } else if (counter <= 8 && counter >= 6) {
-        counter = 7 + diff;
-        //kDebug() << "around first quarter " << counter;
+Moon* TimeSource::moon()
+{
+    if (!m_moon) {
+        m_moon = new Moon(sun());
     }
+    m_moon->setPosition(m_latitude, m_longitude);
+    return m_moon;
+}
 
-    diff = ln.daysTo(dt);
-    if (diff == 0) {
-        counter = 0;
-    } else if (counter <= 1 || counter >= 28) {
-        counter = (29 + diff) % 29;
-        diff = -nn.daysTo(dt);
-        if (diff == 0) {
-            counter = 0;
-        } else if (diff < 3) {
-            counter = 29 - diff;
-        }
-        //kDebug() << "around new " << counter << " " << diff;
-    }
+void TimeSource::addMoonPositionData(const QDateTime &dt)
+{
+    Moon* m = moon();
+    m->calcForDateTime(dt, m_offset);
+    setData("Moon Azimuth", m->azimuth());
+    setData("Moon Zenith", 90 - m->altitude());
+    setData("Moon Corrected Elevation", m->calcElevation());
+    setData("MoonPhaseAngle", m->phase());
+}
 
-    if (tq.daysTo(dt) == 0) {
-        counter = 21;
-    } else if (counter <= 22 && counter >= 20) {
-        counter = 21 + tq.daysTo(dt);
-        //kDebug() << "around third quarter " << counter;
-    }
-
-    //kDebug() << "counter " << counter;
-    setData("MoonPhase", counter);
+void TimeSource::addDailyMoonPositionData(const QDateTime &dt)
+{
+    Moon* m = moon();
+    QList< QPair<QDateTime, QDateTime> > times = m->timesForAngles(
+            QList<double>() << -0.833, dt, m_offset);
+    setData("Moonrise", times[0].first);
+    setData("Moonset", times[0].second);
+    m->calcForDateTime(QDateTime(dt.date(), QTime(12,0)), m_offset);
+    setData("MoonPhase",  int(m->phase() / 360.0 * 29.0));
 }
 
 void TimeSource::addSolarPositionData(const QDateTime &dt)
 {
-    //QTime time;
-    //time.start();
-    double zone = m_offset / -3600.0;
-
-    double jd;
-    double century;
-    double eqTime;
-    double solarDec;
-    double azimuth;
-    double zenith;
-
-    NOAASolarCalc::calc(dt, m_longitude, m_latitude, zone, &jd, &century, &eqTime,
-                        &solarDec, &azimuth, &zenith);
-    setData("Equation of Time", eqTime);
-    setData("Solar Declination", solarDec);
-    setData("Azimuth", azimuth);
-    setData("Zenith", zenith);
-    setData("Corrected Elevation", NOAASolarCalc::calcElevation(zenith));
+    Sun* s = sun();
+    s->calcForDateTime(dt, m_offset);
+    setData("Azimuth", s->azimuth());
+    setData("Zenith", 90.0 - s->altitude());
+    setData("Corrected Elevation", s->calcElevation());
 }
 
 void TimeSource::addDailySolarPositionData(const QDateTime &dt)
 {
-    double jd;
-    double century;
-    double eqTime;
-    double solarDec;
-    double azimuth;
-    double zenith;
-    double minutes;
-    double zone = m_offset / -3600.0;
+    Sun* s = sun();
+    QList< QPair<QDateTime, QDateTime> > times = s->timesForAngles(
+            QList<double>() << -0.833 << -6.0 << -12.0 << -18.0, dt, m_offset);
 
-    NOAASolarCalc::calc(dt, m_longitude, m_latitude, zone, &jd, &century, &eqTime,
-                        &solarDec, &azimuth, &zenith);
-
-    double jd2 = jd;
-    NOAASolarCalc::calcTimeUTC(90.833, true, &jd2, &minutes, m_latitude, m_longitude);
-    setData("Apparent Sunrise", NOAASolarCalc::calcDateFromJD(jd2, minutes, zone));
-
-    jd2 = jd;
-    NOAASolarCalc::calcTimeUTC(90.833, false, &jd2, &minutes, m_latitude, m_longitude);
-    setData("Apparent Sunset", NOAASolarCalc::calcDateFromJD(jd2, minutes, zone));
-
-    jd2 = jd;
-    NOAASolarCalc::calcTimeUTC(90.0, true, &jd2, &minutes, m_latitude, m_longitude);
-    setData("Sunrise", NOAASolarCalc::calcDateFromJD(jd2, minutes, zone));
-    jd2 = jd;
-    NOAASolarCalc::calcTimeUTC(90.0, false, &jd2, &minutes, m_latitude, m_longitude);
-    setData("Sunset", NOAASolarCalc::calcDateFromJD(jd2, minutes, zone));
-
-    jd2 = jd;
-    NOAASolarCalc::calcTimeUTC(96.0, true, &jd2, &minutes, m_latitude, m_longitude);
-    setData("Civil Dawn", NOAASolarCalc::calcDateFromJD(jd2, minutes, zone));
-    jd2 = jd;
-    NOAASolarCalc::calcTimeUTC(96.0, false, &jd2, &minutes, m_latitude, m_longitude);
-    setData("Civil Dusk", NOAASolarCalc::calcDateFromJD(jd2, minutes, zone));
-
-    jd2 = jd;
-    NOAASolarCalc::calcTimeUTC(102.0, true, &jd2, &minutes, m_latitude, m_longitude);
-    setData("Nautical Dawn", NOAASolarCalc::calcDateFromJD(jd2, minutes, zone));
-    jd2 = jd;
-    NOAASolarCalc::calcTimeUTC(102.0, false, &jd2, &minutes, m_latitude, m_longitude);
-    setData("Nautical Dusk", NOAASolarCalc::calcDateFromJD(jd2, minutes, zone));
-
-    jd2 = jd;
-    NOAASolarCalc::calcTimeUTC(108.0, true, &jd2, &minutes, m_latitude, m_longitude);
-    setData("Astronomical Dawn", NOAASolarCalc::calcDateFromJD(jd2, minutes, zone));
-    jd2 = jd;
-    NOAASolarCalc::calcTimeUTC(108.0, false, &jd2, &minutes, m_latitude, m_longitude);
-    setData("Astronomical Dusk", NOAASolarCalc::calcDateFromJD(jd2, minutes, zone));
-
-    century = NOAASolarCalc::calcTimeJulianCent(jd);
-    minutes = NOAASolarCalc::calcSolNoonUTC(century, m_longitude);
-    QDateTime dtFromJD = NOAASolarCalc::calcDateFromJD(jd, minutes, zone);
-    NOAASolarCalc::calc(dtFromJD, m_longitude, m_latitude, zone, &jd, &century, &eqTime,
-                        &solarDec, &azimuth, &zenith);
-    setData("Solar Noon", dtFromJD);
-    setData("Min Zenith", zenith);
-    setData("Max Corrected Elevation", NOAASolarCalc::calcElevation(zenith));
+    setData("Sunrise", times[0].first);
+    setData("Sunset", times[0].second);
+    setData("Civil Dawn", times[1].first);
+    setData("Civil Dusk", times[1].second);
+    setData("Nautical Dawn", times[2].first);
+    setData("Nautical Dusk", times[2].second);
+    setData("Astronomical Dawn", times[3].first);
+    setData("Astronomical Dusk", times[3].second);
 }
 
