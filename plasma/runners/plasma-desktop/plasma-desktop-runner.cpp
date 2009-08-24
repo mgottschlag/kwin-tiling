@@ -73,7 +73,7 @@ void PlasmaDesktopRunner::run(const Plasma::RunnerContext &context, const Plasma
         QDBusMessage message;
 
         QString query = context.query();
-        if (query.compare(m_desktopConsoleKeyword, Qt::CaseInsensitive)) {
+        if (query.compare(m_desktopConsoleKeyword, Qt::CaseInsensitive) == 0) {
             message = QDBusMessage::createMethodCall(s_plasmaService, "/MainApplication",
                                                      QString(), "showInteractiveConsole");
         } else {
