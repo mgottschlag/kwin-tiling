@@ -49,7 +49,8 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
       m_maxColumnWidth(0),
       m_viewMainWidget(0),
       m_gridScroll(0),
-      m_appletsLayout(0)
+      m_appletsLayout(0),
+      m_buttonDownMousePos(QPoint())
 {
     setContainmentType(Containment::CustomContainment);
 }
@@ -497,22 +498,12 @@ bool SearchLaunch::eventFilter(QObject *watched, QEvent *event)
                qobject_cast<Plasma::Frame *>(watched)) {
                m_hoverIndicator->animatedSetVisible(false);
     //pass click only if the user didn't move the mouse
-    } else if (event->type() == QEvent::GraphicsSceneMousePress && m_buttonDownMousePos == QPoint()) {
-        QGraphicsSceneMouseEvent *mp = static_cast<QGraphicsSceneMouseEvent *>(event);
-        m_buttonDownMousePos = mp->pos();
-        event->ignore();
-        return true;
-    } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
-        QGraphicsSceneMouseEvent *mr = static_cast<QGraphicsSceneMouseEvent *>(event);
-        if (QPoint(mr->pos().toPoint() - m_buttonDownMousePos.toPoint()).manhattanLength() < QApplication::startDragDistance()) {
-            QGraphicsSceneMouseEvent me(QEvent::GraphicsSceneMousePress);
-            me.setPos(mr->pos());
-            me.setButton(mr->button());
-            me.setButtons(mr->buttons());
-            me.setModifiers(mr->modifiers());
-            QApplication::sendEvent(watched, &me);
-        }
-        m_buttonDownMousePos = QPoint();
+    } else if (event->type() == QEvent::GraphicsSceneMouseMove) {
+        QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
+
+        QPointF deltaPos = me->pos() - me->lastPos();
+        m_viewMainWidget->setPos(m_viewMainWidget->pos().x(),
+                                 qBound(qMin((qreal)0,-m_viewMainWidget->size().height()+m_gridScroll->size().height()), m_viewMainWidget->pos().y()+deltaPos.y(), (qreal)0));
     }
 
     return false;
