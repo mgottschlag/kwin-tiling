@@ -19,11 +19,13 @@
 
 #include "interactiveconsole.h"
 
+#include <QDateTime>
 #include <QFile>
 #include <QHBoxLayout>
 #include <QSplitter>
 #include <QVBoxLayout>
 
+#include <KLocale>
 #include <KPushButton>
 #include <KShell>
 #include <KTextEdit>
@@ -117,7 +119,36 @@ void InteractiveConsole::scriptTextChanged()
 void InteractiveConsole::evaluateScript()
 {
     //kDebug() << "evaluating" << m_editor->toPlainText();
+    m_output->moveCursor(QTextCursor::End);
+    QTextCursor cursor = m_output->textCursor();
+    m_output->setTextCursor(cursor);
+
+    QTextCharFormat format;
+    format.setFontWeight(QFont::Bold);
+    format.setFontUnderline(true);
+
+    if (cursor.position() > 0) {
+        cursor.insertText("\n\n");
+    }
+
+    QDateTime dt = QDateTime::currentDateTime();
+    cursor.insertText(i18n("Executing script at %1", KGlobal::locale()->formatDateTime(dt)), format);
+
+    format.setFontWeight(QFont::Normal);
+    format.setFontUnderline(false);
+    QTextBlockFormat block = cursor.blockFormat();
+    block.setLeftMargin(10);
+    cursor.insertBlock(block, format);
+    QTime t;
+    t.start();
     m_engine->evaluateScript(m_editor->toPlainText());
+
+    cursor.insertText("\n\n");
+    format.setFontWeight(QFont::Bold);
+    cursor.insertText(i18n("Runtime: %1ms", QString::number(t.elapsed())), format);
+    block.setLeftMargin(0);
+    cursor.insertBlock(block);
+    m_output->ensureCursorVisible();
 }
 
 void InteractiveConsole::clearEditor()
