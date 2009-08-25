@@ -23,6 +23,7 @@ set(wallpaper_SRCS
 
 set(plasma_SRCS
     backgrounddialog.cpp
+    scripting/containment.cpp
     scripting/rect.cpp
     scripting/scriptengine.cpp
     checkbox.cpp
