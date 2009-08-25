@@ -34,22 +34,37 @@ class Containment : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString name READ name WRITE setName)
+    Q_PROPERTY(QString type READ type)
+    Q_PROPERTY(QString formFactor READ formFactor)
+    Q_PROPERTY(QList<int> widgetIds READ widgetIds)
+    Q_PROPERTY(int screen READ screen WRITE setScreen)
+    Q_PROPERTY(int desktop READ desktop WRITE setDesktop)
+    Q_PROPERTY(QString location READ location WRITE setLocation)
+    Q_PROPERTY(int id READ id)
 
 public:
     Containment(Plasma::Containment *containment, QObject *parent = 0);
     ~Containment();
 
+    uint id() const;
+    QString type() const;
+    QString formFactor() const;
+    QList<int> widgetIds() const;
+
     QString name() const;
     void setName(const QString &name);
 
-public Q_SLOTS:
-    QString type() const;
     QString location() const;
-    uint id() const;
+    void setLocation(const QString &location);
+
     int screen() const;
+    void setScreen(int screen);
+
     int desktop() const;
-    QString formFactor() const;
-    QList<int> widgetIds() const;
+    void setDesktop(int desktop);
+
+
+public Q_SLOTS:
     Widget *addWidget(const QString &name);
     void remove();
 

@@ -64,6 +64,30 @@ QString Containment::location() const
     return "floating";
 }
 
+void Containment::setLocation(const QString &location)
+{
+    if (!m_containment) {
+        return;
+    }
+
+    const QString lower = location.toLower();
+    if (location == "floating") {
+        m_containment->setLocation(Plasma::Floating);
+    } else if (location == "desktop") {
+        m_containment->setLocation(Plasma::Desktop);
+    } else if (location == "fullscreen") {
+        m_containment->setLocation(Plasma::FullScreen);
+    } else if (location == "top") {
+        m_containment->setLocation(Plasma::TopEdge);
+    } else if (location == "bottom") {
+        m_containment->setLocation(Plasma::BottomEdge);
+    } else if (location == "left") {
+        m_containment->setLocation(Plasma::LeftEdge);
+    } else if (location == "right") {
+        m_containment->setLocation(Plasma::RightEdge);
+    }
+}
+
 int Containment::screen() const
 {
     if (!m_containment) {
@@ -73,6 +97,13 @@ int Containment::screen() const
     return m_containment->screen();
 }
 
+void Containment::setScreen(int screen)
+{
+    if (m_containment) {
+        m_containment->setScreen(screen);
+    }
+}
+
 int Containment::desktop() const
 {
     if (!m_containment) {
@@ -80,6 +111,13 @@ int Containment::desktop() const
     }
 
     return m_containment->desktop();
+}
+
+void Containment::setDesktop(int desktop)
+{
+    if (m_containment) {
+        m_containment->setScreen(m_containment->screen(), desktop);
+    }
 }
 
 QString Containment::formFactor() const
@@ -136,7 +174,14 @@ QString Containment::name() const
         return QString();
     }
 
-    return m_containment->name();
+    return m_containment->activity();
+}
+
+void Containment::setName(const QString &name)
+{
+    if (m_containment) {
+        m_containment->setActivity(name);
+    }
 }
 
 QString Containment::type() const
@@ -146,15 +191,6 @@ QString Containment::type() const
     }
 
     return m_containment->pluginName();
-}
-
-void Containment::setName(const QString &name)
-{
-    if (!m_containment) {
-        return;
-    }
-
-    return m_containment->setActivity(name);
 }
 
 Widget *Containment::addWidget(const QString &name)
