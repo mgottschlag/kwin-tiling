@@ -49,6 +49,7 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
       m_clearButton(new KPushButton(KIcon("edit-clear"), i18n("&Clear"), this)),
       m_executeButton(new KPushButton(KIcon("system-run"), i18n("&Run Script"), this))
 {
+    setWindowTitle(KDialog::makeStandardCaption(i18n("Desktop Shell Scripting Console")));
     setAttribute(Qt::WA_DeleteOnClose);
     setButtons(KDialog::None);
 
