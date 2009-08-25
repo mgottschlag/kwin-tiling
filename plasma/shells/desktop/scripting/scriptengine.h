@@ -25,6 +25,7 @@
 
 namespace Plasma
 {
+    class Containment;
     class Corona;
 } // namespace Plasma
 
@@ -43,13 +44,8 @@ public:
 public Q_SLOTS:
     int screenCount() const;
     QRectF screenGeometry(int screen) const;
-
     QList<int> activityIds() const;
-    Containment *activityById(int id) const;
-    Containment *activityForScreen(int screen) const;
-
     QList<int> panelIds() const;
-    Containment *panelById(int id) const;
 
 Q_SIGNALS:
     void print(const QString &string);
@@ -58,13 +54,26 @@ Q_SIGNALS:
 private:
     void setupEngine();
 
+    // containment accessors
+    static QScriptValue newActivity(QScriptContext *context, QScriptEngine *engine);
+    static QScriptValue newPanel(QScriptContext *context, QScriptEngine *engine);
+    static QScriptValue activityById(QScriptContext *context, QScriptEngine *engine);
+    static QScriptValue activityForScreen(QScriptContext *context, QScriptEngine *engine);
+    static QScriptValue panelById(QScriptContext *context, QScriptEngine *engine);
+
+    // helpers
+    static QScriptValue createContainment(const QString &type, const QString &plugin,
+                                          QScriptContext *context, QScriptEngine *engine);
+    static ScriptEngine *envFor(QScriptEngine *engine);
+    static QScriptValue wrap(Plasma::Containment *c, QScriptEngine *engine);
+    static bool isPanel(const Plasma::Containment *c);
+
 private Q_SLOTS:
     void exception(const QScriptValue &value);
 
 private:
     Plasma::Corona *m_corona;
     QScriptValue m_scriptSelf;
-    Containment *m_dummyContainment;
 };
 
 #endif
