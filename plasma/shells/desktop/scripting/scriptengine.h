@@ -40,6 +40,7 @@ public:
     ~ScriptEngine();
 
     void evaluateScript(const QString &script);
+    static bool isPanel(const Plasma::Containment *c);
 
 public Q_SLOTS:
     int screenCount() const;
@@ -66,7 +67,6 @@ private:
                                           QScriptContext *context, QScriptEngine *engine);
     static ScriptEngine *envFor(QScriptEngine *engine);
     static QScriptValue wrap(Plasma::Containment *c, QScriptEngine *engine);
-    static bool isPanel(const Plasma::Containment *c);
 
 private Q_SLOTS:
     void exception(const QScriptValue &value);

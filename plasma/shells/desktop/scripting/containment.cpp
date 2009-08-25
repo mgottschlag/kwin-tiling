@@ -21,9 +21,14 @@
 
 #include <Plasma/Containment>
 
+#include "panelview.h"
+#include "plasmaapp.h"
+#include "scriptengine.h"
+
 Containment::Containment(Plasma::Containment *containment, QObject *parent)
     : QObject(parent),
-      m_containment(containment)
+      m_containment(containment),
+      m_isPanel(m_containment ? ScriptEngine::isPanel(m_containment) : false)
 {
 }
 
@@ -204,7 +209,74 @@ Widget *Containment::addWidget(const QString &name)
 
 void Containment::remove()
 {
+    m_isPanel = false;
     m_containment->destroy(false);
+}
+
+PanelView *Containment::panel() const
+{
+    if (!m_isPanel || !m_containment) {
+        return 0;
+    }
+
+    foreach (PanelView *v, PlasmaApp::self()->panelViews()) {
+        if (v->containment() == m_containment) {
+            return v;
+        }
+    }
+
+    return 0;
+}
+
+QString Containment::alignment() const
+{
+    PanelView *v = panel();
+    if (!v) {
+        return "left";
+    }
+
+    switch (v->alignment()) {
+        case Qt::AlignRight:
+            return "right";
+            break;
+        case Qt::AlignCenter:
+            return "center";
+            break;
+        default:
+            return "left";
+            break;
+    }
+
+    return "left";
+}
+
+void Containment::setAlignment(const QString &alignment)
+{
+    PanelView *v = panel();
+    if (v) {
+        bool success = false;
+
+        if (alignment.compare("left", Qt::CaseInsensitive) == 0) {
+            if (v->alignment() != Qt::AlignLeft) {
+                success = true;
+                v->setAlignment(Qt::AlignLeft);
+            }
+        } else if (alignment.compare("right", Qt::CaseInsensitive) == 0) {
+            if (v->alignment() != Qt::AlignRight) {
+                success = true;
+                v->setAlignment(Qt::AlignRight);
+            }
+        } else if (alignment.compare("center", Qt::CaseInsensitive) == 0) {
+            if (v->alignment() != Qt::AlignCenter) {
+                success = true;
+                v->setAlignment(Qt::AlignCenter);
+            }
+        }
+
+        if (success) {
+            v->setOffset(0);
+        }
+    }
 }
 
 #include "containment.moc"

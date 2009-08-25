@@ -29,6 +29,7 @@ namespace Plasma
 } // namespace Plasma
 
 class Widget;
+class PanelView;
 
 class Containment : public QObject
 {
@@ -41,6 +42,9 @@ class Containment : public QObject
     Q_PROPERTY(int desktop READ desktop WRITE setDesktop)
     Q_PROPERTY(QString location READ location WRITE setLocation)
     Q_PROPERTY(int id READ id)
+
+    // panel properties
+    Q_PROPERTY(QString alignment READ alignment WRITE setAlignment)
 
 public:
     Containment(Plasma::Containment *containment, QObject *parent = 0);
@@ -63,6 +67,8 @@ public:
     int desktop() const;
     void setDesktop(int desktop);
 
+    QString alignment() const;
+    void setAlignment(const QString &alignment);
 
 public Q_SLOTS:
     Widget *addWidget(const QString &name);
@@ -71,9 +77,10 @@ public Q_SLOTS:
 Q_SIGNALS:
 
 private:
+    PanelView *panel() const;
 
-private:
     QPointer<Plasma::Containment> m_containment;
+    bool m_isPanel;
 };
 
 #endif
