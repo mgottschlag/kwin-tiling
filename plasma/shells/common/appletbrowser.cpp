@@ -480,6 +480,7 @@ void AppletBrowserPrivate::init(AppletBrowser *browser)
     q->setWindowTitle(i18n("Widgets"));
 
     q->setButtons(KDialog::Apply | KDialog::Close | KDialog::User1);
+    q->setDefaultButton(KDialog::Apply);
     q->setButtonText(KDialog::Apply, i18n("Add Widget"));
     q->setButtonText(KDialog::User1, i18n("Install New Widgets"));
 
