@@ -25,6 +25,7 @@
 #include <Plasma/View>
 
 class QAction;
+class QToolButton;
 
 namespace Plasma
 {
@@ -70,6 +71,7 @@ protected slots:
 private:
     Plasma::View *m_view;
     Plasma::AppletBrowser *m_appletBrowser;
+    QToolButton *m_closeButton;
     QPoint m_appletBrowserDragStart;
     QAction *m_hideAction;
     bool m_suppressShow : 1;

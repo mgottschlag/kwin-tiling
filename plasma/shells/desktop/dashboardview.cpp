@@ -24,6 +24,7 @@
 #include <QAction>
 #include <QKeyEvent>
 #include <QTimer>
+#include <QToolButton>
 
 #include <KWindowSystem>
 
@@ -44,6 +45,7 @@ DashboardView::DashboardView(Plasma::Containment *containment, Plasma::View *vie
     : Plasma::View(containment, 0),
       m_view(view),
       m_appletBrowser(0),
+      m_closeButton(new QToolButton(this)),
       m_suppressShow(false),
       m_zoomIn(false),
       m_zoomOut(false),
@@ -67,6 +69,13 @@ DashboardView::DashboardView(Plasma::Containment *containment, Plasma::View *vie
 
     installEventFilter(this);
 
+    QFont f = font();
+    f.bold();
+    const QFontMetrics fm(f);
+    m_closeButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    m_closeButton->resize(fm.height(), fm.height());
+    m_closeButton->setIcon(KIcon("window-close"));
+    connect(m_closeButton, SIGNAL(clicked()), this, SLOT(hideView()));
     connect(scene(), SIGNAL(releaseVisualFocus()), SLOT(hideView()));
 }
 
@@ -99,12 +108,14 @@ void DashboardView::paintEvent(QPaintEvent *event)
     const QFontMetrics fm(f);
     const int margin = 6;
     const int textWidth = fm.width(text);
-    const QPoint centered(r.width() / 2 - textWidth / 2 - margin, r.y());
-    const QRect boundingBox(centered, QSize(margin * 2 + textWidth, fm.height() + margin * 2));
+    const QPoint centered(r.width() / 2 - textWidth / 2 - margin - margin / 2 - m_closeButton->width() / 2, r.y());
+    const QRect boundingBox(centered, QSize(margin * 3 + textWidth + m_closeButton->width(), fm.height() + margin * 2));
 
     if (!viewport() || !event->rect().intersects(boundingBox)) {
         return;
     }
+
+    m_closeButton->move(boundingBox.right() - 6 - m_closeButton->width(), boundingBox.top() + margin);
 
     QPainterPath box;
     box.moveTo(boundingBox.topLeft());
@@ -125,7 +136,7 @@ void DashboardView::paintEvent(QPaintEvent *event)
     painter.setBrush(highlight);
     painter.drawPath(box);
     painter.setPen(palette().highlightedText().color());
-    painter.drawText(boundingBox, Qt::AlignCenter | Qt::AlignVCenter, text);
+    painter.drawText(boundingBox.adjusted(margin, 0, 0, 0), Qt::AlignLeft | Qt::AlignVCenter, text);
 }
 
 void DashboardView::showAppletBrowser()
@@ -321,16 +332,6 @@ void DashboardView::suppressShowTimeout()
 {
     //kDebug() << "DashboardView::suppressShowTimeout";
     m_suppressShow = false;
-
-    KConfigGroup cg(KGlobal::config(), "Dashboard");
-    if (!cg.readEntry("DashboardShown", false)) {
-        // the first time we show the user the dashboard, expand
-        // the toolbox; some people don't know how to get out of it at first
-        // so we do this as a hint for them
-        containment()->openToolBox();
-        cg.writeEntry("DashboardShown", true);
-        configNeedsSaving();
-    }
 }
 
 void DashboardView::keyPressEvent(QKeyEvent *event)
