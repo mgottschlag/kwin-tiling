@@ -204,7 +204,7 @@ Widget *Containment::addWidget(const QString &name)
 
 void Containment::remove()
 {
-    m_containment->destroy();
+    m_containment->destroy(false);
 }
 
 #include "containment.moc"
