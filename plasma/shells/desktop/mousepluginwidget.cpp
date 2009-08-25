@@ -29,16 +29,27 @@
 #include <QDialogButtonBox>
 #include <QLayout>
 
-MousePluginWidget::MousePluginWidget(const KPluginInfo &plugin, QWidget *parent)
+MousePluginWidget::MousePluginWidget(const KPluginInfo &plugin, const QString &trigger, QWidget *parent)
     :QWidget(parent),
     m_plugin(plugin),
-    m_configDlg(0)
+    m_configDlg(0),
+    m_containment(0),
+    m_lastConfigLocation(trigger),
+    m_tempConfigParent(QString(), KConfig::SimpleConfig)
 {
     m_ui.setupUi(this);
 
     //read plugin data
     m_ui.name->setText(plugin.name());
     m_ui.description->setText(plugin.comment());
+
+    if (plugin.property("X-Plasma-HasConfigurationInterface").toBool()) {
+        m_tempConfig = KConfigGroup(&m_tempConfigParent, "test");
+    } else {
+        m_ui.configButton->setVisible(false);
+    }
+
+    setTrigger(trigger);
 
     //prettiness
     m_ui.aboutButton->setIcon(KIcon("dialog-information"));
@@ -68,33 +79,7 @@ void MousePluginWidget::setContainment(Plasma::Containment *ctmt)
 {
     //note: since the old plugin's parent is the old containment,
     //we let that containment take care of deleting it
-
     m_containment = ctmt;
-
-    m_pluginInstance = Plasma::ContainmentActions::load(ctmt, m_plugin.pluginName());
-    if (! m_pluginInstance) {
-        //FIXME tell user
-        kDebug() << "failed to load plugin!";
-        return;
-    }
-
-    if (m_pluginInstance->hasConfigurationInterface()) {
-        QString trigger = m_ui.inputButton->trigger();
-        if (trigger.isEmpty()) {
-            //FIXME m_pluginInstance->restore(KConfigGroup());
-        } else {
-            //FIXME I'm assuming the config was successfully saved here already
-            KConfigGroup cfg = ctmt->config();
-            cfg = KConfigGroup(&cfg, "ActionPlugins");
-            cfg = KConfigGroup(&cfg, m_ui.inputButton->trigger());
-            m_pluginInstance->restore(cfg);
-        }
-    } else {
-        //well, we don't need it then.
-        delete m_pluginInstance;
-        m_pluginInstance = 0;
-        m_ui.configButton->setVisible(false);
-    }
 }
 
 void MousePluginWidget::setTrigger(const QString &trigger)
@@ -124,9 +109,21 @@ void MousePluginWidget::updateConfig(const QString &trigger)
 void MousePluginWidget::configure()
 {
     if (! m_pluginInstance) {
-        //FIXME tell user
-        kDebug() << "failed to load plugin!";
-        return;
+        m_pluginInstance = Plasma::ContainmentActions::load(m_containment, m_plugin.pluginName());
+        if (! m_pluginInstance) {
+            //FIXME tell user
+            kDebug() << "failed to load plugin!";
+            return;
+        }
+
+        if (m_lastConfigLocation.isEmpty()) {
+            m_pluginInstance->restore(m_tempConfig);
+        } else {
+            KConfigGroup cfg = m_containment->config();
+            cfg = KConfigGroup(&cfg, "ActionPlugins");
+            cfg = KConfigGroup(&cfg, m_lastConfigLocation);
+            m_pluginInstance->restore(cfg);
+        }
     }
 
     if (! m_configDlg) {
@@ -171,15 +168,38 @@ void MousePluginWidget::rejectConfig()
     m_configDlg = 0;
 }
 
+void MousePluginWidget::prepareForSave()
+{
+    if (!m_ui.configButton->isVisible() || m_pluginInstance || m_lastConfigLocation.isEmpty()) {
+        return;
+    }
+
+    KConfigGroup cfg = m_containment->config();
+    cfg = KConfigGroup(&cfg, "ActionPlugins");
+    cfg = KConfigGroup(&cfg, m_lastConfigLocation);
+    cfg.copyTo(&m_tempConfig);
+    //kDebug() << "copied to temp";
+}
+
 void MousePluginWidget::save()
 {
+    if (!m_ui.configButton->isVisible()) {
+        return;
+    }
+
     QString trigger = m_ui.inputButton->trigger();
-    if (m_pluginInstance && !trigger.isEmpty()) {
+    if (!trigger.isEmpty()) {
         KConfigGroup cfg = m_containment->config();
         cfg = KConfigGroup(&cfg, "ActionPlugins");
         cfg = KConfigGroup(&cfg, trigger);
-        m_pluginInstance->save(cfg);
+        if (m_pluginInstance) {
+            m_pluginInstance->save(cfg);
+        } else if (!m_lastConfigLocation.isEmpty()) {
+            m_tempConfig.copyTo(&cfg);
+            //kDebug() << "copied from temp";
+        }
     }
+    m_lastConfigLocation = trigger;
 }
 
 //copied from appletbrowser.cpp

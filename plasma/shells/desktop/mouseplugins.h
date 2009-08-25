@@ -37,6 +37,7 @@ public:
 
 signals:
     void modified(bool isModified);
+    void aboutToSave();
     void save();
 
 public slots:

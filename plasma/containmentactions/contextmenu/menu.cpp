@@ -54,7 +54,6 @@ ContextMenu::ContextMenu(QObject *parent, const QVariantList &args)
       m_separator2(0),
       m_buttons(0)
 {
-    setHasConfigurationInterface(true);
 }
 
 ContextMenu::~ContextMenu()

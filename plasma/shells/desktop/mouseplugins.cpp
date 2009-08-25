@@ -46,15 +46,15 @@ MousePlugins::MousePlugins(Plasma::Containment *containment, KConfigDialog *pare
 
     KPluginInfo::List plugins = Plasma::ContainmentActions::listContainmentActionsInfo();
     foreach (const KPluginInfo& info, plugins) {
-        MousePluginWidget *item = new MousePluginWidget(info);
+        QString trigger = m_plugins.key(info.pluginName());
+        MousePluginWidget *item = new MousePluginWidget(info, trigger);
         lay->addWidget(item);
         item->setObjectName(info.pluginName());
-        QString trigger = m_plugins.key(info.pluginName());
-        item->setTrigger(trigger);
         item->setContainment(m_containment);
         connect(parent, SIGNAL(containmentPluginChanged(Plasma::Containment*)), item, SLOT(setContainment(Plasma::Containment*)));
         connect(item, SIGNAL(triggerChanged(QString,QString,QString)), this, SLOT(setTrigger(QString,QString,QString)));
         connect(item, SIGNAL(configChanged(QString)), this, SLOT(configChanged(QString)));
+        connect(this, SIGNAL(aboutToSave()), item, SLOT(prepareForSave()));
         connect(this, SIGNAL(save()), item, SLOT(save()));
     }
 
@@ -75,6 +75,9 @@ void MousePlugins::configChanged(const QString &trigger)
 
 void MousePlugins::configAccepted()
 {
+    //FIXME there has *got* to be a more efficient way...
+    emit aboutToSave();
+
     KConfigGroup baseCfg = m_containment->config();
     baseCfg = KConfigGroup(&baseCfg, "ActionPlugins");
     foreach (const QString &trigger, m_modifiedKeys) {
@@ -82,7 +85,6 @@ void MousePlugins::configAccepted()
         cfg.deleteGroup();
     }
 
-    //FIXME only save changed configs
     emit save();
 
     foreach (const QString &trigger, m_modifiedKeys) {

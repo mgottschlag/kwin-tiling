@@ -33,7 +33,7 @@ class MousePluginWidget : public QWidget
 {
     Q_OBJECT
 public:
-    MousePluginWidget(const KPluginInfo &plugin, QWidget *parent = 0);
+    MousePluginWidget(const KPluginInfo &plugin, const QString &trigger, QWidget *parent = 0);
     ~MousePluginWidget();
 
     void setTrigger(const QString &trigger);
@@ -52,6 +52,7 @@ private slots:
     void configure();
     void acceptConfig();
     void rejectConfig();
+    void prepareForSave();
     void save();
     void showAbout();
 
@@ -63,6 +64,9 @@ private:
     QPointer<Plasma::ContainmentActions> m_pluginInstance;
     QDialog *m_configDlg;
     Plasma::Containment *m_containment;
+    QString m_lastConfigLocation;
+    KConfigGroup m_tempConfig;
+    KConfig m_tempConfigParent;
 
 };
 #endif

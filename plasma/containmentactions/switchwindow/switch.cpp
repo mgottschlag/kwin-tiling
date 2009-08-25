@@ -32,7 +32,6 @@
 SwitchWindow::SwitchWindow(QObject *parent, const QVariantList &args)
     : Plasma::ContainmentActions(parent, args)
 {
-    setHasConfigurationInterface(true);
 }
 
 void SwitchWindow::init(const KConfigGroup &config)
