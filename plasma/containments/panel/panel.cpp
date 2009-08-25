@@ -502,6 +502,22 @@ void Panel::updateBorders(const QRect &geom, bool themeChange)
 
     //invalidate the layout and set again
     if (layout()) {
+        switch (location()) {
+        case LeftEdge:
+            rightWidth = qMin(rightWidth, qMax(qreal(1), size().width() - KIconLoader::SizeMedium));
+            break;
+        case RightEdge:
+            leftWidth = qMin(leftWidth, qMax(qreal(1), size().width() - KIconLoader::SizeMedium));
+            break;
+        case TopEdge:
+            bottomHeight = qMin(bottomHeight, qMax(qreal(1), size().height() - KIconLoader::SizeMedium));
+            break;  
+        case BottomEdge:
+            topHeight = qMin(topHeight, qMax(qreal(1), size().height() - KIconLoader::SizeMedium));
+            break;
+        default:
+            break;
+        }
         qreal oldLeft = leftWidth;
         qreal oldTop = topHeight;
         qreal oldRight = rightWidth;
@@ -512,13 +528,6 @@ void Panel::updateBorders(const QRect &geom, bool themeChange)
         }
 
         layout()->setContentsMargins(leftWidth, topHeight, rightWidth, bottomHeight);
-        if (formFactor() == Plasma::Vertical) {
-            setPreferredHeight(preferredHeight() - (oldBottom - bottomHeight));
-        } else if (QApplication::layoutDirection() == Qt::LeftToRight) {
-            setPreferredWidth(preferredWidth() - (oldRight - rightWidth));
-        } else {
-            setPreferredWidth(preferredWidth() - (oldLeft - leftWidth));
-        }
 
         layout()->invalidate();
         resize(preferredSize());
