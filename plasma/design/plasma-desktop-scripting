@@ -1,6 +1,8 @@
 ECMA Script Interaction With The Plasma Desktop Shell (plasma-desktop)
 ======================================================================
 
+Overview
+--------
 It is possible to control and interact with plasma-desktop using ECMA Script
 code. This scripting mechanism exposes containments, widgets and various aspects
 of plasma-desktop configuration to the user using the widely known and used
@@ -11,7 +13,6 @@ run such scripts in plasma-desktop.
 
 Running Scripts
 ---------------
-
 There are three ways that scripts can be executed in plasma-desktop:
 
 * on first run: when plasma-desktop is first started any scripts in
@@ -31,9 +32,61 @@ There are three ways that scripts can be executed in plasma-desktop:
   or via dbus with
   `qdbus org.kde.plasma-desktop /MainApplication loadScriptInInteractiveConsole /path/to/file`
 
-API
----
+API: Screen Geometry
+--------------------
+* screenCount(): returns the number of screens connected to the computer
+* screenGeometry(int screen): returns a rect object representing the geometry of a screen
 
-Screen geometry:
-* screenCount() returns the number of screens connected to the computer
-* screenGeometry(int screen) returns a rect object representing the geometry of a screen
+API: Activities
+---------------
+Activities (or in sightly more technical terms, desktop containments) can be enumerated,
+created, destroyed and modified. In the global scope of the script, the following functions
+are available:
+
+* activityIds(): returns a list of integer ids of all existing Plasma activities
+* activityById(int id): return an object representing the activity with the given id
+* activityForScreen(int screen, int dekstop): returns an object representing the activity
+  currently associated with the given screen and, optionally, the given desktop
+* createActivity(string name): creates a new activity of type name (e.g. "desktop" or "folderview";
+  this maps to the X-KDE-PluginInfo-Name= entry in the plugin's .desktop file) and returns an
+  object representing it. On failure, an invalid object will be returned
+
+New Activities can be created using the Activity constructor, like this:
+
+    var activity = new Activity("folderview")
+
+The string passed into the constructor maps to the X-KDE-PluginInfo-Name= entry
+in the plugin's .desktop file).
+
+API: Panels
+-----------
+Panels can be enumerated, created, destroyed and modified. In the global script scope, the
+following functions are available:
+
+* panelIds: returns a list of integer ids of all existing Plasma panels
+* panelById(int id): returns an object representing the Panel with the given id
+
+New Panels can be created using the Panel constructor, like this:
+
+    var panel = new Panel("dock")
+
+The string passed into the constructor maps to the X-KDE-PluginInfo-Name= entry
+in the plugin's .desktop file).
+
+API: Activities and Panels
+--------------------------
+Activity and Panel objects (ones created by the script, or as returned by activityById, activityForScreen,
+or panelById) provide the following methods:
+
+* id: the integer id of this activity
+* name: the name of this activity, may also be changed by assigning a new string to it
+* screen: the screen this activity is associated with, or -1 for none
+* desktop: the virtual desktop this activity is associated with, or -1 for none
+* location: returns the location of the activity (only relevant for Panels)
+* formFactor: returns the form factor of the activity, e.g. "planar" for most desktop activities,
+  "mediacenter" for media centers and either "horizontal" or "vertical" for panels.
+* widgetIds: a list of integer ids of all the widgets in this Activity
+* addWidget(string name): adds a widget to the activity; the name maps to the X-KDE-PluginInfo-Name= entry
+  in the widget's .desktop file
+* remmove: deletes this activity and all widgets inside of it
+
