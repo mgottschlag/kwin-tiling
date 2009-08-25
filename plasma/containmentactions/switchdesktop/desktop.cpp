@@ -34,7 +34,7 @@ SwitchDesktop::SwitchDesktop(QObject *parent, const QVariantList &args)
 void SwitchDesktop::contextEvent(QEvent *event)
 {
     switch (event->type()) {
-        case QEvent::GraphicsSceneMouseRelease:
+        case QEvent::GraphicsSceneMousePress:
             contextEvent(dynamic_cast<QGraphicsSceneMouseEvent*>(event));
             break;
         case QEvent::GraphicsSceneWheel:

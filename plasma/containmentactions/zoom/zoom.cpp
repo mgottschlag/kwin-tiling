@@ -38,7 +38,7 @@ Zoom::Zoom(QObject *parent, const QVariantList &args)
 void Zoom::contextEvent(QEvent *event)
 {
     switch (event->type()) {
-        case QEvent::GraphicsSceneMouseRelease:
+        case QEvent::GraphicsSceneMousePress:
             contextEvent(dynamic_cast<QGraphicsSceneMouseEvent*>(event));
             break;
         case QEvent::GraphicsSceneWheel:

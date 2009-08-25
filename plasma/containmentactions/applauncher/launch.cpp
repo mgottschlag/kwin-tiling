@@ -43,7 +43,7 @@ void AppLauncher::contextEvent(QEvent *event)
 {
     QPoint screenPos;
     switch (event->type()) {
-        case QEvent::GraphicsSceneMouseRelease:
+        case QEvent::GraphicsSceneMousePress:
             screenPos = (static_cast<QGraphicsSceneMouseEvent*>(event))->screenPos();
             break;
         case QEvent::GraphicsSceneWheel:
@@ -56,7 +56,7 @@ void AppLauncher::contextEvent(QEvent *event)
 
 
     Plasma::DataEngine *apps = dataEngine("apps");
-    if (! apps->isValid()) {
+    if (!apps->isValid()) {
         return;
     }
 

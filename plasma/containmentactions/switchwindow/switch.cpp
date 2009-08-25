@@ -77,7 +77,7 @@ void SwitchWindow::save(KConfigGroup &config)
 void SwitchWindow::contextEvent(QEvent *event)
 {
     switch (event->type()) {
-        case QEvent::GraphicsSceneMouseRelease:
+        case QEvent::GraphicsSceneMousePress:
             contextEvent(dynamic_cast<QGraphicsSceneMouseEvent*>(event));
             break;
         case QEvent::GraphicsSceneWheel:
