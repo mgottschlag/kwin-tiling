@@ -97,28 +97,22 @@ QScriptValue ScriptEngine::activityForScreen(QScriptContext *context, QScriptEng
 
 QScriptValue ScriptEngine::newActivity(QScriptContext *context, QScriptEngine *engine)
 {
-    if (context->argumentCount() == 0) {
-        return context->throwError(i18n("Constructor requires the name of the Activity plugin"));
-    }
-
-    return createContainment("desktop", context->argument(0).toString(), context, engine);
+    return createContainment("desktop", "desktop", context, engine);
 }
 
 QScriptValue ScriptEngine::newPanel(QScriptContext *context, QScriptEngine *engine)
 {
-    if (context->argumentCount() == 0) {
-        return context->throwError(i18n("Constructor requires the name of the Panel plugin"));
-    }
-
-    return createContainment("desktop", context->argument(0).toString(), context, engine);
+    return createContainment("panel", "panel", context, engine);
 }
 
-QScriptValue ScriptEngine::createContainment(const QString &type, const QString &plugin,
+QScriptValue ScriptEngine::createContainment(const QString &type, const QString &defaultPlugin,
                                              QScriptContext *context, QScriptEngine *engine)
 {
-    const KPluginInfo::List list = Plasma::Containment::listContainments(type);
-    bool exists = false;
+    QString plugin = context->argumentCount() > 0 ? context->argument(0).toString() :
+                                                    defaultPlugin;
 
+    bool exists = false;
+    const KPluginInfo::List list = Plasma::Containment::listContainmentsOfType(type);
     foreach (const KPluginInfo &info, list) {
         if (info.pluginName() == plugin) {
             exists = true;
@@ -127,7 +121,7 @@ QScriptValue ScriptEngine::createContainment(const QString &type, const QString 
     }
 
     if (!exists) {
-        return context->throwError(i18n("Could not find an Activity plugin named %1.", plugin));
+        return context->throwError(i18n("Could not find an %1 plugin named %2.", type, plugin));
     }
 
 

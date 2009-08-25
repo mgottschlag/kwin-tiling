@@ -62,7 +62,7 @@ private:
     static QScriptValue panelById(QScriptContext *context, QScriptEngine *engine);
 
     // helpers
-    static QScriptValue createContainment(const QString &type, const QString &plugin,
+    static QScriptValue createContainment(const QString &type, const QString &defautPlugin,
                                           QScriptContext *context, QScriptEngine *engine);
     static ScriptEngine *envFor(QScriptEngine *engine);
     static QScriptValue wrap(Plasma::Containment *c, QScriptEngine *engine);
