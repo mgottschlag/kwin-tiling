@@ -138,7 +138,7 @@ QScriptValue ScriptEngine::createContainment(const QString &type, const QString 
 
 QScriptValue ScriptEngine::wrap(Plasma::Containment *c, QScriptEngine *engine)
 {
-    Containment *wrapper = new Containment(c, engine);
+    Containment *wrapper = new Containment(c);
     return engine->newQObject(wrapper, QScriptEngine::ScriptOwnership,
                               QScriptEngine::ExcludeSuperClassProperties |
                               QScriptEngine::ExcludeSuperClassMethods);
