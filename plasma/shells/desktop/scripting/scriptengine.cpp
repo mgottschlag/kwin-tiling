@@ -127,6 +127,11 @@ QScriptValue ScriptEngine::createContainment(const QString &type, const QString 
 
     ScriptEngine *env = envFor(engine);
     Plasma::Containment *c = env->m_corona->addContainment(plugin);
+    if (c) {
+        c->updateConstraints(Plasma::StartupCompletedConstraint);
+        c->flushPendingConstraintsEvents();
+    }
+
     return wrap(c, engine);
 }
 
