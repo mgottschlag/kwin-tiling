@@ -41,6 +41,7 @@ public:
                    const QString& wallpaper, const QVariantList &args = QVariantList());
 
 private slots:
+    void appletTransformedItself();
     void sceneRectChanged(const QRectF &rect);
     void resizeEvent(QResizeEvent *event);
     void closeEvent(QCloseEvent *event);

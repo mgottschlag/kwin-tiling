@@ -77,7 +77,6 @@ FullView::FullView(const QString &ff, const QString &loc, QWidget *parent)
         m_location = Plasma::LeftEdge;
     }
 
-    resize(250, 200);
     setScene(&m_corona);
     connect(&m_corona, SIGNAL(sceneRectChanged(QRectF)), this, SLOT(sceneRectChanged(QRectF)));
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -120,6 +119,8 @@ void FullView::addApplet(const QString &name, const QString &containment,
     setSceneRect(m_containment->geometry());
     setWindowTitle(m_applet->name());
     setWindowIcon(SmallIcon(m_applet->icon()));
+    resize(m_applet->size().toSize());
+    connect(m_applet, SIGNAL(appletTransformedItself()), this, SLOT(appletTransformedItself()));
 }
 
 void FullView::appletRemoved()
@@ -176,6 +177,11 @@ void FullView::closeEvent(QCloseEvent *event)
 {
     Q_UNUSED(event)
     qApp->quit();
+}
+
+void FullView::appletTransformedItself()
+{
+    resize(m_applet->size().toSize());
 }
 
 void FullView::sceneRectChanged(const QRectF &rect)
