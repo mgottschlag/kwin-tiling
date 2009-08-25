@@ -22,6 +22,9 @@
 #include <KDebug>
 #include <KLocale>
 #include <KMimeType>
+#include <KServiceTypeTrader>
+#include <KStandardDirs>
+#include <KSycoca>
 #include <KToolInvocation>
 #include <KUrl>
 
@@ -31,23 +34,47 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
 {
     Q_UNUSED(args);
     setObjectName("Web Shortcut");
-    // query ktrader for all available searchproviders and preload the default icon
-    m_icon = KIcon("internet-web-browser");
-    loadDelimiter();
     setIgnoredTypes(Plasma::RunnerContext::FileSystem);
+
+    m_icon = KIcon("internet-web-browser");
 
     m_match.setType(Plasma::QueryMatch::ExactMatch);
     m_match.setRelevance(0.9);
+
+    m_watch.addFile(KGlobal::dirs()->locateLocal("config", "kuriikwsfilterrc"));
+    connect(&m_watch, SIGNAL(dirty(QString)), this, SLOT(loadDelimiter()));
+    connect(&m_watch, SIGNAL(created(QString)), this, SLOT(loadDelimiter()));
+    connect(&m_watch, SIGNAL(deleted(QString)), this, SLOT(loadDelimiter()));
+
+    connect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)), this,
+            SLOT(sycocaChanged(QStringList)));
+    connect(this, SIGNAL(teardown()), this, SLOT(resetState()));
+
+    loadDelimiter();
+    loadSyntaxes();
+}
+
+WebshortcutRunner::~WebshortcutRunner()
+{
 }
 
 void WebshortcutRunner::loadDelimiter()
 {
-    // TODO: KDirWatch :)
     KConfig kuriconfig("kuriikwsfilterrc", KConfig::NoGlobals);
     KConfigGroup generalgroup(&kuriconfig, "General");
     m_delimiter = generalgroup.readEntry("KeywordDelimiter", QString(':'));
     //kDebug() << "keyworddelimiter is: " << delimiter;
+}
 
+void WebshortcutRunner::sycocaChanged(const QStringList &changes)
+{
+    if (changes.contains("services")) {
+        loadSyntaxes();
+    }
+}
+
+void WebshortcutRunner::loadSyntaxes()
+{
     QList<Plasma::RunnerSyntax> syns;
 
     const KService::List offers = serviceQuery("SearchProvider");
@@ -80,8 +107,11 @@ void WebshortcutRunner::loadDelimiter()
     setSyntaxes(syns);
 }
 
-WebshortcutRunner::~WebshortcutRunner()
+void WebshortcutRunner::resetState()
 {
+    m_lastFailedKey.clear();
+    m_lastKey.clear();
+    m_lastServiceName.clear();
 }
 
 void WebshortcutRunner::match(Plasma::RunnerContext &context)
@@ -95,7 +125,6 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
     //kDebug() << "checking with" << term;
 
     int delimIndex = term.indexOf(m_delimiter);
-
     if (delimIndex == term.length() - 1) {
         return;
     }
@@ -108,7 +137,7 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
     }
 
     if (key != m_lastKey) {
-        const KService::List offers = serviceQuery("SearchProvider", QString("'%1' in Keys").arg(key));
+        const KService::List offers = KServiceTypeTrader::self()->query("SearchProvider", QString("'%1' in Keys").arg(key));
 
         if (!context.isValid()) {
             return;
@@ -126,6 +155,7 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
 
         const QString query = service->property("Query").toString();
         m_match.setData(query);
+        m_match.setId("WebShortcut:" + m_lastKey);
 
         if (service->icon().isEmpty()) {
             m_match.setIcon(iconForUrl(query));
@@ -165,8 +195,7 @@ KIcon WebshortcutRunner::iconForUrl(const KUrl &url)
         return m_icon;
     }
 
-    m_lastIcon = KIcon(iconFile);
-    return m_lastIcon;
+    return KIcon(iconFile);
 }
 
 void WebshortcutRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)

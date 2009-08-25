@@ -19,10 +19,11 @@
 #ifndef WEBSHORTCUTRUNNER_H
 #define WEBSHORTCUTRUNNER_H
 
-#include <Plasma/AbstractRunner>
 
+#include <KDirWatch>
 #include <KIcon>
 
+#include <Plasma/AbstractRunner>
 
 class WebshortcutRunner : public Plasma::AbstractRunner {
     Q_OBJECT
@@ -37,15 +38,21 @@ class WebshortcutRunner : public Plasma::AbstractRunner {
     private:
         QString searchQuery(const QString &query, const QString &searchWord);
         KIcon iconForUrl(const KUrl& url);
-        void loadDelimiter();
+        void loadSyntaxes();
 
+    private Q_SLOTS:
+        void loadDelimiter();
+        void sycocaChanged(const QStringList &changes);
+        void resetState();
+
+    private:
         QString m_delimiter;
+        Plasma::QueryMatch m_match;
         KIcon m_icon;
-        KIcon m_lastIcon;
         QString m_lastFailedKey;
         QString m_lastKey;
         QString m_lastServiceName;
-        Plasma::QueryMatch m_match;
+        KDirWatch m_watch;
 };
 
 K_EXPORT_PLASMA_RUNNER(webshortcuts, WebshortcutRunner)
