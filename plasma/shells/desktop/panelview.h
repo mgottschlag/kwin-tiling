@@ -84,11 +84,6 @@ public:
      */
     VisibilityMode visibilityMode() const;
 
-    /**
-     * @return the Corona (scene) associated with this panel.
-     */
-    Plasma::Corona *corona() const;
-
     /*
      * @return the offset of the panel from the left screen edge
      */

@@ -206,7 +206,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_firstPaint(true),
       m_triggerEntered(false)
 {
-    Q_ASSERT(qobject_cast<Plasma::Corona*>(panel->scene()));
     kDebug() << "Panel geometry is" << panel->geometry();
 
     m_strutsTimer = new QTimer(this);
@@ -441,11 +440,6 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
 PanelView::VisibilityMode PanelView::visibilityMode() const
 {
     return m_visibilityMode;
-}
-
-Plasma::Corona *PanelView::corona() const
-{
-    return qobject_cast<Plasma::Corona*>(scene());
 }
 
 void PanelView::updatePanelGeometry()
