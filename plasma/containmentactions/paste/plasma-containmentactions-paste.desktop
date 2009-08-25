@@ -2,6 +2,7 @@
 Name=Paste
 Name[id]=Tempel
 Name[nb]=Lim inn
+Name[nds]=Infögen
 Name[pt]=Colar
 Name[pt_BR]=Colar
 Name[sv]=Klistra in
@@ -14,6 +15,7 @@ Icon=preferences-desktop-color
 Comment=Creates a widget from the contents of the clipboard
 Comment[id]=Membuat widget dari isi papan klip
 Comment[nb]=Lager et skjermelement av innholdet fra utklippstavla
+Comment[nds]=Stellt ut den Tweischenaflaag-Inholt en Lüttprogramm op
 Comment[pt]=Cria um elemento a partir do conteúdo da área de transferência
 Comment[pt_BR]=Cria um widget a partir do conteúdo da área de transferência
 Comment[sv]=Skapar en grafisk komponent från klippbordets innehåll

@@ -2,6 +2,7 @@
 Name=Switch Desktop
 Name[id]=Pindah Desktop
 Name[nb]=Bytt skrivebord
+Name[nds]=Schriefdisch wesseln
 Name[pt]=Mudar de Ecrã
 Name[pt_BR]=Alternar área de trabalho
 Name[sv]=Byt skrivbord
@@ -14,6 +15,7 @@ Icon=preferences-desktop-color
 Comment=Switch to another virtual desktop
 Comment[id]=Berpindah ke desktop virtual lain
 Comment[nb]=Bytt til et annet virtuelt skrivebord
+Comment[nds]=Na en anner Schriefdischen wesseln
 Comment[pt]=Mudar para outro ecrã virtual
 Comment[pt_BR]=Alterna para outra área de trabalho
 Comment[sv]=Byt till ett annat virtuellt skrivbord

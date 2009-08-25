@@ -2,6 +2,7 @@
 Name=Switch Window
 Name[id]=Pindah Jendela
 Name[nb]=Bytt vindu
+Name[nds]=Finster wesseln
 Name[pt]=Mudar de Janela
 Name[pt_BR]=Alternar janela
 Name[sv]=Byt fönster
@@ -14,6 +15,7 @@ Icon=preferences-desktop-color
 Comment=Show a list of windows to switch to
 Comment[id]=Tampilkan senarai jendela yang akan dipindahkan
 Comment[nb]=Vis en liste over vinduer som kan byttes til
+Comment[nds]=Finstern oplisten un dor henwesseln
 Comment[pt]=Mostrar uma lista com as janelas para onde mudar
 Comment[pt_BR]=Exibe uma lista de janelas para alternar
 Comment[sv]=Visa en lista med fönster att byta till
