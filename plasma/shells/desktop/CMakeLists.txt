@@ -47,7 +47,7 @@ set(plasma_SRCS
 
 
 kde4_add_ui_files(plasma_SRCS BackgroundDialog.ui MousePlugins.ui MousePluginWidget.ui globaloptions.ui)
-kde4_add_kcfg_files(plasma_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/kcfg/plasma-shell-desktop.kcfgc)
+kde4_add_kcfg_files(plasma_SRCS kcfg/plasma-shell-desktop.kcfgc)
 
 if(WIN32)
     set(plasma_SRCS ${plasma_SRCS} panelview_win.cpp)
