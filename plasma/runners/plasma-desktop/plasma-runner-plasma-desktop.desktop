@@ -1,6 +1,10 @@
 [Desktop Entry]
 Name=Plasma Desktop Shell
 Comment=Interact with the Plasma desktop shell
+Comment[pt]=Interagir com a consola do ambiente de trabalho Plasma
+Comment[pt_BR]=Interagir com a consola do ambiente de trabalho Plasma
+Comment[sv]=Interaktion med Plasma skrivbordsskal
+Comment[uk]=Взаємодія з оболонкою стільниці Плазма
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 Icon=plasma
