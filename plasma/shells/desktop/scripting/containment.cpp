@@ -359,5 +359,79 @@ void Containment::setLength(int pixels)
     }
 }
 
+int Containment::height() const
+{
+    if (!m_isPanel || !m_containment) {
+        return 0;
+    }
+
+    return m_containment->formFactor() == Plasma::Vertical ? m_containment->size().width() :
+                                                             m_containment->size().height();
+}
+
+void Containment::setHeight(int height)
+{
+    if (height < 16) {
+        return;
+    }
+
+    PanelView *v = panel();
+    if (v) {
+        QRect screen = m_containment->corona()->screenGeometry(v->screen());
+        QSizeF size = m_containment->size();
+        const int max = (m_containment->formFactor() == Plasma::Vertical ? screen.width() : screen.height()) / 3;
+        height = qBound(16, height, max);
+
+        if (m_containment->formFactor() == Plasma::Vertical) {
+            size.setWidth(height);
+        } else {
+            size.setHeight(height);
+        }
+
+        m_containment->resize(size);
+        m_containment->setMinimumSize(size);
+        m_containment->setMaximumSize(size);
+    }
+}
+
+QString Containment::hiding() const
+{
+    PanelView *v = panel();
+    if (v) {
+        switch (v->visibilityMode()) {
+            case PanelView::NormalPanel:
+                return "none";
+                break;
+            case PanelView::AutoHide:
+                return "autohide";
+                break;
+            case PanelView::LetWindowsCover:
+                return "windowscover";
+                break;
+            case PanelView::WindowsGoBelow:
+                return "windowsbelow";
+                break;
+        }
+    }
+
+    return "none";
+}
+
+void Containment::setHiding(const QString &mode)
+{
+    PanelView *v = panel();
+    if (v) {
+        if (mode.compare("autohide", Qt::CaseInsensitive) == 0) {
+            v->setVisibilityMode(PanelView::AutoHide);
+        } else if (mode.compare("windowscover", Qt::CaseInsensitive) == 0) {
+            v->setVisibilityMode(PanelView::LetWindowsCover);
+        } else if (mode.compare("windowsbelow", Qt::CaseInsensitive) == 0) {
+            v->setVisibilityMode(PanelView::WindowsGoBelow);
+        } else {
+            v->setVisibilityMode(PanelView::NormalPanel);
+        }
+    }
+}
+
 #include "containment.moc"
 
