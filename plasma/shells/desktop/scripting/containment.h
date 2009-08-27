@@ -45,6 +45,8 @@ class Containment : public QObject
 
     // panel properties
     Q_PROPERTY(QString alignment READ alignment WRITE setAlignment)
+    Q_PROPERTY(int offset READ offset WRITE setOffset)
+    Q_PROPERTY(int length READ length WRITE setLength)
 
 public:
     Containment(Plasma::Containment *containment, QObject *parent = 0);
@@ -69,6 +71,12 @@ public:
 
     QString alignment() const;
     void setAlignment(const QString &alignment);
+
+    int offset() const;
+    void setOffset(int pixels);
+
+    int length() const;
+    void setLength(int pixels);
 
 public Q_SLOTS:
     Widget *addWidget(const QString &name);

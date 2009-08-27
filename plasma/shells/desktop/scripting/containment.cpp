@@ -19,6 +19,7 @@
 
 #include "containment.h"
 
+#include <Plasma/Corona>
 #include <Plasma/Containment>
 
 #include "panelview.h"
@@ -276,6 +277,85 @@ void Containment::setAlignment(const QString &alignment)
         if (success) {
             v->setOffset(0);
         }
+    }
+}
+
+int Containment::offset() const
+{
+    PanelView *v = panel();
+    if (v) {
+        return v->offset();
+    }
+
+    return 0;
+}
+
+void Containment::setOffset(int pixels)
+{
+    if (pixels < 0) {
+        return;
+    }
+
+    PanelView *v = panel();
+    if (v) {
+        QRectF screen = m_containment->corona()->screenGeometry(v->screen());
+        QSizeF size = m_containment->size();
+
+        if (m_containment->formFactor() == Plasma::Vertical) {
+            if (pixels > screen.height()) {
+                return;
+            }
+
+            if (size.height() + pixels > screen.height()) {
+                m_containment->resize(size.width(), screen.height() - pixels);
+            }
+        } else if (pixels > screen.width()) {
+            return;
+        } else if (size.width() + pixels > screen.width()) {
+            size.setWidth(screen.width() - pixels);
+            m_containment->resize(size);
+            m_containment->setMinimumSize(size);
+            m_containment->setMaximumSize(size);
+        }
+
+        v->setOffset(pixels);
+    }
+}
+
+int Containment::length() const
+{
+    if (m_containment->formFactor() == Plasma::Vertical) {
+        return m_containment->size().height();
+    } else {
+        return m_containment->size().width();
+    }
+}
+
+void Containment::setLength(int pixels)
+{
+    if (pixels < 0) {
+        return;
+    }
+
+    PanelView *v = panel();
+    if (v) {
+        QRectF screen = m_containment->corona()->screenGeometry(v->screen());
+        QSizeF s = m_containment->size();
+        if (m_containment->formFactor() == Plasma::Vertical) {
+            if (pixels > screen.height() - v->offset()) {
+                return;
+            }
+
+            s.setHeight(pixels);
+        } else if (pixels > screen.width() - v->offset()) {
+            return;
+        } else {
+            s.setWidth(pixels);
+        }
+
+        m_containment->resize(s);
+        m_containment->setMinimumSize(s);
+        m_containment->setMaximumSize(s);
     }
 }
 
