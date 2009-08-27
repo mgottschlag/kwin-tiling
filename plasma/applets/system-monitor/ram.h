@@ -60,7 +60,6 @@ class Ram : public Applet
         QHash<QString, double> m_max;
 
     private slots:
-        void parseSources();
         void themeChanged();
 };
 }

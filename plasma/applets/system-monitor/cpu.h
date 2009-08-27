@@ -66,7 +66,6 @@ class Cpu : public Applet
         QRegExp m_rx;
 
     private slots:
-        void parseSources();
         void themeChanged();
 };
 }
