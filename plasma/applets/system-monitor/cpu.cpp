@@ -26,11 +26,14 @@
 
 SM::Cpu::Cpu(QObject *parent, const QVariantList &args)
     : SM::Applet(parent, args)
+    , m_rx("^cpu/(\\w+)/TotalLoad$")
 {
     setHasConfigurationInterface(true);
     resize(234 + 20 + 23, 135 + 20 + 25);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
+    m_sourceTimer.setSingleShot(true);
+    connect(&m_sourceTimer, SIGNAL(timeout()), this, SLOT(sourcesAdded()));
 }
 
 SM::Cpu::~Cpu()
@@ -49,34 +52,36 @@ void SM::Cpu::init()
     m_showBackground = cg.readEntry("showBackground", true);
     m_graphColor = cg.readEntry("graphColor", QColor(theme->color(Plasma::Theme::TextColor)));
 
-    if (engine()->sources().count() == 0) {
-        connect(engine(), SIGNAL(sourceAdded(QString)), this, SLOT(initLater(const QString)));
-    } else {
-        parseSources();
+    /* At the time this method is running, not all source may be connected. */
+    connect(engine(), SIGNAL(sourceAdded(const QString&)),
+            this, SLOT(sourceAdded(const QString&)));
+    foreach (const QString& source, engine()->sources()) {
+        sourceAdded(source);
     }
 }
 
-void SM::Cpu::parseSources()
+void SM::Cpu::sourceAdded(const QString& name)
 {
-    QRegExp rx("cpu/(\\w+)/TotalLoad");
-
-    foreach (const QString& s, engine()->sources()) {
-        if (rx.indexIn(s) != -1) {
-            //kDebug() << rx.cap(1);
-            m_cpus << s;
+    if (m_rx.indexIn(name) != -1) {
+        //kDebug() << m_rx.cap(1);
+        kWarning() << name; // debug
+        m_cpus << name;
+        if (!m_sourceTimer.isActive()) {
+            m_sourceTimer.start(0);
         }
     }
-    KConfigGroup cg = config();
-    setItems(cg.readEntry("cpus", QStringList() << "cpu/system/TotalLoad"));
-    connectToEngine();
 }
 
-void SM::Cpu::initLater(const QString &name)
+void SM::Cpu::sourcesAdded()
 {
-    // How we know all (cpu) sources are ready???
-    if (name == "system/uptime") {
-        QTimer::singleShot(0, this, SLOT(parseSources()));
-    }
+    KConfigGroup cg = config();
+    QStringList default_cpus;
+    if(m_cpus.contains("cpu/system/TotalLoad"))
+        default_cpus << "cpu/system/TotalLoad";
+    else
+        default_cpus = m_cpus;
+    setItems(cg.readEntry("cpus", default_cpus));
+    connectToEngine();
 }
 
 QString SM::Cpu::cpuTitle(const QString &name)
@@ -165,11 +170,10 @@ void SM::Cpu::createConfigurationInterface(KConfigDialog *parent)
     m_model.clear();
     m_model.setHorizontalHeaderLabels(QStringList() << i18n("CPU"));
     QStandardItem *parentItem = m_model.invisibleRootItem();
-    QRegExp rx("cpu/(\\w+)/TotalLoad");
 
     foreach (const QString& cpu, m_cpus) {
-        if (rx.indexIn(cpu) != -1) {
-            QStandardItem *item1 = new QStandardItem(cpuTitle(rx.cap(1)));
+        if (m_rx.indexIn(cpu) != -1) {
+            QStandardItem *item1 = new QStandardItem(cpuTitle(m_rx.cap(1)));
             item1->setEditable(false);
             item1->setCheckable(true);
             item1->setData(cpu);

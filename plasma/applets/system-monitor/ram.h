@@ -44,7 +44,8 @@ class Ram : public Applet
     public slots:
         void dataUpdated(const QString &name,
                          const Plasma::DataEngine::Data &data);
-        void initLater(const QString &name);
+        void sourceAdded(const QString &name);
+        void sourcesAdded();
         void configAccepted();
 
     private:

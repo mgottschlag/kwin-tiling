@@ -24,6 +24,8 @@
 #include "applet.h"
 #include <Plasma/DataEngine>
 #include <QStandardItemModel>
+#include <QTimer>
+#include <QRegExp>
 
 class QStandardItemModel;
 
@@ -44,7 +46,8 @@ class Cpu : public Applet
     public slots:
         void dataUpdated(const QString &name,
                          const Plasma::DataEngine::Data &data);
-        void initLater(const QString &name);
+        void sourceAdded(const QString &name);
+        void sourcesAdded();
         void configAccepted();
 
     protected:
@@ -59,6 +62,8 @@ class Cpu : public Applet
         bool m_showBackground;
         QColor m_graphColor;
         QHash<QString, QString> m_html;
+        QTimer m_sourceTimer;
+        QRegExp m_rx;
 
     private slots:
         void parseSources();

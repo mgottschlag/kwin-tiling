@@ -24,6 +24,10 @@
 #include <QTimer>
 #include <QGraphicsLinearLayout>
 
+/* All sources we are interested in. */
+static const char *phys_source = "mem/physical/application";
+static const char *swap_source = "mem/swap/used";
+
 SM::Ram::Ram(QObject *parent, const QVariantList &args)
     : SM::Applet(parent, args)
 {
@@ -49,27 +53,30 @@ void SM::Ram::init()
     m_showBackground = cg.readEntry("showBackground", true);
     m_graphColor = cg.readEntry("graphColor", QColor(theme->color(Plasma::Theme::TextColor)));
 
-    if (engine()->sources().count() == 0) {
-        connect(engine(), SIGNAL(sourceAdded(QString)), this, SLOT(initLater(const QString)));
-    } else {
-        parseSources();
+    /* At the time this method is running, not all source may be connected. */
+    connect(engine(), SIGNAL(sourceAdded(const QString&)),
+            this, SLOT(sourceAdded(const QString&)));
+    foreach (const QString& source, engine()->sources()) {
+        sourceAdded(source);
     }
 }
 
-void SM::Ram::parseSources()
+void SM::Ram::sourceAdded(const QString& name)
 {
-    m_memories << "mem/physical/application" << "mem/swap/used";
+    if ((name == phys_source || name == swap_source) && !m_memories.contains(name)) {
+        m_memories << name;
+        if (m_memories.count() == 2) {
+            // all sources are ready
+            QTimer::singleShot(0, this, SLOT(sourcesAdded()));
+        }
+    }
+}
+
+void SM::Ram::sourcesAdded()
+{
     KConfigGroup cg = config();
-    setItems(cg.readEntry("memories", QStringList() << m_memories));
+    setItems(cg.readEntry("memories", m_memories));
     connectToEngine();
-}
-
-void SM::Ram::initLater(const QString &name)
-{
-    // How we know all (ram) sources are ready???
-    if (name == "system/uptime") {
-        QTimer::singleShot(0, this, SLOT(parseSources()));
-    }
 }
 
 bool SM::Ram::addMeter(const QString& source)
@@ -125,16 +132,23 @@ void SM::Ram::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
 {
     Plasma::SignalPlotter *plotter = plotters()[source];
     if (plotter) {
-        if (data["value"].toDouble() > m_max[source]) {
-            m_max[source] = data["max"].toDouble();
-            plotter->setVerticalRange(0.0, m_max[source] / 1024.0);
+        /* A factor to convert from default units to bytes.
+         * If units is not "KB", assume it is bytes. */
+        const double factor = (data["units"].toString() == "KB") ? 1024. : 1.;
+        const double value_b = data["value"].toDouble() * factor;
+        const double max_b = data["max"].toDouble() * factor;
+        const double value_kb = value_b / 1024.;
+        const double max_kb = max_b / 1024.;
+        if (value_b > m_max[source]) {
+            m_max[source] = max_b;
+            plotter->setVerticalRange(0.0, max_kb);
         }
 
-        plotter->addSample(QList<double>() << data["value"].toDouble() / 1024.0);
+        plotter->addSample(QList<double>() << value_kb);
         if (mode() == SM::Applet::Panel) {
-            m_html[source] = QString("<tr><td>%1</td><td>%2</td><td>%3</td></tr>")
+            m_html[source] = QString("<tr><td>%1</td><td>%2</td><td>of</td><td>%3</td></tr>")
                     .arg(plotter->title())
-                    .arg(KGlobal::locale()->formatByteSize(data["value"].toDouble()))
+                    .arg(KGlobal::locale()->formatByteSize(value_b))
                     .arg(KGlobal::locale()->formatByteSize(m_max[source]));
             QString html = "<table>";
             foreach (const QString& s, m_html.keys()) {
