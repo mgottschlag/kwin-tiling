@@ -59,6 +59,7 @@ class Hdd : public SM::Applet
         bool addMeter(const QString& source);
         void deleteMeters(QGraphicsLinearLayout* layout = 0);
         bool isValidDevice(const QString& uuid, Plasma::DataEngine::Data* data);
+        QColor color(const QColor& color);
 };
 
 K_EXPORT_PLASMA_APPLET(sm_hdd, Hdd)

@@ -18,6 +18,7 @@
 
 #include "hdd.h"
 #include "monitoricon.h"
+#include <math.h>
 #include <Plasma/Meter>
 #include <Plasma/Containment>
 #include <Plasma/Theme>
@@ -149,6 +150,19 @@ QString Hdd::hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data)
     return label;
 }
 
+QColor Hdd::color(const QColor& color)
+{
+    qreal h, s, v, a;
+    color.getHsvF(&h, &s, &v, &a);
+    qreal d = fabs(v - 0.5) * 0.40;
+    if (v > 0.5) {
+        v -= d;
+    } else {
+        v += d;
+    }
+    return QColor::fromHsvF(h, s, v, a);
+}
+
 bool Hdd::addMeter(const QString& source)
 {
     Plasma::Meter *w;
@@ -185,11 +199,7 @@ bool Hdd::addMeter(const QString& source)
         w->setSvg("system-monitor/hdd_panel");
     }
     QColor text = theme->color(Plasma::Theme::TextColor);
-    QColor background = theme->color(Plasma::Theme::BackgroundColor);
-    QColor darkerText((text.red() + background.red()) / 2,
-                      (text.green() + background.green()) / 2,
-                      (text.blue() + background.blue()) / 2,
-                      (text.alpha() + background.alpha()) / 2);
+    QColor darkerText(color(text));
     w->setLabel(0, hddTitle(source, data));
     w->setLabelColor(0, text);
     w->setLabelColor(1, darkerText);
@@ -226,11 +236,7 @@ void Hdd::themeChanged()
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
     foreach (Plasma::Meter *w, meters()) {
         QColor text = theme->color(Plasma::Theme::TextColor);
-        QColor background = theme->color(Plasma::Theme::BackgroundColor);
-        QColor darkerText((text.red() + background.red()) / 2,
-                          (text.green() + background.green()) / 2,
-                          (text.blue() + background.blue()) / 2,
-                          (text.alpha() + background.alpha()) / 2);
+        QColor darkerText(color(text));
         w->setLabelColor(0, text);
         w->setLabelColor(1, darkerText);
         w->setLabelColor(2, darkerText);
