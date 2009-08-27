@@ -34,6 +34,7 @@ class Containment;
 class ScriptEngine : public QScriptEngine
 {
     Q_OBJECT
+    Q_PROPERTY(bool locked READ coronaLocked WRITE lockCorona)
 
 public:
     ScriptEngine(Plasma::Corona *corona, QObject *parent = 0);
@@ -47,6 +48,8 @@ public Q_SLOTS:
     QRectF screenGeometry(int screen) const;
     QList<int> activityIds() const;
     QList<int> panelIds() const;
+    bool coronaLocked() const;
+    void lockCorona(bool locked);
 
 Q_SIGNALS:
     void print(const QString &string);

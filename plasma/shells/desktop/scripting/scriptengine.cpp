@@ -19,6 +19,8 @@
 
 #include "scriptengine.h"
 
+//#include <QScriptValueIterator>
+
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 
@@ -138,9 +140,29 @@ QScriptValue ScriptEngine::createContainment(const QString &type, const QString 
 QScriptValue ScriptEngine::wrap(Plasma::Containment *c, QScriptEngine *engine)
 {
     Containment *wrapper = new Containment(c);
-    return engine->newQObject(wrapper, QScriptEngine::ScriptOwnership,
-                              QScriptEngine::ExcludeSuperClassProperties |
-                              QScriptEngine::ExcludeSuperClassMethods);
+    QScriptValue v = engine->newQObject(wrapper, QScriptEngine::ScriptOwnership,
+                                        QScriptEngine::ExcludeSuperClassProperties |
+                                        QScriptEngine::ExcludeSuperClassMethods);
+    /*
+    TODO: this does not actually work, look into why
+    if (!isPanel(c)) {
+        // remove all items we don't want showing to non-panel containments
+        QScriptValueIterator it(v);
+        QSet<QString> blacklist;
+        blacklist << "alignment";
+        while (it.hasNext()) {
+            it.next();
+            kDebug() << it.name();
+            if (blacklist.contains(it.name())) {
+                kDebug() << "removing" << it.name();
+                it.remove();
+                v.setProperty(it.name(), QScriptValue());
+            }
+        }
+    }
+    */
+
+    return v;
 }
 
 ScriptEngine *ScriptEngine::envFor(QScriptEngine *engine)
@@ -161,13 +183,23 @@ QList<int> ScriptEngine::panelIds() const
     QList<int> panels;
 
     foreach (Plasma::Containment *c, m_corona->containments()) {
-        kDebug() << "checking" << (QObject*)c << isPanel(c);
+        //kDebug() << "checking" << (QObject*)c << isPanel(c);
         if (isPanel(c)) {
             panels.append(c->id());
         }
     }
 
     return panels;
+}
+
+void ScriptEngine::lockCorona(bool locked)
+{
+    m_corona->setImmutability(locked ? Plasma::UserImmutable : Plasma::Mutable);
+}
+
+bool ScriptEngine::coronaLocked() const
+{
+    return m_corona->immutability() != Plasma::Mutable;
 }
 
 QScriptValue ScriptEngine::panelById(QScriptContext *context, QScriptEngine *engine)
