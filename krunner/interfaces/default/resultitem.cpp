@@ -268,7 +268,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     p.drawText(pixmap.rect(), Qt::AlignLeft | Qt::TextWordWrap, name());
     QFont italics = p.font();
     QFontMetrics italicMetrics(italics);
-    int fontHeight = italicMetrics.height();
+    int fontHeight = italicMetrics.boundingRect(pixmap.rect(), Qt::AlignLeft | Qt::TextWordWrap, name()).height();
     italics.setItalic(true);
     p.setFont(italics);
     p.drawText(pixmap.rect().adjusted(0, fontHeight, 0, 0), Qt::AlignLeft | Qt::TextWordWrap, description());
