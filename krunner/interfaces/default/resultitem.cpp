@@ -24,17 +24,18 @@
 
 #include <math.h>
 
-#include <QtCore/QTimeLine>
-#include <QtCore/QDebug>
-#include <QtCore/QtGlobal>
-#include <QtCore/QTimer>
-#include <QtGui/QApplication>
-#include <QtGui/QPainter>
-#include <QtGui/QStyleOptionGraphicsItem>
-#include <QtGui/QGraphicsItemAnimation>
-#include <QtGui/QGraphicsLinearLayout>
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QGraphicsView>
+#include <QTimeLine>
+#include <QDebug>
+#include <QtGlobal>
+#include <QTimer>
+#include <QApplication>
+#include <QPainter>
+#include <QStyleOptionGraphicsItem>
+#include <QGraphicsItemAnimation>
+#include <QGraphicsLinearLayout>
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsView>
 
 #include <KDebug>
 #include <KIcon>
@@ -220,7 +221,6 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         }
     } else if (m_highlight > 0) {
         drawMixed = true;
-
         --m_highlight;
 
         if (!m_highlightTimerId) {
@@ -340,9 +340,11 @@ void ResultItem::timerEvent(QTimerEvent *e)
     update();
 }
 
-void ResultItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
+void ResultItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    emit activated(this);
+    if (geometry().contains(event->scenePos())) {
+        emit activated(this);
+    }
 }
 
 bool ResultItem::mouseHovered() const
