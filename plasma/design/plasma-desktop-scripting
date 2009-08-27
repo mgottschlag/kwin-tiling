@@ -99,3 +99,4 @@ In addition, Panel objects provide the folowing properties:
 API: Miscelaneous
 -----------------
 * locked: whether the desktop shell and widgets are locked or not (settable)
+* sleep(int): sleeps the script for the specified number of millseconds
