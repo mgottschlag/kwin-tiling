@@ -95,3 +95,7 @@ In addition, Panel objects provide the folowing properties:
 * height: the height (or for vertical panels, the width) of the panel (settable)
 * hiding: the hiding mode of the panel, one of "none" (for no hiding), "autohide", "windowscover" or "windowsbelow" (settable)
 * alignment: right, left or center alignment of the panel (for vertical panels, right corrsponds to top and left to bottom) (settable)
+
+API: Miscelaneous
+-----------------
+* locked: whether the desktop shell and widgets are locked or not (settable)
