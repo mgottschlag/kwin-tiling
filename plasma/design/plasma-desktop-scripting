@@ -76,13 +76,13 @@ in the plugin's .desktop file).
 API: Activities and Panels
 --------------------------
 Activity and Panel objects (ones created by the script, or as returned by activityById, activityForScreen,
-or panelById) provide the following methods:
+or panelById) provide the following properties:
 
 * id: the integer id of this activity
-* name: the name of this activity, may also be changed by assigning a new string to it
-* screen: the screen this activity is associated with, or -1 for none
-* desktop: the virtual desktop this activity is associated with, or -1 for none
-* location: returns the location of the activity (only relevant for Panels)
+* name: the name of this activity, may also be changed by assigning a new string to it (settable)
+* screen: the screen this activity is associated with, or -1 for none (settable)
+* desktop: the virtual desktop this activity is associated with, or -1 for none (settable)
+* location: returns the location of the activity (only relevant for Panels) (settable)
 * formFactor: returns the form factor of the activity, e.g. "planar" for most desktop activities,
   "mediacenter" for media centers and either "horizontal" or "vertical" for panels.
 * widgetIds: a list of integer ids of all the widgets in this Activity
@@ -90,3 +90,8 @@ or panelById) provide the following methods:
   in the widget's .desktop file
 * remmove: deletes this activity and all widgets inside of it
 
+In addition, Panel objects provide the folowing properties:
+* length: the number of pixels along the screen edge used (settable)
+* height: the height (or for vertical panels, the width) of the panel (settable)
+* hiding: the hiding mode of the panel, one of "none" (for no hiding), "autohide", "windowscover" or "windowsbelow" (settable)
+* alignment: right, left or center alignment of the panel (for vertical panels, right corrsponds to top and left to bottom) (settable)
