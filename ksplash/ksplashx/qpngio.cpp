@@ -183,7 +183,11 @@ void setup_qt( QImage& image, png_structp png_ptr, png_infop info_ptr, float scr
 		    info_ptr->palette[i].red,
 		    info_ptr->palette[i].green,
 		    info_ptr->palette[i].blue,
+#if PNG_LIBPNG_VER < 10400
 		    info_ptr->trans[i]
+#else
+		    info_ptr->trans_alpha[i]
+#endif
 		    )
 		);
 		i++;
