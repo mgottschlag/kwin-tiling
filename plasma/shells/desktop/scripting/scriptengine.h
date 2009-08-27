@@ -50,6 +50,7 @@ public Q_SLOTS:
     QList<int> panelIds() const;
     bool coronaLocked() const;
     void lockCorona(bool locked);
+    void sleep(int ms);
 
 Q_SIGNALS:
     void print(const QString &string);

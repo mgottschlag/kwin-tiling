@@ -20,6 +20,8 @@
 #include "scriptengine.h"
 
 //#include <QScriptValueIterator>
+#include <QEventLoop>
+#include <QTimer>
 
 #include <Plasma/Containment>
 #include <Plasma/Corona>
@@ -254,6 +256,13 @@ void ScriptEngine::exception(const QScriptValue &value)
 {
     //kDebug() << "exception caught!" << value.toVariant();
     emit printError(value.toVariant().toString());
+}
+
+void ScriptEngine::sleep(int ms)
+{
+    QEventLoop loop;
+    QTimer::singleShot(ms, &loop, SLOT(quit()));
+    loop.exec();
 }
 
 #include "scriptengine.moc"
