@@ -78,6 +78,12 @@ public:
     int length() const;
     void setLength(int pixels);
 
+    int height() const;
+    void setHeight(int height);
+
+    QString hiding() const;
+    void setHiding(const QString &mode);
+
 public Q_SLOTS:
     Widget *addWidget(const QString &name);
     void remove();
