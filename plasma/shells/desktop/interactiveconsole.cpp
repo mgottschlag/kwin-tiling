@@ -146,6 +146,7 @@ void InteractiveConsole::evaluateScript()
 
     cursor.insertText("\n\n");
     format.setFontWeight(QFont::Bold);
+    // xgettext:no-c-format
     cursor.insertText(i18n("Runtime: %1ms", QString::number(t.elapsed())), format);
     block.setLeftMargin(0);
     cursor.insertBlock(block);
