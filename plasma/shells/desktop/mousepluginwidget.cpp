@@ -108,7 +108,7 @@ void MousePluginWidget::updateConfig(const QString &trigger)
 
 void MousePluginWidget::configure()
 {
-    if (! m_pluginInstance) {
+    if (!m_pluginInstance) {
         m_pluginInstance = Plasma::ContainmentActions::load(m_containment, m_plugin.pluginName());
         if (! m_pluginInstance) {
             //FIXME tell user
@@ -126,7 +126,7 @@ void MousePluginWidget::configure()
         }
     }
 
-    if (! m_configDlg) {
+    if (!m_configDlg) {
         m_configDlg = new QDialog(this);
         QLayout *lay = new QVBoxLayout(m_configDlg);
         m_configDlg->setLayout(lay);
