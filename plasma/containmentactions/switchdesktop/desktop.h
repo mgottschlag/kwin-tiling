@@ -33,6 +33,8 @@ class SwitchDesktop : public Plasma::ContainmentActions
         void contextEvent(QEvent *event);
         void contextEvent(QGraphicsSceneMouseEvent *event);
         void wheelEvent(QGraphicsSceneWheelEvent *event);
+        QList<QAction*> contextualActions();
+        void makeMenu(QMenu *menu);
 
     public slots:
         void switchTo(QAction *action);
