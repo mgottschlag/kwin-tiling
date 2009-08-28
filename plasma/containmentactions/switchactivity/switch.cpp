@@ -49,7 +49,7 @@ void SwitchActivity::contextEvent(QEvent *event)
     }
 }
 
-void SwitchActivity::contextEvent(QGraphicsSceneMouseEvent *event)
+void SwitchActivity::makeMenu(QMenu *menu)
 {
     Plasma::Containment *myCtmt = containment();
     if (!myCtmt) {
@@ -59,10 +59,6 @@ void SwitchActivity::contextEvent(QGraphicsSceneMouseEvent *event)
     if (!c) {
         return;
     }
-
-    KMenu desktopMenu;
-
-    desktopMenu.addTitle(i18n("Activities"));
 
     QList<Plasma::Containment*> containments = c->containments();
     foreach (Plasma::Containment *ctmt, containments) {
@@ -76,7 +72,7 @@ void SwitchActivity::contextEvent(QGraphicsSceneMouseEvent *event)
         if (name.isEmpty()) {
             name = ctmt->name();
         }
-        QAction *action = desktopMenu.addAction(name);
+        QAction *action = menu->addAction(name);
         action->setData(QVariant::fromValue<QPointer<Plasma::Containment> >(QPointer<Plasma::Containment>(ctmt)));
 
         //WARNING this assumes the plugin will only ever be set on activities, not panels!
@@ -84,9 +80,31 @@ void SwitchActivity::contextEvent(QGraphicsSceneMouseEvent *event)
             action->setEnabled(false);
         }
     }
+    connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
+}
 
-    connect(&desktopMenu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
+void SwitchActivity::contextEvent(QGraphicsSceneMouseEvent *event)
+{
+    KMenu desktopMenu;
+
+    desktopMenu.addTitle(i18n("Activities"));
+    makeMenu(&desktopMenu);
+
     desktopMenu.exec(event->screenPos());
+}
+
+QList<QAction*> SwitchActivity::contextualActions()
+{
+    QList<QAction*> list;
+    QMenu *menu = new QMenu();
+
+    makeMenu(menu);
+    QAction *action = new QAction(this); //FIXME I hope this doesn't leak
+    action->setMenu(menu);
+    menu->setTitle(i18n("Activities"));
+
+    list << action;
+    return list;
 }
 
 void SwitchActivity::switchTo(QAction *action)
