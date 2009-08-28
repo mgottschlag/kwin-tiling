@@ -254,20 +254,13 @@ void DesktopCorona::loadDefaultLayout()
         applet->setGlobalShortcut(KShortcut("Alt+F1"));
     }
 
-    loadDefaultApplet("notifier", panel);
     loadDefaultApplet("pager", panel);
     loadDefaultApplet("tasks", panel);
-    loadDefaultApplet("systemtray", panel);
-
-    Plasma::DataEngineManager *engines = Plasma::DataEngineManager::self();
-    Plasma::DataEngine *power = engines->loadEngine("powermanagement");
-    if (power) {
-        const QStringList &batteries = power->query("Battery")["sources"].toStringList();
-        if (!batteries.isEmpty()) {
-            loadDefaultApplet("battery", panel);
-        }
+    Plasma::Applet *sysTray = loadDefaultApplet("systemtray", panel);
+    QAction *addDefaultApplets = sysTray->action("add default applets");
+    if (addDefaultApplets) {
+        addDefaultApplets->trigger();
     }
-    engines->unloadEngine("powermanagement");
 
     loadDefaultApplet("digital-clock", panel);
     emit containmentAdded(panel);

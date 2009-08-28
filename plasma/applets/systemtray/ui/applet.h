@@ -68,6 +68,7 @@ private slots:
     void clearAllCompletedJobs();
     void finishJob(SystemTray::Job *job);
     void open(const QString &url);
+    void addDefaultApplets();
 
 private:
     void createJobGroups();

@@ -47,6 +47,8 @@
 #include <plasma/framesvg.h>
 #include <plasma/widgets/label.h>
 #include <plasma/theme.h>
+#include <plasma/dataenginemanager.h>
+#include <plasma/dataengine.h>
 
 #include "config.h"
 #ifdef HAVE_LIBXSS      // Idle detection.
@@ -150,6 +152,9 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
     setBackgroundHints(NoBackground);
     setHasConfigurationInterface(true);
+    QAction *addDefaultApplets = new QAction(i18n("add default applets"), this);
+    connect(addDefaultApplets, SIGNAL(triggered()), this, SLOT(addDefaultApplets()));
+    addAction("add default applets", addDefaultApplets);
 }
 
 Applet::~Applet()
@@ -666,6 +671,24 @@ void Applet::configAccepted()
     emit configNeedsSaving();
 }
 
+void Applet::addDefaultApplets()
+{
+    QStringList applets = Private::s_manager->applets(this);
+    if (!applets.contains("notifier")) {
+        Private::s_manager->addApplet("notifier", this);
+    }
+    if (!applets.contains("battery")) {
+        Plasma::DataEngineManager *engines = Plasma::DataEngineManager::self();
+        Plasma::DataEngine *power = engines->loadEngine("powermanagement");
+        if (power) {
+            const QStringList &batteries = power->query("Battery")["sources"].toStringList();
+            if (!batteries.isEmpty()) {
+                Private::s_manager->addApplet("battery", this);
+            }
+        }
+        engines->unloadEngine("powermanagement");
+    }
+}
 
 void Applet::addNotification(Notification *notification)
 {
