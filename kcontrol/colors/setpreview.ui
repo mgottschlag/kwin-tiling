@@ -35,7 +35,7 @@
          <string>Normal Text on Normal Background</string>
         </property>
         <property name="text">
-         <string>normal</string>
+         <string comment="color-kcm-set-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">normal</string>
         </property>
        </widget>
       </item>
@@ -56,7 +56,7 @@
          <string>Link Text on Normal Background</string>
         </property>
         <property name="text">
-         <string>link</string>
+         <string comment="color-kcm-set-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">link</string>
         </property>
        </widget>
       </item>
@@ -77,7 +77,7 @@
          <string>Visited Text on Normal Background</string>
         </property>
         <property name="text">
-         <string>visited</string>
+         <string comment="color-kcm-set-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">visited</string>
         </property>
        </widget>
       </item>
@@ -93,7 +93,7 @@
       <item>
        <widget class="QLabel" name="labelFore2">
         <property name="text">
-         <string>active</string>
+         <string comment="color-kcm-set-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">active</string>
         </property>
        </widget>
       </item>
@@ -109,7 +109,7 @@
          <string>Inactive Text on Normal Background</string>
         </property>
         <property name="text">
-         <string>inactive</string>
+         <string comment="color-kcm-set-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">inactive</string>
         </property>
        </widget>
       </item>
@@ -125,7 +125,7 @@
          <string>Negative Text on Normal Background</string>
         </property>
         <property name="text">
-         <string>negative</string>
+         <string comment="color-kcm-set-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">negative</string>
         </property>
        </widget>
       </item>
@@ -141,7 +141,7 @@
          <string>Neutral Text on Normal Background</string>
         </property>
         <property name="text">
-         <string>neutral</string>
+         <string comment="color-kcm-set-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">neutral</string>
         </property>
        </widget>
       </item>
@@ -157,7 +157,7 @@
          <string>Positive Text on Normal Background</string>
         </property>
         <property name="text">
-         <string>positive</string>
+         <string comment="color-kcm-set-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">positive</string>
         </property>
        </widget>
       </item>
@@ -173,7 +173,7 @@
       <item>
        <widget class="QLabel" name="labelFore8">
         <property name="text">
-         <string>hover</string>
+         <string comment="color-kcm-set-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">hover</string>
         </property>
        </widget>
       </item>
@@ -189,7 +189,7 @@
          <string>Normal Text on Normal Background</string>
         </property>
         <property name="text">
-         <string>normal</string>
+         <string comment="color-kcm-set-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">normal</string>
         </property>
        </widget>
       </item>
@@ -211,7 +211,7 @@
 (Note: Link Background is derived from Link Text and cannot be separately configured at this time)</string>
         </property>
         <property name="text">
-         <string>link</string>
+         <string comment="color-kcm-set-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">link</string>
         </property>
        </widget>
       </item>
@@ -233,7 +233,7 @@
 (Note: Visited Background is derived from Visited Text and cannot be separately configured at this time)</string>
         </property>
         <property name="text">
-         <string>visited</string>
+         <string comment="color-kcm-set-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">visited</string>
         </property>
        </widget>
       </item>
@@ -250,7 +250,7 @@
 (Note: Active Background is derived from Active Text and cannot be separately configured at this time)</string>
         </property>
         <property name="text">
-         <string>active</string>
+         <string comment="color-kcm-set-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">active</string>
         </property>
        </widget>
       </item>
@@ -266,7 +266,7 @@
          <string>Inactive Text on Alternate Background</string>
         </property>
         <property name="text">
-         <string>alternate</string>
+         <string comment="color-kcm-set-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">alternate</string>
         </property>
        </widget>
       </item>
@@ -283,7 +283,7 @@
 (Note: Negative Background is derived from Negative Text and cannot be separately configured at this time)</string>
         </property>
         <property name="text">
-         <string>negative</string>
+         <string comment="color-kcm-set-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">negative</string>
         </property>
        </widget>
       </item>
@@ -300,7 +300,7 @@
 (Note: Neutral Background is derived from Neutral Text and cannot be separately configured at this time)</string>
         </property>
         <property name="text">
-         <string>neutral</string>
+         <string comment="color-kcm-set-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">neutral</string>
         </property>
        </widget>
       </item>
@@ -317,7 +317,7 @@
 (Note: Positive Background is derived from Positive Text and cannot be separately configured at this time)</string>
         </property>
         <property name="text">
-         <string>positive</string>
+         <string comment="color-kcm-set-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">positive</string>
         </property>
        </widget>
       </item>
@@ -333,7 +333,7 @@
          <string>Focus on Normal Background</string>
         </property>
         <property name="text">
-         <string>focus</string>
+         <string comment="color-kcm-set-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">focus</string>
         </property>
        </widget>
       </item>

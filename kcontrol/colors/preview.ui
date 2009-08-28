@@ -29,7 +29,7 @@
       <string>Window text on Window Background</string>
      </property>
      <property name="text">
-      <string>Window text</string>
+      <string comment="color-kcm-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">Window text</string>
      </property>
     </widget>
    </item>
@@ -63,7 +63,7 @@
             <string>View Normal Text against View Normal Background</string>
            </property>
            <property name="text">
-            <string>Normal text</string>
+            <string comment="color-kcm-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">Normal text</string>
            </property>
           </widget>
          </item>
@@ -78,7 +78,7 @@
             <string>View Link Text against View Normal Background</string>
            </property>
            <property name="text">
-            <string>link</string>
+            <string comment="color-kcm-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">link</string>
            </property>
           </widget>
          </item>
@@ -93,7 +93,7 @@
             <string>View Visited Text against View Normal Background</string>
            </property>
            <property name="text">
-            <string>visited</string>
+            <string comment="color-kcm-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">visited</string>
            </property>
           </widget>
          </item>
@@ -103,7 +103,7 @@
             <string>View Active Text against View Normal Background</string>
            </property>
            <property name="text">
-            <string comment="active (abbreviate)">a</string>
+            <string comment="color-kcm-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">a</string>
            </property>
           </widget>
          </item>
@@ -113,7 +113,7 @@
             <string>View Inactive Text against View Normal Background</string>
            </property>
            <property name="text">
-            <string comment="inactive (abbreviate)">i</string>
+            <string comment="color-kcm-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">i</string>
            </property>
           </widget>
          </item>
@@ -123,7 +123,7 @@
             <string>View Negative Text against View Normal Background</string>
            </property>
            <property name="text">
-            <string>!</string>
+            <string comment="color-kcm-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">!</string>
            </property>
           </widget>
          </item>
@@ -133,7 +133,7 @@
             <string>View Neutral Text against View Normal Background</string>
            </property>
            <property name="text">
-            <string>=</string>
+            <string comment="color-kcm-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">=</string>
            </property>
           </widget>
          </item>
@@ -143,7 +143,7 @@
             <string>View Positive Text against View Normal Background</string>
            </property>
            <property name="text">
-            <string>+</string>
+            <string comment="color-kcm-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">+</string>
            </property>
           </widget>
          </item>
@@ -181,7 +181,7 @@
             <string>Selection Normal Text against Selection Normal Background</string>
            </property>
            <property name="text">
-            <string>Selected text</string>
+            <string comment="color-kcm-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">Selected text</string>
            </property>
           </widget>
          </item>
@@ -196,7 +196,7 @@
             <string>Selection Link Text against Selection Normal Background</string>
            </property>
            <property name="text">
-            <string>link</string>
+            <string comment="color-kcm-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">link</string>
            </property>
           </widget>
          </item>
@@ -211,7 +211,7 @@
             <string>Selection Visited Text against Selection Normal Background</string>
            </property>
            <property name="text">
-            <string>visited</string>
+            <string comment="color-kcm-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">visited</string>
            </property>
           </widget>
          </item>
@@ -221,7 +221,7 @@
             <string>Selection Active Text against Selection Normal Background</string>
            </property>
            <property name="text">
-            <string comment="active (abbreviate)">a</string>
+            <string comment="color-kcm-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">a</string>
            </property>
           </widget>
          </item>
@@ -231,7 +231,7 @@
             <string>Selection Inactive Text against Selection Normal Background</string>
            </property>
            <property name="text">
-            <string comment="inactive (abbreviate)">i</string>
+            <string comment="color-kcm-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">i</string>
            </property>
           </widget>
          </item>
@@ -241,7 +241,7 @@
             <string>Selection Negative Text against Selection Normal Background</string>
            </property>
            <property name="text">
-            <string>!</string>
+            <string comment="color-kcm-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">!</string>
            </property>
           </widget>
          </item>
@@ -251,7 +251,7 @@
             <string>Selection Neutral Text against Selection Normal Background</string>
            </property>
            <property name="text">
-            <string>=</string>
+            <string comment="color-kcm-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">=</string>
            </property>
           </widget>
          </item>
@@ -261,7 +261,7 @@
             <string>Selection Positive Text against Selection Normal Background</string>
            </property>
            <property name="text">
-            <string>+</string>
+            <string comment="color-kcm-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">+</string>
            </property>
           </widget>
          </item>
@@ -293,7 +293,7 @@
       <string>Button text on Button Background</string>
      </property>
      <property name="text">
-      <string>Push Button</string>
+      <string comment="color-kcm-preview" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">Push Button</string>
      </property>
     </widget>
    </item>
