@@ -35,6 +35,8 @@
 #include <kcmodule.h>
 #include <kvbox.h>
 
+#include "ui_theme.h"
+
 class KComboBox;
 class KConfig;
 class QCheckBox;
@@ -43,6 +45,8 @@ class QLabel;
 class QPushButton;
 class StylePreview;
 class QTabWidget;
+
+class ThemeModel;
 
 struct StyleEntry {
 	QString name;
@@ -68,6 +72,7 @@ protected:
 	void switchStyle(const QString& styleName, bool force = false);
 	void setStyleRecursive(QWidget* w, QStyle* s);
 
+	void loadDesktopTheme();
 	void loadStyle( KConfig& config );
 	void loadEffects( KConfig& config );
 	void addWhatsThis();
@@ -78,23 +83,31 @@ protected Q_SLOTS:
 	void styleSpecificConfig();
 	void updateConfigButton();
 
+	void setDesktopThemeDirty();
 	void setStyleDirty();
 	void setEffectsDirty();
 
 	void styleChanged();
+	
+	void getNewThemes();
 
 private:
 	QString currentStyle();
 
-	bool m_bStyleDirty, m_bEffectsDirty;
+	bool m_bDesktopThemeDirty, m_bStyleDirty, m_bEffectsDirty;
 	QHash <QString,StyleEntry*> styleEntries;
 	QMap  <QString,QString>     nameToStyleKey;
 
 	QVBoxLayout* mainLayout;
 	QTabWidget* tabWidget;
-	QWidget *page1, *page2;
+	QWidget *page0, *page1, *page2;
 	QVBoxLayout* page1Layout;
 
+	//Page0
+	Ui::theme themeUi;
+	ThemeModel* m_themeModel;
+
+	
 	// Page1 widgets
 	QVBoxLayout* gbWidgetStyleLayout;
 	QHBoxLayout* hbLayout;
