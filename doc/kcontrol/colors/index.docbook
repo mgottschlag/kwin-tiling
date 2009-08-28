@@ -1,4 +1,5 @@
 <?xml version="1.0" ?>
+
 <!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
 "dtd/kdex.dtd" [
 <!ENTITY % addindex "IGNORE">
@@ -47,18 +48,18 @@
   </para></listitem>
   <listitem><para>
     <link linkend="color-effects">The state effects tabs</link>
-    (Inactive, Disabled), used to change the state effects
-    of the current scheme.
+    (<guilabel>Inactive</guilabel>, <guilabel>Disabled</guilabel>), used to 
+    change the state effects of the current scheme.
   </para></listitem>
   </itemizedlist>
 
   <para>Note: This documentation will sometimes refer to the
   &quot;current&quot; scheme, or the &quot;active&quot; scheme.
   The &quot;current&quot; scheme is the set of colors and color scheme options
-  that was most recently applied, i.e. what you would get if you choose
+  that was most recently applied, &ie; what you would get if you choose
   <guibutton>Cancel</guibutton>. The &quot;active&quot; scheme is the set of
-  colors as has been most recently edited by you, i.e. what you would get if
-  you choose <guibutton>Apply</guibutton> or <guibutton>OK</guibutton>.</para>
+  colors as has been most recently edited by you, &ie; what you would get if
+  you choose <guibutton>Apply</guibutton>.</para>
 </sect2>
 
 <sect2 id="color-scheme">
@@ -72,7 +73,7 @@
   Note that system schemes cannot be removed; trying to do so will display an
   error.</para>
 
-  <para>&kde; ships with several schemes. If you have an internet connection,
+  <para>&kde; ships with several schemes. If you have an Internet connection,
   you can also browse and retrieve user-created schemes using <guibutton>Get
   New Schemes...</guibutton>.</para>
 
@@ -146,7 +147,7 @@
   <title>Colors</title>
 
   <para>The <guilabel>Colors</guilabel> tab allows you to change the colors in
-  a color scheme. The &quot;Common Colors&quot; set, which is displayed
+  a color scheme. The <guilabel>Common Colors</guilabel> set, which is displayed
   initially, is not actually a "set" in the sense used by &kde; (see next
   section), but presents a number of color roles in a way that makes it
   easier to edit the scheme as a whole. When creating a new color scheme, you
@@ -164,19 +165,19 @@
     <para>&kde; 4 breaks the color scheme into several sets based on the type
     of user interface element, as follows:</para>
     <itemizedlist>
-      <listitem><para>View &mdash;
+      <listitem><para><guilabel>View</guilabel> &mdash;
         information presentation elements, such as lists, trees, text input boxes, etc.
       </para></listitem>
-      <listitem><para>Window &mdash;
+      <listitem><para><guilabel>Window</guilabel> &mdash;
         window elements that are not buttons or views.
       </para></listitem>
-      <listitem><para>Button &mdash;
+      <listitem><para><guilabel>Button</guilabel> &mdash;
         buttons and similar elements.
       </para></listitem>
-      <listitem><para>Selection &mdash;
+      <listitem><para><guilabel>Selection</guilabel> &mdash;
         selected text and items.
       </para></listitem>
-      <listitem><para>Tooltip &mdash;
+      <listitem><para><guilabel>Tooltip</guilabel> &mdash;
         tool tips, &quot;What's This&quot; tips, and similar elements.
       </para></listitem>
       <listitem><para>Window Manager &mdash;
@@ -201,7 +202,7 @@
     <itemizedlist>
       <listitem><para>Alternate Background &mdash;
         used when there is a need to subtly change the background to aid in
-        item association. This might be used e.g. as the background of a
+        item association. This might be used &eg; as the background of a
         heading, but is mostly used for alternating rows in lists, especially
         multi-column lists, to aid in visually tracking rows.
       </para></listitem>
@@ -210,23 +211,23 @@
         be visited&quot;, or to show relationships.
       </para></listitem>
       <listitem><para>Visited Text &mdash;
-        used for &quot;something (e.g. a hyperlink) that has been
+        used for &quot;something (&eg; a hyperlink) that has been
         visited&quot;, or to indicate something that is "old".
       </para></listitem>
       <listitem><para>Active Text &mdash;
-        used to indicate an active element or attract attention, e.g. alerts,
+        used to indicate an active element or attract attention, &eg; alerts,
         notifications; also for hovered hyperlinks.
       </para></listitem>
       <listitem><para>Inactive Text &mdash;
-        used for text which should be unobtrusive, e.g. comments,
+        used for text which should be unobtrusive, &eg; comments,
         &quot;subtitles&quot;, unimportant information, etc.
       </para></listitem>
       <listitem><para>Negative Text &mdash;
         used for errors, failure notices, notifications that an action may be
-        dangerous (e.g. unsafe web page or security context), etc.
+        dangerous (&eg; unsafe web page or security context), etc.
       </para></listitem>
       <listitem><para>Neutral Text &mdash;
-        used to draw attention when another role is not appropriate; e.g.
+        used to draw attention when another role is not appropriate; &eg;
         warnings, to indicate secure/encrypted content, etc.
       </para></listitem>
       <listitem><para>Positive Text &mdash;
@@ -245,7 +246,7 @@
         used to indicate the item which has active input focus.
       </para></listitem>
       <listitem><para>Hover Decoration &mdash;
-        used for mouse-over effects, e.g. the "illumination" effects for
+        used for mouse-over effects, &eg; the "illumination" effects for
         buttons.
       </para></listitem>
     </itemizedlist>
@@ -291,7 +292,7 @@
       <listitem><para>Shade &mdash;
         makes everything lighter or darker in a controlled manner. Each
         &quot;tick&quot; on the slider increases or decreases the overall
-        intensity (i.e. perceived brightness) by an absolute amount.
+        intensity (&ie; perceived brightness) by an absolute amount.
       </para></listitem>
       <listitem><para>Darken &mdash;
         changes the intensity to a percentage of the initial value. A slider
