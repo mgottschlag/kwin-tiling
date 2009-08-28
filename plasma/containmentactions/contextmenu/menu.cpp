@@ -91,7 +91,7 @@ void ContextMenu::init(const KConfigGroup &config)
         return; //below here is stuff we only want to do once
     }
 
-    connect(c, SIGNAL(immutabilityChanged(const Plasma::ImmutabilityType)), this, SLOT(updateImmutability(const Plasma::ImmutabilityType)));
+    connect(c->corona(), SIGNAL(immutabilityChanged(const Plasma::ImmutabilityType)), this, SLOT(updateImmutability(const Plasma::ImmutabilityType)));
 
     //FIXME what if it's a panel? what if it's a customcontainment?
     KPluginInfo::List panelPlugins = c->listContainmentsOfType("panel");
