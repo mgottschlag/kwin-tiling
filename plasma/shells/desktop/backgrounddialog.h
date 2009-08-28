@@ -19,7 +19,6 @@ namespace Plasma {
     class Containment;
     class View;
 }
-class ThemeModel;
 class QStandardItemModel;
 class ScreenPreviewWidget;
 
@@ -63,14 +62,12 @@ private:
     KConfigGroup wallpaperConfig(const QString &plugin);
 
 private slots:
-    void getNewThemes();
     void changeBackgroundMode(int mode);
     void cleanup();
     void checkActivityName();
     void settingsModified(bool modified = true);
 
 private:
-    ThemeModel* m_themeModel;
     QStandardItemModel* m_containmentModel;
     Plasma::Wallpaper* m_wallpaper;
     Plasma::View* m_view;

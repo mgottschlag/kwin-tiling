@@ -24,7 +24,6 @@
 
 #include <Plasma/Containment>
 #include <Plasma/FrameSvg>
-#include <Plasma/Theme>
 #include <Plasma/Wallpaper>
 #include <Plasma/View>
 #include <Plasma/Corona>
@@ -33,188 +32,6 @@
 
 typedef QPair<QString, QString> WallpaperInfo;
 Q_DECLARE_METATYPE(WallpaperInfo)
-
-class ThemeInfo
-{
-public:
-    QString package;
-    Plasma::FrameSvg *svg;
-};
-
-class ThemeModel : public QAbstractListModel
-{
-public:
-    enum { PackageNameRole = Qt::UserRole,
-           SvgRole = Qt::UserRole + 1
-         };
-
-    ThemeModel(QObject *parent = 0);
-    virtual ~ThemeModel();
-
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    int indexOf(const QString &path) const;
-    void reload();
-private:
-    QMap<QString, ThemeInfo> m_themes;
-};
-
-ThemeModel::ThemeModel( QObject *parent )
-    : QAbstractListModel( parent )
-{
-    reload();
-}
-
-ThemeModel::~ThemeModel()
-{
-}
-
-void ThemeModel::reload()
-{
-    reset();
-    foreach (const ThemeInfo &info, m_themes) {
-        delete info.svg;
-    }
-    m_themes.clear();
-
-    // get all desktop themes
-    KPluginInfo::List themeInfos = Plasma::Theme::listThemeInfo();
-
-    foreach (const KPluginInfo &themeInfo, themeInfos) {
-        kDebug() << themeInfo.name() << themeInfo.pluginName();
-        QString name = themeInfo.name();
-        if (name.isEmpty()) {
-            name = themeInfo.pluginName();
-        }
-
-        Plasma::Theme *theme = new Plasma::Theme(themeInfo.pluginName(), this);
-        Plasma::FrameSvg *svg = new Plasma::FrameSvg(theme);
-        svg->setUsingRenderingCache(false);
-        svg->setTheme(theme);
-        svg->setImagePath("widgets/background");
-        svg->setEnabledBorders(Plasma::FrameSvg::AllBorders);
-
-        ThemeInfo info;
-        info.package = themeInfo.pluginName();
-        info.svg = svg;
-        m_themes[name] = info;
-    }
-
-    beginInsertRows(QModelIndex(), 0, m_themes.size());
-    endInsertRows();
-}
-
-int ThemeModel::rowCount(const QModelIndex &) const
-{
-    return m_themes.size();
-}
-
-QVariant ThemeModel::data(const QModelIndex &index, int role) const
-{
-    if (!index.isValid()) {
-        return QVariant();
-    }
-
-    if (index.row() >= m_themes.size()) {
-        return QVariant();
-    }
-
-    QMap<QString, ThemeInfo>::const_iterator it = m_themes.constBegin();
-    for (int i = 0; i < index.row(); ++i) {
-        ++it;
-    }
-
-    switch (role) {
-        case Qt::DisplayRole:
-            return it.key();
-        case PackageNameRole:
-            return (*it).package;
-        case SvgRole:
-            return qVariantFromValue((void*)(*it).svg);
-        default:
-            return QVariant();
-    }
-}
-
-int ThemeModel::indexOf(const QString &name) const
-{
-    QMapIterator<QString, ThemeInfo> it(m_themes);
-    int i = -1;
-    while (it.hasNext()) {
-        ++i;
-        if (it.next().value().package == name) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-
-class ThemeDelegate : public QAbstractItemDelegate
-{
-public:
-    ThemeDelegate(QObject * parent = 0);
-
-    virtual void paint(QPainter *painter,
-                       const QStyleOptionViewItem &option,
-                       const QModelIndex &index) const;
-    virtual QSize sizeHint(const QStyleOptionViewItem &option,
-                           const QModelIndex &index) const;
-private:
-    static const int MARGIN = 5;
-};
-
-ThemeDelegate::ThemeDelegate(QObject* parent)
-: QAbstractItemDelegate(parent)
-{
-}
-
-void ThemeDelegate::paint(QPainter *painter,
-                          const QStyleOptionViewItem &option,
-                          const QModelIndex &index) const
-{
-    QString title = index.model()->data(index, Qt::DisplayRole).toString();
-    QString package = index.model()->data(index, ThemeModel::PackageNameRole).toString();
-
-    // highlight selected item
-    painter->save();
-    if (option.state & QStyle::State_Selected) {
-        painter->setBrush(option.palette.color(QPalette::Highlight));
-    } else {
-        painter->setBrush(Qt::gray);
-    }
-    painter->drawRect(option.rect);
-    painter->restore();
-
-    // draw image
-    Plasma::FrameSvg *svg = static_cast<Plasma::FrameSvg *>(
-            index.model()->data(index, ThemeModel::SvgRole).value<void *>());
-    svg->resizeFrame(QSize(option.rect.width() - (2 * MARGIN), 100 - (2 * MARGIN)));
-    QRect imgRect = QRect(option.rect.topLeft(),
-            QSize(option.rect.width() - (2 * MARGIN), 100 - (2 * MARGIN)))
-            .translated(MARGIN, MARGIN);
-    svg->paintFrame(painter, QPoint(option.rect.left() + MARGIN, option.rect.top() + MARGIN));
-
-    // draw text
-    painter->save();
-    QFont font = painter->font();
-    font.setWeight(QFont::Bold);
-    QString colorFile = KStandardDirs::locate("data", "desktoptheme/" + package + "/colors");
-    if (!colorFile.isEmpty()) {
-        KSharedConfigPtr colors = KSharedConfig::openConfig(colorFile);
-        KColorScheme colorScheme(QPalette::Active, KColorScheme::Window, colors);
-        painter->setPen(colorScheme.foreground(KColorScheme::NormalText).color());
-    }
-    painter->setFont(font);
-    painter->drawText(option.rect, Qt::AlignCenter | Qt::TextWordWrap, title);
-    painter->restore();
-}
-
-QSize ThemeDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
-{
-    return QSize(200, 100);
-}
 
 // From kcategorizeditemsviewdelegate by Ivan Cukic
 #define EMBLEM_ICON_SIZE 16
@@ -352,7 +169,6 @@ void WallpaperWidget::settingsChanged(bool isModified)
 BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Plasma::View* view,
                                    QWidget* parent, const QString &id, KConfigSkeleton *s)
     : KConfigDialog(parent, id, s),
-      m_themeModel(0),
       m_containmentModel(0),
       m_wallpaper(0),
       m_view(view),
@@ -380,8 +196,6 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     m_preview->setRatio(previewRatio);
     m_preview->resize(200, 200);
 
-    connect(m_newThemeButton, SIGNAL(clicked()), this, SLOT(getNewThemes()));
-
     connect(this, SIGNAL(finished(int)), this, SLOT(cleanup()));
     connect(this, SIGNAL(okClicked()), this, SLOT(saveConfig()));
     connect(this, SIGNAL(applyClicked()), this, SLOT(saveConfig()));
@@ -389,11 +203,6 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     if (m_containment) {
         connect(m_containment, SIGNAL(destroyed()), this, SLOT(close()));
     }
-
-    m_themeModel = new ThemeModel(this);
-    m_theme->setModel(m_themeModel);
-    m_theme->setItemDelegate(new ThemeDelegate(m_theme->view()));
-    m_theme->view()->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
     m_containmentModel = new QStandardItemModel(this);
     m_containmentComboBox->setModel(m_containmentModel);
@@ -416,7 +225,6 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     connect(m_activityName, SIGNAL(textChanged(const QString&)), this, SLOT(settingsModified()));
     connect(m_activityName, SIGNAL(editingFinished()), this, SLOT(checkActivityName()));
 
-    connect(m_theme, SIGNAL(currentIndexChanged(int)), this, SLOT(settingsModified()));
     connect(m_wallpaperMode, SIGNAL(currentIndexChanged(int)), this, SLOT(settingsModified()));
 
     settingsModified(false);
@@ -431,20 +239,6 @@ void BackgroundDialog::cleanup()
 {
     delete m_wallpaper;
     m_wallpaper = 0;
-}
-
-void BackgroundDialog::getNewThemes()
-{
-    KNS::Engine engine(this);
-    if (engine.init("plasma-themes.knsrc")) {
-        KNS::Entry::List entries = engine.downloadDialogModal(this);
-
-        if (entries.size() > 0) {
-            m_themeModel->reload();
-            m_theme->setCurrentIndex(m_themeModel->indexOf(
-                                     Plasma::Theme::defaultTheme()->themeName()));
-        }
-    }
 }
 
 void BackgroundDialog::checkActivityName()
@@ -543,10 +337,6 @@ void BackgroundDialog::reloadConfig()
         changeBackgroundMode(wallpaperIndex);
     }
 
-    // Theme
-    m_themeModel->reload();
-    m_theme->setCurrentIndex(m_themeModel->indexOf(Plasma::Theme::defaultTheme()->themeName()));
-
     connect(m_wallpaperMode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
     settingsModified(false);
 }
@@ -614,8 +404,6 @@ KConfigGroup BackgroundDialog::wallpaperConfig(const QString &plugin)
 
 void BackgroundDialog::saveConfig()
 {
-    QString theme = m_theme->itemData(m_theme->currentIndex(),
-                                      ThemeModel::PackageNameRole).toString();
     QString wallpaperPlugin = m_wallpaperMode->itemData(m_wallpaperMode->currentIndex()).value<WallpaperInfo>().first;
     QString wallpaperMode = m_wallpaperMode->itemData(m_wallpaperMode->currentIndex()).value<WallpaperInfo>().second;
     QString containment = m_containmentComboBox->itemData(m_containmentComboBox->currentIndex(),
@@ -679,9 +467,6 @@ void BackgroundDialog::saveConfig()
     if (m_containment) {
         m_containment->setWallpaper(wallpaperPlugin, wallpaperMode);
     }
-
-    // Plasma Theme
-    Plasma::Theme::defaultTheme()->setThemeName(theme);
 
     settingsModified(false);
 }
