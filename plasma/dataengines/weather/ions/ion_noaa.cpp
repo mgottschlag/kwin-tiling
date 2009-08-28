@@ -381,7 +381,7 @@ void NOAAIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& xml)
             } else if (xml.name() == "observation_time") {
                 data.observationTime = xml.readElementText();
                 QStringList tmpDateStr = data.observationTime.split(' ');
-                data.observationTime = QString("%1 %2").arg(tmpDateStr[5]).arg(tmpDateStr[6]);
+                data.observationTime = QString("%1 %2").arg(tmpDateStr[6]).arg(tmpDateStr[7]);
                 d->m_dateFormat = QDateTime::fromString(data.observationTime, "h:mm ap");
                 data.iconPeriodHour = d->m_dateFormat.toString("HH");
                 data.iconPeriodAP = d->m_dateFormat.toString("ap");
@@ -483,19 +483,22 @@ void NOAAIon::updateWeather(const QString& source)
     data.insert("Observation Period", observationTime(source));
     data.insert("Current Conditions", condition(source));
     kDebug() << "i18n condition string: " << qPrintable(condition(source));
-// FIXME: We'll need major fuzzy logic, this isn't pretty: http://www.weather.gov/xml/current_obs/weather.php
-    //QMap<QString, ConditionIcons> conditionList;
-    //conditionList = conditionIcons();
 
-    /*
-        if ((periodHour(source) >= 0 && periodHour(source) < 6) || (periodHour(source) >= 18)) {
-            // Night
-            // - Fill in condition fuzzy logic
-        } else {
-            // Day
-            // - Fill in condition fuzzy logic
-        }
-    */
+    /* Determine the weather icon based on the observation time and reported condition.
+     * NOAA reports the time in 'Standard Time'.
+     */
+    if ((periodHour(source) >= 0 && periodHour(source) < 6) || (periodHour(source) >= 18)) {
+        // Night
+        QString weather = condition(source).toLower();
+        ConditionIcons condition = getConditionIcon(weather, false);
+        data.insert("Condition Icon", getWeatherIcon(condition));
+    } else {
+        // Day
+        QString weather = condition(source).toLower();
+        ConditionIcons condition = getConditionIcon(weather, true);
+        data.insert("Condition Icon", getWeatherIcon(condition));
+    }
+
     data.insert("Condition Icon", "weather-none-available");
 
     dataFields = temperature(source);
@@ -605,7 +608,7 @@ QMap<QString, QString> NOAAIon::humidity(const QString& source) const
         humidityInfo.insert("humidity", d->m_weatherData[source].humidity);
         humidityInfo.insert("humidityUnit", QString::number(WeatherUtils::Percent));
     }
-    
+
     return humidityInfo;
 }
 
@@ -692,6 +695,106 @@ QMap<QString, QString> NOAAIon::wind(const QString& source) const
         windInfo.insert("windDirection", i18nc("wind direction", d->m_weatherData[source].windDirection.toUtf8()));
     }
     return windInfo;
+}
+
+/**
+  * Determine the condition icon based on the list of possible NOAA weather conditions as defined at
+  * <http://www.weather.gov/xml/current_obs/weather.php>.  Since the number of NOAA weather
+  * conditions need to be fitted into the narowly defined groups in IonInterface::ConditionIcons, we
+  * try to group the NOAA conditions as best as we can based on their priorities/severity.
+  */
+IonInterface::ConditionIcons NOAAIon::getConditionIcon(const QString& weather, bool isDayTime) const
+{
+    // Consider any type of storm, tornado or funnel to be a thunderstorm.
+    if (weather.contains("thunderstorm") || weather.contains("funnel") ||
+        weather.contains("tornado") || weather.contains("storm")) {
+
+        if (weather.contains("Vicinity")) {
+            if (isDayTime) {
+                return IonInterface::ChanceThunderstormDay;
+            } else {
+                return IonInterface::ChanceThunderstormNight;
+            }
+        }
+        return IonInterface::Thunderstorm;
+
+    } else if (weather.contains("pellets") || weather.contains("crystals") ||
+             weather.contains("hail")) {
+        return IonInterface::Hail;
+
+    } else if ((weather.contains("rain") || weather.contains("drizzle") ||
+              weather.contains("showers")) && weather.contains("snow")) {
+        return IonInterface::RainSnow;
+
+    } else if (weather.contains("snow") && weather.contains("light")) {
+        return IonInterface::LightSnow;
+
+    } else if (weather.contains("snow")) {
+
+        if (weather.contains("Vicinity")) {
+            if (isDayTime) {
+                return IonInterface::ChanceSnowDay;
+            } else {
+                return IonInterface::ChanceSnowNight;
+            }
+        }
+        return IonInterface::Snow;
+
+    } else if (weather.contains("freezing rain")) {
+        return IonInterface::FreezingRain;
+
+    } else if (weather.contains("freezing drizzle")) {
+        return IonInterface::FreezingDrizzle;
+
+    } else if (weather.contains("Showers")) {
+
+        if (weather.contains("Vicinity")) {
+            if (isDayTime) {
+                return IonInterface::ChanceShowersDay;
+            } else {
+                return IonInterface::ChanceShowersNight;
+            }
+        }
+        return IonInterface::Showers;
+
+    } else if (weather.contains("light rain") || weather.contains("drizzle")) {
+        return IonInterface::LightRain;
+
+    } else if (weather.contains("rain")) {
+        return IonInterface::Rain;
+
+    } else if (weather.contains("overcast") || weather.contains("mostly cloudy")) {
+        return IonInterface::Overcast;
+
+    } else if (weather.contains("few clouds")) {
+        if(isDayTime) {
+            return IonInterface::FewCloudsDay;
+        } else {
+            return IonInterface::FewCloudsNight;
+        }
+    } else if (weather.contains("partly cloudy")) {
+        if(isDayTime) {
+            return IonInterface::PartlyCloudyDay;
+        } else {
+            return IonInterface::PartlyCloudyNight;
+        }
+    } else if (weather.contains("haze") || weather.contains("smoke") ||
+             weather.contains("dust") || weather.contains("sand")) {
+        return IonInterface::Haze;
+
+    } else if (weather.contains("fair") || weather.contains("clear")) {
+        if (isDayTime) {
+            return IonInterface::ClearDay;
+        } else {
+            return IonInterface::ClearNight;
+        }
+    } else if (weather.contains("fog")) {
+        return IonInterface::Mist;
+
+    } else {
+        return IonInterface::NotAvailable;
+
+    }
 }
 
 #include "ion_noaa.moc"

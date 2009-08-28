@@ -62,6 +62,13 @@ public:
 
     /**
      * Returns weather icon filename to display in applet.
+     * @param condition the current condition being reported.
+     * @return icon name
+     */
+    QString getWeatherIcon(ConditionIcons condition) const;
+
+    /**
+     * Returns weather icon filename to display in applet.
      * @param conditionList a QList map pair of icons mapped to a enumeration of conditions.
      * @param condition the current condition being reported.
      * @return icon name

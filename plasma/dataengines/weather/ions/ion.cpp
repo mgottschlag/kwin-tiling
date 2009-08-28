@@ -129,9 +129,9 @@ QString IonInterface::getWindDirectionIcon(const QMap<QString, WindDirections> &
 /**
  * Return weather icon to display in an applet when given a condition.
  */
-QString IonInterface::getWeatherIcon(const QMap<QString, ConditionIcons> &conditionList, const QString& condition) const
+QString IonInterface::getWeatherIcon(ConditionIcons condition) const
 {
-    switch (conditionList[condition.toLower()]) {
+    switch (condition) {
     case ClearDay:
         return "weather-clear";
     case FewCloudsDay:
@@ -188,4 +188,12 @@ QString IonInterface::getWeatherIcon(const QMap<QString, ConditionIcons> &condit
         return "weather-none-available";
     }
     return "weather-none-available";
+}
+
+/**
+ * Return weather icon to display in an applet when given a condition.
+ */
+QString IonInterface::getWeatherIcon(const QMap<QString, ConditionIcons> &conditionList, const QString& condition) const
+{
+    return getWeatherIcon(conditionList[condition.toLower()]);
 }

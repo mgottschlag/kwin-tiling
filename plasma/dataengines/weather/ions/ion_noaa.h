@@ -114,6 +114,7 @@ private:
     QMap<QString, QString> visibility(const QString& source) const;
     QMap<QString, QString> pressure(const QString& source) const;
     QMap<QString, QString> wind(const QString& source) const;
+    IonInterface::ConditionIcons getConditionIcon(const QString& weather, bool isDayTime) const;
 
     // Load and Parse the place XML listing
     void getXMLSetup(void) const;
