@@ -43,6 +43,9 @@ If you're performing an immediate action you should ignore MousePress and use Mo
 The incoming event will always have the buttons and modifiers that the user configured as the trigger, so
 there's no sense in checking those values.
 
+        void init(const KConfigGroup &config);
+Do whatever initialization is needed here (not in the constructor).
+
 A configuration UI can optionally be provided by overloading the configuration methods:
         QWidget* createConfigurationInterface(QWidget* parent);
         void configurationAccepted();
@@ -51,6 +54,9 @@ A configuration UI can optionally be provided by overloading the configuration m
 when configurationAccepted is called, you should read from your config UI and extract all your data
 from it; the UI may be deleted after the function returns.
 when save is called, save that data to the provided config group.
+
+if your plugin needs to be configured before it is useful, call setConfigurationRequired() from
+init().
 
 Containment Interface
 ---------------------
