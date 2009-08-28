@@ -85,6 +85,7 @@ void SystemMonitor::init()
         connect(button, SIGNAL(toggled(bool)), this, SLOT(toggled(bool)));
         m_buttons->addItem(button);
         m_monitorButtons << button;
+        // this does not work
         KGlobal::locale()->insertCatalog(pluginInfo.pluginName());
     }
 

@@ -41,6 +41,7 @@ Hdd::~Hdd()
 
 void Hdd::init()
 {
+    KGlobal::locale()->insertCatalog("plasma_applet_system-monitor");
     KConfigGroup cg = config();
     QString predicateString("IS StorageVolume");
     setEngine(dataEngine("soliddevice"));
@@ -173,12 +174,10 @@ bool Hdd::addMeter(const QString& source)
     if (!engine) {
         return false;
     }
-
     if (!isValidDevice(source, &data)) {
         // do not try to show hard drives and swap partitions.
         return false;
     }
-
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(Qt::Horizontal);
     layout->setContentsMargins(3, 3, 3, 3);
     layout->setSpacing(5);

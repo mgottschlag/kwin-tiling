@@ -43,11 +43,12 @@ SM::Ram::~Ram()
 
 void SM::Ram::init()
 {
+    KGlobal::locale()->insertCatalog("plasma_applet_system-monitor");
     KConfigGroup cg = config();
     setEngine(dataEngine("systemmonitor"));
     setInterval(cg.readEntry("interval", 2) * 1000);
     setTitle(i18n("RAM"));
-
+    
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
     m_showTopBar = cg.readEntry("showTopBar", true);
     m_showBackground = cg.readEntry("showBackground", true);
