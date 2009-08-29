@@ -35,6 +35,8 @@ class Widget : public QObject
     Q_OBJECT
     Q_PROPERTY(QString type READ type)
     Q_PROPERTY(int id READ id)
+    Q_PROPERTY(QStringList configKeys READ configKeys)
+    Q_PROPERTY(QStringList configGroups READ configGroups)
 
 
 public:
@@ -44,12 +46,13 @@ public:
     uint id() const;
     QString type() const;
 
+    QStringList configKeys() const;
+    QStringList configGroups() const;
+
 public Q_SLOTS:
     void remove();
     void setConfigGroup(const QString &config);
-    QStringList configKeys() const;
-    QStringList configGroups() const;
-    QVariant readConfig(const QString &key, const QVariant &def) const;
+    QVariant readConfig(const QString &key, const QVariant &def = QString()) const;
     void writeConfig(const QString &key, const QVariant &value);
 
 private:
