@@ -112,19 +112,19 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         m_model->setWallpaperSize(m_size);
         m_model->reload(m_usersWallpapers);
         m_uiImage.m_view->setModel(m_model);
-        m_uiImage.m_view->setItemDelegate(new BackgroundDelegate(m_uiImage.m_view->view(),
+        m_uiImage.m_view->setItemDelegate(new BackgroundDelegate(m_uiImage.m_view,
                                                                  ratio, m_configWidget));
-        m_uiImage.m_view->view()->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-        int index = m_model->indexOf(m_wallpaper);
+        m_uiImage.m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+        QModelIndex index = m_model->indexOf(m_wallpaper);
         kDebug() << m_wallpaper << index;
-        if (index != -1) {
+        ///if (index != -1) {
             m_uiImage.m_view->setCurrentIndex(index);
-            Plasma::Package *b = m_model->package(index);
+            Plasma::Package *b = m_model->package(index.row());
             if (b) {
                 fillMetaInfo(b);
             }
-        }
-        connect(m_uiImage.m_view, SIGNAL(currentIndexChanged(int)), this, SLOT(pictureChanged(int)));
+        ///}
+        connect(m_uiImage.m_view, SIGNAL(activated(const QModelIndex &)), this, SLOT(pictureChanged(const QModelIndex &)));
 
         m_uiImage.m_pictureUrlButton->setIcon(KIcon("document-open"));
         connect(m_uiImage.m_pictureUrlButton, SIGNAL(clicked()), this, SLOT(showFileDialog()));
@@ -153,7 +153,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
 
         connect(m_uiImage.m_color, SIGNAL(changed(const QColor&)), this, SLOT(modified()));
         connect(m_uiImage.m_resizeMethod, SIGNAL(currentIndexChanged(int)), this, SLOT(modified()));
-        connect(m_uiImage.m_view, SIGNAL(currentIndexChanged(int)), this, SLOT(modified()));
+        connect(m_uiImage.m_view, SIGNAL(activated(const QModelIndex &)), this, SLOT(modified()));
 
     } else {
         m_uiSlideshow.setupUi(m_configWidget);
@@ -379,13 +379,13 @@ void Image::colorChanged(const QColor& color)
     setSingleImage();
 }
 
-void Image::pictureChanged(int index)
+void Image::pictureChanged(const QModelIndex &index)
 {
-    if (index == -1 || !m_model) {
+    if (index.row() == -1 || !m_model) {
         return;
     }
 
-    Plasma::Package *b = m_model->package(index);
+    Plasma::Package *b = m_model->package(index.row());
     if (!b) {
         return;
     }
@@ -504,10 +504,10 @@ void Image::wallpaperBrowseCompleted()
     m_model->addBackground(wallpaper);
 
     // select it
-    int index = m_model->indexOf(wallpaper);
-    if (index != -1) {
+    QModelIndex index = m_model->indexOf(wallpaper);
+    ///if (index != -1) {
         m_uiImage.m_view->setCurrentIndex(index);
-    }
+    ///}
 
     // save it
     m_usersWallpapers << wallpaper;
@@ -609,7 +609,7 @@ void Image::suspendStartup(bool suspend)
 
 void Image::updateScreenshot(QPersistentModelIndex index)
 {
-    m_uiImage.m_view->view()->update(index);
+    m_uiImage.m_view->update(index);
 }
 
 void Image::updateFadedImage(qreal frame)

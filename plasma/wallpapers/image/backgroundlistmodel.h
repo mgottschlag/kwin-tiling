@@ -41,7 +41,7 @@ public:
     void reload();
     void reload(const QStringList &selected);
     void addBackground(const QString &path);
-    int indexOf(const QString &path) const;
+    QModelIndex indexOf(const QString &path) const;
     virtual bool contains(const QString &bg) const;
 
     static QStringList findAllBackgrounds(Plasma::Wallpaper *structureParent,

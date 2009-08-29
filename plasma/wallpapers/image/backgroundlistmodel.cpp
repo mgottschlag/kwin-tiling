@@ -44,7 +44,7 @@ BackgroundListModel::~BackgroundListModel()
 void BackgroundListModel::removeBackground(const QString &path)
 {
     int index;
-    while ((index = indexOf(path)) != -1) {
+    while ((index = indexOf(path).row()) != -1) {
         beginRemoveRows(QModelIndex(), index, index);
         Plasma::Package *package = m_packages.at(index);
         m_packages.removeAt(index);
@@ -116,7 +116,7 @@ void BackgroundListModel::addBackground(const QString& path)
     }
 }
 
-int BackgroundListModel::indexOf(const QString &path) const
+QModelIndex BackgroundListModel::indexOf(const QString &path) const
 {
     for (int i = 0; i < m_packages.size(); i++) {
         // packages will end with a '/', but the path passed in may not
@@ -130,16 +130,16 @@ int BackgroundListModel::indexOf(const QString &path) const
             // package->path does not contain the actual file name
             if ((!m_packages[i]->structure()->contentsPrefix().isEmpty()) ||
                 (path == m_packages[i]->filePath("preferred"))) {
-                return i;
+                return index(i, 0);
             }
         }
     }
-    return -1;
+    return index(-1, 0);
 }
 
 bool BackgroundListModel::contains(const QString &path) const
 {
-    return indexOf(path) != -1;
+    return indexOf(path).row() != -1;
 }
 
 int BackgroundListModel::rowCount(const QModelIndex &) const
