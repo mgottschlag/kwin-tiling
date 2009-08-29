@@ -160,12 +160,12 @@ void ContextMenu::contextEvent(QEvent *event)
     QPoint screenPos;
     switch (event->type()) {
         case QEvent::GraphicsSceneMousePress: {
-            QGraphicsSceneMouseEvent *e = dynamic_cast<QGraphicsSceneMouseEvent*>(event);
+            QGraphicsSceneMouseEvent *e = static_cast<QGraphicsSceneMouseEvent*>(event);
             screenPos = e->screenPos();
             break;
         }
         case QEvent::GraphicsSceneWheel: {
-            QGraphicsSceneWheelEvent *e = dynamic_cast<QGraphicsSceneWheelEvent*>(event);
+            QGraphicsSceneWheelEvent *e = static_cast<QGraphicsSceneWheelEvent*>(event);
             screenPos = e->screenPos();
             break;
         }
