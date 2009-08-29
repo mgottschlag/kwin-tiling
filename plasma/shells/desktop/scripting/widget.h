@@ -23,6 +23,8 @@
 #include <QObject>
 #include <QPointer>
 
+#include <KConfigGroup>
+
 namespace Plasma
 {
     class Applet;
@@ -44,9 +46,16 @@ public:
 
 public Q_SLOTS:
     void remove();
+    void setConfigGroup(const QString &config);
+    QStringList configKeys() const;
+    QStringList configGroups() const;
+    QVariant readConfig(const QString &key, const QVariant &def) const;
+    void writeConfig(const QString &key, const QVariant &value);
 
 private:
     QPointer<Plasma::Applet> m_applet;
+    KConfigGroup m_configGroup;
+    bool m_configDirty;
 };
 
 #endif

@@ -23,14 +23,19 @@
 
 Widget::Widget(Plasma::Applet *applet, QObject *parent)
     : QObject(parent),
-      m_applet(applet)
+      m_applet(applet),
+      m_configGroup(applet->config()),
+      m_configDirty(false)
 {
 
 }
 
 Widget::~Widget()
 {
-
+    if (m_configDirty && m_applet) {
+        KConfigGroup cg = m_applet->config();
+        m_applet->restore(cg);
+    }
 }
 
 uint Widget::id() const
@@ -59,6 +64,38 @@ void Widget::remove()
     }
 }
 
+void Widget::setConfigGroup(const QString &config)
+{
+    if (!m_applet) {
+        return;
+    }
+
+    m_configGroup = m_applet->config();
+    if (!config.isEmpty()) {
+        m_configGroup = KConfigGroup(&m_configGroup, config);
+    }
+}
+
+QStringList Widget::configKeys() const
+{
+    return m_configGroup.keyList();
+}
+
+QStringList Widget::configGroups() const
+{
+    return m_configGroup.groupList();
+}
+
+QVariant Widget::readConfig(const QString &key, const QVariant &def) const
+{
+    return m_configGroup.readEntry(key, def);
+}
+
+void Widget::writeConfig(const QString &key, const QVariant &value)
+{
+    m_configGroup.writeEntry(key, value);
+    m_configDirty = true;
+}
 
 #include "widget.moc"
 
