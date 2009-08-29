@@ -53,9 +53,7 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     setAttribute(Qt::WA_DeleteOnClose);
     setButtons(KDialog::None);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
     QSplitter *splitter = new QSplitter(Qt::Vertical, this);
-    mainLayout->addWidget(splitter);
 
     QWidget *widget = new QWidget(splitter);
     QVBoxLayout *editorLayout = new QVBoxLayout(widget);
