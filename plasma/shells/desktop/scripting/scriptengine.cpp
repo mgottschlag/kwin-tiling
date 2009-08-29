@@ -19,7 +19,7 @@
 
 #include "scriptengine.h"
 
-//#include <QScriptValueIterator>
+#include <QScriptValueIterator>
 #include <QEventLoop>
 #include <QTimer>
 
@@ -235,13 +235,24 @@ QScriptValue ScriptEngine::panelById(QScriptContext *context, QScriptEngine *eng
 
 void ScriptEngine::setupEngine()
 {
-    setGlobalObject(m_scriptSelf);
+    QScriptValue v = globalObject();
+    QScriptValueIterator it(v);
+    while (it.hasNext()) {
+        it.next();
+        // we provide our own print implementation, but we want the rest
+        if (it.name() != "print") {
+            m_scriptSelf.setProperty(it.name(), it.value());
+        }
+    }
+
     m_scriptSelf.setProperty("QRectF", constructQRectFClass(this));
     m_scriptSelf.setProperty("Activity", newFunction(ScriptEngine::newActivity));
     m_scriptSelf.setProperty("Panel", newFunction(ScriptEngine::newPanel));
     m_scriptSelf.setProperty("activityById", newFunction(ScriptEngine::activityById));
     m_scriptSelf.setProperty("activityForScreen", newFunction(ScriptEngine::activityForScreen));
     m_scriptSelf.setProperty("panelById", newFunction(ScriptEngine::panelById));
+
+    setGlobalObject(m_scriptSelf);
 }
 
 bool ScriptEngine::isPanel(const Plasma::Containment *c)
