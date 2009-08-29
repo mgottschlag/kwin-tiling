@@ -13,6 +13,7 @@
 
 #include <KConfigDialog>
 #include "ui_BackgroundDialog.h"
+#include "ui_ActivityConfiguration.h"
 
 namespace Plasma {
     class Wallpaper;
@@ -68,6 +69,7 @@ private slots:
     void settingsModified(bool modified = true);
 
 private:
+    Ui::ActivityConfiguration activityUi;
     QStandardItemModel* m_containmentModel;
     Plasma::Wallpaper* m_wallpaper;
     Plasma::View* m_view;
