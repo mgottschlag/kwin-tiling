@@ -86,17 +86,44 @@ or panelById) provide the following properties:
 * formFactor: returns the form factor of the activity, e.g. "planar" for most desktop activities,
   "mediacenter" for media centers and either "horizontal" or "vertical" for panels.
 * widgetIds: a list of integer ids of all the widgets in this Activity
+
+and the following methods:
+
+* remove(): deletes this activity and all widgets inside of it
+* widgetById(id): returns an object representing the widget with the given id
 * addWidget(string name): adds a widget to the activity; the name maps to the X-KDE-PluginInfo-Name= entry
   in the widget's .desktop file
-* remmove: deletes this activity and all widgets inside of it
 
-In addition, Panel objects provide the folowing properties:
-* length: the number of pixels along the screen edge used (settable)
-* height: the height (or for vertical panels, the width) of the panel (settable)
-* hiding: the hiding mode of the panel, one of "none" (for no hiding), "autohide", "windowscover" or "windowsbelow" (settable)
-* alignment: right, left or center alignment of the panel (for vertical panels, right corrsponds to top and left to bottom) (settable)
+In addition, Panel objects provide the folowing properties, all of which are settable:
+* length: the number of pixels along the screen edge used
+* height: the height (or for vertical panels, the width) of the panel
+* hiding: the hiding mode of the panel, one of "none" (for no hiding), "autohide", "windowscover" or "windowsbelow"
+* alignment: right, left or center alignment of the panel (for vertical panels, right corrsponds to top and left to bottom)
 
 API: Miscelaneous
 -----------------
 * locked: whether the desktop shell and widgets are locked or not (settable)
 * sleep(int): sleeps the script for the specified number of millseconds
+
+API: Widgets
+------------
+Widgets may be enumerated by calling the widgetIds property on a Activity or Panel object.
+With a widget id in hand, a Widget object can be retrieved by calling widgetById(id) on the
+Activity or Panel.
+
+A widget object provides the following properties:
+
+* id: the id of the widget
+* type: the plugin type of this widget
+* configKeys: a list of all keys that are set in the current configuration
+* configGroups: a list of all the groups in the current configuration
+
+and methods:
+
+* remove(): deletes this widget
+* setConfigGroup(string group): sets the current configuration group
+* readConfig(string key, variant default): reads the value of key in the config with default
+  for the default value
+* writeConfig(string key, variant value): sets key to value in the config
+
+
