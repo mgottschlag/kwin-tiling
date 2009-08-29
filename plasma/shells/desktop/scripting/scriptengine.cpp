@@ -23,10 +23,12 @@
 #include <QEventLoop>
 #include <QTimer>
 
+#include <Plasma/Applet>
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 
 #include "containment.h"
+#include "widget.h"
 
 QScriptValue constructQRectFClass(QScriptEngine *engine);
 
@@ -85,7 +87,7 @@ QScriptValue ScriptEngine::activityById(QScriptContext *context, QScriptEngine *
         }
     }
 
-    return wrap(0, engine);
+    return engine->undefinedValue();
 }
 
 QScriptValue ScriptEngine::activityForScreen(QScriptContext *context, QScriptEngine *engine)
@@ -139,12 +141,22 @@ QScriptValue ScriptEngine::createContainment(const QString &type, const QString 
     return wrap(c, engine);
 }
 
+QScriptValue ScriptEngine::wrap(Plasma::Applet *w, QScriptEngine *engine)
+{
+    Widget *wrapper = new Widget(w);
+    QScriptValue v = engine->newQObject(wrapper, QScriptEngine::ScriptOwnership,
+                                        QScriptEngine::ExcludeSuperClassProperties |
+                                        QScriptEngine::ExcludeSuperClassMethods);
+    return v;
+}
+
 QScriptValue ScriptEngine::wrap(Plasma::Containment *c, QScriptEngine *engine)
 {
     Containment *wrapper = new Containment(c);
     QScriptValue v = engine->newQObject(wrapper, QScriptEngine::ScriptOwnership,
                                         QScriptEngine::ExcludeSuperClassProperties |
                                         QScriptEngine::ExcludeSuperClassMethods);
+    v.setProperty("widgetById", engine->newFunction(Containment::widgetById));
     /*
     TODO: this does not actually work, look into why
     if (!isPanel(c)) {
@@ -218,7 +230,7 @@ QScriptValue ScriptEngine::panelById(QScriptContext *context, QScriptEngine *eng
         }
     }
 
-    return wrap(0, engine);
+    return engine->undefinedValue();
 }
 
 void ScriptEngine::setupEngine()

@@ -25,6 +25,7 @@
 
 namespace Plasma
 {
+    class Applet;
     class Containment;
     class Corona;
 } // namespace Plasma
@@ -42,6 +43,8 @@ public:
 
     void evaluateScript(const QString &script);
     static bool isPanel(const Plasma::Containment *c);
+    static QScriptValue wrap(Plasma::Applet *w, QScriptEngine *engine);
+    static QScriptValue wrap(Plasma::Containment *c, QScriptEngine *engine);
 
 public Q_SLOTS:
     int screenCount() const;
@@ -70,7 +73,6 @@ private:
     static QScriptValue createContainment(const QString &type, const QString &defautPlugin,
                                           QScriptContext *context, QScriptEngine *engine);
     static ScriptEngine *envFor(QScriptEngine *engine);
-    static QScriptValue wrap(Plasma::Containment *c, QScriptEngine *engine);
 
 private Q_SLOTS:
     void exception(const QScriptValue &value);

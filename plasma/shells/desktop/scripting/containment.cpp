@@ -165,6 +165,30 @@ QList<int> Containment::widgetIds() const
     return w;
 }
 
+QScriptValue Containment::widgetById(QScriptContext *context, QScriptEngine *engine)
+{
+    if (context->argumentCount() == 0) {
+        return context->throwError(i18n("widgetById requires an id"));
+    }
+
+    const uint id = context->argument(0).toInt32();
+    Containment *c = qobject_cast<Containment*>(context->thisObject().toQObject());
+
+    if (!c) {
+        return engine->undefinedValue();
+    }
+
+    if (c->m_containment) {
+        foreach (Plasma::Applet *w, c->m_containment->applets()) {
+            if (w->id() == id) {
+                return ScriptEngine::wrap(w, engine);
+            }
+        }
+    }
+
+    return engine->undefinedValue();
+}
+
 uint Containment::id() const
 {
     if (!m_containment) {

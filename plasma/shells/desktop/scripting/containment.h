@@ -22,6 +22,8 @@
 
 #include <QObject>
 #include <QPointer>
+#include <QScriptContext>
+#include <QScriptValue>
 
 namespace Plasma
 {
@@ -85,6 +87,8 @@ public:
 
     QString hiding() const;
     void setHiding(const QString &mode);
+
+    static QScriptValue widgetById(QScriptContext *context, QScriptEngine *engine);
 
 public Q_SLOTS:
     Widget *addWidget(const QString &name);
