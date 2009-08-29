@@ -26,6 +26,7 @@ set(plasma_SRCS
     scripting/containment.cpp
     scripting/rect.cpp
     scripting/scriptengine.cpp
+    scripting/widget.cpp
     checkbox.cpp
     dashboardview.cpp
     desktopcorona.cpp
