@@ -187,7 +187,7 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     
     QWidget *activity = new QWidget(this);
     activityUi.setupUi(activity);
-    addPage(activity, i18n("Activity"), "activity");
+    m_activityItem = addPage(activity, i18n("Activity"), "activity");
     
     qreal previewRatio = (qreal)res.width() / (qreal)res.height();
     QSize monitorSize(200, int(200 * previewRatio));
@@ -437,7 +437,8 @@ void BackgroundDialog::saveConfig()
 
                     KPageWidgetItem *item = m->item(idx);
 
-                    if (item && item != m_appearanceItem && item != m_mouseItem) {
+                    if (item && item != m_appearanceItem && item != m_mouseItem
+                      && item != m_activityItem) {
                         itemsToRemove.append(item);
                     }
                 }
