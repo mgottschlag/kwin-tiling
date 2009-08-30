@@ -183,7 +183,7 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
 
     QWidget *main= new QWidget(this);
     setupUi(main);
-    m_appearanceItem = addPage(main, i18n("Appearance"), "preferences-desktop-wallpaper");
+    m_appearanceItem = addPage(main, i18n("Wallpaper"), "preferences-desktop-wallpaper");
     
     QWidget *activity = new QWidget(this);
     activityUi.setupUi(activity);
