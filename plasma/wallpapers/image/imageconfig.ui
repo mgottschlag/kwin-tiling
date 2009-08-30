@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>512</width>
+    <width>516</width>
     <height>388</height>
    </rect>
   </property>
@@ -15,8 +15,8 @@
     <widget class="QListView" name="m_view">
      <property name="minimumSize">
       <size>
-       <width>504</width>
-       <height>116</height>
+       <width>300</width>
+       <height>220</height>
       </size>
      </property>
     </widget>
