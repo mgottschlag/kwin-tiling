@@ -90,9 +90,16 @@ void SystemMonitor::init()
     }
 
     m_layout->addItem(m_buttons);
-    foreach (const QString& applet, appletNames) {
-        if (appletsFound.contains(applet)) {
-            addApplet(applet);
+    foreach (const QString& appletName, appletNames) {
+        if (appletsFound.contains(appletName)) {
+            Applet * applet = addApplet(appletName);
+
+            if (applet) {
+                Plasma::Constraints constraints(Plasma::ImmutableConstraint |
+                                                Plasma::StartupCompletedConstraint);
+                applet->updateConstraints(constraints);
+                applet->flushPendingConstraintsEvents();
+            }
         }
     }
 
@@ -128,12 +135,12 @@ SM::Applet *SystemMonitor::addApplet(const QString &name)
     Plasma::Applet* plasmaApplet = Plasma::Applet::load(name, 0, QVariantList() << "SM");
     SM::Applet* applet = qobject_cast<SM::Applet*>(plasmaApplet);
     if (applet) {
+        applet->setParentItem(m_widget);
         m_applets.append(applet);
         connect(applet, SIGNAL(geometryChecked()), this, SLOT(checkGeometry()));
         connect(applet, SIGNAL(destroyed(QObject*)), this, SLOT(appletRemoved(QObject*)));
         applet->setFlag(QGraphicsItem::ItemIsMovable, false);
         applet->setBackgroundHints(Plasma::Applet::NoBackground);
-        applet->setParentItem(m_widget);
         applet->setObjectName(name);
         connect(applet, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
         m_layout->addItem(applet);

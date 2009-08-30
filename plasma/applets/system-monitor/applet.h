@@ -48,6 +48,7 @@ class SM_EXPORT Applet : public Plasma::Applet
         ~Applet();
 
         virtual void constraintsEvent(Plasma::Constraints constraints);
+        void save(KConfigGroup &config) const;
         void saveConfig(KConfigGroup &config);
         QSizeF minSize() const { return m_min; };
 

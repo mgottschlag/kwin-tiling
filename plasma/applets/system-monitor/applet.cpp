@@ -46,8 +46,6 @@ Applet::Applet(QObject *parent, const QVariantList &args)
     if (args.count() > 0 && args[0].toString() == "SM") {
         m_mode = Monitor;
     }
-
-    QString name = pluginName();
 }
 
 Applet::~Applet()
@@ -301,6 +299,14 @@ KConfigGroup Applet::config()
     }
 
     return Plasma::Applet::config();
+}
+
+void Applet::save(KConfigGroup &config) const
+{
+    // work around for saveState being protected
+    if (m_mode != Monitor) {
+        Plasma::Applet::save(config);
+    }
 }
 
 void Applet::saveConfig(KConfigGroup &config)
