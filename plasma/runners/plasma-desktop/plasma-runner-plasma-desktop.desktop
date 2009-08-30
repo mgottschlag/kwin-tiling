@@ -1,19 +1,22 @@
 [Desktop Entry]
 Name=Plasma Desktop Shell
 Name[id]=Shell Desktop Plasma
+Name[nb]=Plasma skrivebordsskall
 Name[nds]=Plasma-Schriefdischkieker
 Name[pt]=Consola de Ecrã do Plasma
-Name[pt_BR]=Consola de Ecrã do Plasma
+Name[pt_BR]=Shell da área de trabalho do Plasma
 Name[sv]=Plasma skrivbordskal
+Name[tg]=Пустаи мизи кории Plasma
 Name[tr]=Plasma Masaüstü Kabuğu
 Name[uk]=Оболонка стільниці Плазми
 Name[x-test]=xxPlasma Desktop Shellxx
 Name[zh_TW]=Plasma 桌面 shell
 Comment=Interact with the Plasma desktop shell
 Comment[id]=Interaksi dengan shell desktop Plasma
+Comment[nb]=Arbeid med Plasma skrivebordsskallet
 Comment[nds]=Mit den Plasma-Schriefdischkieker snacken
 Comment[pt]=Interagir com a consola do ambiente de trabalho Plasma
-Comment[pt_BR]=Interagir com a consola do ambiente de trabalho Plasma
+Comment[pt_BR]=Interagir com a shell da área de trabalho do Plasma
 Comment[sv]=Interaktion med Plasma skrivbordsskal
 Comment[tr]=Plasma Masaüstü Kabuğu ile etkileş
 Comment[uk]=Взаємодія з оболонкою стільниці Плазма
