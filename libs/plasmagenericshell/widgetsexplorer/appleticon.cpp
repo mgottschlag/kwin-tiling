@@ -50,7 +50,7 @@ void AppletIconWidget::setAppletItem(PlasmaAppletItem *appletIcon)
 
 void AppletIconWidget::updateApplet(PlasmaAppletItem *appletItem)
 {
-    if(appletItem != 0) {
+    if (appletItem != 0) {
         m_appletItem = appletItem;
         setText(m_appletItem->name());
         setIcon(m_appletItem->icon());
@@ -78,9 +78,7 @@ void AppletIconWidget::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 {
     Plasma::IconWidget::mouseMoveEvent(event);
     if (event->button() != Qt::LeftButton
-        && (event->pos() - event->buttonDownPos(Qt::LeftButton))
-            .toPoint().manhattanLength() > QApplication::startDragDistance()
-    ) {
+        && (event->pos() - event->buttonDownPos(Qt::LeftButton)).toPoint().manhattanLength() > QApplication::startDragDistance()) {
         event->accept();
         qDebug() << "Start Dragging";
         QDrag *drag = new QDrag(event->widget());
@@ -116,10 +114,10 @@ void AppletIconWidget::setSelected(bool selected)
 
 void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
  {
-    if(m_selected || m_hovered) {
+    if (m_selected || m_hovered) {
         m_selectedBackgroundSvg->resizeFrame(boundingRect().size());
         m_selectedBackgroundSvg->paintFrame(painter, boundingRect().topLeft());
-        if(m_selected) {
+        if (m_selected) {
             //again
             m_selectedBackgroundSvg->paintFrame(painter, boundingRect().topLeft());
         }
