@@ -436,6 +436,7 @@ void Image::fillMetaInfo(Plasma::Package *b)
     // - last ditch attempt to localize author's name, if not such by config
     //   (translators can "hook" names from outside if resolute enough).
     QString author = b->metadata().author();
+    #if 0
     if (author.isEmpty()) {
         setMetadata(m_uiImage.m_authorLine, QString());
         m_uiImage.m_authorLabel->setAlignment(Qt::AlignLeft);
@@ -444,6 +445,7 @@ void Image::fillMetaInfo(Plasma::Package *b)
         m_uiImage.m_authorLabel->setAlignment(Qt::AlignRight);
         setMetadata(m_uiImage.m_authorLine, authorIntl);
     }
+    #endif
     setMetadata(m_uiImage.m_licenseLine, QString());
     setMetadata(m_uiImage.m_emailLine, QString());
     m_uiImage.m_emailLabel->hide();
