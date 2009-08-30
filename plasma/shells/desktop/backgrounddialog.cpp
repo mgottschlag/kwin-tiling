@@ -183,7 +183,8 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
 
     QWidget *main= new QWidget(this);
     setupUi(main);
-
+    m_appearanceItem = addPage(main, i18n("Appearance"), "preferences-desktop-wallpaper");
+    
     QWidget *activity = new QWidget(this);
     activityUi.setupUi(activity);
     addPage(activity, i18n("Activity"), "activity");
@@ -211,8 +212,6 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     m_containmentModel = new QStandardItemModel(this);
     activityUi.m_containmentComboBox->setModel(m_containmentModel);
     activityUi.m_containmentComboBox->setItemDelegate(new AppletDelegate());
-
-    m_appearanceItem = addPage(main, i18n("Appearance"), "preferences-desktop-wallpaper");
 
     MousePlugins *m = new MousePlugins(m_containment, this);
     connect(m, SIGNAL(modified(bool)), this, SLOT(settingsModified(bool)));
