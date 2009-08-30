@@ -117,13 +117,13 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         m_uiImage.m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
         QModelIndex index = m_model->indexOf(m_wallpaper);
         kDebug() << m_wallpaper << index;
-        ///if (index != -1) {
+        if (index.isValid()) {
             m_uiImage.m_view->setCurrentIndex(index);
             Plasma::Package *b = m_model->package(index.row());
             if (b) {
                 fillMetaInfo(b);
             }
-        ///}
+        }
         connect(m_uiImage.m_view, SIGNAL(activated(const QModelIndex &)), this, SLOT(pictureChanged(const QModelIndex &)));
 
         m_uiImage.m_pictureUrlButton->setIcon(KIcon("document-open"));
@@ -505,9 +505,9 @@ void Image::wallpaperBrowseCompleted()
 
     // select it
     QModelIndex index = m_model->indexOf(wallpaper);
-    ///if (index != -1) {
+    if (index.isValid()) {
         m_uiImage.m_view->setCurrentIndex(index);
-    ///}
+    }
 
     // save it
     m_usersWallpapers << wallpaper;

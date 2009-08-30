@@ -43,11 +43,11 @@ BackgroundListModel::~BackgroundListModel()
 
 void BackgroundListModel::removeBackground(const QString &path)
 {
-    int index;
-    while ((index = indexOf(path).row()) != -1) {
-        beginRemoveRows(QModelIndex(), index, index);
-        Plasma::Package *package = m_packages.at(index);
-        m_packages.removeAt(index);
+    QModelIndex index;
+    while ((index = indexOf(path)).isValid()) {
+        beginRemoveRows(QModelIndex(), index.row(), index.row());
+        Plasma::Package *package = m_packages.at(index.row());
+        m_packages.removeAt(index.row());
         delete package;
         endRemoveRows();
     }
@@ -134,12 +134,12 @@ QModelIndex BackgroundListModel::indexOf(const QString &path) const
             }
         }
     }
-    return index(-1, 0);
+    return QModelIndex();
 }
 
 bool BackgroundListModel::contains(const QString &path) const
 {
-    return indexOf(path).row() != -1;
+    return indexOf(path).isValid();
 }
 
 int BackgroundListModel::rowCount(const QModelIndex &) const
