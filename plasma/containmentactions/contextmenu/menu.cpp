@@ -170,7 +170,7 @@ void ContextMenu::contextEvent(QEvent *event)
             break;
         }
         default:
-            break;
+            return;
     }
 
     KMenu desktopMenu;
