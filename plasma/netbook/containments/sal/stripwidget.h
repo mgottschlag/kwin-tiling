@@ -38,9 +38,9 @@ namespace Plasma
     class PushButton;
     class QueryMatch;
     class RunnerManager;
+    class ItemBackground;
 }
 
-class ItemBackground;
 
 class StripWidget : public QGraphicsWidget
 {
@@ -80,7 +80,7 @@ private:
     QHash<Plasma::QueryMatch*, QString> m_favouritesQueries;
     QHash<Plasma::IconWidget*, Plasma::QueryMatch*> m_favouritesIcons;
     Plasma::RunnerContext *m_context;
-    ItemBackground *m_hoverIndicator;
+    Plasma::ItemBackground *m_hoverIndicator;
     int m_shownIcons;
     int m_offset;
 };

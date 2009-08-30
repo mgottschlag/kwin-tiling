@@ -18,7 +18,6 @@
  */
 
 #include "stripwidget.h"
-#include "itembackground.h"
 
 #include <Plasma/Frame>
 #include <Plasma/PushButton>
@@ -26,6 +25,7 @@
 #include <Plasma/QueryMatch>
 #include <Plasma/AbstractRunner>
 #include <Plasma/RunnerManager>
+#include <Plasma/ItemBackground>
 
 #include <KIcon>
 #include <KPushButton>
@@ -51,7 +51,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
 
     m_arrowsLayout = new QGraphicsLinearLayout(m_background);
     m_stripLayout = new QGraphicsLinearLayout();
-    m_hoverIndicator = new ItemBackground(m_background);
+    m_hoverIndicator = new Plasma::ItemBackground(m_background);
     m_hoverIndicator->hide();
     m_hoverIndicator->setZValue(-100);
     setAcceptHoverEvents(true);
@@ -303,7 +303,7 @@ bool StripWidget::eventFilter(QObject *watched, QEvent *event)
         if (icon) {
             QGraphicsWidget *parent = icon->parentWidget();
             if (parent) {
-                m_hoverIndicator->animatedShowAtRect(parent->geometry());
+                m_hoverIndicator->setTargetItem(parent);
             }
         }
     }
@@ -313,7 +313,7 @@ bool StripWidget::eventFilter(QObject *watched, QEvent *event)
 
 void StripWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    m_hoverIndicator->animatedSetVisible(false);
+    m_hoverIndicator->hide();
 }
 
 void StripWidget::resizeEvent(QGraphicsSceneResizeEvent *event)

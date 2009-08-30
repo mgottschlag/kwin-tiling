@@ -20,7 +20,6 @@
 
 #include "sal.h"
 #include "stripwidget.h"
-#include "itembackground.h"
 
 #include <QPainter>
 #include <QAction>
@@ -41,6 +40,8 @@
 #include <Plasma/RunnerManager>
 #include <Plasma/QueryMatch>
 #include <Plasma/ScrollWidget>
+#include <Plasma/ItemBackground>
+
 
 
 SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
@@ -380,7 +381,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             mwLay->addItem(gridBackground);
             mwLay->addStretch();
 
-            m_hoverIndicator = new ItemBackground(gridBackground);
+            m_hoverIndicator = new Plasma::ItemBackground(gridBackground);
             m_hoverIndicator->hide();
 
             m_gridScroll = new Plasma::ScrollWidget(this);
@@ -492,11 +493,12 @@ bool SearchLaunch::eventFilter(QObject *watched, QEvent *event)
     if (event->type() == QEvent::GraphicsSceneHoverEnter) {
         Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
         if (icon) {
-            m_hoverIndicator->animatedShowAtRect(icon->geometry());
+            m_hoverIndicator->setTarget(icon->geometry());
+            m_hoverIndicator->show();
         }
     } else if (event->type() == QEvent::GraphicsSceneHoverLeave &&
                qobject_cast<Plasma::Frame *>(watched)) {
-               m_hoverIndicator->animatedSetVisible(false);
+               m_hoverIndicator->hide();
     //pass click only if the user didn't move the mouse
     } else if (event->type() == QEvent::GraphicsSceneMouseMove) {
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);

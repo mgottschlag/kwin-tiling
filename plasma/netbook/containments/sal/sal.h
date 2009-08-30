@@ -33,8 +33,6 @@ class QAction;
 class QTimer;
 class StripWidget;
 
-class ItemBackground;
-
 namespace Plasma
 {
     class IconWidget;
@@ -43,6 +41,7 @@ namespace Plasma
     class QueryMatch;
     class ScrollWidget;
     class Frame;
+    class ItemBackground;
 }
 
 class SearchLaunch : public Plasma::Containment
@@ -96,7 +95,7 @@ private:
     QGraphicsWidget *m_viewMainWidget;
     Plasma::ScrollWidget *m_gridScroll;
     StripWidget *m_stripWidget;
-    ItemBackground *m_hoverIndicator;
+    Plasma::ItemBackground *m_hoverIndicator;
 
     QGraphicsLinearLayout *m_mainLayout;
     QGraphicsLinearLayout *m_appletsLayout;
