@@ -2,6 +2,7 @@
 Name=Panel for Mobile Internet Devices
 Name[et]=Paneel mobiilsetele internetiseadmetele
 Name[fr]=Panneau pour les périphériques mobiles accédant à Internet
+Name[hr]=Ploča za Mobilne Internet Uređaje
 Name[km]=បន្ទះ​សម្រាប់​ឧបករណ៍​អ៊ីនធឺណិត​ចល័ត
 Name[pt]=Painel dos Dispositivos de Internet Móveis (MID)
 Name[pt_BR]=Painel dos Dispositivos de Internet Móveis (MID)
@@ -14,6 +15,7 @@ Comment[de]=Ein Behältnis für eine Kontrollleiste
 Comment[et]=Paneeli konteiner
 Comment[fr]=Un conteneur pour un panneau
 Comment[gl]=Un contedor para un panel
+Comment[hr]=Sadržavatelj ploče
 Comment[km]=ការ​ផ្ទុក​សម្រាប់​បន្ទះ
 Comment[nds]=En Gelaats för en Paneel
 Comment[pt]=Um contentor para um painel
