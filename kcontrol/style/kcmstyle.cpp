@@ -233,7 +233,7 @@ QModelIndex ThemeModel::indexOf(const QString &name) const
         }
     }
 
-    return index(-1, 0);
+    return QModelIndex();
 }
 
 
