@@ -1,0 +1,4 @@
+[org.kde.kcontrol.kcmclock.save]
+Name=Save the date/time settings
+Description=System policies prevent you to save the date/time settings
+Policy=auth_admin

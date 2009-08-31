@@ -16,7 +16,7 @@ install(TARGETS kcm_clock  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 kde4_auth_add_helper(kcmdatetimehelper org.kde.kcontrol.kcmclock root helper.cpp ${helper_mocs})
 
-kde4_auth_register_actions(org.kde.kcontrol.kcmclock kcmclock_actions.ini)
+kde4_auth_register_actions(org.kde.kcontrol.kcmclock kcmclock_actions.actions)
 
 ########### install files ###############
 
