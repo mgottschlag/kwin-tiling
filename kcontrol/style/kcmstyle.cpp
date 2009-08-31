@@ -374,6 +374,8 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	page0 = new QWidget;
 	themeUi.setupUi(page0);
 
+	themeUi.m_newThemeButton->setIcon(KIcon("get-hot-new-stuff"));
+	
 	m_themeModel = new ThemeModel(this);
 	themeUi.m_theme->setModel(m_themeModel);
 	themeUi.m_theme->setItemDelegate(new ThemeDelegate(themeUi.m_theme));
