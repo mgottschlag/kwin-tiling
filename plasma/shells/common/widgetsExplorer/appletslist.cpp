@@ -19,18 +19,20 @@
  */
 
 #include "appletslist.h"
-#include "widgetexplorer.h"
 
 #include <cmath>
 
-#include <kiconloader.h>
-#include <kicon.h>
-#include <kpushbutton.h>
-
-#include <plasma/corona.h>
-#include <plasma/containment.h>
-
 #include <QHash>
+
+#include <KIconLoader>
+#include <KIcon>
+#include <KPushButton>
+
+#include <Plasma/ItemBackground>
+#include <Plasma/Containment>
+#include <Plasma/Corona>
+
+#include "widgetexplorer.h"
 
 #define ICON_SIZE 70
 #define FILTER_APPLIANCE_DELAY 400
@@ -42,7 +44,9 @@
 using namespace KCategorizedItemsViewModels;
 
 AppletsListWidget::AppletsListWidget(Qt::Orientation orientation, QGraphicsItem *parent)
-        :QGraphicsWidget(parent)
+    : QGraphicsWidget(parent),
+      m_selectionIndicator(new Plasma::ItemBackground(this)),
+      m_hoverIndicator(new Plasma::ItemBackground(this))
 {
     arrowClickStep = 0;
     wheelStep = 0;
@@ -299,7 +303,7 @@ void AppletsListWidget::timerEvent(QTimerEvent *event)
 
 void AppletsListWidget::appletIconHoverEnter(AppletIconWidget *applet)
 {
-    if(!m_toolTip->isVisible()) {
+    if (!m_toolTip->isVisible()) {
         m_toolTip->setAppletIconWidget(applet);
         m_toolTipAppearTimer.start(TOOLTIP_APPEAR_DELAY, this);
     } else {
@@ -313,6 +317,8 @@ void AppletsListWidget::appletIconHoverEnter(AppletIconWidget *applet)
         }
         m_toolTipDisappearTimer.stop();
     }
+
+    m_hoverIndicator->setTargetItem(applet);
 }
 
 void AppletsListWidget::appletIconHoverLeave(AppletIconWidget *applet)
@@ -411,11 +417,13 @@ AppletIconWidget *AppletsListWidget::createAppletIcon(PlasmaAppletItem *appletIt
 
 void AppletsListWidget::itemSelected(AppletIconWidget *applet)
 {
-    if(m_selectedItem) {
+    if (m_selectedItem) {
         m_selectedItem->setSelected(false);
     }
+
     applet->setSelected(true);
     m_selectedItem = applet;
+    m_selectionIndicator->setTargetItem(m_selectedItem);
 }
 
 void AppletsListWidget::appletIconDoubleClicked(AppletIconWidget *applet)

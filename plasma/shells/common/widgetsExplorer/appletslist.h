@@ -33,6 +33,11 @@
 #include "appleticon.h"
 #include "applettooltip.h"
 
+namespace Plasma
+{
+    class ItemBackground;
+} // namespace Plasma
+
 class AppletsListWidget : public QGraphicsWidget
 {
 
@@ -155,6 +160,8 @@ private:
 
     //One single tootip to show applets info
     AppletToolTipWidget *m_toolTip;
+    Plasma::ItemBackground *m_selectionIndicator;
+    Plasma::ItemBackground *m_hoverIndicator;
 
     QStandardItemModel *m_modelItems;
 

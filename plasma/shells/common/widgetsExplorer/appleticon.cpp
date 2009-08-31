@@ -124,8 +124,8 @@ void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     const int width = size().width();
     const int height = size().height();
 
-    QRect iconRect((width - m_iconHeight) / 2, 0, m_iconHeight, m_iconHeight);
-    painter->drawPixmap(iconRect, m_appletItem->icon().pixmap(iconRect.size()));
+    QRect iconRect(qMax(0, (width / 2) - (m_iconHeight / 2)), 0, m_iconHeight, m_iconHeight);
+    painter->drawPixmap(iconRect, m_appletItem->icon().pixmap(m_iconHeight, m_iconHeight));
 
     QRectF textRect(0, iconRect.bottom() + 2, width, height - iconRect.bottom());
     painter->drawText(textRect, Qt::AlignTop | Qt::AlignCenter | Qt::TextWordWrap, m_appletItem->text());
