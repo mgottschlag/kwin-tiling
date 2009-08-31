@@ -95,11 +95,10 @@ StripWidget::~StripWidget()
 void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
 {
     // create new IconWidget for favourite strip
-    QGraphicsWidget *widget = new QGraphicsWidget();
-    widget->setSizePolicy(QSizePolicy::MinimumExpanding,
-                          QSizePolicy::MinimumExpanding);
 
-    Plasma::IconWidget *fav = new Plasma::IconWidget(widget);
+    Plasma::IconWidget *fav = new Plasma::IconWidget(this);
+    fav->setSizePolicy(QSizePolicy::MinimumExpanding,
+                          QSizePolicy::MinimumExpanding);
     fav->installEventFilter(this);
     fav->setText(match->text());
     fav->setIcon(match->icon());
@@ -107,8 +106,8 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     fav->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(fav, SIGNAL(activated()), this, SLOT(launchFavourite()));
 
-    widget->setMinimumSize(fav->size().height(), fav->size().height());
-    fav->setPos(widget->size().width()/2-fav->size().width()/2, widget->size().height()/2-fav->size().height()/2);
+    fav->setMinimumSize(fav->size().height(), fav->size().height());
+    fav->setPos(fav->size().width()/2-fav->size().width()/2, fav->size().height()/2-fav->size().height()/2);
 
     // set an action to be able to remove from favourites
     QAction *action = new QAction(fav);
@@ -117,8 +116,8 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     connect(action, SIGNAL(triggered()), this, SLOT(removeFavourite()));
 
     m_favouritesIcons.insert(fav, match);
-    m_stripLayout->insertItem(idx, widget);
-    m_stripLayout->setMaximumSize((widget->size().width())*m_stripLayout->count(), widget->size().height());
+    m_stripLayout->insertItem(idx, fav);
+    m_stripLayout->setMaximumSize((fav->size().width())*m_stripLayout->count(), fav->size().height());
     m_stripLayout->setMinimumSize(m_stripLayout->maximumSize());
 }
 
@@ -146,8 +145,7 @@ void StripWidget::remove(Plasma::IconWidget *favourite)
     m_favouritesIcons.remove(favourite);
 
     // must be deleteLater because the IconWidget will return from the action?
-    QGraphicsWidget *widget = favourite->parentWidget();
-    widget->deleteLater();
+    favourite->deleteLater();
     delete match;
 
     // the IconWidget was not removed yet
@@ -169,13 +167,12 @@ void StripWidget::remove(Plasma::IconWidget *favourite)
 
 void StripWidget::removeFavourite()
 {
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
-    QGraphicsWidget *widget = icon->parentWidget();
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender());
 
     remove(icon);
 
     //FIXME
-    m_stripLayout->setMinimumSize(widget->size().width()*(m_stripLayout->count()-1), widget->size().height());
+    m_stripLayout->setMinimumSize(icon->size().width()*(m_stripLayout->count()-1), icon->size().height());
     m_stripLayout->setMaximumSize(m_stripLayout->minimumSize());
 }
 
@@ -192,14 +189,13 @@ void StripWidget::launchFavourite()
 void StripWidget::goRight()
 {
     // discover the item that will be removed
-    QGraphicsWidget *widget = static_cast<QGraphicsWidget*>(m_stripLayout->itemAt(0));
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(widget->childItems()[0]);
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_stripLayout->itemAt(0));
     Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
 
     // removes the first item
     m_favouritesIcons.remove(icon);
     icon->hide();
-    delete widget;
+    delete icon;
 
     // adds the new item to the end of the list
     int idx = m_favouritesMatches.indexOf(match);
@@ -214,14 +210,13 @@ void StripWidget::goRight()
 void StripWidget::goLeft()
 {
     // discover the item that will be removed
-    QGraphicsWidget *widget = static_cast<QGraphicsWidget*>(m_stripLayout->itemAt(m_shownIcons - 1));
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(widget->childItems()[0]);
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_stripLayout->itemAt(m_shownIcons - 1));
     Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
 
     // removes the first item
     m_favouritesIcons.remove(icon);
     icon->hide();
-    delete widget;
+    delete icon;
 
     // adds the new item to the end of the list
     int idx = m_favouritesMatches.indexOf(match);
@@ -301,11 +296,8 @@ bool StripWidget::eventFilter(QObject *watched, QEvent *event)
     if (event->type() == QEvent::GraphicsSceneHoverEnter) {
         Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
         if (icon) {
-            QGraphicsWidget *parent = icon->parentWidget();
-            if (parent) {
-                m_hoverIndicator->show();
-                m_hoverIndicator->setTargetItem(parent);
-            }
+            m_hoverIndicator->show();
+            m_hoverIndicator->setTargetItem(icon);
         }
     }
 
@@ -337,8 +329,7 @@ void StripWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void StripWidget::focusInEvent(QFocusEvent *event)
 {
-    QGraphicsWidget *widget = static_cast<QGraphicsWidget *>(m_stripLayout->itemAt(m_stripLayout->count()-1));
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(widget->childItems()[0]);
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_stripLayout->itemAt(m_stripLayout->count()-1));
     show();
     m_hoverIndicator->setTargetItem(icon);
 }
@@ -362,13 +353,12 @@ void StripWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
         }
     } else if (newShownIcons < effectiveShownIcons) {
         for (int i = effectiveShownIcons; i > newShownIcons && m_stripLayout->count() > 0; --i) {
-            QGraphicsWidget *widget = static_cast<QGraphicsWidget *>(m_stripLayout->itemAt(m_stripLayout->count()-1));
-            Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(widget->childItems()[0]);
+            Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_stripLayout->itemAt(m_stripLayout->count()-1));
 
             m_favouritesIcons.remove(icon);
             icon->hide();
-            QSizeF widgetSize = widget->size();
-            delete widget;
+            QSizeF widgetSize = icon->size();
+            delete icon;
             //FIXME here as well
             m_stripLayout->setMinimumSize(widgetSize.width()*(m_stripLayout->count()-1), widgetSize.height());
             m_stripLayout->setMaximumSize(m_stripLayout->minimumSize());
