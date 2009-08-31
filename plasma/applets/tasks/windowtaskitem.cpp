@@ -96,6 +96,18 @@ void WindowTaskItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     event->accept();
 }
 
+void WindowTaskItem::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter)
+    {
+        activate();
+    }
+    else
+    {
+        QGraphicsWidget::keyPressEvent(event);
+    }
+}
+
 //destroy this item
 void WindowTaskItem::close()
 {
@@ -240,7 +252,7 @@ void WindowTaskItem::setStartupTask(TaskItem *task)
     if (!m_busyWidget) {
         m_busyWidget = new Plasma::BusyWidget(this);
         m_busyWidget->hide();
-    }        
+    }
 }
 
 void WindowTaskItem::gotTaskPointer()

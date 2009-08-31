@@ -81,6 +81,9 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet)
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     setAcceptsHoverEvents(true);
     setAcceptDrops(true);
+    setFocusPolicy(Qt::StrongFocus);
+    setFlag(QGraphicsItem::ItemIsFocusable);
+
 //    setPreferredSize(basicPreferredSize());
 
     Plasma::ToolTipManager::self()->registerWidget(this);
@@ -284,6 +287,28 @@ void AbstractTaskItem::queueUpdate()
 
     update();
     m_lastUpdate.restart();
+}
+
+void AbstractTaskItem::focusInEvent(QFocusEvent *event)
+{
+    Q_UNUSED(event)
+
+    m_flags |= TaskHasFocus;
+
+    setTaskFlags(m_flags);
+
+    update();
+}
+
+void AbstractTaskItem::focusOutEvent(QFocusEvent *event)
+{
+    Q_UNUSED(event)
+
+    m_flags &= ~TaskHasFocus;
+
+    setTaskFlags(m_flags);
+
+    update();
 }
 
 void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)

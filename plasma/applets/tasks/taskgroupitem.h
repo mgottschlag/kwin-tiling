@@ -140,6 +140,7 @@ protected:
     virtual void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
     virtual void dropEvent(QGraphicsSceneDragDropEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
+    bool focusNextPrevChild(bool next);
 
     void handleDroppedId(WId id, AbstractTaskItem *targetTask, QGraphicsSceneDragDropEvent *event);
 
@@ -185,6 +186,7 @@ private:
     void setSplitIndex(int position);
 
     int totalSubTasks();
+    bool focusSubTask(bool next, bool activate);
     AbstractTaskItem * selectSubTask(int index);
 
     GroupPtr m_group;

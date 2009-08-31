@@ -31,6 +31,7 @@
 // Qt
 #include <QTime>
 #include <QIcon>
+#include <QFocusEvent>
 #include <QGraphicsWidget>
 
 class QTextOption;
@@ -143,6 +144,8 @@ protected:
     void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
 
     // reimplemented
+    void focusInEvent(QFocusEvent *event);
+    void focusOutEvent(QFocusEvent *event);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

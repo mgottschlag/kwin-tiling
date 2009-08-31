@@ -693,6 +693,64 @@ bool TaskGroupItem::eventFilter(QObject *watched, QEvent *event)
     return QGraphicsWidget::eventFilter(watched, event);
 }
 
+bool TaskGroupItem::focusNextPrevChild(bool next)
+{
+    return focusSubTask(next, false);
+}
+
+bool TaskGroupItem::focusSubTask(bool next, bool activate)
+{
+    const int subTasks = totalSubTasks();
+
+    if (subTasks > 0) {
+        int index = -1;
+
+        if (focusWidget() && subTasks > 1) {
+            for (int i = 0; i < subTasks; ++i) {
+                if (focusWidget() == selectSubTask(i)) {
+                    index = i;
+
+                    break;
+                }
+            }
+        }
+
+        if (next) {
+            ++index;
+
+            if (index >= subTasks) {
+                index = 0;
+            }
+        }
+        else {
+            --index;
+
+            if (index < 0) {
+                index = (subTasks - 1);
+            }
+        }
+
+        AbstractTaskItem *taskItem = selectSubTask(index);
+
+        if (taskItem) {
+            taskItem->setFocus();
+
+            m_activeTaskIndex = index;
+        }
+
+        if (activate && taskItem) {
+            stopWindowHoverEffect();
+
+            taskItem->activate();
+        }
+
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 void TaskGroupItem::clearPopupLostFocus()
 {
     m_popupLostFocus = false;
@@ -1206,32 +1264,7 @@ AbstractTaskItem * TaskGroupItem::selectSubTask(int index)
 
 void TaskGroupItem::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
-    int subTasks = totalSubTasks();
-    //zero or one tasks don't cycle
-    if (subTasks < 1) {
-        return;
-    }
-
-    //mouse wheel down
-    if (event->delta() < 0) {
-        m_activeTaskIndex++;
-        if (m_activeTaskIndex >= subTasks) {
-            m_activeTaskIndex = 0; // last item is spacer
-        }
-    } else {
-        //mouse wheel up
-        m_activeTaskIndex--;
-        if (m_activeTaskIndex < 0) {
-            m_activeTaskIndex = subTasks - 1; //last item is a spacer
-        }
-    }
-
-    //kDebug() << "Wheel event m_activeTaskIndex: " << m_activeTaskIndex << " of " << subTasks;
-    AbstractTaskItem *taskItem = selectSubTask(m_activeTaskIndex);
-    if (taskItem) {
-        stopWindowHoverEffect();
-        taskItem->activate();
-    }
+    focusSubTask((event->delta() > 0), true);
 }
 
 int TaskGroupItem::maxRows()

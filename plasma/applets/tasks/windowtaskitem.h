@@ -68,6 +68,7 @@ public slots:
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void keyPressEvent(QKeyEvent *event);
     void updateToolTip();
 
 private slots:
