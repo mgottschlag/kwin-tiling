@@ -61,6 +61,9 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
     void resizeEvent(QGraphicsSceneResizeEvent *event);
+    void focusInEvent(QFocusEvent *event);
+    void focusOutEvent(QFocusEvent *event);
+    void keyPressEvent(QKeyEvent *event);
 
 private slots:
     void removeFavourite();

@@ -312,7 +312,38 @@ bool StripWidget::eventFilter(QObject *watched, QEvent *event)
     return false;
 }
 
+void StripWidget::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_Left:
+        focusNextPrevChild(false);
+        break;
+    case Qt::Key_Right:
+        focusNextPrevChild(true);
+        break;
+    case Qt::Key_Enter:
+    case Qt::Key_Return:
+        //TODO;
+        break;
+    default:
+        break;
+    }
+}
+
 void StripWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    m_hoverIndicator->hide();
+}
+
+void StripWidget::focusInEvent(QFocusEvent *event)
+{
+    QGraphicsWidget *widget = static_cast<QGraphicsWidget *>(m_stripLayout->itemAt(m_stripLayout->count()-1));
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(widget->childItems()[0]);
+    show();
+    m_hoverIndicator->setTargetItem(icon);
+}
+
+void StripWidget::focusOutEvent(QFocusEvent *event)
 {
     m_hoverIndicator->hide();
 }
