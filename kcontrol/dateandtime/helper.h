@@ -18,8 +18,35 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-#ifndef helper_included
-#define helper_included
+#ifndef CLOCK_HELPER_H
+#define CLOCK_HELPER_H
+
+#include <kauth.h>
+
+using namespace KAuth;
+
+class ClockHelper : public QObject
+{
+    Q_OBJECT    
+    
+    public:
+        enum
+        {
+            CallError       = 1 << 0,
+            TimezoneError      = 1 << 1,
+            NTPError        = 1 << 2,
+            DateError       = 1 << 3
+        };
+    
+    public slots:
+        ActionReply save(const QVariantMap &map);
+        
+    private:        
+        int ntp(const QStringList& ntpServers, bool ntpEnabled);
+        int date(const QString& newdate, const QString& olddate);
+        int tz(const QString& selectedzone);
+        int tzreset();
+};
 
 /*
  commands:
@@ -29,12 +56,4 @@
    tzreset
 */
 
-enum
-    {
-    ERROR_CALL       = 1 << 0,
-    ERROR_TZONE      = 1 << 1,
-    ERROR_DTIME_NTP  = 1 << 2,
-    ERROR_DTIME_DATE = 1 << 3
-    };
-
-#endif // main_included
+#endif // CLOCK_HELPER_H

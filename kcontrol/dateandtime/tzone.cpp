@@ -92,16 +92,17 @@ void Tzone::currentZone()
 
 // FIXME: Does the logic in this routine actually work correctly? For example,
 // on non-Solaris systems which do not use /etc/timezone?
-void Tzone::save( QStringList& helperargs )
+void Tzone::save( QVariantMap& helperargs )
 {
     QStringList selectedZones(tzonelist->selection());
 
     if (selectedZones.count() > 0)
     {
       QString selectedzone(selectedZones[0]);
-      helperargs << "tz" << selectedzone; // make the helper set the timezone
+      helperargs["tz"] = true;
+      helperargs["tzone"] = selectedzone;
     } else {
-      helperargs << "tzreset"; // // make the helper reset the timezone
+      helperargs["tzreset"] = true; // // make the helper reset the timezone
     }
 
     currentZone();
@@ -109,7 +110,7 @@ void Tzone::save( QStringList& helperargs )
 
 void Tzone::processHelperErrors( int code )
 {
-  if( code & ERROR_TZONE )
+  if( code & ClockHelper::TimezoneError)
     KMessageBox::error( this, i18n("Error setting new time zone."),
         i18n("Time zone Error"));
 }

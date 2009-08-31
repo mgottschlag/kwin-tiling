@@ -46,7 +46,7 @@ class Dtime : public QWidget
  public:
   Dtime( QWidget *parent=0 );
 
-  void	save( QStringList& helperargs );
+  void	save( QVariantMap &helperargs );
   void processHelperErrors( int code );
   void	load();
 

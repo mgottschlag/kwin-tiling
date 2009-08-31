@@ -40,6 +40,7 @@
 #include <kstandarddirs.h>
 #include <kprocess.h>
 #include <QFile>
+#include <QDebug>
 
 #if defined(USE_SOLARIS)
 #include <ktemporaryfile.h>
@@ -48,8 +49,8 @@
 #include <sys/stat.h>
 #endif
 
-static int Dtime_save_ntp( const QStringList& ntpServers, bool ntpEnabled )
-{
+int ClockHelper::ntp( const QStringList& ntpServers, bool ntpEnabled )
+{    
   int ret = 0;
   // write to the system config file
   KConfig _config( KDE_CONFDIR "/kcmclockrc", KConfig::SimpleConfig);
@@ -75,26 +76,26 @@ static int Dtime_save_ntp( const QStringList& ntpServers, bool ntpEnabled )
     KProcess proc;
     proc << ntpUtility << timeServer;
     if( proc.execute() != 0 ){
-      ret |= ERROR_DTIME_NTP;
+      ret |= NTPError;
     }
   } else if( ntpEnabled ) {
-    ret |= ERROR_DTIME_NTP;
+    ret |= NTPError;
   }
   return ret;
 }
 
-static int Dtime_save_date( const QString& date, const QString& olddate )
-{
+int ClockHelper::date( const QString& newdate, const QString& olddate )
+{    
     struct timeval tv;
 
-    tv.tv_sec = date.toULong() - olddate.toULong() + time(0);
+    tv.tv_sec = newdate.toULong() - olddate.toULong() + time(0);
     tv.tv_usec = 0;
-    return settimeofday(&tv, 0) ? ERROR_DTIME_DATE : 0;
+    return settimeofday(&tv, 0) ? DateError : 0;
 }
 
 // on non-Solaris systems which do not use /etc/timezone?
-static int Tzone_save_set( const QString& selectedzone )
-{
+int ClockHelper::tz( const QString& selectedzone )
+{    
     int ret = 0;
 #if defined(USE_SOLARIS)	// MARCO
 
@@ -172,11 +173,11 @@ static int Tzone_save_set( const QString& selectedzone )
         {
             if (!QFile::remove("/etc/localtime"))
             {
-                ret |= ERROR_TZONE;
+                ret |= TimezoneError;
             }
             else
                 if (!QFile::copy(tz,"/etc/localtime"))
-                    ret |= ERROR_TZONE;
+                    ret |= TimezoneError;
         }
 
         QFile fTimezoneFile("/etc/timezone");
@@ -197,8 +198,8 @@ static int Tzone_save_set( const QString& selectedzone )
     return ret;
 }
 
-static int Tzone_save_reset()
-{
+int ClockHelper::tzreset()
+{    
 #if !defined(USE_SOLARIS) // Do not update the System!
         unlink( "/etc/timezone" );
         unlink( "/etc/localtime" );
@@ -209,72 +210,33 @@ static int Tzone_save_reset()
     return 0;
 }
 
-
-int main( int argc, char* argv[] )
-{
-  if( getuid() != 0 ) {
-    fprintf( stderr, "Needs to be called as root.\n" );
-    return ERROR_CALL;
-  }
-  bool ntp = false;
-  QStringList ntpServerList;
-  bool ntpEnabled = false;
-  bool date = false;
-  QString datestr;
-  QString olddatestr;
-  bool tz = false;
-  QString timezone;
-  bool tzreset = false;
-  QStringList args;
-  for( int pos = 1;
-       pos < argc;
-       ++pos )
-    args.append( argv[ pos ] ); // convert to QStringList first to protect against possible overflows
-  while( !args.isEmpty()) {
-    QString arg = args.takeFirst();
-    if( arg == "ntp" && !args.isEmpty()) {
-      int ntpCount = args.takeFirst().toInt();
-      if( ntpCount >= 0 && ntpCount <= args.count()) {
-        for( int i = 0;
-             i < ntpCount;
-             ++i ) {
-          ntpServerList.append( args.takeFirst());
-        }
-      }
-      if( args.isEmpty()) {
-        fprintf( stderr, "Wrong arguments!\n" );
-        exit( ERROR_CALL );
-      }
-      ntpEnabled = args.takeFirst() == "enabled";
-      ntp = true;
-    } else if( arg == "date" && !args.isEmpty()) {
-      datestr = args.takeFirst();
-      if( args.isEmpty()) {
-        fprintf( stderr, "Wrong arguments!\n" );
-        exit( ERROR_CALL );
-      }
-      olddatestr = args.takeFirst();
-      date = true;
-    } else if( arg == "tz" && !args.isEmpty()) {
-      timezone = args.takeFirst();
-      tz = true;
-    } else if( arg == "tzreset" ) {
-      tzreset = true;
-    } else {
-      fprintf( stderr, "Wrong arguments!\n" );
-      exit( ERROR_CALL );
-    }
-  }
+ActionReply ClockHelper::save(const QVariantMap &args)
+{    
+  bool _ntp = args.value("ntp").toBool();
+  bool _date = args.value("date").toBool();
+  bool _tz = args.value("tz").toBool();
+  bool _tzreset = args.value("tzreset").toBool();
+  
   KComponentData data( "kcmdatetimehelper" );
+  
   int ret = 0; // error code
 //  The order here is important
-  if( ntp )
-    ret |= Dtime_save_ntp( ntpServerList, ntpEnabled );
-  if( date )
-    ret |= Dtime_save_date( datestr, olddatestr );
-  if( tz )
-    ret |= Tzone_save_set( timezone );
-  if( tzreset )
-    ret |= Tzone_save_reset();
-  return ret;
+  if( _ntp )
+    ret |= ntp( args.value("ntpServers").toStringList(), args.value("ntpEnabled").toBool() );
+  if( _date )
+    ret |= date( args.value("newdate").toString(), args.value("olddate").toString() );
+  if( _tz )
+    ret |= tz( args.value("tzone").toString() );
+  if( _tzreset )
+    ret |= tzreset();
+  
+  if (ret == 0) {
+    return ActionReply::SuccessReply;
+  } else {
+    ActionReply reply(ActionReply::HelperError);
+    reply.setErrorCode(ret);
+    return reply;
+  }
 }
+
+KDE4_AUTH_HELPER_MAIN("org.kde.kcontrol.kcmclock", ClockHelper)

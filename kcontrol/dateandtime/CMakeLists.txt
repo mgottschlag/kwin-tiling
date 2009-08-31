@@ -1,10 +1,9 @@
 
-
+include(MacroKAuth)
 
 ########### next target ###############
 
 set(kcm_clock_PART_SRCS dtime.cpp tzone.cpp main.cpp )
-
 
 kde4_add_plugin(kcm_clock ${kcm_clock_PART_SRCS})
 
@@ -15,10 +14,9 @@ install(TARGETS kcm_clock  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### next target ###############
 
-set(kcmdatetimehelper_SRCS helper.cpp)
-kde4_add_executable(kcmdatetimehelper ${kcmdatetimehelper_SRCS})
-target_link_libraries(kcmdatetimehelper  ${KDE4_KDECORE_LIBS} )
-install(TARGETS kcmdatetimehelper DESTINATION ${LIBEXEC_INSTALL_DIR})
+kde4_auth_add_helper(kcmdatetimehelper org.kde.kcontrol.kcmclock root helper.cpp ${helper_mocs})
+
+kde4_auth_register_actions(org.kde.kcontrol.kcmclock kcmclock_actions.ini)
 
 ########### install files ###############
 

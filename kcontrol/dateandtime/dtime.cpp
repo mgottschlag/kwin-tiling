@@ -230,7 +230,7 @@ oceania.pool.ntp.org")).split(',', QString::SkipEmptyParts));
   timeout();
 }
 
-void Dtime::save( QStringList& helperargs )
+void Dtime::save( QVariantMap& helperargs )
 {
   // Save the order, but don't duplicate!
   QStringList list;
@@ -244,8 +244,10 @@ void Dtime::save( QStringList& helperargs )
     if( list.count() == 10)
       break;
   }
-  helperargs << "ntp" << QString::number( list.count()) << list
-      << ( setDateTimeAuto->isChecked() ? "enabled" : "disabled" );
+  
+  helperargs["ntp"] = true;
+  helperargs["ntpServers"] = list;
+  helperargs["ntpEnabled"] = setDateTimeAuto->isChecked();
 
   if(setDateTimeAuto->isChecked() && !ntpUtility.isEmpty()){
     // NTP Time setting - done in helper
@@ -258,8 +260,9 @@ void Dtime::save( QStringList& helperargs )
 
     kDebug() << "Set date " << dt;
 
-    helperargs << "date" << QString::number(dt.toTime_t())
-                         << QString::number(::time(0));
+    helperargs["date"] = true;
+    helperargs["newdate"] = QString::number(dt.toTime_t());
+    helperargs["olddate"] = QString::number(::time(0));
   }
 
   // restart time
@@ -268,11 +271,11 @@ void Dtime::save( QStringList& helperargs )
 
 void Dtime::processHelperErrors( int code )
 {
-  if( code & ERROR_DTIME_NTP ) {
+  if( code & ClockHelper::NTPError ) {
     KMessageBox::error( this, i18n("Unable to contact time server: %1.", timeServer) );
     setDateTimeAuto->setChecked( false );
   }
-  if( code & ERROR_DTIME_DATE ) {
+  if( code & ClockHelper::DateError ) {
     KMessageBox::error( this, i18n("Can not set date."));
   }
 }

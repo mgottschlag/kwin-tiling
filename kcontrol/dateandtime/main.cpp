@@ -41,6 +41,8 @@
 #include "dtime.h"
 #include "helper.h"
 
+#include <kauthaction.h>
+
 K_PLUGIN_FACTORY(KlockModuleFactory, registerPlugin<KclockModule>();)
 K_EXPORT_PLUGIN(KlockModuleFactory("kcmkclock"))
 
@@ -79,43 +81,37 @@ KclockModule::KclockModule(QWidget *parent, const QVariantList &)
 
   setButtons(Help|Apply);
 
+  setNeedsAuthorization(true);
+  
   process = NULL;
 }
 
 void KclockModule::save()
 {
-  QStringList helperargs;
+  QVariantMap helperargs;
   dtime->save( helperargs );
   tzone->save( helperargs );
-  QString helper = KStandardDirs::findExe( "kcmdatetimehelper" );
-  QString kdesu = KStandardDirs::findExe( "kdesu" );
-  bool ok = true;
-  if( helper.isEmpty() || kdesu.isEmpty())
-    ok = false;
-  else {
-    process = new KProcess(this);
-    *process << kdesu;
-    *process << "--attach" << QString::number(window()->winId()) << "--" << helper;
-    *process << helperargs;
-    process->start();
-    connect( process, SIGNAL( finished(int, QProcess::ExitStatus) ),
-		     SLOT( slotDateTimeHelperFinished(int) ) );
-    ok = process->waitForStarted();
-    if(!ok) {
-      delete process;
-      process = NULL;
+  
+  Action *action = authAction();
+  action->setArguments(helperargs);
+  
+  ActionReply reply = action->execute();
+  
+  if (reply.failed())
+  {
+    if (reply.type() == ActionReply::KAuthError) {
+          KMessageBox::error(this, i18n("Unable to authenticate/execute the action: %1, %2", reply.errorCode(), reply.errorDescription()));
+    } else {
+        dtime->processHelperErrors(reply.errorCode());
+        tzone->processHelperErrors(reply.errorCode());
     }
+    
   }
-  if( !ok )
-    KMessageBox::error( this, i18n( "Failed to set system date/time/time zone."), i18n( "Date/Time Error" ));
 }
 void KclockModule::slotDateTimeHelperFinished(int exitCode)
 {
     dtime->processHelperErrors( exitCode );
-    tzone->processHelperErrors( exitCode);
-
-    process->deleteLater();
-    process = NULL;
+    tzone->processHelperErrors( exitCode );
 #if 0
   // Tell the clock applet about the change so that it can update its timezone
   QDBusInterface clock("org.kde.kicker", "/Applets/Clock", "org.kde.kicker.ClockApplet");
