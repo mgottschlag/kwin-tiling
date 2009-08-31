@@ -86,6 +86,7 @@ private:
     Plasma::ItemBackground *m_hoverIndicator;
     int m_shownIcons;
     int m_offset;
+    int m_currentIconIndex;
 };
 
 #endif

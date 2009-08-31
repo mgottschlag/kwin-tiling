@@ -37,7 +37,8 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
     : QGraphicsWidget(parent),
       m_runnermg(rm),
       m_shownIcons(5),
-      m_offset(0)
+      m_offset(0),
+      m_currentIconIndex(-1)
 {
     m_background = new Plasma::Frame();
     m_background->setFrameShadow(Plasma::Frame::Raised);
@@ -55,6 +56,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
     m_hoverIndicator->hide();
     m_hoverIndicator->setZValue(-100);
     setAcceptHoverEvents(true);
+    setFocusPolicy(Qt::StrongFocus);
 
     m_leftArrow = new Plasma::PushButton(this);
     m_leftArrow->nativeWidget()->setIcon(KIcon("arrow-left"));
@@ -307,16 +309,20 @@ bool StripWidget::eventFilter(QObject *watched, QEvent *event)
 void StripWidget::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
-    case Qt::Key_Left:
-        focusNextPrevChild(false);
+    case Qt::Key_Left: {
+        m_currentIconIndex = (m_stripLayout->count() + m_currentIconIndex - 1) % m_stripLayout->count();
+        QGraphicsWidget *currentIcon = static_cast<QGraphicsWidget *>(m_stripLayout->itemAt(m_currentIconIndex));
+        currentIcon->setFocus();
+        m_hoverIndicator->setTargetItem(currentIcon);
         break;
-    case Qt::Key_Right:
-        focusNextPrevChild(true);
+    }
+    case Qt::Key_Right: {
+        m_currentIconIndex = (m_currentIconIndex + 1) % m_stripLayout->count();
+        QGraphicsWidget *currentIcon = static_cast<QGraphicsWidget *>(m_stripLayout->itemAt(m_currentIconIndex));
+        currentIcon->setFocus();
+        m_hoverIndicator->setTargetItem(currentIcon);
         break;
-    case Qt::Key_Enter:
-    case Qt::Key_Return:
-        //TODO;
-        break;
+    }
     default:
         break;
     }
@@ -332,11 +338,13 @@ void StripWidget::focusInEvent(QFocusEvent *event)
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_stripLayout->itemAt(m_stripLayout->count()-1));
     show();
     m_hoverIndicator->setTargetItem(icon);
+    m_currentIconIndex = 0;
 }
 
 void StripWidget::focusOutEvent(QFocusEvent *event)
 {
     m_hoverIndicator->hide();
+    m_currentIconIndex = -1;
 }
 
 void StripWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
