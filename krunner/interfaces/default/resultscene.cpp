@@ -334,6 +334,7 @@ void ResultScene::selectNextItem()
     setFocusItem(m_items.at(m_currentIndex));
     clearSelection();
     m_items.at(m_currentIndex)->setSelected(true);
+    emit ensureVisibility(m_items.at(m_currentIndex));
 }
 
 void ResultScene::selectPreviousItem()
@@ -350,6 +351,7 @@ void ResultScene::selectPreviousItem()
     setFocusItem(m_items.at(m_currentIndex));
     clearSelection();
     m_items.at(m_currentIndex)->setSelected(true);
+    emit ensureVisibility(m_items.at(m_currentIndex));
 }
 
 bool ResultScene::launchQuery(const QString &term)
