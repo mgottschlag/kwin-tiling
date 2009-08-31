@@ -7,7 +7,6 @@ set(cmakeFiles FindCkConnector.cmake
                FindGooglegadgets.cmake
                FindLibXKlavier.cmake
                FindPAM.cmake
-               FindPolkitQt.cmake
                FindQEdje.cmake
                FindSensors.cmake
                PkgConfigGetVar.cmake
