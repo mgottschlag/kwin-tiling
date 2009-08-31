@@ -62,7 +62,6 @@
 
 #include <kephal/screens.h>
 
-#include "appletbrowser.h"
 #include "appadaptor.h"
 #include "backgrounddialog.h"
 #include "checkbox.h"
@@ -90,7 +89,6 @@ PlasmaApp* PlasmaApp::self()
 PlasmaApp::PlasmaApp()
     : KUniqueApplication(),
       m_corona(0),
-      m_appletBrowser(0),
       m_controllerDialog(0),
       m_zoomLevel(Plasma::DesktopZoom),
       m_panelHidden(0)
@@ -306,7 +304,6 @@ void PlasmaApp::cleanup()
     m_panels.clear();
     qDeleteAll(panels);
 
-    delete m_appletBrowser;
     delete m_console;
     delete m_corona;
 
@@ -567,7 +564,7 @@ Plasma::Corona* PlasmaApp::corona()
     return m_corona;
 }
 
-void PlasmaApp::showAppletBrowser()
+/*void PlasmaApp::showAppletBrowser()
 {
     Plasma::Containment *containment = dynamic_cast<Plasma::Containment *>(sender());
 
@@ -584,35 +581,7 @@ void PlasmaApp::showAppletBrowser()
     }
 
     showAppletBrowser(containment);
-}
-
-void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
-{
-    if (!containment) {
-        return;
-    }
-
-    if (!m_appletBrowser) {
-        m_appletBrowser = new Plasma::AppletBrowser();
-        m_appletBrowser->setContainment(containment);
-        m_appletBrowser->setApplication();
-        m_appletBrowser->setAttribute(Qt::WA_DeleteOnClose);
-        m_appletBrowser->setWindowTitle(i18n("Add Widgets"));
-        m_appletBrowser->setWindowIcon(KIcon("plasmagik"));
-        connect(m_appletBrowser, SIGNAL(destroyed(QObject*)), this, SLOT(appletBrowserDestroyed()));
-    } else {
-        m_appletBrowser->setContainment(containment);
-    }
-
-    KWindowSystem::setOnDesktop(m_appletBrowser->winId(), KWindowSystem::currentDesktop());
-    m_appletBrowser->show();
-    KWindowSystem::activateWindow(m_appletBrowser->winId());
-}
-
-void PlasmaApp::appletBrowserDestroyed()
-{
-    m_appletBrowser = 0;
-}
+}*/
 
 bool PlasmaApp::hasComposite()
 {

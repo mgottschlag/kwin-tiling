@@ -46,6 +46,7 @@
 #include "plasmaapp.h"
 #include "positioningruler.h"
 #include "toolbutton.h"
+#include "widgetsExplorer/widgetexplorer.h"
 
 #include <kephal/screens.h>
 
@@ -386,7 +387,9 @@ public:
 
 PanelController::PanelController(QWidget* parent)
    : QWidget(0),
-     d(new Private(this))
+     d(new Private(this)),
+     m_widgetExplorerView(0),
+     m_widgetExplorer(0)
 {
     Q_UNUSED(parent)
 
@@ -411,7 +414,13 @@ PanelController::PanelController(QWidget* parent)
     setFocus(Qt::ActiveWindowFocusReason);
 
     //layout setup
-    d->extLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    m_mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    m_mainLayout->setContentsMargins(0, 0, 0, 0);
+
+    m_configWidget = new QWidget(this);
+    m_mainLayout->addWidget(m_configWidget);
+
+    d->extLayout = new QBoxLayout(QBoxLayout::TopToBottom, m_configWidget);
     setLayout(d->extLayout);
 
     d->background->setEnabledBorders(Plasma::FrameSvg::TopBorder);
@@ -433,11 +442,10 @@ PanelController::PanelController(QWidget* parent)
 
     //alignment
     //first the container
-    QFrame *alignFrame = new ButtonGroup(this);
+    QFrame *alignFrame = new ButtonGroup(m_configWidget);
     QVBoxLayout *alignLayout = new QVBoxLayout(alignFrame);
 
-
-    d->alignLabel = new QLabel(i18n("Panel Alignment"), this);
+    d->alignLabel = new QLabel(i18n("Panel Alignment"), m_configWidget);
     alignLayout->addWidget(d->alignLabel);
 
     d->leftAlignTool = d->addTool("format-justify-left", i18n("Left"), alignFrame,  Qt::ToolButtonTextBesideIcon, true);
@@ -459,10 +467,10 @@ PanelController::PanelController(QWidget* parent)
 
     //Panel mode
     //first the container
-    QFrame *modeFrame = new ButtonGroup(this);
+    QFrame *modeFrame = new ButtonGroup(m_configWidget);
     QVBoxLayout *modeLayout = new QVBoxLayout(modeFrame);
 
-    d->modeLabel = new QLabel(i18n("Visibility"), this);
+    d->modeLabel = new QLabel(i18n("Visibility"), m_configWidget);
     modeLayout->addWidget(d->modeLabel);
 
     d->normalPanelTool = d->addTool("checkmark", i18n("Always visible"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
@@ -486,13 +494,13 @@ PanelController::PanelController(QWidget* parent)
     connect(d->overWindowsTool, SIGNAL(toggled(bool)), this, SLOT(panelVisibilityModeChanged(bool)));
 
     d->layout->addStretch();
-    d->moveTool = d->addTool(QString(), i18n("Screen Edge"), this);
+    d->moveTool = d->addTool(QString(), i18n("Screen Edge"), m_configWidget);
     d->moveTool->setIcon(d->iconSvg->pixmap("move"));
     d->moveTool->installEventFilter(this);
     d->moveTool->setCursor(Qt::SizeAllCursor);
     d->layout->addWidget(d->moveTool);
 
-    d->sizeTool = d->addTool(QString(), i18n("Height"), this);
+    d->sizeTool = d->addTool(QString(), i18n("Height"), m_configWidget);
     d->sizeTool->installEventFilter(this);
     d->sizeTool->setCursor(Qt::SizeVerCursor);
     d->layout->addWidget(d->sizeTool);
@@ -502,7 +510,7 @@ PanelController::PanelController(QWidget* parent)
     d->layout->addSpacing(20);
 
     //Settings popup menu
-    d->settingsTool = d->addTool("configure", i18n("More Settings"), this);
+    d->settingsTool = d->addTool("configure", i18n("More Settings"), m_configWidget);
     d->layout->addWidget(d->settingsTool);
     connect(d->settingsTool, SIGNAL(pressed()), this, SLOT(settingsPopup()));
     d->optionsDialog = new Plasma::Dialog(0); // don't pass in a parent; breaks with some lesser WMs
@@ -514,17 +522,17 @@ PanelController::PanelController(QWidget* parent)
     d->optDialogLayout->addWidget(modeFrame);
 
 
-    d->expandTool = d->addTool(QString(), i18n("Maximize Panel"), this);
+    d->expandTool = d->addTool(QString(), i18n("Maximize Panel"), m_configWidget);
     d->expandTool->setIcon(d->iconSvg->pixmap("size-horizontal"));
     d->expandTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     d->optDialogLayout->addWidget(d->expandTool);
     connect(d->expandTool, SIGNAL(clicked()), this, SLOT(maximizePanel()));
 
-    ToolButton *closeControllerTool = d->addTool("window-close", i18n("Close this configuration window"), this, Qt::ToolButtonIconOnly, false);
+    ToolButton *closeControllerTool = d->addTool("window-close", i18n("Close this configuration window"), m_configWidget, Qt::ToolButtonIconOnly, false);
     d->layout->addWidget(closeControllerTool);
     connect(closeControllerTool, SIGNAL(clicked()), this, SLOT(close()));
 
-    d->ruler = new PositioningRuler(this);
+    d->ruler = new PositioningRuler(m_configWidget);
     connect(d->ruler, SIGNAL(rulersMoved(int, int, int)), this, SLOT(rulersMoved(int, int, int)));
     d->extLayout->addWidget(d->ruler);
 
@@ -537,6 +545,8 @@ PanelController::~PanelController()
     //TODO: should we try and only call this when something has actually been
     //      altered that we care about?
     PlasmaApp::self()->corona()->requestConfigSync();
+    delete m_widgetExplorer;
+    delete m_widgetExplorerView;
     delete d->optionsDialog;
     d->optionsDialog = 0;
     delete d;
@@ -548,7 +558,16 @@ void PanelController::setContainment(Plasma::Containment *containment)
         return;
     }
 
+    if (d->containment) {
+        disconnect(d->containment, 0, this, 0);
+    }
+    
+
     d->containment = containment;
+
+    if(m_widgetExplorer) {
+        m_widgetExplorer->setContainment(d->containment);
+    }
 
     QWidget *child;
     while (!d->actionWidgets.isEmpty()) {
@@ -567,7 +586,7 @@ void PanelController::setContainment(Plasma::Containment *containment)
         ToolButton *addWidgetTool = d->addTool(action, this);
         d->layout->insertWidget(insertIndex, addWidgetTool);
         ++insertIndex;
-        connect(addWidgetTool, SIGNAL(clicked()), this, SLOT(hide()));
+        connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetsExplorer()));
     }
 
     action = new QAction(i18n("Add Spacer"), this);
@@ -722,6 +741,19 @@ void PanelController::setLocation(const Plasma::Location &loc)
     d->ruler->setMaximumSize(d->ruler->sizeHint());
     d->syncRuler();
 
+    if(m_widgetExplorer) {
+        switch (loc) {
+        case Plasma::LeftEdge:
+        case Plasma::RightEdge:
+            m_widgetExplorer->setOrientation(Qt::Vertical);
+            break;
+        case Plasma::TopEdge:
+        case Plasma::BottomEdge:
+            m_widgetExplorer->setOrientation(Qt::Horizontal);
+            break;
+        }
+    }
+
     Plasma::WindowEffects::slideWindow(this, loc);
 }
 
@@ -794,6 +826,11 @@ PanelView::VisibilityMode PanelController::panelVisibilityMode() const
     }
 }
 
+bool PanelController::isHorizontal() const
+{
+    return d->location == Plasma::TopEdge || d->location == Plasma::BottomEdge;
+}
+
 void PanelController::themeChanged()
 {
     QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
@@ -805,16 +842,55 @@ void PanelController::themeChanged()
 
     d->sizeTool->setIcon(d->iconSvg->pixmap("move"));
 
-    switch (d->location) {
-        case Plasma::LeftEdge:
-        case Plasma::RightEdge:
-            d->sizeTool->setIcon(d->iconSvg->pixmap("size-horizontal"));
-            break;
-        case Plasma::TopEdge:
-        case Plasma::BottomEdge:
-        default:
-            d->sizeTool->setIcon(d->iconSvg->pixmap("size-vertical"));
+    if (isHorizontal()) {
+        d->sizeTool->setIcon(d->iconSvg->pixmap("size-vertical"));
+    } else {
+        d->sizeTool->setIcon(d->iconSvg->pixmap("size-horizontal"));
     }
+}
+
+void PanelController::showWidgetsExplorer()
+{
+    Qt::Orientation widgetExplorerOrientation = isHorizontal() ? Qt::Horizontal : Qt::Vertical;
+  
+    if (!d->containment) {
+        return;
+    }
+    
+    m_configWidget->hide();
+
+    if (!m_widgetExplorerView) {
+
+        m_widgetExplorerView = new QGraphicsView(this);
+        m_widgetExplorerView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        m_widgetExplorerView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        m_widgetExplorerView->setStyleSheet("background: transparent; border: none;");
+
+        m_widgetExplorerView->setScene(d->containment->corona());
+        m_widgetExplorerView->installEventFilter(this);
+        m_mainLayout->addWidget(m_widgetExplorerView);
+    }
+
+    if (!m_widgetExplorer) {
+        m_widgetExplorer = new Plasma::WidgetExplorer();
+        m_widgetExplorer->setContainment(d->containment);
+        m_widgetExplorer->setCorona(d->containment->corona());
+        m_widgetExplorer->setApplication();
+
+        m_widgetExplorer->resize(size());
+        d->containment->corona()->addOffscreenWidget(m_widgetExplorer);
+
+        m_widgetExplorerView->setSceneRect(m_widgetExplorer->geometry());
+
+        m_widgetExplorer->installEventFilter(this);
+    }
+
+    if (m_widgetExplorer->orientation() != widgetExplorerOrientation) {
+        m_widgetExplorer->setOrientation(widgetExplorerOrientation);
+    }
+
+    m_widgetExplorer->show();
+    // connect signals
 }
 
 void PanelController::paintEvent(QPaintEvent *event)
@@ -837,7 +913,8 @@ void PanelController::keyPressEvent(QKeyEvent *event)
 
 bool PanelController::eventFilter(QObject *watched, QEvent *event)
 {
-    if (watched == d->optionsDialog && event->type() == QEvent::WindowDeactivate) {
+    if (watched == d->optionsDialog && event->type() == QEvent::WindowDeactivate
+            && (!m_widgetExplorerView || !m_widgetExplorerView->isVisible())) {
         if (!d->settingsTool->underMouse()) {
             d->optionsDialog->hide();
         }
@@ -868,6 +945,20 @@ bool PanelController::eventFilter(QObject *watched, QEvent *event)
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
             mouseMoveFilter(mouseEvent);
         }
+    }
+    
+    //if widgetsExplorer moves or resizes, then the view has to adjust
+    if ((watched == (QObject*)m_widgetExplorer) && (event->type() == QEvent::GraphicsSceneResize || event->type() == QEvent::GraphicsSceneMove)) {
+//        int widgetExplorerMinimumHeight = m_widgetExplorer->effectiveSizeHint(Qt::MinimumSize).height();
+//        m_widgetExplorerView->resize(m_widgetExplorerView->width(),
+//                                     m_widgetExplorer->effectiveSizeHint(Qt::MinimumSize).height());
+//        m_mainLayout->
+        m_widgetExplorerView->setSceneRect(m_widgetExplorer->geometry());
+    } 
+     
+    //if the view resizes, then the widgetexplorer has to be resized
+    if (watched == m_widgetExplorerView && event->type() == QEvent::Resize) { 
+          m_widgetExplorer->resize(m_widgetExplorerView->geometry().size());
     }
 
     return false;
@@ -993,8 +1084,16 @@ void PanelController::focusOutEvent(QFocusEvent * event)
 {
     Q_UNUSED(event)
     if (!d->optionsDialog->isActiveWindow()) {
-        d->optionsDialog->hide();
-        close();
+        //qDebug() << "m_widgetExplorerView" << (void*) m_widgetExplorerView;
+        if(m_widgetExplorerView) {
+            if(!m_widgetExplorerView->isVisible()) {
+                d->optionsDialog->hide();
+                close();
+            }
+        } else {
+            d->optionsDialog->hide();
+            close();
+        }
     }
 }
 

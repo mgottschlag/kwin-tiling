@@ -29,7 +29,7 @@ class QToolButton;
 
 namespace Plasma
 {
-    class AppletBrowser;
+//    class AppletBrowser;
     class Containment;
 }
 
@@ -46,7 +46,7 @@ protected:
     void keyPressEvent(QKeyEvent *event);
     void showEvent(QShowEvent *event);
     void paintEvent(QPaintEvent *event);
-    bool eventFilter(QObject *watched, QEvent *event);
+//    bool eventFilter(QObject *watched, QEvent *event);
     bool event(QEvent *event);
 
 public slots:
@@ -62,15 +62,15 @@ public slots:
     void setContainment(Plasma::Containment *newContainment);
 
 protected slots:
-    void showAppletBrowser();
-    void appletBrowserDestroyed();
+   // void showAppletBrowser();
+ //   void appletBrowserDestroyed();
     void hideView();
-    void activeWindowChanged(WId id);
+ //   void activeWindowChanged(WId id);
     void suppressShowTimeout();
 
 private:
     Plasma::View *m_view;
-    Plasma::AppletBrowser *m_appletBrowser;
+   // Plasma::AppletBrowser *m_appletBrowser;
     QToolButton *m_closeButton;
     QPoint m_appletBrowserDragStart;
     QAction *m_hideAction;

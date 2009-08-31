@@ -36,7 +36,6 @@ class QTimer;
 
 namespace Plasma
 {
-    class AppletBrowser;
     class Containment;
     class Corona;
     class Dialog;
@@ -62,7 +61,6 @@ public:
 
     void notifyStartup(bool completed);
     Plasma::Corona* corona();
-    void showAppletBrowser(Plasma::Containment *containment);
 
     /**
      * Should be called when a panel hides or unhides itself
@@ -125,14 +123,12 @@ private Q_SLOTS:
     void cleanup();
     void containmentAdded(Plasma::Containment *containment);
     void syncConfig();
-    void appletBrowserDestroyed();
     void createView(Plasma::Containment *containment);
     void panelRemoved(QObject* panel);
     void waitingPanelRemoved(QObject* panel);
     void createWaitingPanels();
     void screenRemoved(int id);
     void compositingChanged();
-    void showAppletBrowser();
     void addContainment();
     void configureContainment(Plasma::Containment*);
     void updateActions(Plasma::ImmutabilityType immutability);
@@ -145,7 +141,6 @@ private:
     DesktopCorona *m_corona;
     QList<PanelView*> m_panels;
     QList<Plasma::Containment*> m_panelsWaiting;
-    Plasma::AppletBrowser *m_appletBrowser;
     Plasma::Dialog *m_controllerDialog;
     QList<DesktopView*> m_desktops;
     QTimer *m_panelViewCreationTimer;

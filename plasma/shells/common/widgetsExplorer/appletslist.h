@@ -138,7 +138,7 @@ Q_SIGNALS:
 private:
 
     //Hash containing all widgets that represents the applets
-    QHash<QString, AppletIconWidget *> *m_allAppletsHash;
+    QHash<QString, AppletIconWidget *> m_allAppletsHash;
 
     //list containing the applet icons of the filter proxy model
     QList<AppletIconWidget *> *m_currentAppearingAppletsOnList;

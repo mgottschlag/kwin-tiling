@@ -3,18 +3,15 @@ include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${KDEBASE_WORKSPACE_SOU
 add_subdirectory(configupdates)
 
 set(appletbrowserdialog_SRCS
-    ../common/appletbrowser.cpp
-    ../common/customdragtreeview.cpp
-    ../common/kcategorizeditemsview.cpp
-    ../common/kcategorizeditemsviewdelegate.cpp
-    ../common/kcategorizeditemsviewmodels.cpp
-    ../common/openwidgetassistant.cpp
-    ../common/plasmaappletitemmodel.cpp
-)
-
-kde4_add_ui_files (
-    appletbrowserdialog_SRCS
-    ../common/kcategorizeditemsviewbase.ui
+    ../common/widgetsExplorer/kcategorizeditemsviewmodels.cpp
+    ../common/widgetsExplorer/plasmaappletitemmodel.cpp
+    ../common/widgetsExplorer/appleticon.cpp
+    ../common/widgetsExplorer/appletsfiltering.cpp
+    ../common/widgetsExplorer/applettooltip.cpp
+    ../common/widgetsExplorer/appletslist.cpp
+    ../common/widgetsExplorer/managewidgets.cpp
+    ../common/widgetsExplorer/widgetexplorer.cpp
+    ../common/widgetsExplorer/openwidgetassistant.cpp
 )
 
 set(wallpaper_SRCS

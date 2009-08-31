@@ -36,7 +36,7 @@
 
 #include <kephal/screens.h>
 
-#include "appletbrowser.h"
+//#include "appletbrowser.h"
 #include "plasma-shell-desktop.h"
 
 static const int SUPPRESS_SHOW_TIMEOUT = 500; // Number of millis to prevent reshow of dashboard
@@ -44,7 +44,7 @@ static const int SUPPRESS_SHOW_TIMEOUT = 500; // Number of millis to prevent res
 DashboardView::DashboardView(Plasma::Containment *containment, Plasma::View *view)
     : Plasma::View(containment, 0),
       m_view(view),
-      m_appletBrowser(0),
+     // m_appletBrowser(0),
       m_closeButton(new QToolButton(this)),
       m_suppressShow(false),
       m_zoomIn(false),
@@ -81,7 +81,7 @@ DashboardView::DashboardView(Plasma::Containment *containment, Plasma::View *vie
 
 DashboardView::~DashboardView()
 {
-    delete m_appletBrowser;
+    //delete m_appletBrowser;
 }
 
 void DashboardView::drawBackground(QPainter * painter, const QRectF & rect)
@@ -139,7 +139,7 @@ void DashboardView::paintEvent(QPaintEvent *event)
     painter.drawText(boundingBox.adjusted(margin, 0, 0, 0), Qt::AlignLeft | Qt::AlignVCenter, text);
 }
 
-void DashboardView::showAppletBrowser()
+/*void DashboardView::showAppletBrowser()
 {
     if (!containment()) {
         return;
@@ -163,14 +163,14 @@ void DashboardView::showAppletBrowser()
     }
 
     m_appletBrowser->setHidden(m_appletBrowser->isVisible());
-}
+}*/
 
-void DashboardView::appletBrowserDestroyed()
+/*void DashboardView::appletBrowserDestroyed()
 {
     m_appletBrowser = 0;
-}
+}*/
 
-bool DashboardView::eventFilter(QObject *watched, QEvent *event)
+/*bool DashboardView::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched != m_appletBrowser) {
         return false;
@@ -212,7 +212,7 @@ bool DashboardView::eventFilter(QObject *watched, QEvent *event)
     }
 
     return false;
-}
+}*/
 
 bool DashboardView::event(QEvent *event)
 {
@@ -298,9 +298,9 @@ void DashboardView::setContainment(Plasma::Containment *newContainment)
         newContainment->enableAction("zoom in", false);
     }
 
-    if (m_appletBrowser) {
+   /* if (m_appletBrowser) {
         m_appletBrowser->setContainment(newContainment);
-    }
+    }*/
 
     View::setContainment(0); // we don't actually to mess with the screen settings
     View::setContainment(newContainment);
@@ -308,9 +308,9 @@ void DashboardView::setContainment(Plasma::Containment *newContainment)
 
 void DashboardView::hideView()
 {
-    if (m_appletBrowser) {
+    /*if (m_appletBrowser) {
         m_appletBrowser->hide();
-    }
+    }*/
 
 #ifndef Q_WS_WIN
     disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
@@ -345,12 +345,12 @@ void DashboardView::keyPressEvent(QKeyEvent *event)
     Plasma::View::keyPressEvent(event);
 }
 
-void DashboardView::activeWindowChanged(WId id)
+/*void DashboardView::activeWindowChanged(WId id)
 {
     if (id != winId() && (!m_appletBrowser || id != m_appletBrowser->winId()) && find(id) != 0) {
         hideView();
     }
-}
+}*/
 
 void DashboardView::showEvent(QShowEvent *event)
 {

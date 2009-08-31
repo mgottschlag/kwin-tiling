@@ -26,12 +26,15 @@
 
 #include "panelview.h"
 
-
+class QBoxLayout;
+class QGraphicsView;
 
 namespace Plasma
 {
     class Containment;
+    class WidgetExplorer;
 }
+
 
 class PanelController : public QWidget
 {
@@ -59,9 +62,6 @@ public:
     void setVisibilityMode(PanelView::VisibilityMode);
     PanelView::VisibilityMode panelVisibilityMode() const;
 
-public Q_SLOTS:
-    void themeChanged();
-
 protected:
     void paintEvent(QPaintEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
@@ -77,8 +77,13 @@ Q_SIGNALS:
      void locationChanged(Plasma::Location);
      void panelVisibilityModeChanged(PanelView::VisibilityMode mode);
 
+private Q_SLOTS:
+    void themeChanged();
+    void showWidgetsExplorer();
+
 private:
     void mouseMoveFilter(QMouseEvent *event);
+    bool isHorizontal() const;
 
     Q_PRIVATE_SLOT(d, void rulersMoved(int offset, int minLength, int minLength))
     Q_PRIVATE_SLOT(d, void alignToggled(bool toggle))
@@ -91,6 +96,11 @@ private:
 
     class Private;
     Private *d;
+
+    QBoxLayout *m_mainLayout;
+    QWidget *m_configWidget;
+    QGraphicsView *m_widgetExplorerView;
+    Plasma::WidgetExplorer *m_widgetExplorer;
 };
 
 

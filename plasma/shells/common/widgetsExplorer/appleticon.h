@@ -22,13 +22,11 @@
 
 #include "plasmaappletitemmodel_p.h"
 
-#include <QtCore>
-#include <QtGui>
+#include <QGraphicsWidget>
 
 #include <plasma/framesvg.h>
-#include <plasma/widgets/iconwidget.h>
 
-class AppletIconWidget : public Plasma::IconWidget
+class AppletIconWidget : public QGraphicsWidget
 {
     Q_OBJECT
 
@@ -36,20 +34,11 @@ class AppletIconWidget : public Plasma::IconWidget
         explicit AppletIconWidget(QGraphicsItem *parent = 0, PlasmaAppletItem *appletItem = 0);
         virtual ~AppletIconWidget();
 
+        void setIconHeight(int height);
         void setAppletItem(PlasmaAppletItem *appletIcon);
         void setSelected(bool selected);
         PlasmaAppletItem *appletItem();
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
-
-        //listen to events and emit signals
-        void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-        void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
-        void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-        void mousePressEvent(QGraphicsSceneMouseEvent *event);
-        void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-
-    public Q_SLOTS:
-        void updateApplet(PlasmaAppletItem *newAppletItem);
 
     Q_SIGNALS:
         void hoverEnter(AppletIconWidget *applet);
@@ -57,10 +46,20 @@ class AppletIconWidget : public Plasma::IconWidget
         void selected(AppletIconWidget *applet);
         void doubleClicked(AppletIconWidget *applet);
 
+    protected:
+        //listen to events and emit signals
+        void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+        void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+        void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+        void mousePressEvent(QGraphicsSceneMouseEvent *event);
+        void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+        void resizeEvent(QGraphicsSceneResizeEvent *);
+
     private:
         PlasmaAppletItem *m_appletItem;
         bool m_selected;
         bool m_hovered;
+        int m_iconHeight;
         Plasma::FrameSvg *m_selectedBackgroundSvg;
 };
 

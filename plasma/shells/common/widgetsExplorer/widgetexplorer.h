@@ -48,8 +48,6 @@ public:
     WidgetExplorer(QGraphicsItem *parent = 0);
     ~WidgetExplorer();
 
-    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
-
     QString application();
     void setApplication(const QString &application = QString());
     /**
@@ -80,6 +78,8 @@ public:
      * @arg the new orientation
      */
     void setOrientation(Qt::Orientation orientation);
+
+    Qt::Orientation orientation();
 
 protected:
 
@@ -127,7 +127,6 @@ private:
     Q_PRIVATE_SLOT(d, void containmentDestroyed())
 
     WidgetExplorerPrivate * const d;
-    Plasma::FrameSvg *m_backgroundSvg;
 
 };
 

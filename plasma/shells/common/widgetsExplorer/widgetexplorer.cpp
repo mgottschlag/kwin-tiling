@@ -70,7 +70,6 @@ public:
     void containmentDestroyed();
     void setOrientation(Qt::Orientation orientation);
     void adjustContentsSize();
-    void setMainSize();
 
     /**
      * Tracks a new running applet
@@ -147,8 +146,6 @@ void WidgetExplorerPrivate::init(Qt::Orientation orient)
     filteringWidget = new FilteringWidget(orientation);
     appletsListWidget = new AppletsListWidget(orientation);
 
-    setMainSize();
-
     //connect
     QObject::connect(appletsListWidget, SIGNAL(appletDoubleClicked(PlasmaAppletItem*)), q, SLOT(addApplet(PlasmaAppletItem*)));
     QObject::connect(filteringWidget->textSearch()->nativeWidget(), SIGNAL(textChanged(QString)), appletsListWidget, SLOT(searchTermChanged(QString)));
@@ -166,58 +163,34 @@ void WidgetExplorerPrivate::init(Qt::Orientation orient)
     appletsListWidget->setItemModel(&itemModel);
     initRunningApplets();
 
-    q->setContentsMargins(15,15,15,15);
     q->setLayout(mainLayout);
 
 }
 
-void WidgetExplorerPrivate::setMainSize()
-{
-    // **** find a fancier way to use screen ****
-    QDesktopWidget *screen = new QDesktopWidget();
-    QSize screenSize = screen->screenGeometry(-1).size();
-
-    if(orientation == Qt::Horizontal) {
-       q->setMinimumWidth(screenSize.width());
-       q->setMaximumWidth(screenSize.width());
-       q->setMinimumHeight(screenSize.height()/4);
-       q->setMaximumHeight(screenSize.height()/4);
-    } else {
-       q->setMinimumHeight(screenSize.height());
-       q->setMaximumHeight(screenSize.height());
-       q->setMinimumWidth(screenSize.width()/5);
-       q->setMaximumWidth(screenSize.width()/5);
-    }
-}
-
 void WidgetExplorerPrivate::adjustContentsSize()
 {
-    mainLayout->invalidate();
-
     QSizeF contentsSize = q->contentsRect().size();
 
-    if(orientation == Qt::Horizontal) {
-        if(filteringWidget != 0) {
+    if (orientation == Qt::Horizontal) {
+        if (filteringWidget != 0) {
             filteringWidget->setPreferredSize(-1, -1);
         }
 
-        if(appletsListWidget != 0) {
+        if (appletsListWidget != 0) {
             appletsListWidget->setPreferredSize(-1,-1);
         }
-
     } else {
-        if(filteringWidget != 0) {
+        if (filteringWidget != 0) {
             filteringWidget->setMinimumHeight(contentsSize.height()/5);
             filteringWidget->setMaximumHeight(contentsSize.height()/5);
             filteringWidget->setMinimumWidth(contentsSize.width());
             filteringWidget->setMaximumWidth(contentsSize.width());
         }
 
-        if(appletsListWidget != 0) {
+        if (appletsListWidget != 0) {
             appletsListWidget->setPreferredSize(-1,-1);
         }
     }
-    mainLayout->activate();
 }
 
 void WidgetExplorerPrivate::setOrientation(Qt::Orientation orient)
@@ -225,8 +198,6 @@ void WidgetExplorerPrivate::setOrientation(Qt::Orientation orient)
     orientation = orient;
     filteringWidget->setListOrientation(orientation);
     appletsListWidget->setOrientation(orientation);
-
-    setMainSize();
 }
 
 void WidgetExplorerPrivate::initPushButtonWidgetMenu()
@@ -311,8 +282,6 @@ WidgetExplorer::WidgetExplorer(QGraphicsItem *parent)
         d(new WidgetExplorerPrivate(this))
 {
     d->init(Qt::Horizontal);
-    m_backgroundSvg = new Plasma::FrameSvg(this);
-    m_backgroundSvg->setImagePath("widgets/translucentbackground");
 }
 
 WidgetExplorer::~WidgetExplorer()
@@ -320,7 +289,8 @@ WidgetExplorer::~WidgetExplorer()
      delete d;
 }
 
-void WidgetExplorer::resizeEvent(QGraphicsSceneResizeEvent *event) {
+void WidgetExplorer::resizeEvent(QGraphicsSceneResizeEvent *event)
+{
     Q_UNUSED(event);
     d->adjustContentsSize();
 }
@@ -331,14 +301,10 @@ void WidgetExplorer::setOrientation(Qt::Orientation orientation)
     emit(orientationChanged(orientation));
 }
 
-void WidgetExplorer::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
- {
-     QGraphicsWidget::paint(painter, option, widget);
-     m_backgroundSvg->resizeFrame(size());
-     m_backgroundSvg->paintFrame(painter, pos());
-     //again
-     m_backgroundSvg->paintFrame(painter, pos());
- }
+Qt::Orientation WidgetExplorer::orientation()
+{
+    return d->orientation;
+}
 
 void WidgetExplorer::setApplication(const QString &app)
 {

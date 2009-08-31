@@ -185,8 +185,8 @@ void FilteringWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
     Q_UNUSED(event)
 
     QSizeF contentsSize = m_linearLayout->contentsRect().size();
-    m_linearLayout->invalidate();
-    m_linearLayout->activate();
+//    m_linearLayout->invalidate();
+//    m_linearLayout->activate();
 
     if(m_orientation == Qt::Horizontal) {
         //don't let it occupy the whole layout width
