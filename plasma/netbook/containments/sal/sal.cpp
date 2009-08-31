@@ -493,7 +493,7 @@ bool SearchLaunch::eventFilter(QObject *watched, QEvent *event)
     if (event->type() == QEvent::GraphicsSceneHoverEnter) {
         Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
         if (icon) {
-            m_hoverIndicator->setTarget(icon->geometry());
+            m_hoverIndicator->setTargetItem(icon);
             m_hoverIndicator->show();
         }
     } else if (event->type() == QEvent::GraphicsSceneHoverLeave &&

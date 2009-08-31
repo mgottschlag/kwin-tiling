@@ -303,6 +303,7 @@ bool StripWidget::eventFilter(QObject *watched, QEvent *event)
         if (icon) {
             QGraphicsWidget *parent = icon->parentWidget();
             if (parent) {
+                m_hoverIndicator->show();
                 m_hoverIndicator->setTargetItem(parent);
             }
         }
