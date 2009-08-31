@@ -20,7 +20,7 @@
 #ifndef SELECTIONBAR_H
 #define SELECTIONBAR_H
 
-#include <QGraphicsWidget>
+#include <Plasma/ItemBackground>
 
 class QTimer;
 
@@ -31,47 +31,18 @@ namespace Plasma
 
 class ResultItem;
 
-class SelectionBar : public QGraphicsWidget
+class SelectionBar : public Plasma::ItemBackground
 {
     Q_OBJECT
 
 public:
     SelectionBar(QGraphicsWidget *parent);
 
-    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
-    void getMargins(qreal &left, qreal &top, qreal &right, qreal &bottom) const;
-
-signals:
-    void graphicsChanged();
-    void ensureVisibility(QGraphicsItem * item);
-
 protected:
-    void resizeEvent(QGraphicsSceneResizeEvent *event);
     QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value);
-    bool sceneEventFilter(QGraphicsItem *watched, QEvent *event);
 
-private:
+private Q_SLOTS:
     void acquireTarget();
-
-private slots:
-    void itemSelected();
-    void movementFinished(int id);
-    void frameSvgChanged();
-    void disappear();
-    void targetDestroyed();
-    void targetChangedSize();
-    void animateAndCenter(qreal t);
-
-private:
-    QTimer *m_hideTimer;
-    Plasma::FrameSvg *m_frame;
-    int m_animId;
-    ResultItem *m_target;
-    QRectF m_animStartRect;
-    QRectF m_animEndRect;
-    
-    static const int ANIM_FRAMES = 20;
-    static const int ANIM_DURATION = 100;
 };
 
 #endif

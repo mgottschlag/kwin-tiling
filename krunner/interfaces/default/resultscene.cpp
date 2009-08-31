@@ -67,7 +67,7 @@ ResultScene::ResultScene(Plasma::RunnerManager *manager, QWidget *focusBase, QOb
     m_selectionBar->hide();
     updateItemMargins();
 
-    connect(m_selectionBar, SIGNAL(graphicsChanged()), this, SLOT(updateItemMargins()));
+    connect(m_selectionBar, SIGNAL(appearanceChanged()), this, SLOT(updateItemMargins()));
     //QColor bg(255, 255, 255, 126);
     //setBackgroundBrush(bg);
 }
@@ -399,8 +399,8 @@ Plasma::RunnerManager* ResultScene::manager() const
 */
 void ResultScene::updateItemMargins()
 {
-    m_selectionBar->getMargins(m_itemMarginLeft, m_itemMarginTop,
-                               m_itemMarginRight, m_itemMarginBottom);
+    m_selectionBar->getContentsMargins(&m_itemMarginLeft, &m_itemMarginTop,
+                                       &m_itemMarginRight, &m_itemMarginBottom);
 
     foreach (ResultItem *item, m_items) {
         item->setContentsMargins(m_itemMarginLeft, m_itemMarginTop,

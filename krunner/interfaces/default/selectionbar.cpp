@@ -31,129 +31,21 @@
 #include "resultitem.h"
 
 SelectionBar::SelectionBar(QGraphicsWidget *parent)
-    : QGraphicsWidget(parent),
-      m_frame(new Plasma::FrameSvg(this)),
-      m_animId(0),
-      m_target(0)
+    : Plasma::ItemBackground(parent)
 {
-    setCacheMode(DeviceCoordinateCache);
-    setZValue(-1000);
-    setFlag(ItemIsMovable, false);
-    setFlag(ItemIsSelectable, false);
-    setFlag(ItemIsFocusable, false);
-
-    m_hideTimer = new QTimer(this);
-    m_hideTimer->setInterval(100);
-    m_hideTimer->setSingleShot(true);
-    connect(m_hideTimer, SIGNAL(timeout()), this, SLOT(disappear()));
-
-    m_frame->setImagePath("widgets/viewitem");
-    m_frame->setCacheAllRenderedFrames(true);
-    m_frame->setElementPrefix("hover");
-
-    connect(m_frame, SIGNAL(repaintNeeded()), this, SLOT(frameSvgChanged()));
-    connect(Plasma::Animator::self(), SIGNAL(customAnimationFinished(int)),
-            this, SLOT(movementFinished(int)));
-}
-
-void SelectionBar::getMargins(qreal &left, qreal &top, qreal &right, qreal &bottom) const
-{
-    return m_frame->getMargins(left, top, right, bottom);
-}
-
-void SelectionBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
-    Q_UNUSED(widget)
-    m_frame->paintFrame(painter, option->exposedRect, option->exposedRect);
-}
-
-void SelectionBar::animateAndCenter(qreal t)
-{
-    setPos(m_animStartRect.topLeft()*(1-t)+m_animEndRect.topLeft()*t);
-    if (m_target && !m_target->mouseHovered()) {
-        emit ensureVisibility(this);
-    }
 }
 
 void SelectionBar::acquireTarget()
 {
-    if (m_target) {
-        disconnect(m_target, 0, this, 0);
-        m_target->removeSceneEventFilter(this);
-    }
-
-    m_target = 0;
     QList<QGraphicsItem *> selection = scene()->selectedItems();
-
-    if (selection.count() != 1) {
+    if (selection.isEmpty()) {
+        setTargetItem(0);
         return;
     }
 
-    m_target = dynamic_cast<ResultItem *>(selection.first());
-
-    if (m_target) {
-        connect(m_target, SIGNAL(sizeChanged(ResultItem*)), this, SLOT(targetChangedSize()));
-        connect(m_target, SIGNAL(destroyed(QObject*)), this, SLOT(targetDestroyed()));
-        m_target->installSceneEventFilter(this);
-    }
-}
-
-void SelectionBar::movementFinished(int id)
-{
-    if (id != m_animId) {
-        return;
-    }
-
-    m_animId = 0;
-
-    if (m_target) {
-        resize(m_target->size());
-    }
-}
-
-void SelectionBar::frameSvgChanged()
-{
-    update();
-    emit graphicsChanged();
-}
-
-void SelectionBar::disappear()
-{
-    hide();
-}
-
-void SelectionBar::targetDestroyed()
-{
-    m_target = 0;
-}
-
-void SelectionBar::itemSelected()
-{
-    if (m_animId) {
-        Plasma::Animator::self()->stopCustomAnimation(m_animId);
-    }
-
-    acquireTarget();
-
-    if (!m_target) {
-        //TODO: animate the hide
-        m_hideTimer->start();
-        return;
-    }
-
-    m_hideTimer->stop();
-
-    QRectF rect(m_target->geometry());
-
-    if (!isVisible()) {
-        resize(rect.size());
-        setPos(rect.topLeft());
-        show();
-    } else {
-        m_animStartRect = geometry();
-        m_animEndRect = rect;
-        m_animId = Plasma::Animator::self()->customAnimation(ANIM_FRAMES,ANIM_DURATION, Plasma::Animator::EaseInCurve, this, "animateAndCenter");
-    }
+    kDebug() << "showing an item!";
+    setVisible(true);
+    setTargetItem(selection.first());
 }
 
 QVariant SelectionBar::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
@@ -161,12 +53,12 @@ QVariant SelectionBar::itemChange(QGraphicsItem::GraphicsItemChange change, cons
     switch (change) {
         case ItemSceneChange: {
             if (scene()) {
-                disconnect(scene(), SIGNAL(selectionChanged()), this, SLOT(itemSelected()));
+                disconnect(scene(), SIGNAL(selectionChanged()), this, SLOT(acquireTarget()));
             }
 
             QGraphicsScene *newScene = value.value<QGraphicsScene*>();
             if (newScene) {
-                connect(newScene, SIGNAL(selectionChanged()), this, SLOT(itemSelected()));
+                connect(newScene, SIGNAL(selectionChanged()), this, SLOT(acquireTarget()));
             }
         }
         break;
@@ -176,43 +68,6 @@ QVariant SelectionBar::itemChange(QGraphicsItem::GraphicsItemChange change, cons
     }
 
     return QGraphicsWidget::itemChange(change, value);
-}
-
-bool SelectionBar::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
-{
-    if (static_cast<QGraphicsItem*>(m_target) == watched) {
-        //kDebug() << event->type() << QEvent::GraphicsSceneResize << QEvent::Resize;
-        switch (event->type()) {
-            case QEvent::GraphicsSceneResize: {
-                QResizeEvent *resizeEvent = static_cast<QResizeEvent*>(event);
-                //kDebug() << "resizing to" << resizeEvent->oldSize() << resizeEvent->size();
-                resize(resizeEvent->size());
-                update();
-            }
-            break;
-
-            case QEvent::GraphicsSceneMove:
-                setPos(m_target->pos());
-            break;
-
-            default:
-            break;
-        }
-    }
-
-    return QGraphicsWidget::sceneEventFilter(watched, event);
-}
-
-void SelectionBar::targetChangedSize()
-{
-    resize(m_target->size());
-}
-
-void SelectionBar::resizeEvent(QGraphicsSceneResizeEvent *event)
-{
-    Q_UNUSED(event)
-    m_frame->resizeFrame(rect().size());
-    update();
 }
 
 #include <selectionbar.moc>
