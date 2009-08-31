@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>372</width>
-    <height>117</height>
+    <width>405</width>
+    <height>143</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -114,6 +114,20 @@
     <widget class="KIntSpinBox" name="dialogIconSizeSpin">
      <property name="suffix">
       <string>px</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Show icon names:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QCheckBox" name="iconNamesCheckBox">
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>

@@ -167,6 +167,8 @@ class QuicklaunchApplet : public Plasma::Applet
         void saveConfig() {}
 
         bool dropHandler(const int pos, const QMimeData *mimedata);
+	
+        void setShowIconNames(bool set);
 
         QGraphicsLinearLayout *m_layout;
         QuicklaunchLayout *m_innerLayout;
@@ -186,6 +188,7 @@ class QuicklaunchApplet : public Plasma::Applet
         QuicklaunchIcon *m_rightClickedIcon;
         QPointF m_mousePressPos;
         bool m_isBusy;
+	bool m_showIconNames;
 
         QAction* m_addAction;
         QAction* m_removeAction;

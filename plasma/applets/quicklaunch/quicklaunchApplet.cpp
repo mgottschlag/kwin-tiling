@@ -63,7 +63,8 @@ QuicklaunchApplet::QuicklaunchApplet(QObject *parent, const QVariantList &args)
     m_addAction(0),
     m_removeAction(0),
     m_sortappAscending(0),
-    m_sortappDescending(0)
+    m_sortappDescending(0),
+    m_showIconNames(false)
 {
     setHasConfigurationInterface(true);
     setAcceptDrops(true);
@@ -104,6 +105,9 @@ void QuicklaunchApplet::init()
     m_preferredIconSize = m_iconSize = qMax(s_defaultIconSize, (int)cg.readEntry("iconSize", contentsRect().height() / 2));
     m_visibleIcons = qMax(-1, cg.readEntry("visibleIcons", m_visibleIcons));
     m_dialogIconSize = qMax(s_defaultIconSize, (int)cg.readEntry("dialogIconSize", contentsRect().height() / 2));
+
+    m_showIconNames = (bool)cg.readEntry("showIconNames", false);
+    setShowIconNames(m_showIconNames);
 
     // Initialize outer layout
     m_layout = new QGraphicsLinearLayout(this);
@@ -153,6 +157,13 @@ void QuicklaunchApplet::init()
     }
 
     m_isBusy = false;
+}
+
+void QuicklaunchApplet::setShowIconNames(bool set)
+{
+    foreach (QuicklaunchIcon *icon, m_icons) {
+        icon->setText(set ? icon->appName() : QString());
+    }
 }
 
 QSizeF QuicklaunchApplet::sizeHint(Qt::SizeHint which, const QSizeF & constraint) const
@@ -325,6 +336,8 @@ void QuicklaunchApplet::createConfigurationInterface(KConfigDialog *parent)
     uiConfig.iconSizeSlider->setValue(m_preferredIconSize);
     uiConfig.dialogIconSizeSpin->setValue(m_dialogIconSize);
     uiConfig.dialogIconSizeSlider->setValue(m_dialogIconSize);
+    
+    uiConfig.iconNamesCheckBox->setChecked(m_showIconNames);
 
     uiConfig.icons->setValue(m_visibleIcons);
     parent->addPage(widget, i18n("General"), icon());
@@ -356,6 +369,14 @@ void QuicklaunchApplet::configAccepted()
         m_dialogIconSize = temp;
         cg.writeEntry("dialogIconSize", m_dialogIconSize);
         changed = true;
+    }
+    
+    bool iconNames = uiConfig.iconNamesCheckBox->isChecked();
+    if (m_showIconNames != iconNames) {
+        m_showIconNames = iconNames;
+	cg.writeEntry("showIconNames", m_showIconNames);
+        setShowIconNames(m_showIconNames);
+	changed = true;
     }
 
     if (changed) {
@@ -631,6 +652,9 @@ void QuicklaunchApplet::addProgram(int index, const QString &url, bool isNewIcon
     }
 
     QuicklaunchIcon *container = new QuicklaunchIcon(appUrl, text, icon, genericName, this);
+    if (m_showIconNames) {
+        container->setText(container->appName());
+    }
     container->installEventFilter(this);
 
     m_icons.insert(index, container);
