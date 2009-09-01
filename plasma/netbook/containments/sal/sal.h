@@ -32,6 +32,7 @@
 class QAction;
 class QTimer;
 class StripWidget;
+class GridItemView;
 
 namespace Plasma
 {
@@ -75,6 +76,7 @@ private slots:
     void addFavourite();
     void reset();
     void relayout();
+    void selectItem(Plasma::IconWidget *);
 
 private:
     /**

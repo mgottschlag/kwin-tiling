@@ -24,12 +24,12 @@
 #include <Plasma/IconWidget>
 
 GridItemView::GridItemView(QGraphicsWidget *parent)
-    : QGraphicsWidget(parent),
+    : Plasma::Frame(parent),
+      m_layout(0),
       m_currentIcon(0),
       m_currentIconIndexX(-1),
       m_currentIconIndexY(-1)
 {
-    
 }
 
 GridItemView::~GridItemView()
@@ -37,16 +37,34 @@ GridItemView::~GridItemView()
 
 void GridItemView::keyPressEvent(QKeyEvent *event)
 {
+    if (!m_layout) {
+        m_layout = dynamic_cast<QGraphicsGridLayout *>(layout());
+    }
+    if (!m_layout) {
+        return;
+    }
     switch (event->key()) {
     case Qt::Key_Left: {
-        m_currentIconIndexX = (m_layout->count() + m_currentIconIndexX - 1) % m_layout->count();
-        m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexX, m_currentIconIndexY));
+        m_currentIconIndexX = (m_layout->columnCount() + m_currentIconIndexX - 1) % m_layout->columnCount();
+        m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
         emit itemSelected(m_currentIcon);
         break;
     }
     case Qt::Key_Right: {
-        m_currentIconIndexX = (m_currentIconIndexX + 1) % m_layout->count();
-        m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexX, m_currentIconIndexY));
+        m_currentIconIndexX = (m_currentIconIndexX + 1) % m_layout->columnCount();
+        m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
+        emit itemSelected(m_currentIcon);
+        break;
+    }
+    case Qt::Key_Up: {
+        m_currentIconIndexY = (m_layout->columnCount() + m_currentIconIndexY - 1) % m_layout->columnCount();
+        m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
+        emit itemSelected(m_currentIcon);
+        break;
+    }
+    case Qt::Key_Down: {
+        m_currentIconIndexY = (m_currentIconIndexY + 1) % m_layout->columnCount();
+        m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
         emit itemSelected(m_currentIcon);
         break;
     }
@@ -61,8 +79,15 @@ void GridItemView::keyPressEvent(QKeyEvent *event)
 
 void GridItemView::focusInEvent(QFocusEvent *event)
 {
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_layout->itemAt(0, 0));
-    emit itemSelected(icon);
+    if (!m_layout) {
+        m_layout = dynamic_cast<QGraphicsGridLayout *>(layout());
+    }
+    if (m_layout) {
+        m_currentIconIndexX = 0;
+        m_currentIconIndexY = 0;
+        Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_layout->itemAt(0, 0));
+        emit itemSelected(icon);
+    }
 }
 
 void GridItemView::focusOutEvent(QFocusEvent *event)

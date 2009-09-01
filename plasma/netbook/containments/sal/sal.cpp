@@ -20,6 +20,7 @@
 
 #include "sal.h"
 #include "stripwidget.h"
+#include "griditemview.h"
 
 #include <QPainter>
 #include <QAction>
@@ -371,7 +372,9 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             // create launch grid and make it centered
             QGraphicsLinearLayout *gridLayout = new QGraphicsLinearLayout(Qt::Vertical);
 
-            Plasma::Frame *gridBackground = new Plasma::Frame(this);
+            Plasma::Frame *gridBackground = new GridItemView(this);
+            connect(gridBackground, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
+            gridBackground->setFocusPolicy(Qt::StrongFocus);
             gridBackground->setFrameShadow(Plasma::Frame::Plain);
             gridBackground->setAcceptHoverEvents(true);
             gridBackground->installEventFilter(this);
@@ -488,13 +491,19 @@ void SearchLaunch::dataUpdated(const QString &sourceName, const Plasma::DataEngi
     doSearch(query);
 }
 
+void SearchLaunch::selectItem(Plasma::IconWidget *icon)
+{
+    m_hoverIndicator->show();
+    m_hoverIndicator->setTargetItem(icon);
+}
+
 bool SearchLaunch::eventFilter(QObject *watched, QEvent *event)
 {
     if (event->type() == QEvent::GraphicsSceneHoverEnter) {
         Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
         if (icon) {
-            m_hoverIndicator->setTargetItem(icon);
             m_hoverIndicator->show();
+            m_hoverIndicator->setTargetItem(icon);
         }
     } else if (event->type() == QEvent::GraphicsSceneHoverLeave &&
                qobject_cast<Plasma::Frame *>(watched)) {
