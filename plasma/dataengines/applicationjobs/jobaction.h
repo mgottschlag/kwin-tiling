@@ -32,7 +32,7 @@ class JobAction : public Plasma::ServiceJob
                   const QString& operation,
                   QMap<QString,QVariant>& parameters,
                   QObject* parent = 0)
-        : ServiceJob(jobView->sourceName(), operation, parameters, parent),
+        : ServiceJob(jobView->objectName(), operation, parameters, parent),
           m_jobView(jobView)
         {
         }

@@ -25,7 +25,7 @@ JobControl::JobControl(QObject* parent, JobView *jobView)
       m_jobView(jobView)
 {
     setName("applicationjobs");
-    setDestination(jobView->sourceName());
+    setDestination(jobView->objectName());
 }
 
 Plasma::ServiceJob* JobControl::createJob(const QString& operation,

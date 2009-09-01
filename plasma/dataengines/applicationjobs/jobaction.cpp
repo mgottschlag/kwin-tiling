@@ -35,11 +35,11 @@ void JobAction::start()
 
     //TODO: check with capabilities before performing actions.
     if (operationName() == "resume") {
-        emit m_jobView->resumeRequested();
+        m_jobView->requestStateChange(JobView::Running);
     } else if (operationName() == "suspend") {
-        emit m_jobView->suspendRequested();
+        m_jobView->requestStateChange(JobView::Suspended);
     } else if (operationName() == "stop") {
-        emit m_jobView->cancelRequested();
+        m_jobView->requestStateChange(JobView::Stopped);
         //in case the app crashed and won't call terminate on the jobview.
         m_jobView->terminate(i18n("Job canceled by user."));
     }

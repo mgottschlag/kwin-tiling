@@ -21,7 +21,8 @@
 
 #include <QDBusObjectPath>
 
-#include <plasma/dataengine.h>
+#include <Plasma/DataContainer>
+#include <Plasma/DataEngine>
 
 class JobView;
 
@@ -45,24 +46,18 @@ public:
 
     static uint s_jobId;
 
-public Q_SLOTS:
-    void sourceUpdated(JobView* jobView);
-
 protected:
     void init();
-
-private:
-    QMap<QString, JobView*> m_jobViews;
-
 };
 
-class JobView : public QObject
+class JobView : public Plasma::DataContainer
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.kde.JobView")
 
 public:
     enum State {
+                 UnknownState = -1,
                  Running = 0,
                  Suspended = 1,
                  Stopped = 2
@@ -70,6 +65,8 @@ public:
 
     JobView(QObject *parent = 0);
     ~JobView();
+
+    uint jobId() const;
 
     void setTotalAmount(qlonglong amount, const QString &unit);
     QString totalAmountSize() const;
@@ -94,9 +91,9 @@ public:
 
     void terminate(const QString &errorMessage);
 
-    QString sourceName() const;
-
     QDBusObjectPath objectPath() const;
+
+    void requestStateChange(State state);
 
 public Q_SLOTS:
     void finished();
@@ -106,31 +103,26 @@ Q_SIGNALS:
     void resumeRequested();
     void cancelRequested();
 
-    void viewUpdated(JobView* view);
+protected:
+    void timerEvent(QTimerEvent *event);
 
 private:
+    void scheduleUpdate();
+    int unitId(const QString &unit);
+
     QDBusObjectPath m_objectPath;
 
     uint m_capabilities;
-    uint m_jobId;
     uint m_percent;
+    uint m_jobId;
+    int m_updateTimerId;
 
     qlonglong m_speed;
 
     State m_state;
 
-    QString m_infoMessage;
-    QString m_appName;
-    QString m_appIconName;
-    QString m_error;
-
-    QMap<int, QString> m_labels;
-    QMap<int, QString> m_labelNames;
-    QMap<QString, qlonglong> m_totalMap;
-    QMap<QString, qlonglong> m_processedMap;
-
-    friend class KuiserverEngine;
-    friend class JobAction;
+    QMap<QString, int> m_unitMap;
+    int m_unitId;
 };
 
 #endif
