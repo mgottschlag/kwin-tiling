@@ -429,6 +429,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_homeButton->setIcon(KIcon("go-home"));
             m_homeButton->setText(i18n("Home"));
             connect(m_homeButton, SIGNAL(activated()), this, SLOT(reset()));
+            connect(gridBackground, SIGNAL(resetRequested()), this, SLOT(reset()));
             //FIXME: do it for each theme change, another place where anchorlayout would shine, now there is an hardcoded value, not acceptable
             m_homeButton->setPos(QPoint(0, 32) + m_mainLayout->contentsRect().topLeft());
             reset();

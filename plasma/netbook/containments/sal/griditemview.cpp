@@ -83,6 +83,11 @@ void GridItemView::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Enter:
     case Qt::Key_Return:
         emit itemActivated(m_currentIcon);
+        break;
+    case Qt::Key_Backspace:
+    case Qt::Key_Home:
+        emit resetRequested();
+        break;
     default:
         break;
     }
