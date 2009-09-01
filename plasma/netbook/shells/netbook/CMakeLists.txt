@@ -1,19 +1,17 @@
-include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ../common ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kworkspace)
+include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ../../../shells/common ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kworkspace)
 
 set(appletbrowserdialog_SRCS
-    ../common/appletbrowser.cpp
-    ../common/customdragtreeview.cpp
-    ../common/kcategorizeditemsview.cpp
-    ../common/kcategorizeditemsviewdelegate.cpp
-    ../common/kcategorizeditemsviewmodels.cpp
-    ../common/openwidgetassistant.cpp
-    ../common/plasmaappletitemmodel.cpp
+    ../../../shells/common/widgetsExplorer/kcategorizeditemsviewmodels.cpp
+    ../../../shells/common/widgetsExplorer/plasmaappletitemmodel.cpp
+    ../../../shells/common/widgetsExplorer/appleticon.cpp
+    ../../../shells/common/widgetsExplorer/appletsfiltering.cpp
+    ../../../shells/common/widgetsExplorer/applettooltip.cpp
+    ../../../shells/common/widgetsExplorer/appletslist.cpp
+    ../../../shells/common/widgetsExplorer/managewidgets.cpp
+    ../../../shells/common/widgetsExplorer/widgetexplorer.cpp
+    ../../../shells/common/widgetsExplorer/openwidgetassistant.cpp
 )
 
-kde4_add_ui_files (
-    appletbrowserdialog_SRCS
-    ../common/kcategorizeditemsviewbase.ui
-)
 
 set(plasma-netbook_SRCS
     netcorona.cpp

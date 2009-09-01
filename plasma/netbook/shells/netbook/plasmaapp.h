@@ -37,7 +37,7 @@ namespace Plasma
     class Containment;
     class Corona;
     class View;
-    class AppletBrowser;
+    class WidgetExplorer;
 } // namespace Plasma
 
 class NetView;
@@ -106,7 +106,8 @@ private Q_SLOTS:
 
 private:
     Plasma::Corona *m_corona;
-    Plasma::AppletBrowser *m_appletBrowser;
+    QGraphicsView *m_widgetExplorerView;
+    Plasma::WidgetExplorer *m_widgetExplorer;
 #ifdef Q_WS_X11
     Window m_unhideTrigger;
     QRect m_triggerZone;

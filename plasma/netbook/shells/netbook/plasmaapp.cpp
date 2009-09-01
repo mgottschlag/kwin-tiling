@@ -46,7 +46,7 @@
 #include "netcorona.h"
 #include "netview.h"
 
-#include "appletbrowser.h"
+#include "widgetsExplorer/widgetexplorer.h"
 #include "backgrounddialog.h"
 
 #include <X11/Xlib.h>
@@ -64,7 +64,8 @@ PlasmaApp* PlasmaApp::self()
 PlasmaApp::PlasmaApp()
     : KUniqueApplication(),
       m_corona(0),
-      m_appletBrowser(0),
+      m_widgetExplorerView(0),
+      m_widgetExplorer(0),
       m_controlBar(0),
       m_mainView(0),
       m_isDesktop(false),
@@ -514,26 +515,44 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
         return;
     }
 
-    if (!m_appletBrowser) {
-        m_appletBrowser = new Plasma::AppletBrowser();
-        m_appletBrowser->setContainment(containment);
-        m_appletBrowser->setApplication();
-        m_appletBrowser->setAttribute(Qt::WA_DeleteOnClose);
-        m_appletBrowser->setWindowTitle(i18n("Add Widgets"));
-        m_appletBrowser->setWindowIcon(KIcon("plasmagik"));
-        connect(m_appletBrowser, SIGNAL(destroyed()), this, SLOT(appletBrowserDestroyed()));
-    } else {
-        m_appletBrowser->setContainment(containment);
+    if (!m_widgetExplorerView) {
+
+        m_widgetExplorerView = new QGraphicsView();
+        m_widgetExplorerView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        m_widgetExplorerView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        m_widgetExplorerView->setStyleSheet("background: transparent; border: none;");
+
+        m_widgetExplorerView->setScene(m_corona);
     }
 
-    KWindowSystem::setOnDesktop(m_appletBrowser->winId(), KWindowSystem::currentDesktop());
-    m_appletBrowser->show();
-    KWindowSystem::activateWindow(m_appletBrowser->winId());
+    if (!m_widgetExplorer) {
+        m_widgetExplorer = new Plasma::WidgetExplorer();
+        m_widgetExplorer->setContainment(m_mainView->containment());
+        m_widgetExplorer->setCorona(m_corona);
+        m_widgetExplorer->setApplication();
+
+        m_widgetExplorer->resize(m_widgetExplorerView->size());
+        m_corona->addOffscreenWidget(m_widgetExplorer);
+
+        m_widgetExplorerView->setSceneRect(m_widgetExplorer->geometry());
+
+        m_widgetExplorer->installEventFilter(this);
+    }
+
+    m_widgetExplorer->setOrientation(Qt::Horizontal);
+
+
+    m_widgetExplorer->show();
+
+    KWindowSystem::setOnDesktop(m_widgetExplorerView->winId(), KWindowSystem::currentDesktop());
+    m_widgetExplorerView->show();
+    KWindowSystem::activateWindow(m_widgetExplorerView->winId());
 }
 
 void PlasmaApp::appletBrowserDestroyed()
 {
-    m_appletBrowser = 0;
+    m_widgetExplorer = 0;
+    m_widgetExplorerView = 0;
 }
 
 
