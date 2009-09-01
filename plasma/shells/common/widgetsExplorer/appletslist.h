@@ -26,6 +26,7 @@
 #include <QtCore>
 #include <QtGui>
 
+#include <Plasma/Svg>
 #include <plasma/widgets/pushbutton.h>
 
 #include "kcategorizeditemsviewmodels_p.h"
@@ -131,6 +132,8 @@ private slots:
     void animateToolTipMove();
     void toolTipMoveTimeLineFrameChanged(int frame);
 
+    void themeUpdated();
+
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     bool eventFilter(QObject *obj, QEvent *event);
@@ -155,6 +158,7 @@ private:
 
     Plasma::PushButton *m_downRightArrow;
     Plasma::PushButton *m_upLeftArrow;
+    Plasma::Svg *m_arrowsSvg;
 
     Qt::Orientation m_orientation;
 

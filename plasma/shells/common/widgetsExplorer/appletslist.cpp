@@ -28,9 +28,10 @@
 #include <KIcon>
 #include <KPushButton>
 
-#include <Plasma/ItemBackground>
 #include <Plasma/Containment>
 #include <Plasma/Corona>
+#include <Plasma/ItemBackground>
+#include <Plasma/Theme>
 
 #include "widgetexplorer.h"
 
@@ -53,6 +54,13 @@ AppletsListWidget::AppletsListWidget(Qt::Orientation orientation, QGraphicsItem 
     m_selectedItem = 0;
     m_currentAppearingAppletsOnList = new QList<AppletIconWidget *>();
     m_orientation = orientation;
+    
+    //init arrows svg
+    m_arrowsSvg = new Plasma::Svg(this);
+    m_arrowsSvg->setImagePath("widgets/arrows");
+    m_arrowsSvg->setContainsMultipleImages(true);
+    m_arrowsSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+    //
 
     connect(this, SIGNAL(listScrolled()), this, SLOT(manageArrows()));
 
@@ -93,11 +101,15 @@ void AppletsListWidget::init()
     m_downRightArrow->setMaximumSize(IconSize(KIconLoader::Panel), IconSize(KIconLoader::Panel));
 
     if (m_orientation == Qt::Horizontal) {
-        m_upLeftArrow->nativeWidget()->setIcon(KIcon("go-previous"));
-        m_downRightArrow->nativeWidget()->setIcon(KIcon("go-next"));
+        m_upLeftArrow->nativeWidget()->setIcon(KIcon(QIcon(m_arrowsSvg->pixmap("left-arrow"))));
+        m_downRightArrow->nativeWidget()->setIcon(KIcon(QIcon(m_arrowsSvg->pixmap("right-arrow"))));
+        m_upLeftArrow->setMaximumSize(IconSize(KIconLoader::Panel), -1);
+        m_downRightArrow->setMaximumSize(IconSize(KIconLoader::Panel), -1);
     } else {
-        m_upLeftArrow->nativeWidget()->setIcon(KIcon("go-up"));
-        m_downRightArrow->nativeWidget()->setIcon(KIcon("go-down"));
+        m_upLeftArrow->nativeWidget()->setIcon(KIcon(QIcon(m_arrowsSvg->pixmap("up-arrow"))));
+        m_downRightArrow->nativeWidget()->setIcon(KIcon(QIcon(m_arrowsSvg->pixmap("down-arrow"))));
+        m_upLeftArrow->setMaximumSize(-1, IconSize(KIconLoader::Panel));
+        m_downRightArrow->setMaximumSize(-1, IconSize(KIconLoader::Panel));
     }
 
     connect(m_downRightArrow, SIGNAL(clicked()), this, SLOT(onRightArrowClick()));
@@ -129,6 +141,29 @@ void AppletsListWidget::init()
     m_arrowsLayout->setAlignment(m_appletsListWindowWidget, Qt::AlignVCenter | Qt::AlignHCenter);
 
     setLayout(m_arrowsLayout);
+
+    themeUpdated();
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
+}
+
+void AppletsListWidget::themeUpdated()
+{
+    Plasma::Theme *theme = Plasma::Theme::defaultTheme();
+    QColor buttonBgColor = theme->color(Plasma::Theme::BackgroundColor);
+    QString buttonStyleSheet = QString("Plasma::PushButton { border: 1px solid %4; border-radius: 4px; padding: 2px;"
+                                       " background-color: rgba(%1, %2, %3, %5); }")
+                                      .arg(buttonBgColor.red())
+                                      .arg(buttonBgColor.green())
+                                      .arg(buttonBgColor.blue())
+                                      .arg(theme->color(Plasma::Theme::BackgroundColor).name(), "50%");
+    buttonBgColor = theme->color(Plasma::Theme::TextColor);
+    buttonStyleSheet += QString("Plasma::PushButton:hover { border: 2px solid %1; }")
+                               .arg(theme->color(Plasma::Theme::HighlightColor).name());
+    buttonStyleSheet += QString("Plasma::PushButton:focus { border: 2px solid %1; }")
+                               .arg(theme->color(Plasma::Theme::HighlightColor).name());
+
+    m_upLeftArrow->nativeWidget()->setStyleSheet(buttonStyleSheet);
+    m_downRightArrow->nativeWidget()->setStyleSheet(buttonStyleSheet);
 }
 
 void AppletsListWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
@@ -244,11 +279,16 @@ void AppletsListWidget::setContentsPropertiesAccordingToOrientation()
     m_arrowsLayout->setOrientation(m_orientation);
 
     if(m_orientation == Qt::Horizontal) {
-        m_upLeftArrow->nativeWidget()->setIcon(KIcon("go-previous"));
-        m_downRightArrow->nativeWidget()->setIcon(KIcon("go-next"));
+        m_upLeftArrow->nativeWidget()->setIcon(KIcon(QIcon(m_arrowsSvg->pixmap("left-arrow"))));
+        m_downRightArrow->nativeWidget()->setIcon(KIcon(QIcon(m_arrowsSvg->pixmap("right-arrow"))));
+        m_upLeftArrow->setMaximumSize(IconSize(KIconLoader::Panel), -1);
+        m_downRightArrow->setMaximumSize(IconSize(KIconLoader::Panel), -1);
+
     } else {
-        m_upLeftArrow->nativeWidget()->setIcon(KIcon("go-up"));
-        m_downRightArrow->nativeWidget()->setIcon(KIcon("go-down"));
+        m_upLeftArrow->nativeWidget()->setIcon(KIcon(QIcon(m_arrowsSvg->pixmap("up-arrow"))));
+        m_downRightArrow->nativeWidget()->setIcon(KIcon(QIcon(m_arrowsSvg->pixmap("down-arrow"))));
+        m_upLeftArrow->setMaximumSize(-1, IconSize(KIconLoader::Panel));
+        m_downRightArrow->setMaximumSize(-1, IconSize(KIconLoader::Panel));
     }
 
     m_appletListLinearLayout->activate();
