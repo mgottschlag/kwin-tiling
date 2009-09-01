@@ -141,8 +141,9 @@ void DBusJobProtocol::dataUpdated(const QString &source, const Plasma::DataEngin
 void DBusJobProtocol::removeJob(const QString &source)
 {
     if (m_jobs.contains(source)) {
-        m_jobs[source]->setState(Job::Stopped);
-        m_jobs.take(source)->destroy();
+        DBusJob *job = m_jobs.take(source);
+        job->setState(Job::Stopped);
+        job->destroy();
     }
 }
 
