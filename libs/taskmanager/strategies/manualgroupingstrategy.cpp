@@ -112,10 +112,10 @@ void ManualGroupingStrategy::removeGroup()
     if (!d->tempGroup) {
         return;
     }
-
-    if (d->tempGroup->parentGroup()) {
+    TaskGroup *parentGroup = d->tempGroup->parentGroup(); //tempGroup is invalid before last item has been moved to the parentGroup
+    if (parentGroup) {
         foreach (AbstractGroupableItem *item, d->tempGroup->members()) {
-            d->tempGroup->parentGroup()->add(item);
+            parentGroup->add(item);
         }
         //Group gets automatically closed on empty signal
     }
