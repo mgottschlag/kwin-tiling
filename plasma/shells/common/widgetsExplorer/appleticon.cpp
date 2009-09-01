@@ -91,6 +91,7 @@ void AppletIconWidget::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         drag->exec();
 
         mouseReleaseEvent(event);
+        update(boundingRect());
     }
 }
 
@@ -117,6 +118,7 @@ void AppletIconWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void AppletIconWidget::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
+    update(boundingRect());
     emit(doubleClicked(this));
 }
 
