@@ -52,6 +52,7 @@ class AppletIconWidget : public QGraphicsWidget
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
         void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
         void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
         void resizeEvent(QGraphicsSceneResizeEvent *);
 

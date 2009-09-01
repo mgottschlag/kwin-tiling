@@ -922,6 +922,16 @@ bool PanelController::eventFilter(QObject *watched, QEvent *event)
             close();
         }
         return true;
+    } else if (watched == m_widgetExplorerView && event->type() == QEvent::WindowDeactivate
+               && (!m_configWidget|| !m_configWidget->isVisible())) {
+        if (!d->settingsTool->underMouse()) {
+            d->optionsDialog->hide();
+        }
+        if (!isActiveWindow()) {
+            close();
+        }
+        return true;
+
     } else if (watched == d->moveTool) {
         if (event->type() == QEvent::MouseButtonPress) {
             d->dragging = Private::MoveButtonElement;
@@ -949,10 +959,6 @@ bool PanelController::eventFilter(QObject *watched, QEvent *event)
     
     //if widgetsExplorer moves or resizes, then the view has to adjust
     if ((watched == (QObject*)m_widgetExplorer) && (event->type() == QEvent::GraphicsSceneResize || event->type() == QEvent::GraphicsSceneMove)) {
-//        int widgetExplorerMinimumHeight = m_widgetExplorer->effectiveSizeHint(Qt::MinimumSize).height();
-//        m_widgetExplorerView->resize(m_widgetExplorerView->width(),
-//                                     m_widgetExplorer->effectiveSizeHint(Qt::MinimumSize).height());
-//        m_mainLayout->
         m_widgetExplorerView->setSceneRect(m_widgetExplorer->geometry());
     } 
      

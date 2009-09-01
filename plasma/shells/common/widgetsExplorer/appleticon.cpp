@@ -35,6 +35,8 @@ AppletIconWidget::AppletIconWidget(QGraphicsItem *parent, PlasmaAppletItem *appl
     m_selected = false;
     m_selectedBackgroundSvg = new Plasma::FrameSvg(this);
     m_selectedBackgroundSvg->setImagePath("widgets/translucentbackground");
+    qDebug() << cursor();
+    setCursor(Qt::OpenHandCursor);
 }
 
 AppletIconWidget::~AppletIconWidget()
@@ -90,6 +92,12 @@ void AppletIconWidget::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
+void AppletIconWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsWidget::mouseReleaseEvent(event);
+    setCursor(Qt::OpenHandCursor);
+}
+
 void AppletIconWidget::resizeEvent(QGraphicsSceneResizeEvent *)
 {
     QFontMetrics fm(font());
@@ -100,6 +108,7 @@ void AppletIconWidget::resizeEvent(QGraphicsSceneResizeEvent *)
 void AppletIconWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
+    setCursor(Qt::ClosedHandCursor);
     emit(selected(this));
 }
 
