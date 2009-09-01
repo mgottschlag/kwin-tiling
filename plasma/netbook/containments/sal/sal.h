@@ -73,6 +73,7 @@ private slots:
     void doSearch(const QString query);
     void setQueryMatches(const QList<Plasma::QueryMatch> &m);
     void launch();
+    void launch(Plasma::IconWidget *icon);
     void addFavourite();
     void reset();
     void relayout();

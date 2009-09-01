@@ -45,6 +45,7 @@ protected:
 
 Q_SIGNALS:
     void itemSelected(Plasma::IconWidget *);
+    void itemActivated(Plasma::IconWidget *);
 
 private:
     QGraphicsGridLayout *m_layout;

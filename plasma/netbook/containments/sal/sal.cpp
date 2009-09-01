@@ -274,15 +274,20 @@ void SearchLaunch::relayout()
     m_viewMainWidget->resize(0,0);
 }
 
-void SearchLaunch::launch()
+void SearchLaunch::launch(Plasma::IconWidget *icon)
 {
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender());
     Plasma::QueryMatch match = m_matches.value(icon, Plasma::QueryMatch(0));
     if (m_runnermg->searchContext()->query().isEmpty()) {
         doSearch(match.data().toString());
     } else {
         m_runnermg->run(match);
     }
+}
+
+void SearchLaunch::launch()
+{
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender());
+    launch(icon);
 }
 
 void SearchLaunch::addFavourite()
@@ -374,6 +379,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
             Plasma::Frame *gridBackground = new GridItemView(this);
             connect(gridBackground, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
+            connect(gridBackground, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launch(Plasma::IconWidget *)));
             gridBackground->setFocusPolicy(Qt::StrongFocus);
             gridBackground->setFrameShadow(Plasma::Frame::Plain);
             gridBackground->setAcceptHoverEvents(true);

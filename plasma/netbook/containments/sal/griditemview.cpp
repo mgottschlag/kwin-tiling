@@ -70,7 +70,7 @@ void GridItemView::keyPressEvent(QKeyEvent *event)
     }
     case Qt::Key_Enter:
     case Qt::Key_Return:
-        
+        emit itemActivated(m_currentIcon);
     default:
         break;
     }
