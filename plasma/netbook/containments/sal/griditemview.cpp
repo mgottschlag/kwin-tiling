@@ -45,26 +45,38 @@ void GridItemView::keyPressEvent(QKeyEvent *event)
     }
     switch (event->key()) {
     case Qt::Key_Left: {
-        m_currentIconIndexX = (m_layout->columnCount() + m_currentIconIndexX - 1) % m_layout->columnCount();
-        m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
+        m_currentIcon = 0;
+        while (!m_currentIcon) {
+            m_currentIconIndexX = (m_layout->columnCount() + m_currentIconIndexX - 1) % m_layout->columnCount();
+            m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
+        }
         emit itemSelected(m_currentIcon);
         break;
     }
     case Qt::Key_Right: {
-        m_currentIconIndexX = (m_currentIconIndexX + 1) % m_layout->columnCount();
-        m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
+        m_currentIcon = 0;
+        while (!m_currentIcon) {
+            m_currentIconIndexX = (m_currentIconIndexX + 1) % m_layout->columnCount();
+            m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
+        }
         emit itemSelected(m_currentIcon);
         break;
     }
     case Qt::Key_Up: {
-        m_currentIconIndexY = (m_layout->columnCount() + m_currentIconIndexY - 1) % m_layout->columnCount();
-        m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
+        m_currentIcon = 0;
+        while (!m_currentIcon) {
+            m_currentIconIndexY = (m_layout->columnCount() + m_currentIconIndexY - 1) % m_layout->columnCount();
+            m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
+        }
         emit itemSelected(m_currentIcon);
         break;
     }
     case Qt::Key_Down: {
-        m_currentIconIndexY = (m_currentIconIndexY + 1) % m_layout->columnCount();
-        m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
+        m_currentIcon = 0;
+        while (!m_currentIcon) {
+            m_currentIconIndexY = (m_currentIconIndexY + 1) % m_layout->columnCount();
+            m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
+        }
         emit itemSelected(m_currentIcon);
         break;
     }
