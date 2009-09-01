@@ -158,7 +158,9 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
         extenderItem->setTitle(i18n("Notification from %1", applicationName));
     }
 
-    body->setHtml(message);
+    QString processed = message.trimmed();
+    processed.replace("\n", "<br>");
+    body->setHtml(processed);
 }
 
 void NotificationWidgetPrivate::completeDetach()
