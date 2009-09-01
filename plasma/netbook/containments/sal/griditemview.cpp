@@ -1,0 +1,71 @@
+/*
+ *   Copyright 2009 by Marco Martin <notmart@gmail.com>
+ *
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU Library General Public License version 2,
+ *   or (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details
+ *
+ *   You should have received a copy of the GNU Library General Public
+ *   License along with this program; if not, write to the
+ *   Free Software Foundation, Inc.,
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+#include "griditemview.h"
+
+#include <QGraphicsGridLayout>
+
+#include <Plasma/IconWidget>
+
+GridItemView::GridItemView(QGraphicsWidget *parent)
+    : QGraphicsWidget(parent),
+      m_currentIcon(0),
+      m_currentIconIndexX(-1),
+      m_currentIconIndexY(-1)
+{
+    
+}
+
+GridItemView::~GridItemView()
+{}
+
+void GridItemView::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_Left: {
+        m_currentIconIndexX = (m_layout->count() + m_currentIconIndexX - 1) % m_layout->count();
+        m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexX, m_currentIconIndexY));
+        emit itemSelected(m_currentIcon);
+        break;
+    }
+    case Qt::Key_Right: {
+        m_currentIconIndexX = (m_currentIconIndexX + 1) % m_layout->count();
+        m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexX, m_currentIconIndexY));
+        emit itemSelected(m_currentIcon);
+        break;
+    }
+    case Qt::Key_Enter:
+    case Qt::Key_Return:
+        
+    default:
+        break;
+    }
+}
+
+
+void GridItemView::focusInEvent(QFocusEvent *event)
+{
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_layout->itemAt(0, 0));
+    emit itemSelected(icon);
+}
+
+void GridItemView::focusOutEvent(QFocusEvent *event)
+{
+
+}
