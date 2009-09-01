@@ -39,6 +39,7 @@ AppletIconWidget::AppletIconWidget(QGraphicsItem *parent, PlasmaAppletItem *appl
     qDebug() << cursor();
     setCursor(Qt::OpenHandCursor);
     m_runningIcon = KIcon("dialog-ok");
+//    m_runningIcon = KIcon("system-run");
 }
 
 AppletIconWidget::~AppletIconWidget()

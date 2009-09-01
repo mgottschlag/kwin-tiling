@@ -507,6 +507,8 @@ void AppletsListWidget::updateList()
     m_appletsListWidget->setLayout(m_appletListLinearLayout);
     m_appletListLinearLayout->setSpacing(10);
     updateGeometry();
+    delete(m_hoverIndicator);
+    m_hoverIndicator = new Plasma::ItemBackground(this);
     resetScroll();
 }
 
