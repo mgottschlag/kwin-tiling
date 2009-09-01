@@ -361,6 +361,7 @@ void ResultItem::focusInEvent(QFocusEvent * event)
 
     scene()->clearSelection();
     setSelected(true);
+    emit ensureVisibility(this);
 
     if (!m_highlightTimerId) {
         m_highlightTimerId = startTimer(TIMER_INTERVAL);

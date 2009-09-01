@@ -96,6 +96,7 @@ signals:
     void hoverEnter(ResultItem *item);
     void hoverLeave(ResultItem *item);
     void sizeChanged(ResultItem *item);
+    void ensureVisibility(QGraphicsItem *item);
 
 protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);

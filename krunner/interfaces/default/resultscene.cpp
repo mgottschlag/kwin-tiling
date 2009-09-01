@@ -246,6 +246,7 @@ ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool use
                                      m_itemMarginRight, m_itemMarginBottom);
             addItem(item);
             item->hide();
+            connect(item, SIGNAL(ensureVisibility(QGraphicsItem*)), this, SIGNAL(ensureVisibility(QGraphicsItem*)));
             connect(item, SIGNAL(sizeChanged(ResultItem*)), this, SLOT(arrangeItems(ResultItem*)));
             connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
             connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SIGNAL(itemHoverEnter(ResultItem*)));
