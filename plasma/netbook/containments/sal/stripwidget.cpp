@@ -347,7 +347,7 @@ void StripWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 void StripWidget::focusInEvent(QFocusEvent *event)
 {
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_stripLayout->itemAt(m_stripLayout->count()-1));
-    show();
+    m_hoverIndicator->show();
     m_hoverIndicator->setTargetItem(icon);
     m_currentIconIndex = 0;
 }
