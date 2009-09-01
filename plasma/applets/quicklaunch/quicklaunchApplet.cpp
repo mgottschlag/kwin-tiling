@@ -260,8 +260,12 @@ void QuicklaunchApplet::performUiRefactor()
     } else {
         m_arrow->hide();
     }
-
     int cols = qMax(1,m_innerLayout->columnCount());
+    
+    if (count > m_visibleIcons && m_visibleIcons != -1) {
+        cols++;
+    }
+    
     int icons = qMax(1, qMin(m_icons.size(), m_visibleIcons));
 
     setPreferredSize(QSize((m_iconSize + 6) * cols,
