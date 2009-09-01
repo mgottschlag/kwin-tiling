@@ -135,7 +135,6 @@ void Clock::updateSize()
     if (m_showDate || showTimezone()) {
         const QFont f(KGlobalSettings::smallestReadableFont());
         const QFontMetrics metrics(f);
-        qDebug() <<"sizes" << f.pointSize() << f.pixelSize();
         // if there's enough vertical space, wrap the words
         if (contentsRect().height() < f.pointSize() * 6) {
             QSize s = metrics.size(Qt::TextSingleLine, m_dateString);
@@ -169,7 +168,6 @@ void Clock::updateSize()
         // kDebug(96669) << contentsRect();
     } else {
         // We have a fixed width, set some sensible height
-        qDebug() << "height" << h;
         setMinimumHeight(h);
         setMinimumWidth(0);
     }
