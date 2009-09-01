@@ -118,6 +118,7 @@ void Manager::removeTask(Task *task)
     }
 
     d->tasks.removeAll(task);
+    disconnect(task, 0, this, 0);
     emit taskRemoved(task);
 }
 
@@ -151,6 +152,7 @@ void Manager::addNotification(Notification* notification)
 void Manager::removeNotification(Notification *notification)
 {
     d->notifications.removeAll(notification);
+    disconnect(notification, 0, this, 0);
     emit notificationRemoved(notification);
 }
 
@@ -198,6 +200,7 @@ void Manager::addJob(Job *job)
 void Manager::removeJob(Job *job)
 {
     d->jobs.removeAll(job);
+    disconnect(job, 0, this, 0);
     emit jobRemoved(job);
 }
 
