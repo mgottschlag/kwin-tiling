@@ -49,7 +49,8 @@
 #include "core/applicationmodel.h"
 #include "core/leavemodel.h"
 #include "core/itemhandlers.h"
-#include "core/searchmodel.h"
+//#include "core/searchmodel.h"
+#include "core/krunnermodel.h"
 #include "core/systemmodel.h"
 
 #include "ui/itemdelegate.h"
@@ -172,11 +173,11 @@ public:
         view->setItemStateProvider(delegate);
         addView(i18n("Favorites"), KIcon("bookmarks"), favoritesModel, view);
 
-        QAction *sortAscendingAction = new QAction(KIcon("view-sort-ascending"), 
+        QAction *sortAscendingAction = new QAction(KIcon("view-sort-ascending"),
                                                    i18n("Sort Alphabetically (A to Z)"), q);
 
-        QAction *sortDescendingAction = new QAction(KIcon("view-sort-descending"), 
-                                                    i18n("Sort Alphabetically (Z to A)"), q);  
+        QAction *sortDescendingAction = new QAction(KIcon("view-sort-descending"),
+                                                    i18n("Sort Alphabetically (Z to A)"), q);
 
 
         connect(favoritesModel, SIGNAL(rowsInserted(QModelIndex, int, int)), q, SLOT(focusFavoritesView()));
@@ -239,7 +240,8 @@ public:
 
     void setupSearchView()
     {
-        searchModel = new SearchModel(q);
+        // searchModel = new SearchModel(q);
+        searchModel = new KRunnerModel(q);
         UrlItemView *view = new UrlItemView();
         ItemDelegate *delegate = new ItemDelegate(q);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, SubTitleRole);
@@ -269,6 +271,7 @@ public:
     {
         UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ExtensionHandler, "desktop", new ServiceItemHandler);
         UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ProtocolHandler, "leave", new LeaveItemHandler);
+        UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ProtocolHandler, "krunner", new KRunnerItemHandler);
     }
 
     QIcon systemIcon()
@@ -441,7 +444,8 @@ public:
     FavoritesModel *favoritesModel;
     ApplicationModel  *applicationModel;
     RecentlyUsedModel *recentlyUsedModel;
-    SearchModel *searchModel;
+    KRunnerModel *searchModel;
+    // SearchModel *searchModel;
     LeaveModel *leaveModel;
     SearchBar *searchBar;
     QWidget *footer;

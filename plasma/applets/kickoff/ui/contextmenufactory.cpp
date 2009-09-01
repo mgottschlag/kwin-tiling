@@ -132,7 +132,8 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
             favoriteAction->setIcon(KIcon("list-remove"));
             actions << favoriteAction;
             //exclude stuff in the leave tab
-        } else if (KUrl(url).protocol() != "leave") {
+        } else if (KUrl(url).protocol() != "leave" &&
+                   KUrl(url).protocol() != "krunner") {
             favoriteAction->setText(i18n("Add to Favorites"));
             favoriteAction->setIcon(KIcon("bookmark-new"));
             actions << favoriteAction;
@@ -150,7 +151,8 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
     //### TODO : do not forget to remove (kurl.scheme() != "leave") and kurl declaration
     //when proper action for such case will be provided
     KUrl kurl(url);
-    if ((d->applet) && (kurl.scheme() != "leave")) {
+    if ((d->applet) && (kurl.scheme() != "leave") &&
+       (d->applet) && (kurl.scheme() != "krunner")) {
         Plasma::Containment *containment = d->applet->containment();
 
         // There might be relative paths for .desktop installed in

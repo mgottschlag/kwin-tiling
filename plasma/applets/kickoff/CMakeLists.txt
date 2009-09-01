@@ -18,6 +18,7 @@ set(libkickoff_SRCS
     core/recentapplications.cpp
     core/recentlyusedmodel.cpp
     core/searchmodel.cpp
+    core/krunnermodel.cpp
     core/systemmodel.cpp
     core/urlitemlauncher.cpp
     core/itemhandlers.cpp

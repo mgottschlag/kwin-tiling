@@ -77,7 +77,7 @@ enum DataRole {
 };
 
 /**
- * This enum describes the policy for displaying 
+ * This enum describes the policy for displaying
  * Name of Application - Description
  * Description - Name of Application
  */
@@ -96,6 +96,8 @@ public:
     static QStandardItem *createItemForUrl(const QString& url, DisplayOrder displayOrder);
     static QStandardItem *createItemForService(KService::Ptr service,
                                                DisplayOrder displayOrder);
+    static QStandardItem *createItem(const QIcon & icon, const QString & title,
+        const QString & description, const QString & url);
 
 private:
     static void setSpecialUrlProperties(const KUrl& url, QStandardItem *item);

@@ -96,7 +96,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
 
 bool ItemDelegate::isVisible(const QModelIndex& index) const
 {
-    Q_ASSERT(index.isValid());
+    if (!index.isValid()) return false;
 
     if (index.model()->hasChildren(index)) {
         const int childCount = index.model()->rowCount(index);
