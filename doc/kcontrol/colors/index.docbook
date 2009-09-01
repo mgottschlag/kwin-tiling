@@ -147,17 +147,30 @@
   <title>Colors</title>
 
   <para>The <guilabel>Colors</guilabel> tab allows you to change the colors in
-  a color scheme. The <guilabel>Common Colors</guilabel> set, which is displayed
-  initially, is not actually a "set" in the sense used by &kde; (see next
-  section), but presents a number of color roles in a way that makes it
-  easier to edit the scheme as a whole. When creating a new color scheme, you
-  will usually change these colors first, and use the other sets to tweak
-  specific colors if needed.</para>
+  a color scheme.</para>
 
   <para>Creating or changing a scheme is a simple matter of clicking on the
   swatch in the color list and selecting a new color. You can check your
   changes at any time by pressing <guibutton>Apply</guibutton>. It is suggested
   that you save your scheme when you are done.</para>
+
+  <para>The <guilabel>Common Colors</guilabel> set, which is displayed
+  initially, is not actually a &quot;set&quot; in the sense used by &kde; (see
+  next section), but presents a number of color roles in a way that makes it
+  easier to edit the scheme as a whole. When creating a new color scheme, you
+  will usually change these colors first, and use the other sets to tweak
+  specific colors if needed.</para>
+
+  <para>Note that <guilabel>Common Colors</guilabel> makes available roles from
+  all sets. For example, &quot;View Background&quot; here is shorthand for the
+  Normal Background role from the View set. Also, setting colors that do not
+  refer to a specific set will change that color in <emphasis>all</emphasis>
+  sets. (As an exception, &quot;Inactive Text&quot; will change the color for
+  all sets <emphasis>except</emphasis> for Selection; there is a separate
+  &quot;Selection Inactive Text&quot; for Inactive Text in the Selection set.)
+  Some roles may not be visible under <guilabel>Common Colors</guilabel> at
+  all, and can only be changed (if needed) by selecting the appropriate
+  set.</para>
 
   <sect3>
     <title>Color Sets</title>
@@ -261,6 +274,32 @@
     <para>The choice of color role is left to the developer; the above are
     guidelines intended to represent typical usage.</para>
   </sect3>
+
+  <sect3>
+    <title>Window Manager Roles</title>
+
+    <para>As previously stated, the Window Manager set has its own roles,
+    independent of those in other sets. These are (currently) only accessible
+    via <guilabel>Common Colors</guilabel>, and are as follows:</para>
+
+    <itemizedlist>
+      <listitem><para>Active Titlebar &mdash;
+        used to draw the title bar background, borders, and/or decorations for
+        active window (that is, the one with input focus). Not all window
+        decorations will use this in the same way, and some may even use the
+        Normal Background from the Window set to draw the title bar.
+      </para></listitem>
+      <listitem><para>Active Titlebar Text &mdash;
+        used to draw the title bar text when Active Titlebar is used to draw
+        the title bar background. May also be used for other foreground
+        elements which use Active Titlebar as the background.
+      </para></listitem>
+    </itemizedlist>
+
+    <para>The Inactive Titlebar [Text] roles are the same as the above, but for
+    inactive windows, rather than active windows.</para>
+  </sect3>
+
 </sect2>
 
 <sect2 id="color-effects">
@@ -350,6 +389,7 @@
     slider produces no change, while maximum causes the text to completely
     disappear into the background.</para>
   </sect3>
+
 </sect2>
 
 </sect1>
