@@ -134,16 +134,18 @@ void AppletsListWidget::init()
 void AppletsListWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     qDebug() << "resize event";
+
     static bool guard = false;
 
     if (guard) {
         return;
     }
+
     guard = true;
     Q_UNUSED(event);
     qDebug() << "resize event 2";
 
-    updateGeometry();
+//    updateGeometry();
 
     if (m_orientation == Qt::Horizontal) {
         m_appletsListWindowWidget->setMinimumWidth(-1);
@@ -153,7 +155,6 @@ void AppletsListWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
         m_appletsListWindowWidget->setMaximumHeight(-1);
     }
 
-    manageArrows();
     const int height = size().height();
     m_appletsListWidget->resize(m_appletsListWidget->size().width(), height);
      m_appletsListWindowWidget->resize(m_appletsListWindowWidget->size().width(), height);
@@ -184,6 +185,7 @@ bool AppletsListWidget::eventFilter(QObject *obj, QEvent *event)
 
         //if the resize occured with the list widget
         if(widget == m_appletsListWidget) {
+            manageArrows();
             if (m_orientation == Qt::Horizontal) {
 //                m_appletsListWindowWidget->setMinimumHeight(resizeEvent->newSize().height());
 //                m_appletsListWindowWidget->setMaximumHeight(resizeEvent->newSize().height());
@@ -353,9 +355,6 @@ void AppletsListWidget::setToolTipPosition()
 
     toolTipMoveFrom = m_toolTip->pos();
 
-    //how come?
-   // qDebug() << widgetExplorer->containment()->location() << Plasma::LeftEdge << Plasma::BottomEdge;
-
     if(corona) {
 //        ********* use this after integrating with plasma *************
         toolTipMoveTo = corona->popupPosition(m_toolTip->appletIconWidget(), m_toolTip->geometry().size());
@@ -464,6 +463,7 @@ void AppletsListWidget::updateList()
 
     m_appletsListWidget->setLayout(m_appletListLinearLayout);
     m_appletListLinearLayout->setSpacing(10);
+    updateGeometry();
     resetScroll();
 }
 
@@ -542,14 +542,16 @@ void AppletsListWidget::scrollDownRight(int step, QRectF visibleRect) {
     newLastIcon = m_currentAppearingAppletsOnList->at(lastVisibleItemIndex + appletsIndexesToSum);
 
     //scroll enough to show the new last icon on the list
+    //and store the list size
     if(m_orientation == Qt::Horizontal) {
         scrollAmount = (newLastIcon->pos().x() + newLastIcon->size().width()) -
                         lastVisiblePositionOnList;
-        listSize = m_appletListLinearLayout->preferredSize().width();
+        listSize = m_appletsListWidget->size().width();
+
     } else {
         scrollAmount = (newLastIcon->pos().y() + newLastIcon->size().height()) -
                         lastVisiblePositionOnList;
-        listSize = m_appletListLinearLayout->preferredSize().height();
+        listSize = m_appletsListWidget->size().height();
     }
 
     //check if the scrollAmount is more than necessary to reach the end of the list
@@ -706,10 +708,10 @@ void AppletsListWidget::manageArrows() {
 
     if(m_orientation == Qt::Horizontal) {
         windowSize = m_appletsListWindowWidget->geometry().width();
-        listSize = m_appletListLinearLayout->preferredSize().width();
+        listSize = m_appletsListWidget->size().width();
     } else {
         windowSize = m_appletsListWindowWidget->geometry().height();
-        listSize = m_appletListLinearLayout->preferredSize().height();
+        listSize = m_appletsListWidget->size().height();
     }
 
     if(listSize <= windowSize) {

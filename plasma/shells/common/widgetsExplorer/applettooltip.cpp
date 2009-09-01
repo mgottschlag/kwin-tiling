@@ -75,7 +75,11 @@ void AppletToolTipWidget::leaveEvent(QEvent *event)
 AppletInfoWidget::AppletInfoWidget(QGraphicsItem *parent, PlasmaAppletItem *appletItem)
         : QGraphicsWidget(parent)
 {
-    m_appletItem = appletItem;
+    if(appletItem != 0) {
+        m_appletItem = appletItem;
+    } else {
+        m_appletItem = 0;
+    }
     init();
 }
 
@@ -147,20 +151,30 @@ void AppletInfoWidget::setAppletItem(PlasmaAppletItem *appletItem)
 
 void AppletInfoWidget::updateInfo()
 {
-    if(m_appletItem != 0) {
-        m_iconWidget->setIcon(m_appletItem->icon());
-        m_nameLabel->setText(m_appletItem->name());
+    if (m_appletItem != 0) {
 
-        m_aboutLabel->setText(
-            m_appletItem->description());
+        if (m_iconWidget != 0) {
+            m_iconWidget->setIcon(m_appletItem->icon());
+        }
+        if (m_nameLabel != 0) {
+            m_nameLabel->setText(m_appletItem->name());
+        }
 
-        m_detailsLabel->setText(
+        if (m_aboutLabel != 0) {
+            m_aboutLabel->setText(m_appletItem->description());
+        }
+
+        if (m_detailsLabel != 0)  {
+            m_detailsLabel->setText(
             i18n("<html><p>Version: %4</p><p>Author: %1 (%2)</p><p>License: %3</p></html>")
                 .arg(m_appletItem->author())
                 .arg(m_appletItem->email())
                 .arg(m_appletItem->license())
                 .arg(m_appletItem->version())
                 );
+        }
+
+
     } else {
         m_iconWidget->setIcon("plasma");
         m_nameLabel->setText("Unknown applet");
