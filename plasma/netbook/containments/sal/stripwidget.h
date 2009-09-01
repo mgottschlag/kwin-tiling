@@ -68,6 +68,7 @@ protected:
 private slots:
     void removeFavourite();
     void launchFavourite();
+    void launchFavourite(Plasma::IconWidget *icon);
     void goLeft();
     void goRight();
 
@@ -86,6 +87,7 @@ private:
     Plasma::ItemBackground *m_hoverIndicator;
     int m_shownIcons;
     int m_offset;
+    Plasma::IconWidget *m_currentIcon;
     int m_currentIconIndex;
 };
 

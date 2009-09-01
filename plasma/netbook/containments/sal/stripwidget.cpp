@@ -38,6 +38,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
       m_runnermg(rm),
       m_shownIcons(5),
       m_offset(0),
+      m_currentIcon(0),
       m_currentIconIndex(-1)
 {
     m_background = new Plasma::Frame();
@@ -188,6 +189,15 @@ void StripWidget::launchFavourite()
     match->run(context);
 }
 
+void StripWidget::launchFavourite(Plasma::IconWidget *icon)
+{
+    Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
+
+    Plasma::RunnerContext context;
+    context.setQuery(m_favouritesQueries.value(match));
+    match->run(context);
+}
+
 void StripWidget::goRight()
 {
     // discover the item that will be removed
@@ -311,18 +321,19 @@ void StripWidget::keyPressEvent(QKeyEvent *event)
     switch (event->key()) {
     case Qt::Key_Left: {
         m_currentIconIndex = (m_stripLayout->count() + m_currentIconIndex - 1) % m_stripLayout->count();
-        QGraphicsWidget *currentIcon = static_cast<QGraphicsWidget *>(m_stripLayout->itemAt(m_currentIconIndex));
-        currentIcon->setFocus();
-        m_hoverIndicator->setTargetItem(currentIcon);
+        m_currentIcon = static_cast<Plasma::IconWidget *>(m_stripLayout->itemAt(m_currentIconIndex));
+        m_hoverIndicator->setTargetItem(m_currentIcon);
         break;
     }
     case Qt::Key_Right: {
         m_currentIconIndex = (m_currentIconIndex + 1) % m_stripLayout->count();
-        QGraphicsWidget *currentIcon = static_cast<QGraphicsWidget *>(m_stripLayout->itemAt(m_currentIconIndex));
-        currentIcon->setFocus();
-        m_hoverIndicator->setTargetItem(currentIcon);
+        m_currentIcon = static_cast<Plasma::IconWidget *>(m_stripLayout->itemAt(m_currentIconIndex));
+        m_hoverIndicator->setTargetItem(m_currentIcon);
         break;
     }
+    case Qt::Key_Enter:
+    case Qt::Key_Return:
+        launchFavourite(m_currentIcon);
     default:
         break;
     }
