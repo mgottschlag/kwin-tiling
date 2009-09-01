@@ -9,6 +9,7 @@
 
 #include "backgrounddelegate.h"
 
+#include <QApplication>
 #include <QPen>
 #include <QPainter>
 
@@ -31,13 +32,8 @@ void BackgroundDelegate::paint(QPainter *painter,
     QString resolution = index.model()->data(index, ResolutionRole).toString();
     QPixmap pix = index.model()->data(index, ScreenshotRole).value<QPixmap>();
 
-    // draw selection outline
-    if (option.state & QStyle::State_Selected) {
-        QPen oldPen = painter->pen();
-        painter->setPen(option.palette.color(QPalette::Highlight));
-        painter->drawRect(option.rect.adjusted(2, 2, -2, -2));
-        painter->setPen(oldPen);
-    }
+    // highlight selected item
+    QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &option, painter);
 
     // draw pixmap
     int maxheight = SCREENSHOT_SIZE;
