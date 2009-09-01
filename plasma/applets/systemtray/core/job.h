@@ -128,7 +128,12 @@ signals:
     void ready(SystemTray::Job *job);
 
     /**
-     * Emitted when the job changes
+     * Emitted when the job changes state
+     */
+    void stateChanged(SystemTray::Job *job);
+
+    /**
+     * Emitted when the job details change
      */
     void changed(SystemTray::Job *job);
 

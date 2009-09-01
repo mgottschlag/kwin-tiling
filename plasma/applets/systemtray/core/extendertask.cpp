@@ -64,7 +64,7 @@ ExtenderTaskBusyWidget::ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, cons
             this, SLOT(updateTask()));
     connect(manager, SIGNAL(jobRemoved(SystemTray::Job*)),
             this, SLOT(updateTask()));
-    connect(manager, SIGNAL(jobChanged(SystemTray::Job*)),
+    connect(manager, SIGNAL(jobStateChanged(SystemTray::Job*)),
             this, SLOT(updateTask()));
 
     Plasma::Extender *extender = qobject_cast<Plasma::Extender *>(m_systray->graphicsWidget());
@@ -139,7 +139,7 @@ void ExtenderTaskBusyWidget::updateTask()
     int runningJobs = 0;
     int pausedJobs = 0;
     int completedJobs = 0;
-    foreach (Job *job, m_manager->jobs()) {
+    foreach (const Job *job, m_manager->jobs()) {
         if (job->state() == Job::Running) {
             runningJobs++;
         } else if (job->state() == Job::Suspended) {

@@ -221,7 +221,7 @@ void Job::setState(State state)
     if (d->state != state) {
         d->state = state;
         show();
-        scheduleChangedSignal();
+        emit stateChanged(this);
     }
 }
 

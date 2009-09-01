@@ -63,6 +63,7 @@ class JobWidget : public QGraphicsWidget
 
     private:
         void updateLabels();
+        void updateJobState();
         void updateJob();
 
         Plasma::ExtenderItem *m_extenderItem;

@@ -190,6 +190,7 @@ void Manager::addJob(Job *job)
 {
     connect(job, SIGNAL(destroyed(SystemTray::Job*)), this, SLOT(removeJob(SystemTray::Job*)));
     connect(job, SIGNAL(changed(SystemTray::Job*)), this, SIGNAL(jobChanged(SystemTray::Job*)));
+    connect(job, SIGNAL(stateChanged(SystemTray::Job*)), this, SIGNAL(jobStateChanged(SystemTray::Job*)));
     connect(job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(updateTotals()));
     connect(job, SIGNAL(destroyed(SystemTray::Job*)), this, SLOT(updateTotals()));
 

@@ -39,10 +39,10 @@ static const int UPDATE_INTERVAL = 200;
 
 JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     : QGraphicsWidget(parent),
-    m_extenderItem(parent),
-    m_job(job),
-    m_updateTimerId(0),
-    m_extenderItemDestroyed(false)
+      m_extenderItem(parent),
+      m_job(job),
+      m_updateTimerId(0),
+      m_extenderItemDestroyed(false)
 {
     Q_ASSERT(m_extenderItem);
 
@@ -98,6 +98,7 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
         m_details->setText(i18n("More"));
 
         connect(m_job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(scheduleUpdateJob()));
+        connect(m_job, SIGNAL(stateChanged(SystemTray::Job*)), this, SLOT(updateJobState()));
         connect(m_job, SIGNAL(destroyed(SystemTray::Job*)), this, SLOT(destroyExtenderItem()));
         connect(m_details, SIGNAL(clicked()),
                 this, SLOT(detailsClicked()));
@@ -166,6 +167,37 @@ void JobWidget::scheduleUpdateJob()
     }
 }
 
+void JobWidget::updateJobState()
+{
+    if (m_extenderItemDestroyed) {
+        return;
+    }
+
+    //show the current status in the title.
+    if (!m_job->error().isEmpty()) {
+        m_extenderItem->setTitle(m_job->error());
+    } else if (m_job->state() == SystemTray::Job::Running) {
+        m_extenderItem->setTitle(m_job->message());
+        if (m_job->eta()) {
+            m_eta->setText(i18n("%1 (%2 remaining)", m_job->speed(),
+                                 KGlobal::locale()->prettyFormatDuration(m_job->eta())));
+        } else {
+            m_eta->setText(QString());
+        }
+    } else if (m_job->state() == SystemTray::Job::Suspended) {
+        m_extenderItem->setTitle(
+            i18nc("%1 is the name of the job, can be things like Copying, deleting, moving",
+                  "%1 [Paused]", m_job->message()));
+        m_eta->setText(i18n("Paused"));
+    } else {
+        m_extenderItem->setTitle(
+            i18nc("%1 is the name of the job, can be things like Copying, deleting, moving",
+                  "%1 [Finished]", m_job->message()));
+        m_extenderItem->showCloseButton();
+        m_details->hide();
+    }
+}
+
 void JobWidget::updateJob()
 {
     if (m_extenderItemDestroyed) {
@@ -191,30 +223,6 @@ void JobWidget::updateJob()
     }
 
     updateLabels();
-
-    //show the current status in the title.
-    if (!m_job->error().isEmpty()) {
-        m_extenderItem->setTitle(m_job->error());
-    } else if (m_job->state() == SystemTray::Job::Running) {
-        m_extenderItem->setTitle(m_job->message());
-        if (m_job->eta()) {
-            m_eta->setText(i18n("%1 (%2 remaining)", m_job->speed(),
-                                 KGlobal::locale()->prettyFormatDuration(m_job->eta())));
-        } else {
-            m_eta->setText(QString());
-        }
-    } else if (m_job->state() == SystemTray::Job::Suspended) {
-        m_extenderItem->setTitle(
-            i18nc("%1 is the name of the job, can be things like Copying, deleting, moving",
-                  "%1 [Paused]", m_job->message()));
-        m_eta->setText(i18n("Paused"));
-    } else {
-        m_extenderItem->setTitle(
-            i18nc("%1 is the name of the job, can be things like Copying, deleting, moving",
-                  "%1 [Finished]", m_job->message()));
-        m_extenderItem->showCloseButton();
-        m_details->hide();
-    }
 
     //set the correct actions to visible.
     if (m_extenderItem->action("suspend")) {
