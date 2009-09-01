@@ -35,10 +35,13 @@
 #include <Plasma/Meter>
 #include <Plasma/PushButton>
 
+static const int UPDATE_INTERVAL = 200;
+
 JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     : QGraphicsWidget(parent),
     m_extenderItem(parent),
     m_job(job),
+    m_updateTimerId(0),
     m_extenderItemDestroyed(false)
 {
     Q_ASSERT(m_extenderItem);
@@ -94,7 +97,7 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     if (m_job) {
         m_details->setText(i18n("More"));
 
-        connect(m_job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(updateJob()));
+        connect(m_job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(scheduleUpdateJob()));
         connect(m_job, SIGNAL(destroyed(SystemTray::Job*)), this, SLOT(destroyExtenderItem()));
         connect(m_details, SIGNAL(clicked()),
                 this, SLOT(detailsClicked()));
@@ -152,6 +155,17 @@ void JobWidget::destroyExtenderItem()
     m_extenderItemDestroyed = true;
 }
 
+void JobWidget::scheduleUpdateJob()
+{
+    if (m_extenderItemDestroyed) {
+        return;
+    }
+
+    if (!m_updateTimerId) {
+        m_updateTimerId = startTimer(UPDATE_INTERVAL);
+    }
+}
+
 void JobWidget::updateJob()
 {
     if (m_extenderItemDestroyed) {
@@ -159,8 +173,6 @@ void JobWidget::updateJob()
     }
 
     m_meter->setValue(m_job->percentage());
-
-    Plasma::ExtenderItem *item = m_extenderItem;
 
     if (m_job) {
         if (m_job->labels().count() > 0) {
@@ -182,9 +194,9 @@ void JobWidget::updateJob()
 
     //show the current status in the title.
     if (!m_job->error().isEmpty()) {
-        item->setTitle(m_job->error());
+        m_extenderItem->setTitle(m_job->error());
     } else if (m_job->state() == SystemTray::Job::Running) {
-        item->setTitle(m_job->message());
+        m_extenderItem->setTitle(m_job->message());
         if (m_job->eta()) {
             m_eta->setText(i18n("%1 (%2 remaining)", m_job->speed(),
                                  KGlobal::locale()->prettyFormatDuration(m_job->eta())));
@@ -192,31 +204,31 @@ void JobWidget::updateJob()
             m_eta->setText(QString());
         }
     } else if (m_job->state() == SystemTray::Job::Suspended) {
-        item->setTitle(
+        m_extenderItem->setTitle(
             i18nc("%1 is the name of the job, can be things like Copying, deleting, moving",
                   "%1 [Paused]", m_job->message()));
         m_eta->setText(i18n("Paused"));
     } else {
-        item->setTitle(
+        m_extenderItem->setTitle(
             i18nc("%1 is the name of the job, can be things like Copying, deleting, moving",
                   "%1 [Finished]", m_job->message()));
-        item->showCloseButton();
+        m_extenderItem->showCloseButton();
         m_details->hide();
     }
 
     //set the correct actions to visible.
-    if (item->action("suspend")) {
-        item->action("suspend")->setVisible(m_job->isSuspendable() &&
+    if (m_extenderItem->action("suspend")) {
+        m_extenderItem->action("suspend")->setVisible(m_job->isSuspendable() &&
                                             m_job->state() == SystemTray::Job::Running);
     }
 
-    if (item->action("resume")) {
-        item->action("resume")->setVisible(m_job->isSuspendable() &&
+    if (m_extenderItem->action("resume")) {
+        m_extenderItem->action("resume")->setVisible(m_job->isSuspendable() &&
                                            m_job->state() == SystemTray::Job::Suspended);
     }
 
-    if (item->action("stop")) {
-        item->action("stop")->setVisible(m_job->isKillable() &&
+    if (m_extenderItem->action("stop")) {
+        m_extenderItem->action("stop")->setVisible(m_job->isKillable() &&
                                          m_job->state() != SystemTray::Job::Stopped);
     }
 
@@ -233,17 +245,33 @@ void JobWidget::updateJob()
         m_fileCountLabel->setText(i18np("%2 / 1 file", "%2 / %1 files", files, processed["files"]));
     }
 
-    QString processedString = KGlobal::locale()->formatByteSize(processed["bytes"]);
-    QString totalsString = KGlobal::locale()->formatByteSize(totals["bytes"]);
-    m_totalBytesLabel->setText(QString("%1 / %2").arg(processedString, totalsString));
+    qlonglong done = processed["bytes"];
+    qlonglong total = totals["bytes"];
+    if (total > 0) {
+        QString processedString = KGlobal::locale()->formatByteSize(processed["bytes"]);
+        QString totalsString = KGlobal::locale()->formatByteSize(totals["bytes"]);
+        m_totalBytesLabel->setText(QString("%1 / %2").arg(processedString, totalsString));
+    } else {
+        m_details->hide();
+        m_totalBytesLabel->hide();
+    }
 
-    item->setIcon(m_job->applicationIconName());
+    m_extenderItem->setIcon(m_job->applicationIconName());
 }
 
 void JobWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     Q_UNUSED(event)
     updateLabels();
+}
+
+void JobWidget::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() == m_updateTimerId) {
+        killTimer(m_updateTimerId);
+        m_updateTimerId = 0;
+        updateJob();
+    }
 }
 
 void JobWidget::updateLabels()
@@ -271,7 +299,7 @@ void JobWidget::updateLabels()
 void JobWidget::detailsClicked()
 {
     if (!m_totalBytesLabel->isVisible()) {
-        m_details->setText(i18n("less"));
+        m_details->setText(i18n("Less"));
         m_totalBytesLabel->setVisible(true);
         m_dirCountLabel->setVisible(true);
         m_fileCountLabel->setVisible(true);
@@ -280,7 +308,7 @@ void JobWidget::detailsClicked()
         m_layout->addItem(m_dirCountLabel, 6, 1);
         m_extenderItem->setCollapsed(m_extenderItem->isCollapsed());
     } else {
-        m_details->setText(i18n("more"));
+        m_details->setText(i18n("More"));
         m_totalBytesLabel->setVisible(false);
         m_dirCountLabel->setVisible(false);
         m_fileCountLabel->setVisible(false);

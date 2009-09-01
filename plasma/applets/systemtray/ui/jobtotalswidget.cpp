@@ -23,10 +23,13 @@
 #include <Plasma/ExtenderItem>
 #include <Plasma/Meter>
 
+static const int UPDATE_TIMER_INTERVAL = 200;
+
 JobTotalsWidget::JobTotalsWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     : Meter(parent),
-    m_extenderItem(parent),
-    m_job(job)
+      m_extenderItem(parent),
+      m_job(job),
+      m_updateTimerId(0)
 {
     Q_ASSERT(m_extenderItem);
 
@@ -39,7 +42,7 @@ JobTotalsWidget::JobTotalsWidget(SystemTray::Job *job, Plasma::ExtenderItem *par
 
     if (m_job) {
         connect(m_job, SIGNAL(changed(SystemTray::Job*)),
-                this, SLOT(updateJob()));
+                this, SLOT(scheduleJobUpdate()));
 
         updateJob();
     }
@@ -47,6 +50,24 @@ JobTotalsWidget::JobTotalsWidget(SystemTray::Job *job, Plasma::ExtenderItem *par
 
 JobTotalsWidget::~JobTotalsWidget()
 {
+}
+
+void JobTotalsWidget::scheduleJobUpdate()
+{
+    if (!m_updateTimerId) {
+        m_updateTimerId = startTimer(UPDATE_TIMER_INTERVAL);
+    }
+}
+
+void JobTotalsWidget::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() == m_updateTimerId) {
+        killTimer(m_updateTimerId);
+        m_updateTimerId = 0;
+        updateJob();
+    } else {
+        Meter::timerEvent(event);
+    }
 }
 
 void JobTotalsWidget::updateJob()

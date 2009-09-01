@@ -49,12 +49,18 @@ class JobTotalsWidget : public Plasma::Meter
         explicit JobTotalsWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent);
         ~JobTotalsWidget();
 
-    public Q_SLOTS:
-        void updateJob();
+    protected:
+        void timerEvent(QTimerEvent *event);
+
+    private Q_SLOTS:
+        void scheduleJobUpdate();
 
     private:
+        void updateJob();
+
         Plasma::ExtenderItem *m_extenderItem;
         SystemTray::Job *m_job;
+        int m_updateTimerId;
 };
 
 #endif

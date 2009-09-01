@@ -52,18 +52,18 @@ class JobWidget : public QGraphicsWidget
         explicit JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent);
         ~JobWidget();
 
-    public Q_SLOTS:
-        void updateJob();
-
     protected:
         void resizeEvent(QGraphicsSceneResizeEvent *event);
+        void timerEvent(QTimerEvent *event);
 
     private Q_SLOTS:
         void detailsClicked();
         void destroyExtenderItem();
+        void scheduleUpdateJob();
 
     private:
         void updateLabels();
+        void updateJob();
 
         Plasma::ExtenderItem *m_extenderItem;
         SystemTray::Job *m_job;
@@ -85,6 +85,8 @@ class JobWidget : public QGraphicsWidget
         QString labelName1;
         QString label0;
         QString label1;
+
+        int m_updateTimerId;
 
         bool m_extenderItemDestroyed;
 };
