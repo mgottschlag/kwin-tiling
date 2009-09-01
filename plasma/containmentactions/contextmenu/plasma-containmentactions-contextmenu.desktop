@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Contextual Menu
+Name[et]=Kontekstimenüü
 Name[id]=Menu Kontekstual
 Name[nb]=Kontekstmeny
 Name[nds]=Rechtsklickmenü
@@ -11,6 +12,7 @@ Name[uk]=Контекстне меню
 Name[x-test]=xxContextual Menuxx
 Name[zh_TW]=內文選單
 Comment=The menu that normally shows on right-click
+Comment[et]=Tavaliselt hiire parema nupu klõpsuga avanev menüü
 Comment[id]=Menu yang normalnya muncul saat klik-kanan
 Comment[nb]=Menyen som vanligvis vises med høyre-klikk
 Comment[nds]=Dat Menü, dat Een normalerwies mit de rechte Muustast opropen deit

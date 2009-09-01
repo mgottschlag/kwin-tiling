@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Paste
+Name[et]=Asetamine
 Name[id]=Tempel
 Name[nb]=Lim inn
 Name[nds]=Infögen
@@ -14,6 +15,7 @@ Name[zh_TW]=貼上
 Type=Service
 Icon=preferences-desktop-color
 Comment=Creates a widget from the contents of the clipboard
+Comment[et]=Vidina loomine lõikepuhvri sisu põhjal
 Comment[id]=Membuat widget dari isi papan klip
 Comment[nb]=Lager et skjermelement av innholdet fra utklippstavla
 Comment[nds]=Stellt ut den Tweischenaflaag-Inholt en Lüttprogramm op

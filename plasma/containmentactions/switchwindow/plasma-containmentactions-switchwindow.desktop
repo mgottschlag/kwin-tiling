@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Switch Window
+Name[et]=Akna vahetamine
 Name[id]=Pindah Jendela
 Name[nb]=Bytt vindu
 Name[nds]=Finster wesseln
@@ -14,6 +15,7 @@ Name[zh_TW]=切換視窗
 Type=Service
 Icon=preferences-desktop-color
 Comment=Show a list of windows to switch to
+Comment[et]=Võimalike akende loendi näitamine
 Comment[id]=Tampilkan senarai jendela yang akan dipindahkan
 Comment[nb]=Vis en liste over vinduer som kan byttes til
 Comment[nds]=Finstern oplisten un dor henwesseln

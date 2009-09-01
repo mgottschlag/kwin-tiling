@@ -1,6 +1,7 @@
 [Desktop Entry]
 # ctxt: plasma runner
 Name=Windows
+Name[et]=Aknad
 Name[hr]=Prozori
 Name[id]=Jendela
 Name[nds]=Finstern
@@ -14,6 +15,7 @@ Name[uk]=Вікна
 Name[x-test]=xxWindowsxx
 Name[zh_TW]=視窗
 Comment=List windows and desktops and switch them
+Comment[et]=Akende ja töölauade näitamine võimalusega neile lülituda
 Comment[hr]=Popis prozora i radnih površina za laku promjenu među njima
 Comment[id]=Urutkan jendela dan desktop lalu kemudian tukar mereka
 Comment[nb]=List vinduer og skrivebord og bytt mellom dem

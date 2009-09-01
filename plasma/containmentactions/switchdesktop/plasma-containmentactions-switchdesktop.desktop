@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Switch Desktop
+Name[et]=Töölaua vahetamine
 Name[id]=Pindah Desktop
 Name[nb]=Bytt skrivebord
 Name[nds]=Schriefdisch wesseln
@@ -14,6 +15,7 @@ Name[zh_TW]=切換桌面
 Type=Service
 Icon=preferences-desktop-color
 Comment=Switch to another virtual desktop
+Comment[et]=Lülitumine teisele virtuaalsele töölauale
 Comment[id]=Berpindah ke desktop virtual lain
 Comment[nb]=Bytt til et annet virtuelt skrivebord
 Comment[nds]=Na en anner Schriefdischen wesseln

@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Switch Activity
+Name[et]=Tegevuse vahetamine
 Name[id]=Aktivitas Pindah
 Name[nb]=Bytt aktivitet
 Name[nds]=Aktiviteet wesseln
@@ -13,6 +14,7 @@ Name[zh_TW]=切換活動
 Type=Service
 Icon=preferences-desktop-color
 Comment=Switch to another activity
+Comment[et]=Lülitumine teisele tegevusele
 Comment[id]=Pindah ke aktivitas lain
 Comment[nb]=Bytt til en annen aktivitet
 Comment[nds]=Na en anner Aktiviteet wesseln
