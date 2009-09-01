@@ -119,10 +119,12 @@ int JobView::unitId(const QString &unit)
     if (m_unitMap.contains(unit)) {
         id = m_unitMap.value(unit);
     } else {
-        setData(QString("totalUnit%1").arg(id), unit);
-        setData(QString("processedUnit%1").arg(id), unit);
-        m_unitMap.insert(unit, m_unitId);
         id = m_unitId;
+        setData(QString("totalUnit%1").arg(id), unit);
+        setData(QString("totalAmount%1").arg(id), 0);
+        setData(QString("processedUnit%1").arg(id), unit);
+        setData(QString("processedAmount%1").arg(id), 0);
+        m_unitMap.insert(unit, m_unitId);
         ++m_unitId;
         scheduleUpdate();
     }
@@ -137,7 +139,7 @@ void JobView::setTotalAmount(qlonglong amount, const QString &unit)
     qlonglong prevTotal = data().value(amountString).toLongLong();
     if (prevTotal != amount) {
         if (m_speed > 0 && unit == "bytes") {
-            QString processedString = QString("processAmount%1").arg(id);
+            QString processedString = QString("processedAmount%1").arg(id);
             qlonglong remaining = 1000 * (amount - data().value(processedString).toLongLong());
             setData("eta", remaining / m_speed);
         }
@@ -150,7 +152,7 @@ void JobView::setTotalAmount(qlonglong amount, const QString &unit)
 void JobView::setProcessedAmount(qlonglong amount, const QString &unit)
 {
     int id = unitId(unit);
-    QString processedString = QString("processAmount%1").arg(id);
+    QString processedString = QString("processedAmount%1").arg(id);
     qlonglong prevTotal = data().value(processedString).toLongLong();
     if (prevTotal != amount) {
         if (m_speed > 0 && unit == "bytes") {
