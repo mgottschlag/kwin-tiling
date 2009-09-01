@@ -52,6 +52,7 @@ void DBusJobProtocol::init()
     m_engine = Plasma::DataEngineManager::self()->loadEngine(engineName);
 
     if (!m_engine->isValid()) {
+        Plasma::DataEngineManager::self()->unloadEngine(engineName);
         m_engine = 0;
         return;
     }
@@ -66,7 +67,6 @@ void DBusJobProtocol::prepareJob(const QString &source)
 {
     m_engine->connectSource(source, this);
 }
-
 
 void DBusJobProtocol::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
 {
