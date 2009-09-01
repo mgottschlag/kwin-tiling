@@ -1,0 +1,24 @@
+[Desktop Entry]
+Exec=plasma-netbook --desktop
+X-DBUS-StartupType=wait
+Name=Plasma Netbook
+Name[fr]=Netbook pour Plasma
+Name[pt]=Plasma em Mini-Computadores
+Name[pt_BR]=Plasma em Mini-Computadores
+Name[sv]=Plasma för bärbara nätdatorer
+Name[uk]=Плазмоїд для субноутбуків
+Name[x-test]=xxPlasma Netbookxx
+Comment=Workspace shell for netbook devices.
+Comment[fr]=Environnement de travail de Shell pour des périphériques de type Netbook.
+Comment[hr]=Ljuska radne okoline za netbook uređaje.
+Comment[pt]=Área de trabalho para os dispositivos em mini-computadores.
+Comment[pt_BR]=Área de trabalho para os dispositivos em mini-computadores.
+Comment[sv]=Arbetsyta för bärbara nätdatorenheter.
+Comment[tr]=Netbook aygıtları için çalışma uçbirimi.
+Comment[uk]=Оболонка робочого простору для субноутбуків.
+Comment[x-test]=xxWorkspace shell for netbook devices.xx
+Type=Service
+X-KDE-StartupNotify=false
+OnlyShowIn=KDE;
+X-KDE-autostart-phase=0
+
