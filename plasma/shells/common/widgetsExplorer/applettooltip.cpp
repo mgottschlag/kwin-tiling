@@ -50,7 +50,9 @@ void AppletToolTipWidget::setAppletIconWidget(AppletIconWidget *applet)
 
 void AppletToolTipWidget::updateContent()
 {
-    m_widget->updateInfo();
+    if(m_widget != 0) {
+        m_widget->updateInfo();
+    }
 }
 
 AppletIconWidget *AppletToolTipWidget::appletIconWidget()
@@ -151,6 +153,8 @@ void AppletInfoWidget::setAppletItem(PlasmaAppletItem *appletItem)
 
 void AppletInfoWidget::updateInfo()
 {
+    qDebug() << "m_appletItem" << m_appletItem;
+
     if (m_appletItem != 0) {
 
         if (m_iconWidget != 0) {
@@ -176,12 +180,17 @@ void AppletInfoWidget::updateInfo()
 
 
     } else {
-        m_iconWidget->setIcon("plasma");
-        m_nameLabel->setText("Unknown applet");
+        if (m_iconWidget != 0) {
+            m_iconWidget->setIcon("plasma");
+        }
+
+        if (m_nameLabel != 0) {
+            m_nameLabel->setText("Unknown Applet");
+        }
     }
 
-    m_mainLayout->invalidate();
-    m_mainLayout->activate();
+//    m_mainLayout->invalidate();
+//    m_mainLayout->activate();
 
     QSizeF prefSize = m_mainLayout->sizeHint(Qt::PreferredSize) + QSizeF(32, 32);
     resize(prefSize);

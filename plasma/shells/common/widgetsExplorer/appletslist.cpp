@@ -242,7 +242,7 @@ bool AppletsListWidget::eventFilter(QObject *obj, QEvent *event)
     return QObject::eventFilter(obj, event);
 }
 
-void AppletsListWidget::setItemModel(QStandardItemModel *model)
+void AppletsListWidget::setItemModel(PlasmaAppletItemModel *model)
 {
     m_modelFilterItems = new DefaultItemFilterProxyModel(this);
 
@@ -256,6 +256,7 @@ void AppletsListWidget::setItemModel(QStandardItemModel *model)
 
     connect(m_modelFilterItems, SIGNAL(searchTermChanged(QString)), this, SLOT(updateList()));
     connect(m_modelFilterItems, SIGNAL(filterChanged()), this, SLOT(updateList()));
+
 
     updateList();
 
@@ -411,9 +412,11 @@ void AppletsListWidget::setToolTipPosition()
 
 void AppletsListWidget::insertAppletIcon(AppletIconWidget *appletIconWidget)
 {
-    appletIconWidget->setVisible(true);
-    m_appletListLinearLayout->addItem(appletIconWidget);
-    m_appletListLinearLayout->setAlignment(appletIconWidget, Qt::AlignHCenter);
+    if(appletIconWidget != 0) {
+        appletIconWidget->setVisible(true);
+        m_appletListLinearLayout->addItem(appletIconWidget);
+        m_appletListLinearLayout->setAlignment(appletIconWidget, Qt::AlignHCenter);
+    }
 }
 
 int AppletsListWidget::maximumAproxVisibleIconsOnList() {
@@ -754,7 +757,7 @@ void AppletsListWidget::manageArrows() {
         listSize = m_appletsListWidget->size().height();
     }
 
-    if(listSize <= windowSize) {
+    if(listSize <= windowSize || m_currentAppearingAppletsOnList->count() == 0) {
         m_upLeftArrow->setEnabled(false);
         m_downRightArrow->setEnabled(false);
         

@@ -751,6 +751,8 @@ void PanelController::setLocation(const Plasma::Location &loc)
         case Plasma::BottomEdge:
             m_widgetExplorer->setOrientation(Qt::Horizontal);
             break;
+        default:
+            break;
         }
     }
 

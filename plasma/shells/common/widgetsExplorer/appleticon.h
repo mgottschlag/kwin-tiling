@@ -62,6 +62,7 @@ class AppletIconWidget : public QGraphicsWidget
         bool m_hovered;
         int m_iconHeight;
         Plasma::FrameSvg *m_selectedBackgroundSvg;
+        KIcon m_runningIcon;
 };
 
 #endif //APPLETICON_H

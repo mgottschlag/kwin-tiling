@@ -22,6 +22,7 @@
 #include <QFontMetrics>
 
 #include <KIconLoader>
+#include <KIcon>
 #include <KGlobalSettings>
 
 AppletIconWidget::AppletIconWidget(QGraphicsItem *parent, PlasmaAppletItem *appletItem)
@@ -37,6 +38,7 @@ AppletIconWidget::AppletIconWidget(QGraphicsItem *parent, PlasmaAppletItem *appl
     m_selectedBackgroundSvg->setImagePath("widgets/translucentbackground");
     qDebug() << cursor();
     setCursor(Qt::OpenHandCursor);
+    m_runningIcon = KIcon("dialog-ok");
 }
 
 AppletIconWidget::~AppletIconWidget()
@@ -126,6 +128,9 @@ void AppletIconWidget::setSelected(bool selected)
 
 void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
  {
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
+
     if (!m_appletItem) {
         return;
     }
@@ -136,6 +141,12 @@ void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     QRect iconRect(qMax(0, (width / 2) - (m_iconHeight / 2)), 0, m_iconHeight, m_iconHeight);
     painter->drawPixmap(iconRect, m_appletItem->icon().pixmap(m_iconHeight, m_iconHeight));
 
+    if (m_appletItem->running() > 0) {
+        QSize runningIconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+        painter->drawPixmap(iconRect.bottomLeft().x(), iconRect.bottomLeft().y() - runningIconSize.height(),
+                            m_runningIcon.pixmap(runningIconSize));
+    }
+
     QRectF textRect(0, iconRect.bottom() + 2, width, height - iconRect.bottom());
-    painter->drawText(textRect, Qt::AlignTop | Qt::AlignCenter | Qt::TextWordWrap, m_appletItem->text());
+    painter->drawText(textRect, Qt::AlignTop | Qt::AlignCenter | Qt::TextWordWrap, m_appletItem->name());
  }

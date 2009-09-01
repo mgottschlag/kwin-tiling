@@ -51,7 +51,7 @@ public:
     //not used yet
     QList <KCategorizedItemsViewModels::AbstractItem *> selectedItems() const;
 
-    void setItemModel(QStandardItemModel *model);
+    void setItemModel(PlasmaAppletItemModel *model);
     void setFilterModel(QStandardItemModel *model);
     void setOrientation(Qt::Orientation orientation);
 

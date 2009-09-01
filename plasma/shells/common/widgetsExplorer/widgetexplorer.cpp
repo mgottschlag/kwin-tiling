@@ -248,7 +248,6 @@ void WidgetExplorerPrivate::containmentDestroyed()
 void WidgetExplorerPrivate::appletAdded(Plasma::Applet *applet)
 {
     QString name = applet->pluginName();
-    //kDebug() << name;
 
     runningApplets[name]++;
     appletNames.insert(applet, name);
