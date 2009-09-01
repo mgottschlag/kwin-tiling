@@ -99,6 +99,7 @@ void FullView::addApplet(const QString &name, const QString &containment,
     m_containment->setLocation(m_location);
     m_containment->resize(size());
     setScene(m_containment->scene());
+    setSceneRect(m_containment->geometry());
 
     QFileInfo info(name);
     if (!info.isAbsolute()) {
@@ -109,14 +110,15 @@ void FullView::addApplet(const QString &name, const QString &containment,
         m_applet = Applet::loadPlasmoid(info.absoluteFilePath());
     }
 
-    if (!m_applet) {
-        m_applet = m_containment->addApplet(name, args, QRectF(0, 0, -1, -1));
-    } else {
+    if (m_applet) {
         m_containment->addApplet(m_applet, QPointF(-1, -1), false);
+    } else if (name.isEmpty()) {
+        return;
+    } else {
+        m_applet = m_containment->addApplet(name, args, QRectF(0, 0, -1, -1));
     }
 
     m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
-    setSceneRect(m_containment->geometry());
     setWindowTitle(m_applet->name());
     setWindowIcon(SmallIcon(m_applet->icon()));
     resize(m_applet->size().toSize());
@@ -132,16 +134,16 @@ void FullView::resizeEvent(QResizeEvent *event)
 {
     QGraphicsView::resizeEvent(event);
 
-    if (!m_applet) {
-        kDebug() << "no applet";
-        return;
-    }
-
     m_containment->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
     m_containment->setMinimumSize(size());
     m_containment->setMaximumSize(size());
     m_containment->resize(size());
     if (m_containment->layout()) {
+        return;
+    }
+
+    if (!m_applet) {
+        kDebug() << "no applet";
         return;
     }
 
