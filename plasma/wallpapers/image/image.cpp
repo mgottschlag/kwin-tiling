@@ -158,7 +158,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
 
     } else {
         m_uiSlideshow.setupUi(m_configWidget);
-
+        m_uiSlideshow.m_newStuff->setIcon(KIcon("get-hot-new-stuff"));
         m_uiSlideshow.m_dirlist->clear();
         foreach (const QString &dir, m_dirs) {
             m_uiSlideshow.m_dirlist->addItem(dir);
