@@ -99,6 +99,7 @@ void ResultScene::resize(int width, int height)
 void ResultScene::clearMatches()
 {
     foreach (ResultItem *item, m_items) {
+        removeItem(item);
         item->deleteLater();
     }
 
@@ -140,7 +141,7 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     */
 
     if (m.isEmpty()) {
-        kDebug() << "clearing";
+        //kDebug() << "clearing";
         resize(width(), 0);
         emit itemHoverEnter(0);
         m_clearTimer.start(200);
@@ -176,7 +177,8 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     // delete the stragglers
     QMapIterator<QString, ResultItem *> it(m_itemsById);
     while (it.hasNext()) {
-        it.next().value()->deleteLater();
+        removeItem(it.next().value());
+        it.value()->deleteLater();
     }
 
     // organize the remainders

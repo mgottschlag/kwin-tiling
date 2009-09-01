@@ -43,7 +43,7 @@ void SelectionBar::acquireTarget()
         return;
     }
 
-    kDebug() << "showing an item!";
+    //kDebug() << "showing an item!";
     setVisible(true);
     setTargetItem(selection.first());
 }
