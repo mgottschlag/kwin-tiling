@@ -112,7 +112,24 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
         return;
     }
 
-    const QString url = index.data(UrlRole).value<QString>();
+    QString url = index.data(UrlRole).value<QString>();
+    qDebug() << "ContextMenuFactory::showContextMenu: " << url;
+
+    // ivan: The url handling is dirty - instead of handling it in
+    // the source data models (that define them), we are handling
+    // them here. So, we need to make urls from KRunner model
+    // to behave properly
+    if (url.startsWith("krunner://")) {
+        url = url.replace("krunner://", "");
+        qDebug() << "ContextMenuFactory::showContextMenu: 1 " << url;
+        if (url.startsWith("services/services_")) {
+            url = url.replace("services/services_", "");
+        } else {
+            return;
+        }
+    }
+
+    qDebug() << "ContextMenuFactory::showContextMenu: " << url;
 
     if (url.isEmpty()) {
         return;
@@ -132,8 +149,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
             favoriteAction->setIcon(KIcon("list-remove"));
             actions << favoriteAction;
             //exclude stuff in the leave tab
-        } else if (KUrl(url).protocol() != "leave" &&
-                   KUrl(url).protocol() != "krunner") {
+        } else if (KUrl(url).protocol() != "leave") {
             favoriteAction->setText(i18n("Add to Favorites"));
             favoriteAction->setIcon(KIcon("bookmark-new"));
             actions << favoriteAction;
@@ -151,8 +167,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
     //### TODO : do not forget to remove (kurl.scheme() != "leave") and kurl declaration
     //when proper action for such case will be provided
     KUrl kurl(url);
-    if ((d->applet) && (kurl.scheme() != "leave") &&
-       (d->applet) && (kurl.scheme() != "krunner")) {
+    if ((d->applet) && (kurl.scheme() != "leave")) {
         Plasma::Containment *containment = d->applet->containment();
 
         // There might be relative paths for .desktop installed in
