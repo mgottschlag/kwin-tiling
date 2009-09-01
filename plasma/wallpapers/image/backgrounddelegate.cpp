@@ -51,6 +51,11 @@ void BackgroundDelegate::paint(QPainter *painter,
     QFont font = painter->font();
     font.setWeight(QFont::Bold);
     painter->setFont(font);
+    if (option.state & QStyle::State_Selected) {
+        painter->setPen(QApplication::palette().brush(QPalette::HighlightedText).color());
+    }else{
+        painter->setPen(QApplication::palette().brush(QPalette::Text).color());
+    }
     int x = option.rect.left() + MARGIN * 2 + maxwidth;
 
     QRect textRect(x,
