@@ -26,14 +26,15 @@
 #include <QGraphicsGridLayout>
 #include <QLabel>
 
-#include <plasma/widgets/meter.h>
 #include <Plasma/DataEngine>
-#include <Plasma/Service>
+#include <Plasma/Extender>
 #include <Plasma/ExtenderItem>
-#include <Plasma/Theme>
 #include <Plasma/Label>
 #include <Plasma/Meter>
+#include <Plasma/PopupApplet>
 #include <Plasma/PushButton>
+#include <Plasma/Service>
+#include <Plasma/Theme>
 
 static const int UPDATE_INTERVAL = 200;
 
@@ -97,11 +98,9 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     if (m_job) {
         m_details->setText(i18n("More"));
 
-        connect(m_job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(scheduleUpdateJob()));
         connect(m_job, SIGNAL(stateChanged(SystemTray::Job*)), this, SLOT(updateJobState()));
         connect(m_job, SIGNAL(destroyed(SystemTray::Job*)), this, SLOT(destroyExtenderItem()));
-        connect(m_details, SIGNAL(clicked()),
-                this, SLOT(detailsClicked()));
+        connect(m_details, SIGNAL(clicked()), this, SLOT(detailsClicked()));
 
         //the suspend action
         QAction *suspendAction = new QAction(m_extenderItem);
@@ -110,8 +109,7 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
         suspendAction->setVisible(false);
         suspendAction->setToolTip(i18n("Pause job"));
         m_extenderItem->addAction("suspend", suspendAction);
-        connect(suspendAction, SIGNAL(triggered()), m_job,
-                SLOT(suspend()));
+        connect(suspendAction, SIGNAL(triggered()), m_job, SLOT(suspend()));
 
         //the resume action
         QAction *resumeAction = new QAction(m_extenderItem);
@@ -120,8 +118,7 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
         resumeAction->setVisible(false);
         resumeAction->setToolTip(i18n("Resume job"));
         m_extenderItem->addAction("resume", resumeAction);
-        connect(resumeAction, SIGNAL(triggered()), m_job,
-                SLOT(resume()));
+        connect(resumeAction, SIGNAL(triggered()), m_job, SLOT(resume()));
 
         //the friendly stop action
         QAction *stopAction = new QAction(m_extenderItem);
@@ -130,8 +127,7 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
         stopAction->setVisible(true);
         stopAction->setToolTip(i18n("Cancel job"));
         m_extenderItem->addAction("stop", stopAction);
-        connect(stopAction, SIGNAL(triggered()), m_job,
-                SLOT(stop()));
+        connect(stopAction, SIGNAL(triggered()), m_job, SLOT(stop()));
 
         updateJob();
     } else {
@@ -169,7 +165,7 @@ void JobWidget::scheduleUpdateJob()
 
 void JobWidget::updateJobState()
 {
-    if (m_extenderItemDestroyed) {
+    if (m_extenderItemDestroyed && m_job) {
         return;
     }
 
@@ -194,33 +190,33 @@ void JobWidget::updateJobState()
             i18nc("%1 is the name of the job, can be things like Copying, deleting, moving",
                   "%1 [Finished]", m_job->message()));
         m_extenderItem->showCloseButton();
-        m_details->hide();
     }
 }
 
 void JobWidget::updateJob()
 {
-    if (m_extenderItemDestroyed) {
+    if (m_extenderItemDestroyed && m_job) {
         return;
     }
 
+
     m_meter->setValue(m_job->percentage());
 
-    if (m_job) {
-        if (m_job->labels().count() > 0) {
-            labelName0 = m_job->labels().value(0).first;
-            label0 = m_job->labels().value(0).second;
-        }
-        if (m_job->labels().count() > 1) {
-            labelName1 = m_job->labels().value(1).first;
-            label1 = m_job->labels().value(1).second;
-        }
-        KConfigGroup cg = m_extenderItem->config();
-        cg.writeEntry("labelName0", labelName0);
-        cg.writeEntry("label0", label0);
-        cg.writeEntry("labelName1", labelName1);
-        cg.writeEntry("label1", label1);
+    if (m_job->labels().count() > 0) {
+        labelName0 = m_job->labels().value(0).first;
+        label0 = m_job->labels().value(0).second;
     }
+    if (m_job->labels().count() > 1) {
+        labelName1 = m_job->labels().value(1).first;
+        label1 = m_job->labels().value(1).second;
+    }
+
+    //TODO: can we write this at some later point?
+    KConfigGroup cg = m_extenderItem->config();
+    cg.writeEntry("labelName0", labelName0);
+    cg.writeEntry("label0", label0);
+    cg.writeEntry("labelName1", labelName1);
+    cg.writeEntry("label1", label1);
 
     updateLabels();
 
@@ -253,11 +249,10 @@ void JobWidget::updateJob()
         m_fileCountLabel->setText(i18np("%2 / 1 file", "%2 / %1 files", files, processed["files"]));
     }
 
-    qlonglong done = processed["bytes"];
     qlonglong total = totals["bytes"];
     if (total > 0) {
         QString processedString = KGlobal::locale()->formatByteSize(processed["bytes"]);
-        QString totalsString = KGlobal::locale()->formatByteSize(totals["bytes"]);
+        QString totalsString = KGlobal::locale()->formatByteSize(total);
         m_totalBytesLabel->setText(QString("%1 / %2").arg(processedString, totalsString));
     } else {
         m_details->hide();
@@ -265,6 +260,45 @@ void JobWidget::updateJob()
     }
 
     m_extenderItem->setIcon(m_job->applicationIconName());
+}
+
+void JobWidget::showEvent(QShowEvent *)
+{
+    if (!m_job) {
+        return;
+    }
+
+    Plasma::PopupApplet *applet = qobject_cast<Plasma::PopupApplet *>(m_extenderItem->extender()->applet());
+    if (applet && !applet->isPopupShowing()) {
+        updateJob();
+        disconnect(m_job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(scheduleUpdateJob()));
+        connect(m_job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(scheduleUpdateJob()));
+        return;
+    }
+}
+
+void JobWidget::hideEvent(QHideEvent *)
+{
+    if (!m_job) {
+        return;
+    }
+
+    disconnect(m_job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(scheduleUpdateJob()));
+}
+
+void JobWidget::poppedUp(bool shown)
+{
+    if (!m_job) {
+        return;
+    }
+
+    disconnect(m_job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(scheduleUpdateJob()));
+
+    if (shown && isVisible()) {
+        updateJob();
+        connect(m_job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(scheduleUpdateJob()));
+        return;
+    }
 }
 
 void JobWidget::resizeEvent(QGraphicsSceneResizeEvent *event)

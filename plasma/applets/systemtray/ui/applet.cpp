@@ -781,6 +781,21 @@ void Applet::timerEvent(QTimerEvent *event)
     }
 }
 
+void Applet::popupEvent(bool show)
+{
+    Plasma::ExtenderGroup * jobGroup = extender()->group("jobGroup");
+    if (!jobGroup) {
+        return;
+    }
+
+    foreach (Plasma::ExtenderItem *item, jobGroup->items()) {
+        JobWidget *job = dynamic_cast<JobWidget *>(item->widget());
+        if (job) {
+            job->poppedUp(show);
+        }
+    }
+}
+
 void Applet::clearAllCompletedJobs()
 {
     Plasma::ExtenderGroup *completedJobsGroup = extender()->group("completedJobsGroup");

@@ -58,6 +58,7 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) { Q_UNUSED(event); }
 
     void timerEvent(QTimerEvent *event);
+    void popupEvent(bool show);
 
 private slots:
     void configAccepted();

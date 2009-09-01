@@ -194,10 +194,8 @@ QMap<QString, qlonglong> Job::totalAmounts() const
 
 void Job::setTotalAmounts(QMap<QString, qlonglong> amounts)
 {
-    if (d->totalAmounts != amounts) {
-        d->totalAmounts = amounts;
-        scheduleChangedSignal();
-    }
+    d->totalAmounts = amounts;
+    scheduleChangedSignal();
 }
 
 QMap<QString, qlonglong> Job::processedAmounts() const

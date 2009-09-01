@@ -52,9 +52,13 @@ class JobWidget : public QGraphicsWidget
         explicit JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent);
         ~JobWidget();
 
+        void poppedUp(bool shown);
+
     protected:
         void resizeEvent(QGraphicsSceneResizeEvent *event);
         void timerEvent(QTimerEvent *event);
+        void showEvent(QShowEvent *event);
+        void hideEvent(QHideEvent *event);
 
     private Q_SLOTS:
         void detailsClicked();
