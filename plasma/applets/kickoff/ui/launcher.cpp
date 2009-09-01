@@ -240,7 +240,6 @@ public:
 
     void setupSearchView()
     {
-        // searchModel = new SearchModel(q);
         searchModel = new KRunnerModel(q);
         UrlItemView *view = new UrlItemView();
         ItemDelegate *delegate = new ItemDelegate(q);
@@ -445,7 +444,6 @@ public:
     ApplicationModel  *applicationModel;
     RecentlyUsedModel *recentlyUsedModel;
     KRunnerModel *searchModel;
-    // SearchModel *searchModel;
     LeaveModel *leaveModel;
     SearchBar *searchBar;
     QWidget *footer;
