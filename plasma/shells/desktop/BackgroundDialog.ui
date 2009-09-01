@@ -23,7 +23,7 @@
    </size>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="3" rowspan="4">
+   <item row="0" column="4" rowspan="4">
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <spacer name="verticalSpacer_3">
@@ -140,6 +140,22 @@
       </size>
      </property>
     </widget>
+   </item>
+   <item row="0" column="3">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>8</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
