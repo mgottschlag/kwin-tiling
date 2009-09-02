@@ -541,7 +541,6 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
     if (!m_widgetExplorer) {
         m_widgetExplorer = new Plasma::WidgetExplorer();
         m_widgetExplorer->setContainment(m_mainView->containment());
-        m_widgetExplorer->setCorona(m_corona);
         m_widgetExplorer->setApplication();
 
         m_widgetExplorer->resize(m_widgetExplorerView->size());
