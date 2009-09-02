@@ -18,11 +18,11 @@ set(plasma-netbook_SRCS
     netview.cpp
     main.cpp
     plasmaapp.cpp
-    backgrounddialog.cpp
+    ../../../shells/common/backgrounddialog.cpp
     ${appletbrowserdialog_SRCS}
 )
 
-kde4_add_ui_files(plasma-netbook_SRCS BackgroundDialog.ui)
+kde4_add_ui_files(plasma-netbook_SRCS ../../../shells/common/BackgroundDialog.ui../../../shells/common/ActivityConfiguration.ui )
 
 #set(ksmserver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
 set(ksmserver_xml ${KDE4_DBUS_INTERFACES_DIR}/org.kde.KSMServerInterface.xml)

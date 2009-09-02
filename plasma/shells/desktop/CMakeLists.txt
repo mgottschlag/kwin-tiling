@@ -16,10 +16,10 @@ set(appletbrowserdialog_SRCS
 
 set(wallpaper_SRCS
     ../common/wallpaperpreview.cpp
+    ../common/backgrounddialog.cpp
 )
 
 set(plasma_SRCS
-    backgrounddialog.cpp
     scripting/containment.cpp
     scripting/rect.cpp
     scripting/scriptengine.cpp
@@ -44,7 +44,7 @@ set(plasma_SRCS
 )
 
 
-kde4_add_ui_files(plasma_SRCS BackgroundDialog.ui ActivityConfiguration.ui MousePlugins.ui MousePluginWidget.ui globaloptions.ui)
+kde4_add_ui_files(plasma_SRCS ../common/BackgroundDialog.ui ../common/ActivityConfiguration.ui MousePlugins.ui MousePluginWidget.ui globaloptions.ui)
 kde4_add_kcfg_files(plasma_SRCS kcfg/plasma-shell-desktop.kcfgc)
 
 if(WIN32)
