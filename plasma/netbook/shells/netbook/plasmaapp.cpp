@@ -217,6 +217,10 @@ void PlasmaApp::positionPanel()
     m_controlBar->containment()->setMaximumSize(m_controlBar->size());
     m_controlBar->containment()->setMinimumSize(m_controlBar->size());
 
+    if (m_widgetExplorerView) {
+        top += m_widgetExplorerView->size().height();
+    }
+    
     foreach (Plasma::Containment *containment, m_corona->containments()) {
         if (containment->formFactor() == Plasma::Planar) {
             containment->setContentsMargins(left, top, right, bottom);
@@ -527,6 +531,8 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
         KWindowSystem::setState(m_widgetExplorerView->winId(), NET::StaysOnTop);
         m_widgetExplorerView->setWindowFlags(Qt::FramelessWindowHint);
         m_widgetExplorerView->setAttribute(Qt::WA_TranslucentBackground);
+        m_widgetExplorerView->setAttribute(Qt::WA_DeleteOnClose);
+        connect(m_widgetExplorerView, SIGNAL(destroyed()), this, SLOT(appletBrowserDestroyed()));
         
         m_widgetExplorerView->resize(m_mainView->size().width(), 100);
         
@@ -543,14 +549,11 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
 
         m_widgetExplorerView->setGraphicsWidget(m_widgetExplorer);
 
-        m_widgetExplorer->installEventFilter(this);
+        m_widgetExplorerView->installEventFilter(this);
     }
 
     m_widgetExplorer->setOrientation(Qt::Horizontal);
-    qreal left, top, right, bottom;
-    Plasma::Containment *cont = m_mainView->containment();
-    cont->getContentsMargins(&left, &top, &right, &bottom);
-    cont->setContentsMargins(left, top + m_widgetExplorerView->size().height(), right, bottom);
+    positionPanel();
 
 
     m_widgetExplorer->show();
@@ -561,6 +564,7 @@ void PlasmaApp::appletBrowserDestroyed()
 {
     m_widgetExplorer = 0;
     m_widgetExplorerView = 0;
+    positionPanel();
 }
 
 
@@ -603,6 +607,12 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
                 !QApplication::activeWindow())) {
         //delayed hide
         m_unHideTimer->start(600);
+    } else if (watched == m_widgetExplorerView && event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        if (keyEvent->key() == Qt::Key_Escape) {
+            m_widgetExplorerView->deleteLater();
+            m_widgetExplorer->deleteLater();
+        }
     }
     return false;
 }
