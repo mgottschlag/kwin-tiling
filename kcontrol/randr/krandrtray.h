@@ -21,7 +21,7 @@
 
 #include <QMouseEvent>
 
-#include <knotificationitem-1/knotificationitem.h>
+#include <KNotificationItem>
 
 #include "randrdisplay.h"
 
@@ -29,8 +29,6 @@ class KHelpMenu;
 class QAction;
 class QActionGroup;
 class KMenu;
-
-using namespace Experimental;
 
 class KRandRSystemTray : public KNotificationItem
 {

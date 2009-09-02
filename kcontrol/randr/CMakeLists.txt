@@ -1,15 +1,8 @@
 
-if( XRANDR_1_2_FOUND )
-    macro_optional_add_subdirectory(module)
-endif( XRANDR_1_2_FOUND )
-
 configure_file (config-randr.h.cmake
                 ${CMAKE_CURRENT_BINARY_DIR}/config-randr.h )
 
-find_package(LibKNotificationItem-1 REQUIRED)
-
-include_directories( ${X11_Xrandr_INCLUDE_PATH}  
-                     ${LIBKNOTIFICATIONITEM-1_INCLUDE_DIR} )
+include_directories( ${X11_Xrandr_INCLUDE_PATH}  )
 
 ########### next target ###############
 
@@ -57,7 +50,7 @@ set(krandrtray_SRCS
 
 kde4_add_executable(krandrtray ${krandrtray_SRCS})
 
-target_link_libraries(krandrtray ${LIBKNOTIFICATIONITEM-1_LIBRARIES}  ${KDE4_KUTILS_LIBS} ${X11_Xrandr_LIB} ${X11_LIBRARIES})
+target_link_libraries(krandrtray ${KDE4_KUTILS_LIBS} ${X11_Xrandr_LIB} ${X11_LIBRARIES})
 
 install(TARGETS krandrtray ${INSTALL_TARGETS_DEFAULT_ARGS})
 
