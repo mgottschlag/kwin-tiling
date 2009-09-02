@@ -56,12 +56,6 @@ public:
      * @arg containment the new default
      */
     void setContainment(Plasma::Containment *containment);
-    /**
-     * Register the corona 
-     *
-     * @arg containment the new default
-     */
-    void setCorona(Plasma::Corona *corona);
 
     /**
      * @return the current default containment to add applets to

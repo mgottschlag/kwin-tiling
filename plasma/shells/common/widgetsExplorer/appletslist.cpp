@@ -315,27 +315,19 @@ void AppletsListWidget::timerEvent(QTimerEvent *event)
     if (event->timerId() == m_searchDelayTimer.timerId()) {
         m_modelFilterItems->setSearch(m_searchString);
         m_searchDelayTimer.stop();
-    }
-
-    if(event->timerId() == m_toolTipAppearTimer.timerId()) {
+    } else if (event->timerId() == m_toolTipAppearTimer.timerId()) {
         setToolTipPosition();
         m_toolTip->updateContent();
         m_toolTip->setVisible(true);
         m_toolTipAppearTimer.stop();
-    }
-
-    if(event->timerId() == m_toolTipAppearWhenAlreadyVisibleTimer.timerId()) {
+    } else if (event->timerId() == m_toolTipAppearWhenAlreadyVisibleTimer.timerId()) {
         m_toolTip->updateContent();
         setToolTipPosition();
         m_toolTipAppearWhenAlreadyVisibleTimer.stop();
-    }
-
-    if(event->timerId() == m_toolTipDisappearTimer.timerId()) {
+    } else if (event->timerId() == m_toolTipDisappearTimer.timerId()) {
         m_toolTip->setVisible(false);
         m_toolTipDisappearTimer.stop();
-    }
-
-    if(event->timerId() == m_filterApplianceTimer.timerId()) {
+    } else if (event->timerId() == m_filterApplianceTimer.timerId()) {
         m_modelFilterItems->setFilter(qVariantValue<KCategorizedItemsViewModels::Filter>
                                       (m_dataFilterAboutToApply));
         m_filterApplianceTimer.stop();
@@ -391,19 +383,21 @@ void AppletsListWidget::setToolTipPosition()
     QRectF appletRect = m_toolTip->appletIconWidget()->
                         mapRectToItem(this, m_toolTip->appletIconWidget()->boundingRect());
 
-    Plasma::Corona *corona = dynamic_cast<Plasma::WidgetExplorer*>(parentItem())->corona();
     //Plasma::WidgetExplorer *widgetExplorer = dynamic_cast<Plasma::WidgetExplorer*>(parentItem());
 
     toolTipMoveFrom = m_toolTip->pos();
 
-    if(corona) {
+    Plasma::Corona *corona = static_cast<Plasma::WidgetExplorer*>(parentItem())->corona();
+    if (corona) {
 //        ********* use this after integrating with plasma *************
         toolTipMoveTo = corona->popupPosition(m_toolTip->appletIconWidget(), m_toolTip->geometry().size());
+        kDebug() << "from corona" << toolTipMoveTo;
     } else {
         toolTipMoveTo = QPoint(appletPosition.x(), appletPosition.y());
+        kDebug() << "from ourself" << toolTipMoveTo;
     }
-    
-    if(m_toolTip->isVisible()) {
+
+    if (m_toolTip->isVisible()) {
         animateToolTipMove();
     } else {
         m_toolTip->move(toolTipMoveTo);
@@ -412,7 +406,7 @@ void AppletsListWidget::setToolTipPosition()
 
 void AppletsListWidget::insertAppletIcon(AppletIconWidget *appletIconWidget)
 {
-    if(appletIconWidget != 0) {
+    if (appletIconWidget != 0) {
         appletIconWidget->setVisible(true);
         m_appletListLinearLayout->addItem(appletIconWidget);
         m_appletListLinearLayout->setAlignment(appletIconWidget, Qt::AlignHCenter);

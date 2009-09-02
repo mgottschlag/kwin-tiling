@@ -20,14 +20,14 @@ target_link_libraries(plasmaappletexplorer ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS
 
 set(backgrounddialog_SRCS
     background.cpp
-    ../../desktop/backgrounddialog.cpp
-    ../../desktop/mouseinputbutton.cpp
-    ../../desktop/mouseplugins.cpp
-    ../../desktop/mousepluginwidget.cpp
+    ../backgrounddialog.cpp
+    ../mouseinputbutton.cpp
+    ../mouseplugins.cpp
+    ../mousepluginwidget.cpp
     ../wallpaperpreview.cpp
 )
 
-kde4_add_ui_files(backgrounddialog_SRCS ../../desktop/MousePlugins.ui ../../desktop/MousePluginWidget.ui ../../desktop/BackgroundDialog.ui ../../desktop/ActivityConfiguration.ui)
+kde4_add_ui_files(backgrounddialog_SRCS ../MousePlugins.ui ../MousePluginWidget.ui ../BackgroundDialog.ui ../ActivityConfiguration.ui)
 kde4_add_kcfg_files(backgrounddialog_SRCS ../../desktop/kcfg/plasma-shell-desktop.kcfgc)
 
 kde4_add_executable(plasmabackgrounddialog ${backgrounddialog_SRCS})

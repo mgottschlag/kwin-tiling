@@ -85,8 +85,7 @@ public:
     WidgetExplorer *q;
     QString application;
     Plasma::Containment *containment;
-    Plasma::Corona *corona;
-    
+
     QHash<QString, int> runningApplets; // applet name => count
     //extra hash so we can look up the names of deleted applets
     QHash<Plasma::Applet *,QString> appletNames;
@@ -340,13 +339,6 @@ void WidgetExplorer::setContainment(Plasma::Containment *containment)
     }
 }
 
-void WidgetExplorer::setCorona(Plasma::Corona *corona)
-{
-    if (d->corona != corona) {
-        d->corona = corona;
-    }
-}
-
 Containment *WidgetExplorer::containment() const
 {
     return d->containment;
@@ -354,7 +346,11 @@ Containment *WidgetExplorer::containment() const
 
 Plasma::Corona *WidgetExplorer::corona() const
 {
-    return d->corona;
+    if (d->containment) {
+        return d->containment->corona();
+    }
+
+    return 0;
 }
 
 void WidgetExplorer::addApplet()

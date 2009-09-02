@@ -27,7 +27,7 @@
 #include <KConfig>
 #include <KDebug>
 
-#include "../desktop/backgrounddialog.h"
+#include "../backgrounddialog.h"
 #include "plasma-shell-desktop.h"
 
 static const char description[] = "Background settings dialog";
