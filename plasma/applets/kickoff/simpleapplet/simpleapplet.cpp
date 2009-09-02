@@ -183,8 +183,8 @@ public:
             case SaveSession:              return i18n("Save Session");
             case LockScreen:               return i18n("Lock Screen");
             case Standby:                  return i18nc("Puts the system on standby", "Standby");
-            case SuspendDisk:              return i18n("Suspend to Disk");
-            case SuspendRAM:               return i18n("Suspend to RAM");
+            case SuspendDisk:              return i18n("Hibernate");
+            case SuspendRAM:               return i18n("Sleep");
             case Restart:                  return i18nc("Restart Computer", "Restart");
             case Shutdown:                 return i18n("Shutdown");
             case Logout:                   return i18n("Logout");

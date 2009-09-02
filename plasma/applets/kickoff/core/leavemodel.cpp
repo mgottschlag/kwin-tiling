@@ -73,13 +73,13 @@ QStandardItem* LeaveModel::createStandardItem(const QString& url)
         item->setIcon(KIcon("system-suspend"));
         item->setData(i18n("Pause without logging out"), Kickoff::SubTitleRole);
     } else if (basename == "suspenddisk") {
-        item->setText(i18n("Suspend to Disk"));
+        item->setText(i18n("Hibernate"));
         item->setIcon(KIcon("system-suspend-hibernate"));
-        item->setData(i18n("Pause without logging out"), Kickoff::SubTitleRole);
+        item->setData(i18n("Suspend to disk"), Kickoff::SubTitleRole);
     } else if (basename == "suspendram") {
-        item->setText(i18n("Suspend to RAM"));
+        item->setText(i18n("Sleep"));
         item->setIcon(KIcon("system-suspend"));
-        item->setData(i18n("Pause without logging out"), Kickoff::SubTitleRole);
+        item->setData(i18n("Suspend to RAM"), Kickoff::SubTitleRole);
     } else {
         item->setText(basename);
         item->setData(url, Kickoff::SubTitleRole);
