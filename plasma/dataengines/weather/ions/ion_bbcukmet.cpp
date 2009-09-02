@@ -597,7 +597,7 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 QString observeString = xml.readElementText();
                 QStringList observeData = observeString.split(':');
 #ifdef __GNUC__
-#warning FIXME: We should make this use a QRegExp but I need some here here :) -spstarr
+#warning FIXME: We should make this use a QRegExp but I need some help here :) -spstarr
 #endif
 
                 data.temperature_C = observeData[1].split(QChar(176))[0].trimmed();
