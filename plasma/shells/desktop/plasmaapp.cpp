@@ -52,6 +52,7 @@
 #include <KDebug>
 #include <KCmdLineArgs>
 #include <KGlobalAccel>
+#include <KNotification>
 #include <KWindowSystem>
 
 #include <ksmserver_interface.h>
@@ -59,6 +60,9 @@
 #include <Plasma/Containment>
 #include <Plasma/Theme>
 #include <Plasma/Dialog>
+#include <plasma/authorizationmanager.h>
+#include <plasma/accessmanager.h>
+#include <plasma/accessappletjob.h>
 
 #include <kephal/screens.h>
 
@@ -91,7 +95,8 @@ PlasmaApp::PlasmaApp()
       m_corona(0),
       m_controllerDialog(0),
       m_zoomLevel(Plasma::DesktopZoom),
-      m_panelHidden(0)
+      m_panelHidden(0),
+      m_mapper(new QSignalMapper(this))
 {
     KGlobal::locale()->insertCatalog("libplasma");
     KGlobal::locale()->insertCatalog("plasma-shells-common");
@@ -219,6 +224,19 @@ PlasmaApp::PlasmaApp()
 
     KGlobal::setAllowQuit(true);
     KGlobal::ref();
+
+    connect(m_mapper, SIGNAL(mapped(const QString &)),
+            this, SLOT(slotAddRemotePlasmoid(const QString &)));
+    connect(Plasma::AccessManager::self(),
+            SIGNAL(finished(Plasma::AccessAppletJob*)),
+            this, SLOT(slotPlasmoidAccessFinished(Plasma::AccessAppletJob*)));
+    connect(Plasma::AccessManager::self(),
+            SIGNAL(remoteAppletAnnounced(Plasma::PackageMetadata)),
+            this, SLOT(slotRemotePlasmoidAdded(Plasma::PackageMetadata)));
+
+    Plasma::AuthorizationManager::self()->setAuthorizationPolicy(
+        Plasma::AuthorizationManager::PinPairing);
+
     QTimer::singleShot(0, this, SLOT(setupDesktop()));
 }
 
@@ -1046,6 +1064,42 @@ void PlasmaApp::updateActions(Plasma::ImmutabilityType immutability)
     bool enable = immutability == Plasma::Mutable && m_zoomLevel != Plasma::DesktopZoom;
     kDebug() << enable;
     m_corona->enableAction("add sibling containment", enable);
+}
+
+void PlasmaApp::slotRemotePlasmoidAdded(Plasma::PackageMetadata metadata)
+{
+    kDebug();
+    if (m_desktops.isEmpty()) {
+        return;
+    }
+
+    KNotification *notification = new KNotification("newplasmoid", m_desktops.at(0));
+    notification->setText(i18n("An plasma widget has just been published on the network:<br><b>%1</b> - </i>%2</i>",
+                               metadata.name(), metadata.description()));
+    notification->setActions(QStringList(i18n("Add to current activity")));
+
+    m_mapper->setMapping(notification, metadata.remoteLocation().prettyUrl());
+    connect(notification, SIGNAL(action1Activated()), m_mapper, SLOT(map()));
+    kDebug() << "firing notification";
+    notification->sendEvent();
+}
+
+void PlasmaApp::slotAddRemotePlasmoid(const QString &location)
+{
+    Plasma::AccessManager::self()->accessRemoteApplet(KUrl(location));
+}
+
+void PlasmaApp::slotPlasmoidAccessFinished(Plasma::AccessAppletJob *job)
+{
+    if (m_desktops.isEmpty()) {
+        return;
+    }
+
+    Plasma::Containment *c = m_desktops.at(0)->containment();
+    if (c) {
+        kDebug() << "adding applet";
+        c->addApplet(job->applet(), QPointF(-1, -1), false);
+    }
 }
 
 

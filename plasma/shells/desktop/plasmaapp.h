@@ -29,13 +29,17 @@
 #include <KUniqueApplication>
 
 #include <Plasma/Plasma>
+#include <plasma/packagemetadata.h>
 
 #include "ui_globaloptions.h"
 
+class QSignalMapper;
 class QTimer;
 
 namespace Plasma
 {
+    class AccessAppletJob;
+    class AppletBrowser;
     class Containment;
     class Corona;
     class Dialog;
@@ -136,6 +140,9 @@ private Q_SLOTS:
     void checkVirtualDesktopViews(int numDesktops);
     void setFixedDashboard(bool fixedDashboard);
     void setWmClass(WId id);
+    void slotRemotePlasmoidAdded(Plasma::PackageMetadata metadata);
+    void slotAddRemotePlasmoid(const QString &location);
+    void slotPlasmoidAccessFinished(Plasma::AccessAppletJob *job);
 
 private:
     DesktopCorona *m_corona;
@@ -147,6 +154,7 @@ private:
     Plasma::ZoomLevel m_zoomLevel;
     QPointer<InteractiveConsole> m_console;
     int m_panelHidden;
+    QSignalMapper *m_mapper;
 
     Ui::GlobalOptions m_configUi;
 };

@@ -78,4 +78,4 @@ install(TARGETS plasma-desktop ${INSTALL_TARGETS_DEFAULT_ARGS})
 install(FILES plasma.desktop plasma-desktop.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
 install(FILES kcfg/plasma-shell-desktop.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
 install(FILES plasma-themes.knsrc DESTINATION  ${CONFIG_INSTALL_DIR})
-
+install(FILES plasma-desktop.notifyrc DESTINATION ${DATA_INSTALL_DIR}/plasma-desktop)

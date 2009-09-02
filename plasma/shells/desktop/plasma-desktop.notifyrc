@@ -1,0 +1,9 @@
+[Global]
+IconName=plasma
+Comment=Plasma Desktop Shell
+Name=Plasma
+
+[Event/newplasmoid]
+Name=New plasmoid published
+Comment=A new plasmoid is published on the network.
+Action=Popup
