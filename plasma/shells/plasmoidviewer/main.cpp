@@ -40,8 +40,8 @@
 // for --list
 #include <Plasma/Applet>
 #include <Plasma/Theme>
-#include <plasma/authorizationmanager.h>
-#include <plasma/accessmanager.h>
+#include <Plasma/AccessManager>
+#include <Plasma/AuthorizationManager>
 
 using namespace Plasma;
 

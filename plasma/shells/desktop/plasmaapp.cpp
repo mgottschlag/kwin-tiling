@@ -57,12 +57,12 @@
 
 #include <ksmserver_interface.h>
 
+#include <Plasma/AccessAppletJob>
+#include <Plasma/AccessManager>
+#include <Plasma/AuthorizationManager>
 #include <Plasma/Containment>
 #include <Plasma/Theme>
 #include <Plasma/Dialog>
-#include <plasma/authorizationmanager.h>
-#include <plasma/accessmanager.h>
-#include <plasma/accessappletjob.h>
 
 #include <kephal/screens.h>
 

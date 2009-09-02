@@ -36,9 +36,9 @@
 #include <KIconLoader>
 #include <KStandardDirs>
 
-#include <plasma/accessmanager.h>
-#include <plasma/accessappletjob.h>
-#include <plasma/package.h>
+#include <Plasma/AccessManager>
+#include <Plasma/AccessAppletJob>
+#include <Plasma/Package>
 #include <Plasma/Containment>
 #include <Plasma/Wallpaper>
 
