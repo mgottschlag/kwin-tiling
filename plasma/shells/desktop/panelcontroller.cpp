@@ -876,7 +876,6 @@ void PanelController::showWidgetsExplorer()
     if (!m_widgetExplorer) {
         m_widgetExplorer = new Plasma::WidgetExplorer();
         m_widgetExplorer->setContainment(d->containment);
-        m_widgetExplorer->setCorona(d->containment->corona());
         m_widgetExplorer->setApplication();
 
         m_widgetExplorer->resize(size());
