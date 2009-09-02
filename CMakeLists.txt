@@ -21,6 +21,11 @@ find_package(KDE4 4.3.60 REQUIRED)
 find_package(Strigi REQUIRED)
 find_package(QImageBlitz REQUIRED)
 find_package(ZLIB REQUIRED)
+find_package(QCA2 REQUIRED)
+
+
+include_directories(${QCA2_INCLUDE_DIR})
+
 
 if(Q_WS_X11)
   if(NOT X11_XTest_FOUND)
