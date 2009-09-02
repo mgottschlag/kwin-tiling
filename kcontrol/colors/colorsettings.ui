@@ -181,13 +181,53 @@
        <item>
         <widget class="QGroupBox" name="groupBox_5">
          <property name="toolTip">
-          <string>Contrast used for 3D objects</string>
+          <string>Shading of frames and lighting (&quot;3D&quot;) effects</string>
          </property>
          <property name="title">
-          <string>Contrast</string>
+          <string>Shading</string>
          </property>
-         <layout class="QVBoxLayout" name="_5">
-          <item>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <property name="horizontalSpacing">
+           <number>12</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>0</number>
+          </property>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_9">
+            <property name="text">
+             <string>Minimum</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>198</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="3">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>Maximum</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Contrast</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" colspan="3">
            <widget class="QSlider" name="contrastSlider">
             <property name="maximum">
              <number>10</number>
@@ -249,32 +289,32 @@
          </property>
          <item>
           <property name="text">
-           <string>Common Colors</string>
+           <string comment="color-sets" extracomment="'Common' here means &quot;frequent/not rare&quot;, not &quot;shared&quot;">Common Colors</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>View</string>
+           <string comment="color-sets" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">View</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Window</string>
+           <string comment="color-sets" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">Window</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Button</string>
+           <string comment="color-sets" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">Button</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Selection</string>
+           <string comment="color-sets" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">Selection</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Tooltip</string>
+           <string comment="color-sets" extracomment="see kdebase/workspace/kcontrol/colors/README.i18n">Tooltip</string>
           </property>
          </item>
         </widget>
