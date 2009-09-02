@@ -21,6 +21,8 @@
 #include "applettooltip.h"
 
 #include <kiconloader.h>
+#include <kpushbutton.h>
+#include <ktextbrowser.h>
 
 //AppletToolTipWidget
 
@@ -91,31 +93,37 @@ AppletInfoWidget::~AppletInfoWidget()
 
 void AppletInfoWidget::init()
 {
-    m_mainLayout = new QGraphicsLinearLayout();
-    m_mainLayout->setOrientation(Qt::Vertical);
-
     m_iconWidget   = new Plasma::IconWidget();
-    m_nameLabel    = new Plasma::Label();
-    m_tabs         = new Plasma::TabBar();
+    m_nameLabel    = new Plasma::TextBrowser();
+    m_aboutLabel   = new Plasma::TextBrowser();
 
-    m_aboutLabel   = new Plasma::Label();
-    m_actionsLabel = new Plasma::Label();
-    m_detailsLabel = new Plasma::Label();
+    m_publishCheckBox = new Plasma::CheckBox();
+    m_publishCheckBox->setText("Publish");
 
-    // main layout init
-    QGraphicsLinearLayout * headerLayout = new QGraphicsLinearLayout();
-    headerLayout->setOrientation(Qt::Horizontal);
-    headerLayout->addItem(m_iconWidget);
-    headerLayout->addItem(m_nameLabel);
+    m_uninstallButton = new Plasma::PushButton();
+    m_uninstallButton->setText("Uninstall");
+    m_uninstallButton->nativeWidget()->setIcon(QIcon("draw-eraser"));
+    //m_uninstallButton->setSizePolicy(QSizePolicy::Minimum);
 
-    headerLayout->setAlignment(m_iconWidget, Qt::AlignHCenter);
+    // layout init
+    QGraphicsLinearLayout *textLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    textLayout->addItem(m_nameLabel);
+    textLayout->addItem(m_aboutLabel);
 
-    m_mainLayout->addItem(headerLayout);
-    m_mainLayout->addItem(m_tabs);
+    QGraphicsLinearLayout *buttonsLayout = new QGraphicsLinearLayout();
+    buttonsLayout->addItem(m_publishCheckBox);
+    buttonsLayout->addItem(m_uninstallButton);
+    buttonsLayout->setContentsMargins(10, 10, 10, 10);
 
-    m_mainLayout->setContentsMargins(10, 10, 10, 0);
+    m_mainLayout = new QGraphicsLinearLayout();
+    m_mainLayout->addItem(m_iconWidget);
+    m_mainLayout->addItem(textLayout);
+    m_mainLayout->setContentsMargins(10, 10, 10, 10);
+    m_mainLayout->setAlignment(m_iconWidget, Qt::AlignVCenter);
 
-    m_tabs->setPreferredSize(250, 150);
+    QGraphicsLinearLayout *mainVerticalLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    mainVerticalLayout->addItem(m_mainLayout);
+    mainVerticalLayout->addItem(buttonsLayout);
 
     // header init
     m_iconWidget->setAcceptHoverEvents(false);
@@ -127,23 +135,21 @@ void AppletInfoWidget::init()
     font.setBold(true);
     font.setPointSize(1.2 * font.pointSize());
     m_nameLabel->nativeWidget()->setFont(font);
-    m_nameLabel->nativeWidget()->setScaledContents(true);
-    m_nameLabel->setMaximumHeight(m_iconWidget->maximumHeight());
+    m_nameLabel->nativeWidget()->setFixedHeight(m_iconWidget->maximumHeight());
+    m_nameLabel->nativeWidget()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_nameLabel->nativeWidget()->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_nameLabel->nativeWidget()->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
-    // about tab
-    m_tabs->addTab(i18n("About"), m_aboutLabel);
+    // about label
     font.setBold(false);
     m_aboutLabel->setFont(font);
+    m_aboutLabel->nativeWidget()->setFont(font);
+    m_aboutLabel->nativeWidget()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_aboutLabel->nativeWidget()->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_aboutLabel->nativeWidget()->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    m_aboutLabel->nativeWidget()->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
-    // actions tab
-    m_tabs->addTab(i18n("Actions"), m_actionsLabel);
-
-    // author tab
-    m_tabs->addTab(i18n("Details"), m_detailsLabel);
-    m_detailsLabel->nativeWidget()->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-
-    setLayout(m_mainLayout);
+    setLayout(mainVerticalLayout);
 }
 
 void AppletInfoWidget::setAppletItem(PlasmaAppletItem *appletItem)
@@ -153,7 +159,7 @@ void AppletInfoWidget::setAppletItem(PlasmaAppletItem *appletItem)
 
 void AppletInfoWidget::updateInfo()
 {
-    qDebug() << "m_appletItem" << m_appletItem;
+    m_mainLayout->invalidate();
 
     if (m_appletItem != 0) {
 
@@ -168,17 +174,6 @@ void AppletInfoWidget::updateInfo()
             m_aboutLabel->setText(m_appletItem->description());
         }
 
-        if (m_detailsLabel != 0)  {
-            m_detailsLabel->setText(
-            i18n("<html><p>Version: %4</p><p>Author: %1 (%2)</p><p>License: %3</p></html>")
-                .arg(m_appletItem->author())
-                .arg(m_appletItem->email())
-                .arg(m_appletItem->license())
-                .arg(m_appletItem->version())
-                );
-        }
-
-
     } else {
         if (m_iconWidget != 0) {
             m_iconWidget->setIcon("plasma");
@@ -189,9 +184,7 @@ void AppletInfoWidget::updateInfo()
         }
     }
 
-//    m_mainLayout->invalidate();
-//    m_mainLayout->activate();
-
-    QSizeF prefSize = m_mainLayout->sizeHint(Qt::PreferredSize) + QSizeF(32, 32);
-    resize(prefSize);
+//    QSizeF prefSize = m_mainLayout->sizeHint(Qt::PreferredSize);
+//    resize(prefSize);
+    m_mainLayout->activate();
 }

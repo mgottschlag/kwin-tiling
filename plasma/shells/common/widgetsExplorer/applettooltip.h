@@ -27,10 +27,13 @@
 #include <QtCore>
 #include <QtGui>
 
+#include <plasma/dialog.h>
+#include <plasma/widgets/checkbox.h>
 #include <plasma/widgets/iconwidget.h>
 #include <plasma/widgets/label.h>
 #include <plasma/widgets/tabbar.h>
-#include <plasma/dialog.h>
+#include <plasma/widgets/pushbutton.h>
+#include <plasma/widgets/textbrowser.h>
 
 class AppletInfoWidget : public QGraphicsWidget {
 
@@ -47,16 +50,14 @@ class AppletInfoWidget : public QGraphicsWidget {
         void updateInfo();
 
     private:
-        PlasmaAppletItem * m_appletItem;
-        QGraphicsLinearLayout * m_mainLayout;
+        PlasmaAppletItem *m_appletItem;
+        QGraphicsLinearLayout *m_mainLayout;
 
-        Plasma::IconWidget * m_iconWidget;
-        Plasma::Label  * m_nameLabel;
-        Plasma::TabBar * m_tabs;
-
-        Plasma::Label   * m_aboutLabel;
-        Plasma::Label   * m_actionsLabel;
-        Plasma::Label   * m_detailsLabel;
+        Plasma::IconWidget *m_iconWidget;
+        Plasma::TextBrowser *m_nameLabel;
+        Plasma::TextBrowser *m_aboutLabel;
+        Plasma::CheckBox *m_publishCheckBox;
+        Plasma::PushButton *m_uninstallButton;
 };
 
 class AppletToolTipWidget : public Plasma::Dialog {
