@@ -1,26 +1,6 @@
 [Desktop Entry]
 Name=Search Box
-Name[es]=Caja de búsqueda
-Name[et]=Otsingukast
-Name[fr]=Boîte de recherche
-Name[hr]=Polje za pretragu
-Name[km]=ប្រអប់​ស្វែងរក
-Name[pt]=Campo de Pesquisa
-Name[pt_BR]=Campo de Pesquisa
-Name[sv]=Sökruta
-Name[tr]=Arama Kutusu
-Name[uk]=Панель пошуку
-Name[x-test]=xxSearch Boxxx
 Comment=Search Box for a given RunnerManager
-Comment[et]=Käivitamishalduri otsingukast
-Comment[fr]=Boîte de recherche pour un RunnerManager donné
-Comment[hr]=Polje za pretragu za dani Upravitelj Pokretanja
-Comment[km]=ប្រអប់​ស្វែងរក​សម្រាប់​កម្មវិធី​គ្រប់គ្រង​កម្មវិធី​រត់​ដែល​បាន​ផ្ដល់
-Comment[pt]=Campo de pesquisa de um dado gestor de execução
-Comment[pt_BR]=Campo de pesquisa de um dado gestor de execução
-Comment[sv]=Sökruta för en given hanterare av programkörning
-Comment[uk]=Панель пошуку для вказаного Керування запуском
-Comment[x-test]=xxSearch Box for a given RunnerManagerxx
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/Applet

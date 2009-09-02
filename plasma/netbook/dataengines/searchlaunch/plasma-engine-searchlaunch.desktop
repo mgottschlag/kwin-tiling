@@ -1,23 +1,6 @@
 [Desktop Entry]
 Name=Search and Launch Engine
-Name[et]=Otsimise ja käivitamise mootor
-Name[fr]=Moteur pour rechercher et lancer
-Name[hr]=Podrška za pretragu i pokretanje
-Name[km]=ស្វែងរក​ និង​ចាប់ផ្ដើម​ម៉ាស៊ីន
-Name[pt]=Motor de Pesquisa e Lançamento
-Name[pt_BR]=Motor de Pesquisa e Lançamento
-Name[sv]=Sök- och startprogram
-Name[uk]=Рушій пошуку і запуску
-Name[x-test]=xxSearch and Launch Enginexx
 Comment=Engine to handle queries to SAL containment
-Comment[et]=SAL konteineri päringuid käitlev mootor
-Comment[hr]=Podrška za rad s upitima SAL sadržitelju
-Comment[km]=ម៉ាស៊ីន​ត្រូវ​គ្រប់គ្រង​សំណួរ​មាន SAL
-Comment[pt]=Motor para lidar com as pesquisas no contentor SAL
-Comment[pt_BR]=Motor para lidar com as pesquisas no contentor SAL
-Comment[sv]=Program för att hantera förfrågningar till SAL-omgivning
-Comment[uk]=Рушій для обробки запитів до контейнера SAL
-Comment[x-test]=xxEngine to handle queries to SAL containmentxx
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/DataEngine

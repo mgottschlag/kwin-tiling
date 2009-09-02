@@ -1,25 +1,7 @@
 [Desktop Entry]
 Name=Newspaper activity
-Name[et]=Ajalehetegevus
-Name[fr]=Activité des journaux
-Name[hr]=Aktivnost novina
-Name[km]=សកម្មភាព​សារព័ត៌មាន
-Name[pt]=Actividade de jornal
-Name[pt_BR]=Actividade de jornal
-Name[sv]=Tidningsaktivitet
-Name[uk]=Газетна обробка
-Name[x-test]=xxNewspaper activityxx
 
 Comment=An activity that puts widgets on two columns
-Comment[et]=Tegevus, mis asetab vidinad kahte veergu
-Comment[fr]=Une activité qui dispose les plasmoïdes sur deux colonnes
-Comment[hr]=Aktivnost koja stavi spravice u dva stupca
-Comment[km]=សកម្មភាព​ដែល​ដាក់ធាតុក្រាហ្វិក​នៅ​ក្នុង​ជួរឈរ​ពីរ
-Comment[pt]=Uma actividade que coloca os itens em duas colunas
-Comment[pt_BR]=Uma actividade que coloca os itens em duas colunas
-Comment[sv]=En aktivitet som placerar grafiska komponenter i två kolumner
-Comment[uk]=Інструмент обробки з розміщення тексту в дві колонки
-Comment[x-test]=xxAn activity that puts widgets on two columnsxx
 
 
 Icon=
