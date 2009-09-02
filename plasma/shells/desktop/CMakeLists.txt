@@ -17,6 +17,9 @@ set(appletbrowserdialog_SRCS
 set(wallpaper_SRCS
     ../common/wallpaperpreview.cpp
     ../common/backgrounddialog.cpp
+    ../common/mouseplugins.cpp
+    ../common/mousepluginwidget.cpp
+    ../common/mouseinputbutton.cpp
 )
 
 set(plasma_SRCS
@@ -30,9 +33,6 @@ set(plasma_SRCS
     desktopview.cpp
     interactiveconsole.cpp
     main.cpp
-    mouseplugins.cpp
-    mousepluginwidget.cpp
-    mouseinputbutton.cpp
     panelcontroller.cpp
     panelview.cpp
     panelappletoverlay.cpp
@@ -44,7 +44,7 @@ set(plasma_SRCS
 )
 
 
-kde4_add_ui_files(plasma_SRCS ../common/BackgroundDialog.ui ../common/ActivityConfiguration.ui MousePlugins.ui MousePluginWidget.ui globaloptions.ui)
+kde4_add_ui_files(plasma_SRCS ../common/BackgroundDialog.ui ../common/ActivityConfiguration.ui ../common/MousePlugins.ui ../common/MousePluginWidget.ui globaloptions.ui)
 kde4_add_kcfg_files(plasma_SRCS kcfg/plasma-shell-desktop.kcfgc)
 
 if(WIN32)

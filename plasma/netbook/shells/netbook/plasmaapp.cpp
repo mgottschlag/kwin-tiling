@@ -547,6 +547,10 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
     }
 
     m_widgetExplorer->setOrientation(Qt::Horizontal);
+    qreal left, top, right, bottom;
+    Plasma::Containment *cont = m_mainView->containment();
+    cont->getContentsMargins(&left, &top, &right, &bottom);
+    cont->setContentsMargins(left, top + m_widgetExplorerView->size().height(), right, bottom);
 
 
     m_widgetExplorer->show();
