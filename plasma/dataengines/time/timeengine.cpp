@@ -78,7 +78,7 @@ QStringList TimeEngine::sources() const
 
 bool TimeEngine::sourceRequestEvent(const QString &name)
 {
-    addSource(new TimeSource(name));
+    addSource(new TimeSource(name, this));
     return true;
 }
 
