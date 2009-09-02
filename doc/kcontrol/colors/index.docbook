@@ -147,12 +147,13 @@
   <title>Colors</title>
 
   <para>The <guilabel>Colors</guilabel> tab allows you to change the colors in
-  a color scheme.</para>
+  the active color scheme.</para>
 
   <para>Creating or changing a scheme is a simple matter of clicking on the
   swatch in the color list and selecting a new color. You can check your
   changes at any time by pressing <guibutton>Apply</guibutton>. It is suggested
-  that you save your scheme when you are done.</para>
+  that you save your scheme (via the <guilabel>Scheme</guilabel> tab) when you
+  are done.</para>
 
   <para>The <guilabel>Common Colors</guilabel> set, which is displayed
   initially, is not actually a &quot;set&quot; in the sense used by &kde; (see
@@ -276,7 +277,7 @@
   </sect3>
 
   <sect3>
-    <title>Window Manager Roles</title>
+    <title>Window Manager Colors</title>
 
     <para>As previously stated, the Window Manager set has its own roles,
     independent of those in other sets. These are (currently) only accessible
@@ -285,7 +286,7 @@
     <itemizedlist>
       <listitem><para>Active Titlebar &mdash;
         used to draw the title bar background, borders, and/or decorations for
-        active window (that is, the one with input focus). Not all window
+        the active window (that is, the one with input focus). Not all window
         decorations will use this in the same way, and some may even use the
         Normal Background from the Window set to draw the title bar.
       </para></listitem>
