@@ -36,6 +36,9 @@
 #include <KIconLoader>
 #include <KStandardDirs>
 
+#include <plasma/accessmanager.h>
+#include <plasma/accessappletjob.h>
+#include <plasma/package.h>
 #include <Plasma/Containment>
 #include <Plasma/Wallpaper>
 
@@ -101,6 +104,15 @@ void FullView::addApplet(const QString &name, const QString &containment,
     setScene(m_containment->scene());
     setSceneRect(m_containment->geometry());
 
+    if (name.startsWith("plasma:") ||
+        name.startsWith("zeroconf:")) {
+        kDebug() << "accessing remote: " << name;
+        AccessManager::self()->accessRemoteApplet(KUrl(name));
+        connect(AccessManager::self(), SIGNAL(finished(Plasma::AccessAppletJob*)),
+                this, SLOT(plasmoidAccessFinished(Plasma::AccessAppletJob*)));
+        return;
+    }
+
     QFileInfo info(name);
     if (!info.isAbsolute()) {
         info = QFileInfo(QDir::currentPath() + "/" + name);
@@ -118,11 +130,32 @@ void FullView::addApplet(const QString &name, const QString &containment,
         m_applet = m_containment->addApplet(name, args, QRectF(0, 0, -1, -1));
     }
 
+    if (!m_applet) {
+        kDebug() << "m_applet is 0????";
+	return;
+    }	
+
     m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
     setWindowTitle(m_applet->name());
     setWindowIcon(SmallIcon(m_applet->icon()));
     resize(m_applet->size().toSize());
     connect(m_applet, SIGNAL(appletTransformedItself()), this, SLOT(appletTransformedItself()));
+}
+
+void FullView::plasmoidAccessFinished(Plasma::AccessAppletJob *job)
+{
+    kDebug() << "!!!! PLASMOID ACCESS FINISHED!";
+    if (!job->error() && job->applet()) {
+        m_applet = job->applet();
+        m_containment->addApplet(m_applet, QPointF(-1, -1), false);
+        m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
+        setSceneRect(m_containment->geometry());
+        setWindowTitle(m_applet->name());
+        setWindowIcon(SmallIcon(m_applet->icon()));
+    } else {
+        //TODO: some nice userfriendly error.
+        kDebug() << "plasmoid access failed: " << job->errorString();
+    }
 }
 
 void FullView::appletRemoved()

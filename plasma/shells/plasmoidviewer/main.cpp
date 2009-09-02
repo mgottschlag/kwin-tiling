@@ -40,10 +40,43 @@
 // for --list
 #include <Plasma/Applet>
 #include <Plasma/Theme>
+#include <plasma/authorizationmanager.h>
+#include <plasma/accessmanager.h>
 
 using namespace Plasma;
 
 static const char description[] = I18N_NOOP("Run Plasma widgets in their own window");
+
+class RemotePlasmoidWatcher : public QObject
+{
+Q_OBJECT
+
+public:
+    RemotePlasmoidWatcher(AccessManager *manager)
+        : QObject(manager)
+    {
+        kDebug();
+        connect(manager, SIGNAL(remotePlasmoidAdded(Plasma::PackageMetadata)),
+                this, SLOT(slotServiceAdded(Plasma::PackageMetadata)));
+        connect(manager, SIGNAL(remotePlasmoidRemoved(Plasma::PackageMetadata)),
+                this, SLOT(slotServiceRemoved(Plasma::PackageMetadata)));
+    }
+
+    ~RemotePlasmoidWatcher() {}
+
+public Q_SLOTS:
+    void slotServiceAdded(Plasma::PackageMetadata metadata) {
+        std::cout << "New service published:" << std::endl;
+        std::cout << metadata.remoteLocation().prettyUrl().toLocal8Bit().data() << std::endl;
+        std::cout << metadata.name().toLocal8Bit().data() << " - "
+                  << metadata.description().toLocal8Bit().data() << std::endl;
+    }
+
+    void slotServiceRemoved(Plasma::PackageMetadata metadata) {
+        std::cout << "Service removed:" << std::endl;
+        std::cout << metadata.remoteLocation().prettyUrl().toLocal8Bit().data() << std::endl;
+    }
+};
 
 int main(int argc, char **argv)
 {
@@ -75,6 +108,7 @@ int main(int argc, char **argv)
                                 "(absolute or relative) to a package. If not provided, then an "
                                 "attempt is made to load a package from the current directory."));
     options.add("+[args]", ki18n("Optional arguments of the applet to add"));
+    options.add("list-remote", ki18n("List zeroconf announced remote widgets"));
     KCmdLineArgs::addCmdLineOptions(options);
 
     KApplication app;
@@ -151,16 +185,34 @@ int main(int argc, char **argv)
     for (int i = 1; i < args->count(); ++i) {
         appletArgs << args->arg(i);
     }
+    kDebug() << "setting auth policy";
+    Plasma::AuthorizationManager::self()->setAuthorizationPolicy(
+            Plasma::AuthorizationManager::PinPairing);
+
+    FullView view(formfactor, location);
+
+    if (args->isSet("list-remote")) {
+        kDebug() << "list remote...";
+        /**
+        QList<KUrl> list = AccessManager::self()->remotePlasmoids();
+        foreach (const KUrl &url, list) {
+            std::cout << url.prettyUrl().toLocal8Bit().data() << std::endl;
+        }
+        */
+        new RemotePlasmoidWatcher(AccessManager::self());
+    } else {
+        kDebug() << "just load applet";
+        view.addApplet(pluginName, containment, wallpaper, appletArgs);
+        view.show();
+
+        QAction *action = KStandardAction::quit(&app, SLOT(quit()), &view);
+        view.addAction(action);
+    }
 
     args->clear();
 
-    FullView view(formfactor, location);
-    view.addApplet(pluginName, containment, wallpaper, appletArgs);
-    view.show();
-
-    QAction *action = KStandardAction::quit(&app, SLOT(quit()), &view);
-    view.addAction(action);
-
     return app.exec();
 }
+
+#include "main.moc"
 

@@ -30,6 +30,11 @@
 
 #include <QGraphicsView>
 
+namespace Plasma
+{
+    class AccessAppletJob;
+}
+
 class FullView : public QGraphicsView
 {
     Q_OBJECT
@@ -46,6 +51,7 @@ private slots:
     void resizeEvent(QResizeEvent *event);
     void closeEvent(QCloseEvent *event);
     void appletRemoved();
+    void plasmoidAccessFinished(Plasma::AccessAppletJob *job);
 
 private:
     Plasma::Corona m_corona;
