@@ -36,6 +36,7 @@ namespace Plasma
 {
     class Containment;
     class Corona;
+    class Dialog;
     class View;
     class WidgetExplorer;
 } // namespace Plasma
@@ -106,7 +107,7 @@ private Q_SLOTS:
 
 private:
     Plasma::Corona *m_corona;
-    QGraphicsView *m_widgetExplorerView;
+    Plasma::Dialog *m_widgetExplorerView;
     Plasma::WidgetExplorer *m_widgetExplorer;
 #ifdef Q_WS_X11
     Window m_unhideTrigger;

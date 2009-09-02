@@ -41,6 +41,7 @@
 
 #include <Plasma/Containment>
 #include <Plasma/Theme>
+#include <Plasma/Dialog>
 #include <Plasma/WindowEffects>
 
 #include "netcorona.h"
@@ -517,13 +518,9 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
 
     if (!m_widgetExplorerView) {
 
-        m_widgetExplorerView = new QGraphicsView();
-        m_widgetExplorerView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        m_widgetExplorerView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        m_widgetExplorerView->setStyleSheet("background: transparent; border: none;");
+        m_widgetExplorerView = new Plasma::Dialog();
 
-        m_widgetExplorerView->setScene(m_corona);
-        
+      
         KWindowSystem::setOnDesktop(m_widgetExplorerView->winId(), KWindowSystem::currentDesktop());
         m_widgetExplorerView->show();
         KWindowSystem::activateWindow(m_widgetExplorerView->winId());
@@ -544,7 +541,7 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
         m_widgetExplorer->resize(m_widgetExplorerView->size());
         m_corona->addOffscreenWidget(m_widgetExplorer);
 
-        m_widgetExplorerView->setSceneRect(m_widgetExplorer->geometry());
+        m_widgetExplorerView->setGraphicsWidget(m_widgetExplorer);
 
         m_widgetExplorer->installEventFilter(this);
     }
