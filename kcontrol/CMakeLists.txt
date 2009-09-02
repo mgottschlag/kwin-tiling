@@ -1,3 +1,4 @@
+
 macro_optional_find_package(Freetype)
 macro_log_feature(FREETYPE_FOUND "FreeType" "A font rendering engine" "http://www.freetype.org" FALSE "" "Needed to build kfontinst, a simple font installer.")
 
@@ -25,6 +26,7 @@ add_subdirectory( dateandtime )
 add_subdirectory( autostart )
 endif(NOT WIN32)
 
+add_subdirectory(remotewidgets)
 add_subdirectory( launch )
 add_subdirectory( colors )
 add_subdirectory( krdb )

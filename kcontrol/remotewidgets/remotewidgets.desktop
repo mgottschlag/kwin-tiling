@@ -1,0 +1,20 @@
+[Desktop Entry]
+Exec=kcmshell4 remotewidgets
+Icon=plasma
+Type=Service
+X-KDE-ServiceTypes=KCModule
+X-DocPath=kcontrol/remotewidgets/index.html
+
+X-KDE-Library=kcm_remotewidgets
+X-KDE-ParentApp=kcontrol
+
+#FIXME should this be in system settings when we can get to it through the panel?
+X-KDE-System-Settings-Parent-Category=computer-administration
+
+Name=Remote widgets policies
+
+Comment=Define policies for remote plasma widgets
+
+X-KDE-Keywords=plasma,remote,widgets,policy
+
+Categories=Qt;KDE;X-KDE-settings-system;
