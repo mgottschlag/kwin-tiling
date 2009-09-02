@@ -1,4 +1,4 @@
-include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ../../../shells/common ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kworkspace)
+include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ../../../shells/desktop ../../../shells/common ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kworkspace)
 
 set(appletbrowserdialog_SRCS
     ../../../shells/common/widgetsExplorer/kcategorizeditemsviewmodels.cpp
@@ -19,10 +19,13 @@ set(plasma-netbook_SRCS
     main.cpp
     plasmaapp.cpp
     ../../../shells/common/backgrounddialog.cpp
+    ../../../shells/desktop/mouseplugins.cpp
+    ../../../shells/desktop/mousepluginwidget.cpp
+    ../../../shells/desktop/mouseinputbutton.cpp
     ${appletbrowserdialog_SRCS}
 )
 
-kde4_add_ui_files(plasma-netbook_SRCS ../../../shells/common/BackgroundDialog.ui ../../../shells/common/ActivityConfiguration.ui )
+kde4_add_ui_files(plasma-netbook_SRCS ../../../shells/common/BackgroundDialog.ui ../../../shells/common/ActivityConfiguration.ui ../../../shells/desktop/MousePlugins.ui ../../../shells/desktop/MousePluginWidget.ui)
 
 #set(ksmserver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
 set(ksmserver_xml ${KDE4_DBUS_INTERFACES_DIR}/org.kde.KSMServerInterface.xml)
