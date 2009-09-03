@@ -300,27 +300,6 @@ void Image::updateDirs()
         m_dirs.append(m_uiSlideshow.m_dirlist->item(i)->text());
     }
 
-    if (m_uiSlideshow.m_dirlist->count() == 0) {
-        m_uiSlideshow.m_dirlist->hide();
-    } else {
-        const int itemHeight = m_uiSlideshow.m_dirlist->visualItemRect(m_uiSlideshow.m_dirlist->item(0)).height();
-        const int vMargin = m_uiSlideshow.m_dirlist->height() - m_uiSlideshow.m_dirlist->viewport()->height();
-
-        if (m_uiSlideshow.m_dirlist->count() <= 6) {
-            m_uiSlideshow.m_dirlist->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-            m_uiSlideshow.m_dirlist->setFixedHeight(itemHeight * m_uiSlideshow.m_dirlist->count() + vMargin);
-        } else {
-            m_uiSlideshow.m_dirlist->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        }
-
-        if (!m_uiSlideshow.m_dirlist->isVisible()) {
-            m_uiSlideshow.m_dirlist->setCurrentRow(0);
-        }
-
-        m_uiSlideshow.m_dirlist->show();
-        m_uiSlideshow.gridLayout->invalidate();
-    }
-
     m_uiSlideshow.m_removeDir->setEnabled(m_uiSlideshow.m_dirlist->currentRow() != -1);
 }
 
