@@ -20,6 +20,7 @@
 #include "job.h"
 
 #include <QtCore/QTimer>
+#include <QTextDocument>
 
 #include <KDebug>
 #include <KUrl>
@@ -165,7 +166,10 @@ QString Job::completedMessage() const
             destinationString = location.prettyUrl();
         }
 
-        QString destinationLink = QString("<a href=\"%1\">%1</a>").arg(destinationString);
+        kDebug() << "href = " << location.url();
+        QString destinationLink = QString("<a href=\"%1\">%2</a>").arg(location.url())
+                                                                  .arg(Qt::escape(destinationString));
+
         if (totalAmounts().value("files") > 1) {
             return i18np("%1 file, to: %2", "%1 files, to: %2", totalAmounts().value("files"),
                          destinationLink);

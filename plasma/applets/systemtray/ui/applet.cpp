@@ -739,6 +739,8 @@ void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
         label->setMinimumWidth(300);
         label->setText(extenderItem->config().readEntry("text", ""));
         label->setPreferredSize(label->minimumSize());
+        connect(label, SIGNAL(linkActivated(const QString &)),
+                this, SLOT(open(const QString &)));
 
         extenderItem->setWidget(label);
         extenderItem->showCloseButton();
@@ -831,6 +833,7 @@ void Applet::finishJob(SystemTray::Job *job)
 
 void Applet::open(const QString &url)
 {
+    kDebug() << "open " << url;
     QProcess::startDetached("kde-open", QStringList() << url);
 }
 
