@@ -489,6 +489,8 @@ void Image::wallpaperBrowseCompleted()
     QModelIndex index = m_model->indexOf(wallpaper);
     if (index.isValid()) {
         m_uiImage.m_view->setCurrentIndex(index);
+        pictureChanged(index);
+        modified();
     }
 
     // save it
