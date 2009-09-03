@@ -232,6 +232,11 @@ QRect NotifierView::visualRect(const QModelIndex &index) const
     return itemRects[index];
 }
 
+QSize NotifierView::sizeHint()
+{
+    return QSize(150, 300);
+}
+
 void NotifierView::paintHeaderItem(QPainter &painter, const QRect &itemRect, const QModelIndex &index)
 {
     QStyleOptionViewItem option = viewOptions();

@@ -55,6 +55,11 @@ namespace Notifier
        */
       QRect visualRect(const QModelIndex &index) const;
 
+      /**
+       * Reimplemented from QWidget
+       */
+      QSize sizeHint();
+
   protected:
       /**
       * Call when the view is resized

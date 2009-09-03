@@ -171,7 +171,7 @@ void NotifierDialog::setUnMount(bool unmount, const QString &name)
         icon = KIcon();
     }
 
-    m_hotplugModel->setData(childAction->index(),icon,Qt::DecorationRole);
+    m_hotplugModel->setData(childAction->index(), icon, Qt::DecorationRole);
 }
 
 void NotifierDialog::setDeviceData(const QString &name, QVariant data, int role)
@@ -186,11 +186,11 @@ void NotifierDialog::setDeviceData(const QString &name, QVariant data, int role)
         QStandardItem *category = device->parent();
         QModelIndex parentIndex = category->index();
         if (!parentIndex.data(Qt::DecorationRole).isValid()) {
-           m_hotplugModel->setData(parentIndex,data,role);
+           m_hotplugModel->setData(parentIndex, data, role);
         }
     }
 
-    m_hotplugModel->setData(index,data,role);
+    m_hotplugModel->setData(index, data, role);
 }
 
 QVariant NotifierDialog::getDeviceData(const QString &name, int role)
@@ -271,7 +271,6 @@ void NotifierDialog::buildDialog()
 
     m_notifierView = new NotifierView(m_widget);
     m_notifierView->setModel(m_hotplugModel);
-    m_notifierView->setMinimumSize(150,300);
     m_notifierView->setFocusPolicy(Qt::NoFocus);
 
 

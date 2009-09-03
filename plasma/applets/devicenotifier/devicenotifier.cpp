@@ -187,7 +187,7 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
 
         //kDebug() << "DeviceNotifier::solidDeviceEngine updated" << source;
         if (data["Accessible"].toBool() == true) {
-            m_dialog->setUnMount(true,source);
+            m_dialog->setUnMount(true, source);
 
             //set icon to mounted device
             QStringList overlays;
@@ -203,7 +203,7 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
             //Unmounted optical drive
             m_dialog->setDeviceData(source, KIcon("media-eject"), Qt::DecorationRole);
             //set icon to unmounted device
-            m_dialog->setUnMount(true,source);
+            m_dialog->setUnMount(true, source);
             m_dialog->setDeviceData(source, KIcon(m_dialog->getDeviceData(source,NotifierDialog::IconNameRole).toString()), Qt::DecorationRole);
         } else {
             m_dialog->setUnMount(false,source);
