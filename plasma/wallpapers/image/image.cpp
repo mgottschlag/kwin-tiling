@@ -149,7 +149,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         m_uiImage.m_color->setColor(m_color);
         connect(m_uiImage.m_color, SIGNAL(changed(const QColor&)), this, SLOT(colorChanged(const QColor&)));
 
-	m_uiImage.m_newStuff->setIcon(KIcon("get-hot-new-stuff"));
+        m_uiImage.m_newStuff->setIcon(KIcon("get-hot-new-stuff"));
         connect(m_uiImage.m_newStuff, SIGNAL(clicked()), this, SLOT(getNewWallpaper()));
 
         connect(m_uiImage.m_color, SIGNAL(changed(const QColor&)), this, SLOT(modified()));
