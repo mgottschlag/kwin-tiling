@@ -176,7 +176,7 @@ void JobWidget::updateJobState()
         m_extenderItem->setTitle(m_job->message());
         if (m_job->eta()) {
             m_eta->setText(i18n("%1 (%2 remaining)", m_job->speed(),
-                                 KGlobal::locale()->prettyFormatDuration(m_job->eta())));
+                                 KGlobal::locale()->formatDuration(m_job->eta())));
         } else {
             m_eta->setText(QString());
         }
