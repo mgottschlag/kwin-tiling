@@ -141,6 +141,7 @@ void WidgetExplorerPrivate::init(Qt::Orientation orient)
 {
     //init widgets
     mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    mainLayout->setSpacing(0);
     orientation = orient;
     filteringWidget = new FilteringWidget(orientation);
     appletsListWidget = new AppletsListWidget(orientation);
