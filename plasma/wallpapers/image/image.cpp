@@ -41,6 +41,7 @@ Image::Image(QObject *parent, const QVariantList &args)
       m_startupResumed(false)
 {
     connect(this, SIGNAL(renderCompleted(QImage)), this, SLOT(updateBackground(QImage)));
+    connect(this, SIGNAL(urlDropped(KUrl)), this, SLOT(setWallpaper(KUrl)));
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(nextSlide()));
 }
 
@@ -320,6 +321,26 @@ void Image::setSingleImage()
 
     if (!m_size.isEmpty()) {
         renderWallpaper(img);
+    }
+}
+
+void Image::setWallpaper(const KUrl &url)
+{
+    ///kDebug() << "droppage!" << url << url.isLocalFile();
+    if (!url.isLocalFile()) {
+        return;
+    }
+
+    QString path = url.toLocalFile();
+    if (m_wallpaper.isEmpty()) {
+        m_slideshowBackgrounds.append(path);
+        m_currentSlide = m_slideshowBackgrounds.size() - 2;
+        bool random = m_randomize;
+        nextSlide();
+        m_randomize = random;
+    } else {
+        m_wallpaper = path;
+        setSingleImage();
     }
 }
 

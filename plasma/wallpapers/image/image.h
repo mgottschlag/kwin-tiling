@@ -56,6 +56,7 @@ class Image : public Plasma::Wallpaper
         void startSlideshow();
         void modified();
         void fileDialogFinished();
+        void setWallpaper(const KUrl &url);
 
     protected:
         void init(const KConfigGroup &config);
