@@ -1,5 +1,12 @@
 [Desktop Entry]
 Name=Panel for Netbooks
+Name[id]=Panel untuk Komputer Mini
+Name[nds]=Paneel för Nettböker
+Name[pt]=Painel para Netbooks
+Name[pt_BR]=Painel para Netbooks
+Name[sv]=Panel för bärbara nätdatorer
+Name[uk]=Панель для субноутбука
+Name[x-test]=xxPanel for Netbooksxx
 Comment=A containment for a panel
 Comment[af]='n Plekhouer vir 'n paneel
 Comment[ar]=لوحة حاوية

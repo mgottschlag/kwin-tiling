@@ -1,6 +1,20 @@
 [Desktop Entry]
 Name=Search Box
+Name[id]=Kotak Pencarian
+Name[nds]=Söökreeg
+Name[pt]=Campo de Pesquisa
+Name[pt_BR]=Campo de Pesquisa
+Name[sv]=Sökruta
+Name[uk]=Панель пошуку
+Name[x-test]=xxSearch Boxxx
 Comment=Search Box for a given RunnerManager
+Comment[id]=Kotak pencarian untuk manajer pelari yang diberikan
+Comment[nds]=Söökreeg för en angeven Dreegpleger
+Comment[pt]=Campo de Pesquisa para um dado Gestor de Execuções
+Comment[pt_BR]=Campo de Pesquisa para um dado Gestor de Execuções
+Comment[sv]=Sökruta för en given hanterare av programkörning
+Comment[uk]=Панель пошуку для вказаного Керування запуском
+Comment[x-test]=xxSearch Box for a given RunnerManagerxx
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/Applet

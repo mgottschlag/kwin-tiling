@@ -1,6 +1,20 @@
 [Desktop Entry]
 Name=Search and Launch Engine
+Name[id]=Mesin Pencari dan Peluncur
+Name[nds]=Söök- un Oproopkarn
+Name[pt]=Motor de Busca e Lançamento
+Name[pt_BR]=Motor de Busca e Lançamento
+Name[sv]=Sök- och startprogram
+Name[uk]=Рушій пошуку і запуску
+Name[x-test]=xxSearch and Launch Enginexx
 Comment=Engine to handle queries to SAL containment
+Comment[id]=Mesin untuk menangani lema ke pembatasan SAL
+Comment[nds]=Karn för Anfragen na't SuO-Gelaats
+Comment[pt]=Motor para lidar com as pesquisas ao contentor ASL
+Comment[pt_BR]=Motor para lidar com as pesquisas ao contentor ASL
+Comment[sv]=Program för att hantera förfrågningar till SAL-omgivning
+Comment[uk]=Рушій для обробки запитів до контейнера SAL
+Comment[x-test]=xxEngine to handle queries to SAL containmentxx
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/DataEngine

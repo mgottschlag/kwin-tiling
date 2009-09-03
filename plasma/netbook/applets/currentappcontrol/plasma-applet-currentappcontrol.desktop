@@ -1,6 +1,20 @@
 [Desktop Entry]
 Name=Current Application Control
+Name[id]=Kontrol Aplikasi Saat Ini
+Name[nds]=Programmstüern
+Name[pt]=Controlo da Aplicação Actual
+Name[pt_BR]=Controlo da Aplicação Actual
+Name[sv]=Styrning av nuvarande program
+Name[uk]=Керування поточною програмою
+Name[x-test]=xxCurrent Application Controlxx
 Comment=Controls for the active window
+Comment[id]=Kontrol untuk jendela aktif
+Comment[nds]=Kuntrull för't aktive Finster
+Comment[pt]=Controlos para a janela activa
+Comment[pt_BR]=Controlos para a janela activa
+Comment[sv]=Styrning av det aktiva fönstret
+Comment[uk]=Інструменти керування активним вікном
+Comment[x-test]=xxControls for the active windowxx
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/Applet

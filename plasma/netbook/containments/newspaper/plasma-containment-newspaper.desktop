@@ -1,7 +1,21 @@
 [Desktop Entry]
 Name=Newspaper activity
+Name[id]=Aktivitas koran
+Name[nds]=Blattstriepen-Aktiviteet
+Name[pt]=Actividade de jornal
+Name[pt_BR]=Actividade de jornal
+Name[sv]=Tidningsaktivitet
+Name[uk]=Газетний простір дій
+Name[x-test]=xxNewspaper activityxx
 
 Comment=An activity that puts widgets on two columns
+Comment[id]=Sebuah aktivitas yang membagi widget menjadi dua kolom
+Comment[nds]=En Aktiviteet, de Elementen op twee Striepen verdeelt
+Comment[pt]=Uma actividade que coloca os elementos em duas colunas
+Comment[pt_BR]=Uma actividade que coloca os elementos em duas colunas
+Comment[sv]=En aktivitet som placerar grafiska komponenter i två kolumner
+Comment[uk]=Простір дій, у якому віджети буде розподілено на два стовпчики
+Comment[x-test]=xxAn activity that puts widgets on two columnsxx
 
 
 Icon=
