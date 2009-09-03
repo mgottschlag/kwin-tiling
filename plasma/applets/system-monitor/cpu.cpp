@@ -48,11 +48,6 @@ void SM::Cpu::init()
     setInterval(cg.readEntry("interval", 2) * 1000);
     setTitle(i18n("CPU"));
 
-    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
-    m_showTopBar = cg.readEntry("showTopBar", true);
-    m_showBackground = cg.readEntry("showBackground", true);
-    m_graphColor = cg.readEntry("graphColor", QColor(theme->color(Plasma::Theme::TextColor)));
-
     /* At the time this method is running, not all source may be connected. */
     connect(engine(), SIGNAL(sourceAdded(const QString&)),
             this, SLOT(sourceAdded(const QString&)));
@@ -102,12 +97,12 @@ bool SM::Cpu::addMeter(const QString& source)
     QString cpu = l[1];
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
     Plasma::SignalPlotter *plotter = new Plasma::SignalPlotter(this);
-    plotter->addPlot(m_graphColor);
+    plotter->addPlot(theme->color(Plasma::Theme::TextColor));
     plotter->setUseAutoRange(false);
     plotter->setVerticalRange(0.0, 100.0);
     plotter->setThinFrame(false);
     plotter->setShowLabels(false);
-    plotter->setShowTopBar(m_showTopBar);
+    plotter->setShowTopBar(true);
     plotter->setShowVerticalLines(false);
     plotter->setShowHorizontalLines(false);
     plotter->setFontColor(theme->color(Plasma::Theme::TextColor));
@@ -119,12 +114,7 @@ bool SM::Cpu::addMeter(const QString& source)
     plotter->setHorizontalLinesColor(linesColor);
     plotter->setVerticalLinesColor(linesColor);
     plotter->setHorizontalLinesCount(4);
-    if (m_showBackground) {
-        plotter->setSvgBackground("widgets/plot-background");
-    } else {
-        plotter->setSvgBackground(QString());
-        plotter->setBackgroundColor(Qt::transparent);
-    }
+    plotter->setSvgBackground("widgets/plot-background");
     plotter->setTitle(cpuTitle(cpu));
     plotter->setUnit("%");
     appendPlotter(source, plotter);
@@ -190,13 +180,6 @@ void SM::Cpu::createConfigurationInterface(KConfigDialog *parent)
     ui.intervalSpinBox->setSuffix(ki18np(" second", " seconds"));
     parent->addPage(widget, i18n("CPUs"), "cpu");
 
-    widget = new QWidget();
-    uiAdv.setupUi(widget);
-    uiAdv.showTopBarCheckBox->setChecked(m_showTopBar);
-    uiAdv.showBackgroundCheckBox->setChecked(m_showBackground);
-    uiAdv.graphColorCombo->setColor(m_graphColor);
-    parent->addPage(widget, i18n("Advanced"), "preferences-other");
-
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 }
@@ -222,10 +205,6 @@ void SM::Cpu::configAccepted()
     interval *= 1000;
     setInterval(interval);
 
-    cg.writeEntry("showTopBar", m_showTopBar = uiAdv.showTopBarCheckBox->isChecked());
-    cg.writeEntry("showBackground", m_showBackground = uiAdv.showBackgroundCheckBox->isChecked());
-    cg.writeEntry("graphColor", m_graphColor = uiAdv.graphColorCombo->color());
-    
     emit configNeedsSaving();
     connectToEngine();
 }

@@ -48,11 +48,6 @@ void SM::Ram::init()
     setEngine(dataEngine("systemmonitor"));
     setInterval(cg.readEntry("interval", 2) * 1000);
     setTitle(i18n("RAM"));
-    
-    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
-    m_showTopBar = cg.readEntry("showTopBar", true);
-    m_showBackground = cg.readEntry("showBackground", true);
-    m_graphColor = cg.readEntry("graphColor", QColor(theme->color(Plasma::Theme::TextColor)));
 
     /* At the time this method is running, not all source may be connected. */
     connect(engine(), SIGNAL(sourceAdded(const QString&)),
@@ -89,11 +84,11 @@ bool SM::Ram::addMeter(const QString& source)
     QString ram = l[1];
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
     Plasma::SignalPlotter *plotter = new Plasma::SignalPlotter(this);
-    plotter->addPlot(m_graphColor);
+    plotter->addPlot(theme->color(Plasma::Theme::TextColor));
     plotter->setUseAutoRange(false);
     plotter->setThinFrame(false);
     plotter->setShowLabels(false);
-    plotter->setShowTopBar(m_showTopBar);
+    plotter->setShowTopBar(true);
     plotter->setShowVerticalLines(false);
     plotter->setShowHorizontalLines(false);
     plotter->setFontColor(theme->color(Plasma::Theme::TextColor));
@@ -105,12 +100,7 @@ bool SM::Ram::addMeter(const QString& source)
     plotter->setHorizontalLinesColor(linesColor);
     plotter->setVerticalLinesColor(linesColor);
     plotter->setHorizontalLinesCount(4);
-    if (m_showBackground) {
-        plotter->setSvgBackground("widgets/plot-background");
-    } else {
-        plotter->setSvgBackground(QString());
-        plotter->setBackgroundColor(Qt::transparent);
-    }
+    plotter->setSvgBackground("widgets/plot-background");
     plotter->setTitle(ram);
     plotter->setUnit("MB");
     appendPlotter(source, plotter);
@@ -189,13 +179,6 @@ void SM::Ram::createConfigurationInterface(KConfigDialog *parent)
     ui.intervalSpinBox->setSuffix(ki18np(" second", " seconds"));
     parent->addPage(widget, i18n("RAM"), "ram");
 
-    widget = new QWidget();
-    uiAdv.setupUi(widget);
-    uiAdv.showTopBarCheckBox->setChecked(m_showTopBar);
-    uiAdv.showBackgroundCheckBox->setChecked(m_showBackground);
-    uiAdv.graphColorCombo->setColor(m_graphColor);
-    parent->addPage(widget, i18n("Advanced"), "preferences-other");
-
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 }
@@ -220,10 +203,6 @@ void SM::Ram::configAccepted()
     cg.writeEntry("interval", interval);
     interval *= 1000;
     setInterval(interval);
-
-    cg.writeEntry("showTopBar", m_showTopBar = uiAdv.showTopBarCheckBox->isChecked());
-    cg.writeEntry("showBackground", m_showBackground = uiAdv.showBackgroundCheckBox->isChecked());
-    cg.writeEntry("graphColor", m_graphColor = uiAdv.graphColorCombo->color());
 
     m_max.clear();
     emit configNeedsSaving();

@@ -20,7 +20,6 @@
 #define NET_HEADER
 
 #include <ui_net-config.h>
-#include <ui_net-config-adv.h>
 #include "applet.h"
 #include <Plasma/DataEngine>
 #include <QStandardItemModel>
@@ -53,14 +52,9 @@ class Net : public Applet
 
     private:
         Ui::config ui;
-        Ui::configAdv uiAdv;
         QStandardItemModel m_model;
         QStringList m_interfaces;
         QMap<QString, QList<double> > m_data;
-        bool m_showTopBar;
-        bool m_showBackground;
-        QColor m_inColor;
-        QColor m_outColor;
         QHash<QString, QString> m_html;
         QTimer m_sourceTimer;
         QRegExp m_rx;

@@ -20,7 +20,6 @@
 #define CPU_HEADER
 
 #include <ui_cpu-config.h>
-#include <ui_cpu-config-adv.h>
 #include "applet.h"
 #include <Plasma/DataEngine>
 #include <QStandardItemModel>
@@ -55,12 +54,8 @@ class Cpu : public Applet
 
     private:
         Ui::config ui;
-        Ui::configAdv uiAdv;
         QStandardItemModel m_model;
         QStringList m_cpus;
-        bool m_showTopBar;
-        bool m_showBackground;
-        QColor m_graphColor;
         QHash<QString, QString> m_html;
         QTimer m_sourceTimer;
         QRegExp m_rx;

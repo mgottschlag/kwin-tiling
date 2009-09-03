@@ -20,7 +20,6 @@
 #define RAM_HEADER
 
 #include <ui_ram-config.h>
-#include <ui_ram-config-adv.h>
 #include "applet.h"
 #include <Plasma/DataEngine>
 #include <QStandardItemModel>
@@ -50,12 +49,8 @@ class Ram : public Applet
 
     private:
         Ui::config ui;
-        Ui::configAdv uiAdv;
         QStandardItemModel m_model;
         QStringList m_memories;
-        bool m_showTopBar;
-        bool m_showBackground;
-        QColor m_graphColor;
         QHash<QString, QString> m_html;
         QHash<QString, double> m_max;
 

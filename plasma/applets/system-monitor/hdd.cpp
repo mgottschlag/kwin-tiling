@@ -212,6 +212,7 @@ bool Hdd::addMeter(const QString& source)
     w->setLabelAlignment(0, Qt::AlignVCenter | Qt::AlignLeft);
     w->setLabelAlignment(1, Qt::AlignVCenter | Qt::AlignRight);
     w->setLabelAlignment(2, Qt::AlignVCenter | Qt::AlignCenter);
+    kDebug() << w->labelRect(2);
     w->setMaximum(data["Size"].toULongLong() / (1024 * 1024));
     layout->addItem(w);
     appendMeter(source, w);

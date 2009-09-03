@@ -21,7 +21,6 @@
 
 #include <applet.h>
 #include "ui_temperature-config.h"
-#include "ui_temperature-config-adv.h"
 #include <Plasma/DataEngine>
 #include <QStandardItemModel>
 
@@ -50,12 +49,7 @@ class Temperature : public SM::Applet
 
     private:
         Ui::config ui;
-        Ui::configAdv uiAdv;
         QStandardItemModel m_tempModel;
-        bool m_showPlotters;
-        bool m_showBackground;
-        bool m_showTopBar;
-        QColor m_graphColor;
         QHash<QString, QString> m_html;
 
         QString temperatureTitle(const QString& source);

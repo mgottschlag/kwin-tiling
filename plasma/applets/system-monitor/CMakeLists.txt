@@ -27,7 +27,7 @@ target_link_libraries(plasma_applet_sm_hdd ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS
 set(temparature_SRCS
     temperature.cpp
 )
-kde4_add_ui_files(temparature_SRCS temperature-config.ui temperature-config-adv.ui)
+kde4_add_ui_files(temparature_SRCS temperature-config.ui)
 kde4_add_plugin(plasma_applet_sm_temperature ${temparature_SRCS})
 target_link_libraries(plasma_applet_sm_temperature ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
 
@@ -36,7 +36,7 @@ target_link_libraries(plasma_applet_sm_temperature ${KDE4_PLASMA_LIBS} ${KDE4_KD
 set(net_SRCS
     net.cpp
 )
-kde4_add_ui_files(net_SRCS net-config.ui net-config-adv.ui)
+kde4_add_ui_files(net_SRCS net-config.ui)
 kde4_add_plugin(plasma_applet_sm_net ${net_SRCS})
 target_link_libraries(plasma_applet_sm_net ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
 
@@ -45,7 +45,7 @@ target_link_libraries(plasma_applet_sm_net ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS
 set(cpu_SRCS
     cpu.cpp
 )
-kde4_add_ui_files(cpu_SRCS cpu-config.ui cpu-config-adv.ui)
+kde4_add_ui_files(cpu_SRCS cpu-config.ui)
 kde4_add_plugin(plasma_applet_sm_cpu ${cpu_SRCS})
 target_link_libraries(plasma_applet_sm_cpu ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
 
@@ -62,7 +62,7 @@ target_link_libraries(plasma_applet_sm_hwinfo ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_L
 set(ram_SRCS
     ram.cpp
 )
-kde4_add_ui_files(ram_SRCS ram-config.ui ram-config-adv.ui)
+kde4_add_ui_files(ram_SRCS ram-config.ui)
 kde4_add_plugin(plasma_applet_sm_ram ${ram_SRCS})
 target_link_libraries(plasma_applet_sm_ram ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
 
