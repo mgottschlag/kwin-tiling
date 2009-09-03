@@ -1033,11 +1033,16 @@ void PanelView::enterEvent(QEvent *event)
 
 void PanelView::moveEvent(QMoveEvent *event)
 {
-    //kDebug();
     Plasma::View::moveEvent(event);
     m_strutsTimer->stop();
     m_strutsTimer->start(STRUTSTIMERDELAY);
     recreateUnhideTrigger();
+
+    if (containment()) {
+        foreach (Plasma::Applet *applet, containment()->applets()) {
+            applet->updateConstraints(Plasma::PopupConstraint);
+        }
+    }
 }
 
 void PanelView::resizeEvent(QResizeEvent *event)
@@ -1050,6 +1055,12 @@ void PanelView::resizeEvent(QResizeEvent *event)
 #ifdef Q_WS_WIN
     appBarPosChanged();
 #endif
+
+    if (containment()) {
+        foreach (Plasma::Applet *applet, containment()->applets()) {
+            applet->updateConstraints(Plasma::PopupConstraint);
+        }
+    }
 }
 
 void PanelView::hideMousePoll()
