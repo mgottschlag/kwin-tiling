@@ -195,10 +195,9 @@ void JobWidget::updateJobState()
 
 void JobWidget::updateJob()
 {
-    if (m_extenderItemDestroyed && m_job) {
+    if (m_extenderItemDestroyed || !m_job) {
         return;
     }
-
 
     m_meter->setValue(m_job->percentage());
 
