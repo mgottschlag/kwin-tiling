@@ -28,7 +28,11 @@ Plasma Desktop Shell
     * D-Bus
         * NEW showDashboard bool
     * Desktop Settings
-        * Desktop theme configuration has been moved to System Settings/Style.
+        * Desktop theme configuration has been moved to System Settings/Style
+    * ECMA Script; see kdebase/workspace/plasma/design/plasma-desktop-scripting for more info
+        * the plasma-desktop configuration can be interacted with via the interactive scripting console
+        * the initial layout can be set with scripts in share/apps/plasma-desktop/defaults/
+        * updates to plasma-desktop can be pushed by placing scripts in share/apps/plasma-desktop/updates
 * Bugfixes
 
 
@@ -66,6 +70,7 @@ Plugins/Addons
     * DataEngines
 
     * Runners
+        * plasma-desktop: "desktop console [script file]" trigges the interactive scripting window
 
     * Wallpapers
 	* Image wallpaper combobox has been replaced with a nicer view.
