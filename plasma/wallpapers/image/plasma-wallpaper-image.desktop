@@ -218,3 +218,5 @@ Name[zh_TW]=投影播放
 Icon=folder-image
 # Dummy
 Exec=plasma
+X-Plasma-DropMimeTypes=image/jpeg,image/png,image/svg+xml,image/svg+xml-compressed
+
