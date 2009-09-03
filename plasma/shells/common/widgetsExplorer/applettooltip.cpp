@@ -98,10 +98,10 @@ void AppletInfoWidget::init()
     m_aboutLabel   = new Plasma::TextBrowser();
 
     m_publishCheckBox = new Plasma::CheckBox();
-    m_publishCheckBox->setText("Publish");
+    m_publishCheckBox->setText(i18n("Publish"));
 
     m_uninstallButton = new Plasma::PushButton();
-    m_uninstallButton->setText("Uninstall");
+    m_uninstallButton->setText(i18n("Uninstall"));
     m_uninstallButton->nativeWidget()->setIcon(QIcon("draw-eraser"));
     //m_uninstallButton->setSizePolicy(QSizePolicy::Minimum);
 
@@ -180,7 +180,7 @@ void AppletInfoWidget::updateInfo()
         }
 
         if (m_nameLabel != 0) {
-            m_nameLabel->setText("Unknown Applet");
+            m_nameLabel->setText(i18n("Unknown Applet"));
         }
     }
 
