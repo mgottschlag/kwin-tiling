@@ -93,9 +93,14 @@ class Battery : public Plasma::PopupApplet
 
         QGraphicsGridLayout *m_controlsLayout;
         QGraphicsGridLayout *m_batteryLayout;
+        QGraphicsGridLayout *m_infoLayout;
+        Plasma::Label *m_batteryLabelLabel;
+        Plasma::Label *m_batteryInfoLabel;
+        Plasma::Label *m_acLabelLabel;
+        Plasma::Label *m_acInfoLabel;
         QGraphicsLinearLayout *m_brightnessLayout;
         Plasma::Label *m_statusLabel;
-        Plasma::Label *m_batteryLabel;
+        //Plasma::Label *m_batteryLabel;
         Plasma::Label *m_profileLabel;
         Plasma::ComboBox *m_profileCombo;
         Plasma::Slider *m_brightnessSlider;

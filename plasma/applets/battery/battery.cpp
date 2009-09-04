@@ -67,9 +67,11 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_extenderVisible(false),
       m_controlsLayout(0),
       m_batteryLayout(0),
+      m_batteryLabelLabel(0),
+      m_batteryInfoLabel(0),
+      m_acLabelLabel(0),
+      m_acInfoLabel(0),
       m_brightnessLayout(0),
-      m_statusLabel(0),
-      m_batteryLabel(0),
       m_profileLabel(0),
       m_profileCombo(0),
       m_brightnessSlider(0),
@@ -95,7 +97,6 @@ Battery::Battery(QObject *parent, const QVariantList &args)
 {
     //kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
-    setHasConfigurationInterface(true);
     setPopupIcon(QIcon());
     resize(128, 128);
     setAspectRatioMode(Plasma::ConstrainedSquare );
@@ -110,6 +111,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
 
 void Battery::init()
 {
+    setHasConfigurationInterface(true);
     KConfigGroup cg = config();
     m_showBatteryString = cg.readEntry("showBatteryString", false);
     m_showRemainingTime = cg.readEntry("showRemainingTime", false);
@@ -358,7 +360,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         int columnWidth = 120;
 
         QGraphicsWidget *controls = new QGraphicsWidget(item);
-        //controls->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+        controls->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         //controls->resize(500, 500);
         m_controlsLayout = new QGraphicsGridLayout(controls);
         m_controlsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -373,6 +375,26 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         //m_batteryLayout->setColumnPreferredWidth(0, 100);
         m_batteryLayout->setColumnPreferredWidth(1, columnWidth);
         //m_batteryLayout->setRowPreferredHeight(row, 60);
+
+        QGraphicsWidget *infoWidget = new QGraphicsWidget(controls);
+        m_infoLayout = new QGraphicsGridLayout(infoWidget);
+        m_infoLayout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+        m_batteryLabelLabel = new Plasma::Label(infoWidget);
+        m_batteryLabelLabel->nativeWidget()->setWordWrap(false);
+        m_batteryInfoLabel = new Plasma::Label(infoWidget);
+        m_batteryInfoLabel->nativeWidget()->setWordWrap(false);
+        m_acLabelLabel = new Plasma::Label(infoWidget);
+        m_acLabelLabel->nativeWidget()->setWordWrap(false);
+        m_acInfoLabel = new Plasma::Label(infoWidget);
+        m_acInfoLabel->nativeWidget()->setWordWrap(false);
+
+        m_infoLayout->addItem(m_batteryLabelLabel, 0, 0);
+        m_infoLayout->addItem(m_batteryInfoLabel, 0, 1);
+        m_infoLayout->addItem(m_acLabelLabel, 1, 0);
+        m_infoLayout->addItem(m_acInfoLabel, 1, 1);
+
+        infoWidget->setLayout(m_infoLayout);
+        /*
         m_batteryLabel = new Plasma::Label(controls);
         m_batteryLabel->setMinimumSize(200, 80);
         m_batteryLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -380,7 +402,9 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         //m_batteryLabel->nativeWidget()->setWordWrap(false);
         m_batteryLabel->nativeWidget()->setAlignment(Qt::AlignTop);
         // FIXME: larger fonts screw up this label
-        m_batteryLayout->addItem(m_batteryLabel, 0, 0, 1, 1, Qt::AlignLeft);
+        */
+
+        m_batteryLayout->addItem(infoWidget, 0, 0, 1, 1, Qt::AlignLeft);
 
         Battery *m_extenderApplet = static_cast<Battery*>(Plasma::Applet::load("battery"));
         if (m_extenderApplet) {
@@ -467,7 +491,8 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
             } else if (sleepstate == Solid::PowerManagement::SuspendState) {
                 Plasma::IconWidget *suspendButton = new Plasma::IconWidget(controls);
                 suspendButton->setIcon("system-suspend");
-                suspendButton->setText(i18n("Sleep"));
+                suspendButton->setText(i18n("Sleep Long Text Entry"));
+                suspendButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
                 suspendButton->setOrientation(Qt::Horizontal);
                 suspendButton->setMaximumHeight(36);
                 suspendButton->setDrawBackground(true);
@@ -478,8 +503,9 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
             } else if (sleepstate == Solid::PowerManagement::HibernateState) {
                 Plasma::IconWidget *hibernateButton = new Plasma::IconWidget(controls);
                 hibernateButton->setIcon("system-suspend-hibernate");
-                hibernateButton->setText(i18n("Hibernate"));
+                hibernateButton->setText(i18n("Hibernate Long Text Entry"));
                 hibernateButton->setOrientation(Qt::Horizontal);
+                hibernateButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
                 hibernateButton->setMaximumHeight(36);
                 hibernateButton->setDrawBackground(true);
                 hibernateButton->setTextBackgroundColor(QColor());
@@ -527,8 +553,8 @@ void Battery::updateStatus()
         return;
     }
 
-    QString batteryLabelText = QString("<br />");
-    if (m_numOfBattery && m_batteryLabel) {
+    //QString batteryLabelText = QString("<br />");
+    if (m_numOfBattery && m_batteryLabelLabel) {
         QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
         int bnum = 0;
 
@@ -538,6 +564,7 @@ void Battery::updateStatus()
             QString state = battery_data.value()["State"].toString();
             m_remainingMSecs = battery_data.value()["Remaining msec"].toInt();
             //kDebug() << "time left:" << m_remainingMSecs;
+            /*
             if (state == "Discharging" && m_remainingMSecs > 0 && m_showRemainingTime) {
 
                 // FIXME: Somehow, m_extenderApplet is null here, so the label never becomes visible
@@ -547,48 +574,50 @@ void Battery::updateStatus()
                 // we don't have too much accuracy so only give hours and minutes
                 batteryLabelText.append(i18n("Time remaining: <b>%1</b><br />", KGlobal::locale()->prettyFormatDuration(m_remainingMSecs)));
             } else {
-                if (m_extenderApplet) {
-                    m_extenderApplet->showBatteryLabel(false);
-                }
+            */
+                //if (m_extenderApplet) {
+                //    m_extenderApplet->showBatteryLabel(false);
+                //}
                 if (m_numOfBattery == 0) {
                     //kDebug() << "zero batteries ...";
                 } else if (m_numOfBattery == 1) {
+                    m_batteryLabelLabel->setText(i18n("<b>Battery:</b> "));
                     if (battery_data.value()["Plugged in"].toBool()) {
                         if (state == "NoCharge") {
-                            batteryLabelText.append(i18n("<b>Battery:</b> %1% (fully charged)<br />", battery_data.value()["Percent"].toString()));
+                            m_batteryInfoLabel->setText(i18n("%1% (fully charged)<br />", battery_data.value()["Percent"].toString()));
                         } else if (state == "Discharging") {
-                            batteryLabelText.append(i18nc("Shown when a time estimate is not available", "<b>Battery:</b> %1% (discharging)<br />", battery_data.value()["Percent"].toString()));
+                            m_batteryInfoLabel->setText(i18nc("Shown when a time estimate is not available", "%1% (discharging)<br />", battery_data.value()["Percent"].toString()));
                         } else {
-                            batteryLabelText.append(i18n("<b>Battery:</b> %1% (charging)<br />", battery_data.value()["Percent"].toString()));
+                            m_batteryInfoLabel->setText(i18n("%1% (charging)<br />", battery_data.value()["Percent"].toString()));
                         }
                     } else {
-                        batteryLabelText.append(i18nc("Battery is not plugged in", "<b>Battery:</b> not present<br />"));
+                        m_batteryInfoLabel->setText(i18nc("Battery is not plugged in", "Not present<br />"));
                     }
                 } else {
                     //kDebug() << "More batteries ...";
+                    // FIXME: we're overwriting the text
+                    m_batteryLabelLabel->setText(i18nc("", "<b>Battery %1:</b> ", bnum));
                     if (state == "NoCharge") {
-                        batteryLabelText.append(i18n("<b>Battery %1:</b> %2% (fully charged)<br />", bnum, battery_data.value()["Percent"].toString()));
+                        m_batteryInfoLabel->setText(i18n("1% (fully charged)<br />", battery_data.value()["Percent"].toString()));
                     } else if (state == "Discharging") {
-                        batteryLabelText.append(i18n("<b>Battery %1:</b> %2% (discharging)<br />", bnum, battery_data.value()["Percent"].toString()));
+                        m_batteryInfoLabel->setText(i18n("%2% (discharging)<br />", bnum, battery_data.value()["Percent"].toString()));
                     } else {
-                        batteryLabelText.append(i18n("<b>Battery %1:</b> %2% (charging)<br />", bnum, battery_data.value()["Percent"].toString()));
+                        m_batteryInfoLabel->setText(i18n("%2% (charging)<br />", bnum, battery_data.value()["Percent"].toString()));
                     }
                 }
-            }
+            //}
         }
-
+        m_acLabelLabel->setText(i18n("<b>AC Adapter:</b> "));
         if (m_acAdapterPlugged) {
-            batteryLabelText.append(i18n("<b>AC Adapter:</b> Plugged in"));
+            m_acInfoLabel->setText(i18n("plugged in"));
         } else {
-            batteryLabelText.append(i18n("<b>AC Adapter:</b> Not plugged in"));
+            m_acInfoLabel->setText(i18n("Not plugged in"));
         }
     } else {
-        batteryLabelText.append(i18nc("Battery is not plugged in", "<b>Battery:</b> not present<br />"));
+        m_batteryLabelLabel->setText(i18n("<b>Battery:</b> "));
+        m_batteryInfoLabel->setText(i18nc("Battery is not plugged in", "Not present"));
     }
-    //kDebug() << batteryLabelText;
-    if (m_batteryLabel) {
-        m_batteryLabel->setText(batteryLabelText);
-    }
+
     if (!m_availableProfiles.empty() && m_profileCombo) {
         m_profileCombo->clear();
         m_profileCombo->addItem(m_currentProfile);
@@ -616,8 +645,8 @@ void Battery::updateStatus()
     //kDebug() << "SIZE LABEL" << m_batteryLabel->size() << m_batteryLabel->preferredSize() << m_batteryLabel->preferredSize();
     m_controlsLayout->setColumnMinimumWidth(1,280);
     m_batteryLayout->setColumnMinimumWidth(0,200);
-    m_batteryLayout->invalidate();
-    m_controlsLayout->invalidate();
+    //m_batteryLayout->invalidate();
+    //m_controlsLayout->invalidate();
 }
 
 void Battery::openConfig()
