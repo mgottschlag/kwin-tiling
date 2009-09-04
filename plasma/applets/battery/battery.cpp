@@ -496,7 +496,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
             } else if (sleepstate == Solid::PowerManagement::SuspendState) {
                 Plasma::IconWidget *suspendButton = new Plasma::IconWidget(controls);
                 suspendButton->setIcon("system-suspend");
-                suspendButton->setText(i18n("Sleep Long Text Entry"));
+                suspendButton->setText(i18n("Sleep"));
                 suspendButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
                 suspendButton->setOrientation(Qt::Horizontal);
                 suspendButton->setMaximumHeight(36);
@@ -508,7 +508,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
             } else if (sleepstate == Solid::PowerManagement::HibernateState) {
                 Plasma::IconWidget *hibernateButton = new Plasma::IconWidget(controls);
                 hibernateButton->setIcon("system-suspend-hibernate");
-                hibernateButton->setText(i18n("Hibernate Long Text Entry"));
+                hibernateButton->setText(i18n("Hibernate"));
                 hibernateButton->setOrientation(Qt::Horizontal);
                 hibernateButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
                 hibernateButton->setMaximumHeight(36);
