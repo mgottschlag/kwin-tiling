@@ -13,8 +13,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2005-02-20</date>
-<releaseinfo>3.4</releaseinfo>
+<date>2009-04-09</date>
+<releaseinfo>4.3</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -34,12 +34,6 @@ or remove password protection to your screen saver.</para>
 
 <sect2 id="ss-choose">
 <title>Choosing the screen saver, and configuring its options</title>
-
-<para>In the <guilabel>Settings</guilabel> box is a check box
-labeled <guilabel>Start screen saver automatically</guilabel>.  This
-box must have a mark in it, or &kde; will not launch any screen saver
-and it will not allow you to adjust the settings of your screen
-saver.</para>
 
 <para>Along the left side is a list of all available screen savers.  You can
 select a screen saver by simply clicking on its name.  Once
@@ -70,6 +64,12 @@ the Copyright and Author information if you are interested.</para>
 simply click on <guibutton>Test</guibutton> to immediately start the
 screen saver <emphasis>exactly</emphasis> as it will appear.</para>
 
+<para>In the <guilabel>Settings</guilabel> box is a check box
+labeled <guilabel>Start automatically</guilabel>.  This
+box must have a mark in it, or &kde; will not launch any screen saver
+and it will not allow you to adjust the settings of your screen
+saver.</para>
+
 </sect2>
 
 <sect2 id="ss-options">
@@ -85,10 +85,6 @@ work, you must enter a password.  The password used is the same
 password you used to login to your machine.  If there is no mark in
 the check box, no password is required to return to your
 desktop.</para>
-
-<para>Enable the check box <guilabel>Make aware of
-power management</guilabel> if you don't want the screensaver to start
-while you watch TV or movies on your monitor.</para>
 
 </sect2>
 

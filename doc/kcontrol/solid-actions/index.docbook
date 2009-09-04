@@ -12,8 +12,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2009-02-14</date>
-<releaseinfo>&kde; 4.2.1</releaseinfo>
+<date>2009-04-09</date>
+<releaseinfo>&kde; 4.3</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -51,24 +51,24 @@ devices are plugged in.
 Please note that they will only be available under certain conditions.</para>
 
 <itemizedlist>
-<listitem><para><guibutton>Add Action</guibutton>
+<listitem><para><guibutton>Add</guibutton>
    This will ask you to supply a name for your new action, then will open that
 action for editing.
    If you do not supply all the required details in that dialog, then your
 action will be deleted.
 </para></listitem>
 <listitem><para>
-<guibutton>Edit Action</guibutton>
+<guibutton>Edit</guibutton>
    This will allow you to change the Name, Icon, command to execute 
    and the conditions the action must match to be shown. 
 </para></listitem>
 <listitem><para>
-<guibutton>Revert Modifications / Cannot be deleted / Delete Action</guibutton>
+<guibutton>Discard / Cannot be deleted / Remove</guibutton>
    This will do different actions, depending on if it was supplied with your
 system or created by you.
-   You can only revert changes to system wide actions, if there are no changes
+   You can only discard changes to system wide actions, if there are no changes
 then these actions cannot be deleted.
-   User created actions are completely deleted, including all changes.
+   User created actions are completely removed, including all changes.
 </para></listitem>
 </itemizedlist>
 
@@ -78,7 +78,7 @@ then these actions cannot be deleted.
 <title>Add Action</title>
 
 <para>
-The <guibutton>Add Action</guibutton> button brings you a dialog to enter the
+The <guibutton>Add</guibutton> button brings you a dialog to enter the
 new action name.
 </para>
 <para>
@@ -111,7 +111,7 @@ selected.</para>
 <screeninfo>Screenshot of the Edit Action dialog</screeninfo>
   <mediaobject>
     <imageobject>
-      <imagedata fileref="add-action.png" format="PNG"/>
+      <imagedata fileref="edit-action.png" format="PNG"/>
     </imageobject>
      <textobject>
       <phrase>Screenshot of the Edit Action dialog</phrase>
@@ -153,7 +153,7 @@ the various details of that particular item type.
 <listitem>
 <para>
 This is available for all items, except the root item. If a container contains
-any requirements, they will also be deleted.                
+any requirements, they will also be deleted.
 </para>
 </listitem>
 </varlistentry>
@@ -183,12 +183,13 @@ This has many settings, with additional ones available for some
 sub-types.</para>
 <para>
 <variablelist>
-<varlistentry><term><guilabel>Restriction type</guilabel></term>
+<varlistentry><term><guilabel>Restriction Type</guilabel></term>
 <listitem>
 <para>
-Only two settings are available: "Is value type" and
-"Compare value to". "Is value type" checks to ensure the device is of the
-selected device type. "Compare value to" compares a value of the device with
+Only two settings are available: <guilabel>Is Value Type</guilabel> and
+<guilabel>Compare Value To</guilabel>. <guilabel>Is Value Type</guilabel>
+checks to ensure the device is of the selected device type. <guilabel>
+Compare Value To</guilabel> compares a value of the device with
 what you specify.
 </para>
 </listitem>
@@ -209,7 +210,7 @@ select a device value to check.
 </para>
 </listitem>
 </varlistentry>
-<varlistentry><term><guilabel>Equals/Doesn't Equal</guilabel></term>
+<varlistentry><term><guilabel>Equals/Does Not Equal</guilabel></term>
 <listitem>
 <para>
 This determines what kind of match we are looking
