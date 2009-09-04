@@ -151,7 +151,7 @@ void Battery::init()
         Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
         eItem->setName("powermanagement");
         initExtenderItem(eItem);
-        //extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+        extender()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     }
 }
 
@@ -367,26 +367,28 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         m_controlsLayout->setColumnPreferredWidth(0, rowHeight);
         m_controlsLayout->setColumnMinimumWidth(1, 2*columnWidth);
-        m_controlsLayout->setColumnPreferredWidth(2, rowHeight);
+        m_controlsLayout->setColumnFixedWidth(2, rowHeight*2);
         m_controlsLayout->setHorizontalSpacing(0);
 
         m_batteryLayout = new QGraphicsGridLayout(m_controlsLayout);
 
-        //m_batteryLayout->setColumnPreferredWidth(0, 100);
         m_batteryLayout->setColumnPreferredWidth(1, columnWidth);
         //m_batteryLayout->setRowPreferredHeight(row, 60);
 
         QGraphicsWidget *infoWidget = new QGraphicsWidget(controls);
         m_infoLayout = new QGraphicsGridLayout(infoWidget);
         m_infoLayout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding));
-        m_infoLayout->setColumnStretchFactor(0, 1);
-        m_infoLayout->setColumnStretchFactor(1, 1.6); // second column wider than first
+
+        m_infoLayout->setColumnStretchFactor(0, 1.4);
+        m_infoLayout->setColumnStretchFactor(1, 2); // second column wider than first
+        //m_infoLayout->setColumnMinimumWidth(0, 80);
+
         infoWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
         infoWidget->setLayout(m_infoLayout);
 
         m_batteryLabelLabel = new Plasma::Label(infoWidget);
         m_batteryLabelLabel->nativeWidget()->setWordWrap(false);
-        m_batteryLabelLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
+        m_batteryLabelLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
         m_batteryInfoLabel = new Plasma::Label(infoWidget);
         m_batteryInfoLabel->nativeWidget()->setWordWrap(false);
         m_infoLayout->addItem(m_batteryLabelLabel, 0, 0);
@@ -394,7 +396,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         m_acLabelLabel = new Plasma::Label(infoWidget);
         m_acLabelLabel->nativeWidget()->setWordWrap(false);
-        m_acLabelLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
+        m_acLabelLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
         m_acInfoLabel = new Plasma::Label(infoWidget);
         m_acInfoLabel->nativeWidget()->setWordWrap(false);
         m_infoLayout->addItem(m_acLabelLabel, 1, 0);
@@ -417,8 +419,9 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
             m_extenderApplet->setAcceptsHoverEvents(false);
             m_extenderApplet->setParentItem(controls);
             m_extenderApplet->setEmbedded(true);
-            m_extenderApplet->setMinimumSize(80, 80); // TODO: Multiple batteries?
+            //m_extenderApplet->setFixedSize(80, 80); // TODO: Multiple batteries?
             m_extenderApplet->resize(80, 80);
+            m_extenderApplet->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
             m_extenderApplet->setBackgroundHints(NoBackground);
             m_extenderApplet->setFlag(QGraphicsItem::ItemIsMovable, false);
             m_extenderApplet->init();
@@ -589,7 +592,7 @@ void Battery::updateStatus()
                     m_batteryLabelLabel->setText(i18n("<b>Battery:</b>"));
                     if (battery_data.value()["Plugged in"].toBool()) {
                         if (state == "NoCharge") {
-                            m_batteryInfoLabel->setText(i18n("%1% (fully charged)<br />", battery_data.value()["Percent"].toString()));
+                            m_batteryInfoLabel->setText(i18n("%1% (fully charged)", battery_data.value()["Percent"].toString()));
                         } else if (state == "Discharging") {
                             m_batteryInfoLabel->setText(i18nc("Shown when a time estimate is not available", "%1% (discharging)<br />", battery_data.value()["Percent"].toString()));
                         } else {
