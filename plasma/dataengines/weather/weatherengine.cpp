@@ -99,6 +99,28 @@ Plasma::DataEngine *WeatherEngine::loadIon(const QString& plugName)
     return ion;
 }
 
+/* FIXME: Q_PROPERTY functions to update the list of available plugins */
+
+void WeatherEngine::setUpdate(bool update)
+{
+    Q_UNUSED(update)
+
+    removeSource("ions");
+    
+    // Get the list of available plugins but don't load them
+    foreach(const KPluginInfo &info, Plasma::DataEngineManager::listEngineInfo("weatherengine")) {
+        setData("ions", info.pluginName(),
+                QString("%1|%2").arg(info.property("Name").toString()).arg(info.pluginName()));
+        kDebug() << "FOUND PLUGINS: " << info.property("Name").toString();
+    }
+}
+
+/* This method is unused */
+bool WeatherEngine::update() const
+{
+   return true;
+}
+
 /**
  * Unload an Ion plugin given a Ion plugin name.
  */

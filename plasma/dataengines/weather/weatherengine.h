@@ -39,6 +39,7 @@
 class WeatherEngine : public Plasma::DataEngine
 {
     Q_OBJECT
+    Q_PROPERTY(bool update READ update WRITE setUpdate)
 
 public:
     /** Constructor
@@ -49,6 +50,10 @@ public:
 
     // Destructor
     ~WeatherEngine();
+
+    // FIXME: Right now use a Q_PROPERTY to force the engine to update plugins installed with KNS, this isn't pretty at all :/
+    void setUpdate(bool update);
+    bool update(void) const;
 
     // initialization
     void init();
