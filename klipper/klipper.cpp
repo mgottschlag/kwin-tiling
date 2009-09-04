@@ -125,7 +125,6 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     m_clip = kapp->clipboard();
 
     connect( &m_overflowClearTimer, SIGNAL( timeout()), SLOT( slotClearOverflow()));
-    m_overflowClearTimer.start( 1000 );
 
     m_pendingCheckTimer.setSingleShot( true );
     connect( &m_pendingCheckTimer, SIGNAL( timeout()), SLOT( slotCheckPending()));
@@ -677,6 +676,8 @@ bool Klipper::blockFetchingNewData()
         return true;
     }
     m_pendingContentsCheck = false;
+    if ( m_overflowCounter == 0 ) 
+        m_overflowClearTimer.start( 1000 );
     if( ++m_overflowCounter > MAX_CLIPBOARD_CHANGES )
         return true;
     return false;
@@ -860,6 +861,8 @@ void Klipper::setClipboard( const HistoryItem& item, int mode )
 
 void Klipper::slotClearOverflow()
 {
+    m_overflowClearTimer.stop();
+
     if( m_overflowCounter > MAX_CLIPBOARD_CHANGES ) {
         kDebug() << "App owning the clipboard/selection is lame";
         // update to the latest data - this unfortunately may trigger the problem again
