@@ -73,6 +73,9 @@ void Tasks::init()
 {
     //kDebug();
 
+    KConfigGroup cg = config();
+    m_showTooltip = cg.readEntry("showTooltip", true);
+
     m_groupManager = new TaskManager::GroupManager(this);
     Plasma::Containment* appletContainment = containment();
     if (appletContainment) {
@@ -114,13 +117,10 @@ void Tasks::init()
 
     setLayout(layout);
 
-    KConfigGroup cg = config();
-
     m_groupManager->setShowOnlyCurrentDesktop( cg.readEntry("showOnlyCurrentDesktop", false));
     m_groupManager->setShowOnlyCurrentScreen( cg.readEntry("showOnlyCurrentScreen", false));
     m_groupManager->setShowOnlyMinimized( cg.readEntry("showOnlyMinimized", false));
     m_groupManager->setOnlyGroupWhenFull(cg.readEntry("groupWhenFull", true));
-    m_showTooltip = cg.readEntry("showTooltip", true);
 
     m_groupManager->setGroupingStrategy( static_cast<TaskManager::GroupManager::TaskGroupingStrategy>(cg.readEntry("groupingStrategy", static_cast<int>(TaskManager::GroupManager::ProgramGrouping))));
 
