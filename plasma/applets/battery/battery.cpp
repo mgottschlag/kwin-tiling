@@ -378,29 +378,34 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         QGraphicsWidget *infoWidget = new QGraphicsWidget(controls);
         m_infoLayout = new QGraphicsGridLayout(infoWidget);
-        m_infoLayout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+        m_infoLayout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding));
+        m_infoLayout->setColumnStretchFactor(0, 1);
+        m_infoLayout->setColumnStretchFactor(1, 1.6); // second column wider than first
+        infoWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+        infoWidget->setLayout(m_infoLayout);
+
         m_batteryLabelLabel = new Plasma::Label(infoWidget);
         m_batteryLabelLabel->nativeWidget()->setWordWrap(false);
+        m_batteryLabelLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
         m_batteryInfoLabel = new Plasma::Label(infoWidget);
         m_batteryInfoLabel->nativeWidget()->setWordWrap(false);
-        m_acLabelLabel = new Plasma::Label(infoWidget);
-        m_acLabelLabel->nativeWidget()->setWordWrap(false);
-        m_acInfoLabel = new Plasma::Label(infoWidget);
-        m_acInfoLabel->nativeWidget()->setWordWrap(false);
-
         m_infoLayout->addItem(m_batteryLabelLabel, 0, 0);
         m_infoLayout->addItem(m_batteryInfoLabel, 0, 1);
+
+        m_acLabelLabel = new Plasma::Label(infoWidget);
+        m_acLabelLabel->nativeWidget()->setWordWrap(false);
+        m_acLabelLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
+        m_acInfoLabel = new Plasma::Label(infoWidget);
+        m_acInfoLabel->nativeWidget()->setWordWrap(false);
         m_infoLayout->addItem(m_acLabelLabel, 1, 0);
         m_infoLayout->addItem(m_acInfoLabel, 1, 1);
 
-        infoWidget->setLayout(m_infoLayout);
         /*
         m_batteryLabel = new Plasma::Label(controls);
         m_batteryLabel->setMinimumSize(200, 80);
         m_batteryLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
         //m_batteryLabel->nativeWidget()->setWordWrap(false);
-        m_batteryLabel->nativeWidget()->setAlignment(Qt::AlignTop);
         // FIXME: larger fonts screw up this label
         */
 
@@ -553,11 +558,11 @@ void Battery::updateStatus()
         return;
     }
 
-    //QString batteryLabelText = QString("<br />");
+    QString batteriesLabel;
+    QString batteriesInfo;
     if (m_numOfBattery && m_batteryLabelLabel) {
         QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
         int bnum = 0;
-
         while (battery_data.hasNext()) {
             bnum++;
             battery_data.next();
@@ -581,35 +586,39 @@ void Battery::updateStatus()
                 if (m_numOfBattery == 0) {
                     //kDebug() << "zero batteries ...";
                 } else if (m_numOfBattery == 1) {
-                    m_batteryLabelLabel->setText(i18n("<b>Battery:</b> "));
+                    m_batteryLabelLabel->setText(i18n("<b>Battery:</b>"));
                     if (battery_data.value()["Plugged in"].toBool()) {
                         if (state == "NoCharge") {
                             m_batteryInfoLabel->setText(i18n("%1% (fully charged)<br />", battery_data.value()["Percent"].toString()));
                         } else if (state == "Discharging") {
                             m_batteryInfoLabel->setText(i18nc("Shown when a time estimate is not available", "%1% (discharging)<br />", battery_data.value()["Percent"].toString()));
                         } else {
-                            m_batteryInfoLabel->setText(i18n("%1% (charging)<br />", battery_data.value()["Percent"].toString()));
+                            m_batteryInfoLabel->setText(i18n("%1% (charging)", battery_data.value()["Percent"].toString()));
                         }
                     } else {
-                        m_batteryInfoLabel->setText(i18nc("Battery is not plugged in", "Not present<br />"));
+                        m_batteryInfoLabel->setText(i18nc("Battery is not plugged in", "Not present"));
                     }
                 } else {
                     //kDebug() << "More batteries ...";
                     // FIXME: we're overwriting the text
-                    m_batteryLabelLabel->setText(i18nc("", "<b>Battery %1:</b> ", bnum));
+                    if (bnum > 1) {
+                        batteriesLabel.append("<br />");
+                        batteriesInfo.append("<br />");
+                    }
+                    batteriesLabel.append(i18nc("", "<b>Battery %1:</b> ", bnum));
                     if (state == "NoCharge") {
-                        m_batteryInfoLabel->setText(i18n("1% (fully charged)<br />", battery_data.value()["Percent"].toString()));
+                        batteriesInfo.append(i18n("1% (fully charged)", battery_data.value()["Percent"].toString()));
                     } else if (state == "Discharging") {
-                        m_batteryInfoLabel->setText(i18n("%2% (discharging)<br />", bnum, battery_data.value()["Percent"].toString()));
+                        batteriesInfo.append(i18n("%2% (discharging)", bnum, battery_data.value()["Percent"].toString()));
                     } else {
-                        m_batteryInfoLabel->setText(i18n("%2% (charging)<br />", bnum, battery_data.value()["Percent"].toString()));
+                        batteriesInfo.append(i18n("%2% (charging)", bnum, battery_data.value()["Percent"].toString()));
                     }
                 }
             //}
         }
-        m_acLabelLabel->setText(i18n("<b>AC Adapter:</b> "));
+        m_acLabelLabel->setText(i18n("<b>AC Adapter:</b>")); // ouch ...
         if (m_acAdapterPlugged) {
-            m_acInfoLabel->setText(i18n("plugged in"));
+            m_acInfoLabel->setText(i18n("Plugged in "));
         } else {
             m_acInfoLabel->setText(i18n("Not plugged in"));
         }
@@ -617,7 +626,10 @@ void Battery::updateStatus()
         m_batteryLabelLabel->setText(i18n("<b>Battery:</b> "));
         m_batteryInfoLabel->setText(i18nc("Battery is not plugged in", "Not present"));
     }
-
+    if (!batteriesInfo.isEmpty()) {
+        m_batteryInfoLabel->setText(batteriesInfo);
+        m_batteryLabelLabel->setText(batteriesLabel);
+    }
     if (!m_availableProfiles.empty() && m_profileCombo) {
         m_profileCombo->clear();
         m_profileCombo->addItem(m_currentProfile);
