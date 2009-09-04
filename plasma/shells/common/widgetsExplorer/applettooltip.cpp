@@ -98,7 +98,7 @@ void AppletInfoWidget::init()
     m_aboutLabel   = new Plasma::TextBrowser();
 
     m_uninstallButton = new Plasma::PushButton();
-    m_uninstallButton->setText(il8n("Uninstall"));
+    m_uninstallButton->setText(i18n("Uninstall"));
     m_uninstallButton->setIcon(KIcon("application-exit"));
     m_uninstallButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum, QSizePolicy::ButtonBox);
     qDebug() << m_uninstallButton->effectiveSizeHint(Qt::MinimumSize);
