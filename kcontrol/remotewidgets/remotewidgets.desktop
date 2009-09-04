@@ -12,8 +12,20 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=computer-administration
 
 Name=Remote widgets policies
+Name[pt]=Políticas dos elementos remotos
+Name[pt_BR]=Políticas dos elementos remotos
+Name[sv]=Policy för grafiska fjärrkomponenter
+Name[tr]=Uzak gereçler politikası
+Name[uk]=Правила доступу для віддалених віджетів
+Name[x-test]=xxRemote widgets policiesxx
 
 Comment=Define policies for remote plasma widgets
+Comment[pt]=Definir políticas para os elementos remotos do Plasma
+Comment[pt_BR]=Definir políticas para os elementos remotos do Plasma
+Comment[sv]=Definiera policy för Plasma grafiska fjärrkomponenter
+Comment[tr]=Uzak Plasma gereçleri için politikalar
+Comment[uk]=Визначає правила доступу для віддалених віджетів Плазми
+Comment[x-test]=xxDefine policies for remote plasma widgetsxx
 
 X-KDE-Keywords=plasma,remote,widgets,policy
 

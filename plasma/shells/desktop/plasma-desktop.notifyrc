@@ -1,9 +1,29 @@
 [Global]
 IconName=plasma
 Comment=Plasma Desktop Shell
+Comment[pt]=Consola de Ecrã do Plasma
+Comment[pt_BR]=Consola de Ecrã do Plasma
+Comment[sv]=Plasma skrivbordskal
+Comment[tr]=Plasma Masaüstü Kabuğu
+Comment[uk]=Оболонка стільниці Плазми
+Comment[x-test]=xxPlasma Desktop Shellxx
 Name=Plasma
+Name[uk]=Плазма
+Name[x-test]=xxPlasmaxx
 
 [Event/newplasmoid]
 Name=New plasmoid published
+Name[pt]=Novo plasmóide publicado
+Name[pt_BR]=Novo plasmóide publicado
+Name[sv]=Ny Plasmoid publicerad
+Name[tr]=Yeni bir Plasma programcığı yayınlandı
+Name[uk]=З’явився новий плазмоїд
+Name[x-test]=xxNew plasmoid publishedxx
 Comment=A new plasmoid is published on the network.
+Comment[pt]=Está publicado um novo plasmóide na rede.
+Comment[pt_BR]=Está publicado um novo plasmóide na rede.
+Comment[sv]=En ny Plasmoid publicerad på nätverket
+Comment[tr]=Ağda yeni bir Plasma programcığı yayınlandı.
+Comment[uk]=У мережі з’явився новий плазмоїд.
+Comment[x-test]=xxA new plasmoid is published on the network.xx
 Action=Popup

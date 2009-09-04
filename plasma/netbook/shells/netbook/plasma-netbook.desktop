@@ -15,6 +15,7 @@ Comment[nds]=Arbeitrebeet-Konsool för Nettbook-Reedschappen
 Comment[pt]=Área de trabalho para dispositivos 'netbook'.
 Comment[pt_BR]=Área de trabalho para dispositivos 'netbook'.
 Comment[sv]=Arbetsyta för bärbara nätdatorenheter.
+Comment[tr]=Netbook aygıtları için çalışma alanı kabuğu.
 Comment[uk]=Оболонка робочого простору для субноутбуків.
 Comment[x-test]=xxWorkspace shell for netbook devices.xx
 Type=Service
