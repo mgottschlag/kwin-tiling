@@ -130,7 +130,7 @@ const ActionList& URLGrabber::matchingActions( const QString& clipData )
         mimetype = KMimeType::findByPath( "/tmp/klipper.html", 0, true /*fast mode*/ );
     }
 
-    if ( mimetype->name() != "application/octet-stream" ) {
+    if ( !mimetype->isDefault() ) {
         ClipAction* action = new ClipAction( QString(), mimetype->comment() );
         KService::List lst = KMimeTypeTrader::self()->query( mimetype->name(), "Application" );
         foreach( const KService::Ptr &service, lst ) {
