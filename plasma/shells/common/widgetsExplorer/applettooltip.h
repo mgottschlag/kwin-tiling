@@ -28,10 +28,7 @@
 #include <QtGui>
 
 #include <plasma/dialog.h>
-#include <plasma/widgets/checkbox.h>
 #include <plasma/widgets/iconwidget.h>
-#include <plasma/widgets/label.h>
-#include <plasma/widgets/tabbar.h>
 #include <plasma/widgets/pushbutton.h>
 #include <plasma/widgets/textbrowser.h>
 
@@ -52,11 +49,11 @@ class AppletInfoWidget : public QGraphicsWidget {
     private:
         PlasmaAppletItem *m_appletItem;
         QGraphicsLinearLayout *m_mainLayout;
+        QGraphicsLinearLayout *m_mainVerticalLayout;
 
         Plasma::IconWidget *m_iconWidget;
         Plasma::TextBrowser *m_nameLabel;
         Plasma::TextBrowser *m_aboutLabel;
-        Plasma::CheckBox *m_publishCheckBox;
         Plasma::PushButton *m_uninstallButton;
 };
 

@@ -168,19 +168,7 @@ void AppletsListWidget::themeUpdated()
 
 void AppletsListWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
-    qDebug() << "resize event";
-
-    static bool guard = false;
-
-    if (guard) {
-        return;
-    }
-
-    guard = true;
     Q_UNUSED(event);
-    qDebug() << "resize event 2";
-
-//    updateGeometry();
 
     if (m_orientation == Qt::Horizontal) {
         m_appletsListWindowWidget->setMinimumWidth(-1);
@@ -190,44 +178,50 @@ void AppletsListWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
         m_appletsListWindowWidget->setMaximumHeight(-1);
     }
 
-    const int height = size().height();
-    m_appletsListWidget->resize(m_appletsListWidget->size().width(), height);
-     m_appletsListWindowWidget->resize(m_appletsListWindowWidget->size().width(), height);
-    int minIcon = 1000;
-    foreach (AppletIconWidget *applet, m_allAppletsHash) {
-        applet->setMinimumSize(height, height);
-//
-//        const int iconHeight = applet->iconSize().height();
-//        if (minIcon > iconHeight) {
-//            minIcon = iconHeight;
-//        }
+    qreal contentMarginTop;
+    qreal contentMarginBottom;
+    qreal x;
+    int height = event->newSize().height();
+    int width = event->newSize().width();
+    int iconSize;
+
+    if (m_orientation == Qt::Horizontal) {
+        m_arrowsLayout->getContentsMargins(&x, &contentMarginTop, &x, &contentMarginBottom);
+        height -= (contentMarginBottom + contentMarginTop);
+        m_appletsListWidget->resize(m_appletsListWidget->size().width(), height);
+        m_appletsListWindowWidget->resize(m_appletsListWindowWidget->size().width(), height);
+        iconSize = height;
+        m_appletListLinearLayout->getContentsMargins(&x, &contentMarginTop, &x, &contentMarginBottom);
+        iconSize -= (contentMarginBottom + contentMarginTop);
+    } else {
+        m_arrowsLayout->getContentsMargins(&contentMarginTop, &x, &contentMarginBottom, &x);
+        width -= (contentMarginBottom + contentMarginTop);
+        m_appletsListWidget->resize(width, m_appletsListWidget->size().height());
+        m_appletsListWindowWidget->resize(width, m_appletsListWindowWidget->size().height());
+        iconSize = width;
+        m_appletListLinearLayout->getContentsMargins(&contentMarginTop, &x, &contentMarginBottom, &x);
+        iconSize -= (contentMarginBottom + contentMarginTop);
     }
 
-    //foreach (AppletIconWidget *applet, m_allAppletsHash) {
-        //applet->setMinimumSize(applet->sizeFromIconSize(minIcon));
-        //applet->setMaximumSize(applet->sizeFromIconSize(minIcon));
-    //}
-    qDebug() << "resizing to" << height << minIcon;
-    guard = false;
+    //icon resize is causing 'this' resize, so a loop happens
+    qDebug() << "icon size" << iconSize;
+
+    foreach (AppletIconWidget *applet, m_allAppletsHash) { 
+        applet->setMinimumSize(iconSize, iconSize);
+        applet->setMaximumSize(iconSize, iconSize);
+    }
 }
 
 //parent intercepts children events
 bool AppletsListWidget::eventFilter(QObject *obj, QEvent *event)
 {    
     if (event->type() == QEvent::GraphicsSceneResize) {
-        //QGraphicsSceneResizeEvent *resizeEvent = static_cast<QGraphicsSceneResizeEvent *>(event);
         QGraphicsWidget *widget = dynamic_cast<QGraphicsWidget *>(obj);
+        QGraphicsSceneResizeEvent *resizeEvent = static_cast<QGraphicsSceneResizeEvent *>(event);
 
         //if the resize occured with the list widget
         if(widget == m_appletsListWidget) {
             manageArrows();
-            if (m_orientation == Qt::Horizontal) {
-//                m_appletsListWindowWidget->setMinimumHeight(resizeEvent->newSize().height());
-//                m_appletsListWindowWidget->setMaximumHeight(resizeEvent->newSize().height());
-            } else {
-//                m_appletsListWindowWidget->setMinimumWidth(resizeEvent->newSize().width());
-//                m_appletsListWindowWidget->setMaximumWidth(resizeEvent->newSize().width());
-            }
             return false;
 
         //if the resize occured with the window widget
@@ -235,9 +229,10 @@ bool AppletsListWidget::eventFilter(QObject *obj, QEvent *event)
             int maxVisibleIconsOnList = maximumAproxVisibleIconsOnList();
             arrowClickStep = ceil(maxVisibleIconsOnList/4);
             wheelStep = ceil(maxVisibleIconsOnList/2);
+
             return false;
         }
-     }
+    }
 
     return QObject::eventFilter(obj, event);
 }
@@ -256,7 +251,6 @@ void AppletsListWidget::setItemModel(PlasmaAppletItemModel *model)
 
     connect(m_modelFilterItems, SIGNAL(searchTermChanged(QString)), this, SLOT(updateList()));
     connect(m_modelFilterItems, SIGNAL(filterChanged()), this, SLOT(updateList()));
-
 
     updateList();
 
@@ -383,18 +377,13 @@ void AppletsListWidget::setToolTipPosition()
     QRectF appletRect = m_toolTip->appletIconWidget()->
                         mapRectToItem(this, m_toolTip->appletIconWidget()->boundingRect());
 
-    //Plasma::WidgetExplorer *widgetExplorer = dynamic_cast<Plasma::WidgetExplorer*>(parentItem());
-
     toolTipMoveFrom = m_toolTip->pos();
 
     Plasma::Corona *corona = static_cast<Plasma::WidgetExplorer*>(parentItem())->corona();
     if (corona) {
-//        ********* use this after integrating with plasma *************
         toolTipMoveTo = corona->popupPosition(m_toolTip->appletIconWidget(), m_toolTip->geometry().size());
-        kDebug() << "from corona" << toolTipMoveTo;
     } else {
         toolTipMoveTo = QPoint(appletPosition.x(), appletPosition.y());
-        kDebug() << "from ourself" << toolTipMoveTo;
     }
 
     if (m_toolTip->isVisible()) {
@@ -440,8 +429,6 @@ AppletIconWidget *AppletsListWidget::createAppletIcon(PlasmaAppletItem *appletIt
 {
     AppletIconWidget *applet = new AppletIconWidget(0, appletItem);
     applet->setMinimumSize(100, 0);
-//    applet->setMinimumSize(applet->sizeFromIconSize(ICON_SIZE));
-//    applet->setMaximumSize(applet->sizeFromIconSize(ICON_SIZE));
 
     connect(applet, SIGNAL(hoverEnter(AppletIconWidget*)), this, SLOT(appletIconHoverEnter(AppletIconWidget*)));
     connect(applet, SIGNAL(hoverLeave(AppletIconWidget*)), this, SLOT(appletIconHoverLeave(AppletIconWidget*)));
@@ -483,6 +470,7 @@ void AppletsListWidget::updateList()
 
     m_appletsListWidget->setLayout(NULL);
     m_appletListLinearLayout = new QGraphicsLinearLayout(m_orientation);
+    m_appletsListWidget->resize(0,0);
     m_currentAppearingAppletsOnList->clear();
 
     eraseList();
@@ -499,10 +487,13 @@ void AppletsListWidget::updateList()
     }
 
     m_appletsListWidget->setLayout(m_appletListLinearLayout);
-    m_appletListLinearLayout->setSpacing(10);
+    m_appletListLinearLayout->setSpacing(20);
+
     updateGeometry();
+
     delete(m_hoverIndicator);
     m_hoverIndicator = new Plasma::ItemBackground(this);
+
     resetScroll();
 }
 

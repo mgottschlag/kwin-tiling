@@ -36,10 +36,8 @@ AppletIconWidget::AppletIconWidget(QGraphicsItem *parent, PlasmaAppletItem *appl
     m_selected = false;
     m_selectedBackgroundSvg = new Plasma::FrameSvg(this);
     m_selectedBackgroundSvg->setImagePath("widgets/translucentbackground");
-    qDebug() << cursor();
     setCursor(Qt::OpenHandCursor);
     m_runningIcon = KIcon("dialog-ok");
-//    m_runningIcon = KIcon("system-run");
 }
 
 AppletIconWidget::~AppletIconWidget()
@@ -105,8 +103,7 @@ void AppletIconWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void AppletIconWidget::resizeEvent(QGraphicsSceneResizeEvent *)
 {
     QFontMetrics fm(font());
-    m_iconHeight = qMax(16, int(size().height() - fm.height()));
-    //qDebug() << "icon height is" << m_iconHeight << size().height() << fm.height();
+    m_iconHeight = qBound(0, int(size().height() - fm.height()), int(size().height()));
 }
 
 void AppletIconWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -130,7 +127,7 @@ void AppletIconWidget::setSelected(bool selected)
 }
 
 void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
+ {
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
@@ -152,4 +149,4 @@ void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
     QRectF textRect(0, iconRect.bottom() + 2, width, height - iconRect.bottom());
     painter->drawText(textRect, Qt::AlignTop | Qt::AlignCenter | Qt::TextWordWrap, m_appletItem->name());
-}
+ }

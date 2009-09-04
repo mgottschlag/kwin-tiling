@@ -97,23 +97,17 @@ void AppletInfoWidget::init()
     m_nameLabel    = new Plasma::TextBrowser();
     m_aboutLabel   = new Plasma::TextBrowser();
 
-    m_publishCheckBox = new Plasma::CheckBox();
-    m_publishCheckBox->setText(i18n("Publish"));
-
     m_uninstallButton = new Plasma::PushButton();
-    m_uninstallButton->setText(i18n("Uninstall"));
-    m_uninstallButton->nativeWidget()->setIcon(QIcon("draw-eraser"));
-    //m_uninstallButton->setSizePolicy(QSizePolicy::Minimum);
+    m_uninstallButton->setText(il8n("Uninstall"));
+    m_uninstallButton->setIcon(KIcon("application-exit"));
+    m_uninstallButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum, QSizePolicy::ButtonBox);
+    qDebug() << m_uninstallButton->effectiveSizeHint(Qt::MinimumSize);
+    qDebug() << m_uninstallButton->size();
 
     // layout init
     QGraphicsLinearLayout *textLayout = new QGraphicsLinearLayout(Qt::Vertical);
     textLayout->addItem(m_nameLabel);
     textLayout->addItem(m_aboutLabel);
-
-    QGraphicsLinearLayout *buttonsLayout = new QGraphicsLinearLayout();
-    buttonsLayout->addItem(m_publishCheckBox);
-    buttonsLayout->addItem(m_uninstallButton);
-    buttonsLayout->setContentsMargins(10, 10, 10, 10);
 
     m_mainLayout = new QGraphicsLinearLayout();
     m_mainLayout->addItem(m_iconWidget);
@@ -121,9 +115,10 @@ void AppletInfoWidget::init()
     m_mainLayout->setContentsMargins(10, 10, 10, 10);
     m_mainLayout->setAlignment(m_iconWidget, Qt::AlignVCenter);
 
-    QGraphicsLinearLayout *mainVerticalLayout = new QGraphicsLinearLayout(Qt::Vertical);
-    mainVerticalLayout->addItem(m_mainLayout);
-    mainVerticalLayout->addItem(buttonsLayout);
+    m_mainVerticalLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    m_mainVerticalLayout->addItem(m_mainLayout);
+    m_mainVerticalLayout->addItem(m_uninstallButton);
+    m_mainVerticalLayout->setAlignment(m_uninstallButton, Qt::AlignBottom);
 
     // header init
     m_iconWidget->setAcceptHoverEvents(false);
@@ -149,7 +144,7 @@ void AppletInfoWidget::init()
     m_aboutLabel->nativeWidget()->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     m_aboutLabel->nativeWidget()->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
-    setLayout(mainVerticalLayout);
+    setLayout(m_mainVerticalLayout);
 }
 
 void AppletInfoWidget::setAppletItem(PlasmaAppletItem *appletItem)
@@ -159,8 +154,6 @@ void AppletInfoWidget::setAppletItem(PlasmaAppletItem *appletItem)
 
 void AppletInfoWidget::updateInfo()
 {
-    m_mainLayout->invalidate();
-
     if (m_appletItem != 0) {
 
         if (m_iconWidget != 0) {
@@ -180,11 +173,7 @@ void AppletInfoWidget::updateInfo()
         }
 
         if (m_nameLabel != 0) {
-            m_nameLabel->setText(i18n("Unknown Applet"));
+            m_nameLabel->setText("Unknown Applet");
         }
     }
-
-//    QSizeF prefSize = m_mainLayout->sizeHint(Qt::PreferredSize);
-//    resize(prefSize);
-    m_mainLayout->activate();
 }

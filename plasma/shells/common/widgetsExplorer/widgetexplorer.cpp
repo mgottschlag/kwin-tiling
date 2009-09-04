@@ -44,6 +44,11 @@
 #include "managewidgets.h"
 #include "appletsfiltering.h"
 
+//getting the user local
+//KGlobal::dirs()->localkdedir();
+//Compare it to the entryPath of the KPluginInfo
+//and see if it can be uninstalled
+
 using namespace KCategorizedItemsViewModels;
 
 namespace Plasma
