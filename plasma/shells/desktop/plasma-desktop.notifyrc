@@ -2,7 +2,7 @@
 IconName=plasma
 Comment=Plasma Desktop Shell
 Comment[pt]=Consola de Ecrã do Plasma
-Comment[pt_BR]=Consola de Ecrã do Plasma
+Comment[pt_BR]=Shell da área de trabalho do Plasma
 Comment[sv]=Plasma skrivbordskal
 Comment[tr]=Plasma Masaüstü Kabuğu
 Comment[uk]=Оболонка стільниці Плазми
@@ -21,7 +21,7 @@ Name[uk]=З’явився новий плазмоїд
 Name[x-test]=xxNew plasmoid publishedxx
 Comment=A new plasmoid is published on the network.
 Comment[pt]=Está publicado um novo plasmóide na rede.
-Comment[pt_BR]=Está publicado um novo plasmóide na rede.
+Comment[pt_BR]=Um novo plasmóide foi publicado na rede.
 Comment[sv]=En ny Plasmoid publicerad på nätverket
 Comment[tr]=Ağda yeni bir Plasma programcığı yayınlandı.
 Comment[uk]=У мережі з’явився новий плазмоїд.
