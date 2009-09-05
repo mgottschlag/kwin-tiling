@@ -342,6 +342,10 @@ void Image::setWallpaper(const KUrl &url)
         m_wallpaper = path;
         setSingleImage();
     }
+
+    if (!m_usersWallpapers.contains(path)) {
+        m_usersWallpapers.append(path);
+    }
 }
 
 void Image::startSlideshow()
