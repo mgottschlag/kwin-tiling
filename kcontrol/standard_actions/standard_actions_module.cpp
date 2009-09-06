@@ -31,7 +31,7 @@
 #include <QVBoxLayout>
 
 K_PLUGIN_FACTORY(StandardActionsModuleFactory, registerPlugin<StandardActionsModule>();)
-K_EXPORT_PLUGIN(StandardActionsModuleFactory("kcmstandard_actions"))
+K_EXPORT_PLUGIN(StandardActionsModuleFactory("kcm_standard_actions"))
 
 
 StandardActionsModule::StandardActionsModule(
@@ -42,7 +42,7 @@ StandardActionsModule::StandardActionsModule(
       ,m_actionCollection(NULL)
     {
     // Configure the KCM
-    KCModule::setButtons(KCModule::Buttons(KCModule::Default | KCModule::Apply));
+    KCModule::setButtons(KCModule::Buttons(KCModule::Default | KCModule::Apply | KCModule::Help));
 
     // Create and configure the editor
     m_editor = new KShortcutsEditor(this, KShortcutsEditor::AllActions);
