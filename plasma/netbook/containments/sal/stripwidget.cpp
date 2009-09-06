@@ -170,13 +170,14 @@ void StripWidget::remove(Plasma::IconWidget *favourite)
 
 void StripWidget::removeFavourite()
 {
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender());
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
 
-    remove(icon);
+    if (icon) {
+        m_stripLayout->setMinimumSize(icon->size().width()*(m_stripLayout->count()-2), icon->size().height());
+        m_stripLayout->setMaximumSize(m_stripLayout->minimumSize());
 
-    //FIXME
-    m_stripLayout->setMinimumSize(icon->size().width()*(m_stripLayout->count()-1), icon->size().height());
-    m_stripLayout->setMaximumSize(m_stripLayout->minimumSize());
+        remove(icon);
+    }
 }
 
 void StripWidget::launchFavourite()
@@ -341,11 +342,13 @@ void StripWidget::keyPressEvent(QKeyEvent *event)
 
 void StripWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event)
     m_hoverIndicator->hide();
 }
 
 void StripWidget::focusInEvent(QFocusEvent *event)
 {
+    Q_UNUSED(event)
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_stripLayout->itemAt(0));
     m_hoverIndicator->show();
     m_hoverIndicator->setTargetItem(icon);
@@ -354,6 +357,7 @@ void StripWidget::focusInEvent(QFocusEvent *event)
 
 void StripWidget::focusOutEvent(QFocusEvent *event)
 {
+    Q_UNUSED(event)
     m_hoverIndicator->hide();
     m_currentIconIndex = -1;
 }
