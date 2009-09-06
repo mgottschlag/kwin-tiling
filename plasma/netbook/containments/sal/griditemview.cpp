@@ -38,6 +38,9 @@ GridItemView::~GridItemView()
 void GridItemView::setCurrentItem(Plasma::IconWidget *currentIcon)
 {
     if (!m_layout) {
+        m_layout = dynamic_cast<QGraphicsGridLayout *>(layout());
+    }
+    if (!m_layout) {
         return;
     }
 
@@ -120,6 +123,8 @@ void GridItemView::keyPressEvent(QKeyEvent *event)
 
 void GridItemView::focusInEvent(QFocusEvent *event)
 {
+    Q_UNUSED(event)
+
     if (!m_layout) {
         m_layout = dynamic_cast<QGraphicsGridLayout *>(layout());
     }

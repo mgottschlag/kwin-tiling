@@ -521,8 +521,6 @@ bool SearchLaunch::eventFilter(QObject *watched, QEvent *event)
         Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
         if (icon) {
             m_gridBackground->setCurrentItem(icon);
-            /*m_hoverIndicator->show();
-            m_hoverIndicator->setTargetItem(icon);*/
         }
     } else if (event->type() == QEvent::GraphicsSceneHoverLeave &&
                qobject_cast<Plasma::Frame *>(watched)) {
