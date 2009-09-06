@@ -322,9 +322,11 @@ void SearchLaunch::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 
 void SearchLaunch::appletRemoved(Plasma::Applet* applet)
 {
-   if (m_appletsLayout->count() == 1) {
-        m_mainLayout->removeItem(m_appletsLayout);
-    }
+    Q_UNUSED(applet)
+
+    if (m_appletsLayout->count() == 1) {
+         m_mainLayout->removeItem(m_appletsLayout);
+     }
 }
 
 void SearchLaunch::updateSize()
@@ -500,6 +502,15 @@ void SearchLaunch::dataUpdated(const QString &sourceName, const Plasma::DataEngi
 
 void SearchLaunch::selectItem(Plasma::IconWidget *icon)
 {
+    QRectF iconRectToScroll = icon->mapToItem(m_gridScroll, icon->boundingRect()).boundingRect();
+    QRectF iconRectToMainWidget = icon->mapToItem(m_viewMainWidget, icon->boundingRect()).boundingRect();
+
+    if (iconRectToScroll.bottom() > m_gridScroll->size().height()) {
+        m_viewMainWidget->setPos(0, -iconRectToMainWidget.bottom() + m_gridScroll->size().height());
+    } else if (iconRectToScroll.top() < 0) {
+        m_viewMainWidget->setPos(0, -iconRectToMainWidget.top());
+    }
+
     m_hoverIndicator->show();
     m_hoverIndicator->setTargetItem(icon);
 }
