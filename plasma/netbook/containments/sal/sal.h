@@ -96,6 +96,7 @@ private:
     QHash<Plasma::IconWidget*, Plasma::QueryMatch> m_matches;
 
     QGraphicsWidget *m_viewMainWidget;
+    GridItemView *m_gridBackground;
     Plasma::ScrollWidget *m_gridScroll;
     StripWidget *m_stripWidget;
     Plasma::ItemBackground *m_hoverIndicator;

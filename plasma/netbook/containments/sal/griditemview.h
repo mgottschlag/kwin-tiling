@@ -18,7 +18,7 @@
  */
 
 #ifndef GRIDITEMVIEW_H
-#define GRIDITEMVIEW_H 
+#define GRIDITEMVIEW_H
 
 #include <Plasma/Frame>
 #include <Plasma/Plasma>
@@ -37,6 +37,9 @@ class GridItemView : public Plasma::Frame
 public:
     GridItemView(QGraphicsWidget *parent);
     ~GridItemView();
+
+    void setCurrentItem(Plasma::IconWidget *currentItem);
+    Plasma::IconWidget *currentItem() const;
 
 protected:
     void focusInEvent(QFocusEvent *event);

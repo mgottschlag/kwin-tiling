@@ -35,6 +35,30 @@ GridItemView::GridItemView(QGraphicsWidget *parent)
 GridItemView::~GridItemView()
 {}
 
+void GridItemView::setCurrentItem(Plasma::IconWidget *currentIcon)
+{
+    if (!m_layout) {
+        return;
+    }
+
+    for (int x = 0; x < m_layout->columnCount(); ++x) {
+        for (int y = 0; y < m_layout->rowCount(); ++y) {
+            if (m_layout->itemAt(y, x) == currentIcon) {
+                m_currentIcon = currentIcon;
+                m_currentIconIndexX = x;
+                m_currentIconIndexY = y;
+                emit itemSelected(m_currentIcon);
+                break;
+            }
+        }
+    }
+}
+
+Plasma::IconWidget *GridItemView::currentItem() const
+{
+    return m_currentIcon;
+}
+
 void GridItemView::keyPressEvent(QKeyEvent *event)
 {
     if (!m_layout) {

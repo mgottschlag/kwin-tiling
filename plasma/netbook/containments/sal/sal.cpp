@@ -379,20 +379,20 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             // create launch grid and make it centered
             QGraphicsLinearLayout *gridLayout = new QGraphicsLinearLayout(Qt::Vertical);
 
-            Plasma::Frame *gridBackground = new GridItemView(this);
-            connect(gridBackground, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
-            connect(gridBackground, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launch(Plasma::IconWidget *)));
-            gridBackground->setFocusPolicy(Qt::StrongFocus);
-            gridBackground->setFrameShadow(Plasma::Frame::Plain);
-            gridBackground->setAcceptHoverEvents(true);
-            gridBackground->installEventFilter(this);
+            m_gridBackground = new GridItemView(this);
+            connect(m_gridBackground, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
+            connect(m_gridBackground, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launch(Plasma::IconWidget *)));
+            m_gridBackground->setFocusPolicy(Qt::StrongFocus);
+            m_gridBackground->setFrameShadow(Plasma::Frame::Plain);
+            m_gridBackground->setAcceptHoverEvents(true);
+            m_gridBackground->installEventFilter(this);
             m_viewMainWidget = new QGraphicsWidget(this);
             QGraphicsLinearLayout *mwLay = new QGraphicsLinearLayout(m_viewMainWidget);
             mwLay->addStretch();
-            mwLay->addItem(gridBackground);
+            mwLay->addItem(m_gridBackground);
             mwLay->addStretch();
 
-            m_hoverIndicator = new Plasma::ItemBackground(gridBackground);
+            m_hoverIndicator = new Plasma::ItemBackground(m_gridBackground);
             m_hoverIndicator->hide();
 
             m_gridScroll = new Plasma::ScrollWidget(this);
@@ -402,7 +402,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             gridLayout->addItem(m_gridScroll);
 
             m_launchGrid = new QGraphicsGridLayout();
-            gridBackground->setLayout(m_launchGrid);
+            m_gridBackground->setLayout(m_launchGrid);
 
             QGraphicsLinearLayout *m_favourites = new QGraphicsLinearLayout();
             m_favourites->setOrientation(layoutDirection);
@@ -431,7 +431,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_homeButton->setIcon(KIcon("go-home"));
             m_homeButton->setText(i18n("Home"));
             connect(m_homeButton, SIGNAL(activated()), this, SLOT(reset()));
-            connect(gridBackground, SIGNAL(resetRequested()), this, SLOT(reset()));
+            connect(m_gridBackground, SIGNAL(resetRequested()), this, SLOT(reset()));
             //FIXME: do it for each theme change, another place where anchorlayout would shine, now there is an hardcoded value, not acceptable
             m_homeButton->setPos(QPoint(0, 32) + m_mainLayout->contentsRect().topLeft());
             reset();
@@ -520,8 +520,9 @@ bool SearchLaunch::eventFilter(QObject *watched, QEvent *event)
     if (event->type() == QEvent::GraphicsSceneHoverEnter) {
         Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
         if (icon) {
-            m_hoverIndicator->show();
-            m_hoverIndicator->setTargetItem(icon);
+            m_gridBackground->setCurrentItem(icon);
+            /*m_hoverIndicator->show();
+            m_hoverIndicator->setTargetItem(icon);*/
         }
     } else if (event->type() == QEvent::GraphicsSceneHoverLeave &&
                qobject_cast<Plasma::Frame *>(watched)) {
