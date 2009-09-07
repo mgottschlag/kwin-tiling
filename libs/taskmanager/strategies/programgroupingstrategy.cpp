@@ -64,11 +64,6 @@ ProgramGroupingStrategy::ProgramGroupingStrategy(GroupManager *groupManager)
 
 ProgramGroupingStrategy::~ProgramGroupingStrategy()
 {
-    KConfig groupBlacklist("taskbargroupblacklistrc", KConfig::NoGlobals);
-    KConfigGroup blackGroup(&groupBlacklist, "Blacklist");
-    blackGroup.writeEntry("Applications", d->blackList);
-    blackGroup.config()->sync();
-
     delete d;
 }
 
@@ -128,6 +123,15 @@ void ProgramGroupingStrategy::toggleGrouping()
     }
 
     d->tempItem = 0;
+
+    // Save immediately. Much better than saving in the destructor,
+    // since this class is deleted at every change of virtual desktop (!)
+    // So when doing it from the destructor we were constantly sync'ing
+    // (and triggering KDirWatch) even when the blacklist hadn't changed at all...
+    KConfig groupBlacklist("taskbargroupblacklistrc", KConfig::NoGlobals);
+    KConfigGroup blackGroup(&groupBlacklist, "Blacklist");
+    blackGroup.writeEntry("Applications", d->blackList);
+    blackGroup.config()->sync();
 }
 
 void ProgramGroupingStrategy::handleItem(AbstractGroupableItem *item)
@@ -200,7 +204,7 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
 
 void ProgramGroupingStrategy::checkGroup()
 {
-    TaskGroup *group = qobject_cast<TaskGroup*>(sender()); 
+    TaskGroup *group = qobject_cast<TaskGroup*>(sender());
     if (group) {
         if (group->members().size() < 2) {
             closeGroup(group);
