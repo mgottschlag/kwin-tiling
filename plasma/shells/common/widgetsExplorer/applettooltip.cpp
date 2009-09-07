@@ -24,6 +24,8 @@
 #include <kpushbutton.h>
 #include <ktextbrowser.h>
 
+#include <plasma/theme.h>
+
 //AppletToolTipWidget
 
 AppletToolTipWidget::AppletToolTipWidget(QWidget *parent, AppletIconWidget *applet)
@@ -101,8 +103,6 @@ void AppletInfoWidget::init()
     m_uninstallButton->setText(i18n("Uninstall"));
     m_uninstallButton->setIcon(KIcon("application-exit"));
     m_uninstallButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum, QSizePolicy::ButtonBox);
-    qDebug() << m_uninstallButton->effectiveSizeHint(Qt::MinimumSize);
-    qDebug() << m_uninstallButton->size();
 
     // layout init
     QGraphicsLinearLayout *textLayout = new QGraphicsLinearLayout(Qt::Vertical);
@@ -143,6 +143,13 @@ void AppletInfoWidget::init()
     m_aboutLabel->nativeWidget()->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_aboutLabel->nativeWidget()->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     m_aboutLabel->nativeWidget()->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
+    //set palette
+    QPalette plasmaPalette = QPalette();
+    QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    plasmaPalette.setColor(QPalette::Text, textColor);
+    m_nameLabel->nativeWidget()->setPalette(plasmaPalette);
+    m_aboutLabel->nativeWidget()->setPalette(plasmaPalette);
 
     setLayout(m_mainVerticalLayout);
 }
