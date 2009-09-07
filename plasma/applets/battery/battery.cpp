@@ -610,7 +610,7 @@ void Battery::updateStatus()
                     }
                     batteriesLabel.append(i18nc("", "<b>Battery %1:</b> ", bnum));
                     if (state == "NoCharge") {
-                        batteriesInfo.append(i18n("1% (fully charged)", battery_data.value()["Percent"].toString()));
+                        batteriesInfo.append(i18n("%1% (fully charged)", battery_data.value()["Percent"].toString()));
                     } else if (state == "Discharging") {
                         batteriesInfo.append(i18n("%2% (discharging)", bnum, battery_data.value()["Percent"].toString()));
                     } else {
