@@ -127,6 +127,12 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
         } else {
             return;
         }
+
+        KService::Ptr service = KService::serviceByStorageId(url);
+
+        url = service->entryPath();
+
+        qDebug() << "ContextMenuFactory::showContextMenu: " << "KRunner service runner: " << url;
     }
 
     qDebug() << "ContextMenuFactory::showContextMenu: " << url;
