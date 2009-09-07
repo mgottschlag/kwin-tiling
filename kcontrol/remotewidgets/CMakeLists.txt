@@ -1,6 +1,3 @@
-
-include(MacroKAuth)
-
 ########### next target ###############
 
 set(kcm_remotewidgets_PART_SRCS remotewidgets.cpp )
