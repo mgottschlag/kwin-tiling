@@ -178,38 +178,50 @@ void AppletsListWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
         m_appletsListWindowWidget->setMaximumHeight(-1);
     }
 
+    qDebug() << "m_appletsListWidget->size()" << m_appletsListWidget->size();
+    qDebug() << "size()" << size();
+
     qreal contentMarginTop;
     qreal contentMarginBottom;
-    qreal x;
+    qreal contentMarginLeft;
+    qreal contentMarginRight;
     int height = event->newSize().height();
     int width = event->newSize().width();
     int iconSize;
-
+    
     if (m_orientation == Qt::Horizontal) {
-        m_arrowsLayout->getContentsMargins(&x, &contentMarginTop, &x, &contentMarginBottom);
+        m_arrowsLayout->getContentsMargins(&contentMarginLeft, &contentMarginTop,
+                                           &contentMarginRight, &contentMarginBottom);
         height -= (contentMarginBottom + contentMarginTop);
+        qDebug() << "resize: old this size" << event->oldSize().height();
+        qDebug() << "resize: new this size" << event->newSize().height();
+        qDebug() << "resize: height" << height;
         m_appletsListWidget->resize(m_appletsListWidget->size().width(), height);
-        m_appletsListWindowWidget->resize(m_appletsListWindowWidget->size().width(), height);
         iconSize = height;
-        m_appletListLinearLayout->getContentsMargins(&x, &contentMarginTop, &x, &contentMarginBottom);
+        m_appletListLinearLayout->getContentsMargins(&contentMarginLeft, &contentMarginTop,
+                                                     &contentMarginRight, &contentMarginBottom);
         iconSize -= (contentMarginBottom + contentMarginTop);
     } else {
-        m_arrowsLayout->getContentsMargins(&contentMarginTop, &x, &contentMarginBottom, &x);
-        width -= (contentMarginBottom + contentMarginTop);
+        //i don't know why, but when it's vertical, a loop happens here:
+        //m_appletsListWidget resizes and it causes a resize to this
+        m_arrowsLayout->getContentsMargins(&contentMarginLeft, &contentMarginTop,
+                                       &contentMarginRight, &contentMarginBottom);
+        width -= (contentMarginLeft + contentMarginRight);
+        qDebug() << "resize: old this size" << event->oldSize().width();
+        qDebug() << "resize: new this size" << event->newSize().width();
+        qDebug() << "resize: width" << width;
         m_appletsListWidget->resize(width, m_appletsListWidget->size().height());
-        m_appletsListWindowWidget->resize(width, m_appletsListWindowWidget->size().height());
         iconSize = width;
-        m_appletListLinearLayout->getContentsMargins(&contentMarginTop, &x, &contentMarginBottom, &x);
-        iconSize -= (contentMarginBottom + contentMarginTop);
+        m_appletListLinearLayout->getContentsMargins(&contentMarginLeft, &contentMarginTop,
+                                                     &contentMarginRight, &contentMarginBottom);
+        iconSize -= (contentMarginLeft + contentMarginRight);
     }
-
-    //icon resize is causing 'this' resize, so a loop happens
-    qDebug() << "icon size" << iconSize;
 
     foreach (AppletIconWidget *applet, m_allAppletsHash) { 
         applet->setMinimumSize(iconSize, iconSize);
         applet->setMaximumSize(iconSize, iconSize);
     }
+
 }
 
 //parent intercepts children events
@@ -265,6 +277,7 @@ void AppletsListWidget::setOrientation(Qt::Orientation orientation)
 {
     m_orientation = orientation;
     setContentsPropertiesAccordingToOrientation();
+    updateList();
 }
 
 void AppletsListWidget::setContentsPropertiesAccordingToOrientation()

@@ -132,7 +132,7 @@ void WidgetExplorerPrivate::initFilters()
                           KIcon("view-history"));
     filterModel.addFilter(i18n("Running"),
                           KCategorizedItemsViewModels::Filter("running", true),
-                          KIcon("view-history"));
+                          KIcon("dialog-ok"));
 
     filterModel.addSeparator(i18n("Categories:"));
 
@@ -176,24 +176,20 @@ void WidgetExplorerPrivate::adjustContentsSize()
 {
     QSizeF contentsSize = q->contentsRect().size();
 
+    if (appletsListWidget != 0) {
+        appletsListWidget->setPreferredSize(-1,-1);
+    }
+
     if (orientation == Qt::Horizontal) {
         if (filteringWidget != 0) {
             filteringWidget->setPreferredSize(-1, -1);
         }
 
-        if (appletsListWidget != 0) {
-            appletsListWidget->setPreferredSize(-1,-1);
-        }
     } else {
         if (filteringWidget != 0) {
+            filteringWidget->setPreferredSize(-1, -1);
             filteringWidget->setMinimumHeight(contentsSize.height()/5);
             filteringWidget->setMaximumHeight(contentsSize.height()/5);
-            filteringWidget->setMinimumWidth(contentsSize.width());
-            filteringWidget->setMaximumWidth(contentsSize.width());
-        }
-
-        if (appletsListWidget != 0) {
-            appletsListWidget->setPreferredSize(-1,-1);
         }
     }
 }
