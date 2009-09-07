@@ -18,6 +18,7 @@ Name[sv]=Policy för grafiska fjärrkomponenter
 Name[tr]=Uzak gereçler politikası
 Name[uk]=Правила доступу для віддалених віджетів
 Name[x-test]=xxRemote widgets policiesxx
+Name[zh_TW]=遠端元件政策
 
 Comment=Define policies for remote plasma widgets
 Comment[pt]=Definir políticas para os elementos remotos do Plasma
@@ -26,6 +27,7 @@ Comment[sv]=Definiera policy för Plasma grafiska fjärrkomponenter
 Comment[tr]=Uzak Plasma gereçleri için politikalar
 Comment[uk]=Визначає правила доступу для віддалених віджетів Плазми
 Comment[x-test]=xxDefine policies for remote plasma widgetsxx
+Comment[zh_TW]=定義遠端 plasma 元件的政策
 
 X-KDE-Keywords=plasma,remote,widgets,policy
 

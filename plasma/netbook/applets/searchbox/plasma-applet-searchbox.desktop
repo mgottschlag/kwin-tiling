@@ -8,6 +8,7 @@ Name[sv]=Sökruta
 Name[tr]=Arama Kutusu
 Name[uk]=Панель пошуку
 Name[x-test]=xxSearch Boxxx
+Name[zh_TW]=搜尋盒
 Comment=Search Box for a given RunnerManager
 Comment[id]=Kotak pencarian untuk manajer pelari yang diberikan
 Comment[nds]=Söökreeg för en angeven Dreegpleger
@@ -16,6 +17,7 @@ Comment[pt_BR]=Campo de pesquisa para um gerenciador de execuções informado
 Comment[sv]=Sökruta för en given hanterare av programkörning
 Comment[uk]=Панель пошуку для вказаного Керування запуском
 Comment[x-test]=xxSearch Box for a given RunnerManagerxx
+Comment[zh_TW]=RunnerManager 的搜尋盒
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/Applet

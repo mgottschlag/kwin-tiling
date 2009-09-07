@@ -7,6 +7,7 @@ Name[pt_BR]=Contentor de pesquisa e localização
 Name[sv]=Sök- och lokaliseringsomgivning
 Name[uk]=Контейнер пошуку і адрес
 Name[x-test]=xxSearch and Locate Containmentxx
+Name[zh_TW]=搜尋與定位容器
 Comment=Special Containment with Launcher
 Comment[id]=Pembatasan Khusus Dengan Peluncur
 Comment[nds]=Besünner Gelaats mit Oproper
@@ -15,6 +16,7 @@ Comment[pt_BR]=Contentor especial com executor
 Comment[sv]=Särskild omgivning med programstart
 Comment[uk]=Особливий контейнер з інструментом запуску
 Comment[x-test]=xxSpecial Containment with Launcherxx
+Comment[zh_TW]=含有啟動器的特殊容器
 
 Icon=
 Type=Service

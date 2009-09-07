@@ -8,6 +8,7 @@ Name[sv]=Styrning av nuvarande program
 Name[tr]=Geçerli Uygulama Denetimi
 Name[uk]=Керування поточною програмою
 Name[x-test]=xxCurrent Application Controlxx
+Name[zh_TW]=目前應用程式控制
 Comment=Controls for the active window
 Comment[id]=Kontrol untuk jendela aktif
 Comment[nds]=Kuntrull för't aktive Finster
@@ -17,6 +18,7 @@ Comment[sv]=Styrning av det aktiva fönstret
 Comment[tr]=Etkin pencereyi denetimleri
 Comment[uk]=Інструменти керування активним вікном
 Comment[x-test]=xxControls for the active windowxx
+Comment[zh_TW]=作用中視窗控制
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/Applet
