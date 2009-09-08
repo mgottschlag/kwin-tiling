@@ -134,10 +134,17 @@ void SM::Net::themeChanged()
 void SM::Net::dataUpdated(const QString& source,
                           const Plasma::DataEngine::Data &data)
 {
-    QString interface = source.split('/')[2];
-
-    m_data[interface] << data["value"].toDouble();
-    if (m_data[interface].count() > 1) {
+    QStringList splitted = source.split('/');
+    if (splitted.length() < 4) {
+        return;
+    }
+    QString interface = splitted[2];
+    int index = (splitted[3] == "receiver") ? 0 : 1;
+    if (!m_data.contains(interface)) {
+        m_data[interface] = QList<double>() << -1 << -1;
+    }
+    m_data[interface][index] = data["value"].toDouble();
+    if (!m_data[interface].contains(-1)) {
        Plasma::SignalPlotter *plotter = plotters()[interface];
         if (plotter) {
             plotter->addSample(m_data[interface]);
@@ -155,7 +162,7 @@ void SM::Net::dataUpdated(const QString& source,
                 Plasma::ToolTipManager::self()->setContent(this, data);
             }
         }
-        m_data[interface].clear();
+        m_data[interface] = QList<double>() << -1 << -1;
     }
 }
 
