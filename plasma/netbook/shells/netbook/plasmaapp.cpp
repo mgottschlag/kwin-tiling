@@ -650,7 +650,9 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
 void PlasmaApp::controlBarVisibilityUpdate()
 {
     //FIXME: QCursor::pos() can be avoided somewat? the good news is that is quite rare, one time per trigger
-    if (!m_controlBar->isVisible()) {
+    if ((QApplication::activeWindow() != NULL) == m_controlBar->isVisible()) {
+        return;
+    } else if (!m_controlBar->isVisible()) {
         if (m_unhideTriggerGeom.adjusted(-1, -1, 1, 1).contains(QCursor::pos())) {
             destroyUnHideTrigger();
             Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
