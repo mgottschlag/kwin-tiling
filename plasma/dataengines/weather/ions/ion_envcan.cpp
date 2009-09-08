@@ -20,6 +20,7 @@
 /* Ion for Environment Canada XML data */
 
 #include "ion_envcan.h"
+#include <KUnitConversion/Converter>
 
 class EnvCanadaIon::Private : public QObject
 {
@@ -1267,7 +1268,7 @@ void EnvCanadaIon::parseYesterdayWeather(WeatherData& data, QXmlStreamReader& xm
             } else if (xml.name() == "precip") {
                 data.prevPrecipType = xml.attributes().value("units").toString();
                 if (data.prevPrecipType.isEmpty()) {
-                    data.prevPrecipType = QString::number(WeatherUtils::NoUnit);
+                    data.prevPrecipType = QString::number(KUnitConversion::NoUnit);
                 }
                 data.prevPrecipTotal = xml.readElementText();
             }
@@ -1586,10 +1587,10 @@ QMap<QString, QString> EnvCanadaIon::humidity(const QString& source) const
     QMap<QString, QString> humidityInfo;
     if (!d->m_weatherData[source].humidity.isEmpty()) {
         humidityInfo.insert("humidity", d->m_weatherData[source].humidity);
-        humidityInfo.insert("humidityUnit", QString::number(WeatherUtils::Percent));
+        humidityInfo.insert("humidityUnit", QString::number(KUnitConversion::Percent));
     } else {
         humidityInfo.insert("humidity", i18n("N/A"));
-        humidityInfo.insert("humidityUnit", QString::number(WeatherUtils::NoUnit));
+        humidityInfo.insert("humidityUnit", QString::number(KUnitConversion::NoUnit));
     }
     return humidityInfo;
 }
@@ -1600,10 +1601,10 @@ QMap<QString, QString> EnvCanadaIon::visibility(const QString& source) const
 
     if (!d->m_weatherData[source].visibility == 0) {
         visibilityInfo.insert("visibility", QString::number(d->m_weatherData[source].visibility, 'f', 1));
-        visibilityInfo.insert("visibilityUnit", QString::number(WeatherUtils::Kilometers));
+        visibilityInfo.insert("visibilityUnit", QString::number(KUnitConversion::Kilometer));
     } else {
         visibilityInfo.insert("visibility", i18n("N/A"));
-        visibilityInfo.insert("visibilityUnit", QString::number(WeatherUtils::NoUnit));
+        visibilityInfo.insert("visibilityUnit", QString::number(KUnitConversion::NoUnit));
     }
     return visibilityInfo;
 }
@@ -1626,7 +1627,7 @@ QMap<QString, QString> EnvCanadaIon::temperature(const QString& source) const
     }
 
     // This is used for not just current temperature but also 8 days. Cannot be NoUnit.
-    temperatureInfo.insert("temperatureUnit", QString::number(WeatherUtils::Celsius));
+    temperatureInfo.insert("temperatureUnit", QString::number(KUnitConversion::Celsius));
     return temperatureInfo;
 }
 
@@ -1759,11 +1760,11 @@ QMap<QString, QString> EnvCanadaIon::pressure(const QString& source) const
 
     if (d->m_weatherData[source].pressure == 0) {
         pressureInfo.insert("pressure", i18n("N/A"));
-        pressureInfo.insert("pressureUnit", QString::number(WeatherUtils::NoUnit));
+        pressureInfo.insert("pressureUnit", QString::number(KUnitConversion::NoUnit));
         pressureInfo.insert("pressureTendency", "N/A");
     } else {
         pressureInfo.insert("pressure", QString::number(d->m_weatherData[source].pressure, 'f', 1));
-        pressureInfo.insert("pressureUnit", QString::number(WeatherUtils::Kilopascals));
+        pressureInfo.insert("pressureUnit", QString::number(KUnitConversion::Kilopascal));
         pressureInfo.insert("pressureTendency", i18nc("pressure tendency", d->m_weatherData[source].pressureTendency.toUtf8()));
     }
     return pressureInfo;
@@ -1776,22 +1777,22 @@ QMap<QString, QString> EnvCanadaIon::wind(const QString& source) const
     // May not have any winds
     if (d->m_weatherData[source].windSpeed.isEmpty()) {
         windInfo.insert("windSpeed", i18n("N/A"));
-        windInfo.insert("windUnit", QString::number(WeatherUtils::NoUnit));
+        windInfo.insert("windUnit", QString::number(KUnitConversion::NoUnit));
     } else if (d->m_weatherData[source].windSpeed.toInt() == 0) {
         windInfo.insert("windSpeed", i18nc("wind speed", "Calm"));
-        windInfo.insert("windUnit", QString::number(WeatherUtils::NoUnit));
+        windInfo.insert("windUnit", QString::number(KUnitConversion::NoUnit));
     } else {
         windInfo.insert("windSpeed", QString::number(d->m_weatherData[source].windSpeed.toInt()));
-        windInfo.insert("windUnit", QString::number(WeatherUtils::KilometersPerHour));
+        windInfo.insert("windUnit", QString::number(KUnitConversion::KilometerPerHour));
     }
 
     // May not always have gusty winds
     if (d->m_weatherData[source].windGust.isEmpty()) {
         windInfo.insert("windGust", i18n("N/A"));
-        windInfo.insert("windGustUnit", QString::number(WeatherUtils::NoUnit));
+        windInfo.insert("windGustUnit", QString::number(KUnitConversion::NoUnit));
     } else {
         windInfo.insert("windGust", QString::number(d->m_weatherData[source].windGust.toInt()));
-        windInfo.insert("windGustUnit", QString::number(WeatherUtils::KilometersPerHour));
+        windInfo.insert("windGustUnit", QString::number(KUnitConversion::KilometerPerHour));
     }
 
     if (d->m_weatherData[source].windDirection.isEmpty() && d->m_weatherData[source].windSpeed.isEmpty()) {
@@ -1867,15 +1868,15 @@ QMap<QString, QString> EnvCanadaIon::yesterdayWeather(const QString& source) con
 
     if (d->m_weatherData[source].prevPrecipTotal.isEmpty()) {
         yesterdayInfo.insert("prevPrecip", i18n("N/A"));
-        yesterdayInfo.insert("prevPrecipUnit", QString::number(WeatherUtils::NoUnit));
+        yesterdayInfo.insert("prevPrecipUnit", QString::number(KUnitConversion::NoUnit));
     } else {
         yesterdayInfo.insert("prevPrecipTotal", d->m_weatherData[source].prevPrecipTotal);
         if (d->m_weatherData[source].prevPrecipType == "mm") {
-            yesterdayInfo.insert("prevPrecipUnit", QString::number(WeatherUtils::Millimeters));
+            yesterdayInfo.insert("prevPrecipUnit", QString::number(KUnitConversion::Millimeter));
         } else if (d->m_weatherData[source].prevPrecipType == "cm") {
-            yesterdayInfo.insert("prevPrecipUnit", QString::number(WeatherUtils::Centimeters));
+            yesterdayInfo.insert("prevPrecipUnit", QString::number(KUnitConversion::Centimeter));
         } else {
-            yesterdayInfo.insert("prevPrecipUnit", QString::number(WeatherUtils::NoUnit));
+            yesterdayInfo.insert("prevPrecipUnit", QString::number(KUnitConversion::NoUnit));
         }
     }
 
@@ -1938,18 +1939,18 @@ QMap<QString, QString> EnvCanadaIon::weatherRecords(const QString& source) const
 
     if (d->m_weatherData[source].recordRain == 0) {
         recordInfo.insert("recordRain", i18n("N/A"));
-        recordInfo.insert("recordRainUnit", QString::number(WeatherUtils::NoUnit));
+        recordInfo.insert("recordRainUnit", QString::number(KUnitConversion::NoUnit));
     } else {
         recordInfo.insert("recordRain", QString("%1").arg(d->m_weatherData[source].recordRain));
-        recordInfo.insert("recordRainUnit", QString::number(WeatherUtils::Millimeters));
+        recordInfo.insert("recordRainUnit", QString::number(KUnitConversion::Millimeter));
     }
 
     if (d->m_weatherData[source].recordSnow == 0) {
         recordInfo.insert("recordSnow", i18n("N/A"));
-        recordInfo.insert("recordSnowUnit", QString::number(WeatherUtils::NoUnit));
+        recordInfo.insert("recordSnowUnit", QString::number(KUnitConversion::NoUnit));
     } else {
         recordInfo.insert("recordSnow", QString("%1").arg(d->m_weatherData[source].recordSnow));
-        recordInfo.insert("recordSnowUnit", QString::number(WeatherUtils::Centimeters));
+        recordInfo.insert("recordSnowUnit", QString::number(KUnitConversion::Centimeter));
     }
 
     return recordInfo;

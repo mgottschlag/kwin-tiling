@@ -20,7 +20,7 @@
 /* Ion for BBC's Weather from the UK Met Office */
 
 #include "ion_bbcukmet.h"
-
+#include <KUnitConversion/Converter>
 
 class UKMETIon::Private : public QObject
 {
@@ -883,7 +883,7 @@ QMap<QString, QString> UKMETIon::temperature(const QString& source) const
     QMap<QString, QString> temperatureInfo;
 
     temperatureInfo.insert("temperature", QString(d->m_weatherData[source].temperature_C));
-    temperatureInfo.insert("temperatureUnit", QString::number(WeatherUtils::Celsius));
+    temperatureInfo.insert("temperatureUnit", QString::number(KUnitConversion::Celsius));
     return temperatureInfo;
 }
 
@@ -892,14 +892,14 @@ QMap<QString, QString> UKMETIon::wind(const QString& source) const
     QMap<QString, QString> windInfo;
     if (d->m_weatherData[source].windSpeed_miles == "N/A") {
         windInfo.insert("windSpeed", i18n("N/A"));
-        windInfo.insert("windUnit", QString::number(WeatherUtils::NoUnit));
+        windInfo.insert("windUnit", QString::number(KUnitConversion::NoUnit));
     } else {
         windInfo.insert("windSpeed", QString(d->m_weatherData[source].windSpeed_miles));
-        windInfo.insert("windUnit", QString::number(WeatherUtils::MilesPerHour));
+        windInfo.insert("windUnit", QString::number(KUnitConversion::MilePerHour));
     }
     if (d->m_weatherData[source].windDirection.isEmpty()) {
         windInfo.insert("windDirection", i18n("N/A"));
-    } else { 
+    } else {
         windInfo.insert("windDirection", i18nc("wind direction", d->m_weatherData[source].windDirection.toUtf8()));
     }
     return windInfo;
@@ -910,10 +910,10 @@ QMap<QString, QString> UKMETIon::humidity(const QString& source) const
     QMap<QString, QString> humidityInfo;
     if (d->m_weatherData[source].humidity != "N/A") {
         humidityInfo.insert("humidity", d->m_weatherData[source].humidity);
-        humidityInfo.insert("humidityUnit", QString::number(WeatherUtils::Percent));
+        humidityInfo.insert("humidityUnit", QString::number(KUnitConversion::Percent));
     } else {
         humidityInfo.insert("humidity", i18n("N/A"));
-        humidityInfo.insert("humidityUnit", QString::number(WeatherUtils::NoUnit));
+        humidityInfo.insert("humidityUnit", QString::number(KUnitConversion::NoUnit));
     }
 
     return humidityInfo;
@@ -929,13 +929,13 @@ QMap<QString, QString> UKMETIon::pressure(const QString& source) const
     QMap<QString, QString> pressureInfo;
     if (d->m_weatherData[source].pressure == "N/A") {
         pressureInfo.insert("pressure", i18n("N/A"));
-        pressureInfo.insert("pressureUnit", QString::number(WeatherUtils::NoUnit));
+        pressureInfo.insert("pressureUnit", QString::number(KUnitConversion::NoUnit));
         pressureInfo.insert("pressureTendency", i18n("N/A"));
         return pressureInfo;
     }
 
     pressureInfo.insert("pressure", QString(d->m_weatherData[source].pressure));
-    pressureInfo.insert("pressureUnit", QString::number(WeatherUtils::Millibars));
+    pressureInfo.insert("pressureUnit", QString::number(KUnitConversion::Millibar));
 
     pressureInfo.insert("pressureTendency", i18nc("pressure tendency", d->m_weatherData[source].pressureTendency.toUtf8()));
     return pressureInfo;
