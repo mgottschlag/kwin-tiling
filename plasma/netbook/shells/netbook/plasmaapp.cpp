@@ -124,7 +124,7 @@ PlasmaApp::PlasmaApp()
     reserveStruts();
 
     //FIXME: monstrous hack: force it non fullscreen by making it a pixel too short
-    m_mainView->setFixedSize(width, height);
+    m_mainView->setFixedSize(width, height-1);
     m_mainView->move(0,0);
 
 
@@ -285,7 +285,7 @@ void PlasmaApp::adjustSize(Kephal::Screen *screen)
     int width = rect.width();
     int height = rect.height();
     //FIXME: ugly hack there too
-    m_mainView->setFixedSize(width, height);
+    m_mainView->setFixedSize(width, height-1);
     positionPanel();
     reserveStruts();
 }
@@ -524,7 +524,6 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
 
         m_widgetExplorerView = new Plasma::Dialog();
 
-      
         KWindowSystem::setOnDesktop(m_widgetExplorerView->winId(), KWindowSystem::currentDesktop());
         m_widgetExplorerView->show();
         KWindowSystem::activateWindow(m_widgetExplorerView->winId());
@@ -533,9 +532,32 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
         m_widgetExplorerView->setAttribute(Qt::WA_TranslucentBackground);
         m_widgetExplorerView->setAttribute(Qt::WA_DeleteOnClose);
         connect(m_widgetExplorerView, SIGNAL(destroyed()), this, SLOT(appletBrowserDestroyed()));
-        
-        m_widgetExplorerView->resize(m_mainView->size().width(), 100);
-        
+
+        if (m_controlBar) {
+            switch (m_controlBar->location()) {
+            case Plasma::TopEdge:
+                m_widgetExplorerView->resize(m_mainView->size().width(), KIconLoader::SizeHuge);
+                m_widgetExplorerView->move(m_controlBar->geometry().bottomLeft());
+                break;
+            case Plasma::LeftEdge:
+                m_widgetExplorerView->resize(KIconLoader::SizeHuge, m_mainView->size().height());
+                m_widgetExplorerView->move(m_controlBar->geometry().topRight());
+                break;
+            case Plasma::RightEdge:
+                m_widgetExplorerView->resize(KIconLoader::SizeHuge, m_mainView->size().height());
+                m_widgetExplorerView->move(m_controlBar->geometry().topLeft() - QPoint(m_widgetExplorerView->size().width(), 0));
+                break;
+            case Plasma::BottomEdge:
+            default:
+                m_widgetExplorerView->resize(m_mainView->size().width(), KIconLoader::SizeHuge);
+                m_widgetExplorerView->move(m_controlBar->geometry().topLeft() - QPoint(0, m_widgetExplorerView->size().height()));
+                break;
+            }
+        } else {
+            m_widgetExplorerView->resize(m_mainView->size().width(), KIconLoader::SizeHuge);
+            m_widgetExplorerView->move(0,0);
+        }
+
     }
 
     if (!m_widgetExplorer) {
