@@ -536,25 +536,25 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
         if (m_controlBar) {
             switch (m_controlBar->location()) {
             case Plasma::TopEdge:
-                m_widgetExplorerView->resize(m_mainView->size().width(), KIconLoader::SizeHuge);
+                m_widgetExplorerView->resize(m_mainView->size().width(), KIconLoader::SizeEnormous);
                 m_widgetExplorerView->move(m_controlBar->geometry().bottomLeft());
                 break;
             case Plasma::LeftEdge:
-                m_widgetExplorerView->resize(KIconLoader::SizeHuge, m_mainView->size().height());
+                m_widgetExplorerView->resize(KIconLoader::SizeEnormous, m_mainView->size().height());
                 m_widgetExplorerView->move(m_controlBar->geometry().topRight());
                 break;
             case Plasma::RightEdge:
-                m_widgetExplorerView->resize(KIconLoader::SizeHuge, m_mainView->size().height());
+                m_widgetExplorerView->resize(KIconLoader::SizeEnormous, m_mainView->size().height());
                 m_widgetExplorerView->move(m_controlBar->geometry().topLeft() - QPoint(m_widgetExplorerView->size().width(), 0));
                 break;
             case Plasma::BottomEdge:
             default:
-                m_widgetExplorerView->resize(m_mainView->size().width(), KIconLoader::SizeHuge);
+                m_widgetExplorerView->resize(m_mainView->size().width(), KIconLoader::SizeEnormous);
                 m_widgetExplorerView->move(m_controlBar->geometry().topLeft() - QPoint(0, m_widgetExplorerView->size().height()));
                 break;
             }
         } else {
-            m_widgetExplorerView->resize(m_mainView->size().width(), KIconLoader::SizeHuge);
+            m_widgetExplorerView->resize(m_mainView->size().width(), KIconLoader::SizeEnormous);
             m_widgetExplorerView->move(0,0);
         }
     }
