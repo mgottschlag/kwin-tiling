@@ -83,6 +83,7 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
             }
         }
     } else if (constraints & Plasma::SizeConstraint) {
+        checkGeometry();
         Detail detail;
         if (size().width() > 250 && size().height() / m_items.count() > 150) {
             detail = High;
@@ -181,7 +182,6 @@ void Applet::connectToEngine()
     if (m_titleSpacer) {
         mainLayout()->addStretch();
     }
-    checkGeometry();
     mainLayout()->activate();
     constraintsEvent(Plasma::SizeConstraint);
     setDetail(m_detail);
