@@ -124,7 +124,7 @@ PlasmaApp::PlasmaApp()
     reserveStruts();
 
     //FIXME: monstrous hack: force it non fullscreen by making it a pixel too short
-    m_mainView->setFixedSize(width, height-1);
+    m_mainView->setFixedSize(width, height);
     m_mainView->move(0,0);
 
 
@@ -285,7 +285,7 @@ void PlasmaApp::adjustSize(Kephal::Screen *screen)
     int width = rect.width();
     int height = rect.height();
     //FIXME: ugly hack there too
-    m_mainView->setFixedSize(width, height-1);
+    m_mainView->setFixedSize(width, height);
     positionPanel();
     reserveStruts();
 }
