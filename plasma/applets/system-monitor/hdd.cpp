@@ -122,7 +122,7 @@ QString Hdd::hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data)
     KConfigGroup cg = globalConfig();
     QString label = cg.readEntry(uuid, "");
 
-    if (label.isEmpty()) {
+    if (label.isEmpty() || label.startsWith("/dev/")) {
         label = data["Label"].toString();
         if (label.isEmpty()) {
             QString path = data["File Path"].toString();
