@@ -156,8 +156,10 @@ void CurrentAppControl::closeWindow()
     m_syncDelay = false;
 
     if (m_activeWindow) {
+#ifdef Q_WS_X11
         NETRootInfo ri( QX11Info::display(), NET::CloseWindow );
         ri.closeWindowRequest(m_activeWindow);
+#endif
     }
 
     syncActiveWindow();
