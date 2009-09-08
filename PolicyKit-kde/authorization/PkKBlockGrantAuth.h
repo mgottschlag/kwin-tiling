@@ -27,7 +27,7 @@
 #include <QStandardItemModel>
 
 #include <polkit-dbus/polkit-dbus.h>
-#include <Action>
+#include <polkit-qt/Action>
 
 #include "ui_PkKBlockGrantAuth.h"
 

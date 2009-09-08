@@ -31,7 +31,7 @@ Boston, MA 02110-1301, USA.
 
 #include <QDateTime>
 
-#include <Context>
+#include <polkit-qt/Context>
 
 using namespace PolkitQt;
 

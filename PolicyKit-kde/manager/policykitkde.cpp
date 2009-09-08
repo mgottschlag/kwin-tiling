@@ -37,7 +37,7 @@
 //policykit header
 #include <polkit-dbus/polkit-dbus.h>
 
-#include <Context>
+#include <polkit-qt/Context>
 
 #include "AuthDialog.h"
 #include "processwatcher.h"

@@ -25,7 +25,7 @@
 #include "pkitemdelegate.h"
 
 
-#include <Context>
+#include <polkit-qt/Context>
 
 #include <KMessageBox>
 #include <KDebug>

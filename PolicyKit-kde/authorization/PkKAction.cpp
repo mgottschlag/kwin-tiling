@@ -29,9 +29,9 @@
 #include "PkKStrings.h"
 #include "PkKBlockGrantAuth.h"
 
-#include <Context>
-#include <ActionButton>
-#include <Auth>
+#include <polkit-qt/Context>
+#include <polkit-qt/ActionButton>
+#include <polkit-qt/Auth>
 
 using namespace PolkitQt;
 

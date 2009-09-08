@@ -21,7 +21,7 @@
 #include "PkKBlockGrantAuth.h"
 #include "PkKCommon.h"
 
-#include <Context>
+#include <polkit-qt/Context>
 
 #include <unistd.h>
 #include <KIcon>
