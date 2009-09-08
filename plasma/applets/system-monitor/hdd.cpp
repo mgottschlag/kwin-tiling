@@ -68,7 +68,7 @@ void Hdd::createConfigurationInterface(KConfigDialog *parent)
         if (!isValidDevice(uuid, &data)) {
             continue;
         }
-        QStandardItem *item1 = new QStandardItem(data["File Path"].toString());
+        QStandardItem *item1 = new QStandardItem(filePath(data));
         item1->setEditable(false);
         item1->setCheckable(true);
         item1->setData(uuid);
@@ -139,6 +139,12 @@ QString Hdd::hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data)
             }
         }
     }
+    return label;
+}
+
+QString Hdd::filePath(const Plasma::DataEngine::Data &data)
+{
+    QString label = data["File Path"].toString();
     QVariant accessible = data["Accessible"];
     if (accessible.isValid()) {
         if (accessible.canConvert(QVariant::Bool)) {

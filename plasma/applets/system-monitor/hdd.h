@@ -56,6 +56,7 @@ class Hdd : public SM::Applet
         QHash<QString, QString> m_html;
 
         QString hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data);
+        QString filePath(const Plasma::DataEngine::Data &data);
         bool addMeter(const QString& source);
         void deleteMeters(QGraphicsLinearLayout* layout = 0);
         bool isValidDevice(const QString& uuid, Plasma::DataEngine::Data* data);
