@@ -21,6 +21,7 @@
 #include <Plasma/Containment>
 #include <Plasma/Frame>
 #include <Plasma/IconWidget>
+#include <Plasma/SignalPlotter>
 #include <KIcon>
 #include <KDebug>
 #include <QGraphicsLinearLayout>
@@ -84,6 +85,7 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
         }
     } else if (constraints & Plasma::SizeConstraint) {
         checkGeometry();
+        checkPlotters();
         Detail detail;
         if (size().width() > 250 && size().height() / m_items.count() > 150) {
             detail = High;
@@ -185,6 +187,22 @@ void Applet::connectToEngine()
     mainLayout()->activate();
     constraintsEvent(Plasma::SizeConstraint);
     setDetail(m_detail);
+}
+
+void Applet::checkPlotters()
+{
+    if (m_plotters.isEmpty()) {
+        return;
+    }
+    Plasma::SignalPlotter *plotter = m_plotters.values()[0];
+    QFontMetrics metrics(plotter->font());
+    bool showTopBar = (metrics.height() < plotter->size().height() / 3);
+    kDebug() << metrics.height() << plotter->size().height();
+    foreach (plotter, m_plotters) {
+        if (showTopBar != plotter->showTopBar()) {
+            plotter->setShowTopBar(showTopBar);
+        }
+    }
 }
 
 void Applet::checkGeometry()

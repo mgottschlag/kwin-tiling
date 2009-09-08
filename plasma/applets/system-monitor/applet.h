@@ -61,6 +61,7 @@ class SM_EXPORT Applet : public Plasma::Applet
         void connectSource(const QString& source);
         void disconnectSources();
         void checkGeometry();
+        void checkPlotters();
         QGraphicsLinearLayout* mainLayout();
         void setTitle(const QString& title, bool spacer = false);
         uint interval() { return m_interval; };
