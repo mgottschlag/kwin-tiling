@@ -26,6 +26,7 @@ target_link_libraries(polkitkdeprivate
 	${POLKITGRANT_LIBRARIES}
 	${POLKIT_LIBRARIES}
 	${POLKITQT_CORE_LIBRARY}
+        ${POLKITQT_GUI_LIBRARY}
 )
 
 set_target_properties(polkitkdeprivate PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
