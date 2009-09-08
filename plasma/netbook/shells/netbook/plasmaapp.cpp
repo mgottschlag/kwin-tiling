@@ -527,10 +527,10 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
         KWindowSystem::setOnDesktop(m_widgetExplorerView->winId(), KWindowSystem::currentDesktop());
         m_widgetExplorerView->show();
         KWindowSystem::activateWindow(m_widgetExplorerView->winId());
-        KWindowSystem::setState(m_widgetExplorerView->winId(), NET::StaysOnTop);
         m_widgetExplorerView->setWindowFlags(Qt::FramelessWindowHint);
         m_widgetExplorerView->setAttribute(Qt::WA_TranslucentBackground);
         m_widgetExplorerView->setAttribute(Qt::WA_DeleteOnClose);
+        KWindowSystem::setState(m_widgetExplorerView->winId(), NET::StaysOnTop|NET::KeepAbove);
         connect(m_widgetExplorerView, SIGNAL(destroyed()), this, SLOT(appletBrowserDestroyed()));
 
         if (m_controlBar) {
@@ -557,7 +557,6 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
             m_widgetExplorerView->resize(m_mainView->size().width(), KIconLoader::SizeHuge);
             m_widgetExplorerView->move(0,0);
         }
-
     }
 
     if (!m_widgetExplorer) {
