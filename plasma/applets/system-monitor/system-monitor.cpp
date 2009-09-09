@@ -23,6 +23,7 @@
 #include <KPushButton>
 #include <Plasma/Containment>
 #include <Plasma/Corona>
+#include <Plasma/ToolTipManager>
 
 SystemMonitor::SystemMonitor(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args), m_layout(0), m_buttons(0), m_widget(0)
@@ -75,6 +76,10 @@ void SystemMonitor::init()
     foreach (const KPluginInfo &pluginInfo, appletsFound) {
         MonitorButton *button = new MonitorButton(m_widget);
         button->setObjectName(pluginInfo.pluginName());
+        Plasma::ToolTipContent data;
+        data.setMainText(pluginInfo.name());
+        data.setImage(KIcon(pluginInfo.icon()).pixmap(IconSize(KIconLoader::Desktop)));
+        Plasma::ToolTipManager::self()->setContent(button, data);
         button->setCheckable(true);
         button->setImage(pluginInfo.icon());
         if (appletNames.contains(pluginInfo.pluginName())) {
