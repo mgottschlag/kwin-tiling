@@ -197,7 +197,6 @@ void Applet::checkPlotters()
     Plasma::SignalPlotter *plotter = m_plotters.values()[0];
     QFontMetrics metrics(plotter->font());
     bool showTopBar = (metrics.height() < plotter->size().height() / 3);
-    kDebug() << metrics.height() << plotter->size().height();
     foreach (plotter, m_plotters) {
         if (showTopBar != plotter->showTopBar()) {
             plotter->setShowTopBar(showTopBar);

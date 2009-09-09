@@ -24,9 +24,13 @@
 #include <Plasma/Theme>
 #include <Plasma/ToolTipManager>
 #include <KConfigDialog>
+#include <KUnitConversion/Converter>
+#include <KUnitConversion/Value>
 #include <QGraphicsLinearLayout>
 #include <QTimer>
 #include <cmath>
+
+using namespace KUnitConversion;
 
 Temperature::Temperature(QObject *parent, const QVariantList &args)
     : SM::Applet(parent, args), m_tempModel(0)
@@ -226,10 +230,10 @@ void Temperature::dataUpdated(const QString& source,
 
     if (data["units"].toString() == "F" &&
         KGlobal::locale()->measureSystem() == KLocale::Metric) {
-        value = (value - 32) * (5.0 / 9.0);
+        value = Value(value, Fahrenheit).convertTo(Celsius).number();
     } else if (data["units"].toString() == "C" &&
         KGlobal::locale()->measureSystem() != KLocale::Metric) {
-        value = (value * (5.0 / 9.0)) + 32;
+        value = Value(value, Celsius).convertTo(Fahrenheit).number();
     }
 
     value = int(value * 10) / 10.0;
