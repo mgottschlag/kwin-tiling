@@ -33,12 +33,16 @@
 using namespace KUnitConversion;
 
 Temperature::Temperature(QObject *parent, const QVariantList &args)
-    : SM::Applet(parent, args), m_tempModel(0)
+    : SM::Applet(parent, args)
+    , m_tempModel(0)
+    , m_rx(".*temp.*", Qt::CaseInsensitive)
 {
     setHasConfigurationInterface(true);
     resize(215 + 20 + 23, 109 + 20 + 25);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
+    m_sourceTimer.setSingleShot(true);
+    connect(&m_sourceTimer, SIGNAL(timeout()), this, SLOT(sourcesAdded()));
 }
 
 Temperature::~Temperature()
@@ -53,28 +57,29 @@ void Temperature::init()
     setInterval(cg.readEntry("interval", 2) * 1000);
     setTitle(i18n("Temperature"));
 
-    if (engine()->sources().count() == 0) {
-        connect(engine(), SIGNAL(sourceAdded(QString)), this, SLOT(initLater(const QString)));
-    } else {
-        parseSources();
+    /* At the time this method is running, not all source may be connected. */
+    connect(engine(), SIGNAL(sourceAdded(QString)), this, SLOT(sourceAdded(const QString)));
+    foreach (const QString& source, engine()->sources()) {
+        sourceAdded(source);
     }
 }
 
-void Temperature::parseSources()
+void Temperature::sourceAdded(const QString& name)
+{
+    if (m_rx.indexIn(name) != -1) {
+        //kDebug() << m_rx.cap(1);
+        m_sources << name;
+        if (!m_sourceTimer.isActive()) {
+            m_sourceTimer.start(0);
+        }
+    }
+}
+
+void Temperature::sourcesAdded()
 {
     KConfigGroup cg = config();
-    QStringList temperatures = engine()->sources()
-            .filter(QRegExp(".*temp.*", Qt::CaseInsensitive)).mid(0, 5);
-    setItems(cg.readEntry("temps", temperatures));
+    setItems(cg.readEntry("temps", m_sources.mid(0, 5)));
     connectToEngine();
-}
-
-void Temperature::initLater(const QString &name)
-{
-    // How we know all (cpu) sources are ready???
-    if (name == "system/uptime") {
-        QTimer::singleShot(0, this, SLOT(parseSources()));
-    }
 }
 
 void Temperature::createConfigurationInterface(KConfigDialog *parent)
@@ -84,11 +89,9 @@ void Temperature::createConfigurationInterface(KConfigDialog *parent)
     m_tempModel.clear();
     m_tempModel.setHorizontalHeaderLabels(QStringList() << i18n("Sensor")
                                                         << i18n("Name"));
-    Plasma::DataEngine *engine = dataEngine("systemmonitor");
-    QStringList temps = engine->sources().filter(QRegExp(".*temp.*", Qt::CaseInsensitive));
 
     QStandardItem *parentItem = m_tempModel.invisibleRootItem();
-    foreach (const QString& temp, temps) {
+    foreach (const QString& temp, m_sources) {
         QStandardItem *item1 = new QStandardItem(temp);
         item1->setEditable(false);
         item1->setCheckable(true);

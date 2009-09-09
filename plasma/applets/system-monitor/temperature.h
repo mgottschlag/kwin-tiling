@@ -23,6 +23,7 @@
 #include "ui_temperature-config.h"
 #include <Plasma/DataEngine>
 #include <QStandardItemModel>
+#include <QTimer>
 
 namespace Plasma {
     class Meter;
@@ -38,19 +39,22 @@ class Temperature : public SM::Applet
         virtual void init();
 
     public slots:
-        void initLater(const QString &name);
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
         void createConfigurationInterface(KConfigDialog *parent);
 
     private slots:
         void configAccepted();
-        void parseSources();
+        void sourceAdded(const QString& name);
+        void sourcesAdded();
         void themeChanged();
 
     private:
         Ui::config ui;
         QStandardItemModel m_tempModel;
         QHash<QString, QString> m_html;
+        QStringList m_sources;
+        QTimer m_sourceTimer;
+        QRegExp m_rx;
 
         QString temperatureTitle(const QString& source);
         bool addMeter(const QString& source);
