@@ -12,6 +12,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=computer-administration
 
 Name=Remote widgets policies
+Name[nb]=Praksis for nettverkselementer
 Name[nds]=Regeln för feern Lüttprogrammen
 Name[pt]=Políticas dos elementos remotos
 Name[pt_BR]=Políticas dos widgets remotos
@@ -22,6 +23,7 @@ Name[x-test]=xxRemote widgets policiesxx
 Name[zh_TW]=遠端元件政策
 
 Comment=Define policies for remote plasma widgets
+Comment[nb]=Definer praksis for plasma-elementer på nettverket
 Comment[nds]=Regeln för feern Plasma-Lüttprogrammen fastleggen
 Comment[pt]=Definir políticas para os elementos remotos do Plasma
 Comment[pt_BR]=Define políticas para os widgets remotos do Plasma

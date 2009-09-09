@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Newspaper activity
 Name[id]=Aktivitas koran
+Name[nb]=Avisaktivitet
 Name[nds]=Blattstriepen-Aktiviteet
 Name[pt]=Actividade de jornal
 Name[pt_BR]=Atividade de jornal
@@ -11,6 +12,7 @@ Name[zh_TW]=報紙活動
 
 Comment=An activity that puts widgets on two columns
 Comment[id]=Sebuah aktivitas yang membagi widget menjadi dua kolom
+Comment[nb]=En aktivitet som legger skjermelementer i to spalter
 Comment[nds]=En Aktiviteet, de Elementen op twee Striepen verdeelt
 Comment[pt]=Uma actividade que coloca os elementos em duas colunas
 Comment[pt_BR]=Uma atividade que coloca os widgets em duas colunas

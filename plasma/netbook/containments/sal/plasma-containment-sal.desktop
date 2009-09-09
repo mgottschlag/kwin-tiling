@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Search and Locate Containment
 Name[id]=Pembatasan Penelusuran dan Pencarian
+Name[nb]=Søk og finn-beholder
 Name[nds]=Söök- un Finngelaats
 Name[pt]=Contentor de Pesquisa e Localização
 Name[pt_BR]=Contentor de pesquisa e localização
@@ -10,6 +11,7 @@ Name[x-test]=xxSearch and Locate Containmentxx
 Name[zh_TW]=搜尋與定位容器
 Comment=Special Containment with Launcher
 Comment[id]=Pembatasan Khusus Dengan Peluncur
+Comment[nb]=Spesiell beholder med starter
 Comment[nds]=Besünner Gelaats mit Oproper
 Comment[pt]=Contentor Especial com Lançamento
 Comment[pt_BR]=Contentor especial com executor

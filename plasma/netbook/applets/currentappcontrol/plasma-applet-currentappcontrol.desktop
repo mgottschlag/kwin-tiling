@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Current Application Control
 Name[id]=Kontrol Aplikasi Saat Ini
+Name[nb]=Styring for gjeldende program
 Name[nds]=Programmstüern
 Name[pt]=Controlo da Aplicação Actual
 Name[pt_BR]=Controle do aplicativo atual
@@ -11,6 +12,7 @@ Name[x-test]=xxCurrent Application Controlxx
 Name[zh_TW]=目前應用程式控制
 Comment=Controls for the active window
 Comment[id]=Kontrol untuk jendela aktif
+Comment[nb]=Styring for det aktive vinduet
 Comment[nds]=Kuntrull för't aktive Finster
 Comment[pt]=Controlos para a janela activa
 Comment[pt_BR]=Controles para a janela ativa
