@@ -29,8 +29,6 @@
 #include "randrscreen.h"
 
 #include <kglobalsettings.h>
-#include <kmessagebox.h>
-#include <kprocess.h>
 
 RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	: QWidget(parent), Ui::RandRConfigBase()
@@ -39,6 +37,7 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	Q_ASSERT(m_display);
 	
 	m_changed = false;
+	m_firstLoad = true;
 
 	if (!m_display->isValid()) {
 		// FIXME: this needs much better handling of this error...
@@ -46,12 +45,11 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	}
 
 	setupUi(this);
+	layout()->setMargin(0);
 
 	connect( identifyOutputsButton, SIGNAL( clicked()), SLOT( identifyOutputs()));
 	connect( &identifyTimer, SIGNAL( timeout()), SLOT( clearIndicators()));
-	connect( &compressUpdateViewTimer, SIGNAL( timeout()), SLOT( slotDelayedUpdateView()));
 	identifyTimer.setSingleShot( true );
-	compressUpdateViewTimer.setSingleShot( true );
 
 	// create the container for the settings widget
 	QHBoxLayout *layout = new QHBoxLayout(outputList);
@@ -73,6 +71,7 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 RandRConfig::~RandRConfig()
 {
 	clearIndicators();
+	delete m_scene;
 }
 
 void RandRConfig::load(void)
@@ -81,23 +80,35 @@ void RandRConfig::load(void)
 		kDebug() << "Invalid display! Aborting config load.";
 		return;
 	}
-
-	m_scene->clear();
-	qDeleteAll(m_outputList);
-	m_outputList.clear();
-	m_configs.clear(); // objects deleted above
+	
+	if(!m_firstLoad) {
+		qDeleteAll(m_outputList);
+		m_outputList.clear();
+		
+		QList<QGraphicsItem*> items = m_scene->items();
+		foreach(QGraphicsItem *i, items) {
+			if(i->scene() == m_scene)
+				m_scene->removeItem(i);
+		}
+	}
+	
+	m_firstLoad = false;
 	
 	OutputMap outputs = m_display->currentScreen()->outputs();
 
 	// FIXME: adjust it to run on a multi screen system
 	CollapsibleWidget *w;
 	OutputGraphicsItem *o;
-	OutputConfigList preceding;
 	foreach(RandROutput *output, outputs)
 	{
-		OutputConfig *config = new OutputConfig(this, output, preceding);
-		m_configs.append( config );
-		preceding.append( config );
+		o = new OutputGraphicsItem(output);
+		o->setParent(m_scene);
+		m_scene->addItem(o);
+		
+		connect(o,    SIGNAL(itemChanged(OutputGraphicsItem*)), 
+		        this, SLOT(slotAdjustOutput(OutputGraphicsItem*)));
+
+		OutputConfig *config = new OutputConfig(0, output, o);
 		
 		QString description = output->isConnected()
 			? i18n("%1 (Connected)", output->name())
@@ -109,12 +120,6 @@ void RandRConfig::load(void)
 		}
 		m_outputList.append(w);
 		
-		o = new OutputGraphicsItem(config);
-		m_scene->addItem(o);
-		
-		connect(o,    SIGNAL(itemChanged(OutputGraphicsItem*)), 
-		        this, SLOT(slotAdjustOutput(OutputGraphicsItem*)));
-
 		connect(config, SIGNAL(updateView()), this, SLOT(slotUpdateView()));
 		connect(config, SIGNAL(optionChanged()), this, SLOT(slotChanged()));
 	}		    
@@ -137,28 +142,6 @@ void RandRConfig::defaults()
 void RandRConfig::apply()
 {
 	kDebug() << "Applying settings...";
-
-	// normalize positions so that the coordinate system starts at (0,0)
-	QPoint normalizePos;
-	bool first = true;
-	foreach(CollapsibleWidget *w, m_outputList) {
-		OutputConfig *config = static_cast<OutputConfig *>(w->innerWidget());
-		if( config->isActive()) {
-			QPoint pos = config->position();
-			if( first ) {
-				normalizePos = pos;
-				first = false;
-			} else {
-				if( pos.x() < normalizePos.x())
-					normalizePos.setX( pos.x());
-				if( pos.y() < normalizePos.y())
-					normalizePos.setY( pos.y());
-			}
-		}
-	}
-	normalizePos = -normalizePos;
-	kDebug() << "Normalizing positions by" << normalizePos;
-
 	foreach(CollapsibleWidget *w, m_outputList) {
 		OutputConfig *config = static_cast<OutputConfig *>(w->innerWidget());
 		RandROutput *output = config->output();
@@ -169,7 +152,7 @@ void RandRConfig::apply()
 		QSize res = config->resolution();
 		
 		if(!res.isNull()) {
-			if(!config->hasPendingChanges( normalizePos )) {
+			if(!config->hasPendingChanges()) {
 				kDebug() << "Ignoring identical config for" << output->name();
 				continue;
 			}
@@ -180,13 +163,7 @@ void RandRConfig::apply()
 			         << ", rot =" << config->rotation()
 			         << ", rate =" << config->refreshRate();
 			
-			// Break the connection with the previous CRTC for changed outputs, since
-			// otherwise the code could try to use the same CRTC for two different outputs.
-			// This is probably rather hackish and may not always work, but I don't see
-			// a better way with this codebase, definitely not with the time I have now.
-			output->disconnectFromCrtc();
-
-			output->proposeRect(configuredRect.translated( normalizePos ));
+			output->proposeRect(configuredRect);
 			output->proposeRotation(config->rotation());
 			output->proposeRefreshRate(config->refreshRate());
 		} else { // user wants to disable this output
@@ -232,26 +209,20 @@ void RandRConfig::slotAdjustOutput(OutputGraphicsItem *o)
 
 void RandRConfig::slotUpdateView()
 {
-	compressUpdateViewTimer.start( 0 );
-}
-
-#include <typeinfo>
-
-void RandRConfig::slotDelayedUpdateView()
-{
 	QRect r;
 	bool first = true;
 
 	// updates the graphics view so that all outputs fit inside of it
-	foreach(OutputConfig *config, m_configs)
+	OutputMap outputs = m_display->currentScreen()->outputs();
+	foreach(RandROutput *output, outputs)
 	{		
 		if (first)
 		{
 			first = false;
-			r = config->rect();
+			r = output->rect();
 		}
 		else
-			r = r.united(config->rect());
+			r = r.united(output->rect());
 	}
 	// scale the total bounding rectangle for all outputs to fit
 	// 80% of the containing QGraphicsView
@@ -264,12 +235,6 @@ void RandRConfig::slotDelayedUpdateView()
 	screenView->scale(scale,scale);
 	screenView->ensureVisible(r);
 	screenView->setSceneRect(r);
-
-	foreach( QGraphicsItem* item, m_scene->items()) {
-		if( OutputGraphicsItem* itemo = dynamic_cast< OutputGraphicsItem* >( item ))
-			itemo->configUpdated();
-	}
-	screenView->update();
 }
 
 uint qHash( const QPoint& p )
@@ -285,7 +250,7 @@ void RandRConfig::identifyOutputs()
 	OutputMap outputs = m_display->currentScreen()->outputs();
 	foreach(RandROutput *output, outputs)
 	{
-		if( !output->isConnected() || output->rect().isEmpty())
+		if( !output->isConnected())
 			continue;
 		ids[ output->rect().center() ].append( output->name());
 	}
@@ -313,24 +278,6 @@ void RandRConfig::clearIndicators()
 {
 	qDeleteAll( m_indicators );
 	m_indicators.clear();
-}
-
-void RandRConfig::insufficientVirtualSize()
-{
-    if( KMessageBox::questionYesNo( this,
-        i18n( "Insufficient virtual size for the total screen size.\n"
-              "The configured virtual size of your X server is insufficient for this setup. "
-              "This configuration needs to be adjusted.\n"
-              "Do you wish to run a tool to adjust the configuration?" )) == KMessageBox::Yes )
-        {
-        KProcess proc;
-        // TODO
-        if( proc.execute() == 0 )
-            KMessageBox::information( this, i18n( "Configuration has been adjusted. Please restart "
-                "your session for this change to take effect." ));
-        else
-            KMessageBox::sorry( this, i18n( "Changing configuration failed. Please adjust your xorg.conf manually." ));
-        }
 }
 
 #include "randrconfig.moc"
