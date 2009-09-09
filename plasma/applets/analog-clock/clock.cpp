@@ -118,6 +118,8 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::SizeConstraint) {
+        m_repaintCache = RepaintAll;
+
         QSize pixmapSize = size().toSize();
 
         if (m_showingTimezone) {
@@ -133,8 +135,6 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
 
         m_theme->resize(pixmapSize);
     }
-
-    m_repaintCache = RepaintAll;
 }
 
 QPainterPath Clock::shape() const
