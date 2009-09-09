@@ -144,7 +144,7 @@ void Temperature::configAccepted()
 QString Temperature::temperatureTitle(const QString& source)
 {
     KConfigGroup cg = globalConfig();
-    return cg.readEntry(source, source.mid(source.lastIndexOf('/') + 1));
+    return cg.readEntry(source, source.mid(source.lastIndexOf('/') + 1).replace('_',' '));
 }
 
 bool Temperature::addMeter(const QString& source)
@@ -229,13 +229,16 @@ void Temperature::dataUpdated(const QString& source,
     Plasma::Meter *w = meters().value(source);
     Plasma::SignalPlotter *plotter = plotters().value(source);
     QString temp;
-    qreal value = (qreal)data["value"].toDouble();
+    double value = data["value"].toDouble();
+    QString unit = data["units"].toString();
 
-    if (data["units"].toString() == "F" &&
-        KGlobal::locale()->measureSystem() == KLocale::Metric) {
+    if (unit.startsWith(i18n("\u00b0"))) { // remove degrees symbol
+        unit = unit.mid(1);
+    }
+
+    if (unit == "F" && KGlobal::locale()->measureSystem() == KLocale::Metric) {
         value = Value(value, Fahrenheit).convertTo(Celsius).number();
-    } else if (data["units"].toString() == "C" &&
-        KGlobal::locale()->measureSystem() != KLocale::Metric) {
+    } else if (unit == "C" && KGlobal::locale()->measureSystem() != KLocale::Metric) {
         value = Value(value, Celsius).convertTo(Fahrenheit).number();
     }
 
@@ -248,13 +251,13 @@ void Temperature::dataUpdated(const QString& source,
     }
 
     if (w) {
-        w->setValue(data["value"].toDouble());
+        w->setValue(value);
         if (mode() != SM::Applet::Panel) {
             w->setLabel(1, temp);
         }
     }
     if (plotter) {
-        plotter->addSample(QList<double>() << data["value"].toDouble());
+        plotter->addSample(QList<double>() << value);
     }
 
     if (mode() == SM::Applet::Panel) {
