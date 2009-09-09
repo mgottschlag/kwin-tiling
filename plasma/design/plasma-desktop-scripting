@@ -91,8 +91,9 @@ and the following methods:
 
 * remove(): deletes this activity and all widgets inside of it
 * widgetById(id): returns an object representing the widget with the given id
-* addWidget(string name): adds a widget to the activity; the name maps to the X-KDE-PluginInfo-Name= entry
+* addWidget(string name): adds a new widget to the activity; the name maps to the X-KDE-PluginInfo-Name= entry
   in the widget's .desktop file
+* addWidget(Object widget): adds an existing widget to this activity; useful for moving widgets between Activities and Panels
 
 In addition, Panel objects provide the folowing properties, all of which are settable:
 * length: the number of pixels along the screen edge used
