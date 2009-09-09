@@ -80,6 +80,7 @@ Q_SIGNALS:
 private Q_SLOTS:
     void themeChanged();
     void showWidgetsExplorer();
+    void onActiveWindowChanged(WId id);
 
 private:
     void mouseMoveFilter(QMouseEvent *event);

@@ -29,11 +29,13 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QToolButton>
+#include <QX11Info>
 
 #include <KColorUtils>
 #include <KIconLoader>
 #include <KIcon>
-#include <KWindowSystem>
+#include <kwindowsystem.h>
+#include <netwm.h>
 
 #include <Plasma/Containment>
 #include <Plasma/Corona>
@@ -412,6 +414,8 @@ PanelController::PanelController(QWidget* parent)
     KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky);
     setAttribute(Qt::WA_DeleteOnClose);
     setFocus(Qt::ActiveWindowFocusReason);
+
+    connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(onActiveWindowChanged(WId)));
 
     //layout setup
     m_mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
@@ -871,6 +875,7 @@ void PanelController::showWidgetsExplorer()
         m_widgetExplorerView->setScene(d->containment->corona());
         m_widgetExplorerView->installEventFilter(this);
         m_mainLayout->addWidget(m_widgetExplorerView);
+
     }
 
     if (!m_widgetExplorer) {
@@ -892,6 +897,23 @@ void PanelController::showWidgetsExplorer()
 
     m_widgetExplorer->show();
     // connect signals
+}
+
+void PanelController::onActiveWindowChanged(WId id)
+{
+    //if the active window isn't the plasma desktop and the widgets explorer is visible,
+    //then close the panel controller
+    if (QApplication::activeWindow() == 0 ||
+       (QApplication::activeWindow()->winId() != KWindowSystem::activeWindow())) {
+        if (m_widgetExplorerView != 0 && m_widgetExplorerView->isVisible()) {
+            if (!d->settingsTool->underMouse()) {
+                d->optionsDialog->hide();
+            }
+            if (!isActiveWindow()) {
+                close();
+            }
+        }
+    }
 }
 
 void PanelController::paintEvent(QPaintEvent *event)
@@ -923,16 +945,6 @@ bool PanelController::eventFilter(QObject *watched, QEvent *event)
             close();
         }
         return true;
-    } else if (watched == m_widgetExplorerView && event->type() == QEvent::WindowDeactivate
-               && (!m_configWidget|| !m_configWidget->isVisible())) {
-        if (!d->settingsTool->underMouse()) {
-            d->optionsDialog->hide();
-        }
-        if (!isActiveWindow()) {
-            close();
-        }
-        return true;
-
     } else if (watched == d->moveTool) {
         if (event->type() == QEvent::MouseButtonPress) {
             d->dragging = Private::MoveButtonElement;
@@ -964,8 +976,9 @@ bool PanelController::eventFilter(QObject *watched, QEvent *event)
     } 
      
     //if the view resizes, then the widgetexplorer has to be resized
-    if (watched == m_widgetExplorerView && event->type() == QEvent::Resize) { 
-          m_widgetExplorer->resize(m_widgetExplorerView->geometry().size());
+    if (watched == m_widgetExplorerView && event->type() == QEvent::Resize) {
+        QResizeEvent *resizeEvent = static_cast<QResizeEvent *>(event);
+        m_widgetExplorer->resize(resizeEvent->size());
     }
 
     return false;
@@ -1091,7 +1104,6 @@ void PanelController::focusOutEvent(QFocusEvent * event)
 {
     Q_UNUSED(event)
     if (!d->optionsDialog->isActiveWindow()) {
-        //qDebug() << "m_widgetExplorerView" << (void*) m_widgetExplorerView;
         if(m_widgetExplorerView) {
             if(!m_widgetExplorerView->isVisible()) {
                 d->optionsDialog->hide();
