@@ -37,6 +37,8 @@ class Widget : public QObject
     Q_PROPERTY(int id READ id)
     Q_PROPERTY(QStringList configKeys READ configKeys)
     Q_PROPERTY(QStringList configGroups READ configGroups)
+    Q_PROPERTY(int index WRITE setIndex READ index)
+    Q_PROPERTY(QRectF geometry WRITE setGeometry READ geometry)
 
 
 public:
@@ -51,11 +53,18 @@ public:
 
     Plasma::Applet *applet() const;
 
+    int index() const;
+    void setIndex(int index);
+
+    QRectF geometry() const;
+    void setGeometry(const QRectF &geometry);
+
 public Q_SLOTS:
     void remove();
     void setConfigGroup(const QString &config);
     QVariant readConfig(const QString &key, const QVariant &def = QString()) const;
     void writeConfig(const QString &key, const QVariant &value);
+    void showConfigurationInterface();
 
 private:
     QPointer<Plasma::Applet> m_applet;

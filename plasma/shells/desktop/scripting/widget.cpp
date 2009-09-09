@@ -19,6 +19,8 @@
 
 #include "widget.h"
 
+#include <QAction>
+
 #include <Plasma/Applet>
 
 Widget::Widget(Plasma::Applet *applet, QObject *parent)
@@ -101,6 +103,47 @@ Plasma::Applet *Widget::applet() const
 {
     return m_applet;
 }
+
+int Widget::index() const
+{
+    if (m_applet) {
+        return 1;
+    }
+
+    return 0;
+}
+
+void Widget::setIndex(int index)
+{
+
+}
+
+QRectF Widget::geometry() const
+{
+    if (m_applet) {
+        return m_applet->geometry();
+    }
+
+    return QRectF();
+}
+
+void Widget::setGeometry(const QRectF &geometry)
+{
+    if (m_applet) {
+        QAction *configAction = m_applet->action("configure");
+        if (configAction && configAction->isEnabled()) {
+            configAction->trigger();
+        }
+    }
+}
+
+void Widget::showConfigurationInterface()
+{
+    if (m_applet) {
+        m_applet->showConfigurationInterface();
+    }
+}
+
 
 #include "widget.moc"
 
