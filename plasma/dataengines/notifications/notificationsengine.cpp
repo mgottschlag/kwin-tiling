@@ -114,7 +114,7 @@ static QImage decodeNotificationSpecImageHint(const QDBusArgument& arg)
     ptr = pixels.data();
     end = ptr + pixels.length();
     for (int y=0; y<height; ++y, ptr += rowStride) {
-        if (ptr + channels * width >= end) {
+        if (ptr + channels * width > end) {
             kWarning() << "Image data is incomplete. y:" << y << "height:" << height;
             break;
         }
