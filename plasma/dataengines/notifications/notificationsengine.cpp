@@ -248,7 +248,7 @@ QString NotificationsEngine::GetServerInformation(QString& vendor, QString& vers
 {
     vendor = "KDE";
     version = "1.0"; // FIXME
-    specVersion = "0.10";
+    specVersion = "1.1";
     return "Plasma";
 }
 
