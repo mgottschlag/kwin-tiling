@@ -76,6 +76,7 @@ void Hdd::createConfigurationInterface(KConfigDialog *parent)
             item1->setCheckState(Qt::Checked);
         }
         QStandardItem *item2 = new QStandardItem(hddTitle(uuid, data));
+        item2->setData(guessHddTitle(data));
         item2->setEditable(true);
         parentItem->appendRow(QList<QStandardItem *>() << item1 << item2);
     }
@@ -99,8 +100,10 @@ void Hdd::configAccepted()
     for (int i = 0; i < parentItem->rowCount(); ++i) {
         QStandardItem *item = parentItem->child(i, 0);
         if (item) {
-            cgGlobal.writeEntry(item->data().toString(),
-                                parentItem->child(i, 1)->text());
+            QStandardItem *child = parentItem->child(i, 1);
+            if (child->text() != child->data().toString()) {
+                cgGlobal.writeEntry(item->data().toString(), child->text());
+            }
             if (item->checkState() == Qt::Checked) {
                 appendItem(item->data().toString());
             }
@@ -122,20 +125,25 @@ QString Hdd::hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data)
     KConfigGroup cg = globalConfig();
     QString label = cg.readEntry(uuid, "");
 
-    if (label.isEmpty() || label.startsWith("/dev/")) {
-        label = data["Label"].toString();
+    if (label.isEmpty()) {
+        label = guessHddTitle(data);
+    }
+    return label;
+}
+
+QString Hdd::guessHddTitle(const Plasma::DataEngine::Data &data)
+{
+    QString label = data["Label"].toString();
+    if (label.isEmpty()) {
+        QString path = data["File Path"].toString();
+        if (path == "/")
+            return i18nc("the root filesystem", "root");
+        QFileInfo fi(path);
+        label = fi.fileName();
         if (label.isEmpty()) {
-            QString path = data["File Path"].toString();
-            if (path == "/")
-                return i18nc("the root filesystem", "root");
-            QFileInfo fi(path);
-            label = fi.fileName();
+            label = data["Device"].toString();
             if (label.isEmpty()) {
-                label = data["Device"].toString();
-                if (label.isEmpty()) {
-                    kDebug() << "Disk: " << uuid << " has empty label";
-                    label = i18n("Unknown filesystem");
-                }
+                label = i18n("Unknown filesystem");
             }
         }
     }
