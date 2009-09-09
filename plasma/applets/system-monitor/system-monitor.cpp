@@ -27,8 +27,6 @@
 SystemMonitor::SystemMonitor(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args), m_layout(0), m_buttons(0), m_widget(0)
 {
-    resize(234 + 20 + 23, 80 + 20 + 25);
-    setMinimumSize(QSize(234 + 20 + 23, 32 + 20 + 25));
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
 }
 
@@ -216,8 +214,8 @@ void SystemMonitor::checkGeometry()
 
     if (formFactor() != Plasma::Horizontal && formFactor() != Plasma::Vertical) {
         setMinimumSize(m_widget->minimumSize() + margins);
+        resize(s + margins);
     }
-    resize(s + margins);
     m_widget->resize(s);
     update();
     /*
