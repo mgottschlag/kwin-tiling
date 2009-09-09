@@ -93,6 +93,7 @@ public:
 
 public Q_SLOTS:
     void remove();
+    void showConfigurationInterface();
 
 private:
     PanelView *panel() const;

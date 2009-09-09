@@ -258,6 +258,16 @@ void Containment::remove()
     m_containment->destroy(false);
 }
 
+void Containment::showConfigurationInterface()
+{
+    if (m_containment) {
+        QAction *configAction = m_containment->action("configure");
+        if (configAction) {
+            configAction->trigger();
+        }
+    }
+}
+
 PanelView *Containment::panel() const
 {
     if (!m_isPanel || !m_containment) {
