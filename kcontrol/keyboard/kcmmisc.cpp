@@ -45,7 +45,6 @@
 #include <KPluginLoader>
 
 #include "kcmmisc.h"
-#include "ui_kcmmiscwidget.h"
 #include <X11/Xlib.h>
 
 K_PLUGIN_FACTORY(KeyboardConfigFactory,
@@ -57,39 +56,35 @@ KeyboardConfig::KeyboardConfig(QWidget *parent, const QVariantList &)
 	: KCModule(KeyboardConfigFactory::componentData(), parent)
 {
   QString wtstr;
-//   QBoxLayout* lay = new QVBoxLayout(this, 0, KDialog::spacingHint());
-  ui = new Ui_KeyboardConfigWidget();
-  ui->setupUi(this);
-//   lay->addWidget(ui);
-//   lay->addStretch();
+  ui.setupUi(this);
 
-  ui->click->setRange(0, 100, 10);
-  ui->delay->setRange(100, 5000, 50);
-  ui->delay->setSliderEnabled(false);
-  ui->rate->setRange(0.2, 50, 5, false);
+  ui.click->setRange(0, 100, 10);
+  ui.delay->setRange(100, 5000, 50);
+  ui.delay->setSliderEnabled(false);
+  ui.rate->setRange(0.2, 50, 5, false);
 
   sliderMax = (int)floor (0.5 + 2*(log(5000.0L)-log(100.0L)) / (log(5000.0L)-log(4999.0L)));
-  ui->delaySlider->setRange(0, sliderMax);
-  ui->delaySlider->setSingleStep(sliderMax/100);
-  ui->delaySlider->setPageStep(sliderMax/10);
-  ui->delaySlider->setTickInterval(sliderMax/10);
+  ui.delaySlider->setRange(0, sliderMax);
+  ui.delaySlider->setSingleStep(sliderMax/100);
+  ui.delaySlider->setPageStep(sliderMax/10);
+  ui.delaySlider->setTickInterval(sliderMax/10);
 
-  ui->rateSlider->setRange(20, 5000);
-  ui->rateSlider->setSingleStep(30);
-  ui->rateSlider->setPageStep(500);
-  ui->rateSlider->setTickInterval(498);
+  ui.rateSlider->setRange(20, 5000);
+  ui.rateSlider->setSingleStep(30);
+  ui.rateSlider->setPageStep(500);
+  ui.rateSlider->setTickInterval(498);
 
-  connect(ui->repeatBox, SIGNAL(clicked()), this, SLOT(changed()));
-  connect(ui->delay, SIGNAL(valueChanged(int)), this, SLOT(delaySpinboxChanged(int)));
-  connect(ui->delaySlider, SIGNAL(valueChanged(int)), this, SLOT(delaySliderChanged(int)));
-  connect(ui->rate, SIGNAL(valueChanged(double)), this, SLOT(rateSpinboxChanged(double)));
-  connect(ui->rateSlider, SIGNAL(valueChanged(int)), this, SLOT(rateSliderChanged(int)));
+  connect(ui.repeatBox, SIGNAL(clicked()), this, SLOT(changed()));
+  connect(ui.delay, SIGNAL(valueChanged(int)), this, SLOT(delaySpinboxChanged(int)));
+  connect(ui.delaySlider, SIGNAL(valueChanged(int)), this, SLOT(delaySliderChanged(int)));
+  connect(ui.rate, SIGNAL(valueChanged(double)), this, SLOT(rateSpinboxChanged(double)));
+  connect(ui.rateSlider, SIGNAL(valueChanged(int)), this, SLOT(rateSliderChanged(int)));
 
-  connect(ui->click, SIGNAL(valueChanged(int)), this, SLOT(changed()));
-  connect(ui->numlockGroup, SIGNAL(released(int)), this, SLOT(changed()));
+  connect(ui.click, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+  connect(ui.numlockGroup, SIGNAL(released(int)), this, SLOT(changed()));
 
 #if !defined(HAVE_XTEST) && !defined(HAVE_XKB)
-  ui->numlockGroup->setDisabled( true );
+  ui.numlockGroup->setDisabled( true );
 #endif
 #if !defined(HAVE_XKB) && !defined(HAVE_XF86MISC)
 //  delay->setDisabled( true );
@@ -100,25 +95,25 @@ KeyboardConfig::KeyboardConfig(QWidget *parent, const QVariantList &)
 
 int  KeyboardConfig::getClick()
 {
-    return ui->click->value();
+    return ui.click->value();
 }
 
 // set the slider and LCD values
 void KeyboardConfig::setRepeat(int r, int delay_, double rate_)
 {
-    ui->repeatBox->setChecked(r == AutoRepeatModeOn);
-    ui->delay->setValue(delay_);
-    ui->rate->setValue(rate_);
+    ui.repeatBox->setChecked(r == AutoRepeatModeOn);
+    ui.delay->setValue(delay_);
+    ui.rate->setValue(rate_);
 }
 
 void KeyboardConfig::setClick(int v)
 {
-    ui->click->setValue(v);
+    ui.click->setValue(v);
 }
 
 int KeyboardConfig::getNumLockState()
 {
-    int selected = ui->numlockGroup->selected();
+    int selected = ui.numlockGroup->selected();
     if( selected < 0 )
         return 2;
     return selected;
@@ -126,7 +121,7 @@ int KeyboardConfig::getNumLockState()
 
 void KeyboardConfig::setNumLockState( int s )
 {
-    ui->numlockGroup->setSelected( s );
+    ui.numlockGroup->setSelected( s );
 }
 
 void KeyboardConfig::load()
@@ -137,24 +132,24 @@ void KeyboardConfig::load()
 
   XGetKeyboardControl(QX11Info::display(), &kbd);
 
-  ui->delay->blockSignals(true);
-  ui->rate->blockSignals(true);
-  ui->click->blockSignals(true);
+  ui.delay->blockSignals(true);
+  ui.rate->blockSignals(true);
+  ui.click->blockSignals(true);
 
   bool key = config.readEntry("KeyboardRepeating", true);
   keyboardRepeat = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
-  ui->delay->setValue(config.readEntry( "RepeatDelay", 660 ));
-  ui->rate->setValue(config.readEntry( "RepeatRate", 25. ));
+  ui.delay->setValue(config.readEntry( "RepeatDelay", 660 ));
+  ui.rate->setValue(config.readEntry( "RepeatRate", 25. ));
   clickVolume = config.readEntry("ClickVolume", kbd.key_click_percent);
   numlockState = config.readEntry( "NumLock", 2 );
 
   setClick(kbd.key_click_percent);
-  setRepeat(kbd.global_auto_repeat, ui->delay->value(), ui->rate->value());
+  setRepeat(kbd.global_auto_repeat, ui.delay->value(), ui.rate->value());
   setNumLockState( numlockState );
 
-  ui->delay->blockSignals(false);
-  ui->rate->blockSignals(false);
-  ui->click->blockSignals(false);
+  ui.delay->blockSignals(false);
+  ui.rate->blockSignals(false);
+  ui.click->blockSignals(false);
 }
 
 void KeyboardConfig::save()
@@ -164,7 +159,7 @@ void KeyboardConfig::save()
   XKeyboardControl kbd;
 
   clickVolume = getClick();
-  keyboardRepeat = ui->repeatBox->isChecked() ? AutoRepeatModeOn : AutoRepeatModeOff;
+  keyboardRepeat = ui.repeatBox->isChecked() ? AutoRepeatModeOn : AutoRepeatModeOff;
   numlockState = getNumLockState();
 
   kbd.key_click_percent = clickVolume;
@@ -173,13 +168,13 @@ void KeyboardConfig::save()
                            KBKeyClickPercent | KBAutoRepeatMode,
                            &kbd);
   if( keyboardRepeat ) {
-    set_repeatrate(ui->delay->value(), ui->rate->value());
+    set_repeatrate(ui.delay->value(), ui.rate->value());
   }
 
   config.writeEntry("ClickVolume",clickVolume);
   config.writeEntry("KeyboardRepeating", (keyboardRepeat == AutoRepeatModeOn));
-  config.writeEntry("RepeatRate", ui->rate->value() );
-  config.writeEntry("RepeatDelay", ui->delay->value() );
+  config.writeEntry("RepeatRate", ui.rate->value() );
+  config.writeEntry("RepeatDelay", ui.delay->value() );
   config.writeEntry("NumLock", numlockState );
   config.sync();
 }
@@ -208,7 +203,7 @@ void KeyboardConfig::delaySliderChanged (int value) {
 	double alpha  = sliderMax / (log(5000.0L) - log(100.0L));
 	double linearValue = exp (value/alpha + log(100.0L));
 
-	ui->delay->setValue((int)floor(0.5 + linearValue));
+	ui.delay->setValue((int)floor(0.5 + linearValue));
 
 	emit KCModule::changed(true);
 }
@@ -217,19 +212,19 @@ void KeyboardConfig::delaySpinboxChanged (int value) {
 	double alpha  = sliderMax / (log(5000.0L) - log(100.0L));
 	double logVal = alpha * (log((double)value)-log(100.0L));
 
-	ui->delaySlider->setValue ((int)floor (0.5 + logVal));
+	ui.delaySlider->setValue ((int)floor (0.5 + logVal));
 
 	emit KCModule::changed(true);
 }
 
 void KeyboardConfig::rateSliderChanged (int value) {
-	ui->rate->setValue(value/100.0);
+	ui.rate->setValue(value/100.0);
 
 	emit KCModule::changed(true);
 }
 
 void KeyboardConfig::rateSpinboxChanged (double value) {
-	ui->rateSlider->setValue ((int)(value*100));
+	ui.rateSlider->setValue ((int)(value*100));
 
 	emit KCModule::changed(true);
 }

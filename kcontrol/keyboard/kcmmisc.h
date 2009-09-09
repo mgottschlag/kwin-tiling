@@ -28,7 +28,7 @@
 #include <kapplication.h>
 #include <kcmodule.h>
 
-class Ui_KeyboardConfigWidget;
+#include "ui_kcmmiscwidget.h"
 
 class KeyboardConfig : public KCModule
 {
@@ -66,7 +66,7 @@ private:
   int sliderMax;
   int clickVolume, keyboardRepeat;
   int numlockState; // 0 = on, 1 = off, 2 = don't change
-  Ui_KeyboardConfigWidget* ui;
+  Ui_KeyboardConfigWidget ui;
 };
 
 void numlockx_change_numlock_state( bool set_P );
