@@ -29,7 +29,9 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QToolButton>
+#ifdef Q_WS_X11
 #include <QX11Info>
+#endif
 
 #include <KColorUtils>
 #include <KIconLoader>
