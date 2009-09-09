@@ -45,12 +45,32 @@ void Hdd::init()
     KConfigGroup cg = config();
     QString predicateString("IS StorageVolume");
     setEngine(dataEngine("soliddevice"));
-    setItems(cg.readEntry("uuids",
-             engine()->query(predicateString)[predicateString].toStringList()));
+    QStringList items = cg.readEntry("uuids", QStringList());
+    if (items.isEmpty()) {
+        items = mounted();
+    }
+    setItems(items);
     setInterval(cg.readEntry("interval", 2) * 60 * 1000);
 
     setTitle(i18n("Disk Space"), true);
     connectToEngine();
+}
+
+QStringList Hdd::mounted()
+{
+    Plasma::DataEngine::Data data;
+    QString predicate("IS StorageVolume");
+    QStringList result;
+
+    foreach (const QString& uuid, engine()->query(predicate)[predicate].toStringList()) {
+        if (!isValidDevice(uuid, &data)) {
+            continue;
+        }
+        if (data["Accessible"].toBool()) {
+            result << uuid;
+        }
+    }
+    return result;
 }
 
 void Hdd::createConfigurationInterface(KConfigDialog *parent)
