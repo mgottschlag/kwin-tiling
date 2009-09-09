@@ -189,9 +189,9 @@ uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id,
             image.load(path);
         }
     } else if (hints.contains("icon_data")) {
-        // This hint was in use in version 0.9 of the spec but has been
-        // replaced by "image_data" in version 0.10. We need to support it for
-        // users of the 0.9 version of the spec.
+        // This hint was in use in version 1.0 of the spec but has been
+        // replaced by "image_data" in version 1.1. We need to support it for
+        // users of the 1.0 version of the spec.
         QDBusArgument arg = hints["icon_data"].value<QDBusArgument>();
         image = decodeNotificationSpecImageHint(arg);
     }
