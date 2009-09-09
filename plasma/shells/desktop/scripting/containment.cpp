@@ -262,7 +262,7 @@ void Containment::showConfigurationInterface()
 {
     if (m_containment) {
         QAction *configAction = m_containment->action("configure");
-        if (configAction) {
+        if (configAction && configAction->isEnabled()) {
             configAction->trigger();
         }
     }
