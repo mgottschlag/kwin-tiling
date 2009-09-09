@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SolidActionsConfig</class>
- <widget class="QWidget" name="SolidActionsConfig">
+ <class>SolidActions</class>
+ <widget class="QWidget" name="SolidActions">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,12 +10,12 @@
     <height>384</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="KListWidget" name="LwActions"/>
+    <widget class="QTreeView" name="TvActions"/>
    </item>
    <item row="1" column="0">
-    <layout class="QGridLayout" name="gridLayout">
+    <layout class="QGridLayout" name="GlActions">
      <item row="0" column="0">
       <widget class="KPushButton" name="PbAddAction">
        <property name="text">
@@ -42,11 +42,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>KListWidget</class>
-   <extends>QListWidget</extends>
-   <header>klistwidget.h</header>
-  </customwidget>
   <customwidget>
    <class>KPushButton</class>
    <extends>QPushButton</extends>

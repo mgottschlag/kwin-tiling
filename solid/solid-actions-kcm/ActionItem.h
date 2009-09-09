@@ -17,34 +17,60 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
-#ifndef SOLID_ACTION_EDIT_PREDICATE_H
-#define SOLID_ACTION_EDIT_PREDICATE_H
+#ifndef ACTION_ITEM_H
+#define ACTION_ITEM_H
 
+#include <QObject>
+#include <QMap>
 
-#include <KDialog>
+#include <Solid/Predicate>
 
-#include "solid-action-data.h"
-#include "ui_solid-action-edit-predicate.h"
+class QString;
 
-class QTreeWidgetItem;
+class KDesktopFile;
+class KConfigGroup;
 
-class SolidActionEditPredicate : public KDialog
+class ActionItem: public QObject
 {
     Q_OBJECT
-public:
-    SolidActionEditPredicate(QWidget *parent = 0);
-    ~SolidActionEditPredicate();
-    void prepareShow(QTreeWidgetItem *editItem);
-    void finishShow(QTreeWidgetItem * updating);
 
-public slots:
-    void updateInterface();
-    void updateValuesList();
+public:
+    ActionItem(QString pathToDesktop, QString action, QObject *parent = 0);
+    ~ActionItem();
+
+    bool isUserSupplied();
+
+    QString icon();
+    QString exec();
+    QString name();
+    Solid::Predicate predicate();
+    QString involvedTypes();
+    void setIcon( QString nameOfIcon );
+    void setName( QString nameOfAction );
+    void setExec( QString execUrl );
+    void setPredicate( QString newPredicate );
+
+    QString desktopMasterPath;
+    QString desktopWritePath;
+    QString actionName;
 
 private:
-    SolidActionData * deviceData;
-    Ui::SolidActionEditPredicate ui;
+    enum DesktopAction { DesktopRead = 0, DesktopWrite = 1 };
+    enum GroupType { GroupDesktop = 0, GroupAction = 1 };
+
+    QString readKey(GroupType keyGroup, QString keyName, QString defaultValue);
+    void setKey(GroupType keyGroup, QString keyName, QString keyContents);
+    bool hasKey(GroupType keyGroup, QString keyName);
+    KConfigGroup * configItem(DesktopAction actionType, GroupType keyGroup, QString keyName = QString());
+
+    KDesktopFile * desktopFileMaster;
+    KDesktopFile * desktopFileWrite;
+    QMultiMap<GroupType, KConfigGroup*> actionGroups;
+    QList<KConfigGroup> configGroups;
+    Solid::Predicate predicateItem;
 
 };
+
+Q_DECLARE_METATYPE( ActionItem * )
 
 #endif

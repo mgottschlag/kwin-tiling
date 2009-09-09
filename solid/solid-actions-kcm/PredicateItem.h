@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2009 by Ben Cooksley <ben@eclipse.endoftheinternet.org> *
+ *   Copyright 2009 Ben Cooksley <ben@eclipse.endoftheinternet.org>        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,28 +17,40 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
-#ifndef SOLID_ACTION_DATA_H
-#define SOLID_ACTION_DATA_H
+#ifndef PREDICATEITEM_H
+#define PREDICATEITEM_H
 
-#include <QObject>
-#include <QMap>
-#include <QString>
+#include <Solid/Predicate>
 
-#include <Solid/DeviceInterface>
+class QString;
+template<typename T> class QList;
 
-class SolidActionData : public QObject
+class PredicateItem
 {
-    Q_OBJECT
-
 public:
-    SolidActionData(bool includeFiles);
-    QMap<QString, QString> valueList(QString deviceType);
-    QMap<QString, QString> types;
+    PredicateItem( Solid::Predicate item, PredicateItem * itsParent );
+    ~PredicateItem();
+
+    PredicateItem * child( int index ) const;
+    PredicateItem * parent() const;
+    QList<PredicateItem*>& children() const;
+    Solid::Predicate predicate() const;
+    QString prettyName() const;
+    void setItemType( Solid::Predicate::Type itemType );
+    void setTypeByInt( int item );
+    void setComparisonByInt( int item );
+
+    Solid::Predicate::Type itemType;
+    Solid::DeviceInterface::Type ifaceType;
+    QString property;
+    QVariant value;
+    Solid::Predicate::ComparisonOperator compOperator;
 
 private:
-    QString generateUserString(QString className);
-    QList<QMetaObject> fillInterfaceList();
-    QMap<QString, QMap<QString,QString> > values;
+    class Private;
+    Private *const d;
 };
+
+Q_DECLARE_METATYPE( PredicateItem * )
 
 #endif

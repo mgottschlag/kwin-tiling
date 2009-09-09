@@ -1,12 +1,12 @@
 [Desktop Action objectName]
 Name=Object Name
 
-[Desktop Action plugged]
-Name=Plugged
+[Desktop Action readerType]
+Name=Reader Type
 
 [Desktop Entry]
-Actions=objectName;plugged;
+Actions=objectName;readerType;
 Name=Solid Device
 Type=Service
 X-KDE-ServiceTypes=SolidDevice
-X-KDE-Solid-Actions-Type=AcAdapter
+X-KDE-Solid-Actions-Type=SmartCardReader

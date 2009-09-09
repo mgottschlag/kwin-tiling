@@ -17,52 +17,39 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
-#ifndef ACTION_ITEM_H
-#define ACTION_ITEM_H
+#ifndef ACTIONEDITOR_H
+#define ACTIONEDITOR_H
 
-#include <QObject>
-#include <QMap>
+#include <KDialog>
 
-class QString;
+#include "PredicateItem.h"
+#include "PredicateModel.h"
+#include "SolidActionData.h"
+#include "ui_ActionEditor.h"
 
-class KDesktopFile;
-class KConfigGroup;
-
-class ActionItem: public QObject
+class ActionEditor : public KDialog
 {
     Q_OBJECT
-
 public:
-    ActionItem(QString pathToDesktop, QString action, QObject *parent = 0);
-    ~ActionItem();
+     ActionEditor(QWidget *parent = 0);
+    ~ActionEditor();
 
-    enum GroupType { GroupDesktop = 0, GroupAction = 1 };
+    void setPredicate( Solid::Predicate predicate );
+    QString predicateString();
 
-    bool isUserSupplied();
-    QString readKey(GroupType keyGroup, QString keyName, QString defaultValue);
-    void setKey(GroupType keyGroup, QString keyName, QString keyContents);
-    bool hasKey(GroupType keyGroup, QString keyName);
-
-    QString icon();
-    QString exec();
-    QString name();
-    void setIcon(QString nameOfIcon);
-    void setName(QString nameOfAction);
-    void setExec(QString execUrl);
-
-    QString desktopMasterPath;
-    QString desktopWritePath;
-    QString actionName;
+    Ui::ActionEditor ui;
 
 private:
-    enum DesktopAction { DesktopRead = 0, DesktopWrite = 1 };
+    SolidActionData * actionData();
 
-    KConfigGroup * configItem(DesktopAction actionType, GroupType keyGroup, QString keyName = QString());
+    PredicateItem * rootItem;
+    PredicateModel * rootModel;
 
-    KDesktopFile * desktopFileMaster;
-    KDesktopFile * desktopFileWrite;
-    QMultiMap<GroupType, KConfigGroup*> actionGroups;
-    QList<KConfigGroup> configGroups;
+private slots:
+    void updatePropertyList();
+    void manageControlStatus();
+    void updateParameter();
+    void saveParameter();
 
 };
 

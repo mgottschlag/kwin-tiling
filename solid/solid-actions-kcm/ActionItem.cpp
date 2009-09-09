@@ -17,14 +17,16 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
-#include "action-item.h"
+#include "ActionItem.h"
+#include "SolidActionData.h"
 
 #include <QString>
 
 #include <kdesktopfileactions.h>
-#include <KDebug>
 #include <KDesktopFile>
 #include <KConfigGroup>
+
+#include <Solid/DeviceInterface>
 
 ActionItem::ActionItem(QString pathToDesktop, QString action, QObject *parent)
 {
@@ -45,6 +47,9 @@ ActionItem::ActionItem(QString pathToDesktop, QString action, QObject *parent)
     actionGroups.insertMulti(ActionItem::GroupDesktop, &configGroups.last());
     configGroups.append(desktopFileWrite->actionGroup(actionName));
     actionGroups.insertMulti(ActionItem::GroupAction, &configGroups.last());
+
+    QString predicateString = readKey(ActionItem::GroupDesktop, "X-KDE-Solid-Predicate", "");
+    predicateItem = Solid::Predicate::fromString( predicateString );
 }
 
 ActionItem::~ActionItem()
@@ -58,21 +63,6 @@ ActionItem::~ActionItem()
 bool ActionItem::isUserSupplied()
 {
     return hasKey(ActionItem::GroupDesktop, "X-KDE-Action-Custom");
-}
-
-QString ActionItem::readKey(GroupType keyGroup, QString keyName, QString defaultValue)
-{
-    return configItem(ActionItem::DesktopRead, keyGroup, keyName)->readEntry(keyName, defaultValue);
-}
-
-void ActionItem::setKey(GroupType keyGroup, QString keyName, QString keyContents)
-{
-    configItem(ActionItem::DesktopWrite, keyGroup)->writeEntry(keyName, keyContents);
-}
-
-bool ActionItem::hasKey(GroupType keyGroup, QString keyName)
-{
-    return configItem(ActionItem::DesktopRead, keyGroup, keyName)->hasKey(keyName);
 }
 
 QString ActionItem::icon()
@@ -90,6 +80,23 @@ QString ActionItem::name()
     return readKey(ActionItem::GroupAction, "Name", "");
 }
 
+Solid::Predicate ActionItem::predicate()
+{
+    return predicateItem;
+}
+
+QString ActionItem::involvedTypes()
+{
+    SolidActionData * actData = SolidActionData::instance();
+    QSet<Solid::DeviceInterface::Type> devTypeList = predicateItem.usedTypes();
+    QStringList deviceTypes;
+    foreach( Solid::DeviceInterface::Type devType, devTypeList ) {
+        deviceTypes << actData->nameFromInterface( devType );
+    }
+
+    return deviceTypes.join(", ");
+}
+
 void ActionItem::setIcon(QString nameOfIcon)
 {
     setKey(ActionItem::GroupAction, "Icon", nameOfIcon);
@@ -105,7 +112,28 @@ void ActionItem::setExec(QString execUrl)
     setKey(ActionItem::GroupAction, "Exec", execUrl);
 }
 
+void ActionItem::setPredicate( QString newPredicate )
+{
+    setKey(ActionItem::GroupDesktop, "X-KDE-Solid-Predicate", newPredicate);
+    predicateItem = Solid::Predicate::fromString( newPredicate );
+}
+
 /// Private functions below
+
+QString ActionItem::readKey(GroupType keyGroup, QString keyName, QString defaultValue)
+{
+    return configItem(ActionItem::DesktopRead, keyGroup, keyName)->readEntry(keyName, defaultValue);
+}
+
+void ActionItem::setKey(GroupType keyGroup, QString keyName, QString keyContents)
+{
+    configItem(ActionItem::DesktopWrite, keyGroup)->writeEntry(keyName, keyContents);
+}
+
+bool ActionItem::hasKey(GroupType keyGroup, QString keyName)
+{
+    return configItem(ActionItem::DesktopRead, keyGroup, keyName)->hasKey(keyName);
+}
 
 KConfigGroup * ActionItem::configItem(DesktopAction actionType, GroupType keyGroup, QString keyName)
 {
@@ -127,4 +155,4 @@ KConfigGroup * ActionItem::configItem(DesktopAction actionType, GroupType keyGro
     return actionGroups.values(keyGroup)[0]; // Implement a backstop so a valid value is always returned
 }
 
-#include "action-item.moc"
+#include "ActionItem.moc"

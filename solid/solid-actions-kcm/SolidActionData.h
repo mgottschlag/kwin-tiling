@@ -17,43 +17,41 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
-#ifndef SOLID_ACTION_EDIT_H
-#define SOLID_ACTION_EDIT_H
+#ifndef SOLIDACTIONDATA_H
+#define SOLIDACTIONDATA_H
 
-#include <KDialog>
+#include <QObject>
+#include <QMap>
+#include <QString>
 
-#include "ui_solid-action-edit.h"
+#include <Solid/DeviceInterface>
 
-class SolidActionEditPredicate;
-
-class SolidActionEdit : public KDialog
+class SolidActionData : public QObject
 {
     Q_OBJECT
-public:
-    SolidActionEdit(QWidget *parent = 0);
-    ~SolidActionEdit();
 
-    void fillPredicateTree(QString predicateText);
-    QString predicate();
-    Ui::SolidActionEdit ui;
+public:
+    QList<QString> propertyList( Solid::DeviceInterface::Type devInterface );
+    QList<QString> propertyInternalList( Solid::DeviceInterface::Type devInterface );
+    QString propertyInternal( Solid::DeviceInterface::Type devInterface, QString property );
+    QString propertyName( Solid::DeviceInterface::Type devInterface, QString property );
+    int propertyPosition( Solid::DeviceInterface::Type devInterface, QString property );
+
+    QList<QString> interfaceList();
+    QList<Solid::DeviceInterface::Type> interfaceTypeList();
+    Solid::DeviceInterface::Type interfaceFromName( QString name );
+    QString nameFromInterface( Solid::DeviceInterface::Type devInterface );
+    int interfacePosition( Solid::DeviceInterface::Type devInterface );
+
+    static SolidActionData * instance();
 
 private:
-    void setPredicateContainer(QString predicate, QTreeWidgetItem *parent);
-    void setPredicateMultiItem(QString predicate, QTreeWidgetItem *parent);
-    void setPredicateItem(QString predicate, QTreeWidgetItem *parent);
-    void setPrettyNames(QTreeWidgetItem *parent);
-    QString readPredicate(QTreeWidgetItem *parent);
-    SolidActionEditPredicate *predicateUi;
-    KDialog * predicateDialog;
+    SolidActionData(bool includeFiles);
+    QString generateUserString(QString className);
+    QList<QMetaObject> fillInterfaceList();
 
-private slots:
-    void updateButtonUsage();
-    void addRequirement();
-    void editRequirement();
-    void cancelEditRequirement();
-    void deleteRequirement();
-    void updateRequirement();
-
+    QMap<Solid::DeviceInterface::Type, QMap<QString,QString> > values;
+    QMap<Solid::DeviceInterface::Type, QString> types;
 };
 
 #endif

@@ -1,25 +1,32 @@
 PROJECT (solid-actions)
 
+find_package(KDE4 REQUIRED)
+include (KDE4Defaults)
+add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+
+INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR}/core ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
+
 ADD_SUBDIRECTORY(device-actions)
 
 ########### next target ###############
 
 SET(kcm_solid_actions_srcs
-    action-item.cpp
-    solid-action-data.cpp
-    solid-action-edit-predicate.cpp
-    solid-action-edit.cpp
-    solid-actions.cpp )
+    PredicateItem.cpp
+    PredicateModel.cpp
+    ActionItem.cpp
+    ActionModel.cpp
+    ActionEditor.cpp
+    SolidActionData.cpp
+    SolidActions.cpp )
 
 SET(solid_action_desktop_gen_srcs
-    solid-action-desktop-gen.cpp
-    solid-action-data.cpp )
+    DesktopFileGenerator.cpp
+    SolidActionData.cpp )
 
 KDE4_ADD_UI_FILES(kcm_solid_actions_srcs
-    solid-actions.ui
-    solid-action-add.ui
-    solid-action-edit.ui
-    solid-action-edit-predicate.ui )
+    SolidActions.ui
+    AddAction.ui
+    ActionEditor.ui )
 
 KDE4_ADD_PLUGIN(kcm_solid_actions ${kcm_solid_actions_srcs})
 KDE4_ADD_EXECUTABLE(solid-action-desktop-gen ${solid_action_desktop_gen_srcs})
@@ -33,4 +40,5 @@ INSTALL( TARGETS kcm_solid_actions DESTINATION ${PLUGIN_INSTALL_DIR} )
 INSTALL( TARGETS solid-action-desktop-gen ${INSTALL_TARGETS_DEFAULT_ARGS} )
 INSTALL( FILES solid-actions.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
 INSTALL( FILES solid-action-template.desktop DESTINATION ${DATA_INSTALL_DIR}/kcmsolidactions )
+INSTALL( FILES solid-device-type.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR} )
 

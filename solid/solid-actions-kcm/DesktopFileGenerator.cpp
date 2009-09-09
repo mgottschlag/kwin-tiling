@@ -25,7 +25,7 @@
 #include <KDebug>
 #include <KConfigGroup>
 
-#include "solid-action-data.h"
+#include "SolidActionData.h"
 
 #include <iostream>
 
@@ -33,27 +33,35 @@ int main( int argc, char *argv[] )
 {
     KLocale::setMainCatalog("solid-action-desktop-gen");
     // About data
-    KAboutData aboutData("solid-action-desktop-gen", 0, ki18n("Solid Action Desktop File Generator"), "0.4", ki18n("Tool to automatically generate Desktop Files from Solid DeviceInterface classes for translation"), 
+    KAboutData aboutData("solid-action-desktop-gen", 0, ki18n("Solid Action Desktop File Generator"), "0.4", ki18n("Tool to automatically generate Desktop Files from Solid DeviceInterface classes for translation"),
                          KAboutData::License_GPL, ki18n("(c) 2009, Ben Cooksley"));
     aboutData.addAuthor(ki18n("Ben Cooksley"), ki18n("Maintainer"), "ben@eclipse.endoftheinternet.org");
     KCmdLineArgs::init(argc, argv, &aboutData);
 
     KApplication application(false);
-    SolidActionData availActions(false);
-    foreach( const QString &typeInternal, availActions.types.keys() ) {
-        KDesktopFile typeFile( "solid-device-" + typeInternal + ".desktop" );
+    SolidActionData * availActions = SolidActionData::instance();
+    foreach( Solid::DeviceInterface::Type internalType, availActions->interfaceTypeList() ) {
+        QString typeName = Solid::DeviceInterface::typeToString( internalType );
+        KDesktopFile typeFile( "solid-device-" + typeName + ".desktop" );
         KConfigGroup tConfig = typeFile.desktopGroup();
-        if( !tConfig.hasKey("X-KDE-Solid-Actions-Type") || !tConfig.hasKey("Name") || !tConfig.hasKey("Type") ) {
-            tConfig.writeEntry( "X-KDE-Solid-Actions-Type", typeInternal );
-            tConfig.writeEntry( "Type", "Solid-Device-Type" );
+
+        tConfig.writeEntry( "Name", "Solid Device" );
+        tConfig.writeEntry( "X-KDE-ServiceTypes", "SolidDevice" );
+        tConfig.writeEntry( "Type", "Service" );
+
+        if( !tConfig.hasKey("X-KDE-Solid-Actions-Type") ) {
+            tConfig.writeEntry( "X-KDE-Solid-Actions-Type", typeName );
         }
-        QStringList typeValues = availActions.valueList(typeInternal).keys();
-        tConfig.writeEntry( "Actions", typeValues.join(";") );
+
+        QStringList typeValues = availActions->propertyInternalList( internalType );
+        QString actionText = typeValues.join(";").append(";");
+        tConfig.writeEntry( "Actions", actionText );
+
         kWarning() << "Desktop file created: " + typeFile.fileName();
         foreach( const QString &tValue, typeValues ) {
-            KConfigGroup vConfig = typeFile.actionGroup(tValue);
+            KConfigGroup vConfig = typeFile.actionGroup( tValue );
             if( !vConfig.hasKey("Name") ) {
-                vConfig.writeEntry( "Name", availActions.valueList(typeInternal).value(tValue) );
+                vConfig.writeEntry( "Name", availActions->propertyName( internalType, tValue ) );
             }
             vConfig.sync();
         }

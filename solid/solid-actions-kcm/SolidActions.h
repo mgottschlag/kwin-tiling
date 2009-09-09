@@ -17,14 +17,16 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
-#ifndef SOLID_ACTIONS_H
-#define SOLID_ACTIONS_H
+#ifndef SOLIDACTIONS_H
+#define SOLIDACTIONS_H
 
 #include <KCModule>
 
-#include "ui_solid-actions.h"
-#include "solid-action-edit.h"
-#include "ui_solid-action-add.h"
+#include "SolidActions.h"
+#include "ActionModel.h"
+#include "ActionEditor.h"
+#include "ui_AddAction.h"
+#include "ui_SolidActions.h"
 
 class ActionItem;
 
@@ -43,21 +45,19 @@ private slots:
     void addAction();
     void editAction();
     void deleteAction();
-    QListWidgetItem * selectedWidget();
     ActionItem * selectedAction();
     void fillActionsList();
     void acceptActionChanges();
-    void toggleEditDelete(bool toggle);
-    void enableEditDelete();
+    void toggleEditDelete();
     void slotTextChanged( const QString& );
     void slotShowAddDialog();
+
 private:
-    Ui::SolidActionsConfig *mainUi;
-    SolidActionEdit *editUi;
-    Ui::SolidActionAdd *addUi;
-    KDialog *addDialog;
-    QWidget *addWidget;
-    QMap<QListWidgetItem*, ActionItem*> actionsDb;
+    Ui::SolidActions mainUi;
+    ActionModel * actionModel;
+    ActionEditor * editUi;
+    Ui::AddAction addUi;
+    KDialog * addDialog;
     void clearActions();
 
 };
