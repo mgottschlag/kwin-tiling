@@ -186,6 +186,7 @@ KGlobalShortcutsEditor::~KGlobalShortcutsEditor()
 {
     // Before closing the door, undo all changes
     undo();
+    qDeleteAll(d->components.values());
     delete d;
 }
 
