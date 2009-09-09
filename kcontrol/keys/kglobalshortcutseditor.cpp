@@ -437,7 +437,6 @@ void KGlobalShortcutsEditor::importConfiguration(KConfigBase *config)
     // Now import the new configurations.
     Q_FOREACH (ComponentData *cd, d->components) {
         KConfigGroup group(config, cd->uniqueName());
-        kDebug();
         if (group.exists()) {
             kDebug() << "Importing" << cd->uniqueName();
             cd->editor()->importConfiguration(&group);
