@@ -97,5 +97,10 @@ void Widget::writeConfig(const QString &key, const QVariant &value)
     m_configDirty = true;
 }
 
+Plasma::Applet *Widget::applet() const
+{
+    return m_applet;
+}
+
 #include "widget.moc"
 

@@ -157,6 +157,7 @@ QScriptValue ScriptEngine::wrap(Plasma::Containment *c, QScriptEngine *engine)
                                         QScriptEngine::ExcludeSuperClassProperties |
                                         QScriptEngine::ExcludeSuperClassMethods);
     v.setProperty("widgetById", engine->newFunction(Containment::widgetById));
+    v.setProperty("addWidget", engine->newFunction(Containment::addWidget));
     /*
     TODO: this does not actually work, look into why
     if (!isPanel(c)) {

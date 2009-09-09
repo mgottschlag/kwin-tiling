@@ -89,9 +89,9 @@ public:
     void setHiding(const QString &mode);
 
     static QScriptValue widgetById(QScriptContext *context, QScriptEngine *engine);
+    static QScriptValue addWidget(QScriptContext *context, QScriptEngine *engine);
 
 public Q_SLOTS:
-    Widget *addWidget(const QString &name);
     void remove();
 
 private:

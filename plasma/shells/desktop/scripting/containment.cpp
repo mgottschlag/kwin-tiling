@@ -25,6 +25,7 @@
 #include "panelview.h"
 #include "plasmaapp.h"
 #include "scriptengine.h"
+#include "widget.h"
 
 Containment::Containment(Plasma::Containment *containment, QObject *parent)
     : QObject(parent),
@@ -189,6 +190,34 @@ QScriptValue Containment::widgetById(QScriptContext *context, QScriptEngine *eng
     return engine->undefinedValue();
 }
 
+QScriptValue Containment::addWidget(QScriptContext *context, QScriptEngine *engine)
+{
+    if (context->argumentCount() == 0) {
+        return context->throwError(i18n("widgetById requires a name of a widget or a widget object"));
+    }
+
+    Containment *c = qobject_cast<Containment*>(context->thisObject().toQObject());
+
+    if (!c || !c->m_containment) {
+        return engine->undefinedValue();
+    }
+
+    QScriptValue v = context->argument(0);
+    Plasma::Applet *applet = 0;
+    if (v.isString()) {
+        applet = c->m_containment->addApplet(v.toString());
+        if (applet) {
+            return ScriptEngine::wrap(applet, engine);
+        }
+    } else if (Widget *widget = qobject_cast<Widget*>(v.toQObject())) {
+        applet = widget->applet();
+        c->m_containment->addApplet(applet);
+        return v;
+    }
+
+    return engine->undefinedValue();
+}
+
 uint Containment::id() const
 {
     if (!m_containment) {
@@ -221,15 +250,6 @@ QString Containment::type() const
     }
 
     return m_containment->pluginName();
-}
-
-Widget *Containment::addWidget(const QString &name)
-{
-    if (!m_containment) {
-        return 0;
-    }
-
-    return 0; // FIXME
 }
 
 void Containment::remove()

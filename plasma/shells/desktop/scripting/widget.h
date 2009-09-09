@@ -49,6 +49,8 @@ public:
     QStringList configKeys() const;
     QStringList configGroups() const;
 
+    Plasma::Applet *applet() const;
+
 public Q_SLOTS:
     void remove();
     void setConfigGroup(const QString &config);
