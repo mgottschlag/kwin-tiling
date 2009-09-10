@@ -293,6 +293,11 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
 PanelView::~PanelView()
 {
+    if (m_panelController) {
+        disconnect(m_panelController, 0, this, 0);
+        delete m_panelController;
+    }
+
     delete m_glowBar;
     destroyUnhideTrigger();
 #ifdef Q_WS_WIN
@@ -875,6 +880,11 @@ void PanelView::edittingComplete()
     m_editting = false;
     qDeleteAll(m_appletOverlays);
     m_appletOverlays.clear();
+
+    if (!containment()) {
+        return;
+    }
+
     containment()->closeToolBox();
     updateStruts();
     m_firstPaint = true; // triggers autohide
