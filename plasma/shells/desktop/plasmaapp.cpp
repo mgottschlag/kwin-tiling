@@ -1068,13 +1068,14 @@ void PlasmaApp::updateActions(Plasma::ImmutabilityType immutability)
 
 void PlasmaApp::slotRemotePlasmoidAdded(Plasma::PackageMetadata metadata)
 {
-    kDebug();
+    //kDebug();
     if (m_desktops.isEmpty()) {
         return;
     }
 
+    // the notification ptr is automatically delete when the notification is closed
     KNotification *notification = new KNotification("newplasmoid", m_desktops.at(0));
-    notification->setText(i18n("An plasma widget has just been published on the network:<br><b>%1</b> - </i>%2</i>",
+    notification->setText(i18n("A new widget has become available on the network:<br><b>%1</b> - </i>%2</i>",
                                metadata.name(), metadata.description()));
     notification->setActions(QStringList(i18n("Add to current activity")));
 
