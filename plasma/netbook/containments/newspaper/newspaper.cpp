@@ -56,7 +56,8 @@ using namespace Plasma;
 Newspaper::Newspaper(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_orientation(Qt::Vertical),
-      m_appletOverlay(0)
+      m_appletOverlay(0),
+      m_dragging(false)
 {
     setContainmentType(Containment::CustomContainment);
 
@@ -130,13 +131,26 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     QGraphicsLinearLayout *lay;
 
     if (m_orientation == Qt::Horizontal) {
-        if (pos.y() >= size().height()/4) {
+        int limitY;
+        if (m_dragging) {
+            limitY = m_rightLayout->geometry().height();
+        } else {
+            limitY = size().height()/4;
+        }
+        if (pos.x() >= limitY) {
             lay = m_rightLayout;
         } else {
             lay = m_leftLayout;
         }
     } else {
-        if (pos.x() >= size().width()/4) {
+        int limitX;
+        //if we are initializing all high value x are to be considered secon coulmn, if we are dropping by hand, we drop on the second column when the value is > of the actual second column geometry
+        if (m_dragging) {
+            limitX = m_rightLayout->geometry().width();
+        } else {
+            limitX = size().width()/4;
+        }
+        if (pos.x() >= limitX) {
             lay = m_rightLayout;
         } else {
             lay = m_leftLayout;
@@ -148,7 +162,12 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     //if pos is (-1,-1) insert at the end of the Newspaper
     if (pos != QPoint(-1, -1)) {
         for (int i = 0; i < lay->count(); ++i) {
-            QRectF siblingGeometry = lay->itemAt(i)->geometry();
+            QGraphicsLayoutItem *li = lay->itemAt(i);
+            if (!dynamic_cast<Plasma::Applet *>(li)) {
+                continue;
+            }
+
+            QRectF siblingGeometry = li->geometry();
             if (m_orientation == Qt::Horizontal) {
                 qreal middle = (siblingGeometry.left() + siblingGeometry.right()) / 2.0;
                 if (pos.x() < middle) {
@@ -177,7 +196,7 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     } else {
         lay->insertItem(qMin(insertIndex, lay->count()-1), applet);
     }
-
+kWarning()<<"AAAA"<<insertIndex;
     connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
     updateSize();
     //applet->setBackgroundHints(NoBackground);

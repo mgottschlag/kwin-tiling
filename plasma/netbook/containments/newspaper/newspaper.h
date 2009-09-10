@@ -70,6 +70,7 @@ private:
     Qt::Orientation m_orientation;
     Plasma::FrameSvg *m_background;
     AppletOverlay *m_appletOverlay;
+    bool m_dragging;
 };
 
 
