@@ -18,6 +18,7 @@
 #include <KIO/PreviewJob>
 #include <KProgressDialog>
 #include <KStandardDirs>
+#include <KDirLister>
 
 #include <Plasma/Package>
 #include <Plasma/PackageStructure>
@@ -95,11 +96,6 @@ void BackgroundListModel::reload(const QStringList &selected)
         m_packages = tmp;
         endInsertRows();
     }
-}
-
-QStringList BackgroundFinder::papersFound() const
-{
-    return m_papersFound;
 }
 
 void BackgroundListModel::addBackground(const QString& path)
@@ -295,17 +291,27 @@ BackgroundFinder::BackgroundFinder(Plasma::Wallpaper *structureParent,
       m_structureParent(structureParent),
       m_container(container),
       m_paths(paths),
-      m_eventLoop(eventLoop)
+      m_lister(0),
+      m_progress(0),
+      m_eventLoop(eventLoop),
+      m_counter(0)
 {
+}
+
+QStringList BackgroundFinder::papersFound() const
+{
+    return m_papersFound;
 }
 
 void BackgroundFinder::start()
 {
-    KProgressDialog *progress = new KProgressDialog;
-    progress->setAllowCancel(false);
-    progress->setModal(true);
-    progress->setLabelText(i18n("Finding images for the wallpaper slideshow."));
-    progress->progressBar()->setRange(0, 0);
+    if (!m_progress) {
+        m_progress = new KProgressDialog;
+        m_progress->setAllowCancel(false);
+        m_progress->setModal(true);
+        m_progress->setLabelText(i18n("Finding images for the wallpaper slideshow."));
+        m_progress->progressBar()->setRange(0, 0);
+    }
 
     QSet<QString> suffixes;
     suffixes << "png" << "jpeg" << "jpg" << "svg" << "svgz";
@@ -316,60 +322,121 @@ void BackgroundFinder::start()
     int count = 0;
     int allCount = 0;
     bool setLabel = true;
+    bool shouldFinish = true;
+    QStringList remoteUrls;
+
     while (!m_paths.isEmpty()) {
-        QString path = m_paths.takeLast();
-        //kDebug() << "doing" << path;
-        dir.setPath(path);
-        const QFileInfoList files = dir.entryInfoList();
-        foreach (const QFileInfo &wp, files) {
-            if (wp.isDir()) {
-                //kDebug() << "directory" << wp.fileName() << validPackages.contains(wp.fileName());
-                QString name = wp.fileName();
-                if (name == "." || name == "..") {
-                    // do nothing
-                } else if(QFile::exists(wp.filePath() + "/metadata.desktop")) {
-                    Plasma::PackageStructure::Ptr structure = Plasma::Wallpaper::packageStructure(m_structureParent);
-                    Plasma::Package pkg(wp.filePath(), structure);
+        KUrl url = m_paths.takeLast();
+        bool remote = true;
 
-                    if (pkg.isValid() && (!m_container || !m_container->contains(pkg.path()))) {
-                        if (setLabel) {
-                            progress->setLabelText(i18n("Finding images for the wallpaper slideshow.") + "\n\n" +
-                                                   i18n("Adding wallpaper package in %1", name));
+        // detect if it's just a local dir or file..
+        // otherwise we should use KIO to 'solve' the file path for us
+        if (url.isLocalFile()) {
+            remote = false;
+        }
+
+        if (!remote) {
+            QString path = url.path();
+            dir.setPath(path);
+            const QFileInfoList files = dir.entryInfoList();
+            foreach (const QFileInfo &wp, files) {
+                if (wp.isDir()) {
+                    //kDebug() << "directory" << wp.fileName() << validPackages.contains(wp.fileName());
+                    QString name = wp.fileName();
+                    if (name == "." || name == "..") {
+                        // do nothing
+                    } else if(QFile::exists(wp.filePath() + "/metadata.desktop")) {
+                        Plasma::PackageStructure::Ptr structure = Plasma::Wallpaper::packageStructure(m_structureParent);
+                        Plasma::Package pkg(wp.filePath(), structure);
+
+                        if (pkg.isValid() && (!m_container || !m_container->contains(pkg.path()))) {
+                            if (setLabel) {
+                                m_progress->setLabelText(i18n("Finding images for the wallpaper slideshow.") + "\n\n" +
+                                                       i18n("Adding wallpaper package in %1", name));
+                            }
+
+                            ++count;
+                            m_papersFound << pkg.path();
+                            //kDebug() << "gots a" << wp.filePath();
+                        } else {
+                            m_paths.append(wp.filePath());
                         }
-
-                        ++count;
-                        m_papersFound << pkg.path();
-                        //kDebug() << "gots a" << wp.filePath();
                     } else {
                         m_paths.append(wp.filePath());
                     }
-                } else {
-                    m_paths.append(wp.filePath());
+                } else if (suffixes.contains(wp.suffix().toLower()) && (!m_container || !m_container->contains(wp.filePath()))) {
+                    //kDebug() << "adding" << wp.filePath() << setLabel;
+                    if (setLabel) {
+                        m_progress->setLabelText(i18n("Finding images for the wallpaper slideshow.") + "\n\n" +
+                                               i18n("Adding image %1", wp.filePath()));
+                        setLabel = false;
+                    }
+                    //kDebug() << "     adding image file" << wp.filePath();
+                    ++count;
+                    m_papersFound << wp.filePath();
                 }
-            } else if (suffixes.contains(wp.suffix().toLower()) && (!m_container || !m_container->contains(wp.filePath()))) {
-                //kDebug() << "adding" << wp.filePath() << setLabel;
-                if (setLabel) {
-                    progress->setLabelText(i18n("Finding images for the wallpaper slideshow.") + "\n\n" +
-                                           i18n("Adding image %1", wp.filePath()));
-                    setLabel = false;
-                }
-                //kDebug() << "     adding image file" << wp.filePath();
-                ++count;
-                m_papersFound << wp.filePath();
-            }
 
+                ++allCount;
+                if (allCount % 10 == 0) {
+                    m_eventLoop->processEvents(QEventLoop::ExcludeUserInputEvents);
+                    if (m_progress->isVisible() && count % 10) {
+                        setLabel = true;
+                    }
+                }
+            }
+        } else {
+            // It's a special URL that should be used by KIO...
+            shouldFinish = false;
+            remoteUrls.append(url.url());
+            ++count;
+
+            // update progressbar for remote files too
             ++allCount;
             if (allCount % 10 == 0) {
                 m_eventLoop->processEvents(QEventLoop::ExcludeUserInputEvents);
-                if (progress->isVisible() && count % 10) {
+                if (m_progress->isVisible() && count % 10) {
                     setLabel = true;
                 }
             }
         }
     }
 
-    delete progress;
-    emit finished();
+    if (shouldFinish) {
+        // it's ok, there was not remote files that need to be processed
+        delete m_progress;
+        emit finished();
+    } else {
+        // create KDirLister to solve remote file paths
+        // open each of the 'remote' URLs
+        m_counter = remoteUrls.size();
+        foreach (const QString &path, remoteUrls) {
+            m_lister = new KDirLister(this);
+            m_lister->setNameFilter("*.png *.jpeg *.jpg *.svg *.svgz");
+            m_lister->emitChanges();
+            connect(m_lister, SIGNAL(completed()), this, SLOT(remoteFinished()));
+            m_lister->openUrl(path, KDirLister::Keep);
+        }
+    }
+}
+
+void BackgroundFinder::remoteFinished()
+{
+    m_lister = static_cast<KDirLister*>(sender());
+    foreach (KUrl url, m_lister->items().targetUrlList()) {
+        m_papersFound << url.url();
+    }
+
+    // m_lister emmited the signal that called this slot, so delete later
+    m_lister->deleteLater();
+
+    m_counter--;
+
+    // now we are ready!
+    if (m_counter == 0) {
+        delete m_progress;
+        m_progress = 0;
+        emit finished();
+    }
 }
 
 void BackgroundListModel::setWallpaperSize(QSize size)

@@ -276,9 +276,10 @@ void Image::slotAddDir()
     KUrl empty;
     KDirSelectDialog dialog(empty, true, m_configWidget);
     if (dialog.exec()) {
-        QString urlDir = dialog.url().path();
-        if (!urlDir.isEmpty() && m_uiSlideshow.m_dirlist->findItems(urlDir, Qt::MatchExactly).isEmpty()) {
-            m_uiSlideshow.m_dirlist->addItem(dialog.url().path());
+        KUrl urlDir = KUrl(dialog.url());
+
+        if (!urlDir.isEmpty() && m_uiSlideshow.m_dirlist->findItems(urlDir.url(), Qt::MatchExactly).isEmpty()) {
+            m_uiSlideshow.m_dirlist->addItem(urlDir.url());
             updateDirs();
             startSlideshow();
         }
