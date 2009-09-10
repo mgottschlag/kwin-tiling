@@ -20,8 +20,10 @@
 #include "widget.h"
 
 #include <QAction>
+#include <QGraphicsLinearLayout>
 
 #include <Plasma/Applet>
+#include <Plasma/Containment>
 
 Widget::Widget(Plasma::Applet *applet, QObject *parent)
     : QObject(parent),
@@ -106,16 +108,47 @@ Plasma::Applet *Widget::applet() const
 
 int Widget::index() const
 {
-    if (m_applet) {
-        return 1;
+    if (!m_applet) {
+        return -1;
     }
 
-    return 0;
+    Plasma::Containment *c = m_applet->containment();
+    if (!c) {
+        return -1;
+    }
+
+    QGraphicsLayout *layout = c->layout();
+    if (!layout) {
+        return - 1;
+    }
+
+    for (int i = 0; i < layout->count(); ++i) {
+        if (layout->itemAt(i) == m_applet) {
+            return i;
+        }
+    }
+
+    return -1;
 }
 
 void Widget::setIndex(int index)
 {
+    if (!m_applet) {
+        return;
+    }
 
+    Plasma::Containment *c = m_applet->containment();
+    if (!c) {
+        return;
+    }
+
+    //FIXME: this is hackish. would be nice to define this for gridlayouts too
+    QGraphicsLinearLayout *layout = dynamic_cast<QGraphicsLinearLayout *>(c->layout());
+    if (!layout) {
+        return;
+    }
+
+    layout->insertItem(index, m_applet);
 }
 
 QRectF Widget::geometry() const
