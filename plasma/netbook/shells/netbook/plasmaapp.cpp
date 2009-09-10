@@ -220,7 +220,7 @@ void PlasmaApp::positionPanel()
     if (m_widgetExplorerView) {
         top += m_widgetExplorerView->size().height();
     }
-    
+
     foreach (Plasma::Containment *containment, m_corona->containments()) {
         if (containment->formFactor() == Plasma::Planar) {
             containment->setContentsMargins(left, top, right, bottom);
@@ -527,7 +527,7 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
         KWindowSystem::setOnDesktop(m_widgetExplorerView->winId(), KWindowSystem::currentDesktop());
         m_widgetExplorerView->show();
         KWindowSystem::activateWindow(m_widgetExplorerView->winId());
-        m_widgetExplorerView->setWindowFlags(Qt::FramelessWindowHint);
+        m_widgetExplorerView->setWindowFlags(Qt::Dialog|Qt::FramelessWindowHint);
         m_widgetExplorerView->setAttribute(Qt::WA_TranslucentBackground);
         m_widgetExplorerView->setAttribute(Qt::WA_DeleteOnClose);
         KWindowSystem::setState(m_widgetExplorerView->winId(), NET::StaysOnTop|NET::KeepAbove);
