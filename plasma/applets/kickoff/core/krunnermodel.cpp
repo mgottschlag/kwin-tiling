@@ -48,13 +48,12 @@ Plasma::RunnerManager * runnerManager() {
         // initializing allowed runners
         QStringList allowed;
         allowed
-            << "placesEnabled"
-            << "windowsEnabled"
-            << "shellEnabled"
-            << "servicesEnabled"
-            << "bookmarksEnabled"
-            << "recentdocumentsEnabled"
-            << "locationsEnabled";
+            << "places"
+            << "shell"
+            << "services"
+            << "bookmarks"
+            << "recentdocuments"
+            << "locations";
         _runnerManager->setAllowedRunners(allowed);
 
         conf.sync();
