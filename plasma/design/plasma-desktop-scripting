@@ -16,11 +16,11 @@ Running Scripts
 There are three ways that scripts can be executed in plasma-desktop:
 
 * on first run: when plasma-desktop is first started any scripts in
-  $APPDATA/plasma/init/ are run. If there is more than one script, they are
+  $APPDATA/plasma/init/ with a ".js" suffix are run. If there is more than one script, they are
   run serially in the alphabetical order of the file names.
 
 * on update: when plasma-desktop is started, it will check in
-  $APPDATA/plasma/updates/ for scripts that have not yet been run. If there
+  $APPDATA/plasma/updates/ with a ".js" suffix for scripts that have not yet been run. If there
   is more than one script which has not been run yet they will be executed
   serially in the alphabetical order of the file names.
 
@@ -94,6 +94,7 @@ and the following methods:
 * addWidget(string name): adds a new widget to the activity; the name maps to the X-KDE-PluginInfo-Name= entry
   in the widget's .desktop file
 * addWidget(Object widget): adds an existing widget to this activity; useful for moving widgets between Activities and Panels
+* showConfigurationInteface(): shows the configuration user interface for this Activity or Panel on the screen
 
 In addition, Panel objects provide the folowing properties, all of which are settable:
 * length: the number of pixels along the screen edge used
@@ -118,6 +119,8 @@ A widget object provides the following properties:
 * type: the plugin type of this widget
 * configKeys: a list of all keys that are set in the current configuration
 * configGroups: a list of all the groups in the current configuration
+* geometry: the geometry of the widget (settable)
+* index: the layout index of the widget; in a Panel this corresponds to the order in appears in
 
 and methods:
 
@@ -126,5 +129,6 @@ and methods:
 * readConfig(string key, variant default): reads the value of key in the config with default
   for the default value
 * writeConfig(string key, variant value): sets key to value in the config
+* showConfigurationInteface(): shows the configuration user interface for this widget on the screen
 
 
