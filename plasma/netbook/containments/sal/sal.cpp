@@ -436,8 +436,6 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_homeButton->setText(i18n("Home"));
             connect(m_homeButton, SIGNAL(activated()), this, SLOT(reset()));
             connect(m_gridBackground, SIGNAL(resetRequested()), this, SLOT(reset()));
-            //FIXME: do it for each theme change, another place where anchorlayout would shine, now there is an hardcoded value, not acceptable
-            m_homeButton->setPos(QPoint(0, 32) + m_mainLayout->contentsRect().topLeft());
             reset();
         }
     }
@@ -460,6 +458,12 @@ void SearchLaunch::paintInterface(QPainter *painter,
                                  const QRect& contentsRect)
 {
     Q_UNUSED(contentsRect)
+
+    if (m_homeButton->isVisible()) {
+        //FIXME mega HACK: use anchorlayout as soon as possible, now there is an hardcoded value, not acceptable
+        m_homeButton->setPos(contentsRect.topLeft() + m_mainLayout->contentsRect().topLeft());
+    }
+
     Containment::paintInterface(painter, option, contentsRect);
     m_background->resizeFrame(contentsRect.size());
     m_background->paintFrame(painter, contentsRect.topLeft());
