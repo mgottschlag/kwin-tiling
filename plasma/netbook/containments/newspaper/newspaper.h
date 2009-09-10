@@ -57,7 +57,6 @@ private slots:
     void themeUpdated();
     void updateSize();
     void updateConfigurationMode(bool config);
-    void containmentAdded(Plasma::Containment *containment);
 
 private:
 

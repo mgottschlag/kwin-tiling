@@ -84,7 +84,7 @@ void Panel::init()
 {
     Containment::init();
 
-    //HACK to experiment with an idea: connect with toolBoxVisibilityChanged of /ALL/ containments
+    //FIXME HACK find a way to make it work from plasmaapp not there
     Plasma::Corona *c = corona();
     foreach (Plasma::Containment *cont, c->containments()) {
         connect(cont, SIGNAL(toolBoxVisibilityChanged(bool)),
