@@ -104,6 +104,7 @@ private Q_SLOTS:
     void mainContainmentActivated();
     void controlBarVisibilityUpdate();
     void configureContainment(Plasma::Containment *containment);
+    void updateToolBoxVisibility(bool visible);
 
 private:
     Plasma::Corona *m_corona;

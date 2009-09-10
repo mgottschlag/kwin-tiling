@@ -123,7 +123,6 @@ PlasmaApp::PlasmaApp()
     setIsDesktop(isDesktop);
     reserveStruts();
 
-    //FIXME: monstrous hack: force it non fullscreen by making it a pixel too short
     m_mainView->setFixedSize(width, height);
     m_mainView->move(0,0);
 
@@ -374,6 +373,8 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
+    connect(containment, SIGNAL(toolBoxVisibilityChanged(bool)),
+            this, SLOT(updateToolBoxVisibility(bool)));
 
     KConfigGroup viewIds(KGlobal::config(), "ViewIds");
     int defaultId = 0;
@@ -450,6 +451,18 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     }
 }
 
+void PlasmaApp::updateToolBoxVisibility(bool visible)
+{
+    foreach (Plasma::Containment *cont, m_corona->containments()) {
+        cont->setToolBoxOpen(visible);
+    }
+
+    if (!visible && m_widgetExplorer) {
+        m_widgetExplorer->deleteLater();
+        m_widgetExplorerView->deleteLater();
+    }
+}
+
 void PlasmaApp::controlBarMoved(const NetView *controlBar)
 {
     if (!m_controlBar || controlBar != m_controlBar) {
@@ -520,6 +533,8 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
         return;
     }
 
+    containment->setToolBoxOpen(true);
+
     if (!m_widgetExplorerView) {
 
         m_widgetExplorerView = new Plasma::Dialog();
@@ -585,6 +600,7 @@ void PlasmaApp::appletBrowserDestroyed()
     m_widgetExplorer = 0;
     m_widgetExplorerView = 0;
     positionPanel();
+    m_mainView->containment()->setToolBoxOpen(false);
 }
 
 
