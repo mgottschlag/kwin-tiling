@@ -206,8 +206,8 @@ void AppletOverlay::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     }
 
     if (m_spacer && m_spacerLayout) {
-        m_spacerLayout->removeItem(m_spacer);
         m_spacerLayout->insertItem(m_spacerIndex, m_applet);
+        m_spacerLayout->removeItem(m_spacer);
     }
 
     delete m_spacer;
@@ -312,6 +312,9 @@ void AppletOverlay::showSpacer(const QPointF &pos)
     }
 
     if (m_spacerLayout == lay && m_spacerIndex < insertIndex) {
+        --insertIndex;
+    }
+    if (insertIndex >= lay->count() - 1) {
         --insertIndex;
     }
 
