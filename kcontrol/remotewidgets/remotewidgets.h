@@ -31,11 +31,11 @@ class RemoteWidgetsModule : public KCModule
 
 public:
     RemoteWidgetsModule(QWidget *parent, const QVariantList &);
-  
+    ~RemoteWidgetsModule();
     void save();
     void load();
     void defaults();
-    
+
 private:
     Ui::MainPage *m_ui;
 

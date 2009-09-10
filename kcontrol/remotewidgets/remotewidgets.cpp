@@ -48,13 +48,19 @@ RemoteWidgetsModule::RemoteWidgetsModule(QWidget *parent, const QVariantList &)
     setButtons(Help|Apply);
 
     setNeedsAuthorization(true);
-    
+
     m_ui->setupUi(this);
 }
 
+RemoteWidgetsModule::~RemoteWidgetsModule()
+{
+    delete m_ui;
+}
+
+
 void RemoteWidgetsModule::save()
 {
-    
+
 }
 
 void RemoteWidgetsModule::load()
