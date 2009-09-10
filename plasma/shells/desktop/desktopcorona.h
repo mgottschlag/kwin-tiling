@@ -67,14 +67,18 @@ public:
     virtual int numScreens() const;
     virtual QRect screenGeometry(int id) const;
     virtual QRegion availableScreenRegion(int id) const;
+    bool loadDefaultLayoutScripts();
 
 protected Q_SLOTS:
     void screenAdded(Kephal::Screen *s);
     void saveDefaultSetup();
+    void printScriptError(const QString &error);
+    void printScriptMessage(const QString &error);
 
 private:
     void init();
     void addDesktopContainment(int screen, int desktop = -1);
+
     Plasma::Applet *loadDefaultApplet(const QString &pluginName, Plasma::Containment *c);
 };
 

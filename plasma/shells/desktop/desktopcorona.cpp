@@ -38,6 +38,7 @@
 #include "panelview.h"
 #include "plasmaapp.h"
 #include "plasma-shell-desktop.h"
+#include "scripting/scriptengine.h"
 
 DesktopCorona::DesktopCorona(QObject *parent)
     : Plasma::Corona(parent)
@@ -170,13 +171,63 @@ QRegion DesktopCorona::availableScreenRegion(int id) const
     return r;
 }
 
+bool DesktopCorona::loadDefaultLayoutScripts()
+{
+    QStringList scripts = KGlobal::dirs()->findAllResources("data", "plasma-desktop/init/*.js");
+    if (scripts.isEmpty()) {
+        //kDebug() << "no javascript based layouts";
+        return false;
+    }
+
+    QMap<QString, QString> scriptPaths;
+    foreach (const QString &script, scripts) {
+        QFileInfo f(script);
+        QString filename = f.fileName();
+        if (!scriptPaths.contains(filename)) {
+            scriptPaths.insert(filename, script);
+        }
+    }
+
+    ScriptEngine scriptEngine(this);
+    connect(&scriptEngine, SIGNAL(printError(QString)), this, SLOT(printScriptError(QString)));
+    connect(&scriptEngine, SIGNAL(print(QString)), this, SLOT(printScriptMessage(QString)));
+
+    foreach (const QString &script, scriptPaths) {
+        QFile file(script);
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text) ) {
+            QString code = file.readAll();
+            kDebug() << "evaluating startup script:" << script;
+            scriptEngine.evaluateScript(code);
+        }
+    }
+
+    return !containments().isEmpty();
+}
+
+void DesktopCorona::printScriptError(const QString &error)
+{
+    kWarning() << "Startup script errror:" << error;
+}
+
+void DesktopCorona::printScriptMessage(const QString &error)
+{
+    kDebug() << "Startup script: " << error;
+}
+
 void DesktopCorona::loadDefaultLayout()
 {
+    if (loadDefaultLayoutScripts()) {
+        return;
+    }
+
     QString defaultConfig = KStandardDirs::locate("appdata", "plasma-default-layoutrc");
     if (!defaultConfig.isEmpty()) {
         kDebug() << "attempting to load the default layout from:" << defaultConfig;
         loadLayout(defaultConfig);
-        return;
+
+        if (!containments().isEmpty()) {
+            return;
+        }
     }
 
     kDebug() << "number of screens is" << Kephal::ScreenUtils::numScreens();
