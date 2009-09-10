@@ -96,9 +96,7 @@ protected:
 
 Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
-      m_addPanelsMenu(0),
       m_configureAction(0),
-      m_addPanelAction(0),
       m_currentSize(QSize(Kephal::ScreenUtils::screenSize(screen()).width(), 35)),
       m_maskDirty(true),
       m_canResize(true),
@@ -124,7 +122,6 @@ Panel::Panel(QObject *parent, const QVariantList &args)
 
 Panel::~Panel()
 {
-    delete m_addPanelsMenu;
 }
 
 void Panel::init()
@@ -353,73 +350,6 @@ void Panel::updateSize()
     }
 }
 
-void Panel::addPanel()
-{
-    KPluginInfo::List panelPlugins = listContainmentsOfType("panel");
-
-    if (!panelPlugins.isEmpty()) {
-        addPanel(panelPlugins.first().pluginName());
-    }
-}
-
-void Panel::addPanel(const QString &plugin)
-{
-    if (corona()) {
-        Containment* panel = corona()->addContainment(plugin);
-        panel->showConfigurationInterface();
-        panel->setScreen(screen());
-
-        QList<Plasma::Location> freeEdges = corona()->freeEdges(screen());
-        //kDebug() << freeEdges;
-        Plasma::Location destination;
-        if (freeEdges.contains(Plasma::TopEdge)) {
-            destination = Plasma::TopEdge;
-        } else if (freeEdges.contains(Plasma::BottomEdge)) {
-            destination = Plasma::BottomEdge;
-        } else if (freeEdges.contains(Plasma::LeftEdge)) {
-            destination = Plasma::LeftEdge;
-        } else if (freeEdges.contains(Plasma::RightEdge)) {
-            destination = Plasma::RightEdge;
-        } else destination = Plasma::TopEdge;
-
-        panel->setLocation(destination);
-
-        // trigger an instant layout so we immediately have a proper geometry
-        // rather than waiting around for the event loop
-        panel->updateConstraints(Plasma::StartupCompletedConstraint);
-        panel->flushPendingConstraintsEvents();
-
-        const QRect screenGeom = corona()->screenGeometry(screen());
-        const QRegion availGeom = corona()->availableScreenRegion(screen());
-        int minH = 10;
-        int minW = 10;
-        int w = 35;
-        int h = 35;
-
-        if (destination == Plasma::LeftEdge) {
-            QRect r = availGeom.intersected(QRect(0, 0, w, screenGeom.height())).boundingRect();
-            h = r.height();
-            minW = 35;
-        } else if (destination == Plasma::RightEdge) {
-            QRect r = availGeom.intersected(QRect(screenGeom.width() - w, 0, w, screenGeom.height())).boundingRect();
-            h = r.height();
-            minW = 35;
-        } else if (destination == Plasma::TopEdge) {
-            QRect r = availGeom.intersected(QRect(0, 0, screenGeom.width(), h)).boundingRect();
-            w = r.width();
-            minH = 35;
-        } else if (destination == Plasma::BottomEdge) {
-            QRect r = availGeom.intersected(QRect(0, screenGeom.height() - h, screenGeom.width(), h)).boundingRect();
-            w = r.width();
-            minH = 35;
-        }
-
-        panel->setMinimumSize(minW, minH);
-        panel->setMaximumSize(w, h);
-        panel->resize(w, h);
-    }
-}
-
 void Panel::updateBorders(const QRect &geom, bool themeChange)
 {
     Plasma::Location loc = location();
@@ -538,8 +468,6 @@ void Panel::updateBorders(const QRect &geom, bool themeChange)
 
 void Panel::constraintsEvent(Plasma::Constraints constraints)
 {
-    //kDebug() << "constraints updated with" << constraints << "!!!!!!";
-
     m_maskDirty = true;
 
     if (constraints & Plasma::FormFactorConstraint) {
@@ -597,11 +525,6 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
 
     if (constraints & Plasma::ImmutableConstraint) {
         bool unlocked = immutability() == Plasma::Mutable;
-
-        if (m_addPanelAction) {
-            m_addPanelAction->setEnabled(unlocked);
-            m_addPanelAction->setVisible(unlocked);
-        }
 
         if (m_configureAction) {
             m_configureAction->setEnabled(unlocked);
