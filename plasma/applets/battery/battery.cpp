@@ -662,6 +662,10 @@ void Battery::updateStatus()
     m_batteryLayout->setColumnMinimumWidth(0,200);
     //m_batteryLayout->invalidate();
     //m_controlsLayout->invalidate();
+/*    kDebug() << "SizeHint batteryLabelLabel:" << m_batteryLabelLabel->effectiveSizeHint(Qt::PreferredSize) << m_batteryLabelLabel->nativeWidget()->sizeHint();
+    kDebug() << "SizeHint batteryInfoLabel: " << m_batteryInfoLabel->effectiveSizeHint(Qt::PreferredSize) << m_batteryInfoLabel->nativeWidget()->sizeHint();
+    kDebug() << "SizeHint acLabelLabel:     " << m_acLabelLabel->effectiveSizeHint(Qt::PreferredSize) << m_acLabelLabel->nativeWidget()->sizeHint();
+    kDebug() << "SizeHint acInfoLabel:      " << m_acInfoLabel->effectiveSizeHint(Qt::PreferredSize) << m_acInfoLabel->nativeWidget()->sizeHint();*/
 }
 
 void Battery::openConfig()
@@ -833,17 +837,16 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
     if (formFactor() == Plasma::Horizontal ||
         formFactor() == Plasma::Vertical) {
         m_font = KGlobalSettings::smallestReadableFont();
-        m_font.setWeight(QFont::Bold);
         fm = QFontMetrics(m_font);
         text_width = (fm.width(labelText)+8);
     }
     p->setFont(m_font);
 
     // Let's find a good position for painting the percentage on top of the battery
-    m_textRect = QRectF(qMax(qreal(0.0), contentsRect.left() + (contentsRect.width() - text_width) / 2),
+    m_textRect = QRectF((contentsRect.left() + (contentsRect.width() - text_width) / 2),
                             contentsRect.top() + ((contentsRect.height() - (int)fm.height()) / 2 * 0.9),
-                            qMin(contentsRect.width(), (int)text_width),
-                            fm.height() * 1.2 );
+                            (int)(text_width),
+                            fm.height() * 1.1 );
     //kDebug() << contentsRect << m_textRect;
     //p->setBrush(QColor("green"));
     //p->drawRect(m_textRect);
