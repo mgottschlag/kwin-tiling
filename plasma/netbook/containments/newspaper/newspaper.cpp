@@ -159,30 +159,33 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 
     int insertIndex = -1;
 
-    //if pos is (-1,-1) insert at the end of the Newspaper
-    if (pos != QPoint(-1, -1)) {
+    QPointF localPos = mapToItem(m_mainWidget, pos);
+
+    //if localPos is (-1,-1) insert at the end of the Newspaper
+    if (localPos != QPoint(-1, -1)) {
         for (int i = 0; i < lay->count(); ++i) {
             QGraphicsLayoutItem *li = lay->itemAt(i);
-            if (!dynamic_cast<Plasma::Applet *>(li)) {
+           /* if (!dynamic_cast<Plasma::Applet *>(li)) {
                 continue;
-            }
+            }*/
 
             QRectF siblingGeometry = li->geometry();
             if (m_orientation == Qt::Horizontal) {
                 qreal middle = (siblingGeometry.left() + siblingGeometry.right()) / 2.0;
-                if (pos.x() < middle) {
+                if (localPos.x() < middle) {
                     insertIndex = i;
                     break;
-                } else if (pos.x() <= siblingGeometry.right()) {
+                } else if (localPos.x() <= siblingGeometry.right()) {
                     insertIndex = i + 1;
                     break;
                 }
             } else { //Vertical
                 qreal middle = (siblingGeometry.top() + siblingGeometry.bottom()) / 2.0;
-                if (pos.y() < middle) {
+
+                if (localPos.y() < middle) {
                     insertIndex = i;
                     break;
-                } else if (pos.y() <= siblingGeometry.bottom()) {
+                } else if (localPos.y() <= siblingGeometry.bottom()) {
                     insertIndex = i + 1;
                     break;
                 }
