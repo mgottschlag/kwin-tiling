@@ -308,9 +308,12 @@ void DesktopCorona::loadDefaultLayout()
     loadDefaultApplet("pager", panel);
     loadDefaultApplet("tasks", panel);
     Plasma::Applet *sysTray = loadDefaultApplet("systemtray", panel);
-    QAction *addDefaultApplets = sysTray->action("add default applets");
-    if (addDefaultApplets) {
-        addDefaultApplets->trigger();
+
+    if (sysTray) {
+        QAction *addDefaultApplets = sysTray->action("add default applets");
+        if (addDefaultApplets) {
+            addDefaultApplets->trigger();
+        }
     }
 
     loadDefaultApplet("digital-clock", panel);
