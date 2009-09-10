@@ -87,6 +87,11 @@ AppletOverlay::~AppletOverlay()
 {
 }
 
+void AppletOverlay::appletDestroyed()
+{
+    m_applet = 0;
+}
+
 void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget)
@@ -155,6 +160,7 @@ void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     }
 
     QPointF offset = m_newspaper->m_mainWidget->pos() + m_newspaper->m_scrollWidget->pos();
+    disconnect(m_applet, SIGNAL(destroyed()), this, SLOT(appletDestroyed()));
     m_applet = 0;
 
     Plasma::Applet *oldApplet;
@@ -162,8 +168,8 @@ void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     //FIXME: is there a way more efficient than this linear one? scene()itemAt() won't work because it would always be == this
     foreach (Plasma::Applet *applet, m_newspaper->applets()) {
         if (applet->geometry().contains(event->pos()-offset)) {
-            //TODO: connect to m_aplet::desroyed()
             m_applet = applet;
+            connect(applet, SIGNAL(destroyed()), this, SLOT(appletDestroyed()));
             break;
         }
     }

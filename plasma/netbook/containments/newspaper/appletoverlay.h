@@ -57,6 +57,7 @@ protected:
 
 protected Q_SLOTS:
     void scrollTimeout();
+    void appletDestroyed();
 
 private:
     Plasma::Applet *m_applet;

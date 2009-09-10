@@ -196,7 +196,7 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     } else {
         lay->insertItem(qMin(insertIndex, lay->count()-1), applet);
     }
-kWarning()<<"AAAA"<<insertIndex;
+
     connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
     updateSize();
     //applet->setBackgroundHints(NoBackground);
