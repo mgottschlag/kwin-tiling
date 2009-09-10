@@ -267,7 +267,7 @@ void ScriptEngine::evaluateScript(const QString &script)
     //kDebug() << "evaluating" << m_editor->toPlainText();
     evaluate(script);
     if (hasUncaughtException()) {
-        kDebug() << "catch the exception!";
+        //kDebug() << "catch the exception!";
         QString error = i18n("Error: %1 at line %2\n\nBacktrace:\n%3",
                              uncaughtException().toString(),
                              QString::number(uncaughtExceptionLineNumber()),
