@@ -724,7 +724,6 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
     disconnect(containment, 0, this, 0);
     connect(containment, SIGNAL(zoomRequested(Plasma::Containment*,Plasma::ZoomDirection)),
             this, SLOT(zoom(Plasma::Containment*,Plasma::ZoomDirection)));
-    connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
 
