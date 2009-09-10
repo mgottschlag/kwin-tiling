@@ -38,14 +38,13 @@
 #include "scriptengine.h"
 
 //TODO:
-// save and restore splitter sizes
-// better initial size of editor to output
 // use text editor KPart for syntax highlighting?
 // interative help?
 
 InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     : KDialog(parent),
       m_engine(new ScriptEngine(corona, this)),
+      m_splitter(new QSplitter(Qt::Vertical, this)),
       m_editor(new KTextEdit(this)),
       m_output(new KTextBrowser(this)),
       m_loadButton(new KPushButton(KStandardGuiItem::open(), this)),
@@ -58,9 +57,8 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     setAttribute(Qt::WA_DeleteOnClose);
     setButtons(KDialog::None);
 
-    QSplitter *splitter = new QSplitter(Qt::Vertical, this);
 
-    QWidget *widget = new QWidget(splitter);
+    QWidget *widget = new QWidget(m_splitter);
     QVBoxLayout *editorLayout = new QVBoxLayout(widget);
     editorLayout->addWidget(m_editor);
 
@@ -72,13 +70,14 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     buttonLayout->addWidget(m_executeButton);
     editorLayout->addLayout(buttonLayout);
 
-    splitter->addWidget(widget);
-    splitter->addWidget(m_output);
-    setMainWidget(splitter);
+    m_splitter->addWidget(widget);
+    m_splitter->addWidget(m_output);
+    setMainWidget(m_splitter);
 
     setInitialSize(QSize(500, 400));
     KConfigGroup cg(KGlobal::config(), "InteractiveConsole");
     restoreDialogSize(cg);
+    m_splitter->restoreState(cg.readEntry("SplitterState", QByteArray()));
 
     scriptTextChanged();
 
@@ -95,6 +94,7 @@ InteractiveConsole::~InteractiveConsole()
 {
     KConfigGroup cg(KGlobal::config(), "InteractiveConsole");
     saveDialogSize(cg);
+    cg.writeEntry("SplitterState", m_splitter->saveState());
 }
 
 void InteractiveConsole::loadScript(const QString &script)

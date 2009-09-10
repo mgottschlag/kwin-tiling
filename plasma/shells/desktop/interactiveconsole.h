@@ -27,6 +27,8 @@
 
 #include <KIO/Job>
 
+class QSplitter;
+
 class KFileDialog;
 class KPushButton;
 class KTextEdit;
@@ -69,6 +71,7 @@ private Q_SLOTS:
 
 private:
     ScriptEngine *m_engine;
+    QSplitter *m_splitter;
     KTextEdit *m_editor;
     KTextBrowser *m_output;
     KPushButton *m_loadButton;
