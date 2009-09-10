@@ -105,13 +105,14 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     fav->installEventFilter(this);
     fav->setText(match->text());
     fav->setIcon(match->icon());
-    fav->setMinimumSize(fav->sizeFromIconSize(KIconLoader::SizeHuge));
-    fav->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(fav, SIGNAL(activated()), this, SLOT(launchFavourite()));
 
     qreal left, top, right, bottom;
     m_hoverIndicator->getContentsMargins(&left, &top, &right, &bottom);
     fav->setContentsMargins(left, top, right, bottom);
+
+    fav->setMinimumSize(fav->sizeFromIconSize(KIconLoader::SizeHuge));
+    fav->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(fav, SIGNAL(activated()), this, SLOT(launchFavourite()));
 
     fav->setMinimumSize(fav->size().height(), fav->size().height());
     fav->setPos(fav->size().width()/2-fav->size().width()/2, fav->size().height()/2-fav->size().height()/2);

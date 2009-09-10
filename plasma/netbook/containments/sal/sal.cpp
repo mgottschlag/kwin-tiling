@@ -208,14 +208,15 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         icon->hide();
         icon->setText(match.text());
         icon->setIcon(match.icon());
-        icon->setMinimumSize(icon->sizeFromIconSize(iconSize));
-        icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        connect(icon, SIGNAL(activated()), this, SLOT(launch()));
-        icon->installEventFilter(this);
 
         qreal left, top, right, bottom;
         m_hoverIndicator->getContentsMargins(&left, &top, &right, &bottom);
         icon->setContentsMargins(left, top, right, bottom);
+
+        icon->setMinimumSize(icon->sizeFromIconSize(iconSize));
+        icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        connect(icon, SIGNAL(activated()), this, SLOT(launch()));
+        icon->installEventFilter(this);
 
         if (icon->size().width() > m_maxColumnWidth) {
             m_maxColumnWidth = icon->size().width();
