@@ -181,10 +181,17 @@ void DesktopCorona::processUpdateScripts()
 
     KConfigGroup cg(KGlobal::config(), "Updates");
     QStringList performed = cg.readEntry("performed", QStringList());
-    QMultiMap<QString, QString> scriptPaths;
+    const QString localDir = KGlobal::dirs()->localkdedir();
+    const QString localXdgDir = KGlobal::dirs()->localxdgdatadir();
 
+    QMultiMap<QString, QString> scriptPaths;
     foreach (const QString &script, scripts) {
         if (performed.contains(script)) {
+            continue;
+        }
+
+        if (script.startsWith(localDir) || script.startsWith(localXdgDir)) {
+            kDebug() << "skipping user local script: " << script;
             continue;
         }
 
@@ -207,8 +214,16 @@ bool DesktopCorona::loadDefaultLayoutScripts()
         return false;
     }
 
+    const QString localDir = KGlobal::dirs()->localkdedir();
+    const QString localXdgDir = KGlobal::dirs()->localxdgdatadir();
+
     QMap<QString, QString> scriptPaths;
     foreach (const QString &script, scripts) {
+        if (script.startsWith(localDir) || script.startsWith(localXdgDir)) {
+            kDebug() << "skipping user local script: " << script;
+            continue;
+        }
+
         QFileInfo f(script);
         QString filename = f.fileName();
         if (!scriptPaths.contains(filename)) {
