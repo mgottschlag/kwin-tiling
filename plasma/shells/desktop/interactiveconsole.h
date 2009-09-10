@@ -20,12 +20,14 @@
 #ifndef INTERACTIVECONSOLE
 #define INTERACTIVECONSOLE
 
+#include <QPointer>
 #include <QScriptValue>
 
 #include <KDialog>
 
-class ScriptEngine;
+#include <KIO/Job>
 
+class KFileDialog;
 class KPushButton;
 class KTextEdit;
 class KTextBrowser;
@@ -34,6 +36,8 @@ namespace Plasma
 {
     class Corona;
 } // namespace Plasma
+
+class ScriptEngine;
 
 class InteractiveConsole : public KDialog
 {
@@ -52,16 +56,28 @@ protected Q_SLOTS:
     void print(const QString &string);
 
 private Q_SLOTS:
+    void openScriptFile();
+    void saveScript();
     void scriptTextChanged();
     void evaluateScript();
     void clearEditor();
+    void scriptFileDataRecvd(KIO::Job *job, const QByteArray &data);
+    void scriptFileDataReq(KIO::Job *job, QByteArray &data);
+    void reenableEditor();
+    void saveScriptUrlSelected();
+    void openScriptUrlSelected();
 
 private:
     ScriptEngine *m_engine;
     KTextEdit *m_editor;
     KTextBrowser *m_output;
+    KPushButton *m_loadButton;
+    KPushButton *m_saveButton;
     KPushButton *m_clearButton;
     KPushButton *m_executeButton;
+
+    KFileDialog *m_fileDialog;
+    QPointer<KIO::Job> m_job;
 };
 
 #endif

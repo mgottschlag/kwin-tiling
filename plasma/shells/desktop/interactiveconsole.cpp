@@ -25,9 +25,11 @@
 #include <QSplitter>
 #include <QVBoxLayout>
 
+#include <KFileDialog>
 #include <KLocale>
 #include <KPushButton>
 #include <KShell>
+#include <KStandardGuiItem>
 #include <KTextEdit>
 #include <KTextBrowser>
 
@@ -46,8 +48,11 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
       m_engine(new ScriptEngine(corona, this)),
       m_editor(new KTextEdit(this)),
       m_output(new KTextBrowser(this)),
+      m_loadButton(new KPushButton(KStandardGuiItem::open(), this)),
+      m_saveButton(new KPushButton(KStandardGuiItem::save(), this)),
       m_clearButton(new KPushButton(KIcon("edit-clear"), i18n("&Clear"), this)),
-      m_executeButton(new KPushButton(KIcon("system-run"), i18n("&Run Script"), this))
+      m_executeButton(new KPushButton(KIcon("system-run"), i18n("&Run Script"), this)),
+      m_fileDialog(0)
 {
     setWindowTitle(KDialog::makeStandardCaption(i18n("Desktop Shell Scripting Console")));
     setAttribute(Qt::WA_DeleteOnClose);
@@ -60,6 +65,8 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     editorLayout->addWidget(m_editor);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
+    buttonLayout->addWidget(m_loadButton);
+    buttonLayout->addWidget(m_saveButton);
     buttonLayout->addStretch(10);
     buttonLayout->addWidget(m_clearButton);
     buttonLayout->addWidget(m_executeButton);
@@ -75,6 +82,8 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
 
     scriptTextChanged();
 
+    connect(m_loadButton, SIGNAL(clicked()), this, SLOT(openScriptFile()));
+    connect(m_saveButton, SIGNAL(clicked()), this, SLOT(saveScript()));
     connect(m_executeButton, SIGNAL(clicked()), this, SLOT(evaluateScript()));
     connect(m_clearButton, SIGNAL(clicked()), this, SLOT(clearEditor()));
     connect(m_editor, SIGNAL(textChanged()), this, SLOT(scriptTextChanged()));
@@ -111,8 +120,115 @@ void InteractiveConsole::print(const QString &string)
 void InteractiveConsole::scriptTextChanged()
 {
     const bool enable = !m_editor->document()->isEmpty();
+    m_saveButton->setEnabled(enable);
     m_clearButton->setEnabled(enable);
     m_executeButton->setEnabled(enable);
+}
+
+void InteractiveConsole::openScriptFile()
+{
+    if (m_fileDialog) {
+        delete m_fileDialog;
+    }
+
+    m_fileDialog = new KFileDialog(KUrl(), QString(), 0);
+    m_fileDialog->setOperationMode(KFileDialog::Opening);
+    m_fileDialog->setCaption(i18n("Open Script File"));
+
+    QStringList mimetypes;
+    mimetypes << "application/javascript";
+    m_fileDialog->setMimeFilter(mimetypes);
+
+    connect(m_fileDialog, SIGNAL(finished()), this, SLOT(openScriptUrlSelected()));
+    m_fileDialog->show();
+}
+
+void InteractiveConsole::openScriptUrlSelected()
+{
+    if (!m_fileDialog) {
+        return;
+    }
+
+    KUrl url = m_fileDialog->selectedUrl();
+    m_fileDialog->deleteLater();
+    m_fileDialog = 0;
+
+    if (url.isEmpty()) {
+        return;
+    }
+
+    m_editor->clear();
+    m_editor->setEnabled(false);
+
+    if (m_job) {
+        m_job->kill();
+    }
+
+    m_job = KIO::get(url, KIO::Reload, KIO::HideProgressInfo);
+    connect(m_job, SIGNAL(data(KIO::Job*,QByteArray)), this, SLOT(scriptFileDataRecvd(KIO::Job*,QByteArray)));
+    connect(m_job, SIGNAL(result(KJob*)), this, SLOT(reenableEditor()));
+}
+
+void InteractiveConsole::scriptFileDataRecvd(KIO::Job *job, const QByteArray &data)
+{
+    if (job == m_job) {
+        m_editor->insertPlainText(data);
+    }
+}
+
+void InteractiveConsole::saveScript()
+{
+    if (m_fileDialog) {
+        delete m_fileDialog;
+    }
+
+    m_fileDialog = new KFileDialog(KUrl(), QString(), 0);
+    m_fileDialog->setOperationMode(KFileDialog::Saving);
+    m_fileDialog->setCaption(i18n("Open Script File"));
+
+    QStringList mimetypes;
+    mimetypes << "application/javascript";
+    m_fileDialog->setMimeFilter(mimetypes);
+
+    connect(m_fileDialog, SIGNAL(finished()), this, SLOT(saveScriptUrlSelected()));
+    m_fileDialog->show();
+}
+
+void InteractiveConsole::saveScriptUrlSelected()
+{
+    if (!m_fileDialog) {
+        return;
+    }
+
+    KUrl url = m_fileDialog->selectedUrl();
+    if (url.isEmpty()) {
+        return;
+    }
+
+    m_editor->setEnabled(false);
+
+    if (m_job) {
+        m_job->kill();
+    }
+
+    m_job = KIO::put(url, -1, KIO::HideProgressInfo);
+    connect(m_job, SIGNAL(dataReq(KIO::Job*,QByteArray&)), this, SLOT(scriptFileDataReq(KIO::Job*,QByteArray&)));
+    connect(m_job, SIGNAL(result(KJob*)), this, SLOT(reenableEditor()));
+}
+
+void InteractiveConsole::scriptFileDataReq(KIO::Job *job, QByteArray &data)
+{
+    if (!m_job || m_job != job) {
+        return;
+    }
+
+    data.append(m_editor->toPlainText().toLocal8Bit());
+    m_job = 0;
+}
+
+void InteractiveConsole::reenableEditor()
+{
+    m_editor->setEnabled(true);
 }
 
 void InteractiveConsole::evaluateScript()
