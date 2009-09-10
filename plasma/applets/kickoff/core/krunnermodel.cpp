@@ -39,7 +39,48 @@ using namespace Kickoff;
 Plasma::RunnerManager * _runnerManager = NULL;
 Plasma::RunnerManager * runnerManager() {
     if (_runnerManager == NULL) {
-        _runnerManager = new Plasma::RunnerManager();
+        KConfigGroup conf =
+            componentData().config()->group("KRunner");
+
+        conf.writeEntry("loadAll", false);
+        _runnerManager = new Plasma::RunnerManager(conf);
+
+        // initializing allowed runners
+        QStringList allowed;
+        allowed
+            << "placesEnabled"
+            << "windowsEnabled"
+            << "shellEnabled"
+            << "servicesEnabled"
+            << "bookmarksEnabled"
+            << "recentdocumentsEnabled"
+            << "locationsEnabled";
+        _runnerManager->setAllowedRunners(allowed);
+
+        conf.sync();
+
+        // runner:  "konquerorsessions"   "Konqueror Sessions"
+        // runner:  "desktopsessions"   "Desktop Sessions"
+        // runner:  "places"   "Places"
+        // runner:  "windows"   "Windows"
+        // runner:  "nepomuksearch"   "Nepomuk Desktop Search Runner"
+        // runner:  "plasma-desktop"   "Plasma Desktop Shell"
+        // runner:  "services"   "Applications"
+        // runner:  "PowerDevil"   "PowerDevil"
+        // runner:  "browserhistory"   "Web Browser History"
+        // runner:  "shell"   "Command Line"
+        // runner:  "katesessions"   "Kate Sessions"
+        // runner:  "locations"   "Locations"
+        // runner:  "webshortcuts"   "Web Shortcuts"
+        // runner:  "kabccontacts"   "Contacts"
+        // runner:  "konsolesessions"   "Konsole Sessions"
+        // runner:  "recentdocuments"   "Recent Documents"
+        // runner:  "calculator"   "Calculator"
+        // runner:  "amarok"   "Amarok"
+        // runner:  "wikipedia"   "Wikipedia"
+        // runner:  "kopete"   "Kopete Contact Runner"
+        // runner:  "bookmarks"   "Bookmarks"
+        // runner:  "unitconverter"   "Unit Converter"
     }
     return _runnerManager;
 }
@@ -129,6 +170,9 @@ void KRunnerModel::timerEvent(QTimerEvent * event)
     if (event->timerId() == d->searchDelay.timerId()) {
         d->searchDelay.stop();
         runnerManager()->launchQuery(d->searchQuery);
+        foreach (Plasma::AbstractRunner * runner, runnerManager()->runners()) {
+            qDebug() << "runner: " << runner->id() << " " << runner->name();
+        }
     };
 }
 
