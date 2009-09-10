@@ -162,6 +162,7 @@ void SolidActions::editAction()
     }
     editUi->setPredicate( item );
     // Display us!
+    editUi->setWindowIcon( windowIcon() );
     editUi->show();
 }
 

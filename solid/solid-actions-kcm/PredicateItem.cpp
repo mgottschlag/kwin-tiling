@@ -146,7 +146,7 @@ QString PredicateItem::prettyName() const
             compName = i18n("The devices property %1 must equal %2", prettyProperty, value.toString());
             break;
         case Solid::Predicate::Mask:
-            compName = i18n("The device property %1 must contain %2", property, value.toString());
+            compName = i18n("The device property %1 must contain %2", prettyProperty, value.toString());
             break;
         default:
             break;
