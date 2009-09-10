@@ -575,6 +575,7 @@ Plasma::Corona* PlasmaApp::corona()
         m_corona = c;
         c->setItemIndexMethod(QGraphicsScene::NoIndex);
         c->initializeLayout();
+        c->processUpdateScripts();
         c->checkScreens();
         kDebug() << " ------------------------------------------>" << t.elapsed();
     }

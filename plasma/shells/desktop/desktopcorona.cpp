@@ -171,6 +171,34 @@ QRegion DesktopCorona::availableScreenRegion(int id) const
     return r;
 }
 
+void DesktopCorona::processUpdateScripts()
+{
+    QStringList scripts = KGlobal::dirs()->findAllResources("data", "plasma-desktop/updates/*.js");
+    if (scripts.isEmpty()) {
+        //kDebug() << "no update scripts";
+        return ;
+    }
+
+    KConfigGroup cg(KGlobal::config(), "Updates");
+    QStringList performed = cg.readEntry("performed", QStringList());
+    QMultiMap<QString, QString> scriptPaths;
+
+    foreach (const QString &script, scripts) {
+        if (performed.contains(script)) {
+            continue;
+        }
+
+        QFileInfo f(script);
+        QString filename = f.fileName();
+        scriptPaths.insert(filename, script);
+        performed.append(script);
+    }
+
+    evaluateScripts(scriptPaths);
+    cg.writeEntry("performed", performed);
+    KGlobal::config()->sync();
+}
+
 bool DesktopCorona::loadDefaultLayoutScripts()
 {
     QStringList scripts = KGlobal::dirs()->findAllResources("data", "plasma-desktop/init/*.js");
@@ -188,11 +216,17 @@ bool DesktopCorona::loadDefaultLayoutScripts()
         }
     }
 
+    evaluateScripts(scriptPaths);
+    return !containments().isEmpty();
+}
+
+void DesktopCorona::evaluateScripts(QMap<QString, QString> scripts)
+{
     ScriptEngine scriptEngine(this);
     connect(&scriptEngine, SIGNAL(printError(QString)), this, SLOT(printScriptError(QString)));
     connect(&scriptEngine, SIGNAL(print(QString)), this, SLOT(printScriptMessage(QString)));
 
-    foreach (const QString &script, scriptPaths) {
+    foreach (const QString &script, scripts) {
         QFile file(script);
         if (file.open(QIODevice::ReadOnly | QIODevice::Text) ) {
             QString code = file.readAll();
@@ -200,8 +234,6 @@ bool DesktopCorona::loadDefaultLayoutScripts()
             scriptEngine.evaluateScript(code);
         }
     }
-
-    return !containments().isEmpty();
 }
 
 void DesktopCorona::printScriptError(const QString &error)

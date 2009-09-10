@@ -68,8 +68,10 @@ public:
     virtual QRect screenGeometry(int id) const;
     virtual QRegion availableScreenRegion(int id) const;
     bool loadDefaultLayoutScripts();
+    void processUpdateScripts();
 
 protected Q_SLOTS:
+    void evaluateScripts(QMap<QString, QString> scripts);
     void screenAdded(Kephal::Screen *s);
     void saveDefaultSetup();
     void printScriptError(const QString &error);
