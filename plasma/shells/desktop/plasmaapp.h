@@ -105,6 +105,7 @@ public Q_SLOTS:
      * Request a zoom based on the containment
      */
     void zoom(Plasma::Containment*, Plasma::ZoomDirection);
+    void createWaitingPanels();
 
 protected:
 #ifdef Q_WS_X11
@@ -130,7 +131,6 @@ private Q_SLOTS:
     void createView(Plasma::Containment *containment);
     void panelRemoved(QObject* panel);
     void waitingPanelRemoved(QObject* panel);
-    void createWaitingPanels();
     void screenRemoved(int id);
     void compositingChanged();
     void addContainment();

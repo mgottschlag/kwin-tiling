@@ -288,7 +288,10 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     // KWin setup
     KWindowSystem::setOnAllDesktops(winId(), true);
-    QTimer::singleShot(0, this, SLOT(init()));
+    kDebug() << "about to set the containment" << (QObject*)panel;
+    setContainment(panel);
+    init();
+//    QTimer::singleShot(0, this, SLOT(init()));
 }
 
 PanelView::~PanelView()

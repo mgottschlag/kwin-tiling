@@ -111,6 +111,7 @@ QScriptValue ScriptEngine::newPanel(QScriptContext *context, QScriptEngine *engi
     return createContainment("panel", "panel", context, engine);
 }
 
+#include "plasmaapp.h"
 QScriptValue ScriptEngine::createContainment(const QString &type, const QString &defaultPlugin,
                                              QScriptContext *context, QScriptEngine *engine)
 {
@@ -134,8 +135,14 @@ QScriptValue ScriptEngine::createContainment(const QString &type, const QString 
     ScriptEngine *env = envFor(engine);
     Plasma::Containment *c = env->m_corona->addContainment(plugin);
     if (c) {
-        c->updateConstraints(Plasma::StartupCompletedConstraint);
+        if (type == "panel") {
+            // some defaults
+            c->setScreen(0);
+            c->setLocation(Plasma::TopEdge);
+        }
+        c->updateConstraints(Plasma::AllConstraints | Plasma::StartupCompletedConstraint);
         c->flushPendingConstraintsEvents();
+        PlasmaApp::self()->createWaitingPanels();
     }
 
     return wrap(c, engine);
