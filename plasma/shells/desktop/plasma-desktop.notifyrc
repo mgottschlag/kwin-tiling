@@ -10,12 +10,12 @@ Comment[tr]=Plasma Masaüstü Kabuğu
 Comment[uk]=Оболонка стільниці Плазми
 Comment[x-test]=xxPlasma Desktop Shellxx
 Comment[zh_TW]=Plasma 桌面 shell
-Name=Plasma
+Name=Workspace
 Name[uk]=Плазма
 Name[x-test]=xxPlasmaxx
 
 [Event/newplasmoid]
-Name=New plasmoid published
+Name=New widget published
 Name[nb]=Ny plasmoide publisert
 Name[nds]=Nieg Plasma-Lüttprogramm apenmaakt
 Name[pt]=Novo plasmóide publicado
@@ -25,7 +25,7 @@ Name[tr]=Yeni bir Plasma programcığı yayınlandı
 Name[uk]=З’явився новий плазмоїд
 Name[x-test]=xxNew plasmoid publishedxx
 Name[zh_TW]=已發布新的 plasmoid 元件
-Comment=A new plasmoid is published on the network.
+Comment=A new widget has become available on the network.
 Comment[nb]=En ny plasmoide er publisert på nettverket.
 Comment[nds]=Dat gifft en nieg Plasma-Lüttprogramm in't Nett.
 Comment[pt]=Está publicado um novo plasmóide na rede.
