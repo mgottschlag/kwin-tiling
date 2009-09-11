@@ -22,6 +22,8 @@
 #include "ui_slideshowconfig.h"
 
 class KFileDialog;
+class KJob;
+
 class BackgroundListModel;
 
 class Image : public Plasma::Wallpaper
@@ -57,6 +59,8 @@ class Image : public Plasma::Wallpaper
         void modified();
         void fileDialogFinished();
         void setWallpaper(const KUrl &url);
+        void setWallpaper(const QString &path);
+        void wallpaperRetrieved(KJob *job);
 
     protected:
         void init(const KConfigGroup &config);

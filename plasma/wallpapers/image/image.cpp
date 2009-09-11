@@ -20,6 +20,7 @@
 #include <KFileDialog>
 #include <KRandom>
 #include <KStandardDirs>
+#include <KIO/Job>
 #include <KNS/Engine>
 
 #include <Plasma/Theme>
@@ -329,11 +330,28 @@ void Image::setSingleImage()
 void Image::setWallpaper(const KUrl &url)
 {
     ///kDebug() << "droppage!" << url << url.isLocalFile();
-    if (!url.isLocalFile()) {
-        return;
-    }
+    if (url.isLocalFile()) {
+        setWallpaper(url.toLocalFile());
+    } else {
+        QString wallpaperPath = KGlobal::dirs()->locateLocal("wallpaper", url.fileName());
 
-    QString path = url.toLocalFile();
+        if (!wallpaperPath.isEmpty()) {
+            KIO::FileCopyJob *job = KIO::file_copy(url, KUrl(wallpaperPath));
+            connect(job, SLOT(slotResult(KJob*)), this, SLOT(wallpaperRetrieved(KJob*)));
+        }
+    }
+}
+
+void Image::wallpaperRetrieved(KJob *job)
+{
+    KIO::FileCopyJob *copyJob = qobject_cast<KIO::FileCopyJob *>(job);
+    if (copyJob) {
+        setWallpaper(copyJob->destUrl().toLocalFile());
+    }
+}
+
+void Image::setWallpaper(const QString &path)
+{
     if (m_wallpaper.isEmpty()) {
         m_slideshowBackgrounds.append(path);
         m_currentSlide = m_slideshowBackgrounds.size() - 2;
