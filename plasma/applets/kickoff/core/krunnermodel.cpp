@@ -32,7 +32,7 @@
 #include <Plasma/AbstractRunner>
 #include <Plasma/RunnerManager>
 
-#define DELAY_TIME 500
+#define DELAY_TIME 50
 
 using namespace Kickoff;
 
