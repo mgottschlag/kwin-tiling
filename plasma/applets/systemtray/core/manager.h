@@ -146,6 +146,11 @@ signals:
     void jobAdded(SystemTray::Job *job);
 
     /**
+     * Emitted when the state of a job changes
+     **/
+    void jobStateChanged(SystemTray::Job *job);
+
+    /**
      * Emitted when something about a job changes
      **/
     void jobChanged(SystemTray::Job *job);
