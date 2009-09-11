@@ -52,6 +52,7 @@ CFontPreview::CFontPreview(QWidget *parent)
 CFontPreview::~CFontPreview()
 {
     delete itsTip;
+    delete itsEngine;
 }
 
 void CFontPreview::showFont(const KUrl &url, const QString &name, unsigned long styleInfo,

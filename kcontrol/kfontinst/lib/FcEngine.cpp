@@ -540,6 +540,7 @@ CFcEngine::~CFcEngine()
 {
     // Clear any fonts that may have been added...
     FcConfigAppFontClear(FcConfigGetCurrent());
+    delete itsXft;
 }
 
 void CFcEngine::readConfig(KConfig &cfg)
@@ -1568,7 +1569,6 @@ void CFcEngine::reinit()
 {
     if(theirFcDirty)
     {
-        FcInitLoadConfigAndFonts();
         FcInitReinitialize();
         theirFcDirty=false;
     }

@@ -29,6 +29,7 @@ namespace KFI
 CFontFilterProxyStyle::CFontFilterProxyStyle(QWidget *parent)
     : QStyle(), parent(parent)
 {
+    setParent(parent);
 }
 
 QStyle *CFontFilterProxyStyle::style() const
