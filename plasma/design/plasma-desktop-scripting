@@ -16,15 +16,15 @@ Running Scripts
 There are three ways that scripts can be executed in plasma-desktop:
 
 * on first run: when plasma-desktop is first started any scripts in
-  $APPDATA/plasma/init/ with a ".js" suffix are run. If there is more than one script, they are
-  run serially in the alphabetical order of the file names.
+  $APPDATA/plasma-desktop/init/ with a ".js" suffix are run. If there is more than one script,
+  they are run serially in the alphabetical order of the file names.
 
   NOTE: For security reasons, scripts located in the user's home directory will NOT be
   automatically run during this phase.
 
 * on update: when plasma-desktop is started, it will check in
-  $APPDATA/plasma/updates/ with a ".js" suffix for scripts that have not yet been run. If there
-  is more than one script which has not been run yet they will be executed
+  $APPDATA/plasma-desktop/updates/ with a ".js" suffix for scripts that have not yet been run.
+  If there is more than one script which has not been run yet they will be executed
   serially in the alphabetical order of the file names.
 
   A record of which update scripts have been run is kept in the application's config file
