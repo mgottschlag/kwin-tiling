@@ -38,9 +38,10 @@ class PlasmaDesktopRunner : public Plasma::AbstractRunner
         void match(Plasma::RunnerContext &context);
         void run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &action);
 
-    private:
-        void checkAvailability(const QString &name, const QString &oldOwner, const QString &newOwner);
+    private slots:
+      void checkAvailability(const QString &name, const QString &oldOwner, const QString &newOwner);
 
+    private:
         const QString m_desktopConsoleKeyword;
         bool m_enabled;
 };
