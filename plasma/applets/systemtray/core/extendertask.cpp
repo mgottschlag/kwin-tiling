@@ -140,10 +140,15 @@ void ExtenderTaskBusyWidget::updateTask()
     int pausedJobs = 0;
     int completedJobs = 0;
     foreach (const Job *job, m_manager->jobs()) {
-        if (job->state() == Job::Running) {
-            runningJobs++;
-        } else if (job->state() == Job::Suspended) {
-            pausedJobs++;
+        switch (job->state()) {
+            case Job::Running:
+                ++runningJobs;
+                break;
+            case Job::Suspended:
+                ++pausedJobs;
+                break;
+            default:
+                break;
         }
     }
 
