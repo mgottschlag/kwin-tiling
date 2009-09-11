@@ -23,9 +23,9 @@
 
 ActionEditor::ActionEditor(QWidget *parent) : KDialog(parent)
 {
-    topItem = 0;
-    rootItem = new PredicateItem( Solid::Predicate(), 0 );
-    rootModel = new PredicateModel( rootItem, this );
+    topItem = new PredicateItem( Solid::Predicate(), 0 );
+    rootItem = 0;
+    rootModel = new PredicateModel( topItem, this );
     // Prepare the dialog
     setInitialSize( QSize(600, 600) ); // Set a decent initial size
     setModal( true );
