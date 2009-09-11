@@ -20,7 +20,6 @@
 
 class QEventLoop;
 class KProgressDialog;
-class KDirLister;
 
 namespace Plasma
 {
@@ -88,7 +87,6 @@ public:
 
 public slots:
     void start();
-    void remoteFinished();
 
 signals:
     void finished();
@@ -98,11 +96,7 @@ private:
     const BackgroundListModel *m_container;
     QStringList m_paths;
     QStringList m_papersFound;
-    KDirLister *m_lister;
-    KProgressDialog *m_progress;
     QEventLoop *m_eventLoop;
-
-    int m_counter;
 };
 
 #endif // BACKGROUNDLISTMODEL_H
