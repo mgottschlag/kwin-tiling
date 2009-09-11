@@ -46,10 +46,26 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action readerType]
 Name=Reader Type
+Name[id]=Tipe Pembaca
+Name[nds]=Lesertyp
+Name[pt]=Tipo de Leitor
+Name[pt_BR]=Tipo de Leitor
+Name[sv]=Typ av läsare
+Name[tr]=Okuyucu Tipi
+Name[uk]=Тип засобу зчитування
+Name[x-test]=xxReader Typexx
 
 [Desktop Entry]
 Actions=objectName;readerType;
 Name=Solid Device
+Name[id]=Divais Solid
+Name[nds]=Solid-Reedschap
+Name[pt]=Dispositivo do Solid
+Name[pt_BR]=Dispositivo do Solid
+Name[sv]=Solid-enhet
+Name[tr]=Solid Aygıtı
+Name[uk]=Пристрій Solid
+Name[x-test]=xxSolid Devicexx
 Type=Service
 X-KDE-ServiceTypes=SolidDevice
 X-KDE-Solid-Actions-Type=SmartCardReader

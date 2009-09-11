@@ -275,6 +275,14 @@ Name[zh_TW]=音效卡類型
 [Desktop Entry]
 Actions=deviceType;driver;driverHandle;name;objectName;soundcardType;
 Name=Solid Device
+Name[id]=Divais Solid
+Name[nds]=Solid-Reedschap
+Name[pt]=Dispositivo do Solid
+Name[pt_BR]=Dispositivo do Solid
+Name[sv]=Solid-enhet
+Name[tr]=Solid Aygıtı
+Name[uk]=Пристрій Solid
+Name[x-test]=xxSolid Devicexx
 Type=Service
 X-KDE-ServiceTypes=SolidDevice
 X-KDE-Solid-Actions-Type=AudioInterface

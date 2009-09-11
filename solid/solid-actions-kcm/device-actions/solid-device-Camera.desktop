@@ -140,6 +140,14 @@ Name[zh_TW]=支援的協定
 [Desktop Entry]
 Actions=objectName;supportedDrivers;supportedProtocols;
 Name=Solid Device
+Name[id]=Divais Solid
+Name[nds]=Solid-Reedschap
+Name[pt]=Dispositivo do Solid
+Name[pt_BR]=Dispositivo do Solid
+Name[sv]=Solid-enhet
+Name[tr]=Solid Aygıtı
+Name[uk]=Пристрій Solid
+Name[x-test]=xxSolid Devicexx
 Type=Service
 X-KDE-ServiceTypes=SolidDevice
 X-KDE-Solid-Actions-Type=Camera

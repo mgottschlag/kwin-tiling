@@ -165,6 +165,14 @@ Name[zh_TW]=序列類型
 [Desktop Entry]
 Actions=driverHandle;objectName;port;serialType;
 Name=Solid Device
+Name[id]=Divais Solid
+Name[nds]=Solid-Reedschap
+Name[pt]=Dispositivo do Solid
+Name[pt_BR]=Dispositivo do Solid
+Name[sv]=Solid-enhet
+Name[tr]=Solid Aygıtı
+Name[uk]=Пристрій Solid
+Name[x-test]=xxSolid Devicexx
 Type=Service
 X-KDE-ServiceTypes=SolidDevice
 X-KDE-Solid-Actions-Type=SerialInterface

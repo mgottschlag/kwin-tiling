@@ -211,6 +211,14 @@ Name[zh_TW]=可移除
 [Desktop Entry]
 Actions=bus;driveType;hotpluggable;objectName;removable;
 Name=Solid Device
+Name[id]=Divais Solid
+Name[nds]=Solid-Reedschap
+Name[pt]=Dispositivo do Solid
+Name[pt_BR]=Dispositivo do Solid
+Name[sv]=Solid-enhet
+Name[tr]=Solid Aygıtı
+Name[uk]=Пристрій Solid
+Name[x-test]=xxSolid Devicexx
 Type=Service
 X-KDE-ServiceTypes=SolidDevice
 X-KDE-Solid-Actions-Type=StorageDrive
