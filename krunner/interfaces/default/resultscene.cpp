@@ -62,8 +62,6 @@ ResultScene::ResultScene(Plasma::RunnerManager *manager, QWidget *focusBase, QOb
     m_selectionBar = new SelectionBar(0);
     addItem(m_selectionBar);
 
-    connect(m_selectionBar, SIGNAL(ensureVisibility(QGraphicsItem *)), this, SIGNAL(ensureVisibility(QGraphicsItem *)));
-
     m_selectionBar->hide();
     updateItemMargins();
 
