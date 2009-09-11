@@ -42,6 +42,7 @@ public:
 private:
     SolidActionData * actionData();
 
+    PredicateItem * topItem;
     PredicateItem * rootItem;
     PredicateModel * rootModel;
 

@@ -23,6 +23,7 @@
 
 ActionEditor::ActionEditor(QWidget *parent) : KDialog(parent)
 {
+    topItem = 0;
     rootItem = new PredicateItem( Solid::Predicate(), 0 );
     rootModel = new PredicateModel( rootItem, this );
     // Prepare the dialog
@@ -46,15 +47,18 @@ ActionEditor::ActionEditor(QWidget *parent) : KDialog(parent)
 
 ActionEditor::~ActionEditor()
 {
+    if( topItem ) {
+        delete topItem;
+    }
 }
 
 void ActionEditor::setPredicate( Solid::Predicate predicate )
 {
-    if( rootItem ) {
-        delete rootItem;
+    if( topItem ) {
+        delete topItem;
     }
-    rootItem = new PredicateItem( Solid::Predicate(), 0 );
-    rootItem = new PredicateItem( predicate, rootItem );
+    topItem = new PredicateItem( Solid::Predicate(), 0 );
+    rootItem = new PredicateItem( predicate, topItem );
     rootModel->setRootPredicate( rootItem->parent() );
 
     // Select the top item, not the hidden root
