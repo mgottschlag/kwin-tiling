@@ -240,7 +240,7 @@ void Applet::checkGeometry()
         qreal s;
 
         if (m_orientation == Qt::Horizontal) {
-            x = m_items.count();
+            x = m_items.count() * 3;
             s = size.height();
         } else {
             y = m_items.count();
