@@ -36,6 +36,9 @@
 #include <Plasma/IconWidget>
 #include <Plasma/View>
 #include <Plasma/Theme>
+#include <Plasma/Dialog>
+#include <Plasma/Containment>
+#include <Plasma/Corona>
 
 //X
 #ifdef Q_WS_X11
@@ -48,7 +51,9 @@ CurrentAppControl::CurrentAppControl(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_syncDelay(false),
       m_activeWindow(0),
-      m_pendingActiveWindow(0)
+      m_pendingActiveWindow(0),
+      m_listDialog(0),
+      m_listWidget(0)
 {
     m_currentTask = new Plasma::IconWidget(this);
     m_currentTask->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -167,15 +172,79 @@ void CurrentAppControl::closeWindow()
 
 void CurrentAppControl::listWindows()
 {
+    if (KWindowSystem::compositingActive()) {
 #ifdef Q_WS_X11
-    QVarLengthArray<long, 32> data(1);
-    data[0] = KWindowSystem::currentDesktop();
-    Display *dpy = QX11Info::display();
-    const WId winId = view()->winId();
-    Atom atom = XInternAtom(dpy, "_KDE_PRESENT_WINDOWS_DESKTOP", False);
-    XChangeProperty(dpy, winId, atom, atom, 32, PropModeReplace,
-                     reinterpret_cast<unsigned char *>(data.data()), data.size());
+        QVarLengthArray<long, 32> data(1);
+        data[0] = KWindowSystem::currentDesktop();
+        Display *dpy = QX11Info::display();
+        const WId winId = view()->winId();
+        Atom atom = XInternAtom(dpy, "_KDE_PRESENT_WINDOWS_DESKTOP", False);
+        XChangeProperty(dpy, winId, atom, atom, 32, PropModeReplace,
+                        reinterpret_cast<unsigned char *>(data.data()), data.size());
 #endif
+    } else if (!m_listDialog) {
+        m_listDialog = new Plasma::Dialog();
+        m_listWidget = new QGraphicsWidget(this);
+        m_listDialog->setGraphicsWidget(m_listWidget);
+        Plasma::Corona *corona = 0;
+        if (containment() && containment()->corona()) {
+            corona = containment()->corona();
+            corona->addOffscreenWidget(m_listWidget);
+        }
+
+        m_listDialog->setWindowFlags(Qt::FramelessWindowHint|Qt::Dialog);
+        KWindowSystem::setType(m_listDialog->winId(), NET::PopupMenu);
+        m_listDialog->setAttribute(Qt::WA_DeleteOnClose);
+        m_listDialog->installEventFilter(this);
+
+        connect(m_listDialog, SIGNAL(destroyed()), this, SLOT(closePopup()));
+
+        QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(m_listWidget);
+        lay->setOrientation(Qt::Vertical);
+
+        foreach(WId window, KWindowSystem::stackingOrder()) {
+            KWindowInfo info = KWindowSystem::windowInfo(window, NET::WMName);
+            Plasma::IconWidget *icon = new Plasma::IconWidget(m_listWidget);
+            icon->setOrientation(Qt::Horizontal);
+            icon->setText(info.name());
+            icon->setIcon(KWindowSystem::icon(window, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium));
+            icon->setTextBackgroundColor(QColor());
+            icon->setDrawBackground(true);
+            icon->setMinimumSize(icon->effectiveSizeHint(Qt::PreferredSize));
+            connect(icon, SIGNAL(clicked()), this, SLOT(windowItemClicked()));
+            m_windowIcons[icon] = window;
+            lay->addItem(icon);
+        }
+        if (corona) {
+            m_listDialog->move(containment()->corona()->popupPosition(this, m_listDialog->size()));
+        }
+        m_listDialog->show();
+    } else {
+        closePopup();
+    }
+}
+
+void CurrentAppControl::windowItemClicked()
+{
+    if (sender() && m_windowIcons.contains(static_cast<Plasma::IconWidget*>(sender()))) {
+        KWindowSystem::forceActiveWindow(m_windowIcons.value(static_cast<Plasma::IconWidget*>(sender())));
+    }
+}
+
+void CurrentAppControl::closePopup()
+{
+    m_listDialog->deleteLater();
+    m_listWidget->deleteLater();
+    m_listDialog = 0;
+    m_listWidget = 0;
+}
+
+bool CurrentAppControl::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == m_listDialog && event->type() == QEvent::WindowDeactivate) {
+        closePopup();
+    }
+    return false;
 }
 
 #include "currentappcontrol.moc"

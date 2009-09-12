@@ -27,6 +27,7 @@
 namespace Plasma
 {
     class IconWidget;
+    class Dialog;
 }
 
 class CurrentAppControl : public Plasma::Applet
@@ -40,6 +41,9 @@ public:
     void init();
     void constraintsEvent(Plasma::Constraints constraints);
 
+protected:
+    bool eventFilter(QObject *watched, QEvent *event);
+
 protected Q_SLOTS:
     void activeWindowChanged(WId id);
     void windowChanged(WId id);
@@ -47,6 +51,8 @@ protected Q_SLOTS:
     void syncActiveWindow();
     void closeWindow();
     void listWindows();
+    void windowItemClicked();
+    void closePopup();
 
 private:
     Plasma::IconWidget *m_currentTask;
@@ -54,6 +60,10 @@ private:
     bool m_syncDelay;
     WId m_activeWindow;
     WId m_pendingActiveWindow;
+
+    Plasma::Dialog *m_listDialog;
+    QGraphicsWidget *m_listWidget;
+    QHash<Plasma::IconWidget *, WId> m_windowIcons;
 };
 
 K_EXPORT_PLASMA_APPLET(currentappcontrol, CurrentAppControl)
