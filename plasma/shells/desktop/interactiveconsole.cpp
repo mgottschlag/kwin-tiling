@@ -83,7 +83,9 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     foreach (const KService::Ptr service, offers) {
         m_editorPart = service->createInstance<KTextEditor::Document>(widget);
         if (m_editorPart) {
-            editorLayout->addWidget(m_editorPart->createView(widget));
+            KTextEditor::View * view = m_editorPart->createView(widget);
+            view->setContextMenu(view->defaultContextMenu());
+            editorLayout->addWidget(view);
             connect(m_editorPart, SIGNAL(textChanged(KTextEditor::Document*)),
                     this, SLOT(scriptTextChanged()));
             break;
