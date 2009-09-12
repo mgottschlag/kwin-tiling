@@ -34,6 +34,7 @@
 #include <KStandardAction>
 #include <KTextBrowser>
 #include <KTextEdit>
+#include <KTextEditor/ConfigInterface>
 #include <KTextEditor/Document>
 #include <KTextEditor/View>
 #include <KToolBar>
@@ -53,7 +54,7 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
       m_editorPart(0),
       m_editor(0),
       m_loadAction(KStandardAction::open(this, SLOT(openScriptFile()), this)),
-      m_saveAction(KStandardAction::save(this, SLOT(saveScript()), this)),
+      m_saveAction(KStandardAction::saveAs(this, SLOT(saveScript()), this)),
       m_clearAction(KStandardAction::clear(this, SLOT(clearEditor()), this)),
       m_executeAction(new KAction(KIcon("system-run"), i18n("&Execute"), this)),
       m_fileDialog(0)
@@ -85,6 +86,13 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
         if (m_editorPart) {
             KTextEditor::View * view = m_editorPart->createView(widget);
             view->setContextMenu(view->defaultContextMenu());
+
+            KTextEditor::ConfigInterface *config = qobject_cast<KTextEditor::ConfigInterface*>(view);
+            if (config) {
+                config->setConfigValue("line-numbers", true);
+                config->setConfigValue("dynamic-word-wrap", true);
+            }
+
             editorLayout->addWidget(view);
             connect(m_editorPart, SIGNAL(textChanged(KTextEditor::Document*)),
                     this, SLOT(scriptTextChanged()));
