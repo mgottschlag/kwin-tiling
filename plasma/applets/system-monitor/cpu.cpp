@@ -60,7 +60,7 @@ void SM::Cpu::sourceAdded(const QString& name)
 {
     if (m_rx.indexIn(name) != -1) {
         //kDebug() << m_rx.cap(1);
-        kWarning() << name; // debug
+        //kWarning() << name; // debug
         m_cpus << name;
         if (!m_sourceTimer.isActive()) {
             m_sourceTimer.start(0);
@@ -176,8 +176,8 @@ void SM::Cpu::createConfigurationInterface(KConfigDialog *parent)
     }
     ui.treeView->setModel(&m_model);
     ui.treeView->resizeColumnToContents(0);
-    ui.intervalSpinBox->setValue(interval() / 1000);
-    ui.intervalSpinBox->setSuffix(ki18np(" second", " seconds"));
+    ui.intervalSpinBox->setValue(interval() / 1000.0);
+    ui.intervalSpinBox->setSuffix(i18n("s"));
     parent->addPage(widget, i18n("CPUs"), "cpu");
 
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
@@ -200,10 +200,9 @@ void SM::Cpu::configAccepted()
     }
     cg.writeEntry("cpus", items());
 
-    uint interval = ui.intervalSpinBox->value();
+    double interval = ui.intervalSpinBox->value();
     cg.writeEntry("interval", interval);
-    interval *= 1000;
-    setInterval(interval);
+    setInterval(interval * 1000.0);
 
     emit configNeedsSaving();
     connectToEngine();

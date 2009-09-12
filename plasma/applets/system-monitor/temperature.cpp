@@ -105,8 +105,8 @@ void Temperature::createConfigurationInterface(KConfigDialog *parent)
     ui.treeView->setModel(&m_tempModel);
     ui.treeView->resizeColumnToContents(0);
 
-    ui.intervalSpinBox->setValue(interval() / 1000);
-    ui.intervalSpinBox->setSuffix(ki18np(" second", " seconds"));
+    ui.intervalSpinBox->setValue(interval() / 1000.0);
+    ui.intervalSpinBox->setSuffix(i18n("s"));
     parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
     parent->addPage(widget, i18n("Temperature"), "cpu");
 
@@ -134,8 +134,7 @@ void Temperature::configAccepted()
     cg.writeEntry("temps", items());
     uint interval = ui.intervalSpinBox->value();
     cg.writeEntry("interval", interval);
-    interval *= 1000;
-    setInterval(interval);
+    setInterval(interval * 1000.0);
 
     emit configNeedsSaving();
     connectToEngine();

@@ -175,8 +175,8 @@ void SM::Ram::createConfigurationInterface(KConfigDialog *parent)
     }
     ui.treeView->setModel(&m_model);
     ui.treeView->resizeColumnToContents(0);
-    ui.intervalSpinBox->setValue(interval() / 1000);
-    ui.intervalSpinBox->setSuffix(ki18np(" second", " seconds"));
+    ui.intervalSpinBox->setValue(interval() / 1000.0);
+    ui.intervalSpinBox->setSuffix(i18n("s"));
     parent->addPage(widget, i18n("RAM"), "ram");
 
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
@@ -199,10 +199,9 @@ void SM::Ram::configAccepted()
     }
     cg.writeEntry("memories", items());
 
-    uint interval = ui.intervalSpinBox->value();
+    double interval = ui.intervalSpinBox->value();
     cg.writeEntry("interval", interval);
-    interval *= 1000;
-    setInterval(interval);
+    setInterval(interval * 1000.0);
 
     m_max.clear();
     emit configNeedsSaving();
