@@ -84,7 +84,7 @@ bool SM::Ram::addMeter(const QString& source)
     QString ram = l[1];
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
     Plasma::SignalPlotter *plotter = new Plasma::SignalPlotter(this);
-    plotter->addPlot(theme->color(Plasma::Theme::TextColor));
+    plotter->addPlot(adjustColor(theme->color(Plasma::Theme::TextColor), 40));
     plotter->setUseAutoRange(false);
     plotter->setThinFrame(false);
     plotter->setShowLabels(false);

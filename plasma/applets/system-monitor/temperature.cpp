@@ -183,7 +183,7 @@ bool Temperature::addMeter(const QString& source)
         setMinimumWidth(24);
     }
     Plasma::SignalPlotter *plotter = new Plasma::SignalPlotter(this);
-    plotter->addPlot(theme->color(Plasma::Theme::TextColor));
+    plotter->addPlot(adjustColor(theme->color(Plasma::Theme::TextColor), 40));
     plotter->setThinFrame(false);
     plotter->setShowLabels(false);
     plotter->setShowTopBar(true);

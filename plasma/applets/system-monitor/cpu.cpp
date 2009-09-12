@@ -97,7 +97,7 @@ bool SM::Cpu::addMeter(const QString& source)
     QString cpu = l[1];
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
     Plasma::SignalPlotter *plotter = new Plasma::SignalPlotter(this);
-    plotter->addPlot(theme->color(Plasma::Theme::TextColor));
+    plotter->addPlot(adjustColor(theme->color(Plasma::Theme::TextColor), 40));
     plotter->setUseAutoRange(false);
     plotter->setVerticalRange(0.0, 100.0);
     plotter->setThinFrame(false);
