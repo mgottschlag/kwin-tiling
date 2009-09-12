@@ -113,9 +113,11 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
 
     setMainWidget(m_splitter);
 
-    setInitialSize(QSize(500, 400));
+    setInitialSize(QSize(700, 500));
     KConfigGroup cg(KGlobal::config(), "InteractiveConsole");
     restoreDialogSize(cg);
+
+    m_splitter->setStretchFactor(0, 10);
     m_splitter->restoreState(cg.readEntry("SplitterState", QByteArray()));
 
     scriptTextChanged();
