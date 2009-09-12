@@ -337,7 +337,7 @@ void Image::setWallpaper(const KUrl &url)
 
         if (!wallpaperPath.isEmpty()) {
             KIO::FileCopyJob *job = KIO::file_copy(url, KUrl(wallpaperPath));
-            connect(job, SLOT(slotResult(KJob*)), this, SLOT(wallpaperRetrieved(KJob*)));
+            connect(job, SIGNAL(result(KJob*)), this, SLOT(wallpaperRetrieved(KJob*)));
         }
     }
 }
