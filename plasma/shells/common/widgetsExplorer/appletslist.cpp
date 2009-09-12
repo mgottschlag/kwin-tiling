@@ -239,8 +239,8 @@ bool AppletsListWidget::eventFilter(QObject *obj, QEvent *event)
         //if the resize occured with the window widget
         } else if(widget == m_appletsListWindowWidget) {
             int maxVisibleIconsOnList = maximumAproxVisibleIconsOnList();
-            arrowClickStep = ceil(maxVisibleIconsOnList/4);
-            wheelStep = ceil(maxVisibleIconsOnList/2);
+            arrowClickStep = ceil((float)maxVisibleIconsOnList/4);
+            wheelStep = ceil((float)maxVisibleIconsOnList/2);
 
             return false;
         }
