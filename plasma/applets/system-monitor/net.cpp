@@ -93,8 +93,8 @@ bool SM::Net::addMeter(const QString& source)
     QString interface = l[2];
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
     Plasma::SignalPlotter *plotter = new Plasma::SignalPlotter(this);
-    plotter->addPlot(QColor("#d2d200"));
-    plotter->addPlot(QColor("#f20000"));
+    plotter->addPlot(adjustColor(theme->color(Plasma::Theme::TextColor), 40));
+    plotter->addPlot(adjustColor(theme->color(Plasma::Theme::BackgroundColor), 40));
     plotter->setUseAutoRange(true);
     plotter->setThinFrame(false);
     plotter->setShowLabels(false);

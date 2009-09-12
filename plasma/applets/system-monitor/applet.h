@@ -100,6 +100,7 @@ class SM_EXPORT Applet : public Plasma::Applet
         virtual void deleteMeters(QGraphicsLinearLayout* layout = 0);
         virtual void setDetail(Detail detail);
         virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+        QColor adjustColor(const QColor& color, uint percentage);
 
     private:
         uint m_interval;

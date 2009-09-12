@@ -17,6 +17,7 @@
  */
 
 #include "applet.h"
+#include <math.h>
 #include <Plasma/DataEngine>
 #include <Plasma/Containment>
 #include <Plasma/Frame>
@@ -360,25 +361,17 @@ QVariant Applet::itemChange(GraphicsItemChange change, const QVariant &value)
     }
 }
 
-/*
-QSizeF Applet::sizeHint(Qt::SizeHint which, const QSizeF& constraint) const
+QColor Applet::adjustColor(const QColor& color, uint percentage)
 {
-    QSizeF result;
-    Q_UNUSED(constraint)
-    switch (which) {
-        case Qt::MinimumSize:
-            result = m_min;
-            break;
-        case Qt::MaximumSize:
-            result = m_max;
-            break;
-        case Qt::PreferredSize:
-        default:
-            result = m_pref;
-            break;
+    qreal h, s, v, a;
+    color.getHsvF(&h, &s, &v, &a);
+    qreal d = fabs(v - 0.5) * (percentage / 100.0);
+    if (v > 0.5) {
+        v -= d;
+    } else {
+        v += d;
     }
-    kDebug() << which << result;
-    return result;
+    return QColor::fromHsvF(h, s, v, a);
 }
-*/
+
 }
