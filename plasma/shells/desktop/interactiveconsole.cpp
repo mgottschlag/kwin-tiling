@@ -30,10 +30,13 @@
 #include <KLocale>
 #include <KAction>
 #include <KShell>
+#include <KServiceTypeTrader>
 #include <KStandardAction>
-#include <KTextEdit>
-#include <KToolBar>
 #include <KTextBrowser>
+#include <KTextEdit>
+#include <KTextEditor/Document>
+#include <KTextEditor/View>
+#include <KToolBar>
 
 #include <Plasma/Corona>
 
@@ -47,10 +50,12 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     : KDialog(parent),
       m_engine(new ScriptEngine(corona, this)),
       m_splitter(new QSplitter(Qt::Vertical, this)),
+      m_editorPart(0),
+      m_editor(0),
       m_loadAction(KStandardAction::open(this, SLOT(openScriptFile()), this)),
       m_saveAction(KStandardAction::save(this, SLOT(saveScript()), this)),
       m_clearAction(KStandardAction::clear(this, SLOT(clearEditor()), this)),
-      m_executeAction(new KAction(KIcon("system-run"), i18n("&Execute Script"), this)),
+      m_executeAction(new KAction(KIcon("system-run"), i18n("&Execute"), this)),
       m_fileDialog(0)
 {
     setWindowTitle(KDialog::makeStandardCaption(i18n("Desktop Shell Scripting Console")));
@@ -74,8 +79,22 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     toolBar->addAction(m_executeAction);
     editorLayout->addWidget(toolBar);
 
-    m_editor = new KTextEdit(widget);
-    editorLayout->addWidget(m_editor);
+    KService::List offers = KServiceTypeTrader::self()->query("KTextEditor/Document");
+    foreach (const KService::Ptr service, offers) {
+        m_editorPart = service->createInstance<KTextEditor::Document>(widget);
+        if (m_editorPart) {
+            editorLayout->addWidget(m_editorPart->createView(widget));
+            connect(m_editorPart, SIGNAL(textChanged(KTextEditor::Document*)),
+                    this, SLOT(scriptTextChanged()));
+            break;
+        }
+    }
+
+    if (!m_editorPart) {
+        m_editor = new KTextEdit(widget);
+        editorLayout->addWidget(m_editor);
+        connect(m_editor, SIGNAL(textChanged()), this, SLOT(scriptTextChanged()));
+    }
 
     m_splitter->addWidget(widget);
 
@@ -101,7 +120,6 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
 
     scriptTextChanged();
 
-    connect(m_editor, SIGNAL(textChanged()), this, SLOT(scriptTextChanged()));
     connect(m_engine, SIGNAL(print(QString)), this, SLOT(print(QString)));
     connect(m_engine, SIGNAL(printError(QString)), this, SLOT(print(QString)));
     connect(m_executeAction, SIGNAL(triggered()), this, SLOT(evaluateScript()));
@@ -118,17 +136,30 @@ InteractiveConsole::~InteractiveConsole()
 
 void InteractiveConsole::loadScript(const QString &script)
 {
-    QFile file(KShell::tildeExpand(script));
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text) ) {
-        m_editor->setText(file.readAll());
+    if (m_editorPart) {
+        m_editorPart->closeUrl(false);
+        if (m_editorPart->openUrl(script)) {
+            return;
+        }
     } else {
-        m_output->append(i18n("Unable to load script file <b>%1</b>", script));
+        QFile file(KShell::tildeExpand(script));
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text) ) {
+            m_editor->setText(file.readAll());
+            return;
+        }
     }
+
+
+    m_output->append(i18n("Unable to load script file <b>%1</b>", script));
 }
 
 void InteractiveConsole::showEvent(QShowEvent *)
 {
-    m_editor->setFocus();
+    if (m_editorPart) {
+        m_editorPart->activeView()->setFocus();
+    } else {
+        m_editor->setFocus();
+    }
 }
 
 void InteractiveConsole::print(const QString &string)
@@ -138,7 +169,7 @@ void InteractiveConsole::print(const QString &string)
 
 void InteractiveConsole::scriptTextChanged()
 {
-    const bool enable = !m_editor->document()->isEmpty();
+    const bool enable = m_editorPart ? !m_editorPart->isEmpty() : !m_editor->document()->isEmpty();
     m_saveAction->setEnabled(enable);
     m_clearAction->setEnabled(enable);
     m_executeAction->setEnabled(enable);
@@ -176,20 +207,26 @@ void InteractiveConsole::openScriptUrlSelected()
         return;
     }
 
-    m_editor->clear();
-    m_editor->setEnabled(false);
+    if (m_editorPart) {
+        m_editorPart->openUrl(url);
+    } else {
+        m_editor->clear();
+        m_editor->setEnabled(false);
 
-    if (m_job) {
-        m_job->kill();
+        if (m_job) {
+            m_job->kill();
+        }
+
+        m_job = KIO::get(url, KIO::Reload, KIO::HideProgressInfo);
+        connect(m_job, SIGNAL(data(KIO::Job*,QByteArray)), this, SLOT(scriptFileDataRecvd(KIO::Job*,QByteArray)));
+        connect(m_job, SIGNAL(result(KJob*)), this, SLOT(reenableEditor()));
     }
-
-    m_job = KIO::get(url, KIO::Reload, KIO::HideProgressInfo);
-    connect(m_job, SIGNAL(data(KIO::Job*,QByteArray)), this, SLOT(scriptFileDataRecvd(KIO::Job*,QByteArray)));
-    connect(m_job, SIGNAL(result(KJob*)), this, SLOT(reenableEditor()));
 }
 
 void InteractiveConsole::scriptFileDataRecvd(KIO::Job *job, const QByteArray &data)
 {
+    Q_ASSERT(m_editor);
+
     if (job == m_job) {
         m_editor->insertPlainText(data);
     }
@@ -224,19 +261,25 @@ void InteractiveConsole::saveScriptUrlSelected()
         return;
     }
 
-    m_editor->setEnabled(false);
+    if (m_editorPart) {
+        m_editorPart->saveAs(url);
+    } else {
+        m_editor->setEnabled(false);
 
-    if (m_job) {
-        m_job->kill();
+        if (m_job) {
+            m_job->kill();
+        }
+
+        m_job = KIO::put(url, -1, KIO::HideProgressInfo);
+        connect(m_job, SIGNAL(dataReq(KIO::Job*,QByteArray&)), this, SLOT(scriptFileDataReq(KIO::Job*,QByteArray&)));
+        connect(m_job, SIGNAL(result(KJob*)), this, SLOT(reenableEditor()));
     }
-
-    m_job = KIO::put(url, -1, KIO::HideProgressInfo);
-    connect(m_job, SIGNAL(dataReq(KIO::Job*,QByteArray&)), this, SLOT(scriptFileDataReq(KIO::Job*,QByteArray&)));
-    connect(m_job, SIGNAL(result(KJob*)), this, SLOT(reenableEditor()));
 }
 
 void InteractiveConsole::scriptFileDataReq(KIO::Job *job, QByteArray &data)
 {
+    Q_ASSERT(m_editor);
+
     if (!m_job || m_job != job) {
         return;
     }
@@ -247,6 +290,7 @@ void InteractiveConsole::scriptFileDataReq(KIO::Job *job, QByteArray &data)
 
 void InteractiveConsole::reenableEditor()
 {
+    Q_ASSERT(m_editor);
     m_editor->setEnabled(true);
 }
 
@@ -275,7 +319,7 @@ void InteractiveConsole::evaluateScript()
     cursor.insertBlock(block, format);
     QTime t;
     t.start();
-    m_engine->evaluateScript(m_editor->toPlainText());
+    m_engine->evaluateScript(m_editorPart ? m_editorPart->text() : m_editor->toPlainText());
 
     cursor.insertText("\n\n");
     format.setFontWeight(QFont::Bold);
@@ -288,7 +332,11 @@ void InteractiveConsole::evaluateScript()
 
 void InteractiveConsole::clearEditor()
 {
-    m_editor->clear();
+    if (m_editorPart) {
+        m_editorPart->closeUrl(false);
+    } else {
+        m_editor->clear();
+    }
 }
 
 #include "interactiveconsole.moc"

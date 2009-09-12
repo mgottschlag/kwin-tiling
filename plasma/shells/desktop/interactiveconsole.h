@@ -34,6 +34,11 @@ class KFileDialog;
 class KTextEdit;
 class KTextBrowser;
 
+namespace KTextEditor
+{
+    class Document;
+} // namespace KParts
+
 namespace Plasma
 {
     class Corona;
@@ -72,6 +77,7 @@ private Q_SLOTS:
 private:
     ScriptEngine *m_engine;
     QSplitter *m_splitter;
+    KTextEditor::Document *m_editorPart;
     KTextEdit *m_editor;
     KTextBrowser *m_output;
     KAction *m_loadAction;
