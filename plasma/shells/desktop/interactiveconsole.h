@@ -29,8 +29,8 @@
 
 class QSplitter;
 
+class KAction;
 class KFileDialog;
-class KPushButton;
 class KTextEdit;
 class KTextBrowser;
 
@@ -74,10 +74,10 @@ private:
     QSplitter *m_splitter;
     KTextEdit *m_editor;
     KTextBrowser *m_output;
-    KPushButton *m_loadButton;
-    KPushButton *m_saveButton;
-    KPushButton *m_clearButton;
-    KPushButton *m_executeButton;
+    KAction *m_loadAction;
+    KAction *m_saveAction;
+    KAction *m_clearAction;
+    KAction *m_executeAction;
 
     KFileDialog *m_fileDialog;
     QPointer<KIO::Job> m_job;

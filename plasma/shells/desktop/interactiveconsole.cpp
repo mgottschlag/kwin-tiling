@@ -22,15 +22,17 @@
 #include <QDateTime>
 #include <QFile>
 #include <QHBoxLayout>
+#include <QLabel>
 #include <QSplitter>
 #include <QVBoxLayout>
 
 #include <KFileDialog>
 #include <KLocale>
-#include <KPushButton>
+#include <KAction>
 #include <KShell>
-#include <KStandardGuiItem>
+#include <KStandardAction>
 #include <KTextEdit>
+#include <KToolBar>
 #include <KTextBrowser>
 
 #include <Plasma/Corona>
@@ -45,33 +47,51 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     : KDialog(parent),
       m_engine(new ScriptEngine(corona, this)),
       m_splitter(new QSplitter(Qt::Vertical, this)),
-      m_editor(new KTextEdit(this)),
-      m_output(new KTextBrowser(this)),
-      m_loadButton(new KPushButton(KStandardGuiItem::open(), this)),
-      m_saveButton(new KPushButton(KStandardGuiItem::save(), this)),
-      m_clearButton(new KPushButton(KIcon("edit-clear"), i18n("&Clear"), this)),
-      m_executeButton(new KPushButton(KIcon("system-run"), i18n("&Run Script"), this)),
+      m_loadAction(KStandardAction::open(this, SLOT(openScriptFile()), this)),
+      m_saveAction(KStandardAction::save(this, SLOT(saveScript()), this)),
+      m_clearAction(KStandardAction::clear(this, SLOT(clearEditor()), this)),
+      m_executeAction(new KAction(KIcon("system-run"), i18n("&Execute Script"), this)),
       m_fileDialog(0)
 {
     setWindowTitle(KDialog::makeStandardCaption(i18n("Desktop Shell Scripting Console")));
     setAttribute(Qt::WA_DeleteOnClose);
     setButtons(KDialog::None);
 
-
     QWidget *widget = new QWidget(m_splitter);
     QVBoxLayout *editorLayout = new QVBoxLayout(widget);
+
+    QLabel *label = new QLabel(i18n("Editor"), widget);
+    QFont f = label->font();
+    f.setBold(true);
+    label->setFont(f);
+    editorLayout->addWidget(label);
+
+    KToolBar *toolBar = new KToolBar(this, true, false);
+    toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    toolBar->addAction(m_loadAction);
+    toolBar->addAction(m_saveAction);
+    toolBar->addAction(m_clearAction);
+    toolBar->addAction(m_executeAction);
+    editorLayout->addWidget(toolBar);
+
+    m_editor = new KTextEdit(widget);
     editorLayout->addWidget(m_editor);
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-    buttonLayout->addWidget(m_loadButton);
-    buttonLayout->addWidget(m_saveButton);
-    buttonLayout->addStretch(10);
-    buttonLayout->addWidget(m_clearButton);
-    buttonLayout->addWidget(m_executeButton);
-    editorLayout->addLayout(buttonLayout);
-
     m_splitter->addWidget(widget);
-    m_splitter->addWidget(m_output);
+
+    widget = new QWidget(m_splitter);
+    QVBoxLayout *outputLayout = new QVBoxLayout(widget);
+
+    label = new QLabel(i18n("Output"), widget);
+    f = label->font();
+    f.setBold(true);
+    label->setFont(f);
+    outputLayout->addWidget(label);
+
+    m_output = new KTextBrowser(widget);
+    outputLayout->addWidget(m_output);
+    m_splitter->addWidget(widget);
+
     setMainWidget(m_splitter);
 
     setInitialSize(QSize(500, 400));
@@ -81,13 +101,12 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
 
     scriptTextChanged();
 
-    connect(m_loadButton, SIGNAL(clicked()), this, SLOT(openScriptFile()));
-    connect(m_saveButton, SIGNAL(clicked()), this, SLOT(saveScript()));
-    connect(m_executeButton, SIGNAL(clicked()), this, SLOT(evaluateScript()));
-    connect(m_clearButton, SIGNAL(clicked()), this, SLOT(clearEditor()));
     connect(m_editor, SIGNAL(textChanged()), this, SLOT(scriptTextChanged()));
     connect(m_engine, SIGNAL(print(QString)), this, SLOT(print(QString)));
     connect(m_engine, SIGNAL(printError(QString)), this, SLOT(print(QString)));
+    connect(m_executeAction, SIGNAL(triggered()), this, SLOT(evaluateScript()));
+
+    m_executeAction->setShortcut(Qt::CTRL + Qt::Key_E);
 }
 
 InteractiveConsole::~InteractiveConsole()
@@ -120,9 +139,9 @@ void InteractiveConsole::print(const QString &string)
 void InteractiveConsole::scriptTextChanged()
 {
     const bool enable = !m_editor->document()->isEmpty();
-    m_saveButton->setEnabled(enable);
-    m_clearButton->setEnabled(enable);
-    m_executeButton->setEnabled(enable);
+    m_saveAction->setEnabled(enable);
+    m_clearAction->setEnabled(enable);
+    m_executeAction->setEnabled(enable);
 }
 
 void InteractiveConsole::openScriptFile()
