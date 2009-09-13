@@ -123,14 +123,6 @@ void SettingsWriter::visitActionDataBase(const ActionDataBase *base)
     config->writeEntry( "Type",    "ERROR" ); // derived classes should call with their type
     config->writeEntry( "Name",    base->name());
     config->writeEntry( "Comment", base->comment());
-    // We only write those two back we currently do not export
-    if (!_export)
-        {
-        // ImportId only if set
-        if (!base->importId().isEmpty())
-            config->writeEntry("ImportId", base->importId());
-        config->writeEntry("AllowMerge", base->allowMerging());
-        }
 
     switch (_state)
         {
@@ -183,6 +175,17 @@ void SettingsWriter::visitActionDataGroup(const ActionDataGroup *group)
         _stack.pop();
         }
     config->writeEntry( "DataCount", cnt );
+
+    // We only write those two back if we do not export the settings
+    if (!_export)
+        {
+        // ImportId only if set
+        if (!group->importId().isEmpty())
+            config->writeEntry("ImportId", group->importId());
+        if (group->allowMerging())
+            config->writeEntry("AllowMerge", group->allowMerging());
+        }
+
     }
 
 
