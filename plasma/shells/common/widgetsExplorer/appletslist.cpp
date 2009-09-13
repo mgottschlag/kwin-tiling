@@ -508,7 +508,7 @@ void AppletsListWidget::updateList()
     }
 
     m_appletsListWidget->setLayout(m_appletListLinearLayout);
-    m_appletListLinearLayout->setSpacing(20);
+    m_appletListLinearLayout->setSpacing(0);
 
     updateGeometry();
 
