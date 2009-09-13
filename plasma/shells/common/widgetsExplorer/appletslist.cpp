@@ -359,13 +359,17 @@ void AppletsListWidget::appletIconHoverEnter(AppletIconWidget *applet)
     }
 
     m_hoverIndicator->setTargetItem(applet);
+    if (!m_hoverIndicator->isVisible()) {
+        m_hoverIndicator->setGeometry(applet->geometry());
+        m_hoverIndicator->show();
+    }
 }
 
 void AppletsListWidget::appletIconHoverLeave(AppletIconWidget *applet)
 {
     Q_UNUSED(applet)
 
-    if(m_toolTip->isVisible()) {
+    if (m_toolTip->isVisible()) {
         m_toolTipDisappearTimer.start(TOOLTIP_DISAPPEAR_DELAY, this);
     } else {
         m_toolTipAppearTimer.stop();
@@ -442,6 +446,9 @@ AppletIconWidget *AppletsListWidget::createAppletIcon(PlasmaAppletItem *appletIt
 {
     AppletIconWidget *applet = new AppletIconWidget(0, appletItem);
     applet->setMinimumSize(100, 0);
+    qreal l, t, r, b;
+    m_hoverIndicator->getContentsMargins(&l, &t, &r, &b);
+    applet->setContentsMargins(l, t, r, b);
 
     connect(applet, SIGNAL(hoverEnter(AppletIconWidget*)), this, SLOT(appletIconHoverEnter(AppletIconWidget*)));
     connect(applet, SIGNAL(hoverLeave(AppletIconWidget*)), this, SLOT(appletIconHoverLeave(AppletIconWidget*)));
@@ -505,8 +512,7 @@ void AppletsListWidget::updateList()
 
     updateGeometry();
 
-    delete(m_hoverIndicator);
-    m_hoverIndicator = new Plasma::ItemBackground(this);
+    m_hoverIndicator->hide();
 
     resetScroll();
 }
