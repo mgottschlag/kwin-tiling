@@ -135,10 +135,11 @@ void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *
         return;
     }
 
-    const int width = size().width();
-    const int height = size().height();
+    const QRectF rect = contentsRect();
+    const int width = rect.width();
+    const int height = rect.height();
 
-    QRect iconRect(qMax(0, (width / 2) - (m_iconHeight / 2)), 0, m_iconHeight, m_iconHeight);
+    QRect iconRect(rect.x() + qMax(0, (width / 2) - (m_iconHeight / 2)), rect.y(), m_iconHeight, m_iconHeight);
     painter->drawPixmap(iconRect, m_appletItem->icon().pixmap(m_iconHeight, m_iconHeight));
 
     if (m_appletItem->running() > 0) {
@@ -147,6 +148,6 @@ void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *
                             m_runningIcon.pixmap(runningIconSize));
     }
 
-    QRectF textRect(0, iconRect.bottom() + 2, width, height - iconRect.bottom());
+    QRectF textRect(rect.x(), iconRect.bottom() + 2, width, height - iconRect.bottom());
     painter->drawText(textRect, Qt::AlignTop | Qt::AlignCenter | Qt::TextWordWrap, m_appletItem->name());
  }
