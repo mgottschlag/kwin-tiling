@@ -926,12 +926,14 @@ QRectF AbstractTaskItem::iconRect(const QRectF &b) const
 
     QSize iconSize = m_icon.actualSize(bounds.size().toSize());
 
-    if (iconSize.width() > KIconLoader::SizeSmall && iconSize.width() < KIconLoader::SizeSmallMedium) {
-        iconSize = QSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
-    } else if (iconSize.width() > KIconLoader::SizeSmallMedium && iconSize.width() < KIconLoader::SizeMedium) {
-        iconSize = QSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
-    } else if (iconSize.width() > KIconLoader::SizeMedium && iconSize.width() < KIconLoader::SizeLarge) {
-        iconSize = QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium);
+    if (iconSize.width() == iconSize.height()) {
+        if (iconSize.width() > KIconLoader::SizeSmall && iconSize.width() < KIconLoader::SizeSmallMedium) {
+            iconSize = QSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+        } else if (iconSize.width() > KIconLoader::SizeSmallMedium && iconSize.width() < KIconLoader::SizeMedium) {
+            iconSize = QSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
+        } else if (iconSize.width() > KIconLoader::SizeMedium && iconSize.width() < KIconLoader::SizeLarge) {
+            iconSize = QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium);
+        }
     }
 
     return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignLeft | Qt::AlignVCenter,
