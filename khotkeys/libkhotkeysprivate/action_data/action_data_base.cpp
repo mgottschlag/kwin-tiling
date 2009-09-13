@@ -70,7 +70,7 @@ void ActionDataBase::accept(ActionDataConstVisitor *visitor) const
 
 bool ActionDataBase::cfg_is_enabled(const KConfigGroup& cfg_P )
     {
-    return cfg_P.readEntry( "Enabled", true);
+    return cfg_P.readEntry("Enabled", false);
     }
 
 
