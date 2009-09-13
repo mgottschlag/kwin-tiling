@@ -99,7 +99,6 @@ bool Active_window_condition::match() const
 void Active_window_condition::set_match()
     {
     is_match = window()->match( Window_data( windows_handler->active_window()));
-    kDebug() << "Active_window_condition::set_match :" << is_match;
     updated();
     }
 

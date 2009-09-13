@@ -16,8 +16,6 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#include <KDE/KDebug>
-
 #include "conditions/existing_window_condition.h"
 
 #include "windows_helper/window_selection_list.h"
@@ -56,7 +54,6 @@ Existing_window_condition::~Existing_window_condition()
 
 void Existing_window_condition::cfg_write( KConfigGroup& cfg_P ) const
     {
-    kDebug() << description();
     base::cfg_write( cfg_P );
     KConfigGroup windowConfig( cfg_P.config(), cfg_P.name() + "Window" );
     window()->cfg_write( windowConfig );
@@ -66,7 +63,6 @@ void Existing_window_condition::cfg_write( KConfigGroup& cfg_P ) const
 
 Existing_window_condition* Existing_window_condition::copy() const
     {
-    kDebug();
     return new Existing_window_condition(window()->copy());
     }
 
@@ -96,7 +92,6 @@ void Existing_window_condition::set_match( WId w_P )
         is_match = window()->match( Window_data( w_P ));
     else
         is_match = windows_handler->find_window( window()) != None;
-    kDebug() << "Existing_window_condition::set_match :" << is_match;
     updated();
     }
 

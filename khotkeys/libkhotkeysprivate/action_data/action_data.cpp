@@ -138,7 +138,6 @@ void ActionData::set_triggers( Trigger_list* triggers_P )
 
 void ActionData::add_action(Action* action, Action* after)
     {
-    kDebug() << action << after << _actions->count();
     if (after)
         {
         int index = _actions->indexOf(after);

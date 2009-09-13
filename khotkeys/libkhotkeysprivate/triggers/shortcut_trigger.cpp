@@ -72,6 +72,9 @@ void ShortcutTrigger::aboutToBeErased()
 
 void ShortcutTrigger::activate( bool newState )
     {
+#ifdef KHOTKEYS_TRACE
+    kDebug() << "new:" << newState << "old:" << _active;
+#endif
     // If there is no change in state just return.
     if (newState == _active)
         return;

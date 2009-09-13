@@ -60,6 +60,9 @@ KAction *ShortcutsHandler::addAction(
         const QString &text,
         const KShortcut &shortcut )
     {
+#ifdef KHOTKEYS_TRACE
+    kDebug() << id << text << shortcut;
+#endif
     QString realId(id);
     // HACK: Do this correctly. Remove uuid on importing / exporting
     // On import it can happen that id is already taken. Create it under a

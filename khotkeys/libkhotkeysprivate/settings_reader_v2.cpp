@@ -48,7 +48,11 @@ SettingsReaderV2::SettingsReaderV2(
         _loadAll(loadAll),
         _disableActions(loadDisabled),
         _importId(importId)
-    {}
+    {
+#ifdef KHOTKEYS_TRACE
+    kDebug() << "Created SettingsReader with disableActions(" << _disableActions << ")";
+#endif
+    }
 
 
 SettingsReaderV2::~SettingsReaderV2()
@@ -79,6 +83,9 @@ KHotKeys::ActionDataGroup *SettingsReaderV2::readGroup(
         const KConfigGroup &config,
         KHotKeys::ActionDataGroup *parent)
     {
+#ifdef KHOTKEYS_TRACE
+    kDebug() << "Reading group" << config.readEntry( "Name" );
+#endif
     KHotKeys::ActionDataGroup *group = NULL;
 
     // Check if it is allowed to merge the group. If yes check for a group
@@ -195,6 +202,10 @@ KHotKeys::ActionDataBase *SettingsReaderV2::readActionData(
             ? newObject->enable()
             : newObject->disable();
 
+#ifdef KHOTKEYS_TRACE
+    kDebug() << newObject->name() << "loaded into" << newObject->isEnabled(KHotKeys::ActionDataBase::Ignore) << "state";
+#endif
+
 
     return newObject;
     }
@@ -208,7 +219,6 @@ KHotKeys::ActionList *SettingsReaderV2::readActionList(
 
     int cnt = actionsGroup.readEntry( "ActionsCount", 0 );
     QString save_cfg_group = actionsGroup.name();
-    kDebug() << cnt;
     for (int i=0; i<cnt; ++i)
         {
         KConfigGroup group(actionsGroup.config(), save_cfg_group + QString::number(i));
@@ -250,7 +260,6 @@ KHotKeys::Trigger_list *SettingsReaderV2::readTriggerList(
     KHotKeys::Trigger_list *list = parent->triggers();
 
     if (!triggersGroup.exists()) return list;
-    kDebug();
     Q_ASSERT(list);
 
     list->set_comment(triggersGroup.readEntry("Comment"));
@@ -288,7 +297,6 @@ KHotKeys::Trigger_list *SettingsReaderV2::readTriggerList(
 
 void SettingsReaderV2::visit(KHotKeys::ActivateWindowAction& action)
     {
-    kDebug();
     QString save_cfg_group = _config->name();
     KConfigGroup windowGroup(_config->config(), save_cfg_group + "Window" );
     action.set_window_list(new KHotKeys::Windowdef_list(windowGroup));
@@ -312,7 +320,6 @@ void SettingsReaderV2::visit(KHotKeys::DBusAction& action)
 
 void SettingsReaderV2::visit(KHotKeys::GestureTrigger& trigger)
     {
-    kDebug() << "GestureTrigger";
     if (_config->hasKey("Gesture"))
         trigger.setKDE3Gesture(_config->readEntry("Gesture"));
     else
@@ -321,8 +328,6 @@ void SettingsReaderV2::visit(KHotKeys::GestureTrigger& trigger)
 
 void SettingsReaderV2::visit(KHotKeys::KeyboardInputAction& action)
     {
-    kDebug() << "KeyboardInputAction";
-
     action.setInput(_config->readEntry("Input"));
 
     KHotKeys::Windowdef_list *window_list = NULL;
@@ -389,6 +394,7 @@ void SettingsReaderV2::visit(KHotKeys::MenuEntryAction& action)
 void SettingsReaderV2::visit(KHotKeys::ShortcutTrigger &trigger)
     {
     QString shortcutString = _config->readEntry( "Key" );
+
     // TODO: Check if this is still necessary
     shortcutString.replace("Win+", "Meta+"); // Qt4 doesn't parse Win+, avoid a shortcut without modifier
 

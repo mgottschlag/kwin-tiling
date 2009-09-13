@@ -22,7 +22,6 @@
 
 #include <KDE/KConfig>
 #include <KDE/KConfigGroup>
-#include <KDE/KDebug>
 
 namespace KHotKeys {
 
@@ -110,7 +109,6 @@ void Condition_list_base::clear()
 void Condition_list_base::cfg_write( KConfigGroup& cfg_P ) const
     {
     int i = 0;
-    kDebug() << description() << " with " << count() << " children";;
     for( ConstIterator it(begin());
          it != end();
          ++it, ++i )

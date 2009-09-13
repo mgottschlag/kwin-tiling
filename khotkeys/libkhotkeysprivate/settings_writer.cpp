@@ -179,7 +179,6 @@ void SettingsWriter::visitActionDataGroup(const ActionDataGroup *group)
                 config->config(),
                 config->name() + QString("_") + QString::number(cnt));
         _stack.push(&childConfig);
-        kDebug() << child->name();
         child->accept(this);
         _stack.pop();
         }
