@@ -147,11 +147,22 @@ const QList<ActionDataBase*> ActionDataGroup::children() const
 
 
 void ActionDataGroup::doDisable()
-    {}
+    {
+    Q_FOREACH( ActionDataBase *child, _list)
+        {
+        child->update_triggers();
+        }
+    }
 
 
 void ActionDataGroup::doEnable()
-    {}
+    {
+    Q_FOREACH( ActionDataBase *child, _list)
+        {
+        child->update_triggers();
+        }
+
+    }
 
 
 void ActionDataGroup::remove_child( ActionDataBase* child_P )
