@@ -108,8 +108,8 @@ private slots:
     void filterChanged(int index);
     void updateList();
 
-    void onRightArrowClick();
-    void onLeftArrowClick();
+    void onRightArrowPress();
+    void onLeftArrowPress();
 
     //checks if arrows should be enabled or not
     void manageArrows();
@@ -190,9 +190,9 @@ private:
 
     /* TODO: Remove this and animate using plasma's
      * animation framework when it is created */
-    QTimeLine scrollTimeLine;
-    qreal scrollTo;
-    qreal scrollFrom;
+    QTimeLine m_scrollTimeLine;
+    qreal m_scrollTo;
+    qreal m_scrollFrom;
 
     QTimeLine toolTipMoveTimeLine;
     QPoint toolTipMoveFrom;
