@@ -168,6 +168,7 @@ void AbstractTaskItem::clearAbstractItem()
 void AbstractTaskItem::setText(const QString &text)
 {
     m_text = text;
+    m_cachedShadow = QPixmap();
 }
 
 void AbstractTaskItem::setIcon(const QIcon &icon)
@@ -541,6 +542,29 @@ void AbstractTaskItem::syncActiveRect()
     itemBackground->setElementPrefix(m_backgroundPrefix);
 }
 
+void AbstractTaskItem::resizeEvent(QGraphicsSceneResizeEvent *event)
+{
+    m_cachedShadow = QPixmap();
+
+    syncActiveRect();
+
+    Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
+
+    itemBackground->setElementPrefix("focus");
+    m_applet->resizeItemBackground(event->newSize().toSize());
+    itemBackground->setElementPrefix("normal");
+    m_applet->resizeItemBackground(event->newSize().toSize());
+    itemBackground->setElementPrefix("minimized");
+    m_applet->resizeItemBackground(event->newSize().toSize());
+    itemBackground->setElementPrefix("attention");
+    m_applet->resizeItemBackground(event->newSize().toSize());
+    itemBackground->setElementPrefix("hover");
+    m_applet->resizeItemBackground(m_activeRect.size().toSize());
+
+    //restore the prefix
+    itemBackground->setElementPrefix(m_backgroundPrefix);
+}
+
 void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
     // Do not paint with invalid sizes, the happens when the layout is being initialized
@@ -553,25 +577,6 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     -This line is only needed when we have different items in the taskbar because of an expanded group for example. otherwise the resizing in the resizeEvent is sufficient
     */
     Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
-
-    //if the size is changed have to resize all the elements
-    if (itemBackground->size() != size().toSize() && itemBackground->size() != m_activeRect.size().toSize()) {
-        syncActiveRect();
-
-        itemBackground->setElementPrefix("focus");
-        m_applet->resizeItemBackground(m_activeRect.size().toSize());
-        itemBackground->setElementPrefix("normal");
-        m_applet->resizeItemBackground(size().toSize());
-        itemBackground->setElementPrefix("minimized");
-        m_applet->resizeItemBackground(size().toSize());
-        itemBackground->setElementPrefix("attention");
-        m_applet->resizeItemBackground(size().toSize());
-        itemBackground->setElementPrefix("hover");
-        m_applet->resizeItemBackground(m_activeRect.size().toSize());
-
-        //restore the prefix
-        itemBackground->setElementPrefix(m_backgroundPrefix);
-    }
 
     if (!m_animId && ~option->state & QStyle::State_Sunken) {
         itemBackground->setElementPrefix(m_backgroundPrefix);
@@ -724,7 +729,7 @@ QSize AbstractTaskItem::layoutText(QTextLayout &layout, const QString &text,
     return QSize(widthUsed, height);
 }
 
-void AbstractTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layout, const QRect &rect) const
+void AbstractTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layout, const QRect &rect)
 {
     if (rect.width() < 1 || rect.height() < 1) {
         return;
@@ -792,13 +797,19 @@ void AbstractTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layo
         shadowColor = Qt::white;
     }
 
-    QImage shadow = pixmap.toImage();
-    Plasma::PaintUtils::shadowBlur(shadow, 2, shadowColor);
+    if (m_cachedShadow.isNull()) {
+        QImage shadow = pixmap.toImage();
+        Plasma::PaintUtils::shadowBlur(shadow, 2, shadowColor);
+        m_cachedShadow = QPixmap(shadow.size());
+        m_cachedShadow.fill(Qt::transparent);
+        QPainter buffPainter(&m_cachedShadow);
+        buffPainter.drawImage(QPoint(0,0), shadow);
+    }
 
     if (shadowColor == Qt::white) {
-        painter->drawImage(rect.topLeft(), shadow);
+        painter->drawPixmap(rect.topLeft(), m_cachedShadow);
     } else {
-        painter->drawImage(rect.topLeft() + QPoint(1,2), shadow);
+        painter->drawPixmap(rect.topLeft() + QPoint(1,2), m_cachedShadow);
     }
     painter->drawPixmap(rect.topLeft(), pixmap);
 }

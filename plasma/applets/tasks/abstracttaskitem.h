@@ -178,7 +178,7 @@ protected:
     * the supplied painter. If the layout contains text lines that are longer than the rect
     * is wide, they will be elided by fading the text out.
     */
-    void drawTextLayout(QPainter *painter, const QTextLayout &layout, const QRect &rect) const;
+    void drawTextLayout(QPainter *painter, const QTextLayout &layout, const QRect &rect);
 
     virtual void updateTask(::TaskManager::TaskChanges changes) = 0; // pure virtual function
     virtual void updateToolTip() = 0; // pure virtual function
@@ -206,6 +206,8 @@ protected:
     // text color, use this because it could be animated
     QColor textColor() const;
 
+    void resizeEvent(QGraphicsSceneResizeEvent *event);
+
     TaskManager::AbstractGroupableItem * m_abstractItem;
     LayoutWidget *m_layoutWidget;
 
@@ -215,6 +217,7 @@ protected:
 
     QIcon m_icon;
     QString m_text;
+    QPixmap m_cachedShadow;
 
     int m_animId;
     qreal m_alpha;
