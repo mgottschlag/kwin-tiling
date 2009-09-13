@@ -30,6 +30,7 @@
 #include <KIconLoader>
 
 #include <Plasma/IconWidget>
+#include <Plasma/ToolTipManager>
 
 #include "../core/manager.h"
 #include "../core/task.h"
@@ -366,6 +367,14 @@ void TaskArea::updateUnhideToolIcon()
         return;
     }
 
+    Plasma::ToolTipContent data;
+    if (d->showingHidden) {
+        data.setSubText(i18n("Hide icons"));
+    } else {
+        data.setSubText(i18n("Show hidden icons"));
+    }
+    Plasma::ToolTipManager::self()->setContent(d->unhider, data);
+    
     if (!d->showingHidden && d->topLayout->orientation() == Qt::Vertical) {
         d->unhider->setSvg("widgets/systemtray", "expander-up");
     } else if(d->showingHidden && d->topLayout->orientation() == Qt::Vertical) {
