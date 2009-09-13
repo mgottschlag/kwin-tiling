@@ -548,18 +548,23 @@ void AbstractTaskItem::resizeEvent(QGraphicsSceneResizeEvent *event)
 
     syncActiveRect();
 
+    resizeBackground(event->newSize().toSize());
+}
+
+void AbstractTaskItem::resizeBackground(const QSize &size)
+{
     Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
 
     itemBackground->setElementPrefix("focus");
-    m_applet->resizeItemBackground(event->newSize().toSize());
+    m_applet->resizeItemBackground(size);
     itemBackground->setElementPrefix("normal");
-    m_applet->resizeItemBackground(event->newSize().toSize());
+    m_applet->resizeItemBackground(size);
     itemBackground->setElementPrefix("minimized");
-    m_applet->resizeItemBackground(event->newSize().toSize());
+    m_applet->resizeItemBackground(size);
     itemBackground->setElementPrefix("attention");
-    m_applet->resizeItemBackground(event->newSize().toSize());
+    m_applet->resizeItemBackground(size);
     itemBackground->setElementPrefix("hover");
-    m_applet->resizeItemBackground(m_activeRect.size().toSize());
+    m_applet->resizeItemBackground(size);
 
     //restore the prefix
     itemBackground->setElementPrefix(m_backgroundPrefix);
@@ -577,6 +582,11 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     -This line is only needed when we have different items in the taskbar because of an expanded group for example. otherwise the resizing in the resizeEvent is sufficient
     */
     Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
+
+    //since a single framesvg is shared between all tasks, we could have to resize it even if there wasn't a resizeevent
+    if (size().toSize() != itemBackground->frameSize()) {
+        resizeBackground(size().toSize());
+    }
 
     if (!m_animId && ~option->state & QStyle::State_Sunken) {
         itemBackground->setElementPrefix(m_backgroundPrefix);

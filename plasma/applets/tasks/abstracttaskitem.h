@@ -205,6 +205,7 @@ protected:
     void fadeBackground(const QString &newBackground, int duration, bool fadeIn);
     // text color, use this because it could be animated
     QColor textColor() const;
+    void resizeBackground(const QSize &size);
 
     void resizeEvent(QGraphicsSceneResizeEvent *event);
 
