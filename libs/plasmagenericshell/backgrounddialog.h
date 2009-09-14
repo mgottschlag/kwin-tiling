@@ -71,15 +71,6 @@ private slots:
 
 private:
     BackgroundDialogPrivate *d;
-    QStandardItemModel* m_containmentModel;
-    Plasma::Wallpaper* m_wallpaper;
-    Plasma::View* m_view;
-    Plasma::Containment* m_containment;
-    ScreenPreviewWidget* m_preview;
-    KPageWidgetItem *m_activityItem;
-    KPageWidgetItem *m_appearanceItem;
-    KPageWidgetItem *m_mouseItem;
-    bool m_modified;
 };
 
 #endif // BACKGROUNDDIALOG_H

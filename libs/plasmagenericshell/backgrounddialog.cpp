@@ -172,20 +172,38 @@ void WallpaperWidget::settingsChanged(bool isModified)
 class BackgroundDialogPrivate
 {
 public:
+    BackgroundDialogPrivate(Plasma::Containment* c, Plasma::View* v)
+     : containmentModel(0),
+       wallpaper(0),
+       view(v),
+       containment(c),
+       preview(0),
+       modified(false)
+    {
+    }
+
+    ~BackgroundDialogPrivate()
+    {
+    }
+
     Ui::ActivityConfiguration activityUi;
     Ui::BackgroundDialog backgroundDialogUi;
+
+    QStandardItemModel* containmentModel;
+    Plasma::Wallpaper* wallpaper;
+    Plasma::View* view;
+    Plasma::Containment* containment;
+    ScreenPreviewWidget* preview;
+    KPageWidgetItem *activityItem;
+    KPageWidgetItem *appearanceItem;
+    KPageWidgetItem *mouseItem;
+    bool modified;
 };
 
 BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Plasma::View* view,
                                    QWidget* parent, const QString &id, KConfigSkeleton *s)
     : KConfigDialog(parent, id, s),
-      d(new BackgroundDialogPrivate),
-      m_containmentModel(0),
-      m_wallpaper(0),
-      m_view(view),
-      m_containment(c),
-      m_preview(0),
-      m_modified(false)
+      d(new BackgroundDialogPrivate(c, view))
 {
     setWindowIcon(KIcon("preferences-desktop-wallpaper"));
     setCaption(i18n("Desktop Settings"));
@@ -194,11 +212,11 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
 
     QWidget *main= new QWidget(this);
     d->backgroundDialogUi.setupUi(main);
-    m_appearanceItem = addPage(main, i18n("Wallpaper"), "preferences-desktop-wallpaper");
+    d->appearanceItem = addPage(main, i18n("Wallpaper"), "preferences-desktop-wallpaper");
     
     QWidget *activity = new QWidget(this);
     d->activityUi.setupUi(activity);
-    m_activityItem = addPage(activity, i18n("Activity"), "activity");
+    d->activityItem = addPage(activity, i18n("Activity"), "activity");
     
     qreal previewRatio = (qreal)res.width() / (qreal)res.height();
     QSize monitorSize(200, int(200 * previewRatio));
@@ -208,28 +226,28 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     d->backgroundDialogUi.m_monitor->setWhatsThis(i18n(
         "This picture of a monitor contains a preview of "
         "what the current settings will look like on your desktop."));
-    m_preview = new ScreenPreviewWidget(d->backgroundDialogUi.m_monitor);
-    m_preview->setRatio(previewRatio);
-    m_preview->resize(200, 200);
+    d->preview = new ScreenPreviewWidget(d->backgroundDialogUi.m_monitor);
+    d->preview->setRatio(previewRatio);
+    d->preview->resize(200, 200);
 
     connect(this, SIGNAL(finished(int)), this, SLOT(cleanup()));
     connect(this, SIGNAL(okClicked()), this, SLOT(saveConfig()));
     connect(this, SIGNAL(applyClicked()), this, SLOT(saveConfig()));
 
-    if (m_containment) {
-        connect(m_containment, SIGNAL(destroyed()), this, SLOT(close()));
+    if (d->containment) {
+        connect(d->containment, SIGNAL(destroyed()), this, SLOT(close()));
     }
 
-    m_containmentModel = new QStandardItemModel(this);
-    d->activityUi.m_containmentComboBox->setModel(m_containmentModel);
+    d->containmentModel = new QStandardItemModel(this);
+    d->activityUi.m_containmentComboBox->setModel(d->containmentModel);
     d->activityUi.m_containmentComboBox->setItemDelegate(new AppletDelegate());
 
-    MousePlugins *m = new MousePlugins(m_containment, this);
+    MousePlugins *m = new MousePlugins(d->containment, this);
     connect(m, SIGNAL(modified(bool)), this, SLOT(settingsModified(bool)));
-    m_mouseItem = addPage(m, i18n("Mouse Plugins"), "mouseplugins");
+    d->mouseItem = addPage(m, i18n("Mouse Plugins"), "mouseplugins");
 
-    if (m_containment && m_containment->hasConfigurationInterface()) {
-        m_containment->createConfigurationInterface(this);
+    if (d->containment && d->containment->hasConfigurationInterface()) {
+        d->containment->createConfigurationInterface(this);
     }
 
     reloadConfig();
@@ -251,14 +269,14 @@ BackgroundDialog::~BackgroundDialog()
 
 void BackgroundDialog::cleanup()
 {
-    delete m_wallpaper;
-    m_wallpaper = 0;
+    delete d->wallpaper;
+    d->wallpaper = 0;
 }
 
 void BackgroundDialog::checkActivityName()
 {
-    if (m_containment && d->activityUi.m_activityName->text().isEmpty()) {
-        d->activityUi.m_activityName->setText(m_containment->activity());
+    if (d->containment && d->activityUi.m_activityName->text().isEmpty()) {
+        d->activityUi.m_activityName->setText(d->containment->activity());
     }
 }
 
@@ -270,15 +288,15 @@ void BackgroundDialog::reloadConfig()
 
     // Containment
     KPluginInfo::List plugins = Plasma::Containment::listContainmentsOfType("desktop");
-    m_containmentModel->clear();
+    d->containmentModel->clear();
     int i = 0;
     foreach (const KPluginInfo& info, plugins) {
         QStandardItem* item = new QStandardItem(KIcon(info.icon()), info.name());
         item->setData(info.comment(), AppletDelegate::DescriptionRole);
         item->setData(info.pluginName(), AppletDelegate::PluginNameRole);
-        m_containmentModel->appendRow(item);
+        d->containmentModel->appendRow(item);
 
-        if (m_containment && info.pluginName() == m_containment->pluginName()) {
+        if (d->containment && info.pluginName() == d->containment->pluginName()) {
             containmentIndex = i;
         }
 
@@ -287,25 +305,25 @@ void BackgroundDialog::reloadConfig()
 
     d->activityUi.m_containmentComboBox->setCurrentIndex(containmentIndex);
     
-    if (m_containment) {
-        d->activityUi.m_activityName->setText(m_containment->activity());
+    if (d->containment) {
+        d->activityUi.m_activityName->setText(d->containment->activity());
     }
 
     // Wallpaper
-    bool doWallpaper = !m_containment || m_containment->drawWallpaper();
+    bool doWallpaper = !d->containment || d->containment->drawWallpaper();
     #if 0
-    m_wallpaperLabel->setVisible(doWallpaper);
+    d->wallpaperLabel->setVisible(doWallpaper);
     #endif
     d->backgroundDialogUi.m_wallpaperGroup->setVisible(doWallpaper);
     d->backgroundDialogUi.m_monitor->setVisible(doWallpaper);
-    m_preview->setVisible(doWallpaper);
+    d->preview->setVisible(doWallpaper);
     //kDebug() << "do wallpapers?!" << doWallpaper;
     if (doWallpaper) {
         // Load wallpaper plugins
         QString currentPlugin;
         QString currentMode;
 
-        Plasma::Wallpaper *currentWallpaper = m_containment ? m_containment->wallpaper() : 0;
+        Plasma::Wallpaper *currentWallpaper = d->containment ? d->containment->wallpaper() : 0;
         if (currentWallpaper) {
             currentPlugin = currentWallpaper->pluginName();
             currentMode = currentWallpaper->renderingMode().name();
@@ -370,27 +388,27 @@ void BackgroundDialog::changeBackgroundMode(int mode)
         delete widget;
     }
 
-    if (m_wallpaper && m_wallpaper->pluginName() != wallpaperInfo.first) {
-        delete m_wallpaper;
-        m_wallpaper = 0;
+    if (d->wallpaper && d->wallpaper->pluginName() != wallpaperInfo.first) {
+        delete d->wallpaper;
+        d->wallpaper = 0;
     }
 
-    if (!m_wallpaper) {
-        m_wallpaper = Plasma::Wallpaper::load(wallpaperInfo.first);
-        m_preview->setPreview(m_wallpaper);
+    if (!d->wallpaper) {
+        d->wallpaper = Plasma::Wallpaper::load(wallpaperInfo.first);
+        d->preview->setPreview(d->wallpaper);
     }
 
-    if (m_wallpaper) {
-        m_wallpaper->setRenderingMode(wallpaperInfo.second);
+    if (d->wallpaper) {
+        d->wallpaper->setRenderingMode(wallpaperInfo.second);
         KConfigGroup cfg = wallpaperConfig(wallpaperInfo.first);
         //kDebug() << "making a" << wallpaperInfo.first << "in mode" << wallpaperInfo.second;
-        if (m_containment) {
-            m_wallpaper->setTargetSizeHint(m_containment->size());
+        if (d->containment) {
+            d->wallpaper->setTargetSizeHint(d->containment->size());
         }
-        m_wallpaper->restore(cfg);
+        d->wallpaper->restore(cfg);
 
         WallpaperWidget *wallpaperWidget = new WallpaperWidget(d->backgroundDialogUi.m_wallpaperGroup);
-        w = m_wallpaper->createConfigurationInterface(wallpaperWidget);
+        w = d->wallpaper->createConfigurationInterface(wallpaperWidget);
         connect(wallpaperWidget, SIGNAL(modified(bool)), this, SLOT(settingsModified(bool)));
     }
 
@@ -413,7 +431,7 @@ void BackgroundDialog::changeBackgroundMode(int mode)
 KConfigGroup BackgroundDialog::wallpaperConfig(const QString &plugin)
 {
     //FIXME: we have details about the structure of the containment config duplicated here!
-    KConfigGroup cfg = m_containment ? m_containment->config() : KConfigGroup(KGlobal::config(), "Wallpaper");
+    KConfigGroup cfg = d->containment ? d->containment->config() : KConfigGroup(KGlobal::config(), "Wallpaper");
     cfg = KConfigGroup(&cfg, "Wallpaper");
     return KConfigGroup(&cfg, plugin);
 }
@@ -426,13 +444,13 @@ void BackgroundDialog::saveConfig()
                                                           AppletDelegate::PluginNameRole).toString();
 
     // Containment
-    if (m_containment) {
-        if (m_containment->pluginName() != containment) {
-            disconnect(m_containment, SIGNAL(destroyed()), this, SLOT(close()));
-            disconnect(this, 0, m_containment, 0);
+    if (d->containment) {
+        if (d->containment->pluginName() != containment) {
+            disconnect(d->containment, SIGNAL(destroyed()), this, SLOT(close()));
+            disconnect(this, 0, d->containment, 0);
 
-            m_containment = m_view->swapContainment(m_containment, containment);
-            emit containmentPluginChanged(m_containment);
+            d->containment = d->view->swapContainment(d->containment, containment);
+            emit containmentPluginChanged(d->containment);
 
             //remove all pages but our own
             KPageWidgetModel *m = qobject_cast<KPageWidgetModel *>(pageWidget()->model());
@@ -448,8 +466,8 @@ void BackgroundDialog::saveConfig()
 
                     KPageWidgetItem *item = m->item(idx);
 
-                    if (item && item != m_appearanceItem && item != m_mouseItem
-                      && item != m_activityItem) {
+                    if (item && item != d->appearanceItem && item != d->mouseItem
+                      && item != d->activityItem) {
                         itemsToRemove.append(item);
                     }
                 }
@@ -460,29 +478,29 @@ void BackgroundDialog::saveConfig()
             }
 
             //add the new containment's config
-            if (m_containment->hasConfigurationInterface()) {
-                m_containment->createConfigurationInterface(this);
+            if (d->containment->hasConfigurationInterface()) {
+                d->containment->createConfigurationInterface(this);
             }
-            connect(m_containment, SIGNAL(destroyed()), this, SLOT(close()));
+            connect(d->containment, SIGNAL(destroyed()), this, SLOT(close()));
         }
 
-        m_containment->setActivity(d->activityUi.m_activityName->text());
+        d->containment->setActivity(d->activityUi.m_activityName->text());
 
         // Wallpaper
-        Plasma::Wallpaper *currentWallpaper = m_containment->wallpaper();
+        Plasma::Wallpaper *currentWallpaper = d->containment->wallpaper();
         if (currentWallpaper) {
             KConfigGroup cfg = wallpaperConfig(currentWallpaper->pluginName());
             currentWallpaper->save(cfg);
         }
     }
 
-    if (m_wallpaper) {
-        KConfigGroup cfg = wallpaperConfig(m_wallpaper->pluginName());
-        m_wallpaper->save(cfg);
+    if (d->wallpaper) {
+        KConfigGroup cfg = wallpaperConfig(d->wallpaper->pluginName());
+        d->wallpaper->save(cfg);
     }
 
-    if (m_containment) {
-        m_containment->setWallpaper(wallpaperPlugin, wallpaperMode);
+    if (d->containment) {
+        d->containment->setWallpaper(wallpaperPlugin, wallpaperMode);
     }
 
     settingsModified(false);
@@ -490,11 +508,11 @@ void BackgroundDialog::saveConfig()
 
 void BackgroundDialog::settingsModified(bool modified)
 {
-    m_modified = modified;
+    d->modified = modified;
     updateButtons();
 }
 
 bool BackgroundDialog::hasChanged()
 {
-    return m_modified;
+    return d->modified;
 }
