@@ -34,6 +34,7 @@ set(plasma_SRCS
     ${appletbrowserdialog_SRCS}
 )
 
+kde4_add_ui_files(plasma_SRCS globaloptions.ui)
 
 kde4_add_kcfg_files(plasma_SRCS kcfg/plasma-shell-desktop.kcfgc)
 
