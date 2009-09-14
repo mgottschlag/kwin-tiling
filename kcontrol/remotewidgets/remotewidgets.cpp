@@ -36,7 +36,7 @@ RemoteWidgetsModule::RemoteWidgetsModule(QWidget *parent, const QVariantList &)
   , m_ui(new Ui::MainPage)
 {
     KAboutData *about =
-    new KAboutData("kcmremotewidgets", 0, ki18n("KDE Clock Control Module"),
+    new KAboutData("kcmremotewidgets", 0, ki18n("Define policies for remote widgets"),
                    0, KLocalizedString(), KAboutData::License_GPL,
                    ki18n("(c) 2009 Rob Scheepmaker"));
 
