@@ -182,10 +182,10 @@ int TaskItemLayout::maximumRows()
         return m_maxRows;
     }
 
+    // in this case rows are columns, columns are rows...
     //TODO basicPreferredSize isn't the optimal source here because  it changes because of margins probably
     QSizeF itemSize = m_itemPositions.first()->basicPreferredSize();
     if (m_layoutOrientation == Qt::Vertical) {
-        // in this case rows are columns, columns are rows...
         maxRows = qMin(qMax(1, int(m_groupItem->geometry().width() / itemSize.width())), m_maxRows);
     } else {
         maxRows = qMin(qMax(1, int(m_groupItem->geometry().height() / itemSize.height())), m_maxRows);

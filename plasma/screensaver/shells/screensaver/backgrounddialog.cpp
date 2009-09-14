@@ -27,7 +27,7 @@
 //#include <Plasma/Corona>
 
 #include "plasmaapp.h"
-#include "wallpaperpreview.h"
+#include "plasmagenericshell/wallpaperpreview.h"
 
 #include "../../../libs/kworkspace/screenpreviewwidget.h"
 

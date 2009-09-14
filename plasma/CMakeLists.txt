@@ -1,13 +1,8 @@
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=1204)
 
-add_subdirectory(animators)
-add_subdirectory(applets)
-add_subdirectory(containments)
-add_subdirectory(containmentactions)
-add_subdirectory(dataengines)
+add_subdirectory(desktop)
+add_subdirectory(generic)
 add_subdirectory(netbook)
-add_subdirectory(runners)
-add_subdirectory(scriptengines)
-add_subdirectory(shells)
+add_subdirectory(screensaver)
 add_subdirectory(tools)
-add_subdirectory(wallpapers)
+

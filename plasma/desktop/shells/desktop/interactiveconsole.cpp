@@ -41,7 +41,7 @@
 
 #include <Plasma/Corona>
 
-#include "scriptengine.h"
+#include "scripting/scriptengine.h"
 
 //TODO:
 // use text editor KPart for syntax highlighting?

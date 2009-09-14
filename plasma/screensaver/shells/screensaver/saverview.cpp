@@ -32,14 +32,13 @@
 #include <Plasma/Containment>
 #include <Plasma/Svg>
 
-#include "appletbrowser.h"
+//#include "appletbrowser.h"
 #include "plasmaapp.h"
 
 static const int SUPPRESS_SHOW_TIMEOUT = 500; // Number of millis to prevent reshow of dashboard
 
 SaverView::SaverView(Plasma::Containment *containment, QWidget *parent)
     : Plasma::View(containment, parent),
-      m_appletBrowser(0),
       m_suppressShow(false),
       m_setupMode(false),
       m_init(false)
@@ -62,7 +61,7 @@ SaverView::SaverView(Plasma::Containment *containment, QWidget *parent)
 
 SaverView::~SaverView()
 {
-    delete m_appletBrowser;
+//    delete m_appletBrowser;
 }
 
 void SaverView::enableSetupMode()
@@ -94,6 +93,7 @@ void SaverView::drawBackground(QPainter * painter, const QRectF & rect)
 
 void SaverView::showAppletBrowser()
 {
+    /*
     if (!m_appletBrowser) {
         m_appletBrowser = new Plasma::AppletBrowser(this, Qt::FramelessWindowHint );
         m_appletBrowser->setContainment(containment());
@@ -115,18 +115,21 @@ void SaverView::showAppletBrowser()
 
     //TODO give the filter kbd focus
     m_appletBrowser->setHidden(m_appletBrowser->isVisible());
+    */
 }
 
 void SaverView::hideAppletBrowser()
 {
+    /*
     if (m_appletBrowser) {
         m_appletBrowser->hide();
     }
+    */
 }
 
 void SaverView::appletBrowserDestroyed()
 {
-    m_appletBrowser = 0;
+    //m_appletBrowser = 0;
 }
 
 void SaverView::paintEvent(QPaintEvent *event)
@@ -175,6 +178,7 @@ void SaverView::paintEvent(QPaintEvent *event)
 
 bool SaverView::eventFilter(QObject *watched, QEvent *event)
 {
+#if 0
     if (watched != m_appletBrowser) {
         /*if (event->type() == QEvent::MouseButtonPress) {
             QMouseEvent *me = static_cast<QMouseEvent *>(event);
@@ -218,7 +222,7 @@ bool SaverView::eventFilter(QObject *watched, QEvent *event)
     } else if (event->type() == QEvent::MouseButtonRelease) {
         m_appletBrowserDragStart = QPoint();
     }
-
+#endif
     return false;
 }
 
@@ -253,11 +257,11 @@ void SaverView::setContainment(Plasma::Containment *newContainment)
         disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
         connect(newContainment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
     }
-
+/*
     if (m_appletBrowser) {
         m_appletBrowser->setContainment(newContainment);
     }
-
+*/
     View::setContainment(newContainment);
 }
 
@@ -266,9 +270,10 @@ void SaverView::hideView()
     if (isHidden()) {
         return;
     }
+    /*
     if (m_appletBrowser) {
         m_appletBrowser->hide();
-    }
+    }*/
 
     disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
 

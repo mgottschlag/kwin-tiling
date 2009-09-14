@@ -1,24 +1,15 @@
 include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/shells/common)
 
 set(appletbrowserdialog_SRCS
-    ../common/widgetsExplorer/kcategorizeditemsviewmodels.cpp
-    ../common/widgetsExplorer/plasmaappletitemmodel.cpp
-    ../common/widgetsExplorer/appleticon.cpp
-    ../common/widgetsExplorer/appletsfiltering.cpp
-    ../common/widgetsExplorer/applettooltip.cpp
-    ../common/widgetsExplorer/appletslist.cpp
-    ../common/widgetsExplorer/managewidgets.cpp
-    ../common/widgetsExplorer/widgetexplorer.cpp
-    ../common/widgetsExplorer/openwidgetassistant.cpp
-)
-
-set(wallpaper_SRCS
-    ../common/wallpaperpreview.cpp
-)
-
-kde4_add_ui_files (
-    appletbrowserdialog_SRCS
-    ../common/kcategorizeditemsviewbase.ui
+    ../../../shells/common/widgetsExplorer/kcategorizeditemsviewmodels.cpp
+    ../../../shells/common/widgetsExplorer/plasmaappletitemmodel.cpp
+    ../../../shells/common/widgetsExplorer/appleticon.cpp
+    ../../../shells/common/widgetsExplorer/appletsfiltering.cpp
+    ../../../shells/common/widgetsExplorer/applettooltip.cpp
+    ../../../shells/common/widgetsExplorer/appletslist.cpp
+    ../../../shells/common/widgetsExplorer/managewidgets.cpp
+    ../../../shells/common/widgetsExplorer/widgetexplorer.cpp
+    ../../../shells/common/widgetsExplorer/openwidgetassistant.cpp
 )
 
 set(plasma-overlay_SRCS
@@ -28,7 +19,6 @@ set(plasma-overlay_SRCS
     savercorona.cpp
     saverview.cpp
     ${appletbrowserdialog_SRCS}
-    ${wallpaper_SRCS}
 )
 
 kde4_add_ui_files(plasma-overlay_SRCS BackgroundDialog.ui)
@@ -40,7 +30,7 @@ qt4_add_dbus_adaptor(plasma-overlay_SRCS ${plasmaapp_dbusXML} plasmaapp.h Plasma
 kde4_add_executable(plasma-overlay ${plasma-overlay_SRCS})
 
 target_link_libraries(plasma-overlay ${KDE4_PLASMA_LIBS} kworkspace  ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS}
-                                     ${X11_X11_LIB} )
+                                     ${X11_X11_LIB} plasmagenericshell)
 if(X11_Xrender_FOUND)
   target_link_libraries(plasma-overlay ${X11_Xrender_LIB})
 endif(X11_Xrender_FOUND)

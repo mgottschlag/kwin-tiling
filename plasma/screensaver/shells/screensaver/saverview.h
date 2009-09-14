@@ -27,7 +27,6 @@
 
 namespace Plasma
 {
-    class AppletBrowser;
     class Containment;
 }
 
@@ -71,7 +70,7 @@ protected slots:
     void suppressShowTimeout();
 
 private:
-    Plasma::AppletBrowser *m_appletBrowser;
+    //Plasma::AppletBrowser *m_appletBrowser;
     QPoint m_appletBrowserDragStart;
     bool m_suppressShow : 1;
     bool m_setupMode : 1;

@@ -228,24 +228,35 @@ void Temperature::dataUpdated(const QString& source,
     Plasma::Meter *w = meters().value(source);
     Plasma::SignalPlotter *plotter = plotters().value(source);
     QString temp;
-    Value value(data["value"].toDouble(), data["units"].toString());
+    double value = data["value"].toDouble();
+    QString unit = data["units"].toString();
 
-    if (KGlobal::locale()->measureSystem() == KLocale::Metric) {
-        value = value.convertTo(Celsius);
-    } else if (KGlobal::locale()->measureSystem() != KLocale::Metric) {
-        value = value.convertTo(Fahrenheit);
+    if (unit.startsWith(i18n("\u00b0"))) { // remove degrees symbol
+        unit = unit.mid(1);
     }
 
-    temp = value.round(1).toSymbolString();
+    if (unit == "F" && KGlobal::locale()->measureSystem() == KLocale::Metric) {
+        value = Value(value, Fahrenheit).convertTo(Celsius).number();
+    } else if (unit == "C" && KGlobal::locale()->measureSystem() != KLocale::Metric) {
+        value = Value(value, Celsius).convertTo(Fahrenheit).number();
+    }
+
+    value = int(value * 10) / 10.0;
+
+    if (KGlobal::locale()->measureSystem() == KLocale::Metric) {
+        temp = i18n("%1 °C", value);
+    } else {
+        temp = i18n("%1 °F", value);
+    }
 
     if (w) {
-        w->setValue(value.number());
+        w->setValue(value);
         if (mode() != SM::Applet::Panel) {
             w->setLabel(1, temp);
         }
     }
     if (plotter) {
-        plotter->addSample(QList<double>() << value.number());
+        plotter->addSample(QList<double>() << value);
     }
 
     if (mode() == SM::Applet::Panel) {
