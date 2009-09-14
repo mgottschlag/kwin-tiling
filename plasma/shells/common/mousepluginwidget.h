@@ -29,7 +29,9 @@
 
 #include <plasma/containmentactions.h>
 
-class MousePluginWidget : public QWidget
+#include "plasmagenericshell_export.h"
+
+class PLASMAGENERICSHELL_EXPORT MousePluginWidget : public QWidget
 {
     Q_OBJECT
 public:

@@ -18,21 +18,15 @@ set(plasma-netbook_SRCS
     netview.cpp
     main.cpp
     plasmaapp.cpp
-    ../../../shells/common/backgrounddialog.cpp
-    ../../../shells/common/mouseplugins.cpp
-    ../../../shells/common/mousepluginwidget.cpp
-    ../../../shells/common/mouseinputbutton.cpp
     ${appletbrowserdialog_SRCS}
 )
-
-kde4_add_ui_files(plasma-netbook_SRCS ../../../shells/common/BackgroundDialog.ui ../../../shells/common/ActivityConfiguration.ui ../../../shells/common/MousePlugins.ui ../../../shells/common/MousePluginWidget.ui)
 
 set(ksmserver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
 qt4_add_dbus_interface(plasma-netbook_SRCS ${ksmserver_xml} ksmserver_interface)
 
 kde4_add_kdeinit_executable(plasma-netbook ${plasma-netbook_SRCS})
 
-target_link_libraries(kdeinit_plasma-netbook ${KDE4_PLASMA_LIBS} kworkspace ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KIO_LIBS} ${X11_LIBRARIES} ${KDE4_KFILE_LIBS} kephal)
+target_link_libraries(kdeinit_plasma-netbook ${KDE4_PLASMA_LIBS} kworkspace ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KIO_LIBS} ${X11_LIBRARIES} ${KDE4_KFILE_LIBS} kephal plasmagenericshell)
 if(X11_Xrender_FOUND)
    target_link_libraries(kdeinit_plasma-netbook ${X11_Xrender_LIB})
 endif(X11_Xrender_FOUND)

@@ -15,6 +15,8 @@
 #include "ui_BackgroundDialog.h"
 #include "ui_ActivityConfiguration.h"
 
+#include "plasmagenericshell_export.h"
+
 namespace Plasma {
     class Wallpaper;
     class Containment;
@@ -26,7 +28,7 @@ class ScreenPreviewWidget;
 // WallpaperWidget is passed the wallpaper
 // in createConfigurationInterface so it can notify
 // of changes (used to enable the apply button)
-class WallpaperWidget :public QWidget
+class PLASMAGENERICSHELL_EXPORT WallpaperWidget :public QWidget
 {
     Q_OBJECT
 public:
@@ -39,7 +41,7 @@ public slots:
     void settingsChanged(bool isModified);
 };
 
-class BackgroundDialog : public KConfigDialog, public Ui::BackgroundDialog
+class PLASMAGENERICSHELL_EXPORT BackgroundDialog : public KConfigDialog, public Ui::BackgroundDialog
 {
     Q_OBJECT
 public:

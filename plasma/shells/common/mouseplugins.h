@@ -22,13 +22,15 @@
 
 #include "ui_MousePlugins.h"
 
+#include "plasmagenericshell_export.h"
+
 namespace Plasma {
     class Containment;
 }
 
 class KConfigDialog;
 
-class MousePlugins : public QWidget
+class PLASMAGENERICSHELL_EXPORT MousePlugins : public QWidget
 {
     Q_OBJECT
 public:

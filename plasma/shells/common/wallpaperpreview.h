@@ -20,12 +20,14 @@
 
 #include <QWidget>
 
+#include "plasmagenericshell_export.h"
+
 namespace Plasma{
     class Wallpaper;
     class Svg;
 }
 
-class WallpaperPreview : public QWidget
+class PLASMAGENERICSHELL_EXPORT WallpaperPreview : public QWidget
 {
     Q_OBJECT
 public:

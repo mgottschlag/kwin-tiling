@@ -23,9 +23,11 @@
 #include <QHash>
 #include <QPushButton>
 
+#include "plasmagenericshell_export.h"
+
 class QEvent;
 
-class MouseInputButton : public QPushButton
+class PLASMAGENERICSHELL_EXPORT MouseInputButton : public QPushButton
 {
     Q_OBJECT
 public:

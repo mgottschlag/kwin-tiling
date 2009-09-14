@@ -14,14 +14,6 @@ set(appletbrowserdialog_SRCS
     ../common/widgetsExplorer/openwidgetassistant.cpp
 )
 
-set(wallpaper_SRCS
-    ../common/wallpaperpreview.cpp
-    ../common/backgrounddialog.cpp
-    ../common/mouseplugins.cpp
-    ../common/mousepluginwidget.cpp
-    ../common/mouseinputbutton.cpp
-)
-
 set(plasma_SRCS
     scripting/containment.cpp
     scripting/rect.cpp
@@ -40,11 +32,9 @@ set(plasma_SRCS
     positioningruler.cpp
     toolbutton.cpp
     ${appletbrowserdialog_SRCS}
-    ${wallpaper_SRCS}
 )
 
 
-kde4_add_ui_files(plasma_SRCS ../common/BackgroundDialog.ui ../common/ActivityConfiguration.ui ../common/MousePlugins.ui ../common/MousePluginWidget.ui globaloptions.ui)
 kde4_add_kcfg_files(plasma_SRCS kcfg/plasma-shell-desktop.kcfgc)
 
 if(WIN32)
@@ -61,7 +51,7 @@ kde4_add_app_icon(plasma_SRCS "${KDE4_INSTALL_DIR}/share/icons/oxygen/*/apps/pla
 
 kde4_add_kdeinit_executable(plasma-desktop ${plasma_SRCS})
 
-target_link_libraries(kdeinit_plasma-desktop ${KDE4_PLASMA_LIBS} ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_KTEXTEDITOR_LIBS} kworkspace ${QT_QTSCRIPT_LIBRARY})
+target_link_libraries(kdeinit_plasma-desktop ${KDE4_PLASMA_LIBS} ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_KTEXTEDITOR_LIBS} kworkspace ${QT_QTSCRIPT_LIBRARY} plasmagenericshell)
 
 if(UNIX AND Q_WS_X11)
     target_link_libraries(kdeinit_plasma-desktop ${X11_LIBRARIES})
