@@ -12,8 +12,6 @@
 #define BACKGROUNDDIALOG_H
 
 #include <KConfigDialog>
-#include "ui_BackgroundDialog.h"
-#include "ui_ActivityConfiguration.h"
 
 #include "plasmagenericshell_export.h"
 
@@ -41,7 +39,8 @@ public slots:
     void settingsChanged(bool isModified);
 };
 
-class PLASMAGENERICSHELL_EXPORT BackgroundDialog : public KConfigDialog, public Ui::BackgroundDialog
+class BackgroundDialogPrivate;
+class PLASMAGENERICSHELL_EXPORT BackgroundDialog : public KConfigDialog
 {
     Q_OBJECT
 public:
@@ -71,7 +70,7 @@ private slots:
     void settingsModified(bool modified = true);
 
 private:
-    Ui::ActivityConfiguration activityUi;
+    BackgroundDialogPrivate *d;
     QStandardItemModel* m_containmentModel;
     Plasma::Wallpaper* m_wallpaper;
     Plasma::View* m_view;
