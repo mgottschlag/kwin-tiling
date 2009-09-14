@@ -23,15 +23,13 @@
 #include <KAssistantDialog>
 #include <KService>
 
-#include "plasmagenericshell_export.h"
-
 class KFileWidget;
 class KListWidget;
 
 namespace Plasma
 {
 
-class PLASMAGENERICSHELL_EXPORT OpenWidgetAssistant : public KAssistantDialog
+class OpenWidgetAssistant : public KAssistantDialog
 {
     Q_OBJECT
 
