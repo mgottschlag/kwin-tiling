@@ -1,6 +1,9 @@
 if (KDE4_BUILD_TESTS)
 
-include_directories(../ ../widgetsExplorer ../../../plasma/shells/desktop ${CMAKE_CURRENT_BINARY_DIR}/../../../plasma/shells/desktop)
+include_directories(..
+   ../../../plasma/shells/common/widgetsExplorer 
+   ../../../plasma/shells/desktop 
+   ${CMAKE_CURRENT_BINARY_DIR}/../../../plasma/shells/desktop)
 
 set(appletexplorer_SRCS
    ../../../plasma/shells/common/widgetsExplorer/kcategorizeditemsviewmodels.cpp
