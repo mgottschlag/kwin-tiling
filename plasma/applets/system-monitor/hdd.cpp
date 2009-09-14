@@ -139,7 +139,7 @@ void Hdd::configAccepted()
     connectToEngine();
 }
 
-QString Hdd::hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data)
+QString Hdd::hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data) const
 {
     KConfigGroup cg = globalConfig();
     QString label = cg.readEntry(uuid, "");
@@ -150,7 +150,7 @@ QString Hdd::hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data)
     return label;
 }
 
-QString Hdd::guessHddTitle(const Plasma::DataEngine::Data &data)
+QString Hdd::guessHddTitle(const Plasma::DataEngine::Data &data) const
 {
     QString label = data["Label"].toString();
     if (label.isEmpty()) {
@@ -169,7 +169,7 @@ QString Hdd::guessHddTitle(const Plasma::DataEngine::Data &data)
     return label;
 }
 
-QString Hdd::filePath(const Plasma::DataEngine::Data &data)
+QString Hdd::filePath(const Plasma::DataEngine::Data &data) const
 {
     QString label = data["File Path"].toString();
     QVariant accessible = data["Accessible"];
