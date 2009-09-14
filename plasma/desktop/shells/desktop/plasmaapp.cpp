@@ -99,7 +99,7 @@ PlasmaApp::PlasmaApp()
       m_mapper(new QSignalMapper(this))
 {
     KGlobal::locale()->insertCatalog("libplasma");
-    KGlobal::locale()->insertCatalog("plasma-shells-common");
+    KGlobal::locale()->insertCatalog("plasmagenericshell");
     KCrash::setFlags(KCrash::AutoRestart);
 
     // why is the next line of code here here?

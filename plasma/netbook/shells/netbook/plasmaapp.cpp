@@ -74,6 +74,7 @@ PlasmaApp::PlasmaApp()
       m_unHideTimer(0)
 {
     KGlobal::locale()->insertCatalog("libplasma");
+    KGlobal::locale()->insertCatalog("plasmagenericshell");
     KCrash::setFlags(KCrash::AutoRestart);
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();

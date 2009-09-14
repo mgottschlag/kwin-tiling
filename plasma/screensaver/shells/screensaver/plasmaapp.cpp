@@ -131,7 +131,7 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
 {
     //load translations for libplasma
     KGlobal::locale()->insertCatalog("libplasma");
-    KGlobal::locale()->insertCatalog("plasma-shells-common");
+    KGlobal::locale()->insertCatalog("plasmagenericshell");
 
     new AppAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/App", this);
