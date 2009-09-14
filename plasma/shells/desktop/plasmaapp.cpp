@@ -67,7 +67,7 @@
 #include <kephal/screens.h>
 
 #include "appadaptor.h"
-#include "backgrounddialog.h"
+#include "plasmagenericshell/backgrounddialog.h"
 #include "checkbox.h"
 #include "desktopcorona.h"
 #include "desktopview.h"

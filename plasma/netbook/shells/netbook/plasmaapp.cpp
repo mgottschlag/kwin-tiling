@@ -48,7 +48,7 @@
 #include "netview.h"
 
 #include "widgetsExplorer/widgetexplorer.h"
-#include "backgrounddialog.h"
+#include "plasmagenericshell/backgrounddialog.h"
 
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
