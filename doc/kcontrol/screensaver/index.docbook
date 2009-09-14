@@ -18,7 +18,7 @@
 
 <keywordset>
 <keyword>KDE</keyword>
-<keyword>KControl</keyword>
+<keyword>systemsettings</keyword>
 <keyword>screensaver</keyword>
 <keyword>screen saver</keyword>
 </keywordset>
@@ -101,7 +101,7 @@ normally.  </para>
 <title>Removing and restoring a screen saver from your system</title>
 
 <para>If you want to remove a screen saver from the list in this
-Control Center Module, you will need to rename a file on your
+&systemsettings; module, you will need to rename a file on your
 system.</para>
 
 <caution><para>Working as a <systemitem
@@ -117,7 +117,7 @@ directions</para></caution>
 
 <screen>
 <prompt>bash$</prompt> <command>cd 
-$KDEDIR/share/applnk/System/ScreenSavers</command>
+$KDEDIR/kde4/services/ScreenSavers</command>
 <prompt>bash$</prompt> <command>ls</command>
 </screen> 
 
@@ -130,13 +130,13 @@ file to a name which does not end in
 <para>Example:</para>
 <screen>
 <prompt>bash$</prompt> <command>cd 
-$KDEDIR/share/applnk/System/ScreenSavers</command>
-<prompt>bash$</prompt> <command>mv KSpace.desktop KSpace.backup</command>
+$KDEDIR/share/kde4/services/ScreenSavers</command>
+<prompt>bash$</prompt> <command>mv krandom.desktop krandom.backup</command>
 </screen> 
 
 <para>Will remove Space (GL) from the list</para>
 
-<note><para>You must close the &kcontrolcenter; entirely and restart it before 
+<note><para>You must close the &systemsettings; entirely and restart it before 
 the changes will be seen.</para></note>
 
 <para>To restore the disabled screen saver, simply rename the file back to its 
@@ -144,11 +144,11 @@ original name:</para>
 
 <screen>
 <prompt>bash$</prompt> <command>cd 
-$KDEDIR/share/applnk/System/ScreenSavers</command>
-<prompt>bash$</prompt> <command>mv KSpace.backup KSpace.desktop</command>
+$KDEDIR/share/kde4/services/ScreenSavers</command>
+<prompt>bash$</prompt> <command>mv krandom.backup krandom.desktop</command>
 </screen> 
 
-<para>Restart the &kcontrolcenter;, and the screen saver is back in the 
+<para>Restart the &systemsettings;, and the screen saver is back in the 
 list.</para>
 
 </sect2>
@@ -169,18 +169,15 @@ configuration file.  To do so:</para>
 </command>
 </para>
 <para>Now, using a text editor (the example uses &kate;, the &kde; text editor), 
-load the <filename>kdesktoprc</filename>.</para>
+load the <filename>kscreensaverrc</filename>.</para>
 <para>
-<prompt>$</prompt> <command>kate <filename>kdesktoprc</filename>
+<prompt>$</prompt> <command>kate <filename>kscreensaverrc</filename>
 </command>
 </para>
-<para>Search through the file for the section labeled 
-<emphasis>[Screensaver]</emphasis>.</para>
-<para>Look through all lines in the section for an entry entitled 
+<para>Search through the file for an entry entitled 
 <emphasis>LockGrace</emphasis>.</para>
 <para>If the entry exists, you can edit the value of the entry.  </para>
-<screen>[Screensaver]
-LockGrace=3000</screen>
+<screen>LockGrace=3000</screen>
 <para>The value of the entity represents the duration of the grace period
 in milliseconds. An entry of 3000, would change the grace period to 3 seconds.
 You can set the value of the entry to any number between zero (no grace period) 
