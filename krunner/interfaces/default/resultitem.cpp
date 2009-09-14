@@ -90,6 +90,7 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
     m_icon = KIcon(match.icon());
 
     if (m_configWidget) {
+        scene()->removeItem(m_configWidget);
         delete m_configWidget;
         m_configWidget = 0;
     }
@@ -103,7 +104,8 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
                                                         QSize(KIconLoader::SizeSmall,
                                                               KIconLoader::SizeSmall)));
         connect(m_configButton, SIGNAL(clicked()), this, SLOT(showConfig()));
-    } else {
+    } else if (m_configButton) {
+        scene()->removeItem(m_configButton);
         delete m_configButton;
         m_configButton = 0;
     }
@@ -417,6 +419,7 @@ void ResultItem::changeEvent(QEvent *event)
 void ResultItem::showConfig()
 {
     if (m_configWidget) {
+        scene()->removeItem(m_configWidget);
         delete m_configWidget;
         m_configWidget = 0;
     } else {
