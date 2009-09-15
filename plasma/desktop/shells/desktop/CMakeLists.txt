@@ -20,6 +20,7 @@ set(plasma_SRCS
     scripting/scriptengine.cpp
     scripting/widget.cpp
     checkbox.cpp
+    controllerwindow.cpp
     dashboardview.cpp
     desktopcorona.cpp
     desktopview.cpp
