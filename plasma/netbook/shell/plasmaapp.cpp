@@ -41,13 +41,14 @@
 
 #include <Plasma/Containment>
 #include <Plasma/Theme>
+#include <Plasma/Dialog>
 #include <Plasma/WindowEffects>
 
 #include "netcorona.h"
 #include "netview.h"
 
-#include "appletbrowser.h"
-#include "backgrounddialog.h"
+#include "widgetsExplorer/widgetexplorer.h"
+#include "plasmagenericshell/backgrounddialog.h"
 
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
@@ -64,7 +65,8 @@ PlasmaApp* PlasmaApp::self()
 PlasmaApp::PlasmaApp()
     : KUniqueApplication(),
       m_corona(0),
-      m_appletBrowser(0),
+      m_widgetExplorerView(0),
+      m_widgetExplorer(0),
       m_controlBar(0),
       m_mainView(0),
       m_isDesktop(false),
@@ -72,6 +74,7 @@ PlasmaApp::PlasmaApp()
       m_unHideTimer(0)
 {
     KGlobal::locale()->insertCatalog("libplasma");
+    KGlobal::locale()->insertCatalog("plasmagenericshell");
     KCrash::setFlags(KCrash::AutoRestart);
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
@@ -121,7 +124,6 @@ PlasmaApp::PlasmaApp()
     setIsDesktop(isDesktop);
     reserveStruts();
 
-    //FIXME: monstrous hack: force it non fullscreen by making it a pixel too short
     m_mainView->setFixedSize(width, height);
     m_mainView->move(0,0);
 
@@ -215,6 +217,10 @@ void PlasmaApp::positionPanel()
     m_controlBar->containment()->setMaximumSize(m_controlBar->size());
     m_controlBar->containment()->setMinimumSize(m_controlBar->size());
 
+    if (m_widgetExplorerView) {
+        top += m_widgetExplorerView->size().height();
+    }
+
     foreach (Plasma::Containment *containment, m_corona->containments()) {
         if (containment->formFactor() == Plasma::Planar) {
             containment->setContentsMargins(left, top, right, bottom);
@@ -256,11 +262,17 @@ void PlasmaApp::setIsDesktop(bool isDesktop)
     if (isDesktop) {
         m_mainView->setWindowFlags(m_mainView->windowFlags() | Qt::FramelessWindowHint);
         KWindowSystem::setOnAllDesktops(m_mainView->winId(), true);
+        if (m_controlBar) {
+            KWindowSystem::setOnAllDesktops(m_controlBar->winId(), true);
+        }
         m_mainView->show();
         KWindowSystem::setType(m_mainView->winId(), NET::Normal);
     } else {
         m_mainView->setWindowFlags(m_mainView->windowFlags() & ~Qt::FramelessWindowHint);
         KWindowSystem::setOnAllDesktops(m_mainView->winId(), false);
+        if (m_controlBar) {
+            KWindowSystem::setOnAllDesktops(m_controlBar->winId(), false);
+        }
         KWindowSystem::setType(m_mainView->winId(), NET::Normal);
     }
 }
@@ -368,6 +380,8 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
+    connect(containment, SIGNAL(toolBoxVisibilityChanged(bool)),
+            this, SLOT(updateToolBoxVisibility(bool)));
 
     KConfigGroup viewIds(KGlobal::config(), "ViewIds");
     int defaultId = 0;
@@ -444,6 +458,18 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     }
 }
 
+void PlasmaApp::updateToolBoxVisibility(bool visible)
+{
+    foreach (Plasma::Containment *cont, m_corona->containments()) {
+        cont->setToolBoxOpen(visible);
+    }
+
+    if (!visible && m_widgetExplorer) {
+        m_widgetExplorer->deleteLater();
+        m_widgetExplorerView->deleteLater();
+    }
+}
+
 void PlasmaApp::controlBarMoved(const NetView *controlBar)
 {
     if (!m_controlBar || controlBar != m_controlBar) {
@@ -514,26 +540,74 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
         return;
     }
 
-    if (!m_appletBrowser) {
-        m_appletBrowser = new Plasma::AppletBrowser();
-        m_appletBrowser->setContainment(containment);
-        m_appletBrowser->setApplication();
-        m_appletBrowser->setAttribute(Qt::WA_DeleteOnClose);
-        m_appletBrowser->setWindowTitle(i18n("Add Widgets"));
-        m_appletBrowser->setWindowIcon(KIcon("plasmagik"));
-        connect(m_appletBrowser, SIGNAL(destroyed()), this, SLOT(appletBrowserDestroyed()));
-    } else {
-        m_appletBrowser->setContainment(containment);
+    containment->setToolBoxOpen(true);
+
+    if (!m_widgetExplorerView) {
+
+        m_widgetExplorerView = new Plasma::Dialog();
+
+        KWindowSystem::setOnDesktop(m_widgetExplorerView->winId(), KWindowSystem::currentDesktop());
+        m_widgetExplorerView->show();
+        KWindowSystem::activateWindow(m_widgetExplorerView->winId());
+        m_widgetExplorerView->setWindowFlags(Qt::Dialog|Qt::FramelessWindowHint);
+        m_widgetExplorerView->setAttribute(Qt::WA_TranslucentBackground);
+        m_widgetExplorerView->setAttribute(Qt::WA_DeleteOnClose);
+        KWindowSystem::setState(m_widgetExplorerView->winId(), NET::StaysOnTop|NET::KeepAbove);
+        connect(m_widgetExplorerView, SIGNAL(destroyed()), this, SLOT(appletBrowserDestroyed()));
+
+        if (m_controlBar) {
+            switch (m_controlBar->location()) {
+            case Plasma::TopEdge:
+                m_widgetExplorerView->resize(m_mainView->size().width(), KIconLoader::SizeEnormous);
+                m_widgetExplorerView->move(m_controlBar->geometry().bottomLeft());
+                break;
+            case Plasma::LeftEdge:
+                m_widgetExplorerView->resize(KIconLoader::SizeEnormous, m_mainView->size().height());
+                m_widgetExplorerView->move(m_controlBar->geometry().topRight());
+                break;
+            case Plasma::RightEdge:
+                m_widgetExplorerView->resize(KIconLoader::SizeEnormous, m_mainView->size().height());
+                m_widgetExplorerView->move(m_controlBar->geometry().topLeft() - QPoint(m_widgetExplorerView->size().width(), 0));
+                break;
+            case Plasma::BottomEdge:
+            default:
+                m_widgetExplorerView->resize(m_mainView->size().width(), KIconLoader::SizeEnormous);
+                m_widgetExplorerView->move(m_controlBar->geometry().topLeft() - QPoint(0, m_widgetExplorerView->size().height()));
+                break;
+            }
+        } else {
+            m_widgetExplorerView->resize(m_mainView->size().width(), KIconLoader::SizeEnormous);
+            m_widgetExplorerView->move(0,0);
+        }
     }
 
-    KWindowSystem::setOnDesktop(m_appletBrowser->winId(), KWindowSystem::currentDesktop());
-    m_appletBrowser->show();
-    KWindowSystem::activateWindow(m_appletBrowser->winId());
+    if (!m_widgetExplorer) {
+        m_widgetExplorer = new Plasma::WidgetExplorer();
+        m_widgetExplorer->setContainment(m_mainView->containment());
+        m_widgetExplorer->setApplication();
+
+        m_widgetExplorer->resize(m_widgetExplorerView->size());
+        m_corona->addOffscreenWidget(m_widgetExplorer);
+
+        m_widgetExplorerView->setGraphicsWidget(m_widgetExplorer);
+
+        m_widgetExplorerView->installEventFilter(this);
+    }
+
+    m_widgetExplorer->setOrientation(Qt::Horizontal);
+    positionPanel();
+
+
+    m_widgetExplorer->show();
+    m_widgetExplorerView->show();
 }
 
 void PlasmaApp::appletBrowserDestroyed()
 {
-    m_appletBrowser = 0;
+    m_widgetExplorer = 0;
+    m_widgetExplorerView = 0;
+    positionPanel();
+    m_mainView->containment()->setToolBoxOpen(false);
 }
 
 
@@ -576,6 +650,12 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
                 !QApplication::activeWindow())) {
         //delayed hide
         m_unHideTimer->start(600);
+    } else if (watched == m_widgetExplorerView && event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        if (keyEvent->key() == Qt::Key_Escape) {
+            m_widgetExplorerView->deleteLater();
+            m_widgetExplorer->deleteLater();
+        }
     }
     return false;
 }
@@ -593,7 +673,9 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
 void PlasmaApp::controlBarVisibilityUpdate()
 {
     //FIXME: QCursor::pos() can be avoided somewat? the good news is that is quite rare, one time per trigger
-    if (!m_controlBar->isVisible()) {
+    if ((QApplication::activeWindow() != NULL) && m_controlBar->isVisible()) {
+        return;
+    } else if (!m_controlBar->isVisible()) {
         if (m_unhideTriggerGeom.adjusted(-1, -1, 1, 1).contains(QCursor::pos())) {
             destroyUnHideTrigger();
             Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());

@@ -1,17 +1,17 @@
-include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/shells/common ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/shells/desktop/scripting/ ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal)
+include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/shells/common ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/desktop/shell/scripting/ ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal)
 
 add_subdirectory(configupdates)
 
 set(appletbrowserdialog_SRCS
-    ../../../shells/common/widgetsExplorer/kcategorizeditemsviewmodels.cpp
-    ../../../shells/common/widgetsExplorer/plasmaappletitemmodel.cpp
-    ../../../shells/common/widgetsExplorer/appleticon.cpp
-    ../../../shells/common/widgetsExplorer/appletsfiltering.cpp
-    ../../../shells/common/widgetsExplorer/applettooltip.cpp
-    ../../../shells/common/widgetsExplorer/appletslist.cpp
-    ../../../shells/common/widgetsExplorer/managewidgets.cpp
-    ../../../shells/common/widgetsExplorer/widgetexplorer.cpp
-    ../../../shells/common/widgetsExplorer/openwidgetassistant.cpp
+    ../../shells/common/widgetsExplorer/kcategorizeditemsviewmodels.cpp
+    ../../shells/common/widgetsExplorer/plasmaappletitemmodel.cpp
+    ../../shells/common/widgetsExplorer/appleticon.cpp
+    ../../shells/common/widgetsExplorer/appletsfiltering.cpp
+    ../../shells/common/widgetsExplorer/applettooltip.cpp
+    ../../shells/common/widgetsExplorer/appletslist.cpp
+    ../../shells/common/widgetsExplorer/managewidgets.cpp
+    ../../shells/common/widgetsExplorer/widgetexplorer.cpp
+    ../../shells/common/widgetsExplorer/openwidgetassistant.cpp
 )
 
 set(plasma_SRCS

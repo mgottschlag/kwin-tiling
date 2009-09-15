@@ -57,11 +57,8 @@ void NetView::connectContainment(Plasma::Containment *containment)
         return;
     }
 
-    connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
     connect(containment, SIGNAL(focusRequested(Plasma::Containment*)),
             this, SLOT(setContainment(Plasma::Containment*)));
-    connect(containment, SIGNAL(configureRequested(Plasma::Containment*)), this,
-            SLOT(configureContainment(Plasma::Containment*)));
     connect(containment, SIGNAL(activate()), this, SIGNAL(containmentActivated()));
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updateGeometry()));
 }
