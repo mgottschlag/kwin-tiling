@@ -41,16 +41,17 @@ class FilteringTreeView : public QGraphicsWidget
         explicit FilteringTreeView(QGraphicsItem * parent = 0, Qt::WindowFlags wFlags = 0);
         virtual ~FilteringTreeView();
 
-        void init();
         void setModel(QStandardItemModel *model);
-
-    private slots:
-        void filterChanged(const QModelIndex &index);
 
     Q_SIGNALS:
         void filterChanged(int index);
 
+    private slots:
+        void filterChanged(const QModelIndex &index);
+
     private:
+        void init();
+
         QStandardItemModel *m_model;
         Plasma::TreeView *m_treeView;
 };
@@ -63,20 +64,17 @@ class FilteringTabs : public Plasma::TabBar
         explicit FilteringTabs(QGraphicsWidget *parent = 0);
         virtual ~FilteringTabs();
 
-        void init();
         void setModel(QStandardItemModel *model);
-
-    private:
-        //uses model to populate the tabs
-        void populateList();
-        QStandardItem *getItemByProxyIndex(const QModelIndex &index) const;
 
     Q_SIGNALS:
         void filterChanged(int index);
 
     private:
-        QStandardItemModel *m_model;
+        //uses model to populate the tabs
+        void populateList();
 
+        QStandardItem *getItemByProxyIndex(const QModelIndex &index) const;
+        QStandardItemModel *m_model;
 };
 
 class FilteringWidget : public QGraphicsWidget
@@ -89,16 +87,19 @@ class FilteringWidget : public QGraphicsWidget
                                  Qt::WindowFlags wFlags = 0);
         virtual ~FilteringWidget();
 
-        void init();
         void setModel(QStandardItemModel *model);
         void setListOrientation(Qt::Orientation orientation);
         Plasma::LineEdit *textSearch();
-        void resizeEvent(QGraphicsSceneResizeEvent *event);
 
     Q_SIGNALS:
         void filterChanged(int index);
 
+    protected:
+        void resizeEvent(QGraphicsSceneResizeEvent *event);
+
     private:
+        void init();
+
         QGraphicsLinearLayout *m_linearLayout;
         FilteringTreeView *m_categoriesTreeView;
         FilteringTabs *m_categoriesTabs;

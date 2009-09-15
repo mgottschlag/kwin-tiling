@@ -88,33 +88,33 @@ void FilteringTreeView::filterChanged(const QModelIndex & index)
 //FilteringTabs
 
 FilteringTabs::FilteringTabs(QGraphicsWidget *parent)
-        : Plasma::TabBar(parent)
+    : Plasma::TabBar(parent),
+      m_model(0)
 {
-    m_model = 0;
-    init();
+    setAttribute(Qt::WA_NoSystemBackground);
+    nativeWidget()->setUsesScrollButtons(true);
     connect(this, SIGNAL(currentChanged(int)), this, SIGNAL(filterChanged(int)));
 }
+
 FilteringTabs::~FilteringTabs()
 {
 
 }
 
-void FilteringTabs::init()
-{
-    setAttribute(Qt::WA_NoSystemBackground);
-    nativeWidget()->setUsesScrollButtons(true);
-}
-
 void FilteringTabs::populateList()
 {
-    QStandardItem *item;
-    int indexesCount = m_model->rowCount();
+    while (count() > 0) {
+        removeTab(0);
+    }
 
-    for(int i = 0; i < indexesCount ; i++){
-        item = getItemByProxyIndex(m_model->index(i, 0));
-        addTab(item->icon(), item->text());
-        if(!item->isEnabled()) {
-            nativeWidget()->setTabEnabled(i, false);
+    if (!m_model) {
+        return;
+    }
+
+    for (int i = 0; i < m_model->rowCount(); i++){
+        QStandardItem *item = getItemByProxyIndex(m_model->index(i, 0));
+        if (item && item->isEnabled()) {
+            addTab(item->icon(), item->text());
         }
     }
 }
@@ -147,7 +147,8 @@ FilteringWidget::FilteringWidget(Qt::Orientation orientation, QGraphicsItem * pa
     init();
 }
 
-FilteringWidget::~FilteringWidget(){
+FilteringWidget::~FilteringWidget()
+{
     delete(m_categoriesTabs);
     delete(m_categoriesTreeView);
 }
@@ -220,7 +221,7 @@ void FilteringWidget::setListOrientation(Qt::Orientation orientation)
 
     m_linearLayout->removeAt(1);
 
-    if(orientation == Qt::Horizontal) {
+    if (orientation == Qt::Horizontal) {
         m_textSearch->setPreferredWidth(200);
         m_textSearch->setPreferredHeight(-1);
         m_linearLayout->addItem(m_categoriesTabs);
@@ -234,3 +235,4 @@ void FilteringWidget::setListOrientation(Qt::Orientation orientation)
 
     m_linearLayout->invalidate();
 }
+
