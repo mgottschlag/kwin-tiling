@@ -23,7 +23,8 @@
 
 #include <syndication/item.h>
 #include <syndication/loader.h>
-#include <syndication/feed.h> 
+#include <syndication/feed.h>
+#include <Solid/Networking>
 #include <Plasma/DataEngine>
 
 class QDBusInterface;
@@ -57,6 +58,7 @@ class RssEngine : public Plasma::DataEngine
         void slotIconChanged(bool isHost, const QString& hostOrURL,
                                           const QString& iconName);
         void timeout(const QString & source);
+        void networkStatusChanged(Solid::Networking::Status status);
 
     private:
         QVariantList mergeFeeds(QString source) const;
@@ -72,6 +74,7 @@ class RssEngine : public Plasma::DataEngine
         QHash<QString, QString>              m_feedIcons;
         QHash<QString, QString>              m_feedTitles;
         QHash<QString, QDateTime>            m_feedTimes;
+        bool                                 m_forceUpdate;
 
         QDBusInterface *                     m_favIconsModule;
         QSignalMapper *                      m_signalMapper;

@@ -24,7 +24,8 @@
 //KDE
 #include <KDebug>
 #include <KUrl>
-#include <kstandarddirs.h>
+#include <KStandardDirs>
+#include <Solid/Networking>
 #include <syndication/item.h>
 #include <syndication/loader.h>
 #include <syndication/image.h>
@@ -47,7 +48,8 @@
 #define FAVICONINTERFACE "org.kde.FavIcon"
 
 RssEngine::RssEngine(QObject* parent, const QVariantList& args)
-    : Plasma::DataEngine(parent, args)
+    : Plasma::DataEngine(parent, args),
+    m_forceUpdate(false)
 {
     Q_UNUSED(args)
     setMinimumPollingInterval(MINIMUM_INTERVAL);
@@ -58,11 +60,28 @@ RssEngine::RssEngine(QObject* parent, const QVariantList& args)
             this, SLOT(slotIconChanged(bool,QString,QString)));
     connect(m_signalMapper, SIGNAL(mapped(const QString &)),
             this, SLOT(timeout(const QString &)));
+    connect(Solid::Networking::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
+            SLOT(networkStatusChanged(Solid::Networking::Status)));
+
 }
 
 RssEngine::~RssEngine()
 {
     delete m_favIconsModule;
+}
+
+void RssEngine::networkStatusChanged(Solid::Networking::Status status)
+{
+    if (status == Solid::Networking::Connected || status == Solid::Networking::Unknown) {
+        kDebug() << "network connected, force refreshing feeds in 3 seconds";
+        // The forced update needs to happen after the new feeds are in,
+        // so remember to force the update in processRss()
+        m_forceUpdate = true;
+        // start updating the feeds
+        foreach(const QString &feedUrl, sources()) {
+            updateSourceEvent(feedUrl);
+        }
+    }
 }
 
 bool RssEngine::updateSourceEvent(const QString &name)
@@ -71,7 +90,7 @@ bool RssEngine::updateSourceEvent(const QString &name)
      * multiple feeds at the same time, so we allow a comma
      * separated list of url's
      */
-    // NOTE: A comma separated list of feeds is not url compliant. Urls 
+    // NOTE: A comma separated list of feeds is not url compliant. Urls
     // may and do contain commas see http://www.spiegel.de/schlagzeilen/rss/0,5291,,00.xml
     // I have changed it to something more not url compliant " " three dots
     // Otherwise take a list instead
@@ -79,7 +98,7 @@ bool RssEngine::updateSourceEvent(const QString &name)
 
     foreach (const QString& source, sources) {
         // Let's first see if we've got a recent cached version of
-        // the feed. This avoids 'large' amounts of unnecesarry network
+        // the feed. This avoids 'large' amounts of unnecessary network
         // traffic.
         if (QDateTime::currentDateTime() >
             m_feedTimes[source.toLower()].addSecs(CACHE_TIMEOUT)){
@@ -220,10 +239,19 @@ void RssEngine::processRss(Syndication::Loader* loader,
             kDebug() << "all caches from source " << source
                      << " up to date, updating...";
             updateFeeds(source, title);
+            if (m_forceUpdate) {
+                // Should be used with care ...
+                forceImmediateUpdateOfAllVisualizations();
+                m_forceUpdate = false;
+                // and skip scheduleSourcesUpdated(), since we
+                // force a repaint anyway already
+                return;
+            }
         } else {
             kDebug() << "not all caches from source " << source
                      << ", delaying update.";
         }
+        scheduleSourcesUpdated();
     }
 }
 
