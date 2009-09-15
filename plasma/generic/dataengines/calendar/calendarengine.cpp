@@ -71,8 +71,16 @@ bool CalendarEngine::sourceRequestEvent(const QString &name)
             KHolidays::Holiday::List holidays = region->holidays(dateArg);
 
             if (!holidays.isEmpty()) {
-                //FIXME: should show ALL holidays, not just the first
-                data.insert(dateArg.toString(Qt::ISODate), holidays[0].text());
+                QString summary;
+                foreach (const KHolidays::Holiday &holiday, holidays) {
+                    if (!summary.isEmpty()) {
+                        summary.append("\n");
+                    }
+
+                    summary.append(holiday.text());
+                }
+
+                data.insert(dateArg.toString(Qt::ISODate), summary);
             }
 
             dateArg = dateArg.addDays(1);
@@ -83,12 +91,18 @@ bool CalendarEngine::sourceRequestEvent(const QString &name)
         setData(name, region->isHoliday(dateArg));
     } else if (tokens[0] == "description") {
         KHolidays::Holiday::List holidays = region->holidays(dateArg);
-        if (!holidays.isEmpty()) {
-            setData(name, holidays[0].text());
-        } else {
-            setData(name, QString());
+        QString summary;
+        foreach (const KHolidays::Holiday &holiday, holidays) {
+            if (!summary.isEmpty()) {
+                summary.append("\n");
+            }
+
+            summary.append(holiday.text());
         }
+
+        setData(name, summary);
     }
+
 
     return true;
 }
