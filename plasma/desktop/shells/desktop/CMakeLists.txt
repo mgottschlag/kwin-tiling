@@ -32,11 +32,11 @@ set(plasma_SRCS
     positioningruler.cpp
     toolbutton.cpp
     ${appletbrowserdialog_SRCS}
+    ${wallpaper_SRCS}
 )
 
 kde4_add_ui_files(plasma_SRCS globaloptions.ui)
-
-kde4_add_kcfg_files(plasma_SRCS kcfg/plasma-shell-desktop.kcfgc)
+kde4_add_kcfg_files(plasma_SRCS data/plasma-shell-desktop.kcfgc)
 
 if(WIN32)
     set(plasma_SRCS ${plasma_SRCS} panelview_win.cpp)
@@ -52,7 +52,7 @@ kde4_add_app_icon(plasma_SRCS "${KDE4_INSTALL_DIR}/share/icons/oxygen/*/apps/pla
 
 kde4_add_kdeinit_executable(plasma-desktop ${plasma_SRCS})
 
-target_link_libraries(kdeinit_plasma-desktop ${KDE4_PLASMA_LIBS} ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_KTEXTEDITOR_LIBS} kworkspace ${QT_QTSCRIPT_LIBRARY} plasmagenericshell)
+target_link_libraries(kdeinit_plasma-desktop ${KDE4_PLASMA_LIBS} ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_KTEXTEDITOR_LIBS} ${QT_QTSCRIPT_LIBRARY} kworkspace plasmagenericshell)
 
 if(UNIX AND Q_WS_X11)
     target_link_libraries(kdeinit_plasma-desktop ${X11_LIBRARIES})
@@ -66,7 +66,8 @@ target_link_libraries(kdeinit_plasma-desktop kephal)
 
 install(TARGETS kdeinit_plasma-desktop DESTINATION ${LIB_INSTALL_DIR})
 install(TARGETS plasma-desktop ${INSTALL_TARGETS_DEFAULT_ARGS})
-install(FILES plasma.desktop plasma-desktop.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
-install(FILES kcfg/plasma-shell-desktop.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
-install(FILES plasma-themes.knsrc DESTINATION  ${CONFIG_INSTALL_DIR})
-install(FILES plasma-desktop.notifyrc DESTINATION ${DATA_INSTALL_DIR}/plasma-desktop)
+install(FILES data/plasma.desktop data/plasma-desktop.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
+install(FILES data/plasma-shell-desktop.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
+install(FILES data/plasma-themes.knsrc DESTINATION  ${CONFIG_INSTALL_DIR})
+install(FILES data/plasma-desktop.notifyrc DESTINATION ${DATA_INSTALL_DIR}/plasma-desktop)
+install(FILES data/plasma-desktop-js.xml DESTINATION ${DATA_INSTALL_DIR}/katepart/syntax/)
