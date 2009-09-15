@@ -303,9 +303,13 @@ void AppletsListWidget::setContentsPropertiesAccordingToOrientation()
 void AppletsListWidget::filterChanged(int index)
 {
     if (m_modelFilterItems) {
-        m_dataFilterAboutToApply = m_modelFilters->item(index)->data();
-        //wait a little before filtering the list
-        m_filterApplianceTimer.start(FILTER_APPLIANCE_DELAY, this);
+        QStandardItem *item = m_modelFilters->item(index);
+
+        if (item) {
+            m_dataFilterAboutToApply = item->data();
+            //wait a little before filtering the list
+            m_filterApplianceTimer.start(FILTER_APPLIANCE_DELAY, this);
+        }
     }
 }
 

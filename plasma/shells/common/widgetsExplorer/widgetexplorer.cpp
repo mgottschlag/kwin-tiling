@@ -139,8 +139,10 @@ void WidgetExplorerPrivate::initFilters()
     typedef QPair<QString, QString> catPair;
     QMap<QString, catPair > categories;
     foreach (const QString &category, Plasma::Applet::listCategories(application)) {
-        QString trans = i18n(category.toLocal8Bit());
-        categories.insert(trans.toLower(), qMakePair(trans, category.toLower()));
+        if (!Plasma::Applet::listAppletInfo(category).isEmpty()) {
+            QString trans = i18n(category.toLocal8Bit());
+            categories.insert(trans.toLower(), qMakePair(trans, category.toLower()));
+        }
     }
 
     foreach (const catPair &category, categories) {

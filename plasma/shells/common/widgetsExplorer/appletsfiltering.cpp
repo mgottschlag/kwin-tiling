@@ -113,8 +113,9 @@ void FilteringTabs::populateList()
 
     for (int i = 0; i < m_model->rowCount(); i++){
         QStandardItem *item = getItemByProxyIndex(m_model->index(i, 0));
-        if (item && item->isEnabled()) {
+        if (item) {
             addTab(item->icon(), item->text());
+            nativeWidget()->setTabEnabled(i, item->isEnabled());
         }
     }
 }
