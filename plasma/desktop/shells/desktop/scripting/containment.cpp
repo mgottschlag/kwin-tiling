@@ -19,6 +19,8 @@
 
 #include "containment.h"
 
+#include <QAction>
+
 #include <Plasma/Corona>
 #include <Plasma/Containment>
 
