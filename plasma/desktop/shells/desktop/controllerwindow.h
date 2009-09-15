@@ -42,17 +42,19 @@ public:
     ControllerWindow(QWidget* parent);
     ~ControllerWindow();
 
-    void setContainment(Plasma::Containment *containment);
+    virtual void setContainment(Plasma::Containment *containment);
     Plasma::Containment *containment() const;
 
     QSize sizeHint() const;
 
-    void setLocation(const Plasma::Location &loc);
+    virtual void setLocation(const Plasma::Location &loc);
     Plasma::Location location() const;
     Qt::Orientation orientation() const;
 
-    void showWidgetsExplorer();
-    bool widgetsExplorerIsVisible() const;
+    void showWidgetExplorer();
+    bool isWidgetExplorerVisible() const;
+
+    Plasma::FrameSvg *background() const;
 
     bool eventFilter(QObject *watched, QEvent *event);
 
@@ -62,6 +64,7 @@ protected:
 
 private Q_SLOTS:
     void onActiveWindowChanged(WId id);
+    void backgroundChanged();
 
 private:
     Plasma::Location m_location;

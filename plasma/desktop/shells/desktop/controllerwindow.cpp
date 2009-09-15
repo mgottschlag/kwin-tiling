@@ -32,7 +32,6 @@
 #include <Plasma/Corona>
 #include <Plasma/Theme>
 #include <Plasma/FrameSvg>
-#include <Plasma/WindowEffects>
 
 #include "widgetsExplorer/widgetexplorer.h"
 
@@ -40,7 +39,7 @@
 
 ControllerWindow::ControllerWindow(QWidget* parent)
    : QWidget(parent),
-     m_location(Plasma::TopEdge),
+     m_location(Plasma::Floating),
      m_layout(new QBoxLayout(QBoxLayout::TopToBottom, this)),
      m_background(new Plasma::FrameSvg(this)),
      m_containment(0),
@@ -48,8 +47,12 @@ ControllerWindow::ControllerWindow(QWidget* parent)
      m_widgetExplorer(0)
 {
     Q_UNUSED(parent)
-
+    setWindowFlags(Qt::FramelessWindowHint);
+    KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky);
+    setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_TranslucentBackground);
+    setFocus(Qt::ActiveWindowFocusReason);
+
     QPalette pal = palette();
     pal.setBrush(backgroundRole(), Qt::transparent);
     setPalette(pal);
@@ -57,12 +60,7 @@ ControllerWindow::ControllerWindow(QWidget* parent)
     m_background->setImagePath("dialogs/background");
     m_background->setContainsMultipleImages(true);
 
-    setWindowFlags(Qt::FramelessWindowHint);
-    KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky);
-    setAttribute(Qt::WA_DeleteOnClose);
-    setFocus(Qt::ActiveWindowFocusReason);
-
-    setLocation(Plasma::BottomEdge);
+    m_layout->setContentsMargins(0, 0, 0, 0);
 
     connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(onActiveWindowChanged(WId)));
     connect(m_background, SIGNAL(repaintNeeded()), SLOT(backgroundChanged()));
@@ -72,6 +70,14 @@ ControllerWindow::~ControllerWindow()
 {
     delete m_widgetExplorer;
     delete m_widgetExplorerView;
+}
+
+void ControllerWindow::backgroundChanged()
+{
+    Plasma::Location l = m_location;
+    m_location = Plasma::Floating;
+    setLocation(l);
+    update();
 }
 
 void ControllerWindow::setContainment(Plasma::Containment *containment)
@@ -115,7 +121,7 @@ QSize ControllerWindow::sizeHint() const
 
 void ControllerWindow::setLocation(const Plasma::Location &loc)
 {
-    if (m_location == loc) {
+    if (m_location == loc || !m_containment) {
         return;
     }
 
@@ -126,26 +132,22 @@ void ControllerWindow::setLocation(const Plasma::Location &loc)
     case Plasma::LeftEdge:
         m_background->setEnabledBorders(Plasma::FrameSvg::RightBorder);
         m_layout->setDirection(QBoxLayout::TopToBottom);
-        m_layout->setContentsMargins(0, 0, m_background->marginSize(Plasma::RightMargin), 0);
         break;
 
     case Plasma::RightEdge:
         m_background->setEnabledBorders(Plasma::FrameSvg::LeftBorder);
         m_layout->setDirection(QBoxLayout::TopToBottom);
-        m_layout->setContentsMargins(m_background->marginSize(Plasma::LeftMargin), 0, 0, 0);
         break;
 
     case Plasma::TopEdge:
         m_background->setEnabledBorders(Plasma::FrameSvg::BottomBorder);
         m_layout->setDirection(QBoxLayout::BottomToTop);
-        m_layout->setContentsMargins(0, 0, 0, m_background->marginSize(Plasma::BottomMargin));
         break;
 
     case Plasma::BottomEdge:
     default:
         m_background->setEnabledBorders(Plasma::FrameSvg::TopBorder);
         m_layout->setDirection(QBoxLayout::TopToBottom);
-        m_layout->setContentsMargins(0, m_background->marginSize(Plasma::TopMargin), 0, 0);
         break;
     }
 
@@ -163,8 +165,6 @@ void ControllerWindow::setLocation(const Plasma::Location &loc)
             break;
         }
     }
-
-    Plasma::WindowEffects::slideWindow(this, loc);
 }
 
 Plasma::Location ControllerWindow::location() const
@@ -181,7 +181,7 @@ Qt::Orientation ControllerWindow::orientation() const
     return Qt::Vertical;
 }
 
-void ControllerWindow::showWidgetsExplorer()
+void ControllerWindow::showWidgetExplorer()
 {
     if (!m_containment) {
         return;
@@ -202,10 +202,9 @@ void ControllerWindow::showWidgetsExplorer()
         m_widgetExplorer = new Plasma::WidgetExplorer();
         m_widgetExplorer->setContainment(m_containment);
         m_widgetExplorer->setApplication();
-
         m_widgetExplorer->resize(size());
-        m_containment->corona()->addOffscreenWidget(m_widgetExplorer);
 
+        m_containment->corona()->addOffscreenWidget(m_widgetExplorer);
         m_widgetExplorerView->setSceneRect(m_widgetExplorer->geometry());
 
         m_widgetExplorer->installEventFilter(this);
@@ -223,13 +222,20 @@ void ControllerWindow::showWidgetsExplorer()
     // connect signals
 }
 
-bool ControllerWindow::widgetsExplorerIsVisible() const
+bool ControllerWindow::isWidgetExplorerVisible() const
 {
     return m_widgetExplorerView && m_widgetExplorerView->isVisible();
 }
 
+Plasma::FrameSvg *ControllerWindow::background() const
+{
+    return m_background;
+}
+
 void ControllerWindow::onActiveWindowChanged(WId id)
 {
+    Q_UNUSED(id)
+
     //if the active window isn't the plasma desktop and the widgets explorer is visible,
     //then close the panel controller
     if (QApplication::activeWindow() == 0 || (QApplication::activeWindow()->winId() != KWindowSystem::activeWindow())) {
