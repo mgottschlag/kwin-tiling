@@ -1,5 +1,6 @@
 /* Copyright 2009 by Martin Klapetek <martin.klapetek@gmail.com>
 
+
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
    License version 2 as published by the Free Software Foundation.
@@ -26,20 +27,22 @@
 #include <QStandardItemModel>
 #include <QPainter>
 
+#include <plasma/framesvg.h>
 
 class KCapacityBar;
 
 class DeviceSpaceInfoDelegate : public Plasma::Delegate
 {
     Q_OBJECT
-public:
-    DeviceSpaceInfoDelegate(QObject *parent = 0);
-    virtual ~DeviceSpaceInfoDelegate();
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
-protected:
-    virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex & index) const;
-private:
-    KCapacityBar *m_capacityBar;
+
+    public:
+        DeviceSpaceInfoDelegate(QObject *parent = 0);
+        virtual ~DeviceSpaceInfoDelegate();
+        virtual void paint(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
+
+    private:
+        KCapacityBar *m_capacityBar;
+        Plasma::FrameSvg *m_svg;
 };
 
 #endif // DEVICESPACEINFODELEGATE_H

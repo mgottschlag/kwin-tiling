@@ -1,5 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2007 by Alexis Ménard <darktears31@gmail.com>           *
+ *   Copyright 2009 by Giulio Camuffo <giuliocamuffo@gmail.com>           *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -28,8 +29,15 @@
 #include <Plasma/DataEngine>
 #include <Plasma/ToolTipManager>
 
+///Ui includes
+#include "ui_configurationpage.h"
+
+class QStandardItemModel;
+class QGraphicsLinearLayout;
+class QGraphicsProxyWidget;
 class QTimer;
 
+class KIcon;
 
 namespace Notifier
 {
@@ -43,7 +51,7 @@ namespace Plasma
 }
 
 /**
-* @short Applet used to display hot plug devices
+* @short Applet used to display devices
 *
 */
 class DeviceNotifier : public Plasma::PopupApplet
@@ -56,12 +64,12 @@ class DeviceNotifier : public Plasma::PopupApplet
         * @param parent the parent of this object
         **/
         DeviceNotifier(QObject *parent, const QVariantList &args);
-        
+
         /**
         * Default destructor
         **/
         ~DeviceNotifier();
-        
+
         /**
         * initialize the applet (called by plasma automatically)
         **/
@@ -73,23 +81,29 @@ class DeviceNotifier : public Plasma::PopupApplet
         void changeNotifierIcon(const QString& name = QString());
 
         /**
-         * The widget that displays the list of devices.
-         */
+        * The widget that displays the list of devices.
+        */
         QWidget *widget();
 
+        void showErrorMessage(const QString &message);
+
     protected:
+        void createConfigurationInterface(KConfigDialog *parent);
         void popupEvent(bool show);
 
     public slots:
         /**
-         * @internal Sets the tooltip content properly before showing.
-         */
-         void toolTipAboutToShow();
+        * @internal Sets the tooltip content properly before showing.
+        */
+        void toolTipAboutToShow();
 
         /**
-         * @internal Clears memory when needed.
-         */
-         void toolTipHidden();
+        * @internal Clears memory when needed.
+        */
+        void toolTipHidden();
+
+        void setItemShown(const QString &name, bool shown);
+        void setAllItemsShown(bool shown);
 
     protected slots:
         /**
@@ -110,6 +124,14 @@ class DeviceNotifier : public Plasma::PopupApplet
         * @param data the data of the source
         **/
         void dataUpdated(const QString &source, Plasma::DataEngine::Data data);
+
+        void configAccepted();
+
+    private slots:
+        /**
+        * @internal Used to recreate the devices in the menu.
+        */
+        void resetDevices();
 
     private:
         /**
@@ -132,36 +154,56 @@ class DeviceNotifier : public Plasma::PopupApplet
 
         ///The engine used to manage devices in the applet (unmount,...)
         Plasma::DataEngine *m_solidDeviceEngine;
-  
+
         ///the icon used when the applet is in the taskbar
         Plasma::IconWidget *m_icon;
-    
+
         ///default icon of the notifier
         QString m_iconName;
 
         ///The dialog where devices are displayed
         Notifier::NotifierDialog * m_dialog;
-        
+
         ///the time durin when the dialog will be show
         int m_displayTime;
-      
+
         ///the number of items displayed in the dialog
         int m_numberItems;
-      
+
         ///the time during when the item will be displayed
         int m_itemsValidity;
 
         ///the timer for different use cases
         QTimer *m_timer;
-       
+
         ///bool to know if notifications are enabled
         bool isNotificationEnabled;
 
         ///last plugged udi
         QList<QString> m_lastPlugged;
 
+        QList<QString> m_hiddenDevices;
+
         ///true if fillPreviousDevices is running
         bool m_fillingPreviousDevices;
+
+        ///configuration page
+        Ui::configurationPage m_configurationUi;
+
+        ///hide the popup after a while
+        int m_hidePopupAfter;
+
+        ///if true do not show the not removable devices
+        bool m_showOnlyRemovable;
+
+        ///if false do not show the popup on insertion of a new device
+        bool m_showPopupOnInsert;
+
+        bool m_showAll;
+
+        QTimer *m_popupTimer;
+
+        bool m_checkHiddenDevices;
 };
 
 #endif

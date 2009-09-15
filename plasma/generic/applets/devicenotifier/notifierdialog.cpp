@@ -1,5 +1,6 @@
 /*
     Copyright 2008 by Alexis Ménard <darktears31@gmail.com>
+    Copyright 2009 by Giulio Camuffo <giuliocamuffo@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -26,6 +27,7 @@
 #include <QVBoxLayout>
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
+#include <QHeaderView>
 #include <QTimer>
 #include <QMetaEnum>
 
@@ -34,7 +36,11 @@
 #include <KColorScheme>
 #include <KIcon>
 #include <KIconLoader>
+#include <KGlobalSettings>
 #include <KMessageBox>
+#include <KDesktopFile>
+#include <KConfigGroup>
+#include <KStandardDirs>
 
 //plasma
 #include <Plasma/Dialog>
@@ -128,6 +134,7 @@ void NotifierDialog::insertDevice(const QString &name)
     item->setData(name, SolidUdiRole);
     item->setData(Plasma::Delegate::MainColumn, ScopeRole);
     item->setData(false, SubTitleMandatoryRole);
+    item->setData(true, VisibilityRole);
 
     QStandardItem *actionItem = new QStandardItem();
     actionItem->setData(name, SolidUdiRole);
@@ -142,6 +149,7 @@ void NotifierDialog::insertDevice(const QString &name)
         if(currentCategory) {
             currentCategory->insertRow(0,item);
             currentCategory->setChild(0, 1, actionItem);
+            currentCategory->setData(true, IsCategoryRole);
         } else {
             delete item;
             delete actionItem;
@@ -149,6 +157,35 @@ void NotifierDialog::insertDevice(const QString &name)
     } else {
         delete item;
         delete actionItem;
+    }
+
+    m_notifierView->calculateRects();
+}
+
+void NotifierDialog::insertAction(const QString& device, const QString& action)
+{
+    QModelIndex parentDeviceIndex = indexForUdi(device);
+
+    QStandardItem *item = new QStandardItem();
+    item->setData(device, ParentDeviceRole);
+    item->setData(action, LauncherRole);
+    item->setData(Plasma::Delegate::MainColumn, ScopeRole);
+    item->setData(false, SubTitleMandatoryRole);
+
+    QStandardItem *parentDevice = m_hotplugModel->itemFromIndex(parentDeviceIndex);
+
+    if(parentDevice) {
+        QString actionUrl = KStandardDirs::locate("data", "solid/actions/" + action);
+        KDesktopFile desktopFile(actionUrl);
+        QString action = desktopFile.readActions().at(0);
+        KConfigGroup deviceType = desktopFile.actionGroup(action); // Retrieve the configuration group where the user friendly name is
+
+        parentDevice->appendRow(item);
+
+        item->setData(deviceType.readEntry("Name"), Qt::DisplayRole);
+        item->setData(KIcon(deviceType.readEntry("Icon")), Qt::DecorationRole);
+    } else {
+        delete item;
     }
 
     m_notifierView->calculateRects();
@@ -168,10 +205,11 @@ void NotifierDialog::setUnMount(bool unmount, const QString &name)
     if (unmount) {
         icon = KIcon("media-eject");
     } else {
-        icon = KIcon();
+        icon = KIcon("emblem-mounted"); //needs a better icon
     }
 
     m_hotplugModel->setData(childAction->index(), icon, Qt::DecorationRole);
+    m_hotplugModel->setData(index, unmount, MountedRole);
 }
 
 void NotifierDialog::setDeviceData(const QString &name, QVariant data, int role)
@@ -273,9 +311,7 @@ void NotifierDialog::buildDialog()
     m_notifierView->setModel(m_hotplugModel);
     m_notifierView->setFocusPolicy(Qt::NoFocus);
 
-
     DeviceSpaceInfoDelegate *delegate = new DeviceSpaceInfoDelegate(this);
-    //Plasma::Delegate *delegate = new Delegate(this);
     //map the roles of m_hotplugModel into the standard Plasma::Delegate roles
     delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, ActionRole);
     delegate->setRoleMapping(Plasma::Delegate::ColumnTypeRole, ScopeRole);
@@ -286,7 +322,11 @@ void NotifierDialog::buildDialog()
     l_layout->addWidget(m_notifierView);
     m_widget->setLayout(l_layout);
 
-    connect(m_notifierView, SIGNAL(clicked(const QModelIndex&)),this,SLOT(itemClicked(const QModelIndex&)));
+    connect(m_notifierView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(itemClicked(const QModelIndex&)));
+    connect(m_notifierView, SIGNAL(itemVisibilityChanged(const QString&, bool)),
+        m_notifier, SLOT(setItemShown(const QString&, bool)));
+    connect(m_notifierView, SIGNAL(allItemsVisibilityChanged(bool)),
+        m_notifier, SLOT(setAllItemsShown(bool)));
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));    // allows updating of colors automatically
 }
@@ -294,7 +334,7 @@ void NotifierDialog::buildDialog()
 void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorData)
 {
     if (error && errorData.isValid()) {
-        QTimer::singleShot(0, this, SLOT(showTeardownError()));
+        m_notifier->showErrorMessage(i18n("Could not unmount the device.\nOne or more files on this device are open within an application."));
     } else {
         m_notifier->changeNotifierIcon("dialog-ok");
         m_notifier->update();
@@ -306,16 +346,10 @@ void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorD
                this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant)));
 }
 
-void NotifierDialog::showTeardownError()
-{
-    //FIXME: modal dialog are bad m'kay
-    KMessageBox::error(0, i18n("Could not unmount the device.\nOne or more files on this device are open within an application."), QString());
-}
-
 void NotifierDialog::storageEjectDone(Solid::ErrorType error, QVariant errorData)
 {
     if (error && errorData.isValid()) {
-        QTimer::singleShot(0, this, SLOT(showStorageEjectDoneError()));
+        m_notifier->showErrorMessage(i18n("Cannot eject the disc.\nOne or more files on this disc are open within an application."));
     } else {
         m_notifier->changeNotifierIcon("dialog-ok");
         m_notifier->update();
@@ -326,9 +360,18 @@ void NotifierDialog::storageEjectDone(Solid::ErrorType error, QVariant errorData
                this, SLOT(storageEjectDone(Solid::ErrorType, QVariant)));
 }
 
-void NotifierDialog::showStorageEjectDoneError()
+void NotifierDialog::storageSetupDone(Solid::ErrorType error, QVariant errorData)
 {
-    KMessageBox::error(0, i18n("Cannot eject the disc.\nOne or more files on this disc are open within an application."), QString());
+    if (error && errorData.isValid()) {
+        m_notifier->showErrorMessage(i18n("Cannot mount the disc."));
+    } else {
+        m_notifier->changeNotifierIcon("dialog-ok");
+        m_notifier->update();
+        QTimer::singleShot(2000, this, SLOT(resetNotifierIcon()));
+    }
+    //show the message only one time
+    disconnect(sender(), SIGNAL(setupDone(Solid::ErrorType, QVariant, const QString &)),
+               this, SLOT(storageSetupDone(Solid::ErrorType, QVariant)));
 }
 
 QModelIndex NotifierDialog::indexForUdi(const QString &udi) const
@@ -350,6 +393,64 @@ QModelIndex NotifierDialog::indexForUdi(const QString &udi) const
     return QModelIndex();
 }
 
+int NotifierDialog::numberOfChildren(const QStandardItem *item)
+{
+    int counter=0;
+    for (int i=0; i<item->rowCount(); ++i) {
+        for (int j=0; j<item->columnCount(); ++j) {
+            if (item->child(i,j) != 0) {
+                ++counter;
+            }
+        }
+    }
+
+    return counter;
+}
+
+void NotifierDialog::toggleActionsForDevice(const QStringList& actions, const QString& deviceUdi)
+{
+    QModelIndex deviceIndex = indexForUdi(deviceUdi);
+    QStandardItem *deviceItem = m_hotplugModel->itemFromIndex(deviceIndex);
+
+    const bool addActions = !deviceItem->hasChildren();
+    removeActions();
+    if (addActions) {
+        foreach(QString action, actions) {
+                insertAction(deviceUdi, action);
+        }
+    }
+}
+
+void NotifierDialog::removeActions()
+{
+    int rowCount = m_hotplugModel->rowCount();
+    for (int i=0; i < rowCount; ++i) {
+        QModelIndex index = m_hotplugModel->index(i, 0);
+        QStandardItem *currentItem = m_hotplugModel->itemFromIndex(index);
+        for (int j=0; j < currentItem->rowCount(); ++j) {
+            QStandardItem *childItem = currentItem->child(j, 0);
+
+            QVariant udi = m_hotplugModel->data(childItem->index(), SolidUdiRole);
+            if (udi.isValid()) {
+                removeActionsForDevice(udi.toString());
+            }
+        }
+    }
+}
+
+void NotifierDialog::removeActionsForDevice(const QString &device)
+{
+    QModelIndex deviceIndex = indexForUdi(device);
+    QStandardItem *deviceItem = m_hotplugModel->itemFromIndex(deviceIndex);
+
+    for (int i = 0; i < deviceItem->rowCount(); ++i) {
+        deviceItem->removeRow(i);
+        --i;
+    }
+
+    m_notifierView->calculateRects();
+}
+
 void NotifierDialog::itemClicked(const QModelIndex &index)
 {
     QString udi = QString(m_hotplugModel->data(index, SolidUdiRole).toString());
@@ -358,46 +459,65 @@ void NotifierDialog::itemClicked(const QModelIndex &index)
     if (index.data(ScopeRole).toInt() == Plasma::Delegate::SecondaryActionColumn) {
         Solid::Device device(udi);
 
-        if (device.is<Solid::OpticalDisc>()) {
-            Solid::OpticalDrive *drive = device.parent().as<Solid::OpticalDrive>();
-            if (drive) {
-                connect(drive, SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
-                        this, SLOT(storageEjectDone(Solid::ErrorType, QVariant)));
-                drive->eject();
+        if (m_hotplugModel->data(indexForUdi(udi), MountedRole).toBool()) {
+            if (device.is<Solid::OpticalDisc>()) {
+                Solid::OpticalDrive *drive = device.parent().as<Solid::OpticalDrive>();
+                if (drive) {
+                    connect(drive, SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
+                            this, SLOT(storageEjectDone(Solid::ErrorType, QVariant)));
+                    drive->eject();
+                }
+            } else if (device.is<Solid::StorageVolume>()) {
+                Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
+                if (access && access->isAccessible()) {
+                    connect(access, SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
+                            this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant)));
+                    access->teardown();
+                }
             }
-        } else if (device.is<Solid::StorageVolume>()) {
+        } else if (device.is<Solid::StorageAccess>()) {
             Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
-             if (access && access->isAccessible()) {
-                connect(access, SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant)));
-                access->teardown();
-             }
+
+            // only unmounted devices
+            if (access && !access->isAccessible()) {
+                connect(access, SIGNAL(setupDone(Solid::ErrorType, QVariant, const QString &)),
+                            this, SLOT(storageSetupDone(Solid::ErrorType, QVariant)));
+                access->setup();
+            }
         }
-    //open  (index.data(ScopeRole).toInt() == OpenAction)
+        //open  (index.data(ScopeRole).toInt() == OpenAction)
     } else {
-        QStringList desktopFiles = m_hotplugModel->data(index, PredicateFilesRole).toStringList();
+        if (m_hotplugModel->data(index, SolidUdiRole).isValid()) {
+            QStringList desktopFiles = m_hotplugModel->data(index, PredicateFilesRole).toStringList();
+            toggleActionsForDevice(desktopFiles, udi);
 
-        kDebug() << "DeviceNotifier:: call Solid Ui Server with params :" << udi \
-                << "," << desktopFiles;
-        QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
-        QDBusReply<void> reply = soliduiserver.call("showActionsDialog", udi, desktopFiles);
+            emit deviceSelected();
+        } else {
+            QStringList desktopFiles;
+            desktopFiles.append(m_hotplugModel->data(index, LauncherRole).toString());
+            udi = m_hotplugModel->data(index, ParentDeviceRole).toString();
+            kDebug() << "DeviceNotifier:: call Solid Ui Server with params :" << udi \
+                    << "," << desktopFiles;
+            QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
+            QDBusReply<void> reply = soliduiserver.call("showActionsDialog", udi, desktopFiles);
+
+            emit actionSelected();
+        }
     }
-
-    emit itemSelected();
 }
 
 QString NotifierDialog::getCategoryNameOfDevice(const Solid::Device& device)
 {
     int index = Solid::DeviceInterface::staticMetaObject.indexOfEnumerator("Type");
     QMetaEnum typeEnum = Solid::DeviceInterface::staticMetaObject.enumerator(index);
-    for (int i = typeEnum.keyCount() - 1 ; i > 0; i--)
-    {
+    for (int i = typeEnum.keyCount() - 1 ; i > 0; i--) {
         Solid::DeviceInterface::Type type = (Solid::DeviceInterface::Type)typeEnum.value(i);
         const Solid::DeviceInterface *interface = device.asDeviceInterface(type);
-        if (interface)
-        {
+        if (interface) {
             return Solid::DeviceInterface::typeDescription(type);
         }
     }
+
     return 0;
 }
 
@@ -411,7 +531,11 @@ void NotifierDialog::updateColors()
 {
     KColorScheme colorTheme = KColorScheme(QPalette::Active, KColorScheme::View,Plasma::Theme::defaultTheme()->colorScheme());
     m_label->setText(i18n("<font color=\"%1\">Devices recently plugged in:</font>",colorTheme.foreground(KColorScheme::NormalText).color().name()));
+}
 
+void NotifierDialog::addShowAllAction(bool value)
+{
+    m_notifierView->addShowAllAction(value);
 }
 
 #include "notifierdialog.moc"

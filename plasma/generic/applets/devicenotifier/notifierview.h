@@ -1,4 +1,5 @@
 /*  Copyright 2007 by Alexis Ménard <darktears31@gmail.com>
+    Copyright 2009 by Giulio Camuffo <giuliocamuffo@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -59,6 +60,8 @@ namespace Notifier
        * Reimplemented from QWidget
        */
       QSize sizeHint();
+
+      void addShowAllAction(bool value);
 
   protected:
       /**
@@ -126,17 +129,35 @@ namespace Notifier
       **/
       QModelIndex indexAt(const QPoint& point) const;
 
+      void contextMenuEvent(QContextMenuEvent *event);
+
       static const int HEADER_LEFT_MARGIN = 5;
       static const int HEADER_TOP_MARGIN = 5;
       static const int HEADER_HEIGHT = 35;
       static const int COLUMN_EJECT_MARGIN = 5;
       static const int COLUMN_EJECT_SIZE = 50;
       static const int TOP_OFFSET = 5;
+      static const int ACTION_LEFT_MARGIN = 30;
+
+  signals:
+      void itemVisibilityChanged(const QString &name, bool hidden);
+      void allItemsVisibilityChanged(bool show);
+
+  private slots:
+      void setItemVisibility();
 
   private:
+
       ///The hovered index
       QPersistentModelIndex m_hoveredIndex;
+
       QHash<QModelIndex,QRect> itemRects;
+
+      bool m_ignoreLeaveEvent;
+      bool m_addShowAllAction;
+
+      QAction *m_hideItem;
+      QAction *m_showAll;
   };
 
 }

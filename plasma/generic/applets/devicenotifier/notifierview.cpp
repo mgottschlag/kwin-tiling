@@ -1,5 +1,6 @@
 /*
     Copyright 2007 by Alexis Ménard <darktears31@gmail.com>
+    Copyright 2009 by Giulio Camuffo <giuliocamuffo@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -18,8 +19,6 @@
 */
 
 #include "notifierview.h"
-#include "devicespaceinfodelegate.h"
-#include "notifierdialog.h"
 
 // Qt
 
@@ -35,15 +34,21 @@
 #include <KIconLoader>
 #include <KColorScheme>
 #include <KGlobalSettings>
+#include <KMenu>
 
 //Plasma
 #include <Plasma/Delegate>
 #include <Plasma/Theme>
 
+//Own
+#include "devicespaceinfodelegate.h"
+#include "notifierdialog.h"
+
 using namespace Notifier;
 
 NotifierView::NotifierView(QWidget *parent)
-    : QTreeView(parent)
+    : QTreeView(parent),
+      m_addShowAllAction(false)
 {
     setIconSize(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
     setRootIsDecorated(true);
@@ -55,6 +60,14 @@ NotifierView::NotifierView(QWidget *parent)
     viewport()->setAttribute(Qt::WA_NoSystemBackground, true);
     setPalette(p);
     setFrameShape(QFrame::NoFrame);
+    m_ignoreLeaveEvent = false;
+
+    m_hideItem = new QAction(this);
+    m_showAll = new QAction(i18n("Show all the items"), this);
+    m_showAll->setCheckable(true);
+    m_hideItem->setCheckable(true);
+    connect(m_hideItem, SIGNAL(triggered()), this, SLOT(setItemVisibility()));
+    connect(m_showAll, SIGNAL(toggled(bool)), this, SIGNAL(allItemsVisibilityChanged(bool)));
 }
 
 NotifierView::~NotifierView()
@@ -102,6 +115,8 @@ void NotifierView::mouseMoveEvent(QMouseEvent *event)
         setCurrentIndex(m_hoveredIndex);
     }
 
+    m_ignoreLeaveEvent = false;
+
     QAbstractItemView::mouseMoveEvent(event);
 }
 
@@ -109,7 +124,7 @@ void NotifierView::mousePressEvent(QMouseEvent *event)
 {
     const QModelIndex itemUnderMouse = indexAt(event->pos());
     //don't pass click for header
-    if (event->button() != Qt::LeftButton || model()->hasChildren(itemUnderMouse)) {
+    if (event->button() != Qt::LeftButton || itemUnderMouse.data(NotifierDialog::IsCategoryRole).toBool() ) {
         return;
     }
 
@@ -120,7 +135,7 @@ void NotifierView::mouseReleaseEvent(QMouseEvent *event)
 {
     const QModelIndex itemUnderMouse = indexAt(event->pos());
     //don't pass click for header
-    if (event->button() != Qt::LeftButton || model()->hasChildren(itemUnderMouse)) {
+    if (event->button() != Qt::LeftButton || itemUnderMouse.data(NotifierDialog::IsCategoryRole).toBool()) {
         return;
     }
 
@@ -130,6 +145,10 @@ void NotifierView::mouseReleaseEvent(QMouseEvent *event)
 void NotifierView::leaveEvent(QEvent *event)
 {
     Q_UNUSED(event)
+    if (m_ignoreLeaveEvent) {
+        return;
+    }
+
     if (m_hoveredIndex.isValid()) {
         const QModelIndex oldHoveredIndex = m_hoveredIndex;
         m_hoveredIndex = QModelIndex();
@@ -158,7 +177,6 @@ void NotifierView::calculateRects()
     const int cols = header()->count();
     //kDebug() << "painting" << rows << "rows" << cols << "columns";
 
-
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
             const QModelIndex index = model()->index(i, j, rootIndex());
@@ -170,9 +188,9 @@ void NotifierView::calculateRects()
 
                 QStandardItemModel * currentModel = dynamic_cast<QStandardItemModel *>(model());
                 QStandardItem *currentItem = currentModel->itemFromIndex(index);
-                // we display the children of this item
+                // we display the children of this item (the devices)
                 for (int k = 0; k < currentItem->rowCount(); ++k) {
-                    for (int l = 0; l < currentItem->columnCount(); ++l) {
+                    for (int l = currentItem->columnCount() - 1; l > -1; --l) {
                         QStandardItem *childItem = currentItem->child(k, l);
 
                         if (!childItem) {
@@ -185,13 +203,31 @@ void NotifierView::calculateRects()
                             QSize size(width() - COLUMN_EJECT_SIZE, sizeHintForIndex(index).height());
                             itemChildRect = QRect(QPoint(HEADER_LEFT_MARGIN, verticalOffset), size);
                             itemRects.insert(childIndex, itemChildRect);
+                            verticalOffset += itemChildRect.size().height();
                         } else {
                             QSize size(COLUMN_EJECT_SIZE - style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 2,
-                                       sizeHintForIndex(index).height());
+                                    sizeHintForIndex(index).height());
                             itemChildRect = QRect(QPoint(width() - (COLUMN_EJECT_SIZE - COLUMN_EJECT_MARGIN ),
-                                                  verticalOffset), size);
+                                                verticalOffset), size);
                             itemRects.insert(childIndex, itemChildRect);
-                            verticalOffset += itemChildRect.size().height();
+                        }
+
+                        if (childItem->hasChildren()) { //actions
+                            for (int n = 0; n < childItem->rowCount(); ++n) {
+                                for (int m = 0; m < childItem->columnCount(); ++m) {
+                                    QStandardItem *subChildItem = childItem->child(n, m);
+                                    if (subChildItem) {
+                                        QModelIndex subChildIndex = subChildItem->index();
+                                        QRect subItemChildRect;
+
+                                        QSize size;
+                                        size = QSize(width() - COLUMN_EJECT_SIZE, sizeHintForIndex(index).height());
+                                        subItemChildRect = QRect(QPoint(ACTION_LEFT_MARGIN, verticalOffset), size);
+                                        itemRects.insert(subChildIndex, subItemChildRect);
+                                        verticalOffset += size.height();
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -214,10 +250,10 @@ void NotifierView::paintEvent(QPaintEvent *event)
     while (it.hasNext()) {
         it.next();
         QRect itemRect = it.value();
-	QRect rect(itemRect.x(), itemRect.y() - verticalOffset(), itemRect.width(), itemRect.height()); 
+        QRect rect(itemRect.x(), itemRect.y() - verticalOffset(), itemRect.width(), itemRect.height()); 
         if (event->region().contains(rect)) {
             QModelIndex index = it.key();
-            if (model()->hasChildren(index)) {
+            if (model()->data(index, NotifierDialog::IsCategoryRole).toBool()) {
                 //kDebug()<<"header"<<rect;
                 paintHeaderItem(painter, rect, index);
             } else {
@@ -287,8 +323,68 @@ void NotifierView::paintItem(QPainter &painter, const QRect &itemRect, const QMo
     if (index == currentIndex()) {
         option.state |= QStyle::State_HasFocus;
     }
-    QList<QVariant> freeSpaceData = index.data(NotifierDialog::DeviceFreeSpaceRole).toList();
+
     itemDelegate(index)->paint(&painter,option,index);
+}
+
+void NotifierView::contextMenuEvent(QContextMenuEvent *event)
+{
+    m_ignoreLeaveEvent = true;
+
+    KMenu menu(this);
+
+    bool drawMenu = false;
+
+    const QModelIndex itemUnderMouse = indexAt(event->pos());
+    if (itemUnderMouse.isValid() && state() == NoState && !itemUnderMouse.data(NotifierDialog::IsCategoryRole).toBool()) {
+        m_hoveredIndex = itemUnderMouse;
+        setCurrentIndex(m_hoveredIndex);
+
+        QString name = itemUnderMouse.data(Qt::DisplayRole).value<QString>();
+        QString udi = itemUnderMouse.data(NotifierDialog::SolidUdiRole).value<QString>();
+        m_hideItem->setChecked(!itemUnderMouse.data(NotifierDialog::VisibilityRole).toBool());
+        if (udi == QString()) {
+            QModelIndex device = itemUnderMouse.parent();
+            name = device.data(Qt::DisplayRole).value<QString>();
+            udi = device.data(NotifierDialog::SolidUdiRole).value<QString>();
+            m_hideItem->setChecked(!device.data(NotifierDialog::VisibilityRole).toBool());
+        } else if (name == QString()) {
+            QModelIndex device = itemUnderMouse.sibling(itemUnderMouse.row(), 0);
+            name = device.data(Qt::DisplayRole).value<QString>();
+            m_hideItem->setChecked(!device.data(NotifierDialog::VisibilityRole).toBool());
+        }
+        m_hideItem->setText(i18n("Hide ") + name);
+        m_hideItem->setData(udi);
+        menu.addAction(m_hideItem);
+        drawMenu = true;
+    } else if (!itemUnderMouse.isValid() || itemUnderMouse.data(NotifierDialog::IsCategoryRole).toBool()) {
+        m_hoveredIndex = QModelIndex();
+        setCurrentIndex(m_hoveredIndex);
+    }
+
+    if (m_addShowAllAction) {
+        menu.addAction(m_showAll);
+        drawMenu = true;
+    }
+
+    if (drawMenu) {
+        update();
+
+        menu.exec(event->globalPos());
+    }
+}
+
+void NotifierView::setItemVisibility()
+{
+    QString udi = m_hideItem->data().toString();
+    bool checked = m_hideItem->isChecked();
+
+    emit itemVisibilityChanged(udi, !checked);
+}
+
+void NotifierView::addShowAllAction(bool value)
+{
+    m_addShowAllAction = value;
 }
 
 #include "notifierview.moc"

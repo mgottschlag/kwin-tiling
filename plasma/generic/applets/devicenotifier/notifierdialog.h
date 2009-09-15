@@ -1,5 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Alexis Ménard <darktears31@gmail.com>           *
+ *   Copyright 2009 by Giulio Camuffo <giuliocamuffo@gmail.com>           *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -22,10 +23,10 @@
 
 //Qt
 #include <QWidget>
+#include <QStringList>
 
 //solid
 #include <solid/solidnamespace.h>
-
 
 //to remove
 
@@ -43,10 +44,12 @@ namespace Plasma
     class Icon;
     class Dialog;
 }
+
 namespace Solid
 {
     class Device;
 }
+
 namespace Notifier
 {
   class NotifierView;
@@ -58,10 +61,9 @@ namespace Notifier
   class NotifierDialog : public QObject
   {
   Q_OBJECT
-  
+
       public:
 
-          
           ///Specific role for the data-model
           enum SpecificRoles {
               SolidUdiRole = Qt::UserRole + 1,
@@ -70,7 +72,12 @@ namespace Notifier
               IconNameRole = Qt::UserRole + 4,
               ScopeRole = Qt::UserRole + 5,
               SubTitleMandatoryRole = Qt::UserRole + 6,
-              DeviceFreeSpaceRole =  Qt::UserRole + 7
+              LauncherRole = Qt::UserRole + 7,
+              ParentDeviceRole = Qt::UserRole + 8,
+              IsCategoryRole = Qt::UserRole + 9,
+              MountedRole = Qt::UserRole + 10,
+              VisibilityRole = Qt::UserRole + 11,
+              DeviceFreeSpaceRole =  Qt::UserRole + 12
           };
 
           /**
@@ -80,7 +87,7 @@ namespace Notifier
           * @param parent the parent of this object
           **/
           NotifierDialog(DeviceNotifier * notifier,QObject *parent = 0);
- 
+
           /**
           * Default destructor
           **/
@@ -90,7 +97,7 @@ namespace Notifier
           * Returns the related QWidget.
           **/
           QWidget * dialog();
-         
+
           /**
           * Hide the dialog
           **/
@@ -107,61 +114,60 @@ namespace Notifier
           **/
           void insertDevice(const QString &name);
 
+          void insertAction(const QString &device, const QString &name);
+
           void setUnMount(bool unmount,const QString &name);
-  
+
           /**
           * Allow to set data which will be displayed by the view
-          * @param name the name of the device 
+          * @param name the name of the device
           * @param data the data
           * @param role the role in the data-model
           **/
           void setDeviceData(const QString &name, QVariant data, int role);
-          
+
           /**
           * Allow to get a data display by the view
-          * @param name the name of the device 
+          * @param name the name of the device
           * @param role the role where is the data
           **/
           QVariant getDeviceData(const QString &name, int role);
 
           /**
           * Remove a device in the dialog
-          * @param name the name of the device 
+          * @param name the name of the device
           **/
           void removeDevice(const QString &name);
-  
+
           /**
           * Remove a device in the view (provided by convenience)
-          * @param index the index where the data will be delete 
+          * @param index the index where the data will be delete
           **/
           void removeDevice(int index);
 
+          void removeActions();
+
+          void removeActionsForDevice(const QString &device);
+
           /**
           * Return the number of items displayed
-          * 
+          *
           **/
           int countDevices();
 
           /**
           * get the udi of a device displayed in the dialog
-          * @param index the index of the device 
+          * @param index the index of the device
           **/
           QString getDeviceUdi(int index);
 
-      signals :
+          void addShowAllAction(bool value);
 
-          void itemSelected();
+      signals:
+          void deviceSelected();
+          void actionSelected();
 
       private slots:
-          /**
-           * @internal called when a teardown error occurs
-           */
-          void showTeardownError();
-
-          /**
-           * @internal called when an eject error occurs
-           */
-          void showStorageEjectDoneError();
 
           /**
           * @internal slot called when user has click on a item in the dialog
@@ -182,36 +188,47 @@ namespace Notifier
           * @param error type of error given by solid
           **/
           void storageTeardownDone(Solid::ErrorType error, QVariant errorData);
- 
+
+          /**
+          * @internal slot called when a setup is finished
+          * @param errorData the error if problem
+          * @param error type of error given by solid
+          **/
+          void storageSetupDone(Solid::ErrorType error, QVariant errorData);
+
           /**
           * @internal slot called to restore to the notifier his icon
           **/
           void resetNotifierIcon();
 
           /**
-          * @internal update the color of the label to follow plasma theme 
+          * @internal update the color of the label to follow plasma theme
           *
           **/
           void updateColors();
 
-
       private :
           /**
-          * @internal build the dialog depending where it is 
+          * @internal build the dialog depending where it is
           **/
           void buildDialog();
 
           /**
-          * @internal get the model index in the data-model by using the udi in parameter 
+          * @internal get the model index in the data-model by using the udi in parameter
           * @param udi the udi used to find the model index
           **/
           QModelIndex indexForUdi(const QString &udi) const;
 
+          void toggleActionsForDevice(const QStringList& actions, const QString& deviceUdi);
+
+          int numberOfChildren(const QStandardItem *item);
+
           ///The data-model used to store devices
           QStandardItemModel *m_hotplugModel;
 
-          // The widget which display the panel
+          /// The widget which display the panel
           QWidget *m_widget;
+
           ///The tree view used to display the content
           NotifierView *m_notifierView;
 
@@ -235,6 +252,8 @@ namespace Notifier
           * @param device the solid device plugged in hardware
           **/
           QString getCategoryNameOfDevice(const Solid::Device& device);
+
+          bool m_layActionsInColumn;
   };
 
 }
