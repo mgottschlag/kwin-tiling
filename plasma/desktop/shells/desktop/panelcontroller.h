@@ -20,38 +20,39 @@
 #ifndef PANELCONTROLLER_H
 #define PANELCONTROLLER_H 
 
-#include <QWidget>
+#include "controllerwindow.h"
 
-#include <Plasma/Plasma>
-
-#include "panelview.h"
-
-class QBoxLayout;
-class QGraphicsView;
+class QLabel;
 
 namespace Plasma
 {
-    class Containment;
-    class WidgetExplorer;
-}
+    class Dialog;
+} // namespace Plasma
 
+class PositioningRuler;
+class ToolButton;
 
-class PanelController : public QWidget
+#include "panelview.h"
+
+class PanelController : public ControllerWindow
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
+    enum DragElement {
+        NoElement = 0,
+        ResizeButtonElement,
+        MoveButtonElement
+    };
 
     PanelController(QWidget* parent = 0);
     ~PanelController();
-
-    QSize sizeHint() const;
 
     QPoint positionForPanelGeometry(const QRect &panelGeom) const;
     void setContainment(Plasma::Containment *containment);
     void resizePanel(const QSizeF newSize);
 
     void setLocation(const Plasma::Location &loc);
-    Plasma::Location location() const;
 
     void setOffset(int newOffset);
     int offset() const;
@@ -63,10 +64,8 @@ public:
     PanelView::VisibilityMode panelVisibilityMode() const;
 
 protected:
-    void paintEvent(QPaintEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
     void focusOutEvent(QFocusEvent * event);
-    void keyPressEvent(QKeyEvent *event);
 
 Q_SIGNALS:
     /**
@@ -75,33 +74,62 @@ Q_SIGNALS:
      void offsetChanged(int offset);
      void alignmentChanged(Qt::Alignment);
      void locationChanged(Plasma::Location);
-     void panelVisibilityModeChanged(PanelView::VisibilityMode mode);
-
-private Q_SLOTS:
-    void themeChanged();
-    void showWidgetsExplorer();
-    void onActiveWindowChanged(WId id);
+    void panelVisibilityModeChanged(PanelView::VisibilityMode mode);
 
 private:
     void mouseMoveFilter(QMouseEvent *event);
-    Qt::Orientation orientation() const;
+    ToolButton *addTool(QAction *action, QWidget *parent, Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon);
+    ToolButton *addTool(const QString iconName, const QString iconText, QWidget *parent, Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon, bool checkButton = false);
+    void syncRuler();
+    void resizeFrameHeight(const int newHeight);
 
-    Q_PRIVATE_SLOT(d, void rulersMoved(int offset, int minLength, int minLength))
-    Q_PRIVATE_SLOT(d, void alignToggled(bool toggle))
-    Q_PRIVATE_SLOT(d, void panelVisibilityModeChanged(bool toggle))
-    Q_PRIVATE_SLOT(d, void settingsPopup())
-    Q_PRIVATE_SLOT(d, void maximizePanel())
-    Q_PRIVATE_SLOT(d, void addSpace())
+private Q_SLOTS:
+    void themeChanged();
+    void switchToWidgetExplorer();
+    void rulersMoved(int offset, int minLength, int maxLength);
+    void alignToggled(bool toggle);
+    void panelVisibilityModeChanged(bool toggle);
+    void settingsPopup();
+    void maximizePanel();
+    void addSpace();
 
+private:
     class ButtonGroup;
 
-    class Private;
-    Private *d;
-
-    QBoxLayout *m_mainLayout;
     QWidget *m_configWidget;
-    QGraphicsView *m_widgetExplorerView;
-    Plasma::WidgetExplorer *m_widgetExplorer;
+    QBoxLayout *m_extLayout;
+    QBoxLayout *m_layout;
+    QLabel *m_alignLabel;
+    QLabel *m_modeLabel;
+    DragElement m_dragging;
+    QPoint m_startDragPos;
+    Plasma::Dialog *m_optionsDialog;
+    QBoxLayout *m_optDialogLayout;
+    ToolButton *m_settingsTool;
+    Plasma::Svg *m_iconSvg;
+
+    ToolButton *m_moveTool;
+    ToolButton *m_sizeTool;
+
+    //Alignment buttons
+    ToolButton *m_leftAlignTool;
+    ToolButton *m_centerAlignTool;
+    ToolButton *m_rightAlignTool;
+
+    //Panel mode buttons
+    ToolButton *m_normalPanelTool;
+    ToolButton *m_autoHideTool;
+    ToolButton *m_underWindowsTool;
+    ToolButton *m_overWindowsTool;
+
+    //Widgets for actions
+    QList<QWidget *> m_actionWidgets;
+
+    PositioningRuler *m_ruler;
+
+    bool m_drawMoveHint;
+
+    ToolButton *m_expandTool;
 };
 
 

@@ -78,320 +78,19 @@ public:
 };
 
 
-class PanelController::Private
-{
-public:
-    Private(PanelController *panelControl)
-       : q(panelControl),
-         containment(0),
-         location(Plasma::BottomEdge),
-         extLayout(0),
-         layout(0),
-         dragging(NoElement),
-         startDragPos(0,0),
-         leftAlignTool(0),
-         centerAlignTool(0),
-         rightAlignTool(0),
-         drawMoveHint(false)
-    {
-    }
 
-    ToolButton *addTool(QAction *action, QWidget *parent, Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon)
-    {
-        ToolButton *tool = new ToolButton(parent);
-        tool->setToolButtonStyle(style);
-        tool->setAction(action);
-        actionWidgets.append(tool);
-
-        return tool;
-    }
-
-    ToolButton *addTool(const QString iconName, const QString iconText, QWidget *parent, Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon, bool checkButton = false)
-    {
-        //TODO take advantage of setDefaultAction using the containment's actions if possible
-        ToolButton *tool = new ToolButton(parent);
-
-        KIcon icon = KIcon(iconName);
-        if (!icon.isNull() && !iconName.isNull()) {
-            tool->setIcon(icon);
-        }
-
-        tool->setText(iconText);
-        tool->setToolButtonStyle(style);
-
-        if (style == Qt::ToolButtonIconOnly) {
-            tool->setToolTip(iconText);
-        }
-
-        tool->setCheckable(checkButton);
-        tool->setAutoExclusive(checkButton);
-
-        return tool;
-    }
-
-    void resizeFrameHeight(const int newHeight)
-    {
-        if (!containment) {
-            return;
-        }
-
-        switch (location) {
-        case Plasma::LeftEdge:
-        case Plasma::RightEdge:
-            containment->resize(QSize(newHeight, (int)containment->size().height()));
-            containment->setMinimumSize(QSize(newHeight, (int)containment->minimumSize().height()));
-            containment->setMaximumSize(QSize(newHeight, (int)containment->maximumSize().height()));
-            break;
-        case Plasma::TopEdge:
-        case Plasma::BottomEdge:
-        default:
-            containment->resize(QSize((int)containment->size().width(), newHeight));
-            containment->setMinimumSize(QSize((int)containment->minimumSize().width(), newHeight));
-            containment->setMaximumSize(QSize((int)containment->maximumSize().width(), newHeight));
-            break;
-       }
-    }
-
-    void rulersMoved(int offset, int minLength, int maxLength)
-    {
-         if (!containment) {
-            return;
-         }
-
-         QSize preferredSize(containment->preferredSize().toSize());
-
-         switch (location) {
-         case Plasma::LeftEdge:
-         case Plasma::RightEdge:
-             containment->resize(QSize((int)containment->size().width(), qBound(minLength, preferredSize.height(), maxLength)));
-             containment->setMinimumSize(QSize((int)containment->minimumSize().width(), minLength));
-             containment->setMaximumSize(QSize((int)containment->maximumSize().width(), maxLength));
-             break;
-         case Plasma::TopEdge:
-         case Plasma::BottomEdge:
-         default:
-             containment->resize(QSize(qBound(minLength, preferredSize.width(), maxLength), (int)containment->size().height()));
-             containment->setMinimumSize(QSize(minLength, (int)containment->minimumSize().height()));
-             containment->setMaximumSize(QSize(maxLength, (int)containment->maximumSize().height()));
-             break;
-        }
-
-        emit q->offsetChanged(offset);
-    }
-
-    void alignToggled(bool toggle)
-    {
-        if (!toggle) {
-            return;
-        }
-
-        if (q->sender() == leftAlignTool) {
-            emit q->alignmentChanged(Qt::AlignLeft);
-            ruler->setAlignment(Qt::AlignLeft);
-        } else if (q->sender() == centerAlignTool) {
-            emit q->alignmentChanged(Qt::AlignCenter);
-            ruler->setAlignment(Qt::AlignCenter);
-        } else if (q->sender() == rightAlignTool) {
-            emit q->alignmentChanged(Qt::AlignRight);
-            ruler->setAlignment(Qt::AlignRight);
-        }
-
-        emit q->offsetChanged(0);
-        ruler->setOffset(0);
-    }
-
-    void panelVisibilityModeChanged(bool toggle)
-    {
-        if (!toggle) {
-            return;
-        }
-
-        if (q->sender() == normalPanelTool) {
-            emit q->panelVisibilityModeChanged(PanelView::NormalPanel);
-        } else if (q->sender() == autoHideTool) {
-            emit q->panelVisibilityModeChanged(PanelView::AutoHide);
-        } else if (q->sender() == underWindowsTool) {
-            emit q->panelVisibilityModeChanged(PanelView::LetWindowsCover);
-        } else if (q->sender() == overWindowsTool) {
-            emit q->panelVisibilityModeChanged(PanelView::WindowsGoBelow);
-        }
-    }
-
-    void settingsPopup()
-    {
-        if (optionsDialog->isVisible()) {
-            optionsDialog->hide();
-        } else {
-            KWindowSystem::setState(optionsDialog->winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky);
-            QPoint pos = q->mapToGlobal(settingsTool->pos());
-            optionsDialog->layout()->activate();
-            optionsDialog->resize(optionsDialog->sizeHint());
-            QSize s = optionsDialog->size();
-
-            switch (location) {
-                case Plasma::BottomEdge:
-                pos = QPoint(pos.x(), pos.y() - s.height());
-                break;
-            case Plasma::TopEdge:
-                pos = QPoint(pos.x(), pos.y() + settingsTool->size().height());
-                break;
-            case Plasma::LeftEdge:
-                pos = QPoint(pos.x() + settingsTool->size().width(), pos.y());
-                break;
-            case Plasma::RightEdge:
-                pos = QPoint(pos.x() - s.width(), pos.y());
-                break;
-            default:
-                if (pos.y() - s.height() > 0) {
-                    pos = QPoint(pos.x(), pos.y() - s.height());
-                } else {
-                    pos = QPoint(pos.x(), pos.y() + settingsTool->size().height());
-                }
-            }
-
-            QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment->screen());
-
-            if (pos.rx() + s.width() > screenRect.right()) {
-                pos.rx() -= ((pos.rx() + s.width()) - screenRect.right());
-            }
-
-            if (pos.ry() + s.height() > screenRect.bottom()) {
-                pos.ry() -= ((pos.ry() + s.height()) - screenRect.bottom());
-            }
-
-            pos.rx() = qMax(0, pos.rx());
-            optionsDialog->move(pos);
-            optionsDialog->show();
-        }
-    }
-
-    void syncRuler()
-    {
-        QRect screenGeom = Kephal::ScreenUtils::screenGeometry(containment->screen());
-
-        switch (location) {
-        case Plasma::LeftEdge:
-        case Plasma::RightEdge:
-            ruler->setAvailableLength(screenGeom.height());
-            ruler->setMaxLength(qMin((int)containment->maximumSize().height(), screenGeom.height()));
-            ruler->setMinLength(containment->minimumSize().height());
-            break;
-        case Plasma::TopEdge:
-        case Plasma::BottomEdge:
-        default:
-            ruler->setAvailableLength(screenGeom.width());
-            ruler->setMaxLength(qMin((int)containment->maximumSize().width(), screenGeom.width()));
-            ruler->setMinLength(containment->minimumSize().width());
-            break;
-        }
-    }
-
-    void maximizePanel()
-    {
-        const int length = ruler->availableLength();
-        const int screen = containment->screen();
-        const QRect screenGeom = PlasmaApp::self()->corona()->screenGeometry(screen);
-        QRegion availGeom(screenGeom);
-        foreach (PanelView *view, PlasmaApp::self()->panelViews()) {
-            if (view->containment() != containment &&
-                view->screen() == screen && view->visibilityMode() == PanelView::NormalPanel) {
-                availGeom = availGeom.subtracted(view->geometry());
-            }
-        }
-        int offset = 0;
-        const int w = containment->size().width();
-        const int h = containment->size().height();
-
-        switch (location) {
-            case Plasma::LeftEdge: {
-                QRect r = availGeom.intersected(QRect(0, 0, w, length)).boundingRect();
-                offset = r.top();
-            }
-            break;
-
-            case Plasma::RightEdge: {
-                QRect r = availGeom.intersected(QRect(screenGeom.right() - w, 0, w, length)).boundingRect();
-                offset = r.top();
-            }
-            break;
-
-            case Plasma::TopEdge: {
-                QRect r = availGeom.intersected(QRect(0, 0, length, h)).boundingRect();
-                offset = r.left();
-            }
-            break;
-
-            case Plasma::BottomEdge:
-            default: {
-                QRect r = availGeom.intersected(QRect(0, screenGeom.bottom() - h, length, h)).boundingRect();
-                offset = r.left();
-            }
-            break;
-        }
-
-        rulersMoved(offset, length, length);
-        ruler->setMaxLength(length);
-        ruler->setMinLength(length);
-    }
-
-    void addSpace()
-    {
-        Plasma::Applet *spacer = containment->addApplet("panelspacer_internal");
-        if (spacer) {
-           QMetaObject::invokeMethod(spacer, "updateConfigurationMode", Q_ARG(bool, true));
-        }
-    }
-
-     enum DragElement { NoElement = 0,
-                        ResizeButtonElement,
-                        MoveButtonElement
-                      };
-
-    PanelController *q;
-    Plasma::Containment *containment;
-    Plasma::Location location;
-    QBoxLayout *extLayout;
-    QBoxLayout *layout;
-    QLabel *alignLabel;
-    QLabel *modeLabel;
-    DragElement dragging;
-    QPoint startDragPos;
-    Plasma::FrameSvg *background;
-    Plasma::Dialog *optionsDialog;
-    QBoxLayout *optDialogLayout;
-    ToolButton *settingsTool;
-    Plasma::Svg *iconSvg;
-
-    ToolButton *moveTool;
-    ToolButton *sizeTool;
-
-    //Alignment buttons
-    ToolButton *leftAlignTool;
-    ToolButton *centerAlignTool;
-    ToolButton *rightAlignTool;
-
-    //Panel mode buttons
-    ToolButton *normalPanelTool;
-    ToolButton *autoHideTool;
-    ToolButton *underWindowsTool;
-    ToolButton *overWindowsTool;
-    ToolButton *expandTool;
-
-    //Widgets for actions
-    QList<QWidget *> actionWidgets;
-
-    PositioningRuler *ruler;
-
-    bool drawMoveHint;
-
-    static const int minimumHeight = 10;
-};
+static const int MINIMUM_HEIGHT = 10;
 
 PanelController::PanelController(QWidget* parent)
-   : QWidget(0),
-     d(new Private(this)),
-     m_widgetExplorerView(0),
-     m_widgetExplorer(0)
+   : ControllerWindow(parent),
+     m_extLayout(0),
+     m_layout(0),
+     m_dragging(NoElement),
+     m_startDragPos(0,0),
+     m_leftAlignTool(0),
+     m_centerAlignTool(0),
+     m_rightAlignTool(0),
+     m_drawMoveHint(false)
 {
     Q_UNUSED(parent)
 
@@ -400,14 +99,10 @@ PanelController::PanelController(QWidget* parent)
     pal.setBrush(backgroundRole(), Qt::transparent);
     setPalette(pal);
 
-    d->background = new Plasma::FrameSvg(this);
-    d->background->setImagePath("dialogs/background");
-    d->background->setContainsMultipleImages(true);
-
-    d->iconSvg = new Plasma::Svg(this);
-    d->iconSvg->setImagePath("widgets/configuration-icons");
-    d->iconSvg->setContainsMultipleImages(true);
-    d->iconSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+    m_iconSvg = new Plasma::Svg(this);
+    m_iconSvg->setImagePath("widgets/configuration-icons");
+    m_iconSvg->setContainsMultipleImages(true);
+    m_iconSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
 
     //setWindowFlags(Qt::Popup);
     setWindowFlags(Qt::FramelessWindowHint);
@@ -415,32 +110,24 @@ PanelController::PanelController(QWidget* parent)
     setAttribute(Qt::WA_DeleteOnClose);
     setFocus(Qt::ActiveWindowFocusReason);
 
-    connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(onActiveWindowChanged(WId)));
-
     //layout setup
-    m_mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
-    m_mainLayout->setContentsMargins(0, 0, 0, 0);
-
     m_configWidget = new QWidget(this);
-    m_mainLayout->addWidget(m_configWidget);
+    layout()->addWidget(m_configWidget);
 
-    d->extLayout = new QBoxLayout(QBoxLayout::TopToBottom, m_configWidget);
-    setLayout(d->extLayout);
+    m_extLayout = new QBoxLayout(QBoxLayout::TopToBottom, m_configWidget);
+    m_extLayout->setContentsMargins(0, background()->marginSize(Plasma::TopMargin), 0, 0);
 
-    d->background->setEnabledBorders(Plasma::FrameSvg::TopBorder);
-    d->extLayout->setContentsMargins(0, d->background->marginSize(Plasma::TopMargin), 0, 0);
+    m_layout = new QBoxLayout(QBoxLayout::LeftToRight);
+    m_layout->setContentsMargins(0, 0, 0, 0);
 
-    d->layout = new QBoxLayout(QBoxLayout::LeftToRight);
-    d->layout->setContentsMargins(4, 4, 4, 4);
     if (QApplication::layoutDirection() == Qt::RightToLeft) {
-        d->layout->setDirection(QBoxLayout::RightToLeft);
+        m_layout->setDirection(QBoxLayout::RightToLeft);
     } else {
-        d->layout->setDirection(QBoxLayout::LeftToRight);
+        m_layout->setDirection(QBoxLayout::LeftToRight);
     }
-    d->layout->setSpacing(4);
 
-    d->layout->addStretch();
-    d->extLayout->addLayout(d->layout);
+    m_layout->addStretch();
+    m_extLayout->addLayout(m_layout);
 
     //Add buttons
 
@@ -449,24 +136,24 @@ PanelController::PanelController(QWidget* parent)
     QFrame *alignFrame = new ButtonGroup(m_configWidget);
     QVBoxLayout *alignLayout = new QVBoxLayout(alignFrame);
 
-    d->alignLabel = new QLabel(i18n("Panel Alignment"), m_configWidget);
-    alignLayout->addWidget(d->alignLabel);
+    m_alignLabel = new QLabel(i18n("Panel Alignment"), m_configWidget);
+    alignLayout->addWidget(m_alignLabel);
 
-    d->leftAlignTool = d->addTool("format-justify-left", i18n("Left"), alignFrame,  Qt::ToolButtonTextBesideIcon, true);
-    d->leftAlignTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    alignLayout->addWidget(d->leftAlignTool);
-    d->leftAlignTool->setChecked(true);
-    connect(d->leftAlignTool, SIGNAL(toggled(bool)), this, SLOT(alignToggled(bool)));
+    m_leftAlignTool = addTool("format-justify-left", i18n("Left"), alignFrame,  Qt::ToolButtonTextBesideIcon, true);
+    m_leftAlignTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    alignLayout->addWidget(m_leftAlignTool);
+    m_leftAlignTool->setChecked(true);
+    connect(m_leftAlignTool, SIGNAL(toggled(bool)), this, SLOT(alignToggled(bool)));
 
-    d->centerAlignTool = d->addTool("format-justify-center", i18n("Center"), alignFrame,  Qt::ToolButtonTextBesideIcon, true);
-    d->centerAlignTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    alignLayout->addWidget(d->centerAlignTool);
-    connect(d->centerAlignTool, SIGNAL(clicked(bool)), this, SLOT(alignToggled(bool)));
+    m_centerAlignTool = addTool("format-justify-center", i18n("Center"), alignFrame,  Qt::ToolButtonTextBesideIcon, true);
+    m_centerAlignTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    alignLayout->addWidget(m_centerAlignTool);
+    connect(m_centerAlignTool, SIGNAL(clicked(bool)), this, SLOT(alignToggled(bool)));
 
-    d->rightAlignTool = d->addTool("format-justify-right", i18n("Right"), alignFrame,  Qt::ToolButtonTextBesideIcon, true);
-    d->rightAlignTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    alignLayout->addWidget(d->rightAlignTool);
-    connect(d->rightAlignTool, SIGNAL(clicked(bool)), this, SLOT(alignToggled(bool)));
+    m_rightAlignTool = addTool("format-justify-right", i18n("Right"), alignFrame,  Qt::ToolButtonTextBesideIcon, true);
+    m_rightAlignTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    alignLayout->addWidget(m_rightAlignTool);
+    connect(m_rightAlignTool, SIGNAL(clicked(bool)), this, SLOT(alignToggled(bool)));
 
 
     //Panel mode
@@ -474,71 +161,71 @@ PanelController::PanelController(QWidget* parent)
     QFrame *modeFrame = new ButtonGroup(m_configWidget);
     QVBoxLayout *modeLayout = new QVBoxLayout(modeFrame);
 
-    d->modeLabel = new QLabel(i18n("Visibility"), m_configWidget);
-    modeLayout->addWidget(d->modeLabel);
+    m_modeLabel = new QLabel(i18n("Visibility"), m_configWidget);
+    modeLayout->addWidget(m_modeLabel);
 
-    d->normalPanelTool = d->addTool("checkmark", i18n("Always visible"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
-    d->normalPanelTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    modeLayout->addWidget(d->normalPanelTool);
-    connect(d->normalPanelTool, SIGNAL(toggled(bool)), this, SLOT(panelVisibilityModeChanged(bool)));
+    m_normalPanelTool = addTool("checkmark", i18n("Always visible"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
+    m_normalPanelTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    modeLayout->addWidget(m_normalPanelTool);
+    connect(m_normalPanelTool, SIGNAL(toggled(bool)), this, SLOT(panelVisibilityModeChanged(bool)));
 
-    d->autoHideTool = d->addTool("video-display", i18n("Auto-hide"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
-    d->autoHideTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    modeLayout->addWidget(d->autoHideTool);
-    connect(d->autoHideTool, SIGNAL(toggled(bool)), this, SLOT(panelVisibilityModeChanged(bool)));
+    m_autoHideTool = addTool("video-display", i18n("Auto-hide"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
+    m_autoHideTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    modeLayout->addWidget(m_autoHideTool);
+    connect(m_autoHideTool, SIGNAL(toggled(bool)), this, SLOT(panelVisibilityModeChanged(bool)));
 
-    d->underWindowsTool = d->addTool("view-fullscreen", i18n("Windows can cover"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
-    d->underWindowsTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    modeLayout->addWidget(d->underWindowsTool);
-    connect(d->underWindowsTool, SIGNAL(toggled(bool)), this, SLOT(panelVisibilityModeChanged(bool)));
+    m_underWindowsTool = addTool("view-fullscreen", i18n("Windows can cover"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
+    m_underWindowsTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    modeLayout->addWidget(m_underWindowsTool);
+    connect(m_underWindowsTool, SIGNAL(toggled(bool)), this, SLOT(panelVisibilityModeChanged(bool)));
 
-    d->overWindowsTool = d->addTool("view-restore", i18n("Windows go below"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
-    d->overWindowsTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    modeLayout->addWidget(d->overWindowsTool);
-    connect(d->overWindowsTool, SIGNAL(toggled(bool)), this, SLOT(panelVisibilityModeChanged(bool)));
+    m_overWindowsTool = addTool("view-restore", i18n("Windows go below"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
+    m_overWindowsTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    modeLayout->addWidget(m_overWindowsTool);
+    connect(m_overWindowsTool, SIGNAL(toggled(bool)), this, SLOT(panelVisibilityModeChanged(bool)));
 
-    d->layout->addStretch();
-    d->moveTool = d->addTool(QString(), i18n("Screen Edge"), m_configWidget);
-    d->moveTool->setIcon(d->iconSvg->pixmap("move"));
-    d->moveTool->installEventFilter(this);
-    d->moveTool->setCursor(Qt::SizeAllCursor);
-    d->layout->addWidget(d->moveTool);
+    m_layout->addStretch();
+    m_moveTool = addTool(QString(), i18n("Screen Edge"), m_configWidget);
+    m_moveTool->setIcon(m_iconSvg->pixmap("move"));
+    m_moveTool->installEventFilter(this);
+    m_moveTool->setCursor(Qt::SizeAllCursor);
+    m_layout->addWidget(m_moveTool);
 
-    d->sizeTool = d->addTool(QString(), i18n("Height"), m_configWidget);
-    d->sizeTool->installEventFilter(this);
-    d->sizeTool->setCursor(Qt::SizeVerCursor);
-    d->layout->addWidget(d->sizeTool);
-    d->layout->addStretch();
+    m_sizeTool = addTool(QString(), i18n("Height"), m_configWidget);
+    m_sizeTool->installEventFilter(this);
+    m_sizeTool->setCursor(Qt::SizeVerCursor);
+    m_layout->addWidget(m_sizeTool);
+    m_layout->addStretch();
 
     //other buttons
-    d->layout->addSpacing(20);
+    m_layout->addSpacing(20);
 
     //Settings popup menu
-    d->settingsTool = d->addTool("configure", i18n("More Settings"), m_configWidget);
-    d->layout->addWidget(d->settingsTool);
-    connect(d->settingsTool, SIGNAL(pressed()), this, SLOT(settingsPopup()));
-    d->optionsDialog = new Plasma::Dialog(0); // don't pass in a parent; breaks with some lesser WMs
-    d->optionsDialog->installEventFilter(this);
-    KWindowSystem::setState(d->optionsDialog->winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky);
-    d->optDialogLayout = new QVBoxLayout(d->optionsDialog);
-    d->optDialogLayout->setMargin(0);
-    d->optDialogLayout->addWidget(alignFrame);
-    d->optDialogLayout->addWidget(modeFrame);
+    m_settingsTool = addTool("configure", i18n("More Settings"), m_configWidget);
+    m_layout->addWidget(m_settingsTool);
+    connect(m_settingsTool, SIGNAL(pressed()), this, SLOT(settingsPopup()));
+    m_optionsDialog = new Plasma::Dialog(0); // don't pass in a parent; breaks with some lesser WMs
+    m_optionsDialog->installEventFilter(this);
+    KWindowSystem::setState(m_optionsDialog->winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky);
+    m_optDialogLayout = new QVBoxLayout(m_optionsDialog);
+    m_optDialogLayout->setMargin(0);
+    m_optDialogLayout->addWidget(alignFrame);
+    m_optDialogLayout->addWidget(modeFrame);
 
 
-    d->expandTool = d->addTool(QString(), i18n("Maximize Panel"), m_configWidget);
-    d->expandTool->setIcon(d->iconSvg->pixmap("size-horizontal"));
-    d->expandTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    d->optDialogLayout->addWidget(d->expandTool);
-    connect(d->expandTool, SIGNAL(clicked()), this, SLOT(maximizePanel()));
+    m_expandTool = addTool(QString(), i18n("Maximize Panel"), m_configWidget);
+    m_expandTool->setIcon(m_iconSvg->pixmap("size-horizontal"));
+    m_expandTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    m_optDialogLayout->addWidget(m_expandTool);
+    connect(m_expandTool, SIGNAL(clicked()), this, SLOT(maximizePanel()));
 
-    ToolButton *closeControllerTool = d->addTool("window-close", i18n("Close this configuration window"), m_configWidget, Qt::ToolButtonIconOnly, false);
-    d->layout->addWidget(closeControllerTool);
+    ToolButton *closeControllerTool = addTool("window-close", i18n("Close this configuration window"), m_configWidget, Qt::ToolButtonIconOnly, false);
+    m_layout->addWidget(closeControllerTool);
     connect(closeControllerTool, SIGNAL(clicked()), this, SLOT(close()));
 
-    d->ruler = new PositioningRuler(m_configWidget);
-    connect(d->ruler, SIGNAL(rulersMoved(int, int, int)), this, SLOT(rulersMoved(int, int, int)));
-    d->extLayout->addWidget(d->ruler);
+    m_ruler = new PositioningRuler(m_configWidget);
+    connect(m_ruler, SIGNAL(rulersMoved(int, int, int)), this, SLOT(rulersMoved(int, int, int)));
+    m_extLayout->addWidget(m_ruler);
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(themeChanged()));
     themeChanged();
@@ -549,96 +236,67 @@ PanelController::~PanelController()
     //TODO: should we try and only call this when something has actually been
     //      altered that we care about?
     PlasmaApp::self()->corona()->requestConfigSync();
-    delete m_widgetExplorer;
-    delete m_widgetExplorerView;
-    delete d->optionsDialog;
-    d->optionsDialog = 0;
-    delete d;
+    delete m_optionsDialog;
 }
 
-void PanelController::setContainment(Plasma::Containment *containment)
+void PanelController::setContainment(Plasma::Containment *c)
 {
-    if (!containment) {
+    if (!c) {
         return;
     }
 
-    if (d->containment) {
-        disconnect(d->containment, 0, this, 0);
-    }
-
-    d->containment = containment;
-
-    if(m_widgetExplorer) {
-        m_widgetExplorer->setContainment(d->containment);
-    }
+    ControllerWindow::setContainment(c);
 
     QWidget *child;
-    while (!d->actionWidgets.isEmpty()) {
-        child = d->actionWidgets.first();
+    while (!m_actionWidgets.isEmpty()) {
+        child = m_actionWidgets.first();
         //try to remove from both layouts
-        d->layout->removeWidget(child);
-        d->optDialogLayout->removeWidget(child);
-        d->actionWidgets.removeFirst();
+        m_layout->removeWidget(child);
+        m_optDialogLayout->removeWidget(child);
+        m_actionWidgets.removeFirst();
         child->deleteLater();
     }
 
-    int insertIndex = d->layout->count() - 3;
+    int insertIndex = m_layout->count() - 3;
 
-    QAction *action = containment->action("add widgets");
+    QAction *action = containment()->action("add widgets");
     if (action && action->isEnabled()) {
-        ToolButton *addWidgetTool = d->addTool(action, this);
-        d->layout->insertWidget(insertIndex, addWidgetTool);
+        ToolButton *addWidgetTool = addTool(action, this);
+        m_layout->insertWidget(insertIndex, addWidgetTool);
         ++insertIndex;
-        connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetsExplorer()));
+        connect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(switchToWidgetExplorer()));
     }
 
     action = new QAction(i18n("Add Spacer"), this);
-    ToolButton *addSpaceTool = d->addTool(action, this);
-    d->layout->insertWidget(insertIndex, addSpaceTool);
+    ToolButton *addSpaceTool = addTool(action, this);
+    m_layout->insertWidget(insertIndex, addSpaceTool);
     ++insertIndex;
     connect(action, SIGNAL(triggered()), this, SLOT(addSpace()));
 
-    action = containment->action("lock widgets");
+    action = containment()->action("lock widgets");
     if (action && action->isEnabled()) {
-        ToolButton *lockWidgetsTool = d->addTool(action, this);
-        d->layout->insertWidget(insertIndex, lockWidgetsTool);
+        ToolButton *lockWidgetsTool = addTool(action, this);
+        m_layout->insertWidget(insertIndex, lockWidgetsTool);
         ++insertIndex;
         connect(lockWidgetsTool, SIGNAL(clicked()), this, SLOT(hide()));
     }
 
-    action = containment->action("remove");
+    action = containment()->action("remove");
     if (action && action->isEnabled()) {
-        ToolButton *removePanelTool = d->addTool(action, this);
+        ToolButton *removePanelTool = addTool(action, this);
         removePanelTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-        d->optDialogLayout->insertWidget(insertIndex, removePanelTool);
+        m_optDialogLayout->insertWidget(insertIndex, removePanelTool);
         connect(removePanelTool, SIGNAL(clicked()), this, SLOT(hide()));
     }
 
-    d->syncRuler();
-}
-
-QSize PanelController::sizeHint() const
-{
-    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(d->containment->screen());
-
-    switch (d->location) {
-    case Plasma::LeftEdge:
-    case Plasma::RightEdge:
-        return QSize(QWidget::sizeHint().width(), screenGeom.height());
-        break;
-    case Plasma::TopEdge:
-    case Plasma::BottomEdge:
-    default:
-        return QSize(screenGeom.width(), QWidget::sizeHint().height());
-        break;
-    }
+    syncRuler();
 }
 
 QPoint PanelController::positionForPanelGeometry(const QRect &panelGeom) const
 {
-    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(d->containment->screen());
+    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(containment()->screen());
 
-    switch (d->location) {
+    switch (location()) {
     case Plasma::LeftEdge:
         return QPoint(panelGeom.right(), screenGeom.top());
         break;
@@ -657,332 +315,207 @@ QPoint PanelController::positionForPanelGeometry(const QRect &panelGeom) const
 
 void PanelController::setLocation(const Plasma::Location &loc)
 {
-    if (d->location == loc) {
+    if (location() == loc) {
         return;
     }
 
-    d->location = loc;
-    d->ruler->setLocation(loc);
-    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(d->containment->screen());
+    ControllerWindow::setLocation(loc);
 
+    m_ruler->setLocation(loc);
+
+    //The external layout gwts auto flipped when QApplication::layoutDirection() changes
+    //and it shouldn't, the internal one no and it should, so i must manually invert both
     switch (loc) {
     case Plasma::LeftEdge:
-        d->layout->setDirection(QBoxLayout::TopToBottom);
-        //The external layout gwts auto flipped when QApplication::layoutDirection() changes
-        //and it shouldn't, the internal one no and it should, so i must manually invert both
         if (QApplication::layoutDirection() == Qt::RightToLeft) {
-            d->extLayout->setDirection(QBoxLayout::LeftToRight);
+            m_extLayout->setDirection(QBoxLayout::LeftToRight);
         } else {
-            d->extLayout->setDirection(QBoxLayout::RightToLeft);
+            m_extLayout->setDirection(QBoxLayout::RightToLeft);
         }
-        d->background->setEnabledBorders(Plasma::FrameSvg::RightBorder);
-        d->extLayout->setContentsMargins(0, 0, d->background->marginSize(Plasma::RightMargin), 0);
-
         break;
+
     case Plasma::RightEdge:
-        d->layout->setDirection(QBoxLayout::TopToBottom);
         if (QApplication::layoutDirection() == Qt::RightToLeft) {
-            d->extLayout->setDirection(QBoxLayout::RightToLeft);
+            m_extLayout->setDirection(QBoxLayout::RightToLeft);
         } else {
-            d->extLayout->setDirection(QBoxLayout::LeftToRight);
+            m_extLayout->setDirection(QBoxLayout::LeftToRight);
         }
-        d->background->setEnabledBorders(Plasma::FrameSvg::LeftBorder);
-        d->extLayout->setContentsMargins(d->background->marginSize(Plasma::LeftMargin), 0, 0, 0);
-
         break;
+
     case Plasma::TopEdge:
         if (QApplication::layoutDirection() == Qt::RightToLeft) {
-            d->layout->setDirection(QBoxLayout::RightToLeft);
+            m_layout->setDirection(QBoxLayout::RightToLeft);
         } else {
-            d->layout->setDirection(QBoxLayout::LeftToRight);
+            m_layout->setDirection(QBoxLayout::LeftToRight);
         }
-        d->extLayout->setDirection(QBoxLayout::BottomToTop);
-        d->background->setEnabledBorders(Plasma::FrameSvg::BottomBorder);
-        d->extLayout->setContentsMargins(0, 0, 0, d->background->marginSize(Plasma::BottomMargin));
-
         break;
+
     case Plasma::BottomEdge:
     default:
         if (QApplication::layoutDirection() == Qt::RightToLeft) {
-            d->layout->setDirection(QBoxLayout::RightToLeft);
+            m_layout->setDirection(QBoxLayout::RightToLeft);
         } else {
-            d->layout->setDirection(QBoxLayout::LeftToRight);
+            m_layout->setDirection(QBoxLayout::LeftToRight);
         }
-        d->extLayout->setDirection(QBoxLayout::TopToBottom);
-        d->background->setEnabledBorders(Plasma::FrameSvg::TopBorder);
-        d->extLayout->setContentsMargins(0, d->background->marginSize(Plasma::TopMargin), 0, 0);
-
         break;
     }
+
+    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(containment()->screen());
 
     switch (loc) {
     case Plasma::LeftEdge:
     case Plasma::RightEdge:
-        d->sizeTool->setCursor(Qt::SizeHorCursor);
-        d->sizeTool->setText(i18n("Width"));
-        d->sizeTool->setIcon(d->iconSvg->pixmap("size-horizontal"));
-        d->expandTool->setIcon(d->iconSvg->pixmap("size-vertical"));
-        d->leftAlignTool->setText(i18n("Top"));
-        d->rightAlignTool->setText(i18n("Bottom"));
+        m_sizeTool->setCursor(Qt::SizeHorCursor);
+        m_sizeTool->setText(i18n("Width"));
+        m_sizeTool->setIcon(m_iconSvg->pixmap("size-horizontal"));
+        m_expandTool->setIcon(m_iconSvg->pixmap("size-vertical"));
+        m_leftAlignTool->setText(i18n("Top"));
+        m_rightAlignTool->setText(i18n("Bottom"));
 
-        d->ruler->setAvailableLength(screenGeom.height());
+        m_ruler->setAvailableLength(screenGeom.height());
 
         break;
     case Plasma::TopEdge:
     case Plasma::BottomEdge:
     default:
-        d->sizeTool->setCursor(Qt::SizeVerCursor);
-        d->sizeTool->setText(i18n("Height"));
-        d->sizeTool->setIcon(d->iconSvg->pixmap("size-vertical"));
-        d->expandTool->setIcon(d->iconSvg->pixmap("size-horizontal"));
-        d->leftAlignTool->setText(i18n("Left"));
-        d->rightAlignTool->setText(i18n("Right"));
+        m_sizeTool->setCursor(Qt::SizeVerCursor);
+        m_sizeTool->setText(i18n("Height"));
+        m_sizeTool->setIcon(m_iconSvg->pixmap("size-vertical"));
+        m_expandTool->setIcon(m_iconSvg->pixmap("size-horizontal"));
+        m_leftAlignTool->setText(i18n("Left"));
+        m_rightAlignTool->setText(i18n("Right"));
 
-        d->ruler->setAvailableLength(screenGeom.width());
+        m_ruler->setAvailableLength(screenGeom.width());
     }
 
-    d->ruler->setMaximumSize(d->ruler->sizeHint());
-    d->syncRuler();
-
-    if(m_widgetExplorer) {
-        switch (loc) {
-        case Plasma::LeftEdge:
-        case Plasma::RightEdge:
-            m_widgetExplorer->setOrientation(Qt::Vertical);
-            break;
-        case Plasma::TopEdge:
-        case Plasma::BottomEdge:
-            m_widgetExplorer->setOrientation(Qt::Horizontal);
-            break;
-        default:
-            break;
-        }
-    }
-
-    Plasma::WindowEffects::slideWindow(this, loc);
-}
-
-Plasma::Location PanelController::location() const
-{
-    return d->location;
+    m_ruler->setMaximumSize(m_ruler->sizeHint());
+    syncRuler();
 }
 
 void PanelController::setOffset(int newOffset)
 {
-    if (newOffset != d->ruler->offset()) {
-        d->ruler->setOffset(newOffset);
+    if (newOffset != m_ruler->offset()) {
+        m_ruler->setOffset(newOffset);
     }
 }
 
 int PanelController::offset() const
 {
-    return d->ruler->offset();
+    return m_ruler->offset();
 }
 
 void PanelController::setAlignment(const Qt::Alignment &newAlignment)
 {
-    if (newAlignment != d->ruler->alignment()) {
+    if (newAlignment != m_ruler->alignment()) {
         if (newAlignment == Qt::AlignLeft) {
-            d->leftAlignTool->setChecked(true);
+            m_leftAlignTool->setChecked(true);
         } else if (newAlignment == Qt::AlignCenter) {
-            d->centerAlignTool->setChecked(true);
+            m_centerAlignTool->setChecked(true);
         } else if (newAlignment == Qt::AlignRight) {
-            d->rightAlignTool->setChecked(true);
+            m_rightAlignTool->setChecked(true);
         }
 
-        d->ruler->setAlignment(newAlignment);
+        m_ruler->setAlignment(newAlignment);
     }
 }
 
 Qt::Alignment PanelController::alignment() const
 {
-    return d->ruler->alignment();
+    return m_ruler->alignment();
 }
 
 void PanelController::setVisibilityMode(PanelView::VisibilityMode mode)
 {
     switch (mode) {
     case PanelView::AutoHide:
-        d->autoHideTool->setChecked(true);
+        m_autoHideTool->setChecked(true);
         break;
     case PanelView::LetWindowsCover:
-        d->underWindowsTool->setChecked(true);
+        m_underWindowsTool->setChecked(true);
         break;
     case PanelView::WindowsGoBelow:
-        d->overWindowsTool->setChecked(true);
+        m_overWindowsTool->setChecked(true);
         break;
     case PanelView::NormalPanel:
     default:
-        d->normalPanelTool->setChecked(true);
+        m_normalPanelTool->setChecked(true);
         break;
     }
 }
 
 PanelView::VisibilityMode PanelController::panelVisibilityMode() const
 {
-    if (d->underWindowsTool->isChecked()) {
+    if (m_underWindowsTool->isChecked()) {
         return PanelView::LetWindowsCover;
-    } else if (d->overWindowsTool->isChecked()) {
+    } else if (m_overWindowsTool->isChecked()) {
         return PanelView::WindowsGoBelow;
-    } else if (d->autoHideTool->isChecked()) {
+    } else if (m_autoHideTool->isChecked()) {
         return PanelView::AutoHide;
     } else {
         return PanelView::NormalPanel;
     }
 }
 
-Qt::Orientation PanelController::orientation() const
-{
-    if (d->location == Plasma::TopEdge || d->location == Plasma::BottomEdge) {
-        return Qt::Horizontal;
-    }
-
-    return Qt::Vertical;
-}
-
 void PanelController::themeChanged()
 {
     QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-    QPalette p = d->alignLabel->palette();
+    QPalette p = m_alignLabel->palette();
     p.setColor(QPalette::Normal, QPalette::WindowText, color);
     p.setColor(QPalette::Inactive, QPalette::WindowText, color);
-    d->alignLabel->setPalette(p);
-    d->modeLabel->setPalette(p);
+    m_alignLabel->setPalette(p);
+    m_modeLabel->setPalette(p);
 
-    d->sizeTool->setIcon(d->iconSvg->pixmap("move"));
+    m_sizeTool->setIcon(m_iconSvg->pixmap("move"));
 
     if (orientation() == Qt::Horizontal) {
-        d->sizeTool->setIcon(d->iconSvg->pixmap("size-vertical"));
+        m_sizeTool->setIcon(m_iconSvg->pixmap("size-vertical"));
     } else {
-        d->sizeTool->setIcon(d->iconSvg->pixmap("size-horizontal"));
+        m_sizeTool->setIcon(m_iconSvg->pixmap("size-horizontal"));
     }
 }
 
-void PanelController::showWidgetsExplorer()
+void PanelController::switchToWidgetExplorer()
 {
-    if (!d->containment) {
-        return;
-    }
-
     m_configWidget->hide();
-
-    if (!m_widgetExplorerView) {
-        m_widgetExplorerView = new QGraphicsView(this);
-        m_widgetExplorerView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        m_widgetExplorerView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        m_widgetExplorerView->setStyleSheet("background: transparent; border: none;");
-
-        m_widgetExplorerView->setScene(d->containment->corona());
-        m_widgetExplorerView->installEventFilter(this);
-        m_mainLayout->addWidget(m_widgetExplorerView);
-
-    }
-
-    if (!m_widgetExplorer) {
-        m_widgetExplorer = new Plasma::WidgetExplorer();
-        m_widgetExplorer->setContainment(d->containment);
-        m_widgetExplorer->setApplication();
-
-        m_widgetExplorer->resize(size());
-        d->containment->corona()->addOffscreenWidget(m_widgetExplorer);
-
-        m_widgetExplorerView->setSceneRect(m_widgetExplorer->geometry());
-
-        m_widgetExplorer->installEventFilter(this);
-    }
-
-    m_widgetExplorer->setOrientation(orientation());
-
-    if (orientation() == Qt::Horizontal) {
-        resize(width(), m_widgetExplorer->preferredSize().height());
-    } else {
-        resize(m_widgetExplorer->preferredSize().width(), height());
-    }
-
-    m_widgetExplorer->show();
-    // connect signals
-}
-
-void PanelController::onActiveWindowChanged(WId id)
-{
-    //if the active window isn't the plasma desktop and the widgets explorer is visible,
-    //then close the panel controller
-    if (QApplication::activeWindow() == 0 ||
-       (QApplication::activeWindow()->winId() != KWindowSystem::activeWindow())) {
-        if (m_widgetExplorerView != 0 && m_widgetExplorerView->isVisible()) {
-            if (!d->settingsTool->underMouse()) {
-                d->optionsDialog->hide();
-            }
-            if (!isActiveWindow()) {
-                close();
-            }
-        }
-    }
-}
-
-void PanelController::paintEvent(QPaintEvent *event)
-{
-    Q_UNUSED(event)
-
-    QPainter painter(this);
-    painter.setCompositionMode(QPainter::CompositionMode_Source );
-
-    d->background->resizeFrame(size());
-    d->background->paintFrame(&painter);
-}
-
-void PanelController::keyPressEvent(QKeyEvent *event)
-{
-    if (event->key() == Qt::Key_Escape) {
-        close();
-    }
+    showWidgetExplorer();
 }
 
 bool PanelController::eventFilter(QObject *watched, QEvent *event)
 {
-    if (watched == d->optionsDialog && event->type() == QEvent::WindowDeactivate
-            && (!m_widgetExplorerView || !m_widgetExplorerView->isVisible())) {
-        if (!d->settingsTool->underMouse()) {
-            d->optionsDialog->hide();
+    ControllerWindow::eventFilter(watched, event);
+
+    if (watched == m_optionsDialog && event->type() == QEvent::WindowDeactivate && (!isWidgetExplorerVisible())) {
+        if (!m_settingsTool->underMouse()) {
+            m_optionsDialog->hide();
         }
+
         if (!isActiveWindow()) {
             close();
         }
         return true;
-    } else if (watched == d->moveTool) {
+    } else if (watched == m_moveTool) {
         if (event->type() == QEvent::MouseButtonPress) {
-            d->dragging = Private::MoveButtonElement;
+            m_dragging = MoveButtonElement;
         } else if (event->type() == QEvent::MouseButtonRelease) {
-            d->dragging = Private::NoElement;
+            m_dragging = NoElement;
         } else if (event->type() == QEvent::MouseMove) {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
             mouseMoveFilter(mouseEvent);
         }
-    } else if (watched == d->sizeTool) {
+    } else if (watched == m_sizeTool) {
         if (event->type() == QEvent::MouseButtonPress) {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-            d->startDragPos = mouseEvent->pos();
-            d->dragging = Private::ResizeButtonElement;
+            m_startDragPos = mouseEvent->pos();
+            m_dragging = ResizeButtonElement;
         } else if (event->type() == QEvent::MouseButtonRelease) {
             //resets properties saved during the drag
-            d->startDragPos = QPoint(0, 0);
-            d->dragging = Private::NoElement;
+            m_startDragPos = QPoint(0, 0);
+            m_dragging = NoElement;
             setCursor(Qt::ArrowCursor);
         } else if (event->type() == QEvent::MouseMove) {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
             mouseMoveFilter(mouseEvent);
         }
-    }
-    
-    //if widgetsExplorer moves or resizes, then the view has to adjust
-    if ((watched == (QObject*)m_widgetExplorer) && (event->type() == QEvent::GraphicsSceneResize || event->type() == QEvent::GraphicsSceneMove)) {
-        m_widgetExplorerView->setSceneRect(m_widgetExplorer->geometry());
-    } 
-     
-    //if the view resizes, then the widgetexplorer has to be resized
-    if (watched == m_widgetExplorerView && event->type() == QEvent::Resize) {
-        QResizeEvent *resizeEvent = static_cast<QResizeEvent *>(event);
-        m_widgetExplorer->resize(resizeEvent->size());
     }
 
     return false;
@@ -990,13 +523,13 @@ bool PanelController::eventFilter(QObject *watched, QEvent *event)
 
 void PanelController::mouseMoveFilter(QMouseEvent *event)
 {
-    if (d->dragging == Private::NoElement || !d->containment) {
+    if (m_dragging == NoElement || !containment()) {
         return;
     }
 
-    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(d->containment->screen());
+    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(containment()->screen());
 
-    if (d->dragging == Private::MoveButtonElement) {
+    if (m_dragging == MoveButtonElement) {
         //only move when the mouse cursor is out of the controller to avoid an endless reposition cycle
         if (geometry().contains(event->globalPos())) {
             return;
@@ -1005,8 +538,8 @@ void PanelController::mouseMoveFilter(QMouseEvent *event)
         if (!screenGeom.contains(event->globalPos())) {
             //move panel to new screen if dragged there
             int targetScreen = Kephal::ScreenUtils::screenId(event->globalPos());
-            //kDebug() << "Moving panel from screen" << d->containment->screen() << "to screen" << targetScreen;
-            d->containment->setScreen(targetScreen);
+            //kDebug() << "Moving panel from screen" << containment()->screen() << "to screen" << targetScreen;
+            containment()->setScreen(targetScreen);
             return;
         }
 
@@ -1019,7 +552,7 @@ void PanelController::mouseMoveFilter(QMouseEvent *event)
             return;
         }
 
-        const Plasma::Location oldLocation = d->containment->location();
+        const Plasma::Location oldLocation = containment()->location();
         Plasma::Location newLocation = oldLocation;
         float screenAspect = float(screenGeom.height())/screenGeom.width();
 
@@ -1029,24 +562,24 @@ void PanelController::mouseMoveFilter(QMouseEvent *event)
          */
         if (event->globalY() < screenGeom.y()+(event->globalX()-screenGeom.x())*screenAspect) {
             if (event->globalY() < screenGeom.bottomLeft().y()-(event->globalX()-screenGeom.x())*screenAspect) {
-                if (d->containment->location() == Plasma::TopEdge) {
+                if (containment()->location() == Plasma::TopEdge) {
                     return;
                 } else {
                     newLocation = Plasma::TopEdge;
                 }
-            } else if (d->containment->location() == Plasma::RightEdge) {
+            } else if (containment()->location() == Plasma::RightEdge) {
                     return;
             } else {
                 newLocation = Plasma::RightEdge;
             }
         } else {
             if (event->globalY() < screenGeom.bottomLeft().y()-(event->globalX()-screenGeom.x())*screenAspect) {
-                if (d->containment->location() == Plasma::LeftEdge) {
+                if (containment()->location() == Plasma::LeftEdge) {
                     return;
                 } else {
                     newLocation = Plasma::LeftEdge;
                 }
-            } else if(d->containment->location() == Plasma::BottomEdge) {
+            } else if(containment()->location() == Plasma::BottomEdge) {
                     return;
             } else {
                 newLocation = Plasma::BottomEdge;
@@ -1065,39 +598,39 @@ void PanelController::mouseMoveFilter(QMouseEvent *event)
     //Resize handle moved
     switch (location()) {
     case Plasma::LeftEdge: {
-        int newX = mapToGlobal(event->pos()).x() - d->startDragPos.x();
-        if (newX - d->minimumHeight > screenGeom.left() &&
+        int newX = mapToGlobal(event->pos()).x() - m_startDragPos.x();
+        if (newX - MINIMUM_HEIGHT > screenGeom.left() &&
             newX - screenGeom.left() <= screenGeom.width()/3) {
             move(newX, pos().y());
-            d->resizeFrameHeight(geometry().left() - screenGeom.left());
+            resizeFrameHeight(geometry().left() - screenGeom.left());
         }
         break;
     }
     case Plasma::RightEdge: {
-        int newX = mapToGlobal(event->pos()).x() - d->startDragPos.x();
-        if (newX + width() + d->minimumHeight < screenGeom.right() &&
+        int newX = mapToGlobal(event->pos()).x() - m_startDragPos.x();
+        if (newX + width() + MINIMUM_HEIGHT < screenGeom.right() &&
             newX + width() - screenGeom.left() >= 2*(screenGeom.width()/3)) {
             move(newX, pos().y());
-            d->resizeFrameHeight(screenGeom.right() - geometry().right());
+            resizeFrameHeight(screenGeom.right() - geometry().right());
         }
         break;
     }
     case Plasma::TopEdge: {
-        int newY = mapToGlobal(event->pos()).y() - d->startDragPos.y();
-        if ( newY - d->minimumHeight > screenGeom.top() &&
+        int newY = mapToGlobal(event->pos()).y() - m_startDragPos.y();
+        if ( newY - MINIMUM_HEIGHT > screenGeom.top() &&
              newY - screenGeom.top()<= screenGeom.height()/3) {
             move(pos().x(), newY);
-            d->resizeFrameHeight(geometry().top() - screenGeom.top());
+            resizeFrameHeight(geometry().top() - screenGeom.top());
         }
         break;
     }
     case Plasma::BottomEdge:
     default: {
-        int newY = mapToGlobal(event->pos()).y() - d->startDragPos.y();
-        if ( newY + height() + d->minimumHeight < screenGeom.bottom() &&
+        int newY = mapToGlobal(event->pos()).y() - m_startDragPos.y();
+        if ( newY + height() + MINIMUM_HEIGHT < screenGeom.bottom() &&
              newY + height() - screenGeom.top() >= 2*(screenGeom.height()/3)) {
             move(pos().x(), newY);
-            d->resizeFrameHeight(screenGeom.bottom() - geometry().bottom());
+            resizeFrameHeight(screenGeom.bottom() - geometry().bottom());
         }
         break;
     }
@@ -1107,16 +640,255 @@ void PanelController::mouseMoveFilter(QMouseEvent *event)
 void PanelController::focusOutEvent(QFocusEvent * event)
 {
     Q_UNUSED(event)
-    if (!d->optionsDialog->isActiveWindow()) {
-        if(m_widgetExplorerView) {
-            if(!m_widgetExplorerView->isVisible()) {
-                d->optionsDialog->hide();
-                close();
-            }
-        } else {
-            d->optionsDialog->hide();
-            close();
+    if (!m_optionsDialog->isActiveWindow() && !isWidgetExplorerVisible()) {
+        m_optionsDialog->hide();
+        close();
+    }
+}
+
+ToolButton *PanelController::addTool(QAction *action, QWidget *parent, Qt::ToolButtonStyle style)
+{
+    ToolButton *tool = new ToolButton(parent);
+    tool->setToolButtonStyle(style);
+    tool->setAction(action);
+    m_actionWidgets.append(tool);
+
+    return tool;
+}
+
+ToolButton *PanelController::addTool(const QString iconName, const QString iconText, QWidget *parent, Qt::ToolButtonStyle style, bool checkButton)
+{
+    //TODO take advantage of setDefaultAction using the containment's actions if possible
+    ToolButton *tool = new ToolButton(parent);
+
+    KIcon icon = KIcon(iconName);
+    if (!icon.isNull() && !iconName.isNull()) {
+        tool->setIcon(icon);
+    }
+
+    tool->setText(iconText);
+    tool->setToolButtonStyle(style);
+
+    if (style == Qt::ToolButtonIconOnly) {
+        tool->setToolTip(iconText);
+    }
+
+    tool->setCheckable(checkButton);
+    tool->setAutoExclusive(checkButton);
+
+    return tool;
+}
+
+void PanelController::resizeFrameHeight(const int newHeight)
+{
+    if (!containment()) {
+        return;
+    }
+
+    switch (location()) {
+        case Plasma::LeftEdge:
+        case Plasma::RightEdge:
+            containment()->resize(QSize(newHeight, (int)containment()->size().height()));
+            containment()->setMinimumSize(QSize(newHeight, (int)containment()->minimumSize().height()));
+            containment()->setMaximumSize(QSize(newHeight, (int)containment()->maximumSize().height()));
+            break;
+        case Plasma::TopEdge:
+        case Plasma::BottomEdge:
+        default:
+            containment()->resize(QSize((int)containment()->size().width(), newHeight));
+            containment()->setMinimumSize(QSize((int)containment()->minimumSize().width(), newHeight));
+            containment()->setMaximumSize(QSize((int)containment()->maximumSize().width(), newHeight));
+            break;
+    }
+}
+
+void PanelController::rulersMoved(int offset, int minLength, int maxLength)
+{
+    if (!containment()) {
+        return;
+    }
+
+    QSize preferredSize(containment()->preferredSize().toSize());
+
+    switch (location()) {
+        case Plasma::LeftEdge:
+        case Plasma::RightEdge:
+            containment()->resize(QSize((int)containment()->size().width(), qBound(minLength, preferredSize.height(), maxLength)));
+            containment()->setMinimumSize(QSize((int)containment()->minimumSize().width(), minLength));
+            containment()->setMaximumSize(QSize((int)containment()->maximumSize().width(), maxLength));
+            break;
+        case Plasma::TopEdge:
+        case Plasma::BottomEdge:
+        default:
+            containment()->resize(QSize(qBound(minLength, preferredSize.width(), maxLength), (int)containment()->size().height()));
+            containment()->setMinimumSize(QSize(minLength, (int)containment()->minimumSize().height()));
+            containment()->setMaximumSize(QSize(maxLength, (int)containment()->maximumSize().height()));
+            break;
+    }
+
+    emit offsetChanged(offset);
+}
+
+void PanelController::alignToggled(bool toggle)
+{
+    if (!toggle) {
+        return;
+    }
+
+    if (sender() == m_leftAlignTool) {
+        emit alignmentChanged(Qt::AlignLeft);
+        m_ruler->setAlignment(Qt::AlignLeft);
+    } else if (sender() == m_centerAlignTool) {
+        emit alignmentChanged(Qt::AlignCenter);
+        m_ruler->setAlignment(Qt::AlignCenter);
+    } else if (sender() == m_rightAlignTool) {
+        emit alignmentChanged(Qt::AlignRight);
+        m_ruler->setAlignment(Qt::AlignRight);
+    }
+
+    emit offsetChanged(0);
+    m_ruler->setOffset(0);
+}
+
+void PanelController::panelVisibilityModeChanged(bool toggle)
+{
+    if (!toggle) {
+        return;
+    }
+
+    if (sender() == m_normalPanelTool) {
+        emit panelVisibilityModeChanged(PanelView::NormalPanel);
+    } else if (sender() == m_autoHideTool) {
+        emit panelVisibilityModeChanged(PanelView::AutoHide);
+    } else if (sender() == m_underWindowsTool) {
+        emit panelVisibilityModeChanged(PanelView::LetWindowsCover);
+    } else if (sender() == m_overWindowsTool) {
+        emit panelVisibilityModeChanged(PanelView::WindowsGoBelow);
+    }
+}
+
+void PanelController::settingsPopup()
+{
+    if (m_optionsDialog->isVisible()) {
+        m_optionsDialog->hide();
+    } else {
+        KWindowSystem::setState(m_optionsDialog->winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky);
+        QPoint pos = mapToGlobal(m_settingsTool->pos());
+        m_optionsDialog->layout()->activate();
+        m_optionsDialog->resize(m_optionsDialog->sizeHint());
+        QSize s = m_optionsDialog->size();
+
+        switch (location()) {
+            case Plasma::BottomEdge:
+                pos = QPoint(pos.x(), pos.y() - s.height());
+                break;
+            case Plasma::TopEdge:
+                pos = QPoint(pos.x(), pos.y() + m_settingsTool->size().height());
+                break;
+            case Plasma::LeftEdge:
+                pos = QPoint(pos.x() + m_settingsTool->size().width(), pos.y());
+                break;
+            case Plasma::RightEdge:
+                pos = QPoint(pos.x() - s.width(), pos.y());
+                break;
+            default:
+                if (pos.y() - s.height() > 0) {
+                    pos = QPoint(pos.x(), pos.y() - s.height());
+                } else {
+                    pos = QPoint(pos.x(), pos.y() + m_settingsTool->size().height());
+                }
         }
+
+        QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment()->screen());
+
+        if (pos.rx() + s.width() > screenRect.right()) {
+            pos.rx() -= ((pos.rx() + s.width()) - screenRect.right());
+        }
+
+        if (pos.ry() + s.height() > screenRect.bottom()) {
+            pos.ry() -= ((pos.ry() + s.height()) - screenRect.bottom());
+        }
+
+        pos.rx() = qMax(0, pos.rx());
+        m_optionsDialog->move(pos);
+        m_optionsDialog->show();
+    }
+}
+
+void PanelController::syncRuler()
+{
+    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(containment()->screen());
+
+    switch (location()) {
+        case Plasma::LeftEdge:
+        case Plasma::RightEdge:
+            m_ruler->setAvailableLength(screenGeom.height());
+            m_ruler->setMaxLength(qMin((int)containment()->maximumSize().height(), screenGeom.height()));
+            m_ruler->setMinLength(containment()->minimumSize().height());
+            break;
+        case Plasma::TopEdge:
+        case Plasma::BottomEdge:
+        default:
+            m_ruler->setAvailableLength(screenGeom.width());
+            m_ruler->setMaxLength(qMin((int)containment()->maximumSize().width(), screenGeom.width()));
+            m_ruler->setMinLength(containment()->minimumSize().width());
+            break;
+    }
+}
+
+void PanelController::maximizePanel()
+{
+    const int length = m_ruler->availableLength();
+    const int screen = containment()->screen();
+    const QRect screenGeom = PlasmaApp::self()->corona()->screenGeometry(screen);
+    QRegion availGeom(screenGeom);
+    foreach (PanelView *view, PlasmaApp::self()->panelViews()) {
+        if (view->containment() != containment() &&
+            view->screen() == screen && view->visibilityMode() == PanelView::NormalPanel) {
+            availGeom = availGeom.subtracted(view->geometry());
+        }
+    }
+    int offset = 0;
+    const int w = containment()->size().width();
+    const int h = containment()->size().height();
+
+    switch (location()) {
+        case Plasma::LeftEdge: {
+            QRect r = availGeom.intersected(QRect(0, 0, w, length)).boundingRect();
+            offset = r.top();
+        }
+        break;
+
+        case Plasma::RightEdge: {
+            QRect r = availGeom.intersected(QRect(screenGeom.right() - w, 0, w, length)).boundingRect();
+            offset = r.top();
+        }
+        break;
+
+        case Plasma::TopEdge: {
+            QRect r = availGeom.intersected(QRect(0, 0, length, h)).boundingRect();
+            offset = r.left();
+        }
+        break;
+
+        case Plasma::BottomEdge:
+        default: {
+            QRect r = availGeom.intersected(QRect(0, screenGeom.bottom() - h, length, h)).boundingRect();
+            offset = r.left();
+        }
+        break;
+    }
+
+    rulersMoved(offset, length, length);
+    m_ruler->setMaxLength(length);
+    m_ruler->setMinLength(length);
+}
+
+void PanelController::addSpace()
+{
+    Plasma::Applet *spacer = containment()->addApplet("panelspacer_internal");
+    if (spacer) {
+        QMetaObject::invokeMethod(spacer, "updateConfigurationMode", Q_ARG(bool, true));
     }
 }
 
