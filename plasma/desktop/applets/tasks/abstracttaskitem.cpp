@@ -60,7 +60,7 @@
 #include "tasks.h"
 #include "taskgroupitem.h"
 
-static const int HOVER_EFFECT_TIMEOUT = 800;
+static const int HOVER_EFFECT_TIMEOUT = 900;
 
 AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet)
     : QGraphicsWidget(parent),
