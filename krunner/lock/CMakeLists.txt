@@ -15,7 +15,7 @@ set(kscreenlocker_SRCS
    autologout.cc
    main.cc )
 
-set(plasmaapp_dbusXML ../../plasma/screensaver/shells/screensaver/org.kde.plasma-overlay.App.xml)
+set(plasmaapp_dbusXML ../../plasma/screensaver/shell/org.kde.plasma-overlay.App.xml)
 qt4_add_dbus_interface(kscreenlocker_SRCS ${plasmaapp_dbusXML} plasmaapp_interface)
 
 set(lockprocess_dbusXML org.kde.screenlocker.LockProcess.xml)
