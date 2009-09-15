@@ -11,7 +11,6 @@
 
 #include "backgrounddialog.h"
 
-#include <QPainter>
 //#include <QFile>
 //#include <QAbstractItemView>
 //#include <QStandardItemModel>
