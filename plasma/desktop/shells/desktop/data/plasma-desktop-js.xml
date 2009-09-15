@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language SYSTEM "language.dtd">
+<!-- Author: Aaron Seigo <aseigo@kde.org> //-->
+<!-- Full JavaScript 1.0 support by Whitehawk Stormchaser //-->
+
+
+<language name="JavaScript/PlasmaDesktop" hidden="true" version="0.1" kateversion="2.4" section="Other" extensions="" mimetype="" author="Aaron Seigo (aseigo@kde.org, Whitehawk Stormchaser (zerokode@gmx.net)" license="BSD">
+    <highlighting>
+        <contexts>
+            <context name="Start" attribute="Normal Text" lineEndContext="#stay">
+                <IncludeRules context="##JavaScript" />
+            </context>
+        </contexts>
+    </highlighting>
+</language>
