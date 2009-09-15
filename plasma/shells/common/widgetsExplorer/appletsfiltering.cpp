@@ -158,7 +158,7 @@ void FilteringWidget::init()
 {
     //init text search
     m_textSearch = new Plasma::LineEdit();
-    m_textSearch->nativeWidget()->setClickMessage(/*i18n(*/"Type search"/*)*/);
+    m_textSearch->nativeWidget()->setClickMessage(i18n("Enter Search Term"));
     m_textSearch->setFocus();
     m_textSearch->setAttribute(Qt::WA_NoSystemBackground);
 
