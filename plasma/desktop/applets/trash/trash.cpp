@@ -35,6 +35,7 @@
 #include <KUrl>
 #include <KProcess>
 #include <KStandardDirs>
+#include <KNotification>
 
 #include <kfileplacesmodel.h>
 
@@ -226,10 +227,13 @@ void Trash::emptyFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
     Q_UNUSED(exitCode)
     Q_UNUSED(exitStatus)
+
+    KNotification::event("Trash: emptied", QString() , QPixmap() , 0l, KNotification::DefaultEvent );
+    
     //TODO: check the exit status and let the user know if it fails
     delete m_emptyProcess;
     m_emptyProcess = 0;
-    emptyTrash->setEnabled(true);
+    emptyTrash->setEnabled(false);
     emptyTrash->setText(i18n("&Empty Trashcan"));
 }
 
