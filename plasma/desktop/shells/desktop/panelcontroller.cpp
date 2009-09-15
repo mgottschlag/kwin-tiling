@@ -859,16 +859,13 @@ void PanelController::themeChanged()
 
 void PanelController::showWidgetsExplorer()
 {
-    Qt::Orientation widgetExplorerOrientation = isHorizontal() ? Qt::Horizontal : Qt::Vertical;
-  
     if (!d->containment) {
         return;
     }
-    
+
     m_configWidget->hide();
 
     if (!m_widgetExplorerView) {
-
         m_widgetExplorerView = new QGraphicsView(this);
         m_widgetExplorerView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         m_widgetExplorerView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -893,8 +890,15 @@ void PanelController::showWidgetsExplorer()
         m_widgetExplorer->installEventFilter(this);
     }
 
+    Qt::Orientation widgetExplorerOrientation = isHorizontal() ? Qt::Horizontal : Qt::Vertical;
     if (m_widgetExplorer->orientation() != widgetExplorerOrientation) {
         m_widgetExplorer->setOrientation(widgetExplorerOrientation);
+    }
+
+    if (isHorizontal()) {
+        resize(width(), m_widgetExplorer->preferredSize().height());
+    } else {
+        resize(m_widgetExplorer->preferredSize().width(), height());
     }
 
     m_widgetExplorer->show();
