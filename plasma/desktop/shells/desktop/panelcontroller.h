@@ -84,7 +84,7 @@ private Q_SLOTS:
 
 private:
     void mouseMoveFilter(QMouseEvent *event);
-    bool isHorizontal() const;
+    Qt::Orientation orientation() const;
 
     Q_PRIVATE_SLOT(d, void rulersMoved(int offset, int minLength, int minLength))
     Q_PRIVATE_SLOT(d, void alignToggled(bool toggle))

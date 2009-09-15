@@ -84,7 +84,6 @@ public:
     Private(PanelController *panelControl)
        : q(panelControl),
          containment(0),
-         orientation(Qt::Horizontal),
          location(Plasma::BottomEdge),
          extLayout(0),
          layout(0),
@@ -350,7 +349,6 @@ public:
 
     PanelController *q;
     Plasma::Containment *containment;
-    Qt::Orientation orientation;
     Plasma::Location location;
     QBoxLayout *extLayout;
     QBoxLayout *layout;
@@ -567,7 +565,6 @@ void PanelController::setContainment(Plasma::Containment *containment)
     if (d->containment) {
         disconnect(d->containment, 0, this, 0);
     }
-    
 
     d->containment = containment;
 
@@ -834,9 +831,13 @@ PanelView::VisibilityMode PanelController::panelVisibilityMode() const
     }
 }
 
-bool PanelController::isHorizontal() const
+Qt::Orientation PanelController::orientation() const
 {
-    return d->location == Plasma::TopEdge || d->location == Plasma::BottomEdge;
+    if (d->location == Plasma::TopEdge || d->location == Plasma::BottomEdge) {
+        return Qt::Horizontal;
+    }
+
+    return Qt::Vertical;
 }
 
 void PanelController::themeChanged()
@@ -850,7 +851,7 @@ void PanelController::themeChanged()
 
     d->sizeTool->setIcon(d->iconSvg->pixmap("move"));
 
-    if (isHorizontal()) {
+    if (orientation() == Qt::Horizontal) {
         d->sizeTool->setIcon(d->iconSvg->pixmap("size-vertical"));
     } else {
         d->sizeTool->setIcon(d->iconSvg->pixmap("size-horizontal"));
@@ -890,12 +891,9 @@ void PanelController::showWidgetsExplorer()
         m_widgetExplorer->installEventFilter(this);
     }
 
-    Qt::Orientation widgetExplorerOrientation = isHorizontal() ? Qt::Horizontal : Qt::Vertical;
-    if (m_widgetExplorer->orientation() != widgetExplorerOrientation) {
-        m_widgetExplorer->setOrientation(widgetExplorerOrientation);
-    }
+    m_widgetExplorer->setOrientation(orientation());
 
-    if (isHorizontal()) {
+    if (orientation() == Qt::Horizontal) {
         resize(width(), m_widgetExplorer->preferredSize().height());
     } else {
         resize(m_widgetExplorer->preferredSize().width(), height());
