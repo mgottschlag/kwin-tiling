@@ -158,7 +158,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
 
         connect(m_uiImage.m_color, SIGNAL(changed(const QColor&)), this, SLOT(modified()));
         connect(m_uiImage.m_resizeMethod, SIGNAL(currentIndexChanged(int)), this, SLOT(modified()));
-        connect(m_uiImage.m_view, SIGNAL(activated(const QModelIndex &)), this, SLOT(modified()));
+        connect(m_uiImage.m_view, SIGNAL(clicked(const QModelIndex &)), this, SLOT(modified()));
 
     } else {
         m_uiSlideshow.setupUi(m_configWidget);
