@@ -123,15 +123,19 @@ public:
         switch (location) {
         case Plasma::LeftEdge:
             elementPrefix = "west-";
+            sliderGraphics->setEnabledBorders(Plasma::FrameSvg::RightBorder);
             break;
         case Plasma::RightEdge:
             elementPrefix = "east-";
+            sliderGraphics->setEnabledBorders(Plasma::FrameSvg::LeftBorder);
             break;
         case Plasma::TopEdge:
             elementPrefix = "north-";
+            sliderGraphics->setEnabledBorders(Plasma::FrameSvg::BottomBorder);
             break;
         case Plasma::BottomEdge:
         default:
+            sliderGraphics->setEnabledBorders(Plasma::FrameSvg::TopBorder);
             elementPrefix = "south-";
             break;
         }
