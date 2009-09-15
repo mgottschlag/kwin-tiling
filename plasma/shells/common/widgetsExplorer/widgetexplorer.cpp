@@ -136,9 +136,16 @@ void WidgetExplorerPrivate::initFilters()
 
     filterModel.addSeparator(i18n("Categories:"));
 
+    typedef QPair<QString, QString> catPair;
+    QMap<QString, catPair > categories;
     foreach (const QString &category, Plasma::Applet::listCategories(application)) {
-        filterModel.addFilter(i18n(category.toLocal8Bit()),
-                              KCategorizedItemsViewModels::Filter("category", category.toLower()));
+        QString trans = i18n(category.toLocal8Bit());
+        categories.insert(trans.toLower(), qMakePair(trans, category.toLower()));
+    }
+
+    foreach (const catPair &category, categories) {
+        filterModel.addFilter(category.first,
+                              KCategorizedItemsViewModels::Filter("category", category.second));
     }
 }
 
@@ -169,7 +176,6 @@ void WidgetExplorerPrivate::init(Qt::Orientation orient)
     initRunningApplets();
 
     q->setLayout(mainLayout);
-
 }
 
 void WidgetExplorerPrivate::adjustContentsSize()
