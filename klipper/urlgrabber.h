@@ -69,6 +69,7 @@ private:
   void execute( const ClipAction *action, int commandIdx ) const;
   bool isAvoidedWindow() const;
   void actionMenu( bool wm_class_check );
+  void matchingMimeActions(const QString& clipData);
 
   ActionList m_myActions;
   ActionList m_myMatches;

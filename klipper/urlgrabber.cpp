@@ -23,6 +23,7 @@
 #include <QTimer>
 #include <QX11Info>
 #include <QUuid>
+#include <QFile>
 
 #include <kconfig.h>
 #include <kdialog.h>
@@ -105,13 +106,31 @@ void URLGrabber::setActionList( const ActionList& list )
     m_myActions = list;
 }
 
-
-const ActionList& URLGrabber::matchingActions( const QString& clipData )
+void URLGrabber::matchingMimeActions(const QString& clipData)
 {
-    m_myMatches.clear();
+    KUrl url(clipData);
+    KConfigGroup cg(KGlobal::config(), "General");
+    if(!cg.readEntry("EnableMagicMimeActions",true)) { //Secret configuration entry
+    //    kDebug() << "skipping mime magic due to configuration";
+    	return;
+    }
+    if(!url.isValid()) {
+    //    kDebug() << "skipping mime magic due to invalid url";
+    	return;
+    }
+    if(url.isRelative()) {  //openinng a relative path will just not work. what path should be used?
+    //    kDebug() << "skipping mime magic due to relative url";
+    	return;
+    }
+    if(url.isLocalFile()) {
+	if(!QFile::exists(url.toLocalFile())) {
+	//    kDebug() << "skipping mime magic due to nonexistant localfile";
+	    return;
+	}
+    }
 
     // try to figure out if clipData contains a filename
-    KMimeType::Ptr mimetype = KMimeType::findByUrl( KUrl( clipData ), 0,
+    KMimeType::Ptr mimetype = KMimeType::findByUrl( url, 0,
                                                     false,
                                                     true /*fast mode*/ );
 
@@ -139,6 +158,14 @@ const ActionList& URLGrabber::matchingActions( const QString& clipData )
         if ( !lst.isEmpty() )
             m_myMatches.append( action );
     }
+}
+
+const ActionList& URLGrabber::matchingActions( const QString& clipData )
+{
+    m_myMatches.clear();
+
+    matchingMimeActions(clipData);
+
 
     // now look for matches in custom user actions
     foreach (ClipAction* action, m_myActions) {
