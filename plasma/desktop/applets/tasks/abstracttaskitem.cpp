@@ -317,7 +317,7 @@ void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
     Q_UNUSED(event)
     fadeBackground("hover", 175, true);
     QGraphicsWidget *w = parentWidget();
-    if (w && w != m_applet->rootGroupItem()) {
+    if (w) {
         if (m_hoverEffectTimerId) {
             killTimer(m_hoverEffectTimerId);
         }
