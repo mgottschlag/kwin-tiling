@@ -84,6 +84,8 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     foreach (const KService::Ptr service, offers) {
         m_editorPart = service->createInstance<KTextEditor::Document>(widget);
         if (m_editorPart) {
+            m_editorPart->setHighlightingMode("JavaScript/PlasmaDesktop");
+
             KTextEditor::View * view = m_editorPart->createView(widget);
             view->setContextMenu(view->defaultContextMenu());
 
@@ -151,6 +153,7 @@ void InteractiveConsole::loadScript(const QString &script)
     if (m_editorPart) {
         m_editorPart->closeUrl(false);
         if (m_editorPart->openUrl(script)) {
+            m_editorPart->setHighlightingMode("JavaScript/PlasmaDesktop");
             return;
         }
     } else {
@@ -220,7 +223,9 @@ void InteractiveConsole::openScriptUrlSelected()
     }
 
     if (m_editorPart) {
+        m_editorPart->closeUrl(false);
         m_editorPart->openUrl(url);
+        m_editorPart->setHighlightingMode("JavaScript/PlasmaDesktop");
     } else {
         m_editor->clear();
         m_editor->setEnabled(false);
@@ -246,6 +251,11 @@ void InteractiveConsole::scriptFileDataRecvd(KIO::Job *job, const QByteArray &da
 
 void InteractiveConsole::saveScript()
 {
+    if (m_editorPart) {
+        m_editorPart->documentSaveAs();
+        return;
+    }
+
     if (m_fileDialog) {
         delete m_fileDialog;
     }
@@ -345,7 +355,7 @@ void InteractiveConsole::evaluateScript()
 void InteractiveConsole::clearEditor()
 {
     if (m_editorPart) {
-        m_editorPart->closeUrl(false);
+        m_editorPart->clear();
     } else {
         m_editor->clear();
     }
