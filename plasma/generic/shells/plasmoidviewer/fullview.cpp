@@ -30,12 +30,9 @@
 #include <QApplication>
 #include <QDir>
 #include <QFileInfo>
-#include <QIcon>
 #include <QResizeEvent>
 
 #include <KIconLoader>
-#include <KStandardDirs>
-
 #include <Plasma/AccessManager>
 #include <Plasma/AccessAppletJob>
 #include <Plasma/Package>
