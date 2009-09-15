@@ -604,7 +604,6 @@ void PanelView::updatePanelGeometry()
 
     //update the panel controller location position and size
     if (m_panelController) {
-
         if (m_panelController->isVisible()) {
             m_panelController->resize(m_panelController->sizeHint());
             m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
@@ -824,7 +823,7 @@ void PanelView::togglePanelController()
     }
 
     if (!m_panelController) {
-        m_panelController = new PanelController(this);
+        m_panelController = new PanelController(0);
         m_panelController->setContainment(containment());
         m_panelController->setLocation(containment()->location());
         m_panelController->setAlignment(m_alignment);
@@ -868,6 +867,7 @@ void PanelView::togglePanelController()
         m_panelController->resize(m_panelController->sizeHint());
         m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
         Plasma::WindowEffects::slideWindow(m_panelController, location());
+        kDebug() << "showing panel controller!" << m_panelController->geometry();
         m_panelController->show();
     } else {
         Plasma::WindowEffects::slideWindow(m_panelController, location());
