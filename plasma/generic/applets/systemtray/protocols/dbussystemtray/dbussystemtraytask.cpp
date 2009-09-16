@@ -39,6 +39,8 @@
 #include "notificationitem_interface.h"
 #include "systemtraytypes.h"
 
+#include <netinet/in.h>
+
 namespace SystemTray
 {
 
@@ -323,6 +325,14 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
 
 QPixmap DBusSystemTrayTaskPrivate::ExperimentalKDbusImageStructToPixmap(const ExperimentalKDbusImageStruct &icon) const
 {
+    //swap from network byte order if we are little endian
+    if (QSysInfo::ByteOrder == QSysInfo::LittleEndian) {
+        uint32_t *uintBuf = (uint32_t *) icon.data.data();
+        for (uint i = 0; i < icon.data.size()/sizeof(uint32_t); ++i) {
+            *uintBuf = ntohl(*uintBuf);
+            ++uintBuf;
+        }
+    }
     QImage iconImage( icon.width, icon.height, QImage::Format_ARGB32 );
     memcpy(iconImage.bits(), (uchar*)icon.data.data(), iconImage.numBytes());
 
