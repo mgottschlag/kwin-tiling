@@ -62,8 +62,15 @@ CurrentAppControl::CurrentAppControl(QObject *parent, const QVariantList &args)
     m_closeTask->setSvg("widgets/configuration-icons", "close");
     m_closeTask->setMaximumWidth(KIconLoader::SizeSmallMedium);
 
+    m_maximizeTask = new Plasma::IconWidget(this);
+    m_maximizeTask->setSvg("widgets/configuration-icons", "maximize");
+    m_maximizeTask->setMaximumWidth(KIconLoader::SizeSmallMedium);
+    m_maximizeTask->setZValue(999);
+
     connect(m_closeTask, SIGNAL(clicked()), this, SLOT(closeWindow()));
     connect(m_closeTask, SIGNAL(pressed(bool)), this, SLOT(setSyncDelay(bool)));
+    connect(m_maximizeTask, SIGNAL(clicked()), this, SLOT(toggleMaximizedWindow()));
+    connect(m_maximizeTask, SIGNAL(pressed(bool)), this, SLOT(setSyncDelay(bool)));
     connect(m_currentTask, SIGNAL(clicked()), this, SLOT(listWindows()));
 }
 
@@ -82,6 +89,7 @@ void CurrentAppControl::init()
     lay->setContentsMargins(0, 0, 0, 0);
     lay->setSpacing(0);
     lay->addItem(m_currentTask);
+    lay->addItem(m_maximizeTask);
     lay->addItem(m_closeTask);
     activeWindowChanged(KWindowSystem::activeWindow());
 }
@@ -138,6 +146,7 @@ void CurrentAppControl::syncActiveWindow()
         m_currentTask->setIcon("preferences-system-windows");
         m_currentTask->setText(i18np("%1 running app", "%1 running apps", KWindowSystem::windows().count()-1));
         m_closeTask->hide();
+        m_maximizeTask->hide();
     } else {
         m_activeWindow = m_pendingActiveWindow;
         KWindowInfo info = KWindowSystem::windowInfo(m_activeWindow, NET::WMName);
@@ -146,6 +155,7 @@ void CurrentAppControl::syncActiveWindow()
         //FIXME: this is utterly bad: the layout seems to -not- resize it?
         m_currentTask->resize(size().width() - m_closeTask->size().width(), m_currentTask->size().height());
         m_closeTask->show();
+        m_maximizeTask->show();
     }
 
     m_pendingActiveWindow = 0;
@@ -168,6 +178,40 @@ void CurrentAppControl::closeWindow()
     }
 
     syncActiveWindow();
+}
+
+void CurrentAppControl::toggleMaximizedWindow()
+{
+#ifdef Q_WS_X11
+    KWindowInfo info = KWindowSystem::windowInfo(m_activeWindow, NET::WMState | NET::XAWMState | NET::WMDesktop);
+    bool on_current = info.isOnCurrentDesktop();
+
+    if (!on_current)
+    {
+        KWindowSystem::setCurrentDesktop(info.desktop());
+    }
+
+    if (info.isMinimized())
+    {
+        KWindowSystem::unminimizeWindow(m_activeWindow);
+    }
+
+    NETWinInfo ni(QX11Info::display(), m_activeWindow, QX11Info::appRootWindow(), NET::WMState);
+
+    if (!(ni.state() & NET::Max))
+    {
+        ni.setState(NET::Max, NET::Max);
+    }
+    else
+    {
+        ni.setState(0, NET::Max);
+    }
+
+    if (!on_current)
+    {
+        KWindowSystem::forceActiveWindow(m_activeWindow);
+    }
+#endif
 }
 
 void CurrentAppControl::listWindows()

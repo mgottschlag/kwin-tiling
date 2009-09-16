@@ -50,6 +50,7 @@ protected Q_SLOTS:
     void setSyncDelay(bool delay);
     void syncActiveWindow();
     void closeWindow();
+    void toggleMaximizedWindow();
     void listWindows();
     void windowItemClicked();
     void closePopup();
@@ -57,6 +58,7 @@ protected Q_SLOTS:
 private:
     Plasma::IconWidget *m_currentTask;
     Plasma::IconWidget *m_closeTask;
+    Plasma::IconWidget *m_maximizeTask;
     bool m_syncDelay;
     WId m_activeWindow;
     WId m_pendingActiveWindow;
