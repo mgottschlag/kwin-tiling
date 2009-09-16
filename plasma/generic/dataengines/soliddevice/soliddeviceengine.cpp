@@ -124,6 +124,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
     setData(name, I18N_NOOP("Vendor"), device.vendor());
     setData(name, I18N_NOOP("Product"), device.product());
     setData(name, I18N_NOOP("Icon"), device.icon());
+    setData(name, I18N_NOOP("Emblems"), device.emblems());
 
     if (device.is<Solid::Processor>()) {
         Solid::Processor *processor = device.as<Solid::Processor>();
@@ -572,12 +573,21 @@ bool SolidDeviceEngine::updateHardDiskTemperature(const QString &udi)
     return false;
 }
 
+bool SolidDeviceEngine::updateEmblems(const QString &udi)
+{
+    Solid::Device device = devicemap.value(udi);
+
+    setData(udi, I18N_NOOP("Emblems"), device.emblems() );
+    return true;
+}
+
 bool SolidDeviceEngine::updateSourceEvent(const QString& source)
 {
     bool update1 = updateFreeSpace(source);
     bool update2 = updateHardDiskTemperature(source);
+    bool update3 = updateEmblems(source);
 
-    return (update1 || update2);
+    return (update1 || update2 || update3);
 }
 
 void SolidDeviceEngine::deviceRemoved(const QString& udi)
@@ -594,8 +604,7 @@ void SolidDeviceEngine::deviceRemoved(const QString& udi)
 void SolidDeviceEngine::deviceChanged(const QString& udi, const QString &property, const QVariant &value)
 {
     setData(udi, property, value);
-    updateFreeSpace(udi);
-    updateHardDiskTemperature(udi);
+    updateSourceEvent(udi);
 }
 
 #include "soliddeviceengine.moc"

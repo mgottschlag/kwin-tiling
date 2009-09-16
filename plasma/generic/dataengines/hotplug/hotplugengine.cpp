@@ -105,7 +105,7 @@ void HotplugEngine::onDeviceAdded(const QString &udi)
             data.insert("text", device.vendor() + ' ' + device.description());
         }
         data.insert("icon", device.icon());
-        setData(udi, "icon", device.icon());
+        data.insert("emblems", device.emblems());
         data.insert("predicateFiles", interestingDesktopFiles);
 
         setData(udi, data);

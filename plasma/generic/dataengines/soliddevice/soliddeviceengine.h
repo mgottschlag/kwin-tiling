@@ -55,6 +55,7 @@ private:
     qlonglong freeDiskSpace(const QString &mountPoint);
     bool updateFreeSpace(const QString &udi);
     bool updateHardDiskTemperature(const QString &udi);
+    bool updateEmblems(const QString &udi);
     void listenForNewDevices();
 
     //predicate in string form, list of devices by udi
