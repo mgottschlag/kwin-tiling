@@ -19,6 +19,7 @@ Description[nds]=De Systeemregeln verlöövt nich, dat Du de Instellen för Datu
 Description[pt]=As políticas do sistema proíbem a modificação da configuração de data/hora
 Description[pt_BR]=As políticas do sistema previnem você de salvar as configurações de data e hora
 Description[sv]=Systemets policy förhindrar att du sparar inställningar av datum och tid
+Description[tr]=Sistem politikaları tarih saat ayarlarını kaydetmenizi engelliyor
 Description[uk]=Згідно до загальносистемних правил, ви не можете зберігати параметри дати/часу
 Description[x-test]=xxSystem policies prevent you to save the date/time settingsxx
 Description[zh_TW]=系統政策不允許您儲存日期與時間的設定
