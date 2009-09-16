@@ -22,7 +22,7 @@
 
 
 // Marshall the ImageStruct data into a D-BUS argument
-const QDBusArgument &operator<<(QDBusArgument &argument, const ExperimentalKDbusImageStruct &icon)
+const QDBusArgument &operator<<(QDBusArgument &argument, const KDbusImageStruct &icon)
 {
     argument.beginStructure();
     argument << icon.width;
@@ -34,7 +34,7 @@ const QDBusArgument &operator<<(QDBusArgument &argument, const ExperimentalKDbus
 #include <KDebug>
 
 // Retrieve the ImageStruct data from the D-BUS argument
-const QDBusArgument &operator>>(const QDBusArgument &argument, ExperimentalKDbusImageStruct &icon)
+const QDBusArgument &operator>>(const QDBusArgument &argument, KDbusImageStruct &icon)
 {
     qint32 width = 0;
     qint32 height = 0;
@@ -60,9 +60,9 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, ExperimentalKDbus
 }
 
 // Marshall the ImageVector data into a D-BUS argument
-const QDBusArgument &operator<<(QDBusArgument &argument, const ExperimentalKDbusImageVector &iconVector)
+const QDBusArgument &operator<<(QDBusArgument &argument, const KDbusImageVector &iconVector)
 {
-    argument.beginArray(qMetaTypeId<ExperimentalKDbusImageStruct>());
+    argument.beginArray(qMetaTypeId<KDbusImageStruct>());
     for (int i=0; i<iconVector.size(); ++i) {
         argument << iconVector[i]; 
     }
@@ -71,7 +71,7 @@ const QDBusArgument &operator<<(QDBusArgument &argument, const ExperimentalKDbus
 }
 
 // Retrieve the ImageVector data from the D-BUS argument
-const QDBusArgument &operator>>(const QDBusArgument &argument, ExperimentalKDbusImageVector &iconVector)
+const QDBusArgument &operator>>(const QDBusArgument &argument, KDbusImageVector &iconVector)
 {
     iconVector.clear();
 
@@ -79,7 +79,7 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, ExperimentalKDbus
         argument.beginArray();
 
         while (!argument.atEnd()) {
-            ExperimentalKDbusImageStruct element;
+            KDbusImageStruct element;
             argument >> element;
             iconVector.append(element);
         }
@@ -91,7 +91,7 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, ExperimentalKDbus
 }
 
 // Marshall the ToolTipStruct data into a D-BUS argument
-const QDBusArgument &operator<<(QDBusArgument &argument, const ExperimentalKDbusToolTipStruct &toolTip)
+const QDBusArgument &operator<<(QDBusArgument &argument, const KDbusToolTipStruct &toolTip)
 {
     argument.beginStructure();
     argument << toolTip.icon;
@@ -104,10 +104,10 @@ const QDBusArgument &operator<<(QDBusArgument &argument, const ExperimentalKDbus
 }
 
 // Retrieve the ToolTipStruct data from the D-BUS argument
-const QDBusArgument &operator>>(const QDBusArgument &argument, ExperimentalKDbusToolTipStruct &toolTip)
+const QDBusArgument &operator>>(const QDBusArgument &argument, KDbusToolTipStruct &toolTip)
 {
     QString icon;
-    ExperimentalKDbusImageVector image;
+    KDbusImageVector image;
     QString title;
     QString subTitle;
 

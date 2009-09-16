@@ -24,34 +24,34 @@
 #include <QDBusArgument>
 #include <QVector>
 
-struct ExperimentalKDbusImageStruct {
+struct KDbusImageStruct {
     int width;
     int height;
     QByteArray data;
 };
 
-const QDBusArgument &operator<<(QDBusArgument &argument, const ExperimentalKDbusImageStruct &icon);
-const QDBusArgument &operator>>(const QDBusArgument &argument, ExperimentalKDbusImageStruct &icon);
+const QDBusArgument &operator<<(QDBusArgument &argument, const KDbusImageStruct &icon);
+const QDBusArgument &operator>>(const QDBusArgument &argument, KDbusImageStruct &icon);
 
-Q_DECLARE_METATYPE(ExperimentalKDbusImageStruct)
+Q_DECLARE_METATYPE(KDbusImageStruct)
 
-typedef QVector<ExperimentalKDbusImageStruct> ExperimentalKDbusImageVector;
-const QDBusArgument &operator<<(QDBusArgument &argument, const ExperimentalKDbusImageVector &iconVector);
-const QDBusArgument &operator>>(const QDBusArgument &argument, ExperimentalKDbusImageVector &iconVector);
+typedef QVector<KDbusImageStruct> KDbusImageVector;
+const QDBusArgument &operator<<(QDBusArgument &argument, const KDbusImageVector &iconVector);
+const QDBusArgument &operator>>(const QDBusArgument &argument, KDbusImageVector &iconVector);
 
-Q_DECLARE_METATYPE(ExperimentalKDbusImageVector)
+Q_DECLARE_METATYPE(KDbusImageVector)
 
 
-struct ExperimentalKDbusToolTipStruct {
+struct KDbusToolTipStruct {
     QString icon;
-    ExperimentalKDbusImageVector image;
+    KDbusImageVector image;
     QString title;
     QString subTitle;
 };
 
-const QDBusArgument &operator<<(QDBusArgument &argument, const ExperimentalKDbusToolTipStruct &toolTip);
-const QDBusArgument &operator>>(const QDBusArgument &argument, ExperimentalKDbusToolTipStruct &toolTip);
+const QDBusArgument &operator<<(QDBusArgument &argument, const KDbusToolTipStruct &toolTip);
+const QDBusArgument &operator>>(const QDBusArgument &argument, KDbusToolTipStruct &toolTip);
 
-Q_DECLARE_METATYPE(ExperimentalKDbusToolTipStruct)
+Q_DECLARE_METATYPE(KDbusToolTipStruct)
 
 #endif

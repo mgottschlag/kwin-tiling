@@ -64,8 +64,8 @@ public:
         delete blinkTimer;
     }
 
-    QPixmap ExperimentalKDbusImageStructToPixmap(const ExperimentalKDbusImageStruct &image) const;
-    QIcon imageVectorToPixmap(const ExperimentalKDbusImageVector &vector) const;
+    QPixmap KDbusImageStructToPixmap(const KDbusImageStruct &image) const;
+    QIcon imageVectorToPixmap(const KDbusImageVector &vector) const;
     void overlayIcon(QIcon *icon, QIcon *overlay);
 
     void iconDestroyed(QObject *obj);
@@ -78,8 +78,8 @@ public:
     void syncStatus(QString status);
 
     //callbacks
-    void syncToolTip(const ExperimentalKDbusToolTipStruct &);
-    void syncMovie(const ExperimentalKDbusImageVector &);
+    void syncToolTip(const KDbusToolTipStruct &);
+    void syncMovie(const KDbusImageVector &);
     void refreshCallback(QDBusPendingCallWatcher *call);
 
 
@@ -107,9 +107,9 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service, QObject *parent)
       d(new DBusSystemTrayTaskPrivate(this))
 {
     setObjectName("DBusSystemTrayTask");
-    qDBusRegisterMetaType<ExperimentalKDbusImageStruct>();
-    qDBusRegisterMetaType<ExperimentalKDbusImageVector>();
-    qDBusRegisterMetaType<ExperimentalKDbusToolTipStruct>();
+    qDBusRegisterMetaType<KDbusImageStruct>();
+    qDBusRegisterMetaType<KDbusImageVector>();
+    qDBusRegisterMetaType<KDbusToolTipStruct>();
 
     d->typeId = service;
     d->name = service;
@@ -250,7 +250,7 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
 
         //Icon
         {
-            ExperimentalKDbusImageVector image;
+            KDbusImageVector image;
 
             properties["OverlayIconPixmap"].value<QDBusArgument>() >> image;
             if (image.isEmpty()) {
@@ -289,7 +289,7 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
 
         //Attention icon
         {
-            ExperimentalKDbusImageVector image;
+            KDbusImageVector image;
             properties["AttentionIconPixmap"].value<QDBusArgument>() >> image;
             if (image.isEmpty()) {
                 QString iconName = properties["AttentionIconName"].toString();
@@ -308,11 +308,11 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
             }
         }
 
-        ExperimentalKDbusImageVector movie;
+        KDbusImageVector movie;
         properties["AttentionMovie"].value<QDBusArgument>() >> movie;
         syncMovie(movie);
 
-        ExperimentalKDbusToolTipStruct toolTip;
+        KDbusToolTipStruct toolTip;
         properties["ToolTip"].value<QDBusArgument>() >> toolTip;
         syncToolTip(toolTip);
 
@@ -323,7 +323,7 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
     delete call;
 }
 
-QPixmap DBusSystemTrayTaskPrivate::ExperimentalKDbusImageStructToPixmap(const ExperimentalKDbusImageStruct &icon) const
+QPixmap DBusSystemTrayTaskPrivate::KDbusImageStructToPixmap(const KDbusImageStruct &icon) const
 {
     //swap from network byte order if we are little endian
     if (QSysInfo::ByteOrder == QSysInfo::LittleEndian) {
@@ -339,12 +339,12 @@ QPixmap DBusSystemTrayTaskPrivate::ExperimentalKDbusImageStructToPixmap(const Ex
     return QPixmap::fromImage(iconImage);
 }
 
-QIcon DBusSystemTrayTaskPrivate::imageVectorToPixmap(const ExperimentalKDbusImageVector &vector) const
+QIcon DBusSystemTrayTaskPrivate::imageVectorToPixmap(const KDbusImageVector &vector) const
 {
     QIcon icon;
 
     for (int i = 0; i<vector.size(); ++i) {
-        icon.addPixmap(ExperimentalKDbusImageStructToPixmap(vector[i]));
+        icon.addPixmap(KDbusImageStructToPixmap(vector[i]));
     }
 
     return icon;
@@ -406,13 +406,13 @@ void DBusSystemTrayTaskPrivate::blinkAttention()
     blink = !blink;
 }
 
-void DBusSystemTrayTaskPrivate::syncMovie(const ExperimentalKDbusImageVector &movieData)
+void DBusSystemTrayTaskPrivate::syncMovie(const KDbusImageVector &movieData)
 {
     movie = QVector<QPixmap>(movieData.size());
 
     if (!movieData.isEmpty()) {
         for (int i=0; i<movieData.size(); ++i) {
-            movie[i] = ExperimentalKDbusImageStructToPixmap(movieData[i]);
+            movie[i] = KDbusImageStructToPixmap(movieData[i]);
         }
     }
 }
@@ -430,7 +430,7 @@ void DBusSystemTrayTaskPrivate::updateMovieFrame()
 
 //toolTip
 
-void DBusSystemTrayTaskPrivate::syncToolTip(const ExperimentalKDbusToolTipStruct &tipStruct)
+void DBusSystemTrayTaskPrivate::syncToolTip(const KDbusToolTipStruct &tipStruct)
 {
     if (tipStruct.title.isEmpty()) {
         foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
