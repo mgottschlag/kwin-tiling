@@ -1,16 +1,4 @@
-include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ../../shells/common ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kworkspace)
-
-set(appletbrowserdialog_SRCS
-    ../../shells/common/widgetsExplorer/kcategorizeditemsviewmodels.cpp
-    ../../shells/common/widgetsExplorer/plasmaappletitemmodel.cpp
-    ../../shells/common/widgetsExplorer/appleticon.cpp
-    ../../shells/common/widgetsExplorer/appletsfiltering.cpp
-    ../../shells/common/widgetsExplorer/applettooltip.cpp
-    ../../shells/common/widgetsExplorer/appletslist.cpp
-    ../../shells/common/widgetsExplorer/managewidgets.cpp
-    ../../shells/common/widgetsExplorer/widgetexplorer.cpp
-    ../../shells/common/widgetsExplorer/openwidgetassistant.cpp
-)
+include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/plasmagenericshell ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kworkspace)
 
 
 set(plasma-netbook_SRCS
@@ -18,7 +6,6 @@ set(plasma-netbook_SRCS
     netview.cpp
     main.cpp
     plasmaapp.cpp
-    ${appletbrowserdialog_SRCS}
 )
 
 set(ksmserver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)

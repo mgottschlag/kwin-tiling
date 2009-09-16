@@ -30,6 +30,8 @@
 
 #include "plasmaappletitemmodel_p.h"
 
+#include "plasmagenericshell_export.h"
+
 namespace Plasma
 {
 
@@ -39,7 +41,7 @@ class Applet;
 class WidgetExplorerPrivate;
 class WidgetExplorerPrivate;
 
-class WidgetExplorer : public QGraphicsWidget
+class PLASMAGENERICSHELL_EXPORT WidgetExplorer : public QGraphicsWidget
 {
 
     Q_OBJECT

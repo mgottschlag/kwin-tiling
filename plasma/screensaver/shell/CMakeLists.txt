@@ -1,24 +1,11 @@
 include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/shells/common)
 
-set(appletbrowserdialog_SRCS
-    ../../shells/common/widgetsExplorer/kcategorizeditemsviewmodels.cpp
-    ../../shells/common/widgetsExplorer/plasmaappletitemmodel.cpp
-    ../../shells/common/widgetsExplorer/appleticon.cpp
-    ../../shells/common/widgetsExplorer/appletsfiltering.cpp
-    ../../shells/common/widgetsExplorer/applettooltip.cpp
-    ../../shells/common/widgetsExplorer/appletslist.cpp
-    ../../shells/common/widgetsExplorer/managewidgets.cpp
-    ../../shells/common/widgetsExplorer/widgetexplorer.cpp
-    ../../shells/common/widgetsExplorer/openwidgetassistant.cpp
-)
-
 set(plasma-overlay_SRCS
     backgrounddialog.cpp
     main.cpp
     plasmaapp.cpp
     savercorona.cpp
     saverview.cpp
-    ${appletbrowserdialog_SRCS}
 )
 
 kde4_add_ui_files(plasma-overlay_SRCS BackgroundDialog.ui)

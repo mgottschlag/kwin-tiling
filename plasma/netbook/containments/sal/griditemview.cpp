@@ -24,7 +24,7 @@
 #include <Plasma/IconWidget>
 
 GridItemView::GridItemView(QGraphicsWidget *parent)
-    : Plasma::Frame(parent),
+    : QGraphicsWidget(parent),
       m_layout(0),
       m_currentIcon(0),
       m_currentIconIndexX(-1),

@@ -1,7 +1,7 @@
 #include <QtGui>
 // #include "customwidgets.h"
 #include <plasma/applet.h>
-#include "widgetexplorer.h"
+#include "widgetsExplorer/widgetexplorer.h"
 #include <plasma/containment.h>
 #include <QDesktopWidget>
 #include <plasma/corona.h>

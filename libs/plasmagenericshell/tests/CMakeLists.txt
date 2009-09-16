@@ -1,20 +1,19 @@
 if (KDE4_BUILD_TESTS)
 
 include_directories(..
-   ../../../plasma/shells/common/widgetsExplorer 
    ../../../plasma/shells/desktop 
    ${CMAKE_CURRENT_BINARY_DIR}/../../../plasma/shells/desktop)
 
 set(appletexplorer_SRCS
-   ../../../plasma/shells/common/widgetsExplorer/kcategorizeditemsviewmodels.cpp
-   ../../../plasma/shells/common/widgetsExplorer/plasmaappletitemmodel.cpp
-   ../../../plasma/shells/common/widgetsExplorer/appleticon.cpp
-   ../../../plasma/shells/common/widgetsExplorer/appletsfiltering.cpp
-   ../../../plasma/shells/common/widgetsExplorer/applettooltip.cpp
-   ../../../plasma/shells/common/widgetsExplorer/appletslist.cpp
-   ../../../plasma/shells/common/widgetsExplorer/managewidgets.cpp
-   ../../../plasma/shells/common/widgetsExplorer/widgetexplorer.cpp
-   ../../../plasma/shells/common/widgetsExplorer/openwidgetassistant.cpp
+   ../widgetsExplorer/kcategorizeditemsviewmodels.cpp
+   ../widgetsExplorer/plasmaappletitemmodel.cpp
+   ../widgetsExplorer/appleticon.cpp
+   ../widgetsExplorer/appletsfiltering.cpp
+   ../widgetsExplorer/applettooltip.cpp
+   ../widgetsExplorer/appletslist.cpp
+   ../widgetsExplorer/managewidgets.cpp
+   ../widgetsExplorer/widgetexplorer.cpp
+   ../widgetsExplorer/openwidgetassistant.cpp
    main.cpp
    )
 

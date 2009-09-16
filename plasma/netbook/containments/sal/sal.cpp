@@ -95,8 +95,8 @@ void SearchLaunch::init()
 void SearchLaunch::themeUpdated()
 {
     qreal left, top, right, bottom;
-    m_background->getMargins(left, top, right, bottom);
-    m_mainLayout->setContentsMargins(left, top, right, bottom);
+    /*m_background->getMargins(left, top, right, bottom);
+    m_mainLayout->setContentsMargins(left, top, right, bottom);*/
 }
 
 void SearchLaunch::doSearch(const QString query)
@@ -389,7 +389,6 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             connect(m_gridBackground, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
             connect(m_gridBackground, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launch(Plasma::IconWidget *)));
             m_gridBackground->setFocusPolicy(Qt::StrongFocus);
-            m_gridBackground->setFrameShadow(Plasma::Frame::Plain);
             m_gridBackground->setAcceptHoverEvents(true);
             m_gridBackground->installEventFilter(this);
             m_viewMainWidget = new QGraphicsWidget(this);
@@ -467,8 +466,8 @@ void SearchLaunch::paintInterface(QPainter *painter,
     }
 
     Containment::paintInterface(painter, option, contentsRect);
-    m_background->resizeFrame(contentsRect.size());
-    m_background->paintFrame(painter, contentsRect.topLeft());
+    //m_background->resizeFrame(contentsRect.size());
+    //m_background->paintFrame(painter, contentsRect.topLeft());
 }
 
 void SearchLaunch::setFormFactorFromLocation(Plasma::Location loc)

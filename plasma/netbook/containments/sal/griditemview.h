@@ -20,7 +20,7 @@
 #ifndef GRIDITEMVIEW_H
 #define GRIDITEMVIEW_H
 
-#include <Plasma/Frame>
+#include <QGraphicsWidget>
 #include <Plasma/Plasma>
 
 class QGraphicsGridLayout;
@@ -30,7 +30,7 @@ namespace Plasma
     class IconWidget;
 }
 
-class GridItemView : public Plasma::Frame
+class GridItemView : public QGraphicsWidget
 {
     Q_OBJECT
 

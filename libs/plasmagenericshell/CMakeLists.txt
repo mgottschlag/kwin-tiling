@@ -1,12 +1,24 @@
 add_subdirectory(tests)
 
+set(appletbrowserdialog_SRCS
+    widgetsExplorer/kcategorizeditemsviewmodels.cpp
+    widgetsExplorer/plasmaappletitemmodel.cpp
+    widgetsExplorer/appleticon.cpp
+    widgetsExplorer/appletsfiltering.cpp
+    widgetsExplorer/applettooltip.cpp
+    widgetsExplorer/appletslist.cpp
+    widgetsExplorer/managewidgets.cpp
+    widgetsExplorer/widgetexplorer.cpp
+    widgetsExplorer/openwidgetassistant.cpp
+)
+
 set(plasmagenericshell_LIB_SRCS
     backgrounddialog.cpp
     mouseinputbutton.cpp
     mouseplugins.cpp
     mousepluginwidget.cpp
-    openwidgetassistant.cpp
     wallpaperpreview.cpp
+    ${appletbrowserdialog_SRCS}
 )
 
 kde4_add_ui_files(plasmagenericshell_LIB_SRCS ActivityConfiguration.ui BackgroundDialog.ui MousePlugins.ui MousePluginWidget.ui)

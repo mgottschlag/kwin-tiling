@@ -1,18 +1,6 @@
-include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/shells/common ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/desktop/shell/scripting/ ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal)
+include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/plasmagenericshell ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/shells/common ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/desktop/shell/scripting/ ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal)
 
 add_subdirectory(configupdates)
-
-set(appletbrowserdialog_SRCS
-    ../../shells/common/widgetsExplorer/kcategorizeditemsviewmodels.cpp
-    ../../shells/common/widgetsExplorer/plasmaappletitemmodel.cpp
-    ../../shells/common/widgetsExplorer/appleticon.cpp
-    ../../shells/common/widgetsExplorer/appletsfiltering.cpp
-    ../../shells/common/widgetsExplorer/applettooltip.cpp
-    ../../shells/common/widgetsExplorer/appletslist.cpp
-    ../../shells/common/widgetsExplorer/managewidgets.cpp
-    ../../shells/common/widgetsExplorer/widgetexplorer.cpp
-    ../../shells/common/widgetsExplorer/openwidgetassistant.cpp
-)
 
 set(plasma_SRCS
     scripting/containment.cpp
@@ -32,7 +20,6 @@ set(plasma_SRCS
     plasmaapp.cpp
     positioningruler.cpp
     toolbutton.cpp
-    ${appletbrowserdialog_SRCS}
     ${wallpaper_SRCS}
 )
 
