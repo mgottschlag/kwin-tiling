@@ -42,7 +42,7 @@ int main( int argc, char *argv[] )
     SolidActionData * availActions = SolidActionData::instance();
     foreach( Solid::DeviceInterface::Type internalType, availActions->interfaceTypeList() ) {
         QString typeName = Solid::DeviceInterface::typeToString( internalType );
-        KDesktopFile typeFile( "solid-device-" + typeName + ".desktop" );
+        KDesktopFile typeFile( "services", "solid-device-" + typeName + ".desktop" );
         KConfigGroup tConfig = typeFile.desktopGroup();
 
         tConfig.writeEntry( "Name", "Solid Device" );
