@@ -107,9 +107,9 @@ void Newspaper::init()
 
 void Newspaper::themeUpdated()
 {
-    qreal left, top, right, bottom;
+    /*qreal left, top, right, bottom;
     m_background->getMargins(left, top, right, bottom);
-    m_externalLayout->setContentsMargins(left, top, right, bottom);
+    m_externalLayout->setContentsMargins(left, top, right, bottom);*/
 }
 
 void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
@@ -236,8 +236,8 @@ void Newspaper::paintInterface(QPainter *painter,
 
     Containment::paintInterface(painter, option, contentsRect);
 
-    m_background->resizeFrame(contentsRect.size());
-    m_background->paintFrame(painter, contentsRect.topLeft());
+    /*m_background->resizeFrame(contentsRect.size());
+    m_background->paintFrame(painter, contentsRect.topLeft());*/
 }
 
 
