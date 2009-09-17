@@ -72,6 +72,8 @@ private slots:
 
     void doSearch(const QString query);
     void setQueryMatches(const QList<Plasma::QueryMatch> &m);
+    void delayedQuery();
+    void query();
     void launch();
     void launch(Plasma::IconWidget *icon);
     void addFavourite();
@@ -92,11 +94,13 @@ private:
     int m_queryCounter;
     int m_maxColumnWidth;
     QTimer *m_relayoutTimer;
+    QTimer *m_searchTimer;
     QMultiMap<qreal, Plasma::IconWidget*> m_items;
     QHash<Plasma::IconWidget*, Plasma::QueryMatch> m_matches;
 
     QGraphicsWidget *m_viewMainWidget;
     GridItemView *m_gridBackground;
+    Plasma::LineEdit *m_searchField;
     Plasma::ScrollWidget *m_gridScroll;
     StripWidget *m_stripWidget;
     Plasma::ItemBackground *m_hoverIndicator;

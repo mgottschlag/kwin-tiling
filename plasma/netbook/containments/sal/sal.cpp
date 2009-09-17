@@ -31,6 +31,7 @@
 #include <KDebug>
 #include <KIcon>
 #include <KIconLoader>
+#include <KLineEdit>
 
 #include <Plasma/Theme>
 #include <Plasma/Frame>
@@ -48,6 +49,7 @@
 SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_homeButton(0),
+      m_searchField(0),
       m_maxColumnWidth(0),
       m_viewMainWidget(0),
       m_gridScroll(0),
@@ -422,8 +424,31 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_appletsLayout = new QGraphicsLinearLayout();
 
 
+            m_homeButton = new Plasma::IconWidget(this);
+            m_homeButton->setIcon(KIcon("go-home"));
+            m_homeButton->setText(i18n("Home"));
+            m_homeButton->setOrientation(Qt::Horizontal);
+            m_homeButton->setPreferredSize(m_homeButton->sizeFromIconSize(KIconLoader::SizeSmall));
+            connect(m_homeButton, SIGNAL(activated()), this, SLOT(reset()));
+            connect(m_gridBackground, SIGNAL(resetRequested()), this, SLOT(reset()));
+
+            QGraphicsLinearLayout *searchLayout = new QGraphicsLinearLayout(Qt::Horizontal);
+            searchLayout->addStretch();
+            searchLayout->addItem(m_homeButton);
+            m_searchField = new Plasma::LineEdit(this);
+            m_searchField->nativeWidget()->setClearButtonShown(true);
+            m_searchField->nativeWidget()->setClickMessage(i18n("Enter your query here"));
+            connect(m_searchField, SIGNAL(returnPressed()), this, SLOT(query()));
+            connect(m_searchField->nativeWidget(), SIGNAL(textEdited(const QString &)), this, SLOT(delayedQuery()));
+            m_searchTimer = new QTimer(this);
+            m_searchTimer->setSingleShot(true);
+            connect(m_searchTimer, SIGNAL(timeout()), this, SLOT(query()));
+            searchLayout->addItem(m_searchField);
+            searchLayout->addStretch();
+
             // add our layouts to main vertical layout
             m_mainLayout->addItem(m_favourites);
+            m_mainLayout->addItem(searchLayout);
             m_mainLayout->addItem(gridLayout);
 
 
@@ -432,11 +457,6 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_mainLayout->activate();
             m_mainLayout->updateGeometry();
 
-            m_homeButton = new Plasma::IconWidget(this);
-            m_homeButton->setIcon(KIcon("go-home"));
-            m_homeButton->setText(i18n("Home"));
-            connect(m_homeButton, SIGNAL(activated()), this, SLOT(reset()));
-            connect(m_gridBackground, SIGNAL(resetRequested()), this, SLOT(reset()));
             reset();
         }
     }
@@ -459,11 +479,6 @@ void SearchLaunch::paintInterface(QPainter *painter,
                                  const QRect& contentsRect)
 {
     Q_UNUSED(contentsRect)
-
-    if (m_homeButton->isVisible()) {
-        //FIXME mega HACK: use anchorlayout as soon as possible, now there is an hardcoded value, not acceptable
-        m_homeButton->setPos(contentsRect.topLeft() + m_mainLayout->contentsRect().topLeft());
-    }
 
     Containment::paintInterface(painter, option, contentsRect);
     //m_background->resizeFrame(contentsRect.size());
@@ -492,6 +507,16 @@ void SearchLaunch::setFormFactorFromLocation(Plasma::Location loc)
     }
 }
 
+void SearchLaunch::delayedQuery()
+{
+    m_searchTimer->start(500);
+}
+
+void SearchLaunch::query()
+{
+    doSearch(m_searchField->text());
+}
+
 void SearchLaunch::dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data)
 {
     Q_UNUSED(sourceName);
@@ -507,6 +532,9 @@ void SearchLaunch::dataUpdated(const QString &sourceName, const Plasma::DataEngi
     }
 
     doSearch(query);
+    if (m_searchField) {
+        m_searchField->setText(query);
+    }
 }
 
 void SearchLaunch::selectItem(Plasma::IconWidget *icon)
