@@ -225,6 +225,7 @@ void JoyWidget::init()
   if ( device->count() == 0 )
   {
     messageBox->show();
+    message->setWordWrap(true);
     message->setText(QString("<qt><b>%1</b></qt>").arg(
       i18n("No joystick device automatically found on this computer.<br />"
            "Checks were done in /dev/js[0-4] and /dev/input/js[0-4]<br />"
