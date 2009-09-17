@@ -51,7 +51,6 @@ public:
         applet->setAcceptsHoverEvents(true);
 
         page = new Plasma::WebView(applet);
-        page->setPage(new WebPage(page));
         QObject::connect(page, SIGNAL(loadFinished(bool)),
                          q, SLOT(loadFinished(bool)));
         QObject::connect(page->page(), SIGNAL(frameCreated(QWebFrame *)),
