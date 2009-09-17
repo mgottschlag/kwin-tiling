@@ -32,7 +32,6 @@
 #include <kdemacros.h>
 #include <plasma/dataengine.h>
 #include "ion.h"
-#include "weatherutils.h"
 
 class WeatherData
 {
@@ -66,6 +65,15 @@ public:
     QString windchill_F;
     QString windchill_C;
     QString visibility;
+
+    struct Forecast
+    {
+        QString day;
+        QString summary;
+        QString low;
+        QString high;
+    };
+    QList<Forecast> forecasts;
 };
 
 class KDE_EXPORT NOAAIon : public IonInterface
@@ -88,6 +96,9 @@ protected Q_SLOTS:
 
     void slotDataArrived(KIO::Job *, const QByteArray &);
     void slotJobFinished(KJob *);
+
+    void forecast_slotDataArrived(KIO::Job *, const QByteArray &);
+    void forecast_slotJobFinished(KJob *);
 
 private:
     /* NOAA Methods - Internal for Ion */
@@ -123,6 +134,10 @@ private:
     // Load and parse the specific place(s)
     void getXMLData(const QString& source);
     bool readXMLData(const QString& source, QXmlStreamReader& xml);
+
+    // Load and parse upcoming forecast for the next N days
+    void getForecast(const QString& source);
+    void readForecast(const QString& source, QXmlStreamReader& xml);
 
     // Check if place specified is valid or not
     QStringList validate(const QString& source) const;

@@ -262,6 +262,89 @@ weather condition|Thunderstorm Snow
 weather condition|Tornado/Water Spout
 weather condition|Windy
 weather condition|N/A
+weather forecast|Ice Crystals
+weather forecast|Volcanic Ash
+weather forecast|Water Spout
+weather forecast|Freezing Spray
+weather forecast|Frost
+weather forecast|Chance Thunderstorms
+weather forecast|Thunderstorms Likely
+weather forecast|Thunderstorms
+weather forecast|Severe Tstms
+weather forecast|Chance Snow/Sleet
+weather forecast|Snow/Sleet Likely
+weather forecast|Snow/Sleet
+weather forecast|Chance Rain/Sleet
+weather forecast|Rain/Sleet Likely
+weather forecast|Rain/Sleet
+weather forecast|Chance Rain/Freezing Rain
+weather forecast|Rain/Freezing Rain Likely
+weather forecast|Rain/Freezing Rain
+weather forecast|Wintry Mix
+weather forecast|Chance Freezing Drizzle
+weather forecast|Freezing Drizzle Likely
+weather forecast|Freezing Drizzle
+weather forecast|Chance Freezing Rain
+weather forecast|Freezing Rain Likely
+weather forecast|Freezing Rain
+weather forecast|Chance Rain/Snow
+weather forecast|Rain/Snow Likely
+weather forecast|Rain/Snow
+weather forecast|Chance Snow
+weather forecast|Snow Likely
+weather forecast|Snow
+weather forecast|Heavy Snow
+weather forecast|Chance Flurries
+weather forecast|Flurries Likely
+weather forecast|Flurries
+weather forecast|Chance Snow Showers
+weather forecast|Snow Showers Likely
+weather forecast|Snow Showers
+weather forecast|Chance Snow Showers
+weather forecast|Snow Showers Likely
+weather forecast|Snow Showers
+weather forecast|Chance Drizzle
+weather forecast|Drizzle Likely
+weather forecast|Drizzle
+weather forecast|Chance Rain
+weather forecast|Rain Likely
+weather forecast|Rain
+weather forecast|Heavy Rain
+weather forecast|Chance Rain Showers
+weather forecast|Rain Showers Likely
+weather forecast|Rain Showers
+weather forecast|Chance Rain Showers
+weather forecast|Rain Showers Likely
+weather forecast|Rain Showers
+weather forecast|Sleet
+weather forecast|Smoke
+weather forecast|Freezing Fog
+weather forecast|Ice Fog
+weather forecast|Haze
+weather forecast|Blowing Sand
+weather forecast|Blowing Dust
+weather forecast|Blowing Snow
+weather forecast|Dense Fog
+weather forecast|Fog
+weather forecast|Windy
+weather forecast|Blustery
+weather forecast|Breezy
+weather forecast|Cold
+weather forecast|Hot
+weather forecast|Cloudy
+weather forecast|Mostly Cloudy
+weather forecast|Partly Cloudy
+weather forecast|Mostly Sunny
+weather forecast|Sunny
+weather forecast|Increasing Clouds
+weather forecast|Becoming Cloudy
+weather forecast|Clearing
+weather forecast|Gradual Clearing
+weather forecast|Clearing Late
+weather forecast|Decreasing Clouds
+weather forecast|Becoming Sunny
+weather forecast|Clear
+weather forecast|Mostly Clear
 wind direction|N
 wind direction|NE
 wind direction|S

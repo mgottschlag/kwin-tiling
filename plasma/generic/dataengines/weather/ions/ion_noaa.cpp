@@ -257,6 +257,9 @@ void NOAAIon::slotJobFinished(KJob *job)
         readXMLData(d->m_jobList[job], *reader);
     }
 
+    // Now that we have the longitude and latitude, fetch the seven day forecast.
+    getForecast(d->m_jobList[job]);
+
     d->m_jobList.remove(job);
     d->m_jobXml.remove(job);
     delete reader;
@@ -447,7 +450,6 @@ bool NOAAIon::readXMLData(const QString& source, QXmlStreamReader& xml)
     }
 
     d->m_weatherData[source] = data;
-    updateWeather(source);
     return !xml.error();
 }
 
@@ -500,8 +502,6 @@ void NOAAIon::updateWeather(const QString& source)
         data.insert("Condition Icon", getWeatherIcon(condition));
     }
 
-    data.insert("Condition Icon", "weather-none-available");
-
     dataFields = temperature(source);
     data.insert("Temperature", dataFields["temperature"]);
     data.insert("Temperature Unit", dataFields["temperatureUnit"]);
@@ -545,6 +545,31 @@ void NOAAIon::updateWeather(const QString& source)
     data.insert("Wind Gust Unit", dataFields["windGustUnit"]);
     data.insert("Wind Direction", getWindDirectionIcon(windIcons(), dataFields["windDirection"].toLower()));
     data.insert("Credit", i18n("Data provided by NOAA National Weather Service"));
+
+    int dayIndex = 0;
+    foreach(WeatherData::Forecast forecast, d->m_weatherData[source].forecasts) {
+
+        ConditionIcons icon = getConditionIcon(forecast.summary.toLower(), true);
+        QString iconName = getWeatherIcon(icon);
+
+        /* Sometimes the forecast for the later days is unavailable, if so skip remianing days
+         * since their forecast data is probably unavailable.
+         */
+        if (forecast.low.isEmpty() || forecast.high.isEmpty()) {
+            break;
+        }
+
+        // Get the short day name for the forecast
+        data.insert(QString("Short Forecast Day %1").arg(dayIndex), QString("%1|%2|%3|%4|%5|%6") \
+                .arg(forecast.day).arg(iconName).arg(forecast.summary).arg(forecast.high) \
+                .arg(forecast.low).arg("N/U"));
+        dayIndex++;
+    }
+
+    // Set number of forecasts per day/night supported
+    data.insert("Total Weather Days", dayIndex);
+
+
 
     setData(source, data);
 }
@@ -700,17 +725,17 @@ QMap<QString, QString> NOAAIon::wind(const QString& source) const
 
 /**
   * Determine the condition icon based on the list of possible NOAA weather conditions as defined at
-  * <http://www.weather.gov/xml/current_obs/weather.php>.  Since the number of NOAA weather
-  * conditions need to be fitted into the narowly defined groups in IonInterface::ConditionIcons, we
+  * <http://www.weather.gov/xml/current_obs/weather.php> and <http://www.weather.gov/mdl/XML/Design/MDL_XML_Design.htm#_Toc141760783>
+  * Since the number of NOAA weather conditions need to be fitted into the narowly defined groups in IonInterface::ConditionIcons, we
   * try to group the NOAA conditions as best as we can based on their priorities/severity.
   */
 IonInterface::ConditionIcons NOAAIon::getConditionIcon(const QString& weather, bool isDayTime) const
 {
     // Consider any type of storm, tornado or funnel to be a thunderstorm.
     if (weather.contains("thunderstorm") || weather.contains("funnel") ||
-        weather.contains("tornado") || weather.contains("storm")) {
+        weather.contains("tornado") || weather.contains("storm") || weather.contains("tstms")) {
 
-        if (weather.contains("Vicinity")) {
+        if (weather.contains("vicinity") || weather.contains("chance")) {
             if (isDayTime) {
                 return IonInterface::ChanceThunderstormDay;
             } else {
@@ -723,8 +748,8 @@ IonInterface::ConditionIcons NOAAIon::getConditionIcon(const QString& weather, b
              weather.contains("hail")) {
         return IonInterface::Hail;
 
-    } else if ((weather.contains("rain") || weather.contains("drizzle") ||
-              weather.contains("showers")) && weather.contains("snow")) {
+    } else if (((weather.contains("rain") || weather.contains("drizzle") ||
+              weather.contains("showers")) && weather.contains("snow")) || weather.contains("wintry mix")) {
         return IonInterface::RainSnow;
 
     } else if (weather.contains("snow") && weather.contains("light")) {
@@ -732,7 +757,7 @@ IonInterface::ConditionIcons NOAAIon::getConditionIcon(const QString& weather, b
 
     } else if (weather.contains("snow")) {
 
-        if (weather.contains("Vicinity")) {
+        if (weather.contains("vicinity") || weather.contains("chance")) {
             if (isDayTime) {
                 return IonInterface::ChanceSnowDay;
             } else {
@@ -747,9 +772,9 @@ IonInterface::ConditionIcons NOAAIon::getConditionIcon(const QString& weather, b
     } else if (weather.contains("freezing drizzle")) {
         return IonInterface::FreezingDrizzle;
 
-    } else if (weather.contains("Showers")) {
+    } else if (weather.contains("showers")) {
 
-        if (weather.contains("Vicinity")) {
+        if (weather.contains("vicinity") || weather.contains("chance")) {
             if (isDayTime) {
                 return IonInterface::ChanceShowersDay;
             } else {
@@ -764,26 +789,28 @@ IonInterface::ConditionIcons NOAAIon::getConditionIcon(const QString& weather, b
     } else if (weather.contains("rain")) {
         return IonInterface::Rain;
 
-    } else if (weather.contains("overcast") || weather.contains("mostly cloudy")) {
-        return IonInterface::Overcast;
-
-    } else if (weather.contains("few clouds")) {
+    } else if (weather.contains("few clouds") || weather.contains("mostly sunny") ||
+               weather.contains("mostly clear")) {
         if(isDayTime) {
             return IonInterface::FewCloudsDay;
         } else {
             return IonInterface::FewCloudsNight;
         }
-    } else if (weather.contains("partly cloudy")) {
+    } else if (weather.contains("partly cloudy") || weather.contains("partly sunny") ||
+               weather.contains("partly clear")) {
         if(isDayTime) {
             return IonInterface::PartlyCloudyDay;
         } else {
             return IonInterface::PartlyCloudyNight;
         }
+    } else if (weather.contains("overcast") || weather.contains("cloudy")) {
+        return IonInterface::Overcast;
+
     } else if (weather.contains("haze") || weather.contains("smoke") ||
              weather.contains("dust") || weather.contains("sand")) {
         return IonInterface::Haze;
 
-    } else if (weather.contains("fair") || weather.contains("clear")) {
+    } else if (weather.contains("fair") || weather.contains("clear") || weather.contains("sunny")) {
         if (isDayTime) {
             return IonInterface::ClearDay;
         } else {
@@ -795,6 +822,135 @@ IonInterface::ConditionIcons NOAAIon::getConditionIcon(const QString& weather, b
     } else {
         return IonInterface::NotAvailable;
 
+    }
+}
+
+void NOAAIon::getForecast(const QString& source)
+{
+    /* Assuming that we have the latitude and longitude data at this point, get the 7-day
+     * forecast.
+     */
+    KUrl url = QString("http://www.weather.gov/forecasts/xml/sample_products/browser_interface/"
+                       "ndfdBrowserClientByDay.php?lat=%1&lon=%2&format=24+hourly&numDays=7")
+                        .arg(latitude(source)).arg(longitude(source));
+
+    KIO::TransferJob * const m_job = KIO::get(url, KIO::Reload, KIO::HideProgressInfo);
+    d->m_jobXml.insert(m_job, new QXmlStreamReader);
+    d->m_jobList.insert(m_job, source);
+
+    if (m_job) {
+        connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
+                SLOT(forecast_slotDataArrived(KIO::Job *, const QByteArray &)));
+        connect(m_job, SIGNAL(result(KJob *)), this, SLOT(forecast_slotJobFinished(KJob *)));
+    }
+}
+
+void NOAAIon::forecast_slotDataArrived(KIO::Job *job, const QByteArray &data)
+{
+    if (data.isEmpty() || !d->m_jobXml.contains(job)) {
+        return;
+    }
+
+    // Send to xml.
+    d->m_jobXml[job]->addData(data);
+}
+
+void NOAAIon::forecast_slotJobFinished(KJob *job)
+{
+    QXmlStreamReader *reader = d->m_jobXml.value(job);
+    if (reader) {
+        QString source = d->m_jobList[job];
+        readForecast(source, *reader);
+        updateWeather(source);
+    }
+
+    d->m_jobList.remove(job);
+    delete d->m_jobXml[job];
+    d->m_jobXml.remove(job);
+}
+
+void NOAAIon::readForecast(const QString& source, QXmlStreamReader& xml)
+{
+    QList<WeatherData::Forecast>& forecasts = d->m_weatherData[source].forecasts;
+
+    // Clear the current forecasts
+    forecasts.clear();
+
+    while (!xml.atEnd()) {
+        xml.readNext();
+
+        if (xml.isStartElement()) {
+
+            /* Read all reported days from <time-layout>. We check for existence of a specific
+             * <layout-key> which indicates the separate day listings.  The schema defines it to be
+             * the first item before the day listings.
+             */
+            if (xml.name() == "layout-key" && xml.readElementText() == "k-p24h-n7-1") {
+
+                // Read days until we get to end of parent (<time-layout>)tag
+                while (! (xml.isEndElement() && xml.name() == "time-layout")) {
+
+                    xml.readNext();
+
+                    if (xml.name() == "start-valid-time") {
+                        QString data = xml.readElementText();
+                        QDateTime date = QDateTime::fromString(data, Qt::ISODate);
+
+                        WeatherData::Forecast forecast;
+                        forecast.day = QDate::shortDayName(date.date().dayOfWeek());
+                        forecasts.append(forecast);
+                        //kDebug() << forecast.day;
+                    }
+                }
+
+            } else if (xml.name() == "temperature" && xml.attributes().value("type") == "maximum") {
+
+                // Read max temps until we get to end tag
+                int i = 0;
+                while (! (xml.isEndElement() && xml.name() == "temperature") &&
+                       i < forecasts.count()) {
+
+                    xml.readNext();
+
+                    if (xml.name() == "value") {
+                        forecasts[i].high = xml.readElementText();
+                        //kDebug() << forecasts[i].high;
+                        i++;
+                    }
+                }
+            } else if (xml.name() == "temperature" && xml.attributes().value("type") == "minimum") {
+
+                // Read min temps until we get to end tag
+                int i = 0;
+                while (! (xml.isEndElement() && xml.name() == "temperature") &&
+                       i < forecasts.count()) {
+
+                    xml.readNext();
+
+                    if (xml.name() == "value") {
+                        forecasts[i].low = xml.readElementText();
+                        //kDebug() << forecasts[i].low;
+                        i++;
+                    }
+                }
+            } else if (xml.name() == "weather") {
+
+                // Read weather conditions until we get to end tag
+                int i = 0;
+                while (! (xml.isEndElement() && xml.name() == "weather") &&
+                       i < forecasts.count()) {
+
+                    xml.readNext();
+
+                    if (xml.name() == "weather-conditions" && xml.isStartElement()) {
+                        QString summary = xml.attributes().value("weather-summary").toString();
+                        forecasts[i].summary = i18nc("weather forecast", summary.toUtf8());
+                        //kDebug() << forecasts[i].summary;
+                        i++;
+                    }
+                }
+            }
+        }
     }
 }
 
