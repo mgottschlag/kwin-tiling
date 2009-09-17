@@ -403,6 +403,8 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_hoverIndicator->hide();
 
             m_gridScroll = new Plasma::ScrollWidget(this);
+            m_gridScroll->installEventFilter(this);
+            m_gridScroll->setFocusPolicy(Qt::StrongFocus);
             m_gridScroll->setWidget(m_viewMainWidget);
             m_gridScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
             m_gridScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
@@ -457,6 +459,8 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_mainLayout->activate();
             m_mainLayout->updateGeometry();
 
+            setTabOrder(m_stripWidget, m_searchField);
+            setTabOrder(m_searchField, m_gridScroll);
             reset();
         }
     }
@@ -554,21 +558,22 @@ void SearchLaunch::selectItem(Plasma::IconWidget *icon)
 
 bool SearchLaunch::eventFilter(QObject *watched, QEvent *event)
 {
-    if (event->type() == QEvent::GraphicsSceneHoverEnter) {
-        Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
-        if (icon) {
-            m_gridBackground->setCurrentItem(icon);
-        }
-    } else if (event->type() == QEvent::GraphicsSceneHoverLeave &&
-               qobject_cast<Plasma::Frame *>(watched)) {
-               m_hoverIndicator->hide();
+    Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
+    if (icon && event->type() == QEvent::GraphicsSceneHoverEnter) {
+        m_gridBackground->setCurrentItem(icon);
+    } else if (watched == m_gridBackground && event->type() == QEvent::GraphicsSceneHoverLeave && !m_gridBackground->hasFocus()) {
+        m_hoverIndicator->hide();
     //pass click only if the user didn't move the mouse
-    } else if (event->type() == QEvent::GraphicsSceneMouseMove) {
+    } else if (icon && event->type() == QEvent::GraphicsSceneMouseMove) {
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
 
         QPointF deltaPos = me->pos() - me->lastPos();
         m_viewMainWidget->setPos(m_viewMainWidget->pos().x(),
                                  qBound(qMin((qreal)0,-m_viewMainWidget->size().height()+m_gridScroll->size().height()), m_viewMainWidget->pos().y()+deltaPos.y(), (qreal)0));
+    } else if (watched == m_gridScroll && event->type() == QEvent::FocusIn) {
+        m_gridBackground->setFocus();
+    } else if (watched == m_gridBackground && event->type() == QEvent::FocusOut) {
+        m_hoverIndicator->hide();
     }
 
     return false;

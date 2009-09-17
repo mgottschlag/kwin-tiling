@@ -348,7 +348,9 @@ void StripWidget::keyPressEvent(QKeyEvent *event)
 void StripWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event)
-    m_hoverIndicator->hide();
+    if (!hasFocus()) {
+        m_hoverIndicator->hide();
+    }
 }
 
 void StripWidget::focusInEvent(QFocusEvent *event)
