@@ -1,10 +1,15 @@
 [Domain]
 Name=Date and Time Control Module
+Name[pt]=Módulo de Controlo da Data e Hora
+Name[tr]=Tarih ve Saat Denetim Modülü
+Name[uk]=Модуль керування датою і часом
+Name[x-test]=xxDate and Time Control Modulexx
 Icon=preferences-system-time
 
 [org.kde.kcontrol.kcmclock.save]
 Name=Save the date/time settings
 Name[id]=Simpan pengaturan tanggal/waktu
+Name[nb]=Lagre dato og klokkeslett-innstillinger
 Name[nds]=Instellen vun Datum un Tiet sekern
 Name[pt]=Mudar a configuração da data/hora
 Name[pt_BR]=Salvar as configurações de data e hora
@@ -15,6 +20,7 @@ Name[x-test]=xxSave the date/time settingsxx
 Name[zh_TW]=儲存日期和時間設定值
 Description=System policies prevent you to save the date/time settings
 Description[id]=Kebijakan sistem menghalangi anda untuk menyimpan pengaturan tanggal/waktu
+Description[nb]=Systembestemmelser gjør at du ikke kan lagre dato/tid-innstillingene
 Description[nds]=De Systeemregeln verlöövt nich, dat Du de Instellen för Datum un Tiet sekerst.
 Description[pt]=As políticas do sistema proíbem a modificação da configuração de data/hora
 Description[pt_BR]=As políticas do sistema previnem você de salvar as configurações de data e hora

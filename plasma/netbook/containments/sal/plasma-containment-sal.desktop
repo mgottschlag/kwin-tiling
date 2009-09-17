@@ -1,5 +1,9 @@
 [Desktop Entry]
 Name=Search and Launch Containment
+Name[pt]=Contentor de Pesquisa e Lançamento
+Name[tr]=Ara ve Çalıştır İçericisi
+Name[uk]=Контейнер пошуку і запуску
+Name[x-test]=xxSearch and Launch Containmentxx
 Comment=Special Containment with Launcher
 Comment[id]=Pembatasan Khusus Dengan Peluncur
 Comment[nb]=Spesiell beholder med starter

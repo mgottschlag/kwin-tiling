@@ -2,10 +2,10 @@
 Name=Object Name
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
-Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
+Name[en_GB]=Object Name
 Name[es]=Nombre del objeto
 Name[et]=Objekti nimi
 Name[fi]=Objektinimi
@@ -47,6 +47,7 @@ Name[zh_TW]=物件名稱
 [Desktop Action readerType]
 Name=Reader Type
 Name[id]=Tipe Pembaca
+Name[nb]=Lesertype
 Name[nds]=Lesertyp
 Name[pt]=Tipo de Leitor
 Name[pt_BR]=Tipo de leitor
@@ -59,6 +60,7 @@ Name[x-test]=xxReader Typexx
 Actions=objectName;readerType;
 Name=Solid Device
 Name[id]=Divais Solid
+Name[nb]=Solid-enhet
 Name[nds]=Solid-Reedschap
 Name[pt]=Dispositivo do Solid
 Name[pt_BR]=Dispositivo do Solid
