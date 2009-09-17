@@ -110,14 +110,8 @@ void NotificationItemWatcher::RegisterNotificationHost(const QString &service)
         !m_notificationHostServices.contains(service)) {
         kDebug()<<"Registering"<<service<<"as system tray";
 
-        //check if the service has registered a SystemTray object
-        org::kde::NotificationItem tray(service, "/",
-                                        QDBusConnection::sessionBus());
-
-        if (tray.isValid()) {
-            m_notificationHostServices.insert(service);
-            emit NotificationHostRegistered();
-        }
+        m_notificationHostServices.insert(service);
+        emit NotificationHostRegistered();
     }
 }
 
