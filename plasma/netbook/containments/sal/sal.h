@@ -29,7 +29,6 @@
 #include <QGraphicsLinearLayout>
 #include <QGraphicsGridLayout>
 
-class QAction;
 class QTimer;
 class StripWidget;
 class GridItemView;
@@ -53,7 +52,6 @@ public:
     ~SearchLaunch();
     void init();
 
-    QList<QAction*> contextualActions();
     void constraintsEvent(Plasma::Constraints constraints);
     void paintInterface(QPainter *painter,
                         const QStyleOptionGraphicsItem *option,

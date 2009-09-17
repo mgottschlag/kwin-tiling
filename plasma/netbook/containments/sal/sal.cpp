@@ -304,12 +304,6 @@ void SearchLaunch::addFavourite()
     m_stripWidget->add(match, m_runnermg->searchContext()->query());
 }
 
-QList<QAction*> SearchLaunch::contextualActions()
-{
-    QList<QAction*> actions;
-    return actions;
-}
-
 void SearchLaunch::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 {
     Q_UNUSED(pos);
