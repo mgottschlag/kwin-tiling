@@ -529,7 +529,6 @@ void SearchLaunch::selectItem(Plasma::IconWidget *icon)
         m_viewMainWidget->setPos(0, -iconRectToMainWidget.top());
     }
 
-    m_hoverIndicator->show();
     m_hoverIndicator->setTargetItem(icon);
 }
 
