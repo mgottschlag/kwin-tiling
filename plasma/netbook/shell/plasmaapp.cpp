@@ -75,13 +75,13 @@ PlasmaApp::PlasmaApp()
 {
     KGlobal::locale()->insertCatalog("libplasma");
     KGlobal::locale()->insertCatalog("plasmagenericshell");
-    KCrash::setFlags(KCrash::AutoRestart);
+
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-
     bool isDesktop = args->isSet("desktop");
     if (isDesktop) {
         notifyStartup(false);
+        KCrash::setFlags(KCrash::AutoRestart);
     }
 
     //TODO: decide how to handle the cache size; possibilities:
