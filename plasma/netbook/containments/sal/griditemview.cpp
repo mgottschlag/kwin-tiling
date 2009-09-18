@@ -67,7 +67,7 @@ void GridItemView::keyPressEvent(QKeyEvent *event)
     if (!m_layout) {
         m_layout = dynamic_cast<QGraphicsGridLayout *>(layout());
     }
-    if (!m_layout) {
+    if (!m_layout || m_layout->columnCount() == 0) {
         return;
     }
     switch (event->key()) {
