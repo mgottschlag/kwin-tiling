@@ -265,7 +265,7 @@ void SearchLaunch::relayout()
     }
 
     int nColumns;
-    //if there were
+    // if we already decided how many columns are going to be don't decide again
     if (m_launchGrid->columnCount() > 0 &&  m_launchGrid->rowCount() > 0) {
         nColumns = m_launchGrid->columnCount();
     } else {

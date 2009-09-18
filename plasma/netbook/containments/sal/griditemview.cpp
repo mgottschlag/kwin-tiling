@@ -92,7 +92,7 @@ void GridItemView::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Up: {
         m_currentIcon = 0;
         while (!m_currentIcon) {
-            m_currentIconIndexY = (m_layout->columnCount() + m_currentIconIndexY - 1) % m_layout->columnCount();
+            m_currentIconIndexY = (m_layout->rowCount() + m_currentIconIndexY - 1) % m_layout->rowCount();
             m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
         }
         emit itemSelected(m_currentIcon);
@@ -101,7 +101,7 @@ void GridItemView::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Down: {
         m_currentIcon = 0;
         while (!m_currentIcon) {
-            m_currentIconIndexY = (m_currentIconIndexY + 1) % m_layout->columnCount();
+            m_currentIconIndexY = (m_currentIconIndexY + 1) % m_layout->rowCount();
             m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
         }
         emit itemSelected(m_currentIcon);
