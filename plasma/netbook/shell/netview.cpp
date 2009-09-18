@@ -57,8 +57,6 @@ void NetView::connectContainment(Plasma::Containment *containment)
         return;
     }
 
-    connect(containment, SIGNAL(focusRequested(Plasma::Containment*)),
-            this, SLOT(setContainment(Plasma::Containment*)));
     connect(containment, SIGNAL(activate()), this, SIGNAL(containmentActivated()));
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updateGeometry()));
 }
