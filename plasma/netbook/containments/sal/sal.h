@@ -53,9 +53,7 @@ public:
     void init();
 
     void constraintsEvent(Plasma::Constraints constraints);
-    void paintInterface(QPainter *painter,
-                        const QStyleOptionGraphicsItem *option,
-                        const QRect &contentsRect);
+
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
 
@@ -63,7 +61,6 @@ public slots:
     void dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data);
 
 private slots:
-    void themeUpdated();
     void updateSize();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
     void appletRemoved(Plasma::Applet* applet);

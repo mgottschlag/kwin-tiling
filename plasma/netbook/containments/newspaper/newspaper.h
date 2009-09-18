@@ -46,20 +46,12 @@ public:
 
     void constraintsEvent(Plasma::Constraints constraints);
 
-    void paintInterface(QPainter *painter,
-                        const QStyleOptionGraphicsItem *option,
-                        const QRect &contentsRect);
-
-
 private slots:
-
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
-    void themeUpdated();
     void updateSize();
     void updateConfigurationMode(bool config);
 
 private:
-
     QGraphicsWidget *m_mainWidget;
     Plasma::ScrollWidget *m_scrollWidget;
     QGraphicsLinearLayout *m_externalLayout;

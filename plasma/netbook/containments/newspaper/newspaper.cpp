@@ -61,7 +61,6 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
 {
     setContainmentType(Containment::CustomContainment);
 
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
     connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
             this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
 
@@ -96,20 +95,9 @@ void Newspaper::init()
     m_leftLayout->addItem(spacer1);
     m_rightLayout->addItem(spacer2);
 
-    m_background = new Plasma::FrameSvg(this);
-    m_background->setImagePath("widgets/translucentbackground");
-
     Containment::init();
     setHasConfigurationInterface(true);
-    themeUpdated();
 
-}
-
-void Newspaper::themeUpdated()
-{
-    /*qreal left, top, right, bottom;
-    m_background->getMargins(left, top, right, bottom);
-    m_externalLayout->setContentsMargins(left, top, right, bottom);*/
 }
 
 void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
@@ -225,19 +213,6 @@ void Newspaper::updateConfigurationMode(bool config)
         delete m_appletOverlay;
         m_appletOverlay = 0;
     }
-}
-
-
-void Newspaper::paintInterface(QPainter *painter,
-                           const QStyleOptionGraphicsItem *option,
-                           const QRect& contentsRect)
-{
-    Q_UNUSED(contentsRect)
-
-    Containment::paintInterface(painter, option, contentsRect);
-
-    /*m_background->resizeFrame(contentsRect.size());
-    m_background->paintFrame(painter, contentsRect.topLeft());*/
 }
 
 

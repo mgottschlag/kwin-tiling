@@ -65,7 +65,6 @@ SearchLaunch::~SearchLaunch()
     m_stripWidget->save(cg);
 
     delete m_runnermg;
-    delete m_background;
 }
 
 void SearchLaunch::init()
@@ -87,18 +86,8 @@ void SearchLaunch::init()
     Plasma::Svg *borderSvg = new Plasma::Svg(this);
     borderSvg->setImagePath("newspaper/border");
 
-    m_background = new Plasma::FrameSvg(this);
-    m_background->setImagePath("widgets/translucentbackground");
-
     Plasma::DataEngine *engine = dataEngine("searchlaunch");
     engine->connectSource("query", this);
-}
-
-void SearchLaunch::themeUpdated()
-{
-    qreal left, top, right, bottom;
-    /*m_background->getMargins(left, top, right, bottom);
-    m_mainLayout->setContentsMargins(left, top, right, bottom);*/
 }
 
 void SearchLaunch::doSearch(const QString query)
@@ -455,7 +444,6 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
 
             // correctly set margins
-            themeUpdated();
             m_mainLayout->activate();
             m_mainLayout->updateGeometry();
 
@@ -476,17 +464,6 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
         m_relayoutTimer->start();
     }
 
-}
-
-void SearchLaunch::paintInterface(QPainter *painter,
-                                 const QStyleOptionGraphicsItem *option,
-                                 const QRect& contentsRect)
-{
-    Q_UNUSED(contentsRect)
-
-    Containment::paintInterface(painter, option, contentsRect);
-    //m_background->resizeFrame(contentsRect.size());
-    //m_background->paintFrame(painter, contentsRect.topLeft());
 }
 
 void SearchLaunch::setFormFactorFromLocation(Plasma::Location loc)
