@@ -338,7 +338,8 @@ void WebBrowser::urlChanged(const QUrl &url)
     saveState(cg);
 
     m_back->setEnabled(m_browser->page()->history()->canGoBack());
-    m_forward->setEnabled(m_browser->page()->history()->canGoForward());    
+    m_forward->setEnabled(m_browser->page()->history()->canGoForward());
+    setAssociatedApplicationUrls(KUrl(url));
 }
 
 void WebBrowser::comboTextChanged(const QString &string)
