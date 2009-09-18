@@ -264,7 +264,13 @@ void SearchLaunch::relayout()
         m_launchGrid->removeAt(validIndex);
     }
 
-    int nColumns = qMax(1, int(m_gridScroll->size().width() / m_maxColumnWidth));
+    int nColumns;
+    //if there were
+    if (m_launchGrid->columnCount() > 0 &&  m_launchGrid->rowCount() > 0) {
+        nColumns = m_launchGrid->columnCount();
+    } else {
+        nColumns = qMax(1, int(m_gridScroll->size().width() / m_maxColumnWidth));
+    }
     int i = 0;
 
     foreach (Plasma::IconWidget *icon, orderedItems) {
