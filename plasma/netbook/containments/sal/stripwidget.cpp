@@ -61,14 +61,10 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
 
     m_leftArrow = new Plasma::PushButton(this);
     m_leftArrow->nativeWidget()->setIcon(KIcon("arrow-left"));
-    m_leftArrow->setMaximumSize(IconSize(KIconLoader::Panel),
-                              IconSize(KIconLoader::Panel));
     connect(m_leftArrow, SIGNAL(clicked()), this, SLOT(goLeft()));
 
     m_rightArrow = new Plasma::PushButton(this);
     m_rightArrow->nativeWidget()->setIcon(KIcon("arrow-right"));
-    m_rightArrow->setMaximumSize(IconSize(KIconLoader::Panel),
-                               IconSize(KIconLoader::Panel));
     connect(m_rightArrow, SIGNAL(clicked()), this, SLOT(goRight()));
 
     m_leftArrow->setEnabled(false);
