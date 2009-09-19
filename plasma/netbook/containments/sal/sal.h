@@ -56,6 +56,7 @@ public:
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
+    void focusInEvent(QFocusEvent *event);
 
 public slots:
     void dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data);

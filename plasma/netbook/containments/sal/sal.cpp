@@ -360,6 +360,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
         // create our layout!
         if (!layout()) {
+            setFocusPolicy(Qt::StrongFocus);
             // create main layout
             m_mainLayout = new QGraphicsLinearLayout();
             m_mainLayout->setOrientation(layoutOtherDirection);
@@ -512,6 +513,13 @@ void SearchLaunch::dataUpdated(const QString &sourceName, const Plasma::DataEngi
     doSearch(query);
     if (m_searchField) {
         m_searchField->setText(query);
+    }
+}
+
+void SearchLaunch::focusInEvent(QFocusEvent *event)
+{
+    if (m_searchField) {
+        m_searchField->setFocus();
     }
 }
 
