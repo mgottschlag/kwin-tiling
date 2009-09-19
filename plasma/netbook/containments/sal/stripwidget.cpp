@@ -189,8 +189,9 @@ void StripWidget::launchFavourite(Plasma::IconWidget *icon)
 
 void StripWidget::goRight()
 {
+    //FIXME: no hardcoded and animated
     QPointF oldPos = m_scrollingWidget->pos();
-    m_scrollingWidget->setPos(oldPos.x() - 100, oldPos.y());
+    m_scrollingWidget->setPos(qMax(oldPos.x() - 100, -(m_scrollingWidget->size().width() - m_scrollWidget->size().width())), oldPos.y());
 }
 
 void StripWidget::goLeft()
