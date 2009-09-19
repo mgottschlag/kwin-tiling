@@ -346,6 +346,7 @@ void DeviceNotifier::createConfigurationInterface(KConfigDialog *parent)
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
     m_configurationUi.hidePopupAfter->setValue(m_hidePopupAfter);
+    m_configurationUi.hidePopupAfter->setSuffix(ki18np(" second", " seconds"));
     m_configurationUi.showPopupOnInsert->setChecked(m_showPopupOnInsert);
     m_configurationUi.showOnlyRemovable->setChecked(m_showOnlyRemovable);
 }

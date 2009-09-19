@@ -17,12 +17,15 @@
    <item row="3" column="0">
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="1" column="1">
-      <widget class="QSpinBox" name="hidePopupAfter">
+      <widget class="KIntSpinBox" name="hidePopupAfter">
        <property name="maximumSize">
         <size>
          <width>60</width>
          <height>16777215</height>
         </size>
+       </property>
+       <property name="specialValueText">
+        <string>never</string>
        </property>
       </widget>
      </item>
@@ -48,13 +51,6 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>seconds (0 for never)</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item row="1" column="0">
@@ -73,6 +69,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KIntSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>knuminput.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
