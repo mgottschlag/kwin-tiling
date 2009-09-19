@@ -34,7 +34,7 @@
 namespace Plasma
 {
     class IconWidget;
-    class PushButton;
+    class ToolButton;
     class QueryMatch;
     class RunnerManager;
     class ItemBackground;
@@ -73,8 +73,8 @@ private slots:
     void goRight();
 
 private:
-    Plasma::PushButton *m_leftArrow;
-    Plasma::PushButton *m_rightArrow;
+    Plasma::ToolButton *m_leftArrow;
+    Plasma::ToolButton *m_rightArrow;
     QGraphicsLinearLayout *m_stripLayout;
     QGraphicsLinearLayout *m_arrowsLayout;
 

@@ -19,19 +19,20 @@
 
 #include "stripwidget.h"
 
+#include <QToolButton>
+#include <QAction>
+
+#include <KIcon>
+#include <KIconLoader>
+
 #include <Plasma/Frame>
-#include <Plasma/PushButton>
+#include <Plasma/ToolButton>
 #include <Plasma/IconWidget>
 #include <Plasma/QueryMatch>
 #include <Plasma/AbstractRunner>
 #include <Plasma/RunnerManager>
 #include <Plasma/ItemBackground>
 #include <Plasma/ScrollWidget>
-
-#include <KIcon>
-#include <KPushButton>
-
-#include <QAction>
 
 
 StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
@@ -56,11 +57,15 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     setAcceptHoverEvents(true);
     setFocusPolicy(Qt::StrongFocus);
 
-    m_leftArrow = new Plasma::PushButton(this);
+    m_leftArrow = new Plasma::ToolButton(this);
+    m_leftArrow->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    m_leftArrow->setPreferredWidth(KIconLoader::SizeMedium);
     m_leftArrow->nativeWidget()->setIcon(KIcon("arrow-left"));
     connect(m_leftArrow, SIGNAL(clicked()), this, SLOT(goLeft()));
 
-    m_rightArrow = new Plasma::PushButton(this);
+    m_rightArrow = new Plasma::ToolButton(this);
+    m_rightArrow->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    m_rightArrow->setPreferredWidth(KIconLoader::SizeMedium);
     m_rightArrow->nativeWidget()->setIcon(KIcon("arrow-right"));
     connect(m_rightArrow, SIGNAL(clicked()), this, SLOT(goRight()));
 
