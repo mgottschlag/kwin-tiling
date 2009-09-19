@@ -24,30 +24,30 @@
 #include <KConfigGroup>
 
 #include <QPair>
-#include <QGraphicsWidget>
 #include <QGraphicsLinearLayout>
 #include <QGraphicsSceneResizeEvent>
 
 
+#include <Plasma/Frame>
 #include <Plasma/RunnerContext>
 
 namespace Plasma
 {
     class IconWidget;
-    class Frame;
     class PushButton;
     class QueryMatch;
     class RunnerManager;
     class ItemBackground;
+    class ScrollWidget;
 }
 
 
-class StripWidget : public QGraphicsWidget
+class StripWidget : public Plasma::Frame
 {
     Q_OBJECT
 
 public:
-    StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent = 0);
+    StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent = 0);
     ~StripWidget();
 
     void add(Plasma::QueryMatch match, const QString &query);
@@ -75,7 +75,6 @@ private slots:
 private:
     Plasma::PushButton *m_leftArrow;
     Plasma::PushButton *m_rightArrow;
-    Plasma::Frame *m_background;
     QGraphicsLinearLayout *m_stripLayout;
     QGraphicsLinearLayout *m_arrowsLayout;
 
@@ -83,6 +82,8 @@ private:
     QList<Plasma::QueryMatch*> m_favouritesMatches;
     QHash<Plasma::QueryMatch*, QString> m_favouritesQueries;
     QHash<Plasma::IconWidget*, Plasma::QueryMatch*> m_favouritesIcons;
+    Plasma::ScrollWidget *m_scrollWidget;
+    QGraphicsWidget *m_scrollingWidget;
     Plasma::RunnerContext *m_context;
     Plasma::ItemBackground *m_hoverIndicator;
     int m_shownIcons;

@@ -26,6 +26,7 @@
 #include <Plasma/AbstractRunner>
 #include <Plasma/RunnerManager>
 #include <Plasma/ItemBackground>
+#include <Plasma/ScrollWidget>
 
 #include <KIcon>
 #include <KPushButton>
@@ -33,27 +34,23 @@
 #include <QAction>
 
 
-StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
-    : QGraphicsWidget(parent),
+StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
+    : Plasma::Frame(parent),
       m_runnermg(rm),
-      m_shownIcons(5),
       m_offset(0),
       m_currentIcon(0),
-      m_currentIconIndex(-1)
+      m_currentIconIndex(-1),
+      m_scrollWidget(0),
+      m_scrollingWidget(0)
 {
-    m_background = new Plasma::Frame();
-    m_background->setFrameShadow(Plasma::Frame::Raised);
-    /*m_background->setMinimumSize(QSize(600, 115));
-    m_background->setMaximumSize(QSize(600, 115));*/
-    setMaximumHeight(115);
+    setFrameShadow(Plasma::Frame::Raised);
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    //FIXME: layout problems, do it right
+    setPreferredSize(500, 128);
 
-    // mainLayout to correctly setup the m_background
-    QGraphicsLinearLayout *mainLayout = new QGraphicsLinearLayout(this);
-    mainLayout->addItem(m_background);
-
-    m_arrowsLayout = new QGraphicsLinearLayout(m_background);
+    m_arrowsLayout = new QGraphicsLinearLayout(this);
     m_stripLayout = new QGraphicsLinearLayout();
-    m_hoverIndicator = new Plasma::ItemBackground(m_background);
+    m_hoverIndicator = new Plasma::ItemBackground(this);
     m_hoverIndicator->hide();
     m_hoverIndicator->setZValue(-100);
     setAcceptHoverEvents(true);
@@ -70,20 +67,26 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
     m_leftArrow->setEnabled(false);
     m_rightArrow->setEnabled(false);
 
-    QGraphicsWidget *leftSpacer = new QGraphicsWidget(this);
-    QGraphicsWidget *rightSpacer = new QGraphicsWidget(this);
+    m_scrollWidget = new Plasma::ScrollWidget(this);
+    m_scrollWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_scrollWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_scrollingWidget = new QGraphicsWidget(m_scrollWidget);
+    m_scrollingWidget->installEventFilter(this);
+    QGraphicsLinearLayout *scrollingLayout = new QGraphicsLinearLayout(m_scrollingWidget);
+    QGraphicsWidget *leftSpacer = new QGraphicsWidget(m_scrollingWidget);
+    QGraphicsWidget *rightSpacer = new QGraphicsWidget(m_scrollingWidget);
     leftSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     rightSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     /*leftSpacer->setPreferredSize(0, 0);
     rightSpacer->setPreferredSize(0, 0);*/
+    scrollingLayout->addItem(leftSpacer);
+    scrollingLayout->addItem(m_stripLayout);
+    scrollingLayout->addItem(rightSpacer);
+
+    m_scrollWidget->setWidget(m_scrollingWidget);
 
     m_arrowsLayout->addItem(m_leftArrow);
-    m_arrowsLayout->addItem(leftSpacer);
-    //m_arrowsLayout->addStretch();
-    m_arrowsLayout->addItem(m_stripLayout);
-    //m_arrowsLayout->setStretchFactor(m_stripLayout, 8);
-    m_arrowsLayout->addItem(rightSpacer);
-    //m_arrowsLayout->addStretch();
+    m_arrowsLayout->addItem(m_scrollWidget);
     m_arrowsLayout->addItem(m_rightArrow);
 }
 
@@ -123,6 +126,7 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     m_stripLayout->insertItem(idx, fav);
     m_stripLayout->setMaximumSize((fav->size().width())*m_stripLayout->count(), fav->size().height());
     m_stripLayout->setMinimumSize(m_stripLayout->maximumSize());
+    m_scrollWidget->setMinimumHeight(m_stripLayout->maximumSize().height());
 }
 
 void StripWidget::add(Plasma::QueryMatch match, const QString &query)
@@ -133,12 +137,7 @@ void StripWidget::add(Plasma::QueryMatch match, const QString &query)
     m_favouritesQueries.insert(newMatch, query);
 
     int idx = m_stripLayout->count();
-    if (idx > m_shownIcons - 1) {
-        m_leftArrow->setEnabled(true);
-        m_rightArrow->setEnabled(true);
-    } else {
-        createIcon(newMatch, idx);
-    }
+    createIcon(newMatch, idx);
 }
 
 void StripWidget::remove(Plasma::IconWidget *favourite)
@@ -151,22 +150,6 @@ void StripWidget::remove(Plasma::IconWidget *favourite)
     // must be deleteLater because the IconWidget will return from the action?
     favourite->deleteLater();
     delete match;
-
-    // the IconWidget was not removed yet
-    if (m_favouritesMatches.size() <= m_shownIcons) {
-        m_leftArrow->setEnabled(false);
-        m_rightArrow->setEnabled(false);
-    }
-
-    if (m_favouritesMatches.size() >= m_shownIcons) {
-        // adds the new item to the end of the list
-        int idx = m_favouritesMatches.indexOf(match);
-        int newpos = (idx + m_shownIcons + m_offset) % (m_favouritesMatches.size()-1);
-
-        match = m_favouritesMatches[newpos];
-        // must be m_shownIcons here because at this point the icon was not deleted yet
-        createIcon(match, m_shownIcons);
-    }
 }
 
 void StripWidget::removeFavourite()
@@ -202,44 +185,14 @@ void StripWidget::launchFavourite(Plasma::IconWidget *icon)
 
 void StripWidget::goRight()
 {
-    // discover the item that will be removed
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_stripLayout->itemAt(0));
-    Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
-
-    // removes the first item
-    m_favouritesIcons.remove(icon);
-    icon->hide();
-    delete icon;
-
-    // adds the new item to the end of the list
-    int idx = m_favouritesMatches.indexOf(match);
-    int size = m_favouritesMatches.size();
-    int newpos = (idx + m_shownIcons) % size;
-    m_offset = (m_offset + 1) % size;
-
-    match = m_favouritesMatches[newpos];
-    createIcon(match, m_shownIcons-1);
+    QPointF oldPos = m_scrollingWidget->pos();
+    m_scrollingWidget->setPos(oldPos.x() - 100, oldPos.y());
 }
 
 void StripWidget::goLeft()
 {
-    // discover the item that will be removed
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_stripLayout->itemAt(m_shownIcons - 1));
-    Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
-
-    // removes the first item
-    m_favouritesIcons.remove(icon);
-    icon->hide();
-    delete icon;
-
-    // adds the new item to the end of the list
-    int idx = m_favouritesMatches.indexOf(match);
-    int size = m_favouritesMatches.size();
-    int newpos = (idx + size - m_shownIcons) % size;
-    m_offset = newpos;
-
-    match = m_favouritesMatches[newpos];
-    createIcon(match, 0);
+    QPointF oldPos = m_scrollingWidget->pos();
+    m_scrollingWidget->setPos(qMax(oldPos.x() + 100, (qreal)0.0), oldPos.y());
 }
 
 void StripWidget::save(KConfigGroup &cg)
@@ -313,6 +266,23 @@ bool StripWidget::eventFilter(QObject *watched, QEvent *event)
             m_hoverIndicator->show();
             m_hoverIndicator->setTargetItem(icon);
         }
+    //FIXME: we probably need a specialized widget instead this ugly filter code
+    } else if (watched == m_scrollingWidget && event->type() == QEvent::GraphicsSceneResize) {
+        QGraphicsSceneResizeEvent *re = static_cast<QGraphicsSceneResizeEvent *>(event);
+
+        bool wider = (re->newSize().width() > m_scrollWidget->size().width());
+        if (wider) {
+             m_leftArrow->setEnabled(m_scrollingWidget->pos().x() < 0);
+             m_rightArrow->setEnabled(m_scrollingWidget->geometry().right() > m_scrollWidget->size().width());
+        }
+    } else if (watched == m_scrollingWidget && event->type() == QEvent::GraphicsSceneMove) {
+        QGraphicsSceneMoveEvent *me = static_cast<QGraphicsSceneMoveEvent *>(event);
+
+        bool wider = (m_scrollingWidget->size().width() > m_scrollWidget->size().width());
+        if (wider) {
+             m_leftArrow->setEnabled(me->newPos().x() < 0);
+             m_rightArrow->setEnabled(m_scrollingWidget->size().width()+me->newPos().x() > m_scrollWidget->size().width());
+        }
     }
 
     return false;
@@ -367,29 +337,14 @@ void StripWidget::focusOutEvent(QFocusEvent *event)
 
 void StripWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
-    int newShownIcons = qMax(1, (int)((event->newSize().width() - m_leftArrow->size().width() - m_rightArrow->size().width())/m_background->size().height()));
-
-    int effectiveShownIcons = qMin(m_shownIcons, m_favouritesMatches.count());
-
-    if (newShownIcons > effectiveShownIcons) {
-        int newEffectiveShownIcons = qMin(newShownIcons, m_favouritesMatches.count());
-        for (int i = effectiveShownIcons; i < newEffectiveShownIcons; ++i) {
-            Plasma::QueryMatch *match = m_favouritesMatches[i];
-            createIcon(match, i);
-        }
-    } else if (newShownIcons < effectiveShownIcons) {
-        for (int i = effectiveShownIcons; i > newShownIcons && m_stripLayout->count() > 0; --i) {
-            Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_stripLayout->itemAt(m_stripLayout->count()-1));
-
-            m_favouritesIcons.remove(icon);
-            icon->hide();
-            QSizeF widgetSize = icon->size();
-            delete icon;
-            //FIXME here as well
-            m_stripLayout->setMinimumSize(widgetSize.width()*(m_stripLayout->count()-1), widgetSize.height());
-            m_stripLayout->setMaximumSize(m_stripLayout->minimumSize());
-        }
+    if (!m_scrollWidget) {
+        return;
     }
 
-    m_shownIcons = newShownIcons;
+    bool wider = (m_scrollWidget->size().width() > m_scrollWidget->size().width());
+    if (wider) {
+            m_leftArrow->setEnabled(m_scrollingWidget->pos().x() < 0);
+            m_rightArrow->setEnabled(m_scrollingWidget->geometry().right() > m_scrollWidget->size().width());
+    }
+    Plasma::Frame::resizeEvent(event);
 }
