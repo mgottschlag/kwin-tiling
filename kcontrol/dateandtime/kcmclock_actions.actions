@@ -1,6 +1,7 @@
 [Domain]
 Name=Date and Time Control Module
 Name[pt]=Módulo de Controlo da Data e Hora
+Name[pt_BR]=Módulo de controle da data e hora
 Name[sv]=Inställningsmodul för datum och tid
 Name[tr]=Tarih ve Saat Denetim Modülü
 Name[uk]=Модуль керування датою і часом
