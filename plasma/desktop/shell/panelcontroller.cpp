@@ -329,25 +329,36 @@ void PanelController::setLocation(const Plasma::Location &loc)
     case Plasma::LeftEdge:
         if (QApplication::layoutDirection() == Qt::RightToLeft) {
             m_extLayout->setDirection(QBoxLayout::LeftToRight);
+            m_extLayout->setContentsMargins(background()->marginSize(Plasma::LeftMargin), 0, 0, 0);
+
         } else {
             m_extLayout->setDirection(QBoxLayout::RightToLeft);
+            m_extLayout->setContentsMargins(0, 0, background()->marginSize(Plasma::RightMargin), 0);
         }
+        m_layout->setDirection(QBoxLayout::TopToBottom);
+
         break;
 
     case Plasma::RightEdge:
         if (QApplication::layoutDirection() == Qt::RightToLeft) {
             m_extLayout->setDirection(QBoxLayout::RightToLeft);
+            m_extLayout->setContentsMargins(0, 0, background()->marginSize(Plasma::RightMargin), 0);
         } else {
             m_extLayout->setDirection(QBoxLayout::LeftToRight);
+            m_extLayout->setContentsMargins(background()->marginSize(Plasma::LeftMargin), 0, 0, 0);
         }
+        m_layout->setDirection(QBoxLayout::TopToBottom);
         break;
 
     case Plasma::TopEdge:
         if (QApplication::layoutDirection() == Qt::RightToLeft) {
             m_layout->setDirection(QBoxLayout::RightToLeft);
         } else {
+
             m_layout->setDirection(QBoxLayout::LeftToRight);
         }
+        m_extLayout->setDirection(QBoxLayout::BottomToTop);
+        m_extLayout->setContentsMargins(0, 0, 0, background()->marginSize(Plasma::BottomMargin));
         break;
 
     case Plasma::BottomEdge:
@@ -355,8 +366,11 @@ void PanelController::setLocation(const Plasma::Location &loc)
         if (QApplication::layoutDirection() == Qt::RightToLeft) {
             m_layout->setDirection(QBoxLayout::RightToLeft);
         } else {
+
             m_layout->setDirection(QBoxLayout::LeftToRight);
         }
+        m_extLayout->setDirection(QBoxLayout::TopToBottom);
+        m_extLayout->setContentsMargins(0, background()->marginSize(Plasma::TopMargin), 0, 0);
         break;
     }
 
@@ -372,8 +386,6 @@ void PanelController::setLocation(const Plasma::Location &loc)
         m_leftAlignTool->setText(i18n("Top"));
         m_rightAlignTool->setText(i18n("Bottom"));
 
-        m_ruler->setAvailableLength(screenGeom.height());
-
         break;
     case Plasma::TopEdge:
     case Plasma::BottomEdge:
@@ -384,8 +396,6 @@ void PanelController::setLocation(const Plasma::Location &loc)
         m_expandTool->setIcon(m_iconSvg->pixmap("size-horizontal"));
         m_leftAlignTool->setText(i18n("Left"));
         m_rightAlignTool->setText(i18n("Right"));
-
-        m_ruler->setAvailableLength(screenGeom.width());
     }
 
     m_ruler->setMaximumSize(m_ruler->sizeHint());
