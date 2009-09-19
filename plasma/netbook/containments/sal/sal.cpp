@@ -49,9 +49,9 @@
 SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_homeButton(0),
-      m_searchField(0),
       m_maxColumnWidth(0),
       m_viewMainWidget(0),
+      m_searchField(0),
       m_gridScroll(0),
       m_appletsLayout(0),
       m_buttonDownMousePos(QPoint())

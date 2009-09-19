@@ -38,11 +38,11 @@
 StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     : Plasma::Frame(parent),
       m_runnermg(rm),
+      m_scrollWidget(0),
+      m_scrollingWidget(0),
       m_offset(0),
       m_currentIcon(0),
-      m_currentIconIndex(-1),
-      m_scrollWidget(0),
-      m_scrollingWidget(0)
+      m_currentIconIndex(-1)
 {
     setFrameShadow(Plasma::Frame::Raised);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
