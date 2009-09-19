@@ -398,13 +398,14 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_launchGrid = new QGraphicsGridLayout();
             m_gridBackground->setLayout(m_launchGrid);
 
-            QGraphicsLinearLayout *m_favourites = new QGraphicsLinearLayout();
-            m_favourites->setOrientation(layoutDirection);
-            m_favourites->addStretch();
-            m_favourites->addStretch();
+            QGraphicsLinearLayout *favouritesLayout = new QGraphicsLinearLayout();
+            favouritesLayout->setOrientation(layoutDirection);
+            favouritesLayout->addStretch();
+            favouritesLayout->addStretch();
 
             m_stripWidget = new StripWidget(m_runnermg, this);
-            m_favourites->insertItem(1, m_stripWidget);
+            favouritesLayout->insertItem(1, m_stripWidget);
+            favouritesLayout->setStretchFactor(m_stripWidget, 4);
             KConfigGroup cg = config();
             m_stripWidget->restore(cg);
 
@@ -434,7 +435,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             searchLayout->addStretch();
 
             // add our layouts to main vertical layout
-            m_mainLayout->addItem(m_favourites);
+            m_mainLayout->addItem(favouritesLayout);
             m_mainLayout->addItem(searchLayout);
             m_mainLayout->addItem(gridLayout);
 

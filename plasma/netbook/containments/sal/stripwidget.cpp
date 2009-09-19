@@ -46,7 +46,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     setFrameShadow(Plasma::Frame::Raised);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     //FIXME: layout problems, do it right
-    setPreferredSize(500, 128);
+    //setPreferredSize(500, 128);
 
     m_arrowsLayout = new QGraphicsLinearLayout(this);
     m_stripLayout = new QGraphicsLinearLayout();
@@ -124,9 +124,8 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
 
     m_favouritesIcons.insert(fav, match);
     m_stripLayout->insertItem(idx, fav);
-    m_stripLayout->setMaximumSize((fav->size().width())*m_stripLayout->count(), fav->size().height());
-    m_stripLayout->setMinimumSize(m_stripLayout->maximumSize());
-    m_scrollWidget->setMinimumHeight(m_stripLayout->maximumSize().height());
+    m_stripLayout->activate();
+    m_scrollWidget->setMinimumHeight(m_scrollingWidget->effectiveSizeHint(Qt::PreferredSize).height());
 }
 
 void StripWidget::add(Plasma::QueryMatch match, const QString &query)
