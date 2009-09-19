@@ -268,7 +268,7 @@ QRect NotifierView::visualRect(const QModelIndex &index) const
     return itemRects[index];
 }
 
-QSize NotifierView::sizeHint()
+QSize NotifierView::sizeHint() const
 {
     return QSize(150, 300);
 }

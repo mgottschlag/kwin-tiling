@@ -59,7 +59,7 @@ namespace Notifier
       /**
        * Reimplemented from QWidget
        */
-      QSize sizeHint();
+      QSize sizeHint() const;
 
       void addShowAllAction(bool value);
 
