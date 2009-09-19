@@ -603,18 +603,25 @@ void AppletsListWidget::scrollDownRight(int step, QRectF visibleRect)
     //scroll enough to show the new last icon on the list
     //and store the list size
     if (m_orientation == Qt::Horizontal) {
-        scrollAmount = (newLastIcon->pos().x() + newLastIcon->size().width()) -
+        scrollAmount = (newLastIcon->pos().x() + newLastIcon->boundingRect().size().width()) -
                         lastVisiblePositionOnList;
-        listSize = m_appletsListWidget->size().width();
-
+        listSize = m_appletsListWidget->boundingRect().size().width();
     } else {
         scrollAmount = (newLastIcon->pos().y() + newLastIcon->size().height()) -
                         lastVisiblePositionOnList;
-        listSize = m_appletsListWidget->size().height();
+        listSize = m_appletsListWidget->boundingRect().size().height();
     }
 
+    //if the newLastIcon is the actual last icon on list, scroll until the end of the list
+    if(lastVisibleItemIndex + appletsIndexesToSum == m_currentAppearingAppletsOnList->count() - 1) {
+        scrollAmount = listSize - lastVisiblePositionOnList;
+    }
+
+    //do both:
+    //if the newLastIcon is the actual last icon on list, scroll until the end of the list;
     //check if the scrollAmount is more than necessary to reach the end of the list
-    if (lastVisiblePositionOnList + scrollAmount > listSize) {
+    if ((lastVisibleItemIndex + appletsIndexesToSum == m_currentAppearingAppletsOnList->count() - 1)  ||
+        (lastVisiblePositionOnList + scrollAmount > listSize)) {
         scrollAmount = listSize - lastVisiblePositionOnList;
     }
 
@@ -660,8 +667,11 @@ void AppletsListWidget::scrollUpLeft(int step, QRectF visibleRect)
         scrollAmount = firstVisiblePositionOnList - newFirstIcon->pos().y();
     }
 
+    //do both:
+    //if the newFirstIcon is the actual first icon on list, scroll until the beggining of the list
     //check if the scrollAmount is more than necessary to reach the begining of the list
-    if(firstVisiblePositionOnList - scrollAmount <  0){
+    if((firstVisibleItemIndex - appletsIndexesToReduce == 0) ||
+       (firstVisiblePositionOnList - scrollAmount <  0)){
         scrollAmount = firstVisiblePositionOnList;
     }
 
@@ -773,6 +783,8 @@ void AppletsListWidget::manageArrows()
     QRectF visibleRect = visibleListRect();
     qreal windowSize;
     qreal listSize;
+
+    qDebug() << "manage the arrows";
 
     if (m_orientation == Qt::Horizontal) {
         windowSize = m_appletsListWindowWidget->geometry().width();
