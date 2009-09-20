@@ -256,7 +256,7 @@ public:
      * This is more or less a request to disable editable widgets
      * responsible for the that phase.
      * There will be no further attempt to enter that phase until the
-     * widget is destroyed.
+     * widget is destroyed or revived.
      * Will be called only when running and stops it.
      */
     virtual void succeeded() = 0;
@@ -275,6 +275,7 @@ public:
      * disabled previously, clear the probably incorrect authentication tokens
      * and to set the input focus appropriately.
      * Will be called only after failed() (possibly with clear() in between),
+     * after succeeded() (after an aborted forced authentication token change),
      * or after presetEntity() with field -1.
      */
     virtual void revive() = 0;
