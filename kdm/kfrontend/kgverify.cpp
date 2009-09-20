@@ -669,6 +669,7 @@ KGVerify::handleVerify()
 			continue;
 		case V_MSG_ERR:
 			debug( " V_MSG_ERR\n" );
+			timer.suspend();
 			msg = gRecvStr();
 			debug( "  %s->textMessage(%\"s, true)\n", pName.data(), msg );
 			if (!greet->textMessage( msg, true )) { // XXX little point in filtering
@@ -679,9 +680,11 @@ KGVerify::handleVerify()
 			if (msg)
 				free( msg );
 			gSendInt( 0 );
+			timer.resume();
 			continue;
 		case V_MSG_INFO_AUTH:
 			debug( " V_MSG_INFO_AUTH\n" );
+			timer.suspend();
 			msg = gRecvStr();
 			debug( "  %s->textMessage(%\"s, false)\n", pName.data(), msg );
 			if (!greet->textMessage( msg, false )) {
@@ -691,14 +694,17 @@ KGVerify::handleVerify()
 				debug( "  message swallowed\n" );
 			free( msg );
 			gSendInt( 0 );
+			timer.resume();
 			continue;
 		case V_MSG_INFO:
 			debug( " V_MSG_INFO\n" );
+			timer.suspend();
 			msg = gRecvStr();
 			debug( "  display %\"s\n", msg );
 			vrfInfoBox( parent, user, msg );
 			free( msg );
 			gSendInt( 0 );
+			timer.resume();
 			continue;
 		}
 
@@ -829,7 +835,8 @@ KGVerify::gplugChanged()
 {
 	debug( "%s: gplugChanged()\n", pName.data() );
 	if (func == KGreeterPlugin::Authenticate &&
-	    ctx == KGreeterPlugin::Login)
+	    ctx == KGreeterPlugin::Login &&
+	    parent->isActiveWindow())
 	{
 		isClear = false;
 		if (!timeable)
