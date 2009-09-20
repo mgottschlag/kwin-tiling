@@ -667,26 +667,6 @@ KGVerify::handleVerify()
 			debug( "%s->succeeded()\n", pName.data() );
 			greet->succeeded();
 			continue;
-		case V_CHTOK_AUTH:
-			debug( " V_CHTOK_AUTH\n" );
-			nfunc = KGreeterPlugin::AuthChAuthTok;
-			user = curUser;
-			goto dchtok;
-		case V_CHTOK:
-			debug( " V_CHTOK\n" );
-			nfunc = KGreeterPlugin::ChAuthTok;
-			user.clear();
-		  dchtok:
-			{
-				timer.stop();
-				debug( "%s->succeeded()\n", pName.data() );
-				greet->succeeded();
-				KGChTok chtok( parent, user, pluginList, curPlugin, nfunc, KGreeterPlugin::Login );
-				if (!chtok.exec())
-					goto retry;
-				handler->verifyOk();
-				return;
-			}
 		case V_MSG_ERR:
 			debug( " V_MSG_ERR\n" );
 			msg = gRecvStr();
@@ -726,6 +706,27 @@ KGVerify::handleVerify()
 		coreLock = 0;
 		running = false;
 		timer.stop();
+
+		// These codes are not really terminal as far as the core is concerned,
+		// but the branches as a whole are.
+		if (ret == V_CHTOK_AUTH) {
+			debug( " V_CHTOK_AUTH\n" );
+			nfunc = KGreeterPlugin::AuthChAuthTok;
+			user = curUser;
+			goto dchtok;
+		} else if (ret == V_CHTOK) {
+			debug( " V_CHTOK\n" );
+			nfunc = KGreeterPlugin::ChAuthTok;
+			user.clear();
+		  dchtok:
+			debug( "%s->succeeded()\n", pName.data() );
+			greet->succeeded();
+			KGChTok chtok( parent, user, pluginList, curPlugin, nfunc, KGreeterPlugin::Login );
+			if (!chtok.exec())
+				goto retry;
+			handler->verifyOk();
+			return;
+		}
 
 		if (ret == V_OK) {
 			debug( " V_OK\n" );
