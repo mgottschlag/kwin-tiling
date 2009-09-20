@@ -115,20 +115,27 @@ void PopupProxy::tryInsertItem( HistoryItem const * const item,
     m_proxy_for_menu->insertAction(before, action);
 
     // Determine height of a menu item.
-    int itemheight = QFontMetrics(m_proxy_for_menu->fontMetrics()).height();
+    QStyleOptionMenuItem style_options;
+    // It would be much easier to use QMenu::initStyleOptions. But that is protected, so until we have a better
+    // excuse to subclass that, I'd rather implement this manually.
+    // Note 2 properties, tabwidth and maxIconWidth, are not available from the public interface, so those are left out (probably not 
+    // important for height. Also, Exlsive checkType is disregarded as  I don't think we will ever use it)
+    style_options.initFrom(m_proxy_for_menu);
+    style_options.checkType = action->isCheckable() ? QStyleOptionMenuItem::NonExclusive : QStyleOptionMenuItem::NotCheckable;
+    style_options.checked = action->isChecked();
+    style_options.font = action->font();
+    style_options.icon = action->icon();
+    style_options.menuHasCheckableItems = true;
+    style_options.menuRect = m_proxy_for_menu->rect();
+    style_options.text = action->text();
 
-//TODO Use old-style QStyle and QStyleOption API
-#if 0
-    Q_ASSERT( id != -1 ); // Be sure that the item was inserted.
-    QMenuItem* mi = m_proxy_for_menu->findItem( id );
+    int font_height = QFontMetrics(m_proxy_for_menu->fontMetrics()).height();
 
-
-    int itemheight = m_proxy_for_menu->style().sizeFromContents(QStyle::CT_PopupMenuItem,
-                                                              m_proxy_for_menu,
-                                                              QSize( 0, fontheight ),
-                                                              QStyleOption(mi,10,0) ).height();
-#endif
-    // Test if there was enough space
+    int itemheight = m_proxy_for_menu->style()->sizeFromContents(QStyle::CT_MenuItem,
+                                                              &style_options,
+                                                              QSize( 0, font_height ),
+                                                              m_proxy_for_menu).height();
+    // Subtract the used height
     remainingHeight -= itemheight;
 }
 
