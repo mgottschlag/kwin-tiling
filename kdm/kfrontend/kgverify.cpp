@@ -1263,7 +1263,7 @@ QXTimer::resume()
 void
 QXTimer::slotTimeout()
 {
-	left = 0;
+	left = -1;
 	emit timeout();
 }
 
