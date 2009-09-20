@@ -158,6 +158,7 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	void performAutoLogin();
 	bool scheduleAutoLogin( bool initial );
 	void doReject( bool initial );
+	void talkerEdits();
 
   private Q_SLOTS:
 	void slotPluginSelected( QAction * );

@@ -296,7 +296,7 @@ KGVerify::setUser( const QString &user )
 	curUser = user;
 	debug( "%s->setUser(%\"s)\n", pName.data(), qPrintable( user ) );
 	greet->setUser( user );
-	gplugChanged();
+	talkerEdits();
 }
 
 void
@@ -428,7 +428,7 @@ KGVerify::slotTimeout()
 			debug( "%s->start()\n", pName.data() );
 			greet->start();
 			slotActivity();
-			gplugChanged();
+			talkerEdits();
 		}
 	} else if (timedLeft) {
 		deadTicks--;
@@ -461,6 +461,18 @@ KGVerify::slotActivity()
 	} else if (timeable)
 		// timed login is possible and thus scheduled. reschedule it.
 		timer.start( TIMED_GREET_TO * SECONDS );
+}
+
+void
+KGVerify::talkerEdits()
+{
+	if (func == KGreeterPlugin::Authenticate &&
+	    ctx == KGreeterPlugin::Login)
+	{
+		isClear = false;
+		if (!timeable)
+			timer.start( FULL_GREET_TO * SECONDS );
+	}
 }
 
 
@@ -784,6 +796,8 @@ KGVerify::handleVerify()
 	running = true;
 	debug( "%s->start()\n", pName.data() );
 	greet->start();
+	slotActivity();
+	talkerEdits();
 }
 
 void
@@ -839,14 +853,8 @@ void
 KGVerify::gplugChanged()
 {
 	debug( "%s: gplugChanged()\n", pName.data() );
-	if (func == KGreeterPlugin::Authenticate &&
-	    ctx == KGreeterPlugin::Login &&
-	    parent->isActiveWindow())
-	{
-		isClear = false;
-		if (!timeable)
-			timer.start( FULL_GREET_TO * SECONDS );
-	}
+	if (parent->isActiveWindow())
+		talkerEdits();
 }
 
 void
