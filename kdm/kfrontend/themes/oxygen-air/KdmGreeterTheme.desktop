@@ -4,6 +4,7 @@
 [KdmGreeterTheme]
 Greeter=oxygen-air.xml
 Name=Oxygen-Air
+Name[bg]=Oxygen-Air
 Name[ca]=Oxygen-Air
 Name[da]=Oxygen-Air
 Name[de]=Oxygen-Air
