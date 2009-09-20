@@ -46,6 +46,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QKeyEvent>
 #include <QLabel>
 #include <QMenu>
+#include <QSocketNotifier>
 #include <QX11Info>
 
 #include <X11/Xlib.h> // for updateLockStatus()
@@ -89,6 +90,10 @@ KGVerify::KGVerify( KGVerifyHandler *_handler,
 	, failed( false )
 	, isClear( true )
 {
+	sockNot = new QSocketNotifier( rfd, QSocketNotifier::Read, this );
+	sockNot->setEnabled( false );
+	connect( sockNot, SIGNAL(activated( int )), SLOT(handleVerify()) );
+
 	connect( &timer, SIGNAL(timeout()), SLOT(slotTimeout()) );
 	connect( qApp, SIGNAL(activity()), SLOT(slotActivity()) );
 
@@ -104,7 +109,7 @@ KGVerify::~KGVerify()
 QMenu *
 KGVerify::getPlugMenu()
 {
-	// assert( !cont );
+	// assert( coreState != CoreBusy );
 	if (!plugMenu) {
 		uint np = pluginList.count();
 		if (np > 1) {
@@ -233,6 +238,7 @@ KGVerify::applyPreset()
 		greet->presetEntity( presEnt, presFld );
 		if (entitiesLocal()) {
 			curUser = presEnt;
+			pamUser.clear();
 			handler->verifySetUser( presEnt );
 		}
 		return true;
@@ -258,6 +264,7 @@ KGVerify::scheduleAutoLogin( bool initial )
 			deadTicks = DEAD_TIMED_TO;
 		}
 		updateStatus();
+		sockNot->setEnabled( false );
 		running = false;
 		isClear = true;
 		return true;
@@ -270,7 +277,7 @@ KGVerify::performAutoLogin()
 {
 //	timer.stop();
 	gSendInt( G_AutoLogin );
-	handleVerify();
+	coreState = CoreBusy;
 }
 
 QString // public
@@ -296,7 +303,6 @@ void
 KGVerify::start()
 {
 	authTok = (func == KGreeterPlugin::ChAuthTok);
-	cont = false;
 	if (func == KGreeterPlugin::Authenticate && ctx == KGreeterPlugin::Login) {
 		if (scheduleAutoLogin( true )) {
 			if (!_autoLoginAgain)
@@ -305,17 +311,16 @@ KGVerify::start()
 		} else
 			applyPreset();
 	}
+	sockNot->setEnabled( true );
 	running = true;
 	if (!(func == KGreeterPlugin::Authenticate ||
 	      ctx == KGreeterPlugin::ChangeTok ||
 	      ctx == KGreeterPlugin::ExChangeTok))
 	{
-		cont = true;
+		coreState = CoreBusy;
 	}
 	debug( "%s->start()\n", pName.data() );
 	greet->start();
-	if (cont)
-		handleVerify();
 }
 
 void
@@ -323,13 +328,14 @@ KGVerify::abort()
 {
 	debug( "%s->abort()\n", pName.data() );
 	greet->abort();
+	sockNot->setEnabled( false );
 	running = false;
 }
 
 void
 KGVerify::suspend()
 {
-	// assert( !cont );
+	// assert( coreState != CoreBusy );
 	if (running) {
 		debug( "%s->abort()\n", pName.data() );
 		greet->abort();
@@ -337,11 +343,13 @@ KGVerify::suspend()
 	suspended = true;
 	updateStatus();
 	timer.suspend();
+	sockNot->setEnabled( false );
 }
 
 void
 KGVerify::resume()
 {
+	sockNot->setEnabled( true );
 	timer.resume();
 	suspended = false;
 	updateLockStatus();
@@ -351,6 +359,7 @@ KGVerify::resume()
 	} else if (delayed) {
 		delayed = false;
 		running = true;
+		sockNot->setEnabled( true );
 		debug( "%s->start()\n", pName.data() );
 		greet->start();
 	}
@@ -366,7 +375,7 @@ KGVerify::accept()
 void // private
 KGVerify::doReject( bool initial )
 {
-	// assert( !cont );
+	// assert( coreState != CoreBusy );
 	if (running) {
 		debug( "%s->abort()\n", pName.data() );
 		greet->abort();
@@ -375,6 +384,7 @@ KGVerify::doReject( bool initial )
 	debug( "%s->clear()\n", pName.data() );
 	greet->clear();
 	curUser.clear();
+	pamUser.clear();
 	if (!scheduleAutoLogin( initial )) {
 		isClear = !(isClear && applyPreset());
 		if (running) {
@@ -414,12 +424,11 @@ KGVerify::slotTimeout()
 			delayed = true;
 		else {
 			running = true;
+			sockNot->setEnabled( true );
 			debug( "%s->start()\n", pName.data() );
 			greet->start();
 			slotActivity();
 			gplugChanged();
-			if (cont)
-				handleVerify();
 		}
 	} else if (timedLeft) {
 		deadTicks--;
@@ -444,6 +453,7 @@ KGVerify::slotActivity()
 		greet->revive();
 		debug( "%s->start()\n", pName.data() );
 		greet->start();
+		sockNot->setEnabled( true );
 		running = true;
 		timedLeft = 0;
 		updateStatus();
@@ -604,181 +614,176 @@ KGVerify::handleFailVerify( QWidget *parent, bool showUser )
 void // private
 KGVerify::handleVerify()
 {
-	QString user;
-
 	debug( "handleVerify ...\n" );
-	for (;;) {
-		char *msg;
-		int ret, echo, ndelay;
-		KGreeterPlugin::Function nfunc;
+	QString user;
+	char *msg;
+	int ret, echo, ndelay;
+	KGreeterPlugin::Function nfunc;
 
-		ret = gRecvInt();
+	ret = gRecvInt();
 
-		// requests
-		coreState = CorePrompting;
-		switch (ret) {
-		case V_GET_TEXT:
-			debug( " V_GET_TEXT\n" );
-			msg = gRecvStr();
-			debug( "  prompt %\"s\n", msg );
-			echo = gRecvInt();
-			debug( "  echo = %d\n", echo );
-			ndelay = gRecvInt();
-			debug( "  ndelay = %d\n%s->textPrompt(...)\n", ndelay, pName.data() );
-			greet->textPrompt( msg, echo, ndelay );
-			if (msg)
-				free( msg );
-			return;
-		case V_GET_BINARY:
-			debug( " V_GET_BINARY\n" );
-			msg = gRecvArr( &ret );
-			debug( "  %d bytes prompt\n", ret );
-			ndelay = gRecvInt();
-			debug( "  ndelay = %d\n%s->binaryPrompt(...)\n", ndelay, pName.data() );
-			greet->binaryPrompt( msg, ndelay );
-			if (msg)
-				free( msg );
-			return;
-		}
-
-		// non-terminal status
-		coreState = CoreBusy;
-		switch (ret) {
-		case V_PUT_USER:
-			debug( " V_PUT_USER\n" );
-			msg = gRecvStr();
-			curUser = user = QString::fromLocal8Bit( msg );
-			// greet needs this to be able to return something useful from
-			// getEntity(). but the backend is still unable to tell a domain ...
-			debug( "  %s->setUser(%\"s)\n", pName.data(), qPrintable( user ) );
-			greet->setUser( curUser );
-			handler->verifySetUser( curUser );
-			if (msg)
-				free( msg );
-			continue;
-		case V_PRE_OK: // this is only for func == AuthChAuthTok
-			debug( " V_PRE_OK\n" );
-			// With the "classic" method, the wrong user simply cannot be
-			// authenticated, even with the generic plugin. Other methods
-			// could do so, but this applies only to ctx == ChangeTok, which
-			// is not implemented yet.
-			authTok = true;
-			cont = true;
-			debug( "%s->succeeded()\n", pName.data() );
-			greet->succeeded();
-			continue;
-		case V_MSG_ERR:
-			debug( " V_MSG_ERR\n" );
-			timer.suspend();
-			msg = gRecvStr();
-			debug( "  %s->textMessage(%\"s, true)\n", pName.data(), msg );
-			if (!greet->textMessage( msg, true )) { // XXX little point in filtering
-				debug( "  message passed\n" );
-				vrfErrBox( parent, user, msg );
-			} else
-				debug( "  message swallowed\n" );
-			if (msg)
-				free( msg );
-			gSendInt( 0 );
-			timer.resume();
-			continue;
-		case V_MSG_INFO_AUTH:
-			debug( " V_MSG_INFO_AUTH\n" );
-			timer.suspend();
-			msg = gRecvStr();
-			debug( "  %s->textMessage(%\"s, false)\n", pName.data(), msg );
-			if (!greet->textMessage( msg, false )) {
-				debug( "  message passed\n" );
-				vrfInfoBox( parent, user, msg );
-			} else
-				debug( "  message swallowed\n" );
+	// requests
+	coreState = CorePrompting;
+	switch (ret) {
+	case V_GET_TEXT:
+		debug( " V_GET_TEXT\n" );
+		msg = gRecvStr();
+		debug( "  prompt %\"s\n", msg );
+		echo = gRecvInt();
+		debug( "  echo = %d\n", echo );
+		ndelay = gRecvInt();
+		debug( "  ndelay = %d\n%s->textPrompt(...)\n", ndelay, pName.data() );
+		greet->textPrompt( msg, echo, ndelay );
+		if (msg)
 			free( msg );
-			gSendInt( 0 );
-			timer.resume();
-			continue;
-		case V_MSG_INFO:
-			debug( " V_MSG_INFO\n" );
-			timer.suspend();
-			msg = gRecvStr();
-			debug( "  display %\"s\n", msg );
-			vrfInfoBox( parent, user, msg );
+		return;
+	case V_GET_BINARY:
+		debug( " V_GET_BINARY\n" );
+		msg = gRecvArr( &ret );
+		debug( "  %d bytes prompt\n", ret );
+		ndelay = gRecvInt();
+		debug( "  ndelay = %d\n%s->binaryPrompt(...)\n", ndelay, pName.data() );
+		greet->binaryPrompt( msg, ndelay );
+		if (msg)
 			free( msg );
-			gSendInt( 0 );
-			timer.resume();
-			continue;
-		}
-
-		// terminal status
-		coreState = CoreIdle;
-		running = false;
-		timer.stop();
-
-		// These codes are not really terminal as far as the core is concerned,
-		// but the branches as a whole are.
-		if (ret == V_CHTOK_AUTH) {
-			debug( " V_CHTOK_AUTH\n" );
-			nfunc = KGreeterPlugin::AuthChAuthTok;
-			user = curUser;
-			goto dchtok;
-		} else if (ret == V_CHTOK) {
-			debug( " V_CHTOK\n" );
-			nfunc = KGreeterPlugin::ChAuthTok;
-			user.clear();
-		  dchtok:
-			debug( "%s->succeeded()\n", pName.data() );
-			greet->succeeded();
-			KGChTok chtok( parent, user, pluginList, curPlugin, nfunc, KGreeterPlugin::Login );
-			if (!chtok.exec())
-				goto retry;
-			handler->verifyOk();
-			return;
-		}
-
-		if (ret == V_OK) {
-			debug( " V_OK\n" );
-			if (!fixedEntity.isEmpty()) {
-				debug( "  %s->getEntity()\n", pName.data() );
-				QString ent = greet->getEntity();
-				debug( "  entity %\"s\n", qPrintable( ent ) );
-				if (ent != fixedEntity) {
-					debug( "%s->failed()\n", pName.data() );
-					greet->failed();
-					msgBox( sorrybox,
-					        i18n("Authenticated user (%1) does not match requested user (%2).\n",
-					             ent, fixedEntity ) );
-					goto retry;
-				}
-			}
-			debug( "%s->succeeded()\n", pName.data() );
-			greet->succeeded();
-			handler->verifyOk();
-			return;
-		}
-
-		debug( "%s->failed()\n", pName.data() );
-		greet->failed();
-
-		if (ret == V_AUTH) {
-			debug( " V_AUTH\n" );
-			failed = true;
-			updateStatus();
-			handler->verifyFailed();
-			timer.start( 1500 + KRandom::random()/(RAND_MAX/1000) );
-			return;
-		}
-		if (ret != V_FAIL)
-			logPanic( "Unknown V_xxx code %d from core\n", ret );
-		debug( " V_FAIL\n" );
-	  retry:
-		debug( "%s->revive()\n", pName.data() );
-		greet->revive();
-		running = true;
-		debug( "%s->start()\n", pName.data() );
-		greet->start();
-		if (!cont)
-			return;
-		user.clear();
+		return;
 	}
+
+	// non-terminal status
+	coreState = CoreBusy;
+	switch (ret) {
+	case V_PUT_USER:
+		debug( " V_PUT_USER\n" );
+		msg = gRecvStr();
+		curUser = pamUser = QString::fromLocal8Bit( msg );
+		// greet needs this to be able to return something useful from
+		// getEntity(). but the backend is still unable to tell a domain ...
+		debug( "  %s->setUser(%\"s)\n", pName.data(), qPrintable( user ) );
+		greet->setUser( curUser );
+		handler->verifySetUser( curUser );
+		if (msg)
+			free( msg );
+		return;
+	case V_PRE_OK: // this is only for func == AuthChAuthTok
+		debug( " V_PRE_OK\n" );
+		// With the "classic" method, the wrong user simply cannot be
+		// authenticated, even with the generic plugin. Other methods
+		// could do so, but this applies only to ctx == ChangeTok, which
+		// is not implemented yet.
+		authTok = true;
+		debug( "%s->succeeded()\n", pName.data() );
+		greet->succeeded();
+		return;
+	case V_MSG_ERR:
+		debug( " V_MSG_ERR\n" );
+		timer.suspend();
+		msg = gRecvStr();
+		debug( "  %s->textMessage(%\"s, true)\n", pName.data(), msg );
+		if (!greet->textMessage( msg, true )) { // XXX little point in filtering
+			debug( "  message passed\n" );
+			vrfErrBox( parent, pamUser, msg );
+		} else
+			debug( "  message swallowed\n" );
+		if (msg)
+			free( msg );
+		gSendInt( 0 );
+		timer.resume();
+		return;
+	case V_MSG_INFO_AUTH:
+		debug( " V_MSG_INFO_AUTH\n" );
+		timer.suspend();
+		msg = gRecvStr();
+		debug( "  %s->textMessage(%\"s, false)\n", pName.data(), msg );
+		if (!greet->textMessage( msg, false )) {
+			debug( "  message passed\n" );
+			vrfInfoBox( parent, pamUser, msg );
+		} else
+			debug( "  message swallowed\n" );
+		free( msg );
+		gSendInt( 0 );
+		timer.resume();
+		return;
+	case V_MSG_INFO:
+		debug( " V_MSG_INFO\n" );
+		timer.suspend();
+		msg = gRecvStr();
+		debug( "  display %\"s\n", msg );
+		vrfInfoBox( parent, pamUser, msg );
+		free( msg );
+		gSendInt( 0 );
+		timer.resume();
+		return;
+	}
+
+	// terminal status
+	coreState = CoreIdle;
+	running = false;
+	sockNot->setEnabled( false );
+	timer.stop();
+
+	// These codes are not really terminal as far as the core is concerned,
+	// but the branches as a whole are.
+	if (ret == V_CHTOK_AUTH) {
+		debug( " V_CHTOK_AUTH\n" );
+		nfunc = KGreeterPlugin::AuthChAuthTok;
+		user = curUser;
+		goto dchtok;
+	} else if (ret == V_CHTOK) {
+		debug( " V_CHTOK\n" );
+		nfunc = KGreeterPlugin::ChAuthTok;
+		user.clear();
+	  dchtok:
+		debug( "%s->succeeded()\n", pName.data() );
+		greet->succeeded();
+		KGChTok chtok( parent, user, pluginList, curPlugin, nfunc, KGreeterPlugin::Login );
+		if (!chtok.exec())
+			goto retry;
+		handler->verifyOk();
+		return;
+	}
+
+	if (ret == V_OK) {
+		debug( " V_OK\n" );
+		if (!fixedEntity.isEmpty()) {
+			debug( "  %s->getEntity()\n", pName.data() );
+			QString ent = greet->getEntity();
+			debug( "  entity %\"s\n", qPrintable( ent ) );
+			if (ent != fixedEntity) {
+				debug( "%s->failed()\n", pName.data() );
+				greet->failed();
+				msgBox( sorrybox,
+						i18n("Authenticated user (%1) does not match requested user (%2).\n",
+							 ent, fixedEntity ) );
+				goto retry;
+			}
+		}
+		debug( "%s->succeeded()\n", pName.data() );
+		greet->succeeded();
+		handler->verifyOk();
+		return;
+	}
+
+	debug( "%s->failed()\n", pName.data() );
+	greet->failed();
+
+	if (ret == V_AUTH) {
+		debug( " V_AUTH\n" );
+		failed = true;
+		updateStatus();
+		handler->verifyFailed();
+		timer.start( 1500 + KRandom::random()/(RAND_MAX/1000) );
+		return;
+	}
+	if (ret != V_FAIL)
+		logPanic( "Unknown V_xxx code %d from core\n", ret );
+	debug( " V_FAIL\n" );
+  retry:
+	debug( "%s->revive()\n", pName.data() );
+	greet->revive();
+	sockNot->setEnabled( true );
+	running = true;
+	debug( "%s->start()\n", pName.data() );
+	greet->start();
 }
 
 void
@@ -789,7 +794,7 @@ KGVerify::gplugReturnText( const char *text, int tag )
 	gSendStr( text );
 	if (text) {
 		gSendInt( tag );
-		handleVerify();
+		coreState = CoreBusy;
 	} else
 		coreState = CoreIdle;
 }
@@ -802,7 +807,7 @@ KGVerify::gplugReturnBinary( const char *data )
 		int len = up[3] | (up[2] << 8) | (up[1] << 16) | (up[0] << 24);
 		debug( "%s: gplugReturnBinary(%d bytes)\n", pName.data(), len );
 		gSendArr( len, data );
-		handleVerify();
+		coreState = CoreBusy;
 	} else {
 		debug( "%s: gplugReturnBinary(NULL)\n", pName.data() );
 		gSendArr( 0, 0 );
@@ -822,12 +827,12 @@ void
 KGVerify::gplugStart()
 {
 	// XXX handle func != Authenticate
-	if (cont)
+	if (coreState != CoreIdle)
 		return;
 	debug( "%s: gplugStart()\n", pName.data() );
 	gSendInt( ctx == KGreeterPlugin::Shutdown ? G_VerifyRootOK : G_Verify );
 	gSendStr( greetPlugins[pluginList[curPlugin]].info->method );
-	handleVerify();
+	coreState = CoreBusy;
 }
 
 void

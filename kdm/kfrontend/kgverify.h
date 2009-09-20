@@ -41,6 +41,7 @@ class KdmThemer;
 class KLibrary;
 class KPushButton;
 class QMenu;
+class QSocketNotifier;
 
 // helper class, nuke when qt supports suspend()/resume()
 class QXTimer : public QObject {
@@ -129,12 +130,12 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	void setTimer();
 	void updateLockStatus();
 	virtual void updateStatus() = 0;
-	void handleVerify();
 
 	QXTimer timer;
-	QString fixedEntity, presEnt, curUser;
+	QString fixedEntity, presEnt, curUser, pamUser;
 	PluginList pluginList;
 	KGVerifyHandler *handler;
+	QSocketNotifier *sockNot;
 	QWidget *parent, *predecessor;
 	KGreeterPlugin *greet;
 	QMenu *plugMenu;
@@ -143,7 +144,7 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	KGreeterPlugin::Function func;
 	KGreeterPlugin::Context ctx;
 	bool capsLocked;
-	bool enabled, running, suspended, failed, delayed, cont;
+	bool enabled, running, suspended, failed, delayed;
 	bool authTok, isClear, timeable;
 
 	static void vrfMsgBox( QWidget *parent, const QString &user, QMessageBox::Icon type, const QString &mesg );
@@ -162,6 +163,7 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	void slotPluginSelected( QAction * );
 	void slotTimeout();
 	void slotActivity();
+	void handleVerify();
 
   public: // from KGreetPluginHandler
 	virtual void gplugReturnText( const char *text, int tag );
