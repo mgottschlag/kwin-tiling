@@ -565,7 +565,8 @@ KGreeter::slotLoadPrevWM()
 	QByteArray name;
 	char *sess;
 
-	if (verify->coreLock) {
+	// XXX this should actually check for !CoreBusy - would it be safe?
+	if (verify->coreState != KGVerify::CoreIdle) {
 		needLoad = true;
 		return;
 	}

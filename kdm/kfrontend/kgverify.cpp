@@ -72,7 +72,7 @@ KGVerify::KGVerify( KGVerifyHandler *_handler,
                     KGreeterPlugin::Function _func,
                     KGreeterPlugin::Context _ctx )
 	: inherited()
-	, coreLock( 0 )
+	, coreState( CoreIdle )
 	, fixedEntity( _fixedUser )
 	, pluginList( _pluginList )
 	, handler( _handler )
@@ -615,7 +615,7 @@ KGVerify::handleVerify()
 		ret = gRecvInt();
 
 		// requests
-		coreLock = 1;
+		coreState = CorePrompting;
 		switch (ret) {
 		case V_GET_TEXT:
 			debug( " V_GET_TEXT\n" );
@@ -642,7 +642,7 @@ KGVerify::handleVerify()
 		}
 
 		// non-terminal status
-		coreLock = 2;
+		coreState = CoreBusy;
 		switch (ret) {
 		case V_PUT_USER:
 			debug( " V_PUT_USER\n" );
@@ -709,7 +709,7 @@ KGVerify::handleVerify()
 		}
 
 		// terminal status
-		coreLock = 0;
+		coreState = CoreIdle;
 		running = false;
 		timer.stop();
 
@@ -791,7 +791,7 @@ KGVerify::gplugReturnText( const char *text, int tag )
 		gSendInt( tag );
 		handleVerify();
 	} else
-		coreLock = 0;
+		coreState = CoreIdle;
 }
 
 void
@@ -806,7 +806,7 @@ KGVerify::gplugReturnBinary( const char *data )
 	} else {
 		debug( "%s: gplugReturnBinary(NULL)\n", pName.data() );
 		gSendArr( 0, 0 );
-		coreLock = 0;
+		coreState = CoreIdle;
 	}
 }
 

@@ -114,7 +114,7 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	void accept();
 	void reject();
 
-	int coreLock;
+	enum { CoreIdle, CorePrompting, CoreBusy } coreState;
 
 	static bool handleFailVerify( QWidget *parent, bool showUser );
 	static PluginList init( const QStringList &plugins );
