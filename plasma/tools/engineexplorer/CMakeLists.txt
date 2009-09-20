@@ -6,7 +6,7 @@ set(plasmaengineexplorer_SRCS
 )
 
 macro_optional_find_package(Soprano)
-macro_log_feature(Soprano_FOUND "Soprano" "Soprano Libraries" "kdesupport" FALSE "" "Adds support for the Soprano data type to Plasma Engine Explorer.")
+macro_log_feature(Soprano_FOUND "Soprano" "Semantic Desktop Storing" "http://soprano.sourceforge.net" FALSE "" "Adds support for the Soprano data type to Plasma Engine Explorer.")
 
 if (Soprano_FOUND)
    include_directories( ${SOPRANO_INCLUDE_DIR} )
