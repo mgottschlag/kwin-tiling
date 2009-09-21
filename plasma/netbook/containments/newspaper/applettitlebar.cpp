@@ -50,6 +50,16 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
         connect(maximizeButton, SIGNAL(clicked()), applet, SLOT(runAssociatedApplication()));
     }
 
+    if (applet->hasConfigurationInterface()) {
+        Plasma::IconWidget *closeButton = new Plasma::IconWidget(this);
+        closeButton->setSvg("widgets/configuration-icons", "configure");
+        closeButton->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
+        closeButton->setMaximumSize(closeButton->minimumSize());
+        lay->addItem(closeButton, 0, column);
+        ++column;
+        connect(closeButton, SIGNAL(clicked()), applet, SLOT(showConfigurationInterface()));
+    }
+
     Plasma::Label *title = new Plasma::Label(this);
     title->setAlignment(Qt::AlignCenter);
     title->nativeWidget()->setWordWrap(false);
