@@ -53,10 +53,13 @@ public:
 
     History* history() { return m_history; }
     const History* history() const { return m_history; }
-
 public Q_SLOTS:
     void slotHistoryChanged() { m_dirty = true; }
     void slotAboutToShow();
+    /**
+     * set the top history item active, to easy kb navigation
+     */
+    void slotSetTopActive();
 
 private:
     void rebuild( const QString& filter = QString() );

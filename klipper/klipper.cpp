@@ -530,6 +530,7 @@ void Klipper::slotQuit()
 void Klipper::slotPopupMenu() {
     KlipperPopup* popup = history()->popup();
     popup->ensureClean();
+    popup->slotSetTopActive();
     showPopupMenu( popup );
 }
 

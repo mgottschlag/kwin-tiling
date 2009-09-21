@@ -277,4 +277,12 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
     } //case
 }
 
+
+void KlipperPopup::slotSetTopActive()
+{
+  if (actions().size() > TOP_HISTORY_ITEM_INDEX) {
+    setActiveAction(actions().at(TOP_HISTORY_ITEM_INDEX));
+  }
+}
+
 #include "klipperpopup.moc"
