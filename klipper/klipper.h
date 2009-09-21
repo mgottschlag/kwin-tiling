@@ -133,6 +133,7 @@ protected:
 
 public Q_SLOTS:
     void slotPopupMenu();
+    void slotAskClearHistory();
 
 protected Q_SLOTS:
     void showPopupMenu( QMenu * );

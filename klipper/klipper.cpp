@@ -142,8 +142,7 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     m_clearHistoryAction = m_collection->addAction( "clearHistoryAction" );
     m_clearHistoryAction->setIcon( KIcon("edit-clear-history") );
     m_clearHistoryAction->setText( i18n("C&lear Clipboard History") );
-    connect(m_clearHistoryAction, SIGNAL(triggered() ), history(), SLOT( slotClear() ));
-    connect( m_clearHistoryAction, SIGNAL( triggered() ), SLOT( slotClearClipboard() ) );
+    connect(m_clearHistoryAction, SIGNAL(triggered() ), SLOT( slotAskClearHistory() ));
     //m_clearHistoryAction->setGroup( defaultGroup );
     m_configureAction = m_collection->addAction( "configureAction" );
     m_configureAction->setIcon( KIcon("configure") );
@@ -1040,6 +1039,22 @@ static void ensureGlobalSyncOff(KSharedConfigPtr config) {
         cg.sync();
         kapp->setSynchronizeClipboard(false);
         KGlobalSettings::self()->emitChange( KGlobalSettings::ClipboardConfigChanged, 0 );
+    }
+
+}
+
+void Klipper::slotAskClearHistory()
+{
+    int clearHist = KMessageBox::questionYesNo(0, 
+                                               i18n("Really delete entire clipboard history?"),
+                                               i18n("Delete clipboard history?"), 
+                                               KStandardGuiItem::yes(),
+                                               KStandardGuiItem::no(),
+                                               QString::fromUtf8("really_clear_history"),
+                                               KMessageBox::Dangerous);
+    if (clearHist == KMessageBox::Yes) {
+      history()->slotClear();
+      slotClearClipboard();
     }
 
 }
