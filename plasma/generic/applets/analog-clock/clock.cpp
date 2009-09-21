@@ -117,7 +117,7 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::SizeConstraint) {
         m_repaintCache = RepaintAll;
 
-        QSize pixmapSize = size().toSize();
+        QSize pixmapSize = contentsRect().size().toSize();
 
         if (m_showingTimezone) {
             QRect tzArea = tzRect();
@@ -353,7 +353,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         facePainter.setRenderHint(QPainter::SmoothPixmapTransform);
         glassPainter.setRenderHint(QPainter::SmoothPixmapTransform);
 
-        m_theme->paint(&facePainter, m_faceCache.rect(), "ClockFace");
+        m_theme->paint(&facePainter, faceRect, "ClockFace");
 
         glassPainter.save();
         QRectF elementRect = QRectF(QPointF(0, 0), m_theme->elementSize("HandCenterScrew"));
@@ -387,6 +387,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     if (targetRect.width() < rect.width()) {
         targetRect.moveLeft((rect.width() - targetRect.width()) / 2);
     }
+    targetRect.translate(rect.topLeft());
 
     p->drawPixmap(targetRect, m_handsCache, faceRect);
     if (m_showSecondHand) {
