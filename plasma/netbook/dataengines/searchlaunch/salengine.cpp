@@ -29,7 +29,7 @@ SearchLaunchEngine::SearchLaunchEngine(QObject* parent, const QVariantList& args
 
 void SearchLaunchEngine::init()
 {
-    setData("query", "");
+    setData("query", QString());
 }
 
 Plasma::Service *SearchLaunchEngine::serviceForSource(const QString &source)
