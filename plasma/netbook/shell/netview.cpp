@@ -133,7 +133,7 @@ void NetView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containmen
         setContainment(0);
     }
 
-    if (isScreen == screen()) {
+    if (isScreen == screen() && this->containment( )!= containment) {
         setContainment(containment);
     }
 }
