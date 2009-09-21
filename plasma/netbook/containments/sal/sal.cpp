@@ -86,9 +86,6 @@ void SearchLaunch::init()
 
     Plasma::Svg *borderSvg = new Plasma::Svg(this);
     borderSvg->setImagePath("newspaper/border");
-
-    Plasma::DataEngine *engine = dataEngine("searchlaunch");
-    engine->connectSource("query", this);
 }
 
 void SearchLaunch::doSearch(const QString query)
@@ -454,6 +451,11 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_appletsLayout->setMaximumHeight(size().height()/4);
         }
         m_relayoutTimer->start();
+    }
+
+    if (constraints & Plasma::StartupCompletedConstraint) {
+        Plasma::DataEngine *engine = dataEngine("searchlaunch");
+        engine->connectSource("query", this);
     }
 }
 
