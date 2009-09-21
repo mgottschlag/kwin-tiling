@@ -119,14 +119,13 @@ PlasmaApp::PlasmaApp()
         }
     }
 
+    m_mainView->setFixedSize(width, height);
+    m_mainView->move(0,0);
+
     // this line initializes the corona.
     corona();
     setIsDesktop(isDesktop);
     reserveStruts();
-
-    m_mainView->setFixedSize(width, height);
-    m_mainView->move(0,0);
-
 
     if (isDesktop) {
         notifyStartup(true);
