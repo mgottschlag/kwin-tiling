@@ -45,6 +45,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
       m_currentIconIndex(-1)
 {
     setFrameShadow(Plasma::Frame::Raised);
+    setEnabledBorders(Plasma::FrameSvg::BottomBorder);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     //FIXME: layout problems, do it right
     //setPreferredSize(500, 128);
@@ -104,8 +105,7 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     // create new IconWidget for favourite strip
 
     Plasma::IconWidget *fav = new Plasma::IconWidget(this);
-    fav->setSizePolicy(QSizePolicy::MinimumExpanding,
-                          QSizePolicy::MinimumExpanding);
+    fav->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     fav->installEventFilter(this);
     fav->setText(match->text());
     fav->setIcon(match->icon());
@@ -114,7 +114,7 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     m_hoverIndicator->getContentsMargins(&left, &top, &right, &bottom);
     fav->setContentsMargins(left, top, right, bottom);
 
-    fav->setMinimumSize(fav->sizeFromIconSize(KIconLoader::SizeHuge));
+    fav->setMinimumSize(fav->sizeFromIconSize(KIconLoader::SizeLarge));
     fav->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(fav, SIGNAL(activated()), this, SLOT(launchFavourite()));
 
@@ -268,7 +268,6 @@ bool StripWidget::eventFilter(QObject *watched, QEvent *event)
     if (event->type() == QEvent::GraphicsSceneHoverEnter) {
         Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
         if (icon) {
-            m_hoverIndicator->show();
             m_hoverIndicator->setTargetItem(icon);
         }
     //FIXME: we probably need a specialized widget instead this ugly filter code
@@ -328,7 +327,6 @@ void StripWidget::focusInEvent(QFocusEvent *event)
 {
     Q_UNUSED(event)
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_stripLayout->itemAt(0));
-    m_hoverIndicator->show();
     m_hoverIndicator->setTargetItem(icon);
     m_currentIconIndex = 0;
 }
