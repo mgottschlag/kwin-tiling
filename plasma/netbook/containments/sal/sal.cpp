@@ -53,6 +53,7 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
       m_viewMainWidget(0),
       m_searchField(0),
       m_gridScroll(0),
+      m_hoverIndicator(0),
       m_appletsLayout(0),
       m_buttonDownMousePos(QPoint())
 {
@@ -93,11 +94,13 @@ void SearchLaunch::init()
 void SearchLaunch::doSearch(const QString query)
 {
     m_queryCounter = 0;
+    m_hoverIndicator->setTargetItem(0);
 
     foreach (Plasma::IconWidget *icon, m_items) {
         m_launchGrid->removeAt(0);
         icon->deleteLater();
     }
+
     m_items.clear();
     m_maxColumnWidth = 0;
 
@@ -364,8 +367,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             // create main layout
             m_mainLayout = new QGraphicsLinearLayout();
             m_mainLayout->setOrientation(layoutOtherDirection);
-            //FIXME: whi is necessary this hardcoded space?
-            m_mainLayout->setSpacing(16);
+            m_mainLayout->setContentsMargins(0, 0, 0, 0);
             m_mainLayout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
                                                     QSizePolicy::Expanding));
             setLayout(m_mainLayout);
@@ -399,19 +401,11 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_launchGrid = new QGraphicsGridLayout();
             m_gridBackground->setLayout(m_launchGrid);
 
-            QGraphicsLinearLayout *favouritesLayout = new QGraphicsLinearLayout();
-            favouritesLayout->setOrientation(layoutDirection);
-            favouritesLayout->addStretch();
-            favouritesLayout->addStretch();
-
             m_stripWidget = new StripWidget(m_runnermg, this);
-            favouritesLayout->insertItem(1, m_stripWidget);
-            favouritesLayout->setStretchFactor(m_stripWidget, 4);
             KConfigGroup cg = config();
             m_stripWidget->restore(cg);
 
             m_appletsLayout = new QGraphicsLinearLayout();
-
 
             m_homeButton = new Plasma::IconWidget(this);
             m_homeButton->setIcon(KIcon("go-home"));
@@ -436,7 +430,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             searchLayout->addStretch();
 
             // add our layouts to main vertical layout
-            m_mainLayout->addItem(favouritesLayout);
+            m_mainLayout->addItem(m_stripWidget);
             m_mainLayout->addItem(searchLayout);
             m_mainLayout->addItem(gridLayout);
 
@@ -461,7 +455,6 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
         }
         m_relayoutTimer->start();
     }
-
 }
 
 void SearchLaunch::setFormFactorFromLocation(Plasma::Location loc)
