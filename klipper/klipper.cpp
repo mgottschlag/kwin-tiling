@@ -275,6 +275,11 @@ void Klipper::slotStartShowTimer()
 
 void Klipper::loadSettings()
 {
+    // Security bug 142882: If user has save clipboard turned off, old data should be deleted from disk
+    if (m_bKeepContents && !KlipperSettings::keepClipboardContents()) {
+        saveHistory(true);
+    }
+
     m_bPopupAtMouse = KlipperSettings::popupAtMousePosition();
     m_bKeepContents = KlipperSettings::keepClipboardContents();
     m_bReplayActionInHistory = KlipperSettings::replayActionInHistory();
@@ -409,7 +414,7 @@ bool Klipper::loadHistory() {
     return true;
 }
 
-void Klipper::saveHistory() {
+void Klipper::saveHistory(bool empty) {
     static const char* const failed_save_warning =
         "Failed to save history. Clipboard history cannot be saved.";
     // don't use "appdata", klipper is also a kicker applet
@@ -427,10 +432,12 @@ void Klipper::saveHistory() {
     QDataStream history_stream( &data, QIODevice::WriteOnly );
     history_stream << klipper_version; // const char*
 
-    History::iterator it = history()->youngest();
-    while (it.hasNext()) {
-        const HistoryItem *item = it.next();
-        history_stream << item;
+    if (!empty) {
+        History::iterator it = history()->youngest();
+        while (it.hasNext()) {
+            const HistoryItem *item = it.next();
+            history_stream << item;
+        }
     }
 
     quint32 crc = crc32( 0, reinterpret_cast<unsigned char *>( data.data() ), data.size() );
@@ -1055,6 +1062,7 @@ void Klipper::slotAskClearHistory()
     if (clearHist == KMessageBox::Yes) {
       history()->slotClear();
       slotClearClipboard();
+      saveHistory();
     }
 
 }
