@@ -31,6 +31,8 @@ class KlipperTray : public KSystemTrayIcon
 
 public:
     KlipperTray();
+public slots:
+    void slotSetToolTipFromHistory();
 private:
     Klipper* m_klipper;
 };

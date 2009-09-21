@@ -27,16 +27,29 @@
 #include <klocale.h>
 
 #include "klipper.h"
+#include "history.h"
 
 KlipperTray::KlipperTray()
     : KSystemTrayIcon( "klipper" )
 {
     m_klipper = new Klipper( this, KGlobal::config());
-    setToolTip( i18n("Klipper - clipboard tool"));
     setContextMenu( NULL );
     show();
     connect( this, SIGNAL( activated( QSystemTrayIcon::ActivationReason )), m_klipper,
         SLOT( slotPopupMenu()));
+    connect( m_klipper->history(), SIGNAL(changed()), SLOT(slotSetToolTipFromHistory()));
+    slotSetToolTipFromHistory();
+}
+
+void KlipperTray::slotSetToolTipFromHistory()
+{
+    if (m_klipper->history()->empty()) {
+      setToolTip( i18n("Clipboard is empty"));
+    } else {
+      const HistoryItem* top = m_klipper->history()->first();
+      setToolTip(top->text());
+    }
+
 }
 
 #include "tray.moc"
