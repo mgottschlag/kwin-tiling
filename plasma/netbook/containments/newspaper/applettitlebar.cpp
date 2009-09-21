@@ -22,6 +22,7 @@
 
 #include <QGraphicsGridLayout>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneResizeEvent>
 #include <QLabel>
 #include <QTimer>
 
@@ -35,7 +36,11 @@
 
 AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
        : QGraphicsWidget(applet),
-         m_applet(applet)
+         m_applet(applet),
+         m_configureButton(0),
+         m_closeButton(0),
+         m_savedAppletTopMargin(0),
+         m_background(0)
 {
     QGraphicsGridLayout *lay = new QGraphicsGridLayout(this);
 
@@ -80,6 +85,10 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
         Plasma::Separator *separator = new Plasma::Separator(this);
         separator->setOrientation(Qt::Horizontal);
         lay->addItem(separator, 1, 0, 1, column);
+    } else {
+        m_background = new Plasma::FrameSvg(this);
+        m_background->setImagePath("widgets/frame");
+        m_background->setElementPrefix("raised");
     }
 
     applet->installEventFilter(this);
@@ -96,12 +105,18 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
 
 AppletTitleBar::~AppletTitleBar()
 {
-    
 }
 
 
 void AppletTitleBar::syncMargins()
 {
+    if (m_background) {
+        qreal left, top, right, bottom;
+
+        m_background->getMargins(left, top, right, bottom);
+        setContentsMargins(left, top, right, bottom);
+    }
+
     qreal left, right, bottom;
     m_applet->getContentsMargins(&left, &m_savedAppletTopMargin, &right, &bottom);
     m_applet->setContentsMargins(left, m_savedAppletTopMargin + size().height(), right, bottom);
@@ -137,6 +152,23 @@ void AppletTitleBar::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void AppletTitleBar::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     event->ignore();
+}
+
+void AppletTitleBar::resizeEvent(QGraphicsSceneResizeEvent *event)
+{
+    if (m_background) {
+        m_background->resizeFrame(event->newSize());
+    }
+}
+
+void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
+
+    if (m_background) {
+        m_background->paintFrame(painter);
+    }
 }
 
 void AppletTitleBar::appletRemoved(Plasma::Applet *applet)

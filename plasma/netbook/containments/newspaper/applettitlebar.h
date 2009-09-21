@@ -28,6 +28,7 @@
 namespace Plasma
 {
     class Applet;
+    class FrameSvg;
     class IconWidget;
 }
 
@@ -47,6 +48,8 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void resizeEvent(QGraphicsSceneResizeEvent *event);
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 protected Q_SLOTS:
     void syncMargins();
@@ -59,6 +62,8 @@ private:
 
     Plasma::IconWidget *m_configureButton;
     Plasma::IconWidget *m_closeButton;
+
+    Plasma::FrameSvg *m_background;
 
     qreal m_savedAppletTopMargin;
 };
