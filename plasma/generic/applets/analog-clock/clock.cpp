@@ -63,6 +63,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     resize(256, 256);
     setPreferredSize(256, 256);
     setAspectRatioMode(Plasma::Square);
+    setBackgroundHints(NoBackground);
 
     m_theme = new Plasma::Svg(this);
     m_theme->setImagePath("widgets/clock");
@@ -112,10 +113,6 @@ void Clock::connectToEngine()
 void Clock::constraintsEvent(Plasma::Constraints constraints)
 {
     ClockApplet::constraintsEvent(constraints);
-
-    if (constraints & Plasma::FormFactorConstraint) {
-        setBackgroundHints(NoBackground);
-    }
 
     if (constraints & Plasma::SizeConstraint) {
         m_repaintCache = RepaintAll;
