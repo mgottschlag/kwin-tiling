@@ -26,6 +26,7 @@
 
 class QGraphicsLinearLayout;
 class AppletOverlay;
+class AppletTitleBar;
 
 namespace Plasma
 {
@@ -45,6 +46,9 @@ public:
     void init();
 
     void constraintsEvent(Plasma::Constraints constraints);
+
+protected:
+    bool createAppletTitle(Plasma::Applet *applet);
 
 private slots:
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);

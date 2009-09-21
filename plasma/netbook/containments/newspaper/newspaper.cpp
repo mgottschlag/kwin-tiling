@@ -21,6 +21,7 @@
 
 #include "newspaper.h"
 #include "appletoverlay.h"
+#include "applettitlebar.h"
 
 #include <limits>
 
@@ -176,7 +177,7 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 
     connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
     updateSize();
-    //applet->setBackgroundHints(NoBackground);
+    createAppletTitle(applet);
 }
 
 void Newspaper::updateSize()
@@ -213,6 +214,12 @@ void Newspaper::updateConfigurationMode(bool config)
         delete m_appletOverlay;
         m_appletOverlay = 0;
     }
+}
+
+bool Newspaper::createAppletTitle(Plasma::Applet *applet)
+{
+    AppletTitleBar *appletTitleBar = new AppletTitleBar(applet);
+    appletTitleBar->show();
 }
 
 
