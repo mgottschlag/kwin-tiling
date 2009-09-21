@@ -180,7 +180,6 @@ You can also remove programs from this list clicking on the &lt;b>Remove&lt;/b> 
      </layout>
      <zorder>m_lblCache</zorder>
      <zorder>m_spinCache</zorder>
-     <zorder>spacer2</zorder>
     </widget>
    </item>
    <item>

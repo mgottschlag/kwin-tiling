@@ -156,7 +156,6 @@
   <zorder>lePassword</zorder>
   <zorder>cbRemember</zorder>
   <zorder>cbSessionOnly</zorder>
-  <zorder>horizontalSpacer</zorder>
   <zorder>userCB</zorder>
  </widget>
  <customwidgets>
