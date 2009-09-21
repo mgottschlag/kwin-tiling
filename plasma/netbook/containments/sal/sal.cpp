@@ -94,19 +94,27 @@ void SearchLaunch::doSearch(const QString query)
     m_queryCounter = 0;
     m_hoverIndicator->setTargetItem(0);
 
-    foreach (Plasma::IconWidget *icon, m_items) {
-        m_launchGrid->removeAt(0);
-        icon->deleteLater();
+    const bool stillEmpty = query.isEmpty() && m_runnermg->query().isEmpty();
+    if (!stillEmpty) {
+        foreach (Plasma::IconWidget *icon, m_items) {
+            if (m_launchGrid->count()) {
+                m_launchGrid->removeAt(0);
+            }
+
+            icon->deleteLater();
+        }
     }
 
     m_items.clear();
     m_maxColumnWidth = 0;
-
-    m_items.clear();
     m_matches.clear();
-    m_runnermg->reset();
+    m_runnermg->launchQuery(query);
 
     if (m_gridScroll && query.isEmpty()) {
+        if (stillEmpty && m_launchGrid->count()) {
+            return;
+        }
+
         QList<Plasma::QueryMatch> fakeMatches;
         Plasma::QueryMatch match(0);
         match.setType(Plasma::QueryMatch::ExactMatch);
@@ -169,11 +177,8 @@ void SearchLaunch::doSearch(const QString query)
 
         setQueryMatches(fakeMatches);
         m_homeButton->hide();
-    } else {
-        m_runnermg->launchQuery(query);
-        if (m_homeButton) {
-            m_homeButton->show();
-        }
+    } else if (m_homeButton) {
+        m_homeButton->show();
     }
 }
 
