@@ -24,7 +24,9 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneResizeEvent>
 #include <QLabel>
+#include <QPainter>
 #include <QTimer>
+
 
 #include <KIconLoader>
 
@@ -65,12 +67,6 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
         connect(m_configureButton, SIGNAL(clicked()), applet, SLOT(showConfigurationInterface()));
     }
 
-    Plasma::Label *title = new Plasma::Label(this);
-    title->setAlignment(Qt::AlignCenter);
-    title->nativeWidget()->setWordWrap(false);
-    title->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    title->setText(applet->name());
-    lay->addItem(title, 0, column);
     ++column;
 
     m_closeButton = new Plasma::IconWidget(this);
@@ -169,6 +165,12 @@ void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     if (m_background) {
         m_background->paintFrame(painter);
     }
+
+    painter->save();
+    painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+    painter->setFont(Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
+    painter->drawText(contentsRect(), Qt::AlignCenter, m_applet->name());
+    painter->restore();
 }
 
 void AppletTitleBar::appletRemoved(Plasma::Applet *applet)
