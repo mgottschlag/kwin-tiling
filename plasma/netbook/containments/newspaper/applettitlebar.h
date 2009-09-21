@@ -52,13 +52,14 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    /*void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);*/
 
 protected Q_SLOTS:
     void syncMargins();
     void appletRemoved(Plasma::Applet *applet);
     void themeChanged();
+    void animationFinished(int id);
 
 private:
     enum PressedButton{
@@ -75,12 +76,17 @@ private:
     QRectF m_configureButtonRect;
     QRectF m_closeButtonRect;
 
+    int m_maximizeButtonAnimationId;
+    int m_configureButtonAnimationId;
+    int m_closeButtonAnimationId;
+
     Plasma::Svg *m_icons;
     Plasma::Svg *m_separator;
     Plasma::FrameSvg *m_background;
 
     qreal m_savedAppletTopMargin;
-    qreal m_buttonsOpacity;
+    bool m_underMouse;
+    bool m_showButtons;
 };
 
 #endif

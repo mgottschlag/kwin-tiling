@@ -30,6 +30,7 @@
 
 #include <KIconLoader>
 
+#include <Plasma/Animator>
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
 #include <Plasma/Separator>
@@ -41,10 +42,14 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
        : QGraphicsWidget(applet),
          m_applet(applet),
          m_pressedButton(NoButton),
+         m_maximizeButtonAnimationId(0),
+         m_configureButtonAnimationId(0),
+         m_closeButtonAnimationId(0),
          m_separator(0),
          m_background(0),
          m_savedAppletTopMargin(0),
-         m_buttonsOpacity(0)
+         m_underMouse(false),
+         m_showButtons(false)
 {
     m_maximizeButtonRect = m_configureButtonRect = m_closeButtonRect = QRect(0, 0, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
 
@@ -55,7 +60,7 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
 
     if (applet->backgroundHints() & Plasma::Applet::StandardBackground) {
         m_separator = new Plasma::Svg(this);
-        m_separator->setImagePath("widgets/configuration-icons");
+        m_separator->setImagePath("widgets/line");
         m_separator->setContainsMultipleImages(true);
     } else {
         m_background = new Plasma::FrameSvg(this);
@@ -71,6 +76,8 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
         connect(applet->containment(), SIGNAL(appletRemoved(Plasma::Applet *)), this, SLOT(appletRemoved(Plasma::Applet *)));
     }
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
+
+    connect(Plasma::Animator::self(), SIGNAL(elementAnimationFinished(int)), this, SLOT(animationFinished(int)));
 }
 
 AppletTitleBar::~AppletTitleBar()
@@ -80,9 +87,10 @@ AppletTitleBar::~AppletTitleBar()
 
 void AppletTitleBar::syncMargins()
 {
+    const int extraMargin = 2;
     syncIconRects();
-    setMinimumHeight(m_maximizeButtonRect.height());
-    setMaximumHeight(m_maximizeButtonRect.height());
+    setMinimumHeight(m_maximizeButtonRect.height() + extraMargin);
+    setMaximumHeight(m_maximizeButtonRect.height() + extraMargin);
 
     if (m_background) {
         qreal left, top, right, bottom;
@@ -93,7 +101,7 @@ void AppletTitleBar::syncMargins()
 
     qreal left, right, bottom;
     m_applet->getContentsMargins(&left, &m_savedAppletTopMargin, &right, &bottom);
-    m_applet->setContentsMargins(left, m_savedAppletTopMargin + size().height(), right, bottom);
+    m_applet->setContentsMargins(left, m_savedAppletTopMargin + size().height() + extraMargin, right, bottom);
 }
 
 void AppletTitleBar::syncSize()
@@ -121,10 +129,48 @@ bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
     if (event->type() == QEvent::GraphicsSceneResize) {
         syncSize();
     } else if (event->type() == QEvent::GraphicsSceneHoverEnter) {
-        m_buttonsOpacity = 1.0;
+        m_underMouse = true;
+        m_showButtons = true;
+
+        if (m_maximizeButtonAnimationId) {
+            Plasma::Animator::self()->stopElementAnimation(m_maximizeButtonAnimationId);
+        }
+        m_maximizeButtonAnimationId = Plasma::Animator::self()->animateElement(this, Plasma::Animator::AppearAnimation);
+        Plasma::Animator::self()->setInitialPixmap(m_maximizeButtonAnimationId, m_icons->pixmap("maximize"));
+
+        if (m_configureButtonAnimationId) {
+            Plasma::Animator::self()->stopElementAnimation(m_maximizeButtonAnimationId);
+        }
+        m_configureButtonAnimationId = Plasma::Animator::self()->animateElement(this, Plasma::Animator::AppearAnimation);
+        Plasma::Animator::self()->setInitialPixmap(m_configureButtonAnimationId, m_icons->pixmap("configure"));
+
+        if (m_closeButtonAnimationId) {
+            Plasma::Animator::self()->stopElementAnimation(m_maximizeButtonAnimationId);
+        }
+        m_closeButtonAnimationId = Plasma::Animator::self()->animateElement(this, Plasma::Animator::AppearAnimation);
+        Plasma::Animator::self()->setInitialPixmap(m_closeButtonAnimationId, m_icons->pixmap("close"));
+
         update();
     } else if (event->type() == QEvent::GraphicsSceneHoverLeave) {
-        m_buttonsOpacity = 0.0;
+        m_underMouse = false;
+        if (m_maximizeButtonAnimationId) {
+            Plasma::Animator::self()->stopElementAnimation(m_maximizeButtonAnimationId);
+        }
+        m_maximizeButtonAnimationId = Plasma::Animator::self()->animateElement(this, Plasma::Animator::DisappearAnimation);
+        Plasma::Animator::self()->setInitialPixmap(m_maximizeButtonAnimationId, m_icons->pixmap("maximize"));
+
+        if (m_configureButtonAnimationId) {
+            Plasma::Animator::self()->stopElementAnimation(m_maximizeButtonAnimationId);
+        }
+        m_configureButtonAnimationId = Plasma::Animator::self()->animateElement(this, Plasma::Animator::DisappearAnimation);
+        Plasma::Animator::self()->setInitialPixmap(m_configureButtonAnimationId, m_icons->pixmap("configure"));
+
+        if (m_closeButtonAnimationId) {
+            Plasma::Animator::self()->stopElementAnimation(m_maximizeButtonAnimationId);
+        }
+        m_closeButtonAnimationId = Plasma::Animator::self()->animateElement(this, Plasma::Animator::DisappearAnimation);
+        Plasma::Animator::self()->setInitialPixmap(m_closeButtonAnimationId, m_icons->pixmap("close"));
+
         update();
     }
 
@@ -203,16 +249,6 @@ void AppletTitleBar::resizeEvent(QGraphicsSceneResizeEvent *event)
     syncIconRects();
 }
 
-void AppletTitleBar::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    m_buttonsOpacity = 1.0;
-}
-
-void AppletTitleBar::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-{
-    m_buttonsOpacity = 0.0;
-}
-
 void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option)
@@ -222,15 +258,30 @@ void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
         m_background->paintFrame(painter);
     }
 
-    if (m_buttonsOpacity > 0) {
+    if (m_showButtons) {
         if (m_applet->hasValidAssociatedApplication()) {
-            m_icons->paint(painter, m_maximizeButtonRect, "maximize");
+            if (m_maximizeButtonAnimationId) {
+                QPixmap animPixmap = Plasma::Animator::self()->currentPixmap(m_maximizeButtonAnimationId);
+                painter->drawPixmap(m_maximizeButtonRect, animPixmap, animPixmap.rect());
+            } else {
+                m_icons->paint(painter, m_maximizeButtonRect, "maximize");
+            }
         }
         if (m_applet->hasConfigurationInterface()) {
-            m_icons->paint(painter, m_configureButtonRect, "configure");
+            if (m_maximizeButtonAnimationId) {
+                QPixmap animPixmap = Plasma::Animator::self()->currentPixmap(m_configureButtonAnimationId);
+                painter->drawPixmap(m_configureButtonRect, animPixmap, animPixmap.rect());
+            } else {
+                m_icons->paint(painter, m_configureButtonRect, "configure");
+            }
         }
         if (m_applet->immutability() == Plasma::Mutable) {
-            m_icons->paint(painter, m_closeButtonRect, "close");
+            if (m_maximizeButtonAnimationId) {
+                QPixmap animPixmap = Plasma::Animator::self()->currentPixmap(m_closeButtonAnimationId);
+                painter->drawPixmap(m_closeButtonRect, animPixmap, animPixmap.rect());
+            } else {
+                m_icons->paint(painter, m_closeButtonRect, "close");
+            }
         }
     }
 
@@ -239,6 +290,12 @@ void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     painter->setFont(Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
     painter->drawText(contentsRect(), Qt::AlignCenter, m_applet->name());
     painter->restore();
+
+    if (m_separator) {
+        QRectF lineRect = contentsRect();
+        lineRect.setTop(lineRect.height() - m_separator->elementSize("horizontal-line").height());
+        m_separator->paint(painter, lineRect, "horizontal-line");
+    }
 }
 
 void AppletTitleBar::appletRemoved(Plasma::Applet *applet)
@@ -256,6 +313,21 @@ void AppletTitleBar::themeChanged()
     //send the margin update in the back of eveny queue,
     //so it will be executed after the margins update by Plasma::Applet
     QTimer::singleShot(0, this, SLOT(syncMargins()));
+}
+
+void AppletTitleBar::animationFinished(int id)
+{
+    if (!m_underMouse) {
+        m_showButtons = false;
+    }
+
+    if (id == m_maximizeButtonAnimationId) {
+        m_maximizeButtonAnimationId = 0;
+    } else if (id == m_configureButtonAnimationId) {
+        m_configureButtonAnimationId = 0;
+    } else if (id == m_closeButtonAnimationId) {
+        m_closeButtonAnimationId = 0;
+    }
 }
 
 #include <applettitlebar.moc>
