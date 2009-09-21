@@ -182,9 +182,9 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     connect( m_poll, SIGNAL( clipboardChanged( bool ) ),
              this, SLOT( newClipData( bool ) ) );
 
-    QAction *a = m_collection->addAction("show_klipper_popup");
+    KAction* a = m_collection->addAction("show_klipper_popup");
     a->setText(i18n("Show Klipper Popup-Menu"));
-    qobject_cast<KAction*>(a)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_V));
+    a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_V));
     connect(a, SIGNAL(triggered()), SLOT(slotPopupMenu()));
 
     m_repeatAction = m_collection->addAction("repeat_action");
