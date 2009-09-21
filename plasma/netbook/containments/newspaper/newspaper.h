@@ -48,7 +48,7 @@ public:
     void constraintsEvent(Plasma::Constraints constraints);
 
 protected:
-    bool createAppletTitle(Plasma::Applet *applet);
+    void createAppletTitle(Plasma::Applet *applet);
 
 private slots:
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);

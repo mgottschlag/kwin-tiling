@@ -51,13 +51,13 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
     }
 
     if (applet->hasConfigurationInterface()) {
-        Plasma::IconWidget *closeButton = new Plasma::IconWidget(this);
-        closeButton->setSvg("widgets/configuration-icons", "configure");
-        closeButton->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
-        closeButton->setMaximumSize(closeButton->minimumSize());
-        lay->addItem(closeButton, 0, column);
+        m_configureButton = new Plasma::IconWidget(this);
+        m_configureButton->setSvg("widgets/configuration-icons", "configure");
+        m_configureButton->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
+        m_configureButton->setMaximumSize(m_configureButton->minimumSize());
+        lay->addItem(m_configureButton, 0, column);
         ++column;
-        connect(closeButton, SIGNAL(clicked()), applet, SLOT(showConfigurationInterface()));
+        connect(m_configureButton, SIGNAL(clicked()), applet, SLOT(showConfigurationInterface()));
     }
 
     Plasma::Label *title = new Plasma::Label(this);
@@ -68,13 +68,13 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
     lay->addItem(title, 0, column);
     ++column;
 
-    Plasma::IconWidget *closeButton = new Plasma::IconWidget(this);
-    closeButton->setSvg("widgets/configuration-icons", "close");
-    closeButton->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
-    closeButton->setMaximumSize(closeButton->minimumSize());
-    lay->addItem(closeButton, 0, column);
+    m_closeButton = new Plasma::IconWidget(this);
+    m_closeButton->setSvg("widgets/configuration-icons", "close");
+    m_closeButton->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
+    m_closeButton->setMaximumSize(m_closeButton->minimumSize());
+    lay->addItem(m_closeButton, 0, column);
     ++column;
-    connect(closeButton, SIGNAL(clicked()), applet, SLOT(destroy()));
+    connect(m_closeButton, SIGNAL(clicked()), applet, SLOT(destroy()));
 
     if (applet->backgroundHints() & Plasma::Applet::StandardBackground) {
         Plasma::Separator *separator = new Plasma::Separator(this);
@@ -91,6 +91,7 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
         connect(applet->containment(), SIGNAL(appletRemoved(Plasma::Applet *)), this, SLOT(appletRemoved(Plasma::Applet *)));
     }
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
+    connect(applet, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)), this, SLOT(immutabilityChanged(Plasma::ImmutabilityType)));
 }
 
 AppletTitleBar::~AppletTitleBar()
@@ -153,6 +154,11 @@ void AppletTitleBar::themeChanged()
     //send the margin update in the back of eveny queue,
     //so it will be executed after the margins update by Plasma::Applet
     QTimer::singleShot(0, this, SLOT(syncMargins()));
+}
+
+void AppletTitleBar::immutabilityChanged(Plasma::ImmutabilityType immutable)
+{
+    m_closeButton->setVisible(immutable == Plasma::Mutable);
 }
 
 #include <applettitlebar.moc>

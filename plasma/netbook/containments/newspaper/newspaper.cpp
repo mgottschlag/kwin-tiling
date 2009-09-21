@@ -216,7 +216,7 @@ void Newspaper::updateConfigurationMode(bool config)
     }
 }
 
-bool Newspaper::createAppletTitle(Plasma::Applet *applet)
+void Newspaper::createAppletTitle(Plasma::Applet *applet)
 {
     AppletTitleBar *appletTitleBar = new AppletTitleBar(applet);
     appletTitleBar->show();

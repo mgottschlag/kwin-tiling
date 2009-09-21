@@ -23,10 +23,12 @@
 
 #include <QGraphicsWidget>
 
+#include <Plasma/Plasma>
 
 namespace Plasma
 {
     class Applet;
+    class IconWidget;
 }
 
 class AppletTitleBar : public QGraphicsWidget
@@ -50,9 +52,13 @@ protected Q_SLOTS:
     void syncMargins();
     void appletRemoved(Plasma::Applet *applet);
     void themeChanged();
+    void immutabilityChanged(Plasma::ImmutabilityType immutable);
 
 private:
     Plasma::Applet *m_applet;
+
+    Plasma::IconWidget *m_configureButton;
+    Plasma::IconWidget *m_closeButton;
 
     qreal m_savedAppletTopMargin;
 };
