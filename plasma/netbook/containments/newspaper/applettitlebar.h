@@ -30,6 +30,7 @@ namespace Plasma
     class Applet;
     class FrameSvg;
     class IconWidget;
+    class Svg;
 }
 
 class AppletTitleBar : public QGraphicsWidget
@@ -42,6 +43,7 @@ public:
 
 protected:
     void syncSize();
+    void syncIconRects();
 
     //reimplementations
     bool eventFilter(QObject *watched, QEvent *event);
@@ -50,22 +52,35 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
 protected Q_SLOTS:
     void syncMargins();
     void appletRemoved(Plasma::Applet *applet);
     void themeChanged();
-    void immutabilityChanged(Plasma::ImmutabilityType immutable);
 
 private:
+    enum PressedButton{
+        NoButton,
+        MaximizeButton,
+        ConfigureButton,
+        CloseButton
+    };
+
     Plasma::Applet *m_applet;
 
-    Plasma::IconWidget *m_configureButton;
-    Plasma::IconWidget *m_closeButton;
+    PressedButton m_pressedButton;
+    QRectF m_maximizeButtonRect;
+    QRectF m_configureButtonRect;
+    QRectF m_closeButtonRect;
 
+    Plasma::Svg *m_icons;
+    Plasma::Svg *m_separator;
     Plasma::FrameSvg *m_background;
 
     qreal m_savedAppletTopMargin;
+    qreal m_buttonsOpacity;
 };
 
 #endif

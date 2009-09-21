@@ -33,54 +33,30 @@
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
 #include <Plasma/Separator>
+#include <Plasma/Svg>
 #include <Plasma/Theme>
 
 
 AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
        : QGraphicsWidget(applet),
          m_applet(applet),
-         m_configureButton(0),
-         m_closeButton(0),
+         m_pressedButton(NoButton),
+         m_separator(0),
+         m_background(0),
          m_savedAppletTopMargin(0),
-         m_background(0)
+         m_buttonsOpacity(0)
 {
-    QGraphicsGridLayout *lay = new QGraphicsGridLayout(this);
+    m_maximizeButtonRect = m_configureButtonRect = m_closeButtonRect = QRect(0, 0, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
 
-    int column = 0;
-    if (applet->hasValidAssociatedApplication()) {
-        Plasma::IconWidget *maximizeButton = new Plasma::IconWidget(this);
-        maximizeButton->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
-        maximizeButton->setMaximumSize(maximizeButton->minimumSize());
-        maximizeButton->setSvg("widgets/configuration-icons", "maximize");
-        lay->addItem(maximizeButton, 0, column);
-        ++column;
-        connect(maximizeButton, SIGNAL(clicked()), applet, SLOT(runAssociatedApplication()));
-    }
+    m_icons = new Plasma::Svg(this);
+    m_icons->setImagePath("widgets/configuration-icons");
+    m_icons->setContainsMultipleImages(true);
 
-    if (applet->hasConfigurationInterface()) {
-        m_configureButton = new Plasma::IconWidget(this);
-        m_configureButton->setSvg("widgets/configuration-icons", "configure");
-        m_configureButton->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
-        m_configureButton->setMaximumSize(m_configureButton->minimumSize());
-        lay->addItem(m_configureButton, 0, column);
-        ++column;
-        connect(m_configureButton, SIGNAL(clicked()), applet, SLOT(showConfigurationInterface()));
-    }
-
-    ++column;
-
-    m_closeButton = new Plasma::IconWidget(this);
-    m_closeButton->setSvg("widgets/configuration-icons", "close");
-    m_closeButton->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
-    m_closeButton->setMaximumSize(m_closeButton->minimumSize());
-    lay->addItem(m_closeButton, 0, column);
-    ++column;
-    connect(m_closeButton, SIGNAL(clicked()), applet, SLOT(destroy()));
 
     if (applet->backgroundHints() & Plasma::Applet::StandardBackground) {
-        Plasma::Separator *separator = new Plasma::Separator(this);
-        separator->setOrientation(Qt::Horizontal);
-        lay->addItem(separator, 1, 0, 1, column);
+        m_separator = new Plasma::Svg(this);
+        m_separator->setImagePath("widgets/configuration-icons");
+        m_separator->setContainsMultipleImages(true);
     } else {
         m_background = new Plasma::FrameSvg(this);
         m_background->setImagePath("widgets/frame");
@@ -88,7 +64,6 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
     }
 
     applet->installEventFilter(this);
-    lay->activate();
     syncMargins();
     syncSize();
 
@@ -96,7 +71,6 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
         connect(applet->containment(), SIGNAL(appletRemoved(Plasma::Applet *)), this, SLOT(appletRemoved(Plasma::Applet *)));
     }
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
-    connect(applet, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)), this, SLOT(immutabilityChanged(Plasma::ImmutabilityType)));
 }
 
 AppletTitleBar::~AppletTitleBar()
@@ -106,6 +80,10 @@ AppletTitleBar::~AppletTitleBar()
 
 void AppletTitleBar::syncMargins()
 {
+    syncIconRects();
+    setMinimumHeight(m_maximizeButtonRect.height());
+    setMaximumHeight(m_maximizeButtonRect.height());
+
     if (m_background) {
         qreal left, top, right, bottom;
 
@@ -125,11 +103,29 @@ void AppletTitleBar::syncSize()
                 size().height())));
 }
 
+void AppletTitleBar::syncIconRects()
+{
+    m_maximizeButtonRect.moveTopLeft(contentsRect().topLeft());
+    m_configureButtonRect.moveTopLeft(contentsRect().topLeft());
+
+    if (m_applet->hasValidAssociatedApplication()) {
+        m_configureButtonRect.moveLeft(contentsRect().left() + m_maximizeButtonRect.width() + 2);
+    }
+
+    m_closeButtonRect.moveTopRight(contentsRect().topRight());
+}
+
 bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
 {
     Q_UNUSED(watched)
     if (event->type() == QEvent::GraphicsSceneResize) {
         syncSize();
+    } else if (event->type() == QEvent::GraphicsSceneHoverEnter) {
+        m_buttonsOpacity = 1.0;
+        update();
+    } else if (event->type() == QEvent::GraphicsSceneHoverLeave) {
+        m_buttonsOpacity = 0.0;
+        update();
     }
 
     return false;
@@ -137,7 +133,22 @@ bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
 
 void AppletTitleBar::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    event->ignore();
+    if (m_applet->hasValidAssociatedApplication() && 
+        m_maximizeButtonRect.contains(event->pos())) {
+        m_pressedButton = MaximizeButton;
+        m_maximizeButtonRect.translate(1, 1);
+        update(m_maximizeButtonRect);
+    } else if (m_configureButtonRect.contains(event->pos())) {
+        m_configureButtonRect.translate(1, 1);
+        m_pressedButton = ConfigureButton;
+        update(m_configureButtonRect);
+    } else if (m_closeButtonRect.contains(event->pos())) {
+        m_closeButtonRect.translate(1, 1);
+        m_pressedButton = CloseButton;
+        update(m_closeButtonRect);
+    } else {
+        event->ignore();
+    }
 }
 
 void AppletTitleBar::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -147,7 +158,40 @@ void AppletTitleBar::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void AppletTitleBar::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    event->ignore();
+    if (m_pressedButton == MaximizeButton && m_maximizeButtonRect.contains(event->pos())) {
+        if (m_applet->hasValidAssociatedApplication()) {
+            m_applet->runAssociatedApplication();
+        }
+    } else if (m_pressedButton == ConfigureButton && m_configureButtonRect.contains(event->pos())) {
+        if (m_applet->hasConfigurationInterface()) {
+            m_applet->showConfigurationInterface();
+        }
+    } else if (m_pressedButton == CloseButton && m_closeButtonRect.contains(event->pos())) {
+        if (m_applet->immutability() == Plasma::Mutable) {
+            m_applet->destroy();
+        }
+    } else {
+        event->ignore();
+    }
+
+    switch (m_pressedButton) {
+    case MaximizeButton:
+        m_maximizeButtonRect.translate(-1, -1);
+        update(m_maximizeButtonRect);
+        break;
+    case ConfigureButton:
+        m_configureButtonRect.translate(-1, -1);
+        update(m_configureButtonRect);
+        break;
+    case CloseButton:
+        m_closeButtonRect.translate(-1, -1);
+        update(m_closeButtonRect);
+        break;
+    default:
+        break;
+    }
+
+    m_pressedButton = NoButton;
 }
 
 void AppletTitleBar::resizeEvent(QGraphicsSceneResizeEvent *event)
@@ -155,6 +199,18 @@ void AppletTitleBar::resizeEvent(QGraphicsSceneResizeEvent *event)
     if (m_background) {
         m_background->resizeFrame(event->newSize());
     }
+
+    syncIconRects();
+}
+
+void AppletTitleBar::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    m_buttonsOpacity = 1.0;
+}
+
+void AppletTitleBar::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    m_buttonsOpacity = 0.0;
 }
 
 void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -164,6 +220,18 @@ void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     if (m_background) {
         m_background->paintFrame(painter);
+    }
+
+    if (m_buttonsOpacity > 0) {
+        if (m_applet->hasValidAssociatedApplication()) {
+            m_icons->paint(painter, m_maximizeButtonRect, "maximize");
+        }
+        if (m_applet->hasConfigurationInterface()) {
+            m_icons->paint(painter, m_configureButtonRect, "configure");
+        }
+        if (m_applet->immutability() == Plasma::Mutable) {
+            m_icons->paint(painter, m_closeButtonRect, "close");
+        }
     }
 
     painter->save();
@@ -188,11 +256,6 @@ void AppletTitleBar::themeChanged()
     //send the margin update in the back of eveny queue,
     //so it will be executed after the margins update by Plasma::Applet
     QTimer::singleShot(0, this, SLOT(syncMargins()));
-}
-
-void AppletTitleBar::immutabilityChanged(Plasma::ImmutabilityType immutable)
-{
-    m_closeButton->setVisible(immutable == Plasma::Mutable);
 }
 
 #include <applettitlebar.moc>
