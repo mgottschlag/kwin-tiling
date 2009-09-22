@@ -17,7 +17,7 @@ Comment[uk]=Особливий контейнер з інструментом з
 Comment[x-test]=xxSpecial Containment with Launcherxx
 Comment[zh_TW]=含有啟動器的特殊容器
 
-Icon=
+Icon=edit-find
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet,Plasma/Containment
 X-Plasma-ContainmentCategories=netbook,desktop
