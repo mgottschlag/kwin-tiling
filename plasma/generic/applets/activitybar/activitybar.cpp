@@ -63,28 +63,13 @@ void ActivityBar::init()
             return;
         }
 
-        int myScreen = containment()->screen();
-
         QList<Plasma::Containment*> containments = c->containments();
         foreach (Plasma::Containment *cont, containments) {
             if (cont->containmentType() == Plasma::Containment::PanelContainment || cont->containmentType() == Plasma::Containment::CustomPanelContainment || c->offscreenWidgets().contains(cont)) {
                 continue;
             }
 
-            m_containments.append(cont);
-
-            if (cont->activity().isNull()) {
-                m_tabBar->addTab(cont->name());
-            } else {
-                m_tabBar->addTab(cont->activity());
-            }
-
-            if (cont->screen() != -1 &&
-                cont->screen() == myScreen &&
-                (cont->desktop() == -1 || cont->desktop() == KWindowSystem::currentDesktop()-1)) {
-                m_activeContainment = m_containments.count() - 1;
-                m_tabBar->setCurrentIndex(m_activeContainment);
-            }
+            insertContainment(cont);
 
             connect(cont, SIGNAL(destroyed(QObject *)), this, SLOT(containmentDestroyed(QObject *)));
             connect(cont, SIGNAL(screenChanged(int, int, Plasma::Containment *)), this, SLOT(screenChanged(int, int, Plasma::Containment *)));
@@ -102,6 +87,37 @@ void ActivityBar::init()
 
     setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
     emit sizeHintChanged(Qt::PreferredSize);
+}
+
+void ActivityBar::insertContainment(Plasma::Containment *cont)
+{
+     QList<Plasma::Containment *>::iterator i = m_containments.begin();
+     int index = 0;
+     int myScreen = containment()->screen();
+
+     for (; i != m_containments.end(); ++i) {
+          if (cont->id() < (*i)->id()) {
+              m_containments.insert(i, cont);
+              break;
+          }
+          ++index;
+     }
+     if (i == m_containments.end()) {
+         m_containments.append(cont);
+     }
+
+     if (cont->activity().isNull()) {
+        m_tabBar->insertTab(index, cont->name());
+     } else {
+        m_tabBar->insertTab(index, cont->activity());
+     }
+
+     if (cont->screen() != -1 &&
+         cont->screen() == myScreen &&
+         (cont->desktop() == -1 || cont->desktop() ==  KWindowSystem::currentDesktop()-1)) {
+         m_activeContainment = index;
+         m_tabBar->setCurrentIndex(m_activeContainment);
+     }
 }
 
 void ActivityBar::constraintsEvent(Plasma::Constraints constraints)
@@ -181,12 +197,7 @@ void ActivityBar::containmentAdded(Plasma::Containment *cont)
         return;
     }
 
-    m_containments.append(cont);
-    if (cont->activity().isNull()) {
-        m_tabBar->addTab(cont->name());
-    } else {
-        m_tabBar->addTab(cont->activity());
-    }
+    insertContainment(cont);
 
     if (m_containments.count() > 1) {
         connect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(switchContainment(int)));

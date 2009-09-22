@@ -39,6 +39,8 @@ public:
 
     void init();
     void constraintsEvent(Plasma::Constraints constraints);
+    //insert in m_containments, keeping it ordered by id()
+    void insertContainment(Plasma::Containment *cont);
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
