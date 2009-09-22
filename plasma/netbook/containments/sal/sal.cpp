@@ -87,6 +87,16 @@ void SearchLaunch::init()
 
     Plasma::Svg *borderSvg = new Plasma::Svg(this);
     borderSvg->setImagePath("newspaper/border");
+
+    QAction *a = action("add widgets");
+    if (a) {
+        addToolBoxAction(a);
+    }
+
+    a = action("configure");
+    if (a) {
+        addToolBoxAction(a);
+    }
 }
 
 void SearchLaunch::doSearch(const QString query)

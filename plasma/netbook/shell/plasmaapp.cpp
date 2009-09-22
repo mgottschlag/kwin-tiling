@@ -396,21 +396,6 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
     kDebug() << "new containment" << (QObject*)containment << containment->id()<<"view id"<<id;
 
-    //is it a desktop?
-    if (containment->containmentType() != Plasma::Containment::PanelContainment &&
-         containment->containmentType() != Plasma::Containment::CustomPanelContainment) {
-        //for now let's just add those two by hand, not the whole lot
-        QAction *a = containment->action("add widgets");
-        if (a) {
-            containment->addToolBoxAction(a);
-        }
-
-        a = containment->action("configure");
-        if (a) {
-            containment->addToolBoxAction(a);
-        }
-    }
-
     //is it a desktop -and- is it active?
     if ((m_mainView && id == NetView::mainViewId()) ||
         (containment->containmentType() != Plasma::Containment::PanelContainment &&

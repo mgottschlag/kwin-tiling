@@ -99,6 +99,15 @@ void Newspaper::init()
     Containment::init();
     setHasConfigurationInterface(true);
 
+    QAction *a = action("add widgets");
+    if (a) {
+        addToolBoxAction(a);
+    }
+
+    a = action("configure");
+    if (a) {
+        addToolBoxAction(a);
+    }
 }
 
 void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
