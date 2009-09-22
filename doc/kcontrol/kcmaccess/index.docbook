@@ -137,7 +137,7 @@ type a <keycap>P</keycap>, the computer interprets this as the letter p
 If you press the &Shift; key <emphasis>twice</emphasis> then press the <keycap>F</keycap> key,
 the computer interprets this as <keycombo
 action="simul">&Shift;<keycap>F</keycap></keycombo>.  Now if you
-type a <keycap>p</keycap>, the computer interprets this as the letter P
+type a <keycap>P</keycap>, the computer interprets this as the letter P
 (<keycombo action="simul">&Shift;<keycap>P</keycap></keycombo>). To
 de-select the &Shift; key, press it again.
 </para>
