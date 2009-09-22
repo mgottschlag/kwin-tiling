@@ -1,6 +1,3 @@
 #! /usr/bin/env bash
-find -name "*.cpp" -print > files
-find -name "*.cc" -print >> files
-find -name "*.h" -print >> files
-$XGETTEXT --files-from=files -o $podir/kstyle_config.pot
-rm -f files
+$EXTRACTRC `find . -name \*.rc -o -name \*.ui -o -name \*.kcfg` >> rc.cpp
+$XGETTEXT `find . -name \*.cc -o -name \*.cpp -o -name \*.h` -o $podir/kstyle_config.pot
