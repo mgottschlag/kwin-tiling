@@ -877,8 +877,8 @@ void PlasmaApp::zoomOut(Plasma::Containment *)
     bool isMutable = m_corona->immutability() == Plasma::Mutable;
     bool zoomIn = true;
     bool zoomOut = true;
-    bool addSibling = isMutable && true; //FIXME wtf?
-    bool addWidgets = isMutable && true;
+    bool addSibling = isMutable;
+    bool addWidgets = isMutable;
 
     if (m_zoomLevel == Plasma::DesktopZoom) {
         setControllerVisible(true);
@@ -905,6 +905,7 @@ void PlasmaApp::zoomOut(Plasma::Containment *)
         c->enableAction("remove", isMutable && c->screen() == -1);
         c->enableAction("add widgets", addWidgets);
     }
+
     m_corona->enableAction("zoom out", zoomOut);
     m_corona->enableAction("add sibling containment", addSibling);
 }

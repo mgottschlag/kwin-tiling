@@ -217,7 +217,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     connect(panel, SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)), this, SLOT(appletAdded(Plasma::Applet *)));
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
 
-
     // Graphics view setup
     setFrameStyle(QFrame::NoFrame);
     //setAutoFillBackground(true);
