@@ -441,7 +441,7 @@ void Panel::updateBorders(const QRect &geom, bool themeChange)
             break;
         case TopEdge:
             bottomHeight = qMin(bottomHeight, qMax(qreal(1), size().height() - KIconLoader::SizeMedium));
-            break;  
+            break;
         case BottomEdge:
             topHeight = qMin(topHeight, qMax(qreal(1), size().height() - KIconLoader::SizeMedium));
             break;
@@ -543,38 +543,6 @@ void Panel::saveState(KConfigGroup &config) const
 
 void Panel::themeUpdated()
 {
-    if (!layout()) {
-        return;
-    }
-
-    //if the theme is changed all the calculations needs to be done again
-    //and resize based on the change in the theme bordersize
-
-    qreal oldLeftWidth;
-    qreal newLeftWidth;
-    qreal oldTopHeight;
-    qreal newTopHeight;
-    qreal oldRightWidth;
-    qreal newRightWidth;
-    qreal oldBottomHeight;
-    qreal newBottomHeight;
-
-    layout()->getContentsMargins(&oldLeftWidth, &oldTopHeight, &oldRightWidth, &oldBottomHeight);
-    m_background->getMargins(newLeftWidth, newTopHeight, newRightWidth, newBottomHeight);
-
-    QSize newSize(size().width()-(oldLeftWidth - newLeftWidth)-(oldRightWidth - newRightWidth),
-           size().height()-(oldTopHeight - newTopHeight)-(oldBottomHeight - newBottomHeight));
-
-    resize(newSize);
-
-    if (formFactor() == Plasma::Vertical) {
-        setMaximumWidth(newSize.width());
-        setMinimumWidth(newSize.width());
-    } else {
-        setMaximumHeight(newSize.height());
-        setMinimumHeight(newSize.height());
-    }
-
     updateBorders(geometry().toRect(), true);
 }
 
