@@ -13,6 +13,7 @@ libplasma
     * Added Separator class.
     * Wallpapers can now accept drops by defining X-Plasma-DropMimeTypes in their .desktop file and connecting to the
       urlDropped(KUrl) signal
+    * Widgets can be published on the network and be accessed remotely. In the case of scripted plasmoids the entire plasmoid package will be sent over, and in any case, dataengines and services will be routed to the remote machine. This is all completely transparent to applets.
     * WindowEffects: a class that permits to control KWin effects in an eas way, hiding the Xatom management
     * Package: contentsHash() provides access to a SHA1 hash of the contents of the package
     * Applet::SetAssociatedApplication(): It's possible to associate an application and/or a list of urls to an applet, a new icon will appear in the applet handle.
