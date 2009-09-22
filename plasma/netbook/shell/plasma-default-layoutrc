@@ -11,6 +11,10 @@ wallpaperplugin=image
 wallpaperpluginmode=SingleImage
 zvalue=0
 
+[Containments][1][ToolBox]
+corner=7
+offset=0
+
 [Containments][2]
 activity=
 desktop=-1
@@ -22,44 +26,39 @@ plugin=netpanel
 screen=0
 zvalue=150
 
+
 [Containments][2][Applets][1]
 geometry=0,0,10,10
-immutability=1
-plugin=currentappcontrol
-zvalue=0
-
-[Containments][2][Applets][2]
-geometry=300,0,10,10
 immutability=1
 plugin=activitybar
 zvalue=0
 
-[Containments][2][Applets][3]
+[Containments][2][Applets][2]
 geometry=550,0,10,10
 immutability=1
 plugin=panelspacer_internal
 zvalue=0
 
-[Containments][2][Applets][3][Configuration]
+[Containments][2][Applets][2][Configuration]
 FixedSize=false
 
-[Containments][2][Applets][4]
+[Containments][2][Applets][3]
 geometry=650,0,10,10
 immutability=1
 plugin=systemtray
 zvalue=0
 
-[Containments][2][Applets][4][Configuration][Applets][9]
+[Containments][2][Applets][3][Configuration][Applets][9]
 plugin=battery
 geometry=0,0,10,10
 immutability=1
 
-[Containments][2][Applets][4][Configuration][Applets][10]
+[Containments][2][Applets][3][Configuration][Applets][10]
 plugin=notifier
 geometry=10,0,10,10
 immutability=1
 
-[Containments][2][Applets][5]
+[Containments][2][Applets][4]
 geometry=700,0,10,10
 immutability=1
 plugin=digital-clock
@@ -68,7 +67,7 @@ zvalue=0
 [Containments][2][Applets][6]
 geometry=750,0,10,10
 immutability=1
-plugin=searchbox
+plugin=currentappcontrol
 zvalue=0
 
 [Containments][3]
@@ -97,25 +96,19 @@ zvalue=52
 [Containments][3][Applets][2]
 geometry=14,278,343.609756097561,188
 immutability=1
-plugin=calendar
+plugin=weather
 zvalue=57
 
 [Containments][3][Applets][3]
 geometry=361.609756097561,38,424.390243902439,241.203996807306
 immutability=1
-plugin=weather
+plugin=opendesktop
 zvalue=47
 
 [Containments][3][Applets][4]
 geometry=361.609756097561,283.203996807306,424.390243902439,182.796003192694
 immutability=1
-plugin=plasma_applet_notes
-zvalue=47
-
-[Containments][3][Applets][5]
-geometry=361.609756097561,600,424.390243902439,182.796003192694
-immutability=1
-plugin=comic
+plugin=knowledgebase
 zvalue=47
 
 [General]
