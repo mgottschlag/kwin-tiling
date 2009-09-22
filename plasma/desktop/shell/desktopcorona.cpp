@@ -104,8 +104,8 @@ void DesktopCorona::checkScreen(int screen, bool signalWhenExists)
 Plasma::Containment *DesktopCorona::findFreeContainment() const
 {
     foreach (Plasma::Containment *cont, containments()) {
-        if ((cont->type() == Plasma::Containment::DesktopContainment ||
-            cont->type() >= Plasma::Containment::CustomContainment) &&
+        if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
+            cont->containmentType() == Plasma::Containment::CustomContainment) &&
             cont->screen() == -1 && !offscreenWidgets().contains(cont)) {
             return cont;
         }
