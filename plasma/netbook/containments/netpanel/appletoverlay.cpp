@@ -102,6 +102,11 @@ void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     }
 }
 
+void AppletOverlay::appletDestroyed()
+{
+    m_applet = 0;
+}
+
 void AppletOverlay::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() != Qt::LeftButton) {
@@ -144,6 +149,7 @@ void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
         return;
     }
 
+    disconnect(m_applet, SIGNAL(destroyed()), this, SLOT(appletDestroyed()));
     m_applet = 0;
 
     Plasma::Applet *oldApplet;
@@ -152,6 +158,7 @@ void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     foreach (Plasma::Applet *applet, m_panel->applets()) {
         if (applet->geometry().contains(event->pos())) {
             m_applet = applet;
+            connect(applet, SIGNAL(destroyed()), this, SLOT(appletDestroyed()));
             break;
         }
     }

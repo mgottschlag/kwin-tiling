@@ -46,6 +46,9 @@ public:
 
     void showSpacer(const QPointF &pos);
 
+protected Q_SLOTS:
+    void appletDestroyed();
+
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget=0);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
