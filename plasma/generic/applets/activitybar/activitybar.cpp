@@ -23,6 +23,7 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include <KWindowSystem>
+#include <KIcon>
 
 #include <Plasma/View>
 #include <Plasma/Corona>
@@ -110,6 +111,12 @@ void ActivityBar::insertContainment(Plasma::Containment *cont)
         m_tabBar->insertTab(index, cont->name());
      } else {
         m_tabBar->insertTab(index, cont->activity());
+     }
+
+     QString iconName = cont->icon();
+
+     if (!iconName.isEmpty() && iconName != "user-desktop") {
+         m_tabBar->nativeWidget()->setTabIcon(index, KIcon(iconName));
      }
 
      if (cont->screen() != -1 &&
