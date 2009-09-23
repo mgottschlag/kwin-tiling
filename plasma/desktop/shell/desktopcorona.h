@@ -69,6 +69,7 @@ public:
     virtual QRegion availableScreenRegion(int id) const;
     bool loadDefaultLayoutScripts();
     void processUpdateScripts();
+    void addDesktopContainment(int screen, int desktop = -1);
 
 protected Q_SLOTS:
     void evaluateScripts(QMap<QString, QString> scripts);
@@ -79,7 +80,6 @@ protected Q_SLOTS:
 
 private:
     void init();
-    void addDesktopContainment(int screen, int desktop = -1);
 
     Plasma::Applet *loadDefaultApplet(const QString &pluginName, Plasma::Containment *c);
 };

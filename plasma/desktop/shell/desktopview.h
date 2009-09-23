@@ -117,6 +117,12 @@ public slots:
      */
     void updateShortcuts();
 
+    /**
+     * make sure we've always got a containment
+     */
+    void lostContainment();
+    void grabContainment();
+
 protected:
     void wheelEvent(QWheelEvent *event);
     void drawBackground(QPainter *painter, const QRectF &rect);

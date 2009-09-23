@@ -43,6 +43,7 @@
 #include <kephal/screens.h>
 
 #include "dashboardview.h"
+#include "desktopcorona.h"
 #include "plasmaapp.h"
 #include "plasma-shell-desktop.h"
 
@@ -124,6 +125,8 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
             this, SLOT(screenResized(Kephal::Screen *)));
     connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)),
             this, SLOT(screenMoved(Kephal::Screen *)));
+
+    connect(this, SIGNAL(lostContainment()), SLOT(lostContainment()));
 }
 
 DesktopView::~DesktopView()
@@ -593,6 +596,25 @@ void DesktopView::previousContainment()
 
     Plasma::Containment *c = containments.at(i);
     setContainment(c);
+}
+
+void DesktopView::lostContainment()
+{
+    QTimer::singleShot(0, this, SLOT(grabContainment()));
+}
+
+void DesktopView::grabContainment()
+{
+    kDebug() << "trying to find a containment @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@";
+
+    DesktopCorona *corona = qobject_cast<DesktopCorona*>(scene());
+    if (!corona) {
+        kDebug() << "no corona :(";
+        return;
+    }
+
+    corona->addDesktopContainment(screen(), desktop());
+    kDebug() << "success?" << (containment() != 0);
 }
 
 #include "desktopview.moc"
