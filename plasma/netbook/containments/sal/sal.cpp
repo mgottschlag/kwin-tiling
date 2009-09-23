@@ -59,6 +59,8 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
       m_buttonDownMousePos(QPoint())
 {
     setContainmentType(Containment::CustomContainment);
+    setFocusPolicy(Qt::StrongFocus);
+    setFlag(QGraphicsItem::ItemIsFocusable, true);
 }
 
 SearchLaunch::~SearchLaunch()
@@ -376,7 +378,6 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
         // create our layout!
         if (!layout()) {
-            setFocusPolicy(Qt::StrongFocus);
             // create main layout
             m_mainLayout = new QGraphicsLinearLayout();
             m_mainLayout->setOrientation(layoutOtherDirection);
@@ -473,6 +474,12 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
         Plasma::DataEngine *engine = dataEngine("searchlaunch");
         engine->connectSource("query", this);
     }
+
+    if (constraints & Plasma::ScreenConstraint) {
+        if (screen() != -1 && m_searchField) {
+            m_searchField->setFocus();
+        }
+    }
 }
 
 void SearchLaunch::setFormFactorFromLocation(Plasma::Location loc)
@@ -532,6 +539,7 @@ void SearchLaunch::focusInEvent(QFocusEvent *event)
     if (m_searchField) {
         m_searchField->setFocus();
     }
+    Containment::focusInEvent(event);
 }
 
 void SearchLaunch::selectItem(Plasma::IconWidget *icon)
@@ -570,6 +578,7 @@ bool SearchLaunch::eventFilter(QObject *watched, QEvent *event)
 
     return false;
 }
+
 
 K_EXPORT_PLASMA_APPLET(sal, SearchLaunch)
 
