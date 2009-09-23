@@ -381,7 +381,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             // create main layout
             m_mainLayout = new QGraphicsLinearLayout();
             m_mainLayout->setOrientation(layoutOtherDirection);
-            m_mainLayout->setContentsMargins(0, 0, 0, 0);
+            m_mainLayout->setContentsMargins(0, 10, 0, 0);
             m_mainLayout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
                                                     QSizePolicy::Expanding));
             setLayout(m_mainLayout);

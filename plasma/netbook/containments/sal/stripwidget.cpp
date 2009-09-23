@@ -45,7 +45,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
       m_currentIconIndex(-1)
 {
     setFrameShadow(Plasma::Frame::Raised);
-    setEnabledBorders(Plasma::FrameSvg::BottomBorder);
+    setEnabledBorders(Plasma::FrameSvg::TopBorder|Plasma::FrameSvg::BottomBorder);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     //FIXME: layout problems, do it right
     //setPreferredSize(500, 128);
