@@ -839,7 +839,7 @@ void PlasmaApp::zoomIn(Plasma::Containment *containment)
     bool zoomIn = true;
     bool zoomOut = true;
     bool addSibling = isMutable;
-    bool remove = false;
+    bool remove = isMutable;
 
     if (m_zoomLevel == Plasma::GroupZoom) {
         setControllerVisible(false);
@@ -847,9 +847,9 @@ void PlasmaApp::zoomIn(Plasma::Containment *containment)
         containment->closeToolBox();
         addSibling = false;
         zoomIn = false;
+        //remove = false;
     } else if (m_zoomLevel == Plasma::OverviewZoom) {
         m_zoomLevel = Plasma::GroupZoom;
-        remove = isMutable;
     }
 
     //make sure everybody can zoom out again
@@ -865,7 +865,7 @@ void PlasmaApp::zoomIn(Plasma::Containment *containment)
         }
 
         c->enableAction("zoom in", zoomIn);
-        c->enableAction("remove", remove && (c->screen() == -1));
+        c->enableAction("remove", remove);
         c->enableAction("add widgets", isMutable);
     }
     m_corona->enableAction("zoom out", zoomOut);
@@ -902,7 +902,7 @@ void PlasmaApp::zoomOut(Plasma::Containment *)
         }
 
         c->enableAction("zoom in", zoomIn);
-        c->enableAction("remove", isMutable && c->screen() == -1);
+        c->enableAction("remove", isMutable);
         c->enableAction("add widgets", addWidgets);
     }
 
