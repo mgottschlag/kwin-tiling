@@ -205,7 +205,7 @@ void ControllerWindow::showWidgetExplorer()
     if (!m_widgetExplorer) {
         m_widgetExplorer = new Plasma::WidgetExplorer();
         m_widgetExplorer->setContainment(m_containment);
-        m_widgetExplorer->setApplication();
+        m_widgetExplorer->populateWidgetList();
         m_widgetExplorer->resize(size());
 
         m_containment->corona()->addOffscreenWidget(m_widgetExplorer);
