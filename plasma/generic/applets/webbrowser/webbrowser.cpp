@@ -43,6 +43,7 @@
 #include <KConfigDialog>
 #include <KHistoryComboBox>
 
+#include <Plasma/ComboBox>
 #include <Plasma/IconWidget>
 #include <Plasma/LineEdit>
 #include <Plasma/Meter>
@@ -50,7 +51,6 @@
 #include <Plasma/TreeView>
 #include <Plasma/Slider>
 
-#include "historycombobox.h"
 #include "bookmarksdelegate.h"
 #include "bookmarkitem.h"
 
@@ -93,11 +93,15 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     m_back = addTool("go-previous", m_toolbarLayout);
     m_forward = addTool("go-next", m_toolbarLayout);
 
-    m_historyCombo = new Plasma::HistoryComboBox(this);
+    m_nativeHistoryCombo = new KHistoryComboBox();
+    m_historyCombo = new Plasma::ComboBox(this);
+    m_historyCombo->setNativeWidget(m_nativeHistoryCombo);
+    m_historyCombo->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_historyCombo->setZValue(999);
-    m_historyCombo->setDuplicatesEnabled(false);
+
+    m_nativeHistoryCombo->setDuplicatesEnabled(false);
     m_pixmapProvider = new KUrlPixmapProvider;
-    m_historyCombo->nativeWidget()->setPixmapProvider(m_pixmapProvider);
+    m_nativeHistoryCombo->setPixmapProvider(m_pixmapProvider);
 
     m_toolbarLayout->addItem(m_historyCombo);
     m_go = addTool("go-jump-locationbar", m_toolbarLayout);
@@ -200,10 +204,10 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
 
     //Autocompletion stuff
     m_completion = new KCompletion();
-    m_historyCombo->nativeWidget()->setCompletionObject(m_completion);
+    m_nativeHistoryCombo->setCompletionObject(m_completion);
 
     QStringList list = cg.readEntry("History list", QStringList());
-    m_historyCombo->setHistoryItems(list);
+    m_nativeHistoryCombo->setHistoryItems(list);
 
     m_graphicsWidget = new QGraphicsWidget(this);
     m_graphicsWidget->setLayout(m_layout);
@@ -272,7 +276,7 @@ void WebBrowser::saveState(KConfigGroup &cg) const
     cg.writeEntry("Url", m_url.prettyUrl());
 
     if (m_historyCombo) {
-        const QStringList list = m_historyCombo->historyItems();
+        const QStringList list = m_nativeHistoryCombo->historyItems();
         cg.writeEntry("History list", list);
     }
 
@@ -299,7 +303,7 @@ void WebBrowser::reload()
 
 void WebBrowser::returnPressed()
 {
-    KUrl url(m_historyCombo->currentText());
+    KUrl url(m_nativeHistoryCombo->currentText());
 
 
     KUriFilter::self()->filterUri( url );
@@ -329,8 +333,8 @@ void WebBrowser::urlChanged(const QUrl &url)
         m_addBookmark->setAction(m_removeBookmarkAction);
     }
 
-    m_historyCombo->addToHistory(m_url.prettyUrl());
-    m_historyCombo->nativeWidget()->setCurrentIndex(0);
+    m_nativeHistoryCombo->addToHistory(m_url.prettyUrl());
+    m_nativeHistoryCombo->setCurrentIndex(0);
 
     m_go->setAction(m_reloadAction);
 
@@ -353,11 +357,11 @@ void WebBrowser::dataUpdated( const QString &source, const Plasma::DataEngine::D
 {
     //TODO: find a way to update bookmarks and history combobox here, at the moment the data engine
     // is only used to save the icon files
-    if (source == m_historyCombo->currentText()) {
+    if (source == m_nativeHistoryCombo->currentText()) {
         QPixmap favicon(QPixmap::fromImage(data["Icon"].value<QImage>()));
         if (!favicon.isNull()) {
-            m_historyCombo->nativeWidget()->setItemIcon(
-                                    m_historyCombo->nativeWidget()->currentIndex(), QIcon(favicon));
+            m_nativeHistoryCombo->setItemIcon(
+                                    m_nativeHistoryCombo->currentIndex(), QIcon(favicon));
             setPopupIcon(QIcon(favicon));
         }
     }

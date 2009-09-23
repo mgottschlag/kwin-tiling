@@ -30,6 +30,7 @@ class QStandardItemModel;
 class QStandardItem;
 class QTimer;
 class KUrlPixmapProvider;
+class KHistoryComboBox;
 class KUrl;
 class KCompletion;
 class KBookmarkManager;
@@ -43,7 +44,7 @@ namespace Plasma
 {
     class IconWidget;
     class Meter;
-    class HistoryComboBox;
+    class ComboBox;
     class WebView;
     class TreeView;
     class Slider;
@@ -112,7 +113,8 @@ private:
 
     QGraphicsWidget *m_graphicsWidget;
 
-    Plasma::HistoryComboBox *m_historyCombo;
+    Plasma::ComboBox *m_historyCombo;
+    KHistoryComboBox *m_nativeHistoryCombo;
     BookmarksDelegate *m_bookmarksDelegate;
 
     Plasma::IconWidget *m_back;

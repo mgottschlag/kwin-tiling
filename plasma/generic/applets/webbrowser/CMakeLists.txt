@@ -1,7 +1,6 @@
 project(webbrowser)
 
 set(webbrowser_SRCS
-    historycombobox.cpp
     bookmarksdelegate.cpp
     bookmarkitem.cpp
     webbrowser.cpp)
