@@ -75,6 +75,7 @@ Newspaper::~Newspaper()
 void Newspaper::init()
 {
     m_externalLayout = new QGraphicsLinearLayout(this);
+    m_externalLayout->setContentsMargins(0, 0, 0, 0);
     m_scrollWidget = new Plasma::ScrollWidget(this);
     m_externalLayout->addItem(m_scrollWidget);
     m_mainWidget = new QGraphicsWidget(m_scrollWidget);
