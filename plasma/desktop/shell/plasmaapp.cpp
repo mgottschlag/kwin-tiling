@@ -849,7 +849,7 @@ void PlasmaApp::zoomIn(Plasma::Containment *containment)
         zoomIn = false;
     } else if (m_zoomLevel == Plasma::OverviewZoom) {
         m_zoomLevel = Plasma::GroupZoom;
-        remove = isMutable && true;
+        remove = isMutable;
     }
 
     //make sure everybody can zoom out again
