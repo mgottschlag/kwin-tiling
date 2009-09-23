@@ -26,6 +26,7 @@
 namespace Plasma
 {
     class Applet;
+    class Svg;
 }
 
 class Newspaper;
@@ -63,6 +64,7 @@ private:
     Plasma::Applet *m_applet;
     Newspaper *m_newspaper;
     AppletMoveSpacer *m_spacer;
+    Plasma::Svg *m_icons;
     QGraphicsLinearLayout *m_spacerLayout;
     int m_spacerIndex;
     QTimer *m_scrollTimer;

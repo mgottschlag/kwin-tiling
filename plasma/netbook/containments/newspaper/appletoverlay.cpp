@@ -26,8 +26,11 @@
 #include <QTimer>
 
 #include <KGlobalSettings>
+#include <KIconLoader>
 
 #include <Plasma/Applet>
+#include <Plasma/Svg>
+#include <Plasma/FrameSvg>
 #include <Plasma/PaintUtils>
 #include <Plasma/ScrollWidget>
 
@@ -38,6 +41,9 @@ public:
     AppletMoveSpacer(QGraphicsWidget *parent)
         : QGraphicsWidget(parent)
     {
+        m_background = new Plasma::FrameSvg(this);
+        m_background->setImagePath("widgets/frame");
+        m_background->setElementPrefix("sunken");
     }
 
     AppletOverlay *overlay;
@@ -49,20 +55,21 @@ protected:
         overlay->dropEvent(event);
     }
 
+    void resizeEvent(QGraphicsSceneResizeEvent *event)
+    {
+        m_background->resizeFrame(event->newSize());
+    }
+
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget * widget = 0)
     {
         Q_UNUSED(option)
         Q_UNUSED(widget)
 
-        //TODO: make this a pretty gradient?
-        painter->setRenderHint(QPainter::Antialiasing);
-        QPainterPath p = Plasma::PaintUtils::roundedRectangle(contentsRect().adjusted(1, 1, -2, -2), 4);
-        QColor c = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-        c.setAlphaF(0.3);
-
-        painter->fillPath(p, c);
+        m_background->paintFrame(painter);
     }
 
+private:
+    Plasma::FrameSvg *m_background;
 };
 
 AppletOverlay::AppletOverlay(QGraphicsWidget *parent, Newspaper *newspaper)
@@ -81,6 +88,10 @@ AppletOverlay::AppletOverlay(QGraphicsWidget *parent, Newspaper *newspaper)
     m_scrollTimer = new QTimer(this);
     m_scrollTimer->setSingleShot(false);
     connect(m_scrollTimer, SIGNAL(timeout()), this, SLOT(scrollTimeout()));
+
+    m_icons = new Plasma::Svg(this);
+    m_icons->setImagePath("widgets/configuration-icons");
+    m_icons->setContainsMultipleImages(true);
 }
 
 AppletOverlay::~AppletOverlay()
@@ -97,16 +108,16 @@ void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     Q_UNUSED(widget)
 
     QColor c = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-    c.setAlphaF(0.25);
+    c.setAlphaF(0.15);
 
     painter->fillRect(option->exposedRect, c);
 
     if (m_applet) {
-        QRectF geom = m_applet->geometry();
+        QRectF geom = m_applet->contentsRect();
+        geom.translate(m_applet->pos());
         //FIXME: calculate the offset ONE time, mmkay?
         QPointF offset = m_newspaper->m_mainWidget->pos() + m_newspaper->m_scrollWidget->pos();
-        //FIXME: why 4,4 (some layout margins not taken into account i suppose)?
-        geom.moveTopLeft(geom.topLeft() + offset + QPoint(4,4));
+        geom.moveTopLeft(geom.topLeft() + offset);
         geom = geom.intersected(m_newspaper->m_scrollWidget->geometry());
         c.setAlphaF(0.3);
         QPainterPath p = Plasma::PaintUtils::roundedRectangle(geom, 4);
@@ -114,6 +125,9 @@ void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->fillPath(p, c);
         painter->restore();
+        QRect iconRect(0, 0, KIconLoader::SizeLarge, KIconLoader::SizeLarge);
+        iconRect.moveCenter(geom.center().toPoint());
+        m_icons->paint(painter, iconRect, "move");
     }
 }
 
