@@ -314,7 +314,7 @@ Qt::Orientation WidgetExplorer::orientation()
     return d->orientation;
 }
 
-void WidgetExplorer::setApplication(const QString &app)
+void WidgetExplorer::populateWidgetList(const QString &app)
 {
     d->application = app;
     d->initFilters();

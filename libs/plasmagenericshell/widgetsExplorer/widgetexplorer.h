@@ -51,7 +51,16 @@ public:
     ~WidgetExplorer();
 
     QString application();
-    void setApplication(const QString &application = QString());
+
+    /**
+     * Populates the widget list for the given application. This must be called
+     * before the widget explorer will be usable as the widget list will remain
+     * empty up to that point.
+     *
+     * @arg application the application which the widgets should be loaded for.
+     */
+    void populateWidgetList(const QString &application = QString());
+
     /**
      * Changes the current default containment to add applets to
      *

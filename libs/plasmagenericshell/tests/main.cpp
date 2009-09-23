@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     appletBrowser = new Plasma::WidgetExplorer();
     appletBrowser->setContainment(containment);
     appletBrowser->setOrientation(orientation);
-    appletBrowser->setApplication();
+    appletBrowser->populateWidgetList();
 
     Plasma::Corona *scene = new Plasma::Corona();
     scene->addItem(appletBrowser);
