@@ -21,6 +21,8 @@
 #ifndef DASHBOARDVIEW_H
 #define DASHBOARDVIEW_H
 
+#include <QPointer>
+
 #include <Plasma/Plasma>
 #include <Plasma/View>
 
@@ -29,7 +31,7 @@ class QToolButton;
 
 namespace Plasma
 {
-//    class AppletBrowser;
+    class WidgetExplorer;
     class Containment;
 }
 
@@ -62,17 +64,14 @@ public slots:
     void setContainment(Plasma::Containment *newContainment);
 
 protected slots:
-   // void showAppletBrowser();
- //   void appletBrowserDestroyed();
+    void showWidgetExplorer();
     void hideView();
- //   void activeWindowChanged(WId id);
     void suppressShowTimeout();
 
 private:
     Plasma::View *m_view;
-   // Plasma::AppletBrowser *m_appletBrowser;
+    QPointer<Plasma::WidgetExplorer> m_widgetExplorer;
     QToolButton *m_closeButton;
-    QPoint m_appletBrowserDragStart;
     QAction *m_hideAction;
     bool m_suppressShow : 1;
     bool m_zoomIn : 1;

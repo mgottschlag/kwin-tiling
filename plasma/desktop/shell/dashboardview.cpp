@@ -32,19 +32,34 @@
 #include <Plasma/Corona>
 #include <Plasma/Containment>
 #include <Plasma/Svg>
-#include "plasmaapp.h"
 
 #include <kephal/screens.h>
 
-//#include "appletbrowser.h"
+#include "plasmaapp.h"
 #include "plasma-shell-desktop.h"
+#include "widgetsExplorer/widgetexplorer.h"
 
 static const int SUPPRESS_SHOW_TIMEOUT = 500; // Number of millis to prevent reshow of dashboard
+
+class DashboardWidgetExplorer : public Plasma::WidgetExplorer
+{
+public:
+    DashboardWidgetExplorer(QGraphicsWidget *parent)
+        : Plasma::WidgetExplorer(parent)
+    {
+
+    }
+
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+    {
+        painter->fillRect(option->rect, QColor(0, 0, 0, 160));
+    }
+};
 
 DashboardView::DashboardView(Plasma::Containment *containment, Plasma::View *view)
     : Plasma::View(containment, 0),
       m_view(view),
-     // m_appletBrowser(0),
+      m_widgetExplorer(0),
       m_closeButton(new QToolButton(this)),
       m_suppressShow(false),
       m_zoomIn(false),
@@ -81,7 +96,7 @@ DashboardView::DashboardView(Plasma::Containment *containment, Plasma::View *vie
 
 DashboardView::~DashboardView()
 {
-    //delete m_appletBrowser;
+    delete m_widgetExplorer;
 }
 
 void DashboardView::drawBackground(QPainter * painter, const QRectF & rect)
@@ -139,80 +154,25 @@ void DashboardView::paintEvent(QPaintEvent *event)
     painter.drawText(boundingBox.adjusted(margin, 0, 0, 0), Qt::AlignLeft | Qt::AlignVCenter, text);
 }
 
-/*void DashboardView::showAppletBrowser()
+void DashboardView::showWidgetExplorer()
 {
-    if (!containment()) {
+    Plasma::Containment *c = containment();
+    if (!c) {
         return;
     }
 
-    if (!m_appletBrowser) {
-        m_appletBrowser = new Plasma::AppletBrowser(this, Qt::FramelessWindowHint);
-        m_appletBrowser->setContainment(containment());
-        //TODO: make this proportional to the screen
-        m_appletBrowser->setInitialSize(QSize(400, 400));
-        m_appletBrowser->setApplication();
-        m_appletBrowser->setWindowTitle(i18n("Add Widgets"));
-        QPalette p = m_appletBrowser->palette();
-        p.setBrush(QPalette::Background, QBrush(QColor(0, 0, 0, 180)));
-        m_appletBrowser->setPalette(p);
-        m_appletBrowser->setBackgroundRole(QPalette::Background);
-        m_appletBrowser->setAutoFillBackground(true);
-        KWindowSystem::setState(m_appletBrowser->winId(), NET::KeepAbove|NET::SkipTaskbar);
-        m_appletBrowser->move(0, 0);
-        m_appletBrowser->installEventFilter(this);
+    if (m_widgetExplorer) {
+        delete m_widgetExplorer;
+    } else {
+        m_widgetExplorer = new DashboardWidgetExplorer(c);
+        m_widgetExplorer->setContainment(c);
+        m_widgetExplorer->populateWidgetList();
+        m_widgetExplorer->setMaximumWidth(width());
+        m_widgetExplorer->adjustSize();
+        m_widgetExplorer->setPos(0, c->geometry().height() - m_widgetExplorer->geometry().height());
+        m_widgetExplorer->setZValue(1000000);
     }
-
-    m_appletBrowser->setHidden(m_appletBrowser->isVisible());
-}*/
-
-/*void DashboardView::appletBrowserDestroyed()
-{
-    m_appletBrowser = 0;
-}*/
-
-/*bool DashboardView::eventFilter(QObject *watched, QEvent *event)
-{
-    if (watched != m_appletBrowser) {
-        return false;
-    }
-
-    if (event->type() == QEvent::MouseButtonPress) {
-        QMouseEvent *me = static_cast<QMouseEvent *>(event);
-        m_appletBrowserDragStart = me->globalPos();
-    } else if (event->type() == QEvent::MouseMove && m_appletBrowserDragStart != QPoint()) {
-        const QMouseEvent *me = static_cast<QMouseEvent *>(event);
-        const QPoint newPos = me->globalPos();
-        const QPoint curPos = m_appletBrowser->pos();
-        int x = curPos.x();
-        int y = curPos.y();
-
-        if (curPos.y() == 0 || curPos.y() + m_appletBrowser->height() >= height()) {
-           x = curPos.x() + (newPos.x() - m_appletBrowserDragStart.x());
-           if (x < 0) {
-               x = 0;
-           } else if (x + m_appletBrowser->width() > width()) {
-               x = width() - m_appletBrowser->width();
-           }
-        }
-
-        if (x == 0 || x + m_appletBrowser->width() >= width()) {
-            y = curPos.y() + (newPos.y() - m_appletBrowserDragStart.y());
-
-            if (y < 0) {
-                y = 0;
-            } else if (y + m_appletBrowser->height() > height()) {
-                y = height() - m_appletBrowser->height();
-            }
-        }
-
-        m_appletBrowser->move(x, y);
-        m_appletBrowserDragStart = newPos;
-    } else if (event->type() == QEvent::MouseButtonRelease) {
-        m_appletBrowserDragStart = QPoint();
-    }
-
-    return false;
-}*/
+}
 
 bool DashboardView::event(QEvent *event)
 {
@@ -283,13 +243,13 @@ void DashboardView::setContainment(Plasma::Containment *newContainment)
 
     if (isVisible()) {
         if (oldContainment) {
-            disconnect(oldContainment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
+            disconnect(oldContainment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
             oldContainment->closeToolBox();
             oldContainment->enableAction("zoom out", m_zoomOut);
             oldContainment->enableAction("zoom in", m_zoomIn);
         }
 
-        connect(newContainment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
+        connect(newContainment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
         QAction *action = newContainment->action("zoom out");
         m_zoomOut = action ? action->isEnabled() : false;
         action = newContainment->action("zoom in");
@@ -298,9 +258,9 @@ void DashboardView::setContainment(Plasma::Containment *newContainment)
         newContainment->enableAction("zoom in", false);
     }
 
-   /* if (m_appletBrowser) {
-        m_appletBrowser->setContainment(newContainment);
-    }*/
+    if (m_widgetExplorer) {
+        m_widgetExplorer->setContainment(newContainment);
+    }
 
     View::setContainment(0); // we don't actually to mess with the screen settings
     View::setContainment(newContainment);
@@ -308,16 +268,10 @@ void DashboardView::setContainment(Plasma::Containment *newContainment)
 
 void DashboardView::hideView()
 {
-    /*if (m_appletBrowser) {
-        m_appletBrowser->hide();
-    }*/
-
-#ifndef Q_WS_WIN
-    disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
-#endif
+    delete m_widgetExplorer;
 
     if (containment()) {
-        disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
+        disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
 
         containment()->closeToolBox();
         containment()->enableAction("zoom out", m_zoomOut);
@@ -345,21 +299,11 @@ void DashboardView::keyPressEvent(QKeyEvent *event)
     Plasma::View::keyPressEvent(event);
 }
 
-/*void DashboardView::activeWindowChanged(WId id)
-{
-    if (id != winId() && (!m_appletBrowser || id != m_appletBrowser->winId()) && find(id) != 0) {
-        hideView();
-    }
-}*/
-
 void DashboardView::showEvent(QShowEvent *event)
 {
     KWindowSystem::setState(winId(), NET::SkipPager);
-#ifndef Q_WS_WIN
-    connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
-#endif
     if (containment()) {
-        connect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
+        connect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
     }
     Plasma::View::showEvent(event);
 }
