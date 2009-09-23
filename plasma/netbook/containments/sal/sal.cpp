@@ -255,11 +255,13 @@ void SearchLaunch::relayout()
     QList<Plasma::IconWidget *>orderedItems = m_items.values();
     int validIndex = 0;
 
-    foreach (Plasma::IconWidget *icon, orderedItems) {
-        if (m_launchGrid->itemAt(validIndex) == icon) {
-            ++validIndex;
-        } else {
-            break;
+    if (m_gridBackground->size().width() <= m_gridScroll->size().width()) {
+        foreach (Plasma::IconWidget *icon, orderedItems) {
+            if (m_launchGrid->itemAt(validIndex) == icon) {
+                ++validIndex;
+            } else {
+                break;
+            }
         }
     }
 
@@ -269,7 +271,7 @@ void SearchLaunch::relayout()
 
     int nColumns;
     // if we already decided how many columns are going to be don't decide again
-    if (m_launchGrid->columnCount() > 0 &&  m_launchGrid->rowCount() > 0) {
+    if (validIndex > 0 && m_launchGrid->columnCount() > 0 &&  m_launchGrid->rowCount() > 0) {
         nColumns = m_launchGrid->columnCount();
     } else {
         nColumns = qMax(1, int(m_gridScroll->size().width() / m_maxColumnWidth));
