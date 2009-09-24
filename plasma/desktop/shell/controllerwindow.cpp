@@ -104,6 +104,10 @@ Plasma::Containment *ControllerWindow::containment() const
 
 QSize ControllerWindow::sizeHint() const
 {
+    if (!m_containment) {
+        return QWidget::sizeHint();
+    }
+
     QRect screenGeom = Kephal::ScreenUtils::screenGeometry(m_containment->screen());
 
     switch (m_location) {
