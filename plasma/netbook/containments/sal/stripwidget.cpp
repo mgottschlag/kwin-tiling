@@ -189,15 +189,20 @@ void StripWidget::launchFavourite(Plasma::IconWidget *icon)
 
 void StripWidget::goRight()
 {
-    //FIXME: no hardcoded and animated
-    QPointF oldPos = m_scrollingWidget->pos();
-    m_scrollingWidget->setPos(qMax(oldPos.x() - 100, -(m_scrollingWidget->size().width() - m_scrollWidget->size().width())), oldPos.y());
+    QRectF rect(m_scrollWidget->boundingRect());
+    rect.moveLeft(rect.right() - m_scrollingWidget->pos().x());
+    rect.setWidth(rect.width()/4);
+
+    m_scrollWidget->ensureRectVisible(rect);
 }
 
 void StripWidget::goLeft()
 {
-    QPointF oldPos = m_scrollingWidget->pos();
-    m_scrollingWidget->setPos(qMax(oldPos.x() + 100, (qreal)0.0), oldPos.y());
+    QRectF rect(m_scrollWidget->boundingRect());
+    rect.setWidth(rect.width()/4);
+    rect.moveRight(- m_scrollingWidget->pos().x());
+
+    m_scrollWidget->ensureRectVisible(rect);
 }
 
 void StripWidget::save(KConfigGroup &cg)
