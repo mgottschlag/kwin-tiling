@@ -326,16 +326,17 @@ void StripWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 void StripWidget::focusInEvent(QFocusEvent *event)
 {
     Q_UNUSED(event)
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_stripLayout->itemAt(0));
-    m_hoverIndicator->setTargetItem(icon);
-    m_currentIconIndex = 0;
+    if (m_currentIconIndex == -1) {
+        Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_stripLayout->itemAt(0));
+        m_hoverIndicator->setTargetItem(icon);
+        m_currentIconIndex = 0;
+    }
 }
 
 void StripWidget::focusOutEvent(QFocusEvent *event)
 {
     Q_UNUSED(event)
     m_hoverIndicator->hide();
-    m_currentIconIndex = -1;
 }
 
 void StripWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
