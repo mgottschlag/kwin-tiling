@@ -610,11 +610,11 @@ void Image::updateBackground(const QImage &img)
     m_oldPixmap = m_pixmap;
     m_oldFadedPixmap = m_oldPixmap;
     m_pixmap = QPixmap::fromImage(img);
-    
-    if(!img.isNull()){
+
+    if (!img.isNull()){
         suspendStartup(false);
     }
-    
+
     if (!m_oldPixmap.isNull()) {
         Plasma::Animator::self()->customAnimation(254, 1000, Plasma::Animator::EaseInCurve, this, "updateFadedImage");
     } else {        
