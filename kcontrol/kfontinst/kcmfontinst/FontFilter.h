@@ -58,8 +58,9 @@ class CFontFilter : public KLineEdit
     CFontFilter(QWidget *parent);
     virtual ~CFontFilter() { }
 
-    void setMgtMode(bool m);
     void setFoundries(const QSet<QString> &foundries);
+
+    QSize sizeHint() const;
 
     Q_SIGNALS:
 
@@ -73,7 +74,7 @@ class CFontFilter : public KLineEdit
 
     private:
 
-    void addAction(ECriteria crit, const QString &text, bool on, bool visible);
+    void addAction(ECriteria crit, const QString &text, bool on);
     void paintEvent(QPaintEvent *ev);
     void resizeEvent(QResizeEvent *ev);
     void mousePressEvent(QMouseEvent *ev);

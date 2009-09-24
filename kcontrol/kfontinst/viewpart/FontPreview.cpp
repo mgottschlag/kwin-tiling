@@ -55,11 +55,10 @@ CFontPreview::~CFontPreview()
     delete itsEngine;
 }
 
-void CFontPreview::showFont(const KUrl &url, const QString &name, unsigned long styleInfo,
+void CFontPreview::showFont(const QString &name, unsigned long styleInfo,
                             int face)
 {
     itsFontName=name;
-    itsCurrentUrl=url;
     itsStyleInfo=styleInfo;
     showFace(face);
 }
@@ -74,20 +73,20 @@ void CFontPreview::showFont()
 {
     itsLastWidth=width()+constStepSize;
     itsLastHeight=height()+constStepSize;
-    itsImage=QImage();
 
-    if(!itsCurrentUrl.isEmpty())
-        itsImage=itsEngine->draw(itsCurrentUrl, itsLastWidth, itsLastHeight,
-                                 palette().text().color(), palette().base().color(),
-                                 itsCurrentFace, false, itsRange, &itsChars, itsFontName,
-                                 itsStyleInfo);
-    
+    itsImage=itsEngine->draw(itsFontName, itsStyleInfo, itsCurrentFace,
+                             palette().text().color(), palette().base().color(),
+                             itsLastWidth, itsLastHeight,
+                             false, itsRange, &itsChars);
+
     if(!itsImage.isNull())
     {
         itsLastChar=CFcEngine::TChar();
         setMouseTracking(itsChars.count()>0);
         update();
         emit status(true);
+        emit atMax(itsEngine->atMax());
+        emit atMin(itsEngine->atMin());
     }
     else
     {
@@ -95,6 +94,8 @@ void CFontPreview::showFont()
         setMouseTracking(false);
         update();
         emit status(false);
+        emit atMax(true);
+        emit atMin(true);
     }
 }
 
@@ -102,12 +103,14 @@ void CFontPreview::zoomIn()
 {
     itsEngine->zoomIn();
     showFont();
+    emit atMax(itsEngine->atMax());
 }
 
 void CFontPreview::zoomOut()
 {
     itsEngine->zoomOut();
     showFont();
+    emit atMin(itsEngine->atMin());
 }
 
 void CFontPreview::setUnicodeRange(const QList<CFcEngine::TRange> &r)
@@ -155,9 +158,9 @@ void CFontPreview::mouseMoveEvent(QMouseEvent *event)
 void CFontPreview::wheelEvent(QWheelEvent *e)
 {
     if(e->delta()>0)
-        emit doZoomIn();
+        zoomIn();
     else if(e->delta()<0)
-        emit doZoomOut();
+        zoomOut();
 
     e->accept();
 }

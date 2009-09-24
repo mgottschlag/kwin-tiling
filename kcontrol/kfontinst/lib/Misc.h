@@ -84,17 +84,20 @@ namespace Misc
     extern KDE_EXPORT QString getFolder(const QString &defaultDir, const QString &root,
                                         QStringList &dirs);
     extern KDE_EXPORT bool    checkExt(const QString &fname, const QString &ext);
+    extern KDE_EXPORT bool    isBitmap(const QString &str);
     extern KDE_EXPORT bool    isMetrics(const QString &str);
     inline KDE_EXPORT bool    isMetrics(const KUrl &url) { return isMetrics(url.fileName()); }
     inline KDE_EXPORT bool    isPackage(const QString &file)
                       { return file.indexOf(KFI_FONTS_PACKAGE)==(file.length()-KFI_FONTS_PACKAGE_LEN); }
     extern KDE_EXPORT int     getIntQueryVal(const KUrl &url, const char *key, int defVal);
     extern KDE_EXPORT bool    printable(const QString &mime);
+    inline KDE_EXPORT QString hide(const QString &f) { return '.'!=f[0] ? QChar('.')+f : f; }
     inline KDE_EXPORT QString unhide(const QString &f) { return '.'==f[0] ? f.mid(1) : f; }
     extern KDE_EXPORT uint    qHash(const TFont &key);
-    extern KDE_EXPORT bool    configureForX11(const QString &dir);
     extern KDE_EXPORT QString encodeText(const QString &str, QTextStream &s);
     extern KDE_EXPORT QString contractHome(QString path);
+    extern KDE_EXPORT QString expandHome(QString path);
+    extern KDE_EXPORT QMap<QString, QString> getFontFileMap(const QSet<QString> &files);
 }
 
 }

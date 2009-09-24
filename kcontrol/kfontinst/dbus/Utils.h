@@ -1,10 +1,10 @@
-#ifndef __SERVER_H__
-#define __SERVER_H__
+#ifndef __UTILS_H__
+#define __UTILS_H__
 
 /*
  * KFontInst - KDE Font Installer
  *
- * Copyright 2003-2007 Craig Drummond <craig@kde.org>
+ * Copyright 2003-2009 Craig Drummond <craig@kde.org>
  *
  * ----
  *
@@ -24,32 +24,35 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtCore/QByteArray>
+#include <QtCore/QString>
+#include "Family.h"
 
 namespace KFI
 {
-
-class CSocket;
-
-class CServer
+namespace Utils
 {
-    public:
 
-    CServer();
-    ~CServer()                  { close(); }
-
-    bool         open();
-    void         close();
-    bool         isOpen() const { return itsOpen; }
-    CSocket *    waitForClient(int timeout=5);
-    QByteArray & name()         { return itsName; }
-
-    private:
-
-    int        itsFd;
-    QByteArray itsName;
-    bool       itsOpen;
+enum EFileType
+{
+    FILE_INVALID,
+    FILE_BITMAP,
+    FILE_SCALABLE,
+    FILE_AFM,
+    FILE_PFM
 };
+    
+inline QString getDestFolder(const QString &folder, const QString &file)
+{
+    return folder+file[0].toLower()+'/';
+}
+extern QString modifyName(const QString &fname);
+extern bool isAAfm(const QString &fname);
+extern bool isAPfm(const QString &fname);
+extern bool isAType1(const QString &fname);
+extern void createAfm(const QString &file, EFileType type);
+extern EFileType check(const QString &file, Family &fam);
+
+}
 
 }
 

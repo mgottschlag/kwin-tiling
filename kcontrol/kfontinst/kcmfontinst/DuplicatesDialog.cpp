@@ -23,10 +23,12 @@
 
 #include "../config-fontinst.h"
 #include "DuplicatesDialog.h"
+#include "ActionLabel.h"
 #include "Misc.h"
 #include "Fc.h"
-#include "JobRunner.h"
+#include "FcEngine.h"
 #include "FontList.h"
+#include "JobRunner.h"
 #include <KDE/KGlobal>
 #include <KDE/KIconLoader>
 #include <KDE/KLocale>
@@ -67,16 +69,14 @@ enum EDialogColumns
     COL_LINK
 };
 
-CDuplicatesDialog::CDuplicatesDialog(QWidget *parent, CJobRunner *jr, CFontList *fl)
-                 : CActionDialog(parent),
-                   itsModifiedSys(false),
-                   itsModifiedUser(false),
-                   itsRunner(jr),
+CDuplicatesDialog::CDuplicatesDialog(QWidget *parent, CFontList *fl)
+                 : KDialog(parent),
                    itsFontList(fl)
 {
     setCaption(i18n("Duplicate Fonts"));
-    setButtons(KDialog::Ok|KDialog::Cancel);
-    enableButtonOk(false);
+    setButtons(Cancel);
+    setModal(true);
+    showButtonSeparator(true);
 
     QFrame *page = new QFrame(this);
     setMainWidget(page);
@@ -87,7 +87,7 @@ CDuplicatesDialog::CDuplicatesDialog(QWidget *parent, CJobRunner *jr, CFontList 
     itsLabel=new QLabel(page);
     itsView=new CFontFileListView(page);
     itsView->hide();
-    layout->addWidget(itsPixmapLabel, 0, 0);
+    layout->addWidget(itsActionLabel = new CActionLabel(this), 0, 0);
     layout->addWidget(itsLabel, 0, 1);
     itsLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
     layout->addWidget(itsView, 1, 0, 1, 2);
@@ -98,15 +98,15 @@ CDuplicatesDialog::CDuplicatesDialog(QWidget *parent, CJobRunner *jr, CFontList 
 
 int CDuplicatesDialog::exec()
 {
-    itsModifiedSys=itsModifiedUser=false;
+    itsActionLabel->startAnimation();
     itsLabel->setText(i18n("Scanning for duplicate fonts. Please wait..."));
     itsFontFileList->start();
-    return CActionDialog::exec();
+    return KDialog::exec();
 }
 
 void CDuplicatesDialog::scanFinished()
 {
-    stopAnimation();
+    itsActionLabel->stopAnimation();
 
     if(itsFontFileList->wasTerminated())
     {
@@ -120,11 +120,17 @@ void CDuplicatesDialog::scanFinished()
         itsFontFileList->getDuplicateFonts(duplicates);
 
         if(0==duplicates.count())
+        {
+            setButtons(Close);
             itsLabel->setText(i18n("No duplicate fonts found."));
+        }
         else
         {
             QSize sizeB4(size());
 
+            setButtons(Ok|Close);
+            setButtonText(Ok, i18n("Delete Marked Files"));
+            enableButtonOk(false);
             itsLabel->setText(i18np("%1 duplicate font found.", "%1 duplicate fonts found.", duplicates.count()));
             itsView->show();
 
@@ -140,12 +146,13 @@ void CDuplicatesDialog::scanFinished()
 
                 details << FC::createName(it.key().family, it.key().styleInfo);
 
-                QTreeWidgetItem *top=new QTreeWidgetItem(itsView, details);
+                CFontFileListView::StyleItem *top=new CFontFileListView::StyleItem(itsView, details,
+                                                                                   it.key().family, it.key().styleInfo);
 
-                QStringList::ConstIterator fit((*it).begin()),
-                                           fend((*it).end());
-                int                        tt(0),
-                                           t1(0);
+                QSet<QString>::ConstIterator fit((*it).begin()),
+                                             fend((*it).end());
+                int                          tt(0),
+                                             t1(0);
 
                 for(; fit!=fend; ++fit)
                 {
@@ -208,36 +215,40 @@ void CDuplicatesDialog::slotButtonClicked(int button)
     {
         case KDialog::Ok:
         {
-            switch(deleteFiles())
+            QSet<QString> files=itsView->getMarkedFiles();
+            int           fCount=files.count();
+            
+            if(1==fCount
+                ? KMessageBox::Yes==KMessageBox::warningYesNo(this,
+                    i18n("Are you sure you wish to delete:\n%1", files.toList().first()))
+                : KMessageBox::Yes==KMessageBox::warningYesNoList(this,
+                    i18n("Are you sure you wish to delete:"), files.toList()))
             {
-                case STATUS_NO_FILES:
-                case STATUS_ALL_REMOVED:
-                    accept();
-                    break;
-                case STATUS_ERROR:
-                {
-                    QList<QString> files=itsView->getMarkedFiles().toList();
+                itsFontList->setSlowUpdates(true);
+                    
+                CJobRunner runner(this);
 
-                    if(1==files.count())
-                        KMessageBox::error(this, i18n("Could not delete:\n%1", files.first()));
-                    else
-                        KMessageBox::errorList(this, i18n("Could not delete the following files:"), files);
-                    break;
-                }
-                default:
-                case STATUS_USER_CANCELLED:
-                    break;
+                connect(&runner, SIGNAL(configuring()), itsFontList, SLOT(unsetSlowUpdates()));
+                runner.exec(CJobRunner::CMD_REMOVE_FILE, itsView->getMarkedItems(), false);
+                itsFontList->setSlowUpdates(false);
+                itsView->removeFiles();
+                files=itsView->getMarkedFiles();
+                if(fCount!=files.count())
+                    CFcEngine::setDirty();
+                if(0==files.count())
+                    accept();
             }
             break;
         }
         case KDialog::Cancel:
+        case KDialog::Close:
             if(!itsFontFileList->wasTerminated())
             {
                 if(itsFontFileList->isRunning())
                 {
                     if(KMessageBox::Yes==KMessageBox::warningYesNo(this, i18n("Cancel font scan?")))
                     {
-                        itsLabel->setText(i18n("Aborting..."));
+                        itsLabel->setText(i18n("Canceling..."));
 
                         if(itsFontFileList->isRunning())
                             itsFontFileList->terminate();
@@ -252,133 +263,6 @@ void CDuplicatesDialog::slotButtonClicked(int button)
         default:
             break;
     }
-}
-
-int CDuplicatesDialog::deleteFiles()
-{
-    QSet<QString> files(itsView->getMarkedFiles());
-
-    if(!files.count())
-        return STATUS_NO_FILES;
-
-    if(1==files.count()
-       ? KMessageBox::Yes==KMessageBox::warningYesNo(this,
-                           i18n("Are you sure you wish to delete:\n%1", files.toList().first()))
-       : KMessageBox::Yes==KMessageBox::warningYesNoList(this,
-                           i18n("Are you sure you wish to delete:"), files.toList()))
-    {
-        QSet<QString> removed;
-
-        if(!Misc::root())
-        {
-            QSet<QString>                sys,
-                                         user;
-            QSet<QString>::ConstIterator it(files.begin()),
-                                         end(files.end());
-            QString                      home(Misc::dirSyntax(QDir::homePath()));
-
-            for(; it!=end; ++it)
-                if(Misc::root() || 0==(*it).indexOf(home))
-                    user.insert(*it);
-                else
-                    sys.insert(*it);
-
-            if(user.count())
-                removed=deleteFiles(user);
-            if(sys.count() && itsRunner->getAdminPasswd(this))
-            {
-                static const int constSysDelFiles=16; // Number of files to rm -f in one go...
-
-                QSet<QString>::ConstIterator it(files.begin()),
-                                             end(files.end());
-                QStringList                  delFiles;
-
-                for(; it!=end; ++it)
-                {
-                    delFiles.append(*it);
-
-                    if(constSysDelFiles==delFiles.size())
-                    {
-                        removed+=deleteSysFiles(delFiles);
-                        delFiles.clear();
-                    }
-                }
-
-                if(delFiles.count())
-                    removed+=deleteSysFiles(delFiles);
-            }
-        }
-        else
-            removed=deleteFiles(files);
-
-        itsView->removeFiles(removed);
-        return 0==itsView->getMarkedFiles().count() ? STATUS_ALL_REMOVED : STATUS_ERROR;
-    }
-    return STATUS_USER_CANCELLED;
-}
-
-QSet<QString> CDuplicatesDialog::deleteFiles(const QSet<QString> &files)
-{
-    QSet<QString>                removed;
-    QSet<QString>::ConstIterator it(files.begin()),
-                                 end(files.end());
-
-    for(; it!=end; ++it)
-        if(0==::unlink(QFile::encodeName(*it).data()) || !Misc::fExists(*it))
-            removed.insert(*it);
-
-    if(removed.count())
-        itsModifiedUser=true;
-
-    return removed;
-}
-
-QSet<QString> CDuplicatesDialog::deleteSysFiles(const QStringList &files)
-{
-    QSet<QString> removed;
-
-    if(files.count())
-    {
-#if defined USE_POLICYKIT && USE_POLICYKIT==1
-        QStringList::ConstIterator it(files.begin()),
-                                   end(files.end());
-        QDBusInterface             iface(KFI_IFACE,
-                                         "/FontInst",
-                                         KFI_IFACE,
-                                         QDBusConnection::systemBus(), this);
-
-        for(; it!=end; ++it)
-        {
-            iface.call("deleteFont", (unsigned int)getpid(), *it);
-
-            if(!Misc::fExists(*it))
-                removed.insert(*it);
-        }
-#else
-        QByteArray cmd("rm -f");
-        QStringList::ConstIterator it(files.begin()),
-                                   end(files.end());
-
-        for(; it!=end; ++it)
-        {
-            cmd+=' ';
-            cmd+=QFile::encodeName(KShell::quoteArg(*it));
-        }
-
-        SuProcess proc(KFI_SYS_USER);
-
-        proc.setCommand(cmd);
-        proc.exec(itsRunner->adminPasswd().toLocal8Bit());
-
-        for(it=files.begin(); it!=end; ++it)
-            if(!Misc::fExists(*it))
-                removed.insert(*it);
-#endif
-    }
-
-    if(removed.count())
-        itsModifiedSys=true;
-    return removed;
 }
 
 static uint qHash(const CFontFileList::TFile &key)
@@ -438,13 +322,13 @@ void CFontFileList::run()
         for(; fontIt!=fontEnd; ++fontIt)
             if(!(*fontIt)->isBitmap())
             {
-                Misc::TFont                              font((*fontIt)->family(), (*fontIt)->styleInfo());
-                CDisabledFonts::TFileList::ConstIterator fileIt((*fontIt)->files().begin()),
-                                                         fileEnd((*fontIt)->files().end());
+                Misc::TFont             font((*fontIt)->family(), (*fontIt)->styleInfo());
+                FileCont::ConstIterator fileIt((*fontIt)->files().begin()),
+                                        fileEnd((*fontIt)->files().end());
 
                 for(; fileIt!=fileEnd; ++fileIt)
-                    if(!Misc::isMetrics(*fileIt))
-                        itsMap[font].append(*fileIt);
+                    if(!Misc::isMetrics((*fileIt).path()) && !Misc::isBitmap((*fileIt).path()))
+                        itsMap[font].insert((*fileIt).path());
             }
     }
 
@@ -459,9 +343,9 @@ void CFontFileList::run()
 
         for(int n=0; it!=end && !itsTerminated; ++it)
         {
-            QStringList           add;
-            QStringList::const_iterator fIt((*it).begin()),
-                                  fEnd((*it).end());
+            QStringList                   add;
+            QSet<QString>::const_iterator fIt((*it).begin()),
+                                          fEnd((*it).end());
 
             for(; fIt!=fEnd && !itsTerminated; ++fIt, ++n)
                 folderMap[Misc::getDir(*fIt)].insert(TFile(Misc::getFile(*fIt), it));
@@ -480,18 +364,9 @@ void CFontFileList::run()
 
 void CFontFileList::fileDuplicates(const QString &folder, const QSet<TFile> &files)
 {
-    QDir                       dir(folder);
-    QStringList                nameFilters;
-    QSet<TFile>::ConstIterator it(files.begin()),
-                               end(files.end());
-
-    // Filter the QDir to look for filenames matching (caselessly) to those in
-    // files...
-    for(; it!=end; ++it)
-        nameFilters.append((*it).name);
+    QDir dir(folder);
 
     dir.setFilter(QDir::Files|QDir::Hidden);
-    dir.setNameFilters(nameFilters);
 
     QFileInfoList list(dir.entryInfoList());
 
@@ -507,7 +382,7 @@ void CFontFileList::fileDuplicates(const QString &folder, const QSet<TFile> &fil
             QSet<TFile>::ConstIterator entry=files.find(TFile(fileInfo.fileName(), true));
 
             if(entry!=files.end())
-                (*((*entry).it)).append(fileInfo.absoluteFilePath());
+                (*((*entry).it)).insert(fileInfo.absoluteFilePath());
         }
     }
 }
@@ -583,7 +458,30 @@ QSet<QString> CFontFileListView::getMarkedFiles()
     return files;
 }
 
-void CFontFileListView::removeFiles(const QSet<QString> &files)
+CJobRunner::ItemList CFontFileListView::getMarkedItems()
+{
+    QTreeWidgetItem      *root=invisibleRootItem();
+    CJobRunner::ItemList items;
+    QString              home(Misc::dirSyntax(QDir::homePath()));
+
+    for(int t=0; t<root->childCount(); ++t)
+    {
+        QList<QTreeWidgetItem *> removeFiles;
+        StyleItem                *style=(StyleItem *)root->child(t);
+
+        for(int c=0; c<style->childCount(); ++c)
+        {
+            QTreeWidgetItem *file=style->child(c);
+
+            if(isMarked(file))
+                items.append(CJobRunner::Item(file->text(0), style->family(), style->value(), 0!=file->text(0).indexOf(home)));
+        }
+    }
+
+    return items;
+}
+
+void CFontFileListView::removeFiles()
 {
     QTreeWidgetItem          *root=invisibleRootItem();
     QList<QTreeWidgetItem *> removeFonts;
@@ -597,7 +495,7 @@ void CFontFileListView::removeFiles(const QSet<QString> &files)
         {
             QTreeWidgetItem *file=font->child(c);
 
-            if(files.contains(file->text(0)))
+            if(!Misc::fExists(file->text(0)))
                 removeFiles.append(file);
         }
 
@@ -735,6 +633,7 @@ void CFontFileListView::contextMenuEvent(QContextMenuEvent *ev)
 
             if(haveUnmarked && haveMaked)
                 break;
+
         }
 
         itsMarkAct->setEnabled(haveUnmarked);

@@ -53,12 +53,10 @@ class CGroupListItem
 
     enum EType
     {
-        STANDARD_TITLE,
         ALL,
         PERSONAL,
         SYSTEM,
         UNCLASSIFIED,
-        GROUPS_TITLE,
         CUSTOM
     };
 
@@ -74,7 +72,7 @@ class CGroupListItem
     const QString &      name() const                        { return itsName; }
     void                 setName(const QString &n)           { itsName=n; }
     QSet<QString> &      families()                          { return itsFamilies; }
-    const EType          type() const                        { return itsType; }
+    EType                type() const                        { return itsType; }
     bool                 isCustom() const                    { return CUSTOM==itsType; }
     bool                 isAll() const                       { return ALL==itsType; }
     bool                 isUnclassified() const              { return UNCLASSIFIED==itsType; }
@@ -115,6 +113,7 @@ class CGroupList : public QAbstractItemModel
     ~CGroupList();
 
     QVariant        data(const QModelIndex &index, int role) const;
+    bool            setData(const QModelIndex &index, const QVariant &value, int role);
     Qt::ItemFlags   flags(const QModelIndex &index) const;
     QVariant        headerData(int section, Qt::Orientation orientation,
                                int role = Qt::DisplayRole) const;
@@ -136,7 +135,6 @@ class CGroupList : public QAbstractItemModel
     void            clear();
     QModelIndex     index(CGroupListItem::EType t);
     void            createGroup(const QString &name);
-    void            renameGroup(const QModelIndex &idx, const QString &name);
     bool            removeGroup(const QModelIndex &idx);
     void            removeFamily(const QString &family);
     bool            removeFromGroup(CGroupListItem *grp, const QString &family);
@@ -144,6 +142,7 @@ class CGroupList : public QAbstractItemModel
 
     CGroupListItem * group(CGroupListItem::EType t)
                         { return itsSpecialGroups[t]; }
+    bool            exists(const QString &name, bool showDialog=true);
 
     public Q_SLOTS:
 
@@ -161,7 +160,6 @@ class CGroupList : public QAbstractItemModel
     Qt::DropActions supportedDropActions() const;
     QStringList     mimeTypes() const;
     CGroupListItem * find(const QString &name);
-    bool            exists(const QString &name);
     QModelIndex     createIdx(int r, int c, void *p) { return createIndex(r, c, p); }
 
     private:
@@ -194,7 +192,7 @@ class CGroupListView : public QTreeView
     bool                  isSystem()       { return CGroupListItem::SYSTEM==getType(); }
     bool                  isPersonal()     { return CGroupListItem::PERSONAL==getType(); }
     CGroupListItem::EType getType();
-    void                  controlMenu(bool del, bool en, bool dis, bool p);
+    void                  controlMenu(bool del, bool en, bool dis, bool p, bool exp);
 
     Q_SIGNALS:
 
@@ -202,7 +200,7 @@ class CGroupListView : public QTreeView
     void                  print();
     void                  enable();
     void                  disable();
-    void                  copyFonts();
+    void                  zip();
     void                  moveFonts();
     void                  info(const QString &str);
     void                  addFamilies(const QModelIndex &group, const QSet<QString> &);
@@ -234,7 +232,8 @@ class CGroupListView : public QTreeView
                 *itsEnableAct,
                 *itsDisableAct,
                 *itsPrintAct,
-                *itsRenameAct;
+                *itsRenameAct,
+                *itsExportAct;
     QModelIndex itsCurrentDropItem;
 };
 }

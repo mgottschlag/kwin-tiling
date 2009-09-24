@@ -38,7 +38,9 @@
 #include <math.h>
 #include <X11/Xlib.h>
 #include <X11/Xft/Xft.h>
-#include <fixx11h.h>
+#include <X11/extensions/Xrender.h>
+#include "fixx11h.h"
+#include "File.h"
 
 //#define KFI_FC_DEBUG
 
@@ -47,7 +49,6 @@
 
 namespace KFI
 {
-
 bool      CFcEngine::theirFcDirty(true);
 const int CFcEngine::constScalableSizes[]={8, 10, 12, 24, 36, 48, 64, 72, 96, 0 };
 const int CFcEngine::constDefaultAlphaSize=24;
@@ -226,6 +227,7 @@ CFcEngine::Xft::Xft()
 {
     itsDraw=0L;
     itsTxtColor.color.alpha=0x0000;
+    init(Qt::black, Qt::white, 64, 64);
 }
 
 CFcEngine::Xft::~Xft()
@@ -259,7 +261,6 @@ bool CFcEngine::Xft::init(const QColor &txt, const QColor &bnd, int w, int h)
         xrenderCol.green=bnd.green()<<8;
         xrenderCol.blue=bnd.green()<<8;
         xrenderCol.alpha=0xFFFF;
-
         XftColorAllocValue(QX11Info::display(), visual, colorMap, &xrenderCol, &itsBgndColor);
         xrenderCol.red=txt.red()<<8;
         xrenderCol.green=txt.green()<<8;
@@ -270,7 +271,7 @@ bool CFcEngine::Xft::init(const QColor &txt, const QColor &bnd, int w, int h)
 
     if(itsPix.allocate(w, h) && itsDraw)
         XftDrawChange(itsDraw, itsPix.x11);
-
+    
     if(!itsDraw)
         itsDraw=XftDrawCreate(QX11Info::display(), itsPix.x11, DefaultVisual(QX11Info::display(), 0),
                               DefaultColormap(QX11Info::display(), 0));
@@ -481,7 +482,7 @@ QImage CFcEngine::Xft::toImage(int w, int h) const
 
     return xOk ? image : QImage();
 }
-
+    
 inline int point2Pixel(int point)
 {
     return (point*QX11Info::appDpiX()+36)/72;
@@ -508,6 +509,11 @@ static QString usableStr(XftFont *font, QString &str)
         if(FcCharSetHasChar(font->charset, str[ch].unicode()))
             newStr+=str[ch];
     return newStr;
+}
+
+static bool isFileName(const QString &name, quint32 style)
+{
+    return QChar('/')==name[0] || KFI_NO_STYLE_INFO==style;
 }
 
 static void setTransparentBackground(QImage &img, const QColor &col)
@@ -553,43 +559,18 @@ void CFcEngine::writeConfig(KConfig &cfg)
     cfg.group(KFI_PREVIEW_GROUP).writeEntry(KFI_PREVIEW_STRING_KEY, itsPreviewString);
 }
 
-const QString & CFcEngine::getName(const KUrl &url, int faceNo)
-{
-    if(url!=itsLastUrl || faceNo!=itsIndex)
-        parseUrl(url, faceNo);
-
-    return itsDescriptiveName;
-}
-
-QImage CFcEngine::drawPreview(const QString &item, const QColor &txt, const QColor &bgnd, int h, quint32 style, int face)
+QImage CFcEngine::drawPreview(const QString &name, quint32 style, int faceNo, const QColor &txt, const QColor &bgnd, int h)
 {
     QImage img;
 
-    if(!item.isEmpty())
+    if(!name.isEmpty() &&
+         ((name==itsName && style==itsStyle && File::equalIndex(faceNo, itsIndex)) ||
+          parse(name, style, faceNo)) )
     {
         static const int constOffset=2;
         static const int constInitialWidth=1536;
 
-        bool ok=true;
-
-        if(QChar('/')==item[0])  // Then add to fontconfig's list, so that Xft can display it...
-        {
-            KUrl url("file://"+item);
-
-            ok=parseUrl(url, face);
-            addFontFile(item);
-        }
-        else
-        {
-            parseName(item, style);
-            itsInstalled=true;
-        }
-
-        if(ok)
-        {
-            itsLastUrl=KUrl();
-            getSizes();
-        }
+        getSizes();
 
         if(itsSizes.size())
         {
@@ -682,8 +663,8 @@ QImage CFcEngine::drawPreview(const QString &item, const QColor &txt, const QCol
     return img;
 }
 
-QImage CFcEngine::draw(const KUrl &url, int w, int h, const QColor &txt, const QColor &bgnd, int faceNo,
-                       bool thumb, const QList<TRange> &range, QList<TChar> *chars, const QString &name, quint32 style)
+QImage CFcEngine::draw(const QString &name, quint32 style, int faceNo, const QColor &txt, const QColor &bgnd,
+                       int w, int h, bool thumb, const QList<TRange> &range, QList<TChar> *chars)
 {
     QImage img;
     bool   rv=false;
@@ -691,16 +672,10 @@ QImage CFcEngine::draw(const KUrl &url, int w, int h, const QColor &txt, const Q
     if(chars)
         chars->clear();
 
-    if((url==itsLastUrl && faceNo==itsIndex) ||
-        (!name.isEmpty() && parseName(name, style, url)) ||
-        parseUrl(url, faceNo))
+    if(!name.isEmpty() &&
+         ((name==itsName && style==itsStyle && File::equalIndex(faceNo, itsIndex)) ||
+          parse(name, style, faceNo)) )
     {
-        if(!name.isEmpty())
-            itsInstalled=true;
-
-        if(!itsInstalled)  // Then add to fontconfig's list, so that Xft can display it...
-            addFontFile(itsFileName);
-
         //
         // We allow kio_thumbnail to cache our thumbs. Normal is 128x128, and large is 256x256
         // ...if kio_thumbnail asks us for a bigger size, then it is probably the file info dialog, in
@@ -1012,28 +987,6 @@ QString CFcEngine::getFcLangString(FcPattern *pat, const char *val, const char *
 }
 #endif
 
-bool CFcEngine::getInfo(const KUrl &url, int faceNo, Misc::TFont &info)
-{
-    if((url==itsLastUrl && faceNo==itsIndex) || parseUrl(url, faceNo))
-    {
-        if(url.isLocalFile() || Misc::isHidden(url))
-        {
-            int pos;
-
-            if(-1==(pos=itsDescriptiveName.indexOf(", ")))   // No style information...
-                info.family=itsDescriptiveName;
-            else
-                info.family=itsDescriptiveName.left(pos);
-        }
-        else
-            info.family=itsName;
-        info.styleInfo=styleVal();
-        return true;
-    }
-
-    return false;
-}
-
 QFont CFcEngine::getQFont(const QString &family, quint32 style, int size)
 {
     int weight,
@@ -1050,215 +1003,35 @@ QFont CFcEngine::getQFont(const QString &family, quint32 style, int size)
     return font;
 }
 
-bool CFcEngine::parseUrl(const KUrl &url, int faceNo)
+bool CFcEngine::parse(const QString &name, quint32 style, int face)
 {
-#ifdef KFI_FC_DEBUG
-    kDebug() << url.prettyUrl() << ' ' << faceNo;
-#endif
-    if(faceNo<0)
-        faceNo=0;
-
-    itsFileName.clear();
-    itsIndex=faceNo;
-
-    reinit();
-
-    // Possible urls:
-    //
-    //    fonts:/times.ttf
-    //    fonts:/System/times.ttf
-    //    file:/home/wibble/hmm.ttf
-    //
-    if(KFI_KIO_FONTS_PROTOCOL==url.protocol())
-    {
-        bool          hidden=Misc::isHidden(url);
-        KIO::UDSEntry udsEntry;
-        QString       name;
-        quint32       style=KFI_NO_STYLE_INFO;
-
-        if(KIO::NetAccess::stat(url, udsEntry, NULL))  // Need to stat the url to get its font name...
-        {
-            name=udsEntry.stringValue((uint)KIO::UDSEntry::UDS_NAME);
-            itsFileName=udsEntry.stringValue((uint)UDS_EXTRA_FILE_NAME);
-            style=udsEntry.numberValue((uint)UDS_EXTRA_FC_STYLE);
-            itsIndex=Misc::getIntQueryVal(KUrl(udsEntry.stringValue((uint)KIO::UDSEntry::UDS_URL)),
-                                          KFI_KIO_FACE, 0);
-#ifdef KFI_FC_DEBUG
-            kDebug() << "Stated fonts:/ url, name:" << name << " itsFileName:" << itsFileName
-                     << " style:" << style << " itsIndex:" << itsIndex;
-#endif
-        }
-#ifdef KFI_FC_DEBUG
-        kDebug() << "isHidden:" << hidden;
-#endif
-        if(hidden)
-            name=itsFileName;
-
-        if(!name.isEmpty())
-        {
-            if(hidden)
-            {
-                if(!parseUrl(KUrl(name), faceNo))
-                    return false;
-            }
-            else
-            {
-                parseName(name, style);
-                itsInstalled=true;
-            }
-        }
-        else
-            return false;
-    }
-    else if(url.isLocalFile() || url.protocol().isEmpty())
-    {
-        // Now lets see if it is from the thumbnail job! if so, then file should contain either:
-        //    a. fonts:/ Url
-        //    b. FontName followed by style info
-        QFile file(url.toLocalFile());
-        bool  isThumbnailUrl=false;
-
-        if(file.size()<2048 && file.open(QIODevice::ReadOnly)) // Data should be less than 2k, and fonts usually above!
-        {
-            QTextStream stream(&file);
-            QString     line1(stream.readLine()),
-                        line2(stream.readLine());
-
-            if(line2.isEmpty())
-                isThumbnailUrl=(0==line1.indexOf(KFI_KIO_FONTS_PROTOCOL) ||
-                                0==line1.indexOf("file:/")) &&
-                                parseUrl(KUrl(line1), faceNo);
-            else if(0==line1.indexOf(KFI_PATH_KEY) && 0==line2.indexOf(KFI_FACE_KEY))
-            {
-                line1=line1.mid(strlen(KFI_PATH_KEY));
-                line2=line2.mid(strlen(KFI_FACE_KEY));
-
-                if(!line1.isEmpty() && !line2.isEmpty())
-                {
-                    bool ok=false;
-                    int  face=line2.toInt(&ok);
-
-                    isThumbnailUrl=ok && parseUrl(line1, face<0 ? 0 : face);
-                }
-            }
-            else if(0==line1.indexOf(KFI_NAME_KEY) && 0==line2.indexOf(KFI_STYLE_KEY))
-            {
-                line1=line1.mid(strlen(KFI_NAME_KEY));
-                line2=line2.mid(strlen(KFI_STYLE_KEY));
-
-                if(!line1.isEmpty() && !line2.isEmpty())
-                {
-                    bool    ok=false;
-                    quint32 style=line2.toULong(&ok);
-
-                    itsInstalled=isThumbnailUrl=ok && parseName(line1, style);
-
-                    if(itsInstalled)
-                    {
-                        QString line3(stream.readLine()),
-                                line4(stream.readLine());
-
-                        if(0==line3.indexOf(KFI_PATH_KEY) && 0==line4.indexOf(KFI_FACE_KEY))
-                        {
-                            line3=line3.mid(strlen(KFI_PATH_KEY));
-                            line4=line4.mid(strlen(KFI_FACE_KEY));
-
-                            if(!line1.isEmpty() && !line2.isEmpty())
-                            {
-                                ok=false;
-                                int  face=line4.toInt(&ok);
-
-                                if(ok)
-                                {
-                                    itsFileName=line3;
-                                    itsIndex=face;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            file.close();
-        }
-
-        if(!isThumbnailUrl)  // Its not a thumbnail, so read the real font file...
-        {
-            itsName=itsFileName=url.path();
-
-            int       count;
-            FcPattern *pat=FcFreeTypeQuery((const FcChar8 *)(QFile::encodeName(itsFileName).data()),
-                                           faceNo, NULL, &count);
-
-            itsWeight=FC_WEIGHT_REGULAR;
-            itsWidth=KFI_FC_WIDTH_NORMAL;
-            itsSlant=FC_SLANT_ROMAN;
-
-            if(pat)
-            {
-                FcPatternGetInteger(pat, FC_WEIGHT, 0, &itsWeight);
-                FcPatternGetInteger(pat, FC_SLANT, 0, &itsSlant);
-#ifndef KFI_FC_NO_WIDTHS
-                FcPatternGetInteger(pat, FC_WIDTH, 0, &itsWidth);
-#endif
-                itsDescriptiveName=FC::createName(pat, itsWeight, itsWidth, itsSlant);
-                FcPatternDestroy(pat);
-            }
-            else
-            {
-                itsDescriptiveName.clear();
-                return false;
-            }
-
-            itsInstalled=false;
-            itsIndex=faceNo;
-        }
-    }
-    else
+    if(name.isEmpty())
         return false;
 
-    itsLastUrl=url;
-    return true;
-}
-
-bool CFcEngine::parseName(const QString &name, quint32 style, const KUrl &url)
-{
-    int pos;
-
     reinit();
 
-    itsDescriptiveName=name;
+    itsName=name;
+    itsStyle=style;
+    itsSizes.clear();
+    itsInstalled=!isFileName(name, style);
 
-    if(-1==(pos=name.indexOf(", ")))   // No style information...
+    if(!itsInstalled)
     {
-        if(KFI_NO_STYLE_INFO!=style)
-            FC::decomposeStyleVal(style, itsWeight, itsWidth, itsSlant);
-        else
-        {
-            itsWeight=FC_WEIGHT_REGULAR;
-            itsWidth=KFI_FC_WIDTH_NORMAL;
-            itsSlant=FC_SLANT_ROMAN;
-        }
-        itsName=name;
+        int       count;
+        FcPattern *pat=FcFreeTypeQuery((const FcChar8 *)(QFile::encodeName(itsName).data()),
+                                       face<1 ? 0 : face, NULL, &count);
+        if(!pat)
+            return false;
+        itsDescriptiveName=FC::createName(pat);
+        FcPatternDestroy(pat);
     }
     else
-    {
-        if(KFI_NO_STYLE_INFO!=style)
-            FC::decomposeStyleVal(style, itsWeight, itsWidth, itsSlant);
-        else
-        {
-            QString style(name.mid(pos+2));
+        itsDescriptiveName=FC::createName(itsName, itsStyle);
 
-            itsWeight=FC::strToWeight(style, style);
-            itsWidth=FC::strToWidth(style, style);
-            itsSlant=FC::strToSlant(style);
-        }
-        itsName=name.left(pos);
-    }
+    itsIndex=face<1 ? 0 : face;
 
-    itsFileName.clear();
-
-    itsIndex=0; // Doesn't matter, as we're gonna use font name!
-    itsLastUrl=url;
+    if(!itsInstalled)  // Then add to fontconfig's list, so that Xft can display it...
+        addFontFile(itsName);
     return true;
 }
 
@@ -1299,26 +1072,32 @@ XftFont * CFcEngine::getFont(int size)
     XftFont *f=NULL;
 
 #ifdef KFI_FC_DEBUG
-    kDebug() << QString(itsInstalled ? itsName : itsFileName) << ' ' << size;
+    kDebug() << itsName << ' ' << itsStyle << ' ' << size;
 #endif
 
     if(itsInstalled)
     {
+        int weight,
+            width,
+            slant;
+
+        FC::decomposeStyleVal(itsStyle, weight, width, slant);
+
 #ifndef KFI_FC_NO_WIDTHS
-        if(KFI_NULL_SETTING!=itsWidth)
+        if(KFI_NULL_SETTING!=width)
             f=XftFontOpen(QX11Info::display(), 0,
                           FC_FAMILY, FcTypeString, (const FcChar8 *)(itsName.toUtf8().data()),
-                          FC_WEIGHT, FcTypeInteger, itsWeight,
-                          FC_SLANT, FcTypeInteger, itsSlant,
-                          FC_WIDTH, FcTypeInteger, itsWidth,
+                          FC_WEIGHT, FcTypeInteger, weight,
+                          FC_SLANT, FcTypeInteger, slant,
+                          FC_WIDTH, FcTypeInteger, width,
                           FC_PIXEL_SIZE, FcTypeDouble, (double)size,
                           NULL);
         else
 #endif
             f=XftFontOpen(QX11Info::display(), 0,
                           FC_FAMILY, FcTypeString, (const FcChar8 *)(itsName.toUtf8().data()),
-                          FC_WEIGHT, FcTypeInteger, itsWeight,
-                          FC_SLANT, FcTypeInteger, itsSlant,
+                          FC_WEIGHT, FcTypeInteger, weight,
+                          FC_SLANT, FcTypeInteger, slant,
                           FC_PIXEL_SIZE, FcTypeDouble, (double)size,
                           NULL);
     }
@@ -1326,7 +1105,7 @@ XftFont * CFcEngine::getFont(int size)
     {
         FcPattern *pattern = FcPatternBuild(NULL,
                                             FC_FILE, FcTypeString,
-                                                     QFile::encodeName(itsFileName).data(),
+                                                     QFile::encodeName(itsName).constData(),
                                             FC_INDEX, FcTypeInteger, itsIndex<0 ? 0 : itsIndex,
                                             FC_PIXEL_SIZE, FcTypeDouble, (double)size,
                                             NULL);
@@ -1342,9 +1121,15 @@ XftFont * CFcEngine::getFont(int size)
 
 bool CFcEngine::isCorrect(XftFont *f, bool checkFamily)
 {
-    int     iv;
+    int     iv,
+            weight,
+            width,
+            slant;
     FcChar8 *str;
 
+    if(itsInstalled)
+        FC::decomposeStyleVal(itsStyle, weight, width, slant);
+        
 #ifdef KFI_FC_DEBUG
     QString     xxx;
     QTextStream s(&xxx);
@@ -1354,19 +1139,19 @@ bool CFcEngine::isCorrect(XftFont *f, bool checkFamily)
         {
             s << "weight:";
             if(FcResultMatch==FcPatternGetInteger(f->pattern, FC_WEIGHT, 0, &iv))
-               s << iv << '/' << itsWeight;
+               s << iv << '/' << weight;
             else
                 s << "no";
 
             s << " slant:";
             if(FcResultMatch==FcPatternGetInteger(f->pattern, FC_SLANT, 0, &iv))
-                s << iv << '/' << itsSlant;
+                s << iv << '/' << slant;
             else
                 s << "no";
 
             s << " width:";
             if(FcResultMatch==FcPatternGetInteger(f->pattern, FC_WIDTH, 0, &iv))
-                s << iv << '/' << itsWidth;
+                s << iv << '/' << width;
             else
                 s << "no";
 
@@ -1391,25 +1176,28 @@ bool CFcEngine::isCorrect(XftFont *f, bool checkFamily)
         f
             ? itsInstalled
                 ? FcResultMatch==FcPatternGetInteger(f->pattern, FC_WEIGHT, 0, &iv) &&
-                   equalWeight(iv, itsWeight) &&
+                   equalWeight(iv, weight) &&
                   FcResultMatch==FcPatternGetInteger(f->pattern, FC_SLANT, 0, &iv) &&
-                   equalSlant(iv, itsSlant) &&
+                   equalSlant(iv, slant) &&
     #ifndef KFI_FC_NO_WIDTHS
-                  (KFI_NULL_SETTING==itsWidth ||
+                  (KFI_NULL_SETTING==width ||
                     (FcResultMatch==FcPatternGetInteger(f->pattern, FC_WIDTH, 0, &iv) &&
-                     equalWidth(iv, itsWidth))) &&
+                     equalWidth(iv, width))) &&
     #endif
                   (!checkFamily ||
                     (FcResultMatch==FcPatternGetString(f->pattern, FC_FAMILY, 0, &str) && str &&
                      QString::fromUtf8((char *)str)==itsName))
                 : (itsIndex<0 || (FcResultMatch==FcPatternGetInteger(f->pattern, FC_INDEX, 0, &iv) && itsIndex==iv)) &&
                   FcResultMatch==FcPatternGetString(f->pattern, FC_FILE, 0, &str) && str &&
-                  QString::fromUtf8((char *)str)==itsFileName
+                  QString::fromUtf8((char *)str)==itsName
             : false;
 }
 
 void CFcEngine::getSizes()
 {
+    if(!itsSizes.isEmpty())
+        return;
+
 #ifdef KFI_FC_DEBUG
     kDebug();
 #endif
@@ -1418,7 +1206,6 @@ void CFcEngine::getSizes()
 
     itsScalable=FcTrue;
 
-    itsSizes.clear();
     itsAlphaSizeIndex=0;
 
     if(f)
@@ -1435,22 +1222,28 @@ void CFcEngine::getSizes()
             {
                 FcPattern   *pat=NULL;
                 FcObjectSet *os  = FcObjectSetBuild(FC_PIXEL_SIZE, (void*)0);
+                int         weight,
+                            width,
+                            slant;
+
+                FC::decomposeStyleVal(itsStyle, weight, width, slant);
+
 #ifndef KFI_FC_NO_WIDTHS
-                if(KFI_NULL_SETTING!=itsWidth)
+                if(KFI_NULL_SETTING!=width)
                     pat=FcPatternBuild(NULL,
                                    FC_FAMILY, FcTypeString,
                                         (const FcChar8 *)(itsName.toUtf8().data()),
-                                   FC_WEIGHT, FcTypeInteger, itsWeight,
-                                   FC_SLANT, FcTypeInteger, itsSlant,
-                                   FC_WIDTH, FcTypeInteger, itsWidth,
+                                   FC_WEIGHT, FcTypeInteger, weight,
+                                   FC_SLANT, FcTypeInteger, slant,
+                                   FC_WIDTH, FcTypeInteger, width,
                                    NULL);
                 else
 #endif
                     pat=FcPatternBuild(NULL,
                                    FC_FAMILY, FcTypeString,
                                         (const FcChar8 *)(itsName.toUtf8().data()),
-                                   FC_WEIGHT, FcTypeInteger, itsWeight,
-                                   FC_SLANT, FcTypeInteger, itsSlant,
+                                   FC_WEIGHT, FcTypeInteger, weight,
+                                   FC_SLANT, FcTypeInteger, slant,
                                    NULL);
 
                 FcFontSet *set=FcFontList(0, pat, os);

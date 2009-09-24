@@ -30,7 +30,9 @@
 #include <QtGui/QFrame>
 #include <QtCore/QMap>
 #include "KfiConstants.h"
+#include "Misc.h"
 #include "FontPreview.h"
+#include "Family.h"
 
 class QPushButton;
 class QLabel;
@@ -44,6 +46,7 @@ namespace KFI
 {
 
 class BrowserExtension;
+class FontInstInterface;
 
 class CFontViewPart : public KParts::ReadOnlyPart
 {
@@ -66,17 +69,16 @@ class CFontViewPart : public KParts::ReadOnlyPart
     void timeout();
     void install();
     void installlStatus();
+    void dbusStatus(int pid, int status);
+    void fontStat(int pid, const KFI::Family &font);
     void changeText();
     void print();
     void displayType(const QList<CFcEngine::TRange> &range);
-    void statResult(KJob *job);
     void showFace(int face);
-    void zoomIn();
-    void zoomOut();
 
     private:
 
-    void stat(const QString &path=QString());
+    void checkInstallable();
 //    void getMetaInfo(int face);
 
     private:
@@ -90,15 +92,15 @@ class CFontViewPart : public KParts::ReadOnlyPart
 //                       *itsMetaLabel;
     KIntNumInput       *itsFaceSelector;
     QAction            *itsChangeTextAction;
-    KAction            *itsZoomInAction,
-                       *itsZoomOutAction;
     int                itsFace;
     KSharedConfigPtr   itsConfig;
     BrowserExtension   *itsExtension;
     QProcess           *itsProc;
-    QString            itsStatName;
 //    KUrl               itsMetaUrl;
     KTempDir           *itsTempDir;
+    Misc::TFont        itsFontDetails;
+    FontInstInterface  *itsInterface;
+    bool               itsOpening;
 };
 
 class BrowserExtension : public KParts::BrowserExtension

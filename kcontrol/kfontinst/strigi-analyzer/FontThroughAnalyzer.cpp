@@ -139,39 +139,29 @@ InputStream * FontThroughAnalyzer::connectInputStream(InputStream *in)
 
     if(fontsProt)
     {
-        // OK, it is a fonts:/ url - are we passed any data in the query?
-        QString path=url.queryItem(KFI_FILE_QUERY),
-                name=url.queryItem(KFI_NAME_QUERY),
-                mime=url.queryItem(KFI_MIME_QUERY);
-        quint32 styleInfo=Misc::getIntQueryVal(url, KFI_STYLE_QUERY, KFI_NO_STYLE_INFO);
+        // OK, it is a fonts:/ url - stat to get appropriate info
+        QString       path,
+                      name,
+                      mime;
+        quint32       styleInfo=KFI_NO_STYLE_INFO;
+        KIO::UDSEntry udsEntry;
 
-        face=Misc::getIntQueryVal(url, KFI_KIO_FACE, 0);
-
-        if(name.isEmpty() && path.isEmpty())
+        if(KIO::NetAccess::stat(url, udsEntry, NULL))
         {
-            // OK, no useable info in the query - stat fonts:/ to get the required info...
-            KIO::UDSEntry udsEntry;
-
-            if(KIO::NetAccess::stat(url, udsEntry, NULL))
+            if(udsEntry.numberValue(KIO::UDSEntry::UDS_HIDDEN, 0))
             {
-                if(udsEntry.numberValue(KIO::UDSEntry::UDS_HIDDEN, 0))
-                {
-                    path=udsEntry.stringValue(UDS_EXTRA_FILE_NAME);
-                    face=Misc::getIntQueryVal(url, KFI_KIO_FACE, 0);
-                }
-                else
-                {
-                    name=udsEntry.stringValue(KIO::UDSEntry::UDS_NAME);
-                    styleInfo=udsEntry.numberValue(UDS_EXTRA_FC_STYLE);
-                }
-                mime=udsEntry.stringValue(KIO::UDSEntry::UDS_MIME_TYPE);
+                path=udsEntry.stringValue(UDS_EXTRA_FILE_NAME);
+                face=udsEntry.numberValue(UDS_EXTRA_FILE_FACE, 0);
             }
+            name=udsEntry.stringValue(KIO::UDSEntry::UDS_NAME);
+            styleInfo=udsEntry.numberValue(UDS_EXTRA_FC_STYLE);
+            mime=udsEntry.stringValue(KIO::UDSEntry::UDS_MIME_TYPE);
         }
 
-        if(path.isNull())
+        if(path.isEmpty())
         {
             // Enabled font...
-            if(!name.isNull())
+            if(!name.isEmpty())
             {
                 int weight, width, slant;
 
@@ -284,4 +274,3 @@ void FontThroughAnalyzer::result(const QString &family, const QString &foundry, 
 
     analysisResult->setMimeType((const char *)mime.toUtf8());
 }
-

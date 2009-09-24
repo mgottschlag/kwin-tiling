@@ -1,0 +1,4 @@
+[org.kde.fontinst]
+Name=Manage system-wide fonts. 
+Description=Modifying the system-wide font configuration requires privileges.
+Policy=auth_admin

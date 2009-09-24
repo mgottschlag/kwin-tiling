@@ -1,4 +1,19 @@
-KDE4.?
+KDE4.4
+======
+1. Create a dbus daemon for handling font installtion, and have the kcm and ioslave
+   use this.
+2. Use policykit to control installation of system-wide fonts.
+3. Merged progress, skip, cancel, and error dialogs used when installing, etc., into
+   1 dialog.
+4. Add option to disable inline previews.
+5. Simplyfy layout.
+6. Remove simple mode - always use font management mode.
+
+KDE4.3
+======
+1. Dont cache previews to disk.
+
+KDE4.2
 ======
 1. Added zoom controls to font preview.
 2. Made viewer application a KUniqueApplication

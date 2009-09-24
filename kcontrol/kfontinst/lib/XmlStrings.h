@@ -1,10 +1,10 @@
-#ifndef __SU_PROC_H__
-#define __SU_PROC_H__
+#ifndef __XML_STRINGS_H__
+#define __XML_STRINGS_H__
 
 /*
  * KFontInst - KDE Font Installer
  *
- * Copyright 2003-2007 Craig Drummond <craig@kde.org>
+ * Copyright 2003-2009 Craig Drummond <craig@kde.org>
  *
  * ----
  *
@@ -24,33 +24,22 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtCore/QThread>
-#include <QtCore/QByteArray>
-
-class QString;
-
-namespace KFI
-{
-
-//
-// SuProcess::exec blocks until command terminates - therefore
-// we need to run this in a separate thread!
-class CSuProc : public QThread
-{
-    public:
-
-    CSuProc(QByteArray &sock, QString &passwd);
-
-    private:
-
-    void run();
-
-    private:
-
-    QString    &itsPasswd;
-    QByteArray itsCmd;
-};
-
-}
+#define FONTLIST_TAG  "fontlist"
+#define FONT_TAG      "font"
+#define FILE_TAG      "file"
+#define PATH_ATTR     "path"
+#define NAME_ATTR     "name"
+#define FOUNDRY_ATTR  "foundry"
+#define FAMILY_ATTR   "family"
+#define FAMILY_TAG    "family"
+#define WEIGHT_ATTR   "weight"
+#define WIDTH_ATTR    "width"
+#define SLANT_ATTR    "slant"
+#define SCALABLE_ATTR "scalable"
+#define FACE_ATTR     "face"
+#define LANGS_ATTR    "langs"
+#define SYSTEM_ATTR   "system"
+#define ERROR_ATTR    "error"
+#define LANG_SEP      ","
 
 #endif

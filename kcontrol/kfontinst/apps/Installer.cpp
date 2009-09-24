@@ -23,6 +23,7 @@
 
 #include "Installer.h"
 #include "Misc.h"
+#include "FontsPackage.h"
 #include <QtCore/QFile>
 #include <KDE/KCmdLineArgs>
 #include <KDE/KAboutData>
@@ -55,8 +56,7 @@ int CInstaller::install(const QSet<KUrl> &urls)
                                        KGuiItem(i18n(KFI_KIO_FONTS_SYS))))
         {
             case KMessageBox::No:
-                if(!jobRunner->getAdminPasswd(itsParent))
-                    return -1;
+                sysInstall=true;
                 break;
             case KMessageBox::Cancel:
                 return -1;
@@ -78,52 +78,8 @@ int CInstaller::install(const QSet<KUrl> &urls)
 
             if(Misc::isPackage(localFile))
             {
-                KZip zip(localFile);
-
+                instUrls+=FontsPackage::extract(localFile, &itsTempDir);
                 package=true;
-                if(zip.open(QIODevice::ReadOnly))
-                {
-                    const KArchiveDirectory *zipDir=zip.directory();
-
-                    if(zipDir)
-                    {
-                        QStringList fonts(zipDir->entries());
-
-                        if(fonts.count())
-                        {
-                            QStringList::ConstIterator it(fonts.begin()),
-                                                       end(fonts.end());
-
-                            if(!itsTempDir)
-                            {
-                                itsTempDir=new KTempDir(KStandardDirs::locateLocal("tmp", KFI_TMP_DIR_PREFIX));
-                                itsTempDir->setAutoRemove(true);
-                            }
-
-                            for(; it!=end; ++it)
-                            {
-                                const KArchiveEntry *entry=zipDir->entry(*it);
-
-                                if(entry && entry->isFile())
-                                {
-                                    ((KArchiveFile *)entry)->copyTo(itsTempDir->name());
-
-                                    QString name(entry->name());
-
-                                    //
-                                    // Cant install hidden fonts, therefore need to unhide 1st!
-                                    if(Misc::isHidden(name))
-                                    {
-                                        ::rename(QFile::encodeName(itsTempDir->name()+name).data(),
-                                            QFile::encodeName(itsTempDir->name()+name.mid(1)).data());
-                                        name=name.mid(1);
-                                    }
-                                    instUrls.insert(KUrl(itsTempDir->name()+name));
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
         if(!package)
@@ -150,12 +106,7 @@ int CInstaller::install(const QSet<KUrl> &urls)
         for(; it!=end; ++it)
             list.append(*it);
 
-        return jobRunner->exec(CJobRunner::CMD_INSTALL, list,
-                               KUrl(Misc::root()
-                                        ? KFI_KIO_FONTS_PROTOCOL":/"
-                                        : sysInstall
-                                            ? KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS"/"
-                                            : KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_USER"/"));
+        return jobRunner->exec(CJobRunner::CMD_INSTALL, list, Misc::root() || sysInstall);
     }
     else
         return -1;
@@ -173,42 +124,29 @@ static KAboutData aboutData("kfontinst", 0, ki18n("Font Installer"), "1.0", ki18
 
 int main(int argc, char **argv)
 {
-    //
-    // Do a quick check to see if we're just being run to configure X...
-    if(3==argc && 0==strcmp(argv[1], "-x"))
+    KCmdLineArgs::init(argc, argv, &aboutData);
+
+    KCmdLineOptions options;
+    options.add("embed <winid>", ki18n("Makes the dialog transient for an X app specified by winid"));
+    options.add("+[URL]", ki18n("URL to install"));
+    KCmdLineArgs::addCmdLineOptions(options);
+
+    QSet<KUrl>   urls;
+    KCmdLineArgs *args(KCmdLineArgs::parsedArgs());
+
+    for(int i=0; i < args->count(); i++)
+        urls.insert(args->url(i));
+
+    if(urls.count())
     {
-        QString dir(KFI::Misc::dirSyntax(QFile::decodeName(argv[2])));
+        KLocale::setMainCatalog(KFI_CATALOGUE);
 
-        return KFI::Misc::dExists(dir) && KFI::Misc::configureForX11(dir) ? 0 : -1;
+        KApplication    app;
+        QString         opt(args->getOption("embed"));
+        KFI::CInstaller inst(createParent(opt.size() ? opt.toInt(0, 16) : 0));
+
+        return inst.install(urls);
     }
-    else
-    {
-        KCmdLineArgs::init(argc, argv, &aboutData);
 
-        KCmdLineOptions options;
-        options.add("x <folder>", ki18n("Configure folder for X11 - create fonts.dir and fonts.scale, plus remove hidden entries."
-                                 " (NOTE: Use this option on its own.)"));
-        options.add("embed <winid>", ki18n("Makes the dialog transient for an X app specified by winid"));
-        options.add("+[URL]", ki18n("URL to install"));
-        KCmdLineArgs::addCmdLineOptions(options);
-
-        QSet<KUrl>   urls;
-        KCmdLineArgs *args(KCmdLineArgs::parsedArgs());
-
-        for(int i=0; i < args->count(); i++)
-            urls.insert(args->url(i));
-
-        if(urls.count())
-        {
-            KLocale::setMainCatalog(KFI_CATALOGUE);
-
-            KApplication    app;
-            QString         opt(args->getOption("embed"));
-            KFI::CInstaller inst(createParent(opt.size() ? opt.toInt(0, 16) : 0));
-
-            return inst.install(urls);
-        }
-
-        return -1;
-    }
+    return -1;
 }

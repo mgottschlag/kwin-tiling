@@ -23,6 +23,7 @@
 
 #include "Fc.h"
 #include <QtCore/QTextStream>
+#include <QtCore/QHash>
 
 //
 // KDE font chooser always seems to use Italic - for both Oblique, and Italic. So I guees
@@ -39,6 +40,41 @@ namespace KFI
 
 namespace FC
 {
+
+#define FC_PROTOCOL    QString::fromLatin1("fontconfig")
+#define FC_STYLE_QUERY QString::fromLatin1("style")
+#define FC_FILE_QUERY  QString::fromLatin1("file")
+#define FC_INDEX_QUERY QString::fromLatin1("index")
+
+KUrl encode(const QString &name, quint32 style, const QString &file, int index)
+{
+    KUrl url(KUrl::fromPath(name));
+
+    url.setProtocol(FC_PROTOCOL);
+    url.addQueryItem(FC_STYLE_QUERY, QString::number(style));
+    if(!file.isEmpty())
+        url.addQueryItem(FC_FILE_QUERY, file);
+    if(index>0)
+        url.addQueryItem(FC_INDEX_QUERY, QString::number(index));
+    return url;
+}
+
+Misc::TFont decode(const KUrl &url)
+{
+    return FC_PROTOCOL==url.protocol()
+                ? Misc::TFont(url.path(), url.queryItem(FC_STYLE_QUERY).toUInt())
+                : Misc::TFont(QString(), 0);
+}
+
+QString getFile(const KUrl &url)
+{
+    return FC_PROTOCOL==url.protocol() ? url.queryItem(FC_FILE_QUERY) : QString();
+}
+
+int getIndex(const KUrl &url)
+{
+    return FC_PROTOCOL==url.protocol() ? url.queryItem(FC_INDEX_QUERY).toInt() : 0;
+}
 
 int weight(int w)
 {
@@ -344,47 +380,29 @@ QString getFcString(FcPattern *pat, const char *val, int index)
     return rv;
 }
 
-#ifdef KFI_USE_TRANSLATED_FAMILY_NAME
 //
-// Try to get the 'string' that matches the users KDE locale..
+// TODO: How correct is this?
+// Qt/Gtk seem to prefer font family names with FAMILY_LANG=="en"
+// ...so if possible, use that. Else, use the first non "xx" lang.
 QString getFcLangString(FcPattern *pat, const char *val, const char *valLang)
 {
-    QString                    rv;
-    QStringList                kdeLangs=KGlobal::locale()->languageList(),
-                               fontLangs;
-    QStringList::ConstIterator it(kdeLangs.begin()),
-                               end(kdeLangs.end());
+    QString rv;
+    int     langIndex=-1;
 
-    // Create list of langs that this font's 'val' is encoded in...
     for(int i=0; true; ++i)
     {
         QString lang=getFcString(pat, valLang, i);
 
         if(lang.isEmpty())
             break;
-        else
-            fontLangs.append(lang);
+        else if(QString::fromLatin1("en")==lang)
+            return getFcString(pat, val, i);
+        else if(QString::fromLatin1("xx")!=lang && -1==langIndex)
+            langIndex=i;
     }
 
-    // Now go through the user's KDE locale, and try to find a font match...
-    for(; it!=end; ++it)
-    {
-        int index=fontLangs.findIndex(*it);
-
-        if(-1!=index)
-        {
-            rv=getFcString(pat, val, index);
-
-            if(!rv.isEmpty())
-                break;
-        }
-    }
-
-    if(rv.isEmpty())
-        rv=getFcString(pat, val, 0);
-    return rv;
+    return getFcString(pat, val, langIndex>0 ? langIndex : 0);
 }
-#endif
 
 int getFcInt(FcPattern *pat, const char *val, int index, int def)
 {
@@ -395,7 +413,23 @@ int getFcInt(FcPattern *pat, const char *val, int index, int def)
     return def;
 }
 
-void getDetails(FcPattern *pat, QString &name, quint32 &styleVal, int &index)
+QString getName(const QString &file)
+{
+    int       count=0;
+    FcPattern *pat=FcFreeTypeQuery((const FcChar8 *)(QFile::encodeName(file).constData()), 0, NULL,
+                                    &count);
+    QString   name(i18n("Unknown"));
+
+    if(pat)
+    {
+        name=FC::createName(pat);
+        FcPatternDestroy(pat);
+    }
+
+    return name;
+}
+
+void getDetails(FcPattern *pat, QString &family, quint32 &styleVal, int &index, QString &foundry)
 {
     int weight=getFcInt(pat,  FC_WEIGHT, 0, KFI_NULL_SETTING),
         width=
@@ -407,30 +441,24 @@ void getDetails(FcPattern *pat, QString &name, quint32 &styleVal, int &index)
         slant=getFcInt(pat,  FC_SLANT, 0, KFI_NULL_SETTING);
 
     index=getFcInt(pat,  FC_INDEX, 0, 0);
-    name=createName(pat, weight, width, slant);
+// #ifdef KFI_USE_TRANSLATED_FAMILY_NAME
+    family=getFcLangString(pat, FC_FAMILY, FC_FAMILYLANG);
+// #else
+//     family=getFcString(pat, FC_FAMILY, 0);
+// #endif
     styleVal=createStyleVal(weight, width, slant);
+    foundry=getFcString(pat, FC_FOUNDRY, 0);
 }
 
 QString createName(FcPattern *pat)
 {
-    return createName(pat, getFcInt(pat, FC_WEIGHT, 0),
-#ifdef KFI_FC_NO_WIDTHS
-                      KFI_NULL_SETTING,
-#else
-                      getFcInt(pat, FC_WIDTH, 0),
-#endif
-                      getFcInt(pat, FC_SLANT, 0));
-}
-
-QString createName(FcPattern *pat, int weight, int width, int slant)
-{
-#ifdef KFI_USE_TRANSLATED_FAMILY_NAME
-    QString family(getFcLangString(pat, FC_FAMILY, FC_FAMILYLANG));
-#else
-    QString family(getFcString(pat, FC_FAMILY, 0));
-#endif
-
-    return createName(family, weight, width, slant);
+    QString family,
+            foundry;
+    quint32 styleVal;
+    int     index;
+           
+    getDetails(pat, family, styleVal, index, foundry);
+    return createName(family, styleVal);
 }
 
 QString createName(const QString &family, quint32 styleInfo)
@@ -443,6 +471,19 @@ QString createName(const QString &family, quint32 styleInfo)
 
 QString createName(const QString &family, int weight, int width, int slant)
 {
+    return family+QString::fromLatin1(", ")+createStyleName(weight, width, slant);
+}
+
+QString createStyleName(quint32 styleInfo)
+{
+    int weight, width, slant;
+
+    decomposeStyleVal(styleInfo, weight, width, slant);
+    return createStyleName(weight, width, slant);
+}
+
+QString createStyleName(int weight, int width, int slant)
+{
 //
 //CPD: TODO: the names *need* to match up with kfontchooser's...
 //         : Removing KFI_DISPLAY_OBLIQUE and KFI_DISPLAY_MEDIUM help this.
@@ -451,11 +492,10 @@ QString createName(const QString &family, int weight, int width, int slant)
 //               as "Rockwell Extra Bold" -- good (well at least they match). *But* fontconfig
 //               is returning the weight "Extra Bold", and kcmshell fonts is using "Bold" :-(
 //
-    QString name(family),
+    QString name,
             weightString,
             widthString,
             slantString;
-    bool    comma=false;
 
 #ifndef KFI_FC_NO_WIDTHS
     if(KFI_NULL_SETTING!=width)
@@ -472,34 +512,24 @@ QString createName(const QString &family, int weight, int width, int slant)
         weightString=weightStr(weight, !slantString.isEmpty() || !widthString.isEmpty());
 
         if(!weightString.isEmpty())
-        {
-            name+=QString(", ")+weightString;
-            comma=true;
-        }
+            name=weightString;
     }
 
 #ifndef KFI_FC_NO_WIDTHS
     if(!widthString.isEmpty())
     {
-        if(!comma)
-        {
-            name+=QChar(',');
-            comma=true;
-        }
-        name+=QChar(' ')+widthString;
+        if(!name.isEmpty())
+            name+=QChar(' ');
+        name+=widthString;
     }
 #endif
 
     if(!slantString.isEmpty())
     {
-        if(!comma)
-        {
-            name+=QChar(',');
-            comma=true;
-        }
-        name+=QChar(' ')+slantString;
+        if(!name.isEmpty())
+            name+=QChar(' ');
+        name+=slantString;
     }
-
     return name;
 }
 

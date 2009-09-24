@@ -1,10 +1,10 @@
-#ifndef __ACTION_DIALOG_H__
-#define __ACTION_DIALOG_H__
+#ifndef __FONTS_PACKAGE_H__
+#define __FONTS_PACKAGE_H__
 
 /*
  * KFontInst - KDE Font Installer
  *
- * Copyright 2003-2007 Craig Drummond <craig@kde.org>
+ * Copyright 2009 Craig Drummond <craig@kde.org>
  *
  * ----
  *
@@ -24,35 +24,17 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <kdialog.h>
+class KTempDir;
 
-class QTimer;
-class QLabel;
+#include <QtCore/QSet>
+#include <KDE/KUrl>
 
 namespace KFI
 {
 
-class CActionDialog : public KDialog
+namespace FontsPackage
 {
-    Q_OBJECT
-
-    public:
-
-    CActionDialog(QWidget *parent);
-    ~CActionDialog();
-    int  exec();
-    void startAnimation();
-    void stopAnimation();
-
-    private Q_SLOTS:
-
-    void rotateIcon();
-
-    protected:
-
-    QLabel  *itsPixmapLabel;
-    QTimer  *itsTimer;
-    int     itsCount;
+    QSet<KUrl> extract(const QString &fileName, KTempDir **tempDir);
 };
 
 }

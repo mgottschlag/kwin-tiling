@@ -24,18 +24,25 @@
 #ifndef __JOB_RUNNER_H__
 #define __JOB_RUNNER_H__
 
-#include <KDE/KIO/Job>
-#include "ActionDialog.h"
-#include "../config-fontinst.h"
+#include <KDE/KUrl>
+#include <KDE/KDialog>
+#include "FontInstInterface.h"
 
 class QLabel;
 class QProgressBar;
+class QStackedWidget;
+class QEventLoop;
+class QCloseEvent;
+class QCheckBox;
 class KJob;
+class KTempDir;
 
 namespace KFI
 {
 
-class CJobRunner : public CActionDialog
+class CActionLabel;
+
+class CJobRunner : public KDialog
 {
     Q_OBJECT
 
@@ -46,11 +53,13 @@ class CJobRunner : public CActionDialog
         enum EType
         {
             TYPE1_FONT,
-            TYPE1_METRICS,
+            TYPE1_AFM,
+            TYPE1_PFM,
             OTHER_FONT
         };
 
         Item(const KUrl &u=KUrl(), const QString &n=QString());
+        Item(const QString &file, const QString &family, quint32 style, bool system);
         QString displayName() const { return name.isEmpty() ? prettyUrl() : name; }
         QString name,
                 fileName;  // Only required so that we can sort an ItemList so that afm/pfms follow after pfa/pfbs
@@ -68,50 +77,62 @@ class CJobRunner : public CActionDialog
         CMD_ENABLE,
         CMD_DISABLE,
         CMD_UPDATE,
-        CMD_COPY,
-        CMD_MOVE
+        CMD_MOVE,
+        CMD_REMOVE_FILE
     };
 
     explicit CJobRunner(QWidget *parent, int xid=0);
     ~CJobRunner();
 
-    bool            getAdminPasswd(QWidget *parent);
-#if !(defined USE_POLICYKIT && USE_POLICYKIT==1)
-    const QString & adminPasswd() const { return itsPasswd; }
-#endif
+    static FontInstInterface * dbus();
+    static KUrl encode(const QString &family, quint32 style, bool system);
+
     static void     getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAndPfm, QWidget *widget);
-    int             exec(ECommand cmd, const ItemList &urls, const KUrl &dest);
+    int             exec(ECommand cmd, const ItemList &urls, bool destIsSystem);
+
+    Q_SIGNALS:
+
+    void configuring();
 
     private Q_SLOTS:
 
     void doNext();
-    void jobResult(KJob *job);
-    void cfgResult(KJob *job);
+    void checkInterface();
+    void dbusServiceOwnerChanged(const QString &name, const QString &from, const QString &to);
+    void dbusStatus(int pid, int status);
     void slotButtonClicked(int button);
 
     private:
 
-    void setMetaData(KIO::Job *job) const;
-    KUrl modifyUrl(const KUrl &orig) const;
+    void    closeEvent(QCloseEvent *e);
+    void    setPage(int page, const QString &msg=QString());
+    QString fileName(const KUrl &url);
+    QString errorString(int value) const;
 
     private:
 
     ECommand                itsCmd;
     ItemList                itsUrls;
     ItemList::ConstIterator itsIt,
-                            itsEnd;
-    KUrl                    itsDest;
-    QLabel                  *itsStatusLabel;
+                            itsEnd,
+                            itsPrev;
+    bool                    itsDestIsSystem;
+    QLabel                  *itsStatusLabel,
+                            *itsSkipLabel,
+                            *itsErrorLabel;
     QProgressBar            *itsProgress;
     bool                    itsAutoSkip,
                             itsCancelClicked,
                             itsModified;
-#if !(defined USE_POLICYKIT && USE_POLICYKIT==1)
-    QString                 itsPasswd;
-#endif
+    KTempDir                *itsTempDir;
+    QString                 itsCurrentFile;
+    CActionLabel            *itsActionLabel;
+    QStackedWidget          *itsStack;
+    int                     itsResponse;
+    QEventLoop              *itsLoop;
+    QCheckBox               *itsDontShowFinishedMsg;
 };
 
 }
 
 #endif
-

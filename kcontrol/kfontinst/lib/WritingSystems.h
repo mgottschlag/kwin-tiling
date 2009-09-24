@@ -1,10 +1,10 @@
-#ifndef __HELPER_H__
-#define __HELPER_H__
+#ifndef __WRITING_SYSTEMS_H__
+#define __WRITING_SYSTEMS_H__
 
 /*
  * KFontInst - KDE Font Installer
  *
- * Copyright 2003-2007 Craig Drummond <craig@kde.org>
+ * Copyright 2003-2009 Craig Drummond <craig@kde.org>
  *
  * ----
  *
@@ -24,24 +24,30 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include <QtCore/QMap>
+#include <QtCore/QStringList>
+#include "kfontinst_export.h"
+
 namespace KFI
 {
-    enum ECommands
-    {
-        CMD_ENABLE_FONT,
-        CMD_DISABLE_FONT,
-        CMD_DELETE_DISABLED_FONT,
-        CMD_RELOAD_DISABLED_LIST,
-        CMD_COPY_FILE,
-        CMD_MOVE_FILE,
-        CMD_DELETE_FILE,
-        CMD_CREATE_DIR,
-        CMD_CREATE_AFM,
-        CMD_FC_CACHE,
-        CMD_ADD_DIR_TO_FONTCONFIG,
-        CMD_CFG_DIR_FOR_X,
-        CMD_QUIT
-    };
+
+class KFONTINST_EXPORT WritingSystems
+{
+    public:
+
+    static WritingSystems * instance();
+
+    WritingSystems();
+
+    qulonglong  get(FcPattern *pat) const;
+    qulonglong  get(const QStringList &langs) const;
+    QStringList getLangs(qulonglong ws) const;
+
+    private:
+
+    QMap<QString, qulonglong> itsMap;
+};
+
 }
 
 #endif

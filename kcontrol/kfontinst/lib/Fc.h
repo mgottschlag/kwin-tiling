@@ -24,10 +24,12 @@
 #ifndef __FC_H__
 #define __FC_H__
 
+#include <KDE/KUrl>
 #include <config-workspace.h>
 #include <fontconfig/fontconfig.h>
 #include "kfontinst_export.h"
 #include "KfiConstants.h"
+#include "Misc.h"
 
 #if (FC_VERSION<20200)
 
@@ -83,6 +85,10 @@ namespace FC
 #define KFI_FC_WIDTH_ULTRAEXPANDED      FC_WIDTH_ULTRAEXPANDED
 #endif
 
+    extern KDE_EXPORT KUrl        encode(const QString &name, quint32 style, const QString &file=QString(), int index=0);
+    extern KDE_EXPORT Misc::TFont decode(const KUrl &url);
+    extern KDE_EXPORT QString     getFile(const KUrl &url);
+    extern KDE_EXPORT int         getIndex(const KUrl &url);
     extern KDE_EXPORT int     weight(int w); // round w to nearest fc weight
     extern KDE_EXPORT int     width(int w); // round w to nearest fc width
     extern KDE_EXPORT int     slant(int s); // round s to nearest fc slant
@@ -102,11 +108,14 @@ namespace FC
     extern KDE_EXPORT QString getFcLangString(FcPattern *pat, const char *val, const char *valLang);
 #endif
     extern KDE_EXPORT int     getFcInt(FcPattern *pat, const char *val, int index=0, int def=-1);
-    extern KDE_EXPORT void    getDetails(FcPattern *pat, QString &name, quint32 &styleVal, int &index);
+    extern KDE_EXPORT QString getName(const QString &file);
+    extern KDE_EXPORT void    getDetails(FcPattern *pat, QString &family, quint32 &styleVal, int &index, QString &foundry);
     extern KDE_EXPORT QString createName(FcPattern *pat);
-    extern KDE_EXPORT QString createName(FcPattern *pat, int weight, int width, int slant);
     extern KDE_EXPORT QString createName(const QString &family, quint32 styleInfo);
     extern KDE_EXPORT QString createName(const QString &family, int weight, int width, int slant);
+    inline KDE_EXPORT QString createName(const Misc::TFont &font) { return createName(font.family, font.styleInfo); }
+    extern KDE_EXPORT QString createStyleName(quint32 styleInfo);
+    extern KDE_EXPORT QString createStyleName(int weight, int width, int slant);
     extern KDE_EXPORT QString weightStr(int w, bool emptyNormal=true);
     extern KDE_EXPORT QString widthStr(int w, bool emptyNormal=true);
     extern KDE_EXPORT QString slantStr(int s, bool emptyNormal=true);

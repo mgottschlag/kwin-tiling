@@ -2,9 +2,10 @@ include_directories(
 	${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/kfontinst/viewpart/
 	 )
 
-set(kcm_fontinst_PART_SRCS ${libkfontinstview_SRCS} ${libkfontinstjobrunner_SRCS}
-    FontList.cpp GroupList.cpp KCmFontInst.cpp PrintDialog.cpp FontLister.cpp
-    DuplicatesDialog.cpp FontFilter.cpp FontFilterProxyStyle.cpp FcQuery.cpp)
+set(kcm_fontinst_PART_SRCS ${libkfontinstview_SRCS} ${libkfontinstjobrunner_SRCS} ${libkfontinstdbusiface_SRCS}
+    DuplicatesDialog.cpp FontList.cpp GroupList.cpp KCmFontInst.cpp PrintDialog.cpp
+    FontFilter.cpp FontFilterProxyStyle.cpp FcQuery.cpp)
+# qt4_add_dbus_interface(kcm_fontinst_PART_SRCS ../dbus/org.kde.fontinst.xml FontinstIface)
 
 kde4_add_plugin(kcm_fontinst ${kcm_fontinst_PART_SRCS})
 

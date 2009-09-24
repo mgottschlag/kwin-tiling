@@ -30,10 +30,9 @@
 #include <QtCore/QRect>
 #include <QtGui/QFont>
 #include <QtGui/QColor>
-#include <KDE/KUrl>
 #include <fontconfig/fontconfig.h>
 #include "KfiConstants.h"
-#include "Misc.h"
+//#include "Misc.h"
 #include "Fc.h"
 
 //Enable the following to use locale aware family name - if font supports this.
@@ -79,15 +78,11 @@ class KDE_EXPORT CFcEngine
     void                  readConfig(KConfig &cfg);
     void                  writeConfig(KConfig &cfg);
     static void           setDirty() { theirFcDirty=true; }
-    QImage                drawPreview(const QString &item, const QColor &txt, const QColor &bgnd, int h,
-                                      quint32 style=KFI_NO_STYLE_INFO, int face=0);
-    QImage                draw(const KUrl &url, int w, int h, const QColor &txt, const QColor &bgnd, int faceNo, bool thumb,
-                               const QList<TRange> &range=QList<TRange>(), QList<TChar> *chars=NULL,
-                               const QString &name=QString(), quint32 style=KFI_NO_STYLE_INFO);
-
+    QImage                drawPreview(const QString &name, quint32 style, int faceNo, const QColor &txt, const QColor &bgnd,
+                                      int h);
+    QImage                draw(const QString &name, quint32 style, int faceNo, const QColor &txt, const QColor &bgnd,
+                               int w, int h, bool thumb, const QList<TRange> &range=QList<TRange>(), QList<TChar> *chars=NULL);
     int                   getNumIndexes() { return itsIndexCount; } // Only valid after draw has been called!
-    const QString &       getName(const KUrl &url, int faceNo=0);
-    bool                  getInfo(const KUrl &url, int faceNo, Misc::TFont &info);
     static QFont          getQFont(const QString &family, quint32 style, int size);
     const QVector<int> &  sizes() const     { return itsSizes; }
     bool                  atMin() const     { return 0==itsSizes.size() || 0==itsAlphaSizeIndex; }
@@ -95,7 +90,8 @@ class KDE_EXPORT CFcEngine
     void                  zoomIn()          { if(!atMax()) itsAlphaSizeIndex++; }
     void                  zoomOut()         { if(!atMin()) itsAlphaSizeIndex--; }
     int                   alphaSize() const { return itsSizes[itsAlphaSizeIndex]; }
-    quint32               styleVal() { return FC::createStyleVal(itsWeight, itsWidth, itsSlant); }
+    quint32               styleVal()        { return itsStyle; }
+    const QString &       descriptiveName() const { return itsDescriptiveName; }
 
     const QString &       getPreviewString(){ return itsPreviewString; }
     static QString        getDefaultPreviewString();
@@ -110,8 +106,7 @@ class KDE_EXPORT CFcEngine
 
     private:
 
-    bool                  parseUrl(const KUrl &url, int faceNo);
-    bool                  parseName(const QString &name, quint32 style=KFI_NO_STYLE_INFO, const KUrl &url=KUrl());
+    bool                  parse(const QString &name, quint32 style, int faceNo);
     XftFont *             queryFont();
     XftFont *             getFont(int size);
     bool                  isCorrect(XftFont *f, bool checkFamily);
@@ -125,16 +120,12 @@ class KDE_EXPORT CFcEngine
 
     bool          itsInstalled;
     QString       itsName,
-                  itsFileName,
                   itsDescriptiveName;
+    quint32       itsStyle;
     int           itsIndex,
                   itsIndexCount,
-                  itsWeight,
-                  itsWidth,
-                  itsSlant,
                   itsAlphaSizeIndex;
     QVector<int>  itsSizes;
-    KUrl          itsLastUrl;
     FcBool        itsScalable;
     QStringList   itsAddedFiles;
     QString       itsPreviewString;

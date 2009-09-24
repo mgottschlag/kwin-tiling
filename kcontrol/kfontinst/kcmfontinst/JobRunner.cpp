@@ -24,210 +24,190 @@
 #include "JobRunner.h"
 #include "KfiConstants.h"
 #include "Misc.h"
-#include <KDE/KIO/JobUiDelegate>
-#include <KDE/KIO/NetAccess>
-#include <KDE/KIO/CopyJob>
-#include <KDE/KIO/DeleteJob>
-#include <KDE/KMessageBox>
+#include "Fc.h"
+#include "ActionLabel.h"
 #include <KDE/KGlobal>
 #include <KDE/KIconLoader>
 #include <KDE/KLocale>
-#include <KDE/KPasswordDialog>
-#include <KDE/SuProcess>
-#include <KDE/OrgKdeKDirNotifyInterface>
+#include <KDE/KIO/NetAccess>
+#include <KDE/KStandardDirs>
+#include <KDE/KTempDir>
+#include <KDE/KSharedConfig>
+#include <kio/global.h>
 #include <QtGui/QGridLayout>
 #include <QtGui/QProgressBar>
 #include <QtGui/QLabel>
 #include <QtGui/QX11Info>
+#include <QtGui/QStackedWidget>
+#include <QtGui/QCheckBox>
+#include <QtGui/QStyleOption>
+#include <QtGui/QStyle>
+#include <QtGui/QCloseEvent>
 #include <QtCore/QTimer>
+#include <QtCore/QEventLoop>
 #include <X11/Xlib.h>
 #include <fixx11h.h>
+#include <fontconfig/fontconfig.h>
 #include <sys/resource.h>
-#if defined USE_POLICYKIT && USE_POLICYKIT==1
-#include "PolicyKitAuthenticator.h"
-#endif
+#include <sys/types.h>
+#include <unistd.h>
 
-using namespace KDESu;
+#define CFG_GROUP                  "Runner Dialog"
+#define CFG_DONT_SHOW_FINISHED_MSG "DontShowFinishedMsg"
 
 namespace KFI
 {
 
-static KUrl toggle(const KUrl &orig, bool enable)
-{
-    KUrl url(orig);
+K_GLOBAL_STATIC(FontInstInterface, theInterface)
 
-    url.setFileName(enable
-                 ? Misc::getFile(orig.path()).mid(1)
-                 : QChar('.')+Misc::getFile(orig.path()));
+FontInstInterface * CJobRunner::dbus()
+{
+    return theInterface;
+}
+
+static const int constDownloadFailed=-1;
+static const int constInterfaceCheck=5*1000;
+
+static void decode(const KUrl &url, Misc::TFont &font, bool &system)
+{
+    font=FC::decode(url);
+    system=url.queryItem("sys")=="true";
+}
+
+KUrl CJobRunner::encode(const QString &family, quint32 style, bool system)
+{
+    KUrl url(FC::encode(family, style));
+
+    url.addQueryItem("sys", system ? "true" : "false");
     return url;
 }
 
-class CSkipDialog : public KDialog
+enum EPages
 {
-    public:
-
-    enum Result
-    {
-        SKIP,
-        AUTO_SKIP,
-        CANCEL
-    };
-
-    CSkipDialog(QWidget *parent, bool multi, const QString &errorText)
-        : KDialog(parent),
-          itsResult(CANCEL)
-    {
-        setCaption(i18n( "Information"));
-        setButtons(multi ? Cancel|User1|User2 : Cancel );
-        setButtonText(User1, i18n("Skip"));
-        setButtonText(User2, i18n("AutoSkip"));
-        setMainWidget(new QLabel(errorText, this));
-        resize(sizeHint());
-    }
-
-    Result go()
-    {
-        itsResult=CANCEL;
-        exec();
-        return itsResult;
-    }
-
-    void slotButtonClicked(int button)
-    {
-        switch(button)
-        {
-            case User1:
-                itsResult=SKIP;
-                break;
-            case User2:
-                itsResult=AUTO_SKIP;
-                break;
-            default:
-                itsResult=CANCEL;
-        }
-
-        KDialog::accept();
-    }
-
-    private:
-
-    Result itsResult;
+    PAGE_PROGRESS,
+    PAGE_SKIP,
+    PAGE_ERROR,
+    PAGE_CANCEL,
+    PAGE_COMPLETE
 };
 
-class CPasswordDialog : public KPasswordDialog
+enum Response
 {
-    public:
-
-    CPasswordDialog(QWidget *parent)
-        : KPasswordDialog(parent),
-          itsSuProc(KFI_SYS_USER)
-    {
-        setCaption(i18n("Authorization Required"));
-
-        if(itsSuProc.useUsersOwnPassword())
-            setPrompt(i18n("The requested action requires administrator privileges.\n"
-                           "If you have these privileges then please enter your password."));
-        else
-            setPrompt(i18n("The requested action requires administrator privileges.\n"
-                           "Please enter the system administrator's password."));
-
-        setPixmap(DesktopIcon("dialog-password"));
-    }
-
-    bool checkPassword()
-    {
-        switch (itsSuProc.checkInstall(password().toLocal8Bit()))
-        {
-            case -1:
-                showErrorMessage(itsSuProc.useUsersOwnPassword()
-                                    ? i18n("Insufficient privileges.")
-                                    : i18n("Conversation with su failed."), UsernameError);
-                return false;
-            case 0:
-                return true;
-            case SuProcess::SuNotFound:
-                showErrorMessage(i18n("<p>Could not launch '%1'.</p>"
-                                      "<p>Make sure your PATH is set correctly.</p>",
-                                      itsSuProc.useUsersOwnPassword() ? "sudo" : "su"), FatalError);
-                return false;
-            case SuProcess::SuNotAllowed:
-                showErrorMessage(i18n("Insufficient privileges."), FatalError);
-                return false;
-            case SuProcess::SuIncorrectPassword:
-                showErrorMessage(i18n("Incorrect password, please try again."), PasswordError);
-                return false;
-            default:
-                showErrorMessage(i18n("Internal error: illegal return from "
-                                      "SuProcess::checkInstall()"), FatalError);
-                done(Rejected);
-                return false;
-        }
-    }
-
-    SuProcess itsSuProc;
+    RESP_CONTINUE,
+    RESP_AUTO,
+    RESP_CANCEL
 };
+
+static void addIcon(QGridLayout *layout, QFrame *page, const char *iconName, int iconSize)
+{
+    QLabel *icon=new QLabel(page);
+    icon->setPixmap(KIcon(iconName).pixmap(iconSize));
+    icon->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+    layout->addWidget(icon, 0, 0);
+}
 
 CJobRunner::CJobRunner(QWidget *parent, int xid)
-           : CActionDialog(parent),
+           : KDialog(parent),
              itsIt(itsUrls.end()),
              itsEnd(itsIt),
              itsAutoSkip(false),
              itsCancelClicked(false),
-             itsModified(false)
+             itsModified(false),
+             itsTempDir(0L),
+             itsLoop(0L)
 {
-#if !(defined USE_POLICYKIT && USE_POLICYKIT==1)
-    // Set core dump size to 0 because we will have root's password in memory.
-    struct rlimit rlim;
-    rlim.rlim_cur=rlim.rlim_max=0;
-    setrlimit(RLIMIT_CORE, &rlim);
-#endif
-
     setModal(true);
-    setButtons(KDialog::Cancel);
+    showButtonSeparator(true);
+
     if(NULL==parent && 0!=xid)
         XSetTransientForHint(QX11Info::display(), winId(), xid);
 
-    QFrame *page = new QFrame(this);
-    setMainWidget(page);
+    itsStack = new QStackedWidget(this);
+    setMainWidget(itsStack);
 
+    QStyleOption option;
+    option.initFrom(this);
+    int iconSize=style()->pixelMetric(QStyle::PM_MessageBoxIconSize, &option, this);
+    
+    QFrame *page = new QFrame(itsStack);
     QGridLayout *layout=new QGridLayout(page);
     layout->setMargin(KDialog::marginHint());
     layout->setSpacing(KDialog::spacingHint());
     itsStatusLabel=new QLabel(page);
     itsProgress=new QProgressBar(page);
-    layout->addWidget(itsPixmapLabel, 0, 0, 2, 1);
+//     itsStatusLabel->setWordWrap(true);
+    layout->addWidget(itsActionLabel = new CActionLabel(this), 0, 0, 2, 1);
     layout->addWidget(itsStatusLabel, 0, 1);
     layout->addWidget(itsProgress, 1, 1);
+    layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 2, 0);
+    itsStack->insertWidget(PAGE_PROGRESS, page);
+
+    page=new QFrame(itsStack);
+    layout=new QGridLayout(page);
+    layout->setMargin(KDialog::marginHint());
+    layout->setSpacing(KDialog::spacingHint());
+    itsSkipLabel=new QLabel(page);
+    itsSkipLabel->setWordWrap(true);
+    addIcon(layout, page, "dialog-error", iconSize);
+    layout->addWidget(itsSkipLabel, 0, 1);
+    layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 1, 0);
+    itsStack->insertWidget(PAGE_SKIP, page);
+
+    page=new QFrame(itsStack);
+    layout=new QGridLayout(page);
+    layout->setMargin(KDialog::marginHint());
+    layout->setSpacing(KDialog::spacingHint());
+    itsErrorLabel=new QLabel(page);
+    itsErrorLabel->setWordWrap(true);
+    addIcon(layout, page, "dialog-error", iconSize);
+    layout->addWidget(itsErrorLabel, 0, 1);
+    layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 1, 0);
+    itsStack->insertWidget(PAGE_ERROR, page);
+
+    page=new QFrame(itsStack);
+    layout=new QGridLayout(page);
+    layout->setMargin(KDialog::marginHint());
+    layout->setSpacing(KDialog::spacingHint());
+    QLabel *cancelLabel=new QLabel(i18n("<h3>Cancel?</h3><p>Are you sure you wish to cancel?</p>"), page);
+    cancelLabel->setWordWrap(true);
+    addIcon(layout, page, "dialog-warning", iconSize);
+    layout->addWidget(cancelLabel, 0, 1);
+    layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 1, 0);
+    itsStack->insertWidget(PAGE_CANCEL, page);
+
+    if(KSharedConfig::openConfig(KFI_UI_CFG_FILE)->group(CFG_GROUP).readEntry(CFG_DONT_SHOW_FINISHED_MSG, false))
+        itsDontShowFinishedMsg=0L;
+    else
+    {
+        page=new QFrame(itsStack);
+        layout=new QGridLayout(page);
+        layout->setMargin(KDialog::marginHint());
+        layout->setSpacing(KDialog::spacingHint());
+        QLabel *finishedLabel=new QLabel(i18n("<h3>Finished!</h3>"
+                                            "<p>Please note that any open applications will need to be "
+                                            "restarted in order for any changes to be noticed.</p>"),
+                                        page);
+        finishedLabel->setWordWrap(true);
+        addIcon(layout, page, "dialog-information", iconSize);
+        layout->addWidget(finishedLabel, 0, 1);
+        layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 1, 0);
+        itsDontShowFinishedMsg = new QCheckBox(i18n("Don't show this message again"), page);
+        itsDontShowFinishedMsg->setChecked(false);
+        layout->addItem(new QSpacerItem(0, KDialog::spacingHint(), QSizePolicy::Fixed, QSizePolicy::Fixed), 2, 0);
+        layout->addWidget(itsDontShowFinishedMsg, 3, 1);
+        layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 4, 0);
+        itsStack->insertWidget(PAGE_COMPLETE, page);
+    }
+    
+    connect(dbus()->connection().interface(), SIGNAL(serviceOwnerChanged(QString, QString, QString)),
+           SLOT(dbusServiceOwnerChanged(QString, QString, QString)));
+    connect(dbus(), SIGNAL(status(int, int)), SLOT(dbusStatus(int, int)));
+    setMinimumSize(420, 160);
 }
 
 CJobRunner::~CJobRunner()
 {
-}
-
-bool CJobRunner::getAdminPasswd(QWidget *parent)
-{
-    if(!Misc::root())
-    {
-#if defined USE_POLICYKIT && USE_POLICYKIT==1
-        if(!PolicyKitAuthenticator::instance()->authenticate(KFI_IFACE, parent, true))
-        {
-            KMessageBox::error(parent, i18n("Authentication failed."));
-            return false;
-        }
-#else
-        // Prompt the user for a password, if we do not already have it...
-        if(itsPasswd.isEmpty() || 0!=SuProcess(KFI_SYS_USER).checkInstall(itsPasswd.toLocal8Bit()))
-        {
-            CPasswordDialog dlg(parent);
-
-            if(!dlg.exec())
-                return false;
-            itsPasswd=dlg.password().toLocal8Bit();
-        }
-#endif
-    }
-
-    return true;
+    delete itsTempDir;
 }
 
 void CJobRunner::getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAndPfm, QWidget *widget)
@@ -247,19 +227,17 @@ void CJobRunner::getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAn
 
     if(check)
     {
-        static const char * const afm[]={"afm", "AFM", "Afm", NULL};
-        static const char * const pfm[]={"pfm", "PFM", "Pfm", NULL};
+        const char *afm[]={"afm", "AFM", "Afm", NULL},
+                   *pfm[]={"pfm", "PFM", "Pfm", NULL};
         bool       gotAfm(false),
                    localFile(url.isLocalFile());
         int        e;
 
         for(e=0; afm[e]; ++e)
         {
-            KUrl statUrl(url);
+            KUrl          statUrl(url);
             KIO::UDSEntry uds;
-
             statUrl.setPath(Misc::changeExt(url.path(), afm[e]));
-
             if(localFile ? Misc::fExists(statUrl.toLocalFile()) : KIO::NetAccess::stat(statUrl, uds, widget))
             {
                 list.append(statUrl);
@@ -274,7 +252,7 @@ void CJobRunner::getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAn
                 KUrl          statUrl(url);
                 KIO::UDSEntry uds;
                 statUrl.setPath(Misc::changeExt(url.path(), pfm[e]));
-                if(localFile ? Misc::fExists(statUrl.path()) : KIO::NetAccess::stat(statUrl, uds, widget))
+                if(localFile ? Misc::fExists(statUrl.toLocalFile()) : KIO::NetAccess::stat(statUrl, uds, widget))
                 {
                     list.append(statUrl);
                     break;
@@ -283,7 +261,7 @@ void CJobRunner::getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAn
     }
 }
 
-int CJobRunner::exec(ECommand cmd, const ItemList &urls, const KUrl &dest)
+int CJobRunner::exec(ECommand cmd, const ItemList &urls, bool destIsSystem)
 {
     switch(cmd)
     {
@@ -296,138 +274,168 @@ int CJobRunner::exec(ECommand cmd, const ItemList &urls, const KUrl &dest)
         case CMD_ENABLE:
             setCaption(i18n("Enabling"));
             break;
-        case CMD_COPY:
-            setCaption(i18n("Copying"));
-            break;
         case CMD_MOVE:
             setCaption(i18n("Moving"));
             break;
         case CMD_UPDATE:
             setCaption(i18n("Updating"));
             break;
+        case CMD_REMOVE_FILE:
+            setCaption(i18n("Removing"));
+            break;
         default:
         case CMD_DISABLE:
             setCaption(i18n("Disabling"));
     }
 
-    itsDest=dest;
+    itsDestIsSystem=destIsSystem;
     itsUrls=urls;
     if(CMD_INSTALL==cmd)
         qSort(itsUrls.begin(), itsUrls.end());  // Sort list of fonts so that we have type1 fonts followed by their metrics...
     itsIt=itsUrls.constBegin();
     itsEnd=itsUrls.constEnd();
+    itsPrev=itsEnd;
     itsProgress->setValue(0);
     itsProgress->setRange(0, itsUrls.count()+1);
     itsProgress->show();
     itsCmd=cmd;
+    itsCurrentFile=QString();
     itsStatusLabel->setText(QString());
     itsAutoSkip=itsCancelClicked=itsModified=false;
+    setPage(PAGE_PROGRESS);
     QTimer::singleShot(0, this, SLOT(doNext()));
-    return CActionDialog::exec();
+    QTimer::singleShot(constInterfaceCheck, this, SLOT(checkInterface()));
+    itsActionLabel->startAnimation();
+    int rv=KDialog::exec();
+    if(itsTempDir)
+    {
+        delete itsTempDir;
+        itsTempDir=0L;
+    }
+    return rv;
 }
 
 void CJobRunner::doNext()
 {
-    if(itsIt==itsEnd || CMD_UPDATE==itsCmd)
+    if(itsIt==itsEnd/* || CMD_UPDATE==itsCmd*/)
     {
-        if(itsModified || CMD_UPDATE==itsCmd)
+        if(itsModified)
         {
-            //
-            // Installation, deletion, enabling, disabling, completed - so now reconfigure...
-            QByteArray  packedArgs;
-            QDataStream stream(&packedArgs, QIODevice::WriteOnly);
-
-            itsStatusLabel->setText(i18n("Updating font configuration. Please wait..."));
-
-            stream << KFI::SPECIAL_CONFIGURE;
-
-            if(CMD_UPDATE==itsCmd)
-            {
-                itsProgress->hide();
-                for(; itsIt!=itsEnd; ++itsIt)
-                    stream << (*itsIt);
-            }
-            else
-                itsProgress->setValue(itsProgress->maximum());
-
-            itsUrls.empty();
-            itsIt=itsEnd=itsUrls.constEnd();
-
-            KIO::Job *job=KIO::special(KUrl(KFI_KIO_FONTS_PROTOCOL":/"), packedArgs, KIO::HideProgressInfo);
-            setMetaData(job);
-            connect(job, SIGNAL(result(KJob *)), SLOT(cfgResult(KJob *)));
-            job->ui()->setWindow(this);
-            job->ui()->setAutoErrorHandlingEnabled(false);
-            job->ui()->setAutoWarningHandlingEnabled(false);
+            itsCmd=CMD_UPDATE;
+            dbus()->reconfigure(getpid());
+            itsStatusLabel->setText("Updating font configuration. Please wait...");
+            itsProgress->setValue(itsProgress->maximum());
+            emit configuring();
         }
         else
-            cfgResult(0L);
+        {
+            itsActionLabel->stopAnimation();
+            if(PAGE_ERROR!=itsStack->currentIndex())
+                reject();
+        }
     }
     else
     {
-        KIO::Job *job(NULL);
+        Misc::TFont font;
+        bool        system;
 
         switch(itsCmd)
         {
-            case CMD_COPY:
             case CMD_INSTALL:
             {
-                KUrl dest(itsDest);
+                itsCurrentFile=fileName((*itsIt).url());
 
-                dest.setFileName(Misc::getFile((*itsIt).path()));
-                itsStatusLabel->setText(CMD_INSTALL==itsCmd ? i18n("Installing %1", (*itsIt).displayName())
-                                                            : i18n("Copying %1", (*itsIt).displayName()) );
-                job=KIO::file_copy(*itsIt, modifyUrl(dest), -1, KIO::HideProgressInfo);
+                if(itsCurrentFile.isEmpty()) // Failed to download...
+                    dbusStatus(getpid(), constDownloadFailed);
+                else
+                {
+                    // Create AFM if this is a PFM, and the previous was not the AFM for this font...
+                    bool createAfm=Item::TYPE1_PFM==(*itsIt).type && 
+                                   (itsPrev==itsEnd || (*itsIt).fileName!=(*itsPrev).fileName || Item::TYPE1_AFM!=(*itsPrev).type);
+ 
+                    dbus()->install(itsCurrentFile, createAfm, itsDestIsSystem, getpid(), (unsigned int)window()->winId(), false);
+                }
                 break;
             }
             case CMD_DELETE:
-                itsStatusLabel->setText(i18n("Deleting %1", (*itsIt).displayName()));
-                job=KIO::file_delete(modifyUrl(*itsIt), KIO::HideProgressInfo);
+                decode(*itsIt, font, system);
+                dbus()->uninstall(font.family, font.styleInfo, system, getpid(), (unsigned int)window()->winId(), false);
                 break;
             case CMD_ENABLE:
-                itsStatusLabel->setText(i18n("Enabling %1", (*itsIt).displayName()));
-                job=KIO::rename(*itsIt, modifyUrl(toggle(*itsIt, true)), KIO::HideProgressInfo);
+                decode(*itsIt, font, system);
+                dbus()->enable(font.family, font.styleInfo, system, getpid(), (unsigned int)window()->winId(), false);
                 break;
             case CMD_DISABLE:
-                itsStatusLabel->setText(i18n("Disabling %1", (*itsIt).displayName()));
-                job=KIO::rename(*itsIt, modifyUrl(toggle(*itsIt, false)), KIO::HideProgressInfo);
+                decode(*itsIt, font, system);
+                dbus()->disable(font.family, font.styleInfo, system, getpid(), (unsigned int)window()->winId(), false);
                 break;
             case CMD_MOVE:
-            {
-                KUrl dest(itsDest);
-
-                dest.setFileName(Misc::getFile((*itsIt).path()));
-                itsStatusLabel->setText(i18n("Moving %1", (*itsIt).displayName()));
-                job=KIO::file_move(modifyUrl(*itsIt), modifyUrl(dest), -1, KIO::HideProgressInfo);
+                decode(*itsIt, font, system);
+                dbus()->move(font.family, font.styleInfo, itsDestIsSystem, getpid(), (unsigned int)window()->winId(), false);
                 break;
-            }
+            case CMD_REMOVE_FILE:
+                decode(*itsIt, font, system);
+                dbus()->removeFile(font.family, font.styleInfo, (*itsIt).fileName, system, getpid(), (unsigned int)window()->winId(), false);
+                break;
             default:
                 break;
         }
+        itsStatusLabel->setText(CMD_INSTALL==itsCmd ? (*itsIt).prettyUrl() : FC::createName(FC::decode(*itsIt)));
         itsProgress->setValue(itsProgress->value()+1);
-        job->setUiDelegate(0L);  // Remove the ui-delegate, so that we can handle all error messages...
-        setMetaData(job);
-        connect(job, SIGNAL(result(KJob *)), SLOT(jobResult(KJob *)));
+        
+        // Keep copy of this iterator - so that can check whether AFM should be created.
+        itsPrev=itsIt;
     }
 }
 
-void CJobRunner::jobResult(KJob *job)
+void CJobRunner::checkInterface()
 {
-    Q_ASSERT(job);
+    if(itsIt==itsUrls.constBegin() && !FontInst::isStarted(dbus()))
+    {
+        setPage(PAGE_ERROR, i18n("Sorry, failed to start backend."));
+        itsActionLabel->stopAnimation();
+        itsIt=itsEnd;
+    }
+}
+
+void CJobRunner::dbusServiceOwnerChanged(const QString &name, const QString &from, const QString &to)
+{
+    if(to.isEmpty() && !from.isEmpty() && name==OrgKdeFontinstInterface::staticInterfaceName() && itsIt!=itsEnd)
+    {
+        setPage(PAGE_ERROR, i18n("Sorry, backend died - and it has been restarted. Please try again."));
+        itsActionLabel->stopAnimation();
+        itsIt=itsEnd;
+    }
+}
+
+void CJobRunner::dbusStatus(int pid, int status)
+{
+    if(pid!=getpid())
+        return;
+
+    if(CMD_UPDATE==itsCmd)
+    {
+        setPage(PAGE_COMPLETE);
+        return;
+    }
 
     if(itsCancelClicked)
     {
-        stopAnimation();
-        if(KMessageBox::Yes==KMessageBox::warningYesNo(this, i18n("Are you sure you wish to cancel?")))
+        itsActionLabel->stopAnimation();
+        setPage(PAGE_CANCEL);
+        if(RESP_CANCEL==itsResponse)
             itsIt=itsEnd;
         itsCancelClicked=false;
-        startAnimation();
+        setPage(PAGE_PROGRESS);
+        itsActionLabel->startAnimation();
     }
 
     // itsIt will equal itsEnd if user decided to cancel the current op
     if(itsIt==itsEnd)
+    {
         doNext();
-    else if (!job->error())
+    }
+    else if (0==status)
     {
         itsModified=true;
         ++itsIt;
@@ -435,50 +443,64 @@ void CJobRunner::jobResult(KJob *job)
     }
     else
     {
-        bool cont(itsAutoSkip && itsUrls.count()>1);
+        bool    cont(itsAutoSkip && itsUrls.count()>1);
+        QString currentName((*itsIt).fileName);
 
         if(!cont)
         {
-            stopAnimation();
+            itsActionLabel->stopAnimation();
 
-            ItemList::ConstIterator next(itsIt==itsEnd ? itsEnd : itsIt+1);
-
-            if(1==itsUrls.count() || next==itsEnd)
+            if(FontInst::STATUS_SERVICE_DIED==status)
             {
-                if(!itsAutoSkip && !job->errorString().isEmpty())
-                    KMessageBox::error(this, job->errorString());
+                setPage(PAGE_ERROR, errorString(status));
+                itsIt=itsEnd;
             }
             else
             {
-                CSkipDialog dlg(this, true, job->errorString());
+                ItemList::ConstIterator lastPartOfCurrent(itsIt),
+                                        next(itsIt==itsEnd ? itsEnd : itsIt+1);
 
-                switch(dlg.go())
+                // If we're installing a Type1 font, and its already installed - then we need to skip past AFM/PFM
+                if(next!=itsEnd && Item::TYPE1_FONT==(*itsIt).type &&
+                   (*next).fileName==currentName && (Item::TYPE1_AFM==(*next).type || Item::TYPE1_PFM==(*next).type))
                 {
-                    case CSkipDialog::SKIP:
-                        cont=true;
-                        break;
-                    case CSkipDialog::AUTO_SKIP:
-                        cont=itsAutoSkip=true;
-                        break;
-                    case CSkipDialog::CANCEL:
-                        break;
+                    next++;
+                    if(next!=itsEnd && (*next).fileName==currentName && (Item::TYPE1_AFM==(*next).type || Item::TYPE1_PFM==(*next).type))
+                        next++;
+                }
+                if(1==itsUrls.count() || next==itsEnd)
+                    setPage(PAGE_ERROR, errorString(status));
+                else
+                {
+                    setPage(PAGE_SKIP, errorString(status));
+                    switch(itsResponse)
+                    {
+                        case RESP_CONTINUE:
+                            cont=true;
+                            break;
+                        case RESP_AUTO:
+                            cont=itsAutoSkip=true;
+                            break;
+                        case RESP_CANCEL:
+                            break;
+                    }
+                    setPage(PAGE_PROGRESS);
                 }
             }
         }
 
-        startAnimation();
+        itsActionLabel->startAnimation();
         if(cont)
         {
             if(CMD_INSTALL==itsCmd && Item::TYPE1_FONT==(*itsIt).type) // Did we error on a pfa/pfb? if so, exclude the afm/pfm...
             {
-                QString oldFile((*itsIt).fileName);
                 ++itsIt;
 
                 // Skip afm/pfm
-                if(itsIt!=itsEnd && (*itsIt).fileName==oldFile && Item::TYPE1_METRICS==(*itsIt).type)
+                if(itsIt!=itsEnd && (*itsIt).fileName==currentName && (Item::TYPE1_AFM==(*itsIt).type || Item::TYPE1_PFM==(*itsIt).type))
                     ++itsIt;
                 // Skip pfm/afm
-                if(itsIt!=itsEnd && (*itsIt).fileName==oldFile && Item::TYPE1_METRICS==(*itsIt).type)
+                if(itsIt!=itsEnd && (*itsIt).fileName==currentName && (Item::TYPE1_AFM==(*itsIt).type || Item::TYPE1_PFM==(*itsIt).type))
                     ++itsIt;
             }
             else
@@ -493,73 +515,180 @@ void CJobRunner::jobResult(KJob *job)
     }
 }
 
-void CJobRunner::cfgResult(KJob *job)
+void CJobRunner::slotButtonClicked(int button)
 {
-    stopAnimation();
-
-    // KIO::file_xxxx() do not seem to emit kdirnotify signals, so do this now...
-    if(itsModified && (CMD_COPY==itsCmd || CMD_INSTALL==itsCmd))
-        org::kde::KDirNotify::emitFilesAdded(itsDest.url());
-
-    if(job && 0==job->error())
+    switch(itsStack->currentIndex())
     {
-        hide();
-        KMessageBox::information(parentWidget(),
-                                 i18n("<p>Please note that any open applications will need to be "
-                                      "restarted in order for any changes to be noticed.</p>"),
-                                 i18n("Success"), "FontChangesAndOpenApps");
-        accept();
+        case PAGE_PROGRESS:
+            if(itsIt!=itsEnd)
+                itsCancelClicked=true;
+            break;
+        case PAGE_SKIP:
+            switch(button)
+            {
+                case User1:
+                    itsResponse=RESP_CONTINUE;
+                    break;
+                case User2:
+                    itsResponse=RESP_AUTO;
+                    break;
+                default:
+                    itsResponse=RESP_CANCEL;
+            }
+            itsLoop->quit();
+            break;
+        case PAGE_CANCEL:
+            switch(button)
+            {
+                case Yes:
+                    itsResponse=RESP_CANCEL;
+                    break;
+                case No:
+                default:
+                    itsResponse=RESP_CONTINUE;
+            }
+            itsLoop->quit();
+            break;
+        case PAGE_COMPLETE:
+            if(itsDontShowFinishedMsg)
+            {
+                KConfigGroup grp(KSharedConfig::openConfig(KFI_UI_CFG_FILE)->group(CFG_GROUP));
+                grp.writeEntry(CFG_DONT_SHOW_FINISHED_MSG, itsDontShowFinishedMsg->isChecked());
+            }
+        case PAGE_ERROR:
+            KDialog::accept();
+            break;
     }
+}
+
+void CJobRunner::closeEvent(QCloseEvent *e)
+{
+    if(PAGE_COMPLETE!=itsStack->currentIndex())
+    {
+        e->ignore();
+        slotButtonClicked(Cancel);
+    }
+}
+
+void CJobRunner::setPage(int page, const QString &msg)
+{
+    itsStack->setCurrentIndex(page);
+
+    switch(page)
+    {
+        case PAGE_PROGRESS:
+            setButtons(Cancel);
+            break;
+        case PAGE_SKIP:
+            itsSkipLabel->setText(i18n("<h3>Error!</h3>")+QLatin1String("<p>")+msg+QLatin1String("</p>"));
+            setButtons(Cancel|User1|User2);
+            setButtonText(User1, i18n("Skip"));
+            setButtonText(User2, i18n("AutoSkip"));
+            if(!itsLoop)
+                itsLoop=new QEventLoop(this);
+            itsLoop->exec();
+            break;
+        case PAGE_ERROR:
+            itsErrorLabel->setText(i18n("<h3>Error!</h3>")+QLatin1String("<p>")+msg+QLatin1String("</p>"));
+            setButtons(Cancel);
+            break;
+        case PAGE_CANCEL:
+            setButtons(Yes|No);
+            if(!itsLoop)
+                itsLoop=new QEventLoop(this);
+            itsLoop->exec();
+            break;
+        case PAGE_COMPLETE:
+            if(!itsDontShowFinishedMsg || itsDontShowFinishedMsg->isChecked())
+                KDialog::accept();
+            else
+                setButtons(Close);
+            break;
+    }
+}
+
+QString CJobRunner::fileName(const KUrl &url)
+{
+    if(url.isLocalFile())
+        return url.toLocalFile();
     else
-        reject();
-}
-
-void CJobRunner::slotButtonClicked(int)
-{
-    if(itsIt!=itsEnd)
-        itsCancelClicked=true;
-}
-
-//
-// Tell the io-slave not to clear, and re-read, the list of fonts. And also, tell it to not
-// automatically recreate the config files - we want that to happen after all fonts are installed,
-// deleted, etc.
-void CJobRunner::setMetaData(KIO::Job *job) const
-{
-    job->addMetaData(KFI_KIO_TIMEOUT, "0");
-    job->addMetaData(KFI_KIO_NO_CLEAR, "1");
-}
-
-KUrl CJobRunner::modifyUrl(const KUrl &orig) const
-{
-    KUrl url(orig);
-
-#if defined USE_POLICYKIT && USE_POLICYKIT==1
-    if(!Misc::root())
     {
-        url.setUser(KFI_SYS_USER);
-        url.setPass(QString().setNum(getpid()));
-    }
-#else
-    if(!Misc::root() && !itsPasswd.isEmpty())
-    {
-        url.setUser(KFI_SYS_USER);
-        url.setPass(itsPasswd);
-    }
-#endif
+        KUrl local(KIO::NetAccess::mostLocalUrl(url, 0L));
 
-    return url;
+        if(local.isLocalFile())
+            return local.toLocalFile(); // Yipee! no need to download!!
+        else
+        {
+            // Need to do actual download...
+            if(!itsTempDir)
+            {
+                itsTempDir=new KTempDir(KStandardDirs::locateLocal("tmp", "fontinst"));
+                itsTempDir->setAutoRemove(true);
+            }
+
+            QString tempName(itsTempDir->name()+QChar('/')+Misc::getFile(url.path()));
+            if(KIO::NetAccess::download(url, tempName, 0L))
+                return tempName;
+            else
+                return QString();
+        }
+    }
 }
 
+QString CJobRunner::errorString(int value) const
+{
+    Misc::TFont font(FC::decode(*itsIt));
+    QString     urlStr;
+
+    if(CMD_REMOVE_FILE==itsCmd)
+        urlStr=(*itsIt).fileName;
+    else if(font.family.isEmpty())
+        urlStr=(*itsIt).prettyUrl();
+    else
+        urlStr=FC::createName(font.family, font.styleInfo);
+    
+    switch(value)
+    {
+        case constDownloadFailed:
+            return i18n("Failed to download <i>%1</i>", urlStr);
+        case FontInst::STATUS_SERVICE_DIED:
+            return i18n("System backend died. Please try again.<br><i>%1</i>", urlStr);
+        case FontInst::STATUS_BITMAPS_DISABLED:
+            return i18n("<i>%1</i> is a bitmap font, and these have been disabled on your system.", urlStr);
+        case FontInst::STATUS_ALREADY_INSTALLED:
+            return i18n("<i>%1</i> contains the font <b>%2</b>, which is already installed on your system.", urlStr,
+                        FC::getName(itsCurrentFile));
+        case FontInst::STATUS_NOT_FONT_FILE:
+            return i18n("<i>%1</i> is not a font.", urlStr);
+        case FontInst::STATUS_PARTIAL_DELETE:
+            return i18n("Could not remove all files associated with <i>%1</i>", urlStr);
+        case FontInst::STATUS_NO_SYS_CONNECTION:
+            return i18n("Failed to start the system daemon.<br><i>%1</i>", urlStr);
+        case KIO::ERR_FILE_ALREADY_EXIST:
+            return i18n("<i>%1</i> already exists.", urlStr);
+        case KIO::ERR_DOES_NOT_EXIST:
+            return i18n("<i>%1</i> does not exist.", urlStr);
+        case KIO::ERR_WRITE_ACCESS_DENIED:
+            return i18n("Permission denied.<br><i>%1</i>", urlStr);
+        case KIO::ERR_UNSUPPORTED_ACTION:
+            return i18n("Unsupported action!<br><i>%1</i>", urlStr);
+        case KIO::ERR_COULD_NOT_AUTHENTICATE:
+            return i18n("Authentication failed.<br><i>%1</i>", urlStr);
+        default:
+            return i18n("Unexpected error whilst processing: <i>%1</i>", urlStr);
+    }
+}
 
 CJobRunner::Item::Item(const KUrl &u, const QString &n)
                 : KUrl(u), name(n), fileName(Misc::getFile(u.path()))
 {
     type=Misc::checkExt(fileName, "pfa") || Misc::checkExt(fileName, "pfb")
             ? TYPE1_FONT
-            : Misc::checkExt(fileName, "afm") || Misc::checkExt(fileName, "pfm")
-                ? TYPE1_METRICS
-                : OTHER_FONT;
+            : Misc::checkExt(fileName, "afm")
+                ? TYPE1_AFM
+                : Misc::checkExt(fileName, "pfm")
+                    ? TYPE1_PFM
+                    : OTHER_FONT;
 
     if(OTHER_FONT!=type)
     {
@@ -570,12 +699,13 @@ CJobRunner::Item::Item(const KUrl &u, const QString &n)
     }
 }
 
+CJobRunner::Item::Item(const QString &file, const QString &family, quint32 style, bool system)
+                : KUrl(CJobRunner::encode(family, style, system)), fileName(file), type(OTHER_FONT)
+{
+}
+
 bool CJobRunner::Item::operator<(const Item &o) const
 {
-    // Do not care about the order of non type1 fonts/metrics...
-    if(OTHER_FONT==type)
-        return true;
-
     int nameComp(fileName.compare(o.fileName));
 
     return nameComp<0 || (0==nameComp && type<o.type);

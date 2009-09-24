@@ -1,5 +1,5 @@
-#ifndef __SOCKET_H__
-#define __SOCKET_H__
+#ifndef __ACTION_LABEL_H__
+#define __ACTION_LABEL_H__
 
 /*
  * KFontInst - KDE Font Installer
@@ -24,42 +24,33 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtCore/QVariant>
+#include <QtGui/QLabel>
 
-class QVariant;
-class QByteArray;
-class QString;
+class QTimer;
+class QLabel;
 
 namespace KFI
 {
 
-class CSocket
+class CActionLabel : public QLabel
 {
+    Q_OBJECT
+
     public:
 
-    static const int constTimeout=1;
+    CActionLabel(QWidget *parent);
+    ~CActionLabel();
+    void startAnimation();
+    void stopAnimation();
 
-    CSocket(int fd=-1);
-    ~CSocket();
+    private Q_SLOTS:
 
-    bool read(QVariant &var, int timeout=constTimeout);
-    bool read(QString &str, int timeout=constTimeout);
-    bool read(int &i, int timeout=constTimeout);
-    bool read(qulonglong &i, int timeout=constTimeout);
-    bool read(bool &b, int timeout=constTimeout);
-    bool write(const QVariant &var, int timeout=constTimeout);
-    bool connectToServer(const QByteArray &sock, unsigned int socketUid);
-
-    private:
-
-    bool readBlock(char *data, int size, int timeout);
-    bool writeBlock(const char *data, int size, int timeout);
-    bool waitForReadyRead(int timeout);
-    bool waitForReadyWrite(int timeout);
+    void rotateIcon();
 
     protected:
 
-    int itsFd;
+    QTimer  *itsTimer;
+    int     itsCount;
 };
 
 }

@@ -38,18 +38,22 @@
 #include <QtGui/QFontDatabase>
 #include <QtGui/QImage>
 #include "Misc.h"
-#include "FontLister.h"
 #include "JobRunner.h"
 #include "FontFilter.h"
 #include "FcQuery.h"
-#include "DisabledFonts.h"
+#include "File.h"
+#include "Style.h"
+#include "Family.h"
+#include "FontInst.h"
 
 class KConfigGroup;
 class KFileItem;
 class KFileItemList;
 class QMenu;
+class QPixmap;
 class QMimeData;
 class QTimer;
+class QPoint;
 
 #define KFI_FONT_DRAG_MIME "kfontinst/fontlist"
 
@@ -57,9 +61,11 @@ namespace KFI
 {
 
 class CFontItem;
+class CFontItem;
 class CFamilyItem;
 class CGroupListItem;
 class CFcEngine;
+class Style;
 
 enum EColumns
 {
@@ -70,9 +76,23 @@ enum EColumns
     NUM_COLS
 };
 
+typedef QList<CFamilyItem *> CFamilyItemCont;
+typedef QList<CFontItem *>   CFontItemCont;
+typedef QHash<QString, CFamilyItem *> CFamilyItemHash;
+
 class CFontList : public QAbstractItemModel
 {
     Q_OBJECT
+
+    private:
+
+    enum EMsgType
+    {
+        MSG_ADD,
+        MSG_DEL,
+
+        NUM_MSGS_TYPES
+    };
 
     public:
 
@@ -97,54 +117,55 @@ class CFontList : public QAbstractItemModel
     QModelIndex     parent(const QModelIndex &index) const;
     int             rowCount(const QModelIndex &parent = QModelIndex()) const;
     int             columnCount(const QModelIndex &parent = QModelIndex()) const;
-    void            scan()                            { itsLister->scan(); }
-    void            setAutoUpdate(bool on)            { itsLister->setAutoUpdate(on); }
-    bool            active() const                    { return !itsLister->busy(); }
     int             row(const CFamilyItem *fam) const { return itsFamilies.indexOf((CFamilyItem *)fam); }
     void            forceNewPreviews();
-    const QList<CFamilyItem *> & families() const { return itsFamilies; }
+    const CFamilyItemCont & families() const { return itsFamilies; }
     QModelIndex     createIndex(int row, int column, void *data = 0) const
                         { return QAbstractItemModel::createIndex(row, column, data); }
-    bool            hasFamily(const QString &family)  { return NULL!=findFamily(family, false); }
+    bool            hasFamily(const QString &family)  { return NULL!=findFamily(family); }
     void            refresh(bool allowSys, bool allowUser);
-    void            setAllowDisabled(bool on);
     bool            allowSys() const      { return itsAllowSys; }
     bool            allowUser() const     { return itsAllowUser; }
-    bool            allowDisabled() const { return itsAllowDisabled; }
     void            getFamilyStats(QSet<QString> &enabled, QSet<QString> &disabled, QSet<QString> &partial);
     void            getFoundries(QSet<QString> &foundries) const;
     QString         whatsThis() const;
+    void            setSlowUpdates(bool slow);
+    bool            slowUpdates() const   { return itsSlowUpdates; }
 
     Q_SIGNALS:
 
-    void            status(const QString &str);
-    void            percent(int p);
-    void            started();
-    void            finished();
+    void            listingPercent(int p);
+
+    public Q_SLOTS:
+
+    void            unsetSlowUpdates();
+    void            load();
 
     private Q_SLOTS:
 
-    void            listingCompleted();
-    void            newItems(const KFileItemList &items);
-    void            clearItems();
-    void            deleteItems(const KFileItemList &items);
-    void            renameItems(const RenameList &items);
+    void            dbusServiceOwnerChanged(const QString &name, const QString &from, const QString &to);
+    void            fontList(int pid, const QList<KFI::Families> &families);
+    void            fontsAdded(const KFI::Families &families);
+    void            fontsRemoved(const KFI::Families &families);
 
     private:
 
-    void            addItem(const KFileItem &item);
-    CFamilyItem *   findFamily(const QString &familyName, bool create=false);
-    CFontItem *     findFont(const KUrl &url);
-
+    void            storeSlowedMessage(const Families &families, EMsgType type);
+    void            actionSlowedUpdates(bool sys);
+    void            addFonts(const FamilyCont &families, bool sys);
+    void            removeFonts(const FamilyCont &families, bool sys);
+    CFamilyItem *   findFamily(const QString &familyName);
+    
     private:
-
-    QList<CFamilyItem *>     itsFamilies;
-    QHash<KUrl, CFontItem *> itsFonts;   // Use for quick searching...
-    CFontLister              *itsLister;
-    bool                     itsAllowSys,
-                             itsAllowUser,
-                             itsAllowDisabled;
-    static int               theirPreviewSize;
+    
+    CFamilyItemCont itsFamilies;
+    CFamilyItemHash itsFamilyHash;
+    bool            itsBlockSignals,
+                    itsAllowSys,
+                    itsAllowUser,
+                    itsSlowUpdates;
+    static int      theirPreviewSize;
+    FamilyCont      itsSlowedMsgs[NUM_MSGS_TYPES][FontInst::FOLDER_COUNT];
 };
 
 class CFontModelItem
@@ -178,20 +199,21 @@ class CFamilyItem : public CFontModelItem
         DISABLED
     };
 
-    CFamilyItem(CFontList &p, const QString &n);
+    CFamilyItem(CFontList &p, const Family &f, bool sys);
     virtual ~CFamilyItem();
 
     bool operator==(const CFamilyItem &other) const       { return itsName==other.itsName; }
 
+    bool                 addFonts(const StyleCont &styles, bool sys);
     const QString &      name() const                     { return itsName; }
     const QString &      icon() const                     { return itsIcon; }
-    const QList<CFontItem *> & fonts() const              { return itsFonts; }
-    void                 addFont(CFontItem *font);
-    void                 removeFont(CFontItem *font);
+    const CFontItemCont & fonts() const                   { return itsFonts; }
+    void                 addFont(CFontItem *font, bool update=true);
+    void                 removeFont(CFontItem *font, bool update);
     void                 refresh();
     bool                 updateStatus();
     bool                 updateRegularFont(CFontItem *font);
-    CFontItem *          findFont(const KFileItem &i);
+    CFontItem *          findFont(quint32 style, bool sys);
     int                  rowNumber() const                { return itsParent.row(this); }
     int                  row(const CFontItem *font) const { return itsFonts.indexOf((CFontItem *)font); }
     EStatus              status() const                   { return itsStatus; }
@@ -199,6 +221,7 @@ class CFamilyItem : public CFontModelItem
     CFontItem *          regularFont()                    { return itsRegularFont; }
     int                  fontCount() const                { return itsFontCount; }
     void                 getFoundries(QSet<QString> &foundries) const;
+    bool                 slowUpdates() const              { return itsParent.slowUpdates(); }
 
     private:
 
@@ -208,7 +231,7 @@ class CFamilyItem : public CFontModelItem
 
     QString            itsName,
                        itsIcon;
-    QList<CFontItem *> itsFonts;
+    CFontItemCont itsFonts;
     int                itsFontCount;
     EStatus            itsStatus,
                        itsRealStatus;
@@ -220,43 +243,36 @@ class CFontItem : public CFontModelItem
 {
     public:
 
-    CFontItem(CFontModelItem *p, const KFileItem &item, const QString &style=QString());
+    CFontItem(CFontModelItem *p, const Style &s, bool sys);
     virtual ~CFontItem() { }
 
-    const QString &                   name() const             { return itsName; }
-    QString                           mimetype() const         { return itsMimeType; }
+    void                              refresh();
+    QString                           name() const             { return family()+QString::fromLatin1(", ")+itsStyleName; }
     bool                              isEnabled() const        { return itsEnabled; }
     bool                              isHidden() const         { return !itsEnabled; }
-    void                              setUrl(const KUrl &url);
-    KUrl                              url() const              { return itsUrl; }
-    bool                              isBitmap() const         { return itsBitmap; }
-    const QString &                   fileName() const         { return itsFileName; }
-    const QString &                   style() const            { return itsStyle; }
-    quint32                           styleInfo() const        { return itsStyleInfo; }
-    int                               index() const            { return itsIndex; }
+    bool                              isBitmap() const         { return !itsStyle.scalable(); }
+    const QString &                   fileName() const         { return (*itsStyle.files().begin()).path(); }
+    const QString &                   style() const            { return itsStyleName; }
+    quint32                           styleInfo() const        { return itsStyle.value(); }
+    int                               index() const            { return (*itsStyle.files().begin()).index(); }
     const QString &                   family() const           { return (static_cast<CFamilyItem *>(parent()))->name(); }
     const QImage &                    image(bool selected, bool force=false);
     void                              clearImage()             { itsImage[0]=itsImage[1]=QImage(); }
     int                               rowNumber() const        { return (static_cast<CFamilyItem *>(parent()))->row(this); }
-    const CDisabledFonts::TFileList & files() const            { return itsFiles; }
-    KIO::filesize_t                   size() const             { return itsSize; }
-    qulonglong                        writingSystems() const   { return itsWritingSystems; }
+    const FileCont &                  files() const            { return itsStyle.files(); }
+    qulonglong                        writingSystems() const   { return itsStyle.writingSystems(); }
+    KUrl                              url() const              { return CJobRunner::encode(family(), styleInfo(), isSystem()); }
+    void                              removeFile(const File &f){ itsStyle.remove(f); }
+    void                              removeFiles(const FileCont &f){ itsStyle.removeFiles(f); }
+    void                              addFile(const File &f)   { itsStyle.add(f); }
+    void                              addFiles(const FileCont &f)   { itsStyle.addFiles(f); }
 
     private:
 
-    KUrl                      itsUrl;
-    QString                   itsName,
-                              itsFileName,
-                              itsStyle,
-                              itsMimeType;
-    int                       itsIndex;
-    QImage                    itsImage[2];
-    quint32                   itsStyleInfo;
-    bool                      itsBitmap,
-                              itsEnabled;
-    CDisabledFonts::TFileList itsFiles;
-    qulonglong                itsWritingSystems;
-    KIO::filesize_t           itsSize;
+    QString itsStyleName;
+    Style   itsStyle;
+    QImage  itsImage[2];
+    bool    itsEnabled;
 };
 
 class CFontListSortFilterProxy : public QSortFilterProxyModel
@@ -278,8 +294,6 @@ class CFontListSortFilterProxy : public QSortFilterProxyModel
 
     void             setFilterText(const QString &text);
     void             setFilterCriteria(CFontFilter::ECriteria crit, qulonglong ws);
-    void             setMgtMode(bool on);
-    bool             mgtMode() const { return itsMgtMode; }
 
     private Q_SLOTS:
 
@@ -296,7 +310,6 @@ class CFontListSortFilterProxy : public QSortFilterProxyModel
                                                     ? (itsFcQuery ? itsFcQuery->font() : QString()) : itsFilterText; }
     private:
 
-    bool                   itsMgtMode;
     CGroupListItem         *itsGroup;
     QString                itsFilterText;
     CFontFilter::ECriteria itsFilterCriteria;
@@ -318,13 +331,14 @@ class CFontListView : public QTreeView
     void            writeConfig(KConfigGroup &cg);
     QModelIndexList selectedItems() const  { return selectedIndexes(); }
     void            getFonts(CJobRunner::ItemList &urls, QStringList &fontNames, QSet<Misc::TFont> *fonts,
-                             bool *hasSys, bool selected, bool getEnabled=true, bool getDisabled=true);
+                             bool selected, bool getEnabled=true, bool getDisabled=true);
+    QSet<QString>   getFiles();
     void            getPrintableFonts(QSet<Misc::TFont> &items, bool selected);
     void            setFilterGroup(CGroupListItem *grp);
     void            stats(int &enabled, int &disabled, int &partial);
     void            selectedStatus(bool &enabled, bool &disabled);
     QModelIndexList allFonts();
-    void            setMgtMode(bool on);
+    void            setShowInlinePreviews(bool on);
     void            selectFirstFont();
 
     Q_SIGNALS:
@@ -334,7 +348,7 @@ class CFontListView : public QTreeView
     void            enable();
     void            disable();
     void            fontsDropped(const QSet<KUrl> &);
-    void            itemSelected(const QModelIndex &, bool en, bool dis);
+    void            itemSelected(const QModelIndex &);
     void            refresh();
     void            reload();
 
@@ -350,6 +364,7 @@ class CFontListView : public QTreeView
     void            selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void            itemCollapsed(const QModelIndex &index);
     void            view();
+    void            showHeaderMenu(const QPoint &point);
 
     private:
 
@@ -364,8 +379,7 @@ class CFontListView : public QTreeView
 
     CFontListSortFilterProxy *itsProxy;
     CFontList                *itsModel;
-    QMenu                    *itsStdMenu,
-                             *itsMgtMenu;
+    QMenu                    *itsMenu;
     QAction                  *itsDeleteAct,
                              *itsEnableAct,
                              *itsDisableAct,

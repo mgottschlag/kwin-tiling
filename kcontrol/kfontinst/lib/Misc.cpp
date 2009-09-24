@@ -22,6 +22,9 @@
  */
 
 #include "Misc.h"
+#include <QtCore/QSet>
+#include <QtCore/QMap>
+#include <QtCore/QVector>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QByteArray>
@@ -183,8 +186,8 @@ void getAssociatedFiles(const QString &path, QStringList &files, bool afmAndPfm)
 
     if(check)
     {
-        static const char * const afm[]={"afm", "AFM", "Afm", NULL};
-        static const char * const pfm[]={"pfm", "PFM", "Pfm", NULL};
+        const char *afm[]={"afm", "AFM", "Afm", NULL},
+                   *pfm[]={"pfm", "PFM", "Pfm", NULL};
         bool       gotAfm(false);
         int        e;
 
@@ -248,7 +251,7 @@ QString getFolder(const QString &defaultDir, const QString &root, QStringList &d
                 return *it;
     }
 
-    return QString();
+    return defaultDir;
 }
 
 bool checkExt(const QString &fname, const QString &ext)
@@ -258,6 +261,11 @@ bool checkExt(const QString &fname, const QString &ext)
     return fname.length()>extension.length()
             ? 0==fname.mid(fname.length()-extension.length()).compare(extension, Qt::CaseInsensitive)
             : false;
+}
+
+bool isBitmap(const QString &str)
+{
+    return checkExt(str, "pcf") || checkExt(str, "bdf") || checkExt(str, "pcf.gz") || checkExt(str, "bdf.gz");
 }
 
 bool isMetrics(const QString &str)
@@ -303,72 +311,6 @@ uint qHash(const KFI::Misc::TFont &key)
         h &= ~g;
     }
     return h;
-}
-
-//
-// mkfontscale doesn't ingore hidden files :-(
-static void removeHiddenEntries(const QString &file)
-{
-    QStringList lines;
-    QFile       f(file);
-
-    if(f.open(QIODevice::ReadOnly))
-    {
-        QTextStream stream(&f);
-        QString     line;
-
-        int lineCount=stream.readLine().toInt(); // Ignore line count...
-
-        while(!stream.atEnd())
-        {
-            line=stream.readLine();
-            if(line.length() && '.'!=line[0])
-                lines.append(line);
-        }
-        f.close();
-
-        if(lineCount!=lines.count())
-        {
-            QTemporaryFile temp;
-
-            temp.setAutoRemove(false);
-
-            if(!temp.open())
-                return;
-
-            QFile out(temp.fileName());
-
-            if(out.open(QIODevice::WriteOnly))
-            {
-                QTextStream                stream(&out);
-                QStringList::ConstIterator it(lines.begin()),
-                                           end(lines.end());
-
-                stream << lines.count() << endl;
-                for(; it!=end; ++it)
-                    stream << (*it).toLocal8Bit() << endl;
-
-                out.setPermissions(QFile::ReadOwner|QFile::WriteOwner|
-                                   QFile::ReadGroup|QFile::ReadOther);
-                out.close();
-                ::rename(QFile::encodeName(out.fileName()), QFile::encodeName(file));
-            }
-            else
-                temp.setAutoRemove(true);
-        }
-    }
-}
-
-bool configureForX11(const QString &dir)
-{
-    //
-    // On systems without mkfontscale, the following will fail, so cant base
-    // return value upon that - hence only check return value of mkfontdir
-    doCmd("mkfontscale", QFile::encodeName(dir));
-    removeHiddenEntries(dir+"fonts.scale");
-    bool rv=doCmd("mkfontdir", QFile::encodeName(dir));
-    removeHiddenEntries(dir+"fonts.dir");
-    return rv;
 }
 
 // Taken from qdom.cpp
@@ -447,7 +389,71 @@ QString contractHome(QString path)
     return path;
 }
 
+QString expandHome(QString path)
+{
+    if(!path.isEmpty() && '~'==path[0])
+        return 1==path.length() ? QDir::homePath() : path.replace(0, 1, QDir::homePath());
+
+    return path;
+}
+
+QMap<QString, QString> getFontFileMap(const QSet<QString> &files)
+{
+    QMap<QString, QString>        map;
+    QSet<QString>::ConstIterator  it=files.constBegin(),
+                                  end=files.constEnd();
+    QMap<QString, QSet<QString> > fontsFiles;
+
+    for(;it!=end; ++it)
+        fontsFiles[unhide(getFile(*it))].insert(getDir(*it));
+
+    QMap<QString, QSet<QString> >::ConstIterator fIt(fontsFiles.constBegin()),
+                                                 fEnd(fontsFiles.constEnd());
+
+    for(; fIt!=fEnd; ++fIt)
+        if(fIt.value().count()>1)
+        {
+            QVector<QString>             orig(fIt.value().count()),
+                                         modified(fIt.value().count());
+            QSet<QString>::ConstIterator oIt(fIt.value().constBegin()),
+                                         oEnd(fIt.value().constEnd());
+            bool                         good=true;
+            int                          count=fIt.value().count();
+
+            for(int i=0;  i<count && good; ++i, ++oIt)
+                orig[i]=modified[i]=*oIt;
+            
+            while(good)
+            {
+                int end=modified[0].indexOf('/', 1);
+                
+                if(-1!=end)
+                {
+                    QString dir=modified[0].left(end);
+                
+                    for(int i=1;  i<count && good; ++i)
+                        if(0!=modified[i].indexOf(dir))
+                            good=false;
+                    if(good)
+                        for(int i=0;  i<count && good; ++i)
+                            modified[i]=modified[i].remove(0, dir.length());
+                }
+                else
+                    good=false;
+            }
+            for(int i=0;  i<count; ++i)
+                map[getDir(modified[i]).mid(1)+fIt.key()]=fExists(orig[i]+fIt.key())
+                                                                    ? orig[i]+fIt.key()
+                                                                    : orig[i]+hide(fIt.key());
+        }
+        else // Only 1 entry! :-)
+            map[unhide(fIt.key())]=fExists((*fIt.value().begin())+fIt.key())
+                                    ? (*fIt.value().begin())+fIt.key()
+                                    : (*fIt.value().begin())+hide(fIt.key());
+
+    return map;
+}
+
 } // Misc::
 
 } // KFI::
-

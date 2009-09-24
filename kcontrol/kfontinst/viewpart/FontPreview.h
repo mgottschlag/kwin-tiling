@@ -29,7 +29,6 @@
 #include <QtGui/QWidget>
 #include <QtGui/QColor>
 #include <QtGui/QPaintEvent>
-#include <KDE/KUrl>
 #include "KfiConstants.h"
 #include "FcEngine.h"
 
@@ -56,29 +55,29 @@ class CFontPreview : public QWidget
     QSize       sizeHint() const;
     QSize       minimumSizeHint() const;
 
-    void        showFont(const KUrl &url, const QString &name=QString(),
+    void        showFont(const QString &name, // Thsi is either family name, or filename
                          unsigned long styleInfo=KFI_NO_STYLE_INFO, int face=0);
     void        showFont();
     void        showFace(int face);
-    void        zoomIn();
-    void        zoomOut();
+
 
     CFcEngine * engine() { return itsEngine; }
 
     public Q_SLOTS:
 
     void        setUnicodeRange(const QList<CFcEngine::TRange> &r);
+    void        zoomIn();
+    void        zoomOut();
 
     Q_SIGNALS:
 
     void        status(bool);
-    void        doZoomIn();
-    void        doZoomOut();
+    void        atMax(bool);
+    void        atMin(bool);
 
     private:
 
     QImage                   itsImage;
-    KUrl                     itsCurrentUrl;
     int                      itsCurrentFace,
                              itsLastWidth,
                              itsLastHeight,

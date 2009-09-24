@@ -36,12 +36,12 @@
 class KPushButton;
 class KProgressDialog;
 class KTempDir;
-class KZip;
 class KToggleAction;
 class KActionMenu;
 class KAction;
-class QProcess;
 class QLabel;
+class QMenu;
+class QProcess;
 class QSplitter;
 class QComboBox;
 
@@ -54,7 +54,6 @@ class CFontPreview;
 class CUpdateDialog;
 class CFontListView;
 class CProgressBar;
-class CPreviewSelectAction;
 
 class CKCmFontInst : public KCModule
 {
@@ -68,13 +67,13 @@ class CKCmFontInst : public KCModule
     public Q_SLOTS:
 
     QString quickHelp() const;
-    void    fontSelected(const QModelIndex &index, bool en, bool dis);
+    void    previewMenu(const QPoint &pos);
+    void    fontSelected(const QModelIndex &index);
     void    groupSelected(const QModelIndex &index);
-    void    reload();
     void    addFonts();
     void    deleteFonts();
-    void    copyFonts();
     void    moveFonts();
+    void    zipGroup();
     void    enableFonts();
     void    disableFonts();
     void    addGroup();
@@ -82,77 +81,56 @@ class CKCmFontInst : public KCModule
     void    enableGroup();
     void    disableGroup();
     void    changeText();
-    void    showPreview(bool s);
     void    duplicateFonts();
     void    print();
     void    printGroup();
-    void    listingStarted();
-    void    listingCompleted();
+    void    listingPercent(int p);
     void    refreshFontList();
     void    refreshFamilies();
     void    showInfo(const QString &info);
     void    setStatusBar();
     void    addFonts(const QSet<KUrl> &src);
-    void    toggleFontManagement(bool on);
-    void    selectMode(int mode);
-    void    zoomIn();
-    void    zoomOut();
 
     private:
 
+    void    removeDeletedFontsFromGroups();
     void    selectGroup(CGroupListItem::EType grp);
     void    print(bool all);
     void    toggleGroup(bool enable);
     void    toggleFonts(bool enable, const QString &grp=QString());
-    void    toggleFonts(CJobRunner::ItemList &urls, const QStringList &fonts, bool enable, const QString &grp,
-                        bool hasSys);
-    bool    working(bool displayMsg=true);
-    KUrl    baseUrl(bool sys);
+    void    toggleFonts(CJobRunner::ItemList &urls, const QStringList &fonts, bool enable, const QString &grp);
     void    selectMainGroup();
-    void    doCmd(CJobRunner::ECommand cmd, const CJobRunner::ItemList &urls, const KUrl &dest);
-    CGroupListItem::EType getCurrentGroupType();
+    void    doCmd(CJobRunner::ECommand cmd, const CJobRunner::ItemList &urls, bool system=false);
 
     private:
 
-    QWidget              *itsGroupsWidget,
-                         *itsFontsWidget,
-                         *itsPreviewWidget;
-    QComboBox            *itsModeControl;
-    QAction              *itsModeAct;
-    QSplitter            *itsGroupSplitter,
-                         *itsPreviewSplitter;
-    CFontPreview         *itsPreview;
-    KConfig              itsConfig;
-    QLabel               *itsStatusLabel;
-    CProgressBar         *itsListingProgress;
-    CFontList            *itsFontList;
-    CFontListView        *itsFontListView;
-    CGroupList           *itsGroupList;
-    CGroupListView       *itsGroupListView;
-    CPreviewSelectAction *itsPreviewControl;
-    KToggleAction        *itsMgtMode,
-                         *itsShowPreview;
-    KActionMenu          *itsToolsMenu;
-    KAction              *itsZoomInAction,
-                         *itsZoomOutAction;
-    KPushButton          *itsDeleteGroupControl,
-                         *itsEnableGroupControl,
-                         *itsDisableGroupControl,
-                         *itsAddFontControl,
-                         *itsDeleteFontControl,
-                         *itsEnableFontControl,
-                         *itsDisableFontControl;
-    CFontFilter          *itsFilter;
-    QString              itsLastStatusBarMsg;
-    KIO::Job             *itsJob;
-    KProgressDialog      *itsProgress;
-    CUpdateDialog        *itsUpdateDialog;
-    KTempDir             *itsTempDir;
-    QProcess             *itsPrintProc;
-    KZip                 *itsExportFile;
-    QSet<QString>        itsDeletedFonts;
-    KUrl::List           itsModifiedUrls;
-    CJobRunner           *itsRunner;
+    QSplitter       *itsGroupSplitter,
+                    *itsPreviewSplitter;
+    CFontPreview    *itsPreview;
+    KConfig         itsConfig;
+    QLabel          *itsStatusLabel;
+    CProgressBar    *itsListingProgress;
+    CFontList       *itsFontList;
+    CFontListView   *itsFontListView;
+    CGroupList      *itsGroupList;
+    CGroupListView  *itsGroupListView;
+    KActionMenu     *itsToolsMenu;
+    KPushButton     *itsDeleteGroupControl,
+                    *itsEnableGroupControl,
+                    *itsDisableGroupControl,
+                    *itsAddFontControl,
+                    *itsDeleteFontControl;
+    CFontFilter     *itsFilter;
+    QString         itsLastStatusBarMsg;
+    KIO::Job        *itsJob;
+    KProgressDialog *itsProgress;
+    CUpdateDialog   *itsUpdateDialog;
+    KTempDir        *itsTempDir;
+    QProcess        *itsPrintProc;
+    QSet<QString>   itsDeletedFonts;
+    KUrl::List      itsModifiedUrls;
+    CJobRunner      *itsRunner;
+    QMenu           *itsPreviewMenu;
 };
 
 }

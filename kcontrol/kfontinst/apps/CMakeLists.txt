@@ -3,7 +3,8 @@ include_directories(
 	${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/kfontinst/viewpart/
 	)
 
-set(kfontinst_bin_SRCS ${libkfontinstjobrunner_SRCS} Installer.cpp )
+set(kfontinst_bin_SRCS ${libkfontinstjobrunner_SRCS} ${libkfontinstdbusiface_SRCS} Installer.cpp )
+# qt4_add_dbus_interface(kfontinst_bin_SRCS ../dbus/org.kde.fontinst.xml FontInstInterfaceBase)
 
 set(kfontprint_bin_SRCS Printer.cpp )
 set(kfontview_bin_SRCS Viewer.cpp )
