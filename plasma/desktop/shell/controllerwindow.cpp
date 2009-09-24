@@ -260,7 +260,6 @@ void ControllerWindow::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setCompositionMode(QPainter::CompositionMode_Source );
 
-    m_background->resizeFrame(size());
     m_background->paintFrame(&painter);
 }
 
@@ -269,6 +268,11 @@ void ControllerWindow::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_Escape) {
         close();
     }
+}
+
+void ControllerWindow::resizeEvent(QResizeEvent *)
+{
+    m_background->resizeFrame(size());
 }
 
 bool ControllerWindow::eventFilter(QObject *watched, QEvent *event)
