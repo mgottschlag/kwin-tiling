@@ -546,14 +546,9 @@ void SearchLaunch::focusInEvent(QFocusEvent *event)
 
 void SearchLaunch::selectItem(Plasma::IconWidget *icon)
 {
-    QRectF iconRectToScroll = icon->mapToItem(m_gridScroll, icon->boundingRect()).boundingRect();
     QRectF iconRectToMainWidget = icon->mapToItem(m_viewMainWidget, icon->boundingRect()).boundingRect();
 
-    if (iconRectToScroll.bottom() > m_gridScroll->size().height()) {
-        m_viewMainWidget->setPos(0, -iconRectToMainWidget.bottom() + m_gridScroll->size().height());
-    } else if (iconRectToScroll.top() < 0) {
-        m_viewMainWidget->setPos(0, -iconRectToMainWidget.top());
-    }
+    m_gridScroll->ensureRectVisible(iconRectToMainWidget);
 
     m_hoverIndicator->setTargetItem(icon);
 }
