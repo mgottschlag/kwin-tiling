@@ -981,7 +981,16 @@ void  TaskGroupItem::itemPositionChanged(AbstractGroupableItem * item)
 
     m_tasksLayout->removeTaskItem(taskItem);
 
-    if (m_group) {
+    // NOTE: If the grouping strategy is "only when the taskbar is full",
+    //       removing the task from the layout might cause this group to
+    //       split, and so the task might be removed from the group.
+    //       This will cause deleteLater() to be called on taskItem, and
+    //       we are in danger of inserting a pointer that will soon be
+    //       invalid into the layout.  So check that the task item is
+    //       still in the group.
+    taskItem = abstractTaskItem(item);
+
+    if (m_group && taskItem) {
         m_tasksLayout->insert(m_group->members().indexOf(item), taskItem);
     }
 }
