@@ -233,7 +233,9 @@ void ActivityBar::containmentDestroyed(QObject *obj)
         }
 
         m_containments.removeAt(index);
+        m_tabBar->blockSignals(true);
         m_tabBar->removeTab(index);
+        m_tabBar->blockSignals(false);
     }
 
     setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
