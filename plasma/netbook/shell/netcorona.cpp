@@ -118,6 +118,19 @@ Plasma::Applet *NetCorona::loadDefaultApplet(const QString &pluginName, Plasma::
     return applet;
 }
 
+Plasma::Containment *NetCorona::findFreeContainment() const
+{
+    foreach (Plasma::Containment *cont, containments()) {
+        if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
+            cont->containmentType() == Plasma::Containment::CustomContainment) &&
+            cont->screen() == -1 && !offscreenWidgets().contains(cont)) {
+            return cont;
+        }
+    }
+
+    return 0;
+}
+
 void NetCorona::screenResized(int screen)
 {
     int numScreens = QApplication::desktop()->numScreens();

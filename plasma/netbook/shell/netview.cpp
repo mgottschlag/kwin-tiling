@@ -17,6 +17,7 @@
  */
 
 #include "netview.h"
+#include "netcorona.h"
 
 #include <QAction>
 #include <QCoreApplication>
@@ -45,6 +46,7 @@ NetView::NetView(Plasma::Containment *containment, int uid, QWidget *parent)
     pt.end();
     QBrush b(tile);
     setBackgroundBrush(tile);
+    connect(this, SIGNAL(lostContainment()), SLOT(grabContainment()));
 }
 
 NetView::~NetView()
@@ -181,6 +183,21 @@ void NetView::updateGeometry()
         c->setMaximumSize(size());
         c->setMinimumSize(size());
         c->resize(size());
+    }
+}
+
+void NetView::grabContainment()
+{
+
+    NetCorona *corona = qobject_cast<NetCorona*>(scene());
+    if (!corona) {
+        kDebug() << "no corona :(";
+        return;
+    }
+
+    Plasma::Containment *cont = corona->findFreeContainment();
+    if (cont) {
+        setContainment(cont);
     }
 }
 

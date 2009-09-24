@@ -44,10 +44,7 @@ public:
      **/
     void loadDefaultLayout();
 
-    /**
-     * Ensures we have a desktop containment for every screen
-     */
-    void checkScreens();
+    Plasma::Containment *findFreeContainment() const;
 
     virtual int numScreens() const;
     virtual QRect screenGeometry(int id) const;

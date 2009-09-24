@@ -56,6 +56,7 @@ public Q_SLOTS:
     void setContainment(Plasma::Containment *containment);
     void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
     void updateGeometry();
+    void grabContainment();
 
 Q_SIGNALS:
     void locationChanged(const NetView *view);
