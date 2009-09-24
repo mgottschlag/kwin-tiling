@@ -105,7 +105,22 @@ void Newspaper::init()
         addToolBoxAction(a);
     }
 
+    a = new QAction(KIcon("view-pim-news"), i18n("Add a new newspaper page"), this);
+    addToolBoxAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(addNewsPaper()));
+
     a = action("configure");
+    if (a) {
+        addToolBoxAction(a);
+    }
+
+    a = action("lock widgets");
+    if (a) {
+        addToolBoxAction(a);
+    }
+
+
+    a = action("remove");
     if (a) {
         addToolBoxAction(a);
     }
@@ -230,6 +245,18 @@ void Newspaper::createAppletTitle(Plasma::Applet *applet)
 {
     AppletTitleBar *appletTitleBar = new AppletTitleBar(applet);
     appletTitleBar->show();
+}
+
+void Newspaper::addNewsPaper()
+{
+    Plasma::Corona *c = corona();
+    if (!c) {
+        return;
+    }
+
+    Plasma::Containment *cont = c->addContainment("newspaper");
+    cont->setScreen(0);
+    cont->setToolBoxOpen(true);
 }
 
 

@@ -54,6 +54,7 @@ private slots:
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
     void updateSize();
     void updateConfigurationMode(bool config);
+    void addNewsPaper();
 
 private:
     QGraphicsWidget *m_mainWidget;
