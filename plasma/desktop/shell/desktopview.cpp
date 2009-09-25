@@ -324,6 +324,7 @@ void DesktopView::setContainment(Plasma::Containment *containment)
     if (oldContainment) {
         disconnect(oldContainment, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
         disconnect(oldContainment, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxClosed()));
+        disconnect(oldContainment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
         if (zoomLevel == Plasma::DesktopZoom) {
             //make sure actions are up-to-date
             oldContainment->enableAction("zoom in", false);
@@ -333,6 +334,7 @@ void DesktopView::setContainment(Plasma::Containment *containment)
 
     if (containment) {
         connect(containment, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
+        connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
     }
 
     View::setContainment(containment);
@@ -359,6 +361,18 @@ void DesktopView::toolBoxOpened()
 #ifndef Q_WS_WIN
     info.setShowingDesktop(true);
 #endif
+}
+
+void DesktopView::showWidgetExplorer()
+{
+    if (m_dashboard && m_dashboard->isVisible()) {
+        return;
+    }
+
+    Plasma::Containment *c = containment();
+    if (c) {
+        PlasmaApp::self()->showWidgetExplorer(screen(), c);
+    }
 }
 
 void DesktopView::toolBoxClosed()

@@ -89,6 +89,7 @@ public slots:
     void toolBoxOpened();
     void toolBoxClosed();
     void showDesktopUntoggled(WId id);
+    void showWidgetExplorer();
     void containmentAdded(Plasma::Containment *c);
     void syncSceneRect();
 
