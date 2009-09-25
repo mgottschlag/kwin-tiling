@@ -35,7 +35,7 @@ namespace KFI
 namespace FontsPackage
 {
     QSet<KUrl> extract(const QString &fileName, KTempDir **tempDir);
-};
+}
 
 }
 

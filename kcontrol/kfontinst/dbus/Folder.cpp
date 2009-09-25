@@ -369,9 +369,9 @@ Families Folder::Flat::build(bool system) const
     {
         Family                    f((*it).family);
         Style                     s((*it).styleInfo, (*it).scalable, (*it).writingSystems);
-        FamilyCont::ConstIterator fam=families.items.find(f);
+        FamilyCont::ConstIterator fam=families.items.constFind(f);
 
-        if(families.items.end()==fam)
+        if(families.items.constEnd()==fam)
         {
             s.add((*it).file);
             f.add(s);
@@ -379,9 +379,9 @@ Families Folder::Flat::build(bool system) const
         }
         else
         {
-            StyleCont::ConstIterator st=(*fam).styles().find(s);
+            StyleCont::ConstIterator st=(*fam).styles().constFind(s);
 
-            if((*fam).styles().end()==st)
+            if((*fam).styles().constEnd()==st)
             {
                 s.add((*it).file);
                 (*fam).add(s);
