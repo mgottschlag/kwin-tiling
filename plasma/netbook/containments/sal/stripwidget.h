@@ -41,6 +41,8 @@ namespace Plasma
     class ScrollWidget;
 }
 
+class QGraphicsGridLayout;
+class GridItemView;
 
 class StripWidget : public Plasma::Frame
 {
@@ -63,20 +65,21 @@ protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     void focusInEvent(QFocusEvent *event);
     void focusOutEvent(QFocusEvent *event);
-    void keyPressEvent(QKeyEvent *event);
 
 private slots:
     void removeFavourite();
     void launchFavourite();
     void launchFavourite(Plasma::IconWidget *icon);
+    void selectFavourite(Plasma::IconWidget *icon);
     void goLeft();
     void goRight();
 
 private:
     Plasma::ToolButton *m_leftArrow;
     Plasma::ToolButton *m_rightArrow;
-    QGraphicsLinearLayout *m_stripLayout;
+    QGraphicsGridLayout *m_stripLayout;
     QGraphicsLinearLayout *m_arrowsLayout;
+    GridItemView *m_iconsBackground;
 
     Plasma::RunnerManager *m_runnermg;
     QList<Plasma::QueryMatch*> m_favouritesMatches;

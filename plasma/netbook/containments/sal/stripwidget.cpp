@@ -19,6 +19,7 @@
 
 #include "stripwidget.h"
 
+#include <QGraphicsGridLayout>
 #include <QToolButton>
 #include <QAction>
 
@@ -34,6 +35,7 @@
 #include <Plasma/ItemBackground>
 #include <Plasma/ScrollWidget>
 
+#include "griditemview.h"
 
 StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     : Plasma::Frame(parent),
@@ -51,7 +53,6 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     //setPreferredSize(500, 128);
 
     m_arrowsLayout = new QGraphicsLinearLayout(this);
-    m_stripLayout = new QGraphicsLinearLayout();
     m_hoverIndicator = new Plasma::ItemBackground(this);
     m_hoverIndicator->hide();
     m_hoverIndicator->setZValue(-100);
@@ -83,10 +84,14 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     QGraphicsWidget *rightSpacer = new QGraphicsWidget(m_scrollingWidget);
     leftSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     rightSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    /*leftSpacer->setPreferredSize(0, 0);
-    rightSpacer->setPreferredSize(0, 0);*/
+
+    m_iconsBackground = new GridItemView(this);
+    m_stripLayout = new QGraphicsGridLayout(m_iconsBackground);
+    connect(m_iconsBackground, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectFavourite(Plasma::IconWidget *)));
+    connect(m_iconsBackground, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launchFavourite(Plasma::IconWidget *)));
+
     scrollingLayout->addItem(leftSpacer);
-    scrollingLayout->addItem(m_stripLayout);
+    scrollingLayout->addItem(m_iconsBackground);
     scrollingLayout->addItem(rightSpacer);
 
     m_scrollWidget->setWidget(m_scrollingWidget);
@@ -102,6 +107,7 @@ StripWidget::~StripWidget()
 
 void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
 {
+    Q_UNUSED(idx)
     // create new IconWidget for favourite strip
 
     Plasma::IconWidget *fav = new Plasma::IconWidget(this);
@@ -128,7 +134,7 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     connect(action, SIGNAL(triggered()), this, SLOT(removeFavourite()));
 
     m_favouritesIcons.insert(fav, match);
-    m_stripLayout->insertItem(idx, fav);
+    m_stripLayout->addItem(fav, 0, m_stripLayout->columnCount());
     m_stripLayout->activate();
     m_scrollWidget->setMinimumHeight(m_scrollingWidget->effectiveSizeHint(Qt::PreferredSize).height());
 }
@@ -185,6 +191,15 @@ void StripWidget::launchFavourite(Plasma::IconWidget *icon)
     Plasma::RunnerContext context;
     context.setQuery(m_favouritesQueries.value(match));
     match->run(context);
+}
+
+void StripWidget::selectFavourite(Plasma::IconWidget *icon)
+{
+    QRectF iconRectToMainWidget = icon->mapToItem(m_scrollingWidget, icon->boundingRect()).boundingRect();
+
+    m_scrollWidget->ensureRectVisible(iconRectToMainWidget);
+
+    m_hoverIndicator->setTargetItem(icon);
 }
 
 void StripWidget::goRight()
@@ -297,29 +312,6 @@ bool StripWidget::eventFilter(QObject *watched, QEvent *event)
     return false;
 }
 
-void StripWidget::keyPressEvent(QKeyEvent *event)
-{
-    switch (event->key()) {
-    case Qt::Key_Left: {
-        m_currentIconIndex = (m_stripLayout->count() + m_currentIconIndex - 1) % m_stripLayout->count();
-        m_currentIcon = static_cast<Plasma::IconWidget *>(m_stripLayout->itemAt(m_currentIconIndex));
-        m_hoverIndicator->setTargetItem(m_currentIcon);
-        break;
-    }
-    case Qt::Key_Right: {
-        m_currentIconIndex = (m_currentIconIndex + 1) % m_stripLayout->count();
-        m_currentIcon = static_cast<Plasma::IconWidget *>(m_stripLayout->itemAt(m_currentIconIndex));
-        m_hoverIndicator->setTargetItem(m_currentIcon);
-        break;
-    }
-    case Qt::Key_Enter:
-    case Qt::Key_Return:
-        launchFavourite(m_currentIcon);
-    default:
-        break;
-    }
-}
-
 void StripWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event)
@@ -336,6 +328,7 @@ void StripWidget::focusInEvent(QFocusEvent *event)
         m_hoverIndicator->setTargetItem(icon);
         m_currentIconIndex = 0;
     }
+    m_iconsBackground->setFocus();
 }
 
 void StripWidget::focusOutEvent(QFocusEvent *event)

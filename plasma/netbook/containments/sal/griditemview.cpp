@@ -30,6 +30,7 @@ GridItemView::GridItemView(QGraphicsWidget *parent)
       m_currentIconIndexX(-1),
       m_currentIconIndexY(-1)
 {
+    setFocusPolicy(Qt::StrongFocus);
 }
 
 GridItemView::~GridItemView()

@@ -394,7 +394,6 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_gridBackground = new GridItemView(this);
             connect(m_gridBackground, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
             connect(m_gridBackground, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launch(Plasma::IconWidget *)));
-            m_gridBackground->setFocusPolicy(Qt::StrongFocus);
             m_gridBackground->setAcceptHoverEvents(true);
             m_gridBackground->installEventFilter(this);
             m_viewMainWidget = new QGraphicsWidget(this);
