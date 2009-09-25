@@ -78,13 +78,26 @@ public:
     Plasma::Corona *corona() const;
 
     /**
-     * Set the orientation of the widgets explorer
+     * Set the orientation of the widget explorer
      *
      * @arg the new orientation
      */
     void setOrientation(Qt::Orientation orientation);
 
+    /**
+     * @return the orientation of the widget explorer
+     */
     Qt::Orientation orientation();
+
+    /**
+     * Sets the icon size for the widget explorer
+     */
+    void setIconSize(int size);
+
+    /**
+     * @return the icon size of the wiget explorer
+     */
+    int iconSize() const;
 
 protected:
 

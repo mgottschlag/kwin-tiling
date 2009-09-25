@@ -314,6 +314,34 @@ Qt::Orientation WidgetExplorer::orientation()
     return d->orientation;
 }
 
+void WidgetExplorer::setIconSize(int size)
+{
+    qreal l, t, r, b;
+    d->appletsListWidget->getContentsMargins(&l, &t, &r, &b);
+
+    if (d->orientation == Qt::Horizontal) {
+        d->appletsListWidget->setMinimumHeight(size + t + b);
+        d->appletsListWidget->setPreferredHeight(size + t + b);
+    } else {
+        d->appletsListWidget->setMinimumWidth(size + l + r);
+        d->appletsListWidget->setPreferredWidth(size + l + r);
+    }
+
+    adjustSize();
+}
+
+int WidgetExplorer::iconSize() const
+{
+    qreal l, t, r, b;
+    d->appletsListWidget->getContentsMargins(&l, &t, &r, &b);
+
+    if (d->orientation == Qt::Horizontal) {
+        return d->appletsListWidget->size().height() - t - b;
+    } else {
+        return d->appletsListWidget->size().height() - l - r;
+    }
+}
+
 void WidgetExplorer::populateWidgetList(const QString &app)
 {
     d->application = app;
