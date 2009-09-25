@@ -23,10 +23,10 @@
 </keywordset>
 </articleinfo>
 
-<sect1 id="winows-navigating">
+<sect1 id="windows-navigating">
 <title>Navigating through Windows</title>
 
-<para>This module offers the possibility to configure the behaviour for Navigating through windows often reffered to as Alt+Tab. There are two independent lists which can have different settings. For each of this list there is an own tab in this module. 
+<para>This module offers the possibility to configure the behaviour for Navigating through windows often referred to as Alt+Tab. There are two independent lists which can have different settings. For each of this list there is an own tab in this module. 
 </para>
 
 <note><para>
@@ -47,7 +47,7 @@ There are several effects which can be used instead of the normal window list wh
 The Present Windows Effect arranges the windows in a regular grid and by that provides thumbnails in the best possible size. This effect can be used without Alt+Tab as well and provides additional shortcuts and screen corner actions.
 </para>
 <para>
-Cover Switch and Flip Switch Effect are more fancy effects which require OpenGL. Cover Switch displays the windows in a galery with a large thumbnail of the currently selected window in the center of the screen while all other windows are rotated on the left and right. Flip Switch displays all windows on a 3D stack. The selected window is on top of the stack and navigating through the windows will move the stack so that the new selected window is on the top.
+Cover Switch and Flip Switch Effect are more fancy effects which require OpenGL. Cover Switch displays the windows in a gallery with a large thumbnail of the currently selected window in the center of the screen while all other windows are rotated on the left and right. Flip Switch displays all windows on a 3D stack. The selected window is on top of the stack and navigating through the windows will move the stack so that the new selected window is on the top.
 </para>
 <para>
 If the effect provides additional settings the configure button will be activated. By clicking this button a configuration dialog will be shown.
