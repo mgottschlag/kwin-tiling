@@ -256,6 +256,7 @@ void StripWidget::restore(KConfigGroup &cg)
     }
 
 
+    QString currentQuery;
     QMutableListIterator<KConfigGroup> it(favouritesConfigs);
     while (it.hasNext()) {
         KConfigGroup &favouriteConfig = it.next();
@@ -271,14 +272,16 @@ void StripWidget::restore(KConfigGroup &cg)
         // so we do not have to query again.
 
         // perform the query
-        if (m_runnermg->execQuery(query, runnerId)) {
+        if (currentQuery == query || m_runnermg->execQuery(query, runnerId)) {
+            currentQuery = query;
             // find our match
             Plasma::QueryMatch match(m_runnermg->searchContext()->match(matchId));
 
             // we should verify some other saved information to avoid putting the
             // wrong item if the search result is different!
-
-            add(match, query);
+            if (match.isValid()) {
+                add(match, query);
+            }
         }
     }
 }
