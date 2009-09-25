@@ -219,11 +219,12 @@ void ControllerWindow::showWidgetExplorer()
     }
 
     m_widgetExplorer->setOrientation(orientation());
+    m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
 
     if (orientation() == Qt::Horizontal) {
-        resize(width(), m_widgetExplorer->preferredSize().height());
+        resize(width(), m_widgetExplorer->size().height());
     } else {
-        resize(m_widgetExplorer->preferredSize().width(), height());
+        resize(m_widgetExplorer->size().width(), height());
     }
 
     m_widgetExplorer->show();
