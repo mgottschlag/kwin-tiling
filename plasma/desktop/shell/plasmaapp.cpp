@@ -66,8 +66,10 @@
 
 #include <kephal/screens.h>
 
+#include <plasmagenericshell/backgrounddialog.h>
+
 #include "appadaptor.h"
-#include "plasmagenericshell/backgrounddialog.h"
+#include "controllerwindow.h"
 #include "checkbox.h"
 #include "desktopcorona.h"
 #include "desktopview.h"
@@ -392,6 +394,32 @@ Plasma::ZoomLevel PlasmaApp::desktopZoomLevel() const
 QList<PanelView*> PlasmaApp::panelViews() const
 {
     return m_panels;
+}
+
+void PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment *c)
+{
+    if (!c) {
+        kDebug() << "no containment";
+        return;
+    }
+
+    QPointer<ControllerWindow> controller = m_widgetExplorers.value(screen);
+    if (!controller) {
+        kDebug() << "controller not found for screen" << screen;
+        controller = new ControllerWindow(0);
+        m_widgetExplorers.insert(screen, controller);
+    }
+
+    controller->setContainment(c);
+    controller->setLocation(Plasma::BottomEdge);
+    controller->showWidgetExplorer();
+
+    QRect geom = Kephal::ScreenUtils::screenGeometry(screen);
+    controller->resize(controller->sizeHint());
+    controller->setGeometry(geom.x(), geom.bottom() - controller->height(), geom.width(), controller->height());
+    controller->show();
+    KWindowSystem::setOnAllDesktops(controller->winId(), true);
+    KWindowSystem::activateWindow(controller->winId());
 }
 
 void PlasmaApp::compositingChanged()

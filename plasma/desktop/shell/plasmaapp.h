@@ -39,7 +39,6 @@ class QTimer;
 namespace Plasma
 {
     class AccessAppletJob;
-    class AppletBrowser;
     class Containment;
     class Corona;
     class Dialog;
@@ -49,6 +48,7 @@ namespace Kephal {
     class Screen;
 } // namespace Kephal
 
+class ControllerWindow;
 class DesktopView;
 class PanelView;
 class DesktopCorona;
@@ -81,6 +81,8 @@ public:
      */
     QList<PanelView*> panelViews() const;
 
+    void showWidgetExplorer(int screen, Plasma::Containment *c);
+
     static bool isPanelContainment(Plasma::Containment *containment);
 
 #ifdef Q_WS_X11
@@ -97,8 +99,10 @@ public Q_SLOTS:
     // qdbuscpp2xml plasmaapp.h -o dbus/org.kde.plasma.App.xml
     void toggleDashboard();
     void showDashboard(bool show);
+
     void showInteractiveConsole();
     void loadScriptInInteractiveConsole(const QString &script);
+
     Q_SCRIPTABLE void quit();
 
     /**
@@ -155,6 +159,7 @@ private:
     QPointer<InteractiveConsole> m_console;
     int m_panelHidden;
     QSignalMapper *m_mapper;
+    QHash<int, QPointer<ControllerWindow> > m_widgetExplorers;
 
     Ui::GlobalOptions m_configUi;
 };
