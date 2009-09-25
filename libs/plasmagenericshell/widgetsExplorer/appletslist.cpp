@@ -179,8 +179,8 @@ void AppletsListWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
         m_appletsListWindowWidget->setMaximumHeight(-1);
     }
 
-    qDebug() << "m_appletsListWidget->size()" << m_appletsListWidget->size();
-    qDebug() << "size()" << size();
+    kDebug() << "m_appletsListWidget->size()" << m_appletsListWidget->size();
+    kDebug() << "size()" << size();
 
     qreal contentMarginTop;
     qreal contentMarginBottom;
@@ -189,14 +189,14 @@ void AppletsListWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
     int height = event->newSize().height();
     int width = event->newSize().width();
     int iconSize;
-    
+
     if (m_orientation == Qt::Horizontal) {
         m_arrowsLayout->getContentsMargins(&contentMarginLeft, &contentMarginTop,
                                            &contentMarginRight, &contentMarginBottom);
         height -= (contentMarginBottom + contentMarginTop);
-        qDebug() << "resize: old this size" << event->oldSize().height();
-        qDebug() << "resize: new this size" << event->newSize().height();
-        qDebug() << "resize: height" << height;
+        kDebug() << "resize: old this size" << event->oldSize().height();
+        kDebug() << "resize: new this size" << event->newSize().height();
+        kDebug() << "resize: height" << height;
         m_appletsListWidget->resize(m_appletsListWidget->size().width(), height);
         iconSize = height;
         m_appletListLinearLayout->getContentsMargins(&contentMarginLeft, &contentMarginTop,
@@ -208,9 +208,9 @@ void AppletsListWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
         m_arrowsLayout->getContentsMargins(&contentMarginLeft, &contentMarginTop,
                                        &contentMarginRight, &contentMarginBottom);
         width -= (contentMarginLeft + contentMarginRight);
-        qDebug() << "resize: old this size" << event->oldSize().width();
-        qDebug() << "resize: new this size" << event->newSize().width();
-        qDebug() << "resize: width" << width;
+        kDebug() << "resize: old this size" << event->oldSize().width();
+        kDebug() << "resize: new this size" << event->newSize().width();
+        kDebug() << "resize: width" << width;
         m_appletsListWidget->resize(width, m_appletsListWidget->size().height());
         iconSize = width;
         m_appletListLinearLayout->getContentsMargins(&contentMarginLeft, &contentMarginTop,
@@ -222,7 +222,6 @@ void AppletsListWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
         applet->setMinimumSize(iconSize, iconSize);
         applet->setMaximumSize(iconSize, iconSize);
     }
-
 }
 
 //parent intercepts children events
