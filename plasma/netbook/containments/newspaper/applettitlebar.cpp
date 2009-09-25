@@ -131,6 +131,7 @@ bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
     } else if (event->type() == QEvent::GraphicsSceneHoverEnter) {
         m_underMouse = true;
         m_showButtons = true;
+        syncIconRects();
 
         if (m_maximizeButtonAnimationId) {
             Plasma::Animator::self()->stopElementAnimation(m_maximizeButtonAnimationId);
