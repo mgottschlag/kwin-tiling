@@ -293,6 +293,9 @@ bool StripWidget::eventFilter(QObject *watched, QEvent *event)
     if (icon && event->type() == QEvent::GraphicsSceneHoverEnter) {
         if (icon) {
             m_hoverIndicator->setTargetItem(icon);
+            QRectF iconRectToMainWidget = icon->mapToItem(m_scrollingWidget, icon->boundingRect()).boundingRect();
+
+            m_scrollWidget->ensureRectVisible(iconRectToMainWidget);
         }
     //FIXME: we probably need a specialized widget instead this ugly filter code
     } else if (watched == m_scrollingWidget && event->type() == QEvent::GraphicsSceneResize) {
