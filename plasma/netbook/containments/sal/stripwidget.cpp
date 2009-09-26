@@ -288,8 +288,8 @@ void StripWidget::restore(KConfigGroup &cg)
 
 bool StripWidget::eventFilter(QObject *watched, QEvent *event)
 {
-    if (event->type() == QEvent::GraphicsSceneHoverEnter) {
-        Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
+    Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
+    if (icon && event->type() == QEvent::GraphicsSceneHoverEnter) {
         if (icon) {
             m_hoverIndicator->setTargetItem(icon);
         }
@@ -302,6 +302,13 @@ bool StripWidget::eventFilter(QObject *watched, QEvent *event)
              m_leftArrow->setEnabled(m_scrollingWidget->pos().x() < 0);
              m_rightArrow->setEnabled(m_scrollingWidget->geometry().right() > m_scrollWidget->size().width());
         }
+    //pass click only if the user didn't move the mouse FIXME: we need sendevent there
+    } else if (icon && event->type() == QEvent::GraphicsSceneMouseMove) {
+        QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
+
+        QPointF deltaPos = me->pos() - me->lastPos();
+        m_scrollingWidget->setPos(qBound(qMin((qreal)0,-m_scrollingWidget->size().width()+m_scrollWidget->size().width()), m_scrollingWidget->pos().x()+deltaPos.x(), (qreal)0),
+                                 m_scrollingWidget->pos().y());
     } else if (watched == m_scrollingWidget && event->type() == QEvent::GraphicsSceneMove) {
         QGraphicsSceneMoveEvent *me = static_cast<QGraphicsSceneMoveEvent *>(event);
 
