@@ -47,6 +47,7 @@
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QBoxLayout>
+#include <QSocketNotifier>
 #include <QTimerEvent>
 #include <QVBoxLayout>
 #include <QFile>
@@ -314,6 +315,8 @@ bool PasswordDlg::GRecvArr (char **ret)
 
 void PasswordDlg::reapVerify()
 {
+    sNot->setEnabled( false );
+    sNot->deleteLater();
     ::close( sFd );
     int status;
     ::waitpid( sPid, &status, 0 );
@@ -344,7 +347,7 @@ void PasswordDlg::handleVerify()
     int ret;
     char *arr;
 
-    while (GRecvInt( &ret )) {
+    if (GRecvInt( &ret )) {
         switch (ret) {
         case ConvGetBinary:
             if (!GRecvArr( &arr ))
@@ -373,16 +376,15 @@ void PasswordDlg::handleVerify()
             if (!greet->textMessage( arr, false ))
                 static_cast< LockProcess* >(parent())->msgBox( this, QMessageBox::Information, QString::fromLocal8Bit( arr ) );
             ::free( arr );
-            continue;
+            return;
         case ConvPutError:
             if (!GRecvArr( &arr ))
                 break;
             if (!greet->textMessage( arr, true ))
                 static_cast< LockProcess* >(parent())->msgBox( this, QMessageBox::Warning, QString::fromLocal8Bit( arr ) );
             ::free( arr );
-            continue;
+            return;
         }
-        break;
     }
     reapVerify();
 }
@@ -394,7 +396,6 @@ void PasswordDlg::gplugReturnText( const char *text, int tag )
     GSendStr( text );
     if (text)
         GSendInt( tag );
-    handleVerify();
 }
 
 void PasswordDlg::gplugReturnBinary( const char *data )
@@ -408,7 +409,6 @@ void PasswordDlg::gplugReturnBinary( const char *data )
             GSendArr( len, data );
     } else
         GSendArr( 0, 0 );
-    handleVerify();
 }
 
 void PasswordDlg::gplugSetUser( const QString & )
@@ -459,7 +459,8 @@ void PasswordDlg::gplugStart()
     }
     ::close(sfd[1]);
     sFd = sfd[0];
-    handleVerify();
+    sNot = new QSocketNotifier(sFd, QSocketNotifier::Read, this);
+    connect(sNot, SIGNAL(activated(int)), SLOT(handleVerify()));
 }
 
 void PasswordDlg::gplugChanged()

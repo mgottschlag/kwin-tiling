@@ -25,6 +25,7 @@ class QFrame;
 class QGridLayout;
 class QLabel;
 class KPushButton;
+class QSocketNotifier;
 class QTreeWidget;
 
 //===========================================================================
@@ -61,6 +62,7 @@ private Q_SLOTS:
     void slotStartNewSession();
     void slotOK();
     void slotActivity();
+    void handleVerify();
 
 private:
     void capsLocked();
@@ -73,7 +75,6 @@ private:
     bool GSendArr (int len, const char *buf);
     bool GRecvInt (int *val);
     bool GRecvArr (char **buf);
-    void handleVerify();
     void reapVerify();
     void cantCheck();
     GreeterPluginHandle *mPlugin;
@@ -87,6 +88,7 @@ private:
     int         mCapsLocked;
     bool        mUnlockingFailed;
     int         sPid, sFd;
+    QSocketNotifier *sNot;
     QTreeWidget *lv;
 };
 
