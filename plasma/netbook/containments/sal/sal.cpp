@@ -442,6 +442,10 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_searchTimer->setSingleShot(true);
             connect(m_searchTimer, SIGNAL(timeout()), this, SLOT(query()));
             searchLayout->addItem(m_searchField);
+            //FIXME: this ugly spacer to center the search field won't be necessary with anchor layout
+            QGraphicsWidget *homeSpacer = new QGraphicsWidget(this);
+            homeSpacer->setPreferredSize(m_homeButton->preferredSize());
+            searchLayout->addItem(homeSpacer);
             searchLayout->addStretch();
 
             // add our layouts to main vertical layout
