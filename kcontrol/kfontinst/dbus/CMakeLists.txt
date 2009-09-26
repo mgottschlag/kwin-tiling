@@ -13,7 +13,8 @@ qt4_add_dbus_adaptor(fontinst_bin_SRCS org.kde.fontinst.xml FontInst.h KFI::Font
 kde4_add_executable(fontinst_bin ${fontinst_bin_SRCS})
 
 set_target_properties(fontinst_bin PROPERTIES OUTPUT_NAME fontinst)
-target_link_libraries(fontinst_bin ${POLKITQT_CORE_LIBRARY} kfontinst)
+target_link_libraries(fontinst_bin ${POLKITQT_CORE_LIBRARY} ${KDE4_KDECORE_LIBS}
+                      ${QT_QTDBUS_LIBRARY} ${QT_QTXML_LIBRARY} ${FONTCONFIG_LIBRARIES} kfontinst)
 
 install(TARGETS fontinst_bin DESTINATION ${LIBEXEC_INSTALL_DIR} )
 install(PROGRAMS fontinst_x11 DESTINATION ${LIBEXEC_INSTALL_DIR})
