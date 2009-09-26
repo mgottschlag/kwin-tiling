@@ -246,29 +246,19 @@ void LockProcess::timerEvent(QTimerEvent *ev)
 void LockProcess::setupSignals()
 {
     struct sigaction act;
+    sigemptyset(&(act.sa_mask));
+    act.sa_flags = 0;
     // ignore SIGINT
     act.sa_handler=SIG_IGN;
-    sigemptyset(&(act.sa_mask));
-    sigaddset(&(act.sa_mask), SIGINT);
-    act.sa_flags = 0;
     sigaction(SIGINT, &act, 0L);
     // ignore SIGQUIT
-    act.sa_handler=SIG_IGN;
-    sigemptyset(&(act.sa_mask));
-    sigaddset(&(act.sa_mask), SIGQUIT);
-    act.sa_flags = 0;
+    //act.sa_handler=SIG_IGN;
     sigaction(SIGQUIT, &act, 0L);
     // exit cleanly on SIGTERM
     act.sa_handler= sigterm_handler;
-    sigemptyset(&(act.sa_mask));
-    sigaddset(&(act.sa_mask), SIGTERM);
-    act.sa_flags = 0;
     sigaction(SIGTERM, &act, 0L);
     // SIGHUP forces lock
     act.sa_handler= sighup_handler;
-    sigemptyset(&(act.sa_mask));
-    sigaddset(&(act.sa_mask), SIGHUP);
-    act.sa_flags = 0;
     sigaction(SIGHUP, &act, 0L);
 
     pipe(signal_pipe);
