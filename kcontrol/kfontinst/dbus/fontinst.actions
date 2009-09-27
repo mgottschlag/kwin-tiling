@@ -1,13 +1,18 @@
 [org.kde.fontinst]
 Name=Manage system-wide fonts.
+Name[id]=Atur fonta lebar sistem.
 Name[nds]=Systeemschriftoorden plegen
 Name[pt]=Gerir os tipos de letra do sistema.
+Name[pt_BR]=Gerenciar as fontes do sistema.
 Name[sv]=Hantera systemteckensnitt.
+Name[tr]=Sistem geneli için yazı tiplerini yönet.
 Name[uk]=Керування загальносистемними шрифтами.
 Name[x-test]=xxManage system-wide fonts.xx
 Description=Modifying the system-wide font configuration requires privileges.
+Description[id]=Memodifikasi konfigurasi fonta lebar sistem memerlukan hak akses.
 Description[nds]=För't Ännern vun de Systeemschriftoorden bruukst Du besünner Verlöven.
 Description[pt]=A modificação da configuração de tipos de letra do sistema necessita de privilégios.
+Description[pt_BR]=A modificação da configuração de fontes do sistema necessita de privilégios.
 Description[sv]=Ändring av systemteckensnittens inställning kräver rättigheter.
 Description[uk]=Для зміни параметрів загальносистемних шрифтів потрібні відповідні права доступу.
 Description[x-test]=xxModifying the system-wide font configuration requires privileges.xx

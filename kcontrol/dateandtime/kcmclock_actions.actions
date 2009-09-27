@@ -1,5 +1,6 @@
 [Domain]
 Name=Date and Time Control Module
+Name[id]=Modul Kontrol Tanggal dan Waktu
 Name[nds]=Datum- un Tiet-Kuntrullmoduul
 Name[pt]=Módulo de Controlo da Data e Hora
 Name[pt_BR]=Módulo de controle da data e hora
