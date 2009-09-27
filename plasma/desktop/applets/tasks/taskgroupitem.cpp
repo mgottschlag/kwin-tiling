@@ -705,9 +705,9 @@ bool TaskGroupItem::focusSubTask(bool next, bool activate)
     if (subTasks > 0) {
         int index = -1;
 
-        if (focusWidget() && subTasks > 1) {
+        if (subTasks > 1) {
             for (int i = 0; i < subTasks; ++i) {
-                if (focusWidget() == selectSubTask(i)) {
+                if (selectSubTask(i)->taskFlags() & TaskHasFocus) {
                     index = i;
 
                     break;
