@@ -49,8 +49,6 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     setFrameShadow(Plasma::Frame::Raised);
     setEnabledBorders(Plasma::FrameSvg::TopBorder|Plasma::FrameSvg::BottomBorder);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    //FIXME: layout problems, do it right
-    //setPreferredSize(500, 128);
 
     m_arrowsLayout = new QGraphicsLinearLayout(this);
     m_hoverIndicator = new Plasma::ItemBackground(this);
@@ -62,13 +60,13 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     m_leftArrow = new Plasma::ToolButton(this);
     m_leftArrow->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     m_leftArrow->setPreferredWidth(KIconLoader::SizeMedium);
-    m_leftArrow->nativeWidget()->setIcon(KIcon("arrow-left"));
+    m_leftArrow->setImage("widgets/arrows", "left-arrow");
     connect(m_leftArrow, SIGNAL(clicked()), this, SLOT(goLeft()));
 
     m_rightArrow = new Plasma::ToolButton(this);
     m_rightArrow->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     m_rightArrow->setPreferredWidth(KIconLoader::SizeMedium);
-    m_rightArrow->nativeWidget()->setIcon(KIcon("arrow-right"));
+    m_rightArrow->setImage("widgets/arrows", "right-arrow");
     connect(m_rightArrow, SIGNAL(clicked()), this, SLOT(goRight()));
 
     m_leftArrow->setEnabled(false);
