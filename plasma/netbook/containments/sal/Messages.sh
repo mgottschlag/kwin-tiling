@@ -1,2 +1,2 @@
 #! /usr/bin/env bash
-$XGETTEXT *.cpp -o $podir/plasma_containment_sal.pot
+$XGETTEXT *.cpp -o $podir/plasma_applet_sal.pot
