@@ -290,10 +290,9 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     itsPreviewList->setVisible(false);
 
     // Font List...
-    itsFontList=new CFontList(itsPreview->engine(), fontWidget);
+    itsFontList=new CFontList(fontWidget);
     itsFontListView=new CFontListView(itsPreviewSplitter, itsFontList);
     itsFontListView->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    itsFontListView->readConfig(cg);
 
     itsAddFontControl=new CPushButton(KGuiItem(i18n("Add..."), "list-add",
                                                i18n("Install fonts")),
@@ -415,7 +414,6 @@ CKCmFontInst::~CKCmFontInst()
 
     cg.writeEntry(CFG_PREVIEW_SPLITTER_SIZES, itsPreviewSplitter->sizes());
     cg.writeEntry(CFG_GROUP_SPLITTER_SIZES, itsGroupSplitter->sizes());
-    itsFontListView->writeConfig(cg);
     delete itsTempDir;
     partialIcon(false);
 }
@@ -823,7 +821,6 @@ void CKCmFontInst::changeText()
     if(status && oldStr!=newStr)
     {
         itsPreview->engine()->setPreviewString(newStr);
-        itsFontList->forceNewPreviews();
 
         if(itsPreview->width()>6)
             itsPreview->showFont();

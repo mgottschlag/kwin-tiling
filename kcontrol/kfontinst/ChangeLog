@@ -5,10 +5,10 @@ KDE4.4
 2. Use policykit to control installation of system-wide fonts.
 3. Merged progress, skip, cancel, and error dialogs used when installing, etc., into
    1 dialog.
-4. Add option to disable inline previews.
-5. Simplyfy layout.
-6. Remove simple mode - always use font management mode.
-7. When multiple fonts are selected, use a list style preview of all selected fonts.
+4. Simplify layout.
+5. Remove simple mode - always use font management mode.
+6. When multiple fonts are selected, use a list style preview of all selected fonts.
+7. Because of the above, remove the in-line previews from the font list.
 
 KDE4.3
 ======

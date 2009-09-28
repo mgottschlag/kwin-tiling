@@ -284,6 +284,8 @@ QVariant CGroupList::data(const QModelIndex &index, int role) const
             case COL_GROUP_NAME:
                 switch(role)
                 {
+                    case Qt::SizeHintRole:
+                        return SmallIcon("dialog-ok").size()+QSize(0, 4);
                     case Qt::EditRole:
                     case Qt::DisplayRole:
                         return grp->name();

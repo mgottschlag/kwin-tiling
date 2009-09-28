@@ -36,7 +36,6 @@
 #include <QtCore/QVariant>
 #include <QtGui/QSortFilterProxyModel>
 #include <QtGui/QFontDatabase>
-#include <QtGui/QImage>
 #include "Misc.h"
 #include "JobRunner.h"
 #include "FontFilter.h"
@@ -64,14 +63,12 @@ class CFontItem;
 class CFontItem;
 class CFamilyItem;
 class CGroupListItem;
-class CFcEngine;
 class Style;
 
 enum EColumns
 {
     COL_FONT,
     COL_STATUS,
-    COL_PREVIEW,
 
     NUM_COLS
 };
@@ -96,13 +93,9 @@ class CFontList : public QAbstractItemModel
 
     public:
 
-    static const int constDefaultPreviewSize=25;
-
     static QStringList compact(const QStringList &fonts);
-    static void        setPreviewSize(int s)         { theirPreviewSize=s; }
-    static int         previewSize()                 { return theirPreviewSize; }
 
-    CFontList(CFcEngine *eng, QWidget *parent=0);
+    CFontList(QWidget *parent=0);
     ~CFontList();
 
     QVariant        data(const QModelIndex &index, int role) const;
@@ -206,7 +199,6 @@ class CFamilyItem : public CFontModelItem
 
     bool                 addFonts(const StyleCont &styles, bool sys);
     const QString &      name() const                     { return itsName; }
-    const QString &      icon() const                     { return itsIcon; }
     const CFontItemCont & fonts() const                   { return itsFonts; }
     void                 addFont(CFontItem *font, bool update=true);
     void                 removeFont(CFontItem *font, bool update);
@@ -229,14 +221,13 @@ class CFamilyItem : public CFontModelItem
 
     private:
 
-    QString            itsName,
-                       itsIcon;
+    QString       itsName;
     CFontItemCont itsFonts;
-    int                itsFontCount;
-    EStatus            itsStatus,
-                       itsRealStatus;
-    CFontItem          *itsRegularFont;  // 'RegularFont' is font nearest to 'Regular' style, and used for previews.
-    CFontList          &itsParent;
+    int           itsFontCount;
+    EStatus       itsStatus,
+                  itsRealStatus;
+    CFontItem     *itsRegularFont;  // 'RegularFont' is font nearest to 'Regular' style, and used for previews.
+    CFontList     &itsParent;
 };
 
 class CFontItem : public CFontModelItem
@@ -256,8 +247,6 @@ class CFontItem : public CFontModelItem
     quint32                           styleInfo() const        { return itsStyle.value(); }
     int                               index() const            { return (*itsStyle.files().begin()).index(); }
     const QString &                   family() const           { return (static_cast<CFamilyItem *>(parent()))->name(); }
-    const QImage &                    image(bool selected, bool force=false);
-    void                              clearImage()             { itsImage[0]=itsImage[1]=QImage(); }
     int                               rowNumber() const        { return (static_cast<CFamilyItem *>(parent()))->row(this); }
     const FileCont &                  files() const            { return itsStyle.files(); }
     qulonglong                        writingSystems() const   { return itsStyle.writingSystems(); }
@@ -271,7 +260,6 @@ class CFontItem : public CFontModelItem
 
     QString itsStyleName;
     Style   itsStyle;
-    QImage  itsImage[2];
     bool    itsEnabled;
 };
 
@@ -327,8 +315,6 @@ class CFontListView : public QTreeView
     CFontListView(QWidget *parent, CFontList *model);
     virtual ~CFontListView() { }
 
-    void            readConfig(KConfigGroup &cg);
-    void            writeConfig(KConfigGroup &cg);
     QModelIndexList selectedItems() const  { return selectedIndexes(); }
     void            getFonts(CJobRunner::ItemList &urls, QStringList &fontNames, QSet<Misc::TFont> *fonts,
                              bool selected, bool getEnabled=true, bool getDisabled=true);
@@ -338,7 +324,6 @@ class CFontListView : public QTreeView
     void            stats(int &enabled, int &disabled, int &partial);
     void            selectedStatus(bool &enabled, bool &disabled);
     QModelIndexList allFonts();
-    void            setShowInlinePreviews(bool on);
     void            selectFirstFont();
 
     Q_SIGNALS:
@@ -364,7 +349,6 @@ class CFontListView : public QTreeView
     void            selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void            itemCollapsed(const QModelIndex &index);
     void            view();
-    void            showHeaderMenu(const QPoint &point);
 
     private:
 

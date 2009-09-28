@@ -35,15 +35,12 @@
 #include <QtGui/QFont>
 #include <QtCore/QMap>
 #include <QtCore/QFile>
-#include <QtGui/QImage>
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
 #include <QtGui/QPixmap>
 #include <QtGui/QDropEvent>
 #include <QtCore/QDateTime>
-#include <QtGui/QX11Info>
 #include <QtGui/QHeaderView>
-#include <QtGui/QStyledItemDelegate>
 #include <QtGui/QPainter>
 #include <QtGui/QMenu>
 #include <QtCore/QTimer>
@@ -62,17 +59,10 @@
 #include "File.h"
 #include <config-workspace.h>
 
-#define CFG_SHOW_INLINE_PREVIEWS "ShowInlinePreviews"
-#define CFG_FONT_COL_SIZE        "FontNameColSize"
-
 namespace KFI
 {
 
 static const int constMaxSlowed = 250;
-
-int CFontList::theirPreviewSize=CFontList::constDefaultPreviewSize;
-
-static CFcEngine * theFcEngine=0L;
 
 static void decompose(const QString &name, QString &family, QString &style)
 {
@@ -225,7 +215,6 @@ CFontItem::CFontItem(CFontModelItem *p, const Style &s, bool sys)
            itsStyleName(FC::createStyleName(s.value())),
            itsStyle(s)
 {
-    clearImage();
     refresh();
     if(!Misc::root())
         setIsSystem(sys);
@@ -243,27 +232,6 @@ void CFontItem::refresh()
             itsEnabled=true;
             break;
         }
-}
-
-const QImage & CFontItem::image(bool selected, bool force)
-{
-    int idx(selected ? 1 : 0);
-
-    if(parent() && !((CFamilyItem *)parent())->slowUpdates() &&
-       (itsImage[idx].isNull() || force ||
-        itsImage[idx].height()!=CFontList::previewSize()))
-    {
-        QColor bgnd(Qt::black);
-        bgnd.setAlpha(0);
-        itsImage[idx]=theFcEngine->drawPreview(isEnabled() ? family() : fileName(),
-                                               itsStyle.value(),
-                                               index(),
-                                               QApplication::palette().color(selected ? QPalette::HighlightedText : QPalette::Text), 
-                                               bgnd,
-                                               CFontList::previewSize()); 
-    }
-
-    return itsImage[idx];
 }
 
 CFamilyItem::CFamilyItem(CFontList &p, const Family &f, bool sys)
@@ -473,18 +441,12 @@ bool CFamilyItem::updateRegularFont(CFontItem *font)
     return oldFont!=itsRegularFont;
 }
 
-CFontList::CFontList(CFcEngine *eng, QWidget *parent)
+CFontList::CFontList(QWidget *parent)
          : QAbstractItemModel(parent),
            itsAllowSys(true),
            itsAllowUser(true),
            itsSlowUpdates(false)
 {
-    theFcEngine=eng;
-    QFont font;
-    int   pixelSize((int)(((font.pointSizeF()*QX11Info::appDpiY())/72.0)+0.5));
-
-    setPreviewSize(pixelSize+12);
-
     FontInst::registerTypes();
 
     connect(CJobRunner::dbus(), SIGNAL(fontsAdded(const KFI::Families &)), SLOT(fontsAdded(const KFI::Families &)));
@@ -496,7 +458,6 @@ CFontList::CFontList(CFcEngine *eng, QWidget *parent)
 
 CFontList::~CFontList()
 {
-    theFcEngine=0L;
     qDeleteAll(itsFamilies);
     itsFamilies.clear();
     itsFamilyHash.clear();
@@ -632,8 +593,6 @@ QVariant CFontList::headerData(int section, Qt::Orientation orientation,
                 {
                     case COL_FONT:
                         return i18n("Font");
-                    case COL_PREVIEW:
-                        return i18n("Preview");
                     default:
                         break;
                 }
@@ -706,21 +665,6 @@ int CFontList::rowCount(const QModelIndex &parent) const
     }
     else
         return itsFamilies.count();
-}
-
-void CFontList::forceNewPreviews()
-{
-    CFamilyItemCont::ConstIterator it(itsFamilies.begin()),
-                                   end(itsFamilies.end());
-
-    for(; it!=end; ++it)
-    {
-        CFontItemCont::ConstIterator fit((*it)->fonts().begin()),
-                                     fend((*it)->fonts().end());
-
-        for(; fit!=fend; ++fit)
-            (*fit)->clearImage();
-    }
 }
 
 void CFontList::refresh(bool allowSys, bool allowUser)
@@ -1155,6 +1099,10 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
                 if(COL_STATUS==index.column())
                     return SmallIcon( (static_cast<CFontItem *>(index.internalPointer()))->isEnabled()
                                       ? "dialog-ok" : "dialog-cancel", 10);
+            break;
+        case Qt::SizeHintRole:
+            if(mi->isFamily())
+                return SmallIcon("dialog-ok").size()+QSize(0, 4);
         default:
             break;
     }
@@ -1401,52 +1349,6 @@ void CFontListSortFilterProxy::fcResults()
     }
 }
 
-class CFontListViewDelegate : public QStyledItemDelegate 
-{
-    public:
-
-    CFontListViewDelegate(QObject *p, QSortFilterProxyModel *px) : QStyledItemDelegate(p), itsProxy(px) { }
-    virtual ~CFontListViewDelegate() { }
-
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &idx) const
-    {
-        QStyledItemDelegate::paint(painter, option, idx);
-
-        QModelIndex index(itsProxy->mapToSource(idx));
-
-        if(index.isValid() && (static_cast<CFontModelItem *>(index.internalPointer()))->isFamily() &&
-           COL_PREVIEW==index.column())
-        {
-            CFamilyItem *fam=static_cast<CFamilyItem *>(index.internalPointer());
-
-            if(fam->regularFont())
-            {
-                const QImage &img=fam->regularFont()->image(option.state&QStyle::State_Selected);
-
-                if(!img.isNull())
-                    if(Qt::RightToLeft==QApplication::layoutDirection())
-                        painter->drawImage(option.rect.x()-(img.width()-option.rect.width()),
-                                           option.rect.y(), img);
-                    else
-                        painter->drawImage(option.rect.x(), option.rect.y(), img);
-            }
-        }
-    }
-
-    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &idx) const
-    {
-        QModelIndex index(itsProxy->mapToSource(idx));
-
-        return (index.isValid() && (static_cast<CFontModelItem *>(index.internalPointer()))->isFamily())
-            ? QSize(CFontList::previewSize(), CFontList::previewSize())
-            : QStyledItemDelegate::sizeHint(option, index);
-    }
-
-    private:
-
-    QSortFilterProxyModel *itsProxy;
-};
-
 CFontListView::CFontListView(QWidget *parent, CFontList *model)
              : QTreeView(parent),
                itsProxy(new CFontListSortFilterProxy(this, model)),
@@ -1454,12 +1356,11 @@ CFontListView::CFontListView(QWidget *parent, CFontList *model)
                itsAllowDrops(false)
 {
     setModel(itsProxy);
-    setItemDelegate(new CFontListViewDelegate(this, itsProxy));
     itsModel=model;
+    header()->setStretchLastSection(false);
     resizeColumnToContents(COL_STATUS);
     header()->setResizeMode(COL_STATUS, QHeaderView::Fixed);
-    header()->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(header(), SIGNAL(customContextMenuRequested(const QPoint &)), SLOT(showHeaderMenu(const QPoint &)));
+    header()->setResizeMode(COL_FONT, QHeaderView::Stretch);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSortingEnabled(true);
@@ -1493,18 +1394,6 @@ CFontListView::CFontListView(QWidget *parent, CFontList *model)
                                       this, SLOT(view()));
     itsMenu->addSeparator();
     itsMenu->addAction(KIcon("view-refresh"), i18n("Reload"), model, SLOT(load()));
-}
-
-void CFontListView::readConfig(KConfigGroup &cg)
-{
-    setShowInlinePreviews(cg.readEntry(CFG_SHOW_INLINE_PREVIEWS, false));
-    setColumnWidth(COL_FONT, cg.readEntry(CFG_FONT_COL_SIZE, 200));
-}
-
-void CFontListView::writeConfig(KConfigGroup &cg)
-{
-    cg.writeEntry(CFG_SHOW_INLINE_PREVIEWS, !header()->isSectionHidden(COL_PREVIEW));
-    cg.writeEntry(CFG_FONT_COL_SIZE, columnWidth(COL_FONT));
 }
 
 void CFontListView::getFonts(CJobRunner::ItemList &urls, QStringList &fontNames, QSet<Misc::TFont> *fonts,
@@ -1755,14 +1644,6 @@ QModelIndexList CFontListView::allFonts()
     return rv;
 }
 
-void CFontListView::setShowInlinePreviews(bool on)
-{
-    header()->setStretchLastSection(on);
-    resizeColumnToContents(COL_STATUS);
-    header()->setResizeMode(COL_FONT, on ? QHeaderView::Interactive : QHeaderView::Stretch);
-    setColumnHidden(COL_PREVIEW, !on);
-}
-
 void CFontListView::selectFirstFont()
 {
     if(0==selectedItems().count())
@@ -1954,19 +1835,6 @@ void CFontListView::view()
 
         QProcess::startDetached(KFI_VIEWER, args);
     }
-}
-
-void CFontListView::showHeaderMenu(const QPoint &point)
-{
-    KMenu   popup(this);
-    QAction *action = popup.addAction(i18n("Show Preview"));
-
-    action->setCheckable(true);
-    action->setChecked(!header()->isSectionHidden(COL_PREVIEW));
-    action = popup.exec(header()->mapToGlobal(point));
-
-    if (action && action->isChecked()==header()->isSectionHidden(COL_PREVIEW))
-        setShowInlinePreviews(action->isChecked());
 }
 
 QModelIndexList CFontListView::allIndexes()

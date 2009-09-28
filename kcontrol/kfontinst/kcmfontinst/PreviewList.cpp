@@ -31,6 +31,7 @@
 #include <QtGui/QHeaderView>
 #include <QtGui/QPixmapCache>
 #include <QtGui/QContextMenuEvent>
+#include <QtGui/QX11Info>
 #include <config-workspace.h>
 
 namespace KFI
@@ -117,7 +118,7 @@ class CPreviewListViewDelegate : public QStyledItemDelegate
 {
     public:
 
-    CPreviewListViewDelegate(QObject *p) : QStyledItemDelegate(p) { }
+    CPreviewListViewDelegate(QObject *p, int previewSize) : QStyledItemDelegate(p), itsPreviewSize(previewSize) { }
     virtual ~CPreviewListViewDelegate() { }
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &idx) const
@@ -125,11 +126,11 @@ class CPreviewListViewDelegate : public QStyledItemDelegate
         CPreviewListItem     *item=static_cast<CPreviewListItem *>(idx.internalPointer());
         QStyleOptionViewItem opt(option);
 
-        opt.rect.adjust(1, constBorder-3, 0, -(1+(3*CFontList::previewSize())));
+        opt.rect.adjust(1, constBorder-3, 0, -(1+itsPreviewSize));
 
         QStyledItemDelegate::paint(painter, opt, idx);
 
-        opt.rect.adjust(constBorder, option.rect.height()-(1+(3*CFontList::previewSize())), -constBorder, 0);
+        opt.rect.adjust(constBorder, option.rect.height()-(1+itsPreviewSize), -constBorder, 0);
         painter->save();
         painter->setPen(QPen(QBrush(QApplication::palette().color(QPalette::Text)), 1));
         QRect lineRect(opt.rect.adjusted(-1, 3, 0, 2));
@@ -145,7 +146,7 @@ class CPreviewListViewDelegate : public QStyledItemDelegate
         //int   pWidth(getPixmap(static_cast<CPreviewListItem *>(idx.internalPointer())).width());
         int   pWidth(1536);
 
-        return QSize((constBorder*2)+pWidth, sz.height()+1+constBorder+(3*CFontList::previewSize()));
+        return QSize((constBorder*2)+pWidth, sz.height()+1+constBorder+itsPreviewSize);
     }
 
     QPixmap getPixmap(CPreviewListItem *item) const
@@ -167,13 +168,14 @@ class CPreviewListViewDelegate : public QStyledItemDelegate
                                                             item->index(),
                                                             text,
                                                             bgnd,
-                                                            3*CFontList::previewSize()));
+                                                            itsPreviewSize));
             QPixmapCache::insert(key, pix);
         }
 
         return pix;
     }
 
+    int itsPreviewSize;
     static const int constBorder=4;
 };
 
@@ -181,9 +183,13 @@ CPreviewListView::CPreviewListView(CFcEngine *eng, QWidget *parent)
                 : QTreeView(parent)
 {
     theFcEngine=eng;
+
+    QFont font;
+    int   pixelSize((int)(((font.pointSizeF()*QX11Info::appDpiY())/72.0)+0.5));
+
     itsModel=new CPreviewList(this);
     setModel(itsModel);
-    setItemDelegate(new CPreviewListViewDelegate(this));
+    setItemDelegate(new CPreviewListViewDelegate(this, (pixelSize+12)*3));
     setSelectionMode(NoSelection);
     setVerticalScrollMode(ScrollPerPixel);
     setSortingEnabled(false);
