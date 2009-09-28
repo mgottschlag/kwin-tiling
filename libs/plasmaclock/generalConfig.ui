@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>428</width>
+    <width>247</width>
     <height>142</height>
    </rect>
   </property>
@@ -24,43 +24,10 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>13</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Display holidays:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QCheckBox" name="displayHolidays">
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="1">
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Use holiday region:</string>
+      <string>Holidays:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -70,11 +37,7 @@
    <item row="2" column="2" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="KComboBox" name="regionComboBox">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-      </widget>
+      <widget class="KComboBox" name="regionComboBox"/>
      </item>
      <item>
       <spacer name="horizontalSpacer_2">
@@ -176,6 +139,22 @@
      </property>
     </spacer>
    </item>
+   <item row="2" column="0">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>13</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -191,38 +170,5 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>displayHolidays</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>label</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>269</x>
-     <y>50</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>81</x>
-     <y>59</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>displayHolidays</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>regionComboBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>269</x>
-     <y>50</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>181</x>
-     <y>59</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
