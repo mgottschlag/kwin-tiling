@@ -14,6 +14,7 @@ Description[nds]=För't Ännern vun de Systeemschriftoorden bruukst Du besünner
 Description[pt]=A modificação da configuração de tipos de letra do sistema necessita de privilégios.
 Description[pt_BR]=A modificação da configuração de fontes do sistema necessita de privilégios.
 Description[sv]=Ändring av systemteckensnittens inställning kräver rättigheter.
+Description[tr]=Sistem geneli için yazı tipi yapılandırması yapabilmek için ayrıcalıklar gerekiyor.
 Description[uk]=Для зміни параметрів загальносистемних шрифтів потрібні відповідні права доступу.
 Description[x-test]=xxModifying the system-wide font configuration requires privileges.xx
 Policy=auth_admin
