@@ -138,7 +138,7 @@ void ContextMenu::init(const KConfigGroup &config)
 
         m_logoutAction = new QAction(i18n("Leave..."), this);
         m_logoutAction->setIcon(KIcon("system-shutdown"));
-        connect(m_logoutAction, SIGNAL(triggered(bool)), this, SLOT(logout()));
+        connect(m_logoutAction, SIGNAL(triggered(bool)), this, SLOT(startLogout()));
 
         m_separator1 = new QAction(this);
         m_separator1->setSeparator(true);
@@ -325,6 +325,22 @@ void ContextMenu::lockScreen()
 #else
     LockWorkStation();
 #endif // !Q_OS_WIN
+}
+
+void ContextMenu::startLogout()
+{
+    // this short delay is due to two issues:
+    // a) KWorkSpace's DBus alls are all syncronous
+    // b) the destrution of the menu that this action is in is delayed
+    //
+    // (a) leads to the menu hanging out where everyone can see it because
+    // the even loop doesn't get returned to allowing it to close.
+    //
+    // (b) leads to a 0ms timer not working since a 0ms timer just appends to
+    // the event queue, and then the menu closing event gets appended to that.
+    //
+    // ergo a timer with small timeout
+    QTimer::singleShot(10, this, SLOT(logout()));
 }
 
 void ContextMenu::logout()

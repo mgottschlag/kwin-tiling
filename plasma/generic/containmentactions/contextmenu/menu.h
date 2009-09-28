@@ -46,6 +46,7 @@ public slots:
     void runCommand();
 
     void lockScreen();
+    void startLogout();
     void logout();
 
     void addPanel();
