@@ -27,7 +27,6 @@
 #include <Plasma/DataEngine>
 
 #include <QGraphicsLinearLayout>
-#include <QGraphicsGridLayout>
 
 class QTimer;
 class StripWidget;
@@ -41,7 +40,6 @@ namespace Plasma
     class QueryMatch;
     class ScrollWidget;
     class Frame;
-    class ItemBackground;
 }
 
 class SearchLaunch : public Plasma::Containment
@@ -74,7 +72,6 @@ private slots:
     void launch(Plasma::IconWidget *icon);
     void addFavourite();
     void reset();
-    void relayout();
     void selectItem(Plasma::IconWidget *);
 
 private:
@@ -89,9 +86,8 @@ private:
 
     int m_queryCounter;
     int m_maxColumnWidth;
-    QTimer *m_relayoutTimer;
+
     QTimer *m_searchTimer;
-    QMultiMap<qreal, Plasma::IconWidget*> m_items;
     QHash<Plasma::IconWidget*, Plasma::QueryMatch> m_matches;
 
     QGraphicsWidget *m_viewMainWidget;
@@ -99,11 +95,9 @@ private:
     Plasma::LineEdit *m_searchField;
     Plasma::ScrollWidget *m_gridScroll;
     StripWidget *m_stripWidget;
-    Plasma::ItemBackground *m_hoverIndicator;
 
     QGraphicsLinearLayout *m_mainLayout;
     QGraphicsLinearLayout *m_appletsLayout;
-    QGraphicsGridLayout *m_launchGrid;
     QPointF m_buttonDownMousePos;
 };
 

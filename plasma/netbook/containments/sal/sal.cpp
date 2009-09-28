@@ -36,14 +36,11 @@
 #include <Plasma/Theme>
 #include <Plasma/Frame>
 #include <Plasma/Corona>
-#include <Plasma/FrameSvg>
 #include <Plasma/LineEdit>
 #include <Plasma/IconWidget>
 #include <Plasma/RunnerManager>
 #include <Plasma/QueryMatch>
 #include <Plasma/ScrollWidget>
-#include <Plasma/ItemBackground>
-
 
 
 SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
@@ -54,7 +51,6 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
       m_viewMainWidget(0),
       m_searchField(0),
       m_gridScroll(0),
-      m_hoverIndicator(0),
       m_appletsLayout(0),
       m_buttonDownMousePos(QPoint())
 {
@@ -83,13 +79,6 @@ void SearchLaunch::init()
     connect(m_runnermg, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
             this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
 
-    m_relayoutTimer = new QTimer(this);
-    m_relayoutTimer->setSingleShot(true);
-    connect(m_relayoutTimer, SIGNAL(timeout()), this, SLOT(relayout()));
-
-    Plasma::Svg *borderSvg = new Plasma::Svg(this);
-    borderSvg->setImagePath("newspaper/border");
-
     QAction *a = action("add widgets");
     if (a) {
         addToolBoxAction(a);
@@ -104,26 +93,20 @@ void SearchLaunch::init()
 void SearchLaunch::doSearch(const QString query)
 {
     m_queryCounter = 0;
-    m_hoverIndicator->setTargetItem(0);
+    m_gridBackground->clear();
 
     const bool stillEmpty = query.isEmpty() && m_runnermg->query().isEmpty();
     if (!stillEmpty) {
-        foreach (Plasma::IconWidget *icon, m_items) {
-            if (m_launchGrid->count()) {
-                m_launchGrid->removeAt(0);
-            }
-
-            icon->deleteLater();
-        }
+        m_gridBackground->clear();
     }
 
-    m_items.clear();
     m_maxColumnWidth = 0;
     m_matches.clear();
     m_runnermg->launchQuery(query);
 
     if (m_gridScroll && query.isEmpty()) {
-        if (stillEmpty && m_launchGrid->count()) {
+        if (stillEmpty && m_gridBackground->count()) {
+            m_gridBackground->clear();
             return;
         }
 
@@ -205,8 +188,6 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         return;
     }
 
-    int iconSize = KIconLoader::SizeHuge;
-
     // just add new QueryMatch
     int i;
     for (i = m_queryCounter; i < m.size(); i++) {
@@ -218,18 +199,10 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         icon->setText(match.text());
         icon->setIcon(match.icon());
 
-        qreal left, top, right, bottom;
-        m_hoverIndicator->getContentsMargins(&left, &top, &right, &bottom);
-        icon->setContentsMargins(left, top, right, bottom);
+        m_gridBackground->insertItem(icon, 1/match.relevance());
 
-        icon->setMinimumSize(icon->sizeFromIconSize(iconSize));
-        icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         connect(icon, SIGNAL(activated()), this, SLOT(launch()));
         icon->installEventFilter(this);
-
-        if (icon->size().width() > m_maxColumnWidth) {
-            m_maxColumnWidth = icon->size().width();
-        }
 
         if (!m_runnermg->searchContext()->query().isEmpty()) {
             // create action to add to favourites strip
@@ -239,58 +212,13 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
             connect(action, SIGNAL(triggered()), this, SLOT(addFavourite()));
         }
 
-        // add to layout and data structures
-
-        m_items.insert(1/match.relevance(), icon);
+        // add to data structure
         m_matches.insert(icon, match);
-
-        m_relayoutTimer->start(400);
     }
     m_queryCounter = i;
 }
 
-void SearchLaunch::relayout()
-{
-    //Relayout the grid
-    QList<Plasma::IconWidget *>orderedItems = m_items.values();
-    int validIndex = 0;
 
-    if (m_gridBackground->size().width() <= m_gridScroll->size().width()) {
-        foreach (Plasma::IconWidget *icon, orderedItems) {
-            if (m_launchGrid->itemAt(validIndex) == icon) {
-                ++validIndex;
-            } else {
-                break;
-            }
-        }
-    }
-
-    for (int i = validIndex; i < m_launchGrid->count(); ++i) {
-        m_launchGrid->removeAt(validIndex);
-    }
-
-    int nColumns;
-    // if we already decided how many columns are going to be don't decide again
-    if (validIndex > 0 && m_launchGrid->columnCount() > 0 &&  m_launchGrid->rowCount() > 0) {
-        nColumns = m_launchGrid->columnCount();
-    } else {
-        nColumns = qMax(1, int(m_gridScroll->size().width() / m_maxColumnWidth));
-    }
-    int i = 0;
-
-    foreach (Plasma::IconWidget *icon, orderedItems) {
-        if (i < validIndex) {
-            ++i;
-            continue;
-        }
-
-        m_launchGrid->addItem(icon, i / nColumns, i % nColumns);
-        m_launchGrid->setAlignment(icon, Qt::AlignHCenter);
-        icon->show();
-        ++i;
-    }
-    m_viewMainWidget->resize(0,0);
-}
 
 void SearchLaunch::launch(Plasma::IconWidget *icon)
 {
@@ -394,16 +322,12 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_gridBackground = new GridItemView(this);
             connect(m_gridBackground, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
             connect(m_gridBackground, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launch(Plasma::IconWidget *)));
-            m_gridBackground->setAcceptHoverEvents(true);
             m_gridBackground->installEventFilter(this);
             m_viewMainWidget = new QGraphicsWidget(this);
             QGraphicsLinearLayout *mwLay = new QGraphicsLinearLayout(m_viewMainWidget);
             mwLay->addStretch();
             mwLay->addItem(m_gridBackground);
             mwLay->addStretch();
-
-            m_hoverIndicator = new Plasma::ItemBackground(m_gridBackground);
-            m_hoverIndicator->hide();
 
             m_gridScroll = new Plasma::ScrollWidget(this);
             m_gridScroll->installEventFilter(this);
@@ -412,9 +336,6 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_gridScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
             m_gridScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
             gridLayout->addItem(m_gridScroll);
-
-            m_launchGrid = new QGraphicsGridLayout();
-            m_gridBackground->setLayout(m_launchGrid);
 
             m_stripWidget = new StripWidget(m_runnermg, this);
             KConfigGroup cg = config();
@@ -472,7 +393,6 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
         if (m_appletsLayout) {
             m_appletsLayout->setMaximumHeight(size().height()/4);
         }
-        m_relayoutTimer->start();
     }
 
     if (constraints & Plasma::StartupCompletedConstraint) {
@@ -552,8 +472,6 @@ void SearchLaunch::selectItem(Plasma::IconWidget *icon)
     QRectF iconRectToMainWidget = icon->mapToItem(m_viewMainWidget, icon->boundingRect()).boundingRect();
 
     m_gridScroll->ensureRectVisible(iconRectToMainWidget);
-
-    m_hoverIndicator->setTargetItem(icon);
 }
 
 bool SearchLaunch::eventFilter(QObject *watched, QEvent *event)
@@ -561,8 +479,6 @@ bool SearchLaunch::eventFilter(QObject *watched, QEvent *event)
     Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
     if (icon && event->type() == QEvent::GraphicsSceneHoverEnter) {
         m_gridBackground->setCurrentItem(icon);
-    } else if (watched == m_gridBackground && event->type() == QEvent::GraphicsSceneHoverLeave && !m_gridBackground->hasFocus()) {
-        m_hoverIndicator->hide();
     //pass click only if the user didn't move the mouse
     } else if (icon && event->type() == QEvent::GraphicsSceneMouseMove) {
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
@@ -572,8 +488,6 @@ bool SearchLaunch::eventFilter(QObject *watched, QEvent *event)
                                  qBound(qMin((qreal)0,-m_viewMainWidget->size().height()+m_gridScroll->size().height()), m_viewMainWidget->pos().y()+deltaPos.y(), (qreal)0));
     } else if (watched == m_gridScroll && event->type() == QEvent::FocusIn) {
         m_gridBackground->setFocus();
-    } else if (watched == m_gridBackground && event->type() == QEvent::FocusOut) {
-        m_hoverIndicator->hide();
     }
 
     return false;

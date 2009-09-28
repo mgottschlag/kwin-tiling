@@ -37,7 +37,6 @@ namespace Plasma
     class ToolButton;
     class QueryMatch;
     class RunnerManager;
-    class ItemBackground;
     class ScrollWidget;
 }
 
@@ -61,10 +60,8 @@ public:
 protected:
     void createIcon(Plasma::QueryMatch *match, int idx);
     bool eventFilter(QObject *watched, QEvent *event);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     void focusInEvent(QFocusEvent *event);
-    void focusOutEvent(QFocusEvent *event);
 
 private slots:
     void removeFavourite();
@@ -77,7 +74,6 @@ private slots:
 private:
     Plasma::ToolButton *m_leftArrow;
     Plasma::ToolButton *m_rightArrow;
-    QGraphicsGridLayout *m_stripLayout;
     QGraphicsLinearLayout *m_arrowsLayout;
     GridItemView *m_iconsBackground;
 
@@ -88,7 +84,6 @@ private:
     Plasma::ScrollWidget *m_scrollWidget;
     QGraphicsWidget *m_scrollingWidget;
     Plasma::RunnerContext *m_context;
-    Plasma::ItemBackground *m_hoverIndicator;
     int m_shownIcons;
     int m_offset;
     Plasma::IconWidget *m_currentIcon;

@@ -21,6 +21,7 @@
 #define GRIDITEMVIEW_H
 
 #include <QGraphicsWidget>
+
 #include <Plasma/Plasma>
 
 class QGraphicsGridLayout;
@@ -28,6 +29,7 @@ class QGraphicsGridLayout;
 namespace Plasma
 {
     class IconWidget;
+    class ItemBackground;
 }
 
 class GridItemView : public QGraphicsWidget
@@ -41,10 +43,25 @@ public:
     void setCurrentItem(Plasma::IconWidget *currentItem);
     Plasma::IconWidget *currentItem() const;
 
+    void insertItem(Plasma::IconWidget *item, qreal weight);
+    void clear();
+    int count() const;
+
+    void setOrientation(Qt::Orientation orientation);
+    Qt::Orientation orientation() const;
+
+    void setIconSize(int size);
+    int iconSize() const;
+
 protected:
     void focusInEvent(QFocusEvent *event);
     void focusOutEvent(QFocusEvent *event);
     void keyPressEvent(QKeyEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    void resizeEvent(QGraphicsSceneResizeEvent *event);
+
+private Q_SLOTS:
+    void relayout();
 
 Q_SIGNALS:
     void itemSelected(Plasma::IconWidget *);
@@ -54,8 +71,15 @@ Q_SIGNALS:
 private:
     QGraphicsGridLayout *m_layout;
     Plasma::IconWidget *m_currentIcon;
+    Plasma::ItemBackground *m_hoverIndicator;
+    QTimer *m_relayoutTimer;
+    QMultiMap<qreal, Plasma::IconWidget*> m_items;
+    Qt::Orientation m_orientation;
     int m_currentIconIndexX;
     int m_currentIconIndexY;
+    int m_iconSize;
+    int m_maxColumnWidth;
+    int m_maxRowHeight;
 };
 
 #endif
