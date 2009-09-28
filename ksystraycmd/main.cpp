@@ -108,7 +108,7 @@ int main( int argc, char *argv[] )
 
   if ( args->isSet( "quitonhide" ) ) {
     cmd.setNoQuit( true );
-	cmd.setQuitOnHide( true );
+    cmd.setQuitOnHide( true );
   }
 
   // Start hidden
