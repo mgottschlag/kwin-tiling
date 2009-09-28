@@ -74,6 +74,7 @@ if(KDE4_ENABLE_FINAL)
         macro_add_file_dependencies(${CMAKE_CURRENT_BINARY_DIR}/kdm_final_cpp.cpp ${confci})
 endif(KDE4_ENABLE_FINAL)
 
+add_dependencies( kdm ConfigCi )
+
 install(TARGETS kdm ${INSTALL_TARGETS_DEFAULT_ARGS})
 
-build_confci()

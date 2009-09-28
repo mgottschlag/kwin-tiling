@@ -103,9 +103,10 @@ set(kdmctl_SRCS kdmctl.c)
 kde4_add_executable(kdmctl ${kdmctl_SRCS})
 macro_add_compile_flags(kdmctl -U_REENTRANT)
 target_link_libraries(kdmctl ${SOCKET_LIBRARIES})
+add_dependencies(kdmctl ConfigCi)
+
 install(TARGETS kdmctl ${INSTALL_TARGETS_DEFAULT_ARGS})
 
-build_confci()
 
 ## use 'GENKDMCONF_FLAGS=... make install' to add flags to the config generation (try genkdmconf -h)
 install(CODE "

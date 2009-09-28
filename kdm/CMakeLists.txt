@@ -12,17 +12,14 @@ set(confdef ${CMAKE_CURRENT_SOURCE_DIR}/config.def)
 set(confci ${CMAKE_CURRENT_BINARY_DIR}/config.ci)
 macro_additional_clean_files( ${confci} )
 
-macro(build_confci)
-	add_custom_command(
-		OUTPUT ${confci}
-		COMMAND ${PERL_EXECUTABLE} -w ${confproc} ${confdef} ${confci}
-		MAIN_DEPENDENCY ${confdef}
-		DEPENDS ${confproc}
-	)
-endmacro(build_confci)
+add_custom_command(
+	OUTPUT ${confci}
+	COMMAND ${PERL_EXECUTABLE} -w ${confproc} ${confdef} ${confci}
+	MAIN_DEPENDENCY ${confdef}
+	DEPENDS ${confproc}
+)
 
-build_confci()
-add_custom_target(config.ci DEPENDS ${confci})
+add_custom_target(ConfigCi DEPENDS ${confci})
 
 ### this is *only* for the kdm home page maintainer! ###
 ADD_CUSTOM_TARGET(hp scp
