@@ -8,6 +8,7 @@ KDE4.4
 4. Add option to disable inline previews.
 5. Simplyfy layout.
 6. Remove simple mode - always use font management mode.
+7. When multiple fonts are selected, use a list style preview of all selected fonts.
 
 KDE4.3
 ======

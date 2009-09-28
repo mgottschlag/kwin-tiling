@@ -1842,9 +1842,21 @@ void CFontListView::selectionChanged(const QItemSelection &selected,
         foreach(index, deselectList)
             selectionModel()->select(index, QItemSelectionModel::Deselect);
 
-    emit itemSelected(selectedItems.count()
-                ? itsProxy->mapToSource(selectedItems.last())
-                : QModelIndex());
+    QModelIndexList sel;
+    QSet<void *> pointers;
+    selectedItems=selectedIndexes();
+    foreach(index, selectedItems)
+    {
+        QModelIndex idx(itsProxy->mapToSource(index));
+
+        if(!pointers.contains(idx.internalPointer()))
+        {
+            pointers.insert(idx.internalPointer());
+            sel.append(idx);
+        }
+    }
+
+    emit itemsSelected(sel);
 }
 
 void CFontListView::itemCollapsed(const QModelIndex &idx)

@@ -54,6 +54,7 @@ class CFontPreview;
 class CUpdateDialog;
 class CFontListView;
 class CProgressBar;
+class CPreviewListView;
 
 class CKCmFontInst : public KCModule
 {
@@ -68,7 +69,7 @@ class CKCmFontInst : public KCModule
 
     QString quickHelp() const;
     void    previewMenu(const QPoint &pos);
-    void    fontSelected(const QModelIndex &index);
+    void    fontsSelected(const QModelIndexList &list);
     void    groupSelected(const QModelIndex &index);
     void    addFonts();
     void    deleteFonts();
@@ -104,33 +105,35 @@ class CKCmFontInst : public KCModule
 
     private:
 
-    QSplitter       *itsGroupSplitter,
-                    *itsPreviewSplitter;
-    CFontPreview    *itsPreview;
-    KConfig         itsConfig;
-    QLabel          *itsStatusLabel;
-    CProgressBar    *itsListingProgress;
-    CFontList       *itsFontList;
-    CFontListView   *itsFontListView;
-    CGroupList      *itsGroupList;
-    CGroupListView  *itsGroupListView;
-    KActionMenu     *itsToolsMenu;
-    KPushButton     *itsDeleteGroupControl,
-                    *itsEnableGroupControl,
-                    *itsDisableGroupControl,
-                    *itsAddFontControl,
-                    *itsDeleteFontControl;
-    CFontFilter     *itsFilter;
-    QString         itsLastStatusBarMsg;
-    KIO::Job        *itsJob;
-    KProgressDialog *itsProgress;
-    CUpdateDialog   *itsUpdateDialog;
-    KTempDir        *itsTempDir;
-    QProcess        *itsPrintProc;
-    QSet<QString>   itsDeletedFonts;
-    KUrl::List      itsModifiedUrls;
-    CJobRunner      *itsRunner;
-    QMenu           *itsPreviewMenu;
+    QSplitter        *itsGroupSplitter,
+                     *itsPreviewSplitter;
+    CFontPreview     *itsPreview;
+    CPreviewListView *itsPreviewList;
+    KConfig          itsConfig;
+    QLabel           *itsStatusLabel;
+    CProgressBar     *itsListingProgress;
+    CFontList        *itsFontList;
+    CFontListView    *itsFontListView;
+    CGroupList       *itsGroupList;
+    CGroupListView   *itsGroupListView;
+    KActionMenu      *itsToolsMenu;
+    KPushButton      *itsDeleteGroupControl,
+                     *itsEnableGroupControl,
+                     *itsDisableGroupControl,
+                     *itsAddFontControl,
+                     *itsDeleteFontControl;
+    CFontFilter      *itsFilter;
+    QString          itsLastStatusBarMsg;
+    KIO::Job         *itsJob;
+    KProgressDialog  *itsProgress;
+    CUpdateDialog    *itsUpdateDialog;
+    KTempDir         *itsTempDir;
+    QProcess         *itsPrintProc;
+    QSet<QString>    itsDeletedFonts;
+    KUrl::List       itsModifiedUrls;
+    CJobRunner       *itsRunner;
+    QMenu            *itsPreviewMenu,
+                     *itsPreviewListMenu;
 };
 
 }

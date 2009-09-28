@@ -348,7 +348,7 @@ class CFontListView : public QTreeView
     void            enable();
     void            disable();
     void            fontsDropped(const QSet<KUrl> &);
-    void            itemSelected(const QModelIndex &);
+    void            itemsSelected(const QModelIndexList &);
     void            refresh();
     void            reload();
 

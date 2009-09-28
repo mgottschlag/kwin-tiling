@@ -32,6 +32,7 @@
 #include "DuplicatesDialog.h"
 #include "FontFilter.h"
 #include "PreviewSelectAction.h"
+#include "PreviewList.h"
 #include <QtGui/QGridLayout>
 #include <QtGui/QBoxLayout>
 #include <QtGui/QSplitter>
@@ -261,8 +262,13 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     groupsLayout->addItem(new QSpacerItem(itsDisableGroupControl->width(), KDialog::spacingHint(),
                           QSizePolicy::Expanding, QSizePolicy::Fixed), 1, 4);
 
+    QWidget    *previewWidget = new QWidget(this);
+    QBoxLayout *previewWidgetLayout = new QBoxLayout(QBoxLayout::TopToBottom, previewWidget);
+    previewWidgetLayout->setMargin(0);
+    previewWidgetLayout->setSpacing(0);
+    
     // Preview
-    QFrame     *previewFrame=new QFrame(this);
+    QFrame     *previewFrame=new QFrame(previewWidget);
     QBoxLayout *previewFrameLayout=new QBoxLayout(QBoxLayout::LeftToRight, previewFrame);
 
     previewFrameLayout->setMargin(0);
@@ -275,8 +281,13 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     itsPreview->setWhatsThis(i18n("This displays a preview of the selected font."));
     itsPreview->setContextMenuPolicy(Qt::CustomContextMenu);
     previewFrameLayout->addWidget(itsPreview);
-
+    previewWidgetLayout->addWidget(previewFrame);
     itsPreview->engine()->readConfig(itsConfig);
+
+    // List-style preview...
+    itsPreviewList = new CPreviewListView(itsPreview->engine(), previewWidget);
+    previewWidgetLayout->addWidget(itsPreviewList);
+    itsPreviewList->setVisible(false);
 
     // Font List...
     itsFontList=new CFontList(itsPreview->engine(), fontWidget);
@@ -292,7 +303,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
                                                   i18n("Delete all selected fonts")),
                                          fontControlWidget);
 
-    itsPreviewSplitter->addWidget(previewFrame);
+    itsPreviewSplitter->addWidget(previewWidget);
     itsPreviewSplitter->setCollapsible(1, true);
 
     itsStatusLabel = new QLabel(fontControlWidget);
@@ -349,6 +360,9 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     KAction *changeTextAct=new KAction(KIcon("edit-rename"), i18n("Change Preview Text..."), this);
     itsPreviewMenu->addAction(changeTextAct),
 
+    itsPreviewListMenu = new QMenu(itsPreviewList);
+    itsPreviewListMenu->addAction(changeTextAct),
+
     // Connect signals...
     connect(itsPreview, SIGNAL(atMax(bool)), zoomIn, SLOT(setDisabled(bool)));
     connect(itsPreview, SIGNAL(atMin(bool)), zoomOut, SLOT(setDisabled(bool)));
@@ -376,7 +390,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     connect(itsFontListView, SIGNAL(disable()), SLOT(disableFonts()));
     connect(itsFontListView, SIGNAL(fontsDropped(const QSet<KUrl> &)),
            SLOT(addFonts(const QSet<KUrl> &)));
-    connect(itsFontListView, SIGNAL(itemSelected(const QModelIndex &)), SLOT(fontSelected(const QModelIndex &)));
+    connect(itsFontListView, SIGNAL(itemsSelected(const QModelIndexList &)), SLOT(fontsSelected(const QModelIndexList &)));
     connect(itsFontListView, SIGNAL(refresh()), SLOT(setStatusBar()));
     connect(itsGroupListView, SIGNAL(unclassifiedChanged()), itsFontListView, SLOT(refreshFilter()));
     connect(createGroup, SIGNAL(clicked()), SLOT(addGroup()));
@@ -389,6 +403,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     //connect(validateFontsAct, SIGNAL(triggered(bool)), SLOT(validateFonts()));
     //connect(downloadFontsAct, SIGNAL(triggered(bool)), SLOT(downloadFonts()));
     connect(itsPreview, SIGNAL(customContextMenuRequested(const QPoint &)), SLOT(previewMenu(const QPoint &)));
+    connect(itsPreviewList, SIGNAL(showMenu(const QPoint &)), SLOT(previewMenu(const QPoint &)));
 
     selectMainGroup();
     itsFontList->load();
@@ -427,31 +442,35 @@ QString CKCmFontInst::quickHelp() const
 
 void CKCmFontInst::previewMenu(const QPoint &pos)
 {
-    itsPreviewMenu->popup(itsPreview->mapToGlobal(pos));
+    if(itsPreviewList->isHidden())
+        itsPreviewMenu->popup(itsPreview->mapToGlobal(pos));
+    else
+        itsPreviewListMenu->popup(itsPreviewList->mapToGlobal(pos));
 }
 
-void CKCmFontInst::fontSelected(const QModelIndex &index)
+void CKCmFontInst::fontsSelected(const QModelIndexList &list)
 {
     itsDeleteFontControl->setEnabled(false);
 
-    if(index.isValid())
+    if(list.count())
     {
-        CFontModelItem *mi=static_cast<CFontModelItem *>(index.internalPointer());
-        CFontItem      *font=NULL;
-
-        if(mi->parent())
-            font=static_cast<CFontItem *>(index.internalPointer());
-        else
-            font=(static_cast<CFamilyItem *>(index.internalPointer()))->regularFont();
-
-        if(font)
+        if(list.count()<2)
         {
-            itsPreview->showFont(font->isEnabled() ? font->family() : font->fileName(),
-                                 font->styleInfo(), font->index());
+            CFontModelItem *mi=static_cast<CFontModelItem *>(list.last().internalPointer());
+            CFontItem      *font=mi->parent()
+                                    ? static_cast<CFontItem *>(mi)
+                                    : (static_cast<CFamilyItem *>(mi))->regularFont();
 
-            itsDeleteFontControl->setEnabled(true);
+            if(font)
+                itsPreview->showFont(font->isEnabled() ? font->family() : font->fileName(),
+                                     font->styleInfo(), font->index());
         }
+        else
+            itsPreviewList->showFonts(list);
     }
+    itsDeleteFontControl->setEnabled(list.count());
+    itsPreviewList->setVisible(list.count()>1);
+    itsPreview->parentWidget()->setVisible(list.count()<2);
 }
 
 void CKCmFontInst::addFonts()
@@ -808,6 +827,7 @@ void CKCmFontInst::changeText()
 
         if(itsPreview->width()>6)
             itsPreview->showFont();
+        itsPreviewList->refreshPreviews();
     }
 }
 
