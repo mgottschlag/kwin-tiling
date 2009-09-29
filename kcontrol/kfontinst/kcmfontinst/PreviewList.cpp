@@ -132,7 +132,7 @@ class CPreviewListViewDelegate : public QStyledItemDelegate
 
         opt.rect.adjust(constBorder, option.rect.height()-(1+itsPreviewSize), -constBorder, 0);
         painter->save();
-        painter->setPen(QPen(QBrush(QApplication::palette().color(QPalette::Text)), 1));
+        painter->setPen(QApplication::palette().color(QPalette::Text));
         QRect lineRect(opt.rect.adjusted(-1, 3, 0, 2));
         painter->drawLine(lineRect.bottomLeft(), lineRect.bottomRight());
         painter->setClipRect(option.rect.adjusted(constBorder, 0, -constBorder, 0));
