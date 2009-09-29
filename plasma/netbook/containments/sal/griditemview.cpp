@@ -141,26 +141,28 @@ void GridItemView::relayout()
     QSizeF availableSize;
     QGraphicsWidget *pw = parentWidget();
     if (pw) {
+        pw->resize(0,0);
         availableSize = pw->size();
     } else {
+        resize(0,0);
         availableSize = size();
     }
 
     if (size().width() <= availableSize.width()) {
-            foreach (Plasma::IconWidget *icon, orderedItems) {
-                if (m_layout->itemAt(validIndex) == icon) {
-                    ++validIndex;
-                } else {
-                    break;
-                }
+        foreach (Plasma::IconWidget *icon, orderedItems) {
+            if (m_layout->itemAt(validIndex) == icon) {
+                ++validIndex;
+            } else {
+                break;
             }
         }
+    }
+
+    for (int i = validIndex; i < m_layout->count(); ++i) {
+        m_layout->removeAt(validIndex);
+    }
 
     if (m_orientation == Qt::Vertical) {
-
-        for (int i = validIndex; i < m_layout->count(); ++i) {
-            m_layout->removeAt(validIndex);
-        }
 
         int nColumns;
         // if we already decided how many columns are going to be don't decide again
@@ -185,10 +187,6 @@ void GridItemView::relayout()
         }
     } else {
 
-        for (int i = validIndex; i < m_layout->count(); ++i) {
-            m_layout->removeAt(validIndex);
-        }
-
         int nRows;
         // if we already decided how many columns are going to be don't decide again
         if (validIndex > 0 && m_layout->columnCount() > 0 &&  m_layout->rowCount() > 0) {
@@ -212,7 +210,7 @@ void GridItemView::relayout()
         }
     }
     //FIXME:????
-    //m_viewMainWidget->resize(0,0);
+    
 }
 
 void GridItemView::keyPressEvent(QKeyEvent *event)
