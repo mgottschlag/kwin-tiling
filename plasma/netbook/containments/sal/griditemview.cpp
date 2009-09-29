@@ -137,6 +137,10 @@ int GridItemView::iconSize() const
 
 void GridItemView::relayout()
 {
+    if (m_layout->count() == 0) {
+        hide();
+    }
+
     //Relayout the grid
     QList<Plasma::IconWidget *>orderedItems = m_items.values();
     int validIndex = 0;
@@ -213,8 +217,11 @@ void GridItemView::relayout()
             ++i;
         }
     }
-    //FIXME:????
-    
+
+    if (!isVisible()) {
+        m_layout->activate();
+        show();
+    }
 }
 
 void GridItemView::keyPressEvent(QKeyEvent *event)
