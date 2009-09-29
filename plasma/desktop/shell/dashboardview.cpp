@@ -166,6 +166,8 @@ void DashboardView::showWidgetExplorer()
     } else {
         m_widgetExplorer = new DashboardWidgetExplorer(c);
         m_widgetExplorer->setContainment(c);
+        m_widgetExplorer->setOrientation(Qt::Horizontal);
+        m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
         m_widgetExplorer->populateWidgetList();
         m_widgetExplorer->setMaximumWidth(width());
         m_widgetExplorer->adjustSize();
