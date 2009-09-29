@@ -35,7 +35,7 @@ GridItemView::GridItemView(QGraphicsWidget *parent)
       m_currentIconIndexY(-1),
       m_iconSize(KIconLoader::SizeHuge),
       m_maxColumnWidth(0),
-      m_maxRowHeight(0)
+      m_maxRowHeight(1)
 {
     m_layout = new QGraphicsGridLayout(this);
 
@@ -87,6 +87,9 @@ void GridItemView::insertItem(Plasma::IconWidget *icon, qreal weight)
     if (icon->size().width() > m_maxColumnWidth) {
         m_maxColumnWidth = icon->size().width();
     }
+    if (icon->size().height() > m_maxRowHeight) {
+        m_maxRowHeight = icon->size().height();
+    }
     icon->hide();
 
     if (weight != -1 || m_items.count() == 0) {
@@ -94,6 +97,8 @@ void GridItemView::insertItem(Plasma::IconWidget *icon, qreal weight)
     } else {
         m_items.insert(m_items.uniqueKeys().last()+1, icon);
     }
+
+    connect(icon, SIGNAL(destroyed(QObject *)), this, SLOT(itemRemoved(QObject *)));
 
     m_relayoutTimer->start(400);
 }
@@ -222,6 +227,22 @@ void GridItemView::relayout()
         m_layout->activate();
         show();
     }
+}
+
+void GridItemView::itemRemoved(QObject *object)
+{
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget *>(object);
+
+    QMapIterator<double, Plasma::IconWidget *> i(m_items);
+    while (i.hasNext()) {
+        i.next();
+        if (i.value() == icon) {
+            m_items.remove(i.key());
+            break;
+        }
+    }
+
+    m_relayoutTimer->start(400);
 }
 
 void GridItemView::keyPressEvent(QKeyEvent *event)

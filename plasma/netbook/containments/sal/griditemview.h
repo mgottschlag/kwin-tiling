@@ -62,6 +62,7 @@ protected:
 
 private Q_SLOTS:
     void relayout();
+    void itemRemoved(QObject *object);
 
 Q_SIGNALS:
     void itemSelected(Plasma::IconWidget *);
