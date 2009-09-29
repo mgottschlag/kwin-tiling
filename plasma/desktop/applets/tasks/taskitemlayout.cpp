@@ -106,7 +106,7 @@ void TaskItemLayout::removeTaskItem(AbstractTaskItem * item)
 bool TaskItemLayout::insert(int index, AbstractTaskItem* item)
 {
     //kDebug() << item->text() << index;
-    if (!item ) {
+    if (!item) {
         kDebug() << "error";
         return false;
     }
@@ -116,6 +116,10 @@ bool TaskItemLayout::insert(int index, AbstractTaskItem* item)
         if (index <= m_groupItem->indexOf(m_itemPositions.at(listIndex))) {
             break;
         }
+    }
+
+    if (m_itemPositions.removeAll(item) == 0) {
+        connect(item, SIGNAL(destroyed(AbstractTaskItem*)), this, SLOT(remove(AbstractTaskItem*)));
     }
 
     m_itemPositions.insert(listIndex, item);
@@ -130,6 +134,7 @@ bool TaskItemLayout::remove(AbstractTaskItem* item)
         kDebug() << "null Item";
     }
 
+    disconnect(item, 0, this, 0);
     m_itemPositions.removeAll(item);
     layoutItems();
     return true;
@@ -501,5 +506,5 @@ int TaskItemLayout::numberOfColumns()
     }
 }
 
-
+#include "taskitemlayout.moc"
 

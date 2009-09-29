@@ -41,8 +41,10 @@ using TaskManager::GroupManager;
 /**
  * A Layout for the expanded group
  */
-class TaskItemLayout : public QGraphicsGridLayout
+class TaskItemLayout : public QObject, public QGraphicsGridLayout
 {
+    Q_OBJECT
+
 public:
     TaskItemLayout(TaskGroupItem * parent, Tasks *applet);
     ~TaskItemLayout();
@@ -79,12 +81,13 @@ public:
     void setOrientation(Plasma::FormFactor orientation);
 
 private:
-    //void calculatePreferredRowSize();
-    bool remove(AbstractTaskItem* item);
-
     void adjustStretch();
     void updatePreferredSize();
 
+private Q_SLOTS:
+    bool remove(AbstractTaskItem* item);
+
+private:
     bool m_hasSpacer;
     QGraphicsWidget *m_spacer;
 

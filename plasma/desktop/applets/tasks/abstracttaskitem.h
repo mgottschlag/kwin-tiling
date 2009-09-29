@@ -131,6 +131,7 @@ public:
 
 Q_SIGNALS:
     void activated(AbstractTaskItem *);
+    void destroyed(AbstractTaskItem *);
 
 public Q_SLOTS:
     virtual void activate() = 0;

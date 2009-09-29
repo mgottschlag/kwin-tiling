@@ -989,7 +989,6 @@ void  TaskGroupItem::itemPositionChanged(AbstractGroupableItem * item)
     //       invalid into the layout.  So check that the task item is
     //       still in the group.
     taskItem = abstractTaskItem(item);
-
     if (m_group && taskItem) {
         m_tasksLayout->insert(m_group->members().indexOf(item), taskItem);
     }
