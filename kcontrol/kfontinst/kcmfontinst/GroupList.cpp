@@ -758,15 +758,7 @@ class CGroupListViewDelegate : public QStyledItemDelegate
         if(grp->isUnclassified())
         {
             opt.rect.adjust(2, 0, -2, 1);
-
-            QLinearGradient grad(opt.rect.bottomLeft(), opt.rect.bottomRight());
-            QColor          col(QApplication::palette().color(QPalette::Text));
-
-            grad.setColorAt(0, col);
-            grad.setColorAt(0.8, col);
-            col.setAlphaF(0.0);
-            grad.setColorAt(1, col);
-            painter->setPen(QPen(QBrush(grad), 1));
+            painter->setPen(QApplication::palette().color(QPalette::Text));
             painter->drawLine(opt.rect.bottomLeft(), opt.rect.bottomRight());
         }
     }
