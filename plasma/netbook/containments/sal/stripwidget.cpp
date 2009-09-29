@@ -218,7 +218,7 @@ void StripWidget::save(KConfigGroup &cg)
     foreach(Plasma::QueryMatch *match, m_favouritesMatches) {
         // Write now just saves one for tests. Later will save
         // all the strip
-        KConfigGroup config(&stripGroup, QString(id));
+        KConfigGroup config(&stripGroup, "favourite-"+id);
         config.writeEntry("runnerid", match->runner()->id());
         config.writeEntry("query", m_favouritesQueries.value(match));
         config.writeEntry("matchId", match->id());
@@ -235,8 +235,10 @@ void StripWidget::restore(KConfigGroup &cg)
     // get all the favourites
     QList<KConfigGroup> favouritesConfigs;
     foreach (const QString &favouriteGroup, stripGroup.groupList()) {
-        KConfigGroup favouriteConfig(&stripGroup, favouriteGroup);
-        favouritesConfigs.append(favouriteConfig);
+        if (favouriteGroup.startsWith("favourite-")) {
+            KConfigGroup favouriteConfig(&stripGroup, favouriteGroup);
+            favouritesConfigs.append(favouriteConfig);
+        }
     }
 
 
