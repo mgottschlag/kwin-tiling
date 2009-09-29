@@ -489,6 +489,7 @@ void PlasmaApp::hideDialogs()
     foreach (QWidget *w, m_dialogs) {
         w->hide();
     }
+
     if (m_view) {
         m_view->hideAppletBrowser();
     }

@@ -25,20 +25,35 @@
 #include <QKeyEvent>
 #include <QTimer>
 
-//#include <KWindowSystem>
-
 #include <Plasma/Applet>
 #include <Plasma/Corona>
 #include <Plasma/Containment>
 #include <Plasma/Svg>
 
-//#include "appletbrowser.h"
+#include <widgetsExplorer/widgetexplorer.h>
+
 #include "plasmaapp.h"
 
 static const int SUPPRESS_SHOW_TIMEOUT = 500; // Number of millis to prevent reshow of dashboard
 
+class ScreenSaverWidgetExplorer : public Plasma::WidgetExplorer
+{
+public:
+    ScreenSaverWidgetExplorer(QGraphicsWidget *parent)
+        : Plasma::WidgetExplorer(parent)
+    {
+
+    }
+
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+    {
+        painter->fillRect(option->rect, QColor(0, 0, 0, 160));
+    }
+};
+
 SaverView::SaverView(Plasma::Containment *containment, QWidget *parent)
     : Plasma::View(containment, parent),
+      m_widgetExplorer(0),
       m_suppressShow(false),
       m_setupMode(false),
       m_init(false)
@@ -61,7 +76,7 @@ SaverView::SaverView(Plasma::Containment *containment, QWidget *parent)
 
 SaverView::~SaverView()
 {
-//    delete m_appletBrowser;
+    delete m_widgetExplorer;
 }
 
 void SaverView::enableSetupMode()
@@ -91,45 +106,31 @@ void SaverView::drawBackground(QPainter * painter, const QRectF & rect)
     }
 }
 
-void SaverView::showAppletBrowser()
+void SaverView::showWidgetExplorer()
 {
-    /*
-    if (!m_appletBrowser) {
-        m_appletBrowser = new Plasma::AppletBrowser(this, Qt::FramelessWindowHint );
-        m_appletBrowser->setContainment(containment());
-        //TODO: make this proportional to the screen
-        m_appletBrowser->setInitialSize(QSize(400, 400));
-        m_appletBrowser->setApplication();
-        m_appletBrowser->setWindowTitle(i18n("Add Widgets"));
-        QPalette p = m_appletBrowser->palette();
-        p.setBrush(QPalette::Background, QBrush(QColor(0, 0, 0, 180)));
-        m_appletBrowser->setPalette(p);
-        m_appletBrowser->setBackgroundRole(QPalette::Background);
-        m_appletBrowser->setAutoFillBackground(true);
-        m_appletBrowser->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint |
-                Qt::X11BypassWindowManagerHint);
-        //KWindowSystem::setState(m_appletBrowser->winId(), NET::KeepAbove|NET::SkipTaskbar);
-        m_appletBrowser->move(0, 0);
-        m_appletBrowser->installEventFilter(this);
+    Plasma::Containment *c = containment();
+    if (!c) {
+        return;
     }
 
-    //TODO give the filter kbd focus
-    m_appletBrowser->setHidden(m_appletBrowser->isVisible());
-    */
+    if (m_widgetExplorer) {
+        delete m_widgetExplorer;
+    } else {
+        m_widgetExplorer = new ScreenSaverWidgetExplorer(c);
+        m_widgetExplorer->setContainment(c);
+        m_widgetExplorer->setOrientation(Qt::Horizontal);
+        m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
+        m_widgetExplorer->populateWidgetList();
+        m_widgetExplorer->setMaximumWidth(width());
+        m_widgetExplorer->adjustSize();
+        m_widgetExplorer->setPos(0, c->geometry().height() - m_widgetExplorer->geometry().height());
+        m_widgetExplorer->setZValue(1000000);
+    }
 }
 
 void SaverView::hideAppletBrowser()
 {
-    /*
-    if (m_appletBrowser) {
-        m_appletBrowser->hide();
-    }
-    */
-}
-
-void SaverView::appletBrowserDestroyed()
-{
-    //m_appletBrowser = 0;
+    delete m_widgetExplorer;
 }
 
 void SaverView::paintEvent(QPaintEvent *event)
@@ -179,7 +180,7 @@ void SaverView::paintEvent(QPaintEvent *event)
 bool SaverView::eventFilter(QObject *watched, QEvent *event)
 {
 #if 0
-    if (watched != m_appletBrowser) {
+    if (watched != m_widgetExplorer) {
         /*if (event->type() == QEvent::MouseButtonPress) {
             QMouseEvent *me = static_cast<QMouseEvent *>(event);
             if (me->button() == Qt::LeftButton) {
@@ -191,36 +192,36 @@ bool SaverView::eventFilter(QObject *watched, QEvent *event)
 
     if (event->type() == QEvent::MouseButtonPress) {
         QMouseEvent *me = static_cast<QMouseEvent *>(event);
-        m_appletBrowserDragStart = me->globalPos();
-    } else if (event->type() == QEvent::MouseMove && m_appletBrowserDragStart != QPoint()) {
+        m_widgetExplorerDragStart = me->globalPos();
+    } else if (event->type() == QEvent::MouseMove && m_widgetExplorerDragStart != QPoint()) {
         QMouseEvent *me = static_cast<QMouseEvent *>(event);
         QPoint newPos = me->globalPos();
-        QPoint curPos = m_appletBrowser->pos();
+        QPoint curPos = m_widgetExplorer->pos();
         int x = curPos.x();
         int y = curPos.y();
 
-        if (curPos.y() == 0 || curPos.y() + m_appletBrowser->height() >= height()) {
-           x = curPos.x() + (newPos.x() - m_appletBrowserDragStart.x());
+        if (curPos.y() == 0 || curPos.y() + m_widgetExplorer->height() >= height()) {
+           x = curPos.x() + (newPos.x() - m_widgetExplorerDragStart.x());
            if (x < 0) {
                x = 0;
-           } else if (x + m_appletBrowser->width() > width()) {
-               x = width() - m_appletBrowser->width();
+           } else if (x + m_widgetExplorer->width() > width()) {
+               x = width() - m_widgetExplorer->width();
            }
         }
 
-        if (x == 0 || x + m_appletBrowser->width() >= width()) {
-            y = m_appletBrowser->y() + (newPos.y() - m_appletBrowserDragStart.y());
+        if (x == 0 || x + m_widgetExplorer->width() >= width()) {
+            y = m_widgetExplorer->y() + (newPos.y() - m_widgetExplorerDragStart.y());
 
             if (y < 0) {
                 y = 0;
-            } else if (y + m_appletBrowser->height() > height()) {
-                y = height() - m_appletBrowser->height();
+            } else if (y + m_widgetExplorer->height() > height()) {
+                y = height() - m_widgetExplorer->height();
             }
         }
-        m_appletBrowser->move(x, y);
-        m_appletBrowserDragStart = newPos;
+        m_widgetExplorer->move(x, y);
+        m_widgetExplorerDragStart = newPos;
     } else if (event->type() == QEvent::MouseButtonRelease) {
-        m_appletBrowserDragStart = QPoint();
+        m_widgetExplorerDragStart = QPoint();
     }
 #endif
     return false;
@@ -251,17 +252,21 @@ void SaverView::setContainment(Plasma::Containment *newContainment)
     if (m_init && newContainment == containment()) {
         return;
     }
-    m_init=true;
 
-    if (isVisible()) {
-        disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
-        connect(newContainment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
+    m_init = true;
+
+    if (containment()) {
+        disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
     }
-/*
-    if (m_appletBrowser) {
-        m_appletBrowser->setContainment(newContainment);
+
+    if (newContainment) {
+        connect(newContainment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
     }
-*/
+
+    if (m_widgetExplorer) {
+        m_widgetExplorer->setContainment(newContainment);
+    }
+
     View::setContainment(newContainment);
 }
 
@@ -270,14 +275,13 @@ void SaverView::hideView()
     if (isHidden()) {
         return;
     }
-    /*
-    if (m_appletBrowser) {
-        m_appletBrowser->hide();
-    }*/
 
-    disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
+    delete m_widgetExplorer;
 
-    containment()->closeToolBox();
+    if (containment()) {
+        containment()->closeToolBox();
+    }
+
     hide();
     //let the lockprocess know
     emit hidden();
@@ -299,14 +303,6 @@ void SaverView::keyPressEvent(QKeyEvent *event)
 
     //kDebug() << event->key() << event->spontaneous();
     Plasma::View::keyPressEvent(event);
-}
-
-//eeeeew. why did dashboard ever have this? wtf!
-void SaverView::showEvent(QShowEvent *event)
-{
-    //KWindowSystem::setState(winId(), NET::SkipPager);
-    connect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
-    Plasma::View::showEvent(event);
 }
 
 #include "saverview.moc"

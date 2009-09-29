@@ -22,12 +22,15 @@
 #ifndef SAVERVIEW_H
 #define SAVERVIEW_H
 
+#include <QPointer>
+
 #include <Plasma/Plasma>
 #include <Plasma/View>
 
 namespace Plasma
 {
     class Containment;
+    class WidgetExplorer;
 }
 
 class SaverView : public Plasma::View
@@ -44,7 +47,6 @@ signals:
 protected:
     void drawBackground(QPainter * painter, const QRectF & rect);
     void keyPressEvent(QKeyEvent *event);
-    void showEvent(QShowEvent *event);
     void paintEvent(QPaintEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
 
@@ -65,12 +67,11 @@ public slots:
     void disableSetupMode();
 
 protected slots:
-    void showAppletBrowser(); //FIXME actually this is toggle
-    void appletBrowserDestroyed();
+    void showWidgetExplorer(); //FIXME actually this is toggle
     void suppressShowTimeout();
 
 private:
-    //Plasma::AppletBrowser *m_appletBrowser;
+    QPointer<Plasma::WidgetExplorer> m_widgetExplorer;
     QPoint m_appletBrowserDragStart;
     bool m_suppressShow : 1;
     bool m_setupMode : 1;
