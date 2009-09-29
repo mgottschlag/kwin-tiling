@@ -233,7 +233,7 @@ void GridItemView::itemRemoved(QObject *object)
 {
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget *>(object);
 
-    QMapIterator<double, Plasma::IconWidget *> i(m_items);
+    QMapIterator<qreal, Plasma::IconWidget *> i(m_items);
     while (i.hasNext()) {
         i.next();
         if (i.value() == icon) {
