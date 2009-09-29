@@ -919,6 +919,7 @@ void CKCmFontInst::setStatusBar()
     bool selectedEnabled=false,
          selectedDisabled=false;
 
+    itsStatusLabel->setToolTip(QString());
     if(0==itsFontList->families().count())
         itsStatusLabel->setText(i18n("No fonts"));
     else
@@ -929,6 +930,7 @@ void CKCmFontInst::setStatusBar()
         QString text(i18np("1 Font", "%1 Fonts", enabled+disabled+partial));
 
         if(disabled||partial)
+        {
             text+=i18n(" (<img src=\"%1\" />%2 <img src=\"%3\" />%4 <img src=\"%5\" />%6)",
                        KIconLoader::global()->iconPath("dialog-ok", -KIconLoader::SizeSmall),
                        enabled,
@@ -936,6 +938,13 @@ void CKCmFontInst::setStatusBar()
                        disabled,
                        partialIcon(),
                        partial);
+            itsStatusLabel->setToolTip(i18n("<table>"
+                                            "<tr><td>Enabled fonts:</td><td>%1</td></tr>"
+                                            "<tr><td>Disabled fonts:</td><td>%2</td></tr>"
+                                            "<tr><td>Partially enabled fonts:</td><td>%3</td></tr>"
+                                            "<tr><td>Total fonts:</td><td>%4</td></tr>"
+                                            "</table>", enabled, disabled, partial, enabled+disabled+partial));
+        }
 
         itsStatusLabel->setText(disabled||partial ? "<p>"+text+"</p>" : text);
     }
