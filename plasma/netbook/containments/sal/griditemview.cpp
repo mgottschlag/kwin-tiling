@@ -89,7 +89,11 @@ void GridItemView::insertItem(Plasma::IconWidget *icon, qreal weight)
     }
     icon->hide();
 
-    m_items.insert(weight, icon);
+    if (weight != -1 || m_items.count() == 0) {
+        m_items.insert(weight, icon);
+    } else {
+        m_items.insert(m_items.uniqueKeys().last()+1, icon);
+    }
 
     m_relayoutTimer->start(400);
 }
@@ -133,13 +137,13 @@ int GridItemView::iconSize() const
 
 void GridItemView::relayout()
 {
-    m_layout->activate();
     //Relayout the grid
     QList<Plasma::IconWidget *>orderedItems = m_items.values();
     int validIndex = 0;
 
     QSizeF availableSize;
     QGraphicsWidget *pw = parentWidget();
+    //FIXME: if this widget will be scrollwidget::widget itself this part could become a bit prettier
     if (pw) {
         pw->resize(0,0);
         availableSize = pw->size();
