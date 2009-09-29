@@ -34,17 +34,6 @@ class KXftConfig
 {
     public:
 
-    enum RequiredData
-    {
-        Dirs           = 0x01,
-        SubPixelType   = 0x02,
-        ExcludeRange   = 0x04,
-        AntiAlias      = 0x08,
-        HintStyle      = 0x10
-    };
-
-    static const int constStyleSettings=SubPixelType|ExcludeRange|AntiAlias|HintStyle;
-
     struct Item
     {
         Item(QDomNode &n) : node(n), toBeRemoved(false) {}
@@ -56,14 +45,6 @@ class KXftConfig
 
         virtual ~Item() {}
         bool toBeRemoved;
-    };
-
-    struct ListItem : public Item
-    {
-        ListItem(const QString &st, QDomNode &n) : Item(n), str(st) {}
-        ListItem(const QString &st)              : str(st)          {}
-
-        QString str;
     };
 
     struct SubPixel : public Item
@@ -137,20 +118,7 @@ class KXftConfig
 
     public:
 
-    static QString contractHome(QString path);
-    static QString expandHome(QString path);
-
-    //
-    // Constructor
-    //    required - This should be a bitmask of 'RequiredData', and indicates the data to be
-    //               read/written to the config file. It is intended that the 'fonts' KControl
-    //               module will use KXftConfig::SubPixelType|KXftConfig::ExcludeRange, and the
-    //               font installer will use KXftConfig::Dirs
-    //
-    //    system   - Indicates if the system-wide config file, or the users ~/.xftconfig file
-    //               should be used. Only the font-installer should access the system file (and then
-    //               only if run as root.
-    explicit KXftConfig(int required, bool system=false);
+    explicit KXftConfig();
 
     virtual ~KXftConfig();
 
@@ -160,8 +128,6 @@ class KXftConfig
     void        setSubPixelType(SubPixel::Type type);  // SubPixel::None => turn off sub-pixel rendering
     bool        getExcludeRange(double &from, double &to);
     void        setExcludeRange(double from, double to); // from:0, to:0 => turn off exclude range
-    void        addDir(const QString &d);
-    void        removeDir(const QString &d);
     bool        getHintStyle(Hint::Style &style);
     void        setHintStyle(Hint::Style style);
     void        setAntiAliasing(bool set);
@@ -171,20 +137,17 @@ class KXftConfig
     static const char * toStr(SubPixel::Type t);
     static QString description(Hint::Style s);
     static const char * toStr(Hint::Style s);
-    bool        hasDir(const QString &d);
 
     private:
 
-    QStringList getDirList();
     void        readContents();
-    void        applyDirs();
     void        applySubPixelType();
     void        applyHintStyle();
     void        applyAntiAliasing();
     void        setHinting(bool set);
     void        applyHinting();
     void        applyExcludeRange(bool pixel);
-    void        removeDirs();
+    bool        aliasingEnabled();
 
     private:
 
@@ -194,13 +157,9 @@ class KXftConfig
     Hint               m_hint;
     Hinting            m_hinting;
     AntiAliasing       m_antiAliasing;
-    bool               aliasingEnabled();
     QDomDocument       m_doc;
-    QList<ListItem>    m_dirs;
     QString            m_file;
-    int                m_required;
-    bool               m_madeChanges,
-                       m_system;
+    bool               m_madeChanges;
     time_t             m_time;
 };
 

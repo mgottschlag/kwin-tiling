@@ -290,7 +290,7 @@ FontAASettings::FontAASettings(QWidget *parent)
 bool FontAASettings::load()
 {
   double     from, to;
-  KXftConfig xft(KXftConfig::constStyleSettings);
+  KXftConfig xft;
 
   if(xft.getExcludeRange(from, to))
      excludeRange->setChecked(true);
@@ -344,7 +344,7 @@ bool FontAASettings::load()
 
 bool FontAASettings::save( bool useAA )
 {
-  KXftConfig   xft(KXftConfig::constStyleSettings);
+  KXftConfig   xft;
   KConfig      kglobals("kdeglobals", KConfig::NoGlobals);
   KConfigGroup grp(&kglobals, "General");
 

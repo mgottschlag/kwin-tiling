@@ -40,32 +40,6 @@
 
 using namespace std;
 
-QString KXftConfig::contractHome(QString path)
-{
-    if (!path.isEmpty() && '/'==path[0])
-    {
-        QString home(QDir::homePath());
-
-        if(path.startsWith(home))
-        {
-            int len = home.length();
-
-            if(path.length() == len || path[len] == '/')
-                return path.replace(0, len, QLatin1String("~"));
-        }
-    }
-
-    return path;
-}
-
-QString KXftConfig::expandHome(QString path)
-{
-    if(!path.isEmpty() && '~'==path[0])
-        return 1==path.length() ? QDir::homePath() : path.replace(0, 1, QDir::homePath());
-
-    return path;
-}
-
 static int point2Pixel(double point)
 {
     return (int)(((point*QX11Info::appDpiY())/72.0)+0.5);
@@ -100,21 +74,6 @@ static QString dirSyntax(const QString &d)
     return d;
 }
 
-static QString xDirSyntax(const QString &d)
-{
-    if(!d.isNull())
-    {
-        QString ds(d);
-        int     slashPos=ds.lastIndexOf('/');
- 
-        if(slashPos==(((int)ds.length())-1))
-            ds.remove(slashPos, 1);
-        return ds;
-    }
-
-    return d;
-}
-
 static bool check(const QString &path, unsigned int fmt, bool checkW=false)
 {
     KDE_struct_stat info;
@@ -132,11 +91,6 @@ inline bool fExists(const QString &p)
 inline bool dWritable(const QString &p)
 {
     return check(p, S_IFDIR, true);
-}
-
-inline bool dExists(const QString &p)
-{
-    return check(p, S_IFDIR, false);
 }
 
 static QString getDir(const QString &f)
@@ -158,26 +112,10 @@ static time_t getTimeStamp(const QString &item)
     return !item.isNull() && 0==KDE_lstat(QFile::encodeName(item), &info) ? info.st_mtime : 0;
 }
 
-inline QString fileSyntax(const QString &f) { return xDirSyntax(f); }
 //
 // Obtain location of config file to use.
-//
-// For system, prefer the following:
-//
-//     <...>/config.d/00kde.conf   = preferred method from FontConfig >= 2.3
-//     <...>/local.conf
-//
-// Non-system, prefer:
-//
-//     $HOME/<...>/.fonts.conf
-//     $HOME/<...>/fonts.conf
-//
-QString getConfigFile(bool system)
+QString getConfigFile()
 {
-#if (FC_VERSION>=20300)
-    static const char * constKdeRootFcFile="00kde.conf";
-#endif
-
     FcStrList   *list=FcConfigGetConfigFiles(FcConfigGetCurrent());
     QStringList files;
     FcChar8     *file;
@@ -187,19 +125,8 @@ QString getConfigFile(bool system)
     {
         QString f((const char *)file);
 
-        if(fExists(f))
-        {
-            // For nonsystem, only consider file within $HOME
-            if(system || 0==fileSyntax(f).indexOf(home))
-                files.append(f);
-        }
-#if (FC_VERSION>=20300)
-        if(system && dExists(f) && (f.contains(QRegExp("/conf\\.d/?$")) ||
-                                    f.contains(QRegExp("/conf\\.d?$"))) ) {
-            FcStrListDone(list);
-            return dirSyntax(f)+constKdeRootFcFile;   // This ones good enough for me!
-        }
-#endif
+        if(fExists(f) && 0==f.indexOf(home))
+            files.append(f);
     }
     FcStrListDone(list);
 
@@ -208,15 +135,15 @@ QString getConfigFile(bool system)
     if(files.count())
     {
         QStringList::const_iterator it(files.begin()),
-                              end(files.end());
+                                    end(files.end());
 
         for(; it!=end; ++it)
-            if(-1!=(*it).indexOf(QRegExp(system ? "/local\\.conf$" : "/\\.?fonts\\.conf$")))
+            if(-1!=(*it).indexOf(QRegExp("/\\.?fonts\\.conf$")))
                 return *it;
         return files.front();  // Just return the 1st one...
     }
     else // Hmmm... no known files?
-        return system ? "/etc/fonts/local.conf" : fileSyntax(home+"/.fonts.conf"); 
+        return home+"/.fonts.conf";
 }
 
 static QString getEntry(QDomElement element, const char *type, unsigned int numAttributes, ...)
@@ -283,12 +210,10 @@ static KXftConfig::Hint::Style strToStyle(const char *str)
         return KXftConfig::Hint::None;
 }
 
-KXftConfig::KXftConfig(int required, bool system)
-          : m_doc("fontconfig"),
-            m_required(required),
-            m_system(system)
+KXftConfig::KXftConfig()
+          : m_doc("fontconfig")
+          , m_file(getConfigFile())
 {
-    m_file=getConfigFile(system);
     kDebug(1208) << "Using fontconfig file:" << m_file;
     m_antiAliasing = aliasingEnabled();
     reset();
@@ -305,7 +230,6 @@ bool KXftConfig::reset()
     m_madeChanges=false;
     m_hint.reset();
     m_hinting.reset();
-    m_dirs.clear();
     m_excludeRange.reset();
     m_excludePixelRange.reset();
     m_subPixel.reset();
@@ -328,7 +252,7 @@ bool KXftConfig::reset()
     if(m_doc.documentElement().isNull())
         m_doc.appendChild(m_doc.createElement("fontconfig"));
 
-    if(ok && m_required&ExcludeRange)
+    if(ok)
     {
         //
         // Check exclude range values - i.e. size and pixel size...
@@ -370,26 +294,12 @@ bool KXftConfig::apply()
         // of our changes...
         if(fExists(m_file) && getTimeStamp(m_file)!=m_time)
         {
-            KXftConfig newConfig(m_required, m_system);
+            KXftConfig newConfig;
 
-            if(m_required&Dirs)
-            {
-                QStringList           list(getDirList());
-                QStringList::const_iterator it(list.begin()),
-                                      end(list.end());
-
-                for(it=list.constBegin(); it!=list.constEnd(); ++it)
-                    newConfig.addDir(*it);
-            }
-
-            if(m_required&ExcludeRange)
-                newConfig.setExcludeRange(m_excludeRange.from, m_excludeRange.to);
-            if(m_required&SubPixelType)
-                newConfig.setSubPixelType(m_subPixel.type);
-            if(m_required&HintStyle)
-                newConfig.setHintStyle(m_hint.style);
-            if(m_required&AntiAlias)
-                newConfig.setAntiAliasing(m_antiAliasing.set);
+            newConfig.setExcludeRange(m_excludeRange.from, m_excludeRange.to);
+            newConfig.setSubPixelType(m_subPixel.type);
+            newConfig.setHintStyle(m_hint.style);
+            newConfig.setAntiAliasing(m_antiAliasing.set);
 
             ok=newConfig.changed() ? newConfig.apply() : true;
             if(ok)
@@ -399,12 +309,9 @@ bool KXftConfig::apply()
         }
         else
         {
-            if(m_required&ExcludeRange)
-            {
-                // Ensure these are always equal...
-                m_excludePixelRange.from=(int)point2Pixel(m_excludeRange.from);
-                m_excludePixelRange.to=(int)point2Pixel(m_excludeRange.to);
-            }
+            // Ensure these are always equal...
+            m_excludePixelRange.from=(int)point2Pixel(m_excludeRange.from);
+            m_excludePixelRange.to=(int)point2Pixel(m_excludeRange.to);
 
             FcAtomic *atomic=FcAtomicCreate((const unsigned char *)(QFile::encodeName(m_file).data()));
 
@@ -417,22 +324,11 @@ bool KXftConfig::apply()
 
                     if(f)
                     {
-                        if(m_required&Dirs)
-                        {
-                            applyDirs();
-                            removeDirs();
-                        }
-                        if(m_required&SubPixelType)
-                            applySubPixelType();
-                        if(m_required&HintStyle)
-                            applyHintStyle();
-                        if(m_required&AntiAlias)
-                            applyAntiAliasing();
-                        if(m_required&ExcludeRange)
-                        {
-                            applyExcludeRange(false);
-                            applyExcludeRange(true);
-                        }
+                        applySubPixelType();
+                        applyHintStyle();
+                        applyAntiAliasing();
+                        applyExcludeRange(false);
+                        applyExcludeRange(true);
 
                         //
                         // Check document syntax...
@@ -551,37 +447,6 @@ void KXftConfig::setExcludeRange(double from, double to)
     }
 }
 
-void KXftConfig::addDir(const QString &d)
-{
-    QString dir(dirSyntax(d));
-
-    if(dExists(dir) && !hasDir(dir))
-    {
-        m_dirs.append(ListItem(d));
-        m_madeChanges=true;
-    }
-}
-
-void KXftConfig::removeDir(const QString &d)
-{
-    QList<ListItem>::Iterator it(m_dirs.begin()),
-                              end(m_dirs.end());
-
-    for(; it!=end; )
-        if((*it).str==d)
-        {
-            QList<ListItem>::Iterator dir=it;
-            ++it;
-
-            if((*dir).added())
-                m_dirs.erase(dir);
-            else
-                (*dir).toBeRemoved=true;
-            m_madeChanges=true;
-            break;
-        }
-}
-
 QString KXftConfig::description(SubPixel::Type t)
 {
     switch(t)
@@ -652,33 +517,6 @@ const char * KXftConfig::toStr(Hint::Style s)
     }
 }
 
-bool KXftConfig::hasDir(const QString &d)
-{
-    QString dir(dirSyntax(d));
-
-    QList<ListItem>::Iterator it(m_dirs.begin()),
-                              end(m_dirs.end());
-
-    for(; it!=end; ++it)
-        if(0==dir.indexOf((*it).str))
-            return true;
-
-    return false;
-}
-
-QStringList KXftConfig::getDirList()
-{
-    QStringList               res;
-    QList<ListItem>::Iterator it(m_dirs.begin()),
-                              end(m_dirs.end());
-
-    for(; it!=end; ++it)
-        if(!(*it).toBeRemoved)
-            res.append((*it).str);
-
-    return res;
-}
-
 void KXftConfig::readContents()
 {
     QDomNode n = m_doc.documentElement().firstChild();
@@ -689,19 +527,14 @@ void KXftConfig::readContents()
 
         if(!e.isNull())
         {
-            if("dir"==e.tagName())
-            {
-                if(m_required&Dirs)
-                    m_dirs.append(ListItem(expandHome(dirSyntax(e.text())), n));
-            }
-            else if("match"==e.tagName())
+            if("match"==e.tagName())
             {
                 QString str;
 
                 switch(e.childNodes().count())
                 {
                     case 1:
-                        if(m_required&SubPixelType && "font"==e.attribute("target"))
+                        if("font"==e.attribute("target"))
                         {
                             QDomElement ene=e.firstChild().toElement();
 
@@ -735,7 +568,7 @@ void KXftConfig::readContents()
                         }
                         break;
                     case 3: // CPD: Is target "font" or "pattern" ????
-                        if(m_required&ExcludeRange && "font"==e.attribute("target"))  
+                        if("font"==e.attribute("target"))
                         {
                             bool     foundFalse=false;
                             QDomNode en=e.firstChild();
@@ -813,22 +646,6 @@ void KXftConfig::readContents()
         }
         n=n.nextSibling();
     }
-}
-
-void KXftConfig::applyDirs()
-{
-    QList<ListItem>::Iterator it(m_dirs.begin()),
-                              end(m_dirs.end());
-
-    for(; it!=end; ++it)
-        if(!(*it).toBeRemoved && (*it).node.isNull())
-        {
-            QDomElement newNode = m_doc.createElement("dir");
-            QDomText    text    = m_doc.createTextNode(contractHome(xDirSyntax((*it).str)));
-
-            newNode.appendChild(text);
-            m_doc.documentElement().appendChild(newNode);
-        }
 }
 
 void KXftConfig::applySubPixelType()
@@ -961,17 +778,6 @@ void KXftConfig::applyExcludeRange(bool pixel)
     }
 }
 
-void KXftConfig::removeDirs()
-{
-    QDomElement               docElem = m_doc.documentElement();
-    QList<ListItem>::Iterator it(m_dirs.begin()),
-                              end(m_dirs.end());
-
-    for(; it!=end; ++it)
-        if((*it).toBeRemoved && !(*it).node.isNull())
-            docElem.removeChild((*it).node);
-}
-
 bool KXftConfig::getAntiAliasing() const
 {
     return m_antiAliasing.set;
@@ -1024,4 +830,3 @@ bool KXftConfig::aliasingEnabled()
 }
 
 #endif
-
