@@ -31,6 +31,7 @@
 #include <KDE/KIconLoader>
 #include <kde_file.h>
 #include <KDE/KMessageBox>
+#include <KDE/KColorScheme>
 #include <QtCore/QProcess>
 #include <QtGui/QFont>
 #include <QtCore/QMap>
@@ -1047,20 +1048,18 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
                 }
             break;
         case Qt::FontRole:
-            if(COL_FONT==index.column())
+            if(COL_FONT==index.column() && mi->isSystem())
             {
-                bool sys(mi->isSystem()),
-                     disabled( (mi->isFont() && !(static_cast<CFontItem *>(index.internalPointer()))->isEnabled()) ||
-                               (mi->isFamily() &&
-                                 CFamilyItem::DISABLED==(static_cast<CFamilyItem *>(index.internalPointer()))->status()));
-                if(sys||disabled)
-                {
-                    QFont font;
-                    font.setItalic(disabled);
-                    font.setBold(sys);
-                    return font;
-                }
+                QFont font;
+                font.setItalic(true);
+                return font;
             }
+            break;
+        case Qt::ForegroundRole:
+            if(COL_FONT==index.column() &&
+               ( (mi->isFont() && !(static_cast<CFontItem *>(index.internalPointer()))->isEnabled()) ||
+                 (mi->isFamily() && CFamilyItem::DISABLED==(static_cast<CFamilyItem *>(index.internalPointer()))->status())) )
+                return KColorScheme(QPalette::Active).foreground(KColorScheme::NegativeText).color();
             break;
         case Qt::DisplayRole:
             if(COL_FONT==index.column())
