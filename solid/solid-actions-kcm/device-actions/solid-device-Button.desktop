@@ -178,6 +178,7 @@ Name[zh_TW]=類型
 [Desktop Entry]
 Actions=hasState;objectName;stateValue;type;
 Name=Solid Device
+Name[et]=Solidi seade
 Name[id]=Divais Solid
 Name[nb]=Solid-enhet
 Name[nds]=Solid-Reedschap

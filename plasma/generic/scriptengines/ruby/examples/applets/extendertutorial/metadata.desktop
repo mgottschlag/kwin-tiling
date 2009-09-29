@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Ruby Extender Tutorial
 Name[da]=Vejledning til Ruby Extender
+Name[de]=Einführung zu Ruby Extender
 Name[es]=Tutorial del extensor Ruby
 Name[et]=Ruby laienduse algtutvustus
 Name[gl]=Tutorial do extensor en Ruby
@@ -21,6 +22,7 @@ Name[x-test]=xxRuby Extender Tutorialxx
 Name[zh_TW]=Ruby Extender 教學
 Comment=An example of a popup applet with extender
 Comment[da]=Et eksempel på en pop-op-applet med extender
+Comment[de]=Ein beispielhaftes Miniprogramm mit Extender
 Comment[es]=Un ejemplo de applet emergente con extensor
 Comment[et]=Laiendusega hüpikapleti näidis
 Comment[gl]=Un exemplo dunha aplet emerxente cun extensor

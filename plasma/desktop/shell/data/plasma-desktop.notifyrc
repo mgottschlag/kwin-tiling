@@ -1,6 +1,7 @@
 [Global]
 IconName=plasma
 Comment=Plasma Desktop Shell
+Comment[et]=Plasma töölauakest
 Comment[id]=Shell Desktop Plasma
 Comment[nb]=Plasma skrivebordsskall
 Comment[nds]=Plasma-Schriefdischkieker
@@ -12,6 +13,7 @@ Comment[uk]=Оболонка стільниці Плазми
 Comment[x-test]=xxPlasma Desktop Shellxx
 Comment[zh_TW]=Plasma 桌面 shell
 Name=Workspace
+Name[et]=Töötsoon
 Name[id]=Ruang Kerja
 Name[nb]=Arbeidsområde
 Name[nds]=Arbeitrebeet
@@ -24,6 +26,7 @@ Name[x-test]=xxWorkspacexx
 
 [Event/newplasmoid]
 Name=New widget published
+Name[et]=Avaldati uus vidin
 Name[id]=Widget baru diterbitkan
 Name[nb]=Nytt skjermelement publisert
 Name[nds]=Nieg Lüttprogramm apenmaakt
@@ -34,6 +37,7 @@ Name[tr]=Yeni gereç yayınlandı
 Name[uk]=Оприлюднено новий віджет
 Name[x-test]=xxNew widget publishedxx
 Comment=A new widget has become available on the network.
+Comment[et]=Võrgus sai kättesaadavaks uus vidin.
 Comment[id]=Sebuah widget baru telah tersedia di dalam jaringan.
 Comment[nb]=Et nytt skjermelement er blitt tilgjengelig på nettverket.
 Comment[nds]=Dat gifft en nieg Lüttprogramm in't Nett.

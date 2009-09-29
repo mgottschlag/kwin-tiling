@@ -408,6 +408,7 @@ Name[zh_TW]=寫入速度
 [Desktop Entry]
 Actions=bus;driveType;hotpluggable;objectName;readSpeed;removable;supportedMedia;writeSpeed;writeSpeeds;
 Name=Solid Device
+Name[et]=Solidi seade
 Name[id]=Divais Solid
 Name[nb]=Solid-enhet
 Name[nds]=Solid-Reedschap

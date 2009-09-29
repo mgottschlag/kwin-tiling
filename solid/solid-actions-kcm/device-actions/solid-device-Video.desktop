@@ -94,6 +94,7 @@ Name[zh_TW]=支援的驅動程式
 [Desktop Entry]
 Actions=objectName;supportedDrivers;
 Name=Solid Device
+Name[et]=Solidi seade
 Name[id]=Divais Solid
 Name[nb]=Solid-enhet
 Name[nds]=Solid-Reedschap

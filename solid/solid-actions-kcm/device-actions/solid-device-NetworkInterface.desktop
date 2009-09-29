@@ -234,6 +234,7 @@ Name[zh_TW]=無線
 [Desktop Entry]
 Actions=hwAddress;ifaceName;macAddress;objectName;wireless;
 Name=Solid Device
+Name[et]=Solidi seade
 Name[id]=Divais Solid
 Name[nb]=Solid-enhet
 Name[nds]=Solid-Reedschap

@@ -181,6 +181,7 @@ Name[zh_TW]=序列類型
 [Desktop Entry]
 Actions=driverHandle;objectName;port;serialType;
 Name=Solid Device
+Name[et]=Solidi seade
 Name[id]=Divais Solid
 Name[nb]=Solid-enhet
 Name[nds]=Solid-Reedschap

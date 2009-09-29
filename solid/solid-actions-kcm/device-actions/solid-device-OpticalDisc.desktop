@@ -559,7 +559,7 @@ Name[bg]=Uuid
 Name[ca]=UUID
 Name[cs]=Uuid
 Name[da]=Uuid
-Name[de]=Uuid
+Name[de]=UUID
 Name[el]=Uuid
 Name[en_GB]=Uuid
 Name[es]=Uuid
@@ -602,6 +602,7 @@ Name[zh_TW]=UUID
 [Desktop Entry]
 Actions=appendable;availableContent;blank;capacity;discType;fsType;ignored;label;objectName;rewritable;size;usage;uuid;
 Name=Solid Device
+Name[et]=Solidi seade
 Name[id]=Divais Solid
 Name[nb]=Solid-enhet
 Name[nds]=Solid-Reedschap

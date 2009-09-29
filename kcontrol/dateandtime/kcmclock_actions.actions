@@ -1,5 +1,6 @@
 [Domain]
 Name=Date and Time Control Module
+Name[et]=Kuupäeva ja kellaaja juhtimismoodul
 Name[id]=Modul Kontrol Tanggal dan Waktu
 Name[nb]=Styremodul for dato og tid
 Name[nds]=Datum- un Tiet-Kuntrullmoduul
@@ -13,6 +14,7 @@ Icon=preferences-system-time
 
 [org.kde.kcontrol.kcmclock.save]
 Name=Save the date/time settings
+Name[et]=Kuupäeva ja kellaaja seadistuste salvestamine
 Name[id]=Simpan pengaturan tanggal/waktu
 Name[nb]=Lagre dato og klokkeslett-innstillinger
 Name[nds]=Instellen vun Datum un Tiet sekern
@@ -24,6 +26,7 @@ Name[uk]=Зберегти параметри дати/часу
 Name[x-test]=xxSave the date/time settingsxx
 Name[zh_TW]=儲存日期和時間設定值
 Description=System policies prevent you to save the date/time settings
+Description[et]=Süsteemi reeglid takistavad kuupäeva ja kellaaja seadistuste salvestamist
 Description[id]=Kebijakan sistem menghalangi anda untuk menyimpan pengaturan tanggal/waktu
 Description[nb]=Systembestemmelser gjør at du ikke kan lagre dato/tid-innstillingene
 Description[nds]=De Systeemregeln verlöövt nich, dat Du de Instellen för Datum un Tiet sekerst.
