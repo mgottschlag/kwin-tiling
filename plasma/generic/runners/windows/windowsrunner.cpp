@@ -36,7 +36,7 @@ WindowsRunner::WindowsRunner(QObject* parent, const QVariantList& args)
     addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds windows whose name, window class or window role match :q:. "
                                    "It is possible to interact with the windows by using one of the following keywords: "
                                    "activate, close, min(imize), max(imize), fullscreen, shade, keep above and keep below.")));
-    addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds windows which are on desktop named :q:"
+    addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds windows which are on desktop named :q: "
                                    "It is possible to interact with the windows by using one of the following keywords: "
                                    "activate, close, min(imize), max(imize), fullscreen, shade, keep above and keep below.")));
     addSyntax(Plasma::RunnerSyntax(":q:", i18n("Switch to desktop named :q:")));
