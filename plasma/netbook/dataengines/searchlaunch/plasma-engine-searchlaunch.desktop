@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Search and Launch Engine
 Name[et]=Otsimise ja käivitamise mootor
+Name[gl]=Motor de procura e inicio
 Name[id]=Mesin Pencari dan Peluncur
 Name[nb]=Søk og start-motor
 Name[nds]=Söök- un Oproopkarn
@@ -13,6 +14,7 @@ Name[x-test]=xxSearch and Launch Enginexx
 Name[zh_TW]=搜索與啟動引擎
 Comment=Engine to handle queries to SAL containment
 Comment[et]=SAL konteineri päringuid käitlev mootor
+Comment[gl]=Un motor para manipular consultas ao contedor SAL
 Comment[id]=Mesin untuk menangani lema ke pembatasan SAL
 Comment[nb]=Motor som håndterer forespørsler til SoS-beholder
 Comment[nds]=Karn för Anfragen na't SuO-Gelaats

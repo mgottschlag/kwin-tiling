@@ -603,6 +603,7 @@ Name[zh_TW]=UUID
 Actions=appendable;availableContent;blank;capacity;discType;fsType;ignored;label;objectName;rewritable;size;usage;uuid;
 Name=Solid Device
 Name[et]=Solidi seade
+Name[gl]=Dispositivo de Solid
 Name[id]=Divais Solid
 Name[nb]=Solid-enhet
 Name[nds]=Solid-Reedschap

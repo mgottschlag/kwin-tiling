@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Search and Launch Containment
 Name[et]=Otsimise ja käivitamise konteiner
+Name[gl]=Contedor de procura e inicio
 Name[id]=Pembatasan Pencarian dan Peluncuran
 Name[nb]=Søk og start-beholder
 Name[nds]=Söök- un Oproopgelaats
@@ -12,6 +13,7 @@ Name[uk]=Контейнер пошуку і запуску
 Name[x-test]=xxSearch and Launch Containmentxx
 Comment=Special Containment with Launcher
 Comment[et]=Erikonteiner käivitajaga
+Comment[gl]=Un contedor especial cun iniciador
 Comment[id]=Pembatasan Khusus Dengan Peluncur
 Comment[nb]=Spesiell beholder med starter
 Comment[nds]=Besünner Gelaats mit Oproper

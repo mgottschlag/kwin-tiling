@@ -329,6 +329,7 @@ Name[zh_TW]=UUID
 Actions=fsType;ignored;label;objectName;size;usage;uuid;
 Name=Solid Device
 Name[et]=Solidi seade
+Name[gl]=Dispositivo de Solid
 Name[id]=Divais Solid
 Name[nb]=Solid-enhet
 Name[nds]=Solid-Reedschap

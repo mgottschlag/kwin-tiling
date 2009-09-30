@@ -47,6 +47,7 @@ Name[zh_TW]=物件名稱
 [Desktop Action readerType]
 Name=Reader Type
 Name[et]=Lugeja tüüp
+Name[gl]=Tipo de lector
 Name[id]=Tipe Pembaca
 Name[nb]=Lesertype
 Name[nds]=Lesertyp
@@ -61,6 +62,7 @@ Name[x-test]=xxReader Typexx
 Actions=objectName;readerType;
 Name=Solid Device
 Name[et]=Solidi seade
+Name[gl]=Dispositivo de Solid
 Name[id]=Divais Solid
 Name[nb]=Solid-enhet
 Name[nds]=Solid-Reedschap

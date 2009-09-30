@@ -226,6 +226,7 @@ Name[zh_TW]=可移除
 Actions=bus;driveType;hotpluggable;objectName;removable;
 Name=Solid Device
 Name[et]=Solidi seade
+Name[gl]=Dispositivo de Solid
 Name[id]=Divais Solid
 Name[nb]=Solid-enhet
 Name[nds]=Solid-Reedschap

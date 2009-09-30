@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Search Box
 Name[et]=Otsingukast
+Name[gl]=Caixa de procura
 Name[id]=Kotak Pencarian
 Name[nb]=Søkeboks
 Name[nds]=Söökreeg
@@ -13,6 +14,7 @@ Name[x-test]=xxSearch Boxxx
 Name[zh_TW]=搜尋盒
 Comment=Search Box for a given RunnerManager
 Comment[et]=Käivitamishalduri otsingukast
+Comment[gl]=Caixa de procura para un RunnerManager dado
 Comment[id]=Kotak pencarian untuk manajer pelari yang diberikan
 Comment[nb]=Søkeboks for en gitt RunnerManager
 Comment[nds]=Söökreeg för en angeven Dreegpleger
