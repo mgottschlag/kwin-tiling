@@ -378,7 +378,6 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
             setTabOrder(m_stripWidget, m_searchField);
             setTabOrder(m_searchField, m_gridScroll);
-            reset();
         }
     }
 
@@ -430,6 +429,7 @@ void SearchLaunch::restoreStrip()
 {
     KConfigGroup cg = config();
     m_stripWidget->restore(cg);
+    reset();
 }
 
 void SearchLaunch::paintInterface(QPainter *, const QStyleOptionGraphicsItem *, const QRect &)
