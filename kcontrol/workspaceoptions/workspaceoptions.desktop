@@ -1,0 +1,19 @@
+[Desktop Entry]
+Exec=kcmshell4 workspaceoptions
+Icon=plasma
+Type=Service
+X-KDE-ServiceTypes=KCModule
+X-DocPath=kcontrol/workspaceoptions/index.html
+
+X-KDE-Library=kcm_workspaceoptions
+X-KDE-ParentApp=kcontrol
+
+X-KDE-System-Settings-Parent-Category=desktop
+
+Name=Workspace
+
+Comment=Global options for the Plasma workspace
+
+X-KDE-Keywords=plasma,workspace,shell,formfactor,dashboard
+
+Categories=Qt;KDE;X-KDE-settings-system;
