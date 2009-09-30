@@ -55,6 +55,7 @@ public:
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
     void focusInEvent(QFocusEvent *event);
+    void paintInterface(QPainter *, const QStyleOptionGraphicsItem *, const QRect &);
 
 public slots:
     void dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data);
@@ -63,6 +64,7 @@ private slots:
     void updateSize();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
     void appletRemoved(Plasma::Applet* applet);
+    void restoreStrip();
 
     void doSearch(const QString query);
     void setQueryMatches(const QList<Plasma::QueryMatch> &m);
@@ -99,6 +101,8 @@ private:
     QGraphicsLinearLayout *m_mainLayout;
     QGraphicsLinearLayout *m_appletsLayout;
     QPointF m_buttonDownMousePos;
+
+    bool m_stripUninitialized;
 };
 
 

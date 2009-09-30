@@ -52,7 +52,7 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
       m_searchField(0),
       m_gridScroll(0),
       m_appletsLayout(0),
-      m_buttonDownMousePos(QPoint())
+      m_stripUninitialized(true)
 {
     setContainmentType(Containment::CustomContainment);
     setFocusPolicy(Qt::StrongFocus);
@@ -311,7 +311,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             // create main layout
             m_mainLayout = new QGraphicsLinearLayout();
             m_mainLayout->setOrientation(layoutOtherDirection);
-            m_mainLayout->setContentsMargins(0, 10, 0, 0);
+            m_mainLayout->setContentsMargins(0, 0, 0, 0);
             m_mainLayout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
                                                     QSizePolicy::Expanding));
             setLayout(m_mainLayout);
@@ -338,9 +338,6 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             gridLayout->addItem(m_gridScroll);
 
             m_stripWidget = new StripWidget(m_runnermg, this);
-            KConfigGroup cg = config();
-            m_stripWidget->restore(cg);
-
             m_appletsLayout = new QGraphicsLinearLayout();
 
             m_homeButton = new Plasma::IconWidget(this);
@@ -426,6 +423,20 @@ void SearchLaunch::setFormFactorFromLocation(Plasma::Location loc)
         break;
     default:
         kDebug() << "invalid location!!";
+    }
+}
+
+void SearchLaunch::restoreStrip()
+{
+    KConfigGroup cg = config();
+    m_stripWidget->restore(cg);
+}
+
+void SearchLaunch::paintInterface(QPainter *, const QStyleOptionGraphicsItem *, const QRect &)
+{
+    if (m_stripUninitialized) {
+        m_stripUninitialized = false;
+        QTimer::singleShot(100, this, SLOT(restoreStrip()));
     }
 }
 
