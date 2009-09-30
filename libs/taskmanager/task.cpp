@@ -137,7 +137,7 @@ void Task::refreshIcon()
 
     // try to guess the icon from the classhint
     if (d->pixmap.isNull()) {
-        KIconLoader::global()->loadIcon(className().toLower(),
+        d->pixmap = KIconLoader::global()->loadIcon(className().toLower(),
                                                     KIconLoader::Small,
                                                     KIconLoader::Small,
                                                     KIconLoader::DefaultState,
