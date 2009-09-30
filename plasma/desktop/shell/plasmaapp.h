@@ -104,6 +104,10 @@ public Q_SLOTS:
     void loadScriptInInteractiveConsole(const QString &script);
 
     Q_SCRIPTABLE void quit();
+    void setPerVirtualDesktopViews(bool perDesktopViews);
+    bool perVirtualDesktopViews() const;
+    void setFixedDashboard(bool fixedDashboard);
+    bool fixedDashboard() const;
 
     /**
      * Request a zoom based on the containment
@@ -140,9 +144,7 @@ private Q_SLOTS:
     void addContainment();
     void configureContainment(Plasma::Containment*);
     void updateActions(Plasma::ImmutabilityType immutability);
-    void setPerVirtualDesktopViews(bool perDesktopViews);
     void checkVirtualDesktopViews(int numDesktops);
-    void setFixedDashboard(bool fixedDashboard);
     void setWmClass(WId id);
     void slotRemotePlasmoidAdded(Plasma::PackageMetadata metadata);
     void slotAddRemotePlasmoid(const QString &location);

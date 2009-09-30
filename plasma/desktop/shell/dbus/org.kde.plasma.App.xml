@@ -11,6 +11,18 @@
     <method name="loadScriptInInteractiveConsole">
       <arg name="script" type="s" direction="in"/>
     </method>
+    <method name="setPerVirtualDesktopViews">
+      <arg name="enable" type="b" direction="in"/>
+    </method>
+    <method name="perVirtualDesktopViews">
+      <arg name="enabled" type="b" direction="out"/>
+    </method>
+    <method name="setFixedDashboard">
+      <arg name="enable" type="b" direction="in"/>
+    </method>
+    <method name="fixedDashboard">
+      <arg name="enabled" type="b" direction="out"/>
+    </method>
     <method name="quit">
     </method>
   </interface>

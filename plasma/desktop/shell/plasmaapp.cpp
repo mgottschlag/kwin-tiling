@@ -1037,6 +1037,11 @@ void PlasmaApp::setPerVirtualDesktopViews(bool perDesktopViews)
     }
 }
 
+bool PlasmaApp::perVirtualDesktopViews() const
+{
+    return AppSettings::perVirtualDesktopViews();
+}
+
 void PlasmaApp::checkVirtualDesktopViews(int numDesktops)
 {
     kDebug() << numDesktops;
@@ -1056,14 +1061,6 @@ void PlasmaApp::checkVirtualDesktopViews(int numDesktops)
 
 void PlasmaApp::setFixedDashboard(bool fixedDashboard)
 {
-    bool dashboardFollowsDesktop = true;
-    foreach (DesktopView *view, m_desktops) {
-        if (view->dashboardContainment()) {
-            dashboardFollowsDesktop = false;
-            break;
-        }
-    }
-
     Plasma::Containment *c = 0;
     if (fixedDashboard) {
         //avoid the containmentAdded signal being emitted
@@ -1076,6 +1073,18 @@ void PlasmaApp::setFixedDashboard(bool fixedDashboard)
     foreach (DesktopView *view, m_desktops) {
         view->setDashboardContainment(c);
     }
+}
+
+bool PlasmaApp::fixedDashboard() const
+{
+    bool dashboardFollowsDesktop = true;
+    foreach (DesktopView *view, m_desktops) {
+        if (view->dashboardContainment()) {
+            dashboardFollowsDesktop = false;
+            break;
+        }
+    }
+    return dashboardFollowsDesktop;
 }
 
 void PlasmaApp::panelRemoved(QObject *panel)
