@@ -143,7 +143,7 @@ void SM::Net::dataUpdated(const QString& source,
     if (!m_data.contains(interface)) {
         m_data[interface] = QList<double>() << -1 << -1;
     }
-    m_data[interface][index] = data["value"].toDouble();
+    m_data[interface][index] = qMax(0.0, data["value"].toDouble());
     if (!m_data[interface].contains(-1)) {
        Plasma::SignalPlotter *plotter = plotters()[interface];
         if (plotter) {
