@@ -508,7 +508,7 @@ bool Settings::update()
         {
         // Import checks if the file was already imported.
         KConfig file(path);
-        if (import(file, ImportSilent, Disabled))
+        if (import(file, ImportSilent, Current))
             {
             kDebug() << "Imported file" << path;
             imported = true;
