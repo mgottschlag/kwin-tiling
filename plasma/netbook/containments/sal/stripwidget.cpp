@@ -218,11 +218,11 @@ void StripWidget::save(KConfigGroup &cg)
     foreach(Plasma::QueryMatch *match, m_favouritesMatches) {
         // Write now just saves one for tests. Later will save
         // all the strip
-        KConfigGroup config(&stripGroup, "favourite-"+id);
+        KConfigGroup config(&stripGroup, QString("favourite-%1").arg(id));
         config.writeEntry("runnerid", match->runner()->id());
         config.writeEntry("query", m_favouritesQueries.value(match));
         config.writeEntry("matchId", match->id());
-        id++;
+        ++id;
     }
 }
 
@@ -241,32 +241,45 @@ void StripWidget::restore(KConfigGroup &cg)
         }
     }
 
+    QVector<QString>runnerIds;
+    QVector<QString>queries;
+    QVector<QString>matchIds;
+
+    if (favouritesConfigs.isEmpty()) {
+        runnerIds.resize(4);
+        queries.resize(4);
+        matchIds.resize(4);
+        matchIds << "services_kde-konqbrowser.desktop" << "services_kde4-KMail.desktop" << "services_kde4-systemsettings.desktop" << "places";
+        queries << "konqueror" << "kmail" << "systemsettings" << "home";
+        runnerIds << "services" << "services" << "services" << "places";
+    } else {
+        runnerIds.resize(favouritesConfigs.size());
+        queries.resize(favouritesConfigs.size());
+        matchIds.resize(favouritesConfigs.size());
+        QMutableListIterator<KConfigGroup> it(favouritesConfigs);
+        int i = 0;
+        while (it.hasNext()) {
+            KConfigGroup &favouriteConfig = it.next();
+
+            runnerIds[i] = favouriteConfig.readEntry("runnerid");
+            queries[i] = favouriteConfig.readEntry("query");
+            matchIds[i] = favouriteConfig.readEntry("matchId");
+            ++i;
+        }
+    }
 
     QString currentQuery;
-    QMutableListIterator<KConfigGroup> it(favouritesConfigs);
-    while (it.hasNext()) {
-        KConfigGroup &favouriteConfig = it.next();
-
-        QString runnerId = favouriteConfig.readEntry("runnerid");
-        QString query = favouriteConfig.readEntry("query");
-        QString matchId = favouriteConfig.readEntry("matchId");
-
-        // This is the "lazy mode". We do the queries again just for
-        // that runner (should be fast). This way we are able to put
-        // contacts and nepomuk stuff on the favourites strip.
-        // Later we can improve load time for specific runners (services)
-        // so we do not have to query again.
-
+    for (int i = 0; i < queries.size(); ++i ) {
         // perform the query
-        if (currentQuery == query || m_runnermg->execQuery(query, runnerId)) {
-            currentQuery = query;
+        if (currentQuery == queries[i] || m_runnermg->execQuery(queries[i], runnerIds[i])) {
+            currentQuery = queries[i];
             // find our match
-            Plasma::QueryMatch match(m_runnermg->searchContext()->match(matchId));
+            Plasma::QueryMatch match(m_runnermg->searchContext()->match(matchIds[i]));
 
             // we should verify some other saved information to avoid putting the
             // wrong item if the search result is different!
             if (match.isValid()) {
-                add(match, query);
+                add(match, queries[i]);
             }
         }
     }
