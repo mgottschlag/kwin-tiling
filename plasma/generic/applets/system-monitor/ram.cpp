@@ -102,7 +102,7 @@ bool SM::Ram::addMeter(const QString& source)
     plotter->setHorizontalLinesCount(4);
     plotter->setSvgBackground("widgets/plot-background");
     plotter->setTitle(ram);
-    plotter->setUnit("MB");
+    plotter->setUnit("B");
     appendPlotter(source, plotter);
     mainLayout()->addItem(plotter);
     setPreferredItemHeight(80);
@@ -125,17 +125,24 @@ void SM::Ram::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
     if (plotter) {
         /* A factor to convert from default units to bytes.
          * If units is not "KB", assume it is bytes. */
-        const double factor = (data["units"].toString() == "KB") ? 1024. : 1.;
+        const double factor = (data["units"].toString() == "KB") ? 1024.0 : 1.0;
         const double value_b = data["value"].toDouble() * factor;
         const double max_b = data["max"].toDouble() * factor;
-        const double value_kb = value_b / 1024.;
-        const double max_kb = max_b / 1024.;
+        static const QStringList units = QStringList() << "B" << "KiB" << "MiB" << "GiB" << "TiB";
         if (value_b > m_max[source]) {
             m_max[source] = max_b;
-            plotter->setVerticalRange(0.0, max_kb);
+            plotter->setVerticalRange(0.0, max_b);
+            qreal scale = 1.0;
+            int i = 0;
+            while (max_b / scale > 1024.0 && i < units.size()) {
+                scale *= 1024.0;
+                ++i;
+            }
+            plotter->setUnit(units[i]);
+            plotter->scale(scale);
         }
 
-        plotter->addSample(QList<double>() << value_kb);
+        plotter->addSample(QList<double>() << value_b);
         if (mode() == SM::Applet::Panel) {
             m_html[source] = QString("<tr><td>%1</td><td>%2</td><td>of</td><td>%3</td></tr>")
                     .arg(plotter->title())
