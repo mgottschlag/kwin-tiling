@@ -147,7 +147,6 @@ void GridItemView::relayout()
     }
 
     //Relayout the grid
-    QList<Plasma::IconWidget *>orderedItems = m_items.values();
     int validIndex = 0;
 
     QSizeF availableSize;
@@ -162,7 +161,7 @@ void GridItemView::relayout()
     }
 
     if (size().width() <= availableSize.width()) {
-        foreach (Plasma::IconWidget *icon, orderedItems) {
+        foreach (Plasma::IconWidget *icon, m_items) {
             if (m_layout->itemAt(validIndex) == icon) {
                 ++validIndex;
             } else {
@@ -187,7 +186,7 @@ void GridItemView::relayout()
         int i = 0;
 
 
-        foreach (Plasma::IconWidget *icon, orderedItems) {
+        foreach (Plasma::IconWidget *icon, m_items) {
             if (i < validIndex) {
                 ++i;
                 continue;
@@ -210,7 +209,7 @@ void GridItemView::relayout()
         int i = 0;
 
 
-        foreach (Plasma::IconWidget *icon, orderedItems) {
+        foreach (Plasma::IconWidget *icon, m_items) {
             if (i < validIndex) {
                 ++i;
                 continue;
