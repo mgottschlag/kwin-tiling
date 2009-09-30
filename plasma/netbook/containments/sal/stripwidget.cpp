@@ -120,7 +120,6 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     fav->addIconAction(action);
     connect(action, SIGNAL(triggered()), this, SLOT(removeFavourite()));
 
-
     m_favouritesIcons.insert(fav, match);
     m_iconsBackground->insertItem(fav, -1);
 }
@@ -241,9 +240,9 @@ void StripWidget::restore(KConfigGroup &cg)
         }
     }
 
-    QVector<QString>runnerIds;
-    QVector<QString>queries;
-    QVector<QString>matchIds;
+    QVector<QString> runnerIds;
+    QVector<QString> queries;
+    QVector<QString> matchIds;
 
     if (favouritesConfigs.isEmpty()) {
         runnerIds.resize(4);
