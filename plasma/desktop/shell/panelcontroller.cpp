@@ -87,6 +87,7 @@ PanelController::PanelController(QWidget* parent)
      m_layout(0),
      m_dragging(NoElement),
      m_startDragPos(0,0),
+     m_optionsDialog(0),
      m_leftAlignTool(0),
      m_centerAlignTool(0),
      m_rightAlignTool(0),
