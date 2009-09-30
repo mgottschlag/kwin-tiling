@@ -1084,7 +1084,7 @@ bool PlasmaApp::fixedDashboard() const
             break;
         }
     }
-    return dashboardFollowsDesktop;
+    return !dashboardFollowsDesktop;
 }
 
 void PlasmaApp::panelRemoved(QObject *panel)
