@@ -441,7 +441,6 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
 
     m_visibilityMode = mode;
     config().writeEntry("panelVisibility", (int)mode);
-    configNeedsSaving();
 }
 
 PanelView::VisibilityMode PanelView::visibilityMode() const
