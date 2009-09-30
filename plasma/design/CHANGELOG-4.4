@@ -20,6 +20,7 @@ libplasma
       It will open that application or urls.
 
 * Bugfixes
+    * Context menu handling on PopupApplets now matches what Applet gets
 
 Developer Documentation
 -----------------------
@@ -32,8 +33,10 @@ Plasma Desktop Shell
 * Features
     * D-Bus
         * NEW showDashboard bool
+        * NEW perVirtualDesktopViews bool and setPerVirtualDesktopViews bool
     * Desktop Settings
-        * Desktop theme configuration has been moved to System Settings/Style
+        * Desktop theme configuration has been moved to System Settings -> Style
+        * Workspace actions moved to System Settings -> Desktop
     * ECMA Script; see kdebase/workspace/plasma/design/plasma-desktop-scripting for more info
         * the plasma-desktop configuration can be interacted with via the interactive scripting console
         * the initial layout can be set with scripts in share/apps/plasma-desktop/defaults/
@@ -47,7 +50,7 @@ New components:
  * plasma-netbook shell
  * Containments:
    * Newspaper: desktop widgets ordered in two vertical columns
-   * Search and launch: full screen krunner interface
+   * Search and Launch: full screen krunner interface
    * Netpanel: a simple panel
  * Applets:
    * Searchbox: lauches searches on the Search and launch containment
