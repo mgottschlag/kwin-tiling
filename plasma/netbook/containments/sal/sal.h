@@ -92,7 +92,6 @@ private:
     QTimer *m_searchTimer;
     QHash<Plasma::IconWidget*, Plasma::QueryMatch> m_matches;
 
-    QGraphicsWidget *m_viewMainWidget;
     GridItemView *m_gridBackground;
     Plasma::LineEdit *m_searchField;
     Plasma::ScrollWidget *m_gridScroll;

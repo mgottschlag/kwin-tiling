@@ -22,7 +22,6 @@
 #include "stripwidget.h"
 #include "griditemview.h"
 
-#include <QPainter>
 #include <QAction>
 #include <QTimer>
 #include <QGraphicsSceneMouseEvent>
@@ -48,7 +47,6 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
       m_homeButton(0),
       m_queryCounter(0),
       m_maxColumnWidth(0),
-      m_viewMainWidget(0),
       m_searchField(0),
       m_gridScroll(0),
       m_appletsLayout(0),
@@ -194,7 +192,7 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         Plasma::QueryMatch match = m[i];
 
         // create new IconWidget with information from the match
-        Plasma::IconWidget *icon = new Plasma::IconWidget(m_viewMainWidget);
+        Plasma::IconWidget *icon = new Plasma::IconWidget(m_gridBackground);
         icon->hide();
         icon->setText(match.text());
         icon->setIcon(match.icon());
@@ -323,16 +321,12 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             connect(m_gridBackground, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
             connect(m_gridBackground, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launch(Plasma::IconWidget *)));
             m_gridBackground->installEventFilter(this);
-            m_viewMainWidget = new QGraphicsWidget(this);
-            QGraphicsLinearLayout *mwLay = new QGraphicsLinearLayout(m_viewMainWidget);
-            mwLay->addStretch();
-            mwLay->addItem(m_gridBackground);
-            mwLay->addStretch();
+
 
             m_gridScroll = new Plasma::ScrollWidget(this);
             m_gridScroll->installEventFilter(this);
             m_gridScroll->setFocusPolicy(Qt::StrongFocus);
-            m_gridScroll->setWidget(m_viewMainWidget);
+            m_gridScroll->setWidget(m_gridBackground);
             m_gridScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
             m_gridScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
             gridLayout->addItem(m_gridScroll);
@@ -480,7 +474,7 @@ void SearchLaunch::focusInEvent(QFocusEvent *event)
 
 void SearchLaunch::selectItem(Plasma::IconWidget *icon)
 {
-    QRectF iconRectToMainWidget = icon->mapToItem(m_viewMainWidget, icon->boundingRect()).boundingRect();
+    QRectF iconRectToMainWidget = icon->mapToItem(m_gridBackground, icon->boundingRect()).boundingRect();
 
     m_gridScroll->ensureRectVisible(iconRectToMainWidget);
 }
@@ -495,8 +489,8 @@ bool SearchLaunch::eventFilter(QObject *watched, QEvent *event)
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
 
         QPointF deltaPos = me->pos() - me->lastPos();
-        m_viewMainWidget->setPos(m_viewMainWidget->pos().x(),
-                                 qBound(qMin((qreal)0,-m_viewMainWidget->size().height()+m_gridScroll->size().height()), m_viewMainWidget->pos().y()+deltaPos.y(), (qreal)0));
+        m_gridBackground->setPos(m_gridBackground->pos().x(),
+                                 qBound(qMin((qreal)0,-m_gridBackground->size().height()+m_gridScroll->size().height()), m_gridBackground->pos().y()+deltaPos.y(), (qreal)0));
     } else if (watched == m_gridScroll && event->type() == QEvent::FocusIn) {
         m_gridBackground->setFocus();
     }

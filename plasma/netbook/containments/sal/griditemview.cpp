@@ -21,6 +21,7 @@
 
 #include <QGraphicsGridLayout>
 #include <QTimer>
+#include <QWidget>
 
 #include <KIconLoader>
 
@@ -105,6 +106,7 @@ void GridItemView::insertItem(Plasma::IconWidget *icon, qreal weight)
 
 void GridItemView::clear()
 {
+    m_maxColumnWidth = 1;
     m_hoverIndicator->setTargetItem(0);
     for (int i = 0; i < m_layout->count(); ++i) {
         m_layout->removeAt(0);
@@ -153,12 +155,11 @@ void GridItemView::relayout()
     QGraphicsWidget *pw = parentWidget();
     //FIXME: if this widget will be scrollwidget::widget itself this part could become a bit prettier
     if (pw) {
-        pw->resize(0,0);
         availableSize = pw->size();
     } else {
-        resize(0,0);
         availableSize = size();
     }
+
 
     if (size().width() <= availableSize.width()) {
         foreach (Plasma::IconWidget *icon, m_items) {
@@ -173,6 +174,8 @@ void GridItemView::relayout()
     for (int i = validIndex; i < m_layout->count(); ++i) {
         m_layout->removeAt(validIndex);
     }
+
+    setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 
     if (m_orientation == Qt::Vertical) {
 
@@ -197,6 +200,7 @@ void GridItemView::relayout()
             icon->show();
             ++i;
         }
+        setMaximumWidth(sizeHint(Qt::MinimumSize, QSizeF()).width());
     } else {
 
         int nRows;
@@ -220,12 +224,16 @@ void GridItemView::relayout()
             icon->show();
             ++i;
         }
+        setMaximumHeight(sizeHint(Qt::MinimumSize, QSizeF()).height());
     }
 
     if (!isVisible()) {
         m_layout->activate();
         show();
     }
+
+    resize(sizeHint(Qt::MinimumSize, QSizeF()));
+    m_relayoutTimer->stop();
 }
 
 void GridItemView::itemRemoved(QObject *object)
@@ -332,6 +340,19 @@ void GridItemView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 void GridItemView::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     Q_UNUSED(event)
+
+    QGraphicsWidget *pw = parentWidget();
+    if (pw) {
+        QRectF parentRect = pw->boundingRect();kWarning()<<"AAAAAAA"<<parentRect<<size();
+        QPointF newPos(pos());
+        if (size().width() < parentRect.size().width()) {
+            newPos.setX(parentRect.center().x() - size().width()/2);
+        }
+        if (size().height() < parentRect.size().height()) {
+            newPos.setY(parentRect.center().y() - size().height()/2);
+        }
+        setPos(newPos.toPoint());
+    }
 
     m_relayoutTimer->start();
 }
