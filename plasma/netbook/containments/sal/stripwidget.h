@@ -82,7 +82,6 @@ private:
     QHash<Plasma::QueryMatch*, QString> m_favouritesQueries;
     QHash<Plasma::IconWidget*, Plasma::QueryMatch*> m_favouritesIcons;
     Plasma::ScrollWidget *m_scrollWidget;
-    QGraphicsWidget *m_scrollingWidget;
     Plasma::RunnerContext *m_context;
     int m_shownIcons;
     int m_offset;

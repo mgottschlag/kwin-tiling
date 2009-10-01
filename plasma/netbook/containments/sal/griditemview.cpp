@@ -200,7 +200,6 @@ void GridItemView::relayout()
             icon->show();
             ++i;
         }
-        setMaximumWidth(sizeHint(Qt::MinimumSize, QSizeF()).width());
     } else {
 
         int nRows;
@@ -224,7 +223,6 @@ void GridItemView::relayout()
             icon->show();
             ++i;
         }
-        setMaximumHeight(sizeHint(Qt::MinimumSize, QSizeF()).height());
     }
 
     if (!isVisible()) {
@@ -232,6 +230,7 @@ void GridItemView::relayout()
         show();
     }
 
+    setMaximumSize(sizeHint(Qt::MinimumSize, QSizeF()));
     resize(sizeHint(Qt::MinimumSize, QSizeF()));
     m_relayoutTimer->stop();
 }
@@ -343,7 +342,7 @@ void GridItemView::resizeEvent(QGraphicsSceneResizeEvent *event)
 
     QGraphicsWidget *pw = parentWidget();
     if (pw) {
-        QRectF parentRect = pw->boundingRect();kWarning()<<"AAAAAAA"<<parentRect<<size();
+        QRectF parentRect = pw->boundingRect();
         QPointF newPos(pos());
         if (size().width() < parentRect.size().width()) {
             newPos.setX(parentRect.center().x() - size().width()/2);
