@@ -434,6 +434,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         m_controlBar->setContainment(containment);
         containment->setMaximumSize(m_controlBar->size());
         containment->setMinimumSize(m_controlBar->size());
+        containment->setImmutability(Plasma::UserImmutable);
 
         m_autoHideControlBar = m_controlBar->config().readEntry("panelAutoHide", true);
 
