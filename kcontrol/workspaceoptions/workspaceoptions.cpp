@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2009 Dario Freddi <drf@kde.org>
+ *  Copyright (C) 2009 Marco Martin <notmart@gmail.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ WorkspaceOptionsModule::WorkspaceOptionsModule(QWidget *parent, const QVariantLi
     KAboutData *about =
     new KAboutData("kcmworkspaceoptions", 0, ki18n("Global options for the Plasma workspace"),
                    0, KLocalizedString(), KAboutData::License_GPL,
-                   ki18n("(c) 2009 Marco MArtin"));
+                   ki18n("(c) 2009 Marco Martin"));
 
     about->addAuthor(ki18n("Marco Martin"), ki18n("Maintainer"), "notmart@gmail.com");
 
