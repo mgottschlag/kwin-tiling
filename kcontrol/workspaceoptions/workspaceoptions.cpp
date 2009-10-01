@@ -20,7 +20,7 @@
 
 #include "ui_mainpage.h"
 
-#include "plasmadesktop_interface.h"
+//#include "plasmadesktop_interface.h"
 
 #include <QDBusInterface>
 
