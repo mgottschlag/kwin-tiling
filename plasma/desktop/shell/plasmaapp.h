@@ -31,8 +31,6 @@
 #include <Plasma/Plasma>
 #include <plasma/packagemetadata.h>
 
-#include "ui_globaloptions.h"
-
 class QSignalMapper;
 class QTimer;
 
@@ -131,8 +129,6 @@ private:
 private Q_SLOTS:
     void zoomOut();
     void setupDesktop();
-    void createConfigurationInterface();
-    void configAccepted();
     void cleanup();
     void containmentAdded(Plasma::Containment *containment);
     void syncConfig();
@@ -162,8 +158,6 @@ private:
     int m_panelHidden;
     QSignalMapper *m_mapper;
     QHash<int, QPointer<ControllerWindow> > m_widgetExplorers;
-
-    Ui::GlobalOptions m_configUi;
 };
 
 #endif // multiple inclusion guard

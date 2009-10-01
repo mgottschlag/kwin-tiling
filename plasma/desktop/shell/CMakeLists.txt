@@ -23,7 +23,6 @@ set(plasma_SRCS
     ${wallpaper_SRCS}
 )
 
-kde4_add_ui_files(plasma_SRCS globaloptions.ui)
 kde4_add_kcfg_files(plasma_SRCS data/plasma-shell-desktop.kcfgc)
 
 if(WIN32)

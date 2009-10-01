@@ -46,6 +46,7 @@
 #include <QPixmapCache>
 #include <QtDBus/QtDBus>
 #include <QTimer>
+#include <QVBoxLayout>
 
 #include <KAction>
 #include <KCrash>
@@ -951,13 +952,6 @@ void PlasmaApp::setControllerVisible(bool show)
                 actionButton->setDefaultAction(action);
                 layout->addWidget(actionButton);
             }
-
-            ToolButton *actionButton = new ToolButton(m_controllerDialog);
-            actionButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-            actionButton->setIcon(KIcon("configure"));
-            actionButton->setText(i18n("Configure Plasma..."));
-            layout->addWidget(actionButton);
-            connect(actionButton, SIGNAL(clicked()), this, SLOT(createConfigurationInterface()));
         }
 
         m_controllerDialog->show();
@@ -965,41 +959,6 @@ void PlasmaApp::setControllerVisible(bool show)
         delete m_controllerDialog;
         m_controllerDialog = 0;
     }
-}
-
-void PlasmaApp::createConfigurationInterface()
-{
-    QWidget *widget = new QWidget();
-    m_configUi.setupUi(widget);
-    KConfigSkeleton *nullManager = new KConfigSkeleton(0);
-    KConfigDialog *dialog = new KConfigDialog(0, "Plasma Settings", nullManager);
-    dialog ->addPage(widget, i18n("Plasma Settings"));
-    dialog->setAttribute(Qt::WA_DeleteOnClose, true);
-    dialog->setFaceType(KPageDialog::Auto);
-    dialog->showButton(KDialog::Apply, false);
-
-    //try to find out if every view has a DashboardContainment
-    bool dashboardFollowsDesktop = true;
-
-    foreach (DesktopView *view, m_desktops) {
-        if (view->dashboardContainment()) {
-            dashboardFollowsDesktop = false;
-            break;
-        }
-    }
-
-    m_configUi.fixedDashboard->setChecked(!dashboardFollowsDesktop);
-    m_configUi.perVirtualDesktopViews->setChecked(AppSettings::perVirtualDesktopViews());
-
-    connect(dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-
-    dialog->show();
-}
-
-void PlasmaApp::configAccepted()
-{
-    setPerVirtualDesktopViews(m_configUi.perVirtualDesktopViews->isChecked());
-    setFixedDashboard(m_configUi.fixedDashboard->isChecked());
 }
 
 void PlasmaApp::setPerVirtualDesktopViews(bool perDesktopViews)
