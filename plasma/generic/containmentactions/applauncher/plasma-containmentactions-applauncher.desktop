@@ -80,19 +80,6 @@ Name[zh_TW]=應用程式啟動器
 Type=Service
 Icon=preferences-desktop-color
 Comment=Simple application launcher
-Comment[et]=Lemmikrakenduste käivitaja
-Comment[gl]=Executa os seus programas favoritos
-Comment[id]=Jalankan aplikasi favorit anda
-Comment[nb]=Kjør dine yndlingsprogrammer
-Comment[nds]=Dien leevste Programmen opropen
-Comment[pt]=Executar as suas aplicações favoritas
-Comment[pt_BR]=Execute os seus aplicativos favoritos
-Comment[sv]=Starta dina favoritprogram
-Comment[tg]=Барномаҳои дӯстдоштаро истифода баред
-Comment[tr]=Sevdiğiniz uygulamaları çalıştırın
-Comment[uk]=Запуск ваших улюблених програм
-Comment[x-test]=xxRun your favourite appsxx
-Comment[zh_TW]=執行您最常用的應用程式
 
 ServiceTypes=Plasma/ContainmentActions
 
