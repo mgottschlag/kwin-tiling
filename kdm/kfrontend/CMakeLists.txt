@@ -95,7 +95,7 @@ install(TARGETS krootimage DESTINATION ${LIBEXEC_INSTALL_DIR})
 
 set(genkdmconf_SRCS genkdmconf.c)
 macro_add_file_dependencies(genkdmconf.c ${confci})
-kde4_add_executable(genkdmconf NOGUI RUN_UNINSTALLED ${genkdmconf_SRCS})
+kde4_add_executable(genkdmconf NOGUI ${genkdmconf_SRCS})
 macro_add_compile_flags(genkdmconf -U_REENTRANT)
 target_link_libraries(genkdmconf ${X11_LIBRARIES})
 add_dependencies(genkdmconf ConfigCi)

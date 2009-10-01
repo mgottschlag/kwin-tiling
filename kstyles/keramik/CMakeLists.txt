@@ -12,7 +12,7 @@ include_directories( ${QIMAGEBLITZ_INCLUDES} )
 set(genembed_SRCS genembed.cpp )
 
 
-kde4_add_executable(genembed NOGUI RUN_UNINSTALLED ${genembed_SRCS})
+kde4_add_executable(genembed NOGUI ${genembed_SRCS})
 
 target_link_libraries(genembed  ${KDE4_KDECORE_LIBS} ${QIMAGEBLITZ_LIBRARIES} ${QT_QTGUI_LIBRARIES} )
 
