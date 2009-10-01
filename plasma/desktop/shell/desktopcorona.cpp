@@ -19,6 +19,7 @@
 
 #include "desktopcorona.h"
 
+#include <QAction>
 #include <QApplication>
 #include <QDir>
 #include <QGraphicsLayout>
