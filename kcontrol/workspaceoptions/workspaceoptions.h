@@ -50,4 +50,4 @@ private:
     Ui::MainPage *m_ui;
 };
 
-#endif // REMOTEWIDGETS_H
+#endif // WORKSPACEOPTIONS_H
