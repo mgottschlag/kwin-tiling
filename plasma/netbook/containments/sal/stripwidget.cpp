@@ -65,6 +65,8 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
 
     m_leftArrow->setEnabled(false);
     m_rightArrow->setEnabled(false);
+    m_leftArrow->hide();
+    m_rightArrow->hide();
 
     m_scrollWidget = new Plasma::ScrollWidget(this);
     m_scrollWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -284,11 +286,11 @@ bool StripWidget::eventFilter(QObject *watched, QEvent *event)
     } else if (watched == m_iconsBackground && event->type() == QEvent::GraphicsSceneResize) {
         QGraphicsSceneResizeEvent *re = static_cast<QGraphicsSceneResizeEvent *>(event);
 
-        bool wider = (re->newSize().width() > m_scrollWidget->size().width());
-        if (wider) {
-             m_leftArrow->setEnabled(m_iconsBackground->pos().x() < 0);
-             m_rightArrow->setEnabled(m_iconsBackground->geometry().right() > m_scrollWidget->size().width());
-        }
+        m_leftArrow->setEnabled(m_iconsBackground->pos().x() < 0);
+        m_rightArrow->setEnabled(m_iconsBackground->geometry().right() > m_scrollWidget->size().width());
+        const bool visible = (m_leftArrow->isEnabled() || m_rightArrow->isEnabled());
+        m_leftArrow->setVisible(visible);
+        m_rightArrow->setVisible(visible);
         m_scrollWidget->setMinimumHeight(re->newSize().height());
     //pass click only if the user didn't move the mouse FIXME: we need sendevent there
     } else if (icon && event->type() == QEvent::GraphicsSceneMouseMove) {
@@ -304,6 +306,9 @@ bool StripWidget::eventFilter(QObject *watched, QEvent *event)
         if (wider) {
              m_leftArrow->setEnabled(me->newPos().x() < 0);
              m_rightArrow->setEnabled(m_iconsBackground->size().width()+me->newPos().x() > m_scrollWidget->size().width());
+             const bool visible = (m_leftArrow->isEnabled() || m_rightArrow->isEnabled());
+             m_leftArrow->setVisible(visible);
+             m_rightArrow->setVisible(visible);
         }
     }
 
@@ -323,10 +328,11 @@ void StripWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
         return;
     }
 
-    bool wider = (m_scrollWidget->size().width() > m_scrollWidget->size().width());
-    if (wider) {
-            m_leftArrow->setEnabled(m_iconsBackground->pos().x() < 0);
-            m_rightArrow->setEnabled(m_iconsBackground->geometry().right() > m_scrollWidget->size().width());
-    }
+    m_leftArrow->setEnabled(m_iconsBackground->pos().x() < 0);
+    m_rightArrow->setEnabled(m_iconsBackground->geometry().right() > m_scrollWidget->size().width());
+    const bool visible = (m_leftArrow->isEnabled() || m_rightArrow->isEnabled());
+    m_leftArrow->setVisible(visible);
+    m_rightArrow->setVisible(visible);
+
     Plasma::Frame::resizeEvent(event);
 }
