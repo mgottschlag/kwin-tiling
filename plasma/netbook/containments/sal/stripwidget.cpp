@@ -46,7 +46,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
       m_currentIconIndex(-1)
 {
     setFrameShadow(Plasma::Frame::Raised);
-    setEnabledBorders(Plasma::FrameSvg::TopBorder|Plasma::FrameSvg::BottomBorder);
+    setEnabledBorders(Plasma::FrameSvg::BottomBorder);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
     m_arrowsLayout = new QGraphicsLinearLayout(this);
