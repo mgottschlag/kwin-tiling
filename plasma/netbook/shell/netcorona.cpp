@@ -44,6 +44,8 @@ void NetCorona::init()
 {
     QDesktopWidget *desktop = QApplication::desktop();
     QObject::connect(desktop, SIGNAL(resized(int)), this, SLOT(screenResized(int)));
+
+    enableAction("lock widgets", false);
 }
 
 void NetCorona::loadDefaultLayout()
