@@ -35,6 +35,7 @@
 #include <QGraphicsLayout>
 
 
+#include <KAction>
 #include <KDebug>
 #include <KIcon>
 #include <KDialog>
@@ -92,6 +93,23 @@ void Panel::init()
     }
     connect(c, SIGNAL(containmentAdded(Plasma::Containment *)),
             this, SLOT(containmentAdded(Plasma::Containment *)));
+
+    KAction *lockAction = new KAction(this);
+    addAction("lock panel", lockAction);
+    lockAction->setText(i18n("Lock Panel"));
+    lockAction->setIcon(KIcon("object-locked"));
+    QObject::connect(lockAction, SIGNAL(triggered(bool)), this, SLOT(toggleImmutability()));
+    lockAction->setShortcut(KShortcut("alt+d, l"));
+    lockAction->setShortcutContext(Qt::ApplicationShortcut);
+}
+
+void Panel::toggleImmutability()
+{
+    if (immutability() == Plasma::UserImmutable) {
+        setImmutability(Plasma::Mutable);
+    } else if (immutability() == Plasma::Mutable) {
+        setImmutability(Plasma::UserImmutable);
+    }
 }
 
 void Panel::containmentAdded(Plasma::Containment *containment)
@@ -325,10 +343,46 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::ImmutableConstraint) {
-        bool unlocked = immutability() == Plasma::Mutable;
-
         updateBorders();
+
+        QAction *a = action("lock panel");
+        if (a) {
+            switch (immutability()) {
+                case Plasma::SystemImmutable:
+                    a->setEnabled(false);
+                    a->setVisible(false);
+                    break;
+
+                case Plasma::UserImmutable:
+                    a->setText(i18n("Unlock Panel"));
+                    a->setEnabled(true);
+                    a->setVisible(true);
+                    break;
+
+                case Plasma::Mutable:
+                    a->setText(i18n("Lock Panel"));
+                    a->setEnabled(true);
+                    a->setVisible(true);
+                    break;
+            }
+        }
     }
+
+    if (constraints & Plasma::StartupCompletedConstraint) {
+        delete action("remove");
+    }
+}
+
+QList<QAction *> Panel::contextualActions()
+{
+    QList<QAction *> actions;
+
+    QAction *a = action("lock panel");
+    if (a) {
+        actions << a;
+    }
+
+    return actions;
 }
 
 void Panel::updateConfigurationMode(bool config)

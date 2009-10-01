@@ -51,11 +51,13 @@ public:
                         const QStyleOptionGraphicsItem *option,
                         const QRect &contentsRect);
     void paintBackground(QPainter *painter, const QRect &contentsRect);
+    QList<QAction *> contextualActions();
 
 protected:
     void saveState(KConfigGroup &config) const;
 
 private slots:
+    void toggleImmutability();
     void themeUpdated();
     void backgroundChanged();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
