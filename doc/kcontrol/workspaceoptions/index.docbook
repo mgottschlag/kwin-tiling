@@ -1,0 +1,97 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE">
+]>
+<article lang="&language;">
+<articleinfo>
+<authorgroup>
+<author>&Marco.Martin;&Marco.Martin.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2009-10-01</date>
+<releaseinfo>&kde; 4.4</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>System Settings</keyword>
+<keyword>desktop</keyword>
+<keyword>workspace</keyword>
+<keyword>netbook</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="workspace">
+<title>Workspace</title>
+
+<para>This is a module to configure the behaviour of the Plasma workspace.
+</para>
+
+<sect2 id="form-factor">
+<title>Form Factor</title>
+<para>In the form factor section you can configure the type of workspace you will be 
+using. Right now there are two options:</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Desktop</guilabel></term>
+<listitem>
+<para>A workspace optimized for traditional desktops and laptop computers.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Netbook</guilabel></term>
+<listitem>
+<para>A workspace optimized for netbooks and in general for devices with 
+a smaller screen resolution.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect2>
+
+<sect2 id="dashboard">
+<title>Dashboard</title>
+<para>
+In the dashboard section you can configure the behaviour of the Plasma dashboard. 
+Right now there are two options:
+</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Show desktop widgets</guilabel></term>
+<listitem>
+<para>The dashboard will show the same widgets present on the desktop.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Show an independent widget set</guilabel></term>
+<listitem>
+<para>The dashboard will present an independent 
+set of widget that is different from the ones in the desktop.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect2>
+
+</sect1>
+</article>
+
+<!--
+Local Variables:
+mode: xml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+vim:tabstop=2:shiftwidth=2:expandtab
+kate: space-indent on; indent-width 2; tab-width 2; indent-mode none;
+-->
+
