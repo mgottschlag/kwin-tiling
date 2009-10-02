@@ -20,7 +20,7 @@
 
 #include "sal.h"
 #include "stripwidget.h"
-#include "griditemview.h"
+#include "itemcontainer.h"
 
 #include <QAction>
 #include <QTimer>
@@ -317,7 +317,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             // create launch grid and make it centered
             QGraphicsLinearLayout *gridLayout = new QGraphicsLinearLayout(Qt::Vertical);
 
-            m_gridBackground = new GridItemView(this);
+            m_gridBackground = new ItemContainer(this);
             connect(m_gridBackground, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
             connect(m_gridBackground, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launch(Plasma::IconWidget *)));
             m_gridBackground->installEventFilter(this);

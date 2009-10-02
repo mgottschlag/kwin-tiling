@@ -17,8 +17,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef GRIDITEMVIEW_H
-#define GRIDITEMVIEW_H
+#ifndef ITEMCONTAINER_H
+#define ITEMCONTAINER_H
 
 #include <QGraphicsWidget>
 
@@ -32,13 +32,13 @@ namespace Plasma
     class ItemBackground;
 }
 
-class GridItemView : public QGraphicsWidget
+class ItemContainer : public QGraphicsWidget
 {
     Q_OBJECT
 
 public:
-    GridItemView(QGraphicsWidget *parent);
-    ~GridItemView();
+    ItemContainer(QGraphicsWidget *parent);
+    ~ItemContainer();
 
     void setCurrentItem(Plasma::IconWidget *currentItem);
     Plasma::IconWidget *currentItem() const;

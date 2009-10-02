@@ -41,7 +41,7 @@ namespace Plasma
 }
 
 class QGraphicsGridLayout;
-class GridItemView;
+class ItemContainer;
 
 class StripWidget : public Plasma::Frame
 {
@@ -75,7 +75,7 @@ private:
     Plasma::ToolButton *m_leftArrow;
     Plasma::ToolButton *m_rightArrow;
     QGraphicsLinearLayout *m_arrowsLayout;
-    GridItemView *m_iconsBackground;
+    ItemContainer *m_iconsBackground;
 
     Plasma::RunnerManager *m_runnermg;
     QList<Plasma::QueryMatch*> m_favouritesMatches;

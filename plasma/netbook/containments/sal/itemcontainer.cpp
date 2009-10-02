@@ -17,7 +17,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "griditemview.h"
+#include "itemcontainer.h"
 
 #include <QGraphicsGridLayout>
 #include <QTimer>
@@ -28,7 +28,7 @@
 #include <Plasma/IconWidget>
 #include <Plasma/ItemBackground>
 
-GridItemView::GridItemView(QGraphicsWidget *parent)
+ItemContainer::ItemContainer(QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
       m_currentIcon(0),
       m_orientation(Qt::Vertical),
@@ -51,10 +51,10 @@ GridItemView::GridItemView(QGraphicsWidget *parent)
     connect(m_relayoutTimer, SIGNAL(timeout()), this, SLOT(relayout()));
 }
 
-GridItemView::~GridItemView()
+ItemContainer::~ItemContainer()
 {}
 
-void GridItemView::setCurrentItem(Plasma::IconWidget *currentIcon)
+void ItemContainer::setCurrentItem(Plasma::IconWidget *currentIcon)
 {
     for (int x = 0; x < m_layout->columnCount(); ++x) {
         for (int y = 0; y < m_layout->rowCount(); ++y) {
@@ -71,12 +71,12 @@ void GridItemView::setCurrentItem(Plasma::IconWidget *currentIcon)
     m_hoverIndicator->setTargetItem(currentIcon);
 }
 
-Plasma::IconWidget *GridItemView::currentItem() const
+Plasma::IconWidget *ItemContainer::currentItem() const
 {
     return m_currentIcon;
 }
 
-void GridItemView::insertItem(Plasma::IconWidget *icon, qreal weight)
+void ItemContainer::insertItem(Plasma::IconWidget *icon, qreal weight)
 {
     qreal left, top, right, bottom;
     m_hoverIndicator->getContentsMargins(&left, &top, &right, &bottom);
@@ -104,7 +104,7 @@ void GridItemView::insertItem(Plasma::IconWidget *icon, qreal weight)
     m_relayoutTimer->start(400);
 }
 
-void GridItemView::clear()
+void ItemContainer::clear()
 {
     m_maxColumnWidth = 1;
     m_hoverIndicator->setTargetItem(0);
@@ -117,32 +117,32 @@ void GridItemView::clear()
     m_items.clear();
 }
 
-int GridItemView::count() const
+int ItemContainer::count() const
 {
     return m_layout->count();
 }
 
-void GridItemView::setOrientation(Qt::Orientation orientation)
+void ItemContainer::setOrientation(Qt::Orientation orientation)
 {
     m_orientation = orientation;
 }
 
-Qt::Orientation GridItemView::orientation() const
+Qt::Orientation ItemContainer::orientation() const
 {
     return m_orientation;
 }
 
-void GridItemView::setIconSize(int size)
+void ItemContainer::setIconSize(int size)
 {
     m_iconSize = size;
 }
 
-int GridItemView::iconSize() const
+int ItemContainer::iconSize() const
 {
     return m_iconSize;
 }
 
-void GridItemView::relayout()
+void ItemContainer::relayout()
 {
     if (m_layout->count() == 0) {
         hide();
@@ -235,7 +235,7 @@ void GridItemView::relayout()
     m_relayoutTimer->stop();
 }
 
-void GridItemView::itemRemoved(QObject *object)
+void ItemContainer::itemRemoved(QObject *object)
 {
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget *>(object);
 
@@ -251,7 +251,7 @@ void GridItemView::itemRemoved(QObject *object)
     m_relayoutTimer->start(400);
 }
 
-void GridItemView::keyPressEvent(QKeyEvent *event)
+void ItemContainer::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
     case Qt::Key_Left: {
@@ -308,7 +308,7 @@ void GridItemView::keyPressEvent(QKeyEvent *event)
 }
 
 
-void GridItemView::focusInEvent(QFocusEvent *event)
+void ItemContainer::focusInEvent(QFocusEvent *event)
 {
     Q_UNUSED(event)
 
@@ -320,14 +320,14 @@ void GridItemView::focusInEvent(QFocusEvent *event)
     }
 }
 
-void GridItemView::focusOutEvent(QFocusEvent *event)
+void ItemContainer::focusOutEvent(QFocusEvent *event)
 {
     Q_UNUSED(event)
 
     m_hoverIndicator->hide();
 }
 
-void GridItemView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+void ItemContainer::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event)
 
@@ -336,7 +336,7 @@ void GridItemView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     }
 }
 
-void GridItemView::resizeEvent(QGraphicsSceneResizeEvent *event)
+void ItemContainer::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     Q_UNUSED(event)
 
@@ -356,4 +356,4 @@ void GridItemView::resizeEvent(QGraphicsSceneResizeEvent *event)
     m_relayoutTimer->start();
 }
 
-#include <griditemview.moc>
+#include <itemcontainer.moc>

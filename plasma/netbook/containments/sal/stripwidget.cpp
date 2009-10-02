@@ -34,7 +34,7 @@
 #include <Plasma/RunnerManager>
 #include <Plasma/ScrollWidget>
 
-#include "griditemview.h"
+#include "itemcontainer.h"
 
 StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     : Plasma::Frame(parent),
@@ -72,7 +72,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     m_scrollWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_scrollWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    m_iconsBackground = new GridItemView(m_scrollWidget);
+    m_iconsBackground = new ItemContainer(m_scrollWidget);
     m_iconsBackground->installEventFilter(this);
     m_iconsBackground->setOrientation(Qt::Horizontal);
     m_iconsBackground->setIconSize(KIconLoader::SizeLarge);

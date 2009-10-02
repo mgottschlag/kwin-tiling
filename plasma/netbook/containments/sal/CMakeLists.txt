@@ -1,7 +1,7 @@
 
 set(sal_SRCS
     sal.cpp
-    griditemview.cpp
+    itemcontainer.cpp
     stripwidget.cpp)
 
 kde4_add_plugin(plasma_containment_sal ${sal_SRCS})

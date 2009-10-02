@@ -30,7 +30,7 @@
 
 class QTimer;
 class StripWidget;
-class GridItemView;
+class ItemContainer;
 
 namespace Plasma
 {
@@ -92,7 +92,7 @@ private:
     QTimer *m_searchTimer;
     QHash<Plasma::IconWidget*, Plasma::QueryMatch> m_matches;
 
-    GridItemView *m_gridBackground;
+    ItemContainer *m_gridBackground;
     Plasma::LineEdit *m_searchField;
     Plasma::ScrollWidget *m_gridScroll;
     StripWidget *m_stripWidget;
