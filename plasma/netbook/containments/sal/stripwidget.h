@@ -31,6 +31,8 @@
 #include <Plasma/Frame>
 #include <Plasma/RunnerContext>
 
+#include "itemview.h"
+
 namespace Plasma
 {
     class IconWidget;
@@ -41,7 +43,6 @@ namespace Plasma
 }
 
 class QGraphicsGridLayout;
-class ItemContainer;
 
 class StripWidget : public Plasma::Frame
 {
@@ -59,15 +60,13 @@ public:
 
 protected:
     void createIcon(Plasma::QueryMatch *match, int idx);
-    bool eventFilter(QObject *watched, QEvent *event);
-    void resizeEvent(QGraphicsSceneResizeEvent *event);
     void focusInEvent(QFocusEvent *event);
 
 private slots:
     void removeFavourite();
     void launchFavourite();
     void launchFavourite(Plasma::IconWidget *icon);
-    void selectFavourite(Plasma::IconWidget *icon);
+    void arrowsNeededChanged(ItemView::ScrollBarFlags flags);
     void goLeft();
     void goRight();
 
@@ -75,13 +74,12 @@ private:
     Plasma::ToolButton *m_leftArrow;
     Plasma::ToolButton *m_rightArrow;
     QGraphicsLinearLayout *m_arrowsLayout;
-    ItemContainer *m_iconsBackground;
 
     Plasma::RunnerManager *m_runnermg;
     QList<Plasma::QueryMatch*> m_favouritesMatches;
     QHash<Plasma::QueryMatch*, QString> m_favouritesQueries;
     QHash<Plasma::IconWidget*, Plasma::QueryMatch*> m_favouritesIcons;
-    Plasma::ScrollWidget *m_scrollWidget;
+    ItemView *m_itemView;
     Plasma::RunnerContext *m_context;
     int m_shownIcons;
     int m_offset;

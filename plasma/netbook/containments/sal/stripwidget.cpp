@@ -34,12 +34,12 @@
 #include <Plasma/RunnerManager>
 #include <Plasma/ScrollWidget>
 
-#include "itemcontainer.h"
+#include "itemview.h"
 
 StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     : Plasma::Frame(parent),
       m_runnermg(rm),
-      m_scrollWidget(0),
+      m_itemView(0),
       m_offset(0),
       m_currentIcon(0),
       m_currentIconIndex(-1)
@@ -68,21 +68,19 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     m_leftArrow->hide();
     m_rightArrow->hide();
 
-    m_scrollWidget = new Plasma::ScrollWidget(this);
-    m_scrollWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_scrollWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_itemView = new ItemView(this);
+    m_itemView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_itemView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_itemView->installEventFilter(this);
+    m_itemView->setOrientation(Qt::Horizontal);
+    m_itemView->setIconSize(KIconLoader::SizeLarge);
 
-    m_iconsBackground = new ItemContainer(m_scrollWidget);
-    m_iconsBackground->installEventFilter(this);
-    m_iconsBackground->setOrientation(Qt::Horizontal);
-    m_iconsBackground->setIconSize(KIconLoader::SizeLarge);
-    connect(m_iconsBackground, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectFavourite(Plasma::IconWidget *)));
-    connect(m_iconsBackground, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launchFavourite(Plasma::IconWidget *)));
-
-    m_scrollWidget->setWidget(m_iconsBackground);
+    connect(m_itemView, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectFavourite(Plasma::IconWidget *)));
+    connect(m_itemView, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launchFavourite(Plasma::IconWidget *)));
+    connect(m_itemView, SIGNAL(scrollBarsNeededChanged(ItemView::ScrollBarFlags)), this, SLOT(arrowsNeededChanged(ItemView::ScrollBarFlags)));
 
     m_arrowsLayout->addItem(m_leftArrow);
-    m_arrowsLayout->addItem(m_scrollWidget);
+    m_arrowsLayout->addItem(m_itemView);
     m_arrowsLayout->addItem(m_rightArrow);
 }
 
@@ -112,7 +110,7 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     connect(action, SIGNAL(triggered()), this, SLOT(removeFavourite()));
 
     m_favouritesIcons.insert(fav, match);
-    m_iconsBackground->insertItem(fav, -1);
+    m_itemView->insertItem(fav, -1);
 }
 
 void StripWidget::add(Plasma::QueryMatch match, const QString &query)
@@ -122,7 +120,7 @@ void StripWidget::add(Plasma::QueryMatch match, const QString &query)
     m_favouritesMatches.append(newMatch);
     m_favouritesQueries.insert(newMatch, query);
 
-    int idx = m_iconsBackground->count();
+    int idx = m_itemView->count();
     createIcon(newMatch, idx);
 }
 
@@ -143,9 +141,6 @@ void StripWidget::removeFavourite()
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
 
     if (icon) {
-        m_iconsBackground->setMinimumSize(icon->size().width()*(m_iconsBackground->count()-2), icon->size().height());
-        m_iconsBackground->setMaximumSize(m_iconsBackground->minimumSize());
-
         remove(icon);
     }
 }
@@ -169,29 +164,22 @@ void StripWidget::launchFavourite(Plasma::IconWidget *icon)
     match->run(context);
 }
 
-void StripWidget::selectFavourite(Plasma::IconWidget *icon)
-{
-    QRectF iconRectToMainWidget = icon->mapToItem(m_iconsBackground, icon->boundingRect()).boundingRect();
-
-    m_scrollWidget->ensureRectVisible(iconRectToMainWidget);
-}
-
 void StripWidget::goRight()
 {
-    QRectF rect(m_scrollWidget->boundingRect());
-    rect.moveLeft(rect.right() - m_iconsBackground->pos().x());
+    QRectF rect(m_itemView->boundingRect());
+    rect.moveLeft(rect.right() - m_itemView->widget()->pos().x());
     rect.setWidth(rect.width()/4);
 
-    m_scrollWidget->ensureRectVisible(rect);
+    m_itemView->ensureRectVisible(rect);
 }
 
 void StripWidget::goLeft()
 {
-    QRectF rect(m_scrollWidget->boundingRect());
+    QRectF rect(m_itemView->boundingRect());
     rect.setWidth(rect.width()/4);
-    rect.moveRight(- m_iconsBackground->pos().x());
+    rect.moveRight(- m_itemView->widget()->pos().x());
 
-    m_scrollWidget->ensureRectVisible(rect);
+    m_itemView->ensureRectVisible(rect);
 }
 
 void StripWidget::save(KConfigGroup &cg)
@@ -275,64 +263,25 @@ void StripWidget::restore(KConfigGroup &cg)
     }
 }
 
-bool StripWidget::eventFilter(QObject *watched, QEvent *event)
-{
-    Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
-    if (icon && event->type() == QEvent::GraphicsSceneHoverEnter) {
-        if (icon) {
-            m_iconsBackground->setCurrentItem(icon);
-        }
-    //FIXME: we probably need a specialized widget instead this ugly filter code
-    } else if (watched == m_iconsBackground && event->type() == QEvent::GraphicsSceneResize) {
-        QGraphicsSceneResizeEvent *re = static_cast<QGraphicsSceneResizeEvent *>(event);
-
-        m_leftArrow->setEnabled(m_iconsBackground->pos().x() < 0);
-        m_rightArrow->setEnabled(m_iconsBackground->geometry().right() > m_scrollWidget->size().width());
-        const bool visible = (m_leftArrow->isEnabled() || m_rightArrow->isEnabled());
-        m_leftArrow->setVisible(visible);
-        m_rightArrow->setVisible(visible);
-        m_scrollWidget->setMinimumHeight(re->newSize().height());
-    //pass click only if the user didn't move the mouse FIXME: we need sendevent there
-    } else if (icon && event->type() == QEvent::GraphicsSceneMouseMove) {
-        QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
-
-        QPointF deltaPos = me->pos() - me->lastPos();
-        m_iconsBackground->setPos(qBound(qMin((qreal)0,-m_iconsBackground->size().width()+m_scrollWidget->size().width()), m_iconsBackground->pos().x()+deltaPos.x(), (qreal)0),
-                                 m_iconsBackground->pos().y());
-    } else if (watched == m_iconsBackground && event->type() == QEvent::GraphicsSceneMove) {
-        QGraphicsSceneMoveEvent *me = static_cast<QGraphicsSceneMoveEvent *>(event);
-
-        bool wider = (m_iconsBackground->size().width() > m_scrollWidget->size().width());
-        if (wider) {
-             m_leftArrow->setEnabled(me->newPos().x() < 0);
-             m_rightArrow->setEnabled(m_iconsBackground->size().width()+me->newPos().x() > m_scrollWidget->size().width());
-             const bool visible = (m_leftArrow->isEnabled() || m_rightArrow->isEnabled());
-             m_leftArrow->setVisible(visible);
-             m_rightArrow->setVisible(visible);
-        }
-    }
-
-    return false;
-}
-
 void StripWidget::focusInEvent(QFocusEvent *event)
 {
     Q_UNUSED(event)
 
-    m_iconsBackground->setFocus();
+    m_itemView->setFocus();
 }
 
-void StripWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
+void StripWidget::arrowsNeededChanged(ItemView::ScrollBarFlags flags)
 {
-    if (!m_scrollWidget) {
-        return;
+    bool leftNeeded = false;
+    bool rightNeeded = false;
+    //FIXME: horizontalScrollValue() returns funny values
+    if (flags & ItemView::HorizontalScrollBar) {
+        leftNeeded = m_itemView->horizontalScrollValue() > 0;
+        rightNeeded = m_itemView->horizontalScrollValue() < 100;
     }
-
-    m_leftArrow->setEnabled(m_iconsBackground->pos().x() < 0);
-    m_rightArrow->setEnabled(m_iconsBackground->geometry().right() > m_scrollWidget->size().width());
-    const bool visible = (m_leftArrow->isEnabled() || m_rightArrow->isEnabled());
-    m_leftArrow->setVisible(visible);
-    m_rightArrow->setVisible(visible);
-
-    Plasma::Frame::resizeEvent(event);
+    m_leftArrow->setEnabled(leftNeeded);
+    m_rightArrow->setEnabled(rightNeeded);
+    m_leftArrow->setVisible(leftNeeded|rightNeeded);
+    m_rightArrow->setVisible(leftNeeded|rightNeeded);
 }
+
