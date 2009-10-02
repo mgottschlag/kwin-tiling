@@ -423,6 +423,14 @@ void PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment *c)
     KWindowSystem::activateWindow(controller->winId());
 }
 
+void PlasmaApp::hideWidgetExplorer(int screen)
+{
+    QPointer<ControllerWindow> controller = m_widgetExplorers.value(screen);
+    if (controller) {
+        controller->hide();
+    }
+}
+
 void PlasmaApp::compositingChanged()
 {
 #ifdef Q_WS_X11

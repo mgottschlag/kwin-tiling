@@ -247,6 +247,7 @@ void PanelController::setContainment(Plasma::Containment *c)
     }
 
     ControllerWindow::setContainment(c);
+    PlasmaApp::self()->hideWidgetExplorer(containment()->screen());
 
     QWidget *child;
     while (!m_actionWidgets.isEmpty()) {

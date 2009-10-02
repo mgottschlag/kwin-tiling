@@ -80,6 +80,7 @@ public:
     QList<PanelView*> panelViews() const;
 
     void showWidgetExplorer(int screen, Plasma::Containment *c);
+    void hideWidgetExplorer(int screen);
 
     static bool isPanelContainment(Plasma::Containment *containment);
 
