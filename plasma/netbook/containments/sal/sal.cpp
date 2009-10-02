@@ -200,7 +200,6 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         m_resultsView->insertItem(icon, 1/match.relevance());
 
         connect(icon, SIGNAL(activated()), this, SLOT(launch()));
-        icon->installEventFilter(this);
 
         if (!m_runnermg->searchContext()->query().isEmpty()) {
             // create action to add to favourites strip
@@ -319,7 +318,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
 
             m_resultsView = new ItemView(this);
-            m_resultsView->installEventFilter(this);
+            m_resultsView->setOrientation(Qt::Vertical);
             m_resultsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
             m_resultsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
             gridLayout->addItem(m_resultsView);

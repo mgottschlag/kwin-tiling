@@ -161,7 +161,7 @@ bool ItemView::eventFilter(QObject *watched, QEvent *event)
         emit scrollBarsNeededChanged(scrollBars);
     }
 
-    return false;
+    return Plasma::ScrollWidget::eventFilter(watched, event);
 }
 
 #include <itemview.moc>
