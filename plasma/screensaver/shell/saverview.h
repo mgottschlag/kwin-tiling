@@ -41,6 +41,8 @@ public:
     SaverView(Plasma::Containment* containment, QWidget *parent);
     ~SaverView();
 
+    bool eventFilter(QObject *watched, QEvent *event);
+
 signals:
     void hidden();
 
@@ -48,7 +50,6 @@ protected:
     void drawBackground(QPainter * painter, const QRectF & rect);
     void keyPressEvent(QKeyEvent *event);
     void paintEvent(QPaintEvent *event);
-    bool eventFilter(QObject *watched, QEvent *event);
 
 public slots:
     void showView();
