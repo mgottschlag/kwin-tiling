@@ -99,12 +99,7 @@ public:
      */
     int iconSize() const;
 
-protected:
-
-    void resizeEvent(QGraphicsSceneResizeEvent *event);
-
 Q_SIGNALS:
-
     void orientationChanged(Qt::Orientation orientation);
 
 public Q_SLOTS:

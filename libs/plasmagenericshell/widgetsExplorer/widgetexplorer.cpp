@@ -64,7 +64,8 @@ public:
           config("plasmarc"),
           configGroup(&config, "Applet Browser"),
           itemModel(configGroup, w),
-          filterModel(w)
+          filterModel(w),
+          iconSize(16)
     {
     }
 
@@ -74,7 +75,6 @@ public:
     void initRunningApplets();
     void containmentDestroyed();
     void setOrientation(Qt::Orientation orientation);
-    void adjustContentsSize();
 
     /**
      * Tracks a new running applet
@@ -116,7 +116,7 @@ public:
      */
     FilteringWidget *filteringWidget;
     QGraphicsLinearLayout *mainLayout;
-
+    int iconSize;
 };
 
 void WidgetExplorerPrivate::initFilters()
@@ -180,28 +180,6 @@ void WidgetExplorerPrivate::init(Qt::Orientation orient)
     q->setLayout(mainLayout);
 }
 
-void WidgetExplorerPrivate::adjustContentsSize()
-{
-    QSizeF contentsSize = q->contentsRect().size();
-
-    if (appletsListWidget != 0) {
-        appletsListWidget->setPreferredSize(-1,-1);
-    }
-
-    if (orientation == Qt::Horizontal) {
-        if (filteringWidget != 0) {
-            filteringWidget->setPreferredSize(-1, -1);
-        }
-
-    } else {
-        if (filteringWidget != 0) {
-            filteringWidget->setPreferredSize(-1, -1);
-            filteringWidget->setMinimumHeight(contentsSize.height()/5);
-            filteringWidget->setMaximumHeight(contentsSize.height()/5);
-        }
-    }
-}
-
 void WidgetExplorerPrivate::setOrientation(Qt::Orientation orient)
 {
     orientation = orient;
@@ -214,7 +192,6 @@ void WidgetExplorerPrivate::initPushButtonWidgetMenu()
     pushButtonWidgetMenu = new KMenu(i18n("Get New Widgets"));
     QObject::connect(pushButtonWidgetMenu, SIGNAL(aboutToShow()), q, SLOT(populateWidgetsMenu()));
     pushButtonWidget->button()->setMenu(pushButtonWidgetMenu);
-
 }
 
 void WidgetExplorerPrivate::initRunningApplets()
@@ -297,12 +274,6 @@ WidgetExplorer::~WidgetExplorer()
      delete d;
 }
 
-void WidgetExplorer::resizeEvent(QGraphicsSceneResizeEvent *event)
-{
-    Q_UNUSED(event);
-    d->adjustContentsSize();
-}
-
 void WidgetExplorer::setOrientation(Qt::Orientation orientation)
 {
     d->setOrientation(orientation);
@@ -316,30 +287,13 @@ Qt::Orientation WidgetExplorer::orientation()
 
 void WidgetExplorer::setIconSize(int size)
 {
-    qreal l, t, r, b;
-    d->appletsListWidget->getContentsMargins(&l, &t, &r, &b);
-
-    if (d->orientation == Qt::Horizontal) {
-        d->appletsListWidget->setMinimumHeight(size + t + b);
-        d->appletsListWidget->setPreferredHeight(size + t + b);
-    } else {
-        d->appletsListWidget->setMinimumWidth(size + l + r);
-        d->appletsListWidget->setPreferredWidth(size + l + r);
-    }
-
+    d->appletsListWidget->setIconSize(size);
     adjustSize();
 }
 
 int WidgetExplorer::iconSize() const
 {
-    qreal l, t, r, b;
-    d->appletsListWidget->getContentsMargins(&l, &t, &r, &b);
-
-    if (d->orientation == Qt::Horizontal) {
-        return d->appletsListWidget->size().height() - t - b;
-    } else {
-        return d->appletsListWidget->size().height() - l - r;
-    }
+    return d->appletsListWidget->iconSize();
 }
 
 void WidgetExplorer::populateWidgetList(const QString &app)

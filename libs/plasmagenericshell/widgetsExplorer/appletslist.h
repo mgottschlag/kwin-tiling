@@ -55,6 +55,10 @@ public:
     void setFilterModel(QStandardItemModel *model);
     void setOrientation(Qt::Orientation orientation);
 
+    // default size of the icons
+    void setIconSize(int size);
+    int iconSize() const;
+
     enum ScrollPolicy {
         DownRight = 0,
         UpLeft = 1,
@@ -135,7 +139,6 @@ private slots:
     void themeUpdated();
 
 protected:
-    void resizeEvent(QGraphicsSceneResizeEvent *event);
     bool eventFilter(QObject *obj, QEvent *event);
     void timerEvent(QTimerEvent *event);
 
@@ -187,6 +190,7 @@ private:
 
     int arrowClickStep;
     int wheelStep;
+    int m_iconSize;
 
     /* TODO: Remove this and animate using plasma's
      * animation framework when it is created */
@@ -197,7 +201,6 @@ private:
     QTimeLine toolTipMoveTimeLine;
     QPoint toolTipMoveFrom;
     QPoint toolTipMoveTo;
-
 };
 
 #endif //APPLETSLIST_H

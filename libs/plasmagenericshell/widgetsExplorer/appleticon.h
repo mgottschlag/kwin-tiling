@@ -34,11 +34,13 @@ class AppletIconWidget : public QGraphicsWidget
         explicit AppletIconWidget(QGraphicsItem *parent = 0, PlasmaAppletItem *appletItem = 0);
         virtual ~AppletIconWidget();
 
-        void setIconHeight(int height);
+        void setIconSize(int height);
         void setAppletItem(PlasmaAppletItem *appletIcon);
         void setSelected(bool selected);
         PlasmaAppletItem *appletItem();
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+
+        static const int DEFAULT_ICON_SIZE = 16;
 
     Q_SIGNALS:
         void hoverEnter(AppletIconWidget *applet);

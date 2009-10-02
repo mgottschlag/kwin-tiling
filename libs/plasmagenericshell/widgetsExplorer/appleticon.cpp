@@ -27,8 +27,9 @@
 
 AppletIconWidget::AppletIconWidget(QGraphicsItem *parent, PlasmaAppletItem *appletItem)
     : QGraphicsWidget(parent),
-      m_iconHeight(16)
+      m_iconHeight(DEFAULT_ICON_SIZE)
 {
+    setCacheMode(DeviceCoordinateCache);
     setFont(KGlobalSettings::smallestReadableFont());
     setAcceptHoverEvents(true);
     m_appletItem = appletItem;
@@ -50,9 +51,17 @@ PlasmaAppletItem *AppletIconWidget::appletItem()
     return m_appletItem;
 }
 
-void AppletIconWidget::setIconHeight(int height)
+void AppletIconWidget::setIconSize(int height)
 {
     m_iconHeight = height;
+
+    QFontMetrics fm(font());
+    const int minHeight = height + 2 + fm.height();
+    qreal l, t, r, b;
+    getContentsMargins(&l, &t, &r, &b);
+    setMinimumHeight(minHeight + t + b);
+
+//    kDebug() << height << minimumHeight();
     update();
 }
 
@@ -103,7 +112,9 @@ void AppletIconWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void AppletIconWidget::resizeEvent(QGraphicsSceneResizeEvent *)
 {
     QFontMetrics fm(font());
-    m_iconHeight = qBound(0, int(size().height() - fm.height()), int(size().height()));
+    qreal l, t, r, b;
+    getContentsMargins(&l, &t, &r, &b);
+    m_iconHeight = qBound(0, int(size().height() - fm.height() - t - b - 2), int(size().height()));
 }
 
 void AppletIconWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -127,7 +138,7 @@ void AppletIconWidget::setSelected(bool selected)
 }
 
 void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
- {
+{
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
@@ -148,6 +159,8 @@ void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *
                             m_runningIcon.pixmap(runningIconSize));
     }
 
-    QRectF textRect(rect.x(), iconRect.bottom() + 2, width, height - iconRect.bottom());
+    QRectF textRect(rect.x(), iconRect.bottom() + 2, width, height - iconRect.height() - 2);
     painter->drawText(textRect, Qt::AlignTop | Qt::AlignCenter | Qt::TextWordWrap, m_appletItem->name());
- }
+}
+
+

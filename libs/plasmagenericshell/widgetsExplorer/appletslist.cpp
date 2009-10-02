@@ -48,7 +48,8 @@ using namespace KCategorizedItemsViewModels;
 AppletsListWidget::AppletsListWidget(Qt::Orientation orientation, QGraphicsItem *parent)
     : QGraphicsWidget(parent),
       m_selectionIndicator(new Plasma::ItemBackground(this)),
-      m_hoverIndicator(new Plasma::ItemBackground(this))
+      m_hoverIndicator(new Plasma::ItemBackground(this)),
+      m_iconSize(16)
 {
     arrowClickStep = 0;
     wheelStep = 0;
@@ -167,63 +168,6 @@ void AppletsListWidget::themeUpdated()
     m_downRightArrow->nativeWidget()->setStyleSheet(buttonStyleSheet);
 }
 
-void AppletsListWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
-{
-    Q_UNUSED(event);
-
-    if (m_orientation == Qt::Horizontal) {
-        m_appletsListWindowWidget->setMinimumWidth(-1);
-        m_appletsListWindowWidget->setMaximumWidth(-1);
-    } else {
-        m_appletsListWindowWidget->setMinimumHeight(-1);
-        m_appletsListWindowWidget->setMaximumHeight(-1);
-    }
-
-    kDebug() << "m_appletsListWidget->size()" << m_appletsListWidget->size();
-    kDebug() << "size()" << size();
-
-    qreal contentMarginTop;
-    qreal contentMarginBottom;
-    qreal contentMarginLeft;
-    qreal contentMarginRight;
-    int height = event->newSize().height();
-    int width = event->newSize().width();
-    int iconSize;
-
-    if (m_orientation == Qt::Horizontal) {
-        m_arrowsLayout->getContentsMargins(&contentMarginLeft, &contentMarginTop,
-                                           &contentMarginRight, &contentMarginBottom);
-        height -= (contentMarginBottom + contentMarginTop);
-        kDebug() << "resize: old this size" << event->oldSize().height();
-        kDebug() << "resize: new this size" << event->newSize().height();
-        kDebug() << "resize: height" << height;
-        m_appletsListWidget->resize(m_appletsListWidget->size().width(), height);
-        iconSize = height;
-        m_appletListLinearLayout->getContentsMargins(&contentMarginLeft, &contentMarginTop,
-                                                     &contentMarginRight, &contentMarginBottom);
-        iconSize -= (contentMarginBottom + contentMarginTop);
-    } else {
-        //i don't know why, but when it's vertical, a loop happens here:
-        //m_appletsListWidget resizes and it causes a resize to this
-        m_arrowsLayout->getContentsMargins(&contentMarginLeft, &contentMarginTop,
-                                       &contentMarginRight, &contentMarginBottom);
-        width -= (contentMarginLeft + contentMarginRight);
-        kDebug() << "resize: old this size" << event->oldSize().width();
-        kDebug() << "resize: new this size" << event->newSize().width();
-        kDebug() << "resize: width" << width;
-        m_appletsListWidget->resize(width, m_appletsListWidget->size().height());
-        iconSize = width;
-        m_appletListLinearLayout->getContentsMargins(&contentMarginLeft, &contentMarginTop,
-                                                     &contentMarginRight, &contentMarginBottom);
-        iconSize -= (contentMarginLeft + contentMarginRight);
-    }
-
-    foreach (AppletIconWidget *applet, m_allAppletsHash) { 
-        applet->setMinimumSize(iconSize, iconSize);
-        applet->setMaximumSize(iconSize, iconSize);
-    }
-}
-
 //parent intercepts children events
 bool AppletsListWidget::eventFilter(QObject *obj, QEvent *event)
 {
@@ -232,6 +176,12 @@ bool AppletsListWidget::eventFilter(QObject *obj, QEvent *event)
 
         if (widget == m_appletsListWidget) {
             //the resize occured with the list widget
+            if (m_orientation == Qt::Horizontal) {
+                m_appletsListWindowWidget->setMinimumHeight(m_appletsListWidget->minimumHeight());
+            } else {
+                m_appletsListWindowWidget->setMinimumWidth(m_appletsListWidget->minimumWidth());
+            }
+
             manageArrows();
             return false;
         } else if (widget == m_appletsListWindowWidget) {
@@ -453,6 +403,10 @@ AppletIconWidget *AppletsListWidget::createAppletIcon(PlasmaAppletItem *appletIt
     m_hoverIndicator->getContentsMargins(&l, &t, &r, &b);
     applet->setContentsMargins(l, t, r, b);
 
+    if (m_iconSize != AppletIconWidget::DEFAULT_ICON_SIZE) {
+        applet->setIconSize(m_iconSize);
+    }
+
     connect(applet, SIGNAL(hoverEnter(AppletIconWidget*)), this, SLOT(appletIconHoverEnter(AppletIconWidget*)));
     connect(applet, SIGNAL(hoverLeave(AppletIconWidget*)), this, SLOT(appletIconHoverLeave(AppletIconWidget*)));
     connect(applet, SIGNAL(selected(AppletIconWidget*)), this, SLOT(itemSelected(AppletIconWidget*)));
@@ -494,7 +448,7 @@ void AppletsListWidget::updateList()
 
     m_appletsListWidget->setLayout(NULL);
     m_appletListLinearLayout = new QGraphicsLinearLayout(m_orientation);
-    m_appletsListWidget->resize(0,0);
+    //m_appletsListWidget->resize(0,0);
     m_currentAppearingAppletsOnList->clear();
 
     eraseList();
@@ -782,8 +736,7 @@ void AppletsListWidget::manageArrows()
     QRectF visibleRect = visibleListRect();
     qreal windowSize;
     qreal listSize;
-
-    qDebug() << "manage the arrows";
+    //qDebug() << "manage the arrows";
 
     if (m_orientation == Qt::Horizontal) {
         windowSize = m_appletsListWindowWidget->geometry().width();
@@ -840,7 +793,7 @@ bool AppletsListWidget::isItemUnder(int itemIndex, qreal position)
                                (m_appletsListWidget, 0, applet->boundingRect().height()).y();
     }
 
-    if((position > firstPositionOnApplet) && (position < lastPositionOnApplet)) {
+    if ((position > firstPositionOnApplet) && (position < lastPositionOnApplet)) {
         return true;
     } else {
         return false;
@@ -929,3 +882,24 @@ QList <AbstractItem *> AppletsListWidget::selectedItems() const
 //    return m_appletList->selectedItems();
     return QList<AbstractItem *>();
 }
+
+void AppletsListWidget::setIconSize(int size)
+{
+    if (m_iconSize == size || size < 16) {
+        return;
+    }
+
+    m_iconSize = size;
+
+    foreach (AppletIconWidget *applet, m_allAppletsHash) {
+        applet->setIconSize(size);
+    }
+
+    adjustSize();
+}
+
+int AppletsListWidget::iconSize() const
+{
+    return m_iconSize;
+}
+
