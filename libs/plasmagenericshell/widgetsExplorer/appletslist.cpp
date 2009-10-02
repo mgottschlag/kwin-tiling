@@ -444,33 +444,30 @@ void AppletsListWidget::updateList()
 {
     AbstractItem *item;
     PlasmaAppletItem *appletItem;
-    AppletIconWidget *appletIconWidget;
 
     m_appletsListWidget->setLayout(NULL);
     m_appletListLinearLayout = new QGraphicsLinearLayout(m_orientation);
-    //m_appletsListWidget->resize(0,0);
-    m_currentAppearingAppletsOnList->clear();
+    m_appletListLinearLayout->setSpacing(0);
 
+    m_currentAppearingAppletsOnList->clear();
     eraseList();
 
     for (int i = 0; i < m_modelFilterItems->rowCount(); i++) {
         item = getItemByProxyIndex(m_modelFilterItems->index(i, 0));
         appletItem = (PlasmaAppletItem*) item;
 
-        if (appletItem != 0) {
-            appletIconWidget = m_allAppletsHash.value(appletItem->id());
+        if (appletItem) {
+            AppletIconWidget *appletIconWidget = m_allAppletsHash.value(appletItem->id());
             insertAppletIcon(appletIconWidget);
             m_currentAppearingAppletsOnList->append(appletIconWidget);
         }
     }
 
     m_appletsListWidget->setLayout(m_appletListLinearLayout);
-    m_appletListLinearLayout->setSpacing(0);
+    m_appletsListWidget->adjustSize();
 
     updateGeometry();
-
     m_hoverIndicator->hide();
-
     resetScroll();
 }
 
@@ -847,7 +844,8 @@ int AppletsListWidget::findLastVisibleApplet(int lastVisiblePositionOnList) {
     return resultIndex;
 }
 
-QRectF AppletsListWidget::visibleListRect() {
+QRectF AppletsListWidget::visibleListRect()
+{
     QRectF visibleRect = m_appletsListWindowWidget->
                          mapRectToItem(m_appletsListWidget, 0, 0,
                                           m_appletsListWindowWidget->geometry().width(),
