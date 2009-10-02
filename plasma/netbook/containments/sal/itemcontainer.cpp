@@ -346,9 +346,13 @@ void ItemContainer::resizeEvent(QGraphicsSceneResizeEvent *event)
         QPointF newPos(pos());
         if (size().width() < parentRect.size().width()) {
             newPos.setX(parentRect.center().x() - size().width()/2);
+        } else {
+            newPos.setX(qMin(pos().x(), (qreal)0.0));
         }
         if (size().height() < parentRect.size().height()) {
             newPos.setY(parentRect.center().y() - size().height()/2);
+        } else {
+            newPos.setY(qMin(pos().y(), (qreal)0.0));
         }
         setPos(newPos.toPoint());
     }
