@@ -42,6 +42,7 @@ class DashboardView : public Plasma::View
 public:
     DashboardView(Plasma::Containment* containment, Plasma::View *parent);
     ~DashboardView();
+    bool eventFilter(QObject *watched, QEvent *event);
 
 protected:
     void drawBackground(QPainter * painter, const QRectF & rect);

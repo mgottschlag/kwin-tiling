@@ -165,15 +165,25 @@ void DashboardView::showWidgetExplorer()
         delete m_widgetExplorer;
     } else {
         m_widgetExplorer = new DashboardWidgetExplorer(c);
+        m_widgetExplorer->installEventFilter(this);
         m_widgetExplorer->setContainment(c);
         m_widgetExplorer->setOrientation(Qt::Horizontal);
         m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
         m_widgetExplorer->populateWidgetList();
         m_widgetExplorer->setMaximumWidth(width());
         m_widgetExplorer->adjustSize();
-        m_widgetExplorer->setPos(0, c->geometry().height() - m_widgetExplorer->geometry().height());
         m_widgetExplorer->setZValue(1000000);
     }
+}
+
+bool DashboardView::eventFilter(QObject *watched, QEvent *event)
+{
+    if (containment() && (watched == (QObject*)m_widgetExplorer) &&
+        (event->type() == QEvent::GraphicsSceneResize || event->type() == QEvent::GraphicsSceneMove)) {
+        m_widgetExplorer->setPos(0, containment()->geometry().height() - m_widgetExplorer->geometry().height());
+    }
+
+    return false;
 }
 
 bool DashboardView::event(QEvent *event)
