@@ -224,7 +224,7 @@ void CKioFonts::put(const KUrl &url, int /*permissions*/, KIO::JobFlags /*flags*
     if(!Misc::root() && FOLDER_ROOT==folder)
         error(KIO::ERR_SLAVE_DEFINED,
                 i18n("Can only install fonts to either \"%1\" or \"%2\".",
-                i18n(KFI_KIO_FONTS_USER), i18n(KFI_KIO_FONTS_SYS)));    
+                i18n(KFI_KIO_FONTS_USER), i18n(KFI_KIO_FONTS_SYS)));
     else if(Misc::isPackage(url.fileName()))
         error(KIO::ERR_SLAVE_DEFINED, i18n("You cannot install a fonts package directly.\n"
                                            "Please extract %1, and install the components individually.",
@@ -377,7 +377,7 @@ void CKioFonts::get(const KUrl &url)
             for(; ait!=aend; ++ait)
                 files.insert(*ait);
         }
-    
+
         if(1==files.count())
             realPath=(*files.begin());
         else   // Font is made up of multiple files - so create .zip of them all!
@@ -477,7 +477,7 @@ void CKioFonts::copy(const KUrl &, const KUrl &, int, KIO::JobFlags)
     error(KIO::ERR_SLAVE_DEFINED, i18n("Cannot copy fonts"));
 }
 
-void CKioFonts::rename(const KUrl &, const KUrl &, int, KIO::JobFlags)
+void CKioFonts::rename(const KUrl &, const KUrl &, KIO::JobFlags)
 {
     error(KIO::ERR_SLAVE_DEFINED, i18n("Cannot move fonts"));
 }
@@ -494,7 +494,7 @@ void CKioFonts::del(const KUrl &url, bool isFile)
     else if(!Misc::root() && FOLDER_ROOT==folder)
         error(KIO::ERR_SLAVE_DEFINED,
                 i18n("Can only remove fonts from either \"%1\" or \"%2\".",
-                i18n(KFI_KIO_FONTS_USER), i18n(KFI_KIO_FONTS_SYS)));    
+                i18n(KFI_KIO_FONTS_USER), i18n(KFI_KIO_FONTS_SYS)));
     else if(!name.isEmpty())
         handleResp(itsInterface->uninstall(name, Misc::root() || FOLDER_SYS==folder), name);
     else
@@ -807,7 +807,7 @@ void CKioFonts::handleResp(int resp, const QString &file, const QString &tempFil
         default:
             error(resp, file);
     }
-    
+
     if(FontInst::STATUS_OK==resp)
         setTimeoutSpecialCommand(constReconfigTimeout);
 }

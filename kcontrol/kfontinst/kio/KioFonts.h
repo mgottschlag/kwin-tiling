@@ -57,7 +57,7 @@ class CKioFonts : public KIO::SlaveBase
     void get(const KUrl &url);
     void del(const KUrl &url, bool isFile);
     void copy(const KUrl &src, const KUrl &dest, int mode, KIO::JobFlags flags);
-    void rename(const KUrl &src, const KUrl &dest, int mode, KIO::JobFlags flags);
+    void rename(const KUrl &src, const KUrl &dest, KIO::JobFlags flags);
     void stat(const KUrl &url);
     void special(const QByteArray &a);
 
