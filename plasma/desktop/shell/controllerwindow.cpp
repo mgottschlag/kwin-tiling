@@ -216,10 +216,10 @@ void ControllerWindow::showWidgetExplorer()
         m_widgetExplorerView->setSceneRect(m_widgetExplorer->geometry());
 
         m_widgetExplorer->installEventFilter(this);
+        m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
     }
 
     m_widgetExplorer->setOrientation(orientation());
-    m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
 
     if (orientation() == Qt::Horizontal) {
         resize(width(), m_widgetExplorer->size().height());
@@ -280,13 +280,21 @@ bool ControllerWindow::eventFilter(QObject *watched, QEvent *event)
 {
     //if widgetsExplorer moves or resizes, then the view has to adjust
     if ((watched == (QObject*)m_widgetExplorer) && (event->type() == QEvent::GraphicsSceneResize || event->type() == QEvent::GraphicsSceneMove)) {
+        m_widgetExplorerView->resize(m_widgetExplorer->size().toSize());
         m_widgetExplorerView->setSceneRect(m_widgetExplorer->geometry());
+        //kDebug() << "sizes are:" << m_widgetExplorer->size() << m_widgetExplorerView->size() << size();
     }
 
     //if the view resizes, then the widgetexplorer has to be resized
     if (watched == m_widgetExplorerView && event->type() == QEvent::Resize) {
         QResizeEvent *resizeEvent = static_cast<QResizeEvent *>(event);
         m_widgetExplorer->resize(resizeEvent->size());
+
+        if (orientation() == Qt::Horizontal) {
+            resize(width(), m_widgetExplorerView->height());
+        } else {
+            resize(m_widgetExplorerView->width(), height());
+        }
     }
 
     return false;
