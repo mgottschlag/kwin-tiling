@@ -70,7 +70,7 @@ Name[te]=అనువర్తనం దించునది
 Name[tg]=Иҷрогари барномаҳо
 Name[th]=ตัวเรียกใช้งานโปรแกรม
 Name[tr]=Uygulama Başlatıcısı
-Name[uk]=Пускач програм
+Name[uk]=Інструмент запуску програм
 Name[uz]=Dasturlarni ishga tushiruvchi
 Name[uz@cyrillic]=Дастурларни ишга туширувчи
 Name[wa]=Enondeu di programe
@@ -80,6 +80,11 @@ Name[zh_TW]=應用程式啟動器
 Type=Service
 Icon=preferences-desktop-color
 Comment=Simple application launcher
+Comment[pt]=Lançador de aplicações simples
+Comment[pt_BR]=Lançador de aplicativos simples
+Comment[tr]=Basit uygulama başlatıcı
+Comment[uk]=Простий інструмент запуску програм
+Comment[x-test]=xxSimple application launcherxx
 
 ServiceTypes=Plasma/ContainmentActions
 
