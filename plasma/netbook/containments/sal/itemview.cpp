@@ -27,6 +27,7 @@
 ItemView::ItemView(QGraphicsWidget *parent)
     : Plasma::ScrollWidget(parent)
 {
+    setFocusPolicy(Qt::StrongFocus);
     m_itemContainer = new ItemContainer(this);
     setWidget(m_itemContainer);
     m_itemContainer->installEventFilter(this);
@@ -144,7 +145,7 @@ bool ItemView::eventFilter(QObject *watched, QEvent *event)
             m_itemContainer->setPos(qBound(qMin((qreal)0,-m_itemContainer->size().width()+size().width()), m_itemContainer->pos().x()+deltaPos.x(), (qreal)0),
                                     m_itemContainer->pos().y());
         } else {
-            m_itemContainer->setPos(m_itemContainer->pos().y(),
+            m_itemContainer->setPos(m_itemContainer->pos().x(),
                                     qBound(qMin((qreal)0,-m_itemContainer->size().height()+size().height()), m_itemContainer->pos().y()+deltaPos.y(), (qreal)0));
         }
     } else if (watched == m_itemContainer && event->type() == QEvent::GraphicsSceneMove) {

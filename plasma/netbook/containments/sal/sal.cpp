@@ -20,7 +20,7 @@
 
 #include "sal.h"
 #include "stripwidget.h"
-#include "itemcontainer.h"
+#include "itemview.h"
 
 #include <QAction>
 #include <QTimer>
@@ -48,7 +48,7 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
       m_queryCounter(0),
       m_maxColumnWidth(0),
       m_searchField(0),
-      m_gridScroll(0),
+      m_resultsView(0),
       m_appletsLayout(0),
       m_stripUninitialized(true)
 {
@@ -91,20 +91,20 @@ void SearchLaunch::init()
 void SearchLaunch::doSearch(const QString query)
 {
     m_queryCounter = 0;
-    m_gridBackground->clear();
+    m_resultsView->clear();
 
     const bool stillEmpty = query.isEmpty() && m_runnermg->query().isEmpty();
     if (!stillEmpty) {
-        m_gridBackground->clear();
+        m_resultsView->clear();
     }
 
     m_maxColumnWidth = 0;
     m_matches.clear();
     m_runnermg->launchQuery(query);
 
-    if (m_gridScroll && query.isEmpty()) {
-        if (stillEmpty && m_gridBackground->count()) {
-            m_gridBackground->clear();
+    if (m_resultsView && query.isEmpty()) {
+        if (stillEmpty && m_resultsView->count()) {
+            m_resultsView->clear();
             return;
         }
 
@@ -192,12 +192,12 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         Plasma::QueryMatch match = m[i];
 
         // create new IconWidget with information from the match
-        Plasma::IconWidget *icon = new Plasma::IconWidget(m_gridBackground);
+        Plasma::IconWidget *icon = new Plasma::IconWidget(m_resultsView);
         icon->hide();
         icon->setText(match.text());
         icon->setIcon(match.icon());
 
-        m_gridBackground->insertItem(icon, 1/match.relevance());
+        m_resultsView->insertItem(icon, 1/match.relevance());
 
         connect(icon, SIGNAL(activated()), this, SLOT(launch()));
         icon->installEventFilter(this);
@@ -317,19 +317,15 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             // create launch grid and make it centered
             QGraphicsLinearLayout *gridLayout = new QGraphicsLinearLayout(Qt::Vertical);
 
-            m_gridBackground = new ItemContainer(this);
-            connect(m_gridBackground, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
-            connect(m_gridBackground, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launch(Plasma::IconWidget *)));
-            m_gridBackground->installEventFilter(this);
 
+            m_resultsView = new ItemView(this);
+            m_resultsView->installEventFilter(this);
+            m_resultsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            m_resultsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+            gridLayout->addItem(m_resultsView);
 
-            m_gridScroll = new Plasma::ScrollWidget(this);
-            m_gridScroll->installEventFilter(this);
-            m_gridScroll->setFocusPolicy(Qt::StrongFocus);
-            m_gridScroll->setWidget(m_gridBackground);
-            m_gridScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-            m_gridScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-            gridLayout->addItem(m_gridScroll);
+            connect(m_resultsView, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
+            connect(m_resultsView, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launch(Plasma::IconWidget *)));
 
             m_stripWidget = new StripWidget(m_runnermg, this);
             m_appletsLayout = new QGraphicsLinearLayout();
@@ -340,7 +336,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_homeButton->setOrientation(Qt::Horizontal);
             m_homeButton->setPreferredSize(m_homeButton->sizeFromIconSize(KIconLoader::SizeSmall));
             connect(m_homeButton, SIGNAL(activated()), this, SLOT(reset()));
-            connect(m_gridBackground, SIGNAL(resetRequested()), this, SLOT(reset()));
+            connect(m_resultsView, SIGNAL(resetRequested()), this, SLOT(reset()));
 
             QGraphicsLinearLayout *searchLayout = new QGraphicsLinearLayout(Qt::Horizontal);
             searchLayout->addStretch();
@@ -371,7 +367,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_mainLayout->updateGeometry();
 
             setTabOrder(m_stripWidget, m_searchField);
-            setTabOrder(m_searchField, m_gridScroll);
+            setTabOrder(m_searchField, m_resultsView);
         }
     }
 
@@ -472,31 +468,6 @@ void SearchLaunch::focusInEvent(QFocusEvent *event)
     Containment::focusInEvent(event);
 }
 
-void SearchLaunch::selectItem(Plasma::IconWidget *icon)
-{
-    QRectF iconRectToMainWidget = icon->mapToItem(m_gridBackground, icon->boundingRect()).boundingRect();
-
-    m_gridScroll->ensureRectVisible(iconRectToMainWidget);
-}
-
-bool SearchLaunch::eventFilter(QObject *watched, QEvent *event)
-{
-    Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
-    if (icon && event->type() == QEvent::GraphicsSceneHoverEnter) {
-        m_gridBackground->setCurrentItem(icon);
-    //pass click only if the user didn't move the mouse
-    } else if (icon && event->type() == QEvent::GraphicsSceneMouseMove) {
-        QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
-
-        QPointF deltaPos = me->pos() - me->lastPos();
-        m_gridBackground->setPos(m_gridBackground->pos().x(),
-                                 qBound(qMin((qreal)0,-m_gridBackground->size().height()+m_gridScroll->size().height()), m_gridBackground->pos().y()+deltaPos.y(), (qreal)0));
-    } else if (watched == m_gridScroll && event->type() == QEvent::FocusIn) {
-        m_gridBackground->setFocus();
-    }
-
-    return false;
-}
 
 
 K_EXPORT_PLASMA_APPLET(sal, SearchLaunch)

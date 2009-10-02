@@ -30,7 +30,7 @@
 
 class QTimer;
 class StripWidget;
-class ItemContainer;
+class ItemView;
 
 namespace Plasma
 {
@@ -53,7 +53,6 @@ public:
     void constraintsEvent(Plasma::Constraints constraints);
 
 protected:
-    bool eventFilter(QObject *watched, QEvent *event);
     void focusInEvent(QFocusEvent *event);
     void paintInterface(QPainter *, const QStyleOptionGraphicsItem *, const QRect &);
 
@@ -74,7 +73,6 @@ private slots:
     void launch(Plasma::IconWidget *icon);
     void addFavourite();
     void reset();
-    void selectItem(Plasma::IconWidget *);
 
 private:
     /**
@@ -92,9 +90,8 @@ private:
     QTimer *m_searchTimer;
     QHash<Plasma::IconWidget*, Plasma::QueryMatch> m_matches;
 
-    ItemContainer *m_gridBackground;
     Plasma::LineEdit *m_searchField;
-    Plasma::ScrollWidget *m_gridScroll;
+    ItemView *m_resultsView;
     StripWidget *m_stripWidget;
 
     QGraphicsLinearLayout *m_mainLayout;
