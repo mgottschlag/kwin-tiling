@@ -642,6 +642,8 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
             m_widgetExplorerView->deleteLater();
             m_widgetExplorer->deleteLater();
         }
+    } else if (watched == m_mainView && event->type() == QEvent::Close) {
+        exit();
     }
     return false;
 }
