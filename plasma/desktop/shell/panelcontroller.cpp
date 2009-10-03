@@ -106,8 +106,8 @@ PanelController::PanelController(QWidget* parent)
     m_iconSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
 
     //setWindowFlags(Qt::Popup);
-    setWindowFlags(Qt::FramelessWindowHint);
-    KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky);
+    //setWindowFlags(Qt::FramelessWindowHint);
+    //KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky);
     setAttribute(Qt::WA_DeleteOnClose);
     setFocus(Qt::ActiveWindowFocusReason);
 

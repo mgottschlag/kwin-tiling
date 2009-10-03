@@ -47,8 +47,8 @@ ControllerWindow::ControllerWindow(QWidget* parent)
      m_widgetExplorer(0)
 {
     Q_UNUSED(parent)
-    setWindowFlags(Qt::FramelessWindowHint);
-    KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky | NET::KeepAbove);
     setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_TranslucentBackground);
     setFocus(Qt::ActiveWindowFocusReason);
