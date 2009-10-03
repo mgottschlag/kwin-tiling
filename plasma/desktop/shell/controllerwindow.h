@@ -59,7 +59,7 @@ public:
     bool eventFilter(QObject *watched, QEvent *event);
 
 protected:
-    void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent *event);
     void paintEvent(QPaintEvent *event);
     void keyPressEvent(QKeyEvent *event);
 
