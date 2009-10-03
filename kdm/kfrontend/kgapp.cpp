@@ -225,6 +225,12 @@ goodLocale( const char *var )
 	return False;
 }
 
+static uint
+qHash(const QSize &sz)
+{
+	return (sz.width() << 12) ^ sz.height();
+}
+
 int
 main( int argc ATTR_UNUSED, char **argv )
 {
@@ -363,9 +369,24 @@ main( int argc ATTR_UNUSED, char **argv )
 	gSendInt( G_Ready );
 
 	if (themer) {
-		QPixmap pm( dw->size() );
+		// Group by size to avoid rescaling images repeatedly
+		QHash<QSize, QList<int> > scrns;
 		for (int i = 0; i < dw->numScreens(); i++)
-			themer->paintBackground( &pm, dw->screenGeometry( i ), i == _greeterScreen );
+			scrns[dw->screenGeometry( i ).size()] << i;
+		QPixmap pm( dw->size() );
+		QSize gsz = dw->screenGeometry( _greeterScreen ).size();
+		// Paint these first, as throwing away their images does not hurt
+		QHash<QSize, QList<int> >::ConstIterator it;
+		for (it = scrns.begin(); it != scrns.end(); ++it)
+			if (it.key() != gsz)
+				foreach (int i, it.value())
+					themer->paintBackground( &pm, dw->screenGeometry( i ), false );
+		// If we are lucky, these will use the same images as the greeter
+		foreach (int i, scrns.value(gsz))
+			if (i != _greeterScreen)
+				themer->paintBackground( &pm, dw->screenGeometry( i ), false );
+		// Paint the greeter background last - it will be re-used.
+		themer->paintBackground( &pm, dw->screenGeometry( _greeterScreen ), true );
 		QPalette palette;
 		palette.setBrush( dw->backgroundRole(), QBrush( pm ) );
 		dw->setPalette( palette );
