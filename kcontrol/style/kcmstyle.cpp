@@ -469,8 +469,8 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	addWhatsThis();
 
 	// Insert the pages into the tabWidget
-	tabWidget->addTab( page0, i18nc("@title:tab", "&Desktop"));
 	tabWidget->addTab( page1, i18nc("@title:tab","&Applications"));
+	tabWidget->addTab( page0, i18nc("@title:tab", "&Workspace"));
 	tabWidget->addTab( page2, i18nc("@title:tab","&Fine Tuning"));
 }
 
