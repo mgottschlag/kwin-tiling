@@ -107,7 +107,7 @@ PanelController::PanelController(QWidget* parent)
 
     //setWindowFlags(Qt::Popup);
     //setWindowFlags(Qt::FramelessWindowHint);
-    //KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky);
+    KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky | NET::KeepAbove);
     setAttribute(Qt::WA_DeleteOnClose);
     setFocus(Qt::ActiveWindowFocusReason);
 
@@ -207,7 +207,7 @@ PanelController::PanelController(QWidget* parent)
     connect(m_settingsTool, SIGNAL(pressed()), this, SLOT(settingsPopup()));
     m_optionsDialog = new Plasma::Dialog(0); // don't pass in a parent; breaks with some lesser WMs
     m_optionsDialog->installEventFilter(this);
-    KWindowSystem::setState(m_optionsDialog->winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky);
+    KWindowSystem::setState(m_optionsDialog->winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky | NET::KeepAbove);
     m_optDialogLayout = new QVBoxLayout(m_optionsDialog);
     m_optDialogLayout->setMargin(0);
     m_optDialogLayout->addWidget(alignFrame);
@@ -785,7 +785,7 @@ void PanelController::settingsPopup()
     if (m_optionsDialog->isVisible()) {
         m_optionsDialog->hide();
     } else {
-        KWindowSystem::setState(m_optionsDialog->winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky);
+        KWindowSystem::setState(m_optionsDialog->winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky | NET::KeepAbove);
         QPoint pos = mapToGlobal(m_settingsTool->pos());
         m_optionsDialog->layout()->activate();
         m_optionsDialog->resize(m_optionsDialog->sizeHint());

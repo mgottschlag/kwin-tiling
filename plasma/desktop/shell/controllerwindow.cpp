@@ -275,25 +275,29 @@ void ControllerWindow::resizeEvent(QResizeEvent * event)
 {
     m_background->resizeFrame(size());
 
+    qDebug() << "ControllerWindow::resizeEvent" << event->oldSize();
+
     // We want to stay aligned to the edge we are at
-    switch (m_location) {
-        case Plasma::BottomEdge:
-            move(
-                x(),
-                y() - event->size().height()
-                    + event->oldSize().height());
-            break;
-    // TODO: Enable this after fixing the behaviour
-    // of the vertical widget explorer
-    //     case Plasma::RightEdge:
-    //         move(
-    //             x() - event->size().width()
-    //                 + event->oldSize().width(),
-    //             y());
-    //         break;
-        default:
-            // do nothing
-            break;
+    if (event->oldSize().isValid()) {
+        switch (m_location) {
+            case Plasma::BottomEdge:
+                move(
+                    x(),
+                    y() - event->size().height()
+                        + event->oldSize().height());
+                break;
+        // TODO: Enable this after fixing the behaviour
+        // of the vertical widget explorer
+        //     case Plasma::RightEdge:
+        //         move(
+        //             x() - event->size().width()
+        //                 + event->oldSize().width(),
+        //             y());
+        //         break;
+            default:
+                // do nothing
+                break;
+        }
     }
 }
 
