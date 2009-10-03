@@ -37,7 +37,7 @@ class NetCorona : public Plasma::Corona
     Q_OBJECT
 
 public:
-    NetCorona(QObject * parent, QWidget *mainWindow);
+    NetCorona(QObject * parent);
 
     /**
      * Loads the default (system wide) layout for this user
@@ -57,7 +57,6 @@ private:
     void init();
     Plasma::Applet *loadDefaultApplet(const QString &pluginName, Plasma::Containment *c);
 
-    QWidget *m_mainWindow;
     int m_numScreens;
 };
 

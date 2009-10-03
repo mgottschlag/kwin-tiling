@@ -349,7 +349,7 @@ NetView *PlasmaApp::mainView() const
 Plasma::Corona* PlasmaApp::corona()
 {
     if (!m_corona) {
-        m_corona = new NetCorona(this, m_mainView);
+        m_corona = new NetCorona(this);
         connect(m_corona, SIGNAL(containmentAdded(Plasma::Containment*)),
                 this, SLOT(createView(Plasma::Containment*)));
         connect(m_corona, SIGNAL(configSynced()), this, SLOT(syncConfig()));

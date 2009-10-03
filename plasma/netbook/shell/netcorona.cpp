@@ -38,9 +38,8 @@
 #include "plasmaapp.h"
 #include "netview.h"
 
-NetCorona::NetCorona(QObject *parent, QWidget *mainWindow)
-    : Plasma::Corona(parent),
-      m_mainWindow(mainWindow)
+NetCorona::NetCorona(QObject *parent)
+    : Plasma::Corona(parent)
 {
     init();
 }
@@ -92,7 +91,7 @@ void NetCorona::loadDefaultLayout()
     emit containmentAdded(c);
 
     QVariantList netPanelArgs;
-    netPanelArgs << m_mainWindow->width();
+    netPanelArgs << PlasmaApp::self()->mainView()->width();
     c = addContainment("netpanel", netPanelArgs);
     /*
     loadDefaultApplet("systemtray", panel);
