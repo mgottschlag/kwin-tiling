@@ -30,8 +30,13 @@
 #include <KGlobalSettings>
 #include <KStandardDirs>
 
+#include <kephal/screens.h>
+
 #include <Plasma/Containment>
 #include <Plasma/DataEngineManager>
+
+#include "plasmaapp.h"
+#include "netview.h"
 
 NetCorona::NetCorona(QObject *parent, QWidget *mainWindow)
     : Plasma::Corona(parent),
@@ -148,19 +153,23 @@ void NetCorona::screenResized(int screen)
 
 int NetCorona::numScreens() const
 {
-    return QApplication::desktop()->numScreens();
+    return Kephal::ScreenUtils::numScreens();
 }
 
 QRect NetCorona::screenGeometry(int id) const
 {
-    return QRect(QPoint(0,0), m_mainWindow->size());
+    return Kephal::ScreenUtils::screenGeometry(id);
 }
 
 QRegion NetCorona::availableScreenRegion(int id) const
 {
-    // TODO: more precise implementation needed
-    //FIXME: no hardcoded stuff
-    return QRegion(QRect(QPoint(0,24), m_mainWindow->size()-QSize(0,24)));
+    QRegion r(screenGeometry(id));
+    NetView *view = PlasmaApp::self()->controlBar();
+    if (view) {
+        r = r.subtracted(view->geometry());
+    }
+
+    return r;
 }
 
 

@@ -75,6 +75,10 @@ public:
 
     void setAutoHideControlBar(bool autoHide);
 
+    NetView *controlBar() const;
+
+    NetView *mainView() const;
+
     /**
      * Returns true if this widget is currently a desktop window.
      * See setIsDesktop()

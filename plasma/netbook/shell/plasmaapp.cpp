@@ -336,6 +336,16 @@ void PlasmaApp::reserveStruts()
                                     strut.bottom_width, strut.bottom_start, strut.bottom_end);
 }
 
+NetView *PlasmaApp::controlBar() const
+{
+    return m_controlBar;
+}
+
+NetView *PlasmaApp::mainView() const
+{
+    return m_mainView;
+}
+
 Plasma::Corona* PlasmaApp::corona()
 {
     if (!m_corona) {
