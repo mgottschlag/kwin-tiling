@@ -635,7 +635,7 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
                 event->type() == QEvent::Leave &&
                 !QApplication::activeWindow())) {
         //delayed hide
-        m_unHideTimer->start(600);
+        m_unHideTimer->start(400);
     } else if (watched == m_widgetExplorerView && event->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         if (keyEvent->key() == Qt::Key_Escape) {
@@ -651,7 +651,7 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
     if (m_controlBar && m_autoHideControlBar && !m_controlBar->isVisible() && event->xcrossing.window == m_unhideTrigger &&
         (event->xany.send_event != True && event->type == EnterNotify)) {
         //delayed show
-        m_unHideTimer->start(600);
+        m_unHideTimer->start(400);
     }
     return KUniqueApplication::x11EventFilter(event);
 }
