@@ -384,7 +384,7 @@ export KDE_SESSION_UID
 
 # We set LD_BIND_NOW to increase the efficiency of kdeinit.
 # kdeinit unsets this variable before loading applications.
-LD_BIND_NOW=true @LIBEXEC_INSTALL_DIR@/start_kdeinit_wrapper +kcminit_startup
+LD_BIND_NOW=true @KDE4_LIBEXEC_INSTALL_DIR@/start_kdeinit_wrapper +kcminit_startup
 if test $? -ne 0; then
   # Startup error
   echo 'startkde: Could not start kdeinit4. Check your installation.'  1>&2
