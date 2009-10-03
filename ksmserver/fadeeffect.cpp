@@ -340,6 +340,15 @@ void BlendingThread::setImage(XImage *image)
     memcpy((void*)m_original, (const void*)m_image->data, size);
     memcpy((void*)m_final,    (const void*)m_image->data, size);
 
+    if (m_image->depth > 16) {
+        // Make sure that the alpha channel is initialized to 0xff
+        for (int y = 0; y < image->height; y++) {
+            quint32 *pixels = (quint32*)(m_original + (m_image->bytes_per_line * y));
+            for (int x = 0; x < image->width; x++)
+                pixels[x] |= 0xff000000;
+        }
+    }
+
     if (m_image->depth != 16)
         toGray32(m_final);
     else
