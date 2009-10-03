@@ -25,6 +25,8 @@
 #include <KIcon>
 #include <KGlobalSettings>
 
+#include <Plasma/Theme>
+
 AppletIconWidget::AppletIconWidget(QGraphicsItem *parent, PlasmaAppletItem *appletItem)
     : QGraphicsWidget(parent),
       m_iconHeight(DEFAULT_ICON_SIZE)
@@ -160,6 +162,8 @@ void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     }
 
     QRectF textRect(rect.x(), iconRect.bottom() + 2, width, height - iconRect.height() - 2);
+    painter->setPen(
+        Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
     painter->drawText(textRect, Qt::AlignTop | Qt::AlignCenter | Qt::TextWordWrap, m_appletItem->name());
 }
 
