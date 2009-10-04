@@ -27,7 +27,7 @@ class QAction;
 class KDialog;
 class KIntNumInput;
 class QGraphicsLinearLayout;
-class AppletOverlay;
+class LinearAppletOverlay;
 
 namespace Plasma
 {
@@ -37,8 +37,6 @@ namespace Plasma
 class Panel : public Plasma::Containment
 {
     Q_OBJECT
-
-    friend class AppletOverlay;
 
 public:
     Panel(QObject *parent, const QVariantList &args);
@@ -56,7 +54,7 @@ public:
 protected:
     void saveState(KConfigGroup &config) const;
 
-private slots:
+private Q_SLOTS:
     void toggleImmutability();
     void themeUpdated();
     void backgroundChanged();
@@ -64,6 +62,7 @@ private slots:
     void appletRemoved(Plasma::Applet* applet);
     void updateSize();
     void updateConfigurationMode(bool config);
+    void overlayRequestedDrop(QGraphicsSceneDragDropEvent *event);
     void containmentAdded(Plasma::Containment *containment);
 
 private:
@@ -79,7 +78,7 @@ private:
 
     Plasma::FrameSvg *m_background;
     QGraphicsLinearLayout *m_layout;
-    AppletOverlay *m_appletOverlay;
+    LinearAppletOverlay *m_appletOverlay;
 };
 
 

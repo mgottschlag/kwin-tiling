@@ -17,8 +17,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "appletoverlay.h"
-#include "panel.h"
+#include "linearappletoverlay.h"
+
+#include "../common/appletmovespacer.h"
 
 #include <QGraphicsLinearLayout>
 #include <QGraphicsSceneMouseEvent>
@@ -27,47 +28,15 @@
 #include <KGlobalSettings>
 
 #include <Plasma/Applet>
+#include <Plasma/Containment>
 #include <Plasma/PaintUtils>
 #include <Plasma/ScrollWidget>
 
-//FIXME:: yeah yeah i know, replicate once more...
-class AppletMoveSpacer : public QGraphicsWidget
-{
-public:
-    AppletMoveSpacer(QGraphicsWidget *parent)
-        : QGraphicsWidget(parent)
-    {
-    }
-
-    AppletOverlay *overlay;
-
-protected:
-    void dropEvent(QGraphicsSceneDragDropEvent *event)
-    {
-        event->setPos(mapToParent(event->pos()));
-        overlay->dropEvent(event);
-    }
-
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget * widget = 0)
-    {
-        Q_UNUSED(option)
-        Q_UNUSED(widget)
-
-        //TODO: make this a pretty gradient?
-        painter->setRenderHint(QPainter::Antialiasing);
-        QPainterPath p = Plasma::PaintUtils::roundedRectangle(contentsRect().adjusted(1, 1, -2, -2), 4);
-        QColor c = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-        c.setAlphaF(0.3);
-
-        painter->fillPath(p, c);
-    }
-
-};
-
-AppletOverlay::AppletOverlay(QGraphicsWidget *parent, Panel *panel)
+LinearAppletOverlay::LinearAppletOverlay(Plasma::Containment *parent, QGraphicsLinearLayout *layout)
     : QGraphicsWidget(parent),
       m_applet(0),
-      m_panel(panel),
+      m_containment(parent),
+      m_layout(layout),
       m_spacer(0),
       m_spacerIndex(0),
       m_clickDrag(false)
@@ -77,11 +46,11 @@ AppletOverlay::AppletOverlay(QGraphicsWidget *parent, Panel *panel)
     setZValue(900);
 }
 
-AppletOverlay::~AppletOverlay()
+LinearAppletOverlay::~LinearAppletOverlay()
 {
 }
 
-void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void LinearAppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget)
 
@@ -102,19 +71,24 @@ void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     }
 }
 
-void AppletOverlay::appletDestroyed()
+void LinearAppletOverlay::appletDestroyed()
 {
     m_applet = 0;
 }
 
-void AppletOverlay::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void LinearAppletOverlay::spacerRequestedDrop(QGraphicsSceneDragDropEvent *event)
+{
+    dropEvent(event);
+}
+
+void LinearAppletOverlay::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() != Qt::LeftButton) {
         //Hack to make scene::itemAt() work
         int z = zValue();
         setZValue(-100);
         //FIXME:here we don't have a screen pos in the event
-        m_panel->showContextMenu(event->pos(), event->pos().toPoint());
+        m_containment->showContextMenu(event->pos(), event->pos().toPoint());
         setZValue(z);
         return;
     }
@@ -128,8 +102,8 @@ void AppletOverlay::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if (m_applet) {
         m_origin = event->pos();
         showSpacer(event->pos());
-        if (m_panel->m_layout) {
-            m_panel->m_layout->removeItem(m_applet);
+        if (m_layout) {
+            m_layout->removeItem(m_applet);
             m_applet->raise();
         }
         if (m_spacer) {
@@ -138,7 +112,7 @@ void AppletOverlay::mousePressEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
-void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+void LinearAppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
     if (m_clickDrag) {
         //Cheat and pretend a mousemoveevent is arrived
@@ -155,7 +129,7 @@ void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     Plasma::Applet *oldApplet;
 
     //FIXME: is there a way more efficient than this linear one? scene()itemAt() won't work because it would always be == this
-    foreach (Plasma::Applet *applet, m_panel->applets()) {
+    foreach (Plasma::Applet *applet, m_containment->applets()) {
         if (applet->geometry().contains(event->pos())) {
             m_applet = applet;
             connect(applet, SIGNAL(destroyed()), this, SLOT(appletDestroyed()));
@@ -167,11 +141,11 @@ void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     }
 }
 
-void AppletOverlay::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void LinearAppletOverlay::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     if (m_spacer) {
         QPointF delta = event->pos()-event->lastPos();
-        if (m_panel->formFactor() == Plasma::Vertical) {
+        if (m_containment->formFactor() == Plasma::Vertical) {
             m_applet->moveBy(0, delta.y());
         } else {
             m_applet->moveBy(delta.x(), 0);
@@ -182,7 +156,7 @@ void AppletOverlay::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     update();
 }
 
-void AppletOverlay::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void LinearAppletOverlay::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
 
@@ -193,9 +167,9 @@ void AppletOverlay::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         return;
     }
 
-    if (m_spacer && m_panel->m_layout) {
-        m_panel->m_layout->removeItem(m_spacer);
-        m_panel->m_layout->insertItem(m_spacerIndex, m_applet);
+    if (m_spacer && m_layout) {
+        m_layout->removeItem(m_spacer);
+        m_layout->insertItem(m_spacerIndex, m_applet);
     }
 
     delete m_spacer;
@@ -203,23 +177,24 @@ void AppletOverlay::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     m_spacerIndex = 0;
 }
 
-void AppletOverlay::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
+void LinearAppletOverlay::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
     showSpacer(event->pos());
     event->accept();
 }
 
-void AppletOverlay::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
+void LinearAppletOverlay::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 {
     showSpacer(event->pos());
 }
 
-void AppletOverlay::dropEvent(QGraphicsSceneDragDropEvent *event)
+void LinearAppletOverlay::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
-    m_panel->dropEvent(event);
+    event->setPos(mapToParent(event->pos()));
+    emit dropRequested(event);
 
-    if (m_panel->m_layout) {
-        m_panel->m_layout->removeItem(m_spacer);
+    if (m_layout) {
+        m_layout->removeItem(m_spacer);
     }
 
     if (m_spacer) {
@@ -230,20 +205,15 @@ void AppletOverlay::dropEvent(QGraphicsSceneDragDropEvent *event)
     m_spacerIndex = 0;
 }
 
-void AppletOverlay::showSpacer(const QPointF &pos)
+void LinearAppletOverlay::showSpacer(const QPointF &pos)
 {
     if (!scene()) {
         return;
     }
 
-    QGraphicsLinearLayout *lay = m_panel->m_layout;
-    if (!lay) {
-        return;
-    }
-
     if (pos == QPoint()) {
         if (m_spacer) {
-            lay->removeItem(m_spacer);
+            m_layout->removeItem(m_spacer);
             m_spacer->hide();
         }
         return;
@@ -256,10 +226,10 @@ void AppletOverlay::showSpacer(const QPointF &pos)
 
     int insertIndex = -1;
 
-    for (int i = 0; i < lay->count(); ++i) {
-        QRectF siblingGeometry = lay->itemAt(i)->geometry();
+    for (int i = 0; i < m_layout->count(); ++i) {
+        QRectF siblingGeometry = m_layout->itemAt(i)->geometry();
 
-        if (m_panel->formFactor() != Plasma::Vertical) {
+        if (m_containment->formFactor() != Plasma::Vertical) {
             qreal middle = siblingGeometry.center().x();
             if (pos.x() < middle) {
                 insertIndex = i;
@@ -289,15 +259,15 @@ void AppletOverlay::showSpacer(const QPointF &pos)
     if (insertIndex != -1) {
         if (!m_spacer) {
             m_spacer = new AppletMoveSpacer(this);
-            m_spacer->overlay = this;
+            connect (m_spacer, SIGNAL(dropRequested(QGraphicsSceneDragDropEvent *)), 
+                     this, SLOT(spacerRequestedDrop(QGraphicsSceneDragDropEvent *)));
         }
-        if (m_panel->m_layout) {
-            m_panel->m_layout->removeItem(m_spacer);
-        }
+
+        m_layout->removeItem(m_spacer);
         m_spacer->show();
-        lay->insertItem(insertIndex, m_spacer);
+        m_layout->insertItem(insertIndex, m_spacer);
     }
 }
 
-#include <appletoverlay.moc>
+#include <linearappletoverlay.moc>
 

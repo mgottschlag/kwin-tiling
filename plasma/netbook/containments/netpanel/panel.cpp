@@ -19,7 +19,7 @@
 */
 
 #include "panel.h"
-#include "appletoverlay.h"
+#include "../common/linearappletoverlay.h"
 
 #include <limits>
 
@@ -388,12 +388,19 @@ QList<QAction *> Panel::contextualActions()
 void Panel::updateConfigurationMode(bool config)
 {
     if (config && !m_appletOverlay) {
-        m_appletOverlay = new AppletOverlay(this, this);
+        m_appletOverlay = new LinearAppletOverlay(this, m_layout);
         m_appletOverlay->resize(size());
+        connect (m_appletOverlay, SIGNAL(dropRequested(QGraphicsSceneDragDropEvent *)),
+                 this, SLOT(overlayRequestedDrop(QGraphicsSceneDragDropEvent *)));
     } else if (!config) {
         delete m_appletOverlay;
         m_appletOverlay = 0;
     }
+}
+
+void Panel::overlayRequestedDrop(QGraphicsSceneDragDropEvent *event)
+{
+    dropEvent(event);
 }
 
 void Panel::saveState(KConfigGroup &config) const

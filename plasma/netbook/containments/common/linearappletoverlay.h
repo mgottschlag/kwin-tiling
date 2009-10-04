@@ -17,8 +17,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef APPLETOVERLAY_H
-#define APPLETOVERLAY_H
+#ifndef LINEARAPPLETOVERLAY_H
+#define LINEARAPPLETOVERLAY_H
 
 
 #include <QGraphicsWidget>
@@ -26,6 +26,7 @@
 namespace Plasma
 {
     class Applet;
+    class Containment;
 }
 
 class Panel;
@@ -33,21 +34,21 @@ class AppletMoveSpacer;
 class QGraphicsLinearLayout;
 class QTimer;
 
-//FIXME: this really screams for mid containments to inherit midContainment...
-class AppletOverlay : public QGraphicsWidget
+class LinearAppletOverlay : public QGraphicsWidget
 {
     Q_OBJECT
 
     friend class AppletMoveSpacer;
 
 public:
-    explicit AppletOverlay(QGraphicsWidget *parent = 0, Panel *panel = 0);
-    ~AppletOverlay();
+    explicit LinearAppletOverlay(Plasma::Containment *parent = 0, QGraphicsLinearLayout *layout = 0);
+    ~LinearAppletOverlay();
 
     void showSpacer(const QPointF &pos);
 
 protected Q_SLOTS:
     void appletDestroyed();
+    void spacerRequestedDrop(QGraphicsSceneDragDropEvent *event);
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget=0);
@@ -59,8 +60,13 @@ protected:
     void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
     void dropEvent(QGraphicsSceneDragDropEvent *event);
 
+Q_SIGNALS:
+    void dropRequested(QGraphicsSceneDragDropEvent *event);
+
 private:
     Plasma::Applet *m_applet;
+    Plasma::Containment *m_containment;
+    QGraphicsLinearLayout *m_layout;
     Panel *m_panel;
     AppletMoveSpacer *m_spacer;
     int m_spacerIndex;
