@@ -60,6 +60,7 @@
 #include <KDE/KPluginFactory>
 #include <KDE/KPluginLoader>
 #include <KDE/KStandardAction>
+#include "config-fontinst.h"
 
 // Enable the following to allow printing of non-installed fonts. Does not seem to work :-(
 //#define KFI_PRINT_APP_FONTS
@@ -488,6 +489,8 @@ void CFontViewPart::checkInstallable()
 {
     if(itsFontDetails.family.isEmpty())
     {
+        if (!QDBusConnection::sessionBus().interface()->isServiceRegistered(OrgKdeFontinstInterface::staticInterfaceName()))
+            QProcess::startDetached(QLatin1String(KFONTINST_LIB_EXEC_DIR"/fontinst"));
         itsInstallButton->setEnabled(false);
         itsInterface->stat(itsPreview->engine()->descriptiveName(), FontInst::SYS_MASK|FontInst::USR_MASK, getpid());
     }

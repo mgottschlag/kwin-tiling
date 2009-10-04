@@ -28,6 +28,7 @@
 #include <QtCore/QCoreApplication>
 #include <KDE/KDebug>
 #include <kio/global.h>
+#include "config-fontinst.h"
 
 #define KFI_DBUG kDebug(7000) << '(' << time(NULL) << ')'
 
@@ -52,6 +53,9 @@ FontInstInterface::FontInstInterface()
     connect(itsInterface, SIGNAL(status(int, int)), SLOT(status(int, int)));
     connect(itsInterface, SIGNAL(fontList(int, const QList<KFI::Families> &)), SLOT(fontList(int, const QList<KFI::Families> &)));
     connect(itsInterface, SIGNAL(fontStat(int, const KFI::Family &)), SLOT(fontStat(int, const KFI::Family &)));
+    
+    if (!QDBusConnection::sessionBus().interface()->isServiceRegistered(OrgKdeFontinstInterface::staticInterfaceName()))
+        QProcess::startDetached(QLatin1String(KFONTINST_LIB_EXEC_DIR"/fontinst"));
 }
 
 FontInstInterface::~FontInstInterface()

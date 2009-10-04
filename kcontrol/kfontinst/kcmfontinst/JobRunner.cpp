@@ -51,6 +51,7 @@
 #include <sys/resource.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include "config-fontinst.h"
 
 #define CFG_GROUP                  "Runner Dialog"
 #define CFG_DONT_SHOW_FINISHED_MSG "DontShowFinishedMsg"
@@ -65,6 +66,12 @@ FontInstInterface * CJobRunner::dbus()
     return theInterface;
 }
 
+void CJobRunner::startDbusService()
+{
+    if (!QDBusConnection::sessionBus().interface()->isServiceRegistered(OrgKdeFontinstInterface::staticInterfaceName()))
+        QProcess::startDetached(QLatin1String(KFONTINST_LIB_EXEC_DIR"/fontinst"));
+}
+    
 static const int constDownloadFailed=-1;
 static const int constInterfaceCheck=5*1000;
 

@@ -85,6 +85,8 @@ class CJobRunner : public KDialog
     ~CJobRunner();
 
     static FontInstInterface * dbus();
+    static void startDbusService();
+
     static KUrl encode(const QString &family, quint32 style, bool system);
 
     static void     getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAndPfm, QWidget *widget);

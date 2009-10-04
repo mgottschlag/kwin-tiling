@@ -46,6 +46,8 @@ int CInstaller::install(const QSet<KUrl> &urls)
     bool                      sysInstall(false);
     CJobRunner *jobRunner=new CJobRunner(itsParent);
 
+    CJobRunner::startDbusService();
+
     if(!Misc::root())
     {
         switch(KMessageBox::questionYesNoCancel(itsParent,
