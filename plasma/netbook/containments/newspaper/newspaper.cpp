@@ -232,7 +232,7 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
 
 void Newspaper::updateConfigurationMode(bool config)
 {
-    if (config && !m_appletOverlay) {
+    if (config && !m_appletOverlay && immutability() == Plasma::Mutable) {
         m_appletOverlay = new AppletOverlay(this, this);
         m_appletOverlay->resize(size());
     } else if (!config) {

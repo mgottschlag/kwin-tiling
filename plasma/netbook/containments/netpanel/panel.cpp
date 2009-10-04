@@ -387,7 +387,7 @@ QList<QAction *> Panel::contextualActions()
 
 void Panel::updateConfigurationMode(bool config)
 {
-    if (config && !m_appletOverlay) {
+    if (config && !m_appletOverlay && immutability() == Plasma::Mutable) {
         m_appletOverlay = new LinearAppletOverlay(this, m_layout);
         m_appletOverlay->resize(size());
         connect (m_appletOverlay, SIGNAL(dropRequested(QGraphicsSceneDragDropEvent *)),

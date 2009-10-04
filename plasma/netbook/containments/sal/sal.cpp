@@ -466,7 +466,7 @@ void SearchLaunch::restoreStrip()
 
 void SearchLaunch::updateConfigurationMode(bool config)
 {
-    if (config && !m_appletOverlay) {
+    if (config && !m_appletOverlay && immutability() == Plasma::Mutable) {
         if (m_appletsLayout->count() == 0) {
             m_mainLayout->addItem(m_appletsLayout);
         }
