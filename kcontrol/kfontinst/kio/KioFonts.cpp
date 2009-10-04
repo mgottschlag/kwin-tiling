@@ -22,6 +22,7 @@
  */
 
 #include <QtCore/QFile>
+#include <QtCore/QCoreApplication>
 #include <KDE/KComponentData>
 #include <KDE/KDebug>
 #include <KDE/KMimeType>
@@ -66,8 +67,9 @@ KDE_EXPORT int kdemain(int argc, char **argv)
 
     KLocale::setMainCatalog(KFI_CATALOGUE);
 
-    KComponentData componentData("kio_"KFI_KIO_FONTS_PROTOCOL);
-    KFI::CKioFonts slave(argv[2], argv[3]);
+    KComponentData   componentData("kio_"KFI_KIO_FONTS_PROTOCOL);
+    KFI::CKioFonts   slave(argv[2], argv[3]);
+    QCoreApplication app(argc, argv);
 
     slave.dispatchLoop();
 

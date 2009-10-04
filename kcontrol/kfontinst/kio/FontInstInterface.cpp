@@ -24,8 +24,6 @@
 #include "FontInstInterface.h"
 #include "FontinstIface.h"
 #include "FontInst.h"
-#include <QtCore/QEventLoop>
-#include <QtCore/QCoreApplication>
 #include <KDE/KDebug>
 #include <kio/global.h>
 #include "config-fontinst.h"
@@ -35,8 +33,6 @@
 namespace KFI
 {
 
-QCoreApplication * FontInstInterface::theApp=0L;
-
 FontInstInterface::FontInstInterface()
                  : itsInterface(new OrgKdeFontinstInterface(OrgKdeFontinstInterface::staticInterfaceName(),
                                                             FONTINST_PATH,
@@ -44,7 +40,6 @@ FontInstInterface::FontInstInterface()
                                                                 ? QDBusConnection::systemBus()
                                                                 : QDBusConnection::sessionBus(), 0L))
                  , itsActive(false)
-
 {
     KFI_DBUG;
     FontInst::registerTypes();
@@ -61,8 +56,6 @@ FontInstInterface::FontInstInterface()
 FontInstInterface::~FontInstInterface()
 {
     KFI_DBUG;
-    delete theApp;
-    theApp=0L;
 }
 
 int FontInstInterface::install(const QString &file, bool toSystem)
@@ -118,15 +111,8 @@ int FontInstInterface::waitForResponse()
     itsStatus=FontInst::STATUS_OK;
     itsFamilies=Families();
     itsActive=true;
-    // Need a QApplication to be able to use event loop!
-    if(!QCoreApplication::instance())
-    {
-        int  dummyArgc=1;
-        char *dummyArgv[]={(char *)"kio_fonts_thread"};
-        theApp=new QCoreApplication(dummyArgc, dummyArgv);
-    }
 
-    QCoreApplication::exec();
+    itsEventLoop.exec();
     KFI_DBUG << "Loop finished";
     return itsStatus;
 }
@@ -137,7 +123,7 @@ void FontInstInterface::dbusServiceOwnerChanged(const QString &name, const QStri
     {
         KFI_DBUG << "Service died :-(";
         itsStatus=FontInst::STATUS_SERVICE_DIED;
-        QCoreApplication::exit(0);
+        itsEventLoop.quit();
     }
 }
 
@@ -147,7 +133,7 @@ void FontInstInterface::status(int pid, int value)
     {
         KFI_DBUG << "Status:" << value;
         itsStatus=value;
-        QCoreApplication::exit(0);
+        itsEventLoop.quit();
     }
 }
 
@@ -158,7 +144,7 @@ void FontInstInterface::fontList(int pid, const QList<KFI::Families> &families)
         KFI_DBUG;
         itsFamilies=1==families.count() ? *families.begin() : Families();
         itsStatus=1==families.count() ? (int)FontInst::STATUS_OK : (int)KIO::ERR_DOES_NOT_EXIST;
-        QCoreApplication::exit(0);
+        itsEventLoop.quit();
     }
 }
 
@@ -169,7 +155,7 @@ void FontInstInterface::fontStat(int pid, const KFI::Family &font)
         KFI_DBUG;
         itsFamilies=Families(font, false);
         itsStatus=font.styles().count()>0 ? (int)FontInst::STATUS_OK : (int)KIO::ERR_DOES_NOT_EXIST;
-        QCoreApplication::exit(0);
+        itsEventLoop.quit();
     }
 }
 

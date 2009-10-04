@@ -25,10 +25,10 @@
  */
 
 #include <QtCore/QObject>
+#include <QtCore/QEventLoop>
 #include "Family.h"
 
 class QTimer;
-class QCoreApplication;
 class OrgKdeFontinstInterface;
 
 namespace KFI
@@ -66,7 +66,7 @@ class FontInstInterface : public QObject
     bool                    itsActive;
     int                     itsStatus;
     Families                itsFamilies;
-    static QCoreApplication *theApp;
+    QEventLoop              itsEventLoop;
 };
 
 }
