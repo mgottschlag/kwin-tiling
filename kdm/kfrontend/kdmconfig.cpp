@@ -66,28 +66,12 @@ str2Font( const QString &aValue )
 	QFont *aRetFont = new QFont();
 
 	QStringList sl = aValue.split( QString::fromLatin1(","), QString::SkipEmptyParts );
-
 	if (sl.count() == 1) {
 		/* X11 font spec */
 		aRetFont->setRawMode( true );
 		aRetFont->setRawName( aValue );
-	} else if (sl.count() == 10) {
-		/* qt3 font spec */
+	} else {
 		aRetFont->fromString( aValue );
-	} else if (sl.count() == 6) {
-		/* backward compatible kde2 font spec */
-		aRetFont->setFamily( sl[0] );
-		aRetFont->setPointSize( sl[1].toInt() );
-		aRetFont->setWeight( sl[4].toUInt() );
-
-		aRetFont->setStyleHint( (QFont::StyleHint)sl[2].toUInt() );
-
-		nFontBits = sl[5].toUInt();
-		aRetFont->setItalic( (nFontBits & 0x01) != 0 );
-		aRetFont->setUnderline( (nFontBits & 0x02) != 0 );
-		aRetFont->setStrikeOut( (nFontBits & 0x04) != 0 );
-		aRetFont->setFixedPitch( (nFontBits & 0x08) != 0 );
-		aRetFont->setRawMode( (nFontBits & 0x20) != 0 );
 	}
 	aRetFont->setStyleStrategy( (QFont::StyleStrategy)
 	   (QFont::PreferMatch |
