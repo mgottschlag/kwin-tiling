@@ -55,14 +55,15 @@ void LinearAppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsIte
     Q_UNUSED(widget)
 
     QColor c = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-    c.setAlphaF(0.25);
+    c.setAlphaF(0.15);
 
     painter->fillRect(option->exposedRect, c);
 
     if (m_applet) {
         QRectF geom = m_applet->geometry();
         geom.moveTopLeft(geom.topLeft());
-        c.setAlphaF(0.3);
+        c = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+        c.setAlphaF(0.30);
         QPainterPath p = Plasma::PaintUtils::roundedRectangle(geom, 4);
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing, true);
