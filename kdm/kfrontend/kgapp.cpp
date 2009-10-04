@@ -72,7 +72,7 @@ sigAlarm( int )
 
 GreeterApp::GreeterApp( int &argc, char **argv ) :
 	inherited( argc, argv ),
-	regrabPtr( false ), regrabKbd( false ),
+	regrabPtr( false ), regrabKbd( false ), initalBusy( true ),
 	dragWidget( 0 )
 {
 	pingInterval = _isLocal ? 0 : _pingInterval;
@@ -86,6 +86,23 @@ GreeterApp::GreeterApp( int &argc, char **argv ) :
 		pingTimerId = startTimer( pingInterval * 60000 );
 	} else
 		pingTimerId = 0;
+}
+
+void
+GreeterApp::markBusy()
+{
+	if (initalBusy)
+		initalBusy = false;
+	else
+		setCursor( QX11Info::display(), desktop()->winId(), XC_watch );
+	setOverrideCursor( Qt::WaitCursor );
+}
+
+void
+GreeterApp::markReady()
+{
+	restoreOverrideCursor();
+	setCursor( QX11Info::display(), desktop()->winId(), XC_left_ptr );
 }
 
 void
@@ -396,8 +413,6 @@ main( int argc ATTR_UNUSED, char **argv )
 		dw->repaint();
 	}
 
-	setCursor( dpy, app.desktop()->winId(), XC_left_ptr );
-
 	int rslt = ex_exit;
 	for (;;) {
 		int cmd = gRecvInt();
@@ -408,12 +423,14 @@ main( int argc ATTR_UNUSED, char **argv )
 			int how = gRecvInt(), uid = gRecvInt();
 			QString os = qString( gRecvStr() );
 			gSet( 0 );
+			app.markReady();
 			KDMSlimShutdown::externShutdown( how, os, uid, true );
 			gSendInt( G_Ready );
 			break;
 		}
 
 		if (cmd == G_ErrorGreet) {
+			app.markReady();
 			if (KGVerify::handleFailVerify( qApp->desktop()->screen( _greeterScreen ), true ))
 				break;
 			_autoLoginDelay = 0;
@@ -421,7 +438,7 @@ main( int argc ATTR_UNUSED, char **argv )
 		}
 
 		KProcess *proc2 = 0;
-		app.setOverrideCursor( Qt::WaitCursor );
+		app.markBusy();
 		FDialog *dialog;
 #ifdef XDMCP
 		if (cmd == G_Choose) {
@@ -444,7 +461,7 @@ main( int argc ATTR_UNUSED, char **argv )
 				proc2->start();
 			}
 		}
-		app.restoreOverrideCursor();
+		QObject::connect( dialog, SIGNAL(ready()), &app, SLOT(markReady()) );
 		debug( "entering event loop\n" );
 		rslt = dialog->exec();
 		debug( "left event loop\n" );

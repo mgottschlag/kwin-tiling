@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 FDialog::FDialog( QWidget *parent, bool framed )
 	: inherited( parent/*, framed ? 0 : WStyle_NoBorder*/ )
+	, readyEmitted( false )
 {
 	setModal( true );
 	if (framed) {
@@ -59,6 +60,16 @@ FDialog::resizeEvent( QResizeEvent *e )
 	inherited::resizeEvent( e );
 	if (winFrame)
 		winFrame->resize( size() );
+}
+
+void
+FDialog::paintEvent( QPaintEvent *e )
+{
+	inherited::paintEvent( e );
+	if (!readyEmitted) {
+		readyEmitted = true;
+		emit ready();
+	}
 }
 
 void
@@ -168,3 +179,5 @@ KFMsgBox::box( QWidget *parent, QMessageBox::Icon type, const QString &text )
 	KFMsgBox dlg( parent, type, text.trimmed() );
 	dlg.exec();
 }
+
+#include "kfdialog.moc"

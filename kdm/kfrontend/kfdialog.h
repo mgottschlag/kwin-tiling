@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class QFrame;
 
 class FDialog : public QDialog {
+	Q_OBJECT
 	typedef QDialog inherited;
 
   public:
@@ -39,12 +40,17 @@ class FDialog : public QDialog {
 	virtual int exec();
 	static void fitInto( const QRect &scr, QRect &grt );
 
+  signals:
+    void ready();
+
   protected:
 	virtual void resizeEvent( QResizeEvent *e );
+	virtual void paintEvent( QPaintEvent *e );
 	void adjustGeometry();
 
   private:
 	QFrame *winFrame;
+	bool readyEmitted;
 };
 
 #define errorbox QMessageBox::Critical
