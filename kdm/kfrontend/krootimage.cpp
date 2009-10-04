@@ -288,10 +288,7 @@ MyApplication::renderDone()
 	QPalette palette;
 	palette.setBrush( desktop()->backgroundRole(), QBrush( renderer.pixmap() ) );
 	desktop()->setPalette( palette );
-	desktop()->setAutoFillBackground( true );
-	desktop()->setAttribute( Qt::WA_PaintOnScreen );
-	desktop()->show();
-	desktop()->repaint();
+	XClearWindow( QX11Info::display(), desktop()->winId() );
 
 	renderer.saveCacheFile();
 	renderer.cleanup();

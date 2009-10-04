@@ -407,10 +407,7 @@ main( int argc ATTR_UNUSED, char **argv )
 		QPalette palette;
 		palette.setBrush( dw->backgroundRole(), QBrush( pm ) );
 		dw->setPalette( palette );
-		dw->setAutoFillBackground( true );
-		dw->setAttribute( Qt::WA_PaintOnScreen );
-		dw->show();
-		dw->repaint();
+		XClearWindow( dpy, dw->winId() );
 	}
 
 	int rslt = ex_exit;
