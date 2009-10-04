@@ -377,7 +377,7 @@ main( int argc ATTR_UNUSED, char **argv )
 		QSize gsz = dw->screenGeometry( _greeterScreen ).size();
 		// Paint these first, as throwing away their images does not hurt
 		QHash<QSize, QList<int> >::ConstIterator it;
-		for (it = scrns.begin(); it != scrns.end(); ++it)
+		for (it = scrns.constBegin(); it != scrns.constEnd(); ++it)
 			if (it.key() != gsz)
 				foreach (int i, it.value())
 					themer->paintBackground( &pm, dw->screenGeometry( i ), false );
