@@ -13,8 +13,8 @@ Information about PAM may be found on its homepage
 Known Solaris Issues:
 --------------------
 
-For compiling PAM support on Solaris,  PAM_MESSAGE_NONCONST must
-be defined.   This should now be handled automatically by the 
+For compiling PAM support on Solaris, PAM_MESSAGE_CONST must NOT
+be defined. This should now be handled automatically by the
 configure script.
 
 

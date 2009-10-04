@@ -38,12 +38,12 @@ struct pam_data {
   int classic:1;
 };
 
-#ifdef PAM_MESSAGE_NONCONST
-typedef struct pam_message pam_message_type;
-typedef void *pam_gi_type;
-#else
+#ifdef PAM_MESSAGE_CONST
 typedef const struct pam_message pam_message_type;
 typedef const void *pam_gi_type;
+#else
+typedef struct pam_message pam_message_type;
+typedef void *pam_gi_type;
 #endif
 
 static int
