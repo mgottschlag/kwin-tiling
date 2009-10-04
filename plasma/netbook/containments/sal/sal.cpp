@@ -90,6 +90,11 @@ void SearchLaunch::init()
     if (a) {
         addToolBoxAction(a);
     }
+
+    a = action("lock widgets");
+    if (a) {
+        addToolBoxAction(a);
+    }
 }
 
 void SearchLaunch::doSearch(const QString query)
