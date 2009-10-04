@@ -34,7 +34,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Configure in which state the actions should be exported.&lt;/p&gt;
 &lt;p style=&quot; margin-top:8px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Actual State&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:30px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Export the actions in their current state.&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;DIsabled&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Disabled&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:30px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Export the actions in disabled state.&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Enabled&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:8px; margin-left:30px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Export the actions in enabled state.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -51,7 +51,7 @@ p, li { white-space: pre-wrap; }
      </item>
      <item>
       <property name="text">
-       <string extracomment="Export hotkey actions into disabled  state">DIsabled</string>
+       <string extracomment="Export hotkey actions into disabled  state">Disabled</string>
       </property>
      </item>
     </widget>
@@ -134,7 +134,7 @@ p, li { white-space: pre-wrap; }
       <string>Merge into existing directories on import?</string>
      </property>
      <property name="whatsThis">
-      <string>Allow merging of content If an directory with the same name exists on importing. If merging is not allowed you will have two directories with the same name.</string>
+      <string>Allow merging of content if an directory with the same name exists on importing. If merging is not allowed you will have two directories with the same name.</string>
      </property>
      <property name="text">
       <string/>
