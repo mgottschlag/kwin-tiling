@@ -31,6 +31,7 @@
 class QTimer;
 class StripWidget;
 class ItemView;
+class LinearAppletOverlay;
 
 namespace Plasma
 {
@@ -64,6 +65,8 @@ private slots:
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
     void appletRemoved(Plasma::Applet* applet);
     void restoreStrip();
+    void updateConfigurationMode(bool config);
+    void overlayRequestedDrop(QGraphicsSceneDragDropEvent *event);
 
     void doSearch(const QString query);
     void setQueryMatches(const QList<Plasma::QueryMatch> &m);
@@ -97,6 +100,7 @@ private:
     QGraphicsLinearLayout *m_mainLayout;
     QGraphicsLinearLayout *m_appletsLayout;
     QPointF m_buttonDownMousePos;
+    LinearAppletOverlay *m_appletOverlay;
 
     bool m_stripUninitialized;
 };

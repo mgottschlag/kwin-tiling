@@ -21,6 +21,7 @@
 #include "sal.h"
 #include "stripwidget.h"
 #include "itemview.h"
+#include "../common/linearappletoverlay.h"
 
 #include <QAction>
 #include <QTimer>
@@ -50,6 +51,7 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
       m_searchField(0),
       m_resultsView(0),
       m_appletsLayout(0),
+      m_appletOverlay(0),
       m_stripUninitialized(true)
 {
     setContainmentType(Containment::CustomContainment);
@@ -72,6 +74,8 @@ void SearchLaunch::init()
             this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
     connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
             this, SLOT(appletRemoved(Plasma::Applet*)));
+
+    connect(this, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
 
     m_runnermg = new Plasma::RunnerManager(this);
     connect(m_runnermg, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
@@ -262,8 +266,8 @@ void SearchLaunch::appletRemoved(Plasma::Applet* applet)
     Q_UNUSED(applet)
 
     if (m_appletsLayout->count() == 1) {
-         m_mainLayout->removeItem(m_appletsLayout);
-     }
+        m_mainLayout->removeItem(m_appletsLayout);
+    }
 }
 
 void SearchLaunch::updateSize()
@@ -378,6 +382,9 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
         if (m_appletsLayout) {
             m_appletsLayout->setMaximumHeight(size().height()/4);
         }
+        if (m_appletOverlay) {
+            m_appletOverlay->resize(size());
+        }
     }
 
     if (constraints & Plasma::StartupCompletedConstraint) {
@@ -419,6 +426,30 @@ void SearchLaunch::restoreStrip()
     KConfigGroup cg = config();
     m_stripWidget->restore(cg);
     reset();
+}
+
+void SearchLaunch::updateConfigurationMode(bool config)
+{
+    if (config && !m_appletOverlay) {
+        if (m_appletsLayout->count() == 0) {
+            m_mainLayout->addItem(m_appletsLayout);
+        }
+        m_appletOverlay = new LinearAppletOverlay(this, m_appletsLayout);
+        m_appletOverlay->resize(size());
+        connect (m_appletOverlay, SIGNAL(dropRequested(QGraphicsSceneDragDropEvent *)),
+                 this, SLOT(overlayRequestedDrop(QGraphicsSceneDragDropEvent *)));
+    } else if (!config) {
+        delete m_appletOverlay;
+        m_appletOverlay = 0;
+        if (m_appletsLayout->count() == 0) {
+            m_mainLayout->removeItem(m_appletsLayout);
+        }
+    }
+}
+
+void SearchLaunch::overlayRequestedDrop(QGraphicsSceneDragDropEvent *event)
+{
+    dropEvent(event);
 }
 
 void SearchLaunch::paintInterface(QPainter *, const QStyleOptionGraphicsItem *, const QRect &)
