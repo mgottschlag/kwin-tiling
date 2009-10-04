@@ -253,7 +253,43 @@ void SearchLaunch::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     }
 
     if (m_appletsLayout->count() == 0) {
+        m_mainLayout->removeItem(m_appletsLayout);
         m_mainLayout->addItem(m_appletsLayout);
+    }
+
+    Plasma::FormFactor f = formFactor();
+    int insertIndex = -1;
+
+    //if pos is (-1,-1) insert at the end of the panel
+    if (pos != QPoint(-1, -1)) {
+        for (int i = 0; i < m_appletsLayout->count(); ++i) {
+            QRectF siblingGeometry = m_appletsLayout->itemAt(i)->geometry();
+            if (f == Plasma::Horizontal) {
+                qreal middle = (siblingGeometry.left() + siblingGeometry.right()) / 2.0;
+                if (pos.x() < middle) {
+                    insertIndex = i;
+                    break;
+                } else if (pos.x() <= siblingGeometry.right()) {
+                    insertIndex = i + 1;
+                    break;
+                }
+            } else { // Plasma::Vertical
+                qreal middle = (siblingGeometry.top() + siblingGeometry.bottom()) / 2.0;
+                if (pos.y() < middle) {
+                    insertIndex = i;
+                    break;
+                } else if (pos.y() <= siblingGeometry.bottom()) {
+                    insertIndex = i + 1;
+                    break;
+                }
+            }
+        }
+    }
+
+    if (insertIndex == -1) {
+        m_appletsLayout->addItem(applet);
+    } else {
+        m_appletsLayout->insertItem(insertIndex, applet);
     }
 
     m_appletsLayout->addItem(applet);
