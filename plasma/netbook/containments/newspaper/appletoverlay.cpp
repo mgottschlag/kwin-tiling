@@ -19,6 +19,7 @@
 
 #include "appletoverlay.h"
 #include "newspaper.h"
+#include "../common/appletmovespacer.h"
 
 #include <QGraphicsLinearLayout>
 #include <QGraphicsSceneMouseEvent>
@@ -33,44 +34,6 @@
 #include <Plasma/FrameSvg>
 #include <Plasma/PaintUtils>
 #include <Plasma/ScrollWidget>
-
-
-class AppletMoveSpacer : public QGraphicsWidget
-{
-public:
-    AppletMoveSpacer(QGraphicsWidget *parent)
-        : QGraphicsWidget(parent)
-    {
-        m_background = new Plasma::FrameSvg(this);
-        m_background->setImagePath("widgets/frame");
-        m_background->setElementPrefix("sunken");
-    }
-
-    AppletOverlay *overlay;
-
-protected:
-    void dropEvent(QGraphicsSceneDragDropEvent *event)
-    {
-        event->setPos(mapToParent(event->pos()));
-        overlay->dropEvent(event);
-    }
-
-    void resizeEvent(QGraphicsSceneResizeEvent *event)
-    {
-        m_background->resizeFrame(event->newSize());
-    }
-
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget * widget = 0)
-    {
-        Q_UNUSED(option)
-        Q_UNUSED(widget)
-
-        m_background->paintFrame(painter);
-    }
-
-private:
-    Plasma::FrameSvg *m_background;
-};
 
 AppletOverlay::AppletOverlay(QGraphicsWidget *parent, Newspaper *newspaper)
     : QGraphicsWidget(parent),
@@ -277,6 +240,11 @@ void AppletOverlay::dropEvent(QGraphicsSceneDragDropEvent *event)
     m_spacerIndex = 0;
 }
 
+void AppletOverlay::spacerRequestedDrop(QGraphicsSceneDragDropEvent *event)
+{
+    dropEvent(event);
+}
+
 void AppletOverlay::showSpacer(const QPointF &pos)
 {
     if (!scene()) {
@@ -345,7 +313,8 @@ void AppletOverlay::showSpacer(const QPointF &pos)
     if (insertIndex != -1) {
         if (!m_spacer) {
             m_spacer = new AppletMoveSpacer(this);
-            m_spacer->overlay = this;
+            connect (m_spacer, SIGNAL(dropRequested(QGraphicsSceneDragDropEvent *)), 
+                     this, SLOT(spacerRequestedDrop(QGraphicsSceneDragDropEvent *)));
         }
         if (m_spacerLayout) {
             m_spacerLayout->removeItem(m_spacer);
