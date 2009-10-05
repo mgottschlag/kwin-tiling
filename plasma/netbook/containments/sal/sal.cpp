@@ -297,20 +297,6 @@ void SearchLaunch::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
         }
     }
 
-    //if is -1 let's see if there are spacers, zero, one or two
-    if (insertIndex < 0) {
-        bool firstSpacer = (!dynamic_cast<Plasma::Applet *>(m_appletsLayout->itemAt(0)) &&
-                            !dynamic_cast<AppletMoveSpacer *>(m_appletsLayout->itemAt(0)));
-        bool lastSpacer = (!dynamic_cast<Plasma::Applet *>(m_appletsLayout->itemAt(m_layout->count() - 1)) &&
-                           !dynamic_cast<AppletMoveSpacer *>(m_appletsLayout->itemAt(m_layout->count() - 1)));
-
-        if (firstSpacer && lastSpacer && m_appletsLayout->count() > 1) {
-            insertIndex = m_appletsLayout->count() - 2;
-        } else if (lastSpacer) {
-            insertIndex = 0;
-        }
-    }
-
     if (insertIndex != -1) {
         m_appletsLayout->insertItem(insertIndex, applet);
     } else {
