@@ -32,6 +32,7 @@
 #include <KWindowSystem>
 
 #include <Plasma/Containment>
+#include <plasma/containmentactionspluginsconfig.h>
 #include <Plasma/DataEngineManager>
 
 #include <kephal/screens.h>
@@ -52,6 +53,17 @@ void DesktopCorona::init()
     Kephal::Screens *screens = Kephal::Screens::self();
     connect(screens, SIGNAL(screenAdded(Kephal::Screen *)), SLOT(screenAdded(Kephal::Screen *)));
     connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SIGNAL(availableScreenRegionChanged()));
+
+    Plasma::ContainmentActionsPluginsConfig desktopPlugins;
+    desktopPlugins.addPlugin(Qt::NoModifier, Qt::Vertical, "switchdesktop");
+    desktopPlugins.addPlugin(Qt::NoModifier, Qt::MidButton, "paste");
+    desktopPlugins.addPlugin(Qt::NoModifier, Qt::RightButton, "contextmenu");
+    Plasma::ContainmentActionsPluginsConfig panelPlugins;
+    panelPlugins.addPlugin(Qt::NoModifier, Qt::RightButton, "contextmenu");
+
+    setContainmentActionsDefaults(Plasma::Containment::DesktopContainment, desktopPlugins);
+    setContainmentActionsDefaults(Plasma::Containment::PanelContainment, panelPlugins);
+    setContainmentActionsDefaults(Plasma::Containment::CustomPanelContainment, panelPlugins);
 }
 
 void DesktopCorona::checkScreens(bool signalWhenExists)
