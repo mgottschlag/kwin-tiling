@@ -222,7 +222,8 @@ void PlasmaApp::positionPanel()
     }
 
     foreach (Plasma::Containment *containment, m_corona->containments()) {
-        if (containment->formFactor() == Plasma::Planar) {
+        if (containment->location() == Plasma::Desktop ||
+            containment->location() == Plasma::Floating) {
             containment->setContentsMargins(left, top, right, bottom);
         }
     }
