@@ -228,6 +228,10 @@ void LinearAppletOverlay::showSpacer(const QPointF &pos)
     int insertIndex = -1;
 
     for (int i = 0; i < m_layout->count(); ++i) {
+        if (!dynamic_cast<Plasma::Applet *>(m_layout->itemAt(i)) &&
+            !dynamic_cast<AppletMoveSpacer *>(m_layout->itemAt(i))) {
+            continue;
+        }
         QRectF siblingGeometry = m_layout->itemAt(i)->geometry();
 
         if (m_containment->formFactor() != Plasma::Vertical) {
@@ -254,6 +258,20 @@ void LinearAppletOverlay::showSpacer(const QPointF &pos)
 
     if (m_spacerIndex < insertIndex) {
         --insertIndex;
+    }
+
+    //if is -1 let's see if there are spacers, zero, one or two
+    if (insertIndex < 0) {
+        bool firstSpacer = (!dynamic_cast<Plasma::Applet *>(m_layout->itemAt(0)) &&
+                            !dynamic_cast<AppletMoveSpacer *>(m_layout->itemAt(0)));
+        bool lastSpacer = (!dynamic_cast<Plasma::Applet *>(m_layout->itemAt(m_layout->count() - 1)) &&
+                           !dynamic_cast<AppletMoveSpacer *>(m_layout->itemAt(m_layout->count() - 1)));
+
+        if (firstSpacer && lastSpacer && m_layout->count() > 1) {
+            insertIndex = m_layout->count() - 2;
+        } else if (lastSpacer) {
+            insertIndex = 0;
+        }
     }
 
     m_spacerIndex = insertIndex;
