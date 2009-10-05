@@ -22,6 +22,7 @@
 #include "stripwidget.h"
 #include "itemview.h"
 #include "../common/linearappletoverlay.h"
+#include "../common/appletmovespacer.h"
 
 #include <QAction>
 #include <QTimer>
@@ -257,7 +258,7 @@ void SearchLaunch::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
         return;
     }
 
-    if (m_appletsLayout->count() == 0) {
+    if (m_appletsLayout->count() == 2) {
         m_mainLayout->removeItem(m_appletsLayout);
         m_mainLayout->addItem(m_appletsLayout);
     }
@@ -267,7 +268,12 @@ void SearchLaunch::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 
     //if pos is (-1,-1) insert at the end of the panel
     if (pos != QPoint(-1, -1)) {
-        for (int i = 0; i < m_appletsLayout->count(); ++i) {
+        for (int i = 1; i < m_appletsLayout->count()-1; ++i) {
+            if (!dynamic_cast<Plasma::Applet *>(m_appletsLayout->itemAt(i)) &&
+                !dynamic_cast<AppletMoveSpacer *>(m_appletsLayout->itemAt(i))) {
+                continue;
+            }
+
             QRectF siblingGeometry = m_appletsLayout->itemAt(i)->geometry();
             if (f == Plasma::Horizontal) {
                 qreal middle = (siblingGeometry.left() + siblingGeometry.right()) / 2.0;
@@ -290,14 +296,13 @@ void SearchLaunch::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
             }
         }
     }
-
-    if (insertIndex == -1) {
-        m_appletsLayout->addItem(applet);
-    } else {
+kWarning()<<"AAAAAAAA"<<insertIndex;
+    if (insertIndex != -1) {
         m_appletsLayout->insertItem(insertIndex, applet);
+    } else {
+        m_appletsLayout->insertItem(m_appletsLayout->count()-1, applet);
     }
 
-    m_appletsLayout->addItem(applet);
     applet->setBackgroundHints(NoBackground);
     connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
 }
@@ -306,7 +311,7 @@ void SearchLaunch::appletRemoved(Plasma::Applet* applet)
 {
     Q_UNUSED(applet)
 
-    if (m_appletsLayout->count() == 1) {
+    if (!m_appletOverlay && m_appletsLayout->count() == 3) {
         m_mainLayout->removeItem(m_appletsLayout);
     }
 }
@@ -373,6 +378,12 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
             m_stripWidget = new StripWidget(m_runnermg, this);
             m_appletsLayout = new QGraphicsLinearLayout();
+            m_appletsLayout->setPreferredHeight(KIconLoader::SizeMedium);
+            m_appletsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+            QGraphicsWidget *leftSpacer = new QGraphicsWidget(this);
+            QGraphicsWidget *rightSpacer = new QGraphicsWidget(this);
+            m_appletsLayout->addItem(leftSpacer);
+            m_appletsLayout->addItem(rightSpacer);
 
             m_homeButton = new Plasma::IconWidget(this);
             m_homeButton->setIcon(KIcon("go-home"));
@@ -453,12 +464,8 @@ void SearchLaunch::setFormFactorFromLocation(Plasma::Location loc)
         //kDebug() << "setting vertical form factor";
         setFormFactor(Plasma::Vertical);
         break;
-    case Plasma::Floating:
-        setFormFactor(Plasma::Planar);
-        kDebug() << "Floating is unimplemented.";
-        break;
     default:
-        kDebug() << "invalid location!!";
+        setFormFactor(Plasma::Horizontal);
     }
 }
 
@@ -472,7 +479,7 @@ void SearchLaunch::restoreStrip()
 void SearchLaunch::updateConfigurationMode(bool config)
 {
     if (config && !m_appletOverlay && immutability() == Plasma::Mutable) {
-        if (m_appletsLayout->count() == 0) {
+        if (m_appletsLayout->count() == 2) {
             m_mainLayout->addItem(m_appletsLayout);
         }
         m_appletOverlay = new LinearAppletOverlay(this, m_appletsLayout);
@@ -482,7 +489,7 @@ void SearchLaunch::updateConfigurationMode(bool config)
     } else if (!config) {
         delete m_appletOverlay;
         m_appletOverlay = 0;
-        if (m_appletsLayout->count() == 0) {
+        if (m_appletsLayout->count() == 2) {
             m_mainLayout->removeItem(m_appletsLayout);
         }
     }
