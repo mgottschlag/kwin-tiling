@@ -96,11 +96,13 @@ AppletsListWidget::~AppletsListWidget()
 void AppletsListWidget::init()
 {
     //init arrows
-    m_upLeftArrow = new Plasma::PushButton();
-    m_upLeftArrow->setMaximumSize(IconSize(KIconLoader::Panel), IconSize(KIconLoader::Panel));
+    m_upLeftArrow = new Plasma::ToolButton();
+    m_upLeftArrow->setPreferredSize(IconSize(KIconLoader::Panel), IconSize(KIconLoader::Panel));
+    m_upLeftArrow->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
-    m_downRightArrow = new Plasma::PushButton();
-    m_downRightArrow->setMaximumSize(IconSize(KIconLoader::Panel), IconSize(KIconLoader::Panel));
+    m_downRightArrow = new Plasma::ToolButton();
+    m_downRightArrow->setPreferredSize(IconSize(KIconLoader::Panel), IconSize(KIconLoader::Panel));
+    m_downRightArrow->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
     if (m_orientation == Qt::Horizontal) {
         m_upLeftArrow->setIcon(KIcon(m_arrowsSvg->pixmap("left-arrow")));
@@ -144,29 +146,8 @@ void AppletsListWidget::init()
 
     setLayout(m_arrowsLayout);
 
-    themeUpdated();
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
 }
 
-void AppletsListWidget::themeUpdated()
-{
-    Plasma::Theme *theme = Plasma::Theme::defaultTheme();
-    QColor buttonBgColor = theme->color(Plasma::Theme::BackgroundColor);
-    QString buttonStyleSheet = QString("Plasma::PushButton { border: 1px solid %4; border-radius: 4px; padding: 2px;"
-                                       " background-color: rgba(%1, %2, %3, %5); }")
-                                      .arg(buttonBgColor.red())
-                                      .arg(buttonBgColor.green())
-                                      .arg(buttonBgColor.blue())
-                                      .arg(theme->color(Plasma::Theme::BackgroundColor).name(), "50%");
-    buttonBgColor = theme->color(Plasma::Theme::TextColor);
-    buttonStyleSheet += QString("Plasma::PushButton:hover { border: 2px solid %1; }")
-                               .arg(theme->color(Plasma::Theme::HighlightColor).name());
-    buttonStyleSheet += QString("Plasma::PushButton:focus { border: 2px solid %1; }")
-                               .arg(theme->color(Plasma::Theme::HighlightColor).name());
-
-    m_upLeftArrow->nativeWidget()->setStyleSheet(buttonStyleSheet);
-    m_downRightArrow->nativeWidget()->setStyleSheet(buttonStyleSheet);
-}
 
 //parent intercepts children events
 bool AppletsListWidget::eventFilter(QObject *obj, QEvent *event)
@@ -746,9 +727,14 @@ void AppletsListWidget::manageArrows()
     if (listSize <= windowSize || m_currentAppearingAppletsOnList->count() == 0) {
         m_upLeftArrow->setEnabled(false);
         m_downRightArrow->setEnabled(false);
+        m_upLeftArrow->setVisible(false);
+        m_downRightArrow->setVisible(false);
     } else {
         qreal firstVisiblePositionOnList;
         qreal lastVisiblePositionOnList;
+
+        m_upLeftArrow->setVisible(true);
+        m_downRightArrow->setVisible(true);
 
         if (m_orientation == Qt::Horizontal) {
             firstVisiblePositionOnList = visibleRect.x();

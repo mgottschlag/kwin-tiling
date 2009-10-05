@@ -36,12 +36,12 @@
 #include <plasma/applet.h>
 #include <plasma/corona.h>
 #include <plasma/containment.h>
+#include <plasma/widgets/toolbutton.h>
 
 #include "kcategorizeditemsviewmodels_p.h"
 #include "plasmaappletitemmodel_p.h"
 #include "openwidgetassistant_p.h"
 #include "appletslist.h"
-#include "managewidgets.h"
 #include "appletsfiltering.h"
 
 //getting the user local
@@ -104,7 +104,7 @@ public:
     /**
      * Button to install new widgets and its menu
      */
-    ManageWidgetsPushButton *pushButtonWidget;
+    Plasma::ToolButton *pushButtonWidget;
     KMenu *pushButtonWidgetMenu;
     /**
      * Widget that lists the applets
@@ -191,7 +191,7 @@ void WidgetExplorerPrivate::initPushButtonWidgetMenu()
 {
     pushButtonWidgetMenu = new KMenu(i18n("Get New Widgets"));
     QObject::connect(pushButtonWidgetMenu, SIGNAL(aboutToShow()), q, SLOT(populateWidgetsMenu()));
-    pushButtonWidget->button()->setMenu(pushButtonWidgetMenu);
+    pushButtonWidget->nativeWidget()->setMenu(pushButtonWidgetMenu);
 }
 
 void WidgetExplorerPrivate::initRunningApplets()

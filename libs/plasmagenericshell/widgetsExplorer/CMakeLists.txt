@@ -24,7 +24,6 @@ AUTOMOC4_ADD_EXECUTABLE(appletBrowser
 	       "appletsfiltering.cpp"
 	       "applettooltip.cpp"
 	       "appletslist.cpp"
-	       "managewidgets.cpp"
 	       "widgetexplorer.cpp"
 	       "openwidgetassistant.cpp"
 	       "main.cpp"
@@ -34,7 +33,6 @@ AUTOMOC4_ADD_EXECUTABLE(appletBrowser
 	       "appletsfiltering.h"
 	       "applettooltip.h"
 	       "appletslist.h"
-	       "managewidgets.h"
 	       "widgetexplorer.h"
 	       "openwidgetassistant_p.h")
 
