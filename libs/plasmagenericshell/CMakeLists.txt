@@ -7,7 +7,6 @@ set(appletbrowserdialog_SRCS
     widgetsExplorer/appletsfiltering.cpp
     widgetsExplorer/applettooltip.cpp
     widgetsExplorer/appletslist.cpp
-    widgetsExplorer/managewidgets.cpp
     widgetsExplorer/widgetexplorer.cpp
     widgetsExplorer/openwidgetassistant.cpp
 )
