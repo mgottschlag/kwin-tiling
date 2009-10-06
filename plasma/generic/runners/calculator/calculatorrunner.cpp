@@ -47,11 +47,11 @@ CalculatorRunner::~CalculatorRunner()
 void CalculatorRunner::powSubstitutions(QString& cmd)
 {
      if (cmd.contains("e+", Qt::CaseInsensitive)) {
-         cmd=cmd.replace("e+", "^", Qt::CaseInsensitive);
+         cmd=cmd.replace("e+", "*10^", Qt::CaseInsensitive);
      }
 
      if (cmd.contains("e-", Qt::CaseInsensitive)) {
-         cmd=cmd.replace("e-", "^-", Qt::CaseInsensitive);
+         cmd=cmd.replace("e-", "*10^-", Qt::CaseInsensitive);
      }
 
     // the below code is scary mainly because we have to honor priority
