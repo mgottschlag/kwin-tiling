@@ -25,6 +25,9 @@ set(solidcontrol_LIB_SRCS
    bluetoothremotedevice.cpp
    bluetoothinputdevice.cpp
    bluetoothsecurity.cpp
+   remotecontrolbutton.cpp
+   remotecontrol.cpp
+   remotecontrolmanager.cpp
 )
 
 # FIXME: this should be XRANDR_FOUND instead
@@ -48,9 +51,10 @@ configure_file(config-randr.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-randr.h )
 
 ########### install files ###############
 
-install( FILES solidpowermanager.desktop solidnetworkmanager.desktop solidbluetoothmanager.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR}  )
-install( FILES powermanager.h networkmanager.h networkinterface.h wirednetworkinterface.h
-    wirelessnetworkinterface.h wirelessaccesspoint.h bluetoothmanager.h bluetoothinterface.h
+install( FILES solidpowermanager.desktop solidnetworkmanager.desktop solidbluetoothmanager.desktop solidremotecontrolmanager.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR}  )
+install( FILES powermanager.h networkmanager.h networkinterface.h remotecontrolmanager.h 
+    remotecontrol.h remotecontrolbutton.h wirednetworkinterface.h wirelessnetworkinterface.h
+    wirelessaccesspoint.h bluetoothmanager.h bluetoothinterface.h
     bluetoothremotedevice.h bluetoothinputdevice.h bluetoothsecurity.h
     singletondefs.h networking.h networkipv4config.h solid_control_export.h 
     networkcdmainterface.h networkgsminterface.h networkserialinterface.h

@@ -56,10 +56,12 @@ KcmSolid::KcmSolid(QWidget *parent, const QVariantList &args)
     m_powerChooser = new BackendChooser(this, "SolidPowerManager");
     m_networkChooser = new BackendChooser(this, "SolidNetworkManager");
     m_bluetoothChooser = new BackendChooser(this, "SolidBluetoothManager");
+    m_remoteControlChooser = new BackendChooser(this, "SolidRemoteControlManager");
 
     layout()->addWidget(m_powerChooser);
     layout()->addWidget(m_networkChooser);
     layout()->addWidget(m_bluetoothChooser);
+    layout()->addWidget(m_remoteControlChooser);
 
     load();
 
@@ -77,6 +79,7 @@ void KcmSolid::load()
     m_powerChooser->load();
     m_networkChooser->load();
     m_bluetoothChooser->load();
+    m_remoteControlChooser->load();
 }
 
 void KcmSolid::save()

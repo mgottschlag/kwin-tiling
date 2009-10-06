@@ -44,6 +44,7 @@ private:
     BackendChooser *m_powerChooser;
     BackendChooser *m_networkChooser;
     BackendChooser *m_bluetoothChooser;
+    BackendChooser *m_remoteControlChooser;
 };
 
 #endif

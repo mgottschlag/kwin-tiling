@@ -33,6 +33,7 @@ macro_log_feature(HAVE_NETWORKMANAGER "NetworkManager" "A daemon for user contro
 
 if(NOT WIN32)
   macro_optional_add_subdirectory(wicd)
+  add_subdirectory(lirc)
 endif(NOT WIN32)
 
 if(BLUEZ_FOUND)

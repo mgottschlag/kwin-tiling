@@ -16,14 +16,16 @@ set(solidcontrolifaces_LIB_SRCS
    bluetoothinputdevice.cpp
    bluetoothinterface.cpp
    bluetoothmanager.cpp
-   bluetoothsecurity.cpp )
+   bluetoothsecurity.cpp
+   remotecontrol.cpp
+   remotecontrolmanager.cpp )
 
 set(unused
    networkmanager.cpp
    network.cpp
    wirelessnetwork.cpp
    authentication.cpp
-
+   remotecontrolmanager.cpp
    )
 
 kde4_add_library(solidcontrolifaces SHARED ${solidcontrolifaces_LIB_SRCS})
@@ -36,5 +38,5 @@ install(TARGETS solidcontrolifaces EXPORT kdeworkspaceLibraryTargets ${INSTALL_T
 
 ########### install files ###############
 
-install( FILES powermanager.h networkmanager.h networkinterface.h networkcdmainterface.h networkgsminterface.h networkserialinterface.h wirednetworkinterface.h wirelessnetworkinterface.h wirelessaccesspoint.h bluetoothremotedevice.h bluetoothinputdevice.h bluetoothinterface.h bluetoothmanager.h DESTINATION ${INCLUDE_INSTALL_DIR}/solid/control/ifaces COMPONENT Devel)
+install( FILES powermanager.h networkmanager.h networkinterface.h networkcdmainterface.h networkgsminterface.h networkserialinterface.h wirednetworkinterface.h wirelessnetworkinterface.h wirelessaccesspoint.h bluetoothremotedevice.h bluetoothinputdevice.h bluetoothinterface.h bluetoothmanager.h remotecontrol.h remotecontrolmanager.h DESTINATION ${INCLUDE_INSTALL_DIR}/solid/control/ifaces COMPONENT Devel)
 

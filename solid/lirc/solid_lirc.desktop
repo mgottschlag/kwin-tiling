@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Service
+X-KDE-ServiceTypes=SolidRemoteControlManager
+X-KDE-Library=solid_lirc
+InitialPreference=80
+
+Name=Lirc
+
+Comment=Linux Infrared Remote Control
+
+Icon=infrared-remote
