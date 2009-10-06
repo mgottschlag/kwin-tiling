@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=ServiceType
+X-KDE-ServiceType=SolidRemoteControlManager
+Comment=Remote Control Management Backend
+
+[PropertyDef::X-KDE-SolidBackendInfo-Version]
+Type=QString
