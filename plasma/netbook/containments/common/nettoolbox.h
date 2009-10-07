@@ -31,6 +31,7 @@ namespace Plasma
     class Containment;
     class Frame;
     class IconWidget;
+    class Svg;
 };
 
 class NetToolBox : public QGraphicsWidget
@@ -74,6 +75,7 @@ private:
     QGraphicsLinearLayout *m_toolContainerLayout;
     QHash<QAction *, Plasma::IconWidget *> m_actionButtons;
     Plasma::Containment *m_containment;
+    Plasma::Svg *m_background;
     KIcon m_icon;
     QSize m_iconSize;
     int m_animHighlightId;

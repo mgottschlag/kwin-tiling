@@ -31,12 +31,14 @@
 #include <Plasma/Containment>
 #include <Plasma/IconWidget>
 #include <Plasma/PaintUtils>
+#include <Plasma/Svg>
+
 
 NetToolBox::NetToolBox(Plasma::Containment *parent)
    : QGraphicsWidget(parent),
      m_containment(parent),
      m_icon("plasma"),
-     m_iconSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium),
+     m_iconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall),
      m_animHighlightId(0),
      m_animHighlightFrame(0),
      m_hovering(false)
@@ -51,6 +53,10 @@ NetToolBox::NetToolBox(Plasma::Containment *parent)
     m_toolContainer->setFlag(QGraphicsWidget::ItemStacksBehindParent);
     m_toolContainerLayout = new QGraphicsLinearLayout(m_toolContainer);
     m_toolContainerLayout->setContentsMargins(size().width(), 0, 0, 0);
+
+    m_background = new Plasma::Svg(this);
+    m_background->setImagePath("widgets/toolbox");
+    m_background->setContainsMultipleImages(true);
 
     connect(m_containment, SIGNAL(geometryChanged()), this, SLOT(containmentGeometryChanged()));
     containmentGeometryChanged();
@@ -120,8 +126,9 @@ void NetToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
-    QPoint iconPos(size().width()/2 - m_iconSize.width()/2,
-                   size().height()/2 - m_iconSize.height()/2);
+    m_background->paint(painter, boundingRect(), "desktop-southwest");
+
+    QPoint iconPos(2, size().height() - m_iconSize.height() - 2);
 
     if (qFuzzyCompare(qreal(1.0), m_animHighlightFrame)) {
         m_icon.paint(painter, QRect(iconPos, m_iconSize));
