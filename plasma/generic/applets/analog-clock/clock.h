@@ -71,6 +71,7 @@ class Clock : public ClockApplet
         void drawHand(QPainter *p, const QRect &rect, const qreal verticalTranslation, const qreal rotation, const QString &handName);
         QRect tzRect();
         Plasma::FrameSvg *tzFrame();
+        void invalidateCache();
 
         bool m_showSecondHand;
         bool m_fancyHands;

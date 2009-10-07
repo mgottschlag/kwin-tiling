@@ -114,24 +114,8 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
 {
     ClockApplet::constraintsEvent(constraints);
 
-    if (constraints & Plasma::SizeConstraint) {
-        m_repaintCache = RepaintAll;
-
-        QSize pixmapSize = contentsRect().size().toSize();
-
-        if (m_showingTimezone) {
-            QRect tzArea = tzRect();
-            pixmapSize.setHeight(qMax(10, pixmapSize.height() - tzArea.height()));
-            tzFrame()->resizeFrame(tzArea.size());
-        }
-
-        pixmapSize.setWidth(pixmapSize.height());
-        m_faceCache = QPixmap(pixmapSize);
-        m_handsCache = QPixmap(pixmapSize);
-        m_glassCache = QPixmap(pixmapSize);
-
-        m_theme->resize(pixmapSize);
-    }
+    if (constraints & Plasma::SizeConstraint)
+        invalidateCache();
 }
 
 QPainterPath Clock::shape() const
@@ -342,6 +326,9 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         }
     }
 
+    if (contentsRect().size().toSize() != m_theme->size())
+        invalidateCache();
+
     // paint face and glass cache
     QRect faceRect = m_faceCache.rect();
     if (m_repaintCache == RepaintAll) {
@@ -430,6 +417,26 @@ Plasma::FrameSvg *Clock::tzFrame()
     }
 
     return m_tzFrame;
+}
+
+void Clock::invalidateCache()
+{
+    m_repaintCache = RepaintAll;
+
+    QSize pixmapSize = contentsRect().size().toSize();
+
+    if (m_showingTimezone) {
+        QRect tzArea = tzRect();
+        pixmapSize.setHeight(qMax(10, pixmapSize.height() - tzArea.height()));
+        tzFrame()->resizeFrame(tzArea.size());
+    }
+
+    pixmapSize.setWidth(pixmapSize.height());
+    m_faceCache = QPixmap(pixmapSize);
+    m_handsCache = QPixmap(pixmapSize);
+    m_glassCache = QPixmap(pixmapSize);
+
+    m_theme->resize(pixmapSize);
 }
 
 #include "clock.moc"
