@@ -91,6 +91,11 @@ AppletsListWidget::AppletsListWidget(Qt::Orientation orientation, QGraphicsItem 
 AppletsListWidget::~AppletsListWidget()
 {
     delete m_toolTip;
+
+    delete m_upLeftArrow;
+    delete m_downRightArrow;
+
+    delete m_appletsListWindowWidget;
 }
 
 void AppletsListWidget::init()
