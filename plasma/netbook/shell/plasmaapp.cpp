@@ -579,7 +579,7 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
     }
 
     if (!m_widgetExplorer) {
-        m_widgetExplorer = new Plasma::WidgetExplorer();
+        m_widgetExplorer = new Plasma::WidgetExplorer(m_controlBar->containment());
         m_widgetExplorer->setContainment(m_mainView->containment());
         m_widgetExplorer->populateWidgetList();
 
