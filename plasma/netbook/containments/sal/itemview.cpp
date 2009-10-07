@@ -141,12 +141,18 @@ bool ItemView::eventFilter(QObject *watched, QEvent *event)
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
 
         QPointF deltaPos = me->pos() - me->lastPos();
-        if (orientation() == Qt::Horizontal) {
-            m_itemContainer->setPos(qBound(qMin((qreal)0,-m_itemContainer->size().width()+size().width()), m_itemContainer->pos().x()+deltaPos.x(), (qreal)0),
-                                    m_itemContainer->pos().y());
-        } else {
-            m_itemContainer->setPos(m_itemContainer->pos().x(),
-                                    qBound(qMin((qreal)0,-m_itemContainer->size().height()+size().height()), m_itemContainer->pos().y()+deltaPos.y(), (qreal)0));
+
+        //FIXME: when added support for horizontal scrolling in scrollwidget, remove it
+        if((m_itemContainer->size().width() > size().width()) || (m_itemContainer->size().height() > size().height())) {
+            if (orientation() == Qt::Horizontal) {
+                m_itemContainer->setPos(qBound(qMin((qreal)0,
+                                -m_itemContainer->size().width()+size().width()),
+                            m_itemContainer->pos().x()+deltaPos.x(), (qreal)0), m_itemContainer->pos().y());
+            } else {
+                m_itemContainer->setPos(m_itemContainer->pos().x(),
+                                    qBound(qMin((qreal)0,-m_itemContainer->size().height()+size().height()),
+                                        m_itemContainer->pos().y()+deltaPos.y(), (qreal)0));
+            }
         }
     } else if (watched == m_itemContainer && event->type() == QEvent::GraphicsSceneMove) {
         QGraphicsSceneMoveEvent *me = static_cast<QGraphicsSceneMoveEvent *>(event);
