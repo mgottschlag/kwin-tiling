@@ -64,6 +64,8 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
 
     connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
             this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
+    connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
+            this, SLOT(updateSize()));
 
     connect(this, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
 }
@@ -91,9 +93,11 @@ void Newspaper::init()
     borderSvg->setImagePath("newspaper/border");
 
     QGraphicsWidget *spacer1 = new QGraphicsWidget(m_mainWidget);
+    spacer1->setPreferredHeight(0);
     spacer1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QGraphicsWidget *spacer2 = new QGraphicsWidget(m_mainWidget);
     spacer2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    spacer2->setPreferredHeight(0);
     m_leftLayout->addItem(spacer1);
     m_rightLayout->addItem(spacer2);
 
@@ -209,15 +213,9 @@ void Newspaper::updateSize()
 {
     QSizeF hint = m_mainWidget->effectiveSizeHint(Qt::PreferredSize);
     if (m_orientation == Qt::Horizontal) {
-        const qreal proposedWidth = hint.width();
-        hint.scale(QWIDGETSIZE_MAX, m_mainWidget->size().height(), Qt::KeepAspectRatio);
-        hint.setWidth(qMax(proposedWidth, hint.width()));
-        m_mainWidget->resize(hint);
+        m_mainWidget->resize(hint.width(), m_mainWidget->size().height());
     } else {
-        const qreal proposedHeight = hint.height();
-        hint.scale(m_mainWidget->size().width(), QWIDGETSIZE_MAX, Qt::KeepAspectRatio);
-        hint.setHeight(qMax(hint.height(), proposedHeight));
-        m_mainWidget->resize(hint);
+        m_mainWidget->resize(m_mainWidget->size().width(), hint.height());
     }
 }
 
