@@ -276,8 +276,8 @@ void StripWidget::arrowsNeededChanged(ItemView::ScrollBarFlags flags)
     bool rightNeeded = false;
     //FIXME: horizontalScrollValue() returns funny values
     if (flags & ItemView::HorizontalScrollBar) {
-        leftNeeded = m_itemView->horizontalScrollValue() > 0;
-        rightNeeded = m_itemView->horizontalScrollValue() < 100;
+//        leftNeeded = m_itemView->horizontalScrollValue() > 0;
+  //      rightNeeded = m_itemView->horizontalScrollValue() < 100;
     }
     m_leftArrow->setEnabled(leftNeeded);
     m_rightArrow->setEnabled(rightNeeded);
