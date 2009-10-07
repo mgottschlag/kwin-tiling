@@ -27,6 +27,7 @@
 class QGraphicsLinearLayout;
 class AppletOverlay;
 class AppletTitleBar;
+class NetToolBox;
 
 namespace Plasma
 {
@@ -66,6 +67,7 @@ private:
     Qt::Orientation m_orientation;
     Plasma::FrameSvg *m_background;
     AppletOverlay *m_appletOverlay;
+    NetToolBox *m_toolBox;
     bool m_dragging;
 };
 

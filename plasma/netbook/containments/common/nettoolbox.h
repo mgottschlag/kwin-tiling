@@ -22,6 +22,8 @@
 
 #include <QGraphicsWidget>
 
+#include <KIcon>
+
 class QGraphicsLinearLayout;
 
 namespace Plasma
@@ -31,12 +33,12 @@ namespace Plasma
     class IconWidget;
 };
 
-class NebToolBox : public QGraphicsWidget
+class NetToolBox : public QGraphicsWidget
 {
     Q_OBJECT
 public:
-    NebToolBox(Plasma::Containment *parent = 0);
-    ~NebToolBox();
+    NetToolBox(Plasma::Containment *parent = 0);
+    ~NetToolBox();
 
     bool showing() const;
     void setShowing(const bool show);
@@ -51,14 +53,32 @@ public:
      */
     void removeTool(QAction *action);
 
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+
 Q_SIGNALS:
     void toggled();
     void visibilityChanged(bool);
+
+private Q_SLOTS:
+    void containmentGeometryChanged();
+    void animateHighlight(qreal progress);
 
 private:
     Plasma::Frame *m_toolContainer;
     QGraphicsLinearLayout *m_toolContainerLayout;
     QHash<QAction *, Plasma::IconWidget *> m_actionButtons;
+    Plasma::Containment *m_containment;
+    KIcon m_icon;
+    QSize m_iconSize;
+    int m_animHighlightId;
+    qreal m_animHighlightFrame;
+    bool m_hovering;
 };
 
 #endif

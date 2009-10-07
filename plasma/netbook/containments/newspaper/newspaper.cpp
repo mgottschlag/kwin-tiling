@@ -22,6 +22,7 @@
 #include "newspaper.h"
 #include "appletoverlay.h"
 #include "applettitlebar.h"
+#include "../common/nettoolbox.h"
 
 #include <limits>
 
@@ -104,29 +105,34 @@ void Newspaper::init()
     Containment::init();
     setHasConfigurationInterface(true);
 
+    m_toolBox = new NetToolBox(this);
+    connect(m_toolBox, SIGNAL(toggled()), this, SIGNAL(toolBoxToggled()));
+    connect(m_toolBox, SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));
+    m_toolBox->show();
+
     QAction *a = action("add widgets");
     if (a) {
-        addToolBoxAction(a);
+        m_toolBox->addTool(a);
     }
 
     a = new QAction(KIcon("view-pim-news"), i18n("Add a new newspaper page"), this);
-    addToolBoxAction(a);
+    m_toolBox->addTool(a);
     connect(a, SIGNAL(triggered()), this, SLOT(addNewsPaper()));
 
     a = action("configure");
     if (a) {
-        addToolBoxAction(a);
+        m_toolBox->addTool(a);
     }
 
     a = action("lock widgets");
     if (a) {
-        addToolBoxAction(a);
+        m_toolBox->addTool(a);
     }
 
 
     a = action("remove");
     if (a) {
-        addToolBoxAction(a);
+        m_toolBox->addTool(a);
     }
 }
 
