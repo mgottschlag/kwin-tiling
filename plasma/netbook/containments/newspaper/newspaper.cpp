@@ -115,7 +115,7 @@ void Newspaper::init()
         m_toolBox->addTool(a);
     }
 
-    a = new QAction(KIcon("view-pim-news"), i18n("Add a new newspaper page"), this);
+    a = new QAction(KIcon("view-pim-news"), i18n("New page"), this);
     m_toolBox->addTool(a);
     connect(a, SIGNAL(triggered()), this, SLOT(addNewsPaper()));
 
@@ -239,9 +239,19 @@ void Newspaper::updateConfigurationMode(bool config)
     if (config && !m_appletOverlay && immutability() == Plasma::Mutable) {
         m_appletOverlay = new AppletOverlay(this, this);
         m_appletOverlay->resize(size());
+
+        //FIXME: hardcode bottom--
+        qreal left, top, right, bottom;
+        getContentsMargins(&left, &top, &right, &bottom);
+        setContentsMargins(left, top, right, bottom + m_toolBox->expandedGeometry().height());
     } else if (!config) {
         delete m_appletOverlay;
         m_appletOverlay = 0;
+
+        //FIXME: hardcode--
+        qreal left, top, right, bottom;
+        getContentsMargins(&left, &top, &right, &bottom);
+        setContentsMargins(left, top, right, bottom - m_toolBox->expandedGeometry().height());
     }
 }
 

@@ -54,6 +54,8 @@ public:
      */
     void removeTool(QAction *action);
 
+    QRectF expandedGeometry() const;
+
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
 protected:
