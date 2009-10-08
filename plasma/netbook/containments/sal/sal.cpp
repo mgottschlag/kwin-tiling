@@ -23,6 +23,7 @@
 #include "itemview.h"
 #include "../common/linearappletoverlay.h"
 #include "../common/appletmovespacer.h"
+#include "../common/nettoolbox.h"
 
 #include <QAction>
 #include <QTimer>
@@ -82,20 +83,26 @@ void SearchLaunch::init()
     connect(m_runnermg, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
             this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
 
+    m_toolBox = new NetToolBox(this);
+    connect(m_toolBox, SIGNAL(toggled()), this, SIGNAL(toolBoxToggled()));
+    connect(m_toolBox, SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));
+    m_toolBox->show();
+
     QAction *a = action("add widgets");
     if (a) {
-        addToolBoxAction(a);
+        m_toolBox->addTool(a);
     }
 
     a = action("configure");
     if (a) {
-        addToolBoxAction(a);
+        m_toolBox->addTool(a);
     }
 
     a = action("lock widgets");
     if (a) {
-        addToolBoxAction(a);
+        m_toolBox->addTool(a);
     }
+
 }
 
 void SearchLaunch::doSearch(const QString query)
@@ -486,12 +493,22 @@ void SearchLaunch::updateConfigurationMode(bool config)
         m_appletOverlay->resize(size());
         connect (m_appletOverlay, SIGNAL(dropRequested(QGraphicsSceneDragDropEvent *)),
                  this, SLOT(overlayRequestedDrop(QGraphicsSceneDragDropEvent *)));
+
+        //FIXME: hardcode bottom--
+        qreal left, top, right, bottom;
+        getContentsMargins(&left, &top, &right, &bottom);
+        setContentsMargins(left, top, right, bottom + m_toolBox->expandedGeometry().height());
     } else if (!config) {
         delete m_appletOverlay;
         m_appletOverlay = 0;
         if (m_appletsLayout->count() == 2) {
             m_mainLayout->removeItem(m_appletsLayout);
         }
+
+        //FIXME: hardcode--
+        qreal left, top, right, bottom;
+        getContentsMargins(&left, &top, &right, &bottom);
+        setContentsMargins(left, top, right, bottom - m_toolBox->expandedGeometry().height());
     }
 }
 

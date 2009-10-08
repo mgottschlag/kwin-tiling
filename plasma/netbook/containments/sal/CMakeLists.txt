@@ -5,6 +5,7 @@ set(sal_SRCS
     itemview.cpp
     ../common/linearappletoverlay.cpp
     ../common/appletmovespacer.cpp
+    ../common/nettoolbox.cpp
     stripwidget.cpp)
 
 kde4_add_plugin(plasma_containment_sal ${sal_SRCS})

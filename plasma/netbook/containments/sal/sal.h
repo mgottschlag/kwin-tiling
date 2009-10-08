@@ -32,6 +32,7 @@ class QTimer;
 class StripWidget;
 class ItemView;
 class LinearAppletOverlay;
+class NetToolBox;
 
 namespace Plasma
 {
@@ -101,6 +102,8 @@ private:
     QGraphicsLinearLayout *m_appletsLayout;
     QPointF m_buttonDownMousePos;
     LinearAppletOverlay *m_appletOverlay;
+
+    NetToolBox *m_toolBox;
 
     bool m_stripUninitialized;
 };
