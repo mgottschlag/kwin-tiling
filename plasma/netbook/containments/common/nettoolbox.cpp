@@ -150,11 +150,12 @@ NetToolBox::NetToolBox(Plasma::Containment *parent)
     m_toolContainer->hide();
     m_toolContainer->setFlag(QGraphicsWidget::ItemStacksBehindParent);
     m_toolContainerLayout = new QGraphicsLinearLayout(m_toolContainer);
-    m_toolContainerLayout->setContentsMargins(size().width(), 0, 0, 0);
+    m_toolContainerLayout->addStretch();
 
     m_background = new Plasma::Svg(this);
     m_background->setImagePath("widgets/toolbox");
     m_background->setContainsMultipleImages(true);
+    setLocation(Plasma::BottomEdge);
 
     connect(m_containment, SIGNAL(geometryChanged()), this, SLOT(containmentGeometryChanged()));
     containmentGeometryChanged();
@@ -190,11 +191,11 @@ void NetToolBox::setShowing(const bool show)
             break;
         case Plasma::LeftEdge:
             m_toolContainer->setPos(boundingRect().topLeft() - QPoint(m_toolContainer->size().width(), 0));
-            finalPos = QPoint(size().width()-m_toolContainer->size().width(), 0);
+            finalPos = QPoint(0, 0);
             break;
         case Plasma::RightEdge:
             m_toolContainer->setPos(boundingRect().topRight());
-            finalPos = QPoint(0, 0);
+            finalPos = QPoint(size().width()-m_toolContainer->size().width(), 0);
             break;
         case Plasma::BottomEdge:
         default:
@@ -248,8 +249,15 @@ void NetToolBox::addTool(QAction *action)
     button->setDrawBackground(true);
     button->setTextBackgroundColor(QColor());
     button->setAction(action);
+
+    if (m_location == Plasma::LeftEdge || m_location == Plasma::RightEdge) {
+        button->setOrientation(Qt::Vertical);
+    } else {
+        button->setOrientation(Qt::Horizontal);
+    }
+
     m_actionButtons[action] = button;
-    m_toolContainerLayout->addItem(button);
+    m_toolContainerLayout->insertItem(m_toolContainerLayout->count() - 1, button);
 }
 
 void NetToolBox::removeTool(QAction *action)
@@ -273,6 +281,19 @@ void NetToolBox::setLocation(Plasma::Location location)
 {
     m_location = location;
     m_toolContainer->setLocation(location);
+    if (location == Plasma::LeftEdge || location == Plasma::RightEdge) {
+        m_toolContainerLayout->setOrientation(Qt::Vertical);
+        m_toolContainerLayout->setContentsMargins(0, size().height(), 0, 0);
+        foreach (Plasma::IconWidget *icon, m_actionButtons) {
+            icon->setOrientation(Qt::Vertical);
+        }
+    } else {
+        m_toolContainerLayout->setOrientation(Qt::Horizontal);
+        m_toolContainerLayout->setContentsMargins(size().width(), 0, 0, 0);
+        foreach (Plasma::IconWidget *icon, m_actionButtons) {
+            icon->setOrientation(Qt::Horizontal);
+        }
+    }
 }
 
 Plasma::Location NetToolBox::location() const
@@ -282,6 +303,9 @@ Plasma::Location NetToolBox::location() const
 
 void NetToolBox::containmentGeometryChanged()
 {
+    m_toolContainerLayout->invalidate();
+    m_toolContainerLayout->activate();
+
     switch (m_location) {
     case Plasma::TopEdge:
         m_toolContainer->resize(m_containment->size().width(), m_toolContainer->effectiveSizeHint(Qt::PreferredSize).height());
@@ -336,7 +360,7 @@ void NetToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         svgElement = "desktop-northwest";
         break;
     case Plasma::RightEdge:
-        iconPos = QPoint(size().width() - m_iconSize.width() - 2, size().height() - m_iconSize.height() - 2);
+        iconPos = QPoint(size().width() - m_iconSize.width() - 2, 2);
         svgElement = "desktop-northeast";
         break;
     case Plasma::BottomEdge:
