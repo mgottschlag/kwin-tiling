@@ -776,7 +776,6 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
 {
     const QString id = "plasma_containment_settings_" + QString::number(containment->id());
     BackgroundDialog *configDialog = qobject_cast<BackgroundDialog*>(KConfigDialog::exists(id));
-    kDebug() << configDialog;
 
     if (configDialog) {
         configDialog->reloadConfig();
