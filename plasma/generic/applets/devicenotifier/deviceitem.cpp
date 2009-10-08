@@ -387,8 +387,8 @@ void DeviceItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         emit activated(this);
     } else {
         if (isCollapsed()) {
-            emit activated(this);
             expand();
+            emit activated(this);
         } else {
             collapse();
         }
