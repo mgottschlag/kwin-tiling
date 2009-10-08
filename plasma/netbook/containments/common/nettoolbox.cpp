@@ -113,7 +113,8 @@ NetToolBox::NetToolBox(Plasma::Containment *parent)
      m_animHighlightId(0),
      m_animHighlightFrame(0),
      m_hovering(false),
-     m_showing(false)
+     m_showing(false),
+     m_location(Plasma::BottomEdge)
 {
     setZValue(9000);
     resize(KIconLoader::SizeMedium, KIconLoader::SizeMedium);
@@ -203,12 +204,45 @@ QRectF NetToolBox::expandedGeometry() const
     return containerGeometry;
 }
 
+void NetToolBox::setLocation(Plasma::Location location)
+{
+    m_location = location;
+    m_toolContainer->setLocation(location);
+}
+
+Plasma::Location NetToolBox::location() const
+{
+    return m_location;
+}
+
 void NetToolBox::containmentGeometryChanged()
 {
-    //TODO: hardcode--
-    m_toolContainer->resize(m_containment->size().width(), KIconLoader::SizeLarge);
-    m_toolContainer->setPos(0, size().height()-m_toolContainer->size().height());
-    setPos(0, m_containment->size().height()-size().height());
+    switch (m_location) {
+    case Plasma::TopEdge:
+        m_toolContainer->resize(m_containment->size().width(), KIconLoader::SizeLarge);
+        m_toolContainer->setPos(0, 0);
+        setPos(0, 0);
+        break;
+    case Plasma::BottomEdge:
+        m_toolContainer->resize(m_containment->size().width(), KIconLoader::SizeLarge);
+        m_toolContainer->setPos(0, size().height()-m_toolContainer->size().height());
+        setPos(0, m_containment->size().height()-size().height());
+        break;
+    case Plasma::LeftEdge:
+        m_toolContainer->resize(m_toolContainer->effectiveSizeHint(Qt::PreferredSize).width(), m_containment->size().height());
+        m_toolContainer->setPos(0, 0);
+        setPos(0, 0);
+        break;
+    case Plasma::RightEdge:
+        m_toolContainer->resize(m_toolContainer->effectiveSizeHint(Qt::PreferredSize).width(), m_containment->size().height());
+        m_toolContainer->setPos(size().width()-m_toolContainer->size().width(), 0);
+        setPos(m_containment->size().width()-size().width(), 0);
+        break;
+    default:
+        m_toolContainer->resize(m_toolContainer->effectiveSizeHint(Qt::PreferredSize));
+        m_toolContainer->setPos(0, size().height()-m_toolContainer->size().height());
+        break;
+    }
 }
 
 void NetToolBox::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -227,9 +261,27 @@ void NetToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
-    m_background->paint(painter, boundingRect(), "desktop-southwest");
+    QPoint iconPos;
+    QString svgElement;
 
-    QPoint iconPos(2, size().height() - m_iconSize.height() - 2);
+    switch (m_location) {
+    case Plasma::TopEdge:
+    case Plasma::LeftEdge:
+        iconPos = QPoint(2, 2);
+        svgElement = "desktop-northwest";
+        break;
+    case Plasma::RightEdge:
+        iconPos = QPoint(size().width() - m_iconSize.width() - 2, size().height() - m_iconSize.height() - 2);
+        svgElement = "desktop-northeast";
+        break;
+    case Plasma::BottomEdge:
+    default:
+        iconPos = QPoint(2, size().height() - m_iconSize.height() - 2);
+        svgElement = "desktop-southwest";
+        break;
+    }
+
+    m_background->paint(painter, boundingRect(), svgElement);
 
     if (qFuzzyCompare(qreal(1.0), m_animHighlightFrame)) {
         m_icon.paint(painter, QRect(iconPos, m_iconSize));

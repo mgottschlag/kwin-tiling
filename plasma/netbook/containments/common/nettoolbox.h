@@ -24,6 +24,8 @@
 
 #include <KIcon>
 
+#include <Plasma/Plasma>
+
 class QGraphicsLinearLayout;
 
 namespace Plasma
@@ -47,7 +49,7 @@ public:
 
     /**
      * create a toolbox tool from the given action
-     * @p action the action to associate hte tool with
+     * @p action the action to associate the tool with
      */
     void addTool(QAction *action);
     /**
@@ -56,6 +58,9 @@ public:
     void removeTool(QAction *action);
 
     QRectF expandedGeometry() const;
+
+    void setLocation(Plasma::Location location);
+    Plasma::Location location() const;
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
@@ -87,6 +92,7 @@ private:
     qreal m_animHighlightFrame;
     bool m_hovering;
     bool m_showing;
+    Plasma::Location m_location;
 };
 
 #endif
