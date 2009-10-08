@@ -98,13 +98,6 @@ void DeviceNotifier::init()
     fillPreviousDevices();
 
     setStatus(Plasma::PassiveStatus);
-
-    //-------FIXME: really really ugly workaround!!! ----------------------
-    //the bug is in Qt, setFlag(QGraphicsItem::ItemClipsChildrenToShape, true) of the scrollwidget
-    QSizeF size = m_dialog->dialog()->size();
-    m_dialog->dialog()->resize(size + QSizeF(1, 1));
-    m_dialog->dialog()->resize(size);
-    //---------------------------------------------------------------------
 }
 
 QGraphicsWidget *DeviceNotifier::graphicsWidget()
