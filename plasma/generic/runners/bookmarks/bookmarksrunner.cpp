@@ -85,13 +85,15 @@ void BookmarksRunner::match(Plasma::RunnerContext &context)
         Plasma::QueryMatch::Type type = Plasma::QueryMatch::NoMatch;
         qreal relevance = 0;
 
-        if (bookmark.text().toLower() == term.toLower()) {
+        const QString text = bookmark.text();
+        const QString url = bookmark.url().prettyUrl();
+        if (text.compare(term, Qt::CaseInsensitive) == 0) {
             type = Plasma::QueryMatch::ExactMatch;
             relevance = 1.0;
-        } else if (bookmark.text().contains(term, Qt::CaseInsensitive)) {
+        } else if (text.contains(term, Qt::CaseInsensitive)) {
             type = Plasma::QueryMatch::PossibleMatch;
             relevance = 0.45;
-        } else if (bookmark.url().prettyUrl().contains(term, Qt::CaseInsensitive)) {
+        } else if (url.contains(term, Qt::CaseInsensitive)) {
             type = Plasma::QueryMatch::PossibleMatch;
             relevance = 0.2;
         } else if (term.compare(i18nc("list of all konqueror bookmarks", "bookmarks"), Qt::CaseInsensitive) == 0) {
