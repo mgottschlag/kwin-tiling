@@ -330,7 +330,7 @@ void CJobRunner::doNext()
         {
             itsCmd=CMD_UPDATE;
             dbus()->reconfigure(getpid());
-            itsStatusLabel->setText("Updating font configuration. Please wait...");
+            itsStatusLabel->setText(i18n("Updating font configuration. Please wait..."));
             itsProgress->setValue(itsProgress->maximum());
             emit configuring();
         }
