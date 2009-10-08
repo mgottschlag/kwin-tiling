@@ -5,7 +5,13 @@ X-KDE-Library=solid_lirc
 InitialPreference=80
 
 Name=Lirc
+Name[pt]=Lirc
+Name[uk]=Lirc
+Name[x-test]=xxLircxx
 
 Comment=Linux Infrared Remote Control
+Comment[pt]=Comando à Distância por Infravermelhos para Linux
+Comment[uk]=Інфрачервоне дистанційне керування для Linux
+Comment[x-test]=xxLinux Infrared Remote Controlxx
 
 Icon=infrared-remote
