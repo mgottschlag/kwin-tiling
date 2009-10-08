@@ -114,10 +114,7 @@ int NotifierDialog::searchOrCreateDeviceCategory(const QString &categoryName)
     category->setText(categoryName);
     category->setAlignment(Qt::AlignRight);
     category->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    // Set the label as disabled to display it with a softer color
-    category->nativeWidget()->setDisabled(true);
-
-    category->installEventFilter(this);
+    updateCategoryColors(category);
     m_deviceLayout->insertItem(1, category);
 
     return 1;
@@ -515,6 +512,13 @@ void NotifierDialog::resetSelection()
 {
     m_itemBackground->hide();
     m_itemBackground->setTargetItem(0);
+
+    for (int i = 0; i < m_deviceLayout->count(); ++i) {
+        DeviceItem *item = dynamic_cast<DeviceItem *>(m_deviceLayout->itemAt(i));
+        if (item && item->hovered()) {
+            item->setHovered(false);
+        }
+    }
 }
 
 void NotifierDialog::updateFreeSpace(DeviceItem *item)
