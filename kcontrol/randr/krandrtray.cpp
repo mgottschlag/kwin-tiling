@@ -49,12 +49,13 @@ KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)
 	  m_display(dpy)
 {
 	setIconByName("preferences-desktop-display-randr");
-    setCategory(Hardware);
-	setToolTip("preferences-desktop-display-randr", i18n("KRandR"), i18n("Screen resize & rotate"));
+	setCategory(Hardware);
+	setToolTip("preferences-desktop-display-randr", i18n("Screen Settings"),
+		i18n("Resize, rotate and configure screens."));
 
 	m_menu = new KMenu(associatedWidget());
 	setContextMenu(m_menu);
-    setStatus(Active);
+	setStatus(Active);
 
     //TODO: probably we need an about to show signal
 	connect(m_menu, SIGNAL(aboutToShow()), this, SLOT(slotPrepareMenu()));
@@ -114,9 +115,9 @@ void KRandRSystemTray::slotPrepareMenu()
 	m_menu->addSeparator();
 
 	KAction *actPrefs = actionCollection()->addAction( QString() );
-     actPrefs->setIcon( KIcon( "configure" ) );
-     actPrefs->setText( i18n( "Configure Display..." ) );
-     
+	actPrefs->setIcon( KIcon( "configure" ) );
+	actPrefs->setText( i18n( "Configure Display..." ) );
+
 	connect( actPrefs, SIGNAL( triggered( bool ) ), SLOT( slotPrefs() ) );
 	m_menu->addAction( actPrefs );
 
