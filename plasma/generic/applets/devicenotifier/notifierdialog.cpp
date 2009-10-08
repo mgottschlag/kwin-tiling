@@ -26,6 +26,7 @@
 #include <QtDBus/QDBusReply>
 #include <QMetaEnum>
 #include <QGraphicsLinearLayout>
+#include <QGraphicsSceneContextMenuEvent>
 
 //KDE
 #include <KDebug>
@@ -166,6 +167,11 @@ void NotifierDialog::clearItemBackgroundTarget()
 
 bool NotifierDialog::eventFilter(QObject* obj, QEvent *event)
 {
+    if (event->type() == QEvent::GraphicsSceneContextMenu) {
+        QGraphicsSceneContextMenuEvent *contextEvent = static_cast<QGraphicsSceneContextMenuEvent *>(event);
+        setMenuActionsAt(contextEvent->scenePos());
+    }
+
     DeviceItem *item = dynamic_cast<DeviceItem*>(obj);
     if (item) {
         switch (event->type()) {
@@ -267,6 +273,7 @@ void NotifierDialog::removeDevice(const QString &udi)
 void NotifierDialog::buildDialog()
 {
     m_widget = new QGraphicsWidget(m_notifier);
+    m_widget->installEventFilter(this);
 
     QGraphicsLinearLayout *l_layout = new QGraphicsLinearLayout(Qt::Vertical, m_widget);
     l_layout->setSpacing(0);
