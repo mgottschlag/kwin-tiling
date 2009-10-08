@@ -236,10 +236,14 @@ bool DeviceItem::hovered() const
 void DeviceItem::setMounted(const bool mounted)
 {
     m_mounted = mounted;
-    if (!m_mounted) {
-        m_leftActionIcon->setIcon("emblem-mounted");
-    } else {
+    if (m_mounted) {
         m_leftActionIcon->setIcon("media-eject");
+        m_leftActionIcon->setToolTip(i18n("Click to safely remove this device from the computer."));
+        m_deviceIcon->setToolTip(i18n("Device is plugged in and can be accessed by applications."));
+    } else {
+        m_leftActionIcon->setIcon("emblem-mounted");
+        m_leftActionIcon->setToolTip(i18n("Click to access this device from other applications."));
+        m_deviceIcon->setToolTip(i18n("Device is plugged in, but not mounted for access yet."));
     }
 
     const bool barVisible = m_capacityBar->isVisible();
