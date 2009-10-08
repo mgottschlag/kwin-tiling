@@ -29,6 +29,7 @@
 #include <Plasma/Animator>
 #include <Plasma/Containment>
 #include <Plasma/IconWidget>
+#include <Plasma/ItemBackground>
 #include <Plasma/PaintUtils>
 #include <Plasma/FrameSvg>
 #include <Plasma/Svg>
@@ -36,11 +37,12 @@
 
 class ToolContainer : public QGraphicsWidget
 {
-    
 public:
     ToolContainer(QGraphicsWidget *parent)
          : QGraphicsWidget(parent)
     {
+        m_itemBackground = new Plasma::ItemBackground(this);
+
         m_background = new Plasma::FrameSvg(this);
         m_background->setImagePath("widgets/frame");
         m_background->setElementPrefix("raised");
@@ -76,6 +78,11 @@ public:
         setContentsMargins(left, top, right, bottom);
     }
 
+    Plasma::ItemBackground *itemBackground() const
+    {
+        return m_itemBackground;
+    }
+
     Plasma::Location location() const
     {
         return m_location;
@@ -100,8 +107,27 @@ protected:
         event->accept();
     }
 
+    QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
+    {
+        QSizeF hint = QGraphicsWidget::sizeHint(which, constraint);
+
+        qreal left, top, right, bottom;
+        m_itemBackground->getContentsMargins(&left, &top, &right, &bottom);
+
+        if (which == Qt::PreferredSize) {
+            if (m_location == Plasma::TopEdge) {
+                hint.setHeight(KIconLoader::SizeSmallMedium + m_background->marginSize(Plasma::BottomMargin) + top + bottom);
+            } else if (m_location == Plasma::BottomEdge) {
+                hint.setHeight(KIconLoader::SizeSmallMedium + m_background->marginSize(Plasma::TopMargin) + top + bottom);
+            }
+        }
+
+        return hint;
+    }
+
 private:
     Plasma::FrameSvg *m_background;
+    Plasma::ItemBackground *m_itemBackground;
     Plasma::Location m_location;
 };
 
@@ -258,12 +284,12 @@ void NetToolBox::containmentGeometryChanged()
 {
     switch (m_location) {
     case Plasma::TopEdge:
-        m_toolContainer->resize(m_containment->size().width(), KIconLoader::SizeLarge);
+        m_toolContainer->resize(m_containment->size().width(), m_toolContainer->effectiveSizeHint(Qt::PreferredSize).height());
         m_toolContainer->setPos(0, 0);
         setPos(0, 0);
         break;
     case Plasma::BottomEdge:
-        m_toolContainer->resize(m_containment->size().width(), KIconLoader::SizeLarge);
+        m_toolContainer->resize(m_containment->size().width(), m_toolContainer->effectiveSizeHint(Qt::PreferredSize).height());
         m_toolContainer->setPos(0, size().height()-m_toolContainer->size().height());
         setPos(0, m_containment->size().height()-size().height());
         break;
