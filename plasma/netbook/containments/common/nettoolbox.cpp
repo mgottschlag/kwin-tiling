@@ -104,7 +104,9 @@ void NetToolBox::removeTool(QAction *action)
 
 QRectF NetToolBox::expandedGeometry() const
 {
-    return m_toolContainer->mapToParent(m_toolContainer->geometry()).boundingRect();
+    QRectF containerGeometry = m_toolContainer->boundingRect();
+    containerGeometry.moveBottomLeft(geometry().bottomLeft());
+    return containerGeometry;
 }
 
 void NetToolBox::containmentGeometryChanged()
