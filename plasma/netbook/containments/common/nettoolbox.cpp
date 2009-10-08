@@ -95,6 +95,11 @@ protected:
         m_background->resizeFrame(event->newSize());
     }
 
+    void mousePressEvent(QGraphicsSceneMouseEvent *event)
+    {
+        event->accept();
+    }
+
 private:
     Plasma::FrameSvg *m_background;
     Plasma::Location m_location;
