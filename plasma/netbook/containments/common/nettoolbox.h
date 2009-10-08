@@ -29,10 +29,11 @@ class QGraphicsLinearLayout;
 namespace Plasma
 {
     class Containment;
-    class Frame;
     class IconWidget;
     class Svg;
 }
+
+class ToolContainer;
 
 class NetToolBox : public QGraphicsWidget
 {
@@ -71,9 +72,10 @@ Q_SIGNALS:
 private Q_SLOTS:
     void containmentGeometryChanged();
     void animateHighlight(qreal progress);
+    void movementFinished(QGraphicsItem *item);
 
 private:
-    Plasma::Frame *m_toolContainer;
+    ToolContainer *m_toolContainer;
     QGraphicsLinearLayout *m_toolContainerLayout;
     QHash<QAction *, Plasma::IconWidget *> m_actionButtons;
     Plasma::Containment *m_containment;
@@ -81,8 +83,10 @@ private:
     KIcon m_icon;
     QSize m_iconSize;
     int m_animHighlightId;
+    int m_animSlideId;
     qreal m_animHighlightFrame;
     bool m_hovering;
+    bool m_showing;
 };
 
 #endif

@@ -27,12 +27,78 @@
 #include <KIconLoader>
 
 #include <Plasma/Animator>
-#include <Plasma/Frame>
 #include <Plasma/Containment>
 #include <Plasma/IconWidget>
 #include <Plasma/PaintUtils>
+#include <Plasma/FrameSvg>
 #include <Plasma/Svg>
 
+
+class ToolContainer : public QGraphicsWidget
+{
+    
+public:
+    ToolContainer(QGraphicsWidget *parent)
+         : QGraphicsWidget(parent)
+    {
+        m_background = new Plasma::FrameSvg(this);
+        m_background->setImagePath("widgets/frame");
+        m_background->setElementPrefix("raised");
+        setLocation(Plasma::BottomEdge);
+    }
+
+    ~ToolContainer()
+    {
+    }
+
+    void setLocation(Plasma::Location location)
+    {
+        m_location = location;
+        switch (location) {
+        case Plasma::TopEdge:
+            m_background->setEnabledBorders(Plasma::FrameSvg::BottomBorder);
+            break;
+        case Plasma::BottomEdge:
+            m_background->setEnabledBorders(Plasma::FrameSvg::TopBorder);
+            break;
+        case Plasma::LeftEdge:
+            m_background->setEnabledBorders(Plasma::FrameSvg::RightBorder);
+            break;
+        case Plasma::RightEdge:
+            m_background->setEnabledBorders(Plasma::FrameSvg::LeftBorder);
+            break;
+        default:
+            m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+            break;
+        }
+        qreal left, top, right, bottom;
+        m_background->getMargins(left, top, right, bottom);
+        setContentsMargins(left, top, right, bottom);
+    }
+
+    Plasma::Location location() const
+    {
+        return m_location;
+    }
+
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+    {
+        Q_UNUSED(option)
+        Q_UNUSED(widget)
+
+        m_background->paintFrame(painter);
+    }
+
+protected:
+    void resizeEvent(QGraphicsSceneResizeEvent *event)
+    {
+        m_background->resizeFrame(event->newSize());
+    }
+
+private:
+    Plasma::FrameSvg *m_background;
+    Plasma::Location m_location;
+};
 
 NetToolBox::NetToolBox(Plasma::Containment *parent)
    : QGraphicsWidget(parent),
@@ -41,14 +107,14 @@ NetToolBox::NetToolBox(Plasma::Containment *parent)
      m_iconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall),
      m_animHighlightId(0),
      m_animHighlightFrame(0),
-     m_hovering(false)
+     m_hovering(false),
+     m_showing(false)
 {
     setZValue(9000);
     resize(KIconLoader::SizeMedium, KIconLoader::SizeMedium);
     setAcceptHoverEvents(true);
 
-    m_toolContainer = new Plasma::Frame(this);
-    m_toolContainer->setFrameShadow(Plasma::Frame::Raised);
+    m_toolContainer = new ToolContainer(this);
     m_toolContainer->hide();
     m_toolContainer->setFlag(QGraphicsWidget::ItemStacksBehindParent);
     m_toolContainerLayout = new QGraphicsLinearLayout(m_toolContainer);
@@ -60,6 +126,9 @@ NetToolBox::NetToolBox(Plasma::Containment *parent)
 
     connect(m_containment, SIGNAL(geometryChanged()), this, SLOT(containmentGeometryChanged()));
     containmentGeometryChanged();
+
+    connect(Plasma::Animator::self(), SIGNAL(movementFinished(QGraphicsItem*)),
+            this, SLOT(movementFinished(QGraphicsItem*)));
 }
 
 NetToolBox::~NetToolBox()
@@ -68,16 +137,36 @@ NetToolBox::~NetToolBox()
 
 bool NetToolBox::showing() const
 {
-    return m_toolContainer->isVisible();
+    return m_showing;
 }
 
 void NetToolBox::setShowing(const bool show)
 {
+    m_showing = show;
+
     if (show != m_toolContainer->isVisible()) {
         emit toggled();
         emit visibilityChanged(show);
     }
-    m_toolContainer->setVisible(show);
+
+    if (show) {
+        m_toolContainer->setPos(boundingRect().bottomLeft());
+        m_toolContainer->show();
+
+        if (m_animSlideId) {
+            Plasma::Animator::self()->stopItemMovement(m_animSlideId);
+        }
+
+        m_animSlideId = Plasma::Animator::self()->moveItem(m_toolContainer, Plasma::Animator::SlideOutMovement,
+                                                   QPoint(m_toolContainer->pos().x(), size().height()-m_toolContainer->size().height()));
+    } else {
+        if (m_animSlideId) {
+            Plasma::Animator::self()->stopItemMovement(m_animSlideId);
+        }
+
+        m_animSlideId = Plasma::Animator::self()->moveItem(m_toolContainer, Plasma::Animator::SlideInMovement,
+                                                   boundingRect().bottomLeft().toPoint());
+    }
 }
 
 
@@ -204,6 +293,12 @@ void NetToolBox::animateHighlight(qreal progress)
     }
 
     update();
+}
+
+void NetToolBox::movementFinished(QGraphicsItem *item)
+{
+    m_animSlideId = 0;
+    m_toolContainer->setVisible(m_showing);
 }
 
 #include "nettoolbox.moc"
