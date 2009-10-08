@@ -156,22 +156,61 @@ void NetToolBox::setShowing(const bool show)
     }
 
     if (show) {
-        m_toolContainer->setPos(boundingRect().bottomLeft());
+        QPoint finalPos;
+        switch (m_location) {
+        case Plasma::TopEdge:
+            m_toolContainer->setPos(boundingRect().topLeft() - QPoint(0, m_toolContainer->size().height()));
+            finalPos = QPoint(0, 0);
+            break;
+        case Plasma::LeftEdge:
+            m_toolContainer->setPos(boundingRect().topLeft() - QPoint(m_toolContainer->size().width(), 0));
+            finalPos = QPoint(size().width()-m_toolContainer->size().width(), 0);
+            break;
+        case Plasma::RightEdge:
+            m_toolContainer->setPos(boundingRect().topRight());
+            finalPos = QPoint(0, 0);
+            break;
+        case Plasma::BottomEdge:
+        default:
+            m_toolContainer->setPos(boundingRect().bottomLeft());
+            finalPos = QPoint(0, size().height()-m_toolContainer->size().height());
+            break;
+        }
+
         m_toolContainer->show();
 
         if (m_animSlideId) {
             Plasma::Animator::self()->stopItemMovement(m_animSlideId);
         }
 
-        m_animSlideId = Plasma::Animator::self()->moveItem(m_toolContainer, Plasma::Animator::SlideOutMovement,
-                                                   QPoint(m_toolContainer->pos().x(), size().height()-m_toolContainer->size().height()));
+        m_animSlideId = Plasma::Animator::self()->moveItem(m_toolContainer, Plasma::Animator::SlideOutMovement, finalPos);
     } else {
+        QPoint finalPos;
+        switch (m_location) {
+        case Plasma::TopEdge:
+            finalPos = QPoint((boundingRect().topLeft() - QPoint(0, m_toolContainer->size().height())).toPoint());
+            m_toolContainer->setPos(0, 0);
+            break;
+        case Plasma::LeftEdge:
+            finalPos = QPoint(boundingRect().topLeft().toPoint() - QPoint(m_toolContainer->size().width(), 0));
+            m_toolContainer->setPos(size().width()-m_toolContainer->size().width(), 0);
+            break;
+        case Plasma::RightEdge:
+            finalPos = QPoint(boundingRect().topRight().toPoint());
+            m_toolContainer->setPos(0, 0);
+            break;
+        case Plasma::BottomEdge:
+        default:
+            finalPos = QPoint(boundingRect().bottomLeft().toPoint());
+            m_toolContainer->setPos(0, size().height()-m_toolContainer->size().height());
+            break;
+        }
+
         if (m_animSlideId) {
             Plasma::Animator::self()->stopItemMovement(m_animSlideId);
         }
 
-        m_animSlideId = Plasma::Animator::self()->moveItem(m_toolContainer, Plasma::Animator::SlideInMovement,
-                                                   boundingRect().bottomLeft().toPoint());
+        m_animSlideId = Plasma::Animator::self()->moveItem(m_toolContainer, Plasma::Animator::SlideInMovement, finalPos);
     }
 }
 
