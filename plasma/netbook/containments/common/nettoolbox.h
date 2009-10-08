@@ -32,7 +32,7 @@ namespace Plasma
     class Frame;
     class IconWidget;
     class Svg;
-};
+}
 
 class NetToolBox : public QGraphicsWidget
 {
