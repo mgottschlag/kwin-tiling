@@ -35,9 +35,9 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:8px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Actual State&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:30px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Export the actions in their current state.&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Disabled&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:30px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Export the actions in disabled state.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:30px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Export the actions in a disabled state.&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Enabled&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:8px; margin-left:30px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Export the actions in enabled state.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:8px; margin-left:30px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Export the actions in an enabled state.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <item>
       <property name="text">
@@ -62,7 +62,7 @@ p, li { white-space: pre-wrap; }
       <string>KHotkeys file id.</string>
      </property>
      <property name="whatsThis">
-      <string>A khotkeys file id is used to ensure files are not imported more than once. They are mostly used for automatically updates from kde developers.</string>
+      <string>A khotkeys file id is used to ensure files are not imported more than once. They are mostly used for automatic updates from the KDE developers.</string>
      </property>
      <property name="text">
       <string>Id</string>
@@ -75,7 +75,7 @@ p, li { white-space: pre-wrap; }
    <item row="1" column="1">
     <widget class="KLineEdit" name="id">
      <property name="clickMessage">
-      <string>set import id for file or leave empty</string>
+      <string>Set import id for file, or leave empty</string>
      </property>
     </widget>
    </item>
@@ -134,7 +134,7 @@ p, li { white-space: pre-wrap; }
       <string>Merge into existing directories on import?</string>
      </property>
      <property name="whatsThis">
-      <string>Allow merging of content if an directory with the same name exists on importing. If merging is not allowed you will have two directories with the same name.</string>
+      <string>Allow merging of content if a directory with the same name exists on importing. If merging is not allowed, there will be two directories with the same name.</string>
      </property>
      <property name="text">
       <string/>
