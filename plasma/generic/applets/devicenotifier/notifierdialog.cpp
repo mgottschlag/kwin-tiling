@@ -549,29 +549,25 @@ void NotifierDialog::updateFreeSpace(DeviceItem *item)
 
 void NotifierDialog::setMenuActionsAt(QPointF scenePos)
 {
-    if (m_notifier->areThereHiddenDevices()) {
-        m_showAll->setVisible(true);
-    } else {
-        m_showAll->setVisible(false);
-    }
+    m_showAll->setVisible(m_notifier->areThereHiddenDevices());
 
+    bool hideItemVisible = false;
     if (m_devicesScrollWidget->geometry().contains(m_widget->mapFromScene(scenePos))) {
         QGraphicsWidget *w = m_devicesScrollWidget->widget();
         for (int i = 0; i <  m_deviceLayout->count(); ++i) {
             DeviceItem *devItem = dynamic_cast<DeviceItem *>(m_deviceLayout->itemAt(i));
             if (devItem && devItem->geometry().contains(w->mapFromScene(scenePos))) {
-                m_hideItem->setVisible(true);
+                hideItemVisible = true;
                 QString name = devItem->data(Qt::DisplayRole).toString();
                 QString udi = devItem->data(SolidUdiRole).toString();
                 m_hideItem->setChecked(!devItem->data(VisibilityRole).toBool());
                 m_hideItem->setText(i18nc("Hide a device", "Hide %1", name));
                 m_hideItem->setData(udi);
-                return;
+                break;
             }
         }
     }
-
-    m_hideItem->setVisible(false);
+    m_hideItem->setVisible(hideItemVisible);
 }
 
 QList<QAction *> NotifierDialog::contextualActions()
