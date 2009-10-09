@@ -116,7 +116,7 @@ void DeviceNotifier::fillPreviousDevices()
     m_fillingPreviousDevices = true;
 
     QList<Solid::Device> list = Solid::Device::listFromType(Solid::DeviceInterface::StorageVolume);
-    foreach (Solid::Device device, list) {
+    foreach (const Solid::Device &device, list) {
         if (device.as<Solid::StorageVolume>()->isIgnored()) {
             onSourceAdded(device.udi());
         }

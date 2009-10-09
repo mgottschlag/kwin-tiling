@@ -58,7 +58,7 @@ class DeviceItem : public QGraphicsWidget
         * @param udi the udi of the device
         * @param parent the parent of the device
         */
-        DeviceItem(const QString &udi, QGraphicsWidget *parent = 0);
+        explicit DeviceItem(const QString &udi, QGraphicsWidget *parent = 0);
 
         /**
         * Default destructor
@@ -268,7 +268,7 @@ class DeviceItem : public QGraphicsWidget
         ///The action the left icon will do if activated
         LeftActions m_leftAction;
 
-        ///The layout arranging the items showing informations abount the device
+        ///The layout arranging the items showing information about the device
         QGraphicsLinearLayout *m_mainLayout;
 
         ///The layout arranging the actions

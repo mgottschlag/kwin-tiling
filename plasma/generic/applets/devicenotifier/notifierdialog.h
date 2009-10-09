@@ -76,7 +76,7 @@ namespace Notifier
           * @param notifier the notifier attached to this dialog
           * @param parent the parent of this object
           **/
-          NotifierDialog(DeviceNotifier *notifier, QObject *parent = 0);
+          explicit NotifierDialog(DeviceNotifier *notifier, QObject *parent = 0);
 
           /**
           * Default destructor
