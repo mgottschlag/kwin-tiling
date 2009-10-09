@@ -77,7 +77,6 @@ void DeviceNotifier::init()
     m_numberItems = cg.readEntry("NumberItems", 4);
     m_itemsValidity = cg.readEntry("ItemsValidity", 5);
     m_showDevices = cg.readEntry("ShowDevices", RemovableOnly).toInt();
-    m_showPopupOnInsert = cg.readEntry("showPopupOnInsert", true);
 
     m_solidEngine = dataEngine("hotplug");
     m_solidDeviceEngine = dataEngine("soliddevice");
@@ -224,9 +223,7 @@ void DeviceNotifier::notifyDevice(const QString &udi)
     setStatus(Plasma::NeedsAttentionStatus);
 
     if (!m_fillingPreviousDevices) {
-        if (m_showPopupOnInsert) {
-            showPopup(5000);
-        }
+        showPopup(5000);
         changeNotifierIcon("preferences-desktop-notification");
         update();
         QTimer::singleShot(5000, m_dialog, SLOT(resetNotifierIcon()));
@@ -335,7 +332,6 @@ void DeviceNotifier::createConfigurationInterface(KConfigDialog *parent)
     parent->setButtons( KDialog::Ok | KDialog::Cancel);
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
-    m_configurationUi.showPopupOnInsert->setChecked(m_showPopupOnInsert);
     m_configurationUi.showDevices->setCurrentIndex(m_showDevices);
 }
 
@@ -343,10 +339,8 @@ void DeviceNotifier::configAccepted()
 {
     KConfigGroup cg = config();
 
-    m_showPopupOnInsert = m_configurationUi.showPopupOnInsert->isChecked();
     m_showDevices = m_configurationUi.showDevices->currentIndex();
 
-    cg.writeEntry("showPopupOnInsert", m_showPopupOnInsert);
     cg.writeEntry("ShowDevices", m_showDevices);
 
     emit configNeedsSaving();

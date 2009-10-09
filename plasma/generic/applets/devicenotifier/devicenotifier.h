@@ -219,9 +219,6 @@ class DeviceNotifier : public Plasma::PopupApplet
         ///tells which devices to show
         int m_showDevices;
 
-        ///if false do not show the popup on insertion of a new device
-        bool m_showPopupOnInsert;
-
         ///if true all the devices will be shown anyway
         bool m_globalVisibility;
 
