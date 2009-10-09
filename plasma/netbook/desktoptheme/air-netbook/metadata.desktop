@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Air for netbooks
+Name[en_GB]=Air for netbooks
 Name[et]=Air väikesülearvutitele
 Name[gl]=Air para ultraportátiles
 Name[id]=Air untuk komputer mini
@@ -17,6 +18,7 @@ Comment[bg]=Глътка свеж въздух
 Comment[ca]=Una alenada d'aire fresc
 Comment[da]=En mundfuld frisk luft
 Comment[de]=Ein Atemzug frische Luft
+Comment[en_GB]=A breath of fresh air
 Comment[es]=Un soplo de aire fresco
 Comment[et]=Värskendav tuulepuhang
 Comment[gl]=Un folgo de ar fresco

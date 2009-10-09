@@ -2,6 +2,7 @@
 Type=ServiceType
 X-KDE-ServiceType=SolidDevice
 Name=Solid Device Type
+Name[en_GB]=Solid Device Type
 Name[et]=Solidi seadme tüüp
 Name[gl]=Tipo do dispositivo de Solid
 Name[id]=Tipe Divais Solid
@@ -13,3 +14,4 @@ Name[sv]=Solid-enhetstyp
 Name[tr]=Solid Aygıtı Tipi
 Name[uk]=Тип пристрою Solid
 Name[x-test]=xxSolid Device Typexx
+Name[zh_TW]=實體裝置類型

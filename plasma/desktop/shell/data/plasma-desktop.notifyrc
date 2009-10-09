@@ -1,6 +1,7 @@
 [Global]
 IconName=plasma
 Comment=Plasma Desktop Shell
+Comment[en_GB]=Plasma Desktop Shell
 Comment[et]=Plasma töölauakest
 Comment[gl]=Shell de escritorio Plasma
 Comment[id]=Shell Desktop Plasma
@@ -14,6 +15,7 @@ Comment[uk]=Оболонка стільниці Плазми
 Comment[x-test]=xxPlasma Desktop Shellxx
 Comment[zh_TW]=Plasma 桌面 shell
 Name=Workspace
+Name[en_GB]=Workspace
 Name[et]=Töötsoon
 Name[gl]=Espazo de traballo
 Name[id]=Ruang Kerja
@@ -25,9 +27,11 @@ Name[sv]=Arbetsyta
 Name[tr]=Çalışma alanı
 Name[uk]=Робочий простір
 Name[x-test]=xxWorkspacexx
+Name[zh_TW]=工作空間
 
 [Event/newplasmoid]
 Name=New widget published
+Name[en_GB]=New widget published
 Name[et]=Avaldati uus vidin
 Name[gl]=Publicouse un novo widget
 Name[id]=Widget baru diterbitkan
@@ -39,7 +43,9 @@ Name[sv]=Ny grafisk komponent publicerad
 Name[tr]=Yeni gereç yayınlandı
 Name[uk]=Оприлюднено новий віджет
 Name[x-test]=xxNew widget publishedxx
+Name[zh_TW]=已發布新的元件
 Comment=A new widget has become available on the network.
+Comment[en_GB]=A new widget has become available on the network.
 Comment[et]=Võrgus sai kättesaadavaks uus vidin.
 Comment[gl]=Hai un novo widget dispoñíbel na rede.
 Comment[id]=Sebuah widget baru telah tersedia di dalam jaringan.
@@ -51,4 +57,5 @@ Comment[sv]=En ny grafisk komponent har blivit tillgänglig på nätverket
 Comment[tr]=Ağda yeni bir gereç yayınlandı.
 Comment[uk]=У мережі оприлюднено новий віджет.
 Comment[x-test]=xxA new widget has become available on the network.xx
+Comment[zh_TW]=網路上已發布新的元件。
 Action=Popup

@@ -26,6 +26,7 @@ Name[x-test]=xxRemote widgets policiesxx
 Name[zh_TW]=遠端元件政策
 
 Comment=Define policies for remote plasma widgets
+Comment[en_GB]=Define policies for remote plasma widgets
 Comment[et]=Plasma välisvidinate reeglite määramine
 Comment[gl]=Define as políticas dos widgets remotos de plasma
 Comment[id]=Tentukan kebijakan untuk widget plasma jarak jauh

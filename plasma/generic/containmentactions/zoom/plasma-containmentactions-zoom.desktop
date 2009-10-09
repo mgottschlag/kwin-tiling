@@ -82,6 +82,7 @@ Name[zh_TW]=縮放
 Type=Service
 Icon=preferences-desktop-color
 Comment=Zoom activities in and out
+Comment[en_GB]=Zoom activities in and out
 Comment[et]=Tegevuste suurendamine ja vähendamine
 Comment[gl]=Ampliar e reducir as actividades
 Comment[id]=Aktivitas pembesaran ke dalam dan ke luar

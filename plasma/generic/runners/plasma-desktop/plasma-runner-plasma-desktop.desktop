@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Plasma Desktop Shell
+Name[en_GB]=Plasma Desktop Shell
 Name[et]=Plasma töölauakest
 Name[gl]=Shell de escritorio Plasma
 Name[id]=Shell Desktop Plasma
@@ -14,6 +15,7 @@ Name[uk]=Оболонка стільниці Плазми
 Name[x-test]=xxPlasma Desktop Shellxx
 Name[zh_TW]=Plasma 桌面 shell
 Comment=Interact with the Plasma desktop shell
+Comment[en_GB]=Interact with the Plasma desktop shell
 Comment[et]=Suhtlus Plasma töölauakestaga
 Comment[gl]=Interactúa coa shell de escritorio Plasma
 Comment[id]=Interaksi dengan shell desktop Plasma

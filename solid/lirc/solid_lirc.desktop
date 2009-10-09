@@ -5,13 +5,23 @@ X-KDE-Library=solid_lirc
 InitialPreference=80
 
 Name=Lirc
+Name[en_GB]=Lirc
+Name[id]=Lirc
 Name[pt]=Lirc
+Name[pt_BR]=Lirc
+Name[sv]=Lirc
 Name[uk]=Lirc
 Name[x-test]=xxLircxx
+Name[zh_TW]=Lirc
 
 Comment=Linux Infrared Remote Control
+Comment[en_GB]=Linux Infrared Remote Control
+Comment[id]=Kontrol Jarak Jauh Inframerah Linux
 Comment[pt]=Comando à Distância por Infravermelhos para Linux
+Comment[pt_BR]=Controle remoto de infravermelho no Linux
+Comment[sv]=Linux infraröda fjärrkontroll
 Comment[uk]=Інфрачервоне дистанційне керування для Linux
 Comment[x-test]=xxLinux Infrared Remote Controlxx
+Comment[zh_TW]=Linux 紅外線遙控
 
 Icon=infrared-remote

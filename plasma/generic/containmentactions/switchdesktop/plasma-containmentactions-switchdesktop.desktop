@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Switch Desktop
 Name[de]=Arbeitsfläche wechseln
+Name[en_GB]=Switch Desktop
 Name[et]=Töölaua vahetamine
 Name[gl]=Trocar de escritorio
 Name[id]=Pindah Desktop
@@ -17,6 +18,7 @@ Name[zh_TW]=切換桌面
 Type=Service
 Icon=preferences-desktop-color
 Comment=Switch to another virtual desktop
+Comment[en_GB]=Switch to another virtual desktop
 Comment[et]=Lülitumine teisele virtuaalsele töölauale
 Comment[gl]=Troca para outro escritorio virtual
 Comment[id]=Berpindah ke desktop virtual lain

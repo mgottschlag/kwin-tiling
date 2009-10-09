@@ -80,6 +80,7 @@ Name[zh_TW]=應用程式啟動器
 Type=Service
 Icon=preferences-desktop-color
 Comment=Simple application launcher
+Comment[en_GB]=Simple application launcher
 Comment[gl]=Lanzador simple de programas
 Comment[id]=Peluncur aplikasi sederhana
 Comment[nb]=Enkel programstarter
@@ -89,6 +90,7 @@ Comment[sv]=Enkel programstart
 Comment[tr]=Basit uygulama başlatıcı
 Comment[uk]=Простий інструмент запуску програм
 Comment[x-test]=xxSimple application launcherxx
+Comment[zh_TW]=簡單的應用程式啟動器
 
 ServiceTypes=Plasma/ContainmentActions
 

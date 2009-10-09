@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Paste
 Name[de]=Einfügen
+Name[en_GB]=Paste
 Name[et]=Asetamine
 Name[gl]=Apegar
 Name[id]=Tempel
@@ -17,6 +18,7 @@ Name[zh_TW]=貼上
 Type=Service
 Icon=preferences-desktop-color
 Comment=Creates a widget from the contents of the clipboard
+Comment[en_GB]=Creates a widget from the contents of the clipboard
 Comment[et]=Vidina loomine lõikepuhvri sisu põhjal
 Comment[gl]=Crea un widget a partir do contido do portarretallos
 Comment[id]=Membuat widget dari isi papan klip

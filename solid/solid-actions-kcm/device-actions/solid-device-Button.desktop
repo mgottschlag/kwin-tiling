@@ -182,6 +182,7 @@ Name[zh_TW]=類型
 [Desktop Entry]
 Actions=hasState;objectName;stateValue;type;
 Name=Solid Device
+Name[en_GB]=Solid Device
 Name[et]=Solidi seade
 Name[gl]=Dispositivo de Solid
 Name[id]=Divais Solid
@@ -193,6 +194,7 @@ Name[sv]=Solid-enhet
 Name[tr]=Solid Aygıtı
 Name[uk]=Пристрій Solid
 Name[x-test]=xxSolid Devicexx
+Name[zh_TW]=實體裝置
 Type=Service
 X-KDE-ServiceTypes=SolidDevice
 X-KDE-Solid-Actions-Type=Button
