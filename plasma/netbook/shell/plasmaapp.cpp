@@ -480,6 +480,7 @@ void PlasmaApp::updateToolBoxVisibility(bool visible)
     }
 
     if (!visible && m_widgetExplorer) {
+        Plasma::WindowEffects::slideWindow(m_widgetExplorerView, m_controlBar->location());
         m_widgetExplorer->deleteLater();
         m_widgetExplorerView->deleteLater();
     }
@@ -614,6 +615,7 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
 
 
     m_widgetExplorer->show();
+    Plasma::WindowEffects::slideWindow(m_widgetExplorerView, m_controlBar->location());
     m_widgetExplorerView->show();
 }
 
@@ -668,6 +670,7 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
     } else if (watched == m_widgetExplorerView && event->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         if (keyEvent->key() == Qt::Key_Escape) {
+            Plasma::WindowEffects::slideWindow(m_widgetExplorerView, m_controlBar->location());
             m_widgetExplorerView->deleteLater();
             m_widgetExplorer->deleteLater();
         }
