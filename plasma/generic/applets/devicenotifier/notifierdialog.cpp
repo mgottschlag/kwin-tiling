@@ -271,6 +271,8 @@ void NotifierDialog::removeDevice(const QString &udi)
     }
 
     updateMainLabelText();
+
+    m_devicesScrollWidget->widget()->adjustSize();
 }
 
 void NotifierDialog::buildDialog()

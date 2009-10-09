@@ -158,8 +158,7 @@ void DeviceItem::expand()
         m_actionsWidget->show();
         updateHoverDisplay();
 
-        //FIXME: is this really needed anymore?
-        resize(size().width(), m_treeLayout->effectiveSizeHint(Qt::PreferredSize).height());
+        adjustSize();
     }
 }
 
