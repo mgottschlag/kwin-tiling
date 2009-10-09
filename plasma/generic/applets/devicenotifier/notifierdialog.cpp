@@ -472,7 +472,6 @@ void NotifierDialog::highlightDeviceAction(QGraphicsItem* item)
 void NotifierDialog::actionActivated(DeviceItem *item, const QString &udi, const QString &action)
 {
     item->collapse();
-    item->setHovered(false);
 
     QStringList desktopFiles;
     desktopFiles.append(action);

@@ -409,7 +409,6 @@ void DeviceItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
     if (m_actionsLayout->count() == 1) {
         emit actionActivated(this, udi(), m_actionsLayout->itemAt(0)->graphicsItem()->data(NotifierDialog::ActionRole).toString());
-        emit activated(this);
     } else {
         if (isCollapsed()) {
             expand();
