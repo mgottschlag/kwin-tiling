@@ -57,6 +57,7 @@ public:
 protected:
     void focusInEvent(QFocusEvent *event);
     void paintInterface(QPainter *, const QStyleOptionGraphicsItem *, const QRect &);
+    void changeEvent(QEvent *event);
 
 public slots:
     void dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data);

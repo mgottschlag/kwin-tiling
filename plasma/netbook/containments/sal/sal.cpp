@@ -485,6 +485,26 @@ void SearchLaunch::restoreStrip()
 
 void SearchLaunch::updateConfigurationMode(bool config)
 {
+    qreal extraLeft = 0;
+    qreal extraTop = 0;
+    qreal extraRight = 0;
+    qreal extraBottom = 0;
+
+    switch (m_toolBox->location()) {
+        case Plasma::LeftEdge:
+        extraLeft= m_toolBox->expandedGeometry().width();
+        break;
+    case Plasma::RightEdge:
+        extraRight = m_toolBox->expandedGeometry().width();
+        break;
+    case Plasma::TopEdge:
+        extraTop = m_toolBox->expandedGeometry().height();
+        break;
+    case Plasma::BottomEdge:
+    default:
+        extraBottom = m_toolBox->expandedGeometry().height();
+    }
+
     if (config && !m_appletOverlay && immutability() == Plasma::Mutable) {
         if (m_appletsLayout->count() == 2) {
             m_mainLayout->addItem(m_appletsLayout);
@@ -494,10 +514,10 @@ void SearchLaunch::updateConfigurationMode(bool config)
         connect (m_appletOverlay, SIGNAL(dropRequested(QGraphicsSceneDragDropEvent *)),
                  this, SLOT(overlayRequestedDrop(QGraphicsSceneDragDropEvent *)));
 
-        //FIXME: hardcode bottom--
+
         qreal left, top, right, bottom;
         getContentsMargins(&left, &top, &right, &bottom);
-        setContentsMargins(left, top, right, bottom + m_toolBox->expandedGeometry().height());
+        setContentsMargins(left + extraLeft, top + extraTop, right + extraRight, bottom + extraBottom);
     } else if (!config) {
         delete m_appletOverlay;
         m_appletOverlay = 0;
@@ -505,10 +525,10 @@ void SearchLaunch::updateConfigurationMode(bool config)
             m_mainLayout->removeItem(m_appletsLayout);
         }
 
-        //FIXME: hardcode--
+
         qreal left, top, right, bottom;
         getContentsMargins(&left, &top, &right, &bottom);
-        setContentsMargins(left, top, right, bottom - m_toolBox->expandedGeometry().height());
+        setContentsMargins(left - extraLeft, top - extraTop, right - extraRight, bottom - extraBottom);
     }
 }
 
@@ -563,6 +583,25 @@ void SearchLaunch::focusInEvent(QFocusEvent *event)
     Containment::focusInEvent(event);
 }
 
+void SearchLaunch::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::ContentsRectChange && !m_toolBox->isShowing()) {
+        qreal left, top, right, bottom;
+        getContentsMargins(&left, &top, &right, &bottom);
+
+        //left preferred over right
+        if (left > top && left > right && left > bottom) {
+            m_toolBox->setLocation(Plasma::RightEdge);
+        } else if (right > top && right >= left && right > bottom) {
+            m_toolBox->setLocation(Plasma::LeftEdge);
+        } else if (bottom > top && bottom > left && bottom > right) {
+            m_toolBox->setLocation(Plasma::TopEdge);
+        //bottom is the default
+        } else {
+            m_toolBox->setLocation(Plasma::BottomEdge);
+        }
+    }
+}
 
 
 K_EXPORT_PLASMA_APPLET(sal, SearchLaunch)

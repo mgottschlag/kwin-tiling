@@ -50,6 +50,7 @@ public:
 
 protected:
     void createAppletTitle(Plasma::Applet *applet);
+    void changeEvent(QEvent *event);
 
 private slots:
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);

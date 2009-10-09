@@ -168,7 +168,7 @@ NetToolBox::~NetToolBox()
 {
 }
 
-bool NetToolBox::showing() const
+bool NetToolBox::isShowing() const
 {
     return m_showing;
 }
@@ -294,6 +294,7 @@ void NetToolBox::setLocation(Plasma::Location location)
             icon->setOrientation(Qt::Horizontal);
         }
     }
+    containmentGeometryChanged();
 }
 
 Plasma::Location NetToolBox::location() const
@@ -342,7 +343,7 @@ void NetToolBox::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void NetToolBox::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
-    setShowing(!showing());
+    setShowing(!isShowing());
 }
 
 void NetToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -389,7 +390,7 @@ void NetToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
 void NetToolBox::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    if (showing() || m_hovering) {
+    if (isShowing() || m_hovering) {
         QGraphicsWidget::hoverEnterEvent(event);
         return;
     }
@@ -409,7 +410,7 @@ void NetToolBox::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     //kDebug() << event->pos() << event->scenePos()
     //         << d->toolBacker->rect().contains(event->scenePos().toPoint());
-    if (!m_hovering || showing()) {
+    if (!m_hovering || isShowing()) {
         QGraphicsWidget::hoverLeaveEvent(event);
         return;
     }

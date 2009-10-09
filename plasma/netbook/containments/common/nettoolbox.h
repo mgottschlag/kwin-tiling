@@ -44,7 +44,7 @@ public:
     NetToolBox(Plasma::Containment *parent = 0);
     ~NetToolBox();
 
-    bool showing() const;
+    bool isShowing() const;
     void setShowing(const bool show);
 
     /**
