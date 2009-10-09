@@ -128,7 +128,7 @@ QScriptValue ScriptEngine::createContainment(const QString &type, const QString 
     }
 
     if (!exists) {
-        return context->throwError(i18n("Could not find an %1 plugin named %2.", type, plugin));
+        return context->throwError(i18n("Could not find a plugin for %1 named %2.", type, plugin));
     }
 
 

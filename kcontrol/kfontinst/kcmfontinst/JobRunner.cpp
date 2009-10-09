@@ -190,7 +190,7 @@ CJobRunner::CJobRunner(QWidget *parent, int xid)
         layout=new QGridLayout(page);
         layout->setMargin(KDialog::marginHint());
         layout->setSpacing(KDialog::spacingHint());
-        QLabel *finishedLabel=new QLabel(i18n("<h3>Finished!</h3>"
+        QLabel *finishedLabel=new QLabel(i18n("<h3>Finished</h3>"
                                             "<p>Please note that any open applications will need to be "
                                             "restarted in order for any changes to be noticed.</p>"),
                                         page);
@@ -198,7 +198,7 @@ CJobRunner::CJobRunner(QWidget *parent, int xid)
         addIcon(layout, page, "dialog-information", iconSize);
         layout->addWidget(finishedLabel, 0, 1);
         layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 1, 0);
-        itsDontShowFinishedMsg = new QCheckBox(i18n("Don't show this message again"), page);
+        itsDontShowFinishedMsg = new QCheckBox(i18n("Do not show this message again"), page);
         itsDontShowFinishedMsg->setChecked(false);
         layout->addItem(new QSpacerItem(0, KDialog::spacingHint(), QSizePolicy::Fixed, QSizePolicy::Fixed), 2, 0);
         layout->addWidget(itsDontShowFinishedMsg, 3, 1);
@@ -399,7 +399,7 @@ void CJobRunner::checkInterface()
 {
     if(itsIt==itsUrls.constBegin() && !FontInst::isStarted(dbus()))
     {
-        setPage(PAGE_ERROR, i18n("Sorry, failed to start backend."));
+        setPage(PAGE_ERROR, i18n("Unable to start backend."));
         itsActionLabel->stopAnimation();
         itsIt=itsEnd;
     }
@@ -409,7 +409,7 @@ void CJobRunner::dbusServiceOwnerChanged(const QString &name, const QString &fro
 {
     if(to.isEmpty() && !from.isEmpty() && name==OrgKdeFontinstInterface::staticInterfaceName() && itsIt!=itsEnd)
     {
-        setPage(PAGE_ERROR, i18n("Sorry, backend died - and it has been restarted. Please try again."));
+        setPage(PAGE_ERROR, i18n("Backend died, but has been restarted. Please try again."));
         itsActionLabel->stopAnimation();
         itsIt=itsEnd;
     }
@@ -587,7 +587,7 @@ void CJobRunner::setPage(int page, const QString &msg)
             setButtons(Cancel);
             break;
         case PAGE_SKIP:
-            itsSkipLabel->setText(i18n("<h3>Error!</h3>")+QLatin1String("<p>")+msg+QLatin1String("</p>"));
+            itsSkipLabel->setText(i18n("<h3>Error</h3>")+QLatin1String("<p>")+msg+QLatin1String("</p>"));
             setButtons(Cancel|User1|User2);
             setButtonText(User1, i18n("Skip"));
             setButtonText(User2, i18n("AutoSkip"));
@@ -596,7 +596,7 @@ void CJobRunner::setPage(int page, const QString &msg)
             itsLoop->exec();
             break;
         case PAGE_ERROR:
-            itsErrorLabel->setText(i18n("<h3>Error!</h3>")+QLatin1String("<p>")+msg+QLatin1String("</p>"));
+            itsErrorLabel->setText(i18n("<h3>Error</h3>")+QLatin1String("<p>")+msg+QLatin1String("</p>"));
             setButtons(Cancel);
             break;
         case PAGE_CANCEL:
@@ -678,7 +678,7 @@ QString CJobRunner::errorString(int value) const
         case KIO::ERR_WRITE_ACCESS_DENIED:
             return i18n("Permission denied.<br><i>%1</i>", urlStr);
         case KIO::ERR_UNSUPPORTED_ACTION:
-            return i18n("Unsupported action!<br><i>%1</i>", urlStr);
+            return i18n("Unsupported action.<br><i>%1</i>", urlStr);
         case KIO::ERR_COULD_NOT_AUTHENTICATE:
             return i18n("Authentication failed.<br><i>%1</i>", urlStr);
         default:
