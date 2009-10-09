@@ -181,6 +181,10 @@ bool NotifierDialog::eventFilter(QObject* obj, QEvent *event)
                 break;
 
             case QEvent::GraphicsSceneHoverEnter:
+                // make sure the popup is not only shown, but doesn't automatically retract on us when we're
+                // mousing around in it
+                m_notifier->showPopup(0);
+
                 item->setHovered(true);
                 if (item->isCollapsed()) {
                     m_clearItemBackgroundTargetTimer.stop();
