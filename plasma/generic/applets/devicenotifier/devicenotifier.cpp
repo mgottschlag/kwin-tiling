@@ -382,6 +382,13 @@ bool DeviceNotifier::areThereHiddenDevices()
     return (m_hiddenDevices.count() > 0);
 }
 
+void DeviceNotifier::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    m_dialog->setMenuActionsAt(event->scenePos());
+
+    PopupApplet::contextMenuEvent(event);
+}
+
 QList<QAction *> DeviceNotifier::contextualActions()
 {
     return m_dialog->contextualActions();

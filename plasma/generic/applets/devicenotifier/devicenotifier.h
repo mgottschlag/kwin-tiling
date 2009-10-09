@@ -102,6 +102,11 @@ class DeviceNotifier : public Plasma::PopupApplet
         /**
         * Reimplemented from Plasma::Applet
         **/
+        void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+
+        /**
+        * Reimplemented from Plasma::Applet
+        **/
         void createConfigurationInterface(KConfigDialog *parent);
 
         /**

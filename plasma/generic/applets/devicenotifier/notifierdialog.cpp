@@ -164,7 +164,7 @@ void NotifierDialog::clearItemBackgroundTarget()
 
 bool NotifierDialog::eventFilter(QObject* obj, QEvent *event)
 {
-    if (event->type() == QEvent::GraphicsSceneContextMenu) {
+    if (m_notifier->isPopupShowing() && event->type() == QEvent::GraphicsSceneContextMenu) {
         QGraphicsSceneContextMenuEvent *contextEvent = static_cast<QGraphicsSceneContextMenuEvent *>(event);
         setMenuActionsAt(contextEvent->scenePos());
     }
