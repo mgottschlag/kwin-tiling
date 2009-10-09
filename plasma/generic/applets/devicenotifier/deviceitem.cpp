@@ -25,6 +25,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsLinearLayout>
 #include <QLabel>
+
 //KDE
 #include <KDebug>
 #include <KIcon>
@@ -33,6 +34,7 @@
 #include <KDesktopFile>
 #include <KGlobalSettings>
 #include <kcapacitybar.h>
+#include <kdesktopfileactions.h>
 
 //Plasma
 #include <Plasma/PaintUtils>
@@ -176,23 +178,19 @@ void DeviceItem::addAction(const QString &action)
     actionItem->setData(NotifierDialog::ActionRole, action);
 
     QString actionUrl = KStandardDirs::locate("data", "solid/actions/" + action);
-    KDesktopFile desktopFile(actionUrl);
-    QStringList actionsNames = desktopFile.readActions();
-    foreach (const QString &actionName, actionsNames) {
-        KConfigGroup actionGroup = desktopFile.actionGroup(actionName); // Retrieve the configuration group where the user friendly name is
+    QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(actionUrl, true);
 
-        QColor color;
-        color.setAlpha(255);
-        actionItem->setTextBackgroundColor(color);
-        actionItem->setText(actionGroup.readEntry("Name"));
-        actionItem->setIcon(actionGroup.readEntry("Icon"));
-        actionItem->setOrientation(Qt::Horizontal);
-        actionItem->setPreferredHeight(KIconLoader::SizeMedium+3+3);
-        actionItem->setPreferredWidth(0);
-        actionItem->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    QColor color;
+    color.setAlpha(255);
+    actionItem->setTextBackgroundColor(color);
+    actionItem->setText(services[0].text());
+    actionItem->setIcon(services[0].icon());
+    actionItem->setOrientation(Qt::Horizontal);
+    actionItem->setPreferredHeight(KIconLoader::SizeMedium+3+3);
+    actionItem->setPreferredWidth(0);
+    actionItem->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
-        m_actionsLayout->addItem(actionItem);
-    }
+    m_actionsLayout->addItem(actionItem);
 }
 
 QString DeviceItem::udi() const

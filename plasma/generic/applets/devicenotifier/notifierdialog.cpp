@@ -549,18 +549,19 @@ void NotifierDialog::setMenuActionsAt(QPointF scenePos)
         m_showAll->setVisible(false);
     }
 
-    QGraphicsWidget *w = m_devicesScrollWidget->widget();
-
-    for (int i = 0; i <  m_deviceLayout->count(); ++i) {
-        DeviceItem *devItem = dynamic_cast<DeviceItem *>(m_deviceLayout->itemAt(i));
-        if (devItem && devItem->geometry().contains(w->mapFromScene(scenePos))) {
-            m_hideItem->setVisible(true);
-            QString name = devItem->data(Qt::DisplayRole).toString();
-            QString udi = devItem->data(SolidUdiRole).toString();
-            m_hideItem->setChecked(!devItem->data(VisibilityRole).toBool());
-            m_hideItem->setText(i18nc("Hide a device", "Hide %1", name));
-            m_hideItem->setData(udi);
-            return;
+    if (m_devicesScrollWidget->geometry().contains(m_widget->mapFromScene(scenePos))) {
+        QGraphicsWidget *w = m_devicesScrollWidget->widget();
+        for (int i = 0; i <  m_deviceLayout->count(); ++i) {
+            DeviceItem *devItem = dynamic_cast<DeviceItem *>(m_deviceLayout->itemAt(i));
+            if (devItem && devItem->geometry().contains(w->mapFromScene(scenePos))) {
+                m_hideItem->setVisible(true);
+                QString name = devItem->data(Qt::DisplayRole).toString();
+                QString udi = devItem->data(SolidUdiRole).toString();
+                m_hideItem->setChecked(!devItem->data(VisibilityRole).toBool());
+                m_hideItem->setText(i18nc("Hide a device", "Hide %1", name));
+                m_hideItem->setData(udi);
+                return;
+            }
         }
     }
 
