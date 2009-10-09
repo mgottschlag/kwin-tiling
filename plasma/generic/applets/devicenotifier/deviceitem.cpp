@@ -132,6 +132,8 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
     m_busyWidget->hide();
     m_busyWidgetTimer.setSingleShot(true);
     connect(&m_busyWidgetTimer, SIGNAL(timeout()), this,  SLOT(triggerBusyWidget()));
+
+    setLeftAction(Nothing);
 }
 
 DeviceItem::~DeviceItem()
@@ -237,13 +239,18 @@ void DeviceItem::setMounted(const bool mounted)
 {
     m_mounted = mounted;
     if (m_mounted) {
-        m_leftActionIcon->setIcon("media-eject");
         m_leftActionIcon->setToolTip(i18n("Click to safely remove this device from the computer."));
         m_deviceIcon->setToolTip(i18n("Device is plugged in and can be accessed by applications."));
     } else {
-        m_leftActionIcon->setIcon("emblem-mounted");
         m_leftActionIcon->setToolTip(i18n("Click to access this device from other applications."));
         m_deviceIcon->setToolTip(i18n("Device is plugged in, but not mounted for access yet."));
+
+    }
+
+    if (m_mounted && m_leftAction == Mount) {
+        setLeftAction(Umount);
+    } else if (!m_mounted && m_leftAction == Umount) {
+        setLeftAction(Mount);
     }
 
     const bool barVisible = m_capacityBar->isVisible();
@@ -252,6 +259,23 @@ void DeviceItem::setMounted(const bool mounted)
         // work around for a QGraphicsLayout bug when used with proxy widgets
         m_mainLayout->invalidate();
     }
+}
+
+void DeviceItem::setLeftAction(DeviceItem::LeftActions action)
+{
+    m_leftAction = action;
+    if (m_leftAction == DeviceItem::Umount) {
+        m_leftActionIcon->setIcon("media-eject");
+    } else if (m_leftAction == Mount) {
+        m_leftActionIcon->setIcon("emblem-mounted");
+    } else {
+        m_leftActionIcon->setIcon("");
+    }
+}
+
+DeviceItem::LeftActions DeviceItem::leftAction()
+{
+    return m_leftAction;
 }
 
 void DeviceItem::setHovered(const bool hovered)

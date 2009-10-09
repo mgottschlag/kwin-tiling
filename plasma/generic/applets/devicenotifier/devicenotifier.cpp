@@ -115,6 +115,12 @@ void DeviceNotifier::fillPreviousDevices()
 {
     m_fillingPreviousDevices = true;
 
+    QList<Solid::Device> list = Solid::Device::listFromType(Solid::DeviceInterface::StorageVolume);
+    foreach (Solid::Device device, list) {
+        if (device.as<Solid::StorageVolume>()->isIgnored()) {
+            onSourceAdded(device.udi());
+        }
+    }
     foreach (const QString &udi, m_solidEngine->sources()) {
         onSourceAdded(udi);
     }
@@ -163,11 +169,6 @@ void DeviceNotifier::dataUpdated(const QString &udi, Plasma::DataEngine::Data da
 
         m_dialog->setDeviceData(udi, data["text"], Qt::DisplayRole);
 
-        //icon name
-        m_dialog->setDeviceData(udi, data["icon"], NotifierDialog::IconNameRole);
-
-        m_dialog->setDeviceData(udi, KIcon(data["icon"].toString(), NULL, data["emblems"].toStringList()), Qt::DecorationRole);
-
         if (nb_actions > 1) {
             QString s = i18np("1 action for this device",
                     "%1 actions for this device",
@@ -181,17 +182,33 @@ void DeviceNotifier::dataUpdated(const QString &udi, Plasma::DataEngine::Data da
     } else if (data["Device Types"].toStringList().contains("Storage Access")) {
         //kDebug() << "DeviceNotifier::solidDeviceEngine updated" << udi;
 
-        QString iconName = m_dialog->getDeviceData(udi, NotifierDialog::IconNameRole).toString();
-        m_dialog->setDeviceData(udi, KIcon(iconName, NULL, data["Emblems"].toStringList()), Qt::DecorationRole);
+        //icon name
+        m_dialog->setDeviceData(udi, data["Icon"], NotifierDialog::IconNameRole);
+        m_dialog->setDeviceData(udi, KIcon(data["Icon"].toString(), NULL, data["Emblems"].toStringList()), Qt::DecorationRole);
 
         //kDebug() << "DeviceNotifier::solidDeviceEngine updated" << udi;
-        if (data["Accessible"].toBool() == true) {
+        if (data["Accessible"].toBool()) {
             m_dialog->setMounted(true, udi);
+            m_dialog->setDeviceLeftAction(udi, DeviceItem::Umount);
         } else if (data["Device Types"].toStringList().contains("OpticalDisc")) {
             //set icon to unmounted device
             m_dialog->setMounted(false, udi);
+            m_dialog->setDeviceLeftAction(udi, DeviceItem::Mount);
         } else {
             m_dialog->setMounted(false, udi);
+            m_dialog->setDeviceLeftAction(udi, DeviceItem::Mount);
+        }
+
+        if (data["Ignored"].toBool()) {
+            m_dialog->setDeviceData(udi, data["File Path"], Qt::DisplayRole);
+
+            const QString desktop("test-predicate-openinwindow.desktop");
+            QString filePath = KStandardDirs::locate("data", "solid/actions/" + desktop);
+            QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(filePath, true);
+            m_dialog->insertAction(udi, desktop);
+            m_dialog->setDeviceData(udi, services[0].text(), NotifierDialog::DescriptionRole);
+
+            m_dialog->setDeviceLeftAction(udi, DeviceItem::Nothing);
         }
     } else if (data["Device Types"].toStringList().contains("Storage Volume")) {
         if (data["Device Types"].toStringList().contains("OpticalDisc")) {

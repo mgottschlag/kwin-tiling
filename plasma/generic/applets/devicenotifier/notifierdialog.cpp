@@ -207,6 +207,12 @@ void NotifierDialog::setMounted(bool mounted, const QString &udi)
     updateFreeSpace(item);
 }
 
+void NotifierDialog::setDeviceLeftAction(const QString &udi, DeviceItem::LeftActions action)
+{
+    DeviceItem *item = itemForUdi(udi);
+    item->setLeftAction(action);
+}
+
 void NotifierDialog::setDeviceData(const QString &udi, QVariant data, int role)
 {
     DeviceItem *item = itemForUdi(udi);
@@ -401,7 +407,7 @@ void NotifierDialog::leftActionActivated(DeviceItem *item)
 {
     Solid::Device device(item->udi());
 
-    if (item->isMounted()) {
+    if (item->leftAction() == DeviceItem::Umount) {
         if (device.is<Solid::OpticalDisc>()) {
             Solid::OpticalDrive *drive = device.parent().as<Solid::OpticalDrive>();
             if (drive) {
@@ -419,7 +425,7 @@ void NotifierDialog::leftActionActivated(DeviceItem *item)
                 access->teardown();
             }
         }
-    } else if (device.is<Solid::StorageAccess>()) {
+    } else if (item->leftAction() == DeviceItem::Mount && device.is<Solid::StorageAccess>()) {
         Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
 
         // only unmounted devices

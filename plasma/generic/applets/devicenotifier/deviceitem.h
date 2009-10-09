@@ -47,6 +47,12 @@ class DeviceItem : public QGraphicsWidget
     Q_OBJECT
 
     public:
+        enum LeftActions {
+            Nothing = 0,
+            Mount = 1,
+            Umount = 2
+        };
+
         /**
         * Constructor of the item
         * @param udi the udi of the device
@@ -124,6 +130,12 @@ class DeviceItem : public QGraphicsWidget
         bool isMounted() const;
 
         /**
+        * Used to know the action the icon will do if pressed
+        * @return the action
+        **/
+        LeftActions leftAction();
+
+        /**
         * Used to know if this item is set hovered
         * @return true if it is hovered
         **/
@@ -134,6 +146,12 @@ class DeviceItem : public QGraphicsWidget
         * @param mounted true if it is mounted
         **/
         void setMounted(const bool mounted = true);
+
+        /**
+        * Indicates the action executed by the left icon
+        * @param action the action
+        **/
+        void setLeftAction(LeftActions action);
 
         /**
         * Indicates if the device is hovered
@@ -246,6 +264,9 @@ class DeviceItem : public QGraphicsWidget
 
         ///True if the device is mounted
         bool m_mounted;
+
+        ///The action the left icon will do if activated
+        LeftActions m_leftAction;
 
         ///The layout arranging the items showing informations abount the device
         QGraphicsLinearLayout *m_mainLayout;

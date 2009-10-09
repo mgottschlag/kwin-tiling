@@ -33,6 +33,8 @@
 //solid
 #include <solid/solidnamespace.h>
 
+#include "deviceitem.h"
+
 class QGraphicsLinearLayout;
 class DeviceNotifier;
 
@@ -50,7 +52,6 @@ namespace Solid
 
 namespace Notifier
 {
-class DeviceItem;
   /**
   * @short The panel used to display devices in a popup
   *
@@ -134,6 +135,13 @@ class DeviceItem;
           * @param udi the udi of the device
           **/
           void setMounted(bool mounted, const QString &udi);
+
+          /**
+          * Set the left action for a device
+          * @param udi the udi of the device
+          * @param action the action
+          **/
+          void setDeviceLeftAction(const QString &udi, DeviceItem::LeftActions action);
 
           /**
           * Remove a device in the dialog
