@@ -99,7 +99,7 @@ void WebshortcutRunner::loadSyntaxes()
         }
 
         Plasma::RunnerSyntax s("shortcut" + m_delimiter + ":q:",
-                 i18n("Opens the location associated with \"shortcut\"  in a web browser with the query :q:. "
+                 i18n("Opens the location associated with \"shortcut\" in a web browser with the query :q:. "
                       "Known shortcuts include:\n%1", knownShortcuts));
         syns << s;
     }

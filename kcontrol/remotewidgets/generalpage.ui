@@ -82,7 +82,7 @@
         <item>
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>When there's no rule defined...</string>
+           <string>When there is no rule defined...</string>
           </property>
          </widget>
         </item>
