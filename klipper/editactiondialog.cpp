@@ -25,6 +25,237 @@
 #include "urlgrabber.h"
 
 #include "ui_editactiondialog.h"
+#include <QItemDelegate>
+#include <QComboBox>
+
+namespace {
+    static QString output2text(ClipCommand::Output output) {
+        switch(output) {
+            case ClipCommand::IGNORE:
+                return QString(i18n("Ignore"));
+            case ClipCommand::REPLACE:
+                return QString(i18n("Replace"));
+            case ClipCommand::ADD:
+                return QString(i18n("Add"));
+        }
+        return QString();
+    }
+
+}
+
+/**
+ * Show dropdown of editing Output part of commands
+ */
+class ActionOutputDelegate : public QItemDelegate {
+    public:
+        ActionOutputDelegate(QObject* parent = 0) : QItemDelegate(parent){
+        }
+
+        virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& /*option*/, const QModelIndex& /*index*/) const {
+            QComboBox* editor = new QComboBox(parent);
+            editor->setInsertPolicy(QComboBox::NoInsert);
+            editor->addItem(output2text(ClipCommand::IGNORE), QVariant::fromValue<ClipCommand::Output>(ClipCommand::IGNORE));
+            editor->addItem(output2text(ClipCommand::REPLACE), QVariant::fromValue<ClipCommand::Output>(ClipCommand::REPLACE));
+            editor->addItem(output2text(ClipCommand::ADD), QVariant::fromValue<ClipCommand::Output>(ClipCommand::ADD));
+            return editor;
+
+        }
+
+        virtual void setEditorData(QWidget* editor, const QModelIndex& index) const {
+            QComboBox* ed = static_cast<QComboBox*>(editor);
+            QVariant data(index.model()->data(index, Qt::EditRole));
+            ed->setCurrentIndex(static_cast<int>(data.value<ClipCommand::Output>()));
+        }
+
+        virtual void setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const {
+            QComboBox* ed = static_cast<QComboBox*>(editor);
+            model->setData(index, ed->itemData(ed->currentIndex()));
+        }
+
+        virtual void updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& /*index*/) const {
+            editor->setGeometry(option.rect);
+        }
+};
+
+class ActionDetailModel : public QAbstractTableModel {
+    public:
+        ActionDetailModel(ClipAction* action, QObject* parent = 0);
+        virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+        virtual bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole);
+        virtual Qt::ItemFlags flags(const QModelIndex& index) const;
+        virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
+        virtual int columnCount(const QModelIndex& parent) const;
+        virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+        const QList<ClipCommand>& commands() const { return m_commands; }
+        void addCommand(const ClipCommand& command);
+        void removeCommand(const QModelIndex& index);
+
+    private:
+        enum column_t {
+            COMMAND_COL = 0,
+            OUTPUT_COL = 1,
+            DESCRIPTION_COL = 2
+        };
+        QList<ClipCommand> m_commands;
+        QVariant displayData(ClipCommand* command, column_t colunm) const;
+        QVariant editData(ClipCommand* command, column_t column) const;
+        QVariant decorationData(ClipCommand* command, column_t column) const;
+        void setIconForCommand(ClipCommand& cmd);
+};
+
+ActionDetailModel::ActionDetailModel(ClipAction* action, QObject* parent):
+    QAbstractTableModel(parent),
+    m_commands(action->commands())
+{
+
+}
+
+Qt::ItemFlags ActionDetailModel::flags(const QModelIndex& /*index*/) const
+{
+    return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+}
+
+
+void ActionDetailModel::setIconForCommand(ClipCommand& cmd)
+{
+    // let's try to update icon of the item according to command
+    QString command = cmd.command;
+    if ( command.contains( ' ' ) ) {
+        // get first word
+        command = command.section( ' ', 0, 0 );
+    }
+
+    QPixmap iconPix = KIconLoader::global()->loadIcon(
+                                        command, KIconLoader::Small, 0,
+                                        KIconLoader::DefaultState,
+                                        QStringList(), 0, true /* canReturnNull */ );
+
+    if ( !iconPix.isNull() ) {
+        cmd.pixmap = command;
+    } else {
+        cmd.pixmap.clear();
+    }
+
+}
+
+bool ActionDetailModel::setData(const QModelIndex& index, const QVariant& value, int role)
+{
+    if (role == Qt::EditRole) {
+        ClipCommand cmd = m_commands.at(index.row());
+        switch (static_cast<column_t>(index.column())) {
+            case COMMAND_COL:
+                cmd.command = value.value<QString>();
+                setIconForCommand(cmd);
+                break;
+            case OUTPUT_COL:
+                cmd.output = value.value<ClipCommand::Output>();
+                break;
+            case DESCRIPTION_COL:
+                cmd.description = value.value<QString>();
+                break;
+        }
+        m_commands.replace(index.row(), cmd);
+        emit dataChanged(index, index);
+        return true;
+    }
+    return false;
+}
+
+int ActionDetailModel::columnCount(const QModelIndex& /*parent*/) const
+{
+    return 3;
+}
+
+int ActionDetailModel::rowCount(const QModelIndex&) const
+{
+    return m_commands.count();
+}
+
+QVariant ActionDetailModel::displayData(ClipCommand* command, ActionDetailModel::column_t column) const
+{
+    switch (column) {
+        case COMMAND_COL:
+            return command->command;
+        case OUTPUT_COL:
+            return output2text(command->output);
+        case DESCRIPTION_COL:
+            return command->description;
+    }
+    return QVariant();
+}
+
+QVariant ActionDetailModel::decorationData(ClipCommand* command, ActionDetailModel::column_t column) const
+{
+    switch (column) {
+        case COMMAND_COL:
+            return command->pixmap.isEmpty() ? KIcon( "system-run" ) : KIcon( command->pixmap );
+        case OUTPUT_COL:
+        case DESCRIPTION_COL:
+            break;
+    }
+    return QVariant();
+
+}
+
+QVariant ActionDetailModel::editData(ClipCommand* command, ActionDetailModel::column_t column) const
+{
+    switch (column) {
+        case COMMAND_COL:
+            return command->command;
+        case OUTPUT_COL:
+            return QVariant::fromValue<ClipCommand::Output>(command->output);
+        case DESCRIPTION_COL:
+            return command->description;
+    }
+    return QVariant();
+
+}
+
+QVariant ActionDetailModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+        switch(static_cast<column_t>(section)) {
+        case COMMAND_COL:
+            return i18n("Command");
+        case OUTPUT_COL:
+            return i18n("Use Output");
+        case DESCRIPTION_COL:
+            return i18n("Description");
+        }
+    }
+    return QAbstractTableModel::headerData(section, orientation, role);
+}
+
+
+QVariant ActionDetailModel::data(const QModelIndex& index, int role) const
+{
+    const int column = index.column();
+    const int row = index.row();
+    ClipCommand cmd = m_commands.at(row);
+    switch (role) {
+        case Qt::DisplayRole:
+            return displayData(&cmd, static_cast<column_t>(column));
+        case Qt::DecorationRole:
+            return decorationData(&cmd, static_cast<column_t>(column));
+        case Qt::EditRole:
+            return editData(&cmd, static_cast<column_t>(column));
+    }
+    return QVariant();
+}
+
+void ActionDetailModel::addCommand(const ClipCommand& command) {
+    beginInsertRows(QModelIndex(), rowCount(), rowCount());
+    m_commands << command;
+    endInsertRows();
+}
+
+void ActionDetailModel::removeCommand(const QModelIndex& index) {
+    int row = index.row();
+    beginRemoveRows(QModelIndex(), row, row);
+    m_commands.removeAt(row);
+    endRemoveRows();
+
+}
 
 EditActionDialog::EditActionDialog(QWidget* parent)
     : KDialog(parent)
@@ -39,19 +270,14 @@ EditActionDialog::EditActionDialog(QWidget* parent)
     m_ui->pbAddCommand->setIcon(KIcon("list-add"));
     m_ui->pbRemoveCommand->setIcon(KIcon("list-remove"));
 
-    m_ui->twCommandList->header()->resizeSection( 0, 170 );
-
+    // For some reason, the default row height is 30 pixel. Set it to the minimum sectionSize instead,
+    // which is the font height+struts.
+    m_ui->twCommandList->verticalHeader()->setDefaultSectionSize(m_ui->twCommandList->verticalHeader()->minimumSectionSize());
     setMainWidget(dlgWidget);
-
-    connect(m_ui->twCommandList, SIGNAL(itemSelectionChanged()), SLOT(onSelectionChanged()));
-    connect(m_ui->twCommandList, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
-            SLOT(onItemChanged(QTreeWidgetItem*, int)));
 
     connect(m_ui->pbAddCommand, SIGNAL( clicked() ), SLOT( onAddCommand() ) );
     connect(m_ui->pbRemoveCommand, SIGNAL( clicked() ), SLOT( onRemoveCommand() ) );
 
-    // update Remove button
-    onSelectionChanged();
 }
 
 EditActionDialog::~EditActionDialog()
@@ -62,6 +288,10 @@ EditActionDialog::~EditActionDialog()
 void EditActionDialog::setAction(ClipAction* act, int commandIdxToSelect)
 {
     m_action = act;
+    m_model = new ActionDetailModel(act, this);
+    m_ui->twCommandList->setModel(m_model);
+    m_ui->twCommandList->setItemDelegateForColumn(1, new ActionOutputDelegate);
+    connect(m_ui->twCommandList->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), SLOT(onSelectionChanged()));
 
     updateWidgets( commandIdxToSelect );
 }
@@ -73,25 +303,12 @@ void EditActionDialog::updateWidgets(int commandIdxToSelect)
         return;
     }
 
-    m_ui->twCommandList->clear();
-
     m_ui->leRegExp->setText(m_action->regExp());
+    m_ui->automatic->setChecked(m_action->automatic());
     m_ui->leDescription->setText(m_action->description());
 
-    foreach( const ClipCommand& cmd, m_action->commands() ) {
-        QTreeWidgetItem* item = new QTreeWidgetItem;
-        item->setFlags( item->flags() | Qt::ItemIsEditable );
-
-        item->setText( 0, cmd.command );
-        QString iconName = cmd.pixmap.isEmpty() ? "system-run" : cmd.pixmap;
-        item->setIcon( 0, KIcon( iconName ) );
-        item->setData( 0, Qt::UserRole, iconName ); // store icon name too
-        item->setText( 1, cmd.description );
-        m_ui->twCommandList->addTopLevelItem( item );
-    }
-
     if (commandIdxToSelect != -1) {
-        m_ui->twCommandList->setCurrentItem( m_ui->twCommandList->topLevelItem( commandIdxToSelect ) );
+        m_ui->twCommandList->setCurrentIndex( m_model->index( commandIdxToSelect ,0 ) );
     }
 
     // update Remove button
@@ -107,16 +324,12 @@ void EditActionDialog::saveAction()
 
     m_action->setRegExp( m_ui->leRegExp->text() );
     m_action->setDescription( m_ui->leDescription->text() );
+    m_action->setAutomatic( m_ui->automatic->isChecked() );
 
     m_action->clearCommands();
 
-    int cmdCount = m_ui->twCommandList->topLevelItemCount();
-    for ( int i=0; i<cmdCount; ++i ) {
-        QTreeWidgetItem* item = m_ui->twCommandList->topLevelItem( i );
-        // we store icon name in Qt::UserRole in first column
-        // (see onItemChanged())
-        QString iconName = item->data( 0, Qt::UserRole ).toString();
-        m_action->addCommand( item->text( 0 ), item->text( 1 ), true, iconName );
+    foreach ( const ClipCommand& cmd, m_model->commands() ){
+        m_action->addCommand( cmd );
     }
 }
 
@@ -131,54 +344,21 @@ void EditActionDialog::slotButtonClicked( int button )
 
 void EditActionDialog::onAddCommand()
 {
-    QTreeWidgetItem *item = new QTreeWidgetItem;
-    item->setFlags( item->flags() | Qt::ItemIsEditable );
-    item->setText( 0, i18n( "new command" ) );
-    item->setIcon( 0, KIcon( "system-run" ) );
-    item->setText( 1, i18n( "Command Description" ) );
-
-    m_ui->twCommandList->addTopLevelItem( item );
-    m_ui->twCommandList->editItem( item );
+    m_model->addCommand(ClipCommand(i18n( "new command" ),
+                                    i18n( "Command Description" ),
+                                    true,
+                                    "" ));
+    m_ui->twCommandList->edit( m_model->index( m_model->rowCount()-1, 0 ));
 }
 
 void EditActionDialog::onRemoveCommand()
 {
-    QTreeWidgetItem* curItem = m_ui->twCommandList->currentItem();
-    delete curItem;
-}
-
-void EditActionDialog::onItemChanged( QTreeWidgetItem* item, int column )
-{
-    if ( column == 0 ) {
-        // let's try to update icon of the item according to command
-        QString command = item->text( 0 );
-        if ( command.contains( ' ' ) )
-            // get first word
-            command = command.section( ' ', 0, 0 );
-
-        QPixmap iconPix = KIconLoader::global()->loadIcon(
-                                         command, KIconLoader::Small, 0,
-                                         KIconLoader::DefaultState,
-                                         QStringList(), 0, true /* canReturnNull */ );
-
-        // block signals to prevent infinite recursion when setIcon will trigger itemChanged again
-        m_ui->twCommandList->blockSignals( true );
-
-        if ( !iconPix.isNull() ) {
-            item->setIcon( 0, KIcon( command ) );
-            // let's save icon name in data field (if we found something that is not "system-run")
-            item->setData( 0, Qt::UserRole, command ); // command is actually the icon name here :)
-        } else {
-            item->setIcon( 0, KIcon( "system-run" ) );
-        }
-
-        m_ui->twCommandList->blockSignals( false );
-    }
+    m_model->removeCommand(m_ui->twCommandList->selectionModel()->currentIndex());
 }
 
 void EditActionDialog::onSelectionChanged()
 {
-    m_ui->pbRemoveCommand->setEnabled( !m_ui->twCommandList->selectedItems().isEmpty() );
+    m_ui->pbRemoveCommand->setEnabled( m_ui->twCommandList->selectionModel() && m_ui->twCommandList->selectionModel()->hasSelection() );
 }
 
 #include "editactiondialog.moc"

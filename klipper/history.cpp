@@ -49,9 +49,11 @@ void History::insert( const HistoryItem* item ) {
 
     m_topIsUserSelected = false;
 
-    // Optimization: Compare with top item.
+    // OptimizationCompare with top item. If identical, the top isn't changing
     if ( !itemList.isEmpty() && *itemList.first() == *item ) {
-        delete item;
+        const HistoryItem* top = itemList.first();
+        itemList.first() = item;
+        delete top;
         return;
     }
 
@@ -85,6 +87,7 @@ void History::remove( const HistoryItem* newItem ) {
     if ( !newItem )
         return;
 
+    // TODO: This is rather broken.. it only checks by pointer!
     if (itemList.contains(newItem)) {
         itemList.removeAll(newItem);
         emit changed();

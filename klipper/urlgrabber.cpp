@@ -30,7 +30,6 @@
 #include <ktextedit.h>
 #include <klocale.h>
 #include <kmenu.h>
-#include <kprocess.h>
 #include <kservice.h>
 #include <kdebug.h>
 #include <kstringhandler.h>
@@ -41,18 +40,21 @@
 
 #include "klippersettings.h"
 #include "urlgrabber.h"
+#include "clipcommandprocess.h"
 
 // TODO:
 // - script-interface?
+#include "history.h"
+#include "historystringitem.h"
 
-URLGrabber::URLGrabber()
+URLGrabber::URLGrabber(History* history):
+    m_myCurrentAction(0L),
+    m_myMenu(0L),
+    m_myPopupKillTimer(new QTimer( this )),
+    m_myPopupKillTimeout(8),
+    m_trimmed(true),
+    m_history(history)
 {
-    m_myCurrentAction = 0L;
-    m_myMenu = 0L;
-    m_myPopupKillTimeout = 8;
-    m_trimmed = true;
-
-    m_myPopupKillTimer = new QTimer( this );
     m_myPopupKillTimer->setSingleShot( true );
     connect( m_myPopupKillTimer, SIGNAL( timeout() ),
              SLOT( slotKillPopupMenu() ));
@@ -88,13 +90,9 @@ URLGrabber::~URLGrabber()
 // Called from Klipper::slotRepeatAction, i.e. by pressing Ctrl-Alt-R
 // shortcut. I.e. never from clipboard monitoring
 //
-void URLGrabber::invokeAction( const QString& clip )
+void URLGrabber::invokeAction( const HistoryItem* item )
 {
-    if ( !clip.isEmpty() )
-        m_myClipData = clip;
-    if ( m_trimmed )
-        m_myClipData = m_myClipData.trimmed();
-
+    m_myClipItem = item;
     actionMenu( false );
 }
 
@@ -153,14 +151,14 @@ void URLGrabber::matchingMimeActions(const QString& clipData)
         ClipAction* action = new ClipAction( QString(), mimetype->comment() );
         KService::List lst = KMimeTypeTrader::self()->query( mimetype->name(), "Application" );
         foreach( const KService::Ptr &service, lst ) {
-            action->addCommand( service->exec(), service->name(), true, service->icon() );
+            action->addCommand( ClipCommand( service->exec(), service->name(), true, service->icon() ) );
         }
         if ( !lst.isEmpty() )
             m_myMatches.append( action );
     }
 }
 
-const ActionList& URLGrabber::matchingActions( const QString& clipData )
+const ActionList& URLGrabber::matchingActions( const QString& clipData, bool automatically_invoked )
 {
     m_myMatches.clear();
 
@@ -169,41 +167,37 @@ const ActionList& URLGrabber::matchingActions( const QString& clipData )
 
     // now look for matches in custom user actions
     foreach (ClipAction* action, m_myActions) {
-        if ( action->matches( clipData ) )
+        if ( action->matches( clipData ) && (action->automatic() || !automatically_invoked) ) {
             m_myMatches.append( action );
+	}
     }
 
     return m_myMatches;
 }
 
 
-bool URLGrabber::checkNewData( const QString& clipData )
+void URLGrabber::checkNewData( const HistoryItem* item )
 {
     // kDebug() << "** checking new data: " << clipData;
-    m_myClipData = clipData;
-    if ( m_trimmed )
-        m_myClipData = m_myClipData.trimmed();
-
-    if ( m_myActions.isEmpty() )
-        return false;
+    m_myClipItem = item;
 
     actionMenu( true ); // also creates m_myMatches
-
-    return !m_myMatches.isEmpty();
 }
 
 
-void URLGrabber::actionMenu( bool wm_class_check )
+void URLGrabber::actionMenu( bool automatically_invoked )
 {
-    if ( m_myClipData.isEmpty() )
-        return;
-
-    ActionList matchingActionsList = matchingActions( m_myClipData );
+    QString text(m_myClipItem->text());
+    if (m_trimmed) {
+        text.trimmed();
+    }
+    ActionList matchingActionsList = matchingActions( text, automatically_invoked );
 
     if (!matchingActionsList.isEmpty()) {
-        // don't react on konqi's/netscape's urls...
-        if ( wm_class_check && isAvoidedWindow() )
+        // don't react on blacklisted (e.g. konqi's/netscape's urls) unless the user explicitly asked for it
+        if ( automatically_invoked && isAvoidedWindow() ) {
             return;
+        }
 
         m_myCommandMapper.clear();
 
@@ -215,7 +209,7 @@ void URLGrabber::actionMenu( bool wm_class_check )
 
         foreach (ClipAction* clipAct, matchingActionsList) {
             m_myMenu->addTitle(KIcon( "klipper" ),
-                               i18n("%1 - Actions For: %2", clipAct->description(), KStringHandler::csqueeze(m_myClipData, 45)));
+                               i18n("%1 - Actions For: %2", clipAct->description(), KStringHandler::csqueeze(text, 45)));
             QList<ClipCommand> cmdList = clipAct->commands();
             int listSize = cmdList.count();
             for (int i=0; i<listSize;++i) {
@@ -240,7 +234,7 @@ void URLGrabber::actionMenu( bool wm_class_check )
 
         // only insert this when invoked via clipboard monitoring, not from an
         // explicit Ctrl-Alt-R
-        if ( wm_class_check )
+        if ( automatically_invoked )
         {
             m_myMenu->addSeparator();
             QAction *disableAction = new QAction(i18n("Disable This Popup"), this);
@@ -297,36 +291,26 @@ void URLGrabber::execute( const ClipAction *action, int cmdIdx ) const
     ClipCommand command = action->command(cmdIdx);
 
     if ( command.isEnabled ) {
-        QHash<QChar,QString> map;
-        map.insert( 's', m_myClipData );
-
-        // support %u, %U (indicates url param(s)) and %f, %F (file param(s))
-        map.insert( 'u', m_myClipData );
-        map.insert( 'U', m_myClipData );
-        map.insert( 'f', m_myClipData );
-        map.insert( 'F', m_myClipData );
-
-        const QStringList matches = action->regExpMatches();
-        // support only %0 and the first 9 matches...
-        const int numMatches = qMin(10, matches.count());
-        for ( int i = 0; i < numMatches; ++i )
-            map.insert( QChar( '0' + i ), matches.at( i ) );
-
-        QString cmdLine = KMacroExpander::expandMacrosShellQuote( command.command, map );
-
-        if ( cmdLine.isEmpty() )
-            return;
-
-        KProcess proc;
-        proc.setShellCommand(cmdLine.trimmed());
-        if (!proc.startDetached())
-            kDebug() << "Klipper: Could not start process!";
+        QString text(m_myClipItem->text());
+        if (m_trimmed) {
+            text.trimmed();
+        }
+        ClipCommandProcess* proc = new ClipCommandProcess(*action, command, text, m_history, m_myClipItem);
+        if (proc->program().isEmpty()) {
+            delete proc;
+            proc = 0L;
+        } else {
+            proc->start();
+        }
     }
 }
 
 
 void URLGrabber::editData()
 {
+    if (!m_myClipItem) {
+        return;
+    }
     m_myPopupKillTimer->stop();
     KDialog *dlg = new KDialog( 0 );
     dlg->setModal( true );
@@ -334,14 +318,16 @@ void URLGrabber::editData()
     dlg->setButtons( KDialog::Ok | KDialog::Cancel );
 
     KTextEdit *edit = new KTextEdit( dlg );
-    edit->setText( m_myClipData );
+    edit->setText( m_myClipItem->text() );
     edit->setFocus();
     edit->setMinimumSize( 300, 40 );
     dlg->setMainWidget( edit );
     dlg->adjustSize();
 
     if ( dlg->exec() == KDialog::Accepted ) {
-        m_myClipData = edit->toPlainText();
+        QString text = edit->toPlainText();
+        m_history->remove( m_myClipItem );
+        m_history->insert( new HistoryStringItem(text) );
         QTimer::singleShot( 0, this, SLOT( slotActionMenu() ) );
     }
     else
@@ -454,10 +440,11 @@ void URLGrabber::slotKillPopupMenu()
 ////////
 
 ClipCommand::ClipCommand(const QString &_command, const QString &_description,
-                         bool _isEnabled, const QString &_icon)
+                         bool _isEnabled, const QString &_icon, Output _output)
     : command(_command),
       description(_description),
-      isEnabled(_isEnabled)
+      isEnabled(_isEnabled),
+      output(_output)
 {
 
     if (!_icon.isEmpty())
@@ -481,14 +468,15 @@ ClipCommand::ClipCommand(const QString &_command, const QString &_description,
 }
 
 
-ClipAction::ClipAction( const QString& regExp, const QString& description )
-    : m_myRegExp( regExp ), m_myDescription( description )
+ClipAction::ClipAction( const QString& regExp, const QString& description, bool automatic )
+    : m_myRegExp( regExp ), m_myDescription( description ), m_automatic(automatic)
 {
 }
 
 ClipAction::ClipAction( KSharedConfigPtr kc, const QString& group )
     : m_myRegExp( kc->group(group).readEntry("Regexp") ),
-      m_myDescription (kc->group(group).readEntry("Description") )
+      m_myDescription (kc->group(group).readEntry("Description") ),
+      m_automatic(kc->group(group).readEntry("Automatic", QVariant(true)).toBool() )
 {
     KConfigGroup cg(kc, group);
 
@@ -499,10 +487,11 @@ ClipAction::ClipAction( KSharedConfigPtr kc, const QString& group )
         QString _group = group + "/Command_%1";
         KConfigGroup _cg(kc, _group.arg(i));
 
-        addCommand( _cg.readPathEntry( "Commandline", QString() ),
-                    _cg.readEntry( "Description" ), // i18n'ed
-                    _cg.readEntry( "Enabled" , false),
-                    _cg.readEntry( "Icon") );
+        addCommand( ClipCommand(_cg.readPathEntry( "Commandline", QString() ),
+                                _cg.readEntry( "Description" ), // i18n'ed
+                                _cg.readEntry( "Enabled" , false),
+                                _cg.readEntry( "Icon"),
+                                static_cast<ClipCommand::Output>(_cg.readEntry( "Output", QVariant(ClipCommand::IGNORE)).toInt())));
     }
 }
 
@@ -513,13 +502,12 @@ ClipAction::~ClipAction()
 }
 
 
-void ClipAction::addCommand( const QString& command,
-                             const QString& description, bool enabled, const QString& icon )
+void ClipAction::addCommand( const ClipCommand& cmd )
 {
-    if ( command.isEmpty() )
+    if ( cmd.command.isEmpty() )
         return;
 
-    m_myCommands.append( ClipCommand(command, description, enabled, icon) );
+    m_myCommands.append( cmd );
 }
 
 void ClipAction::replaceCommand( int idx, const ClipCommand& cmd )
@@ -529,7 +517,7 @@ void ClipAction::replaceCommand( int idx, const ClipCommand& cmd )
         return;
     }
 
-    m_myCommands[idx] = cmd;
+    m_myCommands.replace(idx, cmd);
 }
 
 
@@ -540,6 +528,7 @@ void ClipAction::save( KSharedConfigPtr kc, const QString& group ) const
     cg.writeEntry( "Description", description() );
     cg.writeEntry( "Regexp", regExp() );
     cg.writeEntry( "Number of commands", m_myCommands.count() );
+    cg.writeEntry( "Automatic", automatic() );
 
     int i=0;
     // now iterate over all commands of this action
@@ -551,6 +540,7 @@ void ClipAction::save( KSharedConfigPtr kc, const QString& group ) const
         cg.writeEntry( "Description", cmd.description );
         cg.writeEntry( "Enabled", cmd.isEnabled );
         cg.writeEntry( "Icon", cmd.pixmap );
+	cg.writeEntry( "Output", static_cast<int>(cmd.output) );
 
         ++i;
     }

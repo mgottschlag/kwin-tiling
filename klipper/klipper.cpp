@@ -158,7 +158,7 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     /*
      * Create URL grabber
      */
-    m_myURLGrabber = new URLGrabber();
+    m_myURLGrabber = new URLGrabber(m_history);
     connect( m_myURLGrabber, SIGNAL( sigPopup( QMenu * )),
             SLOT( showPopupMenu( QMenu * )) );
     connect( m_myURLGrabber, SIGNAL( sigDisablePopup() ),
@@ -545,7 +545,7 @@ void Klipper::slotRepeatAction()
 {
     const HistoryStringItem* top = dynamic_cast<const HistoryStringItem*>( history()->first() );
     if ( top ) {
-        m_myURLGrabber->invokeAction( top->text() );
+        m_myURLGrabber->invokeAction( top );
     }
 }
 
@@ -618,12 +618,15 @@ QString Klipper::clipboardContents( bool * /*isSelection*/ )
     return 0;
 }
 
-void Klipper::applyClipChanges( const QMimeData* clipData )
+HistoryItem* Klipper::applyClipChanges( const QMimeData* clipData )
 {
-    if ( m_locklevel )
-        return;
+    if ( m_locklevel ) {
+        return 0L;
+    }
     Ignore lock( m_locklevel );
-    history()->insert( HistoryItem::create( clipData ) );
+    HistoryItem* item = HistoryItem::create( clipData );
+    history()->insert( item );
+    return item;
 
 }
 
@@ -798,44 +801,31 @@ void Klipper::checkClipData( bool selectionMode )
         m_lastClipboard = data->serialNumber();
 #endif
 
-    QString& lastURLGrabberText = selectionMode
-        ? m_lastURLGrabberTextSelection : m_lastURLGrabberTextClipboard;
-    if( data->hasText() )
-    {
-        if ( m_bURLGrabber )
-        {
-            QString text = data->text();
-
-            // Make sure URLGrabber doesn't repeat all the time if klipper reads the same
-            // text all the time (e.g. because XFixes is not available and the application
-            // has broken TIMESTAMP target). Using most recent history item may not always
-            // work.
-            if ( text != lastURLGrabberText )
-            {
-                lastURLGrabberText = text;
-                if ( m_myURLGrabber->checkNewData( text ) )
-                {
-                    return; // don't add into the history
-                }
-            }
-        }
-        else
-            lastURLGrabberText = QString();
-    }
-    else
-        lastURLGrabberText = QString();
-
+    HistoryItem* item = applyClipChanges( data );
     if (changed) {
-        applyClipChanges( data );
 #ifdef NOISY_KLIPPER
         kDebug() << "Synchronize?" << m_bSynchronize;
 #endif
-        if ( m_bSynchronize ) {
-            const HistoryItem* topItem = history()->first();
-            if ( topItem ) {
-                setClipboard( *topItem, selectionMode ? Clipboard : Selection );
-            }
+        if ( m_bSynchronize && item ) {
+            setClipboard( *item, selectionMode ? Clipboard : Selection );
         }
+    }
+    QString& lastURLGrabberText = selectionMode
+        ? m_lastURLGrabberTextSelection : m_lastURLGrabberTextClipboard;
+    if( m_bURLGrabber && item && data->hasText())
+    {
+        m_myURLGrabber->checkNewData( item );
+
+        // Make sure URLGrabber doesn't repeat all the time if klipper reads the same
+        // text all the time (e.g. because XFixes is not available and the application
+        // has broken TIMESTAMP target). Using most recent history item may not always
+        // work.
+        if ( item->text() != lastURLGrabberText )
+        {
+            lastURLGrabberText = item->text();
+        }
+    } else {
+        lastURLGrabberText = QString();
     }
 }
 

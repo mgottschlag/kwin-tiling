@@ -29,7 +29,7 @@ namespace Ui
 }
 
 class ClipAction;
-class QTreeWidgetItem;
+class ActionDetailModel;
 
 class EditActionDialog : public KDialog
 {
@@ -47,7 +47,7 @@ private slots:
     void onAddCommand();
     void onRemoveCommand();
     void onSelectionChanged();
-    void onItemChanged( QTreeWidgetItem*, int );
+//    void onItemChanged( QTreeWidgetItem*, int );
 
 private:
     /**
@@ -68,5 +68,6 @@ private:
     Ui::EditActionDialog* m_ui;
 
     ClipAction* m_action;
+    ActionDetailModel* m_model;
 };
 #endif

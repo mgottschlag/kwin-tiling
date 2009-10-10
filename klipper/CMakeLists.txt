@@ -14,6 +14,7 @@ set(libklipper_common_SRCS
     historyurlitem.cpp
     actionstreewidget.cpp
     editactiondialog.cpp
+    clipcommandprocess.cpp
 )
 
 kde4_add_ui_files(libklipper_common_SRCS generalconfig.ui actionsconfig.ui editactiondialog.ui)

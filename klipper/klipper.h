@@ -123,7 +123,7 @@ protected:
     /**
      * Enter clipboard data in the history.
      */
-    void applyClipChanges( const QMimeData* data );
+    HistoryItem* applyClipChanges( const QMimeData* data );
 
     void setClipboard( const HistoryItem& item, int mode );
     bool ignoreClipboardChanges() const;

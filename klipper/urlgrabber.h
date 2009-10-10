@@ -22,11 +22,17 @@
 
 #include <QHash>
 #include <QRegExp>
+#include <QStringList>
+#include <ksharedconfig.h>
 
+class History;
+class HistoryItem;
 class QTimer;
 
 class KConfig;
 class KMenu;
+class QMenu;
+class QAction;
 
 class ClipAction;
 struct ClipCommand;
@@ -37,7 +43,7 @@ class URLGrabber : public QObject
   Q_OBJECT
 
 public:
-  URLGrabber();
+  URLGrabber(History* history);
   ~URLGrabber();
 
   /**
@@ -46,8 +52,8 @@ public:
    * @returns false if the string should be put into the popupmenu or not,
    * otherwise true.
    */
-  bool checkNewData( const QString& clipData );
-  void invokeAction( const QString& clip = QString() );
+  void checkNewData( const HistoryItem* item );
+  void invokeAction( const HistoryItem* item );
 
   ActionList actionList() const { return m_myActions; }
   void setActionList( const ActionList& );
@@ -65,7 +71,7 @@ public:
   void setStripWhiteSpace( bool enable ) { m_trimmed = enable; }
 
 private:
-  const ActionList& matchingActions( const QString& );
+  const ActionList& matchingActions( const QString&, bool automatically_invoked );
   void execute( const ClipAction *action, int commandIdx ) const;
   bool isAvoidedWindow() const;
   void actionMenu( bool wm_class_check );
@@ -74,7 +80,7 @@ private:
   ActionList m_myActions;
   ActionList m_myMatches;
   QStringList m_myAvoidWindows;
-  QString m_myClipData;
+  const HistoryItem* m_myClipItem;
   ClipAction *m_myCurrentAction;
 
   // holds mappings of menu action IDs to action commands (action+cmd index in it)
@@ -83,13 +89,13 @@ private:
   QTimer *m_myPopupKillTimer;
   int m_myPopupKillTimeout;
   bool m_trimmed;
+  History* m_history;
 
 private Q_SLOTS:
   void slotActionMenu() { actionMenu( true ); }
   void slotItemSelected(QAction *action);
   void slotKillPopupMenu();
   void editData();
-
 
 Q_SIGNALS:
     void sigPopup( QMenu * );
@@ -100,14 +106,29 @@ Q_SIGNALS:
 
 struct ClipCommand
 {
-    ClipCommand( const QString & command, const QString & description,
-            bool = true, const QString & icon = QString() );
+  /**
+   * What to do with output of command
+   */
+  enum Output {
+    IGNORE, // Discard output
+    REPLACE, // Replace clipboard entry with output
+    ADD // Add output as new clipboard element
+  };
+
+  ClipCommand( const QString & command,
+               const QString & description,
+               bool enabled= true,
+               const QString & icon = QString(),
+               Output output = IGNORE);
 
     QString command;
     QString description;
     bool isEnabled;
     QString pixmap;
+    Output output;
 };
+
+Q_DECLARE_METATYPE(ClipCommand::Output)
 
 /**
  * Represents one configured action. An action consists of one regular
@@ -118,7 +139,8 @@ class ClipAction
 {
 public:
   explicit ClipAction( const QString& regExp = QString(),
-                       const QString& description = QString() );
+                       const QString& description = QString(),
+                       bool automagic = true);
 
   ClipAction( KSharedConfigPtr kc, const QString& );
   ~ClipAction();
@@ -133,15 +155,15 @@ public:
   void setDescription( const QString& d) { m_myDescription = d; }
   QString description() const            { return m_myDescription; }
 
+  void setAutomatic( bool automatic ) { m_automatic = automatic; }
+  bool automatic() const { return m_automatic; }
+
   /**
    * Removes all ClipCommands associated with this ClipAction.
    */
   void clearCommands() { m_myCommands.clear(); }
 
-  void  addCommand( const QString& command,
-                    const QString& description,
-                    bool isEnabled = true,
-                    const QString& icon = QString() );
+  void  addCommand(const ClipCommand& cmd);
 
   /**
    * Replaces command at index @p idx with command @p newCmd
@@ -165,6 +187,7 @@ private:
   QRegExp m_myRegExp;
   QString m_myDescription;
   QList<ClipCommand> m_myCommands;
+  bool m_automatic;
 
 };
 
