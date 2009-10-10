@@ -76,7 +76,7 @@ void DeviceNotifier::init()
     KConfigGroup cg = config();
     m_numberItems = cg.readEntry("NumberItems", 4);
     m_itemsValidity = cg.readEntry("ItemsValidity", 5);
-    m_showDevices = cg.readEntry("ShowDevices", RemovableOnly).toInt();
+    m_showDevices = cg.readEntry("ShowDevices", (int)RemovableOnly);
 
     m_solidEngine = dataEngine("hotplug");
     m_solidDeviceEngine = dataEngine("soliddevice");
