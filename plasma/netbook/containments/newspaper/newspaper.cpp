@@ -116,18 +116,20 @@ void Newspaper::init()
         m_toolBox->addTool(a);
     }
 
-    a = new QAction(KIcon("view-pim-news"), i18n("New page"), this);
+    a = new QAction(KIcon("view-pim-news"), i18n("Add page"), this);
+    addAction("add page", a);
     m_toolBox->addTool(a);
     connect(a, SIGNAL(triggered()), this, SLOT(addNewsPaper()));
 
     a = action("configure");
     if (a) {
+        a->setText(i18n("Configure page"));
         m_toolBox->addTool(a);
     }
 
     KAction *lockAction = new KAction(this);
     addAction("lock page", lockAction);
-    lockAction->setText(i18n("Lock Page"));
+    lockAction->setText(i18n("Lock page"));
     lockAction->setIcon(KIcon("object-locked"));
     QObject::connect(lockAction, SIGNAL(triggered(bool)), this, SLOT(toggleImmutability()));
     m_toolBox->addTool(lockAction);
@@ -136,6 +138,7 @@ void Newspaper::init()
 
     a = action("remove");
     if (a) {
+        a->setText(i18n("Remove page"));
         m_toolBox->addTool(a);
     }
 }
@@ -268,6 +271,17 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
                     a->setEnabled(true);
                     a->setVisible(true);
                     break;
+            }
+        }
+
+        a = action("add page");
+        if (a) {
+            if (immutability() == Plasma::Mutable) {
+                a->setEnabled(true);
+                a->setVisible(true);
+            } else {
+                a->setEnabled(false);
+                a->setVisible(false);
             }
         }
     }

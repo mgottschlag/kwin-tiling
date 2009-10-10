@@ -97,6 +97,7 @@ void SearchLaunch::init()
     a = action("configure");
     if (a) {
         m_toolBox->addTool(a);
+        a->setText(i18n("Configure Search and Launch"));
     }
 
     KAction *lockAction = new KAction(this);
