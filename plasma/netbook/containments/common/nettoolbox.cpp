@@ -47,6 +47,7 @@ public:
         m_background->setImagePath("widgets/frame");
         m_background->setElementPrefix("raised");
         setLocation(Plasma::BottomEdge);
+        setAcceptHoverEvents(true);
     }
 
     ~ToolContainer()
@@ -86,6 +87,16 @@ public:
     Plasma::Location location() const
     {
         return m_location;
+    }
+
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+    {
+        event->accept();
+    }
+
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+    {
+        m_itemBackground->hide();
     }
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
