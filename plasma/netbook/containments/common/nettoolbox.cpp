@@ -257,7 +257,8 @@ void NetToolBox::addTool(QAction *action)
     }
 
     m_actionButtons[action] = button;
-    m_toolContainerLayout->insertItem(m_toolContainerLayout->count() - 1, button);
+    //FIXME: in 4.6 m_toolContainerLayout->count()-1 adds two items before the spacer: intended or qt bug?
+    m_toolContainerLayout->insertItem(m_toolContainerLayout->count() , button);
 }
 
 void NetToolBox::removeTool(QAction *action)
