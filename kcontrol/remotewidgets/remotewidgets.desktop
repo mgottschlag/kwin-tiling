@@ -12,6 +12,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=computer-administration
 
 Name=Remote widgets policies
+Name[en_GB]=Remote widgets policies
 Name[et]=Välisvidinate reeglid
 Name[gl]=Políticas dos widgets remotos
 Name[id]=Kebijakan widget jarak jauh
