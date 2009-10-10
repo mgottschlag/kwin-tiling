@@ -30,6 +30,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QApplication>
 
+#include <KAction>
 #include <KDebug>
 #include <KIcon>
 #include <KIconLoader>
@@ -98,11 +99,22 @@ void SearchLaunch::init()
         m_toolBox->addTool(a);
     }
 
-    a = action("lock widgets");
-    if (a) {
-        m_toolBox->addTool(a);
-    }
+    KAction *lockAction = new KAction(this);
+    addAction("lock page", lockAction);
+    lockAction->setText(i18n("Lock Page"));
+    lockAction->setIcon(KIcon("object-locked"));
+    QObject::connect(lockAction, SIGNAL(triggered(bool)), this, SLOT(toggleImmutability()));
+    m_toolBox->addTool(lockAction);
 
+}
+
+void SearchLaunch::toggleImmutability()
+{
+    if (immutability() == Plasma::UserImmutable) {
+        setImmutability(Plasma::Mutable);
+    } else if (immutability() == Plasma::Mutable) {
+        setImmutability(Plasma::UserImmutable);
+    }
 }
 
 void SearchLaunch::doSearch(const QString query)
@@ -454,6 +466,32 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::ScreenConstraint) {
         if (screen() != -1 && m_searchField) {
             m_searchField->setFocus();
+        }
+    }
+
+    if (constraints & Plasma::ImmutableConstraint) {
+        QAction *a = action("lock page");
+        if (a) {
+            switch (immutability()) {
+                case Plasma::SystemImmutable:
+                    a->setEnabled(false);
+                    a->setVisible(false);
+                    break;
+
+                case Plasma::UserImmutable:
+                    a->setText(i18n("Unlock Page"));
+                    a->setIcon(KIcon("object-unlocked"));
+                    a->setEnabled(true);
+                    a->setVisible(true);
+                    break;
+
+                case Plasma::Mutable:
+                    a->setText(i18n("Lock Page"));
+                    a->setIcon(KIcon("object-locked"));
+                    a->setEnabled(true);
+                    a->setVisible(true);
+                    break;
+            }
         }
     }
 }

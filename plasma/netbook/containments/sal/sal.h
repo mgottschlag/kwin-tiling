@@ -59,10 +59,11 @@ protected:
     void paintInterface(QPainter *, const QStyleOptionGraphicsItem *, const QRect &);
     void changeEvent(QEvent *event);
 
-public slots:
+public Q_SLOTS:
     void dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data);
 
-private slots:
+private Q_SLOTS:
+    void toggleImmutability();
     void updateSize();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
     void appletRemoved(Plasma::Applet* applet);

@@ -52,7 +52,8 @@ protected:
     void createAppletTitle(Plasma::Applet *applet);
     void changeEvent(QEvent *event);
 
-private slots:
+private Q_SLOTS:
+    void toggleImmutability();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
     void updateSize();
     void updateConfigurationMode(bool config);

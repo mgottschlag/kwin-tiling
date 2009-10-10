@@ -355,12 +355,14 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
 
                 case Plasma::UserImmutable:
                     a->setText(i18n("Unlock Panel"));
+                    a->setIcon(KIcon("object-unlocked"));
                     a->setEnabled(true);
                     a->setVisible(true);
                     break;
 
                 case Plasma::Mutable:
                     a->setText(i18n("Lock Panel"));
+                    a->setIcon(KIcon("object-locked"));
                     a->setEnabled(true);
                     a->setVisible(true);
                     break;
