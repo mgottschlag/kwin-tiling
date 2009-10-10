@@ -494,6 +494,14 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
                     break;
             }
         }
+
+        if (immutability() == Plasma::Mutable && !m_appletOverlay && m_toolBox->isShowing()) {
+            m_appletOverlay = new LinearAppletOverlay(this, m_appletsLayout);
+            m_appletOverlay->resize(size());
+        } else if (immutability() != Plasma::Mutable && m_appletOverlay && m_toolBox->isShowing()) {
+            m_appletOverlay->deleteLater();
+            m_appletOverlay = 0;
+        }
     }
 }
 
