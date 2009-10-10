@@ -125,6 +125,18 @@ protected:
         return hint;
     }
 
+    bool eventFilter(QObject *watched, QEvent *event)
+    {
+        Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
+        if (icon && event->type() == QEvent::GraphicsSceneHoverEnter) {
+            m_itemBackground->setTargetItem(icon);
+        } else if (icon && event->type() == QEvent::Show) {
+            //force the newly shown icon to have a sensible size
+            layout()->invalidate();
+        }
+        return false;
+    }
+
 private:
     Plasma::FrameSvg *m_background;
     Plasma::ItemBackground *m_itemBackground;
@@ -246,9 +258,13 @@ void NetToolBox::addTool(QAction *action)
 {
     Plasma::IconWidget *button = new Plasma::IconWidget(this);
     button->setOrientation(Qt::Horizontal);
-    button->setDrawBackground(true);
     button->setTextBackgroundColor(QColor());
     button->setAction(action);
+    button->installEventFilter(m_toolContainer);
+
+    qreal left, top, right, bottom;
+    m_toolContainer->itemBackground()->getContentsMargins(&left, &top, &right, &bottom);
+    button->setContentsMargins(left, top, right, bottom);
 
     if (m_location == Plasma::LeftEdge || m_location == Plasma::RightEdge) {
         button->setOrientation(Qt::Vertical);
@@ -445,6 +461,8 @@ void NetToolBox::animateHighlight(qreal progress)
 
 void NetToolBox::movementFinished(QGraphicsItem *item)
 {
+    Q_UNUSED(item)
+
     m_animSlideId = 0;
     m_toolContainer->setVisible(m_showing);
 }
