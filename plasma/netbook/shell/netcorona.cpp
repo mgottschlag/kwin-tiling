@@ -37,6 +37,7 @@
 
 #include "plasmaapp.h"
 #include "netview.h"
+#include <plasma/containmentactionspluginsconfig.h>
 
 NetCorona::NetCorona(QObject *parent)
     : Plasma::Corona(parent)
@@ -48,6 +49,17 @@ void NetCorona::init()
 {
     QDesktopWidget *desktop = QApplication::desktop();
     QObject::connect(desktop, SIGNAL(resized(int)), this, SLOT(screenResized(int)));
+
+    Plasma::ContainmentActionsPluginsConfig desktopPlugins;
+    desktopPlugins.addPlugin(Qt::NoModifier, Qt::Vertical, "switchdesktop");
+    desktopPlugins.addPlugin(Qt::NoModifier, Qt::MidButton, "paste");
+    desktopPlugins.addPlugin(Qt::NoModifier, Qt::RightButton, "contextmenu");
+    Plasma::ContainmentActionsPluginsConfig panelPlugins;
+    panelPlugins.addPlugin(Qt::NoModifier, Qt::RightButton, "contextmenu");
+
+    setContainmentActionsDefaults(Plasma::Containment::DesktopContainment, desktopPlugins);
+    setContainmentActionsDefaults(Plasma::Containment::PanelContainment, panelPlugins);
+    setContainmentActionsDefaults(Plasma::Containment::CustomPanelContainment, panelPlugins);
 
     enableAction("lock widgets", false);
 }
