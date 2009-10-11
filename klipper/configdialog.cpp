@@ -38,12 +38,6 @@ GeneralWidget::GeneralWidget(QWidget* parent)
     m_ui.setupUi(this);
     m_ui.kcfg_TimeoutForActionPopups->setSuffix(ki18np(" second", " seconds"));
     m_ui.kcfg_MaxClipItems->setSuffix(ki18np(" entry", " entries"));
-    connect(m_ui.rbSynchronize, SIGNAL(toggled(bool)), SLOT(onSyncronizeToggled(bool)));
-}
-
-void GeneralWidget::onSyncronizeToggled(bool toggled)
-{
-    m_ui.kcfg_IgnoreSelection->setEnabled(!toggled);
 }
 
 ActionsWidget::ActionsWidget(QWidget* parent)

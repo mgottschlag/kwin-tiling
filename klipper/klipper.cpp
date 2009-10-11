@@ -284,7 +284,8 @@ void Klipper::loadSettings()
     m_bKeepContents = KlipperSettings::keepClipboardContents();
     m_bReplayActionInHistory = KlipperSettings::replayActionInHistory();
     m_bNoNullClipboard = KlipperSettings::preventEmptyClipboard();
-    m_bIgnoreSelection = KlipperSettings::ignoreSelection();
+    // 0 is the id of "Ignore selection" radiobutton
+    m_bIgnoreSelection = KlipperSettings::synchronize() == 2;
     m_bIgnoreImages = KlipperSettings::ignoreImages();
     // 0 is the id of "Synchronize contents" radiobutton
     m_bSynchronize = ( KlipperSettings::synchronize() == 0 );

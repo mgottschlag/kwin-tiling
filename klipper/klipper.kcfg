@@ -30,11 +30,6 @@
       <default>true</default>
       <whatsthis>Selecting this option has the effect, that the clipboard can never be emptied. E.g. when an application exits, the clipboard would usually be emptied.</whatsthis>
     </entry>
-    <entry name="IgnoreSelection" type="Bool">
-      <label>Ignore selection</label>
-      <default>false</default>
-      <whatsthis>This option prevents the selection being recorded in the clipboard history. Only explicit clipboard changes are recorded.</whatsthis>
-    </entry>
     <entry name="IgnoreImages" type="Bool">
       <label>Ignore images</label>
       <default>true</default>
@@ -42,6 +37,7 @@
     <entry name="Synchronize" type="Int">
       <label>Synchronize clipboard and selection</label>
       <default>1</default>
+      <whatsthis><qt>When an area of the screen is selected with mouse or keyboard, this is called "the selection". These options tells Klipper what to do with the selection. If "synchronized", the selection and the clipboard is kept the same, so that anything in the selection is immediately available for pasting elsewhere using any method, including the traditional middle mouse button. If "separate", the selection is recorded in the clipboard history, but the selection can only be pasted using the middle mouse button. If set to "ignore", the selection is not entered into the clipboard history, though it is still available for pasting using the middle mouse button.</qt></whatsthis>
     </entry>
     <entry name="SelectionTextOnly" type="Bool">
       <label>Selection text only</label>

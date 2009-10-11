@@ -42,9 +42,6 @@ class GeneralWidget : public QWidget
 public:
     GeneralWidget(QWidget* parent);
 
-private slots:
-    void onSyncronizeToggled(bool);
-
 private:
     Ui::GeneralWidget m_ui;
 };
