@@ -53,7 +53,7 @@ ClipCommandProcess::ClipCommandProcess(const ClipAction& action, const ClipComma
     if (command.output != ClipCommand::IGNORE) {
         connect(this, SIGNAL(readyRead()), SLOT(slotStdOutputAvailable()));
     }
-    if (command.output == ClipCommand::ADD) {
+    if (command.output != ClipCommand::REPLACE) {
         m_historyItem = 0L; // Don't replace
     }
 
