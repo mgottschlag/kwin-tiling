@@ -40,8 +40,8 @@ HistoryItem* HistoryItem::create( const QMimeData* data )
 {
 #if 0
     int i=0;
-    while ( const char* f = aSource.format( i++ ) ) {
-        kDebug() << "format(" << i <<"): " << f;
+    foreach ( QString format, data->formats() ) {
+        kDebug() << "format(" << i++ <<"): " << format;
     }
 #endif
     if (KUrl::List::canDecode(data))
