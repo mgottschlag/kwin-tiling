@@ -95,7 +95,6 @@ private Q_SLOTS:
   void slotActionMenu() { actionMenu( true ); }
   void slotItemSelected(QAction *action);
   void slotKillPopupMenu();
-  void editData();
 
 Q_SIGNALS:
     void sigPopup( QMenu * );

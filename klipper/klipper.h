@@ -81,6 +81,7 @@ public Q_SLOTS:
     void saveSession();
     void slotHistoryTopChanged();
     void slotConfigure();
+    void slotEditData();
 
 protected:
     /**
@@ -175,6 +176,7 @@ private:
     KToggleAction *m_toggleURLGrabAction;
     QAction* m_clearHistoryAction;
     QAction* m_repeatAction;
+    QAction* m_editAction;
     QAction* m_configureAction;
     QAction* m_quitAction;
     QPixmap m_pixmap;

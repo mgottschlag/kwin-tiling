@@ -27,7 +27,6 @@
 
 #include <kconfig.h>
 #include <kdialog.h>
-#include <ktextedit.h>
 #include <klocale.h>
 #include <kmenu.h>
 #include <kservice.h>
@@ -242,10 +241,6 @@ void URLGrabber::actionMenu( bool automatically_invoked )
             m_myMenu->addAction(disableAction);
         }
         m_myMenu->addSeparator();
-        // add an edit-possibility
-        QAction *editAction = new QAction(KIcon("document-properties"), i18n("&Edit Contents..."), this);
-        connect(editAction, SIGNAL(triggered()), SLOT(editData()));
-        m_myMenu->addAction(editAction);
 
         QAction *cancelAction = new QAction(KIcon("dialog-cancel"), i18n("&Cancel"), this);
         connect(cancelAction, SIGNAL(triggered()), m_myMenu, SLOT(hide()));
@@ -304,40 +299,6 @@ void URLGrabber::execute( const ClipAction *action, int cmdIdx ) const
         }
     }
 }
-
-
-void URLGrabber::editData()
-{
-    if (!m_myClipItem) {
-        return;
-    }
-    m_myPopupKillTimer->stop();
-    KDialog *dlg = new KDialog( 0 );
-    dlg->setModal( true );
-    dlg->setCaption( i18n("Edit Contents") );
-    dlg->setButtons( KDialog::Ok | KDialog::Cancel );
-
-    KTextEdit *edit = new KTextEdit( dlg );
-    edit->setText( m_myClipItem->text() );
-    edit->setFocus();
-    edit->setMinimumSize( 300, 40 );
-    dlg->setMainWidget( edit );
-    dlg->adjustSize();
-
-    if ( dlg->exec() == KDialog::Accepted ) {
-        QString text = edit->toPlainText();
-        m_history->remove( m_myClipItem );
-        m_history->insert( new HistoryStringItem(text) );
-        QTimer::singleShot( 0, this, SLOT( slotActionMenu() ) );
-    }
-    else
-    {
-        m_myMenu->deleteLater();
-        m_myMenu = 0;
-    }
-    delete dlg;
-}
-
 
 void URLGrabber::loadSettings()
 {

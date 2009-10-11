@@ -37,6 +37,7 @@
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
 #include <KConfigSkeleton>
+#include <ktextedit.h>
 
 #include "configdialog.h"
 #include "klipper.h"
@@ -191,6 +192,13 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     qobject_cast<KAction*>(m_repeatAction)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_R));
     connect(m_repeatAction, SIGNAL(triggered()), SLOT(slotRepeatAction()));
 
+    // add an edit-possibility
+    m_editAction = m_collection->addAction("edit_clipboard");
+    m_editAction->setIcon(KIcon("document-properties"));
+    m_editAction->setText(i18n("&Edit Contents..."));
+    qobject_cast<KAction*>(m_editAction)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_E), KAction::DefaultShortcut);
+    connect(m_editAction, SIGNAL(triggered()), SLOT(slotEditData()));
+
     m_toggleURLGrabAction->setText(i18n("Enable Clipboard Actions"));
     m_toggleURLGrabAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_X));
 
@@ -206,6 +214,7 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     popup->plugAction( m_clearHistoryAction );
     popup->plugAction( m_configureAction );
     popup->plugAction( m_repeatAction );
+    popup->plugAction( m_editAction );
     if ( !isApplet() ) {
         popup->plugAction( m_quitAction );
     }
@@ -1033,6 +1042,37 @@ static void ensureGlobalSyncOff(KSharedConfigPtr config) {
         cg.sync();
         kapp->setSynchronizeClipboard(false);
         KGlobalSettings::self()->emitChange( KGlobalSettings::ClipboardConfigChanged, 0 );
+    }
+
+}
+
+void Klipper::slotEditData()
+{
+    const HistoryStringItem* item = dynamic_cast<const HistoryStringItem*>(m_history->first());
+
+    KDialog dlg;
+    dlg.setModal( true );
+    dlg.setCaption( i18n("Edit Contents") );
+    dlg.setButtons( KDialog::Ok | KDialog::Cancel );
+
+    KTextEdit *edit = new KTextEdit( &dlg );
+    if (item) {
+        edit->setText( item->text() );
+    }
+    edit->setFocus();
+    edit->setMinimumSize( 300, 40 );
+    dlg.setMainWidget( edit );
+    dlg.adjustSize();
+
+    if ( dlg.exec() == KDialog::Accepted ) {
+        QString text = edit->toPlainText();
+        if (item) {
+            m_history->remove( item );
+        }
+        m_history->insert( new HistoryStringItem(text) );
+        if (m_myURLGrabber) {
+            m_myURLGrabber->checkNewData( m_history->first() );
+        }
     }
 
 }
