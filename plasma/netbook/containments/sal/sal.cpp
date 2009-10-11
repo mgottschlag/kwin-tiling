@@ -28,6 +28,7 @@
 #include <QAction>
 #include <QTimer>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsAnchorLayout>
 #include <QApplication>
 
 #include <KAction>
@@ -413,10 +414,11 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             connect(m_homeButton, SIGNAL(activated()), this, SLOT(reset()));
             connect(m_resultsView, SIGNAL(resetRequested()), this, SLOT(reset()));
 
-            QGraphicsLinearLayout *searchLayout = new QGraphicsLinearLayout(Qt::Horizontal);
-            searchLayout->addStretch();
-            searchLayout->addItem(m_homeButton);
+            QGraphicsAnchorLayout *searchLayout = new QGraphicsAnchorLayout();
+            searchLayout->setSpacing(5);
+
             m_searchField = new Plasma::LineEdit(this);
+            m_searchField->setPreferredWidth(200);
             m_searchField->nativeWidget()->setClearButtonShown(true);
             m_searchField->nativeWidget()->setClickMessage(i18n("Enter your query here"));
             connect(m_searchField, SIGNAL(returnPressed()), this, SLOT(query()));
@@ -424,12 +426,11 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_searchTimer = new QTimer(this);
             m_searchTimer->setSingleShot(true);
             connect(m_searchTimer, SIGNAL(timeout()), this, SLOT(query()));
-            searchLayout->addItem(m_searchField);
-            //FIXME: this ugly spacer to center the search field won't be necessary with anchor layout
-            QGraphicsWidget *homeSpacer = new QGraphicsWidget(this);
-            homeSpacer->setPreferredSize(m_homeButton->preferredSize());
-            searchLayout->addItem(homeSpacer);
-            searchLayout->addStretch();
+            searchLayout->addAnchor(m_searchField, Qt::AnchorHorizontalCenter, searchLayout, Qt::AnchorHorizontalCenter);
+            searchLayout->addAnchors(m_searchField, searchLayout, Qt::Vertical);
+            searchLayout->addAnchors(m_homeButton, searchLayout, Qt::Vertical);
+            searchLayout->addAnchor(m_homeButton, Qt::AnchorRight, m_searchField, Qt::AnchorLeft);
+
 
             // add our layouts to main vertical layout
             m_mainLayout->addItem(m_stripWidget);
