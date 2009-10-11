@@ -291,10 +291,6 @@ void Klipper::loadSettings()
     m_bSynchronize = ( KlipperSettings::synchronize() == 0 );
     // NOTE: not used atm - kregexpeditor is not ported to kde4
     m_bUseGUIRegExpEditor = KlipperSettings::useGUIRegExpEditor();
-
-    // NOTE (during kconfigxt porting): this option is somehow lost,
-    // no setting for it exists in gui. Or is it a hidden feature?
-    // find it and resolve it. keeping it for now.
     m_bSelectionTextOnly = KlipperSettings::selectionTextOnly();
 
     m_bURLGrabber = KlipperSettings::uRLGrabberEnabled();

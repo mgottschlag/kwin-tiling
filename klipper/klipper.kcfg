@@ -42,7 +42,7 @@
     <entry name="SelectionTextOnly" type="Bool">
       <label>Selection text only</label>
       <default>true</default>
-      <whatsthis><qt>There are two different clipboard buffers available:<br /><br /><b>Clipboard</b> is filled by selecting something and pressing Ctrl+C, or by clicking "Copy" in a toolbar or menubar.<br /><br /><b>Selection</b> is available immediately after selecting some text. The only way to access the selection is to press the middle mouse button.<br /><br />You can configure the relationship between Clipboard and Selection.</qt></whatsthis>
+      <whatsthis><qt>When an area of the screen is selected with mouse or keyboard, this is called <em>"the selection"</em>. If this option is selected, only text selection are stored in the history, while images and other selections are not.</qt></whatsthis>
     </entry>
     <entry name="UseGUIRegExpEditor" type="Bool">
       <label>Use graphical regexp editor</label>

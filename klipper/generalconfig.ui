@@ -47,16 +47,16 @@
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="kcfg_IgnoreSelection" >
-     <property name="text" >
-      <string>Ignore selection</string>
+    <widget class="QCheckBox" name="kcfg_IgnoreImages">
+     <property name="text">
+      <string>Ignore images</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="kcfg_IgnoreImages" >
-     <property name="text" >
-      <string>Ignore images</string>
+    <widget class="QCheckBox" name="kcfg_SelectionTextOnly">
+     <property name="text">
+      <string>Text selection only</string>
      </property>
     </widget>
    </item>
