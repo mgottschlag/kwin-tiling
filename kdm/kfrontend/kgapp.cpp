@@ -330,7 +330,7 @@ main( int argc ATTR_UNUSED, char **argv )
 	foreach (const QString &dir, KGlobal::dirs()->resourceDirs( "qtplugins" ))
 		app.addLibraryPath( dir );
 	initQAppConfig();
-	KGlobalSettings::self();
+	KGlobalSettings::self()->activate();
 
 	Display *dpy = QX11Info::display();
 	QDesktopWidget *dw = app.desktop();
