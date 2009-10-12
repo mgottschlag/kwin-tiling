@@ -38,7 +38,7 @@
 using namespace Kickoff;
 
 TabBar::TabBar(QWidget *parent)
-        : QTabBar(parent),
+        : KTabBar(parent),
         m_hoveredTabIndex(-1),
         m_switchOnHover(true),
         m_animateSwitch(true),
@@ -72,7 +72,7 @@ void TabBar::setShape(Shape shape)
     resize(0, 0);    // This is required, so that the custom implementation of tabSizeHint,
     // which expands the tabs to the full width of the widget does not pick up
     // the previous width, e.g. if the panel is moved from the bottom to the left
-    QTabBar::setShape(shape);
+    KTabBar::setShape(shape);
     resize(sizeHint());
 }
 
@@ -345,7 +345,7 @@ void TabBar::mouseMoveEvent(QMouseEvent *event)
 
 void TabBar::resizeEvent(QResizeEvent* event)
 {
-    QTabBar::resizeEvent(event);
+    KTabBar::resizeEvent(event);
     m_currentAnimRect = tabRect(currentIndex());
 
     background->resizeFrame(event->size());

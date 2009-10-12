@@ -516,7 +516,7 @@ void UrlItemView::mouseMoveEvent(QMouseEvent *event)
         QModelIndex index = d->hoveredIndex;
         QString titleText = index.data(Qt::DisplayRole).toString();
         QString subTitleText = index.data(Plasma::Delegate::SubTitleRole).toString();
-        setToolTip(titleText + "\n" + subTitleText);
+        setToolTip(titleText + '\n' + subTitleText);
     } else {
         setToolTip("");
     }
@@ -601,6 +601,7 @@ void UrlItemView::dragMoveEvent(QDragMoveEvent *event)
 
 void UrlItemView::startDrag(Qt::DropActions supportedActions)
 {
+    Q_UNUSED(supportedActions)
     //kDebug() << "Starting UrlItemView drag with actions" << supportedActions;
 
     if (!d->watchedIndexForDrag.isValid()) {

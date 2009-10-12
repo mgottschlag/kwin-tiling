@@ -26,7 +26,6 @@
 // Qt
 #include <QtGui/QLabel>
 #include <QtGui/QCheckBox>
-#include <QtGui/QComboBox>
 #include <QtGui/QSpinBox>
 #include <QtGui/QGridLayout>
 #include <QtGui/QGraphicsView>
@@ -51,6 +50,7 @@
 #include <KCModuleInfo>
 #include <KToolInvocation>
 #include <KIconButton>
+#include <KComboBox>
 #include <kworkspace/kworkspace.h>
 #include <solid/control/powermanager.h>
 
@@ -112,7 +112,7 @@ public:
 
     QListWidget *view;
     KIconButton *iconButton;
-    QComboBox *formatComboBox;
+    KComboBox *formatComboBox;
     QSpinBox *recentApplicationsSpinBox;
     QCheckBox *showMenuTitlesCheckBox;
 
@@ -139,7 +139,7 @@ public:
         }
     }
 
-    void addItem(QComboBox* combo, const QString& caption, int index, const QString& icon = QString()) {
+    void addItem(KComboBox* combo, const QString& caption, int index, const QString& icon = QString()) {
         if (icon.isEmpty()) {
             combo->addItem(caption, index);
         } else {
@@ -147,7 +147,7 @@ public:
         }
     }
 
-    void setCurrentItem(QComboBox* combo, int currentIndex) {
+    void setCurrentItem(KComboBox* combo, int currentIndex) {
         for (int i = combo->count() - 1; i >= 0; --i) {
             if (combo->itemData(i).toInt() == currentIndex) {
                 combo->setCurrentIndex(i);
@@ -447,7 +447,7 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
 
     QLabel *formatLabel = new QLabel(i18nc("@label:listbox How to present applications in a KMenu-like menu", "Format:"), p);
     grid->addWidget(formatLabel, 1, 0, Qt::AlignRight);
-    d->formatComboBox = new QComboBox(p);
+    d->formatComboBox = new KComboBox(p);
     formatLabel->setBuddy(d->formatComboBox);
     d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Name Only"), MenuLauncherApplet::Name);
     d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Description Only"), MenuLauncherApplet::Description);

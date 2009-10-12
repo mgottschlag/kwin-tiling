@@ -20,7 +20,7 @@
 #ifndef TABBAR_H
 #define TABBAR_H
 
-#include <QTabBar>
+#include <KTabBar>
 #include <QTimer>
 
 namespace Plasma
@@ -31,7 +31,7 @@ class FrameSvg;
 namespace Kickoff
 {
 
-class TabBar : public QTabBar
+class TabBar : public KTabBar
 {
     Q_OBJECT
 
@@ -54,7 +54,7 @@ public:
 protected:
     int lastIndex() const;
 
-    // reimplemented from QTabBar
+    // reimplemented from KTabBar
     virtual QSize tabSizeHint(int index) const;
     virtual void paintEvent(QPaintEvent *event);
     virtual void leaveEvent(QEvent *event);

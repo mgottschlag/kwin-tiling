@@ -119,11 +119,11 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
     // the source data models (that define them), we are handling
     // them here. So, we need to make urls from KRunner model
     // to behave properly
-    if (url.startsWith("krunner://")) {
-        url = url.replace("krunner://", "");
+    if (url.startsWith(QLatin1String("krunner://"))) {
+        url = url.remove("krunner://");
         qDebug() << "ContextMenuFactory::showContextMenu: 1 " << url;
-        if (url.startsWith("services/services_")) {
-            url = url.replace("services/services_", "");
+        if (url.startsWith(QLatin1String("services/services_"))) {
+            url = url.remove("services/services_");
         } else {
             return;
         }
@@ -147,7 +147,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
 
     QAction *favoriteAction = 0;
 
-    if (url.endsWith(".desktop")) {
+    if (url.endsWith(QLatin1String(".desktop"))) {
         // add to / remove from favorites
         favoriteAction = new QAction(this);
         if (isFavorite) {
@@ -179,7 +179,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
         // There might be relative paths for .desktop installed in
         // /usr/shar/applnk, we need to locate them
         bool urlFound = true;
-        if (kurl.isRelative() && kurl.url().endsWith(".desktop")) {
+        if (kurl.isRelative() && kurl.url().endsWith(QLatin1String(".desktop"))) {
             kurl = KStandardDirs::locate("apps", url);
             urlFound = !kurl.isEmpty();
         }

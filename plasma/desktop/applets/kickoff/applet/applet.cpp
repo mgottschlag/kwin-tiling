@@ -177,7 +177,7 @@ void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
 
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-    parent->addPage(widget, i18n("General"), icon());
+    parent->addPage(widget, i18nc("General configuration page", "General"), icon());
 
     d->createLauncher();
     d->switchOnHoverCheckBox->setChecked(d->launcher->switchTabsOnHover());

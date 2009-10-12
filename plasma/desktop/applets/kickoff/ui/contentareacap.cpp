@@ -33,6 +33,8 @@ ContentAreaCap::ContentAreaCap(QWidget *parent, bool flip)
 
 void ContentAreaCap::paintEvent(QPaintEvent *event)
 {
+    Q_UNUSED(event);
+
     QPainter painter(this);
     QPainterPath path;
     QRect r = rect();

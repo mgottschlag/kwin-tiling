@@ -540,6 +540,7 @@ void FlipScrollView::keyPressEvent(QKeyEvent *event)
 
 void FlipScrollView::leaveEvent(QEvent *event)
 {
+    Q_UNUSED(event);
     d->hoveredIndex = QModelIndex();
     setCurrentIndex(QModelIndex());
     d->backArrowHover = false;
@@ -713,6 +714,7 @@ void FlipScrollView::startDrag(Qt::DropActions supportedActions)
     drag->setPixmap(icon.pixmap(IconSize(KIconLoader::Desktop)));
 
     Qt::DropAction dropAction = drag->exec();
+    Q_UNUSED(dropAction);
     QAbstractItemView::startDrag(supportedActions);
 }
 

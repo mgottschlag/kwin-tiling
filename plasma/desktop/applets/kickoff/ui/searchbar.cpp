@@ -67,7 +67,7 @@ SearchBar::SearchBar(QWidget *parent)
     layout->setMargin(3);
     layout->setSpacing(0); // we do the spacing manually to line up with the views below
 
-    d->searchLabel = new QLabel(i18n("Search:"), this);
+    d->searchLabel = new QLabel(i18nc("Label of the search bar textedit", "Search:"), this);
     QLabel *searchIcon = new QLabel(this);
 
     const QFileInfo fi(QDir(QDir::homePath()), ".face.icon");

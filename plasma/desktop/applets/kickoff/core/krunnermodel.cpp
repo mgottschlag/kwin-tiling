@@ -107,7 +107,7 @@ bool KRunnerItemHandler::openUrl(const KUrl& url)
 {
     QString runner = url.host();
     QString id = url.path();
-    if (id.startsWith("/")) {
+    if (id.startsWith(QLatin1String("/"))) {
         id = id.remove(0, 1);
     }
     qDebug() << "KRunnerItemHandler:openUrl " << runner << " " << id;
@@ -232,10 +232,10 @@ QMimeData * KRunnerModel::mimeData(const QModelIndexList &indexes) const
 {
     KUrl::List urls;
 
-    foreach (QModelIndex index, indexes) {
+    foreach (const QModelIndex & index, indexes) {
         KUrl url = data(index, UrlRole).toString();
         QString id = url.path();
-        if (id.startsWith("/")) {
+        if (id.startsWith(QLatin1String("/"))) {
             id = id.remove(0, 1);
         }
         urls << KUrl(id);
