@@ -41,7 +41,7 @@ DateExtenderWidget::DateExtenderWidget(const QDate &date, Plasma::DataEngine *en
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(Qt::Vertical, this);
     Plasma::Label *descriptionLabel = new Plasma::Label();
 
-    QString tmpStr = "description:" + region + ":" + date.toString(Qt::ISODate);
+    QString tmpStr = "description:" + region + ':' + date.toString(Qt::ISODate);
     descriptionLabel->setText(i18n("Holiday: %1", engine->query(tmpStr).value(tmpStr).toString()));
     layout->addItem(descriptionLabel);
 }

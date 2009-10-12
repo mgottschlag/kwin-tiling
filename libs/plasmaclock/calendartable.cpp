@@ -191,6 +191,7 @@ class CalendarTablePrivate
         // it if needed e.g. in QDate Mon 1 Jan -4713 is not valid when it should be, so fake as day 1
         int weekDayFirstOfMonth(const QDate &cellDate)
         {
+            Q_UNUSED(cellDate);
             QDate firstDayOfMonth;
             int weekDay;
             if ( calendar->setYMD(firstDayOfMonth, selectedYear, selectedMonth, 1)) {
@@ -284,7 +285,7 @@ bool CalendarTable::setDate(const QDate &newDate)
 
     int oldYear = d->selectedYear;
     int oldMonth = d->selectedMonth;
-    int oldDay = calendar()->day(date());
+    //int oldDay = calendar()->day(date());
     QDate oldDate = date();
 
     // now change the date
@@ -340,7 +341,7 @@ int CalendarTable::cellY(int weekRow)
 
 void CalendarTable::wheelEvent(QGraphicsSceneWheelEvent * event)
 {
-    bool changed = false;
+    //bool changed = false;
     
     if (event->delta() < 0) {
         setDate(calendar()->addMonths(date(), 1));
@@ -541,7 +542,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
                     weekString = localeDateNum(calendar()->weekNumber(cellDate));
                 }
                 if (cellDate.dayOfWeek() != Qt::Monday) {
-                    weekString += "/";
+                    weekString += '/';
                     QDate date(cellDate);
 // JPL What's this 8?  Columns incl Week No?
                     date = date.addDays(8 - cellDate.dayOfWeek());
@@ -638,7 +639,7 @@ void CalendarTable::populateHolidays()
     QString nextMonthString = queryDate.addMonths(1).toString(Qt::ISODate);
 
     Plasma::DataEngine::Data prevMonth = d->dataEngine->query("holidaysInMonth:" + d->region +
-                                                              ":" + prevMonthString);
+                                                              ':' + prevMonthString);
     for (int i = -10; i < 0; i++) {
         QDate tempDate = queryDate.addDays(i);
         QString reason = prevMonth.value(tempDate.toString(Qt::ISODate)).toString();
@@ -649,7 +650,7 @@ void CalendarTable::populateHolidays()
 
     queryDate.setDate(queryDate.year(), queryDate.month(), 1);
     Plasma::DataEngine::Data thisMonth = d->dataEngine->query("holidaysInMonth:" + d->region +
-                                                              ":" + queryDate.toString(Qt::ISODate));
+                                                              ':' + queryDate.toString(Qt::ISODate));
     int numDays = calendar()->daysInMonth(queryDate);
     for (int i = 0; i < numDays; i++) {
         QDate tempDate = queryDate.addDays(i);
@@ -662,7 +663,7 @@ void CalendarTable::populateHolidays()
 
     queryDate = queryDate.addMonths(1);
     Plasma::DataEngine::Data nextMonth = d->dataEngine->query("holidaysInMonth:" + d->region +
-                                                              ":" + nextMonthString);
+                                                              ':' + nextMonthString);
     for (int i = 0; i < 10; i++) {
         QDate tempDate = queryDate.addDays(i);
         QString reason = nextMonth.value(tempDate.toString(Qt::ISODate)).toString();

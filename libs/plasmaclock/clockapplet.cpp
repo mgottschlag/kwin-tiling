@@ -102,13 +102,13 @@ public:
             subText.append("<br><b>UTC</b>&nbsp;");
         } else {
             subText.append("<br><b>")
-                   .append(data["Timezone City"].toString().replace("_", "&nbsp;"))
+                   .append(data["Timezone City"].toString().replace('_', "&nbsp;"))
                    .append("</b> ");
         }
 
-        subText.append(KGlobal::locale()->formatTime(data["Time"].toTime(), false).replace(" ", "&nbsp;"))
+        subText.append(KGlobal::locale()->formatTime(data["Time"].toTime(), false).replace(' ', "&nbsp;"))
                .append(",&nbsp;")
-               .append(KGlobal::locale()->formatDate(data["Date"].toDate()).replace(" ", "&nbsp;"));
+               .append(KGlobal::locale()->formatDate(data["Date"].toDate()).replace(' ', "&nbsp;"));
     }
 
     void createCalendar()
@@ -123,7 +123,7 @@ public:
     void createToday()
     {
         if (displayHolidays && !holidaysRegion.isEmpty()) {
-            QString tmpStr = "isHoliday:" + holidaysRegion + ":" + QDate::currentDate().toString(Qt::ISODate);
+            QString tmpStr = "isHoliday:" + holidaysRegion + ':' + QDate::currentDate().toString(Qt::ISODate);
             bool isHoliday = q->dataEngine("calendar")->query(tmpStr).value(tmpStr).toBool();
 
             Plasma::ExtenderItem *todayExtender = q->extender()->item("today");
@@ -150,7 +150,7 @@ public:
         QList<Plasma::ExtenderItem *> extenders = q->extender()->items();
         for (int i = 0; i < extenders.size(); i++){
             Plasma::ExtenderItem *eItem = extenders.at(i);
-            if (eItem->name().startsWith("dateExtender-") && !eItem->isDetached()){
+            if (eItem->name().startsWith(QLatin1String("dateExtender-")) && !eItem->isDetached()){
                 eItem->destroy();
             }
         }
@@ -162,7 +162,7 @@ public:
         if (timezone == "UTC")  {
             prettyTimezone = timezonetranslated;
         } else if (!q->isLocalTimezone()) {
-            QStringList tzParts = timezonetranslated.split("/", QString::SkipEmptyParts);
+            QStringList tzParts = timezonetranslated.split('/', QString::SkipEmptyParts);
             if (tzParts.count() == 1) {
                 prettyTimezone = timezonetranslated;
             } else {
@@ -301,7 +301,7 @@ void ClockApplet::updateTipContent()
     {
         // the main text contains the current timezone's time and date
         Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
-        QString mainText = d->prettyTimezone + " ";
+        QString mainText = d->prettyTimezone + ' ';
         mainText += KGlobal::locale()->formatTime(data["Time"].toTime(), false) + "<br>";
         mainText += KGlobal::locale()->formatDate(data["Date"].toDate());
         tipData.setMainText(mainText);
@@ -361,7 +361,7 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
     QWidget *generalWidget = new QWidget();
     d->generalUi.setupUi(generalWidget);
 
-    parent->addPage(generalWidget, i18n("General"), Applet::icon());
+    parent->addPage(generalWidget, i18nc("General configuration page", "General"), Applet::icon());
 
     QStringList regions = dataEngine("calendar")->query("holidaysRegions").value("holidaysRegions").toStringList();
     QMap<QString, QPair<QString, QString> > names;
@@ -606,7 +606,7 @@ void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
         item->setIcon("view-pim-calendar");
         d->label = new Plasma::Label();
         item->setWidget(d->label);
-    } else if (item->name().startsWith("dateExtender-")) {
+    } else if (item->name().startsWith(QLatin1String("dateExtender-"))) {
         item->setIcon("view-pim-calendar");
         item->showCloseButton();
         QDate date = QDate::fromString(item->name().remove(0, 13), Qt::ISODate);
@@ -738,7 +738,7 @@ void ClockApplet::dateChanged(const QDate &date)
                 d->createDateExtender(date);
             }
         } else {
-            QString tmpStr = "isHoliday:" + d->holidaysRegion + ":" + date.toString(Qt::ISODate);
+            QString tmpStr = "isHoliday:" + d->holidaysRegion + ':' + date.toString(Qt::ISODate);
             if (dataEngine("calendar")->query(tmpStr).value(tmpStr).toBool()) {
                 d->createDateExtender(date);
             }
