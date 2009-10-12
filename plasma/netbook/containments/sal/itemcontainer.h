@@ -62,6 +62,7 @@ protected:
 
 private Q_SLOTS:
     void relayout();
+    void syncCurrentItem();
     void itemRemoved(QObject *object);
 
 Q_SIGNALS:
@@ -74,6 +75,7 @@ private:
     Plasma::IconWidget *m_currentIcon;
     Plasma::ItemBackground *m_hoverIndicator;
     QTimer *m_relayoutTimer;
+    QTimer *m_setCurrentTimer;
     QMultiMap<qreal, Plasma::IconWidget*> m_items;
     Qt::Orientation m_orientation;
     int m_currentIconIndexX;

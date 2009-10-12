@@ -43,9 +43,7 @@ ItemView::~ItemView()
 
 void ItemView::selectItem(Plasma::IconWidget *icon)
 {
-    QRectF iconRectToMainWidget = icon->mapToItem(m_itemContainer, icon->boundingRect()).boundingRect();
-
-    ensureRectVisible(iconRectToMainWidget);
+    ensureItemVisible(icon);
 }
 
 void ItemView::setCurrentItem(Plasma::IconWidget *currentIcon)

@@ -83,8 +83,7 @@ private:
     Plasma::RunnerContext *m_context;
     int m_shownIcons;
     int m_offset;
-    Plasma::IconWidget *m_currentIcon;
-    int m_currentIconIndex;
+    bool m_startupCompleted;
 };
 
 #endif

@@ -41,8 +41,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
       m_runnermg(rm),
       m_itemView(0),
       m_offset(0),
-      m_currentIcon(0),
-      m_currentIconIndex(-1)
+      m_startupCompleted(false)
 {
     setFrameShadow(Plasma::Frame::Raised);
     setEnabledBorders(Plasma::FrameSvg::BottomBorder|Plasma::FrameSvg::TopBorder);
@@ -111,6 +110,10 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
 
     m_favouritesIcons.insert(fav, match);
     m_itemView->insertItem(fav, -1);
+
+    if (m_startupCompleted) {
+        m_itemView->setCurrentItem(fav);
+    }
 }
 
 void StripWidget::add(Plasma::QueryMatch match, const QString &query)
@@ -261,6 +264,8 @@ void StripWidget::restore(KConfigGroup &cg)
             }
         }
     }
+
+    m_startupCompleted = true;
 }
 
 void StripWidget::focusInEvent(QFocusEvent *event)

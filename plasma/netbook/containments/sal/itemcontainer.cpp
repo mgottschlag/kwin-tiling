@@ -49,6 +49,10 @@ ItemContainer::ItemContainer(QGraphicsWidget *parent)
     m_relayoutTimer = new QTimer(this);
     m_relayoutTimer->setSingleShot(true);
     connect(m_relayoutTimer, SIGNAL(timeout()), this, SLOT(relayout()));
+
+    m_setCurrentTimer = new QTimer(this);
+    m_setCurrentTimer->setSingleShot(true);
+    connect(m_setCurrentTimer, SIGNAL(timeout()), this, SLOT(syncCurrentItem()));
 }
 
 ItemContainer::~ItemContainer()
@@ -56,6 +60,14 @@ ItemContainer::~ItemContainer()
 
 void ItemContainer::setCurrentItem(Plasma::IconWidget *currentIcon)
 {
+    if (m_relayoutTimer->isActive()) {
+        m_setCurrentTimer->start(400);
+        m_currentIcon = currentIcon;
+        return;
+    }
+
+    m_currentIcon = 0;
+
     for (int x = 0; x < m_layout->columnCount(); ++x) {
         for (int y = 0; y < m_layout->rowCount(); ++y) {
             if (m_layout->itemAt(y, x) == currentIcon) {
@@ -69,6 +81,11 @@ void ItemContainer::setCurrentItem(Plasma::IconWidget *currentIcon)
     }
 
     m_hoverIndicator->setTargetItem(currentIcon);
+}
+
+void ItemContainer::syncCurrentItem()
+{
+    setCurrentItem(m_currentIcon);
 }
 
 Plasma::IconWidget *ItemContainer::currentItem() const
@@ -101,7 +118,7 @@ void ItemContainer::insertItem(Plasma::IconWidget *icon, qreal weight)
 
     connect(icon, SIGNAL(destroyed(QObject *)), this, SLOT(itemRemoved(QObject *)));
 
-    m_relayoutTimer->start(400);
+    m_relayoutTimer->start(300);
 }
 
 void ItemContainer::clear()
