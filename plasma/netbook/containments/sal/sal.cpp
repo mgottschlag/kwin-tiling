@@ -36,6 +36,7 @@
 #include <KIcon>
 #include <KIconLoader>
 #include <KLineEdit>
+#include <KStandardDirs>
 
 #include <Plasma/Theme>
 #include <Plasma/Frame>
@@ -108,6 +109,24 @@ void SearchLaunch::init()
     QObject::connect(lockAction, SIGNAL(triggered(bool)), this, SLOT(toggleImmutability()));
     m_toolBox->addTool(lockAction);
 
+    QString defaultMatchesConfig = KStandardDirs::locate("appdata", "defaultmatchesrc");
+    KSharedPtr<KSharedConfig> config = KSharedConfig::openConfig(defaultMatchesConfig);
+    KConfigGroup iconsGroup(config, "Matches");
+
+    foreach (const QString &group, iconsGroup.groupList()) {
+        KConfigGroup iconConfig(&iconsGroup, group);
+
+        Plasma::QueryMatch match(0);
+        match.setType(Plasma::QueryMatch::ExactMatch);
+        match.setRelevance(1.0/(qreal)group.toInt());
+
+        match.setId(iconConfig.readEntry("Id"));
+        match.setIcon(KIcon(iconConfig.readEntry("Icon")));
+        match.setText(iconConfig.readEntry("Name"));
+        match.setData(iconConfig.readEntry("system"));
+
+        m_defaultMatches.append(match);
+    }
 }
 
 void SearchLaunch::toggleImmutability()
@@ -139,67 +158,7 @@ void SearchLaunch::doSearch(const QString query)
             return;
         }
 
-        QList<Plasma::QueryMatch> fakeMatches;
-        Plasma::QueryMatch match(0);
-        match.setType(Plasma::QueryMatch::ExactMatch);
-        match.setRelevance(0.8);
-
-        //FIXME: awfully hardcoded, find a way nicer way
-        match.setId("system");
-        match.setIcon(KIcon("preferences-system"));
-        match.setText(i18n("System"));
-        match.setData("system");
-        fakeMatches.append(match);
-
-        match.setId("bookmarks");
-        match.setIcon(KIcon("bookmarks"));
-        match.setText(i18n("Bookmarks"));
-        match.setData("bookmarks");
-        fakeMatches.append(match);
-
-        match.setId("contacts");
-        match.setIcon(KIcon("view-pim-contacts"));
-        match.setText(i18n("Contacts"));
-        match.setData("contacts");
-        fakeMatches.append(match);
-
-        match.setId("Network");
-        match.setIcon(KIcon("applications-internet"));
-        match.setText(i18n("Internet"));
-        match.setData("Network");
-        fakeMatches.append(match);
-
-        match.setId("AudioVideo");
-        match.setIcon(KIcon("applications-multimedia"));
-        match.setText(i18n("Multimedia"));
-        match.setData("AudioVideo");
-        fakeMatches.append(match);
-
-        match.setId("Education");
-        match.setIcon(KIcon("applications-education"));
-        match.setText(i18n("Education"));
-        match.setData("Education");
-        fakeMatches.append(match);
-
-        match.setId("Game");
-        match.setIcon(KIcon("applications-games"));
-        match.setText(i18n("Games"));
-        match.setData("Game");
-        fakeMatches.append(match);
-
-        match.setId("Graphics");
-        match.setIcon(KIcon("applications-graphics"));
-        match.setText(i18n("Graphics"));
-        match.setData("Graphics");
-        fakeMatches.append(match);
-
-        match.setId("Office");
-        match.setIcon(KIcon("applications-office"));
-        match.setText(i18n("Office"));
-        match.setData("Office");
-        fakeMatches.append(match);
-
-        setQueryMatches(fakeMatches);
+        setQueryMatches(m_defaultMatches);
         m_homeButton->hide();
     } else if (m_homeButton) {
         m_homeButton->show();

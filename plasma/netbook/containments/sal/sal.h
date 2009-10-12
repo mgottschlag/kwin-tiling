@@ -100,6 +100,8 @@ private:
     ItemView *m_resultsView;
     StripWidget *m_stripWidget;
 
+    QList<Plasma::QueryMatch> m_defaultMatches;
+
     QGraphicsLinearLayout *m_mainLayout;
     QGraphicsLinearLayout *m_appletsLayout;
     QPointF m_buttonDownMousePos;
