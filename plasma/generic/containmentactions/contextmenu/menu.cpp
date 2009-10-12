@@ -33,6 +33,7 @@
 
 #include <Plasma/Containment>
 #include <Plasma/Corona>
+#include <Plasma/Wallpaper>
 
 #include "kworkspace/kworkspace.h"
 #include "krunner_interface.h"
@@ -78,8 +79,8 @@ void ContextMenu::init(const KConfigGroup &config)
         defaultEnabled << true << true << true << true << true;
     } else {
         //FIXME ugly code!
-        m_allActions << "_context" << "_run_command" << "add widgets" << "_add panel" << "remove" << "lock widgets" << "zoom in" << "zoom out" << "_sep1" << "_lock_screen" << "_logout" << "_sep2" << "configure" << "configure shortcuts";
-        defaultEnabled << true << true << true << true << true << true << false << false << true << true << true << true << true << false;
+        m_allActions << "_context" << "_run_command" << "add widgets" << "_add panel" << "remove" << "lock widgets" << "zoom in" << "zoom out" << "_sep1" << "_lock_screen" << "_logout" << "_sep2" << "configure" << "configure shortcuts" << "_wallpaper";
+        defaultEnabled << true << true << true << true << true << true << false << false << true << true << true << true << true << false << true;
     }
 
     for (int i = 0; i < m_allActions.count(); ++i) {
@@ -188,6 +189,14 @@ QList<QAction*> ContextMenu::contextualActions()
             QString name = m_allActions.at(i);
             if (name == "_context") {
                 actions << c->contextualActions();
+            } if (name == "_wallpaper") {
+                if (c->wallpaper() &&
+                      !c->wallpaper()->contextualActions().isEmpty()) {
+                    QAction* sep = new QAction(this);
+                    sep->setSeparator(true);
+                    actions << sep;
+                    actions << c->wallpaper()->contextualActions();
+                }
             } else {
                 QAction *a = action(name);
                 if (a) {
@@ -371,6 +380,10 @@ QWidget* ContextMenu::createConfigurationInterface(QWidget* parent)
             item = new QCheckBox(widget);
             //FIXME better text
             item->setText(i18n("[Other Actions]"));
+        } if (name == "_wallpaper") {
+            item = new QCheckBox(widget);
+            item->setText(i18n("Wallpaper Actions"));
+            item->setIcon(KIcon("user-desktop"));
         } else {
             QAction *a = action(name);
             if (a) {

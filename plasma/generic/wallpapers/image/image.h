@@ -98,6 +98,8 @@ class Image : public Plasma::Wallpaper
         QDateTime m_previousModified;
         bool m_randomize;
         bool m_startupResumed;
+
+        QAction* nextWallpaperAction;
 };
 
 #endif

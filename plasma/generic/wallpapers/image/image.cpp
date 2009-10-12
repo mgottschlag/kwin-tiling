@@ -44,6 +44,8 @@ Image::Image(QObject *parent, const QVariantList &args)
     connect(this, SIGNAL(renderCompleted(QImage)), this, SLOT(updateBackground(QImage)));
     connect(this, SIGNAL(urlDropped(KUrl)), this, SLOT(setWallpaper(KUrl)));
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(nextSlide()));
+    nextWallpaperAction = new QAction(KIcon("user-desktop"), "Next Wallpaper Image", NULL);
+    connect(nextWallpaperAction, SIGNAL(triggered(bool)), this, SLOT(nextSlide()));
 }
 
 Image::~Image()
@@ -81,8 +83,12 @@ void Image::init(const KConfigGroup &config)
 
     if (m_mode == "SingleImage") {
         setSingleImage();
+        setContextualActions(QList<QAction*>());
     } else {
         QTimer::singleShot(0, this, SLOT(startSlideshow()));
+        QList<QAction*> actions;
+        actions.push_back(nextWallpaperAction);
+        setContextualActions(actions);
     }
 }
 
