@@ -108,7 +108,7 @@ void TaskArea::setAlwaysShownTypes(const QStringList &alwaysShownTypes)
 {
     d->alwaysShownTypes.clear();
 
-    foreach (QString type, alwaysShownTypes) {
+    foreach (const QString &type, alwaysShownTypes) {
         if (!d->hiddenTypes.contains(type)) {
             d->alwaysShownTypes.insert(type);
         }

@@ -61,7 +61,7 @@ public:
     QString message() const;
 
     /**
-     * @return the errormessage if an error has occured.
+     * @return the errormessage if an error has occurred.
      */
     QString error() const;
 

@@ -143,7 +143,7 @@ void PlasmoidTask::Private::setupApplet()
 
     if (!applet) {
         kDebug() << "Could not load applet" << name;
-        name = QString();
+        name.clear();
         return;
     }
 

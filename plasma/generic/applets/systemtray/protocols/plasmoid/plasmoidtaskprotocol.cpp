@@ -56,7 +56,7 @@ void PlasmoidProtocol::forwardConstraintsEvent(Plasma::Constraints constraints)
 void PlasmoidProtocol::loadFromConfig(const KConfigGroup &cg, Plasma::Applet *parent)
 {
     KConfigGroup appletGroup(&cg, "Applets");
-    foreach (QString groupName, appletGroup.groupList()) {
+    foreach (const QString &groupName, appletGroup.groupList()) {
 
         KConfigGroup childGroup(&appletGroup, groupName);
         QString appletName = childGroup.readEntry("plugin", QString());

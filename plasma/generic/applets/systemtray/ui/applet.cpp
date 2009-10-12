@@ -33,11 +33,11 @@
 #include <QtGui/QCheckBox>
 #include <QtGui/QPainter>
 #include <QtGui/QX11Info>
-#include <QtGui/QComboBox>
 #include <QtCore/QProcess>
 
 
 #include <KConfigDialog>
+#include <KComboBox>
 
 #include <Solid/Device>
 
@@ -524,7 +524,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
 
     foreach (const Task *task, sortedTasks) {
         QTreeWidgetItem *listItem = new QTreeWidgetItem(d->autoHideUi.icons);
-        QComboBox *itemCombo = new QComboBox(d->autoHideUi.icons);
+        KComboBox *itemCombo = new KComboBox(d->autoHideUi.icons);
         listItem->setText(0, task->name());
         listItem->setIcon(0, task->icon());
         listItem->setFlags(Qt::ItemIsEnabled);
@@ -569,7 +569,7 @@ void Applet::configAccepted()
     QTreeWidget *hiddenList = d->autoHideUi.icons;
     for (int i = 0; i < hiddenList->topLevelItemCount(); ++i) {
         QTreeWidgetItem *item = hiddenList->topLevelItem(i);
-        QComboBox *itemCombo = static_cast<QComboBox *>(hiddenList->itemWidget(item, 1));
+        KComboBox *itemCombo = static_cast<KComboBox *>(hiddenList->itemWidget(item, 1));
         //kDebug() << (item->checkState() == Qt::Checked) << item->data(Qt::UserRole).toString();
         //Always hidden
         if (itemCombo->currentIndex() == 1) {
@@ -666,7 +666,7 @@ void Applet::configAccepted()
         }
     }
 
-    foreach (QString appletName, applets) {
+    foreach (const QString &appletName, applets) {
         Private::s_manager->removeApplet(appletName, this);
     }
 

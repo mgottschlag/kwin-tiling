@@ -117,6 +117,7 @@ void FdoGraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 
 void FdoGraphicsWidget::hideEvent(QHideEvent *event)
 {
+    Q_UNUSED(event);
     if (d->widget) {
         d->widget->hide();
     }
@@ -124,6 +125,7 @@ void FdoGraphicsWidget::hideEvent(QHideEvent *event)
 
 void FdoGraphicsWidget::showEvent(QShowEvent *event)
 {
+    Q_UNUSED(event);
     if (d->widget) {
         d->widget->show();
     }

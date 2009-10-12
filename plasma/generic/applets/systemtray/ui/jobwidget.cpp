@@ -321,7 +321,7 @@ void JobWidget::updateLabels()
     if (!labelName0.isEmpty()) {
         m_fromNameLabel->setText(QString("%1: ").arg(labelName0));
     }
-    if (label0.startsWith("file://")) {
+    if (label0.startsWith(QLatin1String("file://"))) {
         label0 = KUrl(label0).toLocalFile();
     }
 
@@ -330,7 +330,7 @@ void JobWidget::updateLabels()
     if (!labelName1.isEmpty()) {
         m_toNameLabel->setText(QString("%1: ").arg(labelName1));
     }
-    if (label1.startsWith("file://")) {
+    if (label1.startsWith(QLatin1String("file://"))) {
         label1 = KUrl(label1).toLocalFile();
     }
 

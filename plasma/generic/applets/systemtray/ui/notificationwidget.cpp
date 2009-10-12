@@ -159,7 +159,7 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
     }
 
     QString processed = message.trimmed();
-    processed.replace("\n", "<br>");
+    processed.replace('\n', "<br>");
     body->setHtml(processed);
 }
 
