@@ -218,7 +218,7 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
 
 void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
-    if (source.startsWith("Battery")) {
+    if (source.startsWith(QLatin1String("Battery"))) {
         m_batteries_data[source] = data;
     } else if (source == "AC Adapter") {
         m_acAdapterPlugged = data["Plugged in"].toBool();
@@ -1047,7 +1047,7 @@ void Battery::connectSources()
 
 void Battery::sourceAdded(const QString& source)
 {
-    if (source.startsWith("Battery") && source != "Battery") {
+    if (source.startsWith(QLatin1String("Battery")) && source != "Battery") {
         dataEngine("powermanagement")->connectSource(source, this);
         m_numOfBattery++;
         constraintsEvent(Plasma::SizeConstraint);
