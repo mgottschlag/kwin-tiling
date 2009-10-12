@@ -143,6 +143,14 @@ protected:
             m_itemBackground->setTargetItem(icon);
         } else if (icon && event->type() == QEvent::Show) {
             //force the newly shown icon to have a sensible size
+            icon->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+            layout()->invalidate();
+        } else if (icon && event->type() == QEvent::Hide) {
+            if (m_location == Plasma::TopEdge || m_location == Plasma::BottomEdge) {
+                icon->setMaximumWidth(0);
+            } else {
+                icon->setMaximumHeight(0);
+            }
             layout()->invalidate();
         }
         return false;
