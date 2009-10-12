@@ -44,17 +44,19 @@ BGMonitorArrangement::BGMonitorArrangement(QWidget *parent)
 {
     m_pBGMonitor.resize( QApplication::desktop()->numScreens());
 
-    for (int screen = 0; screen < QApplication::desktop()->numScreens(); ++screen)
+    int numScreens = QApplication::desktop()->numScreens();
+    for (int screen = 0; screen < numScreens; ++screen)
     {
         ScreenPreviewWidget *previewWidget = new ScreenPreviewWidget(this);
         m_pBGMonitor[screen] = previewWidget;
         previewWidget->setWhatsThis( i18n("This picture of a monitor contains a preview of what the current settings will look like on your desktop.") );
 
         connect( previewWidget, SIGNAL(imageDropped(const QString &)), this, SIGNAL(imageDropped(const QString &)) );
+        previewWidget->setFixedSize(180,180);
     }
 
-    parent->setFixedSize(200, 200);
-    setFixedSize(200, 200);
+    parent->setFixedSize(210*numScreens, 200);
+    setFixedSize(210*numScreens, 200);
     updateArrangement();
 }
 
