@@ -34,6 +34,7 @@ Description=System policies prevent you from saving the date/time settings.
 Description[en_GB]=System policies prevent you from saving the date/time settings.
 Description[pt]=As políticas do sistema proíbem a modificação da configuração de data/hora.
 Description[pt_BR]=As políticas do sistema previnem a modificação das configurações de data e hora.
+Description[sv]=Systemets policy förhindrar att du sparar inställningar av datum och tid.
 Description[uk]=Згідно до загальносистемних правил, ви не можете зберігати параметри дати/часу.
 Description[x-test]=xxSystem policies prevent you from saving the date/time settings.xx
 Policy=auth_admin
