@@ -214,11 +214,13 @@ void StripWidget::restore(KConfigGroup &cg)
     KConfigGroup stripGroup(&cg, "stripwidget");
 
     // get all the favourites
-    QList<KConfigGroup> favouritesConfigs;
+    QStringList groupNames(stripGroup.groupList());
+    qSort(groupNames);
+    QMap<uint, KConfigGroup> favouritesConfigs;
     foreach (const QString &favouriteGroup, stripGroup.groupList()) {
         if (favouriteGroup.startsWith("favourite-")) {
             KConfigGroup favouriteConfig(&stripGroup, favouriteGroup);
-            favouritesConfigs.append(favouriteConfig);
+            favouritesConfigs.insert(favouriteGroup.split("-").last().toUInt(), favouriteConfig);
         }
     }
 
@@ -237,15 +239,16 @@ void StripWidget::restore(KConfigGroup &cg)
         runnerIds.resize(favouritesConfigs.size());
         queries.resize(favouritesConfigs.size());
         matchIds.resize(favouritesConfigs.size());
-        QMutableListIterator<KConfigGroup> it(favouritesConfigs);
+        QMap<uint, KConfigGroup>::const_iterator it = favouritesConfigs.constBegin();
         int i = 0;
-        while (it.hasNext()) {
-            KConfigGroup &favouriteConfig = it.next();
+        while (it != favouritesConfigs.constEnd()) {
+            KConfigGroup favouriteConfig = it.value();
 
             runnerIds[i] = favouriteConfig.readEntry("runnerid");
             queries[i] = favouriteConfig.readEntry("query");
             matchIds[i] = favouriteConfig.readEntry("matchId");
             ++i;
+            ++it;
         }
     }
 
