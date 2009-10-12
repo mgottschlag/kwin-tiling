@@ -322,7 +322,7 @@ void NotifierDialog::buildDialog()
 
     m_itemBackground = new Plasma::ItemBackground(devicesWidget);
     m_itemBackground->hide();
-    connect(m_itemBackground, SIGNAL(targetItemReached(QGraphicsItem *)), this, SLOT(itemHovered(QGraphicsItem *)));
+    connect(m_itemBackground, SIGNAL(animationStep(qreal)), this, SLOT(itemBackgroundMoving(qreal)));
 
     m_selectedItemBackground = new Plasma::ItemBackground(devicesWidget);
     connect(m_selectedItemBackground, SIGNAL(targetItemReached(QGraphicsItem*)),
@@ -490,11 +490,14 @@ void NotifierDialog::selectedItemAnimationComplete(QGraphicsItem *item)
     }
 }
 
-void NotifierDialog::itemHovered(QGraphicsItem *item)
+void NotifierDialog::itemBackgroundMoving(qreal step)
 {
-    DeviceItem *devItem = dynamic_cast<DeviceItem *>(item);
-    if (devItem && devItem->hovered()) {
-        devItem->updateHoverDisplay();
+    for (int i = 0; i < m_deviceLayout->count(); ++i) {
+        DeviceItem *item = dynamic_cast<DeviceItem *>(m_deviceLayout->itemAt(i));
+        if (item && item->hovered() && item->isCollapsed()) {
+            item->setHoverDisplayOpacity(step);
+            return;
+        }
     }
 }
 

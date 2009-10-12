@@ -21,6 +21,7 @@
 #include "deviceitem.h"
 
 //Qt
+#include <QtGui/QGraphicsOpacityEffect>
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsLinearLayout>
@@ -42,6 +43,7 @@
 #include <Plasma/BusyWidget>
 #include <Plasma/ItemBackground>
 #include <Plasma/Label>
+#include <Plasma/Animator>
 
 //Own
 #include "notifierdialog.h"
@@ -97,6 +99,7 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
     font.setPointSize(KGlobalSettings::smallestReadableFont().pointSize());
     font.setItalic(true);
     m_descriptionLabel->setFont(font);
+    m_descriptionLabel->setGraphicsEffect(new QGraphicsOpacityEffect(m_descriptionLabel));
     updateColors();
 
     m_descriptionLabel->hide();
@@ -108,6 +111,7 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
     capacityBarWidget->setContinuous(true);
     m_capacityBar->setAcceptHoverEvents(false);
     m_capacityBar->setMaximumHeight(12);
+    m_capacityBar->setGraphicsEffect(new QGraphicsOpacityEffect(m_capacityBar));
 
     m_capacityBar->hide();
 
@@ -119,6 +123,7 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
     m_leftActionIcon->hide();
     m_leftActionIcon->setMaximumSize(m_leftActionIcon->sizeFromIconSize(LEFTACTION_SIZE));
     m_leftActionIcon->setSizePolicy(QSizePolicy::Fixed,  QSizePolicy::Fixed);
+    m_leftActionIcon->setGraphicsEffect(new QGraphicsOpacityEffect(m_leftActionIcon));
     connect(m_leftActionIcon, SIGNAL(clicked()), this, SLOT(leftActionClicked()));
 
     m_mainLayout->addItem(m_deviceIcon);
@@ -282,8 +287,13 @@ void DeviceItem::setHovered(const bool hovered)
     }
 
     m_hovered = hovered;
-    if (!hovered) {
-        updateHoverDisplay();
+    if (isCollapsed()) {
+        if (hovered) {
+            updateHoverDisplay();
+        } else {
+            Plasma::Animator::self()->customAnimation(15, 200, Plasma::Animator::LinearCurve,
+                                            this, "setHoverDisplayOpacity");
+        }
     }
 }
 
@@ -300,6 +310,27 @@ void DeviceItem::updateHoverDisplay()
         barVisible != m_capacityBar->isVisible()) {
         // work around for a QGraphicsLayout bug when used with proxy widgets
         m_mainLayout->invalidate();
+    }
+}
+
+void DeviceItem::setHoverDisplayOpacity(qreal opacity)
+{
+    if (!hovered()) {
+        opacity = 1 - opacity;
+    }
+
+    QGraphicsOpacityEffect *labelEffect = dynamic_cast<QGraphicsOpacityEffect *>(m_descriptionLabel->graphicsEffect());
+    QGraphicsOpacityEffect *leftActionEffect = dynamic_cast<QGraphicsOpacityEffect *>(m_leftActionIcon->graphicsEffect());
+    QGraphicsOpacityEffect *capacityBarEffect = dynamic_cast<QGraphicsOpacityEffect *>(m_capacityBar->graphicsEffect());
+
+    if (labelEffect && leftActionEffect && capacityBarEffect) {
+        labelEffect->setOpacity(opacity);
+        leftActionEffect->setOpacity(opacity);
+        capacityBarEffect->setOpacity(opacity);
+    }
+
+    if (!hovered() && opacity == 0) {
+        updateHoverDisplay();
     }
 }
 

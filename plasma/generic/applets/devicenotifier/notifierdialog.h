@@ -251,11 +251,7 @@ namespace Notifier
           **/
           void resetNotifierIcon();
 
-          /**
-          * @internal slot called when the ItemBackground has reached a device item
-          * @param item a pointer to the item with the ItemBackground
-          **/
-          void itemHovered(QGraphicsItem *item);
+          void itemBackgroundMoving(qreal step);
 
           /**
           * @internal slot called when the user changes the visibility of a device
@@ -309,7 +305,6 @@ namespace Notifier
           * @internal updates the color for the category label
           **/
           void updateCategoryColors(Plasma::Label *);
-
 
           void updateMainLabelText();
 

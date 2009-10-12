@@ -181,8 +181,6 @@ class DeviceItem : public QGraphicsWidget
         **/
         void updateColors();
 
-        void updateHoverDisplay();
-
         static const int MARGIN = 3;
         static const int TEXT_MARGIN = 3;
         static const int LEFTACTION_SIZE = 22;
@@ -193,6 +191,7 @@ class DeviceItem : public QGraphicsWidget
         **/
         void setReady();
 
+        void setHoverDisplayOpacity(qreal opacity);
     signals:
         /**
         * Emitted when the left action has been clicked
@@ -241,6 +240,8 @@ class DeviceItem : public QGraphicsWidget
         void triggerBusyWidget();
 
     private:
+        void updateHoverDisplay();
+
         ///The icon of the device
         QIcon m_icon;
 
