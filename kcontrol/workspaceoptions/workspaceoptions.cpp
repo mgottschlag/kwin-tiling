@@ -25,6 +25,7 @@
 #include <kmessagebox.h>
 #include <kpluginfactory.h>
 #include <kaboutdata.h>
+#include <KStandardDirs>
 #include <KRun>
 #include <KUrl>
 
@@ -57,6 +58,11 @@ WorkspaceOptionsModule::WorkspaceOptionsModule(QWidget *parent, const QVariantLi
     connect(m_ui->formFactor, SIGNAL(currentIndexChanged(int)), this, SLOT(changed()));
     connect(m_ui->dashboardMode, SIGNAL(currentIndexChanged(int)), this, SLOT(changed()));
     connect(m_ui->formFactor, SIGNAL(currentIndexChanged(int)), this, SLOT(formFactorChanged(int)));
+
+    //enable the combobox if both plasma-desktop and plasma-netbook are present
+    if (KStandardDirs::findExe("plasma-desktop").isNull() || KStandardDirs::findExe("plasma-netbook").isNull()) {
+        m_ui->formFactor->setEnabled(false);
+    }
 }
 
 WorkspaceOptionsModule::~WorkspaceOptionsModule()
