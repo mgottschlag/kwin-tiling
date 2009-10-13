@@ -547,7 +547,7 @@ void NOAAIon::updateWeather(const QString& source)
     data.insert("Credit", i18n("Data provided by NOAA National Weather Service"));
 
     int dayIndex = 0;
-    foreach(WeatherData::Forecast forecast, d->m_weatherData[source].forecasts) {
+    foreach(const WeatherData::Forecast &forecast, d->m_weatherData[source].forecasts) {
 
         ConditionIcons icon = getConditionIcon(forecast.summary.toLower(), true);
         QString iconName = getWeatherIcon(icon);

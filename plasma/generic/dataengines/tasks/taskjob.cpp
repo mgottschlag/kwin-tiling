@@ -32,7 +32,7 @@ void TaskJob::start()
 {
     // only a subset of task operations are exported
     const QString operation = operationName();
-    if (operation.startsWith("set")) {
+    if (operation.startsWith(QLatin1String("set"))) {
         if (operation == "setMaximized") {
             m_source->getTask()->setMaximized(parameters().value("maximized").toBool());
             setResult(true);
@@ -64,7 +64,7 @@ void TaskJob::start()
             return;
         }
     }
-    else if (operation.startsWith("toggle")) {
+    else if (operation.startsWith(QLatin1String("toggle"))) {
         if (operation == "toggleMaximized") {
             m_source->getTask()->toggleMaximized();
             setResult(true);

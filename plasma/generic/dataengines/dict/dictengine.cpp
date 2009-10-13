@@ -64,7 +64,7 @@ static QString wnToHtml(const QString &word, QByteArray &text)
         //250 ok (optional timing information here)
         //552 No match
         QString currentLine = splitText.takeFirst();
-        if (currentLine.startsWith("151")) {
+        if (currentLine.startsWith(QLatin1String("151"))) {
             isFirst = true;
             continue;
         }
@@ -74,8 +74,10 @@ static QString wnToHtml(const QString &word, QByteArray &text)
             continue;
         }
 
-        if (!(currentLine.startsWith("150") || currentLine.startsWith("151")
-           || currentLine.startsWith("250") || currentLine.startsWith("552"))) {
+        if (!(currentLine.startsWith(QLatin1String("150"))
+           || currentLine.startsWith(QLatin1String("151"))
+           || currentLine.startsWith(QLatin1String("250"))
+           || currentLine.startsWith(QLatin1String("552")))) {
             currentLine.replace(linkRx,"<a href=\"\\1\">\\1</a>");
 
             if (isFirst) {
@@ -143,14 +145,15 @@ void DictEngine::getDicts()
     while (!retLines.empty()) {
         QString curr(retLines.takeFirst());
 
-        if (curr.startsWith("554")) {
+        if (curr.startsWith(QLatin1String("554"))) {
             //TODO: What happens if no DB available?
             //TODO: Eventually there will be functionality to change the server...
             break;
         }
 
         // ignore status code and empty lines
-        if (curr.startsWith("250") || curr.startsWith("110") || curr.isEmpty()) {
+        if (curr.startsWith(QLatin1String("250")) || curr.startsWith(QLatin1String("110"))
+           || curr.isEmpty()) {
             continue;
         }
 

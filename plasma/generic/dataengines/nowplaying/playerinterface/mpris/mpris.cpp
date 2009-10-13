@@ -58,7 +58,7 @@ Player::Ptr MprisFactory::create(const QVariantList& args)
 
 bool MprisFactory::matches(const QString& serviceName)
 {
-    return serviceName.startsWith("org.mpris");
+    return serviceName.startsWith(QLatin1String("org.mpris"));
 }
 
 
@@ -69,7 +69,7 @@ Mpris::Mpris(const QString& name, PlayerFactory* factory)
       m_player(0),
       m_playerName(name)
 {
-    if (!name.startsWith("org.mpris")) {
+    if (!name.startsWith(QLatin1String("org.mpris"))) {
         m_playerName = "org.mpris." + name;
     }
     setName(m_playerName);

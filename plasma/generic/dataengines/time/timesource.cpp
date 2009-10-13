@@ -70,7 +70,7 @@ void TimeSource::setTimeZone(const QString &tz)
     const QString trTimezone = i18n(timezone.toUtf8());
     setData(I18N_NOOP("Timezone"), trTimezone);
 
-    const QStringList tzParts = trTimezone.split("/", QString::SkipEmptyParts);
+    const QStringList tzParts = trTimezone.split('/', QString::SkipEmptyParts);
     if (tzParts.count() == 1) {
         // no '/' so just set it as the city
         setData(I18N_NOOP("Timezone City"), trTimezone);

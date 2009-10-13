@@ -39,7 +39,7 @@ CalendarEngine::~CalendarEngine()
 bool CalendarEngine::sourceRequestEvent(const QString &name)
 {
     kDebug() << name << "\n";
-    const QStringList tokens = name.split(":");
+    const QStringList tokens = name.split(':');
 
     if (tokens.count() < 3) {
         if (name == "holidaysRegions") {

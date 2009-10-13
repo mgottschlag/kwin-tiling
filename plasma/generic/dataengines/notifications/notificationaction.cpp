@@ -33,7 +33,7 @@ void NotificationAction::start()
         return;
     }
 
-    const QStringList dest = destination().split(" ");
+    const QStringList dest = destination().split(' ');
 
     if (dest.count() >  1 && !dest[1].toInt()) {
         setErrorText(i18n("Invalid destination: %1", destination()));

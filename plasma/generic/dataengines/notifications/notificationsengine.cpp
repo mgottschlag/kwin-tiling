@@ -127,7 +127,7 @@ static QImage decodeNotificationSpecImageHint(const QDBusArgument& arg)
 static QString findImageForSpecImagePath(const QString &_path)
 {
     QString path = _path;
-    if (path.startsWith("file:")) {
+    if (path.startsWith(QLatin1String("file:"))) {
         KUrl url(path);
         path = url.toLocalFile();
     }
