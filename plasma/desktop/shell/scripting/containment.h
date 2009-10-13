@@ -21,9 +21,9 @@
 #define CONTAINMENT
 
 #include <QObject>
-#include <QPointer>
 #include <QScriptContext>
 #include <QScriptValue>
+#include <QWeakPointer>
 
 namespace Plasma
 {
@@ -98,7 +98,7 @@ public Q_SLOTS:
 private:
     PanelView *panel() const;
 
-    QPointer<Plasma::Containment> m_containment;
+    QWeakPointer<Plasma::Containment> m_containment;
     bool m_isPanel;
 };
 

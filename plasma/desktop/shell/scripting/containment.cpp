@@ -32,7 +32,7 @@
 Containment::Containment(Plasma::Containment *containment, QObject *parent)
     : QObject(parent),
       m_containment(containment),
-      m_isPanel(m_containment ? ScriptEngine::isPanel(m_containment) : false)
+      m_isPanel(containment && ScriptEngine::isPanel(containment))
 {
 }
 
@@ -46,7 +46,7 @@ QString Containment::location() const
         return "floating";
     }
 
-    switch (m_containment->location()) {
+    switch (m_containment.data()->location()) {
         case Plasma::Floating:
             return "floating";
             break;
@@ -73,28 +73,29 @@ QString Containment::location() const
     return "floating";
 }
 
-void Containment::setLocation(const QString &location)
+void Containment::setLocation(const QString &locationString)
 {
     if (!m_containment) {
         return;
     }
 
-    const QString lower = location.toLower();
-    if (location == "floating") {
-        m_containment->setLocation(Plasma::Floating);
-    } else if (location == "desktop") {
-        m_containment->setLocation(Plasma::Desktop);
-    } else if (location == "fullscreen") {
-        m_containment->setLocation(Plasma::FullScreen);
-    } else if (location == "top") {
-        m_containment->setLocation(Plasma::TopEdge);
-    } else if (location == "bottom") {
-        m_containment->setLocation(Plasma::BottomEdge);
-    } else if (location == "left") {
-        m_containment->setLocation(Plasma::LeftEdge);
-    } else if (location == "right") {
-        m_containment->setLocation(Plasma::RightEdge);
+    const QString lower = locationString.toLower();
+    Plasma::Location loc = Plasma::Floating;
+    if (lower == "desktop") {
+        loc = Plasma::Desktop;
+    } else if (lower == "fullscreen") {
+        loc = Plasma::FullScreen;
+    } else if (lower == "top") {
+        loc = Plasma::TopEdge;
+    } else if (lower == "bottom") {
+        loc = Plasma::BottomEdge;
+    } else if (lower == "left") {
+        loc = Plasma::LeftEdge;
+    } else if (lower == "right") {
+        loc = Plasma::RightEdge;
     }
+
+    m_containment.data()->setLocation(loc);
 }
 
 int Containment::screen() const
@@ -103,13 +104,13 @@ int Containment::screen() const
         return -1;
     }
 
-    return m_containment->screen();
+    return m_containment.data()->screen();
 }
 
 void Containment::setScreen(int screen)
 {
     if (m_containment) {
-        m_containment->setScreen(screen);
+        m_containment.data()->setScreen(screen);
     }
 }
 
@@ -119,13 +120,13 @@ int Containment::desktop() const
         return -1;
     }
 
-    return m_containment->desktop();
+    return m_containment.data()->desktop();
 }
 
 void Containment::setDesktop(int desktop)
 {
     if (m_containment) {
-        m_containment->setScreen(m_containment->screen(), desktop);
+        m_containment.data()->setScreen(m_containment.data()->screen(), desktop);
     }
 }
 
@@ -135,7 +136,7 @@ QString Containment::formFactor() const
         return "Planar";
     }
 
-    switch (m_containment->formFactor()) {
+    switch (m_containment.data()->formFactor()) {
         case Plasma::Planar:
             return "planar";
             break;
@@ -160,7 +161,7 @@ QList<int> Containment::widgetIds() const
     QList<int> w;
 
     if (m_containment) {
-        foreach (const Plasma::Applet *applet, m_containment->applets()) {
+        foreach (const Plasma::Applet *applet, m_containment.data()->applets()) {
             w.append(applet->id());
         }
     }
@@ -182,7 +183,7 @@ QScriptValue Containment::widgetById(QScriptContext *context, QScriptEngine *eng
     }
 
     if (c->m_containment) {
-        foreach (Plasma::Applet *w, c->m_containment->applets()) {
+        foreach (Plasma::Applet *w, c->m_containment.data()->applets()) {
             if (w->id() == id) {
                 return ScriptEngine::wrap(w, engine);
             }
@@ -207,13 +208,13 @@ QScriptValue Containment::addWidget(QScriptContext *context, QScriptEngine *engi
     QScriptValue v = context->argument(0);
     Plasma::Applet *applet = 0;
     if (v.isString()) {
-        applet = c->m_containment->addApplet(v.toString());
+        applet = c->m_containment.data()->addApplet(v.toString());
         if (applet) {
             return ScriptEngine::wrap(applet, engine);
         }
     } else if (Widget *widget = qobject_cast<Widget*>(v.toQObject())) {
         applet = widget->applet();
-        c->m_containment->addApplet(applet);
+        c->m_containment.data()->addApplet(applet);
         return v;
     }
 
@@ -226,7 +227,7 @@ uint Containment::id() const
         return 0;
     }
 
-    return m_containment->id();
+    return m_containment.data()->id();
 }
 
 QString Containment::name() const
@@ -235,13 +236,13 @@ QString Containment::name() const
         return QString();
     }
 
-    return m_containment->activity();
+    return m_containment.data()->activity();
 }
 
 void Containment::setName(const QString &name)
 {
     if (m_containment) {
-        m_containment->setActivity(name);
+        m_containment.data()->setActivity(name);
     }
 }
 
@@ -251,19 +252,22 @@ QString Containment::type() const
         return QString();
     }
 
-    return m_containment->pluginName();
+    return m_containment.data()->pluginName();
 }
 
 void Containment::remove()
 {
     m_isPanel = false;
-    m_containment->destroy(false);
+
+    if (m_containment) {
+        m_containment.data()->destroy(false);
+    }
 }
 
 void Containment::showConfigurationInterface()
 {
     if (m_containment) {
-        QAction *configAction = m_containment->action("configure");
+        QAction *configAction = m_containment.data()->action("configure");
         if (configAction && configAction->isEnabled()) {
             configAction->trigger();
         }
@@ -277,7 +281,7 @@ PanelView *Containment::panel() const
     }
 
     foreach (PanelView *v, PlasmaApp::self()->panelViews()) {
-        if (v->containment() == m_containment) {
+        if (v->containment() == m_containment.data()) {
             return v;
         }
     }
@@ -348,30 +352,31 @@ int Containment::offset() const
 
 void Containment::setOffset(int pixels)
 {
-    if (pixels < 0) {
+    if (pixels < 0 || !m_containment) {
         return;
     }
 
     PanelView *v = panel();
     if (v) {
-        QRectF screen = m_containment->corona()->screenGeometry(v->screen());
-        QSizeF size = m_containment->size();
+        Plasma::Containment *containment = m_containment.data();
+        QRectF screen = containment->corona()->screenGeometry(v->screen());
+        QSizeF size = containment->size();
 
-        if (m_containment->formFactor() == Plasma::Vertical) {
+        if (containment->formFactor() == Plasma::Vertical) {
             if (pixels > screen.height()) {
                 return;
             }
 
             if (size.height() + pixels > screen.height()) {
-                m_containment->resize(size.width(), screen.height() - pixels);
+                containment->resize(size.width(), screen.height() - pixels);
             }
         } else if (pixels > screen.width()) {
             return;
         } else if (size.width() + pixels > screen.width()) {
             size.setWidth(screen.width() - pixels);
-            m_containment->resize(size);
-            m_containment->setMinimumSize(size);
-            m_containment->setMaximumSize(size);
+            containment->resize(size);
+            containment->setMinimumSize(size);
+            containment->setMaximumSize(size);
         }
 
         v->setOffset(pixels);
@@ -380,24 +385,30 @@ void Containment::setOffset(int pixels)
 
 int Containment::length() const
 {
-    if (m_containment->formFactor() == Plasma::Vertical) {
-        return m_containment->size().height();
+    if (!m_containment) {
+        return 0;
+    }
+
+    Plasma::Containment *containment = m_containment.data();
+    if (containment->formFactor() == Plasma::Vertical) {
+        return containment->size().height();
     } else {
-        return m_containment->size().width();
+        return containment->size().width();
     }
 }
 
 void Containment::setLength(int pixels)
 {
-    if (pixels < 0) {
+    if (pixels < 0 || !m_containment) {
         return;
     }
 
     PanelView *v = panel();
     if (v) {
-        QRectF screen = m_containment->corona()->screenGeometry(v->screen());
-        QSizeF s = m_containment->size();
-        if (m_containment->formFactor() == Plasma::Vertical) {
+        Plasma::Containment *containment = m_containment.data();
+        QRectF screen = containment->corona()->screenGeometry(v->screen());
+        QSizeF s = containment->size();
+        if (containment->formFactor() == Plasma::Vertical) {
             if (pixels > screen.height() - v->offset()) {
                 return;
             }
@@ -409,9 +420,9 @@ void Containment::setLength(int pixels)
             s.setWidth(pixels);
         }
 
-        m_containment->resize(s);
-        m_containment->setMinimumSize(s);
-        m_containment->setMaximumSize(s);
+        containment->resize(s);
+        containment->setMinimumSize(s);
+        containment->setMaximumSize(s);
     }
 }
 
@@ -421,32 +432,34 @@ int Containment::height() const
         return 0;
     }
 
-    return m_containment->formFactor() == Plasma::Vertical ? m_containment->size().width() :
-                                                             m_containment->size().height();
+    Plasma::Containment *containment = m_containment.data();
+    return containment->formFactor() == Plasma::Vertical ? containment->size().width() :
+                                                           containment->size().height();
 }
 
 void Containment::setHeight(int height)
 {
-    if (height < 16) {
+    if (height < 16 || !m_containment) {
         return;
     }
 
     PanelView *v = panel();
     if (v) {
-        QRect screen = m_containment->corona()->screenGeometry(v->screen());
-        QSizeF size = m_containment->size();
-        const int max = (m_containment->formFactor() == Plasma::Vertical ? screen.width() : screen.height()) / 3;
+        Plasma::Containment *containment = m_containment.data();
+        QRect screen = containment->corona()->screenGeometry(v->screen());
+        QSizeF size = containment->size();
+        const int max = (containment->formFactor() == Plasma::Vertical ? screen.width() : screen.height()) / 3;
         height = qBound(16, height, max);
 
-        if (m_containment->formFactor() == Plasma::Vertical) {
+        if (containment->formFactor() == Plasma::Vertical) {
             size.setWidth(height);
         } else {
             size.setHeight(height);
         }
 
-        m_containment->resize(size);
-        m_containment->setMinimumSize(size);
-        m_containment->setMaximumSize(size);
+        containment->resize(size);
+        containment->setMinimumSize(size);
+        containment->setMaximumSize(size);
     }
 }
 
