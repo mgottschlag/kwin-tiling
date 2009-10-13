@@ -21,7 +21,7 @@
 #define WIDGET
 
 #include <QObject>
-#include <QPointer>
+#include <QWeakPointer>
 
 #include <KConfigGroup>
 
@@ -67,7 +67,7 @@ public Q_SLOTS:
     void showConfigurationInterface();
 
 private:
-    QPointer<Plasma::Applet> m_applet;
+    QWeakPointer<Plasma::Applet> m_applet;
     KConfigGroup m_configGroup;
     bool m_configDirty;
 };

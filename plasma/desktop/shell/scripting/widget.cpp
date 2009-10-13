@@ -37,15 +37,15 @@ Widget::Widget(Plasma::Applet *applet, QObject *parent)
 Widget::~Widget()
 {
     if (m_configDirty && m_applet) {
-        KConfigGroup cg = m_applet->config();
-        m_applet->restore(cg);
+        KConfigGroup cg = m_applet.data()->config();
+        m_applet.data()->restore(cg);
     }
 }
 
 uint Widget::id() const
 {
     if (m_applet) {
-        return m_applet->id();
+        return m_applet.data()->id();
     }
 
     return 0;
@@ -54,7 +54,7 @@ uint Widget::id() const
 QString Widget::type() const
 {
     if (m_applet) {
-        return m_applet->pluginName();
+        return m_applet.data()->pluginName();
     }
 
     return QString();
@@ -63,8 +63,8 @@ QString Widget::type() const
 void Widget::remove()
 {
     if (m_applet) {
-        m_applet->destroy();
-        m_applet = 0;
+        m_applet.data()->destroy();
+        m_applet.clear();
     }
 }
 
@@ -74,7 +74,7 @@ void Widget::setConfigGroup(const QString &config)
         return;
     }
 
-    m_configGroup = m_applet->config();
+    m_configGroup = m_applet.data()->config();
     if (!config.isEmpty()) {
         m_configGroup = KConfigGroup(&m_configGroup, config);
     }
@@ -103,7 +103,7 @@ void Widget::writeConfig(const QString &key, const QVariant &value)
 
 Plasma::Applet *Widget::applet() const
 {
-    return m_applet;
+    return m_applet.data();
 }
 
 int Widget::index() const
@@ -112,7 +112,8 @@ int Widget::index() const
         return -1;
     }
 
-    Plasma::Containment *c = m_applet->containment();
+    Plasma::Applet *applet = m_applet.data();
+    Plasma::Containment *c = applet->containment();
     if (!c) {
         return -1;
     }
@@ -123,7 +124,7 @@ int Widget::index() const
     }
 
     for (int i = 0; i < layout->count(); ++i) {
-        if (layout->itemAt(i) == m_applet) {
+        if (layout->itemAt(i) == applet) {
             return i;
         }
     }
@@ -137,7 +138,8 @@ void Widget::setIndex(int index)
         return;
     }
 
-    Plasma::Containment *c = m_applet->containment();
+    Plasma::Applet *applet = m_applet.data();
+    Plasma::Containment *c = applet->containment();
     if (!c) {
         return;
     }
@@ -148,13 +150,13 @@ void Widget::setIndex(int index)
         return;
     }
 
-    layout->insertItem(index, m_applet);
+    layout->insertItem(index, applet);
 }
 
 QRectF Widget::geometry() const
 {
     if (m_applet) {
-        return m_applet->geometry();
+        return m_applet.data()->geometry();
     }
 
     return QRectF();
@@ -163,7 +165,7 @@ QRectF Widget::geometry() const
 void Widget::setGeometry(const QRectF &geometry)
 {
     if (m_applet) {
-        QAction *configAction = m_applet->action("configure");
+        QAction *configAction = m_applet.data()->action("configure");
         if (configAction && configAction->isEnabled()) {
             configAction->trigger();
         }
@@ -173,7 +175,7 @@ void Widget::setGeometry(const QRectF &geometry)
 void Widget::showConfigurationInterface()
 {
     if (m_applet) {
-        m_applet->showConfigurationInterface();
+        m_applet.data()->showConfigurationInterface();
     }
 }
 
