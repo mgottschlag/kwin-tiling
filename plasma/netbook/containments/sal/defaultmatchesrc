@@ -12,44 +12,44 @@ Name=Bookmarks
 Data=bookmarks
 
 [Matches][3]
-Id=Office
+Id=office
 Icon=applications-office
 Name=Office
-Data=Office
+Data=office
 
 [Matches][4]
-Id=Network
+Id=network
 Icon=applications-internet
 Name=Internet
-Data=Network
+Data=network
 
 
 [Matches][5]
-Id=AudioVideo
+Id=audiovideo
 Icon=applications-multimedia
 Name=Multimedia
-Data=AudioVideo
+Data=audiovideo
 
 
 [Matches][6]
-Id=Education
+Id=education
 Icon=applications-education
 Name=Education
-Data=Education
+Data=education
 
 
 [Matches][7]
-Id=Game
+Id=game
 Icon=applications-games
 Name=Games
-Data=Game
+Data=game
 
 
 [Matches][8]
-Id=Graphics
+Id=graphics
 Icon=applications-graphics
 Name=Graphics
-Data=Graphics
+Data=graphics
 
 
 [Matches][9]

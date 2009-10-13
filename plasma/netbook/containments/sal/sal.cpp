@@ -123,7 +123,7 @@ void SearchLaunch::init()
         match.setId(iconConfig.readEntry("Id"));
         match.setIcon(KIcon(iconConfig.readEntry("Icon")));
         match.setText(iconConfig.readEntry("Name"));
-        match.setData(iconConfig.readEntry("system"));
+        match.setData(iconConfig.readEntry("Data"));
 
         m_defaultMatches.append(match);
     }
