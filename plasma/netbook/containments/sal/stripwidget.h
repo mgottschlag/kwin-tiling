@@ -43,6 +43,7 @@ namespace Plasma
 }
 
 class QGraphicsGridLayout;
+class QTimer;
 
 class StripWidget : public Plasma::Frame
 {
@@ -69,6 +70,7 @@ private slots:
     void arrowsNeededChanged(ItemView::ScrollBarFlags flags);
     void goLeft();
     void goRight();
+    void scrollTimeout();
 
 private:
     Plasma::ToolButton *m_leftArrow;
@@ -81,6 +83,7 @@ private:
     QHash<Plasma::IconWidget*, Plasma::QueryMatch*> m_favouritesIcons;
     ItemView *m_itemView;
     Plasma::RunnerContext *m_context;
+    QTimer *m_scrollTimer;
     int m_shownIcons;
     int m_offset;
     bool m_startupCompleted;

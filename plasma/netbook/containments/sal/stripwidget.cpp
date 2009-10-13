@@ -22,6 +22,7 @@
 #include <QGraphicsGridLayout>
 #include <QToolButton>
 #include <QAction>
+#include <QTimer>
 
 #include <KIcon>
 #include <KIconLoader>
@@ -55,12 +56,14 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     m_leftArrow->setPreferredWidth(KIconLoader::SizeMedium);
     m_leftArrow->setImage("widgets/arrows", "left-arrow");
     connect(m_leftArrow, SIGNAL(clicked()), this, SLOT(goLeft()));
+    connect(m_leftArrow, SIGNAL(pressed()), this, SLOT(scrollTimeout()));
 
     m_rightArrow = new Plasma::ToolButton(this);
     m_rightArrow->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     m_rightArrow->setPreferredWidth(KIconLoader::SizeMedium);
     m_rightArrow->setImage("widgets/arrows", "right-arrow");
     connect(m_rightArrow, SIGNAL(clicked()), this, SLOT(goRight()));
+    connect(m_rightArrow, SIGNAL(pressed()), this, SLOT(scrollTimeout()));
 
     m_leftArrow->setEnabled(false);
     m_rightArrow->setEnabled(false);
@@ -81,6 +84,10 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     m_arrowsLayout->addItem(m_leftArrow);
     m_arrowsLayout->addItem(m_itemView);
     m_arrowsLayout->addItem(m_rightArrow);
+
+    m_scrollTimer = new QTimer(this);
+    m_scrollTimer->setSingleShot(false);
+    connect(m_scrollTimer, SIGNAL(timeout()), this, SLOT(scrollTimeout()));
 }
 
 StripWidget::~StripWidget()
@@ -183,6 +190,19 @@ void StripWidget::goLeft()
     rect.moveRight(- m_itemView->widget()->pos().x());
 
     m_itemView->ensureRectVisible(rect);
+}
+
+void StripWidget::scrollTimeout()
+{
+    if (!m_scrollTimer->isActive()) {
+        m_scrollTimer->start(250);
+    } else if (m_leftArrow->isDown()) {
+        goLeft();
+    } else if (m_leftArrow->isDown()) {
+        goRight();
+    } else {
+        m_scrollTimer->stop();
+    }
 }
 
 void StripWidget::save(KConfigGroup &cg)
