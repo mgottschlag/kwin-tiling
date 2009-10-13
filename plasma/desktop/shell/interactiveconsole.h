@@ -20,7 +20,7 @@
 #ifndef INTERACTIVECONSOLE
 #define INTERACTIVECONSOLE
 
-#include <QPointer>
+#include <QWeakPointer>
 #include <QScriptValue>
 
 #include <KDialog>
@@ -86,7 +86,7 @@ private:
     KAction *m_executeAction;
 
     KFileDialog *m_fileDialog;
-    QPointer<KIO::Job> m_job;
+    QWeakPointer<KIO::Job> m_job;
 };
 
 #endif

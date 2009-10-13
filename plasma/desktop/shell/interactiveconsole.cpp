@@ -231,12 +231,12 @@ void InteractiveConsole::openScriptUrlSelected()
         m_editor->setEnabled(false);
 
         if (m_job) {
-            m_job->kill();
+            m_job.data()->kill();
         }
 
         m_job = KIO::get(url, KIO::Reload, KIO::HideProgressInfo);
-        connect(m_job, SIGNAL(data(KIO::Job*,QByteArray)), this, SLOT(scriptFileDataRecvd(KIO::Job*,QByteArray)));
-        connect(m_job, SIGNAL(result(KJob*)), this, SLOT(reenableEditor()));
+        connect(m_job.data(), SIGNAL(data(KIO::Job*,QByteArray)), this, SLOT(scriptFileDataRecvd(KIO::Job*,QByteArray)));
+        connect(m_job.data(), SIGNAL(result(KJob*)), this, SLOT(reenableEditor()));
     }
 }
 
@@ -244,7 +244,7 @@ void InteractiveConsole::scriptFileDataRecvd(KIO::Job *job, const QByteArray &da
 {
     Q_ASSERT(m_editor);
 
-    if (job == m_job) {
+    if (job == m_job.data()) {
         m_editor->insertPlainText(data);
     }
 }
@@ -289,12 +289,12 @@ void InteractiveConsole::saveScriptUrlSelected()
         m_editor->setEnabled(false);
 
         if (m_job) {
-            m_job->kill();
+            m_job.data()->kill();
         }
 
         m_job = KIO::put(url, -1, KIO::HideProgressInfo);
-        connect(m_job, SIGNAL(dataReq(KIO::Job*,QByteArray&)), this, SLOT(scriptFileDataReq(KIO::Job*,QByteArray&)));
-        connect(m_job, SIGNAL(result(KJob*)), this, SLOT(reenableEditor()));
+        connect(m_job.data(), SIGNAL(dataReq(KIO::Job*,QByteArray&)), this, SLOT(scriptFileDataReq(KIO::Job*,QByteArray&)));
+        connect(m_job.data(), SIGNAL(result(KJob*)), this, SLOT(reenableEditor()));
     }
 }
 
@@ -302,12 +302,12 @@ void InteractiveConsole::scriptFileDataReq(KIO::Job *job, QByteArray &data)
 {
     Q_ASSERT(m_editor);
 
-    if (!m_job || m_job != job) {
+    if (!m_job || m_job.data() != job) {
         return;
     }
 
     data.append(m_editor->toPlainText().toLocal8Bit());
-    m_job = 0;
+    m_job.clear();
 }
 
 void InteractiveConsole::reenableEditor()
