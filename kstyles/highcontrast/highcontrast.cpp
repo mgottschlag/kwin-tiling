@@ -159,7 +159,7 @@ void HighContrastStyle::polish (QWidget* widget)
 	{
 		widget->installEventFilter (this);
 
-		Q3SpinWidget* spinwidget = dynamic_cast<Q3SpinWidget*>(widget);
+		Q3SpinWidget* spinwidget = qobject_cast<Q3SpinWidget*>(widget);
 		if (spinwidget && spinwidget->editWidget())
 			spinwidget->editWidget()->installEventFilter (this);
 	}
@@ -667,7 +667,7 @@ void HighContrastStyle::drawKStylePrimitive (KStylePrimitive kpe,
 		case KPE_SliderGroove: {
 			setColorsText (p, cg, flags);
 			QRect r2 (r);
-			const QSlider *slider = dynamic_cast<const QSlider*>(widget);
+			const QSlider *slider = qobject_cast<const QSlider*>(widget);
 			if (slider != 0)
 			{
 				if (slider->orientation() == Qt::Horizontal)
@@ -941,7 +941,7 @@ void HighContrastStyle::drawControl (ControlElement element,
 		// -------------------------------------------------------------------
 		case CE_ProgressBarGroove: {
 			setColorsText (p, cg, flags);
-			const QProgressBar *progressbar = dynamic_cast<const QProgressBar*>(widget);
+			const QProgressBar *progressbar = qobject_cast<const QProgressBar*>(widget);
 			if (progressbar) {
 				QRect r2 (r);
 				r2.setLeft (p->boundingRect (r, Qt::AlignVCenter|Qt::AlignLeft|Qt::TextShowMnemonic, progressbar->progressString()).right()
@@ -951,7 +951,7 @@ void HighContrastStyle::drawControl (ControlElement element,
 			break;
 		}
 		case CE_ProgressBarContents: {
-			const QProgressBar *progressbar = dynamic_cast<const QProgressBar*>(widget);
+			const QProgressBar *progressbar = qobject_cast<const QProgressBar*>(widget);
 			if (progressbar)
 			{
 				QRect r2 (r);
@@ -1796,7 +1796,7 @@ QRect HighContrastStyle::subRect (SubRect subrect, const QWidget * widget) const
 
 bool HighContrastStyle::eventFilter (QObject *object, QEvent *event)
 {
-	QWidget* widget = dynamic_cast<QWidget*>(object);
+	QWidget* widget = qobject_cast<QWidget*>(object);
 	if (widget)
 	{
 		// Handle hover effects.
@@ -1820,12 +1820,12 @@ bool HighContrastStyle::eventFilter (QObject *object, QEvent *event)
 		// Make sure the focus rectangle is shown correctly.
 		else if (event->type() == QEvent::FocusIn || event->type() == QEvent::FocusOut)
 		{
-			QWidget* widgetparent = dynamic_cast<QWidget*>(widget->parent());
+			QWidget* widgetparent = qobject_cast<QWidget*>(widget->parent());
 			while (widgetparent
 							&& ! widgetparent->inherits ("QComboBox")
 							&& ! widgetparent->inherits ("QSpinWidget"))
 			{
-				widgetparent = dynamic_cast<QWidget*>(widgetparent->parent());
+				widgetparent = qobject_cast<QWidget*>(widgetparent->parent());
 			}
 
 			if (widgetparent)

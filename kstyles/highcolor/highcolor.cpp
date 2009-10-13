@@ -415,7 +415,7 @@ void HighColorStyle::drawPrimitive( PrimitiveElement pe,
 			// Temporary solution for the proper orientation of gradients.
 			bool horizontal = true;
 			if (p && p->device()->devType() == QInternal::Widget) {
-				Q3Header* hdr = dynamic_cast<Q3Header*>(p->device());
+				Q3Header* hdr = qobject_cast<Q3Header*>(p->device());
 				if (hdr)
 					horizontal = hdr->orientation() == Qt::Horizontal;
 			}
@@ -1948,7 +1948,7 @@ bool HighColorStyle::eventFilter( QObject *object, QEvent *event )
 	Q3ToolBar* toolbar;
 
 	// Handle push button hover effects.
-	QPushButton* button = dynamic_cast<QPushButton*>(object);
+	QPushButton* button = qobject_cast<QPushButton*>(object);
 	if ( button )
 	{
 		if ( (event->type() == QEvent::Enter) &&
@@ -1984,7 +1984,7 @@ bool HighColorStyle::eventFilter( QObject *object, QEvent *event )
 			bool horiz_grad = pr.width() < pr.height();
 
 			// Check if the parent is a QToolbar, and use its orientation, else guess.
-			Q3ToolBar* tb = dynamic_cast<Q3ToolBar*>(parent);
+			Q3ToolBar* tb = qobject_cast<Q3ToolBar*>(parent);
 			if (tb) horiz_grad = tb->orientation() == Qt::Vertical;
 
 			QPainter p( widget );
@@ -1994,7 +1994,7 @@ bool HighColorStyle::eventFilter( QObject *object, QEvent *event )
 			return false;	// Now draw the contents
 		}
 	} else if ( object->parent() &&
-			(toolbar = dynamic_cast<Q3ToolBar*>(object->parent())) )
+			(toolbar = qobject_cast<Q3ToolBar*>(object->parent())) )
 	{
 		// We need to override the paint event to draw a 
 		// gradient on a QToolBarExtensionWidget.
