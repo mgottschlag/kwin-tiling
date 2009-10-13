@@ -325,7 +325,7 @@ void PlasmaApp::cleanup()
     m_panels.clear();
     qDeleteAll(panels);
 
-    delete m_console;
+    delete m_console.data();
     delete m_corona;
 
     //TODO: This manual sync() should not be necessary. Remove it when
@@ -354,21 +354,22 @@ void PlasmaApp::showDashboard(bool show)
 
 void PlasmaApp::showInteractiveConsole()
 {
-    if (!m_console) {
-        m_console = new InteractiveConsole(m_corona);
+    InteractiveConsole *console = m_console.data();
+    if (!console) {
+        m_console = console = new InteractiveConsole(m_corona);
     }
 
-    KWindowSystem::setOnDesktop(m_console->winId(), KWindowSystem::currentDesktop());
-    m_console->show();
-    m_console->raise();
-    KWindowSystem::forceActiveWindow(m_console->winId());
+    KWindowSystem::setOnDesktop(console->winId(), KWindowSystem::currentDesktop());
+    console->show();
+    console->raise();
+    KWindowSystem::forceActiveWindow(console->winId());
 }
 
 void PlasmaApp::loadScriptInInteractiveConsole(const QString &script)
 {
     showInteractiveConsole();
     if (m_console) {
-        m_console->loadScript(script);
+        m_console.data()->loadScript(script);
     }
 }
 
@@ -404,11 +405,13 @@ void PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment *c)
         return;
     }
 
-    QPointer<ControllerWindow> controller = m_widgetExplorers.value(screen);
+    QWeakPointer<ControllerWindow> controllerPtr = m_widgetExplorers.value(screen);
+    ControllerWindow *controller = controllerPtr.data();
+
     if (!controller) {
         kDebug() << "controller not found for screen" << screen;
-        controller = new ControllerWindow(0);
-        m_widgetExplorers.insert(screen, controller);
+        controllerPtr = controller = new ControllerWindow(0);
+        m_widgetExplorers.insert(screen, controllerPtr);
     }
 
     controller->setContainment(c);
@@ -425,9 +428,9 @@ void PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment *c)
 
 void PlasmaApp::hideWidgetExplorer(int screen)
 {
-    QPointer<ControllerWindow> controller = m_widgetExplorers.value(screen);
+    QWeakPointer<ControllerWindow> controller = m_widgetExplorers.value(screen);
     if (controller) {
-        controller->hide();
+        controller.data()->hide();
     }
 }
 

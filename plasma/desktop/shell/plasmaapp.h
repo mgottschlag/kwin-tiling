@@ -23,8 +23,7 @@
 #include <QHash>
 #include <QList>
 #include <QSize>
-#include <QPoint>
-#include <QPointer>
+#include <QWeakPointer>
 
 #include <KUniqueApplication>
 
@@ -155,10 +154,10 @@ private:
     QList<DesktopView*> m_desktops;
     QTimer *m_panelViewCreationTimer;
     Plasma::ZoomLevel m_zoomLevel;
-    QPointer<InteractiveConsole> m_console;
+    QWeakPointer<InteractiveConsole> m_console;
     int m_panelHidden;
     QSignalMapper *m_mapper;
-    QHash<int, QPointer<ControllerWindow> > m_widgetExplorers;
+    QHash<int, QWeakPointer<ControllerWindow> > m_widgetExplorers;
 };
 
 #endif // multiple inclusion guard
