@@ -42,7 +42,7 @@
     <entry name="SelectionTextOnly" type="Bool">
       <label>Selection text only</label>
       <default>true</default>
-      <whatsthis><qt>When an area of the screen is selected with mouse or keyboard, this is called <em>"the selection"</em>. If this option is selected, only text selection are stored in the history, while images and other selections are not.</qt></whatsthis>
+      <whatsthis><qt>When an area of the screen is selected with mouse or keyboard, this is called <em>"the selection"</em>. If this option is selected, only text selections are stored in the history, while images and other selections are not.</qt></whatsthis>
     </entry>
     <entry name="UseGUIRegExpEditor" type="Bool">
       <label>Use graphical regexp editor</label>
