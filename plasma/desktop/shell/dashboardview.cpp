@@ -59,7 +59,6 @@ public:
 DashboardView::DashboardView(Plasma::Containment *containment, Plasma::View *view)
     : Plasma::View(containment, 0),
       m_view(view),
-      m_widgetExplorer(0),
       m_closeButton(new QToolButton(this)),
       m_suppressShow(false),
       m_zoomIn(false),
@@ -96,7 +95,7 @@ DashboardView::DashboardView(Plasma::Containment *containment, Plasma::View *vie
 
 DashboardView::~DashboardView()
 {
-    delete m_widgetExplorer;
+    delete m_widgetExplorer.data();
 }
 
 void DashboardView::drawBackground(QPainter * painter, const QRectF & rect)
@@ -162,25 +161,27 @@ void DashboardView::showWidgetExplorer()
     }
 
     if (m_widgetExplorer) {
-        delete m_widgetExplorer;
+        delete m_widgetExplorer.data();
     } else {
-        m_widgetExplorer = new DashboardWidgetExplorer(c);
-        m_widgetExplorer->installEventFilter(this);
-        m_widgetExplorer->setContainment(c);
-        m_widgetExplorer->setOrientation(Qt::Horizontal);
-        m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
-        m_widgetExplorer->populateWidgetList();
-        m_widgetExplorer->setMaximumWidth(width());
-        m_widgetExplorer->adjustSize();
-        m_widgetExplorer->setZValue(1000000);
+        DashboardWidgetExplorer *widgetExplorer = new DashboardWidgetExplorer(c);
+        m_widgetExplorer = widgetExplorer;
+        widgetExplorer->installEventFilter(this);
+        widgetExplorer->setContainment(c);
+        widgetExplorer->setOrientation(Qt::Horizontal);
+        widgetExplorer->setIconSize(KIconLoader::SizeHuge);
+        widgetExplorer->populateWidgetList();
+        widgetExplorer->setMaximumWidth(width());
+        widgetExplorer->adjustSize();
+        widgetExplorer->setZValue(1000000);
     }
 }
 
 bool DashboardView::eventFilter(QObject *watched, QEvent *event)
 {
-    if (containment() && (watched == (QObject*)m_widgetExplorer) &&
+    if (containment() && (watched == (QObject*)m_widgetExplorer.data()) &&
         (event->type() == QEvent::GraphicsSceneResize || event->type() == QEvent::GraphicsSceneMove)) {
-        m_widgetExplorer->setPos(0, containment()->geometry().height() - m_widgetExplorer->geometry().height());
+        Plasma::WidgetExplorer *widgetExplorer = m_widgetExplorer.data();
+        widgetExplorer->setPos(0, containment()->geometry().height() - widgetExplorer->geometry().height());
     }
 
     return false;
@@ -271,7 +272,7 @@ void DashboardView::setContainment(Plasma::Containment *newContainment)
     }
 
     if (m_widgetExplorer) {
-        m_widgetExplorer->setContainment(newContainment);
+        m_widgetExplorer.data()->setContainment(newContainment);
     }
 
     View::setContainment(0); // we don't actually to mess with the screen settings
@@ -280,7 +281,7 @@ void DashboardView::setContainment(Plasma::Containment *newContainment)
 
 void DashboardView::hideView()
 {
-    delete m_widgetExplorer;
+    delete m_widgetExplorer.data();
 
     if (containment()) {
         disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));

@@ -21,7 +21,7 @@
 #ifndef DASHBOARDVIEW_H
 #define DASHBOARDVIEW_H
 
-#include <QPointer>
+#include <QWeakPointer>
 
 #include <Plasma/Plasma>
 #include <Plasma/View>
@@ -71,7 +71,7 @@ protected slots:
 
 private:
     Plasma::View *m_view;
-    QPointer<Plasma::WidgetExplorer> m_widgetExplorer;
+    QWeakPointer<Plasma::WidgetExplorer> m_widgetExplorer;
     QToolButton *m_closeButton;
     QAction *m_hideAction;
     bool m_suppressShow : 1;
