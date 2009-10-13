@@ -21,6 +21,7 @@
 #include "itemcontainer.h"
 
 #include <QGraphicsSceneResizeEvent>
+#include <QGraphicsScene>
 
 #include <Plasma/IconWidget>
 
@@ -137,14 +138,20 @@ bool ItemView::eventFilter(QObject *watched, QEvent *event)
     //pass click only if the user didn't move the mouse FIXME: we need sendevent there
     } else if(icon && event->type() == QEvent::GraphicsSceneMousePress) {
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
-        ScrollWidget::mousePressEvent(me);
+        if (scene()) {
+            scene()->sendEvent(this, me);
+        }
     } else if (icon && event->type() == QEvent::GraphicsSceneMouseMove) {
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
 
-        ScrollWidget::mouseMoveEvent(me);
+        if (scene()) {
+            scene()->sendEvent(this, me);
+        }
     } else if (icon && event->type() == QEvent::GraphicsSceneMouseRelease){
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
-        ScrollWidget::mouseReleaseEvent(me);
+        if (scene()) {
+            scene()->sendEvent(this, me);
+        }
 
     } else if (watched == m_itemContainer && event->type() == QEvent::GraphicsSceneMove) {
         QGraphicsSceneMoveEvent *me = static_cast<QGraphicsSceneMoveEvent *>(event);
