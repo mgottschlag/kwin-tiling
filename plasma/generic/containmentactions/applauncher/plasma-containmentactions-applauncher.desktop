@@ -81,6 +81,7 @@ Type=Service
 Icon=preferences-desktop-color
 Comment=Simple application launcher
 Comment[en_GB]=Simple application launcher
+Comment[et]=Lihtne rakenduste käivitaja
 Comment[gl]=Lanzador simple de programas
 Comment[id]=Peluncur aplikasi sederhana
 Comment[nb]=Enkel programstarter
