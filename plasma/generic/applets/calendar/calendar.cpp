@@ -1,5 +1,6 @@
 /***************************************************************************
  *   Copyright 2008 by Davide Bettio <davide.bettio@kdemail.net>           *
+ *   Copyright 2009 by John Layt <john@layt.net>                           *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -23,6 +24,8 @@
 
 #include <KDebug>
 #include <KSystemTimeZones>
+#include <KConfigDialog>
+#include <KConfigGroup>
 
 #include <Plasma/Svg>
 #include <Plasma/Theme>
@@ -32,43 +35,36 @@
 
 CalendarApplet::CalendarApplet(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
-    m_calendarDialog(0),
-    m_theme(0),
-    m_date(0)
+    m_calendarWidget(0),
+    m_theme(0)
 {
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
     setCacheMode(DeviceCoordinateCache);
 }
 
+CalendarApplet::~CalendarApplet()
+{
+}
+
 void CalendarApplet::init()
 {
     setPopupIcon("view-pim-calendar");
+    m_calendarWidget = new Plasma::Calendar(this);
+    m_calendarWidget->setPreferredSize(220, 250);
+    m_calendarWidget->setDataEngine(dataEngine("calendar"));
+    m_calendarWidget->applyConfiguration(config());
     updateDate();
 }
 
 QGraphicsWidget *CalendarApplet::graphicsWidget()
 {
-    if (!m_calendarDialog) {
-        m_calendarDialog = new Plasma::Calendar(this);
-        m_calendarDialog->setPreferredSize(220, 250);
-    }
-
-    return m_calendarDialog;
-}
-
-CalendarApplet::~CalendarApplet()
-{
-
+    return m_calendarWidget;
 }
 
 void CalendarApplet::constraintsEvent(Plasma::Constraints constraints)
 {
-    if (!m_calendarDialog) {
-        graphicsWidget();
-    }
-
-    if ((constraints|Plasma::FormFactorConstraint || constraints|Plasma::SizeConstraint) && 
-        layout()->itemAt(0) != m_calendarDialog) {
+    if ((constraints|Plasma::FormFactorConstraint || constraints|Plasma::SizeConstraint) &&
+        layout()->itemAt(0) != m_calendarWidget) {
         paintIcon();
     }
 }
@@ -98,7 +94,8 @@ void CalendarApplet::paintIcon()
     p.setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::ButtonTextColor));
     font.setPixelSize(icon.size().height() / 2);
     p.setFont(font);
-    p.drawText(icon.rect().adjusted(0, icon.size().height()/4, 0, 0), Qt::AlignCenter, QString::number(m_date));
+    p.drawText(icon.rect().adjusted(0, icon.size().height()/4, 0, 0), Qt::AlignCenter,
+               QString::number(m_calendarWidget->calendar()->day(m_calendarWidget->date())));
     m_theme->resize();
     p.end();
     setPopupIcon(icon);
@@ -106,16 +103,24 @@ void CalendarApplet::paintIcon()
 
 void CalendarApplet::configAccepted()
 {
+    m_calendarWidget->configAccepted(config());
     update();
 }
 
 void CalendarApplet::updateDate()
 {
-    QDateTime d = QDateTime::currentDateTime();
-    m_date = d.date().day();
-    int updateIn = (24 * 60 * 60) - (d.toTime_t() + KSystemTimeZones::local().currentOffset()) % (24 * 60 * 60);
+    QDateTime now = QDateTime::currentDateTime();
+    int updateIn = (24 * 60 * 60) - (now.toTime_t() + KSystemTimeZones::local().currentOffset()) % (24 * 60 * 60);
     QTimer::singleShot(updateIn * 1000, this, SLOT(updateDate()));
     constraintsEvent(Plasma::FormFactorConstraint);
+}
+
+void CalendarApplet::createConfigurationInterface(KConfigDialog *parent)
+{
+    m_calendarWidget->createConfigurationInterface(parent);
+    parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 }
 
 #include "calendar.moc"

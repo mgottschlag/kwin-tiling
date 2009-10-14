@@ -28,13 +28,17 @@
 #include <QtGui/QStyleOptionGraphicsItem>
 
 //KDECore
-#include <kglobal.h>
-#include <kdebug.h>
+#include <KGlobal>
+#include <KDebug>
+#include <KConfigDialog>
+#include <KConfigGroup>
 
 //Plasma
 #include <Plasma/Svg>
 #include <Plasma/Theme>
 #include <Plasma/DataEngine>
+
+#include "ui_calendarConfig.h"
 
 namespace Plasma
 {
@@ -68,14 +72,17 @@ public:
 class CalendarTablePrivate
 {
     public:
+
         CalendarTablePrivate(CalendarTable *, const QDate &initialDate = QDate::currentDate())
         {
             svg = new Svg();
             svg->setImagePath("widgets/calendar");
             svg->setContainsMultipleImages(true);
 
+            calendarType = "locale";
             calendar = KGlobal::locale()->calendar();
             dataEngine = 0;
+            displayHolidays = false;
 
             setDate(initialDate);
 
@@ -205,13 +212,39 @@ class CalendarTablePrivate
             return weekDay;
         }
 
+        QString defaultHolidaysRegion()
+        {
+            QString tmpRegion = KGlobal::locale()->country();
+            if (tmpRegion == "C") {
+                // we assume 'C' means USA, which isn't the best of assumptions, really
+                // the user ought to set their region in system settings, however
+                tmpRegion = "us";
+            }
+
+            if (dataEngine && dataEngine->query("holidaysRegions").value("holidaysRegions").toStringList().contains(tmpRegion)) {
+                return tmpRegion;
+            }
+
+            return QString();
+        }
+
+        QString calendarType;
         const KCalendarSystem *calendar;
+
         QDate date;
         int selectedMonth;
         int selectedYear;
         int weekDayFirstOfSelectedMonth;
         int daysInWeek;
         int daysInSelectedMonth;
+
+        bool displayHolidays;
+        QString holidaysRegion;
+        Plasma::DataEngine *dataEngine;
+        // Hash key: int = Julian Day number, QString = what's special
+        QHash<int, QString> specialDates;
+
+        Ui::calendarConfig calendarConfigUi;
 
         Plasma::Svg *svg;
         float opacity;
@@ -226,11 +259,6 @@ class CalendarTablePrivate
         int headerSpace;
         int weekBarSpace;
         int glowRadius;
-
-        // Hash key: int = Julian Day number, QString = what's special
-        QHash<int, QString> specialDates;
-        Plasma::DataEngine *dataEngine;
-        QString region;
 };
 
 CalendarTable::CalendarTable(const QDate &date, QGraphicsWidget *parent)
@@ -251,24 +279,41 @@ CalendarTable::~CalendarTable()
     delete d;
 }
 
-const KCalendarSystem *CalendarTable::calendar() const
+bool CalendarTable::setCalendar(const QString &newCalendarType)
 {
-    return d->calendar;
-}
+    if (newCalendarType == d->calendarType) {
+        return true;
+    }
 
-bool CalendarTable::setCalendar(KCalendarSystem *newCalendar)
-{
     // If not the global calendar, delete the old calendar first
-    if ( d->calendar != KGlobal::locale()->calendar() ) {
+    if (d->calendar != KGlobal::locale()->calendar()) {
         delete d->calendar;
     }
 
-    d->calendar = newCalendar;
+    if (newCalendarType == "locale") {
+        d->calendar = KGlobal::locale()->calendar();
+        d->calendarType = "locale";
+    } else {
+        d->calendar = KCalendarSystem::create(newCalendarType);
+        d->calendarType = calendar()->calendarType();
+    }
 
-    // Need to redraw to display correct calendar
+    // Force date update to refresh cached date componants then update display
+    d->setDate(date());
+    d->updateHoveredPainting(this, QPointF());
+    populateHolidays();
     update();
 
+    // Signal out date change so any dependents will update as well
+    emit dateChanged(date(), date());
+    emit dateChanged(date());
+
     return true;
+}
+
+const KCalendarSystem *CalendarTable::calendar() const
+{
+    return d->calendar;
 }
 
 bool CalendarTable::setDate(const QDate &newDate)
@@ -323,6 +368,186 @@ const QDate& CalendarTable::date() const
     return d->date;
 }
 
+void CalendarTable::setDataEngine(Plasma::DataEngine *dataEngine)
+{
+    // JPL What happens to the old data engine, who cleans it up, do we need to delete first?
+    if (d->dataEngine != dataEngine) {
+        d->dataEngine = dataEngine;
+        populateHolidays();
+    }
+}
+
+const Plasma::DataEngine *CalendarTable::dataEngine() const
+{
+    return d->dataEngine;
+}
+
+bool CalendarTable::setDisplayHolidays(bool showHolidays)
+{
+    if (showHolidays) {
+
+        if (!dataEngine() ||
+        !dataEngine()->query("holidaysRegions").value("holidaysRegions").toStringList().contains(holidaysRegion())) {
+            return false;
+        }
+
+        if (holidaysRegion().isEmpty()) {
+            setHolidaysRegion(d->defaultHolidaysRegion());
+        }
+
+    }
+
+    if (d->displayHolidays != showHolidays) {
+        d->displayHolidays = showHolidays;
+        populateHolidays();
+    }
+
+    return true;
+}
+
+bool CalendarTable::displayHolidays()
+{
+    return d->displayHolidays && !holidaysRegion().isEmpty();
+}
+
+bool CalendarTable::setHolidaysRegion(const QString &region)
+{
+    if(!dataEngine()->query("holidaysRegions").value("holidaysRegions").toStringList().contains(region)){
+        return false;
+    }
+
+    if (d->holidaysRegion != region) {
+        d->holidaysRegion = region;
+        populateHolidays();
+    }
+    return true;
+}
+
+QString CalendarTable::holidaysRegion() const
+{
+    return d->holidaysRegion;
+}
+
+void CalendarTable::clearDateProperties()
+{
+    d->specialDates.clear();
+}
+
+void CalendarTable::setDateProperty(QDate date, const QString &description)
+{
+    d->specialDates.insert(date.toJulianDay(), description);
+}
+
+QString CalendarTable::dateProperty(QDate date) const
+{
+    return d->specialDates.value(date.toJulianDay());
+}
+
+//JPL Looks to work OK even though non-Gregorian months do not match up, probably due to fetching 3 months worth
+void CalendarTable::populateHolidays()
+{
+    clearDateProperties();
+
+    if (!displayHolidays() || !dataEngine() || holidaysRegion().isEmpty()) {
+        return;
+    }
+
+    QDate queryDate = date();
+    QString prevMonthString = queryDate.addMonths(-1).toString(Qt::ISODate);
+    QString nextMonthString = queryDate.addMonths(1).toString(Qt::ISODate);
+
+    Plasma::DataEngine::Data prevMonth = d->dataEngine->query("holidaysInMonth:" + holidaysRegion() +
+    ':' + prevMonthString);
+    for (int i = -10; i < 0; i++) {
+        QDate tempDate = queryDate.addDays(i);
+        QString reason = prevMonth.value(tempDate.toString(Qt::ISODate)).toString();
+        if (!reason.isEmpty()) {
+            setDateProperty(tempDate, reason);
+        }
+    }
+
+    queryDate.setDate(queryDate.year(), queryDate.month(), 1);
+    Plasma::DataEngine::Data thisMonth = d->dataEngine->query("holidaysInMonth:" + holidaysRegion() +
+    ':' + queryDate.toString(Qt::ISODate));
+    int numDays = calendar()->daysInMonth(queryDate);
+    for (int i = 0; i < numDays; i++) {
+        QDate tempDate = queryDate.addDays(i);
+        QString reason = thisMonth.value(tempDate.toString(Qt::ISODate)).toString();
+        if (!reason.isEmpty()) {
+            setDateProperty(tempDate, reason);
+        }
+    }
+
+    queryDate = queryDate.addMonths(1);
+    Plasma::DataEngine::Data nextMonth = d->dataEngine->query("holidaysInMonth:" + holidaysRegion() +
+    ':' + nextMonthString);
+    for (int i = 0; i < 10; i++) {
+        QDate tempDate = queryDate.addDays(i);
+        QString reason = nextMonth.value(tempDate.toString(Qt::ISODate)).toString();
+        if (!reason.isEmpty()) {
+            setDateProperty(tempDate, reason);
+        }
+    }
+}
+
+void CalendarTable::applyConfiguration(KConfigGroup cg)
+{
+    setCalendar(cg.readEntry("calendarType", "locale"));
+    setHolidaysRegion(cg.readEntry("holidaysRegion", QString()));
+    setDisplayHolidays(cg.readEntry("displayHolidays", true));
+}
+
+void CalendarTable::writeConfiguration(KConfigGroup cg)
+{
+    cg.writeEntry("calendarType", d->calendarType);
+    cg.writeEntry("holidaysRegion", d->holidaysRegion);
+    cg.writeEntry("displayHolidays", d->displayHolidays);
+}
+
+void CalendarTable::createConfigurationInterface(KConfigDialog *parent)
+{
+    QWidget *calendarConfigWidget = new QWidget();
+    d->calendarConfigUi.setupUi(calendarConfigWidget);
+    parent->addPage(calendarConfigWidget, i18n("Calendar"), "view-pim-calendar");
+
+    QStringList calendars = KCalendarSystem::calendarSystems();
+    d->calendarConfigUi.calendarComboBox->addItem( i18n("Local"), QVariant( "locale" ) );
+    foreach ( QString cal, calendars ) {
+        d->calendarConfigUi.calendarComboBox->addItem( KCalendarSystem::calendarLabel( cal ), QVariant( cal ) );
+    }
+    d->calendarConfigUi.calendarComboBox->setCurrentIndex( d->calendarConfigUi.calendarComboBox->findData( QVariant( d->calendarType ) ) );
+
+    QStringList regions = dataEngine()->query("holidaysRegions").value("holidaysRegions").toStringList();
+    QMap<QString, QString> regionMap;
+    foreach ( QString region, regions ) {
+        QString label = KGlobal::locale()->countryCodeToName( region );
+        if (label.isEmpty()) {
+            label = region;
+        }
+        regionMap.insert(label, region);
+    }
+    d->calendarConfigUi.regionComboBox->addItem(i18n("Do not show holidays"), QString());
+    QMapIterator<QString, QString> i(regionMap);
+    while (i.hasNext()) {
+        i.next();
+        d->calendarConfigUi.regionComboBox->addItem( i.key(), QVariant( i.value() ) );
+    }
+    d->calendarConfigUi.regionComboBox->setCurrentIndex( d->calendarConfigUi.regionComboBox->findData( QVariant( d->holidaysRegion ) ) );
+}
+
+void CalendarTable::applyConfigurationInterface()
+{
+    setCalendar(d->calendarConfigUi.calendarComboBox->itemData(d->calendarConfigUi.calendarComboBox->currentIndex()).toString());
+    setHolidaysRegion(d->calendarConfigUi.regionComboBox->itemData(d->calendarConfigUi.regionComboBox->currentIndex()).toString());
+    setDisplayHolidays(!d->calendarConfigUi.regionComboBox->itemData(d->calendarConfigUi.regionComboBox->currentIndex()).toString().isEmpty());
+}
+
+void CalendarTable::configAccepted(KConfigGroup cg)
+{
+    applyConfigurationInterface();
+    writeConfiguration(cg);
+}
+
 //Returns the x co-ordinate for drawing the day cell on the widget given the day column
 //Note dayColumn is 0-daysInWeek and is not a real weekDay number (i.e. NOT Monday=1).
 int CalendarTable::cellX(int dayColumn)
@@ -342,7 +567,7 @@ int CalendarTable::cellY(int weekRow)
 void CalendarTable::wheelEvent(QGraphicsSceneWheelEvent * event)
 {
     //bool changed = false;
-    
+
     if (event->delta() < 0) {
         setDate(calendar()->addMonths(date(), 1));
     } else if (event->delta() > 0) {
@@ -591,86 +816,6 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
     p->drawRect(option->exposedRect.adjusted(1, 1, -2, -2));
     p->restore();
     */
-}
-
-void CalendarTable::setDataEngine(Plasma::DataEngine *dataEngine)
-{
-    if (d->dataEngine != dataEngine) {
-        d->dataEngine = dataEngine;
-        populateHolidays();
-    }
-}
-
-void CalendarTable::setRegion(const QString &region)
-{
-    if (d->region != region) {
-        d->region = region;
-        populateHolidays();
-    }
-}
-
-//HACK
-void CalendarTable::clearDateProperties()
-{
-    d->specialDates.clear();
-}
-
-void CalendarTable::setDateProperty(QDate date, const QString &description)
-{
-    d->specialDates.insert(date.toJulianDay(), description);
-}
-
-QString CalendarTable::dateProperty(QDate date) const
-{
-    return d->specialDates.value(date.toJulianDay());
-}
-
-//JPL Looks to work OK even though non-Gregorian months do not match up, probably due to fetching 3 months worth 
-void CalendarTable::populateHolidays()
-{
-    clearDateProperties();
-
-    if (!d->dataEngine || d->region.isEmpty()) {
-        return;
-    }
-
-    QDate queryDate = date();
-    QString prevMonthString = queryDate.addMonths(-1).toString(Qt::ISODate);
-    QString nextMonthString = queryDate.addMonths(1).toString(Qt::ISODate);
-
-    Plasma::DataEngine::Data prevMonth = d->dataEngine->query("holidaysInMonth:" + d->region +
-                                                              ':' + prevMonthString);
-    for (int i = -10; i < 0; i++) {
-        QDate tempDate = queryDate.addDays(i);
-        QString reason = prevMonth.value(tempDate.toString(Qt::ISODate)).toString();
-        if (!reason.isEmpty()) {
-            setDateProperty(tempDate, reason);
-        }
-    }
-
-    queryDate.setDate(queryDate.year(), queryDate.month(), 1);
-    Plasma::DataEngine::Data thisMonth = d->dataEngine->query("holidaysInMonth:" + d->region +
-                                                              ':' + queryDate.toString(Qt::ISODate));
-    int numDays = calendar()->daysInMonth(queryDate);
-    for (int i = 0; i < numDays; i++) {
-        QDate tempDate = queryDate.addDays(i);
-        QString reason = thisMonth.value(tempDate.toString(Qt::ISODate)).toString();
-        if (!reason.isEmpty()) {
-            setDateProperty(tempDate, reason);
-        }
-    }
-
-
-    queryDate = queryDate.addMonths(1);
-    Plasma::DataEngine::Data nextMonth = d->dataEngine->query("holidaysInMonth:" + d->region +
-                                                              ':' + nextMonthString);
-    for (int i = 0; i < 10; i++) {
-        QDate tempDate = queryDate.addDays(i);
-        QString reason = nextMonth.value(tempDate.toString(Qt::ISODate)).toString();
-        if (!reason.isEmpty()) {
-            setDateProperty(tempDate, reason);
-        }
-    }
 }
 
 } //namespace Plasma

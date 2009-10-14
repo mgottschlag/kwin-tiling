@@ -38,6 +38,8 @@
 #include <KLineEdit>
 #include <KLocale>
 #include <KIntSpinBox>
+#include <KConfigDialog>
+#include <KConfigGroup>
 
 //Plasma
 #include <Plasma/Label>
@@ -126,7 +128,7 @@ void Calendar::init(CalendarTable *calendarTable)
     d->yearSpinBox->setValue(calendar()->year(date()));
     d->yearSpinBox->hide();
     connect(d->yearSpinBox->nativeWidget(), SIGNAL(editingFinished()), this, SLOT(hideYearSpinBox()));
-    
+
     m_hLayout->addStretch();
 
     d->forward = new Plasma::ToolButton(this);
@@ -148,6 +150,7 @@ void Calendar::init(CalendarTable *calendarTable)
     m_layoutTools->addStretch();
 
     d->dateText = new Plasma::LineEdit(this);
+    d->dateText->setText(calendar()->formatDate(date(),  KLocale::ShortDate));
     connect(d->dateText->nativeWidget(), SIGNAL(returnPressed()), this, SLOT(manualDateChange()));
     m_layoutTools->addItem(d->dateText);
     m_layoutTools->addStretch();
@@ -165,22 +168,21 @@ void Calendar::init(CalendarTable *calendarTable)
     dateUpdated(date());
 }
 
-void Calendar::manualDateChange()
+CalendarTable *Calendar::calendarTable() const
 {
-    setDate(calendar()->readDate(((QLineEdit*)sender())->text()));
+    return d->calendarTable;
 }
 
-void Calendar::goToToday()
+bool Calendar::setCalendar(const QString &newCalendarType)
 {
-    setDate(QDate::currentDate());
+    bool ret = calendarTable()->setCalendar(newCalendarType);
+    d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
+    d->yearSpinBox->setRange(calendar()->year(calendar()->earliestValidDate()), calendar()->year(calendar()->latestValidDate()));
+    refreshWidgets();
+    return ret;
 }
 
-bool Calendar::setCalendar(KCalendarSystem *calendar)
-{
-    return d->calendarTable->setCalendar(calendar);
-}
-
-const KCalendarSystem *Calendar::calendar () const
+const KCalendarSystem *Calendar::calendar() const
 {
     return calendarTable()->calendar();
 }
@@ -190,6 +192,7 @@ bool Calendar::setDate(const QDate &toDate)
     bool ret = d->calendarTable->setDate(toDate);
 
     //If set date failed force refresh of nav widgets to reset any user entry
+    //If set date successful refresh will be triggered through signal/slot
     if (!ret) {
         refreshWidgets();
     }
@@ -200,6 +203,86 @@ bool Calendar::setDate(const QDate &toDate)
 const QDate& Calendar::date() const
 {
     return calendarTable()->date();
+}
+
+void Calendar::setDataEngine(Plasma::DataEngine *dataEngine)
+{
+    calendarTable()->setDataEngine(dataEngine);
+}
+
+const Plasma::DataEngine *Calendar::dataEngine() const
+{
+    return calendarTable()->dataEngine();
+}
+
+bool Calendar::setDisplayHolidays(bool showHolidays)
+{
+    return calendarTable()->setDisplayHolidays(showHolidays);
+}
+
+bool Calendar::displayHolidays()
+{
+    return calendarTable()->displayHolidays();
+}
+
+bool Calendar::setHolidaysRegion(const QString &region)
+{
+    return calendarTable()->setHolidaysRegion(region);
+}
+
+QString Calendar::holidaysRegion() const
+{
+    return calendarTable()->holidaysRegion();
+}
+
+void Calendar::clearDateProperties()
+{
+    calendarTable()->clearDateProperties();
+}
+
+void Calendar::setDateProperty(QDate date, const QString &description)
+{
+    calendarTable()->setDateProperty(date, description);
+}
+
+QString Calendar::dateProperty(QDate date) const
+{
+    return calendarTable()->dateProperty(date);
+}
+
+void Calendar::applyConfiguration(KConfigGroup cg)
+{
+    calendarTable()->applyConfiguration(cg);
+}
+
+void Calendar::writeConfiguration(KConfigGroup cg)
+{
+    calendarTable()->writeConfiguration(cg);
+}
+
+void Calendar::createConfigurationInterface(KConfigDialog *parent)
+{
+    calendarTable()->createConfigurationInterface(parent);
+}
+
+void Calendar::applyConfigurationInterface()
+{
+    calendarTable()->applyConfigurationInterface();
+}
+
+void Calendar::configAccepted(KConfigGroup cg)
+{
+    calendarTable()->configAccepted(cg);
+}
+
+void Calendar::manualDateChange()
+{
+    setDate(calendar()->readDate(((QLineEdit*)sender())->text()));
+}
+
+void Calendar::goToToday()
+{
+    setDate(QDate::currentDate());
 }
 
 void Calendar::dateUpdated(const QDate &newDate)
@@ -215,7 +298,7 @@ void Calendar::dateUpdated(const QDate &newDate)
 // Update the nav widgets to show the current date in the CalendarTable
 void Calendar::refreshWidgets()
 {
-    d->month->setText(calendar()->monthName(date()));
+    d->month->setText(calendar()->monthName(calendar()->month(date()), calendar()->year(date())));
     d->month->setMinimumSize(static_cast<QToolButton*>(d->month->widget())->sizeHint());
     d->year->setText(calendar()->yearString(date()));
     d->dateText->setText(calendar()->formatDate(date(),  KLocale::ShortDate));
@@ -276,7 +359,7 @@ void Calendar::goToWeek(int newWeek)
 void Calendar::showYearSpinBox()
 {
     QGraphicsLinearLayout *m_hLayout = (QGraphicsLinearLayout*)d->year->parentLayoutItem();
-  
+
     d->yearSpinBox->setValue(calendar()->year(date()));
     m_hLayout->removeItem(d->year);
     m_hLayout->insertItem(3,d->yearSpinBox);
@@ -297,26 +380,6 @@ void Calendar::hideYearSpinBox()
     int currYear = calendar()->year(date());
     setDate(calendar()->addYears(date(), newYear - currYear));
     d->year->show();
-}
-
-CalendarTable *Calendar::calendarTable() const
-{
-    return d->calendarTable;
-}
-
-void Calendar::setDataEngine(Plasma::DataEngine *dataEngine)
-{
-    d->calendarTable->setDataEngine(dataEngine);
-}
-
-void Calendar::setRegion(const QString &region)
-{
-    d->calendarTable->setRegion(region);
-}
-
-QString Calendar::dateProperty(const QDate &date) const
-{
-    return d->calendarTable->dateProperty(date);
 }
 
 }

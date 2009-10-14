@@ -28,6 +28,8 @@
 #include "calendartable.h"
 
 class KCalendarSystem;
+class KConfigDialog;
+class KConfigGroup;
 
 namespace Plasma
 {
@@ -46,17 +48,32 @@ public:
     Calendar(CalendarTable *calendarTable, QGraphicsWidget *parent = 0);
     ~Calendar();
 
-    bool setCalendar(KCalendarSystem *calendar = 0);
+    CalendarTable *calendarTable() const;
+
+    bool setCalendar(const QString &newCalendarType = "locale");
     const KCalendarSystem *calendar () const;
 
     bool setDate(const QDate &date);
     const QDate& date() const;
 
-    CalendarTable *calendarTable() const;
-
     void setDataEngine(Plasma::DataEngine *dataEngine);
-    void setRegion(const QString &region);
-    QString dateProperty(const QDate &date) const;
+    const Plasma::DataEngine *dataEngine() const;
+
+    bool setDisplayHolidays(bool showHolidays);
+    bool displayHolidays();
+
+    bool setHolidaysRegion(const QString &region);
+    QString holidaysRegion() const;
+
+    void clearDateProperties();
+    void setDateProperty(QDate date, const QString &reason);
+    QString dateProperty(QDate date) const;
+
+    void applyConfiguration(KConfigGroup cg);
+    void writeConfiguration(KConfigGroup cg);
+    void createConfigurationInterface(KConfigDialog *parent);
+    void applyConfigurationInterface();
+    void configAccepted(KConfigGroup cg);
 
 Q_SIGNALS:
     void dateChanged(const QDate &newDate, const QDate &oldDate);

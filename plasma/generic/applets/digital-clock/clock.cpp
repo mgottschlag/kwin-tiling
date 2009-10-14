@@ -37,6 +37,7 @@
 #include <KColorScheme>
 #include <KGlobalSettings>
 #include <KConfigDialog>
+#include <KCalendarSystem>
 #include <Plasma/Theme>
 #include <Plasma/Dialog>
 #include <Plasma/ToolTipManager>
@@ -344,10 +345,12 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
     if (m_showDate || showTimezone()) {
         QString dateString;
-        
+
         //Create the localized date string if needed
         if (m_showDate) {
+            // JPL This needs a complete rewrite for l10n issues
             KLocale tmpLocale(*KGlobal::locale());
+            tmpLocale.setCalendar(calendar()->calendarType()); 
             tmpLocale.setDateFormat("%e"); // day number of the month
             QString day = tmpLocale.formatDate(m_date);
             tmpLocale.setDateFormat("%b"); // short form of the month

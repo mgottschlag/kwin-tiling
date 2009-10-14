@@ -1,6 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2007-2008 by Riccardo Iaconelli <riccardo@kde.org>      *
  *   Copyright (C) 2007-2008 by Sebastian Kuegler <sebas@kde.org>          *
+ *   Copyright (C) 2009 by John Layt <john@layt.net>                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -58,6 +59,8 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
         static QString localTimezone();
         static QString localTimezoneUntranslated();
 
+        const KCalendarSystem *calendar () const;
+
     public Q_SLOTS:
         void toolTipAboutToShow();
         void toolTipHidden();
@@ -89,7 +92,7 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
         class Private;
         Private * const d;
 
-        Q_PRIVATE_SLOT(d, void createCalendar())
+        Q_PRIVATE_SLOT(d, void createCalendarExtender())
         Q_PRIVATE_SLOT(d, void createToday())
 };
 

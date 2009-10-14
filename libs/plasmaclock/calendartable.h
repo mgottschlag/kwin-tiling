@@ -27,6 +27,9 @@
 
 #include <KDE/KCalendarSystem>
 
+class KConfigDialog;
+class KConfigGroup;
+
 namespace Plasma
 {
 
@@ -51,17 +54,30 @@ public:
     CalendarTable(const QDate &, QGraphicsWidget *parent = 0);
     ~CalendarTable();
 
-    bool setCalendar(KCalendarSystem *calendar = 0);
+    bool setCalendar(const QString &newCalendarType = "locale");
     const KCalendarSystem *calendar () const;
 
     bool setDate(const QDate &date);
     const QDate& date() const;
 
     void setDataEngine(Plasma::DataEngine *dataEngine);
-    void setRegion(const QString &region);
+    const Plasma::DataEngine *dataEngine() const;
+
+    bool setDisplayHolidays(bool showHolidays);
+    bool displayHolidays();
+
+    bool setHolidaysRegion(const QString &region);
+    QString holidaysRegion() const;
+
     void clearDateProperties();
-    void setDateProperty(QDate date, const QString &reason); //HACK
+    void setDateProperty(QDate date, const QString &reason);
     QString dateProperty(QDate date) const;
+
+    void applyConfiguration(KConfigGroup cg);
+    void writeConfiguration(KConfigGroup cg);
+    void createConfigurationInterface(KConfigDialog *parent);
+    void applyConfigurationInterface();
+    void configAccepted(KConfigGroup cg);
 
 Q_SIGNALS:
     void dateChanged(const QDate &newDate, const QDate &oldDate);

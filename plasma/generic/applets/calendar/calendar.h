@@ -1,5 +1,6 @@
 /***************************************************************************
  *   Copyright 2008 by Davide Bettio <davide.bettio@kdemail.net>           *
+ *   Copyright 2009 by John Layt <john@layt.net>                           *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -45,6 +46,9 @@ class CalendarApplet : public Plasma::PopupApplet
          */
         QGraphicsWidget *graphicsWidget();
 
+    protected:
+        void createConfigurationInterface(KConfigDialog *parent);
+
     protected slots:
         void configAccepted();
         void updateDate();
@@ -52,9 +56,8 @@ class CalendarApplet : public Plasma::PopupApplet
     private:
         void paintIcon();
 
-        Plasma::Calendar *m_calendarDialog;
+        Plasma::Calendar *m_calendarWidget;
         Plasma::Svg *m_theme;
-        int m_date;
 };
 
 K_EXPORT_PLASMA_APPLET(calendar, CalendarApplet)
