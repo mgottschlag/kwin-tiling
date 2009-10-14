@@ -291,13 +291,11 @@ void DeviceItem::setHovered(const bool hovered)
     }
 
     m_hovered = hovered;
-    if (isCollapsed()) {
-        if (hovered) {
-            updateHoverDisplay();
-        } else {
-            Plasma::Animator::self()->customAnimation(15, 200, Plasma::Animator::LinearCurve,
-                                            this, "setHoverDisplayOpacity");
-        }
+    if (hovered) {
+        updateHoverDisplay();
+    } else {
+        Plasma::Animator::self()->customAnimation(15, 200, Plasma::Animator::LinearCurve,
+                                                  this, "setHoverDisplayOpacity");
     }
 }
 

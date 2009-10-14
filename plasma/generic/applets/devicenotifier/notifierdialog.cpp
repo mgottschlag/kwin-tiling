@@ -173,10 +173,12 @@ bool NotifierDialog::eventFilter(QObject* obj, QEvent *event)
     if (item) {
         switch (event->type()) {
             case QEvent::GraphicsSceneHoverLeave:
-                item->setHovered(false);
-                m_clearItemBackgroundTargetTimer.start();
-                if (item->isCollapsed() && m_selectedItemBackground->targetItem() == item) {
-                    m_selectedItemBackground->setTargetItem(0);
+                if (item->isCollapsed()) {
+                    item->setHovered(false);
+                    m_clearItemBackgroundTargetTimer.start();
+                    if (m_selectedItemBackground->targetItem() == item) {
+                        m_selectedItemBackground->setTargetItem(0);
+                    }
                 }
                 break;
 
@@ -452,6 +454,7 @@ void NotifierDialog::deviceActivated(DeviceItem *item)
         DeviceItem *devItem = dynamic_cast<DeviceItem *>(m_deviceLayout->itemAt(i));
         if (devItem && devItem != item) {
             devItem->collapse();
+            devItem->setHovered(false);
         }
     }
 
