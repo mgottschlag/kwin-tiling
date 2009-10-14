@@ -357,7 +357,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             connect(m_resultsView, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launch(Plasma::IconWidget *)));
 
             m_stripWidget = new StripWidget(m_runnermg, this);
-            m_appletsLayout = new QGraphicsLinearLayout();
+            m_appletsLayout = new QGraphicsLinearLayout(Qt::Horizontal);
             m_appletsLayout->setPreferredHeight(KIconLoader::SizeMedium);
             m_appletsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
             QGraphicsWidget *leftSpacer = new QGraphicsWidget(this);
@@ -403,6 +403,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
             setTabOrder(m_stripWidget, m_searchField);
             setTabOrder(m_searchField, m_resultsView);
+            setFormFactorFromLocation(location());
         }
     }
 
