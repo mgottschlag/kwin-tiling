@@ -93,11 +93,20 @@ immutability=1
 plugin=news
 zvalue=52
 
+[Containments][3][Applets][1][LayoutInformation]
+Column=0
+Order=0
+
+
 [Containments][3][Applets][2]
 geometry=14,278,343,188
 immutability=1
 plugin=weather
 zvalue=57
+
+[Containments][3][Applets][2][LayoutInformation]
+Column=0
+Order=1
 
 [Containments][3][Applets][3]
 geometry=1000,38,424,241
@@ -105,11 +114,20 @@ immutability=1
 plugin=opendesktop
 zvalue=47
 
+[Containments][3][Applets][3][LayoutInformation]
+Column=1
+Order=0
+
 [Containments][3][Applets][4]
 geometry=1000,283,424,182
 immutability=1
 plugin=knowledgebase
 zvalue=47
+
+[Containments][3][Applets][4][LayoutInformation]
+Column=1
+Order=1
+
 
 [General]
 immutability=1

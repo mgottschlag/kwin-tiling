@@ -562,7 +562,7 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
 
         m_widgetExplorerView = new Plasma::Dialog();
 
-        KWindowSystem::setOnDesktop(m_widgetExplorerView->winId(), KWindowSystem::currentDesktop());
+        KWindowSystem::setOnAllDesktops(m_widgetExplorerView->winId(), true);
         m_widgetExplorerView->show();
         KWindowSystem::activateWindow(m_widgetExplorerView->winId());
         m_widgetExplorerView->setWindowFlags(Qt::Dialog|Qt::FramelessWindowHint);
