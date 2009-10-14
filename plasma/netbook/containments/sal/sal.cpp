@@ -120,11 +120,11 @@ void SearchLaunch::init()
         match.setType(Plasma::QueryMatch::ExactMatch);
         match.setRelevance(1.0/(qreal)group.toInt());
 
-        QString query = iconConfig.readEntry("Id");
+        QString query = iconConfig.readEntry("Query");
         match.setId(query);
         match.setIcon(KIcon(iconConfig.readEntry("Icon")));
         match.setText(iconConfig.readEntry("Name"));
-        QString runner  = iconConfig.readEntry("Data");
+        QString runner  = iconConfig.readEntry("Runner");
         QStringList data;
         data << query << runner;
         match.setData(data);

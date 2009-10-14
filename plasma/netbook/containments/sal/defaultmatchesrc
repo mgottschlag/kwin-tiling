@@ -1,59 +1,59 @@
 
 [Matches][1]
-Id=contacts
+Query=contacts
 Icon=view-pim-contacts
 Name=Contacts
-Data=kabccontacts
+Runner=kabccontacts
 
 [Matches][2]
-Id=bookmarks
+Query=bookmarks
 Icon=bookmarks
 Name=Bookmarks
-Data=bookmarks
+Runner=bookmarks
 
 [Matches][3]
-Id=office
+Query=office
 Icon=applications-office
 Name=Office
-Data=services
+Runner=services
 
 [Matches][4]
-Id=network
+Query=network
 Icon=applications-internet
 Name=Internet
-Data=services
+Runner=services
 
 
 [Matches][5]
-Id=audiovideo
+Query=audiovideo
 Icon=applications-multimedia
 Name=Multimedia
-Data=services
+Runner=services
 
 
 [Matches][6]
-Id=education
+Query=education
 Icon=applications-education
 Name=Education
-Data=services
+Runner=services
 
 
 [Matches][7]
-Id=game
+Query=game
 Icon=applications-games
 Name=Games
-Data=services
+Runner=services
 
 
 [Matches][8]
-Id=graphics
+Query=graphics
 Icon=applications-graphics
 Name=Graphics
-Data=services
+Runner=services
 
 
 [Matches][9]
-Id=system
+Query=system
 Icon=preferences-system
 Name=System
-Data=services
+Runner=services
