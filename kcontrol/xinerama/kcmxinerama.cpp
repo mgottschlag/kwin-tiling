@@ -49,7 +49,7 @@ K_EXPORT_PLUGIN(KCMXineramaFactory("kcmxinerama"))
 
 
 KCMXinerama::KCMXinerama(QWidget *parent, const QVariantList &)
-  : KCModule(KCMXineramaFactory::componentData(), parent) {
+  : KCModule(KCMXineramaFactory::componentData(), parent), xw(0) {
 
 	KAboutData *about =
 	new KAboutData(I18N_NOOP("kcmxinerama"), 0,
@@ -137,7 +137,7 @@ KCMXinerama::~KCMXinerama() {
 #define KWIN_XINERAMA_FULLSCREEN   "XineramaFullscreenEnabled"
 
 void KCMXinerama::load() {
-	if (QApplication::desktop()->isVirtualDesktop()) {
+	if (QApplication::desktop()->isVirtualDesktop() && xw) {
 		int item = 0;
 		KConfigGroup group = config->group("Windows");
 		xw->_enableXinerama->setChecked(group.readEntry(KWIN_XINERAMA, true));
@@ -157,7 +157,7 @@ void KCMXinerama::load() {
 
 
 void KCMXinerama::save() {
-	if (QApplication::desktop()->isVirtualDesktop()) {
+	if (QApplication::desktop()->isVirtualDesktop() && xw) {
 		KConfigGroup group = config->group("Windows");
 		group.writeEntry(KWIN_XINERAMA,
 					xw->_enableXinerama->isChecked());
@@ -183,7 +183,7 @@ void KCMXinerama::save() {
 }
 
 void KCMXinerama::defaults() {
-	if (QApplication::desktop()->isVirtualDesktop()) {
+	if (QApplication::desktop()->isVirtualDesktop() && xw) {
 		xw->_enableXinerama->setChecked(true);
 		xw->_enableResistance->setChecked(true);
 		xw->_enablePlacement->setChecked(true);
