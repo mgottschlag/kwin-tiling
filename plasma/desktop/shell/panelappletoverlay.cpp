@@ -264,6 +264,9 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
         QPointF pos = view->mapFromGlobal(event->globalPos());
         if (view != m_applet->view()) {
             Plasma::Containment *c = view->containment();
+            if (!c) {
+                return;
+            }
 
             syncOrientation();
             syncGeometry();
