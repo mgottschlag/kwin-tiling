@@ -4,12 +4,14 @@ libplasma
 ---------
 * Features
     * ToolTipManager and ToolTipContent: Tips can now be set as clickable, allowing the mouse to enter them and select an item
+    * Corona
+        * Supports defining default ContainmentAction sets
     * DataEngine:
         * DataEngine::forceImmediateUpdateOfAllVisualizations() allows an engine to push the current data in sources out to all
           visualizations without waiting for their timeout period. Useful for changes that can not wait, such as time updates
           or data that becomes available with network availability.
         * DataContainer::forceImmediateUpdate() allows engines to do a forced update on just one source.
-    * ContainmentActions plugins
+    * ContainmentActions plugins: allows context menus and mouse interaction to be defined separately from the containment
     * Added Separator class.
     * Wallpapers can now accept drops by defining X-Plasma-DropMimeTypes in their .desktop file and connecting to the
       urlDropped(KUrl) signal
@@ -72,31 +74,41 @@ Plugins/Addons
 --------------
 * Features
     * Plasmoids and Containments
-        * NEW: Qalculate math expression evaluator, based on libqalculate
-        * Knowledgebase: new widget. can query the knowledgebase of opendesktop.org
+        * NEW Blackboard
+        * NEW Knowledge Base: query the knowledgebase of opendesktop.org
+        * NEW On-screen keyboard
+        * NEW OpenDesktop.org Activities: activity infomration from opendesktop.org
+        * NEW Qalculate math expression evaluator, based on libqalculate
+        * Device notifier
+            * Visual revamp to make it look and feel more Plasma
+            * Supports non-removable volumes
+            * Can show/hide devices from the interface
+            * Popup autohides after 10s of innactivity
+        * Microblog: can view replies and direct messages
         * Quicklaunch: ascending and descending sort for applications in quicklaunch applet.
         * SystemTray: now can embed other plasmoids
         * Tasks: clicking on a window preview now activates that window
-        * Microblog: can view replies and direct messages
 
     * DataEngines
+        * NEW Pastebin
 
     * Runners
-        * plasma-desktop: "desktop console [script file]" trigges the interactive scripting window
+        * NEW plasma-desktop: "desktop console [script file]" triggers the interactive scripting window
+        * NEW windows: switch between and control windows and desktops
 
     * Wallpapers
-	* Image wallpaper combobox has been replaced with a nicer view.
+        * Image wallpaper combobox has been replaced with a nicer view.
 
     * ScriptEngines
-        * NEW: JavaScript DataEngines
+        * NEW JavaScript DataEngines
 
-    * ContainmentActions(es)
-        * Switch Activity
-        * Switch Desktop
-        * Switch Window
-        * Context Menu
-        * Paste
-        * App Launcher
+    * NEW ContainmentActions(es)
+        * NEW Switch Activity
+        * NEW Switch Desktop
+        * NEW Switch Window
+        * NEW Context Menu
+        * NEW Paste
+        * NEW App Launcher
 
 * Bugfixes
 
