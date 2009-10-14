@@ -39,7 +39,6 @@ namespace Plasma
 namespace SystemTray
 {
     class Job;
-}
 
 class JobTotalsWidget : public Plasma::Meter
 {
@@ -62,5 +61,6 @@ class JobTotalsWidget : public Plasma::Meter
         SystemTray::Job *m_job;
         int m_updateTimerId;
 };
+}
 
 #endif

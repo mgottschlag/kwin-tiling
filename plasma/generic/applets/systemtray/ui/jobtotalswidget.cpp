@@ -25,6 +25,9 @@
 
 static const int UPDATE_TIMER_INTERVAL = 200;
 
+namespace SystemTray
+{
+
 JobTotalsWidget::JobTotalsWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     : Meter(parent),
       m_extenderItem(parent),
@@ -77,6 +80,8 @@ void JobTotalsWidget::updateJob()
     m_extenderItem->setTitle(m_job->message());
     m_extenderItem->setIcon(m_job->applicationIconName());
 }
+
+} // namespace SystemTray
 
 #include "jobtotalswidget.moc"
 
