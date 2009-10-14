@@ -64,10 +64,6 @@
 #include "notificationwidget.h"
 #include "taskarea.h"
 
-#include "ui_protocols.h"
-#include "ui_autohide.h"
-#include "ui_plasmoidtasks.h"
-
 namespace SystemTray
 {
 
@@ -75,77 +71,31 @@ namespace SystemTray
 K_EXPORT_PLASMA_APPLET(systemtray, Applet)
 
 
-class Applet::Private
-{
-public:
-    Private(Applet *q)
-        : q(q),
-          taskArea(0),
-          notificationInterface(0),
-          autoHideInterface(0),
-          background(0),
-          jobSummaryWidget(0),
-          timerId(0)
-    {
-        if (!s_manager) {
-            s_manager = new SystemTray::Manager();
-        }
-
-        ++s_managerUsage;
-    }
-
-    ~Private()
-    {
-        --s_managerUsage;
-        if (s_managerUsage < 1) {
-            delete s_manager;
-            s_manager = 0;
-            s_managerUsage = 0;
-        }
-    }
-
-
-    void setTaskAreaGeometry();
-
-    Applet *q;
-
-    TaskArea *taskArea;
-    QPointer<QWidget> notificationInterface;
-    QPointer<QWidget> autoHideInterface;
-    QPointer<QWidget> plasmoidTasksInterface;
-    QList<Job*> jobs;
-    QSet<Task::Category> shownCategories;
-    QDateTime lastActivity;
-
-    Plasma::FrameSvg *background;
-    Plasma::Svg *icons;
-    JobTotalsWidget *jobSummaryWidget;
-    static SystemTray::Manager *s_manager;
-    static int s_managerUsage;
-    int autoHideTimeout;
-    int timerId;
-
-    Ui::ProtocolsConfig notificationUi;
-    Ui::AutoHideConfig autoHideUi;
-    Ui::PlasmoidTasksConfig plasmoidTasksUi;
-};
-
-Manager *Applet::Private::s_manager = 0;
-int Applet::Private::s_managerUsage = 0;
+Manager *Applet::s_manager = 0;
+int Applet::s_managerUsage = 0;
 static const int idleCheckInterval = 60 * 1000;
 static const int completedJobExpireDelay = 5 * 60 * 1000;
 
 Applet::Applet(QObject *parent, const QVariantList &arguments)
     : Plasma::PopupApplet(parent, arguments),
-      d(new Private(this))
+      m_taskArea(0),
+      m_background(0),
+      m_jobSummaryWidget(0),
+      m_timerId(0)
 {
-    d->background = new Plasma::FrameSvg(this);
-    d->background->setImagePath("widgets/systemtray");
-    d->background->setCacheAllRenderedFrames(true);
-    d->taskArea = new TaskArea(this);
+    if (!s_manager) {
+        s_manager = new SystemTray::Manager();
+    }
 
-    d->icons = new Plasma::Svg(this);
-    d->icons->setImagePath("widgets/configuration-icons");
+    ++s_managerUsage;
+
+    m_background = new Plasma::FrameSvg(this);
+    m_background->setImagePath("widgets/systemtray");
+    m_background->setCacheAllRenderedFrames(true);
+    m_taskArea = new TaskArea(this);
+
+    m_icons = new Plasma::Svg(this);
+    m_icons->setImagePath("widgets/configuration-icons");
 
     setPopupIcon(QIcon());
     setPassivePopup(true);
@@ -160,12 +110,12 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
 Applet::~Applet()
 {
     // stop listening to the manager
-    disconnect(Private::s_manager, 0, this, 0);
+    disconnect(s_manager, 0, this, 0);
 
     // remove the taskArea so we can delete the widgets without it going nuts on us
-    delete d->taskArea;
+    delete m_taskArea;
 
-    foreach (Task *task, Private::s_manager->tasks()) {
+    foreach (Task *task, s_manager->tasks()) {
         // we don't care about the task updates anymore
         disconnect(task, 0, this, 0);
 
@@ -177,7 +127,12 @@ Applet::~Applet()
 
     clearAllCompletedJobs();
 
-    delete d;
+    --s_managerUsage;
+    if (s_managerUsage < 1) {
+        delete s_manager;
+        s_manager = 0;
+        s_managerUsage = 0;
+    }
 }
 
 void Applet::init()
@@ -186,18 +141,18 @@ void Applet::init()
     QStringList hiddenTypes = cg.readEntry("hidden", QStringList());
     QStringList alwaysShownTypes = cg.readEntry("alwaysShown", QStringList());
 
-    d->setTaskAreaGeometry();
-    connect(Private::s_manager, SIGNAL(taskAdded(SystemTray::Task*)),
-            d->taskArea, SLOT(addTask(SystemTray::Task*)));
+    setTaskAreaGeometry();
+    connect(s_manager, SIGNAL(taskAdded(SystemTray::Task*)),
+            m_taskArea, SLOT(addTask(SystemTray::Task*)));
     //TODO: we re-add the task when it changed: slightly silly!
-    connect(Private::s_manager, SIGNAL(taskChanged(SystemTray::Task*)),
-            d->taskArea, SLOT(addTask(SystemTray::Task*)));
-    connect(Private::s_manager, SIGNAL(taskRemoved(SystemTray::Task*)),
-            d->taskArea, SLOT(removeTask(SystemTray::Task*)));
+    connect(s_manager, SIGNAL(taskChanged(SystemTray::Task*)),
+            m_taskArea, SLOT(addTask(SystemTray::Task*)));
+    connect(s_manager, SIGNAL(taskRemoved(SystemTray::Task*)),
+            m_taskArea, SLOT(removeTask(SystemTray::Task*)));
 
-    d->taskArea->setHiddenTypes(hiddenTypes);
-    d->taskArea->setAlwaysShownTypes(alwaysShownTypes);
-    connect(d->taskArea, SIGNAL(sizeHintChanged(Qt::SizeHint)),
+    m_taskArea->setHiddenTypes(hiddenTypes);
+    m_taskArea->setAlwaysShownTypes(alwaysShownTypes);
+    connect(m_taskArea, SIGNAL(sizeHintChanged(Qt::SizeHint)),
             this, SLOT(propogateSizeHintChange(Qt::SizeHint)));
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
@@ -210,25 +165,25 @@ void Applet::init()
     KConfigGroup globalCg = globalConfig();
 
     if (globalCg.readEntry("ShowApplicationStatus", true)) {
-        d->shownCategories.insert(Task::ApplicationStatus);
+        m_shownCategories.insert(Task::ApplicationStatus);
     }
     if (globalCg.readEntry("ShowCommunications", true)) {
-        d->shownCategories.insert(Task::Communications);
+        m_shownCategories.insert(Task::Communications);
     }
     if (globalCg.readEntry("ShowSystemServices", true)) {
-        d->shownCategories.insert(Task::SystemServices);
+        m_shownCategories.insert(Task::SystemServices);
     }
     if (globalCg.readEntry("ShowHardware", true)) {
-        d->shownCategories.insert(Task::Hardware);
+        m_shownCategories.insert(Task::Hardware);
     }
 
     if (config().readEntry("AutoHidePopup", true)) {
-        d->autoHideTimeout = 6000;
+        m_autoHideTimeout = 6000;
     } else {
-        d->autoHideTimeout = 0;
+        m_autoHideTimeout = 0;
     }
 
-    d->shownCategories.insert(Task::UnknownCategory);
+    m_shownCategories.insert(Task::UnknownCategory);
 
     //destroy any item in the systray, that doesn't belong to the completedJobsGroup, since running
     //jobs and notifications can't really survive reboots anyways
@@ -244,33 +199,33 @@ void Applet::init()
         createExtenderTask = true;
         createJobGroups();
 
-        Private::s_manager->registerJobProtocol();
-        connect(Private::s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
+        s_manager->registerJobProtocol();
+        connect(s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
                 this, SLOT(addJob(SystemTray::Job*)));
-        connect(Private::s_manager, SIGNAL(jobRemoved(SystemTray::Job*)),
+        connect(s_manager, SIGNAL(jobRemoved(SystemTray::Job*)),
                 this, SLOT(finishJob(SystemTray::Job*)));
     }
 
     if (globalCg.readEntry("ShowNotifications", true)) {
         createExtenderTask = true;
-        Private::s_manager->registerNotificationProtocol();
-        connect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
+        s_manager->registerNotificationProtocol();
+        connect(s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
                 this, SLOT(addNotification(SystemTray::Notification*)));
     }
 
     initExtenderTask(createExtenderTask);
-    Private::s_manager->loadApplets(config(), this);
-    d->taskArea->syncTasks(Private::s_manager->tasks());
+    s_manager->loadApplets(config(), this);
+    m_taskArea->syncTasks(s_manager->tasks());
 }
 
 void Applet::initExtenderTask(bool create)
 {
     if (create) {
         extender(); // make sure it exists
-        d->taskArea->addTask(Private::s_manager->extenderTask());
-    } else if (Private::s_manager->extenderTask(false)) {
-        d->taskArea->removeTask(Private::s_manager->extenderTask());
-        QGraphicsWidget *widget = Private::s_manager->extenderTask(false)->widget(this, false);
+        m_taskArea->addTask(s_manager->extenderTask());
+    } else if (s_manager->extenderTask(false)) {
+        m_taskArea->removeTask(s_manager->extenderTask());
+        QGraphicsWidget *widget = s_manager->extenderTask(false)->widget(this, false);
         widget->deleteLater();
     }
 }
@@ -290,33 +245,33 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
         }
 
         setSizePolicy(policy);
-        d->taskArea->setSizePolicy(policy);
-        d->taskArea->setOrientation(vertical ? Qt::Vertical : Qt::Horizontal);
+        m_taskArea->setSizePolicy(policy);
+        m_taskArea->setOrientation(vertical ? Qt::Vertical : Qt::Horizontal);
     }
 
     if (constraints & Plasma::SizeConstraint) {
         checkSizes();
     }
 
-    d->s_manager->forwardConstraintsEvent(constraints);
+    s_manager->forwardConstraintsEvent(constraints);
 }
 
 SystemTray::Manager *Applet::manager() const
 {
-    return d->s_manager;
+    return s_manager;
 }
 
 QSet<Task::Category> Applet::shownCategories() const
 {
-    return d->shownCategories;
+    return m_shownCategories;
 }
 
 void Applet::setGeometry(const QRectF &rect)
 {
     Plasma::Applet::setGeometry(rect);
 
-    if (d->taskArea) {
-        d->setTaskAreaGeometry();
+    if (m_taskArea) {
+        setTaskAreaGeometry();
     }
 }
 
@@ -324,32 +279,32 @@ void Applet::checkSizes()
 {
     Plasma::FormFactor f = formFactor();
     qreal leftMargin, topMargin, rightMargin, bottomMargin;
-    d->background->setElementPrefix(QString());
-    d->background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
-    d->background->getMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+    m_background->setElementPrefix(QString());
+    m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+    m_background->getMargins(leftMargin, topMargin, rightMargin, bottomMargin);
 
-    QSizeF minSize = d->taskArea->effectiveSizeHint(Qt::MinimumSize);
+    QSizeF minSize = m_taskArea->effectiveSizeHint(Qt::MinimumSize);
     if (f == Plasma::Horizontal && minSize.height() >= size().height() - topMargin - bottomMargin) {
-        d->background->setElementPrefix(QString());
-        d->background->setEnabledBorders(Plasma::FrameSvg::LeftBorder | Plasma::FrameSvg::RightBorder);
-        d->background->setElementPrefix("lastelements");
-        d->background->setEnabledBorders(Plasma::FrameSvg::LeftBorder | Plasma::FrameSvg::RightBorder);
+        m_background->setElementPrefix(QString());
+        m_background->setEnabledBorders(Plasma::FrameSvg::LeftBorder | Plasma::FrameSvg::RightBorder);
+        m_background->setElementPrefix("lastelements");
+        m_background->setEnabledBorders(Plasma::FrameSvg::LeftBorder | Plasma::FrameSvg::RightBorder);
         setContentsMargins(leftMargin, 0, rightMargin, 0);
     } else if (f == Plasma::Vertical && minSize.width() >= size().width() - leftMargin - rightMargin) {
-        d->background->setElementPrefix(QString());
-        d->background->setEnabledBorders(Plasma::FrameSvg::TopBorder | Plasma::FrameSvg::BottomBorder);
-        d->background->setElementPrefix("lastelements");
-        d->background->setEnabledBorders(Plasma::FrameSvg::TopBorder | Plasma::FrameSvg::BottomBorder);
+        m_background->setElementPrefix(QString());
+        m_background->setEnabledBorders(Plasma::FrameSvg::TopBorder | Plasma::FrameSvg::BottomBorder);
+        m_background->setElementPrefix("lastelements");
+        m_background->setEnabledBorders(Plasma::FrameSvg::TopBorder | Plasma::FrameSvg::BottomBorder);
         setContentsMargins(0, topMargin, 0, bottomMargin);
     } else {
-        d->background->setElementPrefix(QString());
-        d->background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
-        d->background->setElementPrefix("lastelements");
-        d->background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+        m_background->setElementPrefix(QString());
+        m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+        m_background->setElementPrefix("lastelements");
+        m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
         setContentsMargins(leftMargin, topMargin, rightMargin, bottomMargin);
     }
 
-    QSizeF preferredSize = d->taskArea->effectiveSizeHint(Qt::PreferredSize);
+    QSizeF preferredSize = m_taskArea->effectiveSizeHint(Qt::PreferredSize);
     preferredSize.setWidth(preferredSize.width() + leftMargin + rightMargin);
     preferredSize.setHeight(preferredSize.height() + topMargin + bottomMargin);
     setPreferredSize(preferredSize);
@@ -374,7 +329,7 @@ void Applet::checkSizes()
             constraint = QSize(-1, actualSize.height() - topMargin - bottomMargin);
         }
 
-        preferredSize = d->taskArea->effectiveSizeHint(Qt::PreferredSize, actualSize);
+        preferredSize = m_taskArea->effectiveSizeHint(Qt::PreferredSize, actualSize);
         preferredSize.setWidth(qMax(actualSize.width(), preferredSize.width()));
         preferredSize.setHeight(qMax(actualSize.height(), preferredSize.height()));
 
@@ -383,18 +338,18 @@ void Applet::checkSizes()
 }
 
 
-void Applet::Private::setTaskAreaGeometry()
+void Applet::setTaskAreaGeometry()
 {
     qreal leftMargin, topMargin, rightMargin, bottomMargin;
-    q->getContentsMargins(&leftMargin, &topMargin, &rightMargin, &bottomMargin);
+    getContentsMargins(&leftMargin, &topMargin, &rightMargin, &bottomMargin);
 
-    QRectF taskAreaRect(q->rect());
+    QRectF taskAreaRect(rect());
     taskAreaRect.moveLeft(leftMargin);
     taskAreaRect.moveTop(topMargin);
     taskAreaRect.setWidth(taskAreaRect.width() - leftMargin - rightMargin);
     taskAreaRect.setHeight(taskAreaRect.height() - topMargin - bottomMargin);
 
-    taskArea->setGeometry(taskAreaRect);
+    m_taskArea->setGeometry(taskAreaRect);
 }
 
 void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
@@ -404,25 +359,25 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
 
     QRect normalRect = rect().toRect();
     QRect lastRect(normalRect);
-    d->background->setElementPrefix("lastelements");
+    m_background->setElementPrefix("lastelements");
 
     if (formFactor() == Plasma::Vertical) {
-        const int rightEasement = d->taskArea->rightEasement() + d->background->marginSize(Plasma::BottomMargin);
-        normalRect.setY(d->taskArea->leftEasement());
+        const int rightEasement = m_taskArea->rightEasement() + m_background->marginSize(Plasma::BottomMargin);
+        normalRect.setY(m_taskArea->leftEasement());
         normalRect.setBottom(normalRect.bottom() - rightEasement);
 
         lastRect.setY(normalRect.bottom() + 1);
         lastRect.setHeight(rightEasement);
     } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
-        const int rightEasement = d->taskArea->rightEasement() + d->background->marginSize(Plasma::LeftMargin);
-        normalRect.setWidth(normalRect.width() - d->taskArea->leftEasement());
+        const int rightEasement = m_taskArea->rightEasement() + m_background->marginSize(Plasma::LeftMargin);
+        normalRect.setWidth(normalRect.width() - m_taskArea->leftEasement());
         normalRect.setLeft(rightEasement);
 
         lastRect.setX(0);
         lastRect.setWidth(rightEasement);
     } else {
-        const int rightEasement = d->taskArea->rightEasement() + d->background->marginSize(Plasma::RightMargin);
-        normalRect.setX(d->taskArea->leftEasement());
+        const int rightEasement = m_taskArea->rightEasement() + m_background->marginSize(Plasma::RightMargin);
+        normalRect.setX(m_taskArea->leftEasement());
         normalRect.setWidth(normalRect.width() - rightEasement);
 
         lastRect.setX(normalRect.right() + 1);
@@ -433,30 +388,30 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
 
     painter->save();
 
-    d->background->setElementPrefix(QString());
-    d->background->resizeFrame(r.size());
-    if (d->taskArea->rightEasement() > 0) {
+    m_background->setElementPrefix(QString());
+    m_background->resizeFrame(r.size());
+    if (m_taskArea->rightEasement() > 0) {
         painter->setClipRect(normalRect);
     }
-    d->background->paintFrame(painter, r, QRectF(QPointF(0, 0), r.size()));
+    m_background->paintFrame(painter, r, QRectF(QPointF(0, 0), r.size()));
 
-    if (d->taskArea->rightEasement() > 0) {
-        d->background->setElementPrefix("lastelements");
-        d->background->resizeFrame(r.size());
+    if (m_taskArea->rightEasement() > 0) {
+        m_background->setElementPrefix("lastelements");
+        m_background->resizeFrame(r.size());
         painter->setClipRect(lastRect);
-        d->background->paintFrame(painter, r, QRectF(QPointF(0, 0), r.size()));
+        m_background->paintFrame(painter, r, QRectF(QPointF(0, 0), r.size()));
 
-        if (formFactor() == Plasma::Vertical && d->background->hasElement("horizontal-separator")) {
-            QSize s = d->background->elementRect("horizontal-separator").size().toSize();
-            d->background->paint(painter, QRect(lastRect.topLeft() - QPoint(0, s.height() / 2),
+        if (formFactor() == Plasma::Vertical && m_background->hasElement("horizontal-separator")) {
+            QSize s = m_background->elementRect("horizontal-separator").size().toSize();
+            m_background->paint(painter, QRect(lastRect.topLeft() - QPoint(0, s.height() / 2),
                                                 QSize(lastRect.width(), s.height())), "horizontal-separator");
-        } else if (QApplication::layoutDirection() == Qt::RightToLeft && d->background->hasElement("vertical-separator")) {
-            QSize s = d->background->elementRect("vertical-separator").size().toSize();
-            d->background->paint(painter, QRect(lastRect.topRight() - QPoint(s.width() / 2, 0),
+        } else if (QApplication::layoutDirection() == Qt::RightToLeft && m_background->hasElement("vertical-separator")) {
+            QSize s = m_background->elementRect("vertical-separator").size().toSize();
+            m_background->paint(painter, QRect(lastRect.topRight() - QPoint(s.width() / 2, 0),
                                                 QSize(s.width(), lastRect.height())), "vertical-separator");
-        } else if (d->background->hasElement("vertical-separator")) {
-            QSize s = d->background->elementRect("vertical-separator").size().toSize();
-            d->background->paint(painter, QRect(lastRect.topLeft() - QPoint(s.width() / 2, 0),
+        } else if (m_background->hasElement("vertical-separator")) {
+            QSize s = m_background->elementRect("vertical-separator").size().toSize();
+            m_background->paint(painter, QRect(lastRect.topLeft() - QPoint(s.width() / 2, 0),
                                                 QSize(s.width(), lastRect.height())), "vertical-separator");
         }
     }
@@ -474,44 +429,44 @@ void Applet::propogateSizeHintChange(Qt::SizeHint which)
 
 void Applet::createConfigurationInterface(KConfigDialog *parent)
 {
-    if (!d->autoHideInterface) {
+    if (!m_autoHideInterface) {
         KConfigGroup globalCg = globalConfig();
-        d->notificationInterface = new QWidget();
-        d->autoHideInterface = new QWidget();
-        d->plasmoidTasksInterface = new QWidget();
+        m_notificationInterface = new QWidget();
+        m_autoHideInterface = new QWidget();
+        m_plasmoidTasksInterface = new QWidget();
 
-        d->notificationUi.setupUi(d->notificationInterface);
+        m_notificationUi.setupUi(m_notificationInterface.data());
 
-        d->notificationUi.showJobs->setChecked(globalCg.readEntry("ShowJobs", true));
-        d->notificationUi.showNotifications->setChecked(globalCg.readEntry("ShowNotifications", true));
+        m_notificationUi.showJobs->setChecked(globalCg.readEntry("ShowJobs", true));
+        m_notificationUi.showNotifications->setChecked(globalCg.readEntry("ShowNotifications", true));
 
-        d->notificationUi.showApplicationStatus->setChecked(globalCg.readEntry("ShowApplicationStatus", true));
-        d->notificationUi.showCommunications->setChecked(globalCg.readEntry("ShowCommunications", true));
-        d->notificationUi.showSystemServices->setChecked(globalCg.readEntry("ShowSystemServices", true));
-        d->notificationUi.showHardware->setChecked(globalCg.readEntry("ShowHardware", true));
+        m_notificationUi.showApplicationStatus->setChecked(globalCg.readEntry("ShowApplicationStatus", true));
+        m_notificationUi.showCommunications->setChecked(globalCg.readEntry("ShowCommunications", true));
+        m_notificationUi.showSystemServices->setChecked(globalCg.readEntry("ShowSystemServices", true));
+        m_notificationUi.showHardware->setChecked(globalCg.readEntry("ShowHardware", true));
 
-        d->autoHideUi.setupUi(d->autoHideInterface);
-        d->autoHideUi.autoHide->setChecked(config().readEntry("AutoHidePopup", true));
+        m_autoHideUi.setupUi(m_autoHideInterface.data());
+        m_autoHideUi.autoHide->setChecked(config().readEntry("AutoHidePopup", true));
 
-        d->plasmoidTasksUi.setupUi(d->plasmoidTasksInterface);
+        m_plasmoidTasksUi.setupUi(m_plasmoidTasksInterface.data());
 
 
         connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
         connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
-        parent->addPage(d->notificationInterface, i18n("Information"),
+        parent->addPage(m_notificationInterface.data(), i18n("Information"),
                         "preferences-desktop-notification",
                         i18n("Choose which information to show"));
-        parent->addPage(d->autoHideInterface, i18n("Auto Hide"), "window-suppressed");
-        parent->addPage(d->plasmoidTasksInterface, i18n("Plasma widgets"), "plasma");
+        parent->addPage(m_autoHideInterface.data(), i18n("Auto Hide"), "window-suppressed");
+        parent->addPage(m_plasmoidTasksInterface.data(), i18n("Plasma widgets"), "plasma");
     }
 
-    d->autoHideUi.icons->clear();
-    d->plasmoidTasksUi.applets->clear();
+    m_autoHideUi.icons->clear();
+    m_plasmoidTasksUi.applets->clear();
 
     QMultiMap<QString, const Task *> sortedTasks;
-    foreach (const Task *task, Private::s_manager->tasks()) {
-        if (!d->shownCategories.contains(task->category())) {
+    foreach (const Task *task, s_manager->tasks()) {
+        if (!m_shownCategories.contains(task->category())) {
              continue;
         }
 
@@ -523,8 +478,8 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     }
 
     foreach (const Task *task, sortedTasks) {
-        QTreeWidgetItem *listItem = new QTreeWidgetItem(d->autoHideUi.icons);
-        KComboBox *itemCombo = new KComboBox(d->autoHideUi.icons);
+        QTreeWidgetItem *listItem = new QTreeWidgetItem(m_autoHideUi.icons);
+        KComboBox *itemCombo = new KComboBox(m_autoHideUi.icons);
         listItem->setText(0, task->name());
         listItem->setIcon(0, task->icon());
         listItem->setFlags(Qt::ItemIsEnabled);
@@ -536,17 +491,17 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
 
         if (task->hidden() & Task::UserHidden) {
             itemCombo->setCurrentIndex(1);
-        } else if (d->taskArea->alwaysShownTypes().contains(task->typeId())) {
+        } else if (m_taskArea->alwaysShownTypes().contains(task->typeId())) {
             itemCombo->setCurrentIndex(2);
         } else {
             itemCombo->setCurrentIndex(0);
         }
-        d->autoHideUi.icons->setItemWidget(listItem, 1, itemCombo);
+        m_autoHideUi.icons->setItemWidget(listItem, 1, itemCombo);
 
-        d->autoHideUi.icons->addTopLevelItem(listItem);
+        m_autoHideUi.icons->addTopLevelItem(listItem);
     }
 
-    QStringList ownApplets = Private::s_manager->applets(this);
+    QStringList ownApplets = s_manager->applets(this);
     foreach (const KPluginInfo &info, Plasma::Applet::listAppletInfo()) {
         KService::Ptr service = info.service();
         if (service->property("X-Plasma-NotificationArea", QVariant::Bool).toBool()) {
@@ -556,7 +511,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
             listItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
             listItem->setData(Qt::UserRole, info.pluginName());
             listItem->setCheckState(ownApplets.contains(info.pluginName()) ? Qt::Checked : Qt::Unchecked);
-            d->plasmoidTasksUi.applets->addItem(listItem);
+            m_plasmoidTasksUi.applets->addItem(listItem);
         }
     }
 
@@ -566,7 +521,7 @@ void Applet::configAccepted()
 {
     QStringList hiddenTypes;
     QStringList alwaysShownTypes;
-    QTreeWidget *hiddenList = d->autoHideUi.icons;
+    QTreeWidget *hiddenList = m_autoHideUi.icons;
     for (int i = 0; i < hiddenList->topLevelItemCount(); ++i) {
         QTreeWidgetItem *item = hiddenList->topLevelItem(i);
         KComboBox *itemCombo = static_cast<KComboBox *>(hiddenList->itemWidget(item, 1));
@@ -580,85 +535,85 @@ void Applet::configAccepted()
         }
     }
 
-    d->taskArea->setHiddenTypes(hiddenTypes);
-    d->taskArea->setAlwaysShownTypes(alwaysShownTypes);
-    d->taskArea->syncTasks(Private::s_manager->tasks());
+    m_taskArea->setHiddenTypes(hiddenTypes);
+    m_taskArea->setAlwaysShownTypes(alwaysShownTypes);
+    m_taskArea->syncTasks(s_manager->tasks());
 
     KConfigGroup cg = config();
     cg.writeEntry("hidden", hiddenTypes);
     cg.writeEntry("alwaysShown", alwaysShownTypes);
 
-    cg.writeEntry("AutoHidePopup", d->autoHideUi.autoHide->isChecked());
-    if (d->autoHideUi.autoHide->isChecked()) {
-        d->autoHideTimeout = 6000;
+    cg.writeEntry("AutoHidePopup", m_autoHideUi.autoHide->isChecked());
+    if (m_autoHideUi.autoHide->isChecked()) {
+        m_autoHideTimeout = 6000;
     } else {
-        d->autoHideTimeout = 0;
+        m_autoHideTimeout = 0;
     }
 
     KConfigGroup globalCg = globalConfig();
-    globalCg.writeEntry("ShowJobs", d->notificationUi.showJobs->isChecked());
-    globalCg.writeEntry("ShowNotifications", d->notificationUi.showNotifications->isChecked());
+    globalCg.writeEntry("ShowJobs", m_notificationUi.showJobs->isChecked());
+    globalCg.writeEntry("ShowNotifications", m_notificationUi.showNotifications->isChecked());
     bool createExtenderTask = false;
 
-    disconnect(Private::s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
+    disconnect(s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
                this, SLOT(addJob(SystemTray::Job*)));
-    if (d->notificationUi.showJobs->isChecked()) {
+    if (m_notificationUi.showJobs->isChecked()) {
         createJobGroups();
         createExtenderTask = true;
 
-        Private::s_manager->registerJobProtocol();
-        connect(Private::s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
+        s_manager->registerJobProtocol();
+        connect(s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
                 this, SLOT(addJob(SystemTray::Job*)));
     } else {
-        Private::s_manager->unregisterJobProtocol();
+        s_manager->unregisterJobProtocol();
     }
 
-    disconnect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
+    disconnect(s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
                this, SLOT(addNotification(SystemTray::Notification*)));
-    if (d->notificationUi.showNotifications->isChecked()) {
+    if (m_notificationUi.showNotifications->isChecked()) {
         createExtenderTask = true;
-        Private::s_manager->registerNotificationProtocol();
-        connect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
+        s_manager->registerNotificationProtocol();
+        connect(s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
                 this, SLOT(addNotification(SystemTray::Notification*)));
     } else {
-        Private::s_manager->unregisterNotificationProtocol();
+        s_manager->unregisterNotificationProtocol();
     }
 
 
     initExtenderTask(createExtenderTask);
-    d->shownCategories.clear();
+    m_shownCategories.clear();
 
-    globalCg.writeEntry("ShowApplicationStatus", d->notificationUi.showApplicationStatus->isChecked());
-    if (d->notificationUi.showApplicationStatus->isChecked()) {
-        d->shownCategories.insert(Task::ApplicationStatus);
+    globalCg.writeEntry("ShowApplicationStatus", m_notificationUi.showApplicationStatus->isChecked());
+    if (m_notificationUi.showApplicationStatus->isChecked()) {
+        m_shownCategories.insert(Task::ApplicationStatus);
     }
 
-    globalCg.writeEntry("ShowCommunications", d->notificationUi.showCommunications->isChecked());
-    if (d->notificationUi.showCommunications->isChecked()) {
-        d->shownCategories.insert(Task::Communications);
+    globalCg.writeEntry("ShowCommunications", m_notificationUi.showCommunications->isChecked());
+    if (m_notificationUi.showCommunications->isChecked()) {
+        m_shownCategories.insert(Task::Communications);
     }
 
-    globalCg.writeEntry("ShowSystemServices", d->notificationUi.showSystemServices->isChecked());
-    if (d->notificationUi.showSystemServices->isChecked()) {
-        d->shownCategories.insert(Task::SystemServices);
+    globalCg.writeEntry("ShowSystemServices", m_notificationUi.showSystemServices->isChecked());
+    if (m_notificationUi.showSystemServices->isChecked()) {
+        m_shownCategories.insert(Task::SystemServices);
     }
 
-    globalCg.writeEntry("ShowHardware", d->notificationUi.showHardware->isChecked());
-    if (d->notificationUi.showHardware->isChecked()) {
-        d->shownCategories.insert(Task::Hardware);
+    globalCg.writeEntry("ShowHardware", m_notificationUi.showHardware->isChecked());
+    if (m_notificationUi.showHardware->isChecked()) {
+        m_shownCategories.insert(Task::Hardware);
     }
 
-    d->shownCategories.insert(Task::UnknownCategory);
+    m_shownCategories.insert(Task::UnknownCategory);
 
-    d->taskArea->syncTasks(manager()->tasks());
+    m_taskArea->syncTasks(manager()->tasks());
 
-    QStringList applets = Private::s_manager->applets(this);
-    for (int i = 0; i < d->plasmoidTasksUi.applets->count(); ++i) {
-        QListWidgetItem * item = d->plasmoidTasksUi.applets->item(i);
+    QStringList applets = s_manager->applets(this);
+    for (int i = 0; i < m_plasmoidTasksUi.applets->count(); ++i) {
+        QListWidgetItem * item = m_plasmoidTasksUi.applets->item(i);
         QString appletName = item->data(Qt::UserRole).toString();
 
         if (item->checkState() != Qt::Unchecked && !applets.contains(appletName)) {
-            Private::s_manager->addApplet(appletName, this);
+            s_manager->addApplet(appletName, this);
         }
 
         if (item->checkState() == Qt::Checked) {
@@ -667,7 +622,7 @@ void Applet::configAccepted()
     }
 
     foreach (const QString &appletName, applets) {
-        Private::s_manager->removeApplet(appletName, this);
+        s_manager->removeApplet(appletName, this);
     }
 
     emit configNeedsSaving();
@@ -675,9 +630,9 @@ void Applet::configAccepted()
 
 void Applet::addDefaultApplets()
 {
-    QStringList applets = Private::s_manager->applets(this);
+    QStringList applets = s_manager->applets(this);
     if (!applets.contains("notifier")) {
-        Private::s_manager->addApplet("notifier", this);
+        s_manager->addApplet("notifier", this);
     }
     if (!applets.contains("battery")) {
         Plasma::DataEngineManager *engines = Plasma::DataEngineManager::self();
@@ -685,7 +640,7 @@ void Applet::addDefaultApplets()
         if (power) {
             const QStringList &batteries = power->query("Battery")["sources"].toStringList();
             if (!batteries.isEmpty()) {
-                Private::s_manager->addApplet("battery", this);
+                s_manager->addApplet("battery", this);
             }
         }
         engines->unloadEngine("powermanagement");
@@ -698,7 +653,7 @@ void Applet::addNotification(Notification *notification)
     extenderItem->config().writeEntry("type", "notification");
     extenderItem->setWidget(new NotificationWidget(notification, extenderItem));
 
-    showPopup(d->autoHideTimeout);
+    showPopup(m_autoHideTimeout);
 }
 
 void Applet::addJob(Job *job)
@@ -707,7 +662,7 @@ void Applet::addJob(Job *job)
     extenderItem->config().writeEntry("type", "job");
     extenderItem->setWidget(new JobWidget(job, extenderItem));
 
-    showPopup(d->autoHideTimeout);
+    showPopup(m_autoHideTimeout);
 
     extenderItem->setGroup(extender()->group("jobGroup"));
 }
@@ -715,8 +670,8 @@ void Applet::addJob(Job *job)
 void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
 {
     if (extenderItem->name() == "jobGroup") {
-        d->jobSummaryWidget = new JobTotalsWidget(Private::s_manager->jobTotals(), extenderItem);
-        extenderItem->setWidget(d->jobSummaryWidget);
+        m_jobSummaryWidget = new JobTotalsWidget(s_manager->jobTotals(), extenderItem);
+        extenderItem->setWidget(m_jobSummaryWidget);
         return;
     }
 
@@ -726,7 +681,7 @@ void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
         extenderItem->setWidget(widget);
 
         QAction *clearAction = new QAction(this);
-        clearAction->setIcon(KIcon(d->icons->pixmap("close")));
+        clearAction->setIcon(KIcon(m_icons->pixmap("close")));
         extenderItem->addAction("space", new QAction(this));
         extenderItem->addAction("clear", clearAction);
         connect(clearAction, SIGNAL(triggered()), this, SLOT(clearAllCompletedJobs()));
@@ -754,7 +709,7 @@ void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
 
 void Applet::timerEvent(QTimerEvent *event)
 {
-    if (event->timerId() != d->timerId) {
+    if (event->timerId() != m_timerId) {
         Plasma::Applet::timerEvent(event);
         return;
     }
@@ -780,8 +735,8 @@ void Applet::timerEvent(QTimerEvent *event)
             }
         }
 
-        killTimer(d->timerId);
-        d->timerId = 0;
+        killTimer(m_timerId);
+        m_timerId = 0;
     }
 }
 
@@ -827,9 +782,9 @@ void Applet::finishJob(SystemTray::Job *job)
 
     initExtenderItem(item);
     item->setGroup(extender()->group("completedJobsGroup"));
-    showPopup(d->autoHideTimeout);
-    if (!d->timerId) {
-        d->timerId = startTimer(idleCheckInterval);
+    showPopup(m_autoHideTimeout);
+    if (!m_timerId) {
+        m_timerId = startTimer(idleCheckInterval);
     }
 }
 

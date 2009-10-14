@@ -24,14 +24,20 @@
 
 #include <plasma/popupapplet.h>
 
+#include "ui_protocols.h"
+#include "ui_autohide.h"
+#include "ui_plasmoidtasks.h"
+
 #include "../core/task.h"
 
 namespace SystemTray
 {
 
 class Job;
+class JobTotalsWidget;
 class Manager;
 class Notification;
+class TaskArea;
 
 class Applet : public Plasma::PopupApplet
 {
@@ -74,11 +80,28 @@ private slots:
 private:
     void createJobGroups();
     void initExtenderTask(bool create);
+    void setTaskAreaGeometry();
 
-    class Private;
-    Private* const d;
+    static SystemTray::Manager *s_manager;
+    static int s_managerUsage;
 
-    friend class Private;
+    TaskArea *m_taskArea;
+    QWeakPointer<QWidget> m_notificationInterface;
+    QWeakPointer<QWidget> m_autoHideInterface;
+    QWeakPointer<QWidget> m_plasmoidTasksInterface;
+    QList<Job*> m_jobs;
+    QSet<Task::Category> m_shownCategories;
+    QDateTime m_lastActivity;
+
+    Plasma::FrameSvg *m_background;
+    Plasma::Svg *m_icons;
+    JobTotalsWidget *m_jobSummaryWidget;
+    int m_autoHideTimeout;
+    int m_timerId;
+
+    Ui::ProtocolsConfig m_notificationUi;
+    Ui::AutoHideConfig m_autoHideUi;
+    Ui::PlasmoidTasksConfig m_plasmoidTasksUi;
 };
 
 }
