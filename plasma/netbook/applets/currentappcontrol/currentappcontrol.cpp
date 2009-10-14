@@ -149,13 +149,19 @@ void CurrentAppControl::syncActiveWindow()
         m_maximizeTask->hide();
     } else {
         m_activeWindow = m_pendingActiveWindow;
-        KWindowInfo info = KWindowSystem::windowInfo(m_activeWindow, NET::WMName);
+        KWindowInfo info = KWindowSystem::windowInfo(m_activeWindow, NET::WMName|NET::WMState);
         m_currentTask->setIcon(KWindowSystem::icon(m_activeWindow, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium));
         m_currentTask->setText(info.name());
         //FIXME: this is utterly bad: the layout seems to -not- resize it?
         m_currentTask->resize(size().width() - m_closeTask->size().width(), m_currentTask->size().height());
         m_closeTask->show();
         m_maximizeTask->show();
+
+        if (info.state() & (NET::MaxVert|NET::MaxHoriz)) {
+            m_maximizeTask->setSvg("widgets/configuration-icons", "unmaximize");
+        } else {
+            m_maximizeTask->setSvg("widgets/configuration-icons", "maximize");
+        }
     }
 
     m_pendingActiveWindow = 0;
@@ -182,33 +188,30 @@ void CurrentAppControl::closeWindow()
 
 void CurrentAppControl::toggleMaximizedWindow()
 {
+    //TODO: change the icon
 #ifdef Q_WS_X11
     KWindowInfo info = KWindowSystem::windowInfo(m_activeWindow, NET::WMState | NET::XAWMState | NET::WMDesktop);
     bool on_current = info.isOnCurrentDesktop();
 
-    if (!on_current)
-    {
+    if (!on_current) {
         KWindowSystem::setCurrentDesktop(info.desktop());
     }
 
-    if (info.isMinimized())
-    {
+    if (info.isMinimized()) {
         KWindowSystem::unminimizeWindow(m_activeWindow);
     }
 
     NETWinInfo ni(QX11Info::display(), m_activeWindow, QX11Info::appRootWindow(), NET::WMState);
 
-    if (!(ni.state() & NET::Max))
-    {
+    if (!(ni.state() & NET::Max)) {
         ni.setState(NET::Max, NET::Max);
-    }
-    else
-    {
+        m_maximizeTask->setSvg("widgets/configuration-icons", "unmaximize");
+    } else {
         ni.setState(0, NET::Max);
+        m_maximizeTask->setSvg("widgets/configuration-icons", "maximize");
     }
 
-    if (!on_current)
-    {
+    if (!on_current) {
         KWindowSystem::forceActiveWindow(m_activeWindow);
     }
 #endif
