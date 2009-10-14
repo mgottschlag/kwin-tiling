@@ -38,6 +38,7 @@ K_EXPORT_PLUGIN(WorkspaceOptionsModuleFactory("kcmworkspaceoptions"))
 WorkspaceOptionsModule::WorkspaceOptionsModule(QWidget *parent, const QVariantList &)
   : KCModule(WorkspaceOptionsModuleFactory::componentData(), parent),
     m_kwinConfig( KSharedConfig::openConfig("kwinrc")),
+    m_ownConfig( KSharedConfig::openConfig("workspaceoptionsrc")),
     m_plasmaDesktopAutostart("plasma-desktop"),
     m_plasmaNetbookAutostart("plasma-netbook"),
     m_ui(new Ui::MainPage)
@@ -63,6 +64,12 @@ WorkspaceOptionsModule::WorkspaceOptionsModule(QWidget *parent, const QVariantLi
     if (KStandardDirs::findExe("plasma-desktop").isNull() || KStandardDirs::findExe("plasma-netbook").isNull()) {
         m_ui->formFactor->setEnabled(false);
     }
+
+    KConfigGroup cg(m_ownConfig, "TitleBarButtons");
+    m_desktopTitleBarButtonsLeft = cg.readEntry("DesktopLeft", "MS");
+    m_netbookTitleBarButtonsLeft = cg.readEntry("NetbookLeft", "MS");
+    m_desktopTitleBarButtonsRight = cg.readEntry("DesktopRight", "HIA__X");
+    m_netbookTitleBarButtonsRight = cg.readEntry("NetbookRight", "HA__X");
 }
 
 WorkspaceOptionsModule::~WorkspaceOptionsModule()
@@ -85,16 +92,44 @@ void WorkspaceOptionsModule::save()
     m_plasmaNetbookAutostart.setCommand("plasma-netbook");
     m_plasmaNetbookAutostart.setAllowedEnvironments(QStringList()<<"KDE");
 
-    KConfigGroup cg(m_kwinConfig, "Windows");
+    KConfigGroup winCg(m_kwinConfig, "Windows");
 
-    cg.writeEntry("BorderlessMaximizedWindows", !isDesktop);
+    winCg.writeEntry("BorderlessMaximizedWindows", !isDesktop);
     if (!isDesktop) {
-        cg.writeEntry("Placement", "Maximizing");
+        winCg.writeEntry("Placement", "Maximizing");
     } else {
-        cg.writeEntry("Placement", "Smart");
+        winCg.writeEntry("Placement", "Smart");
+    }
+    winCg.sync();
+
+    KConfigGroup ownCg(m_ownConfig, "TitleBarButtons");
+    KConfigGroup styleCg(m_kwinConfig, "Style");
+
+    //save the user preferences on titlebar buttons
+    if (m_currentlyIsDesktop) {
+        m_desktopTitleBarButtonsLeft = styleCg.readEntry("ButtonsOnLeft", "MS");
+        m_desktopTitleBarButtonsRight = styleCg.readEntry("ButtonsOnRight", "HIA__X");
+        ownCg.writeEntry("DesktopLeft", m_desktopTitleBarButtonsLeft);
+        ownCg.writeEntry("DesktopRight", m_desktopTitleBarButtonsRight);
+    } else {
+        m_netbookTitleBarButtonsLeft = styleCg.readEntry("ButtonsOnLeft", "MS");
+        m_netbookTitleBarButtonsRight = styleCg.readEntry("ButtonsOnRight", "HA__X");
+        ownCg.writeEntry("NetbookLeft", m_netbookTitleBarButtonsLeft);
+        ownCg.writeEntry("NetbookRight", m_netbookTitleBarButtonsRight);
+    }
+    ownCg.sync();
+
+    //kill/enable the minimize button, unless configured differently
+    styleCg.writeEntry("CustomButtonPositions", true);
+    if (isDesktop) {
+        styleCg.writeEntry("ButtonsOnLeft", m_desktopTitleBarButtonsLeft);
+        styleCg.writeEntry("ButtonsOnRight", m_desktopTitleBarButtonsRight);
+    } else {
+        styleCg.writeEntry("ButtonsOnLeft", m_netbookTitleBarButtonsLeft);
+        styleCg.writeEntry("ButtonsOnRight", m_netbookTitleBarButtonsRight);
     }
 
-    cg.sync();
+    styleCg.sync();
 
     // Reload KWin.
     QDBusMessage message = QDBusMessage::createSignal( "/KWin", "org.kde.KWin", "reloadConfig" );
@@ -129,7 +164,11 @@ void WorkspaceOptionsModule::load()
     m_currentlyIsDesktop = m_plasmaDesktopAutostart.autostarts();
 
     QDBusInterface interface("org.kde.plasma-desktop", "/App");
-    bool fixedDashboard = interface.call("fixedDashboard").arguments().first().toBool();
+    bool fixedDashboard = false;
+
+    if (interface.isValid()) {
+        fixedDashboard = interface.call("fixedDashboard").arguments().first().toBool();
+    }
 
     if (fixedDashboard) {
         m_ui->dashboardMode->setCurrentIndex(1);

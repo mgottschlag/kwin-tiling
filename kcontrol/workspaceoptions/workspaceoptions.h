@@ -43,9 +43,15 @@ private Q_SLOTS:
 
 private:
     KSharedConfigPtr m_kwinConfig;
+    KSharedConfigPtr m_ownConfig;
     KAutostart m_plasmaDesktopAutostart;
     KAutostart m_plasmaNetbookAutostart;
     bool m_currentlyIsDesktop;
+
+    QString m_desktopTitleBarButtonsLeft;
+    QString m_desktopTitleBarButtonsRight;
+    QString m_netbookTitleBarButtonsLeft;
+    QString m_netbookTitleBarButtonsRight;
 
     Ui::MainPage *m_ui;
 };
