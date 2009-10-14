@@ -60,6 +60,7 @@ private:
     QAction *m_logoutAction;
     QAction *m_separator1;
     QAction *m_separator2;
+    QAction *m_separator3;
 
     QList<QString> m_allActions;
     QList<bool> m_enabledActions;

@@ -53,6 +53,7 @@ ContextMenu::ContextMenu(QObject *parent, const QVariantList &args)
       m_logoutAction(0),
       m_separator1(0),
       m_separator2(0),
+      m_separator3(0),
       m_buttons(0)
 {
 }
@@ -79,8 +80,8 @@ void ContextMenu::init(const KConfigGroup &config)
         defaultEnabled << true << true << true << true << true;
     } else {
         //FIXME ugly code!
-        m_allActions << "_context" << "_run_command" << "add widgets" << "_add panel" << "remove" << "lock widgets" << "zoom in" << "zoom out" << "_sep1" << "_lock_screen" << "_logout" << "_sep2" << "configure" << "configure shortcuts" << "_wallpaper";
-        defaultEnabled << true << true << true << true << true << true << false << false << true << true << true << true << true << false << true;
+        m_allActions << "_context" << "_run_command" << "add widgets" << "_add panel" << "remove" << "lock widgets" << "zoom in" << "zoom out" << "_sep1" << "_lock_screen" << "_logout" << "_sep2" << "configure" << "configure shortcuts" << "_sep3" << "_wallpaper";
+        defaultEnabled << true << true << true << true << true << true << false << false << true << true << true << true << true << false << true << true;
     }
 
     for (int i = 0; i < m_allActions.count(); ++i) {
@@ -145,6 +146,8 @@ void ContextMenu::init(const KConfigGroup &config)
         m_separator1->setSeparator(true);
         m_separator2 = new QAction(this);
         m_separator2->setSeparator(true);
+        m_separator3 = new QAction(this);
+        m_separator3->setSeparator(true);
     }
 
     updateImmutability(c->immutability());
@@ -192,9 +195,6 @@ QList<QAction*> ContextMenu::contextualActions()
             } if (name == "_wallpaper") {
                 if (c->wallpaper() &&
                       !c->wallpaper()->contextualActions().isEmpty()) {
-                    QAction* sep = new QAction(this);
-                    sep->setSeparator(true);
-                    actions << sep;
                     actions << c->wallpaper()->contextualActions();
                 }
             } else {
@@ -216,6 +216,8 @@ QAction *ContextMenu::action(const QString &name)
         return m_separator1;
     } else if (name == "_sep2") {
         return m_separator2;
+    } else if (name == "_sep3") {
+        return m_separator3;
     } else if (name == "_add panel") {
         return m_addPanelAction;
     } else if (name == "_run_command") {
