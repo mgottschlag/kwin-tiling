@@ -479,6 +479,7 @@ void KColorCm::createColorEntry(const QString &text, const QString &key, QList<K
     QTableWidgetItem *label = new QTableWidgetItem(text);
     colorTable->setItem(index, 0, label);
     colorTable->setCellWidget(index, 1, button);
+    colorTable->setRowHeight(index, button->sizeHint().height());
 }
 
 void KColorCm::variesClicked()
@@ -666,6 +667,7 @@ void KColorCm::setupColorTable()
     for (int i = 0; i < 24; ++i)
     {
         KColorButton * button = new KColorButton(this);
+        commonColorTable->setRowHeight(i, button->sizeHint().height());
         button->setObjectName(QString::number(i));
         connect(button, SIGNAL(changed(const QColor &)), this, SLOT(colorChanged(const QColor &)));
         m_commonColorButtons << button;
