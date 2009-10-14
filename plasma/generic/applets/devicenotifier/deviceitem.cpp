@@ -150,9 +150,10 @@ DeviceItem::~DeviceItem()
 void DeviceItem::collapse()
 {
     if (!isCollapsed()) {
-        m_treeLayout->removeAt(1);
-        m_actionsWidget->hide();
         updateHoverDisplay();
+
+        Plasma::Animator::self()->customAnimation(15, 100, Plasma::Animator::LinearCurve,
+                                                  this, "animateCollapsing");
     }
 }
 
@@ -164,6 +165,9 @@ void DeviceItem::expand()
         updateHoverDisplay();
 
         adjustSize();
+
+        Plasma::Animator::self()->customAnimation(15, 100, Plasma::Animator::LinearCurve,
+                                                  this, "animateExpansion");
     }
 }
 
@@ -331,6 +335,22 @@ void DeviceItem::setHoverDisplayOpacity(qreal opacity)
 
     if (!hovered() && opacity == 0) {
         updateHoverDisplay();
+    }
+}
+
+void DeviceItem::animateExpansion(qreal step)
+{
+    m_actionsWidget->setScale(step);
+}
+
+void DeviceItem::animateCollapsing(qreal step)
+{
+    m_actionsWidget->setScale(1 - step);
+
+    if (step == 1) {
+        m_treeLayout->removeAt(1);
+        m_actionsWidget->hide();
+        return;
     }
 }
 

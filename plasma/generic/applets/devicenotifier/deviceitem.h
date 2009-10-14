@@ -239,6 +239,9 @@ class DeviceItem : public QGraphicsWidget
         **/
         void triggerBusyWidget();
 
+        void animateExpansion(qreal step);
+        void animateCollapsing(qreal step);
+
     private:
         void updateHoverDisplay();
 
