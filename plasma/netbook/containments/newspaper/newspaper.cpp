@@ -372,6 +372,26 @@ void Newspaper::addNewsPaper()
     cont->setToolBoxOpen(true);
 }
 
+void Newspaper::saveContents(KConfigGroup &group) const
+{
+    Containment::saveContents(group);
+
+    KConfigGroup appletsConfig(&group, "Applets");
+    for (int column = 0; column < m_mainLayout->count(); ++column) {
+        QGraphicsLinearLayout *lay = static_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(column));
+        for (int row = 0; row < lay->count(); ++row) {
+            const Applet *applet = dynamic_cast<Applet *>(lay->itemAt(row));
+            if (applet) {
+                KConfigGroup appletConfig(&appletsConfig, QString::number(applet->id()));
+                KConfigGroup layoutConfig(&appletConfig, "LayoutInformation");
+
+                layoutConfig.writeEntry("Column", column);
+                layoutConfig.writeEntry("Order", row);
+            }
+        }
+    }
+}
+
 
 K_EXPORT_PLASMA_APPLET(newspaper, Newspaper)
 

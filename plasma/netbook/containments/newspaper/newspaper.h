@@ -52,6 +52,8 @@ protected:
     void createAppletTitle(Plasma::Applet *applet);
     void changeEvent(QEvent *event);
 
+    void saveContents(KConfigGroup &group) const;
+
 private Q_SLOTS:
     void toggleImmutability();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
