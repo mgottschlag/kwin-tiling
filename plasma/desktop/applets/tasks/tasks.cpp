@@ -54,8 +54,7 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
        m_offscreenBottomMargin(0),
        m_rootGroupItem(0),
        m_groupManager(0),
-       m_groupModifierKey(Qt::AltModifier),
-       m_popupDialog(0)
+       m_groupModifierKey(Qt::AltModifier)
 {
     setHasConfigurationInterface(true);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
@@ -396,7 +395,7 @@ TaskGroupItem* Tasks::rootGroupItem()
 
 QWidget *Tasks::popupDialog() const
 {
-    return m_popupDialog;
+    return m_popupDialog.data();
 }
 
 void Tasks::setPopupDialog(bool status)
@@ -406,8 +405,8 @@ void Tasks::setPopupDialog(bool status)
 
     if (status && widget->isVisible()) {
         m_popupDialog = widget;
-    } else if (m_popupDialog == widget) {
-        m_popupDialog = 0;
+    } else if (m_popupDialog.data() == widget) {
+        m_popupDialog.clear();
     }
 }
 

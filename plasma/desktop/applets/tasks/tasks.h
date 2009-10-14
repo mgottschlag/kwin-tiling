@@ -25,7 +25,7 @@
 #include "ui_tasksConfig.h"
 
 // Qt
-#include <QPointer>
+#include <QWeakPointer>
 #include <QTimer>
 #include <QSize>
 
@@ -153,7 +153,7 @@ private:
         Qt::KeyboardModifier m_groupModifierKey;
 
         int m_currentDesktop;
-        QPointer<QWidget> m_popupDialog;
+        QWeakPointer<QWidget> m_popupDialog;
 };
 
 #endif
