@@ -46,6 +46,7 @@ using namespace Plasma;
 using namespace Notifier;
 
 static const char *DEFAULT_ICON_NAME = "device-notifier";
+static const int NOTIFICATION_TIMEOUT = 10000;
 
 K_EXPORT_PLASMA_APPLET(devicenotifier, DeviceNotifier)
 
@@ -223,10 +224,10 @@ void DeviceNotifier::notifyDevice(const QString &udi)
     setStatus(Plasma::NeedsAttentionStatus);
 
     if (!m_fillingPreviousDevices) {
-        showPopup(5000);
+        showPopup(NOTIFICATION_TIMEOUT);
         changeNotifierIcon("preferences-desktop-notification");
         update();
-        QTimer::singleShot(5000, m_dialog, SLOT(resetNotifierIcon()));
+        QTimer::singleShot(NOTIFICATION_TIMEOUT, m_dialog, SLOT(resetNotifierIcon()));
     } else {
         setStatus(Plasma::ActiveStatus);
     }
