@@ -64,8 +64,6 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
 {
     setContainmentType(Containment::CustomContainment);
 
-    connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
-            this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
     connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
             this, SLOT(updateSize()));
 
@@ -370,6 +368,36 @@ void Newspaper::addNewsPaper()
     Plasma::Containment *cont = c->addContainment("newspaper");
     cont->setScreen(0);
     cont->setToolBoxOpen(true);
+}
+
+void Newspaper::restore(KConfigGroup &group)
+{
+    Containment::restore(group);
+
+    KConfigGroup appletsConfig(&group, "Applets");
+
+    foreach (Applet *applet, applets()) {
+        KConfigGroup appletConfig(&appletsConfig, QString::number(applet->id()));
+        KConfigGroup layoutConfig(&appletConfig, "LayoutInformation");
+
+        int column = layoutConfig.readEntry("Column", 0);
+        int order = layoutConfig.readEntry("Order", -1);
+
+        //TODO: generic number of columns?
+        if (column == 0) {
+            m_leftLayout->insertItem(order, applet);
+        } else {
+            m_rightLayout->insertItem(order, applet);
+        }
+
+        createAppletTitle(applet);
+        connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
+    }
+
+    updateSize();
+
+    connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
+            this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
 }
 
 void Newspaper::saveContents(KConfigGroup &group) const

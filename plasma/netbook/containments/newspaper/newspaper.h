@@ -53,6 +53,7 @@ protected:
     void changeEvent(QEvent *event);
 
     void saveContents(KConfigGroup &group) const;
+    void restore(KConfigGroup &group);
 
 private Q_SLOTS:
     void toggleImmutability();
