@@ -58,6 +58,7 @@ protected:
     void focusInEvent(QFocusEvent *event);
     void paintInterface(QPainter *, const QStyleOptionGraphicsItem *, const QRect &);
     void changeEvent(QEvent *event);
+    void doSearch(const QString &query, const QString &runner = QString());
 
 public Q_SLOTS:
     void dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data);
@@ -71,7 +72,6 @@ private Q_SLOTS:
     void updateConfigurationMode(bool config);
     void overlayRequestedDrop(QGraphicsSceneDragDropEvent *event);
 
-    void doSearch(const QString query);
     void setQueryMatches(const QList<Plasma::QueryMatch> &m);
     void delayedQuery();
     void query();

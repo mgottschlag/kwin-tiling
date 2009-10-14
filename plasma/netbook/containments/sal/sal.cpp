@@ -123,7 +123,8 @@ void SearchLaunch::init()
         match.setId(iconConfig.readEntry("Id"));
         match.setIcon(KIcon(iconConfig.readEntry("Icon")));
         match.setText(iconConfig.readEntry("Name"));
-        match.setData(iconConfig.readEntry("Data"));
+        QStringList data = iconConfig.readEntry("Data", QStringList());
+        match.setData(data);
 
         m_defaultMatches.append(match);
     }
@@ -138,7 +139,7 @@ void SearchLaunch::toggleImmutability()
     }
 }
 
-void SearchLaunch::doSearch(const QString query)
+void SearchLaunch::doSearch(const QString &query, const QString &runner)
 {
     m_queryCounter = 0;
     m_resultsView->clear();
@@ -150,7 +151,7 @@ void SearchLaunch::doSearch(const QString query)
 
     m_maxColumnWidth = 0;
     m_matches.clear();
-    m_runnermg->launchQuery(query);
+    m_runnermg->launchQuery(query, runner);
 
     if (m_resultsView && query.isEmpty()) {
         if (stillEmpty && m_resultsView->count()) {
@@ -211,7 +212,12 @@ void SearchLaunch::launch(Plasma::IconWidget *icon)
 {
     Plasma::QueryMatch match = m_matches.value(icon, Plasma::QueryMatch(0));
     if (m_runnermg->searchContext()->query().isEmpty()) {
-        doSearch(match.data().toString());
+        QStringList data = match.data().value<QStringList>();
+        if (data.count() == 2) {
+            doSearch(data.first(), data.last());
+        } else {
+            doSearch(data.first());
+        }
     } else {
         m_runnermg->run(match);
     }

@@ -3,57 +3,57 @@
 Id=contacts
 Icon=view-pim-contacts
 Name=Contacts
-Data=contacts
+Data=contacts,kabccontacts
 
 [Matches][2]
 Id=bookmarks
 Icon=bookmarks
 Name=Bookmarks
-Data=bookmarks
+Data=bookmarks,bookmarks
 
 [Matches][3]
 Id=office
 Icon=applications-office
 Name=Office
-Data=office
+Data=office,services
 
 [Matches][4]
 Id=network
 Icon=applications-internet
 Name=Internet
-Data=network
+Data=network,services
 
 
 [Matches][5]
 Id=audiovideo
 Icon=applications-multimedia
 Name=Multimedia
-Data=audiovideo
+Data=audiovideo,services
 
 
 [Matches][6]
 Id=education
 Icon=applications-education
 Name=Education
-Data=education
+Data=education,services
 
 
 [Matches][7]
 Id=game
 Icon=applications-games
 Name=Games
-Data=game
+Data=game,services
 
 
 [Matches][8]
 Id=graphics
 Icon=applications-graphics
 Name=Graphics
-Data=graphics
+Data=graphics,services
 
 
 [Matches][9]
 Id=system
 Icon=preferences-system
 Name=System
-Data=system
+Data=system,services
