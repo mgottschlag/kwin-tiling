@@ -72,7 +72,7 @@ MousePluginWidget::MousePluginWidget(const KPluginInfo &plugin, const QString &t
 
 MousePluginWidget::~MousePluginWidget()
 {
-    delete m_pluginInstance;
+    delete m_pluginInstance.data();
 }
 
 void MousePluginWidget::setContainment(Plasma::Containment *ctmt)
@@ -109,20 +109,22 @@ void MousePluginWidget::updateConfig(const QString &trigger)
 void MousePluginWidget::configure()
 {
     if (!m_pluginInstance) {
-        m_pluginInstance = Plasma::ContainmentActions::load(m_containment, m_plugin.pluginName());
-        if (! m_pluginInstance) {
+        Plasma::ContainmentActions * pluginInstance = Plasma::ContainmentActions::load(m_containment, m_plugin.pluginName());
+        if (!pluginInstance) {
             //FIXME tell user
             kDebug() << "failed to load plugin!";
             return;
         }
 
+        m_pluginInstance = pluginInstance;
+
         if (m_lastConfigLocation.isEmpty()) {
-            m_pluginInstance->restore(m_tempConfig);
+            pluginInstance->restore(m_tempConfig);
         } else {
             KConfigGroup cfg = m_containment->config();
             cfg = KConfigGroup(&cfg, "ActionPlugins");
             cfg = KConfigGroup(&cfg, m_lastConfigLocation);
-            m_pluginInstance->restore(cfg);
+            pluginInstance->restore(cfg);
         }
     }
 
@@ -133,7 +135,7 @@ void MousePluginWidget::configure()
         m_configDlg->setWindowModality(Qt::WindowModal);
 
         //put the config in the dialog
-        QWidget *w = m_pluginInstance->createConfigurationInterface(m_configDlg);
+        QWidget *w = m_pluginInstance.data()->createConfigurationInterface(m_configDlg);
         if (w) {
             lay->addWidget(w);
         }
@@ -155,7 +157,10 @@ void MousePluginWidget::configure()
 void MousePluginWidget::acceptConfig()
 {
     kDebug() << "accept";
-    m_pluginInstance->configurationAccepted();
+    if (m_pluginInstance) {
+        m_pluginInstance.data()->configurationAccepted();
+    }
+
     m_configDlg->deleteLater();
     m_configDlg = 0;
     emit configChanged(m_ui.inputButton->trigger());
@@ -193,7 +198,7 @@ void MousePluginWidget::save()
         cfg = KConfigGroup(&cfg, "ActionPlugins");
         cfg = KConfigGroup(&cfg, trigger);
         if (m_pluginInstance) {
-            m_pluginInstance->save(cfg);
+            m_pluginInstance.data()->save(cfg);
         } else if (!m_lastConfigLocation.isEmpty()) {
             m_tempConfig.copyTo(&cfg);
             //kDebug() << "copied from temp";

@@ -61,7 +61,7 @@ private:
 
     Ui::MousePluginWidget m_ui;
     KPluginInfo m_plugin;
-    QPointer<Plasma::ContainmentActions> m_pluginInstance;
+    QWeakPointer<Plasma::ContainmentActions> m_pluginInstance;
     QDialog *m_configDlg;
     Plasma::Containment *m_containment;
     QString m_lastConfigLocation;
