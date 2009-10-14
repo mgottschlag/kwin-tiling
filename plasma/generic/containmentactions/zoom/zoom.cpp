@@ -28,7 +28,7 @@
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 
-Q_DECLARE_METATYPE(QPointer<Plasma::Containment>)
+Q_DECLARE_METATYPE(QWeakPointer<Plasma::Containment>)
 
 Zoom::Zoom(QObject *parent, const QVariantList &args)
     : Plasma::ContainmentActions(parent, args)
@@ -77,7 +77,7 @@ void Zoom::contextEvent(QGraphicsSceneMouseEvent *event)
             name = ctmt->name();
         }
         QAction *action = desktopMenu.addAction(name);
-        action->setData(QVariant::fromValue<QPointer<Plasma::Containment> >(QPointer<Plasma::Containment>(ctmt)));
+        action->setData(QVariant::fromValue<QWeakPointer<Plasma::Containment> >(QWeakPointer<Plasma::Containment>(ctmt)));
 
         //WARNING this assumes the plugin will only ever be set on activities, not panels!
         if (ctmt==myCtmt) {
@@ -91,16 +91,17 @@ void Zoom::contextEvent(QGraphicsSceneMouseEvent *event)
 
 void Zoom::switchTo(QAction *action)
 {
-    QPointer<Plasma::Containment> ctmt = action->data().value<QPointer<Plasma::Containment> >();
+    QWeakPointer<Plasma::Containment> ctmt = action->data().value<QWeakPointer<Plasma::Containment> >();
     if (!ctmt) {
         return;
     }
+
     Plasma::Containment *myCtmt = containment();
     if (!myCtmt) {
         return;
     }
 
-    ctmt->setScreen(myCtmt->screen(), myCtmt->desktop());
+    ctmt.data()->setScreen(myCtmt->screen(), myCtmt->desktop());
 }
 
 void Zoom::wheelEvent(QGraphicsSceneWheelEvent *event)
