@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // Ownm_preferredInsertIndex
 #include "abstractgroupableitem.h"
 
-#include <QPointer>
+#include <QWeakPointer>
 
 #include <KDebug>
 
@@ -40,11 +40,10 @@ class AbstractGroupableItem::Private
 {
 public:
     Private()
-        : m_parentGroup(0)
     {
     }
 
-    QPointer<TaskGroup> m_parentGroup;
+    QWeakPointer<TaskGroup> m_parentGroup;
 };
 
 
@@ -69,7 +68,7 @@ AbstractGroupableItem::~AbstractGroupableItem()
 
 bool AbstractGroupableItem::isGrouped() const
 {
-    return d->m_parentGroup && d->m_parentGroup->parentGroup();
+    return d->m_parentGroup && d->m_parentGroup.data()->parentGroup();
 }
 
 QIcon AbstractGroupableItem::icon() const
@@ -85,7 +84,7 @@ QString AbstractGroupableItem::name() const
 GroupPtr AbstractGroupableItem::parentGroup() const
 {
     //kDebug();
-    return d->m_parentGroup;
+    return d->m_parentGroup.data();
 }
 
 

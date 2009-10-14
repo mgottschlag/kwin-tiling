@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "manualgroupingstrategy.h"
 
 #include <QAction>
-#include <QPointer>
+#include <QWeakPointer>
 
 #include <KDebug>
 #include <KLocale>
@@ -44,7 +44,6 @@ public:
         : currentTemplate(0),
           editableGroupProperties(AbstractGroupingStrategy::All),
           tempItem(0),
-          tempGroup(0),
           oldDesktop(TaskManager::self()->currentDesktop())
     {
     }
@@ -54,7 +53,7 @@ public:
     QList<TaskGroup*> protectedGroups;
     AbstractGroupingStrategy::EditableGroupProperties editableGroupProperties;
     AbstractGroupableItem *tempItem;
-    QPointer<TaskGroup> tempGroup;
+    QWeakPointer<TaskGroup> tempGroup;
     int oldDesktop;
 };
 
@@ -109,18 +108,20 @@ void ManualGroupingStrategy::leaveGroup()
 
 void ManualGroupingStrategy::removeGroup()
 {
-    if (!d->tempGroup) {
+    TaskGroup *tempGroup = d->tempGroup.data();
+    if (!tempGroup) {
         return;
     }
-    TaskGroup *parentGroup = d->tempGroup->parentGroup(); //tempGroup is invalid before last item has been moved to the parentGroup
+
+    TaskGroup *parentGroup = tempGroup->parentGroup(); //tempGroup is invalid before last item has been moved to the parentGroup
     if (parentGroup) {
-        foreach (AbstractGroupableItem *item, d->tempGroup->members()) {
+        foreach (AbstractGroupableItem *item, tempGroup->members()) {
             parentGroup->add(item);
         }
         //Group gets automatically closed on empty signal
     }
 
-    d->tempGroup = 0;
+    d->tempGroup.clear();
 }
 
 void ManualGroupingStrategy::unprotectGroup(TaskGroup *group)

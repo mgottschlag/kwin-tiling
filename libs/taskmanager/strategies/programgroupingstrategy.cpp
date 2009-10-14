@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "programgroupingstrategy.h"
 
 #include <QAction>
-#include <QPointer>
+#include <QWeakPointer>
 
 #include <KDebug>
 #include <KLocale>
@@ -46,7 +46,7 @@ public:
     }
 
     AbstractGroupingStrategy::EditableGroupProperties editableGroupProperties;
-    QPointer<AbstractGroupableItem> tempItem;
+    QWeakPointer<AbstractGroupableItem> tempItem;
     QStringList blackList; //Programs in this list should not be grouped
 };
 
@@ -98,31 +98,32 @@ QString ProgramGroupingStrategy::className(AbstractGroupableItem *item)
 
 void ProgramGroupingStrategy::toggleGrouping()
 {
-    if (!d->tempItem) {
+    AbstractGroupableItem *tempItem = d->tempItem.data();
+    if (!tempItem) {
         return;
     }
 
-    QString name = className(d->tempItem);
+    QString name = className(tempItem);
 
     if (d->blackList.contains(name)) {
         d->blackList.removeAll(name);
-        if (d->tempItem->isGroupItem()) {
-            foreach (AbstractGroupableItem *item, (qobject_cast<TaskGroup*>(d->tempItem))->members()) {
+        if (tempItem->isGroupItem()) {
+            foreach (AbstractGroupableItem *item, (qobject_cast<TaskGroup*>(tempItem))->members()) {
                 handleItem(item);
             }
         } else {
-            handleItem(d->tempItem);
+            handleItem(tempItem);
         }
     } else {
         d->blackList.append(name);
-        if (d->tempItem->isGroupItem()) {
-            closeGroup(qobject_cast<TaskGroup*>(d->tempItem));
+        if (tempItem->isGroupItem()) {
+            closeGroup(qobject_cast<TaskGroup*>(tempItem));
         } else if (rootGroup()) {
-            rootGroup()->add(d->tempItem);
+            rootGroup()->add(tempItem);
         }
     }
 
-    d->tempItem = 0;
+    d->tempItem.clear();
 
     // Save immediately. Much better than saving in the destructor,
     // since this class is deleted at every change of virtual desktop (!)
