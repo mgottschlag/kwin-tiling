@@ -337,8 +337,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
         constraints & Plasma::StartupCompletedConstraint) {
 
         Plasma::FormFactor form = formFactor();
-        Qt::Orientation layoutDirection = form == Plasma::Vertical ? \
-            Qt::Vertical : Qt::Horizontal;
+
         Qt::Orientation layoutOtherDirection = form == Plasma::Vertical ? \
             Qt::Horizontal : Qt::Vertical;
 
