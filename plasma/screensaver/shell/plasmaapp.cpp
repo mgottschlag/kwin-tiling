@@ -491,7 +491,7 @@ void PlasmaApp::hideDialogs()
     }
 
     if (m_view) {
-        m_view->hideAppletBrowser();
+        m_view->hideWidgetExplorer();
     }
     //FIXME where does the focus go?
 }

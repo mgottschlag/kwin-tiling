@@ -22,7 +22,7 @@
 #ifndef SAVERVIEW_H
 #define SAVERVIEW_H
 
-#include <QPointer>
+#include <QWeakPointer>
 
 #include <Plasma/Plasma>
 #include <Plasma/View>
@@ -62,7 +62,7 @@ public slots:
      * @arg containment the containment to center the view on
      */
     void setContainment(Plasma::Containment *newContainment);
-    void hideAppletBrowser();
+    void hideWidgetExplorer();
 
     void enableSetupMode();
     void disableSetupMode();
@@ -72,7 +72,7 @@ protected slots:
     void suppressShowTimeout();
 
 private:
-    QPointer<Plasma::WidgetExplorer> m_widgetExplorer;
+    QWeakPointer<Plasma::WidgetExplorer> m_widgetExplorer;
     QPoint m_appletBrowserDragStart;
     bool m_suppressShow : 1;
     bool m_setupMode : 1;

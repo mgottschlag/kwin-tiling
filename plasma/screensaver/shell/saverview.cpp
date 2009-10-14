@@ -47,13 +47,13 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
     {
+        Q_UNUSED(widget)
         painter->fillRect(option->rect, QColor(0, 0, 0, 160));
     }
 };
 
 SaverView::SaverView(Plasma::Containment *containment, QWidget *parent)
     : Plasma::View(containment, parent),
-      m_widgetExplorer(0),
       m_suppressShow(false),
       m_setupMode(false),
       m_init(false)
@@ -76,7 +76,7 @@ SaverView::SaverView(Plasma::Containment *containment, QWidget *parent)
 
 SaverView::~SaverView()
 {
-    delete m_widgetExplorer;
+    delete m_widgetExplorer.data();
 }
 
 void SaverView::enableSetupMode()
@@ -114,23 +114,24 @@ void SaverView::showWidgetExplorer()
     }
 
     if (m_widgetExplorer) {
-        delete m_widgetExplorer;
+        delete m_widgetExplorer.data();
     } else {
-        m_widgetExplorer = new ScreenSaverWidgetExplorer(c);
-        m_widgetExplorer->installEventFilter(this);
-        m_widgetExplorer->setContainment(c);
-        m_widgetExplorer->setOrientation(Qt::Horizontal);
-        m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
-        m_widgetExplorer->populateWidgetList();
-        m_widgetExplorer->setMaximumWidth(width());
-        m_widgetExplorer->adjustSize();
-        m_widgetExplorer->setZValue(1000000);
+        ScreenSaverWidgetExplorer *widgetExplorer = new ScreenSaverWidgetExplorer(c);
+        widgetExplorer->installEventFilter(this);
+        widgetExplorer->setContainment(c);
+        widgetExplorer->setOrientation(Qt::Horizontal);
+        widgetExplorer->setIconSize(KIconLoader::SizeHuge);
+        widgetExplorer->populateWidgetList();
+        widgetExplorer->setMaximumWidth(width());
+        widgetExplorer->adjustSize();
+        widgetExplorer->setZValue(1000000);
+        m_widgetExplorer = widgetExplorer;
     }
 }
 
-void SaverView::hideAppletBrowser()
+void SaverView::hideWidgetExplorer()
 {
-    delete m_widgetExplorer;
+    delete m_widgetExplorer.data();
 }
 
 void SaverView::paintEvent(QPaintEvent *event)
@@ -179,56 +180,12 @@ void SaverView::paintEvent(QPaintEvent *event)
 
 bool SaverView::eventFilter(QObject *watched, QEvent *event)
 {
-    if (containment() && (watched == (QObject*)m_widgetExplorer) &&
+    if (containment() && (watched == (QObject*)m_widgetExplorer.data()) &&
         (event->type() == QEvent::GraphicsSceneResize || event->type() == QEvent::GraphicsSceneMove)) {
-        m_widgetExplorer->setPos(0, containment()->geometry().height() - m_widgetExplorer->geometry().height());
+        Plasma::WidgetExplorer *widgetExplorer = m_widgetExplorer.data();
+        widgetExplorer->setPos(0, containment()->geometry().height() - widgetExplorer->geometry().height());
     }
 
-#if 0
-    if (watched != m_widgetExplorer) {
-        /*if (event->type() == QEvent::MouseButtonPress) {
-            QMouseEvent *me = static_cast<QMouseEvent *>(event);
-            if (me->button() == Qt::LeftButton) {
-                hideView();
-            }
-        }*/
-        return false;
-    }
-
-    if (event->type() == QEvent::MouseButtonPress) {
-        QMouseEvent *me = static_cast<QMouseEvent *>(event);
-        m_widgetExplorerDragStart = me->globalPos();
-    } else if (event->type() == QEvent::MouseMove && m_widgetExplorerDragStart != QPoint()) {
-        QMouseEvent *me = static_cast<QMouseEvent *>(event);
-        QPoint newPos = me->globalPos();
-        QPoint curPos = m_widgetExplorer->pos();
-        int x = curPos.x();
-        int y = curPos.y();
-
-        if (curPos.y() == 0 || curPos.y() + m_widgetExplorer->height() >= height()) {
-           x = curPos.x() + (newPos.x() - m_widgetExplorerDragStart.x());
-           if (x < 0) {
-               x = 0;
-           } else if (x + m_widgetExplorer->width() > width()) {
-               x = width() - m_widgetExplorer->width();
-           }
-        }
-
-        if (x == 0 || x + m_widgetExplorer->width() >= width()) {
-            y = m_widgetExplorer->y() + (newPos.y() - m_widgetExplorerDragStart.y());
-
-            if (y < 0) {
-                y = 0;
-            } else if (y + m_widgetExplorer->height() > height()) {
-                y = height() - m_widgetExplorer->height();
-            }
-        }
-        m_widgetExplorer->move(x, y);
-        m_widgetExplorerDragStart = newPos;
-    } else if (event->type() == QEvent::MouseButtonRelease) {
-        m_widgetExplorerDragStart = QPoint();
-    }
-#endif
     return false;
 }
 
@@ -269,7 +226,7 @@ void SaverView::setContainment(Plasma::Containment *newContainment)
     }
 
     if (m_widgetExplorer) {
-        m_widgetExplorer->setContainment(newContainment);
+        m_widgetExplorer.data()->setContainment(newContainment);
     }
 
     View::setContainment(newContainment);
@@ -281,7 +238,7 @@ void SaverView::hideView()
         return;
     }
 
-    delete m_widgetExplorer;
+    hideWidgetExplorer();
 
     if (containment()) {
         containment()->closeToolBox();
