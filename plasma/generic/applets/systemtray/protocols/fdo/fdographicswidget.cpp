@@ -23,7 +23,7 @@
 #include "x11embeddelegate.h"
 #include "x11embedcontainer.h"
 
-#include <QtCore/QPointer>
+#include <QtCore/QWeakPointer>
 #include <QtCore/QTimer>
 
 #include <QtGui/QApplication>
@@ -45,12 +45,12 @@ public:
 
     ~Private()
     {
-        delete widget;
+        delete widget.data();
     }
 
     WId winId;
     bool clientEmbedded;
-    QPointer<X11EmbedDelegate> widget;
+    QWeakPointer<X11EmbedDelegate> widget;
 };
 
 FdoGraphicsWidget::FdoGraphicsWidget(WId winId, QGraphicsWidget *parent)
@@ -99,19 +99,20 @@ void FdoGraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem 
         return;
     }
 
-    if (d->widget->parentWidget() != parentView) {
+    QWidget *widget = d->widget.data();
+    if (widget->parentWidget() != parentView) {
         //kDebug() << "embedding into" << parentView->metaObject()->className() << "(" << d->winId << ")";
-        d->widget->setParent(parentView);
+        widget->setParent(parentView);
     }
 
     QPoint pos = parentView->mapFromScene(scenePos());
     pos += parentView->viewport()->pos();
-    if (d->widget->pos() != pos) {
-        d->widget->move(pos);
+    if (widget->pos() != pos) {
+        widget->move(pos);
     }
 
-    if (!d->widget->isVisible()) {
-        d->widget->show();
+    if (!widget->isVisible()) {
+        widget->show();
     }
 }
 
@@ -119,7 +120,7 @@ void FdoGraphicsWidget::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event);
     if (d->widget) {
-        d->widget->hide();
+        d->widget.data()->hide();
     }
 }
 
@@ -127,7 +128,7 @@ void FdoGraphicsWidget::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event);
     if (d->widget) {
-        d->widget->show();
+        d->widget.data()->show();
     }
 }
 
@@ -146,31 +147,33 @@ void FdoGraphicsWidget::setupXEmbedDelegate()
         QApplication::setAttribute(attr);
     }
 
-    d->widget = new X11EmbedDelegate();
-    d->widget->setMinimumSize(22, 22);
-    d->widget->setMaximumSize(22, 22);
-    d->widget->resize(22, 22);
+    X11EmbedDelegate *widget = new X11EmbedDelegate();
+    widget->setMinimumSize(22, 22);
+    widget->setMaximumSize(22, 22);
+    widget->resize(22, 22);
 
-    connect(d->widget->container(), SIGNAL(clientIsEmbedded()),
+    connect(widget->container(), SIGNAL(clientIsEmbedded()),
             this, SLOT(handleClientEmbedded()));
-    connect(d->widget->container(), SIGNAL(clientClosed()),
+    connect(widget->container(), SIGNAL(clientClosed()),
             this, SLOT(handleClientClosed()));
-    connect(d->widget->container(), SIGNAL(error(QX11EmbedContainer::Error)),
+    connect(widget->container(), SIGNAL(error(QX11EmbedContainer::Error)),
             this, SLOT(handleClientError(QX11EmbedContainer::Error)));
 
-    d->widget->container()->embedSystemTrayClient(d->winId);
+    widget->container()->embedSystemTrayClient(d->winId);
+    d->widget = widget;
 }
 
 void FdoGraphicsWidget::updateWidgetBackground()
 {
-    if (!d->widget) {
+    X11EmbedDelegate *widget = d->widget.data();
+    if (!widget) {
         return;
     }
 
-    QPalette palette = d->widget->palette();
+    QPalette palette = widget->palette();
     palette.setBrush(QPalette::Window, Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
-    d->widget->setPalette(palette);
-    d->widget->setBackgroundRole(QPalette::Window);
+    widget->setPalette(palette);
+    widget->setBackgroundRole(QPalette::Window);
 }
 
 

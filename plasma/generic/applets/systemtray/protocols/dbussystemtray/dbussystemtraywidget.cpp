@@ -47,8 +47,8 @@ void DBusSystemTrayWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void DBusSystemTrayWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (event->button() == Qt::MidButton) {
-        m_iface->call(QDBus::NoBlock, "SecondaryActivate", event->screenPos().x(), event->screenPos().y());
+    if (event->button() == Qt::MidButton && m_iface) {
+        m_iface.data()->call(QDBus::NoBlock, "SecondaryActivate", event->screenPos().x(), event->screenPos().y());
     }
 
     Plasma::IconWidget::mouseReleaseEvent(event);
@@ -58,14 +58,14 @@ void DBusSystemTrayWidget::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
     //kDebug() << m_iface << event->delta();
     if (m_iface) {
-        m_iface->call(QDBus::NoBlock, "Scroll", event->delta(), "Vertical");
+        m_iface.data()->call(QDBus::NoBlock, "Scroll", event->delta(), "Vertical");
     }
 }
 
 void DBusSystemTrayWidget::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     if (m_iface) {
-        m_iface->call(QDBus::NoBlock, "ContextMenu", event->screenPos().x(), event->screenPos().y());
+        m_iface.data()->call(QDBus::NoBlock, "ContextMenu", event->screenPos().x(), event->screenPos().y());
     }
 }
 
@@ -75,7 +75,7 @@ void DBusSystemTrayWidget::calculateShowPosition()
         Plasma::Corona *corona = m_host->containment()->corona();
         QSize s(1, 1);
         QPoint pos = corona->popupPosition(this, s);
-        m_iface->call(QDBus::NoBlock, "Activate", pos.x(), pos.y());
+        m_iface.data()->call(QDBus::NoBlock, "Activate", pos.x(), pos.y());
     }
 }
 

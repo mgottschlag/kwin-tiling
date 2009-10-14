@@ -20,7 +20,7 @@
 #ifndef DBUSSYSTEMTRAYWIDGET_H
 #define DBUSSYSTEMTRAYWIDGET_H
 
-#include <QPointer>
+#include <QWeakPointer>
 
 #include <Plasma/IconWidget>
 
@@ -54,7 +54,7 @@ private Q_SLOTS:
     void calculateShowPosition();
 
 private:
-    QPointer<QDBusAbstractInterface> m_iface;
+    QWeakPointer<QDBusAbstractInterface> m_iface;
     Plasma::Applet *m_host;
 };
 
