@@ -277,7 +277,7 @@ void FdoSelectionManager::initSelection()
                              &templ, &nvi);
         for (int i = 0; i < nvi; i++) {
             XRenderPictFormat *format = XRenderFindVisualFormat(d->display, xvi[i].visual);
-            if (format->type == PictTypeDirect && format->direct.alphaMask) {
+            if (format && format->type == PictTypeDirect && format->direct.alphaMask) {
                 visual = xvi[i].visualid;
                 break;
             }
