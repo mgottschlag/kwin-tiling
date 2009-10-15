@@ -376,6 +376,11 @@ void Newspaper::restore(KConfigGroup &group)
 
     KConfigGroup appletsConfig(&group, "Applets");
 
+    //FIXME: generic number of columns
+    QMap<int, Applet *> oderedAppletsLeft;
+    QMap<int, Applet *> oderedAppletsRight;
+    QList<Applet *> unoderedApplets;
+
     foreach (Applet *applet, applets()) {
         KConfigGroup appletConfig(&appletsConfig, QString::number(applet->id()));
         KConfigGroup layoutConfig(&appletConfig, "LayoutInformation");
@@ -383,17 +388,31 @@ void Newspaper::restore(KConfigGroup &group)
         int column = layoutConfig.readEntry("Column", 0);
         int order = layoutConfig.readEntry("Order", -1);
 
-        //TODO: generic number of columns?
-        if (column == 0) {
-            m_leftLayout->insertItem(order, applet);
-        } else if (column == 1) {
-            m_rightLayout->insertItem(order, applet);
+        if (order > -1) {
+            if (column == 0) {
+                oderedAppletsLeft[order] = applet;
+            } else if (column == 1) {
+                oderedAppletsRight[order] = applet;
+            } else {
+                unoderedApplets.append(applet);
+            }
+        //if LayoutInformation is not available use the usual way, as a bonus makes it retrocompatible with oler configs
         } else {
-            layoutApplet(applet, applet->pos());
+            unoderedApplets.append(applet);
         }
 
-        createAppletTitle(applet);
         connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
+    }
+
+    foreach (Applet *applet, oderedAppletsLeft) {
+        m_leftLayout->insertItem(m_leftLayout->count()-1, applet);
+    }
+    foreach (Applet *applet, oderedAppletsRight) {
+        m_rightLayout->insertItem(m_leftLayout->count()-1, applet);
+    }
+
+    foreach (Applet *applet, unoderedApplets) {
+        layoutApplet(applet, applet->pos());
     }
 
     updateSize();
