@@ -34,10 +34,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // KDE
 #include <KDE/KSharedPtr>
 #include <KDE/KWindowSystem>
-#include <KDE/NETWinInfo>
 
 #include <taskmanager/taskmanager.h>
 #include <taskmanager/taskmanager_export.h>
+
+class NETWinInfo;
 
 namespace TaskManager
 {

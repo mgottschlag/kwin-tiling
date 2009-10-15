@@ -46,9 +46,7 @@
 #include <KIconLoader>
 #include <KColorUtils>
 
-#include <taskmanager/task.h>
-#include <taskmanager/taskmanager.h>
-#include <taskmanager/taskgroup.h>
+#include <NETWinInfo>
 
 #include <Plasma/Containment>
 #include <Plasma/Corona>
@@ -56,6 +54,10 @@
 #include <Plasma/PaintUtils>
 #include <Plasma/Theme>
 #include <Plasma/ToolTipManager>
+
+#include <taskmanager/task.h>
+#include <taskmanager/taskmanager.h>
+#include <taskmanager/taskgroup.h>
 
 #include "tasks.h"
 #include "taskgroupitem.h"

@@ -37,6 +37,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KGlobal>
 #include <KLocale>
 #include <KStandardDirs>
+#include <NETWinInfo>
 
 #ifdef Q_WS_X11
 #include <QX11Info>
