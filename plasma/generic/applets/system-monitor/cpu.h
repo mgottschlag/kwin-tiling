@@ -56,7 +56,6 @@ class Cpu : public Applet
         Ui::config ui;
         QStandardItemModel m_model;
         QStringList m_cpus;
-        QHash<QString, QString> m_html;
         QTimer m_sourceTimer;
         QRegExp m_rx;
 

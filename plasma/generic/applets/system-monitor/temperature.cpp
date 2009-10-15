@@ -22,7 +22,6 @@
 #include <Plasma/Meter>
 #include <Plasma/Containment>
 #include <Plasma/Theme>
-#include <Plasma/ToolTipManager>
 #include <KConfigDialog>
 #include <KUnitConversion/Converter>
 #include <KUnitConversion/Value>
@@ -43,7 +42,6 @@ Temperature::Temperature(QObject *parent, const QVariantList &args)
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
     m_sourceTimer.setSingleShot(true);
     connect(&m_sourceTimer, SIGNAL(timeout()), this, SLOT(sourcesAdded()));
-    Plasma::ToolTipManager::self()->registerWidget(this);
 }
 
 Temperature::~Temperature()
@@ -261,24 +259,8 @@ void Temperature::dataUpdated(const QString& source,
     }
 
     if (mode() == SM::Applet::Panel) {
-        m_html[source] = QString("<tr><td>%1</td><td>%2</td></tr>")
-                .arg(temperatureTitle(source)).arg(temp);
-    }
-}
-
-void Temperature::toolTipAboutToShow()
-{
-    if (mode() == SM::Applet::Panel) {
-        QString html = "<table>";
-        foreach (const QString& s, items()) {
-            QString senstorHtml = m_html.value(s);
-            if (!senstorHtml.isEmpty()) {
-                html += senstorHtml;
-            }
-        }
-        html += "</table>";
-        Plasma::ToolTipContent data(title(), html);
-        Plasma::ToolTipManager::self()->setContent(this, data);
+        setToolTip(source,
+                   QString("<tr><td>%1</td><td>%2</td></tr>").arg(temperatureTitle(source)).arg(temp));
     }
 }
 

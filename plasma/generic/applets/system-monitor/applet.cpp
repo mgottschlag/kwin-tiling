@@ -23,6 +23,7 @@
 #include <Plasma/Frame>
 #include <Plasma/IconWidget>
 #include <Plasma/SignalPlotter>
+#include <Plasma/ToolTipManager>
 #include <KIcon>
 #include <KDebug>
 #include <QGraphicsLinearLayout>
@@ -48,6 +49,8 @@ Applet::Applet(QObject *parent, const QVariantList &args)
     if (args.count() > 0 && args[0].toString() == "SM") {
         m_mode = Monitor;
     }
+
+    Plasma::ToolTipManager::self()->registerWidget(this);
 }
 
 Applet::~Applet()
@@ -288,6 +291,7 @@ void Applet::deleteMeters(QGraphicsLinearLayout* layout)
         m_meters.clear();
         m_plotters.clear();
         m_keepRatio.clear();
+        m_toolTips.clear();
         m_header = 0;
     }
     for (int i = layout->count() - 1; i >= 0; --i) {
@@ -373,5 +377,22 @@ QColor Applet::adjustColor(const QColor& color, uint percentage)
     }
     return QColor::fromHsvF(h, s, v, a);
 }
+
+void Applet::toolTipAboutToShow()
+{
+    if (mode() == SM::Applet::Panel && !m_toolTips.isEmpty()) {
+        QString html = "<table>";
+        foreach (const QString& s, items()) {
+            QString senstorHtml = m_toolTips.value(s);
+            if (!senstorHtml.isEmpty()) {
+                html += senstorHtml;
+            }
+        }
+        html += "</table>";
+        Plasma::ToolTipContent data(title(), html);
+        Plasma::ToolTipManager::self()->setContent(this, data);
+    }
+}
+
 
 }

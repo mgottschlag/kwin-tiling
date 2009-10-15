@@ -144,17 +144,10 @@ void SM::Ram::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
 
         plotter->addSample(QList<double>() << value_b);
         if (mode() == SM::Applet::Panel) {
-            m_html[source] = QString("<tr><td>%1</td><td>%2</td><td>of</td><td>%3</td></tr>")
-                    .arg(plotter->title())
-                    .arg(KGlobal::locale()->formatByteSize(value_b))
-                    .arg(KGlobal::locale()->formatByteSize(m_max[source]));
-            QString html = "<table>";
-            foreach (const QString& s, m_html.keys()) {
-                html += m_html[s];
-            }
-            html += "</table>";
-            Plasma::ToolTipContent data(title(), html);
-            Plasma::ToolTipManager::self()->setContent(this, data);
+            setToolTip(source, QString("<tr><td>%1</td><td>%2</td><td>of</td><td>%3</td></tr>")
+                                      .arg(plotter->title())
+                                      .arg(KGlobal::locale()->formatByteSize(value_b))
+                                      .arg(KGlobal::locale()->formatByteSize(m_max[source])));
         }
     }
 }

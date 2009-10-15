@@ -335,17 +335,10 @@ void Hdd::dataUpdated(const QString& source,
             }
             m_icons[source]->setOverlays(overlays);
         } else {
-            m_html[source] = QString("<tr><td>%1</td><td>%2</td><td>/</td><td>%3</td></tr>")
-                    .arg(w->label(0))
-                    .arg(KGlobal::locale()->formatByteSize(availBytes))
-                    .arg(KGlobal::locale()->formatByteSize(size));
-            QString html = "<table>";
-            foreach (const QString& s, m_html.keys()) {
-                html += m_html[s];
-            }
-            html += "</table>";
-            Plasma::ToolTipContent data(title(), html);
-            Plasma::ToolTipManager::self()->setContent(this, data);
+            setToolTip(source, QString("<tr><td>%1</td><td>%2</td><td>/</td><td>%3</td></tr>")
+                                      .arg(w->label(0))
+                                      .arg(KGlobal::locale()->formatByteSize(availBytes))
+                                      .arg(KGlobal::locale()->formatByteSize(size)));
         }
     }
 }

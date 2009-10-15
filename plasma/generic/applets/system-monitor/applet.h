@@ -52,6 +52,9 @@ class SM_EXPORT Applet : public Plasma::Applet
         void saveConfig(KConfigGroup &config);
         QSizeF minSize() const { return m_min; };
 
+    public Q_SLOTS:
+        void toolTipAboutToShow();
+
     signals:
         void geometryChecked();
 
@@ -86,6 +89,9 @@ class SM_EXPORT Applet : public Plasma::Applet
         QHash<QString,Plasma::Meter*> meters() { return m_meters; };
         void appendMeter(const QString& source, Plasma::Meter* meter)
                 { m_meters[source] = meter; };
+        QHash<QString, QString> tooltips() const;
+        void setToolTip(const QString &source, const QString &tipContent)
+                { m_toolTips.insert(source, tipContent); }
         QHash<QString,Plasma::SignalPlotter*> plotters() { return m_plotters; };
         void appendPlotter(const QString& source, Plasma::SignalPlotter* plotter)
                 { m_plotters[source] = plotter; };
@@ -116,6 +122,7 @@ class SM_EXPORT Applet : public Plasma::Applet
         QList<QGraphicsWidget*> m_keepRatio;
         QHash<QString, Plasma::Meter*> m_meters;
         QHash<QString, Plasma::SignalPlotter*> m_plotters;
+        QHash<QString, QString> m_toolTips;
         Qt::Orientation m_orientation;
         Plasma::IconWidget *m_noSourcesIcon;
         Mode m_mode;

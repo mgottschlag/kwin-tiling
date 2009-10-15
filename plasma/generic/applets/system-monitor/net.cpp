@@ -149,16 +149,10 @@ void SM::Net::dataUpdated(const QString& source,
         if (plotter) {
             plotter->addSample(m_data[interface]);
             if (mode() == SM::Applet::Panel) {
-                m_html[source] = QString("%1&nbsp;&nbsp;in %2&nbsp;&nbsp;out %3</br>")
-                        .arg(plotter->title())
-                        .arg(m_data[interface][0])
-                        .arg(m_data[interface][1]);
-                QString html;
-                foreach (const QString& s, m_html.keys()) {
-                    html += m_html[s];
-                }
-                Plasma::ToolTipContent data(title(), html);
-                Plasma::ToolTipManager::self()->setContent(this, data);
+                setToolTip(source, QString("%1&nbsp;&nbsp;in %2&nbsp;&nbsp;out %3</br>")
+                                         .arg(plotter->title())
+                                         .arg(m_data[interface][0])
+                                         .arg(m_data[interface][1]));
             }
         }
         m_data[interface] = QList<double>() << -1 << -1;

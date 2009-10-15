@@ -55,7 +55,6 @@ class Net : public Applet
         QStandardItemModel m_model;
         QStringList m_interfaces;
         QMap<QString, QList<double> > m_data;
-        QHash<QString, QString> m_html;
         QTimer m_sourceTimer;
         QRegExp m_rx;
 

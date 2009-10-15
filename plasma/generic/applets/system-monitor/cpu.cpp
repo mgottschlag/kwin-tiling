@@ -19,7 +19,6 @@
 #include "cpu.h"
 #include <Plasma/SignalPlotter>
 #include <Plasma/Theme>
-#include <Plasma/ToolTipManager>
 #include <KConfigDialog>
 #include <QTimer>
 #include <QGraphicsLinearLayout>
@@ -140,16 +139,9 @@ void SM::Cpu::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
         double value = data["value"].toDouble();
         plotter->addSample(QList<double>() << value);
         if (mode() == SM::Applet::Panel) {
-            m_html[source] = QString("<tr><td>%1&nbsp;</td><td>%2%</td></tr>")
-                    .arg(plotter->title())
-                    .arg(KGlobal::locale()->formatNumber(value, 1));
-            QString html = "<table>";
-            foreach (const QString& s, m_html.keys()) {
-                html += m_html[s];
-            }
-            html += "</table>";
-            Plasma::ToolTipContent data(title(), html);
-            Plasma::ToolTipManager::self()->setContent(this, data);
+            setToolTip(source, QString("<tr><td>%1&nbsp;</td><td>%2%</td></tr>")
+                                      .arg(plotter->title())
+                                      .arg(KGlobal::locale()->formatNumber(value, 1)));
         }
     }
 }

@@ -51,7 +51,6 @@ class Ram : public Applet
         Ui::config ui;
         QStandardItemModel m_model;
         QStringList m_memories;
-        QHash<QString, QString> m_html;
         QHash<QString, double> m_max;
 
     private slots:
