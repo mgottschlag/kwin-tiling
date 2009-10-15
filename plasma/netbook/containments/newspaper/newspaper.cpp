@@ -386,8 +386,10 @@ void Newspaper::restore(KConfigGroup &group)
         //TODO: generic number of columns?
         if (column == 0) {
             m_leftLayout->insertItem(order, applet);
-        } else {
+        } else if (column == 1) {
             m_rightLayout->insertItem(order, applet);
+        } else {
+            layoutApplet(applet, applet->pos());
         }
 
         createAppletTitle(applet);
