@@ -54,6 +54,9 @@ public:
 protected:
     void saveState(KConfigGroup &config) const;
 
+    void saveContents(KConfigGroup &group) const;
+    void restore(KConfigGroup &group);
+
 private Q_SLOTS:
     void toggleImmutability();
     void themeUpdated();

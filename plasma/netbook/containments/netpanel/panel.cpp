@@ -69,8 +69,7 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     setDrawWallpaper(false);
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
-    connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
-            this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
+
     connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
             this, SLOT(appletRemoved(Plasma::Applet*)));
     /*connect(this, SIGNAL(toolBoxVisibilityChanged(bool)),
@@ -405,6 +404,7 @@ void Panel::overlayRequestedDrop(QGraphicsSceneDragDropEvent *event)
     dropEvent(event);
 }
 
+//TODO: fold it into saveContents even if it's not strictly contents related?
 void Panel::saveState(KConfigGroup &config) const
 {
     config.writeEntry("minimumSize", minimumSize());
@@ -488,6 +488,49 @@ void Panel::setFormFactorFromLocation(Plasma::Location loc) {
             break;
         default:
             kDebug() << "invalid location!!";
+    }
+}
+
+void Panel::restore(KConfigGroup &group)
+{
+    Containment::restore(group);
+
+    KConfigGroup appletsConfig(&group, "Applets");
+
+    foreach (Applet *applet, applets()) {
+        KConfigGroup appletConfig(&appletsConfig, QString::number(applet->id()));
+        KConfigGroup layoutConfig(&appletConfig, "LayoutInformation");
+
+        int order = layoutConfig.readEntry("Order", -1);
+
+        if (order > -1) {
+            m_layout->insertItem(order, applet);
+        } else {
+            layoutApplet(applet, applet->pos());
+        }
+
+        connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
+    }
+
+    updateSize();
+
+    connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
+            this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
+}
+
+void Panel::saveContents(KConfigGroup &group) const
+{
+    Containment::saveContents(group);
+
+    KConfigGroup appletsConfig(&group, "Applets");
+    for (int order = 0; order < m_layout->count(); ++order) {
+        const Applet *applet = dynamic_cast<Applet *>(m_layout->itemAt(order));
+        if (applet) {
+            KConfigGroup appletConfig(&appletsConfig, QString::number(applet->id()));
+            KConfigGroup layoutConfig(&appletConfig, "LayoutInformation");
+
+            layoutConfig.writeEntry("Order", order);
+        }
     }
 }
 
