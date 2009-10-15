@@ -171,7 +171,7 @@ void Applet::connectToEngine()
         mainLayout()->addItem(m_header);
     }
 
-    if (m_items.count() == 0){
+    if (m_items.isEmpty()){
         displayNoAvailableSources();
         return;
     }
@@ -195,13 +195,13 @@ void Applet::checkPlotters()
     if (m_plotters.isEmpty()) {
         return;
     }
-    Plasma::SignalPlotter *plotter = m_plotters.values()[0];
+
+    Plasma::SignalPlotter *plotter = m_plotters.begin().value();
     QFontMetrics metrics(plotter->font());
     bool showTopBar = (metrics.height() < plotter->size().height() / 3);
+
     foreach (plotter, m_plotters) {
-        if (showTopBar != plotter->showTopBar()) {
-            plotter->setShowTopBar(showTopBar);
-        }
+        plotter->setShowTopBar(showTopBar);
     }
 }
 
