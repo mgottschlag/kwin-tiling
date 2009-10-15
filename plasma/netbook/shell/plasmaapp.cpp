@@ -657,8 +657,10 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
 {
     if (watched == m_mainView && event->type() == QEvent::WindowActivate) {
         destroyUnHideTrigger();
-        Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
-        m_controlBar->show();
+        if (m_controlBar) {
+            Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
+            m_controlBar->show();
+        }
     } else if ((watched == m_mainView &&
                 event->type() == QEvent::WindowDeactivate &&
                 !QApplication::activeWindow()) ||
