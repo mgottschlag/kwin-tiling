@@ -73,13 +73,10 @@ ManualSortingStrategy::ManualSortingStrategy(GroupManager *parent)
 ManualSortingStrategy::~ManualSortingStrategy()
 {
     if (d->desktops) {
-        foreach(itemHashTable *table, *d->desktops) {
-            if (table) {
-                delete table;
-            }
-        }
+        qDeleteAll(*d->desktops);
         delete d->desktops;
     }
+
     delete d;
 }
 
