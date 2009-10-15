@@ -551,7 +551,7 @@ bool TaskGroupItem::isActive() const
 
 void TaskGroupItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { //TODO add delay so we can still drag group items
-    if ((event->buttons() & Qt::LeftButton) && (event->modifiers() & Qt::Key_Control)) {
+    if ((event->buttons() & Qt::LeftButton) && (event->modifiers() & Qt::ControlModifier)) {
  #ifdef Q_WS_X11
         QList<WId> ids;
         foreach (AbstractGroupableItem *groupable, m_group->members()) {
