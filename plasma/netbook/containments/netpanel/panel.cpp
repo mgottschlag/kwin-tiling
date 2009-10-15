@@ -497,6 +497,9 @@ void Panel::restore(KConfigGroup &group)
 
     KConfigGroup appletsConfig(&group, "Applets");
 
+    QMap<int, Applet *> oderedApplets;
+    QList<Applet *> unoderedApplets;
+
     foreach (Applet *applet, applets()) {
         KConfigGroup appletConfig(&appletsConfig, QString::number(applet->id()));
         KConfigGroup layoutConfig(&appletConfig, "LayoutInformation");
@@ -504,12 +507,21 @@ void Panel::restore(KConfigGroup &group)
         int order = layoutConfig.readEntry("Order", -1);
 
         if (order > -1) {
-            m_layout->insertItem(order, applet);
+            oderedApplets[order] = applet;
+        //if LayoutInformation is not available use the usual way, as a bonus makes it retrocompatible with oler configs
         } else {
-            layoutApplet(applet, applet->pos());
+            unoderedApplets.append(applet);
         }
 
         connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
+    }
+
+    foreach (Applet *applet, oderedApplets) {
+        m_layout->addItem(applet);
+    }
+
+    foreach (Applet *applet, unoderedApplets) {
+        layoutApplet(applet, applet->pos());
     }
 
     updateSize();
