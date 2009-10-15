@@ -693,7 +693,11 @@ void Panel::restore(KConfigGroup &group)
     }
 
     foreach (Applet *applet, oderedApplets) {
-        m_layout->addItem(applet);
+        if (m_lastSpace) {
+            m_layout->insertItem(m_layout->count()-1, applet);
+        } else {
+            m_layout->addItem(applet);
+        }
     }
 
     foreach (Applet *applet, unoderedApplets) {
