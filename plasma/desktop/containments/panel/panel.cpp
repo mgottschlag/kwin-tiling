@@ -102,7 +102,8 @@ Panel::Panel(QObject *parent, const QVariantList &args)
       m_canResize(true),
       m_spacerIndex(-1),
       m_spacer(0),
-      m_lastSpace(0)
+      m_lastSpace(0),
+      m_layout(0)
 {
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/panel-background");
@@ -114,8 +115,7 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     setMaximumSize(m_currentSize);
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
-    connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
-            this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
+
     connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
             this, SLOT(appletRemoved(Plasma::Applet*)));
 }
@@ -132,13 +132,13 @@ void Panel::init()
     //FIXME: This should be enabled, but in that case proxywidgets won't get rendered
     //setFlag(ItemClipsChildrenToShape, true);
 
-    QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(this);
-    lay->setContentsMargins(0, 0, 0, 0);
-    lay->setSpacing(4);
-    lay->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
-    setLayout(lay);
+    m_layout = new QGraphicsLinearLayout(this);
+    m_layout->setContentsMargins(0, 0, 0, 0);
+    m_layout->setSpacing(4);
+    m_layout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+    setLayout(m_layout);
     updateBorders(geometry().toRect());
-    lay->setMaximumSize(size());
+    m_layout->setMaximumSize(size());
 
     KConfigGroup cg = config("Configuration");
 
@@ -182,8 +182,7 @@ void Panel::backgroundChanged()
 
 void Panel::adjustLastSpace()
 {
-    QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout*>(layout());
-    if (!lay) {
+    if (!m_layout) {
         return;
     }
 
@@ -212,10 +211,10 @@ void Panel::adjustLastSpace()
             m_lastSpace->m_visible = false;
             m_lastSpace->setPreferredSize(0,0);
             m_lastSpace->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-            lay->addItem(m_lastSpace);
+            m_layout->addItem(m_lastSpace);
         }
     } else {
-        lay->removeItem(m_lastSpace);
+        m_layout->removeItem(m_lastSpace);
         delete m_lastSpace;
         m_lastSpace = 0;
     }
@@ -229,9 +228,8 @@ void Panel::enableUpdateSize()
 void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 {
     // this gets called whenever an applet is added, and we add it to our layout
-    QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout*>(layout());
 
-    if (!lay) {
+    if (!m_layout) {
         return;
     }
 
@@ -250,12 +248,12 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
             resize(size().width(), panelHint.height() + appletHint.height());
         }
     }
-    layout()->setMaximumSize(size());
+    m_layout->setMaximumSize(size());
 
     //if pos is (-1,-1) insert at the end of the panel
     if (pos != QPoint(-1, -1)) {
-        for (int i = 0; i < lay->count(); ++i) {
-            QRectF siblingGeometry = lay->itemAt(i)->geometry();
+        for (int i = 0; i < m_layout->count(); ++i) {
+            QRectF siblingGeometry = m_layout->itemAt(i)->geometry();
             if (f == Plasma::Horizontal) {
                 qreal middle = (siblingGeometry.left() + siblingGeometry.right()) / 2.0;
                 if (QApplication::layoutDirection() == Qt::RightToLeft) {
@@ -284,16 +282,16 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
         }
     }
 
-    lay->removeItem(m_lastSpace);
+    m_layout->removeItem(m_lastSpace);
 
     if (insertIndex == -1) {
-        lay->addItem(applet);
+        m_layout->addItem(applet);
     } else {
-        lay->insertItem(insertIndex, applet);
+        m_layout->insertItem(insertIndex, applet);
     }
 
     if (m_lastSpace) {
-        lay->addItem(m_lastSpace);
+        m_layout->addItem(m_lastSpace);
     }
 
     //FIXME: there must be some beter way to do this rather than this rather error prone arbitrary wait
@@ -304,14 +302,13 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 
 void Panel::appletRemoved(Plasma::Applet* applet)
 {
-    QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout*>(layout());
-    if (!lay) {
+    if (!m_layout) {
         return;
     }
 
     connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
 
-    lay->removeItem(applet);
+    m_layout->removeItem(applet);
 
     //shrink the panel if possible
     if (formFactor() == Plasma::Horizontal) {
@@ -319,7 +316,7 @@ void Panel::appletRemoved(Plasma::Applet* applet)
     } else {
         resize(size().width(), size().height() - applet->size().height());
     }
-    layout()->setMaximumSize(size());
+    m_layout->setMaximumSize(size());
 
     m_lastSpaceTimer->start(200);
 }
@@ -431,7 +428,7 @@ void Panel::updateBorders(const QRect &geom, bool themeChange)
     }
 
     //invalidate the layout and set again
-    if (layout()) {
+    if (m_layout) {
         switch (location()) {
         case LeftEdge:
             rightWidth = qMin(rightWidth, qMax(qreal(1), size().width() - KIconLoader::SizeMedium));
@@ -454,12 +451,12 @@ void Panel::updateBorders(const QRect &geom, bool themeChange)
         qreal oldBottom = bottomHeight;
 
         if (themeChange) {
-            layout()->getContentsMargins(&oldLeft, &oldTop, &oldRight, &oldBottom);
+            m_layout->getContentsMargins(&oldLeft, &oldTop, &oldRight, &oldBottom);
         }
 
-        layout()->setContentsMargins(leftWidth, topHeight, rightWidth, bottomHeight);
+        m_layout->setContentsMargins(leftWidth, topHeight, rightWidth, bottomHeight);
 
-        layout()->invalidate();
+        m_layout->invalidate();
         resize(preferredSize());
     }
 
@@ -474,10 +471,9 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
         Plasma::FormFactor form = formFactor();
         Qt::Orientation layoutDirection = form == Plasma::Vertical ? Qt::Vertical : Qt::Horizontal;
         // create or set up our layout!
-        if (layout()) {
-            QGraphicsLinearLayout * linearLay = static_cast<QGraphicsLinearLayout *>(layout());
-            linearLay->setMaximumSize(size());
-            linearLay->setOrientation(layoutDirection);
+        if (m_layout) {
+            m_layout->setMaximumSize(size());
+            m_layout->setOrientation(layoutDirection);
         }
     }
 
@@ -514,8 +510,8 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
         //FIXME: this seems the only way to correctly resize the layout the first time when the
         // saved panel size is less than the default is to setting a maximum size.
         // this shouldn't happen. maybe even a qgraphicslayout bug?
-        if (layout() && (constraints & Plasma::SizeConstraint)) {
-            layout()->setMaximumSize(size());
+        if (m_layout && (constraints & Plasma::SizeConstraint)) {
+            m_layout->setMaximumSize(size());
         }
 
         if (constraints & Plasma::LocationConstraint) {
@@ -614,15 +610,13 @@ void Panel::showDropZone(const QPoint pos)
         return;
     }
 
-    QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout*>(layout());
-
-    if (!lay) {
+    if (!m_layout) {
         return;
     }
 
     if (pos == QPoint()) {
         if (m_spacer) {
-            lay->removeItem(m_spacer);
+            m_layout->removeItem(m_spacer);
             m_spacer->hide();
         }
         return;
@@ -637,8 +631,8 @@ void Panel::showDropZone(const QPoint pos)
     int insertIndex = -1;
 
     //FIXME: needed in two places, make it a function?
-    for (int i = 0; i < lay->count(); ++i) {
-        QRectF siblingGeometry = lay->itemAt(i)->geometry();
+    for (int i = 0; i < m_layout->count(); ++i) {
+        QRectF siblingGeometry = m_layout->itemAt(i)->geometry();
 
         if (f == Plasma::Horizontal) {
             qreal middle = (siblingGeometry.left() + siblingGeometry.right()) / 2.0;
@@ -667,12 +661,66 @@ void Panel::showDropZone(const QPoint pos)
             m_spacer = new Spacer(this);
             m_spacer->panel = this;
         }
-        lay->removeItem(m_spacer);
+        m_layout->removeItem(m_spacer);
         m_spacer->show();
-        lay->insertItem(insertIndex, m_spacer);
+        m_layout->insertItem(insertIndex, m_spacer);
     }
 }
 
+void Panel::restore(KConfigGroup &group)
+{
+    Containment::restore(group);
+
+    KConfigGroup appletsConfig(&group, "Applets");
+
+    QMap<int, Applet *> oderedApplets;
+    QList<Applet *> unoderedApplets;
+
+    foreach (Applet *applet, applets()) {
+        KConfigGroup appletConfig(&appletsConfig, QString::number(applet->id()));
+        KConfigGroup layoutConfig(&appletConfig, "LayoutInformation");
+
+        int order = layoutConfig.readEntry("Order", -1);
+
+        if (order > -1) {
+            oderedApplets[order] = applet;
+        //if LayoutInformation is not available use the usual way, as a bonus makes it retrocompatible with oler configs
+        } else {
+            unoderedApplets.append(applet);
+        }
+
+        connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
+    }
+
+    foreach (Applet *applet, oderedApplets) {
+        m_layout->addItem(applet);
+    }
+
+    foreach (Applet *applet, unoderedApplets) {
+        layoutApplet(applet, applet->pos());
+    }
+
+    updateSize();
+
+    connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
+            this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
+}
+
+void Panel::saveContents(KConfigGroup &group) const
+{
+    Containment::saveContents(group);
+
+    KConfigGroup appletsConfig(&group, "Applets");
+    for (int order = 0; order < m_layout->count(); ++order) {
+        const Applet *applet = dynamic_cast<Applet *>(m_layout->itemAt(order));
+        if (applet) {
+            KConfigGroup appletConfig(&appletsConfig, QString::number(applet->id()));
+            KConfigGroup layoutConfig(&appletConfig, "LayoutInformation");
+
+            layoutConfig.writeEntry("Order", order);
+        }
+    }
+}
 
 K_EXPORT_PLASMA_APPLET(panel, Panel)
 
