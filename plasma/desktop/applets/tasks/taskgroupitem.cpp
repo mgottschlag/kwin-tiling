@@ -30,10 +30,6 @@
 #include <QGraphicsLinearLayout>
 #include <QInputDialog>
 #include <QVarLengthArray>
-#ifdef Q_WS_X11
-#include <X11/Xlib.h>
-#include <QX11Info>
-#endif
 
 // KDE
 #include <KAuthorized>
@@ -54,6 +50,11 @@
 #include "tasks.h"
 #include "taskitemlayout.h"
 #include "windowtaskitem.h"
+
+#ifdef Q_WS_X11
+#include <X11/Xlib.h>
+#include <QX11Info>
+#endif
 
 TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet)
     : AbstractTaskItem(parent, applet),
