@@ -41,6 +41,7 @@ class Temperature : public SM::Applet
     public slots:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
         void createConfigurationInterface(KConfigDialog *parent);
+        void toolTipAboutToShow();
 
     private slots:
         void configAccepted();
