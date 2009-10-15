@@ -1368,10 +1368,9 @@ void EnvCanadaIon::updateWeather(const QString& source)
 
     const double lati = latitude(source).replace(QRegExp("[^0-9.]"), NULL).toDouble();
     const double longi = longitude(source).replace(QRegExp("[^0-9.]"), NULL).toDouble();
-    const QDate today = QDate::currentDate();
     const Plasma::DataEngine::Data timeData = d->m_timeEngine->query(
-            QString("Local|Solar|Latitude=%1|Longitude=%2|DateTime=%3")
-                .arg(lati).arg(longi).arg(d->m_dateFormat.toString(Qt::ISODate)));
+            QString("Local|Solar|Latitude=%1|Longitude=%2")
+                .arg(lati).arg(-1 * longi));
 
     if (timeData["Corrected Elevation"].toDouble() < 0.0) {
         conditionList["decreasing cloud"] = FewCloudsNight;
