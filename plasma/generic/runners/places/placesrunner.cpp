@@ -19,6 +19,7 @@
 
 #include "placesrunner.h"
 
+#include <KDebug>
 #include <KIcon>
 #include <KRun>
 #include <KUrl>
@@ -31,6 +32,7 @@ PlacesRunner::PlacesRunner(QObject* parent, const QVariantList &args)
     m_filePlaces = new KFilePlacesModel(this);
     connect(m_filePlaces, SIGNAL(setupDone(QModelIndex, bool)), SLOT(setupComplete(QModelIndex, bool)));
     addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds file manager locations that match :q:")));
+    addSyntax(Plasma::RunnerSyntax(i18n("places"), i18n("Lists all file manager locations")));
 }
 
 PlacesRunner::~PlacesRunner()
@@ -46,15 +48,18 @@ void PlacesRunner::match(Plasma::RunnerContext &context)
         return;
     }
 
+    const bool all = term.compare(i18n("places"), Qt::CaseInsensitive) == 0;
+
     for (int i = 0; i <= m_filePlaces->rowCount(); i++) {
         QModelIndex current_index = m_filePlaces->index(i, 0);
         Plasma::QueryMatch::Type type = Plasma::QueryMatch::NoMatch;
         qreal relevance = 0;
 
-        if (m_filePlaces->text(current_index).toLower() == term.toLower()) {
+        const QString text = m_filePlaces->text(current_index);
+        if ((all && !text.isEmpty()) || text.compare(term, Qt::CaseInsensitive) == 0) {
             type = Plasma::QueryMatch::ExactMatch;
-            relevance = 1.0;
-        } else if (m_filePlaces->text(current_index).contains(term, Qt::CaseInsensitive)) {
+            relevance = all ? 0.9 : 1.0;
+        } else if (text.contains(term, Qt::CaseInsensitive)) {
             type = Plasma::QueryMatch::PossibleMatch;
             relevance = 0.7;
         }
@@ -64,7 +69,7 @@ void PlacesRunner::match(Plasma::RunnerContext &context)
             match.setType(type);
             match.setRelevance(relevance);
             match.setIcon(KIcon(m_filePlaces->icon(current_index)));
-            match.setText(m_filePlaces->text(current_index));
+            match.setText(text);
 
             //if we have to mount it set the device udi instead of the URL, as we can't open it directly
             if (m_filePlaces->isDevice(current_index) && m_filePlaces->setupNeeded(current_index)) {
@@ -72,6 +77,7 @@ void PlacesRunner::match(Plasma::RunnerContext &context)
             } else {
                 match.setData(m_filePlaces->url(current_index));
             }
+
             matches << match;
         }
     }
