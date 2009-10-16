@@ -200,14 +200,4 @@ void SM::Cpu::configAccepted()
     connectToEngine();
 }
 
-void SM::Cpu::setDetail(Detail detail)
-{
-    foreach (const QString& key, plotters().keys()) {
-        plotters().value(key)->setShowLabels(detail == SM::Applet::High);
-        //plotters().value(key)->setShowTopBar(detail == SM::Applet::High);
-        //plotters().value(key)->setShowVerticalLines(detail == SM::Applet::High);
-        plotters().value(key)->setShowHorizontalLines(detail == SM::Applet::High);
-    }
-}
-
 #include "cpu.moc"

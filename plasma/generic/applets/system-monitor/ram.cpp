@@ -208,12 +208,4 @@ void SM::Ram::configAccepted()
     connectToEngine();
 }
 
-void SM::Ram::setDetail(Detail detail)
-{
-    foreach (const QString& key, plotters().keys()) {
-        plotters().value(key)->setShowLabels(detail == SM::Applet::High);
-        plotters().value(key)->setShowHorizontalLines(detail == SM::Applet::High);
-    }
-}
-
 #include "ram.moc"

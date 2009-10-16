@@ -90,16 +90,6 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
     } else if (constraints & Plasma::SizeConstraint) {
         checkGeometry();
         checkPlotters();
-        Detail detail;
-        if (size().width() > 250 && size().height() / m_items.count() > 150) {
-            detail = High;
-        } else {
-            detail = Low;
-        }
-        if (m_detail != detail && m_mode != Monitor) {
-            m_detail = detail;
-            setDetail(m_detail);
-        }
         if (m_keepRatio.count() > 0) {
             foreach (QGraphicsWidget* item, m_keepRatio) {
                 QSizeF size = QSizeF(qMin(item->size().width(), contentsRect().size().width()),
@@ -131,11 +121,6 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
             }
         }
     }
-}
-
-void Applet::setDetail(Detail detail)
-{
-    Q_UNUSED(detail);
 }
 
 void Applet::setTitle(const QString& title, bool spacer)
@@ -190,7 +175,7 @@ void Applet::connectToEngine()
     }
     mainLayout()->activate();
     constraintsEvent(Plasma::SizeConstraint);
-    setDetail(m_detail);
+    checkPlotters();
 }
 
 void Applet::checkPlotters()
@@ -205,6 +190,22 @@ void Applet::checkPlotters()
 
     foreach (plotter, m_plotters) {
         plotter->setShowTopBar(showTopBar);
+    }
+
+    Detail detail;
+
+    if (size().width() > 250 && size().height() / m_items.count() > 150) {
+        detail = High;
+    } else {
+        detail = Low;
+    }
+
+    if (m_detail != detail && m_mode != Monitor) {
+        m_detail = detail;
+        foreach (const QString& key, plotters().keys()) {
+            plotters().value(key)->setShowLabels(detail == SM::Applet::High);
+            plotters().value(key)->setShowHorizontalLines(detail == SM::Applet::High);
+        }
     }
 }
 

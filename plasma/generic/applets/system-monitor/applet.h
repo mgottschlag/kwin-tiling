@@ -104,7 +104,6 @@ class SM_EXPORT Applet : public Plasma::Applet
         virtual bool addMeter(const QString&) { return false; };
         void displayNoAvailableSources();
         virtual void deleteMeters(QGraphicsLinearLayout* layout = 0);
-        virtual void setDetail(Detail detail);
         virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
         QColor adjustColor(const QColor& color, uint percentage);
 

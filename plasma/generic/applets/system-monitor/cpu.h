@@ -40,7 +40,6 @@ class Cpu : public Applet
         virtual void init();
         virtual bool addMeter(const QString&);
         virtual void createConfigurationInterface(KConfigDialog *parent);
-        virtual void setDetail(Detail detail);
 
     public slots:
         void dataUpdated(const QString &name,
