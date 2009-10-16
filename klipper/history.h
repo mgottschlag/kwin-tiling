@@ -71,6 +71,16 @@ public:
     const HistoryItem* first();
 
     /**
+     * @return next item in cycle, or null if at end
+     */
+    const HistoryItem* nextInCycle() const;
+
+    /**
+     * @return previous item in cycle, or null if at top
+     */
+    const HistoryItem* prevInCycle() const;
+
+    /**
      * Get an iterator pointing to the first (most recent) item
      * This iterator should probably be a constant iterator, but
      * the QTL doesn't support this easily.
@@ -103,6 +113,16 @@ public:
     bool topIsUserSelected() {
         return m_topIsUserSelected;
     }
+
+    /**
+     * Cycle to next item
+     */
+    void cycleNext();
+
+    /**
+     * Cycle to prev item
+     */
+    void cyclePrev();
 
 public Q_SLOTS:
     /**
@@ -153,6 +173,11 @@ private:
      */
     bool m_topIsUserSelected;
 
+    /**
+     * The index of the "next" when cycling through the
+     * history. the previous would be m_nextCycle-1
+     */
+    int m_nextCycle;
 };
 
 inline const HistoryItem* History::first() { return itemList.count() > 0 ? itemList.first() : 0; }

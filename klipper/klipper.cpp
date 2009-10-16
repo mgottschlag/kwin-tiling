@@ -56,6 +56,7 @@
 #include <X11/Xatom.h>
 
 //#define NOISY_KLIPPER
+#include <KPassivePopup>
 
 namespace {
     /**
@@ -199,6 +200,17 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     qobject_cast<KAction*>(m_editAction)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_E), KAction::DefaultShortcut);
     connect(m_editAction, SIGNAL(triggered()), SLOT(slotEditData()));
 
+    // Cycle through history
+    m_cycleNextAction = m_collection->addAction("cycleNextAction");
+    m_cycleNextAction->setText(i18n("Next history item"));
+    m_cycleNextAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Down), KAction::DefaultShortcut);
+    connect(m_cycleNextAction, SIGNAL(triggered(bool)), SLOT(slotCycleNext()));
+    m_cyclePrevAction = m_collection->addAction("cyclePrevAction");
+    m_cyclePrevAction->setText(i18n("Previous history item"));
+    m_cyclePrevAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Up), KAction::DefaultShortcut);
+    connect(m_cyclePrevAction, SIGNAL(triggered(bool)), SLOT(slotCyclePrev()));
+
+    // Actions toggle
     m_toggleURLGrabAction->setText(i18n("Enable Clipboard Actions"));
     m_toggleURLGrabAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_X));
 
@@ -1094,5 +1106,46 @@ void Klipper::slotAskClearHistory()
 
 }
 
+void Klipper::slotCycleNext()
+{
+    m_history->cycleNext();
+    emit passivePopup(i18n("Clipboard history"), cycleText());
+}
+
+void Klipper::slotCyclePrev()
+{
+    m_history->cyclePrev();
+    emit passivePopup(i18n("Clipboard history"), cycleText());
+}
+
+QString Klipper::cycleText() const
+{
+    const HistoryItem* itemprev = m_history->prevInCycle();
+    const HistoryItem* item = m_history->first();
+    const HistoryItem* itemnext = m_history->nextInCycle();
+    QFontMetrics font_metrics(m_history->popup()->fontMetrics());
+    QString rv("<table>");
+    if (itemprev) {
+        rv += "<tr><td>";
+        rv += i18n("up");
+        rv += "</td><td>";
+        rv += font_metrics.elidedText(Qt::escape(itemprev->text().simplified()), Qt::ElideMiddle, 400);
+        rv += "</td></tr>";
+    }
+    rv += "<tr><td>";
+    rv += i18n("current");
+    rv += "</td><td><b>";
+    rv += font_metrics.elidedText(Qt::escape(item->text().simplified()), Qt::ElideMiddle, 400);
+    rv += "</b></td></tr>";
+    if (itemnext) {
+        rv += "<tr><td>";
+        rv += i18n("down");
+        rv += "</td><td>";
+        rv += font_metrics.elidedText(Qt::escape(itemnext->text().simplified()), Qt::ElideMiddle, 400);
+        rv += "</td></tr>";
+    }
+    rv += "</table>";
+    return rv;
+}
 
 #include "klipper.moc"

@@ -28,6 +28,7 @@
 
 #include "klipper.h"
 #include "history.h"
+#include <KPassivePopup>
 
 KlipperTray::KlipperTray()
     : KSystemTrayIcon( "klipper" )
@@ -39,6 +40,7 @@ KlipperTray::KlipperTray()
         SLOT( slotPopupMenu()));
     connect( m_klipper->history(), SIGNAL(changed()), SLOT(slotSetToolTipFromHistory()));
     slotSetToolTipFromHistory();
+    connect( m_klipper, SIGNAL(passivePopup(QString,QString)), SLOT(passive_popup(QString,QString)));
 }
 
 void KlipperTray::slotSetToolTipFromHistory()
@@ -50,6 +52,11 @@ void KlipperTray::slotSetToolTipFromHistory()
       setToolTip(top->text());
     }
 
+}
+
+void KlipperTray::passive_popup(const QString& caption, const QString& text)
+{
+    KPassivePopup::message(KPassivePopup::Boxed, caption, text, icon().pixmap(QSize(16,16)), this);
 }
 
 #include "tray.moc"

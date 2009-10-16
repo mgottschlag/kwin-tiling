@@ -33,6 +33,7 @@ public:
     KlipperTray();
 public slots:
     void slotSetToolTipFromHistory();
+    void passive_popup(const QString& caption, const QString& text);
 private:
     Klipper* m_klipper;
 };

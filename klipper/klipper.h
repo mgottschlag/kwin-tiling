@@ -31,6 +31,7 @@
 
 #include "urlgrabber.h"
 
+class KAction;
 class QClipboard;
 class KToggleAction;
 class KAboutData;
@@ -82,6 +83,8 @@ public Q_SLOTS:
     void slotHistoryTopChanged();
     void slotConfigure();
     void slotEditData();
+    void slotCycleNext();
+    void slotCyclePrev();
 
 protected:
     /**
@@ -132,10 +135,12 @@ protected:
     KSharedConfigPtr config() const { return m_config; }
     bool isApplet() const { return m_config != KGlobal::config(); }
 
+Q_SIGNALS:
+    void passivePopup(const QString& caption, const QString& text);
+
 public Q_SLOTS:
     void slotPopupMenu();
     void slotAskClearHistory();
-
 protected Q_SLOTS:
     void showPopupMenu( QMenu * );
     void slotRepeatAction();
@@ -179,6 +184,8 @@ private:
     QAction* m_editAction;
     QAction* m_configureAction;
     QAction* m_quitAction;
+    KAction* m_cycleNextAction;
+    KAction* m_cyclePrevAction;
     QPixmap m_pixmap;
     bool m_bPopupAtMouse :1;
     bool m_bKeepContents :1;
@@ -211,6 +218,7 @@ private:
     static KAboutData* m_about_data;
 
     bool blockFetchingNewData();
+    QString cycleText() const;
     KlipperSessionManager* m_session_managed;
     KActionCollection *m_collection;
 };

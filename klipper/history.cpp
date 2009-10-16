@@ -28,7 +28,8 @@
 History::History( QObject* parent )
     : QObject( parent ),
       m_popup( new KlipperPopup( this ) ),
-      m_topIsUserSelected( false )
+      m_topIsUserSelected( false ),
+      m_nextCycle(-1)
 {
     connect( this, SIGNAL( changed() ), m_popup, SLOT( slotHistoryChanged() ) );
 
@@ -68,6 +69,7 @@ void History::forceInsert( const HistoryItem* item ) {
     if ( !item )
         return;
     itemList.prepend( item );
+    m_nextCycle = (itemList.size()>2)?1:-1;
     emit changed();
     trim();
 }
@@ -79,6 +81,9 @@ void History::trim() {
 
     while ( i-- ) {
         itemList.removeLast();
+    }
+    if (itemList.size()<=1) {
+        m_nextCycle = -1;
     }
     emit changed();
 }
@@ -114,6 +119,7 @@ void History::slotMoveToTop(QAction *action) {
     m_topIsUserSelected = true;
 
     itemList.move(pos, 0);
+    m_nextCycle = (itemList.size()>2)?1:-1;
     emit changed();
     emit topChanged();
 }
@@ -126,6 +132,35 @@ void History::setMaxSize( unsigned max_size ) {
 
 KlipperPopup* History::popup() {
     return m_popup;
+}
+
+void History::cycleNext() {
+    if (m_nextCycle != -1 && m_nextCycle < itemList.size()) {
+        itemList.swap(0, m_nextCycle++);
+        emit changed();
+    }
+}
+
+void History::cyclePrev()
+{
+    if (m_nextCycle > 1 && m_nextCycle - 1 < itemList.size()) {
+        itemList.swap(0, --m_nextCycle);
+        emit changed();
+    }
+
+}
+
+
+const HistoryItem* History::nextInCycle() const
+{
+    return (m_nextCycle != -1 && m_nextCycle < itemList.size()) ? itemList.at(m_nextCycle) : 0L;
+
+}
+
+const HistoryItem* History::prevInCycle() const
+{
+    return (m_nextCycle > 1 && m_nextCycle -1 < itemList.size()) ? itemList.at(m_nextCycle-1) : 0L;
+
 }
 
 #include "history.moc"
