@@ -154,6 +154,14 @@ bool Temperature::addMeter(const QString& source)
     if (!engine) {
         return false;
     }
+    int min, max;
+    if (KGlobal::locale()->measureSystem() == KLocale::Metric) {
+        min = 0;
+        max = 110;
+    } else {
+        min = 32;
+        max = 230;
+    }
     data = engine->query(source);
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(Qt::Horizontal);
     layout->setContentsMargins(3, 3, 3, 3);
@@ -174,8 +182,8 @@ bool Temperature::addMeter(const QString& source)
             meter->setLabelFont(0, font);
             meter->setLabelFont(1, font);
         }
-        meter->setMinimum(0);
-        meter->setMaximum(110);
+        meter->setMinimum(min);
+        meter->setMaximum(max);
         layout->addItem(meter);
         appendMeter(source, meter);
         appendKeepRatio(meter);
@@ -190,7 +198,7 @@ bool Temperature::addMeter(const QString& source)
     plotter->setShowHorizontalLines(false);
     plotter->setTitle(title);
     plotter->setUseAutoRange(false);
-    plotter->setVerticalRange(0.0, 110.0);
+    plotter->setVerticalRange(min, max);
     plotter->setFontColor(theme->color(Plasma::Theme::TextColor));
     QFont font = theme->font(Plasma::Theme::DefaultFont);
     font.setPointSize(8);
