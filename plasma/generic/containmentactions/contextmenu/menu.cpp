@@ -382,7 +382,7 @@ QWidget* ContextMenu::createConfigurationInterface(QWidget* parent)
             item = new QCheckBox(widget);
             //FIXME better text
             item->setText(i18n("[Other Actions]"));
-        } if (name == "_wallpaper") {
+        } else if (name == "_wallpaper") {
             item = new QCheckBox(widget);
             item->setText(i18n("Wallpaper Actions"));
             item->setIcon(KIcon("user-desktop"));
