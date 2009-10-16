@@ -143,12 +143,14 @@ void SM::Ram::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
         }
 
         plotter->addSample(QList<double>() << value_b);
+        QString temp = KGlobal::locale()->formatByteSize(value_b);
         if (mode() == SM::Applet::Panel) {
             setToolTip(source, QString("<tr><td>%1</td><td>%2</td><td>of</td><td>%3</td></tr>")
                                       .arg(plotter->title())
-                                      .arg(KGlobal::locale()->formatByteSize(value_b))
+                                      .arg(temp)
                                       .arg(KGlobal::locale()->formatByteSize(m_max[source])));
         }
+        setPlotterOverlayText(plotter, temp);
     }
 }
 

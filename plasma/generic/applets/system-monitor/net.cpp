@@ -145,7 +145,7 @@ void SM::Net::dataUpdated(const QString& source,
     }
     m_data[interface][index] = qMax(0.0, data["value"].toDouble());
     if (!m_data[interface].contains(-1)) {
-       Plasma::SignalPlotter *plotter = plotters()[interface];
+        Plasma::SignalPlotter *plotter = plotters()[interface];
         if (plotter) {
             plotter->addSample(m_data[interface]);
             if (mode() == SM::Applet::Panel) {
@@ -155,6 +155,8 @@ void SM::Net::dataUpdated(const QString& source,
                                          .arg(m_data[interface][1]));
             }
         }
+        //setPlotterOverlayText(plotter, QString("in %1 out %2").arg(m_data[interface][0])
+        //                                                    .arg(m_data[interface][1]));
         m_data[interface] = QList<double>() << -1 << -1;
     }
 }

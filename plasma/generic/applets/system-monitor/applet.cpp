@@ -175,7 +175,6 @@ void Applet::connectToEngine()
     }
     mainLayout()->activate();
     constraintsEvent(Plasma::SizeConstraint);
-    checkPlotters();
 }
 
 void Applet::checkPlotters()
@@ -202,9 +201,9 @@ void Applet::checkPlotters()
 
     if (m_detail != detail && m_mode != Monitor) {
         m_detail = detail;
-        foreach (const QString& key, plotters().keys()) {
-            plotters().value(key)->setShowLabels(detail == SM::Applet::High);
-            plotters().value(key)->setShowHorizontalLines(detail == SM::Applet::High);
+        foreach (plotter, m_plotters) {
+            plotter->setShowLabels(detail == SM::Applet::High);
+            plotter->setShowHorizontalLines(detail == SM::Applet::High);
         }
     }
 }
@@ -295,6 +294,7 @@ void Applet::deleteMeters(QGraphicsLinearLayout* layout)
         m_toolTips.clear();
         m_header = 0;
     }
+    m_overlayFrames.clear();
     for (int i = layout->count() - 1; i >= 0; --i) {
         QGraphicsLayoutItem* item = layout->itemAt(i);
         if (item) {
@@ -395,5 +395,26 @@ void Applet::toolTipAboutToShow()
     }
 }
 
+void Applet::setPlotterOverlayText(Plasma::SignalPlotter* plotter, const QString& text)
+{
+    if (!m_overlayFrames.contains(plotter)) {
+        Plasma::Frame* frame;
+        QGraphicsLinearLayout* layout = new QGraphicsLinearLayout(Qt::Vertical, plotter);
+        plotter->setLayout(layout);
+        frame = new Plasma::Frame(plotter);
+        frame->setZValue(10);
+        frame->resize(frame->size().height() * 2.5, frame->size().height());
+        m_overlayFrames[plotter] = frame;
+        frame->hide();
+        layout->addStretch();
+        QGraphicsLinearLayout* layout2 = new QGraphicsLinearLayout(Qt::Horizontal, layout);
+        layout2->addStretch();
+        layout2->addItem(frame);
+        layout2->addStretch();
+        layout->addItem(layout2);
+    }
+    m_overlayFrames[plotter]->setText(text);
+    m_overlayFrames[plotter]->show();
+}
 
 }

@@ -100,6 +100,7 @@ class SM_EXPORT Applet : public Plasma::Applet
         Detail detail() { return m_detail; };
         qreal minimumWidth() { return m_minimumWidth; };
         void setMinimumWidth(qreal minimumWidth) { m_minimumWidth = minimumWidth; };
+        void setPlotterOverlayText(Plasma::SignalPlotter* plotter, const QString& text);
 
         virtual bool addMeter(const QString&) { return false; };
         void displayNoAvailableSources();
@@ -132,6 +133,7 @@ class SM_EXPORT Applet : public Plasma::Applet
 
         QGraphicsLinearLayout *m_mainLayout;
         Plasma::Applet *m_configSource;
+        QHash<Plasma::SignalPlotter*, Plasma::Frame *> m_overlayFrames;
 };
 
 }

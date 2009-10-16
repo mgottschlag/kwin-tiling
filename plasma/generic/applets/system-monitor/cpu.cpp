@@ -137,12 +137,13 @@ void SM::Cpu::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
     Plasma::SignalPlotter *plotter = plotters()[source];
     if (plotter) {
         double value = data["value"].toDouble();
+        QString temp = KGlobal::locale()->formatNumber(value, 1);
         plotter->addSample(QList<double>() << value);
         if (mode() == SM::Applet::Panel) {
             setToolTip(source, QString("<tr><td>%1&nbsp;</td><td>%2%</td></tr>")
-                                      .arg(plotter->title())
-                                      .arg(KGlobal::locale()->formatNumber(value, 1)));
+                                      .arg(plotter->title()).arg(temp));
         }
+        setPlotterOverlayText(plotter, temp);
     }
 }
 
