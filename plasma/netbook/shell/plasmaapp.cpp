@@ -476,7 +476,11 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 void PlasmaApp::updateToolBoxVisibility(bool visible)
 {
     foreach (Plasma::Containment *cont, m_corona->containments()) {
-        cont->setToolBoxOpen(visible);
+        Plasma::Containment *senderCont = static_cast<Plasma::Containment *>(sender());
+        //avoid signal/slot loops
+        if (cont != senderCont) {
+            cont->setToolBoxOpen(visible);
+        }
     }
 
     if (!visible && m_widgetExplorer) {
