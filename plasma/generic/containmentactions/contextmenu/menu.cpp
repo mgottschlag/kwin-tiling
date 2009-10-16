@@ -386,6 +386,9 @@ QWidget* ContextMenu::createConfigurationInterface(QWidget* parent)
             item = new QCheckBox(widget);
             item->setText(i18n("Wallpaper Actions"));
             item->setIcon(KIcon("user-desktop"));
+        } else if (name == "_sep1" || name =="_sep2" || name == "_sep3") {
+            item = new QCheckBox(widget);
+            item->setText(i18n("[Separator]"));
         } else {
             QAction *a = action(name);
             if (a) {
