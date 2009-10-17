@@ -2,13 +2,25 @@ This change log contains only changes relevant to the KDM configuration,
 startup and packaging. Bug fixes are not listed, and feature changes only
 if they affect the configuration.
 
+2008-11-23  Oswald Buddenhagen <ossi@kde.org>
+
+	* Added setting of PAM_XDISPLAY and PAM_XAUTHDATA PAM items.
+
+2007-11-15  Oswald Buddenhagen <ossi@kde.org>
+
+	* Greeter is now started with unchanged environment variables.
+
+2007-10-27  Oswald Buddenhagen <ossi@kde.org>
+
+	* Moved kdm_config, kdm_greet & krootimage into libexec_dir.
+
 2007-07-08  Oswald Buddenhagen <ossi@kde.org>
 
-	* Improve expando support in UserLogFile. Add UserLogFallback.
+	* Improved expando support in UserLogFile. Add UserLogFallback.
 
 2007-07-07  Oswald Buddenhagen <ossi@kde.org>
 
-	* Make out-of-$HOME xauth enforcable. Option ForceUserAuthDir.
+	* Made out-of-$HOME xauth enforcable. Option ForceUserAuthDir.
 
 2007-06-20  Oswald Buddenhagen <ossi@kde.org>
 
