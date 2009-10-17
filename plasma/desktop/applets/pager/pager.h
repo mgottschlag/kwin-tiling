@@ -78,6 +78,9 @@ class Pager : public Plasma::Applet
         void windowChanged(WId id, unsigned int properties);
         void showingDesktopChanged(bool showing);
         void slotConfigureDesktop();
+#ifdef Q_WS_X11
+        void slotAddDesktop();
+#endif
         void lostDesktopLayoutOwner();
         void animationUpdate(qreal progress, int animId);
         void dragSwitch();

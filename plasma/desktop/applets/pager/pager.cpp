@@ -202,15 +202,28 @@ KColorScheme *Pager::colorScheme()
 
 void Pager::createMenu()
 {
-    QAction* configureDesktop = new QAction(SmallIcon("configure"),i18n("&Configure Desktops..."), this);
+    QAction* configureDesktop = new QAction(SmallIcon("configure"),i18n("&Configure Virtual Desktops..."), this);
     m_actions.append(configureDesktop);
     connect(configureDesktop, SIGNAL(triggered(bool)), this , SLOT(slotConfigureDesktop()));
+#ifdef Q_WS_X11
+    QAction* addDesktop = new QAction(SmallIcon("list-add"),i18n("&Add Virtual Desktop"), this);
+    m_actions.append(addDesktop);
+    connect(addDesktop, SIGNAL(triggered(bool)), this , SLOT(slotAddDesktop()));
+#endif
 }
 
 QList<QAction*> Pager::contextualActions()
 {
   return m_actions;
 }
+
+#ifdef Q_WS_X11
+void Pager::slotAddDesktop()
+{
+    NETRootInfo info(QX11Info::display(), NET::NumberOfDesktops | NET::DesktopNames);
+    info.setNumberOfDesktops(info.numberOfDesktops() + 1);
+}
+#endif
 
 void Pager::slotConfigureDesktop()
 {
