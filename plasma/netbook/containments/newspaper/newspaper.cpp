@@ -105,6 +105,7 @@ void Newspaper::init()
     setHasConfigurationInterface(true);
 
     m_toolBox = new NetToolBox(this);
+    setToolBoxItem(m_toolBox);
     connect(m_toolBox, SIGNAL(toggled()), this, SIGNAL(toolBoxToggled()));
     connect(m_toolBox, SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));
     m_toolBox->show();
@@ -406,9 +407,11 @@ void Newspaper::restore(KConfigGroup &group)
 
     foreach (Applet *applet, oderedAppletsLeft) {
         m_leftLayout->insertItem(m_leftLayout->count()-1, applet);
+        createAppletTitle(applet);
     }
     foreach (Applet *applet, oderedAppletsRight) {
-        m_rightLayout->insertItem(m_leftLayout->count()-1, applet);
+        m_rightLayout->insertItem(m_rightLayout->count()-1, applet);
+        createAppletTitle(applet);
     }
 
     foreach (Applet *applet, unoderedApplets) {
