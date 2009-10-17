@@ -486,7 +486,8 @@ The <filename>Xsetup</filename> program is run after the &X-Server; is
 started or reset, but before the greeter is offered.
 This is the place to change the root background (if
 <option>UseBackground</option> is disabled) or bring up other windows that
-should appear on the screen along with the greeter.
+should appear on the screen along with the greeter. Resources for this
+program can be put into the file named by <option>Resources</option>.
 </para>
 
 <para>
@@ -515,13 +516,10 @@ the following environment variables are passed:</para>
  </varlistentry>
 </variablelist>
 
-<para> Note that since &kdm; grabs the keyboard, any other windows will not be
-able to receive keyboard input. They will be able to interact with the mouse,
-however; beware of potential security holes here. If <option>GrabServer</option>
-is set, <filename>Xsetup</filename> will not be able to connect to the display
-at all. Resources for this program can be put into the file named by
-<option>Resources</option>.
-</para>
+<note><para><option>GrabInput</option> can make &kdm; grab the
+keyboard and mouse, making any other windows unable to receive input.
+If <option>GrabServer</option> is set, <filename>Xsetup</filename>
+will not be able to connect to the display at all.</para></note>
 
 </sect2>
 
@@ -2443,10 +2441,10 @@ Comment:
  may be more secure, but it will disable any background and other
  X-clients started from the Setup script.
 Description:
- To improve security, the greeter grabs the &X-Server; and then the keyboard
+ To improve security, the greeter grabs the &X-Server; and then the input
  when it starts up. This option specifies if the &X-Server; grab should be held
  for the duration of the name/password reading. When disabled, the &X-Server;
- is ungrabbed after the keyboard grab succeeds; otherwise, the &X-Server; is
+ is ungrabbed after the input grabs succeed; otherwise, the &X-Server; is
  grabbed until just before the session begins.
  </para>
  <note><para>Enabling this option disables <option>UseBackground</option> and
