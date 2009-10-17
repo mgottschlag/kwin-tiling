@@ -61,8 +61,6 @@ getCfgQStrList( int id )
 static QFont *
 str2Font( const QString &aValue )
 {
-	uint nFontBits;
-	QString chStr;
 	QFont *aRetFont = new QFont();
 
 	QStringList sl = aValue.split( QString::fromLatin1(","), QString::SkipEmptyParts );
