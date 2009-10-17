@@ -49,6 +49,8 @@ extern "C"
 #endif
 void initConfig( void );
 
+extern int _grabInput;
+
 CONF_GREET_C_DECLS
 
 #endif /* KDMCONFIG_H */

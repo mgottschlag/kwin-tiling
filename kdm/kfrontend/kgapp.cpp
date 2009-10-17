@@ -121,27 +121,31 @@ GreeterApp::x11EventFilter( XEvent * ev )
 {
 	KeySym sym;
 
+	if (_grabInput) {
+		switch (ev->type) {
+		case FocusIn:
+		case FocusOut:
+			if (ev->xfocus.mode == NotifyUngrab) {
+				if (!regrabKbd) {
+					secureKeyboard( QX11Info::display() );
+					regrabKbd = true;
+				}
+			} else
+				regrabKbd = false;
+			return false;
+		case EnterNotify:
+		case LeaveNotify:
+			if (ev->xcrossing.mode == NotifyUngrab) {
+				if (!regrabPtr) {
+					securePointer( QX11Info::display() );
+					regrabPtr = true;
+				}
+			} else
+				regrabPtr = false;
+			return false;
+		}
+	}
 	switch (ev->type) {
-	case FocusIn:
-	case FocusOut:
-		if (ev->xfocus.mode == NotifyUngrab) {
-			if (!regrabKbd) {
-				secureKeyboard( QX11Info::display() );
-				regrabKbd = true;
-			}
-		} else
-			regrabKbd = false;
-		break;
-	case EnterNotify:
-	case LeaveNotify:
-		if (ev->xcrossing.mode == NotifyUngrab) {
-			if (!regrabPtr) {
-				securePointer( QX11Info::display() );
-				regrabPtr = true;
-			}
-		} else
-			regrabPtr = false;
-		break;
 	case KeyPress:
 		sym = XLookupKeysym( &ev->xkey, 0 );
 		if (sym != XK_Return && !IsModifierKey( sym ))

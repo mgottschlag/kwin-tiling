@@ -44,6 +44,7 @@ QString _stsFile;
 bool _isLocal;
 bool _isReserve;
 bool _authorized;
+int _grabInput;
 
 static QString
 getCfgQStr( int id )
@@ -87,6 +88,10 @@ void initConfig( void )
 	_isReserve = _isLocal && getCfgInt( C_isReserve );
 	_hasConsole = _hasConsole && _isLocal && getCfgInt( C_hasConsole );
 	_authorized = getCfgInt( C_isAuthorized );
+	_grabInput =
+		(_grabInputPre == GRAB_NEVER) ? 0 :
+		(_grabInputPre == GRAB_ALWAYS) ? 1 :
+		!_authorized;
 
 	_stsFile = _dataDir + "/kdmsts";
 

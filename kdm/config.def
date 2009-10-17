@@ -2431,6 +2431,28 @@ Description:
  <filename>kdesktoprc</filename> does. Its options are not described
  herein; guess their meanings or use the control center.
 
+Key: GrabInput
+Type: enum
+ Never/GRAB_NEVER: never grab
+ IfNoAuth/GRAB_IFNOAUTH: grab if the display requires no X authorization
+ Always/GRAB_ALWAYS: always grab
+Default: IfNoAuth
+User: greeter-c(grabInputPre)
+Instance: #*/Always
+Comment:
+ Whether to grab keyboard and mouse while the greeter is visible. Grabs
+ may improve security, but make on-screen keyboards, etc. unusable.
+Description:
+ To improve security, the greeter may grab mouse and keyboard input so
+ no other X clients can eavesdrop it. However, the X authorization
+ mechanism will usually prevent malicious X clients from connecting
+ in the first place. Consequently, enabling grabs for local displays
+ is pointless and only marginally improves security for remote displays.
+ </para>
+ <note><para>The mouse grab will make on-screen keyboards unusable.
+ </para></note>
+ <para>
+
 Key: GrabServer
 Type: bool
 Default: false

@@ -140,19 +140,27 @@ FDialog::exec()
 	static QWidget *current;
 
 	adjustGeometry();
-	if (!current)
+	if (_grabInput && !current)
 		secureInputs( QX11Info::display() );
 	show();
 	qApp->processEvents();
-	fakeFocusIn( winId() );
+	if (_grabInput)
+		fakeFocusIn( winId() );
+	else
+		activateWindow();
 	QWidget *previous = current;
 	current = this;
 	inherited::exec();
 	current = previous;
-	if (current)
-		fakeFocusIn( current->winId() );
-	else
-		unsecureInputs( QX11Info::display() );
+	if (current) {
+		if (_grabInput)
+			fakeFocusIn( current->winId() );
+		else
+			current->activateWindow();
+	} else {
+		if (_grabInput)
+			unsecureInputs( QX11Info::display() );
+	}
 	return result();
 }
 
