@@ -630,7 +630,7 @@ void FontInst::removeFile(const QString &family, quint32 style, const QString &f
                 result=Misc::fExists(file)
                         ? QFile::remove(file)
                             ? STATUS_OK
-                            : result=KIO::ERR_WRITE_ACCESS_DENIED
+                            : KIO::ERR_WRITE_ACCESS_DENIED
                         : KIO::ERR_DOES_NOT_EXIST;
 
                 if(STATUS_OK==result)
