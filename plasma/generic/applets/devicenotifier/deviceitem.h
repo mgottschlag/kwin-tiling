@@ -181,6 +181,12 @@ class DeviceItem : public QGraphicsWidget
         **/
         void updateColors();
 
+        void clicked();
+        void actionClicked(Plasma::IconWidget*);
+
+        bool selectNextAction(Plasma::IconWidget*);
+        bool selectPreviousAction(Plasma::IconWidget*, bool forceLast = false);
+
         static const int MARGIN = 3;
         static const int TEXT_MARGIN = 3;
         static const int LEFTACTION_SIZE = 22;

@@ -56,7 +56,6 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
       m_hovered(false),
       m_mounted(false)
 {
-    setFlag(QGraphicsItem::ItemIsFocusable);
     setAcceptHoverEvents(true);
     setCacheMode(DeviceCoordinateCache);
     setZValue(0);
@@ -81,6 +80,7 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
     m_deviceIcon->setMinimumSize(m_deviceIcon->sizeFromIconSize(KIconLoader::SizeMedium));
     m_deviceIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
     m_deviceIcon->setAcceptedMouseButtons(Qt::NoButton);
+    m_deviceIcon->setFocusPolicy(Qt::NoFocus);
 
     QGraphicsLinearLayout *info_layout = new QGraphicsLinearLayout(Qt::Vertical);
     info_layout->setContentsMargins(0, 0, 0, 0);
@@ -431,8 +431,7 @@ bool DeviceItem::eventFilter(QObject* obj, QEvent *event)
             case QEvent::GraphicsSceneMousePress: {
                 QGraphicsSceneMouseEvent *e = static_cast<QGraphicsSceneMouseEvent *>(event);
                 if (e->button() == Qt::LeftButton) {
-                    QString action = item->data(NotifierDialog::ActionRole).toString();
-                    emit actionActivated(this, udi(), action);
+                    actionClicked(item);
                     return true;
                 }
                 break;
@@ -445,6 +444,49 @@ bool DeviceItem::eventFilter(QObject* obj, QEvent *event)
     return false;
 }
 
+bool DeviceItem::selectNextAction(Plasma::IconWidget *currentAction)
+{
+    if (!currentAction) {
+        emit highlightActionItem(dynamic_cast<QGraphicsItem*>(m_actionsLayout->itemAt(0)));
+        return true;
+    } else {
+        int i=0;
+        while (m_actionsLayout->itemAt(i) != currentAction) {
+            i++;
+        }
+        if (m_actionsLayout->count() > i+1) {
+            emit highlightActionItem(dynamic_cast<QGraphicsItem*>(m_actionsLayout->itemAt(i+1)));
+            return true;
+        }
+    }
+    emit highlightActionItem(0);
+    return false;
+}
+
+bool DeviceItem::selectPreviousAction(Plasma::IconWidget *currentAction , bool forceLast)
+{
+    if (forceLast) {
+        emit highlightActionItem(dynamic_cast<QGraphicsItem*>(m_actionsLayout->itemAt(m_actionsLayout->count()-1)));
+        return true;
+    }
+    if (!currentAction) {
+        emit highlightActionItem(0);
+        return false;
+    } else {
+        int i=0;
+        while (m_actionsLayout->itemAt(i) != currentAction) {
+            i++;
+        }
+        if (i > 0) {
+            emit highlightActionItem(dynamic_cast<QGraphicsItem*>(m_actionsLayout->itemAt(i-1)));
+            return true;
+        }
+    }
+    emit highlightActionItem(0);
+    return true;
+}
+
+
 void DeviceItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     event->accept();
@@ -455,8 +497,12 @@ void DeviceItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if (event->button() != Qt::LeftButton || !boundingRect().contains(event->pos())) {
         return;
     }
+    clicked();
+}
 
-    if (m_actionsLayout->count() == 1) {
+void DeviceItem::clicked()
+{
+     if (m_actionsLayout->count() == 1) {
         emit actionActivated(this, udi(), m_actionsLayout->itemAt(0)->graphicsItem()->data(NotifierDialog::ActionRole).toString());
     } else {
         if (isCollapsed()) {
@@ -467,6 +513,14 @@ void DeviceItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         }
     }
 }
+
+
+void DeviceItem::actionClicked(Plasma::IconWidget* item)
+{
+    QString action = item->data(NotifierDialog::ActionRole).toString();
+    emit actionActivated(this, udi(), action);
+}
+
 
 void DeviceItem::updateColors()
 {

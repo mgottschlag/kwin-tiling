@@ -308,6 +308,22 @@ namespace Notifier
 
           void updateMainLabelText();
 
+          /**
+          * @internal called on HoverEnter event or via keyboard navigation
+          */
+          void itemHoverEnter(DeviceItem * item);
+
+          /**
+          * @internal called on HoverLeave event or via keyboard navigation
+          */
+          void itemHoverLeave(DeviceItem * item);
+
+          void selectPreviousItem();
+          void selectNextItem();
+
+          DeviceItem* hoveredItem();
+          Plasma::IconWidget* hoveredAction();
+
           /// The graphics widget which displays the panel
           QGraphicsWidget *m_widget;
 

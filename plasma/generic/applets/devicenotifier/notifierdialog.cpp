@@ -162,6 +162,34 @@ void NotifierDialog::clearItemBackgroundTarget()
     m_itemBackground->setTargetItem(0);
 }
 
+void NotifierDialog::itemHoverEnter(DeviceItem * item)
+{
+    // make sure the popup is not only shown, but doesn't automatically retract on us when we're
+    // mousing around in it
+    m_notifier->showPopup(0);
+
+    item->setHovered(true);
+    if (item->isCollapsed()) {
+        m_clearItemBackgroundTargetTimer.stop();
+        m_itemBackground->setTargetItem(item);
+    } else {
+        m_clearItemBackgroundTargetTimer.start();
+    }
+
+    updateFreeSpace(item);
+}
+
+void NotifierDialog::itemHoverLeave(DeviceItem * item)
+{
+    if (item->isCollapsed()) {
+        item->setHovered(false);
+        m_clearItemBackgroundTargetTimer.start();
+        if (m_selectedItemBackground->targetItem() == item) {
+            m_selectedItemBackground->setTargetItem(0);
+        }
+    }
+}
+
 bool NotifierDialog::eventFilter(QObject* obj, QEvent *event)
 {
     if (m_notifier->isPopupShowing() && event->type() == QEvent::GraphicsSceneContextMenu) {
@@ -173,31 +201,37 @@ bool NotifierDialog::eventFilter(QObject* obj, QEvent *event)
     if (item) {
         switch (event->type()) {
             case QEvent::GraphicsSceneHoverLeave:
-                if (item->isCollapsed()) {
-                    item->setHovered(false);
-                    m_clearItemBackgroundTargetTimer.start();
-                    if (m_selectedItemBackground->targetItem() == item) {
-                        m_selectedItemBackground->setTargetItem(0);
-                    }
-                }
+                itemHoverLeave(item);
                 break;
-
             case QEvent::GraphicsSceneHoverEnter:
-                // make sure the popup is not only shown, but doesn't automatically retract on us when we're
-                // mousing around in it
-                m_notifier->showPopup(0);
-
-                item->setHovered(true);
-                if (item->isCollapsed()) {
-                    m_clearItemBackgroundTargetTimer.stop();
-                    m_itemBackground->setTargetItem(item);
-                } else {
-                    m_clearItemBackgroundTargetTimer.start();
-                }
-
-                updateFreeSpace(item);
+                itemHoverEnter(item);
                 break;
+            default:
+                break;
+        }
+    }
 
+    QGraphicsWidget *widget = dynamic_cast<QGraphicsWidget*>(obj);
+    if (widget == m_widget && event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        switch (keyEvent->key()) {
+            case Qt::Key_Down:
+            case Qt::Key_Right:
+                selectNextItem();
+                break;
+            case Qt::Key_Up:
+            case Qt::Key_Left:
+                selectPreviousItem();
+                break;
+            case Qt::Key_Enter:
+            case Qt::Key_Return:
+            case Qt::Key_Space:
+                if (hoveredAction()) {
+                    hoveredItem()->actionClicked(hoveredAction());
+                } else if (hoveredItem()) {
+                    hoveredItem()->clicked();
+                }
+                break;
             default:
                 break;
         }
@@ -205,6 +239,128 @@ bool NotifierDialog::eventFilter(QObject* obj, QEvent *event)
 
     return false;
 }
+
+void NotifierDialog::selectNextItem()
+{
+    DeviceItem *item = hoveredItem();
+    Plasma::IconWidget *action = hoveredAction();
+
+    if (action || (item &&  !item->isCollapsed())) {
+        // We are hovering an action or an expanded device with no action selected;
+        // we need to let the item select the next action
+        // if no next action is available, we will continue selecting the next item.
+        if (item->selectNextAction(action)) {
+            return;
+        }
+    }
+
+    DeviceItem *firstDevice = 0;
+    DeviceItem *nextDevice = 0;
+    bool grabNext = false;
+
+    for (int i = 0; i < m_deviceLayout->count(); ++i) {
+        DeviceItem *currentItem = dynamic_cast<DeviceItem *>(m_deviceLayout->itemAt(i));
+        if (currentItem && !firstDevice) {
+            firstDevice = currentItem;
+        }
+        if (currentItem && grabNext) {
+            nextDevice = currentItem;
+            grabNext = false;
+        }
+        if (currentItem && currentItem == item) {
+            grabNext = true;
+        }
+
+    }
+
+    if (!nextDevice) {
+        nextDevice = firstDevice;
+    }
+
+    if (item) {
+        itemHoverLeave(item);
+    }
+    if (nextDevice) {
+        itemHoverEnter(nextDevice);
+        m_devicesScrollWidget->ensureItemVisible(previousDevice);
+
+    }
+
+}
+
+void NotifierDialog::selectPreviousItem()
+{
+    DeviceItem *item = hoveredItem();
+    Plasma::IconWidget *action = hoveredAction();
+
+    if (action || (item &&  !item->isCollapsed())) {
+        // We are hovering an action or an expanded device with no action selected;
+        // we need to let the item select the previous action
+        // if no previous action is available, we will continue selecting the previous item.
+        if (item->selectPreviousAction(action)) {
+            return;
+        }
+    }
+
+    DeviceItem *previousDevice = 0;
+    DeviceItem *deviceAbove = 0;
+
+    for (int i = 0; i < m_deviceLayout->count(); ++i) {
+        DeviceItem *currentItem = dynamic_cast<DeviceItem *>(m_deviceLayout->itemAt(i));
+
+        if (currentItem && currentItem == item) {
+            previousDevice = deviceAbove;
+        }
+
+        if (currentItem) {
+            deviceAbove = currentItem;
+        }
+
+    }
+
+    if (!previousDevice) {
+        previousDevice = deviceAbove;
+    }
+
+    if (item) {
+        itemHoverLeave(item);
+    }
+    if (previousDevice) {
+        itemHoverEnter(previousDevice);
+        m_devicesScrollWidget->ensureItemVisible(previousDevice);
+        if (!previousDevice->isCollapsed()) {
+            previousDevice->selectPreviousAction(0, true);
+        }
+    }
+
+}
+
+
+Plasma::IconWidget* NotifierDialog::hoveredAction()
+{
+    if (m_itemBackground) {
+        return dynamic_cast<Plasma::IconWidget*>(m_itemBackground->targetItem());
+    }
+
+    return 0;
+}
+
+DeviceItem* NotifierDialog::hoveredItem()
+{
+    if (m_itemBackground) {
+        DeviceItem* devItem = dynamic_cast<DeviceItem*>(m_itemBackground->targetItem());
+        if (devItem) {
+            return devItem;
+        }
+    }
+
+    if (m_selectedItemBackground) {
+        return dynamic_cast<DeviceItem*>(m_selectedItemBackground->targetItem());
+    }
+
+    return 0;
+}
+
 
 void NotifierDialog::setMounted(bool mounted, const QString &udi)
 {
@@ -285,6 +441,7 @@ void NotifierDialog::buildDialog()
 {
     m_widget = new QGraphicsWidget(m_notifier);
     m_widget->installEventFilter(this);
+    m_widget->setFocusPolicy(Qt::ClickFocus);
 
     QGraphicsLinearLayout *l_layout = new QGraphicsLinearLayout(Qt::Vertical, m_widget);
     l_layout->setSpacing(0);
