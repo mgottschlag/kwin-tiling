@@ -90,7 +90,6 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
 
     if (containment) {
         containment->enableAction("zoom in", false);
-        containment->enableAction("add sibling containment", false);
         connect(PlasmaApp::self()->corona(), SIGNAL(containmentAdded(Plasma::Containment *)), this, SLOT(containmentAdded(Plasma::Containment *)));
     }
 
@@ -314,7 +313,6 @@ void DesktopView::setContainment(Plasma::Containment *containment)
         //make sure actions are up-to-date
         //this is icky but necessary to have the toolbox show the right actions for the zoom level
         containment->enableAction("zoom in", false);
-        containment->enableAction("add sibling containment", false);
     }
 
     if (m_dashboard && m_dashboardFollowsDesktop) {
@@ -328,7 +326,6 @@ void DesktopView::setContainment(Plasma::Containment *containment)
         if (zoomLevel == Plasma::DesktopZoom) {
             //make sure actions are up-to-date
             oldContainment->enableAction("zoom in", false);
-            oldContainment->enableAction("add sibling containment", false);
         }
     }
 

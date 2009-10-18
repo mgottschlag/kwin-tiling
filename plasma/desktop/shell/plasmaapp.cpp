@@ -595,8 +595,6 @@ Plasma::Corona* PlasmaApp::corona()
         KAction *activityAction = c->addAction("add sibling containment");
         activityAction->setText(i18n("Add Activity"));
         activityAction->setIcon(KIcon("list-add"));
-        activityAction->setVisible(false);
-        activityAction->setEnabled(false);
         connect(activityAction, SIGNAL(triggered()), this, SLOT(addContainment()));
         activityAction->setShortcut(KShortcut("alt+d, alt+a"));
         activityAction->setShortcutContext(Qt::ApplicationShortcut);
@@ -884,7 +882,6 @@ void PlasmaApp::zoomIn(Plasma::Containment *containment)
         setControllerVisible(false);
         m_zoomLevel = Plasma::DesktopZoom;
         containment->closeToolBox();
-        addSibling = false;
         zoomIn = false;
         //remove = false;
     } else if (m_zoomLevel == Plasma::OverviewZoom) {
@@ -1068,8 +1065,7 @@ void PlasmaApp::waitingPanelRemoved(QObject *panelContainment)
 
 void PlasmaApp::updateActions(Plasma::ImmutabilityType immutability)
 {
-    bool enable = immutability == Plasma::Mutable && m_zoomLevel != Plasma::DesktopZoom;
-    kDebug() << enable;
+    bool enable = immutability == Plasma::Mutable;
     m_corona->enableAction("add sibling containment", enable);
 }
 
