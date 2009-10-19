@@ -1786,7 +1786,7 @@ QMap<QString, QString> EnvCanadaIon::wind(const QString& source) const
     }
 
     // May not always have gusty winds
-    if (d->m_weatherData[source].windGust.isEmpty()) {
+    if (d->m_weatherData[source].windGust.isEmpty() || d->m_weatherData[source].windGust == 0) {
         windInfo.insert("windGust", i18n("N/A"));
         windInfo.insert("windGustUnit", QString::number(KUnitConversion::NoUnit));
     } else {
