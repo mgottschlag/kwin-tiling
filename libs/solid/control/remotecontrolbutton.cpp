@@ -187,10 +187,112 @@ Solid::Control::RemoteControlButton::RemoteControlButton(const QString &remoteNa
 	d = new RemoteControlButtonPrivate;
     d->remoteName = remoteName;
     d->name = name;
-    d->id = Unknown;
     d->repeatCounter = repeatCounter;
-}
+    if (name == "0")
+        d->id = Number0;
+    else if (name == "1")
+        d->id = Number1;
+    else if (name == "2")
+        d->id = Number2;
+    else if (name == "3")
+        d->id = Number3;
+    else if (name == "4")
+        d->id = Number4;
+    else if (name == "5")
+        d->id = Number5;
+    else if (name == "6")
+        d->id = Number6;
+    else if (name == "7")
+        d->id = Number7;
+    else if (name == "8")
+        d->id = Number8;
+    else if (name == "9")
+        d->id = Number9;
 
+    // Media control
+    else if (name == "Play")
+        d->id = Play;
+    else if (name == "Pause")
+        d->id = Pause;
+    else if (name == "PlayPause")
+        d->id = PlayPause;
+    else if (name == "Stop")
+        d->id = Stop;
+    else if (name == "SkipForward")
+        d->id = Forward;
+    else if (name == "SkipBackward")
+        d->id = Backward;
+    else if (name == "FastForward")
+        d->id = FastForward;
+    else if (name == "Rewind")
+        d->id = Rewind;
+    else if (name == "ChannelDown")
+        d->id = ChannelDown;
+    else if (name == "ChannelUp")
+        d->id = ChannelUp;
+    else if (name == "VolumeDown")
+        d->id = VolumeDown;
+    else if (name == "VolumeUp")
+        d->id = VolumeUp;
+    else if (name == "Mute")
+        d->id = Mute;
+    else if (name == "Info")
+        d->id = Info;
+    else if (name == "Eject")
+        d->id = Eject;
+    else if (name == "Power")
+        d->id = Power;
+
+    // Navigation
+    else if (name == "Up")
+        d->id = Up;
+    else if (name == "Down")
+        d->id = Down;
+    else if (name == "Left")
+        d->id = Left;
+    else if (name == "Right")
+        d->id = Right;
+    else if (name == "Select")
+        d->id = Select;
+    else if (name == "Back")
+        d->id = Back;
+    else if (name == "Menu")
+        d->id = Menu;
+
+    // Jump points
+    else if (name == "Aux")
+        d->id = Aux;
+    else if (name == "CD")
+        d->id = CD;
+    else if (name == "DVD")
+        d->id = DVD;
+    else if (name == "EPG")
+        d->id = EPG;
+    else if (name == "Favorites")
+        d->id = Favorites;
+    else if (name == "Help")
+        d->id = Help;
+    else if (name == "Home")
+        d->id = Home;
+    else if (name == "Music")
+        d->id = Music;
+    else if (name == "Text")
+        d->id = Text;
+    else if (name == "TV")
+        d->id = TV;
+
+    // Colors
+    else if (name == "Blue")
+        d->id = Blue;
+    else if (name == "Green")
+        d->id = Green;
+    else if (name == "Red")
+        d->id = Red;
+    else if (name == "Yellow")
+        d->id = Yellow;
+    else
+        d->id = Unknown;
+}
 Solid::Control::RemoteControlButton::RemoteControlButton(const RemoteControlButton &other): d(other.d){
 
 }

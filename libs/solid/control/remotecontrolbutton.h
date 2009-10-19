@@ -98,23 +98,21 @@ public:
 
     /**
     * Creates a new RemoteControlButton object.
-    * This is the preferred c'tor for a RemoteControlButton.
-    * By setting the ButtonID name() is automatically set to a human readable button name.
+    * The buttons name and description are set according to the id.
     *
     * @param remoteName the name of the RemoteControl this button comes from
-    * @param remoteName the ID of the button
-    * @param remoteName the repeat counter. Increase this if a button is held pressed down. Reset it to zero if the button is released
+    * @param id the ID of the button
+    * @param repeatCounter the repeat counter. Increase this if a button is held pressed down. Reset it to zero if the button is released
     */
     RemoteControlButton(const QString &remoteName, ButtonId id, int repeatCounter = 0);
 
     /**
     * Creates a new RemoteControlButton object.
-    * You should use this only if your backend does not support working with defined button IDs.
-    * In this case you can use a free-form string for the button name. The id() is set to Undefined.
+    * If name is a known buttonname, the id will be set accordingly. Else the ID will be Unknown.
     *
     * @param remoteName the name of the RemoteControl this button comes from
-    * @param remoteName the name of the button
-    * @param remoteName the repeat counter. Increase this if a button is held pressed down. Reset it to zero if the button is released
+    * @param name the name of the button
+    * @param repeatCounter the repeat counter. Increase this if a button is held pressed down. Reset it to zero if the button is released
     */
     RemoteControlButton(const QString &remoteName, const QString &name, int repeatCounter = 0);
 
