@@ -121,6 +121,17 @@ namespace {
             return Soprano::LiteralValue( d );
         return s;
     }
+    
+    bool positiveTerm( const QString& s) {
+        if(s.isEmpty())
+            return true;
+        else if(s == "+")
+            return true;
+        else if(s == "-")
+            return false;
+        else //unrecognized capture
+            return true;
+    }
 }
 
 
@@ -164,6 +175,7 @@ Nepomuk::Search::Query Nepomuk::Search::QueryParser::parse( const QString& query
     // TODO: a "real" parser which can handle all of the Xesam user language
     //       This one for example does not handle nesting at all.
 
+    Nepomuk::Search::Query final;
     QList<Term> terms;
 
     bool inOrBlock = false;
@@ -181,15 +193,15 @@ Nepomuk::Search::Query Nepomuk::Search::QueryParser::parse( const QString& query
 
         if ( pos < query.length() ) {
             if ( s_resourceRx.indexIn( query, pos ) == pos ) {
-                // FIXME: honour the +-
                 kDebug() << "matched resource term at" << pos << s_resourceRx.cap( 0 );
                 term = Term( tryToBeIntelligentAboutParsingUrl( s_resourceRx.cap( 2 ) ),
-                             tryToBeIntelligentAboutParsingUrl( s_resourceRx.cap( 3 ) ) );
+                             tryToBeIntelligentAboutParsingUrl( s_resourceRx.cap( 3 ) ),
+                             positiveTerm(s_resourceRx.cap( 1 ) ) );
                 pos += s_resourceRx.matchedLength();
             }
             else if ( s_propertyRx.indexIn( query, pos ) == pos ) {
-                // FIXME: honour the +-
                 kDebug() << "matched property term at" << pos << s_propertyRx.cap( 0 );
+                term.setPositive( positiveTerm(s_propertyRx.cap( 1 ) ) );
                 term.setProperty( tryToBeIntelligentAboutParsingUrl( s_propertyRx.cap( 2 ) ) );
                 term.addSubTerm( Term( createLiteral( stripQuotes( s_propertyRx.cap( 4 ) ) ) ) );
                 QString comparator = s_propertyRx.cap( 3 );
@@ -213,17 +225,24 @@ Nepomuk::Search::Query Nepomuk::Search::QueryParser::parse( const QString& query
                 pos += s_fieldFieldRx.matchedLength();
             }
             else if ( s_fieldRx.indexIn( query, pos ) == pos ) {
-                // FIXME: honour the +-
                 kDebug() << "matched field term at" << pos << s_fieldRx.cap( 0 ) << s_fieldRx.cap( 2 ) << s_fieldRx.cap( 4 ) << s_fieldRx.cap( 5 );
-                term.setField( stripQuotes( s_fieldRx.cap( 2 ) ) );
-                term.addSubTerm( Term( createLiteral( stripQuotes( s_fieldRx.cap( 5 ) ) ) ) );
-                QString comparator = s_fieldRx.cap( 4 );
-                term.setType( Term::ComparisonTerm );
-                term.setComparator( fieldTypeRelationFromString( comparator ) );
-                pos += s_fieldRx.matchedLength();
+                if( stripQuotes ( s_fieldRx.cap( 2 ) ).compare( QString( "inFolder" ), Qt::CaseInsensitive ) == 0 ) {
+                    QUrl path = QUrl::fromLocalFile( s_fieldRx.cap( 5 ) );
+                    kDebug() << "found include path" << path;
+                    final.addFolderLimit( path, positiveTerm( s_fieldRx.cap( 1 ) ) );
+                    pos += s_fieldRx.matchedLength();
+                }
+                else {
+                    term.setField( stripQuotes( s_fieldRx.cap( 2 ) ) );
+                    term.setPositive( positiveTerm( s_fieldRx.cap( 1 ) ) );
+                    term.addSubTerm( Term( createLiteral( stripQuotes( s_fieldRx.cap( 5 ) ) ) ) );
+                    QString comparator = s_fieldRx.cap( 4 );
+                    term.setType( Term::ComparisonTerm );
+                    term.setComparator( fieldTypeRelationFromString( comparator ) );
+                    pos += s_fieldRx.matchedLength();
+                }
             }
             else if ( s_plainTermRx.indexIn( query, pos ) == pos ) {
-                // FIXME: honour the +-
                 QString value = stripQuotes( s_plainTermRx.cap( 2 ) );
                 if ( d->orKeywords.contains( value.toLower() ) ) {
                     inOrBlock = true;
@@ -233,7 +252,7 @@ Nepomuk::Search::Query Nepomuk::Search::QueryParser::parse( const QString& query
                 }
                 else {
                     kDebug() << "matched literal at" << pos << value;
-                    term = Term( Soprano::LiteralValue( value ) );
+                    term = Term( Soprano::LiteralValue( value ), positiveTerm(s_plainTermRx.cap( 1 ) ) );
                 }
                 pos += s_plainTermRx.matchedLength();
             }
@@ -265,15 +284,17 @@ Nepomuk::Search::Query Nepomuk::Search::QueryParser::parse( const QString& query
     }
 
     if ( terms.count() == 1 ) {
-        return terms[0];
+        final.setTerm( terms[0] );
+        return final;
     }
     else if ( terms.count() > 0 ) {
         Term t;
         t.setType( Term::AndTerm );
         t.setSubTerms( terms );
-        return t;
+        final.setTerm( t );
+        return final;
     }
     else {
-        return Term();
+        return final;
     }
 }

@@ -107,6 +107,20 @@ namespace Nepomuk {
             QList<RequestProperty> requestProperties() const;
 
             bool operator==( const Query& ) const;
+            
+            /**
+             * Add a folder to the search space. If no folder limits are set, will
+             * search the entire Nepomuk database
+             * \param folder the folder to search
+             * \param include true if we should search this folder, false
+             * if we should exclude this folder from search results
+             */
+            void addFolderLimit( const QUrl& folder, bool include );
+            void clearFolderLimits();
+            
+            typedef QPair<QUrl, bool> FolderLimit;
+            
+            QList<FolderLimit> folderLimits() const;
 
         private:
             class Private;

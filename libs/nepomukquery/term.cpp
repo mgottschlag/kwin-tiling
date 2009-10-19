@@ -28,12 +28,14 @@
 class Nepomuk::Search::Term::Private : public QSharedData
 {
 public:
-    Private( Type t = InvalidTerm, Comparator c = Equal )
+    Private( Type t = InvalidTerm, bool p = true, Comparator c = Equal )
         : type( t ),
+          positive( p ),
           comparator( c ) {
     }
 
     Type type;
+    bool positive;
     Comparator comparator;
     Soprano::LiteralValue value;
     QUrl resource;
@@ -55,8 +57,8 @@ Nepomuk::Search::Term::Term( const Term& other )
 }
 
 
-Nepomuk::Search::Term::Term( const Soprano::LiteralValue& value )
-    : d( new Private( LiteralTerm ) )
+Nepomuk::Search::Term::Term( const Soprano::LiteralValue& value, bool isPositive )
+    : d( new Private( LiteralTerm, isPositive ) )
 {
     d->value = value;
 }
@@ -69,24 +71,24 @@ Nepomuk::Search::Term::Term( const QUrl& value )
 }
 
 
-Nepomuk::Search::Term::Term( const QString& field, const Soprano::LiteralValue& value, Comparator c )
-    : d( new Private( ComparisonTerm, c ) )
+Nepomuk::Search::Term::Term( const QString& field, const Soprano::LiteralValue& value, bool isPositive, Comparator c )
+    : d( new Private( ComparisonTerm, isPositive, c ) )
 {
     d->field = field;
     d->subTerms.append( Term( value ) );
 }
 
 
-Nepomuk::Search::Term::Term( const QUrl& field, const Soprano::LiteralValue& value, Comparator c )
-    : d( new Private( ComparisonTerm, c ) )
+Nepomuk::Search::Term::Term( const QUrl& field, const Soprano::LiteralValue& value, bool isPositive, Comparator c )
+    : d( new Private( ComparisonTerm, isPositive, c ) )
 {
     d->property = field;
     d->subTerms.append( Term( value ) );
 }
 
 
-Nepomuk::Search::Term::Term( const QUrl& field, const QUrl& resource )
-    : d( new Private( ComparisonTerm ) )
+Nepomuk::Search::Term::Term( const QUrl& field, const QUrl& resource, bool isPositive )
+    : d( new Private( ComparisonTerm, isPositive ) )
 {
     d->property = field;
     d->subTerms.append( Term( resource ) );
@@ -139,6 +141,12 @@ bool Nepomuk::Search::Term::isValid() const
 }
 
 
+bool Nepomuk::Search::Term::positive() const
+{
+    return d->positive;
+}
+
+
 Nepomuk::Search::Term::Type Nepomuk::Search::Term::type() const
 {
     return d->type;
@@ -178,6 +186,12 @@ QUrl Nepomuk::Search::Term::property() const
 QList<Nepomuk::Search::Term> Nepomuk::Search::Term::subTerms() const
 {
     return d->subTerms;
+}
+
+
+void Nepomuk::Search::Term::setPositive( bool positive )
+{
+    d->positive = positive;
 }
 
 
@@ -312,6 +326,8 @@ QDebug operator<<( QDebug dbg, const Nepomuk::Search::Term& term )
         default:
             break;
         }
+        if( !term.positive() )
+            dbg << "( negative )";
         if ( term.type() == Nepomuk::Search::Term::ComparisonTerm ) {
             if ( term.property().isValid() ) {
                 dbg << "Property" << term.property();
@@ -340,12 +356,13 @@ uint Nepomuk::Search::qHash( const Nepomuk::Search::Term& term )
 {
     switch( term.type() ) {
     case Nepomuk::Search::Term::LiteralTerm:
-        return qHash( term.value().toString() );
+        return( qHash( term.value().toString() )<<8 | ( uint )term.positive() );
 
     case Nepomuk::Search::Term::ComparisonTerm:
-        return( qHash( term.property().isValid() ?  term.property().toString() : term.field() )<<16 |
-                qHash( term.subTerms().first() )<<8 |
-                ( uint )term.comparator() );
+        return( qHash( term.property().isValid() ?  term.property().toString() : term.field() )<<24 |
+                qHash( term.subTerms().first() )<<16 |
+                ( uint )term.comparator()<<8  |
+                ( uint )term.positive() );
 
     case Nepomuk::Search::Term::AndTerm:
     case Nepomuk::Search::Term::OrTerm: {

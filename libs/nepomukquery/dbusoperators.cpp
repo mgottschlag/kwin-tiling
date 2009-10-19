@@ -99,8 +99,9 @@ const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::Search::Resu
 QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::Search::Term& term )
 {
     //
-    // Signature: (ii(isss)sss)
+    // Signature: (ibi(isss)sss)
     // i      -> type
+    // b      -> positive/negative term
     // i      -> comparator type
     // (isss) -> Soprano::LiteralValue encoded as a Soprano::Node for simplicity
     // s      -> resource
@@ -110,6 +111,7 @@ QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::Search::Term& term
 
     arg.beginStructure();
     arg << ( int )term.type()
+        << term.positive()
         << ( int )term.comparator()
         << Soprano::Node( term.value() )
         << QString::fromAscii( term.resource().toEncoded() )
@@ -124,8 +126,9 @@ QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::Search::Term& term
 const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::Search::Term& term )
 {
     //
-    // Signature: (ii(isss)sss)
+    // Signature: (ibi(isss)sss)
     // i      -> type
+    // b      -> positive/negative term
     // i      -> comparator type
     // (isss) -> Soprano::LiteralValue encoded as a Soprano::Node for simplicity
     // s      -> resource
@@ -135,16 +138,19 @@ const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::Search::Term
 
     arg.beginStructure();
     int type = Nepomuk::Search::Term::InvalidTerm;
+    bool positive = true;
     int comparator = Nepomuk::Search::Term::Equal;
     Soprano::Node valueNode;
     QString resource, field, property;
     arg >> type
+        >> positive
         >> comparator
         >> valueNode
         >> resource
         >> field
         >> property;
     term.setType( Nepomuk::Search::Term::Type( type ) );
+    term.setPositive( positive );
     term.setComparator( Nepomuk::Search::Term::Comparator( comparator ) );
     if ( valueNode.isLiteral() )
         term.setValue( valueNode.literal() );
@@ -183,13 +189,14 @@ namespace {
 QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::Search::Query& query )
 {
     //
-    // Signature: (isa(ii(isss)sss)a{iai}ia{sb})
+    // Signature: (isa(ii(isss)sss)a{iai}ia{sb}a{s})
     // i      -> type
     // s      -> sparql query
     // a(ii(isss)sss)    -> array of terms (first is root term)
     // a{iai} -> hash of term relations
     // i      -> limit
     // a{sb}  -> request properties
+    // a{sb}   -> folder limits
     //
 
     arg.beginStructure();
@@ -223,6 +230,15 @@ QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::Search::Query& que
     }
     arg.endMap();
 
+    arg.beginMap( QVariant::String, QVariant::Bool );
+    QList<Nepomuk::Search::Query::FolderLimit> folderLimits = query.folderLimits();
+    foreach( const Nepomuk::Search::Query::FolderLimit& fl, folderLimits ) {
+        arg.beginMapEntry();
+        arg << QString::fromAscii( fl.first.toEncoded() ) << fl.second;
+        arg.endMapEntry();
+    }
+    arg.endMap();
+
     arg.endStructure();
 
     return arg;
@@ -244,13 +260,14 @@ namespace {
 const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::Search::Query& query )
 {
     //
-    // Signature: (isa(ii(isss)sss)a{iai}ia{sb})
+    // Signature: (isa(ii(isss)sss)a{iai}ia{sb}a{s})
     // i      -> type
     // s      -> sparql query
     // a(ii(isss)sss)    -> array of terms (first is root term)
     // a{iai} -> hash of term relations
     // i      -> limit
     // a{sb}  -> request properties
+    // a{sb}  -> folder limits
     //
 
     arg.beginStructure();
@@ -286,6 +303,17 @@ const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::Search::Quer
         arg >> prop >> optional;
         arg.endMapEntry();
         query.addRequestProperty( QUrl::fromEncoded( prop.toAscii() ), optional );
+    }
+    arg.endMap();
+
+    arg.beginMap();
+    while( !arg.atEnd() ) {
+        QString prop;
+        bool include = true;
+        arg.beginMapEntry();
+        arg >> prop >> include;
+        arg.endMapEntry();
+        query.addFolderLimit( QUrl::fromEncoded( prop.toAscii() ), include );
     }
     arg.endMap();
 
@@ -329,7 +357,10 @@ const QDBusArgument& operator>>( const QDBusArgument& arg, Soprano::Node& node )
     QString value, language, dataTypeUri;
     arg >> type >> value >> language >> dataTypeUri;
     if ( type == Soprano::Node::LiteralNode ) {
-        node = Soprano::Node( Soprano::LiteralValue::fromString( value, dataTypeUri ), language );
+        if ( dataTypeUri.isEmpty() )
+            node = Soprano::Node( Soprano::LiteralValue::createPlainLiteral( value, language ) );
+        else
+            node = Soprano::Node( Soprano::LiteralValue::fromString( value, QUrl::fromEncoded( dataTypeUri.toAscii() ) ) );
     }
     else if ( type == Soprano::Node::ResourceNode ) {
         node = Soprano::Node( QUrl::fromEncoded( value.toAscii() ) );

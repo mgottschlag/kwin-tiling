@@ -38,6 +38,7 @@ public:
     int limit;
 
     QList<RequestProperty> requestProperties;
+    QList<FolderLimit> folderLimits;
 };
 
 
@@ -145,14 +146,15 @@ QList<Nepomuk::Search::Query::RequestProperty> Nepomuk::Search::Query::requestPr
 
 
 namespace {
-    bool compareRequestProperties( const QList<Nepomuk::Search::Query::RequestProperty>& rp1, const QList<Nepomuk::Search::Query::RequestProperty>& rp2 ) {
+    template<typename T>
+    bool compareQList( const QList<T>& rp1, const QList<T>& rp2 ) {
         // brute force
-        foreach( const Nepomuk::Search::Query::RequestProperty& rp, rp1 ) {
+        foreach( const T& rp, rp1 ) {
             if ( !rp2.contains( rp ) ) {
                 return false;
             }
         }
-        foreach( const Nepomuk::Search::Query::RequestProperty& rp, rp2 ) {
+        foreach( const T& rp, rp2 ) {
             if ( !rp1.contains( rp ) ) {
                 return false;
             }
@@ -167,15 +169,35 @@ bool Nepomuk::Search::Query::operator==( const Query& other ) const
          d->limit == other.d->limit ) {
         if ( d->type == SPARQLQuery ) {
             return( d->sparqlQuery == other.d->sparqlQuery &&
-                    compareRequestProperties( d->requestProperties, other.d->requestProperties ) );
+                    compareQList( d->requestProperties, other.d->requestProperties ) &&
+                    compareQList( d->folderLimits, other.d->folderLimits ) );
         }
         else {
             return( d->term == other.d->term &&
-                    compareRequestProperties( d->requestProperties, other.d->requestProperties ) );
+                    compareQList( d->requestProperties, other.d->requestProperties ) &&
+                    compareQList( d->folderLimits, other.d->folderLimits ) );
         }
     }
 
     return false;
+}
+
+
+void Nepomuk::Search::Query::addFolderLimit( const QUrl& folder, bool include )
+{
+    d->folderLimits.append( qMakePair( folder, include ) );
+}
+
+
+void Nepomuk::Search::Query::clearFolderLimits()
+{
+    d->folderLimits.clear();
+}
+
+
+QList<Nepomuk::Search::Query::FolderLimit> Nepomuk::Search::Query::folderLimits() const
+{
+    return d->folderLimits;
 }
 
 
