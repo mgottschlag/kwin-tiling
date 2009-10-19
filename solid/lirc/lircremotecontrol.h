@@ -33,20 +33,34 @@ class LircRemoteControl : public QObject, virtual public Solid::Control::Ifaces:
 {
     Q_OBJECT
     Q_INTERFACES(Solid::Control::Ifaces::RemoteControl)
+
 public:
     LircRemoteControl(const QString &name);
     virtual ~LircRemoteControl();
     virtual QString name() const;
     virtual QList<Solid::Control::RemoteControlButton> buttons() const;
+
 Q_SIGNALS:
     void buttonPressed(const Solid::Control::RemoteControlButton &button);
     void remoteControlAdded(const QString &name);
     void remoteControlRemoved(const QString &name);
     void _k_destroyed();
+
 private:
     LircRemoteControlPrivate *d;
 
+    /**
+     * Translate the Lirc Namespace button into a solid button.
+     * Return Unknown if strings are not in namespace || not in solid list
+     */
     Solid::Control::RemoteControlButton::ButtonId lircButtonToSolid(const QString &buttonName) const;
+
+    /**
+    * Used to format a lirc namespace button that is not contained in solid.
+    * Removes KEY_ or BUTTON_ and lowercases the rest to at least look like solid button names for UI consistency
+    */
+    QString formatNamespaceButton(const QString &buttonName) const;
+
 private Q_SLOTS:
     void commandReceived(const QString &remote, const QString &button, int repeatCounter);
 };

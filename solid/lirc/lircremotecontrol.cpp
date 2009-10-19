@@ -65,7 +65,7 @@ QList<RemoteControlButton> LircRemoteControl::buttons() const
         if(lircButtonToSolid(buttonName) != RemoteControlButton::Unknown){
             retList.append(RemoteControlButton(d->name, lircButtonToSolid(buttonName)));
         } else {
-            retList.append(RemoteControlButton(d->name, buttonName));
+            retList.append(RemoteControlButton(d->name, formatNamespaceButton(buttonName)));
         }
     }
     return retList;
@@ -76,7 +76,7 @@ void LircRemoteControl::commandReceived(const QString &remote, const QString &bu
         if(lircButtonToSolid(button) != RemoteControlButton::Unknown){
             emit buttonPressed(RemoteControlButton(remote, lircButtonToSolid(button), repeatCounter));
         } else {
-            emit buttonPressed(RemoteControlButton(remote, button, repeatCounter));
+            emit buttonPressed(RemoteControlButton(remote, formatNamespaceButton(button), repeatCounter));
         }
     }
 }
@@ -191,6 +191,20 @@ Solid::Control::RemoteControlButton::ButtonId LircRemoteControl::lircButtonToSol
     } else {
         return RemoteControlButton::Unknown;
     }
+}
+
+QString LircRemoteControl::formatNamespaceButton(const QString &buttonName) const {
+    QString newName = buttonName;
+    if(buttonName.startsWith("KEY_")){
+        newName.remove("KEY_");
+        newName = newName.left(1) + newName.mid(1).toLower();
+    } else if(buttonName.startsWith("BUTTON_")){
+        newName.replace("BUTTON_", "Button");
+        newName = newName.left(7) + newName.mid(7).toLower();
+    } else {
+        newName = buttonName;
+    }
+    return newName;
 }
 
 #include "lircremotecontrol.moc"
