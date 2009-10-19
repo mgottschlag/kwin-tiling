@@ -282,7 +282,7 @@ void NotifierDialog::selectNextItem()
     }
     if (nextDevice) {
         itemHoverEnter(nextDevice);
-        m_devicesScrollWidget->ensureItemVisible(previousDevice);
+        m_devicesScrollWidget->ensureItemVisible(nextDevice);
 
     }
 
