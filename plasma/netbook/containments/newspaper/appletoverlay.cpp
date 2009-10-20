@@ -254,13 +254,42 @@ void AppletOverlay::showSpacer(const QPointF &pos)
 
     QPointF translatedPos = pos - m_newspaper->m_mainWidget->pos() - m_newspaper->m_scrollWidget->pos();
 
-    QGraphicsLinearLayout *lay;
+    QGraphicsLinearLayout *lay = 0;
 
-    if ((m_newspaper->m_orientation == Qt::Horizontal && translatedPos.y() < m_newspaper->m_leftLayout->geometry().bottom()) ||
-        (m_newspaper->m_orientation == Qt::Vertical && translatedPos.x() < m_newspaper->m_leftLayout->geometry().right())) {
-        lay = m_newspaper->m_leftLayout;
-    } else {
-        lay = m_newspaper->m_rightLayout;
+    for (int i = 0; i < m_newspaper->m_mainLayout->count(); ++i) {
+        QGraphicsLinearLayout *candidateLay = dynamic_cast<QGraphicsLinearLayout *>(m_newspaper->m_mainLayout->itemAt(i));
+
+        //normally should never happen
+        if (!candidateLay) {
+            continue;
+        }
+
+        if (m_newspaper->m_orientation == Qt::Horizontal) {
+            if (pos.y() < candidateLay->geometry().bottom()) {
+                lay = candidateLay;
+                break;
+            }
+        //vertical
+        } else {
+            if (pos.x() < candidateLay->geometry().right()) {
+                lay = candidateLay;
+                break;
+            }
+        }
+    }
+
+    //couldn't decide: is the last column empty?
+    if (!lay) {
+        QGraphicsLinearLayout *candidateLay = dynamic_cast<QGraphicsLinearLayout *>(m_newspaper->m_mainLayout->itemAt(m_newspaper->m_mainLayout->count()-1));
+
+        if (candidateLay && candidateLay->count() <= 2) {
+            lay = candidateLay;
+        }
+    }
+
+    //give up, make a new column
+    if (!lay) {
+        lay = m_newspaper->addColumn();
     }
 
     if (pos == QPoint()) {
@@ -306,7 +335,7 @@ void AppletOverlay::showSpacer(const QPointF &pos)
     if (m_spacerLayout == lay && m_spacerIndex < insertIndex) {
         --insertIndex;
     }
-    if (insertIndex >= lay->count() - 1) {
+    if (lay->count() > 1 && insertIndex >= lay->count() - 1) {
         --insertIndex;
     }
 

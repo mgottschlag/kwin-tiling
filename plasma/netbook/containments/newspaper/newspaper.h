@@ -55,9 +55,13 @@ protected:
     void saveContents(KConfigGroup &group) const;
     void restore(KConfigGroup &group);
 
+    QGraphicsLinearLayout *addColumn();
+    void removeColumn(int column);
+
 private Q_SLOTS:
     void toggleImmutability();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
+    void cleanupColumns();
     void updateSize();
     void updateConfigurationMode(bool config);
     void addNewsPaper();
@@ -67,8 +71,6 @@ private:
     Plasma::ScrollWidget *m_scrollWidget;
     QGraphicsLinearLayout *m_externalLayout;
     QGraphicsLinearLayout *m_mainLayout;
-    QGraphicsLinearLayout *m_leftLayout;
-    QGraphicsLinearLayout *m_rightLayout;
     Qt::Orientation m_orientation;
     Plasma::FrameSvg *m_background;
     AppletOverlay *m_appletOverlay;
