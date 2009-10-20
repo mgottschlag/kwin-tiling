@@ -87,6 +87,7 @@ void SearchLaunch::init()
             this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
 
     m_toolBox = new NetToolBox(this);
+    setToolBox(m_toolBox);
     connect(m_toolBox, SIGNAL(toggled()), this, SIGNAL(toolBoxToggled()));
     connect(m_toolBox, SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));
     m_toolBox->show();
