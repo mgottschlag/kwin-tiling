@@ -92,12 +92,35 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
             return;
         }
 
-        if (service->noDisplay() && service->property("NotShowIn", QVariant::String) != "KDE") {
-            continue;
+        if (service->noDisplay()) {
+            if (seen.contains(service->exec())) {
+                //kDebug() << service->name() << "failed, but we've already seen it";
+                continue;
+            }
+
+            // let's check to see if there are any matches for this executable which ARE visible
+            // this catches things like Okular which installs multiple .desktop files for each
+            // of its components, but only marks one of them as displayable; so our query will
+            // likely match correctly, but on a NoDisplay=true entry; so we check for a match
+            // for the exec on this item, which we may not catch in our previous query. fun!
+            //kDebug() << "got failed" << service->name();
+            const QString check = QString("Exec == '%1'").arg(service->exec());
+            const QString type = service->isApplication() ? "Application" : "KCModule";
+            bool fail = true;
+            foreach (const KService::Ptr &s, KServiceTypeTrader::self()->query(type, check)) {
+                if (!s->noDisplay()) {
+                    fail = false;
+                }
+            }
+
+            if (fail) {
+                //kDebug() << "fail";
+                continue;
+            }
         }
 
-        QString id = service->storageId();
-        QString exec = service->exec();
+        const QString id = service->storageId();
+        const QString exec = service->exec();
         if (seen.contains(id) || seen.contains(exec)) {
             //kDebug() << "already seen" << id << exec;
             continue;
