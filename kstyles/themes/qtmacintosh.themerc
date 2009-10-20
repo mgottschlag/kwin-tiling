@@ -1,0 +1,5 @@
+[Misc]
+Name=Mac OS X
+Comment=Style that uses the Apple Appearance Manager
+[KDE]
+WidgetStyle=Macintosh

@@ -1,0 +1,5 @@
+[Misc]
+Name=Cleanlooks
+Comment=Built-in unthemed style similar to Clearlooks from GNOME
+[KDE]
+WidgetStyle=Cleanlooks

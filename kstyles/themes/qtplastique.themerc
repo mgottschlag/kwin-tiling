@@ -1,0 +1,5 @@
+[Misc]
+Name=Plastique
+Comment=Built-in unthemed style similar to Plastik from KDE3
+[KDE]
+WidgetStyle=Plastique

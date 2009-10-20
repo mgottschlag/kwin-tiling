@@ -1,0 +1,5 @@
+[Misc]
+Name=GTK+ Style
+Comment=Style that uses the GTK+ theming engine
+[KDE]
+WidgetStyle=Gtk

@@ -1,0 +1,5 @@
+[Misc]
+Name=MS Windows Vista
+Comment=Style that uses the Windows Vista style engine
+[KDE]
+WidgetStyle=WindowsVista

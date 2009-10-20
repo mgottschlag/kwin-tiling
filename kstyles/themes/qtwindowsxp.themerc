@@ -1,0 +1,5 @@
+[Misc]
+Name=MS Windows XP
+Comment=Style that uses the Windows XP style engine
+[KDE]
+WidgetStyle=WindowsXP
