@@ -74,6 +74,7 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
 
 Newspaper::~Newspaper()
 {
+    config().writeEntry("orientation", (int)m_orientation);
 }
 
 void Newspaper::init()
@@ -84,7 +85,11 @@ void Newspaper::init()
     m_externalLayout->addItem(m_scrollWidget);
     m_mainWidget = new QGraphicsWidget(m_scrollWidget);
     m_scrollWidget->setWidget(m_mainWidget);
-    m_mainLayout = new QGraphicsLinearLayout(Qt::Horizontal, m_mainWidget);
+
+    m_orientation = (Qt::Orientation)config().readEntry("orientation", (int)Qt::Vertical);
+
+    //m_mainLayout has the -other- orientation
+    m_mainLayout = new QGraphicsLinearLayout((m_orientation==Qt::Vertical?Qt::Horizontal:Qt::Vertical), m_mainWidget);
 
     addColumn();
 
@@ -251,6 +256,8 @@ void Newspaper::updateSize()
     QSizeF hint = m_mainWidget->effectiveSizeHint(Qt::PreferredSize);
     if (m_orientation == Qt::Horizontal) {
         m_mainWidget->resize(hint.width(), m_mainWidget->size().height());
+        //FIXME:this needs ScrollWidget::setPreferredScrollDirection
+        m_mainWidget->setMinimumWidth(hint.width());
     } else {
         m_mainWidget->resize(m_mainWidget->size().width(), hint.height());
     }
@@ -488,7 +495,7 @@ QGraphicsLinearLayout *Newspaper::addColumn()
     m_mainLayout->addItem(lay);
 
     QGraphicsWidget *spacer = new QGraphicsWidget(m_mainWidget);
-    spacer->setPreferredHeight(0);
+    spacer->setPreferredSize(0, 0);
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     lay->addItem(spacer);
 
