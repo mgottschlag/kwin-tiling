@@ -105,6 +105,7 @@ void Newspaper::init()
     setHasConfigurationInterface(true);
 
     m_toolBox = new NetToolBox(this);
+    setToolBox(m_toolBox);
     connect(m_toolBox, SIGNAL(toggled()), this, SIGNAL(toolBoxToggled()));
     connect(m_toolBox, SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));
     m_toolBox->show();

@@ -163,7 +163,7 @@ private:
 };
 
 NetToolBox::NetToolBox(Plasma::Containment *parent)
-   : QGraphicsWidget(parent),
+   : Plasma::AbstractToolBox(parent),
      m_containment(parent),
      m_icon("plasma"),
      m_iconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall),

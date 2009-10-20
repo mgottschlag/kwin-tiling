@@ -25,6 +25,8 @@
 #include <KIcon>
 
 #include <Plasma/Plasma>
+#include <plasma/abstracttoolbox.h>
+
 
 class QGraphicsLinearLayout;
 
@@ -37,9 +39,10 @@ namespace Plasma
 
 class ToolContainer;
 
-class NetToolBox : public QGraphicsWidget
+class NetToolBox : public Plasma::AbstractToolBox
 {
     Q_OBJECT
+    Q_PROPERTY(bool showing READ isShowing WRITE setShowing )
 public:
     NetToolBox(Plasma::Containment *parent = 0);
     ~NetToolBox();
