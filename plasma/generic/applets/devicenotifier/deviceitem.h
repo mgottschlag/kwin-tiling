@@ -198,6 +198,7 @@ class DeviceItem : public QGraphicsWidget
         void setReady();
 
         void setHoverDisplayOpacity(qreal opacity);
+
     signals:
         /**
         * Emitted when the left action has been clicked
@@ -244,9 +245,6 @@ class DeviceItem : public QGraphicsWidget
         * @internal shows the busy widget
         **/
         void triggerBusyWidget();
-
-        void animateExpansion(qreal step);
-        void animateCollapsing(qreal step);
 
     private:
         void updateHoverDisplay();

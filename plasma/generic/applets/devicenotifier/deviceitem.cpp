@@ -43,7 +43,7 @@
 #include <Plasma/BusyWidget>
 #include <Plasma/ItemBackground>
 #include <Plasma/Label>
-#include <Plasma/Animator>
+#include <plasma/animations/fade.h>
 
 //Own
 #include "notifierdialog.h"
@@ -152,8 +152,8 @@ void DeviceItem::collapse()
     if (!isCollapsed()) {
         updateHoverDisplay();
 
-        Plasma::Animator::self()->customAnimation(15, 100, Plasma::Animator::LinearCurve,
-                                                  this, "animateCollapsing");
+        m_treeLayout->removeAt(1);
+        m_actionsWidget->hide();
     }
 }
 
@@ -165,9 +165,6 @@ void DeviceItem::expand()
         updateHoverDisplay();
 
         adjustSize();
-
-        Plasma::Animator::self()->customAnimation(15, 100, Plasma::Animator::LinearCurve,
-                                                  this, "animateExpansion");
     }
 }
 
@@ -294,8 +291,17 @@ void DeviceItem::setHovered(const bool hovered)
     if (hovered) {
         updateHoverDisplay();
     } else {
-        Plasma::Animator::self()->customAnimation(15, 200, Plasma::Animator::LinearCurve,
-                                                  this, "setHoverDisplayOpacity");
+        Plasma::FadeAnimation *labelFade = new Plasma::FadeAnimation(0);
+        Plasma::FadeAnimation *barFade = new Plasma::FadeAnimation(0);
+        Plasma::FadeAnimation *iconFade = new Plasma::FadeAnimation(0);
+
+        labelFade->setWidget(m_descriptionLabel);
+        barFade->setWidget(m_capacityBar);
+        iconFade->setWidget(m_leftActionIcon);
+
+        labelFade->start();
+        barFade->start();
+        iconFade->start();
     }
 }
 
@@ -333,22 +339,6 @@ void DeviceItem::setHoverDisplayOpacity(qreal opacity)
 
     if (!hovered() && opacity == 0) {
         updateHoverDisplay();
-    }
-}
-
-void DeviceItem::animateExpansion(qreal step)
-{
-    m_actionsWidget->setScale(step);
-}
-
-void DeviceItem::animateCollapsing(qreal step)
-{
-    m_actionsWidget->setScale(1 - step);
-
-    if (step == 1) {
-        m_treeLayout->removeAt(1);
-        m_actionsWidget->hide();
-        return;
     }
 }
 
