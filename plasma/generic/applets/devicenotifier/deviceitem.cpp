@@ -43,7 +43,8 @@
 #include <Plasma/BusyWidget>
 #include <Plasma/ItemBackground>
 #include <Plasma/Label>
-#include <plasma/animations/fade.h>
+#include <Plasma/Animator>
+#include <Plasma/AbstractAnimation>
 
 //Own
 #include "notifierdialog.h"
@@ -54,7 +55,10 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
       m_udi(udi),
       m_hovered(false),
-      m_mounted(false)
+      m_mounted(false),
+      m_labelFade(0),
+      m_barFade(0),
+      m_iconFade(0)
 {
     setAcceptHoverEvents(true);
     setCacheMode(DeviceCoordinateCache);
@@ -291,17 +295,19 @@ void DeviceItem::setHovered(const bool hovered)
     if (hovered) {
         updateHoverDisplay();
     } else {
-        Plasma::FadeAnimation *labelFade = new Plasma::FadeAnimation(0);
-        Plasma::FadeAnimation *barFade = new Plasma::FadeAnimation(0);
-        Plasma::FadeAnimation *iconFade = new Plasma::FadeAnimation(0);
+        if (!m_labelFade) {
+            m_labelFade = Plasma::Animator::self()->create(Plasma::Animator::FadeAnim, this);
+            m_barFade = Plasma::Animator::self()->create(Plasma::Animator::FadeAnim, this);
+            m_iconFade = Plasma::Animator::self()->create(Plasma::Animator::FadeAnim, this);
+        }
 
-        labelFade->setWidget(m_descriptionLabel);
-        barFade->setWidget(m_capacityBar);
-        iconFade->setWidget(m_leftActionIcon);
+        m_labelFade->setWidgetToAnimate(m_descriptionLabel);
+        m_barFade->setWidgetToAnimate(m_capacityBar);
+        m_iconFade->setWidgetToAnimate(m_leftActionIcon);
 
-        labelFade->start();
-        barFade->start();
-        iconFade->start();
+        m_labelFade->start();
+        m_barFade->start();
+        m_iconFade->start();
     }
 }
 
