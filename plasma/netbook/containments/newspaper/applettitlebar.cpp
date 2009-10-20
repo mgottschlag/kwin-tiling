@@ -64,8 +64,7 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
         m_separator->setContainsMultipleImages(true);
     } else {
         m_background = new Plasma::FrameSvg(this);
-        m_background->setImagePath("widgets/frame");
-        m_background->setElementPrefix("raised");
+        m_background->setImagePath("widgets/background");
     }
 
     applet->installEventFilter(this);
@@ -89,14 +88,18 @@ void AppletTitleBar::syncMargins()
 {
     const int extraMargin = 2;
     syncIconRects();
-    setMinimumHeight(m_maximizeButtonRect.height() + extraMargin);
-    setMaximumHeight(m_maximizeButtonRect.height() + extraMargin);
+
 
     if (m_background) {
         qreal left, top, right, bottom;
 
         m_background->getMargins(left, top, right, bottom);
         setContentsMargins(left, top, right, bottom);
+        setMinimumHeight(m_maximizeButtonRect.height() + extraMargin + top + bottom);
+        setMaximumHeight(m_maximizeButtonRect.height() + extraMargin + top + bottom);
+    } else {
+        setMinimumHeight(m_maximizeButtonRect.height() + extraMargin);
+        setMaximumHeight(m_maximizeButtonRect.height() + extraMargin);
     }
 
     qreal left, right, bottom;
