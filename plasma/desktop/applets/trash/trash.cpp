@@ -76,6 +76,7 @@ Trash::Trash(QObject *parent, const QVariantList &args)
     m_icon = new Plasma::IconWidget(KIcon("user-trash"),QString(),this);
     m_icon->setNumDisplayLines(2);
     m_icon->setDrawBackground(true);
+    setBackgroundHints(NoBackground);
 
     resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
     createMenu();
@@ -155,8 +156,6 @@ void Trash::popup()
 
 void Trash::constraintsEvent(Plasma::Constraints constraints)
 {
-    setBackgroundHints(NoBackground);
-
     if (constraints & Plasma::FormFactorConstraint) {
         disconnect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
         disconnect(m_icon, SIGNAL(clicked()), this, SLOT(slotOpen()));
