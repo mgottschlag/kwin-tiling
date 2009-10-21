@@ -32,6 +32,8 @@
 #include <Plasma/Corona>
 #include <Plasma/ItemBackground>
 #include <Plasma/Theme>
+#include <Plasma/Animator>
+#include <Plasma/AbstractAnimation>
 
 #include "widgetexplorer.h"
 
@@ -65,13 +67,7 @@ AppletsListWidget::AppletsListWidget(Qt::Orientation orientation, QGraphicsItem 
 
     connect(this, SIGNAL(listScrolled()), this, SLOT(manageArrows()));
 
-    //init timelines
-    m_scrollTimeLine.setFrameRange(0, 100);
-    //m_scrollTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
-    m_scrollTimeLine.setCurveShape(QTimeLine::LinearCurve);
-    m_scrollTimeLine.setDuration(SCROLL_STEP_DURATION); // TODO: Set this to a lesser value
-    connect(&m_scrollTimeLine, SIGNAL(frameChanged(int)),
-            this, SLOT(scrollTimeLineFrameChanged(int)));
+    m_slide = Plasma::Animator::create(Plasma::Animator::SlideAnimation);
 
     toolTipMoveTimeLine.setFrameRange(0, 100);
     toolTipMoveTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
@@ -96,6 +92,8 @@ AppletsListWidget::~AppletsListWidget()
     delete m_downRightArrow;
 
     delete m_appletsListWindowWidget;
+
+    delete m_slide;
 }
 
 void AppletsListWidget::init()
@@ -130,6 +128,8 @@ void AppletsListWidget::init()
     m_appletsListWidget->setLayout(m_appletListLinearLayout);
     //make its events pass through its parent
     m_appletsListWidget->installEventFilter(this);
+
+    m_slide->setWidgetToAnimate(m_appletsListWidget);
 
     //init window that shows the applets of the list - it clips the appletsListWidget
     m_appletsListWindowWidget = new QGraphicsWidget();
@@ -515,8 +515,10 @@ void AppletsListWidget::scrollDownRight(int step, QRectF visibleRect)
 
     if (m_orientation == Qt::Horizontal) {
         lastVisiblePositionOnList = visibleRect.x() + visibleRect.width();
+        m_slide->setDirection(Plasma::MoveLeft);
     } else {
         lastVisiblePositionOnList = visibleRect.y() + visibleRect.height();
+        m_slide->setDirection(Plasma::MoveUp);
     }
 
     lastVisibleItemIndex = findLastVisibleApplet(lastVisiblePositionOnList);
@@ -561,7 +563,8 @@ void AppletsListWidget::scrollDownRight(int step, QRectF visibleRect)
         scrollAmount = listSize - lastVisiblePositionOnList;
     }
 
-    animateMoveBy(-scrollAmount);
+    m_slide->setDistance(scrollAmount);
+    m_slide->start();
     emit(listScrolled());
 }
 
@@ -575,8 +578,10 @@ void AppletsListWidget::scrollUpLeft(int step, QRectF visibleRect)
 
     if(m_orientation == Qt::Horizontal) {
         firstVisiblePositionOnList = visibleRect.x();
+        m_slide->setDirection(Plasma::MoveRight);
     } else {
         firstVisiblePositionOnList = visibleRect.y();
+        m_slide->setDirection(Plasma::MoveDown);
     }
 
     firstVisibleItemIndex = findFirstVisibleApplet(firstVisiblePositionOnList);
@@ -611,89 +616,15 @@ void AppletsListWidget::scrollUpLeft(int step, QRectF visibleRect)
         scrollAmount = firstVisiblePositionOnList;
     }
 
-    animateMoveBy(scrollAmount);
+    m_slide->setDistance(scrollAmount);
+    m_slide->start();
     emit(listScrolled());
 }
 
-/* ivan: Implementation of the following functions is
- * less than optimal and is intended just to provide
- * the temporary solution until plasma gets the new
- * animation framework.
- * TODO: Remove this and animate using plasma's
- * animation framework when it is created */
-void AppletsListWidget::animateMoveBy(int amount)
+void AppletsListWidget::animateToolTipMove( )
 {
-    if (m_orientation == Qt::Horizontal) {
-        m_scrollFrom = m_appletsListWidget->pos().x();
-    } else {
-        m_scrollFrom = m_appletsListWidget->pos().y();
-    }
-
-    if (m_scrollTimeLine.state() == QTimeLine::Running) {
-        m_scrollTo = m_scrollTo + amount;
-    } else {
-        m_scrollTo = m_scrollFrom + amount;
-    }
-
-    if (m_scrollTo > 0) {
-        m_scrollTo = 0;
-    }
-
-    if (m_orientation == Qt::Horizontal) {
-        if (m_scrollTo + m_appletsListWidget->size().width() <
-            m_appletsListWindowWidget->size().width()) {
-            m_scrollTo = m_appletsListWindowWidget->size().width()
-                         - m_appletsListWidget->size().width();
-        }
-    } else {
-        if (m_scrollTo + m_appletsListWidget->size().height() <
-            m_appletsListWindowWidget->size().height()) {
-            m_scrollTo = m_appletsListWindowWidget->size().height()
-                         - m_appletsListWidget->size().height();
-        }
-    }
-
-    if (m_scrollTimeLine.state() != QTimeLine::Running && m_scrollFrom != m_scrollTo) {
-        m_scrollTimeLine.start();
-    }
-}
-
-void AppletsListWidget::animateToolTipMove()
-{
-    if (toolTipMoveTimeLine.state() != QTimeLine::Running && toolTipMoveFrom != toolTipMoveTo) {
-        toolTipMoveTimeLine.start();
-    }
-}
-
-void AppletsListWidget::scrollTimeLineFrameChanged(int frame)
-{
-    QPointF newPos;
-
-    if (m_orientation == Qt::Horizontal) {
-        newPos = QPointF(
-                (frame/(qreal)100) * (m_scrollTo - m_scrollFrom) + m_scrollFrom,
-                m_appletsListWidget->pos().y());
-
-    } else {
-        newPos = QPointF(
-                m_appletsListWidget->pos().x(),
-                (frame/(qreal)100) * (m_scrollTo - m_scrollFrom) + m_scrollFrom);
-    }
-
-    m_appletsListWidget->setPos(newPos);
-
-    if (frame == m_scrollTimeLine.endFrame()) {
-        manageArrows();
-
-        if (m_scrollTo < m_scrollFrom) {
-            // scrolling to the right/down
-            if (m_downRightArrow->isEnabled() && m_downRightArrow->isDown()) {
-                QTimer::singleShot(0, this, SLOT(onRightArrowPress()));
-            }
-        } else if (m_upLeftArrow->isEnabled() && m_upLeftArrow->isDown()) {
-            // scroll left/up
-            QTimer::singleShot(0, this, SLOT(onLeftArrowPress()));
-        }
+    if ( toolTipMoveTimeLine.state() != QTimeLine::Running && toolTipMoveFrom != toolTipMoveTo) {
+         toolTipMoveTimeLine.start();
     }
 }
 

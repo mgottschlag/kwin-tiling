@@ -37,6 +37,7 @@
 namespace Plasma
 {
     class ItemBackground;
+    class Animator;
 } // namespace Plasma
 
 class AppletsListWidget : public QGraphicsWidget
@@ -128,11 +129,6 @@ private slots:
     void onToolTipEnter();
     void onToolTipLeave();
 
-    /* TODO: Remove this and animate using plasma's
-     * animation framework when it is created */
-    void animateMoveBy(int amount);
-    void scrollTimeLineFrameChanged(int frame);
-
     void animateToolTipMove();
     void toolTipMoveTimeLineFrameChanged(int frame);
 
@@ -190,11 +186,7 @@ private:
     int wheelStep;
     int m_iconSize;
 
-    /* TODO: Remove this and animate using plasma's
-     * animation framework when it is created */
-    QTimeLine m_scrollTimeLine;
-    qreal m_scrollTo;
-    qreal m_scrollFrom;
+    Plasma::AbstractAnimation *m_slide;
 
     QTimeLine toolTipMoveTimeLine;
     QPoint toolTipMoveFrom;
