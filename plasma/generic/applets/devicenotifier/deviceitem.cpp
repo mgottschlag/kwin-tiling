@@ -296,9 +296,9 @@ void DeviceItem::setHovered(const bool hovered)
         updateHoverDisplay();
     } else {
         if (!m_labelFade) {
-            m_labelFade = Plasma::Animator::self()->create(Plasma::Animator::FadeAnimation, this);
-            m_barFade = Plasma::Animator::self()->create(Plasma::Animator::FadeAnimation, this);
-            m_iconFade = Plasma::Animator::self()->create(Plasma::Animator::FadeAnimation, this);
+            m_labelFade = Plasma::Animator::create(Plasma::Animator::FadeAnimation, this);
+            m_barFade = Plasma::Animator::create(Plasma::Animator::FadeAnimation, this);
+            m_iconFade = Plasma::Animator::create(Plasma::Animator::FadeAnimation, this);
         }
 
         m_labelFade->setWidgetToAnimate(m_descriptionLabel);
