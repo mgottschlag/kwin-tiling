@@ -2,6 +2,7 @@
 Name=Switch Desktop
 Name[de]=Arbeitsfläche wechseln
 Name[en_GB]=Switch Desktop
+Name[eo]=Ŝalti Labortablon
 Name[et]=Töölaua vahetamine
 Name[gl]=Trocar de escritorio
 Name[id]=Pindah Desktop
@@ -21,6 +22,7 @@ Type=Service
 Icon=preferences-desktop-color
 Comment=Switch to another virtual desktop
 Comment[en_GB]=Switch to another virtual desktop
+Comment[eo]=Ŝalti al alia virtuala labortablo
 Comment[et]=Lülitumine teisele virtuaalsele töölauale
 Comment[gl]=Troca para outro escritorio virtual
 Comment[id]=Berpindah ke desktop virtual lain
