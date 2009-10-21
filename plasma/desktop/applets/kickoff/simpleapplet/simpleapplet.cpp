@@ -223,7 +223,7 @@ public:
             case Standby:                  return "system-suspend";
             case SuspendDisk:              return "system-suspend-hibernate";
             case SuspendRAM:               return "system-suspend-hibernate";
-            case Restart:                  return "system-restart";
+            case Restart:                  return "system-reboot";
             case Shutdown:                 return "system-shutdown";
             case Logout:                   return "system-log-out";
             case Leave:                    return "system-shutdown";
