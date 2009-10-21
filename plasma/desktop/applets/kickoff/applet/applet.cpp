@@ -24,14 +24,12 @@
 #include <QtGui/QAction>
 #include <QtGui/QApplication>
 #include <QtGui/QGraphicsView>
-#include <QtGui/QCheckBox>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QLabel>
 #include <QtGui/QGraphicsLinearLayout>
 
 // KDE
 #include <KIcon>
-#include <KIconButton>
 #include <KDebug>
 #include <KConfigDialog>
 #include <KProcess>
@@ -43,6 +41,7 @@
 #include <Plasma/ToolTipManager>
 
 // Local
+#include "ui_kickoffConfig.h"
 #include "ui/launcher.h"
 #include "core/recentapplications.h"
 
@@ -58,12 +57,10 @@ public:
 
     Kickoff::Launcher *launcher;
 
-    KIconButton *iconButton;
-    QCheckBox *switchOnHoverCheckBox;
-    QCheckBox *appsByNameCheckBox;
     QList<QAction*> actions;
     QAction* switcher;
     LauncherApplet *q;
+    Ui::kickoffConfig ui;
 };
 
 void LauncherApplet::Private::createLauncher()
@@ -150,38 +147,17 @@ void LauncherApplet::startMenuEditor()
 
 void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
 {
-    QWidget *widget = new QWidget(parent);
-    QGridLayout *widgetLayout = new QGridLayout(widget);
-    widget->setLayout(widgetLayout);
-
-    QLabel *iconLabel = new QLabel(i18n("Icon:"), widget);
-    widgetLayout->addWidget(iconLabel, 0, 0, Qt::AlignRight);
-    d->iconButton = new KIconButton(widget);
-    d->iconButton->setIcon(popupIcon());
-    iconLabel->setBuddy(d->iconButton);
-    widgetLayout->addWidget(d->iconButton, 0, 1);
-
-    QLabel *label = new QLabel(i18n("Switch tabs on hover:"), widget);
-    label->setAlignment(Qt::AlignRight);
-    widgetLayout->addWidget(label, 1, 0);
-    d->switchOnHoverCheckBox = new QCheckBox(widget);
-    label->setBuddy(d->switchOnHoverCheckBox);
-    widgetLayout->addWidget(d->switchOnHoverCheckBox, 1, 1);
-
-    label = new QLabel(i18n("Show applications by name:"), widget);
-    label->setAlignment(Qt::AlignRight);
-    widgetLayout->addWidget(label, 2, 0);
-    d->appsByNameCheckBox = new QCheckBox(widget);
-    label->setBuddy(d->appsByNameCheckBox);
-    widgetLayout->addWidget(d->appsByNameCheckBox, 2, 1);
+    QWidget *widget = new QWidget();
+    d->ui.setupUi(widget);
+    parent->addPage(widget, i18nc("General configuration page", "General"), icon());
 
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-    parent->addPage(widget, i18nc("General configuration page", "General"), icon());
 
     d->createLauncher();
-    d->switchOnHoverCheckBox->setChecked(d->launcher->switchTabsOnHover());
-    d->appsByNameCheckBox->setChecked(d->launcher->showAppsByName());
+    d->ui.iconButton->setIcon(popupIcon());
+    d->ui.switchOnHoverCheckBox->setChecked(d->launcher->switchTabsOnHover());
+    d->ui.appsByNameCheckBox->setChecked(d->launcher->showAppsByName());
 }
 
 void LauncherApplet::popupEvent(bool show)
@@ -204,10 +180,10 @@ void LauncherApplet::toolTipAboutToShow()
 
 void LauncherApplet::configAccepted()
 {
-    bool switchTabsOnHover = d->switchOnHoverCheckBox->isChecked();
-    bool showAppsByName = d->appsByNameCheckBox->isChecked();
+    bool switchTabsOnHover = d->ui.switchOnHoverCheckBox->isChecked();
+    bool showAppsByName = d->ui.appsByNameCheckBox->isChecked();
 
-    const QString iconname = d->iconButton->icon();
+    const QString iconname = d->ui.iconButton->icon();
 
     // TODO: should this be moved into Launcher as well? perhaps even the config itself?
     d->createLauncher();

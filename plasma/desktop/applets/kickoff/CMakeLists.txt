@@ -63,6 +63,7 @@ set(Applet_SRCS
     ui/urlitemview.cpp
     applet/applet.cpp
 )
+kde4_add_ui_files(Applet_SRCS applet/kickoffConfig.ui )
 kde4_add_plugin(plasma_applet_launcher ${Applet_SRCS})
 target_link_libraries(plasma_applet_launcher ${KDE4_PLASMA_LIBS} solidcontrol ${Kickoff_LIBS} kickoff)
 install(TARGETS plasma_applet_launcher DESTINATION ${PLUGIN_INSTALL_DIR})
