@@ -164,10 +164,10 @@ void AppletOverlay::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         showSpacer(event->pos());
     }
 
-    if (event->pos().y() > size().height()*0.70) {
+    if (m_newspaper->m_scrollWidget->pos().y() + event->pos().y() > m_newspaper->m_scrollWidget->size().height()*0.70) {
         m_scrollTimer->start(50);
         m_scrollDown = true;
-    } else if (event->pos().y() < size().height()*0.30) {
+    } else if (m_newspaper->m_scrollWidget->pos().y() + event->pos().y() < m_newspaper->m_scrollWidget->size().height()*0.30) {
         m_scrollTimer->start(50);
         m_scrollDown = false;
     } else {
@@ -363,13 +363,13 @@ void AppletOverlay::scrollTimeout()
 
     if (m_scrollDown) {
         if (m_newspaper->m_mainWidget->geometry().bottom() > m_newspaper->m_scrollWidget->geometry().bottom()) {
-            m_newspaper->m_mainWidget->moveBy(0, -5);
-            m_applet->moveBy(0, 5);
+            m_newspaper->m_mainWidget->moveBy(0, -10);
+            m_applet->moveBy(0, 10);
         }
     } else {
         if (m_newspaper->m_mainWidget->pos().y() < 0) {
-            m_newspaper->m_mainWidget->moveBy(0, 5);
-            m_applet->moveBy(0, -5);
+            m_newspaper->m_mainWidget->moveBy(0, 10);
+            m_applet->moveBy(0, -10);
         }
     }
 }
