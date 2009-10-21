@@ -39,10 +39,10 @@
 #include <Plasma/Dialog>
 #include <Plasma/Containment>
 #include <Plasma/Corona>
+#include <Plasma/WindowEffects>
 
 //X
 #ifdef Q_WS_X11
-#include <X11/Xlib.h>
 #include <X11/extensions/XTest.h>
 #include <X11/keysym.h>
 #endif
@@ -219,16 +219,8 @@ void CurrentAppControl::toggleMaximizedWindow()
 
 void CurrentAppControl::listWindows()
 {
-    if (KWindowSystem::compositingActive()) {
-#ifdef Q_WS_X11
-        QVarLengthArray<long, 32> data(1);
-        data[0] = KWindowSystem::currentDesktop();
-        Display *dpy = QX11Info::display();
-        const WId winId = view()->winId();
-        Atom atom = XInternAtom(dpy, "_KDE_PRESENT_WINDOWS_DESKTOP", False);
-        XChangeProperty(dpy, winId, atom, atom, 32, PropModeReplace,
-                        reinterpret_cast<unsigned char *>(data.data()), data.size());
-#endif
+    if (Plasma::WindowEffects::isEffectAvailable(Plasma::WindowEffects::PresentWindows)) {
+        Plasma::WindowEffects::presentWindows(view()->winId() , KWindowSystem::currentDesktop());
     } else if (!m_listDialog) {
         m_listDialog = new Plasma::Dialog();
         m_listWidget = new QGraphicsWidget(this);

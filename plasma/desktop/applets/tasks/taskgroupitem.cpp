@@ -29,7 +29,6 @@
 #include <QApplication>
 #include <QGraphicsLinearLayout>
 #include <QInputDialog>
-#include <QVarLengthArray>
 
 // KDE
 #include <KAuthorized>
@@ -46,15 +45,11 @@
 #include <Plasma/Corona>
 #include <Plasma/Containment>
 #include <Plasma/Dialog>
+#include <Plasma/WindowEffects>
 
 #include "tasks.h"
 #include "taskitemlayout.h"
 #include "windowtaskitem.h"
-
-#ifdef Q_WS_X11
-#include <X11/Xlib.h>
-#include <QX11Info>
-#endif
 
 TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet)
     : AbstractTaskItem(parent, applet),
@@ -554,7 +549,6 @@ bool TaskGroupItem::isActive() const
 void TaskGroupItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { //TODO add delay so we can still drag group items
     if ((event->buttons() & Qt::LeftButton) && (event->modifiers() & Qt::ControlModifier)) {
- #ifdef Q_WS_X11
         QList<WId> ids;
         foreach (AbstractGroupableItem *groupable, m_group->members()) {
             if (groupable->isGroupItem()) {
@@ -566,21 +560,7 @@ void TaskGroupItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 }
             }
         }
-        const int numWindows = ids.count();
-        QVarLengthArray<long, 32> data(numWindows);
-
-        for (int i = 0; i < numWindows; ++i) {
-            data[i] = ids[i];
-        }
-
-        if (!data.isEmpty()) {
-            Display *dpy = QX11Info::display();
-            const WId winId = data[0];
-            Atom atom = XInternAtom(dpy, "_KDE_PRESENT_WINDOWS_GROUP", False);
-            XChangeProperty(dpy, winId, atom, atom, 32, PropModeReplace,
-                            reinterpret_cast<unsigned char *>(data.data()), data.size());
-        }
-#endif
+        Plasma::WindowEffects::presentWindows(m_applet->view()->winId(), ids);
     } else if ((event->buttons() & Qt::LeftButton) && !m_popupLostFocus) {
         if (m_applet->groupManager().sortingStrategy() == TaskManager::GroupManager::ManualSorting ||
             m_applet->groupManager().groupingStrategy() == TaskManager::GroupManager::ManualGrouping) {
