@@ -93,6 +93,24 @@ createLayout
 Creating Items From UI Files
 ----------------------------
 
+Animations
+==========
+An animation object can be retreived by calling the animation(string) method.
+The string corresponds to the Plasma::Animator::Animation enumeration, and currently
+the following are supported (case insensitive):
+
+* fade
+* grow
+* expand
+* pulse
+* rotate
+* rotateStacked
+* slide
+
+By default the animation object is associated with the plasmoid itself. By setting
+the widgetToAnimate property, however, it can be re-assigned to any QGraphicsWidget
+(e.g. plasma widgets) one wants.
+
 Painting
 ========
 
