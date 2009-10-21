@@ -36,7 +36,8 @@
 #include <QComboBox>
 #include <QAction>
 #include <QGraphicsLayout>
-
+#include <QTimer>
+#include <QGraphicsSceneWheelEvent>
 
 #include <KAction>
 #include <KDebug>
@@ -52,6 +53,7 @@
 #include <Plasma/ScrollWidget>
 #include <Plasma/PopupApplet>
 #include <Plasma/Frame>
+#include <Plasma/ToolButton>
 
 using namespace Plasma;
 
@@ -60,7 +62,9 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_orientation(Qt::Vertical),
       m_appletOverlay(0),
-      m_dragging(false)
+      m_dragging(0),
+      m_leftArrow(0),
+      m_rightArrow(0)
 {
     setContainmentType(Containment::CustomContainment);
 
@@ -255,8 +259,34 @@ void Newspaper::setOrientation(Qt::Orientation orientation)
 
     if (m_orientation == Qt::Vertical) {
         m_mainWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        if (m_leftArrow) {
+            m_leftArrow->deleteLater();
+            m_rightArrow->deleteLater();
+        }
     } else {
         m_mainWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+        if (!m_leftArrow) {
+            m_leftArrow = new Plasma::ToolButton(this);
+            m_leftArrow->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+            m_leftArrow->setPreferredWidth(KIconLoader::SizeMedium);
+            m_leftArrow->setImage("widgets/arrows", "left-arrow");
+            connect(m_leftArrow, SIGNAL(clicked()), this, SLOT(goLeft()));
+            connect(m_leftArrow, SIGNAL(pressed()), this, SLOT(scrollTimeout()));
+
+            m_rightArrow = new Plasma::ToolButton(this);
+            m_rightArrow->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+            m_rightArrow->setPreferredWidth(KIconLoader::SizeMedium);
+            m_rightArrow->setImage("widgets/arrows", "right-arrow");
+            connect(m_rightArrow, SIGNAL(clicked()), this, SLOT(goRight()));
+            connect(m_rightArrow, SIGNAL(pressed()), this, SLOT(scrollTimeout()));
+
+            m_externalLayout->insertItem(0, m_leftArrow);
+            m_externalLayout->addItem(m_rightArrow);
+
+            m_scrollTimer = new QTimer(this);
+            m_scrollTimer->setSingleShot(false);
+            connect(m_scrollTimer, SIGNAL(timeout()), this, SLOT(scrollTimeout()));
+        }
     }
 
     for (int i = 0; i < m_mainLayout->count(); ++i) {
@@ -267,6 +297,33 @@ void Newspaper::setOrientation(Qt::Orientation orientation)
         }
 
         lay->setOrientation(orientation);
+    }
+}
+
+void Newspaper::goRight()
+{
+    QGraphicsSceneWheelEvent ev(QEvent::GraphicsSceneWheel);
+    ev.setDelta(-120);
+    scene()->sendEvent(m_scrollWidget, &ev);
+}
+
+void Newspaper::goLeft()
+{
+    QGraphicsSceneWheelEvent ev(QEvent::GraphicsSceneWheel);
+    ev.setDelta(120);
+    scene()->sendEvent(m_scrollWidget, &ev);
+}
+
+void Newspaper::scrollTimeout()
+{
+    if (!m_scrollTimer->isActive()) {
+        m_scrollTimer->start(250);
+    } else if (m_leftArrow->isDown()) {
+        goLeft();
+    } else if (m_rightArrow->isDown()) {
+        goRight();
+    } else {
+        m_scrollTimer->stop();
     }
 }
 

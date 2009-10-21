@@ -34,6 +34,7 @@ namespace Plasma
     class FrameSvg;
     class ScrollWidget;
     class SvgWidget;
+    class ToolButton;
 }
 
 class Newspaper : public Plasma::Containment
@@ -69,6 +70,10 @@ private Q_SLOTS:
     void updateConfigurationMode(bool config);
     void addNewsPaper();
 
+    void goLeft();
+    void goRight();
+    void scrollTimeout();
+
 private:
     QGraphicsWidget *m_mainWidget;
     Plasma::ScrollWidget *m_scrollWidget;
@@ -79,6 +84,9 @@ private:
     AppletOverlay *m_appletOverlay;
     NetToolBox *m_toolBox;
     bool m_dragging;
+    Plasma::ToolButton *m_leftArrow;
+    Plasma::ToolButton *m_rightArrow;
+    QTimer *m_scrollTimer;
 };
 
 
