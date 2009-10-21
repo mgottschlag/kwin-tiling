@@ -87,6 +87,7 @@ void Newspaper::init()
     m_scrollWidget->setWidget(m_mainWidget);
 
     m_orientation = (Qt::Orientation)config().readEntry("orientation", (int)Qt::Vertical);
+    m_externalLayout->setOrientation(m_orientation);
 
     if (m_orientation == Qt::Vertical) {
         m_mainWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -256,7 +257,9 @@ void Newspaper::cleanupColumns()
 
 void Newspaper::setOrientation(Qt::Orientation orientation)
 {
-    m_orientation = (orientation==Qt::Vertical?Qt::Horizontal:Qt::Vertical);
+    m_orientation = orientation;
+    m_mainLayout->setOrientation(orientation==Qt::Vertical?Qt::Horizontal:Qt::Vertical);
+    m_externalLayout->setOrientation(m_orientation);
 
     for (int i = 0; i < m_mainLayout->count(); ++i) {
         QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(i));
