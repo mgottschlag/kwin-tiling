@@ -198,7 +198,7 @@ void StripWidget::scrollTimeout()
         m_scrollTimer->start(250);
     } else if (m_leftArrow->isDown()) {
         goLeft();
-    } else if (m_leftArrow->isDown()) {
+    } else if (m_rightArrow->isDown()) {
         goRight();
     } else {
         m_scrollTimer->stop();
