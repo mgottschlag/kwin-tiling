@@ -58,6 +58,9 @@ protected:
     QGraphicsLinearLayout *addColumn();
     void removeColumn(int column);
 
+    void setOrientation(Qt::Orientation orientation);
+    Qt::Orientation orientation() const;
+
 private Q_SLOTS:
     void toggleImmutability();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);

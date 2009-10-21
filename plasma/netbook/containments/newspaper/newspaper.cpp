@@ -88,6 +88,12 @@ void Newspaper::init()
 
     m_orientation = (Qt::Orientation)config().readEntry("orientation", (int)Qt::Vertical);
 
+    if (m_orientation == Qt::Vertical) {
+        m_mainWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    } else {
+        m_mainWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    }
+
     //m_mainLayout has the -other- orientation
     m_mainLayout = new QGraphicsLinearLayout((m_orientation==Qt::Vertical?Qt::Horizontal:Qt::Vertical), m_mainWidget);
 
@@ -195,9 +201,6 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     if (localPos != QPoint(-1, -1)) {
         for (int i = 0; i < lay->count(); ++i) {
             QGraphicsLayoutItem *li = lay->itemAt(i);
-           /* if (!dynamic_cast<Plasma::Applet *>(li)) {
-                continue;
-            }*/
 
             QRectF siblingGeometry = li->geometry();
             if (m_orientation == Qt::Horizontal) {
@@ -251,13 +254,33 @@ void Newspaper::cleanupColumns()
     }
 }
 
+void Newspaper::setOrientation(Qt::Orientation orientation)
+{
+    m_orientation = (orientation==Qt::Vertical?Qt::Horizontal:Qt::Vertical);
+
+    for (int i = 0; i < m_mainLayout->count(); ++i) {
+        QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(i));
+
+        if (!lay) {
+            continue;
+        }
+
+        lay->setOrientation(orientation);
+    }
+}
+
+Qt::Orientation Newspaper::orientation() const
+{
+    return m_orientation;
+}
+
 void Newspaper::updateSize()
 {
     QSizeF hint = m_mainWidget->effectiveSizeHint(Qt::PreferredSize);
     if (m_orientation == Qt::Horizontal) {
         m_mainWidget->resize(hint.width(), m_mainWidget->size().height());
         //FIXME:this needs ScrollWidget::setPreferredScrollDirection
-        m_mainWidget->setMinimumWidth(hint.width());
+        //m_mainWidget->setMinimumWidth(hint.width());
     } else {
         m_mainWidget->resize(m_mainWidget->size().width(), hint.height());
     }
