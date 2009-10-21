@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>255</width>
+    <width>278</width>
     <height>38</height>
    </rect>
   </property>
@@ -24,6 +24,9 @@
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy">
+      <cstring>showDevices</cstring>
      </property>
     </widget>
    </item>
