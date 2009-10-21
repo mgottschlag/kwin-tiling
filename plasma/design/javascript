@@ -95,7 +95,7 @@ Creating Items From UI Files
 
 Animations
 ==========
-An animation object can be retreived by calling the animation(string) method.
+An animation object can be retrieved by calling the animation(string) method.
 The string corresponds to the Plasma::Animator::Animation enumeration, and currently
 the following are supported (case insensitive):
 
