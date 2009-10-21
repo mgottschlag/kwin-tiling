@@ -279,8 +279,6 @@ void Newspaper::updateSize()
     QSizeF hint = m_mainWidget->effectiveSizeHint(Qt::PreferredSize);
     if (m_orientation == Qt::Horizontal) {
         m_mainWidget->resize(hint.width(), m_mainWidget->size().height());
-        //FIXME:this needs ScrollWidget::setPreferredScrollDirection
-        //m_mainWidget->setMinimumWidth(hint.width());
     } else {
         m_mainWidget->resize(m_mainWidget->size().width(), hint.height());
     }
@@ -375,7 +373,10 @@ void Newspaper::updateConfigurationMode(bool config)
 
         qreal left, top, right, bottom;
         getContentsMargins(&left, &top, &right, &bottom);
-        setContentsMargins(left - extraLeft, top - extraTop, right - extraRight, bottom - extraBottom);
+        setContentsMargins(qMax((qreal)0.0, left - extraLeft),
+                           qMax((qreal)0.0, top - extraTop),
+                           qMax((qreal)0.0, right - extraRight),
+                           qMax((qreal)0.0, bottom - extraBottom));
     }
 
     if (!config) {

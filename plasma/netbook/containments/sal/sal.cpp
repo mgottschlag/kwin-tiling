@@ -545,7 +545,10 @@ void SearchLaunch::updateConfigurationMode(bool config)
 
         qreal left, top, right, bottom;
         getContentsMargins(&left, &top, &right, &bottom);
-        setContentsMargins(left - extraLeft, top - extraTop, right - extraRight, bottom - extraBottom);
+        setContentsMargins(qMax((qreal)0.0, left - extraLeft),
+                           qMax((qreal)0.0, top - extraTop),
+                           qMax((qreal)0.0, right - extraRight),
+                           qMax((qreal)0.0, bottom - extraBottom));
     }
 }
 
