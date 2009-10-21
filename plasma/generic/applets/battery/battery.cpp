@@ -113,7 +113,7 @@ void Battery::init()
 {
     setHasConfigurationInterface(true);
     KConfigGroup cg = config();
-    m_showBatteryString = cg.readEntry("showBatteryString", false);
+    m_showBatteryString = cg.readEntry("showBatteryString", false);    
     m_showRemainingTime = cg.readEntry("showRemainingTime", false);
     m_showMultipleBatteries = cg.readEntry("showMultipleBatteries", !m_isEmbedded);
 
@@ -152,6 +152,10 @@ void Battery::init()
         eItem->setName("powermanagement");
         initExtenderItem(eItem);
         extender()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    }
+    
+    if (m_showBatteryString) {
+        showLabel(m_showBatteryString);
     }
 }
 
