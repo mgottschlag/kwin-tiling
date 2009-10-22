@@ -45,6 +45,7 @@
 #include <Plasma/Corona>
 #include <Plasma/FrameSvg>
 #include <Plasma/Theme>
+#include <Plasma/AbstractToolBox>
 #include <Plasma/View>
 #include <Plasma/PaintUtils>
 
@@ -609,9 +610,10 @@ void Panel::showDropZone(const QPoint pos)
 
     // if the drop isn't happening on the outer edges and is instead
     // actually poised over an applet, ignore it
+    QGraphicsItem *dropOn = scene()->itemAt(mapToScene(pos));
     if (((formFactor() == Plasma::Vertical && pos.y() > 1 && pos.y() > size().height() - 2) ||
          (pos.x() > 1 && pos.x() < size().width() - 2)) &&
-        scene()->itemAt(mapToScene(pos)) != this) {
+        dropOn != this && dropOn != toolBox()) {
         return;
     }
 
@@ -665,8 +667,10 @@ void Panel::showDropZone(const QPoint pos)
         if (!m_spacer) {
             m_spacer = new Spacer(this);
             m_spacer->panel = this;
+        } else {
+            m_layout->removeItem(m_spacer);
         }
-        m_layout->removeItem(m_spacer);
+
         m_spacer->show();
         m_layout->insertItem(insertIndex, m_spacer);
     }
