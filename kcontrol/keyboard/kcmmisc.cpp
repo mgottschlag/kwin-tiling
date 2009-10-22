@@ -58,7 +58,6 @@ KeyboardConfig::KeyboardConfig(QWidget *parent, const QVariantList &)
   QString wtstr;
   ui.setupUi(this);
 
-  ui.click->setRange(0, 100, 10);
   ui.delay->setRange(100, 5000, 50);
   ui.delay->setSliderEnabled(false);
   ui.rate->setRange(0.2, 50, 5, false);
