@@ -289,7 +289,7 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 
     m_layout->removeItem(m_lastSpace);
 
-    if (insertIndex == -1) {
+    if (insertIndex == -1 || insertIndex >= m_layout->count()) {
         m_layout->addItem(applet);
     } else {
         m_layout->insertItem(insertIndex, applet);
@@ -633,7 +633,7 @@ void Panel::showDropZone(const QPoint pos)
     }
 
     Plasma::FormFactor f = formFactor();
-    int insertIndex = -1;
+    int insertIndex = m_layout->count();
 
     //FIXME: needed in two places, make it a function?
     for (int i = 0; i < m_layout->count(); ++i) {
