@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Games
+Comment=A collection of fun games
+Icon=applications-games
+
+Type=Service
+X-KDE-ServiceTypes=Plasma/Sal/Menu
+X-KDE-PluginInfo-Name=plasma-sal-games
+
+X-Plasma-Sal-Query=game
+X-Plasma-Sal-Runner=services
+X-Plasma-Sal-Relevance=1

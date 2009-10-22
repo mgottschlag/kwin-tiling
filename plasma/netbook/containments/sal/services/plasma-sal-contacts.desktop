@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Contacts
+Comment=List all your contacts
+Icon=view-pim-contacts
+
+Type=Service
+X-KDE-ServiceTypes=Plasma/Sal/Menu
+X-KDE-PluginInfo-Name=plasma-sal-contacts
+
+X-Plasma-Sal-Query=contacts
+X-Plasma-Sal-Runner=kabccontacts
+X-Plasma-Sal-Relevance=10

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Education
+Comment=Educational applications
+Icon=applications-education
+
+Type=Service
+X-KDE-ServiceTypes=Plasma/Sal/Menu
+X-KDE-PluginInfo-Name=plasma-sal-education
+
+X-Plasma-Sal-Query=education
+X-Plasma-Sal-Runner=services
+X-Plasma-Sal-Relevance=1

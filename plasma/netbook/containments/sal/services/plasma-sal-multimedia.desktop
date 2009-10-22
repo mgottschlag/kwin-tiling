@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Multimedia
+Comment=Multimedia applications, such as audio and video players
+Icon=applications-multimedia
+
+Type=Service
+X-KDE-ServiceTypes=Plasma/Sal/Menu
+X-KDE-PluginInfo-Name=plasma-sal-multimedia
+
+X-Plasma-Sal-Query=audiovideo
+X-Plasma-Sal-Runner=services
+X-Plasma-Sal-Relevance=1

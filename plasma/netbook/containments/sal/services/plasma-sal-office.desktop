@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Office
+Comment=Office related applications, such as wordprocessing and spreadsheets
+Icon=applications-office
+
+Type=Service
+X-KDE-ServiceTypes=Plasma/Sal/Menu
+X-KDE-PluginInfo-Name=plasma-sal-office
+
+X-Plasma-Sal-Query=office
+X-Plasma-Sal-Runner=services
+X-Plasma-Sal-Relevance=1

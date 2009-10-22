@@ -37,6 +37,8 @@
 #include <KIconLoader>
 #include <KLineEdit>
 #include <KStandardDirs>
+#include <KService>
+#include <KServiceTypeTrader>
 
 #include <Plasma/Theme>
 #include <Plasma/Frame>
@@ -110,27 +112,26 @@ void SearchLaunch::init()
     QObject::connect(lockAction, SIGNAL(triggered(bool)), this, SLOT(toggleImmutability()));
     m_toolBox->addTool(lockAction);
 
-    QString defaultMatchesConfig = KStandardDirs::locate("appdata", "defaultmatchesrc");
-    KSharedPtr<KSharedConfig> config = KSharedConfig::openConfig(defaultMatchesConfig);
-    KConfigGroup iconsGroup(config, "Matches");
+    KService::List services = KServiceTypeTrader::self()->query("Plasma/Sal/Menu");
+    if (!services.isEmpty()) {
+        foreach (const KService::Ptr &service, services) {
+            const QString query = service->property("X-Plasma-Sal-Query", QVariant::String).toString();
+            const QString runner = service->property("X-Plasma-Sal-Runner", QVariant::String).toString();
+            const int relevance = service->property("X-Plasma-Sal-Relevance", QVariant::Int).toInt();
 
-    foreach (const QString &group, iconsGroup.groupList()) {
-        KConfigGroup iconConfig(&iconsGroup, group);
+            Plasma::QueryMatch match(0);
+            match.setType(Plasma::QueryMatch::ExactMatch);
+            match.setRelevance(relevance);
+            match.setId(query);
+            match.setIcon(KIcon(service->icon()));
+            match.setText(service->name());
+            match.setSubtext(service->comment());
+            QStringList data;
+            data << query << runner;
+            match.setData(data);
 
-        Plasma::QueryMatch match(0);
-        match.setType(Plasma::QueryMatch::ExactMatch);
-        match.setRelevance(1.0/(qreal)group.toInt());
-
-        QString query = iconConfig.readEntry("Query");
-        match.setId(query);
-        match.setIcon(KIcon(iconConfig.readEntry("Icon")));
-        match.setText(iconConfig.readEntry("Name"));
-        QString runner  = iconConfig.readEntry("Runner");
-        QStringList data;
-        data << query << runner;
-        match.setData(data);
-
-        m_defaultMatches.append(match);
+            m_defaultMatches.append(match);
+        }
     }
 }
 
@@ -217,6 +218,7 @@ void SearchLaunch::launch(Plasma::IconWidget *icon)
     Plasma::QueryMatch match = m_matches.value(icon, Plasma::QueryMatch(0));
     if (m_runnermg->searchContext()->query().isEmpty()) {
         QStringList data = match.data().value<QStringList>();
+
         if (data.count() == 2) {
             doSearch(data.first(), data.last());
         } else {

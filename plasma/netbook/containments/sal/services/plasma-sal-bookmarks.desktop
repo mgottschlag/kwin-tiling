@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Bookmarks
+Comment=List all your bookmarks
+Icon=bookmarks
+
+Type=Service
+X-KDE-ServiceTypes=Plasma/Sal/Menu
+X-KDE-PluginInfo-Name=plasma-sal-bookmarks
+
+X-Plasma-Sal-Query=bookmarks
+X-Plasma-Sal-Runner=bookmarks
+X-Plasma-Sal-Relevance=9

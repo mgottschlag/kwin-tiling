@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=System
+Comment=System preferences and setup programs
+Icon=preferences-system
+
+Type=Service
+X-KDE-ServiceTypes=Plasma/Sal/Menu
+X-KDE-PluginInfo-Name=plasma-sal-system
+
+X-Plasma-Sal-Query=system
+X-Plasma-Sal-Runner=services
+X-Plasma-Sal-Relevance=1

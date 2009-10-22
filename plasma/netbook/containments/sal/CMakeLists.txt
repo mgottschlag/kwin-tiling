@@ -13,4 +13,7 @@ target_link_libraries(plasma_containment_sal ${KDE4_PLASMA_LIBS} ${KDE4_KIO_LIBS
 
 install(TARGETS plasma_containment_sal DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-containment-sal.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-install(FILES defaultmatchesrc DESTINATION ${DATA_INSTALL_DIR}/plasma-netbook/)
+install(FILES plasma-sal-menu.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR})
+
+file(GLOB services services/*.desktop)
+install(FILES ${services} DESTINATION ${SERVICES_INSTALL_DIR})

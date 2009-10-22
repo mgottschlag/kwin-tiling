@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Graphics
+Comment=Graphics applications, such as paint programs and image viewers
+Icon=applications-graphics
+
+Type=Service
+X-KDE-ServiceTypes=Plasma/Sal/Menu
+X-KDE-PluginInfo-Name=plasma-sal-graphics
+
+X-Plasma-Sal-Query=graphics
+X-Plasma-Sal-Runner=services
+X-Plasma-Sal-Relevance=1

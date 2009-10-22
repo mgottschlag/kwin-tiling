@@ -1,0 +1,18 @@
+[Desktop Entry]
+Type=ServiceType
+X-KDE-ServiceType=Plasma/Sal/Menu
+
+Name=Plasma Search and Launch menu
+Comment=Menu entry for The Plasma search and launch activity
+
+[PropertyDef::X-Plasma-Sal-Query]
+Type=QString
+
+[PropertyDef::X-Plasma-Sal-Runner]
+Type=QString
+
+[PropertyDef::X-Plasma-Sal-Relevance]
+Type=int
+
+
+
