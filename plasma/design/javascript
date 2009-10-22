@@ -97,19 +97,33 @@ Animations
 ==========
 An animation object can be retrieved by calling the animation(string) method.
 The string corresponds to the Plasma::Animator::Animation enumeration, and currently
-the following are supported (case insensitive):
+the following are supported (case insensitive) along with a list of their properties:
 
 * fade
 * grow
 * expand
+* pause
 * pulse
 * rotate
 * rotateStacked
 * slide
 
+All animations support the following properties:
+
+* duration (int): length of the animation in ms
+* widgetToAnimate: the QGraphicsWidget (e.g. a Plasma::Widget) to operate on
+* forwards (bool): true if the animation should play forwards or false if backwards (rewind)
+* visible (bool): whether or not the animation is currently visible (??!?!)
+
 By default the animation object is associated with the plasmoid itself. By setting
 the widgetToAnimate property, however, it can be re-assigned to any QGraphicsWidget
-(e.g. plasma widgets) one wants.
+(e.g. Plasma widgets such as push buttons, sliders, etc) one wants.
+
+
+Animations may also be put into groups for convenient sequential or parallel running
+by creating an AnimationGroup object and then calling add(widget) on it. The parallel (bool)
+property holds whether or not the animations should be run in parallel or sequentially.
+The default is sequential.
 
 Painting
 ========
