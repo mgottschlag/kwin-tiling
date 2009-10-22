@@ -419,7 +419,9 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
     if (event->timerId() == m_activateTimerId) {
         killTimer(m_activateTimerId);
         m_activateTimerId = 0;
-        activate();
+        if (!isActive()) {
+            activate();
+        }
     } else if (event->timerId() == m_updateGeometryTimerId) {
         killTimer(m_updateGeometryTimerId);
         m_updateGeometryTimerId = 0;
@@ -854,7 +856,7 @@ void AbstractTaskItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
     event->accept();
 
     if (!m_activateTimerId) {
-        m_activateTimerId = startTimer(300);
+        m_activateTimerId = startTimer(500);
     }
 }
 
@@ -866,7 +868,7 @@ void AbstractTaskItem::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
     // stops moving
     if (m_activateTimerId) {
         killTimer(m_activateTimerId);
-        m_activateTimerId = startTimer(300);
+        m_activateTimerId = startTimer(500);
     }
 }
 
