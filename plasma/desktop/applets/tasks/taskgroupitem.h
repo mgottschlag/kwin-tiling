@@ -134,11 +134,12 @@ public slots:
     void updateActive(AbstractTaskItem *);
 
 protected:
-    virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
-    virtual void paint(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *widget);
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+    void paint(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *widget);
 
-    virtual void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
-    virtual void dropEvent(QGraphicsSceneDragDropEvent *event);
+    void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
+    void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
+    void dropEvent(QGraphicsSceneDragDropEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
     bool focusNextPrevChild(bool next);
 
