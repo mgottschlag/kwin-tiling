@@ -1,5 +1,13 @@
 [Misc]
 Name=MS Windows XP
+Name[pt]=MS Windows XP
+Name[sv]=MS Windows XP
+Name[uk]=MS Windows XP
+Name[x-test]=xxMS Windows XPxx
 Comment=Style that uses the Windows XP style engine
+Comment[pt]=Um estilo que usa o motor de estilos do Windows XP
+Comment[sv]=Stil som använder Windows XP stil
+Comment[uk]=Стиль, що використовує рушій стилів Windows XP
+Comment[x-test]=xxStyle that uses the Windows XP style enginexx
 [KDE]
 WidgetStyle=WindowsXP

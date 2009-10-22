@@ -1,5 +1,13 @@
 [Misc]
 Name=GTK+ Style
+Name[pt]=Estilo GTK+
+Name[sv]=GTK+ stil
+Name[uk]=Стиль GTK+
+Name[x-test]=xxGTK+ Stylexx
 Comment=Style that uses the GTK+ theming engine
+Comment[pt]=Um estilo que usa o motor de temas do GTK+
+Comment[sv]=Stil som använder GTK+ tema
+Comment[uk]=Стиль, що використовує рушій тем GTK+
+Comment[x-test]=xxStyle that uses the GTK+ theming enginexx
 [KDE]
 WidgetStyle=Gtk

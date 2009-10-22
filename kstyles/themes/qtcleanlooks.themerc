@@ -1,5 +1,13 @@
 [Misc]
 Name=Cleanlooks
+Name[pt]=Cleanlooks
+Name[sv]=Cleanlooks
+Name[uk]=Cleanlooks
+Name[x-test]=xxCleanlooksxx
 Comment=Built-in unthemed style similar to Clearlooks from GNOME
+Comment[pt]=Um estilo incorporado sem tema, semelhante ao Clearlooks do GNOME
+Comment[sv]=Inbyggd stil utan tema som liknar Clearlooks från GNOME
+Comment[uk]=Вбудований стиль без тем, подібний до Clearlooks у GNOME
+Comment[x-test]=xxBuilt-in unthemed style similar to Clearlooks from GNOMExx
 [KDE]
 WidgetStyle=Cleanlooks
