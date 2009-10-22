@@ -990,10 +990,17 @@ void TaskGroupItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
         if (!m_popupMenuTimer) {
             m_popupMenuTimer = new QTimer(this);
             m_popupMenuTimer->setSingleShot(true);
-            m_popupMenuTimer->setInterval(300);
+            m_popupMenuTimer->setInterval(500);
             connect(m_popupMenuTimer, SIGNAL(timeout()), this, SLOT(popupMenu()));
         }
-        m_popupMenuTimer->start(300);
+        m_popupMenuTimer->start();
+    }
+}
+
+void TaskGroupItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    if (m_popupMenuTimer) {
+        m_popupMenuTimer->stop();
     }
 }
 
