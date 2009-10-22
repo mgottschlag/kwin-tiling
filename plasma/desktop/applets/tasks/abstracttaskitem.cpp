@@ -78,7 +78,8 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet)
       m_hoverEffectTimerId(0),
       m_attentionTimerId(0),
       m_attentionTicks(0),
-      m_fadeIn(true)
+      m_fadeIn(true),
+      m_showText(true)
 {
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     setAcceptsHoverEvents(true);
@@ -546,14 +547,17 @@ void AbstractTaskItem::syncActiveRect()
                         -(right - activeRight), -(bottom - activeBottom));
 
     itemBackground->setElementPrefix(m_backgroundPrefix);
+
+    // check to see if there is enough room!
+    QFontMetrics fm(font());
+    const int minimumWidth = left + 8 + IconTextSpacing + right;
+    m_showText = (size().width() >= fm.width("mmm") + minimumWidth);
 }
 
 void AbstractTaskItem::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     m_cachedShadow = QPixmap();
-
     syncActiveRect();
-
     resizeBackground(event->newSize().toSize());
 }
 
@@ -636,17 +640,18 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
     WindowTaskItem *window = qobject_cast<WindowTaskItem *>(this);
     QGraphicsWidget *busyWidget;
     busyWidget = window ? window->busyWidget() : 0;
-    
+    const QRectF iconR = iconRect(bounds);
+
     if (busyWidget) {
-        busyWidget->setGeometry(iconRect(bounds));
+        busyWidget->setGeometry(iconR);
         busyWidget->show();
     } else {
         if ((!m_animId && ~option->state & QStyle::State_MouseOver) 
             ||(m_oldBackgroundPrefix != "hover" && m_backgroundPrefix != "hover")) {
-            m_icon.paint(painter, iconRect(bounds).toRect());
+            m_icon.paint(painter, iconR.toRect());
         } else {
             KIconEffect *effect = KIconLoader::global()->iconEffect();
-            QPixmap result = m_icon.pixmap(iconRect(bounds).toRect().size());
+            QPixmap result = m_icon.pixmap(iconR.toRect().size());
 
             if (effect->hasEffect(KIconLoader::Desktop, KIconLoader::ActiveState)) {
                 if (qFuzzyCompare(qreal(1.0), m_alpha)) {
@@ -657,22 +662,24 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
                                         KIconLoader::ActiveState), m_fadeIn?m_alpha:1-m_alpha);
                 }
             }
-            painter->drawPixmap(iconRect(bounds).topLeft(), result);
+            painter->drawPixmap(iconR.topLeft(), result);
         }
     }
-    
+
     painter->setPen(QPen(textColor(), 1.0));
 
-    QRect rect = textRect(bounds).toRect();
-    if (rect.height() > 20) {
-        rect.adjust(2, 2, -2, -2); // Create a text margin
-    }
-    QTextLayout layout;
-    layout.setFont(KGlobalSettings::taskbarFont());
-    layout.setTextOption(textOption());
+    if (m_showText) {
+        QRect rect = textRect(bounds).toRect();
+        if (rect.height() > 20) {
+            rect.adjust(2, 2, -2, -2); // Create a text margin
+        }
+        QTextLayout layout;
+        layout.setFont(KGlobalSettings::taskbarFont());
+        layout.setTextOption(textOption());
 
-    layoutText(layout, m_text, rect.size());
-    drawTextLayout(painter, layout, rect);
+        layoutText(layout, m_text, rect.size());
+        drawTextLayout(painter, layout, rect);
+    }
 
     TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(this);
     if (groupItem) {
@@ -943,8 +950,11 @@ QRectF AbstractTaskItem::iconRect(const QRectF &b) const
 {
     QRectF bounds(b);
     const int right = bounds.right();
-    //leave enough space for the text. useful in vertical panel
-    bounds.setWidth(qMax(bounds.width() / 3, qMin(minimumSize().height(), bounds.width())));
+
+    if (m_showText) {
+        //leave enough space for the text. useful in vertical panel
+        bounds.setWidth(qMax(bounds.width() / 3, qMin(minimumSize().height(), bounds.width())));
+    }
 
     //restore right position if the layout is RTL
     if (QApplication::layoutDirection() == Qt::RightToLeft) {
@@ -963,7 +973,8 @@ QRectF AbstractTaskItem::iconRect(const QRectF &b) const
         }
     }
 
-    return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignLeft | Qt::AlignVCenter,
+    return QStyle::alignedRect(QApplication::layoutDirection(),
+                               (m_showText ? Qt::AlignLeft : Qt::AlignCenter) | Qt::AlignVCenter,
                                iconSize, bounds.toRect());
 }
 

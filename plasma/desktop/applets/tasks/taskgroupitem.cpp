@@ -761,6 +761,8 @@ void TaskGroupItem::resizeEvent(QGraphicsSceneResizeEvent *event)
         m_popupDialog->getContentsMargins(&left, &top, &right, &bottom);
         m_offscreenWidget->setMinimumWidth(size().width() - left - right);
     }
+
+    AbstractTaskItem::resizeEvent(event);
 }
 
 void TaskGroupItem::expand()

@@ -237,6 +237,7 @@ protected:
     int m_attentionTicks;
 
     bool m_fadeIn : 1;
+    bool m_showText : 1;
 
     // distance (in pixels) between a task's icon and its text
     static const int IconTextSpacing = 4;
