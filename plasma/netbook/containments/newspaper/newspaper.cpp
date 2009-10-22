@@ -139,6 +139,11 @@ void Newspaper::init()
         a->setText(i18n("Remove page"));
         m_toolBox->addTool(a);
     }
+
+    if (config().groupList().count() == 0) {
+        connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
+                this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
+    }
 }
 
 void Newspaper::toggleImmutability()

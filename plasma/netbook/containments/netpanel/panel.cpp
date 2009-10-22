@@ -100,6 +100,11 @@ void Panel::init()
     QObject::connect(lockAction, SIGNAL(triggered(bool)), this, SLOT(toggleImmutability()));
     lockAction->setShortcut(KShortcut("alt+d, l"));
     lockAction->setShortcutContext(Qt::ApplicationShortcut);
+
+    if (config().groupList().count() == 0) {
+        connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
+                this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
+    }
 }
 
 void Panel::toggleImmutability()
