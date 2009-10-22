@@ -34,7 +34,6 @@ class RemoteControlButtonPrivate;
 
 class SOLIDCONTROL_EXPORT RemoteControlButton
 {
-
 public:
     enum ButtonId {
         Unknown = -1,
@@ -170,6 +169,25 @@ public:
 
 private:
 	QSharedDataPointer<RemoteControlButtonPrivate> d;
+};
+
+class RemoteControlButtonPrivate: public QSharedData
+{
+    public:
+        RemoteControlButtonPrivate() {
+            id = RemoteControlButton::Unknown;
+            remoteName.clear();
+            name.clear();
+            repeatCounter = -1;
+        };
+        
+        RemoteControlButtonPrivate(const RemoteControlButtonPrivate &other) : QSharedData(other)
+        , remoteName(other.remoteName), id(other.id), name(other.name), repeatCounter(other.repeatCounter) {};
+        
+        QString remoteName;
+        Solid::Control::RemoteControlButton::ButtonId id;
+        QString name;
+        int repeatCounter;
 };
 
 } // Control

@@ -22,7 +22,6 @@
 
 #include "../solid_control_export.h"
 #include "../remotecontrol.h"
-#include "../remotecontrolbutton_p.h"
 #include <QtCore/QObject>
 #include <QtCore/QList>
 

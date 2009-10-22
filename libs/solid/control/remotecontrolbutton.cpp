@@ -17,7 +17,6 @@
 
 */
 
-#include "remotecontrolbutton_p.h"
 #include "remotecontrolbutton.h"
 
 #include <klocale.h>
