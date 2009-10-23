@@ -106,7 +106,12 @@ private Q_SLOTS:
     void showAppletBrowser();
     void appletBrowserDestroyed();
     void mainContainmentActivated();
+    //TODO: probably those functions can go in netview
     void controlBarVisibilityUpdate();
+    void showControlBar();
+    void hideControlBar();
+    void setControlBarVisible(bool visible);
+    void toggleControlBarVisibility();
     void configureContainment(Plasma::Containment *containment);
     void updateToolBoxVisibility(bool visible);
 

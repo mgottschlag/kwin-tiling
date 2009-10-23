@@ -458,6 +458,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
             connect(m_controlBar, SIGNAL(locationChanged(const NetView *)), this, SLOT(controlBarMoved(const NetView *)));
             connect(m_controlBar, SIGNAL(geometryChanged()), this, SLOT(positionPanel()));
+            connect(m_controlBar, SIGNAL(containmentActivated()), this, SLOT(showControlBar()));
         }
 
         m_controlBar->setContainment(containment);
@@ -709,6 +710,34 @@ void PlasmaApp::controlBarVisibilityUpdate()
         Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
         m_controlBar->hide();
     }
+}
+
+void PlasmaApp::showControlBar()
+{
+    setControlBarVisible(true);
+}
+
+void PlasmaApp::hideControlBar()
+{
+    setControlBarVisible(false);
+}
+
+void PlasmaApp::setControlBarVisible(bool visible)
+{
+   if (visible) {
+        destroyUnHideTrigger();
+        Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
+        m_controlBar->show();
+    } else {
+        createUnhideTrigger();
+        Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
+        m_controlBar->hide();
+    }
+}
+
+void PlasmaApp::toggleControlBarVisibility()
+{
+    setControlBarVisible(!m_controlBar->isVisible());
 }
 
 void PlasmaApp::createUnhideTrigger()
