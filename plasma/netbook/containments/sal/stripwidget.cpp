@@ -49,6 +49,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
     m_arrowsLayout = new QGraphicsLinearLayout(this);
+    m_arrowsLayout->setContentsMargins(0, 0, 0, 0);
     setFocusPolicy(Qt::StrongFocus);
 
     m_leftArrow = new Plasma::ToolButton(this);
