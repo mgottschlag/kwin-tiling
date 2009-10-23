@@ -133,7 +133,7 @@ bool ItemView::eventFilter(QObject *watched, QEvent *event)
 
         //FIXME: this is not desired probably?
         if (orientation() == Qt::Horizontal) {
-            setMinimumHeight(re->newSize().height());
+            setMinimumHeight(re->newSize().height() + (size().height()-contentsRect().height()+6));
         }
     //pass click only if the user didn't move the mouse FIXME: we need sendevent there
     } else if(icon && event->type() == QEvent::GraphicsSceneMousePress) {

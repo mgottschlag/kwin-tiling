@@ -142,6 +142,11 @@ int ItemContainer::count() const
 void ItemContainer::setOrientation(Qt::Orientation orientation)
 {
     m_orientation = orientation;
+    if (orientation == Qt::Horizontal) {
+        setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    } else {
+        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    }
 }
 
 Qt::Orientation ItemContainer::orientation() const
@@ -247,8 +252,10 @@ void ItemContainer::relayout()
         show();
     }
 
-    setMaximumSize(sizeHint(Qt::MinimumSize, QSizeF()));
-    resize(sizeHint(Qt::MinimumSize, QSizeF()));
+    const QSizeF newSize = sizeHint(Qt::MinimumSize, QSizeF());
+
+    setMaximumSize(newSize);
+    resize(newSize);
     m_relayoutTimer->stop();
 }
 
