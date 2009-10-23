@@ -157,11 +157,6 @@ void Panel::init()
     m_lastSpaceTimer = new QTimer(this);
     m_lastSpaceTimer->setSingleShot(true);
     connect(m_lastSpaceTimer, SIGNAL(timeout()), this, SLOT(adjustLastSpace()));
-
-    if (config().groupList().count() == 0) {
-        connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
-                this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
-    }
 }
 
 QList<QAction*> Panel::contextualActions()
@@ -525,6 +520,11 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
         }
     }
 
+    if (constraints & Plasma::StartupCompletedConstraint) {
+        connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
+                this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
+    }
+
     if (constraints & Plasma::ImmutableConstraint) {
         bool unlocked = immutability() == Plasma::Mutable;
 
@@ -714,9 +714,6 @@ void Panel::restore(KConfigGroup &group)
     }
 
     updateSize();
-
-    connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
-            this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
 }
 
 void Panel::saveContents(KConfigGroup &group) const
