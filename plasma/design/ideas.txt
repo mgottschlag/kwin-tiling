@@ -1,0 +1,27 @@
+== Pimp my plasmoid ==
+
+1) ublog
+ - rotation when changing Timeline ---> Replies ---> Messages
+ - pulse on link selection
+ - fade in when selecting edit boxi
+ - drop shadow on photo
+ - grow item on mouse hover (or just photo)
+
+
+2) dictionary
+ - Circle (now loading) (small circles expand and fade out, like
+wii fit counter)
+
+
+3) rss reader
+ - slide for post paging
+ - pulse for selection
+
+== plasma-netbook ==
+
+ - grow/shrink on selection
+ - pulse on click
+ - kinetic scrolling: move right <--> left for scrollwheel events in
+shortcuts panel
+
+
