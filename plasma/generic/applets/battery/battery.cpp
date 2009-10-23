@@ -369,7 +369,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         m_controlsLayout = new QGraphicsGridLayout(controls);
         m_controlsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-        m_controlsLayout->setColumnPreferredWidth(0, rowHeight);
+        //m_controlsLayout->setColumnPreferredWidth(0, rowHeight);
         m_controlsLayout->setColumnMinimumWidth(1, 2*columnWidth);
         m_controlsLayout->setColumnFixedWidth(2, rowHeight*2);
         m_controlsLayout->setHorizontalSpacing(0);
@@ -381,7 +381,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         QGraphicsWidget *infoWidget = new QGraphicsWidget(controls);
         m_infoLayout = new QGraphicsGridLayout(infoWidget);
-        m_infoLayout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding));
+        //m_infoLayout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding));
 
         m_infoLayout->setColumnStretchFactor(0, 1.4);
         m_infoLayout->setColumnStretchFactor(1, 2); // second column wider than first
@@ -391,16 +391,16 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         infoWidget->setLayout(m_infoLayout);
 
         m_batteryLabelLabel = new Plasma::Label(infoWidget);
-        m_batteryLabelLabel->nativeWidget()->setWordWrap(false);
-        m_batteryLabelLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
+        //m_batteryLabelLabel->nativeWidget()->setWordWrap(false);
+        //m_batteryLabelLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
         m_batteryInfoLabel = new Plasma::Label(infoWidget);
-        m_batteryInfoLabel->nativeWidget()->setWordWrap(false);
+        //m_batteryInfoLabel->nativeWidget()->setWordWrap(false);
         m_infoLayout->addItem(m_batteryLabelLabel, 0, 0);
         m_infoLayout->addItem(m_batteryInfoLabel, 0, 1);
 
         m_acLabelLabel = new Plasma::Label(infoWidget);
-        m_acLabelLabel->nativeWidget()->setWordWrap(false);
-        m_acLabelLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
+        //m_acLabelLabel->nativeWidget()->setWordWrap(false);
+        //m_acLabelLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
         m_acInfoLabel = new Plasma::Label(infoWidget);
         m_acInfoLabel->nativeWidget()->setWordWrap(false);
         m_infoLayout->addItem(m_acLabelLabel, 1, 0);
@@ -464,8 +464,9 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         connect(brightnessIcon, SIGNAL(clicked()),
                 this, SLOT(setFullBrightness()));
         brightnessIcon->setDrawBackground(true);
-        brightnessIcon->setMinimumSize(rowHeight, rowHeight);
-        brightnessIcon->setMaximumSize(rowHeight, rowHeight);
+        int s = KIconLoader::SizeSmallMedium;
+        brightnessIcon->setMinimumSize(s, s);
+        brightnessIcon->setMaximumSize(s, s);
         m_brightnessLayout->addItem(brightnessIcon);
         m_controlsLayout->addItem(m_brightnessLayout, row, 1, 1, 1);
         row++;
@@ -494,6 +495,8 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         actionsLayout->setColumnSpacing(0, 0);
         actionsLayout->setColumnSpacing(1, 0);
 
+        int buttonsize = KIconLoader::SizeMedium + 4;
+
         // Sleep and Hibernate buttons
         QSet<Solid::PowerManagement::SleepState> sleepstates = Solid::PowerManagement::supportedSleepStates();
         foreach (const Solid::PowerManagement::SleepState &sleepstate, sleepstates) {
@@ -506,7 +509,8 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
                 suspendButton->setText(i18n("Sleep"));
                 suspendButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
                 suspendButton->setOrientation(Qt::Horizontal);
-                suspendButton->setMaximumHeight(36);
+                suspendButton->setMaximumHeight(buttonsize);
+                suspendButton->setMinimumHeight(buttonsize);
                 suspendButton->setDrawBackground(true);
                 suspendButton->setTextBackgroundColor(QColor());
                 actionsLayout->addItem(suspendButton, 0, 0);
@@ -518,10 +522,11 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
                 hibernateButton->setText(i18n("Hibernate"));
                 hibernateButton->setOrientation(Qt::Horizontal);
                 hibernateButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-                hibernateButton->setMaximumHeight(36);
+                hibernateButton->setMaximumHeight(buttonsize);
+                hibernateButton->setMinimumHeight(buttonsize);
                 hibernateButton->setDrawBackground(true);
                 hibernateButton->setTextBackgroundColor(QColor());
-                actionsLayout->addItem(hibernateButton, 0, 1);
+                actionsLayout->addItem(hibernateButton, 1, 0);
                 connect(hibernateButton, SIGNAL(clicked()), this, SLOT(hibernate()));
             }
         }
@@ -531,9 +536,10 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         // More settings button
         Plasma::IconWidget *configButton = new Plasma::IconWidget(controls);
-        configButton->setText(i18n("More..."));
+        configButton->setText(i18n("Configure..."));
         configButton->setOrientation(Qt::Horizontal);
-        configButton->setMaximumHeight(36);
+        configButton->setMaximumHeight(buttonsize);
+        configButton->setMinimumHeight(buttonsize);
         configButton->setDrawBackground(true);
         configButton->setTextBackgroundColor(QColor());
         configButton->setIcon("preferences-system-power-management");
@@ -593,12 +599,12 @@ void Battery::updateStatus()
                 if (m_numOfBattery == 0) {
                     //kDebug() << "zero batteries ...";
                 } else if (m_numOfBattery == 1) {
-                    m_batteryLabelLabel->setText(i18n("<b>Battery:</b>"));
+                    m_batteryLabelLabel->setText(i18n("Battery:"));
                     if (battery_data.value()["Plugged in"].toBool()) {
                         if (state == "NoCharge") {
                             m_batteryInfoLabel->setText(i18n("%1% (fully charged)", battery_data.value()["Percent"].toString()));
                         } else if (state == "Discharging") {
-                            m_batteryInfoLabel->setText(i18nc("Shown when a time estimate is not available", "%1% (discharging)<br />", battery_data.value()["Percent"].toString()));
+                            m_batteryInfoLabel->setText(i18nc("Shown when a time estimate is not available", "%1% (discharging)\n", battery_data.value()["Percent"].toString()));
                         } else {
                             m_batteryInfoLabel->setText(i18n("%1% (charging)", battery_data.value()["Percent"].toString()));
                         }
@@ -623,7 +629,7 @@ void Battery::updateStatus()
                 }
             //}
         }
-        m_acLabelLabel->setText(i18n("<b>AC Adapter:</b>")); // ouch ...
+        m_acLabelLabel->setText(i18n("AC Adapter:")); // ouch ...
         if (m_acAdapterPlugged) {
             m_acInfoLabel->setText(i18n("Plugged in "));
         } else {
