@@ -139,11 +139,6 @@ void Newspaper::init()
         a->setText(i18n("Remove page"));
         m_toolBox->addTool(a);
     }
-
-    if (config().groupList().count() == 0) {
-        connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
-                this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
-    }
 }
 
 void Newspaper::toggleImmutability()
@@ -351,6 +346,11 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
 {
     kDebug() << "constraints updated with" << constraints << "!!!!!!";
 
+    if (constraints & Plasma::StartupCompletedConstraint) {
+        connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
+                this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
+    }
+
     if (constraints & Plasma::SizeConstraint && m_appletOverlay) {
         m_appletOverlay->resize(size());
     }
@@ -551,9 +551,6 @@ void Newspaper::restore(KConfigGroup &group)
     }
 
     updateSize();
-
-    connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
-            this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
 }
 
 void Newspaper::saveContents(KConfigGroup &group) const

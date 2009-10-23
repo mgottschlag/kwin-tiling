@@ -100,11 +100,6 @@ void Panel::init()
     QObject::connect(lockAction, SIGNAL(triggered(bool)), this, SLOT(toggleImmutability()));
     lockAction->setShortcut(KShortcut("alt+d, l"));
     lockAction->setShortcutContext(Qt::ApplicationShortcut);
-
-    if (config().groupList().count() == 0) {
-        connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
-                this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
-    }
 }
 
 void Panel::toggleImmutability()
@@ -375,6 +370,8 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::StartupCompletedConstraint) {
+        connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
+                this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
         delete action("remove");
     }
 }
@@ -530,9 +527,6 @@ void Panel::restore(KConfigGroup &group)
     }
 
     updateSize();
-
-    connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
-            this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
 }
 
 void Panel::saveContents(KConfigGroup &group) const
