@@ -1,13 +1,19 @@
 [Misc]
 Name=MS Windows Vista
+Name[en_GB]=MS Windows Vista
 Name[pt]=MS Windows Vista
+Name[pt_BR]=MS Windows Vista
 Name[sv]=MS Windows Vista
 Name[uk]=MS Windows Vista
 Name[x-test]=xxMS Windows Vistaxx
+Name[zh_TW]=MS Windows Vista
 Comment=Style that uses the Windows Vista style engine
+Comment[en_GB]=Style that uses the Windows Vista style engine
 Comment[pt]=Um estilo que usa o motor de estilos do Windows Vista
+Comment[pt_BR]=Estilo que usa o mecanismo de estilos do Windows Vista
 Comment[sv]=Stil som använder Windows Vista stil
 Comment[uk]=Стиль, що використовує рушій стилів Windows Vista
 Comment[x-test]=xxStyle that uses the Windows Vista style enginexx
+Comment[zh_TW]=使用 Windows Vista 樣式引擎的樣式
 [KDE]
 WidgetStyle=WindowsVista

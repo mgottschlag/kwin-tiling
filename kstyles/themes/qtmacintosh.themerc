@@ -1,13 +1,19 @@
 [Misc]
 Name=Mac OS X
+Name[en_GB]=Mac OS X
 Name[pt]=Mac OS X
+Name[pt_BR]=Mac OS X
 Name[sv]=Mac OS X
 Name[uk]=Mac OS X
 Name[x-test]=xxMac OS Xxx
+Name[zh_TW]=Mac OS X
 Comment=Style that uses the Apple Appearance Manager
+Comment[en_GB]=Style that uses the Apple Appearance Manager
 Comment[pt]=Um estilo que usa o Gestor de Aparências da Apple
+Comment[pt_BR]=Estilo que usa o gerenciador de aparências da Apple
 Comment[sv]=Stil som använder Apples utseendehanterare
 Comment[uk]=Стиль, що використовує Apple Appearance Manager
 Comment[x-test]=xxStyle that uses the Apple Appearance Managerxx
+Comment[zh_TW]=使用 Apple 外觀管理員的樣式
 [KDE]
 WidgetStyle=Macintosh
