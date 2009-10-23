@@ -299,11 +299,18 @@ void DeviceItem::setHovered(const bool hovered)
             m_labelFade = Plasma::Animator::create(Plasma::Animator::FadeAnimation, this);
             m_barFade = Plasma::Animator::create(Plasma::Animator::FadeAnimation, this);
             m_iconFade = Plasma::Animator::create(Plasma::Animator::FadeAnimation, this);
-        }
 
-        m_labelFade->setWidgetToAnimate(m_descriptionLabel);
-        m_barFade->setWidgetToAnimate(m_capacityBar);
-        m_iconFade->setWidgetToAnimate(m_leftActionIcon);
+            m_labelFade->setWidgetToAnimate(m_descriptionLabel);
+            m_barFade->setWidgetToAnimate(m_capacityBar);
+            m_iconFade->setWidgetToAnimate(m_leftActionIcon);
+
+            m_labelFade->setProperty("startOpacity", 1);
+            m_barFade->setProperty("startOpacity", 1);
+            m_iconFade->setProperty("startOpacity", 1);
+            m_labelFade->setProperty("targetOpacity", 0);
+            m_barFade->setProperty("targetOpacity", 0);
+            m_iconFade->setProperty("targetOpacity", 0);
+        }
 
         m_labelFade->start();
         m_barFade->start();
@@ -510,13 +517,11 @@ void DeviceItem::clicked()
     }
 }
 
-
 void DeviceItem::actionClicked(Plasma::IconWidget* item)
 {
     QString action = item->data(NotifierDialog::ActionRole).toString();
     emit actionActivated(this, udi(), action);
 }
-
 
 void DeviceItem::updateColors()
 {
