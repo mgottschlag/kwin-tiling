@@ -41,7 +41,7 @@
 //Own
 #include "notifierdialog.h"
 #include "deviceitem.h"
-
+#include <Plasma/Containment>
 using namespace Plasma;
 using namespace Notifier;
 
@@ -228,6 +228,7 @@ void DeviceNotifier::notifyDevice(const QString &udi)
         changeNotifierIcon("preferences-desktop-notification");
         update();
         QTimer::singleShot(NOTIFICATION_TIMEOUT, m_dialog, SLOT(resetNotifierIcon()));
+        emit activate();
     } else {
         setStatus(Plasma::ActiveStatus);
     }
