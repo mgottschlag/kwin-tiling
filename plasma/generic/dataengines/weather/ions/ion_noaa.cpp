@@ -946,6 +946,7 @@ void NOAAIon::readForecast(const QString& source, QXmlStreamReader& xml)
                         QString summary = xml.attributes().value("weather-summary").toString();
                         forecasts[i].summary = i18nc("weather forecast", summary.toUtf8());
                         //kDebug() << forecasts[i].summary;
+			kDebug() << "i18n summary string: " << qPrintable(i18n(forecasts[i].summary.toUtf8()));
                         i++;
                     }
                 }
