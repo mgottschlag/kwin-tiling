@@ -395,10 +395,10 @@ void BackgroundDialog::changeBackgroundMode(int mode)
 
     if (!d->wallpaper) {
         d->wallpaper = Plasma::Wallpaper::load(wallpaperInfo.first);
-        d->preview->setPreview(d->wallpaper);
     }
 
     if (d->wallpaper) {
+        d->preview->setPreview(d->wallpaper);
         d->wallpaper->setRenderingMode(wallpaperInfo.second);
         KConfigGroup cfg = wallpaperConfig(wallpaperInfo.first);
         //kDebug() << "making a" << wallpaperInfo.first << "in mode" << wallpaperInfo.second;
