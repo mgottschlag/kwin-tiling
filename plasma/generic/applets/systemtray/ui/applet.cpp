@@ -654,6 +654,7 @@ void Applet::addNotification(Notification *notification)
     extenderItem->setWidget(new NotificationWidget(notification, extenderItem));
 
     showPopup(m_autoHideTimeout);
+    emit activate();
 }
 
 void Applet::addJob(Job *job)
@@ -665,6 +666,7 @@ void Applet::addJob(Job *job)
     showPopup(m_autoHideTimeout);
 
     extenderItem->setGroup(extender()->group("jobGroup"));
+    emit activate();
 }
 
 void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
