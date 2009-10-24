@@ -88,12 +88,7 @@ void Panel::init()
 {
     Containment::init();
 
-    //FIXME HACK find a way to make it work from plasmaapp not there
     Plasma::Corona *c = corona();
-    /*foreach (Plasma::Containment *cont, c->containments()) {
-        connect(cont, SIGNAL(toolBoxVisibilityChanged(bool)),
-            this, SLOT(updateConfigurationMode(bool)));
-    }*/
     connect(c, SIGNAL(containmentAdded(Plasma::Containment *)),
             this, SLOT(containmentAdded(Plasma::Containment *)));
 
