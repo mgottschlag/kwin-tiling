@@ -157,6 +157,10 @@ void PanelSpacer::paintInterface(QPainter *painter, const QStyleOptionGraphicsIt
 
 void PanelSpacer::updateConfigurationMode(bool config)
 {
+    if (containment() && containment()->immutability() != Plasma::Mutable) {
+        config = false;
+    }
+
     if (config != m_configurationMode) {
         m_configurationMode = config;
         update();
