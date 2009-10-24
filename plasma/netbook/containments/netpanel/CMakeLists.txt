@@ -1,6 +1,7 @@
 
 set(panel_SRCS
     panel.cpp
+    dummytoolbox.cpp
     ../common/linearappletoverlay.cpp
     ../common/appletmovespacer.cpp
     )

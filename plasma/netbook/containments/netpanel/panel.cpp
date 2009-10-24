@@ -19,6 +19,7 @@
 */
 
 #include "panel.h"
+#include "dummytoolbox.h"
 #include "../common/linearappletoverlay.h"
 
 #include <limits>
@@ -68,12 +69,15 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     setMaximumSize(size);
     setDrawWallpaper(false);
 
+    DummyToolBox *toolBox = new DummyToolBox(this);
+    setToolBox(toolBox);
+
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
 
     connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
             this, SLOT(appletRemoved(Plasma::Applet*)));
-    /*connect(this, SIGNAL(toolBoxVisibilityChanged(bool)),
-            this, SLOT(updateConfigurationMode(bool)));*/
+    connect(this, SIGNAL(toolBoxVisibilityChanged(bool)),
+            this, SLOT(updateConfigurationMode(bool)));
 }
 
 Panel::~Panel()
@@ -86,10 +90,10 @@ void Panel::init()
 
     //FIXME HACK find a way to make it work from plasmaapp not there
     Plasma::Corona *c = corona();
-    foreach (Plasma::Containment *cont, c->containments()) {
+    /*foreach (Plasma::Containment *cont, c->containments()) {
         connect(cont, SIGNAL(toolBoxVisibilityChanged(bool)),
             this, SLOT(updateConfigurationMode(bool)));
-    }
+    }*/
     connect(c, SIGNAL(containmentAdded(Plasma::Containment *)),
             this, SLOT(containmentAdded(Plasma::Containment *)));
 
