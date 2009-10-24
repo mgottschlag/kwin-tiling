@@ -73,10 +73,6 @@ protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
-Q_SIGNALS:
-    void toggled();
-    void visibilityChanged(bool);
-
 private Q_SLOTS:
     void containmentGeometryChanged();
     void animateHighlight(qreal progress);
