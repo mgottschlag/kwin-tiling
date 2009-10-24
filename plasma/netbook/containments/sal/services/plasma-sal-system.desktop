@@ -87,6 +87,10 @@ Name[x-test]=xxSystemxx
 Name[zh_CN]=系统
 Name[zh_TW]=系統
 Comment=System preferences and setup programs
+Comment[pt]=Preferências do sistema e programas de configuração
+Comment[sv]=Systemanpassning och inställningsprogram
+Comment[uk]=Налаштування системи та програми для налаштування
+Comment[x-test]=xxSystem preferences and setup programsxx
 Icon=preferences-system
 
 Type=Service

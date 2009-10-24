@@ -87,6 +87,10 @@ Name[x-test]=xxMultimediaxx
 Name[zh_CN]=多媒体
 Name[zh_TW]=多媒體
 Comment=Multimedia applications, such as audio and video players
+Comment[pt]=Aplicações multimédia, como os leitores de áudio e vídeo
+Comment[sv]=Multimediaprogram, som ljud- och videospelare
+Comment[uk]=Мультимедійні програми, зокрема програвачі звукових та відеоданих
+Comment[x-test]=xxMultimedia applications, such as audio and video playersxx
 Icon=applications-multimedia
 
 Type=Service

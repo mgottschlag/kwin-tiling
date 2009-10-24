@@ -87,6 +87,10 @@ Name[x-test]=xxGamesxx
 Name[zh_CN]=游戏
 Name[zh_TW]=遊戲
 Comment=A collection of fun games
+Comment[pt]=Uma colecção de jogos engraçados
+Comment[sv]=En samling roliga spel
+Comment[uk]=Збірка веселих ігор
+Comment[x-test]=xxA collection of fun gamesxx
 Icon=applications-games
 
 Type=Service

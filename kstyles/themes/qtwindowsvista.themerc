@@ -1,6 +1,7 @@
 [Misc]
 Name=MS Windows Vista
 Name[en_GB]=MS Windows Vista
+Name[eo]=MS Vindozo Vista
 Name[pt]=MS Windows Vista
 Name[pt_BR]=MS Windows Vista
 Name[sv]=MS Windows Vista
@@ -9,6 +10,7 @@ Name[x-test]=xxMS Windows Vistaxx
 Name[zh_TW]=MS Windows Vista
 Comment=Style that uses the Windows Vista style engine
 Comment[en_GB]=Style that uses the Windows Vista style engine
+Comment[eo]=Stiloj kiuj uzas la Vindozo-Vista etosan modulon
 Comment[pt]=Um estilo que usa o motor de estilos do Windows Vista
 Comment[pt_BR]=Estilo que usa o mecanismo de estilos do Windows Vista
 Comment[sv]=Stil som använder Windows Vista stil

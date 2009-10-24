@@ -1,6 +1,14 @@
 [Desktop Entry]
 Name=Contacts
+Name[pt]=Contactos
+Name[sv]=Kontakter
+Name[uk]=Контакти
+Name[x-test]=xxContactsxx
 Comment=List all your contacts
+Comment[pt]=Apresentar todos os seus contactos
+Comment[sv]=Lista alla kontakter
+Comment[uk]=Список всіх ваших записів контактів
+Comment[x-test]=xxList all your contactsxx
 Icon=view-pim-contacts
 
 Type=Service

@@ -3,7 +3,15 @@ Type=ServiceType
 X-KDE-ServiceType=Plasma/Sal/Menu
 
 Name=Plasma Search and Launch menu
+Name[pt]=Menu de Pesquisa e Lançamento do Plasma
+Name[sv]=Plasma sök- och startmeny
+Name[uk]=Меню пошуку і запуску Плазми
+Name[x-test]=xxPlasma Search and Launch menuxx
 Comment=Menu entry for The Plasma search and launch activity
+Comment[pt]=Item do menu para a actividade de pesquisa e lançamento do Plasma
+Comment[sv]=Menyalternativ för sök- och startåtgärder i Plasma
+Comment[uk]=Пункт меню для простору дій пошуку і запису Плазми
+Comment[x-test]=xxMenu entry for The Plasma search and launch activityxx
 
 [PropertyDef::X-Plasma-Sal-Query]
 Type=QString

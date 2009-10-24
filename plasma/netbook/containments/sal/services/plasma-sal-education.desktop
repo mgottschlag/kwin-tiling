@@ -81,6 +81,10 @@ Name[x-test]=xxEducationxx
 Name[zh_CN]=教育
 Name[zh_TW]=教育
 Comment=Educational applications
+Comment[pt]=Aplicações educativas
+Comment[sv]=Utbildningsprogram
+Comment[uk]=Навчальні програми
+Comment[x-test]=xxEducational applicationsxx
 Icon=applications-education
 
 Type=Service
