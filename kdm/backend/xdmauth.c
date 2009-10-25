@@ -38,18 +38,6 @@ from the copyright holder.
 #include "dm_auth.h"
 #include "dm_error.h"
 
-static char authName[256];
-static int authNameLen;
-
-void
-xdmInitAuth( unsigned short name_len, const char *name )
-{
-	if (name_len > 256)
-		name_len = 256;
-	authNameLen = name_len;
-	memmove( authName, name, name_len );
-}
-
 /*
  * Generate authorization for XDM-AUTHORIZATION-1
  *

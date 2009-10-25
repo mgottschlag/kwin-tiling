@@ -35,11 +35,9 @@ authorization.
 
 #include "dm.h"
 
-void mitInitAuth( unsigned short name_len, const char *name );
 Xauth *mitGetAuth( unsigned short namelen, const char *name );
 
 #ifdef HASXDMAUTH
-void xdmInitAuth( unsigned short name_len, const char *name );
 Xauth *xdmGetAuth( unsigned short namelen, const char *name );
 # ifdef XDMCP
 void xdmGetXdmcpAuth( struct protoDisplay *pdpy,
@@ -55,12 +53,10 @@ int xdmcheckAuthentication( struct protoDisplay *pdpy,
 #endif
 
 #ifdef SECURE_RPC
-void secureRPCInitAuth( unsigned short name_len, const char *name );
 Xauth *secureRPCGetAuth( unsigned short name_len, const char *name );
 #endif
 
 #ifdef K5AUTH
-void krb5InitAuth( unsigned short name_len, const char *name );
 Xauth *krb5GetAuth( unsigned short name_len, const char *name );
 
 Xauth *krb5GetAuthFor( unsigned short name_len, const char *name, const char *dname );

@@ -43,15 +43,8 @@ from the copyright holder.
 
 #include <krb5/krb5.h>
 
+static int inited;
 static krb5_context ctx;
-
-/*ARGSUSED*/
-void
-krb5InitAuth( unsigned short name_len ATTR_UNUSED, const char *name ATTR_UNUSED )
-{
-	if (krb5_init_context( &ctx ))
-		logError( "Error while initializing Krb5 context\n" );
-}
 
 /*
  * Returns malloc'ed string that is the credentials cache name.
@@ -122,6 +115,12 @@ krb5GetAuthFor( unsigned short namelen, const char *name, const char *dname )
 Xauth *
 krb5GetAuth( unsigned short namelen, const char *name )
 {
+	if (!inited) {
+		inited = True;
+		if (krb5_init_context( &ctx ))
+			logError( "Error while initializing Krb5 context\n" );
+	}
+
 	return krb5GetAuthFor( namelen, name, 0 );
 }
 

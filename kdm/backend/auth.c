@@ -83,14 +83,12 @@ from the copyright holder.
 struct AuthProtocol {
 	unsigned short name_length;
 	const char *name;
-	void (*InitAuth)( unsigned short len, const char *name );
 	Xauth *(*GetAuth)( unsigned short len, const char *name );
 #ifdef XDMCP
 	void (*GetXdmcpAuth)( struct protoDisplay *pdpy,
 	                      unsigned short authorizationNameLen,
 	                      const char *authorizationName );
 #endif
-	int inited;
 };
 
 #ifdef XDMCP
@@ -99,28 +97,28 @@ struct AuthProtocol {
 # define xdmcpauth(arg)
 #endif
 
-static struct AuthProtocol authProtocols[] = {
+static const struct AuthProtocol authProtocols[] = {
 { (unsigned short)18, "MIT-MAGIC-COOKIE-1",
-	mitInitAuth, mitGetAuth xdmcpauth(0), False
+	mitGetAuth xdmcpauth(0)
 },
 #ifdef HASXDMAUTH
 { (unsigned short)19, "XDM-AUTHORIZATION-1",
-	xdmInitAuth, xdmGetAuth xdmcpauth(xdmGetXdmcpAuth), False
+	xdmGetAuth xdmcpauth(xdmGetXdmcpAuth)
 },
 #endif
 #ifdef SECURE_RPC
 { (unsigned short)9, "SUN-DES-1",
-	secureRPCInitAuth, secureRPCGetAuth xdmcpauth(0), False
+	secureRPCGetAuth xdmcpauth(0)
 },
 #endif
 #ifdef K5AUTH
 { (unsigned short)14, "MIT-KERBEROS-5",
-	krb5InitAuth, krb5GetAuth xdmcpauth(0), False
+	krb5GetAuth xdmcpauth(0)
 },
 #endif
 };
 
-static struct AuthProtocol *
+static const struct AuthProtocol *
 findProtocol( unsigned short name_length, const char *name )
 {
 	unsigned i;
@@ -145,15 +143,11 @@ validAuthorization( unsigned short name_length, const char *name )
 static Xauth *
 generateAuthorization( unsigned short name_length, const char *name )
 {
-	struct AuthProtocol *a;
+	const struct AuthProtocol *a;
 	Xauth *auth = 0;
 
 	debug( "generateAuthorization %s\n", name );
 	if ((a = findProtocol( name_length, name ))) {
-		if (!a->inited) {
-			(*a->InitAuth)( name_length, name );
-			a->inited = True;
-		}
 		auth = (*a->GetAuth)( name_length, name );
 		if (auth) {
 			debug( "got %p (%d %.*s) %02[*hhx\n", auth,
@@ -173,16 +167,11 @@ setProtoDisplayAuthorization( struct protoDisplay *pdpy,
                               unsigned short authorizationNameLen,
                               const char *authorizationName )
 {
-	struct AuthProtocol *a;
+	const struct AuthProtocol *a;
 	Xauth *auth;
 
-	a = findProtocol( authorizationNameLen, authorizationName );
 	pdpy->xdmcpAuthorization = pdpy->fileAuthorization = 0;
-	if (a) {
-		if (!a->inited) {
-			(*a->InitAuth)( authorizationNameLen, authorizationName );
-			a->inited = True;
-		}
+	if ((a = findProtocol( authorizationNameLen, authorizationName ))) {
 		if (a->GetXdmcpAuth) {
 			(*a->GetXdmcpAuth)( pdpy, authorizationNameLen, authorizationName );
 			auth = pdpy->xdmcpAuthorization;

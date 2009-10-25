@@ -40,13 +40,6 @@ from the copyright holder.
 #include <rpc/rpc.h>
 #include <rpc/key_prot.h>
 
-/*ARGSUSED*/
-void
-secureRPCInitAuth( unsigned short name_len ATTR_UNUSED,
-                   const char *name ATTR_UNUSED )
-{
-}
-
 Xauth *
 secureRPCGetAuth( unsigned short namelen, const char *name )
 {

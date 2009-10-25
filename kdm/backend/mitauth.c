@@ -39,15 +39,6 @@ from the copyright holder.
 #include "dm_auth.h"
 
 #define AUTH_DATA_LEN 16 /* bytes of authorization data */
-static char authName[256];
-
-void
-mitInitAuth( unsigned short name_len, const char *name )
-{
-	if (name_len > 256)
-		name_len = 256;
-	memmove( authName, name, name_len );
-}
 
 Xauth *
 mitGetAuth( unsigned short namelen, const char *name )
