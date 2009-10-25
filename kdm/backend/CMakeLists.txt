@@ -10,7 +10,6 @@ set(kdm_SRCS
 	error.c
 	genauth.c
 	inifile.c
-	mitauth.c
 	netaddr.c
 	process.c
 	reset.c

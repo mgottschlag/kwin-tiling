@@ -80,6 +80,62 @@ from the copyright holder.
 
 #include <X11/Xlib.h>
 
+Xauth *
+getAuthHelper( unsigned short namelen, const char *name )
+{
+	Xauth *new;
+
+	if (!(new = Malloc( sizeof(*new) )))
+		return 0;
+
+	if (!(new->name = Malloc( namelen ))) {
+		free( new );
+		return 0;
+	}
+	new->name_length = namelen;
+	memmove( new->name, name, namelen );
+
+	new->family = FamilyWild;
+	new->address_length = 0;
+	new->address = 0;
+	new->number_length = 0;
+	new->number = 0;
+
+	return new;
+}
+
+Xauth *
+generateAuthHelper( unsigned short namelen, const char *name, int nbytes )
+{
+	Xauth *new;
+
+	if (!(new = getAuthHelper( namelen, name )))
+		return 0;
+
+	if (!(new->data = Malloc( nbytes ))) {
+		free( new->name );
+		free( new );
+		return 0;
+	}
+	new->data_length = nbytes;
+	if (!generateAuthData( new->data, nbytes )) {
+		free( new->data );
+		free( new->name );
+		free( new );
+		return 0;
+	}
+
+	return new;
+}
+
+#define MIT_AUTH_DATA_LEN 16 /* bytes of authorization data */
+
+static Xauth *
+mitGetAuth( unsigned short namelen, const char *name )
+{
+	return generateAuthHelper( namelen, name, MIT_AUTH_DATA_LEN );
+}
+
 struct AuthProtocol {
 	unsigned short name_length;
 	const char *name;

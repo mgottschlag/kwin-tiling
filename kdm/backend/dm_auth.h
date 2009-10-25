@@ -35,8 +35,6 @@ authorization.
 
 #include "dm.h"
 
-Xauth *mitGetAuth( unsigned short namelen, const char *name );
-
 #ifdef HASXDMAUTH
 Xauth *xdmGetAuth( unsigned short namelen, const char *name );
 # ifdef XDMCP
@@ -67,6 +65,8 @@ void krb5Destroy( const char *dname );
 /* auth.c */
 int validAuthorization( unsigned short name_length, const char *name );
 
+Xauth *getAuthHelper( unsigned short namelen, const char *name );
+Xauth *generateAuthHelper( unsigned short namelen, const char *name, int nbytes );
 
 #ifdef XDMCP
 

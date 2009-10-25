@@ -48,41 +48,13 @@ from the copyright holder.
  */
 
 static Xauth *
-xdmGetAuthHelper( unsigned short namelen, const char *name, int includeRho )
+xdmGetAuthHelper( unsigned short namelen, const char *name, int nbytes )
 {
 	Xauth *new;
 
-	if (!(new = Malloc( sizeof(Xauth) )))
+	if (!(new = generateAuthHelper( namelen, name, nbytes )))
 		return 0;
-	new->family = FamilyWild;
-	new->address_length = 0;
-	new->address = 0;
-	new->number_length = 0;
-	new->number = 0;
-	if (includeRho)
-		new->data_length = 16;
-	else
-		new->data_length = 8;
 
-	new->data = Malloc( new->data_length );
-	if (!new->data) {
-		free( new );
-		return 0;
-	}
-	new->name = Malloc( namelen );
-	if (!new->name) {
-		free( new->data );
-		free( new );
-		return 0;
-	}
-	memmove( new->name, name, namelen );
-	new->name_length = namelen;
-	if (!generateAuthData( (char *)new->data, new->data_length )) {
-		free( new->name );
-		free( new->data );
-		free( new );
-		return 0;
-	}
 	/*
 	 * set the first byte of the session key to zero as it
 	 * is a DES key and only uses 56 bits
@@ -95,7 +67,7 @@ xdmGetAuthHelper( unsigned short namelen, const char *name, int includeRho )
 Xauth *
 xdmGetAuth( unsigned short namelen, const char *name )
 {
-	return xdmGetAuthHelper( namelen, name, True );
+	return xdmGetAuthHelper( namelen, name, 16 );
 }
 
 #ifdef XDMCP
@@ -109,8 +81,7 @@ xdmGetXdmcpAuth( struct protoDisplay *pdpy,
 
 	if (pdpy->fileAuthorization && pdpy->xdmcpAuthorization)
 		return;
-	xdmcpauth = xdmGetAuthHelper( authorizationNameLen, authorizationName,
-	                              False );
+	xdmcpauth = xdmGetAuthHelper( authorizationNameLen, authorizationName, 8 );
 	if (!xdmcpauth)
 		return;
 	fileauth = Malloc( sizeof(Xauth) );

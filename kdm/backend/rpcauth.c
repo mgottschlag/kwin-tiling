@@ -46,31 +46,17 @@ secureRPCGetAuth( unsigned short namelen, const char *name )
 	Xauth *new;
 	char key[MAXNETNAMELEN+1];
 
-	new = Malloc( sizeof(*new) );
-	if (!new)
+	if (!(new = getAuthHelper( namelen, name )))
 		return 0;
-	new->family = FamilyWild;
-	new->address_length = 0;
-	new->address = 0;
-	new->number_length = 0;
-	new->number = 0;
 
 	getnetname( key );
 	debug( "system netname %s\n", key );
 	new->data_length = strlen( key );
-	new->data = Malloc( new->data_length );
-	if (!new->data) {
+	if (!(new->data = Malloc( new->data_length ))) {
+		free( new->name );
 		free( new );
 		return 0;
 	}
-	new->name = Malloc( namelen );
-	if (!new->name) {
-		free( new->data );
-		free( new );
-		return 0;
-	}
-	memmove( new->name, name, namelen );
-	new->name_length = namelen;
 	memmove( new->data, key, new->data_length );
 	return new;
 }
