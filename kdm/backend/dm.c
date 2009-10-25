@@ -352,11 +352,15 @@ wakeDisplay( struct display *d )
 }
 #endif
 
-enum utState { UtDead, UtWait, UtActive };
+enum utState {
+	UtDead,   /* no such entry */
+	UtWait,   /* waiting for user login */
+	UtActive  /* user logged in */
+};
 
 struct utmps {
-	struct utmps *next;
 #ifndef HAVE_VTS
+	struct utmps *next;
 	struct display *d;
 #endif
 	time_t time;
@@ -371,19 +375,20 @@ static struct utmps *utmpList;
 static time_t utmpTimeout = TO_INF;
 
 static void
-bombUtmp( void )
+wakeDisplays( void )
 {
-	struct utmps *utp;
-
-	while ((utp = utmpList)) {
 #ifdef HAVE_VTS
-		forEachDisplay( wakeDisplay );
+	forEachDisplay( wakeDisplay );
+	free( utmpList );
+	utmpList = 0;
 #else
+	struct utmps *utp;
+	while ((utp = utmpList)) {
 		utp->d->status = notRunning;
-#endif
 		utmpList = utp->next;
 		free( utp );
 	}
+#endif
 }
 
 static void
@@ -392,7 +397,10 @@ checkUtmp( void )
 	static time_t modtim;
 	time_t nck;
 	time_t ends;
-	struct utmps *utp, **utpp;
+	struct utmps *utp;
+#ifndef HAVE_VTS
+	struct utmps **utpp;
+#endif
 	struct stat st;
 #ifdef BSD_UTMP
 	int fd;
@@ -405,17 +413,21 @@ checkUtmp( void )
 		return;
 	if (stat( UTMP_FILE, &st )) {
 		logError( UTMP_FILE " not found - cannot use console mode\n" );
-		bombUtmp();
+		wakeDisplays();
 		return;
 	}
 	if (modtim != st.st_mtime) {
 		debug( "rescanning " UTMP_FILE "\n" );
+#ifdef HAVE_VTS
+		utp = utmpList;
+#else
 		for (utp = utmpList; utp; utp = utp->next)
+#endif
 			utp->state = UtDead;
 #ifdef BSD_UTMP
 		if ((fd = open( UTMP_FILE, O_RDONLY )) < 0) {
 			logError( "Cannot open " UTMP_FILE " - cannot use console mode\n" );
-			bombUtmp();
+			wakeDisplays();
 			return;
 		}
 		while (reader( fd, ut, sizeof(ut[0]) ) == sizeof(ut[0]))
@@ -424,36 +436,39 @@ checkUtmp( void )
 		while ((ut = GETUTENT()))
 #endif
 		{
-			for (utp = utmpList; utp; utp = utp->next) {
+			/* first, match the tty to a utemps */
 #ifdef HAVE_VTS
-				char **line;
-				for (line = consoleTTYs; *line; line++)
-					if (!strncmp( *line, ut->ut_line, sizeof(ut->ut_line) ))
-						goto hitlin;
-				continue;
-			  hitlin:
+			char **line;
+			for (line = consoleTTYs; *line; line++)
+				if (!strncmp( *line, ut->ut_line, sizeof(ut->ut_line) ))
 #else
-				if (strncmp( utp->d->console, ut->ut_line, sizeof(ut->ut_line) ))
+			for (utp = utmpList; utp; utp = utp->next)
+				if (!strncmp( utp->d->console, ut->ut_line, sizeof(ut->ut_line) ))
+#endif
+					goto hitlin;
+			continue;
+		  hitlin:
+			/* then, update the utemps accordingly */
+#ifdef BSD_UTMP
+			if (!*ut->ut_user) {
+#else
+			if (ut->ut_type != USER_PROCESS) {
+#endif
+#ifdef HAVE_VTS
+				/* don't allow "downgrading" the singular utemps */
+				if (utp->state == UtActive)
 					continue;
 #endif
-#ifdef BSD_UTMP
-				if (!*ut->ut_user) {
-#else
-				if (ut->ut_type != USER_PROCESS) {
-#endif
-#ifdef HAVE_VTS
-					if (utp->state == UtActive)
-						break;
-#endif
-					utp->state = UtWait;
-				} else {
-					utp->hadSess = True;
-					utp->state = UtActive;
-				}
-				if (utp->time < ut->ut_time) /* theoretically superfluous */
-					utp->time = ut->ut_time;
-				break;
+				utp->state = UtWait;
+			} else {
+				utp->hadSess = True;
+				utp->state = UtActive;
 			}
+#ifdef HAVE_VTS
+			/* tty with latest activity wins */
+			if (utp->time < ut->ut_time)
+#endif
+				utp->time = ut->ut_time;
 		}
 #ifdef BSD_UTMP
 		close( fd );
@@ -462,31 +477,38 @@ checkUtmp( void )
 #endif
 		modtim = st.st_mtime;
 	}
+#ifdef HAVE_VTS
+	utp = utmpList;
+#else
 	for (utpp = &utmpList; (utp = *utpp); ) {
+#endif
 		if (utp->state != UtActive) {
 			if (utp->state == UtDead) /* shouldn't happen ... */
 				utp->time = 0;
 			ends = utp->time + (utp->hadSess ? TIME_RELOG : TIME_LOG);
 			if (ends <= now) {
 #ifdef HAVE_VTS
-				forEachDisplay( wakeDisplay );
+				wakeDisplays();
 				debug( "console login timed out\n" );
+				return;
 #else
 				utp->d->status = notRunning;
 				debug( "console login for %s at %s timed out\n",
 				       utp->d->name, utp->d->console );
-#endif
 				*utpp = utp->next;
 				free( utp );
 				continue;
+#endif
 			} else
 				nck = ends;
 		} else
 			nck = TIME_RELOG + now;
 		if (nck < utmpTimeout)
 			utmpTimeout = nck;
+#ifndef HAVE_VTS
 		utpp = &(*utpp)->next;
 	}
+#endif
 }
 
 static void
@@ -503,7 +525,7 @@ switchToTTY( struct display *d )
 
 	if (!(utp = Malloc( sizeof(*utp) ))) {
 #ifdef HAVE_VTS
-		forEachDisplay( wakeDisplay );
+		wakeDisplays();
 #else
 		d->status = notRunning;
 #endif
@@ -512,10 +534,10 @@ switchToTTY( struct display *d )
 #ifndef HAVE_VTS
 	d->status = textMode;
 	utp->d = d;
+	utp->next = utmpList;
 #endif
 	utp->time = now;
 	utp->hadSess = False;
-	utp->next = utmpList;
 	utmpList = utp;
 	checkUtmp();
 
