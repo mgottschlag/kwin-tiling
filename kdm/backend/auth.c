@@ -316,18 +316,20 @@ saveServerAuthorizations( struct display *d, Xauth **auths, int count )
 		 * to the auth file so xrdb and setup programs don't fail.
 		 */
 		if (auths[i]->data_length > 0)
-			if (!XauWriteAuth( auth_file, auths[i] ) ||
-			    fflush( auth_file ) == EOF)
-			{
+			if (!XauWriteAuth( auth_file, auths[i] )) {
 				fclose( auth_file );
-				logError( "Cannot write X server authorization file %s\n",
-				          d->authFile );
-				free( d->authFile );
-				d->authFile = NULL;
-				return False;
+				goto whoops;
 			}
 	}
-	fclose( auth_file );
+	if (fclose( auth_file ) == EOF) {
+	  whoops:
+		logError( "Cannot write X server authorization file %s: %m\n",
+		          d->authFile );
+		unlink( d->authFile );
+		free( d->authFile );
+		d->authFile = NULL;
+		return False;
+	}
 	return True;
 }
 
@@ -1128,7 +1130,7 @@ setUserAuthorization( struct display *d )
 				return;
 			/*
 			 * Note, that we don't lock the auth file here, as it's
-			 * temporary - we can assume, that we are the only ones
+			 * temporary - we can assume that we are the only ones
 			 * knowing about this file anyway.
 			 */
 #ifdef HAVE_MKSTEMP
@@ -1198,7 +1200,8 @@ setUserAuthorization( struct display *d )
 		}
 		if (!endUserAuth( old, new, new_name, ok )) {
 			if (!name) {
-				logError( "Cannot save user authorization\n" );
+				/* XXX this should be user-visible */
+				logError( "Cannot save user authorization: %m\n" );
 				return;
 			}
 			undoUserAuth( name, new_name );

@@ -319,6 +319,60 @@ displace( const char *fn )
 }
 
 
+static char *curName;
+
+/* Create a new file in KDMCONF */
+static FILE *
+createFile( const char *fn, int mode )
+{
+	FILE *f;
+
+	free( curName );
+	ASPrintf( &curName, "%s/%s", newdir, fn );
+	displace( curName );
+	if (!(f = fopen( curName, "w" ))) {
+		fprintf( stderr, "Cannot create %s\n", curName );
+		exit( 1 );
+	}
+	chmod( curName, mode );
+	return f;
+}
+
+static void
+writeError()
+{
+	fprintf( stderr, "Warning: cannot write %s (disk full?)\n", curName );
+	unlink( curName );
+	exit( 1 );
+}
+
+static void
+fputs_( const char *str, FILE *f )
+{
+	if (fputs( str, f ) == EOF)
+		writeError();
+}
+
+static void
+ATTR_PRINTFLIKE(2, 3)
+fprintf_( FILE *f, const char *fmt, ... )
+{
+	va_list args;
+
+	va_start( args, fmt );
+	if (vfprintf( f, fmt, args ) < 0)
+		writeError();
+	va_end( args );
+}
+
+static void
+fclose_( FILE *f )
+{
+	if (fclose( f ) == EOF)
+		writeError();
+}
+
+
 static char *
 locate( const char *exe )
 {
@@ -464,8 +518,8 @@ writeKdmrc( FILE *f )
 
 	putFqVal( "General", "ConfigVersion", RCVERSTR );
 	for (cs = config; cs; cs = cs->next) {
-		fprintf( f, "%s[%s]\n",
-		         cs->comment ? cs->comment : "\n", cs->name );
+		fprintf_( f, "%s[%s]\n",
+		          cs->comment ? cs->comment : "\n", cs->name );
 		for (ce = cs->ents; ce; ce = ce->next) {
 			if (ce->spec->comment) {
 				cmt = ce->spec->comment;
@@ -475,7 +529,7 @@ writeKdmrc( FILE *f )
 						goto havit;
 					}
 				if (!(sp = malloc( sizeof(*sp) )))
-					fprintf( stderr, "Warning: Out of memory\n" );
+					fprintf_( stderr, "Warning: Out of memory\n" );
 				else {
 					sp->str = cmt;
 					sp->next = sl; sl = sp;
@@ -483,8 +537,8 @@ writeKdmrc( FILE *f )
 			} else
 				cmt = "";
 		  havit:
-			fprintf( f, "%s%s%s=%s\n",
-			         cmt, ce->active ? "" : "#", ce->spec->key, ce->value );
+			fprintf_( f, "%s%s%s=%s\n",
+			          cmt, ce->active ? "" : "#", ce->spec->key, ce->value );
 		}
 	}
 }
@@ -726,24 +780,6 @@ static const char def_background[] =
 "WallpaperList=\n"
 "WallpaperMode=Scaled\n";
 
-/* Create a new file in KDMCONF */
-static FILE *
-createFile( const char *fn, int mode )
-{
-	char *nname;
-	FILE *f;
-
-	ASPrintf( &nname, "%s/%s", newdir, fn );
-	displace( nname );
-	if (!(f = fopen( nname, "w" ))) {
-		fprintf( stderr, "Cannot create %s\n", nname );
-		exit( 1 );
-	}
-	chmod( nname, mode );
-	free( nname );
-	return f;
-}
-
 /* Create a copy of a file under KDMCONF and fill it */
 static void
 writeCopy( const char *fn, int mode, time_t stamp, const char *buf, size_t len )
@@ -759,8 +795,11 @@ writeCopy( const char *fn, int mode, time_t stamp, const char *buf, size_t len )
 		fprintf( stderr, "Cannot create %s\n", nname );
 		exit( 1 );
 	}
-	write( fd, buf, len );
-	close( fd );
+	if (write( fd, buf, len ) != (ssize_t)len || close( fd ) < 0) {
+		fprintf( stderr, "Cannot write %s (disk full?)\n", nname );
+		unlink( nname );
+		exit( 1 );
+	}
 	if (stamp) {
 		utim.actime = utim.modtime = stamp;
 		utime( nname, &utim );
@@ -1022,8 +1061,8 @@ static void
 writeFile( const char *tname, int mode, const char *cont )
 {
 	FILE *f = createFile( tname + sizeof(KDMCONF), mode );
-	fputs( cont, f );
-	fclose( f );
+	fputs_( cont, f );
+	fclose_( f );
 	addedFile( tname );
 }
 
@@ -2046,8 +2085,15 @@ copyPlainFile( const char *from, const char *to )
 
 	if (readFile( &file, from )) {
 		if ((fd = open( to, O_WRONLY | O_CREAT | O_EXCL, 0644 )) >= 0) {
-			write( fd, file.buf, file.eof - file.buf );
-			close( fd );
+			size_t len = file.eof - file.buf;
+			if (write( fd, file.buf, len ) != (ssize_t)len) {
+				fprintf( stderr, "Warning: cannot write %s (disk full?)\n", to );
+				unlink( to );
+			}
+			if (close( fd ) < 0) {
+				fprintf( stderr, "Warning: cannot write %s (disk full?)\n", to );
+				unlink( to );
+			}
 		} else if (errno != EEXIST)
 			fprintf( stderr, "Warning: cannot create %s\n", to );
 		freeBuf( &file );
@@ -2812,7 +2858,7 @@ fprintfLineWrap( FILE *f, const char *msg, ... )
 	}
 	free( txt );
 	if (ftxt) {
-		fputs( ftxt, f );
+		fputs_( ftxt, f );
 		free( ftxt );
 	}
 }
@@ -3111,55 +3157,55 @@ int main( int argc, char **argv )
 					ce->spec->func( ce, cs );
 	f = createFile( "kdmrc", kdmrcmode );
 	writeKdmrc( f );
-	fclose( f );
+	fclose_( f );
 
 	f = createFile( "README", 0644 );
-	fprintf( f,
+	fprintf_( f,
 "This automatically generated configuration consists of the following files:\n" );
-	fprintf( f, "- " KDMCONF "/kdmrc\n" );
+	fprintf_( f, "- " KDMCONF "/kdmrc\n" );
 	for (fp = aflist; fp; fp = fp->next)
-		fprintf( f, "- %s\n", fp->str );
+		fprintf_( f, "- %s\n", fp->str );
 	if (use_destdir && !no_in_notice)
 		fprintfLineWrap( f,
 "All files destined for " KDMCONF " were actually saved in %s; "
 "this config will not be workable until moved in place.\n", newdir );
 	if (uflist || eflist || cflist || lflist) {
-		fprintf( f,
+		fprintf_( f,
 "\n"
 "This config was derived from existing files. As the used algorithms are\n"
 "pretty dumb, it may be broken.\n" );
 		if (uflist) {
-			fprintf( f,
+			fprintf_( f,
 "Information from these files was extracted:\n" );
 			for (fp = uflist; fp; fp = fp->next)
-				fprintf( f, "- %s\n", fp->str );
+				fprintf_( f, "- %s\n", fp->str );
 		}
 		if (lflist) {
-			fprintf( f,
+			fprintf_( f,
 "These files were directly incorporated:\n" );
 			for (fp = lflist; fp; fp = fp->next)
-				fprintf( f, "- %s\n", fp->str );
+				fprintf_( f, "- %s\n", fp->str );
 		}
 		if (cflist) {
-			fprintf( f,
+			fprintf_( f,
 "These files were copied verbatim:\n" );
 			for (fp = cflist; fp; fp = fp->next)
-				fprintf( f, "- %s\n", fp->str );
+				fprintf_( f, "- %s\n", fp->str );
 		}
 		if (eflist) {
-			fprintf( f,
+			fprintf_( f,
 "These files were copied with modifications:\n" );
 			for (fp = eflist; fp; fp = fp->next)
-				fprintf( f, "- %s\n", fp->str );
+				fprintf_( f, "- %s\n", fp->str );
 		}
 		if (!no_backup && !use_destdir)
-			fprintf( f,
+			fprintf_( f,
 "Old files that would have been overwritten were renamed to <oldname>.bak.\n" );
 	}
-	fprintf( f,
+	fprintf_( f,
 "\nTry 'genkdmconf --help' if you want to generate another configuration.\n"
 "\nYou may delete this README.\n" );
-	fclose( f );
+	fclose_( f );
 
 	return 0;
 }

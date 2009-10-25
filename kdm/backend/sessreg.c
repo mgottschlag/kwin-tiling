@@ -95,6 +95,23 @@ crc32s( const char *str )
 }
 #endif
 
+#if (!defined(NO_UTMP) && defined(BSD_UTMP)) || \
+    !defined(HAVE_UPDWTMP) || \
+    (!defined(NO_LASTLOG) && !defined(HAVE_LASTLOGX))
+static void
+writeOut( int fd, const void *buf, size_t len, const char *msg )
+{
+	ssize_t ret;
+	if ((ret = write( fd, buf, len )) != (ssize_t)len) {
+		if (ret >= 0)
+			errno = -ENOSPC;
+		logError( msg );
+	}
+	if (close( fd ) < 0)
+		logError( msg );
+}
+#endif
+
 void
 sessreg( struct display *d, int pid, const char *user, int uid )
 {
@@ -240,6 +257,7 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 		}
 		if (!pid) {
 			debug( "utmp entry for display %s vanished\n", d->name );
+			close( utmp );
 			goto skip;
 		}
 		if (freeslot >= 0)
@@ -251,15 +269,14 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 			bzero( ut_ent.ut_host, sizeof(ut_ent.ut_host) );
 #  endif
 		lseek( utmp, slot * sizeof(ut_ent), SEEK_SET );
-		if (write( utmp, (char *)&ut_ent, sizeof(ut_ent) ) != sizeof(ut_ent))
-			logError( "Cannot write utmp file " UTMP_FILE ": %m\n" );
-	  skip:
-		close( utmp );
+		writeOut( utmp, &ut_ent, sizeof(ut_ent),
+		          "Cannot write utmp file " UTMP_FILE ": %m\n" );
 	}
+  skip:
 # else
 	UTMPNAME( UTMP_FILE );
 	SETUTENT();
-	PUTUTLINE( &ut_ent );
+	PUTUTLINE( &ut_ent ); /* Returns void on some systems => no error check. */
 	ENDUTENT();
 # endif
 #endif
@@ -273,11 +290,9 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 #else
 	if ((wtmp = open( WTMP_FILE, O_WRONLY|O_APPEND )) < 0)
 		debug( "cannot open wtmp file " WTMP_FILE ": %m\n" );
-	else {
-		if (write( wtmp, (char *)&ut_ent, sizeof(ut_ent) ) != sizeof(ut_ent))
-			logError( "Cannot write wtmp file " WTMP_FILE ": %m\n" );
-		close( wtmp );
-	}
+	else
+		writeOut( wtmp, &ut_ent, sizeof(ut_ent),
+		          "Cannot write wtmp file " WTMP_FILE ": %m\n" );
 #endif
 
 #ifndef NO_LASTLOG
@@ -293,9 +308,8 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 			debug( "cannot open lastlog file " LLOG_FILE ": %m\n" );
 		else {
 			lseek( llog, (off_t)uid * sizeof(ll), SEEK_SET );
-			if (write( llog, (char *)&ll, sizeof(ll) ) != sizeof(ll))
-				logError( "Cannot write llog file " WTMP_FILE ": %m\n" );
-			close( llog );
+			writeOut( llog, &ll, sizeof(ll),
+			          "Cannot write lastlog file " LLOG_FILE ": %m\n" );
 		}
 # endif
 	}

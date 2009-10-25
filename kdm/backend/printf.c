@@ -61,6 +61,7 @@ from the copyright holder.
  *     - { -> short for ('{')' }'<' '|''
  *   - the pointer to the array is the last argument to the format
  * - the %m conversion from syslog() is supported
+ *   (extended by -ENOSPC meaning "partial write")
  */
 
 /**************************************************************
@@ -426,7 +427,8 @@ doPrint( OutCh dopr_outch, void *bp, const char *format, va_list args )
 			dopr_outch( bp, ch );
 			break;
 		case 'm':
-			fmtstr( dopr_outch, bp, strerror( errn ), flags, min, max );
+			strvalue = (errn == -ENOSPC) ? "partial write" : strerror( errn );
+			fmtstr( dopr_outch, bp, strvalue, flags, min, max );
 			break;
 		case 'c':
 			dopr_outch( bp, va_arg( args, int ) );

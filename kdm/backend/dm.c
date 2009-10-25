@@ -1641,7 +1641,8 @@ storePid( void )
 #endif
 		}
 		fprintf( pidFilePtr, "%ld\n", (long)getpid() );
-		(void)fflush( pidFilePtr );
+		if (fflush( pidFilePtr ) == EOF)
+			logError( "Cannot write PID file %s: %m", pidFile );
 		registerCloseOnFork( pidFd );
 	}
 	return 0;

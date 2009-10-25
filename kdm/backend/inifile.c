@@ -92,16 +92,18 @@ iniSave( const char *data, const char *fname )
 		return False;
 	}
 	len = strlen( data );
-	if ((cnt = write( fd, data, len )) == len) {
-		close( fd );
-		return True;
-	}
-	if (cnt == -1)
+	if ((cnt = write( fd, data, len )) != len) {
+		if (cnt != -1)
+			errno = -ENOSPC;
 		debug( "cannot write ini-file %\"s: %m", fname );
-	else
-		debug( "cannot write ini-file %\"s: partial write", fname );
-	close( fd );
-	return False;
+		close( fd );
+		return False;
+	}
+	if (close( fd ) < 0) {
+		debug( "cannot write ini-file %\"s: %m", fname );
+		return False;
+	}
+	return True;
 }
 
 #define apparr(d,s,n) do { memcpy (d, s, n); d += n; } while(0)
