@@ -497,18 +497,36 @@ void PlasmaApp::controlBarMoved(const NetView *controlBar)
     }
 
     QRect screenRect = Kephal::ScreenUtils::screenGeometry(m_controlBar->screen());
+    
+    Plasma::Containment *cont = m_controlBar->containment();
 
     switch (controlBar->location()) {
     case Plasma::LeftEdge:
+        if (cont && m_controlBar->size().width() > m_controlBar->size().height()) {
+            cont->setMinimumSize(cont->size().height(), cont->size().width());
+            cont->setMaximumSize(cont->minimumSize());
+        }
         m_controlBar->move(screenRect.topLeft());
         break;
     case Plasma::RightEdge:
+        if (cont && m_controlBar->size().width() > m_controlBar->size().height()) {
+            cont->setMinimumSize(cont->size().height(), cont->size().width());
+            cont->setMaximumSize(cont->minimumSize());
+        }
         m_controlBar->move(screenRect.topRight()-QPoint(m_controlBar->size().width(), 0));
         break;
     case Plasma::TopEdge:
+        if (cont && m_controlBar->size().width() < m_controlBar->size().height()) {
+            cont->setMinimumSize(cont->size().height(), cont->size().width());
+            cont->setMaximumSize(cont->minimumSize());
+        }
         m_controlBar->move(screenRect.topLeft());
         break;
     case Plasma::BottomEdge:
+        if (cont && m_controlBar->size().width() < m_controlBar->size().height()) {
+            cont->setMinimumSize(cont->size().height(), cont->size().width());
+            cont->setMaximumSize(cont->minimumSize());
+        }
         m_controlBar->move(screenRect.bottomLeft()-QPoint(0,m_controlBar->size().height()));
     default:
         break;

@@ -44,6 +44,7 @@ public:
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
+    void updateFormFactor();
 
 private Q_SLOTS:
     void updateGeometry();

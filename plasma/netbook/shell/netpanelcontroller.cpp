@@ -95,21 +95,44 @@ void NetPanelController::updateGeometry()
 {
     QRect viewGeometry(m_view->geometry());
     switch (m_containment->location()) {
-        case Plasma::LeftEdge:
-            move(viewGeometry.right(), viewGeometry.center().y()/2 - size().height()/2);
-            break;
-        case Plasma::RightEdge:
-            move(viewGeometry.left() - size().width(), viewGeometry.center().y() - size().height()/2);
-            break;
-        case Plasma::TopEdge:
-            move(viewGeometry.center().x() - size().width()/2, viewGeometry.bottom());
-            break;
-        case Plasma::BottomEdge:
-            move(viewGeometry.center().x() - size().width()/2, viewGeometry.top() - size().height());
-            break;
-        default:
-            break;
-        }
+    case Plasma::LeftEdge:
+        move(viewGeometry.right(), viewGeometry.center().y()/2 - size().height()/2);
+        break;
+    case Plasma::RightEdge:
+        move(viewGeometry.left() - size().width(), viewGeometry.center().y() - size().height()/2);
+        break;
+    case Plasma::TopEdge:
+        move(viewGeometry.center().x() - size().width()/2, viewGeometry.bottom());
+        break;
+    case Plasma::BottomEdge:
+        move(viewGeometry.center().x() - size().width()/2, viewGeometry.top() - size().height());
+        break;
+    default:
+        break;
+    }
+
+    updateFormFactor();
+}
+
+void NetPanelController::updateFormFactor()
+{
+    QRect viewGeometry(m_view->geometry());
+    switch (m_containment->location()) {
+    case Plasma::LeftEdge:
+    case Plasma::RightEdge:
+        m_layout->setOrientation(Qt::Vertical);
+        m_resizeButton->setIcon(m_iconSvg->pixmap("size-horizontal"));
+    m_resizeButton->setText(i18n("Width"));
+        break;
+    case Plasma::TopEdge:
+    case Plasma::BottomEdge:
+        m_layout->setOrientation(Qt::Horizontal);
+        m_resizeButton->setIcon(m_iconSvg->pixmap("size-vertical"));
+        m_resizeButton->setText(i18n("Height"));
+        break;
+    default:
+        break;
+    }
 }
 
 bool NetPanelController::eventFilter(QObject *watched, QEvent *event)
