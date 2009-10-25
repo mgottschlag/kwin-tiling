@@ -353,6 +353,7 @@ void PlasmaApp::reserveStruts()
                                     strut.right_width, strut.right_start, strut.right_end,
                                     strut.top_width, strut.top_start, strut.top_end,
                                     strut.bottom_width, strut.bottom_start, strut.bottom_end);
+    m_mainView->move(0,0);
 }
 
 NetView *PlasmaApp::controlBar() const
@@ -459,6 +460,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
             connect(m_controlBar, SIGNAL(locationChanged(const NetView *)), this, SLOT(controlBarMoved(const NetView *)));
             connect(m_controlBar, SIGNAL(geometryChanged()), this, SLOT(positionPanel()));
             connect(m_controlBar, SIGNAL(containmentActivated()), this, SLOT(showControlBar()));
+            connect(m_controlBar, SIGNAL(autoHideChanged(bool)), this, SLOT(setAutoHideControlBar(bool)));
         }
 
         m_controlBar->setContainment(containment);
@@ -522,23 +524,22 @@ void PlasmaApp::setAutoHideControlBar(bool autoHide)
     }
 
     if (autoHide) {
-        createUnhideTrigger();
-        m_controlBar->hide();
-        m_controlBar->installEventFilter(this);
         m_unHideTimer = new QTimer(this);
         m_unHideTimer->setSingleShot(true);
         connect(m_unHideTimer, SIGNAL(timeout()), this, SLOT(controlBarVisibilityUpdate()));
+        m_controlBar->installEventFilter(this);
+        controlBarVisibilityUpdate();
     } else {
+        m_controlBar->removeEventFilter(this);
         destroyUnHideTrigger();
         delete m_unHideTimer;
         m_unHideTimer = 0;
         m_controlBar->show();
-        m_controlBar->removeEventFilter(this);
     }
 
+    m_autoHideControlBar = autoHide;
     reserveStruts();
     m_controlBar->config().writeEntry("panelAutoHide", autoHide);
-    m_autoHideControlBar = autoHide;
 }
 
 void PlasmaApp::showAppletBrowser()
@@ -670,7 +671,9 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
                 event->type() == QEvent::Leave &&
                 !QApplication::activeWindow())) {
         //delayed hide
-        m_unHideTimer->start(400);
+        if (m_unHideTimer) {
+            m_unHideTimer->start(400);
+        }
     } else if (watched == m_widgetExplorerView && event->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         if (keyEvent->key() == Qt::Key_Escape) {

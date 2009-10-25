@@ -77,6 +77,19 @@ void NetView::setContainment(Plasma::Containment *c)
     updateGeometry();
 }
 
+bool NetView::autoHide() const
+{
+    return config().readEntry("panelAutoHide", true);
+}
+
+void NetView::setAutoHide(bool hide)
+{
+    if (hide != autoHide()) {
+        emit autoHideChanged(hide);
+    }
+    config().writeEntry("panelAutoHide", hide);
+}
+
 
 // This function is reimplemented from QGraphicsView to work around the problem
 // that QPainter::fillRect(QRectF/QRect, QBrush), which QGraphicsView uses, is

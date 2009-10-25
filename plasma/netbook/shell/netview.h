@@ -47,6 +47,7 @@ public:
     Plasma::Location location() const;
     Plasma::FormFactor formFactor() const;
     KConfigGroup config() const {return Plasma::View::config();}
+    bool autoHide() const;
 
     static int mainViewId() { return 1; }
     static int controlBarId() { return 2; }
@@ -58,11 +59,13 @@ public Q_SLOTS:
     void updateGeometry();
     void grabContainment();
     void updateConfigurationMode(bool config);
+    void setAutoHide(bool autoHide);
 
 Q_SIGNALS:
     void locationChanged(const NetView *view);
     void geometryChanged();
     void containmentActivated();
+    void autoHideChanged(bool autoHide);
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);

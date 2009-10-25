@@ -73,8 +73,6 @@ public:
      */
     void setIsDesktop(bool isDesktop);
 
-    void setAutoHideControlBar(bool autoHide);
-
     NetView *controlBar() const;
 
     NetView *mainView() const;
@@ -86,6 +84,10 @@ public:
     bool isDesktop() const;
 
     void showAppletBrowser(Plasma::Containment *containment);
+
+public Q_SLOTS:
+    void setAutoHideControlBar(bool autoHide);
+
 protected:
     bool eventFilter(QObject * watched, QEvent *event);
     bool x11EventFilter(XEvent *event);

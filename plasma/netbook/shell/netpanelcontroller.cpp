@@ -61,12 +61,14 @@ NetPanelController::NetPanelController(QWidget *parent, NetView *view, Plasma::C
     m_resizeButton->setText(i18n("Height"));
     m_layout->addItem(m_resizeButton);
 
-    /*m_autoHideButton = new Plasma::ToolButton(m_mainWidget);
+    m_autoHideButton = new Plasma::ToolButton(m_mainWidget);
     m_autoHideButton->nativeWidget()->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     m_autoHideButton->nativeWidget()->setCheckable(true);
     m_autoHideButton->setIcon(m_iconSvg->pixmap("collapse"));
     m_autoHideButton->setText(i18n("Auto Hide"));
-    m_layout->addItem(m_autoHideButton);*/
+    m_layout->addItem(m_autoHideButton);
+    m_autoHideButton->nativeWidget()->setChecked(view->autoHide());
+    connect(m_autoHideButton->nativeWidget(), SIGNAL(toggled(bool)), view, SLOT(setAutoHide(bool)));
 
     //m_moveButton->installEventFilter(this);
     m_resizeButton->installEventFilter(this);
