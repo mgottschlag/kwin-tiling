@@ -31,6 +31,7 @@
 #include <Plasma/Corona>
 #include <Plasma/ToolButton>
 #include <Plasma/Svg>
+#include <Plasma/WindowEffects>
 
 NetPanelController::NetPanelController(QWidget *parent, NetView *view, Plasma::Containment *containment)
    : Plasma::Dialog(parent),
@@ -38,6 +39,8 @@ NetPanelController::NetPanelController(QWidget *parent, NetView *view, Plasma::C
      m_view(view),
      m_watched(0)
 {
+    hide();
+
     m_mainWidget = new QGraphicsWidget(containment);
     if (containment && containment->corona()) {
         containment->corona()->addOffscreenWidget(m_mainWidget);
@@ -75,12 +78,15 @@ NetPanelController::NetPanelController(QWidget *parent, NetView *view, Plasma::C
     //m_moveButton->installEventFilter(this);
     m_resizeButton->installEventFilter(this);
     setGraphicsWidget(m_mainWidget);
+    m_layout->activate();
     updateGeometry();
     show();
+    Plasma::WindowEffects::slideWindow(this, containment->location());
 }
 
 NetPanelController::~NetPanelController()
 {
+    Plasma::WindowEffects::slideWindow(this, m_containment->location());
 }
 
 void NetPanelController::updateGeometry()
