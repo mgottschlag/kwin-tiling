@@ -28,8 +28,8 @@ namespace Plasma
     class Containment;
 } // namespace Plasma
 
-class DashboardView;
 class BackgroundDialog;
+class NetPanelController;
 
 class NetView : public Plasma::View
 {
@@ -57,6 +57,7 @@ public Q_SLOTS:
     void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
     void updateGeometry();
     void grabContainment();
+    void updateConfigurationMode(bool config);
 
 Q_SIGNALS:
     void locationChanged(const NetView *view);
@@ -66,6 +67,9 @@ Q_SIGNALS:
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
     void resizeEvent(QResizeEvent *event);
+
+private:
+    NetPanelController *m_panelController;
 };
 
 #endif // multiple inclusion guard

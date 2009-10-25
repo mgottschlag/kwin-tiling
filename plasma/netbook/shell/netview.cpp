@@ -18,6 +18,7 @@
 
 #include "netview.h"
 #include "netcorona.h"
+#include "netpanelcontroller.h"
 
 #include <QAction>
 #include <QCoreApplication>
@@ -30,7 +31,8 @@
 #include <Plasma/Containment>
 
 NetView::NetView(Plasma::Containment *containment, int uid, QWidget *parent)
-    : Plasma::View(containment, uid, parent)
+    : Plasma::View(containment, uid, parent),
+      m_panelController(0)
 {
     setFocusPolicy(Qt::NoFocus);
     connectContainment(containment);
@@ -61,6 +63,7 @@ void NetView::connectContainment(Plasma::Containment *containment)
 
     connect(containment, SIGNAL(activate()), this, SIGNAL(containmentActivated()));
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updateGeometry()));
+    connect(containment, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
 }
 
 void NetView::setContainment(Plasma::Containment *c)
@@ -87,6 +90,14 @@ void NetView::drawBackground(QPainter *painter, const QRectF &rect)
 {
     const QPainter::CompositionMode savedMode = painter->compositionMode();
     const QBrush brush = backgroundBrush();
+
+    if (containment() && (containment()->containmentType() == Plasma::Containment::PanelContainment ||
+        containment()->containmentType() == Plasma::Containment::CustomPanelContainment)) {
+        painter->setCompositionMode(QPainter::CompositionMode_Source);
+        painter->fillRect(rect.toAlignedRect(), Qt::transparent);
+        painter->setCompositionMode(savedMode);
+        return;
+    }
 
     switch (brush.style())
     {
@@ -198,6 +209,18 @@ void NetView::grabContainment()
     Plasma::Containment *cont = corona->findFreeContainment();
     if (cont) {
         setContainment(cont);
+    }
+}
+
+void NetView::updateConfigurationMode(bool config)
+{
+    Plasma::Containment *cont = containment();
+    if (config && cont && cont->immutability() == Plasma::Mutable &&
+        (cont->formFactor() == Plasma::Horizontal || cont->formFactor() == Plasma::Vertical)) {
+        m_panelController = new NetPanelController(0, this, cont);
+    } else {
+        delete m_panelController;
+        m_panelController = 0;
     }
 }
 
