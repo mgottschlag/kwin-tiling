@@ -1286,17 +1286,6 @@ else
 fi</programlisting>
 
 </sect1>
-<!-- Riddell: so there's no GUI you need to edit kdmrc to say UseTheme=true and Theme=/path/to/theme.xml
-[13:31] <Riddell> jriddell.org/programs has an example theme 
-
-<sect1 id="dm-themes">
-<title>Themes</title>
-
-&kdm; has limited support for desktop manager themes.  You may enable them
-by adding <userinput>UseTheme=true</userinput> to <filename>kdmrc</filename>
-and <userinput>Theme=/path/to/theme.xml</userinput>.  
-</sect1>
--->
 </chapter>
 
 <chapter id="Other-Information">
