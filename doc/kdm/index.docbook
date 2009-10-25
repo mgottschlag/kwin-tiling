@@ -1018,7 +1018,7 @@ for .dmrc. Unlisted keys will default to previously saved values.</para>
 </varlistentry>
 
 <varlistentry>
-<term><command>resume</command>
+<term><command>resume</command></term>
 <listitem>
 <para>Force return from console mode, even if TTY logins are still
 active.</para>
