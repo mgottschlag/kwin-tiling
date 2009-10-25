@@ -119,34 +119,6 @@ xdmGetXdmcpAuth( struct protoDisplay *pdpy,
 	pdpy->xdmcpAuthorization = xdmcpauth;
 }
 
-#define atox(c) ('0' <= c && c <= '9' ? c - '0' : \
-				 'a' <= c && c <= 'f' ? c - 'a' + 10 : \
-				 'A' <= c && c <= 'F' ? c - 'A' + 10 : -1)
-
-static int
-hexToBinary( char *key )
-{
-	char *out, *in;
-	int top, bottom;
-
-	in = key + 2;
-	out= key;
-	while (in[0] && in[1]) {
-		top = atox( in[0] );
-		if (top == -1)
-			return False;
-		bottom = atox( in[1] );
-		if (bottom == -1)
-			return False;
-		*out++ = (top << 4) | bottom;
-		in += 2;
-	}
-	if (in[0])
-		return False;
-	*out++ = '\0';
-	return True;
-}
-
 /*
  * Search the Keys file for the entry matching this display.  This
  * routine accepts either plain ascii strings for keys, or hex-encoded numbers
@@ -171,10 +143,12 @@ xdmGetKey( struct protoDisplay *pdpy, ARRAY8Ptr displayID )
 		if (strlen( id ) == displayID->length &&
 		    !strncmp( id, (char *)displayID->data, displayID->length ))
 		{
-			if (!strncmp( key, "0x", 2 ) || !strncmp( key, "0X", 2 ))
-				if (!hexToBinary( key ))
+			if (!strncmp( key, "0x", 2 ) || !strncmp( key, "0X", 2 )) {
+				if (!(keylen = hexToBinary( key, key + 2 )))
 					break;
-			keylen = strlen( key );
+			} else {
+				keylen = strlen( key );
+			}
 			while (keylen < 7)
 				key[keylen++] = '\0';
 			pdpy->key.data[0] = '\0';

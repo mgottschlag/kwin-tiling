@@ -581,6 +581,31 @@ strNChrCnt( const char *s, int slen, char c )
 	return cnt;
 }
 
+#define atox(c) ('0' <= c && c <= '9' ? c - '0' : \
+				 'a' <= c && c <= 'f' ? c - 'a' + 10 : \
+				 'A' <= c && c <= 'F' ? c - 'A' + 10 : -1)
+
+int
+hexToBinary( char *out, const char *in )
+{
+	int top, bottom;
+	char c;
+	char *oout;
+
+	for (oout = out; (c = *in++); ) {
+		if ((top = atox( c )) < 0)
+			return 0;
+		if (!(c = *in++))
+			return 0;
+		if ((bottom = atox( c )) < 0)
+			return 0;
+		*out++ = (top << 4) | bottom;
+	}
+	return out - oout;
+}
+
+#undef atox
+
 /* X -from ip6-addr does not work here, so i don't know whether this is needed.
 #define IP6_MAGIC
 */
