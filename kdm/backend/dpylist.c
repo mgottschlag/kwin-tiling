@@ -218,7 +218,6 @@ removeDisplay( struct display *old )
 				(void)unlink( d->authFile );
 				free( d->authFile );
 			}
-			free( d->authNameLens );
 #ifdef XDMCP
 			XdmcpDisposeARRAY8( &d->peer );
 			XdmcpDisposeARRAY8( &d->from );

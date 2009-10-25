@@ -337,7 +337,7 @@ void
 setLocalAuthorization( struct display *d )
 {
 	Xauth *auth, **auths;
-	int i, j;
+	int i, confAuths, gotAuths;
 
 	if (d->authorizations)
 	{
@@ -348,31 +348,20 @@ setLocalAuthorization( struct display *d )
 		d->authNum = 0;
 	}
 	debug( "setLocalAuthorization %s, auths %[s\n", d->name, d->authNames );
-	if (!d->authNames)
+	confAuths = arrLen( d->authNames );
+	if (!(auths = Malloc( confAuths * sizeof(Xauth *) )))
 		return;
-	for (i = 0; d->authNames[i]; i++)
-		;
-	d->authNameNum = i;
-	free( d->authNameLens );
-	d->authNameLens = Malloc( d->authNameNum * sizeof(unsigned short) );
-	if (!d->authNameLens)
-		return;
-	for (i = 0; i < d->authNameNum; i++)
-		d->authNameLens[i] = strlen( d->authNames[i] );
-	auths = Malloc( d->authNameNum * sizeof(Xauth *) );
-	if (!auths)
-		return;
-	j = 0;
-	for (i = 0; i < d->authNameNum; i++) {
-		auth = generateAuthorization( d->authNameLens[i], d->authNames[i] );
+	gotAuths = 0;
+	for (i = 0; i < confAuths; i++) {
+		auth = generateAuthorization( strlen( d->authNames[i] ), d->authNames[i] );
 		if (auth)
-			auths[j++] = auth;
+			auths[gotAuths++] = auth;
 	}
-	if (saveServerAuthorizations( d, auths, j )) {
+	if (saveServerAuthorizations( d, auths, gotAuths )) {
 		d->authorizations = auths;
-		d->authNum = j;
+		d->authNum = gotAuths;
 	} else {
-		for (i = 0; i < j; i++)
+		for (i = 0; i < gotAuths; i++)
 			XauDisposeAuth( auths[i] );
 		free( auths );
 	}

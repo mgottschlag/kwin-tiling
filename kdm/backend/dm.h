@@ -284,10 +284,7 @@ struct display {
 
 	int idleTimeout;            /* abort login after that time */
 
-	unsigned short *authNameLens;  /* authorization protocol name lens */
-
 	/* information potentially derived from resources */
-	int authNameNum;            /* number of protocol names */
 	Xauth **authorizations;     /* authorization data */
 	int authNum;                /* number of authorizations */
 	char *authFile;             /* file to store authorization in */
