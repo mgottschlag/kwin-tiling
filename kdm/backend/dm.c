@@ -1567,7 +1567,7 @@ exitDisplay( struct display *d,
 			return;
 		}
 		if (endState != DS_RESTART ||
-		    (d->displayType & d_origin) != dFromFile)
+		    (d->displayType & d_lifetime) == dTransient)
 		{
 			rStopDisplay( d, endState );
 		} else {

@@ -1025,6 +1025,29 @@ active.</para>
 </listitem>
 </varlistentry>
 
+<varlistentry>
+<term><command>manage</command> <parameter>display</parameter>
+[<parameter>display_class</parameter>
+[<parameter>auth_name</parameter> <parameter>auth_data</parameter>]]</term>
+<listitem>
+<para>Start managing the named foreign display.</para>
+<para><parameter>display_class</parameter>, if specified and non-empty,
+will be used for configuration matching; see <xref linkend="kdm-files"/>.
+</para>
+<para><parameter>auth_name</parameter> and <parameter>auth_data</parameter>
+need to be passed if the display requires X authorization. The format is
+the same as the 2nd and 3rd column of the <command>xauth list</command>
+output.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><command>unmanage</command> <parameter>display</parameter></term>
+<listitem>
+<para>Stop managing the named foreign display.</para>
+</listitem>
+</varlistentry>
+
 </variablelist>
 
 <variablelist>
@@ -1070,7 +1093,7 @@ too</para>
 <varlistentry>
 <term><returnvalue>list</returnvalue>, <returnvalue>lock</returnvalue>,
 <returnvalue>suicide</returnvalue>, <returnvalue>login</returnvalue>,
-<returnvalue>resume</returnvalue>
+<returnvalue>resume</returnvalue>, <returnvalue>manage</returnvalue>
 </term>
 <listitem>
 <para>The respective command is supported</para>

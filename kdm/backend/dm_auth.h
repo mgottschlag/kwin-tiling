@@ -68,6 +68,12 @@ int validAuthorization( unsigned short name_length, const char *name );
 Xauth *getAuthHelper( unsigned short namelen, const char *name );
 Xauth *generateAuthHelper( unsigned short namelen, const char *name, int nbytes );
 
+typedef enum { SetAuthOk, SetAuthBad, SetAuthOOM } SetAuthStatus;
+SetAuthStatus
+setDynamicDisplayAuthorization( struct display *dpy,
+                                const char *authorizationName,
+                                const char *authorizationData );
+
 #ifdef XDMCP
 
 void

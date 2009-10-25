@@ -246,6 +246,43 @@ setProtoDisplayAuthorization( struct protoDisplay *pdpy,
 
 #endif /* XDMCP */
 
+SetAuthStatus
+setDynamicDisplayAuthorization( struct display *d,
+                                const char *authorizationName,
+                                const char *authorizationData )
+{
+	Xauth *new;
+	char *data;
+	int dataLen;
+
+	dataLen = strlen( authorizationData ) / 2;
+	if (!(data = Malloc( dataLen )))
+		return SetAuthOOM;
+	if (!hexToBinary( data, authorizationData )) {
+		free( data );
+		return SetAuthBad;
+	}
+
+	if (!(new = getAuthHelper( strlen( authorizationName ),
+	                           authorizationName ))) {
+		free( data );
+		return SetAuthOOM;
+	}
+
+	new->data = data;
+	new->data_length = dataLen;
+
+	if (!(d->authorizations = Malloc( sizeof(Xauth *) ))) {
+		free( new->name );
+		free( new );
+		free( data );
+		return SetAuthOOM;
+	}
+	d->authorizations[0] = new;
+	d->authNum = 1;
+	return SetAuthOk;
+}
+
 void
 cleanUpFileName( const char *src, char *dst, int len )
 {

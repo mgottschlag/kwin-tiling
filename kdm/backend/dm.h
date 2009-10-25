@@ -300,10 +300,11 @@ struct display {
 #define dTransient      0	/* display removed when session exits */
 
 #ifdef XDMCP
-#define d_origin     8
+#define d_origin     24
 #else
-#define d_origin     0 /* clever, huh? :) */
+#define d_origin     16 /* clever, huh? :) */
 #endif
+#define dFromCommand   16	/* started via command socket */
 #define dFromXDMCP      8	/* started with XDMCP */
 #define dFromFile       0	/* started via entry in servers file */
 

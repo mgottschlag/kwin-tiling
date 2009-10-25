@@ -35,6 +35,7 @@ from the copyright holder.
  */
 
 #include "dm.h"
+#include "dm_auth.h"
 #include "dm_socket.h"
 #include "dm_error.h"
 
@@ -448,7 +449,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				if (anyReserveDisplays())
 					writer( fd, cbuf, sprintf( cbuf, "reserve %d\t",
 					                           idleReserveDisplays() ) );
-				Reply( CMD_ACTIVATE "resume\tlogin\n" );
+				Reply( CMD_ACTIVATE "resume\tmanage\tlogin\n" );
 			}
 			goto bust;
 		} else if (!strcmp( ar[0], "list" )) {
@@ -761,6 +762,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				}
 				if (ar[5]) {
 					if (!(args = unQuote( ar[5] ))) {
+					  oom:
 						fLog( d, fd, "nomem", "out of memory" );
 						goto bust;
 					}
@@ -801,6 +803,59 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				if (ar[1])
 					goto exce;
 				wakeDisplays();
+			} else if (!strcmp( ar[0], "manage" )) {
+				if (!ar[1])
+					goto miss;
+				if (*ar[1] == ':') {
+					fLog( d, fd, "bad", "display needs host (try localhost?)" );
+					goto bust;
+				}
+				if (findDisplayByName( ar[1] )) {
+					fLog( d, fd, "exists", "display is already being managed" );
+					goto bust;
+				}
+				if (!(di = newDisplay( ar[1] )))
+					goto oom;
+				di->displayType = dForeign | dPermanent | dFromCommand;
+				if (ar[2]) {
+					if (*ar[2] && !strDup( &di->class2, ar[2] )) {
+						removeDisplay( di );
+						goto oom;
+					}
+					if (ar[3]) {
+						if (!ar[4])
+							goto miss;
+						if (ar[5]) {
+							removeDisplay( di );
+							goto exce;
+						}
+						switch (setDynamicDisplayAuthorization( di, ar[3], ar[4] )) {
+						case SetAuthOOM:
+							removeDisplay( di );
+							goto oom;
+						case SetAuthBad:
+							removeDisplay( di );
+							fLog( d, fd, "bad", "invalid authorization data" );
+							goto bust;
+						case SetAuthOk:
+							break;
+						}
+					}
+				}
+			} else if (!strcmp( ar[0], "unmanage" )) {
+				if (!ar[1])
+					goto miss;
+				if (ar[2])
+					goto exce;
+				if (!(di = findDisplayByName( ar[1] ))) {
+					fLog( d, fd, "noent", "display %s not found", ar[1] );
+					goto bust;
+				}
+				if ((di->displayType & d_origin) != dFromCommand) {
+					fLog( d, fd, "perm", "not an on-demand display" );
+					goto bust;
+				}
+				stopDisplay( di );
 			} else {
 				fLog( d, fd, "nosys", "unknown command" );
 				goto bust;
