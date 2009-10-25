@@ -33,6 +33,8 @@
 #include <Plasma/Svg>
 #include <Plasma/WindowEffects>
 
+#include <kephal/screens.h>
+
 NetPanelController::NetPanelController(QWidget *parent, NetView *view, Plasma::Containment *containment)
    : Plasma::Dialog(parent),
      m_containment(containment),
@@ -53,11 +55,11 @@ NetPanelController::NetPanelController(QWidget *parent, NetView *view, Plasma::C
     m_iconSvg->setContainsMultipleImages(true);
     m_iconSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
 
-    /*m_moveButton = new Plasma::ToolButton(m_mainWidget);
+    m_moveButton = new Plasma::ToolButton(m_mainWidget);
     m_moveButton->nativeWidget()->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     m_moveButton->setIcon(m_iconSvg->pixmap("move"));
     m_moveButton->setText(i18n("Screen edge"));
-    m_layout->addItem(m_moveButton);*/
+    m_layout->addItem(m_moveButton);
 
     m_resizeButton = new Plasma::ToolButton(m_mainWidget);
     m_resizeButton->nativeWidget()->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -75,7 +77,7 @@ NetPanelController::NetPanelController(QWidget *parent, NetView *view, Plasma::C
     connect(m_autoHideButton->nativeWidget(), SIGNAL(toggled(bool)), view, SLOT(setAutoHide(bool)));
     connect(containment, SIGNAL(geometryChanged()), this, SLOT(updateGeometry()));
 
-    //m_moveButton->installEventFilter(this);
+    m_moveButton->installEventFilter(this);
     m_resizeButton->installEventFilter(this);
     setGraphicsWidget(m_mainWidget);
     m_layout->activate();
@@ -117,7 +119,67 @@ bool NetPanelController::eventFilter(QObject *watched, QEvent *event)
     } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
         m_watched = 0;
     } else if (watched == m_moveButton && event->type() == QEvent::GraphicsSceneMouseMove) {
-        
+        QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
+        QRect screenGeom = Kephal::ScreenUtils::screenGeometry(m_containment->screen());
+
+        //only move when the mouse cursor is out of the controller to avoid an endless reposition cycle
+        if (geometry().contains(me->screenPos())) {
+            return false;
+        }
+
+        if (!screenGeom.contains(me->screenPos())) {
+            //move panel to new screen if dragged there
+            int targetScreen = Kephal::ScreenUtils::screenId(me->screenPos());
+            //kDebug() << "Moving panel from screen" << containment()->screen() << "to screen" << targetScreen;
+            m_containment->setScreen(targetScreen);
+            return false;
+        }
+
+        //create a dead zone so you can go across the middle without having it hop to one side
+        float dzFactor = 0.35;
+        QPoint offset = QPoint(screenGeom.width()*dzFactor,screenGeom.height()*dzFactor);
+        QRect deadzone = QRect(screenGeom.topLeft()+offset, screenGeom.bottomRight()-offset);
+        if (deadzone.contains(me->screenPos())) {
+            //kDebug() << "In the deadzone:" << deadzone;
+            return false;
+        }
+
+        const Plasma::Location oldLocation = m_containment->location();
+        Plasma::Location newLocation = oldLocation;
+        float screenAspect = float(screenGeom.height())/screenGeom.width();
+
+        /* Use diagonal lines so we get predictable behavior when moving the panel
+         * y=topleft.y+(x-topleft.x)*aspectratio   topright < bottomleft
+         * y=bottomleft.y-(x-topleft.x)*aspectratio   topleft < bottomright
+         */
+        if (me->screenPos().y() < screenGeom.y()+(me->screenPos().x()-screenGeom.x())*screenAspect) {
+            if (me->screenPos().y() < screenGeom.bottomLeft().y()-(me->screenPos().x()-screenGeom.x())*screenAspect) {
+                if (m_containment->location() == Plasma::TopEdge) {
+                    return false;
+                } else {
+                    newLocation = Plasma::TopEdge;
+                }
+            } else if (m_containment->location() == Plasma::RightEdge) {
+                    return false;
+            } else {
+                newLocation = Plasma::RightEdge;
+            }
+        } else {
+            if (me->screenPos().y() < screenGeom.bottomLeft().y()-(me->screenPos().x()-screenGeom.x())*screenAspect) {
+                if (m_containment->location() == Plasma::LeftEdge) {
+                    return false;
+                } else {
+                    newLocation = Plasma::LeftEdge;
+                }
+            } else if(m_containment->location() == Plasma::BottomEdge) {
+                    return false;
+            } else {
+                newLocation = Plasma::BottomEdge;
+            }
+        }
+
+        m_containment->setLocation(newLocation);
+
     } else if (watched == m_resizeButton && event->type() == QEvent::GraphicsSceneMouseMove) {
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
         QPointF deltaPos(me->screenPos() - me->lastScreenPos());
