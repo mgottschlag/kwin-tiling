@@ -103,10 +103,10 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
     font.setPointSize(KGlobalSettings::smallestReadableFont().pointSize());
     font.setItalic(true);
     m_descriptionLabel->setFont(font);
-    m_descriptionLabel->setGraphicsEffect(new QGraphicsOpacityEffect(m_descriptionLabel));
+    QGraphicsOpacityEffect *labelEffect = new QGraphicsOpacityEffect(m_descriptionLabel);
+    m_descriptionLabel->setGraphicsEffect(labelEffect);
+    labelEffect->setOpacity(0);
     updateColors();
-
-    m_descriptionLabel->hide();
 
     KCapacityBar *capacityBarWidget = new KCapacityBar(KCapacityBar::DrawTextInline);
     m_capacityBar = new QGraphicsProxyWidget(this);
@@ -115,19 +115,20 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
     capacityBarWidget->setContinuous(true);
     m_capacityBar->setAcceptHoverEvents(false);
     m_capacityBar->setMaximumHeight(12);
-    m_capacityBar->setGraphicsEffect(new QGraphicsOpacityEffect(m_capacityBar));
-
-    m_capacityBar->hide();
-
+    QGraphicsOpacityEffect *capacityBarEffect = new QGraphicsOpacityEffect(m_capacityBar);
+    m_capacityBar->setGraphicsEffect(capacityBarEffect);
+    capacityBarEffect->setOpacity(0);
+    m_capacityBar->setVisible(isMounted());
     info_layout->addItem(m_nameLabel);
     info_layout->addItem(m_descriptionLabel);
     info_layout->addItem(m_capacityBar);
 
     m_leftActionIcon = new Plasma::IconWidget(this);
-    m_leftActionIcon->hide();
     m_leftActionIcon->setMaximumSize(m_leftActionIcon->sizeFromIconSize(LEFTACTION_SIZE));
     m_leftActionIcon->setSizePolicy(QSizePolicy::Fixed,  QSizePolicy::Fixed);
-    m_leftActionIcon->setGraphicsEffect(new QGraphicsOpacityEffect(m_leftActionIcon));
+    QGraphicsOpacityEffect *leftActionEffect = new QGraphicsOpacityEffect(m_leftActionIcon);
+    m_leftActionIcon->setGraphicsEffect(leftActionEffect);
+    leftActionEffect->setOpacity(0);
     connect(m_leftActionIcon, SIGNAL(clicked()), this, SLOT(leftActionClicked()));
 
     m_mainLayout->addItem(m_deviceIcon);
@@ -154,8 +155,6 @@ DeviceItem::~DeviceItem()
 void DeviceItem::collapse()
 {
     if (!isCollapsed()) {
-        updateHoverDisplay();
-
         m_treeLayout->removeAt(1);
         m_actionsWidget->hide();
     }
@@ -166,7 +165,6 @@ void DeviceItem::expand()
     if (isCollapsed()) {
         m_treeLayout->addItem(m_actionsWidget);
         m_actionsWidget->show();
-        updateHoverDisplay();
 
         adjustSize();
     }
@@ -292,9 +290,7 @@ void DeviceItem::setHovered(const bool hovered)
     }
 
     m_hovered = hovered;
-    if (hovered) {
-        updateHoverDisplay();
-    } else {
+    if (!hovered) {
         if (!m_labelFade) {
             m_labelFade = Plasma::Animator::create(Plasma::Animator::FadeAnimation, this);
             m_barFade = Plasma::Animator::create(Plasma::Animator::FadeAnimation, this);
@@ -318,22 +314,6 @@ void DeviceItem::setHovered(const bool hovered)
     }
 }
 
-void DeviceItem::updateHoverDisplay()
-{
-    const bool labelVisible = m_descriptionLabel->isVisible();
-    const bool barVisible = m_capacityBar->isVisible();
-    const bool makeVisible = m_hovered || !isCollapsed();
-
-    m_leftActionIcon->setVisible(makeVisible && !m_busyWidget->isVisible());
-    m_descriptionLabel->setVisible(makeVisible);
-    m_capacityBar->setVisible(m_mounted && makeVisible);
-    if (labelVisible != m_descriptionLabel->isVisible() ||
-        barVisible != m_capacityBar->isVisible()) {
-        // work around for a QGraphicsLayout bug when used with proxy widgets
-        m_mainLayout->invalidate();
-    }
-}
-
 void DeviceItem::setHoverDisplayOpacity(qreal opacity)
 {
     if (!hovered()) {
@@ -348,10 +328,6 @@ void DeviceItem::setHoverDisplayOpacity(qreal opacity)
         labelEffect->setOpacity(opacity);
         leftActionEffect->setOpacity(opacity);
         capacityBarEffect->setOpacity(opacity);
-    }
-
-    if (!hovered() && opacity == 0) {
-        updateHoverDisplay();
     }
 }
 

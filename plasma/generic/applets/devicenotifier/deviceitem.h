@@ -248,7 +248,6 @@ class DeviceItem : public QGraphicsWidget
         void triggerBusyWidget();
 
     private:
-        void updateHoverDisplay();
 
         ///The icon of the device
         QIcon m_icon;
