@@ -11,8 +11,6 @@
 
 - do something about GreetString, i18n & theming. need some magic for the default.
 
-- error labels use fixed color. fix needs support from QPalette.
-
 - message after switching to text mode
 - report critical startup errors to the console
 - set LANGUAGE in the backend for i18n-capable PAM libs
@@ -46,7 +44,7 @@ save these options to .dmrc?
 - make config position independent
 - warn about conflicting {Static,Reserver}Servers settings. more sanity checks?
 - parse /etc/kderc?
-- merge multiple kdmrcs in the style of kconfig.
+- merge multiple kdmrcs in the style of kconfig (#143456).
   how to set section priorities? the included file is recessive to *any*
   matching entry from the master file.
 
@@ -63,7 +61,6 @@ genkdmconf:
 - write a separate configurator application, as kcontrol does not scale well
   enough to cover all of kdm's options.
 
-- write generic conversation plugin
 - write modern conv plugin. or maybe this should be a parallel vs. serial
   setting of the classic plugin? (#148110)
 - change conversation plugin interface:
@@ -106,7 +103,6 @@ genkdmconf:
   or maybe implement it as an xdmcp extension?
 - LoginMode=DirectQuery
 
-- "XDMCP over FiFo" - or at least a "manage <dpy> [<xauth>]" command
 - the per-display sockets are in fact nonsense; gdm's approach is better
 - use dbus instead of command socket?
 
@@ -189,6 +185,7 @@ and the session. .dmrc later affects only the session, not the greeter.
   save bandwidth.
 
 internal stuff:
+- sessreg.c does no file locking whatsoever
 - improve signal handling in the subdaemon, it's incredibly racy (SIGTERM, etc).
   depends on proper main loop.
 - greeter sometimes won't shutdown when killing kdm - prolly some race
