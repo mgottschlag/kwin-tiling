@@ -1019,8 +1019,7 @@ manage( struct sockaddr *from, int fromlen, int length, int fd )
 			if (pdpy->fileAuthorization) {
 				d->authorizations = Malloc( sizeof(Xauth *) );
 				if (!d->authorizations) {
-					free( from_save );
-					free( d );
+					removeDisplay( d );
 					send_failed( from, fromlen, name, sessionID,
 					             "out of memory", fd );
 					goto abort;
