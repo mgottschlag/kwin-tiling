@@ -503,7 +503,7 @@ void PlasmaApp::controlBarMoved(const NetView *controlBar)
         m_controlBar->move(screenRect.topLeft());
         break;
     case Plasma::RightEdge:
-        m_controlBar->move(screenRect.bottomLeft()-QPoint(m_controlBar->size().width(), 0));
+        m_controlBar->move(screenRect.topRight()-QPoint(m_controlBar->size().width(), 0));
         break;
     case Plasma::TopEdge:
         m_controlBar->move(screenRect.topLeft());
