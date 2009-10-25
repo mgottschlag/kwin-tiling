@@ -1030,14 +1030,6 @@ manage( struct sockaddr *from, int fromlen, int length, int fd )
 				pdpy->fileAuthorization = 0;
 			}
 			disposeProtoDisplay( pdpy );
-			debug( "starting display %s,%s\n", d->name, d->class2 );
-			if (loadDisplayResources( d ) < 0) {
-				logError( "Unable to read configuration for display %s; "
-				          "stopping it.\n", d->name );
-				stopDisplay( d );
-			} else
-				startDisplay( d );
-			closeGetter();
 		}
 	}
 abort:

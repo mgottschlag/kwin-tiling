@@ -52,6 +52,7 @@ from the copyright holder.
 
 static void sigHandler( int n );
 static int scanConfigs( int force );
+static void startDisplay( struct display *d );
 static void startDisplays( void );
 #define XS_KEEP 0
 #define XS_RESTART 1
@@ -1393,7 +1394,7 @@ startDisplays( void )
 	forEachDisplay( kickDisplay );
 }
 
-void
+static void
 startDisplay( struct display *d )
 {
 	if (stopping) {

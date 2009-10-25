@@ -375,7 +375,6 @@ extern char *progname;
 extern char *prog;
 extern time_t now;
 extern SdRec sdRec;
-void startDisplay( struct display *d );
 void startDisplayP2( struct display *d );
 void stopDisplay( struct display *d );
 #if !defined(HAVE_SETPROCTITLE) && !defined(NOXDMTITLE)
