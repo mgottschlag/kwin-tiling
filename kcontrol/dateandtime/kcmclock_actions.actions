@@ -37,6 +37,7 @@ Name[zh_TW]=儲存日期和時間設定值
 Description=System policies prevent you from saving the date/time settings.
 Description[en_GB]=System policies prevent you from saving the date/time settings.
 Description[et]=Süsteemi reeglid takistavad kuupäeva ja kellaaja seadistuste salvestamist.
+Description[gl]=As políticas do sistema evitan que garde a configuración da data e hora.
 Description[lt]=Sistemos taisyklės neleidžia jums įrašyti datos/laiko.
 Description[nb]=Systembestemmelser gjør at du ikke kan lagre dato/tid-innstillingene
 Description[nl]=Systeembeleid voorkwam dat u de datum- en tijdinstellingen kon opslaan.

@@ -1,11 +1,17 @@
 [Desktop Entry]
 Name=Contacts
+Name[en_GB]=Contacts
+Name[gl]=Contactos
 Name[pt]=Contactos
+Name[pt_BR]=Contatos
 Name[sv]=Kontakter
 Name[uk]=Контакти
 Name[x-test]=xxContactsxx
 Comment=List all your contacts
+Comment[en_GB]=List all your contacts
+Comment[gl]=Enumera todos os contactos
 Comment[pt]=Apresentar todos os seus contactos
+Comment[pt_BR]=Lista todos os seus contatos
 Comment[sv]=Lista alla kontakter
 Comment[uk]=Список всіх ваших записів контактів
 Comment[x-test]=xxList all your contactsxx

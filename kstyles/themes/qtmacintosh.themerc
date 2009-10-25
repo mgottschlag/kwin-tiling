@@ -2,6 +2,7 @@
 Name=Mac OS X
 Name[en_GB]=Mac OS X
 Name[eo]=Mac OS X
+Name[gl]=Mac OS X
 Name[pt]=Mac OS X
 Name[pt_BR]=Mac OS X
 Name[sv]=Mac OS X
@@ -10,6 +11,7 @@ Name[x-test]=xxMac OS Xxx
 Name[zh_TW]=Mac OS X
 Comment=Style that uses the Apple Appearance Manager
 Comment[en_GB]=Style that uses the Apple Appearance Manager
+Comment[gl]=Un estilo que emprega o xestor de aparencia de Apple
 Comment[pt]=Um estilo que usa o Gestor de Aparências da Apple
 Comment[pt_BR]=Estilo que usa o gerenciador de aparências da Apple
 Comment[sv]=Stil som använder Apples utseendehanterare

@@ -2,6 +2,7 @@
 Name=Plastique
 Name[en_GB]=Plastique
 Name[eo]=Plastik
+Name[gl]=Plastique
 Name[pt]=Plastique
 Name[pt_BR]=Plastique
 Name[sv]=Plastique
@@ -10,6 +11,7 @@ Name[x-test]=xxPlastiquexx
 Name[zh_TW]=Plastique
 Comment=Built-in unthemed style similar to Plastik from KDE3
 Comment[en_GB]=Built-in unthemed style similar to Plastik from KDE3
+Comment[gl]=Un estilo incorporado sen tema semellante ao Plastik de KDE3
 Comment[pt]=Um estilo sem tema incorporado, semelhante ao Plastik do KDE3
 Comment[pt_BR]=Estilo sem tema embutido, semelhante ao Plastik do KDE3
 Comment[sv]=Inbyggd stil utan tema som liknar Plastik från KDE 3
