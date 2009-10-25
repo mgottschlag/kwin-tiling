@@ -385,6 +385,11 @@ static void
 processCtrl( const char *string, int len, int fd, struct display *d )
 {
 #define Reply(t) writer( fd, t, strlen( t ) )
+#ifdef HAVE_VTS
+# define CMD_ACTIVATE "activate\t"
+#else
+# define CMD_ACTIVATE
+#endif
 
 	struct display *di;
 	const char *word;
@@ -415,11 +420,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				Reply( "bootoptions\t" );
 			if (d) {
 				if ((d->displayType & d_location) == dLocal)
-#ifdef HAVE_VTS
-					Reply( "local\tactivate\t" );
-#else
-					Reply( "local\t" );
-#endif
+					Reply( "local\t" CMD_ACTIVATE );
 				if (d->allowShutdown != SHUT_NONE) {
 					if (d->allowShutdown == SHUT_ROOT && d->userSess)
 						Reply( "shutdown root\t" );
@@ -447,11 +448,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				if (anyReserveDisplays())
 					writer( fd, cbuf, sprintf( cbuf, "reserve %d\t",
 					                           idleReserveDisplays() ) );
-#ifdef HAVE_VTS
-				Reply( "login\tactivate\n" );
-#else
-				Reply( "login\n" );
-#endif
+				Reply( CMD_ACTIVATE "login\n" );
 			}
 			goto bust;
 		} else if (!strcmp( ar[0], "list" )) {
