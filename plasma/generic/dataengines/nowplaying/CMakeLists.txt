@@ -26,7 +26,7 @@ QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS ${mpris_player_desc} mprisplayer)
 
 if(GLIB2_FOUND)
    macro_optional_find_package(Xmms)
-   macro_log_feature(XMMS_FOUND "XMMS" "X MultiMedia System developement libraries" "http://www.xmms.org" FALSE "" "Support for XMMS in the Now Playing data engine")
+   macro_log_feature(XMMS_FOUND "XMMS" "X MultiMedia System development libraries" "http://www.xmms.org" FALSE "" "Support for XMMS in the Now Playing data engine")
    if(XMMS_FOUND)
       include_directories(${XMMS_INCLUDE_DIRS})
       include_directories(${GLIB2_INCLUDE_DIR})
