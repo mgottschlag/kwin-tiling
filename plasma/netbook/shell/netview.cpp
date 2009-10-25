@@ -32,7 +32,8 @@
 
 NetView::NetView(Plasma::Containment *containment, int uid, QWidget *parent)
     : Plasma::View(containment, uid, parent),
-      m_panelController(0)
+      m_panelController(0),
+      m_configurationMode(false)
 {
     setFocusPolicy(Qt::NoFocus);
     connectContainment(containment);
@@ -64,6 +65,7 @@ void NetView::connectContainment(Plasma::Containment *containment)
     connect(containment, SIGNAL(activate()), this, SIGNAL(containmentActivated()));
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updateGeometry()));
     connect(containment, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
+    connect(containment, SIGNAL(immutabilityChanged(ImmutabilityType)), this, SLOT(immutabilityChanged(ImmutabilityType)));
 }
 
 void NetView::setContainment(Plasma::Containment *c)
@@ -90,6 +92,14 @@ void NetView::setAutoHide(bool hide)
     config().writeEntry("panelAutoHide", hide);
 }
 
+void NetView::immutabilityChanged(Plasma::ImmutabilityType immutability)
+{
+    if (m_configurationMode && immutability == Plasma::Mutable) {
+        updateConfigurationMode(true);
+    } else if (m_configurationMode) {
+        updateConfigurationMode(false);
+    }
+}
 
 // This function is reimplemented from QGraphicsView to work around the problem
 // that QPainter::fillRect(QRectF/QRect, QBrush), which QGraphicsView uses, is
@@ -227,6 +237,8 @@ void NetView::grabContainment()
 
 void NetView::updateConfigurationMode(bool config)
 {
+    m_configurationMode = config;
+
     Plasma::Containment *cont = containment();
     if (config && cont && cont->immutability() == Plasma::Mutable &&
         (cont->formFactor() == Plasma::Horizontal || cont->formFactor() == Plasma::Vertical)) {

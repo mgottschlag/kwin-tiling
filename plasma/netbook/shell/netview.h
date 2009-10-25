@@ -23,19 +23,20 @@
 #include <Plasma/Plasma>
 #include <Plasma/View>
 
+class BackgroundDialog;
+class NetPanelController;
+
 namespace Plasma
 {
     class Containment;
 } // namespace Plasma
-
-class BackgroundDialog;
-class NetPanelController;
 
 class NetView : public Plasma::View
 {
     Q_OBJECT
 
 public:
+    typedef Plasma::ImmutabilityType ImmutabilityType;
     NetView(Plasma::Containment *containment, int uid, QWidget *parent = 0);
     ~NetView();
 
@@ -60,6 +61,7 @@ public Q_SLOTS:
     void grabContainment();
     void updateConfigurationMode(bool config);
     void setAutoHide(bool autoHide);
+    void immutabilityChanged(ImmutabilityType immutability);
 
 Q_SIGNALS:
     void locationChanged(const NetView *view);
@@ -73,6 +75,7 @@ protected:
 
 private:
     NetPanelController *m_panelController;
+    bool m_configurationMode;
 };
 
 #endif // multiple inclusion guard
