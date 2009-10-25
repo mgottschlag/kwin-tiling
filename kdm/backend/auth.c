@@ -73,7 +73,6 @@ from the copyright holder.
 #  include <sys/stropts.h>
 # endif
 # ifdef __EMX__
-#  define link rename
 #  define chown(a,b,c)
 #  include <io.h>
 # endif
@@ -1089,15 +1088,12 @@ undoUserAuth( const char *name, const char *new_name )
 static char *
 moveUserAuth( const char *name, char *new_name, char *envname )
 {
-	if (unlink( name ))
-		debug( "unlink %s failed\n", name );
-	if (link( new_name, name )) {
-		debug( "link failed %s %s\n", new_name, name );
-		logError( "Cannot move user authorization into place\n" );
+	if (rename( new_name, name )) {
+		debug( "rename %s => %s failed: %m\n", new_name, name );
+		logError( "Cannot move user authorization into place: %m\n" );
 		envname = new_name;
 	} else {
 		debug( "new authorization moved into place\n" );
-		unlink( new_name );
 	}
 	XauUnlockAuth( name );
 	return envname;
