@@ -43,7 +43,7 @@ static struct disphist *disphist;
 int
 anyDisplaysLeft( void )
 {
-	return displays != (struct display *)0;
+	return displays != 0;
 }
 
 int
@@ -193,8 +193,6 @@ findDisplayByAddress( XdmcpNetaddr addr, int addrlen, CARD16 displayNumber )
 
 #endif /* XDMCP */
 
-#define IfFree(x)  if (x) free( (char *)x )
-
 void
 removeDisplay( struct display *old )
 {
@@ -205,28 +203,28 @@ removeDisplay( struct display *old )
 		if (d == old) {
 			debug( "Removing display %s\n", d->name );
 			*dp = d->next;
-			IfFree( d->class2 );
-			IfFree( d->cfg.data );
+			free( d->class2 );
+			free( d->cfg.data );
 			delStr( d->cfg.dep.name );
 #ifdef XDMCP
-			IfFree( d->remoteHost );
+			free( d->remoteHost );
 #endif
 			if (d->authorizations) {
 				for (i = 0; i < d->authNum; i++)
 					XauDisposeAuth( d->authorizations[i] );
-				free( (char *)d->authorizations );
+				free( d->authorizations );
 			}
 			if (d->authFile) {
 				(void)unlink( d->authFile );
 				free( d->authFile );
 			}
-			IfFree( d->authNameLens );
+			free( d->authNameLens );
 #ifdef XDMCP
 			XdmcpDisposeARRAY8( &d->peer );
 			XdmcpDisposeARRAY8( &d->from );
 			XdmcpDisposeARRAY8( &d->clientAddr );
 #endif
-			free( (char *)d );
+			free( d );
 			break;
 		}
 	}
@@ -259,7 +257,7 @@ newDisplay( const char *name )
 		hstent->next = disphist; disphist = hstent;
 	}
 
-	if (!(d = (struct display *)Calloc( 1, sizeof(*d) )))
+	if (!(d = Calloc( 1, sizeof(*d) )))
 		return 0;
 	d->next = displays;
 	d->hstent = hstent;

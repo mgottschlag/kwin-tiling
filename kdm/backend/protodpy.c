@@ -55,7 +55,7 @@ findProtoDisplay( XdmcpNetaddr address,
 			return pdpy;
 		}
 	}
-	return (struct protoDisplay *)False;
+	return 0;
 }
 
 static void
@@ -79,13 +79,13 @@ newProtoDisplay( XdmcpNetaddr address, int addrlen, CARD16 displayNumber,
 
 	debug( "newProtoDisplay\n" );
 	timeoutProtoDisplays();
-	pdpy = (struct protoDisplay *)Malloc( sizeof(*pdpy) );
+	pdpy = Malloc( sizeof(*pdpy) );
 	if (!pdpy)
-		return NULL;
-	pdpy->address = (XdmcpNetaddr)Malloc( addrlen );
+		return 0;
+	pdpy->address = Malloc( addrlen );
 	if (!pdpy->address) {
-		free( (char *)pdpy );
-		return NULL;
+		free( pdpy );
+		return 0;
 	}
 	pdpy->addrlen = addrlen;
 	memmove( pdpy->address, address, addrlen );
@@ -93,13 +93,13 @@ newProtoDisplay( XdmcpNetaddr address, int addrlen, CARD16 displayNumber,
 	pdpy->connectionType = connectionType;
 	pdpy->date = now;
 	if (!XdmcpCopyARRAY8( connectionAddress, &pdpy->connectionAddress )) {
-		free( (char *)pdpy->address );
-		free( (char *)pdpy );
-		return NULL;
+		free( pdpy->address );
+		free( pdpy );
+		return 0;
 	}
 	pdpy->sessionID = sessionID;
-	pdpy->fileAuthorization = (Xauth *)NULL;
-	pdpy->xdmcpAuthorization = (Xauth *)NULL;
+	pdpy->fileAuthorization = 0;
+	pdpy->xdmcpAuthorization = 0;
 	pdpy->next = protoDisplays;
 	protoDisplays = pdpy;
 	return pdpy;
@@ -128,6 +128,6 @@ disposeProtoDisplay( struct protoDisplay *pdpy )
 	if (pdpy->xdmcpAuthorization)
 		XauDisposeAuth( pdpy->xdmcpAuthorization );
 	XdmcpDisposeARRAY8( &pdpy->connectionAddress );
-	free( (char *)pdpy->address );
-	free( (char *)pdpy );
+	free( pdpy->address );
+	free( pdpy );
 }

@@ -69,7 +69,7 @@ killWindows( Window window )
 			debug( "XKillClient %p\n", children[child] );
 			XKillClient( dpy, children[child] );
 		}
-		XFree( (char *)children );
+		XFree( children );
 	}
 }
 

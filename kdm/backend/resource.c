@@ -235,8 +235,7 @@ loadResources( CfgArr *conf )
 	char **vptr, **pptr, *cptr;
 	int *iptr, i, id, nu, j, nptr, nint, nchr;
 
-	if (conf->data)
-		free( conf->data );
+	free( conf->data );
 	conf->numCfgEnt = gRecvInt();
 	nptr = gRecvInt();
 	nint = gRecvInt();
@@ -343,7 +342,7 @@ findCfgEnt( struct display *d, int id )
 				return ((void **)d->cfg.data) + i;
 	}
 	debug( "unknown config entry %#x requested\n", id );
-	return (void **)0;
+	return 0;
 }
 
 
@@ -448,14 +447,12 @@ addServers( char **srv, int bType )
 			class2 = 0;
 		}
 		if ((d = findDisplayByName( name ))) {
-			if (d->class2)
-				free( d->class2 );
+			free( d->class2 );
 			dtx = "existing";
 		} else {
 			if (!(d = newDisplay( name ))) {
 				free( name );
-				if (class2)
-					free( class2 );
+				free( class2 );
 				return;
 			}
 			dtx = "new";

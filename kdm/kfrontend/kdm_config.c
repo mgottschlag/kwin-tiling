@@ -175,7 +175,7 @@ reader( void *buf, int count )
 
 	for (rlen = 0; rlen < count; ) {
 	  dord:
-		ret = read( rfd, (void *)((char *)buf + rlen), count - rlen );
+		ret = read( rfd, (char *)buf + rlen, count - rlen );
 		if (ret < 0) {
 			if (errno == EINTR)
 				goto dord;
@@ -1032,7 +1032,7 @@ parseHost( int *nHosts, HostEntry ***hostPtr, int *nChars,
 	void *addr;
 	int addr_type, addr_len;
 
-	if (!(**hostPtr = (HostEntry *)Malloc( sizeof(HostEntry) )))
+	if (!(**hostPtr = Malloc( sizeof(HostEntry) )))
 		return False;
 	if (!(parse & PARSE_NO_BCAST) && !strcmp( hostOrAlias, BROADCAST_STRING ))
 	{
@@ -1054,13 +1054,13 @@ parseHost( int *nHosts, HostEntry ***hostPtr, int *nChars,
 	{
 		(**hostPtr)->type = HOST_ADDRESS;
 #if defined(IPv6) && defined(AF_INET6)
-		if (getaddrinfo( hostOrAlias, NULL, NULL, &ai ))
+		if (getaddrinfo( hostOrAlias, 0, 0, &ai ))
 #else
 		if (!(hostent = gethostbyname( hostOrAlias )))
 #endif
 		{
 			logWarn( "XDMCP ACL: unresolved host %'s\n", hostOrAlias );
-			free( (char *)(**hostPtr) );
+			free( **hostPtr );
 			return False;
 		}
 #if defined(IPv6) && defined(AF_INET6)
@@ -1083,7 +1083,7 @@ parseHost( int *nHosts, HostEntry ***hostPtr, int *nChars,
 #if defined(IPv6) && defined(AF_INET6)
 			freeaddrinfo( ai );
 #endif
-			free( (char *)(**hostPtr) );
+			free( **hostPtr );
 			return False;
 		}
 		memcpy( (**hostPtr)->entry.displayAddress.hostAddress, addr, addr_len );
@@ -1200,7 +1200,7 @@ readAccessFile( const char *fname )
 	while ((displayOrAlias = readWord( &file, &len, False ))) {
 		if (*displayOrAlias == ALIAS_CHARACTER)
 		{
-			if (!(*aliasPtr = (AliasEntry *)Malloc( sizeof(AliasEntry) ))) {
+			if (!(*aliasPtr = Malloc( sizeof(AliasEntry) ))) {
 				error = True;
 				break;
 			}
@@ -1222,7 +1222,7 @@ readAccessFile( const char *fname )
 		}
 		else if (!strcmp( displayOrAlias, LISTEN_STRING ))
 		{
-			if (!(*listenPtr = (ListenEntry *)Malloc( sizeof(ListenEntry) ))) {
+			if (!(*listenPtr = Malloc( sizeof(ListenEntry) ))) {
 				error = True;
 				break;
 			}
@@ -1246,7 +1246,7 @@ readAccessFile( const char *fname )
 		}
 		else
 		{
-			if (!(*acPtr = (AclEntry *)Malloc( sizeof(AclEntry) ))) {
+			if (!(*acPtr = Malloc( sizeof(AclEntry) ))) {
 				error = True;
 				break;
 			}
@@ -1291,7 +1291,7 @@ readAccessFile( const char *fname )
 	}
 
 	if (!nListens) {
-		if (!(*listenPtr = (ListenEntry *)Malloc( sizeof(ListenEntry) )))
+		if (!(*listenPtr = Malloc( sizeof(ListenEntry) )))
 			error = True;
 		else {
 			(*listenPtr)->iface = -1;
@@ -1455,8 +1455,7 @@ int main( int argc ATTR_UNUSED, char **argv )
 				copyValues( &va, &sec_Core, &dspec, 0 );
 				copyValues( &va, &sec_Greeter, &dspec, 0 );
 				free( disp );
-				if (dcls)
-					free( dcls );
+				free( dcls );
 				sendValues( &va );
 				break;
 #ifdef XDMCP

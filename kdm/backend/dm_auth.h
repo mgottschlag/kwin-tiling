@@ -50,7 +50,7 @@ int xdmcheckAuthentication( struct protoDisplay *pdpy,
                             ARRAY8Ptr authenticationName,
                             ARRAY8Ptr authenticationData );
 # else
-#  define xdmGetXdmcpAuth NULL
+#  define xdmGetXdmcpAuth 0
 # endif
 #endif
 

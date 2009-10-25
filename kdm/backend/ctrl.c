@@ -72,8 +72,7 @@ nukeSock( struct cmdsock *cs )
 {
 	unregisterInput( cs->sock.fd );
 	closeNclearCloseOnFork( cs->sock.fd );
-	if (cs->sock.buffer)
-		free( cs->sock.buffer );
+	free( cs->sock.buffer );
 	free( cs );
 }
 
@@ -642,8 +641,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 					goto bust;
 				}
 				if (!sdr.how && !sdr.start) {
-					if (d->sdRec.osname)
-						free( d->sdRec.osname );
+					free( d->sdRec.osname );
 					d->sdRec = sdr;
 				} else {
 					if (sdRec.how && sdRec.force == SHUT_FORCE &&
@@ -661,15 +659,13 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 						goto bust;
 					}
 					if (!sdr.start) {
-						if (d->sdRec.osname)
-							free( d->sdRec.osname );
+						free( d->sdRec.osname );
 						d->sdRec = sdr;
 					} else {
 						if (!sdr.how)
 							cancelShutdown();
 						else {
-							if (sdRec.osname)
-								free( sdRec.osname );
+							free( sdRec.osname );
 							sdRec = sdr;
 						}
 					}
@@ -700,8 +696,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 						}
 					}
 					sdr.uid = -1;
-					if (sdRec.osname)
-						free( sdRec.osname );
+					free( sdRec.osname );
 					sdRec = sdr;
 				}
 			}
@@ -850,8 +845,7 @@ handleChan( struct display *d, struct bsock *cs, fd_set *reads )
 			cs->buffer = nbuf;
 			cs->buflen = bl;
 			processCtrl( bufp, llen - 1, cs->fd, d );
-			if (obuf)
-				free( obuf );
+			free( obuf );
 			return 1;
 		} else if (!len) {
 			cs->buflen = -bl;

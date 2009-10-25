@@ -590,8 +590,7 @@ KGVerify::handleFailVerify( QWidget *parent, bool showUser )
 			msg = gRecvStr();
 			debug( "  message %\"s\n", msg );
 			vrfErrBox( parent, user, msg );
-			if (msg)
-				free( msg );
+			free( msg );
 			gSendInt( 0 );
 			continue;
 		case V_MSG_INFO_AUTH: // should not happen
@@ -646,8 +645,7 @@ KGVerify::handleVerify()
 		ndelay = gRecvInt();
 		debug( "  ndelay = %d\n%s->textPrompt(...)\n", ndelay, pName.data() );
 		greet->textPrompt( msg, echo, ndelay );
-		if (msg)
-			free( msg );
+		free( msg );
 		return;
 	case V_GET_BINARY:
 		debug( " V_GET_BINARY\n" );
@@ -656,8 +654,7 @@ KGVerify::handleVerify()
 		ndelay = gRecvInt();
 		debug( "  ndelay = %d\n%s->binaryPrompt(...)\n", ndelay, pName.data() );
 		greet->binaryPrompt( msg, ndelay );
-		if (msg)
-			free( msg );
+		free( msg );
 		return;
 	}
 
@@ -673,8 +670,7 @@ KGVerify::handleVerify()
 		debug( "  %s->setUser(%\"s)\n", pName.data(), qPrintable( user ) );
 		greet->setUser( curUser );
 		handler->verifySetUser( curUser );
-		if (msg)
-			free( msg );
+		free( msg );
 		return;
 	case V_PRE_OK: // this is only for func == AuthChAuthTok
 		debug( " V_PRE_OK\n" );
@@ -696,8 +692,7 @@ KGVerify::handleVerify()
 			vrfErrBox( parent, pamUser, msg );
 		} else
 			debug( "  message swallowed\n" );
-		if (msg)
-			free( msg );
+		free( msg );
 		gSendInt( 0 );
 		timer.resume();
 		return;

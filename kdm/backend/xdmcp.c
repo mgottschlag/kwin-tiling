@@ -75,7 +75,7 @@ networkAddressToHostname( CARD16 connectionType, ARRAY8Ptr connectionAddress )
 			if (he) {
 #if defined(IPv6) && defined(AF_INET6)
 				struct addrinfo *ai, *nai;
-				if (!getaddrinfo( he->h_name, NULL, NULL, &ai )) {
+				if (!getaddrinfo( he->h_name, 0, 0, &ai )) {
 					for (nai = ai; nai; nai = nai->ai_next) {
 						if (af_type == nai->ai_family &&
 						    !memcmp( nai->ai_family == AF_INET ?
@@ -109,7 +109,7 @@ networkAddressToHostname( CARD16 connectionType, ARRAY8Ptr connectionAddress )
 				{
 					if (ASPrintf( &lname, "%s%s", name, myDot )) {
 #if defined(IPv6) && defined(AF_INET6)
-						if (!getaddrinfo( lname, NULL, NULL, &ai )) {
+						if (!getaddrinfo( lname, 0, 0, &ai )) {
 							for (nai = ai; nai; nai = nai->ai_next) {
 								if (af_type == nai->ai_family &&
 								    !memcmp( nai->ai_family == AF_INET ?
@@ -179,13 +179,13 @@ networkAddressToName( CARD16 connectionType, ARRAY8Ptr connectionAddress,
 		{
 			CARD8 *data;
 			struct hostent *hostent;
-			char *hostname = NULL;
+			char *hostname = 0;
 			char *name;
 			const char *localhost;
 			int multiHomed = False;
 			int type;
 #if defined(IPv6) && defined(AF_INET6)
-			struct addrinfo  *ai = NULL, *nai, hints;
+			struct addrinfo *ai = 0, *nai, hints;
 			char  dotted[INET6_ADDRSTRLEN];
 
 			if (connectionType == FamilyInternet6)
@@ -202,7 +202,7 @@ networkAddressToName( CARD16 connectionType, ARRAY8Ptr connectionAddress,
 #if defined(IPv6) && defined(AF_INET6)
 					bzero( &hints, sizeof(hints) );
 					hints.ai_flags = AI_CANONNAME;
-					if (!getaddrinfo( hostent->h_name, NULL, &hints, &ai )) {
+					if (!getaddrinfo( hostent->h_name, 0, &hints, &ai )) {
 						hostname = ai->ai_canonname;
 						for (nai = ai->ai_next; nai; nai = nai->ai_next)
 							if (ai->ai_protocol == nai->ai_protocol &&
@@ -213,7 +213,7 @@ networkAddressToName( CARD16 connectionType, ARRAY8Ptr connectionAddress,
 #else
 					hostent = gethostbyname( hostent->h_name );
 					if (hostent && hostent->h_addrtype == AF_INET) {
-						multiHomed = hostent->h_addr_list[1] != NULL;
+						multiHomed = hostent->h_addr_list[1] != 0;
 						hostname = hostent->h_name;
 					}
 #endif
@@ -280,10 +280,10 @@ networkAddressToName( CARD16 connectionType, ARRAY8Ptr connectionAddress,
 		}
 #ifdef DNET
 	case FamilyDECnet:
-		return NULL;
+		return 0;
 #endif /* DNET */
 	default:
-		return NULL;
+		return 0;
 	}
 }
 
@@ -431,14 +431,14 @@ sendForward( CARD16 connectionType, ARRAY8Ptr address, char *closure )
 		in_addr.sin_port = htons( (short)requestPort );
 		if (address->length != 4)
 			return;
-		memmove( (char *)&in_addr.sin_addr, address->data, address->length );
+		memmove( &in_addr.sin_addr, address->data, address->length );
 		addrlen = sizeof(struct sockaddr_in);
 		break;
 #endif
 #if defined(IPv6) && defined(AF_INET6)
 	case FamilyInternet6:
 		addr = (struct sockaddr *)&in6_addr;
-		bzero( (char *)&in6_addr, sizeof(in6_addr) );
+		bzero( &in6_addr, sizeof(in6_addr) );
 # ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_LEN
 		in6_addr.sin6_len = sizeof(in6_addr);
 # endif
@@ -446,7 +446,7 @@ sendForward( CARD16 connectionType, ARRAY8Ptr address, char *closure )
 		in6_addr.sin6_port = htons( (short)requestPort );
 		if (address->length != 16)
 			return;
-		memmove( (char *)&in6_addr.sin6_addr, address->data, address->length );
+		memmove( &in6_addr.sin6_addr, address->data, address->length );
 		addrlen = sizeof(struct sockaddr_in6);
 		break;
 #endif
@@ -593,13 +593,13 @@ forward_respond( struct sockaddr *from, int fromlen ATTR_UNUSED,
 
 					if (clientAddress.length != 4 || clientPort.length != 2)
 						goto badAddress;
-					bzero( (char *)&in_addr, sizeof(in_addr) );
+					bzero( &in_addr, sizeof(in_addr) );
 #ifdef HAVE_STRUCT_SOCKADDR_IN_SIN_LEN
 					in_addr.sin_len = sizeof(in_addr);
 #endif
 					in_addr.sin_family = AF_INET;
 					memmove( &in_addr.sin_addr, clientAddress.data, 4 );
-					memmove( (char *)&in_addr.sin_port, clientPort.data, 2 );
+					memmove( &in_addr.sin_port, clientPort.data, 2 );
 					client = (struct sockaddr *)&in_addr;
 					clientlen = sizeof(in_addr);
 					all_query_respond( client, clientlen, &authenticationNames,
@@ -614,13 +614,13 @@ forward_respond( struct sockaddr *from, int fromlen ATTR_UNUSED,
 
 					if (clientAddress.length != 16 || clientPort.length != 2)
 						goto badAddress;
-					bzero( (char *)&in6_addr, sizeof(in6_addr) );
+					bzero( &in6_addr, sizeof(in6_addr) );
 #ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_LEN
 					in6_addr.sin6_len = sizeof(in6_addr);
 #endif
 					in6_addr.sin6_family = AF_INET6;
 					memmove( &in6_addr,clientAddress.data,clientAddress.length );
-					memmove( (char *)&in6_addr.sin6_port, clientPort.data, 2 );
+					memmove( &in6_addr.sin6_port, clientPort.data, 2 );
 					client = (struct sockaddr *)&in6_addr;
 					clientlen = sizeof(in6_addr);
 					all_query_respond( client, clientlen, &authenticationNames,
@@ -635,7 +635,7 @@ forward_respond( struct sockaddr *from, int fromlen ATTR_UNUSED,
 
 					if (clientAddress.length >= sizeof(un_addr.sun_path))
 						goto badAddress;
-					bzero( (char *)&un_addr, sizeof(un_addr) );
+					bzero( &un_addr, sizeof(un_addr) );
 					un_addr.sun_family = AF_UNIX;
 					memmove( un_addr.sun_path, clientAddress.data, clientAddress.length );
 					un_addr.sun_path[clientAddress.length] = '\0';
@@ -916,8 +916,8 @@ manage( struct sockaddr *from, int fromlen, int length, int fd )
 	int expectlen;
 	struct protoDisplay *pdpy;
 	struct display *d;
-	char *name = NULL;
-	char *class2 = NULL;
+	char *name = 0;
+	char *class2 = 0;
 	XdmcpNetaddr from_save;
 	ARRAY8 clientAddress, clientPort;
 	CARD16 connectionType;
@@ -984,14 +984,14 @@ manage( struct sockaddr *from, int fromlen, int length, int fd )
 					goto abort;
 				}
 			}
-			if (!(from_save = (XdmcpNetaddr)Malloc( fromlen ))) {
+			if (!(from_save = Malloc( fromlen ))) {
 				send_failed( from, fromlen, name, sessionID,
 				             "out of memory", fd );
 				goto abort;
 			}
 			memmove( from_save, from, fromlen );
 			if (!(d = newDisplay( name ))) {
-				free( (char *)from_save );
+				free( from_save );
 				send_failed( from, fromlen, name, sessionID,
 				             "out of memory", fd );
 				goto abort;
@@ -1017,10 +1017,10 @@ manage( struct sockaddr *from, int fromlen, int length, int fd )
 			d->clientPort = clientPort;
 			d->connectionType = connectionType;
 			if (pdpy->fileAuthorization) {
-				d->authorizations = (Xauth **)Malloc( sizeof(Xauth *) );
+				d->authorizations = Malloc( sizeof(Xauth *) );
 				if (!d->authorizations) {
-					free( (char *)from_save );
-					free( (char *)d );
+					free( from_save );
+					free( d );
 					send_failed( from, fromlen, name, sessionID,
 					             "out of memory", fd );
 					goto abort;
@@ -1042,10 +1042,8 @@ manage( struct sockaddr *from, int fromlen, int length, int fd )
 	}
 abort:
 	XdmcpDisposeARRAY8( &displayClass );
-	if (name)
-		free( (char *)name );
-	if (class2)
-		free( (char *)class2 );
+	free( name );
+	free( class2 );
 }
 
 static void
@@ -1098,7 +1096,7 @@ processRequestSocket( int fd )
 	int addrlen = sizeof(addr);
 
 	debug( "processRequestSocket\n" );
-	bzero( (char *)&addr, sizeof(addr) );
+	bzero( &addr, sizeof(addr) );
 	if (!XdmcpFill( fd, &buffer, (XdmcpNetaddr)&addr, &addrlen )) {
 		debug( "XdmcpFill failed\n" );
 		return;

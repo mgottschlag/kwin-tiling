@@ -112,7 +112,7 @@ reader( void *buf, int count )
 
 	for (rlen = 0; rlen < count; ) {
 	  dord:
-		ret = read( rfd, (void *)((char *)buf + rlen), count - rlen );
+		ret = read( rfd, (char *)buf + rlen, count - rlen );
 		if (ret < 0) {
 			if (errno == EINTR)
 				goto dord;
@@ -202,7 +202,7 @@ igRecvArr( int *rlen )
 	*rlen = len;
 	gDebug( " -> %d bytes\n", len );
 	if (!len)
-		return (char *)0;
+		return 0;
 	if (!(buf = malloc( len )))
 		logPanic( "No memory for read buffer\n" );
 	gRead( buf, len );
@@ -233,7 +233,7 @@ gRecvStrArr( int *rnum )
 	if (rnum)
 		*rnum = num;
 	if (!num)
-		return (char **)0;
+		return 0;
 	if (!(argv = malloc( num * sizeof(char *) )))
 		logPanic( "No memory for read buffer\n" );
 	for (cargv = argv; --num >= 0; cargv++)
@@ -250,7 +250,7 @@ gRecvArr( int *num )
 	gRead( num, sizeof(*num) );
 	gDebug( " -> %d bytes\n", *num );
 	if (!*num)
-		return (char *)0;
+		return 0;
 	if (!(arr = malloc( *num )))
 		logPanic( "No memory for read buffer\n" );
 	gRead( arr, *num );
@@ -331,7 +331,7 @@ killWindows( Display *dpy, Window window )
 			debug( "XKillClient 0x%lx\n", (unsigned long)children[child] );
 			XKillClient( dpy, children[child] );
 		}
-		XFree( (char *)children );
+		XFree( children );
 	}
 }
 
@@ -549,7 +549,7 @@ xkbModifierMaskWorker( XkbDescPtr xkb, const char *name )
 		return 0;
 	for (i = 0; i < XkbNumVirtualMods; i++) {
 		char *modStr = XGetAtomName( xkb->dpy, xkb->names->vmods[i] );
-		if (modStr != NULL && strcmp( name, modStr ) == 0) {
+		if (modStr != 0 && strcmp( name, modStr ) == 0) {
 			unsigned int mask;
 			XkbVirtualModsToReal( xkb, 1 << i, &mask );
 			return mask;

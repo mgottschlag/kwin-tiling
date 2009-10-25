@@ -64,8 +64,8 @@ xdmGetAuthHelper( unsigned short namelen, const char *name, int includeRho )
 {
 	Xauth *new;
 
-	if (!(new = (Xauth *)Malloc( sizeof(Xauth) )))
-		return (Xauth *)0;
+	if (!(new = Malloc( sizeof(Xauth) )))
+		return 0;
 	new->family = FamilyWild;
 	new->address_length = 0;
 	new->address = 0;
@@ -76,24 +76,24 @@ xdmGetAuthHelper( unsigned short namelen, const char *name, int includeRho )
 	else
 		new->data_length = 8;
 
-	new->data = (char *)Malloc( new->data_length );
+	new->data = Malloc( new->data_length );
 	if (!new->data) {
-		free( (char *)new );
-		return (Xauth *)0;
+		free( new );
+		return 0;
 	}
-	new->name = (char *)Malloc( namelen );
+	new->name = Malloc( namelen );
 	if (!new->name) {
-		free( (char *)new->data );
-		free( (char *)new );
-		return (Xauth *)0;
+		free( new->data );
+		free( new );
+		return 0;
 	}
-	memmove( (char *)new->name, name, namelen );
+	memmove( new->name, name, namelen );
 	new->name_length = namelen;
 	if (!generateAuthData( (char *)new->data, new->data_length )) {
-		free( (char *)new->name );
-		free( (char *)new->data );
-		free( (char *)new );
-		return (Xauth *)0;
+		free( new->name );
+		free( new->data );
+		free( new );
+		return 0;
 	}
 	/*
 	 * set the first byte of the session key to zero as it
@@ -125,7 +125,7 @@ xdmGetXdmcpAuth( struct protoDisplay *pdpy,
 	                              False );
 	if (!xdmcpauth)
 		return;
-	fileauth = (Xauth *)Malloc( sizeof(Xauth) );
+	fileauth = Malloc( sizeof(Xauth) );
 	if (!fileauth) {
 		XauDisposeAuth( xdmcpauth );
 		return;
@@ -137,11 +137,9 @@ xdmGetXdmcpAuth( struct protoDisplay *pdpy,
 	fileauth->data_length = 16;
 	if (!fileauth->name || !fileauth->data) {
 		XauDisposeAuth( xdmcpauth );
-		if (fileauth->name)
-			free( (char *)fileauth->name );
-		if (fileauth->data)
-			free( (char *)fileauth->data );
-		free( (char *)fileauth );
+		free( fileauth->name );
+		free( fileauth->data );
+		free( fileauth );
 		return;
 	}
 	/*

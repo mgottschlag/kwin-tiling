@@ -103,7 +103,7 @@ getLocalAddress( void )
 #if defined(IPv6) && defined(AF_INET6)
 		struct addrinfo *ai;
 
-		if (getaddrinfo( localHostname(), NULL, NULL, &ai )) {
+		if (getaddrinfo( localHostname(), 0, 0, &ai )) {
 			XdmcpAllocARRAY8( &localAddress, 4 );
 			localAddress.data[0] = 127;
 			localAddress.data[1] = 0;
@@ -148,8 +148,7 @@ scanAccessDatabase( int force )
 		return; /* may memleak */
 	if (startConfig( GC_gXaccess, &accData->dep, force ) <= 0)
 		return;
-	if (accData->hostList)
-		free( accData->hostList );
+	free( accData->hostList );
 	accData->nHosts = gRecvInt();
 	accData->nListens = gRecvInt();
 	accData->nAliases = gRecvInt();
@@ -367,8 +366,7 @@ matchAclEntry( ARRAY8Ptr clientAddress, CARD16 connectionType, int direct )
 				re = e;
 				break;
 			}
-	if (clientName)
-		free( clientName );
+	free( clientName );
 	return re;
 }
 

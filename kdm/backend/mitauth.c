@@ -53,34 +53,34 @@ Xauth *
 mitGetAuth( unsigned short namelen, const char *name )
 {
 	Xauth *new;
-	new = (Xauth *)Malloc( sizeof(Xauth) );
+	new = Malloc( sizeof(Xauth) );
 
 	if (!new)
-		return (Xauth *)0;
+		return 0;
 	new->family = FamilyWild;
 	new->address_length = 0;
 	new->address = 0;
 	new->number_length = 0;
 	new->number = 0;
 
-	new->data = (char *)Malloc( AUTH_DATA_LEN );
+	new->data = Malloc( AUTH_DATA_LEN );
 	if (!new->data) {
-		free( (char *)new );
-		return (Xauth *)0;
+		free( new );
+		return 0;
 	}
-	new->name = (char *)Malloc( namelen );
+	new->name = Malloc( namelen );
 	if (!new->name) {
-		free( (char *)new->data );
-		free( (char *)new );
-		return (Xauth *)0;
+		free( new->data );
+		free( new );
+		return 0;
 	}
-	memmove( (char *)new->name, name, namelen );
+	memmove( new->name, name, namelen );
 	new->name_length = namelen;
 	if (!generateAuthData( new->data, AUTH_DATA_LEN )) {
-		free( (char *)new->name );
-		free( (char *)new->data );
-		free( (char *)new );
-		return (Xauth *)0;
+		free( new->name );
+		free( new->data );
+		free( new );
+		return 0;
 	}
 	new->data_length = AUTH_DATA_LEN;
 	return new;

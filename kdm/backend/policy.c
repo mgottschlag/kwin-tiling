@@ -78,7 +78,7 @@ checkAuthentication( struct protoDisplay *pdpy ATTR_UNUSED,
                      ARRAY8Ptr data ATTR_UNUSED )
 {
 #ifdef HASXDMAUTH
-	if (name->length && !memcmp( (char *)name->data, "XDM-AUTHENTICATION-1", 20 ))
+	if (name->length && !memcmp( name->data, "XDM-AUTHENTICATION-1", 20 ))
 		return xdmcheckAuthentication( pdpy, displayID, name, data );
 #endif
 	return True;
@@ -225,7 +225,7 @@ isWilling( ARRAY8Ptr addr, CARD16 connectionType,
 #endif
 	}
 	status->length = strlen( statusBuf );
-	status->data = (CARD8Ptr) Malloc( status->length );
+	status->data = Malloc( status->length );
 	if (!status->data)
 		status->length = 0;
 	else

@@ -186,10 +186,8 @@ strApp( char **dst, ... )
 	}
 	va_end( va );
 	if (!(bk = Malloc( len ))) {
-		if (*dst) {
-			free( *dst );
-			*dst = 0;
-		}
+		free( *dst );
+		*dst = 0;
 		return False;
 	}
 	dp = bk;
@@ -451,9 +449,7 @@ setEnv( char **e, const char *name, const char *value )
 			}
 		envsize = old - e;
 	}
-	if (!(new = (char **)
-	      Realloc( (char *)e, (unsigned)((envsize + 2) * sizeof(char *)) )))
-	{
+	if (!(new = Realloc( e, (unsigned)((envsize + 2) * sizeof(char *)) ))) {
 		free( newe );
 		return e;
 	}
@@ -468,9 +464,9 @@ putEnv( const char *string, char **env )
 	char *b, *n;
 
 	if (!(b = strchr( string, '=' )))
-		return NULL;
+		return 0;
 	if (!strNDup( &n, string, b - string ))
-		return NULL;
+		return 0;
 	env = setEnv( env, n, b + 1 );
 	free( n );
 	return env;
@@ -522,7 +518,7 @@ atomicIO( ssize_t (*f)( int, void *, size_t ), int fd, void *buf, int count )
 
 	for (rlen = 0; rlen < count; ) {
 	  dord:
-		ret = f( fd, (void *)((char *)buf + rlen), count - rlen );
+		ret = f( fd, (char *)buf + rlen, count - rlen );
 		if (ret < 0) {
 			if (errno == EINTR)
 				goto dord;

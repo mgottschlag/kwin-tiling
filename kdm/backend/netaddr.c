@@ -76,7 +76,7 @@ netaddrPort( char *netaddrp, int *lenp )
 #endif
 	default:
 		*lenp = 0;
-		return NULL;
+		return 0;
 	}
 #endif
 }
@@ -126,7 +126,7 @@ netaddrAddress( char *netaddrp, int *lenp )
 #endif
 	default:
 		*lenp = 0;
-		return NULL;
+		return 0;
 	}
 #endif /* STREAMSCONN else */
 }
@@ -141,7 +141,7 @@ convertAddr( char *saddr, int *len, CARD8 **addr )
 {
 	int retval;
 
-	if (len == NULL)
+	if (!len)
 		return -1;
 	*addr = netaddrAddress( saddr, len );
 #ifdef STREAMSCONN

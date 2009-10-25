@@ -201,8 +201,7 @@ conv_interact( int what, const char *prompt )
 			switch (what) {
 			case GCONV_USER:
 				/* assert( tag & V_IS_USER );*/
-				if (curuser)
-					free( curuser );
+				free( curuser );
 				curuser = ret;
 				break;
 			case GCONV_PASS:
@@ -322,17 +321,16 @@ ctrlGreeterWait( int wreply )
 			name = gRecvStr();
 			debug( " user %\"s\n", name );
 			if (strCmp( dmrcuser, name )) {
-				if (curdmrc) { free( curdmrc ); curdmrc = 0; }
-				if (dmrcuser)
-					free( dmrcuser );
+				free( curdmrc );
+				curdmrc = 0;
+				free( dmrcuser );
 				dmrcuser = name;
 				i = readDmrc();
 				debug( " -> status %d\n", i );
 				gSendInt( i );
 				debug( " => %\"s\n", curdmrc );
 			} else {
-				if (name)
-					free( name );
+				free( name );
 				debug( " -> status " stringify( GE_Ok ) "\n" );
 				gSendInt( GE_Ok );
 				debug( " => keeping old\n" );
@@ -345,13 +343,13 @@ ctrlGreeterWait( int wreply )
 			pass = iniEntry( curdmrc, "Desktop", name, 0 );
 			debug( " -> %\"s\n", pass );
 			gSendStr( pass );
-			if (pass)
-				free( pass );
+			free( pass );
 			free( name );
 			break;
 /*		case G_ResetDmrc:
 			debug( "G_ResetDmrc\n" );
-			if (newdmrc) { free( newdmrc ); newdmrc = 0; }
+			free( newdmrc );
+			newdmrc = 0;
 			break; */
 		case G_PutDmrc:
 			debug( "G_PutDmrc\n" );
@@ -371,9 +369,10 @@ ctrlGreeterWait( int wreply )
 			debug( "G_Verify\n" );
 			rootok = False;
 		  doverify:
-			if (curuser) { free( curuser ); curuser = 0; }
-			wipeStr( curpass ); curpass = 0;
-			if (curtype) free( curtype );
+			free( curuser );
+			wipeStr( curpass );
+			curuser = curpass = 0;
+			free( curtype );
 			curtype = gRecvStr();
 			debug( " type %\"s\n", curtype );
 			cursource = PWSRC_MANUAL;

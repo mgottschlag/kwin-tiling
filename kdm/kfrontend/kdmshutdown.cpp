@@ -422,8 +422,7 @@ KDMShutdown::scheduleShutdown( QWidget *_parent )
 		uid = ret == Authed ? 0 : -1;
 	} else
 		uid = -1;
-	if (os)
-		free( os );
+	free( os );
 	KDMShutdown( uid, _parent ).exec();
 }
 

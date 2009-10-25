@@ -315,12 +315,12 @@ getPAMXauthData( const char *xauth_file )
 	struct pam_xauth_data *ret;
 
 	if (!(fp = fopen( xauth_file, "r" )))
-		return NULL;
+		return 0;
 
 	auth = XauReadAuth( fp );
 	fclose( fp );
 	if (!auth)
-		return NULL;
+		return 0;
 
 	if ((ret = malloc( sizeof(*ret) + auth->name_length + 1 + auth->data_length ))) {
 		ret->name = (char *)ret + sizeof(*ret);
@@ -606,11 +606,10 @@ verify( GConvFunc gconv, int rootok )
 		} else
 			if (!gconv( GCONV_PASS, 0 ))
 				V_RET_NP;
-		msg = NULL;
+		msg = 0;
 		if ((i = authenticate( curuser, curpass, &reenter, &msg ))) {
 			debug( "authenticate() failed: %s\n", msg );
-			if (msg)
-				free( msg );
+			free( msg );
 			loginfailed( curuser, hostname, tty );
 			if (i == ENOENT || i == ESAD)
 				V_RET_AUTH;
@@ -626,19 +625,17 @@ verify( GConvFunc gconv, int rootok )
 		if (!gconv( GCONV_USER, 0 ))
 			return False;
 		for (curret = 0;;) {
-			msg = NULL;
+			msg = 0;
 			if ((i = authenticate( curuser, curret, &reenter, &msg ))) {
 				debug( "authenticate() failed: %s\n", msg );
-				if (msg)
-					free( msg );
+				free( msg );
 				loginfailed( curuser, hostname, tty );
 				if (i == ENOENT || i == ESAD)
 					V_RET_AUTH;
 				else
 					V_RET_FAIL( 0 );
 			}
-			if (curret)
-				free( curret );
+			free( curret );
 			if (!reenter)
 				break;
 			if (!(curret = gconv( GCONV_HIDDEN, msg )))
@@ -740,7 +737,7 @@ verify( GConvFunc gconv, int rootok )
 # endif	 /* KERBEROS */
 
 # if defined(ultrix) || defined(__ultrix__)
-	if (authenticate_user( p, curpass, NULL ) < 0)
+	if (authenticate_user( p, curpass, 0 ) < 0)
 # elif defined(HAVE_PW_ENCRYPT)
 	if (strcmp( pw_encrypt( curpass, p->pw_passwd ), p->pw_passwd ))
 # elif defined(HAVE_CRYPT)
@@ -822,7 +819,7 @@ verify( GConvFunc gconv, int rootok )
 
 #elif defined(_AIX) /* USE_PAM */
 
-	msg = NULL;
+	msg = 0;
 	if (loginrestrictions( curuser,
 	                       ((td->displayType & d_location) == dForeign) ? S_RLOGIN : S_LOGIN,
 	                       tty, &msg ) == -1)
@@ -837,8 +834,7 @@ verify( GConvFunc gconv, int rootok )
 		gSendInt( V_AUTH );
 		V_RET;
 	}
-	if (msg)
-		free( (void *)msg );
+	free( msg );
 
 #endif /* USE_PAM || _AIX */
 
@@ -868,7 +864,7 @@ verify( GConvFunc gconv, int rootok )
 
 #   define DEFAULT_WARN	(2L * 7L)  /* Two weeks */
 
-		tim = time( NULL ) / 86400L;
+		tim = time( 0 ) / 86400L;
 
 #   ifdef HAVE_SETUSERCONTEXT
 		quietlog = login_getcapbool( lc, "hushlogin", False );
@@ -952,7 +948,7 @@ verify( GConvFunc gconv, int rootok )
 #  ifdef HAVE_SETUSERCONTEXT
 	     /* Do we ignore a nologin file? */
 	     !login_getcapbool( lc, "ignorenologin", False )) &&
-	    (!stat( (nolg = login_getcapstr( lc, "nologin", "", NULL )), &st ) ||
+	    (!stat( (nolg = login_getcapstr( lc, "nologin", "", 0 )), &st ) ||
 #  endif
 		 !stat( (nolg = _PATH_NOLOGIN), &st )))
 	{
@@ -978,7 +974,7 @@ verify( GConvFunc gconv, int rootok )
 
 /* restrict_time */
 #  if defined(HAVE_SETUSERCONTEXT) && defined(HAVE_AUTH_TIMEOK)
-	if (!auth_timeok( lc, time( NULL ) )) {
+	if (!auth_timeok( lc, time( 0 ) )) {
 		displayStr( V_MSG_ERR,
 		            "You are not allowed to login at the moment" );
 		gSendInt( V_FAIL );
@@ -1026,7 +1022,7 @@ static const char *envvars[] = {
 #ifdef _AIX
 	"AUTHSTATE", /* for kerberos */
 #endif
-	NULL
+	0
 };
 
 
@@ -1167,8 +1163,7 @@ mergeSessionArgs( int cansave )
 				}
 			iniSave( curdmrc, mfname );
 		}
-	if (mfname)
-		free( mfname );
+	free( mfname );
 }
 
 static int
@@ -1279,8 +1274,9 @@ startClient( volatile int *pid )
 	int i;
 
 	if (strCmp( dmrcuser, curuser )) {
-		if (curdmrc) { free( curdmrc ); curdmrc = 0; }
-		if (dmrcuser) { free( dmrcuser ); dmrcuser = 0; }
+		free( curdmrc );
+		free( dmrcuser );
+		curdmrc = dmrcuser = 0;
 	}
 
 #if defined(USE_PAM) || defined(_AIX)
@@ -1331,10 +1327,9 @@ startClient( volatile int *pid )
 			"remote-host-name", remoteHostName ?
 			                       (const char **)&remoteHostName : &spaceStr,
 # endif
-			NULL );
+			0 );
 # ifdef XDMCP
-	if (remoteHostName)
-		free( remoteHostName );
+	free( remoteHostName );
 # endif
 	debug( "ck status: %d\n", ckStatus );
 	if (!ckStatus) {
@@ -1351,11 +1346,11 @@ startClient( volatile int *pid )
 
 #ifndef USE_PAM
 # ifdef _AIX
-	msg = NULL;
+	msg = 0;
 	loginsuccess( curuser, hostname, tty, &msg );
 	if (msg) {
 		debug( "loginsuccess() - %s\n", msg );
-		free( (void *)msg );
+		free( msg );
 	}
 # else /* _AIX */
 #  if defined(KERBEROS) && defined(AFS)
@@ -1366,7 +1361,7 @@ startClient( volatile int *pid )
 				logError( "setpag() for %s failed\n", curuser );
 				fail = True;
 			}
-			if ((ret = k_afsklog( NULL, NULL )) != KSUCCESS) {
+			if ((ret = k_afsklog( 0, 0 )) != KSUCCESS) {
 				logError( "AFS Warning: %s\n", krb_get_err_text( ret ) );
 				fail = True;
 			}
@@ -1628,7 +1623,7 @@ startClient( volatile int *pid )
 		 * Set the user's credentials: uid, gid, groups,
 		 * audit classes, user limits, and umask.
 		 */
-		if (setpcred( curuser, NULL ) == -1) {
+		if (setpcred( curuser, 0 ) == -1) {
 			logError( "setpcred for %s failed: %m\n", curuser );
 			goto cError;
 		}
@@ -1641,7 +1636,7 @@ startClient( volatile int *pid )
 		userEnviron = xCopyStrArr( 1, userEnviron );
 		userEnviron[0] = (char *)"USRENVIRON:";
 		if (setpenv( curuser, PENV_INIT | PENV_ARGV | PENV_NOEXEC,
-		             userEnviron, NULL ) != 0)
+		             userEnviron, 0 ) != 0)
 		{
 			logError( "Cannot set %s's process environment\n", curuser );
 			goto cError;

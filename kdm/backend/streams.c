@@ -78,7 +78,7 @@ updateListenSockets( void )
 		return;
 	}
 
-	xdmcpFd = t_open( nconf->nc_device, O_RDWR, NULL );
+	xdmcpFd = t_open( nconf->nc_device, O_RDWR, 0 );
 	if (xdmcpFd == -1) {
 		logError( "XDMCP stream creation failed\n" );
 		t_error( "CreateWellKnownSockets(xdmcpFd): t_open failed" );

@@ -134,7 +134,7 @@ Fork( volatile int *pidr )
 		(void)Signal( SIGALRM, SIG_DFL );
 		(void)Signal( SIGHUP, SIG_DFL );
 		sigemptyset( &ss );
-		sigprocmask( SIG_SETMASK, &ss, NULL );
+		sigprocmask( SIG_SETMASK, &ss, 0 );
 		closeOnFork();
 		return 0;
 	}
@@ -380,8 +380,7 @@ gFork( GPipe *pajp, const char *pname, char *cname,
 			close( opipe[1] );
 		  badp1:
 			logError( "Cannot start %s, pipe() failed", cname );
-			if (cname)
-				free( cname );
+			free( cname );
 			return -1;
 		}
 	}
@@ -432,8 +431,7 @@ gFork( GPipe *pajp, const char *pname, char *cname,
 #endif
 		}
 		logError( "Cannot start %s, fork() failed\n", cname );
-		if (cname)
-			 free( cname );
+		free( cname );
 		return -1;
 	case 0:
 #ifndef SINGLE_PIPE
@@ -452,8 +450,7 @@ gFork( GPipe *pajp, const char *pname, char *cname,
 			registerCloseOnFork( ogpipe[0] );
 			ogp->who = (char *)pname;
 		}
-		if (cname)
-			 free( cname );
+		free( cname );
 		return 0;
 	default:
 		pajp->fd.w = opipe[1];
@@ -482,13 +479,11 @@ gOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
 
 	if (proc->pid > 0) {
 		logError( "%s already running\n", cname );
-		if (cname)
-			free( cname );
+		free( cname );
 		return -1;
 	}
 	if (!(margv = xCopyStrArr( 1, argv ))) {
-		if (cname)
-			free( cname );
+		free( cname );
 		return -1;
 	}
 #if KDM_LIBEXEC_STRIP == -1
@@ -500,14 +495,12 @@ gOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
 #endif
 	{
 		free( margv );
-		if (cname)
-			free( cname );
+		free( cname );
 		return -1;
 	}
 	if (pipe( pip )) {
 		logError( "Cannot start %s, pipe() failed\n", cname );
-		if (cname)
-			free( cname );
+		free( cname );
 		goto fail;
 	}
 	switch (gFork( &proc->pipe, 0, cname, 0, 0, gp, &proc->pid )) {
@@ -575,8 +568,7 @@ void
 gClosen( GPipe *pajp )
 {
 	_gClosen( pajp );
-	if (pajp->who)
-		free( pajp->who );
+	free( pajp->who );
 	pajp->who = 0;
 }
 
@@ -600,8 +592,7 @@ gClose( GProc *proc, GPipe *gp, int force )
 		logError( "Abnormal termination of %s, code %d, signal %d\n",
 		          proc->pipe.who, wcCode( ret ), wcSig( ret ) );
 	debug( "closed %s\n", proc->pipe.who );
-	if (proc->pipe.who)
-		free( proc->pipe.who );
+	free( proc->pipe.who );
 	proc->pipe.who = 0;
 	return ret;
 }
@@ -683,7 +674,7 @@ _gRecvArr( int *rlen )
 	*rlen = len;
 	gDebug( " -> %d bytes\n", len );
 	if (!len || len > 0x10000)
-		return (char *)0;
+		return 0;
 	if (!(buf = Malloc( len )))
 		gErr();
 	gRead( buf, len );
@@ -812,7 +803,7 @@ gRecvStrArr( int *rnum )
 	gDebug( " -> %d strings\n", num );
 	*rnum = num;
 	if (!num)
-		return (char **)0;
+		return 0;
 	if (!(argv = Malloc( num * sizeof(char *) )))
 		gErr();
 	for (cargv = argv; --num >= 0; cargv++)

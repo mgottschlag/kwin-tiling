@@ -101,7 +101,7 @@ struct AuthProtocol {
 
 static struct AuthProtocol authProtocols[] = {
 { (unsigned short)18, "MIT-MAGIC-COOKIE-1",
-	mitInitAuth, mitGetAuth xdmcpauth(NULL), False
+	mitInitAuth, mitGetAuth xdmcpauth(0), False
 },
 #ifdef HASXDMAUTH
 { (unsigned short)19, "XDM-AUTHORIZATION-1",
@@ -110,12 +110,12 @@ static struct AuthProtocol authProtocols[] = {
 #endif
 #ifdef SECURE_RPC
 { (unsigned short)9, "SUN-DES-1",
-	secureRPCInitAuth, secureRPCGetAuth xdmcpauth(NULL), False
+	secureRPCInitAuth, secureRPCGetAuth xdmcpauth(0), False
 },
 #endif
 #ifdef K5AUTH
 { (unsigned short)14, "MIT-KERBEROS-5",
-	krb5InitAuth, krb5GetAuth xdmcpauth(NULL), False
+	krb5InitAuth, krb5GetAuth xdmcpauth(0), False
 },
 #endif
 };
@@ -131,7 +131,7 @@ findProtocol( unsigned short name_length, const char *name )
 		{
 			return &authProtocols[i];
 		}
-	return (struct AuthProtocol *)0;
+	return 0;
 }
 
 int
@@ -291,7 +291,7 @@ saveServerAuthorizations( struct display *d, Xauth **auths, int count )
 		if (!(auth_file = fdOpenW( creat( d->authFile, 0600 ) ))) {
 			logError( "Cannot open X server authorization file %s\n", d->authFile );
 			free( d->authFile );
-			d->authFile = NULL;
+			d->authFile = 0;
 			return False;
 		}
 	} else {
@@ -327,7 +327,7 @@ saveServerAuthorizations( struct display *d, Xauth **auths, int count )
 		          d->authFile );
 		unlink( d->authFile );
 		free( d->authFile );
-		d->authFile = NULL;
+		d->authFile = 0;
 		return False;
 	}
 	return True;
@@ -343,8 +343,8 @@ setLocalAuthorization( struct display *d )
 	{
 		for (i = 0; i < d->authNum; i++)
 			XauDisposeAuth( d->authorizations[i] );
-		free( (char *)d->authorizations );
-		d->authorizations = (Xauth **)NULL;
+		free( d->authorizations );
+		d->authorizations = 0;
 		d->authNum = 0;
 	}
 	debug( "setLocalAuthorization %s, auths %[s\n", d->name, d->authNames );
@@ -353,14 +353,13 @@ setLocalAuthorization( struct display *d )
 	for (i = 0; d->authNames[i]; i++)
 		;
 	d->authNameNum = i;
-	if (d->authNameLens)
-		free( (char *)d->authNameLens );
-	d->authNameLens = (unsigned short *)Malloc( d->authNameNum * sizeof(unsigned short) );
+	free( d->authNameLens );
+	d->authNameLens = Malloc( d->authNameNum * sizeof(unsigned short) );
 	if (!d->authNameLens)
 		return;
 	for (i = 0; i < d->authNameNum; i++)
 		d->authNameLens[i] = strlen( d->authNames[i] );
-	auths = (Xauth **)Malloc( d->authNameNum * sizeof(Xauth *) );
+	auths = Malloc( d->authNameNum * sizeof(Xauth *) );
 	if (!auths)
 		return;
 	j = 0;
@@ -375,7 +374,7 @@ setLocalAuthorization( struct display *d )
 	} else {
 		for (i = 0; i < j; i++)
 			XauDisposeAuth( auths[i] );
-		free( (char *)auths );
+		free( auths );
 	}
 }
 
@@ -569,7 +568,7 @@ ifioctl( int fd, int cmd, char *arg )
 	struct strioctl ioc;
 	int ret;
 
-	bzero( (char *)&ioc, sizeof(ioc) );
+	bzero( &ioc, sizeof(ioc) );
 	ioc.ic_cmd = cmd;
 	ioc.ic_timout = 0;
 	if (cmd == SIOCGIFCONF) {
@@ -920,7 +919,7 @@ defineSelf( int fd, int file, int auth, int *ok )
 	if ((hp = gethostbyname( name.nodename ))) {
 		saddr.sa.sa_family = hp->h_addrtype;
 		inetaddr = (struct sockaddr_in *)(&(saddr.sa));
-		memmove( (char *)&(inetaddr->sin_addr), (char *)hp->h_addr,
+		memmove( &inetaddr->sin_addr, hp->h_addr,
 		         (int)hp->h_length );
 		if ((family = convertAddr( &(saddr.sa), &len, &addr )) >= 0)
 			writeAddr( FamilyInternet, sizeof(inetaddr->sin_addr),
@@ -965,7 +964,7 @@ writeLocalAuth( FILE *file, Xauth *auth, const char *name, int *ok )
 	setAuthNumber( auth, name );
 # ifdef STREAMSCONN
 	fd = t_open( "/dev/tcp", O_RDWR, 0 );
-	t_bind( fd, NULL, NULL );
+	t_bind( fd, 0, 0 );
 	defineSelf( fd, file, auth, ok );
 	t_unbind( fd );
 	t_close( fd );

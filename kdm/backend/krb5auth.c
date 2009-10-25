@@ -70,7 +70,7 @@ krb5CCacheName( const char *dname )
 	dnl = strlen( dname );
 	name = Malloc( strlen( tmpdir ) + dnl + 20 );
 	if (!name)
-		return NULL;
+		return 0;
 	nl = sprintf( name, "FILE:%s/K5C", tmpdir );
 	cleanUpFileName( dname, name + nl, dnl + 1 );
 	return name;
@@ -82,8 +82,8 @@ krb5GetAuthFor( unsigned short namelen, const char *name, const char *dname )
 	Xauth *new;
 	char *filename;
 
-	if (!(new = (Xauth *)Malloc( sizeof(*new) )))
-		return (Xauth *)0;
+	if (!(new = Malloc( sizeof(*new) )))
+		return 0;
 	new->family = FamilyWild;
 	new->address_length = 0;
 	new->address = 0;
@@ -92,26 +92,26 @@ krb5GetAuthFor( unsigned short namelen, const char *name, const char *dname )
 
 	if (dname) {
 		if (!(filename = krb5CCacheName( dname ))) {
-			free( (char *)new );
-			return (Xauth *)0;
+			free( new );
+			return 0;
 		}
 		new->data = 0;
 		if (!strApp( &new->data, "UU:", filename, (char *)0 )) {
 			free( filename );
-			free( (char *)new );
-			return (Xauth *)0;
+			free( new );
+			return 0;
 		}
 		free( filename );
 		new->data_length = strlen( new->data );
 	} else {
-		new->data = NULL;
+		new->data = 0;
 		new->data_length = 0;
 	}
 
-	if (!(new->name = (char *)Malloc( namelen ))) {
-		free( (char *)new->data );
-		free( (char *)new );
-		return (Xauth *)0;
+	if (!(new->name = Malloc( namelen ))) {
+		free( new->data );
+		free( new );
+		return 0;
 	}
 	memmove( new->name, name, namelen );
 	new->name_length = namelen;
@@ -122,7 +122,7 @@ krb5GetAuthFor( unsigned short namelen, const char *name, const char *dname )
 Xauth *
 krb5GetAuth( unsigned short namelen, const char *name )
 {
-	return krb5GetAuthFor( namelen, name, NULL );
+	return krb5GetAuthFor( namelen, name, 0 );
 }
 
 
@@ -173,7 +173,7 @@ krb5Init( const char *user, const char *passwd, const char *dname )
 	                                          0, /* service */
 	                                          &options )))
 	{
-		char *my_name = NULL;
+		char *my_name = 0;
 		int code2 = krb5_unparse_name( ctx, me, &my_name );
 		if (code == KRB5KRB_AP_ERR_BAD_INTEGRITY)
 			logError( "Password incorrect for Krb5 principal %\"s\n",
@@ -181,8 +181,7 @@ krb5Init( const char *user, const char *passwd, const char *dname )
 		else
 			logError( "%s while getting initial Krb5 credentials for %\"s\n",
 			          error_message( code ), code2 ? user : my_name );
-		if (my_name)
-			free( my_name );
+		free( my_name );
 		goto err3;
 	}
 

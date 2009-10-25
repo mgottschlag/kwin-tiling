@@ -242,7 +242,7 @@ struct display {
 
 	/* basic display information */
 	char *name;                 /* DISPLAY name -- also referenced in hstent */
-	char *class2;               /* display class (may be NULL) */
+	char *class2;               /* display class (may be 0) */
 	int displayType;            /* location/origin/lifetime */
 	CfgArr cfg;                 /* config data array */
 

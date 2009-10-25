@@ -629,12 +629,9 @@ static void
 sessionDone( struct display *d )
 {
 	d->userSess = -1;
-	if (d->userName)
-		free( d->userName );
-	d->userName = 0;
-	if (d->sessName)
-		free( d->sessName );
-	d->sessName = 0;
+	free( d->userName );
+	free( d->sessName );
+	d->userName = d->sessName = 0;
 }
 
 void
@@ -689,10 +686,9 @@ processDPipe( struct display *d )
 				    !((d->allowNuke == SHUT_NONE && sdRec.uid != d->sdRec.uid) ||
 				      (d->allowNuke == SHUT_ROOT && d->sdRec.uid)))
 				{
-					if (sdRec.osname)
-						free( sdRec.osname );
+					free( sdRec.osname );
 					sdRec = d->sdRec;
-				} else if (d->sdRec.osname)
+				} else
 					free( d->sdRec.osname );
 				d->sdRec.how = 0;
 				d->sdRec.osname = 0;
@@ -725,8 +721,7 @@ processDPipe( struct display *d )
 		XdmcpDisposeARRAY8( &ca );
 		break;
 	case D_RemoteHost:
-		if (d->remoteHost)
-			free( d->remoteHost );
+		free( d->remoteHost );
 		d->remoteHost = gRecvStr();
 		break;
 #endif
@@ -815,8 +810,7 @@ processGPipe( struct display *d )
 		sdRec.uid = gRecvInt();
 		option = gRecvStr();
 		setBootOption( option, &sdRec );
-		if (option)
-			free( option );
+		free( option );
 		break;
 	case G_QueryShutdown:
 		gSendInt( sdRec.how );
@@ -894,10 +888,8 @@ void
 cancelShutdown( void )
 {
 	sdRec.how = 0;
-	if (sdRec.osname) {
-		free( sdRec.osname );
-		sdRec.osname = 0;
-	}
+	free( sdRec.osname );
+	sdRec.osname = 0;
 	stopping = False;
 	rescanConfigs( True );
 }

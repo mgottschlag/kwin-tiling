@@ -121,17 +121,14 @@ destroyListeningSocket( struct socklist *s )
 		unregisterInput( s->fd );
 		s->fd = -1;
 	}
-	if (s->addr) {
-		free( s->addr );
-		s->addr = NULL;
-	}
+	free( s->addr );
+	s->addr = 0;
 	for (g = s->mcastgroups; g; g = n) {
 		n = g->next;
-		if (g->addr)
-			free( g->addr );
+		free( g->addr );
 		free( g );
 	}
-	s->mcastgroups = NULL;
+	s->mcastgroups = 0;
 }
 
 static struct socklist*
@@ -162,7 +159,7 @@ findInList( struct socklist *list, ARRAY8Ptr addr )
 				return s;
 		}
 	}
-	return NULL;
+	return 0;
 }
 
 static struct socklist *
@@ -171,7 +168,7 @@ createSocklistEntry( ARRAY8Ptr addr )
 	struct socklist *s;
 
 	if (!(s = Calloc( 1, sizeof(struct socklist) )))
-		return NULL;
+		return 0;
 
 	if (addr->length == 4) { /* IPv4 */
 		struct sockaddr_in *sin4;
@@ -204,7 +201,7 @@ createSocklistEntry( ARRAY8Ptr addr )
 	else {
 		/* Unknown address type */
 		free( s );
-		s = NULL;
+		s = 0;
 	}
 	return s;
 }
@@ -214,9 +211,9 @@ updateListener( ARRAY8Ptr addr, void **closure )
 {
 	struct socklist *s;
 
-	*closure = NULL;
+	*closure = 0;
 
-	if (addr == NULL) {
+	if (!addr) {
 		ARRAY8 tmpaddr;
 		struct in_addr in;
 #if defined(IPv6) && defined(AF_INET6)
@@ -368,7 +365,7 @@ void
 updateListenSockets( void )
 {
 	struct socklist *s, *g, **ls, **lg;
-	void *tmpPtr = NULL;
+	void *tmpPtr = 0;
 
 	/* Clear Ref bits - any not marked by UpdateCallback will be closed */
 	for (s = listensocks; s; s = s->next) {
@@ -398,7 +395,7 @@ updateListenSockets( void )
 int
 anyListenSockets( void )
 {
-	return listensocks != NULL;
+	return listensocks != 0;
 }
 
 int

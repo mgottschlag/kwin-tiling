@@ -231,7 +231,7 @@ getRemoteAddress( struct display *d, int fd )
 	getpeername( fd, (struct sockaddr *)buf, (void *)&len );
 #endif
 	if (len && XdmcpAllocARRAY8( &d->peer, len ))
-		memmove( (char *)d->peer.data, buf, len );
+		memmove( d->peer.data, buf, len );
 	debug( "got remote address %s %d\n", d->name, d->peer.length );
 }
 

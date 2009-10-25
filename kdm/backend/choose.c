@@ -84,7 +84,7 @@ disposeIndirectHosts()
 		XdmcpDisposeARRAY8( &c->client );
 		XdmcpDisposeARRAY8( &c->port );
 		XdmcpDisposeARRAY8( &c->choice );
-		free( (char *)c );
+		free( c );
 	}
 	return TO_INF;
 }
@@ -160,7 +160,7 @@ registerIndirectChoice( ARRAY8Ptr clientAddress, ARRAY8Ptr clientPort,
 		}
 	}
 
-	if (!(c = (ChoicePtr)Malloc( sizeof(ChoiceRec) )))
+	if (!(c = Malloc( sizeof(ChoiceRec) )))
 		return;
 	if (!XdmcpCopyARRAY8( clientAddress, &c->client )) {
 		free( c );
@@ -177,7 +177,7 @@ registerIndirectChoice( ARRAY8Ptr clientAddress, ARRAY8Ptr clientPort,
 	if (choice && !XdmcpCopyARRAY8( choice, &c->choice )) {
 		XdmcpDisposeARRAY8( &c->port );
 		XdmcpDisposeARRAY8( &c->client );
-		free( (char *)c );
+		free( c );
 		return;
 	}
 	c->timeout = now + choiceTimeout;
@@ -275,7 +275,7 @@ addHostname( ARRAY8Ptr hostname, ARRAY8Ptr status,
 			goto gotold;
 		}
 	}
-	if (!(name = (HostName *)Malloc( sizeof(*name) )))
+	if (!(name = Malloc( sizeof(*name) )))
 		return False;
 	if (hostname->length) {
 		switch (addr->sa_family) {
@@ -299,7 +299,7 @@ addHostname( ARRAY8Ptr hostname, ARRAY8Ptr status,
 		}
 	}
 	if (!XdmcpAllocARRAY8( &name->hostaddr, hostAddr.length )) {
-		free( (char *)name );
+		free( name );
 		return False;
 	}
 	memmove( name->hostaddr.data, hostAddr.data, hostAddr.length );
@@ -329,7 +329,7 @@ disposeHostname( HostName *host )
 	XdmcpDisposeARRAY8( &host->hostname );
 	XdmcpDisposeARRAY8( &host->hostaddr );
 	XdmcpDisposeARRAY8( &host->status );
-	free( (char *)host );
+	free( host );
 }
 
 static void
@@ -435,13 +435,13 @@ addHostaddr( HostAddr **hosts, struct sockaddr *addr, int len, xdmOpCode type )
 				break;
 			}
 	debug( " not dupe\n" );
-	if (!(host = (HostAddr *)Malloc( sizeof(*host) )))
+	if (!(host = Malloc( sizeof(*host) )))
 		return;
-	if (!(host->addr = (struct sockaddr *)Malloc( len ))) {
-		free( (char *)host );
+	if (!(host->addr = Malloc( len ))) {
+		free( host );
 		return;
 	}
-	memcpy( (char *)host->addr, (char *)addr, len );
+	memcpy( host->addr, addr, len );
 	host->addrlen = len;
 	host->type = type;
 	host->next = *hosts;
@@ -746,7 +746,7 @@ initXDMCP()
 	if ((socketFD = t_open( "/dev/udp", O_RDWR, 0 )) < 0)
 		return 0;
 
-	if (t_bind( socketFD, NULL, NULL ) < 0) {
+	if (t_bind( socketFD, 0, 0 ) < 0) {
 		t_close( socketFD );
 		return False;
 	}
@@ -758,13 +758,13 @@ initXDMCP()
 	{
 		struct netconfig *nconf;
 
-		if ((nconf = getnetconfigent( "udp" )) == NULL) {
+		if (!(nconf = getnetconfigent( "udp" ))) {
 			t_unbind( socketFD );
 			t_close( socketFD );
 			return False;
 		}
 
-		if (netdir_options( nconf, ND_SET_BROADCAST, socketFD, NULL )) {
+		if (netdir_options( nconf, ND_SET_BROADCAST, socketFD, 0 )) {
 			freenetconfigent( nconf );
 			t_unbind( socketFD );
 			t_close( socketFD );

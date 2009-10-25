@@ -255,7 +255,6 @@ iniMerge( char *data, const char *newdata )
 		}
 	}
   bail:
-	if (section)
-		free( section );
+	free( section );
 	return data;
 }
