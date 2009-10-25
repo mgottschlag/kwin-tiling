@@ -1004,6 +1004,7 @@ followed by a longer explanation.</para>
 
 <variablelist>
 <title>Global commands:</title>
+
 <varlistentry>
 <term><command>login</command> <option>display</option>
 (<parameter>now</parameter> | <parameter>schedule</parameter>) <parameter>user</parameter> <parameter>password</parameter>
@@ -1015,6 +1016,15 @@ after the session exits. session_arguments are printf-like escaped contents
 for .dmrc. Unlisted keys will default to previously saved values.</para>
 </listitem>
 </varlistentry>
+
+<varlistentry>
+<term><command>resume</command>
+<listitem>
+<para>Force return from console mode, even if TTY logins are still
+active.</para>
+</listitem>
+</varlistentry>
+
 </variablelist>
 
 <variablelist>
@@ -1059,7 +1069,9 @@ too</para>
 </varlistentry>
 <varlistentry>
 <term><returnvalue>list</returnvalue>, <returnvalue>lock</returnvalue>,
-<returnvalue>suicide</returnvalue>, <returnvalue>login</returnvalue></term>
+<returnvalue>suicide</returnvalue>, <returnvalue>login</returnvalue>,
+<returnvalue>resume</returnvalue>
+</term>
 <listitem>
 <para>The respective command is supported</para>
 </listitem>

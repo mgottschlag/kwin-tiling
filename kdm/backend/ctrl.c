@@ -448,7 +448,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				if (anyReserveDisplays())
 					writer( fd, cbuf, sprintf( cbuf, "reserve %d\t",
 					                           idleReserveDisplays() ) );
-				Reply( CMD_ACTIVATE "login\n" );
+				Reply( CMD_ACTIVATE "resume\tlogin\n" );
 			}
 			goto bust;
 		} else if (!strcmp( ar[0], "list" )) {
@@ -797,6 +797,10 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				default:
 					break;
 				}
+			} else if (!strcmp( ar[0], "resume" )) {
+				if (ar[1])
+					goto exce;
+				wakeDisplays();
 			} else {
 				fLog( d, fd, "nosys", "unknown command" );
 				goto bust;

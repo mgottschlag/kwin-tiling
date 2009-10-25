@@ -374,7 +374,7 @@ struct utmps {
 static struct utmps *utmpList;
 static time_t utmpTimeout = TO_INF;
 
-static void
+void
 wakeDisplays( void )
 {
 #ifdef HAVE_VTS

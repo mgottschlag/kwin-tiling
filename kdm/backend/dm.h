@@ -381,6 +381,7 @@ void stopDisplay( struct display *d );
 #if !defined(HAVE_SETPROCTITLE) && !defined(NOXDMTITLE)
 void setproctitle( const char *fmt, ... );
 #endif
+void wakeDisplays( void );
 void switchToX( struct display *d );
 void setNLogin( struct display *d,
                 const char *nuser, const char *npass, const char *nargs,
