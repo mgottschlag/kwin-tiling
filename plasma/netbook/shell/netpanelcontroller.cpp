@@ -35,6 +35,7 @@
 NetPanelController::NetPanelController(QWidget *parent, NetView *view, Plasma::Containment *containment)
    : Plasma::Dialog(parent),
      m_containment(containment),
+     m_view(view),
      m_watched(0)
 {
     m_mainWidget = new QGraphicsWidget(containment);
@@ -69,15 +70,38 @@ NetPanelController::NetPanelController(QWidget *parent, NetView *view, Plasma::C
     m_layout->addItem(m_autoHideButton);
     m_autoHideButton->nativeWidget()->setChecked(view->autoHide());
     connect(m_autoHideButton->nativeWidget(), SIGNAL(toggled(bool)), view, SLOT(setAutoHide(bool)));
+    connect(containment, SIGNAL(geometryChanged()), this, SLOT(updateGeometry()));
 
     //m_moveButton->installEventFilter(this);
     m_resizeButton->installEventFilter(this);
     setGraphicsWidget(m_mainWidget);
+    updateGeometry();
     show();
 }
 
 NetPanelController::~NetPanelController()
 {
+}
+
+void NetPanelController::updateGeometry()
+{
+    QRect viewGeometry(m_view->geometry());
+    switch (m_containment->location()) {
+        case Plasma::LeftEdge:
+            move(viewGeometry.right(), viewGeometry.center().y()/2 - size().height()/2);
+            break;
+        case Plasma::RightEdge:
+            move(viewGeometry.left() - size().width(), viewGeometry.center().y() - size().height()/2);
+            break;
+        case Plasma::TopEdge:
+            move(viewGeometry.center().x() - size().width()/2, viewGeometry.bottom());
+            break;
+        case Plasma::BottomEdge:
+            move(viewGeometry.center().x() - size().width()/2, viewGeometry.top() - size().height());
+            break;
+        default:
+            break;
+        }
 }
 
 bool NetPanelController::eventFilter(QObject *watched, QEvent *event)
@@ -102,7 +126,6 @@ bool NetPanelController::eventFilter(QObject *watched, QEvent *event)
 
             m_containment->setMinimumHeight(m_containment->size().width() + deltaPos.x());
             m_containment->setMaximumHeight(m_containment->minimumHeight());
-            move((pos() + QPointF(deltaPos.x(), 0)).toPoint());
             break;
         case Plasma::RightEdge:
             if ((deltaPos.x() < 0 && m_containment->size().width() >= KIconLoader::SizeEnormous) || (deltaPos.x() > 0 && m_containment->size().width() <= KIconLoader::SizeSmall)) {
@@ -111,7 +134,6 @@ bool NetPanelController::eventFilter(QObject *watched, QEvent *event)
 
             m_containment->setMinimumHeight(m_containment->size().width() - deltaPos.x());
             m_containment->setMaximumHeight(m_containment->minimumHeight());
-            move((pos() + QPointF(deltaPos.x(), 0)).toPoint());
             break;
         case Plasma::TopEdge:
             if ((deltaPos.y() > 0 && m_containment->size().height() >= KIconLoader::SizeEnormous) || (deltaPos.y() < 0 && m_containment->size().height() <= KIconLoader::SizeSmall)) {
@@ -120,7 +142,6 @@ bool NetPanelController::eventFilter(QObject *watched, QEvent *event)
 
             m_containment->setMinimumHeight(m_containment->size().height() + deltaPos.y());
             m_containment->setMaximumHeight(m_containment->minimumHeight());
-            move((pos() + QPointF(0, deltaPos.y())).toPoint());
             break;
         case Plasma::BottomEdge:
             if ((deltaPos.y() < 0 && m_containment->size().height() >= KIconLoader::SizeEnormous) || (deltaPos.y() > 0 && m_containment->size().height() <= KIconLoader::SizeSmall)) {
@@ -129,7 +150,6 @@ bool NetPanelController::eventFilter(QObject *watched, QEvent *event)
 
             m_containment->setMinimumHeight(m_containment->size().height() - deltaPos.y());
             m_containment->setMaximumHeight(m_containment->minimumHeight());
-            move((pos() + QPointF(0, deltaPos.y())).toPoint());
             break;
         default:
             break;
@@ -138,3 +158,4 @@ bool NetPanelController::eventFilter(QObject *watched, QEvent *event)
     return Plasma::Dialog::eventFilter(watched, event);
 }
 
+#include "netpanelcontroller.moc"

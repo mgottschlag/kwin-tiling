@@ -27,6 +27,7 @@ namespace Plasma
     class Containment;
     class ToolButton;
     class Svg;
+    class View;
 }
 
 class QGraphicsWidget;
@@ -36,6 +37,7 @@ class NetView;
 
 class NetPanelController : public Plasma::Dialog
 {
+    Q_OBJECT
 public:
     NetPanelController(QWidget *parent = 0, NetView *view = 0, Plasma::Containment *containment = 0);
     ~NetPanelController();
@@ -43,8 +45,12 @@ public:
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
 
+private Q_SLOTS:
+    void updateGeometry();
+
 private:
     Plasma::Containment *m_containment;
+    Plasma::View *m_view;
     QGraphicsWidget *m_mainWidget;
     QGraphicsLinearLayout *m_layout;
     Plasma::ToolButton *m_moveButton;
