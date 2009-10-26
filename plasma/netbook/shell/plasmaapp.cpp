@@ -224,25 +224,7 @@ void PlasmaApp::positionPanel()
     foreach (Plasma::Containment *containment, m_corona->containments()) {
         if (containment->location() == Plasma::Desktop ||
             containment->location() == Plasma::Floating) {
-            qreal origLeft, origTop, origRight, origBottom;
-            containment->getContentsMargins(&origLeft, &origTop, &origRight, &origBottom);
-            switch (m_controlBar->location()) {
-            case Plasma::LeftEdge:
-                origLeft = 0;
-                break;
-            case Plasma::RightEdge:
-                origRight = 0;
-                break;
-            case Plasma::TopEdge:
-                origTop = 0;
-                break;
-            case Plasma::BottomEdge:
-                origBottom = 0;
-                break;
-            default:
-                break;
-            }
-            containment->setContentsMargins(origLeft + left, origTop + top, origRight + right, origBottom + bottom);
+            containment->setContentsMargins(left, top, right, bottom);
         }
     }
 
@@ -457,7 +439,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
             m_controlBar->viewport()->setAutoFillBackground(false);
             m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
 
-            connect(m_controlBar, SIGNAL(locationChanged(const NetView *)), this, SLOT(controlBarMoved(const NetView *)));
+            connect(m_controlBar, SIGNAL(locationChanged(const NetView *)), this, SLOT(positionPanel()));
             connect(m_controlBar, SIGNAL(geometryChanged()), this, SLOT(positionPanel()));
             connect(m_controlBar, SIGNAL(containmentActivated()), this, SLOT(showControlBar()));
             connect(m_controlBar, SIGNAL(autoHideChanged(bool)), this, SLOT(setAutoHideControlBar(bool)));
