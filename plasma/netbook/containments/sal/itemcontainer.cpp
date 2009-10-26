@@ -341,6 +341,9 @@ void ItemContainer::focusInEvent(QFocusEvent *event)
         m_currentIconIndexY = 0;
         Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_layout->itemAt(0, 0));
         emit itemSelected(icon);
+        setCurrentItem(icon);
+    } else {
+        setCurrentItem(m_currentIcon);
     }
 }
 
