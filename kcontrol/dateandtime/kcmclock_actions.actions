@@ -1,6 +1,7 @@
 [Domain]
 Name=Date and Time Control Module
 Name[en_GB]=Date and Time Control Module
+Name[eo]=Kontrol-Modulo de Dato kaj Tempo
 Name[et]=Kuupäeva ja kellaaja juhtimismoodul
 Name[gl]=Módulo de control da data e hora
 Name[id]=Modul Kontrol Tanggal dan Waktu
@@ -20,6 +21,7 @@ Icon=preferences-system-time
 [org.kde.kcontrol.kcmclock.save]
 Name=Save the date/time settings
 Name[en_GB]=Save the date/time settings
+Name[eo]=Konservu Agordon de dato kaj tempo
 Name[et]=Kuupäeva ja kellaaja seadistuste salvestamine
 Name[gl]=Garda a configuración da data e hora
 Name[id]=Simpan pengaturan tanggal/waktu

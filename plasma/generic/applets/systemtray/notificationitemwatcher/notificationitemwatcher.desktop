@@ -46,6 +46,7 @@ Comment[ca]=Fa un seguiment de les aplicacions que volen utilitzar l'element de 
 Comment[da]=Hold styr på programmer som vil bruge D-Bus-baseret bekendtgørelseselement.
 Comment[de]=Überwacht Anwendungen, die Benachrichtigungselemente des D-Bus-Systems verwenden.
 Comment[en_GB]=Keep track of applications that want to use the D-Bus based notification item.
+Comment[eo]=Konservu spuron de aplikaĵoj kiuj deziras uzi atentigon de D-Bus.
 Comment[es]=Registra las aplicaciones que quieren usar el elemento de notificación de D-Bus.
 Comment[et]=Silma peal hoidmine rakendustel, mis soovivad kasutada D-Busi põhist märguannet.
 Comment[fr]=Conserve des enregistrement sur les application qui veulent utiliser les éléments de notification utilisant D-Bus

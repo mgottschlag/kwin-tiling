@@ -3,6 +3,7 @@ Type=ServiceType
 X-KDE-ServiceType=SolidRemoteControlManager
 Comment=Remote Control Management Backend
 Comment[en_GB]=Remote Control Management Backend
+Comment[eo]=Interna Interfaco de la teleregilo
 Comment[et]=Kaugjuhtimise haldamise taustaprogramm
 Comment[gl]=Infraestrutura de xestión do control remoto
 Comment[id]=Kontrol Jarak Jauh Ujung Belakang Manajemen

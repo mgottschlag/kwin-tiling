@@ -18,6 +18,7 @@ Name[x-test]=xxSearch Boxxx
 Name[zh_TW]=搜尋盒
 Comment=Search Box for a given RunnerManager
 Comment[en_GB]=Search Box for a given RunnerManager
+Comment[eo]=Serĉu dialogujon por la proponita RunnerManager
 Comment[et]=Käivitamishalduri otsingukast
 Comment[gl]=Caixa de procura para un RunnerManager dado
 Comment[id]=Kotak pencarian untuk manajer pelari yang diberikan

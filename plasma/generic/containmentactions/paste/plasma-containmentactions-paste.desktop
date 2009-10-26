@@ -23,6 +23,7 @@ Type=Service
 Icon=preferences-desktop-color
 Comment=Creates a widget from the contents of the clipboard
 Comment[en_GB]=Creates a widget from the contents of the clipboard
+Comment[eo]=Krei fenestraĵon el la enhavo de la tondejo
 Comment[et]=Vidina loomine lõikepuhvri sisu põhjal
 Comment[gl]=Crea un widget a partir do contido do portarretallos
 Comment[id]=Membuat widget dari isi papan klip
