@@ -241,7 +241,7 @@ void NetView::updateConfigurationMode(bool config)
 
     Plasma::Containment *cont = containment();
     if (config && cont && cont->immutability() == Plasma::Mutable &&
-        (cont->formFactor() == Plasma::Horizontal || cont->formFactor() == Plasma::Vertical)) {
+        (cont->location() != Plasma::Planar || cont->location() != Plasma::Floating)) {
         m_panelController = new NetPanelController(0, this, cont);
     } else {
         delete m_panelController;
