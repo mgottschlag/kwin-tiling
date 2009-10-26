@@ -509,19 +509,21 @@ void SearchLaunch::updateConfigurationMode(bool config)
     qreal extraRight = 0;
     qreal extraBottom = 0;
 
-    switch (m_toolBox->location()) {
-        case Plasma::LeftEdge:
-        extraLeft= m_toolBox->expandedGeometry().width();
-        break;
-    case Plasma::RightEdge:
-        extraRight = m_toolBox->expandedGeometry().width();
-        break;
-    case Plasma::TopEdge:
-        extraTop = m_toolBox->expandedGeometry().height();
-        break;
-    case Plasma::BottomEdge:
-    default:
-        extraBottom = m_toolBox->expandedGeometry().height();
+    if (config) {
+        switch (m_toolBox->location()) {
+            case Plasma::LeftEdge:
+            extraLeft= m_toolBox->expandedGeometry().width();
+            break;
+        case Plasma::RightEdge:
+            extraRight = m_toolBox->expandedGeometry().width();
+            break;
+        case Plasma::TopEdge:
+            extraTop = m_toolBox->expandedGeometry().height();
+            break;
+        case Plasma::BottomEdge:
+        default:
+            extraBottom = m_toolBox->expandedGeometry().height();
+        }
     }
 
     if (config && !m_appletOverlay && immutability() == Plasma::Mutable) {
@@ -532,26 +534,15 @@ void SearchLaunch::updateConfigurationMode(bool config)
         m_appletOverlay->resize(size());
         connect (m_appletOverlay, SIGNAL(dropRequested(QGraphicsSceneDragDropEvent *)),
                  this, SLOT(overlayRequestedDrop(QGraphicsSceneDragDropEvent *)));
-
-
-        qreal left, top, right, bottom;
-        getContentsMargins(&left, &top, &right, &bottom);
-        setContentsMargins(left + extraLeft, top + extraTop, right + extraRight, bottom + extraBottom);
     } else if (!config) {
         delete m_appletOverlay;
         m_appletOverlay = 0;
         if (m_appletsLayout->count() == 2) {
             m_mainLayout->removeItem(m_appletsLayout);
         }
-
-
-        qreal left, top, right, bottom;
-        getContentsMargins(&left, &top, &right, &bottom);
-        setContentsMargins(qMax((qreal)0.0, left - extraLeft),
-                           qMax((qreal)0.0, top - extraTop),
-                           qMax((qreal)0.0, right - extraRight),
-                           qMax((qreal)0.0, bottom - extraBottom));
     }
+
+    m_mainLayout->setContentsMargins(extraLeft, extraTop, extraRight, extraBottom);
 }
 
 void SearchLaunch::overlayRequestedDrop(QGraphicsSceneDragDropEvent *event)
