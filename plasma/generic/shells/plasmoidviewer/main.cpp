@@ -42,6 +42,7 @@
 #include <Plasma/Theme>
 #include <Plasma/AccessManager>
 #include <Plasma/AuthorizationManager>
+#include <Plasma/Wallpaper>
 
 using namespace Plasma;
 
@@ -78,6 +79,39 @@ public Q_SLOTS:
     }
 };
 
+void listPlugins(const KPluginInfo::List & plugins)
+{
+    int maxLen = 0;
+    QMap<QString, QString> applets;
+    foreach (const KPluginInfo &info, plugins) {
+        if (info.property("NoDisplay").toBool()) {
+            continue;
+        }
+
+        int len = info.pluginName().length();
+        if (len > maxLen) {
+            maxLen = len;
+        }
+
+        QString name = info.pluginName();
+        QString comment = info.comment();
+
+        if (comment.isEmpty()) {
+            comment = i18n("No description available");
+        }
+
+        applets.insert(name, comment);
+    }
+
+    QMap<QString, QString>::const_iterator it;
+    for (it = applets.constBegin(); it != applets.constEnd(); it++) {
+        QString applet("%1 - %2");
+
+        applet = applet.arg(it.key().leftJustified(maxLen, ' ')).arg(it.value());
+        std::cout << applet.toLocal8Bit().data() << std::endl;
+    }
+}
+
 int main(int argc, char **argv)
 {
     KAboutData aboutData("plasmoidviewer", 0, ki18n("Plasma Widget Viewer"),
@@ -96,6 +130,8 @@ int main(int argc, char **argv)
     options.add("f");
     options.add("formfactor <name>", ki18nc("Do not translate horizontal, vertical, mediacenter nor planar", "The formfactor to use (horizontal, vertical, mediacenter or planar)"), "planar");
     options.add("list", ki18n("Displays a list of known applets"));
+    options.add("list-wallpapers", ki18n("Displays a list of known wallpapers"));
+    options.add("list-containments", ki18n("Displays a list of known containments"));
     options.add("l");
     options.add("location <name>", ki18nc("Do not translate floating, desktop, fullscreen, top, bottom, left nor right", "The location constraint to start the Containment with (floating, desktop, fullscreen, top, bottom, left, right)"), "floating");
     options.add("p");
@@ -103,7 +139,7 @@ int main(int argc, char **argv)
     options.add("t");
     options.add("theme <name>", ki18n("Desktop SVG theme to use"));
     options.add("w");
-    options.add("wallpaper <name>", ki18n("Name of the wallpaper plugin"), QByteArray());
+    options.add("wallpaper <name>", ki18n("Name of the wallpaper plugin. Requires a containment plugin to be specified."), QByteArray());
     options.add("+applet", ki18n("Name of applet to view; may refer to the plugin name or be a path "
                                 "(absolute or relative) to a package. If not provided, then an "
                                 "attempt is made to load a package from the current directory."));
@@ -116,36 +152,17 @@ int main(int argc, char **argv)
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs() ;
 
     if (args->isSet("list")) {
-        int maxLen = 0;
-        QMap<QString, QString> applets;
-        foreach (const KPluginInfo &info, Plasma::Applet::listAppletInfo()) {
-            if (info.property("NoDisplay").toBool()) {
-                continue;
-            }
+        listPlugins(Plasma::Applet::listAppletInfo());
+        return 0;
+    }
+    
+    if (args->isSet("list-wallpapers")) {
+        listPlugins(Plasma::Wallpaper::listWallpaperInfo());
+        return 0;
+    }
 
-            int len = info.pluginName().length();
-            if (len > maxLen) {
-                maxLen = len;
-            }
-
-            QString name = info.pluginName();
-            QString comment = info.comment();
-
-            if (comment.isEmpty()) {
-                comment = i18n("No description available");
-            }
-
-            applets.insert(name, comment);
-        }
-
-        QMap<QString, QString>::const_iterator it;
-        for (it = applets.constBegin(); it != applets.constEnd(); it++) {
-            QString applet("%1 - %2");
-
-            applet = applet.arg(it.key().leftJustified(maxLen, ' ')).arg(it.value());
-            std::cout << applet.toLocal8Bit().data() << std::endl;
-        }
-
+    if (args->isSet("list-containments")) {
+        listPlugins(Plasma::Containment::listContainments());
         return 0;
     }
 
