@@ -449,7 +449,7 @@ void Newspaper::createAppletTitle(Plasma::Applet *applet)
 
 void Newspaper::changeEvent(QEvent *event)
 {
-    if (event->type() == QEvent::ContentsRectChange && !m_toolBox->isShowing()) {
+    if (event->type() == QEvent::ContentsRectChange) {
         qreal left, top, right, bottom;
         getContentsMargins(&left, &top, &right, &bottom);
 
@@ -463,6 +463,10 @@ void Newspaper::changeEvent(QEvent *event)
         //bottom is the default
         } else {
             m_toolBox->setLocation(Plasma::BottomEdge);
+        }
+
+        if (m_toolBox->isShowing()) {
+            updateConfigurationMode(true);
         }
     }
 }

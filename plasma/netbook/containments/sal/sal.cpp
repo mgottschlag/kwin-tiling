@@ -598,7 +598,7 @@ void SearchLaunch::focusInEvent(QFocusEvent *event)
 
 void SearchLaunch::changeEvent(QEvent *event)
 {
-    if (event->type() == QEvent::ContentsRectChange && !m_toolBox->isShowing()) {
+    if (event->type() == QEvent::ContentsRectChange) {
         qreal left, top, right, bottom;
         getContentsMargins(&left, &top, &right, &bottom);
 
@@ -612,6 +612,10 @@ void SearchLaunch::changeEvent(QEvent *event)
         //bottom is the default
         } else {
             m_toolBox->setLocation(Plasma::BottomEdge);
+        }
+
+        if (m_toolBox->isShowing()) {
+            updateConfigurationMode(true);
         }
     }
 }
