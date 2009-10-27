@@ -40,10 +40,11 @@ private:
     QString displayedItemText(int item);
     bool isCustomized(const QString& theme);
     void clearCustomized(const QString& themeRoot);
+    void setDesktopTheme(QString themeRoot);
 
 private slots:
-    void getNewThemes();
     void cleanup();
+    void themeSelectionChanged(const QItemSelection newSelection, const QItemSelection oldSelection);
 
 private:
     ThemeModel* m_themeModel;

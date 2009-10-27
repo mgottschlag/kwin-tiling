@@ -1,175 +1,90 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>DesktopThemeItems</class>
- <widget class="QWidget" name="DesktopThemeItems" >
-  <property name="geometry" >
+ <widget class="QWidget" name="DesktopThemeItems">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>477</width>
-    <height>290</height>
+    <width>570</width>
+    <height>487</height>
    </rect>
   </property>
-  <property name="sizePolicy" >
-   <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="baseSize" >
+  <property name="baseSize">
    <size>
     <width>200</width>
     <height>700</height>
    </size>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Desktop Theme Details</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
-   <item row="0" column="0" >
-    <layout class="QVBoxLayout" name="vlayout2" >
-     <item>
-      <widget class="QComboBox" name="m_theme" />
-     </item>
-     <item>
-      <widget class="QPushButton" name="m_newThemeButton" >
-       <property name="enabled" >
-        <bool>true</bool>
-       </property>
-       <property name="text" >
-        <string>Get New Theme...</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="0">
+    <layout class="QVBoxLayout" name="vlayout2"/>
    </item>
-   <item row="0" column="1" >
-    <widget class="QGroupBox" name="m_groupBox" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+   <item row="2" column="0" colspan="4">
+    <widget class="QTableWidget" name="m_themeItemList">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <layout class="QVBoxLayout" name="vlayout1" >
-      <item>
-       <layout class="QHBoxLayout" name="hlayout0" >
-        <item>
-         <widget class="QLabel" name="m_themeInfoAuthor" >
-          <property name="font" >
-           <font>
-            <italic>true</italic>
-           </font>
-          </property>
-          <property name="text" >
-           <string>Theme Author</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignLeading</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="m_themeInfoName" >
-          <property name="font" >
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text" >
-           <string>Theme Name</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="m_themeInfoVersion" >
-          <property name="font" >
-           <font>
-            <italic>true</italic>
-           </font>
-          </property>
-          <property name="text" >
-           <string>Theme Version</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight</set>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="QLabel" name="m_themeInfoDescription" >
-        <property name="text" >
-         <string>The theme description goes here...</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="2" >
-    <widget class="QTableWidget" name="m_themeItemList" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="editTriggers" >
+     <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>
-     <property name="selectionMode" >
+     <property name="selectionMode">
       <enum>QAbstractItemView::SingleSelection</enum>
      </property>
-     <property name="showGrid" >
+     <property name="showGrid">
       <bool>false</bool>
      </property>
-     <property name="sortingEnabled" >
+     <property name="sortingEnabled">
       <bool>false</bool>
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2" >
-    <widget class="QGroupBox" name="m_groupBox1" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+   <item row="3" column="0" colspan="4">
+    <widget class="QGroupBox" name="m_groupBox1">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <layout class="QGridLayout" name="gLayout1" >
-      <item row="0" column="0" >
-       <widget class="QCheckBox" name="m_enableAdvanced" >
-        <property name="text" >
+     <layout class="QGridLayout" name="gLayout1">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="m_enableAdvanced">
+        <property name="text">
          <string>More</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
-       <layout class="QHBoxLayout" name="hlayout1" >
+       <layout class="QHBoxLayout" name="hlayout1">
         <item>
-         <widget class="QPushButton" name="m_removeThemeButton" >
-          <property name="enabled" >
+         <widget class="QPushButton" name="m_removeThemeButton">
+          <property name="enabled">
            <bool>true</bool>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Remove Theme</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="m_exportThemeButton" >
-          <property name="enabled" >
+         <widget class="QPushButton" name="m_exportThemeButton">
+          <property name="enabled">
            <bool>true</bool>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Export Theme to File...</string>
           </property>
          </widget>
@@ -177,89 +92,89 @@
        </layout>
       </item>
       <item row="2" column="0">
-       <widget class="Line" name="m_advancedLine" >
-        <property name="frameShape" >
+       <widget class="Line" name="m_advancedLine">
+        <property name="frameShape">
          <enum>QFrame::HLine</enum>
         </property>
-        <property name="frameShadow" >
+        <property name="frameShadow">
          <enum>QFrame::Sunken</enum>
         </property>
-        <property name="orientation" >
+        <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
       <item row="3" column="0">
-       <layout class="QHBoxLayout" name="hlayout1" >
+       <layout class="QHBoxLayout" name="hlayout1">
         <item>
-         <widget class="QLabel" name="m_newThemeNameLabel" >
-          <property name="text" >
+         <widget class="QLabel" name="m_newThemeNameLabel">
+          <property name="text">
            <string>New theme name:</string>
           </property>
-          <property name="alignment" >
+          <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
-          <property name="buddy" >
+          <property name="buddy">
            <cstring>m_newThemeName</cstring>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="KLineEdit" name="m_newThemeName" />
+         <widget class="KLineEdit" name="m_newThemeName"/>
         </item>
         <item>
-         <widget class="QLabel" name="m_newThemeAuthorLabel" >
-          <property name="text" >
+         <widget class="QLabel" name="m_newThemeAuthorLabel">
+          <property name="text">
            <string>Author:</string>
           </property>
-          <property name="alignment" >
+          <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
-          <property name="buddy" >
+          <property name="buddy">
            <cstring>m_newThemeAuthor</cstring>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="KLineEdit" name="m_newThemeAuthor" />
+         <widget class="KLineEdit" name="m_newThemeAuthor"/>
         </item>
         <item>
-         <widget class="QLabel" name="m_newThemeVersionLabel" >
-          <property name="text" >
+         <widget class="QLabel" name="m_newThemeVersionLabel">
+          <property name="text">
            <string>Version:</string>
           </property>
-          <property name="alignment" >
+          <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
-          <property name="buddy" >
+          <property name="buddy">
            <cstring>m_newThemeVersion</cstring>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="KLineEdit" name="m_newThemeVersion" />
+         <widget class="KLineEdit" name="m_newThemeVersion"/>
         </item>
        </layout>
       </item>
-      <item row="4" column="0" >
-       <layout class="QHBoxLayout" name="hlayout1" >
+      <item row="4" column="0">
+       <layout class="QHBoxLayout" name="hlayout1">
         <item>
-         <widget class="QLabel" name="m_newThemeDescriptionLabel" >
-          <property name="text" >
+         <widget class="QLabel" name="m_newThemeDescriptionLabel">
+          <property name="text">
            <string>Description:</string>
           </property>
-          <property name="alignment" >
+          <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
-          <property name="buddy" >
+          <property name="buddy">
            <cstring>m_newThemeDescription</cstring>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="KLineEdit" name="m_newThemeDescription" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+         <widget class="KLineEdit" name="m_newThemeDescription">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -269,6 +184,144 @@
        </layout>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Select theme from above to customize</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3">
+    <widget class="QWidget" name="m_widget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <layout class="QVBoxLayout" name="vlayout1">
+      <item>
+       <layout class="QHBoxLayout" name="hlayout0">
+        <item>
+         <widget class="QLabel" name="m_themeInfoAuthor">
+          <property name="text">
+           <string>Theme Author</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="m_themeInfoName">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Theme Name</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="m_themeInfoVersion">
+          <property name="text">
+           <string>Theme Version</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="m_themeInfoDescription">
+        <property name="text">
+         <string>The theme description goes here...</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="4">
+    <widget class="QListView" name="m_theme">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>130</height>
+      </size>
+     </property>
+     <property name="palette">
+      <palette>
+       <active>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>187</red>
+           <green>187</green>
+           <blue>187</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </active>
+       <inactive>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>187</red>
+           <green>187</green>
+           <blue>187</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </inactive>
+       <disabled>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </disabled>
+      </palette>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="isWrapping" stdset="0">
+      <bool>false</bool>
+     </property>
+     <property name="viewMode">
+      <enum>QListView::IconMode</enum>
+     </property>
     </widget>
    </item>
   </layout>
