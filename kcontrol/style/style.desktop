@@ -179,7 +179,7 @@ Comment[x-test]=xxAllows the manipulation of widget behavior and changing the St
 Comment[zh_CN]=允许操纵修饰行为和更改 KDE 的样式
 Comment[zh_TW]=讓您控制視窗元件 (widget) 的操作方式，以及更改 KDE 的風格
 
-X-KDE-Keywords=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE applications
+X-KDE-Keywords=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE applications,theme,plasma
 X-KDE-Keywords[af]=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE programme
 X-KDE-Keywords[be]=Стыль,Стылі,Выгляд,Вонкавы выгляд,Віджэт,Значкі,Панелі начынняў,Тэкст,Падсвятленне,Праграмы,Праграмы KDE,style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE applications
 X-KDE-Keywords[bg]=Keywords=стил, тема, външен, вид, икони, текст, цветове, style, styles, look, widget, icons, toolbars, text, highlight, apps, KDE applications
