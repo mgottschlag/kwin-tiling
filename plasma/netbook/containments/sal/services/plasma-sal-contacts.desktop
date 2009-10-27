@@ -2,6 +2,7 @@
 Name=Contacts
 Name[en_GB]=Contacts
 Name[gl]=Contactos
+Name[id]=Kontak
 Name[pt]=Contactos
 Name[pt_BR]=Contatos
 Name[sv]=Kontakter
@@ -11,6 +12,7 @@ Comment=List all your contacts
 Comment[en_GB]=List all your contacts
 Comment[eo]=Listo de ĉiuj viaj kontaktoj
 Comment[gl]=Enumera todos os contactos
+Comment[id]=Tampilkan semua kontak anda
 Comment[pt]=Apresentar todos os seus contactos
 Comment[pt_BR]=Lista todos os seus contatos
 Comment[sv]=Lista alla kontakter
