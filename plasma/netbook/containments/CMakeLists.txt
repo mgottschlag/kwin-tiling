@@ -1,5 +1,5 @@
-if(NOT WIN32)
-add_subdirectory(sal)
 add_subdirectory(newspaper)
 add_subdirectory(netpanel)
+if(NOT WIN32)
+add_subdirectory(sal)
 endif(NOT WIN32)
