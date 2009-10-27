@@ -1327,7 +1327,7 @@ startClient( volatile int *pid )
 			"remote-host-name", remoteHostName ?
 			                       (const char **)&remoteHostName : &spaceStr,
 # endif
-			0 );
+			(char *)0 );
 # ifdef XDMCP
 	free( remoteHostName );
 # endif
