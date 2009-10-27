@@ -8,7 +8,7 @@ X-KDE-Library=kcm_solid
 X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
-Name=Solid Backends
+Name=Hardware
 Name[ar]=العتاد
 Name[be]=Прылады
 Name[be@latin]=Aparatura
