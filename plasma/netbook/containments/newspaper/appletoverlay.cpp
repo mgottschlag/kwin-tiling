@@ -164,14 +164,26 @@ void AppletOverlay::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         showSpacer(event->pos());
     }
 
-    if (m_newspaper->m_scrollWidget->pos().y() + event->pos().y() > m_newspaper->m_scrollWidget->size().height()*0.70) {
-        m_scrollTimer->start(50);
-        m_scrollDown = true;
-    } else if (m_newspaper->m_scrollWidget->pos().y() + event->pos().y() < m_newspaper->m_scrollWidget->size().height()*0.30) {
-        m_scrollTimer->start(50);
-        m_scrollDown = false;
+    if (m_newspaper->orientation() == Qt::Vertical) {
+        if (m_newspaper->m_scrollWidget->pos().y() + event->pos().y() > m_newspaper->m_scrollWidget->size().height()*0.70) {
+            m_scrollTimer->start(50);
+            m_scrollDown = true;
+        } else if (m_newspaper->m_scrollWidget->pos().y() + event->pos().y() < m_newspaper->m_scrollWidget->size().height()*0.30) {
+            m_scrollTimer->start(50);
+            m_scrollDown = false;
+        } else {
+            m_scrollTimer->stop();
+        }
     } else {
-        m_scrollTimer->stop();
+        if (m_newspaper->m_scrollWidget->pos().x() + event->pos().x() > m_newspaper->m_scrollWidget->size().width()*0.70) {
+            m_scrollTimer->start(50);
+            m_scrollDown = true;
+        } else if (m_newspaper->m_scrollWidget->pos().x() + event->pos().x() < m_newspaper->m_scrollWidget->size().width()*0.30) {
+            m_scrollTimer->start(50);
+            m_scrollDown = false;
+        } else {
+            m_scrollTimer->stop();
+        }
     }
 
     update();
@@ -361,15 +373,29 @@ void AppletOverlay::scrollTimeout()
         return;
     }
 
-    if (m_scrollDown) {
-        if (m_newspaper->m_mainWidget->geometry().bottom() > m_newspaper->m_scrollWidget->geometry().bottom()) {
-            m_newspaper->m_mainWidget->moveBy(0, -10);
-            m_applet->moveBy(0, 10);
+    if (m_newspaper->orientation() == Qt::Vertical) {
+        if (m_scrollDown) {
+            if (m_newspaper->m_mainWidget->geometry().bottom() > m_newspaper->m_scrollWidget->geometry().bottom()) {
+                m_newspaper->m_mainWidget->moveBy(0, -10);
+                m_applet->moveBy(0, 10);
+            }
+        } else {
+            if (m_newspaper->m_mainWidget->pos().y() < 0) {
+                m_newspaper->m_mainWidget->moveBy(0, 10);
+                m_applet->moveBy(0, -10);
+            }
         }
     } else {
-        if (m_newspaper->m_mainWidget->pos().y() < 0) {
-            m_newspaper->m_mainWidget->moveBy(0, 10);
-            m_applet->moveBy(0, -10);
+        if (m_scrollDown) {
+            if (m_newspaper->m_mainWidget->geometry().right() > m_newspaper->m_scrollWidget->geometry().right()) {
+                m_newspaper->m_mainWidget->moveBy(-10, 0);
+                m_applet->moveBy(10, 0);
+            }
+        } else {
+            if (m_newspaper->m_mainWidget->pos().x() < 0) {
+                m_newspaper->m_mainWidget->moveBy(10, 0);
+                m_applet->moveBy(-10, 0);
+            }
         }
     }
 }
