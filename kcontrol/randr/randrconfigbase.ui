@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>RandRConfigBase</class>
- <widget class="QWidget" name="RandRConfigBase" >
-  <property name="geometry" >
+ <widget class="QWidget" name="RandRConfigBase">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,43 +10,43 @@
     <height>425</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Display Configuration (X11 Resize, Rotate and Reflect)</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout" >
+  <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="QSplitter" name="splitter" >
-     <property name="orientation" >
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="layoutWidget" >
-      <layout class="QVBoxLayout" name="verticalLayout" >
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QWidget" native="1" name="outputList" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="MinimumExpanding" >
+        <widget class="QWidget" name="outputList" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="minimumSize" >
+         <property name="minimumSize">
           <size>
-           <width>350</width>
+           <width>400</width>
            <height>0</height>
           </size>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="identifyOutputsButton" >
-         <property name="text" >
+        <widget class="QPushButton" name="identifyOutputsButton">
+         <property name="text">
           <string>Identify Outputs</string>
          </property>
         </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QGraphicsView" name="screenView" />
+     <widget class="QGraphicsView" name="screenView"/>
     </widget>
    </item>
   </layout>
