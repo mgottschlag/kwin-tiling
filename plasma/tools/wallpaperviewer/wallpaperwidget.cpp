@@ -67,6 +67,11 @@ void WallpaperWidget::quit()
         delete m_wallpaper;
     }
 
+    close();
+}
+
+void WallpaperWidget::closeEvent(QCloseEvent *event)
+{
     KGlobal::deref();
 }
 

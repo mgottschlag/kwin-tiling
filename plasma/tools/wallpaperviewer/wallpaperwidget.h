@@ -40,6 +40,7 @@ public:
     ~WallpaperWidget();
 
 protected:
+    void closeEvent(QCloseEvent *event);
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
