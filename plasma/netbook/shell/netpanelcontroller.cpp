@@ -59,6 +59,7 @@ NetPanelController::NetPanelController(QWidget *parent, NetView *view, Plasma::C
     m_moveButton->nativeWidget()->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     m_moveButton->setIcon(m_iconSvg->pixmap("move"));
     m_moveButton->setText(i18n("Screen edge"));
+    m_moveButton->setCursor(Qt::SizeAllCursor);
     m_layout->addItem(m_moveButton);
 
     m_resizeButton = new Plasma::ToolButton(m_mainWidget);
@@ -123,12 +124,14 @@ void NetPanelController::updateFormFactor()
         m_layout->setOrientation(Qt::Vertical);
         m_resizeButton->setIcon(m_iconSvg->pixmap("size-horizontal"));
     m_resizeButton->setText(i18n("Width"));
+        m_resizeButton->setCursor(Qt::SizeHorCursor);
         break;
     case Plasma::TopEdge:
     case Plasma::BottomEdge:
         m_layout->setOrientation(Qt::Horizontal);
         m_resizeButton->setIcon(m_iconSvg->pixmap("size-vertical"));
         m_resizeButton->setText(i18n("Height"));
+        m_resizeButton->setCursor(Qt::SizeVerCursor);
         break;
     default:
         break;
