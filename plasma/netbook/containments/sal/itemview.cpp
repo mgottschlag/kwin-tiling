@@ -136,23 +136,13 @@ bool ItemView::eventFilter(QObject *watched, QEvent *event)
             setMinimumHeight(re->newSize().height() + (size().height()-contentsRect().height()+6));
         }
     //pass click only if the user didn't move the mouse FIXME: we need sendevent there
-    } else if(icon && event->type() == QEvent::GraphicsSceneMousePress) {
+    } else if(icon && (event->type() == QEvent::GraphicsSceneMousePress ||
+                       event->type() == QEvent::GraphicsSceneMouseMove ||
+                       event->type() == QEvent::GraphicsSceneMouseRelease)) {
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
         if (scene()) {
             scene()->sendEvent(this, me);
         }
-    } else if (icon && event->type() == QEvent::GraphicsSceneMouseMove) {
-        QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
-
-        if (scene()) {
-            scene()->sendEvent(this, me);
-        }
-    } else if (icon && event->type() == QEvent::GraphicsSceneMouseRelease){
-        QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
-        if (scene()) {
-            scene()->sendEvent(this, me);
-        }
-
     } else if (watched == m_itemContainer && event->type() == QEvent::GraphicsSceneMove) {
         QGraphicsSceneMoveEvent *me = static_cast<QGraphicsSceneMoveEvent *>(event);
 
