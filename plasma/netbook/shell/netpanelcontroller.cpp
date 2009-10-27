@@ -96,7 +96,7 @@ void NetPanelController::updateGeometry()
     QRect viewGeometry(m_view->geometry());
     switch (m_containment->location()) {
     case Plasma::LeftEdge:
-        move(viewGeometry.right(), viewGeometry.center().y()/2 - size().height()/2);
+        move(viewGeometry.right(), viewGeometry.center().y() - size().height()/2);
         break;
     case Plasma::RightEdge:
         move(viewGeometry.left() - size().width(), viewGeometry.center().y() - size().height()/2);
@@ -215,16 +215,17 @@ bool NetPanelController::eventFilter(QObject *watched, QEvent *event)
                 break;
             }
 
-            m_containment->setMinimumHeight(m_containment->size().width() + deltaPos.x());
-            m_containment->setMaximumHeight(m_containment->minimumHeight());
+            m_containment->setMinimumWidth(m_containment->size().width() + deltaPos.x());
+            m_containment->setMaximumWidth(m_containment->minimumWidth());
+
             break;
         case Plasma::RightEdge:
             if ((deltaPos.x() < 0 && m_containment->size().width() >= KIconLoader::SizeEnormous) || (deltaPos.x() > 0 && m_containment->size().width() <= KIconLoader::SizeSmall)) {
                 break;
             }
 
-            m_containment->setMinimumHeight(m_containment->size().width() - deltaPos.x());
-            m_containment->setMaximumHeight(m_containment->minimumHeight());
+            m_containment->setMinimumWidth(m_containment->size().width() - deltaPos.x());
+            m_containment->setMaximumWidth(m_containment->minimumWidth());
             break;
         case Plasma::TopEdge:
             if ((deltaPos.y() > 0 && m_containment->size().height() >= KIconLoader::SizeEnormous) || (deltaPos.y() < 0 && m_containment->size().height() <= KIconLoader::SizeSmall)) {
