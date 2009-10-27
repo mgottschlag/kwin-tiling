@@ -61,17 +61,18 @@ WallpaperWidget::~WallpaperWidget()
 
 void WallpaperWidget::quit()
 {
-    if (m_wallpaper) {
-        KConfigGroup config = configGroup();
-        m_wallpaper->save(config);
-        delete m_wallpaper;
-    }
-
     close();
 }
 
 void WallpaperWidget::closeEvent(QCloseEvent *event)
 {
+    if (m_wallpaper && m_wallpaper->isInitialized()) {
+        KConfigGroup config = configGroup();
+        m_wallpaper->save(config);
+        delete m_wallpaper;
+        m_wallpaper = 0;
+    }
+
     KGlobal::deref();
 }
 
