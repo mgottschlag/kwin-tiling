@@ -44,8 +44,6 @@ KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
     , _settings()
     ,_initialized(false)
     {
-    setModuleName(COMPONENT_NAME);
-
     // initialize
     kDebug() << "Installing the delayed initialization callback.";
     QMetaObject::invokeMethod( this, "initialize", Qt::QueuedConnection);
