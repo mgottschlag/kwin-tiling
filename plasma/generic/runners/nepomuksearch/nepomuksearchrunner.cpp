@@ -54,14 +54,12 @@ namespace {
 Nepomuk::SearchRunner::SearchRunner( QObject* parent, const QVariantList& args )
     : Plasma::AbstractRunner( parent, args )
 {
-    init();
 }
 
 
 Nepomuk::SearchRunner::SearchRunner( QObject* parent, const QString& serviceId )
     : Plasma::AbstractRunner( parent, serviceId )
 {
-    init();
 }
 
 

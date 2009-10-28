@@ -47,8 +47,10 @@ namespace Nepomuk {
 
         QList<QAction*> actionsForMatch(const Plasma::QueryMatch &match);
 
-    private:
+    protected Q_SLOTS:
         void init();
+
+    private:
 
         QMutex m_mutex;
         QWaitCondition m_waiter;
