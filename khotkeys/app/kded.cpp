@@ -42,8 +42,25 @@ KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
     : KDEDModule(parent)
     , actions_root(NULL)
     , _settings()
+    ,_initialized(false)
     {
     setModuleName(COMPONENT_NAME);
+
+    // initialize
+    kDebug() << "Installing the delayed initialization callback.";
+    QMetaObject::invokeMethod( this, "initialize", Qt::QueuedConnection);
+    }
+
+
+void KHotKeysModule::initialize()
+    {
+    if (_initialized)
+        {
+        return;
+        }
+
+    kDebug() << "Delayed initialization.";
+    _initialized = true;
 
     // Initialize the global data, grab keys
     KHotKeys::init_global_data( true, this );

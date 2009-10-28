@@ -64,6 +64,9 @@ class KHotKeysModule
         //! Save
         void save();
 
+        //! Initialize the module. Delayed initialization.
+        void initialize();
+
     public:
 
         KHotKeysModule(QObject* parent, const QList<QVariant>&);
@@ -76,6 +79,9 @@ class KHotKeysModule
 
         //! The current settings
         KHotKeys::Settings _settings;
+
+        //! Is the module initialized
+        bool _initialized;
 
         /** 
          * @name Some method in need for a better home 
