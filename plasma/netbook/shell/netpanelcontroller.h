@@ -45,9 +45,10 @@ public:
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
     void updateFormFactor();
+    void resizeEvent(QResizeEvent *e);
 
 private Q_SLOTS:
-    void updateGeometry();
+    void updatePosition();
 
 private:
     Plasma::Containment *m_containment;

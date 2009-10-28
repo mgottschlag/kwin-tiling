@@ -23,6 +23,8 @@
 #include <QGraphicsLinearLayout>
 #include <QGraphicsWidget>
 #include <QToolButton>
+#include <QLayout>
+#include <QTimer>
 
 #include <KIcon>
 #include <KIconLoader>
@@ -48,7 +50,7 @@ NetPanelController::NetPanelController(QWidget *parent, NetView *view, Plasma::C
         containment->corona()->addOffscreenWidget(m_mainWidget);
     }
 
-    m_layout = new QGraphicsLinearLayout(m_mainWidget);
+    m_layout = new QGraphicsLinearLayout(Qt::Horizontal, m_mainWidget);
 
     m_iconSvg = new Plasma::Svg(this);
     m_iconSvg->setImagePath("widgets/configuration-icons");
@@ -76,13 +78,15 @@ NetPanelController::NetPanelController(QWidget *parent, NetView *view, Plasma::C
     m_layout->addItem(m_autoHideButton);
     m_autoHideButton->nativeWidget()->setChecked(view->autoHide());
     connect(m_autoHideButton->nativeWidget(), SIGNAL(toggled(bool)), view, SLOT(setAutoHide(bool)));
-    connect(containment, SIGNAL(geometryChanged()), this, SLOT(updateGeometry()));
+    connect(containment, SIGNAL(geometryChanged()), this, SLOT(updatePosition()));
 
     m_moveButton->installEventFilter(this);
     m_resizeButton->installEventFilter(this);
     setGraphicsWidget(m_mainWidget);
+    layout()->activate();
     m_layout->activate();
-    updateGeometry();
+    m_mainWidget->resize(m_mainWidget->effectiveSizeHint(Qt::PreferredSize));
+    updatePosition();
     show();
     Plasma::WindowEffects::slideWindow(this, containment->location());
 }
@@ -92,7 +96,7 @@ NetPanelController::~NetPanelController()
     Plasma::WindowEffects::slideWindow(this, m_containment->location());
 }
 
-void NetPanelController::updateGeometry()
+void NetPanelController::updatePosition()
 {
     QRect viewGeometry(m_view->geometry());
     switch (m_containment->location()) {
@@ -136,6 +140,12 @@ void NetPanelController::updateFormFactor()
     default:
         break;
     }
+}
+
+void NetPanelController::resizeEvent(QResizeEvent *e)
+{
+    updatePosition();
+    Plasma::Dialog::resizeEvent(e);
 }
 
 bool NetPanelController::eventFilter(QObject *watched, QEvent *event)
