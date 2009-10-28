@@ -210,7 +210,7 @@ void ControllerWindow::showWidgetExplorer()
         m_widgetExplorer = new Plasma::WidgetExplorer();
         m_widgetExplorer->setContainment(m_containment);
         m_widgetExplorer->populateWidgetList();
-        m_widgetExplorer->resize(size());
+        m_widgetExplorer->resize(m_widgetExplorerView->size());
 
         m_containment->corona()->addOffscreenWidget(m_widgetExplorer);
         m_widgetExplorerView->setSceneRect(m_widgetExplorer->geometry());
@@ -314,11 +314,14 @@ bool ControllerWindow::eventFilter(QObject *watched, QEvent *event)
     if (watched == m_widgetExplorerView && event->type() == QEvent::Resize) {
         QResizeEvent *resizeEvent = static_cast<QResizeEvent *>(event);
         m_widgetExplorer->resize(resizeEvent->size());
+        m_widgetExplorerView->setSceneRect(m_widgetExplorer->geometry());
+
+        QSize borderSize = size() - m_layout->contentsRect().size();
 
         if (orientation() == Qt::Horizontal) {
-            resize(width(), m_widgetExplorerView->height());
+            resize(width(), m_widgetExplorerView->height() + borderSize.height());
         } else {
-            resize(m_widgetExplorerView->width(), height());
+            resize(m_widgetExplorerView->width() + borderSize.width(), height());
         }
     }
 
