@@ -1,0 +1,29 @@
+[Desktop Entry]
+Name=Terminate Applications
+Name[en_GB]=Terminate Applications
+Name[fr]=Terminate Applications
+Name[gl]=Finalizar aplicativos
+Name[pt]=Terminar as Aplicações
+Name[sv]=Avsluta program
+Name[tr]=Uygulamaları Bitir
+Name[uk]=Переривання програм
+Name[x-test]=xxTerminate Applicationsxx
+Comment=Stop applications that are currently running
+Comment[en_GB]=Stop applications that are currently running
+Comment[fr]=Arrêter des applications qui sont en cours d'exécution
+Comment[gl]=Deter aplicativos que se estean a executar
+Comment[pt]=Parar as aplicações que estão em execução de momento
+Comment[sv]=Stoppa program som för närvarande kör
+Comment[uk]=Завершує роботу запущених програм
+Comment[x-test]=xxStop applications that are currently runningxx
+Icon=application-exit
+
+X-KDE-ServiceTypes=Plasma/Runner
+Type=Service
+X-KDE-Library=krunner_kill
+X-KDE-PluginInfo-Author=Jan Gerrit Marker
+X-KDE-PluginInfo-Email=jangerrit@weiler-marker.com
+X-KDE-PluginInfo-Name=kill
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-License=LGPL
+X-KDE-PluginInfo-EnabledByDefault=true
