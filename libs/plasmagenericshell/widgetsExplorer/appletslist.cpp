@@ -163,9 +163,9 @@ bool AppletsListWidget::eventFilter(QObject *obj, QEvent *event)
         if (widget == m_appletsListWidget) {
             //the resize occured with the list widget
             if (m_orientation == Qt::Horizontal) {
-                m_appletsListWindowWidget->setMinimumHeight(m_appletsListWidget->minimumHeight());
+                m_appletsListWindowWidget->setMinimumSize(0, m_appletsListWidget->minimumHeight());
             } else {
-                m_appletsListWindowWidget->setMinimumWidth(m_appletsListWidget->minimumWidth());
+                m_appletsListWindowWidget->setMinimumSize(m_appletsListWidget->minimumWidth(), 0);
             }
 
             manageArrows();
