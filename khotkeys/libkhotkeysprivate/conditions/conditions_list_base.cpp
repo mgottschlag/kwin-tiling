@@ -150,6 +150,12 @@ Condition_list_base::ConstIterator Condition_list_base::end() const
     }
 
 
+bool Condition_list_base::isEmpty() const
+    {
+    return QList<Condition*>::isEmpty();
+    }
+
+
 int Condition_list_base::removeAll(Condition *const &cond)
     {
     return QList<Condition*>::removeAll(cond);

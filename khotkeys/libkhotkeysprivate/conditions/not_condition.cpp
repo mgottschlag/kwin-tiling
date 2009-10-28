@@ -49,7 +49,7 @@ const Condition* Not_condition::condition() const
 Not_condition* Not_condition::copy() const
     {
     Not_condition* ret = new Not_condition();
-    if( condition())
+    if (!isEmpty())
         {
         ret->append(condition()->copy());
         }

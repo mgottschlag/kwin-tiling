@@ -70,6 +70,8 @@ class KDE_EXPORT Condition_list_base : public Condition, private QList < Conditi
 
         int count() const;
 
+        bool isEmpty() const;
+
         void clear();
 
         virtual void visit( ConditionsVisitor *visitor );

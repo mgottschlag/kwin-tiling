@@ -105,9 +105,9 @@ void BuildTree::visitConditionsListBase(KHotKeys::Condition_list_base *list)
             it != list->end();
             ++it)
         {
-        QTreeWidgetItem *item = new QTreeWidgetItem(parent);
-        item->setText(0, (*it)->description());
-        _items.insert(item, list);
+        // QTreeWidgetItem *child = new QTreeWidgetItem(item);
+        // child->setText(0, (*it)->description());
+        // _items.insert(child, list);
         (*it)->visit(this);
         }
 
@@ -212,7 +212,6 @@ void ConditionsWidget::setConditionsList( KHotKeys::Condition_list *list)
     {
     Q_ASSERT(list);
     _conditions_list = list;
-    copyFromObject();
     }
 
 
