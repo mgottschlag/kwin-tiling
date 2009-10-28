@@ -602,10 +602,11 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
         m_widgetExplorer->setContainment(m_mainView->containment());
         m_widgetExplorer->populateWidgetList();
 
-        m_widgetExplorer->resize(m_widgetExplorerView->size());
         m_corona->addOffscreenWidget(m_widgetExplorer);
 
         m_widgetExplorerView->setGraphicsWidget(m_widgetExplorer);
+        m_widgetExplorer->setIconSize(KIconLoader::SizeLarge);
+        m_widgetExplorer->resize(m_widgetExplorerView->size());
 
         m_widgetExplorerView->installEventFilter(this);
     }
@@ -678,6 +679,8 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
             m_widgetExplorerView->deleteLater();
             m_widgetExplorer->deleteLater();
         }
+    } else if (watched == m_widgetExplorerView && event->type() == QEvent::Resize) {
+         m_widgetExplorer->resize(m_widgetExplorerView->contentsRect().size());
     } else if (watched == m_mainView && event->type() == QEvent::Close) {
         exit();
     }
