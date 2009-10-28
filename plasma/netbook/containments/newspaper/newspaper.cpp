@@ -478,7 +478,18 @@ void Newspaper::addNewsPaper()
         return;
     }
 
+    //count the pages
+    int numNewsPapers = 0;
+    if (corona()) {
+        foreach (Plasma::Containment *containment, corona()->containments()) {
+            if (qobject_cast<Newspaper *>(containment)) {
+                ++numNewsPapers;
+            }
+        }
+    }
+
     Plasma::Containment *cont = c->addContainment("newspaper");
+    cont->setActivity(i18nc("Page number", "Page %1", numNewsPapers+1));
     cont->setScreen(0);
     cont->setToolBoxOpen(true);
 }
