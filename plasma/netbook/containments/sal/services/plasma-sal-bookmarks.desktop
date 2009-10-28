@@ -88,6 +88,7 @@ Name[zh_CN]=书签
 Name[zh_TW]=書籤
 Comment=List all your bookmarks
 Comment[en_GB]=List all your bookmarks
+Comment[et]=Kõigi järjehoidjate loend
 Comment[gl]=Enumera todos os marcadores
 Comment[id]=Tampilkan semua penanda anda
 Comment[pt]=Apresentar todos os seus favoritos
@@ -95,6 +96,7 @@ Comment[pt_BR]=Lista todos os seus favoritos
 Comment[sv]=Lista alla bokmärken
 Comment[uk]=Список всіх ваших закладок
 Comment[x-test]=xxList all your bookmarksxx
+Comment[zh_TW]=列出所有的書籤
 Icon=bookmarks
 
 Type=Service

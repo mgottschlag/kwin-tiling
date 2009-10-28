@@ -2,6 +2,7 @@
 Name=GTK+ Style
 Name[en_GB]=GTK+ Style
 Name[eo]=GTK+ Stilo
+Name[et]=GTK+ stiil
 Name[gl]=Estilo GTK+
 Name[id]=Gaya GTK+
 Name[pt]=Estilo GTK+
@@ -13,6 +14,7 @@ Name[zh_TW]=GTK+ 風格
 Comment=Style that uses the GTK+ theming engine
 Comment[en_GB]=Style that uses the GTK+ theming engine
 Comment[eo]=Stiloj kiuj uzas la GTK+ etosan modulon
+Comment[et]=GTK+ teemamootorit kasutav stiil
 Comment[gl]=Un estilo que emprega o motor de temas de GTK+
 Comment[id]=Gaya yang menggunakan mesin tema GTK+
 Comment[pt]=Um estilo que usa o motor de temas do GTK+

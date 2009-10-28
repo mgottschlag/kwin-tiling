@@ -89,6 +89,7 @@ Name[zh_TW]=遊戲
 Comment=A collection of fun games
 Comment[en_GB]=A collection of fun games
 Comment[eo]=Amuza ludaro
+Comment[et]=Lahedate mängude kogu
 Comment[gl]=Unha colección de xogos
 Comment[id]=Koleksi permainan seru
 Comment[pt]=Uma colecção de jogos engraçados
@@ -96,6 +97,7 @@ Comment[pt_BR]=Uma coleção de jogos divertidos
 Comment[sv]=En samling roliga spel
 Comment[uk]=Збірка веселих ігор
 Comment[x-test]=xxA collection of fun gamesxx
+Comment[zh_TW]=好玩遊戲的集合
 Icon=applications-games
 
 Type=Service

@@ -89,6 +89,7 @@ Name[zh_TW]=多媒體
 Comment=Multimedia applications, such as audio and video players
 Comment[en_GB]=Multimedia applications, such as audio and video players
 Comment[eo]=Plurmediaj aplikaĵoj kiel son- kaj film- legiloj
+Comment[et]=Multimeediarakendused, näiteks muusika- ja videomängija
 Comment[gl]=Programas multimedia, do estilo de reprodutores de son e vídeo
 Comment[id]=Aplikasi multimedia, seperti pemutar audio dan video
 Comment[pt]=Aplicações multimédia, como os leitores de áudio e vídeo
@@ -96,6 +97,7 @@ Comment[pt_BR]=Aplicativos multimídia, tais como reprodutores de áudio e víde
 Comment[sv]=Multimediaprogram, som ljud- och videospelare
 Comment[uk]=Мультимедійні програми, зокрема програвачі звукових та відеоданих
 Comment[x-test]=xxMultimedia applications, such as audio and video playersxx
+Comment[zh_TW]=多媒體應用程式，如音效與影像播放器
 Icon=applications-multimedia
 
 Type=Service

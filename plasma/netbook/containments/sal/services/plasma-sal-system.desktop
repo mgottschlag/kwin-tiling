@@ -89,6 +89,7 @@ Name[zh_TW]=系統
 Comment=System preferences and setup programs
 Comment[en_GB]=System preferences and setup programs
 Comment[eo]=Sistem-preferencoj kaj agordaj programoj
+Comment[et]=Süsteemi eelistused ja häälestamisprogrammid
 Comment[gl]=Preferencias do sistema e programas de configuración
 Comment[id]=Pengaturan sistem dan pengaturan program
 Comment[pt]=Preferências do sistema e programas de configuração
@@ -96,6 +97,7 @@ Comment[pt_BR]=Preferências do sistema e programas de configuração
 Comment[sv]=Systemanpassning och inställningsprogram
 Comment[uk]=Налаштування системи та програми для налаштування
 Comment[x-test]=xxSystem preferences and setup programsxx
+Comment[zh_TW]=系統喜好與設定程式
 Icon=preferences-system
 
 Type=Service

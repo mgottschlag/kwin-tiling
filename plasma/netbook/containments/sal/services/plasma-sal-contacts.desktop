@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Contacts
 Name[en_GB]=Contacts
+Name[et]=Kontaktid
 Name[gl]=Contactos
 Name[id]=Kontak
 Name[pt]=Contactos
@@ -8,9 +9,11 @@ Name[pt_BR]=Contatos
 Name[sv]=Kontakter
 Name[uk]=Контакти
 Name[x-test]=xxContactsxx
+Name[zh_TW]=聯絡人
 Comment=List all your contacts
 Comment[en_GB]=List all your contacts
 Comment[eo]=Listo de ĉiuj viaj kontaktoj
+Comment[et]=Kõigi kontaktide loend
 Comment[gl]=Enumera todos os contactos
 Comment[id]=Tampilkan semua kontak anda
 Comment[pt]=Apresentar todos os seus contactos
@@ -18,6 +21,7 @@ Comment[pt_BR]=Lista todos os seus contatos
 Comment[sv]=Lista alla kontakter
 Comment[uk]=Список всіх ваших записів контактів
 Comment[x-test]=xxList all your contactsxx
+Comment[zh_TW]=列出所有聯絡人
 Icon=view-pim-contacts
 
 Type=Service

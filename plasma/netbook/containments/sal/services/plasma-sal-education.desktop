@@ -82,6 +82,7 @@ Name[zh_CN]=教育
 Name[zh_TW]=教育
 Comment=Educational applications
 Comment[en_GB]=Educational applications
+Comment[et]=Õpirakendused
 Comment[gl]=Programas educativos
 Comment[id]=Aplikasi edukasi
 Comment[pt]=Aplicações educativas
@@ -89,6 +90,7 @@ Comment[pt_BR]=Aplicativos educacionais
 Comment[sv]=Utbildningsprogram
 Comment[uk]=Навчальні програми
 Comment[x-test]=xxEducational applicationsxx
+Comment[zh_TW]=教育類應用程式
 Icon=applications-education
 
 Type=Service

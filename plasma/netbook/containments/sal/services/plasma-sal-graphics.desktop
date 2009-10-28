@@ -88,6 +88,7 @@ Name[zh_CN]=图像
 Name[zh_TW]=圖形
 Comment=Graphics applications, such as paint programs and image viewers
 Comment[en_GB]=Graphics applications, such as paint programs and image viewers
+Comment[et]=Graafikarakendused, näiteks joonistamisrakendused ja pildinäitajad
 Comment[gl]=Programas gráficos, por ex. programas de debuxo e visores de imaxes
 Comment[id]=Aplikasi grafis, seperti program menggambar dan penampil gambar
 Comment[pt]=Aplicações gráficas, como os programas de pintura e os visualizadores de imagens
@@ -95,6 +96,7 @@ Comment[pt_BR]=Aplicativos gráficos, tais como programas de desenho e visualiza
 Comment[sv]=Grafikprogram, som ritprogram och bildvisning
 Comment[uk]=Програми для роботи з графікою, зокрема програми для малювання та перегляду зображень
 Comment[x-test]=xxGraphics applications, such as paint programs and image viewersxx
+Comment[zh_TW]=美工應用程式，如繪圖程式與影像檢視器等
 Icon=applications-graphics
 
 Type=Service

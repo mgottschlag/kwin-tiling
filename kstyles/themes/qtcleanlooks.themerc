@@ -2,6 +2,7 @@
 Name=Cleanlooks
 Name[en_GB]=Cleanlooks
 Name[eo]=Cleanlooks
+Name[et]=Cleanlooks
 Name[gl]=Cleanlooks
 Name[id]=Cleanlooks
 Name[pt]=Cleanlooks
@@ -12,6 +13,7 @@ Name[x-test]=xxCleanlooksxx
 Name[zh_TW]=乾淨外觀
 Comment=Built-in unthemed style similar to Clearlooks from GNOME
 Comment[en_GB]=Built-in unthemed style similar to Clearlooks from GNOME
+Comment[et]=Kaasa pandud teemata stiil, mis sarnaneb GNOME Clearlooksiga
 Comment[gl]=Estilo incorporado sen tema semellante ao Clearlooks de GNOME
 Comment[id]=Gaya tak bertema yang terbina mirip Clearlooks dari GNOME
 Comment[pt]=Um estilo incorporado sem tema, semelhante ao Clearlooks do GNOME

@@ -87,6 +87,7 @@ Name[zh_CN]=互联网
 Name[zh_TW]=網際網路
 Comment=Internet related applications, such as Web browser, Email and chat
 Comment[en_GB]=Internet related applications, such as Web browser, Email and chat
+Comment[et]=Internetiga seotud rakendused, näiteks veebibrauser, e-posti klient ja kiirsuhtlusrakendus
 Comment[gl]=Programas relacionados con internet, como un navegador web, correo e chat
 Comment[id]=Aplikasi terkait Internet, seperti peramban Web, Email dan obrolan
 Comment[pt]=Aplicações relacionadas com a Internet, como o navegador Web, o E-mail e as conversações
@@ -94,6 +95,7 @@ Comment[pt_BR]=Aplicativos relacionados à Internet, tais como o navegador da We
 Comment[sv]=Internet-relaterade program, som webbläsare, e-post och chatt
 Comment[uk]=Програми, пов’язані з інтернетом, зокрема переглядач інтернету, поштовий клієнт та клієнти служб обміну повідомленнями
 Comment[x-test]=xxInternet related applications, such as Web browser, Email and chatxx
+Comment[zh_TW]=網際網路相關應用程式，如瀏覽器、電子郵件收發程式與聊天室
 Icon=applications-internet
 
 Type=Service
