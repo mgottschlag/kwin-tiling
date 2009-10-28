@@ -70,6 +70,14 @@ void NetCorona::loadDefaultLayout()
     if (!defaultConfig.isEmpty()) {
         kDebug() << "attempting to load the default layout from:" << defaultConfig;
         loadLayout(defaultConfig);
+        //FIXME: pretty brutal way to localize the names, don't see other ways
+        foreach (Plasma::Containment *containment, containments()) {
+            if (containment->activity() == "Search and launch") {
+                containment->setActivity(i18n("Search and launch"));
+            } else if (containment->activity() == "Newspaper") {
+                containment->setActivity(i18n("Page one"));
+            } 
+        }
         return;
     }
 
