@@ -20,6 +20,7 @@
 #include <KApplication>
 #include <KAboutData>
 #include <KCmdLineArgs>
+#include <KGlobalSettings>
 #include <KLocale>
 #include <KIcon>
 
@@ -45,8 +46,7 @@ KDE_EXPORT int kdemain(int argc, char **argv)
     int associatedScreen = 0;
 #ifdef Q_WS_X11
     {
-    QByteArray multiHead = getenv("KDE_MULTIHEAD");
-    if (multiHead.toLower() == "true") {
+    if (KGlobalSettings::isMultiHead()) {
         Display *dpy = XOpenDisplay(NULL);
         if (!dpy) {
             fprintf(stderr, "%s: FATAL ERROR: couldn't open display %s\n",
