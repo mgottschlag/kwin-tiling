@@ -80,6 +80,7 @@ class Pager : public Plasma::Applet
         void slotConfigureDesktop();
 #ifdef Q_WS_X11
         void slotAddDesktop();
+        void slotRemoveDesktop();
 #endif
         void lostDesktopLayoutOwner();
         void animationUpdate(qreal progress, int animId);
@@ -139,6 +140,8 @@ class Pager : public Plasma::Applet
         QList<QList<QPair<WId, QRect> > > m_windowRects;
         QList<QRect> m_activeWindows;
         QList<QAction*> m_actions;
+        QAction *m_addDesktopAction;
+        QAction *m_removeDesktopAction;
         QList<KWindowInfo> m_windowInfo;
         KSelectionOwner* m_desktopLayoutOwner;
         Plasma::FrameSvg *m_background;

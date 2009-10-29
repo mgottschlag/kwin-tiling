@@ -53,6 +53,7 @@
 const int FAST_UPDATE_DELAY = 100;
 const int UPDATE_DELAY = 500;
 const int DRAG_SWITCH_DELAY = 1000;
+const int MAXDESKTOPS = 20;
 
 Pager::Pager(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
@@ -64,6 +65,8 @@ Pager::Pager(QObject *parent, const QVariantList &args)
       m_columns(0),
       m_desktopDown(false),
       m_hoverIndex(-1),
+      m_addDesktopAction(0),
+      m_removeDesktopAction(0),
       m_colorScheme(0),
       m_verticalFormFactor(false),
       m_dragId(0),
@@ -206,9 +209,18 @@ void Pager::createMenu()
     m_actions.append(configureDesktop);
     connect(configureDesktop, SIGNAL(triggered(bool)), this , SLOT(slotConfigureDesktop()));
 #ifdef Q_WS_X11
-    QAction* addDesktop = new QAction(SmallIcon("list-add"),i18n("&Add Virtual Desktop"), this);
-    m_actions.append(addDesktop);
-    connect(addDesktop, SIGNAL(triggered(bool)), this , SLOT(slotAddDesktop()));
+    m_addDesktopAction = new QAction(SmallIcon("list-add"),i18n("&Add Virtual Desktop"), this);
+    m_actions.append(m_addDesktopAction);
+    connect(m_addDesktopAction, SIGNAL(triggered(bool)), this , SLOT(slotAddDesktop()));
+    m_removeDesktopAction = new QAction(SmallIcon("list-remove"),i18n("&Remove Last Virtual Desktop"), this);
+    m_actions.append(m_removeDesktopAction);
+    connect(m_removeDesktopAction, SIGNAL(triggered(bool)), this , SLOT(slotRemoveDesktop()));
+
+    if (m_desktopCount <= 1) {
+        m_removeDesktopAction->setEnabled(false);
+    } else if (m_desktopCount >= MAXDESKTOPS) {
+        m_addDesktopAction->setEnabled(false);
+    }
 #endif
 }
 
@@ -220,8 +232,17 @@ QList<QAction*> Pager::contextualActions()
 #ifdef Q_WS_X11
 void Pager::slotAddDesktop()
 {
-    NETRootInfo info(QX11Info::display(), NET::NumberOfDesktops | NET::DesktopNames);
+    NETRootInfo info(QX11Info::display(), NET::NumberOfDesktops);
     info.setNumberOfDesktops(info.numberOfDesktops() + 1);
+}
+
+void Pager::slotRemoveDesktop()
+{
+    NETRootInfo info(QX11Info::display(), NET::NumberOfDesktops);
+    int desktops = info.numberOfDesktops();
+    if (desktops > 1) {
+        info.setNumberOfDesktops(info.numberOfDesktops() - 1);
+    }
 }
 #endif
 
@@ -633,6 +654,11 @@ void Pager::numberOfDesktopsChanged(int num)
     if (num < 1) {
         return; // refuse to update to zero desktops
     }
+
+#ifdef Q_WS_X11
+    m_removeDesktopAction->setEnabled(num > 1);
+    m_addDesktopAction->setEnabled(num < MAXDESKTOPS);
+#endif
 
     m_dirtyDesktop = -1;
     m_desktopCount = num;
