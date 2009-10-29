@@ -201,12 +201,14 @@ void ControllerWindow::showWidgetExplorer()
 
     if (!m_widgetExplorerView) {
         m_widgetExplorerView = new Plasma::View(0, this);
+        m_widgetExplorerView->setScene(m_containment->corona());
         m_widgetExplorerView->setScreen(m_containment->screen(), m_containment->desktop());
+
         m_widgetExplorerView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         m_widgetExplorerView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         m_widgetExplorerView->setStyleSheet("background: transparent; border: none;");
 
-        m_widgetExplorerView->setScene(m_containment->corona());
+        
         m_widgetExplorerView->installEventFilter(this);
         m_layout->addWidget(m_widgetExplorerView);
     }
