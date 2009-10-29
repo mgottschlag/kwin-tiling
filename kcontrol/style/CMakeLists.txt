@@ -8,7 +8,7 @@ include_directories( ${QIMAGEBLITZ_INCLUDES} )
 set(kcm_style_PART_SRCS ../krdb/krdb.cpp styleconfdialog.cpp kcmstyle.cpp)
 
 
-kde4_add_ui_files(kcm_style_PART_SRCS stylepreview.ui theme.ui)
+kde4_add_ui_files(kcm_style_PART_SRCS stylepreview.ui theme.ui finetuning.ui)
 
 kde4_add_plugin(kcm_style ${kcm_style_PART_SRCS})
 

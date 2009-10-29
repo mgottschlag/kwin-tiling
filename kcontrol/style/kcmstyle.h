@@ -36,6 +36,7 @@
 #include <kvbox.h>
 
 #include "ui_theme.h"
+#include "ui_finetuning.h"
 
 class KComboBox;
 class KConfig;
@@ -93,6 +94,8 @@ protected Q_SLOTS:
 
 private:
 	QString currentStyle();
+	static QString toolbarButtonText(int index);
+	static int toolbarButtonIndex(const QString &text);
 
 	bool m_bDesktopThemeDirty, m_bStyleDirty, m_bEffectsDirty;
 	QHash <QString,StyleEntry*> styleEntries;
@@ -119,12 +122,7 @@ private:
 	QPalette palette;
 
 	// Page2 widgets
-	QComboBox* comboGraphicEffectsLevel;
-	QSpacerItem* comboSpacer;
-
-	QComboBox* comboToolbarIcons;
-
-	QCheckBox* cbIconsOnButtons;
+	Ui::FineTuning fineTuningUi;
 };
 
 #endif // __KCMSTYLE_H

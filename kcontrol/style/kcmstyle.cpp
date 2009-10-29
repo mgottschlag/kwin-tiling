@@ -435,43 +435,29 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	// Add Page2 (Effects)
 	// -------------------
 	page2 = new QWidget;
-	QFormLayout* page2Layout = new QFormLayout( page2 );
+	fineTuningUi.setupUi(page2);
 
-	comboGraphicEffectsLevel = new KComboBox( page2 );
-	comboGraphicEffectsLevel->setVisible(false);
-	comboGraphicEffectsLevel->setObjectName( "cbGraphicEffectsLevel" );
-	comboGraphicEffectsLevel->setEditable( false );
-	comboGraphicEffectsLevel->addItem(i18n("Low display resolution and Low CPU"), KGlobalSettings::NoEffects);
-	comboGraphicEffectsLevel->addItem(i18n("High display resolution and Low CPU"), KGlobalSettings::GradientEffects);
-	comboGraphicEffectsLevel->addItem(i18n("Low display resolution and High CPU"), KGlobalSettings::SimpleAnimationEffects);
-	comboGraphicEffectsLevel->addItem(i18n("High display resolution and High CPU"), (int) (KGlobalSettings::SimpleAnimationEffects | KGlobalSettings::GradientEffects));
-	comboGraphicEffectsLevel->addItem(i18n("Low display resolution and Very High CPU"), KGlobalSettings::ComplexAnimationEffects);
-	comboGraphicEffectsLevel->addItem(i18n("High display resolution and Very High CPU"), (int) (KGlobalSettings::ComplexAnimationEffects | KGlobalSettings::GradientEffects));
-	//page2Layout->addRow(i18nc("@label:listbox","Graphical User Interface:"), comboGraphicEffectsLevel);
-
-	comboToolbarIcons = new QComboBox( page2 );
-	comboToolbarIcons->setEditable( false );
-	comboToolbarIcons->addItem( i18n("Icons Only") );
-	comboToolbarIcons->addItem( i18n("Text Only") );
-	comboToolbarIcons->addItem( i18n("Text Alongside Icons") );
-	comboToolbarIcons->addItem( i18n("Text Under Icons") );
-	comboToolbarIcons->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
-	page2Layout->addRow(i18nc("@label:listbox","Text pos&ition of toolbar elements:"), comboToolbarIcons);
-
-	cbIconsOnButtons = new QCheckBox( i18nc("@option:check","Sho&w icons on buttons"), page2 );
- 	page2Layout->addRow(cbIconsOnButtons);
+	fineTuningUi.comboGraphicEffectsLevel->setObjectName( "cbGraphicEffectsLevel" );
+	fineTuningUi.comboGraphicEffectsLevel->setEditable( false );
+	fineTuningUi.comboGraphicEffectsLevel->addItem(i18n("Low display resolution and Low CPU"), KGlobalSettings::NoEffects);
+	fineTuningUi.comboGraphicEffectsLevel->addItem(i18n("High display resolution and Low CPU"), KGlobalSettings::GradientEffects);
+	fineTuningUi.comboGraphicEffectsLevel->addItem(i18n("Low display resolution and High CPU"), KGlobalSettings::SimpleAnimationEffects);
+	fineTuningUi.comboGraphicEffectsLevel->addItem(i18n("High display resolution and High CPU"), (int) (KGlobalSettings::SimpleAnimationEffects | KGlobalSettings::GradientEffects));
+	fineTuningUi.comboGraphicEffectsLevel->addItem(i18n("Low display resolution and Very High CPU"), KGlobalSettings::ComplexAnimationEffects);
+	fineTuningUi.comboGraphicEffectsLevel->addItem(i18n("High display resolution and Very High CPU"), (int) (KGlobalSettings::ComplexAnimationEffects | KGlobalSettings::GradientEffects));
 
 	connect(cbStyle, SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
-	connect( cbIconsOnButtons,     SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
-	connect( comboGraphicEffectsLevel, SIGNAL(activated(int)),   this, SLOT(setEffectsDirty()));
-	connect( comboToolbarIcons,    SIGNAL(activated(int)), this, SLOT(setEffectsDirty()));
+	connect(fineTuningUi.cbIconsOnButtons,     SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
+	connect(fineTuningUi.comboGraphicEffectsLevel, SIGNAL(activated(int)),   this, SLOT(setEffectsDirty()));
+	connect(fineTuningUi.comboToolbarIcons,    SIGNAL(activated(int)), this, SLOT(setEffectsDirty()));
+	connect(fineTuningUi.comboSecondaryToolbarIcons,    SIGNAL(activated(int)), this, SLOT(setEffectsDirty()));
 
 	addWhatsThis();
 
 	// Insert the pages into the tabWidget
-	tabWidget->addTab( page1, i18nc("@title:tab","&Applications"));
-	tabWidget->addTab( page0, i18nc("@title:tab", "&Workspace"));
-	tabWidget->addTab( page2, i18nc("@title:tab","&Fine Tuning"));
+	tabWidget->addTab(page1, i18nc("@title:tab", "&Applications"));
+	tabWidget->addTab(page0, i18nc("@title:tab", "&Workspace"));
+	tabWidget->addTab(page2, i18nc("@title:tab", "&Fine Tuning"));
 }
 
 
@@ -597,24 +583,18 @@ void KCMStyle::save()
         KConfig      _config("kdeglobals", KConfig::NoGlobals);                
         KConfigGroup config(&_config, "KDE"); 
 	// Effects page
-	config.writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked());
+	config.writeEntry( "ShowIconsOnPushButtons", fineTuningUi.cbIconsOnButtons->isChecked());
 	KConfigGroup g( &_config, "KDE-Global GUI Settings" );
-	g.writeEntry( "GraphicEffectsLevel", comboGraphicEffectsLevel->itemData(comboGraphicEffectsLevel->currentIndex()));
+	g.writeEntry( "GraphicEffectsLevel", fineTuningUi.comboGraphicEffectsLevel->itemData(fineTuningUi.comboGraphicEffectsLevel->currentIndex()));
 
 	KConfigGroup generalGroup(&_config, "General");
 	generalGroup.writeEntry("widgetStyle", currentStyle());
 
 	KConfigGroup toolbarStyleGroup(&_config, "Toolbar style");
-	QString tbIcon;
-	switch( comboToolbarIcons->currentIndex() )
-	{
-		case 0: tbIcon = "IconOnly"; break;
-		case 1: tbIcon = "TextOnly"; break;
-		case 2: tbIcon = "TextBesideIcon"; break;
-		default:
-		case 3: tbIcon = "TextUnderIcon"; break;
-	}
-	toolbarStyleGroup.writeEntry("ToolButtonStyle", tbIcon);
+	toolbarStyleGroup.writeEntry("ToolButtonStyle",
+							toolbarButtonText(fineTuningUi.comboToolbarIcons->currentIndex()));
+	toolbarStyleGroup.writeEntry("ToolButtonStyleOtherToolbars",
+							toolbarButtonText(fineTuningUi.comboSecondaryToolbarIcons->currentIndex()));
 	_config.sync();
 
 	// Export the changes we made to qtrc, and update all qt-only
@@ -701,9 +681,10 @@ void KCMStyle::defaults()
 	switchStyle( currentStyle() );	// make resets visible
 
 	// Effects
-	comboToolbarIcons->setCurrentIndex(3);
-	cbIconsOnButtons->setChecked(true);
-	comboGraphicEffectsLevel->setCurrentIndex(comboGraphicEffectsLevel->findData(((int) KGlobalSettings::graphicEffectsLevelDefault())));
+	fineTuningUi.comboToolbarIcons->setCurrentIndex(toolbarButtonIndex("TextUnderIcon"));
+	fineTuningUi.comboSecondaryToolbarIcons->setCurrentIndex(toolbarButtonIndex("TextBesideIcon"));
+	fineTuningUi.cbIconsOnButtons->setChecked(true);
+	fineTuningUi.comboGraphicEffectsLevel->setCurrentIndex(fineTuningUi.comboGraphicEffectsLevel->findData(((int) KGlobalSettings::graphicEffectsLevelDefault())));
 	emit changed(true);
 }
 
@@ -923,6 +904,34 @@ void KCMStyle::setStyleRecursive(QWidget* w, QStyle* s)
 // ----------------------------------------------------------------
 // All the Effects stuff
 // ----------------------------------------------------------------
+QString KCMStyle::toolbarButtonText(int index)
+{
+	switch (index) {
+		case 1:
+			return "TextOnly";
+		case 2:
+			return "TextBesideIcon";
+		case 3:
+			return "TextUnderIcon";
+		default:
+			break;
+	}
+
+	return "NoText";
+}
+
+int KCMStyle::toolbarButtonIndex(const QString &text)
+{
+	if (text == "TextOnly") {
+		return 1;
+	} else if (text == "TextBesideIcon") {
+		return 2;
+	} else if (text == "TextUnderIcon") {
+		return 3;
+	}
+
+	return 0;
+}
 
 void KCMStyle::loadEffects( KConfig& config )
 {
@@ -930,20 +939,15 @@ void KCMStyle::loadEffects( KConfig& config )
 	KConfigGroup configGroup = config.group("Toolbar style");
 
 	QString tbIcon = configGroup.readEntry("ToolButtonStyle", "TextUnderIcon");
-	if (tbIcon == "TextOnly")
-		comboToolbarIcons->setCurrentIndex(1);
-	else if (tbIcon == "TextBesideIcon")
-		comboToolbarIcons->setCurrentIndex(2);
-	else if (tbIcon == "TextUnderIcon")
-		comboToolbarIcons->setCurrentIndex(3);
-	else
-		comboToolbarIcons->setCurrentIndex(0);
+	fineTuningUi.comboToolbarIcons->setCurrentIndex(toolbarButtonIndex(tbIcon));
+	tbIcon = configGroup.readEntry("ToolButtonStyleOtherToolbars", "TextBesideIcon");
+	fineTuningUi.comboSecondaryToolbarIcons->setCurrentIndex(toolbarButtonIndex(tbIcon));
 
 	configGroup = config.group("KDE");
-	cbIconsOnButtons->setChecked(configGroup.readEntry("ShowIconsOnPushButtons", true));
+	fineTuningUi.cbIconsOnButtons->setChecked(configGroup.readEntry("ShowIconsOnPushButtons", true));
 
 	KConfigGroup graphicConfigGroup = config.group("KDE-Global GUI Settings");
-	comboGraphicEffectsLevel->setCurrentIndex(comboGraphicEffectsLevel->findData(graphicConfigGroup.readEntry("GraphicEffectsLevel", ((int) KGlobalSettings::graphicEffectsLevel()))));
+	fineTuningUi.comboGraphicEffectsLevel->setCurrentIndex(fineTuningUi.comboGraphicEffectsLevel->findData(graphicConfigGroup.readEntry("GraphicEffectsLevel", ((int) KGlobalSettings::graphicEffectsLevel()))));
 
 	m_bEffectsDirty = false;
 }
@@ -959,16 +963,16 @@ void KCMStyle::addWhatsThis()
 							"without having to apply it to the whole desktop.") );
 	// Page2
 	page2->setWhatsThis( i18n("This page allows you to choose details about the widget style options") );
-	comboToolbarIcons->setWhatsThis( i18n( "<p><b>Icons only:</b> Shows only icons on toolbar buttons. "
+	fineTuningUi.comboToolbarIcons->setWhatsThis( i18n( "<p><b>Icons only:</b> Shows only icons on toolbar buttons. "
 							"Best option for low resolutions.</p>"
 							"<p><b>Text only: </b>Shows only text on toolbar buttons.</p>"
 							"<p><b>Text alongside icons: </b> Shows icons and text on toolbar buttons. "
 							"Text is aligned alongside the icon.</p>"
 							"<b>Text under icons: </b> Shows icons and text on toolbar buttons. "
 							"Text is aligned below the icon.") );
-	cbIconsOnButtons->setWhatsThis( i18n( "If you enable this option, KDE Applications will "
+	fineTuningUi.cbIconsOnButtons->setWhatsThis( i18n( "If you enable this option, KDE Applications will "
 							"show small icons alongside some important buttons.") );
-	comboGraphicEffectsLevel->setWhatsThis( i18n( "If you enable this option, KDE Applications will "
+	fineTuningUi.comboGraphicEffectsLevel->setWhatsThis( i18n( "If you enable this option, KDE Applications will "
 							"run internal animations.") );
 }
 
