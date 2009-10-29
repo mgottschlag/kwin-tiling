@@ -701,7 +701,7 @@ void KCMStyle::defaults()
 	switchStyle( currentStyle() );	// make resets visible
 
 	// Effects
-	comboToolbarIcons->setCurrentIndex(0);
+	comboToolbarIcons->setCurrentIndex(3);
 	cbIconsOnButtons->setChecked(true);
 	comboGraphicEffectsLevel->setCurrentIndex(comboGraphicEffectsLevel->findData(((int) KGlobalSettings::graphicEffectsLevelDefault())));
 	emit changed(true);
