@@ -25,13 +25,13 @@
 #include <Plasma/Plasma>
 
 class QBoxLayout;
-class QGraphicsView;
 
 namespace Plasma
 {
     class Containment;
     class FrameSvg;
     class WidgetExplorer;
+    class View;
 } // namespace Plasma
 
 class ControllerWindow : public QWidget
@@ -72,7 +72,7 @@ private:
     QBoxLayout *m_layout;
     Plasma::FrameSvg *m_background;
     Plasma::Containment *m_containment;
-    QGraphicsView *m_widgetExplorerView;
+    Plasma::View *m_widgetExplorerView;
     Plasma::WidgetExplorer *m_widgetExplorer;
 };
 

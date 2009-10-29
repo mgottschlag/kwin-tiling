@@ -22,7 +22,6 @@
 
 #include <QApplication>
 #include <QBoxLayout>
-#include <QGraphicsView>
 #include <QPainter>
 
 #include <kwindowsystem.h>
@@ -32,6 +31,7 @@
 #include <Plasma/Corona>
 #include <Plasma/Theme>
 #include <Plasma/FrameSvg>
+#include <Plasma/View>
 
 #include "widgetsExplorer/widgetexplorer.h"
 
@@ -91,6 +91,10 @@ void ControllerWindow::setContainment(Plasma::Containment *containment)
     }
 
     m_containment = containment;
+
+    if (m_widgetExplorerView) {
+        m_widgetExplorerView->setScreen(m_containment->screen(), m_containment->desktop());
+    }
 
     if (m_widgetExplorer) {
         m_widgetExplorer->setContainment(m_containment);
@@ -196,7 +200,8 @@ void ControllerWindow::showWidgetExplorer()
     }
 
     if (!m_widgetExplorerView) {
-        m_widgetExplorerView = new QGraphicsView(this);
+        m_widgetExplorerView = new Plasma::View(0, this);
+        m_widgetExplorerView->setScreen(m_containment->screen(), m_containment->desktop());
         m_widgetExplorerView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         m_widgetExplorerView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         m_widgetExplorerView->setStyleSheet("background: transparent; border: none;");
