@@ -397,6 +397,8 @@ void Pager::recalculateGeometry()
         m_heightScaleFactor = itemHeight / Kephal::ScreenUtils::desktopGeometry().height();
     }
 
+    m_hoverIndex = -1;
+    m_hoverRect = QRectF();
     m_rects.clear();
     m_animations.clear();
     QRectF itemRect(QPoint(leftMargin, topMargin) , QSize(floor(itemWidth), floor(itemHeight)));
