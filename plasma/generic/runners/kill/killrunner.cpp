@@ -19,9 +19,9 @@
 
 #include "killrunner.h"
 #include "killrunner_config.h"
+#include "ksysguard/processcore/processes.h"
+#include "ksysguard/processcore/process.h"
 
-#include <ksysguard/processes.h>
-#include <ksysguard/process.h>
 #include <KDebug>
 #include <KIcon>
 #include <KProcess>
