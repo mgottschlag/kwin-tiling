@@ -28,12 +28,12 @@
 
 class QDBusConnectionInterface;
 
-class NotificationItemWatcher : public KDEDModule
+class StatusNotifierWatcher : public KDEDModule
 {
 Q_OBJECT
 public:
-    NotificationItemWatcher(QObject *parent, const QList<QVariant>&);
-    ~NotificationItemWatcher();
+    StatusNotifierWatcher(QObject *parent, const QList<QVariant>&);
+    ~StatusNotifierWatcher();
 
 public Q_SLOTS:
     void RegisterService(const QString &service);
@@ -41,10 +41,10 @@ public Q_SLOTS:
     //TODO: property?
     QStringList RegisteredServices() const;
 
-    void RegisterNotificationHost(const QString &service);
+    void RegisterStatusNotifierHost(const QString &service);
 
     //TODO: property?
-    bool IsNotificationHostRegistered() const;
+    bool IsStatusNotifierHostRegistered() const;
 
     int ProtocolVersion() const;
 
@@ -57,11 +57,11 @@ Q_SIGNALS:
     void ServiceRegistered(const QString &service);
     //TODO: decide if this makes sense, the systray itself could notice the vanishing of items, but looks complete putting it here
     void ServiceUnregistered(const QString &service);
-    void NotificationHostRegistered();
+    void StatusNotifierHostRegistered();
 
 private:
     QDBusConnectionInterface *m_dbusInterface;
     QStringList m_registeredServices;
-    QSet<QString> m_notificationHostServices;
+    QSet<QString> m_statusNotifierHostServices;
 };
 #endif

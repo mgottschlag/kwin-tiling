@@ -36,7 +36,7 @@
 #include <Plasma/Applet>
 
 #include "dbussystemtraywidget.h"
-#include "notificationitem_interface.h"
+#include "statusnotifieritem_interface.h"
 #include "systemtraytypes.h"
 
 #include <netinet/in.h>
@@ -95,7 +95,7 @@ public:
     QTimer *blinkTimer;
     QHash<Plasma::Applet *, Plasma::IconWidget *>iconWidgets;
     Plasma::ToolTipContent toolTipData;
-    org::kde::NotificationItem *notificationItemInterface;
+    org::kde::StatusNotifierItem *statusNotifierItemInterface;
     bool blink : 1;
     bool valid : 1;
     bool embeddable : 1;
@@ -114,18 +114,18 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service, QObject *parent)
     d->typeId = service;
     d->name = service;
 
-    d->notificationItemInterface = new org::kde::NotificationItem(service, "/NotificationItem",
+    d->statusNotifierItemInterface = new org::kde::StatusNotifierItem(service, "/StatusNotifierItem",
                                                                   QDBusConnection::sessionBus(), this);
 
     //TODO: how to behave if its not valid?
-    d->valid = !service.isEmpty() && d->notificationItemInterface->isValid();
+    d->valid = !service.isEmpty() && d->statusNotifierItemInterface->isValid();
 
     if (d->valid) {
-        connect(d->notificationItemInterface, SIGNAL(NewIcon()), this, SLOT(refresh()));
-        connect(d->notificationItemInterface, SIGNAL(NewAttentionIcon()), this, SLOT(refresh()));
-        connect(d->notificationItemInterface, SIGNAL(NewOverlayIcon()), this, SLOT(refresh()));
-        connect(d->notificationItemInterface, SIGNAL(NewToolTip()), this, SLOT(refresh()));
-        connect(d->notificationItemInterface, SIGNAL(NewStatus(QString)), this, SLOT(syncStatus(QString)));
+        connect(d->statusNotifierItemInterface, SIGNAL(NewIcon()), this, SLOT(refresh()));
+        connect(d->statusNotifierItemInterface, SIGNAL(NewAttentionIcon()), this, SLOT(refresh()));
+        connect(d->statusNotifierItemInterface, SIGNAL(NewOverlayIcon()), this, SLOT(refresh()));
+        connect(d->statusNotifierItemInterface, SIGNAL(NewToolTip()), this, SLOT(refresh()));
+        connect(d->statusNotifierItemInterface, SIGNAL(NewStatus(QString)), this, SLOT(syncStatus(QString)));
         d->refresh();
     }
 }
@@ -143,7 +143,7 @@ QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
         return d->iconWidgets[host];
     }
 
-    DBusSystemTrayWidget *iconWidget = new DBusSystemTrayWidget(host, d->notificationItemInterface);
+    DBusSystemTrayWidget *iconWidget = new DBusSystemTrayWidget(host, d->statusNotifierItemInterface);
     iconWidget->show();
 
     iconWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -201,11 +201,11 @@ void DBusSystemTrayTaskPrivate::iconDestroyed(QObject *obj)
 
 void DBusSystemTrayTaskPrivate::refresh()
 {
-    QDBusMessage message = QDBusMessage::createMethodCall(notificationItemInterface->service(),
-    notificationItemInterface->path(), "org.freedesktop.DBus.Properties", "GetAll");
+    QDBusMessage message = QDBusMessage::createMethodCall(statusNotifierItemInterface->service(),
+    statusNotifierItemInterface->path(), "org.freedesktop.DBus.Properties", "GetAll");
 
-    message << notificationItemInterface->interface();
-    QDBusPendingCall call = notificationItemInterface->connection().asyncCall(message);
+    message << statusNotifierItemInterface->interface();
+    QDBusPendingCall call = statusNotifierItemInterface->connection().asyncCall(message);
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, q);
     q->connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher *)), q, SLOT(refreshCallback(QDBusPendingCallWatcher *)));
 }

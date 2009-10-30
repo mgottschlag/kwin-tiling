@@ -1,26 +1,26 @@
-project(NotificationItemWatcher)
+project(StatusNotifierWatcher)
 
-set(kded_notificationitemwatcher_SRCS notificationitemwatcher.cpp )
+set(kded_statusnotifierwatcher_SRCS statusnotifierwatcher.cpp )
 
-QT4_ADD_DBUS_ADAPTOR(kded_notificationitemwatcher_SRCS     ${KDE4_DBUS_INTERFACES_DIR}/org.kde.NotificationItemWatcher.xml
-                     notificationitemwatcher.h NotificationItemWatcher)
+QT4_ADD_DBUS_ADAPTOR(kded_statusnotifierwatcher_SRCS     ${KDE4_DBUS_INTERFACES_DIR}/org.kde.StatusNotifierWatcher.xml
+                     statusnotifierwatcher.h StatusNotifierWatcher)
 
 
-set(notificationitem_xml ${KDE4_DBUS_INTERFACES_DIR}/org.kde.NotificationItem.xml)
-set_source_files_properties(${notificationitem_xml} PROPERTIES
+set(statusnotifieritem_xml ${KDE4_DBUS_INTERFACES_DIR}/org.kde.StatusNotifierItem.xml)
+set_source_files_properties(${statusnotifieritem_xml} PROPERTIES
    NO_NAMESPACE false
    INCLUDE "../protocols/dbussystemtray/systemtraytypes.h"
-   CLASSNAME OrgKdeNotificationItemInterface
+   CLASSNAME OrgKdeStatusNotifierItemInterface
 )
-QT4_ADD_DBUS_INTERFACE(kded_notificationitemwatcher_SRCS ${notificationitem_xml} notificationitem_interface)
+QT4_ADD_DBUS_INTERFACE(kded_statusnotifierwatcher_SRCS ${statusnotifieritem_xml} statusnotifieritem_interface)
 
-kde4_add_plugin(kded_notificationitemwatcher ${kded_notificationitemwatcher_SRCS})
-
-
-target_link_libraries(kded_notificationitemwatcher  ${KDE4_KIO_LIBS} )
-
-install(TARGETS kded_notificationitemwatcher  DESTINATION ${PLUGIN_INSTALL_DIR})
+kde4_add_plugin(kded_statusnotifierwatcher ${kded_statusnotifierwatcher_SRCS})
 
 
-install( FILES notificationitemwatcher.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kded)
+target_link_libraries(kded_statusnotifierwatcher  ${KDE4_KIO_LIBS} )
+
+install(TARGETS kded_statusnotifierwatcher  DESTINATION ${PLUGIN_INSTALL_DIR})
+
+
+install( FILES statusnotifierwatcher.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kded)
 

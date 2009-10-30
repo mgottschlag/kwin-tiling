@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Service
-Name=KDED Notification item watcher
+Name=KDED Status Notifier watcher
 Name[bg]=KDED Notification item watcher
 Name[ca]=Vigilant de l'element de notificacions del KDED
 Name[csb]=Ùsłëżnota dôwaniô wiédzë dozérôcza KDE
@@ -40,7 +40,7 @@ Name[uk]=Переглядач елементів сповіщень KDED
 Name[x-test]=xxKDED Notification item watcherxx
 Name[zh_CN]=KDED 通知项监视器
 Name[zh_TW]=KDE 通知項目監控器 
-Comment=Keep track of applications that want to use the D-Bus based notification item.
+Comment=Keep track of applications that want to use the D-Bus based status notifier protocol.
 Comment[bg]=Следи програмите, които искат да използват D-Bus.
 Comment[ca]=Fa un seguiment de les aplicacions que volen utilitzar l'element de notificacions basat en el D-Bus.
 Comment[da]=Hold styr på programmer som vil bruge D-Bus-baseret bekendtgørelseselement.
@@ -79,8 +79,8 @@ Comment[zh_CN]=跟踪基于 D-Bus 系统通知架构的程序的情况。
 Comment[zh_TW]=追蹤要使用 D-Bus 系統匣的通知項目。
 
 X-KDE-ServiceTypes=KDEDModule
-X-KDE-Library=notificationitemwatcher
-X-KDE-DBus-ModuleName=notificationitemwatcher
+X-KDE-Library=statusnotifierwatcher
+X-KDE-DBus-ModuleName=statusnotifierwatcher
 X-KDE-Kded-autoload=true
 X-KDE-Kded-load-on-demand=false
 X-KDE-Kded-phase=1

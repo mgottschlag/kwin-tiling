@@ -22,7 +22,7 @@
 
 #include "../../core/protocol.h"
 
-#include "notificationitemwatcher_interface.h"
+#include "statusnotifierwatcher_interface.h"
 
 #include <QHash>
 
@@ -60,7 +60,7 @@ protected Q_SLOTS:
 private:
     QDBusConnection m_dbus;
     QHash<QString, DBusSystemTrayTask*> m_tasks;
-    org::kde::NotificationItemWatcher *m_notificationItemWatcher;
+    org::kde::StatusNotifierWatcher *m_statusNotifierWatcher;
     QString m_serviceName;
     static const int s_protocolVersion = 0;
 };

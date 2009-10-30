@@ -33,7 +33,7 @@ namespace SystemTray
 DBusSystemTrayProtocol::DBusSystemTrayProtocol(QObject *parent)
     : Protocol(parent),
       m_dbus(QDBusConnection::sessionBus()),
-      m_notificationItemWatcher(0)
+      m_statusNotifierWatcher(0)
 {
 }
 
@@ -47,7 +47,7 @@ void DBusSystemTrayProtocol::init()
     if (m_dbus.isConnected()) {
         QDBusConnectionInterface *dbusInterface = m_dbus.interface();
 
-        m_serviceName = "org.kde.NotificationHost-" + QString::number(QCoreApplication::applicationPid());
+        m_serviceName = "org.kde.StatusNotifierHost-" + QString::number(QCoreApplication::applicationPid());
         m_dbus.registerService(m_serviceName);
 
         //FIXME: understand why registerWatcher/unregisterWatcher doesn't work
@@ -58,7 +58,7 @@ void DBusSystemTrayProtocol::init()
         connect(dbusInterface, SIGNAL(serviceOwnerChanged(QString,QString,QString)),
                 this, SLOT(serviceChange(QString,QString,QString)));
 
-        registerWatcher("org.kde.NotificationItemWatcher");
+        registerWatcher("org.kde.StatusNotifierWatcher");
     }
 }
 
@@ -96,15 +96,15 @@ void DBusSystemTrayProtocol::cleanupTask(QString typeId)
 
 void DBusSystemTrayProtocol::initRegisteredServices()
 {
-    QString interface("org.kde.NotificationItemWatcher");
-    org::kde::NotificationItemWatcher notificationItemWatcher(interface, "/NotificationItemWatcher",
+    QString interface("org.kde.StatusNotifierWatcher");
+    org::kde::StatusNotifierWatcher statusNotifierWatcher(interface, "/StatusNotifierWatcher",
                                               QDBusConnection::sessionBus());
-    if (notificationItemWatcher.isValid()) {
-        foreach (const QString &service, notificationItemWatcher.RegisteredServices().value()) {
+    if (statusNotifierWatcher.isValid()) {
+        foreach (const QString &service, statusNotifierWatcher.RegisteredServices().value()) {
             newTask(service);
         }
     } else {
-        kDebug()<<"Notification item watcher not reachable";
+        kDebug()<<"Status notifier watcher not reachable";
     }
 }
 
@@ -112,7 +112,7 @@ void DBusSystemTrayProtocol::serviceChange(const QString& name,
                                            const QString& oldOwner,
                                            const QString& newOwner)
 {
-    if (name != "org.kde.NotificationItemWatcher") {
+    if (name != "org.kde.StatusNotifierWatcher") {
         return;
     }
 
@@ -130,27 +130,27 @@ void DBusSystemTrayProtocol::serviceChange(const QString& name,
 void DBusSystemTrayProtocol::registerWatcher(const QString& service)
 {
     kDebug()<<"service appeared"<<service;
-    if (service == "org.kde.NotificationItemWatcher") {
-        QString interface("org.kde.NotificationItemWatcher");
-        if (m_notificationItemWatcher) {
-            delete m_notificationItemWatcher;
+    if (service == "org.kde.StatusNotifierWatcher") {
+        QString interface("org.kde.StatusNotifierWatcher");
+        if (m_statusNotifierWatcher) {
+            delete m_statusNotifierWatcher;
         }
 
-        m_notificationItemWatcher = new org::kde::NotificationItemWatcher(interface, "/NotificationItemWatcher",
+        m_statusNotifierWatcher = new org::kde::StatusNotifierWatcher(interface, "/StatusNotifierWatcher",
                                                                           QDBusConnection::sessionBus());
-        if (m_notificationItemWatcher->isValid() &&
-            m_notificationItemWatcher->ProtocolVersion() == s_protocolVersion) {
-            connect(m_notificationItemWatcher, SIGNAL(ServiceRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
-            connect(m_notificationItemWatcher, SIGNAL(ServiceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
+        if (m_statusNotifierWatcher->isValid() &&
+            m_statusNotifierWatcher->ProtocolVersion() == s_protocolVersion) {
+            connect(m_statusNotifierWatcher, SIGNAL(ServiceRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
+            connect(m_statusNotifierWatcher, SIGNAL(ServiceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
 
-            m_notificationItemWatcher->call(QDBus::NoBlock, "RegisterNotificationHost", m_serviceName);
+            m_statusNotifierWatcher->call(QDBus::NoBlock, "RegisterStatusNotifierHost", m_serviceName);
 
-            foreach (const QString &service, m_notificationItemWatcher->RegisteredServices().value()) {
+            foreach (const QString &service, m_statusNotifierWatcher->RegisteredServices().value()) {
                 newTask(service);
             }
         } else {
-            delete m_notificationItemWatcher;
-            m_notificationItemWatcher = 0;
+            delete m_statusNotifierWatcher;
+            m_statusNotifierWatcher = 0;
             kDebug()<<"System tray daemon not reachable";
         }
     }
@@ -158,11 +158,11 @@ void DBusSystemTrayProtocol::registerWatcher(const QString& service)
 
 void DBusSystemTrayProtocol::unregisterWatcher(const QString& service)
 {
-    if (service == "org.kde.NotificationItemWatcher") {
-        kDebug()<<"org.kde.NotificationItemWatcher disappeared";
+    if (service == "org.kde.StatusNotifierWatcher") {
+        kDebug()<<"org.kde.StatusNotifierWatcher disappeared";
 
-        disconnect(m_notificationItemWatcher, SIGNAL(ServiceRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
-        disconnect(m_notificationItemWatcher, SIGNAL(ServiceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
+        disconnect(m_statusNotifierWatcher, SIGNAL(ServiceRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
+        disconnect(m_statusNotifierWatcher, SIGNAL(ServiceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
 
         foreach (DBusSystemTrayTask *task, m_tasks) {
             if (task) {
@@ -171,8 +171,8 @@ void DBusSystemTrayProtocol::unregisterWatcher(const QString& service)
         }
         m_tasks.clear();
 
-        delete m_notificationItemWatcher;
-        m_notificationItemWatcher = 0;
+        delete m_statusNotifierWatcher;
+        m_statusNotifierWatcher = 0;
     }
 }
 

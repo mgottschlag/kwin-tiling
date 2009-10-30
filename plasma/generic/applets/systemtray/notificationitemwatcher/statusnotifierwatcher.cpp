@@ -17,7 +17,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#include "notificationitemwatcher.h"
+#include "statusnotifierwatcher.h"
 
 #include <QDBusConnection>
 
@@ -27,49 +27,49 @@
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
-#include "notificationitemwatcheradaptor.h"
-#include "notificationitem_interface.h"
+#include "statusnotifierwatcheradaptor.h"
+#include "statusnotifieritem_interface.h"
 
 
 static inline KAboutData aboutData()
 {
-    return KAboutData("notificationitemwatcher", 0, ki18n("notificationitemwatcher"), KDE_VERSION_STRING);
+    return KAboutData("statusnotifierwatcher", 0, ki18n("statusnotifierwatcher"), KDE_VERSION_STRING);
 }
 
-K_PLUGIN_FACTORY(NotificationItemWatcherFactory,
-                 registerPlugin<NotificationItemWatcher>();
+K_PLUGIN_FACTORY(StatusNotifierWatcherFactory,
+                 registerPlugin<StatusNotifierWatcher>();
     )
-K_EXPORT_PLUGIN(NotificationItemWatcherFactory(aboutData()))
+K_EXPORT_PLUGIN(StatusNotifierWatcherFactory(aboutData()))
 
-NotificationItemWatcher::NotificationItemWatcher(QObject *parent, const QList<QVariant>&)
+StatusNotifierWatcher::StatusNotifierWatcher(QObject *parent, const QList<QVariant>&)
       : KDEDModule(parent)
 {
-    setModuleName("NotificationItemWatcher");
-    new NotificationItemWatcherAdaptor(this);
+    setModuleName("StatusNotifierWatcher");
+    new StatusNotifierWatcherAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.registerService("org.kde.NotificationItemWatcher");
-    dbus.registerObject("/NotificationItemWatcher", this);
+    dbus.registerService("org.kde.StatusNotifierWatcher");
+    dbus.registerObject("/StatusNotifierWatcher", this);
     m_dbusInterface = dbus.interface();
 
     connect(m_dbusInterface, SIGNAL(serviceOwnerChanged(QString,QString,QString)),
            this, SLOT(serviceChange(QString,QString,QString)));
 }
 
-NotificationItemWatcher::~NotificationItemWatcher()
+StatusNotifierWatcher::~StatusNotifierWatcher()
 {
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.unregisterService("org.kde.NotificationItemWatcher");
+    dbus.unregisterService("org.kde.StatusNotifierWatcher");
 }
 
 
-void NotificationItemWatcher::RegisterService(const QString &service)
+void StatusNotifierWatcher::RegisterService(const QString &service)
 {
     if (m_dbusInterface->isServiceRegistered(service).value() &&
         !m_registeredServices.contains(service)) {
         kDebug()<<"Registering"<<service<<"to system tray";
 
         //check if the service has registered a SystemTray object
-        org::kde::NotificationItem trayclient(service, "/NotificationItem",
+        org::kde::StatusNotifierItem trayclient(service, "/StatusNotifierItem",
                                         QDBusConnection::sessionBus());
         if (trayclient.isValid()) {
             m_registeredServices.append(service);
@@ -78,13 +78,13 @@ void NotificationItemWatcher::RegisterService(const QString &service)
     }
 }
 
-QStringList NotificationItemWatcher::RegisteredServices() const
+QStringList StatusNotifierWatcher::RegisteredServices() const
 {
     return m_registeredServices;
 }
 
 
-void NotificationItemWatcher::serviceChange(const QString& name,
+void StatusNotifierWatcher::serviceChange(const QString& name,
                                 const QString& oldOwner,
                                 const QString& newOwner)
 {
@@ -97,32 +97,32 @@ void NotificationItemWatcher::serviceChange(const QString& name,
             emit ServiceUnregistered(name);
         }
 
-        if (m_notificationHostServices.contains(name)) {
-            m_notificationHostServices.remove(name);
+        if (m_statusNotifierHostServices.contains(name)) {
+            m_statusNotifierHostServices.remove(name);
         }
     }
 }
 
-void NotificationItemWatcher::RegisterNotificationHost(const QString &service)
+void StatusNotifierWatcher::RegisterStatusNotifierHost(const QString &service)
 {
-    if (service.contains("org.kde.NotificationHost-") &&
+    if (service.contains("org.kde.StatusNotifierHost-") &&
         m_dbusInterface->isServiceRegistered(service).value() &&
-        !m_notificationHostServices.contains(service)) {
+        !m_statusNotifierHostServices.contains(service)) {
         kDebug()<<"Registering"<<service<<"as system tray";
 
-        m_notificationHostServices.insert(service);
-        emit NotificationHostRegistered();
+        m_statusNotifierHostServices.insert(service);
+        emit StatusNotifierHostRegistered();
     }
 }
 
-bool NotificationItemWatcher::IsNotificationHostRegistered() const
+bool StatusNotifierWatcher::IsStatusNotifierHostRegistered() const
 {
-    return !m_notificationHostServices.isEmpty();
+    return !m_statusNotifierHostServices.isEmpty();
 }
 
-int NotificationItemWatcher::ProtocolVersion() const
+int StatusNotifierWatcher::ProtocolVersion() const
 {
     return 0;
 }
 
-#include "notificationitemwatcher.moc"
+#include "statusnotifierwatcher.moc"
