@@ -288,8 +288,7 @@ void KRunnerDialog::resizeEvent(QResizeEvent *e)
 
     if (m_resizing && !m_center) {
         QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
-        const int w = width();
-        const int dx = r.left() + (r.width() / 2) - (w / 2);
+        const int dx = x() + (e->oldSize().width() / 2) - (width() / 2);
         int dy = r.top();
         move(dx, dy);
         m_screenPos.insert(m_oldScreen, pos());
