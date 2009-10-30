@@ -171,6 +171,11 @@ bool KRunnerDialog::centerPositioned() const
     return m_center;
 }
 
+bool KRunnerDialog::isManualResizing() const
+{
+    return m_resizing;
+}
+
 void KRunnerDialog::setStaticQueryMode(bool staticQuery)
 {
     Q_UNUSED(staticQuery)
@@ -287,6 +292,7 @@ void KRunnerDialog::resizeEvent(QResizeEvent *e)
         const int dx = r.left() + (r.width() / 2) - (w / 2);
         int dy = r.top();
         move(dx, dy);
+        m_screenPos.insert(m_oldScreen, pos());
     }
 
     KDialog::resizeEvent(e);

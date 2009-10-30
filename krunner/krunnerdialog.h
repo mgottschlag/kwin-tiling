@@ -44,6 +44,8 @@ class KRunnerDialog : public KDialog
         void setCenterPositioned(bool center);
         bool centerPositioned() const;
 
+        bool isManualResizing() const;
+
     public Q_SLOTS:
         virtual void display(const QString& term = QString()) = 0;
         virtual void clearHistory() = 0;

@@ -230,7 +230,7 @@ void Interface::resizeEvent(QResizeEvent *event)
     // We set m_defaultSize only when the event is spontaneous, i.e. when the user resizes the window
     // We always update the width, but we update the height only if the resultsContainer is visible.
 
-    if (event->spontaneous()) {
+    if (event->spontaneous() || isManualResizing()) {
         m_defaultSize.setWidth(width());
         if (m_resultsContainer->isVisible()) {
             m_defaultSize.setHeight(height());
