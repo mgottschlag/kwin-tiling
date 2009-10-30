@@ -306,9 +306,7 @@ void Interface::display(const QString &term)
     m_searchTerm->setFocus();
     KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
     positionOnScreen();
-    show();
     resetInterface();
-    KWindowSystem::forceActiveWindow(winId());
 
     if (!term.isEmpty()) {
         m_searchTerm->setItemText(0, term);

@@ -41,6 +41,9 @@ class KRunnerDialog : public KDialog
                                Qt::WindowFlags f =  Qt::Dialog | Qt::FramelessWindowHint);
         virtual ~KRunnerDialog();
 
+        void setCenterPositioned(bool center);
+        bool centerPositioned() const;
+
     public Q_SLOTS:
         virtual void display(const QString& term = QString()) = 0;
         virtual void clearHistory() = 0;
@@ -51,6 +54,8 @@ class KRunnerDialog : public KDialog
         void paintEvent(QPaintEvent *event);
         void resizeEvent(QResizeEvent *event);
         void mousePressEvent(QMouseEvent *event);
+        void mouseReleaseEvent(QMouseEvent *event);
+        void mouseMoveEvent(QMouseEvent *event);
         bool event(QEvent *event);
         void showEvent(QShowEvent *);
         void hideEvent(QHideEvent *);
@@ -88,8 +93,13 @@ class KRunnerDialog : public KDialog
         KRunnerConfigDialog *m_configDialog;
         Plasma::FrameSvg *m_background;
         QPixmap *m_cachedBackground;
-        int m_oldScreen;
         QHash<int, QPoint> m_screenPos;
+        int m_leftBorderWidth;
+        int m_rightBorderWidth;
+        int m_lastPressPos;
+        int m_oldScreen;
+        bool m_center : 1;
+        bool m_resizing : 1;
 };
 
 #endif

@@ -40,6 +40,7 @@
 #include <Plasma/FrameSvg>
 #include <Plasma/RunnerManager>
 #include <Plasma/Theme>
+#include <Plasma/WindowEffects>
 
 #include "configdialog.h"
 #include "krunnerapp.h"
@@ -52,9 +53,13 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
     : KDialog(parent, f),
       m_runnerManager(runnerManager),
       m_configDialog(0),
-      m_oldScreen(-1)
+      m_lastPressPos(-1),
+      m_oldScreen(-1),
+      m_center(false),
+      m_resizing(false)
 {
     setAttribute(Qt::WA_TranslucentBackground);
+    setMouseTracking(true);
     setButtons(0);
     setWindowTitle( i18n("Run Command") );
     setWindowIcon(KIcon("system-run"));
@@ -63,14 +68,14 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
     pal.setColor(backgroundRole(), Qt::transparent);
     setPalette(pal);
 
-    m_background = new Plasma::FrameSvg(this);
     m_iconSvg = new Plasma::Svg(this);
-
     m_iconSvg->setImagePath("widgets/configuration-icons");
-    m_background->setImagePath("dialogs/krunner");
-
-    m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
     m_iconSvg->setContainsMultipleImages(true);
+
+    m_background = new Plasma::FrameSvg(this);
+    m_background->setImagePath("dialogs/krunner");
+    setCenterPositioned(false);
+
     m_iconSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
 
     connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)),
@@ -110,23 +115,60 @@ void KRunnerDialog::positionOnScreen()
         screen = Kephal::ScreenUtils::screenId(QCursor::pos());
     }
 
-    if (m_oldScreen == screen) {
-        return;
+    if (m_oldScreen != screen) {
+        kDebug() << "old screen be the new screen";
+
+        m_screenPos.insert(m_oldScreen, pos());
+        m_oldScreen = screen;
+
+        if (m_screenPos.contains(screen)) {
+            kDebug() << "moving to" << m_screenPos[screen];
+            move(m_screenPos[screen]);
+            return;
+        }
+
+        QRect r = Kephal::ScreenUtils::screenGeometry(screen);
+        const int w = width();
+        const int dx = r.left() + (r.width() / 2) - (w / 2);
+        int dy = r.top();
+        if (m_center) {
+            dy += r.height() / 3;
+        }
+
+        move(dx, dy);
     }
 
-    m_screenPos[m_oldScreen] = pos();
+    show();
+    KWindowSystem::forceActiveWindow(winId());
+
+    if (!m_center) {
+        Plasma::WindowEffects::slideWindow(this, Plasma::TopEdge);
+    }
+
+    if (m_oldScreen != screen) {
+        m_screenPos.insert(screen, pos());
+    }
+
     m_oldScreen = screen;
+    //kDebug() << "moving to" << m_screenPos[screen];
+}
 
-    if (m_screenPos.contains(screen)) {
-        move(m_screenPos[screen]);
-        return;
+void KRunnerDialog::setCenterPositioned(bool center)
+{
+    m_center = center;
+
+    if (m_center) {
+        m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+    } else {
+        m_background->setEnabledBorders(Plasma::FrameSvg::LeftBorder |
+                                        Plasma::FrameSvg::BottomBorder |
+                                        Plasma::FrameSvg::RightBorder);
     }
+}
 
-    QRect r = Kephal::ScreenUtils::screenGeometry(screen);
-    int w = width();
-    move(r.left() + (r.width() / 2) - (w / 2),
-         r.top() + (r.height() / 3));
-    m_screenPos[screen] = pos();
+bool KRunnerDialog::centerPositioned() const
+{
+    return m_center;
 }
 
 void KRunnerDialog::setStaticQueryMode(bool staticQuery)
@@ -186,11 +228,11 @@ void KRunnerDialog::themeUpdated()
 {
     int margin = marginHint();
     const int topHeight = qMax(0, int(m_background->marginSize(Plasma::TopMargin)) - margin);
-    const int leftWidth = qMax(0, int(m_background->marginSize(Plasma::LeftMargin)) - margin);
-    const int rightWidth = qMax(0, int(m_background->marginSize(Plasma::RightMargin)) - margin);
+    m_leftBorderWidth = qMax(0, int(m_background->marginSize(Plasma::LeftMargin)) - margin);
+    m_rightBorderWidth = qMax(0, int(m_background->marginSize(Plasma::RightMargin)) - margin);
     const int bottomHeight = qMax(0, int(m_background->marginSize(Plasma::BottomMargin)) - margin);
 
-    setContentsMargins(leftWidth, topHeight, rightWidth, bottomHeight);
+    setContentsMargins(m_leftBorderWidth, topHeight, m_rightBorderWidth, bottomHeight);
 }
 
 void KRunnerDialog::paintEvent(QPaintEvent *e)
@@ -238,23 +280,77 @@ void KRunnerDialog::resizeEvent(QResizeEvent *e)
 #else
     setMask(m_background->mask());
 #endif
+
+    if (m_resizing && !m_center) {
+        QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
+        const int w = width();
+        const int dx = r.left() + (r.width() / 2) - (w / 2);
+        int dy = r.top();
+        move(dx, dy);
+    }
+
     KDialog::resizeEvent(e);
 }
 
 void KRunnerDialog::mousePressEvent(QMouseEvent *e)
 {
+    if (e->button() == Qt::LeftButton) {
+        if (e->x() < m_leftBorderWidth || e->x() > width() - m_rightBorderWidth) {
+            // let's do a resize! :)
+            m_lastPressPos = e->globalX();
+            grabMouse();
+            m_resizing = true;
+        } else if (m_center) {
 #ifdef Q_WS_X11
-    // We have to release the mouse grab before initiating the move operation.
-    // Ideally we would call releaseMouse() to do this, but when we only have an
-    // implicit passive grab, Qt is unaware of it, and will refuse to release it.
-    XUngrabPointer(x11Info().display(), CurrentTime);
+            // We have to release the mouse grab before initiating the move operation.
+            // Ideally we would call releaseMouse() to do this, but when we only have an
+            // implicit passive grab, Qt is unaware of it, and will refuse to release it.
+            XUngrabPointer(x11Info().display(), CurrentTime);
 
-    // Ask the window manager to start an interactive move operation.
-    NETRootInfo rootInfo(x11Info().display(), NET::WMMoveResize);
-    rootInfo.moveResizeRequest(winId(), e->globalX(), e->globalY(), NET::Move);
+            // Ask the window manager to start an interactive move operation.
+            NETRootInfo rootInfo(x11Info().display(), NET::WMMoveResize);
+            rootInfo.moveResizeRequest(winId(), e->globalX(), e->globalY(), NET::Move);
 
-    e->accept();
 #endif
+        } else {
+            grabMouse();
+            m_lastPressPos = e->globalX();
+        }
+
+        e->accept();
+    }
+}
+
+void KRunnerDialog::mouseReleaseEvent(QMouseEvent *)
+{
+    if (!m_center) {
+        releaseMouse();
+        unsetCursor();
+        m_lastPressPos = -1;
+        m_resizing = false;
+    }
+}
+
+void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
+{
+    //kDebug() << e->x() << m_leftBorderWidth << width() << m_rightBorderWidth;
+    if (m_center) {
+        return;
+    }
+
+    if (m_lastPressPos != -1) {
+        if (m_resizing) {
+            const int deltaX = m_lastPressPos - e->globalX();
+            resize(width() + deltaX * 2, y());
+        } else {
+            move(x() - (m_lastPressPos - e->globalX()), y());
+        }
+        m_lastPressPos = e->globalX();
+    } else if (e->x() < m_leftBorderWidth || e->x() > width() - m_rightBorderWidth) {
+        setCursor(Qt::SizeHorCursor);
+    } else {
+        unsetCursor();
+    }
 }
 
 #include "krunnerdialog.moc"
