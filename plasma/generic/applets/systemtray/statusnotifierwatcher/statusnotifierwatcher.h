@@ -17,8 +17,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef NOTIFICATIONAREAWATCHER
-#define NOTIFICATIONAREAWATCHER
+#ifndef STATUSNOTIFIERWATCHER_H
+#define STATUSNOTIFIERWATCHER_H
 
 #include <kdedmodule.h>
 
