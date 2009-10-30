@@ -23,11 +23,11 @@
 #include "appletoverlay.h"
 #include "applettitlebar.h"
 #include "../common/nettoolbox.h"
+#include "animatedlinearlayout.h"
 
 #include <limits>
 
 #include <QApplication>
-#include <QGraphicsLinearLayout>
 #include <QPainter>
 #include <QBitmap>
 #include <QDesktopWidget>
@@ -83,7 +83,7 @@ Newspaper::~Newspaper()
 
 void Newspaper::init()
 {
-    m_externalLayout = new QGraphicsLinearLayout(this);
+    m_externalLayout = new AnimatedLinearLayout(this);
     m_externalLayout->setContentsMargins(0, 0, 0, 0);
     m_scrollWidget = new Plasma::ScrollWidget(this);
     m_externalLayout->addItem(m_scrollWidget);
@@ -92,7 +92,7 @@ void Newspaper::init()
 
     m_orientation = (Qt::Orientation)config().readEntry("orientation", (int)Qt::Vertical);
 
-    m_mainLayout = new QGraphicsLinearLayout(m_mainWidget);
+    m_mainLayout = new AnimatedLinearLayout(m_mainWidget);
     addColumn();
     setOrientation(m_orientation);
 
@@ -152,10 +152,10 @@ void Newspaper::toggleImmutability()
 
 void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 {
-    QGraphicsLinearLayout *lay = 0;
+    AnimatedLinearLayout *lay = 0;
 
     for (int i = 0; i < m_mainLayout->count(); ++i) {
-        QGraphicsLinearLayout *candidateLay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(i));
+        AnimatedLinearLayout *candidateLay = dynamic_cast<AnimatedLinearLayout *>(m_mainLayout->itemAt(i));
 
         //normally should never happen
         if (!candidateLay) {
@@ -178,7 +178,7 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 
     //couldn't decide: is the last column empty?
     if (!lay) {
-        QGraphicsLinearLayout *candidateLay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(m_mainLayout->count()-1));
+        AnimatedLinearLayout *candidateLay = dynamic_cast<AnimatedLinearLayout *>(m_mainLayout->itemAt(m_mainLayout->count()-1));
 
         if (candidateLay && candidateLay->count() == 1) {
             lay = candidateLay;
@@ -239,7 +239,7 @@ void Newspaper::cleanupColumns()
 {
     //clean up all empty columns
     for (int i = 0; i < m_mainLayout->count(); ++i) {
-        QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(i));
+        AnimatedLinearLayout *lay = dynamic_cast<AnimatedLinearLayout *>(m_mainLayout->itemAt(i));
 
         if (!lay) {
             continue;
@@ -290,7 +290,7 @@ void Newspaper::setOrientation(Qt::Orientation orientation)
     }
 
     for (int i = 0; i < m_mainLayout->count(); ++i) {
-        QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(i));
+        AnimatedLinearLayout *lay = dynamic_cast<AnimatedLinearLayout *>(m_mainLayout->itemAt(i));
 
         if (!lay) {
             continue;
@@ -538,7 +538,7 @@ void Newspaper::restore(KConfigGroup &group)
     QMap<int, QMap<int, Applet *> >::const_iterator it = orderedApplets.constBegin();
 
     while (it != orderedApplets.constEnd()) {
-        QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(column));
+        AnimatedLinearLayout *lay = dynamic_cast<AnimatedLinearLayout *>(m_mainLayout->itemAt(column));
         ++column;
 
         //this should never happen
@@ -568,7 +568,7 @@ void Newspaper::saveContents(KConfigGroup &group) const
 
     KConfigGroup appletsConfig(&group, "Applets");
     for (int column = 0; column < m_mainLayout->count(); ++column) {
-        QGraphicsLinearLayout *lay = static_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(column));
+        AnimatedLinearLayout *lay = static_cast<AnimatedLinearLayout *>(m_mainLayout->itemAt(column));
         for (int row = 0; row < lay->count(); ++row) {
             const Applet *applet = dynamic_cast<Applet *>(lay->itemAt(row));
             if (applet) {
@@ -582,9 +582,9 @@ void Newspaper::saveContents(KConfigGroup &group) const
     }
 }
 
-QGraphicsLinearLayout *Newspaper::addColumn()
+AnimatedLinearLayout *Newspaper::addColumn()
 {
-    QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(m_orientation);
+    AnimatedLinearLayout *lay = new AnimatedLinearLayout(m_orientation);
     m_mainLayout->addItem(lay);
 
     QGraphicsWidget *spacer = new QGraphicsWidget(m_mainWidget);
@@ -597,7 +597,7 @@ QGraphicsLinearLayout *Newspaper::addColumn()
 
 void Newspaper::removeColumn(int column)
 {
-    QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(column));
+    AnimatedLinearLayout *lay = dynamic_cast<AnimatedLinearLayout *>(m_mainLayout->itemAt(column));
 
     if (!lay) {
         return;

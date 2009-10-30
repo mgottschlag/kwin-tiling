@@ -31,7 +31,7 @@ namespace Plasma
 
 class Newspaper;
 class AppletMoveSpacer;
-class QGraphicsLinearLayout;
+class AnimatedLinearLayout;
 class QTimer;
 
 class AppletOverlay : public QGraphicsWidget
@@ -66,7 +66,7 @@ private:
     Newspaper *m_newspaper;
     AppletMoveSpacer *m_spacer;
     Plasma::Svg *m_icons;
-    QGraphicsLinearLayout *m_spacerLayout;
+    AnimatedLinearLayout *m_spacerLayout;
     int m_spacerIndex;
     QTimer *m_scrollTimer;
     bool m_scrollDown;

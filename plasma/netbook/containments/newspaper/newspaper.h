@@ -24,10 +24,10 @@
 
 #include <Plasma/Containment>
 
-class QGraphicsLinearLayout;
 class AppletOverlay;
 class AppletTitleBar;
 class NetToolBox;
+class AnimatedLinearLayout;
 
 namespace Plasma
 {
@@ -56,7 +56,7 @@ protected:
     void saveContents(KConfigGroup &group) const;
     void restore(KConfigGroup &group);
 
-    QGraphicsLinearLayout *addColumn();
+    AnimatedLinearLayout *addColumn();
     void removeColumn(int column);
 
     void setOrientation(Qt::Orientation orientation);
@@ -77,8 +77,8 @@ private Q_SLOTS:
 private:
     QGraphicsWidget *m_mainWidget;
     Plasma::ScrollWidget *m_scrollWidget;
-    QGraphicsLinearLayout *m_externalLayout;
-    QGraphicsLinearLayout *m_mainLayout;
+    AnimatedLinearLayout *m_externalLayout;
+    AnimatedLinearLayout *m_mainLayout;
     Qt::Orientation m_orientation;
     Plasma::FrameSvg *m_background;
     AppletOverlay *m_appletOverlay;
