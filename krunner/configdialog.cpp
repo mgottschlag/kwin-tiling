@@ -55,7 +55,6 @@ KRunnerConfigDialog::KRunnerConfigDialog(Plasma::RunnerManager *manager, QWidget
     QWidget *m_generalSettings = new QWidget(this);
     QVBoxLayout *genLayout = new QVBoxLayout(m_generalSettings);
 
-
     m_interfaceType = KRunnerSettings::interface();
     QRadioButton *commandButton = new QRadioButton(i18n("Command oriented"), m_generalSettings);
     QRadioButton *taskButton = new QRadioButton(i18n("Task oriented"), m_generalSettings);
@@ -89,8 +88,8 @@ KRunnerConfigDialog::KRunnerConfigDialog(Plasma::RunnerManager *manager, QWidget
     connect(this, SIGNAL(okClicked()), this, SLOT(accept()));
 
     KService::List offers = KServiceTypeTrader::self()->query("Plasma/Runner");
-    QList<KPluginInfo> effectinfos = KPluginInfo::fromServices(offers);
-    m_sel->addPlugins(effectinfos, KPluginSelector::ReadConfigFile, i18n("Available Features"), QString(), KSharedConfig::openConfig("krunnerrc"));
+    QList<KPluginInfo> runnerInfo = KPluginInfo::fromServices(offers);
+    m_sel->addPlugins(runnerInfo, KPluginSelector::ReadConfigFile, i18n("Available Features"), QString(), KSharedConfig::openConfig("krunnerrc"));
 
     KConfigGroup config(KGlobal::config(), "ConfigurationDialog");
     restoreDialogSize(config);

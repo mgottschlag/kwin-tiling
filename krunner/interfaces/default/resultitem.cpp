@@ -357,6 +357,7 @@ bool ResultItem::mouseHovered() const
 void ResultItem::focusInEvent(QFocusEvent * event)
 {
     QGraphicsWidget::focusInEvent(event);
+    kDebug() << hasFocus();
     setZValue(1);
 
     m_mouseHovered = (event->reason() == Qt::MouseFocusReason);

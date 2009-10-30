@@ -216,9 +216,7 @@ void ResultScene::arrangeItems(ResultItem *itemChanged)
 
         // it is vital that focus is set *after* the index
         if (!itemChanged && i == 0 && canMoveItemFocus()) {
-            clearSelection();
             setFocusItem(item);
-            item->setSelected(true);
             emit ensureVisibility(item);
         }
 
@@ -324,35 +322,32 @@ void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
 void ResultScene::selectNextItem()
 {
     ResultItem *currentFocus = dynamic_cast<ResultItem*>(focusItem());
-    int m_currentIndex = currentFocus ? currentFocus->index() : 0;
+    int currentIndex = currentFocus ? currentFocus->index() : 0;
 
-    if (m_currentIndex > 0) {
-        --m_currentIndex;
+    if (currentIndex > 0) {
+        --currentIndex;
     } else {
-        m_currentIndex = m_items.size() - 1;
+        currentIndex = m_items.size() - 1;
     }
 
-    setFocusItem(m_items.at(m_currentIndex));
-    clearSelection();
-    m_items.at(m_currentIndex)->setSelected(true);
-    emit ensureVisibility(m_items.at(m_currentIndex));
+    currentFocus = m_items.at(currentIndex);
+    setFocusItem(currentFocus);
+    emit ensureVisibility(currentFocus);
 }
 
 void ResultScene::selectPreviousItem()
 {
     ResultItem *currentFocus = dynamic_cast<ResultItem*>(focusItem());
-    int m_currentIndex = currentFocus ? currentFocus->index() : 0;
+    int currentIndex = currentFocus ? currentFocus->index() : 0;
 
-    ++m_currentIndex;
-
-    if (m_currentIndex >= m_items.size()) {
-        m_currentIndex = 0;
+    ++currentIndex;
+    if (currentIndex >= m_items.size()) {
+        currentIndex = 0;
     }
 
-    setFocusItem(m_items.at(m_currentIndex));
-    clearSelection();
-    m_items.at(m_currentIndex)->setSelected(true);
-    emit ensureVisibility(m_items.at(m_currentIndex));
+    currentFocus = m_items.at(currentIndex);
+    setFocusItem(currentFocus);
+    emit ensureVisibility(currentFocus);
 }
 
 bool ResultScene::launchQuery(const QString &term)

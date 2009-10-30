@@ -207,7 +207,7 @@ void KRunnerDialog::mousePressEvent(QMouseEvent *e)
     rootInfo.moveResizeRequest(winId(), e->globalX(), e->globalY(), NET::Move);
 
     e->accept();
-#endif    
+#endif
 }
 
 #include "krunnerdialog.moc"
