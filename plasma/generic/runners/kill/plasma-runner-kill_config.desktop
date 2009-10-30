@@ -7,3 +7,8 @@ X-KDE-ParentComponents=kill
 X-KDE-PluginKeyword=kcm_krunner_kill
 
 Name=Kill Applications
+Name[en_GB]=Kill Applications
+Name[pt]=Matar as Aplicações
+Name[sv]=Döda program
+Name[uk]=Припинення роботи програм
+Name[x-test]=xxKill Applicationsxx

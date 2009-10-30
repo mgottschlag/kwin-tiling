@@ -1,6 +1,16 @@
 [Desktop Entry]
 Name=Terminate Applications
+Name[en_GB]=Terminate Applications
+Name[pt]=Terminar as Aplicações
+Name[sv]=Avsluta program
+Name[uk]=Переривання програм
+Name[x-test]=xxTerminate Applicationsxx
 Comment=Stop applications that are currently running
+Comment[en_GB]=Stop applications that are currently running
+Comment[pt]=Parar as aplicações actualmente em execução
+Comment[sv]=Stoppa program som för närvarande kör
+Comment[uk]=Завершує роботу запущених програм
+Comment[x-test]=xxStop applications that are currently runningxx
 Icon=application-exit
 
 X-KDE-ServiceTypes=Plasma/Runner
