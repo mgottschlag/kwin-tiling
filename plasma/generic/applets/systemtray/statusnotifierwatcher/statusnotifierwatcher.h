@@ -32,7 +32,7 @@ class StatusNotifierWatcher : public KDEDModule
 {
     Q_OBJECT
     Q_PROPERTY(QStringList RegisteredStatusNotifierItems READ RegisteredStatusNotifierItems)
-    Q_PROPERTY(bool HasStatusNotifierHostRegistered READ HasStatusNotifierHostRegistered)
+    Q_PROPERTY(bool IsStatusNotifierHostRegistered READ IsStatusNotifierHostRegistered)
     Q_PROPERTY(int ProtocolVersion READ ProtocolVersion)
 
 public:
@@ -41,7 +41,7 @@ public:
 
     QStringList RegisteredStatusNotifierItems() const;
 
-    bool HasStatusNotifierHostRegistered() const;
+    bool IsStatusNotifierHostRegistered() const;
 
     int ProtocolVersion() const;
 

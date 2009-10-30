@@ -115,7 +115,7 @@ void StatusNotifierWatcher::RegisterStatusNotifierHost(const QString &service)
     }
 }
 
-bool StatusNotifierWatcher::HasStatusNotifierHostRegistered() const
+bool StatusNotifierWatcher::IsStatusNotifierHostRegistered() const
 {
     return !m_statusNotifierHostServices.isEmpty();
 }
