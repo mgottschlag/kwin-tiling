@@ -35,7 +35,7 @@ The following protocols currently exist:
 
 DBusSystemTrayProtocol: support for the dbus driven NotificationItem; it provides Tasks;
                         for information on the design of this protocol, consult the
-                        KNotificationItem documentation
+                        KStatusNotifierItem documentation
 
 FdoProtocol: support for the XEmbed based freedesktop.org system tray specification;
              it provides Tasks, though these tasks do not work properly in more than one
