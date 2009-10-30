@@ -94,6 +94,7 @@ private slots:
     void taskDialogFinished();
     void reloadConfig();
     void cleanUp();
+    void displayOrHide();
 
 private:
     KRunnerApp();

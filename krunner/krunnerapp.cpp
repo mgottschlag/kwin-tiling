@@ -137,7 +137,7 @@ void KRunnerApp::initialize()
         a = m_actionCollection->addAction("Run Command");
         a->setText(i18n("Run Command"));
         a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::Key_F2));
-        connect(a, SIGNAL(triggered(bool)), SLOT(display()));
+        connect(a, SIGNAL(triggered(bool)), SLOT(displayOrHide()));
 
         a = m_actionCollection->addAction("Run Command on clipboard contents");
         a->setText(i18n("Run Command on clipboard contents"));
@@ -271,6 +271,15 @@ void KRunnerApp::showTaskManagerWithFilter(const QString &filterText)
 void KRunnerApp::display()
 {
     m_interface->display();
+}
+
+void KRunnerApp::displayOrHide()
+{
+    if (!m_interface->centerPositioned() && m_interface->isActiveWindow()) {
+        m_interface->hide();
+    } else {
+        display();
+    }
 }
 
 void KRunnerApp::query(const QString &term)
