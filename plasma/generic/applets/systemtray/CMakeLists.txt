@@ -45,7 +45,7 @@ kde4_add_ui_files(systemtray_SRCS
                   ui/autohide.ui
                   ui/plasmoidtasks.ui)
 
-add_subdirectory(notificationitemwatcher)
+add_subdirectory(statusnotifierwatcher)
 
 include (CheckLibraryExists)
 check_library_exists (Xss XScreenSaverQueryInfo "" HAVE_LIBXSS)
