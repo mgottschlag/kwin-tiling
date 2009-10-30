@@ -6,7 +6,10 @@ set(sal_SRCS
     ../common/linearappletoverlay.cpp
     ../common/appletmovespacer.cpp
     ../common/nettoolbox.cpp
-    stripwidget.cpp)
+    ../common/proxylayout.cpp
+    stripwidget.cpp
+    animatedgridlayout.cpp
+    )
 
 kde4_add_plugin(plasma_containment_sal ${sal_SRCS})
 target_link_libraries(plasma_containment_sal ${KDE4_PLASMA_LIBS} ${KDE4_KIO_LIBS})
