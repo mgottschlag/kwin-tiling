@@ -100,7 +100,8 @@ void DBusSystemTrayProtocol::initRegisteredServices()
     org::kde::StatusNotifierWatcher statusNotifierWatcher(interface, "/StatusNotifierWatcher",
                                               QDBusConnection::sessionBus());
     if (statusNotifierWatcher.isValid()) {
-        foreach (const QString &service, statusNotifierWatcher.RegisteredServices().value()) {
+        QStringList registeredItems = statusNotifierWatcher.property("RegisteredStatusNotifierItems").value<QStringList>();
+        foreach (const QString &service, registeredItems) {
             newTask(service);
         }
     } else {
@@ -139,13 +140,14 @@ void DBusSystemTrayProtocol::registerWatcher(const QString& service)
         m_statusNotifierWatcher = new org::kde::StatusNotifierWatcher(interface, "/StatusNotifierWatcher",
                                                                           QDBusConnection::sessionBus());
         if (m_statusNotifierWatcher->isValid() &&
-            m_statusNotifierWatcher->ProtocolVersion() == s_protocolVersion) {
+            m_statusNotifierWatcher->property("ProtocolVersion").toBool() == s_protocolVersion) {
             connect(m_statusNotifierWatcher, SIGNAL(ServiceRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
             connect(m_statusNotifierWatcher, SIGNAL(ServiceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
 
             m_statusNotifierWatcher->call(QDBus::NoBlock, "RegisterStatusNotifierHost", m_serviceName);
 
-            foreach (const QString &service, m_statusNotifierWatcher->RegisteredServices().value()) {
+            QStringList registeredItems = m_statusNotifierWatcher->property("RegisteredStatusNotifierItems").value<QStringList>();
+            foreach (const QString &service, registeredItems) {
                 newTask(service);
             }
         } else {

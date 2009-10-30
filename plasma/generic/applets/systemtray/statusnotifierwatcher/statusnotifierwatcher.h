@@ -30,23 +30,25 @@ class QDBusConnectionInterface;
 
 class StatusNotifierWatcher : public KDEDModule
 {
-Q_OBJECT
+    Q_OBJECT
+    Q_PROPERTY(QStringList RegisteredStatusNotifierItems READ RegisteredStatusNotifierItems)
+    Q_PROPERTY(bool HasStatusNotifierHostRegistered READ HasStatusNotifierHostRegistered)
+    Q_PROPERTY(int ProtocolVersion READ ProtocolVersion)
+
 public:
     StatusNotifierWatcher(QObject *parent, const QList<QVariant>&);
     ~StatusNotifierWatcher();
 
-public Q_SLOTS:
-    void RegisterService(const QString &service);
+    QStringList RegisteredStatusNotifierItems() const;
 
-    //TODO: property?
-    QStringList RegisteredServices() const;
-
-    void RegisterStatusNotifierHost(const QString &service);
-
-    //TODO: property?
-    bool IsStatusNotifierHostRegistered() const;
+    bool HasStatusNotifierHostRegistered() const;
 
     int ProtocolVersion() const;
+
+public Q_SLOTS:
+    void RegisterStatusNotifierItem(const QString &service);
+
+    void RegisterStatusNotifierHost(const QString &service);
 
 protected Q_SLOTS:
     void serviceChange(const QString& name,

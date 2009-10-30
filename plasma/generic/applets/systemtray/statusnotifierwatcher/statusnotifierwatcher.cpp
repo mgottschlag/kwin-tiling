@@ -62,7 +62,7 @@ StatusNotifierWatcher::~StatusNotifierWatcher()
 }
 
 
-void StatusNotifierWatcher::RegisterService(const QString &service)
+void StatusNotifierWatcher::RegisterStatusNotifierItem(const QString &service)
 {
     if (m_dbusInterface->isServiceRegistered(service).value() &&
         !m_registeredServices.contains(service)) {
@@ -78,7 +78,7 @@ void StatusNotifierWatcher::RegisterService(const QString &service)
     }
 }
 
-QStringList StatusNotifierWatcher::RegisteredServices() const
+QStringList StatusNotifierWatcher::RegisteredStatusNotifierItems() const
 {
     return m_registeredServices;
 }
@@ -115,7 +115,7 @@ void StatusNotifierWatcher::RegisterStatusNotifierHost(const QString &service)
     }
 }
 
-bool StatusNotifierWatcher::IsStatusNotifierHostRegistered() const
+bool StatusNotifierWatcher::HasStatusNotifierHostRegistered() const
 {
     return !m_statusNotifierHostServices.isEmpty();
 }
