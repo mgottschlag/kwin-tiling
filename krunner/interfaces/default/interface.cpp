@@ -43,7 +43,6 @@
 #include <KGlobalSettings>
 #include <KPushButton>
 #include <KTitleWidget>
-#include <KWindowSystem>
 
 #include <Plasma/AbstractRunner>
 #include <Plasma/RunnerManager>
@@ -304,7 +303,6 @@ void Interface::clearHistory()
 void Interface::display(const QString &term)
 {
     m_searchTerm->setFocus();
-    KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
     positionOnScreen();
     resetInterface();
 

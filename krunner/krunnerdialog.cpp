@@ -49,7 +49,7 @@
 #include <X11/Xlib.h>
 #endif
 
-KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *parent, Qt::WindowFlags f )
+KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *parent, Qt::WindowFlags f)
     : KDialog(parent, f),
       m_runnerManager(runnerManager),
       m_configDialog(0),
@@ -61,7 +61,7 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
     setAttribute(Qt::WA_TranslucentBackground);
     setMouseTracking(true);
     setButtons(0);
-    setWindowTitle( i18n("Run Command") );
+    setWindowTitle(i18n("Run Command"));
     setWindowIcon(KIcon("system-run"));
 
     QPalette pal = palette();
@@ -141,7 +141,10 @@ void KRunnerDialog::positionOnScreen()
     show();
     KWindowSystem::forceActiveWindow(winId());
 
-    if (!m_center) {
+    if (m_center) {
+        KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
+    } else {
+        KWindowSystem::setOnAllDesktops(winId(), true);
         Plasma::WindowEffects::slideWindow(this, Plasma::TopEdge);
     }
 
@@ -263,6 +266,12 @@ bool KRunnerDialog::event(QEvent *event)
 
 void KRunnerDialog::showEvent(QShowEvent *)
 {
+    unsigned long state = NET::SkipTaskbar | NET::KeepAbove | NET::StaysOnTop;
+    if (m_center) {
+        KWindowSystem::clearState(winId(), state);
+    } else {
+        KWindowSystem::setState(winId(), state);
+    }
     m_runnerManager->setupMatchSession();
 }
 
