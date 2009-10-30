@@ -62,8 +62,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     : KRunnerDialog(runnerManager, parent),
       m_delayedRun(false),
       m_running(false),
-      m_queryRunning(false),
-      m_oldScreen(-1)
+      m_queryRunning(false)
 {
     m_hideResultsTimer.setSingleShot(true);
     connect(&m_hideResultsTimer, SIGNAL(timeout()), this, SLOT(hideResultsArea()));
@@ -221,14 +220,6 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     }
 
     m_defaultSize = size();
-
-    connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)),
-            this, SLOT(screenRemoved(int)));
-    connect(Kephal::Screens::self(), SIGNAL(screenResized(Kephal::Screen*,QSize,QSize)),
-            this, SLOT(screenChanged(Kephal::Screen*)));
-    connect(Kephal::Screens::self(), SIGNAL(screenMoved(Kephal::Screen*,QPoint,QPoint)),
-            this, SLOT(screenChanged(Kephal::Screen*)));
-    centerOnScreen();
     m_resultsContainer->hide();
 
     QTimer::singleShot(0, this, SLOT(resetInterface()));
@@ -314,7 +305,7 @@ void Interface::display(const QString &term)
 {
     m_searchTerm->setFocus();
     KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
-    centerOnScreen();
+    positionOnScreen();
     show();
     resetInterface();
     KWindowSystem::forceActiveWindow(winId());
@@ -322,45 +313,6 @@ void Interface::display(const QString &term)
     if (!term.isEmpty()) {
         m_searchTerm->setItemText(0, term);
     }
-}
-
-void Interface::screenRemoved(int screen)
-{
-    m_screenPos.remove(screen);
-}
-
-void Interface::screenChanged(Kephal::Screen* screen)
-{
-    m_screenPos.remove(screen->id());
-    if (m_oldScreen == screen->id()) {
-        m_oldScreen = -1;
-    }
-}
-
-void Interface::centerOnScreen()
-{
-    int screen = Kephal::ScreenUtils::primaryScreenId();
-    if (Kephal::ScreenUtils::numScreens() > 1) {
-        screen = Kephal::ScreenUtils::screenId(QCursor::pos());
-    }
-
-    if (m_oldScreen == screen) {
-        return;
-    }
-
-    m_screenPos[m_oldScreen] = pos();
-    m_oldScreen = screen;
-
-    if (m_screenPos.contains(screen)) {
-        move(m_screenPos[screen]);
-        return;
-    }
-
-    QRect r = Kephal::ScreenUtils::screenGeometry(screen);
-    int w = m_defaultSize.width();
-    move(r.left() + (r.width() / 2) - (w / 2),
-         r.top() + (r.height() / 3));
-    m_screenPos[screen] = pos();
 }
 
 void Interface::setWidgetPalettes()

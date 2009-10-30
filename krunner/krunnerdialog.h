@@ -21,6 +21,7 @@
 
 #include <KDialog>
 
+#include <kephal/screens.h>
 
 namespace Plasma
 {
@@ -54,6 +55,7 @@ class KRunnerDialog : public KDialog
         void showEvent(QShowEvent *);
         void hideEvent(QHideEvent *);
 
+        void positionOnScreen();
         virtual void setStaticQueryMode(bool staticQuery);
 
     protected Q_SLOTS:
@@ -70,6 +72,12 @@ class KRunnerDialog : public KDialog
          */
         void configCompleted();
 
+        /**
+         * React to screen changes
+         */
+        void screenRemoved(int screen);
+        void screenChanged(Kephal::Screen* screen);
+
     protected:
         Plasma::Svg *m_iconSvg;
         Plasma::RunnerManager *m_runnerManager;
@@ -80,6 +88,8 @@ class KRunnerDialog : public KDialog
         KRunnerConfigDialog *m_configDialog;
         Plasma::FrameSvg *m_background;
         QPixmap *m_cachedBackground;
+        int m_oldScreen;
+        QHash<int, QPoint> m_screenPos;
 };
 
 #endif

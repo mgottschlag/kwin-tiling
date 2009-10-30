@@ -51,7 +51,8 @@
 KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *parent, Qt::WindowFlags f )
     : KDialog(parent, f),
       m_runnerManager(runnerManager),
-      m_configDialog(0)
+      m_configDialog(0),
+      m_oldScreen(-1)
 {
     setAttribute(Qt::WA_TranslucentBackground);
     setButtons(0);
@@ -72,6 +73,13 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
     m_iconSvg->setContainsMultipleImages(true);
     m_iconSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
 
+    connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)),
+            this, SLOT(screenRemoved(int)));
+    connect(Kephal::Screens::self(), SIGNAL(screenResized(Kephal::Screen*,QSize,QSize)),
+            this, SLOT(screenChanged(Kephal::Screen*)));
+    connect(Kephal::Screens::self(), SIGNAL(screenMoved(Kephal::Screen*,QPoint,QPoint)),
+            this, SLOT(screenChanged(Kephal::Screen*)));
+
     connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(update()));
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
@@ -80,6 +88,45 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
 
 KRunnerDialog::~KRunnerDialog()
 {
+}
+
+void KRunnerDialog::screenRemoved(int screen)
+{
+    m_screenPos.remove(screen);
+}
+
+void KRunnerDialog::screenChanged(Kephal::Screen* screen)
+{
+    m_screenPos.remove(screen->id());
+    if (m_oldScreen == screen->id()) {
+        m_oldScreen = -1;
+    }
+}
+
+void KRunnerDialog::positionOnScreen()
+{
+    int screen = Kephal::ScreenUtils::primaryScreenId();
+    if (Kephal::ScreenUtils::numScreens() > 1) {
+        screen = Kephal::ScreenUtils::screenId(QCursor::pos());
+    }
+
+    if (m_oldScreen == screen) {
+        return;
+    }
+
+    m_screenPos[m_oldScreen] = pos();
+    m_oldScreen = screen;
+
+    if (m_screenPos.contains(screen)) {
+        move(m_screenPos[screen]);
+        return;
+    }
+
+    QRect r = Kephal::ScreenUtils::screenGeometry(screen);
+    int w = width();
+    move(r.left() + (r.width() / 2) - (w / 2),
+         r.top() + (r.height() / 3));
+    m_screenPos[screen] = pos();
 }
 
 void KRunnerDialog::setStaticQueryMode(bool staticQuery)
