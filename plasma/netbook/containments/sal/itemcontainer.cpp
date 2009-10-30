@@ -18,10 +18,12 @@
  */
 
 #include "itemcontainer.h"
+#include "animatedgridlayout.h"
 
 #include <QGraphicsGridLayout>
 #include <QTimer>
 #include <QWidget>
+#include <QWeakPointer>
 
 #include <KIconLoader>
 
@@ -30,7 +32,6 @@
 
 ItemContainer::ItemContainer(QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
-      m_currentIcon(0),
       m_orientation(Qt::Vertical),
       m_currentIconIndexX(-1),
       m_currentIconIndexY(-1),
@@ -38,7 +39,7 @@ ItemContainer::ItemContainer(QGraphicsWidget *parent)
       m_maxColumnWidth(0),
       m_maxRowHeight(1)
 {
-    m_layout = new QGraphicsGridLayout(this);
+    m_layout = new AnimatedGridLayout(this);
 
     setFocusPolicy(Qt::StrongFocus);
     setAcceptHoverEvents(true);
@@ -66,7 +67,8 @@ void ItemContainer::setCurrentItem(Plasma::IconWidget *currentIcon)
         return;
     }
 
-    m_currentIcon = 0;
+    QWeakPointer<Plasma::IconWidget> currentWeakIcon = currentIcon;
+    m_currentIcon.clear();
 
     for (int x = 0; x < m_layout->columnCount(); ++x) {
         for (int y = 0; y < m_layout->rowCount(); ++y) {
@@ -74,7 +76,7 @@ void ItemContainer::setCurrentItem(Plasma::IconWidget *currentIcon)
                 m_currentIcon = currentIcon;
                 m_currentIconIndexX = x;
                 m_currentIconIndexY = y;
-                emit itemSelected(m_currentIcon);
+                emit itemSelected(m_currentIcon.data());
                 break;
             }
         }
@@ -85,12 +87,12 @@ void ItemContainer::setCurrentItem(Plasma::IconWidget *currentIcon)
 
 void ItemContainer::syncCurrentItem()
 {
-    setCurrentItem(m_currentIcon);
+    setCurrentItem(m_currentIcon.data());
 }
 
 Plasma::IconWidget *ItemContainer::currentItem() const
 {
-    return m_currentIcon;
+    return m_currentIcon.data();
 }
 
 void ItemContainer::insertItem(Plasma::IconWidget *icon, qreal weight)
@@ -277,50 +279,51 @@ void ItemContainer::itemRemoved(QObject *object)
 
 void ItemContainer::keyPressEvent(QKeyEvent *event)
 {
+
     switch (event->key()) {
     case Qt::Key_Left: {
-        m_currentIcon = 0;
-        while (!m_currentIcon) {
+        m_currentIcon.clear();
+        while (!m_currentIcon.data()) {
             m_currentIconIndexX = (m_layout->columnCount() + m_currentIconIndexX - 1) % m_layout->columnCount();
             m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
         }
-        m_hoverIndicator->setTargetItem(m_currentIcon);
-        emit itemSelected(m_currentIcon);
+        m_hoverIndicator->setTargetItem(m_currentIcon.data());
+        emit itemSelected(m_currentIcon.data());
         break;
     }
     case Qt::Key_Right: {
-        m_currentIcon = 0;
-        while (!m_currentIcon) {
+        m_currentIcon.clear();
+        while (!m_currentIcon.data()) {
             m_currentIconIndexX = (m_currentIconIndexX + 1) % m_layout->columnCount();
             m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
         }
-        m_hoverIndicator->setTargetItem(m_currentIcon);
-        emit itemSelected(m_currentIcon);
+        m_hoverIndicator->setTargetItem(m_currentIcon.data());
+        emit itemSelected(m_currentIcon.data());
         break;
     }
     case Qt::Key_Up: {
-        m_currentIcon = 0;
+        m_currentIcon.clear();
         while (!m_currentIcon) {
             m_currentIconIndexY = (m_layout->rowCount() + m_currentIconIndexY - 1) % m_layout->rowCount();
             m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
         }
-        m_hoverIndicator->setTargetItem(m_currentIcon);
-        emit itemSelected(m_currentIcon);
+        m_hoverIndicator->setTargetItem(m_currentIcon.data());
+        emit itemSelected(m_currentIcon.data());
         break;
     }
     case Qt::Key_Down: {
-        m_currentIcon = 0;
-        while (!m_currentIcon) {
+        m_currentIcon.clear();
+        while (!m_currentIcon.data()) {
             m_currentIconIndexY = (m_currentIconIndexY + 1) % m_layout->rowCount();
             m_currentIcon = static_cast<Plasma::IconWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
         }
-        m_hoverIndicator->setTargetItem(m_currentIcon);
-        emit itemSelected(m_currentIcon);
+        m_hoverIndicator->setTargetItem(m_currentIcon.data());
+        emit itemSelected(m_currentIcon.data());
         break;
     }
     case Qt::Key_Enter:
     case Qt::Key_Return:
-        emit itemActivated(m_currentIcon);
+        emit itemActivated(m_currentIcon.data());
         break;
     case Qt::Key_Backspace:
     case Qt::Key_Home:
@@ -343,7 +346,7 @@ void ItemContainer::focusInEvent(QFocusEvent *event)
         emit itemSelected(icon);
         setCurrentItem(icon);
     } else {
-        setCurrentItem(m_currentIcon);
+        setCurrentItem(m_currentIcon.data());
     }
 }
 
