@@ -41,58 +41,43 @@
 #include "interfaces/quicksand/qs_dialog.h"
 
 KRunnerConfigDialog::KRunnerConfigDialog(Plasma::RunnerManager *manager, QWidget *parent)
-    : KDialog(parent),
+    : KTabWidget(parent),
       m_preview(0),
       m_manager(manager)
 {
-    setButtons(Ok | Cancel);
-    QTabWidget *m_tab = new QTabWidget(this);
-    setMainWidget(m_tab);
-
-    m_sel = new KPluginSelector(m_tab);
-    m_tab->addTab(m_sel, i18n("Plugins"));
+    m_sel = new KPluginSelector(this);
+    addTab(m_sel, i18n("Plugins"));
 
     QWidget *m_generalSettings = new QWidget(this);
-    QVBoxLayout *genLayout = new QVBoxLayout(m_generalSettings);
+    //QVBoxLayout *genLayout = new QVBoxLayout(m_generalSettings);
 
     m_interfaceType = KRunnerSettings::interface();
-    QRadioButton *commandButton = new QRadioButton(i18n("Command oriented"), m_generalSettings);
-    QRadioButton *taskButton = new QRadioButton(i18n("Task oriented"), m_generalSettings);
+    m_uiOptions.setupUi(m_generalSettings);
+
+    QButtonGroup *positionButtons = new QButtonGroup(m_generalSettings);
+    positionButtons->addButton(m_uiOptions.topEdgeButton);
+    positionButtons->addButton(m_uiOptions.freeFloatingButton);
 
     QButtonGroup *displayButtons = new QButtonGroup(m_generalSettings);
-    displayButtons->addButton(commandButton, KRunnerSettings::EnumInterface::CommandOriented);
-    displayButtons->addButton(taskButton, KRunnerSettings::EnumInterface::TaskOriented);
+    displayButtons->addButton(m_uiOptions.commandButton, KRunnerSettings::EnumInterface::CommandOriented);
+    displayButtons->addButton(m_uiOptions.taskButton, KRunnerSettings::EnumInterface::TaskOriented);
     connect(displayButtons, SIGNAL(buttonClicked(int)), this, SLOT(setInterface(int)));
 
     if (m_interfaceType == KRunnerSettings::EnumInterface::CommandOriented) {
-        commandButton->setChecked(true);
+        m_uiOptions.commandButton->setChecked(true);
     } else {
-        taskButton->setChecked(true);
+        m_uiOptions.taskButton->setChecked(true);
     }
 
+    connect(m_uiOptions.previewButton, SIGNAL(clicked()), this, SLOT(previewInterface()));
 
-    QPushButton *previewButton = new QPushButton(i18n("Preview"), m_generalSettings);
-    connect(previewButton, SIGNAL(clicked()), this, SLOT(previewInterface()));
-
-    genLayout->addWidget(commandButton);
-    genLayout->addWidget(taskButton);
-    genLayout->addWidget(previewButton);
-    genLayout->addStretch();
-
-    m_tab->addTab(m_generalSettings, i18n("User Interface"));
-
-    setInitialSize(QSize(400, 500));
-    setWindowTitle(i18n("KRunner Settings"));
+    addTab(m_generalSettings, i18n("User Interface"));
 
     connect(m_sel, SIGNAL(configCommitted(const QByteArray&)), this, SLOT(updateRunner(const QByteArray&)));
-    connect(this, SIGNAL(okClicked()), this, SLOT(accept()));
 
     KService::List offers = KServiceTypeTrader::self()->query("Plasma/Runner");
     QList<KPluginInfo> runnerInfo = KPluginInfo::fromServices(offers);
     m_sel->addPlugins(runnerInfo, KPluginSelector::ReadConfigFile, i18n("Available Features"), QString(), KSharedConfig::openConfig("krunnerrc"));
-
-    KConfigGroup config(KGlobal::config(), "ConfigurationDialog");
-    restoreDialogSize(config);
 }
 
 void KRunnerConfigDialog::previewInterface()
@@ -106,6 +91,8 @@ void KRunnerConfigDialog::previewInterface()
         m_preview = new QsDialog(m_manager, this);
         break;
     }
+
+    m_preview->setCenterPositioned(m_uiOptions.freeFloatingButton->isChecked());
     m_preview->show();
 }
 
@@ -125,9 +112,6 @@ void KRunnerConfigDialog::updateRunner(const QByteArray &name)
 
 KRunnerConfigDialog::~KRunnerConfigDialog()
 {
-    KConfigGroup config(KGlobal::config(), "ConfigurationDialog");
-    saveDialogSize(config);
-    KGlobal::config()->sync();
 }
 
 void KRunnerConfigDialog::accept()
@@ -135,6 +119,7 @@ void KRunnerConfigDialog::accept()
     m_sel->save();
     m_manager->reloadConfiguration();
     KRunnerSettings::setInterface(m_interfaceType);
+    KRunnerSettings::setFreeFloating(m_uiOptions.freeFloatingButton->isChecked());
     KRunnerSettings::self()->writeConfig();
     close();
 }

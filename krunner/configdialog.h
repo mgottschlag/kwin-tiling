@@ -20,7 +20,9 @@
 #ifndef KRUNNERCONFIG_H
 #define KRUNNERCONFIG_H
 
-#include <KDialog>
+#include <KTabWidget>
+
+#include "ui_interfaceOptions.h"
 
 class KRunnerDialog;
 
@@ -32,7 +34,7 @@ namespace Plasma {
     class RunnerManager;
 }
 
-class KRunnerConfigDialog : public KDialog
+class KRunnerConfigDialog : public KTabWidget
 {
 Q_OBJECT
     public:
@@ -54,6 +56,7 @@ Q_OBJECT
         KRunnerDialog *m_preview;
         KPluginSelector *m_sel;
         Plasma::RunnerManager *m_manager;
+        Ui::InterfaceOptions m_uiOptions;
 };
 
 #endif

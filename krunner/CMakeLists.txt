@@ -16,6 +16,7 @@ set(krunner_dbusAppXML dbus/org.kde.krunner.App.xml)
 set(screensaver_dbusXML dbus/org.freedesktop.ScreenSaver.xml)
 set(kscreensaver_dbusXML dbus/org.kde.screensaver.xml)
 
+
 set(default_interface_SRCS
     interfaces/default/interface.cpp
     interfaces/default/resultitem.cpp
@@ -42,6 +43,7 @@ set(krunner_SRCS
    ${default_interface_SRCS}
    ${quicksand_interface_SRCS})
 
+kde4_add_ui_files(krunner_SRCS interfaceOptions.ui)
 kde4_add_kcfg_files(krunner_SRCS ${krunner_KCFG_SRCS})
 
 qt4_add_dbus_adaptor(krunner_SRCS ${krunner_dbusAppXML} krunnerapp.h KRunnerApp)
