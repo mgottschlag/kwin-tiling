@@ -276,6 +276,7 @@ void TaskGroupItem::updateToolTip()
     }
 
     data.setImage(m_group->icon());
+    data.setClickable(true);
 
     QList<WId> windows;
 
