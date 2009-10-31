@@ -389,13 +389,14 @@ void KRunnerApp::reloadConfig()
     disconnect(KRunnerSettings::self(), SIGNAL(configChanged()), this, SLOT(reloadConfig()));
 
     const int interface = KRunnerSettings::interface();
-    if (qobject_cast<Interface*>(m_interface) &&
+    if (!qobject_cast<QsDialog*>(m_interface) &&
         interface == KRunnerSettings::EnumInterface::TaskOriented) {
-        delete m_interface;
+        m_interface->deleteLater();
         m_interface = new QsDialog(m_runnerManager);
         m_interface->display();
-    } else if (interface == KRunnerSettings::EnumInterface::CommandOriented) {
-        delete m_interface;
+    } else if (!qobject_cast<Interface*>(m_interface) &&
+               interface == KRunnerSettings::EnumInterface::CommandOriented) {
+        m_interface->deleteLater();
         m_interface = new Interface(m_runnerManager);
         m_interface->display();
     }
