@@ -1,13 +1,17 @@
 [Desktop Entry]
 Name=Terminate Applications
 Name[en_GB]=Terminate Applications
+Name[gl]=Terminar programas
 Name[pt]=Terminar as Aplicações
+Name[pt_BR]=Terminar aplicativos
 Name[sv]=Avsluta program
 Name[uk]=Переривання програм
 Name[x-test]=xxTerminate Applicationsxx
 Comment=Stop applications that are currently running
 Comment[en_GB]=Stop applications that are currently running
+Comment[gl]=Detén programas que están a executarse
 Comment[pt]=Parar as aplicações actualmente em execução
+Comment[pt_BR]=Parar os aplicativos atualmente em execução
 Comment[sv]=Stoppa program som för närvarande kör
 Comment[uk]=Завершує роботу запущених програм
 Comment[x-test]=xxStop applications that are currently runningxx
