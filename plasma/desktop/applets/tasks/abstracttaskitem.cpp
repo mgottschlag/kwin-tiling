@@ -54,6 +54,7 @@
 #include <Plasma/PaintUtils>
 #include <Plasma/Theme>
 #include <Plasma/ToolTipManager>
+#include <Plasma/WindowEffects>
 
 #include <taskmanager/task.h>
 #include <taskmanager/taskmanager.h>
@@ -362,14 +363,10 @@ void AbstractTaskItem::stopWindowHoverEffect()
         m_hoverEffectTimerId = 0;
     }
 
-#ifdef Q_WS_X11
-    Display *dpy = QX11Info::display();
-    if (m_applet->view()) {
-        const WId winId = m_applet->view()->winId();
-        Atom atom = XInternAtom(dpy, "_KDE_WINDOW_HIGHLIGHT", False);
-        XDeleteProperty(dpy, winId, atom);
+    QGraphicsView *view = m_applet->view();
+    if (view) {
+        Plasma::WindowEffects::highlightWindows(view->winId(), QList<WId>());
     }
-#endif
 }
 
 void AbstractTaskItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -489,27 +486,9 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
             }
         }
 
-        const int numWindows = windows.count();
-        QVarLengthArray<long, 32> data(numWindows);
-
-        //kDebug() << "setting for" << numWindows;
-        int actualCount = 0;
-        for (int i = 0; i < numWindows; ++i) {
-            data[i] = windows.at(i);
-            ++actualCount;
-        }
-
-        if (actualCount != numWindows) {
-            data.resize(actualCount);
-        }
-
         QGraphicsView *view = m_applet->view();
-        if (!data.isEmpty() && view) {
-            Display *dpy = QX11Info::display();
-            const WId winId = view->winId();
-            Atom atom = XInternAtom(dpy, "_KDE_WINDOW_HIGHLIGHT", False);
-            XChangeProperty(dpy, winId, atom, atom, 32, PropModeReplace,
-                            reinterpret_cast<unsigned char *>(data.data()), data.size());
+        if (view) {
+            Plasma::WindowEffects::highlightWindows(view->winId(), windows);
         }
 #endif
     } else {
