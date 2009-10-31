@@ -56,7 +56,9 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
       m_lastPressPos(-1),
       m_oldScreen(-1),
       m_center(false),
-      m_resizing(false)
+      m_resizing(false),
+      m_rightResize(false),
+      m_vertResize(false)
 {
     setAttribute(Qt::WA_TranslucentBackground);
     setMouseTracking(true);
@@ -240,9 +242,9 @@ void KRunnerDialog::themeUpdated()
     const int topHeight = qMax(0, int(m_background->marginSize(Plasma::TopMargin)) - margin);
     m_leftBorderWidth = qMax(0, int(m_background->marginSize(Plasma::LeftMargin)) - margin);
     m_rightBorderWidth = qMax(0, int(m_background->marginSize(Plasma::RightMargin)) - margin);
-    const int bottomHeight = qMax(0, int(m_background->marginSize(Plasma::BottomMargin)) - margin);
+    m_bottomBorderHeight = qMax(0, int(m_background->marginSize(Plasma::BottomMargin)) - margin);
 
-    setContentsMargins(m_leftBorderWidth, topHeight, m_rightBorderWidth, bottomHeight);
+    setContentsMargins(m_leftBorderWidth, topHeight, m_rightBorderWidth, m_bottomBorderHeight);
 }
 
 void KRunnerDialog::paintEvent(QPaintEvent *e)
@@ -312,7 +314,7 @@ void KRunnerDialog::resizeEvent(QResizeEvent *e)
     setMask(m_background->mask());
 #endif
 
-    if (m_resizing && !m_center) {
+    if (m_resizing && !m_vertResize && !m_center) {
         QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
         const int dx = x() + (e->oldSize().width() / 2) - (width() / 2);
         int dy = r.top();
@@ -326,9 +328,12 @@ void KRunnerDialog::resizeEvent(QResizeEvent *e)
 void KRunnerDialog::mousePressEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton) {
-        if (e->x() < m_leftBorderWidth || e->x() > width() - m_rightBorderWidth) {
+        m_vertResize = e->y() > height() - qMax(5, m_bottomBorderHeight);
+        m_rightResize = e->x() > width() - qMax(5, m_rightBorderWidth);
+        const bool leftResize = e->x() < qMax(5, m_leftBorderWidth);
+        if (!m_center && (leftResize || m_rightResize || m_vertResize)) {
             // let's do a resize! :)
-            m_lastPressPos = e->globalX();
+            m_lastPressPos = m_vertResize ? e->globalY() : e->globalX();
             grabMouse();
             m_resizing = true;
         } else if (m_center) {
@@ -371,14 +376,23 @@ void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
 
     if (m_lastPressPos != -1) {
         if (m_resizing) {
-            const int deltaX = m_lastPressPos - e->globalX();
-            resize(width() + deltaX * 2, y());
+            if (m_vertResize) {
+                const int deltaY = e->globalY() - m_lastPressPos;
+                resize(width(), height() + deltaY);
+                m_lastPressPos = e->globalY();
+            } else {
+                const int deltaX = (m_rightResize ? -1 : 1) * (m_lastPressPos - e->globalX());
+                resize(width() + deltaX * 2, height());
+                m_lastPressPos = e->globalX();
+            }
         } else {
             move(x() - (m_lastPressPos - e->globalX()), y());
+            m_lastPressPos = e->globalX();
         }
-        m_lastPressPos = e->globalX();
-    } else if (e->x() < m_leftBorderWidth || e->x() > width() - m_rightBorderWidth) {
+    } else if (e->x() < qMax(5, m_leftBorderWidth) || e->x() > width() - qMax(5, m_rightBorderWidth)) {
         setCursor(Qt::SizeHorCursor);
+    } else if (e->y() > height() - qMax(5, m_bottomBorderHeight)) {
+        setCursor(Qt::SizeVerCursor);
     } else {
         unsetCursor();
     }

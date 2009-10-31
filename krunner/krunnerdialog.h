@@ -100,10 +100,13 @@ class KRunnerDialog : public KDialog
         QHash<int, QPoint> m_screenPos;
         int m_leftBorderWidth;
         int m_rightBorderWidth;
+        int m_bottomBorderHeight;
         int m_lastPressPos;
         int m_oldScreen;
         bool m_center : 1;
         bool m_resizing : 1;
+        bool m_rightResize : 1;
+        bool m_vertResize : 1;
 };
 
 #endif
