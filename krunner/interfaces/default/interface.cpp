@@ -108,6 +108,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_helpButton->setToolTip(i18n("Information on using this application"));
     m_helpButton->setIcon(m_iconSvg->pixmap("help"));
     connect(m_helpButton, SIGNAL(clicked(bool)), SLOT(showHelp()));
+    connect(m_helpButton, SIGNAL(clicked(bool)), SLOT(configCompleted()));
     bottomLayout->addWidget(m_helpButton);
 
     QSpacerItem* closeButtonSpacer = new QSpacerItem(0,0,QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
@@ -191,7 +192,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     themeUpdated();
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
 
-    new QShortcut(QKeySequence( Qt::Key_Escape ), this, SLOT(close()));
+    new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(close()));
 
     m_layout->setAlignment(Qt::AlignTop);
 
@@ -222,6 +223,28 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_resultsContainer->hide();
 
     QTimer::singleShot(0, this, SLOT(resetInterface()));
+}
+
+void Interface::setConfigWidget(QWidget *w)
+{
+    m_resultsView->hide();
+    m_searchTerm->setEnabled(false);
+    m_layout->addWidget(w);
+    resize(m_defaultSize);
+    connect(w, SIGNAL(destroyed(QObject*)), this, SLOT(configWidgetDestroyed()));
+}
+
+void Interface::configWidgetDestroyed()
+{
+    QTimer::singleShot(0, this, SLOT(cleanupAfterConfigWidget()));
+}
+
+void Interface::cleanupAfterConfigWidget()
+{
+    m_resultsView->show();
+    resize(qMax(minimumSizeHint().width(), m_defaultSize.width()), minimumSizeHint().height());
+    m_searchTerm->setEnabled(true);
+    m_searchTerm->setFocus();
 }
 
 void Interface::resizeEvent(QResizeEvent *event)
@@ -377,10 +400,10 @@ void Interface::setStaticQueryMode(bool staticQuery)
     m_searchTerm->setVisible(visible);
 }
 
-void Interface::closeEvent(QCloseEvent *e)
+void Interface::hideEvent(QHideEvent *e)
 {
-    // We hide first, to avoid resizing right before closing
-    hide();
+    KRunnerDialog::hideEvent(e);
+
     if (!m_running) {
         resetInterface();
     } else {

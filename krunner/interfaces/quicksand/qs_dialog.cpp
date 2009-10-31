@@ -23,6 +23,7 @@
 #include <QBoxLayout>
 #include <QDesktopWidget>
 #include <QLabel>
+#include <QTimer>
 #include <QToolButton>
 
 #include <KAction>
@@ -120,6 +121,27 @@ QsDialog::~QsDialog()
 // FIXME: We still have no notion of history... Actually adaptive search should partly take care of this
 void QsDialog::clearHistory()
 {}
+
+void QsDialog::setConfigWidget(QWidget *w)
+{
+    m_matchView->hide();
+    QVBoxLayout *layout = static_cast<QVBoxLayout*>(mainWidget()->layout());
+    layout->addWidget(w);
+    adjustSize();
+    connect(w, SIGNAL(destroyed(QObject*)), this, SLOT(configWidgetDestroyed()));
+}
+
+void QsDialog::configWidgetDestroyed()
+{
+    QTimer::singleShot(0, this, SLOT(cleanupAfterConfigWidget()));
+}
+
+void QsDialog::cleanupAfterConfigWidget()
+{
+    m_matchView->show();
+    m_matchView->setFocus();
+    adjustSize();
+}
 
 void QsDialog::display(const QString &term)
 {

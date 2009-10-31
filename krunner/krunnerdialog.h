@@ -45,6 +45,7 @@ class KRunnerDialog : public KDialog
         bool centerPositioned() const;
 
         bool isManualResizing() const;
+        virtual void setConfigWidget(QWidget *w) = 0;
 
     public Q_SLOTS:
         virtual void display(const QString& term = QString()) = 0;
@@ -66,18 +67,19 @@ class KRunnerDialog : public KDialog
         virtual void setStaticQueryMode(bool staticQuery);
 
     protected Q_SLOTS:
+        void slotButtonClicked(int button);
         void showConfigDialog();
+
+        /**
+         * React to configuration being done
+         */
+        void configCompleted();
 
     private Q_SLOTS:
         /**
          * React to theme changes
          */
         void themeUpdated();
-
-        /**
-         * React to configuration changes
-         */
-        void configCompleted();
 
         /**
          * React to screen changes

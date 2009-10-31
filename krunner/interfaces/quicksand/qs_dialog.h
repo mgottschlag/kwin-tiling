@@ -50,6 +50,7 @@ class QsDialog : public KRunnerDialog
 
         void display(const QString& term = QString());
         void clearHistory();
+        void setConfigWidget(QWidget *w);
 
     private slots:
         void run(MatchItem *item);
@@ -57,6 +58,9 @@ class QsDialog : public KRunnerDialog
         void setMatches(const QList<Plasma::QueryMatch> &matches);
         void loadActions(MatchItem *item);
         void setAction(MatchItem *item);
+        void configWidgetDestroyed();
+        void cleanupAfterConfigWidget();
+
     private:
         bool m_newQuery;
         QMultiMap<QString, Plasma::QueryMatch> m_matches;

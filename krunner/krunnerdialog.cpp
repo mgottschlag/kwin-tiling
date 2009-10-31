@@ -217,19 +217,21 @@ void KRunnerDialog::switchUser()
 void KRunnerDialog::showConfigDialog()
 {
     if (!m_configDialog) {
-        m_configDialog = new KRunnerConfigDialog(m_runnerManager);
-        connect(m_configDialog, SIGNAL(finished()), this, SLOT(configCompleted()));
+        m_configDialog = new KRunnerConfigDialog(m_runnerManager, this);
+        connect(this, SIGNAL(okClicked()), m_configDialog, SLOT(accept()));
+        setButtons(Ok | Cancel);
+        setConfigWidget(m_configDialog);
     }
-
-    KWindowSystem::setOnDesktop(m_configDialog->winId(), KWindowSystem::currentDesktop());
-    KWindowSystem::activateWindow(m_configDialog->winId());
-    m_configDialog->show();
 }
 
 void KRunnerDialog::configCompleted()
 {
-    m_configDialog->deleteLater();
-    m_configDialog = 0;
+    if (m_configDialog) {
+        disconnect(this, SIGNAL(finished()), this, SLOT(configCompleted()));
+        setButtons(0);
+        m_configDialog->deleteLater();
+        m_configDialog = 0;
+    }
 }
 
 void KRunnerDialog::themeUpdated()
@@ -275,9 +277,24 @@ void KRunnerDialog::showEvent(QShowEvent *)
     m_runnerManager->setupMatchSession();
 }
 
-void KRunnerDialog::hideEvent(QHideEvent *)
+void KRunnerDialog::slotButtonClicked(int button)
+{
+    if (button == KDialog::Ok) {
+        if (m_configDialog) {
+            m_configDialog->accept();
+        }
+        configCompleted();
+    } else if (button == KDialog::Cancel) {
+        configCompleted();
+    } else {
+        KDialog::slotButtonClicked(button);
+    }
+}
+
+void KRunnerDialog::hideEvent(QHideEvent *event)
 {
     m_runnerManager->matchSessionComplete();
+    KDialog::hideEvent(event);
 }
 
 void KRunnerDialog::resizeEvent(QResizeEvent *e)

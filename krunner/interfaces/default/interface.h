@@ -34,8 +34,8 @@ class QToolButton;
 class QHBoxLayout;
 class QVBoxLayout;
 
-class KHistoryComboBox;
 class KCompletion;
+class KHistoryComboBox;
 
 class ResultItem;
 class ResultScene;
@@ -54,13 +54,15 @@ class Interface : public KRunnerDialog
         explicit Interface(Plasma::RunnerManager *m_runnerManager, QWidget* parent = 0);
         ~Interface();
 
+        void setConfigWidget(QWidget *w);
+
     public Q_SLOTS:
         void display(const QString& term = QString());
         void clearHistory();
 
     protected:
         void resizeEvent(QResizeEvent *);
-        void closeEvent(QCloseEvent* e);
+        void hideEvent(QHideEvent *e);
 
     private slots:
         void setWidgetPalettes();
@@ -73,6 +75,8 @@ class Interface : public KRunnerDialog
         void resetInterface();
         void showHelp();
         void ensureVisibility(QGraphicsItem *item);
+        void cleanupAfterConfigWidget();
+        void configWidgetDestroyed();
 
     private:
         void centerOnScreen();
