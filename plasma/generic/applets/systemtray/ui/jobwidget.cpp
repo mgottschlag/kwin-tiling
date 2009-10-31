@@ -201,6 +201,14 @@ void JobWidget::updateJob()
 
     m_meter->setValue(m_job->percentage());
 
+    //Update the ETA and job speed
+    if (m_job->eta()) {
+        m_eta->setText(i18n("%1 (%2 remaining)", m_job->speed(),
+                             KGlobal::locale()->formatDuration(m_job->eta())));
+    } else {
+        m_eta->setText(QString());
+    }
+
     if (m_job->labels().count() > 0) {
         labelName0 = m_job->labels().value(0).first;
         label0 = m_job->labels().value(0).second;
@@ -268,7 +276,7 @@ void JobWidget::showEvent(QShowEvent *)
     }
 
     Plasma::PopupApplet *applet = qobject_cast<Plasma::PopupApplet *>(m_extenderItem->extender()->applet());
-    if (applet && !applet->isPopupShowing()) {
+    if (applet && applet->isPopupShowing()) {
         updateJob();
         disconnect(m_job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(scheduleUpdateJob()));
         connect(m_job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(scheduleUpdateJob()));

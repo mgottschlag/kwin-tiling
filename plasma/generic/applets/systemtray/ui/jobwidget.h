@@ -64,10 +64,10 @@ class JobWidget : public QGraphicsWidget
         void detailsClicked();
         void destroyExtenderItem();
         void scheduleUpdateJob();
+        void updateJobState();
 
     private:
         void updateLabels();
-        void updateJobState();
         void updateJob();
 
         Plasma::ExtenderItem *m_extenderItem;

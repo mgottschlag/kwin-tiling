@@ -178,6 +178,8 @@ void JobView::setPercent(uint percent)
 void JobView::setSpeed(qlonglong bytesPerSecond)
 {
     m_speed = bytesPerSecond;
+    setData("speed", speedString());
+    scheduleUpdate();
 }
 
 QString JobView::speedString() const
