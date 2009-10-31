@@ -46,7 +46,7 @@ ProxyLayout::ProxyLayout(QGraphicsWidget *widget, QGraphicsLayoutItem *parent)
 
     QPropertyAnimation *animation = new QPropertyAnimation(widget, "geometry", widget);
     animation->setEasingCurve(QEasingCurve::OutBounce);
-    animation->setDuration(1000);
+    animation->setDuration(250);
 
     d->animation = animation;
 }
