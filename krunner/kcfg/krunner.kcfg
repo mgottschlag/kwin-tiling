@@ -17,6 +17,10 @@
             </choices>
             <default>CommandOriented</default>
         </entry>
+        <entry key="FreeFloating" type="bool">
+            <label>Set to true to show the interface in a freely floating dialog instead of at the top of the screen</label>
+            <default>false</default>
+        </entry>
         <entry key="QueryTextCompletionMode" type="Int">
             <default code="true">(int)KGlobalSettings::CompletionMan</default>
             <label>Completion mode used for the query text.</label>
