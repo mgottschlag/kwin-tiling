@@ -20,7 +20,7 @@
 #include "ion.h"
 #include "ion.moc"
 
-class IonInterface::Private : public QObject
+class IonInterface::Private
 {
 public:
     Private(IonInterface *i)
@@ -35,6 +35,11 @@ IonInterface::IonInterface(QObject *parent, const QVariantList &args)
         : Plasma::DataEngine(parent, args),
         d(new Private(this))
 {
+}
+
+IonInterface::~IonInterface()
+{
+    delete d;
 }
 
 /**

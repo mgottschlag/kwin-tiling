@@ -58,7 +58,7 @@ public:
     /**
      * Destructor for the ion
      */
-    virtual ~IonInterface() {}
+    virtual ~IonInterface();
 
     /**
      * Returns weather icon filename to display in applet.
