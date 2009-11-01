@@ -56,9 +56,9 @@ protected Q_SLOTS:
                        const QString& newOwner);
 
 Q_SIGNALS:
-    void ServiceRegistered(const QString &service);
+    void StatusNotifierItemRegistered(const QString &service);
     //TODO: decide if this makes sense, the systray itself could notice the vanishing of items, but looks complete putting it here
-    void ServiceUnregistered(const QString &service);
+    void StatusNotifierItemUnregistered(const QString &service);
     void StatusNotifierHostRegistered();
 
 private:

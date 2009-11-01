@@ -141,8 +141,8 @@ void DBusSystemTrayProtocol::registerWatcher(const QString& service)
                                                                           QDBusConnection::sessionBus());
         if (m_statusNotifierWatcher->isValid() &&
             m_statusNotifierWatcher->property("ProtocolVersion").toBool() == s_protocolVersion) {
-            connect(m_statusNotifierWatcher, SIGNAL(ServiceRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
-            connect(m_statusNotifierWatcher, SIGNAL(ServiceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
+            connect(m_statusNotifierWatcher, SIGNAL(StatusNotifierItemRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
+            connect(m_statusNotifierWatcher, SIGNAL(StatusNotifierItemUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
 
             m_statusNotifierWatcher->call(QDBus::NoBlock, "RegisterStatusNotifierHost", m_serviceName);
 
@@ -163,8 +163,8 @@ void DBusSystemTrayProtocol::unregisterWatcher(const QString& service)
     if (service == "org.kde.StatusNotifierWatcher") {
         kDebug()<<"org.kde.StatusNotifierWatcher disappeared";
 
-        disconnect(m_statusNotifierWatcher, SIGNAL(ServiceRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
-        disconnect(m_statusNotifierWatcher, SIGNAL(ServiceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
+        disconnect(m_statusNotifierWatcher, SIGNAL(StatusNotifierItemRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
+        disconnect(m_statusNotifierWatcher, SIGNAL(StatusNotifierItemUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
 
         foreach (DBusSystemTrayTask *task, m_tasks) {
             if (task) {

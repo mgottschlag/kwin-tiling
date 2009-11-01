@@ -73,7 +73,7 @@ void StatusNotifierWatcher::RegisterStatusNotifierItem(const QString &service)
                                         QDBusConnection::sessionBus());
         if (trayclient.isValid()) {
             m_registeredServices.append(service);
-            emit ServiceRegistered(service);
+            emit StatusNotifierItemRegistered(service);
         }
     }
 }
@@ -94,7 +94,7 @@ void StatusNotifierWatcher::serviceChange(const QString& name,
     if (newOwner.isEmpty()) {
         if (m_registeredServices.contains(name)) {
             m_registeredServices.removeAll(name);
-            emit ServiceUnregistered(name);
+            emit StatusNotifierItemUnregistered(name);
         }
 
         if (m_statusNotifierHostServices.contains(name)) {
