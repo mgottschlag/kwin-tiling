@@ -154,7 +154,7 @@ void AkonadiEngine::fetchMicroBlogCollectionsDone(KJob* job)
             if (collection.contentMimeTypes().contains("application/x-vnd.kde.microblog")) {
                 kDebug() << "Microblog setting data:" << collection.name() << collection.url() << collection.contentMimeTypes();
                 i++;
-                setData("MicroBlogs", QString("MicroBlog-%1").arg(collection.id()), collection.name());
+                setData("MicroblogCollection", QString("MicroBlog-%1").arg(collection.id()), collection.name());
             }
         }
         kDebug() << i << "MicroBlog collections are in now";
@@ -242,7 +242,6 @@ bool AkonadiEngine::sourceRequestEvent(const QString &name)
         connect( fetch, SIGNAL(result(KJob*)), SLOT(fetchMicroBlogDone(KJob*)) );
         setData(name, DataEngine::Data());
         return true;
-
     }
     // We don't understand the request.
     kDebug() << "Don't know what to do with:" << name;
