@@ -265,6 +265,7 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
 BackgroundDialog::~BackgroundDialog()
 {
     cleanup();
+    delete d;
 }
 
 void BackgroundDialog::cleanup()
