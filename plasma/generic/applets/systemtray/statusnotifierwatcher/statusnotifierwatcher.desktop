@@ -1,7 +1,15 @@
 [Desktop Entry]
 Type=Service
 Name=KDED Status Notifier watcher
+Name[sv]=KDED bevakning av statusunderrättelser
+Name[tr]=KDED Durum Bildirimi İzleyici
+Name[uk]=Переглядач сповіщень про стан KDED
+Name[x-test]=xxKDED Status Notifier watcherxx
 Comment=Keep track of applications that want to use the D-Bus based status notifier protocol.
+Comment[sv]=Håll reda på program som vill använda det D-Bus baserade protokollet för statusunderrättelser.
+Comment[tr]=D-Bus temelli bildirim kullananmak isteyen uygulamaları izle.
+Comment[uk]=Стежте за програмами, які бажають використовувати заснований на D-Bus протокол сповіщення про стан.
+Comment[x-test]=xxKeep track of applications that want to use the D-Bus based status notifier protocol.xx
 
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=statusnotifierwatcher
