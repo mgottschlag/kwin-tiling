@@ -55,6 +55,7 @@ ProxyLayout::~ProxyLayout()
 {
     if(d->widget.data())
         d->widget.clear();
+    delete d;
 }
 
 void ProxyLayout::setGeometry(const QRectF &rect)
