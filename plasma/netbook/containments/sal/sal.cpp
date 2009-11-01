@@ -133,6 +133,11 @@ void SearchLaunch::init()
             m_defaultMatches.append(match);
         }
     }
+
+    //SAL doesn't want to be removed:
+    //FIXME: wise to do it here?
+    a = action("remove");
+    delete a;
 }
 
 void SearchLaunch::toggleImmutability()
@@ -212,8 +217,6 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     }
     m_queryCounter = i;
 }
-
-
 
 void SearchLaunch::launch(Plasma::IconWidget *icon)
 {
@@ -345,6 +348,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
         Qt::Orientation layoutOtherDirection = form == Plasma::Vertical ? \
             Qt::Horizontal : Qt::Vertical;
+
 
         // create our layout!
         if (!layout()) {
