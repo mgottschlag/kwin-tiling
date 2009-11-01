@@ -359,7 +359,7 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
                             this, SLOT(containmentRemoved(QObject *)));
                 }
              }
-             QTimer::singleShot(0, this, SLOT(updateRemoveActionVisibility()));
+             QTimer::singleShot(100, this, SLOT(updateRemoveActionVisibility()));
         }
     }
 
