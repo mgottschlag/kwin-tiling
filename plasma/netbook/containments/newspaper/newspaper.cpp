@@ -132,8 +132,6 @@ void Newspaper::init()
     QObject::connect(lockAction, SIGNAL(triggered(bool)), this, SLOT(toggleImmutability()));
     m_toolBox->addTool(lockAction);
 
-
-
     a = action("remove");
     if (a) {
         a->setText(i18n("Remove page"));
@@ -349,6 +347,20 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::StartupCompletedConstraint) {
         connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
                 this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
+        Plasma::Corona *c = corona();
+        if (c) {
+            connect(c, SIGNAL(containmentAdded(Plasma::Containment *)),
+                    this, SLOT(containmentAdded(Plasma::Containment *)));
+
+            foreach (Plasma::Containment *containment, corona()->containments()) {
+                Newspaper *news = qobject_cast<Newspaper *>(containment);
+                if (news) {
+                    connect(news, SIGNAL(destroyed(QObject *)),
+                            this, SLOT(containmentRemoved(QObject *)));
+                }
+             }
+             QTimer::singleShot(0, this, SLOT(updateRemoveActionVisibility()));
+        }
     }
 
     if (constraints & Plasma::SizeConstraint && m_appletOverlay) {
@@ -620,6 +632,48 @@ void Newspaper::removeColumn(int column)
     }
 
     delete lay;
+}
+
+void Newspaper::updateRemoveActionVisibility()
+{
+    int newspapers = 0;
+
+    foreach (Plasma::Containment *containment, corona()->containments()) {
+        if (qobject_cast<Newspaper *>(containment)) {
+            ++newspapers;
+        }
+    }
+
+    QAction *a = action("remove");
+    if (a) {
+        a->setEnabled(newspapers > 1);
+        a->setVisible(newspapers > 1);
+    }
+}
+
+void Newspaper::containmentAdded(Plasma::Containment *containment)
+{
+    //we now are sure there are at least two pages
+    Newspaper *news = qobject_cast<Newspaper *>(containment);
+    if (news) {
+        connect(news, SIGNAL(destroyed(QObject *)), this, SLOT(containmentRemoved(QObject *)));
+        QAction *a = action("remove");
+        if (a) {
+            a->setEnabled(true);
+            a->setVisible(true);
+        }
+    }
+}
+
+void Newspaper::containmentRemoved(QObject *containment)
+{
+    if (!corona()) {
+        return;
+    }
+
+    if (qobject_cast<Newspaper *>(containment)) {
+        updateRemoveActionVisibility();
+    }
 }
 
 K_EXPORT_PLASMA_APPLET(newspaper, Newspaper)

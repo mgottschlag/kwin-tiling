@@ -74,6 +74,10 @@ private Q_SLOTS:
     void goRight();
     void scrollTimeout();
 
+    void updateRemoveActionVisibility();
+    void containmentAdded(Plasma::Containment *containment);
+    void containmentRemoved(QObject *containment);
+
 private:
     QGraphicsWidget *m_mainWidget;
     Plasma::ScrollWidget *m_scrollWidget;
