@@ -88,7 +88,7 @@ private:
 
     Plasma::FrameSvg *m_background;
     Plasma::RunnerManager *m_runnermg;
-    Plasma::IconWidget *m_homeButton;
+    Plasma::IconWidget *m_backButton;
 
     int m_queryCounter;
     int m_maxColumnWidth;

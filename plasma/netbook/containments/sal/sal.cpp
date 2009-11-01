@@ -52,7 +52,7 @@
 
 SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
-      m_homeButton(0),
+      m_backButton(0),
       m_queryCounter(0),
       m_maxColumnWidth(0),
       m_searchField(0),
@@ -156,6 +156,7 @@ void SearchLaunch::doSearch(const QString &query, const QString &runner)
 
     m_maxColumnWidth = 0;
     m_matches.clear();
+
     m_runnermg->launchQuery(query, runner);
 
     if (m_resultsView && query.isEmpty()) {
@@ -165,9 +166,9 @@ void SearchLaunch::doSearch(const QString &query, const QString &runner)
         }
 
         setQueryMatches(m_defaultMatches);
-        m_homeButton->hide();
-    } else if (m_homeButton) {
-        m_homeButton->show();
+        m_backButton->hide();
+    } else if (m_backButton) {
+        m_backButton->show();
     }
 }
 
@@ -376,12 +377,12 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_appletsLayout->addItem(leftSpacer);
             m_appletsLayout->addItem(rightSpacer);
 
-            m_homeButton = new Plasma::IconWidget(this);
-            m_homeButton->setIcon(KIcon("go-home"));
-            m_homeButton->setText(i18n("Home"));
-            m_homeButton->setOrientation(Qt::Horizontal);
-            m_homeButton->setPreferredSize(m_homeButton->sizeFromIconSize(KIconLoader::SizeSmall));
-            connect(m_homeButton, SIGNAL(activated()), this, SLOT(reset()));
+            m_backButton = new Plasma::IconWidget(this);
+            m_backButton->setIcon(KIcon("go-previous"));
+            m_backButton->setText(i18n("Back"));
+            m_backButton->setOrientation(Qt::Horizontal);
+            m_backButton->setPreferredSize(m_backButton->sizeFromIconSize(KIconLoader::SizeSmall));
+            connect(m_backButton, SIGNAL(activated()), this, SLOT(reset()));
             connect(m_resultsView, SIGNAL(resetRequested()), this, SLOT(reset()));
 
             QGraphicsAnchorLayout *searchLayout = new QGraphicsAnchorLayout();
@@ -398,8 +399,8 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             connect(m_searchTimer, SIGNAL(timeout()), this, SLOT(query()));
             searchLayout->addAnchor(m_searchField, Qt::AnchorHorizontalCenter, searchLayout, Qt::AnchorHorizontalCenter);
             searchLayout->addAnchors(m_searchField, searchLayout, Qt::Vertical);
-            searchLayout->addAnchors(m_homeButton, searchLayout, Qt::Vertical);
-            searchLayout->addAnchor(m_homeButton, Qt::AnchorRight, m_searchField, Qt::AnchorLeft);
+            searchLayout->addAnchors(m_backButton, searchLayout, Qt::Vertical);
+            searchLayout->addAnchor(m_backButton, Qt::AnchorRight, m_searchField, Qt::AnchorLeft);
 
 
             // add our layouts to main vertical layout
