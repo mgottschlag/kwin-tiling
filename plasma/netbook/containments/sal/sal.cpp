@@ -174,6 +174,7 @@ void SearchLaunch::doSearch(const QString &query, const QString &runner)
 
 void SearchLaunch::reset()
 {
+    m_searchField->setText(QString());
     doSearch(QString());
 }
 
