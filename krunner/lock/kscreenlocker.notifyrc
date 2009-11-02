@@ -2,6 +2,7 @@
 IconName=system-lock-screen
 Comment=The KDE Screen Saver
 Comment[bg]=Екранен предпазител за KDE
+Comment[ca]=L'estalvi de pantalla del KDE
 Comment[de]=Der Bildschirmschoner von KDE
 Comment[en_GB]=The KDE Screen Saver
 Comment[eo]=KDE Ekrankurteno
@@ -32,6 +33,7 @@ Comment[zh_TW]=KDE 螢幕保護程式
 
 [Event/savingstarted]
 Name=Screen saver started
+Name[ca]=S'ha iniciat l'estalvi de pantalla
 Name[de]=Der Bildschirmschoner wurde gestartet.
 Name[en_GB]=Screen saver started
 Name[eo]=Ekrankurtenon ŝaltis
@@ -91,6 +93,7 @@ Action=None
 [Event/locked]
 Name=Screen locked
 Name[bg]=Екранът е заключен
+Name[ca]=S'ha bloquejat la pantalla
 Name[de]=Bildschirm gesperrt
 Name[en_GB]=Screen locked
 Name[eo]=Ekranŝloso
@@ -148,6 +151,7 @@ Action=None
 
 [Event/savingstopped]
 Name=Screen saver exited
+Name[ca]=S'ha sortit de l'estalvi de pantalla
 Name[de]=Der Bildschirmschoner wurde verlassen.
 Name[en_GB]=Screen saver exited
 Name[eo]=Ekrankurteno finiĝis
