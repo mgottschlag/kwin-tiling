@@ -86,6 +86,7 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
             this, SLOT(screenChanged(Kephal::Screen*)));
     connect(Kephal::Screens::self(), SIGNAL(screenMoved(Kephal::Screen*,QPoint,QPoint)),
             this, SLOT(screenChanged(Kephal::Screen*)));
+    connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SLOT(resetScreenPos()));
 
     connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(update()));
 
@@ -110,6 +111,17 @@ void KRunnerDialog::screenChanged(Kephal::Screen* screen)
     }
 }
 
+void KRunnerDialog::resetScreenPos()
+{
+    if (!m_center) {
+        m_screenPos.clear();
+        m_oldScreen = -1;
+        if (isVisible()) {
+            positionOnScreen();
+        }
+    }
+}
+
 void KRunnerDialog::positionOnScreen()
 {
     int screen = Kephal::ScreenUtils::primaryScreenId();
@@ -117,9 +129,9 @@ void KRunnerDialog::positionOnScreen()
         screen = Kephal::ScreenUtils::screenId(QCursor::pos());
     }
 
+    QRect r;
     if (m_oldScreen != screen) {
-        kDebug() << "old screen be the new screen";
-
+        //kDebug() << "old screen be the new screen";
         m_screenPos.insert(m_oldScreen, pos());
         m_oldScreen = screen;
 
@@ -129,7 +141,7 @@ void KRunnerDialog::positionOnScreen()
             return;
         }
 
-        QRect r = Kephal::ScreenUtils::screenGeometry(screen);
+        r = Kephal::ScreenUtils::screenGeometry(screen);
         const int w = width();
         const int dx = r.left() + (r.width() / 2) - (w / 2);
         int dy = r.top();
@@ -151,7 +163,11 @@ void KRunnerDialog::positionOnScreen()
     }
 
     if (m_oldScreen != screen) {
-        m_screenPos.insert(screen, pos());
+        if (m_center) {
+            m_screenPos.insert(screen, pos());
+        } else {
+            m_screenPos.insert(screen, QPoint(x(), r.top()));
+        }
     }
 
     m_oldScreen = screen;

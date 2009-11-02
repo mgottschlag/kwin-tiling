@@ -86,6 +86,7 @@ class KRunnerDialog : public KDialog
          */
         void screenRemoved(int screen);
         void screenChanged(Kephal::Screen* screen);
+        void resetScreenPos();
 
     protected:
         Plasma::Svg *m_iconSvg;
