@@ -92,7 +92,7 @@ void Newspaper::init()
 
     m_orientation = (Qt::Orientation)config().readEntry("orientation", (int)Qt::Vertical);
 
-    m_mainLayout = new AnimatedLinearLayout(m_mainWidget);
+    m_mainLayout = new QGraphicsLinearLayout(m_mainWidget);
     addColumn();
     setOrientation(m_orientation);
 

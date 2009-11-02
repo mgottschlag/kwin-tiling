@@ -28,6 +28,7 @@ class AppletOverlay;
 class AppletTitleBar;
 class NetToolBox;
 class AnimatedLinearLayout;
+class QGraphicsLinearLayout;
 
 namespace Plasma
 {
@@ -82,7 +83,7 @@ private:
     QGraphicsWidget *m_mainWidget;
     Plasma::ScrollWidget *m_scrollWidget;
     AnimatedLinearLayout *m_externalLayout;
-    AnimatedLinearLayout *m_mainLayout;
+    QGraphicsLinearLayout *m_mainLayout;
     Qt::Orientation m_orientation;
     Plasma::FrameSvg *m_background;
     AppletOverlay *m_appletOverlay;
