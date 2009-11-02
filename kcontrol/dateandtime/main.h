@@ -24,7 +24,6 @@
 #include <kcmodule.h>
 
 class Dtime;
-class Tzone;
 class QTabWidget;
 class KProcess;
 
@@ -43,7 +42,6 @@ private Q_SLOTS:
 
 private:
   QTabWidget   *tab;
-  Tzone	*tzone;
   Dtime	*dtime;
   KProcess *process;
 };

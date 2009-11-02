@@ -37,7 +37,6 @@
 
 #include "main.moc"
 
-#include "tzone.h"
 #include "dtime.h"
 #include "helper.h"
 
@@ -75,10 +74,6 @@ KclockModule::KclockModule(QWidget *parent, const QVariantList &)
   layout->addWidget(dtime);
   connect(dtime, SIGNAL(timeChanged(bool)), this, SIGNAL(changed(bool)));
 
-  tzone = new Tzone(this);
-  layout->addWidget(tzone);
-  connect(tzone, SIGNAL(zoneChanged(bool)), this, SIGNAL(changed(bool)));
-
   setButtons(Help|Apply);
 
   setNeedsAuthorization(true);
@@ -90,7 +85,6 @@ void KclockModule::save()
 {
   QVariantMap helperargs;
   dtime->save( helperargs );
-  tzone->save( helperargs );
   
   Action *action = authAction();
   action->setArguments(helperargs);
@@ -103,7 +97,6 @@ void KclockModule::save()
           KMessageBox::error(this, i18n("Unable to authenticate/execute the action: %1, %2", reply.errorCode(), reply.errorDescription()));
     } else {
         dtime->processHelperErrors(reply.errorCode());
-        tzone->processHelperErrors(reply.errorCode());
     }
     
   }
@@ -111,7 +104,6 @@ void KclockModule::save()
 void KclockModule::slotDateTimeHelperFinished(int exitCode)
 {
     dtime->processHelperErrors( exitCode );
-    tzone->processHelperErrors( exitCode );
 #if 0
   // Tell the clock applet about the change so that it can update its timezone
   QDBusInterface clock("org.kde.kicker", "/Applets/Clock", "org.kde.kicker.ClockApplet");
@@ -122,5 +114,4 @@ void KclockModule::slotDateTimeHelperFinished(int exitCode)
 void KclockModule::load()
 {
   dtime->load();
-  tzone->load();
 }

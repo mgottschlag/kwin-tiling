@@ -22,6 +22,8 @@
 #ifndef dtime_included
 #define dtime_included
 
+#include "ui_dateandtime.h"
+
 #include <QSpinBox>
 #include <QComboBox>
 #include <QTimer>
@@ -40,7 +42,7 @@ namespace Plasma {
     class Svg;
 }
 
-class Dtime : public QWidget
+class Dtime : public QWidget, public Ui::DateAndTime
 {
   Q_OBJECT
  public:
@@ -63,16 +65,9 @@ Q_SIGNALS:
   void	changeDate(const QDate&);
 
 private:
+  void currentZone();
   void	findNTPutility();
   QString	ntpUtility;
-
-  QWidget*	privateLayoutWidget;
-  QCheckBox	*setDateTimeAuto;
-  QComboBox	*timeServerList;
-
-  KDatePicker	*cal;
-  QComboBox	*month;
-  QSpinBox	*year;
 
   QTimeEdit	*timeEdit;
 

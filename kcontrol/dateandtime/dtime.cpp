@@ -49,6 +49,7 @@
 #include <kdialog.h>
 #include <kconfig.h>
 #include <kcolorscheme.h>
+#include <ksystemtimezone.h>
 
 #include <Plasma/Svg>
 
@@ -59,51 +60,18 @@
 Dtime::Dtime(QWidget * parent)
   : QWidget(parent)
 {
-  // *************************************************************
-  // Start Dialog
-  // *************************************************************
+  setupUi(this);
 
-  // Time Server
-
-  privateLayoutWidget = new QWidget( this );
-  QHBoxLayout *layout1 = new QHBoxLayout( privateLayoutWidget );
-  layout1->setObjectName( "ntplayout" );
-  layout1->setSpacing( 0 );
-  layout1->setMargin( 0 );
-
-  setDateTimeAuto = new QCheckBox( privateLayoutWidget );
-  setDateTimeAuto->setObjectName( "setDateTimeAuto" );
-  setDateTimeAuto->setText(i18n("Set date and time &automatically:"));
   connect(setDateTimeAuto, SIGNAL(toggled(bool)), this, SLOT(serverTimeCheck()));
   connect(setDateTimeAuto, SIGNAL(toggled(bool)), SLOT(configChanged()));
-  layout1->addWidget( setDateTimeAuto );
 
-  timeServerList = new QComboBox( privateLayoutWidget );
-  timeServerList->setObjectName( "timeServerList" );
   timeServerList->setEditable(false);
   connect(timeServerList, SIGNAL(activated(int)), SLOT(configChanged()));
   connect(timeServerList, SIGNAL(editTextChanged(const QString &)), SLOT(configChanged()));
   connect(setDateTimeAuto, SIGNAL(toggled(bool)), timeServerList, SLOT(setEnabled(bool)));
   timeServerList->setEnabled(false);
   timeServerList->setEditable(true);
-  layout1->addWidget( timeServerList );
   findNTPutility();
-
-  // Date box
-  QGroupBox* dateBox = new QGroupBox( this );
-  dateBox->setObjectName( QLatin1String( "dateBox" ) );
-
-  QVBoxLayout *l1 = new QVBoxLayout( dateBox );
-  l1->setMargin( 0 );
-
-  cal = new KDatePicker( dateBox );
-  cal->setMinimumSize(cal->sizeHint());
-  l1->addWidget( cal );
-  cal->setWhatsThis( i18n("Here you can change the system date's day of the month, month and year.") );
-
-  // Time frame
-  QGroupBox* timeBox = new QGroupBox( this );
-  timeBox->setObjectName( QLatin1String( "timeBox" ) );
 
   QVBoxLayout *v2 = new QVBoxLayout( timeBox );
   v2->setMargin( 0 );
@@ -132,23 +100,28 @@ Dtime::Dtime(QWidget * parent)
     " using the up and down buttons to the right or by entering a new value.");
   timeEdit->setWhatsThis( wtstr );
 
-  QGridLayout *top = new QGridLayout( this );
-  top->setMargin( 0 );
-
-  top->addWidget(dateBox, 1,0);
-  top->addWidget(timeBox, 1,1);
-  top->addWidget(privateLayoutWidget, 0, 0, 1, 2 );
-
-  // *************************************************************
-  // End Dialog
-  // *************************************************************
-
   connect( timeEdit, SIGNAL(timeChanged(QTime)), SLOT(set_time()) );
   connect( cal, SIGNAL(dateChanged(QDate)), SLOT(changeDate(QDate)));
 
   connect( &internalTimer, SIGNAL(timeout()), SLOT(timeout()) );
-
+  
   kclock->setEnabled(false);
+  
+  
+  //Timezone
+  connect( tzonelist, SIGNAL(itemSelectionChanged()), SLOT(handleZoneChange()) );
+}
+
+void Dtime::currentZone()
+{
+    QByteArray result(100, '\0');
+
+    time_t now = ::time(0);
+    tzset();
+    strftime(result.data(), result.size(), "%Z", localtime(&now));
+    m_local->setText(i18n("Current local time zone: %1 (%2)",
+                          KTimeZoneWidget::displayName(KSystemTimeZones::local()),
+                          QLatin1String(result)));
 }
 
 void Dtime::serverTimeCheck() {
@@ -177,7 +150,7 @@ void Dtime::findNTPutility(){
     kDebug() << "ntpUtility = " << ntpUtility;
     return;
   }
-  privateLayoutWidget->hide();
+  ///privateLayoutWidget->hide();
   kDebug() << "ntpUtility not found!";
 }
 
@@ -228,6 +201,12 @@ oceania.pool.ntp.org")).split(',', QString::SkipEmptyParts));
   internalTimer.start( 1000 );
 
   timeout();
+  
+  //Timezone
+  currentZone();
+
+  // read the currently set time zone
+  tzonelist->setSelected(KSystemTimeZones::local().name(), true);
 }
 
 void Dtime::save( QVariantMap& helperargs )
@@ -267,6 +246,19 @@ void Dtime::save( QVariantMap& helperargs )
 
   // restart time
   internalTimer.start( 1000 );
+  
+  //
+  QStringList selectedZones(tzonelist->selection());
+
+  if (selectedZones.count() > 0){
+    QString selectedzone(selectedZones[0]);
+    helperargs["tz"] = true;
+    helperargs["tzone"] = selectedzone;
+  } else {
+      helperargs["tzreset"] = true; // // make the helper reset the timezone
+  }
+  
+  currentZone();
 }
 
 void Dtime::processHelperErrors( int code )
@@ -278,6 +270,9 @@ void Dtime::processHelperErrors( int code )
   if( code & ClockHelper::DateError ) {
     KMessageBox::error( this, i18n("Can not set date."));
   }
+  if( code & ClockHelper::TimezoneError)
+    KMessageBox::error( this, i18n("Error setting new time zone."),
+        i18n("Time zone Error"));
 }
 
 void Dtime::timeout()
@@ -341,7 +336,7 @@ void Kclock::setClockSize(const QSize &size)
 }
 
 void Kclock::setTime(const QTime &time)
-{
+{  
     if (time.minute() != this->time.minute() || time.hour() != this->time.hour()) {
         if (m_repaintCache == RepaintNone) {
             m_repaintCache = RepaintHands;
