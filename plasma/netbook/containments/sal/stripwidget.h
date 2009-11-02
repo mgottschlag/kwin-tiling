@@ -26,9 +26,9 @@
 #include <QPair>
 #include <QGraphicsLinearLayout>
 #include <QGraphicsSceneResizeEvent>
+#include <QGraphicsWidget>
 
 
-#include <Plasma/Frame>
 #include <Plasma/RunnerContext>
 
 #include "itemview.h"
@@ -45,7 +45,7 @@ namespace Plasma
 class QGraphicsGridLayout;
 class QTimer;
 
-class StripWidget : public Plasma::Frame
+class StripWidget : public QGraphicsWidget
 {
     Q_OBJECT
 

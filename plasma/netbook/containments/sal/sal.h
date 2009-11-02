@@ -42,6 +42,7 @@ namespace Plasma
     class QueryMatch;
     class ScrollWidget;
     class Frame;
+    class FrameSvg;
 }
 
 class SearchLaunch : public Plasma::Containment

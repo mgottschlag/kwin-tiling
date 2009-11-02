@@ -38,14 +38,12 @@
 #include "itemview.h"
 
 StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
-    : Plasma::Frame(parent),
+    : QGraphicsWidget(parent),
       m_runnermg(rm),
       m_itemView(0),
       m_offset(0),
       m_startupCompleted(false)
 {
-    setFrameShadow(Plasma::Frame::Raised);
-    setEnabledBorders(Plasma::FrameSvg::BottomBorder);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
     m_arrowsLayout = new QGraphicsLinearLayout(this);

@@ -64,6 +64,10 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
     setContainmentType(Containment::CustomContainment);
     setFocusPolicy(Qt::StrongFocus);
     setFlag(QGraphicsItem::ItemIsFocusable, true);
+    m_background = new Plasma::FrameSvg(this);
+    m_background->setImagePath("widgets/frame");
+    m_background->setElementPrefix("raised");
+    m_background->setEnabledBorders(Plasma::FrameSvg::BottomBorder);
 }
 
 SearchLaunch::~SearchLaunch()
@@ -556,11 +560,14 @@ void SearchLaunch::overlayRequestedDrop(QGraphicsSceneDragDropEvent *event)
     dropEvent(event);
 }
 
-void SearchLaunch::paintInterface(QPainter *, const QStyleOptionGraphicsItem *, const QRect &)
+void SearchLaunch::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *, const QRect &)
 {
     if (m_stripUninitialized) {
         m_stripUninitialized = false;
         QTimer::singleShot(100, this, SLOT(restoreStrip()));
+    } else {
+        m_background->resizeFrame(QSizeF(size().width(), m_stripWidget->geometry().bottom()));
+        m_background->paintFrame(painter);
     }
 }
 
