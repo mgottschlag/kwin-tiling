@@ -27,7 +27,6 @@
 class AppletOverlay;
 class AppletTitleBar;
 class NetToolBox;
-class AnimatedLinearLayout;
 class QGraphicsLinearLayout;
 
 namespace Plasma
@@ -57,7 +56,7 @@ protected:
     void saveContents(KConfigGroup &group) const;
     void restore(KConfigGroup &group);
 
-    AnimatedLinearLayout *addColumn();
+    QGraphicsLinearLayout *addColumn();
     void removeColumn(int column);
 
     void setOrientation(Qt::Orientation orientation);
@@ -82,7 +81,7 @@ private Q_SLOTS:
 private:
     QGraphicsWidget *m_mainWidget;
     Plasma::ScrollWidget *m_scrollWidget;
-    AnimatedLinearLayout *m_externalLayout;
+    QGraphicsLinearLayout *m_externalLayout;
     QGraphicsLinearLayout *m_mainLayout;
     Qt::Orientation m_orientation;
     Plasma::FrameSvg *m_background;

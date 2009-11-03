@@ -20,9 +20,9 @@
 #include "appletoverlay.h"
 #include "newspaper.h"
 #include "../common/appletmovespacer.h"
-#include "animatedlinearlayout.h"
 
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsLinearLayout>
 #include <QPainter>
 #include <QTimer>
 
@@ -266,10 +266,10 @@ void AppletOverlay::showSpacer(const QPointF &pos)
 
     QPointF translatedPos = pos - m_newspaper->m_mainWidget->pos() - m_newspaper->m_scrollWidget->pos();
 
-    AnimatedLinearLayout *lay = 0;
+    QGraphicsLinearLayout *lay = 0;
 
     for (int i = 0; i < m_newspaper->m_mainLayout->count(); ++i) {
-        AnimatedLinearLayout *candidateLay = dynamic_cast<AnimatedLinearLayout *>(m_newspaper->m_mainLayout->itemAt(i));
+        QGraphicsLinearLayout *candidateLay = dynamic_cast<QGraphicsLinearLayout *>(m_newspaper->m_mainLayout->itemAt(i));
 
         //normally should never happen
         if (!candidateLay) {
@@ -292,7 +292,7 @@ void AppletOverlay::showSpacer(const QPointF &pos)
 
     //couldn't decide: is the last column empty?
     if (!lay) {
-        AnimatedLinearLayout *candidateLay = dynamic_cast<AnimatedLinearLayout *>(m_newspaper->m_mainLayout->itemAt(m_newspaper->m_mainLayout->count()-1));
+        QGraphicsLinearLayout *candidateLay = dynamic_cast<QGraphicsLinearLayout *>(m_newspaper->m_mainLayout->itemAt(m_newspaper->m_mainLayout->count()-1));
 
         if (candidateLay && candidateLay->count() <= 2) {
             lay = candidateLay;

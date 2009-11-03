@@ -6,9 +6,7 @@ set(sal_SRCS
     ../common/linearappletoverlay.cpp
     ../common/appletmovespacer.cpp
     ../common/nettoolbox.cpp
-    ../common/proxylayout.cpp
     stripwidget.cpp
-    animatedgridlayout.cpp
     resultwidget.cpp
     )
 

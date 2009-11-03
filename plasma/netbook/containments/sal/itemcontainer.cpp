@@ -18,7 +18,6 @@
  */
 
 #include "itemcontainer.h"
-#include "animatedgridlayout.h"
 #include "resultwidget.h"
 
 #include <QGraphicsGridLayout>

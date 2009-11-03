@@ -4,9 +4,7 @@ set(newspaper_SRCS
     appletoverlay.cpp
     ../common/appletmovespacer.cpp
     ../common/nettoolbox.cpp
-    ../common/proxylayout.cpp
     applettitlebar.cpp
-    animatedlinearlayout.cpp
     )
 
 kde4_add_plugin(plasma_containment_newspaper ${newspaper_SRCS})
