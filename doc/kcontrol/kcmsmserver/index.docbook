@@ -13,13 +13,14 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2003-10-13</date>
-<releaseinfo>3.2</releaseinfo>
+<date>2009-11-03</date>
+<releaseinfo>&kde; 4.4</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
 <keyword>KControl</keyword>
 <keyword>session</keyword>
+<keyword>System Settings</keyword>
 </keywordset>
 </articleinfo>
 
@@ -30,12 +31,14 @@
 <title>Use</title>
 
 <para>In this control module you can configure &kde;'s session
-manager.</para>
+manager and logout settings.</para>
 
 <para>Session management refers to &kde;'s ability to save the state
 of applications and windows when you log out of &kde; and restore them
 when you log back in.</para>
 
+<sect3 id="sessions-general">
+<title>General</title>
 <variablelist>
 <varlistentry>
 <term><guilabel>Confirm logout</guilabel></term>
@@ -56,7 +59,26 @@ computer, or restarting the computer.</para>
 </listitem>
 </varlistentry>
 </variablelist>
+</sect3>
 
+<sect3 id="sessions-default-leave-options">
+<title>Default Leave Options</title>
+<para>You can configure what should happen by default when you log out of
+&kde;.  These options are not possible on all operating systems, and some of
+them may not appear unless you are using &kdm; as your login manager.</para>
+
+<para>The options available are self explanatory, if you are in doubt,
+leave the default settings.  They are:</para>
+
+<itemizedlist>
+<listitem><para><guilabel>End current session</guilabel> (this is the default)</para></listitem>
+<listitem><para><guilabel>Turn off computer</guilabel></para></listitem>
+<listitem><para><guilabel>Restart computer</guilabel></para></listitem>
+</itemizedlist>
+</sect3>
+
+<sect3 id="sessions-on-login">
+<title>On Login</title>
 <para>You may choose one of three options on what should happen when
 you log into &kde;:</para>
 
@@ -73,8 +95,10 @@ left it.</para>
 <term><guilabel>Restore manually saved session</guilabel></term>
 <listitem><para>Instead of restoring &kde; to the state it was when
 you logged out last, it will be restored to a specific state that you
-have saved manually. <!-- FIXME: How do you *save* the session in the
-first place? --></para></listitem>
+have saved manually.</para>
+<para>If this option is checked, the start menu offers an additional item 
+<menuchoice><guimenu>Leave</guimenu><guimenuitem>Save Session</guimenuitem></menuchoice>.
+</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Start with an empty session</guilabel></term>
@@ -83,24 +107,11 @@ first place? --></para></listitem>
 </listitem>
 </varlistentry>
 </variablelist>
-
-<para>You can configure what should happen by default when you log out of
-&kde;.  These options are not possible on all operating systems, and some of
-them may not appear unless you are using &kdm; as your login manager.</para>
-
-<para>The options available are self explanatory, if you are in doubt,
-leave the default settings.  They are:</para>
-
-<itemizedlist>
-<listitem><para><guilabel>End current session</guilabel> (this is the default)</para></listitem>
-<listitem><para><guilabel>Turn off computer</guilabel></para></listitem>
-<listitem><para><guilabel>Restart computer</guilabel></para></listitem>
-</itemizedlist>
-
 <para>Finally, you can enter a colon (<literal>:</literal>) or comma (<literal>,</literal>)
 separated list of applications that should not be saved in sessions,
 and therefore will not be started when restoring a session.  For example
 <userinput>xterm:konsole</userinput> or <userinput>xterm,konsole</userinput>.</para>
+</sect3>
 
 </sect2>
 
