@@ -1,7 +1,9 @@
 [Desktop Entry]
 Name=Terminate Applications
 Name[en_GB]=Terminate Applications
+Name[et]=Rakenduste töö lõpetamine
 Name[gl]=Terminar programas
+Name[nl]=Toepassingen afbreken
 Name[pt]=Terminar as Aplicações
 Name[pt_BR]=Terminar aplicativos
 Name[sv]=Avsluta program
@@ -10,8 +12,10 @@ Name[uk]=Переривання програм
 Name[x-test]=xxTerminate Applicationsxx
 Comment=Stop applications that are currently running
 Comment[en_GB]=Stop applications that are currently running
+Comment[et]=Töötavate rakenduste töö lõpetamine
 Comment[gl]=Detén programas que están a executarse
 Comment[hr]=Zaustavi aplikacije koje su trenutno pokrenute
+Comment[nl]=Breek toepassingen af die nu draaien
 Comment[pt]=Parar as aplicações actualmente em execução
 Comment[pt_BR]=Parar os aplicativos atualmente em execução
 Comment[sv]=Stoppa program som för närvarande kör
