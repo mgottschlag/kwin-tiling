@@ -22,12 +22,12 @@
 #ifndef PROXYLAYOUT_H
 #define PROXYLAYOUT_H
 
-#include <QGraphicsLayout>
+#include <QGraphicsLinearLayout>
 #include <QObject>
 
 class ProxyLayoutPrivate;
 
-class ProxyLayout :public QGraphicsLayoutItem
+class ProxyLayout : public QGraphicsLinearLayout
 {
 public:
     ProxyLayout(QGraphicsWidget *widget, QGraphicsLayoutItem *parent = 0);
@@ -35,7 +35,6 @@ public:
 
     QGraphicsLayoutItem *widget();
     void setGeometry(const QRectF &rect);
-    QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint=QSizeF()) const;
 
 private:
     ProxyLayoutPrivate  * const d;

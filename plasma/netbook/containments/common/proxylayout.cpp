@@ -25,6 +25,7 @@
 #include <QGraphicsWidget>
 
 #include <QWeakPointer>
+#include <QApplication>
 
 #include <KDebug>
 
@@ -36,7 +37,7 @@ public:
 };
 
 ProxyLayout::ProxyLayout(QGraphicsWidget *widget, QGraphicsLayoutItem *parent)
-    : QGraphicsLayoutItem(parent, false), d(new ProxyLayoutPrivate)
+    : QGraphicsLinearLayout(parent), d(new ProxyLayoutPrivate)
 {
 
     setOwnedByLayout(true);
@@ -49,6 +50,7 @@ ProxyLayout::ProxyLayout(QGraphicsWidget *widget, QGraphicsLayoutItem *parent)
     animation->setDuration(250);
 
     d->animation = animation;
+    addItem(widget);
 }
 
 ProxyLayout::~ProxyLayout()
@@ -78,20 +80,6 @@ void ProxyLayout::setGeometry(const QRectF &rect)
 
     animation->setEndValue(rect);
     animation->start();
-}
-
-QSizeF ProxyLayout::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
-{
-    Q_UNUSED(which);
-    Q_UNUSED(constraint);
-
-    qreal left, top, right, bottom;
-    getContentsMargins(&left, &top, &right, &bottom);
-
-    QGraphicsWidget *widget = d->widget.data();
-    QSizeF currentWidgetSize = widget->effectiveSizeHint(which, constraint);
-
-    return QSizeF( left + right + currentWidgetSize.width(), right + bottom + currentWidgetSize.height());
 }
 
 QGraphicsLayoutItem *ProxyLayout::widget()
