@@ -23,7 +23,8 @@
 #include <KDebug>
 
 Color::Color(QObject *parent, const QVariantList &args)
-    : Plasma::Wallpaper(parent, args), m_color(Qt::gray)
+    : Plasma::Wallpaper(parent, args),
+      m_color(Qt::gray)
 {
 }
 
@@ -36,6 +37,7 @@ void Color::paint(QPainter *painter, const QRectF& exposedRect)
 void Color::init(const KConfigGroup &config)
 {
     m_color = config.readEntry("wallpapercolor", QColor(Qt::gray));
+    emit update(boundingRect());
 }
 
 QWidget* Color::createConfigurationInterface(QWidget* parent)
