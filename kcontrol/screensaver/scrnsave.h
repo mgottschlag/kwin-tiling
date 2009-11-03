@@ -22,6 +22,7 @@
 #include "testwin.h"
 #include "advanceddialog.h"
 #include "saverlist.h"
+#include "ui_screensaver.h"
 
 class QTimer;
 class QCheckBox;
@@ -34,7 +35,7 @@ class KIntSpinBox;
 class ScreenPreviewWidget;
 
 //===========================================================================
-class KScreenSaver : public KCModule
+class KScreenSaver : public KCModule, private Ui::ScreenSaver
 {
     Q_OBJECT
 public:
@@ -82,24 +83,10 @@ protected:
     K3Process    *mSetupProc;
     K3Process    *mPreviewProc;
     KSSMonitor  *mMonitor;
-    QPushButton *mSetupBt;
-    QPushButton *mTestBt;
-    QPushButton *mPlasmaSetup;
-    Q3ListView   *mSaverListView;
-    KIntSpinBox	*mWaitEdit;
-    KIntSpinBox    *mWaitLockEdit;
-    QCheckBox   *mLockCheckBox;
-    QCheckBox   *mStarsCheckBox;
-    QCheckBox   *mEnabledCheckBox;
-    QCheckBox   *mPlasmaCheckBox;
     ScreenPreviewWidget *mMonitorPreview;
-    QLabel      *mActivateLbl;
-    QLabel      *mLockLbl;
     KService::List mSaverServices;
     SaverList   mSaverList;
     QTimer      *mLoadTimer;
-    QGroupBox   *mSaverGroup;
-    QGroupBox   *mSettingsGroup;
 
     int         mSelected;
     int         mPrevSelected;

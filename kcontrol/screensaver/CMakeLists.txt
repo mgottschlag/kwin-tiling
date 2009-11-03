@@ -21,7 +21,7 @@ QT4_ADD_DBUS_INTERFACE( kcm_screensaver_PART_SRCS ${kscreensaver_xml} kscreensav
 
 
 
-kde4_add_ui_files(kcm_screensaver_PART_SRCS advanceddialogimpl.ui )
+kde4_add_ui_files(kcm_screensaver_PART_SRCS screensaver.ui advanceddialogimpl.ui )
 
 kde4_add_plugin(kcm_screensaver ${kcm_screensaver_PART_SRCS})
 

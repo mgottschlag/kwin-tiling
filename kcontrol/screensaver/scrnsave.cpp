@@ -108,7 +108,8 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     setButtons( KCModule::Help |  KCModule::Apply );
 
 
-
+    setupUi(this);
+    
     readSettings();
 
     mSetupProc = new K3Process;
@@ -119,170 +120,64 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     connect(mPreviewProc, SIGNAL(processExited(K3Process *)),
             this, SLOT(slotPreviewExited(K3Process *)));
 
-    QBoxLayout *topLayout = new QHBoxLayout(this);
-    topLayout->setMargin(0);
-
-    // left column
-    QVBoxLayout *leftColumnLayout = new QVBoxLayout( );
-    topLayout->addLayout( leftColumnLayout );
-
-    mSaverGroup = new QGroupBox(i18n("Screen Saver"), this );
-    QVBoxLayout *groupLayout = new QVBoxLayout( mSaverGroup );
-    leftColumnLayout->addWidget(mSaverGroup);
-    leftColumnLayout->setStretchFactor( mSaverGroup, 10 );
-
-    mSaverListView = new Q3ListView( mSaverGroup );
-    mSaverListView->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     mSaverListView->addColumn("");
     mSaverListView->header()->hide();
     mSelected = -1;
-    groupLayout->addWidget( mSaverListView, 10 );
     connect( mSaverListView, SIGNAL(doubleClicked ( Q3ListViewItem *)), this, SLOT( slotSetup()));
-    mSaverListView->setWhatsThis( i18n("Select the screen saver to use.") );
-
-    QBoxLayout* hlay = new QHBoxLayout();
-    groupLayout->addLayout(hlay);
-    mSetupBt = new QPushButton( i18n("&Setup..."), mSaverGroup );
+    
     connect( mSetupBt, SIGNAL( clicked() ), SLOT( slotSetup() ) );
-    mSetupBt->setEnabled(false);
-    hlay->addWidget( mSetupBt );
-    mSetupBt->setWhatsThis( i18n("Configure the screen saver's options, if any.") );
-
-    mTestBt = new QPushButton( i18n("&Test"), mSaverGroup );
     connect( mTestBt, SIGNAL( clicked() ), SLOT( slotTest() ) );
-    mTestBt->setEnabled(false);
-    hlay->addWidget( mTestBt );
-    mTestBt->setWhatsThis( i18n("Show a full screen preview of the screen saver.") );
 
-    mSettingsGroup = new QGroupBox( i18n("Settings"), this );
-    groupLayout = new QVBoxLayout( mSettingsGroup );
-    leftColumnLayout->addWidget( mSettingsGroup );
-
-    mEnabledCheckBox = new QCheckBox(i18n(
-        "Start a&utomatically"), mSettingsGroup);
     mEnabledCheckBox->setChecked(mEnabled);
-    mEnabledCheckBox->setWhatsThis( i18n(
-        "Automatically start the screen saver after a period of inactivity.") );
     connect(mEnabledCheckBox, SIGNAL(toggled(bool)),
             this, SLOT(slotEnable(bool)));
-    groupLayout->addWidget(mEnabledCheckBox);
 
-    QBoxLayout *hbox = new QHBoxLayout();
-    groupLayout->addLayout(hbox);
-    hbox->addSpacing(30);
-    mActivateLbl = new QLabel(i18n("After:"), mSettingsGroup);
+
     mActivateLbl->setEnabled(mEnabled);
-    hbox->addWidget(mActivateLbl);
-    mWaitEdit = new KIntSpinBox(mSettingsGroup);
-    //mWaitEdit->setSteps(1, 10);
+
     mWaitEdit->setRange(1, INT_MAX);
     mWaitEdit->setSuffix(ki18np(" minute", " minutes"));
     mWaitEdit->setValue(mTimeout/60);
     mWaitEdit->setEnabled(mEnabled);
     connect(mWaitEdit, SIGNAL(valueChanged(int)),
             this, SLOT(slotTimeoutChanged(int)));
-    mActivateLbl->setBuddy(mWaitEdit);
-    hbox->addWidget(mWaitEdit);
-    hbox->addStretch(1);
-    QString wtstr = i18n(
-        "The period of inactivity "
-        "after which the screen saver should start.");
-    mActivateLbl->setWhatsThis( wtstr );
-    mWaitEdit->setWhatsThis( wtstr );
 
-    mLockCheckBox = new QCheckBox( i18n(
-        "&Require password to stop"), mSettingsGroup );
     mLockCheckBox->setEnabled( mEnabled );
     mLockCheckBox->setChecked( mLock );
     connect( mLockCheckBox, SIGNAL( toggled( bool ) ),
              this, SLOT( slotLock( bool ) ) );
-    groupLayout->addWidget(mLockCheckBox);
-    mLockCheckBox->setWhatsThis( i18n(
-        "Prevent potential unauthorized use by requiring a password"
-        " to stop the screen saver.") );
-    hbox = new QHBoxLayout();
-    groupLayout->addLayout(hbox);
-    hbox->addSpacing(30);
-    mLockLbl = new QLabel(i18n("After:"), mSettingsGroup);
+
+
     mLockLbl->setEnabled(mEnabled && mLock);
-    mLockLbl->setWhatsThis( i18n(
-        "The amount of time, after the screen saver has started, to ask for the unlock password.") );
-    hbox->addWidget(mLockLbl);
-    mWaitLockEdit = new KIntSpinBox(mSettingsGroup);
-    //mWaitLockEdit->setSteps(1, 10);
+
     mWaitLockEdit->setRange(1, 300);
     mWaitLockEdit->setSuffix(ki18np(" second", " seconds"));
     mWaitLockEdit->setValue(mLockTimeout/1000);
     mWaitLockEdit->setEnabled(mEnabled && mLock);
-    if ( mWaitLockEdit->sizeHint().width() <
-         mWaitEdit->sizeHint().width() ) {
-        mWaitLockEdit->setFixedWidth( mWaitEdit->sizeHint().width() );
-        mWaitEdit->setFixedWidth( mWaitEdit->sizeHint().width() );
-    }
-    else {
-        mWaitEdit->setFixedWidth( mWaitLockEdit->sizeHint().width() );
-        mWaitLockEdit->setFixedWidth( mWaitLockEdit->sizeHint().width() );
-    }
     connect(mWaitLockEdit, SIGNAL(valueChanged(int)),
             this, SLOT(slotLockTimeoutChanged(int)));
-    mLockLbl->setBuddy(mWaitLockEdit);
-    hbox->addWidget(mWaitLockEdit);
-    hbox->addStretch(1);
-    QString wltstr = i18n(
-        "Choose the period "
-        "after which the display will be locked. ");
-    mLockLbl->setWhatsThis( wltstr );
-    mWaitLockEdit->setWhatsThis( wltstr );
 
-    mPlasmaCheckBox = new QCheckBox(i18n("Allow widgets on screen saver"), mSaverGroup);
     mPlasmaCheckBox->setChecked(mPlasmaEnabled);
-    mPlasmaCheckBox->setWhatsThis(i18n("Add widgets to your screensaver"));
     connect(mPlasmaCheckBox, SIGNAL(toggled(bool)), this, SLOT(slotEnablePlasma(bool)));
-    groupLayout->addWidget(mPlasmaCheckBox);
 
-    hbox = new QHBoxLayout();
-    groupLayout->addLayout(hbox);
-    hbox->addSpacing(30);
-    mPlasmaSetup = new QPushButton(i18n("Configure Widgets..."), mSaverGroup);
     mPlasmaSetup->setEnabled(mPlasmaEnabled);
     connect(mPlasmaSetup, SIGNAL(clicked()), this, SLOT(slotPlasmaSetup()));
-    hbox->addWidget(mPlasmaSetup);
-    hbox->addItem(new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
-
-    // right column
-    QBoxLayout* rightColumnLayout = new QVBoxLayout();
-    topLayout->addLayout( rightColumnLayout );
 
     mMonitorPreview = new ScreenPreviewWidget(this);
     mMonitorPreview->setFixedSize(200,220);
     QDesktopWidget *desktop = QApplication::desktop();
     QRect avail = desktop->availableGeometry(desktop->screenNumber(this));
     mMonitorPreview->setRatio((qreal)avail.width()/(qreal)avail.height());
-
-    rightColumnLayout->addWidget(mMonitorPreview, 0);
     mMonitorPreview->setWhatsThis( i18n("A preview of the selected screen saver.") );
-
-    QBoxLayout* advancedLayout = new QHBoxLayout();
-    rightColumnLayout->addLayout( advancedLayout );
-    advancedLayout->setSpacing( 3 );
-    advancedLayout->addWidget( new QWidget( this ) );
-    QPushButton* advancedBt = new QPushButton(
-        i18n( "Advanced &Options" ), this );
-    advancedBt->setObjectName("advancedBtn");
-    advancedBt->setSizePolicy( QSizePolicy(
-        QSizePolicy::Fixed, QSizePolicy::Fixed) );
+    mPreviewAreaWidget->layout()->addWidget(mMonitorPreview);
+    
     connect( advancedBt, SIGNAL( clicked() ),
              this, SLOT( slotAdvanced() ) );
-    advancedLayout->addWidget( advancedBt );
-    advancedLayout->addWidget( new QWidget( this ) );
-
-    rightColumnLayout->addStretch();
 
     if (mImmutable)
     {
        setButtons(buttons() & ~Default);
        mSettingsGroup->setEnabled(false);
-       mSaverGroup->setEnabled(false);
     }
 
     // finding the savers can take some time, so defer loading until
