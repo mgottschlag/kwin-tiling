@@ -19,6 +19,7 @@
 
 #include "itemcontainer.h"
 #include "animatedgridlayout.h"
+#include "resultwidget.h"
 
 #include <QGraphicsGridLayout>
 #include <QTimer>
@@ -39,7 +40,7 @@ ItemContainer::ItemContainer(QGraphicsWidget *parent)
       m_maxColumnWidth(0),
       m_maxRowHeight(1)
 {
-    m_layout = new AnimatedGridLayout(this);
+    m_layout = new QGraphicsGridLayout(this);
 
     setFocusPolicy(Qt::StrongFocus);
     setAcceptHoverEvents(true);
@@ -152,7 +153,7 @@ Plasma::IconWidget *ItemContainer::createItem()
         item = m_usedItems.front();
         m_usedItems.pop_front();
     } else {
-        item = new Plasma::IconWidget(this);
+        item = new ResultWidget(this);
     }
     return item;
 }

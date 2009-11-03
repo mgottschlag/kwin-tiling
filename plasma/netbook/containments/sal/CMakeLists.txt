@@ -9,6 +9,7 @@ set(sal_SRCS
     ../common/proxylayout.cpp
     stripwidget.cpp
     animatedgridlayout.cpp
+    resultwidget.cpp
     )
 
 kde4_add_plugin(plasma_containment_sal ${sal_SRCS})

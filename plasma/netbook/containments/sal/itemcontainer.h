@@ -26,7 +26,7 @@
 
 #include <QWeakPointer>
 
-class AnimatedGridLayout;
+class QGraphicsGridLayout;
 
 namespace Plasma
 {
@@ -75,7 +75,7 @@ Q_SIGNALS:
     void resetRequested();
 
 private:
-    AnimatedGridLayout *m_layout;
+    QGraphicsGridLayout *m_layout;
     QWeakPointer<Plasma::IconWidget> m_currentIcon;
     Plasma::ItemBackground *m_hoverIndicator;
     QTimer *m_relayoutTimer;
