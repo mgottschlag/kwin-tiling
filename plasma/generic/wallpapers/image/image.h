@@ -73,6 +73,9 @@ class Image : public Plasma::Wallpaper
         void setSingleImage();
 
     private:
+        static bool s_startupResumed;
+        static bool s_startupSuspended;
+
         int m_delay;
         Plasma::Wallpaper::ResizeMethod m_resizeMethod;
         QStringList m_dirs;
@@ -97,7 +100,6 @@ class Image : public Plasma::Wallpaper
         QString m_img;
         QDateTime m_previousModified;
         bool m_randomize;
-        bool m_startupResumed;
 
         QAction* nextWallpaperAction;
 };
