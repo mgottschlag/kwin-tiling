@@ -291,14 +291,19 @@ void PlasmaApp::setupDesktop()
 
 void PlasmaApp::quit()
 {
-    KGlobal::deref();
+    if (m_corona) {
+        cleanup();
+        KGlobal::deref();
+    }
 }
 
 void PlasmaApp::cleanup()
 {
-    if (m_corona) {
-        m_corona->saveLayout();
+    if (!m_corona) {
+        return;
     }
+
+    m_corona->saveLayout();
 
     // save the mapping of Views to Containments at the moment
     // of application exit so we can restore that when we start again.
@@ -327,6 +332,7 @@ void PlasmaApp::cleanup()
 
     delete m_console.data();
     delete m_corona;
+    m_corona = 0;
 
     //TODO: This manual sync() should not be necessary. Remove it when
     // KConfig was fixed
