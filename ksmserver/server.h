@@ -122,7 +122,6 @@ private Q_SLOTS:
     void protectionTimeout();
     void timeoutQuit();
     void timeoutWMQuit();
-    void kcmPhase1Timeout();
     void kcmPhase2Timeout();
     void pendingShutdownTimeout();
 
