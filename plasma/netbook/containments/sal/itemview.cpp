@@ -93,6 +93,11 @@ int ItemView::iconSize() const
     return m_itemContainer->iconSize();
 }
 
+Plasma::IconWidget *ItemView::createItem()
+{
+    return m_itemContainer->createItem();
+}
+
 void ItemView::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     QRectF rect = boundingRect();

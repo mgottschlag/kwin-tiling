@@ -130,10 +130,31 @@ void ItemContainer::clear()
     for (int i = 0; i < m_layout->count(); ++i) {
         m_layout->removeAt(0);
     }
+    int i = 0;
     foreach (Plasma::IconWidget *icon, m_items) {
-        icon->deleteLater();
+        //recycle until 40 icons
+        if (i < 40) {
+            icon->hide();
+            icon->removeIconAction(0);
+            m_usedItems.append(icon);
+            ++i;
+        } else {
+            icon->deleteLater();
+        }
     }
     m_items.clear();
+}
+
+Plasma::IconWidget *ItemContainer::createItem()
+{
+    Plasma::IconWidget *item;
+    if (!m_usedItems.isEmpty()) {
+        item = m_usedItems.front();
+        m_usedItems.pop_front();
+    } else {
+        item = new Plasma::IconWidget(this);
+    }
+    return item;
 }
 
 int ItemContainer::count() const

@@ -98,7 +98,7 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     Q_UNUSED(idx)
     // create new IconWidget for favourite strip
 
-    Plasma::IconWidget *fav = new Plasma::IconWidget(this);
+    Plasma::IconWidget *fav = m_itemView->createItem();
     fav->hide();
     fav->setTextBackgroundColor(QColor());
     fav->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);

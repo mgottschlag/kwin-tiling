@@ -55,6 +55,8 @@ public:
     void setIconSize(int size);
     int iconSize() const;
 
+    Plasma::IconWidget *createItem();
+
 protected:
     void focusInEvent(QFocusEvent *event);
     void focusOutEvent(QFocusEvent *event);
@@ -79,6 +81,7 @@ private:
     QTimer *m_relayoutTimer;
     QTimer *m_setCurrentTimer;
     QMultiMap<qreal, Plasma::IconWidget*> m_items;
+    QList<Plasma::IconWidget*> m_usedItems;
     Qt::Orientation m_orientation;
     int m_currentIconIndexX;
     int m_currentIconIndexY;
