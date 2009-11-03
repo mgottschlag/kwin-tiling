@@ -41,6 +41,8 @@ Image::Image(QObject *parent, const QVariantList &args)
       m_randomize(true),
       m_startupResumed(false)
 {
+    suspendStartup(true); // during KDE startup, make ksmserver until the wallpaper is ready
+
     connect(this, SIGNAL(renderCompleted(QImage)), this, SLOT(updateBackground(QImage)));
     connect(this, SIGNAL(urlDropped(KUrl)), this, SLOT(setWallpaper(KUrl)));
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(nextSlide()));
@@ -54,8 +56,6 @@ Image::~Image()
 
 void Image::init(const KConfigGroup &config)
 {
-    suspendStartup(true); // during KDE startup, make ksmserver until the wallpaper is ready
-  
     m_timer.stop();
     m_mode = renderingMode().name();
     calculateGeometry();
@@ -617,14 +617,14 @@ void Image::updateBackground(const QImage &img)
     m_oldFadedPixmap = m_oldPixmap;
     m_pixmap = QPixmap::fromImage(img);
 
-    if (!img.isNull()){
-        suspendStartup(false);
-    }
-
     if (!m_oldPixmap.isNull()) {
         Plasma::Animator::self()->customAnimation(254, 1000, Plasma::Animator::EaseInCurve, this, "updateFadedImage");
-    } else {        
+    } else {
         emit update(boundingRect());
+    }
+
+    if (!img.isNull()) {
+        suspendStartup(false);
     }
 }
 
