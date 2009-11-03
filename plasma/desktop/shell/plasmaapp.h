@@ -142,9 +142,9 @@ private Q_SLOTS:
     void updateActions(Plasma::ImmutabilityType immutability);
     void checkVirtualDesktopViews(int numDesktops);
     void setWmClass(WId id);
-    void slotRemotePlasmoidAdded(Plasma::PackageMetadata metadata);
-    void slotAddRemotePlasmoid(const QString &location);
-    void slotPlasmoidAccessFinished(Plasma::AccessAppletJob *job);
+    void remotePlasmoidAdded(Plasma::PackageMetadata metadata);
+    void addRemotePlasmoid(const QString &location);
+    void plasmoidAccessFinished(Plasma::AccessAppletJob *job);
     void wallpaperCheckedIn();
     void wallpaperCheckInTimeout();
 

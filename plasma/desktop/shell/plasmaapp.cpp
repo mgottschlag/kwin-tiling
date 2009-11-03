@@ -231,13 +231,13 @@ PlasmaApp::PlasmaApp()
     KGlobal::ref();
 
     connect(m_mapper, SIGNAL(mapped(const QString &)),
-            this, SLOT(slotAddRemotePlasmoid(const QString &)));
+            this, SLOT(addRemotePlasmoid(const QString &)));
     connect(Plasma::AccessManager::self(),
             SIGNAL(finished(Plasma::AccessAppletJob*)),
-            this, SLOT(slotPlasmoidAccessFinished(Plasma::AccessAppletJob*)));
+            this, SLOT(plasmoidAccessFinished(Plasma::AccessAppletJob*)));
     connect(Plasma::AccessManager::self(),
             SIGNAL(remoteAppletAnnounced(Plasma::PackageMetadata)),
-            this, SLOT(slotRemotePlasmoidAdded(Plasma::PackageMetadata)));
+            this, SLOT(remotePlasmoidAdded(Plasma::PackageMetadata)));
 
     Plasma::AuthorizationManager::self()->setAuthorizationPolicy(
         Plasma::AuthorizationManager::PinPairing);
@@ -1079,7 +1079,7 @@ void PlasmaApp::updateActions(Plasma::ImmutabilityType immutability)
     m_corona->enableAction("add sibling containment", enable);
 }
 
-void PlasmaApp::slotRemotePlasmoidAdded(Plasma::PackageMetadata metadata)
+void PlasmaApp::remotePlasmoidAdded(Plasma::PackageMetadata metadata)
 {
     //kDebug();
     if (m_desktops.isEmpty()) {
@@ -1098,12 +1098,12 @@ void PlasmaApp::slotRemotePlasmoidAdded(Plasma::PackageMetadata metadata)
     notification->sendEvent();
 }
 
-void PlasmaApp::slotAddRemotePlasmoid(const QString &location)
+void PlasmaApp::addRemotePlasmoid(const QString &location)
 {
     Plasma::AccessManager::self()->accessRemoteApplet(KUrl(location));
 }
 
-void PlasmaApp::slotPlasmoidAccessFinished(Plasma::AccessAppletJob *job)
+void PlasmaApp::plasmoidAccessFinished(Plasma::AccessAppletJob *job)
 {
     if (m_desktops.isEmpty()) {
         return;
