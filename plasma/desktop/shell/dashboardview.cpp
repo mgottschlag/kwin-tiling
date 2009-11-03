@@ -52,6 +52,7 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
     {
+        Q_UNUSED(widget)
         painter->fillRect(option->rect, QColor(0, 0, 0, 160));
     }
 };
