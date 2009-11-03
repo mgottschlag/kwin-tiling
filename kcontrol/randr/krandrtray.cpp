@@ -43,7 +43,7 @@
 #include <QVariant>
 
 KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)
-	: KStatusNotifierItem(parent),
+	: KNotificationItem(parent),
 	  m_help(new KHelpMenu(parent, KGlobal::mainComponent().aboutData(), false, actionCollection())),
 	  m_popupUp(false),
 	  m_display(dpy)
