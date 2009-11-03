@@ -73,6 +73,10 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
             this, SLOT(cleanupColumns()));
 
     connect(this, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
+
+    m_updateSizeTimer = new QTimer(this);
+    m_updateSizeTimer->setSingleShot(false);
+    connect(m_updateSizeTimer, SIGNAL(timeout()), this, SLOT(updateSize()));
 }
 
 Newspaper::~Newspaper()
@@ -227,7 +231,7 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
         lay->insertItem(qMin(insertIndex, lay->count()-1), applet);
     }
 
-    connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
+    connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(appletSizeHintChanged()));
     updateSize();
     createAppletTitle(applet);
 }
@@ -327,6 +331,13 @@ void Newspaper::scrollTimeout()
 Qt::Orientation Newspaper::orientation() const
 {
     return m_orientation;
+}
+
+void Newspaper::appletSizeHintChanged()
+{
+    if (m_updateSizeTimer) {
+        m_updateSizeTimer->start(200);
+    }
 }
 
 void Newspaper::updateSize()
@@ -533,7 +544,7 @@ void Newspaper::restore(KConfigGroup &group)
             unorderedApplets.append(applet);
         }
 
-        connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
+        connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(appletSizeHintChanged()));
     }
 
     //if the required columns does not exist, create them
