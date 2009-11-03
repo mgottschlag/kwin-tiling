@@ -5,3 +5,7 @@ r1012444 (4.3)
 pending:
 r861620
 Key_Display
+trying to rotate a screen fails, the UI re-reads the correct values, but the screen remains off
+    and there is no message about this
+reverting doesn't work, it works in trunk
+the startkde code is not up-to-date (and probably should be moved out of it)

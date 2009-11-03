@@ -1,4 +1,8 @@
 
+if( XRANDR_1_2_FOUND )
+    macro_optional_add_subdirectory(module)
+endif( XRANDR_1_2_FOUND )
+
 configure_file (config-randr.h.cmake
                 ${CMAKE_CURRENT_BINARY_DIR}/config-randr.h )
 

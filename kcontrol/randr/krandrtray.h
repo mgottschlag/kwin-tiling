@@ -21,7 +21,7 @@
 
 #include <QMouseEvent>
 
-#include <KStatusNotifierItem>
+#include <KNotificationItem>
 
 #include "randrdisplay.h"
 
@@ -30,7 +30,7 @@ class QAction;
 class QActionGroup;
 class KMenu;
 
-class KRandRSystemTray : public KStatusNotifierItem
+class KRandRSystemTray : public KNotificationItem
 {
 	Q_OBJECT
 
