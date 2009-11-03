@@ -87,6 +87,10 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     m_scrollTimer = new QTimer(this);
     m_scrollTimer->setSingleShot(false);
     connect(m_scrollTimer, SIGNAL(timeout()), this, SLOT(scrollTimeout()));
+
+    m_setCurrentTimer = new QTimer(this);
+    m_setCurrentTimer->setSingleShot(false);
+    connect(m_setCurrentTimer, SIGNAL(timeout()), this, SLOT(highlightCurrentItem()));
 }
 
 StripWidget::~StripWidget()
@@ -119,7 +123,13 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
 
     if (m_startupCompleted) {
         m_itemView->setCurrentItem(fav);
+        m_setCurrentTimer->start(300);
     }
+}
+
+void StripWidget::highlightCurrentItem()
+{
+    m_itemView->setCurrentItem(m_itemView->currentItem());
 }
 
 void StripWidget::add(Plasma::QueryMatch match, const QString &query)

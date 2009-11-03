@@ -63,7 +63,7 @@ protected:
     void createIcon(Plasma::QueryMatch *match, int idx);
     void focusInEvent(QFocusEvent *event);
 
-private slots:
+private Q_SLOTS:
     void removeFavourite();
     void launchFavourite();
     void launchFavourite(Plasma::IconWidget *icon);
@@ -71,6 +71,8 @@ private slots:
     void goLeft();
     void goRight();
     void scrollTimeout();
+    //FIXME: this needs to go
+    void highlightCurrentItem();
 
 private:
     Plasma::ToolButton *m_leftArrow;
@@ -84,6 +86,8 @@ private:
     ItemView *m_itemView;
     Plasma::RunnerContext *m_context;
     QTimer *m_scrollTimer;
+    //FIXME: connecting to an animationcomplete signal from the icon?
+    QTimer *m_setCurrentTimer;
     int m_shownIcons;
     int m_offset;
     bool m_startupCompleted;
