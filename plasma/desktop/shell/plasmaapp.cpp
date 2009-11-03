@@ -62,8 +62,9 @@
 #include <Plasma/AccessManager>
 #include <Plasma/AuthorizationManager>
 #include <Plasma/Containment>
-#include <Plasma/Theme>
 #include <Plasma/Dialog>
+#include <Plasma/Theme>
+#include <Plasma/Wallpaper>
 
 #include <kephal/screens.h>
 
@@ -99,8 +100,10 @@ PlasmaApp::PlasmaApp()
       m_controllerDialog(0),
       m_zoomLevel(Plasma::DesktopZoom),
       m_panelHidden(0),
-      m_mapper(new QSignalMapper(this))
+      m_mapper(new QSignalMapper(this)),
+      m_startupSuspendWaitCount(0)
 {
+    PlasmaApp::suspendStartup(true);
     KGlobal::locale()->insertCatalog("libplasma");
     KGlobal::locale()->insertCatalog("plasmagenericshell");
     KCrash::setFlags(KCrash::AutoRestart);
@@ -152,7 +155,6 @@ PlasmaApp::PlasmaApp()
 
     new PlasmaAppAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/App", this);
-    notifyStartup(false);
 
     // Enlarge application pixmap cache
     // Calculate the size required to hold background pixmaps for all screens.
@@ -284,8 +286,6 @@ void PlasmaApp::setupDesktop()
     palette.setColor(desktop()->backgroundRole(), Qt::black);
     desktop()->setPalette(palette);
 
-    // and now, let everyone know we're ready!
-    notifyStartup(true);
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
 }
 
@@ -615,30 +615,40 @@ Plasma::Corona* PlasmaApp::corona()
         c->initializeLayout();
         c->processUpdateScripts();
         c->checkScreens();
-        kDebug() << " ------------------------------------------>" << t.elapsed();
+        foreach (Plasma::Containment *containment, c->containments()) {
+            if (containment->screen() != -1 && containment->wallpaper()) {
+                ++m_startupSuspendWaitCount;
+                connect(containment->wallpaper(), SIGNAL(update(QRectF)), this, SLOT(wallpaperCheckedIn()));
+            }
+        }
+
+        QTimer::singleShot(5000, this, SLOT(wallpaperCheckInTimeout()));
+        kDebug() << " ------------------------------------------>" << t.elapsed() << m_startupSuspendWaitCount;
     }
 
     return m_corona;
 }
 
-/*void PlasmaApp::showAppletBrowser()
+void PlasmaApp::wallpaperCheckInTimeout()
 {
-    Plasma::Containment *containment = dynamic_cast<Plasma::Containment *>(sender());
+    if (m_startupSuspendWaitCount > 0) {
+        m_startupSuspendWaitCount = 0;
+        suspendStartup(false);
+    }
+}
 
-    if (!containment) {
+void PlasmaApp::wallpaperCheckedIn()
+{
+    if (m_startupSuspendWaitCount < 1) {
         return;
     }
 
-    foreach (DesktopView *view, m_desktops) {
-        if (view->isDashboardVisible() &&
-            (view->containment() == containment || view->dashboardContainment() == containment)) {
-            // the dashboard will pick this one up!
-            return;
-        }
+    --m_startupSuspendWaitCount;
+    if (m_startupSuspendWaitCount < 1) {
+        m_startupSuspendWaitCount = 0;
+        suspendStartup(false);
     }
-
-    showAppletBrowser(containment);
-}*/
+}
 
 bool PlasmaApp::hasComposite()
 {
@@ -650,15 +660,15 @@ bool PlasmaApp::hasComposite()
 #endif
 }
 
-void PlasmaApp::notifyStartup(bool completed)
+void PlasmaApp::suspendStartup(bool suspend)
 {
     org::kde::KSMServerInterface ksmserver("org.kde.ksmserver", "/KSMServer", QDBusConnection::sessionBus());
 
     const QString startupID("workspace desktop");
-    if (completed) {
-        ksmserver.resumeStartup(startupID);
-    } else {
+    if (suspend) {
         ksmserver.suspendStartup(startupID);
+    } else {
+        ksmserver.resumeStartup(startupID);
     }
 }
 

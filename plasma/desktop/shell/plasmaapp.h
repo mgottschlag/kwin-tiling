@@ -60,7 +60,7 @@ public:
     static PlasmaApp* self();
     static bool hasComposite();
 
-    void notifyStartup(bool completed);
+    static void suspendStartup(bool completed);
     Plasma::Corona* corona();
 
     /**
@@ -145,6 +145,8 @@ private Q_SLOTS:
     void slotRemotePlasmoidAdded(Plasma::PackageMetadata metadata);
     void slotAddRemotePlasmoid(const QString &location);
     void slotPlasmoidAccessFinished(Plasma::AccessAppletJob *job);
+    void wallpaperCheckedIn();
+    void wallpaperCheckInTimeout();
 
 private:
     DesktopCorona *m_corona;
@@ -158,6 +160,7 @@ private:
     int m_panelHidden;
     QSignalMapper *m_mapper;
     QHash<int, QWeakPointer<ControllerWindow> > m_widgetExplorers;
+    int m_startupSuspendWaitCount;
 };
 
 #endif // multiple inclusion guard
