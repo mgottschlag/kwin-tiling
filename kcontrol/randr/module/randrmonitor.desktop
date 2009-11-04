@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=Detecting RANDR (monitor) changes
-Type=Service
-X-KDE-ServiceTypes=KDEDModule
-X-KDE-Library=randrmonitor
-X-KDE-DBus-ModuleName=randrmonitor
-X-KDE-Kded-autoload=true
-OnlyShowIn=KDE;
