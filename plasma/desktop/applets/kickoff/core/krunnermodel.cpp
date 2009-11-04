@@ -29,8 +29,13 @@
 #include <QTimerEvent>
 
 // KDE
+#include <KService>
+#include <KStandardDirs>
 #include <Plasma/AbstractRunner>
 #include <Plasma/RunnerManager>
+
+// Local
+#include "core/recentapplications.h"
 
 #define DELAY_TIME 50
 
@@ -111,6 +116,22 @@ bool KRunnerItemHandler::openUrl(const KUrl& url)
         id = id.remove(0, 1);
     }
     qDebug() << "KRunnerItemHandler:openUrl " << runner << " " << id;
+
+    // Since krunner:// urls can't be added to recent applications,
+    // we find the local .desktop entry.
+    if (runner==QLatin1String("services")) {
+        // URL path example: services_kde4-kate.desktop
+        // or: services_firefox.desktop
+        QString desktopFile(id);
+        desktopFile.remove("services_");
+        QString pathToDesktopFile = KStandardDirs::locate("services", desktopFile);
+        KService::Ptr service = KService::serviceByStorageId(desktopFile);
+        if(!service.isNull()) {
+            RecentApplications::self()->add(service);
+        } else {
+            qWarning() << "Failed to find service for" << url;
+        }
+    }
 
     runnerManager()->run(id);
     return true;
