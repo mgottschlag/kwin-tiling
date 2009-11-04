@@ -31,8 +31,6 @@ class QGraphicsScene;
 class SettingsContainer;
 class CollapsibleWidget;
 class RandRDisplay;
-class RandROutput;
-class OutputConfig;
 class OutputGraphicsItem;
 class LayoutManager;
 
