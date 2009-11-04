@@ -1,0 +1,7 @@
+- zrusit ten modalni dialog
+- zkontrolovat, ze tohle opravdu nerusi randr eventmask pro Qt
+    - plus zkontrolovat, jak se tedy pouziva to window pro events
+- musi se dialog zobrazit na spravnem monitoru (tj. ne na vypnutem)
+- Hidden[$e]= v .desktop nefunguje
+- kdyz se detekuje zmena, kcm sam o sobe nic(?) neudela, takze musi byt nejake 'suggest'?
+- zkontrolovat nastaveni po startu KDE

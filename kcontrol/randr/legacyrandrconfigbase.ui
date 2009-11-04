@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LegacyRandRConfigBase</class>
+ <widget class="QWidget" name="LegacyRandRConfigBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>469</width>
+    <height>292</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Screen Resize and Rotate Settings</string>
+  </property>
+  <property name="whatsThis">
+   <string>If this option is enabled, options set by the system tray applet will be saved and loaded when KDE starts instead of being temporary.</string>
+  </property>
+  <layout class="QVBoxLayout">
+   <item>
+    <layout class="QHBoxLayout">
+     <item>
+      <widget class="QLabel" name="screenLabel">
+       <property name="text">
+        <string>Settings for screen:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
+        <cstring>screenCombo</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="KComboBox" name="screenCombo">
+       <property name="whatsThis">
+        <string>The screen whose settings you would like to change can be selected using this drop-down list.</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout">
+     <item>
+      <widget class="QLabel" name="sizeLabel">
+       <property name="text">
+        <string>Screen size:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
+        <cstring>sizeCombo</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="KComboBox" name="sizeCombo">
+       <property name="whatsThis">
+        <string>The size, otherwise known as the resolution, of your screen can be selected from this drop-down list.</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout">
+     <item>
+      <widget class="QLabel" name="rateLabel">
+       <property name="text">
+        <string>Refresh rate:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="KComboBox" name="rateCombo">
+       <property name="whatsThis">
+        <string>The refresh rate of your screen can be selected from this drop-down list.</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="rotationGroup">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="whatsThis">
+      <string>The options in this section allow you to change the rotation of your screen.</string>
+     </property>
+     <property name="title">
+      <string>Orientation (degrees counterclockwise)</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="applyOnStartup">
+     <property name="whatsThis">
+      <string>If this option is enabled the size and orientation settings will be used when KDE starts.</string>
+     </property>
+     <property name="text">
+      <string>Apply settings on KDE startup</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="syncTrayApp">
+     <property name="text">
+      <string>Allow tray application to change startup settings</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

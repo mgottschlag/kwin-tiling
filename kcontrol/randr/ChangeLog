@@ -1,0 +1,34 @@
+- XRRQueryExtension returns Bool, not Status
+- Fix crash where Qt's QDesktopWidget returns multiple Xinerama screens;
+  if we are being managed by RANDR, this number may be greater than the
+- Fix a few memory leaks and uninitialized variables thanks to valgrind.
+- Use the proper Xrandr.h macros for rotation and reflection masks in the
+  actual number of screens as reported by ScreenCount in Xlib.
+  RandR::Orientations enum.
+- Don't remove the OutputGraphicsItems from a scene if they do not belong
+  to it (why does QGraphicsScene return them in ::items() if they don't
+  exist in the scene???)
+- Add some useful accessors to OutputConfig to grab user configuration
+  values for resolution, refresh rate, etc.
+- Add preliminary multi-monitor ability; you can now set the absolute position
+  of any screen.  Setting any other relationship other than "Absolute" currently
+  clones all outputs to the largest display.
+- Remove the "Active" checkbox and add a "Disabled" option in the resolution
+  combo box instead; removes clutter and is clearer.
+- Add the ability to get the preferred mode of a given connected output.
+- Mark the preferred output mode (resolution) of a user as (Auto)
+- Add missing proposeRefreshRate to RandROutput (was only in RandRCrtc)
+- Remove performApplyOnStartup for KRandRModule - this makes sense for 
+  krandrtray, which likely starts up with KDE4, but not for opening the
+  KCModule, which should keep the active settings until the user makes a change.
+- Remove some of my unnecessary output relationship code; found a much better
+  way to do it :)
+- More i18n contexts.
+- The tray doesn't need to force querying infomation about each display/screen/
+  output/crtc every time it prepares the context menu; it can receive randr
+  events for a reason.
+- Temporarily disable the logic to use the legacy RANDR API if the user has
+  RANDR 1.2 but only one RROutput; this seems silly.
+- Clean up the RandROutput and RandRCrtc APIs to use the proper RandR*
+  classes instead of RRMode/Crtc/Output IDs from Xrandr.h to avoid
+  headaches.
