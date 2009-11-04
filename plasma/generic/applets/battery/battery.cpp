@@ -54,6 +54,7 @@
 #include <Plasma/ExtenderItem>
 #include <Plasma/PopupApplet>
 #include <Plasma/Label>
+#include <Plasma/Separator>
 #include <Plasma/Slider>
 #include <Plasma/PushButton>
 #include <Plasma/CheckBox>
@@ -113,7 +114,7 @@ void Battery::init()
 {
     setHasConfigurationInterface(true);
     KConfigGroup cg = config();
-    m_showBatteryString = cg.readEntry("showBatteryString", false);    
+    m_showBatteryString = cg.readEntry("showBatteryString", false);
     m_showRemainingTime = cg.readEntry("showRemainingTime", false);
     m_showMultipleBatteries = cg.readEntry("showMultipleBatteries", !m_isEmbedded);
 
@@ -153,7 +154,7 @@ void Battery::init()
         initExtenderItem(eItem);
         extender()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     }
-    
+
     if (m_showBatteryString) {
         showLabel(m_showBatteryString);
     }
@@ -437,6 +438,10 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         m_controlsLayout->addItem(m_batteryLayout, row, 0, 1, 3);
         row++;
 
+        Plasma::Separator *sep1 = new Plasma::Separator(controls);
+        m_controlsLayout->addItem(sep1, row, 0, 1, 3);
+        row++;
+
         Plasma::Label *brightnessLabel = new Plasma::Label(controls);
         brightnessLabel->setText(i18n("Screen Brightness"));
         m_controlsLayout->addItem(brightnessLabel, row, 0, 1, 3);
@@ -485,10 +490,8 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         m_controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
         row++;
 
-        Plasma::Label *actionsLabel = new Plasma::Label(controls);
-        actionsLabel->setText(i18n("Actions"));
-        actionsLabel->nativeWidget()->setWordWrap(false);
-        m_controlsLayout->addItem(actionsLabel, row, 0, 1, 3);
+        Plasma::Separator *sep2 = new Plasma::Separator(controls);
+        m_controlsLayout->addItem(sep2, row, 0, 1, 3);
         row++;
 
         QGraphicsGridLayout *actionsLayout = new QGraphicsGridLayout(m_controlsLayout);
@@ -602,7 +605,7 @@ void Battery::updateStatus()
                     m_batteryLabelLabel->setText(i18n("Battery:"));
                     if (battery_data.value()["Plugged in"].toBool()) {
                         if (state == "NoCharge") {
-                            m_batteryInfoLabel->setText(i18n("%1% (fully charged)", battery_data.value()["Percent"].toString()));
+                            m_batteryInfoLabel->setText(i18n("%1% (charged)", battery_data.value()["Percent"].toString()));
                         } else if (state == "Discharging") {
                             m_batteryInfoLabel->setText(i18nc("Shown when a time estimate is not available", "%1% (discharging)\n", battery_data.value()["Percent"].toString()));
                         } else {
@@ -620,7 +623,7 @@ void Battery::updateStatus()
                     }
                     batteriesLabel.append(i18nc("Placeholder is the battery ID", "<b>Battery %1:</b> ", bnum));
                     if (state == "NoCharge") {
-                        batteriesInfo.append(i18n("%1% (fully charged)", battery_data.value()["Percent"].toString()));
+                        batteriesInfo.append(i18n("%1% (charged)", battery_data.value()["Percent"].toString()));
                     } else if (state == "Discharging") {
                         batteriesInfo.append(i18n("%2% (discharging)", bnum, battery_data.value()["Percent"].toString()));
                     } else {
