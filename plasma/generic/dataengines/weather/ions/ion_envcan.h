@@ -183,7 +183,7 @@ private:
     int periodMinute(const QString& source) const;
     QMap<QString, QString> watches(const QString& source) const;
     QMap<QString, QString> warnings(const QString& source) const;
-    QString condition(const QString& source) const;
+    QString condition(const QString& source);
     QMap<QString, QString> temperature(const QString& source) const;
     QString dewpoint(const QString& source) const;
     QMap<QString, QString> humidity(const QString& source) const;
@@ -232,9 +232,27 @@ private:
     void parseAstronomicals(WeatherData& data, QXmlStreamReader& xml);
     void parseWeatherRecords(WeatherData& data, QXmlStreamReader& xml);
 
-private:
-    class Private;
-    Private * d;
+    struct XMLMapInfo {
+        QString cityName;
+        QString territoryName;
+        QString cityCode;
+    };
+
+    // Key dicts
+    QHash<QString, EnvCanadaIon::XMLMapInfo> m_places;
+
+    // Weather information
+    QHash<QString, WeatherData> m_weatherData;
+
+    // Store KIO jobs
+    QMap<KJob *, QXmlStreamReader*> m_jobXml;
+    QMap<KJob *, QString> m_jobList;
+    QXmlStreamReader m_xmlSetup;
+    Plasma::DataEngine *m_timeEngine;
+
+    QDateTime m_dateFormat;
+    bool emitWhenSetup;
+
 };
 
 K_EXPORT_PLASMA_DATAENGINE(envcan, EnvCanadaIon)

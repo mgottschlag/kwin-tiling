@@ -22,43 +22,9 @@
 #include "ion_bbcukmet.h"
 #include <KUnitConversion/Converter>
 
-class UKMETIon::Private : public QObject
-{
-private:
-    struct XMLMapInfo {
-        QString place;
-        QString XMLurl;
-        QString forecastHTMLUrl;
-        QString XMLforecastURL;
-    };
-
-public:
-    // Key dicts
-    QHash<QString, UKMETIon::Private::XMLMapInfo> m_place;
-    QVector<QString> m_locations;
-
-    // Weather information
-    QHash<QString, WeatherData> m_weatherData;
-
-    // Store KIO jobs - Search list
-    QMap<KJob *, QByteArray *> m_jobHtml;
-    QMap<KJob *, QString> m_jobList;
-
-    QMap<KJob *, QXmlStreamReader*> m_obsJobXml;
-    QMap<KJob *, QString> m_obsJobList;
-
-    QMap<KJob *, QXmlStreamReader *> m_forecastJobXml;
-    QMap<KJob *, QString> m_forecastJobList;
-
-    KIO::TransferJob *m_job;
-    Plasma::DataEngine *m_timeEngine;
-
-    QDateTime m_dateFormat;
-};
-
 // ctor, dtor
 UKMETIon::UKMETIon(QObject *parent, const QVariantList &args)
-        : IonInterface(parent, args), d(new Private())
+        : IonInterface(parent, args)
 
 {
     Q_UNUSED(args)
@@ -67,22 +33,19 @@ UKMETIon::UKMETIon(QObject *parent, const QVariantList &args)
 UKMETIon::~UKMETIon()
 {
     // Destroy each forecast stored in a QVector
-    foreach(const WeatherData &item, d->m_weatherData) {
+    foreach(const WeatherData &item, m_weatherData) {
         foreach(WeatherData::ForecastInfo *forecast, item.forecasts) {
             if (forecast) {
                 delete forecast;
             }
         }
     }
-
-    // Destroy dptr
-    delete d;
 }
 
 void UKMETIon::reset()
 {
     // Destroy each forecast stored in a QVector
-    foreach(const WeatherData &item, d->m_weatherData) {
+    foreach(const WeatherData &item, m_weatherData) {
         foreach(WeatherData::ForecastInfo *forecast, item.forecasts) {
             if (forecast) {
                 delete forecast;
@@ -90,9 +53,6 @@ void UKMETIon::reset()
         }
     }
 
-    // Destroy dptr
-    delete d;
-    d = new Private();
     emit(resetCompleted(this, true));
 }
 
@@ -101,7 +61,7 @@ void UKMETIon::reset()
 // Get the master list of locations to be parsed
 void UKMETIon::init()
 {
-    d->m_timeEngine = dataEngine("time");
+    m_timeEngine = dataEngine("time");
     setInitialized(true);
 }
 
@@ -250,7 +210,7 @@ bool UKMETIon::updateIonSource(const QString& source)
                 setData(source, "validate", "bbcukmet|malformed");
                 return true;
             }
-            d->m_place[QString("bbcukmet|%1").arg(sourceAction[2])].XMLurl = sourceAction[3];
+            m_place[QString("bbcukmet|%1").arg(sourceAction[2])].XMLurl = sourceAction[3];
             getXMLData(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
             return true;
         } else {
@@ -268,17 +228,17 @@ bool UKMETIon::updateIonSource(const QString& source)
 void UKMETIon::getXMLData(const QString& source)
 {
     KUrl url;
-    url = d->m_place[source].XMLurl;
+    url = m_place[source].XMLurl;
 
-    d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
-    d->m_job->addMetaData("cookies", "none"); // Disable displaying cookies
-    d->m_obsJobXml.insert(d->m_job, new QXmlStreamReader);
-    d->m_obsJobList.insert(d->m_job, source);
+    m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
+    m_job->addMetaData("cookies", "none"); // Disable displaying cookies
+    m_obsJobXml.insert(m_job, new QXmlStreamReader);
+    m_obsJobList.insert(m_job, source);
 
-    if (d->m_job) {
-        connect(d->m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
+    if (m_job) {
+        connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
                 SLOT(observation_slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(d->m_job, SIGNAL(result(KJob *)), this, SLOT(observation_slotJobFinished(KJob *)));
+        connect(m_job, SIGNAL(result(KJob *)), this, SLOT(observation_slotJobFinished(KJob *)));
     }
 }
 
@@ -288,19 +248,19 @@ void UKMETIon::findPlace(const QString& place, const QString& source)
     KUrl url;
     url = "http://news.bbc.co.uk/weather/forecast/?&search=" + place + "&itemsPerPage=200&startIndex=1&count=200";
 
-    d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
-    d->m_job->addMetaData("cookies", "none"); // Disable displaying cookies
-    d->m_jobHtml.insert(d->m_job, new QByteArray());
-    d->m_jobList.insert(d->m_job, source);
+    m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
+    m_job->addMetaData("cookies", "none"); // Disable displaying cookies
+    m_jobHtml.insert(m_job, new QByteArray());
+    m_jobList.insert(m_job, source);
 
-    if (d->m_job) {
-        connect(d->m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
+    if (m_job) {
+        connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
                 SLOT(setup_slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(d->m_job, SIGNAL(result(KJob *)), this, SLOT(setup_slotJobFinished(KJob *)));
+        connect(m_job, SIGNAL(result(KJob *)), this, SLOT(setup_slotJobFinished(KJob *)));
 
 /*
         // Handle redirects for direct hit places.
-        connect(d->m_job, SIGNAL(redirection(KIO::Job *, const KUrl &)), this,
+        connect(m_job, SIGNAL(redirection(KIO::Job *, const KUrl &)), this,
                 SLOT(setup_slotRedirected(KIO::Job *, const KUrl &)));
 */
     }
@@ -309,21 +269,21 @@ void UKMETIon::findPlace(const QString& place, const QString& source)
 void UKMETIon::getFiveDayForecast(const QString& source)
 {
 
-    QString xmlMap = d->m_place[source].forecastHTMLUrl;
+    QString xmlMap = m_place[source].forecastHTMLUrl;
     int splitIDPos = xmlMap.lastIndexOf('/');
     QString stationID = xmlMap.midRef(splitIDPos + 1).toString();
-    d->m_place[source].XMLforecastURL = "http://newsrss.bbc.co.uk/weather/forecast/" + stationID + "/Next3DaysRSS.xml";
-    KUrl url(d->m_place[source].XMLforecastURL);
+    m_place[source].XMLforecastURL = "http://newsrss.bbc.co.uk/weather/forecast/" + stationID + "/Next3DaysRSS.xml";
+    KUrl url(m_place[source].XMLforecastURL);
 
-    d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
-    d->m_job->addMetaData("cookies", "none"); // Disable displaying cookies
-    d->m_forecastJobXml.insert(d->m_job, new QXmlStreamReader);
-    d->m_forecastJobList.insert(d->m_job, source);
+    m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
+    m_job->addMetaData("cookies", "none"); // Disable displaying cookies
+    m_forecastJobXml.insert(m_job, new QXmlStreamReader);
+    m_forecastJobList.insert(m_job, source);
 
-    if (d->m_job) {
-        connect(d->m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
+    if (m_job) {
+        connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
                 SLOT(forecast_slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(d->m_job, SIGNAL(result(KJob *)), this, SLOT(forecast_slotJobFinished(KJob *)));
+        connect(m_job, SIGNAL(result(KJob *)), this, SLOT(forecast_slotJobFinished(KJob *)));
     }
 }
 
@@ -362,14 +322,14 @@ void UKMETIon::readSearchHTMLData(const QString& source, const QByteArray& html)
                        tmp = QString("bbcukmet|").append(grabPlace.cap(1));
 
                        // Duplicate places can exist
-                       if (d->m_locations.contains(tmp)) {
+                       if (m_locations.contains(tmp)) {
                            tmp = QString("bbcukmet|").append(QString("%1 (#%2)").arg(grabPlace.cap(1)).arg(counter));
                            counter++;
                        }
 
-                       d->m_place[tmp].XMLurl = url;
-                       d->m_place[tmp].place = grabPlace.cap(1);
-                       d->m_locations.append(tmp);
+                       m_place[tmp].XMLurl = url;
+                       m_place[tmp].place = grabPlace.cap(1);
+                       m_locations.append(tmp);
                    }
            }
        }
@@ -405,83 +365,83 @@ void UKMETIon::parseUnknownElement(QXmlStreamReader& xml) const
 
 void UKMETIon::setup_slotDataArrived(KIO::Job *job, const QByteArray &data)
 {
-    if (data.isEmpty() || !d->m_jobHtml.contains(job)) {
+    if (data.isEmpty() || !m_jobHtml.contains(job)) {
         return;
     }
 
-    d->m_jobHtml[job]->append(data);
+    m_jobHtml[job]->append(data);
 }
 
 void UKMETIon::setup_slotJobFinished(KJob *job)
 {
     if (job->error() == 149) {
-        setData(d->m_jobList[job], "validate", QString("bbcukmet|timeout"));
-        disconnectSource(d->m_jobList[job], this);
-        d->m_jobList.remove(job);
-        delete d->m_jobHtml[job];
-        d->m_jobHtml.remove(job);
+        setData(m_jobList[job], "validate", QString("bbcukmet|timeout"));
+        disconnectSource(m_jobList[job], this);
+        m_jobList.remove(job);
+        delete m_jobHtml[job];
+        m_jobHtml.remove(job);
         return;
     }
 
     // If Redirected, don't go to this routine
-    if (!d->m_locations.contains(QString("bbcukmet|%1").arg(d->m_jobList[job]))) {
-        QByteArray *reader = d->m_jobHtml.value(job);
+    if (!m_locations.contains(QString("bbcukmet|%1").arg(m_jobList[job]))) {
+        QByteArray *reader = m_jobHtml.value(job);
         if (reader) {
-            readSearchHTMLData(d->m_jobList[job], *reader);
+            readSearchHTMLData(m_jobList[job], *reader);
         }
     }
-    d->m_jobList.remove(job);
-    delete d->m_jobHtml[job];
-    d->m_jobHtml.remove(job);
+    m_jobList.remove(job);
+    delete m_jobHtml[job];
+    m_jobHtml.remove(job);
 }
 
 void UKMETIon::observation_slotDataArrived(KIO::Job *job, const QByteArray &data)
 {
     QByteArray local = data;
-    if (data.isEmpty() || !d->m_obsJobXml.contains(job)) {
+    if (data.isEmpty() || !m_obsJobXml.contains(job)) {
         return;
     }
 
     // Send to xml.
-    d->m_obsJobXml[job]->addData(local);
+    m_obsJobXml[job]->addData(local);
 }
 
 void UKMETIon::observation_slotJobFinished(KJob *job)
 {
-    setData(d->m_obsJobList[job], Data());
+    setData(m_obsJobList[job], Data());
 
-    QXmlStreamReader *reader = d->m_obsJobXml.value(job);
+    QXmlStreamReader *reader = m_obsJobXml.value(job);
     if (reader) {
-        readObservationXMLData(d->m_obsJobList[job], *reader);
+        readObservationXMLData(m_obsJobList[job], *reader);
     }
 
-    d->m_obsJobList.remove(job);
-    delete d->m_obsJobXml[job];
-    d->m_obsJobXml.remove(job);
+    m_obsJobList.remove(job);
+    delete m_obsJobXml[job];
+    m_obsJobXml.remove(job);
 }
 
 void UKMETIon::forecast_slotDataArrived(KIO::Job *job, const QByteArray &data)
 {
     QByteArray local = data;
-    if (data.isEmpty() || !d->m_forecastJobXml.contains(job)) {
+    if (data.isEmpty() || !m_forecastJobXml.contains(job)) {
         return;
     }
 
     // Send to xml.
-    d->m_forecastJobXml[job]->addData(local);
+    m_forecastJobXml[job]->addData(local);
 }
 
 void UKMETIon::forecast_slotJobFinished(KJob *job)
 {
-    setData(d->m_forecastJobList[job], Data());
-    QXmlStreamReader *reader = d->m_forecastJobXml.value(job);
+    setData(m_forecastJobList[job], Data());
+    QXmlStreamReader *reader = m_forecastJobXml.value(job);
     if (reader) {
-        readFiveDayForecastXMLData(d->m_forecastJobList[job], *reader);
+        readFiveDayForecastXMLData(m_forecastJobList[job], *reader);
     }
 
-    d->m_forecastJobList.remove(job);
-    delete d->m_forecastJobXml[job];
-    d->m_forecastJobXml.remove(job);
+    m_forecastJobList.remove(job);
+    delete m_forecastJobXml[job];
+    m_forecastJobXml.remove(job);
 }
 
 void UKMETIon::parsePlaceObservation(const QString &source, WeatherData& data, QXmlStreamReader& xml)
@@ -584,14 +544,14 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 data.obsTime = conditionString.midRef(0, splitIndex).toString();
 
                 // Friday at 0200 GMT
-                d->m_dateFormat =  QDateTime::fromString(data.obsTime.split("at")[1].trimmed(), "hhmm 'GMT'");
-                data.iconPeriodHour = d->m_dateFormat.toString("hh").toInt();
-                data.iconPeriodMinute = d->m_dateFormat.toString("mm").toInt();
+                m_dateFormat =  QDateTime::fromString(data.obsTime.split("at")[1].trimmed(), "hhmm 'GMT'");
+                data.iconPeriodHour = m_dateFormat.toString("hh").toInt();
+                data.iconPeriodMinute = m_dateFormat.toString("mm").toInt();
 
                 data.condition = conditionData.toString().split('.')[0].trimmed();
 
             } else if (xml.name() == "link") {
-                d->m_place[source].forecastHTMLUrl = xml.readElementText();
+                m_place[source].forecastHTMLUrl = xml.readElementText();
 
             } else if (xml.name() == "description") {
                 QString observeString = xml.readElementText();
@@ -658,7 +618,7 @@ bool UKMETIon::readObservationXMLData(const QString& source, QXmlStreamReader& x
     if (!haveObservation) {
         return false;
     }
-    d->m_weatherData[source] = data;
+    m_weatherData[source] = data;
 
     // Get the 5 day forecast info next.
     getFiveDayForecast(source);
@@ -695,7 +655,7 @@ void UKMETIon::parseFiveDayForecast(const QString& source, QXmlStreamReader& xml
     Q_ASSERT(xml.isStartElement() && xml.name() == "item");
 
     // Flush out the old forecasts when updating.
-    d->m_weatherData[source].forecasts.clear();
+    m_weatherData[source].forecasts.clear();
 
     WeatherData::ForecastInfo *forecast = new WeatherData::ForecastInfo;
     QString line;
@@ -722,7 +682,7 @@ void UKMETIon::parseFiveDayForecast(const QString& source, QXmlStreamReader& xml
             kDebug() << "i18n summary string: " << qPrintable(forecast->summary);
             forecast->tempHigh = high.cap(0).toInt();
             forecast->tempLow = low.cap(0).toInt();
-            d->m_weatherData[source].forecasts.append(forecast);
+            m_weatherData[source].forecasts.append(forecast);
             forecast = new WeatherData::ForecastInfo;
         }
     }
@@ -733,38 +693,38 @@ void UKMETIon::validate(const QString& source)
 {
     bool beginflag = true;
 
-    if (!d->m_locations.count()) {
+    if (!m_locations.count()) {
         QStringList invalidPlace = source.split('|');
-        if (d->m_place[QString("bbcukmet|%1").arg(invalidPlace[2])].place.isEmpty()) {
+        if (m_place[QString("bbcukmet|%1").arg(invalidPlace[2])].place.isEmpty()) {
             setData(source, "validate", QString("bbcukmet|invalid|multiple|%1").arg(invalidPlace[2]));
         }
-        d->m_locations.clear();
+        m_locations.clear();
         return;
     } else {
         QString placeList;
-        foreach(const QString &place, d->m_locations) {
+        foreach(const QString &place, m_locations) {
             if (beginflag) {
-                placeList.append(QString("%1|extra|%2").arg(place.split('|')[1]).arg(d->m_place[place].XMLurl));
+                placeList.append(QString("%1|extra|%2").arg(place.split('|')[1]).arg(m_place[place].XMLurl));
                 beginflag = false;
             } else {
-                placeList.append(QString("|place|%1|extra|%2").arg(place.split('|')[1]).arg(d->m_place[place].XMLurl));
+                placeList.append(QString("|place|%1|extra|%2").arg(place.split('|')[1]).arg(m_place[place].XMLurl));
             }
         }
-        if (d->m_locations.count() > 1) {
+        if (m_locations.count() > 1) {
             setData(source, "validate", QString("bbcukmet|valid|multiple|place|%1").arg(placeList));
         } else {
             placeList[0] = placeList[0].toUpper();
             setData(source, "validate", QString("bbcukmet|valid|single|place|%1").arg(placeList));
         }
     }
-    d->m_locations.clear();
+    m_locations.clear();
 }
 
 void UKMETIon::updateWeather(const QString& source)
 {
     QString weatherSource = source;
     weatherSource.replace("bbcukmet|", "bbcukmet|weather|");
-    weatherSource.append(QString("|%1").arg(d->m_place[source].XMLurl));
+    weatherSource.append(QString("|%1").arg(m_place[source].XMLurl));
 
     QMap<QString, QString> dataFields;
     QStringList fieldList;
@@ -782,9 +742,9 @@ void UKMETIon::updateWeather(const QString& source)
     const double lati = periodLatitude(source);
     const double longi = periodLongitude(source);
     const QDate today = QDate::currentDate();
-    const Plasma::DataEngine::Data timeData = d->m_timeEngine->query(
+    const Plasma::DataEngine::Data timeData = m_timeEngine->query(
             QString("Local|Solar|Latitude=%1|Longitude=%2|DateTime=%3")
-                .arg(lati).arg(longi).arg(d->m_dateFormat.toString(Qt::ISODate)));
+                .arg(lati).arg(longi).arg(m_dateFormat.toString(Qt::ISODate)));
 
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
     if (timeData["Corrected Elevation"].toDouble() >= 0.0) {
@@ -821,7 +781,7 @@ void UKMETIon::updateWeather(const QString& source)
     forecastList = forecasts(source);
 
     // Set number of forecasts per day/night supported
-    data.insert("Total Weather Days", d->m_weatherData[source].forecasts.size());
+    data.insert("Total Weather Days", m_weatherData[source].forecasts.size());
 
     foreach(const QString &forecastItem, forecastList) {
         fieldList = forecastItem.split('|');
@@ -833,56 +793,56 @@ void UKMETIon::updateWeather(const QString& source)
     }
 
     data.insert("Credit", i18n("Supported by backstage.bbc.co.uk / Data from UK MET Office"));
-    data.insert("Credit Url", d->m_place[source].forecastHTMLUrl);
+    data.insert("Credit Url", m_place[source].forecastHTMLUrl);
 
     setData(weatherSource, data);
 }
 
 QString UKMETIon::place(const QString& source) const
 {
-    return d->m_weatherData[source].stationName;
+    return m_weatherData[source].stationName;
 }
 
 QString UKMETIon::station(const QString& source) const
 {
-    return d->m_weatherData[source].stationName;
+    return m_weatherData[source].stationName;
 }
 
 QString UKMETIon::observationTime(const QString& source) const
 {
-    return d->m_weatherData[source].obsTime;
+    return m_weatherData[source].obsTime;
 }
 
 int UKMETIon::periodHour(const QString& source) const
 {
-    return d->m_weatherData[source].iconPeriodHour;
+    return m_weatherData[source].iconPeriodHour;
 }
 
 int UKMETIon::periodMinute(const QString& source) const
 {
-    return d->m_weatherData[source].iconPeriodMinute;
+    return m_weatherData[source].iconPeriodMinute;
 }
 
 double UKMETIon::periodLatitude(const QString& source) const
 {
-    return d->m_weatherData[source].latitude;
+    return m_weatherData[source].latitude;
 }
 
 double UKMETIon::periodLongitude(const QString& source) const
 {
-    return d->m_weatherData[source].longitude;
+    return m_weatherData[source].longitude;
 }
 
 QString UKMETIon::condition(const QString& source) const
 {
-    return (d->m_weatherData[source].condition);
+    return (m_weatherData[source].condition);
 }
 
 QMap<QString, QString> UKMETIon::temperature(const QString& source) const
 {
     QMap<QString, QString> temperatureInfo;
 
-    temperatureInfo.insert("temperature", QString(d->m_weatherData[source].temperature_C));
+    temperatureInfo.insert("temperature", QString(m_weatherData[source].temperature_C));
     temperatureInfo.insert("temperatureUnit", QString::number(KUnitConversion::Celsius));
     return temperatureInfo;
 }
@@ -890,17 +850,17 @@ QMap<QString, QString> UKMETIon::temperature(const QString& source) const
 QMap<QString, QString> UKMETIon::wind(const QString& source) const
 {
     QMap<QString, QString> windInfo;
-    if (d->m_weatherData[source].windSpeed_miles == "N/A") {
+    if (m_weatherData[source].windSpeed_miles == "N/A") {
         windInfo.insert("windSpeed", i18n("N/A"));
         windInfo.insert("windUnit", QString::number(KUnitConversion::NoUnit));
     } else {
-        windInfo.insert("windSpeed", QString(d->m_weatherData[source].windSpeed_miles));
+        windInfo.insert("windSpeed", QString(m_weatherData[source].windSpeed_miles));
         windInfo.insert("windUnit", QString::number(KUnitConversion::MilePerHour));
     }
-    if (d->m_weatherData[source].windDirection.isEmpty()) {
+    if (m_weatherData[source].windDirection.isEmpty()) {
         windInfo.insert("windDirection", i18n("N/A"));
     } else {
-        windInfo.insert("windDirection", i18nc("wind direction", d->m_weatherData[source].windDirection.toUtf8()));
+        windInfo.insert("windDirection", i18nc("wind direction", m_weatherData[source].windDirection.toUtf8()));
     }
     return windInfo;
 }
@@ -908,8 +868,8 @@ QMap<QString, QString> UKMETIon::wind(const QString& source) const
 QMap<QString, QString> UKMETIon::humidity(const QString& source) const
 {
     QMap<QString, QString> humidityInfo;
-    if (d->m_weatherData[source].humidity != "N/A") {
-        humidityInfo.insert("humidity", d->m_weatherData[source].humidity);
+    if (m_weatherData[source].humidity != "N/A") {
+        humidityInfo.insert("humidity", m_weatherData[source].humidity);
         humidityInfo.insert("humidityUnit", QString::number(KUnitConversion::Percent));
     } else {
         humidityInfo.insert("humidity", i18n("N/A"));
@@ -921,23 +881,23 @@ QMap<QString, QString> UKMETIon::humidity(const QString& source) const
 
 QString UKMETIon::visibility(const QString& source) const
 {
-    return i18nc("visibility", d->m_weatherData[source].visibilityStr.toUtf8());
+    return i18nc("visibility", m_weatherData[source].visibilityStr.toUtf8());
 }
 
 QMap<QString, QString> UKMETIon::pressure(const QString& source) const
 {
     QMap<QString, QString> pressureInfo;
-    if (d->m_weatherData[source].pressure == "N/A") {
+    if (m_weatherData[source].pressure == "N/A") {
         pressureInfo.insert("pressure", i18n("N/A"));
         pressureInfo.insert("pressureUnit", QString::number(KUnitConversion::NoUnit));
         pressureInfo.insert("pressureTendency", i18n("N/A"));
         return pressureInfo;
     }
 
-    pressureInfo.insert("pressure", QString(d->m_weatherData[source].pressure));
+    pressureInfo.insert("pressure", QString(m_weatherData[source].pressure));
     pressureInfo.insert("pressureUnit", QString::number(KUnitConversion::Millibar));
 
-    pressureInfo.insert("pressureTendency", i18nc("pressure tendency", d->m_weatherData[source].pressureTendency.toUtf8()));
+    pressureInfo.insert("pressureTendency", i18nc("pressure tendency", m_weatherData[source].pressureTendency.toUtf8()));
     return pressureInfo;
 }
 
@@ -945,44 +905,44 @@ QVector<QString> UKMETIon::forecasts(const QString& source)
 {
     QVector<QString> forecastData;
 
-    for (int i = 0; i < d->m_weatherData[source].forecasts.size(); ++i) {
+    for (int i = 0; i < m_weatherData[source].forecasts.size(); ++i) {
 
-        if (d->m_weatherData[source].forecasts[i]->period.contains("Saturday")) {
-            d->m_weatherData[source].forecasts[i]->period.replace("Saturday", i18n("Sat"));
+        if (m_weatherData[source].forecasts[i]->period.contains("Saturday")) {
+            m_weatherData[source].forecasts[i]->period.replace("Saturday", i18n("Sat"));
         }
 
-        if (d->m_weatherData[source].forecasts[i]->period.contains("Sunday")) {
-            d->m_weatherData[source].forecasts[i]->period.replace("Sunday", i18n("Sun"));
+        if (m_weatherData[source].forecasts[i]->period.contains("Sunday")) {
+            m_weatherData[source].forecasts[i]->period.replace("Sunday", i18n("Sun"));
         }
 
-        if (d->m_weatherData[source].forecasts[i]->period.contains("Monday")) {
-            d->m_weatherData[source].forecasts[i]->period.replace("Monday", i18n("Mon"));
+        if (m_weatherData[source].forecasts[i]->period.contains("Monday")) {
+            m_weatherData[source].forecasts[i]->period.replace("Monday", i18n("Mon"));
         }
 
-        if (d->m_weatherData[source].forecasts[i]->period.contains("Tuesday")) {
-            d->m_weatherData[source].forecasts[i]->period.replace("Tuesday", i18n("Tue"));
+        if (m_weatherData[source].forecasts[i]->period.contains("Tuesday")) {
+            m_weatherData[source].forecasts[i]->period.replace("Tuesday", i18n("Tue"));
         }
 
-        if (d->m_weatherData[source].forecasts[i]->period.contains("Wednesday")) {
-            d->m_weatherData[source].forecasts[i]->period.replace("Wednesday", i18n("Wed"));
+        if (m_weatherData[source].forecasts[i]->period.contains("Wednesday")) {
+            m_weatherData[source].forecasts[i]->period.replace("Wednesday", i18n("Wed"));
         }
 
-        if (d->m_weatherData[source].forecasts[i]->period.contains("Thursday")) {
-            d->m_weatherData[source].forecasts[i]->period.replace("Thursday", i18n("Thu"));
+        if (m_weatherData[source].forecasts[i]->period.contains("Thursday")) {
+            m_weatherData[source].forecasts[i]->period.replace("Thursday", i18n("Thu"));
         }
-        if (d->m_weatherData[source].forecasts[i]->period.contains("Friday")) {
-            d->m_weatherData[source].forecasts[i]->period.replace("Friday", i18n("Fri"));
+        if (m_weatherData[source].forecasts[i]->period.contains("Friday")) {
+            m_weatherData[source].forecasts[i]->period.replace("Friday", i18n("Fri"));
         }
 
         forecastData.append(QString("%1|%2|%3|%4|%5|%6") \
-                            .arg(d->m_weatherData[source].forecasts[i]->period) \
-                            .arg(d->m_weatherData[source].forecasts[i]->iconName) \
-                            .arg(d->m_weatherData[source].forecasts[i]->summary) \
-                            .arg(d->m_weatherData[source].forecasts[i]->tempHigh) \
-                            .arg(d->m_weatherData[source].forecasts[i]->tempLow) \
+                            .arg(m_weatherData[source].forecasts[i]->period) \
+                            .arg(m_weatherData[source].forecasts[i]->iconName) \
+                            .arg(m_weatherData[source].forecasts[i]->summary) \
+                            .arg(m_weatherData[source].forecasts[i]->tempHigh) \
+                            .arg(m_weatherData[source].forecasts[i]->tempLow) \
                             .arg("N/U"));
-        //.arg(d->m_weatherData[source].forecasts[i]->windSpeed)
-        //arg(d->m_weatherData[source].forecasts[i]->windDirection));
+        //.arg(m_weatherData[source].forecasts[i]->windSpeed)
+        //arg(m_weatherData[source].forecasts[i]->windDirection));
     }
 
     return forecastData;

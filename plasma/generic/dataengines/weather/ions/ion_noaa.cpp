@@ -22,36 +22,6 @@
 #include "ion_noaa.h"
 #include <KUnitConversion/Converter>
 
-class NOAAIon::Private : public QObject
-{
-public:
-    struct XMLMapInfo {
-        QString stateName;
-        QString stationName;
-        QString stationID;
-        QString XMLurl;
-    };
-
-public:
-    // Key dicts
-    QHash<QString, NOAAIon::Private::XMLMapInfo> m_places;
-
-    // Weather information
-    QHash<QString, WeatherData> m_weatherData;
-
-    // Store KIO jobs
-    QMap<KJob *, QXmlStreamReader*> m_jobXml;
-    QMap<KJob *, QString> m_jobList;
-    QXmlStreamReader m_xmlSetup;
-
-    QDateTime m_dateFormat;
-    bool emitWhenSetup;
-
-    Private() : emitWhenSetup(false) {
-    }
-
-};
-
 QMap<QString, IonInterface::WindDirections> NOAAIon::setupWindIconMappings(void) const
 {
     QMap<QString, WindDirections> windDir;
@@ -88,24 +58,20 @@ QMap<QString, IonInterface::WindDirections> const& NOAAIon::windIcons(void) cons
 
 // ctor, dtor
 NOAAIon::NOAAIon(QObject *parent, const QVariantList &args)
-        : IonInterface(parent, args), d(new Private())
+        : IonInterface(parent, args)
 {
     Q_UNUSED(args)
 }
 
 void NOAAIon::reset()
 {
-    delete d;
-    d = new Private();
-    d->emitWhenSetup = true;
+    emitWhenSetup = true;
     setInitialized(false);
     getXMLSetup();
 }
 
 NOAAIon::~NOAAIon()
 {
-    // Destroy dptr
-    delete d;
 }
 
 // Get the master list of locations to be parsed
@@ -121,11 +87,11 @@ QStringList NOAAIon::validate(const QString& source) const
     QString station;
     QString sourceNormalized = source.toUpper();
 
-    QHash<QString, NOAAIon::Private::XMLMapInfo>::const_iterator it = d->m_places.constBegin();
+    QHash<QString, NOAAIon::XMLMapInfo>::const_iterator it = m_places.constBegin();
     // If the source name might look like a station ID, check these too and return the name
     bool checkState = source.count() == 2;
 
-    while (it != d->m_places.constEnd()) {
+    while (it != m_places.constEnd()) {
         if (checkState) {
             if (it.value().stateName == source) {
                 placeList.append(QString("place|").append(it.key()));
@@ -207,7 +173,7 @@ void NOAAIon::getXMLData(const QString& source)
 
     QString dataKey = source;
     dataKey.remove("noaa|weather|");
-    url = d->m_places[dataKey].XMLurl;
+    url = m_places[dataKey].XMLurl;
 
     // If this is empty we have no valid data, send out an error and abort.
     if (url.url().isEmpty()) {
@@ -216,8 +182,8 @@ void NOAAIon::getXMLData(const QString& source)
     }
 
     KIO::TransferJob * const m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
-    d->m_jobXml.insert(m_job, new QXmlStreamReader);
-    d->m_jobList.insert(m_job, source);
+    m_jobXml.insert(m_job, new QXmlStreamReader);
+    m_jobList.insert(m_job, source);
 
     if (m_job) {
         connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
@@ -235,33 +201,33 @@ void NOAAIon::setup_slotDataArrived(KIO::Job *job, const QByteArray &data)
     }
 
     // Send to xml.
-    d->m_xmlSetup.addData(data);
+    m_xmlSetup.addData(data);
 }
 
 void NOAAIon::slotDataArrived(KIO::Job *job, const QByteArray &data)
 {
-    if (data.isEmpty() || !d->m_jobXml.contains(job)) {
+    if (data.isEmpty() || !m_jobXml.contains(job)) {
         return;
     }
 
     // Send to xml.
-    d->m_jobXml[job]->addData(data);
+    m_jobXml[job]->addData(data);
 }
 
 void NOAAIon::slotJobFinished(KJob *job)
 {
     // Dual use method, if we're fetching location data to parse we need to do this first
-    removeAllData(d->m_jobList[job]);
-    QXmlStreamReader *reader = d->m_jobXml.value(job);
+    removeAllData(m_jobList[job]);
+    QXmlStreamReader *reader = m_jobXml.value(job);
     if (reader) {
-        readXMLData(d->m_jobList[job], *reader);
+        readXMLData(m_jobList[job], *reader);
     }
 
     // Now that we have the longitude and latitude, fetch the seven day forecast.
-    getForecast(d->m_jobList[job]);
+    getForecast(m_jobList[job]);
 
-    d->m_jobList.remove(job);
-    d->m_jobXml.remove(job);
+    m_jobList.remove(job);
+    m_jobXml.remove(job);
     delete reader;
 }
 
@@ -270,8 +236,8 @@ void NOAAIon::setup_slotJobFinished(KJob *job)
     Q_UNUSED(job)
     const bool success = readXMLSetup();
     setInitialized(success);
-    if (d->emitWhenSetup) {
-        d->emitWhenSetup = false;
+    if (emitWhenSetup) {
+        emitWhenSetup = false;
         emit(resetCompleted(this, success));
     }
 }
@@ -283,34 +249,34 @@ void NOAAIon::parseStationID()
     QString stationID;
     QString xmlurl;
 
-    while (!d->m_xmlSetup.atEnd()) {
-        d->m_xmlSetup.readNext();
+    while (!m_xmlSetup.atEnd()) {
+        m_xmlSetup.readNext();
 
-        if (d->m_xmlSetup.isEndElement() && d->m_xmlSetup.name() == "station") {
+        if (m_xmlSetup.isEndElement() && m_xmlSetup.name() == "station") {
             if (!xmlurl.isEmpty()) {
-                NOAAIon::Private::XMLMapInfo info;
+                NOAAIon::XMLMapInfo info;
                 info.stateName = state;
                 info.stationName = stationName;
                 info.stationID = stationID;
                 info.XMLurl = xmlurl;
 
                 QString tmp = stationName + ", " + state; // Build the key name.
-                d->m_places[tmp] = info;
+                m_places[tmp] = info;
             }
             break;
         }
 
-        if (d->m_xmlSetup.isStartElement()) {
-            if (d->m_xmlSetup.name() == "station_id") {
-                stationID = d->m_xmlSetup.readElementText();
-            } else if (d->m_xmlSetup.name() == "state") {
-                state = d->m_xmlSetup.readElementText();
-            } else if (d->m_xmlSetup.name() == "station_name") {
-                stationName = d->m_xmlSetup.readElementText();
-            } else if (d->m_xmlSetup.name() == "xml_url") {
-                xmlurl = d->m_xmlSetup.readElementText().replace("http://", "http://www.");
+        if (m_xmlSetup.isStartElement()) {
+            if (m_xmlSetup.name() == "station_id") {
+                stationID = m_xmlSetup.readElementText();
+            } else if (m_xmlSetup.name() == "state") {
+                state = m_xmlSetup.readElementText();
+            } else if (m_xmlSetup.name() == "station_name") {
+                stationName = m_xmlSetup.readElementText();
+            } else if (m_xmlSetup.name() == "xml_url") {
+                xmlurl = m_xmlSetup.readElementText().replace("http://", "http://www.");
             } else {
-                parseUnknownElement(d->m_xmlSetup);
+                parseUnknownElement(m_xmlSetup);
             }
         }
     }
@@ -318,18 +284,18 @@ void NOAAIon::parseStationID()
 
 void NOAAIon::parseStationList()
 {
-    while (!d->m_xmlSetup.atEnd()) {
-        d->m_xmlSetup.readNext();
+    while (!m_xmlSetup.atEnd()) {
+        m_xmlSetup.readNext();
 
-        if (d->m_xmlSetup.isEndElement()) {
+        if (m_xmlSetup.isEndElement()) {
             break;
         }
 
-        if (d->m_xmlSetup.isStartElement()) {
-            if (d->m_xmlSetup.name() == "station") {
+        if (m_xmlSetup.isStartElement()) {
+            if (m_xmlSetup.name() == "station") {
                 parseStationID();
             } else {
-                parseUnknownElement(d->m_xmlSetup);
+                parseUnknownElement(m_xmlSetup);
             }
         }
     }
@@ -339,17 +305,17 @@ void NOAAIon::parseStationList()
 bool NOAAIon::readXMLSetup()
 {
     bool success = false;
-    while (!d->m_xmlSetup.atEnd()) {
-        d->m_xmlSetup.readNext();
+    while (!m_xmlSetup.atEnd()) {
+        m_xmlSetup.readNext();
 
-        if (d->m_xmlSetup.isStartElement()) {
-            if (d->m_xmlSetup.name() == "wx_station_index") {
+        if (m_xmlSetup.isStartElement()) {
+            if (m_xmlSetup.name() == "wx_station_index") {
                 parseStationList();
                 success = true;
             }
         }
     }
-    return (!d->m_xmlSetup.error() && success);
+    return (!m_xmlSetup.error() && success);
 }
 
 void NOAAIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& xml)
@@ -386,9 +352,9 @@ void NOAAIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& xml)
                 data.observationTime = xml.readElementText();
                 QStringList tmpDateStr = data.observationTime.split(' ');
                 data.observationTime = QString("%1 %2").arg(tmpDateStr[6]).arg(tmpDateStr[7]);
-                d->m_dateFormat = QDateTime::fromString(data.observationTime, "h:mm ap");
-                data.iconPeriodHour = d->m_dateFormat.toString("HH");
-                data.iconPeriodAP = d->m_dateFormat.toString("ap");
+                m_dateFormat = QDateTime::fromString(data.observationTime, "h:mm ap");
+                data.iconPeriodHour = m_dateFormat.toString("HH");
+                data.iconPeriodAP = m_dateFormat.toString("ap");
 
             } else if (xml.name() == "weather") {
                 data.weather = xml.readElementText();
@@ -449,7 +415,7 @@ bool NOAAIon::readXMLData(const QString& source, QXmlStreamReader& xml)
         }
     }
 
-    d->m_weatherData[source] = data;
+    m_weatherData[source] = data;
     return !xml.error();
 }
 
@@ -508,11 +474,11 @@ void NOAAIon::updateWeather(const QString& source)
 
     // Do we have a comfort temperature? if so display it
     if (dataFields["comfortTemperature"] != "N/A") {
-        if (d->m_weatherData[source].windchill_F != "NA") {
+        if (m_weatherData[source].windchill_F != "NA") {
             data.insert("Windchill", QString("%1").arg(dataFields["comfortTemperature"]));
             data.insert("Humidex", i18n("N/A"));
         }
-        if (d->m_weatherData[source].heatindex_F != "NA" && d->m_weatherData[source].temperature_F.toInt() != d->m_weatherData[source].heatindex_F.toInt()) {
+        if (m_weatherData[source].heatindex_F != "NA" && m_weatherData[source].temperature_F.toInt() != m_weatherData[source].heatindex_F.toInt()) {
             data.insert("Humidex", QString("%1").arg(dataFields["comfortTemperature"]));
             data.insert("Windchill", i18n("N/A"));
         }
@@ -547,7 +513,7 @@ void NOAAIon::updateWeather(const QString& source)
     data.insert("Credit", i18n("Data provided by NOAA National Weather Service"));
 
     int dayIndex = 0;
-    foreach(const WeatherData::Forecast &forecast, d->m_weatherData[source].forecasts) {
+    foreach(const WeatherData::Forecast &forecast, m_weatherData[source].forecasts) {
 
         ConditionIcons icon = getConditionIcon(forecast.summary.toLower(), true);
         QString iconName = getWeatherIcon(icon);
@@ -582,56 +548,56 @@ QString const NOAAIon::country(const QString& source) const
 
 QString NOAAIon::place(const QString& source) const
 {
-    return d->m_weatherData[source].locationName;
+    return m_weatherData[source].locationName;
 }
 
 QString NOAAIon::station(const QString& source) const
 {
-    return d->m_weatherData[source].stationID;
+    return m_weatherData[source].stationID;
 }
 
 QString NOAAIon::latitude(const QString& source) const
 {
-    return d->m_weatherData[source].stationLat;
+    return m_weatherData[source].stationLat;
 }
 
 QString NOAAIon::longitude(const QString& source) const
 {
-    return d->m_weatherData[source].stationLon;
+    return m_weatherData[source].stationLon;
 }
 
 QString NOAAIon::observationTime(const QString& source) const
 {
-    return d->m_weatherData[source].observationTime;
+    return m_weatherData[source].observationTime;
 }
 
 int NOAAIon::periodHour(const QString& source) const
 {
-    return d->m_weatherData[source].iconPeriodHour.toInt();
+    return m_weatherData[source].iconPeriodHour.toInt();
 }
 
-QString NOAAIon::condition(const QString& source) const
+QString NOAAIon::condition(const QString& source)
 {
-    if (d->m_weatherData[source].weather.isEmpty() || d->m_weatherData[source].weather == "NA") {
-        d->m_weatherData[source].weather = i18n("N/A");
+    if (m_weatherData[source].weather.isEmpty() || m_weatherData[source].weather == "NA") {
+        m_weatherData[source].weather = i18n("N/A");
     }
-    return i18nc("weather condition", d->m_weatherData[source].weather.toUtf8());
+    return i18nc("weather condition", m_weatherData[source].weather.toUtf8());
 }
 
 QString NOAAIon::dewpoint(const QString& source) const
 {
-    return d->m_weatherData[source].dewpoint_F;
+    return m_weatherData[source].dewpoint_F;
 }
 
 QMap<QString, QString> NOAAIon::humidity(const QString& source) const
 {
     QMap<QString, QString> humidityInfo;
-    if (d->m_weatherData[source].humidity == "NA") {
+    if (m_weatherData[source].humidity == "NA") {
         humidityInfo.insert("humidity", QString(i18n("N/A")));
         humidityInfo.insert("humidityUnit", QString::number(KUnitConversion::NoUnit));
         return humidityInfo;
     } else {
-        humidityInfo.insert("humidity", d->m_weatherData[source].humidity);
+        humidityInfo.insert("humidity", m_weatherData[source].humidity);
         humidityInfo.insert("humidityUnit", QString::number(KUnitConversion::Percent));
     }
 
@@ -641,16 +607,16 @@ QMap<QString, QString> NOAAIon::humidity(const QString& source) const
 QMap<QString, QString> NOAAIon::visibility(const QString& source) const
 {
     QMap<QString, QString> visibilityInfo;
-    if (d->m_weatherData[source].visibility.isEmpty()) {
+    if (m_weatherData[source].visibility.isEmpty()) {
         visibilityInfo.insert("visibility", QString(i18n("N/A")));
         visibilityInfo.insert("visibilityUnit", QString::number(KUnitConversion::NoUnit));
         return visibilityInfo;
     }
-    if (d->m_weatherData[source].visibility == "NA") {
+    if (m_weatherData[source].visibility == "NA") {
         visibilityInfo.insert("visibility", QString(i18n("N/A")));
         visibilityInfo.insert("visibilityUnit", QString::number(KUnitConversion::NoUnit));
     } else {
-        visibilityInfo.insert("visibility", d->m_weatherData[source].visibility);
+        visibilityInfo.insert("visibility", m_weatherData[source].visibility);
         visibilityInfo.insert("visibilityUnit", QString::number(KUnitConversion::Mile));
     }
     return visibilityInfo;
@@ -659,16 +625,16 @@ QMap<QString, QString> NOAAIon::visibility(const QString& source) const
 QMap<QString, QString> NOAAIon::temperature(const QString& source) const
 {
     QMap<QString, QString> temperatureInfo;
-    temperatureInfo.insert("temperature", d->m_weatherData[source].temperature_F);
+    temperatureInfo.insert("temperature", m_weatherData[source].temperature_F);
     temperatureInfo.insert("temperatureUnit", QString::number(KUnitConversion::Fahrenheit));
     temperatureInfo.insert("comfortTemperature", i18n("N/A"));
 
-    if (d->m_weatherData[source].heatindex_F != "NA" && d->m_weatherData[source].windchill_F == "NA") {
-        temperatureInfo.insert("comfortTemperature", d->m_weatherData[source].heatindex_F);
+    if (m_weatherData[source].heatindex_F != "NA" && m_weatherData[source].windchill_F == "NA") {
+        temperatureInfo.insert("comfortTemperature", m_weatherData[source].heatindex_F);
     }
 
-    if (d->m_weatherData[source].windchill_F != "NA" && d->m_weatherData[source].heatindex_F == "NA") {
-        temperatureInfo.insert("comfortTemperature", d->m_weatherData[source].windchill_F);
+    if (m_weatherData[source].windchill_F != "NA" && m_weatherData[source].heatindex_F == "NA") {
+        temperatureInfo.insert("comfortTemperature", m_weatherData[source].windchill_F);
     }
 
     return temperatureInfo;
@@ -677,17 +643,17 @@ QMap<QString, QString> NOAAIon::temperature(const QString& source) const
 QMap<QString, QString> NOAAIon::pressure(const QString& source) const
 {
     QMap<QString, QString> pressureInfo;
-    if (d->m_weatherData[source].pressure.isEmpty()) {
+    if (m_weatherData[source].pressure.isEmpty()) {
         pressureInfo.insert("pressure", i18n("N/A"));
         pressureInfo.insert("pressureUnit", QString::number(KUnitConversion::NoUnit));
         return pressureInfo;
     }
 
-    if (d->m_weatherData[source].pressure == "NA") {
+    if (m_weatherData[source].pressure == "NA") {
         pressureInfo.insert("pressure", i18n("N/A"));
         pressureInfo.insert("visibilityUnit", QString::number(KUnitConversion::NoUnit));
     } else {
-        pressureInfo.insert("pressure", d->m_weatherData[source].pressure);
+        pressureInfo.insert("pressure", m_weatherData[source].pressure);
         pressureInfo.insert("pressureUnit", QString::number(KUnitConversion::InchesOfMercury));
     }
     return pressureInfo;
@@ -698,27 +664,27 @@ QMap<QString, QString> NOAAIon::wind(const QString& source) const
     QMap<QString, QString> windInfo;
 
     // May not have any winds
-    if (d->m_weatherData[source].windSpeed == "NA") {
+    if (m_weatherData[source].windSpeed == "NA") {
         windInfo.insert("windSpeed", i18nc("wind speed", "Calm"));
         windInfo.insert("windUnit", QString::number(KUnitConversion::NoUnit));
     } else {
-        windInfo.insert("windSpeed", QString::number(d->m_weatherData[source].windSpeed.toFloat(), 'f', 1));
+        windInfo.insert("windSpeed", QString::number(m_weatherData[source].windSpeed.toFloat(), 'f', 1));
         windInfo.insert("windUnit", QString::number(KUnitConversion::MilePerHour));
     }
 
     // May not always have gusty winds
-    if (d->m_weatherData[source].windGust == "NA" || d->m_weatherData[source].windGust == "N/A") {
+    if (m_weatherData[source].windGust == "NA" || m_weatherData[source].windGust == "N/A") {
         windInfo.insert("windGust", i18n("N/A"));
         windInfo.insert("windGustUnit", QString::number(KUnitConversion::NoUnit));
     } else {
-        windInfo.insert("windGust", QString::number(d->m_weatherData[source].windGust.toFloat(), 'f', 1));
+        windInfo.insert("windGust", QString::number(m_weatherData[source].windGust.toFloat(), 'f', 1));
         windInfo.insert("windGustUnit", QString::number(KUnitConversion::MilePerHour));
     }
 
-    if (d->m_weatherData[source].windDirection.isEmpty()) {
+    if (m_weatherData[source].windDirection.isEmpty()) {
         windInfo.insert("windDirection", i18n("N/A"));
     } else {
-        windInfo.insert("windDirection", i18nc("wind direction", d->m_weatherData[source].windDirection.toUtf8()));
+        windInfo.insert("windDirection", i18nc("wind direction", m_weatherData[source].windDirection.toUtf8()));
     }
     return windInfo;
 }
@@ -835,8 +801,8 @@ void NOAAIon::getForecast(const QString& source)
                         .arg(latitude(source)).arg(longitude(source));
 
     KIO::TransferJob * const m_job = KIO::get(url, KIO::Reload, KIO::HideProgressInfo);
-    d->m_jobXml.insert(m_job, new QXmlStreamReader);
-    d->m_jobList.insert(m_job, source);
+    m_jobXml.insert(m_job, new QXmlStreamReader);
+    m_jobList.insert(m_job, source);
 
     if (m_job) {
         connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
@@ -847,31 +813,31 @@ void NOAAIon::getForecast(const QString& source)
 
 void NOAAIon::forecast_slotDataArrived(KIO::Job *job, const QByteArray &data)
 {
-    if (data.isEmpty() || !d->m_jobXml.contains(job)) {
+    if (data.isEmpty() || !m_jobXml.contains(job)) {
         return;
     }
 
     // Send to xml.
-    d->m_jobXml[job]->addData(data);
+    m_jobXml[job]->addData(data);
 }
 
 void NOAAIon::forecast_slotJobFinished(KJob *job)
 {
-    QXmlStreamReader *reader = d->m_jobXml.value(job);
+    QXmlStreamReader *reader = m_jobXml.value(job);
     if (reader) {
-        QString source = d->m_jobList[job];
+        QString source = m_jobList[job];
         readForecast(source, *reader);
         updateWeather(source);
     }
 
-    d->m_jobList.remove(job);
-    delete d->m_jobXml[job];
-    d->m_jobXml.remove(job);
+    m_jobList.remove(job);
+    delete m_jobXml[job];
+    m_jobXml.remove(job);
 }
 
 void NOAAIon::readForecast(const QString& source, QXmlStreamReader& xml)
 {
-    QList<WeatherData::Forecast>& forecasts = d->m_weatherData[source].forecasts;
+    QList<WeatherData::Forecast>& forecasts = m_weatherData[source].forecasts;
 
     // Clear the current forecasts
     forecasts.clear();

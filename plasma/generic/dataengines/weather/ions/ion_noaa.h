@@ -118,7 +118,7 @@ private:
     QString observationTime(const QString& source) const;
     //bool night(const QString& source);
     int periodHour(const QString& source) const;
-    QString condition(const QString& source) const;
+    QString condition(const QString& source);
     QMap<QString, QString> temperature(const QString& source) const;
     QString dewpoint(const QString& source) const;
     QMap<QString, QString> humidity(const QString& source) const;
@@ -150,9 +150,27 @@ private:
     void parseStationID(void);
     void parseStationList(void);
 
-private:
-    class Private;
-    Private * d;
+    struct XMLMapInfo {
+        QString stateName;
+        QString stationName;
+        QString stationID;
+        QString XMLurl;
+    };
+
+    // Key dicts
+    QHash<QString, NOAAIon::XMLMapInfo> m_places;
+
+    // Weather information
+    QHash<QString, WeatherData> m_weatherData;
+
+    // Store KIO jobs
+    QMap<KJob *, QXmlStreamReader*> m_jobXml;
+    QMap<KJob *, QString> m_jobList;
+    QXmlStreamReader m_xmlSetup;
+
+    QDateTime m_dateFormat;
+    bool emitWhenSetup;
+
 };
 
 K_EXPORT_PLASMA_DATAENGINE(noaa, NOAAIon)

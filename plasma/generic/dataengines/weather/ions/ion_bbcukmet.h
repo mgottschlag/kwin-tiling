@@ -141,9 +141,35 @@ private:
     void parseWeatherForecast(const QString& source, QXmlStreamReader& xml);
     void parseUnknownElement(QXmlStreamReader& xml) const;
 
-private:
-    class Private;
-    Private * d;
+    struct XMLMapInfo {
+        QString place;
+        QString XMLurl;
+        QString forecastHTMLUrl;
+        QString XMLforecastURL;
+    };
+
+    // Key dicts
+    QHash<QString, UKMETIon::XMLMapInfo> m_place;
+    QVector<QString> m_locations;
+
+    // Weather information
+    QHash<QString, WeatherData> m_weatherData;
+
+    // Store KIO jobs - Search list
+    QMap<KJob *, QByteArray *> m_jobHtml;
+    QMap<KJob *, QString> m_jobList;
+
+    QMap<KJob *, QXmlStreamReader*> m_obsJobXml;
+    QMap<KJob *, QString> m_obsJobList;
+
+    QMap<KJob *, QXmlStreamReader *> m_forecastJobXml;
+    QMap<KJob *, QString> m_forecastJobList;
+
+    KIO::TransferJob *m_job;
+    Plasma::DataEngine *m_timeEngine;
+
+    QDateTime m_dateFormat;
+
 };
 
 K_EXPORT_PLASMA_DATAENGINE(bbcukmet, UKMETIon)
