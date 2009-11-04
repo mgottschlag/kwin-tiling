@@ -43,6 +43,7 @@ namespace Plasma
     class ScrollWidget;
     class Frame;
     class FrameSvg;
+    class ToolButton;
 }
 
 class SearchLaunch : public Plasma::Containment
@@ -52,6 +53,8 @@ public:
     SearchLaunch(QObject *parent, const QVariantList &args);
     ~SearchLaunch();
     void init();
+
+    void setOrientation(Qt::Orientation orientation);
 
     void constraintsEvent(Plasma::Constraints constraints);
 
@@ -81,6 +84,9 @@ private Q_SLOTS:
     void addFavourite();
     void reset();
 
+    void goRight();
+    void goLeft();
+
 private:
     /**
      * update the formfactor based on the location
@@ -100,10 +106,14 @@ private:
     Plasma::LineEdit *m_searchField;
     ItemView *m_resultsView;
     StripWidget *m_stripWidget;
+    Qt::Orientation m_orientation;
+    Plasma::ToolButton *m_leftArrow;
+    Plasma::ToolButton *m_rightArrow;
 
     QList<Plasma::QueryMatch> m_defaultMatches;
 
     QGraphicsLinearLayout *m_mainLayout;
+    QGraphicsLinearLayout *m_resultsLayout;
     QGraphicsLinearLayout *m_appletsLayout;
     QPointF m_buttonDownMousePos;
     LinearAppletOverlay *m_appletOverlay;

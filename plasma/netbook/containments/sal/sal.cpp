@@ -48,6 +48,7 @@
 #include <Plasma/RunnerManager>
 #include <Plasma/QueryMatch>
 #include <Plasma/ScrollWidget>
+#include <Plasma/ToolButton>
 
 
 SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
@@ -57,6 +58,9 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
       m_maxColumnWidth(0),
       m_searchField(0),
       m_resultsView(0),
+      m_orientation(Qt::Vertical),
+      m_leftArrow(0),
+      m_rightArrow(0),
       m_appletsLayout(0),
       m_appletOverlay(0),
       m_stripUninitialized(true)
@@ -74,6 +78,7 @@ SearchLaunch::~SearchLaunch()
 {
     KConfigGroup cg = config();
     m_stripWidget->save(cg);
+    config().writeEntry("orientation", (int)m_orientation);
 
     delete m_runnermg;
 }
@@ -97,6 +102,8 @@ void SearchLaunch::init()
     connect(m_toolBox, SIGNAL(toggled()), this, SIGNAL(toolBoxToggled()));
     connect(m_toolBox, SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));
     m_toolBox->show();
+
+    m_orientation = (Qt::Orientation)config().readEntry("orientation", (int)Qt::Vertical);
 
     QAction *a = action("add widgets");
     if (a) {
@@ -142,6 +149,11 @@ void SearchLaunch::init()
     //FIXME: wise to do it here?
     a = action("remove");
     delete a;
+
+    a = new QAction(i18n("Next activity"), this);
+    addAction("next containment", a);
+    a = new QAction(i18n("Previous activity"), this);
+    addAction("previous containment", a);
 }
 
 void SearchLaunch::toggleImmutability()
@@ -365,14 +377,15 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             setLayout(m_mainLayout);
 
             // create launch grid and make it centered
-            QGraphicsLinearLayout *gridLayout = new QGraphicsLinearLayout(Qt::Vertical);
+            m_resultsLayout = new QGraphicsLinearLayout;
 
 
             m_resultsView = new ItemView(this);
-            m_resultsView->setOrientation(Qt::Vertical);
+
             m_resultsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
             m_resultsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-            gridLayout->addItem(m_resultsView);
+            m_resultsLayout->addItem(m_resultsView);
+            setOrientation(m_orientation);
 
             connect(m_resultsView, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
             connect(m_resultsView, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launch(Plasma::IconWidget *)));
@@ -415,7 +428,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             // add our layouts to main vertical layout
             m_mainLayout->addItem(m_stripWidget);
             m_mainLayout->addItem(searchLayout);
-            m_mainLayout->addItem(gridLayout);
+            m_mainLayout->addItem(m_resultsLayout);
 
 
             // correctly set margins
@@ -438,6 +451,10 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
         }
         if (m_appletOverlay) {
             m_appletOverlay->resize(size());
+        }
+        //FIXME: rather fix itemContainmer
+        if (m_orientation == Qt::Horizontal) {
+            m_resultsView->setMaximumHeight(size().height()-m_searchField->geometry().bottom());
         }
     }
 
@@ -483,6 +500,38 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
         } else if (immutability() != Plasma::Mutable && m_appletOverlay && m_toolBox->isShowing()) {
             m_appletOverlay->deleteLater();
             m_appletOverlay = 0;
+        }
+    }
+}
+
+void SearchLaunch::setOrientation(Qt::Orientation orientation)
+{
+    m_orientation = orientation;
+    m_resultsView->setOrientation(orientation);
+    if (m_orientation == Qt::Vertical) {
+        if (m_leftArrow) {
+            m_leftArrow->deleteLater();
+            m_rightArrow->deleteLater();
+            m_leftArrow=0;
+            m_rightArrow=0;
+        }
+    } else {
+        if (!m_leftArrow) {
+            m_leftArrow = new Plasma::ToolButton(this);
+            m_leftArrow->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+            m_leftArrow->setPreferredWidth(KIconLoader::SizeMedium);
+            m_leftArrow->setImage("widgets/arrows", "left-arrow");
+            connect(m_leftArrow, SIGNAL(clicked()), this, SLOT(goLeft()));
+            connect(m_leftArrow, SIGNAL(pressed()), this, SLOT(scrollTimeout()));
+
+            m_rightArrow = new Plasma::ToolButton(this);
+            m_rightArrow->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+            m_rightArrow->setPreferredWidth(KIconLoader::SizeMedium);
+            m_rightArrow->setImage("widgets/arrows", "right-arrow");
+            connect(m_rightArrow, SIGNAL(clicked()), this, SLOT(goRight()));
+            connect(m_rightArrow, SIGNAL(pressed()), this, SLOT(scrollTimeout()));
+            m_resultsLayout->insertItem(0, m_leftArrow);
+            m_resultsLayout->addItem(m_rightArrow);
         }
     }
 }
@@ -579,6 +628,28 @@ void SearchLaunch::delayedQuery()
 void SearchLaunch::query()
 {
     doSearch(m_searchField->text());
+}
+
+void SearchLaunch::goRight()
+{
+    QGraphicsSceneWheelEvent ev(QEvent::GraphicsSceneWheel);
+    ev.setDelta(-120);
+    scene()->sendEvent(m_resultsView, &ev);
+
+    if (m_resultsView->widget()->geometry().right()-2 <= m_resultsView->viewportGeometry().right()) {
+        action("next containment")->trigger();
+    }
+}
+
+void SearchLaunch::goLeft()
+{
+    QGraphicsSceneWheelEvent ev(QEvent::GraphicsSceneWheel);
+    ev.setDelta(120);
+    scene()->sendEvent(m_resultsView, &ev);
+
+    if (m_resultsView->widget()->geometry().left() >= -2) {
+        action("previous containment")->trigger();
+    }
 }
 
 void SearchLaunch::dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data)
