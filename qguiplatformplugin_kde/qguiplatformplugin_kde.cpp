@@ -66,7 +66,7 @@ static QString qt2KdeFilter(const QString &f)
 {
     QString filter;
     QTextStream str(&filter, QIODevice::WriteOnly);
-    QStringList list(f.split(";;").replaceInStrings("/", "\\/"));
+    const QStringList list(f.split(";;").replaceInStrings("/", "\\/"));
     QStringList::const_iterator it(list.begin()),
                                 end(list.end());
     bool first=true;
@@ -96,7 +96,7 @@ static void kde2QtFilter(const QString &orig, const QString &kde, QString *sel)
 {
     if(sel)
     {
-        QStringList list(orig.split(";;"));
+        const QStringList list(orig.split(";;"));
         QStringList::const_iterator it(list.begin()),
                                     end(list.end());
         int pos;
