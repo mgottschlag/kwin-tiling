@@ -21,3 +21,10 @@ RandR1.2 TODO
 --> try to merge LegacyRandRConfig and RandRConfig
 --> Get relative outputs working
 --> Clean up the RandR* classes
+
+
+Key_Display
+trying to rotate a screen fails, the UI re-reads the correct values, but the screen remains off
+    and there is no message about this
+reverting doesn't work, it works in trunk
+the startkde code is not up-to-date (and probably should be moved out of it)
