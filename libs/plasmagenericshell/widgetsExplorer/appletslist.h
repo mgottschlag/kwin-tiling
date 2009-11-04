@@ -146,7 +146,7 @@ private:
     QHash<QString, AppletIconWidget *> m_allAppletsHash;
 
     //list containing the applet icons of the filter proxy model
-    QList<AppletIconWidget *> *m_currentAppearingAppletsOnList;
+    QList<AppletIconWidget *> m_currentAppearingAppletsOnList;
 
     QGraphicsLinearLayout *m_appletListLinearLayout;
     QGraphicsWidget *m_appletsListWidget;
@@ -156,6 +156,7 @@ private:
     Plasma::ToolButton *m_downRightArrow;
     Plasma::ToolButton *m_upLeftArrow;
     Plasma::Svg *m_arrowsSvg;
+    Plasma::FrameSvg *m_appletIconBgSvg;
 
     Qt::Orientation m_orientation;
 

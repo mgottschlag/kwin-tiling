@@ -49,6 +49,8 @@ using namespace KCategorizedItemsViewModels;
 
 AppletsListWidget::AppletsListWidget(Qt::Orientation orientation, QGraphicsItem *parent)
     : QGraphicsWidget(parent),
+      m_arrowsSvg(new Plasma::Svg(this)),
+      m_appletIconBgSvg(new Plasma::FrameSvg(this)),
       m_selectionIndicator(new Plasma::ItemBackground(this)),
       m_hoverIndicator(new Plasma::ItemBackground(this)),
       m_iconSize(16)
@@ -56,14 +58,13 @@ AppletsListWidget::AppletsListWidget(Qt::Orientation orientation, QGraphicsItem 
     arrowClickStep = 0;
     wheelStep = 0;
     m_selectedItem = 0;
-    m_currentAppearingAppletsOnList = new QList<AppletIconWidget *>();
     m_orientation = orientation;
 
-    //init arrows svg
-    m_arrowsSvg = new Plasma::Svg(this);
+    // init svg objects
     m_arrowsSvg->setImagePath("widgets/arrows");
     m_arrowsSvg->setContainsMultipleImages(true);
     m_arrowsSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+    m_appletIconBgSvg->setImagePath("widgets/translucentbackground");
 
     connect(this, SIGNAL(listScrolled()), this, SLOT(manageArrows()));
 
@@ -88,10 +89,13 @@ AppletsListWidget::~AppletsListWidget()
 {
     delete m_toolTip;
 
-    delete m_upLeftArrow;
-    delete m_downRightArrow;
-
-    delete m_appletsListWindowWidget;
+    //FIXME: if the follow foreach looks silly, that's because it is.
+    //       but Qt 4.6 currently has a devistating bug that crashes
+    //       when we don't do precisely this
+    foreach (QGraphicsWidget *item, m_allAppletsHash) {
+        item->setParentItem(0);
+        item->deleteLater();
+    }
 
     delete m_slide;
 }
@@ -99,11 +103,11 @@ AppletsListWidget::~AppletsListWidget()
 void AppletsListWidget::init()
 {
     //init arrows
-    m_upLeftArrow = new Plasma::ToolButton();
+    m_upLeftArrow = new Plasma::ToolButton(this);
     m_upLeftArrow->setPreferredSize(IconSize(KIconLoader::Panel), IconSize(KIconLoader::Panel));
     m_upLeftArrow->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
-    m_downRightArrow = new Plasma::ToolButton();
+    m_downRightArrow = new Plasma::ToolButton(this);
     m_downRightArrow->setPreferredSize(IconSize(KIconLoader::Panel), IconSize(KIconLoader::Panel));
     m_downRightArrow->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
@@ -122,12 +126,14 @@ void AppletsListWidget::init()
     connect(m_downRightArrow, SIGNAL(pressed()), this, SLOT(onRightArrowPress()));
     connect(m_upLeftArrow, SIGNAL(pressed()), this, SLOT(onLeftArrowPress()));
 
+    //init window that shows the applets of the list - it clips the appletsListWidget
+    m_appletsListWindowWidget = new QGraphicsWidget(this);
+    m_appletsListWindowWidget->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
+
     //init applets list
-    m_appletsListWidget = new QGraphicsWidget();
+    m_appletsListWidget = new QGraphicsWidget(m_appletsListWindowWidget);
     m_appletListLinearLayout = new QGraphicsLinearLayout(m_orientation);
     m_appletsListWidget->setLayout(m_appletListLinearLayout);
-    //make its events pass through its parent
-    m_appletsListWidget->installEventFilter(this);
 
     m_slide->setWidgetToAnimate(m_appletsListWidget);
 
@@ -135,7 +141,9 @@ void AppletsListWidget::init()
     m_appletsListWindowWidget = new QGraphicsWidget();
     m_appletsListWindowWidget->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
     m_appletsListWidget->setParentItem(m_appletsListWindowWidget);
+
     //make its events pass through its parent
+    m_appletsListWidget->installEventFilter(this);
     m_appletsListWindowWidget->installEventFilter(this);
 
     //layouts
@@ -150,7 +158,6 @@ void AppletsListWidget::init()
     m_arrowsLayout->setAlignment(m_appletsListWindowWidget, Qt::AlignVCenter | Qt::AlignHCenter);
 
     setLayout(m_arrowsLayout);
-
 }
 
 
@@ -198,7 +205,6 @@ void AppletsListWidget::setItemModel(PlasmaAppletItemModel *model)
     connect(m_modelFilterItems, SIGNAL(filterChanged()), this, SLOT(updateList()));
 
     updateList();
-
 }
 
 void AppletsListWidget::setFilterModel(QStandardItemModel *model)
@@ -351,7 +357,6 @@ void AppletsListWidget::insertAppletIcon(AppletIconWidget *appletIconWidget)
 {
     if (appletIconWidget != 0) {
         appletIconWidget->setVisible(true);
-        appletIconWidget->setParentItem(this);
         m_appletListLinearLayout->addItem(appletIconWidget);
         m_appletListLinearLayout->setAlignment(appletIconWidget, Qt::AlignHCenter);
     }
@@ -373,7 +378,7 @@ int AppletsListWidget::maximumAproxVisibleIconsOnList()
     }
 
     iconAverageSize = listTotalSize/
-                      (m_currentAppearingAppletsOnList->count()) +
+                      (m_currentAppearingAppletsOnList.count()) +
                        m_appletListLinearLayout->spacing();
 //    approximatelly
     maxVisibleIconsOnList = floor(windowSize/iconAverageSize);
@@ -383,7 +388,7 @@ int AppletsListWidget::maximumAproxVisibleIconsOnList()
 
 AppletIconWidget *AppletsListWidget::createAppletIcon(PlasmaAppletItem *appletItem)
 {
-    AppletIconWidget *applet = new AppletIconWidget(0, appletItem);
+    AppletIconWidget *applet = new AppletIconWidget(m_appletsListWidget, appletItem, m_appletIconBgSvg);
     applet->setMinimumSize(100, 0);
     qreal l, t, r, b;
     m_hoverIndicator->getContentsMargins(&l, &t, &r, &b);
@@ -421,31 +426,27 @@ void AppletsListWidget::eraseList()
 {
     QList<QGraphicsItem *> applets = m_appletsListWidget->childItems();
     foreach (QGraphicsItem *applet, applets) {
-        applet->setParentItem(0);
         applet->setVisible(false);
     }
 }
 
 void AppletsListWidget::updateList()
 {
-    AbstractItem *item;
-    PlasmaAppletItem *appletItem;
-
+    kDebug();
     m_appletsListWidget->setLayout(NULL);
     m_appletListLinearLayout = new QGraphicsLinearLayout(m_orientation);
     m_appletListLinearLayout->setSpacing(0);
 
-    m_currentAppearingAppletsOnList->clear();
+    m_currentAppearingAppletsOnList.clear();
     eraseList();
 
     for (int i = 0; i < m_modelFilterItems->rowCount(); i++) {
-        item = getItemByProxyIndex(m_modelFilterItems->index(i, 0));
-        appletItem = (PlasmaAppletItem*) item;
+        PlasmaAppletItem *appletItem = static_cast<PlasmaAppletItem*>(getItemByProxyIndex(m_modelFilterItems->index(i, 0)));
 
         if (appletItem) {
             AppletIconWidget *appletIconWidget = m_allAppletsHash.value(appletItem->id());
             insertAppletIcon(appletIconWidget);
-            m_currentAppearingAppletsOnList->append(appletIconWidget);
+            m_currentAppearingAppletsOnList.append(appletIconWidget);
         }
     }
 
@@ -531,12 +532,12 @@ void AppletsListWidget::scrollDownRight(int step, QRectF visibleRect)
     }
 
     //find out if the step is more than necessary to reach the end of the list
-    if (lastVisibleItemIndex + appletsIndexesToSum >= m_currentAppearingAppletsOnList->count()) {
-        appletsIndexesToSum = m_currentAppearingAppletsOnList->count() - 1 - lastVisibleItemIndex;
+    if (lastVisibleItemIndex + appletsIndexesToSum >= m_currentAppearingAppletsOnList.count()) {
+        appletsIndexesToSum = m_currentAppearingAppletsOnList.count() - 1 - lastVisibleItemIndex;
     }
 
     //who's gonna be the new last appearing icon on the list?!
-    newLastIcon = m_currentAppearingAppletsOnList->at(lastVisibleItemIndex + appletsIndexesToSum);
+    newLastIcon = m_currentAppearingAppletsOnList.at(lastVisibleItemIndex + appletsIndexesToSum);
 
     //scroll enough to show the new last icon on the list
     //and store the list size
@@ -551,14 +552,14 @@ void AppletsListWidget::scrollDownRight(int step, QRectF visibleRect)
     }
 
     //if the newLastIcon is the actual last icon on list, scroll until the end of the list
-    if(lastVisibleItemIndex + appletsIndexesToSum == m_currentAppearingAppletsOnList->count() - 1) {
+    if(lastVisibleItemIndex + appletsIndexesToSum == m_currentAppearingAppletsOnList.count() - 1) {
         scrollAmount = listSize - lastVisiblePositionOnList;
     }
 
     //do both:
     //if the newLastIcon is the actual last icon on list, scroll until the end of the list;
     //check if the scrollAmount is more than necessary to reach the end of the list
-    if ((lastVisibleItemIndex + appletsIndexesToSum == m_currentAppearingAppletsOnList->count() - 1)  ||
+    if ((lastVisibleItemIndex + appletsIndexesToSum == m_currentAppearingAppletsOnList.count() - 1)  ||
         (lastVisiblePositionOnList + scrollAmount > listSize)) {
         scrollAmount = listSize - lastVisiblePositionOnList;
     }
@@ -599,7 +600,7 @@ void AppletsListWidget::scrollUpLeft(int step, QRectF visibleRect)
     }
 
     //who's gonna be the new first appearing icon on the list?!
-    newFirstIcon = m_currentAppearingAppletsOnList->at(firstVisibleItemIndex - appletsIndexesToReduce);
+    newFirstIcon = m_currentAppearingAppletsOnList.at(firstVisibleItemIndex - appletsIndexesToReduce);
 
     //scroll enough to show the new last icon on the list
     if(m_orientation == Qt::Horizontal) {
@@ -660,7 +661,7 @@ void AppletsListWidget::manageArrows()
         listSize = m_appletsListWidget->size().height();
     }
 
-    if (listSize <= windowSize || m_currentAppearingAppletsOnList->count() == 0) {
+    if (listSize <= windowSize || m_currentAppearingAppletsOnList.count() == 0) {
         m_upLeftArrow->setEnabled(false);
         m_downRightArrow->setEnabled(false);
         m_upLeftArrow->setVisible(false);
@@ -700,7 +701,7 @@ bool AppletsListWidget::isItemUnder(int itemIndex, qreal position)
     int lastPositionOnApplet;
     AppletIconWidget *applet;
 
-    applet = m_currentAppearingAppletsOnList->at(itemIndex);
+    applet = m_currentAppearingAppletsOnList.at(itemIndex);
 
     if(m_orientation == Qt::Horizontal) {
         firstPositionOnApplet = applet->mapToItem(m_appletsListWidget, 0, 0).x();
@@ -726,8 +727,8 @@ int AppletsListWidget::findFirstVisibleApplet(int firstVisiblePositionOnList) {
     int tempDistance = 0;
     AppletIconWidget *applet;
 
-    for(int i = 0; i < m_currentAppearingAppletsOnList->count(); i++) {
-        applet = m_currentAppearingAppletsOnList->at(i);
+    for(int i = 0; i < m_currentAppearingAppletsOnList.count(); i++) {
+        applet = m_currentAppearingAppletsOnList.at(i);
 
         if(m_orientation == Qt::Horizontal) {
             tempDistance = applet->pos().x() + applet->size().width() - firstVisiblePositionOnList;
@@ -748,13 +749,13 @@ int AppletsListWidget::findLastVisibleApplet(int lastVisiblePositionOnList) {
     int resultDistance = 99999;
     int tempDistance = 0;
 
-    for(int i = 0; i < m_currentAppearingAppletsOnList->count(); i++) {
+    for(int i = 0; i < m_currentAppearingAppletsOnList.count(); i++) {
         if(m_orientation == Qt::Horizontal) {
             tempDistance = lastVisiblePositionOnList -
-                           m_currentAppearingAppletsOnList->at(i)->pos().x();
+                           m_currentAppearingAppletsOnList.at(i)->pos().x();
         } else {
             tempDistance = lastVisiblePositionOnList -
-                           m_currentAppearingAppletsOnList->at(i)->pos().y();
+                           m_currentAppearingAppletsOnList.at(i)->pos().y();
         }
 
         if (tempDistance <= resultDistance && tempDistance > 0) {
@@ -778,16 +779,12 @@ QRectF AppletsListWidget::visibleListRect()
 
 void AppletsListWidget::populateAllAppletsHash()
 {
-    AbstractItem *item;
-    PlasmaAppletItem *appletItem;
-    int indexesCount = m_modelFilterItems->rowCount();
-
     qDeleteAll(m_allAppletsHash);
     m_allAppletsHash.clear();
 
-    for (int i = 0; i < indexesCount ; i++){
-        item = getItemByProxyIndex(m_modelFilterItems->index(i, 0));
-        appletItem = (PlasmaAppletItem*) item;
+    const int indexesCount = m_modelFilterItems->rowCount();
+    for (int i = 0; i < indexesCount ; i++) {
+        PlasmaAppletItem *appletItem = static_cast<PlasmaAppletItem*>(getItemByProxyIndex(m_modelFilterItems->index(i, 0)));
         m_allAppletsHash.insert(appletItem->id(), createAppletIcon(appletItem));
     }
 }

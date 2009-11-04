@@ -23,6 +23,7 @@
 #include "plasmaappletitemmodel_p.h"
 
 #include <QGraphicsWidget>
+#include <QWeakPointer>
 
 #include <plasma/framesvg.h>
 
@@ -31,7 +32,7 @@ class AppletIconWidget : public QGraphicsWidget
     Q_OBJECT
 
     public:
-        explicit AppletIconWidget(QGraphicsItem *parent = 0, PlasmaAppletItem *appletItem = 0);
+        explicit AppletIconWidget(QGraphicsItem *parent, PlasmaAppletItem *appletItem, Plasma::FrameSvg *bgSvg);
         virtual ~AppletIconWidget();
 
         void setIconSize(int height);
@@ -59,12 +60,12 @@ class AppletIconWidget : public QGraphicsWidget
         void resizeEvent(QGraphicsSceneResizeEvent *);
 
     private:
-        PlasmaAppletItem *m_appletItem;
-        bool m_selected;
-        bool m_hovered;
-        int m_iconHeight;
+        QWeakPointer<PlasmaAppletItem> m_appletItem;
         Plasma::FrameSvg *m_selectedBackgroundSvg;
         KIcon m_runningIcon;
+        int m_iconHeight;
+        bool m_selected : 1;
+        bool m_hovered : 1;
 };
 
 #endif //APPLETICON_H
