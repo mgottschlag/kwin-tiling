@@ -306,6 +306,25 @@ void Newspaper::goRight()
     QGraphicsSceneWheelEvent ev(QEvent::GraphicsSceneWheel);
     ev.setDelta(-120);
     scene()->sendEvent(m_scrollWidget, &ev);
+
+    if (m_mainWidget->geometry().right()-2 <= m_scrollWidget->viewportGeometry().right()) {
+        QList<Plasma::Containment*> containments = corona()->containments();
+        int start = containments.indexOf(containment());
+        int i = (start + 1) % containments.size();
+        Plasma::Containment *cont = containments.at(i);
+        //FIXME this is a *horrible* way of choosing a "next" containment.
+        while (i != start) {
+            if ((cont->location() == Plasma::Desktop || cont->location() == Plasma::Floating) &&
+                cont->screen() == -1) {
+                break;
+            }
+
+            i = (i + 1) % containments.size();
+            cont = containments.at(i);
+        }
+
+        cont->setScreen(screen(), desktop());
+    }
 }
 
 void Newspaper::goLeft()
@@ -313,6 +332,27 @@ void Newspaper::goLeft()
     QGraphicsSceneWheelEvent ev(QEvent::GraphicsSceneWheel);
     ev.setDelta(120);
     scene()->sendEvent(m_scrollWidget, &ev);
+
+    if (m_mainWidget->geometry().left() >= -2) {
+        QList<Plasma::Containment*> containments = corona()->containments();
+        int start = containments.indexOf(containment());
+        int i = (start + 1) % containments.size();
+        Plasma::Containment *cont = containments.at(i);
+        //FIXME this is a *horrible* way of choosing a "previous" containment.
+        while (i != start) {
+            if ((cont->location() == Plasma::Desktop || cont->location() == Plasma::Floating) &&
+                cont->screen() == -1) {
+                break;
+            }
+
+            if (--i < 0) {
+                i += containments.size();
+            }
+            cont = containments.at(i);
+        }
+
+        cont->setScreen(screen(), desktop());
+    }
 }
 
 void Newspaper::scrollTimeout()
