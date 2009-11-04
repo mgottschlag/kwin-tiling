@@ -38,16 +38,17 @@ class Color : public Plasma::Wallpaper
         void settingsChanged(bool modified);
 
     protected:
-        virtual void init(const KConfigGroup &config);
-        void settingsModified();
+        virtual void init(const KConfigGroup &config);        
 
     protected slots:
-        void setColor(const QColor& color);
+        void settingsModified();
 
     private:
         Ui::Config m_ui;
-        QBrush m_color;
-        QBrush m_currentColor; // the color when the config dialog is opened
+        QColor m_color1;
+        QColor m_color2;;
+
+        int m_backgroundMode;
 };
 
 K_EXPORT_PLASMA_WALLPAPER(color, Color)

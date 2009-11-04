@@ -20,54 +20,176 @@
 #include "color.h"
 
 #include <QPainter>
+#include <QLinearGradient>
+#include <QRadialGradient>
 #include <KDebug>
 
-Color::Color(QObject *parent, const QVariantList &args)
-    : Plasma::Wallpaper(parent, args),
-      m_color(Qt::gray)
-{
-}
+enum BackgroundMode {
+    SOLID,
+    HORIZONTAL,
+    VERTICAL,
+    RECTANGULAR,
+    RADIAL,
+    TOP_LEFT_DIAGONAL,
+    TOP_RIGHT_DIAGONAL,
+};
 
-void Color::paint(QPainter *painter, const QRectF& exposedRect)
+Color::Color(QObject *parent, const QVariantList &args)
+    : Plasma::Wallpaper(parent, args)
 {
-    painter->setCompositionMode(QPainter::CompositionMode_Source);
-    painter->fillRect(exposedRect, m_color);
 }
 
 void Color::init(const KConfigGroup &config)
 {
-    m_color = config.readEntry("wallpapercolor", QColor(Qt::gray));
+    m_color1 = config.readEntry("color1", QColor(Qt::white));
+    m_color2 = config.readEntry("color2", QColor(Qt::black));
+    m_backgroundMode = config.readEntry("backgroundMode", (int)SOLID);
     emit update(boundingRect());
+}
+
+void Color::paint(QPainter *painter, const QRectF& exposedRect)
+{
+    switch (m_backgroundMode) {
+    case SOLID: {
+            painter->fillRect(exposedRect, m_color1);
+            break;
+        }
+
+    case HORIZONTAL: {
+            QLinearGradient gradient = QLinearGradient(boundingRect().topLeft(),
+                                                       boundingRect().topRight());
+            gradient.setColorAt(0, m_color1);
+            gradient.setColorAt(1, m_color2);
+            painter->fillRect(exposedRect, gradient);
+            break;
+        }
+
+    case VERTICAL: {
+            QLinearGradient gradient = QLinearGradient(boundingRect().topLeft(),
+                                                       boundingRect().bottomLeft());
+            gradient.setColorAt(0, m_color1);
+            gradient.setColorAt(1, m_color2);
+            painter->fillRect(exposedRect, gradient);
+            break;
+        }
+
+    case RECTANGULAR: {
+            // First draw a horizontal gradient covering the whole view/screen
+            QLinearGradient horizontalGradient = QLinearGradient(boundingRect().topLeft(),
+                                                                 boundingRect().topRight());
+            horizontalGradient.setColorAt(0, m_color2);
+            horizontalGradient.setColorAt(0.5, m_color1);
+            horizontalGradient.setColorAt(1, m_color2);
+
+            painter->fillRect(exposedRect, horizontalGradient);
+
+            // Then draw two triangles with vertical gradient
+            QLinearGradient verticalGradient = QLinearGradient(boundingRect().topLeft(),
+                                                               boundingRect().bottomLeft());
+            verticalGradient.setColorAt(0, m_color2);
+            verticalGradient.setColorAt(0.5, m_color1);
+            verticalGradient.setColorAt(1, m_color2);
+            painter->setBrush(verticalGradient);
+            painter->setPen(Qt::NoPen);
+
+            QPolygon triangle = QPolygon(3);
+
+            // Draw a triangle which starts from the top edge to the center
+            triangle.append(boundingRect().topLeft().toPoint());
+            triangle.append(boundingRect().topRight().toPoint());
+            triangle.append(boundingRect().center().toPoint());
+            painter->drawPolygon(triangle);
+
+            triangle.clear();
+
+            // Draw a triangle which starts from the bottom edge to the center
+            triangle.append(boundingRect().bottomLeft().toPoint());
+            triangle.append(boundingRect().bottomRight().toPoint());
+            triangle.append(boundingRect().center().toPoint());
+            painter->drawPolygon(triangle);
+
+            break;
+        }
+
+    case RADIAL: {
+            // The diameter of the gradient will be the max screen dimension
+            int maxDimension = qMax(boundingRect().height(), boundingRect().width());
+
+            QRadialGradient gradient = QRadialGradient(boundingRect().center(),
+                                                       maxDimension / 2,
+                                                       boundingRect().center());
+            gradient.setColorAt(0, m_color1);
+            gradient.setColorAt(1, m_color2);
+            painter->fillRect(exposedRect, gradient);
+            break;
+        }
+
+    case TOP_LEFT_DIAGONAL: {
+            QLinearGradient gradient = QLinearGradient(boundingRect().topLeft(),
+                                                       boundingRect().bottomRight());
+            gradient.setColorAt(0, m_color1);
+            gradient.setColorAt(1, m_color2);
+            painter->fillRect(exposedRect, gradient);
+            break;
+        }
+
+    case TOP_RIGHT_DIAGONAL: {
+            QLinearGradient gradient = QLinearGradient(boundingRect().topRight(),
+                                                       boundingRect().bottomLeft());
+            gradient.setColorAt(0, m_color1);
+            gradient.setColorAt(1, m_color2);
+            painter->fillRect(exposedRect, gradient);
+            break;
+        }
+
+    }
 }
 
 QWidget* Color::createConfigurationInterface(QWidget* parent)
 {
-    m_currentColor = m_color;
     QWidget *widget = new QWidget(parent);
     m_ui.setupUi(widget);
 
-    m_ui.m_color->setColor(m_color.color());
-    connect(m_ui.m_color, SIGNAL(changed(const QColor&)), this, SLOT(setColor(const QColor&)));
-    connect(this, SIGNAL(settingsChanged(bool)), parent, SLOT(settingsChanged(bool)));
-    return widget;
-}
+    m_ui.m_color1->setColor(m_color1);
+    m_ui.m_color2->setColor(m_color2);
+    m_ui.m_backgroundMode->setCurrentIndex(m_backgroundMode);
 
-void Color::setColor(const QColor& color)
-{
-    m_color.setColor(color);
-    emit update(boundingRect());
-    settingsModified();
+    if (m_backgroundMode == SOLID) {
+        m_ui.m_color2->setEnabled(false);
+    } else {
+        m_ui.m_color2->setEnabled(true);
+    }
+
+    connect(m_ui.m_color1, SIGNAL(changed(const QColor&)), this, SLOT(settingsModified()));
+    connect(m_ui.m_color2, SIGNAL(changed(const QColor&)), this, SLOT(settingsModified()));
+    connect(m_ui.m_backgroundMode, SIGNAL(currentIndexChanged(int)), this, SLOT(settingsModified()));
+
+    connect(this, SIGNAL(settingsChanged(bool)), parent, SLOT(settingsChanged(bool)));
+
+    return widget;
 }
 
 void Color::save(KConfigGroup &config)
 {
-    config.writeEntry("wallpapercolor", m_color.color());
+    config.writeEntry("color1", m_color1);
+    config.writeEntry("color2", m_color2);
+    config.writeEntry("backgroundMode", m_backgroundMode);
 }
 
 void Color::settingsModified()
 {
-    bool modified = m_color != m_currentColor;
-    emit settingsChanged(modified);
+    m_color1 = m_ui.m_color1->color();
+    m_color2 = m_ui.m_color2->color();
+    m_backgroundMode = m_ui.m_backgroundMode->currentIndex();
+
+    if (m_backgroundMode == SOLID) {
+        m_ui.m_color2->setEnabled(false);
+    } else {
+        m_ui.m_color2->setEnabled(true);
+    }
+
+    emit settingsChanged(true);
+    emit update(boundingRect());
 }
 
 #include "color.moc"
