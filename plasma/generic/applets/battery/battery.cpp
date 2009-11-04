@@ -392,6 +392,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         infoWidget->setLayout(m_infoLayout);
 
         m_batteryLabelLabel = new Plasma::Label(infoWidget);
+        m_batteryLabelLabel->setAlignment(Qt::AlignRight);
         //m_batteryLabelLabel->nativeWidget()->setWordWrap(false);
         //m_batteryLabelLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
         m_batteryInfoLabel = new Plasma::Label(infoWidget);
@@ -400,6 +401,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         m_infoLayout->addItem(m_batteryInfoLabel, 0, 1);
 
         m_acLabelLabel = new Plasma::Label(infoWidget);
+        m_acLabelLabel->setAlignment(Qt::AlignRight);
         //m_acLabelLabel->nativeWidget()->setWordWrap(false);
         //m_acLabelLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
         m_acInfoLabel = new Plasma::Label(infoWidget);
@@ -420,7 +422,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         Battery *m_extenderApplet = static_cast<Battery*>(Plasma::Applet::load("battery"));
         if (m_extenderApplet) {
-            m_extenderApplet->setParent(this);
+            m_extenderApplet->setParent(controls);
             m_extenderApplet->setAcceptsHoverEvents(false);
             m_extenderApplet->setParentItem(controls);
             m_extenderApplet->setEmbedded(true);
@@ -442,13 +444,17 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         m_controlsLayout->addItem(sep1, row, 0, 1, 3);
         row++;
 
+        m_brightnessLayout = new QGraphicsGridLayout(m_controlsLayout);
+        m_brightnessLayout->setSpacing(8);
+        //QGraphicsLinearLayout *brightnessLayout = new QGraphicsLinearLayout(controls);
         Plasma::Label *brightnessLabel = new Plasma::Label(controls);
         brightnessLabel->setText(i18n("Screen Brightness"));
-        m_controlsLayout->addItem(brightnessLabel, row, 0, 1, 3);
         brightnessLabel->nativeWidget()->setWordWrap(false);
-        row++;
+        brightnessLabel->setAlignment(Qt::AlignRight);
 
-        m_brightnessLayout = new QGraphicsLinearLayout();
+        m_brightnessLayout->addItem(brightnessLabel, 0, 0);
+        //m_controlsLayout->addItem(brightnessLabel, row, 0, 1, 3);
+
 
         m_brightnessSlider = new Plasma::Slider(controls);
         m_brightnessSlider->setRange(0, 100);
@@ -462,8 +468,8 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         connect(notifier, SIGNAL(brightnessChanged(float)),
                 this, SLOT(updateSlider(float)));
-        m_brightnessLayout->addItem(m_brightnessSlider);
-
+        m_brightnessLayout->addItem(m_brightnessSlider, 0, 1);
+/*
         Plasma::IconWidget *brightnessIcon = new Plasma::IconWidget(controls);
         brightnessIcon->setIcon("ktip");
         connect(brightnessIcon, SIGNAL(clicked()),
@@ -473,13 +479,15 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         brightnessIcon->setMinimumSize(s, s);
         brightnessIcon->setMaximumSize(s, s);
         m_brightnessLayout->addItem(brightnessIcon);
-        m_controlsLayout->addItem(m_brightnessLayout, row, 1, 1, 1);
-        row++;
+*/
+        //row++;
 
         m_profileLabel = new Plasma::Label(controls);
         m_profileLabel->setText(i18n("Power Profile"));
-        m_controlsLayout->addItem(m_profileLabel, row, 0, 1, 3);
-        row++;
+        m_profileLabel->setAlignment(Qt::AlignRight);
+        //m_controlsLayout->addItem(m_profileLabel, row, 0, 1, 3);
+        m_brightnessLayout->addItem(m_profileLabel, 1, 0);
+        //row++;
 
         m_profileCombo = new Plasma::ComboBox(controls);
         // This is necessary until Qt task #217874 is fixed
@@ -487,7 +495,8 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         connect(m_profileCombo, SIGNAL(activated(QString)),
                 this, SLOT(setProfile(QString)));
 
-        m_controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
+        m_brightnessLayout->addItem(m_profileCombo, 1, 1);
+        m_controlsLayout->addItem(m_brightnessLayout, row, 0, 1, 3);
         row++;
 
         Plasma::Separator *sep2 = new Plasma::Separator(controls);
