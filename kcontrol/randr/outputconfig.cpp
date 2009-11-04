@@ -365,7 +365,7 @@ void OutputConfig::updateSizeList(void)
 	SizeList sizes = m_output->sizes();
 	RandRMode preferredMode = m_output->preferredMode();
 	sizeCombo->clear();
-	sizeCombo->addItem( i18n("Disabled"), QSize(0, 0) );
+	sizeCombo->addItem( i18nc("Screen size", "Disabled"), QSize(0, 0) );
 	
 	foreach (const QSize &s, sizes) {
 		QString sizeDesc = QString("%1x%2").arg(s.width()).arg(s.height());
@@ -397,7 +397,7 @@ void OutputConfig::updateRateList(int resolutionIndex)
 	ModeList modeList = m_output->modes();
 	
 	refreshCombo->clear();
-	refreshCombo->addItem(i18nc("Automatic configuration", "Auto"), 0.0f);
+	refreshCombo->addItem(i18nc("Automatic refresh rate configuration", "Auto"), 0.0f);
 	refreshCombo->setEnabled(true);
 	rateLabel->setEnabled(true);
 	foreach(RRMode m, modeList) {
