@@ -62,6 +62,8 @@ public Q_SLOTS:
     void updateConfigurationMode(bool config);
     void setAutoHide(bool autoHide);
     void immutabilityChanged(ImmutabilityType immutability);
+    void nextContainment();
+    void previousContainment();
 
 Q_SIGNALS:
     void locationChanged(const NetView *view);

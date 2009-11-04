@@ -140,6 +140,11 @@ void Newspaper::init()
         a->setText(i18n("Remove page"));
         m_toolBox->addTool(a);
     }
+
+    a = new QAction(i18n("Next activity"), this);
+    addAction("next containment", a);
+    a = new QAction(i18n("Previous activity"), this);
+    addAction("previous containment", a);
 }
 
 void Newspaper::toggleImmutability()
@@ -308,22 +313,7 @@ void Newspaper::goRight()
     scene()->sendEvent(m_scrollWidget, &ev);
 
     if (m_mainWidget->geometry().right()-2 <= m_scrollWidget->viewportGeometry().right()) {
-        QList<Plasma::Containment*> containments = corona()->containments();
-        int start = containments.indexOf(containment());
-        int i = (start + 1) % containments.size();
-        Plasma::Containment *cont = containments.at(i);
-        //FIXME this is a *horrible* way of choosing a "next" containment.
-        while (i != start) {
-            if ((cont->location() == Plasma::Desktop || cont->location() == Plasma::Floating) &&
-                cont->screen() == -1) {
-                break;
-            }
-
-            i = (i + 1) % containments.size();
-            cont = containments.at(i);
-        }
-
-        cont->setScreen(screen(), desktop());
+        action("next containment")->trigger();
     }
 }
 
@@ -334,24 +324,7 @@ void Newspaper::goLeft()
     scene()->sendEvent(m_scrollWidget, &ev);
 
     if (m_mainWidget->geometry().left() >= -2) {
-        QList<Plasma::Containment*> containments = corona()->containments();
-        int start = containments.indexOf(containment());
-        int i = (start + 1) % containments.size();
-        Plasma::Containment *cont = containments.at(i);
-        //FIXME this is a *horrible* way of choosing a "previous" containment.
-        while (i != start) {
-            if ((cont->location() == Plasma::Desktop || cont->location() == Plasma::Floating) &&
-                cont->screen() == -1) {
-                break;
-            }
-
-            if (--i < 0) {
-                i += containments.size();
-            }
-            cont = containments.at(i);
-        }
-
-        cont->setScreen(screen(), desktop());
+        action("previous containment")->trigger();
     }
 }
 

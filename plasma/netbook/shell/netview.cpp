@@ -66,6 +66,15 @@ void NetView::connectContainment(Plasma::Containment *containment)
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updateGeometry()));
     connect(containment, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
     connect(containment, SIGNAL(immutabilityChanged(ImmutabilityType)), this, SLOT(immutabilityChanged(ImmutabilityType)));
+
+    QAction *a = containment->action("next containment");
+    if (a) {
+        connect(a, SIGNAL(triggered()), this, SLOT(nextContainment()));
+    }
+    a = containment->action("previous containment");
+    if (a) {
+        connect(a, SIGNAL(triggered()), this, SLOT(previousContainment()));
+    }
 }
 
 void NetView::setContainment(Plasma::Containment *c)
@@ -241,12 +250,54 @@ void NetView::updateConfigurationMode(bool config)
 
     Plasma::Containment *cont = containment();
     if (config && cont && cont->immutability() == Plasma::Mutable &&
-        (cont->location() != Plasma::Planar || cont->location() != Plasma::Floating)) {
+        (cont->location() != Plasma::Desktop || cont->location() != Plasma::Floating)) {
         m_panelController = new NetPanelController(0, this, cont);
     } else {
         delete m_panelController;
         m_panelController = 0;
     }
+}
+
+void NetView::nextContainment()
+{
+    QList<Plasma::Containment*> containments = containment()->corona()->containments();
+    int start = containments.indexOf(containment());
+    int i = (start + 1) % containments.size();
+    Plasma::Containment *cont = containments.at(i);
+    //FIXME this is a *horrible* way of choosing a "next" containment.
+    while (i != start) {
+        if ((cont->location() == Plasma::Desktop || cont->location() == Plasma::Floating) &&
+            cont->screen() == -1) {
+            break;
+        }
+
+        i = (i + 1) % containments.size();
+        cont = containments.at(i);
+    }
+
+    cont->setScreen(screen(), desktop());
+}
+
+void NetView::previousContainment()
+{
+    QList<Plasma::Containment*> containments = containment()->corona()->containments();
+    int start = containments.indexOf(containment());
+    int i = (start + 1) % containments.size();
+    Plasma::Containment *cont = containments.at(i);
+    //FIXME this is a *horrible* way of choosing a "previous" containment.
+    while (i != start) {
+        if ((cont->location() == Plasma::Desktop || cont->location() == Plasma::Floating) &&
+            cont->screen() == -1) {
+            break;
+        }
+
+        if (--i < 0) {
+            i += containments.size();
+        }
+        cont = containments.at(i);
+    }
+
+    cont->setScreen(screen(), desktop());
 }
 
 #include "netview.moc"
