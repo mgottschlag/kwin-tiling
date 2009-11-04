@@ -27,6 +27,8 @@
 //KDE
 #include <KConfigDialog>
 #include <KStandardDirs>
+#include <KCModuleProxy>
+#include <KCModuleInfo>
 #include <kdesktopfileactions.h>
 
 //Plasma
@@ -330,7 +332,13 @@ void DeviceNotifier::createConfigurationInterface(KConfigDialog *parent)
 {
     QWidget *configurationWidget = new QWidget();
     m_configurationUi.setupUi(configurationWidget);
+    KCModuleProxy *deviceActionsWidget = new KCModuleProxy("solid-actions");
+    KCModuleProxy *autoMountingWidget = new KCModuleProxy("device_automounter_kcm");
+
     parent->addPage(configurationWidget, i18nc("General options page", "General"), icon());
+    parent->addPage(deviceActionsWidget, deviceActionsWidget->moduleInfo().moduleName(), deviceActionsWidget->moduleInfo().icon());
+    parent->addPage(autoMountingWidget, autoMountingWidget->moduleInfo().moduleName(), autoMountingWidget->moduleInfo().icon());
+
     parent->setButtons( KDialog::Ok | KDialog::Cancel);
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
