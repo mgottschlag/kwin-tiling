@@ -125,6 +125,7 @@ void SaverView::showWidgetExplorer()
         widgetExplorer->setMaximumWidth(width());
         widgetExplorer->adjustSize();
         widgetExplorer->setZValue(1000000);
+        widgetExplorer->resize(width(), widgetExplorer->size().height());
         m_widgetExplorer = widgetExplorer;
     }
 }
