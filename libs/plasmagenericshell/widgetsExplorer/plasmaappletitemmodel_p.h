@@ -37,7 +37,6 @@ public:
     enum FilterFlag {
         NoFilter = 0,
         Favorite = 1,
-        Used = 2
     };
 
     Q_DECLARE_FLAGS(FilterFlags, FilterFlag)
@@ -91,7 +90,6 @@ public:
 private:
     QString m_application;
     QStringList m_favorites;
-    QStringList m_used;
     KConfigGroup m_configGroup;
 
 private slots:

@@ -171,7 +171,6 @@ void PlasmaAppletItemModel::populateModel()
     clear();
     //kDebug() << "populating model, our application is" << m_application;
 
-    //TODO: get favorite, used, etc out of listAppletInfo()
     //kDebug() << "number of applets is"
     //         <<  Plasma::Applet::listAppletInfo(QString(), m_application).count();
     foreach (const KPluginInfo &info, Plasma::Applet::listAppletInfo(QString(), m_application)) {
@@ -188,10 +187,6 @@ void PlasmaAppletItemModel::populateModel()
         PlasmaAppletItem::FilterFlags flags(PlasmaAppletItem::NoFilter);
         if (m_favorites.contains(info.pluginName())) {
             flags |= PlasmaAppletItem::Favorite;
-        }
-
-        if (m_used.contains(info.pluginName())) {
-            flags |= PlasmaAppletItem::Used;
         }
 
         appendRow(new PlasmaAppletItem(this, info, flags));
