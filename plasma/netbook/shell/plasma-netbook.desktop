@@ -3,6 +3,7 @@ Exec=plasma-netbook --desktop
 X-DBUS-StartupType=wait
 Name=Plasma Netbook
 Name[en_GB]=Plasma Netbook
+Name[eo]=Plasma Netbook
 Name[et]=Plasma väikesülearvuti
 Name[gl]=Plasma Netbook
 Name[gu]=પ્લાઝમા નેટબુક

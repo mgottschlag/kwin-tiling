@@ -2,6 +2,7 @@
 Name=Object Name
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
+Name[cs]=Jméno objektu
 Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
@@ -51,6 +52,7 @@ Name[zh_TW]=物件名稱
 [Desktop Action readerType]
 Name=Reader Type
 Name[en_GB]=Reader Type
+Name[eo]=Tipo de Legilo
 Name[et]=Lugeja tüüp
 Name[gl]=Tipo de lector
 Name[hr]=Vrsta čitača

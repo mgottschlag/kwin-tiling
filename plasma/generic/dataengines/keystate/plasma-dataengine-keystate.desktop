@@ -2,6 +2,7 @@
 Name=Keyboard and Mouse State
 Name[bg]=Клавиатура и мишка
 Name[ca]=Estat del teclat i ratolí
+Name[cs]=Stav klávesnice a myši
 Name[csb]=Stón klawiaturë ë mëszë
 Name[da]=Tilstand for tastatur og mus
 Name[de]=Status von Tastatur und Maus
@@ -44,6 +45,7 @@ Name[zh_TW]=鍵盤與滑鼠狀態
 Comment=Keyboard modifier and mouse buttons states
 Comment[bg]=Настройване на клавиатурата и бутоните на мишката
 Comment[ca]=Modificador de l'estat del teclat i dels botons del ratolí
+Comment[cs]=Stavy modifikátorů klávesnice a tlačítek myši
 Comment[csb]=Mòdifikatora klawiaturë ë stónu klawiszów mëszë
 Comment[da]=Tilstand for tastaturets ændringstaster og museknapper
 Comment[en_GB]=Keyboard modifier and mouse buttons states

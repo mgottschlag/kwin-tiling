@@ -2,6 +2,7 @@
 Name=Accessible
 Name[bg]=Достъпен
 Name[ca]=Accessible
+Name[cs]=Přístupné
 Name[csb]=Pòmòce przëstãpù
 Name[da]=Tilgængelig
 Name[de]=Verfügbar
@@ -100,6 +101,7 @@ Name[zh_TW]=檔案路徑
 Name=Object Name
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
+Name[cs]=Jméno objektu
 Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου

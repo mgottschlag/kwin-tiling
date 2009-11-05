@@ -2,6 +2,7 @@
 Name=Object Name
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
+Name[cs]=Jméno objektu
 Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
@@ -52,6 +53,7 @@ Name[zh_TW]=物件名稱
 Name=Supported Drivers
 Name[bg]=Поддържани драйвери
 Name[ca]=Controladors acceptats
+Name[cs]=Podporované ovladače
 Name[csb]=Wspiéróné czérowniczi
 Name[da]=Understøttede drivere
 Name[de]=Unterstützte Treiber

@@ -58,6 +58,7 @@ Name[x-test]=xxNew widget publishedxx
 Name[zh_TW]=已發布新的元件
 Comment=A new widget has become available on the network.
 Comment[en_GB]=A new widget has become available on the network.
+Comment[eo]=Nova fenestraĵo disboneblas sur la reto.
 Comment[et]=Võrgus sai kättesaadavaks uus vidin.
 Comment[gl]=Hai un novo widget dispoñíbel na rede.
 Comment[hr]=Novi widget postao je dostupan na mreži

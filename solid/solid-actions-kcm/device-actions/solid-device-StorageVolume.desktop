@@ -2,6 +2,7 @@
 Name=Fs Type
 Name[bg]=Тип Fs
 Name[ca]=Tipus de sistema de fitxers
+Name[cs]=Typ FS
 Name[csb]=Ôrt Fs
 Name[da]=FS-type
 Name[de]=Dateisystemtyp
@@ -153,6 +154,7 @@ Name[zh_TW]=標籤
 Name=Object Name
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
+Name[cs]=Jméno objektu
 Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου

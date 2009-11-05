@@ -8,8 +8,11 @@ X-KDE-PluginKeyword=kcm_krunner_kill
 
 Name=Kill Applications
 Name[en_GB]=Kill Applications
+Name[eo]=Mortigi aplikaĵon
 Name[et]=Rakenduste tapmine
 Name[gl]=Matar programas
+Name[hr]=Uništi aplikacije
+Name[nds]=Programmen afscheten
 Name[nl]=Programma's afbreken
 Name[pt]=Matar as Aplicações
 Name[pt_BR]=Matar aplicativos
