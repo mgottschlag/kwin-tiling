@@ -284,6 +284,9 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
         if (q->status() != Task::NeedsAttention) {
             foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
                 iconWidget->setIcon(icon);
+                //This hardcoded number is needed to support pixel perfection of icons coming from other environments, in kde actualsize will jusrt return our usual 22x22
+                QSize size = icon.actualSize(QSize(24, 24));
+                iconWidget->setPreferredSize(iconWidget->sizeFromIconSize(qMax(size.width(), size.height())));
             }
         }
 
