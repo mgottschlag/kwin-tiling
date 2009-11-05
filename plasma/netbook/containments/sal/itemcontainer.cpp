@@ -258,7 +258,7 @@ void ItemContainer::relayout()
 
 
         foreach (Plasma::IconWidget *icon, m_items) {
-            if (i <= validIndex) {
+            if (i < validIndex) {
                 ++i;
                 continue;
             }
