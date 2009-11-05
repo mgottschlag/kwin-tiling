@@ -94,7 +94,7 @@ bool WebApplet::init()
         d->page = 0;
         return false;
     }
-    QUrl url(package()->filePath("html"));
+    KUrl url(package()->filePath("html"));
     url.setScheme("file");
     kDebug() << webpage << package()->path() << url;
     d->page->mainFrame()->setHtml(dataFor(webpage), url);
