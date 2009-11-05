@@ -976,11 +976,11 @@ void Pager::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void Pager::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
+    event->setAccepted(true);
     if (event->mimeData()->hasFormat(TaskManager::Task::mimetype())) {
-        event->setAccepted(true);
         return;
     }
-    else event->setAccepted(false);
+
     handleHoverMove(event->pos());
 
     if (m_hoverIndex != -1) {
@@ -1058,6 +1058,7 @@ void Pager::dragSwitch()
     if (m_dragSwitchDesktop == -1) {
         return;
     }
+
     KWindowSystem::setCurrentDesktop(m_dragSwitchDesktop + 1);
     m_currentDesktop = m_dragSwitchDesktop + 1;
 }
