@@ -60,7 +60,7 @@ public slots:
     QObject* globalConfig();
     void setScrollBarPolicy(int orientation, int policy);
     QVariantList screenRect();
-    void setConfigurationRequired(bool needsConfiguring);
+    void setConfigurationRequired(bool needsConfiguring, const QString &reason = QString());
     QVariantList getContentsMargins();
     void resize(qreal w, qreal h);
     QVariantList size();
@@ -78,6 +78,10 @@ public slots:
     QVariantList geometry();
     void setPos(qreal x, qreal y);
     QVariantList pos();
+    void setFailedToLaunch(bool failed, const QString &reason = QString());
+    void update();
+    bool isBusy() const;
+    void setBusy(bool busy);
 
     QVariant arg(int index) const;
     QObject* objArg(int index) const;

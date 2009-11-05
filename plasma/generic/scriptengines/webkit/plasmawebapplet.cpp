@@ -371,10 +371,9 @@ int PlasmaWebApplet::aspectRatioMode()
     return applet()->aspectRatioMode();
 }
 
-void PlasmaWebApplet::setConfigurationRequired(bool needsConfiguring)
+void PlasmaWebApplet::setConfigurationRequired(bool needsConfiguring, const QString &reason)
 {
-    // configurationRequired is protected
-    applet()->setProperty("configurationRequired", needsConfiguring);
+    WebApplet::setConfigurationRequired(needsConfiguring, reason);
 }
 
 void PlasmaWebApplet::setMaximumSize(qreal w, qreal h)
@@ -436,6 +435,26 @@ QVariantList PlasmaWebApplet::pos()
 QVariantList PlasmaWebApplet::size()
 {
     return QVariantList() << applet()->size().width() << applet()->size().height();
+}
+
+void PlasmaWebApplet::setFailedToLaunch(bool failed, const QString &reason)
+{
+    WebApplet::setFailedToLaunch(failed, reason);
+}
+
+void PlasmaWebApplet::update()
+{
+    applet()->update();
+}
+
+bool PlasmaWebApplet::isBusy() const
+{
+    return applet()->isBusy();
+}
+
+void PlasmaWebApplet::setBusy(bool busy)
+{
+    applet()->setBusy(busy);
 }
 
 #include "plasmawebapplet.moc"
