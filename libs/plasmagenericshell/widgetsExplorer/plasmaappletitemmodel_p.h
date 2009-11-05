@@ -45,26 +45,27 @@ public:
     PlasmaAppletItem(PlasmaAppletItemModel *model, const KPluginInfo& info, FilterFlags flags = NoFilter);
 
     QString pluginName() const;
-    virtual QString name() const;
-    virtual QString category() const;
-    virtual QString description() const;
-    virtual QString license() const;
-    virtual QString website() const;
-    virtual QString version() const;
-    virtual QString author() const;
-    virtual QString email() const;
+    QString name() const;
+    QString category() const;
+    QString description() const;
+    QString license() const;
+    QString website() const;
+    QString version() const;
+    QString author() const;
+    QString email() const;
 
-    virtual int running() const;
-    virtual bool used() const;
-    virtual void setUsed(bool used);
-    virtual void setFavorite(bool favorite);
+    int running() const;
+    bool used() const;
+    bool isLocal() const;
+    void setUsed(bool used);
+    void setFavorite(bool favorite);
 
     //set how many instances of this applet are running
-    virtual void setRunning(int count);
-    virtual bool passesFiltering(const KCategorizedItemsViewModels::Filter & filter) const;
-    virtual QVariantList arguments() const;
-    virtual QMimeData *mimeData() const;
-    virtual QStringList mimeTypes() const;
+    void setRunning(int count);
+    bool passesFiltering(const KCategorizedItemsViewModels::Filter & filter) const;
+    QVariantList arguments() const;
+    QMimeData *mimeData() const;
+    QStringList mimeTypes() const;
 
 private:
     PlasmaAppletItemModel * m_model;

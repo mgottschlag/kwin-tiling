@@ -19,6 +19,7 @@
 
 #include "plasmaappletitemmodel_p.h"
 
+#include <KStandardDirs>
 #include <KSycoca>
 
 PlasmaAppletItem::PlasmaAppletItem(PlasmaAppletItemModel *model,
@@ -38,6 +39,14 @@ PlasmaAppletItem::PlasmaAppletItem(PlasmaAppletItemModel *model,
     attrs.insert("email", info.email());
     attrs.insert("favorite", flags & Favorite ? true : false);
     attrs.insert("used", flags & Used ? true : false);
+
+    const QString api(info.property("X-Plasma-API").toString());
+    bool local = false;
+    if (!api.isEmpty()) {
+        QDir dir(KStandardDirs::locateLocal("data", "plasma/plasmoids/" + info.pluginName() + '/'));
+        local = dir.exists();
+    }
+    attrs.insert("local", local);
 
     //attrs.insert("recommended", flags & Recommended ? true : false);
     setText(info.name() + " - "+ info.category().toLower());
@@ -112,6 +121,11 @@ void PlasmaAppletItem::setFavorite(bool favorite)
 
     QString pluginName = attrs["pluginName"].toString();
     m_model->setFavorite(pluginName, favorite);
+}
+
+bool PlasmaAppletItem::isLocal() const
+{
+    return data().toMap()["local"].toBool();
 }
 
 void PlasmaAppletItem::setRunning(int count)

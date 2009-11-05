@@ -103,14 +103,15 @@ AppletInfoWidget::~AppletInfoWidget()
 
 void AppletInfoWidget::init()
 {
-    m_iconWidget   = new Plasma::IconWidget(this);
-    m_nameLabel    = new Plasma::TextBrowser(this);
-    m_aboutLabel   = new Plasma::TextBrowser(this);
+    m_iconWidget = new Plasma::IconWidget(this);
+    m_nameLabel = new Plasma::TextBrowser(this);
+    m_aboutLabel = new Plasma::TextBrowser(this);
 
     m_uninstallButton = new Plasma::PushButton(this);
-    m_uninstallButton->setText(i18n("Uninstall"));
+    m_uninstallButton->setText(i18n("Uninstall Widget"));
     m_uninstallButton->setIcon(KIcon("application-exit"));
     m_uninstallButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum, QSizePolicy::ButtonBox);
+    m_uninstallButton->setVisible(false);
 
     // layout init
     QGraphicsLinearLayout *textLayout = new QGraphicsLinearLayout(Qt::Vertical);
@@ -168,26 +169,14 @@ void AppletInfoWidget::setAppletItem(PlasmaAppletItem *appletItem)
 
 void AppletInfoWidget::updateInfo()
 {
-    if (m_appletItem != 0) {
-
-        if (m_iconWidget != 0) {
-            m_iconWidget->setIcon(m_appletItem->icon());
-        }
-        if (m_nameLabel != 0) {
-            m_nameLabel->setText(m_appletItem->name());
-        }
-
-        if (m_aboutLabel != 0) {
-            m_aboutLabel->setText(m_appletItem->description());
-        }
-
+    if (m_appletItem) {
+        m_iconWidget->setIcon(m_appletItem->icon());
+        m_nameLabel->setText(m_appletItem->name());
+        m_aboutLabel->setText(m_appletItem->description());
+        m_uninstallButton->setVisible(m_appletItem->isLocal());
     } else {
-        if (m_iconWidget != 0) {
-            m_iconWidget->setIcon("plasma");
-        }
-
-        if (m_nameLabel != 0) {
-            m_nameLabel->setText("Unknown Applet");
-        }
+        m_iconWidget->setIcon("plasma");
+        m_nameLabel->setText("Unknown Applet");
+        m_uninstallButton->setVisible(false);
     }
 }
