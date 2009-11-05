@@ -132,13 +132,9 @@ void AppletsListWidget::init()
 
     //init applets list
     m_appletsListWidget = new QGraphicsWidget(m_appletsListWindowWidget);
-    m_appletListLinearLayout = new QGraphicsLinearLayout(m_orientation);
-    m_appletsListWidget->setLayout(m_appletListLinearLayout);
+    m_appletListLinearLayout = new QGraphicsLinearLayout(m_orientation, m_appletsListWidget);
 
     m_slide->setWidgetToAnimate(m_appletsListWidget);
-
-    //init window that shows the applets of the list - it clips the appletsListWidget
-    m_appletsListWidget->setParentItem(m_appletsListWindowWidget);
 
     //make its events pass through its parent
     m_appletsListWidget->installEventFilter(this);
