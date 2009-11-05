@@ -138,8 +138,6 @@ void AppletsListWidget::init()
     m_slide->setWidgetToAnimate(m_appletsListWidget);
 
     //init window that shows the applets of the list - it clips the appletsListWidget
-    m_appletsListWindowWidget = new QGraphicsWidget();
-    m_appletsListWindowWidget->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
     m_appletsListWidget->setParentItem(m_appletsListWindowWidget);
 
     //make its events pass through its parent
