@@ -452,10 +452,6 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
         if (m_appletOverlay) {
             m_appletOverlay->resize(size());
         }
-        //FIXME: rather fix itemContainmer
-        if (m_orientation == Qt::Horizontal) {
-            m_resultsView->setMaximumHeight(size().height()-m_searchField->geometry().bottom());
-        }
     }
 
     if (constraints & Plasma::StartupCompletedConstraint) {
