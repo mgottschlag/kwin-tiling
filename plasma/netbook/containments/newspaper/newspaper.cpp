@@ -312,7 +312,7 @@ void Newspaper::goRight()
     ev.setDelta(-120);
     scene()->sendEvent(m_scrollWidget, &ev);
 
-    if (m_mainWidget->geometry().right()-2 <= m_scrollWidget->viewportGeometry().right()) {
+    if (m_mainWidget->geometry().right()-2 <= m_scrollWidget->viewportGeometry().right() && sender() == m_rightArrow) {
         action("next containment")->trigger();
     }
 }
@@ -323,7 +323,7 @@ void Newspaper::goLeft()
     ev.setDelta(120);
     scene()->sendEvent(m_scrollWidget, &ev);
 
-    if (m_mainWidget->geometry().left() >= -2) {
+    if (m_mainWidget->geometry().left() >= -2 && sender() == m_leftArrow) {
         action("previous containment")->trigger();
     }
 }

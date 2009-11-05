@@ -636,7 +636,7 @@ void SearchLaunch::goRight()
     ev.setDelta(-120);
     scene()->sendEvent(m_resultsView, &ev);
 
-    if (m_resultsView->widget()->geometry().right()-2 <= m_resultsView->viewportGeometry().right()) {
+    if (m_resultsView->widget()->geometry().right()-2 <= m_resultsView->viewportGeometry().right() && sender() == m_rightArrow) {
         action("next containment")->trigger();
     }
 }
@@ -647,7 +647,7 @@ void SearchLaunch::goLeft()
     ev.setDelta(120);
     scene()->sendEvent(m_resultsView, &ev);
 
-    if (m_resultsView->widget()->geometry().left() >= -2) {
+    if (m_resultsView->widget()->geometry().left() >= -2 && sender() == m_leftArrow) {
         action("previous containment")->trigger();
     }
 }
