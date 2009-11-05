@@ -45,7 +45,7 @@ public:
     GroupManager *groupingStrategy;
 
     itemHashTable *managedItems;
-    desktopHashTable *desktops;
+    desktopHashTable desktops;
     int oldDesktop;
 };
 
@@ -57,25 +57,20 @@ ManualSortingStrategy::ManualSortingStrategy(GroupManager *parent)
     d->groupingStrategy = parent;
     setType(GroupManager::ManualSorting);
 
-    d->desktops = new desktopHashTable();
     //TODO add a screenHashTable
     d->oldDesktop = TaskManager::self()->currentDesktop();
 
     d->managedItems = new itemHashTable();
     if (d->groupingStrategy->showOnlyCurrentDesktop()) {
-        d->desktops->insert(TaskManager::self()->currentDesktop(), d->managedItems);
+        d->desktops.insert(TaskManager::self()->currentDesktop(), d->managedItems);
     } else {
-        d->desktops->insert(0, d->managedItems);
+        d->desktops.insert(0, d->managedItems);
     }
 }
 
 ManualSortingStrategy::~ManualSortingStrategy()
 {
-    if (d->desktops) {
-        qDeleteAll(*d->desktops);
-        delete d->desktops;
-    }
-
+    qDeleteAll(d->desktops);
     delete d;
 }
 
@@ -103,13 +98,13 @@ void ManualSortingStrategy::desktopChanged(int newDesktop)
     //store positions of old desktop
     d->managedItems->clear();
     storePositions(d->groupingStrategy->rootGroup());
-    d->desktops->insert(d->oldDesktop, d->managedItems);
+    d->desktops.insert(d->oldDesktop, d->managedItems);
 
     //load positions of new desktop
-    d->managedItems = d->desktops->value(newDesktop);
+    d->managedItems = d->desktops.value(newDesktop);
     if (!d->managedItems) {
         d->managedItems = new itemHashTable();
-        d->desktops->insert(newDesktop, d->managedItems);
+        d->desktops.insert(newDesktop, d->managedItems);
     }
 
     d->oldDesktop = newDesktop;
