@@ -36,7 +36,7 @@ class PlasmaAppletItem : public QObject, public KCategorizedItemsViewModels::Abs
 public:
     enum FilterFlag {
         NoFilter = 0,
-        Favorite = 1,
+        Favorite = 1
     };
 
     Q_DECLARE_FLAGS(FilterFlags, FilterFlag)
