@@ -46,7 +46,7 @@ class Color : public Plasma::Wallpaper
     private:
         Ui::Config m_ui;
         QColor m_color1;
-        QColor m_color2;;
+        QColor m_color2;
 
         int m_backgroundMode;
 };

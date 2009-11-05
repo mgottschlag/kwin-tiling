@@ -31,7 +31,7 @@ enum BackgroundMode {
     RECTANGULAR,
     RADIAL,
     TOP_LEFT_DIAGONAL,
-    TOP_RIGHT_DIAGONAL,
+    TOP_RIGHT_DIAGONAL
 };
 
 Color::Color(QObject *parent, const QVariantList &args)
