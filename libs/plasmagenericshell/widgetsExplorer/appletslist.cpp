@@ -286,6 +286,15 @@ void AppletsListWidget::timerEvent(QTimerEvent *event)
     QGraphicsWidget::timerEvent(event);
 }
 
+QVariant AppletsListWidget::itemChange(GraphicsItemChange change, const QVariant & value)
+{
+    if (change == QGraphicsItem::ItemSceneHasChanged) {
+        m_toolTip->setScene(scene());
+    }
+
+    return QGraphicsWidget::itemChange(change, value);
+}
+
 void AppletsListWidget::appletIconHoverEnter(AppletIconWidget *applet)
 {
     if (!m_toolTip->isVisible()) {
@@ -432,7 +441,6 @@ void AppletsListWidget::eraseList()
 
 void AppletsListWidget::updateList()
 {
-    kDebug();
     m_appletsListWidget->setLayout(NULL);
     m_appletListLinearLayout = new QGraphicsLinearLayout(m_orientation);
     m_appletListLinearLayout->setSpacing(0);

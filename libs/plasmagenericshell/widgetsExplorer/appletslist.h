@@ -135,6 +135,7 @@ private slots:
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
     void timerEvent(QTimerEvent *event);
+    QVariant itemChange(GraphicsItemChange change, const QVariant & value);
 
 Q_SIGNALS:
     void appletDoubleClicked(PlasmaAppletItem *appletItem);

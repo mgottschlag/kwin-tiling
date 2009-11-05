@@ -68,6 +68,7 @@ class AppletToolTipWidget : public Plasma::Dialog {
         void setAppletIconWidget(AppletIconWidget *applet);
         void updateContent();
         AppletIconWidget *appletIconWidget();
+        void setScene(QGraphicsScene *scene);
 
     Q_SIGNALS:
         void enter();

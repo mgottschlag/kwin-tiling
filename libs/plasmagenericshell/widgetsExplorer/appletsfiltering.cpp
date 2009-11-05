@@ -134,7 +134,10 @@ void FilteringTabs::setModel(QStandardItemModel *model)
 //FilteringWidget
 
 FilteringWidget::FilteringWidget(QGraphicsItem * parent, Qt::WindowFlags wFlags)
-    : QGraphicsWidget(parent, wFlags)
+    : QGraphicsWidget(parent, wFlags),
+      m_model(0),
+      m_categoriesTreeView(0),
+      m_categoriesTabs(0)
 {
     m_orientation = Qt::Horizontal;
     init();
@@ -142,7 +145,10 @@ FilteringWidget::FilteringWidget(QGraphicsItem * parent, Qt::WindowFlags wFlags)
 
 FilteringWidget::FilteringWidget(Qt::Orientation orientation, QGraphicsItem * parent,
                                  Qt::WindowFlags wFlags)
-    : QGraphicsWidget(parent, wFlags)
+    : QGraphicsWidget(parent, wFlags),
+      m_model(0),
+      m_categoriesTreeView(0),
+      m_categoriesTabs(0)
 {
     m_orientation = orientation;
     init();
@@ -150,8 +156,8 @@ FilteringWidget::FilteringWidget(Qt::Orientation orientation, QGraphicsItem * pa
 
 FilteringWidget::~FilteringWidget()
 {
-    delete(m_categoriesTabs);
-    delete(m_categoriesTreeView);
+    delete m_categoriesTabs;
+    delete m_categoriesTreeView;
 }
 
 void FilteringWidget::init()
@@ -162,23 +168,9 @@ void FilteringWidget::init()
     m_textSearch->setFocus();
     m_textSearch->setAttribute(Qt::WA_NoSystemBackground);
 
-    //init treeview categories
-    m_categoriesTreeView = new FilteringTreeView();
-    m_categoriesTabs = new FilteringTabs();
-
-    //throws the signal
-    connect(m_categoriesTreeView, SIGNAL(filterChanged(int)), this, SIGNAL(filterChanged(int)));
-    connect(m_categoriesTabs, SIGNAL(filterChanged(int)), this, SIGNAL(filterChanged(int)));
-
     //layout
     m_linearLayout = new QGraphicsLinearLayout();
-    m_linearLayout->setOrientation(m_orientation);
     m_linearLayout->addItem(m_textSearch);
-    if(m_orientation == Qt::Horizontal) {
-        m_linearLayout->addItem(m_categoriesTabs);
-    } else {
-        m_linearLayout->addItem(m_categoriesTreeView);
-    }
     setLayout(m_linearLayout);
 }
 
@@ -208,26 +200,49 @@ Plasma::LineEdit *FilteringWidget::textSearch()
 
 void FilteringWidget::setModel(QStandardItemModel *model)
 {
-    m_categoriesTreeView->setModel(model);
-    m_categoriesTabs->setModel(model);
+    m_model = model;
+    if (m_categoriesTreeView) {
+        m_categoriesTreeView->setModel(model);
+    }
+
+    if (m_categoriesTabs) {
+        m_categoriesTabs->setModel(model);
+    }
 }
 
 void FilteringWidget::setListOrientation(Qt::Orientation orientation)
 {
+    if (m_orientation == orientation && (m_categoriesTreeView || m_categoriesTabs)) {
+        return;
+    }
+
     m_orientation = orientation;
     m_linearLayout->setOrientation(orientation);
 
-    m_categoriesTabs->setVisible(false);
-    m_categoriesTreeView->setVisible(false);
-
-    m_linearLayout->removeAt(1);
-
     if (orientation == Qt::Horizontal) {
+        delete m_categoriesTreeView;
+        m_categoriesTreeView = 0;
+
+        if (!m_categoriesTabs) {
+            m_categoriesTabs = new FilteringTabs();
+            connect(m_categoriesTabs, SIGNAL(filterChanged(int)), this, SIGNAL(filterChanged(int)));
+            m_categoriesTabs->setModel(m_model);
+        }
+
         m_textSearch->setPreferredWidth(200);
         m_textSearch->setPreferredHeight(-1);
         m_linearLayout->addItem(m_categoriesTabs);
         m_categoriesTabs->setVisible(true);
     } else {
+        delete m_categoriesTabs;
+        m_categoriesTabs = 0;
+
+        if (!m_categoriesTreeView) {
+            m_categoriesTreeView = new FilteringTreeView();
+            connect(m_categoriesTreeView, SIGNAL(filterChanged(int)), this, SIGNAL(filterChanged(int)));
+            m_categoriesTreeView->setModel(m_model);
+        }
+
         m_textSearch->setPreferredHeight(30);
         m_textSearch->setPreferredWidth(-1);
         m_linearLayout->addItem(m_categoriesTreeView);

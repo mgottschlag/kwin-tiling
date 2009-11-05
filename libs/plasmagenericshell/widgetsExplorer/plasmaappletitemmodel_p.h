@@ -42,10 +42,11 @@ public:
 
     Q_DECLARE_FLAGS(FilterFlags, FilterFlag)
 
-    PlasmaAppletItem(PlasmaAppletItemModel *model, const QMap<QString, QVariant>& info, FilterFlags flags = NoFilter, QMap<QString, QVariant> *extraAttrs = NULL);
+    PlasmaAppletItem(PlasmaAppletItemModel *model, const KPluginInfo& info, FilterFlags flags = NoFilter);
 
     QString pluginName() const;
     virtual QString name() const;
+    virtual QString category() const;
     virtual QString description() const;
     virtual QString license() const;
     virtual QString website() const;
@@ -77,6 +78,7 @@ public:
     explicit PlasmaAppletItemModel(KConfigGroup configGroup, QObject * parent = 0);
 
     QStringList mimeTypes() const;
+    QSet<QString> categories() const;
 
     QMimeData *mimeData(const QModelIndexList &indexes) const;
 

@@ -121,8 +121,6 @@ public:
 
 void WidgetExplorerPrivate::initFilters()
 {
-    filterModel.clear();
-
     filterModel.addFilter(i18n("All Widgets"),
                           KCategorizedItemsViewModels::Filter(), KIcon("plasma"));
 
@@ -138,10 +136,12 @@ void WidgetExplorerPrivate::initFilters()
 
     typedef QPair<QString, QString> catPair;
     QMap<QString, catPair > categories;
+    QSet<QString> existingCategories = itemModel.categories();
     foreach (const QString &category, Plasma::Applet::listCategories(application)) {
-        if (!Plasma::Applet::listAppletInfo(category).isEmpty()) {
-            QString trans = i18n(category.toLocal8Bit());
-            categories.insert(trans.toLower(), qMakePair(trans, category.toLower()));
+        const QString lowerCaseCat = category.toLower();
+        if (existingCategories.contains(lowerCaseCat)) {
+            const QString trans = i18n(category.toLocal8Bit());
+            categories.insert(trans.toLower(), qMakePair(trans, lowerCaseCat));
         }
     }
 
@@ -149,6 +149,9 @@ void WidgetExplorerPrivate::initFilters()
         filterModel.addFilter(category.first,
                               KCategorizedItemsViewModels::Filter("category", category.second));
     }
+
+    filteringWidget->setModel(&filterModel);
+    appletsListWidget->setFilterModel(&filterModel);
 }
 
 void WidgetExplorerPrivate::init(Qt::Orientation orient)
@@ -171,9 +174,6 @@ void WidgetExplorerPrivate::init(Qt::Orientation orient)
     mainLayout->setAlignment(appletsListWidget, Qt::AlignVCenter | Qt::AlignHCenter);
 
     //filters & models
-    initFilters();
-    filteringWidget->setModel(&filterModel);
-    appletsListWidget->setFilterModel(&filterModel);
     appletsListWidget->setItemModel(&itemModel);
     initRunningApplets();
 
@@ -299,13 +299,13 @@ int WidgetExplorer::iconSize() const
 void WidgetExplorer::populateWidgetList(const QString &app)
 {
     d->application = app;
-    d->initFilters();
     d->itemModel.setApplication(app);
+    d->initFilters();
+    //d->appletsListWidget->setFilterModel(&d->filterModel);
 
     //FIXME: AFAIK this shouldn't be necessary ... but here it is. need to find out what in that
     //       maze of models and views is screwing up
     d->appletsListWidget->setItemModel(&d->itemModel);
-
     d->itemModel.setRunningApplets(d->runningApplets);
 }
 
@@ -365,7 +365,6 @@ void WidgetExplorer::addApplet(PlasmaAppletItem *appletItem)
     }
 
     kDebug() << appletItem->pluginName() << appletItem->arguments();
-
     d->containment->addApplet(appletItem->pluginName(), appletItem->arguments());
 }
 

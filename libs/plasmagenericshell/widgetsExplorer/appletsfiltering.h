@@ -100,6 +100,7 @@ class FilteringWidget : public QGraphicsWidget
     private:
         void init();
 
+        QStandardItemModel *m_model;
         QGraphicsLinearLayout *m_linearLayout;
         FilteringTreeView *m_categoriesTreeView;
         FilteringTabs *m_categoriesTabs;

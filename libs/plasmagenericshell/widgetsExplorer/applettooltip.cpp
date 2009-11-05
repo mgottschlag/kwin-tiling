@@ -24,26 +24,38 @@
 #include <kpushbutton.h>
 #include <ktextbrowser.h>
 
-#include <plasma/theme.h>
+#include <Plasma/Corona>
+#include <Plasma/Theme>
 
 //AppletToolTipWidget
 
 AppletToolTipWidget::AppletToolTipWidget(QWidget *parent, AppletIconWidget *applet)
         : Plasma::Dialog(parent)
 {
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
     m_applet = applet;
     m_widget = new AppletInfoWidget();
-    QGraphicsScene * scene = new QGraphicsScene();
-    scene->addItem(m_widget);
-    if(m_applet) {
+    if (m_applet) {
         m_widget->setAppletItem(m_applet->appletItem());
     }
-    setGraphicsWidget(m_widget);
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
 }
 
 AppletToolTipWidget::~AppletToolTipWidget()
 {
+}
+
+void AppletToolTipWidget::setScene(QGraphicsScene *scene)
+{
+    if (scene) {
+        Plasma::Corona *corona = qobject_cast<Plasma::Corona *>(scene);
+        if (corona) {
+            corona->addOffscreenWidget(m_widget);
+        } else {
+            scene->addItem(m_widget);
+        }
+
+        setGraphicsWidget(m_widget);
+    }
 }
 
 void AppletToolTipWidget::setAppletIconWidget(AppletIconWidget *applet)
@@ -81,11 +93,7 @@ void AppletToolTipWidget::leaveEvent(QEvent *event)
 AppletInfoWidget::AppletInfoWidget(QGraphicsItem *parent, PlasmaAppletItem *appletItem)
         : QGraphicsWidget(parent)
 {
-    if(appletItem != 0) {
-        m_appletItem = appletItem;
-    } else {
-        m_appletItem = 0;
-    }
+    m_appletItem = appletItem;
     init();
 }
 
@@ -95,11 +103,11 @@ AppletInfoWidget::~AppletInfoWidget()
 
 void AppletInfoWidget::init()
 {
-    m_iconWidget   = new Plasma::IconWidget();
-    m_nameLabel    = new Plasma::TextBrowser();
-    m_aboutLabel   = new Plasma::TextBrowser();
+    m_iconWidget   = new Plasma::IconWidget(this);
+    m_nameLabel    = new Plasma::TextBrowser(this);
+    m_aboutLabel   = new Plasma::TextBrowser(this);
 
-    m_uninstallButton = new Plasma::PushButton();
+    m_uninstallButton = new Plasma::PushButton(this);
     m_uninstallButton->setText(i18n("Uninstall"));
     m_uninstallButton->setIcon(KIcon("application-exit"));
     m_uninstallButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum, QSizePolicy::ButtonBox);
@@ -129,7 +137,7 @@ void AppletInfoWidget::init()
     QFont font = m_nameLabel->nativeWidget()->font();
     font.setBold(true);
     font.setPointSize(1.2 * font.pointSize());
-    m_nameLabel->nativeWidget()->setFont(font);
+    m_nameLabel->setFont(font);
     m_nameLabel->nativeWidget()->setFixedHeight(m_iconWidget->maximumHeight());
     m_nameLabel->nativeWidget()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_nameLabel->nativeWidget()->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -138,7 +146,6 @@ void AppletInfoWidget::init()
     // about label
     font.setBold(false);
     m_aboutLabel->setFont(font);
-    m_aboutLabel->nativeWidget()->setFont(font);
     m_aboutLabel->nativeWidget()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_aboutLabel->nativeWidget()->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_aboutLabel->nativeWidget()->setAlignment(Qt::AlignLeft | Qt::AlignTop);
