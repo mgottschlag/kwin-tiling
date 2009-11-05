@@ -173,6 +173,7 @@ void DashboardView::showWidgetExplorer()
         widgetExplorer->populateWidgetList();
         widgetExplorer->setMaximumWidth(width());
         widgetExplorer->adjustSize();
+        widgetExplorer->resize(width(), widgetExplorer->size().height());
         widgetExplorer->setZValue(1000000);
     }
 }
