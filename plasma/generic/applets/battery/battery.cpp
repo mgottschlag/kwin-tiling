@@ -148,7 +148,7 @@ void Battery::init()
 
     dataUpdated("AC Adapter", dataEngine("powermanagement")->query("AC Adapter"));
 
-    if (!m_isEmbedded && !extender()->hasItem("powermanagement")) {
+    if (!m_isEmbedded && extender() && !extender()->hasItem("powermanagement")) {
         Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
         eItem->setName("powermanagement");
         initExtenderItem(eItem);
