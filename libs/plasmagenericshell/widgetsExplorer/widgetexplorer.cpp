@@ -125,9 +125,6 @@ void WidgetExplorerPrivate::initFilters()
                           KCategorizedItemsViewModels::Filter(), KIcon("plasma"));
 
     // Filters: Special
-    filterModel.addFilter(i18n("Used Before"),
-                          KCategorizedItemsViewModels::Filter("used", true),
-                          KIcon("view-history"));
     filterModel.addFilter(i18n("Running"),
                           KCategorizedItemsViewModels::Filter("running", true),
                           KIcon("dialog-ok"));

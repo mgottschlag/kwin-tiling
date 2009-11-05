@@ -38,7 +38,6 @@ PlasmaAppletItem::PlasmaAppletItem(PlasmaAppletItemModel *model,
     attrs.insert("author", info.author());
     attrs.insert("email", info.email());
     attrs.insert("favorite", flags & Favorite ? true : false);
-    attrs.insert("used", flags & Used ? true : false);
 
     const QString api(info.property("X-Plasma-API").toString());
     bool local = false;
@@ -108,11 +107,6 @@ int PlasmaAppletItem::running() const
     return data().toMap()["runningCount"].toInt();
 }
 
-bool PlasmaAppletItem::used() const
-{
-    return data().toMap()["used"].toBool();
-}
-
 void PlasmaAppletItem::setFavorite(bool favorite)
 {
     QMap<QString, QVariant> attrs = data().toMap();
@@ -133,13 +127,6 @@ void PlasmaAppletItem::setRunning(int count)
     QMap<QString, QVariant> attrs = data().toMap();
     attrs.insert("running", count > 0); //bool for the filter
     attrs.insert("runningCount", count);
-    setData(QVariant(attrs));
-}
-
-void PlasmaAppletItem::setUsed(bool used)
-{
-    QMap<QString, QVariant> attrs = data().toMap();
-    attrs.insert("used", used);
     setData(QVariant(attrs));
 }
 
@@ -175,7 +162,6 @@ PlasmaAppletItemModel::PlasmaAppletItemModel(KConfigGroup configGroup, QObject *
     QStandardItemModel(parent),
     m_configGroup(configGroup)
 {
-    m_used = m_configGroup.readEntry("used").split(',');
     m_favorites = m_configGroup.readEntry("favorites").split(',');
     connect(KSycoca::self(), SIGNAL(databaseChanged()), this, SLOT(populateModel()));
 }
@@ -221,19 +207,9 @@ void PlasmaAppletItemModel::setRunningApplets(const QHash<QString, int> &apps)
 
         if (p) {
             const bool running = apps.value(p->pluginName());
-            const bool used = m_used.contains(p->pluginName());
-
             p->setRunning(running);
-            //mark just used applets that arent't running
-            p->setUsed(!running && used);
-
-            if (running && !used) {
-                m_used.append(p->pluginName());
-            }
         }
     }
-
-    m_configGroup.writeEntry("used", m_used.join(","));
 }
 
 void PlasmaAppletItemModel::setRunningApplets(const QString &name, int count)
@@ -242,18 +218,9 @@ void PlasmaAppletItemModel::setRunningApplets(const QString &name, int count)
         QStandardItem *i = item(r);
         PlasmaAppletItem *p = dynamic_cast<PlasmaAppletItem *>(i);
         if (p && p->pluginName() == name) {
-            const bool used = m_used.contains(p->pluginName());
-
             p->setRunning(count);
-            p->setUsed(used && count == 0);
-
-            if (count > 0 && !used) {
-                m_used.append(p->pluginName());
-            }
         }
     }
-
-    m_configGroup.writeEntry("used", m_used.join(","));
 }
 
 QStringList PlasmaAppletItemModel::mimeTypes() const

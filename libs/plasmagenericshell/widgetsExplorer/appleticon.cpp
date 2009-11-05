@@ -33,8 +33,8 @@ AppletIconWidget::AppletIconWidget(QGraphicsItem *parent, PlasmaAppletItem *appl
       m_selectedBackgroundSvg(bgSvg),
       m_runningIcon("dialog-ok"),
       m_iconHeight(DEFAULT_ICON_SIZE),
-      m_hovered(false),
-      m_selected(false)
+      m_selected(false),
+      m_hovered(false)
 {
     setCacheMode(DeviceCoordinateCache);
     setFont(KGlobalSettings::smallestReadableFont());

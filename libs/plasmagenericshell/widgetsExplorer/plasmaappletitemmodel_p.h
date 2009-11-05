@@ -55,9 +55,7 @@ public:
     QString email() const;
 
     int running() const;
-    bool used() const;
     bool isLocal() const;
-    void setUsed(bool used);
     void setFavorite(bool favorite);
 
     //set how many instances of this applet are running
