@@ -416,7 +416,7 @@ void Panel::updateBorders(const QRect &geom, bool themeChange)
     m_background->getMargins(leftWidth, topHeight, rightWidth, bottomHeight);
 
     //calculation of extra margins has to be done after getMargins
-    const QGraphicsItem *box = toolBoxItem();
+    const QGraphicsItem *box = toolBox();
     if (box && immutability() == Mutable) {
         QSizeF s = box->boundingRect().size();
         if (formFactor() == Vertical) {
@@ -604,20 +604,7 @@ void Panel::setFormFactorFromLocation(Plasma::Location loc) {
 
 void Panel::showDropZone(const QPoint pos)
 {
-    if (!scene()) {
-        return;
-    }
-
-    // if the drop isn't happening on the outer edges and is instead
-    // actually poised over an applet, ignore it
-    QGraphicsItem *dropOn = scene()->itemAt(mapToScene(pos));
-    if (((formFactor() == Plasma::Vertical && pos.y() > 1 && pos.y() > size().height() - 2) ||
-         (pos.x() > 1 && pos.x() < size().width() - 2)) &&
-        dropOn != this && dropOn != toolBox()) {
-        return;
-    }
-
-    if (!m_layout) {
+    if (!scene() || !m_layout) {
         return;
     }
 
@@ -642,7 +629,7 @@ void Panel::showDropZone(const QPoint pos)
         QRectF siblingGeometry = m_layout->itemAt(i)->geometry();
 
         if (f == Plasma::Horizontal) {
-            qreal middle = (siblingGeometry.left() + siblingGeometry.right()) / 2.0;
+            qreal middle = siblingGeometry.left() + (siblingGeometry.width() / 2.0);
             if (pos.x() < middle) {
                 insertIndex = i;
                 break;
@@ -651,7 +638,7 @@ void Panel::showDropZone(const QPoint pos)
                 break;
             }
         } else { // Plasma::Vertical
-            qreal middle = (siblingGeometry.top() + siblingGeometry.bottom()) / 2.0;
+            qreal middle = siblingGeometry.top() + (siblingGeometry.height() / 2.0);
             if (pos.y() < middle) {
                 insertIndex = i;
                 break;
