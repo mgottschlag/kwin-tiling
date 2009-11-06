@@ -145,6 +145,11 @@ void ItemContainer::clear()
     m_items.clear();
 }
 
+QList<Plasma::IconWidget *> ItemContainer::items() const
+{
+    return m_items.values();
+}
+
 Plasma::IconWidget *ItemContainer::createItem()
 {
     Plasma::IconWidget *item;

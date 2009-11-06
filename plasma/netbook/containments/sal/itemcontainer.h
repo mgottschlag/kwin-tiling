@@ -55,6 +55,8 @@ public:
     void setIconSize(int size);
     int iconSize() const;
 
+    QList<Plasma::IconWidget *>items() const;
+
     Plasma::IconWidget *createItem();
 
 protected:

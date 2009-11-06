@@ -61,10 +61,15 @@ void ItemView::insertItem(Plasma::IconWidget *icon, qreal weight)
 {
     m_itemContainer->insertItem(icon, weight);
     icon->installEventFilter(this);
+    registerAsDragHandle(icon);
 }
 
 void ItemView::clear()
 {
+    QList<Plasma::IconWidget *>items = m_itemContainer->items();
+    foreach (Plasma::IconWidget *item, items) {
+        unregisterAsDragHandle(item);
+    }
     m_itemContainer->clear();
 }
 
@@ -140,17 +145,7 @@ bool ItemView::eventFilter(QObject *watched, QEvent *event)
         if (orientation() == Qt::Horizontal) {
             setMinimumHeight(re->newSize().height() + (size().height()-contentsRect().height()+6));
         }
-    //pass click only if the user didn't move the mouse FIXME: we need sendevent there
-    } else if(icon && (event->type() == QEvent::GraphicsSceneMousePress ||
-                       event->type() == QEvent::GraphicsSceneMouseMove ||
-                       event->type() == QEvent::GraphicsSceneMouseRelease)) {
-        QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
-        if (scene()) {
-            scene()->sendEvent(this, me);
-        }
     } else if (watched == m_itemContainer && event->type() == QEvent::GraphicsSceneMove) {
-        QGraphicsSceneMoveEvent *me = static_cast<QGraphicsSceneMoveEvent *>(event);
-
         ScrollBarFlags scrollBars = NoScrollBar;
         if (m_itemContainer->pos().x() < 0 || m_itemContainer->geometry().right() > size().width()) {
             scrollBars |= HorizontalScrollBar;
