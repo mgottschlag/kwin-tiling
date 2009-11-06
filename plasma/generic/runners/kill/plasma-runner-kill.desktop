@@ -12,6 +12,7 @@ Name[sv]=Avsluta program
 Name[tr]=Uygulamaları Bitir
 Name[uk]=Переривання програм
 Name[x-test]=xxTerminate Applicationsxx
+Name[zh_TW]=終端機應用程式
 Comment=Stop applications that are currently running
 Comment[en_GB]=Stop applications that are currently running
 Comment[et]=Töötavate rakenduste töö lõpetamine
@@ -24,6 +25,7 @@ Comment[pt_BR]=Parar os aplicativos atualmente em execução
 Comment[sv]=Stoppa program som för närvarande kör
 Comment[uk]=Завершує роботу запущених програм
 Comment[x-test]=xxStop applications that are currently runningxx
+Comment[zh_TW]=停止目前執行中的應用程式
 Icon=application-exit
 
 X-KDE-ServiceTypes=Plasma/Runner
