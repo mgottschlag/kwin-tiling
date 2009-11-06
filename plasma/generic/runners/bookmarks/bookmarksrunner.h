@@ -21,13 +21,14 @@
 #define BOOKMARKSRUNNER_H
 
 #include <KIcon>
-
+#include <QSqlDatabase>
 #include <Plasma/AbstractRunner>
 
 
 class KBookmark;
 class KBookmarkManager;
 
+/** This runner searchs for bookmarks in browsers like Konqueror and Firefox */
 class BookmarksRunner : public Plasma::AbstractRunner
 {
     Q_OBJECT
@@ -38,13 +39,49 @@ class BookmarksRunner : public Plasma::AbstractRunner
 
         void match(Plasma::RunnerContext &context);
         void run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &action);
+        void reloadConfiguration();
 
     private:
-        KIcon getFavicon(const KUrl &url);
+        /** Defines the browser to get the bookmarks from
+          * Add support for a browser by
+          * -adding the browser as part of this enum
+          * -adding an if-statement with the enum part
+          * -adding a method getBrowserBookmarks
+          * -adding a statement to whichBrowser()
+          * @see whichBrowser()
+          */
+        enum Browser { Konqueror, ///< the browser is Konqueror
+                       Firefox, ///< the browser is Firefox
+                       Default = Konqueror ///< Konqueror is default
+                     };
+
+        /** @returns the favicon for the url */
+        KIcon favicon(const KUrl &url);
+
+        /** Get the bookmarks from Firefox */
+        void matchFirefoxBookmarks(Plasma::RunnerContext& context, bool allBookmarks,
+                                                      const QString& term);
+        /** Get the bookmarks from Konqueror */
+        void matchKonquerorBookmarks(Plasma::RunnerContext& context, bool allBookmarks,
+                                                        const QString& term);
+
+        /** @returns the browser to get the bookmarks from
+          * @see Browser
+          */
+        Browser whichBrowser();
 
     private:
         KIcon m_icon;
+        bool m_dbOK;
+        Browser m_browser;
+        QString m_dbFile;
+        QString m_dbCacheFile;
+        QSqlDatabase m_db;
         KBookmarkManager *m_bookmarkManager;
+
+    private Q_SLOTS:
+        void prep();
+        void down();
 };
 
 K_EXPORT_PLASMA_RUNNER(bookmarksrunner, BookmarksRunner)
