@@ -23,6 +23,7 @@
 
 #include <KGlobalSettings>
 #include <KDebug>
+#include <KLocale>
 
 #include "qs_statusbar.h"
 
@@ -53,7 +54,8 @@ void QsStatusBar::paintEvent(QPaintEvent *)
     opt.textAlignment = Qt::AlignRight;
 
     opt.iconAlignment = Qt::AlignVCenter;
-    opt.text = QString("%1 of %2").arg(m_currentItem).arg(m_totalItems);
+    opt.text = i18nc("%1 current item number, %2 total number of items","%1 of %2", m_currentItem, m_totalItems);
+
 
     opt.position = QStyleOptionHeader::OnlyOneSection;
     opt.orientation = Qt::Horizontal;
