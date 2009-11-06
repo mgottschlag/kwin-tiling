@@ -25,6 +25,7 @@
 #include <fixx11h.h>
 
 #include <KIcon>
+#include <KIconLoader>
 
 #include <plasma/applet.h>
 #include <plasma/plasma.h>
@@ -160,10 +161,7 @@ void PlasmoidTask::Private::setupApplet()
     applet->setBackgroundHints(Plasma::Applet::NoBackground);
 
 
-    // TODO: We'll need the preferred item size here
-    // The applet does need a size, otherwise it won't show up correctly.
-    applet->setMinimumSize(22, 22);
-    applet->setMaximumSize(22, 22);
+    applet->setPreferredSize(KIconLoader::SizeSmallMedium+2, KIconLoader::SizeSmallMedium+2);
     kDebug() << applet->name() << " Applet loaded";
 }
 
