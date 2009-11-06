@@ -81,7 +81,7 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_actionView = new QuickSand::QsMatchView(w);
     layout->addWidget(m_actionView);
     m_actionView->setTitle(i18n("Actions"));
-    m_actionView->setItemCountSuffix(i18n("actions"));
+    m_actionView->setCountingActions(true);
     m_actionView->hide();
 
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();

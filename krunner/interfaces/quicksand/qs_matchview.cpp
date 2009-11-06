@@ -68,14 +68,14 @@ class QsMatchView::Private
         QsCompletionBox *m_compBox;
         QList<MatchItem*> m_items;
         QString m_searchTerm;
-        QString m_itemCountSuffix;
         QGraphicsRectItem *m_descRect;
         QGraphicsTextItem *m_descText;
         int m_currentItem;
-        bool m_hasFocus;
-        bool m_itemsRemoved;
-        bool m_listVisible;
-        bool m_selectionMade;
+        bool m_hasFocus : 1;
+        bool m_itemsRemoved : 1;
+        bool m_listVisible : 1;
+        bool m_selectionMade : 1;
+        bool m_itemCountSuffixItems : 1;
 };
 
 QsMatchView::QsMatchView(QWidget *parent)
@@ -120,7 +120,7 @@ QsMatchView::QsMatchView(QWidget *parent)
 
     d->m_titleLabel = new QLabel(this);
     d->m_itemCountLabel = new QLabel(this);
-    d->m_itemCountSuffix = i18n("items");
+    d->m_itemCountSuffixItems = true;
 
     d->m_arrowButton = new QToolButton(this);
     d->m_arrowButton->setFocusPolicy(Qt::NoFocus);
@@ -257,16 +257,20 @@ void QsMatchView::setTitle(const QString &title)
 
 void QsMatchView::setItemCount(int count)
 {
-    //TODO: place a context to aid translation
-    d->m_itemCountLabel->setText(i18n("%1 %2", count, d->m_itemCountSuffix));
+    if (d->m_itemCountSuffixItems) {
+        d->m_itemCountLabel->setText(i18np("1 items", "%1 items", count));
+    } else {
+        d->m_itemCountLabel->setText(i18np("1 actions", "%1 actions", count));
+    }
+
     if (count) {
         d->m_arrowButton->show();
     }
 }
 
-void QsMatchView::setItemCountSuffix(const QString &suffix)
+void QsMatchView::setCountingActions(bool actions)
 {
-    d->m_itemCountSuffix = suffix;
+    d->m_itemCountSuffixItems = !actions;
 }
 
 void QsMatchView::setDescriptionText(const QString &text)

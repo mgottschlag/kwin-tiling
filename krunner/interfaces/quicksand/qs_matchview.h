@@ -73,7 +73,8 @@ namespace QuickSand {
              * Sets the item count text on the upper right hand corner
              * Defaults to "items"
              */
-             void setItemCountSuffix(const QString &suffix);
+             void setCountingActions(bool actions);
+
         public slots:
             /**
              * Sets the title text on the upper left hand corner of the widget
