@@ -116,7 +116,7 @@ void LockOut::checkLayout()
         case Plasma::Vertical:
             if (width < MINBUTTONSIZE * 2 + MARGINSIZE) {
                 direction = Qt::Vertical;
-                ratioToKeep = 1.5;
+                ratioToKeep = 1.9;
             } else {
                 direction = Qt::Horizontal;
                 ratioToKeep = 0.5;
@@ -125,7 +125,7 @@ void LockOut::checkLayout()
         case Plasma::Horizontal:
             if (height < (MINBUTTONSIZE * 2 + MARGINSIZE)) {
                 direction = Qt::Horizontal;
-                ratioToKeep = 1.5;
+                ratioToKeep = 1.9;
             } else {
                 direction = Qt::Vertical;
                 ratioToKeep = 0.5;
