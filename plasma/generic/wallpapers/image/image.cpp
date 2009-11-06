@@ -519,7 +519,11 @@ void Image::wallpaperBrowseCompleted()
 {
     Q_ASSERT(m_model);
 
-    const QString wallpaper = m_dialog->selectedFile();
+    const QFileInfo info(m_dialog->selectedFile());
+
+    //the full file path, so it isn't broken when dealing with symlinks
+    const QString wallpaper = info.canonicalFilePath();
+
 
     if (wallpaper.isEmpty()) {
         return;
