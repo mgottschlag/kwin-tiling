@@ -250,7 +250,7 @@ void NetView::updateConfigurationMode(bool config)
 
     Plasma::Containment *cont = containment();
     if (config && cont && cont->immutability() == Plasma::Mutable &&
-        (cont->location() != Plasma::Desktop || cont->location() != Plasma::Floating)) {
+        (cont->location() != Plasma::Desktop && cont->location() != Plasma::Floating)) {
         m_panelController = new NetPanelController(0, this, cont);
     } else {
         delete m_panelController;
