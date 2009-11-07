@@ -67,7 +67,7 @@ void BookmarksRunner::reloadConfiguration()
             KConfig firefoxProfile(QDir::homePath() + "/.mozilla/firefox/profiles.ini",
                                    KConfig::SimpleConfig);
             QString profilePath(QDir::homePath() + "/.mozilla/firefox/");
-            for (int i = 0; true; i++) {
+            for (int i = 0; i < 20; i++) {
                 QString groupName = QString("Profile%1").arg(i);
                 if (firefoxProfile.hasGroup(groupName)) {
                     KConfigGroup fGrp = firefoxProfile.group(groupName);
