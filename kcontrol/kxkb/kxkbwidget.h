@@ -33,6 +33,8 @@ class QMenu;
 class XkbRules;
 class QAction;
 class QPixmap;
+class KStatusNotifierItem;
+
 
 /* This class is responsible for displaying flag/label for the layout,
     catching keyboard/mouse events and displaying menu when selected
@@ -83,20 +85,17 @@ class KxkbSysTrayIcon : public KxkbWidget
 
 public:
     KxkbSysTrayIcon(int controlType=MENU_FULL);
-    ~KxkbSysTrayIcon() { delete m_indicatorWidget; }
+    ~KxkbSysTrayIcon();
 
 protected:
-    QMenu* contextMenu() { return m_indicatorWidget->contextMenu(); }
-    void setToolTip(const QString& tip) { m_indicatorWidget->setToolTip(tip); }
+    QMenu* contextMenu();
+    void setToolTip(const QString& tip);
     void setPixmap(const QPixmap& pixmap);
-    void setText(const QString& /*text*/) { } //m_indicatorWidget->setText(text); }
-    void setVisible(bool visible) { m_indicatorWidget->setVisible(visible); }
-
-protected slots:
-    void trayActivated(QSystemTrayIcon::ActivationReason);
+    void setText(const QString& text);
+    void setVisible(bool visible);
 
 private:
-    KSystemTrayIcon* m_indicatorWidget;
+    KStatusNotifierItem *m_notifierItem;
 };
 
 

@@ -17,9 +17,10 @@
  */
 
 
-#include <QSystemTrayIcon>
 #include <QMenu>
 #include <QMouseEvent>
+
+#include <KStatusNotifierItem>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -147,22 +148,44 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 KxkbSysTrayIcon::KxkbSysTrayIcon(int controlType):
     KxkbWidget(controlType)
 {
-	m_indicatorWidget = new KSystemTrayIcon();
+    m_notifierItem = new KStatusNotifierItem(this);
+    m_notifierItem->setCategory(KStatusNotifierItem::SystemServices);
+    m_notifierItem->setStatus(KStatusNotifierItem::Active);
+    m_notifierItem->setToolTipTitle(i18n("Keyboard Layout"));
 
-	connect(contextMenu(), SIGNAL(triggered(QAction*)), this, SIGNAL(menuTriggered(QAction*)));
-	connect(m_indicatorWidget, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), 
-					this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
+    connect(m_notifierItem->contextMenu(), SIGNAL(triggered(QAction*)), SIGNAL(menuTriggered(QAction*)));
+    connect(m_notifierItem, SIGNAL(activateRequested(bool, QPoint)), SIGNAL(iconToggled()));
 }
 
-void KxkbSysTrayIcon::trayActivated(QSystemTrayIcon::ActivationReason reason)
+KxkbSysTrayIcon::~KxkbSysTrayIcon()
 {
-	if( reason == QSystemTrayIcon::Trigger )
-	  emit iconToggled();
+}
+
+QMenu *KxkbSysTrayIcon::contextMenu()
+{
+    return m_notifierItem->contextMenu();
+}
+
+void KxkbSysTrayIcon::setVisible(bool visible)
+{
+    m_notifierItem->setStatus(visible ? KStatusNotifierItem::Active :
+                              KStatusNotifierItem::Passive);
 }
 
 void KxkbSysTrayIcon::setPixmap(const QPixmap& pixmap)
 {
-    m_indicatorWidget->setIcon( pixmap );
+    m_notifierItem->setIconByPixmap(pixmap);
+    m_notifierItem->setToolTipIconByPixmap(pixmap);
+}
+
+void KxkbSysTrayIcon::setToolTip(const QString &text)
+{
+    m_notifierItem->setToolTipSubTitle(text);
+}
+
+void KxkbSysTrayIcon::setText(const QString &text)
+{
+    Q_UNUSED(text)
 }
 
 // ----------------------------
