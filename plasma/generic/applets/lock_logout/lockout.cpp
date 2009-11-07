@@ -95,7 +95,29 @@ void LockOut::init()
     Plasma::ToolTipContent hibernateToolTip(i18n("Hibernate"),i18n("Hibernate (suspend to disk)"),m_iconHibernate->icon());
     Plasma::ToolTipManager::self()->setContent(m_iconHibernate, hibernateToolTip);
    
+    countButtons();
     showButtons();
+}
+
+void LockOut::countButtons()
+{
+    m_visibleButtons = 0;
+  
+    if (m_showLockButton){
+        m_visibleButtons++;
+    }
+    
+    if ( m_showLogoutButton){
+        m_visibleButtons++;
+    }
+    
+    if (m_showSleepButton){
+        m_visibleButtons++;
+    }
+    
+    if (m_showHibernateButton){
+        m_visibleButtons++;
+    }
 }
 
 LockOut::~LockOut()
@@ -116,7 +138,7 @@ void LockOut::checkLayout()
         case Plasma::Vertical:
             if (width < MINBUTTONSIZE * 2 + MARGINSIZE) {
                 direction = Qt::Vertical;
-                ratioToKeep = 1.9;
+                ratioToKeep = m_visibleButtons;
             } else {
                 direction = Qt::Horizontal;
                 ratioToKeep = 0.5;
@@ -125,7 +147,7 @@ void LockOut::checkLayout()
         case Plasma::Horizontal:
             if (height < (MINBUTTONSIZE * 2 + MARGINSIZE)) {
                 direction = Qt::Horizontal;
-                ratioToKeep = 1.9;
+                ratioToKeep = m_visibleButtons;
             } else {
                 direction = Qt::Vertical;
                 ratioToKeep = 0.5;
@@ -275,6 +297,7 @@ void LockOut::configAccepted()
     }
 
     if (changed) {
+        countButtons();
         showButtons();
         emit configNeedsSaving();
     }

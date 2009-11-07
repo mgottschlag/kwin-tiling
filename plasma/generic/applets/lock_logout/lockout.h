@@ -55,6 +55,7 @@ class LockOut : public Plasma::Applet
 
     protected:
         void createConfigurationInterface(KConfigDialog *parent);
+        void countButtons();
 
     private:
 #ifndef Q_OS_WIN
@@ -71,6 +72,8 @@ class LockOut : public Plasma::Applet
         QGraphicsLinearLayout *m_layout;
         void checkLayout();
         void showButtons();
+        
+        int m_visibleButtons;
 };
 
 K_EXPORT_PLASMA_APPLET(lockout, LockOut)
