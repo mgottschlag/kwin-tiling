@@ -258,9 +258,9 @@ void QsMatchView::setTitle(const QString &title)
 void QsMatchView::setItemCount(int count)
 {
     if (d->m_itemCountSuffixItems) {
-        d->m_itemCountLabel->setText(i18np("1 items", "%1 items", count));
+        d->m_itemCountLabel->setText(i18np("1 item", "%1 items", count));
     } else {
-        d->m_itemCountLabel->setText(i18np("1 actions", "%1 actions", count));
+        d->m_itemCountLabel->setText(i18np("1 action", "%1 actions", count));
     }
 
     if (count) {
