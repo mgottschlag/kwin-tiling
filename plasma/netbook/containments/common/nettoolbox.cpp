@@ -23,6 +23,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneHoverEvent>
 #include <QPainter>
+#include <QAction>
 
 #include <KIconLoader>
 
@@ -278,8 +279,8 @@ void NetToolBox::addTool(QAction *action)
     Plasma::IconWidget *button = new Plasma::IconWidget(this);
     button->setOrientation(Qt::Horizontal);
     button->setTextBackgroundColor(QColor());
-    button->setAction(action);
     button->installEventFilter(m_toolContainer);
+    button->setAction(action);
 
     qreal left, top, right, bottom;
     m_toolContainer->itemBackground()->getContentsMargins(&left, &top, &right, &bottom);
@@ -292,8 +293,12 @@ void NetToolBox::addTool(QAction *action)
     }
 
     m_actionButtons[action] = button;
-    //FIXME: in 4.6 m_toolContainerLayout->count()-1 adds two items before the spacer: intended or qt bug?
-    m_toolContainerLayout->insertItem(m_toolContainerLayout->count() , button);
+
+    if (action == m_containment->action("remove")) {
+        m_toolContainerLayout->addItem(button);
+    } else {
+        m_toolContainerLayout->insertItem(m_toolContainerLayout->count(), button);
+    }
 }
 
 void NetToolBox::removeTool(QAction *action)
