@@ -192,6 +192,11 @@ int ItemContainer::iconSize() const
     return m_iconSize;
 }
 
+void ItemContainer::askRelayout()
+{
+    m_relayoutTimer->start(500);
+}
+
 void ItemContainer::relayout()
 {
     if (m_layout->count() == 0) {
@@ -199,7 +204,8 @@ void ItemContainer::relayout()
     }
 
     //Relayout the grid
-    int validIndex = 0;
+    int validRow = 0;
+    int validColumn = 0;
 
     QSizeF availableSize;
     QGraphicsWidget *pw = parentWidget();
@@ -210,19 +216,32 @@ void ItemContainer::relayout()
         availableSize = size();
     }
 
-
-    if (size().width() <= availableSize.width()) {
+    if (m_layout->rowCount() > 0 && size().width() <= availableSize.width()) {
+        int i = 0;
         foreach (Plasma::IconWidget *icon, m_items) {
-            if (m_layout->itemAt(validIndex) == icon) {
-                ++validIndex;
+            const int row = i / m_layout->rowCount();
+            const int column = i % m_layout->columnCount();
+            if (m_layout->itemAt(row, column) == icon) {
+                validRow = row;
+                validColumn = column;
             } else {
                 break;
             }
         }
     }
 
-    for (int i = validIndex; i < m_layout->count(); ++i) {
-        m_layout->removeAt(validIndex);
+    for (int row = validRow; row < m_layout->rowCount(); ++row) {
+        for (int column = validColumn; column < m_layout->columnCount(); ++column) {
+            QGraphicsLayoutItem * item = m_layout->itemAt(row, column);
+            //FIXME: no other way to remove a specific item in a grid layout
+            // this s really, really horrible
+            for (int i = 0; i < m_layout->count(); ++i) {
+                if (m_layout->itemAt(i) == item) {
+                    m_layout->removeAt(i);
+                    break;
+                }
+            }
+        }
     }
 
     setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
@@ -231,7 +250,7 @@ void ItemContainer::relayout()
 
         int nColumns;
         // if we already decided how many columns are going to be don't decide again
-        if (validIndex > 0 && m_layout->columnCount() > 0 &&  m_layout->rowCount() > 0) {
+        if (validColumn > 0 && m_layout->columnCount() > 0 &&  m_layout->rowCount() > 0) {
             nColumns = m_layout->columnCount();
         } else {
             nColumns = qMax(1, int(availableSize.width() / m_maxColumnWidth));
@@ -256,7 +275,7 @@ void ItemContainer::relayout()
 
         int nRows;
         // if we already decided how many columns are going to be don't decide again
-        if (validIndex > 0 && m_layout->columnCount() > 0 &&  m_layout->rowCount() > 0) {
+        if (validRow > 0 && m_layout->columnCount() > 0 &&  m_layout->rowCount() > 0) {
             nRows = m_layout->rowCount();
         } else {
             nRows = qMax(1, int(availableSize.height() / m_maxRowHeight));

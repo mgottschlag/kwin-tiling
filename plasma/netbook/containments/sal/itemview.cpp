@@ -118,6 +118,7 @@ void ItemView::resizeEvent(QGraphicsSceneResizeEvent *event)
         newPos.setY(qMin(m_itemContainer->pos().y(), (qreal)0.0));
     }
     m_itemContainer->setPos(newPos.toPoint());
+    m_itemContainer->askRelayout();
 
     Plasma::ScrollWidget::resizeEvent(event);
 }

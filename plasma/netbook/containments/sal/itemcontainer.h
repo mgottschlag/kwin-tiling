@@ -59,6 +59,8 @@ public:
 
     Plasma::IconWidget *createItem();
 
+    void askRelayout();
+
 protected:
     void focusInEvent(QFocusEvent *event);
     void focusOutEvent(QFocusEvent *event);
