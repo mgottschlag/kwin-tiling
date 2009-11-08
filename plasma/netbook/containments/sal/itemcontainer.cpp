@@ -136,6 +136,7 @@ void ItemContainer::clear()
         if (i < 40) {
             icon->hide();
             icon->removeIconAction(0);
+            disconnect(icon, 0, 0, 0);
             m_usedItems.append(icon);
             ++i;
         } else {
