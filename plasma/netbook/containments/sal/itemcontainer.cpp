@@ -240,12 +240,14 @@ void ItemContainer::relayout()
 
 
         foreach (Plasma::IconWidget *icon, m_items) {
-            if (i < validIndex) {
+            const int row = i / nColumns;
+            const int column = i % nColumns;
+            if (m_layout->itemAt(row, column) != 0) {
                 ++i;
                 continue;
             }
 
-            m_layout->addItem(icon, i / nColumns, i % nColumns);
+            m_layout->addItem(icon, row, column);
             m_layout->setAlignment(icon, Qt::AlignHCenter);
             icon->show();
             ++i;
@@ -263,12 +265,14 @@ void ItemContainer::relayout()
 
 
         foreach (Plasma::IconWidget *icon, m_items) {
-            if (i <= validIndex && i > 0) {
+            const int row = i % nRows;
+            const int column = i / nRows;
+            if (m_layout->itemAt(row, column) != 0) {
                 ++i;
                 continue;
             }
 
-            m_layout->addItem(icon, i % nRows, i / nRows);
+            m_layout->addItem(icon, row, column);
             m_layout->setAlignment(icon, Qt::AlignHCenter);
             icon->show();
             ++i;
@@ -413,7 +417,7 @@ void ItemContainer::resizeEvent(QGraphicsSceneResizeEvent *event)
         setPos(newPos.toPoint());
     }
 
-    m_relayoutTimer->start();
+    m_relayoutTimer->start(300);
 }
 
 #include <itemcontainer.moc>
