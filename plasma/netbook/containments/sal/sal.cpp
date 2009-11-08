@@ -387,7 +387,6 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_resultsLayout->addItem(m_resultsView);
             setOrientation(m_orientation);
 
-            connect(m_resultsView, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
             connect(m_resultsView, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launch(Plasma::IconWidget *)));
 
             m_stripWidget = new StripWidget(m_runnermg, this);
