@@ -143,16 +143,9 @@ QModelIndex SystemModel::mapFromSource(const QModelIndex &sourceIndex) const
     if (!d->placesModel->isDevice(sourceIndex)) {
         parent = index(BOOKMARKS_ROW, 0);
     } else {
-        Solid::Device dev = d->placesModel->deviceForIndex(sourceIndex);
+        bool isFixedDevice = d->placesModel->data(sourceIndex, KFilePlacesModel::FixedDeviceRole).toBool();
 
-        Solid::StorageDrive *drive = 0;
-        Solid::Device parentDevice = dev;
-        while (parentDevice.isValid() && !drive) {
-            drive = parentDevice.as<Solid::StorageDrive>();
-            parentDevice = parentDevice.parent();
-        }
-
-        if (drive && (drive->isHotpluggable() || drive->isRemovable())) {
+        if (!isFixedDevice) {
             parent = index(REMOVABLE_ROW, 0);
         } else {
             parent = index(FIXED_ROW, 0);
@@ -277,16 +270,7 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
         if (!isDevice && parent.row() == BOOKMARKS_ROW) {
             wellPlaced = true;
         } else if (isDevice) {
-            Solid::Device dev = d->placesModel->deviceForIndex(sourceIndex);
-
-            Solid::StorageDrive *drive = 0;
-            Solid::Device parentDevice = dev;
-            while (parentDevice.isValid() && !drive) {
-                drive = parentDevice.as<Solid::StorageDrive>();
-                parentDevice = parentDevice.parent();
-            }
-
-            bool fixed = !drive || (!drive->isHotpluggable() && !drive->isRemovable());
+            bool fixed = d->placesModel->data(sourceIndex, KFilePlacesModel::FixedDeviceRole).toBool();
 
             if (!fixed && parent.row() == REMOVABLE_ROW) {
                 wellPlaced = true;
