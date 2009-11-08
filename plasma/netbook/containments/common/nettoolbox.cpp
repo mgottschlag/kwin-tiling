@@ -172,7 +172,8 @@ NetToolBox::NetToolBox(Plasma::Containment *parent)
      m_animHighlightFrame(0),
      m_hovering(false),
      m_showing(false),
-     m_location(Plasma::BottomEdge)
+     m_location(Plasma::BottomEdge),
+     m_newToolsPosition(0)
 {
     setZValue(9000);
     resize(KIconLoader::SizeMedium, KIconLoader::SizeMedium);
@@ -296,9 +297,14 @@ void NetToolBox::addTool(QAction *action)
 
     if (action == m_containment->action("remove")) {
         m_toolContainerLayout->addItem(button);
+        --m_newToolsPosition;
+    } else if (action == m_containment->action("add page")) {
+        m_toolContainerLayout->insertItem(m_newToolsPosition+1, button);
+        --m_newToolsPosition;
     } else {
-        m_toolContainerLayout->insertItem(m_toolContainerLayout->count(), button);
+        m_toolContainerLayout->insertItem(m_newToolsPosition, button);
     }
+    ++m_newToolsPosition;
 }
 
 void NetToolBox::removeTool(QAction *action)
@@ -308,6 +314,10 @@ void NetToolBox::removeTool(QAction *action)
         m_toolContainerLayout->removeItem(button);
         m_actionButtons.remove(action);
         button->deleteLater();
+        if (action != m_containment->action("remove") ||
+            action != m_containment->action("add page")) {
+            --m_newToolsPosition;
+        }
     }
 }
 

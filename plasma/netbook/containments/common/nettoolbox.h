@@ -92,6 +92,7 @@ private:
     bool m_hovering;
     bool m_showing;
     Plasma::Location m_location;
+    int m_newToolsPosition;
 };
 
 #endif
