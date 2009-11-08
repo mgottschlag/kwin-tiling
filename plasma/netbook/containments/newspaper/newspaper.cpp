@@ -433,6 +433,7 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
             m_appletOverlay->deleteLater();
             m_appletOverlay = 0;
         }
+        updateRemoveActionVisibility();
     }
 }
 
