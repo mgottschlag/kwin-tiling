@@ -18,15 +18,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Copied from wireless.h
 /* Modes of operation */
-#define IW_MODE_AUTO    0   /* Let the driver decides */
-#define IW_MODE_ADHOC   1   /* Single cell network */
-#define IW_MODE_INFRA   2   /* Multi cell network, roaming, ... */
-#define IW_MODE_MASTER  3   /* Synchronization master or Access Point */
-#define IW_MODE_REPEAT  4   /* Wireless Repeater (forwarder) */
-#define IW_MODE_SECOND  5   /* Secondary master/repeater (backup) */
-#define IW_MODE_MONITOR 6   /* Passive monitor (listen only) */
+#define NM_802_11_MODE_UNKNOWN 0 /* Mode is unknown. */
+#define NM_802_11_MODE_ADHOC   1 /* Uncoordinated network without central infrastructure. */
+#define NM_802_11_MODE_INFRA   2 /* Coordinated network with one or more central controllers. */
 
 #include "wirelessnetworkinterface.h"
 #include "wirelessnetworkinterface_p.h"
@@ -167,9 +162,9 @@ void NMWirelessNetworkInterface::wirelessPropertiesChanged(const QVariantMap & c
         d->wirelessCapabilities = convertCapabilities(it->toUInt());
         propKeys.removeOne(wirelessCapsKey);
     }
-    if (propKeys.count()) {
-        kDebug(1441) << "Unhandled properties: " << propKeys;
-    }
+    //if (propKeys.count()) {
+    //    kDebug(1441) << "Unhandled properties: " << propKeys;
+    //}
 }
 
 void NMWirelessNetworkInterface::accessPointAdded(const QDBusObjectPath &apPath)
@@ -197,22 +192,14 @@ Solid::Control::WirelessNetworkInterface::OperationMode NMWirelessNetworkInterfa
 {
     Solid::Control::WirelessNetworkInterface::OperationMode ourMode;
     switch ( theirMode ) {
-        case IW_MODE_AUTO:
-            ourMode = Solid::Control::WirelessNetworkInterface::Managed;
+        case NM_802_11_MODE_UNKNOWN:
+            ourMode = Solid::Control::WirelessNetworkInterface::Unassociated;
             break;
-        case IW_MODE_ADHOC:
+        case NM_802_11_MODE_ADHOC:
             ourMode = Solid::Control::WirelessNetworkInterface::Adhoc;
             break;
-        case IW_MODE_INFRA:
-        case IW_MODE_MASTER:
-            ourMode = Solid::Control::WirelessNetworkInterface::Master;
-            break;
-        case IW_MODE_REPEAT:
-            ourMode = Solid::Control::WirelessNetworkInterface::Repeater;
-            break;
-        case IW_MODE_SECOND:
-        case IW_MODE_MONITOR:
-            ourMode = (Solid::Control::WirelessNetworkInterface::OperationMode)0;
+        case NM_802_11_MODE_INFRA:
+            ourMode = Solid::Control::WirelessNetworkInterface::Managed;
             break;
     }
     return ourMode;

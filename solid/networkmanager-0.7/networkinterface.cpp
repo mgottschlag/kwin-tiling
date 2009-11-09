@@ -142,7 +142,7 @@ Solid::Control::IPv4Config NMNetworkInterface::ipV4Config() const
             QList<Solid::Control::IPv4Address> addressObjects;
             foreach (UIntList addressList, addresses) {
                 if ( addressList.count() == 3 ) {
-                    Solid::Control::IPv4Address addr(htonl(addressList[0]), htonl(addressList[1]), htonl(addressList[2]));
+                    Solid::Control::IPv4Address addr(htonl(addressList[0]), addressList[1], htonl(addressList[2]));
                     addressObjects.append(addr);
                 }
             }
@@ -155,9 +155,15 @@ Solid::Control::IPv4Config NMNetworkInterface::ipV4Config() const
                     routeObjects.append(addr);
                 }
             }
+            //convert nameservers into correct byte order
+            UIntList nameservers = iface.nameservers(),
+                     nameserversHostByteOrder;
+            foreach (quint32 nameserver, nameservers) {
+                nameserversHostByteOrder << htonl(nameserver);
+            }
             return Solid::Control::IPv4Config(addressObjects,
-                    iface.nameservers(), iface.domains(),
-                    routeObjects);
+                nameserversHostByteOrder, iface.domains(),
+                routeObjects);
         } else {
             return Solid::Control::IPv4Config();
         }
