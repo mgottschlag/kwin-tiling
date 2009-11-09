@@ -252,7 +252,7 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
 
         if (p->isType(KST_KService)) {
             const QString s = genericName.toLower();
-            QList<AppNode*> list = genericNames.contains(s) ? genericNames[s] : QList<AppNode*>();
+            QList<AppNode*> list = genericNames.value(s);
             list.append(newnode);
             genericNames[s] = list;
         }
@@ -262,7 +262,7 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
     // name what may help us on display to show in such cases also the subtitle to
     // provide a hint to the user what the duplicate entries are about.
     foreach (const QList<AppNode*> &list, genericNames) {
-        if (list.count() >= 2) {
+        if (list.count() > 1) {
             foreach (AppNode* n, list) {
                 n->subTitleMandatory = true;
             }
@@ -312,23 +312,49 @@ int ApplicationModel::columnCount(const QModelIndex &parent) const
     return 1;
 }
 
+bool ApplicationModel::nameAfterDescription(const QModelIndex &index) const
+{
+    AppNode *node = static_cast<AppNode*>(index.internalPointer());
+    if (node->isDir) {
+        return true;
+    }
+
+    QModelIndex parent = index.parent();
+    while (parent.parent().isValid()) {
+        parent = parent.parent();
+    }
+
+    if (parent.isValid()) {
+        // nasty little hack to always makes games show their unique name
+        // there is no such thing as a "generic name" for a game in practice
+        // though this is apparently quite true for all other kinds of apps
+        AppNode *node = static_cast<AppNode*>(parent.internalPointer());
+        if (node->isDir && node->genericName == i18n("Games")) {
+            return false;
+        }
+    }
+
+    return d->displayOrder == NameAfterDescription;
+}
+
 QVariant ApplicationModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid())
+    if (!index.isValid()) {
         return QVariant();
+    }
 
     AppNode *node = static_cast<AppNode*>(index.internalPointer());
 
     switch (role) {
     case Qt::DisplayRole:
-      if (node->isDir || ((d->displayOrder == NameAfterDescription) && (!node->genericName.isEmpty()))) {
+      if (nameAfterDescription(index) && !node->genericName.isEmpty()) {
             return node->genericName;
         } else {
             return node->appName;
         }
         break;
     case Kickoff::SubTitleRole:
-      if (!node->isDir && (d->displayOrder == NameBeforeDescription) && (!node->genericName.isEmpty())) {
+      if (!nameAfterDescription(index) && !node->genericName.isEmpty()) {
             return node->genericName;
         } else {
             return node->appName;
@@ -338,7 +364,7 @@ QVariant ApplicationModel::data(const QModelIndex &index, int role) const
         return node->desktopEntry;
         break;
     case Kickoff::SubTitleMandatoryRole:
-        return node->subTitleMandatory;
+        return nameAfterDescription(index) && node->subTitleMandatory;
         break;
     case Kickoff::SeparatorRole:
         return node->isSeparator;

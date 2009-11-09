@@ -119,6 +119,8 @@ public slots:
     void checkSycocaChange(const QStringList &changes);
 
 private:
+    bool nameAfterDescription(const QModelIndex &index) const;
+
     friend class ApplicationModelPrivate;
     ApplicationModelPrivate *const d;
 

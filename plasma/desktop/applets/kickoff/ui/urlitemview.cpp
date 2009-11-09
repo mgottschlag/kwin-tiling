@@ -512,13 +512,13 @@ void UrlItemView::mouseMoveEvent(QMouseEvent *event)
 
     Plasma::Delegate *hoveredItemDelegate =
                     static_cast<Plasma::Delegate*>(itemDelegate(d->hoveredIndex));
-    if (hoveredItemDelegate->showToolTip() == true) {
+    if (hoveredItemDelegate->showToolTip()) {
         QModelIndex index = d->hoveredIndex;
         QString titleText = index.data(Qt::DisplayRole).toString();
         QString subTitleText = index.data(Plasma::Delegate::SubTitleRole).toString();
         setToolTip(titleText + '\n' + subTitleText);
     } else {
-        setToolTip("");
+        setToolTip(QString());
     }
 
     QAbstractItemView::mouseMoveEvent(event);
