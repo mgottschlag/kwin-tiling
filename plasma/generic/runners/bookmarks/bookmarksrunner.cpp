@@ -66,17 +66,33 @@ void BookmarksRunner::reloadConfiguration()
         if (m_dbFile.isEmpty()) {//Try to get the right database file, the default profile is used
             KConfig firefoxProfile(QDir::homePath() + "/.mozilla/firefox/profiles.ini",
                                    KConfig::SimpleConfig);
-            QString profilePath(QDir::homePath() + "/.mozilla/firefox/");
-            for (int i = 0; i < 20; i++) {
-                QString groupName = QString("Profile%1").arg(i);
-                if (firefoxProfile.hasGroup(groupName)) {
-                    KConfigGroup fGrp = firefoxProfile.group(groupName);
+            QStringList profilesList = firefoxProfile.groupList();
+            profilesList = profilesList.filter(QRegExp("^Profile\\d+$"));
+            int size = profilesList.size();
+
+            QString profilePath;
+            if (size == 1) {
+                // There is only 1 profile so we select it
+                KConfigGroup fGrp = firefoxProfile.group(profilesList.first());
+                profilePath = fGrp.readEntry("Path", "");
+            } else {
+                // There are multiple profiles, find the default one
+                foreach(const QString & profileName, profilesList) {
+                    KConfigGroup fGrp = firefoxProfile.group(profileName);
                     if (fGrp.readEntry<int>("Default", 0)) {
-                        profilePath = profilePath + fGrp.readEntry("Path", QString());
+                        profilePath = fGrp.readEntry("Path", "");
                         break;
                     }
                 }
             }
+
+            if (profilePath.isEmpty()) {
+              kDebug() << "No default firefox profile found";
+              m_db = QSqlDatabase();
+              return;
+            }
+
+            profilePath.prepend(QString("%1/.mozilla/firefox/").arg(QDir::homePath()));
             m_dbFile = profilePath + "/places.sqlite";
             grp.writeEntry("dbfile", m_dbFile);
         }
