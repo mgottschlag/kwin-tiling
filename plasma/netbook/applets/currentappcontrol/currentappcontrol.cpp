@@ -115,8 +115,8 @@ void CurrentAppControl::windowChanged(WId id)
 {
     if (id == m_activeWindow) {
         m_pendingActiveWindow = m_activeWindow;
-        syncActiveWindow();
     }
+    syncActiveWindow();
 }
 
 void CurrentAppControl::activeWindowChanged(WId id)
@@ -144,7 +144,12 @@ void CurrentAppControl::syncActiveWindow()
     if (m_pendingActiveWindow <= 0 || applicationActive) {
         m_activeWindow = 0;
         m_currentTask->setIcon("preferences-system-windows");
-        m_currentTask->setText(i18np("%1 running app", "%1 running apps", KWindowSystem::windows().count()-1));
+        const int activeWindows = qMax(0, KWindowSystem::windows().count()-2);
+        if (activeWindows) {
+            m_currentTask->setText(i18np("%1 running app", "%1 running apps", activeWindows));
+        } else {
+            m_currentTask->setText(i18n("No running apps"));
+        }
         m_closeTask->hide();
         m_maximizeTask->hide();
     } else {
