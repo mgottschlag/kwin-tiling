@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Free Space Notifier
+Type=Service
+X-KDE-ServiceTypes=KDEDModule
+X-KDE-Library=susefreespacenotifier
+X-KDE-DBus-ModuleName=susefreespacenotifier
+X-KDE-Kded-autoload=true

@@ -1,0 +1,6 @@
+This is a small KDED module that monitors free disk space on the home dir
+partition and shows a warning dialog when it runs too low,
+with a configurable limit and the possibility to postpone. It was originally
+written for openSUSE, but feel free to do grab it (use it, do improvements
+like support for KNotification, propose it for inclusion in kdebase
+or even proclaim yourself as the maintainer).
