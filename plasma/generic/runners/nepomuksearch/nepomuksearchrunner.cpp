@@ -19,8 +19,6 @@
 #include "nepomuksearchrunner.h"
 #include "queryclientwrapper.h"
 
-#include "queryserviceclient.h"
-
 #include <QMenu>
 
 #include <KIcon>
@@ -30,6 +28,7 @@
 
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
+#include <Nepomuk/Query/QueryServiceClient>
 
 #include <Soprano/Vocabulary/NAO>
 
@@ -107,7 +106,7 @@ void Nepomuk::SearchRunner::match( Plasma::RunnerContext& context )
         }
 
         // no queries on very short strings
-        if (Search::QueryServiceClient::serviceAvailable() && context.query().count() >= 3) {
+        if (Query::QueryServiceClient::serviceAvailable() && context.query().count() >= 3) {
             QueryClientWrapper queryWrapper(this, &context);
             queryWrapper.runQuery();
             m_waiter.wakeAll();

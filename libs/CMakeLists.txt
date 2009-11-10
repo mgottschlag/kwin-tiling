@@ -10,9 +10,3 @@ if(NOT WIN32)
 endif(NOT WIN32)
 add_subdirectory(kworkspace)
 
-
-if(Nepomuk_FOUND)
-  add_subdirectory(nepomukquery)
-  add_subdirectory(nepomukqueryclient)
-endif(Nepomuk_FOUND)
-

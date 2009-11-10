@@ -25,7 +25,7 @@
 #include <QtCore/QWaitCondition>
 #include <QtCore/QList>
 
-#include "result.h"
+#include <Nepomuk/Query/Result>
 
 class KFileItemActions;
 

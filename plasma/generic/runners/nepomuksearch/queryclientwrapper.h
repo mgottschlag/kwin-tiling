@@ -1,5 +1,5 @@
 /* This file is part of the Nepomuk Project
-   Copyright (c) 2008 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2009 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -22,7 +22,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QList>
 
-#include "result.h"
+#include <Nepomuk/Query/Result>
 
 namespace Plasma {
     class RunnerContext;
@@ -31,7 +31,7 @@ namespace Plasma {
 namespace Nepomuk {
 
     class SearchRunner;
-    namespace Search {
+    namespace Query {
         class QueryServiceClient;
     }
 
@@ -50,12 +50,12 @@ namespace Nepomuk {
         ~QueryClientWrapper();
 
         void runQuery();
-        
+
     private Q_SLOTS:
-        void slotNewEntries( const QList<Nepomuk::Search::Result>& );
+        void slotNewEntries( const QList<Nepomuk::Query::Result>& );
 
     private:
-        Search::QueryServiceClient* m_queryServiceClient;
+        Query::QueryServiceClient* m_queryServiceClient;
 
         SearchRunner* m_runner;
         Plasma::RunnerContext* m_runnerContext;

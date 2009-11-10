@@ -4,8 +4,7 @@ include_directories(
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}
   ${SOPRANO_INCLUDE_DIR}
-  ${nepomukquery_SOURCE_DIR}
-  ${nepomukqueryclient_SOURCE_DIR}
+  ${NEPOMUK_INCLUDES}
 )
 
 SET(nepomuksearchrunner_SRCS
@@ -20,11 +19,10 @@ target_link_libraries(krunner_nepomuksearchrunner
   ${KDE4_KDEUI_LIBS}
   ${KDE4_KIO_LIBS}
   ${NEPOMUK_LIBRARIES}
+  ${NEPOMUK_QUERY_LIBRARIES}
   ${QT_QTGUI_LIBRARY}
   ${SOPRANO_LIBRARIES}
   ${KDE4_PLASMA_LIBS}
-  nepomukquery
-  nepomukqueryclient
 )
 
 install(

@@ -1,5 +1,5 @@
 /* This file is part of the Nepomuk Project
-   Copyright (c) 2008 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2009 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -18,13 +18,13 @@
 
 #include "queryclientwrapper.h"
 #include "nepomuksearchrunner.h"
-#include "queryserviceclient.h"
-#include "result.h"
-#include "query.h"
-#include "queryparser.h"
 
 #include <Nepomuk/Resource>
 #include <Nepomuk/Types/Class>
+#include <Nepomuk/Query/QueryServiceClient>
+#include <Nepomuk/Query/Result>
+#include <Nepomuk/Query/Query>
+#include <Nepomuk/Query/QueryParser>
 
 #include <Soprano/Vocabulary/Xesam>
 
@@ -50,9 +50,9 @@ Nepomuk::QueryClientWrapper::QueryClientWrapper(SearchRunner* runner, Plasma::Ru
       m_runnerContext(context)
 {
     // initialize the query client
-    m_queryServiceClient = new Nepomuk::Search::QueryServiceClient(this);
-    connect(m_queryServiceClient, SIGNAL(newEntries(const QList<Nepomuk::Search::Result>&)),
-             this, SLOT(slotNewEntries(const QList<Nepomuk::Search::Result>&)));
+    m_queryServiceClient = new Nepomuk::Query::QueryServiceClient(this);
+    connect(m_queryServiceClient, SIGNAL(newEntries(const QList<Nepomuk::Query::Result>&)),
+             this, SLOT(slotNewEntries(const QList<Nepomuk::Query::Result>&)));
 }
 
 
@@ -68,7 +68,7 @@ void Nepomuk::QueryClientWrapper::runQuery()
     // add a timeout in case something goes wrong (no user wants to wait more than 30 seconds)
     QTimer::singleShot(30000, m_queryServiceClient, SLOT(close()));
 
-    Search::Query q = Search::QueryParser::parseQuery(m_runnerContext->query());
+    Query::Query q = Query::QueryParser::parseQuery(m_runnerContext->query());
     q.setLimit(s_maxResults);
     m_queryServiceClient->blockingQuery(q);
 
@@ -88,15 +88,15 @@ qreal normalizeScore(double score) {
 }
 }
 
-void Nepomuk::QueryClientWrapper::slotNewEntries(const QList<Nepomuk::Search::Result>& results)
+void Nepomuk::QueryClientWrapper::slotNewEntries(const QList<Nepomuk::Query::Result>& results)
 {
     QList<Plasma::QueryMatch> matches;
-    foreach(const Search::Result& result, results) {
+    foreach(const Query::Result& result, results) {
         Plasma::QueryMatch match(m_runner);
         match.setType(Plasma::QueryMatch::PossibleMatch);
         match.setRelevance(normalizeScore(result.score()));
 
-        Nepomuk::Resource res(result.resourceUri());
+        Nepomuk::Resource res = result.resource();
 
         QString type;
         if (res.hasType(Soprano::Vocabulary::Xesam::File()) ||
