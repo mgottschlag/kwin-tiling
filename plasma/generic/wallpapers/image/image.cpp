@@ -43,7 +43,7 @@ Image::Image(QObject *parent, const QVariantList &args)
     connect(this, SIGNAL(renderCompleted(QImage)), this, SLOT(updateBackground(QImage)));
     connect(this, SIGNAL(urlDropped(KUrl)), this, SLOT(setWallpaper(KUrl)));
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(nextSlide()));
-    nextWallpaperAction = new QAction(KIcon("user-desktop"), "Next Wallpaper Image", NULL);
+    nextWallpaperAction = new QAction(KIcon("user-desktop"), i18n("Next Wallpaper Image"), NULL);
     connect(nextWallpaperAction, SIGNAL(triggered(bool)), this, SLOT(nextSlide()));
 }
 
