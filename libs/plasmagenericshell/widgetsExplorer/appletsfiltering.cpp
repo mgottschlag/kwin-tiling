@@ -167,6 +167,7 @@ void FilteringWidget::init()
     m_textSearch->nativeWidget()->setClickMessage(i18n("Enter Search Term"));
     m_textSearch->setFocus();
     m_textSearch->setAttribute(Qt::WA_NoSystemBackground);
+    m_textSearch->setClearButtonShown(true);
 
     //layout
     m_linearLayout = new QGraphicsLinearLayout();
