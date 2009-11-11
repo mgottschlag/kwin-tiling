@@ -655,7 +655,9 @@ void NotifierDialog::itemBackgroundMoving(qreal step)
     for (int i = 0; i < m_deviceLayout->count(); ++i) {
         DeviceItem *item = dynamic_cast<DeviceItem *>(m_deviceLayout->itemAt(i));
         if (item && item->hovered() && item->isCollapsed()) {
-            item->setHoverDisplayOpacity(step);
+            qreal normalizedDistance = qAbs(m_itemBackground->pos().ry()-item->pos().ry()) / qreal (item->rect().height());
+            qreal saturatedDistance = 1.-qMin(normalizedDistance*1.5, 1.);
+            item->setHoverDisplayOpacity(saturatedDistance*step);
             return;
         }
     }

@@ -300,13 +300,17 @@ void DeviceItem::setHovered(const bool hovered)
             m_barFade->setWidgetToAnimate(m_capacityBar);
             m_iconFade->setWidgetToAnimate(m_leftActionIcon);
 
-            m_labelFade->setProperty("startOpacity", 1);
-            m_barFade->setProperty("startOpacity", 1);
-            m_iconFade->setProperty("startOpacity", 1);
             m_labelFade->setProperty("targetOpacity", 0);
             m_barFade->setProperty("targetOpacity", 0);
             m_iconFade->setProperty("targetOpacity", 0);
         }
+        QGraphicsOpacityEffect *labelEffect = dynamic_cast<QGraphicsOpacityEffect *>(m_descriptionLabel->graphicsEffect());
+
+        qreal currentOpacity = (labelEffect? labelEffect->opacity() : 1.);
+
+        m_labelFade->setProperty("startOpacity", currentOpacity);
+        m_barFade->setProperty("startOpacity", currentOpacity);
+        m_iconFade->setProperty("startOpacity", currentOpacity);
 
         m_labelFade->start();
         m_barFade->start();
