@@ -604,10 +604,12 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
 
         m_corona->addOffscreenWidget(m_widgetExplorer);
 
+        QSize viewSize = m_widgetExplorerView->size();
         m_widgetExplorerView->setGraphicsWidget(m_widgetExplorer);
+
         m_widgetExplorer->setIconSize(KIconLoader::SizeLarge);
         m_widgetExplorer->resize(m_widgetExplorerView->size());
-
+        m_widgetExplorerView->setFixedSize(viewSize);
         m_widgetExplorerView->installEventFilter(this);
     }
 
