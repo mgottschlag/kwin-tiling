@@ -155,8 +155,7 @@ void KSMServer::launchWM( const QList< QStringList >& wmStartCommands )
     // but in such case care only about the process of the first one
     for (int i = 1; i < wmStartCommands.count(); i++)
         startApplication( wmStartCommands[i] );
-
-    QTimer::singleShot( 0, this, SLOT( autoStart0() ) ); // start immediately
+    QTimer::singleShot( 4000, this, SLOT( autoStart0() ) );
 }
 
 void KSMServer::clientSetProgram( KSMClient* client )
@@ -211,11 +210,10 @@ void KSMServer::autoStart0Done()
         kWarning() << "kcminit not running?" ;
     connect( kcminitSignals, SIGNAL( phase1Done()), SLOT( kcmPhase1Done()));
     state = KcmInitPhase1;
+    QTimer::singleShot( 10000, this, SLOT( kcmPhase1Timeout())); // protection
 
     org::kde::KCMInit kcminit("org.kde.kcminit", "/kcminit" , QDBusConnection::sessionBus());
     kcminit.runPhase1();
-
-    QTimer::singleShot( 0, this, SLOT(autoStart1()) ); // start immediately
 }
 
 void KSMServer::kcmPhase1Done()
@@ -224,6 +222,15 @@ void KSMServer::kcmPhase1Done()
         return;
     kDebug( 1218 ) << "Kcminit phase 1 done";
     disconnect( kcminitSignals, SIGNAL( phase1Done()), this, SLOT( kcmPhase1Done()));
+    autoStart1();
+}
+
+void KSMServer::kcmPhase1Timeout()
+{
+    if( state != KcmInitPhase1 )
+        return;
+    kDebug( 1218 ) << "Kcminit phase 1 timeout";
+    kcmPhase1Done();
 }
 
 void KSMServer::autoStart1()
