@@ -33,6 +33,7 @@
 #include <QIcon>
 #include <QFocusEvent>
 #include <QGraphicsWidget>
+#include <QPropertyAnimation>
 
 class QTextOption;
 class QTextLayout;
@@ -52,6 +53,7 @@ class LayoutWidget;
 class AbstractTaskItem : public QGraphicsWidget
 {
     Q_OBJECT
+    Q_PROPERTY(QPointF animationPos READ animationPos WRITE setAnimationPos)
 
 public:
     /** Constructs a new representation for an abstract task. */
@@ -128,6 +130,10 @@ public:
     QSize basicPreferredSize() const;
     void setPreferredOffscreenSize();
     void setPreferredOnscreenSize();
+
+    //TODO: to be removed when we have proper animated layouts
+    QPointF animationPos() const;
+    void setAnimationPos(const QPointF &pos);
 
 Q_SIGNALS:
     void activated(AbstractTaskItem *);
@@ -238,6 +244,11 @@ protected:
 
     bool m_fadeIn : 1;
     bool m_showText : 1;
+
+    //TODO: remove when we have animated layouts
+    QPropertyAnimation *m_animation;
+    bool m_animationLock;
+    bool m_firstAnimation;
 
     // distance (in pixels) between a task's icon and its text
     static const int IconTextSpacing = 4;

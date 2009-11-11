@@ -33,6 +33,7 @@
 #include <QTextLayout>
 #include <QTimer>
 #include <QVarLengthArray>
+#include <QPropertyAnimation>
 #ifdef Q_WS_X11
 #include <QX11Info>
 #endif
@@ -80,8 +81,14 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet)
       m_attentionTimerId(0),
       m_attentionTicks(0),
       m_fadeIn(true),
-      m_showText(true)
+      m_showText(true),
+      m_animationLock(false),
+      m_firstAnimation(true)
 {
+    m_animation = new QPropertyAnimation(this, "animationPos", this);
+    m_animation->setEasingCurve(QEasingCurve::OutBounce);
+    m_animation->setDuration(250);
+
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     setAcceptsHoverEvents(true);
     setAcceptDrops(true);
@@ -910,9 +917,42 @@ void AbstractTaskItem::publishIconGeometry(const QRect &rect) const
     Q_UNUSED(rect)
 }
 
+void AbstractTaskItem::setAnimationPos(const QPointF &pos)
+{
+    m_animationLock = true;
+    setPos(pos);
+    m_animationLock = false;
+}
+
+QPointF AbstractTaskItem::animationPos() const
+{
+    return pos();
+}
+
 void AbstractTaskItem::setGeometry(const QRectF& geometry)
 {
+    QPointF oldPos = pos();
+
     QGraphicsWidget::setGeometry(geometry);
+
+    //TODO:remove when we will have proper animated layouts
+    if (m_firstAnimation) {
+        m_firstAnimation = false;
+    }
+    if (m_animationLock) {
+        return;
+    }
+
+    if (m_animation->state() == QAbstractAnimation::Running) {
+        m_animation->stop();
+    }
+
+    QPointF newPos = pos();
+    setPos(oldPos);
+    m_animation->setEndValue(geometry.topLeft());
+
+    m_animation->start();
+
     if (m_lastGeometryUpdate.elapsed() < 350) {
         if (m_updateGeometryTimerId) {
             killTimer(m_updateGeometryTimerId);
