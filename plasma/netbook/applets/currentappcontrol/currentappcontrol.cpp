@@ -268,6 +268,20 @@ void CurrentAppControl::listWindows()
     }
 }
 
+int CurrentAppControl::windowsCount() const
+{
+    int count = 0;
+    foreach(WId window, KWindowSystem::stackingOrder()) {
+        KWindowInfo info = KWindowSystem::windowInfo(window, NET::WMWindowType | NET::WMPid | NET::WMState);
+        if (!(info.state() & NET::SkipTaskbar) &&
+            info.windowType(NET::NormalMask | NET::DialogMask |
+                            NET::OverrideMask | NET::UtilityMask) != NET::Utility) {
+            ++count;
+        }
+    }
+    return count;
+}
+
 void CurrentAppControl::windowItemClicked()
 {
     if (sender() && m_windowIcons.contains(static_cast<Plasma::IconWidget*>(sender()))) {

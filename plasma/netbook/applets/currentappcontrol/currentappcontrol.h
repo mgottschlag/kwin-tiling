@@ -43,6 +43,7 @@ public:
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
+    int windowsCount() const;
 
 protected Q_SLOTS:
     void activeWindowChanged(WId id);
