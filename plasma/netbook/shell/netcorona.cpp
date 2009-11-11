@@ -51,13 +51,13 @@ void NetCorona::init()
     QObject::connect(desktop, SIGNAL(resized(int)), this, SLOT(screenResized(int)));
 
     Plasma::ContainmentActionsPluginsConfig desktopPlugins;
-    desktopPlugins.addPlugin(Qt::NoModifier, Qt::Vertical, "switchdesktop");
     desktopPlugins.addPlugin(Qt::NoModifier, Qt::MidButton, "paste");
     desktopPlugins.addPlugin(Qt::NoModifier, Qt::RightButton, "contextmenu");
     Plasma::ContainmentActionsPluginsConfig panelPlugins;
     panelPlugins.addPlugin(Qt::NoModifier, Qt::RightButton, "contextmenu");
 
     setContainmentActionsDefaults(Plasma::Containment::DesktopContainment, desktopPlugins);
+    setContainmentActionsDefaults(Plasma::Containment::CustomContainment, desktopPlugins);
     setContainmentActionsDefaults(Plasma::Containment::PanelContainment, panelPlugins);
     setContainmentActionsDefaults(Plasma::Containment::CustomPanelContainment, panelPlugins);
 
