@@ -681,7 +681,7 @@ void KCMStyle::defaults()
 	switchStyle( currentStyle() );	// make resets visible
 
 	// Effects
-	fineTuningUi.comboToolbarIcons->setCurrentIndex(toolbarButtonIndex("TextUnderIcon"));
+	fineTuningUi.comboToolbarIcons->setCurrentIndex(toolbarButtonIndex("TextBesideIcon"));
 	fineTuningUi.comboSecondaryToolbarIcons->setCurrentIndex(toolbarButtonIndex("TextBesideIcon"));
 	fineTuningUi.cbIconsOnButtons->setChecked(true);
 	fineTuningUi.comboGraphicEffectsLevel->setCurrentIndex(fineTuningUi.comboGraphicEffectsLevel->findData(((int) KGlobalSettings::graphicEffectsLevelDefault())));
@@ -938,7 +938,7 @@ void KCMStyle::loadEffects( KConfig& config )
 	// KDE's Part via KConfig
 	KConfigGroup configGroup = config.group("Toolbar style");
 
-	QString tbIcon = configGroup.readEntry("ToolButtonStyle", "TextUnderIcon");
+	QString tbIcon = configGroup.readEntry("ToolButtonStyle", "TextBesideIcon");
 	fineTuningUi.comboToolbarIcons->setCurrentIndex(toolbarButtonIndex(tbIcon));
 	tbIcon = configGroup.readEntry("ToolButtonStyleOtherToolbars", "TextBesideIcon");
 	fineTuningUi.comboSecondaryToolbarIcons->setCurrentIndex(toolbarButtonIndex(tbIcon));
