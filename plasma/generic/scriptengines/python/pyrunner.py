@@ -43,11 +43,11 @@ class PythonRunnerScript(Plasma.RunnerScript):
         self.pyrunner = self.module.main.CreateRunner(None)
         self.pyrunner.setRunner(self.runner())
         self.pyrunner.setRunnerScript(self)
-        self.connect(self.runner(), SIGNAL('prepare()'), self, SLOT('prepare()'))
-        self.connect(self.runner(), SIGNAL('teardown()'), self, SLOT('teardown()'))
-        self.connect(self.runner(), SIGNAL('createRunOptions(QWidget*)'),
+        self.connect(self, SIGNAL('prepare()'), self, SLOT('prepare()'))
+        self.connect(self, SIGNAL('teardown()'), self, SLOT('teardown()'))
+        self.connect(self, SIGNAL('createRunOptions(QWidget*)'),
                      self, SLOT('createRunOptions(QWidget*)'))
-        self.connect(self.runner(), SIGNAL('reloadConfiguration()'),
+        self.connect(self, SIGNAL('reloadConfiguration()'),
                      self, SLOT('reloadConfiguration()'))
         self.pyrunner.init()
 
