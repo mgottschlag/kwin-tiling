@@ -49,6 +49,8 @@
 #include <Plasma/QueryMatch>
 #include <Plasma/ScrollWidget>
 #include <Plasma/ToolButton>
+#include <Plasma/ToolTipContent>
+#include <Plasma/ToolTipManager>
 
 
 SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
@@ -215,6 +217,14 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         icon->hide();
         icon->setText(match.text());
         icon->setIcon(match.icon());
+        Plasma::ToolTipContent toolTipData = Plasma::ToolTipContent();
+        toolTipData.setAutohide(true);
+        toolTipData.setMainText(match.text());
+        toolTipData.setSubText(match.subtext());
+        toolTipData.setImage(match.icon());
+
+        Plasma::ToolTipManager::self()->registerWidget(this);
+        Plasma::ToolTipManager::self()->setContent(icon, toolTipData);
 
         m_resultsView->insertItem(icon, 1/match.relevance());
 
