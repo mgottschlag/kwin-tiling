@@ -114,6 +114,7 @@ private Q_SLOTS:
     void hideControlBar();
     void setControlBarVisible(bool visible);
     void toggleControlBarVisibility();
+    void lowerMainView();
     void configureContainment(Plasma::Containment *containment);
     void updateToolBoxVisibility(bool visible);
 

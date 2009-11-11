@@ -689,12 +689,23 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
 
 bool PlasmaApp::x11EventFilter(XEvent *event)
 {
+
     if (m_controlBar && m_autoHideControlBar && !m_controlBar->isVisible() && event->xcrossing.window == m_unhideTrigger &&
         (event->xany.send_event != True && event->type == EnterNotify)) {
         //delayed show
         m_unHideTimer->start(400);
+    } else if ((event->xany.send_event != True && event->type == FocusOut)) {
+        QTimer::singleShot(100, this, SLOT(lowerMainView()));
     }
     return KUniqueApplication::x11EventFilter(event);
+}
+
+void PlasmaApp::lowerMainView()
+{
+    if (!QApplication::activeWindow() || (QApplication::activeWindow() &&
+        (QApplication::activeWindow() != m_mainView && QApplication::activeWindow()->winId() != KWindowSystem::stackingOrder().last()))) {
+        KWindowSystem::lowerWindow(m_mainView->winId());
+    }
 }
 
 void PlasmaApp::controlBarVisibilityUpdate()
