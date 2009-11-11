@@ -6,11 +6,11 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>571</width>
-    <height>327</height>
+    <width>431</width>
+    <height>343</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QFormLayout" name="formLayout">
    <item row="0" column="0">
     <widget class="QLabel" name="label_4">
      <property name="text">
@@ -25,31 +25,14 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QComboBox" name="m_resizeMethod">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_3">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+    <widget class="QComboBox" name="m_resizeMethod">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
    </item>
    <item row="1" column="0">
     <widget class="QLabel" name="label_5">
@@ -65,39 +48,22 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="KColorButton" name="m_color">
-       <property name="color">
-        <color>
-         <red>70</red>
-         <green>90</green>
-         <blue>130</blue>
-        </color>
-       </property>
-       <property name="defaultColor">
-        <color>
-         <red>70</red>
-         <green>90</green>
-         <blue>130</blue>
-        </color>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_4">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+    <widget class="KColorButton" name="m_color">
+     <property name="color">
+      <color>
+       <red>70</red>
+       <green>90</green>
+       <blue>130</blue>
+      </color>
+     </property>
+     <property name="defaultColor">
+      <color>
+       <red>70</red>
+       <green>90</green>
+       <blue>130</blue>
+      </color>
+     </property>
+    </widget>
    </item>
    <item row="2" column="0">
     <widget class="QLabel" name="label_2">
@@ -119,36 +85,39 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <widget class="QTimeEdit" name="m_slideshowDelay">
+     <property name="dateTime">
+      <datetime>
+       <hour>0</hour>
+       <minute>0</minute>
+       <second>0</second>
+       <year>2000</year>
+       <month>1</month>
+       <day>1</day>
+      </datetime>
+     </property>
+     <property name="currentSection">
+      <enum>QDateTimeEdit::HourSection</enum>
+     </property>
+     <property name="displayFormat">
+      <string comment="(qtdt-format) Please do not change the quotes (') and translate only the content of the quotes.">hh 'Hours' mm 'Mins' ss 'Secs'</string>
+     </property>
+     <property name="time">
+      <time>
+       <hour>0</hour>
+       <minute>0</minute>
+       <second>0</second>
+      </time>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="KListWidget" name="m_dirlist"/>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QTimeEdit" name="m_slideshowDelay">
-       <property name="dateTime">
-        <datetime>
-         <hour>0</hour>
-         <minute>0</minute>
-         <second>0</second>
-         <year>2000</year>
-         <month>1</month>
-         <day>1</day>
-        </datetime>
-       </property>
-       <property name="currentSection">
-        <enum>QDateTimeEdit::HourSection</enum>
-       </property>
-       <property name="displayFormat">
-        <string comment="(qtdt-format) Please do not change the quotes (') and translate only the content of the quotes.">hh 'Hours' mm 'Mins' ss 'Secs'</string>
-       </property>
-       <property name="time">
-        <time>
-         <hour>0</hour>
-         <minute>0</minute>
-         <second>0</second>
-        </time>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
+      <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -160,26 +129,6 @@
        </property>
       </spacer>
      </item>
-    </layout>
-   </item>
-   <item row="3" column="0" colspan="2">
-    <widget class="KListWidget" name="m_dirlist"/>
-   </item>
-   <item row="4" column="0">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>139</width>
-       <height>23</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="4" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
       <widget class="KPushButton" name="m_addDir">
        <property name="sizePolicy">
