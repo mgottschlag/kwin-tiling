@@ -326,8 +326,12 @@ void Interface::clearHistory()
 void Interface::display(const QString &term)
 {
     m_searchTerm->setFocus();
+
+    if (!term.isEmpty() || !isVisible()) {
+        resetInterface();
+    }
+
     positionOnScreen();
-    resetInterface();
 
     if (!term.isEmpty()) {
         m_searchTerm->setItemText(0, term);
