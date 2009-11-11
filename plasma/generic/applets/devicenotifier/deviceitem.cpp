@@ -304,7 +304,7 @@ void DeviceItem::setHovered(const bool hovered)
             m_barFade->setProperty("targetOpacity", 0);
             m_iconFade->setProperty("targetOpacity", 0);
         }
-        QGraphicsOpacityEffect *labelEffect = dynamic_cast<QGraphicsOpacityEffect *>(m_descriptionLabel->graphicsEffect());
+        QGraphicsOpacityEffect *labelEffect = qobject_cast<QGraphicsOpacityEffect *>(m_descriptionLabel->graphicsEffect());
 
         qreal currentOpacity = (labelEffect? labelEffect->opacity() : 1.);
 
@@ -324,9 +324,9 @@ void DeviceItem::setHoverDisplayOpacity(qreal opacity)
         opacity = 1 - opacity;
     }
 
-    QGraphicsOpacityEffect *labelEffect = dynamic_cast<QGraphicsOpacityEffect *>(m_descriptionLabel->graphicsEffect());
-    QGraphicsOpacityEffect *leftActionEffect = dynamic_cast<QGraphicsOpacityEffect *>(m_leftActionIcon->graphicsEffect());
-    QGraphicsOpacityEffect *capacityBarEffect = dynamic_cast<QGraphicsOpacityEffect *>(m_capacityBar->graphicsEffect());
+    QGraphicsOpacityEffect *labelEffect = qobject_cast<QGraphicsOpacityEffect *>(m_descriptionLabel->graphicsEffect());
+    QGraphicsOpacityEffect *leftActionEffect = qobject_cast<QGraphicsOpacityEffect *>(m_leftActionIcon->graphicsEffect());
+    QGraphicsOpacityEffect *capacityBarEffect = qobject_cast<QGraphicsOpacityEffect *>(m_capacityBar->graphicsEffect());
 
     if (labelEffect && leftActionEffect && capacityBarEffect) {
         labelEffect->setOpacity(opacity);
@@ -402,7 +402,7 @@ void DeviceItem::triggerBusyWidget()
 
 bool DeviceItem::eventFilter(QObject* obj, QEvent *event)
 {
-    Plasma::IconWidget *item = dynamic_cast<Plasma::IconWidget *>(obj);
+    Plasma::IconWidget *item = qobject_cast<Plasma::IconWidget *>(obj);
     if (item) {
         switch (event->type()) {
             case QEvent::GraphicsSceneHoverLeave:

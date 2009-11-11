@@ -197,7 +197,7 @@ bool NotifierDialog::eventFilter(QObject* obj, QEvent *event)
         setMenuActionsAt(contextEvent->scenePos());
     }
 
-    DeviceItem *item = dynamic_cast<DeviceItem*>(obj);
+    DeviceItem *item = qobject_cast<DeviceItem*>(obj);
     if (item) {
         switch (event->type()) {
             case QEvent::GraphicsSceneHoverLeave:
@@ -211,7 +211,7 @@ bool NotifierDialog::eventFilter(QObject* obj, QEvent *event)
         }
     }
 
-    QGraphicsWidget *widget = dynamic_cast<QGraphicsWidget*>(obj);
+    QGraphicsWidget *widget = qobject_cast<QGraphicsWidget*>(obj);
     if (widget == m_widget && event->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
         switch (keyEvent->key()) {
