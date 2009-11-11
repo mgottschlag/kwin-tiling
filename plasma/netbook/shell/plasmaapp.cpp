@@ -664,10 +664,10 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
         }
     } else if ((watched == m_mainView &&
                 event->type() == QEvent::WindowDeactivate &&
-                !QApplication::activeWindow()) ||
+                !hasForegroundWindows()) ||
                (watched == m_controlBar &&
                 event->type() == QEvent::Leave &&
-                !QApplication::activeWindow())) {
+                !hasForegroundWindows())) {
         //delayed hide
         if (m_unHideTimer) {
             m_unHideTimer->start(400);
@@ -700,10 +700,15 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
     return KUniqueApplication::x11EventFilter(event);
 }
 
+bool PlasmaApp::hasForegroundWindows() const
+{
+    return (QApplication::activeWindow() && (QApplication::activeWindow() &&
+        (QApplication::activeWindow() == m_mainView || QApplication::activeWindow()->winId() == KWindowSystem::stackingOrder().last())));
+}
+
 void PlasmaApp::lowerMainView()
 {
-    if (!QApplication::activeWindow() || (QApplication::activeWindow() &&
-        (QApplication::activeWindow() != m_mainView && QApplication::activeWindow()->winId() != KWindowSystem::stackingOrder().last()))) {
+    if (m_isDesktop && !hasForegroundWindows()) {
         KWindowSystem::lowerWindow(m_mainView->winId());
     }
 }
@@ -711,7 +716,7 @@ void PlasmaApp::lowerMainView()
 void PlasmaApp::controlBarVisibilityUpdate()
 {
     //FIXME: QCursor::pos() can be avoided somewat? the good news is that is quite rare, one time per trigger
-    if ((QApplication::activeWindow() != NULL) && m_controlBar->isVisible()) {
+    if (hasForegroundWindows() && m_controlBar->isVisible()) {
         return;
     } else if (!m_controlBar->isVisible()) {
         if (m_unhideTriggerGeom.adjusted(-1, -1, 1, 1).contains(QCursor::pos())) {

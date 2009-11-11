@@ -91,6 +91,7 @@ public Q_SLOTS:
 protected:
     bool eventFilter(QObject * watched, QEvent *event);
     bool x11EventFilter(XEvent *event);
+    bool hasForegroundWindows() const;
 
 private:
     PlasmaApp();
