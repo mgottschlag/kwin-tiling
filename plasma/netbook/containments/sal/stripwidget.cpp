@@ -34,6 +34,8 @@
 #include <Plasma/AbstractRunner>
 #include <Plasma/RunnerManager>
 #include <Plasma/ScrollWidget>
+#include <Plasma/ToolTipContent>
+#include <Plasma/ToolTipManager>
 
 #include "itemview.h"
 
@@ -108,6 +110,15 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     fav->installEventFilter(this);
     fav->setText(match->text());
     fav->setIcon(match->icon());
+
+    Plasma::ToolTipContent toolTipData = Plasma::ToolTipContent();
+    toolTipData.setAutohide(true);
+    toolTipData.setMainText(match->text());
+    toolTipData.setSubText(match->subtext());
+    toolTipData.setImage(match->icon());
+
+    Plasma::ToolTipManager::self()->registerWidget(this);
+    Plasma::ToolTipManager::self()->setContent(fav, toolTipData);
 
     connect(fav, SIGNAL(activated()), this, SLOT(launchFavourite()));
 
