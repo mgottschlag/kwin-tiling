@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright 2008 Simon Edwards <simon@simonzone.com>
 #
@@ -36,12 +37,16 @@ class Applet(QObject):
         QObject.__init__(self, parent)
         #sip.settracemask(0x3f)
         self.applet = None
+        self.applet_script = None
         self._forward_to_applet = True
 
     def __getattr__(self, key):
         # provide transparent access to the real applet instance
         if self._forward_to_applet:
-            return getattr(self.applet, key)
+            try:
+                return getattr(self.applet_script, key)
+            except:
+                return getattr(self.applet, key)
         else:
             raise AttributeError(key)
 
@@ -53,6 +58,9 @@ class Applet(QObject):
     # Events
     def setApplet(self,applet):
         self.applet = applet
+
+    def setAppletScript(self,appletScript):
+        self.applet_script = appletScript
 
     def init(self):
         pass
@@ -67,35 +75,48 @@ class Applet(QObject):
         pass
 
     def showConfigurationInterface(self):
+        self.dlg = self.standardConfigurationDialog()
+        self.createConfigurationInterface(self.dlg)
+        self.addStandardConfigurationPages(self.dlg)
+        self.dlg.show()
+
+    def createConfigurationInterface(self, dlg):
         pass
 
     def contextualActions(self):
         return []
 
-    def setHasConfigurationInterface(self,hasInterface):
-        Plasma.AppletProtectedThunk.static_public_setHasConfigurationInterface(self.applet,hasInterface)
-
-    def setConfigurationRequired(self, needsConfiguring, reason):
-        Plasma.AppletProtectedThunk.static_public_setConfigurationRequired(self.applet, needsConfiguring, reason)
-
     def shape(self):
         return QGraphicsWidget.shape(self.applet)
+
+    def initExtenderItem(self, item):
+        print "Missing implementation of initExtenderItem in the applet " + \
+              item.config().readEntry('SourceAppletPluginName', '').toString() + \
+              "!\nAny applet that uses extenders should implement initExtenderItem to " + \
+              "instantiate a widget."
+
+    def saveState(self, config):
+        pass
 
 ###########################################################################
 class DataEngine(QObject):
     def __init__(self, parent=None):
         QObject.__init__(self, parent)
         self.dataengine = None
+        self.dataengine_script = None
+
+    def setDataEngine(self,dataEngine):
+        self.dataEngine = dataEngine
 
     def setDataEngineScript(self,dataEngineScript):
         self.data_engine_script = dataEngineScript
 
     def __getattr__(self, key):
-        # provide transparent access to the real dataengine instance
-        #if self._forward_to_applet:
-        return getattr(self.data_engine_script, key)
-        #else:
-        #    raise AttributeError(key)
+        # provide transparent access to the real dataengine script instance
+        try:
+            return getattr(self.data_engine_script, key)
+        except:
+            return getattr(self.data_engine, key)
 
     def init(self):
         pass
@@ -111,3 +132,91 @@ class DataEngine(QObject):
 
     def serviceForSource(self,source):
         return Plasma.DataEngineScript.serviceForSource(self.data_engine_script,source)
+
+###########################################################################
+class Wallpaper(QObject):
+    def __init__(self, parent=None):
+        QObject.__init__(self, parent)
+        self.wallpaper = None
+        self.wallpaper_script = None
+
+    def setWallpaper(self,wallpaper):
+        self.wallpaper = wallpaper
+
+    def setWallpaperScript(self,wallpaperScript):
+        self.wallpaper_script = wallpaperScript
+
+    def __getattr__(self, key):
+        # provide transparent access to the real wallpaper script instance
+        try:
+            return getattr(self.wallpaper_script, key)
+        except:
+            return getattr(self.wallpaper, key)
+
+    def init(self, config):
+        pass
+
+    def paint(self,painter, exposedRect):
+        pass
+
+    def save(self,config):
+        pass
+
+    def createConfigurationInterface(self,parent):
+        return None
+
+    def mouseMoveEvent(self,event):
+        pass
+
+    def mousePressEvent(self,event):
+        pass
+
+    def mouseReleaseEvent(self,event):
+        pass
+
+    def wheelEvent(self,event):
+        pass
+
+    def configChanged(self):
+        pass
+
+###########################################################################
+class Runner(QObject):
+    def __init__(self, parent=None):
+        QObject.__init__(self, parent)
+        self.runner = None
+        self.runner_script = None
+
+    def setRunner(self,runner):
+        self.runner = runner
+
+    def setRunnerScript(self,runnerScript):
+        self.runner_script = runnerScript
+
+    def __getattr__(self, key):
+        # provide transparent access to the real runner script instance
+        try:
+            return getattr(self.runner_script, key)
+        except:
+            return getattr(self.runner, key)
+
+    def init(self):
+        pass
+
+    def match(self, search):
+        pass
+
+    def run(self, search, action):
+        pass
+
+    def prepare():
+        pass
+
+    def teardown():
+        pass
+
+    def createRunOptions(widget):
+        pass
+
+    def reloadConfiguration():
+        pass

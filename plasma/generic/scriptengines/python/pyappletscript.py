@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright 2008 Simon Edwards <simon@simonzone.com>
 #
@@ -38,20 +39,24 @@ class PythonAppletScript(Plasma.AppletScript):
         # applet() cannot be relied on to give the right details in the destructor,
         # so the plugin name is stored aside. (n.b module.__name__ cannot be relied
         # on either; it might have been changed in the module itself)
-        self.m_moduleName = str(self.applet().pluginName())
+        self.moduleName = str(self.applet().pluginName())
         #print("pluginname: " + str(self.applet().pluginName()))
+        self.pluginName = self.moduleName.replace('-','_')
 
-        self.plugin_name = str(self.applet().pluginName()).replace('-','_')
-
-        PythonAppletScript.importer.register_top_level(self.plugin_name, str(self.applet().package().path()))
+        PythonAppletScript.importer.register_top_level(self.pluginName, str(self.applet().package().path()))
 
         #print("mainScript: " + str(self.mainScript()))
         #print("package path: " + str(self.applet().package().path()))
 
         # import the code at the file name reported by mainScript()
-        self.module = __import__(self.plugin_name+'.main')
+        self.module = __import__(self.pluginName+'.main')
         self.pyapplet = self.module.main.CreateApplet(None)
         self.pyapplet.setApplet(self.applet())
+        self.pyapplet.setAppletScript(self)
+        self.connect(self.applet(), SIGNAL('extenderItemRestored(Plasma::ExtenderItem*)'),
+                     self, SLOT('initExtenderItem(Plasma::ExtenderItem*)'))
+        self.connect(self.applet(), SIGNAL('saveState(KConfigGroup&)'),
+                     self, SLOT('saveState(KConfigGroup&)'))
         self.pyapplet.init()
 
         self._setUpEventHandlers()
@@ -60,8 +65,20 @@ class PythonAppletScript(Plasma.AppletScript):
 
     def __dtor__(self):
         #print("~PythonAppletScript()")
-        PythonAppletScript.importer.unregister_top_level(self.plugin_name)
+        PythonAppletScript.importer.unregister_top_level(self.pluginName)
         self.pyapplet = None
+
+    @pyqtSignature("initExtenderItem(Plasma::ExtenderItem*)")
+    def initExtenderItem(self, item):
+        if not self.initialized:
+            return
+        self.pyapplet.initExtenderItem(item)
+
+    @pyqtSignature("saveState(KConfigGroup&)")
+    def saveState(self, config):
+        if not self.initialized:
+            return
+        self.pyapplet.saveState(config)
 
     def constraintsEvent(self, constraints):
         if not self.initialized:
