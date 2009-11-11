@@ -49,7 +49,7 @@ class PythonRunnerScript(Plasma.RunnerScript):
                      self, SLOT('createRunOptions(QWidget*)'))
         self.connect(self.runner(), SIGNAL('reloadConfiguration()'),
                      self, SLOT('reloadConfiguration()'))
-        self.pydataengine.init()
+        self.pyrunner.init()
 
         self.initialized = True
         return True
@@ -65,19 +65,19 @@ class PythonRunnerScript(Plasma.RunnerScript):
         self.pyrunner.run(search, action)
 
     @pyqtSignature("prepare()")
-    def prepare():
+    def prepare(self):
         self.pyrunner.prepare()
 
     @pyqtSignature("teardown()")
-    def teardown():
+    def teardown(self):
         self.pyrunner.teardown()
 
     @pyqtSignature("createRunOptions(QWidget*)")
-    def createRunOptions(widget):
+    def createRunOptions(self, widget):
         self.pyrunner.createRunOptions(widget)
 
     @pyqtSignature("reloadConfiguration()")
-    def reloadConfiguration():
+    def reloadConfiguration(self):
         self.pyrunner.reloadConfiguration()
 
 def CreatePlugin(widget_parent, parent, component_data):
