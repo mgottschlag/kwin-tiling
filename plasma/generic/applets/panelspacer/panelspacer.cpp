@@ -75,6 +75,7 @@ void PanelSpacer::init()
     }
 
     m_fixedSize = config().readEntry("FixedSize", false);
+    toggleFixed(!m_fixedSize);
     QAction *fixedAction = action("toggle fixed");
     if (fixedAction) {
         fixedAction->setChecked(!m_fixedSize);
