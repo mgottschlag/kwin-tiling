@@ -1,8 +1,6 @@
 [Desktop Entry]
 Name=Python wallpaper
-Name[x-test]=xxPython wallpaperxx
 Comment=Plasma wallpaper support for Python
-Comment[x-test]=xxPlasma wallpaper support for Pythonxx
 
 X-KDE-ServiceTypes=Plasma/ScriptEngine
 Type=Service
