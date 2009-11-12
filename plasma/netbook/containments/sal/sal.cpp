@@ -203,16 +203,15 @@ void SearchLaunch::reset()
     doSearch(QString());
 }
 
-void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
+void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &matches)
 {
-    if (m.isEmpty()) {
+    if (matches.isEmpty()) {
         return;
     }
 
     // just add new QueryMatch
-    int i;
-    for (i = m_queryCounter; i < m.size(); i++) {
-        Plasma::QueryMatch match = m[i];
+
+    foreach (Plasma::QueryMatch match, matches) {
 
         // create new IconWidget with information from the match
         Plasma::IconWidget *icon = m_resultsView->createItem();
@@ -246,7 +245,7 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
             m_firstItem = icon;
         }
     }
-    m_queryCounter = i;
+    m_queryCounter = matches.count();
 }
 
 void SearchLaunch::launch(Plasma::IconWidget *icon)
