@@ -1,5 +1,8 @@
 [Desktop Entry]
 Name=Free Space Notifier
+Name[pt]=Notificação de Espaço Livre
+Name[uk]=Сповіщення про вільне місце
+Name[x-test]=xxFree Space Notifierxx
 Type=Service
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=susefreespacenotifier
