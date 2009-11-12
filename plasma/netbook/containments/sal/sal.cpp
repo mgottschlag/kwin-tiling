@@ -63,6 +63,7 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
       m_orientation(Qt::Vertical),
       m_leftArrow(0),
       m_rightArrow(0),
+      m_firstItem(0),
       m_appletsLayout(0),
       m_appletOverlay(0),
       m_stripUninitialized(true)
@@ -170,6 +171,7 @@ void SearchLaunch::toggleImmutability()
 void SearchLaunch::doSearch(const QString &query, const QString &runner)
 {
     m_queryCounter = 0;
+    m_firstItem = 0;
     m_resultsView->clear();
 
     const bool stillEmpty = query.isEmpty() && m_runnermg->query().isEmpty();
@@ -240,6 +242,9 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 
         // add to data structure
         m_matches.insert(icon, match);
+        if (!m_firstItem || match.relevance() > m_matches.value(m_firstItem, Plasma::QueryMatch(0)).relevance()) {
+            m_firstItem = icon;
+        }
     }
     m_queryCounter = i;
 }
@@ -423,7 +428,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_searchField->setPreferredWidth(200);
             m_searchField->nativeWidget()->setClearButtonShown(true);
             m_searchField->nativeWidget()->setClickMessage(i18n("Enter your query here"));
-            connect(m_searchField, SIGNAL(returnPressed()), this, SLOT(query()));
+            connect(m_searchField, SIGNAL(returnPressed()), this, SLOT(searchReturnPressed()));
             connect(m_searchField->nativeWidget(), SIGNAL(textEdited(const QString &)), this, SLOT(delayedQuery()));
             m_searchTimer = new QTimer(this);
             m_searchTimer->setSingleShot(true);
@@ -632,7 +637,21 @@ void SearchLaunch::delayedQuery()
 
 void SearchLaunch::query()
 {
-    doSearch(m_searchField->text());
+    QString query = m_searchField->text();
+    doSearch(query);
+    m_lastQuery = query;
+}
+
+void SearchLaunch::searchReturnPressed()
+{
+    QString query = m_searchField->text();
+    //by pressing enter  do a query or
+    if (m_firstItem && query == m_lastQuery && !query.isEmpty()) {
+        m_runnermg->run(m_matches.value(m_firstItem, Plasma::QueryMatch(0)));
+    } else {
+        doSearch(query);
+        m_lastQuery = query;
+    }
 }
 
 void SearchLaunch::goRight()
