@@ -116,7 +116,7 @@ class DataEngine(QObject):
         try:
             return getattr(self.data_engine_script, key)
         except:
-            return getattr(self.data_engine, key)
+            return getattr(self.dataEngine, key)
 
     def init(self):
         pass
