@@ -1,9 +1,16 @@
 Writing Plasmoids With JavaScript
 =================================
 
+If you have no done so already, please read the "plasmoid" design document first.
+
+What Is A Simplified JavaScript Plasmoid?
+=========================================
+This document describes the native Plasma API available to Simplified JavaScript Plasmoids. What makes them "Simplified" is that they do not have access to the entire C++ API in the Plasma, KDE and Qt libraries (let alone things lower in the API stack). This helps ensure that these Plasmoids are more likely to work properly between releases as changes in underlying API don't affect them as well as allowing Plasma to offer stronger security guarantees around them.
+
 The Plasmoid Package
 ===================
 
+A Plasmoid package
 Structure
 ---------
 http://techbase.kde.org/Projects/Plasma/Package
@@ -14,44 +21,64 @@ plasmapkg
 
 The plasmoid Object
 ===================
-Environment:
-    FormFactor formFactor();
-    Location location();
-    QString currentActivity();
-    bool shouldConserveResources();
+Environment
+----------
+A set of read-only properties (and in most cases notification functions) that tell the plasmoid about its current environment:
+ * formFactor: one of Planar (e.g. on a desktop or in an application main view), Horizontal, Vertical or MediaCenter.
+   When the form factor changes, the plasmoid.formFactorChanged function, if defined in the Plasmoid, is called.
+
+ * location: one of Floating (no specific location), Desktop (on the application's main view are), FullScreen, LeftEdge, RightEdge, TopEdge or ButtomEdge
+   When the location changes, the plasmoid.locatationChanged function, if defined in the Plasmoid, is called.
+
+ * immutable: this property is set to true when the Plasmoid is set to not be movable or otherwise changeable, and false otherwise. Configuration is still usually allowed in this state.
+   When the immutability changes, the plasmoid.immutabilityChanged function, if defined in the Plasmoid, is called.
+
+ * currentActivity: the current contextual activity name
+   When the current activity changes, the plasmoid.currentActivityChanged function, if defined in the Plasmoid, is called.
+
+ * shouldConserveResources: true if the plasmoid should not be doing anything that would create too much draw on power, e.g. when on a device with low battery power it may be a good idea not to run a computationally expensive but optional animation
+
+Properties
+----------
+A set of read/write properties that allow the Plasmoid to set various visual or functional properties:
+ * aspectRatioMode: defines how to treat the aspect ratio of a Plasmoid when resizing it, one of:
+    * IgnoreAspectRatio: The Plasmoid can be freely resized
+    * KeepAspectRatio: The Plasmoid keeps a fixed aspect ratio
+    * Square: The Plasmoid is always a square
+    * ConstrainedSquare: The Plasmoid is no wider (in horizontal formfactors) or no higher (in vertical ones) than a square
+    * FixedSize: The Plasmoid cannot be resized
+
+ * busy: set to true when the Plasmoid is currently processing or waiting for data and the user interface should be blocked while doing so; will generally show a full-Plasmoid animated overlay to denote business
+
+Geometry
+-------
+Functions:
+ * resize(width, height)
+ * setMinimumSize(width, height)
+ * setPreferredSize(width, height)
 
 Properties:
-    AspectRatioMode aspectRatioMode();
-    void setAspectRatioMode(AspectRatioMode mode);
-    bool isBusy();
-    setFailedToLaunch(bool failed, const QString &reason = QString());
-    setBusy(bool busy);
+ * rect: the current rect of the Plasmoid; note that the top left may be not be the origin point (0,0); this property is read only
 
-Geometry:
-    resize(qreal w, qreal h);
-    setMinimumSize(qreal w, qreal h);
-    setPreferredSize(qreal w, qreal h);
 
-Painting and Layout:
-    update();
-    setLayout(QGraphicsLayout *layout);
-    QGraphicsLayout *layout() const;
+Painting and Layout
+-------------------
+Functions:
+ * update() triggers a full repaint of the Plasmoid
 
-Package Access:
-    QString file(const QString &type, const QString &fileName)
-    QString file(const QString &type)
+ * update(QRectF) triggers a repaint of the rect area of the Plasmoid
 
-Getting Notified of Changes
-===========================
-Events:
-plasmoid.formFactorChanged
-plasmoid.locationChanged
-plasmoid.contextChanged
+ * failedToLaunch(bool failed, string reason) sets the launch status of the Plasmoid; if set to true, the script will stop executing and the reason message, if any, will be displayed to the user
 
-Possibilities for 4.3
----------------------
-networkAvailableChanged(bool)
-conserveResourcesChanged(bool)
+Properties:
+ * layout: the QGraphicsLayout associated with the Plasmoid for laying out top level items; this property is read-write, though the property is not usually set as one can simply do "new LinearLayout" (or one of the other layout classes provided) and it will be automatically associated with the Plasmoid
+
+Access To Packaged Files
+------------------------
+Functions:
+ * string file(string type, string fileName): returns the path to a file named fileName in the Plasmoid package of the given type; e.g. file("images", "mypixmap.png")
+
+ * string file(string type): returns the path to a file named as part of the package, e.g.: file("mainscript")
 
 User Interface Elements
 =======================
