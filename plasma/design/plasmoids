@@ -43,3 +43,32 @@ contents/
     translations/ -> po files for individual translations; each translation should appear in subdirectories named after the language code
     ui/ -> user interface description files, usually Qt Designer
 
+The Metadata File
+=================
+The metadata.desktop file contains information about the widget that is critical to proper function. This file is a standard "INI format" file with one group in it called [Desktop Entry]. A typical such file appears below:
+
+[Desktop Entry]
+Name=JavaScript Animations
+Comment=An example showing how animations can be used from JavaScript
+Encoding=UTF-8
+Icon=plasma
+ServiceTypes=Plasma/Applet
+Type=Service
+X-KDE-PluginInfo-Author=Aaron Seigo
+X-KDE-PluginInfo-Category=Examples
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-Email=plasma-devel@kde.org
+X-KDE-PluginInfo-EnabledByDefault=true
+X-KDE-PluginInfo-License=BSD
+X-KDE-PluginInfo-Name=javascript-animations-example
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-Plasma-API=javascript
+
+The icon can either refer to a file in the root of the package by the same name, or a standard icon theme icon name. The X-KDE-PluginInfo-Name is what the widget will be referred to internally and MUST be unique; as such a "reverse domain name" approach is a good idea, e.g. "org.foo.somewidget". The X-Plasma-API entry defines which language and API the widget is written for and dictates which ScriptEngine will be loaded for it.
+
+
+Installing and Replacing
+========================
+Plasmoid packages can be installed and removed from the Add Widgets interfaces of various Plasma applications, such as plasma desktop, or directly using the plasmapkg binary. See the output of `plasmapkg --help` for more information on using that utility.
+
