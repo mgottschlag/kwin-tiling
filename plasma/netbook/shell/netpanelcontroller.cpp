@@ -28,6 +28,7 @@
 
 #include <KIcon>
 #include <KIconLoader>
+#include <KWindowSystem>
 
 #include <Plasma/Containment>
 #include <Plasma/Corona>
@@ -89,6 +90,7 @@ NetPanelController::NetPanelController(QWidget *parent, NetView *view, Plasma::C
     updatePosition();
     show();
     Plasma::WindowEffects::slideWindow(this, containment->location());
+    KWindowSystem::setState(winId(), NET::KeepAbove|NET::StaysOnTop);
 }
 
 NetPanelController::~NetPanelController()

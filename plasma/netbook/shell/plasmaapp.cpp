@@ -704,8 +704,7 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
 
 bool PlasmaApp::hasForegroundWindows() const
 {
-    return (QApplication::activeWindow() && (QApplication::activeWindow() &&
-        (QApplication::activeWindow() == m_mainView || QApplication::activeWindow()->winId() == KWindowSystem::stackingOrder().last())));
+    return QApplication::activeWindow();
 }
 
 void PlasmaApp::lowerMainView()
