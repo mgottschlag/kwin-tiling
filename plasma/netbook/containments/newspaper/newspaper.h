@@ -62,6 +62,8 @@ protected:
     void setOrientation(Qt::Orientation orientation);
     Qt::Orientation orientation() const;
 
+    void syncColumnSizes();
+
 private Q_SLOTS:
     void toggleImmutability();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);

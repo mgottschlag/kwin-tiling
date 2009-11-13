@@ -239,6 +239,7 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(appletSizeHintChanged()));
     updateSize();
     createAppletTitle(applet);
+    syncColumnSizes();
 }
 
 void Newspaper::cleanupColumns()
@@ -363,6 +364,22 @@ void Newspaper::updateSize()
     }
 }
 
+//FIXME: this is really bad, but without hardcoded maximum sizes the cpu usage goes nuts, causing continuous resizes for a minute or so
+void Newspaper::syncColumnSizes()
+{
+    for (int i = 0; i < m_mainLayout->count(); ++i) {
+        QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(i));
+
+        if (m_orientation == Qt::Vertical) {
+            lay->setMaximumWidth(m_scrollWidget->viewportGeometry().size().width()/m_mainLayout->count());
+            lay->setMaximumHeight(QWIDGETSIZE_MAX);
+        } else {
+            lay->setPreferredHeight(m_scrollWidget->viewportGeometry().size().height()/m_mainLayout->count());
+            lay->setPreferredWidth(QWIDGETSIZE_MAX);
+        }
+    }
+}
+
 void Newspaper::constraintsEvent(Plasma::Constraints constraints)
 {
     kDebug() << "constraints updated with" << constraints << "!!!!!!";
@@ -388,6 +405,10 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
 
     if (constraints & Plasma::SizeConstraint && m_appletOverlay) {
         m_appletOverlay->resize(size());
+    }
+    
+    if (constraints & Plasma::SizeConstraint) {
+        syncColumnSizes();
     }
 
     if (constraints & Plasma::ImmutableConstraint) {
@@ -628,6 +649,8 @@ QGraphicsLinearLayout *Newspaper::addColumn()
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     lay->addItem(spacer);
 
+    syncColumnSizes();
+
     return lay;
 }
 
@@ -654,6 +677,8 @@ void Newspaper::removeColumn(int column)
             widget->deleteLater();
         }
     }
+
+    syncColumnSizes();
 
     delete lay;
 }
