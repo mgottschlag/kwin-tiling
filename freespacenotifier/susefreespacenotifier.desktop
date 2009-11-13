@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Free Space Notifier
+Name[en_GB]=Free Space Notifier
 Name[pt]=Notificação de Espaço Livre
+Name[tr]=Boş Alan Bildirici
 Name[uk]=Сповіщення про вільне місце
 Name[x-test]=xxFree Space Notifierxx
 Type=Service
