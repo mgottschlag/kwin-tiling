@@ -55,12 +55,12 @@ class PythonAppletScript(Plasma.AppletScript):
         self.pyapplet.setAppletScript(self)
         self.connect(self.applet(), SIGNAL('extenderItemRestored(Plasma::ExtenderItem*)'),
                      self, SLOT('initExtenderItem(Plasma::ExtenderItem*)'))
-        self.connect(self.applet(), SIGNAL('saveState(KConfigGroup&)'),
-                     self, SLOT('saveState(KConfigGroup&)'))
-        self.pyapplet.init()
-
+        self.connect(self, SIGNAL('saveState(KConfigGroup&)'),
+                     self, SLOT('saveStateSlot(KConfigGroup&)'))
         self._setUpEventHandlers()
         self.initialized = True
+
+        self.pyapplet.init()
         return True
 
     def __dtor__(self):
@@ -74,8 +74,8 @@ class PythonAppletScript(Plasma.AppletScript):
             return
         self.pyapplet.initExtenderItem(item)
 
-    @pyqtSignature("saveState(KConfigGroup&)")
-    def saveState(self, config):
+    @pyqtSignature("saveStateSlot(KConfigGroup&)")
+    def saveStateSlot(self, config):
         if not self.initialized:
             return
         self.pyapplet.saveState(config)
