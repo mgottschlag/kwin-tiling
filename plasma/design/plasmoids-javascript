@@ -236,6 +236,19 @@ RadioButton
   * boolean isChecked
   * function toggled(bool)
 
+ScrollWidget
+  * object widget
+  * number horizontalScrollBarPolicy
+  * number verticalScrollBarPolicy
+  * object scrollPosition
+  * object contentsSize
+  * object viewportGeometry
+  * string styleSheet
+  * function ensureRectVisible(QRectF)
+  * function ensureItemVisible(QGraphicsItem*)
+  * function registerAsDragHandle(QGraphicsWidget*)
+  * function unregisterAsDragHandle(QGraphicsWidget*)
+
 ScrollBar
   * number singleStep
   * number pageStep
