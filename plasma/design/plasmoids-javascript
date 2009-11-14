@@ -113,27 +113,275 @@ User Interface Elements
 Types of Widgets
 ----------------
 BusyWidget
+  * boolean running
+  * string label
+  * function clicked()
+
 CheckBox
+  * string text
+  * string image
+  * string styleSheet
+  * boolean isChecked
+  * function toggled(bool)
+
 ComboBox
+  * string text
+  * string styleSheet
+  * function activated(QString)
+  * function textChanged(QString)
+  * function clear()
+
 FlashingLabel
+  * boolean autohide
+  * object color
+  * number duration
+  * function kill()
+  * function fadeIn()
+  * function fadeOut()
+  * function flash(QString,int,QTextOption)
+  * function flash(QString,int)
+  * function flash(QString)
+  * function flash(QPixmap,int,Qt::Alignment)
+  * function flash(QPixmap,int)
+  * function flash(QPixmap)
+
 Frame
+  * number frameShadow
+  * string text
+  * string image
+  * string styleSheet
+  * number Plain
+  * number Raised
+  * number Sunken
+
 GroupBox
+  * string text
+  * string styleSheet
+
 IconWidget
+  * string text
+  * string infoText
+  * object icon
+  * object textBackgroundColor
+  * object iconSize
+  * string svg
+  * undefined action
+  * number orientation
+  * number numDisplayLines
+  * function pressed(bool)
+  * function clicked()
+  * function doubleClicked()
+  * function activated()
+  * function changed()
+  * function setPressed(bool)
+  * function setPressed()
+  * function setUnpressed()
+  * function setIcon(QString)
+
+ItemBackground
+  * object target
+  * object targetItem
+  * function appearanceChanged()
+  * function animationStep(qreal)
+  * function targetReached(QRectF)
+  * function targetItemReached(QGraphicsItem*)
+
 Label
+  * string text
+  * string image
+  * number alignment
+  * boolean hasScaledContents
+  * string styleSheet
+  * function linkActivated(QString)
+  * function linkHovered(QString)
+  * function dataUpdated(QString,Plasma::DataEngine::Data)
+
 LineEdit
+  * string text
+  * boolean isClearButtonShown
+  * string styleSheet
+  * function editingFinished()
+  * function returnPressed()
+  * function textEdited(QString)
+  * function textChanged(QString)
+
 Meter
+  * number minimum
+  * number maximum
+  * number value
+  * string svg
+  * number meterType
+  * function dataUpdated(QString,Plasma::DataEngine::Data)
+  * number BarMeterHorizontal
+  * number BarMeterVertical
+  * number AnalogMeter
+
 PushButton
+  * string text
+  * string image
+  * undefined action
+  * object icon
+  * boolean checkable
+  * boolean checked
+  * boolean down
+  * function pressed()
+  * function released()
+  * function clicked()
+  * function toggled(bool)
+
 RadioButton
+  * string text
+  * string image
+  * string styleSheet
+  * boolean isChecked
+  * function toggled(bool)
+
 ScrollBar
+  * number singleStep
+  * number pageStep
+  * number value
+  * number minimum
+  * number maximum
+  * function valueChanged(int)
+  * function setValue(int)
+  * function setOrientation(Qt::Orientation)
+
+Separator
+  * number orientation
+
 SignalPlotter
+  * string title
+  * string unit
+  * boolean useAutoRange
+  * number horizontalScale
+  * boolean showVerticalLines
+  * object verticalLinesColor
+  * number verticalLinesDistance
+  * boolean verticalLinesScroll
+  * boolean showHorizontalLines
+  * object horizontalLinesColor
+  * object fontColor
+  * number horizontalLinesCount
+  * boolean showLabels
+  * boolean showTopBar
+  * object backgroundColor
+  * string svgBackground
+  * boolean thinFrame
+  * boolean stackPlots
+
 Slider
+  * number maximum
+  * number minimum
+  * number value
+  * number orientation
+  * string styleSheet
+  * function sliderMoved(int)
+  * function valueChanged(int)
+  * function setMaximum(int)
+  * function setMinimum(int)
+  * function setRange(int,int)
+  * function setValue(int)
+  * function setOrientation(Qt::Orientation)
+
+SpinBox
+  * number maximum
+  * number minimum
+  * number value
+  * string styleSheet
+  * function sliderMoved(int)
+  * function valueChanged(int)
+  * function editingFinished()
+  * function setMaximum(int)
+  * function setMinimum(int)
+  * function setRange(int,int)
+  * function setValue(int)
+
 SvgWidget
+  * undefined svg
+  * string elementID
+  * function clicked(Qt::MouseButton)
+
 TabBar
+  * number currentIndex
+  * number count
+  * string styleSheet
+  * boolean tabBarShown
+  * function currentChanged(int)
+  * function setCurrentIndex(int)
+  * function insertTab(int,QIcon,QString,QGraphicsLayoutItem*)
+  * function insertTab(int,QIcon,QString)
+  * function insertTab(int,QString,QGraphicsLayoutItem*)
+  * function insertTab(int,QString)
+  * function addTab(QIcon,QString,QGraphicsLayoutItem*)
+  * function addTab(QIcon,QString)
+  * function addTab(QString,QGraphicsLayoutItem*)
+  * function addTab(QString)
+  * function removeTab(int)
+  * function takeTab(int)
+  * function tabAt(int)
+  * function setTabText(int,QString)
+  * function tabText(int)
+  * function setTabIcon(int,QIcon)
+  * function tabIcon(int)
+
 TextEdit
+  * string text
+  * boolean readOnly
+  * function textChanged()
+  * function dataUpdated(QString,Plasma::DataEngine::Data)
+
 ToolButton
+  * string text
+  * boolean autoRaise
+  * string image
+  * undefined action
+  * function clicked()
+  * function pressed()
+  * function released()
+
 TreeView
+  * undefined model
+  * string styleSheet
+
 VideoWidget
+  * string url
+  * number currentTime
+  * number totalTime
+  * number remainingTime
+  * number usedControls
+  * boolean controlsVisible
+  * string styleSheet
+  * function tick(qint64)
+  * function aboutToFinish()
+  * function nextRequested()
+  * function previousRequested()
+  * function play()
+  * function pause()
+  * function stop()
+  * function seek(qint64)
+  * function mediaObject()
+  * function audioOutput()
+  * number NoControls
+  * number Play
+  * number Pause
+  * number Stop
+  * number PlayPause
+  * number Previous
+  * number Next
+  * number Progress
+  * number Volume
+  * number OpenFile
+  * number DefaultControls
+
 WebView
+  * object url
+  * string html
+  * boolean dragToScroll
+  * object scrollPosition
+  * object contentsSize
+  * object viewportGeometry
+  * function loadProgress(int)
+  * function loadFinished(bool)
 
 Layouts
 -------
