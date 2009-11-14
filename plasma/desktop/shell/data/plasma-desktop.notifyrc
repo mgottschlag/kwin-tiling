@@ -1,6 +1,7 @@
 [Global]
 IconName=plasma
 Comment=Plasma Desktop Shell
+Comment[de]=Plasma-Arbeitsflächen-Umgebung
 Comment[en_GB]=Plasma Desktop Shell
 Comment[eo]=Plasma Labortabla ŝelo
 Comment[et]=Plasma töölauakest
@@ -19,6 +20,7 @@ Comment[uk]=Оболонка стільниці Плазми
 Comment[x-test]=xxPlasma Desktop Shellxx
 Comment[zh_TW]=Plasma 桌面 shell
 Name=Workspace
+Name[de]=Arbeitsbereich
 Name[en_GB]=Workspace
 Name[eo]=Laborspacon
 Name[et]=Töötsoon

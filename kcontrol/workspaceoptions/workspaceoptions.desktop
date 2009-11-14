@@ -11,6 +11,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=desktop
 
 Name=Workspace
+Name[de]=Arbeitsbereich
 Name[en_GB]=Workspace
 Name[eo]=Laborspacon
 Name[et]=Töötsoon
