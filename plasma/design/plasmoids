@@ -65,8 +65,16 @@ X-KDE-PluginInfo-Version=0.1
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-Plasma-API=javascript
 
-The icon can either refer to a file in the root of the package by the same name, or a standard icon theme icon name. The X-KDE-PluginInfo-Name is what the widget will be referred to internally and MUST be unique; as such a "reverse domain name" approach is a good idea, e.g. "org.foo.somewidget". The X-Plasma-API entry defines which language and API the widget is written for and dictates which ScriptEngine will be loaded for it.
+The icon can either refer to a file in the root of the package by the same name, or a standard icon theme icon name. 
 
+Important fields include:
+
+ * X-KDE-PluginInfo-Name= what the widget will be referred to internally and MUST be unique; as such a "reverse domain name" approach is a good idea, e.g. "org.foo.somewidget". 
+ * X-Plasma-API entry defines which language and API the widget is written for and dictates which ScriptEngine will be loaded for it.
+
+Useful optional fields include:
+ * X-Plasma-MainScript= path relative to the contents/ dir of the package; used to override the default of "contents/code/main" 
+ * X-Plasma-DefaultSize= a good initial size for the widget given in the form x,y
 
 Installing and Replacing
 ========================
