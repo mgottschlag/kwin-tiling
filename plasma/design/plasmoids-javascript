@@ -107,6 +107,8 @@ Functions:
 
  * string file(string type): returns the path to a file named as part of the package, e.g.: file("mainscript")
 
+ * bool include(string filename): attempts to include the script defined from the package's scripts directory
+
 User Interface Elements
 =======================
 
