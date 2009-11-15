@@ -62,12 +62,12 @@
     <widget class="QComboBox" name="dashboardMode">
      <item>
       <property name="text">
-       <string>Show desktop widgets</string>
+       <string>Show Desktop Widgets</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Show an independent widget set</string>
+       <string>Show an Independent Widget Set</string>
       </property>
      </item>
     </widget>
