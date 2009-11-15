@@ -11,7 +11,7 @@ X-KDE-ParentApp=kcontrol
 #FIXME should this be in system settings when we can get to it through the panel?
 X-KDE-System-Settings-Parent-Category=computer-administration
 
-Name=Remote widgets policies
+Name=Remote Widgets Policies
 Name[en_GB]=Remote widgets policies
 Name[eo]=Forigi strategion de fenestraĵo
 Name[et]=Välisvidinate reeglid
