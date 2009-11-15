@@ -315,7 +315,7 @@ void ThemePage::removeClicked()
 {
     // We don't have to check if the current index is valid, since
     // the remove button will be disabled when there's no selection.
-    const CursorTheme *theme = model->theme(view->currentIndex());
+    const CursorTheme *theme = proxy->theme(view->currentIndex());
 
     // Don't let the user delete the currently configured theme
     if (view->currentIndex() == appliedIndex) {
