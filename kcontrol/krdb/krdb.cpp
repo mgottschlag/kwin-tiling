@@ -106,7 +106,7 @@ static void applyGtkStyles(bool active, int version)
 
 // -----------------------------------------------------------------------------
 
-static void applyQtColors( KConfigGroup kglobals, QSettings& settings, QPalette& newPal )
+static void applyQtColors( KSharedConfigPtr kglobalcfg, QSettings& settings, QPalette& newPal )
 {
   QStringList actcg, inactcg, discg;
   /* export kde color settings */
@@ -126,49 +126,49 @@ static void applyQtColors( KConfigGroup kglobals, QSettings& settings, QPalette&
   settings.setValue("/qt/Palette/disabled", discg);
 
   // export kwin's colors to qtrc for kstyle to use
-  kglobals.changeGroup("WM");
+  KConfigGroup wmCfgGroup(kglobalcfg, "WM");
 
   // active colors
   QColor clr = newPal.color( QPalette::Active, QPalette::Background );
-  clr = kglobals.readEntry("activeBackground", clr);
+  clr = wmCfgGroup.readEntry("activeBackground", clr);
   settings.setValue("/qt/KWinPalette/activeBackground", clr.name());
   if (QPixmap::defaultDepth() > 8)
     clr = clr.dark(110);
-  clr = kglobals.readEntry("activeBlend", clr);
+  clr = wmCfgGroup.readEntry("activeBlend", clr);
   settings.setValue("/qt/KWinPalette/activeBlend", clr.name());
   clr = newPal.color( QPalette::Active, QPalette::HighlightedText );
-  clr = kglobals.readEntry("activeForeground", clr);
+  clr = wmCfgGroup.readEntry("activeForeground", clr);
   settings.setValue("/qt/KWinPalette/activeForeground", clr.name());
   clr = newPal.color( QPalette::Active,QPalette::Background );
-  clr = kglobals.readEntry("frame", clr);
+  clr = wmCfgGroup.readEntry("frame", clr);
   settings.setValue("/qt/KWinPalette/frame", clr.name());
-  clr = kglobals.readEntry("activeTitleBtnBg", clr);
+  clr = wmCfgGroup.readEntry("activeTitleBtnBg", clr);
   settings.setValue("/qt/KWinPalette/activeTitleBtnBg", clr.name());
 
   // inactive colors
   clr = newPal.color(QPalette::Inactive, QPalette::Background);
-  clr = kglobals.readEntry("inactiveBackground", clr);
+  clr = wmCfgGroup.readEntry("inactiveBackground", clr);
   settings.setValue("/qt/KWinPalette/inactiveBackground", clr.name());
   if (QPixmap::defaultDepth() > 8)
     clr = clr.dark(110);
-  clr = kglobals.readEntry("inactiveBlend", clr);
+  clr = wmCfgGroup.readEntry("inactiveBlend", clr);
   settings.setValue("/qt/KWinPalette/inactiveBlend", clr.name());
   clr = newPal.color(QPalette::Inactive, QPalette::Background).dark();
-  clr = kglobals.readEntry("inactiveForeground", clr);
+  clr = wmCfgGroup.readEntry("inactiveForeground", clr);
   settings.setValue("/qt/KWinPalette/inactiveForeground", clr.name());
   clr = newPal.color(QPalette::Inactive, QPalette::Background);
-  clr = kglobals.readEntry("inactiveFrame", clr);
+  clr = wmCfgGroup.readEntry("inactiveFrame", clr);
   settings.setValue("/qt/KWinPalette/inactiveFrame", clr.name());
-  clr = kglobals.readEntry("inactiveTitleBtnBg", clr);
+  clr = wmCfgGroup.readEntry("inactiveTitleBtnBg", clr);
   settings.setValue("/qt/KWinPalette/inactiveTitleBtnBg", clr.name());
 
-  kglobals.changeGroup("KDE");
-  settings.setValue("/qt/KDE/contrast", kglobals.readEntry("contrast", 7));
+  KConfigGroup kdeCfgGroup(kglobalcfg, "KDE");
+  settings.setValue("/qt/KDE/contrast", kdeCfgGroup.readEntry("contrast", 7));
 }
 
 // -----------------------------------------------------------------------------
 
-static void applyQtSettings( KConfigGroup kglobals, QSettings& settings )
+static void applyQtSettings( KSharedConfigPtr kglobalcfg, QSettings& settings )
 {
     // export KDE's plugin library path to Trolltech.conf
     // This is only needed for Qt applications that run outside of a KDE session but still should
@@ -220,8 +220,8 @@ static void applyQtSettings( KConfigGroup kglobals, QSettings& settings )
 
 #if (QT_VERSION < QT_VERSION_CHECK(4, 5, 0))    //Qt 4.5 will read kde config files if running on kde
   /* export widget style */
-  kglobals.changeGroup("General");
-  QString style = kglobals.readEntry("widgetStyle", KStyle::defaultStyle());
+  KConfigGroup generalCfgGroup(kglobalcfg, "General");
+  QString style = generalCfgGroup.readEntry("widgetStyle", KStyle::defaultStyle());
   if (!style.isEmpty())
     settings.setValue("/qt/style", style);
 #endif
@@ -230,17 +230,17 @@ static void applyQtSettings( KConfigGroup kglobals, QSettings& settings )
   settings.setValue("/qt/font", KGlobalSettings::generalFont().toString());
 
   /* ##### looks like kcmfonts skips this, so we don't do this here */
-/*bool usexft = kglobals.readEntry("AntiAliasing", false);
+/*bool usexft = generalCfgGroup.readEntry("AntiAliasing", false);
   kconfig.setGroup("General");
   settings.writeEntry("/qt/enableXft", usexft);
   settings.writeEntry("/qt/useXft", usexft); */
 
   /* export effects settings */
-  kglobals.changeGroup("KDE");
-  bool effectsEnabled = kglobals.readEntry("EffectsEnabled", false);
-  bool fadeMenus = kglobals.readEntry("EffectFadeMenu", false);
-  bool fadeTooltips = kglobals.readEntry("EffectFadeTooltip", false);
-  bool animateCombobox = kglobals.readEntry("EffectAnimateCombo", false);
+  KConfigGroup kdeCfgGroup(kglobalcfg, "General");
+  bool effectsEnabled = kdeCfgGroup.readEntry("EffectsEnabled", false);
+  bool fadeMenus = kdeCfgGroup.readEntry("EffectFadeMenu", false);
+  bool fadeTooltips = kdeCfgGroup.readEntry("EffectFadeTooltip", false);
+  bool animateCombobox = kdeCfgGroup.readEntry("EffectAnimateCombo", false);
 
   QStringList guieffects;
   if (effectsEnabled) {
@@ -475,20 +475,20 @@ void runRdb( uint flags )
 
   if (exportXftSettings)
   {
-    kglobals.changeGroup("General");
+    KConfigGroup generalCfgGroup(kglobalcfg, "General");
 
-    if (kglobals.hasKey("XftAntialias"))
+    if (generalCfgGroup.hasKey("XftAntialias"))
     {
       contents += "Xft.antialias: ";
-      if(kglobals.readEntry("XftAntialias", true))
+      if(generalCfgGroup.readEntry("XftAntialias", true))
         contents += "1\n";
       else
         contents += "0\n";
     }
 
-    if (kglobals.hasKey("XftHintStyle"))
+    if (generalCfgGroup.hasKey("XftHintStyle"))
     {
-      QString hintStyle = kglobals.readEntry("XftHintStyle", "hintmedium");
+      QString hintStyle = generalCfgGroup.readEntry("XftHintStyle", "hintmedium");
       contents += "Xft.hinting: ";
       if(hintStyle.isEmpty())
         contents += "-1\n";
@@ -502,9 +502,9 @@ void runRdb( uint flags )
       }
     }
 
-    if (kglobals.hasKey("XftSubPixel"))
+    if (generalCfgGroup.hasKey("XftSubPixel"))
     {
-      QString subPixel = kglobals.readEntry("XftSubPixel");
+      QString subPixel = generalCfgGroup.readEntry("XftSubPixel");
       if(!subPixel.isEmpty())
         contents += "Xft.rgba: " + subPixel + '\n';
     }
@@ -550,10 +550,10 @@ void runRdb( uint flags )
     QSettings* settings = new QSettings(QLatin1String("Trolltech"));
 
     if ( exportQtColors )
-      applyQtColors( kglobals, *settings, newPal );    // For kcmcolors
+      applyQtColors( kglobalcfg, *settings, newPal );    // For kcmcolors
 
     if ( exportQtSettings )
-      applyQtSettings( kglobals, *settings );          // For kcmstyle
+      applyQtSettings( kglobalcfg, *settings );          // For kcmstyle
 
     delete settings;
     QApplication::flush();
