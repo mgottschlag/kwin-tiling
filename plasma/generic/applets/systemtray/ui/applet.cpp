@@ -458,7 +458,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
                         "preferences-desktop-notification",
                         i18n("Choose which information to show"));
         parent->addPage(m_autoHideInterface.data(), i18n("Auto Hide"), "window-suppressed");
-        parent->addPage(m_plasmoidTasksInterface.data(), i18n("Plasma widgets"), "plasma");
+        parent->addPage(m_plasmoidTasksInterface.data(), i18n("Plasma Widgets"), "plasma");
     }
 
     m_autoHideUi.icons->clear();
@@ -487,7 +487,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
 
         itemCombo->addItem(i18nc("Item will be automatically shown or hidden from the systray", "Auto"));
         itemCombo->addItem(i18nc("Item is never visible in the systray", "Hidden"));
-        itemCombo->addItem(i18nc("Item is always visible in the systray", "Always visible"));
+        itemCombo->addItem(i18nc("Item is always visible in the systray", "Always Visible"));
 
         if (task->hidden() & Task::UserHidden) {
             itemCombo->setCurrentIndex(1);
