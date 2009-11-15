@@ -466,6 +466,9 @@ CFontList::~CFontList()
 
 void CFontList::dbusServiceOwnerChanged(const QString &name, const QString &from, const QString &to)
 {
+    Q_UNUSED(from);
+    Q_UNUSED(to);
+
     if(name==OrgKdeFontinstInterface::staticInterfaceName())
         load();
 }

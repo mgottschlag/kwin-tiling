@@ -108,7 +108,7 @@ void ExtendedIntNumInput::slotSliderValueChanged(int val)
 	spinBox()->setValue ((int)floor(0.5 + linearVal));
 }
 
-static bool needToRunKAccessDaemon( KConfig *config )
+static bool needToRunKAccessDaemon( KConfig * )
 {
 	// We always start the KAccess Daemon, if it is not needed,
 	// it will terminate itself after configuring the AccessX
