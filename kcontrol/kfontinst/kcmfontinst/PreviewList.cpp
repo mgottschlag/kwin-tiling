@@ -62,7 +62,7 @@ QVariant CPreviewList::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-Qt::ItemFlags CPreviewList::flags(const QModelIndex &index) const
+Qt::ItemFlags CPreviewList::flags(const QModelIndex &) const
 {
     return Qt::ItemIsEnabled;
 }

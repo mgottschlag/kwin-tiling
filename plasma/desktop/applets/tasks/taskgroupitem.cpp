@@ -1000,7 +1000,7 @@ void TaskGroupItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
     }
 }
 
-void TaskGroupItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
+void TaskGroupItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *)
 {
     if (m_popupMenuTimer) {
         m_popupMenuTimer->stop();

@@ -158,7 +158,7 @@ bool OutputConfig::hasPendingChanges( const QPoint& normalizePos ) const
 
 void OutputConfig::outputChanged(RROutput output, int changes)
 {
-	Q_ASSERT(m_output->id() == output);
+	Q_ASSERT(m_output->id() == output); Q_UNUSED(output);
 	kDebug() << "Output" << m_output->name() << "changed. ( mask =" << QString::number(changes) << ")";
 	
 	if(changes & RandR::ChangeOutputs) {

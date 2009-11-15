@@ -24,6 +24,7 @@
 QuicklaunchLayout::QuicklaunchLayout(int rowCount, QGraphicsWidget *parentWidget, QGraphicsLayoutItem *parent)
   : QGraphicsGridLayout(parent), m_rowCount(rowCount)
 {
+    Q_UNUSED(parentWidget);
 }
 
 QuicklaunchLayout::~QuicklaunchLayout()

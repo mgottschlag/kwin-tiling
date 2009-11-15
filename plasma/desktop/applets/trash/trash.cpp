@@ -326,7 +326,7 @@ void Trash::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
     }
 }
 
-void Trash::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
+void Trash::dragLeaveEvent(QGraphicsSceneDragDropEvent *)
 {
     updateIcon();
 }

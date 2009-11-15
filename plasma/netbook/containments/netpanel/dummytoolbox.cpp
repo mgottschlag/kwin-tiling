@@ -47,12 +47,12 @@ void DummyToolBox::setShowing(const bool show)
 }
 
 
-void DummyToolBox::addTool(QAction *action)
+void DummyToolBox::addTool(QAction *)
 {
     //not supported
 }
 
-void DummyToolBox::removeTool(QAction *action)
+void DummyToolBox::removeTool(QAction *)
 {
     //not supported
 }

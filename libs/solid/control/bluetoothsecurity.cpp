@@ -86,6 +86,7 @@ void Solid::Control::BluetoothSecurity::setAuthorizationAgent(Solid::Control::Bl
 Solid::Control::BluetoothPasskeyAgent::BluetoothPasskeyAgent(QObject * parent,const QString &interface)
     :QObject(parent)
 {
+    Q_UNUSED(interface);
     //TODO Auto register all subclasses on BluetoothSecurity?
 }
 

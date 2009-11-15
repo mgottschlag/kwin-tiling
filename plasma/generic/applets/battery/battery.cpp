@@ -361,8 +361,8 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
     // as the battery applet is also embedded into the battery's extender.
     if (!m_isEmbedded && item->name() == "powermanagement") {
         int row = 0;
-        int rowHeight = 20;
-        int columnWidth = 120;
+        //int rowHeight = 20;
+        //int columnWidth = 120;
 
         QGraphicsWidget *controls = new QGraphicsWidget(item);
         controls->setMinimumWidth(360);

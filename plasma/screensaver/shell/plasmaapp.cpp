@@ -299,6 +299,7 @@ void PlasmaApp::setActive(bool activate)
 
 void PlasmaApp::adjustSize(int screen)
 {
+    Q_UNUSED(screen);
     if (! m_view) {
         return;
     }

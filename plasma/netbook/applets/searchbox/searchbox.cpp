@@ -118,6 +118,8 @@ void SearchBox::focusInEvent(QFocusEvent *event)
 
 bool SearchBox::eventFilter(QObject* watched, QEvent *event)
 {
+    Q_UNUSED(watched);
+
     //FIXME: is there a way to do it in PopupApplet?
     if (event->type() == QEvent::FocusIn) {
         focusEditor();

@@ -164,6 +164,7 @@ QRectF Widget::geometry() const
 
 void Widget::setGeometry(const QRectF &geometry)
 {
+    Q_UNUSED(geometry);
     if (m_applet) {
         QAction *configAction = m_applet.data()->action("configure");
         if (configAction && configAction->isEnabled()) {

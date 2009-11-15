@@ -126,6 +126,7 @@ void FakeNetworkManager::setNetworkingEnabled(bool enabled)
     {
         it.next();
         FakeNetworkInterface * netDevice = it.value();
+        Q_UNUSED(netDevice);
     //    if ((netDevice->type() == Solid::Control::NetworkInterface::Ieee80211 && mUserWirelessEnabled)
       //     || netDevice->type() == Solid::Control::NetworkInterface::Ieee8023)
         //    netDevice->setActive(enabled);
@@ -267,6 +268,10 @@ QMap<QString,QVariant> FakeNetworkManager::parseAPElement(const QDomElement &dev
 
 void FakeNetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters)
 {
+    Q_UNUSED(interfaceUni);
+    Q_UNUSED(connectionUni);
+    Q_UNUSED(connectionParameters);
+
     mActiveConnections.append(connectionUni);
     QTimer::singleShot(0, this, SIGNAL(activeConnectionsChanged()));
 }

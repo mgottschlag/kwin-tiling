@@ -632,6 +632,7 @@ void NotifierDialog::deviceActivated(DeviceItem *item)
 
 void NotifierDialog::deviceCollapsed(DeviceItem *item)
 {
+    Q_UNUSED(item);
     Plasma::ItemBackground *tmp = m_itemBackground;
     m_itemBackground = m_selectedItemBackground;
     m_selectedItemBackground = tmp;

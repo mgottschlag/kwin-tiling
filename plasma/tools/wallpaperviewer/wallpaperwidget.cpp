@@ -64,7 +64,7 @@ void WallpaperWidget::quit()
     close();
 }
 
-void WallpaperWidget::closeEvent(QCloseEvent *event)
+void WallpaperWidget::closeEvent(QCloseEvent *)
 {
     if (m_wallpaper && m_wallpaper->isInitialized()) {
         KConfigGroup config = configGroup();

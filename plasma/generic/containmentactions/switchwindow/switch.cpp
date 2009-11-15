@@ -192,7 +192,7 @@ void SwitchWindow::switchTo(QAction *action)
     }
 }
 
-void SwitchWindow::wheelEvent(QGraphicsSceneWheelEvent *event)
+void SwitchWindow::wheelEvent(QGraphicsSceneWheelEvent *)
 {
     //TODO somehow find the "next" or "previous" window
     //without changing hte window order (don't want to always go between two windows)
