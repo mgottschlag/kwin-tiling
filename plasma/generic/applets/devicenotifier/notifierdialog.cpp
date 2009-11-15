@@ -55,7 +55,8 @@ using namespace Notifier;
 NotifierDialog::NotifierDialog(DeviceNotifier * notifier, QObject *parent)
     : QObject(parent),
       m_widget(0),
-      m_notifier(notifier)
+      m_notifier(notifier),
+      m_collapsing(false)
 {
     buildDialog();
 
@@ -131,6 +132,7 @@ void NotifierDialog::insertDevice(const QString &udi)
     connect(devItem, SIGNAL(actionActivated(DeviceItem *, const QString &, const QString &)),
             this, SLOT(actionActivated(DeviceItem *, const QString &, const QString &)));
     connect(devItem, SIGNAL(activated(DeviceItem *)), this, SLOT(deviceActivated(DeviceItem *)));
+    connect(devItem, SIGNAL(collapsed(DeviceItem *)), this, SLOT(deviceCollapsed(DeviceItem *)));
     connect(devItem, SIGNAL(highlightActionItem(QGraphicsItem *)), this, SLOT(highlightDeviceAction(QGraphicsItem*)));
     devItem->installEventFilter(this);
 
@@ -171,6 +173,7 @@ void NotifierDialog::itemHoverEnter(DeviceItem * item)
     item->setHovered(true);
     if (item->isCollapsed()) {
         m_clearItemBackgroundTargetTimer.stop();
+        m_collapsing = false;
         m_itemBackground->setTargetItem(item);
     } else {
         m_clearItemBackgroundTargetTimer.start();
@@ -480,13 +483,12 @@ void NotifierDialog::buildDialog()
     l_layout->addItem(m_devicesScrollWidget);
 
     m_itemBackground = new Plasma::ItemBackground(devicesWidget);
-    m_itemBackground->hide();
-    connect(m_itemBackground, SIGNAL(animationStep(qreal)), this, SLOT(itemBackgroundMoving(qreal)));
-
     m_selectedItemBackground = new Plasma::ItemBackground(devicesWidget);
-    connect(m_selectedItemBackground, SIGNAL(targetItemReached(QGraphicsItem*)),
-            this, SLOT(selectedItemAnimationComplete(QGraphicsItem*)));
+    m_itemBackground->hide();
     m_selectedItemBackground->hide();
+
+    connect(m_itemBackground, SIGNAL(animationStep(qreal)), this, SLOT(itemBackgroundMoving(qreal)));
+    connect(m_selectedItemBackground, SIGNAL(animationStep(qreal)), this, SLOT(itemBackgroundMoving(qreal)));
 
     devicesWidget->adjustSize();
     updateMainLabelText();
@@ -607,6 +609,8 @@ void NotifierDialog::deviceActivated(DeviceItem *item)
 {
     m_devicesScrollWidget->ensureItemVisible(item);
 
+    m_selectedItemBackground->setTargetItem(0);
+
     for (int i = 0; i < m_deviceLayout->count(); ++i) {
         DeviceItem *devItem = dynamic_cast<DeviceItem *>(m_deviceLayout->itemAt(i));
         if (devItem && devItem != item) {
@@ -615,17 +619,32 @@ void NotifierDialog::deviceActivated(DeviceItem *item)
         }
     }
 
-    m_selectedItemBackground->setTarget(m_itemBackground->geometry());
-    m_selectedItemBackground->show();
+    item->setHoverDisplayOpacity(1);
+
+    Plasma::ItemBackground *tmp = m_itemBackground;
+    m_itemBackground = m_selectedItemBackground;
+    m_selectedItemBackground = tmp;
+
     m_itemBackground->setTargetItem(0);
-    m_selectedItemBackground->setTargetItem(item);
 
     emit deviceSelected();
+}
+
+void NotifierDialog::deviceCollapsed(DeviceItem *item)
+{
+    Plasma::ItemBackground *tmp = m_itemBackground;
+    m_itemBackground = m_selectedItemBackground;
+    m_selectedItemBackground = tmp;
+
+    m_collapsing = true;
+
+    m_selectedItemBackground->setTargetItem(0);
 }
 
 void NotifierDialog::highlightDeviceAction(QGraphicsItem* item)
 {
     m_clearItemBackgroundTargetTimer.stop();
+    m_collapsing = false;
     m_itemBackground->setTargetItem(item);
 }
 
@@ -642,24 +661,22 @@ void NotifierDialog::actionActivated(DeviceItem *item, const QString &udi, const
     emit actionSelected();
 }
 
-void NotifierDialog::selectedItemAnimationComplete(QGraphicsItem *item)
-{
-    DeviceItem *devItem = dynamic_cast<DeviceItem *>(item);
-    if (devItem && devItem->isCollapsed() && !devItem->hovered()) {
-        m_selectedItemBackground->setTargetItem(0);
-    }
-}
-
 void NotifierDialog::itemBackgroundMoving(qreal step)
 {
+    Plasma::ItemBackground *itemBackground = qobject_cast<Plasma::ItemBackground*>(sender());
+
     for (int i = 0; i < m_deviceLayout->count(); ++i) {
         DeviceItem *item = dynamic_cast<DeviceItem *>(m_deviceLayout->itemAt(i));
-        if (item && item->hovered() && item->isCollapsed()) {
-            qreal normalizedDistance = qAbs(m_itemBackground->pos().ry()-item->pos().ry()) / qreal (item->rect().height());
+        if (!m_collapsing && item && item->hovered() && item->isCollapsed()) {
+            qreal normalizedDistance = qAbs(itemBackground->pos().ry()-item->pos().ry()) / qreal (item->rect().height());
             qreal saturatedDistance = 1.-qMin(normalizedDistance*1.5, 1.);
             item->setHoverDisplayOpacity(saturatedDistance*step);
             return;
         }
+    }
+
+    if (qFuzzyCompare(step, (qreal)1.0)) {
+        m_collapsing = false;
     }
 }
 
@@ -686,8 +703,8 @@ void NotifierDialog::resetNotifierIcon()
 
 void NotifierDialog::resetSelection()
 {
-    m_itemBackground->hide();
     m_itemBackground->setTargetItem(0);
+    m_selectedItemBackground->setTargetItem(0);
 
     for (int i = 0; i < m_deviceLayout->count(); ++i) {
         DeviceItem *item = dynamic_cast<DeviceItem *>(m_deviceLayout->itemAt(i));

@@ -212,9 +212,14 @@ class DeviceItem : public QGraphicsWidget
         void actionActivated(DeviceItem *item, const QString &udi, const QString &action);
 
         /**
-        * Emitted when the device has been clicked
+        * Emitted when the device has been clicked and expanded
         **/
         void activated(DeviceItem *item);
+
+        /**
+        * Emitted when the device has been clicked and collapsed
+        **/
+        void collapsed(DeviceItem *item);
 
         /**
         * Emitted when an item in the device item should be highlighted

@@ -179,25 +179,28 @@ void DeviceItem::addAction(const QString &action)
         }
     }
 
-    Plasma::IconWidget *actionItem = new Plasma::IconWidget(m_actionsWidget);
-    actionItem->installEventFilter(this);
-    actionItem->setContentsMargins(3, 3, 3, 3);
-    actionItem->setData(NotifierDialog::ActionRole, action);
-
     QString actionUrl = KStandardDirs::locate("data", "solid/actions/" + action);
     QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(actionUrl, true);
 
-    QColor color;
-    color.setAlpha(255);
-    actionItem->setTextBackgroundColor(color);
-    actionItem->setText(services[0].text());
-    actionItem->setIcon(services[0].icon());
-    actionItem->setOrientation(Qt::Horizontal);
-    actionItem->setPreferredHeight(KIconLoader::SizeMedium+3+3);
-    actionItem->setPreferredWidth(0);
-    actionItem->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    //Sanity check
+    if (services.count()>0) {
+        Plasma::IconWidget *actionItem = new Plasma::IconWidget(m_actionsWidget);
+        actionItem->installEventFilter(this);
+        actionItem->setContentsMargins(3, 3, 3, 3);
+        actionItem->setData(NotifierDialog::ActionRole, action);
 
-    m_actionsLayout->addItem(actionItem);
+        QColor color;
+        color.setAlpha(255);
+        actionItem->setTextBackgroundColor(color);
+        actionItem->setText(services[0].text());
+        actionItem->setIcon(services[0].icon());
+        actionItem->setOrientation(Qt::Horizontal);
+        actionItem->setPreferredHeight(KIconLoader::SizeMedium+3+3);
+        actionItem->setPreferredWidth(0);
+        actionItem->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+
+        m_actionsLayout->addItem(actionItem);
+    }
 }
 
 QString DeviceItem::udi() const
@@ -363,7 +366,7 @@ void DeviceItem::setData(int key, const QVariant & value)
         case NotifierDialog::DescriptionRole:
             m_descriptionLabel->setText(value.toString());
             m_descriptionLabel->setMinimumWidth(50);
-            m_descriptionLabel->setPreferredWidth(50);
+//            m_descriptionLabel->setPreferredWidth(50);
             break;
     }
 }
@@ -492,6 +495,7 @@ void DeviceItem::clicked()
             expand();
             emit activated(this);
         } else {
+            emit collapsed(this);
             collapse();
         }
     }

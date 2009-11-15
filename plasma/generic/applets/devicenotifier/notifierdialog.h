@@ -192,21 +192,22 @@ namespace Notifier
           void clearItemBackgroundTarget();
 
           /**
-          * @internal slot called when the selected item background has reached its target
-          */
-          void selectedItemAnimationComplete(QGraphicsItem *);
-
-          /**
           * @internal slot called when user has clicked on the left button on a device
           * @param item the DeviceItem which has the button clicked
           **/
           void leftActionActivated(DeviceItem *item);
 
           /**
-          * @internal slot called when user has clicked on a device in the dialog
+          * @internal slot called when user has clicked on a device in the dialog and expanded it
           * @param item the DeviceItem which is clicked
           **/
           void deviceActivated(DeviceItem *item);
+
+          /**
+          * @internal slot called when user has clicked on a device in the dialog and collapsed it
+          * @param item the DeviceItem which is clicked
+          **/
+          void deviceCollapsed(DeviceItem *item);
 
           /**
           * @internal slot called when the user highlights an action in a device; the
@@ -353,6 +354,8 @@ namespace Notifier
           QAction *m_separator;
 
           QTimer m_clearItemBackgroundTargetTimer;
+
+          bool m_collapsing;
 
           Plasma::Label *m_mainLabel;
   };
