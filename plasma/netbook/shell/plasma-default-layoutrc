@@ -33,15 +33,6 @@ immutability=1
 plugin=activitybar
 zvalue=0
 
-[Containments][2][Applets][2]
-geometry=550,0,10,10
-immutability=1
-plugin=panelspacer_internal
-zvalue=0
-
-[Containments][2][Applets][2][Configuration]
-FixedSize=false
-
 [Containments][2][Applets][3]
 geometry=650,0,10,10
 immutability=1
