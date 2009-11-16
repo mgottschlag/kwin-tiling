@@ -32,6 +32,7 @@
 AppletToolTipWidget::AppletToolTipWidget(QWidget *parent, AppletIconWidget *applet)
         : Plasma::Dialog(parent)
 {
+    setAcceptDrops(true);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
     m_applet = applet;
     m_widget = new AppletInfoWidget();
@@ -84,6 +85,12 @@ void AppletToolTipWidget::enterEvent(QEvent *event)
 
 void AppletToolTipWidget::leaveEvent(QEvent *event)
 {
+    Q_UNUSED(event);
+    emit(leave());
+}
+
+void AppletToolTipWidget::dragEnterEvent(QDragEnterEvent *event)
+{kWarning()<<"AAAAAAAAAAAAAAA";
     Q_UNUSED(event);
     emit(leave());
 }
