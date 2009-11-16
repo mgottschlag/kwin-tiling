@@ -60,7 +60,7 @@ class EngineExplorer : public KDialog, public Ui::EngineExplorer
     private:
         void listEngines();
         QString convertToString(const QVariant &value) const;
-        void showData(QStandardItem* parent, Plasma::DataEngine::Data data);
+        int showData(QStandardItem* parent, Plasma::DataEngine::Data data);
         void updateTitle();
 
         Plasma::DataEngineManager* m_engineManager;

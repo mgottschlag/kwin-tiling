@@ -134,11 +134,11 @@ void EngineExplorer::dataUpdated(const QString& source, const Plasma::DataEngine
 
     QStandardItem* parent = items.first();
 
-    while (parent->hasChildren()) {
-        parent->removeRow(0);
-    }
+    int rows = showData(parent, data);
 
-    showData(parent, data);
+    while (parent->rowCount() > rows) {
+        parent->removeRow(rows);
+    }
 }
 
 void EngineExplorer::listEngines()
@@ -399,7 +399,7 @@ QString EngineExplorer::convertToString(const QVariant &value) const
     }
 }
 
-void EngineExplorer::showData(QStandardItem* parent, Plasma::DataEngine::Data data)
+int EngineExplorer::showData(QStandardItem* parent, Plasma::DataEngine::Data data)
 {
     int rowCount = 0;
     Plasma::DataEngine::DataIterator it(data);
@@ -425,6 +425,8 @@ void EngineExplorer::showData(QStandardItem* parent, Plasma::DataEngine::Data da
             ++rowCount;
         }
     }
+
+    return rowCount;
 }
 
 void EngineExplorer::updateTitle()
