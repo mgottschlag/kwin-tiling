@@ -71,7 +71,7 @@ class JobWidget : public QGraphicsWidget
         void updateJob();
 
         Plasma::ExtenderItem *m_extenderItem;
-        SystemTray::Job *m_job;
+        QWeakPointer<SystemTray::Job>m_job;
 
         Plasma::Meter *m_meter;
         Plasma::Label *m_fromNameLabel;
