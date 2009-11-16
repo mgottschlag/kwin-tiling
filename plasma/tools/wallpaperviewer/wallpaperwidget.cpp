@@ -147,7 +147,7 @@ void WallpaperWidget::mouseMoveEvent(QMouseEvent *event)
         m_mouseMovePoint = event->pos();
         m_mouseMoveScreenPoint = event->globalPos();
 
-        m_wallpaper->mousePressEvent(&mouseEvent);
+        m_wallpaper->mouseMoveEvent(&mouseEvent);
 
         if (mouseEvent.isAccepted()) {
             return;
