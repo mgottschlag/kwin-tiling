@@ -151,7 +151,7 @@ void CurrentAppControl::syncActiveWindow()
     if (m_pendingActiveWindow <= 0 || applicationActive) {
         m_activeWindow = 0;
         m_currentTask->setIcon("preferences-system-windows");
-        const int activeWindows = qMax(0, KWindowSystem::windows().count()-2);
+        const int activeWindows = qMax(0, KWindowSystem::windows().count()-1);
         if (activeWindows) {
             m_currentTask->setText(i18np("%1 running app", "%1 running apps", activeWindows));
         } else {
