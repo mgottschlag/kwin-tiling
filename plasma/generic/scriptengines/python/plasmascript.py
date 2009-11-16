@@ -177,7 +177,10 @@ class Wallpaper(QObject):
     def wheelEvent(self,event):
         pass
 
-    def configChanged(self):
+    def renderCompleted(self, image):
+        pass
+
+    def urlDropped(self, url):
         pass
 
 ###########################################################################

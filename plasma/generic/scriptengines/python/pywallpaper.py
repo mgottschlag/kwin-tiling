@@ -78,8 +78,13 @@ class PythonWallpaperScript(Plasma.WallpaperScript):
     def wheelEvent(self, event):
         self.pywallpaper.wheelEvent(event)
 
-    def configChanged(self):
-        self.pywallpaper.configChanged()
+    @pyqtSignature("renderCompleted(const QImage&)")
+    def renderCompleted(self, image):
+        self.pywallpaper.renderCompleted(image)
+
+    @pyqtSignature("urlDropped(const KUrl&)")
+    def urlDropped(self, url):
+        self.pywallpaper.urlDropped(url)
 
 def CreatePlugin(widget_parent, parent, component_data):
     return PythonWallpaperScript(parent)
