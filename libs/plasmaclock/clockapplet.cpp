@@ -46,7 +46,10 @@
 #include <KDebug>
 #include <KDialog>
 #include <KGlobalSettings>
+#include <KRun>
 #include <KLocale>
+#include <KService>
+#include <KServiceTypeTrader>
 #include <KTimeZone>
 #include <KToolInvocation>
 #include <KMessageBox>
@@ -73,9 +76,10 @@ public:
         : q(clockapplet),
           timezone(ClockApplet::localTimezoneUntranslated()),
           clipboardMenu(0),
+          adjustSystemTimeAction(0),
           label(0),
-          forceTzDisplay(false),
-          calendarWidget(0)
+          calendarWidget(0),
+          forceTzDisplay(false)
     {}
 
     ClockApplet *q;
@@ -86,6 +90,7 @@ public:
     QPoint clicked;
     QStringList selectedTimezones;
     KMenu *clipboardMenu;
+    QAction *adjustSystemTimeAction;
     QString prettyTimezone;
     Plasma::Label *label;
     Plasma::Calendar *calendarWidget;
@@ -437,11 +442,36 @@ QList<QAction *> ClockApplet::contextualActions()
         d->clipboardMenu->setIcon(KIcon("edit-copy"));
         connect(d->clipboardMenu, SIGNAL(aboutToShow()), this, SLOT(updateClipboardMenu()));
         connect(d->clipboardMenu, SIGNAL(triggered(QAction*)), this, SLOT(copyToClipboard(QAction*)));
+
+        KService::List offers = KServiceTypeTrader::self()->query("KCModule", "Library == 'kcm_clock'");
+        if (!offers.isEmpty()) {
+            d->adjustSystemTimeAction = new QAction(this);
+            d->adjustSystemTimeAction->setText(i18n("Adjust Date and Time"));
+            d->adjustSystemTimeAction->setIcon(KIcon("chronometer"));
+            connect(d->adjustSystemTimeAction, SIGNAL(triggered()), this, SLOT(launchTimeControlPanel()));
+        }
     }
 
     QList<QAction*> contextualActions;
     contextualActions << d->clipboardMenu->menuAction();
+
+    if (d->adjustSystemTimeAction) {
+        contextualActions << d->adjustSystemTimeAction;
+    }
     return contextualActions;
+}
+
+void ClockApplet::launchTimeControlPanel()
+{
+    KService::List offers = KServiceTypeTrader::self()->query("KCModule", "Library == 'kcm_clock'");
+    if (offers.isEmpty()) {
+        kDebug() << "fail";
+        return;
+    }
+
+    KUrl::List urls;
+    KService::Ptr service = offers.first();
+    KRun::run(*service, urls, 0);
 }
 
 void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
