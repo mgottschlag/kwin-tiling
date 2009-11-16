@@ -65,6 +65,8 @@ public:
 
     virtual bool isChanged() const;
 
+    using HotkeysWidgetIFace::changed;
+
 Q_SIGNALS:
 
     void changed(KHotKeys::ActionDataBase*);
@@ -77,10 +79,6 @@ protected:
      */
     void mergeLayouts( QGridLayout *to, QGridLayout *from );
 #endif
-
-Q_SIGNALS:
-
-    void changed(bool) const;
 
 protected:
 

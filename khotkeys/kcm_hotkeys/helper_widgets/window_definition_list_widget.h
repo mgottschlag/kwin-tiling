@@ -53,10 +53,6 @@ public:
 
     bool isChanged() const;
 
-Q_SIGNALS:
-
-    void changed(bool) const;
-
 private:
 
     void emitChanged(bool);
