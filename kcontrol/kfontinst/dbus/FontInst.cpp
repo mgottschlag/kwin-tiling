@@ -24,7 +24,7 @@
 #include <QtDBus/QDBusConnection>
 #include <QtCore/QTimer>
 #include <KDE/KDebug>
-#include <PolicyKit/polkit-qt/Auth>
+#include <polkit-qt/Auth>
 #include <kio/global.h>
 #include <kde_file.h>
 #include <fontconfig/fontconfig.h>
