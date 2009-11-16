@@ -64,7 +64,7 @@ class PythonWallpaperScript(Plasma.WallpaperScript):
         return self.pywallpaper.createConfigurationInterface(parent)
 
     def settingsChanged(self, changed):
-        self.emit(SIGNAL('settingsChanged(bool)'))
+        self.emit(SIGNAL('settingsChanged(bool)'), changed)
 
     def mouseMoveEvent(self, event):
         self.pywallpaper.mouseMoveEvent(event)
