@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>431</width>
-    <height>343</height>
+    <width>455</width>
+    <height>385</height>
    </rect>
   </property>
   <layout class="QFormLayout" name="formLayout">
@@ -115,8 +115,8 @@
     <widget class="KListWidget" name="m_dirlist"/>
    </item>
    <item row="4" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -129,7 +129,7 @@
        </property>
       </spacer>
      </item>
-     <item>
+     <item row="0" column="1">
       <widget class="KPushButton" name="m_addDir">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -142,7 +142,7 @@
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="2">
       <widget class="KPushButton" name="m_removeDir">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -155,7 +155,7 @@
        </property>
       </widget>
      </item>
-     <item>
+     <item row="1" column="2">
       <widget class="QPushButton" name="m_newStuff">
        <property name="toolTip">
         <string>Download new wallpapers</string>
