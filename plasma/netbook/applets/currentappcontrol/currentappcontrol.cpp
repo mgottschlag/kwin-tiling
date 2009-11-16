@@ -113,17 +113,24 @@ void CurrentAppControl::constraintsEvent(Plasma::Constraints constraints)
 
 void CurrentAppControl::windowChanged(WId id)
 {
-    if (id == m_activeWindow) {
-        m_pendingActiveWindow = m_activeWindow;
+    bool applicationActive = false;
+
+    foreach (QWidget *widget, QApplication::topLevelWidgets()) {
+         if (widget->winId() == id) {
+             applicationActive = true;
+             break;
+         }
     }
-    syncActiveWindow();
+    if (!applicationActive && id == m_activeWindow) {
+        m_pendingActiveWindow = m_activeWindow;
+        syncActiveWindow();
+    }
 }
 
 void CurrentAppControl::activeWindowChanged(WId id)
 {
     m_pendingActiveWindow = id;
     //delay the switch to permit to pass the close action to the proper window if our view accepts focus
-    //QTimer::singleShot(100, this, SLOT(syncActiveWindow()));
     if (!m_syncDelay) {
         syncActiveWindow();
     }
