@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<articleinfo>
+
+<title>Screen Edges</title>
+<authorgroup>
+<author>&Mike.McBride; &Mike.McBride.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2009-11-17</date>
+<releaseinfo>&kde; 4.4</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>desktop</keyword>
+<keyword>effects</keyword>
+</keywordset>
+</articleinfo>
+
+<para>Active screen edges allow you to activate effects by pushing your mouse 
+cursor against the edge of the screen. Here you can configure which effect 
+will get activated on each edge and corner of the screen.
+</para>
+
+<para>Click with any mouse button onto a square and select an effect 
+in the context menu. Edges with a black square have already an attached effect, 
+a grey colored square indicates that no effect is selected for this edge.</para>
+
+<!-- apparently not in kde4
+<para>If you are looking for the setting to enable switching of desktops by 
+pushing your mouse cursor against the edge of the screen you can find it in 
+the settings module <ulink url="help:/kcontrol/windowbehaviour/index.html#action-advanced">
+<guilabel>Window Behavior</guilabel></ulink> on the <guilabel>Advanced</guilabel> 
+tab in the section <guilabel>Active Desktop Borders</guilabel>.
+</para>
+-->
+</article>

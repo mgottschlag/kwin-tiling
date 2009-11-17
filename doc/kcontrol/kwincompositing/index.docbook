@@ -34,9 +34,8 @@
 for &kde;.</para>
 
 
-<para>This panel is divided into four tabs:  <guilabel>General</guilabel>, 
-<guilabel>Screen Edges</guilabel>, <guilabel>All Effects</guilabel> and
-<guilabel>Advanced</guilabel>.</para>
+<para>This panel is divided into three tabs:  <guilabel>General</guilabel>, 
+<guilabel>All Effects</guilabel> and <guilabel>Advanced</guilabel>.</para>
 
 <sect3 id="desktop-effects-general">
 <title><guilabel>General</guilabel> tab</title>
@@ -95,26 +94,6 @@ appearance that the menu is lifted off the application, and the menu is creating
 to select the method &kde; uses to generate the transparency.  You can use the slider to determine the level of 
 transparency in menus.  A preview is visible on the right side of this section.</para>
 -->
-</sect3>
-
-<sect3 id="desktop-screen-edges">
-<title><guilabel>Screen Edges</guilabel> tab</title>
-
-<para>Active screen edges allow you to activate effects by pushing your mouse 
-cursor against the edge of the screen. Here you can configure which effect 
-will get activated on each edge and corner of the screen.
-</para>
-
-<para>Click with any mouse button onto a square and select an effect 
-in the context menu. Edges with a green square have already an attached effect, 
-a red colored square indicates that no effect is selected for this edge.</para>
-
-<para>If you are looking for the setting to enable switching of desktops by 
-pushing your mouse cursor against the edge of the screen you can find it in 
-the settings module <ulink url="help:/kcontrol/windowbehaviour/index.html#action-advanced">
-<guilabel>Window Behavior</guilabel></ulink> on the <guilabel>Advanced</guilabel> 
-tab in the section <guilabel>Active Desktop Borders</guilabel>.
-</para>
 </sect3>
 
 <sect3 id="desktop-alleffects">
