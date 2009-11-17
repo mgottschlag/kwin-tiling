@@ -2,7 +2,9 @@
 Name=Python runner
 Name[en_GB]=Python runner
 Name[eo]=Pitona motoro
+Name[gu]=પાયથોન ચલાવનાર
 Name[pt]=Módulo de execução em Python
+Name[pt_BR]=Execução em Python
 Name[sv]=Python körningsprogram
 Name[tr]=Python çalıştırıcı
 Name[uk]=Запуск для Python
@@ -10,6 +12,7 @@ Name[x-test]=xxPython runnerxx
 Comment=Plasma runner support for Python
 Comment[en_GB]=Plasma runner support for Python
 Comment[pt]=Suporte para os motores de execução do Plasma em Python
+Comment[pt_BR]=Suporte aos mecanismos de execução do Plasma em Python
 Comment[sv]=Plasma körningsstöd för Python
 Comment[tr]=Python için Plasma çalıştırıcı desteği
 Comment[uk]=Підтримка Python у інструментах запуску

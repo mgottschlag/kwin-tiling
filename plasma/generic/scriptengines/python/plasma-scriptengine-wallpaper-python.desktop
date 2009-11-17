@@ -1,7 +1,9 @@
 [Desktop Entry]
 Name=Python wallpaper
 Name[en_GB]=Python wallpaper
+Name[gu]=પાયથોન વોલપેપર
 Name[pt]=Papel de parede em Python
+Name[pt_BR]=Papel de parede em Python
 Name[sv]=Python skrivbordsunderlägg
 Name[tr]=Python duvar kağıdı
 Name[uk]=Шпалери для Python
@@ -9,6 +11,7 @@ Name[x-test]=xxPython wallpaperxx
 Comment=Plasma wallpaper support for Python
 Comment[en_GB]=Plasma wallpaper support for Python
 Comment[pt]=Suporte para os papéis de parede do Plasma em Python
+Comment[pt_BR]=Suporte aos mecanismos a papéis de parede do Plasma em Python
 Comment[sv]=Plasma skrivbordsunderläggsstöd för Python
 Comment[tr]=Python için Plasma duvar kağıdı desteği
 Comment[uk]=Підтримка Python у шпалерах Плазми
