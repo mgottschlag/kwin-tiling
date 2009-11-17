@@ -501,6 +501,13 @@ void Interface::matchCountChanged(int count)
     if (show) {
         //kDebug() << "showing!" << minimumSizeHint();
         m_resultsContainer->show();
+
+        // Next 2 lines are a workaround to allow arrow
+        // keys navigation in krunner's result list.
+        // Patch submited in bugreport #211578
+        QEvent event(QEvent::WindowActivate);
+        QApplication::sendEvent(m_resultsView, &event);
+
         resize(m_defaultSize);
         m_resultsScene->resize(m_resultsView->width(), qMax(m_resultsView->height(), int(m_resultsScene->height())));
     } else {
