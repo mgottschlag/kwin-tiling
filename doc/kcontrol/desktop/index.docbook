@@ -6,6 +6,7 @@
 ]>
 
 <article lang="&language;">
+<title>Multiple Desktops</title>
 <articleinfo>
 
 <authorgroup>
@@ -14,16 +15,17 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2005-02-20</date>
-<releaseinfo>3.4</releaseinfo>
+<date>2009-11-18</date>
+<releaseinfo>4.4</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
-<keyword>KControl</keyword>
+<keyword>Systemsettings</keyword>
 <keyword>desktop</keyword>
 </keywordset>
 </articleinfo>
 
+<!--not in kde 4
 <sect1 id="desktop">
 
 <title>Desktop</title>
@@ -62,23 +64,71 @@ Desktop.</para></listitem>
 </varlistentry>
 </variablelist>
 </sect2>
+-->
+<sect1 id="desktop">
+
+<title>Multiple Desktop</title>
 
 <sect2 id="desktop-number">
-<title><guilabel>Multiple Desktops</guilabel></title>
+<title><guilabel>Desktops</guilabel></title>
 
 <para>&kde; offers you the possibility to have several virtual
 desktops. In this tab you can configure the number of desktops as well
-as their names. Just use the slider to adjust the number of
+as their names. Just use the input box to adjust the number of
 desktops. You can assign names to the desktops by entering text into the
 text fields below.</para> 
 
+<!--not in kde4
 <para>If you enable <guilabel>Mouse wheel over desktop switches
 desktop</guilabel> then scrolling the wheel over an empty space on the
 desktop will change to the next virtual desktop numerically, in the
 direction you scrolled (either up or down).</para>
-
+-->
 </sect2>
 
+<sect2 id="desktop-switching">
+<title><guilabel>Switching</guilabel></title>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Desktop navigation wraps around</guilabel></term>
+<listitem><para>Enable this option if you want keyboard or active desktop border navigation 
+beyond the edge of a desktop to take you to the opposite edge of the new desktop.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Desktop Effect Animation</guilabel></term>
+<listitem><para>Select <guilabel>No Animation</guilabel>, <guilabel>Slide</guilabel>, 
+<guilabel>Desktop Cube Animation</guilabel> or <guilabel>Fade Desktop</guilabel>
+from the drop down box. If the selected animation has settings options, click on the 
+tools icon on the right of the drop down box to launch a configuration dialog. 
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Desktop Switch On-Screen Display</guilabel></term>
+<listitem><para>Enable this option if you want to have an on-screen display for desktop switching. 
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Show desktop layout indicators</guilabel></term>
+<listitem><para>Enabling this option will show a small preview of the desktop layout 
+indicating the selected desktop.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Shortcuts</guilabel></term>
+<listitem><para>This section displays the configured shortcuts for switching the desktops 
+and allows you to edit them.
+</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect2>
 </sect1>
 
 </article>
