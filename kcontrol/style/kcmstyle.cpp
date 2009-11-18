@@ -963,12 +963,12 @@ void KCMStyle::addWhatsThis()
 							"without having to apply it to the whole desktop.") );
 	// Page2
 	page2->setWhatsThis( i18n("This page allows you to choose details about the widget style options") );
-	fineTuningUi.comboToolbarIcons->setWhatsThis( i18n( "<p><b>Icons only:</b> Shows only icons on toolbar buttons. "
+	fineTuningUi.comboToolbarIcons->setWhatsThis( i18n( "<p><b>No Text:</b> Shows only icons on toolbar buttons. "
 							"Best option for low resolutions.</p>"
-							"<p><b>Text only: </b>Shows only text on toolbar buttons.</p>"
-							"<p><b>Text alongside icons: </b> Shows icons and text on toolbar buttons. "
-							"Text is aligned alongside the icon.</p>"
-							"<b>Text under icons: </b> Shows icons and text on toolbar buttons. "
+							"<p><b>Text Only: </b>Shows only text on toolbar buttons.</p>"
+							"<p><b>Text Beside Icons: </b> Shows icons and text on toolbar buttons. "
+							"Text is aligned beside the icon.</p>"
+							"<b>Text Below Icons: </b> Shows icons and text on toolbar buttons. "
 							"Text is aligned below the icon.") );
 	fineTuningUi.cbIconsOnButtons->setWhatsThis( i18n( "If you enable this option, KDE Applications will "
 							"show small icons alongside some important buttons.") );
