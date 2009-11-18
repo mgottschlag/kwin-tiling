@@ -14,12 +14,12 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2008-09-30</date>
-<releaseinfo>&kde; 4.2</releaseinfo>
+<date>2009-11-18</date>
+<releaseinfo>&kde; 4.4</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
-<keyword>KControl</keyword>
+<keyword>System Settings</keyword>
 <keyword>style</keyword>
 </keywordset>
 </articleinfo>
@@ -43,13 +43,13 @@ but to change the color of the widgets, you should refer to the
 section entitled <ulink
 url="help:/kcontrol/colors/index.html">Colors</ulink>.</para>
 
-<para>This panel is divided into two tabs:  <guilabel>Style</guilabel>
-and <guilabel>Fine Tuning</guilabel>.</para>
+<para>This panel is divided into three tabs:  <guilabel>Applications</guilabel>, 
+<guilabel>Workspace</guilabel> and <guilabel>Fine Tuning</guilabel>.</para>
 
-<sect3 id="style-style">
-<title><guilabel>Style</guilabel> tab</title>
+<sect3 id="style-applications">
+<title><guilabel>Applications</guilabel> tab</title>
 
-<para>The top list box, labeled <guilabel>Widget Style</guilabel> 
+<para>The top drop down box, labeled <guilabel>Widget Style</guilabel> 
 contains a list of the pre-defined styles.
 Each style has a name, and a brief description.</para>
 
@@ -57,7 +57,7 @@ Each style has a name, and a brief description.</para>
 of the style will be displayed in the preview box below the style list.</para>
 
 <para> If a style is configurable, the <guibutton>Configure...</guibutton> button 
-at the right side of the list box is enabled and can be used to open
+at the right side of the drop down box is enabled and can be used to open
 a dialog to select further settings.</para>
 <!--
 <para>The other options available here are:</para>
@@ -144,6 +144,16 @@ transparency in menus.  A preview is visible on the right side of this section.<
 
 </sect3>
 -->
+<sect3 id="style-workspace">
+<title><guilabel>Workspace</guilabel> tab</title>
+
+<para>A list of available themes is displayed on this tab. Select a theme by clicking on an item in the list.</para>
+
+<para>Use the <guibutton>Get New Themes</guibutton> button to launch the <guilabel>Get Hot New Stuff</guilabel> dialog and 
+download additional themes from the Internet.</para>
+
+
+</sect3>
 <sect3 id="style-misc">
 <title><guilabel>Fine Tuning</guilabel> tab</title>
 
@@ -167,11 +177,9 @@ you are moving them around on the screen.</para>
 </varlistentry> 
 -->
 <varlistentry> 
-<term><guilabel>Text position</guilabel></term>
+<term><guilabel>Graphical effects</guilabel></term>
 <listitem>
-<para>This combo box lets you determine where on the button the text name of the button will appear as the default.  
-If <guilabel>Icons Only</guilabel> is selected, then there is no text on the toolbar buttons.  If  <guilabel>Text Only</guilabel> is selected, then the button's icon is replaced with a text name of  the button. If <guilabel>Text Alongside Icons</guilabel> is selected, then the name of the button will be placed to the <emphasis>right</emphasis> of the icon. If <guilabel>Text Under Icons</guilabel> is selected, the default will be to have the text of the button <emphasis>below</emphasis> the icon.</para>
-<tip><para>This option only specifies the <emphasis>default</emphasis> location.  Each application can override the setting used in this panel.</para></tip>
+<para>&kde; applications will run internal animations with the selected display resolution and CPU usage.</para>
 </listitem> 
 </varlistentry> 
 
@@ -180,8 +188,25 @@ If <guilabel>Icons Only</guilabel> is selected, then there is no text on the too
 <listitem>
 <para>If this option is selected, action buttons (like <guibutton>OK</guibutton> and 
 <guibutton>Apply</guibutton>) will have a small icon located within them to act
-as a visual reference.  If this option is not selected, then only  text
+as a visual reference.  If this option is not selected, then only text
 will appear on the button.</para>
+</listitem> 
+</varlistentry> 
+
+<varlistentry> 
+<term><guilabel>Main toolbar text</guilabel>, <guilabel>Secondary toolbar text</guilabel></term>
+<listitem>
+<para>These drop down boxes lets you determine where on the button in both toolbars the 
+text name of the button will appear as the default.  
+If <guilabel>No Text</guilabel> is selected, then there is no text on the toolbar buttons.  
+If  <guilabel>Text Only</guilabel> is selected, then the button's icon is replaced with a text name of 
+the button. If <guilabel>Text Beside Icons</guilabel> is selected, then the name of the button 
+will be placed to the <emphasis>right</emphasis> of the icon. 
+If <guilabel>Text Below Icons</guilabel> is selected, the default will be to have the text 
+of the button <emphasis>below</emphasis> the icon.</para>
+
+<tip><para>This option only specifies the <emphasis>default</emphasis> location.  
+Each application can override the setting used in this panel.</para></tip>
 </listitem> 
 </varlistentry> 
 
