@@ -5,27 +5,17 @@
 ]>
 
 <article lang="&language;">
+<title>System Bell</title>
 <articleinfo>
 <authorgroup>
-<author>
-<firstname>Pat</firstname>
-<surname>Dowler</surname>
-</author>
-
-<author>
-<firstname>Matthias</firstname>
-<surname>Hoelzer</surname>
-</author>
-
-<author>
-<firstname>Mike</firstname>
-<surname>McBride</surname>
-</author>
+<author><firstname>Pat</firstname><surname>Dowler</surname></author>
+<author><firstname>Matthias</firstname><surname>Hoelzer</surname></author>
+<author><firstname>Mike</firstname><surname>McBride</surname></author>
 
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
-<date>2003-10-16</date>
-<releaseinfo>3.2</releaseinfo>
+<date>2009-11-18</date>
+<releaseinfo>4.4</releaseinfo>
 <keywordset>
 <keyword>KDE</keyword>
 <keyword>KControl</keyword>
@@ -34,41 +24,48 @@
 </keywordset>
 </articleinfo>
 
-<sect1 id="bell">
-<title>System bell</title>
-
 <para>The system bell or beep is a feature of the X server, which
 attempts to make good use of the available hardware. </para>
 
-<para>&kde; normally doesn't use the system bell; instead using its
+<para>&kde; normally does not use the system bell; instead using its
 own system notifications, which could include log entries, message
 popups, or its own beep.  You can configure these in the
-<guilabel>System Notifications</guilabel> &kcontrol; module.</para>
+<guilabel>System Notifications</guilabel> &systemsettings; module.</para>
 
-<note><para>It isn't always possible for the X server to actually make
+<note><para>It is not always possible for the X server to actually make
 a beep sound with exactly the parameters selected due to hardware
 limitations. For example, on most PCs, volume control is not very good
 so the X server seems to fake low volume with a reduced duration of
-the sound. Thus, if the settings don't seem to do anything, this is
-because the X server and/or the hardware don't support anything
+the sound. Thus, if the settings do not seem to do anything, this is
+because the X server and/or the hardware do not support anything
 better.</para></note>
 
-<para>Users are able to set the following parameters for the bell:</para>
+<para> Select <guilabel>Use system bell instead of system notification</guilabel>
+then you are able to set the following parameters for the bell:</para>
 
-<itemizedlist>
-<listitem> <para>volume (percentage of <quote>maximum</quote> volume)</para> </listitem>
-<listitem> <para>pitch (in Hz)</para> </listitem>
-<listitem> <para>duration (in milliseconds)</para> </listitem>
-</itemizedlist>
+<variablelist>
 
-<para>You can use the <guibutton>test</guibutton> button to hear how
+<varlistentry>
+<term><guilabel>Volume</guilabel> (percentage of <quote>maximum</quote> volume)</term>
+<listitem><para>Here you can customize the volume of the system bell. For further 
+customization of the bell, see the <guilabel>Accessibility</guilabel> &systemsettings; module.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Pitch</guilabel> (in Hz)</term>
+<listitem><para>Here you can customize the pitch of the system bell. For further 
+customization of the bell, see the <guilabel>Accessibility</guilabel> &systemsettings; module.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Duration</guilabel> (in milliseconds)</term>
+<listitem><para>Here you can customize the duration of the system bell. For further 
+customization of the bell, see the <guilabel>Accessibility</guilabel> &systemsettings; module.</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+<para>You can use the <guibutton>Test</guibutton> button to hear how
 the current settings will sound.</para>
-
-<sect2 id="bell-author"><title>Section Authors</title>
-<para>Pat Dowler, Matthias Hoelzer <email>mhk@kde.org</email></para>
-<para>Converted to KDE 2.0 by Mike McBride <email>mpmcbride7@yahoo.com</email></para>
-<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
-</sect2>
-</sect1>
 
 </article>
