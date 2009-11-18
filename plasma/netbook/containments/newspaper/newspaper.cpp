@@ -374,8 +374,8 @@ void Newspaper::syncColumnSizes()
             lay->setMaximumWidth(m_scrollWidget->viewportGeometry().size().width()/m_mainLayout->count());
             lay->setMaximumHeight(QWIDGETSIZE_MAX);
         } else {
-            lay->setPreferredHeight(m_scrollWidget->viewportGeometry().size().height()/m_mainLayout->count());
-            lay->setPreferredWidth(QWIDGETSIZE_MAX);
+            lay->setMaximumHeight(m_scrollWidget->viewportGeometry().size().height()/m_mainLayout->count());
+            lay->setMaximumWidth(QWIDGETSIZE_MAX);
         }
     }
 }
