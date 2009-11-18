@@ -269,7 +269,6 @@ void SearchLaunch::launch()
 {
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender());
     launch(icon);
-    reset();
 }
 
 void SearchLaunch::addFavourite()
