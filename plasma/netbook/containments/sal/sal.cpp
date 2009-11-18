@@ -261,6 +261,7 @@ void SearchLaunch::launch(Plasma::IconWidget *icon)
         }
     } else {
         m_runnermg->run(match);
+        reset();
     }
 }
 
@@ -268,6 +269,7 @@ void SearchLaunch::launch()
 {
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender());
     launch(icon);
+    reset();
 }
 
 void SearchLaunch::addFavourite()
@@ -647,6 +649,7 @@ void SearchLaunch::searchReturnPressed()
     //by pressing enter  do a query or
     if (m_firstItem && query == m_lastQuery && !query.isEmpty()) {
         m_runnermg->run(m_matches.value(m_firstItem, Plasma::QueryMatch(0)));
+        reset();
     } else {
         doSearch(query);
         m_lastQuery = query;
