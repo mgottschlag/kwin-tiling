@@ -81,6 +81,15 @@ void NetView::setContainment(Plasma::Containment *c)
 {
     if (containment()) {
         disconnect(containment(), 0, this, 0);
+
+        QAction *a = containment()->action("next containment");
+        if (a) {
+            disconnect(a, SIGNAL(triggered()), this, SLOT(nextContainment()));
+        }
+        a = containment()->action("previous containment");
+        if (a) {
+            disconnect(a, SIGNAL(triggered()), this, SLOT(previousContainment()));
+        }
     }
 
     Plasma::View::setContainment(c);
@@ -262,16 +271,19 @@ void NetView::nextContainment()
 {
     QList<Plasma::Containment*> containments = containment()->corona()->containments();
     int start = containments.indexOf(containment());
-    int i = (start + 1) % containments.size();
+    int i = (start + containments.size() - 1) % containments.size();
     Plasma::Containment *cont = containments.at(i);
-    //FIXME this is a *horrible* way of choosing a "next" containment.
+
+    //FIXME this is a *horrible* way of choosing a "previous" containment.
     while (i != start) {
         if ((cont->location() == Plasma::Desktop || cont->location() == Plasma::Floating) &&
             cont->screen() == -1) {
             break;
         }
 
-        i = (i + 1) % containments.size();
+        if (--i < 0) {
+            i += containments.size();
+        }
         cont = containments.at(i);
     }
 
@@ -284,16 +296,14 @@ void NetView::previousContainment()
     int start = containments.indexOf(containment());
     int i = (start + 1) % containments.size();
     Plasma::Containment *cont = containments.at(i);
-    //FIXME this is a *horrible* way of choosing a "previous" containment.
+    //FIXME this is a *horrible* way of choosing a "next" containment.
     while (i != start) {
         if ((cont->location() == Plasma::Desktop || cont->location() == Plasma::Floating) &&
             cont->screen() == -1) {
             break;
         }
 
-        if (--i < 0) {
-            i += containments.size();
-        }
+        i = (i + 1) % containments.size();
         cont = containments.at(i);
     }
 
