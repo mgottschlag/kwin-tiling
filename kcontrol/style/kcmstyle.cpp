@@ -40,6 +40,7 @@
 #include <kmessagebox.h>
 #include <kstyle.h>
 #include <kstandarddirs.h>
+#include <kautostart.h>
 #include <KDebug>
 #include <KColorScheme>
 #include <KStandardDirs>
@@ -349,6 +350,10 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	m_bStyleDirty= false;
 	m_bEffectsDirty = false;
 
+
+	KAutostart plasmaNetbookAutoStart("plasma-netbook");
+	m_isNetbook = plasmaNetbookAutoStart.autostarts();
+
 	KGlobal::dirs()->addResourceType("themes", "data", "kstyle/themes");
 
 	KAboutData *about =
@@ -576,7 +581,12 @@ void KCMStyle::save()
 	if ( m_bDesktopThemeDirty )
 	{
 		QString theme = m_themeModel->data(themeUi.m_theme->currentIndex(), ThemeModel::PackageNameRole).toString();
-		Plasma::Theme::defaultTheme()->setThemeName(theme);
+		if (m_isNetbook) {
+			KConfigGroup cg(KSharedConfig::openConfig("plasmarc"), "Theme-plasma-netbook");
+			cg.writeEntry("name", theme);
+		} else {
+			Plasma::Theme::defaultTheme()->setThemeName(theme);
+		}
 	}
 
 	// Save effects.
@@ -718,8 +728,15 @@ void KCMStyle::getNewThemes()
 
 		if (entries.size() > 0) {
 			m_themeModel->reload();
-			themeUi.m_theme->setCurrentIndex(m_themeModel->indexOf(
-				Plasma::Theme::defaultTheme()->themeName()));
+
+			QString themeName;
+			if (m_isNetbook) {
+				KConfigGroup cg(KSharedConfig::openConfig("plasmarc"), "Theme-plasma-netbook");
+				themeName = cg.readEntry("name", "air-netbook");
+			} else {
+				themeName = Plasma::Theme::defaultTheme()->themeName();
+			}
+			themeUi.m_theme->setCurrentIndex(m_themeModel->indexOf(themeName));
 		}
 	}
 }
@@ -727,7 +744,14 @@ void KCMStyle::getNewThemes()
 void KCMStyle::loadDesktopTheme()
 {
 	m_themeModel->reload();
-	themeUi.m_theme->setCurrentIndex(m_themeModel->indexOf(Plasma::Theme::defaultTheme()->themeName()));
+	QString themeName;
+	if (m_isNetbook) {
+		KConfigGroup cg(KSharedConfig::openConfig("plasmarc"), "Theme-plasma-netbook");
+		themeName = cg.readEntry("name", "air-netbook");
+	} else {
+		themeName = Plasma::Theme::defaultTheme()->themeName();
+	}
+	themeUi.m_theme->setCurrentIndex(m_themeModel->indexOf(themeName));
 }
 
 // ----------------------------------------------------------------

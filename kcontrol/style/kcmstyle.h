@@ -120,6 +120,7 @@ private:
 	StylePreview* stylePreview;
 	QStyle* appliedStyle;
 	QPalette palette;
+	bool m_isNetbook;
 
 	// Page2 widgets
 	Ui::FineTuning fineTuningUi;
