@@ -77,6 +77,7 @@ class Interface : public KRunnerDialog
         void ensureVisibility(QGraphicsItem *item);
         void cleanupAfterConfigWidget();
         void configWidgetDestroyed();
+        void delayedQueryLaunch();
 
     private:
         void centerOnScreen();
@@ -99,10 +100,11 @@ class Interface : public KRunnerDialog
         QGraphicsView *m_resultsView;
         QWidget *m_dividerLine;
         ResultScene *m_resultsScene;
-        bool m_delayedRun;
-        bool m_running;
-        bool m_queryRunning;
         QSize m_defaultSize;
+        QTimer m_delayedQueryTimer;
+        bool m_delayedRun : 1;
+        bool m_running : 1;
+        bool m_queryRunning : 1;
 };
 
 #endif

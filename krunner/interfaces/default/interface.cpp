@@ -222,6 +222,10 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_defaultSize = size();
     m_resultsContainer->hide();
 
+    m_delayedQueryTimer.setSingleShot(true);
+    m_delayedQueryTimer.setInterval(100);
+    connect(&m_delayedQueryTimer, SIGNAL(timeout()), this, SLOT(delayedQueryLaunch()));
+
     QTimer::singleShot(0, this, SLOT(resetInterface()));
 }
 
@@ -475,9 +479,18 @@ void Interface::queryTextEdited(const QString &query)
     m_delayedRun = false;
 
     if (query.isEmpty()) {
+        m_delayedQueryTimer.stop();
         resetInterface();
         m_queryRunning = false;
     } else {
+        m_delayedQueryTimer.start();
+    }
+}
+
+void Interface::delayedQueryLaunch()
+{
+    const QString query = m_searchTerm->currentText();
+    if (!query.isEmpty()) {
         m_queryRunning = m_resultsScene->launchQuery(query) || m_queryRunning; //lazy OR?
     }
 }
