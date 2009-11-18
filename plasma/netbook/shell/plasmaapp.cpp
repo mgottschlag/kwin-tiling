@@ -92,7 +92,12 @@ PlasmaApp::PlasmaApp()
     //      * don't do anything special at all
     //QPixmapCache::setCacheLimit(cacheSize);
 
-    KConfigGroup cg(KGlobal::config(), "General");
+    KConfigGroup cg(KSharedConfig::openConfig("plasmarc"), "Theme-plasma-netbook");
+    const QString themeName = cg.readEntry("name", "air-netbook");
+    Plasma::Theme::defaultTheme()->setUseGlobalSettings(false);
+    Plasma::Theme::defaultTheme()->setThemeName(themeName);
+
+    cg = KConfigGroup(KGlobal::config(), "General");
     Plasma::Theme::defaultTheme()->setFont(cg.readEntry("desktopFont", font()));
 
     m_mainView = new NetView(0, NetView::mainViewId(), 0);

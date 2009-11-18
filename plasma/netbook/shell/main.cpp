@@ -25,13 +25,13 @@
 
 #include "plasmaapp.h"
 
-static const char description[] = I18N_NOOP( "The KDE desktop, panels and widgets workspace application." );
+static const char description[] = I18N_NOOP( "The KDE workspace application optimized for Netbook devices." );
 static const char version[] = "0.1";
 
 extern "C"
 KDE_EXPORT int kdemain(int argc, char **argv)
 {
-    KAboutData aboutData("plasma-netbook", 0, ki18n("Plasma Workspace"),
+    KAboutData aboutData("plasma-netbook", 0, ki18n("Plasma Netbook"),
                          version, ki18n(description), KAboutData::License_GPL,
                          ki18n("Copyright 2006-2009, The KDE Team"));
     aboutData.addAuthor(ki18n("Aaron J. Seigo"),
