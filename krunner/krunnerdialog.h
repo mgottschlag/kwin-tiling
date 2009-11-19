@@ -41,8 +41,8 @@ class KRunnerDialog : public KDialog
                                Qt::WindowFlags f =  Qt::Dialog | Qt::FramelessWindowHint);
         virtual ~KRunnerDialog();
 
-        void setCenterPositioned(bool center);
-        bool centerPositioned() const;
+        void setFreeFloating(bool floating);
+        bool freeFloating() const;
 
         bool isManualResizing() const;
         virtual void setConfigWidget(QWidget *w) = 0;
@@ -104,7 +104,7 @@ class KRunnerDialog : public KDialog
         int m_bottomBorderHeight;
         int m_lastPressPos;
         int m_oldScreen;
-        bool m_center : 1;
+        bool m_floating : 1;
         bool m_resizing : 1;
         bool m_rightResize : 1;
         bool m_vertResize : 1;

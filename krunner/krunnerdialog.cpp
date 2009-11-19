@@ -55,7 +55,7 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
       m_configDialog(0),
       m_lastPressPos(-1),
       m_oldScreen(-1),
-      m_center(false),
+      m_floating(true), // we'll set it to false in a moment
       m_resizing(false),
       m_rightResize(false),
       m_vertResize(false)
@@ -76,7 +76,7 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
 
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("dialogs/krunner");
-    setCenterPositioned(false);
+    setFreeFloating(false);
 
     m_iconSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
 
@@ -113,7 +113,7 @@ void KRunnerDialog::screenChanged(Kephal::Screen* screen)
 
 void KRunnerDialog::resetScreenPos()
 {
-    if (!m_center) {
+    if (!m_floating) {
         m_screenPos.clear();
         m_oldScreen = -1;
         if (isVisible()) {
@@ -145,7 +145,7 @@ void KRunnerDialog::positionOnScreen()
         const int w = width();
         const int dx = r.left() + (r.width() / 2) - (w / 2);
         int dy = r.top();
-        if (m_center) {
+        if (m_floating) {
             dy += r.height() / 3;
         }
 
@@ -155,7 +155,7 @@ void KRunnerDialog::positionOnScreen()
     show();
     KWindowSystem::forceActiveWindow(winId());
 
-    if (m_center) {
+    if (m_floating) {
         KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
     } else {
         KWindowSystem::setOnAllDesktops(winId(), true);
@@ -163,7 +163,7 @@ void KRunnerDialog::positionOnScreen()
     }
 
     if (m_oldScreen != screen) {
-        if (m_center) {
+        if (m_floating) {
             m_screenPos.insert(screen, pos());
         } else {
             m_screenPos.insert(screen, QPoint(x(), r.top()));
@@ -174,22 +174,32 @@ void KRunnerDialog::positionOnScreen()
     //kDebug() << "moving to" << m_screenPos[screen];
 }
 
-void KRunnerDialog::setCenterPositioned(bool center)
+void KRunnerDialog::setFreeFloating(bool floating)
 {
-    m_center = center;
+    if (m_floating == floating) {
+        return;
+    }
 
-    if (m_center) {
+    m_floating = floating;
+
+    if (m_floating) {
         m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
     } else {
         m_background->setEnabledBorders(Plasma::FrameSvg::LeftBorder |
                                         Plasma::FrameSvg::BottomBorder |
                                         Plasma::FrameSvg::RightBorder);
     }
+
+    m_screenPos.clear();
+    m_oldScreen = -1;
+    if (isVisible()) {
+        positionOnScreen();
+    }
 }
 
-bool KRunnerDialog::centerPositioned() const
+bool KRunnerDialog::freeFloating() const
 {
-    return m_center;
+    return m_floating;
 }
 
 bool KRunnerDialog::isManualResizing() const
@@ -287,7 +297,7 @@ bool KRunnerDialog::event(QEvent *event)
 void KRunnerDialog::showEvent(QShowEvent *)
 {
     unsigned long state = NET::SkipTaskbar | NET::KeepAbove | NET::StaysOnTop;
-    if (m_center) {
+    if (m_floating) {
         KWindowSystem::clearState(winId(), state);
     } else {
         KWindowSystem::setState(winId(), state);
@@ -330,7 +340,7 @@ void KRunnerDialog::resizeEvent(QResizeEvent *e)
     setMask(m_background->mask());
 #endif
 
-    if (m_resizing && !m_vertResize && !m_center) {
+    if (m_resizing && !m_vertResize && !m_floating) {
         QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
         const int dx = x() + (e->oldSize().width() / 2) - (width() / 2);
         int dy = r.top();
@@ -347,12 +357,12 @@ void KRunnerDialog::mousePressEvent(QMouseEvent *e)
         m_vertResize = e->y() > height() - qMax(5, m_bottomBorderHeight);
         m_rightResize = e->x() > width() - qMax(5, m_rightBorderWidth);
         const bool leftResize = e->x() < qMax(5, m_leftBorderWidth);
-        if (!m_center && (leftResize || m_rightResize || m_vertResize)) {
+        if (!m_floating && (leftResize || m_rightResize || m_vertResize)) {
             // let's do a resize! :)
             m_lastPressPos = m_vertResize ? e->globalY() : e->globalX();
             grabMouse();
             m_resizing = true;
-        } else if (m_center) {
+        } else if (m_floating) {
 #ifdef Q_WS_X11
             // We have to release the mouse grab before initiating the move operation.
             // Ideally we would call releaseMouse() to do this, but when we only have an
@@ -375,7 +385,7 @@ void KRunnerDialog::mousePressEvent(QMouseEvent *e)
 
 void KRunnerDialog::mouseReleaseEvent(QMouseEvent *)
 {
-    if (!m_center) {
+    if (!m_floating) {
         releaseMouse();
         unsetCursor();
         m_lastPressPos = -1;
@@ -386,7 +396,7 @@ void KRunnerDialog::mouseReleaseEvent(QMouseEvent *)
 void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
 {
     //kDebug() << e->x() << m_leftBorderWidth << width() << m_rightBorderWidth;
-    if (m_center) {
+    if (m_floating) {
         return;
     }
 

@@ -115,6 +115,7 @@ void KRunnerApp::initialize()
             m_interface = new QsDialog(m_runnerManager);
             break;
     }
+    m_interface->setFreeFloating(KRunnerSettings::freeFloating());
 
     new AppAdaptor(this);
     QDBusConnection::sessionBus().registerObject( "/App", this );
@@ -275,7 +276,7 @@ void KRunnerApp::display()
 
 void KRunnerApp::displayOrHide()
 {
-    if (!m_interface->centerPositioned() && m_interface->isActiveWindow()) {
+    if (!m_interface->freeFloating() && m_interface->isActiveWindow()) {
         m_interface->hide();
     } else {
         display();
@@ -401,6 +402,7 @@ void KRunnerApp::reloadConfig()
         m_interface->display();
     }
 
+    m_interface->setFreeFloating(KRunnerSettings::freeFloating());
     connect(KRunnerSettings::self(), SIGNAL(configChanged()), this, SLOT(reloadConfig()));
 }
 

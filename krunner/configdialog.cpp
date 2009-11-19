@@ -57,17 +57,13 @@ KRunnerConfigDialog::KRunnerConfigDialog(Plasma::RunnerManager *manager, QWidget
     QButtonGroup *positionButtons = new QButtonGroup(m_generalSettings);
     positionButtons->addButton(m_uiOptions.topEdgeButton);
     positionButtons->addButton(m_uiOptions.freeFloatingButton);
+    m_uiOptions.freeFloatingButton->setChecked(KRunnerSettings::freeFloating());
 
     QButtonGroup *displayButtons = new QButtonGroup(m_generalSettings);
+    connect(displayButtons, SIGNAL(buttonClicked(int)), this, SLOT(setInterface(int)));
     displayButtons->addButton(m_uiOptions.commandButton, KRunnerSettings::EnumInterface::CommandOriented);
     displayButtons->addButton(m_uiOptions.taskButton, KRunnerSettings::EnumInterface::TaskOriented);
-    connect(displayButtons, SIGNAL(buttonClicked(int)), this, SLOT(setInterface(int)));
-
-    if (m_interfaceType == KRunnerSettings::EnumInterface::CommandOriented) {
-        m_uiOptions.commandButton->setChecked(true);
-    } else {
-        m_uiOptions.taskButton->setChecked(true);
-    }
+    m_uiOptions.commandButton->setChecked(m_interfaceType == KRunnerSettings::EnumInterface::CommandOriented);
 
     connect(m_uiOptions.previewButton, SIGNAL(clicked()), this, SLOT(previewInterface()));
 
@@ -92,7 +88,7 @@ void KRunnerConfigDialog::previewInterface()
         break;
     }
 
-    m_preview->setCenterPositioned(m_uiOptions.freeFloatingButton->isChecked());
+    m_preview->setFreeFloating(m_uiOptions.freeFloatingButton->isChecked());
     m_preview->show();
 }
 
