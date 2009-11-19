@@ -105,6 +105,10 @@ PlasmaApp::PlasmaApp()
     connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SLOT(positionPanel()));
     m_mainView->installEventFilter(this);
 
+    m_raiseTimer = new QTimer(this);
+    m_raiseTimer->setSingleShot(true);
+    connect(m_raiseTimer, SIGNAL(timeout()), this, SLOT(raiseMainView()));
+
     int width = 400;
     int height = 200;
     if (isDesktop) {
@@ -253,6 +257,7 @@ void PlasmaApp::mainContainmentActivated()
     KWindowSystem::raiseWindow(id);
 
     if (activeWindow) {
+        KWindowSystem::clearState(m_mainView->winId(), NET::KeepBelow);
         KWindowSystem::raiseWindow(activeWindow->effectiveWinId());
         m_mainView->activateWindow();
         activeWindow->setFocus();
@@ -703,6 +708,11 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
         m_unHideTimer->start(400);
     } else if ((event->xany.send_event != True && event->type == FocusOut)) {
         QTimer::singleShot(100, this, SLOT(lowerMainView()));
+    } else if ((event->xany.send_event != True && event->type == FocusIn)) {
+        m_raiseTimer->start(100);
+    //the desktop doesn't come on top for a mouse click
+    } else if ((event->xany.send_event != True && event->type == ButtonPress)) {
+        m_raiseTimer->stop();
     }
     return KUniqueApplication::x11EventFilter(event);
 }
@@ -716,6 +726,15 @@ void PlasmaApp::lowerMainView()
 {
     if (m_isDesktop && !hasForegroundWindows()) {
         KWindowSystem::lowerWindow(m_mainView->winId());
+        KWindowSystem::setState(m_mainView->winId(), NET::KeepBelow);
+    }
+}
+
+void PlasmaApp::raiseMainView()
+{
+    if (m_isDesktop) {
+        KWindowSystem::clearState(m_mainView->winId(), NET::KeepBelow);
+        KWindowSystem::raiseWindow(m_mainView->winId());
     }
 }
 

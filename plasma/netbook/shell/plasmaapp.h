@@ -116,6 +116,7 @@ private Q_SLOTS:
     void setControlBarVisible(bool visible);
     void toggleControlBarVisibility();
     void lowerMainView();
+    void raiseMainView();
     void configureContainment(Plasma::Containment *containment);
     void updateToolBoxVisibility(bool visible);
 
@@ -133,6 +134,7 @@ private:
     bool m_isDesktop;
     bool m_autoHideControlBar;
     QTimer *m_unHideTimer;
+    QTimer *m_raiseTimer;
 };
 
 #endif // multiple inclusion guard
