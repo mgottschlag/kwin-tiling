@@ -96,6 +96,9 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
 
 StripWidget::~StripWidget()
 {
+    foreach(Plasma::QueryMatch *match, m_favouritesMatches) {
+        delete match;
+    }
 }
 
 void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
