@@ -27,9 +27,11 @@
 #include <Plasma/DataContainer>
 
 //solid specific includes
-#include <solid/devicenotifier.h>
-#include <solid/device.h>
-#include <solid/deviceinterface.h>
+#include <Solid/DeviceNotifier>
+#include <Solid/Device>
+#include <Solid/DeviceInterface>
+#include <Solid/StorageDrive>
+#include <Solid/StorageVolume>
 
 
 
@@ -74,14 +76,35 @@ void HotplugEngine::findPredicates()
 
 void HotplugEngine::onDeviceAdded(const QString &udi)
 {
+    Solid::Device device(udi);
+
+    // Skip things we know we don't care about
+    if (device.isDeviceInterface(Solid::DeviceInterface::StorageDrive)) {
+        Solid::DeviceInterface *dev = device.asDeviceInterface(Solid::DeviceInterface::StorageDrive);
+        Solid::StorageDrive *drive = static_cast<Solid::StorageDrive *>(dev);
+        if (!drive->isHotpluggable()) {
+            return;
+        }
+    } else if (device.isDeviceInterface(Solid::DeviceInterface::StorageVolume)) {
+        Solid::DeviceInterface *dev = device.asDeviceInterface(Solid::DeviceInterface::StorageVolume);
+        Solid::StorageVolume *volume = static_cast<Solid::StorageVolume *>(dev);
+        Solid::StorageVolume::UsageType type = volume->usage();
+        if (type == Solid::StorageVolume::Other ||
+            type == Solid::StorageVolume::Unused ||
+            type == Solid::StorageVolume::PartitionTable) {
+            return;
+        }
+    }
+
     if (m_predicates.isEmpty()) {
         findPredicates();
     }
 
-    Solid::Device device(udi);
     QStringList interestingDesktopFiles;
     //search in all desktop configuration file if the device inserted is a correct device
     QHashIterator<QString, Solid::Predicate> it(m_predicates);
+    Solid::Predicate pd;
+    bool first = true;
     //kDebug() << "=================" << udi;
     while (it.hasNext()) {
         it.next();
