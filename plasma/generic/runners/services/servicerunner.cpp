@@ -194,12 +194,19 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
                 Plasma::QueryMatch match(this);
                 match.setType(Plasma::QueryMatch::ExactMatch);
                 setupMatch(service, match);
-                match.setRelevance(0.6);
+
+                qreal relevance = 0.6;
                 if (service->categories().contains("X-KDE-More") ||
                     service->property("OnlyShownIn") != "KDE" ||
                     !service->property("OnlyShowIn").isNull()) {
-                    match.setRelevance(0.5);
+                    relevance = 0.5;
                 }
+
+                if (service->isApplication()) {
+                    relevance += .4;
+                }
+                match.setRelevance(relevance);
+
                 matches << match;
             }
         }
