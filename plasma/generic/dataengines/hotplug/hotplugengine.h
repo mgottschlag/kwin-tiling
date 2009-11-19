@@ -39,11 +39,12 @@ class HotplugEngine : public Plasma::DataEngine
         ~HotplugEngine();
         void init();
 
-    protected slots :
+    protected slots:
         void onDeviceAdded(const QString &udi);
         void onDeviceRemoved(const QString &udi);
 
-    private :
+    private:
+        void onDeviceAdded(Solid::Device &dev);
         void findPredicates();
 
         QHash<QString, Solid::Predicate> m_predicates;

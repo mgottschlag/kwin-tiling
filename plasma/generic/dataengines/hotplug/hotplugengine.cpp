@@ -48,10 +48,22 @@ HotplugEngine::~HotplugEngine()
 void HotplugEngine::init()
 {
     findPredicates();
-    const QString query("[ Is StorageAccess OR [ Is StorageDrive OR [ Is StorageVolume OR [ Is OpticalDrive OR [ Is PortableMediaPlayer OR [ Is SmartCardReader OR Is Camera ] ] ] ] ] ]");
-    foreach (const Solid::Device &dev, Solid::Device::listFromQuery(query)) {
-        onDeviceAdded(dev.udi());
+
+    Solid::Predicate p(Solid::DeviceInterface::StorageAccess);
+    p |= Solid::Predicate(Solid::DeviceInterface::StorageDrive);
+    p |= Solid::Predicate(Solid::DeviceInterface::StorageVolume);
+    p |= Solid::Predicate(Solid::DeviceInterface::OpticalDrive);
+    p |= Solid::Predicate(Solid::DeviceInterface::PortableMediaPlayer);
+    p |= Solid::Predicate(Solid::DeviceInterface::SmartCardReader);
+    p |= Solid::Predicate(Solid::DeviceInterface::Camera);
+    const QList<Solid::Device> list = Solid::Device::listFromQuery(p);
+
+    QListIterator<Solid::Device> devIt(list);
+    while (devIt.hasNext()) {
+        Solid::Device dev = const_cast<Solid::Device &>(devIt.next());
+        onDeviceAdded(dev);
     }
+
     m_predicates.clear();
 
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString &)),
@@ -77,7 +89,11 @@ void HotplugEngine::findPredicates()
 void HotplugEngine::onDeviceAdded(const QString &udi)
 {
     Solid::Device device(udi);
+    onDeviceAdded(device);
+}
 
+void HotplugEngine::onDeviceAdded(Solid::Device &device)
+{
     // Skip things we know we don't care about
     if (device.isDeviceInterface(Solid::DeviceInterface::StorageDrive)) {
         Solid::DeviceInterface *dev = device.asDeviceInterface(Solid::DeviceInterface::StorageDrive);
@@ -103,8 +119,6 @@ void HotplugEngine::onDeviceAdded(const QString &udi)
     QStringList interestingDesktopFiles;
     //search in all desktop configuration file if the device inserted is a correct device
     QHashIterator<QString, Solid::Predicate> it(m_predicates);
-    Solid::Predicate pd;
-    bool first = true;
     //kDebug() << "=================" << udi;
     while (it.hasNext()) {
         it.next();
@@ -120,7 +134,7 @@ void HotplugEngine::onDeviceAdded(const QString &udi)
         //kDebug() << "number of interesting desktop file : " << interestingDesktopFiles.size();
         Plasma::DataEngine::Data data;
         data.insert("added", true);
-        data.insert("udi", udi);
+        data.insert("udi", device.udi());
 
         if (device.vendor().isEmpty()) {
             data.insert("text", device.description());
@@ -131,7 +145,7 @@ void HotplugEngine::onDeviceAdded(const QString &udi)
         data.insert("emblems", device.emblems());
         data.insert("predicateFiles", interestingDesktopFiles);
 
-        setData(udi, data);
+        setData(device.udi(), data);
         //kDebug() << "add hardware solid : " << udi;
     }
 }
