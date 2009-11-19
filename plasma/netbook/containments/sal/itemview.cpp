@@ -22,6 +22,7 @@
 
 #include <QGraphicsSceneResizeEvent>
 #include <QGraphicsScene>
+#include <QTimer>
 
 #include <Plasma/IconWidget>
 
@@ -37,6 +38,9 @@ ItemView::ItemView(QGraphicsWidget *parent)
     connect(m_itemContainer, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SIGNAL(itemActivated(Plasma::IconWidget *)));
     connect(m_itemContainer, SIGNAL(resetRequested()), this, SIGNAL(resetRequested()));
     connect(m_itemContainer, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
+
+    m_noActivateTimer = new QTimer(this);
+    m_noActivateTimer->setSingleShot(true);
 }
 
 ItemView::~ItemView()
@@ -44,7 +48,9 @@ ItemView::~ItemView()
 
 void ItemView::selectItem(Plasma::IconWidget *icon)
 {
-    ensureItemVisible(icon);
+    if (!m_noActivateTimer->isActive()) {
+        ensureItemVisible(icon);
+    }
 }
 
 void ItemView::setCurrentItem(Plasma::IconWidget *currentIcon)
@@ -147,6 +153,7 @@ bool ItemView::eventFilter(QObject *watched, QEvent *event)
             setMinimumHeight(re->newSize().height() + (size().height()-contentsRect().height()+6));
         }
     } else if (watched == m_itemContainer && event->type() == QEvent::GraphicsSceneMove) {
+        m_noActivateTimer->start(300);
         ScrollBarFlags scrollBars = NoScrollBar;
         if (m_itemContainer->pos().x() < 0 || m_itemContainer->geometry().right() > size().width()) {
             scrollBars |= HorizontalScrollBar;

@@ -33,6 +33,7 @@ namespace Plasma
 }
 
 class ItemContainer;
+class QTimer;
 
 class ItemView : public Plasma::ScrollWidget
 {
@@ -81,6 +82,7 @@ Q_SIGNALS:
 
 private:
     ItemContainer *m_itemContainer;
+    QTimer *m_noActivateTimer;
 };
 
 #endif
