@@ -386,7 +386,7 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	themeUi.m_theme->setItemDelegate(new ThemeDelegate(themeUi.m_theme));
 	themeUi.m_theme->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
-	connect(themeUi.m_theme, SIGNAL(activated(const QModelIndex &)), this, SLOT(setDesktopThemeDirty()));
+	connect(themeUi.m_theme, SIGNAL(clicked(const QModelIndex &)), this, SLOT(setDesktopThemeDirty()));
 	connect(themeUi.m_newThemeButton, SIGNAL(clicked()), this, SLOT(getNewThemes()));
   
 	// Add Page1 (Applications Style)
