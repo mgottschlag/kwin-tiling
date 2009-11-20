@@ -6,6 +6,7 @@
 ]>
 
 <article lang="&language;">
+<title>Keyboard</title>
 <articleinfo>
 
 <authorgroup>
@@ -13,17 +14,15 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2002-02-12</date>
-<releaseinfo>3.00.00</releaseinfo>
+<date>2009-11-20</date>
+<releaseinfo>&kde; 4.4</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
-<keyword>KControl</keyword>
+<keyword>System Settings</keyword>
 <keyword>keyboard</keyword>
 </keywordset>
 </articleinfo>
-<sect1 id="kbd">
-<title>Keyboard</title>
 
 <para>This module allows you to choose how your keyboard works.</para>
 
@@ -33,10 +32,17 @@ features provided by your keyboard hardware and the X server on which
 click volume has no effect because that feature is not available on your
 system. </para>
 
-<sect2 id="kbd-use">
-<title>Advanced</title>
-
 <variablelist>
+<varlistentry>
+<term><guilabel>NumLock on KDE Startup</guilabel></term>
+<listitem>
+<para>You can choose to either always <guilabel>Turn on</guilabel> or
+<guilabel>Turn off</guilabel> the NumLock when &kde; starts, or you can
+choose to have &kde; leave NumLock at whatever it was set to before &kde;
+started up.</para>
+</listitem>
+</varlistentry>
+
 <varlistentry>
 <term><guilabel>Enable keyboard repeat</guilabel></term>
 <listitem>
@@ -47,22 +53,24 @@ times in succession.  </para>
 <tip><para> Almost all users will want to have this option enabled, because it
 makes navigating through documents with the arrow keys significantly
 easier. </para></tip>
-</listitem>
-</varlistentry>
 
+<variablelist>
 <varlistentry>
-<term><guilabel>NumLock on KDE Startup</guilabel></term>
+<term><guilabel>Delay</guilabel></term>
 <listitem>
-<para>You can choose to either always <guilabel>Turn on</guilabel> or
-<guilabel>Turn off</guilabel> the NumLock when &kde; starts, or you can
-choose to have &kde; leave NumLock at whatever it was set to before KDE
-started up.</para>
+<para>This option allows you to set the delay after which a pressed 
+key will start generating keycodes.</para>
 </listitem>
 </varlistentry>
-
-
 <varlistentry>
-<term><guilabel>Key click volume:</guilabel></term>
+<term><guilabel>Rate</guilabel></term>
+<listitem>
+<para>This option allows you to set the rate at which keycodes are 
+generated while a key is pressed.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Key click volume</guilabel></term>
 <listitem>
 <para>If supported, this option allows you to hear audible clicks from
 your computer's speakers when you press the keys on your keyboard. In
@@ -75,16 +83,14 @@ click.</para>
 <tip><para>Very few people would choose to enable this option, since it
 generally annoys everyone else in the room. However, if your heart
 yearns for the pre-soft-key era, this may help you to re-experience the
-warm sentimentality of days-gone-by.</para>
-</tip>
+warm sentimentality of days-gone-by.</para></tip>
+</listitem>
+</varlistentry>
+</variablelist>
+
 </listitem>
 </varlistentry>
 
-
 </variablelist>
-
-</sect2>
-
-</sect1>
 
 </article>
