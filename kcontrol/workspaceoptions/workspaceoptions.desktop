@@ -32,6 +32,7 @@ Name[x-test]=xxWorkspacexx
 Name[zh_TW]=工作空間
 
 Comment=Global options for the Plasma workspace
+Comment[cs]=Globální možnosti pro pracovní plochu Plasma
 Comment[en_GB]=Global options for the Plasma workspace
 Comment[eo]=Ĝeneralaj opcioj por Plasma laborspaco
 Comment[et]=Plasma töötsooni globaalsed valikud
