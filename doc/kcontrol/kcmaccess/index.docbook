@@ -6,20 +6,22 @@
 ]>
 
 <article lang="&language;">
+<title>Accessibility</title>
 <articleinfo>
-
 <authorgroup>	
 <author>&Mike.McBride; &Mike.McBride.mail;</author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2005-12-21</date>
-<releaseinfo>3.01.00</releaseinfo>
+<date>2009-11-20</date>
+<releaseinfo>&kde; 4.4</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
-<keyword>KControl</keyword>
+<keyword>Systemsetting</keyword>
 <keyword>accessibility</keyword>
+<keyword>keys</keyword>
+<keyword>bell</keyword>
 </keywordset>
 </articleinfo>
 
@@ -33,9 +35,11 @@
 audible cues, or who have difficulty using a keyboard.  </para>
 
 <para>
-The module is divided into two tabs: <link
-linkend="access-bell"><guilabel>Bell</guilabel></link> and <link
-linkend="access-kb"><guilabel>Keyboard</guilabel></link>.
+The module is divided into four tabs: <link
+linkend="access-bell"><guilabel>Bell</guilabel></link>, <link
+linkend="access-modifier-keys"><guilabel>Modifier keys</guilabel></link>, <link
+linkend="access-keyboard-filters"><guilabel>Keyboard Filters</guilabel></link> and <link
+linkend="access-activation-gestures"><guilabel>Activation Gestures</guilabel></link>.
 </para>
 
 <sect3 id="access-bell">
@@ -57,7 +61,7 @@ The next check box down can be used to play a different sound whenever
 the system bell is triggered.  To activate, place a mark in the check
 box labeled <guilabel>Use customized bell</guilabel>, and enter the
 complete pathname to the sound file in the text box labeled
-<guilabel>Sound to Play</guilabel>.  If you want, you can select the
+<guilabel>Sound to play</guilabel>.  If you want, you can select the
 <guibutton>Browse</guibutton> button to navigate through your filesystem
 to find the exact file.
 </para>
@@ -90,10 +94,10 @@ bell.  The default value is 500ms, or half a second.
 
 </sect3>
 
-<sect3 id="access-kb">
-<title><guilabel>Keyboard</guilabel></title>
+<sect3 id="access-modifier-keys">
+<title><guilabel>Modifier keys</guilabel></title>
 
-<para>There are three sections to this panel.</para>
+<para>There are two sections to this panel.</para>
 
 <variablelist>
 <varlistentry>
@@ -146,9 +150,18 @@ de-select the &Shift; key, press it again.
 </variablelist>
 </listitem>
 </varlistentry>
+</variablelist>
 
+</sect3>
+
+<sect3 id="access-keyboard-filters">
+<title><guilabel>Keyboard Filters</guilabel></title>
+
+<para>There are tho sections to this panel.</para>
+
+<variablelist>
 <varlistentry>
-<term><guilabel>Slow keys</guilabel></term>
+<term><guilabel>Use slow keys</guilabel></term>
 <listitem>
 <para>
 If this option is enabled, you must hold the key down for a
@@ -159,7 +172,7 @@ keystroke will be accepted. This helps prevent accidental key strokes.
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>Bounce keys</guilabel></term>
+<term><guilabel>Use bounce keys</guilabel></term>
 <listitem>
 <para>
 If this option is enabled, you must wait for a specified length of time
@@ -172,6 +185,54 @@ accepted. This prevents accidental multiple key strokes.
 
 </sect3>
 
+<sect3 id="access-activation-gestures">
+<title><guilabel>Activation Gestures</guilabel></title>
+
+<para>There are two sections to this panel.</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Activation Gestures</guilabel> with these options:</term>
+<listitem>
+<para>
+<simplelist>
+<member><guilabel>Use gestures for activating sticky keys and slow keys</guilabel></member>
+<member>Here you can activate keyboard gestures that turn on the following features:</member>
+<member>Mouse Keys: Press &Shift;+NumLock</member>
+<member>Sticky keys: Press &Shift; key 5 consecutive times</member>
+<member>Slow keys: Hold down &Shift; for 8 seconds</member>
+<member><guilabel>Turn sticky keys and slow keys off after a certain period of inactivity</guilabel></member>
+</simplelist>
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Notification</guilabel> with these options:</term>
+<listitem>
+<para>
+<simplelist>
+<member><guilabel>Use the system bell whenever a gesture is used to turn an accessibility 
+feature on or off</guilabel></member>
+
+<member><guilabel>Show a confirmation dialog whenever a keyboard accessibility feature is 
+turned on or off</guilabel></member>
+<member>If this option is checked, KDE will show a confirmation dialog whenever a 
+keyboard accessibility feature is turned on or off.</member>
+<member>Ensure you know what you are doing if you uncheck it, as the keyboard 
+accessibility settings will then always be applied without confirmation.</member>
+
+<member><guilabel>Use &kde;'s system notification mechanism whenever a keyboard accessibility 
+feature is turned on or off</guilabel></member>
+</simplelist>
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<para>Click the <guibutton>Configure Notifications</guibutton> button to open a dialog 
+which allows you to edit the notifications for status changes of all keys.</para>
+
+</sect3>
 </sect2>
 
 </sect1>
