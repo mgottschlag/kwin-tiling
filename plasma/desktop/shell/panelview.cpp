@@ -26,6 +26,7 @@
 #ifdef Q_WS_X11
 #include <X11/Xatom.h>
 #include <QX11Info>
+#include <X11/extensions/shape.h>
 #endif
 
 #include <KWindowSystem>
@@ -64,6 +65,12 @@ public:
         QPalette pal = palette();
         pal.setColor(backgroundRole(), Qt::transparent);
         setPalette(pal);
+
+#ifdef Q_WS_X11
+        QRegion region(QRect(0,0,1,1));
+        XShapeCombineRegion(QX11Info::display(), winId(), ShapeInput, 0, 0,
+                            region.handle(), ShapeSet);
+#endif
 
         QRect glowGeom = triggerZone;
         QSize s = sizeHint();
