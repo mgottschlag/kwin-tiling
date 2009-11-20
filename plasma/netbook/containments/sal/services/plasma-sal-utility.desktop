@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Utilities
+Comment=Small utilities and accessories
+Icon=applications-utilities
+
+Type=Service
+X-KDE-ServiceTypes=Plasma/Sal/Menu
+X-KDE-PluginInfo-Name=plasma-sal-utility
+
+X-Plasma-Sal-Query=utility
+X-Plasma-Sal-Runner=services
+X-Plasma-Sal-Relevance=0.2

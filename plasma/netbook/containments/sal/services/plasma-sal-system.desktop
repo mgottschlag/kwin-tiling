@@ -110,4 +110,4 @@ X-KDE-PluginInfo-Name=plasma-sal-system
 
 X-Plasma-Sal-Query=system
 X-Plasma-Sal-Runner=services
-X-Plasma-Sal-Relevance=1
+X-Plasma-Sal-Relevance=0.1
