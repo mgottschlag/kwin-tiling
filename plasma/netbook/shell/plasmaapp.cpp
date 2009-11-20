@@ -50,8 +50,11 @@
 #include "widgetsExplorer/widgetexplorer.h"
 #include "plasmagenericshell/backgrounddialog.h"
 
+#ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
+#include <X11/extensions/shape.h>
+#endif
 
 PlasmaApp* PlasmaApp::self()
 {
@@ -62,12 +65,153 @@ PlasmaApp* PlasmaApp::self()
     return qobject_cast<PlasmaApp*>(kapp);
 }
 
+
+class GlowBar : public QWidget
+{
+public:
+    GlowBar(Plasma::Direction direction, const QRect &triggerZone)
+        : QWidget(0),
+          m_strength(0.3),
+          m_svg(new Plasma::Svg(this)),
+          m_direction(direction)
+    {
+        setAttribute(Qt::WA_TranslucentBackground);
+        KWindowSystem::setOnAllDesktops(winId(), true);
+        unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
+        KWindowSystem::setState(winId(), state);
+        KWindowSystem::setType(winId(), NET::Dock);
+        m_svg->setImagePath("widgets/glowbar");
+
+#ifdef Q_WS_X11
+        QRegion region(QRect(0,0,1,1));
+        XShapeCombineRegion(QX11Info::display(), winId(), ShapeInput, 0, 0,
+                            region.handle(), ShapeSet);
+#endif
+
+        QPalette pal = palette();
+        pal.setColor(backgroundRole(), Qt::transparent);
+        setPalette(pal);
+
+        QRect glowGeom = triggerZone;
+        QSize s = sizeHint();
+        switch (m_direction) {
+            case Plasma::Up:
+                glowGeom.setY(glowGeom.y() - s.height() + 1);
+                // fallthrough
+            case Plasma::Down:
+                glowGeom.setHeight(s.height());
+                break;
+            case Plasma::Left:
+                glowGeom.setX(glowGeom.x() - s.width() + 1);
+                // fallthrough
+            case Plasma::Right:
+                glowGeom.setWidth(s.width());
+                break;
+        }
+
+        //kDebug() << "glow geom is" << glowGeom << "from" << triggerZone;
+        setGeometry(glowGeom);
+        m_buffer = QPixmap(size());
+    }
+
+    void paintEvent(QPaintEvent* e)
+    {
+        Q_UNUSED(e)
+        QPixmap pixmap;
+        const QSize glowRadius = m_svg->elementSize("hint-glow-radius");
+        QPoint pixmapPosition(0, 0);
+
+        m_buffer.fill(QColor(0, 0, 0, int(qreal(255)*m_strength)));
+        QPainter p(&m_buffer);
+        p.setCompositionMode(QPainter::CompositionMode_SourceIn);
+
+        switch (m_direction) {
+            case Plasma::Down:
+                pixmap = m_svg->pixmap("bottom");
+                pixmapPosition = QPoint(0, -glowRadius.height());
+                break;
+            case Plasma::Up:
+                pixmap = m_svg->pixmap("top");
+                break;
+            case Plasma::Right:
+                pixmap = m_svg->pixmap("right");
+                pixmapPosition = QPoint(-glowRadius.width(), 0);
+                break;
+            case Plasma::Left:
+                pixmap = m_svg->pixmap("left");
+                break;
+        }
+
+        if (m_direction == Plasma::Left || m_direction == Plasma::Right) {
+            p.drawTiledPixmap(QRect(0, pixmapPosition.x(), pixmap.width(), height()), pixmap);
+        } else {
+            p.drawTiledPixmap(QRect(0, pixmapPosition.y(), width(), pixmap.height()), pixmap);
+        }
+
+        p.end();
+        p.begin(this);
+        p.drawPixmap(QPoint(0, 0), m_buffer);
+    }
+
+    QSize sizeHint() const
+    {
+        return m_svg->elementSize("bottomright") - m_svg->elementSize("hint-glow-radius");
+    }
+
+    bool event(QEvent *event)
+    {
+        if (event->type() == QEvent::Paint) {
+            QPainter p(this);
+            p.setCompositionMode(QPainter::CompositionMode_Source);
+            p.fillRect(rect(), Qt::transparent);
+        }
+        return QWidget::event(event);
+    }
+
+    void updateStrength(QPoint point)
+    {
+        QPoint localPoint = mapFromGlobal(point);
+
+        qreal newStrength;
+        switch (m_direction) {
+        case Plasma::Up: // when the panel is at the bottom.
+            newStrength = 1 - qreal(-localPoint.y())/m_triggerDistance;
+            break;
+        case Plasma::Right:
+            newStrength = 1 - qreal(localPoint.x())/m_triggerDistance;
+            break;
+        case Plasma::Left: // when the panel is right-aligned
+            newStrength = 1 - qreal(-localPoint.x())/m_triggerDistance;
+            break;
+        case Plasma::Down:
+        default:
+            newStrength = 1- qreal(localPoint.y())/m_triggerDistance;
+            break;
+        }
+        if (qAbs(newStrength - m_strength) > 0.01 && newStrength >= 0 && newStrength <= 1) {
+            m_strength = newStrength;
+            update();
+        }
+    }
+
+
+private:
+    static const int m_triggerDistance = 30;
+    qreal m_strength;
+    Plasma::Svg *m_svg;
+    Plasma::Direction m_direction;
+    QPixmap m_buffer;
+};
+
+
 PlasmaApp::PlasmaApp()
     : KUniqueApplication(),
       m_corona(0),
       m_widgetExplorerView(0),
       m_widgetExplorer(0),
       m_controlBar(0),
+      m_glowBar(0),
+      m_mousePollTimer(0),
       m_mainView(0),
       m_isDesktop(false),
       m_autoHideControlBar(true),
@@ -705,7 +849,23 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
     if (m_controlBar && m_autoHideControlBar && !m_controlBar->isVisible() && event->xcrossing.window == m_unhideTrigger &&
         (event->xany.send_event != True && event->type == EnterNotify)) {
         //delayed show
-        m_unHideTimer->start(400);
+        if (!m_glowBar) {
+            Plasma::Direction direction = Plasma::locationToDirection(m_controlBar->location());
+            m_glowBar = new GlowBar(direction, m_triggerZone);
+            m_glowBar->show();
+            XMoveResizeWindow(QX11Info::display(), m_unhideTrigger, m_triggerZone.x(), m_triggerZone.y(), m_triggerZone.width(), m_triggerZone.height());
+
+            //FIXME: This is ugly as hell but well, yeah
+            if (!m_mousePollTimer) {
+                m_mousePollTimer = new QTimer(this);
+            }
+
+            disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(unhideHintMousePoll()));
+            connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(unhideHintMousePoll()));
+            m_mousePollTimer->start(200);
+        } else {
+            m_unHideTimer->start(400);
+        }
     } else if ((event->xany.send_event != True && event->type == FocusOut)) {
         QTimer::singleShot(100, this, SLOT(lowerMainView()));
     } else if ((event->xany.send_event != True && event->type == FocusIn)) {
@@ -784,6 +944,26 @@ void PlasmaApp::toggleControlBarVisibility()
     setControlBarVisible(!m_controlBar->isVisible());
 }
 
+void PlasmaApp::unhideHintMousePoll()
+{
+#ifdef Q_WS_X11
+    QPoint mousePos = QCursor::pos();
+    m_glowBar->updateStrength(mousePos);
+
+    if (!m_unhideTriggerGeom.contains(mousePos)) {
+        //kDebug() << "hide the glow";
+        if (m_mousePollTimer) {
+            m_mousePollTimer->stop();
+            disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(unhideHintMousePoll()));
+        }
+
+        delete m_glowBar;
+        m_glowBar = 0;
+        XMoveResizeWindow(QX11Info::display(), m_unhideTrigger, m_unhideTriggerGeom.x(), m_unhideTriggerGeom.y(), m_unhideTriggerGeom.width(), m_unhideTriggerGeom.height());
+    }
+#endif
+}
+
 void PlasmaApp::createUnhideTrigger()
 {
 #ifdef Q_WS_X11
@@ -794,8 +974,8 @@ void PlasmaApp::createUnhideTrigger()
 
     int actualWidth = 1;
     int actualHeight = 1;
-    int triggerWidth = 1;
-    int triggerHeight = 1;
+    int triggerWidth = 30;
+    int triggerHeight = 30;
 
     QPoint actualTriggerPoint = m_controlBar->pos();
     QPoint triggerPoint = m_controlBar->pos();
@@ -803,6 +983,7 @@ void PlasmaApp::createUnhideTrigger()
     switch (m_controlBar->location()) {
         case Plasma::TopEdge:
             actualWidth = triggerWidth = m_controlBar->width();
+            actualHeight = 1;
 
             break;
         case Plasma::BottomEdge:

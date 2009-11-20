@@ -43,6 +43,7 @@ namespace Plasma
 
 class NetView;
 class QTimer;
+class GlowBar;
 
 namespace Kephal
 {
@@ -119,6 +120,7 @@ private Q_SLOTS:
     void raiseMainView();
     void configureContainment(Plasma::Containment *containment);
     void updateToolBoxVisibility(bool visible);
+    void unhideHintMousePoll();
 
 private:
     Plasma::Corona *m_corona;
@@ -129,6 +131,8 @@ private:
     QRect m_triggerZone;
     QRect m_unhideTriggerGeom;
 #endif
+    GlowBar *m_glowBar;
+    QTimer *m_mousePollTimer;
     NetView *m_controlBar;
     NetView *m_mainView;
     bool m_isDesktop;
