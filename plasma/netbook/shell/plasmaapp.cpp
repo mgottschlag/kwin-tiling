@@ -817,6 +817,7 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
         if (m_controlBar) {
             Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
             m_controlBar->show();
+            m_raiseTimer->start(100);
         }
     } else if ((watched == m_mainView &&
                 event->type() == QEvent::WindowDeactivate &&
@@ -868,9 +869,6 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
         }
     } else if ((event->xany.send_event != True && event->type == FocusOut)) {
         QTimer::singleShot(100, this, SLOT(lowerMainView()));
-    } else if ((event->xany.send_event != True && event->type == FocusIn)) {
-        m_raiseTimer->start(100);
-    //the desktop doesn't come on top for a mouse click
     } else if ((event->xany.send_event != True && event->type == ButtonPress)) {
         m_raiseTimer->stop();
     }
