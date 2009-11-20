@@ -756,7 +756,9 @@ IonInterface::ConditionIcons NOAAIon::getConditionIcon(const QString& weather, b
         return IonInterface::Rain;
 
     } else if (weather.contains("few clouds") || weather.contains("mostly sunny") ||
-               weather.contains("mostly clear")) {
+               weather.contains("mostly clear") || weather.contains("increasing clouds") ||
+               weather.contains("becoming cloudy") || weather.contains("clearing") ||
+               weather.contains("decreasing clouds") || weather.contains("becoming sunny")) {
         if(isDayTime) {
             return IonInterface::FewCloudsDay;
         } else {
