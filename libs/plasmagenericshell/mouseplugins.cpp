@@ -42,13 +42,13 @@ MousePlugins::MousePlugins(Plasma::Containment *containment, KConfigDialog *pare
     }
 
     //can't seem to do anything to pluginList in designer
-    QVBoxLayout *lay = new QVBoxLayout(m_ui.pluginList);
+    QGridLayout *lay = new QGridLayout(m_ui.pluginList);
 
     KPluginInfo::List plugins = Plasma::ContainmentActions::listContainmentActionsInfo();
     foreach (const KPluginInfo& info, plugins) {
         QString trigger = m_plugins.key(info.pluginName());
-        MousePluginWidget *item = new MousePluginWidget(info, trigger);
-        lay->addWidget(item);
+        MousePluginWidget *item = new MousePluginWidget(info, trigger, lay, this);
+        //lay->addWidget(item);
         item->setObjectName(info.pluginName());
         item->setContainment(m_containment);
         connect(parent, SIGNAL(containmentPluginChanged(Plasma::Containment*)), item, SLOT(setContainment(Plasma::Containment*)));

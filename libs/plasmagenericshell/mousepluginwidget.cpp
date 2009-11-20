@@ -25,49 +25,55 @@
 #include <KAboutApplicationDialog>
 #include <KDebug>
 
+#include <QApplication>
 #include <QDialog>
 #include <QDialogButtonBox>
-#include <QLayout>
+#include <QGridLayout>
 
-MousePluginWidget::MousePluginWidget(const KPluginInfo &plugin, const QString &trigger, QWidget *parent)
-    :QWidget(parent),
-    m_plugin(plugin),
+MousePluginWidget::MousePluginWidget(const KPluginInfo &plugin, const QString &trigger, QGridLayout *layoutHack, QObject *parent)
+    :QObject(parent),
     m_configDlg(0),
+    m_plugin(plugin),
     m_containment(0),
     m_lastConfigLocation(trigger),
     m_tempConfigParent(QString(), KConfig::SimpleConfig)
 {
-    m_ui.setupUi(this);
+    //make us some widgets
+    QLabel *name = new QLabel(plugin.name());
+    QToolButton *aboutButton = new QToolButton();
+    QToolButton *clearButton = new QToolButton();
+    m_triggerButton = new MouseInputButton();
+    m_configButton = new QToolButton();
+    //m_ui.description->setText(plugin.comment());
 
-    //read plugin data
-    m_ui.name->setText(plugin.name());
-    m_ui.description->setText(plugin.comment());
-
+    //I can haz config?
     if (plugin.property("X-Plasma-HasConfigurationInterface").toBool()) {
         m_tempConfig = KConfigGroup(&m_tempConfigParent, "test");
     } else {
-        m_ui.configButton->setVisible(false);
+        m_configButton->setVisible(false);
     }
 
     setTrigger(trigger);
 
-    //prettiness
-    m_ui.aboutButton->setIcon(KIcon("dialog-information"));
-    m_ui.inputButton->setIcon(KIcon("configure"));
-    m_ui.configButton->setIcon(KIcon("configure"));
+    //pretty icons for the buttons
+    aboutButton->setIcon(KIcon("dialog-information"));
+    m_triggerButton->setIcon(KIcon("input-mouse"));
+    m_configButton->setIcon(KIcon("configure"));
+    clearButton->setIcon(KIcon("edit-delete"));
 
-    //FIXME rtl: the button position is probably all wrong
-    if (qApp->isLeftToRight()) {
-        m_ui.clearButton->setIcon(KIcon("edit-clear-locationbar-rtl"));
-    } else {
-        m_ui.clearButton->setIcon(KIcon("edit-clear-locationbar-ltr"));
-    }
+    //HACK
+    int row = layoutHack->rowCount();
+    layoutHack->addWidget(m_triggerButton, row, 0);
+    layoutHack->addWidget(name, row, 1);
+    layoutHack->addWidget(m_configButton, row, 2);
+    layoutHack->addWidget(aboutButton, row, 3);
+    layoutHack->addWidget(clearButton, row, 4);
 
     //connect
-    connect(m_ui.inputButton, SIGNAL(triggerChanged(QString,QString)), this, SLOT(changeTrigger(QString,QString)));
-    connect(m_ui.configButton, SIGNAL(clicked()), this, SLOT(configure()));
-    connect(m_ui.clearButton, SIGNAL(clicked()), this, SLOT(clearTrigger()));
-    connect(m_ui.aboutButton, SIGNAL(clicked()), this, SLOT(showAbout()));
+    connect(m_triggerButton, SIGNAL(triggerChanged(QString,QString)), this, SLOT(changeTrigger(QString,QString)));
+    connect(m_configButton, SIGNAL(clicked()), this, SLOT(configure()));
+    connect(clearButton, SIGNAL(clicked()), this, SLOT(clearTrigger()));
+    connect(aboutButton, SIGNAL(clicked()), this, SLOT(showAbout()));
 }
 
 MousePluginWidget::~MousePluginWidget()
@@ -84,13 +90,13 @@ void MousePluginWidget::setContainment(Plasma::Containment *ctmt)
 
 void MousePluginWidget::setTrigger(const QString &trigger)
 {
-    m_ui.inputButton->setTrigger(trigger);
+    m_triggerButton->setTrigger(trigger);
     updateConfig(trigger);
 }
 
 void MousePluginWidget::clearTrigger()
 {
-    QString oldTrigger = m_ui.inputButton->trigger();
+    QString oldTrigger = m_triggerButton->trigger();
     setTrigger(QString());
     emit triggerChanged(m_plugin.pluginName(), oldTrigger, QString());
 }
@@ -103,7 +109,7 @@ void MousePluginWidget::changeTrigger(const QString &oldTrigger, const QString& 
 
 void MousePluginWidget::updateConfig(const QString &trigger)
 {
-    m_ui.configButton->setEnabled(!trigger.isEmpty());
+    m_configButton->setEnabled(!trigger.isEmpty());
 }
 
 void MousePluginWidget::configure()
@@ -129,7 +135,7 @@ void MousePluginWidget::configure()
     }
 
     if (!m_configDlg) {
-        m_configDlg = new QDialog(this);
+        m_configDlg = new QDialog(qobject_cast<QWidget*>(parent()));
         QLayout *lay = new QVBoxLayout(m_configDlg);
         m_configDlg->setLayout(lay);
         m_configDlg->setWindowModality(Qt::WindowModal);
@@ -163,7 +169,7 @@ void MousePluginWidget::acceptConfig()
 
     m_configDlg->deleteLater();
     m_configDlg = 0;
-    emit configChanged(m_ui.inputButton->trigger());
+    emit configChanged(m_triggerButton->trigger());
 }
 
 void MousePluginWidget::rejectConfig()
@@ -175,7 +181,7 @@ void MousePluginWidget::rejectConfig()
 
 void MousePluginWidget::prepareForSave()
 {
-    if (!m_ui.configButton->isVisible() || m_pluginInstance || m_lastConfigLocation.isEmpty()) {
+    if (!m_configButton->isVisible() || m_pluginInstance || m_lastConfigLocation.isEmpty()) {
         return;
     }
 
@@ -188,11 +194,11 @@ void MousePluginWidget::prepareForSave()
 
 void MousePluginWidget::save()
 {
-    if (!m_ui.configButton->isVisible()) {
+    if (!m_configButton->isVisible()) {
         return;
     }
 
-    QString trigger = m_ui.inputButton->trigger();
+    QString trigger = m_triggerButton->trigger();
     if (!trigger.isEmpty()) {
         KConfigGroup cfg = m_containment->config();
         cfg = KConfigGroup(&cfg, "ActionPlugins");
@@ -243,7 +249,7 @@ void MousePluginWidget::showAbout()
 
     aboutData->addAuthor(ki18n(m_plugin.author().toUtf8()), ki18n(QByteArray()), m_plugin.email().toLatin1());
 
-    KAboutApplicationDialog *aboutDialog = new KAboutApplicationDialog2(aboutData, this);
+    KAboutApplicationDialog *aboutDialog = new KAboutApplicationDialog2(aboutData, qobject_cast<QWidget*>(parent()));
     aboutDialog->show();
 }
 

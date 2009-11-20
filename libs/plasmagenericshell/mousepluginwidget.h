@@ -20,20 +20,23 @@
 #ifndef MOUSEPLUGINWIDGET_H
 #define MOUSEPLUGINWIDGET_H
 
-#include "ui_MousePluginWidget.h"
-
 #include <QDialog>
+#include <QLabel>
+#include <QToolButton>
 
 #include <KPluginInfo>
 #include <KConfigGroup>
 
 #include <plasma/containmentactions.h>
+#include "mouseinputbutton.h"
 
-class  MousePluginWidget : public QWidget
+class QGridLayout;
+
+class  MousePluginWidget : public QObject
 {
     Q_OBJECT
 public:
-    MousePluginWidget(const KPluginInfo &plugin, const QString &trigger, QWidget *parent = 0);
+    MousePluginWidget(const KPluginInfo &plugin, const QString &trigger, QGridLayout *layoutHack, QObject *parent = 0);
     ~MousePluginWidget();
 
     void setTrigger(const QString &trigger);
@@ -59,10 +62,12 @@ private slots:
 private:
     void updateConfig(const QString &trigger);
 
-    Ui::MousePluginWidget m_ui;
+    MouseInputButton *m_triggerButton;
+    QToolButton *m_configButton;
+    QDialog *m_configDlg;
+
     KPluginInfo m_plugin;
     QWeakPointer<Plasma::ContainmentActions> m_pluginInstance;
-    QDialog *m_configDlg;
     Plasma::Containment *m_containment;
     QString m_lastConfigLocation;
     KConfigGroup m_tempConfig;
