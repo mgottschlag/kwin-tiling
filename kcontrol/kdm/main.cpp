@@ -110,7 +110,7 @@ KDModule::KDModule( QWidget *parent, const QVariantList & )
 		"the look and feel as well as the users that can be "
 		"selected for login. Note that you can only make changes "
 		"if you run the module with superuser rights. If you have not started the KDE "
-		"Control Center with superuser rights (which is absolutely the right thing to "
+		"System Settings with superuser rights (which is absolutely the right thing to "
 		"do, by the way), click on the <em>Modify</em> button to acquire "
 		"superuser rights. You will be asked for the superuser password."
 		"<h2>General</h2> On this tab page, you can configure parts of "

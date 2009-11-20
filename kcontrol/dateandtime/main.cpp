@@ -60,7 +60,7 @@ KclockModule::KclockModule(QWidget *parent, const QVariantList &)
   setAboutData( about );
   setQuickHelp( i18n("<h1>Date & Time</h1> This control module can be used to set the system date and"
     " time. As these settings do not only affect you as a user, but rather the whole system, you"
-    " can only change these settings when you start the Control Center as root. If you do not have"
+    " can only change these settings when you start the System Settings as root. If you do not have"
     " the root password, but feel the system time should be corrected, please contact your system"
     " administrator."));
 

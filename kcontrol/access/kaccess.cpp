@@ -779,7 +779,7 @@ void KAccessApp::xkbControlsNotify(XkbControlsNotifyEvent *event)
 
         createDialogContents();
         featuresLabel->setText ( question+"\n\n"+explanation
-              +" "+i18n("These AccessX settings are needed for some users with motion impairments and can be configured in the KDE Control Center. You can also turn them on and off with standardized keyboard gestures.\n\nIf you do not need them, you can select \"Deactivate all AccessX features and gestures\".") );
+              +" "+i18n("These AccessX settings are needed for some users with motion impairments and can be configured in the KDE System Settings. You can also turn them on and off with standardized keyboard gestures.\n\nIf you do not need them, you can select \"Deactivate all AccessX features and gestures\".") );
 
         KWindowSystem::setState( dialog->winId(), NET::KeepAbove );
         kapp->updateUserTimestamp();

@@ -314,7 +314,7 @@ static void createGtkrc( bool exportColors, const QPalette& cg, int version )
             "# created by KDE, %1\n"
             "#\n"
             "# If you do not want KDE to override your GTK settings, select\n"
-            "# Appearance -> Colors in the Control Center and disable the checkbox\n"
+            "# Appearance -> Colors in the System Settings and disable the checkbox\n"
             "# \"Apply colors to non-KDE4 applications\"\n"
             "#\n"
             "#\n", QDateTime::currentDateTime().toString());

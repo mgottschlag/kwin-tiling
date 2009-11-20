@@ -44,7 +44,7 @@
                     </property>
                     <property name="text">
                         <string>
-1) The KDE daemon, 'kded' is not running. You can restart it by running the command 'kdeinit' and then try reloading the KDE Control Center to see if this message goes away.
+1) The KDE daemon, 'kded' is not running. You can restart it by running the command 'kdeinit' and then try reloading the KDE System Settings to see if this message goes away.
 
 2) You do not appear to have smartcard support in the KDE libraries. You will need to recompile the kdelibs package with libpcsclite installed.</string>
                     </property>
