@@ -12,8 +12,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2009-04-09</date>
-<releaseinfo>&kde; 4.3</releaseinfo>
+<date>2009-11-21</date>
+<releaseinfo>&kde; 4.4</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -121,109 +121,88 @@ selected.</para>
 </para>
 <para>
 This includes the icon, the action name, the action command and the various
-requirements.
-You can change the icon by clicking on it. The requirements are displayed in a
-tree, the top item having to be true in order for the action to be shown. Each
-item can be either a "Container" or a "Requirement", which is selected when 
-that item was added. Only Containers can have items below them. </para>
+parameters.
+You can change the icon by clicking on it.</para>
+<para>The parameters are displayed in a
+tree, the top item having to be true in order for the action to be shown.</para>
 
-<para>Containers can be one of two types, which will determine how they match
-their conditions. Either all or at least one of the conditions
-must match.</para>
+<sect3 id="edit-parameter">
+<title>Edit parameter</title>
 
-<para>Requirements can also be different types. If the device matches them, they
-are true, otherwise they are false.</para>
 <variablelist>
-<varlistentry><term><guibutton>Add Requirement</guibutton></term>
+<varlistentry><term><guilabel>Parameter type</guilabel></term>
 <listitem>
-<para>This is only available for containers and allows you to select type of the requirement,
-and provide some of its initial details.</para>
-</listitem>
-</varlistentry>
+<para>This controls what can be contained inside it, or
+what matching is performed to check if it is true.
 
-<varlistentry><term><guibutton>Edit Requirement</guibutton></term>
-<listitem>
-<para>
-This can only be performed when a valid item is selected. It allows you to edit
-the various details of that particular item type.
-</para>
-</listitem>
-</varlistentry>
-<varlistentry><term><guibutton>Delete Requirement</guibutton></term>
-<listitem>
-<para>
-This is available for all items, except the root item. If a container contains
-any requirements, they will also be deleted.
-</para>
-</listitem>
-</varlistentry>
-</variablelist>
-
-</sect2>
-<sect2 id="edit-requirement">
-<title>Edit Requirement</title>
-
-<para>This dialog allows you to change the various details about a container and
-will display different information,
-depending on what type of item it is.</para>
 <variablelist>
-<varlistentry><term><guibutton>Container Type</guibutton></term>
+<varlistentry><term><guilabel>Property Match</guilabel></term>
 <listitem>
-<para>
-You can only change one setting, the logic match. This is either "All must
-match" or "Any can match". This will be used when determining if the container
-is true.
-</para>
+<para>Compares the specified property of the Device (using 
+<guilabel>Device type</guilabel> and <guilabel>Value name</guilabel>) and using the evaluator, compares it aganist the
+text provided.</para>
 </listitem>
 </varlistentry>
-<varlistentry><term><guibutton>Item type</guibutton></term>
-<listitem>
-<para>
-This has many settings, with additional ones available for some
-sub-types.</para>
-<para>
-<variablelist>
-<varlistentry><term><guilabel>Restriction Type</guilabel></term>
-<listitem>
-<para>
-Only two settings are available: <guilabel>Is Value Type</guilabel> and
-<guilabel>Compare Value To</guilabel>. <guilabel>Is Value Type</guilabel>
-checks to ensure the device is of the selected device type. <guilabel>
-Compare Value To</guilabel> compares a value of the device with
-what you specify.
-</para>
-</listitem>
-</varlistentry>
-<varlistentry><term><guilabel>Device Type</guilabel></term>
-<listitem>
-<para>You can select the device type here. This is used for
-limiting the selection of values for comparing values, and direct matches for the
-device type selected.
-</para>
-</listitem>
-</varlistentry>
-<varlistentry><term><guilabel>Value Name</guilabel></term>
-<listitem>
-<para>
-This is only visible for "Compare value to". It allows you to
-select a device value to check.
-</para>
-</listitem>
-</varlistentry>
-<varlistentry><term><guilabel>Equals/Does Not Equal</guilabel></term>
-<listitem>
-<para>
-This determines what kind of match we are looking
-for when comparing the value. The text to check is specified beside it.
-</para>
-</listitem>
-</varlistentry>
-</variablelist>
 
+<varlistentry><term><guilabel>Content Conjunction</guilabel></term>
+<listitem>
+<para>All sub-properties of this must be true for
+it to be true itself.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><guilabel>Content Disjunction</guilabel></term>
+<listitem>
+<para>Any sub-property of this may be true for it
+to be true itself.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><guilabel>Device interface match</guilabel></term>
+<listitem>
+<para>Checks to see if the Device can be
+classed as the selected Device type.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
 </para>
 </listitem>
 </varlistentry>
+
+<varlistentry><term><guilabel>Device type</guilabel></term>
+<listitem>
+<para>These are the possible device types supported by &kde; on
+your system.
+They are used in both Property and Device interface matches.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><guilabel>Value name</guilabel></term>
+<listitem>
+<para>This is a list of all possible property names for the
+selected device type.
+It also provides the selection of the value evaluator (which is either 
+<guilabel>Equals</guilabel> or <guilabel>Contains</guilabel>), and allows
+entry of the text to be compared with.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><guibutton>Reset Parameter</guibutton></term>
+<listitem>
+<para>Reverts any unsaved changes you have made to this parameter.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><guibutton>Save Parameter changes</guibutton></term>
+<listitem>
+<para>Saves the changes you have made to the parameter.</para>
+</listitem>
+</varlistentry>
+
 </variablelist>
+</sect3>
 </sect2>
 </sect1>
 </article>
