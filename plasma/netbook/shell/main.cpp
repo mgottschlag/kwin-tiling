@@ -22,6 +22,7 @@
 #include <KCmdLineArgs>
 #include <KLocale>
 #include <KIcon>
+#include <KConfigGroup>
 
 #include "plasmaapp.h"
 
@@ -37,6 +38,20 @@ KDE_EXPORT int kdemain(int argc, char **argv)
     aboutData.addAuthor(ki18n("Aaron J. Seigo"),
                         ki18n("Author and maintainer"),
                         "aseigo@kde.org");
+
+
+    bool customGraphicsSystem = false;
+    for (int i = 0; i < argc; ++i) {
+        if (QString(argv[i]) == "-graphicssystem") {
+            customGraphicsSystem = true;
+            break;
+        }
+    }
+
+    if (!customGraphicsSystem) {
+        KConfigGroup cg(KSharedConfig::openConfig("plasma-netbookrc"), "General");
+        QApplication::setGraphicsSystem(cg.readEntry("GraphicsSystem", "system"));
+    }
 
     KCmdLineArgs::init(argc, argv, &aboutData);
 

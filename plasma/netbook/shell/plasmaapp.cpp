@@ -242,6 +242,7 @@ PlasmaApp::PlasmaApp()
     Plasma::Theme::defaultTheme()->setThemeName(themeName);
 
     cg = KConfigGroup(KGlobal::config(), "General");
+
     Plasma::Theme::defaultTheme()->setFont(cg.readEntry("desktopFont", font()));
 
     m_mainView = new NetView(0, NetView::mainViewId(), 0);
