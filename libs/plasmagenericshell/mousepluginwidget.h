@@ -24,25 +24,27 @@
 #include <QLabel>
 #include <QToolButton>
 
-#include <KPluginInfo>
 #include <KConfigGroup>
 
 #include <plasma/containmentactions.h>
 #include "mouseinputbutton.h"
 
+class QComboBox;
 class QGridLayout;
 
 class  MousePluginWidget : public QObject
 {
     Q_OBJECT
 public:
-    MousePluginWidget(const KPluginInfo &plugin, const QString &trigger, QGridLayout *layoutHack, QObject *parent = 0);
+    MousePluginWidget(const QString &plugin, const QString &trigger, QGridLayout *layoutHack, QObject *parent = 0);
     ~MousePluginWidget();
 
     void setTrigger(const QString &trigger);
+    void prepareForSave();
+    void save();
 
 signals:
-    void triggerChanged(const QString &plugin, const QString &oldTrigger, const QString &newTrigger);
+    void triggerChanged(const QString &oldTrigger, const QString &newTrigger);
     void configChanged(const QString &trigger);
 
 public slots:
@@ -51,17 +53,17 @@ public slots:
 private slots:
     void changeTrigger(const QString &oldTrigger, const QString& newTrigger);
     void clearTrigger();
+    void setPlugin(int index);
 
     void configure();
     void acceptConfig();
     void rejectConfig();
-    void prepareForSave();
-    void save();
     void showAbout();
 
 private:
     void updateConfig(const QString &trigger);
 
+    QComboBox *m_pluginList;
     MouseInputButton *m_triggerButton;
     QToolButton *m_configButton;
     QDialog *m_configDlg;

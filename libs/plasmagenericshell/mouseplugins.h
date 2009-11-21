@@ -27,6 +27,7 @@ namespace Plasma {
 }
 
 class KConfigDialog;
+class MousePluginWidget;
 
 class MousePlugins : public QWidget
 {
@@ -37,8 +38,6 @@ public:
 
 signals:
     void modified(bool isModified);
-    void aboutToSave();
-    void save();
 
 public slots:
     void configChanged(const QString &trigger);
@@ -49,13 +48,13 @@ private slots:
     /**
      * reassign the plugin's trigger to be @p newTrigger
      */
-    void setTrigger(const QString &plugin, const QString &oldTrigger, const QString &newTrigger);
+    void setTrigger(const QString &oldTrigger, const QString &newTrigger);
 
 private:
 
     Ui::MousePlugins m_ui;
     Plasma::Containment *m_containment;
-    QHash<QString, QString> m_plugins;
+    QHash<QString, MousePluginWidget*> m_plugins;
     QSet<QString> m_modifiedKeys;
 };
 

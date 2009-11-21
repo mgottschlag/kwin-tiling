@@ -26,30 +26,43 @@
 #include <KDebug>
 
 #include <QApplication>
+#include <QComboBox>
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QGridLayout>
 
-MousePluginWidget::MousePluginWidget(const KPluginInfo &plugin, const QString &trigger, QGridLayout *layoutHack, QObject *parent)
+Q_DECLARE_METATYPE(KPluginInfo)
+
+MousePluginWidget::MousePluginWidget(const QString &pluginName, const QString &trigger, QGridLayout *layoutHack, QObject *parent)
     :QObject(parent),
     m_configDlg(0),
-    m_plugin(plugin),
     m_containment(0),
     m_lastConfigLocation(trigger),
     m_tempConfigParent(QString(), KConfig::SimpleConfig)
 {
     //make us some widgets
-    QLabel *name = new QLabel(plugin.name());
+    m_pluginList = new QComboBox();
     QToolButton *aboutButton = new QToolButton();
     QToolButton *clearButton = new QToolButton();
     m_triggerButton = new MouseInputButton();
     m_configButton = new QToolButton();
     //m_ui.description->setText(plugin.comment());
 
+    //plugin list
+    //FIXME is there some way to share this across all the entries?
+    KPluginInfo::List plugins = Plasma::ContainmentActions::listContainmentActionsInfo();
+    foreach (const KPluginInfo& plugin, plugins) {
+        m_pluginList->addItem(KIcon(plugin.icon()), plugin.name(), QVariant::fromValue(plugin));
+        if (plugin.pluginName() == pluginName) {
+            m_pluginList->setCurrentIndex(m_pluginList->count() - 1);
+            m_plugin = plugin;
+        }
+    }
+
+    //TODO separate setplugin function
     //I can haz config?
-    if (plugin.property("X-Plasma-HasConfigurationInterface").toBool()) {
-        m_tempConfig = KConfigGroup(&m_tempConfigParent, "test");
-    } else {
+    m_tempConfig = KConfigGroup(&m_tempConfigParent, "test");
+    if (!m_plugin.property("X-Plasma-HasConfigurationInterface").toBool()) {
         m_configButton->setVisible(false);
     }
 
@@ -64,12 +77,13 @@ MousePluginWidget::MousePluginWidget(const KPluginInfo &plugin, const QString &t
     //HACK
     int row = layoutHack->rowCount();
     layoutHack->addWidget(m_triggerButton, row, 0);
-    layoutHack->addWidget(name, row, 1);
+    layoutHack->addWidget(m_pluginList, row, 1);
     layoutHack->addWidget(m_configButton, row, 2);
     layoutHack->addWidget(aboutButton, row, 3);
     layoutHack->addWidget(clearButton, row, 4);
 
     //connect
+    connect(m_pluginList, SIGNAL(currentIndexChanged(int)), this, SLOT(setPlugin(int)));
     connect(m_triggerButton, SIGNAL(triggerChanged(QString,QString)), this, SLOT(changeTrigger(QString,QString)));
     connect(m_configButton, SIGNAL(clicked()), this, SLOT(configure()));
     connect(clearButton, SIGNAL(clicked()), this, SLOT(clearTrigger()));
@@ -79,6 +93,30 @@ MousePluginWidget::MousePluginWidget(const KPluginInfo &plugin, const QString &t
 MousePluginWidget::~MousePluginWidget()
 {
     delete m_pluginInstance.data();
+}
+
+void MousePluginWidget::setPlugin(int index)
+{
+    m_plugin = m_pluginList->itemData(index).value<KPluginInfo>();
+    //clear all the old plugin's stuff
+    if (m_configDlg) {
+        kDebug() << "can't happen";
+        m_configDlg->deleteLater();
+        m_configDlg = 0;
+    }
+    if (m_pluginInstance) {
+        delete m_pluginInstance.data();
+        kDebug() << "tried to delete instance";
+    }
+    //reset config button
+    bool hasConfig = m_plugin.property("X-Plasma-HasConfigurationInterface").toBool();
+    m_configButton->setVisible(hasConfig);
+    m_tempConfig.deleteGroup();
+    m_lastConfigLocation.clear();
+    //FIXME a stray mousewheel deleting your config would be no fun.
+    //perhaps we could mark it for deletion, and then... um.. not delete it if the user goes back to
+    //that plugin? but then we'd have to record which plugin the config is *for*...
+    emit configChanged(m_triggerButton->trigger());
 }
 
 void MousePluginWidget::setContainment(Plasma::Containment *ctmt)
@@ -98,13 +136,13 @@ void MousePluginWidget::clearTrigger()
 {
     QString oldTrigger = m_triggerButton->trigger();
     setTrigger(QString());
-    emit triggerChanged(m_plugin.pluginName(), oldTrigger, QString());
+    emit triggerChanged(oldTrigger, QString());
 }
 
 void MousePluginWidget::changeTrigger(const QString &oldTrigger, const QString& newTrigger)
 {
     updateConfig(newTrigger);
-    emit triggerChanged(m_plugin.pluginName(), oldTrigger, newTrigger);
+    emit triggerChanged(oldTrigger, newTrigger);
 }
 
 void MousePluginWidget::updateConfig(const QString &trigger)
@@ -185,6 +223,7 @@ void MousePluginWidget::prepareForSave()
         return;
     }
 
+    //back up our config because it'll be erased for saving
     KConfigGroup cfg = m_containment->config();
     cfg = KConfigGroup(&cfg, "ActionPlugins");
     cfg = KConfigGroup(&cfg, m_lastConfigLocation);
@@ -194,23 +233,25 @@ void MousePluginWidget::prepareForSave()
 
 void MousePluginWidget::save()
 {
-    if (!m_configButton->isVisible()) {
+    QString trigger = m_triggerButton->trigger();
+    if (trigger.isEmpty()) {
+        m_lastConfigLocation.clear();
         return;
     }
 
-    QString trigger = m_triggerButton->trigger();
-    if (!trigger.isEmpty()) {
+    if (m_pluginInstance || !m_lastConfigLocation.isEmpty()) {
         KConfigGroup cfg = m_containment->config();
         cfg = KConfigGroup(&cfg, "ActionPlugins");
         cfg = KConfigGroup(&cfg, trigger);
         if (m_pluginInstance) {
             m_pluginInstance.data()->save(cfg);
-        } else if (!m_lastConfigLocation.isEmpty()) {
+        } else {
             m_tempConfig.copyTo(&cfg);
             //kDebug() << "copied from temp";
         }
+        m_lastConfigLocation = trigger;
     }
-    m_lastConfigLocation = trigger;
+    m_containment->setContainmentActions(trigger, m_plugin.pluginName());
 }
 
 //copied from appletbrowser.cpp

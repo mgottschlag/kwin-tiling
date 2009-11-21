@@ -31,31 +31,20 @@ MousePlugins::MousePlugins(Plasma::Containment *containment, KConfigDialog *pare
     :QWidget(parent),
     m_containment(containment)
 {
-    m_ui.setupUi(this);
-
     Q_ASSERT(m_containment);
-    foreach (const QString &key, m_containment->containmentActionsTriggers()) {
-        QString plugin = m_containment->containmentActions(key);
-        if (!plugin.isEmpty()) {
-            m_plugins.insert(key, plugin);
-        }
-    }
-
-    //can't seem to do anything to pluginList in designer
+    m_ui.setupUi(this);
     QGridLayout *lay = new QGridLayout(m_ui.pluginList);
 
-    KPluginInfo::List plugins = Plasma::ContainmentActions::listContainmentActionsInfo();
-    foreach (const KPluginInfo& info, plugins) {
-        QString trigger = m_plugins.key(info.pluginName());
-        MousePluginWidget *item = new MousePluginWidget(info, trigger, lay, this);
-        //lay->addWidget(item);
-        item->setObjectName(info.pluginName());
-        item->setContainment(m_containment);
-        connect(parent, SIGNAL(containmentPluginChanged(Plasma::Containment*)), item, SLOT(setContainment(Plasma::Containment*)));
-        connect(item, SIGNAL(triggerChanged(QString,QString,QString)), this, SLOT(setTrigger(QString,QString,QString)));
-        connect(item, SIGNAL(configChanged(QString)), this, SLOT(configChanged(QString)));
-        connect(this, SIGNAL(aboutToSave()), item, SLOT(prepareForSave()));
-        connect(this, SIGNAL(save()), item, SLOT(save()));
+    foreach (const QString &trigger, m_containment->containmentActionsTriggers()) {
+        QString plugin = m_containment->containmentActions(trigger);
+        if (!plugin.isEmpty()) {
+            MousePluginWidget *item = new MousePluginWidget(plugin, trigger, lay, this);
+            item->setContainment(m_containment);
+            connect(parent, SIGNAL(containmentPluginChanged(Plasma::Containment*)), item, SLOT(setContainment(Plasma::Containment*)));
+            connect(item, SIGNAL(triggerChanged(QString,QString)), this, SLOT(setTrigger(QString,QString)));
+            connect(item, SIGNAL(configChanged(QString)), this, SLOT(configChanged(QString)));
+            m_plugins.insert(trigger, item); //FIXME what kind of pointer?
+        }
     }
 
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
@@ -76,45 +65,59 @@ void MousePlugins::configChanged(const QString &trigger)
 void MousePlugins::configAccepted()
 {
     //FIXME there has *got* to be a more efficient way...
-    emit aboutToSave();
+    //let them back up their config
+    foreach (const QString &trigger, m_modifiedKeys) {
+        MousePluginWidget *p = m_plugins.value(trigger);
+        if (p) {
+            p->prepareForSave();
+        }
+    }
 
     KConfigGroup baseCfg = m_containment->config();
     baseCfg = KConfigGroup(&baseCfg, "ActionPlugins");
     foreach (const QString &trigger, m_modifiedKeys) {
+        //delete any old config (who knows what it could be from)
         KConfigGroup cfg = KConfigGroup(&baseCfg, trigger);
         cfg.deleteGroup();
+        //save the new config
+        MousePluginWidget *p = m_plugins.value(trigger);
+        if (p) {
+            p->save();
+        } else {
+            m_containment->setContainmentActions(trigger, QString());
+        }
     }
 
-    emit save();
-
-    foreach (const QString &trigger, m_modifiedKeys) {
-        m_containment->setContainmentActions(trigger, m_plugins.value(trigger));
-    }
     m_modifiedKeys.clear();
 }
 
-void MousePlugins::setTrigger(const QString &plugin, const QString &oldTrigger, const QString &newTrigger)
+void MousePlugins::setTrigger(const QString &oldTrigger, const QString &newTrigger)
 {
     if (newTrigger == oldTrigger) {
         return;
     }
 
+    MousePluginWidget *plugin = qobject_cast<MousePluginWidget*>(sender());
+    Q_ASSERT(plugin);
     if (!newTrigger.isEmpty() && m_plugins.contains(newTrigger)) {
         int ret = KMessageBox::warningContinueCancel(this,
                 i18n("This trigger is assigned to another plugin."), QString(), KGuiItem(i18n("Reassign")));
         if (ret == KMessageBox::Continue) {
             //clear it from the UI
-            MousePluginWidget *w = findChild<MousePluginWidget*>(m_plugins.value(newTrigger));
+            MousePluginWidget *w = m_plugins.value(newTrigger);
             Q_ASSERT(w);
             w->setTrigger(QString());
         } else {
             //undo
-            MousePluginWidget *w = qobject_cast<MousePluginWidget*>(sender());
-            Q_ASSERT(w);
-            w->setTrigger(oldTrigger);
+            plugin->setTrigger(oldTrigger);
             return;
         }
     }
+    //FIXME we can't just remove them now, they're pointers!
+    //...or can we? can we get them back when they set a trigger again?
+    //er, that plugin string coming in.. that's not what we wanna set any more.
+    //tbh we never needed it.. unless there was no old trigger.
+    //so... uhm.. yes. we're now always going to yank the sender from this. feels wrong.
 
     if (!oldTrigger.isEmpty()) {
         m_plugins.remove(oldTrigger);
