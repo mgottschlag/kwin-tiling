@@ -18,7 +18,7 @@
 
 <keywordset>
 <keyword>KDE</keyword>
-<keyword>Systemsetting</keyword>
+<keyword>Systemsettings</keyword>
 <keyword>accessibility</keyword>
 <keyword>keys</keyword>
 <keyword>bell</keyword>
@@ -157,7 +157,7 @@ de-select the &Shift; key, press it again.
 <sect3 id="access-keyboard-filters">
 <title><guilabel>Keyboard Filters</guilabel></title>
 
-<para>There are tho sections to this panel.</para>
+<para>There are two sections to this panel.</para>
 
 <variablelist>
 <varlistentry>
@@ -217,7 +217,7 @@ feature on or off</guilabel></member>
 
 <member><guilabel>Show a confirmation dialog whenever a keyboard accessibility feature is 
 turned on or off</guilabel></member>
-<member>If this option is checked, KDE will show a confirmation dialog whenever a 
+<member>If this option is checked, &kde; will show a confirmation dialog whenever a 
 keyboard accessibility feature is turned on or off.</member>
 <member>Ensure you know what you are doing if you uncheck it, as the keyboard 
 accessibility settings will then always be applied without confirmation.</member>
