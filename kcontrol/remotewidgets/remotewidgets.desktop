@@ -18,6 +18,7 @@ Name[pt_BR]=Políticas dos widgets remotos
 Name[sv]=Policy för grafiska fjärrkomponenter
 Name[uk]=Правила доступу для віддалених віджетів
 Name[x-test]=xxRemote Widgets' Policiesxx
+Name[zh_TW]=遠端元件政策
 
 Comment=Define policies for remote plasma widgets
 Comment[en_GB]=Define policies for remote plasma widgets

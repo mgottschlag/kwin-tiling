@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Switch Window
+Name[de]=Fenster wechseln
 Name[en_GB]=Switch Window
 Name[eo]=Ŝalti fenestron
 Name[et]=Akna vahetamine
@@ -22,6 +23,7 @@ Name[zh_TW]=切換視窗
 Type=Service
 Icon=preferences-desktop-color
 Comment=Show a list of windows to switch to
+Comment[de]=Eine Liste aller Fenster anzeigen
 Comment[en_GB]=Show a list of windows to switch to
 Comment[eo]=Montri liston de festestro por komuti
 Comment[et]=Võimalike akende loendi näitamine

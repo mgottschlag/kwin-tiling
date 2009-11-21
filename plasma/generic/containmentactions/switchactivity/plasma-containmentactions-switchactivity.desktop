@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Switch Activity
+Name[de]=Aktivität wechseln
 Name[en_GB]=Switch Activity
 Name[eo]=Ŝalti Aktivecon
 Name[et]=Tegevuse vahetamine
@@ -21,6 +22,7 @@ Name[zh_TW]=切換活動
 Type=Service
 Icon=preferences-desktop-color
 Comment=Switch to another activity
+Comment[de]=Ermöglich Ihnen, zu einer anderen Aktivität zu wechseln
 Comment[en_GB]=Switch to another activity
 Comment[eo]=Ŝalti al alia aktiveco
 Comment[et]=Lülitumine teisele tegevusele

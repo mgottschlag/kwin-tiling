@@ -23,6 +23,7 @@ Name[zh_TW]=切換桌面
 Type=Service
 Icon=preferences-desktop-color
 Comment=Switch to another virtual desktop
+Comment[de]=Ermöglicht Ihnen, zu einer anderen virtuellen Arbeitsfläche zu wechseln.
 Comment[en_GB]=Switch to another virtual desktop
 Comment[eo]=Ŝalti al alia virtuala labortablo
 Comment[et]=Lülitumine teisele virtuaalsele töölauale

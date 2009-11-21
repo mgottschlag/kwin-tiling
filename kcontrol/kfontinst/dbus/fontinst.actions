@@ -1,5 +1,6 @@
 [org.kde.fontinst]
 Name=Manage system-wide fonts.
+Name[de]=Systemweite Schriften verwalten.
 Name[en_GB]=Manage system-wide fonts.
 Name[et]=Süsteemsete fontide haldamine.
 Name[gl]=Xestiona os tipos de letra do sistema.

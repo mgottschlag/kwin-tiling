@@ -5,6 +5,7 @@ X-KDE-Library=solid_lirc
 InitialPreference=80
 
 Name=Lirc
+Name[de]=Lirc
 Name[en_GB]=Lirc
 Name[eo]=Lirc
 Name[et]=Lirc
@@ -26,6 +27,7 @@ Name[x-test]=xxLircxx
 Name[zh_TW]=Lirc
 
 Comment=Linux Infrared Remote Control
+Comment[de]=Linux-Infrarotfernbedienung
 Comment[en_GB]=Linux Infrared Remote Control
 Comment[eo]=Linuksa transruĝa Teleregilo
 Comment[et]=Linuxi infrapuna kaugjuhtimine

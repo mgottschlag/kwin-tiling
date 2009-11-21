@@ -10,6 +10,7 @@ Name[sv]=Python skrivbordsunderlägg
 Name[tr]=Python duvar kağıdı
 Name[uk]=Шпалери для Python
 Name[x-test]=xxPython wallpaperxx
+Name[zh_TW]=Python 桌布
 Comment=Plasma wallpaper support for Python
 Comment[en_GB]=Plasma wallpaper support for Python
 Comment[et]=Plasma taustapildi toetus Pythonile
@@ -20,6 +21,7 @@ Comment[sv]=Plasma skrivbordsunderläggsstöd för Python
 Comment[tr]=Python için Plasma duvar kağıdı desteği
 Comment[uk]=Підтримка Python у шпалерах Плазми
 Comment[x-test]=xxPlasma wallpaper support for Pythonxx
+Comment[zh_TW]=支援 Python 的 Plasma 桌布
 
 X-KDE-ServiceTypes=Plasma/ScriptEngine
 Type=Service

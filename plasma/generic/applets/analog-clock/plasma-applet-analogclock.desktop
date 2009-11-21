@@ -79,6 +79,7 @@ Name[x-test]=xxAnalog Clockxx
 Name[zh_CN]=模拟时钟
 Name[zh_TW]=類比時鐘
 Comment=A themable analog clock
+Comment[de]=Eine gestaltbare analoge Uhr
 Comment[en_GB]=A themable analogue clock
 Comment[et]=Teemadega analoogkell
 Comment[gl]=Un reloxo analóxico con temas

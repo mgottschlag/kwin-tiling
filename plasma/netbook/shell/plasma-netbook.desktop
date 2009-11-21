@@ -2,6 +2,7 @@
 Exec=plasma-netbook --desktop
 X-DBUS-StartupType=wait
 Name=Plasma Netbook
+Name[de]=Plasma Netbook
 Name[en_GB]=Plasma Netbook
 Name[eo]=Plasma Netbook
 Name[et]=Plasma väikesülearvuti
@@ -21,6 +22,7 @@ Name[uk]=Плазма для субноутбуків
 Name[x-test]=xxPlasma Netbookxx
 Name[zh_TW]=Plasma Netbook
 Comment=Workspace shell for netbook devices.
+Comment[de]=Arbeitsfläche für Netbook-Geräte
 Comment[en_GB]=Workspace shell for netbook devices.
 Comment[et]=Töötsooni kest väikesülearvutitele.
 Comment[gl]=Shell de traballo para ordenadores ultraportátiles.
