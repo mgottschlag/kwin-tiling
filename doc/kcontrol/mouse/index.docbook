@@ -14,17 +14,17 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2004-10-09</date>
-<releaseinfo>3.03.00</releaseinfo>
+<date>2009-11-22</date>
+<releaseinfo>&kde; 4.4</releaseinfo>
 
 <abstract>
-<para>This is the documentation for the &kde; &kcontrol; module that configures mice and other pointing devices.
+<para>This is the documentation for the &kde; &systemsettings; module that configures mice and other pointing devices.
 </para>
 </abstract>
 
 <keywordset>
 <keyword>KDE</keyword>
-<keyword>KControl</keyword>
+<keyword>Systemsettings</keyword>
 <keyword>mouse</keyword>
 </keywordset>
 </articleinfo>
@@ -66,7 +66,7 @@ unaffected.</para>
 <varlistentry>
 <term><guilabel>Reverse scroll direction</guilabel></term>
 <listitem><para>
-With this checkbox selected, the scroll wheel (if any) will work in the opposite direction (so that if rolling the top of the scroll wheel towards you previously causes a scroll down, then it will now cause a scroll up). This may be useful to handle a unusual setup of the X server.
+With this check box selected, the scroll wheel (if any) will work in the opposite direction (so that if rolling the top of the scroll wheel towards you previously causes a scroll down, then it will now cause a scroll up). This may be useful to handle a unusual setup of the X server.
 </para>
 </listitem>
 </varlistentry>
@@ -90,7 +90,7 @@ operating systems.</para>
 <para>This is the default setting for &kde;. Clicking once on an icon
 will open it.  To select you can drag around the icon(s) or <keycombo
 action="simul">&Ctrl;<mousebutton>Right</mousebutton></keycombo> click,
-or simply click and hold to drag it. You can also enable automatic selection of icons using the <guilabel>Automatically select icons</guilabel> checkbox, discussed below.</para>
+or simply click and hold to drag it. You can also enable automatic selection of icons using the <guilabel>Automatically select icons</guilabel> check box, discussed below.</para>
 </listitem>
 </varlistentry>
 
@@ -112,16 +112,9 @@ will happen.</para></tip>
 <listitem>
 <para>
 As noted above, if you have <guilabel>Single-click to open files and folders</guilabel> selected, you can select icons by dragging around them, or by using <keycombo
-action="simul">&Ctrl;<mousebutton>Right</mousebutton></keycombo> click. If you routinely need to select icons, you may want to enable this checkbox, which will allow icons to be selected automatically by pausing over the icon. The <guilabel>Delay:</guilabel> slider determines how long is required before the automatic selection takes effect.
+action="simul">&Ctrl;<mousebutton>Right</mousebutton></keycombo> click. If you routinely need to select icons, you may want to enable this check box, which will allow icons to be selected automatically by pausing over the icon. The <guilabel>Delay:</guilabel> slider determines how long is required before the automatic selection takes effect.
 </para>
 </listitem>
-</varlistentry>
-
-<varlistentry>
-<term><guilabel>Visual feedback on activation</guilabel></term>
-<listitem>
-<para>When this option is
-checked, &kde; gives you visual feedback whenever you click on something and activate it.</para></listitem>
 </varlistentry>
 
 </variablelist>
@@ -131,20 +124,20 @@ checked, &kde; gives you visual feedback whenever you click on something and act
 <title><guilabel>Cursor Theme</guilabel></title>
 
 <para>
-This tab allows you to select from a number of cursor themes. A preview of the cursor display is shown above the listbox.
+This tab allows you to select from a number of cursor themes. A preview of the cursor display is shown above the list box.
 </para>
 
 <note><para>The features provided by this tab may not be available on some systems. Your system may need to be updated to support cursor themes.
 </para></note>
 
 <para>
-If you have additional cursor themes available, you can install and remove them using the buttons below the listbox. Note that you cannot remove the default themes.
+If you have additional cursor themes available, you can install and remove them using the buttons below the list box. Note that you cannot remove the default themes.
 </para>
 
 </sect2>
 
 <sect2 id="mouse-advanced">
-<title>Advanced</title>
+<title><guilabel>Advanced</guilabel></title>
 
 <variablelist>
 <varlistentry>
@@ -252,10 +245,10 @@ This tab allows you to configure the keyboard number pad keys as a mouse-type de
 <term><guilabel>Move pointer with keyboard (using the num pad)</guilabel></term>
 <listitem>
 <para>
-To enable keyboard mouse mode, you need to select the checkbox labelled <guilabel>Move pointer with keyboard (using the num pad)</guilabel>. When you do this, the other settings will become enabled, and you can customize the keyboard pointer behavior further, if required.
+To enable keyboard mouse mode, you need to select the check box labeled <guilabel>Move pointer with keyboard (using the num pad)</guilabel>. When you do this, the other settings will become enabled, and you can customize the keyboard pointer behavior further, if required.
 </para>
 <para>
-The various keys on the number pad move in the direction you would expect. Note that you can move diagonally as well as up, down, left and right.  The <keycap>5</keycap> key emulates a click to a pointer button, typically &LMB;. You change which button is emulated by using the <keycap>/</keycap> key (which makes it &LMB;), <keycap>*</keycap> key (which makes it &MMB;) and <keycap>-</keycap> (which makes it &RMB;). Using the <keycap>+</keycap> emulates a doubleclick to the selected pointer button. You can use the <keycap>0</keycap> key to emulate holding down the selected pointer button (for easy dragging), and then use the <keycap>.</keycap> to emulate releasing the selected pointer button.
+The various keys on the number pad move in the direction you would expect. Note that you can move diagonally as well as up, down, left and right.  The <keycap>5</keycap> key emulates a click to a pointer button, typically &LMB;. You change which button is emulated by using the <keycap>/</keycap> key (which makes it &LMB;), <keycap>*</keycap> key (which makes it &MMB;) and <keycap>-</keycap> (which makes it &RMB;). Using the <keycap>+</keycap> emulates a double click to the selected pointer button. You can use the <keycap>0</keycap> key to emulate holding down the selected pointer button (for easy dragging), and then use the <keycap>.</keycap> to emulate releasing the selected pointer button.
 </para>
 </listitem>
 </varlistentry>
@@ -314,7 +307,7 @@ This is the slope of the acceleration curve for mouse key acceleration.
 
 <para>
 Some Logitech USB mice support special features, such as switching to a higher resolution, or
-providing cordless status. If KDE was built with libusb support, then you will get an additional
+providing cordless status. If &kde; was built with libusb support, then you will get an additional
 tab for each supported mouse that is plugged in.
 </para>
 
@@ -374,7 +367,7 @@ configuration yourself.
 </para>
 
 <para>
-On a Linux system, you should use the hotplug system to change the ownership
+On a &Linux; system, you should use the hotplug system to change the ownership
 and permissions on the mouse entry in <filename>/proc/bus/usb</filename>. One
 way to do this is to create a short script
 (<filename>/etc/hotplug/usb/consoleUserPerms</filename>) that changes the ownership
@@ -479,7 +472,7 @@ consoleUserPerms     0x0003      0x046d   0xc702    0x0000       0xffff      0x0
 </informalexample>
 
 <para>
-That should be all that is needed on Linux - just copy the files into
+That should be all that is needed on &Linux; - just copy the files into
 <filename>/etc/hotplug/usb/</filename>, and when the mouse is
 plugged in, the ownership and permissions should be changed
 so that the user at the console can access the mouse.
