@@ -29,7 +29,6 @@
 #include <KDialog>
 
 #include "ui_quicklaunchConfig.h"
-#include "ui_quicklaunchAdd.h"
 
 #include "quicklaunchIcon.h"
 #include "QuicklaunchLayout.h"
@@ -123,11 +122,6 @@ class QuicklaunchApplet : public Plasma::Applet
 
     protected slots:
 	/**
-	 * Called when the user has clicked OK in the Add Icon interface
-	 */
-	void addAccepted();
-
-	/**
 	 * Called when the user has clicked OK or apply in the Config interface
 	 */
 	void configAccepted();
@@ -184,7 +178,6 @@ class QuicklaunchApplet : public Plasma::Applet
         QuicklaunchLayout *m_dialogLayout;
         KDialog *m_addDialog;
         Ui::quicklaunchConfig uiConfig;
-        Ui::quicklaunchAdd addUi;
         QuicklaunchIcon *m_rightClickedIcon;
         QPointF m_mousePressPos;
         bool m_isBusy;

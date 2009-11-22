@@ -22,8 +22,11 @@
 #include <KConfigDialog>
 #include <KDesktopFile>
 #include <KMessageBox>
+#include <KOpenWithDialog>
+#include <KPropertiesDialog>
 #include <QGraphicsSceneDragDropEvent>
 #include <QGraphicsWidget>
+#include <QDir>
 #include <QDrag>
 #include <QHash>
 #include <QMimeData>
@@ -719,28 +722,36 @@ bool QuicklaunchApplet::dropHandler(const int pos, const QMimeData *mimedata)
 
 void QuicklaunchApplet::showAddInterface()
 {
-    if (!m_addDialog) {
-        m_addDialog = new KDialog;
-        m_addDialog->setCaption(i18n("Add Shortcut"));
+    KOpenWithDialog appChooseDialog(NULL);
+    appChooseDialog.hideRunInTerminal();
+    appChooseDialog.setSaveNewApplications(true);
 
-        QWidget *widget = new QWidget;
-        addUi.setupUi(widget);
-        m_addDialog->setMainWidget(widget);
-        connect(m_addDialog, SIGNAL(okClicked()), this, SLOT(addAccepted()));
-    }
-    
-    m_addDialog->resize(460,0); //the prefered size seems to be ignored
-    
-    m_addDialog->show();
-}
+    if (appChooseDialog.exec() == QDialog::Accepted) {
+	QString programPath = appChooseDialog.service()->entryPath();
+	if (appChooseDialog.service()->icon() == NULL) {
+	    // If the program chosen doesn't have an icon, then we give
+	    // it a default icon and open up its properties in a dialog
+	    // so the user can change it's icon and name etc
+	    KConfig kc(programPath, KConfig::SimpleConfig);
+	    KConfigGroup kcg = kc.group("Desktop Entry");
+	    kcg.writeEntry("Icon","system-run");
+	    kc.sync();
 
-void QuicklaunchApplet::addAccepted()
-{
-    KUrl::List uniqueUrls = removeDuplicateUrls(KUrl::List(addUi.urlIcon->url()));
-    if (uniqueUrls.count() == 1) { 
-        int insertplace = m_rightClickedIcon ? m_icons.indexOf(m_rightClickedIcon) : m_icons.size();
-        addProgram(insertplace, uniqueUrls.first().toLocalFile(), true);
-        performUiRefactor();
+	    KPropertiesDialog propertiesDialog(KUrl(programPath), NULL);
+	    if (propertiesDialog.exec() != QDialog::Accepted) {
+		return;
+	    }
+
+	    // In case the name changed
+	    programPath = propertiesDialog.kurl().path();
+	}
+
+	KUrl::List uniqueUrls = removeDuplicateUrls(KUrl::List(programPath));
+	if (uniqueUrls.count() == 1) { 
+	    int insertplace = m_rightClickedIcon ? m_icons.indexOf(m_rightClickedIcon) : m_icons.size();
+	    addProgram(insertplace, programPath, true);
+	    performUiRefactor();
+	}
     }
 }
 
