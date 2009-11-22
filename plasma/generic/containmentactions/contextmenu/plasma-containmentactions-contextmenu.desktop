@@ -39,7 +39,7 @@ Comment[uk]=Меню, яке буде показано у відповідь н�
 Comment[x-test]=xxThe menu that normally shows on right-clickxx
 Comment[zh_TW]=此選單通常由滑鼠右鍵叫出
 Type=Service
-Icon=preferences-desktop-color
+Icon=
 ServiceTypes=Plasma/ContainmentActions
 
 X-KDE-Library=plasma_containmentactions_contextmenu
