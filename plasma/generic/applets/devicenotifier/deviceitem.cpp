@@ -21,7 +21,6 @@
 #include "deviceitem.h"
 
 //Qt
-#include <QtGui/QGraphicsOpacityEffect>
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsLinearLayout>
@@ -103,9 +102,7 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
     font.setPointSize(KGlobalSettings::smallestReadableFont().pointSize());
     font.setItalic(true);
     m_descriptionLabel->setFont(font);
-    QGraphicsOpacityEffect *labelEffect = new QGraphicsOpacityEffect(m_descriptionLabel);
-    m_descriptionLabel->setGraphicsEffect(labelEffect);
-    labelEffect->setOpacity(0);
+    m_descriptionLabel->setOpacity(0);
     updateColors();
 
     KCapacityBar *capacityBarWidget = new KCapacityBar(KCapacityBar::DrawTextInline);
@@ -115,9 +112,7 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
     capacityBarWidget->setContinuous(true);
     m_capacityBar->setAcceptHoverEvents(false);
     m_capacityBar->setMaximumHeight(12);
-    QGraphicsOpacityEffect *capacityBarEffect = new QGraphicsOpacityEffect(m_capacityBar);
-    m_capacityBar->setGraphicsEffect(capacityBarEffect);
-    capacityBarEffect->setOpacity(0);
+    m_capacityBar->setOpacity(0);
     m_capacityBar->setVisible(isMounted());
     info_layout->addItem(m_nameLabel);
     info_layout->addItem(m_descriptionLabel);
@@ -126,9 +121,7 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
     m_leftActionIcon = new Plasma::IconWidget(this);
     m_leftActionIcon->setMaximumSize(m_leftActionIcon->sizeFromIconSize(LEFTACTION_SIZE));
     m_leftActionIcon->setSizePolicy(QSizePolicy::Fixed,  QSizePolicy::Fixed);
-    QGraphicsOpacityEffect *leftActionEffect = new QGraphicsOpacityEffect(m_leftActionIcon);
-    m_leftActionIcon->setGraphicsEffect(leftActionEffect);
-    leftActionEffect->setOpacity(0);
+    m_leftActionIcon->setOpacity(0);
     connect(m_leftActionIcon, SIGNAL(clicked()), this, SLOT(leftActionClicked()));
 
     m_mainLayout->addItem(m_deviceIcon);
@@ -307,9 +300,7 @@ void DeviceItem::setHovered(const bool hovered)
             m_barFade->setProperty("targetOpacity", 0);
             m_iconFade->setProperty("targetOpacity", 0);
         }
-        QGraphicsOpacityEffect *labelEffect = qobject_cast<QGraphicsOpacityEffect *>(m_descriptionLabel->graphicsEffect());
-
-        qreal currentOpacity = (labelEffect? labelEffect->opacity() : 1.);
+        qreal currentOpacity = m_descriptionLabel->opacity();
 
         m_labelFade->setProperty("startOpacity", currentOpacity);
         m_barFade->setProperty("startOpacity", currentOpacity);
@@ -323,19 +314,10 @@ void DeviceItem::setHovered(const bool hovered)
 
 void DeviceItem::setHoverDisplayOpacity(qreal opacity)
 {
-    if (!hovered()) {
-        opacity = 1 - opacity;
-    }
+    m_descriptionLabel->setOpacity(opacity);
+    m_leftActionIcon->setOpacity(opacity);
+    m_capacityBar->setOpacity(opacity);
 
-    QGraphicsOpacityEffect *labelEffect = qobject_cast<QGraphicsOpacityEffect *>(m_descriptionLabel->graphicsEffect());
-    QGraphicsOpacityEffect *leftActionEffect = qobject_cast<QGraphicsOpacityEffect *>(m_leftActionIcon->graphicsEffect());
-    QGraphicsOpacityEffect *capacityBarEffect = qobject_cast<QGraphicsOpacityEffect *>(m_capacityBar->graphicsEffect());
-
-    if (labelEffect && leftActionEffect && capacityBarEffect) {
-        labelEffect->setOpacity(opacity);
-        leftActionEffect->setOpacity(opacity);
-        capacityBarEffect->setOpacity(opacity);
-    }
 }
 
 void DeviceItem::setFreeSpace(qulonglong freeSpace, qulonglong size)
