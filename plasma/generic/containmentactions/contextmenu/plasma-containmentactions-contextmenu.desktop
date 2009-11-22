@@ -1,23 +1,5 @@
 [Desktop Entry]
 Name=Standard Menu
-Name[en_GB]=Contextual Menu
-Name[eo]=Kunteksta Menuo
-Name[et]=Kontekstimenüü
-Name[gl]=Menú contextual
-Name[hr]=Kontekstualni izbornik
-Name[id]=Menu Kontekstual
-Name[lt]=Kontesktinis meniu
-Name[nb]=Kontekstmeny
-Name[nds]=Rechtsklickmenü
-Name[nl]=Contextmenu
-Name[pt]=Menu de Contexto
-Name[pt_BR]=Menu contextual
-Name[ru]=Контекстное меню
-Name[sv]=Sammanhangsberoende meny
-Name[tr]=Sağ Tık Menüsü
-Name[uk]=Контекстне меню
-Name[x-test]=xxContextual Menuxx
-Name[zh_TW]=內文選單
 Comment=The menu that normally shows on right-click
 Comment[de]=Das Menü, was für gewöhnlich durch einem Rechtsklick geöffnet wird
 Comment[en_GB]=The menu that normally shows on right-click

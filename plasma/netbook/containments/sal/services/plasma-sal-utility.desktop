@@ -87,6 +87,9 @@ Name[x-test]=xxUtilitiesxx
 Name[zh_CN]=工具
 Name[zh_TW]=實用工具
 Comment=Small utilities and accessories
+Comment[en_GB]=Small utilities and accessories
+Comment[uk]=Малі програми та інструменти
+Comment[x-test]=xxSmall utilities and accessoriesxx
 Icon=applications-utilities
 
 Type=Service
