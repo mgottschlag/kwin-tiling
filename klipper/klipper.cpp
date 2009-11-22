@@ -306,10 +306,10 @@ void Klipper::loadSettings()
     m_bReplayActionInHistory = KlipperSettings::replayActionInHistory();
     m_bNoNullClipboard = KlipperSettings::preventEmptyClipboard();
     // 0 is the id of "Ignore selection" radiobutton
-    m_bIgnoreSelection = KlipperSettings::synchronize() == 2;
+    m_bIgnoreSelection = KlipperSettings::ignoreSelection();
     m_bIgnoreImages = KlipperSettings::ignoreImages();
     // 0 is the id of "Synchronize contents" radiobutton
-    m_bSynchronize = ( KlipperSettings::synchronize() == 0 );
+    m_bSynchronize = KlipperSettings::synchronize();
     // NOTE: not used atm - kregexpeditor is not ported to kde4
     m_bUseGUIRegExpEditor = KlipperSettings::useGUIRegExpEditor();
     m_bSelectionTextOnly = KlipperSettings::selectionTextOnly();

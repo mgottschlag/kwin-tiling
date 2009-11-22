@@ -10,7 +10,7 @@
     <height>417</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QCheckBox" name="kcfg_PopupAtMousePosition">
      <property name="text">
@@ -26,9 +26,9 @@
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="kcfg_StripWhiteSpace">
+    <widget class="QCheckBox" name="kcfg_PreventEmptyClipboard">
      <property name="text">
-      <string>Remove whitespace when executing actions</string>
+      <string>Prevent empty clipboard</string>
      </property>
     </widget>
    </item>
@@ -40,9 +40,9 @@
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="kcfg_PreventEmptyClipboard">
+    <widget class="QCheckBox" name="kcfg_StripWhiteSpace">
      <property name="text">
-      <string>Prevent empty clipboard</string>
+      <string>Remove whitespace when executing actions</string>
      </property>
     </widget>
    </item>
@@ -54,36 +54,29 @@
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="kcfg_SelectionTextOnly">
-     <property name="text">
-      <string>Text selection only</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="KButtonGroup" name="kcfg_Synchronize">
+    <widget class="QGroupBox" name="selection_group">
      <property name="title">
-      <string>Clipboard/Selection Behavior</string>
+      <string>Selection and clipboard</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QRadioButton" name="rbSynchronize">
+       <widget class="QCheckBox" name="kcfg_IgnoreSelection">
+        <property name="text">
+         <string>Ignore Selection</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="kcfg_SelectionTextOnly">
+        <property name="text">
+         <string>Text selection only</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="kcfg_Synchronize">
         <property name="text">
          <string>Synchronize contents of the clipboard and the selection</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="rbSeparate">
-        <property name="text">
-         <string>Separate clipboard and selection</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="rbIgnore">
-        <property name="text">
-         <string>Ignore selection</string>
         </property>
        </widget>
       </item>
@@ -91,7 +84,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="timeout_label">
      <property name="text">
       <string>Timeout for action popups:</string>
      </property>
@@ -105,7 +98,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_2">
+    <widget class="QLabel" name="history_size_label">
      <property name="text">
       <string>Clipboard history size:</string>
      </property>
@@ -139,13 +132,56 @@
    <extends>QSpinBox</extends>
    <header>knuminput.h</header>
   </customwidget>
-  <customwidget>
-   <class>KButtonGroup</class>
-   <extends>QGroupBox</extends>
-   <header>kbuttongroup.h</header>
-   <container>1</container>
-  </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>kcfg_IgnoreSelection</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>kcfg_SelectionTextOnly</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>78</x>
+     <y>213</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>80</x>
+     <y>231</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_IgnoreSelection</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>kcfg_Synchronize</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>209</x>
+     <y>214</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>207</x>
+     <y>265</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_Synchronize</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>kcfg_IgnoreSelection</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>300</x>
+     <y>261</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>301</x>
+     <y>210</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
