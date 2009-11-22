@@ -139,7 +139,7 @@ what matching is performed to check if it is true.
 <varlistentry><term><guilabel>Property Match</guilabel></term>
 <listitem>
 <para>Compares the specified property of the Device (using 
-<guilabel>Device type</guilabel> and <guilabel>Value name</guilabel>) and using the evaluator, compares it aganist the
+<guilabel>Device type</guilabel> and <guilabel>Value name</guilabel>) and using the evaluator, compares it against the
 text provided.</para>
 </listitem>
 </varlistentry>

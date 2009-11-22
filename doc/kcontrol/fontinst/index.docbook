@@ -41,7 +41,7 @@
 </orderedlist>
 <para>To add a font to a group, drag it from the list of fonts onto a group. To remove a font from a group, drag the font onto the <quote>All Fonts</quote> group.</para>
 <para>Below this list you find buttons to create a new group, remove a group and enable or disable the fonts in the current group.</para>
-<para>In the context meu of this list you have additional menuitems to print font samples and export a font to a zip archive.</para>
+<para>In the context menu of this list you have additional menuitems to print font samples and export a font to a zip archive.</para>
 
 <sect3 id="font-hiding">
 <title>Enabling and Disabling</title>
@@ -94,7 +94,7 @@ The main display is a list of the installed fonts, grouped via the fonts' family
 <sect2 id="font-preview">
 <title>Preview</title>
 <para>This displays a preview text in different font sizes.</para>
-<para>Using the context menu enables you to zoom in and out, select a preview type (<guilabel>Standard Preview</guilabel>, <guilabel>All Characters</guilabel> and change the preview text.</para>
+<para>Using the context menu enables you to zoom in and out, select a preview type (<guilabel>Standard Preview</guilabel>, <guilabel>All Characters</guilabel>, &etc;) and change the preview text.</para>
 </sect2>
 </sect1>
 </article>
