@@ -188,7 +188,7 @@ void URLGrabber::actionMenu( bool automatically_invoked )
 {
     QString text(m_myClipItem->text());
     if (m_trimmed) {
-        text.trimmed();
+        text = text.trimmed();
     }
     ActionList matchingActionsList = matchingActions( text, automatically_invoked );
 
@@ -288,7 +288,7 @@ void URLGrabber::execute( const ClipAction *action, int cmdIdx ) const
     if ( command.isEnabled ) {
         QString text(m_myClipItem->text());
         if (m_trimmed) {
-            text.trimmed();
+            text = text.trimmed();
         }
         ClipCommandProcess* proc = new ClipCommandProcess(*action, command, text, m_history, m_myClipItem);
         if (proc->program().isEmpty()) {
