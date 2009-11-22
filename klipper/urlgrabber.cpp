@@ -106,8 +106,8 @@ void URLGrabber::setActionList( const ActionList& list )
 void URLGrabber::matchingMimeActions(const QString& clipData)
 {
     KUrl url(clipData);
-    KConfigGroup cg(KGlobal::config(), "General");
-    if(!cg.readEntry("EnableMagicMimeActions",true)) { //Secret configuration entry
+    KConfigGroup cg(KGlobal::config(), "Actions");
+    if(!cg.readEntry("EnableMagicMimeActions",true)) {
     //    kDebug() << "skipping mime magic due to configuration";
     	return;
     }
