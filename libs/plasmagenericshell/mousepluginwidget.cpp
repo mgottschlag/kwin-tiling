@@ -43,7 +43,7 @@ MousePluginWidget::MousePluginWidget(const QString &pluginName, const QString &t
     KPluginInfo::List plugins = Plasma::ContainmentActions::listContainmentActionsInfo();
     if (plugins.count() == 0) {
         //panic!!
-        QLabel *fail = new QLabel(i18n("No plugins found! Check your installation."));
+        QLabel *fail = new QLabel(i18n("No plugins found, check your installation."));
         layoutHack->addWidget(fail, 0, 0);
         return;
     }
