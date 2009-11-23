@@ -244,7 +244,7 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
 
     MousePlugins *m = new MousePlugins(d->containment, this);
     connect(m, SIGNAL(modified(bool)), this, SLOT(settingsModified(bool)));
-    d->mouseItem = addPage(m, i18n("Mouse Plugins"), "input-mouse");
+    d->mouseItem = addPage(m, i18n("Mouse Actions"), "input-mouse");
 
     if (d->containment && d->containment->hasConfigurationInterface()) {
         d->containment->createConfigurationInterface(this);

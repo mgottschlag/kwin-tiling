@@ -83,7 +83,7 @@ MousePluginWidget::MousePluginWidget(const QString &pluginName, const QString &t
     m_aboutButton->setIcon(KIcon("dialog-information"));
     m_triggerButton->setIcon(KIcon("input-mouse"));
     m_configButton->setIcon(KIcon("configure"));
-    m_clearButton->setIcon(KIcon("edit-delete"));
+    m_clearButton->setIcon(KIcon("list-remove"));
 
     //HACK
     //FIXME what's the Right Way to do this?

@@ -36,6 +36,7 @@ MousePlugins::MousePlugins(Plasma::Containment *containment, KConfigDialog *pare
     m_ui.setupUi(this);
     m_ui.addButton->setIcon(KIcon("list-add"));
     QGridLayout *lay = qobject_cast<QGridLayout*>(m_ui.pluginList->layout());
+    lay->setColumnStretch(1, 1); //make the plugin list take the extra space
 
     //stupid hack because you can't *insert* rows into a gridlayout
     lay->removeWidget(m_ui.addButton);
