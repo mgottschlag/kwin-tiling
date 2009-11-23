@@ -60,11 +60,12 @@ class LockOut : public Plasma::Applet
     private:
 #ifndef Q_OS_WIN
         Ui::lockoutConfig ui;
+#endif
         bool m_showLockButton;
         bool m_showLogoutButton;
         bool m_showSleepButton;
         bool m_showHibernateButton;
-#endif
+
         Plasma::IconWidget *m_iconLock;
         Plasma::IconWidget *m_iconLogout;
         Plasma::IconWidget *m_iconSleep;
