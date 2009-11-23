@@ -149,6 +149,12 @@ void KRunnerDialog::positionOnScreen()
             dy += r.height() / 3;
         }
 
+        if (!m_floating) {
+            m_background->setEnabledBorders(Plasma::FrameSvg::LeftBorder |
+                                            Plasma::FrameSvg::BottomBorder |
+                                            Plasma::FrameSvg::RightBorder);
+        }
+
         move(dx, dy);
     }
 
@@ -184,10 +190,6 @@ void KRunnerDialog::setFreeFloating(bool floating)
 
     if (m_floating) {
         m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
-    } else {
-        m_background->setEnabledBorders(Plasma::FrameSvg::LeftBorder |
-                                        Plasma::FrameSvg::BottomBorder |
-                                        Plasma::FrameSvg::RightBorder);
     }
 
     m_screenPos.clear();
@@ -325,9 +327,8 @@ void KRunnerDialog::hideEvent(QHideEvent *event)
     KDialog::hideEvent(event);
 }
 
-void KRunnerDialog::resizeEvent(QResizeEvent *e)
+void KRunnerDialog::updateMask()
 {
-    m_background->resizeFrame(e->size());
 #ifdef Q_WS_X11
     /*FIXME for 4.3: now the clip mask always has to be on for disabling the KWin shadow,
     in the future something better has to be done, and enable the mask only when compositing is active
@@ -339,13 +340,29 @@ void KRunnerDialog::resizeEvent(QResizeEvent *e)
 #else
     setMask(m_background->mask());
 #endif
+}
+
+void KRunnerDialog::resizeEvent(QResizeEvent *e)
+{
+    m_background->resizeFrame(e->size());
 
     if (m_resizing && !m_vertResize && !m_floating) {
         QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
-        const int dx = x() + (e->oldSize().width() / 2) - (width() / 2);
-        int dy = r.top();
-        move(dx, dy);
-        m_screenPos.insert(m_oldScreen, pos());
+        //kDebug() << "if" << x() << ">" << r.left() << "&&" << r.right() << ">" << (x() + width());
+        const Plasma::FrameSvg::EnabledBorders borders = m_background->enabledBorders();
+        if (borders & Plasma::FrameSvg::LeftBorder) {
+            const int dx = x() + (e->oldSize().width() / 2) - (width() / 2);
+            int dy = r.top();
+            move(qBound(r.left(), dx, r.right() - width()), dy);
+            m_screenPos.insert(m_oldScreen, pos());
+            if (!checkBorders(r)) {
+                updateMask();
+            }
+        } else {
+            updateMask();
+        }
+    } else {
+        updateMask();
     }
 
     KDialog::resizeEvent(e);
@@ -393,6 +410,29 @@ void KRunnerDialog::mouseReleaseEvent(QMouseEvent *)
     }
 }
 
+bool KRunnerDialog::checkBorders(const QRect &screenGeom)
+{
+    Q_ASSERT(!m_floating);
+    Plasma::FrameSvg::EnabledBorders borders = Plasma::FrameSvg::BottomBorder;
+
+    if (x() > screenGeom.left()) {
+        borders |= Plasma::FrameSvg::LeftBorder;
+    }
+
+    if (x() + width() < screenGeom.right()) {
+        borders |= Plasma::FrameSvg::RightBorder;
+    }
+
+    if (borders != m_background->enabledBorders()) {
+        m_background->setEnabledBorders(borders);
+        updateMask();
+        update();
+        return true;
+    }
+
+    return false;
+}
+
 void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
 {
     //kDebug() << e->x() << m_leftBorderWidth << width() << m_rightBorderWidth;
@@ -407,13 +447,31 @@ void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
                 resize(width(), height() + deltaY);
                 m_lastPressPos = e->globalY();
             } else {
+                QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
                 const int deltaX = (m_rightResize ? -1 : 1) * (m_lastPressPos - e->globalX());
-                resize(width() + deltaX * 2, height());
-                m_lastPressPos = e->globalX();
+                int newWidth = width() + deltaX;
+                const Plasma::FrameSvg::EnabledBorders borders = m_background->enabledBorders();
+                // don't let it grow beyond the opposite screen edge
+                if (m_rightResize) {
+                    if (borders & Plasma::FrameSvg::LeftBorder) {
+                        newWidth += qMin(deltaX, x() - r.left());
+                    }
+                } else if (borders & Plasma::FrameSvg::RightBorder) {
+                    newWidth += qBound(0, deltaX, r.right() - (x() + width() - 1));
+                } else if (newWidth > minimumWidth() && newWidth < width()) {
+                    move(x() - deltaX, y());
+                }
+
+                if (newWidth > minimumWidth()) {
+                    resize(newWidth, height());
+                    m_lastPressPos = e->globalX();
+                }
             }
         } else {
-            move(x() - (m_lastPressPos - e->globalX()), y());
+            QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
+            move(qBound(r.left(), x() - (m_lastPressPos - e->globalX()), r.right() - width()), y());
             m_lastPressPos = e->globalX();
+            checkBorders(r);
         }
     } else if (e->x() < qMax(5, m_leftBorderWidth) || e->x() > width() - qMax(5, m_rightBorderWidth)) {
         setCursor(Qt::SizeHorCursor);

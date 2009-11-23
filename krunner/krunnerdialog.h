@@ -93,6 +93,8 @@ class KRunnerDialog : public KDialog
         Plasma::RunnerManager *m_runnerManager;
 
     private:
+        bool checkBorders(const QRect &screenGeom);
+        void updateMask();
         void paintBackground(QPainter* painter, const QRect &exposedRect);
 
         KRunnerConfigDialog *m_configDialog;
