@@ -209,9 +209,9 @@ PlasmaApp::PlasmaApp()
       m_corona(0),
       m_widgetExplorerView(0),
       m_widgetExplorer(0),
-      m_controlBar(0),
       m_glowBar(0),
       m_mousePollTimer(0),
+      m_controlBar(0),
       m_mainView(0),
       m_isDesktop(false),
       m_autoHideControlBar(true),
@@ -616,7 +616,6 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 void PlasmaApp::updateToolBoxVisibility(bool visible)
 {
     foreach (Plasma::Containment *cont, m_corona->containments()) {
-        Plasma::Containment *senderCont = static_cast<Plasma::Containment *>(sender());
          cont->setToolBoxOpen(visible);
     }
 
