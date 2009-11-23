@@ -37,6 +37,9 @@ public:
 signals:
     void triggerChanged(const QString &oldTrigger, const QString &newTrigger);
 
+public slots:
+    void reset();
+
 protected:
     bool event(QEvent *event);
 
@@ -45,6 +48,7 @@ private slots:
 
 private:
     void changeTrigger(const QString& newTrigger);
+    void showModifiers(Qt::KeyboardModifiers modifiers);
 
     QString m_trigger;
     QHash<QString,QString> m_prettyStrings;

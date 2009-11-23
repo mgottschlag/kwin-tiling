@@ -72,7 +72,7 @@ MousePlugins::~MousePlugins()
 
 void MousePlugins::addTrigger(const QString&, const QString &trigger)
 {
-    m_ui.addButton->setText(i18n("Add Trigger"));
+    m_ui.addButton->reset();
 
     //check for duplicate
     if (m_plugins.contains(trigger)) {

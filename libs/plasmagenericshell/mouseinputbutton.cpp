@@ -29,6 +29,7 @@ MouseInputButton::MouseInputButton(QWidget *parent)
     :QPushButton(parent)
 {
     setCheckable(true);
+    reset();
     connect(this, SIGNAL(clicked()), SLOT(getTrigger()));
 
     //translations
@@ -58,6 +59,11 @@ void MouseInputButton::getTrigger()
     setText(i18n("Input here..."));
 }
 
+void MouseInputButton::reset()
+{
+    setText(i18n("Add Trigger..."));
+}
+
 bool MouseInputButton::event(QEvent *event)
 {
     if (isChecked()) {
@@ -72,12 +78,15 @@ bool MouseInputButton::event(QEvent *event)
                 event->accept();
                 return true;
             case QEvent::KeyPress:
-                if ((dynamic_cast<QKeyEvent*>(event))->key() == Qt::Key_Escape) {
+                if ((static_cast<QKeyEvent*>(event))->key() == Qt::Key_Escape) {
                     //cancel
                     setTrigger(m_trigger);
                     event->accept();
                     return true;
                 }
+            case QEvent::KeyRelease:
+                showModifiers((static_cast<QKeyEvent*>(event))->modifiers());
+                break;
             default:
                 break;
         }
@@ -99,7 +108,7 @@ void MouseInputButton::setTrigger(const QString &trigger)
     setChecked(false);
 
     if (trigger.isEmpty()) {
-        setText(i18n("No Button"));
+        reset();
     } else {
         //make it prettier and translatable
         QString button = trigger.section(';', 0, 0);
@@ -118,5 +127,28 @@ void MouseInputButton::setTrigger(const QString &trigger)
     }
 }
 
+void MouseInputButton::showModifiers(Qt::KeyboardModifiers modifiers)
+{
+    QString pretty;
+    if (modifiers == Qt::NoModifier) {
+        pretty = i18n("Input here...");
+    } else {
+        if (modifiers & Qt::ShiftModifier) {
+            pretty = m_prettyStrings.value("ShiftModifier") + "+";
+        }
+        if (modifiers & Qt::ControlModifier) {
+            pretty += m_prettyStrings.value("ControlModifier") + "+";
+        }
+        if (modifiers & Qt::AltModifier) {
+            pretty += m_prettyStrings.value("AltModifier") + "+";
+        }
+        if (modifiers & Qt::MetaModifier) {
+            pretty += m_prettyStrings.value("MetaModifier") + "+";
+        }
+        pretty += "...";
+    }
+
+    setText(pretty);
+}
 
 // vim: sw=4 sts=4 et tw=100
