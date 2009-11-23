@@ -14,12 +14,12 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2008-05-26</date>
-<releaseinfo>3.2</releaseinfo>
+<date>2009-11-23</date>
+<releaseinfo>&kde; 4.4</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
-<keyword>KControl</keyword>
+<keyword>Systemsettings</keyword>
 <keyword>kwin</keyword>
 <keyword>window</keyword>
 <keyword>border</keyword>
@@ -53,7 +53,7 @@ windows.</para>
 <para>Choose a window decoration style from the drop down box at the
 top of the screen to see a preview of it in the lower pane.</para>
 
-<para>&kde; 4.1 default window decoration is called "Ozone".</para>
+<para>&kde; 4.4 default window decoration is called "Oxygen".</para>
 
 <para>Each style has a different look, but also a different
 <quote>feel</quote>. Some have (sometimes invisible)
