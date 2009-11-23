@@ -40,6 +40,14 @@ MousePluginWidget::MousePluginWidget(const QString &pluginName, const QString &t
     m_lastConfigLocation(trigger),
     m_tempConfigParent(QString(), KConfig::SimpleConfig)
 {
+    KPluginInfo::List plugins = Plasma::ContainmentActions::listContainmentActionsInfo();
+    if (plugins.count() == 0) {
+        //panic!!
+        QLabel *fail = new QLabel(i18n("No plugins found! Check your installation."));
+        layoutHack->addWidget(fail, 0, 0);
+        return;
+    }
+
     //make us some widgets
     m_pluginList = new QComboBox();
     QToolButton *aboutButton = new QToolButton();
@@ -50,7 +58,6 @@ MousePluginWidget::MousePluginWidget(const QString &pluginName, const QString &t
 
     //plugin list
     //FIXME is there some way to share this across all the entries?
-    KPluginInfo::List plugins = Plasma::ContainmentActions::listContainmentActionsInfo();
     foreach (const KPluginInfo& plugin, plugins) {
         m_pluginList->addItem(KIcon(plugin.icon()), plugin.name(), QVariant::fromValue(plugin));
         if (plugin.pluginName() == pluginName) {
@@ -58,8 +65,12 @@ MousePluginWidget::MousePluginWidget(const QString &pluginName, const QString &t
             m_plugin = plugin;
         }
     }
+    if (! m_plugin.isValid()) {
+        //probably an empty string; pick the first one
+        m_pluginList->setCurrentIndex(0);
+        m_plugin = plugins.first();
+    }
 
-    //TODO separate setplugin function
     //I can haz config?
     m_tempConfig = KConfigGroup(&m_tempConfigParent, "test");
     if (!m_plugin.property("X-Plasma-HasConfigurationInterface").toBool()) {
@@ -75,6 +86,7 @@ MousePluginWidget::MousePluginWidget(const QString &pluginName, const QString &t
     clearButton->setIcon(KIcon("edit-delete"));
 
     //HACK
+    //FIXME what's the Right Way to do this?
     int row = layoutHack->rowCount();
     layoutHack->addWidget(m_triggerButton, row, 0);
     layoutHack->addWidget(m_pluginList, row, 1);

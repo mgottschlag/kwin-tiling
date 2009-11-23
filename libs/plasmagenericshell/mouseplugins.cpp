@@ -19,6 +19,7 @@
 
 #include "mouseplugins.h"
 #include "mousepluginwidget.h"
+#include "mouseinputbutton.h"
 
 #include <KConfigDialog>
 #include <KDebug>
@@ -33,7 +34,13 @@ MousePlugins::MousePlugins(Plasma::Containment *containment, KConfigDialog *pare
 {
     Q_ASSERT(m_containment);
     m_ui.setupUi(this);
-    QGridLayout *lay = new QGridLayout(m_ui.pluginList);
+    m_ui.addButton->setIcon(KIcon("list-add"));
+    QGridLayout *lay = qobject_cast<QGridLayout*>(m_ui.pluginList->layout());
+
+    //stupid hack because you can't *insert* rows into a gridlayout
+    lay->removeWidget(m_ui.addButton);
+    lay->removeWidget(m_ui.help);
+    lay->removeItem(m_ui.verticalSpacer);
 
     foreach (const QString &trigger, m_containment->containmentActionsTriggers()) {
         QString plugin = m_containment->containmentActions(trigger);
@@ -47,6 +54,12 @@ MousePlugins::MousePlugins(Plasma::Containment *containment, KConfigDialog *pare
         }
     }
 
+    //stupid hack because you can't *insert* rows into a gridlayout
+    lay->addWidget(m_ui.addButton, lay->rowCount(), 0);
+    lay->addWidget(m_ui.help, lay->rowCount(), 0, 1, -1);
+    lay->addItem(m_ui.verticalSpacer, lay->rowCount(), 0);
+
+    connect(m_ui.addButton, SIGNAL(triggerChanged(QString,QString)), this, SLOT(addTrigger(QString,QString)));
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(containmentPluginChanged(Plasma::Containment*)), this, SLOT(containmentPluginChanged(Plasma::Containment*)));
@@ -54,6 +67,48 @@ MousePlugins::MousePlugins(Plasma::Containment *containment, KConfigDialog *pare
 
 MousePlugins::~MousePlugins()
 {
+}
+
+void MousePlugins::addTrigger(const QString&, const QString &trigger)
+{
+    m_ui.addButton->setText(i18n("Add Trigger"));
+
+    //check for duplicate
+    if (m_plugins.contains(trigger)) {
+        int ret = KMessageBox::warningContinueCancel(this,
+                i18n("This trigger is assigned to another plugin."), QString(), KGuiItem(i18n("Reassign")));
+        if (ret == KMessageBox::Continue) {
+            //clear it from the UI
+            MousePluginWidget *w = m_plugins.value(trigger);
+            Q_ASSERT(w);
+            w->setTrigger(QString());
+        } else {
+            //don't add anything
+            return;
+        }
+    }
+
+    QGridLayout *lay = qobject_cast<QGridLayout*>(m_ui.pluginList->layout());
+
+    //stupid hack because you can't *insert* rows into a gridlayout
+    lay->removeWidget(m_ui.addButton);
+    lay->removeWidget(m_ui.help);
+    lay->removeItem(m_ui.verticalSpacer);
+
+    //insert a new row
+    MousePluginWidget *item = new MousePluginWidget(QString(), trigger, lay, this);
+    item->setContainment(m_containment);
+    connect(parent(), SIGNAL(containmentPluginChanged(Plasma::Containment*)), item, SLOT(setContainment(Plasma::Containment*)));
+    connect(item, SIGNAL(triggerChanged(QString,QString)), this, SLOT(setTrigger(QString,QString)));
+    connect(item, SIGNAL(configChanged(QString)), this, SLOT(configChanged(QString)));
+    m_plugins.insert(trigger, item); //FIXME what kind of pointer?
+    m_modifiedKeys << trigger;
+
+    //stupid hack because you can't *insert* rows into a gridlayout
+    lay->addWidget(m_ui.addButton, lay->rowCount(), 0);
+    lay->addWidget(m_ui.help, lay->rowCount(), 0, 1, -1);
+    lay->addItem(m_ui.verticalSpacer, lay->rowCount(), 0);
+
 }
 
 void MousePlugins::configChanged(const QString &trigger)

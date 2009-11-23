@@ -28,6 +28,7 @@ namespace Plasma {
 
 class KConfigDialog;
 class MousePluginWidget;
+//class MouseInputButton;
 
 class MousePlugins : public QWidget
 {
@@ -40,6 +41,7 @@ signals:
     void modified(bool isModified);
 
 public slots:
+    void addTrigger(const QString&, const QString &trigger);
     void configChanged(const QString &trigger);
     void configAccepted();
     void containmentPluginChanged(Plasma::Containment *c);
@@ -56,6 +58,7 @@ private:
     Plasma::Containment *m_containment;
     QHash<QString, MousePluginWidget*> m_plugins;
     QSet<QString> m_modifiedKeys;
+//    MouseInputButton *m_addButton;
 };
 
 #endif
