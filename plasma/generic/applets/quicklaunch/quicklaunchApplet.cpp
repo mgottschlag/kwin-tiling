@@ -397,7 +397,7 @@ QList<QAction*> QuicklaunchApplet::contextActions(QuicklaunchIcon *icon)
 {
     QList<QAction*> tempActions;
     if (!m_addAction) {
-        m_addAction = new QAction(KIcon("list-add"), i18n("Add Icon..."), this);
+        m_addAction = new QAction(KIcon("list-add"), i18n("Add Launcher..."), this);
         connect(m_addAction, SIGNAL(triggered(bool)), this, SLOT(showAddInterface()));
     }
 
@@ -406,7 +406,7 @@ QList<QAction*> QuicklaunchApplet::contextActions(QuicklaunchIcon *icon)
     if (icon) {
         m_rightClickedIcon = icon;
         if (!m_removeAction) {
-            m_removeAction = new QAction(KIcon("list-remove"), i18n("Remove Icon"), this);
+            m_removeAction = new QAction(KIcon("list-remove"), i18n("Remove Launcher"), this);
             connect(m_removeAction, SIGNAL(triggered(bool)), this, SLOT(removeCurrentIcon()));
         }
         tempActions << m_removeAction;
