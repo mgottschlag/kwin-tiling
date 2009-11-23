@@ -156,6 +156,11 @@ QStringList PlasmaAppletItem::mimeTypes() const
     return types;
 }
 
+PlasmaAppletItemModel* PlasmaAppletItem::appletItemModel()
+{
+    return m_model;
+}
+
 //PlasmaAppletItemModel
 
 PlasmaAppletItemModel::PlasmaAppletItemModel(KConfigGroup configGroup, QObject * parent) :

@@ -131,6 +131,7 @@ private slots:
 
     void animateToolTipMove();
     void toolTipMoveTimeLineFrameChanged(int frame);
+    void rowsAboutToBeRemoved(const QModelIndex& parent, int row, int column);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);

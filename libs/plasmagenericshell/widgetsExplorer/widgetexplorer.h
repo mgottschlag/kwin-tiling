@@ -114,11 +114,6 @@ public Q_SLOTS:
     void addApplet(PlasmaAppletItem *appletItem);
 
     /**
-     * Destroy all applets with this name
-     */
-    void destroyApplets(const QString &name);
-
-    /**
      * Launches a download dialog to retrieve new applets from the Internet
      *
      * @arg type the type of widget to download; an empty string means the default

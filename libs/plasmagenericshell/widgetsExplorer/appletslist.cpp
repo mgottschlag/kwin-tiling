@@ -197,6 +197,8 @@ void AppletsListWidget::setItemModel(PlasmaAppletItemModel *model)
 
     connect(m_modelFilterItems, SIGNAL(searchTermChanged(QString)), this, SLOT(updateList()));
     connect(m_modelFilterItems, SIGNAL(filterChanged()), this, SLOT(updateList()));
+    connect(m_modelItems, SIGNAL(rowsAboutToBeRemoved(const QModelIndex&, int, int)),
+            this, SLOT(rowsAboutToBeRemoved(const QModelIndex&, int, int)));
 
     updateList();
 }
@@ -295,7 +297,8 @@ void AppletsListWidget::appletIconHoverEnter(AppletIconWidget *applet)
         m_toolTip->setAppletIconWidget(applet);
         m_toolTipAppearTimer.start(TOOLTIP_APPEAR_DELAY, this);
     } else {
-        if(!(m_toolTip->appletIconWidget()->appletItem()->pluginName() ==
+        if(m_toolTip->appletIconWidget()->appletItem() &&
+            !(m_toolTip->appletIconWidget()->appletItem()->pluginName() ==
             applet->appletItem()->pluginName())) {
             m_toolTip->setAppletIconWidget(applet);
 
@@ -353,7 +356,7 @@ void AppletsListWidget::setToolTipPosition()
         animateToolTipMove();
     } else {
         m_toolTip->move(toolTipMoveTo);
-    } 
+    }
 }
 
 void AppletsListWidget::insertAppletIcon(AppletIconWidget *appletIconWidget)
@@ -445,7 +448,7 @@ void AppletsListWidget::updateList()
     for (int i = 0; i < m_modelFilterItems->rowCount(); i++) {
         PlasmaAppletItem *appletItem = static_cast<PlasmaAppletItem*>(getItemByProxyIndex(m_modelFilterItems->index(i, 0)));
 
-        if (appletItem) {
+        if (appletItem && m_allAppletsHash.contains(appletItem->id())) {
             AppletIconWidget *appletIconWidget = m_allAppletsHash.value(appletItem->id());
             insertAppletIcon(appletIconWidget);
             m_currentAppearingAppletsOnList.append(appletIconWidget);
@@ -822,3 +825,14 @@ int AppletsListWidget::iconSize() const
     return m_iconSize;
 }
 
+void AppletsListWidget::rowsAboutToBeRemoved(const QModelIndex& parent, int row, int column)
+{
+    Q_UNUSED(parent)
+    Q_UNUSED(column)
+    PlasmaAppletItem *item = dynamic_cast<PlasmaAppletItem*>(m_modelItems->item(row));
+    if (item) {
+        m_allAppletsHash.remove(item->id());
+        updateList();
+        m_toolTip->hide();
+    }
+}

@@ -56,6 +56,7 @@ public:
     int running() const;
     bool isLocal() const;
     void setFavorite(bool favorite);
+    PlasmaAppletItemModel* appletItemModel();
 
     //set how many instances of this applet are running
     void setRunning(int count);

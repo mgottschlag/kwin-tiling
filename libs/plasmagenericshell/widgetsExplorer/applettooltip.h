@@ -31,6 +31,7 @@
 #include <plasma/widgets/iconwidget.h>
 #include <plasma/widgets/pushbutton.h>
 #include <plasma/widgets/textbrowser.h>
+#include <plasma/widgets/label.h>
 
 class AppletInfoWidget : public QGraphicsWidget {
 
@@ -46,13 +47,17 @@ class AppletInfoWidget : public QGraphicsWidget {
     public Q_SLOTS:
         void updateInfo();
 
+    protected Q_SLOTS:
+        void uninstall();
+
     private:
         PlasmaAppletItem *m_appletItem;
         QGraphicsLinearLayout *m_mainLayout;
         QGraphicsLinearLayout *m_mainVerticalLayout;
 
         Plasma::IconWidget *m_iconWidget;
-        Plasma::TextBrowser *m_nameLabel;
+        Plasma::Label *m_nameLabel;
+        Plasma::Label *m_versionLabel;
         Plasma::TextBrowser *m_aboutLabel;
         Plasma::PushButton *m_uninstallButton;
 };

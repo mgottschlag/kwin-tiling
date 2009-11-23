@@ -365,36 +365,6 @@ void WidgetExplorer::addApplet(PlasmaAppletItem *appletItem)
     d->containment->addApplet(appletItem->pluginName(), appletItem->arguments());
 }
 
-void WidgetExplorer::destroyApplets(const QString &name)
-{
-    if (!d->containment) {
-        return;
-    }
-
-    Plasma::Corona *c = d->containment->corona();
-
-    //we've tried our best to get a corona
-    //we don't want just one containment, we want them all
-    if (!c) {
-        kDebug() << "can't happen";
-        return;
-    }
-
-    foreach (Containment *containment, c->containments()) {
-        QList<Applet*> applets = containment->applets();
-        foreach (Applet *applet, applets) {
-            if (applet->pluginName() == name) {
-                d->appletNames.remove(applet);
-                applet->disconnect(this);
-                applet->destroy();
-            }
-        }
-    }
-
-    d->runningApplets.remove(name);
-    d->itemModel.setRunningApplets(name, 0);
-}
-
 void WidgetExplorer::downloadWidgets(const QString &type)
 {
     PackageStructure *installer = 0;
