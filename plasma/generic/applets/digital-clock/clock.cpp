@@ -343,6 +343,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     const QString fakeTimeString = KGlobal::locale()->formatTime(QTime(23,59,59), m_showSeconds);
     QFont smallFont = KGlobalSettings::smallestReadableFont();
 
+    //create the string for the date and/or the timezone
     if (m_showDate || showTimezone()) {
         QString dateString;
 
@@ -399,8 +400,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         // magic 10 is for very big spaces,
         // where there's enough space to grow without harming time space
         QFontMetrics fm(smallFont);
-        // kDebug(96669) << "=========";
-        // kDebug(96669) << "contentsRect: " << contentsRect;
 
         if (contentsRect.height() > contentsRect.width() * 2) {
             //kDebug() << Plasma::Vertical << contentsRect.height() <<contentsRect.width() * 2;
@@ -414,9 +413,18 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                 smallFont.setPixelSize(qMax(contentsRect.height()/6, fm.ascent()));
             } else if (formFactor() == Plasma::Horizontal) {
                 smallFont.setPixelSize(qMax(qMin(contentsRect.height(), contentsRect.width())*2/7, fm.ascent()));
+
+                //we want to write the date always on one line
+                fm = QFontMetrics(smallFont);
+                const int tempWidth = fm.width(dateString);
+                if(tempWidth > contentsRect.width()){
+                    smallFont.setPixelSize((contentsRect.width() * smallFont.pixelSize())/tempWidth);
+                }
+
             } else {
                 smallFont.setPixelSize(qMax(qMin(contentsRect.height(), contentsRect.width())/8, KGlobalSettings::smallestReadableFont().pointSize()));
             }
+
             m_dateRect = preparePainter(p, contentsRect, smallFont, dateString);
         }
 
