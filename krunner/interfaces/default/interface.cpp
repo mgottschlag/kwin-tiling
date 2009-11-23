@@ -467,7 +467,7 @@ void Interface::run(ResultItem *item)
 
 void Interface::runDefaultResultItem()
 {
-    if (m_queryRunning) {
+    if (m_queryRunning || m_delayedQueryTimer.isActive()) {
         m_delayedRun = true;
     } else {
         run(m_resultsScene->defaultResultItem());
