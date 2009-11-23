@@ -50,8 +50,8 @@ MousePluginWidget::MousePluginWidget(const QString &pluginName, const QString &t
 
     //make us some widgets
     m_pluginList = new QComboBox();
-    QToolButton *aboutButton = new QToolButton();
-    QToolButton *clearButton = new QToolButton();
+    m_aboutButton = new QToolButton();
+    m_clearButton = new QToolButton();
     m_triggerButton = new MouseInputButton();
     m_configButton = new QToolButton();
     //m_ui.description->setText(plugin.comment());
@@ -80,10 +80,10 @@ MousePluginWidget::MousePluginWidget(const QString &pluginName, const QString &t
     setTrigger(trigger);
 
     //pretty icons for the buttons
-    aboutButton->setIcon(KIcon("dialog-information"));
+    m_aboutButton->setIcon(KIcon("dialog-information"));
     m_triggerButton->setIcon(KIcon("input-mouse"));
     m_configButton->setIcon(KIcon("configure"));
-    clearButton->setIcon(KIcon("edit-delete"));
+    m_clearButton->setIcon(KIcon("edit-delete"));
 
     //HACK
     //FIXME what's the Right Way to do this?
@@ -91,15 +91,15 @@ MousePluginWidget::MousePluginWidget(const QString &pluginName, const QString &t
     layoutHack->addWidget(m_triggerButton, row, 0);
     layoutHack->addWidget(m_pluginList, row, 1);
     layoutHack->addWidget(m_configButton, row, 2);
-    layoutHack->addWidget(aboutButton, row, 3);
-    layoutHack->addWidget(clearButton, row, 4);
+    layoutHack->addWidget(m_aboutButton, row, 3);
+    layoutHack->addWidget(m_clearButton, row, 4);
 
     //connect
     connect(m_pluginList, SIGNAL(currentIndexChanged(int)), this, SLOT(setPlugin(int)));
     connect(m_triggerButton, SIGNAL(triggerChanged(QString,QString)), this, SLOT(changeTrigger(QString,QString)));
     connect(m_configButton, SIGNAL(clicked()), this, SLOT(configure()));
-    connect(clearButton, SIGNAL(clicked()), this, SLOT(clearTrigger()));
-    connect(aboutButton, SIGNAL(clicked()), this, SLOT(showAbout()));
+    connect(m_clearButton, SIGNAL(clicked()), this, SLOT(clearTrigger()));
+    connect(m_aboutButton, SIGNAL(clicked()), this, SLOT(showAbout()));
 }
 
 MousePluginWidget::~MousePluginWidget()
@@ -149,6 +149,14 @@ void MousePluginWidget::clearTrigger()
     QString oldTrigger = m_triggerButton->trigger();
     setTrigger(QString());
     emit triggerChanged(oldTrigger, QString());
+
+    //byebye!
+    m_triggerButton->deleteLater();
+    m_pluginList->deleteLater();
+    m_configButton->deleteLater();
+    m_aboutButton->deleteLater();
+    m_clearButton->deleteLater();
+    this->deleteLater();
 }
 
 void MousePluginWidget::changeTrigger(const QString &oldTrigger, const QString& newTrigger)

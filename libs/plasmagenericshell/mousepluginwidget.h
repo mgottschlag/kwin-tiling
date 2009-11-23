@@ -66,6 +66,8 @@ private:
     QComboBox *m_pluginList;
     MouseInputButton *m_triggerButton;
     QToolButton *m_configButton;
+    QToolButton *m_aboutButton;
+    QToolButton *m_clearButton;
     QDialog *m_configDlg;
 
     KPluginInfo m_plugin;
