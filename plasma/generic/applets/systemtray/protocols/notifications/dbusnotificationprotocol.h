@@ -50,6 +50,7 @@ private slots:
     void notificationDeleted(const QString &source);
     void relayAction(const QString &source, const QString &actionId);
     void unregisterNotification(const QString&);
+    void hideNotification(const QString &source);
 
 private:
     Plasma::DataEngine *m_engine;

@@ -61,7 +61,7 @@ void DBusNotificationProtocol::init()
     connect(m_engine, SIGNAL(sourceAdded(const QString&)),
             this, SLOT(prepareNotification(const QString&)));
     connect(m_engine, SIGNAL(sourceRemoved(const QString&)),
-            this, SLOT(removeNotification(const QString&)));
+            this, SLOT(hideNotification(const QString&)));
 }
 
 
@@ -143,6 +143,13 @@ void DBusNotificationProtocol::unregisterNotification(const QString &source)
     Plasma::Service *service = m_engine->serviceForSource(source);
     KConfigGroup op = service->operationDescription("userClosed");
     service->startOperationCall(op);
+}
+
+void DBusNotificationProtocol::hideNotification(const QString &source)
+{
+    if (m_notifications.contains(source)) {
+        m_notifications.value(source)->hide();
+    }
 }
 
 void DBusNotificationProtocol::removeNotification(const QString &source)

@@ -49,6 +49,7 @@
 #include <plasma/theme.h>
 #include <plasma/dataenginemanager.h>
 #include <plasma/dataengine.h>
+#include <Plasma/TabBar>
 
 #include "config.h"
 #ifdef HAVE_LIBXSS      // Idle detection.
@@ -79,6 +80,8 @@ static const int completedJobExpireDelay = 5 * 60 * 1000;
 Applet::Applet(QObject *parent, const QVariantList &arguments)
     : Plasma::PopupApplet(parent, arguments),
       m_taskArea(0),
+      m_notificationBarExtenderItem(0),
+      m_notificationBar(0),
       m_background(0),
       m_jobSummaryWidget(0),
       m_timerId(0)
@@ -227,6 +230,83 @@ void Applet::initExtenderTask(bool create)
         m_taskArea->removeTask(s_manager->extenderTask());
         QGraphicsWidget *widget = s_manager->extenderTask(false)->widget(this, false);
         widget->deleteLater();
+    }
+}
+
+void Applet::syncNotificationBarNeeded()
+{
+    if (s_manager->notifications().count() > 0) {
+        if (!m_notificationBarExtenderItem) {
+            m_notificationBarExtenderItem = new Plasma::ExtenderItem(extender());
+            m_notificationBarExtenderItem->setTitle(i18n("Recent notifications"));
+            m_notificationBarExtenderItem->setIcon("dialog-information");
+            QGraphicsWidget *widget = new QGraphicsWidget(m_notificationBarExtenderItem);
+            QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(widget);
+            lay->addStretch();
+            m_notificationBar = new Plasma::TabBar(widget);
+            m_notificationBar->nativeWidget()->setMaximumHeight(KIconLoader::SizeSmallMedium);
+            lay->addItem(m_notificationBar);
+            lay->addStretch();
+            m_notificationBarExtenderItem->setWidget(widget);
+            m_notificationBar->addTab(KIcon("dialog-information"), i18nc("Show all recent notifications", "Recent"));
+            connect(m_notificationBar, SIGNAL(currentChanged(int)), this, SLOT(showTaskNotifications(int)));
+        } else {
+            for (int i = 1; i < m_notificationBar->count(); ++i) {
+                if (!m_notificationsForApp.contains(m_notificationBar->tabText(i))) {
+                    m_notificationBar->removeTab(i);
+                }
+            }
+        }
+    } else if (m_notificationBarExtenderItem) {
+        m_notificationBarExtenderItem->destroy();
+        m_notificationBarExtenderItem = 0;
+        m_notificationBar = 0;
+    }
+}
+
+void Applet::notificationDestroyed(SystemTray::Notification *notification)
+{
+    if (notification) {
+        const QString name = notification->applicationName();
+        if (m_notificationsForApp.contains(name)) {
+            m_notificationsForApp[name].removeAll(notification);
+            if (m_notificationsForApp.value(name).count() == 0) {
+                m_notificationsForApp.remove(name);
+            }
+        }
+    }
+
+    syncNotificationBarNeeded();
+}
+
+void Applet::showTaskNotifications(int barIndex)
+{
+    QList<Notification *> notifications;
+    if (barIndex > 0) {
+        foreach (Notification *notification, s_manager->notifications()) {
+            if (notification->applicationName() == m_notificationBar->tabText(barIndex)) {
+                notifications.append(notification);
+            }
+        }
+    } else {
+        foreach (Notification *notification, s_manager->notifications()) {
+            if (!notification->expired()) {
+                notifications.append(notification);
+            }
+        }
+    }
+
+    foreach (Plasma::ExtenderItem *item, extender()->items()) {
+        if (dynamic_cast<NotificationWidget *>(item->widget())) {
+            item->destroy();
+        }
+    }
+
+    foreach (Notification *notification, notifications) {
+        NotificationWidget *notificationWidget = addNotification(notification);
+        if (barIndex > 0) {
+            notificationWidget->setAutoHide(false);
+        }
     }
 }
 
@@ -647,14 +727,43 @@ void Applet::addDefaultApplets()
     }
 }
 
-void Applet::addNotification(Notification *notification)
+NotificationWidget *Applet::addNotification(Notification *notification)
 {
+    if (sender() == s_manager && m_notificationBar) {
+        m_notificationBar->setCurrentIndex(0);
+    }
     Plasma::ExtenderItem *extenderItem = new Plasma::ExtenderItem(extender());
     extenderItem->config().writeEntry("type", "notification");
-    extenderItem->setWidget(new NotificationWidget(notification, extenderItem));
+    NotificationWidget *notificationWidget = new NotificationWidget(notification, extenderItem);
+    extenderItem->setWidget(notificationWidget);
 
     showPopup(m_autoHideTimeout);
     emit activate();
+
+    syncNotificationBarNeeded();
+
+    bool found = false;
+    for (int i = 0; i < m_notificationBar->count(); ++i) {
+        if (m_notificationBar->tabText(i) == notification->applicationName()) {
+            found = true;
+            break;
+        }
+    }
+
+    QList<Notification *> &appNotifications = m_notificationsForApp[notification->applicationName()];
+    appNotifications.append(notification);
+    //FIXME: arbitrary limit
+    if (appNotifications.count() > 15) {
+        appNotifications.pop_front();
+    }
+
+    if (!found) {
+        m_notificationBar->addTab(notification->applicationIcon(), notification->applicationName());
+    }
+
+    connect(notification, SIGNAL(destroyed(SystemTray::Notification *)), this, SLOT(notificationDestroyed(SystemTray::Notification *)));
+
+    return notificationWidget;
 }
 
 void Applet::addJob(Job *job)

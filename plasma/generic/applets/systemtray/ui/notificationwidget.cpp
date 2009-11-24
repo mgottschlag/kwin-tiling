@@ -30,6 +30,7 @@
 #include <QtGui/QFontMetrics>
 #include <QtGui/QGraphicsSceneResizeEvent>
 #include <QtGui/QPainter>
+#include <QAction>
 
 #include <KColorScheme>
 #include <KPushButton>
@@ -46,6 +47,7 @@ public:
         : q(q),
           notification(0),
           destroyOnClose(true),
+          autoHide(true),
           body(new QGraphicsTextItem(q)),
           actionsWidget(0),
           signalMapper(new QSignalMapper(q))
@@ -62,6 +64,7 @@ public:
 
     SystemTray::Notification *notification;
     bool destroyOnClose;
+    bool autoHide;
 
     QString message;
     QGraphicsTextItem *body;
@@ -96,6 +99,17 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, P
                 this, SLOT(updateNotification()));
         connect(notification, SIGNAL(destroyed()),
                 this, SLOT(destroy()));
+        connect(notification, SIGNAL(hideRequested()),
+                this, SLOT(destroy()));
+
+        extenderItem->showCloseButton();
+        QAction *closeAction = closeAction = extenderItem->action("close");
+        if (closeAction) {
+            connect(closeAction, SIGNAL(triggered()),
+                    notification, SLOT(deleteLater()));
+        }
+
+
 
         d->updateNotification();
     } else {
@@ -112,11 +126,31 @@ NotificationWidget::~NotificationWidget()
 {
     if (d->notification) {
         // we were destroyed by the user, and the notification still exists
-        d->notification->remove();
+        //d->notification->remove();
     }
 
     delete d;
 }
+
+void NotificationWidget::setAutoHide(bool autoHide)
+{
+    if (autoHide != d->autoHide) {
+        if (autoHide) {
+            connect(d->notification, SIGNAL(hideRequested()),
+                    this, SLOT(destroy()));
+        } else {
+            disconnect(d->notification, SIGNAL(hideRequested()),
+                       this, SLOT(destroy()));
+        }
+        d->autoHide = autoHide;
+    }
+}
+
+bool NotificationWidget::autoHide() const
+{
+    return d->autoHide;
+}
+
 
 void NotificationWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {

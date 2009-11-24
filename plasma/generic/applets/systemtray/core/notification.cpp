@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 #include "notification.h"
+#include "task.h"
 
 #include <QImage>
 #include <QtCore/QTimer>
@@ -35,16 +36,24 @@ class Notification::Private
 {
 public:
     Private()
-        : timeout(0)
+        : timeout(0),
+          owner(0),
+          hideTimer(0),
+          expired(false)
     {
     }
 
+    QString identifier;
     QString applicationName;
     QIcon applicationIcon;
     QString message;
     QString summary;
     int timeout;
     QImage image;
+    Task *owner;
+    QTimer *deleteTimer;
+    QTimer *hideTimer;
+    bool expired;
 
     QHash<QString, QString> actions;
     QStringList actionOrder;
@@ -55,6 +64,9 @@ Notification::Notification(QObject *parent)
     : QObject(parent),
       d(new Private)
 {
+    d->deleteTimer = new QTimer(this);
+    d->deleteTimer->setSingleShot(true);
+    connect(d->deleteTimer, SIGNAL(timeout()), this, SLOT(deleteLater()));
 }
 
 
@@ -131,9 +143,17 @@ void Notification::setImage(QImage image)
 void Notification::setTimeout(int timeout)
 {
     d->timeout = timeout;
+    //keep it available for 30 minutes
+    d->deleteTimer->start(1800000);
+
     if (timeout) {
-        QTimer::singleShot(timeout, this, SLOT(deleteLater()));
+        if (!d->hideTimer) {
+            d->hideTimer = new QTimer(this);
+            d->hideTimer->setSingleShot(true);
+            connect(d->hideTimer, SIGNAL(timeout()), this, SLOT(hide()));
+        }
     }
+    d->hideTimer->start(d->timeout);
 }
 
 
@@ -170,6 +190,17 @@ void Notification::triggerAction(const QString &actionId)
 void Notification::remove()
 {
     kDebug() << "remove requested but no handler implemented";
+}
+
+void Notification::hide()
+{
+    d->expired = true;
+    emit hideRequested(this);
+}
+
+bool Notification::expired() const
+{
+    return d->expired;
 }
 
 }

@@ -30,6 +30,14 @@
 
 #include "../core/task.h"
 
+namespace Plasma
+{
+class ExtenderItem;
+class TabBar;
+}
+
+class NotificationWidget;
+
 namespace SystemTray
 {
 
@@ -70,12 +78,15 @@ private slots:
     void configAccepted();
     void propogateSizeHintChange(Qt::SizeHint which);
     void checkSizes();
-    void addNotification(SystemTray::Notification *notification);
+    NotificationWidget *addNotification(SystemTray::Notification *notification);
     void addJob(SystemTray::Job *job);
     void clearAllCompletedJobs();
     void finishJob(SystemTray::Job *job);
     void open(const QString &url);
     void addDefaultApplets();
+    void showTaskNotifications(int barIndex);
+    void syncNotificationBarNeeded();
+    void notificationDestroyed(SystemTray::Notification *notification);
 
 private:
     void createJobGroups();
@@ -93,11 +104,16 @@ private:
     QSet<Task::Category> m_shownCategories;
     QDateTime m_lastActivity;
 
+    Plasma::ExtenderItem *m_notificationBarExtenderItem;
+    Plasma::TabBar *m_notificationBar;
+
     Plasma::FrameSvg *m_background;
     Plasma::Svg *m_icons;
     JobTotalsWidget *m_jobSummaryWidget;
     int m_autoHideTimeout;
     int m_timerId;
+
+    QHash<QString, QList<Notification*> > m_notificationsForApp;
 
     Ui::ProtocolsConfig m_notificationUi;
     Ui::AutoHideConfig m_autoHideUi;

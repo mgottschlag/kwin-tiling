@@ -50,9 +50,12 @@ public:
     QHash<QString, QString> actions() const;
     QStringList actionOrder() const;
 
+    bool expired() const;
+
 public slots:
     virtual void triggerAction(const QString &actionId);
     virtual void remove();
+    void hide();
 
 signals:
     void changed(SystemTray::Notification *notification = 0);
@@ -61,6 +64,11 @@ signals:
      * Emitted when the notification is about to be destroyed
      **/
     void destroyed(SystemTray::Notification *notification = 0);
+
+    /**
+     * emitted when the notification wants to hide itself
+     */
+    void hideRequested(SystemTray::Notification *notification = 0);
 
 protected:
     void setApplicationName(const QString &applicationName);
