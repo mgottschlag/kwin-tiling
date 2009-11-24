@@ -62,6 +62,7 @@ class KRunnerDialog : public KDialog
         bool event(QEvent *event);
         void showEvent(QShowEvent *);
         void hideEvent(QHideEvent *);
+        void moveEvent(QMoveEvent *);
 
         void positionOnScreen();
         virtual void setStaticQueryMode(bool staticQuery);

@@ -88,10 +88,12 @@ KRunnerApp::~KRunnerApp()
 void KRunnerApp::cleanUp()
 {
     disconnect(KRunnerSettings::self(), SIGNAL(configChanged()), this, SLOT(reloadConfig()));
+    kDebug() << "deleting interface";
     delete m_interface;
     m_interface = 0;
     delete m_runnerManager;
     m_runnerManager = 0;
+    KGlobal::config()->sync();
 }
 
 void KRunnerApp::initialize()
@@ -115,7 +117,6 @@ void KRunnerApp::initialize()
             m_interface = new QsDialog(m_runnerManager);
             break;
     }
-    m_interface->setFreeFloating(KRunnerSettings::freeFloating());
 
     new AppAdaptor(this);
     QDBusConnection::sessionBus().registerObject( "/App", this );

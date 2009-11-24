@@ -44,6 +44,7 @@
 
 #include "configdialog.h"
 #include "krunnerapp.h"
+#include "krunnersettings.h"
 
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
@@ -55,7 +56,7 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
       m_configDialog(0),
       m_lastPressPos(-1),
       m_oldScreen(-1),
-      m_floating(true), // we'll set it to false in a moment
+      m_floating(!KRunnerSettings::freeFloating()),
       m_resizing(false),
       m_rightResize(false),
       m_vertResize(false)
@@ -76,9 +77,7 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
 
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("dialogs/krunner");
-    setFreeFloating(false);
-
-    m_iconSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+    setFreeFloating(KRunnerSettings::freeFloating());
 
     connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)),
             this, SLOT(screenRemoved(int)));
@@ -96,6 +95,16 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
 
 KRunnerDialog::~KRunnerDialog()
 {
+    kDebug( )<< "!!!!!!!!!! deleting" << m_floating << m_screenPos.count();
+    if (!m_floating) {
+        KConfigGroup cg(KGlobal::config(), "EdgePositions");
+        QHashIterator<int, QPoint> it(m_screenPos);
+        while (it.hasNext()) {
+            it.next();
+            kDebug() << "saving" << "Screen" + QString::number(it.key()) << it.value();
+            cg.writeEntry("Screen" + QString::number(it.key()), it.value());
+        }
+    }
 }
 
 void KRunnerDialog::screenRemoved(int screen)
@@ -114,7 +123,21 @@ void KRunnerDialog::screenChanged(Kephal::Screen* screen)
 void KRunnerDialog::resetScreenPos()
 {
     if (!m_floating) {
-        m_screenPos.clear();
+        QHashIterator<int, QPoint> it(m_screenPos);
+        QRect r = KWindowSystem::workArea();
+        while (it.hasNext()) {
+            QPoint p = it.next().value();
+            if (r.left() < p.x()) {
+                p.setX(r.left());
+            } else if (r.right() > p.x() + width() - 1) {
+                p.setX(r.right() - width());
+            }
+
+            if (r.top() > p.y()) {
+                p.setY(r.top());
+            }
+        }
+
         m_oldScreen = -1;
         if (isVisible()) {
             positionOnScreen();
@@ -126,34 +149,38 @@ void KRunnerDialog::positionOnScreen()
 {
     int screen = Kephal::ScreenUtils::primaryScreenId();
     if (Kephal::ScreenUtils::numScreens() > 1) {
-        screen = Kephal::ScreenUtils::screenId(QCursor::pos());
+        if (isVisible()) {
+            screen = Kephal::ScreenUtils::screenId(geometry().center());
+        } else {
+            screen = Kephal::ScreenUtils::screenId(QCursor::pos());
+        }
     }
 
-    QRect r;
+    QRect r = Kephal::ScreenUtils::screenGeometry(screen);
     if (m_oldScreen != screen) {
-        //kDebug() << "old screen be the new screen";
-        m_screenPos.insert(m_oldScreen, pos());
-        m_oldScreen = screen;
+        kDebug() << "old screen be the new screen" << m_oldScreen << screen;
+        if (m_oldScreen != -1) {
+            m_screenPos.insert(m_oldScreen, pos());
+        }
 
+        m_oldScreen = screen;
         if (m_screenPos.contains(screen)) {
             kDebug() << "moving to" << m_screenPos[screen];
             move(m_screenPos[screen]);
-            return;
-        }
+        } else {
+            const int w = width();
+            const int dx = r.left() + (r.width() / 2) - (w / 2);
+            int dy = r.top();
+            if (m_floating) {
+                dy += r.height() / 3;
+            }
 
-        r = Kephal::ScreenUtils::screenGeometry(screen);
-        const int w = width();
-        const int dx = r.left() + (r.width() / 2) - (w / 2);
-        int dy = r.top();
-        if (m_floating) {
-            dy += r.height() / 3;
+            move(dx, dy);
         }
+    }
 
-        move(dx, dy);
-
-        if (!m_floating) {
-            checkBorders(r);
-        }
+    if (!m_floating) {
+        checkBorders(r);
     }
 
     show();
@@ -166,16 +193,12 @@ void KRunnerDialog::positionOnScreen()
         Plasma::WindowEffects::slideWindow(this, Plasma::TopEdge);
     }
 
-    if (m_oldScreen != screen) {
-        if (m_floating) {
-            m_screenPos.insert(screen, pos());
-        } else {
-            m_screenPos.insert(screen, QPoint(x(), r.top()));
-        }
-    }
-
-    m_oldScreen = screen;
     //kDebug() << "moving to" << m_screenPos[screen];
+}
+
+void KRunnerDialog::moveEvent(QMoveEvent *)
+{
+    m_screenPos.insert(m_oldScreen, pos());
 }
 
 void KRunnerDialog::setFreeFloating(bool floating)
@@ -185,13 +208,26 @@ void KRunnerDialog::setFreeFloating(bool floating)
     }
 
     m_floating = floating;
+    m_screenPos.clear();
+    m_oldScreen = -1;
 
     if (m_floating) {
         m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+    } else {
+        // load the positions for each screen from our config
+        const int numScreens = Kephal::ScreenUtils::numScreens();
+        KConfigGroup cg(KGlobal::config(), "EdgePositions");
+        for (int i = 0; i < numScreens; ++i) {
+            QPoint p = cg.readEntry("Screen" + QString::number(i), QPoint());
+            if (!p.isNull()) {
+                QRect r = Kephal::ScreenUtils::screenGeometry(i);
+                m_screenPos.insert(i, QPoint(p.x(), r.top()));
+            }
+        }
     }
 
-    m_screenPos.clear();
-    m_oldScreen = -1;
+    m_iconSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+
     if (isVisible()) {
         positionOnScreen();
     }
