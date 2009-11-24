@@ -99,7 +99,6 @@ void KSMServer::restoreSession( const QString &sessionName )
 
     int count =  configSessionGroup.readEntry( "count", 0 );
     appsToStart = count;
-    publishProgress( appsToStart, true );
     upAndRunning( "ksmserver" );
     connect( klauncherSignals, SIGNAL( autoStart0Done()), SLOT( autoStart0Done()));
     connect( klauncherSignals, SIGNAL( autoStart1Done()), SLOT( autoStart1Done()));
@@ -132,7 +131,6 @@ void KSMServer::startDefaultSession()
         return;
     state = LaunchingWM;
     sessionGroup = "";
-    publishProgress( 0, true );
     upAndRunning( "ksmserver" );
     connect( klauncherSignals, SIGNAL( autoStart0Done()), SLOT( autoStart0Done()));
     connect( klauncherSignals, SIGNAL( autoStart1Done()), SLOT( autoStart1Done()));
@@ -275,7 +273,6 @@ void KSMServer::tryRestoreNext()
     KConfigGroup config(KGlobal::config(), sessionGroup );
 
     while ( lastAppStarted < appsToStart ) {
-        publishProgress ( appsToStart - lastAppStarted );
         lastAppStarted++;
         QString n = QString::number(lastAppStarted);
         QStringList restartCommand = config.readEntry( QString("restartCommand")+n, QStringList() );
@@ -300,7 +297,6 @@ void KSMServer::tryRestoreNext()
 
     appsToStart = 0;
     lastIdStarted.clear();
-    publishProgress( 0 );
 
     autoStart2();
 }
@@ -458,23 +454,6 @@ void KSMServer::resumeStartupInternal()
           break;
     }
 }
-
-void KSMServer::publishProgress( int progress, bool max )
-{
-    Q_UNUSED( progress );
-    Q_UNUSED( max );
-    // KSplash now goes away before restoring of session-saved apps starts, in order
-    // to make the startup visually faster, so this is not needed now. Also, there's
-    // no DBUS interface anymore.
-#if 0
-    org::kde::KSplash ksplash("org.kde.ksplash", "/KSplash", QDBusConnection::sessionBus());
-    if(max)
-	ksplash.setMaxProgress(progress);
-    else
-        ksplash.setProgress(progress);
-#endif
-}
-
 
 void KSMServer::upAndRunning( const QString& msg )
 {

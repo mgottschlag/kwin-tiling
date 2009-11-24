@@ -237,7 +237,6 @@ private:
 
     // ksplash interface
     void upAndRunning( const QString& msg );
-    void publishProgress( int progress, bool max  = false  );
 
     // sequential startup
     int appsToStart;
