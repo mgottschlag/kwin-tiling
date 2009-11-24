@@ -82,6 +82,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <klauncher_iface.h>
 #include "kcminit_interface.h"
 
+#define KSMSERVER_STARTUP_DEBUG1
+
+#ifdef KSMSERVER_STARTUP_DEBUG1
+static QTime t;
+#endif
+
 /*!  Restores the previous session. Ensures the window manager is
   running (if specified).
  */
@@ -89,6 +95,9 @@ void KSMServer::restoreSession( const QString &sessionName )
 {
     if( state != Idle )
         return;
+#ifdef KSMSERVER_STARTUP_DEBUG1
+    t.start();
+#endif
     state = LaunchingWM;
 
     kDebug( 1218 ) << "KSMServer::restoreSession " << sessionName;
@@ -130,6 +139,9 @@ void KSMServer::startDefaultSession()
     if( state != Idle )
         return;
     state = LaunchingWM;
+#ifdef KSMSERVER_STARTUP_DEBUG1
+    t.start();
+#endif
     sessionGroup = "";
     upAndRunning( "ksmserver" );
     connect( klauncherSignals, SIGNAL( autoStart0Done()), SLOT( autoStart0Done()));
@@ -160,6 +172,24 @@ void KSMServer::clientSetProgram( KSMClient* client )
 {
     if( client->program() == wm )
         autoStart0();
+#ifndef KSMSERVER_STARTUP_DEBUGl
+    if( state == Idle )
+        {
+        static int cnt = 0;
+        if( client->program() == "gedit" && ( cnt == 0 ))
+            ++cnt;
+        else if( client->program() == "konqueror" && ( cnt == 1 ))
+            ++cnt;
+        else if( client->program() == "kspaceduel" && ( cnt == 2 ))
+            ++cnt;
+        else if( client->program() == "gedit" && ( cnt == 3 ))
+            ++cnt;
+        else
+            cnt = 0;
+        if( cnt == 4 )
+            KMessageBox::information( NULL, "drat" );
+        }
+#endif
 }
 
 void KSMServer::wmProcessChange()
@@ -190,6 +220,9 @@ void KSMServer::autoStart0()
     if( !checkStartupSuspend())
         return;
     state = AutoStart0;
+#ifdef KSMSERVER_STARTUP_DEBUG1
+    kDebug() << t.elapsed();
+#endif
     org::kde::KLauncher klauncher("org.kde.klauncher", "/KLauncher", QDBusConnection::sessionBus());
     klauncher.autoStart((int)0);
 }
@@ -202,6 +235,9 @@ void KSMServer::autoStart0Done()
     if( !checkStartupSuspend())
         return;
     kDebug( 1218 ) << "Autostart 0 done";
+#ifdef KSMSERVER_STARTUP_DEBUG1
+    kDebug() << t.elapsed();
+#endif
     upAndRunning( "desktop" );
     kcminitSignals = new QDBusInterface("org.kde.kcminit", "/kcminit", "org.kde.KCMInit", QDBusConnection::sessionBus(), this );
     if( !kcminitSignals->isValid())
@@ -236,6 +272,9 @@ void KSMServer::autoStart1()
     if( state != KcmInitPhase1 )
         return;
     state = AutoStart1;
+#ifdef KSMSERVER_STARTUP_DEBUG1
+    kDebug() << t.elapsed();
+#endif
     org::kde::KLauncher klauncher("org.kde.klauncher", "/KLauncher", QDBusConnection::sessionBus());
     klauncher.autoStart((int)1);
 }
@@ -251,6 +290,9 @@ void KSMServer::autoStart1Done()
     lastAppStarted = 0;
     lastIdStarted.clear();
     state = Restoring;
+#ifdef KSMSERVER_STARTUP_DEBUG1
+    kDebug() << t.elapsed();
+#endif
     if( defaultSession()) {
         autoStart2();
         return;
@@ -308,6 +350,9 @@ void KSMServer::autoStart2()
     if( !checkStartupSuspend())
         return;
     state = FinishingStartup;
+#ifdef KSMSERVER_STARTUP_DEBUG1
+    kDebug() << t.elapsed();
+#endif
     waitAutoStart2 = true;
     waitKcmInit2 = true;
     org::kde::KLauncher klauncher("org.kde.klauncher", "/KLauncher", QDBusConnection::sessionBus());
@@ -389,6 +434,9 @@ void KSMServer::finishStartup()
         return;
 
     upAndRunning( "ready" );
+#ifdef KSMSERVER_STARTUP_DEBUG1
+    kDebug() << t.elapsed();
+#endif
 
     state = Idle;
     setupXIOErrorHandler(); // From now on handle X errors as normal shutdown.
