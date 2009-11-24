@@ -732,6 +732,8 @@ NotificationWidget *Applet::addNotification(Notification *notification)
     if (sender() == s_manager && m_notificationBar) {
         m_notificationBar->setCurrentIndex(0);
     }
+    syncNotificationBarNeeded();
+
     Plasma::ExtenderItem *extenderItem = new Plasma::ExtenderItem(extender());
     extenderItem->config().writeEntry("type", "notification");
     NotificationWidget *notificationWidget = new NotificationWidget(notification, extenderItem);
@@ -739,8 +741,6 @@ NotificationWidget *Applet::addNotification(Notification *notification)
 
     showPopup(m_autoHideTimeout);
     emit activate();
-
-    syncNotificationBarNeeded();
 
     bool found = false;
     for (int i = 0; i < m_notificationBar->count(); ++i) {
