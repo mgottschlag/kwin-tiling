@@ -177,21 +177,6 @@ void sanity_check( int argc, char* argv[], KAboutData* aboutDataPtr )
     }
     if (msg.isEmpty())
     {
-#ifdef __GNUC__
-#warning Is something like this needed for D-BUS?
-#endif
-#if 0
-    path = DCOPClient::dcopServerFile();
-    if (access(path.data(), R_OK) && (errno == ENOENT))
-    {
-        // Check iceauth
-        if (DCOPClient::iceauthPath().isEmpty())
-            msg = "Could not find 'iceauth' in path.";
-    }
-#endif
-    }
-    if (msg.isEmpty())
-    {
         path = getenv("KDETMP");
         if (path.isEmpty())
             path = "/tmp";
