@@ -152,8 +152,8 @@ void Notification::setTimeout(int timeout)
             d->hideTimer->setSingleShot(true);
             connect(d->hideTimer, SIGNAL(timeout()), this, SLOT(hide()));
         }
+        d->hideTimer->start(d->timeout);
     }
-    d->hideTimer->start(d->timeout);
 }
 
 
