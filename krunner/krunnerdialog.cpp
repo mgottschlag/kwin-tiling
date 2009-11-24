@@ -158,14 +158,14 @@ void KRunnerDialog::positionOnScreen()
 
     QRect r = Kephal::ScreenUtils::screenGeometry(screen);
     if (m_oldScreen != screen) {
-        kDebug() << "old screen be the new screen" << m_oldScreen << screen;
+        //kDebug() << "old screen be the new screen" << m_oldScreen << screen;
         if (m_oldScreen != -1) {
             m_screenPos.insert(m_oldScreen, pos());
         }
 
         m_oldScreen = screen;
         if (m_screenPos.contains(screen)) {
-            kDebug() << "moving to" << m_screenPos[screen];
+            //kDebug() << "moving to" << m_screenPos[screen];
             move(m_screenPos[screen]);
         } else {
             const int w = width();
@@ -504,8 +504,14 @@ void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
             }
         } else {
             QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
-            move(qBound(r.left(), x() - (m_lastPressPos - e->globalX()), r.right() - width()), y());
-            m_lastPressPos = e->globalX();
+            int newX = qBound(r.left(), x() - (m_lastPressPos - e->globalX()), r.right() - width());
+            if (abs(r.center().x() - (newX + (width() / 2))) < 20) {
+                newX = r.center().x() - (width() / 2);
+            } else {
+                m_lastPressPos = e->globalX();
+            }
+
+            move(newX, y());
             checkBorders(r);
         }
     } else if (e->x() < qMax(5, m_leftBorderWidth) || e->x() > width() - qMax(5, m_rightBorderWidth)) {
