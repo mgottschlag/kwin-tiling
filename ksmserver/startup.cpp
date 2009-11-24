@@ -82,7 +82,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <klauncher_iface.h>
 #include "kcminit_interface.h"
 
-#define KSMSERVER_STARTUP_DEBUG1
+//#define KSMSERVER_STARTUP_DEBUG1
 
 #ifdef KSMSERVER_STARTUP_DEBUG1
 static QTime t;
