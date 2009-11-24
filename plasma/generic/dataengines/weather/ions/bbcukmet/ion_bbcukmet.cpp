@@ -20,6 +20,8 @@
 /* Ion for BBC's Weather from the UK Met Office */
 
 #include "ion_bbcukmet.h"
+
+#include <KIO/Job>
 #include <KUnitConversion/Converter>
 
 // ctor, dtor

@@ -23,15 +23,19 @@
 #define ION_NOAA_H
 
 #include <QtXml/QXmlStreamReader>
-#include <QtCore/QStringList>
-#include <QDebug>
+#include <QStringList>
 #include <QDateTime>
-#include <kurl.h>
-#include <kio/job.h>
-#include <kio/scheduler.h>
+
+class KJob;
+namespace KIO
+{
+    class Job;
+} // namespace KIO
 #include <kdemacros.h>
-#include <plasma/dataengine.h>
-#include "ion.h"
+
+#include <Plasma/DataEngine>
+
+#include "../ion.h"
 
 class WeatherData
 {

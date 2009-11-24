@@ -20,7 +20,11 @@
 /* Ion for Environment Canada XML data */
 
 #include "ion_envcan.h"
+
+#include <KIO/Job>
 #include <KUnitConversion/Converter>
+#include <Solid/Networking>
+
 
 // ctor, dtor
 EnvCanadaIon::EnvCanadaIon(QObject *parent, const QVariantList &args)

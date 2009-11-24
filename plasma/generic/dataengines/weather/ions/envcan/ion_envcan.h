@@ -23,18 +23,20 @@
 #define ION_ENVCAN_H
 
 #include <QtXml/QXmlStreamReader>
-#include <QtCore/QStringList>
 #include <QDateTime>
-#include <QDebug>
-#include <kurl.h>
-#include <kio/job.h>
-#include <kio/scheduler.h>
-#include <Solid/Networking>
+
 #include <kdemacros.h>
-#include <plasma/dataengine.h>
-#include "ion.h"
-#include "weatherutils.h"
-#include "dataengineconsumer.h"
+#include <Plasma/DataEngine>
+
+#include "../ion.h"
+#include "../weatherutils.h"
+#include "../dataengineconsumer.h"
+
+class KJob;
+namespace KIO
+{
+    class Job;
+} // namespace KIO
 
 class WeatherData
 {

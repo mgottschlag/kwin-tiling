@@ -22,7 +22,7 @@
 
 #include <QtCore/QObject>
 #include <KDE/KGenericFactory>
-#include <plasma/dataengine.h>
+#include <Plasma/DataEngine>
 
 #include "ion_export.h"
 

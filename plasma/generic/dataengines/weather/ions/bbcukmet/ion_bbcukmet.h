@@ -23,18 +23,18 @@
 #define ION_BBCUKMET_H
 
 #include <QtXml/QXmlStreamReader>
-#include <QRegExp>
-#include <QtCore/QStringList>
 #include <QDateTime>
-#include <QDebug>
-#include <kurl.h>
-#include <kio/job.h>
-#include <kio/scheduler.h>
-#include <kdemacros.h>
-#include <plasma/dataengine.h>
-#include "ion.h"
-#include "weatherutils.h"
-#include "dataengineconsumer.h"
+
+#include "../ion.h"
+#include "../weatherutils.h"
+#include "../dataengineconsumer.h"
+
+class KJob;
+namespace KIO
+{
+    class Job;
+    class TransferJob;
+};
 
 class WeatherData
 {

@@ -20,6 +20,9 @@
 /* Ion for NOAA's National Weather Service XML data */
 
 #include "ion_noaa.h"
+
+#include <KIO/Job>
+
 #include <KUnitConversion/Converter>
 
 QMap<QString, IonInterface::WindDirections> NOAAIon::setupWindIconMappings(void) const
