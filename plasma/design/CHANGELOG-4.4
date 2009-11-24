@@ -21,7 +21,7 @@ libplasma
     * Package: contentsHash() provides access to a SHA1 hash of the contents of the package
     * Applet::SetAssociatedApplication(): It's possible to associate an application and/or a list of urls to an applet, a new icon will appear in the applet handle.
       It will open that application or urls.
-
+    * KRunner: X-Plasma-Args= can be used by runners to specify plugin-specific setup (used in mediawiki runner to point to a mediawiki instance)
 * Bugfixes
     * Context menu handling on PopupApplets now matches what Applet gets
 
@@ -84,12 +84,15 @@ Plugins/Addons
         * NEW OpenDesktop.org Activities: activity infomration from opendesktop.org
         * NEW Qalculate math expression evaluator, based on libqalculate
         * NEW Spellcheck: a quick spell checking area
+        * NEW Webslice: a plasmoid displaying a part of a web page
         * NEW Window list
+        * Battery: Improved layout, better support for bigger fonts
         * Device notifier
             * Visual revamp to make it look and feel more Plasma
             * Supports non-removable volumes
             * Can show/hide devices from the interface
             * Popup autohides after 10s of innactivity
+        * Picture Frame: now supports loading and displaying of remote images
         * Microblog: can view replies and direct messages
         * Quicklaunch: ascending and descending sort for applications in quicklaunch applet.
         * SystemTray: now can embed other plasmoids
