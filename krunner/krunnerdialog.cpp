@@ -149,13 +149,11 @@ void KRunnerDialog::positionOnScreen()
             dy += r.height() / 3;
         }
 
-        if (!m_floating) {
-            m_background->setEnabledBorders(Plasma::FrameSvg::LeftBorder |
-                                            Plasma::FrameSvg::BottomBorder |
-                                            Plasma::FrameSvg::RightBorder);
-        }
-
         move(dx, dy);
+
+        if (!m_floating) {
+            checkBorders(r);
+        }
     }
 
     show();
@@ -425,6 +423,7 @@ bool KRunnerDialog::checkBorders(const QRect &screenGeom)
 
     if (borders != m_background->enabledBorders()) {
         m_background->setEnabledBorders(borders);
+        themeUpdated();
         updateMask();
         update();
         return true;
