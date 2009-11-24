@@ -168,6 +168,7 @@ void MousePluginWidget::changeTrigger(const QString &oldTrigger, const QString& 
 void MousePluginWidget::updateConfig(const QString &trigger)
 {
     m_configButton->setEnabled(!trigger.isEmpty());
+    m_pluginList->setEnabled(!trigger.isEmpty());
 }
 
 void MousePluginWidget::configure()
