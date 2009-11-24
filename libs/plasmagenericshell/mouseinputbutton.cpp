@@ -21,6 +21,7 @@
 
 #include <KDebug>
 
+#include <QApplication>
 #include <QKeyEvent>
 
 #include <plasma/containmentactions.h>
@@ -29,7 +30,7 @@ MouseInputButton::MouseInputButton(QWidget *parent)
     :QPushButton(parent)
 {
     setCheckable(true);
-    reset();
+    setDefaultToolTip(i18n("Click to change how an action is triggered"));
     connect(this, SIGNAL(clicked()), SLOT(getTrigger()));
 
     //translations
@@ -49,6 +50,14 @@ MouseInputButton::MouseInputButton(QWidget *parent)
     //FIXME keypad/groupswitch?
 }
 
+void MouseInputButton::setDefaultToolTip(const QString &tip)
+{
+    m_defaultToolTip = tip;
+    if (!isChecked()) {
+        setToolTip(tip);
+    }
+}
+
 QString MouseInputButton::trigger()
 {
     return m_trigger;
@@ -57,11 +66,13 @@ QString MouseInputButton::trigger()
 void MouseInputButton::getTrigger()
 {
     setText(i18n("Input here..."));
+    QString tip = i18n("Hold down the modifier keys you want, then click a mouse button or scroll a mouse wheel here");
+    setToolTip(tip);
 }
 
 void MouseInputButton::reset()
 {
-    setText(i18n("Add Trigger..."));
+    setTrigger(QString());
 }
 
 bool MouseInputButton::event(QEvent *event)
@@ -91,7 +102,15 @@ bool MouseInputButton::event(QEvent *event)
                 break;
         }
     }
-    return QPushButton::event(event);
+    bool ret = QPushButton::event(event);
+    if (event->type() == QEvent::MouseButtonRelease) {
+        //fake a tooltip event
+        //because otherwise they go away when you click and don't come back until you move the mouse
+        QMouseEvent *e = static_cast<QMouseEvent*>(event);
+        QHelpEvent tip(QEvent::ToolTip, e->pos(), e->globalPos());
+        QApplication::sendEvent(this, &tip);
+    }
+    return ret;
 }
 
 void MouseInputButton::changeTrigger(const QString &newTrigger)
@@ -107,8 +126,9 @@ void MouseInputButton::setTrigger(const QString &trigger)
     m_trigger=trigger;
     setChecked(false);
 
+    setToolTip(m_defaultToolTip);
     if (trigger.isEmpty()) {
-        reset();
+        setText(i18n("Add Trigger..."));
     } else {
         //make it prettier and translatable
         QString button = trigger.section(';', 0, 0);

@@ -38,29 +38,19 @@
        <item row="0" column="0">
         <widget class="MouseInputButton" name="addButton">
          <property name="text">
-          <string>Add Trigger</string>
+          <string>Add Trigger...</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="help">
-         <property name="text">
-          <string>To set the event that triggers the plugin, first press the 'Add Trigger' button, then hold the modifier keys you want and click a mouse button or scroll a wheel on that button.</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>84</height>
+           <width>315</width>
+           <height>157</height>
           </size>
          </property>
         </spacer>

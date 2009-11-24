@@ -33,6 +33,7 @@ public:
 
     QString trigger();
     void setTrigger(const QString &trigger);
+    void setDefaultToolTip(const QString &tip);
 
 signals:
     void triggerChanged(const QString &oldTrigger, const QString &newTrigger);
@@ -51,6 +52,7 @@ private:
     void showModifiers(Qt::KeyboardModifiers modifiers);
 
     QString m_trigger;
+    QString m_defaultToolTip;
     QHash<QString,QString> m_prettyStrings;
 };
 

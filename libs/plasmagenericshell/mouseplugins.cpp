@@ -35,12 +35,12 @@ MousePlugins::MousePlugins(Plasma::Containment *containment, KConfigDialog *pare
     Q_ASSERT(m_containment);
     m_ui.setupUi(this);
     m_ui.addButton->setIcon(KIcon("list-add"));
+    m_ui.addButton->setDefaultToolTip(i18n("Add another mouse action"));
     QGridLayout *lay = qobject_cast<QGridLayout*>(m_ui.pluginList->layout());
     lay->setColumnStretch(1, 1); //make the plugin list take the extra space
 
     //stupid hack because you can't *insert* rows into a gridlayout
     lay->removeWidget(m_ui.addButton);
-    lay->removeWidget(m_ui.help);
     lay->removeItem(m_ui.verticalSpacer);
 
     foreach (const QString &trigger, m_containment->containmentActionsTriggers()) {
@@ -57,7 +57,6 @@ MousePlugins::MousePlugins(Plasma::Containment *containment, KConfigDialog *pare
 
     //stupid hack because you can't *insert* rows into a gridlayout
     lay->addWidget(m_ui.addButton, lay->rowCount(), 0);
-    lay->addWidget(m_ui.help, lay->rowCount(), 0, 1, -1);
     lay->addItem(m_ui.verticalSpacer, lay->rowCount(), 0);
 
     connect(m_ui.addButton, SIGNAL(triggerChanged(QString,QString)), this, SLOT(addTrigger(QString,QString)));
@@ -77,7 +76,7 @@ void MousePlugins::addTrigger(const QString&, const QString &trigger)
     //check for duplicate
     if (m_plugins.contains(trigger)) {
         int ret = KMessageBox::warningContinueCancel(this,
-                i18n("This trigger is assigned to another plugin."), QString(), KGuiItem(i18n("Reassign")));
+                i18n("This trigger is already assigned to another action."), QString(), KGuiItem(i18n("Reassign")));
         if (ret == KMessageBox::Continue) {
             //clear it from the UI
             MousePluginWidget *w = m_plugins.value(trigger);
@@ -93,7 +92,6 @@ void MousePlugins::addTrigger(const QString&, const QString &trigger)
 
     //stupid hack because you can't *insert* rows into a gridlayout
     lay->removeWidget(m_ui.addButton);
-    lay->removeWidget(m_ui.help);
     lay->removeItem(m_ui.verticalSpacer);
 
     //insert a new row
@@ -107,7 +105,6 @@ void MousePlugins::addTrigger(const QString&, const QString &trigger)
 
     //stupid hack because you can't *insert* rows into a gridlayout
     lay->addWidget(m_ui.addButton, lay->rowCount(), 0);
-    lay->addWidget(m_ui.help, lay->rowCount(), 0, 1, -1);
     lay->addItem(m_ui.verticalSpacer, lay->rowCount(), 0);
 
 }
