@@ -1,0 +1,44 @@
+[Desktop Entry]
+Name=Window List
+Name[de]=Fensterliste
+Name[en_GB]=Window List
+Name[es]=Lista de ventanas
+Name[et]=Akende nimekiri
+Name[fr]=Window List
+Name[gl]=Lista de xanelas
+Name[nl]=Vensterlijst
+Name[pt]=Lista de Janelas
+Name[pt_BR]=Lista de janelas
+Name[sv]=Fönsterlista
+Name[tr]=Pencere Listesi
+Name[uk]=Список вікон
+Name[x-test]=xxWindow Listxx
+
+Comment=Plasmoid to show list of opened windows.
+Comment[en_GB]=Plasmoid to show list of opened windows.
+Comment[es]=Plasmoide que muestra una lista de las ventanas abiertas.
+Comment[et]=Avatud akende nimekirja näitav plasmoid.
+Comment[fr]=Plasmoïde permettant l'affichage de la liste des fenêtres ouvertes
+Comment[gl]=Plasmoide que mostra unha lista das xanelas abertas.
+Comment[nl]=Plasmoid die een lijst van open vensters laat zien.
+Comment[pt]=Plasmóide para mostrar uma lista com as janelas abertas.
+Comment[pt_BR]=Plasmoide para exibir uma lista das janelas abertas.
+Comment[sv]=Plasmoid för att visa lista med öppna fönster.
+Comment[tr]=Açık pencerelerin listesini gösteren bir Plasma programcığı.
+Comment[uk]=Плазмоїд для показу списку відкритих вікон.
+Comment[x-test]=xxPlasmoid to show list of opened windows.xx
+
+Icon=preferences-system-windows
+Type=Service
+ServiceTypes=Plasma/Applet
+
+X-KDE-Library=plasma_applet_windowlist
+X-KDE-PluginInfo-Author=Michał Dutkiewicz aka Emdek
+X-KDE-PluginInfo-Email=emdeck@gmail.com
+X-KDE-PluginInfo-Name=windowlist
+X-KDE-PluginInfo-Version=3.1
+X-KDE-PluginInfo-Website=http://emdek.cba.pl/
+X-KDE-PluginInfo-Category=Windows and Tasks
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
