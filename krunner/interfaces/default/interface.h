@@ -77,6 +77,7 @@ class Interface : public KRunnerDialog
         void ensureVisibility(QGraphicsItem *item);
         void cleanupAfterConfigWidget();
         void configWidgetDestroyed();
+        void actionTriggered();
         void delayedQueryLaunch();
 
     private:

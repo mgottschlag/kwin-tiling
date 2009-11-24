@@ -178,6 +178,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     connect(m_resultsScene, SIGNAL(matchCountChanged(int)), this, SLOT(matchCountChanged(int)));
     connect(m_resultsScene, SIGNAL(itemActivated(ResultItem *)), this, SLOT(run(ResultItem *)));
     connect(m_resultsScene, SIGNAL(ensureVisibility(QGraphicsItem *)), this, SLOT(ensureVisibility(QGraphicsItem *)));
+    connect(m_resultsScene, SIGNAL(actionTriggered()), this, SLOT(actionTriggered()));
 
     resultsLayout->addWidget(m_resultsView);
 
@@ -464,6 +465,13 @@ void Interface::run(ResultItem *item)
     m_searchTerm->addToHistory(m_searchTerm->currentText().trimmed());
     resetInterface();
 }
+
+void Interface::actionTriggered()
+{
+    close();
+    resetInterface();
+}
+
 
 void Interface::runDefaultResultItem()
 {

@@ -24,6 +24,7 @@
 
 #include <math.h>
 
+#include <QAction>
 #include <QTimeLine>
 #include <QDebug>
 #include <QtGlobal>
@@ -52,7 +53,7 @@ void shadowBlur(QImage &image, int radius, const QColor &color);
 
 int ResultItem::s_fontHeight = 0;
 
-ResultItem::ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent)
+ResultItem::ResultItem(const Plasma::QueryMatch &match, Plasma::RunnerManager *runnerManager, QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
       m_match(0),
       m_configButton(0),
@@ -60,7 +61,10 @@ ResultItem::ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent)
       m_index(-1),
       m_highlightTimerId(0),
       m_mouseHovered(false),
-      m_configWidget(0)
+      m_configWidget(0),
+      m_actionsWidget(0),
+      m_actionsLayout(0),
+      m_runnerManager(runnerManager)
 {
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIsSelectable);
@@ -95,6 +99,12 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
         m_configWidget = 0;
     }
 
+    if (m_actionsWidget) {
+        scene()->removeItem(m_actionsWidget);
+        delete m_actionsWidget;
+        m_actionsWidget = 0;
+    }
+
     //kDebug() << match.hasConfigurationInterface();
     if (match.hasConfigurationInterface()) {
         m_configButton = new Plasma::ToolButton(this);
@@ -110,8 +120,52 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
         m_configButton = 0;
     }
 
+    setupActions();
     calculateSize();
     update();
+}
+
+void ResultItem::setupActions()
+{
+    kDebug() << "setupactions";
+    QList<QAction*> actionList = m_runnerManager->actionsForMatch(m_match);
+
+    if (!actionList.isEmpty()) {
+        m_actionsWidget = new QGraphicsWidget(this);
+        m_actionsLayout = new QGraphicsLinearLayout(Qt::Horizontal, m_actionsWidget);
+
+        foreach ( QAction* action, actionList ) {
+            Plasma::ToolButton * actionButton = new Plasma::ToolButton(m_actionsWidget);
+            actionButton->setIcon(action->icon());
+            actionButton->show();
+            actionButton->resize(actionButton->effectiveSizeHint(Qt::MinimumSize,
+                                                        QSize(KIconLoader::SizeSmall,
+                                                              KIconLoader::SizeSmall)));
+            actionButton->setText(action->text());
+            m_actionsLayout->addItem(actionButton);
+            connect(actionButton, SIGNAL(clicked()), action, SLOT(trigger()));
+            connect(actionButton, SIGNAL(clicked()), this , SIGNAL(actionTriggered()));
+            actionButton->installEventFilter(this);
+        }
+        m_actionsWidget->show();
+    }
+}
+
+bool ResultItem::eventFilter(QObject *obj, QEvent *event)
+{
+    Plasma::ToolButton* actionButton = static_cast<Plasma::ToolButton*>(obj);
+
+    if (actionButton) {
+        if (event->type() == QEvent::GraphicsSceneHoverEnter) {
+            m_currentActionText = actionButton->text();
+            update();
+        } else if (event->type() == QEvent::GraphicsSceneHoverLeave) {
+            m_currentActionText.clear();
+            update();
+        }
+    }
+
+    return false;
 }
 
 QString ResultItem::id() const
@@ -136,7 +190,7 @@ QString ResultItem::name() const
 
 QString ResultItem::description() const
 {
-    return m_match.subtext();
+    return (m_currentActionText.isEmpty()?  m_match.subtext() : m_currentActionText);
 }
 
 QString ResultItem::data() const
@@ -493,6 +547,19 @@ void ResultItem::calculateSize(int sceneWidth, int sceneHeight)
         newSize.setHeight(newSize.height() + m_configWidget->size().height());
         m_configWidget->setPos((newSize.width() - m_configWidget->size().width()) / 2,
                                newSize.height() - m_configWidget->size().height() - bottom);
+    }
+
+    if (m_actionsWidget) {
+        m_actionsWidget->setMaximumWidth(newSize.width()/2);
+        m_actionsWidget->adjustSize();
+        QSizeF s = m_actionsWidget->size();
+
+        if (QApplication::layoutDirection() == Qt::RightToLeft) {
+            m_actionsWidget->setPos(left, newSize.height() - s.height() - bottom);
+        } else {
+            m_actionsWidget->setPos(newSize.width() - s.width() - right,
+                                   newSize.height() - s.height() - bottom);
+        }
     }
 
     resize(newSize);

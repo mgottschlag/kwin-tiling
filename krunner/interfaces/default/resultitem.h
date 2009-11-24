@@ -61,7 +61,7 @@ class ResultItem : public QGraphicsWidget
     Q_OBJECT
 
 public:
-    ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent);
+    ResultItem(const Plasma::QueryMatch &match, Plasma::RunnerManager *runnerManager, QGraphicsWidget *parent);
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
     void setMatch(const Plasma::QueryMatch &match);
@@ -96,6 +96,7 @@ signals:
     void hoverEnter(ResultItem *item);
     void hoverLeave(ResultItem *item);
     void sizeChanged(ResultItem *item);
+    void actionTriggered();
     void ensureVisibility(QGraphicsItem *item);
 
 protected:
@@ -110,6 +111,8 @@ protected:
     void changeEvent(QEvent *event);
     void resizeEvent(QGraphicsSceneResizeEvent *);
     void drawIcon(QPainter *painter, const QRect &iRect, const QPixmap &p);
+    void setupActions();
+    bool eventFilter(QObject *obj, QEvent *event);
 
 protected slots:
     void showConfig();
@@ -130,6 +133,10 @@ private:
     int m_highlightTimerId;
     bool m_mouseHovered;
     QGraphicsProxyWidget *m_configWidget;
+    QGraphicsWidget *m_actionsWidget;
+    QGraphicsLinearLayout *m_actionsLayout;
+    QString m_currentActionText;
+    Plasma::RunnerManager *m_runnerManager;
 
     static int s_fontHeight;
 };

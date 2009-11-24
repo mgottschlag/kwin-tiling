@@ -239,7 +239,7 @@ ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool use
         //kDebug() << "did not find for" << match.id();
         if (useAnyId) {
             //kDebug() << "creating for" << match.id();
-            item = new ResultItem(match, 0);
+            item = new ResultItem(match, m_runnerManager, 0);
             item->setContentsMargins(m_itemMarginLeft, m_itemMarginTop,
                                      m_itemMarginRight, m_itemMarginBottom);
             addItem(item);
@@ -249,6 +249,7 @@ ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool use
             connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
             connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SIGNAL(itemHoverEnter(ResultItem*)));
             connect(item, SIGNAL(hoverLeave(ResultItem*)), this, SIGNAL(itemHoverLeave(ResultItem*)));
+            connect(item, SIGNAL(actionTriggered()), this, SIGNAL(actionTriggered()));
         } else {
             //kDebug() << "returning failure for" << match.id();
             return 0;
