@@ -107,6 +107,7 @@ void MousePlugins::addTrigger(const QString&, const QString &trigger)
     lay->addWidget(m_ui.addButton, lay->rowCount(), 0);
     lay->addItem(m_ui.verticalSpacer, lay->rowCount(), 0);
 
+    emit modified(true);
 }
 
 void MousePlugins::configChanged(const QString &trigger)
