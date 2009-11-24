@@ -21,6 +21,7 @@
 #include "sal.h"
 #include "stripwidget.h"
 #include "itemview.h"
+#include "runnersconfig.h"
 #include "../common/linearappletoverlay.h"
 #include "../common/appletmovespacer.h"
 #include "../common/nettoolbox.h"
@@ -39,6 +40,7 @@
 #include <KStandardDirs>
 #include <KService>
 #include <KServiceTypeTrader>
+#include <KConfigDialog>
 
 #include <Plasma/Theme>
 #include <Plasma/Frame>
@@ -69,6 +71,7 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
       m_stripUninitialized(true)
 {
     setContainmentType(Containment::CustomContainment);
+    setHasConfigurationInterface(true);
     setFocusPolicy(Qt::StrongFocus);
     setFlag(QGraphicsItem::ItemIsFocusable, true);
     m_background = new Plasma::FrameSvg(this);
@@ -729,6 +732,14 @@ void SearchLaunch::changeEvent(QEvent *event)
     }
 }
 
+void SearchLaunch::createConfigurationInterface(KConfigDialog *parent)
+{
+    RunnersConfig *runnersConfig = new RunnersConfig(m_runnermg, parent);
+    parent->addPage(runnersConfig, i18nc("Title of the page that lets the user choose the loaded krunner plugins", "Search plugins"), "edit-find");
+
+    connect(parent, SIGNAL(applyClicked()), runnersConfig, SLOT(accept()));
+    connect(parent, SIGNAL(okClicked()), runnersConfig, SLOT(accept()));
+}
 
 K_EXPORT_PLASMA_APPLET(sal, SearchLaunch)
 

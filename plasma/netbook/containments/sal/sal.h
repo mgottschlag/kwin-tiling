@@ -58,6 +58,8 @@ public:
 
     void constraintsEvent(Plasma::Constraints constraints);
 
+    void createConfigurationInterface(KConfigDialog *parent);
+
 protected:
     void focusInEvent(QFocusEvent *event);
     void paintInterface(QPainter *, const QStyleOptionGraphicsItem *, const QRect &);
