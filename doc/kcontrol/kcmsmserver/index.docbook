@@ -30,7 +30,7 @@
 <sect2 id="sessions-use">
 <title>Use</title>
 
-<para>In this control module you can configure &kde;'s session
+<para>In this &systemsettings; module you can configure &kde;'s session
 manager and logout settings.</para>
 
 <para>Session management refers to &kde;'s ability to save the state
@@ -118,3 +118,4 @@ and therefore will not be started when restoring a session.  For example
 </sect1>
 
 </article>
+
