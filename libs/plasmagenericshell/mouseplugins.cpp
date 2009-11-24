@@ -35,7 +35,7 @@ MousePlugins::MousePlugins(Plasma::Containment *containment, KConfigDialog *pare
     Q_ASSERT(m_containment);
     m_ui.setupUi(this);
     m_ui.addButton->setIcon(KIcon("list-add"));
-    m_ui.addButton->setDefaultToolTip(i18n("Add another mouse action"));
+    m_ui.addButton->setDefaultText(i18n("Add Action..."), i18n("Add another mouse action"));
     QGridLayout *lay = qobject_cast<QGridLayout*>(m_ui.pluginList->layout());
     lay->setColumnStretch(1, 1); //make the plugin list take the extra space
 

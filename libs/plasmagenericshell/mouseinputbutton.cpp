@@ -30,7 +30,7 @@ MouseInputButton::MouseInputButton(QWidget *parent)
     :QPushButton(parent)
 {
     setCheckable(true);
-    setDefaultToolTip(i18n("Click to change how an action is triggered"));
+    setDefaultText(i18n("Set Trigger..."), i18n("Click to change how an action is triggered"));
     connect(this, SIGNAL(clicked()), SLOT(getTrigger()));
 
     //translations
@@ -50,10 +50,12 @@ MouseInputButton::MouseInputButton(QWidget *parent)
     //FIXME keypad/groupswitch?
 }
 
-void MouseInputButton::setDefaultToolTip(const QString &tip)
+void MouseInputButton::setDefaultText(const QString &text, const QString &tip)
 {
+    m_defaultText = text;
     m_defaultToolTip = tip;
     if (!isChecked()) {
+        setText(text);
         setToolTip(tip);
     }
 }
@@ -128,7 +130,7 @@ void MouseInputButton::setTrigger(const QString &trigger)
 
     setToolTip(m_defaultToolTip);
     if (trigger.isEmpty()) {
-        setText(i18n("Add Trigger..."));
+        setText(m_defaultText);
     } else {
         //make it prettier and translatable
         QString button = trigger.section(';', 0, 0);
