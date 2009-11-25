@@ -35,10 +35,10 @@
 #include <Plasma/ToolTipManager>
 
 //solid
-#include <solid/device.h>
-#include <solid/storagedrive.h>
-#include <solid/opticaldisc.h>
-#include <solid/opticaldrive.h>
+#include <Solid/Device>
+#include <Solid/StorageDrive>
+#include <Solid/OpticalDisc>
+#include <Solid/OpticalDrive>
 
 //Own
 #include "notifierdialog.h"
@@ -120,9 +120,10 @@ void DeviceNotifier::fillPreviousDevices()
     QList<Solid::Device> list = Solid::Device::listFromType(Solid::DeviceInterface::StorageVolume);
     foreach (const Solid::Device &device, list) {
         if (device.as<Solid::StorageVolume>()->isIgnored()) {
-            onSourceAdded(device.udi());
+            deviceAdded(device, false);
         }
     }
+
     foreach (const QString &udi, m_solidEngine->sources()) {
         onSourceAdded(udi);
     }
@@ -266,8 +267,15 @@ void DeviceNotifier::removeLastDeviceNotification(const QString &udi)
 
 void DeviceNotifier::onSourceAdded(const QString &udi)
 {
-     if (m_showDevices == NonRemovableOnly) {
-        Solid::Device device = Solid::Device(udi);
+    DataEngine::Data data = m_solidEngine->query(udi);
+    Solid::Device device = Solid::Device(udi);
+    deviceAdded(device, data["added"].toBool());
+}
+
+void DeviceNotifier::deviceAdded(const Solid::Device &device, bool hotplugged)
+{
+    const QString udi = device.udi();
+    if (m_showDevices == NonRemovableOnly) {
         Solid::Device parentDevice = device.parent();
         Solid::StorageDrive *drive = parentDevice.as<Solid::StorageDrive>();
         if (drive && (drive->isHotpluggable() || drive->isRemovable())) {
@@ -283,14 +291,16 @@ void DeviceNotifier::onSourceAdded(const QString &udi)
     }
 
     kDebug() << "DeviceNotifier:: source added" << udi;
-
     KConfigGroup cg = config();
-
     bool visibility = cg.readEntry(udi, true);
 
     if (visibility || m_globalVisibility) {
         m_dialog->insertDevice(udi);
-        notifyDevice(udi);
+
+        if (hotplugged) {
+            notifyDevice(udi);
+        }
+
         m_dialog->setDeviceData(udi, visibility, NotifierDialog::VisibilityRole);
 
         m_solidEngine->connectSource(udi, this);

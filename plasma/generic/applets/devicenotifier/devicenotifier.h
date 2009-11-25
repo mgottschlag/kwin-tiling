@@ -23,7 +23,7 @@
 #define DEVICENOTIFIER_H
 
 //Solid
-#include <solid/solidnamespace.h>
+#include <Solid/Device>
 
 //Plasma
 #include <Plasma/PopupApplet>
@@ -171,6 +171,11 @@ class DeviceNotifier : public Plasma::PopupApplet
 
     private:
         /**
+         * @internal used to register a new device that has appeared to us
+         */
+        void deviceAdded(const Solid::Device &device, bool hotplugged = true);
+
+        /**
         * @internal Used to fill the notifier from previous plugged devices
         **/
         void fillPreviousDevices();
@@ -206,17 +211,10 @@ class DeviceNotifier : public Plasma::PopupApplet
         ///the timer for different use cases
         QTimer *m_timer;
 
-        ///bool to know if notifications are enabled
-        bool isNotificationEnabled;
-
-        ///list of the devices
         QList<QString> m_lastPlugged;
 
         ///list of the hidden devices
         QList<QString> m_hiddenDevices;
-
-        ///true if fillPreviousDevices is running
-        bool m_fillingPreviousDevices;
 
         ///configuration page
         Ui::configurationPage m_configurationUi;
@@ -224,11 +222,18 @@ class DeviceNotifier : public Plasma::PopupApplet
         ///tells which devices to show
         int m_showDevices;
 
+        ///bool to know if notifications are enabled
+        bool isNotificationEnabled : 1;
+
+        ///list of the devices
+        ///true if fillPreviousDevices is running
+        bool m_fillingPreviousDevices : 1;
+
         ///if true all the devices will be shown anyway
-        bool m_globalVisibility;
+        bool m_globalVisibility : 1;
 
         ///if true the applet will check if the removed devices were hidded
-        bool m_checkHiddenDevices;
+        bool m_checkHiddenDevices : 1;
 };
 
 #endif
