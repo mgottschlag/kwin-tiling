@@ -102,6 +102,7 @@ void ItemContainer::insertItem(Plasma::IconWidget *icon, qreal weight)
     icon->setContentsMargins(left, top, right, bottom);
 
     icon->setMinimumSize(icon->sizeFromIconSize(m_iconSize));
+    icon->setMaximumSize(icon->sizeFromIconSize(m_iconSize));
     icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     if (icon->size().width() > m_maxColumnWidth) {
@@ -259,7 +260,12 @@ void ItemContainer::relayout()
         int i = 0;
 
 
+        Plasma::IconWidget *lastIcon = 0;
         foreach (Plasma::IconWidget *icon, m_items) {
+            //this kinda hacky thing to send less important items in a new line will be avoided if we will ever use a model
+            if (lastIcon && icon->size().height() < lastIcon->size().height()/2) {
+                i += nColumns - (i % nColumns);
+            }
             const int row = i / nColumns;
             const int column = i % nColumns;
             if (m_layout->itemAt(row, column) != 0) {
@@ -271,6 +277,7 @@ void ItemContainer::relayout()
             m_layout->setAlignment(icon, Qt::AlignHCenter);
             icon->show();
             ++i;
+            lastIcon = icon;
         }
     } else {
 
@@ -284,7 +291,11 @@ void ItemContainer::relayout()
         int i = 0;
 
 
+        Plasma::IconWidget *lastIcon = 0;
         foreach (Plasma::IconWidget *icon, m_items) {
+            if (lastIcon && icon->size().height() < lastIcon->size().height()/2) {
+                i += (nRows - (i % nRows));
+            }
             const int row = i % nRows;
             const int column = i / nRows;
             if (m_layout->itemAt(row, column) != 0) {
@@ -296,6 +307,7 @@ void ItemContainer::relayout()
             m_layout->setAlignment(icon, Qt::AlignHCenter);
             icon->show();
             ++i;
+            lastIcon = icon;
         }
     }
 

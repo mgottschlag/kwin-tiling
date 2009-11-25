@@ -219,6 +219,7 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &matches)
         // create new IconWidget with information from the match
         Plasma::IconWidget *icon = m_resultsView->createItem();
         icon->hide();
+        icon->setOrientation(Qt::Vertical);
         icon->setText(match.text());
         icon->setIcon(match.icon());
         Plasma::ToolTipContent toolTipData = Plasma::ToolTipContent();
@@ -231,6 +232,12 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &matches)
         Plasma::ToolTipManager::self()->setContent(icon, toolTipData);
 
         m_resultsView->insertItem(icon, 1/match.relevance());
+
+        if (match.relevance() < 0.4) {
+            icon->setOrientation(Qt::Horizontal);
+            icon->setMinimumSize(icon->sizeFromIconSize(KIconLoader::SizeSmall));
+            icon->setMaximumSize(icon->sizeFromIconSize(KIconLoader::SizeSmall));
+        }
 
         connect(icon, SIGNAL(activated()), this, SLOT(launch()));
 
