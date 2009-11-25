@@ -84,9 +84,6 @@ public:
 
     /** The following functions check if a property is editable and sets it on group*/
 
-    /**	Adds an item to group if EditableGroupProperties::Members is set*/
-    virtual bool addItemToGroup(AbstractGroupableItem *, TaskGroup*);
-
     virtual bool setName(const QString &, TaskGroup*);
     /** Returns a List of unused Names*/
     virtual QList<QString> nameSuggestions(TaskGroup *);
@@ -98,6 +95,20 @@ public:
     virtual bool setIcon(const QIcon &, TaskGroup*);
     /** Returns a list of icons*/
     virtual QList<QIcon> iconSuggestions(TaskGroup *);
+
+    /** 
+    * Adds an item to group if EditableGroupProperties::Members is set
+    */
+    bool manualGroupingRequest(AbstractGroupableItem* taskItem, TaskGroup* groupItem);
+    /** 
+    * Creates a new group if EditableGroupProperties::Members is set
+    * Should be called if the user wants to group items manually
+    */
+    bool manualGroupingRequest(ItemList items);
+
+protected:
+    /** Create a group with items and returns the newly created group */
+    TaskGroup* createGroup(ItemList items);
 
 Q_SIGNALS:
     void groupRemoved(TaskGroup*);
@@ -111,11 +122,6 @@ protected Q_SLOTS:
 
      /** Returns the strategy type */
     void setType(GroupManager::TaskGroupingStrategy type);
-
-public:
-//rotected:
-    /** Create a group with items and returns the newly created group */
-    TaskGroup* createGroup(ItemList items);
 
 private:
     class Private;

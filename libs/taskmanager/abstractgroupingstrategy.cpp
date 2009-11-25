@@ -140,9 +140,8 @@ TaskGroup* AbstractGroupingStrategy::createGroup(ItemList items)
         newGroup->add(item);
     }
 
-    if (oldGroup) {
-        oldGroup->add(newGroup);
-    }
+    Q_ASSERT(oldGroup);
+    oldGroup->add(newGroup);
 
     return newGroup;
 }
@@ -194,21 +193,32 @@ void AbstractGroupingStrategy::checkGroup()
     }
 }
 
-bool AbstractGroupingStrategy::addItemToGroup(AbstractGroupableItem *item, TaskGroup *group)
+bool AbstractGroupingStrategy::manualGroupingRequest(AbstractGroupableItem* taskItem, TaskGroup* groupItem)
 {
     if (editableGroupProperties() & Members) {
-        group->add(item);
+        groupItem->add(taskItem);
         return true;
     }
+    return false;
+}
 
-    return false; 
+//TODO move to manual strategy?
+bool AbstractGroupingStrategy::manualGroupingRequest(ItemList items)
+{
+    if (editableGroupProperties() & Members) {
+        TaskGroup *group = createGroup(items);
+        setName(nameSuggestions(group).first(), group);
+        setColor(colorSuggestions(group).first(), group);
+        setIcon(iconSuggestions(group).first(), group);
+        return true;
+    }
+    return false;
 }
 
 bool AbstractGroupingStrategy::setName(const QString &name, TaskGroup *group)
 {
     d->usedNames.removeAll(group->name());
     if ((editableGroupProperties() & Name) && (!d->usedNames.contains(name))) {
-        //TODO editableGroupProperties shouldn't be tested here i think
         d->usedNames.append(name);
         group->setName(name);
         return true;

@@ -81,6 +81,11 @@ QString AbstractGroupableItem::name() const
     return QString();
 }
 
+WindowList AbstractGroupableItem::winIds() const
+{ 
+    return WindowList(); 
+}
+
 GroupPtr AbstractGroupableItem::parentGroup() const
 {
     //kDebug();

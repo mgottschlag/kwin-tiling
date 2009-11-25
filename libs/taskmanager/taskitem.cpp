@@ -64,6 +64,7 @@ TaskItem::TaskItem(QObject *parent, StartupPtr task)
     connect(task.data(), SIGNAL(destroyed(QObject*)), this, SLOT(taskDestroyed())); //this item isn't useful anymore if the Task was closed
 }
 
+
 TaskItem::~TaskItem()
 {
     //kDebug();
@@ -118,6 +119,17 @@ StartupPtr TaskItem::startup() const
     }
     */
     return d->startupTask;
+}
+
+WindowList TaskItem::winIds() const
+{
+    if (!d->task) {
+        kDebug() << "no winId: probably startup task";
+        return WindowList();
+    }
+    WindowList list;
+    list << d->task->window();
+    return list;
 }
 
 QIcon TaskItem::icon() const

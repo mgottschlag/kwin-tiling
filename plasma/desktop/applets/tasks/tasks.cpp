@@ -89,8 +89,8 @@ void Tasks::init()
     // personal experience tinking with it) and convoluted. It should be possible to
     // set up the GroupManager firt, and *then* create the root TaskGroupItem.
 
-   // connect(m_groupManager, SIGNAL(reload()), this, SLOT(reload()));
-    connect(this, SIGNAL(settingsChanged()), m_groupManager, SLOT(reconnect()));
+    connect(m_groupManager, SIGNAL(reload()), this, SLOT(reload()));
+    //connect(this, SIGNAL(settingsChanged()), m_groupManager, SLOT(reconnect()));
 
     m_rootGroupItem = new TaskGroupItem(this, this);
     m_rootGroupItem->expand();
@@ -136,7 +136,12 @@ void Tasks::init()
 
 void Tasks::reload()
 {
-    m_rootGroupItem->reload();
+    TaskGroup *newGroup = m_groupManager->rootGroup();
+    if (newGroup != m_rootGroupItem->abstractItem()) {
+        m_rootGroupItem->setGroup(newGroup);
+    } else {
+        m_rootGroupItem->reload();
+    }
 }
 
 TaskManager::GroupManager &Tasks::groupManager() const

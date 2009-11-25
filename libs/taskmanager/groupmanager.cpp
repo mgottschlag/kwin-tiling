@@ -49,7 +49,6 @@ class GroupManagerPrivate
 public:
     GroupManagerPrivate(GroupManager *manager)
         : q(manager),
-          rootGroup(0),
           sortingStrategy(GroupManager::NoSorting),
           groupingStrategy(GroupManager::NoGrouping),
           lastGroupingStrategy(GroupManager::NoGrouping),
@@ -83,10 +82,10 @@ public:
     void addStartup(StartupPtr);
     void removeStartup(StartupPtr);
 
+    TaskGroup *currentRootGroup();
+
     GroupManager *q;
-    QHash<TaskPtr, TaskItem*> itemList; //holds all tasks of the Taskmanager
     QHash<StartupPtr, TaskItem*> startupList;
-    TaskGroup *rootGroup; //the current layout
     GroupManager::TaskSortingStrategy sortingStrategy;
     GroupManager::TaskGroupingStrategy groupingStrategy;
     GroupManager::TaskGroupingStrategy lastGroupingStrategy;
@@ -103,6 +102,9 @@ public:
     bool onlyGroupWhenFull : 1;
     bool changingGroupingStrategy : 1;
     QUuid configToken;
+
+    QHash<int, TaskGroup*> rootGroups; //container for groups
+    int currentDesktop;
 };
 
 
@@ -117,7 +119,8 @@ GroupManager::GroupManager(QObject *parent)
     connect(TaskManager::self(), SIGNAL(startupAdded(StartupPtr)), this, SLOT(addStartup(StartupPtr)));
     connect(TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)), this, SLOT(removeStartup(StartupPtr)));
 
-    d->rootGroup = new TaskGroup(this, "RootGroup", Qt::transparent);
+    d->currentDesktop = TaskManager::self()->currentDesktop();
+    d->rootGroups[d->currentDesktop] = new TaskGroup(this, "RootGroup", Qt::transparent);
 
     d->reloadTimer.setSingleShot(true);
     d->reloadTimer.setInterval(0);
@@ -133,8 +136,12 @@ GroupManager::~GroupManager()
     TaskManager::self()->setTrackGeometry(false, d->configToken);
     delete d->abstractSortingStrategy;
     delete d->abstractGroupingStrategy;
-    delete d->rootGroup;
     delete d;
+}
+
+TaskGroup *GroupManagerPrivate::currentRootGroup()
+{
+    return rootGroups[currentDesktop];
 }
 
 void GroupManagerPrivate::reloadTasks()
@@ -148,11 +155,11 @@ void GroupManagerPrivate::actuallyReloadTasks()
     QHash<WId, TaskPtr> taskList = TaskManager::self()->tasks();
     QMutableHashIterator<WId, TaskPtr> it(taskList);
 
-
     while (it.hasNext()) {
         it.next();
 
         if (addTask(it.value())) {
+            //kDebug() << "task added " << it.value()->visibleName();
             it.remove();
         }
     }
@@ -172,8 +179,8 @@ void GroupManagerPrivate::addStartup(StartupPtr task)
     //kDebug();
     if (!startupList.contains(task)) {
         TaskItem *item = new TaskItem(q, task);
-        startupList.insert(task, item); 
-        rootGroup->add(item);
+        startupList.insert(task, item);
+        currentRootGroup()->add(item);
         QObject::connect(item, SIGNAL(destroyed(AbstractGroupableItem*)),
                          q, SLOT(startupItemDestroyed(AbstractGroupableItem*)));
     }
@@ -181,7 +188,7 @@ void GroupManagerPrivate::addStartup(StartupPtr task)
 
 void GroupManagerPrivate::removeStartup(StartupPtr task)
 {
-    //kDebug() << "startup";
+    //kDebug();
     if (!startupList.contains(task)) {
         kDebug() << "invalid startup task";
         return;
@@ -191,12 +198,11 @@ void GroupManagerPrivate::removeStartup(StartupPtr task)
     if (item->parentGroup()) {
         item->parentGroup()->remove(item);
     }
-
-    emit q->itemRemoved(item);
 }
 
 bool GroupManagerPrivate::addTask(TaskPtr task)
 {
+    //kDebug();
     /* kDebug() << task->visibleName()
              << task->visibleNameWithState()
              << task->name()
@@ -252,10 +258,7 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
 
     //Ok the Task should be displayed
     TaskItem *item = 0;
-    if (itemList.contains(task)) {
-        // we pretend to add it again so the group strategy evaluates it again
-        item = itemList.value(task);
-    } else {
+    if (!currentRootGroup()->getMemberByWId(task->window())) {
         // first search for an existing startuptask for this task
         QHash<StartupPtr, TaskItem *>::iterator it = startupList.begin();
         QHash<StartupPtr, TaskItem *>::iterator itEnd = startupList.end();
@@ -268,7 +271,6 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
                 item->setTaskPointer(task);
                 break;
             }
-
             ++it;
         }
 
@@ -278,16 +280,14 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
 
         QObject::connect(item, SIGNAL(destroyed(AbstractGroupableItem*)),
                          q, SLOT(taskItemDestroyed(AbstractGroupableItem*)));
-        itemList.insert(task, item);
-    }
 
-    geometryTasks.insert(task);
-
-    //Find a fitting group for the task with GroupingStrategies
-    if (abstractGroupingStrategy && !task->demandsAttention()) { //do not group attention tasks
-        abstractGroupingStrategy->handleItem(item);
-    } else {
-        rootGroup->add(item);
+        //Find a fitting group for the task with GroupingStrategies
+        if (abstractGroupingStrategy && !task->demandsAttention()) { //do not group attention tasks
+            abstractGroupingStrategy->handleItem(item);
+        } else {
+            currentRootGroup()->add(item);
+        }
+        geometryTasks.insert(task);
     }
 
     return true;
@@ -299,11 +299,12 @@ void GroupManagerPrivate::removeTask(TaskPtr task)
     //kDebug() << "remove: " << task->visibleName();
     geometryTasks.remove(task);
 
-    TaskItem *item = itemList.value(task);
+    AbstractGroupableItem *item = currentRootGroup()->getMemberByWId(task->window());
+
     if (!item) {
-        // this can happen if the window hasn't been caught previously, 
+        // this can happen if the window hasn't been caught previously,
         // of it it is an ignored type such as a NET::Utility type window
-        //kDebug() << "invalid item";
+        kDebug() << "invalid item";
         return;
     }
 
@@ -311,17 +312,12 @@ void GroupManagerPrivate::removeTask(TaskPtr task)
         item->parentGroup()->remove(item);
     }
 
-    emit q->itemRemoved(item);
-
-    itemList.remove(task);
-    //FIXME: We keep it in the itemlist because it may return: what does actually mean?
-    //the item must exist as long as the TaskPtr does because of activate calls so don't delete the item here, it will delete itself. We keep it in the itemlist because it may return
+    //the item must exist as long as the TaskPtr does because of activate calls so don't delete the item here, it will delete itself.
 }
 
 void GroupManagerPrivate::taskItemDestroyed(AbstractGroupableItem *item)
 {
     TaskItem *taskItem = static_cast<TaskItem*>(item);
-    itemList.remove(itemList.key(taskItem));
     geometryTasks.remove(taskItem->task());
 }
 
@@ -334,49 +330,32 @@ void GroupManagerPrivate::startupItemDestroyed(AbstractGroupableItem *item)
 
 bool GroupManager::manualGroupingRequest(AbstractGroupableItem* item, TaskGroup* groupItem)
 {
-    //kDebug();
     if (d->abstractGroupingStrategy) {
-        return d->abstractGroupingStrategy->addItemToGroup(item, groupItem);
-    //    kDebug() << d->abstractGroupingStrategy->type() << ManualGrouping;
-        /*if (d->abstractGroupingStrategy->type() == ManualGrouping) {
-   //         kDebug();
-            return (qobject_cast<ManualGroupingStrategy*>(d->abstractGroupingStrategy))->addItemToGroup(item,groupItem);
-        }*/
+        return d->abstractGroupingStrategy->manualGroupingRequest(item, groupItem);
     }
     return false;
 }
 
 bool GroupManager::manualGroupingRequest(ItemList items)
 {
-    //kDebug();
-    if (d->abstractGroupingStrategy && d->abstractGroupingStrategy->type() == ManualGrouping) {
-        //kDebug();
-        ManualGroupingStrategy *strategy = qobject_cast<ManualGroupingStrategy*>(d->abstractGroupingStrategy);
-        if (strategy) {
-            return strategy->groupItems(items);
-        }
+    if (d->abstractGroupingStrategy) {
+            return d->abstractGroupingStrategy->manualGroupingRequest(items);
     }
-
     return false;
 }
 
 bool GroupManager::manualSortingRequest(AbstractGroupableItem* taskItem, int newIndex)
 {
-    //kDebug();
-    if (d->abstractSortingStrategy && d->abstractSortingStrategy->type() == ManualSorting) {
-        ManualSortingStrategy *strategy = qobject_cast<ManualSortingStrategy*>(d->abstractSortingStrategy);
-        if (strategy) {
-            return strategy->moveItem(taskItem, newIndex);
-        }
+    if (d->abstractSortingStrategy) {
+        return d->abstractSortingStrategy->manualSortingRequest(taskItem, newIndex);
     }
-
     return false;
 }
 
 
 GroupPtr GroupManager::rootGroup() const
 {
-    return d->rootGroup;
+    return d->currentRootGroup();
 }
 
 void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
@@ -386,14 +365,30 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
         return;
     }
 
-    if (abstractSortingStrategy) {
-        abstractSortingStrategy->desktopChanged(newDesktop);
+    if (currentDesktop == newDesktop) {
+        return;
     }
 
-    if (abstractGroupingStrategy) {
-        abstractGroupingStrategy->desktopChanged(newDesktop);
+    if (!rootGroups.contains(newDesktop)) {
+        kDebug() << "created new desk group";
+        rootGroups[newDesktop] = new TaskGroup(q, "RootGroup", Qt::transparent);
+        if (abstractSortingStrategy) {
+            abstractSortingStrategy->handleGroup(rootGroups[newDesktop]);
+        }
     }
-
+    
+    if (onlyGroupWhenFull) {
+        QObject::disconnect(currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
+        QObject::disconnect(currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
+    }
+    
+    currentDesktop = newDesktop;
+    
+    if (onlyGroupWhenFull) {
+        QObject::connect(currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
+        QObject::connect(currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), q, SLOT(checkIfFull()));
+    }
+    
     reloadTasks();
 }
 
@@ -468,7 +463,7 @@ void GroupManagerPrivate::checkScreenChange()
 
 void GroupManager::reconnect()
 {
-    //kDebug();
+    kDebug();
     disconnect(TaskManager::self(), SIGNAL(desktopChanged(int)),
                this, SLOT(currentDesktopChanged(int)));
     disconnect(TaskManager::self(), SIGNAL(windowChanged(TaskPtr,::TaskManager::TaskChanges)),
@@ -490,7 +485,6 @@ void GroupManager::reconnect()
     if (!d->showOnlyCurrentScreen) {
         d->geometryTasks.clear();
     }
-
     d->reloadTasks();
 }
 
@@ -509,12 +503,12 @@ void GroupManager::setOnlyGroupWhenFull(bool onlyGroupWhenFull)
 
     d->onlyGroupWhenFull = onlyGroupWhenFull;
 
-    disconnect(d->rootGroup, SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
-    disconnect(d->rootGroup, SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
+    disconnect(d->currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
+    disconnect(d->currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
 
     if (onlyGroupWhenFull) {
-        connect(d->rootGroup, SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
-        connect(d->rootGroup, SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
+        connect(d->currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
+        connect(d->currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
         d->checkIfFull();
     }
 }
@@ -537,7 +531,7 @@ void GroupManagerPrivate::checkIfFull()
         return;
     }
 
-    if (itemList.size() >= groupIsFullLimit) {
+    if (currentRootGroup()->totalSize() >= groupIsFullLimit) {
         if (!abstractGroupingStrategy) {
             geometryTasks.clear();
             q->setGroupingStrategy(GroupManager::ProgramGrouping);
@@ -545,7 +539,7 @@ void GroupManagerPrivate::checkIfFull()
     } else if (abstractGroupingStrategy) {
         geometryTasks.clear();
         q->setGroupingStrategy(GroupManager::NoGrouping);
-        //let the visualization thing we still use the programGrouping
+        //let the visualization think we still use the programGrouping
         groupingStrategy = GroupManager::ProgramGrouping;
     }
 }
@@ -558,7 +552,7 @@ bool GroupManager::showOnlyCurrentScreen() const
 void GroupManager::setShowOnlyCurrentScreen(bool showOnlyCurrentScreen)
 {
     d->showOnlyCurrentScreen = showOnlyCurrentScreen;
-    d->reloadTasks();
+    reconnect();
 }
 
 bool GroupManager::showOnlyCurrentDesktop() const
@@ -569,7 +563,7 @@ bool GroupManager::showOnlyCurrentDesktop() const
 void GroupManager::setShowOnlyCurrentDesktop(bool showOnlyCurrentDesktop)
 {
     d->showOnlyCurrentDesktop = showOnlyCurrentDesktop;
-    d->reloadTasks();
+    reconnect();
 }
 
 bool GroupManager::showOnlyMinimized() const
@@ -580,6 +574,7 @@ bool GroupManager::showOnlyMinimized() const
 void GroupManager::setShowOnlyMinimized(bool showOnlyMinimized)
 {
     d->showOnlyMinimized = showOnlyMinimized;
+    reconnect();
 }
 
 GroupManager::TaskSortingStrategy GroupManager::sortingStrategy() const
@@ -608,17 +603,14 @@ void GroupManager::setSortingStrategy(TaskSortingStrategy sortOrder)
     switch (sortOrder) {
         case ManualSorting:
             d->abstractSortingStrategy = new ManualSortingStrategy(this);
-            d->abstractSortingStrategy->handleGroup(d->rootGroup);
             break;
 
         case AlphaSorting:
             d->abstractSortingStrategy = new AlphaSortingStrategy(this);
-            d->abstractSortingStrategy->handleGroup(d->rootGroup);
             break;
 
         case DesktopSorting:
             d->abstractSortingStrategy = new DesktopSortingStrategy(this);
-            d->abstractSortingStrategy->handleGroup(d->rootGroup);
             break;
 
         case NoSorting: //manual and no grouping result both in non automatic grouping
@@ -627,9 +619,14 @@ void GroupManager::setSortingStrategy(TaskSortingStrategy sortOrder)
         default:
             kDebug() << "Invalid Strategy";
     }
+    if (d->abstractSortingStrategy) {
+        foreach (TaskGroup *group, d->rootGroups) {
+            d->abstractSortingStrategy->handleGroup(group);
+        }
+    }
 
     d->sortingStrategy = sortOrder;
-    d->reloadTasks();
+    reconnect();
 }
 
 GroupManager::TaskGroupingStrategy GroupManager::groupingStrategy() const
@@ -642,6 +639,7 @@ AbstractGroupingStrategy* GroupManager::taskGrouper() const
     return d->abstractGroupingStrategy;
 }
 
+
 void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
 {
     if (d->changingGroupingStrategy ||
@@ -653,8 +651,8 @@ void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
 
     //kDebug() << strategy << kBacktrace();
     if (d->onlyGroupWhenFull) {
-        disconnect(d->rootGroup, SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
-        disconnect(d->rootGroup, SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
+        disconnect(d->currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
+        disconnect(d->currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
     }
 
     if (d->abstractGroupingStrategy) {
@@ -685,16 +683,11 @@ void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
 
     d->groupingStrategy = strategy;
 
-    if (d->abstractGroupingStrategy) {
-        connect(d->abstractGroupingStrategy, SIGNAL(groupRemoved(TaskGroup*)),
-                this, SIGNAL(groupRemoved(TaskGroup*)));
-    }
-
     d->actuallyReloadTasks();
 
     if (d->onlyGroupWhenFull) {
-        connect(d->rootGroup, SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
-        connect(d->rootGroup, SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
+        connect(d->currentRootGroup(), SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
+        connect(d->currentRootGroup(), SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
     }
 
     d->changingGroupingStrategy = false;

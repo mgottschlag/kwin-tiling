@@ -49,8 +49,6 @@ public:
     {
     }
 
-    QList<WId> winIds() const;
-
     ItemList members;
     QString groupName;
     QColor groupColor;
@@ -93,6 +91,66 @@ TaskGroup::~TaskGroup()
     delete d;
 }
 
+WindowList TaskGroup::winIds() const
+{
+    kDebug() << name() << d->members.size();
+    if (d->members.isEmpty()) {
+        kDebug() << "empty group: " << name();
+    }
+    WindowList ids;
+    foreach (AbstractGroupableItem *groupable, d->members) {
+        ids+=groupable->winIds();
+    }
+    kDebug() << ids.size();
+    return ids;
+}
+
+//TODO unused
+WindowList TaskGroup::directMemberwinIds() const
+{
+    WindowList ids;
+    foreach (AbstractGroupableItem *groupable, d->members) {
+        if (!groupable->isGroupItem()) {
+            ids+=groupable->winIds();
+        }
+    }
+    return ids;
+}
+
+AbstractGroupableItem *TaskGroup::getMemberByWId(WId id)
+{
+    foreach (AbstractGroupableItem *groupable, d->members) {
+        if (groupable->isGroupItem()) {
+            AbstractGroupableItem *item = static_cast<TaskGroup*>(groupable)->getMemberByWId(id);
+            if (item) {
+                return item;
+            }
+        } else {
+            if (groupable->winIds().isEmpty()) {
+                continue;
+            }
+            if (groupable->winIds().values().first() == id) {
+                return groupable;
+            }
+        }
+    }
+    //kDebug() << "item not found";
+    return 0;
+}
+
+//including subgroups
+int TaskGroup::totalSize()
+{
+    int size = 0;
+    foreach (AbstractGroupableItem *groupable, d->members) {
+        if (groupable->isGroupItem()) {
+            size += static_cast<TaskGroup*>(groupable)->totalSize();
+        } else {
+            size++;
+        }
+    }
+    return size;
+}
 
 void TaskGroup::add(AbstractGroupableItem *item)
 {
@@ -103,6 +161,10 @@ void TaskGroup::add(AbstractGroupableItem *item)
         kDebug() << " to Group " << name();
     }
 */
+    if (!item) {
+        kDebug() << "invalid item";
+        return;
+    }
 
     if (d->members.contains(item)) {
         //kDebug() << "already in this group";
@@ -187,19 +249,6 @@ void TaskGroup::remove(AbstractGroupableItem *item)
         emit empty(this);
     }*/
     emit itemRemoved(item);
-}
-
-void TaskGroup::clear()
-{
-   // kDebug() << "size " << d->members.size();
-    foreach(AbstractGroupableItem *item, d->members) {
-    //    kDebug();
-        Q_ASSERT(item);
-        if (item->isGroupItem()) { 
-            (static_cast<GroupPtr>(item))->clear();
-        }
-        remove(item);
-    }
 }
 
 ItemList TaskGroup::members() const
@@ -330,27 +379,6 @@ bool TaskGroup::isOnCurrentDesktop() const
     return true;
 }
 
-QList<WId> TaskGroup::Private::winIds() const
-{
-    QList<WId> ids;
-
-    foreach (AbstractGroupableItem *groupable, members) {
-        if (groupable->isGroupItem()) {
-            TaskGroup *group = dynamic_cast<TaskGroup*>(groupable);
-            if (group) {
-                ids << group->d->winIds();
-            }
-        } else {
-            TaskItem * item = dynamic_cast<TaskItem*>(groupable);
-            if (item) {
-                ids << item->task()->info().win();
-            }
-        }
-    }
-
-    return ids;
-}
-
 void TaskGroup::addMimeData(QMimeData *mimeData) const
 {
     //kDebug() << d->members.count();
@@ -359,7 +387,7 @@ void TaskGroup::addMimeData(QMimeData *mimeData) const
     }
 
     QByteArray data;
-    QList<WId> ids = d->winIds();
+    WindowList ids = winIds();
     int count = ids.count();
     data.resize(sizeof(int) + sizeof(WId) * count);
     memcpy(data.data(), &count, sizeof(int));

@@ -50,11 +50,10 @@ public:
     /** Adds group under control of sorting strategy. all added subgroups are automatically added to this sortingStrategy*/
     void handleGroup(TaskGroup *);
 
-    /** DesktopChanges time to backup any needed data */
-    virtual void desktopChanged(int newDesktop);
-
     /** Moves Item to new index*/
     bool moveItem(AbstractGroupableItem *, int);
+    /**Reimplement this to support manual sorting*/
+    virtual bool manualSortingRequest(AbstractGroupableItem *item, int newIndex);
 
 protected Q_SLOTS:
      /** Handles a new item, is typically called after an item was added to a handled group*/
@@ -75,13 +74,13 @@ private:
      *        in by value and should be in the proprer sorting order when
      *        the method returns.
      */
-    virtual void sortItems(ItemList &ites) = 0;
+    virtual void sortItems(ItemList &ites);
 
     class Private;
     Private * const d;
 };
 
-typedef QHash <AbstractGroupableItem*, int> itemHashTable;
+typedef QHash <int, WindowList> itemHashTable;
 typedef QHash <int, itemHashTable*> desktopHashTable;
 
 } // TaskManager namespace

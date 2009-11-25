@@ -42,22 +42,8 @@ class ManualSortingStrategy : public AbstractSortingStrategy
 public:
     ManualSortingStrategy(GroupManager *parent);
     ~ManualSortingStrategy();
-
-    /** DesktopChanges, time to backup any needed data */
-    void desktopChanged(int newDesktop);
-
-protected Q_SLOTS:
-     /** Handles a new item*/
-    virtual void handleItem(AbstractGroupableItem *);
-
-private:
-    /** Sorts list of items*/
-    void sortItems(ItemList&);
-
-    void storePositions(TaskGroup *group);
-
-    class Private;
-    Private * const d;
+    bool manualSortingRequest(AbstractGroupableItem *item, int newIndex);
+    
 };
 
 

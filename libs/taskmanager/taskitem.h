@@ -47,6 +47,8 @@ public:
     /** Returns the shared pointer to the  Task */
     TaskPtr task() const;
 
+    WindowList winIds() const;
+
     StartupPtr startup() const;
     bool isGroupItem() const { return false; }
 

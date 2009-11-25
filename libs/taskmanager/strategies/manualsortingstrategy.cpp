@@ -23,126 +23,25 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "manualsortingstrategy.h"
 
-#include "taskitem.h"
-#include "taskgroup.h"
-#include "taskmanager.h"
-
-#include <QMap>
-#include <QtAlgorithms>
-
-#include <KDebug>
-
-
 namespace TaskManager
 {
 
-class ManualSortingStrategy::Private
-{
-public:
-    Private()
-    {
-    }
-    GroupManager *groupingStrategy;
-
-    itemHashTable *managedItems;
-    desktopHashTable desktops;
-    int oldDesktop;
-};
-
-
 ManualSortingStrategy::ManualSortingStrategy(GroupManager *parent)
-    :AbstractSortingStrategy(parent),
-    d(new Private)
+        :AbstractSortingStrategy(parent)
 {
-    d->groupingStrategy = parent;
     setType(GroupManager::ManualSorting);
-
-    //TODO add a screenHashTable
-    d->oldDesktop = TaskManager::self()->currentDesktop();
-
-    d->managedItems = new itemHashTable();
-    if (d->groupingStrategy->showOnlyCurrentDesktop()) {
-        d->desktops.insert(TaskManager::self()->currentDesktop(), d->managedItems);
-    } else {
-        d->desktops.insert(0, d->managedItems);
-    }
 }
 
 ManualSortingStrategy::~ManualSortingStrategy()
 {
-    qDeleteAll(d->desktops);
-    delete d;
 }
 
-void ManualSortingStrategy::storePositions(TaskGroup *group)
+bool ManualSortingStrategy::manualSortingRequest(AbstractGroupableItem *item, int newIndex)
 {
-    Q_ASSERT(group);
-    for (int i = 0; i < group->members().size(); i++) {
-        AbstractGroupableItem *item = group->members().at(i);
-        Q_ASSERT(item);
-        if (item->isGroupItem()) {
-            d->managedItems->insert(item, i);
-            storePositions(dynamic_cast<TaskGroup*>(item));
-        } else {
-            d->managedItems->insert(item, i);
-        }
-
-        //kDebug() << item << i;
-    }
-}
-
-//Here we should store all infos about the sorting
-void ManualSortingStrategy::desktopChanged(int newDesktop)
-{
-    kDebug() << "Desktop changed" << d->oldDesktop << newDesktop;
-    //store positions of old desktop
-    d->managedItems->clear();
-    storePositions(d->groupingStrategy->rootGroup());
-    d->desktops.insert(d->oldDesktop, d->managedItems);
-
-    //load positions of new desktop
-    d->managedItems = d->desktops.value(newDesktop);
-    if (!d->managedItems) {
-        d->managedItems = new itemHashTable();
-        d->desktops.insert(newDesktop, d->managedItems);
-    }
-
-    d->oldDesktop = newDesktop;
-}
-
-void ManualSortingStrategy::sortItems(ItemList &items)
-{
-    kDebug();
-
-    QMap<int, AbstractGroupableItem*> map;
-    int i = 1000;
-    foreach (AbstractGroupableItem *item, items) {
-        if (d->managedItems->contains(item)) {
-            map.insertMulti(d->managedItems->value(item), item);
-        } else {//make sure unkwown items are appended
-            kDebug() << "item not found in managedItems";
-            map.insertMulti(i, item);
-            i++;
-        }
-    }
-    items.clear();
-    items = map.values();
-}
-
-//since we have no way of knowing about a desktop change before it happens we have to track every single change....
-void ManualSortingStrategy::handleItem(AbstractGroupableItem *item)
-{
-    if (d->managedItems->contains(item)) {
-        if (item->isGroupItem()) {
-            handleGroup(qobject_cast<TaskGroup*>(item));
-        }
-        check(item);
-    } else if (item->parentGroup()) {
-        d->managedItems->insert(item, item->parentGroup()->members().indexOf(item));
-    }
+    moveItem(item, newIndex);
+    return true;
 }
 
 } //namespace
-
 #include "manualsortingstrategy.moc"
 

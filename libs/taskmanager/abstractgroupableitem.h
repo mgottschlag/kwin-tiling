@@ -57,6 +57,8 @@ public:
     virtual QIcon icon() const;
     virtual QString name() const;
 
+    virtual WindowList winIds() const;
+
     /**
     *   Returns the parent group of this item
     */

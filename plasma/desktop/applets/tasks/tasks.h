@@ -124,7 +124,6 @@ private slots:
         * Somthing has changed in the tree of the GroupingStrategy
         */
         void reload();
-        //void groupRemoved(TaskGroup *item);
         void changeSizeHint(Qt::SizeHint which);
         void dialogGroupingChanged(int index);
 

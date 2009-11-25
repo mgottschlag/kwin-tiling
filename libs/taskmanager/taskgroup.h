@@ -40,12 +40,18 @@ public:
     ~TaskGroup();
 
     ItemList members() const;
+    WindowList winIds() const;
+    WindowList directMemberwinIds() const;
+
+    AbstractGroupableItem *getMemberByWId(WId id);
+    //including subgroups
+    int totalSize();
 
     QIcon icon() const;
     void setIcon(const QIcon &icon);
 
     QColor color() const;
-    void setColor(const QColor &color); 
+    void setColor(const QColor &color);
 
     QString name() const;
     void setName(const QString &newName);
@@ -116,9 +122,6 @@ public Q_SLOTS:
 
     /** remove item from group */
     void remove(AbstractGroupableItem *);
-
-    /** Removes all tasks and groups from this group */
-    void clear();
 
 Q_SIGNALS:
     /** inform visualization about wat is added and removed */

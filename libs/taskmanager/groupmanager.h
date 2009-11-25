@@ -118,20 +118,14 @@ public:
      * The Visualization is responsible to update the screen number the visualization is currently on.
      */
     void setScreen(int screen);
+    /**
+     * Reconnect all neccessary signals to the taskmanger, and clear the per desktop stored rootGroups
+     */
+    void reconnect();
 
 Q_SIGNALS:
     /** Signal that the rootGroup has to be reloaded in the visualization */
     void reload();
-    /** Signal that the item is no longer available */
-    void itemRemoved(AbstractGroupableItem*);
-    /** Signal that a group was removed */
-    void groupRemoved(TaskGroup*);
-
-public Q_SLOTS:
-    /**
-    *   listen to the relevant signals of taskmanager
-    */
-    void reconnect();
 
 private:
     Q_PRIVATE_SLOT(d, void currentDesktopChanged(int))
