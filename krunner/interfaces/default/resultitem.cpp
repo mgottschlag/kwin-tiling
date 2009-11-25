@@ -127,7 +127,7 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
 
 void ResultItem::setupActions()
 {
-    kDebug() << "setupactions";
+    //kDebug();
     QList<QAction*> actionList = m_runnerManager->actionsForMatch(m_match);
 
     if (!actionList.isEmpty()) {
