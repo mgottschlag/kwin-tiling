@@ -36,6 +36,7 @@ class QVBoxLayout;
 
 class KCompletion;
 class KHistoryComboBox;
+class KLineEdit;
 
 class ResultItem;
 class ResultScene;
@@ -77,6 +78,7 @@ class Interface : public KRunnerDialog
         void ensureVisibility(QGraphicsItem *item);
         void cleanupAfterConfigWidget();
         void configWidgetDestroyed();
+        void searchTermSetFocus();
         void actionTriggered();
         void delayedQueryLaunch();
 
@@ -102,6 +104,9 @@ class Interface : public KRunnerDialog
         QWidget *m_dividerLine;
         ResultScene *m_resultsScene;
         QSize m_defaultSize;
+        QLabel *m_singleRunnerIcon;
+        QLabel *m_singleRunnerDisplayName;
+        KLineEdit *m_singleRunnerSearchTerm;
         QTimer m_delayedQueryTimer;
         bool m_delayedRun : 1;
         bool m_running : 1;

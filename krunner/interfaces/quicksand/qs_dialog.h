@@ -62,7 +62,12 @@ class QsDialog : public KRunnerDialog
         void cleanupAfterConfigWidget();
 
     private:
+        void adjustInterface();
+
         bool m_newQuery;
+        QLabel *m_singleRunnerIcon;
+        QToolButton *m_configButton;
+
         QMultiMap<QString, Plasma::QueryMatch> m_matches;
         QuickSand::QsMatchView *m_matchView;
         QuickSand::QsMatchView *m_actionView;

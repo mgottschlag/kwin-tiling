@@ -19,5 +19,8 @@
     </method>
     <method name="clearHistory">
     </method>
+    <method name="querySingleRunner">
+      <arg name="runnerName" type="s" direction="in"/>
+    </method>
   </interface>
 </node>

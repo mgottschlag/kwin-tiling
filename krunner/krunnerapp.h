@@ -62,6 +62,7 @@ public Q_SLOTS:
     void logoutWithoutConfirmation();
     void haltWithoutConfirmation();
     void rebootWithoutConfirmation();
+    void singleRunnerModeAction();
 
     // DBUS interface. if you change these methods, you MUST run:
     // qdbuscpp2xml -m krunnerapp.h -o org.kde.krunner.App.xml
@@ -86,6 +87,9 @@ public Q_SLOTS:
 
     /** Clear the search history */
     Q_SCRIPTABLE void clearHistory();
+
+    /** Enter single runner query mode **/
+    Q_SCRIPTABLE void querySingleRunner(const QString& runnerName);
 
 private slots:
     /**

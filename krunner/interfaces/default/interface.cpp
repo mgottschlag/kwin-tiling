@@ -103,6 +103,11 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     bottomLayout->addWidget(m_activityButton);
     //bottomLayout->addStretch(10);
 
+    m_singleRunnerIcon = new QLabel();
+    bottomLayout->addWidget(m_singleRunnerIcon);
+    m_singleRunnerDisplayName = new QLabel();
+    bottomLayout->addWidget(m_singleRunnerDisplayName);
+
     m_helpButton = new QToolButton(m_buttonContainer);
     m_helpButton->setText(i18n("Help"));
     m_helpButton->setToolTip(i18n("Information on using this application"));
@@ -140,7 +145,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     // FIXME remove this code when KLineEdit has automatic direction detection of the "paragraph"
     m_searchTerm->setLayoutDirection( Qt::LeftToRight );
 
-    connect(focusEdit, SIGNAL(triggered(bool)), lineEdit, SLOT(setFocus()));
+    connect(focusEdit, SIGNAL(triggered(bool)), this, SLOT(searchTermSetFocus()));
     addAction(focusEdit);
 
     // the order of these next few lines if very important.
@@ -156,7 +161,10 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_searchTerm->setHistoryItems(pastQueryItems);
     m_searchTerm->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
     m_completion->insertItems(pastQueryItems);
-    bottomLayout->insertWidget(2, m_searchTerm, 10);
+    bottomLayout->insertWidget(4, m_searchTerm, 10);
+
+    m_singleRunnerSearchTerm = new KLineEdit(w);
+    bottomLayout->insertWidget(4, m_singleRunnerSearchTerm, 10 );
 
     m_resultsContainer = new QWidget(w);
     QVBoxLayout* resultsLayout = new QVBoxLayout(m_resultsContainer);
@@ -186,6 +194,8 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
     connect(lineEdit, SIGNAL(userTextChanged(QString)), this, SLOT(queryTextEdited(QString)));
     connect(m_searchTerm, SIGNAL(returnPressed()), this, SLOT(runDefaultResultItem()));
+    connect(m_singleRunnerSearchTerm, SIGNAL(textChanged(QString)), this, SLOT(queryTextEdited(QString)));
+    connect(m_singleRunnerSearchTerm, SIGNAL(returnPressed()),  this, SLOT(runDefaultResultItem()));
 
     KrunnerTabFilter *krunnerTabFilter = new KrunnerTabFilter(m_resultsScene, lineEdit, this);
     m_searchTerm->installEventFilter(krunnerTabFilter);
@@ -295,6 +305,17 @@ Interface::~Interface()
     KGlobal::config()->sync();
 }
 
+
+void Interface::searchTermSetFocus()
+{
+    if (singleRunnerMode()) {
+        m_singleRunnerSearchTerm->setFocus();
+    } else {
+        m_searchTerm->setFocus();
+    }
+}
+
+
 void Interface::themeUpdated()
 {
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
@@ -330,15 +351,23 @@ void Interface::clearHistory()
 
 void Interface::display(const QString &term)
 {
-    m_searchTerm->setFocus();
-
     if (!term.isEmpty() || !isVisible()) {
         resetInterface();
     }
 
     positionOnScreen();
+    searchTermSetFocus();
 
-    if (!term.isEmpty()) {
+    if (singleRunnerMode()) {
+        if (term.isEmpty()) {
+            // We need to manually trigger queryTextEdited, since
+            // with an empty query it won't be triggered; still we need it
+            // to launch the query
+            queryTextEdited(QString());
+        } else {
+            m_singleRunnerSearchTerm->setText(term);
+        }
+    } else if (!term.isEmpty()) {
         m_searchTerm->setItemText(0, term);
     }
 }
@@ -360,6 +389,7 @@ void Interface::resetInterface()
     setStaticQueryMode(false);
     m_delayedRun = false;
     m_searchTerm->setCurrentItem(QString(), true, 0);
+    m_singleRunnerSearchTerm->clear();
     resetResultsArea();
     m_resultsScene->clearQuery();
     resize(qMax(minimumSizeHint().width(), m_defaultSize.width()), minimumSizeHint().height());
@@ -368,8 +398,16 @@ void Interface::resetInterface()
 void Interface::showHelp()
 {
     QMap<QString, Plasma::QueryMatch> matches;
+    QList<Plasma::AbstractRunner*> runnerList;
 
-    foreach (Plasma::AbstractRunner *runner, m_runnerManager->runners()) {
+    if (singleRunnerMode()) {
+        runnerList << m_runnerManager->runner(singleRunnerId());
+    } else {
+        runnerList = m_runnerManager->runners();
+    }
+
+
+    foreach (Plasma::AbstractRunner *runner, runnerList) {
         int count = 0;
         QIcon icon(runner->icon());
         if (icon.isNull()) {
@@ -400,13 +438,19 @@ void Interface::ensureVisibility(QGraphicsItem* item)
 
 void Interface::setStaticQueryMode(bool staticQuery)
 {
-     // don't show the search and other control buttons in the case of a static query
-  //   m_buttonContainer->setVisible(!staticQuery);
+    // don't show the search and other control buttons in the case of a static querymatch
     bool visible = !staticQuery;
-    m_configButton->setVisible(visible);
-    m_activityButton->setVisible(visible);
+    m_configButton->setVisible(visible && !singleRunnerMode());
+    m_activityButton->setVisible(visible && !singleRunnerMode());
     m_helpButton->setVisible(visible);
-    m_searchTerm->setVisible(visible);
+    m_searchTerm->setVisible(visible && !singleRunnerMode());
+    m_singleRunnerSearchTerm->setVisible(visible && singleRunnerMode());
+    if (singleRunnerMode()) {
+        m_singleRunnerIcon->setPixmap(m_runnerManager->runner(singleRunnerId())->icon().pixmap( QSize( 22, 22 )) );
+        m_singleRunnerDisplayName->setText(m_runnerManager->runner(singleRunnerId())->name());
+    }
+    m_singleRunnerIcon->setVisible(singleRunnerMode());
+    m_singleRunnerDisplayName->setVisible(singleRunnerMode());
 }
 
 void Interface::hideEvent(QHideEvent *e)
@@ -486,7 +530,7 @@ void Interface::queryTextEdited(const QString &query)
 {
     m_delayedRun = false;
 
-    if (query.isEmpty()) {
+    if (query.isEmpty() && !singleRunnerMode()) {
         m_delayedQueryTimer.stop();
         resetInterface();
         m_queryRunning = false;
@@ -497,9 +541,9 @@ void Interface::queryTextEdited(const QString &query)
 
 void Interface::delayedQueryLaunch()
 {
-    const QString query = static_cast<KLineEdit*>(m_searchTerm->lineEdit())->userText();
-    if (!query.isEmpty()) {
-        m_queryRunning = m_resultsScene->launchQuery(query) || m_queryRunning; //lazy OR?
+    const QString query = (singleRunnerMode()? m_singleRunnerSearchTerm->userText() : static_cast<KLineEdit*>(m_searchTerm->lineEdit())->userText());
+    if (!query.isEmpty() || singleRunnerMode()) {
+        m_queryRunning = m_resultsScene->launchQuery(query, singleRunnerId()) || m_queryRunning; //lazy OR?
     }
 }
 
@@ -540,7 +584,7 @@ void Interface::matchCountChanged(int count)
 
 void Interface::hideResultsArea()
 {
-    m_searchTerm->setFocus();
+    searchTermSetFocus();
 
     resetResultsArea();
 

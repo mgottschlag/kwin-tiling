@@ -49,11 +49,13 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
     QHBoxLayout *hLayout = new QHBoxLayout();
 
-    QToolButton *m_configButton = new QToolButton(w);
+    m_configButton = new QToolButton(w);
     m_configButton->setText(i18n("Settings"));
     m_configButton->setToolTip(i18n("Settings"));
     m_configButton->setIcon(m_iconSvg->pixmap("configure"));
     connect(m_configButton, SIGNAL(clicked()), SLOT(showConfigDialog()));
+
+    m_singleRunnerIcon = new QLabel(w);
 
     QLabel *label = new QLabel(w);
     label->setText("<b>QuickSand</b>");
@@ -66,6 +68,7 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
     connect(m_closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
 
     hLayout->addWidget(m_configButton);
+    hLayout->addWidget(m_singleRunnerIcon);
     hLayout->addStretch();
     hLayout->addWidget(label);
     hLayout->addStretch();
@@ -143,10 +146,23 @@ void QsDialog::cleanupAfterConfigWidget()
     adjustSize();
 }
 
+void QsDialog::adjustInterface()
+{
+    if (singleRunnerMode()) {
+        m_singleRunnerIcon->setPixmap(m_runnerManager->runner(singleRunnerId())->icon().pixmap( QSize( 22, 22 )) );
+        m_singleRunnerIcon->show();
+        m_configButton->hide();
+    } else {
+        m_singleRunnerIcon->hide();
+        m_configButton->show();
+    }
+}
+
 void QsDialog::display(const QString &term)
 {
     KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
 
+    adjustInterface();
     m_matchView->reset();
     m_actionView->reset();
     m_actionView->hide();
@@ -162,7 +178,7 @@ void QsDialog::display(const QString &term)
     //KDialog::centerOnScreen(this, screen); // For some reason, this isn't working
     positionOnScreen();
     KWindowSystem::forceActiveWindow(winId());
-    if (term.isEmpty()) {
+    if (term.isEmpty() && !singleRunnerMode()) {
         m_matchView->setTitle(QString());
     } else {
         m_matchView->setTitle(term);
@@ -172,12 +188,12 @@ void QsDialog::display(const QString &term)
 
 void QsDialog::launchQuery(const QString &query)
 {
-    if (query.isEmpty()) {
+    if (query.isEmpty() && !singleRunnerMode()) {
         m_matchView->reset();
     } else {
         m_matchView->showLoading();
     }
-    m_runnerManager->launchQuery(query);
+    m_runnerManager->launchQuery(query, singleRunnerId());
     m_newQuery = true;
 }
 

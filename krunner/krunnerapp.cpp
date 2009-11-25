@@ -41,6 +41,7 @@
 #include <KWindowSystem>
 
 #include <Plasma/RunnerManager>
+#include <Plasma/AbstractRunner>
 
 #ifdef Q_WS_X11
 #include "processui/ksysguardprocesslist.h"
@@ -197,6 +198,37 @@ void KRunnerApp::initialize()
 
     m_actionCollection->readSettings();
     m_runnerManager->reloadConfiguration(); // pre-load the runners
+
+    // Single runner mode actions shortcuts
+
+    foreach (Plasma::AbstractRunner *runner, m_runnerManager->singleQueryModeEnabledRunners()) {
+        if (runner->defaultSyntax()) {
+            a = m_actionCollection->addAction(runner->id());
+            a->setText( i18nc("Run krunner restricting the search only to runner %1", "Run Command (runner \"%1\" only)", runner->name()));
+            a->setGlobalShortcut(KShortcut());
+            connect(a, SIGNAL(triggered(bool)), SLOT(singleRunnerModeAction()));
+        }
+    }
+}
+
+void KRunnerApp::singleRunnerModeAction()
+{
+    KAction * action = qobject_cast<KAction*>(sender());
+    if (action) {
+        m_interface->setSingleRunnerMode(action->objectName());
+    }
+}
+
+void KRunnerApp::querySingleRunner(const QString& runnerName)
+{
+    if (runnerName.isEmpty()) {
+        return;
+    }
+
+    Plasma::AbstractRunner *runner = m_runnerManager->runner(runnerName);
+    if (runner && runner->defaultSyntax()) {
+        m_interface->setSingleRunnerMode(runnerName);
+    }
 }
 
 void KRunnerApp::initializeStartupNotification()
@@ -272,6 +304,7 @@ void KRunnerApp::showTaskManagerWithFilter(const QString &filterText)
 
 void KRunnerApp::display()
 {
+    m_interface->setSingleRunnerMode(QString());
     m_interface->display();
 }
 

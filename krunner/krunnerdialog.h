@@ -52,6 +52,7 @@ class KRunnerDialog : public KDialog
         virtual void clearHistory() = 0;
 
         void switchUser();
+        virtual void setSingleRunnerMode(QString runnerName);
 
     protected:
         void paintEvent(QPaintEvent *event);
@@ -65,6 +66,8 @@ class KRunnerDialog : public KDialog
         void moveEvent(QMoveEvent *);
 
         void positionOnScreen();
+        bool singleRunnerMode() const;
+        QString singleRunnerId() const;
         virtual void setStaticQueryMode(bool staticQuery);
 
     protected Q_SLOTS:
@@ -111,6 +114,7 @@ class KRunnerDialog : public KDialog
         bool m_resizing : 1;
         bool m_rightResize : 1;
         bool m_vertResize : 1;
+        QString m_singleRunnerId;
 };
 
 #endif
