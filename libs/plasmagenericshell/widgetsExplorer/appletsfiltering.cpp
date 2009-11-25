@@ -48,6 +48,7 @@ void FilteringTreeView::init()
     //init treeview
     m_treeView = new Plasma::TreeView();
     m_treeView->nativeWidget()->setAttribute(Qt::WA_NoSystemBackground);
+    m_treeView->nativeWidget()->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_treeView->nativeWidget()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_treeView->nativeWidget()->setRootIsDecorated(false);
     m_treeView->nativeWidget()->setAttribute(Qt::WA_TranslucentBackground);
