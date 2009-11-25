@@ -39,15 +39,20 @@ class HotplugEngine : public Plasma::DataEngine
         ~HotplugEngine();
         void init();
 
-    protected slots:
+    protected Q_SLOTS:
         void onDeviceAdded(const QString &udi);
         void onDeviceRemoved(const QString &udi);
 
     private:
-        void onDeviceAdded(Solid::Device &dev);
+        void onDeviceAdded(Solid::Device &dev, bool added = true);
         void findPredicates();
 
+    private Q_SLOTS:
+        void processNextStartupDevice();
+
+    private:
         QHash<QString, Solid::Predicate> m_predicates;
+        QHash<QString, Solid::Device> m_startList;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(hotplug, HotplugEngine)

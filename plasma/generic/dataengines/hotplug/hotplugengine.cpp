@@ -19,6 +19,8 @@
 
 #include "hotplugengine.h"
 
+#include <QTimer>
+
 #include <KConfigGroup>
 #include <KDebug>
 #include <KLocale>
@@ -33,7 +35,7 @@
 #include <Solid/StorageDrive>
 #include <Solid/StorageVolume>
 
-
+//#define HOTPLUGENGINE_TIMING
 
 HotplugEngine::HotplugEngine(QObject* parent, const QVariantList& args)
     : Plasma::DataEngine(parent, args)
@@ -56,20 +58,33 @@ void HotplugEngine::init()
     p |= Solid::Predicate(Solid::DeviceInterface::PortableMediaPlayer);
     p |= Solid::Predicate(Solid::DeviceInterface::SmartCardReader);
     p |= Solid::Predicate(Solid::DeviceInterface::Camera);
-    const QList<Solid::Device> list = Solid::Device::listFromQuery(p);
-
-    QListIterator<Solid::Device> devIt(list);
-    while (devIt.hasNext()) {
-        Solid::Device dev = const_cast<Solid::Device &>(devIt.next());
-        onDeviceAdded(dev);
+    QList<Solid::Device> devices = Solid::Device::listFromQuery(p);
+    foreach (const Solid::Device &dev, devices) {
+        m_startList.insert(dev.udi(), dev);
     }
-
-    m_predicates.clear();
 
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString &)),
             this, SLOT(onDeviceAdded(const QString &)));
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)),
             this, SLOT(onDeviceRemoved(const QString &)));
+
+    processNextStartupDevice();
+}
+
+void HotplugEngine::processNextStartupDevice()
+{
+    if (!m_startList.isEmpty()) {
+        QHash<QString, Solid::Device>::iterator it = m_startList.begin();
+        //Solid::Device dev = const_cast<Solid::Device &>(m_startList.takeFirst());
+        onDeviceAdded(it.value(), false);
+        m_startList.erase(it);
+    }
+
+    if (m_startList.isEmpty()) {
+        m_predicates.clear();
+    } else {
+        QTimer::singleShot(0, this, SLOT(processNextStartupDevice()));
+    }
 }
 
 void HotplugEngine::findPredicates()
@@ -92,13 +107,21 @@ void HotplugEngine::onDeviceAdded(const QString &udi)
     onDeviceAdded(device);
 }
 
-void HotplugEngine::onDeviceAdded(Solid::Device &device)
+void HotplugEngine::onDeviceAdded(Solid::Device &device, bool added)
 {
+    //kDebug() << "adding" << device.udi();
+#ifdef HOTPLUGENGINE_TIMING
+    QTime t;
+    t.start();
+#endif
     // Skip things we know we don't care about
     if (device.isDeviceInterface(Solid::DeviceInterface::StorageDrive)) {
         Solid::DeviceInterface *dev = device.asDeviceInterface(Solid::DeviceInterface::StorageDrive);
         Solid::StorageDrive *drive = static_cast<Solid::StorageDrive *>(dev);
         if (!drive->isHotpluggable()) {
+#ifdef HOTPLUGENGINE_TIMING
+            kDebug() << "storage, but not pluggable, returning" << t.restart();
+#endif
             return;
         }
     } else if (device.isDeviceInterface(Solid::DeviceInterface::StorageVolume)) {
@@ -108,6 +131,9 @@ void HotplugEngine::onDeviceAdded(Solid::Device &device)
         if (type == Solid::StorageVolume::Other ||
             type == Solid::StorageVolume::Unused ||
             type == Solid::StorageVolume::PartitionTable) {
+#ifdef HOTPLUGENGINE_TIMING
+            kDebug() << "storage volume, but not of interest" << t.restart();
+#endif
             return;
         }
     }
@@ -133,7 +159,7 @@ void HotplugEngine::onDeviceAdded(Solid::Device &device)
         //kDebug() << device.vendor();
         //kDebug() << "number of interesting desktop file : " << interestingDesktopFiles.size();
         Plasma::DataEngine::Data data;
-        data.insert("added", true);
+        data.insert("added", added);
         data.insert("udi", device.udi());
 
         if (device.vendor().isEmpty()) {
@@ -148,14 +174,22 @@ void HotplugEngine::onDeviceAdded(Solid::Device &device)
         setData(device.udi(), data);
         //kDebug() << "add hardware solid : " << udi;
     }
+
+#ifdef HOTPLUGENGINE_TIMING
+    kDebug() << "total time" << t.restart();
+#endif
 }
 
 void HotplugEngine::onDeviceRemoved(const QString &udi)
 {
+    //kDebug() << "remove hardware:" << udi;
+
+    if (m_startList.contains(udi)) {
+        m_startList.remove(udi);
+        return;
+    }
+
     removeSource(udi);
-
-    //kDebug() << "remove hardware solid : " << udi;
-
     scheduleSourcesUpdated();
 }
 
