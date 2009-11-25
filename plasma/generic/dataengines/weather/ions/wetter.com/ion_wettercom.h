@@ -34,7 +34,7 @@
 #include <kio/scheduler.h>
 #include <kdemacros.h>
 #include <plasma/dataengine.h>
-#include <plasma/weather/ion.h>
+#include "../ion.h"
 
 // wetter.com API project data
 #define PROJECTNAME "weatherion"
