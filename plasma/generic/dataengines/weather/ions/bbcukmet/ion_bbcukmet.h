@@ -34,7 +34,7 @@ namespace KIO
 {
     class Job;
     class TransferJob;
-};
+}
 
 class WeatherData
 {
