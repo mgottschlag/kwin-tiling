@@ -542,7 +542,7 @@ void AppletsListWidget::scrollDownRight(int step, QRectF visibleRect)
     }
 
     //who's gonna be the new last appearing icon on the list?!
-    newLastIcon = m_currentAppearingAppletsOnList.at(lastVisibleItemIndex + appletsIndexesToSum);
+    newLastIcon = m_currentAppearingAppletsOnList.at(qMin(m_currentAppearingAppletsOnList.count()-1, lastVisibleItemIndex + appletsIndexesToSum));
 
     //scroll enough to show the new last icon on the list
     //and store the list size
