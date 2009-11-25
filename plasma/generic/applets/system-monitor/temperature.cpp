@@ -235,35 +235,27 @@ void Temperature::dataUpdated(const QString& source,
     Plasma::Meter *w = meters().value(source);
     Plasma::SignalPlotter *plotter = plotters().value(source);
     QString temp;
-    double value = data["value"].toDouble();
     QString unit = data["units"].toString();
-
-    if (unit.startsWith(i18n("\u00b0"))) { // remove degrees symbol
-        unit = unit.mid(1);
-    }
-
-    if (unit == "F" && KGlobal::locale()->measureSystem() == KLocale::Metric) {
-        value = Value(value, Fahrenheit).convertTo(Celsius).number();
-    } else if (unit == "C" && KGlobal::locale()->measureSystem() != KLocale::Metric) {
-        value = Value(value, Celsius).convertTo(Fahrenheit).number();
-    }
-
-    value = int(value * 10) / 10.0;
+    double doubleValue = data["value"].toDouble();
+    Value value = Value(doubleValue, unit);
 
     if (KGlobal::locale()->measureSystem() == KLocale::Metric) {
-        temp = i18n("%1 °C", value);
+        value = value.convertTo(Celsius);
     } else {
-        temp = i18n("%1 °F", value);
+        value = value.convertTo(Fahrenheit);
     }
 
+    value.round(1);
+    temp = value.toSymbolString();
+
     if (w) {
-        w->setValue(value);
+        w->setValue(doubleValue);
         if (mode() != SM::Applet::Panel) {
             w->setLabel(1, temp);
         }
     }
     if (plotter) {
-        plotter->addSample(QList<double>() << value);
+        plotter->addSample(QList<double>() << doubleValue);
         setPlotterOverlayText(plotter, temp);
     }
 
