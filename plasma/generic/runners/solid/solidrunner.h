@@ -42,7 +42,7 @@ class SolidRunner : public Plasma::AbstractRunner
 
 
     protected:
-	QList<QAction*> actionsForMatch(const Plasma::QueryMatch &match);
+        QList<QAction*> actionsForMatch(const Plasma::QueryMatch &match);
 
     protected slots:
 
@@ -51,21 +51,24 @@ class SolidRunner : public Plasma::AbstractRunner
         void onSourceRemoved(const QString &name);
    
     private slots:
-	void registerAction(QString &id, QString icon, QString text, QString desktop);
-	
+        void registerAction(QString &id, QString icon, QString text, QString desktop);
+        void refreshMatch(QString &id);
+
     private:
 
         void fillPreviousDevices();
-	void cleanActionsForDevice(DeviceWrapper *);
+        void cleanActionsForDevice(DeviceWrapper *);
+        void createOrUpdateMatches(const QStringList &udiList);
 
-	Plasma::QueryMatch deviceMatch(DeviceWrapper * device);
+        Plasma::QueryMatch deviceMatch(DeviceWrapper * device);
 
         Plasma::DataEngine *m_hotplugEngine;
         Plasma::DataEngine *m_solidDeviceEngine;
 
-	QHash<QString, DeviceWrapper*> m_deviceList;
-	QStringList m_udiOrderedList;
-	Plasma::DataEngineManager* m_engineManager;
+        QHash<QString, DeviceWrapper*> m_deviceList;
+        QStringList m_udiOrderedList;
+        Plasma::DataEngineManager* m_engineManager;
+        Plasma::RunnerContext m_currentContext;
 };
 
 K_EXPORT_PLASMA_RUNNER(solid, SolidRunner)

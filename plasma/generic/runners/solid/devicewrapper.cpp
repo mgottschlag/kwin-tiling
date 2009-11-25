@@ -87,6 +87,8 @@ void DeviceWrapper::dataUpdated(const QString &source, Plasma::DataEngine::Data 
 
     m_emblems = m_device.emblems();
 
+    emit refreshMatch(m_udi);
+
     return;
 }
 

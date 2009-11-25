@@ -50,6 +50,7 @@ class DeviceWrapper : public QObject
     
     signals:
     void registerAction(QString &id, QString icon, QString text, QString desktop);
+    void refreshMatch(QString &id);
 
     public slots:
     void actionTriggered();

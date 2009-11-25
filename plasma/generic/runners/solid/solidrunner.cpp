@@ -46,14 +46,9 @@ SolidRunner::SolidRunner(QObject* parent, const QVariantList& args)
     m_engineManager = Plasma::DataEngineManager::self();
 
     addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds devices whose name match :q:")));
-//****
-//  Single runner query mode specific code
-//    setDefaultSyntax(Plasma::RunnerSyntax(i18nc("Note this is a KRunner keyword", "device"),
-//                                   i18n("Lists all devices and allows them to be mounted, unmounted or ejected.")));
-//    addSyntax(Plasma::RunnerSyntax(i18nc("Note this is a KRunner keyword", "device"),
-//                                   i18n("Lists all devices and allows them to be mounted, unmounted or ejected.")));
-//****
 
+    setDefaultSyntax(Plasma::RunnerSyntax(i18nc("Note this is a KRunner keyword", "device"),
+                                   i18n("Lists all devices and allows them to be mounted, unmounted or ejected.")));
     addSyntax(Plasma::RunnerSyntax(i18nc("Note this is a KRunner keyword", "mount"),
                                    i18n("Lists all devices which can be mounted, and allows them to be mounted.")));
     addSyntax(Plasma::RunnerSyntax(i18nc("Note this is a KRunner keyword", "unmount"),
@@ -110,10 +105,19 @@ QList<QAction*> SolidRunner::actionsForMatch(const Plasma::QueryMatch &match)
 
 void SolidRunner::match(Plasma::RunnerContext& context)
 {
-    const QString term = context.query();
+    m_currentContext = context;
+    createOrUpdateMatches(m_deviceList.keys());
+}
 
-    //if (!context.singleRunnerQueryMode() && (term.length() < 3)) {
-    if (term.length() < 3) {
+void SolidRunner::createOrUpdateMatches(const QStringList &udiList)
+{
+    const QString term = m_currentContext.query();
+
+    if (!m_currentContext.isValid()) {
+        return;
+    }
+
+    if (!m_currentContext.singleRunnerQueryMode() && (term.length() < 3)) {
         return;
     }
     QList<Plasma::QueryMatch> matches;
@@ -145,7 +149,7 @@ void SolidRunner::match(Plasma::RunnerContext& context)
         deviceDescription = keywords[0];
     }
 
-    foreach (QString udi,  m_deviceList.keys()) {
+    foreach (QString udi,  udiList) {
         DeviceWrapper * dev = m_deviceList.value(udi);
         if ((deviceDescription.isEmpty() && showDevices) || dev->description().contains(deviceDescription, Qt::CaseInsensitive)) {
             if ((onlyMounted && dev->isAccessible()) ||
@@ -166,13 +170,15 @@ void SolidRunner::match(Plasma::RunnerContext& context)
     }
 
     if (!matches.isEmpty()) {
-        context.addMatches(term, matches);
+        kDebug () << matches.count();
+        m_currentContext.addMatches(term, matches);
     }
 }
 
 Plasma::QueryMatch SolidRunner::deviceMatch(DeviceWrapper * device)
 {
     Plasma::QueryMatch match(this);
+    match.setId(device->id());
     match.setData(device->id());
     match.setIcon(device->icon());
     match.setText(device->description());
@@ -202,11 +208,26 @@ void SolidRunner::registerAction(QString &id, QString icon, QString text, QStrin
     connect (action, SIGNAL(triggered()), sender(), SLOT(actionTriggered()));
 }
 
+void SolidRunner::refreshMatch(QString &id)
+{
+    if (!m_currentContext.isValid()) {
+        return;
+    }
+
+    QueryMatch match(this);
+    match.setId(id);
+    m_currentContext.removeMatch(match.id());
+    QStringList deviceList;
+    deviceList << id;
+    createOrUpdateMatches(deviceList);
+}
+
 void SolidRunner::onSourceAdded(const QString &name)
 {
     DeviceWrapper * device = new DeviceWrapper(name);
     connect(device, SIGNAL(registerAction(QString &, QString , QString, QString )),
             this,  SLOT(registerAction(QString &, QString, QString, QString)));
+    connect(device, SIGNAL(refreshMatch(QString &)), this, SLOT(refreshMatch(QString &)));
 
     m_deviceList.insert(name, device);
     m_udiOrderedList << name;
@@ -224,6 +245,11 @@ void SolidRunner::onSourceRemoved(const QString &name)
             cleanActionsForDevice(device);
             m_deviceList.remove(name);
             m_udiOrderedList.removeAll(name);
+            if (m_currentContext.isValid()) {
+                QueryMatch match(this);
+                match.setId(device->id());
+                m_currentContext.removeMatch(match.id());
+            }
             delete device;
     }
 }
