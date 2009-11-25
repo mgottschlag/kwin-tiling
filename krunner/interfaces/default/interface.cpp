@@ -497,7 +497,7 @@ void Interface::queryTextEdited(const QString &query)
 
 void Interface::delayedQueryLaunch()
 {
-    const QString query = m_searchTerm->currentText();
+    const QString query = static_cast<KLineEdit*>(m_searchTerm->lineEdit())->userText();
     if (!query.isEmpty()) {
         m_queryRunning = m_resultsScene->launchQuery(query) || m_queryRunning; //lazy OR?
     }
