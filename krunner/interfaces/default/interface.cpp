@@ -401,7 +401,7 @@ void Interface::showHelp()
     QList<Plasma::AbstractRunner*> runnerList;
 
     if (singleRunnerMode()) {
-        runnerList << m_runnerManager->runner(singleRunnerId());
+        runnerList << m_runnerManager->retrieveSingleRunner(singleRunnerId());
     } else {
         runnerList = m_runnerManager->runners();
     }
@@ -446,8 +446,9 @@ void Interface::setStaticQueryMode(bool staticQuery)
     m_searchTerm->setVisible(visible && !singleRunnerMode());
     m_singleRunnerSearchTerm->setVisible(visible && singleRunnerMode());
     if (singleRunnerMode()) {
-        m_singleRunnerIcon->setPixmap(m_runnerManager->runner(singleRunnerId())->icon().pixmap( QSize( 22, 22 )) );
-        m_singleRunnerDisplayName->setText(m_runnerManager->runner(singleRunnerId())->name());
+        Plasma::AbstractRunner *r = m_runnerManager->retrieveSingleRunner(singleRunnerId());
+        m_singleRunnerIcon->setPixmap(r->icon().pixmap( QSize( 22, 22 )));
+        m_singleRunnerDisplayName->setText(r->name());
     }
     m_singleRunnerIcon->setVisible(singleRunnerMode());
     m_singleRunnerDisplayName->setVisible(singleRunnerMode());

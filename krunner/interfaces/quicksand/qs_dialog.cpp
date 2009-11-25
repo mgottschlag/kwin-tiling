@@ -149,7 +149,8 @@ void QsDialog::cleanupAfterConfigWidget()
 void QsDialog::adjustInterface()
 {
     if (singleRunnerMode()) {
-        m_singleRunnerIcon->setPixmap(m_runnerManager->runner(singleRunnerId())->icon().pixmap( QSize( 22, 22 )) );
+
+        m_singleRunnerIcon->setPixmap(m_runnerManager->retrieveSingleRunner(singleRunnerId())->icon().pixmap( QSize( 22, 22 )) );
         m_singleRunnerIcon->show();
         m_configButton->hide();
     } else {

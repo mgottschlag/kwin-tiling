@@ -201,13 +201,11 @@ void KRunnerApp::initialize()
 
     // Single runner mode actions shortcuts
 
-    foreach (Plasma::AbstractRunner *runner, m_runnerManager->singleQueryModeEnabledRunners()) {
-        if (runner->defaultSyntax()) {
-            a = m_actionCollection->addAction(runner->id());
-            a->setText( i18nc("Run krunner restricting the search only to runner %1", "Run Command (runner \"%1\" only)", runner->name()));
-            a->setGlobalShortcut(KShortcut());
-            connect(a, SIGNAL(triggered(bool)), SLOT(singleRunnerModeAction()));
-        }
+    foreach (QString runnerId, m_runnerManager->singleRunnerEnabledIds()) {
+        a = m_actionCollection->addAction(runnerId);
+        a->setText( i18nc("Run krunner restricting the search only to runner %1", "Run Command (runner \"%1\" only)", m_runnerManager->runnerName(runnerId)));
+        a->setGlobalShortcut(KShortcut());
+        connect(a, SIGNAL(triggered(bool)), SLOT(singleRunnerModeAction()));
     }
 }
 
@@ -225,8 +223,7 @@ void KRunnerApp::querySingleRunner(const QString& runnerName)
         return;
     }
 
-    Plasma::AbstractRunner *runner = m_runnerManager->runner(runnerName);
-    if (runner && runner->defaultSyntax()) {
+    if (m_runnerManager->singleRunnerEnabledIds().contains(runnerName)) {
         m_interface->setSingleRunnerMode(runnerName);
     }
 }
