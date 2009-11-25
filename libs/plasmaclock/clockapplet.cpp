@@ -299,7 +299,12 @@ void ClockApplet::updateTipContent()
 
     QString property = d->calendarWidget->dateProperty(tipDate);
     if (!property.isEmpty()) {
-        subText.append("<br>").append(property);
+        QString countryString = KGlobal::locale()->countryCodeToName(d->calendarWidget->holidaysRegion());
+        if (countryString.isEmpty()) {
+            subText.append("<br>").append(property);
+        } else {
+            subText.append("<br><b>").append(countryString).append("</b> ").append(property);
+        }
     }
 
     tipData.setSubText(subText);
