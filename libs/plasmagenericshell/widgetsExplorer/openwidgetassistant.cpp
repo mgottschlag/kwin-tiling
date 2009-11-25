@@ -87,6 +87,7 @@ OpenWidgetAssistant::OpenWidgetAssistant(QWidget *parent)
     //connect( this, SIGNAL( helpClicked() ), this, SLOT( slotHelpClicked() ) );
     m_widgetTypeList->setFocus();
     resize(QSize(560, 400).expandedTo(minimumSizeHint()));
+    setModal(true);
 }
 
 void OpenWidgetAssistant::slotItemChanged()
