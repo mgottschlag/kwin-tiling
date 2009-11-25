@@ -53,7 +53,7 @@ void Temperature::init()
     KGlobal::locale()->insertCatalog("plasma_applet_system-monitor");
     KConfigGroup cg = config();
     setEngine(dataEngine("systemmonitor"));
-    setInterval(cg.readEntry("interval", 2) * 1000);
+    setInterval(cg.readEntry("interval", 2.0) * 1000);
     setTitle(i18n("Temperature"));
 
     /* At the time this method is running, not all source may be connected. */

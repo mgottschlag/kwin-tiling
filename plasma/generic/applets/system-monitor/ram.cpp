@@ -46,7 +46,7 @@ void SM::Ram::init()
     KGlobal::locale()->insertCatalog("plasma_applet_system-monitor");
     KConfigGroup cg = config();
     setEngine(dataEngine("systemmonitor"));
-    setInterval(cg.readEntry("interval", 2) * 1000);
+    setInterval(cg.readEntry("interval", 2.0) * 1000);
     setTitle(i18n("RAM"));
 
     /* At the time this method is running, not all source may be connected. */
