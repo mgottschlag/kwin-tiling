@@ -18,11 +18,22 @@
  */
 
 #include "appletsfiltering.h"
+#include "widgetexplorer.h"
+#include "openwidgetassistant_p.h"
 
 #include <kglobalsettings.h>
 #include <klineedit.h>
+#include <kmenu.h>
+#include <kservicetypetrader.h>
 
 #include <plasma/theme.h>
+#include <plasma/corona.h>
+#include <plasma/packagestructure.h>
+#include <plasma/framesvg.h>
+#include <plasma/widgets/label.h>
+#include <plasma/widgets/lineedit.h>
+#include <plasma/widgets/treeview.h>
+#include <plasma/widgets/toolbutton.h>
 
 //FilteringTreeView
 
@@ -138,18 +149,22 @@ FilteringWidget::FilteringWidget(QGraphicsItem * parent, Qt::WindowFlags wFlags)
     : QGraphicsWidget(parent, wFlags),
       m_model(0),
       m_categoriesTreeView(0),
-      m_categoriesTabs(0)
+      m_categoriesTabs(0),
+      m_widgetExplorer(0)
 {
     m_orientation = Qt::Horizontal;
     init();
 }
 
-FilteringWidget::FilteringWidget(Qt::Orientation orientation, QGraphicsItem * parent,
+FilteringWidget::FilteringWidget(Qt::Orientation orientation,
+                                 Plasma::WidgetExplorer *widgetExplorer,
+                                 QGraphicsItem * parent,
                                  Qt::WindowFlags wFlags)
     : QGraphicsWidget(parent, wFlags),
       m_model(0),
       m_categoriesTreeView(0),
-      m_categoriesTabs(0)
+      m_categoriesTabs(0),
+      m_widgetExplorer(widgetExplorer)
 {
     m_orientation = orientation;
     init();
@@ -159,6 +174,8 @@ FilteringWidget::~FilteringWidget()
 {
     delete m_categoriesTabs;
     delete m_categoriesTreeView;
+    delete m_newWidgetsButton;
+    delete m_newWidgetsMenu;
 }
 
 void FilteringWidget::init()
@@ -169,6 +186,13 @@ void FilteringWidget::init()
     m_textSearch->setFocus();
     m_textSearch->setAttribute(Qt::WA_NoSystemBackground);
     m_textSearch->setClearButtonShown(true);
+
+    m_newWidgetsButton = new Plasma::ToolButton();
+    m_newWidgetsButton->nativeWidget()->setPopupMode(QToolButton::InstantPopup);
+    m_newWidgetsButton->setText(i18n("Get New Widgets"));
+    m_newWidgetsMenu = new KMenu(i18n("Get New Widgets"));
+    connect(m_newWidgetsMenu, SIGNAL(aboutToShow()), this, SLOT(populateWidgetsMenu()));
+    m_newWidgetsButton->nativeWidget()->setMenu(m_newWidgetsMenu);
 
     //layout
     m_linearLayout = new QGraphicsLinearLayout();
@@ -233,6 +257,7 @@ void FilteringWidget::setListOrientation(Qt::Orientation orientation)
 
         m_textSearch->setPreferredWidth(200);
         m_textSearch->setPreferredHeight(-1);
+        m_linearLayout->addItem(m_newWidgetsButton);
         m_linearLayout->addItem(m_categoriesTabs);
         m_categoriesTabs->setVisible(true);
     } else {
@@ -247,10 +272,107 @@ void FilteringWidget::setListOrientation(Qt::Orientation orientation)
 
         m_textSearch->setPreferredHeight(30);
         m_textSearch->setPreferredWidth(-1);
+        m_linearLayout->addItem(m_newWidgetsButton);
+        m_categoriesTreeView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
         m_linearLayout->addItem(m_categoriesTreeView);
         m_categoriesTreeView->setVisible(true);
     }
 
     m_linearLayout->invalidate();
+}
+
+void FilteringWidget::setMenuPos()
+{
+    QPoint position(0, 0);
+    if (m_widgetExplorer) {
+        Plasma::Corona *corona = m_widgetExplorer->corona();
+
+        if (corona) {
+            position = corona->popupPosition(m_newWidgetsButton,
+                                             m_newWidgetsMenu->geometry().size());
+        }
+    }
+    m_newWidgetsMenu->move(position);
+}
+
+void FilteringWidget::populateWidgetsMenu()
+{
+    QTimer::singleShot(0, this, SLOT(setMenuPos()));
+    if (!m_newWidgetsMenu->actions().isEmpty()) {
+        // already populated.
+        return;
+    }
+    QSignalMapper *mapper = new QSignalMapper(this);
+    QObject::connect(mapper, SIGNAL(mapped(QString)), this, SLOT(downloadWidgets(QString)));
+
+    QAction *action = new QAction(KIcon("applications-internet"),
+                                  i18n("Download New Plasma Widgets"), this);
+    QObject::connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
+    mapper->setMapping(action, QString());
+    m_newWidgetsMenu->addAction(action);
+
+    KService::List offers = KServiceTypeTrader::self()->query("Plasma/PackageStructure");
+    foreach (const KService::Ptr &service, offers) {
+        //kDebug() << service->property("X-Plasma-ProvidesWidgetBrowser");
+        if (service->property("X-Plasma-ProvidesWidgetBrowser").toBool()) {
+            QAction *action = new QAction(KIcon("applications-internet"),
+                                          i18nc("%1 is a type of widgets, as defined by "
+                                                "e.g. some plasma-packagestructure-*.desktop files",
+                                                "Download New %1", service->name()), this);
+            QObject::connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
+            mapper->setMapping(action, service->property("X-KDE-PluginInfo-Name").toString());
+            m_newWidgetsMenu->addAction(action);
+        }
+    }
+
+    m_newWidgetsMenu->addSeparator();
+
+    action = new QAction(KIcon("package-x-generic"),
+                         i18n("Install Widget From Local File..."), this);
+    QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(openWidgetFile()));
+    m_newWidgetsMenu->addAction(action);
+}
+
+void FilteringWidget::downloadWidgets(const QString &type)
+{
+    Plasma::PackageStructure *installer = 0;
+
+    if (!type.isEmpty()) {
+        QString constraint = QString("'%1' == [X-KDE-PluginInfo-Name]").arg(type);
+        KService::List offers = KServiceTypeTrader::self()->query("Plasma/PackageStructure",
+                                                                  constraint);
+        if (offers.isEmpty()) {
+            kDebug() << "could not find requested PackageStructure plugin" << type;
+        } else {
+            KService::Ptr service = offers.first();
+            QString error;
+            installer = service->createInstance<Plasma::PackageStructure>(topLevelWidget(),
+                                                                          QVariantList(), &error);
+            if (installer) {
+                connect(installer, SIGNAL(newWidgetBrowserFinished()),
+                        installer, SLOT(deleteLater()));
+            } else {
+                kDebug() << "found, but could not load requested PackageStructure plugin" << type
+                         << "; reported error was" << error;
+            }
+        }
+    }
+
+    if (installer) {
+        installer->createNewWidgetBrowser();
+    } else {
+        // we don't need to delete the default Applet::packageStructure as that
+        // belongs to the applet
+       Plasma::Applet::packageStructure()->createNewWidgetBrowser();
+    }
+}
+
+void FilteringWidget::openWidgetFile()
+{
+    // TODO: if we already have one of these showing and the user clicks to
+    // add it again, show the same window?
+    Plasma::OpenWidgetAssistant *assistant = new Plasma::OpenWidgetAssistant(0);
+    assistant->setAttribute(Qt::WA_DeleteOnClose, true);
+    assistant->show();
 }
 

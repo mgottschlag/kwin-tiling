@@ -129,9 +129,11 @@ void AppletsListWidget::init()
     //init window that shows the applets of the list - it clips the appletsListWidget
     m_appletsListWindowWidget = new QGraphicsWidget(this);
     m_appletsListWindowWidget->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
+    m_appletsListWindowWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     //init applets list
     m_appletsListWidget = new QGraphicsWidget(m_appletsListWindowWidget);
+    m_appletsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_appletListLinearLayout = new QGraphicsLinearLayout(m_orientation, m_appletsListWidget);
 
     m_slide->setWidgetToAnimate(m_appletsListWidget);
@@ -226,7 +228,6 @@ void AppletsListWidget::setContentsPropertiesAccordingToOrientation()
         m_downRightArrow->nativeWidget()->setIcon(KIcon(QIcon(m_arrowsSvg->pixmap("right-arrow"))));
         m_upLeftArrow->setMaximumSize(IconSize(KIconLoader::Panel), -1);
         m_downRightArrow->setMaximumSize(IconSize(KIconLoader::Panel), -1);
-
     } else {
         m_upLeftArrow->nativeWidget()->setIcon(KIcon(QIcon(m_arrowsSvg->pixmap("up-arrow"))));
         m_downRightArrow->nativeWidget()->setIcon(KIcon(QIcon(m_arrowsSvg->pixmap("down-arrow"))));

@@ -18,7 +18,7 @@
  */
 
 #ifndef PANELCONTROLLER_H
-#define PANELCONTROLLER_H 
+#define PANELCONTROLLER_H
 
 #include "controllerwindow.h"
 

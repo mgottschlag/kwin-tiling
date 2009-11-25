@@ -208,7 +208,6 @@ void ControllerWindow::showWidgetExplorer()
         m_widgetExplorerView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         m_widgetExplorerView->setStyleSheet("background: transparent; border: none;");
 
-        
         m_widgetExplorerView->installEventFilter(this);
         m_layout->addWidget(m_widgetExplorerView);
     }
@@ -224,6 +223,8 @@ void ControllerWindow::showWidgetExplorer()
 
         m_widgetExplorer->installEventFilter(this);
         m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
+
+        connect(m_widgetExplorer, SIGNAL(closeClicked()), this, SLOT(close()));
     }
 
     m_widgetExplorer->setOrientation(orientation());

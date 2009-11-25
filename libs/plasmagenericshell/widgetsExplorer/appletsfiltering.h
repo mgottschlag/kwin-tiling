@@ -23,89 +23,115 @@
 #include <QtCore>
 #include <QtGui>
 
-#include <plasma/framesvg.h>
-#include <plasma/widgets/label.h>
-#include <plasma/widgets/lineedit.h>
-#include <plasma/widgets/treeview.h>
-#include <plasma/widgets/tabbar.h>
-
 #include "kcategorizeditemsviewmodels_p.h"
 #include "plasmaappletitemmodel_p.h"
 #include "widgetexplorer.h"
+#include <plasma/widgets/tabbar.h>
+
+class KMenu;
+namespace Plasma {
+    class LineEdit;
+    class ToolButton;
+    class TreeView;
+    class WidgetExplorer;
+}
 
 class FilteringTreeView : public QGraphicsWidget
 {
     Q_OBJECT
 
-    public:
-        explicit FilteringTreeView(QGraphicsItem * parent = 0, Qt::WindowFlags wFlags = 0);
-        virtual ~FilteringTreeView();
+public:
+    explicit FilteringTreeView(QGraphicsItem * parent = 0, Qt::WindowFlags wFlags = 0);
+    virtual ~FilteringTreeView();
 
-        void setModel(QStandardItemModel *model);
+    void setModel(QStandardItemModel *model);
 
-    Q_SIGNALS:
-        void filterChanged(int index);
+Q_SIGNALS:
+    void filterChanged(int index);
 
-    private slots:
-        void filterChanged(const QModelIndex &index);
+private slots:
+    void filterChanged(const QModelIndex &index);
 
-    private:
-        void init();
+private:
+    void init();
 
-        QStandardItemModel *m_model;
-        Plasma::TreeView *m_treeView;
+    QStandardItemModel *m_model;
+    Plasma::TreeView *m_treeView;
 };
 
 class FilteringTabs : public Plasma::TabBar
 {
     Q_OBJECT
 
-    public:
-        explicit FilteringTabs(QGraphicsWidget *parent = 0);
-        virtual ~FilteringTabs();
+public:
+    explicit FilteringTabs(QGraphicsWidget *parent = 0);
+    virtual ~FilteringTabs();
 
-        void setModel(QStandardItemModel *model);
+    void setModel(QStandardItemModel *model);
 
-    Q_SIGNALS:
-        void filterChanged(int index);
+Q_SIGNALS:
+    void filterChanged(int index);
 
-    private:
-        //uses model to populate the tabs
-        void populateList();
+private:
+    //uses model to populate the tabs
+    void populateList();
 
-        QStandardItem *getItemByProxyIndex(const QModelIndex &index) const;
-        QStandardItemModel *m_model;
+    QStandardItem *getItemByProxyIndex(const QModelIndex &index) const;
+    QStandardItemModel *m_model;
 };
 
 class FilteringWidget : public QGraphicsWidget
 {
     Q_OBJECT
 
-    public:
-        explicit FilteringWidget(QGraphicsItem * parent = 0, Qt::WindowFlags wFlags = 0);
-        explicit FilteringWidget(Qt::Orientation orientation = Qt::Horizontal, QGraphicsItem * parent = 0,
-                                 Qt::WindowFlags wFlags = 0);
-        virtual ~FilteringWidget();
+public:
+    explicit FilteringWidget(QGraphicsItem * parent = 0, Qt::WindowFlags wFlags = 0);
+    explicit FilteringWidget(Qt::Orientation orientation = Qt::Horizontal,
+                             Plasma::WidgetExplorer* widgetExplorer = 0,
+                             QGraphicsItem * parent = 0,
+                             Qt::WindowFlags wFlags = 0);
+    virtual ~FilteringWidget();
 
-        void setModel(QStandardItemModel *model);
-        void setListOrientation(Qt::Orientation orientation);
-        Plasma::LineEdit *textSearch();
+    void setModel(QStandardItemModel *model);
+    void setListOrientation(Qt::Orientation orientation);
+    Plasma::LineEdit *textSearch();
 
-    Q_SIGNALS:
-        void filterChanged(int index);
+Q_SIGNALS:
+    void filterChanged(int index);
 
-    protected:
-        void resizeEvent(QGraphicsSceneResizeEvent *event);
+protected Q_SLOTS:
+    void setMenuPos();
+    void populateWidgetsMenu();
 
-    private:
-        void init();
+    /**
+     * Launches a download dialog to retrieve new applets from the Internet
+     *
+     * @arg type the type of widget to download; an empty string means the default
+     *           Plasma widgets will be accessed, any other value should map to a
+     *           PackageStructure PluginInfo-Name entry that provides a widget browser.
+     */
+    void downloadWidgets(const QString &type = QString());
 
-        QStandardItemModel *m_model;
-        QGraphicsLinearLayout *m_linearLayout;
-        FilteringTreeView *m_categoriesTreeView;
-        FilteringTabs *m_categoriesTabs;
-        Plasma::LineEdit *m_textSearch;
-        Qt::Orientation m_orientation;
+    /**
+     * Opens a file dialog to open a widget from a local file
+     */
+    void openWidgetFile();
+
+protected:
+    void resizeEvent(QGraphicsSceneResizeEvent *event);
+
+private:
+    void init();
+
+    QStandardItemModel *m_model;
+    QGraphicsLinearLayout *m_linearLayout;
+    FilteringTreeView *m_categoriesTreeView;
+    FilteringTabs *m_categoriesTabs;
+    Plasma::LineEdit *m_textSearch;
+    Qt::Orientation m_orientation;
+    Plasma::ToolButton *m_newWidgetsButton;
+    KMenu *m_newWidgetsMenu;
+    Plasma::WidgetExplorer *m_widgetExplorer;
 };
 
 #endif // APPLETSFILTERING_H
