@@ -498,6 +498,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         // Configure button
         Plasma::IconWidget *configButton = new Plasma::IconWidget(controls);
+        configButton->setToolTip(i18nc("tooltip on the config button in the popup", "Configure Power Management..."));
         configButton->setOrientation(Qt::Horizontal);
         configButton->setMaximumHeight(buttonsize);
         configButton->setMinimumHeight(buttonsize);
