@@ -276,14 +276,13 @@ void ClockApplet::updateTipContent()
 {
     Plasma::ToolTipContent tipData;
 
-    {
-        // the main text contains the current timezone's time and date
-        Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
-        QString mainText = d->prettyTimezone + ' ';
-        mainText += KGlobal::locale()->formatTime(data["Time"].toTime(), false) + "<br>";
-        mainText += calendar()->formatDate(data["Date"].toDate());
-        tipData.setMainText(mainText);
-    }
+    // the main text contains the current timezone's time and date
+    Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
+    QString mainText = d->prettyTimezone + ' ';
+    mainText += KGlobal::locale()->formatTime(data["Time"].toTime(), false) + "<br>";
+    QDate tipDate = data["Date"].toDate();
+    mainText += calendar()->formatDate(tipDate);
+    tipData.setMainText(mainText);
 
     QString subText;
     if (!isLocalTimezone()) {
@@ -296,6 +295,11 @@ void ClockApplet::updateTipContent()
         }
 
         d->addTzToTipText(subText, tz);
+    }
+
+    QString property = d->calendarWidget->dateProperty(tipDate);
+    if (!property.isEmpty()) {
+        subText.append("<br>").append(property);
     }
 
     tipData.setSubText(subText);
