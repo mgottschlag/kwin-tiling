@@ -1,3 +1,5 @@
+project(plasma-windowlist)
+
 set(windowlist_SRCS WindowList.cpp)
 
 kde4_add_plugin(plasma_applet_windowlist ${windowlist_SRCS})
