@@ -1,23 +1,7 @@
 [Desktop Entry]
 # ctxt: plasma runner
 Name=Devices
-Name[cs]=Zařízení
-Name[da]=Enheder
-Name[en_GB]=Devices
-Name[et]=Seadmed
-Name[pt]=Dispositivos
-Name[sv]=Enheter
-Name[uk]=Пристрої
-Name[x-test]=xxDevicesxx
 Comment=Manage removable devices
-Comment[da]=Håndtér flytbare enheder
-Comment[en_GB]=Manage removable devices
-Comment[et]=Eemaldatavate seadmete haldamine
-Comment[pt]=Gerir os dispositivos removíveis
-Comment[sv]=Hantera flyttbara enheter
-Comment[tr]=Çıkarılabilir aygıtları yönet
-Comment[uk]=Керування змінними пристроями
-Comment[x-test]=xxManage removable devicesxx
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 Icon=device-notifier
