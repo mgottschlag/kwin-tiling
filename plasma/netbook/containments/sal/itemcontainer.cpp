@@ -304,7 +304,7 @@ void ItemContainer::relayout()
             }
 
             m_layout->addItem(icon, row, column);
-            m_layout->setAlignment(icon, Qt::AlignHCenter);
+            m_layout->setAlignment(icon, Qt::AlignCenter);
             icon->show();
             ++i;
             lastIcon = icon;
