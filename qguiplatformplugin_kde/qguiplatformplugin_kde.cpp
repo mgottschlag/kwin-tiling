@@ -344,5 +344,5 @@ private slots:
 
 Q_EXPORT_PLUGIN2(KQGuiPlatformPlugin, KQGuiPlatformPlugin);
 
-
 #include "qguiplatformplugin_kde.moc"
+

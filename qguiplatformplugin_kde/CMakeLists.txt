@@ -7,10 +7,11 @@ include (KDE4Defaults)
 include (MacroLibrary)
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
-include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
+include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
 set(kde_SOURCES  qguiplatformplugin_kde.cpp)
-qt4_generate_moc(qguiplatformplugin_kde.cpp qguiplatformplugin_kde.moc)
+qt4_generate_moc(qguiplatformplugin_kde.cpp ${CMAKE_CURRENT_BINARY_DIR}/qguiplatformplugin_kde.moc)
+
 
 add_library (kde SHARED ${kde_SOURCES})
 
