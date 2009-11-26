@@ -82,6 +82,8 @@ void NOAAIon::init()
 {
     // Get the real city XML URL so we can parse this
     getXMLSetup();
+
+    m_timeEngine = dataEngine("time");
 }
 
 QStringList NOAAIon::validate(const QString& source) const
@@ -456,19 +458,28 @@ void NOAAIon::updateWeather(const QString& source)
     data.insert("Current Conditions", condition(source));
     kDebug() << "i18n condition string: " << qPrintable(condition(source));
 
-    /* Determine the weather icon based on the observation time and reported condition.
-     * NOAA reports the time in 'Standard Time'.
-     */
-    if ((periodHour(source) >= 0 && periodHour(source) < 6) || (periodHour(source) >= 18)) {
-        // Night
-        QString weather = condition(source).toLower();
-        ConditionIcons condition = getConditionIcon(weather, false);
-        data.insert("Condition Icon", getWeatherIcon(condition));
-    } else {
+    // Determine the weather icon based on the current time and computed sunrise/sunset time.
+    const Plasma::DataEngine::Data timeData = m_timeEngine->query(
+            QString("Local|Solar|Latitude=%1|Longitude=%2")
+                .arg(latitude(source)).arg(longitude(source)));
+
+    QTime sunriseTime = timeData["Sunrise"].toDateTime().time();
+    QTime sunsetTime = timeData["Sunset"].toDateTime().time();
+    QTime currentTime = QDateTime::currentDateTime().time();
+
+    // Provide mapping for the condition-type to the icons to display
+    if (currentTime > sunriseTime && currentTime < sunsetTime) {
         // Day
         QString weather = condition(source).toLower();
         ConditionIcons condition = getConditionIcon(weather, true);
         data.insert("Condition Icon", getWeatherIcon(condition));
+        kDebug() << "Using daytime icons\n";
+    } else {
+        // Night
+        QString weather = condition(source).toLower();
+        ConditionIcons condition = getConditionIcon(weather, false);
+        data.insert("Condition Icon", getWeatherIcon(condition));
+        kDebug() << "Using nighttime icons\n";
     }
 
     dataFields = temperature(source);

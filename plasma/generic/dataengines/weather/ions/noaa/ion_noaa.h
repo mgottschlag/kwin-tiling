@@ -35,6 +35,7 @@ namespace KIO
 
 #include <Plasma/DataEngine>
 
+#include "../dataengineconsumer.h"
 #include "../ion.h"
 
 class WeatherData
@@ -80,7 +81,7 @@ public:
     QList<Forecast> forecasts;
 };
 
-class KDE_EXPORT NOAAIon : public IonInterface
+class KDE_EXPORT NOAAIon : public IonInterface, public Plasma::DataEngineConsumer
 {
     Q_OBJECT
 
@@ -172,6 +173,7 @@ private:
     QMap<KJob *, QString> m_jobList;
     QXmlStreamReader m_xmlSetup;
 
+    Plasma::DataEngine *m_timeEngine;
     QDateTime m_dateFormat;
     bool emitWhenSetup;
 
