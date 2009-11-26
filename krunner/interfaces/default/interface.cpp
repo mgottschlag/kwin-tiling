@@ -547,7 +547,7 @@ void Interface::delayedQueryLaunch()
     const QString query = (m_runnerManager->singleMode() ? m_singleRunnerSearchTerm->userText()
                                                          : static_cast<KLineEdit*>(m_searchTerm->lineEdit())->userText());
     if (!query.isEmpty() || m_runnerManager->singleMode()) {
-        m_queryRunning = m_resultsScene->launchQuery(query, m_runnerManager->singleModeRunnerId()) || m_queryRunning; //lazy OR?
+        m_queryRunning = m_resultsScene->launchQuery(query) || m_queryRunning; //lazy OR?
     }
 }
 
