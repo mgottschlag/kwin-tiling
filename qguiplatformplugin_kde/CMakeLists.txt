@@ -1,14 +1,5 @@
 project(qguiplatformplugin_kde)
 
-find_package(KDE4 REQUIRED)
-find_package(Qt4 REQUIRED)
-set (QT_MIN_VERSION "4.6.0")
-include (KDE4Defaults)
-include (MacroLibrary)
-
-add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
-include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
-
 set(kde_SOURCES  qguiplatformplugin_kde.cpp)
 qt4_generate_moc(qguiplatformplugin_kde.cpp ${CMAKE_CURRENT_BINARY_DIR}/qguiplatformplugin_kde.moc)
 
