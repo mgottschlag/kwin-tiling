@@ -22,6 +22,7 @@
 
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsGridLayout>
+#include <QPropertyAnimation>
 
 #include <Plasma/Applet>
 #include <Plasma/Animator>
@@ -41,6 +42,9 @@ namespace Plasma
 class Battery : public Plasma::PopupApplet
 {
     Q_OBJECT
+    Q_PROPERTY(qreal labelAlpha READ labelAlpha WRITE setLabelAlpha NOTIFY labelAlphaChanged)
+    Q_PROPERTY(qreal acAlpha READ acAlpha WRITE setAcAlpha)
+
     public:
         Battery(QObject *parent, const QVariantList &args);
         ~Battery();
@@ -54,7 +58,12 @@ class Battery : public Plasma::PopupApplet
         void popupEvent(bool show);
         void showBatteryLabel(bool show);
 
-    public slots:
+        qreal labelAlpha();
+        void setLabelAlpha(qreal alpha);
+        qreal acAlpha();
+        void setAcAlpha(qreal alpha);
+
+    public Q_SLOTS:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
 
     protected Q_SLOTS:
@@ -67,10 +76,10 @@ class Battery : public Plasma::PopupApplet
         void createConfigurationInterface(KConfigDialog *parent);
         void setEmbedded(const bool embedded);
 
-    private slots:
-        void animationUpdate(qreal progress);
-        void acAnimationUpdate(qreal progress);
-        void batteryAnimationUpdate(qreal progress);
+    private Q_SLOTS:
+        //void animationUpdate(qreal progress);
+        //void acAnimationUpdate(qreal progress);
+        //void batteryAnimationUpdate(qreal progress);
         void sourceAdded(const QString &source);
         void sourceRemoved(const QString &source);
         void brightnessChanged(const int brightness);
@@ -80,6 +89,7 @@ class Battery : public Plasma::PopupApplet
         void setProfile(const QString &profile);
         void suspend();
         void hibernate();
+        void updateBattery();
 
     private:
         void connectSources();
@@ -111,7 +121,7 @@ class Battery : public Plasma::PopupApplet
         /* Paint a label on top of the battery */
         void paintLabel(QPainter *p, const QRect &contentsRect, const QString& labelText);
         /* Scale in/out Battery. */
-        void showBattery(bool show);
+        //void showBattery(bool show);
         /* Scale in/out Ac Adapter. */
         void showAcAdapter(bool show);
         /* Fade in/out the label above the battery. */
@@ -137,23 +147,12 @@ class Battery : public Plasma::PopupApplet
         // Configuration dialog
         Ui::batteryConfig ui;
 
-        int m_animId;
-        qreal m_alpha;
-        bool m_fadeIn;
-
-        int m_acAnimId;
-        qreal m_acAlpha;
-        bool m_acFadeIn;
-
         int m_batteryAnimId;
-        qreal m_batteryAlpha;
-        bool m_batteryFadeIn;
 
         // Internal data
         QList<QVariant> batterylist, acadapterlist;
         QHash<QString, QHash<QString, QVariant> > m_batteries_data;
         QFont m_font;
-        bool m_isHovered;
         bool m_firstRun;
         QColor m_boxColor;
         QColor m_textColor;
@@ -163,6 +162,11 @@ class Battery : public Plasma::PopupApplet
         int m_numOfBattery;
         bool m_acAdapterPlugged;
         int m_remainingMSecs;
+
+        qreal m_labelAlpha;
+        QPropertyAnimation *m_labelAnimation;
+        qreal m_acAlpha;
+        QPropertyAnimation *m_acAnimation;
 };
 
 K_EXPORT_PLASMA_APPLET(battery, Battery)

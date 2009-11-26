@@ -32,6 +32,7 @@
 #include <QGraphicsLinearLayout>
 #include <QDBusPendingCall>
 #include <QLabel>
+#include <QPropertyAnimation>
 
 #include <KDebug>
 #include <KIcon>
@@ -67,12 +68,10 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_isEmbedded(false),
       m_extenderVisible(false),
       m_controlsLayout(0),
-      //m_batteryLayout(0),
       m_batteryLabelLabel(0),
       m_batteryInfoLabel(0),
       m_acLabelLabel(0),
       m_acInfoLabel(0),
-      //m_brightnessLayout(0),
       m_profileLabel(0),
       m_profileCombo(0),
       m_brightnessSlider(0),
@@ -81,20 +80,13 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_theme(0),
       m_availableProfiles(QStringList()),
       m_currentProfile(0),
-      m_animId(-1),
-      m_alpha(0),
-      m_fadeIn(false),
-      m_acAnimId(-1),
       m_acAlpha(0),
-      m_acFadeIn(false),
-      m_batteryAnimId(-1),
-      m_batteryAlpha(0),
-      m_batteryFadeIn(false),
-      m_isHovered(false),
       m_firstRun(true),
       m_numOfBattery(0),
       m_acAdapterPlugged(false),
-      m_remainingMSecs(0)
+      m_remainingMSecs(0),
+      m_labelAnimation(0),
+      m_acAnimation(0)
 {
     //kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
@@ -108,6 +100,19 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     m_theme->setImagePath("widgets/battery-oxygen");
     m_theme->setContainsMultipleImages(true);
     setStatus(Plasma::ActiveStatus);
+
+    m_labelAnimation = new QPropertyAnimation(this, "labelAlpha");
+    m_labelAnimation->setDuration(200);
+    m_labelAnimation->setStartValue((qreal)(0.0));
+    m_labelAnimation->setEndValue((qreal)(1.0));
+    m_labelAnimation->setEasingCurve(QEasingCurve::OutQuad);
+    connect(m_labelAnimation, SIGNAL(finished()), this, SLOT(updateBattery()));
+    m_acAnimation = new QPropertyAnimation(this, "acAlpha");
+    m_acAnimation->setDuration(500);
+    m_acAnimation->setStartValue((qreal)(0.0));
+    m_acAnimation->setEndValue((qreal)(1.0));
+    m_acAnimation->setEasingCurve(QEasingCurve::OutBack);
+    connect(m_acAnimation, SIGNAL(finished()), this, SLOT(updateBattery()));
 }
 
 void Battery::init()
@@ -117,12 +122,6 @@ void Battery::init()
     m_showBatteryString = cg.readEntry("showBatteryString", false);
     m_showRemainingTime = cg.readEntry("showRemainingTime", false);
     m_showMultipleBatteries = cg.readEntry("showMultipleBatteries", !m_isEmbedded);
-
-    m_theme->resize(contentsRect().size());
-    if (m_acAdapterPlugged) {
-        showAcAdapter(true);
-    }
-    showBattery(true);
 
     m_theme->resize(contentsRect().size());
     m_font = QApplication::font();
@@ -137,11 +136,9 @@ void Battery::init()
 
     const QStringList& battery_sources = dataEngine("powermanagement")->query("Battery")["sources"].toStringList();
 
-    //connect sources
     connectSources();
 
     foreach (const QString &battery_source, battery_sources) {
-        //kDebug() << "BatterySource:" << battery_source;
         dataUpdated(battery_source, dataEngine("powermanagement")->query(battery_source));
     }
     m_numOfBattery = battery_sources.size();
@@ -158,6 +155,15 @@ void Battery::init()
     if (m_showBatteryString) {
         showLabel(m_showBatteryString);
     }
+    if (m_acAdapterPlugged) {
+        showAcAdapter(true);
+    }
+
+}
+
+void Battery::updateBattery()
+{
+    update();
 }
 
 void Battery::constraintsEvent(Plasma::Constraints constraints)
@@ -287,15 +293,14 @@ void Battery::readColors()
 {
     m_textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     m_boxColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-    m_boxColor.setAlpha(m_boxAlpha);
 }
 
 void Battery::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    showLabel(true);
-    //showAcAdapter(false); // to test the animation without constant plugging
-    //showBattery(false); // to test the animation without constant plugging
-    m_isHovered = true;
+    if (!m_showBatteryString) {
+        showLabel(true);
+    }
+    //showAcAdapter(true);
     Applet::hoverEnterEvent(event);
 }
 
@@ -304,9 +309,7 @@ void Battery::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     if (!m_showBatteryString && !m_isEmbedded) {
         showLabel(false);
     }
-    //showAcAdapter(true); // to test the animation without constant plugging
-    //showBattery(true); // to test the animation without constant plugging
-    //m_isHovered = false;
+    //showAcAdapter(false);
     Applet::hoverLeaveEvent(event);
 }
 
@@ -361,8 +364,6 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
     // as the battery applet is also embedded into the battery's extender.
     if (!m_isEmbedded && item->name() == "powermanagement") {
         int row = 0;
-        //int rowHeight = 20;
-        //int columnWidth = 120;
 
         QGraphicsWidget *controls = new QGraphicsWidget(item);
         controls->setMinimumWidth(360);
@@ -657,18 +658,32 @@ void Battery::setProfile(const QString &profile)
 
 void Battery::showLabel(bool show)
 {
-    if (m_fadeIn == show) {
-        return;
+    if (show) {
+        m_labelAnimation->setDirection(QAbstractAnimation::Forward);
+        if (m_labelAnimation->state() != QAbstractAnimation::Running) {
+            m_labelAnimation->start();
+        }
+    } else {
+        m_labelAnimation->setDirection(QAbstractAnimation::Backward);
+        if (m_labelAnimation->state() != QAbstractAnimation::Running) {
+            m_labelAnimation->start();
+        }
     }
-    m_fadeIn = show;
-    const int FadeInDuration = 150;
+}
 
-    if (m_animId != -1) {
-        Plasma::Animator::self()->stopCustomAnimation(m_animId);
+void Battery::showAcAdapter(bool show)
+{
+    if (show) {
+        m_acAnimation->setDirection(QAbstractAnimation::Forward);
+        if (m_acAnimation->state() != QAbstractAnimation::Running) {
+            m_acAnimation->start();
+        }
+    } else {
+        m_acAnimation->setDirection(QAbstractAnimation::Backward);
+        if (m_acAnimation->state() != QAbstractAnimation::Running) {
+            m_acAnimation->start();
+        }
     }
-    m_animId = Plasma::Animator::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
-                                                      Plasma::Animator::EaseOutCurve, this,
-                                                      "animationUpdate");
 }
 
 QRectF Battery::scaleRectF(const qreal progress, QRectF rect)
@@ -689,95 +704,6 @@ QRectF Battery::scaleRectF(const qreal progress, QRectF rect)
     rect.setHeight(h);
 
     return rect;
-}
-
-void Battery::showAcAdapter(bool show)
-{
-    if (m_acFadeIn == show) {
-        return;
-    }
-    m_acFadeIn = show;
-    const int FadeInDuration = 600;
-    // As long as the animation is running, we fake it's still plugged in so it gets
-    // painted in paintInterface()
-    m_acAdapterPlugged = true;
-
-    if (m_acAnimId != -1) {
-        Plasma::Animator::self()->stopCustomAnimation(m_acAnimId);
-    }
-
-    m_acAnimId = Plasma::Animator::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
-                                                           Plasma::Animator::EaseOutCurve, this,
-                                                           "acAnimationUpdate");
-}
-
-void Battery::showBattery(bool show)
-{
-    if (m_batteryFadeIn == show) {
-        return;
-    }
-
-    m_batteryFadeIn = show;
-    const int FadeInDuration = 300;
-
-    if (m_batteryAnimId != -1) {
-        Plasma::Animator::self()->stopCustomAnimation(m_batteryAnimId);
-    }
-
-    m_batteryAnimId = Plasma::Animator::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
-                                                                Plasma::Animator::EaseOutCurve, this,
-                                                                "batteryAnimationUpdate");
-}
-
-void Battery::animationUpdate(qreal progress)
-{
-    if (qFuzzyCompare(progress, qreal(1))) {
-        m_animId = -1;
-        m_alpha = m_fadeIn ? 1 : 0;
-    } else if (m_fadeIn) {
-        m_alpha = progress;
-    } else {
-        m_alpha = qMin(1 - progress, m_alpha);
-    }
-
-    m_alpha = qBound(qreal(0), m_alpha, qreal(1));
-    update();
-}
-
-void Battery::acAnimationUpdate(qreal progress)
-{
-    if (qFuzzyCompare(progress, qreal(1))) {
-        m_acAnimId = -1;
-        m_acAlpha = m_acFadeIn ? 1 : 0;
-    } else if (m_acFadeIn) {
-        m_acAlpha = progress;
-    } else {
-        m_acAlpha = qMin(1 - progress, m_acAlpha);
-    }
-
-    m_acAlpha = qBound(qreal(0), m_acAlpha, qreal(1));
-    // During the fadeout animation, we had set it to true (and lie)
-    // now the animation has ended, we _really_ set it to not show the adapter
-    if (!m_acFadeIn && qFuzzyCompare(progress, qreal(1))) {
-        m_acAdapterPlugged = false;
-        updateStatus();
-    }
-    update();
-}
-
-void Battery::batteryAnimationUpdate(qreal progress)
-{
-    if (qFuzzyCompare(progress, qreal(1))) {
-        m_batteryAnimId = -1;
-        m_batteryAlpha = m_batteryFadeIn ? 1 : 0;
-    } else if (m_batteryFadeIn) {
-        m_batteryAlpha = progress;
-    } else {
-        m_batteryAlpha = qMin(1 - progress, m_batteryAlpha);
-    }
-
-    m_batteryAlpha = qBound(qreal(0), m_batteryAlpha, qreal(1));
-    update();
 }
 
 void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& labelText)
@@ -816,18 +742,15 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
                             contentsRect.top() + ((contentsRect.height() - (int)fm.height()) / 2 * 0.9),
                             (int)(text_width),
                             fm.height() * 1.1 );
-    //kDebug() << contentsRect << m_textRect;
-    //p->setBrush(QColor("green"));
-    //p->drawRect(m_textRect);
 
     if (m_firstRun) {
         m_firstRun = false;
-        return;
+        //return;
     }
     // Poor man's highlighting
-    m_boxColor.setAlphaF(m_alpha);
+    m_boxColor.setAlphaF(m_labelAlpha);
     p->setPen(m_boxColor);
-    m_boxColor.setAlphaF(m_alpha*0.5);
+    m_boxColor.setAlphaF(m_labelAlpha*0.5);
     p->setBrush(m_boxColor);
 
     // Find sensible proportions for the rounded corners
@@ -837,19 +760,18 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
     qreal round_radius = 35.0;
     p->drawRoundedRect(m_textRect, round_radius / round_prop, round_radius, Qt::RelativeSize);
 
-    m_textColor.setAlphaF(m_alpha);
+    m_textColor.setAlphaF(m_labelAlpha);
     p->setPen(m_textColor);
     p->drawText(m_textRect, Qt::AlignCenter, labelText);
 
     // Reset font and box
     m_font.setPointSize(original_font_size);
-    m_boxColor.setAlpha(m_boxAlpha);
 }
 
 void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int batteryPercent, const bool plugState)
 {
     if (m_theme->hasElement("Battery")) {
-        m_theme->paint(p, scaleRectF(m_batteryAlpha, contentsRect), "Battery");
+        m_theme->paint(p, contentsRect, "Battery");
     }
 
     QString fill_element = QString();
@@ -873,19 +795,16 @@ void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int bat
     // Now let's find out which fillstate to show
     if (!fill_element.isEmpty()) {
         if (m_theme->hasElement(fill_element)) {
-            m_theme->paint(p, scaleRectF(m_batteryAlpha, contentsRect), fill_element);
+            m_theme->paint(p, contentsRect, fill_element);
         } else {
             kDebug() << fill_element << " does not exist in svg";
         }
     }
 
-    if (m_acAdapterPlugged) {
-        //QRectF ac_rect = QRectF(contentsRect.topLeft(), QSizeF(contentsRect.width()*m_acAlpha, contentsRect.height()*m_acAlpha));
-        m_theme->paint(p, scaleRectF(m_acAlpha, contentsRect), "AcAdapter");
-    }
+    m_theme->paint(p, scaleRectF(m_acAlpha, contentsRect), "AcAdapter");
 
     if (plugState && m_theme->hasElement("Overlay")) {
-        m_theme->paint(p, scaleRectF(m_batteryAlpha, contentsRect), "Overlay");
+        m_theme->paint(p, contentsRect, "Overlay");
     }
 }
 
@@ -930,7 +849,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
             // paint battery with appropriate charge level
             paintBattery(p, corect, battery_data.value()["Percent"].toInt(), battery_data.value()["Plugged in"].toBool());
 
-            if (m_showBatteryString || m_isHovered || m_firstRun) {
+            //if (m_showBatteryString || m_firstRun) {
                 // Show the charge percentage with a box on top of the battery
                 QString batteryLabel;
                 if (battery_data.value()["Plugged in"].toBool()) {
@@ -954,7 +873,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
                     }
                     paintLabel(p, corect, batteryLabel);
                 }
-            }
+            //}
             ++battery_num;
         }
     } else {
@@ -976,7 +895,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         }
         // paint battery with appropriate charge level
         paintBattery(p, contentsRect,  battery_charge, has_battery);
-        if (m_showBatteryString || m_isHovered) {
+        if (m_showBatteryString) {
             // Show the charge percentage with a box on top of the battery
             QString batteryLabel;
             if (has_battery) {
@@ -1037,6 +956,28 @@ void Battery::sourceRemoved(const QString& source)
     if (source == "PowerDevil") {
         dataEngine("powermanagement")->disconnectSource(source, this);
     }
+}
+
+void Battery::setLabelAlpha(qreal alpha)
+{
+    m_labelAlpha = alpha;
+    update();
+}
+
+qreal Battery::labelAlpha()
+{
+    return m_labelAlpha;
+}
+
+void Battery::setAcAlpha(qreal alpha)
+{
+    m_acAlpha = alpha;
+    update();
+}
+
+qreal Battery::acAlpha()
+{
+    return m_acAlpha;
 }
 
 #include "battery.moc"
