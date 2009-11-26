@@ -201,31 +201,35 @@ void KRunnerApp::initialize()
 
     // Single runner mode actions shortcuts
 
-    foreach (QString runnerId, m_runnerManager->singleRunnerEnabledIds()) {
+    foreach (QString runnerId, m_runnerManager->enabledSingleModeRunnerIds()) {
         a = m_actionCollection->addAction(runnerId);
-        a->setText( i18nc("Run krunner restricting the search only to runner %1", "Run Command (runner \"%1\" only)", m_runnerManager->runnerName(runnerId)));
+        a->setText(i18nc("Run krunner restricting the search only to runner %1", "Run Command (runner \"%1\" only)", m_runnerManager->runnerName(runnerId)));
         a->setGlobalShortcut(KShortcut());
-        connect(a, SIGNAL(triggered(bool)), SLOT(singleRunnerModeAction()));
+        connect(a, SIGNAL(triggered(bool)), SLOT(singleRunnerModeActionTriggered()));
     }
 }
 
-void KRunnerApp::singleRunnerModeAction()
+void KRunnerApp::singleRunnerModeActionTriggered()
 {
     KAction * action = qobject_cast<KAction*>(sender());
     if (action) {
-        m_interface->setSingleRunnerMode(action->objectName());
+        m_runnerManager->setSingleModeRunnerId(action->objectName());
     }
 }
 
-void KRunnerApp::querySingleRunner(const QString& runnerName)
+void KRunnerApp::querySingleRunner(const QString& runnerId, const QString &term)
 {
-    if (runnerName.isEmpty()) {
-        return;
-    }
+    m_runnerManager->setSingleModeRunnerId(runnerId);
+    m_runnerManager->setSingleMode(!runnerId.isEmpty());
 
-    if (m_runnerManager->singleRunnerEnabledIds().contains(runnerName)) {
-        m_interface->setSingleRunnerMode(runnerName);
+    if (m_runnerManager->singleMode()) {
+        m_interface->display(term);
     }
+}
+
+QStringList KRunnerApp::enabledSingleModeRunnerIds() const
+{
+    return m_runnerManager->enabledSingleModeRunnerIds();
 }
 
 void KRunnerApp::initializeStartupNotification()
@@ -301,7 +305,14 @@ void KRunnerApp::showTaskManagerWithFilter(const QString &filterText)
 
 void KRunnerApp::display()
 {
-    m_interface->setSingleRunnerMode(QString());
+    m_runnerManager->setSingleMode(false);
+    m_interface->display();
+}
+
+void KRunnerApp::displaySingleRunner(const QString &runnerId)
+{
+    m_runnerManager->setSingleModeRunnerId(runnerId);
+    m_runnerManager->setSingleMode(!runnerId.isEmpty());
     m_interface->display();
 }
 

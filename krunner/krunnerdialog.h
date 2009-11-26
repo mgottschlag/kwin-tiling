@@ -48,11 +48,10 @@ class KRunnerDialog : public KDialog
         virtual void setConfigWidget(QWidget *w) = 0;
 
     public Q_SLOTS:
-        virtual void display(const QString& term = QString()) = 0;
+        virtual void display(const QString &term = QString()) = 0;
         virtual void clearHistory() = 0;
 
         void switchUser();
-        virtual void setSingleRunnerMode(QString runnerName);
 
     protected:
         void paintEvent(QPaintEvent *event);
@@ -66,8 +65,6 @@ class KRunnerDialog : public KDialog
         void moveEvent(QMoveEvent *);
 
         void positionOnScreen();
-        bool singleRunnerMode() const;
-        QString singleRunnerId() const;
         virtual void setStaticQueryMode(bool staticQuery);
 
     protected Q_SLOTS:

@@ -248,17 +248,6 @@ void KRunnerDialog::setStaticQueryMode(bool staticQuery)
     Q_UNUSED(staticQuery)
 }
 
-void KRunnerDialog::setSingleRunnerMode(QString runnerName)
-{
-    m_singleRunnerId = runnerName;
-
-    if (runnerName.isEmpty()) {
-        return;
-    }
-
-    display();
-}
-
 void KRunnerDialog::switchUser()
 {
     const KService::Ptr service = KService::serviceByStorageId("plasma-runner-sessions.desktop");
@@ -532,16 +521,6 @@ void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
     } else {
         unsetCursor();
     }
-}
-
-bool KRunnerDialog::singleRunnerMode() const
-{
-    return (!m_singleRunnerId.isEmpty());
-}
-
-QString KRunnerDialog::singleRunnerId() const
-{
-    return (m_singleRunnerId);
 }
 
 #include "krunnerdialog.moc"

@@ -148,9 +148,8 @@ void QsDialog::cleanupAfterConfigWidget()
 
 void QsDialog::adjustInterface()
 {
-    if (singleRunnerMode()) {
-
-        m_singleRunnerIcon->setPixmap(m_runnerManager->retrieveSingleRunner(singleRunnerId())->icon().pixmap( QSize( 22, 22 )) );
+    if (m_runnerManager->singleModeRunner()) {
+        m_singleRunnerIcon->setPixmap(m_runnerManager->singleModeRunner()->icon().pixmap( QSize( 22, 22 )) );
         m_singleRunnerIcon->show();
         m_configButton->hide();
     } else {
@@ -179,7 +178,7 @@ void QsDialog::display(const QString &term)
     //KDialog::centerOnScreen(this, screen); // For some reason, this isn't working
     positionOnScreen();
     KWindowSystem::forceActiveWindow(winId());
-    if (term.isEmpty() && !singleRunnerMode()) {
+    if (term.isEmpty() && !m_runnerManager->singleMode()) {
         m_matchView->setTitle(QString());
     } else {
         m_matchView->setTitle(term);
@@ -189,12 +188,13 @@ void QsDialog::display(const QString &term)
 
 void QsDialog::launchQuery(const QString &query)
 {
-    if (query.isEmpty() && !singleRunnerMode()) {
+    if (query.isEmpty() && !m_runnerManager->singleMode()) {
         m_matchView->reset();
     } else {
         m_matchView->showLoading();
     }
-    m_runnerManager->launchQuery(query, singleRunnerId());
+
+    m_runnerManager->launchQuery(query);
     m_newQuery = true;
 }
 

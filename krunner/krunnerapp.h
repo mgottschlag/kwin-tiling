@@ -62,10 +62,9 @@ public Q_SLOTS:
     void logoutWithoutConfirmation();
     void haltWithoutConfirmation();
     void rebootWithoutConfirmation();
-    void singleRunnerModeAction();
 
     // DBUS interface. if you change these methods, you MUST run:
-    // qdbuscpp2xml -m krunnerapp.h -o org.kde.krunner.App.xml
+    // qdbuscpp2xml -m krunnerapp.h -o dbus/org.kde.krunner.App.xml
     Q_SCRIPTABLE void initializeStartupNotification();
 
     /** Show taskmanager */
@@ -76,11 +75,17 @@ public Q_SLOTS:
     /** Display the interface */
     Q_SCRIPTABLE void display();
 
-    /** Display the interface */
-    Q_SCRIPTABLE void query(const QString& term);
+    /** Enter single runner query mode **/
+    Q_SCRIPTABLE void displaySingleRunner(const QString& runnerName);
 
     /** Display the interface, using clipboard contents */
     Q_SCRIPTABLE void displayWithClipboardContents();
+
+    /** Display the interface */
+    Q_SCRIPTABLE void query(const QString& term);
+
+    /** Enter single runner query mode **/
+    Q_SCRIPTABLE void querySingleRunner(const QString& runnerName, const QString &term);
 
     /** Switch user */
     Q_SCRIPTABLE void switchUser();
@@ -88,8 +93,7 @@ public Q_SLOTS:
     /** Clear the search history */
     Q_SCRIPTABLE void clearHistory();
 
-    /** Enter single runner query mode **/
-    Q_SCRIPTABLE void querySingleRunner(const QString& runnerName);
+    Q_SCRIPTABLE QStringList enabledSingleModeRunnerIds() const;
 
 private slots:
     /**
@@ -99,6 +103,7 @@ private slots:
     void reloadConfig();
     void cleanUp();
     void displayOrHide();
+    void singleRunnerModeActionTriggered();
 
 private:
     KRunnerApp();

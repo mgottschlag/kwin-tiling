@@ -308,7 +308,7 @@ Interface::~Interface()
 
 void Interface::searchTermSetFocus()
 {
-    if (singleRunnerMode()) {
+    if (m_runnerManager->singleMode()) {
         m_singleRunnerSearchTerm->setFocus();
     } else {
         m_searchTerm->setFocus();
@@ -351,14 +351,15 @@ void Interface::clearHistory()
 
 void Interface::display(const QString &term)
 {
-    if (!term.isEmpty() || !isVisible()) {
+    if (!term.isEmpty() || !isVisible() ||
+        m_runnerManager->singleMode() != m_singleRunnerIcon->isVisible()) {
         resetInterface();
     }
 
     positionOnScreen();
     searchTermSetFocus();
 
-    if (singleRunnerMode()) {
+    if (m_runnerManager->singleMode()) {
         if (term.isEmpty()) {
             // We need to manually trigger queryTextEdited, since
             // with an empty query it won't be triggered; still we need it
@@ -400,8 +401,9 @@ void Interface::showHelp()
     QMap<QString, Plasma::QueryMatch> matches;
     QList<Plasma::AbstractRunner*> runnerList;
 
-    if (singleRunnerMode()) {
-        runnerList << m_runnerManager->retrieveSingleRunner(singleRunnerId());
+    Plasma::AbstractRunner *singleRunner = m_runnerManager->singleModeRunner();
+    if (singleRunner) {
+        runnerList << singleRunner;
     } else {
         runnerList = m_runnerManager->runners();
     }
@@ -439,19 +441,19 @@ void Interface::ensureVisibility(QGraphicsItem* item)
 void Interface::setStaticQueryMode(bool staticQuery)
 {
     // don't show the search and other control buttons in the case of a static querymatch
-    bool visible = !staticQuery;
-    m_configButton->setVisible(visible && !singleRunnerMode());
-    m_activityButton->setVisible(visible && !singleRunnerMode());
+    const bool visible = !staticQuery;
+    Plasma::AbstractRunner *singleRunner = m_runnerManager->singleModeRunner();
+    m_configButton->setVisible(visible && !singleRunner);
+    m_activityButton->setVisible(visible && !singleRunner);
     m_helpButton->setVisible(visible);
-    m_searchTerm->setVisible(visible && !singleRunnerMode());
-    m_singleRunnerSearchTerm->setVisible(visible && singleRunnerMode());
-    if (singleRunnerMode()) {
-        Plasma::AbstractRunner *r = m_runnerManager->retrieveSingleRunner(singleRunnerId());
-        m_singleRunnerIcon->setPixmap(r->icon().pixmap( QSize( 22, 22 )));
-        m_singleRunnerDisplayName->setText(r->name());
+    m_searchTerm->setVisible(visible && !singleRunner);
+    m_singleRunnerSearchTerm->setVisible(visible && singleRunner);
+    if (singleRunner) {
+        m_singleRunnerIcon->setPixmap(singleRunner->icon().pixmap( QSize( 22, 22 )));
+        m_singleRunnerDisplayName->setText(singleRunner->name());
     }
-    m_singleRunnerIcon->setVisible(singleRunnerMode());
-    m_singleRunnerDisplayName->setVisible(singleRunnerMode());
+    m_singleRunnerIcon->setVisible(singleRunner);
+    m_singleRunnerDisplayName->setVisible(singleRunner);
 }
 
 void Interface::hideEvent(QHideEvent *e)
@@ -531,7 +533,7 @@ void Interface::queryTextEdited(const QString &query)
 {
     m_delayedRun = false;
 
-    if (query.isEmpty() && !singleRunnerMode()) {
+    if (query.isEmpty() && !m_runnerManager->singleMode()) {
         m_delayedQueryTimer.stop();
         resetInterface();
         m_queryRunning = false;
@@ -542,9 +544,10 @@ void Interface::queryTextEdited(const QString &query)
 
 void Interface::delayedQueryLaunch()
 {
-    const QString query = (singleRunnerMode()? m_singleRunnerSearchTerm->userText() : static_cast<KLineEdit*>(m_searchTerm->lineEdit())->userText());
-    if (!query.isEmpty() || singleRunnerMode()) {
-        m_queryRunning = m_resultsScene->launchQuery(query, singleRunnerId()) || m_queryRunning; //lazy OR?
+    const QString query = (m_runnerManager->singleMode() ? m_singleRunnerSearchTerm->userText()
+                                                         : static_cast<KLineEdit*>(m_searchTerm->lineEdit())->userText());
+    if (!query.isEmpty() || m_runnerManager->singleMode()) {
+        m_queryRunning = m_resultsScene->launchQuery(query, m_runnerManager->singleModeRunnerId()) || m_queryRunning; //lazy OR?
     }
 }
 
