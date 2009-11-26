@@ -57,6 +57,10 @@ SessionRunner::SessionRunner(QObject *parent, const QVariantList &args)
                                 i18n("Starts a new session as a different user"));
     fastUserSwitchSyntax.addExampleQuery(i18n("new session"));
     addSyntax(fastUserSwitchSyntax);
+
+    //"SESSIONS" should not be translated; it's used programmaticaly
+    setDefaultSyntax(Plasma::RunnerSyntax("SESSIONS", i18n("Lists all sessions")));
+
 }
 
 SessionRunner::~SessionRunner()
