@@ -427,7 +427,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_backButton->setIcon(KIcon("go-previous"));
             m_backButton->setText(i18n("Back"));
             m_backButton->setOrientation(Qt::Horizontal);
-            m_backButton->setPreferredSize(m_backButton->sizeFromIconSize(KIconLoader::SizeSmall));
+            m_backButton->setPreferredSize(m_backButton->sizeFromIconSize(KIconLoader::SizeSmallMedium));
             connect(m_backButton, SIGNAL(activated()), this, SLOT(reset()));
             connect(m_resultsView, SIGNAL(resetRequested()), this, SLOT(reset()));
 
