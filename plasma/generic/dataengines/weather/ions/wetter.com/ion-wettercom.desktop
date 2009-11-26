@@ -1,6 +1,19 @@
 [Desktop Entry]
 Name=wetter.com
+Name[en_GB]=wetter.com
+Name[pt]=wetter.com
+Name[sv]=wetter.com
+Name[uk]=wetter.com
+Name[x-test]=xxwetter.comxx
+Name[zh_TW]=wetter.com
 Comment=Weather forecast by wetter.com
+Comment[en_GB]=Weather forecast by wetter.com
+Comment[nn]=Vêrmelding
+Comment[pt]=Previsão meteorológica da wetter.com
+Comment[sv]=Väderprognos av wetter.com
+Comment[uk]=Прогноз погоди з wetter.com
+Comment[x-test]=xxWeather forecast by wetter.comxx
+Comment[zh_TW]=氣象預報，由 wetter.com 提供
 X-KDE-ServiceTypes=Plasma/DataEngine
 X-KDE-ParentApp=weatherengine
 Type=Service

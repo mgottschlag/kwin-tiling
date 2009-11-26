@@ -1,7 +1,21 @@
 [Desktop Entry]
 # ctxt: plasma runner
 Name=Devices
+Name[en_GB]=Devices
+Name[nb]=Enhet
+Name[pt]=Dispositivos
+Name[sv]=Enheter
+Name[uk]=Пристрої
+Name[x-test]=xxDevicesxx
+Name[zh_TW]=裝置
 Comment=Manage removable devices
+Comment[en_GB]=Manage removable devices
+Comment[nb]=Flyttbar
+Comment[pt]=Gerir os dispositivos removíveis
+Comment[sv]=Hantera flyttbara enheter
+Comment[uk]=Керування портативними пристроями
+Comment[x-test]=xxManage removable devicesxx
+Comment[zh_TW]=管理可移除裝置
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 Icon=device-notifier
