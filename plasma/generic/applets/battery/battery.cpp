@@ -80,12 +80,12 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_theme(0),
       m_availableProfiles(QStringList()),
       m_currentProfile(0),
-      m_acAlpha(0),
-      m_firstRun(true),
       m_numOfBattery(0),
       m_acAdapterPlugged(false),
       m_remainingMSecs(0),
+      m_labelAlpha(0),
       m_labelAnimation(0),
+      m_acAlpha(0),
       m_acAnimation(0)
 {
     //kDebug() << "Loading applet battery";
@@ -285,7 +285,7 @@ void Battery::configAccepted()
         //kDebug() << "Show multiple battery changed: " << m_showMultipleBatteries;
         emit sizeHintChanged(Qt::PreferredSize);
     }
-
+ 
     emit configNeedsSaving();
 }
 
@@ -743,10 +743,6 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
                             (int)(text_width),
                             fm.height() * 1.1 );
 
-    if (m_firstRun) {
-        m_firstRun = false;
-        //return;
-    }
     // Poor man's highlighting
     m_boxColor.setAlphaF(m_labelAlpha);
     p->setPen(m_boxColor);
@@ -824,7 +820,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         return;
     }
 
-    if (m_isEmbedded || m_showMultipleBatteries || m_firstRun) {
+    if (m_isEmbedded || m_showMultipleBatteries) {
         // paint each battery with own charge level
         int battery_num = 0;
         int height = contentsRect.height();
@@ -849,31 +845,29 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
             // paint battery with appropriate charge level
             paintBattery(p, corect, battery_data.value()["Percent"].toInt(), battery_data.value()["Plugged in"].toBool());
 
-            //if (m_showBatteryString || m_firstRun) {
                 // Show the charge percentage with a box on top of the battery
-                QString batteryLabel;
-                if (battery_data.value()["Plugged in"].toBool()) {
-                    int hours = m_remainingMSecs/1000/3600;
-                    int minutes = qRound(m_remainingMSecs/60000) % 60;
-                    if (!(minutes==0 && hours==0)) {
-                        m_minutes= minutes;
-                        m_hours= hours;
-                    }
-                    QString state = battery_data.value()["State"].toString();
-
-                    if (m_showRemainingTime && (state=="Charging" || state=="Discharging" )) {
-                        m_remainingMSecs = battery_data.value()["Remaining msec"].toInt();
-                        QTime t = QTime(m_hours, m_minutes);
-                        KLocale tmpLocale(*KGlobal::locale());
-                        tmpLocale.setTimeFormat("%k:%M");
-                        batteryLabel = tmpLocale.formatTime(t, false, true); // minutes, hours as duration
-                    } else {
-                        batteryLabel = battery_data.value()["Percent"].toString();
-                        batteryLabel.append("%");
-                    }
-                    paintLabel(p, corect, batteryLabel);
+            QString batteryLabel;
+            if (battery_data.value()["Plugged in"].toBool()) {
+                int hours = m_remainingMSecs/1000/3600;
+                int minutes = qRound(m_remainingMSecs/60000) % 60;
+                if (!(minutes==0 && hours==0)) {
+                    m_minutes= minutes;
+                    m_hours= hours;
                 }
-            //}
+                QString state = battery_data.value()["State"].toString();
+
+                if (m_showRemainingTime && (state=="Charging" || state=="Discharging" )) {
+                    m_remainingMSecs = battery_data.value()["Remaining msec"].toInt();
+                    QTime t = QTime(m_hours, m_minutes);
+                    KLocale tmpLocale(*KGlobal::locale());
+                    tmpLocale.setTimeFormat("%k:%M");
+                    batteryLabel = tmpLocale.formatTime(t, false, true); // minutes, hours as duration
+                } else {
+                    batteryLabel = battery_data.value()["Percent"].toString();
+                    batteryLabel.append("%");
+                }
+                paintLabel(p, corect, batteryLabel);
+            }
             ++battery_num;
         }
     } else {
