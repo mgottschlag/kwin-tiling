@@ -318,10 +318,20 @@ void KRunnerApp::displaySingleRunner(const QString &runnerId)
 
 void KRunnerApp::displayOrHide()
 {
-    if (!m_interface->freeFloating() && m_interface->isActiveWindow()) {
+    if (!m_interface->isVisible()) {
+        m_runnerManager->setSingleMode(false);
+    }
+
+    if (m_interface->freeFloating()) {
+        if (m_interface->isVisible()) {
+            m_interface->hide();
+        } else {
+            m_interface->display();
+        }
+    } else if (m_interface->isActiveWindow()) {
         m_interface->hide();
     } else {
-        display();
+        m_interface->display();
     }
 }
 
