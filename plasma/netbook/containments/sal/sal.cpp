@@ -432,7 +432,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             connect(m_resultsView, SIGNAL(resetRequested()), this, SLOT(reset()));
 
             QGraphicsAnchorLayout *searchLayout = new QGraphicsAnchorLayout();
-            searchLayout->setSpacing(5);
+            searchLayout->setSpacing(10);
 
             m_searchField = new Plasma::LineEdit(this);
             m_searchField->setPreferredWidth(200);
