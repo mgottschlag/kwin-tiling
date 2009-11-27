@@ -92,28 +92,74 @@ Properties:
 
 Painting and Layout
 -------------------
+To paint directly on to the canvas, a widget may implement the paintInterface function in the plasmoid object:
+
+    plasmoid.paintInterface = function(painter) { /* painting code goes here */ }
+
+See the Painting section below for information about helpful classes and functions that can be used when implementing a paintInterface function.
+
 Functions:
  * update() triggers a full repaint of the Plasmoid
- * update(QRectF) triggers a repaint of the rect area of the Plasmoid
+ * update(QRectF rect) triggers a repaint of the rect area of the Plasmoid
  * failedToLaunch(bool failed, string reason) sets the launch status of the Plasmoid; if set to true, the script will stop executing and the reason message, if any, will be displayed to the user
 
 Properties:
  * layout: the QGraphicsLayout associated with the Plasmoid for laying out top level items; this property is read-write, though the property is not usually set as one can simply do "new LinearLayout" (or one of the other layout classes provided) and it will be automatically associated with the Plasmoid
 
+
 Access To Packaged Files
 ------------------------
 Functions:
  * string file(string type, string fileName): returns the path to a file named fileName in the Plasmoid package of the given type; e.g. file("images", "mypixmap.png")
-
  * string file(string type): returns the path to a file named as part of the package, e.g.: file("mainscript")
-
  * bool include(string filename): attempts to include the script defined from the package's scripts directory
 
 User Interface Elements
 =======================
 
-Types of Widgets
-----------------
+Plasma Widgets
+--------------
+The Plasma framework provides a set of standard user interface elmenets such as pushbuttons and checkboxes for use in Plasmoids, and these are available from the Simplified Javascript API as well. These elements follow the Plasma style and other conventions. By default, all widgets have the following properties:
+
+Properties
+----------
+stylesheet
+objectName
+opacity
+enabled
+visible
+pos
+x
+y
+z
+rotation
+scale
+transformOriginPoint
+palette
+font
+size
+focusPolicy
+windowFlags
+windowTitle
+geometry
+
+Signals
+------
+opacityChanged()
+visibleChanged()
+enabledChanged()
+xChanged()
+yChanged()
+zChanged()
+rotationChanged()
+scaleChanged()
+
+Undocumented Properties and Functions
+-------------------------------------
+There are a handful of other undocument properties and functions available to UI elements. These are not supported or guaranteed to exist in future versions however, and as such should be used or relied upon.
+
+UI Element Gallery
+------------------
 BusyWidget
   * boolean running
   * string label
@@ -439,20 +485,274 @@ The default is sequential.
 
 Painting
 ========
+See the "Painting and Layout" section, part of the Global Plasmoid chapter, for information on using these classes within a widget.
+
+Pixmaps
+-------
+The QPixmap object allows widgets to use pixmaps for painting. Widgets may include pixmaps in various common formats (PNG, JPEG, GIF, etc.) in the contents/images/ directory of the Plasmoid package and load them by passing the name of the file into the pixmap contrustor:
+
+    var pixmap = new QPixmap("myimage.png")
+
+In addition to being used as a file load, some objects return or take pixmaps and the QPixmap object facilitates that as well.
+
+Properties
+  * bool isNull: returns true if the pixmap is empty or not
+  * QRectF rect: the rect of the pixmap
+  * QPixmap scaled(width, height): returns a scaled version of the pixmap with width and height dimensions
+
 
 SVG Images
----------
-PlasmaSvg
-PlasmaFrameSvg
+----------
+Plasma makes heavy usage of SVG images. More information on this industry standard scalable vector format can be found here:
+
+    http://www.w3.org/Graphics/SVG/
+
+Free and Open Source Software tools for creating SVGs include Inkscape and Karbon13. Widgets may include their own SVG files in the contents/images/ directdory or may use SVG images that are part of the standard Plasma Desktop Theme as documented here:
+
+    http://techbase.kde.org/Projects/Plasma/Theme
+
+Two classes are provide: Svg and FrameSvg. Svg allows loading and painting entire SVG documents or individual elements in an SVG document. FrameSvg extends Svg with methods to paint bordered frames from specially crafted SVG documents (see the Plasma Desktop Theme documentation for more information on this).
+
+Svg
+  * Constructors
+    * Svg(fileName): fileName can be a file in the desktop theme or the plasmoid package
+  * object size
+  * boolean multipleImages
+  * string imagePath
+  * boolean usingRenderingCache
+  * function repaintNeeded()
+  * function pixmap(QString)
+  * function pixmap()
+  * function paint(QPainter*,QPointF,QString)
+  * function paint(QPainter*,QPointF)
+  * function paint(QPainter*,int,int,QString)
+  * function paint(QPainter*,int,int)
+  * function paint(QPainter*,QRectF,QString)
+  * function paint(QPainter*,QRectF)
+  * function paint(QPainter*,int,int,int,int,QString)
+  * function paint(QPainter*,int,int,int,int)
+  * function resize(qreal,qreal)
+  * function resize(QSizeF)
+  * function resize()
+  * function elementSize(QString)
+  * function elementRect(QString)
+  * function hasElement(QString)
+  * function elementAtPoint(QPoint)
+  * function isValid()
+
+FrameSvg
+  * Constructors
+    * FrameSvg(fileName): fileName can be a file in the desktop theme or the plasmoid package
+  * boolean multipleImages
+  * function setEnabledBorders(EnabledBorders)
+  * function enabledBorders()
+  * function resizeFrame(QSizeF)
+  * function frameSize()
+  * function marginSize(Plasma::MarginEdge)
+  * function getMargins(qreal&,qreal&,qreal&,qreal&)
+  * function contentsRect()
+  * function setElementPrefix(Plasma::Location)
+  * function setElementPrefix(QString)
+  * function hasElementPrefix(QString)
+  * function hasElementPrefix(Plasma::Location)
+  * function prefix()
+  * function mask()
+  * function setCacheAllRenderedFrames(bool)
+  * function cacheAllRenderedFrames()
+  * function framePixmap()
+  * function paintFrame(QPainter*,QRectF,QRectF)
+  * function paintFrame(QPainter*,QRectF)
+  * function paintFrame(QPainter*,QPointF)
+  * function paintFrame(QPainter*)
 
 Painting on the Canvas
 ----------------------
-plasmoid.paintInterface = function(painter)
+
 QPainter
+  * function background
+  * function backgroundMode
+  * function begin
+  * function boundingRect
+  * function brush
+  * function brushOrigin
+  * function clipPath
+  * function clipRegion
+  * function combinedMatrix
+  * function combinedTransform
+  * function compositionMode
+  * function device
+  * function deviceMatrix
+  * function deviceTransform
+  * function drawChord
+  * function drawConvexPolygon
+  * function drawArc
+  * function drawEllipse
+  * function drawImage
+  * function drawLine
+  * function drawLines
+  * function drawPath
+  * function drawPicture
+  * function drawPie
+  * function drawPixmap
+  * function drawPoint
+  * function drawPoints
+  * function drawPolygon
+  * function drawPolyline
+  * function drawRect
+  * function drawRects
+  * function drawRoundRect
+  * function drawText
+  * function drawTiledPixmap
+  * function end
+  * function eraseRect
+  * function fillPath
+  * function fillRect
+  * function font
+  * function fontInfo
+  * function fontMetrics
+  * function hasClipping
+  * function initFrom
+  * function isActive
+  * function layoutDirection
+  * function opacity
+  * function paintEngine
+  * function pen
+  * function renderHints
+  * function resetMatrix
+  * function resetTransform
+  * function restore
+  * function rotate
+  * function save
+  * function scale
+  * function setBackground
+  * function setBackgroundMode
+  * function setBrush
+  * function setBrushOrigin
+  * function setClipPath
+  * function setClipRect
+  * function setClipRegion
+  * function setClipping
+  * function setCompositionMode
+  * function setFont
+  * function setLayoutDirection
+  * function setOpacity
+  * function setPen
+  * function setRenderHint
+  * function setRenderHints
+  * function setTransform
+  * function setViewTransformEnabled
+  * function setViewport
+  * function setWindow
+  * function setWorldMatrix
+  * function setWorldMatrixEnabled
+  * function setWorldTransform
+  * function shear
+  * function strokePath
+  * function testRenderHint
+  * function toString
+  * function transform
+  * function translate
+  * function viewTransformEnabled
+  * function viewport
+  * function window
+  * function worldMatrix
+  * function worldMatrixEnabled
+  * function worldTransform
+
+QColor
+  * Constructors:
+    * QColor
+    * QColor(string colorName)
+    * QColor(number red, number green, number blue, number alpha)
+  * number red
+  * number green
+  * number blue
+  * number alpha
+  * boolean isValid
+
 QFont
+  * Constructors:
+    * QFont
+    * QFont(string fontName)
+    * QFont(string fontName, number pointSize)
+    * QFont(string fontName, number pointSize, number weight)
+    * QFont(string fontName, number pointSize, number weight, boolean italic)
+  * boolean bold
+  * function defaultFamily
+  * function exactMatch
+  * string family
+  * boolean fixedPitch
+  * function fromString
+  * function handle
+  * function isCopyOf
+  * boolean italic
+  * boolean kerning
+  * string key
+  * function lastResortFamily
+  * function lastResortFont
+  * boolean overline
+  * number pixelSize
+  * number pointSize
+  * number pointSizeF
+  * boolean rawMode
+  * string rawName
+  * function resolve
+  * undefined bamily
+  * number stretch
+  * boolean strikeOut
+  * function setStyle
+  * function setStyleHint
+  * function setStyleStrategy
+  * boolean underline
+  * number weight
+  * function style
+  * function styleHint
+  * function styleStrategy
+  * function toString
+
 QRectF
+  * Constructors:
+    * QRectF
+    * QRectF(number x, number y, number width, number height)
+  * function adjust
+  * object adjusted
+  * function translate
+  * function setCoords
+  * function setRect
+  * function contains
+  * function moveBottom
+  * function moveLeft
+  * function moveRight
+  * function moveTo
+  * function moveTop
+  * boolean isEmpty
+  * boolean isNull
+  * boolean isValid
+  * number left
+  * number top
+  * number bottom
+  * number right
+  * number height
+  * number width
+  * number x
+  * number y
+
 QSizeF
+  * Constructors:
+    * QSizeF
+    * QSizeF(number width, number height)
+  * number height
+  * number width
+
 QPoint
+  * Constructors:
+    * QPoint
+    * QPoint(number x, number y)
+  * bool isNull
+  * number manhattanLength
+  * number x
+  * number y
+
 
 Accessing Sources of Data
 =========================
@@ -479,6 +779,14 @@ configChanged()
 Other Functions and Classes
 ===========================
 print(string)
+debug(string)
 GraphicsItem
 Timer
 Url
+
+Extensions
+==========
+Extensions to the standard API
+plasmoid.hasExtension
+
+
