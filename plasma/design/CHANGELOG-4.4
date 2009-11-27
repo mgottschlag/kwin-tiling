@@ -37,6 +37,15 @@ Desktop Theme
     * slider: new focus and hover indicators elements
     * widgets/background: hint-overlay-pos-right and hint-overlay-pos-bottom to control where the overlay will be anchored
 
+Generic shell
+-------------
+    * NEW library in workspace called plasmagenericshell that contains elements shared by the desktop shell, the netbook shell and the screensaver one, such as:
+        * Wallpaper setup UI
+        * Mouse plugins configuratin UI
+        * NEW Widgets Explorer that replaces the old applet browser.
+           It shows all the available widgets in an horizontal or vertical list
+           with a tabbar to chose the available categories and an input field to search among all installed widgets.
+
 Plasma Desktop Shell
 --------------------
 * Features
@@ -51,6 +60,7 @@ Plasma Desktop Shell
         * the plasma-desktop configuration can be interacted with via the interactive scripting console
         * the initial layout can be set with scripts in share/apps/plasma-desktop/defaults/
         * updates to plasma-desktop can be pushed by placing scripts in share/apps/plasma-desktop/updates
+    * Uses the new Widgets Explorer
 * Bugfixes
 
 
@@ -67,6 +77,7 @@ New components:
    * Current app control: provides a titlebar in the panel with a button to quickly switch windows
  * Dataengines:
    * Searchandlaunch: communication between searchbox and search and launch containment
+ * Shares the Widgets Explorer, wallpaper and mouse plugis settings with the other shells
 
  * Desktopthemes:
    * A simpler version of air to be used there
