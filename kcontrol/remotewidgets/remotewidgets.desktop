@@ -12,6 +12,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=computer-administration
 
 Name=Remote Widgets' Policies
+Name[el]=Πολιτικές απομακρυσμένων γραφικών συστατικών
 Name[en_GB]=Remote Widgets' Policies
 Name[et]=Välisvidinate reeglid
 Name[kk]=Қашықтағы виджеттер ережелері
@@ -25,6 +26,7 @@ Name[x-test]=xxRemote Widgets' Policiesxx
 Name[zh_TW]=遠端元件政策
 
 Comment=Define policies for remote plasma widgets
+Comment[el]=Ορισμός πολιτικών για απομακρυσμένα συστατικά γραφικών Plasma
 Comment[en_GB]=Define policies for remote plasma widgets
 Comment[et]=Plasma välisvidinate reeglite määramine
 Comment[gl]=Define as políticas dos widgets remotos de plasma

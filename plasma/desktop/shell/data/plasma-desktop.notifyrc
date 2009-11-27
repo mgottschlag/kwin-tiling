@@ -24,6 +24,7 @@ Comment[x-test]=xxPlasma Desktop Shellxx
 Comment[zh_TW]=Plasma 桌面 shell
 Name=Workspace
 Name[de]=Arbeitsbereich
+Name[el]=Χώρος εργασίας
 Name[en_GB]=Workspace
 Name[eo]=Laborspacon
 Name[et]=Töötsoon
