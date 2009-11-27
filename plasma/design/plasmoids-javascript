@@ -37,8 +37,8 @@ On top of the ECMA Script language, QtScript provides Qt integration features. P
 
 This will print out:
 
-We got clicked!
-First click!
+    We got clicked!
+    First click!
 
 on the console when the Plasmoid starts, and the "We got clicked!" again whenever the button is clicked by the user.
 
@@ -754,8 +754,8 @@ QPoint
   * number y
 
 
-Accessing Sources of Data
-=========================
+Accessing Sources of Data: DataEngines
+======================================
 dataEngine(string name)
 dataUpdate
 
