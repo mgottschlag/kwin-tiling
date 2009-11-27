@@ -37,12 +37,6 @@ namespace Notifier
     class NotifierDialog;
 }
 
-//desktop view
-namespace Plasma
-{
-    class IconWidget;
-}
-
 /**
 * @short Applet used to display devices
 *

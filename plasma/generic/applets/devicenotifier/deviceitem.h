@@ -24,7 +24,6 @@
 #include <QtGui/QIcon>
 #include <QtCore/QTimer>
 
-class QGraphicsSceneHoverEvent;
 class QGraphicsProxyWidget;
 class QGraphicsLinearLayout;
 
