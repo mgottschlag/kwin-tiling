@@ -390,6 +390,15 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         m_controlsLayout->addItem(m_acInfoLabel, row, 1);
         row++;
 
+        m_remainingTimeLabel = new Plasma::Label(controls);
+        m_remainingTimeLabel->setAlignment(Qt::AlignRight);
+        //m_remainingTimeLabel->setText(i18nc("Label for remaining time", "Time Remaining:"));
+        m_remainingInfoLabel = new Plasma::Label(controls);
+        m_remainingInfoLabel->nativeWidget()->setWordWrap(false);
+        m_controlsLayout->addItem(m_remainingTimeLabel, row, 0);
+        m_controlsLayout->addItem(m_remainingInfoLabel, row, 1);
+        row++;
+
         Battery *m_extenderApplet = static_cast<Battery*>(Plasma::Applet::load("battery"));
         int s = 64;
         if (m_extenderApplet) {
@@ -536,64 +545,57 @@ void Battery::updateStatus()
     if (m_numOfBattery && m_batteryLabelLabel) {
         QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
         int bnum = 0;
+        QString state;
         while (battery_data.hasNext()) {
             bnum++;
             battery_data.next();
-            QString state = battery_data.value()["State"].toString();
-            m_remainingMSecs = battery_data.value()["Remaining msec"].toInt();
-            //kDebug() << "time left:" << m_remainingMSecs;
-            /*
-            if (state == "Discharging" && m_remainingMSecs > 0 && m_showRemainingTime) {
-
-                // FIXME: Somehow, m_extenderApplet is null here, so the label never becomes visible
-                if (m_extenderApplet) {
-                    m_extenderApplet->showBatteryLabel(true);
-                }
-                // we don't have too much accuracy so only give hours and minutes
-                batteryLabelText.append(i18n("Time remaining: <b>%1</b><br />", KGlobal::locale()->prettyFormatDuration(m_remainingMSecs)));
-            } else {
-            */
-                //if (m_extenderApplet) {
-                //    m_extenderApplet->showBatteryLabel(false);
-                //}
-                if (m_numOfBattery == 0) {
-                    //kDebug() << "zero batteries ...";
-                } else if (m_numOfBattery == 1) {
-                    m_batteryLabelLabel->setText(i18n("Battery:"));
-                    if (battery_data.value()["Plugged in"].toBool()) {
-                        if (state == "NoCharge") {
-                            m_batteryInfoLabel->setText(i18n("%1% (charged)", battery_data.value()["Percent"].toString()));
-                        } else if (state == "Discharging") {
-                            m_batteryInfoLabel->setText(i18nc("Shown when a time estimate is not available", "%1% (discharging)\n", battery_data.value()["Percent"].toString()));
-                        } else {
-                            m_batteryInfoLabel->setText(i18n("%1% (charging)", battery_data.value()["Percent"].toString()));
-                        }
+            state = battery_data.value()["State"].toString();
+            if (m_numOfBattery == 1) {
+                m_batteryLabelLabel->setText(i18n("Battery:"));
+                if (battery_data.value()["Plugged in"].toBool()) {
+                    if (state == "NoCharge") {
+                        m_batteryInfoLabel->setText(i18n("%1% (charged)", battery_data.value()["Percent"].toString()));
+                    } else if (state == "Discharging") {
+                        m_batteryInfoLabel->setText(i18nc("Shown when a time estimate is not available", "%1% (discharging)", battery_data.value()["Percent"].toString()));
                     } else {
-                        m_batteryInfoLabel->setText(i18nc("Battery is not plugged in", "Not present"));
+                        m_batteryInfoLabel->setText(i18n("%1% (charging)", battery_data.value()["Percent"].toString()));
                     }
                 } else {
-                    //kDebug() << "More batteries ...";
-                    // FIXME: we're overwriting the text
-                    if (bnum > 1) {
-                        batteriesLabel.append("<br />");
-                        batteriesInfo.append("<br />");
-                    }
-                    batteriesLabel.append(i18nc("Placeholder is the battery ID", "<b>Battery %1:</b> ", bnum));
-                    if (state == "NoCharge") {
-                        batteriesInfo.append(i18n("%1% (charged)", battery_data.value()["Percent"].toString()));
-                    } else if (state == "Discharging") {
-                        batteriesInfo.append(i18n("%2% (discharging)", bnum, battery_data.value()["Percent"].toString()));
-                    } else {
-                        batteriesInfo.append(i18n("%2% (charging)", bnum, battery_data.value()["Percent"].toString()));
-                    }
+                    m_batteryInfoLabel->setText(i18nc("Battery is not plugged in", "Not present"));
                 }
-            //}
+            } else {
+                //kDebug() << "More batteries ...";
+                // FIXME: we're overwriting the text
+                if (bnum > 1) {
+                    batteriesLabel.append("<br />");
+                    batteriesInfo.append("<br />");
+                }
+                batteriesLabel.append(i18nc("Placeholder is the battery ID", "<b>Battery %1:</b> ", bnum));
+                if (state == "NoCharge") {
+                    batteriesInfo.append(i18n("%1% (charged)", battery_data.value()["Percent"].toString()));
+                } else if (state == "Discharging") {
+                    batteriesInfo.append(i18n("%2% (discharging)", bnum, battery_data.value()["Percent"].toString()));
+                } else {
+                    batteriesInfo.append(i18n("%2% (charging)", bnum, battery_data.value()["Percent"].toString()));
+                }
+            }
         }
         m_acLabelLabel->setText(i18n("AC Adapter:")); // ouch ...
         if (m_acAdapterPlugged) {
             m_acInfoLabel->setText(i18n("Plugged in "));
         } else {
             m_acInfoLabel->setText(i18n("Not plugged in"));
+        }
+        m_remainingMSecs = battery_data.value()["Remaining msec"].toInt();
+        //kDebug() << "time left:" << m_remainingMSecs;
+        if ((state == "Discharging" || state == "Charging") && m_remainingMSecs > 0 && m_showRemainingTime) {
+            m_remainingTimeLabel->show();
+            m_remainingInfoLabel->show();
+            // we don't have too much accuracy so only give hours and minutes
+            m_remainingInfoLabel->setText(KGlobal::locale()->prettyFormatDuration(m_remainingMSecs));
+        } else {
+            m_remainingTimeLabel->hide();
+            m_remainingInfoLabel->hide();
         }
     } else {
         m_batteryLabelLabel->setText(i18n("<b>Battery:</b> "));
@@ -856,8 +858,8 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
                 }
                 QString state = battery_data.value()["State"].toString();
 
-                if (m_showRemainingTime && (state=="Charging" || state=="Discharging" )) {
-                    m_remainingMSecs = battery_data.value()["Remaining msec"].toInt();
+                m_remainingMSecs = battery_data.value()["Remaining msec"].toInt();
+                if (m_remainingMSecs > 0 && (m_showRemainingTime && (state=="Charging" || state=="Discharging"))) {
                     QTime t = QTime(m_hours, m_minutes);
                     KLocale tmpLocale(*KGlobal::locale());
                     tmpLocale.setTimeFormat("%k:%M");
