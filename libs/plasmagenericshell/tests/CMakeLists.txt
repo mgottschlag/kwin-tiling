@@ -3,6 +3,7 @@ if (KDE4_BUILD_TESTS)
 include_directories(..
    ../../../plasma/shells/desktop 
    ${CMAKE_CURRENT_BINARY_DIR}/../../../plasma/shells/desktop)
+add_definitions(-DPLASMAGENERICSHELL_EXPORT="")
 
 set(appletexplorer_SRCS
    ../widgetsExplorer/kcategorizeditemsviewmodels.cpp
@@ -15,7 +16,6 @@ set(appletexplorer_SRCS
    ../widgetsExplorer/openwidgetassistant.cpp
    main.cpp
    )
-
 kde4_add_executable(plasmaappletexplorer ${appletexplorer_SRCS})
 target_link_libraries(plasmaappletexplorer ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_KFILE_LIBRARY})
 
