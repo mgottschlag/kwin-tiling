@@ -46,7 +46,6 @@ class GlowBar;
 namespace Plasma
 {
     class Containment;
-    class Corona;
     class Applet;
     class Svg;
 }
