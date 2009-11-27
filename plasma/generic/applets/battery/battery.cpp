@@ -436,7 +436,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         Plasma::Label *brightnessLabel = new Plasma::Label(controls);
         brightnessLabel->setText(i18n("Screen Brightness"));
         brightnessLabel->nativeWidget()->setWordWrap(false);
-        brightnessLabel->setAlignment(Qt::AlignRight);
+        brightnessLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
         m_controlsLayout->addItem(brightnessLabel, row, 0);
 
@@ -457,7 +457,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         m_profileLabel = new Plasma::Label(controls);
         m_profileLabel->setText(i18n("Power Profile"));
-        m_profileLabel->setAlignment(Qt::AlignRight);
+        m_profileLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
         m_controlsLayout->addItem(m_profileLabel, row, 0);
 
         m_profileCombo = new Plasma::ComboBox(controls);
