@@ -16,7 +16,7 @@ libplasma
     * Wallpapers can now accept drops by defining X-Plasma-DropMimeTypes in their .desktop file and connecting to the
       urlDropped(KUrl) signal
     * Widgets can be published on the network and be accessed remotely. In the case of scripted plasmoids the entire plasmoid package will be sent over, and in any case, dataengines and services will be routed to the remote machine. This is all completely transparent to applets.
-    * Applets can be associated to applications or urls, with a new button in the handle that will launch the associated application
+    * The applet handle supports resize, rotate and move with multitouch gestures on platforms that supports them
     * WindowEffects: a class that permits to control KWin effects in an eas way, hiding the Xatom management
     * Adding new Plasma::Animator based on Qt 4.6 Animation API (a.k.a. kinetic). The following animations are implemented: fade, grow, slide, rotation, pulser.
     * Package: contentsHash() provides access to a SHA1 hash of the contents of the package
@@ -78,7 +78,7 @@ Plugins/Addons
 --------------
 * Features
     * Plasmoids and Containments
-        * NEW Blackboard
+        * NEW Blackboard: a simple paint canvas, it's possible to paint with the mouse or with multitouch events on platforms that supports them
         * NEW KDE Observatory: keep track of the development of your favorite KDE projects
         * NEW KIMPanel: KDE Input Method Panel for multibyte input
         * NEW Knowledge Base: query the knowledgebase of opendesktop.org
