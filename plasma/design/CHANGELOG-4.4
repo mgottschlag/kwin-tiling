@@ -12,10 +12,11 @@ libplasma
           or data that becomes available with network availability.
         * DataContainer::forceImmediateUpdate() allows engines to do a forced update on just one source.
     * ContainmentActions plugins: allows context menus and mouse interaction to be defined separately from the containment
-    * Added Separator class.
+    * Added Separator widget.
     * Wallpapers can now accept drops by defining X-Plasma-DropMimeTypes in their .desktop file and connecting to the
       urlDropped(KUrl) signal
     * Widgets can be published on the network and be accessed remotely. In the case of scripted plasmoids the entire plasmoid package will be sent over, and in any case, dataengines and services will be routed to the remote machine. This is all completely transparent to applets.
+    * Applets can be associated to applications or urls, with a new button in the handle that will launch the associated application
     * WindowEffects: a class that permits to control KWin effects in an eas way, hiding the Xatom management
     * Adding new Plasma::Animator based on Qt 4.6 Animation API (a.k.a. kinetic). The following animations are implemented: fade, grow, slide, rotation, pulser.
     * Package: contentsHash() provides access to a SHA1 hash of the contents of the package
@@ -54,8 +55,8 @@ Plasma Netbook Shell
 New components:
  * plasma-netbook shell
  * Containments:
-   * Newspaper: desktop widgets ordered in two vertical columns
-   * Search and Launch: full screen krunner interface
+   * Newspaper: desktop widgets ordered in two or more vertical columns
+   * Search and Launch: full screen krunner interface with bookmarks support for the search results
    * Netpanel: a simple panel
  * Applets:
    * Searchbox: lauches searches on the Search and launch containment
