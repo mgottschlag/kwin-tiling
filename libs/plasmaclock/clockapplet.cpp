@@ -368,7 +368,7 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
     parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-    connect(d->ui.timeZones, SIGNAL(itemSelectionChanged()), this, SLOT(updateClockDefaultsTo()));
+    connect(d->ui.timeZones, SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(updateClockDefaultsTo()));
 }
 
 void ClockApplet::createClockConfigurationInterface(KConfigDialog *parent)

@@ -45,6 +45,9 @@ p, li { white-space: pre-wrap; }
      <property name="selectionMode">
       <enum>QAbstractItemView::MultiSelection</enum>
      </property>
+     <property name="itemsCheckable">
+      <bool>true</bool>
+     </property>
      <column>
       <property name="text">
        <string>Area</string>
