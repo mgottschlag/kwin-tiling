@@ -739,8 +739,9 @@ NotificationWidget *Applet::addNotification(Notification *notification)
     NotificationWidget *notificationWidget = new NotificationWidget(notification, extenderItem);
     extenderItem->setWidget(notificationWidget);
 
-    showPopup(m_autoHideTimeout);
     emit activate();
+    showPopup(m_autoHideTimeout);
+
 
     bool found = false;
     for (int i = 0; i < m_notificationBar->count(); ++i) {
