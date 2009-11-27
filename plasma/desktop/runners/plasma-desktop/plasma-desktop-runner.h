@@ -21,7 +21,6 @@
 
 #include <Plasma/AbstractRunner>
 
-class QWidget;
 
 /**
  * This class runs programs using the literal name of the binary, much as one

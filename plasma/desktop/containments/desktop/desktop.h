@@ -35,7 +35,6 @@
 
 #include "desktoplayout.h"
 
-class QAction;
 
 namespace Plasma
 {
