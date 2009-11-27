@@ -22,6 +22,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyKDE4.plasma import Plasma
 import plasma_importer
+import os.path
 
 class PythonRunnerScript(Plasma.RunnerScript):
     importer = None
@@ -39,7 +40,13 @@ class PythonRunnerScript(Plasma.RunnerScript):
         PythonRunnerScript.importer.register_top_level(self.pluginName, str(self.runner().package().path()))
 
         # import the code at the file name reported by mainScript()
-        self.module = __import__(self.pluginName+'.main')
+        relpath = os.path.relpath(str(self.mainScript()),str(self.runner().package().path()))
+        if relpath.startswith("contents/code/"):
+            relpath = relpath[14:]
+        if relpath.endswith(".py"):
+            relpath = relpath[:-3]
+        relpath = relpath.replace("/",".")
+        self.module = __import__(self.pluginName+'.'+relpath)
         self.pyrunner = self.module.main.CreateRunner(None)
         self.pyrunner.setRunner(self.runner())
         self.pyrunner.setRunnerScript(self)
