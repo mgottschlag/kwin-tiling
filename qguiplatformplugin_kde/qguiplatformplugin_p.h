@@ -63,7 +63,6 @@ QT_BEGIN_NAMESPACE
 
 QT_MODULE(Gui)
 
-class QStyle;
 class QPalette;
 class QIcon;
 class QFileDialog;
