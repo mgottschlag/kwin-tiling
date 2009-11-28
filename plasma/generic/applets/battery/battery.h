@@ -90,6 +90,7 @@ class Battery : public Plasma::PopupApplet
         void suspend();
         void hibernate();
         void updateBattery();
+        void setupFonts();
 
     private:
         void connectSources();

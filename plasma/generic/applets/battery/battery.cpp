@@ -100,6 +100,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     m_theme->setImagePath("widgets/battery-oxygen");
     m_theme->setContainsMultipleImages(true);
     setStatus(Plasma::ActiveStatus);
+    //setPassivePopup(true);
 
     m_labelAnimation = new QPropertyAnimation(this, "labelAlpha");
     m_labelAnimation->setDuration(200);
@@ -133,6 +134,7 @@ void Battery::init()
     readColors();
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(readColors()));
     connect(KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()), SLOT(readColors()));
+    connect(KGlobalSettings::self(), SIGNAL(appearanceChanged()), SLOT(setupFonts()));
 
     const QStringList& battery_sources = dataEngine("powermanagement")->query("Battery")["sources"].toStringList();
 
@@ -421,12 +423,12 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         spacer1->setMaximumHeight(8);
         m_controlsLayout->addItem(spacer1, row, 0);
         row++;
-
+        /*
         Plasma::Separator *sep1 = new Plasma::Separator(controls);
         sep1->setMaximumWidth(controls->geometry().width()-s);
         m_controlsLayout->addItem(sep1, row, 0, 1, 2, Qt::AlignLeft);
         row++;
-
+        */
         Plasma::Label *spacer2 = new Plasma::Label(controls);
         spacer2->setMinimumHeight(8);
         spacer2->setMaximumHeight(8);
@@ -525,6 +527,8 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         controls->setLayout(m_controlsLayout);
         item->setWidget(controls);
         item->setTitle(i18n("Power Management"));
+
+        setupFonts();
     }
 }
 
@@ -534,6 +538,23 @@ void Battery::popupEvent(bool show)
     updateStatus();
 }
 
+void Battery::setupFonts()
+{
+    if (m_batteryLabelLabel) {
+        QFont infoFont = KGlobalSettings::generalFont();
+        infoFont.setPointSize(infoFont.pointSize()+1);
+        QFont labelFont = infoFont;
+        labelFont.setBold(true);
+
+        m_batteryLabelLabel->setFont(labelFont);
+        m_acLabelLabel->setFont(labelFont);
+        m_remainingTimeLabel->setFont(labelFont);
+
+        m_batteryInfoLabel->setFont(infoFont);
+        m_acInfoLabel->setFont(infoFont);
+        m_remainingInfoLabel->setFont(infoFont);
+    }
+}
 void Battery::updateStatus()
 {
     if (!m_extenderVisible) {
