@@ -81,6 +81,7 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, P
 {
     setMinimumWidth(300);
     setPreferredWidth(400);
+    setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
     d->body->setFont(theme->font(Plasma::Theme::DefaultFont));
