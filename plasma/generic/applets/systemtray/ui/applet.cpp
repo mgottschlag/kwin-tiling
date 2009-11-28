@@ -241,6 +241,7 @@ void Applet::syncNotificationBarNeeded()
             m_notificationBarExtenderItem->setTitle(i18n("Recent notifications"));
             m_notificationBarExtenderItem->setIcon("dialog-information");
             QGraphicsWidget *widget = new QGraphicsWidget(m_notificationBarExtenderItem);
+            widget->setContentsMargins(0, 0, 0, 4);
             QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(widget);
             lay->addStretch();
             m_notificationBar = new Plasma::TabBar(widget);

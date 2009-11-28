@@ -39,6 +39,7 @@
 #include <plasma/extenderitem.h>
 #include <plasma/theme.h>
 #include <plasma/widgets/pushbutton.h>
+#include <Plasma/Label>
 
 class NotificationWidgetPrivate
 {
@@ -48,7 +49,6 @@ public:
           notification(0),
           destroyOnClose(true),
           autoHide(true),
-          body(new QGraphicsTextItem(q)),
           actionsWidget(0),
           signalMapper(new QSignalMapper(q))
     {
@@ -67,7 +67,9 @@ public:
     bool autoHide;
 
     QString message;
-    QGraphicsTextItem *body;
+    Plasma::Label *body;
+    QGraphicsLinearLayout *mainLayout;
+    QGraphicsLinearLayout *labelLayout;
     QGraphicsWidget *actionsWidget;
     QHash<QString, QString> actions;
     QStringList actionOrder;
@@ -83,13 +85,12 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, P
     setPreferredWidth(400);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    Plasma::Theme *theme = Plasma::Theme::defaultTheme();
-    d->body->setFont(theme->font(Plasma::Theme::DefaultFont));
-    d->body->setDefaultTextColor(theme->color(Plasma::Theme::TextColor));
+    d->mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
+    d->labelLayout = new QGraphicsLinearLayout(Qt::Horizontal);
+    d->body = new Plasma::Label(this);
 
-    QTextOption option = d->body->document()->defaultTextOption();
-    option.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
-    d->body->document()->setDefaultTextOption(option);
+    d->labelLayout->addItem(d->body);
+    d->mainLayout->addItem(d->labelLayout);
 
     if (notification) {
         d->notification = notification;
@@ -117,8 +118,6 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, P
         d->setTextFields(extenderItem->config().readEntry("applicationName", ""),
                          extenderItem->config().readEntry("summary", ""),
                          extenderItem->config().readEntry("message", ""));
-        qreal bodyHeight = d->body->boundingRect().height();
-        setPreferredHeight(bodyHeight);
         extenderItem->showCloseButton();
     }
 }
@@ -153,25 +152,6 @@ bool NotificationWidget::autoHide() const
 }
 
 
-void NotificationWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
-{
-    if (d->notification) {
-        if (!d->notification->image().isNull()) {
-            d->body->setTextWidth(event->newSize().width() -
-                                  d->notification->image().size().width() - 4);
-            d->body->setPos(d->notification->image().size().width() + 4, 0);
-        } else {
-            d->body->setTextWidth(event->newSize().width());
-            d->body->setPos(0, 0);
-        }
-    }
-
-    if (d->actionsWidget) {
-        d->actionsWidget->setPos(event->newSize().width() - d->actionsWidget->size().width(),
-                                 event->newSize().height() - d->actionsWidget->size().height());
-    }
-}
-
 void NotificationWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option)
@@ -203,7 +183,7 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
     }
 
     processed.replace('\n', "<br>");
-    body->setHtml(processed);
+    body->setText(processed);
 }
 
 void NotificationWidgetPrivate::completeDetach()
@@ -224,6 +204,7 @@ void NotificationWidgetPrivate::updateActions()
     actionsWidget = new QGraphicsWidget(q);
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(actionsWidget);
     layout->setOrientation(Qt::Horizontal);
+    layout->addStretch();
     actionsWidget->setContentsMargins(0, 0, 0, 0);
 
     foreach (const QString &actionId, actionOrder) {
@@ -240,9 +221,7 @@ void NotificationWidgetPrivate::updateActions()
         layout->addItem(button);
     }
 
-    actionsWidget->adjustSize();
-    actionsWidget->setPos(q->size().width() - actionsWidget->size().width(),
-                          q->size().width() - actionsWidget->size().height());
+    mainLayout->addItem(actionsWidget);
 }
 
 void NotificationWidgetPrivate::updateNotification()
@@ -266,6 +245,9 @@ void NotificationWidgetPrivate::updateNotification()
     qreal imageHeight = 0;
     if (!notification->image().isNull()) {
         imageHeight = notification->image().size().height();
+        labelLayout->setContentsMargins(notification->image().size().width(), 0, 0, 0);
+    } else {
+        labelLayout->setContentsMargins(0, 0, 0, 0);
     }
 
     extenderItem->showCloseButton();
