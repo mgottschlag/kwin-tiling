@@ -198,7 +198,7 @@ void Notification::hide()
     emit hideRequested(this);
 }
 
-bool Notification::expired() const
+bool Notification::isExpired() const
 {
     return d->expired;
 }

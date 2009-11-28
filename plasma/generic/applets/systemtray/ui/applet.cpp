@@ -299,7 +299,7 @@ void Applet::showTaskNotifications(int barIndex)
         }
     } else {
         foreach (Notification *notification, s_manager->notifications()) {
-            if (!notification->expired()) {
+            if (!notification->isExpired()) {
                 notifications.append(notification);
             }
         }

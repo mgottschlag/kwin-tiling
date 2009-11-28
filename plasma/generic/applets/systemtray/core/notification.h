@@ -50,7 +50,7 @@ public:
     QHash<QString, QString> actions() const;
     QStringList actionOrder() const;
 
-    bool expired() const;
+    bool isExpired() const;
 
 public slots:
     virtual void triggerAction(const QString &actionId);
