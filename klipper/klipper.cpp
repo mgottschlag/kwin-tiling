@@ -451,10 +451,12 @@ void Klipper::saveHistory(bool empty) {
     history_stream << klipper_version; // const char*
 
     if (!empty) {
-        History::iterator it = history()->youngest();
-        while (it.hasNext()) {
-            const HistoryItem *item = it.next();
-            history_stream << item;
+        const HistoryItem *item = history()->first();
+        if (item) {
+            do {
+                history_stream << item;
+                item = history()->find(item->next_uuid());
+            } while (item != history()->first());
         }
     }
 
@@ -889,11 +891,12 @@ void Klipper::slotClearOverflow()
 QStringList Klipper::getClipboardHistoryMenu()
 {
     QStringList menu;
-
-    History::iterator it = history()->youngest();
-    while (it.hasNext()) {
-        const HistoryItem *item = it.next();
-        menu << item->text();
+    const HistoryItem* item = history()->first();
+    if (item) {
+        do {
+            menu << item->text();
+            item = history()->find(item->next_uuid());
+        } while (item != history()->first());
     }
 
     return menu;
@@ -901,13 +904,14 @@ QStringList Klipper::getClipboardHistoryMenu()
 
 QString Klipper::getClipboardHistoryItem(int i)
 {
-    History::iterator it = history()->youngest();
-    while (it.hasNext()) {
-        const HistoryItem *item = it.next();
-        if ( i == 0 ) {
-            return item->text();
-        }
-        i--;
+    const HistoryItem* item = history()->first();
+    if (item) {
+        do {
+            if (i-- == 0) {
+                return item->text();
+            }
+            item = history()->find(item->next_uuid());
+        } while (item != history()->first());
     }
     return QString();
 

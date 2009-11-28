@@ -20,6 +20,7 @@
 #include <QMap>
 
 #include <QPixmap>
+#include <QCryptographicHash>
 
 #include <kdebug.h>
 
@@ -28,7 +29,7 @@
 #include "historyimageitem.h"
 #include "historyurlitem.h"
 
-HistoryItem::HistoryItem() {
+HistoryItem::HistoryItem(const QByteArray& uuid) : m_uuid(uuid) {
 
 }
 
@@ -94,3 +95,31 @@ HistoryItem* HistoryItem::create( QDataStream& aSource ) {
     return 0;
 }
 
+
+
+void HistoryItem::chain(HistoryItem* next)
+{
+    m_next_uuid = next->uuid();
+    next->m_previous_uuid = uuid();
+}
+
+void HistoryItem::insertBetweeen(HistoryItem* before, HistoryItem* after)
+{
+    if (before && after) {
+        before->chain(this);
+        chain(after);
+    } else {
+        Q_ASSERT(!before && !after);
+        // First item in chain
+        m_next_uuid = m_uuid;
+        m_previous_uuid = m_uuid;
+    }
+#if 0 // Extra checks, if anyone ever needs them
+    Q_ASSERT(before->uuid() == m_previous_uuid);
+    Q_ASSERT(before->next_uuid() == m_uuid);
+    Q_ASSERT(after->previous_uuid() == m_uuid);
+    Q_ASSERT(after->uuid() == m_next_uuid);
+    Q_ASSERT(before->uuid() != uuid());
+    Q_ASSERT(after->uuid() != uuid());
+#endif
+}

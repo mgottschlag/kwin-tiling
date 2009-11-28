@@ -31,7 +31,7 @@ class QDataStream;
 class HistoryItem
 {
 public:
-    HistoryItem( );
+    HistoryItem(const QByteArray& uuid);
     virtual ~HistoryItem();
 
     /**
@@ -40,6 +40,13 @@ public:
      * text, such as 32x43 image.
      */
     virtual QString text() const = 0;
+
+    /**
+     * @return uuid of current item.
+     */
+    const QByteArray& uuid() const {
+        return m_uuid;
+    }
 
     /**
      * Return the current item as text
@@ -75,6 +82,34 @@ public:
      * is left in an undefined state.
      */
     static HistoryItem* create( QDataStream& aSource );
+
+    /**
+     * Inserts this item between before and after
+     */
+    void insertBetweeen(HistoryItem* before, HistoryItem* after);
+
+    /**
+     * Chain this with next
+     */
+    void chain(HistoryItem* next);
+
+    /**
+     * previous item's uuid
+     */
+    const QByteArray& previous_uuid() const {
+        return m_previous_uuid;
+    }
+
+    /**
+     * next item's uuid
+     */
+    const QByteArray& next_uuid() const {
+        return m_next_uuid;
+    }
+private:
+    QByteArray m_previous_uuid;
+    QByteArray m_uuid;
+    QByteArray m_next_uuid;
 };
 
 inline

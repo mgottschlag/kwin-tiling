@@ -36,11 +36,13 @@
 PopupProxy::PopupProxy( KlipperPopup* parent, int menu_height, int menu_width )
     : QObject( parent ),
       m_proxy_for_menu( parent ),
-      m_spillPointer( parent->history()->youngest() ),
+      m_spill_uuid(),
       m_menu_height( menu_height ),
-      m_menu_width( menu_width ),
-      m_nextItemNumber( 0 )
+      m_menu_width( menu_width )
 {
+    if (!parent->history()->empty()) {
+        m_spill_uuid = parent->history()->first()->uuid();
+    }
     connect( parent->history(), SIGNAL( changed() ), SLOT( slotHistoryChanged() ) );
     connect(m_proxy_for_menu, SIGNAL(triggered(QAction*)), parent->history(), SLOT(slotMoveToTop(QAction*)));
 }
@@ -68,8 +70,7 @@ void PopupProxy::deleteMoreMenus() {
 int PopupProxy::buildParent( int index, const QRegExp& filter ) {
     deleteMoreMenus();
     // Start from top of  history (again)
-    m_spillPointer = parent()->history()->youngest();
-    m_nextItemNumber = 0;
+    m_spill_uuid = parent()->history()->empty() ? QByteArray() : parent()->history()->first()->uuid();
     if ( filter.isValid() ) {
         m_filter = filter;
     }
@@ -107,7 +108,7 @@ void PopupProxy::tryInsertItem( HistoryItem const * const item,
         action->setIcon(QIcon(image));
     }
 
-    action->setData(m_nextItemNumber);
+    action->setData(item->uuid());
 
     // if the m_proxy_for_menu is a submenu (aka a "More" menu) then it may the case, that there is no other action in that menu yet.
     QAction *before = index < m_proxy_for_menu->actions().count() ? m_proxy_for_menu->actions().at(index) : 0;
@@ -141,6 +142,7 @@ void PopupProxy::tryInsertItem( HistoryItem const * const item,
 
 int PopupProxy::insertFromSpill( int index ) {
 
+    const History* history = parent()->history();
     // This menu is going to be filled, so we don't need the aboutToShow()
     // signal anymore
     disconnect( m_proxy_for_menu, 0, this, 0 );
@@ -150,23 +152,22 @@ int PopupProxy::insertFromSpill( int index ) {
     // stop when the total number of items equal m_itemsPerMenu;
     int count = 0;
     int remainingHeight = m_menu_height - m_proxy_for_menu->sizeHint().height();
-    // Force at least one item to be inserted.
-    remainingHeight = qMax( remainingHeight, 0 );
-
-    while (m_spillPointer.hasNext() && remainingHeight >= 0) {
-        const HistoryItem *item = m_spillPointer.next();
-        if ( m_filter.indexIn( item->text() ) == -1) {
-            m_nextItemNumber++; // also count hidden items
-            continue;
-        }
-        tryInsertItem( item, remainingHeight, index++ );
-        count++;
-        m_nextItemNumber++;
+    const HistoryItem* item = history->find(m_spill_uuid);
+    if (!item) {
+        return count;
     }
+    do {
+        if ( m_filter.indexIn( item->text() ) != -1) {
+            tryInsertItem( item, remainingHeight, index++ );
+            count++;
+        }
+        item = history->find(item->next_uuid());
+    } while ( item && history->first() != item && remainingHeight >= 0);
+    m_spill_uuid = item->uuid();
 
     // If there is more items in the history, insert a new "More..." menu and
     // make *this a proxy for that menu ('s content).
-    if (m_spillPointer.hasNext()) {
+    if (history->first() && m_spill_uuid != history->first()->uuid()) {
         KMenu* moreMenu = new KMenu(i18n("&More"), m_proxy_for_menu);
         connect(moreMenu, SIGNAL(aboutToShow()), SLOT(slotAboutToShow()));
         QAction *before = index < m_proxy_for_menu->actions().count() ? m_proxy_for_menu->actions().at(index) : 0;

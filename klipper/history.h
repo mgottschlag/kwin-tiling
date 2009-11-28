@@ -34,10 +34,6 @@ class History : public QObject
 public:
     History( QObject* parent );
     ~History();
-    /**
-     * Iterator for history
-     */
-    typedef QListIterator<const HistoryItem*> iterator;
 
     /**
      * Return (toplevel) popup menu (or default view, of you like)
@@ -50,7 +46,7 @@ public:
      * The duplicate concept is "deep", so that two text string
      * are considerd duplicate if identical.
      */
-    void insert( const HistoryItem* item );
+    void insert( HistoryItem* item );
 
     /**
      * Inserts item into clipboard without any checks
@@ -58,7 +54,7 @@ public:
      * Don't use this unless you're reasonable certain
      * that no duplicates are introduced
      */
-    void forceInsert( const HistoryItem* item );
+    void forceInsert( HistoryItem* item );
 
     /**
      * Remove (first) history item equal to item from history
@@ -68,7 +64,12 @@ public:
     /**
      * Traversal: Get first item
      */
-    const HistoryItem* first();
+    const HistoryItem* first() const;
+
+    /**
+     * Get item identified by uuid
+     */
+    const HistoryItem* find(const QByteArray& uuid) const;
 
     /**
      * @return next item in cycle, or null if at end
@@ -81,21 +82,9 @@ public:
     const HistoryItem* prevInCycle() const;
 
     /**
-     * Get an iterator pointing to the first (most recent) item
-     * This iterator should probably be a constant iterator, but
-     * the QTL doesn't support this easily.
-     *
-     * Anyway, if you modify the items via. the iterator, call changed()
-     * when you're done. Calling changed() multiple times doesn't hurt.
-     *
-     * iterator could be made into a proxy class that did the right thing.
-     */
-    iterator youngest();
-
-    /**
      * True if no history items
      */
-    bool empty() const { return itemList.isEmpty(); }
+    bool empty() const { return m_items.isEmpty(); }
 
     /**
      * Set maximum history size
@@ -131,6 +120,11 @@ public Q_SLOTS:
     void slotMoveToTop(QAction *action);
 
     /**
+     * move the history in position pos to top
+     */
+    void slotMoveToTop(const QByteArray& uuid);
+
+    /**
      * Clear history
      */
     void slotClear();
@@ -144,12 +138,6 @@ Q_SIGNALS:
     void topChanged();
 
 private:
-
-    /**
-     * The history
-     */
-    QList<const HistoryItem*> itemList;
-
     /**
      * ensure that the number of items does not exceed max_size()
      * Deletes items from the end as necessary.
@@ -157,6 +145,17 @@ private:
     void trim();
 
 private:
+    typedef QHash<QByteArray, HistoryItem*> items_t;
+    /**
+     * The history
+     */
+    items_t m_items;
+
+    /**
+     * First item
+     */
+    HistoryItem* m_top;
+
     /**
      * "Default view" --- a popupmenu containing the clipboard history.
      */
@@ -174,12 +173,12 @@ private:
     bool m_topIsUserSelected;
 
     /**
-     * The index of the "next" when cycling through the
-     * history. the previous would be m_nextCycle-1
+     * The "next" when cycling through the
+     * history. May be 0, if history is empty
      */
-    int m_nextCycle;
+    HistoryItem* m_nextCycle;
 };
 
-inline const HistoryItem* History::first() { return itemList.count() > 0 ? itemList.first() : 0; }
+inline const HistoryItem* History::first() const { return m_top; }
 
 #endif

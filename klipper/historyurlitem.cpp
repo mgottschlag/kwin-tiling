@@ -20,9 +20,25 @@
 #include "historyurlitem.h"
 
 #include <QMimeData>
+#include <QCryptographicHash>
+
+namespace {
+    QByteArray compute_uuid(const KUrl::List &_urls, KUrl::MetaDataMap _metaData, bool _cut ) {
+        QCryptographicHash hash(QCryptographicHash::Sha1);
+        foreach(const KUrl& url, _urls) {
+            hash.addData(url.toEncoded());
+            hash.addData("\0", 1); // Use binary zero as that is not a valid path character
+        }
+        QByteArray buffer;
+        QDataStream out(&buffer, QIODevice::WriteOnly);
+        out << _metaData << "\0" << _cut;
+        hash.addData(buffer);
+        return hash.result();
+    }
+}
 
 HistoryURLItem::HistoryURLItem( const KUrl::List &_urls, KUrl::MetaDataMap _metaData, bool _cut )
-    : m_urls( _urls ), m_metaData( _metaData ), m_cut( _cut )
+    : HistoryItem(compute_uuid(_urls, _metaData, _cut)), m_urls( _urls ), m_metaData( _metaData ), m_cut( _cut )
 {
 }
 

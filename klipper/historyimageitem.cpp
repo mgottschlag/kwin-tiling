@@ -23,9 +23,20 @@
 #include <kdebug.h>
 
 #include "historyimageitem.h"
+#include <QCryptographicHash>
+
+namespace {
+    QByteArray compute_uuid(const QPixmap& data) {
+        QByteArray buffer;
+        QDataStream out(&buffer, QIODevice::WriteOnly);
+        out << data;
+        return QCryptographicHash::hash(buffer, QCryptographicHash::Sha1);
+    }
+
+}
 
 HistoryImageItem::HistoryImageItem( const QPixmap& data )
-    : HistoryItem(), m_data( data )
+    : HistoryItem(compute_uuid(data)), m_data( data )
 {
 }
 

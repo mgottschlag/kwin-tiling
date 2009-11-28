@@ -27,9 +27,10 @@
 
 History::History( QObject* parent )
     : QObject( parent ),
+      m_top(0L),
       m_popup( new KlipperPopup( this ) ),
       m_topIsUserSelected( false ),
-      m_nextCycle(-1)
+      m_nextCycle(0L)
 {
     connect( this, SIGNAL( changed() ), m_popup, SLOT( slotHistoryChanged() ) );
 
@@ -37,53 +38,56 @@ History::History( QObject* parent )
 
 
 History::~History() {
-    qDeleteAll(itemList);
+    qDeleteAll(m_items);
 }
 
-History::iterator History::youngest() {
-    return iterator( itemList );
-}
-
-void History::insert( const HistoryItem* item ) {
+void History::insert( HistoryItem* item ) {
     if ( !item )
         return;
 
     m_topIsUserSelected = false;
-
-    // OptimizationCompare with top item. If identical, the top isn't changing
-    if ( !itemList.isEmpty() && *itemList.first() == *item ) {
-        const HistoryItem* top = itemList.first();
-        itemList.first() = item;
-        delete top;
+    items_t::iterator it = m_items.find(item->uuid());
+    if (*it == m_top) {
         return;
     }
-
-    remove( item );
-    forceInsert( item );
+    if (it != m_items.end()) {
+        slotMoveToTop( item->uuid() );
+    } else {
+        forceInsert( item );
+    }
 
     emit topChanged();
 
 }
 
-void History::forceInsert( const HistoryItem* item ) {
+void History::forceInsert( HistoryItem* item ) {
     if ( !item )
         return;
-    itemList.prepend( item );
-    m_nextCycle = (itemList.size()>2)?1:-1;
+    if (m_items.find(item->uuid()) != m_items.end()) {
+        return; // Don't insert duplicates
+    }
+    m_nextCycle = m_top;
+    item->insertBetweeen(m_top ? m_items[m_top->previous_uuid()] : 0L, m_top);
+    m_items.insert( item->uuid(), item );
+    m_top = item;
     emit changed();
     trim();
 }
 
 void History::trim() {
-    int i = itemList.count() - maxSize();
-    if ( i <= 0 )
+    int i = m_items.count() - maxSize();
+    if ( i <= 0 || !m_top )
         return;
 
+    items_t::iterator bottom = m_items.find(m_top->previous_uuid());
     while ( i-- ) {
-        itemList.removeLast();
+        items_t::iterator it = bottom;
+        bottom = m_items.find((*bottom)->previous_uuid());
+        m_items.erase(it);
     }
-    if (itemList.size()<=1) {
-        m_nextCycle = -1;
+    (*bottom)->chain(m_top);
+    if (m_items.size()<=1) {
+        m_nextCycle = 0L;
     }
     emit changed();
 }
@@ -92,34 +96,48 @@ void History::remove( const HistoryItem* newItem ) {
     if ( !newItem )
         return;
 
-    // TODO: This is rather broken.. it only checks by pointer!
-    if (itemList.contains(newItem)) {
-        itemList.removeAll(newItem);
-        emit changed();
+    items_t::iterator it = m_items.find(newItem->uuid());
+    if (it == m_items.end()) {
+        return;
     }
+
+    if (*it == m_top) {
+        m_top = m_items[m_top->next_uuid()];
+    }
+    m_items[(*it)->previous_uuid()]->chain(m_items[(*it)->next_uuid()]);
+    m_items.erase(it);
 }
 
 
 void History::slotClear() {
-    itemList.clear();
+    m_items.clear();
+    m_top = 0L;
     emit changed();
 }
 
 void History::slotMoveToTop(QAction *action) {
-    bool ok = false;
-    int pos = action->data().toInt(&ok);
-    if (!ok) // not an action from popupproxy
+    QByteArray uuid = action->data().toByteArray();
+    if (uuid.isNull()) // not an action from popupproxy
         return;
 
-    if ( pos < 0 || pos >= itemList.count() ) {
-        kDebug() << "Argument pos out of range: " << pos;
+    slotMoveToTop(uuid);
+}
+
+void History::slotMoveToTop(const QByteArray& uuid) {
+
+    items_t::iterator it = m_items.find(uuid);
+    if (it == m_items.end()) {
         return;
     }
-
+    if (*it == m_top) {
+        return;
+    }
     m_topIsUserSelected = true;
 
-    itemList.move(pos, 0);
-    m_nextCycle = (itemList.size()>2)?1:-1;
+    m_nextCycle = m_top;
+    m_items[(*it)->previous_uuid()]->chain(m_items[(*it)->next_uuid()]);
+    (*it)->insertBetweeen(m_items[m_top->previous_uuid()], m_top);
+    m_top = *it;
     emit changed();
     emit topChanged();
 }
@@ -135,32 +153,67 @@ KlipperPopup* History::popup() {
 }
 
 void History::cycleNext() {
-    if (m_nextCycle != -1 && m_nextCycle < itemList.size()) {
-        itemList.swap(0, m_nextCycle++);
+    if (m_top && m_nextCycle && m_nextCycle != m_top) {
+        HistoryItem* prev = m_items[m_nextCycle->previous_uuid()];
+        HistoryItem* next = m_items[m_nextCycle->next_uuid()];
+        HistoryItem* endofhist = m_items[m_top->previous_uuid()];
+        HistoryItem* aftertop = m_items[m_top->next_uuid()];
+        if (prev == m_top) {
+            prev = m_nextCycle;
+            aftertop = m_top;
+        }
+        m_top->insertBetweeen(prev, next);
+        m_nextCycle->insertBetweeen(endofhist, aftertop);
+        m_top = m_nextCycle;
+        m_nextCycle = next;
         emit changed();
     }
 }
 
-void History::cyclePrev()
-{
-    if (m_nextCycle > 1 && m_nextCycle - 1 < itemList.size()) {
-        itemList.swap(0, --m_nextCycle);
+void History::cyclePrev() {
+    if (m_top && m_nextCycle) {
+        HistoryItem* prev = m_items[m_nextCycle->previous_uuid()];
+        if (prev == m_top) {
+            return;
+        }
+        HistoryItem* prevprev = m_items[prev->previous_uuid()];
+        HistoryItem* endofhist = m_items[m_top->previous_uuid()];
+        HistoryItem* aftertop = m_items[m_top->next_uuid()];
+        if (prevprev == m_top) {
+            prevprev = prev;
+            aftertop = m_top;
+        }
+        m_top->insertBetweeen(prevprev,m_nextCycle);
+        prev->insertBetweeen(endofhist, aftertop);
+        m_nextCycle = m_top;
+        m_top = prev;
         emit changed();
     }
-
 }
 
 
 const HistoryItem* History::nextInCycle() const
 {
-    return (m_nextCycle != -1 && m_nextCycle < itemList.size()) ? itemList.at(m_nextCycle) : 0L;
+    return m_nextCycle != m_top ? m_nextCycle : 0L; // pointing to top=no more items
 
 }
 
 const HistoryItem* History::prevInCycle() const
 {
-    return (m_nextCycle > 1 && m_nextCycle -1 < itemList.size()) ? itemList.at(m_nextCycle-1) : 0L;
+    if (m_nextCycle) {
+        const HistoryItem* prev = m_items[m_nextCycle->previous_uuid()];
+        if (prev != m_top) {
+            return prev;
+        }
+    }
+    return 0L;
 
+}
+
+const HistoryItem* History::find(const QByteArray& uuid) const
+{
+    items_t::const_iterator it = m_items.find(uuid);
+    return (it == m_items.end()) ? 0L : *it;
 }
 
 #include "history.moc"

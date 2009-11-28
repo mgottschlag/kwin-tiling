@@ -81,11 +81,10 @@ private:
 
 private:
     KMenu* m_proxy_for_menu;
-    History::iterator m_spillPointer;
+    QByteArray m_spill_uuid;
     QRegExp m_filter;
     int m_menu_height;
     int m_menu_width;
-    int m_nextItemNumber;
 };
 
 #endif
