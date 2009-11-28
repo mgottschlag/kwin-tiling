@@ -197,7 +197,7 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
     //in the end it could be more than 8 lines depending on how much \n characters will be there
     QString processed = message.trimmed();
     QFontMetricsF fm(body->font());
-    int totalWidth = body->boundingRect().width() * 8;
+    int totalWidth = qMax((qreal)200, body->boundingRect().width()) * 8;
     if (fm.width(processed) > totalWidth) {
         processed = fm.elidedText(processed, Qt::ElideRight, totalWidth);
     }
