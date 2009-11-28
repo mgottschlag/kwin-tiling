@@ -135,6 +135,7 @@ void Battery::init()
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(readColors()));
     connect(KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()), SLOT(readColors()));
     connect(KGlobalSettings::self(), SIGNAL(appearanceChanged()), SLOT(setupFonts()));
+    connect(KGlobalSettings::self(), SIGNAL(appearanceChanged()), SLOT(setupFonts()));
 
     const QStringList& battery_sources = dataEngine("powermanagement")->query("Battery")["sources"].toStringList();
 
@@ -418,12 +419,12 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
             m_extenderApplet->updateConstraints(Plasma::StartupCompletedConstraint);
         }
 
-        Plasma::Label *brightnessLabel = new Plasma::Label(controls);
-        brightnessLabel->setText(i18n("Screen Brightness"));
-        brightnessLabel->nativeWidget()->setWordWrap(false);
-        brightnessLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+        m_brightnessLabel = new Plasma::Label(controls);
+        m_brightnessLabel->setText(i18n("Screen Brightness"));
+        m_brightnessLabel->nativeWidget()->setWordWrap(false);
+        m_brightnessLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
-        m_controlsLayout->addItem(brightnessLabel, row, 0);
+        m_controlsLayout->addItem(m_brightnessLabel, row, 0);
 
         m_brightnessSlider = new Plasma::Slider(controls);
         m_brightnessSlider->setRange(0, 100);
@@ -539,6 +540,9 @@ void Battery::setupFonts()
 {
     if (m_batteryLabelLabel) {
         QFont infoFont = KGlobalSettings::generalFont();
+        m_brightnessLabel->setFont(infoFont);
+        m_profileLabel->setFont(infoFont);
+
         infoFont.setPointSize(infoFont.pointSize()+1);
         QFont labelFont = infoFont;
         labelFont.setBold(true);
