@@ -162,7 +162,7 @@ int main( int argc, char **argv )
         }
 
         // Get languages by priority from KLocale.
-        QStringList langs = KGlobal::locale()->languageList();
+        const QStringList langs = KGlobal::locale()->languageList();
         startupconfig << "klocale_languages=" << langs.join( ":" ) << "\n";
     return 0;
     }
