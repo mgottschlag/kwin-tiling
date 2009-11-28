@@ -193,7 +193,15 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
         extenderItem->setTitle(i18n("Notification from %1", applicationName));
     }
 
+    //Don't show more than 8 lines
+    //in the end it could be more than 8 lines depending on how much \n characters will be there
     QString processed = message.trimmed();
+    QFontMetricsF fm(body->font());
+    int totalWidth = body->boundingRect().width() * 8;
+    if (fm.width(processed) > totalWidth) {
+        processed = fm.elidedText(processed, Qt::ElideRight, totalWidth);
+    }
+
     processed.replace('\n', "<br>");
     body->setHtml(processed);
 }
