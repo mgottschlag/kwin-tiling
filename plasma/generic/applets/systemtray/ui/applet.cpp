@@ -773,10 +773,10 @@ void Applet::addJob(Job *job)
     extenderItem->config().writeEntry("type", "job");
     extenderItem->setWidget(new JobWidget(job, extenderItem));
 
+    emit activate();
     showPopup(m_autoHideTimeout);
 
     extenderItem->setGroup(extender()->group("jobGroup"));
-    emit activate();
 }
 
 void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
