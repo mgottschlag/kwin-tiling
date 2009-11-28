@@ -87,22 +87,26 @@ private:
     void eraseList();
     void setToolTipPosition();
 
-    //according to the orientation, paramenter position can be the X or the Y of a QPoint
-    bool isItemUnder(int itemIndex, qreal position);
-
-    int findFirstVisibleApplet(int firstVisiblePositionOnList);
-    int findLastVisibleApplet(int lastVisiblePositionOnList);
-
     //returns the what's the visible rect of the list widget
     QRectF visibleListRect();
-
+    //returns window's start position
+    qreal visibleStartPosition();
+    //returns window's end position
+    qreal visibleEndPosition();
+    //returns list size
+    qreal listSize();
+    //returns windows size relative to list
+    qreal windowSize();
+    //returns item position
+    qreal itemPosition(int i);
+    
     void scroll(ScrollPolicy side, ScrollPolicy how);
 
     //scrolls down or right according to orientation
-    void scrollDownRight(int step, QRectF visibleRect);
+    void scrollDownRight(int step);
 
     //scrolls up or left according to orientation
-    void scrollUpLeft(int step, QRectF visibleRect);
+    void scrollUpLeft(int step);
 
     void wheelEvent(QGraphicsSceneWheelEvent *event);
 
@@ -140,7 +144,6 @@ protected:
 
 Q_SIGNALS:
     void appletDoubleClicked(PlasmaAppletItem *appletItem);
-    void listScrolled();
 
 private:
 
@@ -175,6 +178,9 @@ private:
     //model that filters the item models
     KCategorizedItemsViewModels::DefaultItemFilterProxyModel *m_modelFilterItems;
 
+    //index of current first item
+    int m_firstItemIndex;
+    
     AppletIconWidget *m_selectedItem;
 
     QVariant m_dataFilterAboutToApply;
