@@ -104,7 +104,7 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, P
                 this, SLOT(updateNotification()));
         connect(notification, SIGNAL(destroyed()),
                 this, SLOT(destroy()));
-        connect(notification, SIGNAL(hideRequested()),
+        connect(notification, SIGNAL(expired()),
                 this, SLOT(destroy()));
 
         extenderItem->showCloseButton();
@@ -139,10 +139,10 @@ void NotificationWidget::setAutoHide(bool autoHide)
 {
     if (autoHide != d->autoHide) {
         if (autoHide) {
-            connect(d->notification, SIGNAL(hideRequested()),
+            connect(d->notification, SIGNAL(expired()),
                     this, SLOT(destroy()));
         } else {
-            disconnect(d->notification, SIGNAL(hideRequested()),
+            disconnect(d->notification, SIGNAL(expired()),
                        this, SLOT(destroy()));
         }
         d->autoHide = autoHide;

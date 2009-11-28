@@ -787,7 +787,7 @@ NotificationWidget *Applet::addNotification(Notification *notification)
     disconnect(notification, 0, this, 0);
     connect(notification, SIGNAL(destroyed(SystemTray::Notification *)), this, SLOT(notificationDestroyed(SystemTray::Notification *)));
 
-    connect(notification, SIGNAL(hideRequested(SystemTray::Notification *)), this, SLOT(notificationExpired(SystemTray::Notification *)));
+    connect(notification, SIGNAL(expired(SystemTray::Notification *)), this, SLOT(notificationExpired(SystemTray::Notification *)));
 
     return notificationWidget;
 }
