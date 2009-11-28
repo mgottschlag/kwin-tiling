@@ -38,6 +38,7 @@
 
 LogitechMouse::LogitechMouse( struct usb_device *usbDev, int mouseCapabilityFlags, QWidget* parent, const char* name )
     : LogitechMouseBase( parent )
+    , m_resolution( 0 )
 {
     if ( !name )
         setObjectName( "LogitechMouse" );
@@ -110,7 +111,8 @@ LogitechMouse::LogitechMouse( struct usb_device *usbDev, int mouseCapabilityFlag
 
 LogitechMouse::~LogitechMouse()
 {
-    usb_close( m_usbDeviceHandle );
+    if ( m_usbDeviceHandle )
+        usb_close( m_usbDeviceHandle );
 }
 
 void LogitechMouse::initCordlessStatusReporting()
@@ -125,7 +127,10 @@ void LogitechMouse::updateCordlessStatus()
 {
     QByteArray status(8, '\0');
 
-    int result =  usb_control_msg(  m_usbDeviceHandle,
+    int result = -1;
+
+    if ( m_usbDeviceHandle )
+        result = usb_control_msg( m_usbDeviceHandle,
                                     USB_TYPE_VENDOR | USB_ENDPOINT_IN,0x09,
                                     (0x0003 | m_useSecondChannel),
                                     (0x0000 | m_useSecondChannel),
@@ -135,6 +140,7 @@ void LogitechMouse::updateCordlessStatus()
 
     if (0 > result) {
         // We probably have a permission problem
+        m_channel = 0;
         channelSelector->setEnabled( false );
         batteryBox->setEnabled( false );
         cordlessNameLabel->hide();
@@ -246,7 +252,10 @@ void LogitechMouse::updateResolution()
 {
     char resolution;
 
-    int result =  usb_control_msg( m_usbDeviceHandle,
+    int result = -1;
+
+    if ( m_usbDeviceHandle )
+        result = usb_control_msg( m_usbDeviceHandle,
                                    USB_TYPE_VENDOR | USB_ENDPOINT_IN,
                                    0x01,
                                    0x000E,
