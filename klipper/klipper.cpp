@@ -22,7 +22,6 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include <QClipboard>
 #include <QtDBus/QDBusConnection>
 
 #include <kaboutdata.h>
@@ -44,7 +43,6 @@
 #include "klippersettings.h"
 #include "urlgrabber.h"
 #include "version.h"
-#include "clipboardpoll.h"
 #include "history.h"
 #include "historyitem.h"
 #include "historystringitem.h"
@@ -126,6 +124,9 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     updateTimestamp(); // read initial X user time
     m_clip = kapp->clipboard();
 
+    connect( m_clip, SIGNAL(changed(QClipboard::Mode)),
+             this, SLOT( newClipData( QClipboard::Mode) ) );
+
     connect( &m_overflowClearTimer, SIGNAL( timeout()), SLOT( slotClearOverflow()));
 
     m_pendingCheckTimer.setSingleShot( true );
@@ -179,10 +180,6 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     // if it's too old, drop it and just use load history
     readProperties(m_config.data());
 
-    m_poll = new ClipboardPoll;
-    connect( m_poll, SIGNAL( clipboardChanged( bool ) ),
-             this, SLOT( newClipData( bool ) ) );
-
     KAction* a = m_collection->addAction("show_klipper_popup");
     a->setText(i18n("Show Klipper Popup-Menu"));
     a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_V));
@@ -234,7 +231,6 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
 
 Klipper::~Klipper()
 {
-    delete m_poll;
     delete m_session_managed;
     delete m_showTimer;
     delete m_hideTimer;
@@ -650,7 +646,7 @@ HistoryItem* Klipper::applyClipChanges( const QMimeData* clipData )
 
 }
 
-void Klipper::newClipData( bool selectionMode )
+void Klipper::newClipData( QClipboard::Mode mode )
 {
     if ( m_locklevel ) {
         return;
@@ -659,7 +655,7 @@ void Klipper::newClipData( bool selectionMode )
     if( blockFetchingNewData())
         return;
 
-    checkClipData( selectionMode );
+    checkClipData( mode == QClipboard::Selection ? true : false );
 
 }
 
@@ -719,7 +715,7 @@ void Klipper::slotCheckPending()
         return;
     m_pendingContentsCheck = false; // blockFetchingNewData() will be called again
     updateTimestamp();
-    newClipData( true ); // always selection
+    newClipData( QClipboard::Selection ); // always selection
 }
 
 void Klipper::checkClipData( bool selectionMode )
@@ -777,8 +773,15 @@ void Klipper::checkClipData( bool selectionMode )
     // TODO: Rewrite to Qt4 !!!
     //int lastSerialNo = selectionMode ? m_lastSelection : m_lastClipboard;
     //bool changed = data->serialNumber() != lastSerialNo;
-    bool changed = true; // ### FIXME
+    bool changed = true; // ### FIXME (only relevant under polling, might be better to simply remove polling and rely on XFixes)
     bool clipEmpty = data->formats().isEmpty();
+    if (clipEmpty) {
+        // Might be a timeout. Try again
+        clipEmpty = data->formats().isEmpty();
+#ifdef NOISY_KLIPPER
+        kDebug() << "was empty. Retried, now " << (clipEmpty?" still empty":" no longer empty");
+#endif
+    }
 
     if ( changed && clipEmpty && m_bNoNullClipboard ) {
         const HistoryItem* top = history()->first();
@@ -883,7 +886,7 @@ void Klipper::slotClearOverflow()
     if( m_overflowCounter > MAX_CLIPBOARD_CHANGES ) {
         kDebug() << "App owning the clipboard/selection is lame";
         // update to the latest data - this unfortunately may trigger the problem again
-        newClipData( true ); // Always the selection.
+        newClipData( QClipboard::Selection ); // Always the selection.
     }
     m_overflowCounter = 0;
 }

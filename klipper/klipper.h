@@ -25,6 +25,7 @@
 #include <QKeyEvent>
 #include <QMenu>
 #include <QTimer>
+#include <QClipboard>
 
 #include <KApplication>
 #include <KIcon>
@@ -37,7 +38,6 @@ class KToggleAction;
 class KAboutData;
 class KActionCollection;
 class URLGrabber;
-class ClipboardPoll;
 class QTime;
 class History;
 class QAction;
@@ -148,7 +148,7 @@ protected Q_SLOTS:
     void disableURLGrabber();
 
 private Q_SLOTS:
-    void newClipData( bool selectionMode );
+    void newClipData( QClipboard::Mode );
     void slotClearClipboard();
 
     void slotSelectionChanged() {
@@ -214,7 +214,6 @@ private:
     QTimer m_overflowClearTimer;
     QTimer m_pendingCheckTimer;
     bool m_pendingContentsCheck;
-    ClipboardPoll* m_poll;
     static KAboutData* m_about_data;
 
     bool blockFetchingNewData();

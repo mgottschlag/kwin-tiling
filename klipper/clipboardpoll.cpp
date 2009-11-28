@@ -42,6 +42,10 @@
 
 /*
 
+ After Qt 4.something, this part worked poorly. Meanwhile, XFixes was integrated into QClipboard,
+ and has become pretty ubiquitous, so  I'm risking retiring this code. The alternative is essentially
+ reimplementation of QClipboard, and the duplication would help noone. (Esben Mose Hansen, 2009-11-28 11:44:43)
+
  The polling magic:
 
  There's no way with X11 how to find out if the selection has changed (unless its ownership
