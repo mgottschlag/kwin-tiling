@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright 2007-2008 by Riccardo Iaconelli <riccardo@kde.org>          *
- *   Copyright 2007-2008 by Sebastian Kuegler <sebas@kde.org>              *
+ *   Copyright 2007-2009 by Sebastian Kuegler <sebas@kde.org>              *
  *   Copyright 2007 by Luka Renko <lure@kubuntu.org>                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -488,7 +488,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
                 suspendButton->setDrawBackground(true);
                 suspendButton->setTextBackgroundColor(QColor());
                 m_controlsLayout->addItem(suspendButton, row, 0);
-                row++;
+                //row++;
                 connect(suspendButton, SIGNAL(clicked()), this, SLOT(suspend()));
                 //actionsLayout->setColumnSpacing(0, 20);
             } else if (sleepstate == Solid::PowerManagement::HibernateState) {
@@ -501,7 +501,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
                 hibernateButton->setMinimumHeight(buttonsize);
                 hibernateButton->setDrawBackground(true);
                 hibernateButton->setTextBackgroundColor(QColor());
-                m_controlsLayout->addItem(hibernateButton, row, 0);
+                m_controlsLayout->addItem(hibernateButton, row, 1);
                 connect(hibernateButton, SIGNAL(clicked()), this, SLOT(hibernate()));
             }
         }
