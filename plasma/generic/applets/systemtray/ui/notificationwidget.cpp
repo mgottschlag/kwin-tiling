@@ -104,7 +104,7 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, P
                 this, SLOT(destroy()));
 
         extenderItem->showCloseButton();
-        QAction *closeAction = closeAction = extenderItem->action("close");
+        QAction *closeAction = extenderItem->action("close");
         if (closeAction) {
             connect(closeAction, SIGNAL(triggered()),
                     notification, SLOT(deleteLater()));
