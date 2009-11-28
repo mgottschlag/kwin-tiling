@@ -418,23 +418,6 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
             m_extenderApplet->updateConstraints(Plasma::StartupCompletedConstraint);
         }
 
-        Plasma::Label *spacer1 = new Plasma::Label(controls);
-        spacer1->setMinimumHeight(8);
-        spacer1->setMaximumHeight(8);
-        m_controlsLayout->addItem(spacer1, row, 0);
-        row++;
-        /*
-        Plasma::Separator *sep1 = new Plasma::Separator(controls);
-        sep1->setMaximumWidth(controls->geometry().width()-s);
-        m_controlsLayout->addItem(sep1, row, 0, 1, 2, Qt::AlignLeft);
-        row++;
-        */
-        Plasma::Label *spacer2 = new Plasma::Label(controls);
-        spacer2->setMinimumHeight(8);
-        spacer2->setMaximumHeight(8);
-        m_controlsLayout->addItem(spacer2, row, 0);
-        row++;
-
         Plasma::Label *brightnessLabel = new Plasma::Label(controls);
         brightnessLabel->setText(i18n("Screen Brightness"));
         brightnessLabel->nativeWidget()->setWordWrap(false);
@@ -462,16 +445,46 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         m_profileLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
         m_controlsLayout->addItem(m_profileLabel, row, 0);
 
+        QGraphicsWidget *profileWidget = new QGraphicsWidget(controls);
+
+        QGraphicsLinearLayout *profileLayout = new QGraphicsLinearLayout(profileWidget);
+        profileLayout->setSpacing(0.0);
+        
         m_profileCombo = new Plasma::ComboBox(controls);
         // This is necessary until Qt task #217874 is fixed
         m_profileCombo->setZValue(100);
         connect(m_profileCombo, SIGNAL(activated(QString)),
                 this, SLOT(setProfile(QString)));
 
-        m_controlsLayout->addItem(m_profileCombo, row, 1);
-        row++;
+        profileLayout->addItem(m_profileCombo);
 
         int buttonsize = KIconLoader::SizeMedium + 4;
+
+        // Configure button
+        Plasma::IconWidget *configButton = new Plasma::IconWidget(profileWidget);
+        configButton->setToolTip(i18nc("tooltip on the config button in the popup", "Configure Power Management..."));
+        configButton->setOrientation(Qt::Horizontal);
+        configButton->setMaximumHeight(buttonsize);
+        configButton->setDrawBackground(false);
+        //configButton->setMinimumHeight(buttonsize);
+        configButton->setMaximumWidth(buttonsize);
+        //configButton->setMinimumWidth(buttonsize);
+        configButton->setDrawBackground(true);
+        configButton->setTextBackgroundColor(QColor());
+        configButton->setIcon("configure");
+        connect(configButton, SIGNAL(clicked()), this, SLOT(openConfig()));
+        configButton->setEnabled(hasAuthorization("LaunchApp"));
+
+        profileLayout->addItem(configButton);
+        profileLayout->setItemSpacing(0, 0.0);
+        profileLayout->setItemSpacing(1, 0.0);
+        profileLayout->setAlignment(m_profileCombo, Qt::AlignLeft|Qt::AlignVCenter);
+        profileLayout->setAlignment(configButton, Qt::AlignLeft|Qt::AlignVCenter);
+
+        profileWidget->setLayout(profileLayout);
+
+        m_controlsLayout->addItem(profileWidget, row, 1);
+        row++;
 
         // Sleep and Hibernate buttons
         QSet<Solid::PowerManagement::SleepState> sleepstates = Solid::PowerManagement::supportedSleepStates();
@@ -492,7 +505,6 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
                 m_controlsLayout->addItem(suspendButton, row, 0);
                 //row++;
                 connect(suspendButton, SIGNAL(clicked()), this, SLOT(suspend()));
-                //actionsLayout->setColumnSpacing(0, 20);
             } else if (sleepstate == Solid::PowerManagement::HibernateState) {
                 Plasma::IconWidget *hibernateButton = new Plasma::IconWidget(controls);
                 hibernateButton->setIcon("system-suspend-hibernate");
@@ -508,21 +520,6 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
             }
         }
 
-        // Configure button
-        Plasma::IconWidget *configButton = new Plasma::IconWidget(controls);
-        configButton->setToolTip(i18nc("tooltip on the config button in the popup", "Configure Power Management..."));
-        configButton->setOrientation(Qt::Horizontal);
-        configButton->setMaximumHeight(buttonsize);
-        configButton->setMinimumHeight(buttonsize);
-        configButton->setMaximumWidth(buttonsize);
-        configButton->setMinimumWidth(buttonsize);
-        configButton->setDrawBackground(true);
-        configButton->setTextBackgroundColor(QColor());
-        configButton->setIcon("configure");
-        connect(configButton, SIGNAL(clicked()), this, SLOT(openConfig()));
-        configButton->setEnabled(hasAuthorization("LaunchApp"));
-
-        m_controlsLayout->addItem(configButton, row, 1, Qt::AlignRight);
 
         controls->setLayout(m_controlsLayout);
         item->setWidget(controls);
