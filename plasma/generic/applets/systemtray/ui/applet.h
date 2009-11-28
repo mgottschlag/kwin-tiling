@@ -87,6 +87,7 @@ private slots:
     void showTaskNotifications(int barIndex);
     void syncNotificationBarNeeded();
     void notificationDestroyed(SystemTray::Notification *notification);
+    void notificationExpired(SystemTray::Notification *notification);
 
 private:
     void createJobGroups();
@@ -114,6 +115,7 @@ private:
     int m_timerId;
 
     QHash<QString, QList<Notification*> > m_notificationsForApp;
+    QList<Notification*> m_recentNotifications;
 
     Ui::ProtocolsConfig m_notificationUi;
     Ui::AutoHideConfig m_autoHideUi;

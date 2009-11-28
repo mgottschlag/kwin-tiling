@@ -275,9 +275,17 @@ void Applet::notificationDestroyed(SystemTray::Notification *notification)
                 m_notificationsForApp.remove(name);
             }
         }
+        m_recentNotifications.removeAll(notification);
     }
 
     syncNotificationBarNeeded();
+}
+
+void Applet::notificationExpired(SystemTray::Notification *notification)
+{
+    if (notification) {
+        m_recentNotifications.removeAll(notification);
+    }
 }
 
 void Applet::showTaskNotifications(int barIndex)
@@ -753,19 +761,33 @@ NotificationWidget *Applet::addNotification(Notification *notification)
     }
 
     QList<Notification *> &appNotifications = m_notificationsForApp[notification->applicationName()];
-    appNotifications.append(notification);
-    //FIXME: arbitrary limit
-    if (appNotifications.count() > 10) {
-        Notification *notif = appNotifications.first();
-        appNotifications.pop_front();
-        notif->deleteLater();
+    if (!appNotifications.contains(notification)) {
+        appNotifications.append(notification);
+        //FIXME: arbitrary limit
+        if (appNotifications.count() > 10) {
+            Notification *oldNotification = appNotifications.first();
+            appNotifications.pop_front();
+            oldNotification->deleteLater();
+        }
+    }
+
+    if (!m_recentNotifications.contains(notification)) {
+        m_recentNotifications.append(notification);
+        while (m_recentNotifications.count() > 10) {
+            Notification *oldNotification = m_recentNotifications.first();
+            appNotifications.pop_front();
+            oldNotification->hide();
+        }
     }
 
     if (!found) {
         m_notificationBar->addTab(notification->applicationIcon(), notification->applicationName());
     }
 
+    disconnect(notification, 0, this, 0);
     connect(notification, SIGNAL(destroyed(SystemTray::Notification *)), this, SLOT(notificationDestroyed(SystemTray::Notification *)));
+
+    connect(notification, SIGNAL(hideRequested(SystemTray::Notification *)), this, SLOT(notificationExpired(SystemTray::Notification *)));
 
     return notificationWidget;
 }
