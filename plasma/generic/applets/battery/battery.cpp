@@ -413,7 +413,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
             m_extenderApplet->setBackgroundHints(NoBackground);
             m_extenderApplet->setFlag(QGraphicsItem::ItemIsMovable, false);
             m_extenderApplet->init();
-            m_extenderApplet->showBatteryLabel(true);
+            m_extenderApplet->showBatteryLabel(false);
             m_extenderApplet->setGeometry(QRectF(QPoint(controls->geometry().width()-s, 0), QSizeF(s, s)));
             m_extenderApplet->updateConstraints(Plasma::StartupCompletedConstraint);
         }
