@@ -755,8 +755,10 @@ NotificationWidget *Applet::addNotification(Notification *notification)
     QList<Notification *> &appNotifications = m_notificationsForApp[notification->applicationName()];
     appNotifications.append(notification);
     //FIXME: arbitrary limit
-    if (appNotifications.count() > 15) {
+    if (appNotifications.count() > 10) {
+        Notification *notif = appNotifications.first();
         appNotifications.pop_front();
+        notif->deleteLater();
     }
 
     if (!found) {
