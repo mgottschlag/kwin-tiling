@@ -31,6 +31,7 @@
 #include <QtGui/QGraphicsSceneResizeEvent>
 #include <QtGui/QPainter>
 #include <QAction>
+#include <QLabel>
 
 #include <KColorScheme>
 #include <KPushButton>
@@ -49,6 +50,7 @@ public:
           notification(0),
           destroyOnClose(true),
           autoHide(true),
+          image(0),
           actionsWidget(0),
           signalMapper(new QSignalMapper(q))
     {
@@ -68,6 +70,7 @@ public:
 
     QString message;
     Plasma::Label *body;
+    Plasma::Label *image;
     QGraphicsLinearLayout *mainLayout;
     QGraphicsLinearLayout *labelLayout;
     QGraphicsWidget *actionsWidget;
@@ -151,17 +154,6 @@ bool NotificationWidget::autoHide() const
     return d->autoHide;
 }
 
-
-void NotificationWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
-
-    if (d->notification) {
-        painter->drawImage(QPointF(0, 0), d->notification->image());
-    }
-}
-
 void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
                                                 const QString &summary, const QString &message)
 {
@@ -242,25 +234,26 @@ void NotificationWidgetPrivate::updateNotification()
     actionOrder = notification->actionOrder();
     updateActions();
 
-    qreal imageHeight = 0;
     if (!notification->image().isNull()) {
-        imageHeight = notification->image().size().height();
-        labelLayout->setContentsMargins(notification->image().size().width(), 0, 0, 0);
+        if (!image) {
+            image = new Plasma::Label(q);
+        }
+        image->nativeWidget()->setPixmap(QPixmap::fromImage(notification->image()));
+        image->setMinimumSize(notification->image().size());
+        image->setMaximumSize(notification->image().size());
+        labelLayout->insertItem(0, image);
     } else {
         labelLayout->setContentsMargins(0, 0, 0, 0);
+        if (image) {
+            image->deleteLater();
+            image = 0;
+        }
     }
 
     extenderItem->showCloseButton();
 
-    //set the correct size hint and display a close action if no actions are provided by the
-    //notification
-    qreal bodyHeight = body->boundingRect().height();
-    if (actionsWidget) {
-        q->setPreferredWidth(qMax(q->preferredWidth(), actionsWidget->preferredWidth()));
-        q->setPreferredHeight(qMax(bodyHeight + actionsWidget->size().height(), imageHeight));
-    } else {
-        q->setPreferredHeight(qMax(bodyHeight, imageHeight));
-    }
+    //FIXME: this sounds wrong
+    q->setPreferredHeight(mainLayout->effectiveSizeHint(Qt::MinimumSize).height());
 }
 
 void NotificationWidgetPrivate::destroy()

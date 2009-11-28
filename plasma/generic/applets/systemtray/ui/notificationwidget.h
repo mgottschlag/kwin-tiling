@@ -49,9 +49,6 @@ public:
     void setAutoHide(bool autoHide);
     bool autoHide() const;
 
-protected:
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
-
 private:
     NotificationWidgetPrivate* const d;
 
