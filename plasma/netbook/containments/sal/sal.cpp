@@ -201,8 +201,10 @@ void SearchLaunch::doSearch(const QString &query, const QString &runner)
 
 void SearchLaunch::reset()
 {
-    m_searchField->setText(QString());
-    doSearch(QString());
+    if (!m_runnermg->query().isEmpty()) {
+        m_searchField->setText(QString());
+        doSearch(QString());
+    }
 }
 
 void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &matches)
