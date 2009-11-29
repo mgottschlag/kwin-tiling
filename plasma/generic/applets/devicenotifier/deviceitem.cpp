@@ -255,7 +255,7 @@ void DeviceItem::setMounted(const bool mounted)
     }
 
     const bool barVisible = m_capacityBar->isVisible();
-    m_capacityBar->setVisible(m_mounted && m_hovered);
+    m_capacityBar->setVisible(m_mounted);
     if (!barVisible && m_capacityBar->isVisible()) {
         // work around for a QGraphicsLayout bug when used with proxy widgets
         m_mainLayout->invalidate();
