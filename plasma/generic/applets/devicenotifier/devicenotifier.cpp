@@ -305,6 +305,8 @@ void DeviceNotifier::deviceAdded(const Solid::Device &device, bool hotplugged)
 
         m_solidEngine->connectSource(udi, this);
         m_solidDeviceEngine->connectSource(udi, this);
+
+        m_lastPlugged << udi;
     }
 
     if (!visibility) {
