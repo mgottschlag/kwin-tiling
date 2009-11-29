@@ -850,7 +850,7 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
     if (m_controlBar && m_autoHideControlBar && !m_controlBar->isVisible() && event->xcrossing.window == m_unhideTrigger &&
         (event->xany.send_event != True && event->type == EnterNotify)) {
         //delayed show
-        if (!m_glowBar) {
+        if (!m_glowBar && KWindowSystem::compositingActive()) {
             Plasma::Direction direction = Plasma::locationToDirection(m_controlBar->location());
             m_glowBar = new GlowBar(direction, m_triggerZone);
             m_glowBar->show();
@@ -972,8 +972,13 @@ void PlasmaApp::createUnhideTrigger()
 
     int actualWidth = 1;
     int actualHeight = 1;
-    int triggerWidth = 30;
-    int triggerHeight = 30;
+    int triggerWidth = 1;
+    int triggerHeight = 1;
+
+    if (KWindowSystem::compositingActive()) {
+        triggerWidth = 30;
+        triggerHeight = 30;
+    }
 
     QPoint actualTriggerPoint = m_controlBar->pos();
     QPoint triggerPoint = m_controlBar->pos();
