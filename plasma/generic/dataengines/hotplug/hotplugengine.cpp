@@ -128,8 +128,7 @@ void HotplugEngine::onDeviceAdded(Solid::Device &device, bool added)
         Solid::DeviceInterface *dev = device.asDeviceInterface(Solid::DeviceInterface::StorageVolume);
         Solid::StorageVolume *volume = static_cast<Solid::StorageVolume *>(dev);
         Solid::StorageVolume::UsageType type = volume->usage();
-        if (type == Solid::StorageVolume::Other ||
-            type == Solid::StorageVolume::Unused ||
+        if (type == Solid::StorageVolume::Unused ||
             type == Solid::StorageVolume::PartitionTable) {
 #ifdef HOTPLUGENGINE_TIMING
             kDebug() << "storage volume, but not of interest" << t.restart();
