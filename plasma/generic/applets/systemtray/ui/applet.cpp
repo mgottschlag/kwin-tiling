@@ -257,7 +257,6 @@ void Applet::syncNotificationBarNeeded()
                     m_notificationBar->removeTab(i);
                 }
             }
-            m_notificationBar->setCurrentIndex(0);
         }
     } else if (m_notificationBarExtenderItem) {
         m_notificationBarExtenderItem->destroy();
