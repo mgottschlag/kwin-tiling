@@ -91,6 +91,7 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, P
     d->mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
     d->labelLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     d->body = new Plasma::Label(this);
+    d->body->nativeWidget()->setTextFormat(Qt::RichText);
 
     d->labelLayout->addItem(d->body);
     d->mainLayout->addItem(d->labelLayout);
