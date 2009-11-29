@@ -18,6 +18,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
+#include "calendar.h"
+
 #include <QGraphicsLayout>
 #include <QPainter>
 #include <QTimer>
@@ -29,9 +31,6 @@
 
 #include <Plasma/Svg>
 #include <Plasma/Theme>
-
-#include "calendar.h"
-
 
 CalendarApplet::CalendarApplet(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),

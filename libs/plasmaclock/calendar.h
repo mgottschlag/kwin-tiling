@@ -44,8 +44,8 @@ class PLASMACLOCK_EXPORT Calendar : public QGraphicsWidget
 
 public:
     explicit Calendar(QGraphicsWidget *parent = 0);
-    Calendar(const QDate &, QGraphicsWidget *parent = 0);
-    Calendar(CalendarTable *calendarTable, QGraphicsWidget *parent = 0);
+    explicit Calendar(const QDate &, QGraphicsWidget *parent = 0);
+    explicit Calendar(CalendarTable *calendarTable, QGraphicsWidget *parent = 0);
     ~Calendar();
 
     CalendarTable *calendarTable() const;

@@ -51,7 +51,7 @@ public:
     Q_DECLARE_FLAGS(CellTypes, CellType)
 
     explicit CalendarTable(QGraphicsWidget *parent = 0);
-    CalendarTable(const QDate &, QGraphicsWidget *parent = 0);
+    explicit CalendarTable(const QDate &, QGraphicsWidget *parent = 0);
     ~CalendarTable();
 
     bool setCalendar(const QString &newCalendarType = "locale");
@@ -108,4 +108,5 @@ private:
 }
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Plasma::CalendarTable::CellTypes)
+
 #endif
