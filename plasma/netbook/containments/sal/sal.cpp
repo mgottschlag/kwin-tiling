@@ -188,9 +188,8 @@ void SearchLaunch::doSearch(const QString &query, const QString &runner)
     m_runnermg->launchQuery(query, runner);
 
     if (m_resultsView && query.isEmpty()) {
-        if (stillEmpty && m_resultsView->count()) {
+        if (m_resultsView->count()) {
             m_resultsView->clear();
-            return;
         }
 
         setQueryMatches(m_defaultMatches);
