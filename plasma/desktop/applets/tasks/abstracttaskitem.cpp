@@ -82,9 +82,10 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet)
       m_attentionTicks(0),
       m_fadeIn(true),
       m_showText(true),
-      m_animationLock(false),
-      m_firstAnimation(true)
+      m_animationLock(false)
 {
+    m_firstGeometryUpdate.restart();
+
     m_animation = new QPropertyAnimation(this, "animationPos", this);
     m_animation->setEasingCurve(QEasingCurve::OutBounce);
     m_animation->setDuration(250);
@@ -94,8 +95,6 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet)
     setAcceptDrops(true);
     setFocusPolicy(Qt::StrongFocus);
     setFlag(QGraphicsItem::ItemIsFocusable);
-
-//    setPreferredSize(basicPreferredSize());
 
     Plasma::ToolTipManager::self()->registerWidget(this);
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(syncActiveRect()));
@@ -933,12 +932,26 @@ void AbstractTaskItem::setGeometry(const QRectF& geometry)
 {
     QPointF oldPos = pos();
 
+    bool immediate = false;
+    if (m_lastGeometryUpdate.elapsed() < 350) {
+        immediate = true;
+        if (m_updateGeometryTimerId) {
+            killTimer(m_updateGeometryTimerId);
+        }
+
+        m_updateGeometryTimerId = startTimer(350 - m_lastGeometryUpdate.elapsed());
+    } else {
+        publishIconGeometry();
+        m_lastGeometryUpdate.restart();
+    }
+
     QGraphicsWidget::setGeometry(geometry);
 
     //TODO:remove when we will have proper animated layouts
-    if (m_firstAnimation) {
-        m_firstAnimation = false;
+    if (m_firstGeometryUpdate.elapsed() < 500) {
+        return;
     }
+
     if (m_animationLock) {
         return;
     }
@@ -952,17 +965,6 @@ void AbstractTaskItem::setGeometry(const QRectF& geometry)
     m_animation->setEndValue(geometry.topLeft());
 
     m_animation->start();
-
-    if (m_lastGeometryUpdate.elapsed() < 350) {
-        if (m_updateGeometryTimerId) {
-            killTimer(m_updateGeometryTimerId);
-        }
-
-        m_updateGeometryTimerId = startTimer(350 - m_lastGeometryUpdate.elapsed());
-    } else {
-        publishIconGeometry();
-        m_lastGeometryUpdate.restart();
-    }
 }
 
 QRectF AbstractTaskItem::iconRect(const QRectF &b) const
