@@ -224,7 +224,7 @@ void Notification::setDeleteTimeout(const int time)
 
 int Notification::deleteTimeOut() const
 {
-    d->deleteTimer->interval();
+    return d->deleteTimer->interval();
 }
 
 }

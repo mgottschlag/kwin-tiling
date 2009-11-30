@@ -61,6 +61,7 @@ public:
     void updateActions();
     void updateNotification();
     void destroy();
+    void buttonClicked();
 
     NotificationWidget *q;
 
@@ -209,12 +210,21 @@ void NotificationWidgetPrivate::updateActions()
         button->setPreferredHeight(button->minimumHeight() - 6);
 
         q->connect(button, SIGNAL(clicked()), signalMapper, SLOT(map()));
+        q->connect(button, SIGNAL(clicked()), q, SLOT(buttonClicked()));
         signalMapper->setMapping(button, actionId);
 
         layout->addItem(button);
     }
 
     mainLayout->addItem(actionsWidget);
+}
+
+void NotificationWidgetPrivate::buttonClicked()
+{
+    //a decsion has already been taken
+    if (actionsWidget) {
+        actionsWidget->hide();
+    }
 }
 
 void NotificationWidgetPrivate::updateNotification()
