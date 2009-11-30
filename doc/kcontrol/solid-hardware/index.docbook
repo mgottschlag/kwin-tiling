@@ -1,0 +1,67 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE">
+]>
+<article lang="&language;">
+<title>Hardware</title>
+<articleinfo>
+<authorgroup>
+<author><firstname>Ben</firstname><surname>Cooksley</surname></author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2009-11-30</date>
+<releaseinfo>&kde; 4.4</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>Systemsettings</keyword>
+<keyword>hardware</keyword>
+<keyword>backend</keyword>
+</keywordset>
+</articleinfo>
+
+<para>
+This &systemsettings; module allows you to select the backends used by Solid to 
+retrieve information about your hardware, and manage its network connection, 
+bluetooth and infrared devices if present. None of these backends can be used directly by the user.
+</para>
+
+<variablelist>
+<varlistentry><term><guilabel>Power Management Backend</guilabel></term>
+<listitem><para>
+This is used to gather information such as hardware present in your system 
+(such as the connection of storage devices) as well as change settings such 
+as screen brightness, and is used to handle shutting down and suspending the system.
+</para></listitem>
+</varlistentry>
+
+<varlistentry><term><guilabel>Network Management Backend</guilabel></term>
+<listitem><para>
+This is used by &kde; applications to determine the status of your computers 
+connection to the Internet and other networks. It also allows them to retrieve 
+information such as the current configuration of your network cards, and to change 
+their configuration if permitted.
+</para></listitem>
+</varlistentry>
+
+<varlistentry><term><guilabel>Bluetooth Management Backend</guilabel></term>
+<listitem><para>
+This is used to communicate with other bluetooth devices, and allows them to be 
+discovered. It can also be used to change the configuration of the systems bluetooth status.
+</para></listitem>
+</varlistentry>
+
+<varlistentry><term><guilabel>Remote Control Management Backend</guilabel></term>
+<listitem><para>
+Used by &kde; applications to handle input from devices such as infrared remote controls. 
+</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+<para>
+</para>
+</article>
