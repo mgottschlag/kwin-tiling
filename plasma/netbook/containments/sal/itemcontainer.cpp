@@ -232,8 +232,10 @@ void ItemContainer::relayout()
         }
     }
 
-    for (int row = validRow; row < m_layout->rowCount(); ++row) {
-        for (int column = validColumn; column < m_layout->columnCount(); ++column) {
+    const int nRows = m_layout->rowCount();
+    const int nColumns = m_layout->columnCount();
+    for (int row = validRow; row < nRows; ++row) {
+        for (int column = validColumn; column < nColumns; ++column) {
             QGraphicsLayoutItem * item = m_layout->itemAt(row, column);
             //FIXME: no other way to remove a specific item in a grid layout
             // this s really, really horrible
