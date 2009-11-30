@@ -311,6 +311,9 @@ void Applet::showTaskNotifications(int barIndex)
         NotificationWidget *notificationWidget = addNotification(notification);
         if (barIndex > 0) {
             notificationWidget->setAutoHide(false);
+            if (notification->isExpired()) {
+                notification->setRead(true);
+            }
         }
     }
 }
@@ -784,6 +787,10 @@ NotificationWidget *Applet::addNotification(Notification *notification)
     connect(notification, SIGNAL(destroyed(SystemTray::Notification *)), this, SLOT(notificationDestroyed(SystemTray::Notification *)));
 
     connect(notification, SIGNAL(expired(SystemTray::Notification *)), this, SLOT(notificationExpired(SystemTray::Notification *)));
+
+    if (notification->isRead()) {
+        extenderItem->setCollapsed(true);
+    }
 
     return notificationWidget;
 }

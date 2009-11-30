@@ -52,6 +52,9 @@ public:
 
     bool isExpired() const;
 
+    void setRead(const bool read);
+    bool isRead() const;
+
 public slots:
     virtual void triggerAction(const QString &actionId);
     virtual void remove();
@@ -68,7 +71,7 @@ signals:
     /**
      * emitted when the notification wants to hide itself
      */
-    void hideRequested(SystemTray::Notification *notification = 0);
+    void expired(SystemTray::Notification *notification = 0);
 
 protected:
     void setApplicationName(const QString &applicationName);

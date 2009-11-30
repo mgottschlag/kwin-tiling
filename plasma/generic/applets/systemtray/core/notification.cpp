@@ -39,7 +39,8 @@ public:
         : timeout(0),
           owner(0),
           hideTimer(0),
-          expired(false)
+          expired(false),
+          read(false)
     {
     }
 
@@ -54,6 +55,7 @@ public:
     QTimer *deleteTimer;
     QTimer *hideTimer;
     bool expired;
+    bool read;
 
     QHash<QString, QString> actions;
     QStringList actionOrder;
@@ -195,12 +197,22 @@ void Notification::remove()
 void Notification::hide()
 {
     d->expired = true;
-    emit hideRequested(this);
+    emit expired(this);
 }
 
 bool Notification::isExpired() const
 {
     return d->expired;
+}
+
+void Notification::setRead(const bool read)
+{
+    d->read = read;
+}
+
+bool Notification::isRead() const
+{
+    return d->read;
 }
 
 }
