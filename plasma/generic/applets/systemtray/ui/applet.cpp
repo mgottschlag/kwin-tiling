@@ -292,11 +292,7 @@ void Applet::showTaskNotifications(int barIndex)
 {
     QList<Notification *> notifications;
     if (barIndex > 0) {
-        foreach (Notification *notification, s_manager->notifications()) {
-            if (notification->applicationName() == m_notificationBar->tabText(barIndex)) {
-                notifications.append(notification);
-            }
-        }
+        notifications = m_notificationsForApp[m_notificationBar->tabText(barIndex)];
     } else {
         foreach (Notification *notification, s_manager->notifications()) {
             if (!notification->isExpired()) {
