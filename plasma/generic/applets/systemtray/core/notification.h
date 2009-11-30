@@ -55,6 +55,9 @@ public:
     void setRead(const bool read);
     bool isRead() const;
 
+    void setDeleteTimeout(const int time);
+    int deleteTimeOut() const;
+
 public slots:
     virtual void triggerAction(const QString &actionId);
     virtual void remove();

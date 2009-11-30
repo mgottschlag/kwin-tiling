@@ -76,6 +76,7 @@ Manager *Applet::s_manager = 0;
 int Applet::s_managerUsage = 0;
 static const int idleCheckInterval = 60 * 1000;
 static const int completedJobExpireDelay = 5 * 60 * 1000;
+static const int oldNotificationsExpireDelay = 5 * 60 * 1000;
 
 Applet::Applet(QObject *parent, const QVariantList &arguments)
     : Plasma::PopupApplet(parent, arguments),
@@ -872,6 +873,11 @@ void Applet::timerEvent(QTimerEvent *event)
                 if (!item->autoExpireDelay()) {
                     item->setAutoExpireDelay(completedJobExpireDelay);
                 }
+            }
+        }
+        foreach (Notification *notification, s_manager->notifications()) {
+            if (!notification->isExpired()) {
+                notification->setDeleteTimeout(oldNotificationsExpireDelay);
             }
         }
 

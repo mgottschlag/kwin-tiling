@@ -146,7 +146,7 @@ void Notification::setTimeout(int timeout)
 {
     d->timeout = timeout;
     //keep it available for 30 minutes
-    d->deleteTimer->start(1800000);
+    d->deleteTimer->start(30*60*1000);
 
     if (timeout) {
         if (!d->hideTimer) {
@@ -213,6 +213,18 @@ void Notification::setRead(const bool read)
 bool Notification::isRead() const
 {
     return d->read;
+}
+
+void Notification::setDeleteTimeout(const int time)
+{
+    if (d->deleteTimer->interval() != time) {
+        d->deleteTimer->start(time);
+    }
+}
+
+int Notification::deleteTimeOut() const
+{
+    d->deleteTimer->interval();
 }
 
 }
