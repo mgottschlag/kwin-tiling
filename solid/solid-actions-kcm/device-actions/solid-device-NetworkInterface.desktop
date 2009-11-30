@@ -269,6 +269,7 @@ Name[zh_TW]=無線
 [Desktop Entry]
 Actions=hwAddress;ifaceName;macAddress;objectName;wireless;
 Name=Solid Device
+Name[da]=Solid-enhed
 Name[en_GB]=Solid Device
 Name[et]=Solidi seade
 Name[gl]=Dispositivo de Solid

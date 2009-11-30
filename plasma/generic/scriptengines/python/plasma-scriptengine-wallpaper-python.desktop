@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Python wallpaper
+Name[da]=Python-baggrundsbillede
 Name[en_GB]=Python wallpaper
 Name[et]=Pythoni taustapilt
 Name[gu]=પાયથોન વોલપેપર
@@ -16,6 +17,7 @@ Name[uk]=Шпалери для Python
 Name[x-test]=xxPython wallpaperxx
 Name[zh_TW]=Python 桌布
 Comment=Plasma wallpaper support for Python
+Comment[da]=Understøttelse af Plasma wallpaper til Python
 Comment[en_GB]=Plasma wallpaper support for Python
 Comment[et]=Plasma taustapildi toetus Pythonile
 Comment[he]=תמיכה ברקע Plasma לפייתון

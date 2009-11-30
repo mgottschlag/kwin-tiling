@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Terminate Applications
+Name[da]=Afslut programmer
 Name[de]=Programme beenden
 Name[en_GB]=Terminate Applications
 Name[et]=Rakenduste töö lõpetamine
@@ -19,6 +20,7 @@ Name[uk]=Переривання програм
 Name[x-test]=xxTerminate Applicationsxx
 Name[zh_TW]=終端機應用程式
 Comment=Stop applications that are currently running
+Comment[da]=Stop programmer der kører i øjeblikket
 Comment[de]=Gerade laufende Anwendungen beenden
 Comment[en_GB]=Stop applications that are currently running
 Comment[et]=Töötavate rakenduste töö lõpetamine

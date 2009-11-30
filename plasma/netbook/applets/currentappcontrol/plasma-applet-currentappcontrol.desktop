@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Current Application Control
+Name[da]=Styring af aktuelt program
 Name[en_GB]=Current Application Control
 Name[et]=Aktiivne rakenduse juhtimine
 Name[gl]=Control do programa actual
@@ -21,6 +22,7 @@ Name[uk]=Керування поточною програмою
 Name[x-test]=xxCurrent Application Controlxx
 Name[zh_TW]=目前應用程式控制
 Comment=Controls for the active window
+Comment[da]=Styring af det aktive vindue
 Comment[en_GB]=Controls for the active window
 Comment[et]=Aktiivse akna juhtimine
 Comment[gl]=Controla a fiestra actual

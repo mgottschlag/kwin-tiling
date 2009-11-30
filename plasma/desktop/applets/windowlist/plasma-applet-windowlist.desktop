@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Window List
+Name[da]=Vinduesliste
 Name[en_GB]=Window List
 Name[pt]=Lista de Janelas
 Name[sv]=Fönsterlista
@@ -8,6 +9,7 @@ Name[x-test]=xxWindow Listxx
 Name[zh_TW]=視窗列表
 
 Comment=Plasmoid to show list of opened windows.
+Comment[da]=Plasmoid til at vise en liste over åbne vinduer.
 Comment[en_GB]=Plasmoid to show list of opened windows.
 Comment[pt]=Um plasmóide para ver a lista de janelas abertas.
 Comment[sv]=Plasmoid för att visa lista med öppna fönster.

@@ -1,9 +1,11 @@
 [org.kde.fontinst]
 Name=Manage system-wide fonts.
+Name[da]=Håndtér systemomfattende skrifttyper.
 Name[de]=Systemweite Schriften verwalten.
 Name[el]=Διαχείριση γραμματοσειρών συστήματος.
 Name[en_GB]=Manage system-wide fonts.
 Name[et]=Süsteemsete fontide haldamine.
+Name[eu]=Kudeatu sistema-osoko tipografiak.
 Name[gl]=Xestiona os tipos de letra do sistema.
 Name[he]=נהל גופני מערכת
 Name[hr]=Upravljanje pismima širom sustava.
@@ -23,9 +25,11 @@ Name[uk]=Керування загальносистемними шрифтам�
 Name[x-test]=xxManage system-wide fonts.xx
 Name[zh_TW]=管理系統字型。
 Description=Modifying the system-wide font configuration requires privileges.
+Description[da]=Ændring af systemomfattende konfiguration af skrifttyper kræver privilegier.
 Description[el]=Για την μορφοποίηση ρυθμίσεων των γραμματοσειρών του συστήματος χρειάζονται προνόμια.
 Description[en_GB]=Modifying the system-wide font configuration requires privileges.
 Description[et]=Süsteemsete fontide seadistuste muutmine nõuab vastavaid õigusi.
+Description[eu]=Sistema-osoko tipografia konfiguraketa aldaketak pribilegioak eskatzen ditu.
 Description[gl]=Para modificar a configuración dos tipos de letra do sistema requírense privilexios.
 Description[he]=עדכון הגדרת גופן מערכת דורש הרשאות
 Description[hr]=Mijenjanje konfiguracije pisma širom sustava zahtjeva privilegije.

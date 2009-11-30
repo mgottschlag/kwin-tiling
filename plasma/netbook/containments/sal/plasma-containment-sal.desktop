@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Search and Launch Containment
+Name[da]=Beholder til søg og start
 Name[en_GB]=Search and Launch Containment
 Name[et]=Otsimise ja käivitamise konteiner
 Name[gl]=Contedor de procura e inicio
@@ -19,6 +20,7 @@ Name[uk]=Контейнер пошуку і запуску
 Name[x-test]=xxSearch and Launch Containmentxx
 Name[zh_TW]=搜尋與啟動容器
 Comment=Special Containment with Launcher
+Comment[da]=Speciel beholder med startmenu
 Comment[en_GB]=Special Containment with Launcher
 Comment[et]=Erikonteiner käivitajaga
 Comment[gl]=Un contedor especial cun iniciador

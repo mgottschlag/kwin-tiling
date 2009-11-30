@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=wetter.com
+Name[da]=wetter.com
 Name[en_GB]=wetter.com
 Name[pt]=wetter.com
 Name[sv]=wetter.com
@@ -7,6 +8,7 @@ Name[uk]=wetter.com
 Name[x-test]=xxwetter.comxx
 Name[zh_TW]=wetter.com
 Comment=Weather forecast by wetter.com
+Comment[da]=Vejrudsigt fra wetter.com
 Comment[en_GB]=Weather forecast by wetter.com
 Comment[nn]=Vêrmelding
 Comment[pt]=Previsão meteorológica da wetter.com

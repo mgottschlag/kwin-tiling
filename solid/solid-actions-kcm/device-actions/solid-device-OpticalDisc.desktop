@@ -694,6 +694,7 @@ Name[zh_TW]=UUID
 [Desktop Entry]
 Actions=appendable;availableContent;blank;capacity;discType;fsType;ignored;label;objectName;rewritable;size;usage;uuid;
 Name=Solid Device
+Name[da]=Solid-enhed
 Name[en_GB]=Solid Device
 Name[et]=Solidi seade
 Name[gl]=Dispositivo de Solid

@@ -1,11 +1,13 @@
 [Misc]
 Name=Mac OS X
 Name[cs]=Mac OS X
+Name[da]=Mac OS X
 Name[de]=Mac OS X
 Name[el]=Mac OS X
 Name[en_GB]=Mac OS X
 Name[eo]=Mac OS X
 Name[et]=Mac OS X
+Name[eu]=Mac OS X
 Name[gl]=Mac OS X
 Name[gu]=મેક OS X
 Name[he]=Mac OS X
@@ -26,10 +28,13 @@ Name[uk]=Mac OS X
 Name[x-test]=xxMac OS Xxx
 Name[zh_TW]=Mac OS X
 Comment=Style that uses the Apple Appearance Manager
+Comment[da]=Stil der bruger Apple Appearance Manager
+Comment[de]=Stil, der das Apple-Erscheinungsbild nachahmt
 Comment[el]=Στυλ που χρησιμοποιεί τον διαχειριστή εμφάνισης της Apple
 Comment[en_GB]=Style that uses the Apple Appearance Manager
 Comment[eo]=Stilo kiu uzas la Apple-Stilan mastrumilon
 Comment[et]=Apple'i välimuse haldurit kasutav stiil
+Comment[eu]=Apple itxura kudeatzailea erabiltzen duen estiloa
 Comment[gl]=Un estilo que emprega o xestor de aparencia de Apple
 Comment[hr]=Stil koji koristi Appleov upravitelj izgleda
 Comment[id]=Gaya yang menggunakan Manajer Tampilan Apple

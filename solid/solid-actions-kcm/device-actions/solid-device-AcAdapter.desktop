@@ -108,6 +108,7 @@ Name[zh_TW]=已插入
 [Desktop Entry]
 Actions=objectName;plugged;
 Name=Solid Device
+Name[da]=Solid-enhed
 Name[en_GB]=Solid Device
 Name[et]=Solidi seade
 Name[gl]=Dispositivo de Solid

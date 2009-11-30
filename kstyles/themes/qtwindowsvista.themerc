@@ -1,10 +1,12 @@
 [Misc]
 Name=MS Windows Vista
+Name[da]=MS Windows Vista
 Name[de]=MS Windows Vista
 Name[el]=MS Windows Vista
 Name[en_GB]=MS Windows Vista
 Name[eo]=MS Vindozo Vista
 Name[et]=MS Windows Vista
+Name[eu]=MS Windows Vista
 Name[gl]=MS Windows Vista
 Name[gu]=MS વિન્ડોઝ વિસ્ટા
 Name[he]=MS Windows Vista
@@ -25,10 +27,13 @@ Name[uk]=MS Windows Vista
 Name[x-test]=xxMS Windows Vistaxx
 Name[zh_TW]=MS Windows Vista
 Comment=Style that uses the Windows Vista style engine
+Comment[da]=Stil der bruger stilmotoren fra Windows Vista
+Comment[de]=Stil, der das Erscheinungsbild von Windows Vista nachahmt
 Comment[el]=Στυλ που χρησιμοποιεί τον μηχανισμό εμφάνισης των Windows Vista
 Comment[en_GB]=Style that uses the Windows Vista style engine
 Comment[eo]=Stiloj kiuj uzas la Vindozo-Vista etosan modulon
 Comment[et]=Windows Vista stiilimootorit kasutav stiil
+Comment[eu]=Windows Vista estilo motorea erabiltzen duen estiloa
 Comment[gl]=Un estilo que emprega o motor de estilos do Windows Vista
 Comment[hr]=Stil koji koristi Windows Vista mehanizam za stilove
 Comment[id]=Gaya yang menggunakan mesin gaya Windows Vista

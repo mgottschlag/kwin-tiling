@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Search Box
+Name[da]=Søgfelt
 Name[de]=Suchfeld
 Name[en_GB]=Search Box
 Name[eo]=Skatol-serĉo
@@ -23,6 +24,7 @@ Name[uk]=Панель пошуку
 Name[x-test]=xxSearch Boxxx
 Name[zh_TW]=搜尋盒
 Comment=Search Box for a given RunnerManager
+Comment[da]=Søgfelt til en given RunnerManager
 Comment[en_GB]=Search Box for a given RunnerManager
 Comment[eo]=Serĉu dialogujon por la proponita RunnerManager
 Comment[et]=Käivitamishalduri otsingukast

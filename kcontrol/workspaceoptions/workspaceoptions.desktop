@@ -11,6 +11,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=desktop
 
 Name=Workspace
+Name[da]=Arbejdsområde
 Name[de]=Arbeitsbereich
 Name[el]=Χώρος εργασίας
 Name[en_GB]=Workspace
@@ -29,6 +30,7 @@ Name[nl]=Werkruimte
 Name[pt]=Espaço de Trabalho
 Name[pt_BR]=Espaço de trabalho
 Name[ro]=Spațiu de lucru
+Name[ru]=Рабочее пространство Plasma
 Name[sv]=Arbetsyta
 Name[tr]=Çalışma alanı
 Name[uk]=Робочий простір
@@ -37,6 +39,7 @@ Name[zh_TW]=工作空間
 
 Comment=Global options for the Plasma workspace
 Comment[cs]=Globální možnosti pro pracovní plochu Plasma
+Comment[da]=Globale indstillinger for Plasma-arbejdsområde
 Comment[el]=Καθολικές επιλογές για το χώρο εργασίας Plasma
 Comment[en_GB]=Global options for the Plasma workspace
 Comment[eo]=Ĝeneralaj opcioj por Plasma laborspaco

@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Contacts
+Name[da]=Kontakter
 Name[de]=Kontakte
 Name[en_GB]=Contacts
 Name[eo]=Kontaktoj
@@ -22,6 +23,7 @@ Name[uk]=Контакти
 Name[x-test]=xxContactsxx
 Name[zh_TW]=聯絡人
 Comment=List all your contacts
+Comment[da]=Oplist alle dine kontakter
 Comment[de]=Alle Kontakte auflisten
 Comment[en_GB]=List all your contacts
 Comment[eo]=Listo de ĉiuj viaj kontaktoj

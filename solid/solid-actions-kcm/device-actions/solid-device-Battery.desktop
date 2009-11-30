@@ -316,6 +316,7 @@ Name[zh_TW]=類型
 [Desktop Entry]
 Actions=chargePercent;chargeState;objectName;plugged;rechargeable;type;
 Name=Solid Device
+Name[da]=Solid-enhed
 Name[en_GB]=Solid Device
 Name[et]=Solidi seade
 Name[gl]=Dispositivo de Solid

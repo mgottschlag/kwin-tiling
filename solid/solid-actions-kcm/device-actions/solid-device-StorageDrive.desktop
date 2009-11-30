@@ -263,6 +263,7 @@ Name[zh_TW]=可移除
 [Desktop Entry]
 Actions=bus;driveType;hotpluggable;objectName;removable;
 Name=Solid Device
+Name[da]=Solid-enhed
 Name[en_GB]=Solid Device
 Name[et]=Solidi seade
 Name[gl]=Dispositivo de Solid

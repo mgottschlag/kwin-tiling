@@ -265,6 +265,7 @@ Name[zh_TW]=物件名稱
 [Desktop Entry]
 Actions=device;deviceAdapter;deviceIndex;deviceType;objectName;
 Name=Solid Device
+Name[da]=Solid-enhed
 Name[en_GB]=Solid Device
 Name[et]=Solidi seade
 Name[gl]=Dispositivo de Solid

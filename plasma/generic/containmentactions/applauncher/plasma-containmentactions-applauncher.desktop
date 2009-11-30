@@ -80,6 +80,7 @@ Name[zh_TW]=應用程式啟動器
 Type=Service
 Icon=
 Comment=Simple application launcher
+Comment[da]=Simpel programstarter
 Comment[en_GB]=Simple application launcher
 Comment[et]=Lihtne rakenduste käivitaja
 Comment[gl]=Lanzador simple de programas

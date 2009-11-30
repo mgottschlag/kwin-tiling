@@ -1,6 +1,7 @@
 [Global]
 IconName=plasma
 Comment=Plasma Desktop Shell
+Comment[da]=Plasma Desktop Shell
 Comment[de]=Plasma-Arbeitsflächen-Umgebung
 Comment[en_GB]=Plasma Desktop Shell
 Comment[eo]=Plasma Labortabla ŝelo
@@ -23,6 +24,7 @@ Comment[uk]=Оболонка стільниці Плазми
 Comment[x-test]=xxPlasma Desktop Shellxx
 Comment[zh_TW]=Plasma 桌面 shell
 Name=Workspace
+Name[da]=Arbejdsområde
 Name[de]=Arbeitsbereich
 Name[el]=Χώρος εργασίας
 Name[en_GB]=Workspace
@@ -41,6 +43,7 @@ Name[nl]=Werkruimte
 Name[pt]=Espaço de Trabalho
 Name[pt_BR]=Espaço de trabalho
 Name[ro]=Spațiu de lucru
+Name[ru]=Рабочее пространство Plasma
 Name[sv]=Arbetsyta
 Name[tr]=Çalışma alanı
 Name[uk]=Робочий простір
@@ -49,6 +52,7 @@ Name[zh_TW]=工作空間
 
 [Event/newplasmoid]
 Name=New widget published
+Name[da]=Ny widget annonceret
 Name[en_GB]=New widget published
 Name[eo]=Nova fenestraĵo eldoniĝas
 Name[et]=Avaldati uus vidin
@@ -70,6 +74,7 @@ Name[uk]=Оприлюднено новий віджет
 Name[x-test]=xxNew widget publishedxx
 Name[zh_TW]=已發布新的元件
 Comment=A new widget has become available on the network.
+Comment[da]=En ny widget er blevet tilgængelig på netværket.
 Comment[en_GB]=A new widget has become available on the network.
 Comment[eo]=Nova fenestraĵo disboneblas sur la reto.
 Comment[et]=Võrgus sai kättesaadavaks uus vidin.

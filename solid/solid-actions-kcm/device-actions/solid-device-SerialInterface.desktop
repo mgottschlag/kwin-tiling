@@ -209,6 +209,7 @@ Name[zh_TW]=序列類型
 [Desktop Entry]
 Actions=driverHandle;objectName;port;serialType;
 Name=Solid Device
+Name[da]=Solid-enhed
 Name[en_GB]=Solid Device
 Name[et]=Solidi seade
 Name[gl]=Dispositivo de Solid

@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Plasma Desktop Shell
+Name[da]=Plasma Desktop Shell
 Name[de]=Plasma-Arbeitsflächen-Umgebung
 Name[en_GB]=Plasma Desktop Shell
 Name[eo]=Plasma Labortabla ŝelo
@@ -23,6 +24,7 @@ Name[uk]=Оболонка стільниці Плазми
 Name[x-test]=xxPlasma Desktop Shellxx
 Name[zh_TW]=Plasma 桌面 shell
 Comment=Interact with the Plasma desktop shell
+Comment[da]=Interaktion med Plasma-skrivebordsskal
 Comment[en_GB]=Interact with the Plasma desktop shell
 Comment[et]=Suhtlus Plasma töölauakestaga
 Comment[gl]=Interactúa coa shell de escritorio Plasma

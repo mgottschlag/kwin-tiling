@@ -87,6 +87,7 @@ Name[x-test]=xxMultimediaxx
 Name[zh_CN]=多媒体
 Name[zh_TW]=多媒體
 Comment=Multimedia applications, such as audio and video players
+Comment[da]=Multimedieprogrammer, såsom lyd- og videoafspillere
 Comment[de]=Multimedia-Anwendungen wie Abspielprogramme für Audio und Video
 Comment[en_GB]=Multimedia applications, such as audio and video players
 Comment[eo]=Plurmediaj aplikaĵoj kiel son- kaj film- legiloj

@@ -1,6 +1,7 @@
 [Desktop Entry]
 # ctxt: plasma runner
 Name=Devices
+Name[da]=Enheder
 Name[en_GB]=Devices
 Name[nb]=Enhet
 Name[pt]=Dispositivos
@@ -9,6 +10,7 @@ Name[uk]=Пристрої
 Name[x-test]=xxDevicesxx
 Name[zh_TW]=裝置
 Comment=Manage removable devices
+Comment[da]=Håndtér flytbare enheder
 Comment[en_GB]=Manage removable devices
 Comment[nb]=Flyttbar
 Comment[pt]=Gerir os dispositivos removíveis

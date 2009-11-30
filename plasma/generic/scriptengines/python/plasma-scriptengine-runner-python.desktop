@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Python runner
+Name[da]=Python-runner
 Name[en_GB]=Python runner
 Name[eo]=Pitona motoro
 Name[et]=Pythoni käivitaja
@@ -17,6 +18,7 @@ Name[uk]=Запуск для Python
 Name[x-test]=xxPython runnerxx
 Name[zh_TW]=Python 執行器
 Comment=Plasma runner support for Python
+Comment[da]=Understøttelse af Plasma runner til Python
 Comment[en_GB]=Plasma runner support for Python
 Comment[et]=Plasma käivitaja toetus Pythonile
 Comment[he]=תמיכה במנוע הרצת Plasma לפייתון

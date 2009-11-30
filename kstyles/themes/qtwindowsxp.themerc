@@ -1,10 +1,12 @@
 [Misc]
 Name=MS Windows XP
+Name[da]=MS Windows XP
 Name[de]=MS Windows XP
 Name[el]=MS Windows XP
 Name[en_GB]=MS Windows XP
 Name[eo]=MS Vindozo XP
 Name[et]=MS Windows XP
+Name[eu]=MS Windows XP
 Name[gl]=MS Windows XP
 Name[gu]=MS વિન્ડોઝ XP
 Name[he]=MS Windows XP
@@ -25,10 +27,13 @@ Name[uk]=MS Windows XP
 Name[x-test]=xxMS Windows XPxx
 Name[zh_TW]=MS Windows XP
 Comment=Style that uses the Windows XP style engine
+Comment[da]=Stil der bruger stilmotoren fra Windows XP
+Comment[de]=Stil, der das Erscheinungsbild von Windows XP nachahmt
 Comment[el]=Στυλ που χρησιμοποιεί τον μηχανισμό εμφάνισης των Windows XP
 Comment[en_GB]=Style that uses the Windows XP style engine
 Comment[eo]=Stiloj kiuj uzas la Vindozo-XP etosan modulon
 Comment[et]=Windows XP stiilimootorit kasutav stiil
+Comment[eu]=Windows XP estilo motorea erabiltzen duen estiloa
 Comment[gl]=Un estilo que emprega o motor de estilos do Windows XP
 Comment[he]=סגנון שמשתמש במנוע סגנון של Windows XP
 Comment[hr]=Stil koji koristi Windows XP mehanizam za stilove

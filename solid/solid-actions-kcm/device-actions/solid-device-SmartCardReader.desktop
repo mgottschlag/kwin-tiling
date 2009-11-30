@@ -53,6 +53,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action readerType]
 Name=Reader Type
+Name[da]=Læsertype
 Name[en_GB]=Reader Type
 Name[eo]=Tipo de Legilo
 Name[et]=Lugeja tüüp
@@ -76,6 +77,7 @@ Name[zh_TW]=讀取器型態
 [Desktop Entry]
 Actions=objectName;readerType;
 Name=Solid Device
+Name[da]=Solid-enhed
 Name[en_GB]=Solid Device
 Name[et]=Solidi seade
 Name[gl]=Dispositivo de Solid

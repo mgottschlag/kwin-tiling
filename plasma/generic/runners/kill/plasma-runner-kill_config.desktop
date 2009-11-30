@@ -7,6 +7,7 @@ X-KDE-ParentComponents=kill
 X-KDE-PluginKeyword=kcm_krunner_kill
 
 Name=Kill Applications
+Name[da]=Dræb programmer
 Name[de]=Programme abschießen
 Name[en_GB]=Kill Applications
 Name[eo]=Mortigi aplikaĵon

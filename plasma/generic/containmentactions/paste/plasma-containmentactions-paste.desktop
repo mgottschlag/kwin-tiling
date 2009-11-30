@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Paste
+Name[da]=Indsæt
 Name[de]=Einfügen
 Name[en_GB]=Paste
 Name[eo]=Glui
@@ -27,6 +28,7 @@ Name[zh_TW]=貼上
 Type=Service
 Icon=edit-paste
 Comment=Creates a widget from the contents of the clipboard
+Comment[da]=Opretter en widget ud fra indholdet af udklipsholderen
 Comment[en_GB]=Creates a widget from the contents of the clipboard
 Comment[eo]=Krei fenestraĵon el la enhavo de la tondejo
 Comment[et]=Vidina loomine lõikepuhvri sisu põhjal
