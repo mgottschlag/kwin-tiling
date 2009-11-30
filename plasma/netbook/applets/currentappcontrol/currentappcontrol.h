@@ -48,6 +48,7 @@ protected:
 protected Q_SLOTS:
     void activeWindowChanged(WId id);
     void windowChanged(WId id);
+    void windowRemoved(WId id);
     void setSyncDelay(bool delay);
     void syncActiveWindow();
     void closeWindow();

@@ -85,6 +85,8 @@ void CurrentAppControl::init()
             this, SLOT(activeWindowChanged(WId)));
     connect(KWindowSystem::self(), SIGNAL(windowChanged(WId)),
             this, SLOT(windowChanged(WId)));
+    connect(KWindowSystem::self(), SIGNAL(windowRemoved(WId)),
+            this, SLOT(windowRemoved(WId)));
     QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(Qt::Horizontal, this);
     lay->setContentsMargins(0, 0, 0, 0);
     lay->setSpacing(0);
@@ -134,6 +136,11 @@ void CurrentAppControl::activeWindowChanged(WId id)
     if (!m_syncDelay) {
         syncActiveWindow();
     }
+}
+
+void CurrentAppControl::windowRemoved(WId id)
+{
+    syncActiveWindow();
 }
 
 void CurrentAppControl::syncActiveWindow()
