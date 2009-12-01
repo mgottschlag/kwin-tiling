@@ -63,6 +63,12 @@ Plasma::IconWidget *ItemView::currentItem() const
     return m_itemContainer->currentItem();
 }
 
+void ItemView::focusInEvent(QFocusEvent *event)
+{
+    m_itemContainer->setFocus();
+    Plasma::ScrollWidget::focusInEvent(event);
+}
+
 void ItemView::insertItem(Plasma::IconWidget *icon, qreal weight)
 {
     m_itemContainer->insertItem(icon, weight);

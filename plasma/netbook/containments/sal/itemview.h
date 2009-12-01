@@ -70,6 +70,7 @@ public:
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
+    void focusInEvent(QFocusEvent *event);
 
 protected Q_SLOTS:
     void selectItem(Plasma::IconWidget *icon);
