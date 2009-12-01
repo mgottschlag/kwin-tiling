@@ -37,7 +37,7 @@ GlobalShortcutsModule::GlobalShortcutsModule(QWidget *parent, const QVariantList
  : KCModule(GlobalShortcutsModuleFactory::componentData(), parent, args),
    editor(0)
 {
-    KCModule::setButtons(KCModule::Buttons(KCModule::Default | KCModule::Apply));
+    KCModule::setButtons(KCModule::Buttons(KCModule::Default | KCModule::Apply | KCModule::Help));
 
 
     // Create the kglobaleditor
