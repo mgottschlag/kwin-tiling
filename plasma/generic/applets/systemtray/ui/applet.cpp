@@ -775,7 +775,7 @@ NotificationWidget *Applet::addNotification(Notification *notification)
         m_recentNotifications.append(notification);
         while (m_recentNotifications.count() > 10) {
             Notification *oldNotification = m_recentNotifications.first();
-            appNotifications.pop_front();
+            m_recentNotifications.pop_front();
             oldNotification->hide();
         }
     }
