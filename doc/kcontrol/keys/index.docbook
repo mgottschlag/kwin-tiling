@@ -14,8 +14,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2002-02-13</date>
-<releaseinfo>3.00.00</releaseinfo>
+<date>2009-11-30</date>
+<releaseinfo>&kde; 4.4</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -47,32 +47,22 @@ action with a key or a combination of keys.</para>
 
 </sect2>
 
-<sect2 id="key-bindings-use">
-<title>Use</title>
+<sect2 id="key-bindings-use-globapp">
+<title>Standard Shortcuts and Global Shortcuts</title>
 
-<para>In the Shortcuts control module you'll see a list of <quote>key
-schemes,</quote> a list of key bindings in the currently selected
-scheme and a frame where you can customize the currently selected key
-binding. Also, you'll see a tab for <guilabel>Global
-shortcuts</guilabel> and one for <guilabel>Application
-shortcuts</guilabel>.</para>
-
-<sect3 id="key-bindings-use-globapp">
-<title>Global Shortcuts and Application Shortcuts</title>
-
-<para><guilabel>Global shortcuts</guilabel> and <guilabel>application
-shortcuts</guilabel> work just the same. Actually, in a certain way
-application shortcuts are <quote>global</quote> as well. The only
+<para>Standard shortcuts and Global shortcuts work just the same. 
+Actually, in a certain way standard or application shortcuts are 
+<quote>global</quote> as well. The only
 difference is:</para>
 
 <itemizedlist>
-<listitem><para><quote>Global shortcuts</quote> are shortcuts for
+<listitem><para><quote>Standard keyboard shortcuts</quote> refer to actions
+that are often available in applications, such as Save, Print, Copy
+&etc;</para></listitem> 
+<listitem><para><quote>Global keyboard shortcuts</quote> are shortcuts for
 actions that make sense even when no application is opened. These
 shortcuts usually refer to actions like switching desktops, manipulating
-windows etc.  </para></listitem> 
-<listitem><para><quote>Application shortcuts</quote> refer to actions
-that are often available in applications, such as Save, Print, Copy
-etc.</para></listitem> 
+windows &etc;</para></listitem> 
 </itemizedlist>
 
 <para>Please note, that the application shortcuts configured here are
@@ -81,46 +71,66 @@ applications. Most applications will define their own actions as well,
 for which you have to customize key bindings using the application's
 key bindings dialog.</para>
 
+<sect3 id="key-bindings-standard">
+<title><guilabel>Standard Keyboard Shortcuts</guilabel> tab</title>
+<para>At the bottom of this dialog you see an input box, where you can
+search interactively for shortcut names (&eg; Copy) or combination of keys 
+(&eg; Ctrl+C) by typing them here.</para>
+<para>Below the search box you can see a list of key bindings, &ie; associations between actions 
+(&eg; Copy) shown in the <guilabel>Actions</guilabel> column and keys or combination of keys (&eg;
+Ctrl+V) shown in the <guilabel>Shortcut</guilabel> or <guilabel>Alternate</guilabel> column.
+</para>
+<!-- Global column is empty what's that???-->
+</sect3>
+
+<sect3 id="key-bindings-global">
+<title><guilabel>Global Keyboard Shortcuts</guilabel> tab</title>
+<para>At the bottom of this page is a drop down box which allows you
+to select a <guilabel>KDE component</guilabel> like KWin, Plasma Workspace &etc;
+The defined shortcuts for the selected component are displayed in the 
+<guilabel>Actions</guilabel> and <guilabel>Global</guilabel> column in the list view. 
+Click the <guilabel>File</guilabel> drop down box at the right to import/export a 
+Scheme, set all shortcuts to none and remove a component.</para>
+<para>This page has the same search box as the <guilabel>Standard Keyboard 
+Shortcuts</guilabel> tab.</para>
+
 </sect3>
 
 <sect3 id="key-bindings-use-confkeys">
 <title>Configuring Key Bindings</title>
 
 <para>Configuring key bindings is pretty easy. In the middle of the
-key bindings control module you'll find a list of available
-actions. If there's a key binding configured for that action you'll
-find it right next to it. Just select the action you want to
+these &systemsettings; modules you will find a list of available
+actions. If there's a key binding configured for that action you will
+find it in the columns right to it. Just select the action you want to
 configure.</para>
 
-<para>After you've selected an action you'll notice that most of the
-controls below the action list are enabled. There you can configure a
+<para>After you have selected an action in the list you will notice that 
+this item is displayed bold and you see two additional check boxes below 
+this item in the list view. There you can configure a
 combination of keys or maybe no key binding at all for the selected
-action.  </para>
+action. </para>
 
 <itemizedlist>
-<listitem><para><guilabel>No key</guilabel>: the selected action will not
-be associated with any key.</para></listitem>
 
-<listitem><para><guilabel>Default key</guilabel>: the selected action
+<listitem><para><guilabel>Default</guilabel>: the selected action
 will be associated with &kde;'s default value. This is a good choice
 for most actions, as &kde; comes with reasonable key bindings we have
-thought about.  </para></listitem>
+thought about. </para></listitem>
 
-<listitem><para><guilabel>Custom key</guilabel>: if this option is
+<listitem><para><guilabel>Custom</guilabel>: if this option is
 enabled, you can create a key combination for the selected
-action. Just select any modifiers (&ie; &Shift;, &Ctrl;, or &Alt;) and
-then select a key: just click on the key symbol and after that press
-the key you want to assign to this key combination.</para></listitem>
-
+action. Click on the button labeled either <guibutton>None</guibutton> 
+or labeled with the previously selected custom shortcut. Now the button label
+changes to <guibutton>Input</guibutton>. Then press any modifier key 
+(&ie; &Shift;, &Ctrl;, or &Alt;) and then normal key or a function key (&ie; F11) 
+you want to assign to this key combination.</para>
+<para>Clicking on the <guilabel>Alternate</guilabel> column of the selected row
+allows to edit this shortcut for the action.</para></listitem>
 </itemizedlist>
 
-<para>As with all control modules, your changes won't take in effect
-until you click <guibutton>OK</guibutton> or
-<guibutton>Apply</guibutton>. Click <guibutton>Cancel</guibutton> to
-discard all changes.</para>
-
 </sect3>
-
+<!-- changed in kde4
 <sect3 id="key-bindings-use-confschemes">
 <title>Configuring Schemes</title>
 
@@ -156,10 +166,11 @@ scheme</guilabel>.</para>
 scheme is selected, you always have to add a new scheme first! If you
 select one of your own schemes because you want to save the changes to
 that one, the control module will switch to the key bindings of that
-scheme, discarding your changes.</para></important> </sect3>
-
+scheme, discarding your changes.</para></important> 
+</sect3>
+-->
+<!--not in kde 4
 </sect2>
-
 <sect2>
 <title>Modifier Keys</title>
 
@@ -173,7 +184,7 @@ of modifiers will change.</para>
 
 <para>If you have enabled the &Mac; keyboard, you can further enable
 <guilabel>MacOS-style modifier usage</guilabel>, to make &kde; behave
-more like &MacOS;.</para><!-- FIXME: well, that's rather non-explanatory, more here would be good -->
+more like &MacOS;.</para>
 
 <para>Finally, you can change what a keypress sends to the &X-Server;
 in the <guilabel>X Modifier Mapping</guilabel> section.  A common
@@ -182,10 +193,9 @@ rarely used, to be another &Ctrl; key.  This is especially nice if you
 are a touch typist, as <keycap>Caps Lock</keycap> is much easier to
 reach than either of the &Ctrl; keys on a standard keyboard.</para>
 
-<!-- FIXME: what exactly is going on here... -->
-
 </sect2>
-
+-->
+</sect2>
 </sect1>
 
 </article>
