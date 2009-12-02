@@ -467,11 +467,11 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         configButton->setOrientation(Qt::Horizontal);
         configButton->setMaximumHeight(buttonsize);
         configButton->setDrawBackground(false);
-        //configButton->setMinimumHeight(buttonsize);
+        configButton->setMinimumHeight(buttonsize);
         configButton->setMaximumWidth(buttonsize);
-        //configButton->setMinimumWidth(buttonsize);
+        configButton->setMinimumWidth(buttonsize);
         configButton->setDrawBackground(true);
-        configButton->setTextBackgroundColor(QColor());
+        configButton->setTextBackgroundColor(QColor(Qt::transparent));
         configButton->setIcon("configure");
         connect(configButton, SIGNAL(clicked()), this, SLOT(openConfig()));
         configButton->setEnabled(hasAuthorization("LaunchApp"));
@@ -502,7 +502,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
                 suspendButton->setMaximumHeight(buttonsize);
                 suspendButton->setMinimumHeight(buttonsize);
                 suspendButton->setDrawBackground(true);
-                suspendButton->setTextBackgroundColor(QColor());
+                suspendButton->setTextBackgroundColor(QColor(Qt::transparent));
                 m_controlsLayout->addItem(suspendButton, row, 0);
                 //row++;
                 connect(suspendButton, SIGNAL(clicked()), this, SLOT(suspend()));
@@ -515,7 +515,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
                 hibernateButton->setMaximumHeight(buttonsize);
                 hibernateButton->setMinimumHeight(buttonsize);
                 hibernateButton->setDrawBackground(true);
-                hibernateButton->setTextBackgroundColor(QColor());
+                hibernateButton->setTextBackgroundColor(QColor(Qt::transparent));
                 m_controlsLayout->addItem(hibernateButton, row, 1);
                 connect(hibernateButton, SIGNAL(clicked()), this, SLOT(hibernate()));
             }
