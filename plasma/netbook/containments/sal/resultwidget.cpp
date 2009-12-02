@@ -26,7 +26,7 @@ ResultWidget::ResultWidget(QGraphicsItem *parent)
      m_animationLock(false)
 {
     m_animation = new QPropertyAnimation(this, "animationPos", this);
-    m_animation->setEasingCurve(QEasingCurve::OutBounce);
+    m_animation->setEasingCurve(QEasingCurve::InOutQuad);
     m_animation->setDuration(250);
 }
 
