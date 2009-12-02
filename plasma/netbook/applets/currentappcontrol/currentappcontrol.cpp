@@ -155,7 +155,7 @@ void CurrentAppControl::syncActiveWindow()
          }
      }
 
-    if (m_pendingActiveWindow <= 0 || applicationActive) {
+    if (applicationActive) {
         m_activeWindow = 0;
         m_currentTask->setIcon("preferences-system-windows");
         const int activeWindows = qMax(0, KWindowSystem::windows().count()-1);
@@ -166,6 +166,8 @@ void CurrentAppControl::syncActiveWindow()
         }
         m_closeTask->hide();
         m_maximizeTask->hide();
+    } else if (m_pendingActiveWindow <= 0) {
+        return;
     } else {
         m_activeWindow = m_pendingActiveWindow;
         KWindowInfo info = KWindowSystem::windowInfo(m_activeWindow, NET::WMName|NET::WMState);
