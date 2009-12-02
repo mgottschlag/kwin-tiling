@@ -421,6 +421,8 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         m_brightnessLabel = new Plasma::Label(controls);
         m_brightnessLabel->setText(i18n("Screen Brightness"));
+        // FIXME: 4.5
+        m_brightnessLabel->setText(i18n("Screen Brightness:"));
         m_brightnessLabel->nativeWidget()->setWordWrap(false);
         m_brightnessLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
@@ -443,6 +445,8 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         m_profileLabel = new Plasma::Label(controls);
         m_profileLabel->setText(i18n("Power Profile"));
+        // FIXME: 4.5
+        //m_profileLabel->setText(i18n("Power Profile:"));
         m_profileLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
         m_controlsLayout->addItem(m_profileLabel, row, 0);
 
@@ -544,15 +548,16 @@ void Battery::setupFonts()
         m_profileLabel->setFont(infoFont);
 
         infoFont.setPointSize(infoFont.pointSize()+1);
-        QFont labelFont = infoFont;
-        labelFont.setBold(true);
+        QFont boldFont = infoFont;
+        boldFont.setBold(true);
 
-        m_batteryLabelLabel->setFont(labelFont);
-        m_acLabelLabel->setFont(labelFont);
-        m_remainingTimeLabel->setFont(labelFont);
+        m_batteryLabelLabel->setFont(infoFont);
+        m_acLabelLabel->setFont(infoFont);
+        m_remainingTimeLabel->setFont(infoFont);
 
-        m_batteryInfoLabel->setFont(infoFont);
-        m_acInfoLabel->setFont(infoFont);
+        m_batteryInfoLabel->setFont(boldFont);
+        m_acInfoLabel->setFont(boldFont);
+        
         m_remainingInfoLabel->setFont(infoFont);
     }
 }
