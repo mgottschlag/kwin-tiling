@@ -288,7 +288,7 @@ void Battery::configAccepted()
         //kDebug() << "Show multiple battery changed: " << m_showMultipleBatteries;
         emit sizeHintChanged(Qt::PreferredSize);
     }
- 
+
     emit configNeedsSaving();
 }
 
@@ -395,6 +395,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         m_remainingTimeLabel = new Plasma::Label(controls);
         m_remainingTimeLabel->setAlignment(Qt::AlignRight);
+        // FIXME: 4.5
         //m_remainingTimeLabel->setText(i18nc("Label for remaining time", "Time Remaining:"));
         m_remainingInfoLabel = new Plasma::Label(controls);
         m_remainingInfoLabel->nativeWidget()->setWordWrap(false);
@@ -422,7 +423,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         m_brightnessLabel = new Plasma::Label(controls);
         m_brightnessLabel->setText(i18n("Screen Brightness"));
         // FIXME: 4.5
-        m_brightnessLabel->setText(i18n("Screen Brightness:"));
+        //m_brightnessLabel->setText(i18n("Screen Brightness:"));
         m_brightnessLabel->nativeWidget()->setWordWrap(false);
         m_brightnessLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
@@ -454,10 +455,10 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         QGraphicsLinearLayout *profileLayout = new QGraphicsLinearLayout(profileWidget);
         profileLayout->setSpacing(0.0);
-        
+
         m_profileCombo = new Plasma::ComboBox(controls);
         // This is necessary until Qt task #217874 is fixed
-        m_profileCombo->setZValue(100);
+        m_profileCombo->setZValue(110);
         connect(m_profileCombo, SIGNAL(activated(QString)),
                 this, SLOT(setProfile(QString)));
 
@@ -525,7 +526,6 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
             }
         }
 
-
         controls->setLayout(m_controlsLayout);
         item->setWidget(controls);
         item->setTitle(i18n("Power Management"));
@@ -557,7 +557,7 @@ void Battery::setupFonts()
 
         m_batteryInfoLabel->setFont(boldFont);
         m_acInfoLabel->setFont(boldFont);
-        
+
         m_remainingInfoLabel->setFont(infoFont);
     }
 }
@@ -592,7 +592,6 @@ void Battery::updateStatus()
                 }
             } else {
                 //kDebug() << "More batteries ...";
-                // FIXME: we're overwriting the text
                 if (bnum > 1) {
                     batteriesLabel.append("<br />");
                     batteriesInfo.append("<br />");
@@ -654,17 +653,7 @@ void Battery::updateStatus()
 
     if (m_brightnessSlider) {
         m_brightnessSlider->setValue(Solid::Control::PowerManager::brightness());
-        //kDebug() << "Updating brightness:" << Solid::Control::PowerManager::brightness();
     }
-    //kDebug() << "SIZE LABEL" << m_batteryLabel->size() << m_batteryLabel->preferredSize() << m_batteryLabel->preferredSize();
-    //m_controlsLayout->setColumnMinimumWidth(1,280);
-    //m_batteryLayout->setColumnMinimumWidth(0,200);
-    //m_batteryLayout->invalidate();
-    //m_controlsLayout->invalidate();
-/*    kDebug() << "SizeHint batteryLabelLabel:" << m_batteryLabelLabel->effectiveSizeHint(Qt::PreferredSize) << m_batteryLabelLabel->nativeWidget()->sizeHint();
-    kDebug() << "SizeHint batteryInfoLabel: " << m_batteryInfoLabel->effectiveSizeHint(Qt::PreferredSize) << m_batteryInfoLabel->nativeWidget()->sizeHint();
-    kDebug() << "SizeHint acLabelLabel:     " << m_acLabelLabel->effectiveSizeHint(Qt::PreferredSize) << m_acLabelLabel->nativeWidget()->sizeHint();
-    kDebug() << "SizeHint acInfoLabel:      " << m_acInfoLabel->effectiveSizeHint(Qt::PreferredSize) << m_acInfoLabel->nativeWidget()->sizeHint();*/
 }
 
 void Battery::openConfig()
@@ -874,7 +863,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
             // paint battery with appropriate charge level
             paintBattery(p, corect, battery_data.value()["Percent"].toInt(), battery_data.value()["Plugged in"].toBool());
 
-                // Show the charge percentage with a box on top of the battery
+            // Show the charge percentage with a box on top of the battery
             QString batteryLabel;
             if (battery_data.value()["Plugged in"].toBool()) {
                 int hours = m_remainingMSecs/1000/3600;
@@ -932,7 +921,6 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
 
 void Battery::showBatteryLabel(bool show)
 {
-    //kDebug() << show;
     if (show != m_showBatteryString) {
         showLabel(show);
         m_showBatteryString = show;
