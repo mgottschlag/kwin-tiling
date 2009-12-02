@@ -42,7 +42,7 @@ void ResultWidget::hideEvent(QHideEvent *event)
     if (!m_hiding) {
         show();
         m_hiding = true;
-        m_hideTimer->start(200);
+        m_hideTimer->start(400);
     }
 }
 
