@@ -2,6 +2,7 @@
 Name=Current Application Control
 Name[da]=Styring af aktuelt program
 Name[en_GB]=Current Application Control
+Name[es]=Control de la aplicación actual
 Name[et]=Aktiivne rakenduse juhtimine
 Name[gl]=Control do programa actual
 Name[gu]=હાલનાં કાર્યક્રમનું નિયંત્રણ
@@ -25,6 +26,7 @@ Name[zh_TW]=目前應用程式控制
 Comment=Controls for the active window
 Comment[da]=Styring af det aktive vindue
 Comment[en_GB]=Controls for the active window
+Comment[es]=Controles de la ventana activa
 Comment[et]=Aktiivse akna juhtimine
 Comment[gl]=Controla a fiestra actual
 Comment[he]=שליטה עבור החלון הפעיל

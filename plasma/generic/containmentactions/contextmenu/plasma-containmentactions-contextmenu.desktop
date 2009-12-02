@@ -2,6 +2,7 @@
 Name=Standard Menu
 Name[da]=Standardmenu
 Name[en_GB]=Standard Menu
+Name[es]=Menú estándar
 Name[et]=Standardmenüü
 Name[he]=תפריט רגיל
 Name[kk]=Стандартты мәзір
@@ -20,6 +21,7 @@ Comment[da]=Menuen der normalt vises ved højreklik
 Comment[de]=Das Menü, was für gewöhnlich durch einem Rechtsklick geöffnet wird
 Comment[en_GB]=The menu that normally shows on right-click
 Comment[eo]=La menuo videblas per dekstra musklako
+Comment[es]=El menú que se suele mostrar al hacer clic derecho
 Comment[et]=Tavaliselt hiire parema nupu klõpsuga avanev menüü
 Comment[gl]=O menú que se mostra xeralmente ao premer co botón dereito
 Comment[hr]=Izbornik koji se obično pojavljuje na desni klik

@@ -2,6 +2,7 @@
 Name=Window List
 Name[da]=Vinduesliste
 Name[en_GB]=Window List
+Name[es]=Lista de ventanas
 Name[et]=Akende nimekiri
 Name[lv]=Logu saraksts
 Name[nb]=Vindusliste
@@ -15,6 +16,7 @@ Name[zh_TW]=視窗列表
 Comment=Plasmoid to show list of opened windows.
 Comment[da]=Plasmoid til at vise en liste over åbne vinduer.
 Comment[en_GB]=Plasmoid to show list of opened windows.
+Comment[es]=Plasmoide que muestra una lista de las ventanas abiertas.
 Comment[et]=Avatud akende nimekirja näitav plasmoid.
 Comment[lv]=Plazmoīds, kas rāda atvērto logu sarakstu.
 Comment[nb]=Plasmoide som viser en liste over åpne vinduer.

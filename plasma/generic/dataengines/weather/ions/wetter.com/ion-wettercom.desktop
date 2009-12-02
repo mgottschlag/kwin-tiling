@@ -2,6 +2,7 @@
 Name=wetter.com
 Name[da]=wetter.com
 Name[en_GB]=wetter.com
+Name[es]=wetter.com
 Name[et]=wetter.com
 Name[lv]=wetter.com
 Name[nb]=wetter.com
@@ -14,6 +15,7 @@ Name[zh_TW]=wetter.com
 Comment=Weather forecast by wetter.com
 Comment[da]=Vejrudsigt fra wetter.com
 Comment[en_GB]=Weather forecast by wetter.com
+Comment[es]=Previsión meteorológica de wetter.com
 Comment[et]=Wetter.com-i ilmateade
 Comment[lv]=wetter.com laikapstākļu prognoze
 Comment[nb]=Værmelding fra wetter.com

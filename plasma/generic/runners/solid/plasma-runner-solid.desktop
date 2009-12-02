@@ -3,6 +3,7 @@
 Name=Devices
 Name[da]=Enheder
 Name[en_GB]=Devices
+Name[es]=Dispositivos
 Name[et]=Seadmed
 Name[lv]=Ierīces
 Name[nb]=Enhet
@@ -15,6 +16,7 @@ Name[zh_TW]=裝置
 Comment=Manage removable devices
 Comment[da]=Håndtér flytbare enheder
 Comment[en_GB]=Manage removable devices
+Comment[es]=Gestionar dispositivos extraíbles
 Comment[et]=Eemaldatavate seadmete haldamine
 Comment[lv]=Pārvaldīt noņemamās iekārtas
 Comment[nb]=Flyttbar
