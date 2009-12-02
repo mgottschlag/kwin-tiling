@@ -24,6 +24,7 @@
 #include <QTimer>
 #include <QWidget>
 #include <QWeakPointer>
+#include <QPropertyAnimation>
 
 #include <KIconLoader>
 
@@ -39,6 +40,9 @@ ItemContainer::ItemContainer(QGraphicsWidget *parent)
       m_maxColumnWidth(0),
       m_maxRowHeight(1)
 {
+    m_positionAnimation = new QPropertyAnimation(this, "pos", this);
+    m_positionAnimation->setEasingCurve(QEasingCurve::InOutQuad);
+    m_positionAnimation->setDuration(250);
     m_layout = new QGraphicsGridLayout(this);
 
     setFocusPolicy(Qt::StrongFocus);
@@ -448,7 +452,11 @@ void ItemContainer::resizeEvent(QGraphicsSceneResizeEvent *event)
         } else {
             newPos.setY(qMin(pos().y(), (qreal)0.0));
         }
-        setPos(newPos.toPoint());
+        if (m_positionAnimation->state() == QAbstractAnimation::Running) {
+            m_positionAnimation->stop();
+        }
+        m_positionAnimation->setEndValue(newPos.toPoint());
+        m_positionAnimation->start();
     }
 
     m_relayoutTimer->start(300);

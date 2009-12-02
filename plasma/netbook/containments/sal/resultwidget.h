@@ -20,6 +20,8 @@
 #ifndef PLASMA_RESULTWIDGET_H
 #define PLASMA_RESULTWIDGET_H
 
+#include <QTimer>
+
 #include <Plasma/IconWidget>
 
 class QPropertyAnimation;
@@ -36,9 +38,19 @@ public:
 
     QPointF animationPos() const;
     void setAnimationPos(const QPointF &pos);
+
+protected:
+    void hideEvent(QHideEvent *event);
+    void showEvent(QShowEvent *event);
+
+protected Q_SLOTS:
+    void hideTimeout();
+
 private:
     QPropertyAnimation *m_animation;
+    QTimer *m_hideTimer;
     bool m_animationLock;
+    bool m_hiding;
 };
 
 #endif

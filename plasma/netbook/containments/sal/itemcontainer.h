@@ -27,6 +27,7 @@
 #include <QWeakPointer>
 
 class QGraphicsGridLayout;
+class QPropertyAnimation;
 
 namespace Plasma
 {
@@ -87,6 +88,7 @@ private:
     QMultiMap<qreal, Plasma::IconWidget*> m_items;
     QList<Plasma::IconWidget*> m_usedItems;
     Qt::Orientation m_orientation;
+    QPropertyAnimation *m_positionAnimation;
     int m_currentIconIndexX;
     int m_currentIconIndexY;
     int m_iconSize;
