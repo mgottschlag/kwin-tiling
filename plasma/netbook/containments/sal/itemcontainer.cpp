@@ -160,8 +160,8 @@ Plasma::IconWidget *ItemContainer::createItem()
 {
     Plasma::IconWidget *item;
     if (!m_usedItems.isEmpty()) {
-        item = m_usedItems.front();
-        m_usedItems.pop_front();
+        item = m_usedItems.last();
+        m_usedItems.pop_back();
     } else {
         item = new ResultWidget(this);
     }
