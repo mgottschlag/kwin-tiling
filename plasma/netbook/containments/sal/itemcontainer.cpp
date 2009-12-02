@@ -38,7 +38,8 @@ ItemContainer::ItemContainer(QGraphicsWidget *parent)
       m_currentIconIndexY(-1),
       m_iconSize(KIconLoader::SizeHuge),
       m_maxColumnWidth(0),
-      m_maxRowHeight(1)
+      m_maxRowHeight(1),
+      m_firstRelayout(true)
 {
     m_positionAnimation = new QPropertyAnimation(this, "pos", this);
     m_positionAnimation->setEasingCurve(QEasingCurve::InOutQuad);
@@ -327,6 +328,7 @@ void ItemContainer::relayout()
     setMaximumSize(newSize);
     resize(newSize);
     m_relayoutTimer->stop();
+    m_firstRelayout = false;
 }
 
 void ItemContainer::itemRemoved(QObject *object)
@@ -455,8 +457,12 @@ void ItemContainer::resizeEvent(QGraphicsSceneResizeEvent *event)
         if (m_positionAnimation->state() == QAbstractAnimation::Running) {
             m_positionAnimation->stop();
         }
-        m_positionAnimation->setEndValue(newPos.toPoint());
-        m_positionAnimation->start();
+        if (m_firstRelayout) {
+            setPos(newPos.toPoint());
+        } else {
+            m_positionAnimation->setEndValue(newPos.toPoint());
+            m_positionAnimation->start();
+        }
     }
 
     m_relayoutTimer->start(300);

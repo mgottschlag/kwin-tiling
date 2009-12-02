@@ -94,6 +94,7 @@ private:
     int m_iconSize;
     int m_maxColumnWidth;
     int m_maxRowHeight;
+    bool m_firstRelayout;
 };
 
 #endif
