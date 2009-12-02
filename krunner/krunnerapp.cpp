@@ -97,6 +97,11 @@ void KRunnerApp::cleanUp()
     KGlobal::config()->sync();
 }
 
+KActionCollection* KRunnerApp::actionCollection()
+{
+    return m_actionCollection;
+}
+
 void KRunnerApp::initialize()
 {
     setWindowIcon(KIcon("system-run"));
@@ -109,28 +114,8 @@ void KRunnerApp::initialize()
 
     m_runnerManager = new Plasma::RunnerManager;
 
-    switch (KRunnerSettings::interface()) {
-        default:
-        case KRunnerSettings::EnumInterface::CommandOriented:
-            m_interface = new Interface(m_runnerManager);
-            break;
-        case KRunnerSettings::EnumInterface::TaskOriented:
-            m_interface = new QsDialog(m_runnerManager);
-            break;
-    }
-
     new AppAdaptor(this);
     QDBusConnection::sessionBus().registerObject( "/App", this );
-
-#ifdef Q_WS_X11
-    //FIXME: if argb visuals enabled Qt will always set WM_CLASS as "qt-subapplication" no matter what
-    //the application name is we set the proper XClassHint here, hopefully won't be necessary anymore when
-    //qapplication will manage apps with argvisuals in a better way
-    XClassHint classHint;
-    classHint.res_name = const_cast<char*>("krunner");
-    classHint.res_class = const_cast<char*>("krunner");
-    XSetClassHint(QX11Info::display(), m_interface->winId(), &classHint);
-#endif
 
     // Global keys
     m_actionCollection = new KActionCollection(this);
@@ -195,6 +180,28 @@ void KRunnerApp::initialize()
         a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::SHIFT+Qt::Key_PageUp));
         connect(a, SIGNAL(triggered(bool)), SLOT(rebootWithoutConfirmation()));
     }
+
+    //Setup the interface after we have set up the actions
+    switch (KRunnerSettings::interface()) {
+        default:
+        case KRunnerSettings::EnumInterface::CommandOriented:
+            m_interface = new Interface(m_runnerManager);
+            break;
+        case KRunnerSettings::EnumInterface::TaskOriented:
+            m_interface = new QsDialog(m_runnerManager);
+            break;
+    }
+
+#ifdef Q_WS_X11
+    //FIXME: if argb visuals enabled Qt will always set WM_CLASS as "qt-subapplication" no matter what
+    //the application name is we set the proper XClassHint here, hopefully won't be necessary anymore when
+    //qapplication will manage apps with argvisuals in a better way
+    XClassHint classHint;
+    classHint.res_name = const_cast<char*>("krunner");
+    classHint.res_class = const_cast<char*>("krunner");
+    XSetClassHint(QX11Info::display(), m_interface->winId(), &classHint);
+#endif
+
 
     m_actionCollection->readSettings();
     m_runnerManager->reloadConfiguration(); // pre-load the runners

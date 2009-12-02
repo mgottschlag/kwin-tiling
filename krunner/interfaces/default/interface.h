@@ -81,6 +81,7 @@ class Interface : public KRunnerDialog
         void searchTermSetFocus();
         void actionTriggered();
         void delayedQueryLaunch();
+        void updateSystemActivityToolTip();
 
     private:
         void centerOnScreen();

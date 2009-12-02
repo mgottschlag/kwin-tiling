@@ -32,6 +32,7 @@
 #include <QToolButton>
 #include <QVBoxLayout>
 
+#include <KAction>
 #include <KActionCollection>
 #include <KHistoryComboBox>
 #include <KCompletion>
@@ -49,6 +50,7 @@
 #include <Plasma/Theme>
 #include <Plasma/Svg>
 
+#include "krunnerapp.h"
 #include "krunnersettings.h"
 #include "interfaces/default/resultscene.h"
 #include "interfaces/default/resultitem.h"
@@ -92,14 +94,15 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     bottomLayout->addWidget( m_optionsButton );
     */
 
+    //Set up the system activity button, using the krunner global action, showing the global shortcut in the tooltip
     m_activityButton = new QToolButton(m_buttonContainer);
-//    m_activityButton->setDefault(false);
-//    m_activityButton->setAutoDefault(false);
-    m_activityButton->setText(i18n("Show System Activity"));
-    m_activityButton->setToolTip(i18n("Show System Activity"));
-    m_activityButton->setIcon(m_iconSvg->pixmap("status"));
-    connect(m_activityButton, SIGNAL(clicked()), qApp, SLOT(showTaskManager()));
-    connect(m_activityButton, SIGNAL(clicked()), this, SLOT(close()));
+    KRunnerApp *krunnerApp = KRunnerApp::self();
+    QAction *showSystemActivityAction = krunnerApp->actionCollection()->action("Show System Activity");
+    m_activityButton->setDefaultAction(showSystemActivityAction);
+
+    updateSystemActivityToolTip();
+    connect(showSystemActivityAction, SIGNAL(globalShortcutChanged(const QKeySequence &)), this, SLOT(updateSystemActivityToolTip()));
+    connect(showSystemActivityAction, SIGNAL(triggered(bool)), this, SLOT(close()));
     bottomLayout->addWidget(m_activityButton);
     //bottomLayout->addStretch(10);
 
@@ -239,7 +242,20 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
     QTimer::singleShot(0, this, SLOT(resetInterface()));
 }
+void Interface::updateSystemActivityToolTip()
+{
+    /* Set the tooltip for the Show System Activity button to include the global shortcut */
+    KRunnerApp *krunnerApp = KRunnerApp::self();
+    KAction *showSystemActivityAction = dynamic_cast<KAction *>(krunnerApp->actionCollection()->action("Show System Activity"));
+    if(!showSystemActivityAction)
+        return;
 
+    QString shortcut = showSystemActivityAction->globalShortcut().toString();
+    if(!shortcut.isEmpty())
+        m_activityButton->setToolTip( i18nc("tooltip, shortcut", "%1 (%2)", showSystemActivityAction->toolTip(), shortcut));
+    else
+        m_activityButton->setToolTip( showSystemActivityAction->toolTip() );
+}
 void Interface::setConfigWidget(QWidget *w)
 {
     m_resultsView->hide();
