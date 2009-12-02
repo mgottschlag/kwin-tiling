@@ -211,6 +211,9 @@ void TaskGroup::itemChanged(::TaskManager::TaskChanges changes)
     if (changes & ::TaskManager::IconChanged) {
         emit checkIcon(this);
     }
+    if (changes & StateChanged) {
+        emit changed(StateChanged);
+    }
 }
 
 void TaskGroup::remove(AbstractGroupableItem *item)
