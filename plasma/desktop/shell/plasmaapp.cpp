@@ -1094,7 +1094,7 @@ void PlasmaApp::remotePlasmoidAdded(Plasma::PackageMetadata metadata)
 
     // the notification ptr is automatically delete when the notification is closed
     KNotification *notification = new KNotification("newplasmoid", m_desktops.at(0));
-    notification->setText(i18n("A new widget has become available on the network:<br><b>%1</b> - </i>%2</i>",
+    notification->setText(i18n("A new widget has become available on the network:<br><b>%1</b> - <i>%2</i>",
                                metadata.name(), metadata.description()));
     notification->setActions(QStringList(i18n("Add to current activity")));
 
