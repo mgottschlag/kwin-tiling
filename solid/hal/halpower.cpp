@@ -361,13 +361,21 @@ bool HalPower::setCpuEnabled(int /*cpuNum */, bool /*enabled */)
 Solid::Control::PowerManager::BrightnessControlsList HalPower::brightnessControlsAvailable()
 {
     Solid::Control::PowerManager::BrightnessControlsList deviceList;
-    foreach(const QString &name, m_halManager.call("FindDeviceByCapability", "laptop_panel").arguments().at(0).toStringList())
+    QDBusReply<QStringList> reply = m_halManager.call("FindDeviceByCapability", "laptop_panel");
+    if (reply.isValid())
     {
-        deviceList.insert(name, Solid::Control::PowerManager::Screen);
+        foreach(const QString &name, reply.value())
+        {
+            deviceList.insert(name, Solid::Control::PowerManager::Screen);
+        }
     }
-    foreach(const QString &name, m_halManager.call("FindDeviceByCapability", "keyboard_backlight").arguments().at(0).toStringList())
+    reply = m_halManager.call("FindDeviceByCapability", "keyboard_backlight");
+    if (reply.isValid())
     {
-        deviceList.insert(name, Solid::Control::PowerManager::Keyboard);
+        foreach(const QString &name, reply.value())
+        {
+            deviceList.insert(name, Solid::Control::PowerManager::Keyboard);
+        }
     }
     return deviceList;
 }
@@ -375,46 +383,53 @@ Solid::Control::PowerManager::BrightnessControlsList HalPower::brightnessControl
 float HalPower::brightness(const QString &device)
 {
     float brightness;
-    if(m_halManager.call("FindDeviceByCapability", "laptop_panel").arguments().at(0).toStringList().contains(device))
+    QDBusReply<QStringList> reply = m_halManager.call("FindDeviceByCapability", "laptop_panel");
+    if(reply.isValid() && reply.value().contains(device))
     {
         QDBusInterface deviceInterface("org.freedesktop.Hal", device, "org.freedesktop.Hal.Device.LaptopPanel", QDBusConnection::systemBus());
-        brightness = deviceInterface.call("GetBrightness").arguments().at(0).toDouble();
-        if(deviceInterface.lastError().isValid())
+        QDBusReply<double> brightnessReply = deviceInterface.call("GetBrightness");
+        if(!brightnessReply.isValid())
         {
-            return 0;
+            return 0.0;
         }
-        else
+        brightness = brightnessReply;
+
+        QDBusInterface propertyInterface("org.freedesktop.Hal", device, "org.freedesktop.Hal.Device", QDBusConnection::systemBus());
+        QDBusReply<int> levelsReply = propertyInterface.call("GetProperty", "laptop_panel.num_levels");
+        if (levelsReply.isValid())
         {
-            QDBusInterface propertyInterface("org.freedesktop.Hal", device, "org.freedesktop.Hal.Device", QDBusConnection::systemBus());
-            int levels = propertyInterface.call("GetProperty", "laptop_panel.num_levels").arguments().at(0).toInt();
+            int levels = levelsReply;
             return (float)(100*(brightness/(levels-1)));
         }
     }
-    if(m_halManager.call("FindDeviceByCapability", "keyboard_backlight").arguments().at(0).toStringList().contains(device))
+
+    reply = m_halManager.call("FindDeviceByCapability", "keyboard_backlight");
+    if(reply.isValid() && reply.value().contains(device))
     {
         QDBusInterface deviceInterface("org.freedesktop.Hal", device, "org.freedesktop.Hal.Device.KeyboardBacklight", QDBusConnection::systemBus()); //TODO - I do not have a backlight enabled keyboard, so I'm guessing a bit here. Could someone please check this.
 
-        QDBusMessage getBrightnessDBusMessage = deviceInterface.call("GetBrightness");
-        if(!deviceInterface.lastError().isValid())
-            brightness = getBrightnessDBusMessage.arguments().at(0).toDouble();
-
-        if(deviceInterface.lastError().isValid())
+        QDBusReply<double> brightnessReply = deviceInterface.call("GetBrightness");
+        if(!brightnessReply.isValid())
         {
-            return 0;
+            return 0.0;
         }
-        else
+        brightness = brightnessReply;
+
+        QDBusInterface propertyInterface("org.freedesktop.Hal", device, "org.freedesktop.Hal.Device", QDBusConnection::systemBus());
+        QDBusReply<int> levelsReply = propertyInterface.call("GetProperty", "keyboard_backlight.num_levels");
+        if (levelsReply.isValid())
         {
-            QDBusInterface propertyInterface("org.freedesktop.Hal", device, "org.freedesktop.Hal.Device", QDBusConnection::systemBus());
-            int levels = propertyInterface.call("GetProperty", "keyboard_backlight.num_levels").arguments().at(0).toInt();
+            int levels = levelsReply;
             return (float)(100*(brightness/(levels-1)));
         }
     }
-    return 0;
+    return 0.0;
 }
 
 bool HalPower::setBrightness(float brightness, const QString &device)
 {
-    if(m_halManager.call("FindDeviceByCapability", "laptop_panel").arguments().at(0).toStringList().contains(device))
+    QDBusReply<QStringList> reply = m_halManager.call("FindDeviceByCapability", "laptop_panel");
+    if(reply.isValid() && reply.value().contains(device))
     {
         QDBusInterface propertyInterface("org.freedesktop.Hal", device, "org.freedesktop.Hal.Device", QDBusConnection::systemBus());
         int levels = propertyInterface.call("GetProperty", "laptop_panel.num_levels").arguments().at(0).toInt();
@@ -426,7 +441,9 @@ bool HalPower::setBrightness(float brightness, const QString &device)
             return true;
         }
     }
-    if(m_halManager.call("FindDeviceByCapability", "keyboard_backlight").arguments().at(0).toStringList().contains(device))
+
+    reply = m_halManager.call("FindDeviceByCapability", "keyboard_backlight");
+    if(reply.isValid() && reply.value().contains(device))
     {
         QDBusInterface propertyInterface("org.freedesktop.Hal", device, "org.freedesktop.Hal.Device", QDBusConnection::systemBus());
         int levels = propertyInterface.call("GetProperty", "keyboard_backlight.num_levels").arguments().at(0).toInt();
