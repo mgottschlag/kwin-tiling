@@ -98,7 +98,7 @@ void CurrentAppControl::init()
 
 void CurrentAppControl::constraintsEvent(Plasma::Constraints constraints)
 {
-    if (constraints && Plasma::FormFactorConstraint) {
+    if ((constraints & Plasma::FormFactorConstraint)) {
         QFontMetrics fm(Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
         if (formFactor() == Plasma::Vertical) {
             m_currentTask->setOrientation(Qt::Vertical);
