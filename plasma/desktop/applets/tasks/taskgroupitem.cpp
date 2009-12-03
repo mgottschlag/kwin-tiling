@@ -622,6 +622,8 @@ void TaskGroupItem::popupMenu()
     if (!m_popupDialog) {
         // Initialize popup dialog
         m_popupDialog = new Plasma::Dialog();
+        KWindowSystem::setType(m_popupDialog->winId(), NET::PopupMenu);
+        m_popupDialog->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
         connect(m_popupDialog, SIGNAL(dialogVisible(bool)), m_applet, SLOT(setPopupDialog(bool)));
         KWindowSystem::setState(m_popupDialog->winId(), NET::SkipTaskbar| NET::SkipPager);
         m_popupDialog->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
