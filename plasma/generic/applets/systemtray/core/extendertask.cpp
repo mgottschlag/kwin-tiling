@@ -36,6 +36,7 @@
 
 #include "../core/manager.h"
 #include "../core/job.h"
+#include "../core/notification.h"
 
 
 namespace SystemTray
@@ -163,7 +164,13 @@ void ExtenderTaskBusyWidget::updateTask()
         }
     }
 
-    int total = m_manager->jobs().count() + m_manager->notifications().count() + completedJobs;
+    int total = m_manager->jobs().count() + completedJobs;
+
+    foreach (Notification *notification, m_manager->notifications()) {
+        if (!notification->isExpired()) {
+            ++total;
+        }
+    }
 
     if (!total) {
         m_systray->hidePopup();
