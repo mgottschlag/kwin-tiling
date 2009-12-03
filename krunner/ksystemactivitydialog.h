@@ -24,13 +24,15 @@ class KSystemActivityDialog : public KDialog
         KSystemActivityDialog(QWidget *parent = NULL) : KDialog(parent), processList(0) {
             setWindowTitle(i18n("System Activity"));
             setWindowIcon(KIcon("utilities-system-monitor"));
-            setButtons(KDialog::Close);
+            setButtons(0);
             setMainWidget(&processList);
             processList.setScriptingEnabled(true);
+            setSizeGripEnabled(true);
 
             setInitialSize(QSize(650, 420));
             KConfigGroup cg = KGlobal::config()->group("TaskDialog");
             restoreDialogSize(cg);
+
             processList.loadSettings(cg);
             // Since we default to forcing the window to be KeepAbove, if the user turns this off, remember this
             const bool keepAbove = KRunnerSettings::keepTaskDialogAbove();
@@ -55,7 +57,21 @@ class KSystemActivityDialog : public KDialog
             processList.filterLineEdit()->setText(filterText);
             processList.filterLineEdit()->setFocus();
         }
-        virtual void closeEvent(QCloseEvent *event) {
+        /** Save the settings if the user clicks (x) button on the window */
+        void closeEvent(QCloseEvent *event) {
+            saveDialogSettings();
+            if(event)
+                event->accept();
+        }
+
+        /** Save the settings if the user presses the ESC key */
+        virtual void reject () {
+            saveDialogSettings();
+            QDialog::reject();
+        }
+
+    private:
+        void saveDialogSettings() {
             //When the user closes the dialog, save the position and the KeepAbove state
             KConfigGroup cg = KGlobal::config()->group("TaskDialog");
             saveDialogSize(cg);
@@ -65,11 +81,7 @@ class KSystemActivityDialog : public KDialog
             bool keepAbove = KWindowSystem::windowInfo(winId(), NET::WMState).hasState(NET::KeepAbove);
             KRunnerSettings::setKeepTaskDialogAbove(keepAbove);
             KGlobal::config()->sync();
-
-            event->accept();
         }
-
-    private:
         KSysGuardProcessList processList;
 };
 #endif // not Q_WS_WIN
