@@ -283,6 +283,7 @@ void KRunnerApp::showTaskManagerWithFilter(const QString &filterText)
         m_tasks->setButtons(KDialog::Close);
         w = new KSysGuardProcessList(m_tasks);
         m_tasks->setMainWidget(w);
+        w->setScriptingEnabled(true);
 
         m_tasks->setInitialSize(QSize(650, 420));
         KConfigGroup cg = KGlobal::config()->group("TaskDialog");
