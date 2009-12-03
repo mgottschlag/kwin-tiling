@@ -29,7 +29,7 @@ class QGraphicsLinearLayout;
 
 namespace Plasma
 {
-    class AbstractAnimation;
+    class Animation;
     class IconWidget;
     class BusyWidget;
     class Label;
@@ -313,9 +313,9 @@ class DeviceItem : public QGraphicsWidget
         ///The timer that makes the busy widget show up
         QTimer m_busyWidgetTimer;
 
-        Plasma::AbstractAnimation *m_labelFade;
-        Plasma::AbstractAnimation *m_barFade;
-        Plasma::AbstractAnimation *m_iconFade;
+        Plasma::Animation *m_labelFade;
+        Plasma::Animation *m_barFade;
+        Plasma::Animation *m_iconFade;
 };
 
 }

@@ -43,7 +43,7 @@
 #include <Plasma/ItemBackground>
 #include <Plasma/Label>
 #include <Plasma/Animator>
-#include <Plasma/AbstractAnimation>
+#include <Plasma/Animation>
 
 //Own
 #include "notifierdialog.h"

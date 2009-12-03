@@ -33,7 +33,7 @@
 #include <Plasma/ItemBackground>
 #include <Plasma/Theme>
 #include <Plasma/Animator>
-#include <Plasma/AbstractAnimation>
+#include <Plasma/Animation>
 
 #include "widgetexplorer.h"
 
@@ -518,10 +518,10 @@ void AppletsListWidget::scrollDownRight(int step)
     if (nextFirstItemIndex < 0) {
         return;
     }
-    
+
     qreal startPosition = itemPosition(nextFirstItemIndex);
     qreal endPosition = startPosition + (visibleEndPosition() - visibleStartPosition());
-    
+
     // would we show empty space at the end?
     if (endPosition > listSize()) {
         // find a better first item
@@ -536,19 +536,19 @@ void AppletsListWidget::scrollDownRight(int step)
             }
         }
     }
-    
+
     qreal move = startPosition - visibleStartPosition();
-    
+
     m_firstItemIndex = nextFirstItemIndex;
-    
+
     if (m_orientation == Qt::Horizontal) {
-        m_slide->setDirection(Plasma::MoveLeft);
+        m_slide->setProperty("movementDirection", Plasma::MoveLeft);
     } else {
-        m_slide->setDirection(Plasma::MoveUp);
+        m_slide->setProperty("movementDirection", Plasma::MoveUp);
     }
-    m_slide->setDistance(move);
+    m_slide->setProperty("distance", move);
     m_slide->start();
-    
+
     manageArrows();
 }
 
@@ -561,20 +561,20 @@ void AppletsListWidget::scrollUpLeft(int step)
     if (nextFirstItemIndex > m_currentAppearingAppletsOnList.count() - 1) {
         return;
     }
-    
+
     qreal startPosition = itemPosition(nextFirstItemIndex);
     qreal move = startPosition - visibleStartPosition();
-    
+
     m_firstItemIndex = nextFirstItemIndex;
-    
+
     if (m_orientation == Qt::Horizontal) {
-        m_slide->setDirection(Plasma::MoveLeft);
+        m_slide->setProperty("movementDirection", Plasma::MoveLeft);
     } else {
-        m_slide->setDirection(Plasma::MoveUp);
+        m_slide->setProperty("movementDirection", Plasma::MoveUp);
     }
-    m_slide->setDistance(move);
+    m_slide->setProperty("distance", move);
     m_slide->start();
-    
+
     manageArrows();
 }
 
@@ -607,7 +607,7 @@ void AppletsListWidget::manageArrows()
 {
     qreal list_size = listSize();
     qreal window_size = windowSize();
-    
+
     if (list_size <= window_size || m_currentAppearingAppletsOnList.count() == 0) {
         m_upLeftArrow->setEnabled(false);
         m_downRightArrow->setEnabled(false);
@@ -667,7 +667,7 @@ qreal AppletsListWidget::windowSize()
 qreal AppletsListWidget::itemPosition(int i)
 {
     AppletIconWidget *applet = m_currentAppearingAppletsOnList.at(i);
-    
+
     if (m_orientation == Qt::Horizontal) {
         return applet->pos().x();
     } else {

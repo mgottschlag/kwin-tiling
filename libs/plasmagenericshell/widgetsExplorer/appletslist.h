@@ -37,7 +37,7 @@
 namespace Plasma
 {
     class ItemBackground;
-    class Animator;
+    class Animation;
 } // namespace Plasma
 
 class AppletsListWidget : public QGraphicsWidget
@@ -195,7 +195,7 @@ private:
     int wheelStep;
     int m_iconSize;
 
-    Plasma::AbstractAnimation *m_slide;
+    Plasma::Animation *m_slide;
 
     QTimeLine toolTipMoveTimeLine;
     QPoint toolTipMoveFrom;
