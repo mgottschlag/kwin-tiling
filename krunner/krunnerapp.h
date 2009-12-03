@@ -35,6 +35,7 @@ namespace Plasma
 }
 
 class KRunnerDialog;
+class KSystemActivityDialog;
 class StartupId;
 
 class KRunnerApp : public KUniqueApplication
@@ -115,7 +116,7 @@ private:
     SaverEngine m_saver;
 #endif
     KRunnerDialog *m_interface;
-    KDialog *m_tasks;
+    KSystemActivityDialog *m_tasks;
     StartupId *m_startupId;
 };
 

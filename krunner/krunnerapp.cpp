@@ -43,12 +43,9 @@
 #include <Plasma/RunnerManager>
 #include <Plasma/AbstractRunner>
 
-#ifdef Q_WS_X11
-#include "processui/ksysguardprocesslist.h"
-#endif
-
 #include "appadaptor.h"
 #include "kworkspace.h"
+#include "ksystemactivitydialog.h"
 #include "interfaces/default/interface.h"
 #include "interfaces/quicksand/qs_dialog.h"
 #ifdef Q_WS_X11
@@ -60,8 +57,6 @@
 #ifdef Q_WS_X11
 #include <X11/extensions/Xrender.h>
 #endif
-
-
 
 KRunnerApp* KRunnerApp::self()
 {
@@ -94,6 +89,8 @@ void KRunnerApp::cleanUp()
     m_interface = 0;
     delete m_runnerManager;
     m_runnerManager = 0;
+    delete m_tasks;
+    m_tasks = 0;
     KGlobal::config()->sync();
 }
 
@@ -265,48 +262,13 @@ void KRunnerApp::showTaskManagerWithFilter(const QString &filterText)
 {
 #ifndef Q_WS_WIN
     //kDebug(1204) << "Launching KSysGuard...";
-    KSysGuardProcessList* w = NULL;
     if (!m_tasks) {
-        //TODO: move this dialog into its own KDialog subclass
-        //      add an expander widget (as seen in the main
-        //      krunner window when options get shown)
-        //      and put some basic feedback plasmoids there
-        //      BLOCKEDBY: said plasmoids and the dataengine
-        //                 currently being worked on, so the
-        //                 wait shouldn't be too long =)
-
-        m_tasks = new KDialog(0);
-        m_tasks->setWindowTitle(i18n("System Activity"));
-        m_tasks->setWindowIcon(KIcon("utilities-system-monitor"));
+        m_tasks = new KSystemActivityDialog;
         connect(m_tasks, SIGNAL(finished()),
                 this, SLOT(taskDialogFinished()));
-        m_tasks->setButtons(KDialog::Close);
-        w = new KSysGuardProcessList(m_tasks);
-        m_tasks->setMainWidget(w);
-        w->setScriptingEnabled(true);
-
-        m_tasks->setInitialSize(QSize(650, 420));
-        KConfigGroup cg = KGlobal::config()->group("TaskDialog");
-        m_tasks->restoreDialogSize(cg);
-        w->loadSettings(cg);
-        // Since we default to forcing the window to be KeepAbove, if the user turns this off, remember this
-        const bool keepAbove = KRunnerSettings::keepTaskDialogAbove();
-        if (keepAbove)
-            KWindowSystem::setState(m_tasks->winId(), NET::KeepAbove );
-
-    } else
-        w = static_cast<KSysGuardProcessList *> (m_tasks->mainWidget());
-
-
-    m_tasks->show();
-    m_tasks->raise();
-    KWindowSystem::setOnDesktop(m_tasks->winId(), KWindowSystem::currentDesktop());
-    KWindowSystem::forceActiveWindow(m_tasks->winId());
-
-    if (w) {
-        w->filterLineEdit()->setText(filterText);
-        w->filterLineEdit()->setFocus();
     }
+    m_tasks->run();
+    m_tasks->setFilterText(filterText);
 #endif
 }
 
@@ -365,21 +327,7 @@ void KRunnerApp::clearHistory()
 
 void KRunnerApp::taskDialogFinished()
 {
-#ifndef Q_WS_WIN  
-    KConfigGroup cg = KGlobal::config()->group("TaskDialog");
-    m_tasks->saveDialogSize(cg);
-    KSysGuardProcessList *w = static_cast<KSysGuardProcessList *> (m_tasks->mainWidget());
-    if (w) {
-        w->saveSettings(cg);
-    }
-
-    /* -- This is currently broken due to a bug(?) in KWindowSystem
-    // Since we default to forcing the window to be KeepAbove, if the user turns this off, remember this
-    bool keepAbove = KWindowSystem::windowInfo(m_tasks->winId(), NET::WMState).hasState(NET::KeepAbove);*/
-    bool keepAbove = true;
-    KRunnerSettings::setKeepTaskDialogAbove(keepAbove);
-    KGlobal::config()->sync();
-
+#ifndef Q_WS_WIN
     m_tasks->deleteLater();
     m_tasks = 0;
 #endif
