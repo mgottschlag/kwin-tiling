@@ -291,9 +291,8 @@ void KRunnerApp::showTaskManagerWithFilter(const QString &filterText)
         w->loadSettings(cg);
         // Since we default to forcing the window to be KeepAbove, if the user turns this off, remember this
         const bool keepAbove = KRunnerSettings::keepTaskDialogAbove();
-        if (keepAbove) {
+        if (keepAbove)
             KWindowSystem::setState(m_tasks->winId(), NET::KeepAbove );
-        }
 
     } else
         w = static_cast<KSysGuardProcessList *> (m_tasks->mainWidget());
@@ -374,8 +373,10 @@ void KRunnerApp::taskDialogFinished()
         w->saveSettings(cg);
     }
 
+    /* -- This is currently broken due to a bug(?) in KWindowSystem
     // Since we default to forcing the window to be KeepAbove, if the user turns this off, remember this
-    bool keepAbove = KWindowSystem::windowInfo(m_tasks->winId(), NET::WMState).hasState(NET::KeepAbove);
+    bool keepAbove = KWindowSystem::windowInfo(m_tasks->winId(), NET::WMState).hasState(NET::KeepAbove);*/
+    bool keepAbove = true;
     KRunnerSettings::setKeepTaskDialogAbove(keepAbove);
     KGlobal::config()->sync();
 
