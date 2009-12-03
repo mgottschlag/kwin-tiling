@@ -66,6 +66,7 @@ Solid::Control::WirelessNetworkInterface::Capabilities FakeWirelessNetworkInterf
 
 QObject * FakeWirelessNetworkInterface::createAccessPoint(const QString & uni)
 {
+    Q_UNUSED(uni);
     return 0;
 }
 
