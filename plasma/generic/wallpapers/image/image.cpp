@@ -21,7 +21,7 @@
 #include <KRandom>
 #include <KStandardDirs>
 #include <KIO/Job>
-#include <KNS/Engine>
+#include <knewstuff3/downloaddialog.h>
 
 #include <Plasma/Theme>
 #include <Plasma/Animator>
@@ -391,13 +391,10 @@ void Image::startSlideshow()
 
 void Image::getNewWallpaper()
 {
-    KNS::Engine engine(m_configWidget);
-    if (engine.init("wallpaper.knsrc")) {
-        KNS::Entry::List entries = engine.downloadDialogModal(m_configWidget);
-
-        if (entries.size() > 0 && m_model) {
-            m_model->reload();
-        }
+    KNS3::DownloadDialog dialog("wallpaper.knsrc", m_configWidget);
+    dialog.exec();
+    if (m_model && dialog.changedEntries().size() > 0) {
+        m_model->reload();
     }
 }
 
