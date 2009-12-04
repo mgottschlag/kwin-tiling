@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2007 Bar?? Metin <baris@pardus.org.tr>
+ *   Copyright (C) 2007 Barış Metin <baris@pardus.org.tr>
  *   Copyright (C) 2006 David Faure <faure@kde.org>
  *   Copyright (C) 2007 Richard Moore <rich@kde.org>
  *
