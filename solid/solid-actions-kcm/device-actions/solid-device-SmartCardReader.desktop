@@ -53,6 +53,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action readerType]
 Name=Reader Type
+Name[bg]=Вид четец
 Name[da]=Læsertype
 Name[en_GB]=Reader Type
 Name[eo]=Tipo de Legilo
