@@ -20,9 +20,11 @@
 
 #include "dbussystemtraytask.h"
 
+#include <QDir>
 #include <QGraphicsWidget>
 #include <QGraphicsSceneContextMenuEvent>
 #include <QIcon>
+#include <QMovie>
 
 #include <KIcon>
 #include <KIconLoader>
@@ -49,8 +51,7 @@ class DBusSystemTrayTaskPrivate
 public:
     DBusSystemTrayTaskPrivate(DBusSystemTrayTask *q)
         : q(q),
-          currentFrame(0),
-          movieTimer(0),
+          movie(0),
           blinkTimer(0),
           blink(false),
           valid(false),
@@ -60,7 +61,7 @@ public:
 
     ~DBusSystemTrayTaskPrivate()
     {
-        delete movieTimer;
+        delete movie;
         delete blinkTimer;
     }
 
@@ -79,7 +80,7 @@ public:
 
     //callbacks
     void syncToolTip(const KDbusToolTipStruct &);
-    void syncMovie(const KDbusImageVector &);
+    void syncMovie(const QString &);
     void refreshCallback(QDBusPendingCallWatcher *call);
 
 
@@ -89,9 +90,7 @@ public:
     QString title;
     QIcon icon;
     QIcon attentionIcon;
-    QVector<QPixmap> movie;
-    int currentFrame;
-    QTimer *movieTimer;
+    QMovie *movie;
     QTimer *blinkTimer;
     QHash<Plasma::Applet *, Plasma::IconWidget *>iconWidgets;
     Plasma::ToolTipContent toolTipData;
@@ -311,9 +310,8 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
             }
         }
 
-        KDbusImageVector movie;
-        properties["AttentionMovie"].value<QDBusArgument>() >> movie;
-        syncMovie(movie);
+        QString movieName = properties["AttentionMovieName"].toString();
+        syncMovie(movieName);
 
         KDbusToolTipStruct toolTip;
         properties["ToolTip"].value<QDBusArgument>() >> toolTip;
@@ -409,25 +407,30 @@ void DBusSystemTrayTaskPrivate::blinkAttention()
     blink = !blink;
 }
 
-void DBusSystemTrayTaskPrivate::syncMovie(const KDbusImageVector &movieData)
+void DBusSystemTrayTaskPrivate::syncMovie(const QString &movieName)
 {
-    movie = QVector<QPixmap>(movieData.size());
-
-    if (!movieData.isEmpty()) {
-        for (int i=0; i<movieData.size(); ++i) {
-            movie[i] = KDbusImageStructToPixmap(movieData[i]);
-        }
+    delete movie;
+    if (movieName.isNull()) {
+        movie = 0;
+        return;
     }
+    if (QDir::isAbsolutePath(movieName)) {
+        movie = new QMovie(movieName);
+    } else {
+        movie = KIconLoader::global()->loadMovie(movieName, KIconLoader::Panel);
+    }
+    q->connect(movie, SIGNAL(frameChanged(int)), q, SLOT(updateMovieFrame()));
 }
 
 
 
 void DBusSystemTrayTaskPrivate::updateMovieFrame()
 {
+    Q_ASSERT(movie);
+    QPixmap pix = movie->currentPixmap();
     foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
-        iconWidget->setIcon(movie[currentFrame]);
+        iconWidget->setIcon(pix);
     }
-    currentFrame = (currentFrame + 1) % movie.size();
 }
 
 
@@ -469,12 +472,9 @@ void DBusSystemTrayTaskPrivate::syncStatus(QString newStatus)
     }
 
     if (status == Task::NeedsAttention) {
-        if (movie.size() != 0) {
-            if (!movieTimer) {
-                movieTimer = new QTimer(q);
-                q->connect(movieTimer, SIGNAL(timeout()), q, SLOT(updateMovieFrame()));
-                movieTimer->start(100);
-            }
+        if (movie) {
+            movie->stop();
+            movie->start();
         } else if (!attentionIcon.isNull()) {
             if (!blinkTimer) {
                 blinkTimer = new QTimer(q);
@@ -483,10 +483,8 @@ void DBusSystemTrayTaskPrivate::syncStatus(QString newStatus)
             }
         }
     } else {
-        if (movieTimer) {
-            movieTimer->stop();
-            movieTimer->deleteLater();
-            movieTimer = 0;
+        if (movie) {
+            movie->stop();
         }
 
         if (blinkTimer) {
