@@ -177,7 +177,18 @@ bool Calendar::setCalendar(const QString &newCalendarType)
 {
     bool ret = calendarTable()->setCalendar(newCalendarType);
     d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
-    d->yearSpinBox->setRange(calendar()->year(calendar()->earliestValidDate()), calendar()->year(calendar()->latestValidDate()));
+    d->yearSpinBox->setRange(calendar()->year(calendar()->earliestValidDate()),
+                             calendar()->year(calendar()->latestValidDate()));
+    refreshWidgets();
+    return ret;
+}
+
+bool Calendar::setCalendar(const KCalendarSystem *newCalendar)
+{
+    bool ret = calendarTable()->setCalendar(newCalendar);
+    d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
+    d->yearSpinBox->setRange(calendar()->year(calendar()->earliestValidDate()),
+                             calendar()->year(calendar()->latestValidDate()));
     refreshWidgets();
     return ret;
 }

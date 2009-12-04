@@ -55,6 +55,7 @@ public:
     ~CalendarTable();
 
     bool setCalendar(const QString &newCalendarType = "locale");
+    bool setCalendar(const KCalendarSystem *calendar);
     const KCalendarSystem *calendar () const;
 
     bool setDate(const QDate &date);

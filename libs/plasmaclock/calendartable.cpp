@@ -95,6 +95,28 @@ class CalendarTablePrivate
             delete svg;
         }
 
+        void setCalendar(const KCalendarSystem *newCalendar)
+        {
+            // If not the global calendar, delete the old calendar first
+            if (calendar != KGlobal::locale()->calendar()) {
+                delete calendar;
+            }
+
+            calendar = newCalendar;
+
+            if (calendar == KGlobal::locale()->calendar()) {
+                calendarType = "locale";
+            } else {
+                calendarType = calendar->calendarType();
+            }
+
+            // Force date update to refresh cached date componants then update display
+            setDate(selectedDate);
+            updateHoveredPainting(QPointF());
+            calendarTable->populateHolidays();
+            calendarTable->update();
+        }
+
         void setDate(const QDate &setDate)
         {
             selectedDate = setDate;
@@ -326,24 +348,26 @@ bool CalendarTable::setCalendar(const QString &newCalendarType)
         return true;
     }
 
-    // If not the global calendar, delete the old calendar first
-    if (d->calendar != KGlobal::locale()->calendar()) {
-        delete d->calendar;
-    }
-
     if (newCalendarType == "locale") {
-        d->calendar = KGlobal::locale()->calendar();
-        d->calendarType = "locale";
+        d->setCalendar(KGlobal::locale()->calendar());
     } else {
-        d->calendar = KCalendarSystem::create(newCalendarType);
-        d->calendarType = calendar()->calendarType();
+        d->setCalendar(KCalendarSystem::create(newCalendarType));
     }
 
-    // Force date update to refresh cached date componants then update display
-    d->setDate(date());
-    d->updateHoveredPainting(QPointF());
-    populateHolidays();
-    update();
+    // Signal out date change so any dependents will update as well
+    emit dateChanged(date(), date());
+    emit dateChanged(date());
+
+    return true;
+}
+
+bool CalendarTable::setCalendar(const KCalendarSystem *newCalendar)
+{
+    if (newCalendar == d->calendar) {
+        return true;
+    }
+
+    d->setCalendar(newCalendar);
 
     // Signal out date change so any dependents will update as well
     emit dateChanged(date(), date());
