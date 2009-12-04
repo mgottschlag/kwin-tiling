@@ -1215,7 +1215,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
             shadowColor = Qt::white;
         }
 
-        QString desktopText = QString();
+        QString desktopText;
         if (m_displayedText == Number) { // Display number of desktop
             desktopText = QString::number(i + 1);
         } else if (m_displayedText == Name) { // Display name of desktop
@@ -1294,7 +1294,7 @@ void Pager::updateToolTip()
     }
 
     Plasma::ToolTipContent data;
-    QString subtext = QString();
+    QString subtext;
     int taskCounter = 0;
     int displayedTaskCounter = 0;
 
