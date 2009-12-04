@@ -26,6 +26,7 @@
 
 //KDE
 #include <KConfigDialog>
+#include <KGlobal>
 #include <KStandardDirs>
 #include <KCModuleProxy>
 #include <KCModuleInfo>
@@ -64,6 +65,7 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
 {
     setBackgroundHints(StandardBackground);
     setAspectRatioMode(IgnoreAspectRatio);
+    KGlobal::locale()->insertCatalog("solid_qt");
 
     // let's initialize the widget
     setMinimumSize(graphicsWidget()->minimumSize());
