@@ -20,7 +20,6 @@
 #include <KStandardDirs>
 #include <KDesktopFile>
 #include <KColorScheme>
-#include <KNS/Engine>
 
 #include <Plasma/Containment>
 #include <Plasma/FrameSvg>
