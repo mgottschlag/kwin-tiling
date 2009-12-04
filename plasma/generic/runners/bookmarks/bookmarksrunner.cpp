@@ -271,7 +271,7 @@ void BookmarksRunner::matchFirefoxBookmarks(Plasma::RunnerContext& context, bool
                     "moz_places.favicon_id FROM moz_bookmarks, moz_places WHERE " \
                     "moz_bookmarks.type = 1 AND moz_bookmarks.fk = moz_places.id");
     } else {
-        const QString escapedTerm = tmpTerm.replace("'", "\\'");
+        const QString escapedTerm = tmpTerm.replace('\'', "\\'");
         query = QSqlQuery("SELECT moz_bookmarks.fk, moz_bookmarks.title, moz_places.url," \
                         "moz_places.favicon_id FROM moz_bookmarks, moz_places WHERE " \
                         "moz_bookmarks.type = 1 AND moz_bookmarks.fk = moz_places.id AND " \

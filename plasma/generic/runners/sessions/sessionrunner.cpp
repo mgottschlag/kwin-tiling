@@ -130,7 +130,7 @@ void SessionRunner::match(Plasma::RunnerContext &context)
             // switch switch. ha!
 
             // we don't know the size of 'switch' translated to your language, do we?
-            QStringList words = term.split(" ");
+            QStringList words = term.split(' ');
             int switchCmdSize = words.at(0).size();
 
             user = term.right(term.size() - switchCmdSize).trimmed();

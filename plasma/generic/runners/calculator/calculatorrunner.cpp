@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2007 Barış Metin <baris@pardus.org.tr>
+ *   Copyright (C) 2007 Bar?? Metin <baris@pardus.org.tr>
  *   Copyright (C) 2006 David Faure <faure@kde.org>
  *   Copyright (C) 2007 Richard Moore <rich@kde.org>
  *
@@ -172,7 +172,7 @@ void CalculatorRunner::match(Plasma::RunnerContext &context)
     QString cmd = term;
 
     //no meanless space between friendly guys: helps simplify code
-    cmd = cmd.trimmed().replace(" ", "");
+    cmd = cmd.trimmed().replace(' ', "");
 
     if (cmd.length() < 4) {
         return;
