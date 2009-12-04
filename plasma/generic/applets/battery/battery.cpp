@@ -788,7 +788,7 @@ void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int bat
         m_theme->paint(p, contentsRect, "Battery");
     }
 
-    QString fill_element = QString();
+    QString fill_element;
     if (plugState) {
         if (batteryPercent > 95) {
             fill_element = "Fill100";
