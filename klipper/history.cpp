@@ -47,10 +47,10 @@ void History::insert( HistoryItem* item ) {
 
     m_topIsUserSelected = false;
     items_t::iterator it = m_items.find(item->uuid());
-    if (*it == m_top) {
-        return;
-    }
     if (it != m_items.end()) {
+        if (*it == m_top) {
+            return;
+        }
         slotMoveToTop( item->uuid() );
     } else {
         forceInsert( item );
