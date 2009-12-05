@@ -191,8 +191,8 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     connect(m_goAction, SIGNAL(triggered()), this, SLOT(returnPressed()));
     connect(m_stop->action(), SIGNAL(triggered()), m_browser->page()->action(QWebPage::Stop), SLOT(trigger()));
 
-    connect(m_historyCombo, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
-    connect(m_historyCombo, SIGNAL(activated(int)), this, SLOT(returnPressed()));
+    connect(m_historyCombo->nativeWidget(), SIGNAL(returnPressed()), this, SLOT(returnPressed()));
+    connect(m_historyCombo->nativeWidget(), SIGNAL(activated(int)), this, SLOT(returnPressed()));
     connect(m_historyCombo, SIGNAL(activated(const QString&)), this, SLOT(comboTextChanged(const QString&)));
     connect(m_browser->page()->mainFrame(), SIGNAL(urlChanged(const QUrl &)), this, SLOT(urlChanged(const QUrl &)));
     connect(m_browser, SIGNAL(loadProgress(int)), this, SLOT(loadProgress(int)));
