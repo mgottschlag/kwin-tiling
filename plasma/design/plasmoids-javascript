@@ -479,9 +479,9 @@ the widgetToAnimate property, however, it can be re-assigned to any QGraphicsWid
 (e.g. Plasma widgets such as push buttons, sliders, etc) one wants.
 
 Animations may also be put into groups for convenient sequential or parallel running
-by creating an AnimationGroup object and then calling add(widget) on it. The parallel (bool)
-property holds whether or not the animations should be run in parallel or sequentially.
-The default is sequential.
+by creating an AnimationGroup or ParallelAnimationGroup object and then calling add(widget) on it.
+Parallel animation groups execute aniations in them simultaneously, while plain AnimationGroups
+run the animations one after another.
 
 Painting
 ========
