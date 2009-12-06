@@ -541,6 +541,7 @@ void AppletsListWidget::scrollDownRight(int step)
 
     m_firstItemIndex = nextFirstItemIndex;
 
+    m_slide->stop();
     if (m_orientation == Qt::Horizontal) {
         m_slide->setProperty("movementDirection", Plasma::MoveLeft);
     } else {
@@ -567,6 +568,7 @@ void AppletsListWidget::scrollUpLeft(int step)
 
     m_firstItemIndex = nextFirstItemIndex;
 
+    m_slide->stop();
     if (m_orientation == Qt::Horizontal) {
         m_slide->setProperty("movementDirection", Plasma::MoveLeft);
     } else {
