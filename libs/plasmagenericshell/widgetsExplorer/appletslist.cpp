@@ -163,7 +163,7 @@ bool AppletsListWidget::eventFilter(QObject *obj, QEvent *event)
         QGraphicsWidget *widget = dynamic_cast<QGraphicsWidget *>(obj);
 
         if (widget == m_appletsListWidget) {
-            //the resize occured with the list widget
+            //the resize occurred with the list widget
             if (m_orientation == Qt::Horizontal) {
                 m_appletsListWindowWidget->setMinimumSize(0, m_appletsListWidget->minimumHeight());
             } else {
@@ -173,7 +173,7 @@ bool AppletsListWidget::eventFilter(QObject *obj, QEvent *event)
             manageArrows();
             return false;
         } else if (widget == m_appletsListWindowWidget) {
-            // the resize occured with the window widget
+            // the resize occurred with the window widget
             int maxVisibleIconsOnList = maximumAproxVisibleIconsOnList();
             arrowClickStep = ceil((float)maxVisibleIconsOnList/4);
             wheelStep = ceil((float)maxVisibleIconsOnList/2);
