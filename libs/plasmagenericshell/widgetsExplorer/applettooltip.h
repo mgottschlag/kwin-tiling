@@ -24,9 +24,6 @@
 #include "plasmaappletitemmodel_p.h"
 #include "appleticon.h"
 
-#include <QtCore>
-#include <QtGui>
-
 #include <plasma/dialog.h>
 #include <plasma/widgets/iconwidget.h>
 #include <plasma/widgets/pushbutton.h>

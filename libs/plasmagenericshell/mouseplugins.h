@@ -17,8 +17,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef CONTEXTACTIONDIALOG_H
-#define CONTEXTACTIONDIALOG_H
+#ifndef MOUSEPLUGINS_H
+#define MOUSEPLUGINS_H
 
 #include "ui_MousePlugins.h"
 
@@ -61,5 +61,5 @@ private:
 //    MouseInputButton *m_addButton;
 };
 
-#endif
+#endif /* MOUSEPLUGINS */
 

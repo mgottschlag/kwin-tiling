@@ -141,7 +141,7 @@ void MouseInputButton::setTrigger(const QString &trigger)
             if (mod == "NoModifier") {
                 break;
             }
-            pretty += m_prettyStrings.value(mod) + "+";
+            pretty += m_prettyStrings.value(mod) + '+';
         }
         pretty += m_prettyStrings.value(button);
 
@@ -156,16 +156,16 @@ void MouseInputButton::showModifiers(Qt::KeyboardModifiers modifiers)
         pretty = i18n("Input here...");
     } else {
         if (modifiers & Qt::ShiftModifier) {
-            pretty = m_prettyStrings.value("ShiftModifier") + "+";
+            pretty = m_prettyStrings.value("ShiftModifier") + '+';
         }
         if (modifiers & Qt::ControlModifier) {
-            pretty += m_prettyStrings.value("ControlModifier") + "+";
+            pretty += m_prettyStrings.value("ControlModifier") + '+';
         }
         if (modifiers & Qt::AltModifier) {
-            pretty += m_prettyStrings.value("AltModifier") + "+";
+            pretty += m_prettyStrings.value("AltModifier") + '+';
         }
         if (modifiers & Qt::MetaModifier) {
-            pretty += m_prettyStrings.value("MetaModifier") + "+";
+            pretty += m_prettyStrings.value("MetaModifier") + '+';
         }
         pretty += "...";
     }

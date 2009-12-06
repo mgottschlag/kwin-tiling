@@ -23,8 +23,6 @@
 
 #include <QBasicTimer>
 #include <QTimeLine>
-#include <QtCore>
-#include <QtGui>
 
 #include <Plasma/Svg>
 #include <plasma/widgets/toolbutton.h>

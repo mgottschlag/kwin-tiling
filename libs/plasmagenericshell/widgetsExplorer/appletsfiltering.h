@@ -20,9 +20,6 @@
 #ifndef APPLETSFILTERING_H
 #define APPLETSFILTERING_H
 
-#include <QtCore>
-#include <QtGui>
-
 #include "kcategorizeditemsviewmodels_p.h"
 #include "plasmaappletitemmodel_p.h"
 #include "widgetexplorer.h"
