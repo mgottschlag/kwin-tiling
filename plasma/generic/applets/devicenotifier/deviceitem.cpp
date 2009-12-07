@@ -150,6 +150,8 @@ void DeviceItem::collapse()
     if (!isCollapsed()) {
         m_treeLayout->removeAt(1);
         m_actionsWidget->hide();
+
+        update();
     }
 }
 
@@ -159,7 +161,7 @@ void DeviceItem::expand()
         m_treeLayout->addItem(m_actionsWidget);
         m_actionsWidget->show();
 
-        adjustSize();
+        update();
     }
 }
 
@@ -372,7 +374,7 @@ void DeviceItem::setReady()
         m_mainLayout->removeItem(m_busyWidget);
         m_mainLayout->addItem(m_leftActionIcon);
         m_mainLayout->setAlignment(m_leftActionIcon, Qt::AlignVCenter);
-        m_leftActionIcon->setVisible(m_hovered || !isCollapsed());
+        m_leftActionIcon->show();
     }
 }
 
