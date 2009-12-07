@@ -3,6 +3,7 @@ Type=ServiceType
 X-KDE-ServiceType=Plasma/Sal/Menu
 
 Name=Plasma Search and Launch menu
+Name[csb]=Menu szëkbë ë zrëszaniô plazmë
 Name[da]=Plasma menu til søgning og opstart
 Name[en_GB]=Plasma Search and Launch menu
 Name[et]=Plasma otsimise ja käivitamise menüü

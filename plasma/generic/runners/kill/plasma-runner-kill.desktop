@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Terminate Applications
+Name[csb]=Zamëkô apliakcëje
 Name[da]=Afslut programmer
 Name[de]=Programme beenden
 Name[en_GB]=Terminate Applications
@@ -22,6 +23,7 @@ Name[uk]=Переривання програм
 Name[x-test]=xxTerminate Applicationsxx
 Name[zh_TW]=終端機應用程式
 Comment=Stop applications that are currently running
+Comment[csb]=Zamëkô prawie robiącé aplikacëje
 Comment[da]=Stop programmer der kører i øjeblikket
 Comment[de]=Gerade laufende Anwendungen beenden
 Comment[en_GB]=Stop applications that are currently running

@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Window List
+Name[csb]=Lësta òknów
 Name[da]=Vinduesliste
 Name[en_GB]=Window List
 Name[es]=Lista de ventanas
@@ -14,6 +15,7 @@ Name[x-test]=xxWindow Listxx
 Name[zh_TW]=視窗列表
 
 Comment=Plasmoid to show list of opened windows.
+Comment[csb]=Plazmòid wëskrzënianiô lëstë òtemkłich òknów
 Comment[da]=Plasmoid til at vise en liste over åbne vinduer.
 Comment[en_GB]=Plasmoid to show list of opened windows.
 Comment[es]=Plasmoide que muestra una lista de las ventanas abiertas.

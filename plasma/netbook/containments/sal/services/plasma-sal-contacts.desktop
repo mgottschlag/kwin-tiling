@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Contacts
+Name[csb]=Łączbë
 Name[da]=Kontakter
 Name[de]=Kontakte
 Name[en_GB]=Contacts
@@ -26,6 +27,7 @@ Name[wa]=Soçons
 Name[x-test]=xxContactsxx
 Name[zh_TW]=聯絡人
 Comment=List all your contacts
+Comment[csb]=Wëskrzëni wszëtczé twòjé łączbë
 Comment[da]=Oplist alle dine kontakter
 Comment[de]=Alle Kontakte auflisten
 Comment[en_GB]=List all your contacts

@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Standard Menu
+Name[csb]=Standardowé menu
 Name[da]=Standardmenu
 Name[en_GB]=Standard Menu
 Name[es]=Menú estándar
@@ -17,6 +18,7 @@ Name[uk]=Стандартне меню
 Name[x-test]=xxStandard Menuxx
 Name[zh_TW]=標準選單
 Comment=The menu that normally shows on right-click
+Comment[csb]=Menu wëskrzëniwóné zwëczajno pò klëkniãcô prawą knąpą
 Comment[da]=Menuen der normalt vises ved højreklik
 Comment[de]=Das Menü, was für gewöhnlich durch einem Rechtsklick geöffnet wird
 Comment[en_GB]=The menu that normally shows on right-click
