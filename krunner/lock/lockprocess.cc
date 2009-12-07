@@ -763,8 +763,11 @@ void LockProcess::stopSaver()
     hideSaverWindow();
     mVisibility = false;
     if (!child_saver) {
-        if (mLocked)
+        if (mLocked) {
             KDisplayManager().setLock( false );
+            mLocked = false;
+            KNotification::event( "unlocked" );
+        }
         ungrabInput();
         const char *out = "GOAWAY!";
         for (QList<int>::ConstIterator it = child_sockets.constBegin(); it != child_sockets.constEnd(); ++it)
@@ -1161,6 +1164,7 @@ bool LockProcess::checkPass(const QString &reason)
         //so that the user doesn't have to type their password twice
         mLocked = false;
         KDisplayManager().setLock(false);
+        KNotification::event( "unlocked" );
         //FIXME while suppressUnlock *should* always be running, if it isn't
         //(say if someone's doing things they shouldn't with dbus) then it won't get started by this
         //which means that a successful unlock will never re-lock
