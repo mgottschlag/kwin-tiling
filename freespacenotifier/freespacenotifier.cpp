@@ -1,6 +1,7 @@
 /* This file is part of the KDE Project
    Copyright (c) 2006 Lukas Tinkl <ltinkl@suse.cz>
    Copyright (c) 2008 Lubos Lunak <l.lunak@suse.cz>
+   Copyright (c) 2009 Ivo Anjo <knuckles@gmail.com>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,50 +22,54 @@
 #include <sys/vfs.h>
 #include <unistd.h>
 
-#include <Qt/qdir.h>
-#include <Qt/qfile.h>
-#include <Qt/qlabel.h>
-#include <Qt/qspinbox.h>
+#include <QtCore/QDir>
+#include <QtCore/QFile>
+#include <QtGui/QLabel>
+#include <QtGui/QSpinBox>
 
-#include <kconfig.h>
-#include <kdebug.h>
-#include <klocale.h>
-#include <krun.h>
+#include <QtDBus/QtDBus>
 
-#include "ui_freespacewidget.h"
+#include <KDebug>
+#include <KLocale>
+#include <KRun>
+#include <KConfigDialog>
 
+#include "settings.h"
+#include "ui_freespacenotifier_prefs_base.h"
 
 FreeSpaceNotifier::FreeSpaceNotifier( QObject* parent )
     : QObject( parent )
     , lastAvailTimer( NULL )
-    , dialog( NULL )
+    , notification( NULL )
     , lastAvail( -1 )
 {
+    // If we are running, notifications are enabled
+    FreeSpaceNotifierSettings::setEnableNotification( true );
+    
     connect( &timer, SIGNAL( timeout() ), SLOT( checkFreeDiskSpace() ) );
-    KConfig cfg( "lowspacesuse" );
-    KConfigGroup group( &cfg, "General" );
-    limit = group.readEntry( "WarnMinimumFreeSpace", 200 ); // MiB
-    if( limit != 0 )
-        timer.start( 1000 * 60 /* 1 minute */ );
+    timer.start( 1000 * 60 /* 1 minute */ );
 }
 
 FreeSpaceNotifier::~FreeSpaceNotifier()
 {
-    delete dialog;
+    // The notification is automatically destroyed when it goes away, so we only need to do this if
+    // it is still being shown
+    if ( notification ) notification->deref();
 }
 
 void FreeSpaceNotifier::checkFreeDiskSpace()
 {
-    if ( dialog )
+    if ( notification || !FreeSpaceNotifierSettings::enableNotification() )
         return;
     struct statfs sfs;
-    if ( statfs( QFile::encodeName( QDir::homeDirPath() ), &sfs ) == 0 )
+    if ( statfs( QFile::encodeName( QDir::homePath() ), &sfs ) == 0 )
     {
         long avail = ( getuid() ? sfs.f_bavail : sfs.f_bfree );
 
         if (avail < 0 || sfs.f_blocks <= 0)
-            return; // we better do not say anything about it
+            return; // we better not say anything about it
         
+        long limit = FreeSpaceNotifierSettings::minimumSpace(); // MiB
         int availpct = int( 100 * avail / sfs.f_blocks );
         avail = ((long long)avail) * sfs.f_bsize / ( 1024 * 1024 ); // to MiB
         bool warn = false;
@@ -86,71 +91,60 @@ void FreeSpaceNotifier::checkFreeDiskSpace()
         }
         if ( warn )
         {
-            dialog = new KDialog;
-            dialog->setCaption( i18n( "Low Disk Space" ));
-            QWidget* mainwidget = new QWidget(dialog);
-            dialog->setMainWidget(mainwidget);
-            dialog->setButtons( KDialog::Yes | KDialog::No | KDialog::Cancel );
-            dialog->setDefaultButton( KDialog::Yes );
-            dialog->setEscapeButton( KDialog::No );
-            dialog->setButtonText( KDialog::Yes, i18n( "Open File Manager" ));
-            dialog->setButtonText( KDialog::No, i18n( "Do Nothing" ));
-            dialog->setButtonText( KDialog::Cancel, i18n( "Disable Warning" ));
-            widget = new Ui_FreeSpaceWidget();
-            widget->setupUi( mainwidget );
+            notification = new KNotification( "freespacenotif", 0, KNotification::Persistent );
 
-            QString text = i18n( "You are running low on disk space on your home partition (currently %2%, %1 MiB free).",
-                avail, availpct );
-            widget->warningLabel->setText( text );
-            widget->spinbox->setMinValue( 0 );
-            widget->spinbox->setMaxValue( 100000 );
-            widget->spinbox->setValue( limit );
-            connect( dialog, SIGNAL( yesClicked() ), SLOT( slotYes() ) );
-            connect( dialog, SIGNAL( noClicked() ), SLOT( slotNo() ) );
-            connect( dialog, SIGNAL( cancelClicked() ), SLOT( slotCancel() ) );
-            dialog->show();
+            notification->setText( i18n( "You are running low on disk space on your home partition (currently %2%, %1 MiB free).\nWould you like to run a file manager to free some disk space?", avail, availpct ) );
+            notification->setActions( QStringList() << i18n( "Open File Manager" ) << i18n( "Do Nothing" ) << i18n( "Configure Warning" ) );
+            //notification->setPixmap( ... ); // TODO: Maybe add a picture here?
+
+            connect( notification, SIGNAL( action1Activated() ), SLOT( openFileManager() ) );
+            connect( notification, SIGNAL( action2Activated() ), SLOT( cleanupNotification() ) );
+            connect( notification, SIGNAL( action3Activated() ), SLOT( showConfiguration() ) );
+            connect( notification, SIGNAL( closed() ),           SLOT( cleanupNotification() ) );
+
+            notification->setComponentData( KComponentData( "freespacenotifier" ) );
+            notification->sendEvent();
         }
     }
 }
 
-void FreeSpaceNotifier::slotYes()
+void FreeSpaceNotifier::openFileManager()
 {
-    ( void ) new KRun( KUrl::fromPathOrUrl( QDir::homeDirPath() ), dialog );
-    cleanupDialog( widget->spinbox->value());
+    cleanupNotification();
+    new KRun( KUrl( QDir::homePath() ), 0 );
 }
 
-void FreeSpaceNotifier::slotNo()
+void FreeSpaceNotifier::showConfiguration()
 {
-    cleanupDialog( widget->spinbox->value());
+    cleanupNotification();
+
+    if ( KConfigDialog::showDialog( "settings" ) )  {
+        return;
+    }
+
+    KConfigDialog *dialog = new KConfigDialog( 0, "settings", FreeSpaceNotifierSettings::self() );
+    QWidget *generalSettingsDlg = new QWidget();
+
+    Ui::freespacenotifier_prefs_base preferences;
+    preferences.setupUi( generalSettingsDlg );
+
+    dialog->addPage( generalSettingsDlg, i18n( "General" ), "system-run" );
+    connect( dialog, SIGNAL( finished() ), this, SLOT( configDialogClosed() ) );
+    dialog->setAttribute( Qt::WA_DeleteOnClose );
+    dialog->show();
 }
 
-void FreeSpaceNotifier::slotCancel()
+void FreeSpaceNotifier::cleanupNotification()
 {
-    cleanupDialog( 0 ); // set limit to zero
-}
+    notification = NULL;
 
-void FreeSpaceNotifier::cleanupDialog( long newLimit )
-{
-    dialog->deleteLater();
-    dialog = NULL;
-    if( limit != newLimit )
+    // warn again if constantly below limit for too long
+    if( lastAvailTimer == NULL )
     {
-        KConfig cfg( "lowspacesuse" );
-        KConfigGroup group( &cfg, "General" );
-        limit = newLimit;
-        group.writeEntry( "WarnMinimumFreeSpace", int( limit ));
-        if( limit == 0 )
-            timer.stop();
+        lastAvailTimer = new QTimer( this );
+        connect( lastAvailTimer, SIGNAL( timeout() ), SLOT( resetLastAvailable() ) );
     }
-    if( limit != 0 )
-    { // warn again if constanly below limit for too long
-        if( lastAvailTimer == NULL )
-        { 
-            lastAvailTimer = new QTimer( this );
-            connect( lastAvailTimer, SIGNAL( timeout()), SLOT( resetLastAvailable()));
-        }
-        lastAvailTimer->start( 1000 * 60 * 60 /* 1 hour*/ ); 
-    }
+    lastAvailTimer->start( 1000 * 60 * 60 /* 1 hour*/ );
 }
 
 void FreeSpaceNotifier::resetLastAvailable()
@@ -160,3 +154,36 @@ void FreeSpaceNotifier::resetLastAvailable()
     lastAvailTimer = NULL;
 }
 
+void FreeSpaceNotifier::configDialogClosed()
+{
+    if ( !FreeSpaceNotifierSettings::enableNotification() )
+        disableFSNotifier();
+}
+
+/* The idea here is to disable ourselves by telling kded to stop autostarting us, and
+ * to kill the current running instance.
+ */
+void FreeSpaceNotifier::disableFSNotifier()
+{
+    QDBusInterface iface( "org.kde.kded", "/kded", "org.kde.kded" );
+    if ( dbusError( iface ) ) return;
+
+    // Disable current module autoload
+    iface.call( "setModuleAutoloading", "freespacenotifier", false );
+    if ( dbusError( iface ) ) return;
+
+    // Unload current module
+    iface.call( "unloadModule", "freespacenotifier" );
+    if ( dbusError( iface ) ) return;
+}
+
+bool FreeSpaceNotifier::dbusError( QDBusInterface &iface )
+{
+    QDBusError err = iface.lastError();
+    if ( err.isValid() )
+    {
+        kError() << "Failed to perform operation on kded [" << err.name() << "]:" << err.message();
+        return true;
+    }
+    return false;
+}

@@ -1,6 +1,7 @@
 /* This file is part of the KDE Project
    Copyright (c) 2006 Lukas Tinkl <ltinkl@suse.cz>
    Copyright (c) 2008 Lubos Lunak <l.lunak@suse.cz>
+   Copyright (c) 2009 Ivo Anjo <knuckles@gmail.com>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
 #ifndef MODULE_H
 #define MODULE_H
 
-#include <kdedmodule.h>
+#include <KDEDModule>
 #include <QtCore/QObject>
 #include <QtDBus/QtDBus>
 

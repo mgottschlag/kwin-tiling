@@ -1,6 +1,7 @@
 /* This file is part of the KDE Project
    Copyright (c) 2006 Lukas Tinkl <ltinkl@suse.cz>
    Copyright (c) 2008 Lubos Lunak <l.lunak@suse.cz>
+   Copyright (c) 2009 Ivo Anjo <knuckles@gmail.com>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,16 +19,14 @@
 
 #include "module.h"
 
-#include <kpluginfactory.h>
-#include <kpluginloader.h>
+#include <KPluginFactory>
+#include <KPluginLoader>
 
 K_PLUGIN_FACTORY(FreeSpaceNotifierModuleFactory,
                  registerPlugin<FreeSpaceNotifierModule>();
     )
-K_EXPORT_PLUGIN(FreeSpaceNotifierModuleFactory("susefreespacenotifier"))
+K_EXPORT_PLUGIN(FreeSpaceNotifierModuleFactory("freespacenotifier"))
 
-
-// KhotKeysModule
 
 FreeSpaceNotifierModule::FreeSpaceNotifierModule(QObject* parent, const QList<QVariant>&)
     : KDEDModule(parent)

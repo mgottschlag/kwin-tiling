@@ -1,19 +1,21 @@
-add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
-
 
 ########### next target ###############
 
-set(kded_susefreespacenotifier_SRCS freespacenotifier.cpp module.cpp)
+set(kded_freespacenotifier_SRCS freespacenotifier.cpp module.cpp)
 
-kde4_add_ui_files(kded_susefreespacenotifier_SRCS freespacewidget.ui)
+kde4_add_ui_files(kded_freespacenotifier_SRCS freespacenotifier_prefs_base.ui)
 
-kde4_add_plugin(kded_susefreespacenotifier ${kded_susefreespacenotifier_SRCS})
+kde4_add_kcfg_files(kded_freespacenotifier_SRCS settings.kcfgc)
 
-target_link_libraries(kded_susefreespacenotifier ${KDE4_KIO_LIBS} )
+kde4_add_plugin(kded_freespacenotifier ${kded_freespacenotifier_SRCS})
 
-install(TARGETS kded_susefreespacenotifier  DESTINATION ${PLUGIN_INSTALL_DIR} )
+target_link_libraries(kded_freespacenotifier ${KDE4_KIO_LIBS} )
+
+install(TARGETS kded_freespacenotifier  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install( FILES susefreespacenotifier.desktop  DESTINATION  ${SERVICES_INSTALL_DIR}/kded )
+install( FILES freespacenotifier.desktop  DESTINATION  ${SERVICES_INSTALL_DIR}/kded )
+install( FILES freespacenotifier.notifyrc  DESTINATION  ${DATA_INSTALL_DIR}/freespacenotifier )
+install( FILES freespacenotifier.kcfg  DESTINATION  ${KCFG_INSTALL_DIR} )

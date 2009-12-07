@@ -1,6 +1,7 @@
 /* This file is part of the KDE Project
    Copyright (c) 2006 Lukas Tinkl <ltinkl@suse.cz>
    Copyright (c) 2008 Lubos Lunak <l.lunak@suse.cz>
+   Copyright (c) 2009 Ivo Anjo <knuckles@gmail.com>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,11 +20,10 @@
 #ifndef _FREESPACENOTIFIER_H_
 #define _FREESPACENOTIFIER_H_
 
-#include <Qt/qtimer.h>
+#include <QtCore/QTimer>
+#include <QtDBus/QDBusInterface>
 
-#include <kdialog.h>
-
-class Ui_FreeSpaceWidget;
+#include <KNotification>
 
 class FreeSpaceNotifier
 : public QObject
@@ -35,17 +35,18 @@ class FreeSpaceNotifier
     private slots:
         void checkFreeDiskSpace();
         void resetLastAvailable();
-        void slotYes();
-        void slotNo();
-        void slotCancel();
+        void openFileManager();
+        void showConfiguration();
+        void cleanupNotification();
+        void configDialogClosed();
     private:
-        void cleanupDialog( long newLimit );
         QTimer timer;
         QTimer* lastAvailTimer;
-        KDialog* dialog;
-        Ui_FreeSpaceWidget* widget;
-        long limit;
+        KNotification *notification;
         long lastAvail; // used to supress repeated warnings when available space hasn't changed
+
+        void disableFSNotifier();
+        bool dbusError( QDBusInterface &iface );
 };
 
 #endif
