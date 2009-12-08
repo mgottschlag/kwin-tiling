@@ -204,24 +204,33 @@ void RandRScreen::handleRandREvent(XRRNotifyEvent* event)
             qDebug() << "RandRScreen::handleRandREvent - CrtcChange";
             crtcEvent = (XRRCrtcChangeNotifyEvent*)event;
             c = crtc(crtcEvent->crtc);
-            Q_ASSERT(c);
-            c->handleEvent(crtcEvent);
+            if (c) {
+                c->handleEvent(crtcEvent);
+            } else {
+                qDebug() << "RandRScreen::handleRandREvent - crtc not found";
+            }
             return;
 
         case RRNotify_OutputChange:
             qDebug() << "RandRScreen::handleRandREvent - OutputChange";
             outputEvent = (XRROutputChangeNotifyEvent*)event;
             o = output(outputEvent->output);
-            Q_ASSERT(o);
-            o->handleEvent(outputEvent);
+            if (o) {
+                o->handleEvent(outputEvent);
+            } else {
+                qDebug() << "RandRScreen::handleRandREvent - output not found";
+            }
             return;
 
         case RRNotify_OutputProperty:
             qDebug() << "RandRScreen::handleRandREvent - OutputProperty";
             propertyEvent = (XRROutputPropertyNotifyEvent*)event;
             o = output(propertyEvent->output);
-            Q_ASSERT(o);
-            o->handlePropertyEvent(propertyEvent);
+            if (o) {
+                o->handlePropertyEvent(propertyEvent);
+            } else {
+                qDebug() << "RandRScreen::handleRandREvent - output not found";
+            }
             return;
             
         default:
