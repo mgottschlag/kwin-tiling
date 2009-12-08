@@ -127,7 +127,7 @@ void RandrMonitorModule::processX11Event( XEvent* e )
                 + "\n\n" + i18n( "Do you wish to run a configuration tool to adjust the monitor setup?" );
             currentMonitors = newMonitors;
             if( KMessageBox::questionYesNo( NULL, question, i18n( "Monitor setup has changed" ),
-                    KGuiItem( "Con&figure" ), KGuiItem( "&Ignore" ), "randrmonitorchange" )
+                    KGuiItem( i18n( "Con&figure" ) ), KGuiItem( i18n( "&Ignore" ) ), "randrmonitorchange" )
                 == KMessageBox::Yes )
                 {
                 KToolInvocation::kdeinitExec( "kcmshell4", QStringList() << "display" );
