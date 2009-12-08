@@ -451,10 +451,6 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         m_profileLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
         m_controlsLayout->addItem(m_profileLabel, row, 0);
 
-        QGraphicsWidget *profileWidget = new QGraphicsWidget(controls);
-
-        QGraphicsLinearLayout *profileLayout = new QGraphicsLinearLayout(profileWidget);
-        profileLayout->setSpacing(0.0);
 
         m_profileCombo = new Plasma::ComboBox(controls);
         // This is necessary until Qt task #217874 is fixed
@@ -462,12 +458,54 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         connect(m_profileCombo, SIGNAL(activated(QString)),
                 this, SLOT(setProfile(QString)));
 
-        profileLayout->addItem(m_profileCombo);
+        m_controlsLayout->addItem(m_profileCombo, row, 1);
+
+        row++;
+
+        QGraphicsWidget *buttonWidget = new QGraphicsWidget(controls);
+        QGraphicsLinearLayout *buttonLayout = new QGraphicsLinearLayout(buttonWidget);
+        buttonLayout->setSpacing(0.0);
+        //buttonLayout->addItem(m_profileCombo);
 
         int buttonsize = KIconLoader::SizeMedium + 4;
 
+        // Sleep and Hibernate buttons
+        QSet<Solid::PowerManagement::SleepState> sleepstates = Solid::PowerManagement::supportedSleepStates();
+        foreach (const Solid::PowerManagement::SleepState &sleepstate, sleepstates) {
+            if (sleepstate == Solid::PowerManagement::StandbyState) {
+                // Not interesting at this point ...
+
+            } else if (sleepstate == Solid::PowerManagement::SuspendState) {
+                Plasma::IconWidget *suspendButton = new Plasma::IconWidget(controls);
+                suspendButton->setIcon("system-suspend");
+                suspendButton->setText(i18n("Sleep"));
+                suspendButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+                suspendButton->setOrientation(Qt::Horizontal);
+                suspendButton->setMaximumHeight(buttonsize);
+                suspendButton->setMinimumHeight(buttonsize);
+                suspendButton->setDrawBackground(true);
+                suspendButton->setTextBackgroundColor(QColor(Qt::transparent));
+                //suspendButton->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+                m_controlsLayout->addItem(suspendButton, row, 0, Qt::AlignRight|Qt::AlignVCenter);
+                //row++;
+                connect(suspendButton, SIGNAL(clicked()), this, SLOT(suspend()));
+            } else if (sleepstate == Solid::PowerManagement::HibernateState) {
+                Plasma::IconWidget *hibernateButton = new Plasma::IconWidget(controls);
+                hibernateButton->setIcon("system-suspend-hibernate");
+                hibernateButton->setText(i18n("Hibernate"));
+                hibernateButton->setOrientation(Qt::Horizontal);
+                hibernateButton->setMaximumHeight(buttonsize);
+                hibernateButton->setMinimumHeight(buttonsize);
+                hibernateButton->setDrawBackground(true);
+                hibernateButton->setTextBackgroundColor(QColor(Qt::transparent));
+                hibernateButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+                buttonLayout->addItem(hibernateButton);
+                buttonLayout->setAlignment(hibernateButton, Qt::AlignLeft|Qt::AlignVCenter);
+                connect(hibernateButton, SIGNAL(clicked()), this, SLOT(hibernate()));
+            }
+        }
         // Configure button
-        Plasma::IconWidget *configButton = new Plasma::IconWidget(profileWidget);
+        Plasma::IconWidget *configButton = new Plasma::IconWidget(buttonWidget);
         configButton->setToolTip(i18nc("tooltip on the config button in the popup", "Configure Power Management..."));
         configButton->setOrientation(Qt::Horizontal);
         configButton->setMaximumHeight(buttonsize);
@@ -481,51 +519,13 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         connect(configButton, SIGNAL(clicked()), this, SLOT(openConfig()));
         configButton->setEnabled(hasAuthorization("LaunchApp"));
 
-        profileLayout->addItem(configButton);
-        profileLayout->setItemSpacing(0, 0.0);
-        profileLayout->setItemSpacing(1, 0.0);
-        profileLayout->setAlignment(m_profileCombo, Qt::AlignLeft|Qt::AlignVCenter);
-        profileLayout->setAlignment(configButton, Qt::AlignLeft|Qt::AlignVCenter);
+        buttonLayout->addItem(configButton);
+        buttonLayout->setItemSpacing(0, 0.0);
+        buttonLayout->setItemSpacing(1, 0.0);
+        buttonLayout->setAlignment(configButton, Qt::AlignRight|Qt::AlignVCenter);
 
-        profileWidget->setLayout(profileLayout);
-
-        m_controlsLayout->addItem(profileWidget, row, 1);
-        row++;
-
-        // Sleep and Hibernate buttons
-        QSet<Solid::PowerManagement::SleepState> sleepstates = Solid::PowerManagement::supportedSleepStates();
-        foreach (const Solid::PowerManagement::SleepState &sleepstate, sleepstates) {
-            if (sleepstate == Solid::PowerManagement::StandbyState) {
-                // Not interesting at this point ...
-
-            } else if (sleepstate == Solid::PowerManagement::SuspendState) {
-                Plasma::IconWidget *suspendButton = new Plasma::IconWidget(controls);
-                suspendButton->setIcon("system-suspend");
-                suspendButton->setText(i18n("Sleep"));
-                suspendButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-                suspendButton->setOrientation(Qt::Horizontal);
-                suspendButton->setMaximumHeight(buttonsize);
-                suspendButton->setMinimumHeight(buttonsize);
-                suspendButton->setDrawBackground(true);
-                suspendButton->setTextBackgroundColor(QColor(Qt::transparent));
-                m_controlsLayout->addItem(suspendButton, row, 0);
-                //row++;
-                connect(suspendButton, SIGNAL(clicked()), this, SLOT(suspend()));
-            } else if (sleepstate == Solid::PowerManagement::HibernateState) {
-                Plasma::IconWidget *hibernateButton = new Plasma::IconWidget(controls);
-                hibernateButton->setIcon("system-suspend-hibernate");
-                hibernateButton->setText(i18n("Hibernate"));
-                hibernateButton->setOrientation(Qt::Horizontal);
-                hibernateButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-                hibernateButton->setMaximumHeight(buttonsize);
-                hibernateButton->setMinimumHeight(buttonsize);
-                hibernateButton->setDrawBackground(true);
-                hibernateButton->setTextBackgroundColor(QColor(Qt::transparent));
-                m_controlsLayout->addItem(hibernateButton, row, 1);
-                connect(hibernateButton, SIGNAL(clicked()), this, SLOT(hibernate()));
-            }
-        }
-
+        buttonWidget->setLayout(buttonLayout);
+        m_controlsLayout->addItem(buttonWidget, row, 1);
         controls->setLayout(m_controlsLayout);
         item->setWidget(controls);
         item->setTitle(i18n("Power Management"));
