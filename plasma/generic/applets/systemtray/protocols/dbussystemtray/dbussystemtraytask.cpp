@@ -410,7 +410,7 @@ void DBusSystemTrayTaskPrivate::blinkAttention()
 void DBusSystemTrayTaskPrivate::syncMovie(const QString &movieName)
 {
     delete movie;
-    if (movieName.isNull()) {
+    if (movieName.isEmpty()) {
         movie = 0;
         return;
     }
@@ -419,7 +419,9 @@ void DBusSystemTrayTaskPrivate::syncMovie(const QString &movieName)
     } else {
         movie = KIconLoader::global()->loadMovie(movieName, KIconLoader::Panel);
     }
-    q->connect(movie, SIGNAL(frameChanged(int)), q, SLOT(updateMovieFrame()));
+    if (movie) {
+        q->connect(movie, SIGNAL(frameChanged(int)), q, SLOT(updateMovieFrame()));
+    }
 }
 
 
