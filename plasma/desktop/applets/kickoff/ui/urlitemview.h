@@ -43,6 +43,12 @@ public:
     virtual void scrollTo(const QModelIndex& index, ScrollHint hint = EnsureVisible);
     virtual QRect visualRect(const QModelIndex& index) const;
     virtual void setModel(QAbstractItemModel *model);
+
+    /* if nothing is selected, the first item is
+     * @returns whether the selection has changed
+     */
+    bool initializeSelection();
+
 protected:
     // reimplemented from QAbstractItemView
     virtual int horizontalOffset() const;

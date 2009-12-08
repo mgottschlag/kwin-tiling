@@ -298,6 +298,40 @@ QModelIndex UrlItemView::indexAt(const QPoint& point) const
     return QModelIndex();
 }
 
+bool UrlItemView::initializeSelection()
+{
+    if (!selectionModel()
+            || selectionModel()->hasSelection()
+            || d->itemRects.size() == 0
+    ) {
+        return false;
+    }
+
+    // searching for the first item - the item whose rectangle is the
+    // top one
+
+    QHashIterator<QModelIndex, QRect> iter(d->itemRects);
+
+    // There is at least one item
+    iter.next();
+
+    int y = iter.value().top();
+    QModelIndex index = iter.key();
+
+    while (iter.hasNext()) {
+        iter.next();
+
+        if (y > iter.value().top()) {
+            y = iter.value().top();
+            index = iter.key();
+        }
+    }
+
+    setCurrentIndex(index);
+
+    return selectionModel()->hasSelection();
+}
+
 void UrlItemView::setModel(QAbstractItemModel *model)
 {
     QAbstractItemView::setModel(model);
@@ -651,7 +685,7 @@ void UrlItemView::dropEvent(QDropEvent *event)
             row--;
         }
 
-        model()->dropMimeData(event->mimeData(), event->dropAction(), 
+        model()->dropMimeData(event->mimeData(), event->dropAction(),
 							    row, 0, parent);
 
         d->dragging = false;

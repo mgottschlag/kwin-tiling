@@ -1,6 +1,7 @@
 /*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
     Copyright 2007 Kevin Ottens <ervin@kde.org>
+    Copyright 2009 Ivan Cukic <ivan.cukic@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -247,11 +248,14 @@ public:
         delegate->setRoleMapping(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
+
         view->setModel(searchModel);
         view->setFrameStyle(QFrame::NoFrame);
+        view->setSelectionMode(QAbstractItemView::SingleSelection);
         // prevent view from stealing focus from the search bar
         view->setFocusPolicy(Qt::NoFocus);
         view->setDragEnabled(true);
+
         setupEventHandler(view);
 
         connect(searchModel, SIGNAL(resultsAvailable()), q, SLOT(resultsAvailable()));
@@ -453,7 +457,7 @@ public:
     ContentAreaCap *contentAreaFooter;
     TabBar *contentSwitcher;
     FlipScrollView *applicationView;
-    QAbstractItemView *searchView;
+    UrlItemView *searchView;
     QAbstractItemView *favoritesView;
     ContextMenuFactory *contextMenuFactory;
     bool autoHide;
@@ -726,7 +730,21 @@ bool Launcher::eventFilter(QObject *object, QEvent *event)
             }
         }
 
+        // if the search view is visible, we are passing the events to it
+        if (d->searchView->isVisible()) {
+            if (!d->searchView->initializeSelection()
+                    || keyEvent->key() == Qt::Key_Return
+                    || keyEvent->key() == Qt::Key_Enter
+            ) {
+                qDebug() << "Passing the event to the search view" << event;
+                QCoreApplication::sendEvent(d->searchView, event);
+            }
+            return true;
+        }
+
+        // getting for the active view, and passing the events to it
         QAbstractItemView *activeView = qobject_cast<QAbstractItemView*>(d->contentArea->currentWidget());
+
         if (activeView) {
             QCoreApplication::sendEvent(activeView, event);
             return true;
