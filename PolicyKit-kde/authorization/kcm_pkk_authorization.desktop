@@ -10,6 +10,7 @@ X-KDE-System-Settings-Parent-Category=system
 X-DocPath=PolicyKit-kde/index.html
 
 Name=PolicyKit Authorization
+Name[ar]=استيثاق PolicyKit
 Name[bg]=Удостоверяване (PolicyKit)
 Name[ca]=Autoritzacions del PolicyKit
 Name[cs]=Autorizace PolicyKit
@@ -57,6 +58,7 @@ Name[zh_CN]=PolicyKit 授权
 Name[zh_TW]=PolicyKit 授權
 
 Comment=Set up policies for applications using PolicyKit
+Comment[ar]=تضع سياسات للتطبيقات التي تستخدم PolicyKit
 Comment[bg]=Настройване поведението на програмите с PolicyKit
 Comment[ca]=Defineix polítiques per a les aplicacions utilitzant el PolicyKit
 Comment[cs]=Nastavení chování aplikací pomocí PolicyKit

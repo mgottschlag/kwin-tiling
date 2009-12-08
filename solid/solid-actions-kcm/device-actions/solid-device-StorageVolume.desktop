@@ -1,5 +1,6 @@
 [Desktop Action fsType]
 Name=Fs Type
+Name[ar]=نوع نظام الملفات
 Name[bg]=Тип Fs
 Name[ca]=Tipus de sistema de fitxers
 Name[cs]=Typ FS
@@ -53,6 +54,7 @@ Name[zh_TW]=檔案系統型態
 
 [Desktop Action ignored]
 Name=Ignored
+Name[ar]=متجاهل
 Name[bg]=Игнориран
 Name[ca]=Ignorat
 Name[cs]=Ignorováno
@@ -105,6 +107,7 @@ Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
+Name[ar]=المسمى
 Name[bg]=Етикет
 Name[ca]=Etiqueta
 Name[cs]=Popisek
@@ -160,6 +163,7 @@ Name[zh_TW]=標籤
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[cs]=Jméno objektu
@@ -213,6 +217,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action size]
 Name=Size
+Name[ar]=الحجم
 Name[bg]=Големина
 Name[ca]=Mida
 Name[cs]=Velikost
@@ -268,6 +273,7 @@ Name[zh_TW]=大小
 
 [Desktop Action usage]
 Name=Usage
+Name[ar]=الاستعمال
 Name[bg]=Използване
 Name[ca]=Ús
 Name[cs]=Použití
@@ -323,6 +329,7 @@ Name[zh_TW]=使用量
 
 [Desktop Action uuid]
 Name=Uuid
+Name[ar]=Uuid
 Name[bg]=Uuid
 Name[ca]=UUID
 Name[cs]=Uuid

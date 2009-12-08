@@ -1,5 +1,6 @@
 [Desktop Action device]
 Name=Device
+Name[ar]=الجهاز
 Name[bg]=Устройство
 Name[ca]=Dispositiu
 Name[cs]=Zařízení
@@ -54,6 +55,7 @@ Name[zh_TW]=裝置
 
 [Desktop Action major]
 Name=Major
+Name[ar]=عام
 Name[ca]=Major
 Name[cs]=Velké
 Name[csb]=Wësok
@@ -106,6 +108,7 @@ Name[zh_TW]=主要
 
 [Desktop Action minor]
 Name=Minor
+Name[ar]=فرعي
 Name[ca]=Menor
 Name[cs]=Malé
 Name[csb]=Niskò
@@ -158,6 +161,7 @@ Name[zh_TW]=次要
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[cs]=Jméno objektu

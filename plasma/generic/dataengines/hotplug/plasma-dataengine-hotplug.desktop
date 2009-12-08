@@ -61,6 +61,7 @@ Name[x-test]=xxHotplug Eventsxx
 Name[zh_CN]=热插拔事件
 Name[zh_TW]=熱插拔事件
 Comment=Tracks hot-pluggable devices as they appear and disappear.
+Comment[ar]=تتابع  الأجهزة  المركبة عندما تظهر أو تختفي
 Comment[ca]=Segueix els dispositius de connexió en calent quan apareixen i desapareixen.
 Comment[da]=Holder styr på flytbare enheder efterhånden som de dukker op og forsvinder.
 Comment[de]=Überwacht Hotplug-Geräte auf Aktivierung und Deaktivierung

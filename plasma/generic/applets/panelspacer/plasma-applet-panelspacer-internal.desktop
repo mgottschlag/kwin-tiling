@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Panel Spacer
+Name[ar]=مباعد اللوحة
 Name[bg]=Panel Spacer
 Name[ca]=Espaiador del plafó
 Name[cs]=Mezera v panelu
@@ -42,6 +43,7 @@ Name[x-test]=xxPanel Spacerxx
 Name[zh_CN]=面板间距
 Name[zh_TW]=面板間隔器
 Comment=Reserve empty spaces within the panel.
+Comment[ar]=تحفظ مكان فارغ في اللوحة
 Comment[bg]=Запазване на празни места в панела.
 Comment[ca]=Reserva espais buit en el plafó.
 Comment[cs]=Rezervovat prázdné místo v panelu.

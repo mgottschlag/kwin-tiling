@@ -1,7 +1,7 @@
 [Global]
 IconName=utilities-terminal
 Comment=KDE write daemon
-Comment[ar]=مراقب كتابة للكيدي
+Comment[ar]=مراقب كتابة لكدي
 Comment[be@latin]=Słužba „write” dla „KDE”
 Comment[bg]=Демон за писане (KDE)
 Comment[bn]=কে.ডি.ই. রাইট ডিমন

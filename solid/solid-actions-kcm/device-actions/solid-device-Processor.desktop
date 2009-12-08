@@ -1,5 +1,6 @@
 [Desktop Action canChangeFrequency]
 Name=Can Change Frequency
+Name[ar]=يمكن تغير التردد
 Name[bg]=Може да променя честотата
 Name[ca]=Pot canviar la freqüència
 Name[cs]=Může měnit frekvenci
@@ -50,6 +51,7 @@ Name[zh_TW]=可變更頻率
 
 [Desktop Action instructionSets]
 Name=Instruction Sets
+Name[ar]=مجموعة الأوامر
 Name[bg]=Инструкции
 Name[ca]=Jocs d'instruccions
 Name[cs]=Instrukční sady
@@ -99,6 +101,7 @@ Name[zh_TW]=指令集
 
 [Desktop Action maxSpeed]
 Name=Max Speed
+Name[ar]=السرعة القصوى
 Name[bg]=Макс. скорост
 Name[ca]=Velocitat màxima
 Name[cs]=Maximální rychlost
@@ -153,6 +156,7 @@ Name[zh_TW]=最大速率
 
 [Desktop Action number]
 Name=Number
+Name[ar]=الرقم
 Name[bg]=Номер
 Name[ca]=Número
 Name[cs]=Číslo
@@ -206,6 +210,7 @@ Name[zh_TW]=數字
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[cs]=Jméno objektu

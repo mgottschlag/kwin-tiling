@@ -1,5 +1,6 @@
 [Desktop Action driverHandle]
 Name=Driver Handle
+Name[ar]=مقبض المشغل
 Name[bg]=Управление на драйвера
 Name[ca]=Gestor de controlador
 Name[cs]=ID ovladače
@@ -49,6 +50,7 @@ Name[zh_TW]=驅動程式處理
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[cs]=Jméno objektu
@@ -102,6 +104,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action port]
 Name=Port
+Name[ar]=المنفذ
 Name[bg]=Порт
 Name[ca]=Port
 Name[cs]=Port
@@ -156,6 +159,7 @@ Name[zh_TW]=連接埠
 
 [Desktop Action serialType]
 Name=Serial Type
+Name[ar]=نوع التسلسل
 Name[bg]=Сериен тип
 Name[ca]=Tipus de sèrie
 Name[cs]=Typ sériového

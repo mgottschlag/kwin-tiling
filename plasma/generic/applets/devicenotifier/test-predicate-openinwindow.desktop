@@ -5,6 +5,7 @@ Actions=open;
 
 [Desktop Action open]
 Name=Open with File Manager
+Name[ar]=افتح بمدير الملفات
 Name[bg]=Отваряне с файлов мениджър
 Name[ca]=Obre amb el gestor de fitxers
 Name[cs]=Otevřít ve správci souborů

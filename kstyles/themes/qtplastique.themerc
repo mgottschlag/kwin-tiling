@@ -1,5 +1,6 @@
 [Misc]
 Name=Plastique
+Name[ca]=Plastique
 Name[csb]=Plastik
 Name[da]=Plastique
 Name[de]=Plastique
@@ -30,6 +31,7 @@ Name[uk]=Plastique
 Name[x-test]=xxPlastiquexx
 Name[zh_TW]=Plastique
 Comment=Built-in unthemed style similar to Plastik from KDE3
+Comment[ca]=Un estil sense tema integrat, similar Plastik del KDE3
 Comment[csb]=Wbùdowóny sztél szlachùjący za Plastikã z KDE3
 Comment[da]=Indbygget ikke-tematiseret stil som ligner Plastik fra KDE3
 Comment[de]=Eingebauter Stil ähnlich zu Plastik aus KDE 3

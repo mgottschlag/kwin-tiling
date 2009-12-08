@@ -5,6 +5,7 @@ X-KDE-Library=solid_wicd
 InitialPreference=80
 
 Name=Wicd
+Name[ar]=Wicd
 Name[bg]=Wicd
 Name[ca]=Wicd
 Name[cs]=Wicd
@@ -55,6 +56,7 @@ Name[x-test]=xxWicdxx
 Name[zh_CN]=Wicd
 Name[zh_TW]=Wicd
 Comment=Network management using the Wicd daemon.
+Comment[ar]=إدارة الشبكة باستعمال مراقب Wicd.
 Comment[bg]=Управление на мрежата с демона Wicd.
 Comment[ca]=Gestor de xarxes que usa el dimoni Wicd.
 Comment[cs]=Správa sítě pomocí Wicd démona.

@@ -1,5 +1,6 @@
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[cs]=Jméno objektu
@@ -53,6 +54,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action plugged]
 Name=Plugged
+Name[ar]=موصول
 Name[bg]=Вкл.
 Name[ca]=Endollat
 Name[cs]=Připojeno

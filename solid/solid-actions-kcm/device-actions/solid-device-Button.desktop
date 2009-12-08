@@ -1,5 +1,6 @@
 [Desktop Action hasState]
 Name=Has State
+Name[ar]=يملك حالة
 Name[ca]=Té estat
 Name[cs]=Má stav
 Name[csb]=Mô stón
@@ -50,6 +51,7 @@ Name[zh_TW]=有狀態
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[cs]=Jméno objektu
@@ -103,6 +105,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action stateValue]
 Name=State Value
+Name[ar]=قيمة الحالة
 Name[ca]=Valor de l'estat
 Name[cs]=Hodnota stavu
 Name[da]=Tilstandsværdi
@@ -152,6 +155,7 @@ Name[zh_TW]=狀態值
 
 [Desktop Action type]
 Name=Type
+Name[ar]=النوع
 Name[bg]=Тип
 Name[ca]=Tipus
 Name[cs]=Typ

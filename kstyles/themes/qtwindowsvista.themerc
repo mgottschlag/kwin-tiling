@@ -1,5 +1,6 @@
 [Misc]
 Name=MS Windows Vista
+Name[ca]=MS Windows Vista
 Name[csb]=MS Windows Vista
 Name[da]=MS Windows Vista
 Name[de]=MS Windows Vista
@@ -31,6 +32,7 @@ Name[uk]=MS Windows Vista
 Name[x-test]=xxMS Windows Vistaxx
 Name[zh_TW]=MS Windows Vista
 Comment=Style that uses the Windows Vista style engine
+Comment[ca]=Estil que utilitza el motor d'estils del Windows Vista
 Comment[csb]=Sztél brëkùjący mòtóra sztélu Windowsa Vista
 Comment[da]=Stil der bruger stilmotoren fra Windows Vista
 Comment[de]=Stil, der das Erscheinungsbild von Windows Vista nachahmt

@@ -3,6 +3,7 @@ DataCount=1
 
 [Data_1]
 Comment=Comment
+Comment[ar]=التعليق
 Comment[bg]=Коментар
 Comment[ca]=Comentari
 Comment[cs]=Komentář
@@ -60,6 +61,7 @@ Comment[zh_TW]=註解
 DataCount=1
 Enabled=true
 Name=KMenuEdit
+Name[ar]=ك.محرّر القوائم
 Name[bg]=Редактор на системното меню
 Name[ca]=KMenuEdit
 Name[cs]=Editor nabídek
@@ -124,6 +126,7 @@ ConditionsCount=0
 
 [Data_1_1]
 Comment=Comment
+Comment[ar]=التعليق
 Comment[bg]=Коментар
 Comment[ca]=Comentari
 Comment[cs]=Komentář
@@ -180,6 +183,7 @@ Comment[zh_CN]=注释
 Comment[zh_TW]=註解
 Enabled=true
 Name=Search
+Name[ar]=ابحث
 Name[bg]=Търсене
 Name[ca]=Cerca
 Name[cs]=Hledat
@@ -250,7 +254,7 @@ ConditionsCount=0
 
 [Data_1_1Triggers]
 Comment=Simple_action
-Comment[ar]=إجراء بسيط
+Comment[ar]=إجراء_بسيط
 Comment[be@latin]=Prostaja_aperacyja
 Comment[bg]=Обикновено_действие
 Comment[ca]=Acció_simple

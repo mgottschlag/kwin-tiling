@@ -79,6 +79,7 @@ Name[x-test]=xxSystem Monitorxx
 Name[zh_CN]=系统监视器
 Name[zh_TW]=系統監視器
 Comment=System status information
+Comment[ar]=معلومات حالة النظام
 Comment[bg]=Информация за състоянието на системата
 Comment[ca]=Informació de l'estat del sistema
 Comment[cs]=Informace o stavu systému

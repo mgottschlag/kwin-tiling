@@ -569,6 +569,7 @@ Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 [Data_1_10]
 Comment=Opera-style: Press, move up, release.\nNOTE: Conflicts with 'New Tab', and as such is disabled by default.
 Comment[af]=Opera-styl: Kliek, skuif op, los.\nLet wel: konflik met 'Nuwe oortjie', en word daarom by verstek afgeskakel.
+Comment[ar]=أسلوب أوبرا اضغط حرك للأعلى ثم اترك\nلاحظ أن التعارض بين فتح لسان جديد و هذا معطل بشكل افتراضي
 Comment[bg]=Стил на Opera: натискане, движение нагоре, пускане.\nЗАБЕЛЕЖКА:Има конфликт с "Нов подпрозорец" и затова е изключено по подразбиране.
 Comment[ca]=Estil Opera: premeu, moveu amunt,deixeu anar.\nNota: els conflictes amb 'Pestanya nova', i similars s'han deshabilitat per omissió.
 Comment[ca@valencia]=Estil Opera: premeu, moveu amunt,deixeu anar.\nNota: els conflictes amb 'Pestanya nova', i similars s'han deshabilitat per omissió.
@@ -1026,7 +1027,7 @@ Type=GESTURE
 
 [Data_1_12]
 Comment=Going up in URL/directory structure.\nOpera-style: Press, move up, move left, move up, release.\nNOTE: Conflicts with  "Activate Previous Tab", and as such is disabled by default.
-Comment[ar]=انتقل للرابط السابق. \nOpera-style: اضغط حرك للأعلى ، حرك لليسار ثم اترك \nNOTE: إعداد باستخدام  "فعل اللسان السابق", كأنه غير المفعل افتراضياً
+Comment[ar]=انتقل للرابط السابق. \nOpera-style: اضغط حرك للأعلى ، حرك لليسار ثم اترك \nNOTE: إعداد باستخدام  "فعل اللسان السابق" ، كأنه غير المفعل افتراضياً
 Comment[bg]=Едно ниво нагоре.\nСтил на Opera: натискане, движение нагоре, движение наляво, движение нагоре, пускане.\nЗАБЕЛЕЖКА:Има конфликт с "Активиране на предишен подпрозорец" и затова е изключено по подразбиране.
 Comment[ca]=Anar cap amunt per l'URL/estructura de directoris.\nEstil Opera: premeu, moveu amunt, moveu a l'esquerra, moveu amunt, deixeu anar.\nNota: els conflictes amb 'Pestanya nova', i similars s'han deshabilitat per omissió.
 Comment[ca@valencia]=Anar cap amunt per l'URL/estructura de directoris.\nEstil Opera: premeu, moveu amunt, moveu a l'esquerra, moveu amunt, deixeu anar.\nNota: els conflictes amb 'Pestanya nova', i similars s'han deshabilitat per omissió.
@@ -2745,7 +2746,7 @@ Type=GESTURE
 
 [Data_1_6]
 Comment=Press, move right, move down, move right, release.\nMozilla-style: Press, move down, move right, release.
-Comment[ar]=اضغط ، تحرك لليمين ، تحرك اسفل ، تحرك لليمين ، حرك للأسفل ، افلت.\nنمط موزيريلا: اضغط, حرك اسفل ، حرك يمين ، افلت
+Comment[ar]=اضغط ، تحرك لليمين ، تحرك اسفل ، تحرك لليمين ، حرك للأسفل ، افلت.\nنمط موزيريلا: اضغط ، حرك اسفل ، حرك يمين ، افلت
 Comment[bg]=Натискане, движение надолу, движение нагоре, движение надолу, пускане.
 Comment[ca]=Premeu, moveu a la dreta, moveu avall, moveu a la dreta, deixeu anar.\nEstil Mozilla: premeu, moveu avall, moveu a la dreta, deixeu anar.
 Comment[ca@valencia]=Premeu, moveu a la dreta, moveu avall, moveu a la dreta, deixeu anar.\nEstil Mozilla: premeu, moveu avall, moveu a la dreta, deixeu anar.
@@ -2977,7 +2978,7 @@ Type=GESTURE
 
 [Data_1_7]
 Comment=Press, move up, release.\nConflicts with Opera-style 'Up #2', which is disabled by default.
-Comment[ar]=اضغط ،حرك للأعلى، افلت \nنمط اوبرا أعلى #2', غير المفعل مبدئيا
+Comment[ar]=اضغط ،حرك للأعلى، افلت \nنمط اوبرا أعلى #2' ، غير المفعل مبدئيا
 Comment[bg]=Натискане, движение нагоре, пускане.\nИма конфликт със стила на Opera "Нагоре 2", който е по подразбиране.
 Comment[ca]=Premeu, moveu amunt, deixeu anar.\nConflictes amb l'estil Opera 'Amunt 2', que està deshabilitat per omissió.
 Comment[ca@valencia]=Premeu, moveu amunt, deixeu anar.\nConflictes amb l'estil Opera 'Amunt 2', que està deshabilitat per omissió.

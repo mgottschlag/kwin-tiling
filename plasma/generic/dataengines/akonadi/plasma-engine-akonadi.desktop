@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Akonadi
+Name[ar]=اكوندا
 Name[bg]=Akonadi
 Name[ca]=Akonadi
 Name[cs]=Akonadi
@@ -47,6 +48,7 @@ Name[x-test]=xxAkonadixx
 Name[zh_CN]=Akonadi
 Name[zh_TW]=Akonadi
 Comment=Akonadi PIM data engine
+Comment[ar]=محرك بيانات إدارة المعلومات الشخصية اكوندا
 Comment[bg]=Ядро Akonadi PIM
 Comment[ca]=Motor de dades PIM de l'Akonadi
 Comment[cs]=Datový nástroj Akonadi PIM

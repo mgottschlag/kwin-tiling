@@ -1,5 +1,6 @@
 [Desktop Action deviceType]
 Name=Device Type
+Name[ar]=نوع الجهاز
 Name[bg]=Тип устройство
 Name[ca]=Tipus de dispositiu
 Name[cs]=Typ zařízení
@@ -54,6 +55,7 @@ Name[zh_TW]=裝置類型
 
 [Desktop Action driver]
 Name=Driver
+Name[ar]=المشغل
 Name[bg]=Драйвер
 Name[ca]=Controlador
 Name[cs]=Ovladač
@@ -109,6 +111,7 @@ Name[zh_TW]=驅動程式
 
 [Desktop Action driverHandle]
 Name=Driver Handle
+Name[ar]=مقبض المشغل
 Name[bg]=Управление на драйвера
 Name[ca]=Gestor de controlador
 Name[cs]=ID ovladače
@@ -158,6 +161,7 @@ Name[zh_TW]=驅動程式處理
 
 [Desktop Action name]
 Name=Name
+Name[ar]=الاسم
 Name[bg]=Име
 Name[ca]=Nom
 Name[cs]=Jméno
@@ -213,6 +217,7 @@ Name[zh_TW]=名稱
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[cs]=Jméno objektu
@@ -266,6 +271,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action soundcardType]
 Name=Soundcard Type
+Name[ar]=نوع بطاقة الصوت
 Name[bg]=Тип звукова карта
 Name[ca]=Tipus de targeta de so
 Name[cs]=Typ zvukové karty
