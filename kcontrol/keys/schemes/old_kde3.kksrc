@@ -1,44 +1,10 @@
 
 [Global Shortcuts]
 Halt Computer=none
-Kill Metadow=Ctrl+Alt+Esc
 Popup Launch Menu=Alt+F1
 Reboot Computer=none
-Show Metadow List=Alt+F5
+Show Window List=Alt+F5
 Toggle Showing Desktop=Ctrl+Alt+D
-Toggle Metadow Raise/Lower=none
-Walk Through Metadows=Alt+Tab
-Walk Through Metadows (Reverse)=Alt+Shift+Tab
-Metadow Close=Alt+F4
-Metadow Lower=none
-Metadow Maximize Horizontal=none
-Metadow Maximize=none
-Metadow Maximize Vertical=none
-Metadow Minimize=none
-Metadow Move=none
-Metadow Operations Menu=Alt+F3
-Metadow Raise=none
-Metadow Resize=none
-Metadow Screenshot=Alt+Print
-Metadow Shade=none
-Metadow to Desktop 10=none
-Metadow to Desktop 11=none
-Metadow to Desktop 12=none
-Metadow to Desktop 13=none
-Metadow to Desktop 14=none
-Metadow to Desktop 15=none
-Metadow to Desktop 16=none
-Metadow to Desktop 1=none
-Metadow to Desktop 2=none
-Metadow to Desktop 3=none
-Metadow to Desktop 4=none
-Metadow to Desktop 5=none
-Metadow to Desktop 6=none
-Metadow to Desktop 7=none
-Metadow to Desktop 8=none
-Metadow to Desktop 9=none
-Metadow to Next Desktop=none
-Metadow to Previous Desktop=none
 
 [Shortcuts]
 AddBookmark=Ctrl+B
@@ -46,8 +12,8 @@ Back=Alt+Left
 Close=Ctrl+W
 Copy=Ctrl+C; Ctrl+Insert
 Cut=Ctrl+X; Shift+Del
-DelWordBack=Ctrl+Backspace
-DelWordForward=Ctrl+Delete
+DeleteWordBack=Ctrl+Backspace
+DeleteWordForward=Ctrl+Del
 Deselect=Ctrl+Shift+A
 End=Ctrl+End
 Find=Ctrl+F
