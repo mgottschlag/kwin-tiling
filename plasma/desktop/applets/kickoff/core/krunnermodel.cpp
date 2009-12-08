@@ -89,6 +89,27 @@ Plasma::RunnerManager * runnerManager() {
     return _runnerManager;
 }
 
+KService::Ptr serviceForUrl(const KUrl & url)
+{
+    QString runner = url.host();
+    QString id = url.path();
+
+    if (id.startsWith(QLatin1String("/"))) {
+        id = id.remove(0, 1);
+    }
+
+    if (runner != QLatin1String("services")) {
+        return KService::Ptr(NULL);
+    }
+
+    // URL path example: services_kde4-kate.desktop
+    // or: services_firefox.desktop
+    id.remove("services_");
+
+    return KService::serviceByStorageId(id);
+}
+
+
 class ResultItem {
 public:
     ResultItem()
@@ -115,23 +136,17 @@ bool KRunnerItemHandler::openUrl(const KUrl& url)
     if (id.startsWith(QLatin1String("/"))) {
         id = id.remove(0, 1);
     }
-    qDebug() << "KRunnerItemHandler:openUrl " << runner << " " << id;
 
     // Since krunner:// urls can't be added to recent applications,
     // we find the local .desktop entry.
-    if (runner==QLatin1String("services")) {
-        // URL path example: services_kde4-kate.desktop
-        // or: services_firefox.desktop
-        QString desktopFile(id);
-        desktopFile.remove("services_");
-        QString pathToDesktopFile = KStandardDirs::locate("services", desktopFile);
-        KService::Ptr service = KService::serviceByStorageId(desktopFile);
-        if(!service.isNull()) {
-            RecentApplications::self()->add(service);
-        } else {
-            qWarning() << "Failed to find service for" << url;
-        }
+
+    KService::Ptr service = serviceForUrl(url);
+    if(!service.isNull()) {
+        RecentApplications::self()->add(service);
+    } else {
+        qWarning() << "Failed to find service for" << url;
     }
+
 
     runnerManager()->run(id);
     return true;
@@ -169,7 +184,6 @@ KRunnerModel::~KRunnerModel()
 
 void KRunnerModel::setQuery(const QString& query)
 {
-    qDebug() << "KRunnerModel::setQuery: " << query;
     runnerManager()->reset();
     clear();
 
@@ -184,15 +198,11 @@ void KRunnerModel::setQuery(const QString& query)
 
 void KRunnerModel::timerEvent(QTimerEvent * event)
 {
-    qDebug() << "KRunnerModel::timerEvent";
     KickoffModel::timerEvent(event);
 
     if (event->timerId() == d->searchDelay.timerId()) {
         d->searchDelay.stop();
         runnerManager()->launchQuery(d->searchQuery);
-        foreach (Plasma::AbstractRunner * runner, runnerManager()->runners()) {
-            qDebug() << "runner: " << runner->id() << " " << runner->name();
-        }
     };
 }
 
@@ -215,12 +225,6 @@ void KRunnerModel::matchesChanged(const QList< Plasma::QueryMatch > & m)
     while (matches.size()) {
         Plasma::QueryMatch match = matches.takeLast();
 
-        qDebug() << "KRunnerModel::matchesChanged: "
-            << match.icon()
-            << match.text()
-            << match.subtext()
-            << match.data()
-            ;
         appendRow(
             StandardItemFactory::createItem(
                 match.icon(),
@@ -255,11 +259,12 @@ QMimeData * KRunnerModel::mimeData(const QModelIndexList &indexes) const
 
     foreach (const QModelIndex & index, indexes) {
         KUrl url = data(index, UrlRole).toString();
-        QString id = url.path();
-        if (id.startsWith(QLatin1String("/"))) {
-            id = id.remove(0, 1);
+
+        KService::Ptr service = serviceForUrl(url);
+
+        if (service) {
+            urls << KUrl(service->entryPath());
         }
-        urls << KUrl(id);
     }
 
     QMimeData *mimeData = new QMimeData();
