@@ -232,11 +232,11 @@ void DeviceNotifier::notifyDevice(const QString &udi)
     setStatus(Plasma::NeedsAttentionStatus);
 
     if (!m_fillingPreviousDevices) {
+        emit activate();
         showPopup(NOTIFICATION_TIMEOUT);
         changeNotifierIcon("preferences-desktop-notification");
         update();
         QTimer::singleShot(NOTIFICATION_TIMEOUT, m_dialog, SLOT(resetNotifierIcon()));
-        emit activate();
     } else {
         setStatus(Plasma::ActiveStatus);
     }
