@@ -112,7 +112,6 @@ void RandRConfig::load(void)
 		m_outputList.append(w);
 		
 		o = new OutputGraphicsItem(config);
-		o->setParent(m_scene);
 		m_scene->addItem(o);
 		
 		connect(o,    SIGNAL(itemChanged(OutputGraphicsItem*)), 
