@@ -1,7 +1,9 @@
 [Desktop Entry]
 Name=Window List
+Name[ca]=Llista de finestres
 Name[csb]=Lësta òknów
 Name[da]=Vinduesliste
+Name[de]=Fensterliste
 Name[en_GB]=Window List
 Name[es]=Lista de ventanas
 Name[et]=Akende nimekiri
@@ -9,14 +11,17 @@ Name[lv]=Logu saraksts
 Name[nb]=Vindusliste
 Name[nds]=Finsterlist
 Name[pt]=Lista de Janelas
+Name[sl]=Seznam oken
 Name[sv]=Fönsterlista
 Name[uk]=Список вікон
 Name[x-test]=xxWindow Listxx
 Name[zh_TW]=視窗列表
 
 Comment=Plasmoid to show list of opened windows.
+Comment[ca]=Plasmoide que mostra una llista de les finestres obertes.
 Comment[csb]=Plazmòid wëskrzënianiô lëstë òtemkłich òknów
 Comment[da]=Plasmoid til at vise en liste over åbne vinduer.
+Comment[de]=Miniprogramm zur Auflistung geöffneter Fenster.
 Comment[en_GB]=Plasmoid to show list of opened windows.
 Comment[es]=Plasmoide que muestra una lista de las ventanas abiertas.
 Comment[et]=Avatud akende nimekirja näitav plasmoid.
@@ -24,6 +29,7 @@ Comment[lv]=Plazmoīds, kas rāda atvērto logu sarakstu.
 Comment[nb]=Plasmoide som viser en liste over åpne vinduer.
 Comment[nds]=Plasma-Lüttprogramm, dat de List mit opmaakt Finstern wiest
 Comment[pt]=Um plasmóide para ver a lista de janelas abertas.
+Comment[sl]=Gradnik, ki prikazuje seznam odprtih oken.
 Comment[sv]=Plasmoid för att visa lista med öppna fönster.
 Comment[uk]=Плазмоїд для показу списку відкритих вікон.
 Comment[x-test]=xxPlasmoid to show list of opened windows.xx

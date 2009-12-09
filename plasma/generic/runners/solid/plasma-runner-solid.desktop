@@ -1,8 +1,10 @@
 [Desktop Entry]
 # ctxt: plasma runner
 Name=Devices
+Name[ca]=Dispositius
 Name[csb]=Ùrządzenia
 Name[da]=Enheder
+Name[de]=Geräte
 Name[en_GB]=Devices
 Name[es]=Dispositivos
 Name[et]=Seadmed
@@ -10,13 +12,16 @@ Name[lv]=Ierīces
 Name[nb]=Enhet
 Name[nds]=Reedschappen
 Name[pt]=Dispositivos
+Name[sl]=Naprave
 Name[sv]=Enheter
 Name[uk]=Пристрої
 Name[x-test]=xxDevicesxx
 Name[zh_TW]=裝置
 Comment=Manage removable devices
+Comment[ca]=Gestiona dispositius extraïbles
 Comment[csb]=Sprôwiôj przenosnyma ùrządzeniama
 Comment[da]=Håndtér flytbare enheder
+Comment[de]=Wechselmedien verwalten
 Comment[en_GB]=Manage removable devices
 Comment[es]=Gestionar dispositivos extraíbles
 Comment[et]=Eemaldatavate seadmete haldamine
@@ -24,6 +29,7 @@ Comment[lv]=Pārvaldīt noņemamās iekārtas
 Comment[nb]=Flyttbar
 Comment[nds]=Tuuschbor Reedschappen plegen
 Comment[pt]=Gerir os dispositivos removíveis
+Comment[sl]=Upravljanje odstranljivih naprav
 Comment[sv]=Hantera flyttbara enheter
 Comment[uk]=Керування портативними пристроями
 Comment[x-test]=xxManage removable devicesxx

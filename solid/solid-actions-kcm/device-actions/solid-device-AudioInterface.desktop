@@ -327,7 +327,9 @@ Name[zh_TW]=音效卡類型
 [Desktop Entry]
 Actions=deviceType;driver;driverHandle;name;objectName;soundcardType;
 Name=Solid Device
+Name[ca]=Dispositiu del Solid
 Name[da]=Solid-enhed
+Name[de]=Solid-Gerät
 Name[en_GB]=Solid Device
 Name[et]=Solidi seade
 Name[gl]=Dispositivo de Solid
@@ -343,6 +345,7 @@ Name[nl]=Solid-apparaat
 Name[pt]=Dispositivo do Solid
 Name[pt_BR]=Dispositivo do Solid
 Name[ro]=Dispozitiv Solid
+Name[sl]=Naprava Solid
 Name[sv]=Solid-enhet
 Name[tr]=Solid Aygıtı
 Name[uk]=Пристрій Solid

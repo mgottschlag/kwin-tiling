@@ -2,7 +2,9 @@
 Type=ServiceType
 X-KDE-ServiceType=SolidRemoteControlManager
 Comment=Remote Control Management Backend
+Comment[ca]=Dorsal de gestió de control remot
 Comment[da]=Motor til håndtering af fjernbetjening
+Comment[de]=Treiber für Fernbedienungen
 Comment[en_GB]=Remote Control Management Backend
 Comment[eo]=Interna Interfaco de la teleregilo
 Comment[et]=Kaugjuhtimise haldamise taustaprogramm
@@ -17,6 +19,7 @@ Comment[nds]=Hülpprogramm för de Pleeg vun Feernbedeners
 Comment[nl]=Afstandsbedieningbeheer-backend
 Comment[pt]=Infra-Estrutura de Gestão de Comandos à Distância
 Comment[pt_BR]=Infraestrutura de gerenciamento do controle remoto
+Comment[sl]=Hrbtenica za upravljanje z daljinskimi upravljalniki
 Comment[sv]=Gränssnitt för fjärrkontrollhantering
 Comment[tr]=Uzaktan Denetim Yönetimi Arka Ucu
 Comment[uk]=Сервер керування пристроями дистанційного керування
