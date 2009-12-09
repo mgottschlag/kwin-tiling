@@ -219,6 +219,7 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &matches)
 
         // create new IconWidget with information from the match
         Plasma::IconWidget *icon = m_resultsView->createItem();
+        icon->setNumDisplayLines(4);
         icon->hide();
         icon->setOrientation(Qt::Vertical);
         icon->setText(match.text());
