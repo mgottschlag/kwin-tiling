@@ -490,7 +490,10 @@ void PlasmaApp::reserveStruts()
                                     strut.right_width, strut.right_start, strut.right_end,
                                     strut.top_width, strut.top_start, strut.top_end,
                                     strut.bottom_width, strut.bottom_start, strut.bottom_end);
-    m_mainView->move(0,0);
+
+    //ensure the main view is at the proper position too
+    QRect screenRect = Kephal::ScreenUtils::screenGeometry(m_controlBar->screen());
+    m_mainView->move(screenRect.topLeft());
 }
 
 NetView *PlasmaApp::controlBar() const
