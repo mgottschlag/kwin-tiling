@@ -980,8 +980,8 @@ void PlasmaApp::createUnhideTrigger()
         triggerHeight = 30;
     }
 
-    QPoint actualTriggerPoint = m_controlBar->pos();
-    QPoint triggerPoint = m_controlBar->pos();
+    QPoint actualTriggerPoint;
+    QPoint triggerPoint = actualTriggerPoint = QPoint(qMax(0, m_controlBar->pos().x()), qMax(0, m_controlBar->pos().y()));
 
     switch (m_controlBar->location()) {
         case Plasma::TopEdge:
