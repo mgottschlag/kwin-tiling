@@ -625,6 +625,7 @@ void TaskGroupItem::popupMenu()
         KWindowSystem::setType(m_popupDialog->winId(), NET::PopupMenu);
         m_popupDialog->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
         connect(m_popupDialog, SIGNAL(dialogVisible(bool)), m_applet, SLOT(setPopupDialog(bool)));
+        connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), m_popupDialog, SLOT(hide()));
         KWindowSystem::setState(m_popupDialog->winId(), NET::SkipTaskbar| NET::SkipPager);
         m_popupDialog->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
         //TODO in the future it may be possible to use the Qt::Popup flag instead of the eventFilter, but for now the focus works better with the eventFilter
