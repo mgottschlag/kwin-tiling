@@ -82,7 +82,8 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet)
       m_attentionTicks(0),
       m_fadeIn(true),
       m_showText(true),
-      m_animationLock(false)
+      m_animationLock(false),
+      m_lastViewId(0)
 {
     m_firstGeometryUpdate.restart();
 
@@ -369,9 +370,8 @@ void AbstractTaskItem::stopWindowHoverEffect()
         m_hoverEffectTimerId = 0;
     }
 
-    QGraphicsView *view = m_applet->view();
-    if (view) {
-        Plasma::WindowEffects::highlightWindows(view->winId(), QList<WId>());
+    if (m_lastViewId) {
+        Plasma::WindowEffects::highlightWindows(m_lastViewId, QList<WId>());
     }
 }
 
@@ -492,9 +492,11 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
             }
         }
 
+        stopWindowHoverEffect();
         QGraphicsView *view = m_applet->view();
         if (view) {
-            Plasma::WindowEffects::highlightWindows(view->winId(), windows);
+            m_lastViewId = view->winId();
+            Plasma::WindowEffects::highlightWindows(m_lastViewId, windows);
         }
 #endif
     } else {

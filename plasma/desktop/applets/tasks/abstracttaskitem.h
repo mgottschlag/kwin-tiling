@@ -249,6 +249,7 @@ protected:
     QPropertyAnimation *m_animation;
     bool m_animationLock;
     QTime m_firstGeometryUpdate;
+    WId m_lastViewId;
 
     // distance (in pixels) between a task's icon and its text
     static const int IconTextSpacing = 4;
