@@ -76,6 +76,8 @@ Manager *Applet::s_manager = 0;
 int Applet::s_managerUsage = 0;
 static const int idleCheckInterval = 60 * 1000;
 static const int completedJobExpireDelay = 5 * 60 * 1000;
+static const int completedShortJobExpireDelay = 40 * 1000;
+static const int shortJobsLength = 30 * 1000;
 static const int oldNotificationsExpireDelay = 5 * 60 * 1000;
 
 Applet::Applet(QObject *parent, const QVariantList &arguments)
@@ -870,9 +872,7 @@ void Applet::timerEvent(QTimerEvent *event)
         Plasma::ExtenderGroup *group = extender()->group("completedJobsGroup");
         if (group) {
             foreach (Plasma::ExtenderItem *item, group->items()) {
-                if (!item->autoExpireDelay()) {
-                    item->setAutoExpireDelay(completedJobExpireDelay);
-                }
+                item->setAutoExpireDelay(completedJobExpireDelay);
             }
         }
         foreach (Notification *notification, s_manager->notifications()) {
@@ -928,10 +928,13 @@ void Applet::finishJob(SystemTray::Job *job)
 
     initExtenderItem(item);
     item->setGroup(extender()->group("completedJobsGroup"));
-    showPopup(m_autoHideTimeout);
-    if (!m_timerId) {
+
+    if (job->elapsed() < shortJobsLength) {
+        item->setAutoExpireDelay(completedShortJobExpireDelay);
+    } else if (!m_timerId) {
         m_timerId = startTimer(idleCheckInterval);
     }
+    showPopup(m_autoHideTimeout);
 }
 
 void Applet::open(const QString &url)

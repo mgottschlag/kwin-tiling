@@ -54,6 +54,8 @@ class JobWidget : public QGraphicsWidget
 
         void poppedUp(bool shown);
 
+        SystemTray::Job *job() const;
+
     protected:
         void resizeEvent(QGraphicsSceneResizeEvent *event);
         void timerEvent(QTimerEvent *event);

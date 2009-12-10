@@ -105,6 +105,11 @@ public:
      */
     uint percentage() const;
 
+    /**
+     * total elapsed job time
+     */
+    uint elapsed() const;
+
 public slots:
     /**
      * suspend this job.

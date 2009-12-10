@@ -310,6 +310,11 @@ void JobWidget::poppedUp(bool shown)
     }
 }
 
+SystemTray::Job *JobWidget::job() const
+{
+    return m_job.data();
+}
+
 void JobWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     Q_UNUSED(event)

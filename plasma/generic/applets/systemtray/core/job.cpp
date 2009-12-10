@@ -20,6 +20,7 @@
 #include "job.h"
 
 #include <QtCore/QTimer>
+#include <QtCore/QTime>
 #include <QTextDocument>
 
 #include <KDebug>
@@ -34,6 +35,7 @@ class Job::Private
 {
 public:
     Private() :
+        finalElapsed(0),
         state(Running),
         percentage(0),
         eta(0),
@@ -57,6 +59,9 @@ public:
 
     QList<QPair<QString, QString> > labels;
 
+    QTime elapsed;
+    uint finalElapsed;
+
     State state;
     uint percentage;
     uint eta;
@@ -73,6 +78,7 @@ Job::Job(QObject *parent)
 {
     //delay a little the job to avoid the user to be distracted with short ones
     QTimer::singleShot(1500, this, SLOT(show()));
+    d->elapsed.restart();
 }
 
 Job::~Job()
@@ -223,6 +229,9 @@ void Job::setState(State state)
     if (d->state != state) {
         d->state = state;
         show();
+        if (state == Stopped) {
+            d->finalElapsed = d->elapsed.elapsed();
+        }
         emit stateChanged(this);
     }
 }
@@ -251,6 +260,15 @@ void Job::setPercentage(uint percentage)
     if (d->percentage != percentage) {
         d->percentage = percentage;
         scheduleChangedSignal();
+    }
+}
+
+uint Job::elapsed() const
+{
+    if (d->finalElapsed) {
+        return d->finalElapsed;
+    } else {
+        return d->elapsed.elapsed();
     }
 }
 

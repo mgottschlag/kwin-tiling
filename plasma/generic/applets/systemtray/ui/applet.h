@@ -101,7 +101,6 @@ private:
     QWeakPointer<QWidget> m_notificationInterface;
     QWeakPointer<QWidget> m_autoHideInterface;
     QWeakPointer<QWidget> m_plasmoidTasksInterface;
-    QList<Job*> m_jobs;
     QSet<Task::Category> m_shownCategories;
     QDateTime m_lastActivity;
 
