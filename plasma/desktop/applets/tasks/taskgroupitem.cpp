@@ -528,7 +528,7 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractGroupableItem * groupableIt
 
         if (m_popupDialog && m_popupDialog->isVisible() && 
             m_applet->containment() && m_applet->containment()->corona()) {
-            m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size()));
+            m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size(), Qt::AlignCenter));
         }
     }
 
@@ -649,7 +649,7 @@ void TaskGroupItem::popupMenu()
         m_tasksLayout->setMaximumRows(1);
         m_offscreenWidget->adjustSize();
         if (m_applet->containment() && m_applet->containment()->corona()) {
-            m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size()));
+            m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size(), Qt::AlignCenter));
         }
         KWindowSystem::setState(m_popupDialog->winId(), NET::SkipTaskbar| NET::SkipPager);
         if (m_applet->location() != Plasma::Floating) {
