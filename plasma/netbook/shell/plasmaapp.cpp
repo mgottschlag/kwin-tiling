@@ -547,7 +547,7 @@ void PlasmaApp::notifyStartup(bool completed)
 
 void PlasmaApp::createView(Plasma::Containment *containment)
 {
-    connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
+    connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetsExplorer()));
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
     connect(containment, SIGNAL(toolBoxVisibilityChanged(bool)),
@@ -616,16 +616,23 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     }
 }
 
+void PlasmaApp::closeWidgetsExplorer()
+{
+    if (m_widgetExplorer) {
+        Plasma::WindowEffects::slideWindow(m_widgetExplorerView, m_controlBar->location());
+        m_widgetExplorer->deleteLater();
+        m_widgetExplorerView->deleteLater();
+    }
+}
+
 void PlasmaApp::updateToolBoxVisibility(bool visible)
 {
     foreach (Plasma::Containment *cont, m_corona->containments()) {
          cont->setToolBoxOpen(visible);
     }
 
-    if (!visible && m_widgetExplorer) {
-        Plasma::WindowEffects::slideWindow(m_widgetExplorerView, m_controlBar->location());
-        m_widgetExplorer->deleteLater();
-        m_widgetExplorerView->deleteLater();
+    if (!visible) {
+        closeWidgetsExplorer();
     }
 }
 
@@ -696,7 +703,7 @@ void PlasmaApp::setAutoHideControlBar(bool autoHide)
     m_controlBar->config().writeEntry("panelAutoHide", autoHide);
 }
 
-void PlasmaApp::showAppletBrowser()
+void PlasmaApp::showWidgetsExplorer()
 {
     Plasma::Containment *containment = dynamic_cast<Plasma::Containment *>(sender());
 
@@ -704,10 +711,10 @@ void PlasmaApp::showAppletBrowser()
         return;
     }
 
-    showAppletBrowser(containment);
+    showWidgetsExplorer(containment);
 }
 
-void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
+void PlasmaApp::showWidgetsExplorer(Plasma::Containment *containment)
 {
     if (!containment) {
         return;
@@ -726,7 +733,7 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
         m_widgetExplorerView->setAttribute(Qt::WA_TranslucentBackground);
         m_widgetExplorerView->setAttribute(Qt::WA_DeleteOnClose);
         KWindowSystem::setState(m_widgetExplorerView->winId(), NET::StaysOnTop|NET::KeepAbove);
-        connect(m_widgetExplorerView, SIGNAL(destroyed()), this, SLOT(appletBrowserDestroyed()));
+        connect(m_widgetExplorerView, SIGNAL(destroyed()), this, SLOT(widgetsExplorerDestroyed()));
 
         if (m_controlBar) {
             switch (m_controlBar->location()) {
@@ -779,7 +786,7 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
     m_widgetExplorerView->show();
 }
 
-void PlasmaApp::appletBrowserDestroyed()
+void PlasmaApp::widgetsExplorerDestroyed()
 {
     m_widgetExplorer = 0;
     m_widgetExplorerView = 0;
@@ -835,9 +842,7 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
     } else if (watched == m_widgetExplorerView && event->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         if (keyEvent->key() == Qt::Key_Escape) {
-            Plasma::WindowEffects::slideWindow(m_widgetExplorerView, m_controlBar->location());
-            m_widgetExplorerView->deleteLater();
-            m_widgetExplorer->deleteLater();
+            closeWidgetsExplorer();
         }
     } else if (watched == m_widgetExplorerView && event->type() == QEvent::Resize) {
          m_widgetExplorer->resize(m_widgetExplorerView->contentsRect().size());

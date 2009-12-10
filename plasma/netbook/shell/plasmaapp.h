@@ -84,13 +84,13 @@ public:
      */
     bool isDesktop() const;
 
-    void showAppletBrowser(Plasma::Containment *containment);
+    void showWidgetsExplorer(Plasma::Containment *containment);
 
 public Q_SLOTS:
     void setAutoHideControlBar(bool autoHide);
 
 protected:
-    bool eventFilter(QObject * watched, QEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event);
     bool x11EventFilter(XEvent *event);
     bool hasForegroundWindows() const;
 
@@ -107,8 +107,9 @@ private Q_SLOTS:
     void createView(Plasma::Containment *containment);
     void adjustSize(Kephal::Screen *);
     void controlBarMoved(const NetView *controlBar);
-    void showAppletBrowser();
-    void appletBrowserDestroyed();
+    void showWidgetsExplorer();
+    void widgetsExplorerDestroyed();
+    void closeWidgetsExplorer();
     void mainContainmentActivated();
     //TODO: probably those functions can go in netview
     void controlBarVisibilityUpdate();
