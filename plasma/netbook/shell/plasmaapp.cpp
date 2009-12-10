@@ -547,7 +547,7 @@ void PlasmaApp::notifyStartup(bool completed)
 
 void PlasmaApp::createView(Plasma::Containment *containment)
 {
-    connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetsExplorer()));
+    connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
     connect(containment, SIGNAL(toolBoxVisibilityChanged(bool)),
@@ -616,7 +616,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     }
 }
 
-void PlasmaApp::closeWidgetsExplorer()
+void PlasmaApp::closeWidgetExplorer()
 {
     if (m_widgetExplorer) {
         Plasma::WindowEffects::slideWindow(m_widgetExplorerView, m_controlBar->location());
@@ -632,7 +632,7 @@ void PlasmaApp::updateToolBoxVisibility(bool visible)
     }
 
     if (!visible) {
-        closeWidgetsExplorer();
+        closeWidgetExplorer();
     }
 }
 
@@ -703,7 +703,7 @@ void PlasmaApp::setAutoHideControlBar(bool autoHide)
     m_controlBar->config().writeEntry("panelAutoHide", autoHide);
 }
 
-void PlasmaApp::showWidgetsExplorer()
+void PlasmaApp::showWidgetExplorer()
 {
     Plasma::Containment *containment = dynamic_cast<Plasma::Containment *>(sender());
 
@@ -711,10 +711,10 @@ void PlasmaApp::showWidgetsExplorer()
         return;
     }
 
-    showWidgetsExplorer(containment);
+    showWidgetExplorer(containment);
 }
 
-void PlasmaApp::showWidgetsExplorer(Plasma::Containment *containment)
+void PlasmaApp::showWidgetExplorer(Plasma::Containment *containment)
 {
     if (!containment) {
         return;
@@ -733,7 +733,7 @@ void PlasmaApp::showWidgetsExplorer(Plasma::Containment *containment)
         m_widgetExplorerView->setAttribute(Qt::WA_TranslucentBackground);
         m_widgetExplorerView->setAttribute(Qt::WA_DeleteOnClose);
         KWindowSystem::setState(m_widgetExplorerView->winId(), NET::StaysOnTop|NET::KeepAbove);
-        connect(m_widgetExplorerView, SIGNAL(destroyed()), this, SLOT(widgetsExplorerDestroyed()));
+        connect(m_widgetExplorerView, SIGNAL(destroyed()), this, SLOT(widgetExplorerDestroyed()));
 
         if (m_controlBar) {
             switch (m_controlBar->location()) {
@@ -763,6 +763,7 @@ void PlasmaApp::showWidgetsExplorer(Plasma::Containment *containment)
 
     if (!m_widgetExplorer) {
         m_widgetExplorer = new Plasma::WidgetExplorer(m_controlBar->containment());
+        connect(m_widgetExplorer, SIGNAL(closeClicked()), this, SLOT(closeWidgetExplorer()));
         m_widgetExplorer->setContainment(m_mainView->containment());
         m_widgetExplorer->populateWidgetList();
 
@@ -786,7 +787,7 @@ void PlasmaApp::showWidgetsExplorer(Plasma::Containment *containment)
     m_widgetExplorerView->show();
 }
 
-void PlasmaApp::widgetsExplorerDestroyed()
+void PlasmaApp::widgetExplorerDestroyed()
 {
     m_widgetExplorer = 0;
     m_widgetExplorerView = 0;
@@ -842,7 +843,7 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
     } else if (watched == m_widgetExplorerView && event->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         if (keyEvent->key() == Qt::Key_Escape) {
-            closeWidgetsExplorer();
+            closeWidgetExplorer();
         }
     } else if (watched == m_widgetExplorerView && event->type() == QEvent::Resize) {
          m_widgetExplorer->resize(m_widgetExplorerView->contentsRect().size());

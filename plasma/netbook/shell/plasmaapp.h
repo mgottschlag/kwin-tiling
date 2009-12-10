@@ -84,7 +84,7 @@ public:
      */
     bool isDesktop() const;
 
-    void showWidgetsExplorer(Plasma::Containment *containment);
+    void showWidgetExplorer(Plasma::Containment *containment);
 
 public Q_SLOTS:
     void setAutoHideControlBar(bool autoHide);
@@ -107,9 +107,9 @@ private Q_SLOTS:
     void createView(Plasma::Containment *containment);
     void adjustSize(Kephal::Screen *);
     void controlBarMoved(const NetView *controlBar);
-    void showWidgetsExplorer();
-    void widgetsExplorerDestroyed();
-    void closeWidgetsExplorer();
+    void showWidgetExplorer();
+    void widgetExplorerDestroyed();
+    void closeWidgetExplorer();
     void mainContainmentActivated();
     //TODO: probably those functions can go in netview
     void controlBarVisibilityUpdate();
