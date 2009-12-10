@@ -200,52 +200,52 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         QStringList supportedtypes;
         Solid::OpticalDrive::MediumTypes mediatypes = opticaldrive->supportedMedia();
         if (mediatypes & Solid::OpticalDrive::Cdr) {
-            supportedtypes << I18N_NOOP("Cdr");
+            supportedtypes << I18N_NOOP("CD-R");
         }
         if (mediatypes & Solid::OpticalDrive::Cdrw) {
-            supportedtypes << I18N_NOOP("Cdrw");
+            supportedtypes << I18N_NOOP("CD-RW");
         }
         if (mediatypes & Solid::OpticalDrive::Dvd) {
-            supportedtypes << I18N_NOOP("Dvd");
+            supportedtypes << I18N_NOOP("DVD");
         }
         if (mediatypes & Solid::OpticalDrive::Dvdr) {
-            supportedtypes << I18N_NOOP("Dvdr");
+            supportedtypes << I18N_NOOP("DVD-R");
         }
         if (mediatypes & Solid::OpticalDrive::Dvdrw) {
-            supportedtypes << I18N_NOOP("Dvdrw");
+            supportedtypes << I18N_NOOP("DVD-RW");
         }
         if (mediatypes & Solid::OpticalDrive::Dvdram) {
-            supportedtypes << I18N_NOOP("Dvdram");
+            supportedtypes << I18N_NOOP("DVD-RAM");
         }
         if (mediatypes & Solid::OpticalDrive::Dvdplusr) {
-            supportedtypes << I18N_NOOP("Dvdplusr");
+            supportedtypes << I18N_NOOP("DVD+R");
         }
         if (mediatypes & Solid::OpticalDrive::Dvdplusrw) {
-            supportedtypes << I18N_NOOP("Dvdplusrw");
+            supportedtypes << I18N_NOOP("DVD+RW");
         }
         if (mediatypes & Solid::OpticalDrive::Dvdplusdl) {
-            supportedtypes << I18N_NOOP("Dvdplusdl");
+            supportedtypes << I18N_NOOP("DVD+DL");
         }
         if (mediatypes & Solid::OpticalDrive::Dvdplusdlrw) {
-            supportedtypes << I18N_NOOP("Dvdplusdlrw");
+            supportedtypes << I18N_NOOP("DVD+DLRW");
         }
         if (mediatypes & Solid::OpticalDrive::Bd) {
-            supportedtypes << I18N_NOOP("Bd");
+            supportedtypes << I18N_NOOP("BD");
         }
         if (mediatypes & Solid::OpticalDrive::Bdr) {
-            supportedtypes << I18N_NOOP("Bdr");
+            supportedtypes << I18N_NOOP("BD-R");
         }
         if (mediatypes & Solid::OpticalDrive::Bdre) {
-            supportedtypes << I18N_NOOP("Bdre");
+            supportedtypes << I18N_NOOP("BD-RE");
         }
         if (mediatypes & Solid::OpticalDrive::HdDvd) {
-            supportedtypes << I18N_NOOP("HdDvd");
+            supportedtypes << I18N_NOOP("HDDVD");
         }
         if (mediatypes & Solid::OpticalDrive::HdDvdr) {
-            supportedtypes << I18N_NOOP("HdDvdr");
+            supportedtypes << I18N_NOOP("HDDVD-R");
         }
         if (mediatypes & Solid::OpticalDrive::HdDvdrw) {
-            supportedtypes << I18N_NOOP("HdDvdrw");
+            supportedtypes << I18N_NOOP("HDDVD-RW");
         }
         setData(name, I18N_NOOP("Supported Media"), supportedtypes);
 
@@ -282,7 +282,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         setData(name, I18N_NOOP("Ignored"), storagevolume->isIgnored());
         setData(name, I18N_NOOP("File System Type"), storagevolume->fsType());
         setData(name, I18N_NOOP("Label"), storagevolume->label());
-        setData(name, I18N_NOOP("Uuid"), storagevolume->uuid());
+        setData(name, I18N_NOOP("UUID"), storagevolume->uuid());
         setData(name, I18N_NOOP("Size"), storagevolume->size());
     }
     if (device.is<Solid::OpticalDisc>()) {
@@ -303,13 +303,13 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
             contenttypelist << I18N_NOOP("Data");
         }
         if (contenttypes & Solid::OpticalDisc::Audio) {
-            contenttypelist << I18N_NOOP("Video Cd");
+            contenttypelist << I18N_NOOP("Video CD");
         }
         if (contenttypes & Solid::OpticalDisc::Audio) {
-            contenttypelist << I18N_NOOP("Super Video Cd");
+            contenttypelist << I18N_NOOP("Super Video CD");
         }
         if (contenttypes & Solid::OpticalDisc::Audio) {
-            contenttypelist << I18N_NOOP("Video Dvd");
+            contenttypelist << I18N_NOOP("Video DVD");
         }
         setData(name, I18N_NOOP("Available Content"), contenttypelist);
 
@@ -361,7 +361,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         setData(name, I18N_NOOP("Interface Name"), networkinterface->ifaceName());
         setData(name, I18N_NOOP("Wireless"), networkinterface->isWireless());
         setData(name, I18N_NOOP("Hardware Address"), networkinterface->hwAddress());
-        setData(name, I18N_NOOP("Mac Address"), networkinterface->macAddress());
+        setData(name, I18N_NOOP("MAC Address"), networkinterface->macAddress());
     }
     if (device.is<Solid::AcAdapter>()) {
         Solid::AcAdapter *ac = device.as<Solid::AcAdapter>();
@@ -369,7 +369,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
             return false;
         }
 
-        devicetypes << I18N_NOOP("AD Adapter");
+        devicetypes << I18N_NOOP("AC Adapter");
 
         setData(name, I18N_NOOP("Plugged In"), ac->isPlugged());
         signalmanager->mapDevice(ac, device.udi());
