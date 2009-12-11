@@ -57,7 +57,6 @@ LockOut::LockOut(QObject *parent, const QVariantList &args)
 #ifndef Q_OS_WIN
     setHasConfigurationInterface(true);
 #endif
-    resize(MINBUTTONSIZE*4, MINBUTTONSIZE * 2 *4 + MARGINSIZE);
 }
 
 void LockOut::init()
@@ -171,12 +170,15 @@ void LockOut::checkLayout()
         setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding));
         qreal wsize = size().height() * ratioToKeep;
         setMaximumSize(wsize, QWIDGETSIZE_MAX);
+        setMinimumSize(0,0);
     } else if (formFactor() == Plasma::Vertical) {
         setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum));
         qreal hsize = size().width() * ratioToKeep;
         setMaximumSize(QWIDGETSIZE_MAX, hsize);
+        setMinimumSize(0,0);
     } else {
         setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+        setMinimumSize(40,40);
     }
 }
 
