@@ -316,10 +316,11 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                 m_secondHandUpdateTimer = new QTimer(this);
                 connect(m_secondHandUpdateTimer, SIGNAL(timeout()), this, SLOT(moveSecondHand()));
             }
-
-            if (!m_secondHandUpdateTimer->isActive()) {
+            
+            if (m_animationStart != seconds && !m_secondHandUpdateTimer->isActive()) {
                 m_secondHandUpdateTimer->start(50);
-                seconds += 1;
+                m_animationStart = seconds; //we don't want to have a second animation if there is a external update (wallpaper etc).
+                seconds += 1;                
             } else {
                 m_secondHandUpdateTimer->stop();
             }
