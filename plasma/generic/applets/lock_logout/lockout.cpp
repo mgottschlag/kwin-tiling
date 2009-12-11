@@ -299,8 +299,12 @@ void LockOut::configAccepted()
     }
 
     if (changed) {
+        int oldButtonCount = m_visibleButtons;
         countButtons();
         showButtons();
+        if (formFactor() != Plasma::Horizontal && formFactor() != Plasma::Vertical) {
+            resize(size().width(), (size().height() / oldButtonCount) * m_visibleButtons);
+        }
         emit configNeedsSaving();
     }
 #endif
