@@ -35,7 +35,7 @@ class PythonWallpaperScript(Plasma.WallpaperScript):
 
     def init(self):
         self.moduleName = str(self.wallpaper().pluginName())
-        self.pluginName = self.moduleName.replace('-','_')
+        self.pluginName = 'wallpaper_' + self.moduleName.replace('-','_')
 
         PythonWallpaperScript.importer.register_top_level(self.pluginName, str(self.wallpaper().package().path()))
 

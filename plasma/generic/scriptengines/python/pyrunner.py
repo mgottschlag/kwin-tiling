@@ -35,7 +35,7 @@ class PythonRunnerScript(Plasma.RunnerScript):
 
     def init(self):
         self.moduleName = str(self.runner().package().metadata().pluginName())
-        self.pluginName = self.moduleName.replace('-','_')
+        self.pluginName = 'runner_' + self.moduleName.replace('-','_')
 
         PythonRunnerScript.importer.register_top_level(self.pluginName, str(self.runner().package().path()))
 

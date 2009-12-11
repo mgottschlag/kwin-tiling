@@ -34,7 +34,7 @@ class PythonDataEngineScript(Plasma.DataEngineScript):
 
     def init(self):
         self.moduleName = str(self.dataEngine().pluginName())
-        self.pluginName = self.moduleName.replace('-','_')
+        self.pluginName = 'dataengine_' + self.moduleName.replace('-','_')
 
         PythonDataEngineScript.importer.register_top_level(self.pluginName, str(self.dataEngine().package().path()))
 

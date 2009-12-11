@@ -42,7 +42,7 @@ class PythonAppletScript(Plasma.AppletScript):
         # on either; it might have been changed in the module itself)
         self.moduleName = str(self.applet().pluginName())
         #print("pluginname: " + str(self.applet().pluginName()))
-        self.pluginName = self.moduleName.replace('-','_')
+        self.pluginName = 'applet_' + self.moduleName.replace('-','_')
 
         PythonAppletScript.importer.register_top_level(self.pluginName, str(self.applet().package().path()))
 
