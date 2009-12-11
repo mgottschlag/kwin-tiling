@@ -136,7 +136,7 @@ void LockOut::checkLayout()
 
     switch (formFactor()) {
         case Plasma::Vertical:
-            if (width < MINBUTTONSIZE * 2 + MARGINSIZE) {
+            if (width < MINBUTTONSIZE * 0.55 * m_visibleButtons + MARGINSIZE) {
                 direction = Qt::Vertical;
                 ratioToKeep = m_visibleButtons;
             } else {
@@ -145,7 +145,7 @@ void LockOut::checkLayout()
             }
             break;
         case Plasma::Horizontal:
-            if (height < (MINBUTTONSIZE * 2 + MARGINSIZE)) {
+            if (height < (MINBUTTONSIZE * 0.55 * m_visibleButtons + MARGINSIZE)) {
                 direction = Qt::Horizontal;
                 ratioToKeep = m_visibleButtons;
             } else {
