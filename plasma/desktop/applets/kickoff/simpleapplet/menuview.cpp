@@ -40,6 +40,8 @@
 #include "core/models.h"
 #include "core/itemhandlers.h"
 
+#define MAX_NAME_SIZE 50
+
 Q_DECLARE_METATYPE(QPersistentModelIndex)
 Q_DECLARE_METATYPE(QAction*)
 
@@ -71,6 +73,16 @@ public:
         q->updateAction(model, action, index);
         return action;
     }
+    
+    QString trunctuateName(QString name, int maxSize){
+        if(name.length() <= maxSize)
+            return name;
+        
+        maxSize -= 2; // remove the 3 placeholder points
+        const int start = maxSize / 3; //use one third of the chars for the start of the name
+        const int end = maxSize - start;
+        return name.left(start) + ".." + name.right(end);
+    }
 
     void buildBranch(KMenu *menu, QAbstractItemModel *model, const QModelIndex& parent) {
         if (model->canFetchMore(parent)) {
@@ -79,6 +91,7 @@ public:
         const int rowCount = model->rowCount(parent);
         for (int i = 0; i < rowCount; i++) {
             QAction *action = createActionForIndex(model, model->index(i, column, parent), menu);
+            action->setText(trunctuateName(action->text(), MAX_NAME_SIZE));
             menu->addAction(action);
         }
     }
