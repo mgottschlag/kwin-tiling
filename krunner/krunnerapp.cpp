@@ -217,7 +217,7 @@ void KRunnerApp::singleRunnerModeActionTriggered()
 {
     KAction * action = qobject_cast<KAction*>(sender());
     if (action) {
-        m_runnerManager->setSingleModeRunnerId(action->objectName());
+        displaySingleRunner(action->objectName());
     }
 }
 
