@@ -34,9 +34,9 @@ namespace {
             case ClipCommand::IGNORE:
                 return QString(i18n("Ignore"));
             case ClipCommand::REPLACE:
-                return QString(i18n("Replace"));
+                return QString(i18n("Replace Clipboard"));
             case ClipCommand::ADD:
-                return QString(i18n("Add"));
+                return QString(i18n("Add to Clipboard"));
         }
         return QString();
     }
@@ -218,7 +218,7 @@ QVariant ActionDetailModel::headerData(int section, Qt::Orientation orientation,
         case COMMAND_COL:
             return i18n("Command");
         case OUTPUT_COL:
-            return i18n("Use Output");
+            return i18n("Output Handling");
         case DESCRIPTION_COL:
             return i18n("Description");
         }
