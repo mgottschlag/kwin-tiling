@@ -115,6 +115,51 @@ modifying the XDM init script shipped by your distribution.
    presenting you the exceedingly cute KDE login screen.
 
 
+Running KDM from Upstart
+------------------------
+
+NOTE, this description applies to K/Ubuntu 9.10, however it should be
+almost the same for other debian-based distros running Upstart.
+
+  Edit ( as root ) /etc/init/kdm.conf
+
+  Look for the line:
+
+      [ ! -f /etc/X11/default-display-manager -o "$(cat /etc/X11/default-display-manager 2>/dev/null)" = "/usr/bin/kdm" ]
+
+  and:
+
+      exec /usr/bin/kdm
+
+  Then, replace the kdm paths in order to point your new executable.
+  For example, if your executable is located under /opt/kde4/bin,
+  the updated version of the previous lines  will look like this:
+
+      [ ! -f /etc/X11/default-display-manager -o "$(cat /etc/X11/default-display-manager 2>/dev/null)" = "/opt/kde4/bin/kdm" ]
+
+  and this:
+
+      exec /opt/kde4/bin/kdm
+
+  This will tell Upstart where the new kdm file il located. Now,
+  you have to enable your new kdm as default display manager, so
+  edit ( as root ) /etc/X11/default-display-manager
+
+  And change the line:
+
+    /usr/bin/kdm
+    
+  to
+
+    /opt/kde4/bin/kdm
+
+That's all! now simply start/stop kdm by typing, as root,
+
+  start/stop kdm
+
+and you are done!
+
+
 "It doesn't work!!"
 -------------------
 
