@@ -44,7 +44,7 @@ BookmarksRunner::BookmarksRunner( QObject* parent, const QVariantList &args )
     m_browser = whichBrowser();
     m_dbCacheFile = KStandardDirs::locateLocal("cache", "") + "bookmarkrunnerfirefoxdbfile.sqlite";
     addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds web browser bookmarks matching :q:.")));
-    addSyntax(Plasma::RunnerSyntax(i18nc("list of all web browser bookmarks", "bookmarks"),
+    setDefaultSyntax(Plasma::RunnerSyntax(i18nc("list of all web browser bookmarks", "bookmarks"),
                                    i18n("List all web browser bookmarks")));
 
     connect(this, SIGNAL(prepare()), this, SLOT(prep()));
