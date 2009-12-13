@@ -291,6 +291,19 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         setData(name, I18N_NOOP("Label"), storagevolume->label());
         setData(name, I18N_NOOP("UUID"), storagevolume->uuid());
         setData(name, I18N_NOOP("Size"), storagevolume->size());
+
+        //Check if the volume is part of an encrypted container
+        //This needs to trigger an update for the encrypted container volume since
+        //libsolid cannot notify us when the accessibility of the container changes
+        Solid::Device encryptedContainer = storagevolume->encryptedContainer();
+        if (encryptedContainer.isValid()) {
+            QString containerUdi = encryptedContainer.udi();
+            setData(name, I18N_NOOP("Encrypted Container"), containerUdi);
+            encryptedContainerMap[name] = containerUdi;
+            //TODO: compress the calls?
+            forceUpdateAccessibility(containerUdi);
+            }
+
     }
     if (device.is<Solid::OpticalDisc>()) {
         Solid::OpticalDisc *opticaldisc = device.as<Solid::OpticalDisc>();
@@ -588,6 +601,22 @@ bool SolidDeviceEngine::updateEmblems(const QString &udi)
     return true;
 }
 
+bool SolidDeviceEngine::forceUpdateAccessibility(const QString &udi)
+{
+    Solid::Device device = devicemap.value(udi);
+    if (!device.isValid()) {
+        return false;
+    }
+
+    updateEmblems(udi);
+    Solid::StorageAccess *storageaccess = device.as<Solid::StorageAccess>();
+    if (storageaccess) {
+        setData(udi, I18N_NOOP("Accessible"), storageaccess->isAccessible());
+    }
+
+    return true;
+}
+
 bool SolidDeviceEngine::updateSourceEvent(const QString& source)
 {
     bool update1 = updateFreeSpace(source);
@@ -599,6 +628,15 @@ bool SolidDeviceEngine::updateSourceEvent(const QString& source)
 
 void SolidDeviceEngine::deviceRemoved(const QString& udi)
 {
+    //libsolid cannot notify us when an encrypted container is closed,
+    //hence we trigger an update when a device contained in an encrypted container device dies
+    QString containerUdi = encryptedContainerMap.value(udi, QString());
+
+    if (!containerUdi.isEmpty()) {
+        forceUpdateAccessibility(containerUdi);
+        encryptedContainerMap.remove(udi);
+    }
+
     foreach (const QString &query, predicatemap.keys()) {
         predicatemap[query].removeAll(udi);
         setData(query, predicatemap[query]);

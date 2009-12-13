@@ -56,12 +56,15 @@ private:
     bool updateFreeSpace(const QString &udi);
     bool updateHardDiskTemperature(const QString &udi);
     bool updateEmblems(const QString &udi);
+    bool forceUpdateAccessibility(const QString &udi);
     void listenForNewDevices();
 
     //predicate in string form, list of devices by udi
     QMap<QString, QStringList> predicatemap;
     //udi, corresponding device
     QMap<QString, Solid::Device> devicemap;
+    //udi, corresponding encrypted container udi;
+    QMap<QString, QString> encryptedContainerMap;
     DeviceSignalMapManager *signalmanager;
 
     HddTemp *temperature;
