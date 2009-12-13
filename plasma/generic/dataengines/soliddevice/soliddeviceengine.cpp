@@ -85,8 +85,15 @@ bool SolidDeviceEngine::sourceRequestEvent(const QString &name)
 {
 
     //create a predicate to check for validity
-    Solid::Predicate predicate = Solid::Predicate::fromString(name);
-    Solid::Device device(name);
+    Solid::Predicate predicate;
+    Solid::Device device;
+
+    if (name.startsWith('/')) {
+        device = Solid::Device(name);
+    } else {
+        predicate = Solid::Predicate::fromString(name);
+    }
+
     if(predicate.isValid()  && !predicatemap.contains(name)) {
         foreach (const Solid::Device &device, Solid::Device::listFromQuery(predicate)) {
             predicatemap[name] << device.udi();
