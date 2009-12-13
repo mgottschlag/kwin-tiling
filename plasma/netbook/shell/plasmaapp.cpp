@@ -859,7 +859,7 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
     if (m_controlBar && m_autoHideControlBar && !m_controlBar->isVisible() && event->xcrossing.window == m_unhideTrigger &&
         (event->xany.send_event != True && event->type == EnterNotify)) {
         //delayed show
-        if (!m_glowBar && KWindowSystem::compositingActive()) {
+        if (!m_glowBar && KWindowSystem::compositingActive() && !m_triggerZone.contains(QCursor::pos())) {
             Plasma::Direction direction = Plasma::locationToDirection(m_controlBar->location());
             m_glowBar = new GlowBar(direction, m_triggerZone);
             m_glowBar->show();
