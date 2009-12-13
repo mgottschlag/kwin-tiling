@@ -190,16 +190,15 @@ void DeviceNotifier::dataUpdated(const QString &udi, Plasma::DataEngine::Data da
         m_dialog->setDeviceData(udi, data["Icon"], NotifierDialog::IconNameRole);
         m_dialog->setDeviceData(udi, KIcon(data["Icon"].toString(), NULL, data["Emblems"].toStringList()), Qt::DecorationRole);
 
-        if (data["Device Types"].toStringList().contains("Storage Access")) {
+        bool isOpticalMedia = data["Device Types"].toStringList().contains("OpticalDisc");
 
+        m_dialog->setDeviceData(udi, isOpticalMedia, NotifierDialog::IsOpticalMedia);
+
+        if (data["Device Types"].toStringList().contains("Storage Access")) {
             //kDebug() << "DeviceNotifier::solidDeviceEngine updated" << udi;
             if (data["Accessible"].toBool()) {
                 m_dialog->setMounted(true, udi);
                 m_dialog->setDeviceLeftAction(udi, DeviceItem::Umount);
-            } else if (data["Device Types"].toStringList().contains("OpticalDisc")) {
-                //set icon to unmounted device
-                m_dialog->setMounted(false, udi);
-                m_dialog->setDeviceLeftAction(udi, DeviceItem::Mount);
             } else {
                 m_dialog->setMounted(false, udi);
                 m_dialog->setDeviceLeftAction(udi, DeviceItem::Mount);
@@ -217,7 +216,7 @@ void DeviceNotifier::dataUpdated(const QString &udi, Plasma::DataEngine::Data da
                 m_dialog->setDeviceLeftAction(udi, DeviceItem::Nothing);
             }
         } else if (data["Device Types"].toStringList().contains("Storage Volume")) {
-            if (data["Device Types"].toStringList().contains("OpticalDisc")) {
+            if (isOpticalMedia) {
                 m_dialog->setMounted(true, udi);
                 m_dialog->setDeviceLeftAction(udi, DeviceItem::Umount);
             }

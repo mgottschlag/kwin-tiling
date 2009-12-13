@@ -68,7 +68,8 @@ namespace Notifier
               IconNameRole = Qt::UserRole + 3,
               DescriptionRole = Qt::UserRole + 4,
               VisibilityRole = Qt::UserRole + 5,
-              IsBusy = Qt::UserRole + 6
+              IsBusy = Qt::UserRole + 6,
+              IsOpticalMedia = Qt::UserRole + 7
           };
 
           /**

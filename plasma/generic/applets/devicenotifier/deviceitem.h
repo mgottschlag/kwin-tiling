@@ -253,6 +253,8 @@ class DeviceItem : public QGraphicsWidget
 
     private:
 
+        bool allowsCapacityBar() const;
+
         ///The icon of the device
         QIcon m_icon;
 

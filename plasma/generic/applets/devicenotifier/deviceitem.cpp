@@ -113,7 +113,6 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
     m_capacityBar->setAcceptHoverEvents(false);
     m_capacityBar->setMaximumHeight(12);
     m_capacityBar->setOpacity(0);
-    m_capacityBar->setVisible(isMounted());
     info_layout->addItem(m_nameLabel);
     info_layout->addItem(m_descriptionLabel);
     info_layout->addItem(m_capacityBar);
@@ -238,6 +237,11 @@ bool DeviceItem::hovered() const
     return m_hovered;
 }
 
+bool DeviceItem::allowsCapacityBar() const
+{
+    return !data(NotifierDialog::IsOpticalMedia).toBool();
+}
+
 void DeviceItem::setMounted(const bool mounted)
 {
     m_mounted = mounted;
@@ -257,7 +261,7 @@ void DeviceItem::setMounted(const bool mounted)
     }
 
     const bool barVisible = m_capacityBar->isVisible();
-    m_capacityBar->setVisible(m_mounted);
+    m_capacityBar->setVisible(m_mounted && allowsCapacityBar());
     if (!barVisible && m_capacityBar->isVisible()) {
         // work around for a QGraphicsLayout bug when used with proxy widgets
         m_mainLayout->invalidate();
