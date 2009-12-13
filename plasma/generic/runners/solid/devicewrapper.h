@@ -81,6 +81,7 @@ class DeviceWrapper : public QObject
     KIcon m_icon;
     bool m_isStorageAccess;
     bool m_isAccessible;
+    bool m_isEncryptedContainer;
     QString m_description;
     QStringList m_actionIds;
     // Solid doesn't like multithreading that much

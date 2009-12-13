@@ -44,7 +44,8 @@
 DeviceWrapper::DeviceWrapper(const QString& udi)
   : m_device(udi),
     m_isStorageAccess(false),
-    m_isAccessible(false)
+    m_isAccessible(false),
+    m_isEncryptedContainer(false)
 {
     m_udi = m_device.udi();
     return;
@@ -61,8 +62,7 @@ void DeviceWrapper::dataUpdated(const QString &source, Plasma::DataEngine::Data 
     if (data.isEmpty()) {
         return;
     }
-    QStringList predicateFiles = data["predicateFiles"].toStringList();
-    if (!predicateFiles.isEmpty()) {
+    if (data["text"].isValid()) {
         m_actionIds.clear();
         foreach (const QString &desktop, data["predicateFiles"].toStringList()) {
             QString filePath = KStandardDirs::locate("data", "solid/actions/" + desktop);
@@ -74,6 +74,7 @@ void DeviceWrapper::dataUpdated(const QString &source, Plasma::DataEngine::Data 
                 emit registerAction(actionId,  serviceAction.icon(), serviceAction.text(), desktop);
             }
         }
+        m_isEncryptedContainer = data["isEncryptedContainer"].toBool();
     } else if (data["Device Types"].toStringList().contains("Storage Access")) {
         m_isStorageAccess = true;
         if (data["Accessible"].toBool() == true) {
@@ -121,10 +122,18 @@ QString DeviceWrapper::defaultAction() const {
     QString actionString;
 
     if (m_isStorageAccess) {
-        if (!m_isAccessible) {
-            actionString = i18n("Mount the device");
+        if (!m_isEncryptedContainer) {
+            if (!m_isAccessible) {
+                actionString = i18n("Mount the device");
+            } else {
+                actionString = i18n("Unmount the device");
+            }
         } else {
-            actionString = i18n("Unmount the device");
+            if (!m_isAccessible) {
+                actionString = i18nc("Unlock the encrypted container; will ask for a password; partitions inside will appear as they had been plugged in","Unlock the container");
+            } else {
+                actionString = i18nc("Close the encrypted container; partitions inside will disappear as they had been unplugged", "Lock the container");
+            }
         }
     } else {
             actionString = i18n("Eject medium");
