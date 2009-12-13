@@ -50,7 +50,9 @@ class DeviceItem : public QGraphicsWidget
         enum LeftActions {
             Nothing = 0,
             Mount = 1,
-            Umount = 2
+            Umount = 2,
+            Lock = 3,
+            Unlock = 4
         };
 
         /**

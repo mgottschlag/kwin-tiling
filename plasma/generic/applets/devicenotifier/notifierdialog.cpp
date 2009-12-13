@@ -574,7 +574,7 @@ void NotifierDialog::leftActionActivated(DeviceItem *item)
 {
     Solid::Device device(item->udi());
 
-    if (item->leftAction() == DeviceItem::Umount) {
+    if ((item->leftAction() == DeviceItem::Umount) || (item->leftAction() == DeviceItem::Lock)) {
         if (device.is<Solid::OpticalDisc>()) {
             Solid::OpticalDrive *drive = device.parent().as<Solid::OpticalDrive>();
             if (drive) {
@@ -592,7 +592,7 @@ void NotifierDialog::leftActionActivated(DeviceItem *item)
                 access->teardown();
             }
         }
-    } else if (item->leftAction() == DeviceItem::Mount && device.is<Solid::StorageAccess>()) {
+    } else if (((item->leftAction() == DeviceItem::Mount) || (item->leftAction() == DeviceItem::Unlock)) && device.is<Solid::StorageAccess>()) {
         Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
 
         // only unmounted devices

@@ -239,7 +239,7 @@ bool DeviceItem::hovered() const
 
 bool DeviceItem::allowsCapacityBar() const
 {
-    return !data(NotifierDialog::IsOpticalMedia).toBool();
+    return !(data(NotifierDialog::IsOpticalMedia).toBool() || data(NotifierDialog::IsEncryptedContainer).toBool());
 }
 
 void DeviceItem::setMounted(const bool mounted)
@@ -251,13 +251,20 @@ void DeviceItem::setMounted(const bool mounted)
     } else {
         m_leftActionIcon->setToolTip(i18n("Click to access this device from other applications."));
         m_deviceIcon->setToolTip(i18n("Device is plugged in, but not mounted for access yet."));
-
     }
 
-    if (m_mounted && m_leftAction == Mount) {
-        setLeftAction(Umount);
-    } else if (!m_mounted && m_leftAction == Umount) {
-        setLeftAction(Mount);
+    if (data(NotifierDialog::IsEncryptedContainer).toBool()) {
+        if (m_mounted && m_leftAction != Lock) {
+            setLeftAction(Lock);
+        } else if (!m_mounted && m_leftAction != Unlock) {
+            setLeftAction(Unlock);
+        }
+    } else {
+        if (m_mounted && m_leftAction != Umount) {
+            setLeftAction(Umount);
+        } else if (!m_mounted && m_leftAction != Mount) {
+            setLeftAction(Mount);
+        }
     }
 
     const bool barVisible = m_capacityBar->isVisible();
@@ -271,10 +278,14 @@ void DeviceItem::setMounted(const bool mounted)
 void DeviceItem::setLeftAction(DeviceItem::LeftActions action)
 {
     m_leftAction = action;
-    if (m_leftAction == DeviceItem::Umount) {
+    if (m_leftAction == Umount) {
         m_leftActionIcon->setIcon("media-eject");
     } else if (m_leftAction == Mount) {
         m_leftActionIcon->setIcon("emblem-mounted");
+    } else if (m_leftAction == Unlock) {
+        m_leftActionIcon->setIcon("emblem-unlocked");
+    } else if (m_leftAction == Lock) {
+        m_leftActionIcon->setIcon("emblem-locked");
     } else {
         m_leftActionIcon->setIcon("");
     }
@@ -476,7 +487,11 @@ void DeviceItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void DeviceItem::clicked()
 {
-     if (m_actionsLayout->count() == 1) {
+    if (m_actionsLayout->count() == 0) {
+        return;
+    }
+
+    if (m_actionsLayout->count() == 1) {
         emit actionActivated(this, udi(), m_actionsLayout->itemAt(0)->graphicsItem()->data(NotifierDialog::ActionRole).toString());
     } else {
         if (isCollapsed()) {

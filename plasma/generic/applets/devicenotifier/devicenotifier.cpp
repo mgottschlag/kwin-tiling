@@ -157,8 +157,10 @@ void DeviceNotifier::dataUpdated(const QString &udi, Plasma::DataEngine::Data da
 
     //data from hotplug engine
     //kDebug() << data["udi"] << data["predicateFiles"].toStringList() << data["Device Types"].toStringList();
-    QStringList predicateFiles = data["predicateFiles"].toStringList();
-    if (!predicateFiles.isEmpty()) {
+
+    //FIXME: here we rely on the fact that the hotplug engine gives a "text" field (and the soliddevice one does not)
+    // to distinguish between data from the two engines. This is really not nice
+    if (data["text"].isValid()) {
         //kDebug() << "adding" << data["udi"];
         int nb_actions = 0;
         QString lastActionLabel;
@@ -173,6 +175,7 @@ void DeviceNotifier::dataUpdated(const QString &udi, Plasma::DataEngine::Data da
         }
 
         m_dialog->setDeviceData(udi, data["text"], Qt::DisplayRole);
+        m_dialog->setDeviceData(udi, data["isEncryptedContainer"], NotifierDialog::IsEncryptedContainer);
 
         if (nb_actions > 1) {
             QString s = i18np("1 action for this device",
@@ -198,10 +201,8 @@ void DeviceNotifier::dataUpdated(const QString &udi, Plasma::DataEngine::Data da
             //kDebug() << "DeviceNotifier::solidDeviceEngine updated" << udi;
             if (data["Accessible"].toBool()) {
                 m_dialog->setMounted(true, udi);
-                m_dialog->setDeviceLeftAction(udi, DeviceItem::Umount);
             } else {
                 m_dialog->setMounted(false, udi);
-                m_dialog->setDeviceLeftAction(udi, DeviceItem::Mount);
             }
 
             if (data["Ignored"].toBool()) {
@@ -218,7 +219,6 @@ void DeviceNotifier::dataUpdated(const QString &udi, Plasma::DataEngine::Data da
         } else if (data["Device Types"].toStringList().contains("Storage Volume")) {
             if (isOpticalMedia) {
                 m_dialog->setMounted(true, udi);
-                m_dialog->setDeviceLeftAction(udi, DeviceItem::Umount);
             }
         }
     }
