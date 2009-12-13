@@ -26,7 +26,7 @@
     </method>
     <method name="clearHistory">
     </method>
-    <method name="enabledSingleModeRunnerIds">
+    <method name="singleModeAdvertisedRunnerIds">
       <arg type="as" direction="out"/>
     </method>
   </interface>

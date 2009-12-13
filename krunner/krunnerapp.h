@@ -94,7 +94,7 @@ public Q_SLOTS:
     /** Clear the search history */
     Q_SCRIPTABLE void clearHistory();
 
-    Q_SCRIPTABLE QStringList enabledSingleModeRunnerIds() const;
+    Q_SCRIPTABLE QStringList singleModeAdvertisedRunnerIds() const;
 
 private slots:
     /**

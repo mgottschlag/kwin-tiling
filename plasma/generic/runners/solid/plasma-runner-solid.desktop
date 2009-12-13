@@ -47,4 +47,4 @@ X-KDE-PluginInfo-Name=solid
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=true
-X-Plasma-SingleRunnerQueryMode=true
+X-Plasma-AdvertiseSingleRunnerQueryMode=true
