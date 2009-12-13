@@ -68,6 +68,8 @@ void HotplugEngine::init()
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)),
             this, SLOT(onDeviceRemoved(const QString &)));
 
+    m_encryptedPredicate = Solid::Predicate("StorageVolume", "usage", "Encrypted");
+
     processNextStartupDevice();
 }
 
@@ -153,7 +155,9 @@ void HotplugEngine::onDeviceAdded(Solid::Device &device, bool added)
         }
     }
 
-    if (!interestingDesktopFiles.isEmpty()) {
+    bool isEncryptedContainer =  m_encryptedPredicate.matches(device);
+
+    if (!interestingDesktopFiles.isEmpty() || isEncryptedContainer) {
         //kDebug() << device.product();
         //kDebug() << device.vendor();
         //kDebug() << "number of interesting desktop file : " << interestingDesktopFiles.size();
@@ -169,6 +173,7 @@ void HotplugEngine::onDeviceAdded(Solid::Device &device, bool added)
         data.insert("icon", device.icon());
         data.insert("emblems", device.emblems());
         data.insert("predicateFiles", interestingDesktopFiles);
+        data.insert("isEncryptedContainer", isEncryptedContainer);
 
         setData(device.udi(), data);
         //kDebug() << "add hardware solid : " << udi;

@@ -53,6 +53,7 @@ class HotplugEngine : public Plasma::DataEngine
     private:
         QHash<QString, Solid::Predicate> m_predicates;
         QHash<QString, Solid::Device> m_startList;
+        Solid::Predicate m_encryptedPredicate;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(hotplug, HotplugEngine)
