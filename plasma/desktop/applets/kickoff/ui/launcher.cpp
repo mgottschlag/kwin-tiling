@@ -113,10 +113,10 @@ public:
         view->setDragEnabled(true);
         view->setAcceptDrops(true);
         view->setDropIndicatorShown(true);
-        if (name == "Favorites") {
+        if (name == i18n("Favorites")) {
             view->setDragDropMode(QAbstractItemView::DragDrop);
-        } else if(name == "Applications" || name == "Computer" ||
-                  name == "Recently Used") {
+        } else if(name == i18n("Applications") || name == i18n("Computer") ||
+                  name == i18n("Recently Used")) {
             view->setDragDropMode(QAbstractItemView::DragOnly);
         }
         view->setModel(model);
