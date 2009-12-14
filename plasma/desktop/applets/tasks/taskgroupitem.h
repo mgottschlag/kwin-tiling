@@ -190,7 +190,7 @@ private:
     bool focusSubTask(bool next, bool activate);
     AbstractTaskItem * selectSubTask(int index);
 
-    GroupPtr m_group;
+    QWeakPointer<TaskGroup> m_group;
 
     QHash<AbstractGroupableItem *, AbstractTaskItem*> m_groupMembers;
 

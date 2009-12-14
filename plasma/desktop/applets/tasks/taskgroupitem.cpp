@@ -53,7 +53,6 @@
 
 TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet)
     : AbstractTaskItem(parent, applet),
-      m_group(0),
       m_tasksLayout(0),
       m_popupMenuTimer(0),
       m_lastActivated(-1),
@@ -154,7 +153,7 @@ TaskGroupItem * TaskGroupItem::splitGroup(int newSplitPosition)
     if (!m_childSplitGroup) {
         //kDebug() << "Normal scene " << scene();
         m_childSplitGroup = new  TaskGroupItem(this, m_applet);
-        m_childSplitGroup->setSplitGroup(m_group);
+        m_childSplitGroup->setSplitGroup(m_group.data());
     }
 
     m_childSplitGroup->setSplitIndex(newSplitPosition);
@@ -191,10 +190,8 @@ void TaskGroupItem::close()
     }
 
     if (m_group) {
-        disconnect(m_group, 0, this, 0);
+        disconnect(m_group.data(), 0, this, 0);
     }
-
-    m_group = 0;
 }
 
 
@@ -207,20 +204,20 @@ void TaskGroupItem::updateTask(::TaskManager::TaskChanges changes)
     bool needsUpdate = false;
     // task flags
     TaskFlags flags = m_flags;
-    if (m_group->isActive()) {
+    if (m_group.data()->isActive()) {
         flags |= TaskHasFocus;
         emit activated(this);
     } else {
         flags &= ~TaskHasFocus;
     }
 
-    if (m_group->demandsAttention()) {
+    if (m_group.data()->demandsAttention()) {
         flags |= TaskWantsAttention;
     } else {
         flags &= ~TaskWantsAttention;
     }
 
-    if (m_group->isMinimized()) {
+    if (m_group.data()->isMinimized()) {
         flags |= TaskIsMinimized;
     } else {
         flags &= ~TaskIsMinimized;
@@ -234,12 +231,12 @@ void TaskGroupItem::updateTask(::TaskManager::TaskChanges changes)
     // basic title and icon
     if (changes & TaskManager::IconChanged) {
         needsUpdate = true;
-        setIcon(m_group->icon());
+        setIcon(m_group.data()->icon());
     }
 
     if (changes & TaskManager::NameChanged) {
         needsUpdate = true;
-        setText(m_group->name());
+        setText(m_group.data()->name());
     }
 
     if (Plasma::ToolTipManager::self()->isVisible(this) &&
@@ -268,19 +265,19 @@ void TaskGroupItem::updateToolTip()
         return;
     }
 
-    Plasma::ToolTipContent data(m_group->name(), QString());
-    int desktop = m_group->desktop();
+    Plasma::ToolTipContent data(m_group.data()->name(), QString());
+    int desktop = m_group.data()->desktop();
     if (desktop != 0) {
         data.setSubText(i18nc("Which virtual desktop a window is currently on", "On %1",
-                        KWindowSystem::desktopName(m_group->desktop())));
+                        KWindowSystem::desktopName(m_group.data()->desktop())));
     }
 
-    data.setImage(m_group->icon());
+    data.setImage(m_group.data()->icon());
     data.setClickable(true);
 
     QList<WId> windows;
 
-    foreach (AbstractGroupableItem *item, m_group->members()) {
+    foreach (AbstractGroupableItem *item, m_group.data()->members()) {
         TaskManager::TaskItem *taskItem = qobject_cast<TaskManager::TaskItem *>(item);
         if (taskItem && taskItem->task()) {
             windows.append(taskItem->task()->window());
@@ -295,6 +292,9 @@ void TaskGroupItem::updateToolTip()
 void TaskGroupItem::reload()
 {
     QList <AbstractGroupableItem *> itemsToRemove = m_groupMembers.keys();
+    if (!group()) {
+        return;
+    }
 
     foreach (AbstractGroupableItem *item, group()->members()) {
         if (!item) {
@@ -325,13 +325,13 @@ void TaskGroupItem::reload()
 void TaskGroupItem::setGroup(TaskManager::GroupPtr group)
 {
     //kDebug();
-    if (m_group == group) {
+    if (m_group.data() == group) {
         kDebug() << "already have this group!";
         return;
     }
 
     if (m_group) {
-        disconnect(m_group, 0, this, 0);
+        disconnect(m_group.data(), 0, this, 0);
     }
 
     m_group = group;
@@ -341,17 +341,17 @@ void TaskGroupItem::setGroup(TaskManager::GroupPtr group)
         connect(m_abstractItem, SIGNAL(destroyed(QObject*)), this, SLOT(clearAbstractItem()));
     }
 
-    connect(m_group, SIGNAL(destroyed(QObject*)), this, SLOT(clearGroup()));
-    connect(m_group, SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(itemRemoved(AbstractGroupableItem *)));
-    connect(m_group, SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(itemAdded(AbstractGroupableItem *)));
+    connect(m_group.data(), SIGNAL(destroyed(QObject*)), this, SLOT(clearGroup()));
+    connect(m_group.data(), SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(itemRemoved(AbstractGroupableItem *)));
+    connect(m_group.data(), SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(itemAdded(AbstractGroupableItem *)));
 
     //connect(m_group, SIGNAL(destroyed()), this, SLOT(close()));
 
-    connect(m_group, SIGNAL(changed(::TaskManager::TaskChanges)),
+    connect(m_group.data(), SIGNAL(changed(::TaskManager::TaskChanges)),
             this, SLOT(updateTask(::TaskManager::TaskChanges)));
 
-    connect(m_group, SIGNAL(itemPositionChanged(AbstractGroupableItem *)), this, SLOT(itemPositionChanged(AbstractGroupableItem *)));
-    connect(m_group, SIGNAL(groupEditRequest()), this, SLOT(editGroup()));
+    connect(m_group.data(), SIGNAL(itemPositionChanged(AbstractGroupableItem *)), this, SLOT(itemPositionChanged(AbstractGroupableItem *)));
+    connect(m_group.data(), SIGNAL(groupEditRequest()), this, SLOT(editGroup()));
 
     //Add already existing items
     reload();
@@ -362,12 +362,12 @@ void TaskGroupItem::setGroup(TaskManager::GroupPtr group)
 
 TaskManager::GroupPtr TaskGroupItem::group() const
 {
-    return m_group;
+    return m_group.data();
 }
 
 void TaskGroupItem::clearGroup()
 {
-    m_group = 0;
+    //now it's useless
 }
 
 void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
@@ -397,7 +397,7 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
     QList <QAction*> actionList;
     actionList.append(a);
 
-    TaskManager::BasicMenu menu(qobject_cast<QWidget*>(this), m_group, &m_applet->groupManager(), actionList);
+    TaskManager::BasicMenu menu(qobject_cast<QWidget*>(this), m_group.data(), &m_applet->groupManager(), actionList);
     menu.adjustSize();
 
     if (m_applet->formFactor() != Plasma::Vertical) {
@@ -487,7 +487,7 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractGroupableItem * groupableItem
     if (item->isActive()) {
         //kDebug() << "item is Active" ;
         m_activeTaskIndex = indexOf(item);
-    } else if (!m_group || m_group->members().size() == 1) {
+    } else if (!m_group || m_group.data()->members().size() == 1) {
         m_activeTaskIndex = 0;
     }
 
@@ -549,10 +549,15 @@ bool TaskGroupItem::isActive() const
 }
 
 void TaskGroupItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{ //TODO add delay so we can still drag group items
+{
+    //TODO add delay so we can still drag group items
+    if (!m_group) {
+        return;
+    }
+
     if ((event->buttons() & Qt::LeftButton) && (event->modifiers() & Qt::ControlModifier)) {
         QList<WId> ids;
-        foreach (AbstractGroupableItem *groupable, m_group->members()) {
+        foreach (AbstractGroupableItem *groupable, m_group.data()->members()) {
             if (groupable->isGroupItem()) {
                 //TODO: recurse through sub-groups?
             } else {
@@ -907,7 +912,7 @@ AbstractTaskItem *TaskGroupItem::directMember(AbstractTaskItem *item)
 {
     Q_ASSERT(item);
     Q_ASSERT(m_group);
-    TaskManager::AbstractGroupableItem * directMember = m_group->directMember(item->abstractItem());
+    TaskManager::AbstractGroupableItem * directMember = m_group.data()->directMember(item->abstractItem());
     if (!directMember) {
         kDebug() << "Error" << item->abstractItem();
     }
@@ -922,7 +927,7 @@ void TaskGroupItem::paint(QPainter *painter,
         AbstractTaskItem::paint(painter,option,widget);
     }/* else {
         if (m_group) {
-            //painter->fillRect(geometry(), m_group->color());
+            //painter->fillRect(geometry(), m_group.data()->color());
         }
     }*/
 
@@ -942,9 +947,9 @@ void TaskGroupItem::editGroup()
         bool ok;
         QString text = QInputDialog::getText(qobject_cast<QWidget*>(this), i18n("Edit Group"),
                                             i18n("New Group Name: "), QLineEdit::Normal,
-                                            m_group->name(), &ok);
+                                            m_group.data()->name(), &ok);
         if (ok && !text.isEmpty()) {
-            m_group->setName(text);
+            m_group.data()->setName(text);
         }
     }
 }
@@ -979,7 +984,7 @@ void  TaskGroupItem::itemPositionChanged(AbstractGroupableItem * item)
     //       still in the group.
     taskItem = abstractTaskItem(item);
     if (m_group && taskItem) {
-        m_tasksLayout->insert(m_group->members().indexOf(item), taskItem);
+        m_tasksLayout->insert(m_group.data()->members().indexOf(item), taskItem);
     }
 }
 
@@ -1091,11 +1096,11 @@ void TaskGroupItem::handleDroppedId(WId id, AbstractTaskItem *targetTask, QGraph
 
         if (!targetTask) {
             //add item to this group
-            m_applet->groupManager().manualGroupingRequest(taskItem->abstractItem(), m_group);
-        } else if (targetTask->isWindowItem() && (group == m_group)) { //Both Items in same group
+            m_applet->groupManager().manualGroupingRequest(taskItem->abstractItem(), m_group.data());
+        } else if (targetTask->isWindowItem() && (group == m_group.data())) { //Both Items in same group
             //Group Items together
-            int targetIndex = m_group ? m_group->members().indexOf(targetTask->abstractItem()) : 0;
-            int sourceIndex = m_group ? m_group->members().indexOf(taskItem->abstractItem()) : 0;
+            int targetIndex = m_group ? m_group.data()->members().indexOf(targetTask->abstractItem()) : 0;
+            int sourceIndex = m_group ? m_group.data()->members().indexOf(taskItem->abstractItem()) : 0;
             TaskManager::ItemList members;
             members.append(targetTask->abstractItem());
             members.append(taskItem->abstractItem());
@@ -1119,11 +1124,11 @@ void TaskGroupItem::handleDroppedId(WId id, AbstractTaskItem *targetTask, QGraph
         }
     } else if (m_applet->groupManager().sortingStrategy() == TaskManager::GroupManager::ManualSorting) {
         //Move action 
-        if (group == m_group) { //same group
+        if (group == m_group.data()) { //same group
             //kDebug() << "Drag within group";
             layoutTaskItem(taskItem, event->pos());
         } else if (m_group) { //task item was dragged outside of group -> group move
-            AbstractTaskItem *directMember = abstractTaskItem(m_group->directMember(group));
+            AbstractTaskItem *directMember = abstractTaskItem(m_group.data()->directMember(group));
             if (directMember) {
                 layoutTaskItem(directMember, event->pos()); //we need to get the group right under the receiver group
             }
@@ -1170,7 +1175,7 @@ int TaskGroupItem::indexOf(AbstractTaskItem *task)
 
     int index = 0;
 
-    foreach (AbstractGroupableItem *item, m_group->members()) {
+    foreach (AbstractGroupableItem *item, m_group.data()->members()) {
         AbstractTaskItem *taskItem = abstractTaskItem(item);
         if (taskItem) {
             if (task == taskItem) {
@@ -1209,7 +1214,7 @@ AbstractTaskItem * TaskGroupItem::activeSubTask()
         return 0;
     }
 
-    foreach (AbstractGroupableItem *item, m_group->members()) {
+    foreach (AbstractGroupableItem *item, m_group.data()->members()) {
         AbstractTaskItem *taskItem = abstractTaskItem(item);
         if (taskItem) {
             if(taskItem->isActive()) {
@@ -1326,7 +1331,7 @@ AbstractTaskItem* TaskGroupItem::abstractTaskItem(AbstractGroupableItem * item)
 void TaskGroupItem::setAdditionalMimeData(QMimeData* mimeData)
 {
     if (m_group) {
-        m_group->addMimeData(mimeData);
+        m_group.data()->addMimeData(mimeData);
     }
 }
 
