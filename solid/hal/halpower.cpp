@@ -387,7 +387,7 @@ float HalPower::brightness(const QString &device)
     if(reply.isValid() && reply.value().contains(device))
     {
         QDBusInterface deviceInterface("org.freedesktop.Hal", device, "org.freedesktop.Hal.Device.LaptopPanel", QDBusConnection::systemBus());
-        QDBusReply<double> brightnessReply = deviceInterface.call("GetBrightness");
+        QDBusReply<int> brightnessReply = deviceInterface.call("GetBrightness");
         if(!brightnessReply.isValid())
         {
             return 0.0;
@@ -408,7 +408,7 @@ float HalPower::brightness(const QString &device)
     {
         QDBusInterface deviceInterface("org.freedesktop.Hal", device, "org.freedesktop.Hal.Device.KeyboardBacklight", QDBusConnection::systemBus()); //TODO - I do not have a backlight enabled keyboard, so I'm guessing a bit here. Could someone please check this.
 
-        QDBusReply<double> brightnessReply = deviceInterface.call("GetBrightness");
+        QDBusReply<int> brightnessReply = deviceInterface.call("GetBrightness");
         if(!brightnessReply.isValid())
         {
             return 0.0;

@@ -196,7 +196,7 @@ float Solid::Control::PowerManager::brightness(const QString &device)
         else
         {
             return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
-                      false, brightness(controls.keys().at(0)));
+                      false, brightness(controls.keys(Solid::Control::PowerManager::Screen).at(0)));
         }
     }
     else
