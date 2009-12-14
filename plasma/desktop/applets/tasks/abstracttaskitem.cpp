@@ -452,6 +452,9 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
     } else if (event->timerId() == m_hoverEffectTimerId) {
         killTimer(m_hoverEffectTimerId);
         m_hoverEffectTimerId = 0;
+        if (!isUnderMouse()) {
+            return;
+        }
 
 #ifdef Q_WS_X11
         QList<WId> windows;
@@ -1111,7 +1114,25 @@ bool AbstractTaskItem::isGrouped() const
 
 TaskGroupItem * AbstractTaskItem::parentGroup() const
 {
-    return qobject_cast<TaskGroupItem*>(parentWidget());
+    TaskGroupItem *group = qobject_cast<TaskGroupItem*>(parentWidget());
+
+    //lucky case: directly in a group
+    if (group) {
+        return group;
+    }
+
+    //in a popup or a popup's popup?
+    QObject *candidate = parentWidget();
+
+    while(candidate) {
+        group = qobject_cast<TaskGroupItem*>(candidate);
+        candidate = candidate->parent();
+        if (group) {
+            return group;
+        }
+    }
+
+    return 0;
 }
 
 TaskManager::AbstractGroupableItem * AbstractTaskItem::abstractItem()
