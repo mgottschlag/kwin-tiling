@@ -179,7 +179,7 @@ void AppletInfoWidget::updateInfo()
             description += m_appletItem->description() + "<br/><br/>";
         }
         if (!m_appletItem->author().isEmpty()) {
-            description += i18n("Author:") + "<div style=\"margin-left: 15px\">" +
+            description += i18n("<font color=\"%1\">Author:</font>") + "<div style=\"margin-left: 15px; color:%1\">" +
                            m_appletItem->author();
             if (!m_appletItem->email().isEmpty()) {
                  description += " <a href=\"mailto:" + m_appletItem->email() + "\">" +
@@ -188,13 +188,15 @@ void AppletInfoWidget::updateInfo()
             description += "</div>";
         }
         if (!m_appletItem->website().isEmpty()) {
-            description += i18n("Website:") + "<div style=\"margin-left: 15px\">" + "<a href=\"" +
+            description += i18n("<font color=\"%1\">Website:</font>") + "<div style=\"margin-left: 15px; color:%1\">" + "<a href=\"" +
                            m_appletItem->website() + "\">" + m_appletItem->website() +
                            "</a></div>";
         }
-        description += i18n("License:") + "<div style=\"margin-left: 15px\">" +
+        description += i18n("<font color=\"%1\">License:</font>") + "<div style=\"margin-left: 15px; color:%1\">" +
                        m_appletItem->license() + "</div>";
         description += "</body></html>";
+        description = description.arg(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor).name());
+
         m_aboutLabel->setText(description);
         m_uninstallButton->setVisible(m_appletItem->isLocal());
     } else {
