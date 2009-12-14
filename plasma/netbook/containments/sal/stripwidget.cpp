@@ -170,7 +170,7 @@ void StripWidget::remove(Plasma::IconWidget *favourite)
 
 void StripWidget::removeFavourite()
 {
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
+    Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget*>(sender()->parent());
 
     if (icon) {
         remove(icon);
