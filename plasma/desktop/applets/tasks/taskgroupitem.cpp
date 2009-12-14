@@ -406,6 +406,7 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
 
     Q_ASSERT(m_applet->containment());
     Q_ASSERT(m_applet->containment()->corona());
+    stopWindowHoverEffect();
     menu.exec(m_applet->containment()->corona()->popupPosition(this, menu.size()));
 }
 
