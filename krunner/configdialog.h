@@ -48,6 +48,7 @@ Q_OBJECT
         void previewInterface();
         void setInterface(int type);
         void updateRunner(const QByteArray& runnerName);
+        void syncPalette();
 
     private:
         void init();

@@ -35,6 +35,7 @@
 #include <KServiceTypeTrader>
 
 #include <Plasma/RunnerManager>
+#include <Plasma/Theme>
 
 #include "interfaces/default/interface.h"
 #include "krunnersettings.h"
@@ -53,6 +54,9 @@ KRunnerConfigDialog::KRunnerConfigDialog(Plasma::RunnerManager *manager, QWidget
 
     m_interfaceType = KRunnerSettings::interface();
     m_uiOptions.setupUi(m_generalSettings);
+
+    syncPalette();
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(syncPalette()));
 
     QButtonGroup *positionButtons = new QButtonGroup(m_generalSettings);
     positionButtons->addButton(m_uiOptions.topEdgeButton);
@@ -74,6 +78,20 @@ KRunnerConfigDialog::KRunnerConfigDialog(Plasma::RunnerManager *manager, QWidget
     KService::List offers = KServiceTypeTrader::self()->query("Plasma/Runner");
     QList<KPluginInfo> runnerInfo = KPluginInfo::fromServices(offers);
     m_sel->addPlugins(runnerInfo, KPluginSelector::ReadConfigFile, i18n("Available Features"), QString(), KSharedConfig::openConfig("krunnerrc"));
+}
+
+void KRunnerConfigDialog::syncPalette()
+{
+    QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    QPalette p = palette();
+    p.setColor(QPalette::Normal, QPalette::WindowText, color);
+    p.setColor(QPalette::Inactive, QPalette::WindowText, color);
+    color.setAlphaF(0.6);
+    p.setColor(QPalette::Disabled, QPalette::WindowText, color);
+
+    p.setColor(QPalette::Normal, QPalette::Link, Plasma::Theme::defaultTheme()->color(Plasma::Theme::LinkColor));
+    p.setColor(QPalette::Normal, QPalette::LinkVisited, Plasma::Theme::defaultTheme()->color(Plasma::Theme::VisitedLinkColor));
+    setPalette(p);
 }
 
 void KRunnerConfigDialog::previewInterface()
