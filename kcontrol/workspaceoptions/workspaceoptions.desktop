@@ -12,6 +12,7 @@ X-KDE-System-Settings-Parent-Category=desktop
 
 Name=Workspace
 Name[ca]=Espai de treball
+Name[csb]=Robòczi plac
 Name[da]=Arbejdsområde
 Name[de]=Arbeitsbereich
 Name[el]=Χώρος εργασίας
@@ -45,6 +46,7 @@ Name[zh_TW]=工作空間
 Comment=Global options for the Plasma workspace
 Comment[ca]=Opcions globals per a l'espai de treball del Plasma
 Comment[cs]=Globální možnosti pro pracovní plochu Plasma
+Comment[csb]=Globalné òptacëje dlô robòczich placów Plasmë
 Comment[da]=Globale indstillinger for Plasma-arbejdsområde
 Comment[de]=Globale Einstellungen für die Plasma-Arbeitsumgebung
 Comment[el]=Καθολικές επιλογές για το χώρο εργασίας Plasma

@@ -150,6 +150,7 @@ Comment[fy]=De daemon ûntfong in nij berjocht stjoert mei wall(1) of write(1)
 Comment[ga]=Fuair an deamhan teachtaireacht nua a seoladh trí wall(1) nó le write(1)
 Comment[gl]=O daemon recibiu unha mensaxe nova enviada con wall(1) ou write(1)
 Comment[gu]=ડેમોને wall(1) અથવા write(1) સાથે મોકલેલ નવો સંદેશ મેળવ્યો
+Comment[he]=שירות הרקע קיבל הודעה שנשלחה עם wall(1) או write(1)
 Comment[hi]=डेमन द्वारा राइट(1) या वाल(1) के जरिए भेजे गए संदेश प्राप्त किया गया
 Comment[hne]=वाल(१) या राइट (१) से भेजे वाले नवा संदेस डेमन ल मिलिस
 Comment[hr]=Daemon je primio novu poruku poslanu sa wall(1) ili write(1)

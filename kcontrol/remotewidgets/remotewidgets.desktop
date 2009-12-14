@@ -13,6 +13,7 @@ X-KDE-System-Settings-Parent-Category=computer-administration
 
 Name=Remote Widgets' Policies
 Name[ca]=Polítiques dels estris remots
+Name[csb]=Nastôwë ùprzëstãpnionych widżetów
 Name[da]=Politikker for eksterne widgets
 Name[de]=Richtlinien für freigegebene Miniprogramme
 Name[el]=Πολιτικές απομακρυσμένων γραφικών συστατικών
@@ -20,6 +21,7 @@ Name[en_GB]=Remote Widgets' Policies
 Name[es]=Políticas de elementos gráficos remotos
 Name[et]=Välisvidinate reeglid
 Name[fr]=Règles pour les plasmoïdes distants
+Name[he]=הרשאות וידג'טים נשלטים
 Name[kk]=Қашықтағы виджеттер ережелері
 Name[lv]=Attālināto sīkrīku politikas
 Name[nb]=Praksis for nettverkselementer
@@ -35,6 +37,7 @@ Name[zh_TW]=遠端元件政策
 
 Comment=Define policies for remote plasma widgets
 Comment[ca]=Defineix les polítiques per a estris remots del Plasma
+Comment[csb]=Òpiszë prawa do nastôwów ùprzëstãpnionych widżetów
 Comment[da]=Definér politikker for eksterne Plasma-widgets
 Comment[de]=Legen Sie Richtlinien für freigegebene Plasma-Miniprogramme fest.
 Comment[el]=Ορισμός πολιτικών για απομακρυσμένα συστατικά γραφικών Plasma

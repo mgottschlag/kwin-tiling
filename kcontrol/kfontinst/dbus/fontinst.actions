@@ -1,6 +1,7 @@
 [org.kde.fontinst]
 Name=Manage system-wide fonts.
 Name[ca]=Gestiona els tipus de lletra del sistema.
+Name[csb]=Sprôwianié sytemòwą szérzą fòntów.
 Name[da]=Håndtér systemomfattende skrifttyper.
 Name[de]=Systemweite Schriften verwalten.
 Name[el]=Διαχείριση γραμματοσειρών συστήματος.
@@ -29,6 +30,7 @@ Name[x-test]=xxManage system-wide fonts.xx
 Name[zh_TW]=管理系統字型。
 Description=Modifying the system-wide font configuration requires privileges.
 Description[ca]=La modificació de la configuració dels tipus de lletra del sistema requereix privilegis.
+Description[csb]=Do sprôwianiô sytemòwą szérzą fòntów nót je ekstra pawów.
 Description[da]=Ændring af systemomfattende konfiguration af skrifttyper kræver privilegier.
 Description[de]=Zum Ändern der systemweiten Schrift-Einstellungen sind besondere Berechtigungen nötig.
 Description[el]=Για την μορφοποίηση ρυθμίσεων των γραμματοσειρών του συστήματος χρειάζονται προνόμια.
