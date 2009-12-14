@@ -158,6 +158,10 @@ void StripWidget::add(Plasma::QueryMatch match, const QString &query)
 
 void StripWidget::remove(Plasma::IconWidget *favourite)
 {
+    if (!favourite || !m_favouritesIcons.contains(favourite)) {
+        return;
+    }
+
     Plasma::QueryMatch *match = m_favouritesIcons.value(favourite);
     m_favouritesMatches.removeOne(match);
     m_favouritesQueries.remove(match);
