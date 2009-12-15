@@ -64,6 +64,11 @@ protected:
 
     void syncColumnSizes();
 
+    void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
+    void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
+    void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
+    void dropEvent(QGraphicsSceneDragDropEvent *event);
+
 private Q_SLOTS:
     void toggleImmutability();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);

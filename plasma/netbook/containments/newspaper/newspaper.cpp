@@ -725,6 +725,29 @@ void Newspaper::containmentRemoved(QObject *containment)
     }
 }
 
+//They all have to be reimplemented in order to accept them
+void Newspaper::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
+{
+    Containment::dragEnterEvent(event);
+}
+
+void Newspaper::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    Containment::dragLeaveEvent(event);
+}
+
+void Newspaper::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    Containment::dragMoveEvent(event);
+    event->accept();
+}
+
+void Newspaper::dropEvent(QGraphicsSceneDragDropEvent *event)
+{
+    Containment::dropEvent(event);
+    event->accept();
+}
+
 K_EXPORT_PLASMA_APPLET(newspaper, Newspaper)
 
 #include "newspaper.moc"
