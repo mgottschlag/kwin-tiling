@@ -58,7 +58,8 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
     m_icons->setContainsMultipleImages(true);
 
 
-    if (applet->backgroundHints() & Plasma::Applet::StandardBackground) {
+    if (applet->backgroundHints() & Plasma::Applet::StandardBackground ||
+        applet->backgroundHints() & Plasma::Applet::TranslucentBackground) {
         m_separator = new Plasma::Svg(this);
         m_separator->setImagePath("widgets/line");
         m_separator->setContainsMultipleImages(true);
