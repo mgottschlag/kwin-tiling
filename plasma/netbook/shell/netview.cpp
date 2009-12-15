@@ -249,7 +249,7 @@ void NetView::grabContainment()
 
     Plasma::Containment *cont = corona->findFreeContainment();
     if (cont) {
-        setContainment(cont);
+        cont->setScreen(screen(), desktop());
     }
 }
 
