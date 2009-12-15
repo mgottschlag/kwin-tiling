@@ -90,18 +90,21 @@ void AppletTitleBar::syncMargins()
     const int extraMargin = 2;
     syncIconRects();
 
-
     if (m_background) {
         qreal left, top, right, bottom;
 
         m_background->getMargins(left, top, right, bottom);
         setContentsMargins(left, top, right, bottom);
+        setMaximumHeight(INT_MAX);
         setMinimumHeight(m_maximizeButtonRect.height() + extraMargin + top + bottom);
         setMaximumHeight(m_maximizeButtonRect.height() + extraMargin + top + bottom);
     } else {
+        setContentsMargins(0, 0, 0, 0);
+        setMaximumHeight(INT_MAX);
         setMinimumHeight(m_maximizeButtonRect.height() + extraMargin);
         setMaximumHeight(m_maximizeButtonRect.height() + extraMargin);
     }
+
 
     qreal left, right, bottom;
     m_applet->getContentsMargins(&left, &m_savedAppletTopMargin, &right, &bottom);
@@ -113,6 +116,27 @@ void AppletTitleBar::syncSize()
     setGeometry(QRectF(QPointF(m_applet->contentsRect().left(), m_savedAppletTopMargin),
                 QSizeF(m_applet->contentsRect().size().width(),
                 size().height())));
+
+    //sometimes the background of applets change on the go...
+    if (m_separator) {
+        if (m_applet->backgroundHints() == Plasma::Applet::NoBackground) {
+            m_background = new Plasma::FrameSvg(this);
+            m_background->setImagePath("widgets/background");
+            m_separator->deleteLater();
+            m_separator = 0;
+            syncMargins();
+        }
+    } else {
+        if (m_applet->backgroundHints() & Plasma::Applet::StandardBackground ||
+            m_applet->backgroundHints() & Plasma::Applet::TranslucentBackground) {
+            m_separator = new Plasma::Svg(this);
+            m_separator->setImagePath("widgets/line");
+            m_separator->setContainsMultipleImages(true);
+            m_background->deleteLater();
+            m_background = 0;
+            syncMargins();
+        }
+    }
 }
 
 void AppletTitleBar::syncIconRects()
@@ -184,7 +208,7 @@ bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
 
 void AppletTitleBar::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (m_applet->hasValidAssociatedApplication() && 
+    if (m_applet->hasValidAssociatedApplication() &&
         m_maximizeButtonRect.contains(event->pos())) {
         m_pressedButton = MaximizeButton;
         m_maximizeButtonRect.translate(1, 1);
@@ -298,7 +322,7 @@ void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     if (m_separator) {
         QRectF lineRect = contentsRect();
-        lineRect.setTop(lineRect.height() - m_separator->elementSize("horizontal-line").height());
+        lineRect.setTop(lineRect.bottom() - m_separator->elementSize("horizontal-line").height());
         m_separator->paint(painter, lineRect, "horizontal-line");
     }
 }
