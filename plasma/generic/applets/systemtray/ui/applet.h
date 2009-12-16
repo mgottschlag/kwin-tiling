@@ -91,6 +91,7 @@ private slots:
 
 private:
     void createJobGroups();
+    void clearOldNotifications();
     void initExtenderTask(bool create);
     void setTaskAreaGeometry();
 

@@ -132,6 +132,7 @@ Applet::~Applet()
     }
 
     clearAllCompletedJobs();
+    clearOldNotifications();
 
     --s_managerUsage;
     if (s_managerUsage < 1) {
@@ -240,8 +241,16 @@ void Applet::syncNotificationBarNeeded()
 {
     if (s_manager->notifications().count() > 0) {
         if (!m_notificationBarExtenderItem) {
+            Plasma::ExtenderGroup *group = new Plasma::ExtenderGroup(extender());
+            group->setName("oldNotificationsGroup");
+            group->setTitle(i18n("Recent notifications"));
+            group->setIcon("dialog-information");
+            QGraphicsWidget *groupWidget = new QGraphicsWidget(group);
+            groupWidget->setMaximumHeight(0);
+            group->setWidget(groupWidget);
+
             m_notificationBarExtenderItem = new Plasma::ExtenderItem(extender());
-            m_notificationBarExtenderItem->setTitle(i18n("Recent notifications"));
+            m_notificationBarExtenderItem->setGroup(group);
             m_notificationBarExtenderItem->setIcon("dialog-information");
             QGraphicsWidget *widget = new QGraphicsWidget(m_notificationBarExtenderItem);
             widget->setContentsMargins(0, 0, 0, 4);
@@ -265,6 +274,10 @@ void Applet::syncNotificationBarNeeded()
         m_notificationBarExtenderItem->destroy();
         m_notificationBarExtenderItem = 0;
         m_notificationBar = 0;
+        //don't let him in the config file
+        if (extender()->group("oldNotificationsGroup")) {
+            extender()->group("oldNotificationsGroup")->destroy();
+        }
     }
 }
 
@@ -750,6 +763,10 @@ NotificationWidget *Applet::addNotification(Notification *notification)
     NotificationWidget *notificationWidget = new NotificationWidget(notification, extenderItem);
     extenderItem->setWidget(notificationWidget);
 
+    if (extender()->hasItem("oldNotificationsGroup") && notification->isExpired()) {
+        extenderItem->setGroup(extender()->group("oldNotificationsGroup"));
+    }
+
     emit activate();
     showPopup(m_autoHideTimeout);
 
@@ -911,6 +928,20 @@ void Applet::clearAllCompletedJobs()
     foreach (Plasma::ExtenderItem *item, completedJobsGroup->items()) {
         item->destroy();
     }
+}
+
+
+void Applet::clearOldNotifications()
+{
+    Plasma::ExtenderGroup *oldNotificationsGroup = extender()->group("oldNotificationsGroup");
+    if (!oldNotificationsGroup) {
+        return;
+    }
+
+    foreach (Plasma::ExtenderItem *item, oldNotificationsGroup->items()) {
+        item->destroy();
+    }
+    oldNotificationsGroup->destroy();
 }
 
 void Applet::finishJob(SystemTray::Job *job)
