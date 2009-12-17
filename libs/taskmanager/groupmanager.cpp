@@ -288,7 +288,7 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
     } else {
         currentRootGroup()->add(item);
     }
-    geometryTasks.insert(task);
+    geometryTasks.insert(task.data());
 
     return true;
 }
