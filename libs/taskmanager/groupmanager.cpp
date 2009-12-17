@@ -94,7 +94,7 @@ public:
     int currentScreen;
     QTimer screenTimer;
     QTimer reloadTimer;
-    QSet<TaskPtr> geometryTasks;
+    QSet<Task *> geometryTasks;
     int groupIsFullLimit;
     bool showOnlyCurrentDesktop : 1;
     bool showOnlyCurrentScreen : 1;
@@ -287,7 +287,7 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
         } else {
             currentRootGroup()->add(item);
         }
-        geometryTasks.insert(task);
+        geometryTasks.insert(task.data());
     }
 
     return true;
@@ -297,7 +297,7 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
 void GroupManagerPrivate::removeTask(TaskPtr task)
 {
     //kDebug() << "remove: " << task->visibleName();
-    geometryTasks.remove(task);
+    geometryTasks.remove(task.data());
 
     AbstractGroupableItem *item = currentRootGroup()->getMemberByWId(task->window());
 
@@ -319,7 +319,7 @@ void GroupManagerPrivate::taskDestroyed(QObject *item)
 {
     Task *task = qobject_cast<Task*>(item);
     if (task) {
-        geometryTasks.remove(TaskPtr(task));
+        geometryTasks.remove(task);
     }
 }
 
@@ -327,7 +327,7 @@ void GroupManagerPrivate::startupItemDestroyed(AbstractGroupableItem *item)
 {
     TaskItem *taskItem = static_cast<TaskItem*>(item);
     startupList.remove(startupList.key(taskItem));
-    geometryTasks.remove(taskItem->task());
+    geometryTasks.remove(taskItem->task().data());
 }
 
 bool GroupManager::manualGroupingRequest(AbstractGroupableItem* item, TaskGroup* groupItem)
@@ -414,7 +414,7 @@ void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges c
     }
 
     if (showOnlyCurrentScreen && changes & ::TaskManager::GeometryChanged) {
-        geometryTasks.insert(task);
+        geometryTasks.insert(task.data());
 
         if (!screenTimer.isActive()) {
             screenTimer.start();
@@ -453,11 +453,11 @@ void GroupManager::setScreen(int screen)
 void GroupManagerPrivate::checkScreenChange()
 {
     //kDebug();
-    foreach (const TaskPtr &task, geometryTasks) {
+    foreach (Task *task, geometryTasks) {
         if (task->isOnScreen(currentScreen)) {
-            addTask(task);
+            addTask(TaskPtr(task));
         } else {
-            removeTask(task);
+            removeTask(TaskPtr(task));
         }
     }
 }
