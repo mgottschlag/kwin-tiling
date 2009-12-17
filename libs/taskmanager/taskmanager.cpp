@@ -284,6 +284,7 @@ void TaskManager::windowRemoved(WId w)
         }
 
         //kDebug() << "TM: Task for WId " << w << " removed.";
+        t->deleteLater();
     }
     else
     {

@@ -74,7 +74,7 @@ public:
     void currentDesktopChanged(int);
     void taskChanged(TaskPtr, ::TaskManager::TaskChanges);
     void checkScreenChange();
-    void taskItemDestroyed(AbstractGroupableItem *);
+    void taskDestroyed(QObject *item);
     void startupItemDestroyed(AbstractGroupableItem *);
     void checkIfFull();
     bool addTask(TaskPtr);
@@ -278,8 +278,8 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
             item = new TaskItem(q, task);
         }
 
-        QObject::connect(item, SIGNAL(destroyed(AbstractGroupableItem*)),
-                         q, SLOT(taskItemDestroyed(AbstractGroupableItem*)));
+        QObject::connect(task.data(), SIGNAL(destroyed(QObject*)),
+                         q, SLOT(taskDestroyed(QObject*)));
 
         //Find a fitting group for the task with GroupingStrategies
         if (abstractGroupingStrategy && !task->demandsAttention()) { //do not group attention tasks
@@ -315,10 +315,12 @@ void GroupManagerPrivate::removeTask(TaskPtr task)
     //the item must exist as long as the TaskPtr does because of activate calls so don't delete the item here, it will delete itself.
 }
 
-void GroupManagerPrivate::taskItemDestroyed(AbstractGroupableItem *item)
+void GroupManagerPrivate::taskDestroyed(QObject *item)
 {
-    TaskItem *taskItem = static_cast<TaskItem*>(item);
-    geometryTasks.remove(taskItem->task());
+    Task *task = qobject_cast<Task*>(item);
+    if (task) {
+        geometryTasks.remove(TaskPtr(task));
+    }
 }
 
 void GroupManagerPrivate::startupItemDestroyed(AbstractGroupableItem *item)
