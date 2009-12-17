@@ -244,6 +244,7 @@ public: // File Dialog integration
             kdefd->setOperationMode((qfd->acceptMode() == QFileDialog::AcceptSave) ? KFileDialog::Saving : KFileDialog::Opening);
             kdefd->setCaption(qfd->windowTitle());
             kdefd->setConfirmOverwrite(qfd->confirmOverwrite());
+            kdefd->setSelection(qfd->selectedFiles().value(0));
         }
         kdefd->setVisible(visible);
         return true;
