@@ -257,8 +257,8 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
     }
 
     //Ok the Task should be displayed
-    TaskItem *item = 0;
-    if (!currentRootGroup()->getMemberByWId(task->window())) {
+    TaskItem *item = qobject_cast<TaskItem*>(currentRootGroup()->getMemberByWId(task->window()));
+    if (!item) {
         // first search for an existing startuptask for this task
         QHash<StartupPtr, TaskItem *>::iterator it = startupList.begin();
         QHash<StartupPtr, TaskItem *>::iterator itEnd = startupList.end();
@@ -280,15 +280,15 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
 
         QObject::connect(task.data(), SIGNAL(destroyed(QObject*)),
                          q, SLOT(taskDestroyed(QObject*)));
-
-        //Find a fitting group for the task with GroupingStrategies
-        if (abstractGroupingStrategy && !task->demandsAttention()) { //do not group attention tasks
-            abstractGroupingStrategy->handleItem(item);
-        } else {
-            currentRootGroup()->add(item);
-        }
-        geometryTasks.insert(task.data());
     }
+
+    //Find a fitting group for the task with GroupingStrategies
+    if (abstractGroupingStrategy && !task->demandsAttention()) { //do not group attention tasks
+        abstractGroupingStrategy->handleItem(item);
+    } else {
+        currentRootGroup()->add(item);
+    }
+    geometryTasks.insert(task);
 
     return true;
 }
