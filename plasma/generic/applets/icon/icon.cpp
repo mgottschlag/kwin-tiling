@@ -142,9 +142,13 @@ void IconApplet::setUrl(const KUrl& url)
         m_icon->setIcon("unknown");
     }
 
-    //Update the icon text
+    //Update the icon text (if the icon is not on a panel)
     if (formFactor() == Plasma::Planar || formFactor() == Plasma::MediaCenter) {
         m_icon->setText(m_text);
+    } else {
+        //Update the tooltip (if the icon is on a panel)
+        Plasma::ToolTipContent data(m_text, m_genericName, m_icon->icon());
+        Plasma::ToolTipManager::self()->setContent(m_icon, data);
     }
     
     //kDebug() << "url was" << url << "and is" << m_url;
