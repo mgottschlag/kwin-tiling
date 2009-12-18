@@ -6,9 +6,11 @@
 #include "processui/ksysguardprocesslist.h"
 #include "krunnersettings.h"
 
+#include <QAbstractScrollArea>
 #include <QCloseEvent>
 #include <QLayout>
 #include <QString>
+#include <QTreeView>
 #include <KConfigGroup>
 #include <KDialog>
 #include <KGlobal>
@@ -31,6 +33,7 @@ class KSystemActivityDialog : public KDialog
             setSizeGripEnabled(true);
             (void)minimumSizeHint(); //Force the dialog to be laid out now
             layout()->setContentsMargins(0,0,0,0);
+            processList.treeView()->setCornerWidget(new QWidget);
 
             setInitialSize(QSize(650, 420));
             KConfigGroup cg = KGlobal::config()->group("TaskDialog");
