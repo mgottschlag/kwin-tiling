@@ -30,8 +30,6 @@
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Query/QueryServiceClient>
 
-#include <Soprano/Vocabulary/NAO>
-
 #include <KFileItemActions>
 #include <KFileItemList>
 #include <KFileItemListProperties>
@@ -126,14 +124,7 @@ void Nepomuk::SearchRunner::run( const Plasma::RunnerContext&, const Plasma::Que
         }
     }
     Nepomuk::Resource res = match.data().value<Nepomuk::Resource>();
-    KUrl url;
-
-    if (res.hasType( Soprano::Vocabulary::NAO::Tag())) {
-        url.setProtocol("nepomuksearch");
-        url.setPath(QString("/hasTag:\"%1\"").arg(res.genericLabel()));
-    } else {
-        url = res.resourceUri();
-    }
+    KUrl url = res.resourceUri();
 
     (void)new KRun(url, 0);
 }
