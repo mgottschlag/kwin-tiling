@@ -7,6 +7,7 @@
 #include "krunnersettings.h"
 
 #include <QCloseEvent>
+#include <QLayout>
 #include <QString>
 #include <KConfigGroup>
 #include <KDialog>
@@ -28,6 +29,8 @@ class KSystemActivityDialog : public KDialog
             setMainWidget(&processList);
             processList.setScriptingEnabled(true);
             setSizeGripEnabled(true);
+            (void)minimumSizeHint(); //Force the dialog to be laid out now
+            layout()->setContentsMargins(0,0,0,0);
 
             setInitialSize(QSize(650, 420));
             KConfigGroup cg = KGlobal::config()->group("TaskDialog");
