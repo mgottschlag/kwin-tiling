@@ -162,15 +162,24 @@ bool ActivityBar::eventFilter(QObject *watched, QEvent *event)
 
 void ActivityBar::switchContainment(int newActive)
 {
-    Plasma::Containment *c = containment();
-    if (!c || newActive > m_containments.count()-1 || newActive < 0) {
+    Plasma::Containment *ownCont = containment();
+    if (!ownCont || newActive > m_containments.count()-1 || newActive < 0) {
+        return;
+    }
+    Plasma::Corona *c = containment()->corona();
+    if (!c) {
         return;
     }
 
-    m_activeContainment = newActive;
-    m_containments[newActive]->setScreen(c->screen(), c->desktop());
-    return;
 
+    Plasma::Containment *oldCont = c->containmentForScreen(ownCont->screen(), KWindowSystem::currentDesktop() - 1);
+
+    m_activeContainment = newActive;
+    if (oldCont) {
+        m_containments[newActive]->setScreen(oldCont->screen(), oldCont->desktop());
+    } else {
+        m_containments[newActive]->setScreen(ownCont->screen(), ownCont->desktop());
+    }
 }
 
 void ActivityBar::currentDesktopChanged(const int currentDesktop)
