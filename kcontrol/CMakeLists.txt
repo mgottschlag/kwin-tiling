@@ -25,7 +25,6 @@ add_subdirectory( dateandtime )
 add_subdirectory( autostart )
 endif(NOT WIN32)
 
-add_subdirectory(remotewidgets)
 add_subdirectory( launch )
 add_subdirectory( colors )
 add_subdirectory( krdb )
