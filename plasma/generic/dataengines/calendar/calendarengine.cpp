@@ -73,12 +73,14 @@ bool CalendarEngine::sourceRequestEvent(const QString &name)
             if (!holidays.isEmpty()) {
                 QString summary;
                 foreach (const KHolidays::Holiday &holiday, holidays) {
-                    if (!summary.isEmpty()) {
-                        summary.append("\n");
-                    }
+                    if (holiday.dayType()==1) {
+                        if (!summary.isEmpty()) {
+                            summary.append("\n");
+                        }
 
-                    summary.append(holiday.text());
+                        summary.append(holiday.text());
                 }
+            }
 
                 data.insert(dateArg.toString(Qt::ISODate), summary);
             }
