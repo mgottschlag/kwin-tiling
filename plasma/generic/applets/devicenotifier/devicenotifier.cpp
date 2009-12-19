@@ -101,7 +101,11 @@ void DeviceNotifier::init()
     //feed the list with what is already reported by the engine
     fillPreviousDevices();
 
-    setStatus(Plasma::PassiveStatus);
+    if (m_lastPlugged.count() == 0) {
+        setStatus(Plasma::PassiveStatus);
+    } else {
+        setStatus(Plasma::ActiveStatus);
+    }
 }
 
 QGraphicsWidget *DeviceNotifier::graphicsWidget()
@@ -327,7 +331,7 @@ void DeviceNotifier::onSourceRemoved(const QString &udi)
     } else {
         m_checkHiddenDevices = false;
     }
-    if (m_numberItems == 0) {
+    if (m_lastPlugged.count() == 0) {
         setStatus(Plasma::PassiveStatus);
     } else {
         setStatus(Plasma::ActiveStatus);
