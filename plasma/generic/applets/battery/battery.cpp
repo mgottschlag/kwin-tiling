@@ -784,8 +784,11 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
 
 void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int batteryPercent, const bool plugState)
 {
+    int minSize = qMin(contentsRect.height(), contentsRect.width());
+    QRect contentsSquare = QRect(contentsRect.x() + (contentsRect.width() - minSize) / 2, contentsRect.y() + (contentsRect.height() - minSize) / 2, minSize, minSize);
+  
     if (m_theme->hasElement("Battery")) {
-        m_theme->paint(p, contentsRect, "Battery");
+        m_theme->paint(p, contentsSquare, "Battery");
     }
 
     QString fill_element;
@@ -809,16 +812,16 @@ void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int bat
     // Now let's find out which fillstate to show
     if (!fill_element.isEmpty()) {
         if (m_theme->hasElement(fill_element)) {
-            m_theme->paint(p, contentsRect, fill_element);
+            m_theme->paint(p, contentsSquare, fill_element);
         } else {
             kDebug() << fill_element << " does not exist in svg";
         }
     }
 
-    m_theme->paint(p, scaleRectF(m_acAlpha, contentsRect), "AcAdapter");
+    m_theme->paint(p, scaleRectF(m_acAlpha, contentsSquare), "AcAdapter");
 
     if (plugState && m_theme->hasElement("Overlay")) {
-        m_theme->paint(p, contentsRect, "Overlay");
+        m_theme->paint(p, contentsSquare, "Overlay");
     }
 }
 
