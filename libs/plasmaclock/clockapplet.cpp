@@ -312,7 +312,7 @@ void ClockApplet::updateTipContent()
     // query for custom content
     Plasma::ToolTipContent customContent = toolTipContent();
     if (customContent.image().isNull()) {
-        tipData.setImage(KIcon("chronometer").pixmap(IconSize(KIconLoader::Desktop)));
+        tipData.setImage(KIcon(icon()).pixmap(IconSize(KIconLoader::Desktop)));
     } else {
         tipData.setImage(customContent.image());
     }
@@ -456,7 +456,7 @@ QList<QAction *> ClockApplet::contextualActions()
         if (!offers.isEmpty()) {
             d->adjustSystemTimeAction = new QAction(this);
             d->adjustSystemTimeAction->setText(i18n("Adjust Date and Time"));
-            d->adjustSystemTimeAction->setIcon(KIcon("chronometer"));
+            d->adjustSystemTimeAction->setIcon(KIcon(icon()));
             connect(d->adjustSystemTimeAction, SIGNAL(triggered()), this, SLOT(launchTimeControlPanel()));
         }
     }
