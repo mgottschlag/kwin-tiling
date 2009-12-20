@@ -47,7 +47,6 @@ class NotificationWidgetPrivate
 public:
     NotificationWidgetPrivate(NotificationWidget *q)
         : q(q),
-          notification(0),
           destroyOnClose(true),
           autoHide(true),
           image(0),
@@ -65,7 +64,7 @@ public:
 
     NotificationWidget *q;
 
-    SystemTray::Notification *notification;
+    QWeakPointer<SystemTray::Notification> notification;
     bool destroyOnClose;
     bool autoHide;
 
@@ -101,7 +100,7 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, P
         d->notification = notification;
 
         connect(d->signalMapper, SIGNAL(mapped(const QString &)),
-                d->notification, SLOT(triggerAction(const QString &)));
+                d->notification.data(), SLOT(triggerAction(const QString &)));
         connect(notification, SIGNAL(changed()),
                 this, SLOT(updateNotification()));
         connect(notification, SIGNAL(destroyed()),
@@ -131,7 +130,7 @@ NotificationWidget::~NotificationWidget()
 {
     if (d->notification) {
         // we were destroyed by the user, and the notification still exists
-        //d->notification->remove();
+        //d->notification.data()->remove();
     }
 
     delete d;
@@ -141,10 +140,10 @@ void NotificationWidget::setAutoHide(bool autoHide)
 {
     if (autoHide != d->autoHide) {
         if (autoHide) {
-            connect(d->notification, SIGNAL(expired()),
+            connect(d->notification.data(), SIGNAL(expired()),
                     this, SLOT(destroy()));
         } else {
-            disconnect(d->notification, SIGNAL(expired()),
+            disconnect(d->notification.data(), SIGNAL(expired()),
                        this, SLOT(destroy()));
         }
         d->autoHide = autoHide;
@@ -229,29 +228,33 @@ void NotificationWidgetPrivate::buttonClicked()
 
 void NotificationWidgetPrivate::updateNotification()
 {
+    if (!notification) {
+        return;
+    }
+
     Plasma::ExtenderItem *extenderItem = dynamic_cast<Plasma::ExtenderItem*>(q->parentWidget());
 
     //store the notification
-    extenderItem->config().writeEntry("applicationName", notification->applicationName());
-    extenderItem->config().writeEntry("summary", notification->summary());
-    extenderItem->config().writeEntry("message", notification->message());
+    extenderItem->config().writeEntry("applicationName", notification.data()->applicationName());
+    extenderItem->config().writeEntry("summary", notification.data()->summary());
+    extenderItem->config().writeEntry("message", notification.data()->message());
 
     //set text fields and icon
-    setTextFields(notification->applicationName(), notification->summary(), notification->message());
-    extenderItem->setIcon(notification->applicationIcon());
+    setTextFields(notification.data()->applicationName(), notification.data()->summary(), notification.data()->message());
+    extenderItem->setIcon(notification.data()->applicationIcon());
 
     //set the actions provided
-    actions = notification->actions();
-    actionOrder = notification->actionOrder();
+    actions = notification.data()->actions();
+    actionOrder = notification.data()->actionOrder();
     updateActions();
 
-    if (!notification->image().isNull()) {
+    if (!notification.data()->image().isNull()) {
         if (!image) {
             image = new Plasma::Label(q);
         }
-        image->nativeWidget()->setPixmap(QPixmap::fromImage(notification->image()));
-        image->setMinimumSize(notification->image().size());
-        image->setMaximumSize(notification->image().size());
+        image->nativeWidget()->setPixmap(QPixmap::fromImage(notification.data()->image()));
+        image->setMinimumSize(notification.data()->image().size());
+        image->setMaximumSize(notification.data()->image().size());
         labelLayout->insertItem(0, image);
     } else {
         labelLayout->setContentsMargins(0, 0, 0, 0);
@@ -270,7 +273,6 @@ void NotificationWidgetPrivate::updateNotification()
 void NotificationWidgetPrivate::destroy()
 {
     Plasma::ExtenderItem *extenderItem = dynamic_cast<Plasma::ExtenderItem *>(q->parentItem());
-    notification = 0;
 
     if (extenderItem->isDetached()) {
         completeDetach();
