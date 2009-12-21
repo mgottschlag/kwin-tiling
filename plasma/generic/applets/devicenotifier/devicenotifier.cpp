@@ -61,7 +61,9 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
       m_numberItems(0),
       m_itemsValidity(0),
       m_globalVisibility(false),
-      m_checkHiddenDevices(true)
+      m_checkHiddenDevices(true),
+      m_autoMountingWidget(0),
+      m_deviceActionsWidget(0)
 {
     setBackgroundHints(StandardBackground);
     setAspectRatioMode(IgnoreAspectRatio);
@@ -352,12 +354,14 @@ void DeviceNotifier::createConfigurationInterface(KConfigDialog *parent)
 {
     QWidget *configurationWidget = new QWidget();
     m_configurationUi.setupUi(configurationWidget);
-    KCModuleProxy *deviceActionsWidget = new KCModuleProxy("solid-actions");
-    KCModuleProxy *autoMountingWidget = new KCModuleProxy("device_automounter_kcm");
+    m_deviceActionsWidget = new KCModuleProxy("solid-actions");
+    m_autoMountingWidget = new KCModuleProxy("device_automounter_kcm");
 
     parent->addPage(configurationWidget, i18nc("General options page", "General"), icon());
-    parent->addPage(deviceActionsWidget, deviceActionsWidget->moduleInfo().moduleName(), deviceActionsWidget->moduleInfo().icon());
-    parent->addPage(autoMountingWidget, autoMountingWidget->moduleInfo().moduleName(), autoMountingWidget->moduleInfo().icon());
+    parent->addPage(m_deviceActionsWidget, m_deviceActionsWidget->moduleInfo().moduleName(), 
+                    m_deviceActionsWidget->moduleInfo().icon());
+    parent->addPage(m_autoMountingWidget, m_autoMountingWidget->moduleInfo().moduleName(),
+                    m_autoMountingWidget->moduleInfo().icon());
 
     parent->setButtons( KDialog::Ok | KDialog::Cancel);
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
@@ -373,6 +377,10 @@ void DeviceNotifier::configAccepted()
 
     cg.writeEntry("ShowDevices", m_showDevices);
 
+    //Save the configurations of the embedded KCMs
+    m_deviceActionsWidget->save();
+    m_autoMountingWidget->save();
+    
     emit configNeedsSaving();
 
     resetDevices();

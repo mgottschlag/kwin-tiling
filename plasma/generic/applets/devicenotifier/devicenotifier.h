@@ -37,6 +37,8 @@ namespace Notifier
     class NotifierDialog;
 }
 
+class KCModuleProxy;
+
 /**
 * @short Applet used to display devices
 *
@@ -228,6 +230,10 @@ class DeviceNotifier : public Plasma::PopupApplet
 
         ///if true the applet will check if the removed devices were hidded
         bool m_checkHiddenDevices : 1;
+
+        ///embedded KCM modules in the configuration dialog
+        KCModuleProxy *m_autoMountingWidget;
+        KCModuleProxy *m_deviceActionsWidget;
 };
 
 #endif
