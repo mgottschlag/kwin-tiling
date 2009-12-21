@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2008 by Lukas Appelhans                                 *
+ *   Copyright (C) 2008 - 2009 by Lukas Appelhans                                 *
  *   l.appelhans@gmx.de                                                    *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -704,19 +704,28 @@ bool QuicklaunchApplet::dropHandler(const int pos, const QMimeData *mimedata)
         return false;
     }
     
-    KUrl::List uniqueUrls = removeDuplicateUrls(urls);
+    bool rtn = false;
+
+    foreach (const KUrl &url, urls) {
+        foreach (QuicklaunchIcon *icon, m_icons) {
+            if (icon->url().url() == url.url()) {
+                m_icons.move(m_icons.indexOf(icon), pos);
+                urls.removeOne(url);
+                rtn = true;
+                break;
+            }
+        }
+    }
     
-    if (uniqueUrls.count()) { 
-        foreach (const KUrl &url, uniqueUrls) {
+    if (urls.count()) {
+        foreach (const KUrl &url, urls) {
             if (KDesktopFile::isDesktopFile(url.toLocalFile())) {
                 addProgram(pos, url.toLocalFile(), true);
             }
         }
-        
-        return true;
+        rtn = true;
     }
-
-    return false;
+    return rtn;
 }
 
 
