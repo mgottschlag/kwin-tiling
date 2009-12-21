@@ -269,8 +269,8 @@ void TaskItemLayout::layoutItems()
     //kDebug();
 
     QPair<int,int> grid = gridLayoutSize();
-    int columns = grid.first;
-    int rows = grid.second;
+    int columns = qMax(grid.first, 1);
+    int rows = qMax(grid.second, 1);
 
     //kDebug() << "Laying out with" << columns << rows;
     //kDebug() << "geometry" << m_groupItem->geometry();
