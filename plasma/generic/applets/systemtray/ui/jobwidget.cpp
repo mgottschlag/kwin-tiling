@@ -68,9 +68,9 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     m_dirCountLabel->setVisible(false);
     m_fileCountLabel->setVisible(false);
 
-    m_fromNameLabel->setAlignment(Qt::AlignLeft);
+    m_fromNameLabel->setAlignment(Qt::AlignRight);
     m_fromLabel->setAlignment(Qt::AlignLeft);
-    m_toNameLabel->setAlignment(Qt::AlignLeft);
+    m_toNameLabel->setAlignment(Qt::AlignRight);
     m_toLabel->setAlignment(Qt::AlignLeft);
     m_totalBytesLabel->setAlignment(Qt::AlignRight);
     m_dirCountLabel->setAlignment(Qt::AlignRight);
@@ -266,6 +266,14 @@ void JobWidget::updateJob()
     } else {
         m_details->hide();
         m_totalBytesLabel->hide();
+    }
+
+    if (m_totalBytesLabel->text().isEmpty() &&
+        m_dirCountLabel->text().isEmpty() &&
+        m_fileCountLabel->text().isEmpty()) {
+        m_details->hide();
+    } else {
+        m_details->show();
     }
 
     m_extenderItem->setIcon(m_job.data()->applicationIconName());
