@@ -24,6 +24,10 @@
 class KFileDialog;
 class KJob;
 
+namespace KNS3 {
+    class DownloadDialog;
+}
+
 class BackgroundListModel;
 
 class Image : public Plasma::Wallpaper
@@ -61,6 +65,7 @@ class Image : public Plasma::Wallpaper
         void setWallpaper(const KUrl &url);
         void setWallpaper(const QString &path);
         void wallpaperRetrieved(KJob *job);
+        void newStuffFinished();
 
     protected:
         void init(const KConfigGroup &config);
@@ -100,6 +105,7 @@ class Image : public Plasma::Wallpaper
         QString m_img;
         QDateTime m_previousModified;
         bool m_randomize;
+        KNS3::DownloadDialog* m_newStuffDialog;
 
         QAction* nextWallpaperAction;
 };

@@ -38,7 +38,8 @@ Image::Image(QObject *parent, const QVariantList &args)
       m_currentSlide(-1),
       m_model(0),
       m_dialog(0),
-      m_randomize(true)
+      m_randomize(true),
+      m_newStuffDialog(0)
 {
     connect(this, SIGNAL(renderCompleted(QImage)), this, SLOT(updateBackground(QImage)));
     connect(this, SIGNAL(urlDropped(KUrl)), this, SLOT(setWallpaper(KUrl)));
@@ -391,9 +392,16 @@ void Image::startSlideshow()
 
 void Image::getNewWallpaper()
 {
-    KNS3::DownloadDialog dialog("wallpaper.knsrc", m_configWidget);
-    dialog.exec();
-    if (m_model && dialog.changedEntries().size() > 0) {
+    if (!m_newStuffDialog) {
+        m_newStuffDialog = new KNS3::DownloadDialog( "wallpaper.knsrc", m_configWidget );
+        connect(m_newStuffDialog, SIGNAL(accepted()), SLOT(newStuffFinished()));
+    }
+    m_newStuffDialog->show();
+}
+
+void Image::newStuffFinished()
+{
+    if (m_model && m_newStuffDialog->changedEntries().size() > 0) {
         m_model->reload();
     }
 }
