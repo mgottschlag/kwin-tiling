@@ -585,7 +585,6 @@ void Interface::matchCountChanged(int count)
 
     if (show) {
         //kDebug() << "showing!" << minimumSizeHint();
-        m_resultsContainer->show();
 
         // Next 2 lines are a workaround to allow arrow
         // keys navigation in krunner's result list.
@@ -594,6 +593,7 @@ void Interface::matchCountChanged(int count)
         QApplication::sendEvent(m_resultsView, &event);
 
         resize(m_defaultSize);
+        m_resultsContainer->show();
         m_resultsScene->resize(m_resultsView->width(), qMax(m_resultsView->height(), int(m_resultsScene->height())));
     } else {
         //kDebug() << "hiding ... eventually";
