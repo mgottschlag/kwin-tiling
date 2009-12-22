@@ -207,11 +207,6 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
             } else {
                 setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
             }
-
-            if (constraints & Plasma::FormFactorConstraint &&
-                    (formFactor() == Plasma::Planar || formFactor() == Plasma::MediaCenter) ) {
-                resize(KIconLoader::SizeEnormous, KIconLoader::SizeEnormous);
-            }
         }
 
         QSize c(contentsRect().size().toSize());
