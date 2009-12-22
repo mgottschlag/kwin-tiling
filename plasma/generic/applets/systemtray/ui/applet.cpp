@@ -944,6 +944,8 @@ void Applet::clearOldNotifications()
         return;
     }
 
+    oldNotificationsGroup->config().deleteGroup();
+
     foreach (Plasma::ExtenderItem *item, oldNotificationsGroup->items()) {
         item->destroy();
     }
