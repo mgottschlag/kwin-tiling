@@ -69,6 +69,11 @@ public:
     QList<Notification*> notifications() const;
 
     /**
+     * clear all notifications
+     */
+    void clearNotifications();
+
+    /**
      * @return a list of all known Job instances
      **/
     QList<Job*> jobs() const;

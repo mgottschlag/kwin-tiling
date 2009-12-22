@@ -248,6 +248,10 @@ void Applet::syncNotificationBarNeeded()
             QGraphicsWidget *groupWidget = new QGraphicsWidget(group);
             groupWidget->setMaximumHeight(0);
             group->setWidget(groupWidget);
+            group->showCloseButton();
+            QAction *closeAction = group->action("close");
+
+            connect(closeAction, SIGNAL(triggered()), this, SLOT(clearOldNotifications()));
 
             m_notificationBarExtenderItem = new Plasma::ExtenderItem(extender());
             m_notificationBarExtenderItem->setGroup(group);
@@ -933,6 +937,8 @@ void Applet::clearAllCompletedJobs()
 
 void Applet::clearOldNotifications()
 {
+    s_manager->clearNotifications();
+
     Plasma::ExtenderGroup *oldNotificationsGroup = extender()->group("oldNotificationsGroup");
     if (!oldNotificationsGroup) {
         return;
@@ -941,6 +947,7 @@ void Applet::clearOldNotifications()
     foreach (Plasma::ExtenderItem *item, oldNotificationsGroup->items()) {
         item->destroy();
     }
+
     oldNotificationsGroup->destroy();
 }
 

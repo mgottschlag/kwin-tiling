@@ -81,6 +81,7 @@ private slots:
     NotificationWidget *addNotification(SystemTray::Notification *notification);
     void addJob(SystemTray::Job *job);
     void clearAllCompletedJobs();
+    void clearOldNotifications();
     void finishJob(SystemTray::Job *job);
     void open(const QString &url);
     void addDefaultApplets();
@@ -91,7 +92,6 @@ private slots:
 
 private:
     void createJobGroups();
-    void clearOldNotifications();
     void initExtenderTask(bool create);
     void setTaskAreaGeometry();
 

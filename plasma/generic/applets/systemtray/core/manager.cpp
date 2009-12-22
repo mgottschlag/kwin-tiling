@@ -161,6 +161,12 @@ QList<Notification*> Manager::notifications() const
     return d->notifications;
 }
 
+void Manager::clearNotifications()
+{
+    qDeleteAll(d->notifications);
+    d->notifications.clear();
+}
+
 void Manager::registerJobProtocol()
 {
     if (!d->jobProtocol) {
