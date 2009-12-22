@@ -172,8 +172,12 @@ void ExtenderTaskBusyWidget::updateTask()
         }
     }
 
+
     if (!(total + m_manager->notifications().count())) {
         m_systray->hidePopup();
+    }
+
+    if (!total) {
         setState(ExtenderTaskBusyWidget::Empty);
         setLabel(QString());
     } else if (runningJobs) {
