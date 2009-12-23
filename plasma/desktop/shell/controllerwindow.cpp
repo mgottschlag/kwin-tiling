@@ -201,6 +201,7 @@ void ControllerWindow::showWidgetExplorer()
 
     if (!m_widgetExplorerView) {
         m_widgetExplorerView = new Plasma::View(0, this);
+        m_widgetExplorerView->setFocus();
         m_widgetExplorerView->setScene(m_containment->corona());
         m_widgetExplorerView->setScreen(m_containment->screen(), m_containment->desktop());
 
