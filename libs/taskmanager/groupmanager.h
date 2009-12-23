@@ -131,7 +131,6 @@ private:
     Q_PRIVATE_SLOT(d, void currentDesktopChanged(int))
     Q_PRIVATE_SLOT(d, void taskChanged(TaskPtr, ::TaskManager::TaskChanges))
     Q_PRIVATE_SLOT(d, void checkScreenChange())
-    Q_PRIVATE_SLOT(d, void checkScreenChange())
     Q_PRIVATE_SLOT(d, void startupItemDestroyed(AbstractGroupableItem *))
     Q_PRIVATE_SLOT(d, void checkIfFull())
     Q_PRIVATE_SLOT(d, bool addTask(TaskPtr))
@@ -139,6 +138,7 @@ private:
     Q_PRIVATE_SLOT(d, void addStartup(StartupPtr))
     Q_PRIVATE_SLOT(d, void removeStartup(StartupPtr))
     Q_PRIVATE_SLOT(d, void actuallyReloadTasks())
+    Q_PRIVATE_SLOT(d, void taskDestroyed(QObject *))
 
     friend class GroupManagerPrivate;
     GroupManagerPrivate * const d;
