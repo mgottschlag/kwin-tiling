@@ -16,6 +16,10 @@
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
 */
+
+#ifndef CONTENTAREACAP_H
+#define CONTENTAREACAP_H
+
 #include <QWidget>
 
 class ContentAreaCap: public QWidget
@@ -31,3 +35,4 @@ protected:
 
 };
 
+#endif

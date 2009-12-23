@@ -63,6 +63,7 @@
 
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
+#include <fixx11h.h>
 
 Atom tag; //FIXME should this be a member var or what?
 const unsigned char DIALOG = 1; //FIXME this is really bad code

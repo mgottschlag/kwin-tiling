@@ -40,7 +40,9 @@
 #include <QtCore/QMutex>
 
 
+#ifndef KDE_USE_FINAL
 Q_DECLARE_METATYPE(Nepomuk::Resource)
+#endif
 
 static const int s_maxResults = 10;
 

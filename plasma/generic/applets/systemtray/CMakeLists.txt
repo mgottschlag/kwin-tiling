@@ -1,4 +1,6 @@
 project(plasma-systemtray)
+# 'engineName' causes error
+kde4_no_enable_final(plasma-systemtray)
 
 set(systemtray_SRCS
 

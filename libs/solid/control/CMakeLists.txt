@@ -1,3 +1,5 @@
+kde4_no_enable_final(solid)
+
 include_directories( ${CMAKE_SOURCE_DIR}/workspace/libs )
 
 add_subdirectory( ifaces )
