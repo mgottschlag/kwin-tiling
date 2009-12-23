@@ -308,6 +308,7 @@ void DashboardView::hideView()
 
     m_hideAction->setEnabled(false);
     hide();
+    emit dashboardClosed();
 }
 
 void DashboardView::suppressShowTimeout()

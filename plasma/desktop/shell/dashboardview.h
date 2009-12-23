@@ -69,6 +69,9 @@ protected slots:
     void hideView();
     void suppressShowTimeout();
 
+Q_SIGNALS:
+    void dashboardClosed();
+
 private:
     Plasma::View *m_view;
     QWeakPointer<Plasma::WidgetExplorer> m_widgetExplorer;

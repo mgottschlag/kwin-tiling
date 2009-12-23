@@ -177,6 +177,10 @@ void DesktopView::toggleDashboard()
 
 void DesktopView::showDashboard(bool show)
 {
+    if (!show && (!m_dashboard || !m_dashboard->isVisible())) {
+        return;
+    }
+
     prepDashboard();
     m_dashboard->showDashboard(show);
 }
@@ -200,6 +204,7 @@ void DesktopView::prepDashboard()
         }
 
         m_dashboard = new DashboardView(dc, this);
+        connect(m_dashboard, SIGNAL(dashboardClosed()), this, SIGNAL(dashboardClosed()));
         m_dashboard->addActions(actions());
     }
 

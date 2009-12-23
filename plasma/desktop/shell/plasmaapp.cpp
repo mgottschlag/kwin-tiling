@@ -358,6 +358,11 @@ void PlasmaApp::showDashboard(bool show)
     }
 }
 
+void PlasmaApp::dashboardClosed()
+{
+    showDashboard(false);
+}
+
 void PlasmaApp::showInteractiveConsole()
 {
     InteractiveConsole *console = m_console.data();
@@ -719,6 +724,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
         // we have a new screen. neat.
         view = new DesktopView(containment, id, 0);
+        connect(view, SIGNAL(dashboardClosed()), this, SLOT(dashboardClosed()));
         if (m_corona) {
             connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
                     view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));

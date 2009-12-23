@@ -147,6 +147,7 @@ private Q_SLOTS:
     void plasmoidAccessFinished(Plasma::AccessAppletJob *job);
     void wallpaperCheckedIn();
     void wallpaperCheckInTimeout();
+    void dashboardClosed();
 
 private:
     DesktopCorona *m_corona;

@@ -124,6 +124,9 @@ public slots:
     void lostContainment();
     void grabContainment();
 
+Q_SIGNALS:
+    void dashboardClosed();
+
 protected:
     void wheelEvent(QWheelEvent *event);
     void drawBackground(QPainter *painter, const QRectF &rect);
