@@ -130,9 +130,12 @@ void IconApplet::setUrl(const KUrl& url)
         if (m_text.isEmpty() && m_url.isLocalFile()) {
             //handle special case like the / folder
             m_text = m_url.directory();
-        } else if(m_text.isEmpty()) { 
-            //if we can't find a name, at least take the protocol name, like trash, remote etc.
-            m_text = m_url.protocol();
+        } else if(m_text.isEmpty()) {
+            m_text = m_url.prettyUrl();
+            
+            if(m_text.endsWith(":/")) {
+                m_text = m_url.protocol();
+            }
         }
 
         m_icon->setIcon(KMimeType::iconNameForUrl(url));
