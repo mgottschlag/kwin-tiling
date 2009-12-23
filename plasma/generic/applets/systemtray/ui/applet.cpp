@@ -567,6 +567,9 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
                         i18n("Choose which information to show"));
         parent->addPage(m_autoHideInterface.data(), i18n("Auto Hide"), "window-suppressed");
         parent->addPage(m_plasmoidTasksInterface.data(), i18n("Plasma Widgets"), "plasma");
+        if (m_plasmoidTasksInterface) {
+            m_plasmoidTasksInterface.data()->setEnabled(immutability() == Plasma::Mutable);
+        }
     }
 
     m_autoHideUi.icons->clear();
