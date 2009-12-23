@@ -51,6 +51,7 @@ class ResultScene : public QGraphicsScene
         void run(ResultItem* item) const;
         QSize minimumSizeHint() const;
         void setItemsAcceptHoverEvents(bool enable);
+        bool itemsAcceptHoverEvents();
 //        Plasma::RunnerManager* manager() const;
 
 
@@ -105,6 +106,7 @@ class ResultScene : public QGraphicsScene
         qreal m_itemMarginBottom;
 
         QWidget *m_focusBase;
+        bool m_itemsAcceptHoverEvents;
 };
 
 #endif

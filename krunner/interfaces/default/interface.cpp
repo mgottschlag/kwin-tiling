@@ -407,8 +407,8 @@ void Interface::resetInterface()
     m_delayedRun = false;
     m_searchTerm->setCurrentItem(QString(), true, 0);
     m_singleRunnerSearchTerm->clear();
-    resetResultsArea();
     m_resultsScene->clearQuery();
+    resetResultsArea();
     resize(qMax(minimumSizeHint().width(), m_defaultSize.width()), minimumSizeHint().height());
 }
 
@@ -449,9 +449,10 @@ void Interface::showHelp()
 
 void Interface::ensureVisibility(QGraphicsItem* item)
 {
+    bool oldState = m_resultsScene->itemsAcceptHoverEvents();
     m_resultsScene->setItemsAcceptHoverEvents(false);
     m_resultsView->ensureVisible(item,0,0);
-    m_resultsScene->setItemsAcceptHoverEvents(true);
+    m_resultsScene->setItemsAcceptHoverEvents(oldState);
 }
 
 void Interface::setStaticQueryMode(bool staticQuery)

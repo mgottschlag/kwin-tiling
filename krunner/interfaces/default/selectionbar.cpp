@@ -39,13 +39,12 @@ void SelectionBar::acquireTarget()
 {
     QList<QGraphicsItem *> selection = scene()->selectedItems();
     if (selection.isEmpty()) {
-        setTargetItem(0);
         return;
     }
 
     //kDebug() << "showing an item!";
-    setVisible(true);
     setTargetItem(selection.first());
+    setVisible(true);
 }
 
 QVariant SelectionBar::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)

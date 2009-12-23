@@ -46,7 +46,8 @@ ResultScene::ResultScene(Plasma::RunnerManager *manager, QWidget *focusBase, QOb
     : QGraphicsScene(parent),
       m_runnerManager(manager),
       m_currentIndex(0),
-      m_focusBase(focusBase)
+      m_focusBase(focusBase),
+      m_itemsAcceptHoverEvents(false)
 {
     setItemIndexMethod(NoIndex);
 
@@ -114,11 +115,23 @@ bool ResultScene::canMoveItemFocus() const
     // 2) the currently focused item is not visible anymore
     // 3) the focusBase widget (the khistorycombobox) has focus (i.e. the user is still typing or waiting) AND the currently focused item has not been hovered
 
-     return !(focusItem()) || (!m_items.contains(static_cast<ResultItem*>(focusItem()))) || (m_focusBase->hasFocus() && !static_cast<ResultItem*>(focusItem())->mouseHovered()) ;
+     return !(focusItem()) ||
+            (!m_items.contains(static_cast<ResultItem*>(focusItem()))) ||
+            (m_focusBase->hasFocus() && !static_cast<ResultItem*>(focusItem())->mouseHovered()) ;
+}
+
+bool ResultScene::itemsAcceptHoverEvents()
+{
+    return m_itemsAcceptHoverEvents;
 }
 
 void ResultScene::setItemsAcceptHoverEvents(bool enable)
 {
+    if (enable == m_itemsAcceptHoverEvents) {
+        return;
+    }
+
+    m_itemsAcceptHoverEvents = enable;
     foreach (QGraphicsItem* tmpItem, items()) {
         tmpItem->setAcceptHoverEvents(enable);
     }
@@ -367,6 +380,9 @@ bool ResultScene::launchQuery(const QString &term, const QString &runner)
 
 void ResultScene::clearQuery()
 {
+    m_selectionBar->setTargetItem(0);
+    setFocusItem(0);
+    clearSelection();
     m_runnerManager->reset();
 }
 
