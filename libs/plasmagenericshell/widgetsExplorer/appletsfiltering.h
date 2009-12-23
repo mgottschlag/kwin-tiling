@@ -41,6 +41,10 @@ public:
     explicit FilteringTreeView(QGraphicsItem * parent = 0, Qt::WindowFlags wFlags = 0);
     virtual ~FilteringTreeView();
 
+    /*
+     * Sets focus to the lineedit for the quicksearch
+     */
+    void setFocus();
     void setModel(QStandardItemModel *model);
 
 Q_SIGNALS:
@@ -89,6 +93,7 @@ public:
                              Qt::WindowFlags wFlags = 0);
     virtual ~FilteringWidget();
 
+    void setFocus();
     void setModel(QStandardItemModel *model);
     void setListOrientation(Qt::Orientation orientation);
     Plasma::LineEdit *textSearch();

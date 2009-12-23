@@ -374,6 +374,12 @@ void WidgetExplorer::addApplet(PlasmaAppletItem *appletItem)
     d->containment->addApplet(appletItem->pluginName(), appletItem->arguments());
 }
 
+void WidgetExplorer::showEvent(QShowEvent *e)
+{
+    d->filteringWidget->setFocus();
+    QGraphicsWidget::showEvent(e);
+}
+
 } // namespace Plasma
 
 #include "widgetexplorer.moc"

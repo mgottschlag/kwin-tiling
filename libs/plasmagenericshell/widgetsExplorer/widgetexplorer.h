@@ -113,6 +113,10 @@ public Q_SLOTS:
      * Adds applet
      */
     void addApplet(PlasmaAppletItem *appletItem);
+    
+protected:    
+  
+    void showEvent(QShowEvent *e);
 
 private:
     Q_PRIVATE_SLOT(d, void appletAdded(Plasma::Applet*))
