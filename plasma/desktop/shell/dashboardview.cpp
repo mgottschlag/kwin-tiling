@@ -48,13 +48,26 @@ public:
         : Plasma::WidgetExplorer(parent)
     {
         connect(this, SIGNAL(closeClicked()), this, SLOT(deleteLater()));
+        m_svg = new Plasma::FrameSvg(this);
+        m_svg->setImagePath("widgets/frame");
+        m_svg->setElementPrefix("raised");
+        m_svg->setEnabledBorders(Plasma::FrameSvg::TopBorder);
+    }
+
+protected:
+    void resizeEvent(QGraphicsSceneResizeEvent *event)
+    {
+        m_svg->resizeFrame(event->newSize());
     }
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
     {
         Q_UNUSED(widget)
-        painter->fillRect(option->rect, QColor(0, 0, 0, 160));
+        m_svg->paintFrame(painter);
     }
+
+private:
+    Plasma::FrameSvg *m_svg;
 };
 
 DashboardView::DashboardView(Plasma::Containment *containment, Plasma::View *view)
