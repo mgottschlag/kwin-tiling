@@ -48,6 +48,7 @@ class Clock : public ClockApplet
     protected slots:
         void clockConfigAccepted();
         void constraintsEvent(Plasma::Constraints constraints);
+        void resetSize();
 
     protected:
         void createClockConfigurationInterface(KConfigDialog *parent);

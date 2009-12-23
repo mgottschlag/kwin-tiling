@@ -104,6 +104,7 @@ void Clock::init()
 
     dataEngine("time")->connectSource(currentTimezone(), this, updateInterval(), intervalAlignment());
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
+    connect(KGlobalSettings::self(), SIGNAL(appearanceChanged()), SLOT(resetSize()));
 }
 
 void Clock::constraintsEvent(Plasma::Constraints constraints)
@@ -113,6 +114,13 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::SizeConstraint) {
         updateSize();
     }
+}
+
+void Clock::resetSize()
+{
+    // Called when the size of the applet may change externally, such as on
+    // font size changes
+    constraintsEvent(Plasma::SizeConstraint);
 }
 
 void Clock::updateSize()
