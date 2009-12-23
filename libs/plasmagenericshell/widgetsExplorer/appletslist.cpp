@@ -461,6 +461,7 @@ void AppletsListWidget::updateList()
     updateGeometry();
     m_hoverIndicator->hide();
     resetScroll();
+    m_toolTip->setVisible(false); // hides possibly open tooltip when list updates
 }
 
 void AppletsListWidget::wheelEvent(QGraphicsSceneWheelEvent *event)
