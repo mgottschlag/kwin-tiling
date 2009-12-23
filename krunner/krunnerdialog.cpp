@@ -365,13 +365,14 @@ void KRunnerDialog::hideEvent(QHideEvent *event)
 void KRunnerDialog::updateMask()
 {
 #ifdef Q_WS_X11
-    /*FIXME for 4.3: now the clip mask always has to be on for disabling the KWin shadow,
-    in the future something better has to be done, and enable the mask only when compositing is active
+    // Enable the mask only when compositing is disabled;
+    // As this operation is quite slow, it would be nice to find some
+    // way to workaround it for no-compositing users.
+
     if (!QX11Info::isCompositingManagerRunning()) {
         setMask(m_background->mask());
     }
-    */
-    setMask(m_background->mask());
+
 #else
     setMask(m_background->mask());
 #endif
