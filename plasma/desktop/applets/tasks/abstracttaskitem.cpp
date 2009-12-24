@@ -852,7 +852,7 @@ void AbstractTaskItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 
     event->accept();
 
-    if (!m_activateTimerId) {
+    if (!m_activateTimerId && m_applet->highlightWindows()) {
         m_activateTimerId = startTimer(500);
     }
 }
