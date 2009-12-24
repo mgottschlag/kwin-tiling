@@ -65,7 +65,8 @@ public:
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
-    void focusOutEvent(QFocusEvent * event);
+    void focusOutEvent(QFocusEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
 Q_SIGNALS:
     /**
@@ -121,6 +122,8 @@ private:
     ToolButton *m_autoHideTool;
     ToolButton *m_underWindowsTool;
     ToolButton *m_overWindowsTool;
+
+    ToolButton *m_closeControllerTool;
 
     //Widgets for actions
     QList<QWidget *> m_actionWidgets;

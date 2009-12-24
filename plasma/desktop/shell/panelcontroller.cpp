@@ -220,9 +220,9 @@ PanelController::PanelController(QWidget* parent)
     m_optDialogLayout->addWidget(m_expandTool);
     connect(m_expandTool, SIGNAL(clicked()), this, SLOT(maximizePanel()));
 
-    ToolButton *closeControllerTool = addTool("window-close", i18n("Close this configuration window"), m_configWidget, Qt::ToolButtonIconOnly, false);
-    m_layout->addWidget(closeControllerTool);
-    connect(closeControllerTool, SIGNAL(clicked()), this, SLOT(close()));
+    m_closeControllerTool = addTool("window-close", i18n("Close this configuration window"), m_configWidget, Qt::ToolButtonIconOnly, false);
+    m_layout->addWidget(m_closeControllerTool);
+    connect(m_closeControllerTool, SIGNAL(clicked()), this, SLOT(close()));
 
     m_ruler = new PositioningRuler(m_configWidget);
     connect(m_ruler, SIGNAL(rulersMoved(int, int, int)), this, SLOT(rulersMoved(int, int, int)));
@@ -847,6 +847,44 @@ void PanelController::syncRuler()
             m_ruler->setMinLength(containment()->minimumSize().width());
             break;
     }
+}
+
+void PanelController::resizeEvent(QResizeEvent *event)
+{
+    bool showText = true;
+
+    switch (location()) {
+        case Plasma::LeftEdge:
+        case Plasma::RightEdge:
+            showText = true;
+            break;
+        case Plasma::TopEdge:
+        case Plasma::BottomEdge:
+        default: {
+            const int screen = containment()->screen();
+            const QRect screenGeom = PlasmaApp::self()->corona()->screenGeometry(screen);
+            QRegion availGeom(screenGeom);
+            if (m_extLayout->sizeHint().width() > screenGeom.width()) {
+                showText = false;
+            }
+            break;
+        }
+    }
+
+    //FIXME: better (and faster) way to do that?
+    for (int i=0; i < m_layout->count(); ++i) {
+        ToolButton *button = qobject_cast<ToolButton *>(m_layout->itemAt(i)->widget());
+        if(button)
+        if (button) {
+            if (showText && button != m_closeControllerTool) {
+                button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+            } else {
+                button->setToolButtonStyle(Qt::ToolButtonIconOnly);
+            }
+        }
+    }
+
+    ControllerWindow::resizeEvent(event);
 }
 
 void PanelController::maximizePanel()
