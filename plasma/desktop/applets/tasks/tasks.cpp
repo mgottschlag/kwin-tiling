@@ -77,7 +77,9 @@ void Tasks::init()
     //kDebug();
 
     KConfigGroup cg = config();
+    //TODO: for 4.5, make this option visible
     m_showTooltip = cg.readEntry("showTooltip", true);
+    m_highlightWindows = cg.readEntry("highlightWindows", true);
 
     m_groupManager = new TaskManager::GroupManager(this);
     Plasma::Containment* appletContainment = containment();
@@ -386,6 +388,11 @@ void Tasks::configAccepted()
 bool Tasks::showToolTip() const
 {
     return m_showTooltip;
+}
+
+bool Tasks::highlightWindows() const
+{
+    return m_highlightWindows;
 }
 
 void Tasks::needsVisualFocus()

@@ -100,6 +100,7 @@ public:
         Qt::KeyboardModifiers groupModifierKey() const;
 
         bool showToolTip() const;
+        bool highlightWindows() const;
 
         void needsVisualFocus();
         QWidget *popupDialog() const;
@@ -129,6 +130,7 @@ private slots:
 
 private:
         bool m_showTooltip;
+        bool m_highlightWindows;
         Plasma::LayoutAnimator *m_animator;
         QGraphicsLinearLayout *layout;
 

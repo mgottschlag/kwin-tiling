@@ -370,7 +370,7 @@ void AbstractTaskItem::stopWindowHoverEffect()
         m_hoverEffectTimerId = 0;
     }
 
-    if (m_lastViewId) {
+    if (m_lastViewId && m_applet->highlightWindows()) {
         Plasma::WindowEffects::highlightWindows(m_lastViewId, QList<WId>());
     }
 }
@@ -497,7 +497,7 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
 
         stopWindowHoverEffect();
         QGraphicsView *view = m_applet->view();
-        if (view) {
+        if (view && m_applet->highlightWindows()) {
             m_lastViewId = view->winId();
             Plasma::WindowEffects::highlightWindows(m_lastViewId, windows);
         }
