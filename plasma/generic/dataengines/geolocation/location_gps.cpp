@@ -41,11 +41,7 @@ void Gpsd::update()
 
 void Gpsd::run()
 {
-#if GPSD_API_MAJOR_VERSION == 2
     gps_query(m_gpsdata, "w+x\n");
-#elif GPSD_API_MAJOR_VERSION == 3
-    gps_stream(m_gpsdata, WATCH_ENABLE, NULL);
-#endif
 
     while (!m_abort) {
         Plasma::DataEngine::Data d;
