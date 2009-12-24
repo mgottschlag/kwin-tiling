@@ -68,6 +68,7 @@ Comment[tr]=GTK+ temalandırma motoru kullanan bir biçim
 Comment[uk]=Стиль, що використовує рушій тем GTK+
 Comment[wa]=Stîle ki s' sieve do moteur di tinmes di GTK+
 Comment[x-test]=xxStyle that uses the GTK+ theming enginexx
+Comment[zh_CN]=使用 GTK+ 主题引擎的风格
 Comment[zh_TW]=GTK+ 主題引擎使用的樣式
 [KDE]
 WidgetStyle=Gtk

@@ -3,6 +3,7 @@ Type=ServiceType
 X-KDE-ServiceType=SolidDevice
 Name=Solid Device Type
 Name[ca]=Tipus de dispositiu del Solid
+Name[cs]=Typ zařízení Solid
 Name[da]=Solid enhedstype
 Name[de]=Solid-Gerätetyp
 Name[en_GB]=Solid Device Type

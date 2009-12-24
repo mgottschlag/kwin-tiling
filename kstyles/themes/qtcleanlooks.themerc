@@ -30,6 +30,7 @@ Name[tr]=Cleanlooks
 Name[uk]=Cleanlooks
 Name[wa]=Cleanlooks
 Name[x-test]=xxCleanlooksxx
+Name[zh_CN]=Cleanlooks
 Name[zh_TW]=乾淨外觀
 Comment=Built-in unthemed style similar to Clearlooks from GNOME
 Comment[ca]=Un estil sense tema integrat, similar al Clearlooks de GNOME
@@ -59,6 +60,7 @@ Comment[sv]=Inbyggd stil utan tema som liknar Clearlooks från GNOME
 Comment[uk]=Вбудований стиль без тем, подібний до Clearlooks у GNOME
 Comment[wa]=Stîle ki n' est pus on tinme basti dins KDE mins k' rishonne a Clearlooks di GNOME
 Comment[x-test]=xxBuilt-in unthemed style similar to Clearlooks from GNOMExx
+Comment[zh_CN]=内建的无主题风格，和 GNOME 的 Clearlooks 风格类似
 Comment[zh_TW]=內建的無主題樣式，類似 GNOME 的 Clearlooks
 [KDE]
 WidgetStyle=Cleanlooks

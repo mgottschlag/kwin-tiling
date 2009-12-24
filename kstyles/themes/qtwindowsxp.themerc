@@ -66,6 +66,7 @@ Comment[sv]=Stil som använder Windows XP stil
 Comment[uk]=Стиль, що використовує рушій стилів Windows XP
 Comment[wa]=Stîle ki s' sieve do moteur di stîle di Windows XP
 Comment[x-test]=xxStyle that uses the Windows XP style enginexx
+Comment[zh_CN]=使用 Windows XP 样式引擎的风格
 Comment[zh_TW]=使用 Windows XP 樣式引擎的樣式
 [KDE]
 WidgetStyle=WindowsXP

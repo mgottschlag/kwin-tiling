@@ -66,6 +66,7 @@ Comment[sv]=Stil som använder Windows Vista stil
 Comment[uk]=Стиль, що використовує рушій стилів Windows Vista
 Comment[wa]=Stîle ki s' sieve do moteur di stîle di Windows Vista
 Comment[x-test]=xxStyle that uses the Windows Vista style enginexx
+Comment[zh_CN]=使用 Windows Vista 样式引擎的风格
 Comment[zh_TW]=使用 Windows Vista 樣式引擎的樣式
 [KDE]
 WidgetStyle=WindowsVista

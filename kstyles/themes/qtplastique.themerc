@@ -34,6 +34,7 @@ Name[sv]=Plastique
 Name[tr]=Plastik
 Name[uk]=Plastique
 Name[x-test]=xxPlastiquexx
+Name[zh_CN]=Plastique
 Name[zh_TW]=Plastique
 Comment=Built-in unthemed style similar to Plastik from KDE3
 Comment[ca]=Un estil sense tema integrat, similar Plastik del KDE3
@@ -64,6 +65,7 @@ Comment[sv]=Inbyggd stil utan tema som liknar Plastik från KDE 3
 Comment[uk]=Вбудований стиль без тем, подібний до Plastik у KDE3
 Comment[wa]=Stîle ki n' est pus on tinme basti dins KDE4 mins k' rishonne a Plastik di KDE3
 Comment[x-test]=xxBuilt-in unthemed style similar to Plastik from KDE3xx
+Comment[zh_CN]=内建的无主题风格，和 KDE3 的 Plastik 风格类似
 Comment[zh_TW]=內建的無主題樣式，類似 KDE3 的 Plastik
 [KDE]
 WidgetStyle=Plastique
