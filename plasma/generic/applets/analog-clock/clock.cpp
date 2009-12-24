@@ -96,6 +96,7 @@ void Clock::init()
     }
 
     connectToEngine();
+    invalidateCache();
 }
 
 void Clock::connectToEngine()
@@ -114,8 +115,9 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
 {
     ClockApplet::constraintsEvent(constraints);
 
-    if (constraints & Plasma::SizeConstraint)
+    if (constraints & Plasma::SizeConstraint) {
         invalidateCache();
+    }
 }
 
 QPainterPath Clock::shape() const
@@ -327,8 +329,9 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         }
     }
 
-    if (contentsRect().size().toSize() != m_theme->size())
+    if (contentsRect().size().toSize() != m_theme->size()) {
         invalidateCache();
+    }
 
     // paint face and glass cache
     QRect faceRect = m_faceCache.rect();
@@ -436,6 +439,10 @@ void Clock::invalidateCache()
     m_faceCache = QPixmap(pixmapSize);
     m_handsCache = QPixmap(pixmapSize);
     m_glassCache = QPixmap(pixmapSize);
+
+    m_faceCache.fill(Qt::transparent);
+    m_glassCache.fill(Qt::transparent);
+    m_handsCache.fill(Qt::transparent);
 
     m_theme->resize(pixmapSize);
 }
