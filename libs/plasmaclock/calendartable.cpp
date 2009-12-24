@@ -695,7 +695,7 @@ void CalendarTable::paintCell(QPainter *p, int cell, int weekRow, int weekdayCol
     font.setPixelSize(cellArea.height() * 0.7);
     p->setFont(font);
     if (!(type & InvalidDate)) {
-        p->drawText(cellArea, Qt::AlignCenter, calendar()->dayString(cellDate), &cellArea); //draw number
+        p->drawText(cellArea, Qt::AlignCenter, calendar()->dayString(cellDate, KCalendarSystem::ShortFormat), &cellArea); //draw number
     }
     p->setOpacity(1.0);
 }
