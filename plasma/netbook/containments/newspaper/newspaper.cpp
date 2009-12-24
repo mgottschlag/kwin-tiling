@@ -75,7 +75,7 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
     connect(this, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
 
     m_updateSizeTimer = new QTimer(this);
-    m_updateSizeTimer->setSingleShot(false);
+    m_updateSizeTimer->setSingleShot(true);
     connect(m_updateSizeTimer, SIGNAL(timeout()), this, SLOT(updateSize()));
 }
 
@@ -357,10 +357,12 @@ void Newspaper::appletSizeHintChanged()
 void Newspaper::updateSize()
 {
     QSizeF hint = m_mainWidget->effectiveSizeHint(Qt::PreferredSize);
+
+    //FIXME: it appears to work only with hardcoded values
     if (m_orientation == Qt::Horizontal) {
-        m_mainWidget->resize(hint.width(), m_mainWidget->size().height());
+        m_mainWidget->resize(qMax((int)hint.width(), 300), m_mainWidget->size().height());
     } else {
-        m_mainWidget->resize(m_mainWidget->size().width(), hint.height());
+        m_mainWidget->resize(m_mainWidget->size().width(), qMax((int)hint.height(), 300));
     }
 }
 
