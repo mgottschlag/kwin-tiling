@@ -224,6 +224,7 @@ void WindowTaskItem::updateToolTip()
                                     KWindowSystem::desktopName(m_task->desktop())), p);
         data.setWindowToPreview(m_task->task()->window());
         data.setClickable(true);
+        data.setHighlightWindows(m_applet->highlightWindows());
 
         Plasma::ToolTipManager::self()->setContent(this, data);
     } else {

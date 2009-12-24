@@ -274,6 +274,7 @@ void TaskGroupItem::updateToolTip()
 
     data.setImage(m_group.data()->icon());
     data.setClickable(true);
+    data.setHighlightWindows(m_applet->highlightWindows());
 
     QList<WId> windows;
 
