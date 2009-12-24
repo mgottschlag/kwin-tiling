@@ -77,6 +77,7 @@ private Q_SLOTS:
     void appletSizeHintChanged();
     void updateConfigurationMode(bool config);
     void addNewsPaper();
+    void refreshLayout();
 
     void goLeft();
     void goRight();
@@ -100,6 +101,7 @@ private:
     Plasma::ToolButton *m_rightArrow;
     QTimer *m_scrollTimer;
     QTimer *m_updateSizeTimer;
+    QTimer *m_relayoutTimer;
 };
 
 

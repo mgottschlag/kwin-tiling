@@ -68,15 +68,19 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
     setContainmentType(Containment::CustomContainment);
 
     connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
-            this, SLOT(updateSize()));
-    connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
-            this, SLOT(cleanupColumns()));
+            this, SLOT(refreshLayout()));
+
 
     connect(this, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
 
     m_updateSizeTimer = new QTimer(this);
     m_updateSizeTimer->setSingleShot(true);
     connect(m_updateSizeTimer, SIGNAL(timeout()), this, SLOT(updateSize()));
+
+    m_relayoutTimer = new QTimer(this);
+    m_relayoutTimer->setSingleShot(true);
+    connect(m_relayoutTimer, SIGNAL(timeout()), this, SLOT(updateSize()));
+    connect(m_relayoutTimer, SIGNAL(timeout()), this, SLOT(cleanupColumns()));
 }
 
 Newspaper::~Newspaper()
@@ -240,6 +244,13 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     updateSize();
     createAppletTitle(applet);
     syncColumnSizes();
+}
+
+void Newspaper::refreshLayout()
+{
+    if (!m_relayoutTimer->isActive()) {
+        m_relayoutTimer->start(200);
+    }
 }
 
 void Newspaper::cleanupColumns()
