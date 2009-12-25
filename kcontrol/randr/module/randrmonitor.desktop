@@ -24,6 +24,7 @@ Name[sl]=Zaznavanje sprememb glede zaslonov
 Name[sv]=Detektera bildskärmsändringar (RANDR)
 Name[uk]=Виявляє зміни у RANDR (стані монітора)
 Name[x-test]=xxDetecting RANDR (monitor) changesxx
+Name[zh_CN]=正在检测 RANDR(显示器)的改变
 Name[zh_TW]=偵測 RANDR（螢幕）的變更
 Type=Service
 X-KDE-ServiceTypes=KDEDModule

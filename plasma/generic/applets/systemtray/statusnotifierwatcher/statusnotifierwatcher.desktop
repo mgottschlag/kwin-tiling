@@ -25,6 +25,7 @@ Name[sv]=KDED bevakning av statusunderrättelser
 Name[tr]=KDED Durum Bildirimi İzleyici
 Name[uk]=Переглядач сповіщень про стан KDED
 Name[x-test]=xxKDED Status Notifier watcherxx
+Name[zh_CN]=KDED 状态通知监视器
 Name[zh_TW]=KDE 狀態通知監控器 
 Comment=Keep track of applications that want to use the D-Bus based status notifier protocol.
 Comment[ca]=Fa un seguiment de les aplicacions que volen utilitzar el protocol de notificacions basat en l'estat del D-Bus.
@@ -49,6 +50,7 @@ Comment[sv]=Håll reda på program som vill använda det D-Bus baserade protokol
 Comment[tr]=D-Bus temelli bildirim kullananmak isteyen uygulamaları izle.
 Comment[uk]=Стежте за програмами, які бажають використовувати заснований на D-Bus протокол сповіщення про стан.
 Comment[x-test]=xxKeep track of applications that want to use the D-Bus based status notifier protocol.xx
+Comment[zh_CN]=跟踪基于 D-Bus 状态通知协议的程序。
 Comment[zh_TW]=追蹤要使用 D-Bus 狀態通知協定的應用程式。
 
 X-KDE-ServiceTypes=KDEDModule

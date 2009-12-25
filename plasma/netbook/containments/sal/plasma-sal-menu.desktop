@@ -28,6 +28,7 @@ Name[sv]=Plasma sök- och startmeny
 Name[tr]=Plasma Ara ve Çalıştır Menüsü
 Name[uk]=Меню пошуку і запуску Плазми
 Name[x-test]=xxPlasma Search and Launch menuxx
+Name[zh_CN]=Plasma 搜索与执行菜单
 Name[zh_TW]=Plasma 搜尋與啟動選單
 Comment=Menu entry for The Plasma search and launch activity
 Comment[ca]=Entrada de menú per a l'activitat de cerca i llançament del Plasma
@@ -53,6 +54,7 @@ Comment[sv]=Menyalternativ för sök- och startåtgärder i Plasma
 Comment[tr]=Plasma ara ve çalıştır eylemi için menü girdisi
 Comment[uk]=Пункт меню для простору дій пошуку і запису Плазми
 Comment[x-test]=xxMenu entry for The Plasma search and launch activityxx
+Comment[zh_CN]=提供 Plasma 搜索与程序启动特性的菜单项
 Comment[zh_TW]=Plasma 搜尋與啟動的選單項目
 
 [PropertyDef::X-Plasma-Sal-Query]

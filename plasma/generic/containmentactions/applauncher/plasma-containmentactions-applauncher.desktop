@@ -107,6 +107,7 @@ Comment[sv]=Enkel programstart
 Comment[tr]=Basit uygulama başlatıcı
 Comment[uk]=Простий інструмент запуску програм
 Comment[x-test]=xxSimple application launcherxx
+Comment[zh_CN]=简易程序启动器
 Comment[zh_TW]=簡單的應用程式啟動器
 
 ServiceTypes=Plasma/ContainmentActions

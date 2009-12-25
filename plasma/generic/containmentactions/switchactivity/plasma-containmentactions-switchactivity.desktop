@@ -28,6 +28,7 @@ Name[sv]=Byt aktivitet
 Name[tr]=Eylemi Değiştir
 Name[uk]=Перемкнути простір дій
 Name[x-test]=xxSwitch Activityxx
+Name[zh_CN]=切换活动
 Name[zh_TW]=切換活動
 Type=Service
 Icon=dashboard-show
@@ -60,6 +61,7 @@ Comment[sv]=Byt till en annan aktivitet
 Comment[tr]=Başka bir eyleme geç
 Comment[uk]=Перемкнутися на інший простір дій
 Comment[x-test]=xxSwitch to another activityxx
+Comment[zh_CN]=切换到另一个活动
 Comment[zh_TW]=切換到其它活動
 
 ServiceTypes=Plasma/ContainmentActions

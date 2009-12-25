@@ -31,6 +31,7 @@ Name[tg]=Часпондан
 Name[tr]=Yapıştır
 Name[uk]=Вставка
 Name[x-test]=xxPastexx
+Name[zh_CN]=粘贴
 Name[zh_TW]=貼上
 Type=Service
 Icon=edit-paste
@@ -64,6 +65,7 @@ Comment[sv]=Skapa komponent från klippbordets innehåll
 Comment[tr]=Pano içeriğininden bir gereç oluşturur
 Comment[uk]=Створює віджет з вмістом буфера обміну даними
 Comment[x-test]=xxCreates a widget from the contents of the clipboardxx
+Comment[zh_CN]=从剪贴板内容中创建部件
 Comment[zh_TW]=從剪貼簿內容建立一元件
 
 ServiceTypes=Plasma/ContainmentActions

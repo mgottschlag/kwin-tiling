@@ -29,6 +29,7 @@ Name[tr]=Kişiler
 Name[uk]=Контакти
 Name[wa]=Soçons
 Name[x-test]=xxContactsxx
+Name[zh_CN]=联系人
 Name[zh_TW]=聯絡人
 Comment=List all your contacts
 Comment[ca]=Llista tots els contactes
@@ -59,6 +60,7 @@ Comment[sv]=Lista alla kontakter
 Comment[tr]=Tüm kişileri listele
 Comment[uk]=Список всіх ваших записів контактів
 Comment[x-test]=xxList all your contactsxx
+Comment[zh_CN]=列出所有联系人
 Comment[zh_TW]=列出所有聯絡人
 Icon=view-pim-contacts
 

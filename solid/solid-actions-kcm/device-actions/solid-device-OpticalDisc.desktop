@@ -748,6 +748,7 @@ Name[tr]=Solid Aygıtı
 Name[uk]=Пристрій Solid
 Name[wa]=Éndjins Solid
 Name[x-test]=xxSolid Devicexx
+Name[zh_CN]=Solid 设备
 Name[zh_TW]=實體裝置
 Type=Service
 X-KDE-ServiceTypes=SolidDevice

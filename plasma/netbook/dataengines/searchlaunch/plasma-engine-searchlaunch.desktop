@@ -27,6 +27,7 @@ Name[sv]=Sök- och startprogram
 Name[tr]=Ara ve Çalıştır Motoru
 Name[uk]=Рушій пошуку і запуску
 Name[x-test]=xxSearch and Launch Enginexx
+Name[zh_CN]=搜索与启动引擎
 Name[zh_TW]=搜索與啟動引擎
 Comment=Engine to handle queries to SAL containment
 Comment[ca]=Motor per gestionar consultes al contenidor SAL
@@ -50,6 +51,7 @@ Comment[sl]=Pogon za ravnanje s poizvedbami za vsebnik SAL
 Comment[sv]=Program för att hantera förfrågningar till SAL-omgivning
 Comment[uk]=Рушій для обробки запитів до контейнера SAL
 Comment[x-test]=xxEngine to handle queries to SAL containmentxx
+Comment[zh_CN]=处理 SAL 容器查询的引擎
 Comment[zh_TW]=處理 SAL 容器查詢的引擎
 Type=Service
 

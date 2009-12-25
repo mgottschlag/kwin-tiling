@@ -29,6 +29,7 @@ Name[sv]=Sökruta
 Name[tr]=Arama Kutusu
 Name[uk]=Панель пошуку
 Name[x-test]=xxSearch Boxxx
+Name[zh_CN]=搜索框
 Name[zh_TW]=搜尋盒
 Comment=Search Box for a given RunnerManager
 Comment[ca]=Caixa de cerca per a un gestor d'execució indicat
@@ -54,6 +55,7 @@ Comment[sv]=Sökruta för en given hanterare av programkörning
 Comment[tr]=Verilen bir Çalıştırıcı Yöneticisi için Arama Kutusu
 Comment[uk]=Панель пошуку для вказаного Керування запуском
 Comment[x-test]=xxSearch Box for a given RunnerManagerxx
+Comment[zh_CN]=运行管理器的搜索框
 Comment[zh_TW]=RunnerManager 的搜尋盒
 Type=Service
 

@@ -24,6 +24,7 @@ Name[sv]=Sök- och programstartomgivning
 Name[tr]=Ara ve Çalıştır İçericisi
 Name[uk]=Контейнер пошуку і запуску
 Name[x-test]=xxSearch and Launch Containmentxx
+Name[zh_CN]=搜索与启动容器
 Name[zh_TW]=搜尋與啟動容器
 Comment=Special Containment with Launcher
 Comment[ca]=Contenidor especial amb llançador
@@ -50,6 +51,7 @@ Comment[sl]=Poseben vsebnik za zaganjalnikom
 Comment[sv]=Särskild omgivning med programstart
 Comment[uk]=Особливий контейнер з інструментом запуску
 Comment[x-test]=xxSpecial Containment with Launcherxx
+Comment[zh_CN]=包含启动器的特殊容器
 Comment[zh_TW]=含有啟動器的特殊容器
 
 Icon=edit-find

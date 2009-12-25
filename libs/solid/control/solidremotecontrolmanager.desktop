@@ -26,6 +26,7 @@ Comment[sv]=Gränssnitt för fjärrkontrollhantering
 Comment[tr]=Uzaktan Denetim Yönetimi Arka Ucu
 Comment[uk]=Сервер керування пристроями дистанційного керування
 Comment[x-test]=xxRemote Control Management Backendxx
+Comment[zh_CN]=远程控制管理后端
 Comment[zh_TW]=遠端控制管理後端介面
 
 [PropertyDef::X-KDE-SolidBackendInfo-Version]

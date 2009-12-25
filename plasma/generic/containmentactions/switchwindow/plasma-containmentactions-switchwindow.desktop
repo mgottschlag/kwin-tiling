@@ -29,6 +29,7 @@ Name[tg]=Мубодилаи тирезаҳо
 Name[tr]=Pencereyi Değiştir
 Name[uk]=Перемкнути вікно
 Name[x-test]=xxSwitch Windowxx
+Name[zh_CN]=切换窗口
 Name[zh_TW]=切換視窗
 Type=Service
 Icon=preferences-system-windows
@@ -61,6 +62,7 @@ Comment[sv]=Visa en lista med fönster att byta till
 Comment[tr]=Değiştirilecek pencereler listesini göster
 Comment[uk]=Показує список вікон для перемикання
 Comment[x-test]=xxShow a list of windows to switch toxx
+Comment[zh_CN]=显示可供切换的窗口列表
 Comment[zh_TW]=列出視窗並切換
 
 ServiceTypes=Plasma/ContainmentActions
