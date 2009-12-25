@@ -907,16 +907,20 @@ void PlasmaApp::raiseMainView()
 
 void PlasmaApp::controlBarVisibilityUpdate()
 {
-    //FIXME: QCursor::pos() can be avoided somewat? the good news is that is quite rare, one time per trigger
     if (hasForegroundWindows() && m_controlBar->isVisible()) {
         return;
-    } else if (!m_controlBar->isVisible()) {
-        if (m_unhideTriggerGeom.adjusted(-1, -1, 1, 1).contains(QCursor::pos())) {
+    }
+
+    //would be nice to avoid this
+    QPoint cursorPos = QCursor::pos();
+
+    if (m_triggerZone.adjusted(-1, -1, 1, 1).contains(cursorPos)) { 
+        if (!m_controlBar->isVisible()) {
             destroyUnHideTrigger();
             Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
             m_controlBar->show();
         }
-    } else {
+    } else if (!m_controlBar->geometry().contains(cursorPos)) {
         createUnhideTrigger();
         Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
         m_controlBar->hide();
@@ -967,6 +971,8 @@ void PlasmaApp::unhideHintMousePoll()
         delete m_glowBar;
         m_glowBar = 0;
         XMoveResizeWindow(QX11Info::display(), m_unhideTrigger, m_unhideTriggerGeom.x(), m_unhideTriggerGeom.y(), m_unhideTriggerGeom.width(), m_unhideTriggerGeom.height());
+    } else {
+        controlBarVisibilityUpdate();
     }
 #endif
 }
