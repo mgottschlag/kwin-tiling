@@ -868,8 +868,11 @@ void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
 
         extenderItem->setWidget(label);
         extenderItem->showCloseButton();
-    } else {
+    } else if (extenderItem->config().readEntry("type", "") == "job") {
         extenderItem->setWidget(new JobWidget(0, extenderItem));
+    //unknown type, this should never happen
+    } else {
+        extenderItem->destroy();
     }
 
 }
