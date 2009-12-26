@@ -105,7 +105,6 @@ private:
     QSet<Task::Category> m_shownCategories;
     QDateTime m_lastActivity;
 
-    Plasma::ExtenderItem *m_notificationBarExtenderItem;
     Plasma::TabBar *m_notificationBar;
 
     Plasma::FrameSvg *m_background;

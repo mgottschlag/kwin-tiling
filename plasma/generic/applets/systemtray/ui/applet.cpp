@@ -83,7 +83,6 @@ static const int oldNotificationsExpireDelay = 5 * 60 * 1000;
 Applet::Applet(QObject *parent, const QVariantList &arguments)
     : Plasma::PopupApplet(parent, arguments),
       m_taskArea(0),
-      m_notificationBarExtenderItem(0),
       m_notificationBar(0),
       m_background(0),
       m_jobSummaryWidget(0),
@@ -240,23 +239,21 @@ void Applet::initExtenderTask(bool create)
 void Applet::syncNotificationBarNeeded()
 {
     if (s_manager->notifications().count() > 0) {
-        if (!m_notificationBarExtenderItem) {
+        if (!extender()->group("oldNotificationsGroup")) {
             Plasma::ExtenderGroup *group = new Plasma::ExtenderGroup(extender());
             group->setName("oldNotificationsGroup");
             group->setTitle(i18n("Recent notifications"));
             group->setIcon("dialog-information");
-            QGraphicsWidget *groupWidget = new QGraphicsWidget(group);
-            groupWidget->setMaximumHeight(0);
-            group->setWidget(groupWidget);
             group->showCloseButton();
+            group->setAutoHide(false);
+            group->setAutoCollapse(true);
+            group->collapseGroup();
             QAction *closeAction = group->action("close");
 
             connect(closeAction, SIGNAL(triggered()), this, SLOT(clearOldNotifications()));
 
-            m_notificationBarExtenderItem = new Plasma::ExtenderItem(extender());
-            m_notificationBarExtenderItem->setGroup(group);
-            m_notificationBarExtenderItem->setIcon("dialog-information");
-            QGraphicsWidget *widget = new QGraphicsWidget(m_notificationBarExtenderItem);
+            QGraphicsWidget *widget = new QGraphicsWidget(group);
+            group->setWidget(widget);
             widget->setContentsMargins(0, 0, 0, 4);
             QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(widget);
             lay->addStretch();
@@ -264,7 +261,6 @@ void Applet::syncNotificationBarNeeded()
             m_notificationBar->nativeWidget()->setMaximumHeight(KIconLoader::SizeMedium);
             lay->addItem(m_notificationBar);
             lay->addStretch();
-            m_notificationBarExtenderItem->setWidget(widget);
             m_notificationBar->addTab(KIcon("dialog-information"), i18nc("Show all recent notifications", "Recent"));
             connect(m_notificationBar, SIGNAL(currentChanged(int)), this, SLOT(showTaskNotifications(int)));
         } else {
@@ -274,14 +270,10 @@ void Applet::syncNotificationBarNeeded()
                 }
             }
         }
-    } else if (m_notificationBarExtenderItem) {
-        m_notificationBarExtenderItem->destroy();
-        m_notificationBarExtenderItem = 0;
+    } else if (extender()->group("oldNotificationsGroup")) {
         m_notificationBar = 0;
         //don't let him in the config file
-        if (extender()->group("oldNotificationsGroup")) {
-            extender()->group("oldNotificationsGroup")->destroy();
-        }
+        extender()->group("oldNotificationsGroup")->destroy();
     }
 }
 
