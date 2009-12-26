@@ -72,7 +72,7 @@ class IconApplet : public Plasma::Applet
         KPropertiesDialog *m_dialog;
         KMimeType::Ptr m_mimetype;
         KUrl m_url;
-        KDirWatch *m_watchDestopFile;
+        KDirWatch *m_watcher;
         QSize m_lastFreeSize;
 };
 

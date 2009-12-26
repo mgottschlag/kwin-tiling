@@ -47,7 +47,7 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_icon(0),
       m_dialog(0),
-      m_watchDestopFile(0)
+      m_watcher(0)
 {
     setAcceptDrops(true);
     setBackgroundHints(NoBackground);
@@ -88,7 +88,7 @@ void IconApplet::init()
 IconApplet::~IconApplet()
 {
     delete m_dialog;
-    delete m_watchDestopFile;
+    delete m_watcher;
 }
 
 void IconApplet::saveState(KConfigGroup &cg) const
@@ -109,6 +109,11 @@ void IconApplet::setUrl(const KUrl& url)
 
     m_mimetype = KMimeType::findByUrl(url);
 
+    delete m_watcher;
+    m_watcher = new KDirWatch;
+    m_watcher->addFile(m_url.toLocalFile());
+    connect(m_watcher, SIGNAL(deleted(const QString &)), this, SLOT(destroy()));
+
     if (m_url.isLocalFile() && KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
         KDesktopFile f(m_url.toLocalFile());
         m_text = f.readName();
@@ -120,10 +125,7 @@ void IconApplet::setUrl(const KUrl& url)
 
         m_genericName = f.readGenericName();
 
-        delete m_watchDestopFile;
-        m_watchDestopFile = new KDirWatch;
-        m_watchDestopFile->addFile(m_url.toLocalFile());
-        connect(m_watchDestopFile, SIGNAL(dirty(const QString &)), this, SLOT(updateDesktopFile()));
+        connect(m_watcher, SIGNAL(dirty(const QString &)), this, SLOT(updateDesktopFile()));
     } else {
         m_text = m_url.fileName();
 
@@ -132,7 +134,7 @@ void IconApplet::setUrl(const KUrl& url)
             m_text = m_url.directory();
         } else if(m_text.isEmpty()) {
             m_text = m_url.prettyUrl();
-            
+
             if(m_text.endsWith(":/")) {
                 m_text = m_url.protocol();
             }
