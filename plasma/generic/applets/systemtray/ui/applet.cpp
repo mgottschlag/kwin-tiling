@@ -258,6 +258,8 @@ void Applet::syncNotificationBarNeeded()
             QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(widget);
             lay->addStretch();
             m_notificationBar = new Plasma::TabBar(widget);
+            //arbitrary maximum size before enabling scroll arrows
+            m_notificationBar->setMaximumWidth(400);
             m_notificationBar->nativeWidget()->setMaximumHeight(KIconLoader::SizeMedium);
             lay->addItem(m_notificationBar);
             lay->addStretch();
@@ -267,6 +269,7 @@ void Applet::syncNotificationBarNeeded()
             for (int i = 1; i < m_notificationBar->count(); ++i) {
                 if (!m_notificationsForApp.contains(m_notificationBar->tabText(i))) {
                     m_notificationBar->removeTab(i);
+                    showTaskNotifications(m_notificationBar->currentIndex());
                 }
             }
         }
