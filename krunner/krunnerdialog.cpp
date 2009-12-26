@@ -518,7 +518,7 @@ void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
         }
     } else if (e->x() < qMax(5, m_leftBorderWidth) || e->x() > width() - qMax(5, m_rightBorderWidth)) {
         setCursor(Qt::SizeHorCursor);
-    } else if (e->y() > height() - qMax(5, m_bottomBorderHeight)) {
+    } else if ((e->y() > height() - qMax(5, m_bottomBorderHeight)) && (e->y() < height())) {
         setCursor(Qt::SizeVerCursor);
     } else {
         unsetCursor();
