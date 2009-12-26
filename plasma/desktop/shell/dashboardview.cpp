@@ -52,6 +52,17 @@ public:
         m_svg->setImagePath("widgets/frame");
         m_svg->setElementPrefix("raised");
         m_svg->setEnabledBorders(Plasma::FrameSvg::TopBorder);
+        s_containmentsWithExplorer.insert(parent);
+    }
+
+    ~DashboardWidgetExplorer()
+    {
+        s_containmentsWithExplorer.remove(parentWidget());
+    }
+
+    static bool parentHasExplorer(QGraphicsWidget *parent)
+    {
+        return s_containmentsWithExplorer.contains(parent);
     }
 
 protected:
@@ -68,7 +79,10 @@ protected:
 
 private:
     Plasma::FrameSvg *m_svg;
+    static QSet<QGraphicsWidget *> s_containmentsWithExplorer;
 };
+
+QSet<QGraphicsWidget *> DashboardWidgetExplorer::s_containmentsWithExplorer;
 
 DashboardView::DashboardView(Plasma::Containment *containment, Plasma::View *view)
     : Plasma::View(containment, 0),
@@ -171,6 +185,9 @@ void DashboardView::showWidgetExplorer()
 {
     Plasma::Containment *c = containment();
     if (!c) {
+        return;
+    }
+    if (DashboardWidgetExplorer::parentHasExplorer(c)) {
         return;
     }
 
