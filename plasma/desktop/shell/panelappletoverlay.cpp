@@ -133,6 +133,10 @@ void PanelAppletOverlay::paintEvent(QPaintEvent *event)
     KIcon configIcon("arrow-up");
     p.drawPixmap(m_menuButtonRect, configIcon.pixmap(m_menuButtonRect.size()));
 
+    if (!m_applet) {
+        return;
+    }
+
     if (m_orientation == Qt::Horizontal) {
         iconSize = qMin(qMin(height(), int(m_applet->size().width())), 64);
         iconRect = QRect(rect().center() - QPoint(iconSize / 2, iconSize / 2), QSize(iconSize, iconSize));
