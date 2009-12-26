@@ -77,7 +77,7 @@ int Applet::s_managerUsage = 0;
 static const int idleCheckInterval = 60 * 1000;
 static const int completedJobExpireDelay = 5 * 60 * 1000;
 static const int completedShortJobExpireDelay = 40 * 1000;
-static const int shortJobsLength = 30 * 1000;
+static const uint shortJobsLength = 30 * 1000;
 static const int oldNotificationsExpireDelay = 5 * 60 * 1000;
 
 Applet::Applet(QObject *parent, const QVariantList &arguments)
