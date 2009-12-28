@@ -181,7 +181,7 @@ int main(int argc, char** argv)
 			nextID += 256;
 		}
 
-		s.replace("-","_");
+		s.replace('-','_');
 
 
 		if (s.contains("button"))
@@ -392,7 +392,7 @@ int main(int argc, char** argv)
 	for (QMap<QString, int>::iterator i = assignID.begin(); i != assignID.end(); ++i)
 	{
 		QString name = "keramik_"+i.key();
-		name.replace("-","_");
+		name.replace('-','_');
 		ts<<"\t"<<name<<" = "<<i.value()<<",\n";
 	}
 	ts<<"\tkeramik_last\n";
