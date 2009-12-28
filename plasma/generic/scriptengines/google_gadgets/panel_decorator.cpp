@@ -94,10 +94,8 @@ class PanelDecorator::Private {
     if (!owner_->IsMinimizedCaptionVisible()) {
       minimized_width_ = owner_->GetWidth();
       owner_->SetWidth(38);
-      owner_->SetResizeBorderVisible(0);
     } else {
       owner_->SetWidth(minimized_width_);
-      owner_->SetResizeBorderVisible(BORDER_RIGHT);
     }
   }
 
@@ -205,8 +203,7 @@ void PanelDecorator::setHorizontal() {
     SetMinimized(false);
   }
 
-  SetResizeBorderVisible((!IsMinimized() || IsMinimizedCaptionVisible()) ?
-                         0 : BORDER_RIGHT);
+  SetResizeBorderVisible(0);
   d->vertical_ = false;
 }
 

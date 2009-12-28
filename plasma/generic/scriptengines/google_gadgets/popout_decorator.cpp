@@ -29,12 +29,9 @@
 namespace ggadget {
 
 PopOutDecorator::PopOutDecorator(PlasmaViewHost *host)
-    : MainViewDecoratorBase(host,
-                            "plasma_popout_main_view",
-                            false,
-                            false,
-                            true),
+    : FloatingMainViewDecorator(host, true),
       info(host->getInfo()) {
+  SetOptionPrefix("plasma_popout_main_view");
   SetButtonVisible(MainViewDecoratorBase::POP_IN_OUT_BUTTON, false);
   SetButtonVisible(MainViewDecoratorBase::MENU_BUTTON, false);
   SetButtonVisible(MainViewDecoratorBase::CLOSE_BUTTON, false);
@@ -47,11 +44,9 @@ void PopOutDecorator::OnAddDecoratorMenuItems(MenuInterface *menu) {
 }
 
 bool PopOutDecorator::ShowDecoratedView(bool modal, int flags,
-                                          Slot1<bool, int> *feedback_handler) {
+                                        Slot1<bool, int> *feedback_handler) {
   info->applet->setMaximumSize(QSizeF());
-  MainViewDecoratorBase::ShowDecoratedView(modal, flags, feedback_handler);
-  
-  // return something in non-void function
-  return true;
+  return FloatingMainViewDecorator::ShowDecoratedView(modal, flags, feedback_handler);
 }
+
 } // namespace ggadget

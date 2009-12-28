@@ -32,6 +32,7 @@ namespace ggadget {
 namespace Plasma {
   class Applet;
 }
+class QGraphicsProxyWidget;
 
 class GadgetInfo {
  public:
@@ -40,6 +41,7 @@ class GadgetInfo {
         gadget(NULL),
         applet(NULL),
         script(NULL),
+        proxy(NULL),
         widget(NULL),
         main_view_host(NULL),
         expanded_main_view_host(NULL),
@@ -52,6 +54,7 @@ class GadgetInfo {
   ggadget::Gadget *gadget;
   Plasma::Applet *applet;
   Plasma::AppletScript *script;
+  QGraphicsProxyWidget *proxy;
   ggadget::qt::QtViewWidget *widget;
   ggadget::DecoratedViewHost *main_view_host;
   ggadget::ViewHostInterface *expanded_main_view_host;

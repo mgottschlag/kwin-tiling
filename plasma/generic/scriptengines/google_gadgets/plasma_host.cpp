@@ -16,7 +16,8 @@
 #include "plasma_host.h"
 
 #include <string>
-#include <QtGui/QGraphicsWidget>
+#include <QGraphicsWidget>
+#include <QGraphicsProxyWidget>
 #include <QtGui/QFontDatabase>
 #include <ggadget/common.h>
 #include <ggadget/logger.h>
@@ -281,19 +282,22 @@ void PlasmaHost::onConstraintsEvent(Plasma::Constraints constraints) {
 
   if (constraints & Plasma::SizeConstraint) {
     ViewInterface *view = d->info->main_view_host->GetViewDecorator();
-    if (!view) return;
+    if (!view || !d->info->widget || !d->info->proxy) return;
+
     QSizeF s = d->info->applet->size();
     kDebug() << "size requested:" << s;
     double w = s.width();
     double h = s.height();
     double old_w = view->GetWidth();
     double old_h = view->GetHeight();
+    if (w == old_w && h == old_h) {
+      d->info->widget->resize(w, h);
+      d->info->proxy->resize(s);
+      return;
+    }
 
     if (view->OnSizing(&w, &h)) {
-      kDebug() << "Original view size:"
-               << old_w << " " << old_h;
       view->SetSize(w, h);
-      kDebug() << "Change to:" << w << " " << h;
     }
   }
 }

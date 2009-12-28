@@ -35,25 +35,10 @@ class PlasmaViewHost::Private : public QObject {
       type_(type),
       info(i),
       is_popout_(popout),
-      gadget_w_(0),
-      gadget_h_(0),
       feedback_handler_(NULL) {}
 
   ~Private() {
     closeView();
-  }
-
-  static void embedWidget(QGraphicsWidget *parent, QWidget *widget) {
-    widget->setAttribute(Qt::WA_NoSystemBackground);
-    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(parent);
-    layout->setSpacing(0);
-    layout->setContentsMargins(0, 0, 0, 0);
-    QGraphicsProxyWidget* proxy = new QGraphicsProxyWidget(parent);
-    proxy->setWidget(widget);
-    layout->addItem(proxy);
-    parent->setLayout(layout);
-    DLOG("EmbededWidget: widget:%p, applet:%p, layout:%p, proxy:%p",
-         widget, parent, layout, proxy);
   }
 
   /* Show the view in right place
@@ -74,7 +59,10 @@ class PlasmaViewHost::Private : public QObject {
       // normal main view
       if (info->widget == NULL) {
         widget_ = new QtViewWidget(view_, 0);
-        embedWidget(info->applet, widget_);
+        widget_->setAttribute(Qt::WA_NoSystemBackground);
+        info->proxy = new QGraphicsProxyWidget(info->applet);
+        info->proxy->setWidget(widget_);
+        widget_->show();
         info->widget = widget_;
       } else {
         widget_ = info->widget;
@@ -140,20 +128,23 @@ class PlasmaViewHost::Private : public QObject {
   // This is called when view size has changed, caused by constraintsEvent or
   // user manually resizes gadget. Applet and widget size will be adjusted
   // according to view size.
+  // size changing has two sequences:
+  //   view->applet, widget, proxy
+  //   applet->view->widget, proxy
   void adjustAppletSize() {
-    if (!info->main_view_host || !info->applet) return;
+    if (!info->main_view_host || !info->applet || !info->proxy || !widget_) {
+      return;
+    }
     ViewInterface *view = info->main_view_host->GetViewDecorator();
     double w = view->GetWidth();
     double h = view->GetHeight();
     if (w <= 0 || h <= 0) return;
-    if (gadget_w_ == w && gadget_h_ == h) return;
 
-    gadget_w_ = w;
-    gadget_h_ = h;
-#if 0
     kDebug() << "view size:" << w << " " << h;
     kDebug() << "applet old size:" << info->applet->size();
-
+    kDebug() << "widget old size:" << widget_->size();
+    kDebug() << "proxy old size:" << info->proxy->size();
+#if 0
     if (info->applet->location() == Plasma::Floating) {
       info->applet->resize(w, h);
     } else {
@@ -165,11 +156,12 @@ class PlasmaViewHost::Private : public QObject {
     kDebug() << "applet new size:" << info->applet->size();
 #endif
 
-    if (widget_) {
-      kDebug() << "widget old size:" << widget_->size();
-      widget_->resize(w, h);
-      kDebug() << "widget new size:" << widget_->size();
-    }
+    info->applet->resize(w, h);
+    info->proxy->resize(w, h);
+    widget_->resize(w, h);
+    kDebug() << "applet new size:" << info->applet->size();
+    kDebug() << "widget new size:" << widget_->size();
+    kDebug() << "proxy new size:" << info->proxy->size();
   }
 
   void queueResize() {
@@ -200,8 +192,6 @@ class PlasmaViewHost::Private : public QObject {
   ViewHostInterface::Type type_;
   GadgetInfo *info;
   bool is_popout_;
-  double gadget_w_;
-  double gadget_h_;
 
   Slot1<bool, int> *feedback_handler_;
   QString caption_;

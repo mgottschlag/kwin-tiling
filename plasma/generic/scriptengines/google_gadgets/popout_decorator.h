@@ -17,12 +17,12 @@
 #ifndef GGADGET_POPOUT_DECORATOR_H__
 #define GGADGET_POPOUT_DECORATOR_H__
 
-#include <ggadget/main_view_decorator_base.h>
+#include <ggadget/floating_main_view_decorator.h>
 #include "plasma_view_host.h"
 
 namespace ggadget {
 
-class PopOutDecorator : public MainViewDecoratorBase {
+class PopOutDecorator : public FloatingMainViewDecorator {
  public:
   PopOutDecorator(PlasmaViewHost *host);
   virtual ~PopOutDecorator();

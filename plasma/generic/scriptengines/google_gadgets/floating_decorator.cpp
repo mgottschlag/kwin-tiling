@@ -52,9 +52,7 @@ void FloatingDecorator::OnAddDecoratorMenuItems(MenuInterface *menu) {
 bool FloatingDecorator::ShowDecoratedView(bool modal, int flags,
                                           Slot1<bool, int> *feedback_handler) {
   info->applet->setMaximumSize(QSizeF());
-  MainViewDecoratorBase::ShowDecoratedView(modal, flags, feedback_handler);
-  
-  // return something in non-void function
-  return true;
+  return MainViewDecoratorBase::ShowDecoratedView(modal, flags, feedback_handler);
 }
+
 } // namespace ggadget
