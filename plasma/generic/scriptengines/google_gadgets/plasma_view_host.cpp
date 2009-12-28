@@ -14,14 +14,17 @@
   limitations under the License.
 */
 
+#include "plasma_view_host.h"
+
 #include <sys/time.h>
 
-#include <KMessageBox>
 #include <QtGui/QGraphicsProxyWidget>
 #include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QToolTip>
 
 #include <KInputDialog>
+#include <KMessageBox>
+
 #include <ggadget/file_manager_interface.h>
 #include <ggadget/gadget_consts.h>
 #include <ggadget/logger.h>
@@ -32,7 +35,6 @@
 #include <ggadget/script_runtime_manager.h>
 #include <ggadget/qt/qt_graphics.h>
 #include <ggadget/qt/utilities.h>
-#include "plasma_view_host.h"
 #include "plasma_view_host_internal.h"
 
 #include <Plasma/Applet>
@@ -89,9 +91,6 @@ void PlasmaViewHost::QueueResize() {
   d->queueResize();
 }
 
-void PlasmaViewHost::EnableInputShapeMask(bool enable) {
-}
-
 void PlasmaViewHost::SetResizable(ViewInterface::ResizableMode mode) {
   if (d->type_ != ViewHostInterface::VIEW_HOST_MAIN || d->is_popout_ ||
       !d->info->applet)
@@ -111,6 +110,7 @@ void PlasmaViewHost::SetCaption(const std::string &caption) {
 
 void PlasmaViewHost::SetShowCaptionAlways(bool always) {
   // TODO:
+  Q_UNUSED(always);
 }
 
 void PlasmaViewHost::SetCursor(ggadget::ViewInterface::CursorType type) {
@@ -129,6 +129,9 @@ void PlasmaViewHost::ShowTooltip(const std::string &tooltip) {
 void PlasmaViewHost::ShowTooltipAtPosition(const std::string &tooltip,
                                            double x, double y) {
   // TODO:
+  Q_UNUSED(tooltip);
+  Q_UNUSED(x);
+  Q_UNUSED(y);
 }
 
 bool PlasmaViewHost::ShowView(bool modal, int flags,
@@ -169,7 +172,8 @@ std::string PlasmaViewHost::Prompt(const ViewInterface *view,
                                    const char *message,
                                    const char *default_value) {
   QString s = KInputDialog::getText(view->GetCaption().c_str(),
-                                   message);
+                                    message,
+                                    default_value);
   return s.toUtf8().data();
 }
 

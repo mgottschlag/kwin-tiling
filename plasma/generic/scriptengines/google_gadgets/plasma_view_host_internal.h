@@ -61,6 +61,8 @@ class PlasmaViewHost::Private : public QObject {
    *    - popouted main view and details view: Shown in QtViewWidget
    */
   bool showView(bool modal, int flags, Slot1<bool, int> *feedback_handler) {
+    Q_UNUSED(modal);
+    Q_UNUSED(flags);
     ASSERT(view_);
     if (feedback_handler_ && feedback_handler_ != feedback_handler)
       delete feedback_handler_;

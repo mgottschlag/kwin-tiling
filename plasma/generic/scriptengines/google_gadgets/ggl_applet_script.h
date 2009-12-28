@@ -20,9 +20,13 @@
 #include <Plasma/AppletScript>
 
 namespace ggadget {
+  class Gadget;
   class PlasmaHost;
   class DecoratedViewHost;
   class ViewHostInterface;
+  namespace qt {
+    class QtViewWidget;
+  }
 }
 
 namespace Plasma {

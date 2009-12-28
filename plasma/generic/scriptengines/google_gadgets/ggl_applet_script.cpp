@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
+#include "ggl_applet_script.h"
 
 #include <sys/time.h>
 #include <time.h>
@@ -48,7 +49,6 @@
 #include <ggadget/decorated_view_host.h>
 #include "plasma_host.h"
 #include "ggl_extensions.h"
-#include "ggl_applet_script.h"
 
 K_EXPORT_PLASMA_APPLETSCRIPTENGINE(googlegadget, GglAppletScript)
 
@@ -130,6 +130,9 @@ void GglAppletScript::loadGadget() {
 void GglAppletScript::paintInterface(QPainter *p,
                                      const QStyleOptionGraphicsItem *option,
                                      const QRect &contentsRect) {
+  Q_UNUSED(p);
+  Q_UNUSED(option);
+  Q_UNUSED(contentsRect);
 #if 0
   QRect r = contentsRect;
   p->setPen(QColor(0, 0, 255));

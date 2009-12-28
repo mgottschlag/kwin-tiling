@@ -1,5 +1,5 @@
 /*
-  Copyright 2008 Google Inc.
+  Copyright 2009 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-#include "floating_decorator.h"
+#include "popout_decorator.h"
 
 #include <QtGui/QMessageBox>
 
@@ -28,9 +28,9 @@
 
 namespace ggadget {
 
-FloatingDecorator::FloatingDecorator(PlasmaViewHost *host)
+PopOutDecorator::PopOutDecorator(PlasmaViewHost *host)
     : MainViewDecoratorBase(host,
-                            "plasma_floating",
+                            "plasma_popout_main_view",
                             false,
                             false,
                             true),
@@ -40,16 +40,13 @@ FloatingDecorator::FloatingDecorator(PlasmaViewHost *host)
   SetButtonVisible(MainViewDecoratorBase::CLOSE_BUTTON, false);
 }
 
-FloatingDecorator::~FloatingDecorator() {}
+PopOutDecorator::~PopOutDecorator() {}
 
-void FloatingDecorator::OnAddDecoratorMenuItems(MenuInterface *menu) {
-  AddCollapseExpandMenuItem(menu);
-  if (!IsMinimized() && !IsPoppedOut()) {
-    AddZoomMenuItem(menu);
-  }
+void PopOutDecorator::OnAddDecoratorMenuItems(MenuInterface *menu) {
+  AddZoomMenuItem(menu);
 }
 
-bool FloatingDecorator::ShowDecoratedView(bool modal, int flags,
+bool PopOutDecorator::ShowDecoratedView(bool modal, int flags,
                                           Slot1<bool, int> *feedback_handler) {
   info->applet->setMaximumSize(QSizeF());
   MainViewDecoratorBase::ShowDecoratedView(modal, flags, feedback_handler);

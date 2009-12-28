@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
+#include "ggl_package.h"
 
 #include <QtCore/QDir>
 #include <QtCore/QFile>
@@ -34,7 +35,6 @@
 #include <ggadget/qt/qt_view_host.h>
 #include <ggadget/qt/utilities.h>
 #include "ggl_extensions.h"
-#include "ggl_package.h"
 
 using namespace ggadget;
 

@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
+#include "plasma_host.h"
 
 #include <string>
 #include <QtGui/QGraphicsWidget>
@@ -24,7 +25,6 @@
 #include <ggadget/gadget_consts.h>
 #include <ggadget/decorated_view_host.h>
 #include <ggadget/docked_main_view_decorator.h>
-#include <ggadget/popout_main_view_decorator.h>
 #include <ggadget/details_view_decorator.h>
 #include <ggadget/permissions.h>
 #include <ggadget/qt/utilities.h>
@@ -33,8 +33,8 @@
 
 #include <Plasma/Applet>
 #include "plasma_view_host.h"
-#include "plasma_host.h"
 #include "panel_decorator.h"
+#include "popout_decorator.h"
 #include "floating_decorator.h"
 
 namespace ggadget {
@@ -72,8 +72,7 @@ class PlasmaHost::Private {
     if (child) {
       PlasmaViewHost *vh = new PlasmaViewHost(
               info, ViewHostInterface::VIEW_HOST_MAIN, true);
-      PopOutMainViewDecorator *view_decorator =
-          new PopOutMainViewDecorator(vh);
+      PopOutDecorator *view_decorator = new PopOutDecorator(vh);
       DecoratedViewHost *dvh = new DecoratedViewHost(view_decorator);
       view_decorator->ConnectOnClose(
           NewSlot(this, &Private::onClosePopOutViewHandler));
@@ -176,6 +175,8 @@ ViewHostInterface *PlasmaHost::NewViewHost(Gadget *,
 
 void PlasmaHost::RemoveGadget(Gadget *gadget, bool save_data) {
   // Please close me through plasma's button
+  Q_UNUSED(gadget);
+  Q_UNUSED(save_data);
 }
 
 bool PlasmaHost::LoadFont(const char *filename) {

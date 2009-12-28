@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
+#include "panel_decorator.h"
 
 #include <QtGui/QMessageBox>
 
@@ -24,7 +25,6 @@
 #include <ggadget/qt/qt_view_widget.h>
 
 #include <Plasma/Applet>
-#include "panel_decorator.h"
 
 namespace ggadget {
 
@@ -141,7 +141,7 @@ void PanelDecorator::SetSize(double width, double height) {
   }
 }
 
-void PanelDecorator::SetResizable(ViewInterface::ResizableMode resizable) {
+void PanelDecorator::SetResizable(ViewInterface::ResizableMode) {
   View::SetResizable(RESIZABLE_FALSE);
 }
 

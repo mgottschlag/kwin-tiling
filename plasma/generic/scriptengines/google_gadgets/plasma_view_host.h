@@ -60,7 +60,7 @@ class PlasmaViewHost : public ViewHostInterface {
       double x, double y, double *view_x, double *view_y) const;
   virtual void QueueDraw();
   virtual void QueueResize();
-  virtual void EnableInputShapeMask(bool enable);
+  virtual void EnableInputShapeMask(bool enable) { Q_UNUSED(enable); }
   virtual void SetResizable(ViewInterface::ResizableMode mode);
   virtual void SetCaption(const std::string &caption);
   virtual void SetShowCaptionAlways(bool always);

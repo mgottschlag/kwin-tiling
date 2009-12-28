@@ -41,6 +41,7 @@ set(scriptengine_SRCS
   plasma_view_host.cpp
   panel_decorator.cpp
   floating_decorator.cpp
+  popout_decorator.cpp
   )
 
 # Now make sure all files get to the right place
