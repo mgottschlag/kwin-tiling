@@ -83,7 +83,6 @@ static const int oldNotificationsExpireDelay = 5 * 60 * 1000;
 Applet::Applet(QObject *parent, const QVariantList &arguments)
     : Plasma::PopupApplet(parent, arguments),
       m_taskArea(0),
-      m_notificationBar(0),
       m_background(0),
       m_jobSummaryWidget(0),
       m_timerId(0)
@@ -259,22 +258,21 @@ void Applet::syncNotificationBarNeeded()
             lay->addStretch();
             m_notificationBar = new Plasma::TabBar(widget);
             //arbitrary maximum size before enabling scroll arrows
-            m_notificationBar->setMaximumWidth(400);
-            m_notificationBar->nativeWidget()->setMaximumHeight(KIconLoader::SizeMedium);
-            lay->addItem(m_notificationBar);
+            m_notificationBar.data()->setMaximumWidth(400);
+            m_notificationBar.data()->nativeWidget()->setMaximumHeight(KIconLoader::SizeMedium);
+            lay->addItem(m_notificationBar.data());
             lay->addStretch();
-            m_notificationBar->addTab(KIcon("dialog-information"), i18nc("Show all recent notifications", "Recent"));
-            connect(m_notificationBar, SIGNAL(currentChanged(int)), this, SLOT(showTaskNotifications(int)));
+            m_notificationBar.data()->addTab(KIcon("dialog-information"), i18nc("Show all recent notifications", "Recent"));
+            connect(m_notificationBar.data(), SIGNAL(currentChanged(int)), this, SLOT(showTaskNotifications(int)));
         } else {
-            for (int i = 1; i < m_notificationBar->count(); ++i) {
-                if (!m_notificationsForApp.contains(m_notificationBar->tabText(i))) {
-                    m_notificationBar->removeTab(i);
-                    showTaskNotifications(m_notificationBar->currentIndex());
+            for (int i = 1; i < m_notificationBar.data()->count(); ++i) {
+                if (!m_notificationsForApp.contains(m_notificationBar.data()->tabText(i))) {
+                    m_notificationBar.data()->removeTab(i);
+                    showTaskNotifications(m_notificationBar.data()->currentIndex());
                 }
             }
         }
     } else if (extender()->group("oldNotificationsGroup")) {
-        m_notificationBar = 0;
         //don't let him in the config file
         extender()->group("oldNotificationsGroup")->destroy();
     }
@@ -307,7 +305,7 @@ void Applet::showTaskNotifications(int barIndex)
 {
     QList<Notification *> notifications;
     if (barIndex > 0) {
-        notifications = m_notificationsForApp[m_notificationBar->tabText(barIndex)];
+        notifications = m_notificationsForApp[m_notificationBar.data()->tabText(barIndex)];
     } else {
         foreach (Notification *notification, s_manager->notifications()) {
             if (!notification->isExpired()) {
@@ -756,7 +754,7 @@ void Applet::addDefaultApplets()
 NotificationWidget *Applet::addNotification(Notification *notification)
 {
     if (sender() == s_manager && m_notificationBar) {
-        m_notificationBar->setCurrentIndex(0);
+        m_notificationBar.data()->setCurrentIndex(0);
     }
     syncNotificationBarNeeded();
 
@@ -774,8 +772,8 @@ NotificationWidget *Applet::addNotification(Notification *notification)
 
 
     bool found = false;
-    for (int i = 0; i < m_notificationBar->count(); ++i) {
-        if (m_notificationBar->tabText(i) == notification->applicationName()) {
+    for (int i = 0; i < m_notificationBar.data()->count(); ++i) {
+        if (m_notificationBar.data()->tabText(i) == notification->applicationName()) {
             found = true;
             break;
         }
@@ -802,7 +800,7 @@ NotificationWidget *Applet::addNotification(Notification *notification)
     }
 
     if (!found) {
-        m_notificationBar->addTab(notification->applicationIcon(), notification->applicationName());
+        m_notificationBar.data()->addTab(notification->applicationIcon(), notification->applicationName());
     }
 
     disconnect(notification, 0, this, 0);

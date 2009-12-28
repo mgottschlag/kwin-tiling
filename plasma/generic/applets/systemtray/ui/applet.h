@@ -105,7 +105,7 @@ private:
     QSet<Task::Category> m_shownCategories;
     QDateTime m_lastActivity;
 
-    Plasma::TabBar *m_notificationBar;
+    QWeakPointer<Plasma::TabBar> m_notificationBar;
 
     Plasma::FrameSvg *m_background;
     Plasma::Svg *m_icons;
