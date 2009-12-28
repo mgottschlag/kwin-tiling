@@ -19,6 +19,7 @@
 */
 #ifndef _CLIPBOARDPOLL_H_
 #define _CLIPBOARDPOLL_H_
+#ifdef Q_WS_X11
 
 #include <QWidget>
 #include <QTimer>
@@ -63,4 +64,5 @@ class ClipboardPoll
         int m_xfixes_event_base;
     };
     
+#endif
 #endif

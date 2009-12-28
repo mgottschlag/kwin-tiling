@@ -50,8 +50,10 @@
 
 #include <zlib.h>
 
+#ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#endif
 
 //#define NOISY_KLIPPER
 #include <KPassivePopup>
@@ -679,6 +681,7 @@ const int MAX_CLIPBOARD_CHANGES = 10; // max changes per second
 
 bool Klipper::blockFetchingNewData()
 {
+#ifdef Q_WS_X11
 // Hacks for #85198 and #80302.
 // #85198 - block fetching new clipboard contents if Shift is pressed and mouse is not,
 //   this may mean the user is doing selection using the keyboard, in which case
@@ -707,6 +710,7 @@ bool Klipper::blockFetchingNewData()
     if( ++m_overflowCounter > MAX_CLIPBOARD_CHANGES )
         return true;
     return false;
+#endif
 }
 
 void Klipper::slotCheckPending()
@@ -942,6 +946,7 @@ bool Klipper::ignoreClipboardChanges() const
     return false;
 }
 
+#ifdef Q_WS_X11
 // QClipboard uses qt_x_time as the timestamp for selection operations.
 // It is updated mainly from user actions, but Klipper polls the clipboard
 // without any user action triggering it, so qt_x_time may be old,
@@ -986,9 +991,11 @@ static Bool update_x_time_predicate( Display*, XEvent* event, XPointer )
     }
     return False;
 }
+#endif
 
 void Klipper::updateTimestamp()
 {
+#ifdef Q_WS_X11
     static QWidget* w = 0;
     if ( !w )
         w = new QWidget;
@@ -1006,6 +1013,7 @@ void Klipper::updateTimestamp()
     QX11Info::setAppTime( next_x_time );
     XEvent ev; // remove the PropertyNotify event from the events queue
     XWindowEvent( QX11Info::display(), w->winId(), PropertyChangeMask, &ev );
+#endif
 }
 
 static const char * const description =

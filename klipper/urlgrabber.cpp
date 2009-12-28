@@ -338,6 +338,7 @@ void URLGrabber::saveSettings() const
 // digged a little bit in netwm.cpp
 bool URLGrabber::isAvoidedWindow() const
 {
+#ifdef Q_WS_X11
     Display *d = QX11Info::display();
     static Atom wm_class = XInternAtom( d, "WM_CLASS", true );
     static Atom active_window = XInternAtom( d, "_NET_ACTIVE_WINDOW", true );
@@ -376,6 +377,9 @@ bool URLGrabber::isAvoidedWindow() const
     }
 
     return ret;
+#else
+    return false;
+#endif
 }
 
 

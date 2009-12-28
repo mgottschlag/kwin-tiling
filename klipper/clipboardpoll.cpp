@@ -18,6 +18,7 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
+#ifdef Q_WS_X11
 
 #include <config-workspace.h>
 #include <config-X11.h>
@@ -340,3 +341,5 @@ bool ClipboardPoll::changedTimestamp( SelectionData& data, const XEvent& ev )
 }
 
 #include "clipboardpoll.moc"
+
+#endif
