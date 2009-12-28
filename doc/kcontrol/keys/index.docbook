@@ -123,7 +123,7 @@ enabled, you can create a key combination for the selected
 action. Click on the button labeled either <guibutton>None</guibutton> 
 or labeled with the previously selected custom shortcut. Now the button label
 changes to <guibutton>Input</guibutton>. Then press any modifier key 
-(&ie; &Shift;, &Ctrl;, or &Alt;) and then normal key or a function key (&ie; F11) 
+(&ie; &Shift;, &Ctrl;, or &Alt;) and then normal key or a function key (&eg; F11) 
 you want to assign to this key combination.</para>
 <para>Clicking on the <guilabel>Alternate</guilabel> column of the selected row
 allows to edit this shortcut for the action.</para></listitem>
