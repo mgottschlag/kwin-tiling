@@ -129,6 +129,11 @@ Applet::~Applet()
         delete task->widget(this, false);
     }
 
+    foreach (Notification *notification, s_manager->notifications()) {
+        // we don't want a destroyed managed after the destruction of manager
+        disconnect(notification, 0, this, 0);
+    }
+
     clearAllCompletedJobs();
     clearOldNotifications();
 
@@ -237,6 +242,10 @@ void Applet::initExtenderTask(bool create)
 
 void Applet::syncNotificationBarNeeded()
 {
+    if (!s_manager) {
+        return;
+    }
+
     if (s_manager->notifications().count() > 0) {
         if (!extender()->group("oldNotificationsGroup")) {
             Plasma::ExtenderGroup *group = new Plasma::ExtenderGroup(extender());
