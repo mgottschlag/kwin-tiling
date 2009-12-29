@@ -140,7 +140,7 @@ void Manager::unregisterNotificationProtocol()
 
 void Manager::addNotification(Notification* notification)
 {
-    connect(notification, SIGNAL(destroyed(SystemTray::Notification*)),
+    connect(notification, SIGNAL(notificationDestroyed(SystemTray::Notification*)),
             this, SLOT(removeNotification(SystemTray::Notification*)));
     connect(notification, SIGNAL(changed(SystemTray::Notification*)),
             this, SIGNAL(notificationChanged(SystemTray::Notification*)));
