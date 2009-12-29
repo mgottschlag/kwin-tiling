@@ -55,10 +55,10 @@ void CalculatorRunner::powSubstitutions(QString& cmd)
      }
 
     // the below code is scary mainly because we have to honor priority
-   // honor decimal numbers and parenthesis.
-    if (cmd.contains('^')){
+    // honor decimal numbers and parenthesis.
+    while (cmd.contains('^')) {
         int where = cmd.indexOf('^');
-        cmd = cmd.replace('^', ',');
+        cmd = cmd.replace(where, 1, ',');
         int preIndex = where - 1;
         int postIndex = where + 1;
         int count = 0;
@@ -84,7 +84,10 @@ void CalculatorRunner::powSubstitutions(QString& cmd)
                 }
             }
             if (count == 0) {
-                break;
+                //check for functions
+                if (!((next <= 'z' ) && (next >= 'a'))) {
+                    break;
+                }
             }
             preIndex--;
         }
@@ -94,6 +97,13 @@ void CalculatorRunner::powSubstitutions(QString& cmd)
         while (postIndex != cmd.size() - 1) {
             QChar current=cmd.at(postIndex);
             QChar next=cmd.at(postIndex + 1);
+
+            //check for functions
+            if ((count == 0) && (current <= 'z') && (current >= 'a')) {
+                postIndex++;
+                continue;
+            }
+
             if (current == '(') {
                 count++;
             } else if (current == ')') {
