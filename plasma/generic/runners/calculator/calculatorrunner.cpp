@@ -133,26 +133,27 @@ void CalculatorRunner::powSubstitutions(QString& cmd)
 void CalculatorRunner::hexSubstitutions(QString& cmd)
 {
     if (cmd.contains("0x")) {
+        //Append +0 so that the calculator can serve also as a hex converter
+        cmd.append("+0");
         bool ok;
         int pos = 0;
         QString hex;
 
-        for (int i = 0; i < cmd.size(); i++) {
+        while (cmd.contains("0x")) {
             hex.clear();
             pos = cmd.indexOf("0x", pos);
 
             for (int q = 0; q < cmd.size(); q++) {//find end of hex number
                 QChar current = cmd[pos+q+2];
-                if (((current <= '9' ) && (current >= '0')) || ((current <= 'F' ) && (current >= 'A'))) { //Check if valid hex sign
+                if (((current <= '9' ) && (current >= '0')) || ((current <= 'F' ) && (current >= 'A')) || ((current <= 'f' ) && (current >= 'a'))) { //Check if valid hex sign
                     hex[q] = current;
                 } else {
                     break;
                 }
             }
-            cmd = cmd.replace("0x" + hex,QString::number(hex.toInt(&ok,16))); //replace hex with decimal
+            cmd = cmd.replace(pos, 2+hex.length(), QString::number(hex.toInt(&ok,16))); //replace hex with decimal
         }
     }
-
 }
 
 void CalculatorRunner::userFriendlySubstitutions(QString& cmd)
