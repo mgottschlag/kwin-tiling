@@ -74,7 +74,7 @@ Notification::Notification(QObject *parent)
 
 Notification::~Notification()
 {
-    emit destroyed(this);
+    emit notificationDestroyed(this);
     delete d;
 }
 

@@ -69,7 +69,7 @@ signals:
     /**
      * Emitted when the notification is about to be destroyed
      **/
-    void destroyed(SystemTray::Notification *notification = 0);
+    void notificationDestroyed(SystemTray::Notification *notification = 0);
 
     /**
      * emitted when the notification wants to hide itself
