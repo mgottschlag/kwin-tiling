@@ -33,6 +33,7 @@
 #include <ggadget/gadget.h>
 
 #include <Plasma/Applet>
+#include <Plasma/ToolTipManager>
 #include "plasma_view_host.h"
 #include "panel_decorator.h"
 #include "popout_decorator.h"
@@ -125,10 +126,7 @@ class PlasmaHost::Private {
         info, ViewHostInterface::VIEW_HOST_MAIN);
 
     PanelDecorator *decorator = new PanelDecorator(vh);
-    if (isHorizontal(info->applet->location()))
-      decorator->setHorizontal();
-    else
-      decorator->setVertical();
+    decorator->setVertical(isVertical(info->applet->location()));
     decorator->ConnectOnPopOut(NewSlot(this, &Private::onPopOutHandler));
     decorator->ConnectOnPopIn(NewSlot(this, &Private::onPopInHandler));
     DecoratedViewHost *dvh = new DecoratedViewHost(decorator);
@@ -234,6 +232,10 @@ void PlasmaHost::onConstraintsEvent(Plasma::Constraints constraints) {
 
   if ((constraints & Plasma::LocationConstraint) &&
       d->info->applet->location() != d->info->location) {
+    // disable tip.
+    // It will be enabled when PanelDecorator is on horizontal panel.
+    Plasma::ToolTipManager::self()->unregisterWidget(d->info->applet);
+
     d->onPopInHandler();
     d->onCloseDetailsViewHandler();
     Plasma::Location loc = d->info->applet->location();
@@ -244,10 +246,11 @@ void PlasmaHost::onConstraintsEvent(Plasma::Constraints constraints) {
     if ((d->info->location == Plasma::Floating && loc != Plasma::Floating) ||
         (d->info->location != Plasma::Floating && loc == Plasma::Floating)) {
       DecoratedViewHost *vh;
-      if (loc == Plasma::Floating)
+      if (loc == Plasma::Floating) {
         vh = d->newFloatingViewHost();
-      else
+      } else {
         vh = d->newPanelViewHost();
+      }
 
       // Send popout event here so elements like browser_element will know
       // about it and they will hide themselves.
@@ -269,12 +272,9 @@ void PlasmaHost::onConstraintsEvent(Plasma::Constraints constraints) {
 
       vh->ShowView(false, 0, NULL);
     } else if (isVertical(d->info->location) != isVertical(loc)) {
-      PanelDecorator *decorator = static_cast<PanelDecorator*>(
+      PanelDecorator *decorator = down_cast<PanelDecorator*>(
           d->info->main_view_host->GetViewDecorator());
-      if (isVertical(loc))
-        decorator->setVertical();
-      else
-        decorator->setHorizontal();
+      decorator->setVertical(isVertical(loc));
     }
     d->info->location = loc;
     return;
@@ -282,7 +282,7 @@ void PlasmaHost::onConstraintsEvent(Plasma::Constraints constraints) {
 
   if (constraints & Plasma::SizeConstraint) {
     ViewInterface *view = d->info->main_view_host->GetViewDecorator();
-    if (!view || !d->info->widget || !d->info->proxy) return;
+    if (!view || !d->info->main_view_widget || !d->info->proxy) return;
 
     QSizeF s = d->info->applet->size();
     kDebug() << "size requested:" << s;
@@ -291,7 +291,7 @@ void PlasmaHost::onConstraintsEvent(Plasma::Constraints constraints) {
     double old_w = view->GetWidth();
     double old_h = view->GetHeight();
     if (w == old_w && h == old_h) {
-      d->info->widget->resize(w, h);
+      d->info->main_view_widget->resize(w, h);
       d->info->proxy->resize(s);
       return;
     }

@@ -24,6 +24,9 @@
 
 #include <KInputDialog>
 #include <KMessageBox>
+#include <Plasma/Applet>
+#include <Plasma/ToolTipContent>
+#include <Plasma/ToolTipManager>
 
 #include <ggadget/file_manager_interface.h>
 #include <ggadget/gadget_consts.h>
@@ -35,9 +38,9 @@
 #include <ggadget/script_runtime_manager.h>
 #include <ggadget/qt/qt_graphics.h>
 #include <ggadget/qt/utilities.h>
+
 #include "plasma_view_host_internal.h"
 
-#include <Plasma/Applet>
 
 using namespace ggadget::qt;
 namespace ggadget {
@@ -57,8 +60,6 @@ void PlasmaViewHost::Destroy() {
 
 void PlasmaViewHost::SetView(ViewInterface *view) {
   kDebug() << "PlasmaViewHost::SetView:" << this << "," << view;
-  if (d->view_ == view) return;
-  d->detach();
   d->view_ = view;
 }
 
@@ -69,10 +70,8 @@ void *PlasmaViewHost::GetNativeWidget() const {
 void PlasmaViewHost::ViewCoordToNativeWidgetCoord(
     double x, double y, double *widget_x, double *widget_y) const {
   double zoom = d->view_->GetGraphics()->GetZoom();
-  if (widget_x)
-    *widget_x = x * zoom;
-  if (widget_y)
-    *widget_y = y * zoom;
+  if (widget_x) *widget_x = x * zoom;
+  if (widget_y) *widget_y = y * zoom;
 }
 
 void PlasmaViewHost::NativeWidgetCoordToViewCoord(
@@ -92,7 +91,8 @@ void PlasmaViewHost::QueueResize() {
 }
 
 void PlasmaViewHost::SetResizable(ViewInterface::ResizableMode mode) {
-  if (d->type_ != ViewHostInterface::VIEW_HOST_MAIN || d->is_popout_ ||
+  if (d->type_ != ViewHostInterface::VIEW_HOST_MAIN ||
+      d->is_popout_ ||
       !d->info->applet)
       return;
   if (mode == ViewInterface::RESIZABLE_TRUE)
@@ -102,15 +102,21 @@ void PlasmaViewHost::SetResizable(ViewInterface::ResizableMode mode) {
   kDebug() << "SetResizable:" << mode << d->info->applet->aspectRatioMode();
 }
 
-void PlasmaViewHost::SetCaption(const std::string &caption) {
-  d->caption_ = QString::fromUtf8(caption.c_str());
-  if (d->parent_widget_)
-    d->parent_widget_->setWindowTitle(d->caption_);
+static void UpdateTooltip(Plasma::Applet *applet, const QString &text) {
+  if (isHorizontal(applet->location())) {
+    Plasma::ToolTipContent data;
+    data.setMainText(text);
+    Plasma::ToolTipManager::self()->setContent(applet, data);
+  }
 }
 
-void PlasmaViewHost::SetShowCaptionAlways(bool always) {
-  // TODO:
-  Q_UNUSED(always);
+void PlasmaViewHost::SetCaption(const std::string &caption) {
+  d->caption_ = QString::fromUtf8(caption.c_str());
+  if (d->parent_widget_) {
+    d->parent_widget_->setWindowTitle(d->caption_);
+  } else {
+    UpdateTooltip(d->info->applet, d->caption_);
+  }
 }
 
 void PlasmaViewHost::SetCursor(ggadget::ViewInterface::CursorType type) {
@@ -128,17 +134,20 @@ void PlasmaViewHost::ShowTooltip(const std::string &tooltip) {
 
 void PlasmaViewHost::ShowTooltipAtPosition(const std::string &tooltip,
                                            double x, double y) {
-  // TODO:
-  Q_UNUSED(tooltip);
-  Q_UNUSED(x);
-  Q_UNUSED(y);
+  double widget_x = 0, widget_y = 0;
+  ViewCoordToNativeWidgetCoord(x, y, &widget_x, &widget_y);
+  QToolTip::showText(QPoint(widget_x, widget_y),
+                     QString::fromUtf8(tooltip.c_str()));
 }
 
 bool PlasmaViewHost::ShowView(bool modal, int flags,
                               Slot1<bool, int> *feedback_handler) {
   if (d->showView(modal, flags, feedback_handler)) {
-    if (d->parent_widget_)
+    if (d->parent_widget_) {
       d->parent_widget_->setWindowTitle(d->caption_);
+    } else {
+      UpdateTooltip(d->info->applet, d->caption_);
+    }
     return true;
   }
   return false;
@@ -162,10 +171,7 @@ ViewHostInterface::ConfirmResponse PlasmaViewHost::Confirm(
   int ret = KMessageBox::questionYesNo(NULL,
                                        message,
                                        view->GetCaption().c_str() );
-  if (ret == KMessageBox::Yes)
-    return CONFIRM_YES;
-  else
-    return CONFIRM_NO;
+  return ret == KMessageBox::Yes ? CONFIRM_YES : CONFIRM_NO;
 }
 
 std::string PlasmaViewHost::Prompt(const ViewInterface *view,

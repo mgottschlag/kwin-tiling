@@ -40,7 +40,6 @@ inline bool isVertical(Plasma::Location loc) {
   return loc == Plasma::LeftEdge || loc == Plasma::RightEdge;
 }
 
-
 class PlasmaViewHost : public ViewHostInterface {
  public:
   PlasmaViewHost(GadgetInfo *info, ViewHostInterface::Type type, bool popout = false);
@@ -63,7 +62,7 @@ class PlasmaViewHost : public ViewHostInterface {
   virtual void EnableInputShapeMask(bool enable) { Q_UNUSED(enable); }
   virtual void SetResizable(ViewInterface::ResizableMode mode);
   virtual void SetCaption(const std::string &caption);
-  virtual void SetShowCaptionAlways(bool always);
+  virtual void SetShowCaptionAlways(bool) {}
   virtual void SetCursor(ggadget::ViewInterface::CursorType cursor);
   virtual void ShowTooltip(const std::string &tooltip);
   virtual void ShowTooltipAtPosition(const std::string &tooltip,

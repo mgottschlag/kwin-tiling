@@ -31,22 +31,12 @@ namespace ggadget {
 class PanelDecorator::Private {
  public:
   Private(GadgetInfo *info)
-      : owner_(NULL), info_(info), minimized_width_(0), vertical_(true) {}
+      : owner_(NULL), info_(info), vertical_(true) {}
 
   void onAddDecoratorMenuItems(MenuInterface *menu) {
     int priority = MenuInterface::MENU_ITEM_PRI_DECORATOR;
-    owner_->AddCollapseExpandMenuItem(menu);
-    if (owner_->IsMinimized()) {
-      menu->AddItem(i18n("Show Icon").toUtf8().data(),
-                    owner_->IsMinimizedIconVisible() ?
-                    MenuInterface::MENU_ITEM_FLAG_CHECKED:0,
-                    0,
-                    NewSlot(this, &Private::showIcon), priority);
-      menu->AddItem(i18n("Show Caption").toUtf8().data(),
-                    owner_->IsMinimizedCaptionVisible() ?
-                    MenuInterface::MENU_ITEM_FLAG_CHECKED:0,
-                    0,
-                    NewSlot(this, &Private::showCaption), priority);
+    if (vertical_) {
+      owner_->AddCollapseExpandMenuItem(menu);
     }
 
 #ifndef NDEBUG
@@ -77,40 +67,8 @@ class PanelDecorator::Private {
   }
 #endif
 
-  void showIcon(const char*) {
-    bool caption = owner_->IsMinimizedCaptionVisible();
-    owner_->SetMinimizedIconVisible(!owner_->IsMinimizedIconVisible());
-    if (caption != owner_->IsMinimizedCaptionVisible())
-      updateIconizeStatus();
-  }
-
-  void showCaption(const char*) {
-    owner_->SetMinimizedCaptionVisible(!owner_->IsMinimizedCaptionVisible());
-    updateIconizeStatus();
-  }
-
-  void updateIconizeStatus() {
-    if (vertical_ || !owner_->IsMinimized()) return;
-    if (!owner_->IsMinimizedCaptionVisible()) {
-      minimized_width_ = owner_->GetWidth();
-      owner_->SetWidth(38);
-    } else {
-      owner_->SetWidth(minimized_width_);
-    }
-  }
-
-  void loadMinimizedWidth() {
-    DLOG("LoadMinimizedWidth:");
-    Variant width = owner_->GetOption("minimized_width");
-    if (width.type() == Variant::TYPE_DOUBLE) {
-      minimized_width_ = VariantValue<double>()(width);
-      DLOG("\t%f", VariantValue<double>()(width));
-    }
-    updateIconizeStatus();
-  }
   PanelDecorator *owner_;
   GadgetInfo *info_;
-  double minimized_width_;
   bool vertical_;
 };
 
@@ -131,80 +89,33 @@ void PanelDecorator::OnAddDecoratorMenuItems(MenuInterface *menu) {
   d->onAddDecoratorMenuItems(menu);
 }
 
-void PanelDecorator::SetSize(double width, double height) {
-  DockedMainViewDecorator::SetSize(width, height);
-  if (IsMinimized() && IsMinimizedCaptionVisible()) {
-    SetOption("minimized_width", Variant(GetWidth()));
-    DLOG("SaveMinimizedWidth:%f", GetWidth());
-  }
-}
+void PanelDecorator::setVertical(bool vertical) {
+  if (vertical) {
+    SetAllowYMargin(false);
+    SetAllowXMargin(true);
 
-void PanelDecorator::SetResizable(ViewInterface::ResizableMode) {
-  View::SetResizable(RESIZABLE_FALSE);
-}
+    // Gadget on vertical panel is not minimized by default
+    Variant vertical_minimized = GetOption("vertical_minimized");
+    if (vertical_minimized.type() != Variant::TYPE_BOOL ||
+        !VariantValue<bool>()(vertical_minimized)) {
+      SetMinimized(false);
+    } else {
+      SetMinimized(true);
+    }
 
-/*void PanelDecorator::GetClientExtents(double *width, double *height) const {
-  MainViewDecoratorBase::GetClientExtents(width, height);
-  if (IsMinimized()) {
-    if (!IsMinimizedCaptionVisible())
-      *width = 38;
-    else
-      *width = d->minimized_width_;
-  }
-}*/
-
-void PanelDecorator::OnChildViewChanged() {
-  DockedMainViewDecorator::OnChildViewChanged();
-  // this methods is called not only when a main view assigned to this
-  // decorator for the first time, but also when a main view popped in/out.
-  // We only want to init minimized_width_ the first time
-  if (d->minimized_width_ == 0)
-    d->loadMinimizedWidth();
-}
-
-bool PanelDecorator::ShowDecoratedView(bool modal, int flags,
-                       Slot1<bool, int> *feedback_handler) {
-  d->info_->applet->setMaximumSize(QSizeF());
-  if (d->vertical_)
-    d->info_->applet->setMaximumHeight(GetHeight());
-  else
-    d->info_->applet->setMaximumWidth(GetWidth());
-  return DockedMainViewDecorator::ShowDecoratedView(
-      modal, flags, feedback_handler);
-}
-
-void PanelDecorator::setVertical() {
-  SetAllowYMargin(false);
-  SetAllowXMargin(true);
-
-  // Gadget on vertical panel is not minimized by default
-  Variant vertical_minimized = GetOption("vertical_minimized");
-  if (vertical_minimized.type() != Variant::TYPE_BOOL ||
-      !VariantValue<bool>()(vertical_minimized)) {
-    SetMinimized(false);
+    SetResizeBorderVisible(IsMinimized() ? 0 : BORDER_BOTTOM);
   } else {
+    SetAllowYMargin(true);
+    SetAllowXMargin(false);
+
+    // Gadget on horizontal panel is minimized, caption-hidden.
     SetMinimized(true);
+    SetMinimizedIconVisible(true);
+    SetMinimizedCaptionVisible(false);
+
+    SetResizeBorderVisible(0);
   }
-
-  SetResizeBorderVisible(IsMinimized() ? 0 : BORDER_BOTTOM);
-  d->vertical_ = true;
-}
-
-void PanelDecorator::setHorizontal() {
-  SetAllowYMargin(true);
-  SetAllowXMargin(false);
-
-  // Gadget on horizontal panel is minimized by default
-  Variant horizontal_minimized = GetOption("horizontal_minimized");
-  if (horizontal_minimized.type() != Variant::TYPE_BOOL ||
-      VariantValue<bool>()(horizontal_minimized)) {
-    SetMinimized(true);
-  } else {
-    SetMinimized(false);
-  }
-
-  SetResizeBorderVisible(0);
-  d->vertical_ = false;
+  d->vertical_ = vertical;
 }
 
 } // namespace ggadget

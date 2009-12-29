@@ -42,7 +42,7 @@ class GadgetInfo {
         applet(NULL),
         script(NULL),
         proxy(NULL),
-        widget(NULL),
+        main_view_widget(NULL),
         main_view_host(NULL),
         expanded_main_view_host(NULL),
         details_view_host(NULL),
@@ -55,7 +55,7 @@ class GadgetInfo {
   Plasma::Applet *applet;
   Plasma::AppletScript *script;
   QGraphicsProxyWidget *proxy;
-  ggadget::qt::QtViewWidget *widget;
+  ggadget::qt::QtViewWidget *main_view_widget;
   ggadget::DecoratedViewHost *main_view_host;
   ggadget::ViewHostInterface *expanded_main_view_host;
   ggadget::ViewHostInterface *details_view_host;

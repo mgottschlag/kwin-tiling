@@ -39,33 +39,38 @@ class PlasmaViewHost::Private : public QObject {
 
   ~Private() {
     closeView();
+    delete feedback_handler_;
   }
 
   /* Show the view in right place
-   *    - floating main view: Shown within the applet
+   *    - floating and docked main view: Shown within the applet
    *    - popouted main view and details view: Shown in QtViewWidget
+   *    - OptionsView isn't handled here.
    */
   bool showView(bool modal, int flags, Slot1<bool, int> *feedback_handler) {
+    // Only OptionsView needs these two.
     Q_UNUSED(modal);
     Q_UNUSED(flags);
+
     ASSERT(view_);
-    if (feedback_handler_ && feedback_handler_ != feedback_handler)
+    if (feedback_handler_ != feedback_handler) {
       delete feedback_handler_;
-    feedback_handler_ = feedback_handler;
+      feedback_handler_ = feedback_handler;
+    }
 
     if (widget_) return true;
 
     if (type_ == ViewHostInterface::VIEW_HOST_MAIN && !is_popout_) {
       // normal main view
-      if (info->widget == NULL) {
+      if (info->main_view_widget == NULL) {
         widget_ = new QtViewWidget(view_, 0);
         widget_->setAttribute(Qt::WA_NoSystemBackground);
         info->proxy = new QGraphicsProxyWidget(info->applet);
         info->proxy->setWidget(widget_);
         widget_->show();
-        info->widget = widget_;
+        info->main_view_widget = widget_;
       } else {
-        widget_ = info->widget;
+        widget_ = info->main_view_widget;
         widget_->SetView(view_);
         adjustAppletSize();
       }
@@ -76,18 +81,13 @@ class PlasmaViewHost::Private : public QObject {
       } else {
         disconnect();
       }
-
-      if (info->applet->formFactor() == Plasma::Vertical)
-        view_->SetWidth(info->applet->size().width());
-      if (info->applet->formFactor() == Plasma::Horizontal)
-        view_->SetHeight(info->applet->size().height());
     } else {
       // Popouted main view and details view
       widget_ = new QtViewWidget(view_, QtViewWidget::FLAG_MOVABLE);
       parent_widget_ = widget_;
       SetGadgetWindowIcon(widget_, view_->GetGadget());
-      if (info->expanded_main_view_host
-          && type_ == ViewHostInterface::VIEW_HOST_DETAILS) {
+      if (info->expanded_main_view_host &&
+          type_ == ViewHostInterface::VIEW_HOST_DETAILS) {
         int w = view_->GetWidth();
         int h = view_->GetHeight();
         QWidget *expanded =
@@ -119,10 +119,11 @@ class PlasmaViewHost::Private : public QObject {
   }
 
   void queueDraw() {
-    if (parent_widget_)
+    if (parent_widget_) {
       parent_widget_->update();
-    else if (info->applet)
+    } else if (info->applet) {
       info->applet->update();
+    }
   }
 
   // This is called when view size has changed, caused by constraintsEvent or
@@ -144,21 +145,11 @@ class PlasmaViewHost::Private : public QObject {
     kDebug() << "applet old size:" << info->applet->size();
     kDebug() << "widget old size:" << widget_->size();
     kDebug() << "proxy old size:" << info->proxy->size();
-#if 0
-    if (info->applet->location() == Plasma::Floating) {
-      info->applet->resize(w, h);
-    } else {
-      if (isHorizontal(info->applet->location()))
-        info->applet->setMaximumWidth(w);
-      else
-        info->applet->setMaximumHeight(h);
-    }
-    kDebug() << "applet new size:" << info->applet->size();
-#endif
 
     info->applet->resize(w, h);
     info->proxy->resize(w, h);
     widget_->resize(w, h);
+
     kDebug() << "applet new size:" << info->applet->size();
     kDebug() << "widget new size:" << widget_->size();
     kDebug() << "proxy new size:" << info->proxy->size();
@@ -197,11 +188,7 @@ class PlasmaViewHost::Private : public QObject {
   QString caption_;
   QMenu context_menu_;
 
-  void detach() {
-    view_ = NULL;
-  }
-
- public slots:
+ private slots:
   void onViewMoved(int x, int y) {
     if (type_ == ViewHostInterface::VIEW_HOST_MAIN && !is_popout_ &&
         info->applet->immutability() == Plasma::Mutable)

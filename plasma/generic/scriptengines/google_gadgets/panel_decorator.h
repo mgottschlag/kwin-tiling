@@ -27,16 +27,7 @@ class PanelDecorator : public DockedMainViewDecorator {
   PanelDecorator(PlasmaViewHost *host);
   virtual ~PanelDecorator();
   virtual void OnAddDecoratorMenuItems(MenuInterface *menu);
-  virtual void SetSize(double width, double height);
-  virtual void SetResizable(ViewInterface::ResizableMode resizable);
-  void setVertical();
-  void setHorizontal();
-
- protected:
-//  virtual void GetClientExtents(double *width, double *height) const;
-  virtual void OnChildViewChanged();
-  virtual bool ShowDecoratedView(bool modal, int flags,
-                                 Slot1<bool, int> *feedback_handler);
+  void setVertical(bool vertical);
 
  private:
   class Private;
