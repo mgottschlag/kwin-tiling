@@ -13,7 +13,9 @@ Name[he]=מעקב אחר מצב KDED
 Name[hr]=KDED nadglednik obavijesti
 Name[id]=Pengawas Notifikasi Status KDED
 Name[kk]=KDED күй-жайы туралы құлақтандыру бақылауышы
+Name[kn]=KDED ಸ್ಥಿತಿ ಸೂಚನಾ ನೋಡುಗ(ವಾಚರ್)
 Name[lv]=KDE statusa paziņojumu novērotājs
+Name[ml]=കെഡിഇഡി അവസ്ഥ അറിയിപ്പുകളുടെ നിരീക്ഷകന്‍
 Name[nb]=KDED-overvåker for statusvarsler
 Name[nds]=KDED-Statusbescheed-Beluern
 Name[nl]=KDED Statusmeldingsbewaker
@@ -38,7 +40,9 @@ Comment[he]=שמור דיווח על יישומים שמעוניינים להש�
 Comment[hr]=Nadzirite aplikacije koje žele koristiti protokol za obavještavanje temeljen na D-Busu.
 Comment[id]=Pantau aplikasi yang ingin menggunakan protokol notifikasi status berbasis D-Bus.
 Comment[kk]=D-Bus негіздеген күй-жайы туралы құлақтандыру протоколын пайдаланбақ қолданбаларды бақылау.
+Comment[kn]=ಡಿ-ಬಸ್ ಆಧಾರಿತ ಸ್ಥಿತಿ ಸೂಚನಾ ಪ್ರೊಟೊಕಾಲ್ ಅನ್ನು ಬಳಸಲು ಬಯಸುವ ಅನ್ವಯಗಳ ಜಾಡನ್ನು ಇರಿಸಿ.
 Comment[lv]=Novēro programmas, kas vēlas izmantot D-Bus balstītos paziņojumus.
+Comment[ml]=ഡി-ബസ് അടിസ്ഥാനമാക്കിയുള്ള അവസ്ഥ അറിയിയ്ക്കുന്നതിനുള്ള കീഴ്‌വഴക്കം ഉപയോഗിയ്ക്കാന്‍ ആവശ്യപ്പെടുന്ന പ്രയോഗങ്ങളെ നിരീക്ഷിക്കുക.
 Comment[nb]=Hold styr på programmer som vil bruke den D-Bus-baserte protokollen for statusvarsling.
 Comment[nds]=De Översicht över Programmen wohren, de dat Statusbescheed-Protokoll bruukt, wat op den D-Bus opbuut
 Comment[nl]=Volg applicaties die het op D-Bus gebaseerde statusnotificatieprotocol willen gebruiken.

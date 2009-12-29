@@ -40,7 +40,7 @@ Comment[ko]=이 그룹에는 KHotkeys의 기능을 보여 주는 다양한 예�
 Comment[lt]=Šioje grupėje yra įvairūs pavyzdžiai, demonstruojantys daugumą KHotKeys galimybių. (Atkreipkite dėmesį, kad ši grupė ir joje esantys veiksmai numatytuose nustatymuose yra išjungta).
 Comment[lv]=Šī grupa satur dažādus piemērus, kas demonstrē lielāko daļu KHotKeys iespējām. (Šī grupa pēc noklusējuma nav aktivizēta.)
 Comment[mk]=Оваа група содржи разни примери што ги демонстрираат повеќето од можностите на KHotkeys. (Забележете дека оваа група и сите нејзини дејства се стандардно оневозможени.)
-Comment[ml]=KHotkeys ന്റെ വിവിധ സവിശേഷതകള്‍ ഉദാഹരണസഹിതം കാണിക്കുന്നു.  (Note that this group and all its actions are disabled by default.)
+Comment[ml]=കെഹോട്കീസ് ന്റെ വിവിധ സവിശേഷതകള്‍ ഉദാഹരണസഹിതം കാണിക്കുന്നു.  (അറിയിപ്പ്: ഈ കൂട്ടത്തിന്റെയും ഇവയുടെ പ്രവൃത്തികളും സഹജമായി ലഭ്യമല്ല)
 Comment[nb]=Denne gruppa inneholder forskjellige eksempler som viser de fleste egenskapene til KHotkeys. (Merk at denne gruppa og alle dens handlinger er slått av som standard.)
 Comment[nds]=Disse Koppel bargt en Reeg Bispelen, de de mehrsten Funkschonen vun KHotkeys wiest (Beacht bitte, dat disse Koppel un all sien Akschonen standardwies utmaakt sünd).
 Comment[ne]=यो समूहले केडीई हटकुञ्जीको धेरै विशेषता प्रदर्शन भएको विभिन्न उदाहरणहरू समाविष्ट गर्दछ । (याद गर्नुहोस् कि यो समूह र अरू सबै कार्य पूर्वनिर्धारित रूपमा अक्षम गरिन्छन् ।)
@@ -197,7 +197,7 @@ Comment[lt]=Nuspaudus Vald(Ctrl)+Alt+I bus aktyvuotas KSIRC langas, jei toks yra
 Comment[lv]=Nospiežot Ctrl+Alt+I, tiks aktivizēts KSIRC logs, ja tāds eksistē. Vienkārši.
 Comment[mai]=जँ केएसआईआरसी विंडो मोजुद रहत तँ कंट्रोल+आल्ट+I दबाने पर ई सक्रिय भए जएताह. आसान.
 Comment[mk]=По притискањето на Ctrl+Alt+I ќе се активира прозорецот на KSIRC. Лесно.
-Comment[ml]=നിലവിലുണ്ടെങ്കില്‍, Ctrl+Alt+I കീ അമര്‍ത്തിയാല്‍,KSIRC ജാലകം സജീവമാകുന്നു.
+Comment[ml]=നിലവിലുണ്ടെങ്കില്‍, Ctrl+Alt+I കീ അമര്‍ത്തിയാല്‍, കെഎസ്ഐആര്‍സി ജാലകം സജീവമാകുന്നു.
 Comment[mr]=Ctrl+Alt+I दाबल्यावर, KSIRC चौकट अस्तित्वात असल्यास, सक्रीय केले जाईल. सिंपल.
 Comment[nb]=Etter at Ctrl+Alt+I er trykket blir KSIRC-vinduet skrudd på om det finnes. Enkelt.
 Comment[nds]=Dat drücken vun Strg+Alt+I maakt dat KSirc-Finster aktiv, wenn dat een gifft. Eenfach.
@@ -271,7 +271,7 @@ Name[lt]=Aktyvuoti KSIRC langą
 Name[lv]=Aktivizēt KSIRC logu
 Name[mai]=केएसआईआरसी सक्रिय करू
 Name[mk]=Активирање на прозорецот на KSIRC
-Name[ml]=KSIRC ജാലകം സജ്ജമാക്കുക
+Name[ml]=കെഎസ്ഐആര്‍സി ജാലകം സജ്ജമാക്കുക
 Name[mr]=KSIRC चौकट सक्रिय करा
 Name[nb]=Skru på KSIRC-vindu
 Name[nds]=KSirc-Finster aktiv maken
@@ -355,7 +355,7 @@ Comment[lt]=KSIRC langas
 Comment[lv]=KSIRC logs
 Comment[mai]=केएसआईआरसी विंडो
 Comment[mk]=Прозорец на KSIRC
-Comment[ml]=കെഎസ്ഐആര്‍സി (KSIRC) ജാലകം
+Comment[ml]=കെഎസ്ഐആര്‍സി ജാലകം
 Comment[mr]=KSIRC चौकट
 Comment[nb]=KSIRC-vindu
 Comment[nds]=KSirc-Finster
@@ -437,7 +437,7 @@ Comment[lt]=KSIRC
 Comment[lv]=KSIRC
 Comment[mai]=केएसआईआरसी
 Comment[mk]=KSIRC
-Comment[ml]=KSIRC
+Comment[ml]=കെഎസ്ഐആര്‍സി
 Comment[mr]=KSIRC
 Comment[nb]=KSIRC
 Comment[nds]=KSirc
@@ -579,6 +579,7 @@ Comment[is]=Við að ýta á Alt+Ctrl+H, verða stafirnir 'Hello' slegnir inn r�
 Comment[kk]=Alt+Ctrl+H тіркесімді басқан соң, 'Hello' деген сөз, дәл қолмен теріп алғандай, енгізіп келтіріледі. Бұл мүмкіндік, 'unsigned' секілді сөздерді теруді ерінсеңіз, әсіресе пайдалы. Әрбір келтірілген перне басуы ':' қос нүктемен бөлінеді. Мұндағы перне басуы дегеніміз - шын перне басуы, сонымен, пернетақтадағыны шын басатынды жазыңыз. Төмендегі кестесінде, сол жақ бағанда енгізетіні, оң жақ бағанда теретіні көрсетілген.\n\n"enter" (яғни, жаңа жол)                Enter не Return\na (яғни, кіші a)                          A\nA (яғни, үлкен a)                       Shift+A\n: (қос нүкте)                                  Shift+;\n' '  (бос орын)                              Бос_орын
 Comment[lt]=Nuspaudus Alt+Vald(Ctrl)+H, bus simuliuojamas žodžio „Hello“ įvedimas taip, tarytum būtumėte jį parašę. Tai naudinga, ypač jei tingite įvedinėti kokias nors standartines frazes, pvz., „Nuoširdžiai jūsų“. Kiekvienas klavišo paspaudimas įvedime yra atskiriamas dvitaškiu „:“ . Atkreipkite dėmesį, kad klavišo paspaudimas iš tiesų reiškia klavišo paspaudimą, taigi, turite paspausti kiekvieną klavišą taip pat, kaip ir įvesdami reikiamą frazę. Žemiau esančioje lentelėje kairėje rodoma įvestis, o dešinėje – tai, ką turite surinkti.\n\n"Enter" (t.y., nauja eilutė)                Enter arba Įvesti\na (t.y., mažoji a)                          A\nA (t.y., didžioji a)                       Lyg2(Shift)+A\n: (dvitaškis)                                  Shift+;\n' '  (tarpas)                              Tarpas
 Comment[lv]=Nospiežot Alt+Ctrl+H, tiks imitēts 'Hello' ievads tā itkā jūs būtu to ievadījis. Tas ir īpaši noderīgi, ja bieži jāraksta kāds vārds (piemēram, 'unsigned'). Katrs taustiņa nospiediens ievadā ir atdalīts kolu ':' . Ņemiet vērā ka taustiņu nospiedieni tiešām nozīmē nospiedienus,  tāpēc jums jāraksta tas ko gribēsiet nospiest uz tastatūras. Zemāk redzamajā tabulā kreisā kolonna rāda ievadu un labā rāda ko spiest.\n\n"enter" (t.i. jauna rinda)                Enter vai Return\na (t.i. mazais a)                          A\nA (t.i. lielais a)                       Shift+A\n: (kols)                                  Shift+;\n' '  (atstarpe)                              Atstarpe
+Comment[ml]=Alt+Ctrl+H അമര്‍ത്തിയശേഷം നിങ്ങള്‍ 'Hello' ടൈപ്പ് ചെയ്തതുപോലെ തോന്നിപ്പിയ്ക്കും. ഒരു പ്രത്യേക വാക്ക് പലവട്ടം ടൈപ്പ് ചെയ്യണ്ട ഘട്ടത്തില്‍ (ഉദാഹരണത്തിന് 'unsigned') ഇതു് പ്രയോജനപ്പെടും. ഇന്‍പുട്ടിലെ ഓരോ കീ അമര്‍ത്തുന്നതും ഒരു കോളന്‍ ':' കൊണ്ട് വേര്‍തിരിക്കപ്പെടും. കീ അമര്‍ത്തുക എന്നതുകൊണ്ട് അക്ഷരാര്‍ത്ഥത്തില്‍ കീ കൊണ്ടുള്ള അമര്‍ത്തലുകള്‍ എന്നു് തന്നെ അര്‍ത്ഥമാക്കണം, അതു കൊണ്ടു് കീബോര്‍ഡില്‍ നിങ്ങള്‍ അമര്‍ത്താന്‍ സാധ്യതയുള്ളതെല്ലാം എഴുതിയിരിക്കണം. താഴെ കൊടുത്ത പട്ടികയില്‍ ഇടതുഭാഗത്തെ നിരകള്‍ ഇന്‍പുട്ടും വലതുഭാഗത്തെ നിരകള്‍ നിങ്ങള്‍ ടൈപ്പ് ചെയ്യേണ്ടതും കാണിക്കുന്നു. \n\n"enter" (i.e. പുതിയ വരി)                Enter or Return\na (i.e. ചെറിയക്ഷരം a)                       A\nA (i.e. വലിയക്ഷരം a)                       Shift+A\n: (കോളന്‍)                                  Shift+;\n' '  (സ്പേസ്)                              Space
 Comment[nb]=Når Alt+Ctrl+H er trykket, blir inndata-teksten «Hallo» simulert, som om du tastet det inn. Spesielt nyttig om du er for doven til å taste et ord ofte (for eksempel «unsigned»). Hvert tastetrykk i inndataene er atskilt med kolon «:». Merk at tastetrykkene er ekte tastetrykk, så du må skrive inn hva du virkelig ville skrive på tastaturet. I tabellen nedenfor vises inndata i venstre kolonne, og høyre kolonne viser hva som skal tastes. \n\n"enter" (dvs. ny linje)                Enter eller Return\na (dvs. liten a)                          A\nA (dvs. stor A)                       Shift+A\n: (kolon)                                  Shift+;\n' '  (mellomrom)                         Mellomrom
 Comment[nds]=Dat Drücken vun Strg+Alt+H maakt de Ingaav vun "Hello" na, jüst so, as wenn Du dat sülven ingeven deist. Dat is a.B. denn goot, wenn Du en Woort faken ingeven muttst (a.B. "unsigned"). Elk Druck op en Tast warrt mit en Dubbelpunkt scheedt. Beacht bitte, "Tastdruck" meent redig daaldrückt Tasten, Du muttst also schrieven, wat Du redig op de Tastatuur drücken deist. In de Tabell nerrn wiest de Striep linkerhand de namaakte Ingaav, de Striep rechterhand, wat Du schrieven muttst.\n\n"Ingaav" (d.h. Reegümbrook)    "Enter" oder "Return"\na (en lütt A)                               "A"\nA (en groot A)                           "Shift+A"\n: (en Dubbelpunkt)                    "Shift+."\n  (en Freeteken)                        "Space"
 Comment[nl]=Wanneer u op Ctrl+Alt+H drukt zal de invoer "Hallo" gesimuleerd worden alsof u het getypt hebt. Handig wanneer u te lui bent om dingen als 'unsigned' te typen. Iedere toetsaanslag bij de invoer dient gescheiden te worden met een dubbele punt ':'. Merk op dat een toetsaanslag letterlijk genomen dient te worden, dus iedere toets die u indrukt dient opgeschreven te worden. In de onderstaande tabel bevat de linkerkolom de invoer en rechts wat u dient in te typen.\n\n"enter" (nieuwe regel)         Enter of Return\na (kleine a)                             A\nA (hoofdletter a)                   Shift+A\n: (dubbele punt)                    Shift+;\n' ' (spatie)                               Spatie
@@ -801,7 +802,7 @@ Comment[ko]=Ctrl+Alt+T 키를 눌렀을 때 Konsole을 실행시킵니다.
 Comment[lt]=This action runs Konsole, after pressing Ctrl+Alt+T.
 Comment[lv]=Šī darbība palaiž Konsole, nospiežot Ctrl+Alt+T.
 Comment[mk]=Ова дејство ја извршува Конзолата, по притискање на Ctrl+Alt+T.
-Comment[ml]=Ctrl+Alt+T അമര്‍ത്തിയശേഷം, ഇതു് Konsole പ്രവര്‍ത്തിപ്പിക്കുന്നു.
+Comment[ml]=Ctrl+Alt+T അമര്‍ത്തിയശേഷം, ഇതു് കണ്‍സോള്‍ പ്രവര്‍ത്തിപ്പിക്കുന്നു.
 Comment[mr]=Ctrl+Alt+T दाबल्यावर, ही कृती Konsole चालविते.
 Comment[nb]=Denne handlinga kjører Konsole når Ctrl+Alt+T trykkes.
 Comment[nds]=Disse Akschoon röppt Konsole mit Strg+Alt+T op.
@@ -879,7 +880,7 @@ Name[lt]=Paleisti Konsole
 Name[lv]=Palaist Konsole
 Name[mai]=कंसोल चलाबू
 Name[mk]=Изврши ја Конзола
-Name[ml]=Konsole പ്രവര്‍ത്തിപ്പിയ്ക്കുക
+Name[ml]=കണ്‍സോള്‍ പ്രവര്‍ത്തിപ്പിയ്ക്കുക
 Name[mr]=कंसोल चालवा
 Name[nb]=Kjør Konsole
 Name[nds]=Konsole opropen
@@ -1084,7 +1085,7 @@ Name[ko]=Qt 디자이너에서 Ctrl+W 키를 Ctrl+F4 키로 바꾸기
 Name[lt]=Pakeisti derinį Vald(Ctrl)+W į derinį Vald(Ctrl)+F4 Qt designer programoje
 Name[lv]=Pārkartēt Ctrl+W uz Ctrl+F4 Qt maketētājā
 Name[mk]=Ремапирање на Ctrl+W во Ctrl+F4 во Qt Designer
-Name[ml]=Qt ഡിസൈനറില്‍ Ctrl+W to Ctrl+F4 വീണ്ടും മാപ്പ് ചെയ്യുന്നു
+Name[ml]=ക്യുട്ടി ഡിസൈനറില്‍ Ctrl+W to Ctrl+F4 വീണ്ടും മാപ്പ് ചെയ്യുന്നു
 Name[mr]=Qt डिजाइनर मध्ये Ctrl+W ला Ctrl+F4 असे निश्चित करा
 Name[nb]=Viderefør Ctrl+W til Ctrl+F4 i QT Designer
 Name[nds]=Binnen Qt-Designer Strg+W as Strg+F4 översetten
@@ -1258,7 +1259,7 @@ Comment[kn]=Alt+Ctrl+W ಒತ್ತುವುದರ ಮೂಲಕ ಒಂದು D-B
 Comment[ko]=Alt+Ctrl+W 키를 누르면 minicli를 표시하는 D-Bus 호출을 실행합니다. 'qdbus' 명령행 도구를 실행하는 것처럼 임의의 D-Bus 호출을 할 수 있습니다.
 Comment[lt]=Nuspaudus Alt+Vald(Ctrl)+W bus įvykdytas D-Bus iškvietimas, iššaukiantis komandų įvedimo sąsają. Galite naudoti bet kokį D-Bus iškvietimą lygiai taip pat, kaip, pvz., naudojant „qdbus“ įrankį.
 Comment[lv]=Nospiešžot Alt+Ctrl+W tiks veikts D-Bus izsaukums, kas parādīs minicli. Jūs varan lietot jebkuru D-Bus izsaukumu, tāpat kā lietojot komandrindas 'qdbus' rīku.
-Comment[ml]=By pressing Alt+Ctrl+W a D-Bus call will be performed that will show the minicli. You can use any kind of D-Bus call, just like using the command line 'qdbus' tool.
+Comment[ml]=Alt+Ctrl+W അമര്‍ത്തിയാല്‍ ഡി-ബസിനെ വിളിയ്ക്കുകയും മിനിസിഎല്‍ഐ കാണിയ്ക്കുകയും ചെയ്യും. 'qdbus' പണിയായുധം ഉപയോഗിയ്ക്കുന്നതു് പോലെ നിങ്ങള്‍ക്കു് ഏതു് തരത്തിലുള്ള ഡി-ബസ് വിളിയും നടത്താം.
 Comment[nb]=Om Ctrl+Alt+W trykkes blir det utført et D-BUS-kall som viser mini-kommandolinja. Alle slags D-BUS-kall kan brukes akkurat som i kommandolinjeverktøyet «qdbus».
 Comment[nds]=Dat Drücken vun Strg+Alt+W föhrt en D-Bus-Oproop ut, de den Dialoog "Befehl utföhren" opröppt. Du kannst all D-Bus-Oprööp bruken, jüst as mit dat Konsool-Programm "qdbus".
 Comment[nl]=Door Alt+Ctrl+W in te drukken zal er een D-Bus-aanroep uitgevoerd worden die het venster "Commando uitvoeren" opent. U kunt iedere andere D-Bus-aanroep gebruiken, net zoals met de commandoregelvariant 'qdbus'.
@@ -1317,7 +1318,7 @@ Name[kn]=D-Bus ಕರೆ  'kdesktop KDesktopIface popupExecuteCommand()' ಯನ�
 Name[ko]=D-Bus 호출 'kdesktop KDesktopIface popupExecuteCommand()'를 실행하기
 Name[lt]=Atlikti D-Bus užklausą 'kdesktop KDesktopIface popupExecuteCommand()'
 Name[lv]=Veikt D-Bus izsaukumu 'kdesktop KDesktopIface popupExecuteCommand()'
-Name[ml]=Perform D-Bus call 'kdesktop KDesktopIface popupExecuteCommand()'
+Name[ml]='kdesktop KDesktopIface popupExecuteCommand()' എന്ന ഡി-ബസ് വിളി നടത്തുക
 Name[mr]=D-Bus कॉल 'kdesktop KDesktopIface popupExecuteCommand()' वापरा
 Name[nb]=Utfør DBus-kallet 'kdesktop KDesktopIface popupExecuteCommand()'
 Name[nds]=D-Bus-Oproop "kdesktop KDesktopIface popupExecuteCommand()" utföhren
@@ -1524,7 +1525,7 @@ Name[lt]=Kita XMMS programoje
 Name[lv]=Nākamais iekš XMMS
 Name[mai]=एक्सएमएमएस मे अगिला
 Name[mk]=Следно во XMMS
-Name[ml]=അടുത്തതു് എക്സ്എംഎംഎസില്‍ (XMMS)
+Name[ml]=എക്സ്എംഎംഎസില്‍ അടുത്തതു്
 Name[mr]=XMMS मध्ये पुढचे
 Name[nb]=Neste i XMMS
 Name[nds]=Nakamen XMMS-Stück
@@ -1612,7 +1613,7 @@ Comment[lt]=XMMS langas
 Comment[lv]=XMMS logs
 Comment[mai]=एक्सएमएमएस विंडो
 Comment[mk]=XMMS-прозорец
-Comment[ml]=എക്സ്എംഎംഎസ് (XMMS) ജാലകം
+Comment[ml]=എക്സ്എംഎംഎസ് ജാലകം
 Comment[mr]=XMMS चौकट
 Comment[nb]=XMMS- vindu
 Comment[nds]=XMMS-Finster
@@ -1693,7 +1694,7 @@ Comment[lt]=XMMS grotuvo langas
 Comment[lv]=XMMS atskaņotāja logs
 Comment[mai]=एक्सएमएमएस प्लेयर विंडो
 Comment[mk]=Прозорец на плеерот XMMS
-Comment[ml]=എക്സ്എംഎംഎസ് (XMMS) പ്ലേയര്‍ ജാലകം
+Comment[ml]=എക്സ്എംഎംഎസ് പ്ലേയര്‍ ജാലകം
 Comment[mr]=XMMS प्लेयर चौकट
 Comment[nb]=XMMS spillervindu
 Comment[nds]=XMMS-Afspeler-Finster
@@ -1901,7 +1902,7 @@ Name[ku]=Konqi Gestures
 Name[lt]=Konqi gestai
 Name[lv]=Konqueror žesti
 Name[mai]=कान्क्वी गेस्चर्स
-Name[ml]=Konqi വിശേഷതകള്‍
+Name[ml]=കോങ്ക്വി ആംഗ്യങ്ങള്‍
 Name[mr]=कॉन्क्वी हावभाव
 Name[nb]=Konqi musebevegelser
 Name[nds]=Konqui-Muustekens
@@ -2933,9 +2934,11 @@ Comment[is]=Ef smellt er á Win+E (Tux+E), mun vefskoðari verða ræstur og opn
 Comment[it]=Con la pressione di Win+E (Tux+E), verrà avviato il browser web ed aprirà il sito http://www.kde.org. Puoi eseguire tutti i comandi avviabili da minicli (Alt+F2).
 Comment[kk]=Win+E (Tux+E) деп басқан соң, WWW шолғышы жегіліп онда http://www.kde.org сайты ашылады. Команда жолында (Alt+F2) жегілетін барлық командаларды орындай аласыз.
 Comment[km]=បន្ទាប់​ពី​ចុច Win+E (Tux+E) កម្មវិធី​រុករក WWW នឹង​ត្រូវ​បានចាប់ផ្ដើម ហើយ​នឹង​បើក http://www.kde.org ។ អ្នក​អាច​រត់​ពាក្យ​បញ្ជា​គ្រប់​ប្រភេទ ដែលអ្នក​អាច​រត់​វា​minicli (Alt+F2) ។
+Comment[kn]=Win+E (Tux+E) ಅನ್ನು ಒತ್ತಿದ ನಂತರ, WWW ವೀಕ್ಷಕವು ಪ್ರಕ್ಷೇಪಗೊಂಡು (ಲಾಂಚ್), http://www.kde.org ಅನ್ನು ತೆರೆಯುತ್ತದೆ. minicli (Alt+F2) ಯಲ್ಲಿ ಚಲಾಯಿಸಬಹುದಾದ ಎಲ್ಲ ರೀತಿಯ ಆದೇಶಗಳನ್ನೂ ಚಲಾಯಿಸಬಹುದು.
 Comment[ko]=Win+E(Tux+E) 키를 누르면 웹 브라우저가 실행되고 'http://www.kde.org'를 표시합니다. minicli(Alt+F2)에서 실행할 수 있는 모든 명령을 실행할 수 있습니다.
 Comment[lt]=Paspaudus Win+E (Tux+E) bus paleista žiniatinklio naršyklė, kuri atvers puslapį http://www.kde.org . Galite vykdyti visas komandas, kurias galite vykdyti mini komandų eilutėje (Alt+F2).
 Comment[lv]=Pēc Win+E (Tux+E) nospiešanas, tiks palaists tīmekļa pārlūks un tiks atvērts http://www.kde.org . Jūs varat palaist jekkuru komandu, ko var palaist ar minicli (Alt+F2).
+Comment[ml]=Win+E (Tux+E) അമര്‍ത്തിയശേഷം ഒരു ഡബ്ല്യൂഡബ്ല്യൂഡബ്ല്യൂ ബ്രൌസറില്‍ http://www.kde.org പ്രത്യക്ഷപെടും.നിങ്ങള്‍ക്ക് മിനിസിഎല്‍ഐ (Alt+F2) ഉപയോഗിച്ച് പ്രവര്‍ത്തിപ്പിയ്ക്കാവുന്ന എല്ലാ തരം ആജ്ഞകളും പ്രവര്‍ത്തിപ്പിയ്ക്കാവുന്നതാണു്.
 Comment[nb]=Når Win+E (Tux+E) trykkes, starter en WWW-leser og åpner http://www.kde.org. Alle kommandoer som kan kjøres i mini-kommandolinja (Alt+F2) kan kjøres her.
 Comment[nds]=Dat Drücken vun Win+E (Tux+E) maakt den Nettkieker op, de denn "http://www.kde.org" laadt. Du kannst so all Befehlen utföhren, de Du ok över den Dialoog "Befehl utföhren" (Alt+F2) opropen kannst.
 Comment[nl]=Wanneer u Win+E (Tux+E) indrukt, zal de webbrowser gestart worden met de pagina http://www.kde.org. U kunt alle commando's uitvoeren die u ook in het venster "Commando uitvoeren" (Alt+F2) kunt aanroepen.
