@@ -19,6 +19,9 @@
 
 */
 
+#include "ksignalplotter.h"
+#include "ksignalplotter_p.h"
+
 #include <math.h>  //For floor, ceil, log10 etc for calculating ranges
 
 #include <QtGui/QPainter>
@@ -32,9 +35,6 @@
 #include <kapplication.h>
 #include <math.h>
 #include <limits>
-
-#include "SignalPlotter.h"
-#include "SignalPlotter_p.h"
 
 #ifdef SVG_SUPPORT
 #include <plasma/svg.h>
@@ -994,5 +994,5 @@ void KSignalPlotter::setFillOpacity(int fill)
 }
 
 
-#include <SignalPlotter.moc>
+#include "ksignalplotter.moc"
 

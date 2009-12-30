@@ -28,6 +28,7 @@
 #include <QtGui/QFont>
 #include <QtGui/QWidget>
 #include <klocalizedstring.h>
+#include <kcomponentdata.h>
 
 class QPaintEvent;
 class QResizeEvent;
@@ -60,7 +61,7 @@ class KSignalPlotterPrivate;
  *
  *  \image KSignalPlotter.png  Example KSignalPlotter with two beams
  */
-class KSignalPlotter : public QWidget
+class KDE_EXPORT KSignalPlotter : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY( double minimumValue READ minimumValue WRITE setMinimumValue )
