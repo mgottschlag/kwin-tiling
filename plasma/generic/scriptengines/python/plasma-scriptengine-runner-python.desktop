@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Python runner
+Name=Python Runner
 Name[ca]=Executador en Python
 Name[csb]=Zrëszôcz Phythona
 Name[da]=Python-runner
@@ -28,7 +28,7 @@ Name[uk]=Запуск для Python
 Name[x-test]=xxPython runnerxx
 Name[zh_CN]=Python 执行器
 Name[zh_TW]=Python 執行器
-Comment=Plasma runner support for Python
+Comment=Plasma Runner support for Python
 Comment[ca]=Implementació de l'executador del Plasma per al Python
 Comment[da]=Understøttelse af Plasma runner til Python
 Comment[en_GB]=Plasma runner support for Python
