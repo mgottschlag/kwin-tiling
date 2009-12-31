@@ -3,19 +3,10 @@
 # (or setgid utmp) in order to be able to login successfully
 # (and thus be useful, as kwrited does not work at all if it
 # cannot login to the terminal device that it opens).
-# This is required (at least) on Debian and its derivatives and
-# opensolaris (afaict).
 
-# This check is not very nice... what we should really check is
-# whether libkpty was built with utempter support or not.
-# This is the same check that libkpty does, so, assuming that
-# kdebase/workspace is being built on the same system that libkpty was
-# built, this should tell us if likpty was built with utempter or not.
-check_library_exists(utempter addToUtmp "" HAVE_ADDTOUTEMP)
-check_include_files(utempter.h HAVE_UTEMPTER_H)
-if (NOT HAVE_ADDTOUTEMP OR NOT HAVE_UTEMPTER_H)
+if (NOT KDE4_KPTY_BUILT_WITH_UTEMPTER)
     set(BUILD_AS_EXECUTABLE 1)
-endif (NOT HAVE_ADDTOUTEMP OR NOT HAVE_UTEMPTER_H)
+endif (NOT KDE4_KPTY_BUILT_WITH_UTEMPTER)
 
 configure_file(config-kwrited.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kwrited.h)
 
