@@ -426,7 +426,7 @@ void PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment *c)
     }
 
     controller->setContainment(c);
-    controller->setLocation(Plasma::BottomEdge);
+    controller->setLocation(c->location());
     controller->showWidgetExplorer();
 
     QRect geom = Kephal::ScreenUtils::screenGeometry(screen);
