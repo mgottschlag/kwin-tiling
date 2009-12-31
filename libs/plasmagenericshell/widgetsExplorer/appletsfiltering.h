@@ -28,7 +28,7 @@
 class KMenu;
 namespace Plasma {
     class LineEdit;
-    class ToolButton;
+    class PushButton;
     class TreeView;
     class WidgetExplorer;
 }
@@ -131,7 +131,7 @@ private:
     FilteringTabs *m_categoriesTabs;
     Plasma::LineEdit *m_textSearch;
     Qt::Orientation m_orientation;
-    Plasma::ToolButton *m_newWidgetsButton;
+    Plasma::PushButton *m_newWidgetsButton;
     KMenu *m_newWidgetsMenu;
     Plasma::WidgetExplorer *m_widgetExplorer;
 };

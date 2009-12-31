@@ -25,6 +25,7 @@
 #include <klineedit.h>
 #include <kmenu.h>
 #include <kservicetypetrader.h>
+#include <kpushbutton.h>
 
 #include <plasma/theme.h>
 #include <plasma/corona.h>
@@ -33,7 +34,7 @@
 #include <plasma/widgets/label.h>
 #include <plasma/widgets/lineedit.h>
 #include <plasma/widgets/treeview.h>
-#include <plasma/widgets/toolbutton.h>
+#include <plasma/widgets/pushbutton.h>
 
 //FilteringTreeView
 
@@ -172,9 +173,6 @@ FilteringWidget::FilteringWidget(Qt::Orientation orientation,
 
 FilteringWidget::~FilteringWidget()
 {
-    delete m_categoriesTabs;
-    delete m_categoriesTreeView;
-    delete m_newWidgetsButton;
     delete m_newWidgetsMenu;
 }
 
@@ -189,8 +187,7 @@ void FilteringWidget::init()
     m_textSearch->setAttribute(Qt::WA_NoSystemBackground);
     m_textSearch->setClearButtonShown(true);
 
-    m_newWidgetsButton = new Plasma::ToolButton();
-    m_newWidgetsButton->nativeWidget()->setPopupMode(QToolButton::InstantPopup);
+    m_newWidgetsButton = new Plasma::PushButton(this);
     m_newWidgetsButton->setText(i18n("Get New Widgets"));
     m_newWidgetsMenu = new KMenu(i18n("Get New Widgets"));
     connect(m_newWidgetsMenu, SIGNAL(aboutToShow()), this, SLOT(populateWidgetsMenu()));
@@ -248,11 +245,11 @@ void FilteringWidget::setListOrientation(Qt::Orientation orientation)
     m_linearLayout->setOrientation(orientation);
 
     if (orientation == Qt::Horizontal) {
-        delete m_categoriesTreeView;
+        m_categoriesTreeView->deleteLater();
         m_categoriesTreeView = 0;
 
         if (!m_categoriesTabs) {
-            m_categoriesTabs = new FilteringTabs();
+            m_categoriesTabs = new FilteringTabs(this);
             connect(m_categoriesTabs, SIGNAL(filterChanged(int)), this, SIGNAL(filterChanged(int)));
             m_categoriesTabs->setModel(m_model);
         }
@@ -263,11 +260,11 @@ void FilteringWidget::setListOrientation(Qt::Orientation orientation)
         m_linearLayout->addItem(m_categoriesTabs);
         m_categoriesTabs->setVisible(true);
     } else {
-        delete m_categoriesTabs;
+        m_categoriesTabs->deleteLater();
         m_categoriesTabs = 0;
 
         if (!m_categoriesTreeView) {
-            m_categoriesTreeView = new FilteringTreeView();
+            m_categoriesTreeView = new FilteringTreeView(this);
             connect(m_categoriesTreeView, SIGNAL(filterChanged(int)), this, SIGNAL(filterChanged(int)));
             m_categoriesTreeView->setModel(m_model);
         }
