@@ -88,6 +88,30 @@ ResultItem::~ResultItem()
 {
 }
 
+QGraphicsWidget* ResultItem::arrangeTabOrder(QGraphicsWidget* last)
+{
+    QGraphicsWidget* sceneWidget = static_cast<QGraphicsWidget*>(parent());
+    sceneWidget->setTabOrder(last, this);
+    QGraphicsWidget* currentWidget = this;
+
+    if (m_configButton) {
+        sceneWidget->setTabOrder(this, m_configButton);
+        currentWidget = m_configButton;
+        if (m_configWidget) {
+            sceneWidget->setTabOrder(m_configButton, m_configWidget);
+            currentWidget = m_configWidget;
+        }
+    }
+    if (m_actionsWidget) {
+        for (int i = 0; i< m_actionsLayout->count(); i++) {
+            QGraphicsWidget* button = static_cast<QGraphicsWidget*>(m_actionsLayout->itemAt(i));
+            sceneWidget->setTabOrder(currentWidget, button);
+            currentWidget = button;
+        }
+    }
+    return currentWidget;
+}
+
 void ResultItem::setMatch(const Plasma::QueryMatch &match)
 {
     m_match = match;
@@ -107,13 +131,16 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
 
     //kDebug() << match.hasConfigurationInterface();
     if (match.hasConfigurationInterface()) {
-        m_configButton = new Plasma::ToolButton(this);
-        m_configButton->setIcon(KIcon("configure"));
-        m_configButton->show();
-        m_configButton->resize(m_configButton->effectiveSizeHint(Qt::MinimumSize,
-                                                        QSize(KIconLoader::SizeSmall,
-                                                              KIconLoader::SizeSmall)));
-        connect(m_configButton, SIGNAL(clicked()), this, SLOT(showConfig()));
+        if (!m_configButton) {
+            m_configButton = new Plasma::ToolButton(this);
+            m_configButton->setIcon(KIcon("configure"));
+            m_configButton->show();
+            m_configButton->resize(m_configButton->effectiveSizeHint(Qt::MinimumSize,
+                                                                     QSize(KIconLoader::SizeSmall,
+                                                                           KIconLoader::SizeSmall)));
+            connect(m_configButton, SIGNAL(clicked()), this, SLOT(showConfig()));
+            m_configButton->installEventFilter(this);
+        }
     } else if (m_configButton) {
         scene()->removeItem(m_configButton);
         delete m_configButton;
@@ -136,14 +163,13 @@ void ResultItem::setupActions()
 
         foreach ( QAction* action, actionList ) {
             Plasma::ToolButton * actionButton = new Plasma::ToolButton(m_actionsWidget);
-            actionButton->setIcon(action->icon());
+            actionButton->setFlag(QGraphicsItem::ItemIsFocusable);
+            actionButton->setAction(action);
             actionButton->show();
             actionButton->resize(actionButton->effectiveSizeHint(Qt::MinimumSize,
                                                         QSize(KIconLoader::SizeSmall,
                                                               KIconLoader::SizeSmall)));
-            actionButton->setText(action->text());
             m_actionsLayout->addItem(actionButton);
-            connect(actionButton, SIGNAL(clicked()), action, SLOT(trigger()));
             connect(actionButton, SIGNAL(clicked()), this , SIGNAL(actionTriggered()));
             actionButton->installEventFilter(this);
         }
@@ -157,11 +183,25 @@ bool ResultItem::eventFilter(QObject *obj, QEvent *event)
 
     if (actionButton) {
         if (event->type() == QEvent::GraphicsSceneHoverEnter) {
-            m_currentActionText = actionButton->text();
+            scene()->setFocusItem(actionButton);
+        } else if (event->type() == QEvent::FocusIn) {
+            focusInEvent(static_cast<QFocusEvent*>(event));
+            actionButton->setAutoRaise(false);
             update();
-        } else if (event->type() == QEvent::GraphicsSceneHoverLeave) {
-            m_currentActionText.clear();
+        } else if (event->type() == QEvent::GraphicsSceneHoverLeave || event->type() == QEvent::FocusOut) {
+            actionButton->setAutoRaise(true);
             update();
+        } else if (event->type() == QEvent::KeyPress) {
+            QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+            if (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return) {
+                if (actionButton->action()) {
+                        actionButton->action()->trigger();
+                        emit actionTriggered();
+                    } else {
+                        showConfig();
+                    }
+                return true;
+            }
         }
     }
 
@@ -190,7 +230,14 @@ QString ResultItem::name() const
 
 QString ResultItem::description() const
 {
-    return (m_currentActionText.isEmpty()?  m_match.subtext() : m_currentActionText);
+    Plasma::ToolButton* actionButton = qobject_cast<Plasma::ToolButton*>(static_cast<QGraphicsWidget*>(scene()->focusItem()));
+
+    //if a button is focused and it  belongs to the item
+    if (actionButton && actionButton->parentWidget() == m_actionsWidget) {
+        return actionButton->text();
+    }
+
+    return m_match.subtext();
 }
 
 QString ResultItem::data() const
@@ -484,6 +531,8 @@ void ResultItem::showConfig()
         m_configWidget = new QGraphicsProxyWidget(this);
         m_configWidget->setWidget(w);
         m_configWidget->show();
+        QGraphicsWidget* sceneWidget = parentWidget();
+        sceneWidget->setTabOrder(m_configButton, m_configWidget);
     }
 
     calculateSize();

@@ -115,9 +115,11 @@ bool ResultScene::canMoveItemFocus() const
     // 2) the currently focused item is not visible anymore
     // 3) the focusBase widget (the khistorycombobox) has focus (i.e. the user is still typing or waiting) AND the currently focused item has not been hovered
 
-     return !(focusItem()) ||
-            (!m_items.contains(static_cast<ResultItem*>(focusItem()))) ||
-            (m_focusBase->hasFocus() && !static_cast<ResultItem*>(focusItem())->mouseHovered()) ;
+    ResultItem * focusedItem = currentlyFocusedItem();
+
+    return !(focusedItem) ||
+            (!m_items.contains(focusedItem)) ||
+            (m_focusBase->hasFocus() && !focusedItem->mouseHovered()) ;
 }
 
 bool ResultScene::itemsAcceptHoverEvents()
@@ -217,7 +219,7 @@ void ResultScene::arrangeItems(ResultItem *itemChanged)
 
         if (!itemChanged) {
             // first time set up
-            QGraphicsWidget::setTabOrder(tab, item);
+            tab = item->arrangeTabOrder(tab);
             m_itemsById.insert(item->id(), item);
             item->setIndex(i);
         }
@@ -234,7 +236,6 @@ void ResultScene::arrangeItems(ResultItem *itemChanged)
         }
 
         ++i;
-        tab = item;
     }
 
     // Here we cannot use itemsBoundingRect().height() because old items will be deleted on the next event cycle
@@ -287,7 +288,7 @@ void ResultScene::focusInEvent(QFocusEvent *focusEvent)
     // In our case this assumption is not true, as an item can be focused before the scene,
     // therefore we revert the behaviour by re-selecting the previously selected item
 
-    ResultItem *currentFocus = dynamic_cast<ResultItem*>(focusItem());
+    ResultItem *currentFocus = currentlyFocusedItem();
 
     QGraphicsScene::focusInEvent(focusEvent);
 
@@ -333,9 +334,26 @@ void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
     }
 }
 
+ResultItem* ResultScene::currentlyFocusedItem() const
+{
+    QGraphicsWidget* widget = static_cast<QGraphicsWidget*>(focusItem());
+    if (!widget) {
+        return 0;
+    }
+
+    ResultItem *currentFocus = qobject_cast<ResultItem*>(widget);
+    if (!currentFocus) {
+        //If we focused an action button, find the resultItem
+        //FIXME: the config button
+        currentFocus = qobject_cast<ResultItem*>(widget->parentWidget()->parentWidget());
+    }
+
+    return currentFocus;
+}
+
 void ResultScene::selectNextItem()
 {
-    ResultItem *currentFocus = dynamic_cast<ResultItem*>(focusItem());
+    ResultItem *currentFocus = currentlyFocusedItem();
     int currentIndex = currentFocus ? currentFocus->index() : 0;
 
     if (currentIndex > 0) {
@@ -351,7 +369,7 @@ void ResultScene::selectNextItem()
 
 void ResultScene::selectPreviousItem()
 {
-    ResultItem *currentFocus = dynamic_cast<ResultItem*>(focusItem());
+    ResultItem *currentFocus = currentlyFocusedItem();
     int currentIndex = currentFocus ? currentFocus->index() : 0;
 
     ++currentIndex;

@@ -78,6 +78,8 @@ class ResultScene : public QGraphicsScene
         void selectPreviousItem();
         void selectNextItem();
 
+        ResultItem* currentlyFocusedItem() const;
+
         ResultItem* addQueryMatch(const Plasma::QueryMatch &match, bool useAnyId);
 
         bool canMoveItemFocus() const;

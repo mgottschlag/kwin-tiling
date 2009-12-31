@@ -83,6 +83,7 @@ public:
     bool mouseHovered() const;
     void calculateSize();
     void calculateSize(int sceneWidth, int sceneHeight);
+    QGraphicsWidget* arrangeTabOrder(QGraphicsWidget* last);
 
     static bool compare(const ResultItem *one, const ResultItem *other);
     bool operator<(const ResultItem &other) const;
@@ -135,7 +136,6 @@ private:
     QGraphicsProxyWidget *m_configWidget;
     QGraphicsWidget *m_actionsWidget;
     QGraphicsLinearLayout *m_actionsLayout;
-    QString m_currentActionText;
     Plasma::RunnerManager *m_runnerManager;
 
     static int s_fontHeight;
