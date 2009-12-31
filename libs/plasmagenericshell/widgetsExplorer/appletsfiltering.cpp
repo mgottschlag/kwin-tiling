@@ -192,6 +192,7 @@ void FilteringWidget::init()
     m_newWidgetsMenu = new KMenu(i18n("Get New Widgets"));
     connect(m_newWidgetsMenu, SIGNAL(aboutToShow()), this, SLOT(populateWidgetsMenu()));
     m_newWidgetsButton->nativeWidget()->setMenu(m_newWidgetsMenu);
+    m_newWidgetsButton->setMinimumWidth(m_newWidgetsButton->effectiveSizeHint(Qt::PreferredSize).width());
 
     //layout
     m_linearLayout = new QGraphicsLinearLayout();
@@ -255,6 +256,7 @@ void FilteringWidget::setListOrientation(Qt::Orientation orientation)
         }
 
         m_textSearch->setPreferredWidth(200);
+        m_textSearch->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
         m_textSearch->setPreferredHeight(-1);
         m_linearLayout->addItem(m_newWidgetsButton);
         m_linearLayout->addItem(m_categoriesTabs);
@@ -270,6 +272,7 @@ void FilteringWidget::setListOrientation(Qt::Orientation orientation)
         }
 
         m_textSearch->setPreferredHeight(30);
+        m_textSearch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred );
         m_textSearch->setPreferredWidth(-1);
         m_linearLayout->addItem(m_newWidgetsButton);
         m_categoriesTreeView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
