@@ -121,15 +121,15 @@ class PlasmaHost::Private {
     return dvh;
   }
 
-  DecoratedViewHost *newPanelViewHost() {
+  DecoratedViewHost *newPanelViewHost(bool vertical) {
     PlasmaViewHost* vh =  new PlasmaViewHost(
         info, ViewHostInterface::VIEW_HOST_MAIN);
 
-    PanelDecorator *decorator = new PanelDecorator(vh);
-    decorator->setVertical(isVertical(info->applet->location()));
+    PanelDecorator *decorator = new PanelDecorator(vh, vertical);
     decorator->ConnectOnPopOut(NewSlot(this, &Private::onPopOutHandler));
     decorator->ConnectOnPopIn(NewSlot(this, &Private::onPopInHandler));
     DecoratedViewHost *dvh = new DecoratedViewHost(decorator);
+
     DLOG("NewViewHost: dvh(%p), pvh(%p), vd(%p)",
          dvh, vh, decorator);
     return dvh;
@@ -151,10 +151,11 @@ PlasmaHost::~PlasmaHost() {
 ViewHostInterface *PlasmaHost::NewViewHost(Gadget *,
                                            ViewHostInterface::Type type) {
   if (type == ViewHostInterface::VIEW_HOST_MAIN) {
-    if (d->info->applet->location() == Plasma::Floating) {
+    Plasma::Location loc = d->info->applet->location();
+    if (loc == Plasma::Floating) {
       d->info->main_view_host = d->newFloatingViewHost();
     } else {
-      d->info->main_view_host = d->newPanelViewHost();
+      d->info->main_view_host = d->newPanelViewHost(isVertical(loc));
     }
     return d->info->main_view_host;
   } else if (type == ViewHostInterface::VIEW_HOST_OPTIONS) {
@@ -243,39 +244,32 @@ void PlasmaHost::onConstraintsEvent(Plasma::Constraints constraints) {
     kDebug() << "LocationConstraint changed from " << d->info->location
              << " to " << loc;
 
-    if ((d->info->location == Plasma::Floating && loc != Plasma::Floating) ||
-        (d->info->location != Plasma::Floating && loc == Plasma::Floating)) {
-      DecoratedViewHost *vh;
-      if (loc == Plasma::Floating) {
-        vh = d->newFloatingViewHost();
-      } else {
-        vh = d->newPanelViewHost();
-      }
-
-      // Send popout event here so elements like browser_element will know
-      // about it and they will hide themselves.
-      SimpleEvent event(Event::EVENT_POPOUT);
-      d->info->main_view_host->GetViewDecorator()->OnOtherEvent(event);
-
-      ViewInterface *child = d->info->main_view_host->GetView();
-      ViewHostInterface *old = child->SwitchViewHost(vh);
-      old->Destroy();
-
-      d->info->main_view_host = vh;
-      SimpleEvent event1(Event::EVENT_POPIN);
-      vh->GetViewDecorator()->OnOtherEvent(event1);
-
-      // Must call it to get the aspectRatioMode of applet right.
-      // Maybe we can do it nicely in GGL.
-      vh->GetViewDecorator()->GetViewHost()->SetResizable(
-              vh->GetViewDecorator()->GetResizable());
-
-      vh->ShowView(false, 0, NULL);
-    } else if (isVertical(d->info->location) != isVertical(loc)) {
-      PanelDecorator *decorator = down_cast<PanelDecorator*>(
-          d->info->main_view_host->GetViewDecorator());
-      decorator->setVertical(isVertical(loc));
+    DecoratedViewHost *vh;
+    if (loc == Plasma::Floating) {
+      vh = d->newFloatingViewHost();
+    } else {
+      vh = d->newPanelViewHost(isVertical(loc));
     }
+
+    // Send popout event here so elements like browser_element will know
+    // about it and they will hide themselves.
+    SimpleEvent event(Event::EVENT_POPOUT);
+    d->info->main_view_host->GetViewDecorator()->OnOtherEvent(event);
+
+    ViewInterface *child = d->info->main_view_host->GetView();
+    ViewHostInterface *old = child->SwitchViewHost(vh);
+    old->Destroy();
+
+    d->info->main_view_host = vh;
+    SimpleEvent event1(Event::EVENT_POPIN);
+    vh->GetViewDecorator()->OnOtherEvent(event1);
+
+    // Must call it to get the aspectRatioMode of applet right.
+    // Maybe we can do it nicely in GGL.
+    vh->GetViewDecorator()->GetViewHost()->SetResizable(
+            vh->GetViewDecorator()->GetResizable());
+
+    vh->ShowView(false, 0, NULL);
     d->info->location = loc;
     return;
   }

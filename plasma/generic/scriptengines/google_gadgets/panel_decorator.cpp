@@ -30,8 +30,9 @@ namespace ggadget {
 
 class PanelDecorator::Private {
  public:
-  Private(GadgetInfo *info)
-      : owner_(NULL), info_(info), vertical_(true) {}
+  Private(GadgetInfo *info, bool vertical)
+      : owner_(NULL), info_(info), vertical_(vertical) {
+  }
 
   void onAddDecoratorMenuItems(MenuInterface *menu) {
     int priority = MenuInterface::MENU_ITEM_PRI_DECORATOR;
@@ -50,34 +51,39 @@ class PanelDecorator::Private {
   void showDebugInfo(const char*) {
     QString msg = "Applet size:(%1, %2)\n"
                   "Widget size:(%3, %4)\n"
-                  "View size:(%5, %6)\n"
-                  "Aspect:(%7)";
+                  "Decorator size:(%5, %6)\n"
+                  "View size:(%7, %8)\n"
+                  "Aspect:(%9)";
     qt::QtViewWidget *widget = static_cast<qt::QtViewWidget*>(
         info_->main_view_host->GetNativeWidget());
-    ViewInterface *view = info_->main_view_host->GetViewDecorator();
+    ViewInterface *decorator = info_->main_view_host->GetViewDecorator();
+    ViewInterface *view = info_->main_view_host->GetView();
     QMessageBox::information(NULL,
                              "Debug",
                              msg.arg(info_->applet->size().width())
                              .arg(info_->applet->size().height())
                              .arg(widget->size().width())
                              .arg(widget->size().height())
+                             .arg(decorator->GetWidth())
+                             .arg(decorator->GetHeight())
                              .arg(view->GetWidth())
                              .arg(view->GetHeight())
                              .arg(info_->applet->aspectRatioMode()));
   }
 #endif
-
+  
   PanelDecorator *owner_;
   GadgetInfo *info_;
   bool vertical_;
 };
 
-PanelDecorator::PanelDecorator(PlasmaViewHost *host)
-    : DockedMainViewDecorator(host), d(new Private(host->getInfo())) {
+PanelDecorator::PanelDecorator(PlasmaViewHost *host, bool vertical)
+    : DockedMainViewDecorator(host),
+      d(new Private(host->getInfo(), vertical)) {
   SetButtonVisible(MainViewDecoratorBase::POP_IN_OUT_BUTTON, false);
   SetButtonVisible(MainViewDecoratorBase::MENU_BUTTON, false);
   SetButtonVisible(MainViewDecoratorBase::CLOSE_BUTTON, false);
-  SetOptionPrefix("plasma_panel");
+  SetVertical(vertical);
   d->owner_ = this;
 }
 
@@ -89,22 +95,14 @@ void PanelDecorator::OnAddDecoratorMenuItems(MenuInterface *menu) {
   d->onAddDecoratorMenuItems(menu);
 }
 
-void PanelDecorator::setVertical(bool vertical) {
+void PanelDecorator::SetVertical(bool vertical) {
   if (vertical) {
+    SetOptionPrefix("plasma_vpanel");
     SetAllowYMargin(false);
     SetAllowXMargin(true);
-
-    // Gadget on vertical panel is not minimized by default
-    Variant vertical_minimized = GetOption("vertical_minimized");
-    if (vertical_minimized.type() != Variant::TYPE_BOOL ||
-        !VariantValue<bool>()(vertical_minimized)) {
-      SetMinimized(false);
-    } else {
-      SetMinimized(true);
-    }
-
-    SetResizeBorderVisible(IsMinimized() ? 0 : BORDER_BOTTOM);
+    SetWidth(d->info_->applet->size().width());
   } else {
+    SetOptionPrefix("plasma_hpanel");
     SetAllowYMargin(true);
     SetAllowXMargin(false);
 
@@ -112,10 +110,11 @@ void PanelDecorator::setVertical(bool vertical) {
     SetMinimized(true);
     SetMinimizedIconVisible(true);
     SetMinimizedCaptionVisible(false);
+    
+    SetWidth(38);
 
     SetResizeBorderVisible(0);
   }
-  d->vertical_ = vertical;
 }
 
 } // namespace ggadget

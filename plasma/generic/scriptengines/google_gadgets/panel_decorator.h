@@ -24,14 +24,14 @@ namespace ggadget {
 
 class PanelDecorator : public DockedMainViewDecorator {
  public:
-  PanelDecorator(PlasmaViewHost *host);
+  PanelDecorator(PlasmaViewHost *host, bool vertical);
   virtual ~PanelDecorator();
   virtual void OnAddDecoratorMenuItems(MenuInterface *menu);
-  void setVertical(bool vertical);
 
  private:
   class Private;
   Private *d;
+  void SetVertical(bool vertical);
   DISALLOW_EVIL_CONSTRUCTORS(PanelDecorator);
 };
 
