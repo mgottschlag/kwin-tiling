@@ -71,7 +71,6 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet)
       m_abstractItem(0),
       m_applet(applet),
       m_flags(0),
-      m_animId(0),
       m_alpha(1),
       m_backgroundPrefix("normal"),
       m_activateTimerId(0),
@@ -80,15 +79,14 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet)
       m_hoverEffectTimerId(0),
       m_attentionTimerId(0),
       m_attentionTicks(0),
-      m_fadeIn(true),
+      m_backgroundFadeAnim(0),
+      m_lastViewId(0),
       m_showText(true),
       m_animationLock(false),
-      m_lastViewId(0)
+      m_firstGeometryUpdate(false)
 {
-    m_firstGeometryUpdate.restart();
-
     m_animation = new QPropertyAnimation(this, "animationPos", this);
-    m_animation->setEasingCurve(QEasingCurve::OutBounce);
+    m_animation->setEasingCurve(QEasingCurve::InOutQuad);
     m_animation->setDuration(250);
 
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
@@ -154,11 +152,6 @@ void AbstractTaskItem::setPreferredOnscreenSize()
 AbstractTaskItem::~AbstractTaskItem()
 {
     emit destroyed(this);
-
-    if (m_animId) {
-        Plasma::Animator::self()->stopCustomAnimation(m_animId);
-    }
-
     Plasma::ToolTipManager::self()->unregisterWidget(this);
 }
 
@@ -228,11 +221,11 @@ void AbstractTaskItem::setTaskFlags(const TaskFlags flags)
     }
 
     if (newBackground != m_backgroundPrefix) {
-        fadeBackground(newBackground, 100, true);
+        fadeBackground(newBackground, 100);
     }
 }
 
-void AbstractTaskItem::fadeBackground(const QString &newBackground, int duration, bool fadeIn)
+void AbstractTaskItem::fadeBackground(const QString &newBackground, int duration)
 {
     TaskGroupItem *group = qobject_cast<TaskGroupItem*>(this);
     if (group && !group->collapsed()) {
@@ -242,12 +235,21 @@ void AbstractTaskItem::fadeBackground(const QString &newBackground, int duration
     m_oldBackgroundPrefix = m_backgroundPrefix;
     m_backgroundPrefix = newBackground;
 
-    if (m_animId) {
-        Plasma::Animator::self()->stopCustomAnimation(m_animId);
-    }
+    if (m_oldBackgroundPrefix.isEmpty()) {
+        update();
+    } else {
+        if (!m_backgroundFadeAnim) {
+            m_backgroundFadeAnim = new QPropertyAnimation(this);
+            m_backgroundFadeAnim->setDuration(duration);
+            m_backgroundFadeAnim->setEasingCurve(QEasingCurve::InQuad);
+            m_backgroundFadeAnim->setPropertyName("backgroundFadeAlpha");
+            m_backgroundFadeAnim->setTargetObject(this);
+            m_backgroundFadeAnim->setStartValue(0);
+            m_backgroundFadeAnim->setEndValue(1);
+        }
 
-    m_fadeIn = fadeIn;
-    m_animId = Plasma::Animator::self()->customAnimation(40 / (1000 / duration), duration,Plasma::Animator::LinearCurve, this, "animationUpdate");
+        m_backgroundFadeAnim->start();
+    }
 }
 
 
@@ -328,7 +330,7 @@ void AbstractTaskItem::focusOutEvent(QFocusEvent *event)
 void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event)
-    fadeBackground("hover", 175, true);
+    fadeBackground("hover", 175);
     QGraphicsWidget *w = parentWidget();
     if (w && this != m_applet->rootGroupItem()) {
         if (m_hoverEffectTimerId) {
@@ -356,7 +358,7 @@ void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
         backgroundPrefix = "normal";
     }
 
-    fadeBackground(backgroundPrefix, 150, false);
+    fadeBackground(backgroundPrefix, 150);
 }
 
 void AbstractTaskItem::stopWindowHoverEffect()
@@ -429,6 +431,7 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
     } else if (event->timerId() == m_updateGeometryTimerId) {
         killTimer(m_updateGeometryTimerId);
         m_updateGeometryTimerId = 0;
+        m_firstGeometryUpdate = true;
         publishIconGeometry();
     } else if (event->timerId() == m_updateTimerId) {
         killTimer(m_updateTimerId);
@@ -443,9 +446,9 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
         }
 
         if (m_attentionTicks % 2 == 0) {
-            fadeBackground("attention", 100, false);
+            fadeBackground("attention", 100);
         } else {
-            fadeBackground("normal", 150, false);
+            fadeBackground("normal", 150);
         }
 
         update();
@@ -588,7 +591,8 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
         resizeBackground(size().toSize());
     }
 
-    if (!m_animId && ~option->state & QStyle::State_Sunken) {
+    if (~option->state & QStyle::State_Sunken && 
+        (!m_backgroundFadeAnim || m_backgroundFadeAnim->state() != QAbstractAnimation::Running)) {
         itemBackground->setElementPrefix(m_backgroundPrefix);
         if (itemBackground->frameSize() == m_activeRect.size().toSize()) {
             itemBackground->paintFrame(painter, m_activeRect.topLeft());
@@ -636,8 +640,12 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
         busyWidget->setGeometry(iconR);
         busyWidget->show();
     } else {
-        if ((!m_animId && ~option->state & QStyle::State_MouseOver) 
-            ||(m_oldBackgroundPrefix != "hover" && m_backgroundPrefix != "hover")) {
+        /*
+        kDebug() << bool(option->state & QStyle::State_MouseOver) << m_backgroundFadeAnim <<
+            (m_backgroundFadeAnim ? m_backgroundFadeAnim->state() : QAbstractAnimation::Stopped);*/
+        const bool fadingBg = m_backgroundFadeAnim && m_backgroundFadeAnim->state() == QAbstractAnimation::Running;
+        if ((!fadingBg && !(option->state & QStyle::State_MouseOver)) ||
+            (m_oldBackgroundPrefix != "hover" && m_backgroundPrefix != "hover")) {
             m_icon.paint(painter, iconR.toRect());
         } else {
             KIconEffect *effect = KIconLoader::global()->iconEffect();
@@ -649,9 +657,10 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
                 } else {
                     result = Plasma::PaintUtils::transition(result,
                                         effect->apply(result, KIconLoader::Desktop,
-                                        KIconLoader::ActiveState), m_fadeIn?m_alpha:1-m_alpha);
+                                        KIconLoader::ActiveState), m_backgroundPrefix == "normal" ? 1 - m_alpha : m_alpha);
                 }
             }
+
             painter->drawPixmap(iconR.topLeft(), result);
         }
     }
@@ -828,14 +837,13 @@ void AbstractTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layo
 }
 
 
-
-void AbstractTaskItem::animationUpdate(qreal progress)
+qreal AbstractTaskItem::backgroundFadeAlpha() const
 {
-    if (qFuzzyCompare(qreal(1.0), progress)) {
-        m_animId = 0;
-        m_fadeIn = true;
-    }
+    return m_alpha;
+}
 
+void AbstractTaskItem::setBackgroundFadeAlpha(qreal progress)
+{
     m_alpha = progress;
 
     // explicit update
@@ -953,23 +961,17 @@ void AbstractTaskItem::setGeometry(const QRectF& geometry)
     QGraphicsWidget::setGeometry(geometry);
 
     //TODO:remove when we will have proper animated layouts
-    if (m_firstGeometryUpdate.elapsed() < 500) {
-        return;
+    if (m_firstGeometryUpdate && !m_animationLock) {
+        if (m_animation->state() == QAbstractAnimation::Running) {
+            m_animation->stop();
+        }
+
+        QPointF newPos = pos();
+        setPos(oldPos);
+        m_animation->setEndValue(geometry.topLeft());
+
+        m_animation->start();
     }
-
-    if (m_animationLock) {
-        return;
-    }
-
-    if (m_animation->state() == QAbstractAnimation::Running) {
-        m_animation->stop();
-    }
-
-    QPointF newPos = pos();
-    setPos(oldPos);
-    m_animation->setEndValue(geometry.topLeft());
-
-    m_animation->start();
 }
 
 QRectF AbstractTaskItem::iconRect(const QRectF &b) const
@@ -1050,11 +1052,8 @@ QColor AbstractTaskItem::textColor() const
 
     if ((m_oldBackgroundPrefix == "attention" || m_backgroundPrefix == "attention") &&
          m_applet->itemBackground()->hasElement("hint-attention-button-color")) {
-        if (!m_animId && m_backgroundPrefix != "attention") {
-            color = theme->color(Plasma::Theme::TextColor);
-        } else if (!m_animId) {
-            color = theme->color(Plasma::Theme::ButtonTextColor);
-        } else {
+        bool animatingBg = m_backgroundFadeAnim && m_backgroundFadeAnim->state() == QAbstractAnimation::Running;
+        if (animatingBg) {
             if (m_oldBackgroundPrefix == "attention") {
                 bias = 1 - m_alpha;
             } else {
@@ -1063,6 +1062,10 @@ QColor AbstractTaskItem::textColor() const
 
             color = KColorUtils::mix(theme->color(Plasma::Theme::TextColor),
                                      theme->color(Plasma::Theme::ButtonTextColor), bias);
+        } else if (m_backgroundPrefix != "attention") {
+                color = theme->color(Plasma::Theme::TextColor);
+        } else {
+            color = theme->color(Plasma::Theme::ButtonTextColor);
         }
     } else {
         color = theme->color(Plasma::Theme::TextColor);

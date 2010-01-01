@@ -54,6 +54,7 @@ class AbstractTaskItem : public QGraphicsWidget
 {
     Q_OBJECT
     Q_PROPERTY(QPointF animationPos READ animationPos WRITE setAnimationPos)
+    Q_PROPERTY(qreal backgroundFadeAlpha READ backgroundFadeAlpha WRITE setBackgroundFadeAlpha)
 
 public:
     /** Constructs a new representation for an abstract task. */
@@ -196,7 +197,9 @@ protected Q_SLOTS:
     /** Event compression **/
     void queueUpdate();
 
-    void animationUpdate(qreal progress);
+    qreal backgroundFadeAlpha() const;
+    void setBackgroundFadeAlpha(qreal progress);
+
     void syncActiveRect();
     void checkSettings();
     void clearAbstractItem();
@@ -209,7 +212,7 @@ protected:
     // area of item occupied by task's text
     QRectF textRect(const QRectF &bounds) const;
     // start an animation to chnge the task background
-    void fadeBackground(const QString &newBackground, int duration, bool fadeIn);
+    void fadeBackground(const QString &newBackground, int duration);
     // text color, use this because it could be animated
     QColor textColor() const;
     void resizeBackground(const QSize &size);
@@ -227,7 +230,6 @@ protected:
     QString m_text;
     QPixmap m_cachedShadow;
 
-    int m_animId;
     qreal m_alpha;
     QString m_oldBackgroundPrefix;
     QString m_backgroundPrefix;
@@ -242,14 +244,14 @@ protected:
     int m_attentionTimerId;
     int m_attentionTicks;
 
-    bool m_fadeIn : 1;
-    bool m_showText : 1;
-
     //TODO: remove when we have animated layouts
     QPropertyAnimation *m_animation;
-    bool m_animationLock;
-    QTime m_firstGeometryUpdate;
+    QPropertyAnimation *m_backgroundFadeAnim;
     WId m_lastViewId;
+
+    bool m_showText : 1;
+    bool m_animationLock : 1;
+    bool m_firstGeometryUpdate : 1;
 
     // distance (in pixels) between a task's icon and its text
     static const int IconTextSpacing = 4;
