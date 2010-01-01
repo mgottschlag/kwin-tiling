@@ -82,12 +82,12 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet)
       m_backgroundFadeAnim(0),
       m_lastViewId(0),
       m_showText(true),
-      m_animationLock(false),
+      m_layoutAnimationLock(false),
       m_firstGeometryUpdate(false)
 {
-    m_animation = new QPropertyAnimation(this, "animationPos", this);
-    m_animation->setEasingCurve(QEasingCurve::InOutQuad);
-    m_animation->setDuration(250);
+    m_layoutAnimation = new QPropertyAnimation(this, "animationPos", this);
+    m_layoutAnimation->setEasingCurve(QEasingCurve::InOutQuad);
+    m_layoutAnimation->setDuration(250);
 
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     setAcceptsHoverEvents(true);
@@ -932,9 +932,9 @@ void AbstractTaskItem::publishIconGeometry(const QRect &rect) const
 
 void AbstractTaskItem::setAnimationPos(const QPointF &pos)
 {
-    m_animationLock = true;
+    m_layoutAnimationLock = true;
     setPos(pos);
-    m_animationLock = false;
+    m_layoutAnimationLock = false;
 }
 
 QPointF AbstractTaskItem::animationPos() const
@@ -963,14 +963,14 @@ void AbstractTaskItem::setGeometry(const QRectF& geometry)
 
     QGraphicsWidget::setGeometry(geometry);
     //TODO:remove when we will have proper animated layouts
-    if (m_firstGeometryUpdate && !m_animationLock) {
-        if (m_animation->state() == QAbstractAnimation::Running) {
-            m_animation->stop();
+    if (m_firstGeometryUpdate && !m_layoutAnimationLock) {
+        if (m_layoutAnimation->state() == QAbstractAnimation::Running) {
+            m_layoutAnimation->stop();
         }
 
         setPos(oldPos);
-        m_animation->setEndValue(geometry.topLeft());
-        m_animation->start();
+        m_layoutAnimation->setEndValue(geometry.topLeft());
+        m_layoutAnimation->start();
     }
 }
 

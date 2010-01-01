@@ -248,12 +248,12 @@ private:
     int m_attentionTicks;
 
     //TODO: remove when we have animated layouts
-    QPropertyAnimation *m_animation;
+    QPropertyAnimation *m_layoutAnimation;
     QPropertyAnimation *m_backgroundFadeAnim;
     WId m_lastViewId;
 
     bool m_showText : 1;
-    bool m_animationLock : 1;
+    bool m_layoutAnimationLock : 1;
     bool m_firstGeometryUpdate : 1;
 };
 
