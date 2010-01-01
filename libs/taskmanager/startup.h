@@ -27,6 +27,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Qt
 #include <QtCore/QObject>
+#include <QtGui/QIcon>
 
 // KDE
 #include <KDE/KSharedPtr>
@@ -48,7 +49,7 @@ class TASKMANAGER_EXPORT Startup: public QObject, public KShared
     Q_OBJECT
     Q_PROPERTY(QString text READ text)
     Q_PROPERTY(QString bin READ bin)
-    Q_PROPERTY(QString icon READ icon)
+    Q_PROPERTY(QIcon icon READ icon)
 
 public:
     Startup(const KStartupInfoId& id, const KStartupInfoData& data, QObject * parent,
@@ -68,7 +69,7 @@ public:
     /**
      * The name of the icon to be used for the starting task.
      */
-    QString icon() const;
+    QIcon icon() const;
     void update( const KStartupInfoData& data );
     KStartupInfoId id() const;
 

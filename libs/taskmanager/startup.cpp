@@ -28,7 +28,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // Qt
 #include <QSet>
 
+// KDE
+#include <KIcon>
+
+// libtaskmanager
 #include "taskmanager.h"
+
 
 namespace TaskManager
 {
@@ -41,6 +46,7 @@ public:
     {
     }
 
+    QIcon icon;
     KStartupInfoId id;
     KStartupInfoData data;
     QSet<WId> windowMatches;
@@ -69,9 +75,13 @@ QString Startup::bin() const
     return d->data.bin();
 }
 
-QString Startup::icon() const
+QIcon Startup::icon() const
 {
-    return d->data.findIcon();
+    if (d->icon.isNull()) {
+        d->icon = KIcon(d->data.findIcon());
+    }
+
+    return d->icon;
 }
 
 void Startup::update(const KStartupInfoData& data)

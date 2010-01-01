@@ -25,7 +25,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "taskitem.h"
 
 #include <KDebug>
-#include <KIcon>
 
 namespace TaskManager
 {
@@ -139,7 +138,7 @@ QIcon TaskItem::icon() const
     }
 
     if (d->startupTask) {
-        return KIcon(d->startupTask->icon());
+        return d->startupTask->icon();
     }
 
     return QIcon();
