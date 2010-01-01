@@ -57,7 +57,7 @@ public:
     {
         setAttribute(Qt::WA_TranslucentBackground);
         KWindowSystem::setOnAllDesktops(winId(), true);
-        unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
+        unsigned long state = NET::Sticky;
         KWindowSystem::setState(winId(), state);
         KWindowSystem::setType(winId(), NET::Dock);
         m_svg->setImagePath("widgets/glowbar");
@@ -422,11 +422,10 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
 
     if (mode == LetWindowsCover) {
         createUnhideTrigger();
-        KWindowSystem::clearState(winId(), NET::StaysOnTop | NET::KeepAbove);
         state |= NET::KeepBelow;
     } else {
         //kDebug() << "panel shouldn't let windows cover it!";
-        state |= NET::StaysOnTop;
+        KWindowSystem::clearState(winId(), NET::KeepBelow);
     }
 
     if (mode == NormalPanel || mode == WindowsGoBelow) {
