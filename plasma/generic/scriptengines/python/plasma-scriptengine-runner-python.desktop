@@ -1,6 +1,20 @@
 [Desktop Entry]
 Name=Python Runner
+Name[en_GB]=Python Runner
+Name[sr]=питонски извођач
+Name[sr@ijekavian]=питонски извођач
+Name[sr@ijekavianlatin]=Python izvođač
+Name[sr@latin]=Python izvođač
+Name[sv]=Python körningsprogram
+Name[uk]=Запуск для Python
 Comment=Plasma Runner support for Python
+Comment[en_GB]=Plasma Runner support for Python
+Comment[sr]=Подршка плазма извођача за питон
+Comment[sr@ijekavian]=Подршка плазма извођача за питон
+Comment[sr@ijekavianlatin]=Podrška plasma izvođača za Python
+Comment[sr@latin]=Podrška plasma izvođača za Python
+Comment[sv]=Plasma körningsstöd för Python
+Comment[uk]=Підтримка Python у інструментах запуску
 
 X-KDE-ServiceTypes=Plasma/ScriptEngine
 Type=Service
