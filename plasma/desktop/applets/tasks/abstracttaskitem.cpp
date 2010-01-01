@@ -171,25 +171,29 @@ void AbstractTaskItem::clearAbstractItem()
     m_abstractItem = 0;
 }
 
-void AbstractTaskItem::setText(const QString &text)
+void AbstractTaskItem::textChanged()
 {
-    m_text = text;
     m_cachedShadow = QPixmap();
-}
-
-void AbstractTaskItem::setIcon(const QIcon &icon)
-{
-    m_icon = icon; //icon.pixmap(MinTaskIconSize);
-}
-
-QIcon AbstractTaskItem::icon() const
-{
-    return m_icon;
 }
 
 QString AbstractTaskItem::text() const
 {
-    return m_text;
+    if (m_abstractItem) {
+        return m_abstractItem->name();
+    } else {
+        kDebug() << "no abstract item?";
+    }
+
+    return QString();
+}
+
+QIcon AbstractTaskItem::icon() const
+{
+    if (m_abstractItem) {
+        return m_abstractItem->icon();
+    }
+
+    return QIcon();
 }
 
 void AbstractTaskItem::setTaskFlags(const TaskFlags flags)
@@ -415,7 +419,7 @@ void AbstractTaskItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     QDrag *drag = new QDrag(event->widget());
     drag->setMimeData(mimeData);
-    drag->setPixmap(m_icon.pixmap(20));
+    drag->setPixmap(icon().pixmap(20));
    // drag->setDragCursor( set the correct cursor //TODO
     drag->exec();
 }
@@ -645,10 +649,10 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
         const bool fadingBg = m_backgroundFadeAnim && m_backgroundFadeAnim->state() == QAbstractAnimation::Running;
         if ((!fadingBg && !(option->state & QStyle::State_MouseOver)) ||
             (m_oldBackgroundPrefix != "hover" && m_backgroundPrefix != "hover")) {
-            m_icon.paint(painter, iconR.toRect());
+            icon().paint(painter, iconR.toRect());
         } else {
             KIconEffect *effect = KIconLoader::global()->iconEffect();
-            QPixmap result = m_icon.pixmap(iconR.toRect().size());
+            QPixmap result = icon().pixmap(iconR.toRect().size());
 
             if (effect->hasEffect(KIconLoader::Desktop, KIconLoader::ActiveState)) {
                 if (qFuzzyCompare(qreal(1.0), m_alpha)) {
@@ -675,7 +679,7 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
         layout.setFont(KGlobalSettings::taskbarFont());
         layout.setTextOption(textOption());
 
-        layoutText(layout, m_text, rect.size());
+        layoutText(layout, text(), rect.size());
         drawTextLayout(painter, layout, rect);
     }
 
@@ -985,7 +989,7 @@ QRectF AbstractTaskItem::iconRect(const QRectF &b) const
         bounds.moveRight(right);
     }
 
-    QSize iconSize = m_icon.actualSize(bounds.size().toSize());
+    QSize iconSize = icon().actualSize(bounds.size().toSize());
 
     if (iconSize.width() == iconSize.height()) {
         if (iconSize.width() > KIconLoader::SizeSmall && iconSize.width() < KIconLoader::SizeSmallMedium) {

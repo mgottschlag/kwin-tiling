@@ -168,12 +168,11 @@ void WindowTaskItem::updateTask(::TaskManager::TaskChanges changes)
     // basic title and icon
     if (changes & TaskManager::IconChanged) {
         needsUpdate = true;
-        setIcon(m_task->icon());
     }
 
     if (changes & TaskManager::NameChanged) {
         needsUpdate = true;
-        setText(m_task->name());
+        textChanged();
     }
 
     if (Plasma::ToolTipManager::self()->isVisible(this) &&
@@ -240,19 +239,18 @@ void WindowTaskItem::setStartupTask(TaskItem *task)
         return;
     }
 
-    m_abstractItem = qobject_cast<TaskManager::AbstractGroupableItem *>(task);
+    m_abstractItem = task;
 
     if (m_abstractItem) {
         connect(m_abstractItem, SIGNAL(destroyed(QObject*)), this, SLOT(clearAbstractItem()));
-    }
+        textChanged();
 
-    connect(task, SIGNAL(gotTaskPointer()), this, SLOT(gotTaskPointer()));
-    setText(task->startup()->text());
-    setIcon(KIcon(task->startup()->icon()));
+        connect(task, SIGNAL(gotTaskPointer()), this, SLOT(gotTaskPointer()));
 
-    if (!m_busyWidget) {
-        m_busyWidget = new Plasma::BusyWidget(this);
-        m_busyWidget->hide();
+        if (!m_busyWidget) {
+            m_busyWidget = new Plasma::BusyWidget(this);
+            m_busyWidget->hide();
+        }
     }
 }
 

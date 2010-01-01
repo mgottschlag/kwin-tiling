@@ -63,8 +63,8 @@ public:
      /** Destruct the representation for an abstract task. */
     ~AbstractTaskItem();
 
-    /** Sets the text for this task item. */
-    void setText(const QString &text);
+    /** The text changed for this task item. */
+    void textChanged();
 
     /** Sets the icon for this task item. */
     void setIcon(const QIcon &icon);
@@ -98,7 +98,7 @@ public:
     TaskFlags taskFlags() const;
 
     /** Returns current text for this task. */
-    QString text() const;
+    virtual QString text() const;
 
     /** Returns the current icon for this task. */
     QIcon icon() const;
@@ -226,8 +226,6 @@ protected:
 
     TaskFlags m_flags;
 
-    QIcon m_icon;
-    QString m_text;
     QPixmap m_cachedShadow;
 
     qreal m_alpha;

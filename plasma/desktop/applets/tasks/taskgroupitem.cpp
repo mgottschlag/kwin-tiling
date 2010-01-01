@@ -231,12 +231,11 @@ void TaskGroupItem::updateTask(::TaskManager::TaskChanges changes)
     // basic title and icon
     if (changes & TaskManager::IconChanged) {
         needsUpdate = true;
-        setIcon(m_group.data()->icon());
     }
 
     if (changes & TaskManager::NameChanged) {
         needsUpdate = true;
-        setText(m_group.data()->name());
+        textChanged();
     }
 
     if (Plasma::ToolTipManager::self()->isVisible(this) &&
@@ -336,28 +335,25 @@ void TaskGroupItem::setGroup(TaskManager::GroupPtr group)
     }
 
     m_group = group;
-    m_abstractItem = qobject_cast<AbstractGroupableItem *>(group);
+    m_abstractItem = group;
 
-    if (m_abstractItem) {
+    if (m_group) {
         connect(m_abstractItem, SIGNAL(destroyed(QObject*)), this, SLOT(clearAbstractItem()));
+        connect(group, SIGNAL(destroyed(QObject*)), this, SLOT(clearGroup()));
+        connect(group, SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(itemRemoved(AbstractGroupableItem *)));
+        connect(group, SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(itemAdded(AbstractGroupableItem *)));
+
+        //connect(group, SIGNAL(destroyed()), this, SLOT(close()));
+
+        connect(group, SIGNAL(changed(::TaskManager::TaskChanges)), this, SLOT(updateTask(::TaskManager::TaskChanges)));
+
+        connect(group, SIGNAL(itemPositionChanged(AbstractGroupableItem *)), this, SLOT(itemPositionChanged(AbstractGroupableItem *)));
+        connect(group, SIGNAL(groupEditRequest()), this, SLOT(editGroup()));
     }
-
-    connect(m_group.data(), SIGNAL(destroyed(QObject*)), this, SLOT(clearGroup()));
-    connect(m_group.data(), SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(itemRemoved(AbstractGroupableItem *)));
-    connect(m_group.data(), SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(itemAdded(AbstractGroupableItem *)));
-
-    //connect(m_group, SIGNAL(destroyed()), this, SLOT(close()));
-
-    connect(m_group.data(), SIGNAL(changed(::TaskManager::TaskChanges)),
-            this, SLOT(updateTask(::TaskManager::TaskChanges)));
-
-    connect(m_group.data(), SIGNAL(itemPositionChanged(AbstractGroupableItem *)), this, SLOT(itemPositionChanged(AbstractGroupableItem *)));
-    connect(m_group.data(), SIGNAL(groupEditRequest()), this, SLOT(editGroup()));
 
     //Add already existing items
     reload();
     updateTask(::TaskManager::EverythingChanged);
-
     //kDebug() << "Task added, isActive = " << task->isActive();
 }
 
