@@ -450,8 +450,6 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
         } else {
             fadeBackground("normal", 150);
         }
-
-        update();
     } else if (event->timerId() == m_hoverEffectTimerId) {
         killTimer(m_hoverEffectTimerId);
         m_hoverEffectTimerId = 0;
@@ -514,7 +512,7 @@ void AbstractTaskItem::paint(QPainter *painter,
                              const QStyleOptionGraphicsItem *option,
                              QWidget *widget)
 {
-//    kDebug() << "painting" << (QObject*)this;
+    //kDebug() << "painting" << (QObject*)this << text();
     painter->setRenderHint(QPainter::Antialiasing);
 
     // draw background
@@ -846,8 +844,6 @@ qreal AbstractTaskItem::backgroundFadeAlpha() const
 void AbstractTaskItem::setBackgroundFadeAlpha(qreal progress)
 {
     m_alpha = progress;
-
-    // explicit update
     update();
 }
 
