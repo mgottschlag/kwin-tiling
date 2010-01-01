@@ -617,11 +617,14 @@ void TaskGroupItem::popupMenu()
         }
 
         tasksLayout()->invalidate();
+        m_tasksLayout->setOrientation(Plasma::Vertical);
+        m_tasksLayout->setMaximumRows(1);
         m_offscreenWidget = new QGraphicsWidget(this);
         m_offscreenLayout = new QGraphicsLinearLayout(m_offscreenWidget);
         m_offscreenLayout->setContentsMargins(0,0,0,0); //default are 4 on each side
         m_offscreenLayout->addItem(tasksLayout());
         m_offscreenWidget->setLayout(m_offscreenLayout);
+        m_offscreenWidget->adjustSize();
         m_applet->containment()->corona()->addOffscreenWidget(m_offscreenWidget);
         m_offscreenLayout->activate();
     }
