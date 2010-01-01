@@ -409,9 +409,9 @@ QList<PanelView*> PlasmaApp::panelViews() const
     return m_panels;
 }
 
-void PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment *c)
+void PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment *containment)
 {
-    if (!c) {
+    if (!containment) {
         kDebug() << "no containment";
         return;
     }
@@ -425,13 +425,30 @@ void PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment *c)
         m_widgetExplorers.insert(screen, controllerPtr);
     }
 
-    controller->setContainment(c);
-    controller->setLocation(c->location());
+    controller->setContainment(containment);
     controller->showWidgetExplorer();
-
-    QRect geom = Kephal::ScreenUtils::screenGeometry(screen);
+    controller->setLocation(containment->location());
     controller->resize(controller->sizeHint());
-    controller->setGeometry(geom.x(), geom.bottom() - controller->height(), geom.width(), controller->height());
+
+    bool moved = false;
+    if (isPanelContainment(containment)) {
+        // try to align it with the appropriate panel view
+        foreach (PanelView * panel, m_panels) {
+            if (panel->containment() == containment) {
+                controller->move(controller->positionForPanelGeometry(panel->geometry()));
+                moved = true;
+                break;
+            }
+        }
+    }
+
+    if (!moved) {
+        // set it to the bottom of the screen as we have no better hints to go by
+        QRect geom = Kephal::ScreenUtils::screenGeometry(screen);
+        controller->resize(controller->sizeHint());
+        controller->setGeometry(geom.x(), geom.bottom() - controller->height(), geom.width(), controller->height());
+    }
+
     controller->show();
     KWindowSystem::setOnAllDesktops(controller->winId(), true);
     KWindowSystem::activateWindow(controller->winId());
