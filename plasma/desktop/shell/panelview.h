@@ -214,6 +214,7 @@ private:
 private Q_SLOTS:
     void init();
     void togglePanelController();
+    void showWidgetExplorer();
     void edittingComplete();
     void overlayDestroyed(PanelAppletOverlay *overlay);
     void overlayMoved(PanelAppletOverlay *overlay);

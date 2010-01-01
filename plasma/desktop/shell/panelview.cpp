@@ -331,6 +331,8 @@ void PanelView::init()
             this, SLOT(updateStruts()));
     connect(screens, SIGNAL(screenRemoved(int)),
             this, SLOT(updateStruts()));
+    connect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)),
+	    this, SLOT(showWidgetExplorer()));
 }
 
 void PanelView::setLocation(Plasma::Location location)
@@ -1048,6 +1050,17 @@ void PanelView::enterEvent(QEvent *event)
     Plasma::View::enterEvent(event);
 }
 */
+
+void PanelView::showWidgetExplorer()
+{
+    if (!containment()) {
+        return;
+    }
+
+    if (!m_panelController) {
+        PlasmaApp::self()->showWidgetExplorer(screen(), containment());
+    }
+}
 
 void PanelView::moveEvent(QMoveEvent *event)
 {
