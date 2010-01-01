@@ -23,8 +23,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Own
 #include "taskitem.h"
-#include <KDebug>
 
+#include <KDebug>
+#include <KIcon>
 
 namespace TaskManager
 {
@@ -133,23 +134,28 @@ WindowList TaskItem::winIds() const
 
 QIcon TaskItem::icon() const
 {
-    if (!d->task) {
-        return QIcon();
+    if (d->task) {
+        return d->task.data()->icon();
     }
-    return d->task.data()->icon();
+
+    if (d->startupTask) {
+        return KIcon(d->startupTask->icon());
+    }
+
+    return QIcon();
 }
 
 QString TaskItem::name() const
 {
-    if (!d->task) {
-        if (d->startupTask) {
-            return d->startupTask->text();
-        }
-
-        return QString();
+    if (d->task) {
+        return d->task.data()->visibleName();
     }
 
-    return d->task.data()->visibleName();
+    if (d->startupTask) {
+        return d->startupTask->text();
+    }
+
+    return QString();
 }
 
 void TaskItem::setShaded(bool state)
