@@ -223,9 +223,14 @@ protected:
     LayoutWidget *m_layoutWidget;
 
     Tasks *m_applet;
-
     TaskFlags m_flags;
 
+    // distance (in pixels) between a task's icon and its text
+    static const int IconTextSpacing = 4;
+    static const int TaskItemHorizontalMargin = 4;
+    static const int TaskItemVerticalMargin = 4;
+
+private:
     QPixmap m_cachedShadow;
 
     qreal m_alpha;
@@ -250,11 +255,6 @@ protected:
     bool m_showText : 1;
     bool m_animationLock : 1;
     bool m_firstGeometryUpdate : 1;
-
-    // distance (in pixels) between a task's icon and its text
-    static const int IconTextSpacing = 4;
-    static const int TaskItemHorizontalMargin = 4;
-    static const int TaskItemVerticalMargin = 4;
 };
 
 #endif
