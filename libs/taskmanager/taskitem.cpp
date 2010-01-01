@@ -142,8 +142,13 @@ QIcon TaskItem::icon() const
 QString TaskItem::name() const
 {
     if (!d->task) {
+        if (d->startupTask) {
+            return d->startupTask->text();
+        }
+
         return QString();
     }
+
     return d->task.data()->visibleName();
 }
 
