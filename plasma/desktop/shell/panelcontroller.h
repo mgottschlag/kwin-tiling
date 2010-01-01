@@ -48,7 +48,6 @@ public:
     PanelController(QWidget* parent = 0);
     ~PanelController();
 
-    QPoint positionForPanelGeometry(const QRect &panelGeom) const;
     void setContainment(Plasma::Containment *containment);
     void resizePanel(const QSizeF newSize);
 

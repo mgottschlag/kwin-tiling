@@ -50,6 +50,7 @@ public:
     virtual void setLocation(const Plasma::Location &loc);
     Plasma::Location location() const;
     Qt::Orientation orientation() const;
+    QPoint positionForPanelGeometry(const QRect &panelGeom) const;
 
     void showWidgetExplorer();
     bool isWidgetExplorerVisible() const;

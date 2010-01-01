@@ -68,6 +68,18 @@ ControllerWindow::ControllerWindow(QWidget* parent)
 
 ControllerWindow::~ControllerWindow()
 {
+
+    if (m_widgetExplorer) {
+        if (m_containment) {
+            m_widgetExplorer->corona()->removeOffscreenWidget(m_widgetExplorer);
+        }
+
+        if (m_widgetExplorer->scene()) {
+            //FIXME: causes a crash in Qt 4.6 *sigh*
+            //m_widgetExplorer->scene()->removeItem(m_widgetExplorer);
+        }
+    }
+
     delete m_widgetExplorer;
     delete m_widgetExplorerView;
 }
@@ -176,6 +188,27 @@ void ControllerWindow::setLocation(const Plasma::Location &loc)
         default:
             break;
         }
+    }
+}
+
+QPoint ControllerWindow::positionForPanelGeometry(const QRect &panelGeom) const
+{
+    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(containment()->screen());
+
+    switch (m_location) {
+    case Plasma::LeftEdge:
+        return QPoint(panelGeom.right(), screenGeom.top());
+        break;
+    case Plasma::RightEdge:
+        return QPoint(panelGeom.left() - width(), screenGeom.top());
+        break;
+    case Plasma::TopEdge:
+        return QPoint(screenGeom.left(), panelGeom.bottom());
+        break;
+    case Plasma::BottomEdge:
+    default:
+        return QPoint(screenGeom.left(), panelGeom.top() - height());
+        break;
     }
 }
 

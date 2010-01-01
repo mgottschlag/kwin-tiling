@@ -294,27 +294,6 @@ void PanelController::setContainment(Plasma::Containment *c)
     syncRuler();
 }
 
-QPoint PanelController::positionForPanelGeometry(const QRect &panelGeom) const
-{
-    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(containment()->screen());
-
-    switch (location()) {
-    case Plasma::LeftEdge:
-        return QPoint(panelGeom.right(), screenGeom.top());
-        break;
-    case Plasma::RightEdge:
-        return QPoint(panelGeom.left() - width(), screenGeom.top());
-        break;
-    case Plasma::TopEdge:
-        return QPoint(screenGeom.left(), panelGeom.bottom());
-        break;
-    case Plasma::BottomEdge:
-    default:
-        return QPoint(screenGeom.left(), panelGeom.top() - height());
-        break;
-    }
-}
-
 void PanelController::setLocation(const Plasma::Location &loc)
 {
     if (location() == loc) {
