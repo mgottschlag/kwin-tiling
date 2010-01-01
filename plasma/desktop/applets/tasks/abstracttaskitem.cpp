@@ -514,6 +514,7 @@ void AbstractTaskItem::paint(QPainter *painter,
                              const QStyleOptionGraphicsItem *option,
                              QWidget *widget)
 {
+//    kDebug() << "painting" << (QObject*)this;
     painter->setRenderHint(QPainter::Antialiasing);
 
     // draw background
@@ -943,33 +944,32 @@ QPointF AbstractTaskItem::animationPos() const
 
 void AbstractTaskItem::setGeometry(const QRectF& geometry)
 {
+    if (geometry == QGraphicsWidget::geometry()) {
+        return;
+    }
+
     QPointF oldPos = pos();
 
-    bool immediate = false;
-    if (m_lastGeometryUpdate.elapsed() < 350) {
-        immediate = true;
+    if (m_lastGeometryUpdate.elapsed() < 500) {
         if (m_updateGeometryTimerId) {
             killTimer(m_updateGeometryTimerId);
         }
 
-        m_updateGeometryTimerId = startTimer(350 - m_lastGeometryUpdate.elapsed());
+        m_updateGeometryTimerId = startTimer(500 - m_lastGeometryUpdate.elapsed());
     } else {
         publishIconGeometry();
         m_lastGeometryUpdate.restart();
     }
 
     QGraphicsWidget::setGeometry(geometry);
-
     //TODO:remove when we will have proper animated layouts
     if (m_firstGeometryUpdate && !m_animationLock) {
         if (m_animation->state() == QAbstractAnimation::Running) {
             m_animation->stop();
         }
 
-        QPointF newPos = pos();
         setPos(oldPos);
         m_animation->setEndValue(geometry.topLeft());
-
         m_animation->start();
     }
 }
@@ -1127,7 +1127,7 @@ TaskGroupItem * AbstractTaskItem::parentGroup() const
     //in a popup or a popup's popup?
     QObject *candidate = parentWidget();
 
-    while(candidate) {
+    while (candidate) {
         group = qobject_cast<TaskGroupItem*>(candidate);
         candidate = candidate->parent();
         if (group) {
