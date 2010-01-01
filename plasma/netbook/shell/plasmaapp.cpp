@@ -460,7 +460,7 @@ void PlasmaApp::reserveStruts()
 
     NETExtendedStrut strut;
 
-    if (!m_autoHideControlBar) {
+    if (!m_autoHideControlBar || hasForegroundWindows()) {
         switch (m_controlBar->location()) {
         case Plasma::LeftEdge:
             strut.left_width = m_controlBar->width();
@@ -829,6 +829,7 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
             Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
             m_controlBar->show();
             m_raiseTimer->start(100);
+            reserveStruts();
         }
     } else if ((watched == m_mainView &&
                 event->type() == QEvent::WindowDeactivate &&
@@ -839,6 +840,7 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
         //delayed hide
         if (m_unHideTimer) {
             m_unHideTimer->start(400);
+            reserveStruts();
         }
     } else if (watched == m_widgetExplorerView && event->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
