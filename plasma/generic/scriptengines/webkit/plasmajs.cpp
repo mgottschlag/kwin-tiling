@@ -43,6 +43,16 @@ QObject *PlasmaJs::dataEngine(const QString &name)
     return m_webApplet->dataEngine(name);
 }
 
+QObject *PlasmaJs::config()
+{
+    return m_webApplet->config();
+}
+
+QObject *PlasmaJs::globalConfig()
+{
+    return m_webApplet->globalConfig();
+}
+
 ConfigGroupWrapper::ConfigGroupWrapper(const KConfigGroup &config)
 : m_config(config)
 {

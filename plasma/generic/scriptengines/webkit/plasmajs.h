@@ -37,6 +37,8 @@ public:
 public Q_SLOTS:
     QStringList knownEngines();
     QObject *dataEngine(const QString &name);
+    QObject *config();
+    QObject *globalConfig();
 
 private:
     PlasmaWebApplet *m_webApplet;
