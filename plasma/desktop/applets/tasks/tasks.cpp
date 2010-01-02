@@ -79,7 +79,7 @@ void Tasks::init()
     KConfigGroup cg = config();
     //TODO: for 4.5, make this option visible
     m_showTooltip = cg.readEntry("showTooltip", true);
-    m_highlightWindows = cg.readEntry("highlightWindows", true);
+    m_highlightWindows = cg.readEntry("highlightWindows", false);
 
     m_groupManager = new TaskManager::GroupManager(this);
     Plasma::Containment* appletContainment = containment();
@@ -251,6 +251,7 @@ void Tasks::createConfigurationInterface(KConfigDialog *parent)
      parent->addPage(widget, i18n("General"), icon());
 
     m_ui.showTooltip->setChecked(m_showTooltip);
+    m_ui.highlightWindows->setChecked(m_highlightWindows);
     m_ui.showOnlyCurrentDesktop->setChecked(m_groupManager->showOnlyCurrentDesktop());
     m_ui.showOnlyCurrentScreen->setChecked(m_groupManager->showOnlyCurrentScreen());
     m_ui.showOnlyMinimized->setChecked(m_groupManager->showOnlyMinimized());
@@ -375,6 +376,13 @@ void Tasks::configAccepted()
         m_showTooltip = !m_showTooltip;
         KConfigGroup cg = config();
         cg.writeEntry("showTooltip", m_showTooltip);
+        changed = true;
+    }
+
+    if (m_highlightWindows != (m_ui.highlightWindows->checkState() == Qt::Checked)) {
+        m_highlightWindows = !m_highlightWindows;
+        KConfigGroup cg = config();
+        cg.writeEntry("highlightWindows", m_highlightWindows);
         changed = true;
     }
 
