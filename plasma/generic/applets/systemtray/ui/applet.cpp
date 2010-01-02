@@ -777,7 +777,7 @@ NotificationWidget *Applet::addNotification(Notification *notification)
     }
 
     emit activate();
-    showPopup(m_autoHideTimeout);
+    showPopup(qMin(m_autoHideTimeout, notification->timeout()));
 
 
     bool found = false;
