@@ -434,7 +434,7 @@
              <string>This is a shortcut for switching layouts which is handled by X.org. It allows modifier-only shortcuts.</string>
             </property>
             <property name="text">
-             <string>None</string>
+             <string comment="no shortcut defined">None</string>
             </property>
            </widget>
           </item>
@@ -464,7 +464,7 @@
              <string>This is a shortcut for switching to a third level of the active layout (if it has one) which is handled by X.org. It allows modifier-only shortcuts.</string>
             </property>
             <property name="text">
-             <string>None</string>
+             <string comment="no shortcut defined">None</string>
             </property>
            </widget>
           </item>

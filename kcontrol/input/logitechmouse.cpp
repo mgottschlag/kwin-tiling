@@ -357,7 +357,7 @@ QString LogitechMouse::cordlessName() const
 {
     switch ( m_cordlessNameIndex ) {
     case 0x00:
-        return i18n( "none" );
+        return i18nc( "no cordless mouse", "none" );
         break;
     case 0x04:
         return i18n( "Cordless Mouse" );

@@ -400,11 +400,11 @@ QVariant KHotkeysModel::headerData( int section, Qt::Orientation, int role ) con
     switch (section)
         {
         case NameColumn:
-            return QVariant(i18n("Name"));
+            return QVariant(i18nc("action name", "Name"));
 
         case EnabledColumn:
             return QVariant();
-            return QVariant(i18n("Enabled"));
+            return QVariant(i18nc("action enabled", "Enabled"));
 
         case IsGroupColumn:
             return QVariant(i18n("Type"));

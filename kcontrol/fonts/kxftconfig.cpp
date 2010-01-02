@@ -453,7 +453,7 @@ QString KXftConfig::description(SubPixel::Type t)
     {
         default:
         case SubPixel::None:
-            return i18n("None");
+            return i18nc("no subpixel rendering", "None");
         case SubPixel::Rgb:
             return i18n("RGB");
         case SubPixel::Bgr:
@@ -493,7 +493,7 @@ QString KXftConfig::description(Hint::Style s)
         case Hint::NotSet:
             return "";
         case Hint::None:
-            return i18n("None");
+            return i18nc("no hinting", "None");
         case Hint::Slight:
             return i18n("Slight");
         case Hint::Full:

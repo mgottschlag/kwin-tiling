@@ -606,7 +606,7 @@ static QString getShortcutText(const QStringList& options, const QString& grp)
     if( grpOptions.count() == 1 )
         return i18n("Defined");         //TODO: show shortcut
     else
-        return i18n("None");
+        return i18nc("no shortcut defined", "None");
 }
 
 void LayoutConfig::updateShortcutsLabels()

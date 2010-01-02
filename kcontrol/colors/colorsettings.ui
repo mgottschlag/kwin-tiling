@@ -699,7 +699,7 @@
      </widget>
      <widget class="QWidget" name="pageInactice">
       <attribute name="title">
-       <string>Inactive</string>
+       <string comment="@title:tab color transformations on inactive elements">Inactive</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_4">
        <item row="0" column="0">
@@ -719,7 +719,7 @@
          </property>
          <item>
           <property name="text">
-           <string>None</string>
+           <string comment="no inactive intensity effect">None</string>
           </property>
          </item>
          <item>
@@ -791,7 +791,7 @@
          </property>
          <item>
           <property name="text">
-           <string>None</string>
+           <string comment="no inactive color effect">None</string>
           </property>
          </item>
          <item>
@@ -857,7 +857,7 @@
          </property>
          <item>
           <property name="text">
-           <string>None</string>
+           <string comment="no inactive contrast effect">None</string>
           </property>
          </item>
          <item>
@@ -940,7 +940,7 @@
      </widget>
      <widget class="QWidget" name="pageDisabled">
       <attribute name="title">
-       <string>Disabled</string>
+       <string comment="@title:tab color transformations on disabled elements">Disabled</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="0" column="0">
@@ -960,7 +960,7 @@
          </property>
          <item>
           <property name="text">
-           <string>None</string>
+           <string comment="no disabled intensity effect">None</string>
           </property>
          </item>
          <item>
@@ -1032,7 +1032,7 @@
          </property>
          <item>
           <property name="text">
-           <string>None</string>
+           <string comment="no disabled color effect">None</string>
           </property>
          </item>
          <item>
@@ -1098,7 +1098,7 @@
          </property>
          <item>
           <property name="text">
-           <string>None</string>
+           <string comment="no disabled contrast">None</string>
           </property>
          </item>
          <item>
