@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2001, S.R.Haque <srhaque@iee.org>. 
 	Copyright (C) 2006, Andriy Rysin <rysin@kde.org>. Derived from an
-    original by Matthias H�zer-Klpfel released under the QPL.
+    original by Matthias Hözer-Klüpfel released under the QPL.
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
