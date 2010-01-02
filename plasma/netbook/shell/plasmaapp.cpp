@@ -382,7 +382,7 @@ void PlasmaApp::positionPanel()
         }
     }
 
-    if (m_autoHideControlBar) {
+    if (m_autoHideControlBar && m_controlBar->isVisible()) {
         destroyUnHideTrigger();
         createUnhideTrigger();
     }
@@ -680,11 +680,11 @@ void PlasmaApp::controlBarMoved(const NetView *controlBar)
 
 void PlasmaApp::setAutoHideControlBar(bool autoHide)
 {
-    if (!m_controlBar || m_autoHideControlBar == autoHide) {
+    if (!m_controlBar) {
         return;
     }
 
-    if (autoHide) {
+    if (autoHide && !m_unHideTimer) {
         m_unHideTimer = new QTimer(this);
         m_unHideTimer->setSingleShot(true);
         connect(m_unHideTimer, SIGNAL(timeout()), this, SLOT(controlBarVisibilityUpdate()));
@@ -837,6 +837,7 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
                (watched == m_controlBar &&
                 event->type() == QEvent::Leave &&
                 !hasForegroundWindows())) {
+kWarning()<<event;
         //delayed hide
         if (m_unHideTimer) {
             m_unHideTimer->start(400);
@@ -923,9 +924,9 @@ void PlasmaApp::controlBarVisibilityUpdate()
             m_controlBar->show();
         }
     } else if (!m_controlBar->geometry().contains(cursorPos)) {
-        createUnhideTrigger();
         Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
         m_controlBar->hide();
+        createUnhideTrigger();
     }
 }
 
@@ -946,9 +947,9 @@ void PlasmaApp::setControlBarVisible(bool visible)
         Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
         m_controlBar->show();
     } else {
-        createUnhideTrigger();
         Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
         m_controlBar->hide();
+        createUnhideTrigger();
     }
 }
 
