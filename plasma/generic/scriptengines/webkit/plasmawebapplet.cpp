@@ -28,9 +28,10 @@ THE SOFTWARE.
 
 #include <KColorScheme>
 
-#include <Plasma/WebView>
+#include <Plasma/DataEngineManager>
 #include <Plasma/Applet>
 #include <Plasma/Theme>
+#include <Plasma/WebView>
 
 #define JS_CONSTANTS_CONSTRAINT \
 "var NoConstraint = %1;\n"\
@@ -262,6 +263,11 @@ bool PlasmaWebApplet::shouldConserveResources() const
     return applet()->shouldConserveResources();
 }
 
+QStringList PlasmaWebApplet::listAllDataEngines()
+{
+    return Plasma::DataEngineManager::listAllEngines();
+}
+
 QObject* PlasmaWebApplet::dataEngine(const QString& name)
 {
     QString id = QString("%1").arg(applet()->id());
@@ -317,9 +323,9 @@ QVariant PlasmaWebApplet::callJsFunction(const QString& func, const QVariantList
                 cmd += ',';
             }
             if (args[i].canConvert<QObject*>()) {
-                cmd += QString("window.applet.objArg(%1)").arg(i);
+                cmd += QString("window.plasmoid.objArg(%1)").arg(i);
             } else {
-                cmd += QString("window.applet.arg(%1)").arg(i);
+                cmd += QString("window.plasmoid.arg(%1)").arg(i);
             }
         }
         cmd += ')';
@@ -345,8 +351,7 @@ void PlasmaWebApplet::initJsObjects()
 {
     QWebFrame *frame = qobject_cast<QWebFrame*>(sender());
     Q_ASSERT(frame);
-    frame->addToJavaScriptWindowObject(QLatin1String("applet"), this);
-    frame->addToJavaScriptWindowObject(QLatin1String("plasma"), new PlasmaJs(this));
+    frame->addToJavaScriptWindowObject(QLatin1String("plasmoid"), this);
 }
 
 QVariantList PlasmaWebApplet::geometry()

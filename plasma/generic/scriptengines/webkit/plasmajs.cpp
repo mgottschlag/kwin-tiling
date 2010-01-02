@@ -22,36 +22,9 @@ THE SOFTWARE.
 #include "plasmajs.h"
 #include "plasmawebapplet.h"
 
-#include <Plasma/DataEngineManager>
 #include <Plasma/DataEngine>
 
 using namespace Plasma;
-
-PlasmaJs::PlasmaJs(PlasmaWebApplet *parent)
-    : QObject(parent),
-      m_webApplet(parent)
-{
-}
-
-QStringList PlasmaJs::knownEngines()
-{
-    return DataEngineManager::listAllEngines();
-}
-
-QObject *PlasmaJs::dataEngine(const QString &name)
-{
-    return m_webApplet->dataEngine(name);
-}
-
-QObject *PlasmaJs::config()
-{
-    return m_webApplet->config();
-}
-
-QObject *PlasmaJs::globalConfig()
-{
-    return m_webApplet->globalConfig();
-}
 
 ConfigGroupWrapper::ConfigGroupWrapper(const KConfigGroup &config)
 : m_config(config)

@@ -39,6 +39,7 @@ class PlasmaWebApplet : public WebApplet
     Q_PROPERTY(QString category READ category)
     Q_PROPERTY(int formFactor READ formFactor)
     Q_PROPERTY(int location READ location)
+
 public:
     PlasmaWebApplet(QObject *parent, const QVariantList &args);
     virtual ~PlasmaWebApplet();
@@ -55,6 +56,7 @@ public:
     int location() const;
 
 public slots:
+    QStringList listAllDataEngines();
     QObject* dataEngine(const QString& name);
     QObject* config();
     QObject* globalConfig();
