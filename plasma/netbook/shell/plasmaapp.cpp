@@ -464,28 +464,28 @@ void PlasmaApp::reserveStruts()
         switch (m_controlBar->location()) {
         case Plasma::LeftEdge:
             strut.left_width = m_controlBar->width();
-            strut.left_start = m_mainView->y();
-            strut.left_end = m_mainView->y() + m_mainView->height() - 1;
+            strut.left_start = m_controlBar->y();
+            strut.left_end = m_controlBar->y() + m_controlBar->height() - 1;
             break;
         case Plasma::RightEdge:
             strut.right_width = m_controlBar->width();
-            strut.right_start = m_mainView->y();
-            strut.right_end = m_mainView->y() + m_mainView->height() - 1;
+            strut.right_start = m_controlBar->y();
+            strut.right_end = m_controlBar->y() + m_controlBar->height() - 1;
             break;
         case Plasma::TopEdge:
             strut.top_width = m_controlBar->height();
-            strut.top_start = m_mainView->x();
-            strut.top_end = m_mainView->x() + m_mainView->width() - 1;
+            strut.top_start = m_controlBar->x();
+            strut.top_end = m_controlBar->x() + m_controlBar->width() - 1;
             break;
         case Plasma::BottomEdge:
         default:
             strut.bottom_width = m_controlBar->height();
-            strut.bottom_start = m_mainView->x();
-            strut.bottom_end = m_mainView->x() + m_mainView->width() - 1;
+            strut.bottom_start = m_controlBar->x();
+            strut.bottom_end = m_controlBar->x() + m_controlBar->width() - 1;
         }
     }
 
-    KWindowSystem::setExtendedStrut(m_mainView->winId(),
+    KWindowSystem::setExtendedStrut(m_controlBar->winId(),
                                     strut.left_width, strut.left_start, strut.left_end,
                                     strut.right_width, strut.right_start, strut.right_end,
                                     strut.top_width, strut.top_start, strut.top_end,
