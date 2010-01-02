@@ -498,14 +498,14 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
   QStringList nameGroupKeyRc;
 
   nameGroupKeyRc
-    << i18n("General")        << "General"    << "font"         << ""
-    << i18n("Fixed width")    << "General"    << "fixed"        << ""
-    << i18n("Small")          << "General"    << "smallestReadableFont" << ""
-    << i18n("Toolbar")        << "General"    << "toolBarFont"  << ""
-    << i18n("Menu")           << "General"    << "menuFont"     << ""
-    << i18n("Window title")   << "WM"         << "activeFont"   << ""
-    << i18n("Taskbar")        << "General"    << "taskbarFont"  << ""
-    << i18n("Desktop")        << "General"    << "desktopFont" << "";
+    << i18nc("font usage", "General")       << "General"    << "font"         << ""
+    << i18nc("font usage", "Fixed width")   << "General"    << "fixed"        << ""
+    << i18nc("font usage", "Small")         << "General"    << "smallestReadableFont" << ""
+    << i18nc("font usage", "Toolbar")       << "General"    << "toolBarFont"  << ""
+    << i18nc("font usage", "Menu")          << "General"    << "menuFont"     << ""
+    << i18nc("font usage", "Window title")  << "WM"         << "activeFont"   << ""
+    << i18nc("font usage", "Taskbar")       << "General"    << "taskbarFont"  << ""
+    << i18nc("font usage", "Desktop")       << "General"    << "desktopFont" << "";
 
   QList<QFont> defaultFontList;
 

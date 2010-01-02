@@ -25,12 +25,12 @@
     <widget class="QComboBox" name="formFactor">
      <item>
       <property name="text">
-       <string>Desktop</string>
+       <string comment="Form factor: desktop computer">Desktop</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Netbook</string>
+       <string comment="Form factor: netbook computer">Netbook</string>
       </property>
      </item>
     </widget>
