@@ -27,14 +27,20 @@ THE SOFTWARE.
 
 using namespace Plasma;
 
-PlasmaJs::PlasmaJs(QObject *parent)
-    : QObject(parent)
+PlasmaJs::PlasmaJs(PlasmaWebApplet *parent)
+    : QObject(parent),
+      m_webApplet(parent)
 {
 }
 
 QStringList PlasmaJs::knownEngines()
 {
     return DataEngineManager::listAllEngines();
+}
+
+QObject *PlasmaJs::dataEngine(const QString &name)
+{
+    return m_webApplet->dataEngine(name);
 }
 
 ConfigGroupWrapper::ConfigGroupWrapper(const KConfigGroup &config)

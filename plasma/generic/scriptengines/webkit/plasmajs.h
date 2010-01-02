@@ -26,14 +26,20 @@ THE SOFTWARE.
 #include <KConfigGroup>
 #include <Plasma/DataEngine>
 
+class PlasmaWebApplet;
+
 class PlasmaJs : public QObject
 {
     Q_OBJECT
 public:
-    PlasmaJs(QObject *parent=0);
+    PlasmaJs(PlasmaWebApplet *parent=0);
 
 public Q_SLOTS:
     QStringList knownEngines();
+    QObject *dataEngine(const QString &name);
+
+private:
+    PlasmaWebApplet *m_webApplet;
 };
 
 class DataEngineDataWrapper : public QObject
