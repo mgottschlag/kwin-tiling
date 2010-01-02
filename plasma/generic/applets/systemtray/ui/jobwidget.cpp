@@ -251,11 +251,17 @@ void JobWidget::updateJob()
     qlonglong dirs = totals.value("dirs");
     if (dirs > 1) {
         m_dirCountLabel->setText(i18np("%2 / 1 folder", "%2 / %1 folders", dirs, processed["dirs"]));
+        m_dirCountLabel->setMaximumHeight(INT_MAX);
+    } else {
+        m_dirCountLabel->setMaximumHeight(0);
     }
 
     qlonglong files = totals.value("files");
     if (files > 1) {
         m_fileCountLabel->setText(i18np("%2 / 1 file", "%2 / %1 files", files, processed["files"]));
+        m_fileCountLabel->setMaximumHeight(INT_MAX);
+    } else {
+        m_fileCountLabel->setMaximumHeight(0);
     }
 
     qlonglong total = totals["bytes"];
