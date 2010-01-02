@@ -1,6 +1,10 @@
 [Desktop Entry]
 Name=Python Runner
+Name[da]=Python Runner
 Name[en_GB]=Python Runner
+Name[id]=Pelari Python
+Name[pa]=ਪਾਈਥਨ ਰਨਰ
+Name[pt]=Módulo de Execução em Python
 Name[sr]=питонски извођач
 Name[sr@ijekavian]=питонски извођач
 Name[sr@ijekavianlatin]=Python izvođač
@@ -8,7 +12,10 @@ Name[sr@latin]=Python izvođač
 Name[sv]=Python körningsprogram
 Name[uk]=Запуск для Python
 Comment=Plasma Runner support for Python
+Comment[da]=Understøttelse af Plasma Runner til Python
 Comment[en_GB]=Plasma Runner support for Python
+Comment[id]=Dukungan Pelari Plasma terhadap Python
+Comment[pt]=Suporte para os motores de execução do Plasma em Python
 Comment[sr]=Подршка плазма извођача за питон
 Comment[sr@ijekavian]=Подршка плазма извођача за питон
 Comment[sr@ijekavianlatin]=Podrška plasma izvođača za Python
