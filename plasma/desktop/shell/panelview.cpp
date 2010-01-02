@@ -251,7 +251,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     m_offset = viewConfig.readEntry("Offset", 0);
 
     KWindowSystem::setType(winId(), NET::Dock);
-    setWindowRole( QString( "panel_%1" ).arg( id ));
+    setWindowRole(QString("panel_%1").arg(id));
 
     // ensure we aren't overlapping other panels
     const QRegion availGeom = PlasmaApp::self()->corona()->availableScreenRegion(panel->screen());
