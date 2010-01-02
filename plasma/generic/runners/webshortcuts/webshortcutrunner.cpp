@@ -34,7 +34,7 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
 {
     Q_UNUSED(args);
     setObjectName("Web Shortcut");
-    setIgnoredTypes(Plasma::RunnerContext::FileSystem);
+    setIgnoredTypes(Plasma::RunnerContext::Directory | Plasma::RunnerContext::File | Plasma::RunnerContext::Executable);
 
     m_icon = KIcon("internet-web-browser");
 
