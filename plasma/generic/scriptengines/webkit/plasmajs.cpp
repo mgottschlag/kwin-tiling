@@ -81,7 +81,7 @@ DataEngineDataWrapper::DataEngineDataWrapper(const DataEngine::Data &data)
 {
 }
 
-int DataEngineDataWrapper::size() const
+int DataEngineDataWrapper::length() const
 {
     return m_data.count();
 }

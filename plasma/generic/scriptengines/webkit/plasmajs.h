@@ -45,11 +45,11 @@ private:
 class DataEngineDataWrapper : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int size READ size)
+    Q_PROPERTY(int length READ length)
 public:
     DataEngineDataWrapper(const Plasma::DataEngine::Data &data = Plasma::DataEngine::Data());
 
-    int size() const;
+    int length() const;
     void setData(const Plasma::DataEngine::Data &data);
 
 public Q_SLOTS:
