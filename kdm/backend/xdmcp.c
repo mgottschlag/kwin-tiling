@@ -612,14 +612,29 @@ forward_respond( struct sockaddr *from, int fromlen ATTR_UNUSED,
 				{
 					struct sockaddr_in6 in6_addr;
 
-					if (clientAddress.length != 16 || clientPort.length != 2)
+					if ((clientAddress.length != 16 && clientAddress.length != 4) ||
+					    clientPort.length != 2)
 						goto badAddress;
 					bzero( &in6_addr, sizeof(in6_addr) );
 #ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_LEN
 					in6_addr.sin6_len = sizeof(in6_addr);
 #endif
 					in6_addr.sin6_family = AF_INET6;
-					memmove( in6_addr.sin6_addr.s6_addr, clientAddress.data, 16 );
+					if (clientAddress.length == 16) {
+						memmove( in6_addr.sin6_addr.s6_addr, clientAddress.data, 16 );
+					} else {
+						/* If the client wants to forward the xdm server to an
+						 * IPv4 hosts it sends an IPv4 address in the forward
+						 * packet. On dual-stack hosts the packet arrives as a
+						 * IPv6 packet. To respond to the IPv4 host one has
+						 * to create an IPv4-mapped address.
+						 * One example where this is necessary is an IPv4-only
+						 * thin client that connects to a dual-stacked xdm.
+						 */
+						in6_addr.sin6_addr.s6_addr[10] = 0xff;
+						in6_addr.sin6_addr.s6_addr[11] = 0xff;
+						memmove( in6_addr.sin6_addr.s6_addr + 12, clientAddress.data, 4 );
+					}
 					memmove( &in6_addr.sin6_port, clientPort.data, 2 );
 					client = (struct sockaddr *)&in6_addr;
 					clientlen = sizeof(in6_addr);
