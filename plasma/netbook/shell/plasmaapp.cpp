@@ -680,7 +680,7 @@ void PlasmaApp::controlBarMoved(const NetView *controlBar)
 
 void PlasmaApp::setAutoHideControlBar(bool autoHide)
 {
-    if (!m_controlBar) {
+    if (!m_controlBar || m_autoHideControlBar == autoHide) {
         return;
     }
 
@@ -983,7 +983,7 @@ void PlasmaApp::createUnhideTrigger()
 {
 #ifdef Q_WS_X11
     //kDebug() << m_unhideTrigger << None;
-    if (!m_autoHideControlBar || m_unhideTrigger != None) {
+    if (!m_autoHideControlBar || m_unhideTrigger != None || !m_controlBar || m_controlBar->isVisible()) {
         return;
     }
 
