@@ -2,7 +2,7 @@
 Name=Plasma Desktop Shell
 Name[ca]=Intèrpret d'ordres de l'escriptori Plasma
 Name[da]=Plasma Desktop Shell
-Name[de]=Plasma-Arbeitsflächen-Umgebung
+Name[de]=Plasma-Umgebung
 Name[en_GB]=Plasma Desktop Shell
 Name[eo]=Plasma Labortabla ŝelo
 Name[et]=Plasma töölauakest
@@ -41,6 +41,7 @@ Name[zh_TW]=Plasma 桌面 shell
 Comment=Interact with the Plasma desktop shell
 Comment[ca]=Interactua amb l'intèrpret d'ordres de l'escriptori Plasma
 Comment[da]=Interaktion med Plasma-skrivebordsskal
+Comment[de]=Interaktion mit der Plasma-Shell
 Comment[en_GB]=Interact with the Plasma desktop shell
 Comment[et]=Suhtlus Plasma töölauakestaga
 Comment[fy]=Ynteraksje mei de Plasma buroblêd flues

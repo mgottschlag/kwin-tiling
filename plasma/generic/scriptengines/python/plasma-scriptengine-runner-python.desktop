@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Python Runner
 Name[da]=Python Runner
+Name[de]=Python-Starter
 Name[en_GB]=Python Runner
 Name[id]=Pelari Python
 Name[pa]=ਪਾਈਥਨ ਰਨਰ
@@ -13,6 +14,7 @@ Name[sv]=Python körningsprogram
 Name[uk]=Запуск для Python
 Comment=Plasma Runner support for Python
 Comment[da]=Understøttelse af Plasma Runner til Python
+Comment[de]=Plasma-Starter-Unterstützung für Python
 Comment[en_GB]=Plasma Runner support for Python
 Comment[id]=Dukungan Pelari Plasma terhadap Python
 Comment[pt]=Suporte para os motores de execução do Plasma em Python
