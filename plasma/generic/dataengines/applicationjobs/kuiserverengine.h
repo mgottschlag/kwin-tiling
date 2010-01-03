@@ -20,6 +20,7 @@
 #define KUISERVERENGINE_H
 
 #include <QDBusObjectPath>
+#include <QBasicTimer>
 
 #include <Plasma/DataContainer>
 #include <Plasma/DataEngine>
@@ -108,20 +109,25 @@ protected:
 
 private:
     void scheduleUpdate();
+    void updateEta();
     int unitId(const QString &unit);
 
     QDBusObjectPath m_objectPath;
+    QBasicTimer m_updateTimer;
 
     uint m_capabilities;
     uint m_percent;
     uint m_jobId;
-    int m_updateTimerId;
 
+    // for ETA calculation we cache these values
     qlonglong m_speed;
+    qlonglong m_totalBytes;
+    qlonglong m_processedBytes;
 
     State m_state;
 
     QMap<QString, int> m_unitMap;
+    int m_bytesUnitId;
     int m_unitId;
 };
 

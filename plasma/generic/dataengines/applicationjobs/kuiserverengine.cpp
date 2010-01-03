@@ -36,9 +36,11 @@ JobView::JobView(QObject* parent)
     : Plasma::DataContainer(parent),
       m_capabilities(-1),
       m_percent(0),
-      m_updateTimerId(0),
       m_speed(0),
+      m_totalBytes(0),
+      m_processedBytes(0),
       m_state(UnknownState),
+      m_bytesUnitId(-1),
       m_unitId(0)
 {
     m_jobId = ++KuiserverEngine::s_jobId;
@@ -60,16 +62,15 @@ uint JobView::jobId() const
 
 void JobView::scheduleUpdate()
 {
-    if (!m_updateTimerId) {
-        m_updateTimerId = startTimer(UPDATE_INTERVAL);
+    if (!m_updateTimer.isActive()) {
+        m_updateTimer.start(UPDATE_INTERVAL, this);
     }
 }
 
 void JobView::timerEvent(QTimerEvent *event)
 {
-    if (event->timerId() == m_updateTimerId) {
-        killTimer(m_updateTimerId);
-        m_updateTimerId = 0;
+    if (event->timerId() == m_updateTimer.timerId()) {
+        m_updateTimer.stop();
         checkForUpdate();
 
         if (m_state == Stopped) {
@@ -125,6 +126,11 @@ int JobView::unitId(const QString &unit)
         setData(QString("processedUnit%1").arg(id), unit);
         setData(QString("processedAmount%1").arg(id), 0);
         m_unitMap.insert(unit, m_unitId);
+
+        if (unit == "bytes") {
+            m_bytesUnitId = id;
+        }
+
         ++m_unitId;
         scheduleUpdate();
     }
@@ -132,16 +138,31 @@ int JobView::unitId(const QString &unit)
     return id;
 }
 
+void JobView::updateEta()
+{
+    if (m_speed < 1) {
+        setData("eta", 0);
+        return;
+    }
+
+    if (m_totalBytes < 1) {
+        setData("eta", 0);
+        return;
+    }
+
+    const qlonglong remaining = 1000 * (m_totalBytes - m_processedBytes);
+    setData("eta", remaining / m_speed);
+}
+
 void JobView::setTotalAmount(qlonglong amount, const QString &unit)
 {
-    int id = unitId(unit);
-    QString amountString = QString("totalAmount%1").arg(id);
-    qlonglong prevTotal = data().value(amountString).toLongLong();
+    const int id = unitId(unit);
+    const QString amountString = QString("totalAmount%1").arg(id);
+    const qlonglong prevTotal = data().value(amountString).toLongLong();
     if (prevTotal != amount) {
-        if (m_speed > 0 && unit == "bytes") {
-            QString processedString = QString("processedAmount%1").arg(id);
-            qlonglong remaining = 1000 * (amount - data().value(processedString).toLongLong());
-            setData("eta", remaining / m_speed);
+        if (id == m_bytesUnitId) {
+            m_totalBytes = amount;
+            updateEta();
         }
 
         setData(amountString, amount);
@@ -151,14 +172,13 @@ void JobView::setTotalAmount(qlonglong amount, const QString &unit)
 
 void JobView::setProcessedAmount(qlonglong amount, const QString &unit)
 {
-    int id = unitId(unit);
-    QString processedString = QString("processedAmount%1").arg(id);
-    qlonglong prevTotal = data().value(processedString).toLongLong();
+    const int id = unitId(unit);
+    const QString processedString = QString("processedAmount%1").arg(id);
+    const qlonglong prevTotal = data().value(processedString).toLongLong();
     if (prevTotal != amount) {
-        if (m_speed > 0 && unit == "bytes") {
-            QString amountString = QString("totalAmount%1").arg(id);
-            qlonglong remaining = 1000 * (data().value(amountString).toLongLong() - amount);
-            setData("eta", remaining / m_speed);
+        if (id == m_bytesUnitId) {
+            m_processedBytes = amount;
+            updateEta();
         }
 
         setData(processedString, amount);
@@ -177,9 +197,16 @@ void JobView::setPercent(uint percent)
 
 void JobView::setSpeed(qlonglong bytesPerSecond)
 {
-    m_speed = bytesPerSecond;
-    setData("speed", speedString());
-    scheduleUpdate();
+    if (m_speed != bytesPerSecond) {
+        m_speed = bytesPerSecond;
+        setData("speed", speedString());
+
+        if (m_bytesUnitId > -1) {
+            updateEta();
+        }
+
+        scheduleUpdate();
+    }
 }
 
 QString JobView::speedString() const
