@@ -325,8 +325,7 @@ void DesktopView::setContainment(Plasma::Containment *containment)
     }
 
     if (oldContainment) {
-        disconnect(oldContainment, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
-        disconnect(oldContainment, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxClosed()));
+        disconnect(oldContainment, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(toolBoxOpened(bool)));
         disconnect(oldContainment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
         if (zoomLevel == Plasma::DesktopZoom) {
             //make sure actions are up-to-date
@@ -335,14 +334,14 @@ void DesktopView::setContainment(Plasma::Containment *containment)
     }
 
     if (containment) {
-        connect(containment, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
+        connect(containment, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(toolBoxOpened(bool)));
         connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
     }
 
     View::setContainment(containment);
 }
 
-void DesktopView::toolBoxOpened()
+void DesktopView::toolBoxOpened(bool open)
 {
     if (isDashboardVisible()) {
         return;
@@ -353,21 +352,22 @@ void DesktopView::toolBoxOpened()
     if (!info.isSupported(NET::WM2ShowingDesktop)) {
         return;
     }
-#endif
-    Plasma::Containment *c = containment();
-    disconnect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
-    connect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxClosed()));
-    connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
-            this, SLOT(showDesktopUntoggled(WId)));
 
-#ifndef Q_WS_WIN
-    info.setShowingDesktop(true);
+    if (open) {
+        connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
+                this, SLOT(showDesktopUntoggled(WId)));
+    } else {
+        disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
+                   this, SLOT(showDesktopUntoggled(WId)));
+    }
+
+    info.setShowingDesktop(open);
 #endif
 }
 
 void DesktopView::showWidgetExplorer()
 {
-    if (m_dashboard && m_dashboard->isVisible()) {
+    if (isDashboardVisible()) {
         return;
     }
 
@@ -377,54 +377,18 @@ void DesktopView::showWidgetExplorer()
     }
 }
 
-void DesktopView::toolBoxClosed()
-{
-    if (isDashboardVisible()) {
-        return;
-    }
-
-#ifndef Q_WS_WIN
-    NETRootInfo info(QX11Info::display(), NET::Supported);
-    if (!info.isSupported(NET::WM2ShowingDesktop)) {
-        return;
-    }
-#endif
-
-    Plasma::Containment *c = containment();
-    disconnect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxClosed()));
-    disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
-               this, SLOT(showDesktopUntoggled(WId)));
-    connect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
-
-#ifndef Q_WS_WIN
-    info.setShowingDesktop(false);
-#endif
-}
-
 void DesktopView::showDesktopUntoggled(WId id)
 {
     if (isDashboardVisible()) {
         return;
     }
 
-    disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
-               this, SLOT(showDesktopUntoggled(WId)));
-
     Plasma::Containment *c = containment();
     if (c) {
-        disconnect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxClosed()));
-        connect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
-        containment()->setToolBoxOpen(false);
+        c->setToolBoxOpen(false);
     }
 
-#ifndef Q_WS_WIN
-    Plasma::ZoomLevel zoomLevel = PlasmaApp::self()->desktopZoomLevel();
-    NETRootInfo info(QX11Info::display(), NET::Supported);
-    if (zoomLevel == Plasma::DesktopZoom && info.isSupported(NET::WM2ShowingDesktop)) {
-        info.setShowingDesktop(false);
-    }
     KWindowSystem::activateWindow(id);
-#endif
 }
 
 void DesktopView::containmentAdded(Plasma::Containment *c)
@@ -462,7 +426,7 @@ void DesktopView::zoomIn(Plasma::ZoomLevel zoomLevel)
             setSceneRect(containment()->geometry());
         }
 
-        toolBoxClosed();
+        toolBoxOpened(false);
     } else if (zoomLevel == Plasma::GroupZoom) {
         qreal factor = Plasma::scalingFactor(zoomLevel);
         factor = factor / matrix().m11();

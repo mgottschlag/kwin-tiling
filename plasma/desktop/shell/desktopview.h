@@ -86,8 +86,7 @@ public slots:
     void screenResized(Kephal::Screen *);
     void screenMoved(Kephal::Screen *);
     void adjustSize();
-    void toolBoxOpened();
-    void toolBoxClosed();
+    void toolBoxOpened(bool);
     void showDesktopUntoggled(WId id);
     void showWidgetExplorer();
     void containmentAdded(Plasma::Containment *c);
