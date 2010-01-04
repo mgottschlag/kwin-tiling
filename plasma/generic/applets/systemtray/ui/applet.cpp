@@ -777,7 +777,13 @@ NotificationWidget *Applet::addNotification(Notification *notification)
     }
 
     emit activate();
-    showPopup(qMin(m_autoHideTimeout, notification->timeout()));
+
+    //notification->timeout() = 0 actually means eternal life
+    if (notification->timeout() > 0) {
+        showPopup(qMin(m_autoHideTimeout, notification->timeout()));
+    } else {
+        showPopup(m_autoHideTimeout);
+    }
 
 
     bool found = false;
