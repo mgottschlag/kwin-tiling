@@ -52,6 +52,7 @@ ControllerWindow::ControllerWindow(QWidget* parent)
     setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_TranslucentBackground);
     setFocus(Qt::ActiveWindowFocusReason);
+    setLocation(Plasma::BottomEdge);
 
     QPalette pal = palette();
     pal.setBrush(backgroundRole(), Qt::transparent);
@@ -141,12 +142,11 @@ QSize ControllerWindow::sizeHint() const
 
 void ControllerWindow::setLocation(const Plasma::Location &loc)
 {
-    if (m_location == loc || !m_containment) {
+    if (m_location == loc) {
         return;
     }
 
     m_location = loc;
-    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(m_containment->screen());
 
     switch (loc) {
     case Plasma::LeftEdge:
@@ -183,9 +183,9 @@ void ControllerWindow::setLocation(const Plasma::Location &loc)
             break;
         case Plasma::TopEdge:
         case Plasma::BottomEdge:
+        default:
             m_widgetExplorer->setOrientation(Qt::Horizontal);
             break;
-        default:
             break;
         }
     }
@@ -219,11 +219,11 @@ Plasma::Location ControllerWindow::location() const
 
 Qt::Orientation ControllerWindow::orientation() const
 {
-    if (m_location == Plasma::TopEdge || m_location == Plasma::BottomEdge) {
-        return Qt::Horizontal;
+    if (m_location == Plasma::LeftEdge || m_location == Plasma::RightEdge) {
+        return Qt::Vertical;
     }
 
-    return Qt::Vertical;
+    return Qt::Horizontal;
 }
 
 void ControllerWindow::showWidgetExplorer()
