@@ -663,6 +663,8 @@ void TaskGroupItem::popupMenu()
         } else {
             m_popupDialog->show();
         }
+        m_offscreenWidget->layout()->activate();
+        m_offscreenWidget->resize(m_offscreenWidget->effectiveSizeHint(Qt::PreferredSize));
         m_popupDialog->raise();
         KWindowSystem::activateWindow(m_popupDialog->winId());
         //kDebug() << m_popupDialog->size() << m_tasksLayout->size();
