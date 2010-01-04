@@ -1213,16 +1213,34 @@
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>tabWidget</tabstop>
   <tabstop>schemeList</tabstop>
   <tabstop>schemeKnsButton</tabstop>
   <tabstop>schemeImportButton</tabstop>
   <tabstop>schemeSaveButton</tabstop>
   <tabstop>schemeRemoveButton</tabstop>
+  <tabstop>useInactiveEffects</tabstop>
+  <tabstop>inactiveSelectionEffect</tabstop>
+  <tabstop>shadeSortedColumn</tabstop>
+  <tabstop>applyToAlien</tabstop>
   <tabstop>contrastSlider</tabstop>
   <tabstop>colorSet</tabstop>
   <tabstop>commonColorTable</tabstop>
+  <tabstop>inactiveIntensityBox</tabstop>
+  <tabstop>inactiveIntensitySlider</tabstop>
+  <tabstop>inactiveColorBox</tabstop>
+  <tabstop>inactiveColorSlider</tabstop>
+  <tabstop>inactiveContrastBox</tabstop>
+  <tabstop>inactiveContrastSlider</tabstop>
+  <tabstop>inactiveColorButton</tabstop>
+  <tabstop>disabledIntensityBox</tabstop>
+  <tabstop>disabledIntensitySlider</tabstop>
+  <tabstop>disabledColorBox</tabstop>
+  <tabstop>disabledColorSlider</tabstop>
+  <tabstop>disabledContrastBox</tabstop>
+  <tabstop>disabledContrastSlider</tabstop>
+  <tabstop>disabledColorButton</tabstop>
   <tabstop>colorTable</tabstop>
-  <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources/>
  <connections/>
