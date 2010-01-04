@@ -321,7 +321,7 @@ QVariant PlasmaWebApplet::callJsFunction(const QString& func, const QVariantList
 {
     if (loaded()) {
         m_args = args;
-        QString cmd = func + '(';
+        QString cmd = "if (window." + func + ") { " + func + '(';
         for(int i = 0; i < args.count(); ++i) {
             if (i > 0) {
                 cmd += ',';
@@ -332,7 +332,7 @@ QVariant PlasmaWebApplet::callJsFunction(const QString& func, const QVariantList
                 cmd += QString("window.plasmoid.arg(%1)").arg(i);
             }
         }
-        cmd += ')';
+        cmd += ") }";
         //kDebug() << cmd;
         return page()->mainFrame()->evaluateJavaScript(cmd);
     }
