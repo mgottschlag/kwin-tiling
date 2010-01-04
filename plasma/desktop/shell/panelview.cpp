@@ -451,7 +451,7 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
     m_visibilityMode = mode;
     config().writeEntry("panelVisibility", (int)mode);
 
-    if (m_visibilityMode == AutoHide) {
+    if (m_visibilityMode == AutoHide && !m_editting) {
         QTimer::singleShot(2000, this, SLOT(startAutoHide()));
     }
 }
