@@ -107,7 +107,7 @@ void CurrentAppControl::constraintsEvent(Plasma::Constraints constraints)
             setMinimumSize(0, KIconLoader::SizeSmallMedium*2 + fm.xHeight()*20);
         } else {
             m_currentTask->setOrientation(Qt::Horizontal);
-            m_currentTask->setMaximumSize(QWIDGETSIZE_MAX, size().height());
+            m_currentTask->setMaximumSize(KIconLoader::SizeSmallMedium*2 + fm.width('M')*30, size().height());
             setMinimumSize(KIconLoader::SizeSmallMedium*2 + fm.width('M')*20, 0);
         }
     }
