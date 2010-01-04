@@ -243,7 +243,7 @@ class CalendarTablePrivate
                     hoverRect = QRectF(columnToX(column) - glowRadius,
                                        rowToY(row) - glowRadius,
                                        cellW + glowRadius * 2,
-                                       cellH + glowRadius * 2);
+                                       cellH + glowRadius * 2).adjusted(-2,-2,2,2);
                     hoverWeekdayColumn = adjustColumn(column);
                     hoverWeekRow = row;
                 }
@@ -251,12 +251,14 @@ class CalendarTablePrivate
 
             // now update what is needed, and only what is needed!
             if (hoverRect != oldHoverRect) {
-                if (oldHoverRect.isValid()) {
+                //FIXME: update only of a piece seems to paint over the old stuff
+                /*if (oldHoverRect.isValid()) {
                     calendarTable->update(oldHoverRect);
                 }
                 if (hoverRect.isValid()) {
                     calendarTable->update(hoverRect);
-                }
+                }*/
+                calendarTable->update();
             }
         }
 
