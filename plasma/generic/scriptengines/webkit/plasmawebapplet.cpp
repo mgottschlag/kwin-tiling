@@ -169,21 +169,25 @@ bool PlasmaWebApplet::init()
 
 void PlasmaWebApplet::makeStylesheet()
 {
-    if (page() && m_temp.open()) {
+    if (!page()) {
+        return;
+    }
+
+    KTemporaryFile temp;
+    if (temp.open()) {
         KColorScheme plasmaColorTheme = KColorScheme(QPalette::Active, KColorScheme::View,
-                Plasma::Theme::defaultTheme()->colorScheme());
+                                                     Plasma::Theme::defaultTheme()->colorScheme());
         QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-        QColor backgroundColor =
-                Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+        QColor backgroundColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
         QFont font = Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
 
         QString css = QString(CSS).arg(textColor.name())
                                   .arg(backgroundColor.name())
                                   .arg(font.family())
                                   .arg(font.pointSize());
-        m_temp.write(css.toUtf8());
-        page()->settings()->setUserStyleSheetUrl(QUrl(m_temp.fileName()));
-        m_temp.close();
+        temp.write(css.toUtf8());
+        page()->settings()->setUserStyleSheetUrl(QUrl(temp.fileName()));
+        temp.close();
     }
 }
 

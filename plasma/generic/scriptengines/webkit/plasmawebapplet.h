@@ -105,8 +105,6 @@ private:
     DataEngineDataWrapper m_dataEngineData;
     ConfigGroupWrapper m_config;
     ConfigGroupWrapper m_globalConfig;
-    KTemporaryFile m_temp;
-    bool m_useDefaultSize;
     static QString m_jsConstants;
 };
 
