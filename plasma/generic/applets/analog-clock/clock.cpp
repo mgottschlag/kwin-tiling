@@ -61,7 +61,6 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     KGlobal::locale()->insertCatalog("timezones4");
     setHasConfigurationInterface(true);
     resize(256, 256);
-    setPreferredSize(256, 256);
     setAspectRatioMode(Plasma::Square);
     setBackgroundHints(NoBackground);
 
@@ -117,6 +116,14 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
 
     if (constraints & Plasma::SizeConstraint) {
         invalidateCache();
+    }
+
+    if (constraints & Plasma::FormFactorConstraint) {
+        if (formFactor() == Plasma::Planar || formFactor() == Plasma::MediaCenter) {
+            setPreferredSize(256, 256);
+        } else {
+            setPreferredSize(-1, -1);
+        }
     }
 }
 
