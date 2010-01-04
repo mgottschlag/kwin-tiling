@@ -155,7 +155,7 @@ bool Solid::Control::PowerManager::setBrightness(float brightness, const QString
     if(device.isEmpty())
     {
         Solid::Control::PowerManager::BrightnessControlsList controls = brightnessControlsAvailable();
-        if(controls.size() == 0)
+        if(controls.keys(Solid::Control::PowerManager::Screen).isEmpty())
         {
 #ifdef Q_WS_WIN
             return false;
@@ -185,7 +185,7 @@ float Solid::Control::PowerManager::brightness(const QString &device)
     if(device.isEmpty())
     {
         Solid::Control::PowerManager::BrightnessControlsList controls = brightnessControlsAvailable();
-        if(controls.size() == 0)
+        if(controls.keys(Solid::Control::PowerManager::Screen).isEmpty())
         {
 #ifdef Q_WS_WIN
             return false;
