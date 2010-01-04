@@ -32,6 +32,7 @@
 #include <Plasma/Theme>
 #include <Plasma/FrameSvg>
 #include <Plasma/View>
+#include <Plasma/WindowEffects>
 
 #include "widgetsExplorer/widgetexplorer.h"
 
@@ -145,6 +146,8 @@ void ControllerWindow::setLocation(const Plasma::Location &loc)
     if (m_location == loc) {
         return;
     }
+
+    Plasma::WindowEffects::slideWindow(this, loc);
 
     m_location = loc;
 

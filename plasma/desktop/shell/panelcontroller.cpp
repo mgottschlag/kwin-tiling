@@ -45,7 +45,6 @@
 #include <Plasma/Theme>
 #include <Plasma/FrameSvg>
 #include <Plasma/Dialog>
-#include <Plasma/WindowEffects>
 
 #include "plasmaapp.h"
 #include "positioningruler.h"
