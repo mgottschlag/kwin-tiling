@@ -173,22 +173,32 @@ void PlasmaWebApplet::makeStylesheet()
         return;
     }
 
-    KTemporaryFile temp;
-    if (temp.open()) {
-        KColorScheme plasmaColorTheme = KColorScheme(QPalette::Active, KColorScheme::View,
-                                                     Plasma::Theme::defaultTheme()->colorScheme());
-        QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-        QColor backgroundColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-        QFont font = Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
+    // this temporary file contains the style sheet to be used when loading/reloading the
+    // web content. we keep it around for the lifetime of the widget since it needs to be there
+    // when reloaded
 
-        QString css = QString(CSS).arg(textColor.name())
-                                  .arg(backgroundColor.name())
-                                  .arg(font.family())
-                                  .arg(font.pointSize());
-        temp.write(css.toUtf8());
-        page()->settings()->setUserStyleSheetUrl(QUrl(temp.fileName()));
-        temp.close();
+    //TODO perhaps share this file between all instances? perhaps even keep it persistent on disk
+    // to limit disk write/deletes. that would be simple enough, the only trick would be to
+    // ensure it updates (and only updates once) on Plasma theme changes so that it doesn't get
+    // written to in a flury by every PlasmaWebApplet when the theme updates
+    // probably a reference counted singleton would be the way to go here.
+    if (!m_styleSheetFile.open()) {
+        return;
     }
+
+    KColorScheme plasmaColorTheme = KColorScheme(QPalette::Active, KColorScheme::View,
+            Plasma::Theme::defaultTheme()->colorScheme());
+    QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    QColor backgroundColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+    QFont font = Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
+
+    QString css = QString(CSS).arg(textColor.name())
+                              .arg(backgroundColor.name())
+                              .arg(font.family())
+                              .arg(font.pointSize());
+    m_styleSheetFile.write(css.toUtf8());
+    page()->settings()->setUserStyleSheetUrl(QUrl(m_styleSheetFile.fileName()));
+    m_styleSheetFile.close();
 }
 
 void PlasmaWebApplet::themeChanged()

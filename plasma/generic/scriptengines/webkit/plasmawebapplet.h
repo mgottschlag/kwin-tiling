@@ -105,6 +105,7 @@ private:
     DataEngineDataWrapper m_dataEngineData;
     ConfigGroupWrapper m_config;
     ConfigGroupWrapper m_globalConfig;
+    KTemporaryFile m_styleSheetFile;
     static QString m_jsConstants;
 };
 
