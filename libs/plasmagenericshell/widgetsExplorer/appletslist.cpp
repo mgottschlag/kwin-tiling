@@ -135,7 +135,7 @@ void AppletsListWidget::init()
     m_appletsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_appletListLinearLayout = new QGraphicsLinearLayout(m_orientation, m_appletsListWidget);
 
-    m_slide->setWidgetToAnimate(m_appletsListWidget);
+    m_slide->setTargetWidget(m_appletsListWidget);
 
     //make its events pass through its parent
     m_appletsListWidget->installEventFilter(this);
