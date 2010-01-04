@@ -131,7 +131,6 @@ QGraphicsWidget* PlasmoidTask::createWidget(Plasma::Applet *host)
 
     connect(d->applet, SIGNAL(configNeedsSaving()), host, SIGNAL(configNeedsSaving()));
     connect(d->applet, SIGNAL(releaseVisualFocus()), host, SIGNAL(releaseVisualFocus()));
-    connect(d->applet, SIGNAL(activate()), host, SIGNAL(activate()));
 
     return static_cast<QGraphicsWidget*>(d->applet);
 }
