@@ -54,8 +54,8 @@ void DashboardApplet::loadFinished(bool success)
 {
     WebApplet::loadFinished(success);
     if (success) {
-        page()->resize(page()->mainFrame()->contentsSize());
-        applet()->resize(page()->mainFrame()->contentsSize());
+        view()->resize(view()->mainFrame()->contentsSize());
+        applet()->resize(view()->mainFrame()->contentsSize());
     }
 }
 

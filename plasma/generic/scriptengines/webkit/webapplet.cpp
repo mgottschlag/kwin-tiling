@@ -39,7 +39,7 @@ class WebApplet::Private
 {
 public:
     Private()
-        : page(0)
+        : view(0)
     {
     }
 
@@ -50,22 +50,22 @@ public:
         Plasma::Applet *applet = q->applet();
         applet->setAcceptsHoverEvents(true);
 
-        page = new Plasma::WebView(applet);
-        QObject::connect(page, SIGNAL(loadFinished(bool)),
+        view = new Plasma::WebView(applet);
+        QObject::connect(view, SIGNAL(loadFinished(bool)),
                          q, SLOT(loadFinished(bool)));
-        QObject::connect(page->page(), SIGNAL(frameCreated(QWebFrame *)),
+        QObject::connect(view->page(), SIGNAL(frameCreated(QWebFrame *)),
                          q, SLOT(connectFrame(QWebFrame *)));
-        q->connectFrame(page->mainFrame());
+        q->connectFrame(view->mainFrame());
 
-        page->mainFrame()->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff);
-        page->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
+        view->mainFrame()->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff);
+        view->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
 
-        QPalette palette = page->palette();
+        QPalette palette = view->palette();
         palette.setColor(QPalette::Base, Qt::transparent);
-        page->page()->setPalette(palette);
+        view->page()->setPalette(palette);
     }
 
-    Plasma::WebView *page;
+    Plasma::WebView *view;
     bool loaded;
 };
 
@@ -90,13 +90,14 @@ bool WebApplet::init()
 
     if (webpage.isEmpty()) {
         kDebug() << "fail! no page";
-        delete d->page;
-        d->page = 0;
+        delete d->view;
+        d->view = 0;
         return false;
     }
+
     KUrl url(package()->filePath("html"));
     kDebug() << webpage << package()->path() << url;
-    d->page->mainFrame()->setHtml(dataFor(webpage), url);
+    d->view->mainFrame()->setHtml(dataFor(webpage), url);
     return true;
 }
 
@@ -111,7 +112,7 @@ void WebApplet::paintInterface(QPainter *painter,
 
 Plasma::WebView* WebApplet::view() const
 {
-    return d->page;
+    return d->view;
 }
 
 void WebApplet::loadFinished(bool success)
@@ -138,9 +139,9 @@ QByteArray WebApplet::dataFor(const QString &str)
     return data;
 }
 
-Plasma::WebView* WebApplet::page()
+QWebPage *WebApplet::page()
 {
-    return d->page;
+    return d->view ? d->view->page() : 0;
 }
 
 bool WebApplet::loaded()

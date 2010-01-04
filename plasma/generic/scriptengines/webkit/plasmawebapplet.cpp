@@ -23,6 +23,7 @@ THE SOFTWARE.
 
 #include "plasmawebapplet.h"
 
+#include <QAction>
 #include <QWebPage>
 #include <QWebFrame>
 
@@ -157,6 +158,9 @@ bool PlasmaWebApplet::init()
         connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
                 this, SLOT(themeChanged()));
         makeStylesheet();
+        page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
+        QAction *inspectAction = page()->action(QWebPage::InspectElement);
+        inspectAction->setText(i18n("Inspect this widget"));
         return true;
     }
 
@@ -178,7 +182,7 @@ void PlasmaWebApplet::makeStylesheet()
                                   .arg(font.family())
                                   .arg(font.pointSize());
         m_temp.write(css.toUtf8());
-        page()->page()->settings()->setUserStyleSheetUrl(QUrl(m_temp.fileName()));
+        page()->settings()->setUserStyleSheetUrl(QUrl(m_temp.fileName()));
         m_temp.close();
     }
 }
@@ -206,8 +210,8 @@ void PlasmaWebApplet::constraintsEvent(Plasma::Constraints constraints)
         qreal right;
         qreal bottom;
         applet()->getContentsMargins(&left, &top, &right, &bottom);
-        page()->setPos(QPointF(left, top));
-        page()->resize(WebApplet::size() - QSizeF(left + right, top + bottom));
+        view()->setPos(QPointF(left, top));
+        view()->resize(WebApplet::size() - QSizeF(left + right, top + bottom));
         //kDebug() << WebApplet::size() << left << right << top << bottom << page()->size();
     }
     callJsFunction("constraintsEvent", QVariantList() << (int)constraints);

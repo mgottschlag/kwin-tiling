@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include <Plasma/AppletScript>
 
 class QWebFrame;
+class QWebPage;
 
 namespace Plasma
 {
@@ -49,7 +50,7 @@ protected:
                                 const QStyleOptionGraphicsItem *option,
                                 const QRect &contentsRect);
     virtual QByteArray dataFor(const QString &str);
-    Plasma::WebView* page();
+    QWebPage *page();
     bool loaded();
 
 protected slots:
