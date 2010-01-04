@@ -420,14 +420,14 @@ void PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment *containment)
     ControllerWindow *controller = controllerPtr.data();
 
     if (!controller) {
-        kDebug() << "controller not found for screen" << screen;
+        //kDebug() << "controller not found for screen" << screen;
         controllerPtr = controller = new ControllerWindow(0);
         m_widgetExplorers.insert(screen, controllerPtr);
     }
 
     controller->setContainment(containment);
-    controller->showWidgetExplorer();
     controller->setLocation(containment->location());
+    controller->showWidgetExplorer();
     controller->resize(controller->sizeHint());
 
     bool moved = false;
@@ -621,15 +621,17 @@ Plasma::Corona* PlasmaApp::corona()
 
         //actions!
         KAction *activityAction = c->addAction("add sibling containment");
+        connect(activityAction, SIGNAL(triggered()), this, SLOT(addContainment()));
         activityAction->setText(i18n("Add Activity"));
         activityAction->setIcon(KIcon("list-add"));
-        connect(activityAction, SIGNAL(triggered()), this, SLOT(addContainment()));
+        activityAction->setData(Plasma::AbstractToolBox::AddTool);
         activityAction->setShortcut(KShortcut("alt+d, alt+a"));
         activityAction->setShortcutContext(Qt::ApplicationShortcut);
 
         KAction *zoomAction = c->addAction("zoom out");
         zoomAction->setText(i18n("Zoom Out"));
         zoomAction->setIcon(KIcon("zoom-out"));
+        zoomAction->setData(Plasma::AbstractToolBox::ControlTool);
         connect(zoomAction, SIGNAL(triggered()), this, SLOT(zoomOut()));
         zoomAction->setShortcut(KShortcut("alt+d, -"));
 
@@ -804,8 +806,8 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
 
-    if (containment->containmentType() == Plasma::Containment::DesktopContainment
-            && m_zoomLevel == Plasma::DesktopZoom) {
+    if (containment->containmentType() == Plasma::Containment::DesktopContainment &&
+        m_zoomLevel == Plasma::DesktopZoom) {
         foreach (QAction *action, m_corona->actions()) {
             containment->addToolBoxAction(action);
         }
