@@ -165,7 +165,7 @@ PanelController::PanelController(QWidget* parent)
     m_modeLabel = new QLabel(i18n("Visibility"), m_configWidget);
     modeLayout->addWidget(m_modeLabel);
 
-    m_normalPanelTool = addTool("checkmark", i18n("Always visible"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
+    m_normalPanelTool = addTool("layer-visible-on", i18n("Always visible"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
     m_normalPanelTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     modeLayout->addWidget(m_normalPanelTool);
     connect(m_normalPanelTool, SIGNAL(toggled(bool)), this, SLOT(panelVisibilityModeChanged(bool)));
