@@ -309,9 +309,9 @@ void DeviceItem::setHovered(const bool hovered)
             m_barFade = Plasma::Animator::create(Plasma::Animator::FadeAnimation, this);
             m_iconFade = Plasma::Animator::create(Plasma::Animator::FadeAnimation, this);
 
-            m_labelFade->setWidgetToAnimate(m_descriptionLabel);
-            m_barFade->setWidgetToAnimate(m_capacityBar);
-            m_iconFade->setWidgetToAnimate(m_leftActionIcon);
+            m_labelFade->setTargetWidget(m_descriptionLabel);
+            m_barFade->setTargetWidget(m_capacityBar);
+            m_iconFade->setTargetWidget(m_leftActionIcon);
 
             m_labelFade->setProperty("targetOpacity", 0);
             m_barFade->setProperty("targetOpacity", 0);
