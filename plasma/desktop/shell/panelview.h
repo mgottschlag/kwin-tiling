@@ -199,7 +199,6 @@ private:
     bool isHorizontal() const;
     QTimeLine *timeLine();
     void positionSpacer(const QPoint pos);
-    void startAutoHide();
     bool hasPopup();
 
 #ifdef Q_WS_WIN
@@ -219,6 +218,7 @@ private Q_SLOTS:
     void overlayDestroyed(PanelAppletOverlay *overlay);
     void overlayMoved(PanelAppletOverlay *overlay);
     void panelDeleted();
+    void startAutoHide();
     void hideMousePoll();
     void unhideHintMousePoll();
     void resetTriggerEnteredSuppression();

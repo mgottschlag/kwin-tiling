@@ -450,6 +450,10 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
 
     m_visibilityMode = mode;
     config().writeEntry("panelVisibility", (int)mode);
+
+    if (m_visibilityMode == AutoHide) {
+        QTimer::singleShot(2000, this, SLOT(startAutoHide()));
+    }
 }
 
 PanelView::VisibilityMode PanelView::visibilityMode() const
