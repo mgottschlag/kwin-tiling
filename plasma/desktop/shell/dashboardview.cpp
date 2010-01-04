@@ -73,6 +73,7 @@ protected:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
     {
+        Q_UNUSED(option)
         Q_UNUSED(widget)
         m_svg->paintFrame(painter);
     }
@@ -106,6 +107,7 @@ DashboardView::DashboardView(Plasma::Containment *containment, Plasma::View *vie
     m_hideAction = new QAction(i18n("Hide Dashboard"), this);
     m_hideAction->setIcon(KIcon("preferences-desktop-display"));
     m_hideAction->setEnabled(false);
+    m_hideAction->setData(Plasma::AbstractToolBox::DestructiveTool);
     containment->addToolBoxAction(m_hideAction);
     connect(m_hideAction, SIGNAL(triggered()), this, SLOT(hideView()));
 
