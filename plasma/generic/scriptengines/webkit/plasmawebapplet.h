@@ -106,7 +106,7 @@ private:
     ConfigGroupWrapper m_config;
     ConfigGroupWrapper m_globalConfig;
     KTemporaryFile m_styleSheetFile;
-    static QString m_jsConstants;
+    static QString s_jsConstants;
 };
 
 #endif

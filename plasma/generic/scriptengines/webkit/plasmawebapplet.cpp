@@ -97,14 +97,14 @@ THE SOFTWARE.
 
 #define CSS "body { font-family: %3; font-size: %4pt; color:%1; background-color:%2 }\n"
 
-QString PlasmaWebApplet::m_jsConstants;
+QString PlasmaWebApplet::s_jsConstants;
 
 PlasmaWebApplet::PlasmaWebApplet(QObject *parent, const QVariantList &args)
 : WebApplet(parent, args)
 {
-    if (m_jsConstants.isEmpty()) {
-        m_jsConstants = JS_CONSTANTS_OTHER;
-        m_jsConstants += QString(JS_CONSTANTS_CONSTRAINT)
+    if (s_jsConstants.isEmpty()) {
+        s_jsConstants = JS_CONSTANTS_OTHER;
+        s_jsConstants += QString(JS_CONSTANTS_CONSTRAINT)
                 .arg(Plasma::NoConstraint)
                 .arg(Plasma::FormFactorConstraint)
                 .arg(Plasma::LocationConstraint)
@@ -114,30 +114,30 @@ PlasmaWebApplet::PlasmaWebApplet(QObject *parent, const QVariantList &args)
                 .arg(Plasma::StartupCompletedConstraint)
                 .arg(Plasma::ContextConstraint)
                 .arg(Plasma::AllConstraints);
-        m_jsConstants += QString(JS_CONSTANTS_BACKGROUND)
+        s_jsConstants += QString(JS_CONSTANTS_BACKGROUND)
                 .arg(Plasma::Applet::NoBackground)
                 .arg(Plasma::Applet::StandardBackground)
                 .arg(Plasma::Applet::TranslucentBackground)
                 .arg(Plasma::Applet::DefaultBackground);
-        m_jsConstants += QString(JS_CONSTANTS_SCROLLBAR)
+        s_jsConstants += QString(JS_CONSTANTS_SCROLLBAR)
                 .arg(Qt::Horizontal)
                 .arg(Qt::Vertical)
                 .arg(Qt::ScrollBarAsNeeded)
                 .arg(Qt::ScrollBarAlwaysOff)
                 .arg(Qt::ScrollBarAlwaysOn);
-        m_jsConstants += QString(JS_CONSTANTS_ASPECTRATIO)
+        s_jsConstants += QString(JS_CONSTANTS_ASPECTRATIO)
                 .arg(Plasma::InvalidAspectRatioMode)
                 .arg(Plasma::IgnoreAspectRatio)
                 .arg(Plasma::KeepAspectRatio)
                 .arg(Plasma::Square)
                 .arg(Plasma::ConstrainedSquare)
                 .arg(Plasma::FixedSize);
-        m_jsConstants += QString(JS_CONSTANTS_FORMFACTOR)
+        s_jsConstants += QString(JS_CONSTANTS_FORMFACTOR)
                 .arg(Plasma::Planar)
                 .arg(Plasma::MediaCenter)
                 .arg(Plasma::Horizontal)
                 .arg(Plasma::Vertical);
-        m_jsConstants += QString(JS_CONSTANTS_LOCATION)
+        s_jsConstants += QString(JS_CONSTANTS_LOCATION)
                 .arg(Plasma::Floating)
                 .arg(Plasma::Desktop)
                 .arg(Plasma::FullScreen)
@@ -211,7 +211,7 @@ void PlasmaWebApplet::loadFinished(bool success)
 {
     WebApplet::loadFinished(success);
     if (success) {
-        page()->mainFrame()->evaluateJavaScript(m_jsConstants);
+        page()->mainFrame()->evaluateJavaScript(s_jsConstants);
         callJsFunction("init");
     }
 }
