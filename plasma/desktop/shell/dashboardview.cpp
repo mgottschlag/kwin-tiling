@@ -28,6 +28,7 @@
 
 #include <KWindowSystem>
 
+#include <Plasma/AbstractToolBox>
 #include <Plasma/Applet>
 #include <Plasma/Corona>
 #include <Plasma/Containment>

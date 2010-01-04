@@ -58,6 +58,7 @@
 
 #include <ksmserver_interface.h>
 
+#include <Plasma/AbstractToolBox>
 #include <Plasma/AccessAppletJob>
 #include <Plasma/AccessManager>
 #include <Plasma/AuthorizationManager>
