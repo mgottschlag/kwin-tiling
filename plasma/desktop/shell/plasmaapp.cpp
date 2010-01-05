@@ -49,6 +49,7 @@
 #include <QVBoxLayout>
 
 #include <KAction>
+#include <KAuthorized>
 #include <KCrash>
 #include <KDebug>
 #include <KCmdLineArgs>
@@ -812,6 +813,10 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
         foreach (QAction *action, m_corona->actions()) {
             containment->addToolBoxAction(action);
         }
+    }
+
+    if (!isPanelContainment(containment) && !KAuthorized::authorize("editable_desktop_icons")) {
+        containment->setImmutability(Plasma::SystemImmutable);
     }
 }
 
