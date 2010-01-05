@@ -207,6 +207,7 @@ bool Calendar::setDate(const QDate &toDate)
     if (!ret) {
         refreshWidgets();
     }
+    d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
 
     return ret;
 }
