@@ -25,17 +25,18 @@
 #include <QTimer>
 
 // KDE
+#include <KAuthorized>
 #include <KDebug>
 #include <KDiskFreeSpaceInfo>
 #include <KIcon>
 #include <KUrl>
 #include <KSycoca>
-#include <kfileplacesmodel.h>
-#include <solid/device.h>
-#include <solid/deviceinterface.h>
-#include <solid/devicenotifier.h>
-#include <solid/storageaccess.h>
-#include <solid/storagedrive.h>
+#include <KFilePlacesModel>
+#include <Solid/Device>
+#include <Solid/DeviceInterface>
+#include <Solid/DeviceNotifier>
+#include <Solid/StorageAccess>
+#include <Solid/StorageDrive>
 
 // Local
 #include "core/models.h"
@@ -190,7 +191,11 @@ int SystemModel::rowCount(const QModelIndex &parent) const
     } else if (!parent.parent().isValid()) {
         switch (parent.row()) {
         case APPLICATIONS_ROW:
-            return d->appsList.size() + 1;
+            if (KAuthorized::authorize("run_command")) {
+                return d->appsList.size() + 1;
+            } else {
+                return d->appsList.size();
+            }
             break;
         case BOOKMARKS_ROW:
             return d->placesModel->rowCount();

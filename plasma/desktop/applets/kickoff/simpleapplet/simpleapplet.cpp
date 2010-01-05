@@ -37,20 +37,23 @@
 #include <QtGui/QListWidget>
 #include <QtGui/QListWidgetItem>
 
-// KDE
-#include <KIcon>
-#include <KIconLoader>
+// KDE Libs
+#include <KActionCollection>
+#include <KAuthorized>
+#include <KBookmarkMenu>
+#include <KCModuleInfo>
+#include <KComboBox>
 #include <KConfigDialog>
+#include <KIcon>
+#include <KIconButton>
+#include <KIconLoader>
 #include <KMenu>
 #include <KProcess>
-#include <KActionCollection>
-#include <KBookmarkMenu>
 #include <KRun>
 #include <KServiceTypeTrader>
-#include <KCModuleInfo>
 #include <KToolInvocation>
-#include <KIconButton>
-#include <KComboBox>
+
+// KDE Base
 #include <kworkspace/kworkspace.h>
 #include <solid/control/powermanager.h>
 
@@ -282,7 +285,11 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
     connect(this, SIGNAL(activate()), this, SLOT(toggleMenu()));
 
     if (args.count() < 2) { // assuming args is only used for passing in submenu paths
-        d->viewtypes << "RecentlyUsedApplications" << "Applications" << "Favorites" << "RunCommand" << "Leave";
+        d->viewtypes << "RecentlyUsedApplications" << "Applications" << "Favorites";
+        if (KAuthorized::authorize("run_command")) {
+            d->viewtypes << "RunCommand";
+        }
+        d->viewtypes << "Leave";
         d->iconname = "start-here-kde";
     } else {
         d->viewtypes << "Applications";
@@ -707,7 +714,9 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
                     }
                 }
             } else if(vtname == "RunCommand") {
-                menuview->addAction(KIcon(d->viewIcon(RunCommand)), d->viewText(RunCommand))->setData(KUrl("leave:/run"));
+                if (KAuthorized::authorize("run_command")) {
+                    menuview->addAction(KIcon(d->viewIcon(RunCommand)), d->viewText(RunCommand))->setData(KUrl("leave:/run"));
+                }
             } else if(vtname == "SwitchUser") {
                 menuview->addAction(KIcon(d->viewIcon(SwitchUser)), d->viewText(SwitchUser))->setData(KUrl("leave:/switch"));
             } else if(vtname == "SaveSession") {

@@ -26,6 +26,7 @@
 #include <QModelIndex>
 
 // KDE
+#include <KAuthorized>
 #include <KDebug>
 #include <KRun>
 #include <KUrl>
@@ -53,7 +54,7 @@ class GenericItemHandler : public UrlItemHandler
 {
 public:
     virtual bool openUrl(const KUrl& url) {
-        if (url.protocol() == "run") {
+        if (url.protocol() == "run" && KAuthorized::authorize("run_command")) {
             QString interface("org.kde.krunner");
             org::kde::krunner::App krunner(interface, "/App", QDBusConnection::sessionBus());
             krunner.display();
