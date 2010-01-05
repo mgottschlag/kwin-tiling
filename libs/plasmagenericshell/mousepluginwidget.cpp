@@ -33,38 +33,43 @@
 
 Q_DECLARE_METATYPE(KPluginInfo)
 
-MousePluginWidget::MousePluginWidget(const QString &pluginName, const QString &trigger, QGridLayout *layoutHack, QObject *parent)
-    :QObject(parent),
-    m_configDlg(0),
-    m_containment(0),
-    m_lastConfigLocation(trigger),
-    m_tempConfigParent(QString(), KConfig::SimpleConfig)
+MousePluginWidget::MousePluginWidget(const QString &pluginName, const QString &trigger, QGridLayout *layoutHack, QWidget *parent)
+    : QObject(parent),
+      m_configDlg(0),
+      m_containment(0),
+      m_lastConfigLocation(trigger),
+      m_tempConfigParent(QString(), KConfig::SimpleConfig)
 {
     KPluginInfo::List plugins = Plasma::ContainmentActions::listContainmentActionsInfo();
-    if (plugins.count() == 0) {
+    if (plugins.isEmpty()) {
         //panic!!
-        QLabel *fail = new QLabel(i18n("No plugins found, check your installation."));
+        QLabel *fail = new QLabel(i18n("No plugins found, check your installation."), parent);
         layoutHack->addWidget(fail, 0, 0);
         return;
     }
 
     //make us some widgets
-    m_pluginList = new QComboBox();
-    m_aboutButton = new QToolButton();
-    m_clearButton = new QToolButton();
-    m_triggerButton = new MouseInputButton();
-    m_configButton = new QToolButton();
+    m_pluginList = new QComboBox(parent);
+    m_aboutButton = new QToolButton(parent);
+    m_clearButton = new QToolButton(parent);
+    m_triggerButton = new MouseInputButton(parent);
+    m_configButton = new QToolButton(parent);
     //m_ui.description->setText(plugin.comment());
 
     //plugin list
     //FIXME is there some way to share this across all the entries?
     foreach (const KPluginInfo& plugin, plugins) {
+        if (plugin.property("NoDisplay").toBool()) {
+            continue;
+        }
+
         m_pluginList->addItem(KIcon(plugin.icon()), plugin.name(), QVariant::fromValue(plugin));
         if (plugin.pluginName() == pluginName) {
             m_pluginList->setCurrentIndex(m_pluginList->count() - 1);
             m_plugin = plugin;
         }
     }
+
     if (! m_plugin.isValid()) {
         //probably an empty string; pick the first one
         m_pluginList->setCurrentIndex(0);
@@ -151,12 +156,13 @@ void MousePluginWidget::clearTrigger()
     emit triggerChanged(oldTrigger, QString());
 
     //byebye!
-    m_triggerButton->deleteLater();
     m_pluginList->deleteLater();
-    m_configButton->deleteLater();
     m_aboutButton->deleteLater();
     m_clearButton->deleteLater();
-    this->deleteLater();
+    m_triggerButton->deleteLater();
+    m_configButton->deleteLater();
+
+    deleteLater();
 }
 
 void MousePluginWidget::changeTrigger(const QString &oldTrigger, const QString& newTrigger)
@@ -174,7 +180,7 @@ void MousePluginWidget::updateConfig(const QString &trigger)
 void MousePluginWidget::configure()
 {
     if (!m_pluginInstance) {
-        Plasma::ContainmentActions * pluginInstance = Plasma::ContainmentActions::load(m_containment, m_plugin.pluginName());
+        Plasma::ContainmentActions *pluginInstance = Plasma::ContainmentActions::load(m_containment, m_plugin.pluginName());
         if (!pluginInstance) {
             //FIXME tell user
             kDebug() << "failed to load plugin!";
@@ -208,7 +214,8 @@ void MousePluginWidget::configure()
 
         m_configDlg->setWindowTitle(title.isEmpty() ? i18n("Configure Plugin") :title);
         //put buttons below
-        QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+        QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+                                                         Qt::Horizontal, m_configDlg);
         lay->addWidget(buttons);
 
         //TODO other signals?

@@ -36,7 +36,7 @@ class  MousePluginWidget : public QObject
 {
     Q_OBJECT
 public:
-    MousePluginWidget(const QString &plugin, const QString &trigger, QGridLayout *layoutHack, QObject *parent = 0);
+    MousePluginWidget(const QString &plugin, const QString &trigger, QGridLayout *layoutHack, QWidget *parent = 0);
     ~MousePluginWidget();
 
     void setTrigger(const QString &trigger);
