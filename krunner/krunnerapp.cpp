@@ -213,7 +213,7 @@ void KRunnerApp::initialize()
 
         // Single runner mode actions shortcuts
 
-        foreach (QString runnerId, m_runnerManager->singleModeAdvertisedRunnerIds()) {
+        foreach (const QString &runnerId, m_runnerManager->singleModeAdvertisedRunnerIds()) {
             a = m_actionCollection->addAction(runnerId);
             a->setText(i18nc("Run krunner restricting the search only to runner %1", "Run Command (runner \"%1\" only)",
                        m_runnerManager->runnerName(runnerId)));
