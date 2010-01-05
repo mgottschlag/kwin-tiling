@@ -208,15 +208,18 @@ void KRunnerApp::initialize()
 
 
     m_actionCollection->readSettings();
-    m_runnerManager->reloadConfiguration(); // pre-load the runners
+    if (KAuthorized::authorize("run_command")) {
+        m_runnerManager->reloadConfiguration(); // pre-load the runners
 
-    // Single runner mode actions shortcuts
+        // Single runner mode actions shortcuts
 
-    foreach (QString runnerId, m_runnerManager->singleModeAdvertisedRunnerIds()) {
-        a = m_actionCollection->addAction(runnerId);
-        a->setText(i18nc("Run krunner restricting the search only to runner %1", "Run Command (runner \"%1\" only)", m_runnerManager->runnerName(runnerId)));
-        a->setGlobalShortcut(KShortcut());
-        connect(a, SIGNAL(triggered(bool)), SLOT(singleRunnerModeActionTriggered()));
+        foreach (QString runnerId, m_runnerManager->singleModeAdvertisedRunnerIds()) {
+            a = m_actionCollection->addAction(runnerId);
+            a->setText(i18nc("Run krunner restricting the search only to runner %1", "Run Command (runner \"%1\" only)",
+                       m_runnerManager->runnerName(runnerId)));
+            a->setGlobalShortcut(KShortcut());
+            connect(a, SIGNAL(triggered(bool)), SLOT(singleRunnerModeActionTriggered()));
+        }
     }
 }
 
@@ -230,7 +233,7 @@ void KRunnerApp::singleRunnerModeActionTriggered()
 
 void KRunnerApp::querySingleRunner(const QString& runnerId, const QString &term)
 {
-    if (!KAuthorized::authorizeKAction("run_command")) {
+    if (!KAuthorized::authorize("run_command")) {
         return;
     }
 
