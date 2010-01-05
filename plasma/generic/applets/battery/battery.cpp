@@ -613,7 +613,8 @@ void Battery::updateStatus()
             m_remainingTimeLabel->show();
             m_remainingInfoLabel->show();
             // we don't have too much accuracy so only give hours and minutes
-            m_remainingInfoLabel->setText(KGlobal::locale()->prettyFormatDuration(m_remainingMSecs));
+            int remainingMinutes = m_remainingMSecs - (m_remainingMSecs % 60000);
+            m_remainingInfoLabel->setText(KGlobal::locale()->prettyFormatDuration(remainingMinutes));
         } else {
             m_remainingTimeLabel->hide();
             m_remainingInfoLabel->hide();
