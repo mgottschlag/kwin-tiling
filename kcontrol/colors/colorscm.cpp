@@ -1,6 +1,6 @@
 /* KDE Display color scheme setup module
  * Copyright (C) 2007 Matthew Woehlke <mw_triad@users.sourceforge.net>
- * Copyright (C) 2007 Jeremy Whiting <jeremy@scitools.com>
+ * Copyright (C) 2007 Jeremy Whiting <jpwhiting@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     );
     about->addAuthor( ki18n("Matthew Woehlke"), KLocalizedString(),
                      "mw_triad@users.sourceforge.net" );
-    about->addAuthor( ki18n("Jeremy Whiting"), KLocalizedString(), "jeremy@scitools.com");
+    about->addAuthor( ki18n("Jeremy Whiting"), KLocalizedString(), "jpwhiting@kde.org");
     setAboutData( about );
 
     m_config = KSharedConfig::openConfig("kdeglobals");
