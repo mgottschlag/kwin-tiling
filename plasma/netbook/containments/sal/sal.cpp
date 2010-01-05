@@ -100,6 +100,7 @@ void SearchLaunch::init()
     connect(this, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
 
     m_runnermg = new Plasma::RunnerManager(this);
+    m_runnermg->reloadConfiguration();
     connect(m_runnermg, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
             this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
 

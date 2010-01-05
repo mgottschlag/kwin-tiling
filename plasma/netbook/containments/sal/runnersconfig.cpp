@@ -45,7 +45,7 @@ RunnersConfig::RunnersConfig(Plasma::RunnerManager *manager, QWidget *parent)
 
     KService::List offers = KServiceTypeTrader::self()->query("Plasma/Runner");
     QList<KPluginInfo> runnerInfo = KPluginInfo::fromServices(offers);
-    addPlugins(runnerInfo, KPluginSelector::ReadConfigFile, i18n("Available Features"), QString(), KSharedConfig::openConfig("krunnerrc"));
+    addPlugins(runnerInfo, KPluginSelector::ReadConfigFile, i18n("Available Features"), QString(), KGlobal::config());
 }
 
 void RunnersConfig::updateRunner(const QByteArray &name)
