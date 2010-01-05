@@ -31,11 +31,7 @@
 NotificationsEngine::NotificationsEngine( QObject* parent, const QVariantList& args )
     : Plasma::DataEngine( parent, args ), m_nextId( 1 )
 {
-    NotificationsAdaptor* adaptor = new NotificationsAdaptor(this);
-    connect(this, SIGNAL(NotificationClosed(uint, uint)),
-            adaptor, SIGNAL(NotificationClosed(uint,uint)));
-    connect(this, SIGNAL(ActionInvoked(uint, const QString&)),
-            adaptor, SIGNAL(ActionInvoked(uint, const QString&)));
+    new NotificationsAdaptor(this);
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.registerService( "org.freedesktop.Notifications" );
