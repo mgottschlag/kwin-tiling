@@ -118,7 +118,7 @@ void KRunnerApp::initialize()
     m_actionCollection = new KActionCollection(this);
     KAction* a = 0;
 
-    if (KAuthorized::authorizeKAction("run_command")) {
+    if (KAuthorized::authorize("run_command")) {
         a = m_actionCollection->addAction("Run Command");
         a->setText(i18n("Run Command"));
         a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::Key_F2));
@@ -142,13 +142,17 @@ void KRunnerApp::initialize()
     a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::Key_F5));
     connect( a, SIGNAL(triggered(bool)), SLOT(slotShowWindowList()));
 */
-    a = m_actionCollection->addAction("Switch User");
-    a->setText(i18n("Switch User"));
-    a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Insert));
-    connect(a, SIGNAL(triggered(bool)), SLOT(switchUser()));
+    if (KAuthorized::authorize("switch_user")) {
+        a = m_actionCollection->addAction("Switch User");
+        a->setText(i18n("Switch User"));
+        a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Insert));
+        connect(a, SIGNAL(triggered(bool)), SLOT(switchUser()));
+    }
 
+    //FIXME: lock/logout should be in the session management runner which also provides similar
+    // functions
 #ifdef Q_WS_X11
-    if (KAuthorized::authorizeKAction("lock_screen")) {
+    if (KAuthorized::authorize("lock_screen")) {
         a = m_actionCollection->addAction("Lock Session");
         a->setText(i18n("Lock Session"));
         a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_L));
@@ -156,7 +160,7 @@ void KRunnerApp::initialize()
     }
 #endif
 
-    if (KAuthorized::authorizeKAction("logout")) {
+    if (KAuthorized::authorize("logout")) {
         a = m_actionCollection->addAction("Log Out");
         a->setText(i18n("Log Out"));
         a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Delete));
@@ -179,6 +183,9 @@ void KRunnerApp::initialize()
     }
 
     //Setup the interface after we have set up the actions
+    //TODO: if !KAuthorized::authorize("run_comand") (and !"switch_user" i suppose?)
+    //      then we probably don't need the interface at all. would be another place
+    //      for some small improvements in footprint in that case
     switch (KRunnerSettings::interface()) {
         default:
         case KRunnerSettings::EnumInterface::CommandOriented:
@@ -223,6 +230,10 @@ void KRunnerApp::singleRunnerModeActionTriggered()
 
 void KRunnerApp::querySingleRunner(const QString& runnerId, const QString &term)
 {
+    if (!KAuthorized::authorizeKAction("run_command")) {
+        return;
+    }
+
     m_runnerManager->setSingleModeRunnerId(runnerId);
     m_runnerManager->setSingleMode(!runnerId.isEmpty());
 
@@ -274,12 +285,20 @@ void KRunnerApp::showTaskManagerWithFilter(const QString &filterText)
 
 void KRunnerApp::display()
 {
+    if (!KAuthorized::authorize("run_command")) {
+        return;
+    }
+
     m_runnerManager->setSingleMode(false);
     m_interface->display();
 }
 
 void KRunnerApp::displaySingleRunner(const QString &runnerId)
 {
+    if (!KAuthorized::authorize("run_command")) {
+        return;
+    }
+
     m_runnerManager->setSingleModeRunnerId(runnerId);
     m_runnerManager->setSingleMode(!runnerId.isEmpty());
     m_interface->display();
@@ -287,6 +306,11 @@ void KRunnerApp::displaySingleRunner(const QString &runnerId)
 
 void KRunnerApp::displayOrHide()
 {
+    if (!KAuthorized::authorize("run_command")) {
+        m_interface->hide();
+        return;
+    }
+
     if (!m_interface->isVisible()) {
         m_runnerManager->setSingleMode(false);
     }
@@ -306,13 +330,21 @@ void KRunnerApp::displayOrHide()
 
 void KRunnerApp::query(const QString &term)
 {
+    if (!KAuthorized::authorize("run_command")) {
+        return;
+    }
+
     m_interface->display(term);
 }
 
 void KRunnerApp::displayWithClipboardContents()
 {
-   QString clipboardData = QApplication::clipboard()->text(QClipboard::Selection);
-   m_interface->display(clipboardData);
+    if (!KAuthorized::authorize("run_command")) {
+        return;
+    }
+
+    QString clipboardData = QApplication::clipboard()->text(QClipboard::Selection);
+    m_interface->display(clipboardData);
 }
 
 void KRunnerApp::switchUser()
@@ -335,33 +367,28 @@ void KRunnerApp::taskDialogFinished()
 
 void KRunnerApp::logout()
 {
-    logout( KWorkSpace::ShutdownConfirmYes,
-            KWorkSpace::ShutdownTypeDefault );
+    logout(KWorkSpace::ShutdownConfirmYes, KWorkSpace::ShutdownTypeDefault);
 }
 
 void KRunnerApp::logoutWithoutConfirmation()
 {
-    logout( KWorkSpace::ShutdownConfirmNo,
-            KWorkSpace::ShutdownTypeNone );
+    logout(KWorkSpace::ShutdownConfirmNo, KWorkSpace::ShutdownTypeNone);
 }
 
 void KRunnerApp::haltWithoutConfirmation()
 {
-    logout( KWorkSpace::ShutdownConfirmNo,
-            KWorkSpace::ShutdownTypeHalt );
+    logout(KWorkSpace::ShutdownConfirmNo, KWorkSpace::ShutdownTypeHalt);
 }
 
 void KRunnerApp::rebootWithoutConfirmation()
 {
-    logout( KWorkSpace::ShutdownConfirmNo,
-            KWorkSpace::ShutdownTypeReboot );
+    logout(KWorkSpace::ShutdownConfirmNo, KWorkSpace::ShutdownTypeReboot);
 }
 
-void KRunnerApp::logout( KWorkSpace::ShutdownConfirm confirm,
-                       KWorkSpace::ShutdownType sdtype )
+void KRunnerApp::logout(KWorkSpace::ShutdownConfirm confirm, KWorkSpace::ShutdownType sdtype)
 {
 #ifndef Q_WS_WIN
-    if ( !KWorkSpace::requestShutDown( confirm, sdtype ) ) {
+    if (!KWorkSpace::requestShutDown(confirm, sdtype)) {
         // TODO: should we show these errors in Interface?
         KMessageBox::error( 0, i18n("Could not log out properly.\nThe session manager cannot "
                                     "be contacted. You can try to force a shutdown by pressing "
