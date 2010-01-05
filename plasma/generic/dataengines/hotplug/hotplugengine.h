@@ -27,6 +27,8 @@
 
 #include <Solid/Predicate>
 
+class KDirWatch;
+
 /**
  * This class is connected with solid, filter devices and provide signal with source for applet in Plasma
  */
@@ -46,14 +48,18 @@ class HotplugEngine : public Plasma::DataEngine
     private:
         void onDeviceAdded(Solid::Device &dev, bool added = true);
         void findPredicates();
+        QStringList predicatesForDevice(Solid::Device &device);
 
     private Q_SLOTS:
         void processNextStartupDevice();
+        void updatePredicates(const QString &path);
 
     private:
         QHash<QString, Solid::Predicate> m_predicates;
         QHash<QString, Solid::Device> m_startList;
+        QHash<QString, Solid::Device> m_devices;
         Solid::Predicate m_encryptedPredicate;
+        KDirWatch *m_dirWatch;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(hotplug, HotplugEngine)

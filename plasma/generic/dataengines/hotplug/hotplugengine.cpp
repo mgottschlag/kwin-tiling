@@ -21,6 +21,7 @@
 
 #include <QTimer>
 
+#include <KDirWatch>
 #include <KConfigGroup>
 #include <KDebug>
 #include <KLocale>
@@ -38,8 +39,14 @@
 //#define HOTPLUGENGINE_TIMING
 
 HotplugEngine::HotplugEngine(QObject* parent, const QVariantList& args)
-    : Plasma::DataEngine(parent, args)
+    : Plasma::DataEngine(parent, args),
+      m_dirWatch(new KDirWatch(this))
 {
+    QStringList folders = KGlobal::dirs()->findDirs("data", "solid/actions/");
+    foreach (const QString &folder, folders) {
+        m_dirWatch->addDir(folder, KDirWatch::WatchFiles);
+    }
+    connect(m_dirWatch, SIGNAL(dirty(const QString &)), this, SLOT(updatePredicates(const QString &)));
 }
 
 HotplugEngine::~HotplugEngine()
@@ -91,6 +98,8 @@ void HotplugEngine::processNextStartupDevice()
 
 void HotplugEngine::findPredicates()
 {
+    m_predicates.clear();
+
     foreach (const QString &path, KGlobal::dirs()->findAllResources("data", "solid/actions/")) {
         KDesktopFile cfg(path);
         const QString string_predicate = cfg.desktopGroup().readEntry("X-KDE-Solid-Predicate");
@@ -101,6 +110,48 @@ void HotplugEngine::findPredicates()
     if (m_predicates.isEmpty()) {
         m_predicates.insert(QString(), Solid::Predicate::fromString(QString()));
     }
+}
+
+void HotplugEngine::updatePredicates(const QString &path)
+{
+    Q_UNUSED(path)
+
+    findPredicates();
+
+    QHashIterator<QString, Solid::Device> it(m_devices);
+    while (it.hasNext()) {
+        it.next();
+        Solid::Device device(it.value());
+        QString udi(it.key());
+
+        QStringList predicates = predicatesForDevice(device);
+        if (!predicates.isEmpty()) {
+            Plasma::DataEngine::Data data;
+            data.insert("predicateFiles", predicates);
+
+            setData(udi, data);
+        } else if (sources().contains(udi)) {
+            removeSource(udi);
+            scheduleSourcesUpdated();
+        }
+    }
+}
+
+QStringList HotplugEngine::predicatesForDevice(Solid::Device &device)
+{
+    QStringList interestingDesktopFiles;
+    //search in all desktop configuration file if the device inserted is a correct device
+    QHashIterator<QString, Solid::Predicate> it(m_predicates);
+    //kDebug() << "=================" << udi;
+    while (it.hasNext()) {
+        it.next();
+        if (it.value().matches(device)) {
+            //kDebug() << "     hit" << it.key();
+            interestingDesktopFiles << it.key();
+        }
+    }
+
+    return interestingDesktopFiles;
 }
 
 void HotplugEngine::onDeviceAdded(const QString &udi)
@@ -139,21 +190,13 @@ void HotplugEngine::onDeviceAdded(Solid::Device &device, bool added)
         }
     }
 
+    m_devices.insert(device.udi(), device);
+
     if (m_predicates.isEmpty()) {
         findPredicates();
     }
 
-    QStringList interestingDesktopFiles;
-    //search in all desktop configuration file if the device inserted is a correct device
-    QHashIterator<QString, Solid::Predicate> it(m_predicates);
-    //kDebug() << "=================" << udi;
-    while (it.hasNext()) {
-        it.next();
-        if (it.value().matches(device)) {
-            //kDebug() << "     hit" << it.key();
-            interestingDesktopFiles << it.key();
-        }
-    }
+    QStringList interestingDesktopFiles = predicatesForDevice(device);
 
     bool isEncryptedContainer =  m_encryptedPredicate.matches(device);
 
@@ -193,6 +236,7 @@ void HotplugEngine::onDeviceRemoved(const QString &udi)
         return;
     }
 
+    m_devices.remove(udi);
     removeSource(udi);
     scheduleSourcesUpdated();
 }
