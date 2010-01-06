@@ -61,6 +61,7 @@ ControllerWindow::ControllerWindow(QWidget* parent)
 
     m_background->setImagePath("dialogs/background");
     m_background->setContainsMultipleImages(true);
+    Plasma::WindowEffects::overrideShadow(winId(), true);
 
     m_layout->setContentsMargins(0, 0, 0, 0);
 
