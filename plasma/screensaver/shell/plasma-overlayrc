@@ -1,5 +1,5 @@
 [KDE Action Restrictions][$i]
-PlasmaAllowConfigureWhenLocked=false
+plasma/allow_configure_when_locked=false
 
 [Constraints]
 FileDialog=false
