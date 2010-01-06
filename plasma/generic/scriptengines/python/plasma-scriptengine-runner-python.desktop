@@ -16,6 +16,7 @@ Name[sr@ijekavianlatin]=Python izvođač
 Name[sr@latin]=Python izvođač
 Name[sv]=Python körningsprogram
 Name[uk]=Запуск для Python
+Name[x-test]=xxPython Runnerxx
 Name[zh_CN]=Python 运行器
 Name[zh_TW]=Python 執行器
 Comment=Plasma Runner support for Python
@@ -33,6 +34,7 @@ Comment[sr@ijekavianlatin]=Podrška plasma izvođača za Python
 Comment[sr@latin]=Podrška plasma izvođača za Python
 Comment[sv]=Plasma körningsstöd för Python
 Comment[uk]=Підтримка Python у інструментах запуску
+Comment[x-test]=xxPlasma Runner support for Pythonxx
 Comment[zh_CN]=支持 Python 的 Plasma 运行器
 Comment[zh_TW]=支援 Python 的執行器
 
