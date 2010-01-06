@@ -35,6 +35,7 @@
 #include <KIcon>
 
 #include <Plasma/Containment>
+#include <plasma/containmentactionspluginsconfig.h>
 
 SaverCorona::SaverCorona(QObject *parent)
     : Plasma::Corona(parent)
@@ -49,6 +50,11 @@ void SaverCorona::init()
     if (m_numScreens > 1) {
         kDebug() << "maybe someone should implement multiple screen support";
     }
+
+    Plasma::ContainmentActionsPluginsConfig plugins;
+    plugins.addPlugin(Qt::NoModifier, Qt::RightButton, "minimalcontextmenu");
+    //should I add paste too?
+    setContainmentActionsDefaults(Plasma::Containment::CustomContainment, plugins);
 
     bool unlocked = immutability() == Plasma::Mutable;
 
