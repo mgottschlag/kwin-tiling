@@ -118,6 +118,7 @@ private:
     KRunnerDialog *m_interface;
     KSystemActivityDialog *m_tasks;
     StartupId *m_startupId;
+    bool m_firstTime;
 };
 
 #endif /* KRUNNERAPP_H */

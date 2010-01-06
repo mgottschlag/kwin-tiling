@@ -71,7 +71,8 @@ KRunnerApp::KRunnerApp()
     : KUniqueApplication(),
       m_interface(0),
       m_tasks(0),
-      m_startupId(NULL)
+      m_startupId(NULL),
+      m_firstTime(true)
 {
     initialize();
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanUp()));
@@ -255,11 +256,11 @@ void KRunnerApp::initializeStartupNotification()
     // Startup notification
     KLaunchSettings::self()->readConfig();
 #ifdef Q_WS_X11
-    if(!KLaunchSettings::busyCursor()) {
+    if (!KLaunchSettings::busyCursor()) {
         delete m_startupId;
         m_startupId = NULL;
     } else {
-        if(m_startupId == NULL ) {
+        if (m_startupId == NULL ) {
             m_startupId = new StartupId;
         }
 
@@ -403,11 +404,10 @@ void KRunnerApp::logout(KWorkSpace::ShutdownConfirm confirm, KWorkSpace::Shutdow
 
 int KRunnerApp::newInstance()
 {
-    static bool firstTime = true;
-    if ( firstTime ) {
-        firstTime = false;
+    if (m_firstTime) {
+        m_firstTime = false;
     } else {
-        m_interface->display();
+        display();
     }
 
     return KUniqueApplication::newInstance();
@@ -433,16 +433,15 @@ void KRunnerApp::reloadConfig()
         interface == KRunnerSettings::EnumInterface::TaskOriented) {
         m_interface->deleteLater();
         m_interface = new QsDialog(m_runnerManager);
-        m_interface->display();
     } else if (!qobject_cast<Interface*>(m_interface) &&
                interface == KRunnerSettings::EnumInterface::CommandOriented) {
         m_interface->deleteLater();
         m_interface = new Interface(m_runnerManager);
-        m_interface->display();
     }
 
     m_interface->setFreeFloating(KRunnerSettings::freeFloating());
     connect(KRunnerSettings::self(), SIGNAL(configChanged()), this, SLOT(reloadConfig()));
+    display();
 }
 
 #include "krunnerapp.moc"
