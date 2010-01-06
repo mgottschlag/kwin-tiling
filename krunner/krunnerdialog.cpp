@@ -184,7 +184,6 @@ void KRunnerDialog::positionOnScreen()
     }
 
     show();
-    KWindowSystem::forceActiveWindow(winId());
 
     if (m_floating) {
         KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
@@ -194,6 +193,7 @@ void KRunnerDialog::positionOnScreen()
         Plasma::WindowEffects::slideWindow(this, Plasma::TopEdge);
     }
 
+    KWindowSystem::forceActiveWindow(winId());
     //kDebug() << "moving to" << m_screenPos[screen];
 }
 
