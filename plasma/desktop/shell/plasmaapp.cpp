@@ -367,6 +367,10 @@ void PlasmaApp::dashboardClosed()
 
 void PlasmaApp::showInteractiveConsole()
 {
+    if (KGlobal::config()->isImmutable() || !KAuthorized::authorize("plasma-desktop/scripting_console")) {
+        return;
+    }
+
     InteractiveConsole *console = m_console.data();
     if (!console) {
         m_console = console = new InteractiveConsole(m_corona);
