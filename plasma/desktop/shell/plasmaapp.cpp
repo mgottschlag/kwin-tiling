@@ -1081,14 +1081,19 @@ void PlasmaApp::setFixedDashboard(bool fixedDashboard)
     Plasma::Containment *c = 0;
     if (fixedDashboard) {
         //avoid the containmentAdded signal being emitted
-        m_corona->blockSignals(true);
         c = m_corona->addContainment("desktop");
-        m_corona->blockSignals(false);
         m_corona->addOffscreenWidget(c);
     }
 
+    QSize maxViewSize;
     foreach (DesktopView *view, m_desktops) {
         view->setDashboardContainment(c);
+        if (view->size().width() > maxViewSize.width() && view->size().height() > maxViewSize.height()) {
+            maxViewSize = view->size();
+        }
+    }
+    if (fixedDashboard) {
+        c->resize(maxViewSize);
     }
 }
 
