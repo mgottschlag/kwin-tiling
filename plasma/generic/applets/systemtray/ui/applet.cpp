@@ -50,6 +50,8 @@
 #include <plasma/dataenginemanager.h>
 #include <plasma/dataengine.h>
 #include <Plasma/TabBar>
+#include <Plasma/Containment>
+#include <Plasma/Corona>
 
 #include "config.h"
 #ifdef HAVE_LIBXSS      // Idle detection.
@@ -363,6 +365,15 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
         checkSizes();
     }
 
+    if (constraints & Plasma::ImmutableConstraint) {
+        if (m_plasmoidTasksInterface) {
+            bool immutable = (immutability() != Plasma::Mutable);
+            m_plasmoidTasksUi.applets->setEnabled(!immutable);
+            m_plasmoidTasksUi.unlockLabel->setVisible(immutable);
+            m_plasmoidTasksUi.unlockButton->setVisible(immutable);
+        }
+    }
+
     s_manager->forwardConstraintsEvent(constraints);
 }
 
@@ -560,6 +571,15 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
 
         m_plasmoidTasksUi.setupUi(m_plasmoidTasksInterface.data());
 
+        QAction *unlockAction = 0;
+        if (containment() && containment()->corona()) {
+            unlockAction = containment()->corona()->action("lock widgets");
+        }
+        if (unlockAction) {
+            disconnect(m_plasmoidTasksUi.unlockButton, SIGNAL(clicked()), unlockAction, SLOT(trigger()));
+            connect(m_plasmoidTasksUi.unlockButton, SIGNAL(clicked()), unlockAction, SLOT(trigger()));
+        }
+
 
         connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
         connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
@@ -569,9 +589,11 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
                         i18n("Choose which information to show"));
         parent->addPage(m_autoHideInterface.data(), i18n("Auto Hide"), "window-suppressed");
         parent->addPage(m_plasmoidTasksInterface.data(), i18n("Plasma Widgets"), "plasma");
-        if (m_plasmoidTasksInterface) {
-            m_plasmoidTasksInterface.data()->setEnabled(immutability() == Plasma::Mutable);
-        }
+
+        bool immutable = (immutability() != Plasma::Mutable);
+        m_plasmoidTasksUi.applets->setEnabled(!immutable);
+        m_plasmoidTasksUi.unlockLabel->setVisible(immutable);
+        m_plasmoidTasksUi.unlockButton->setVisible(immutable);
     }
 
     m_autoHideUi.icons->clear();
