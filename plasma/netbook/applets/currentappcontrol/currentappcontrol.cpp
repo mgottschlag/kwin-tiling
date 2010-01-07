@@ -140,7 +140,7 @@ void CurrentAppControl::activeWindowChanged(WId id)
 
 void CurrentAppControl::windowRemoved(WId id)
 {
-    syncActiveWindow();
+    QTimer::singleShot(300, this, SLOT(syncActiveWindow()));
 }
 
 void CurrentAppControl::syncActiveWindow()
@@ -149,7 +149,8 @@ void CurrentAppControl::syncActiveWindow()
     bool applicationActive = false;
 
     foreach (QWidget *widget, QApplication::topLevelWidgets()) {
-         if (widget->winId() == m_pendingActiveWindow) {
+         if (widget->winId() == m_pendingActiveWindow ||
+             widget->winId() == KWindowSystem::activeWindow()) {
              applicationActive = true;
              break;
          }
@@ -158,7 +159,7 @@ void CurrentAppControl::syncActiveWindow()
     if (applicationActive) {
         m_activeWindow = 0;
         m_currentTask->setIcon("preferences-system-windows");
-        const int activeWindows = qMax(0, KWindowSystem::windows().count()-1);
+        const int activeWindows = qMax(0, windowsCount()-1);
         if (activeWindows) {
             m_currentTask->setText(i18np("%1 running app", "%1 running apps", activeWindows));
         } else {
@@ -291,7 +292,9 @@ int CurrentAppControl::windowsCount() const
         KWindowInfo info = KWindowSystem::windowInfo(window, NET::WMWindowType | NET::WMPid | NET::WMState);
         if (!(info.state() & NET::SkipTaskbar) &&
             info.windowType(NET::NormalMask | NET::DialogMask |
-                            NET::OverrideMask | NET::UtilityMask) != NET::Utility) {
+                            NET::OverrideMask | NET::UtilityMask) != NET::Utility &&
+            info.windowType(NET::NormalMask | NET::DialogMask |
+                            NET::OverrideMask | NET::UtilityMask | NET::DockMask) != NET::Dock) {
             ++count;
         }
     }
