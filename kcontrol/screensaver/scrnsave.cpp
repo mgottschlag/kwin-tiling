@@ -132,9 +132,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     connect(mEnabledCheckBox, SIGNAL(toggled(bool)),
             this, SLOT(slotEnable(bool)));
 
-
-    mActivateLbl->setEnabled(mEnabled);
-
     mWaitEdit->setRange(1, INT_MAX);
     mWaitEdit->setSuffix(ki18np(" minute", " minutes"));
     mWaitEdit->setValue(mTimeout/60);
@@ -146,9 +143,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     mLockCheckBox->setChecked( mLock );
     connect( mLockCheckBox, SIGNAL( toggled( bool ) ),
              this, SLOT( slotLock( bool ) ) );
-
-
-    mLockLbl->setEnabled(mEnabled && mLock);
 
     mWaitLockEdit->setRange(1, 300);
     mWaitLockEdit->setSuffix(ki18np(" second", " seconds"));
@@ -519,10 +513,8 @@ void KScreenSaver::slotPreviewExited(K3Process *)
 void KScreenSaver::slotEnable(bool e)
 {
     mEnabled = e;
-    mActivateLbl->setEnabled( e );
     mWaitEdit->setEnabled( e );
     mLockCheckBox->setEnabled( e );
-    mLockLbl->setEnabled( e && mLock );
     mWaitLockEdit->setEnabled( e && mLock );
     mChanged = true;
     emit changed(true);
@@ -753,7 +745,6 @@ void KScreenSaver::slotLockTimeoutChanged(int to )
 void KScreenSaver::slotLock( bool l )
 {
     mLock = l;
-    mLockLbl->setEnabled( l );
     mWaitLockEdit->setEnabled( l );
     mChanged = true;
     emit changed(true);
