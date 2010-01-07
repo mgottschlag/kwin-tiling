@@ -709,8 +709,8 @@ bool Klipper::blockFetchingNewData()
         m_overflowClearTimer.start( 1000 );
     if( ++m_overflowCounter > MAX_CLIPBOARD_CHANGES )
         return true;
-    return false;
 #endif
+    return false;
 }
 
 void Klipper::slotCheckPending()
