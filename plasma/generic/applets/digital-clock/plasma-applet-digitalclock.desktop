@@ -143,13 +143,13 @@ Comment[sv]=Tid visad med digitalformat
 Comment[ta]=Time displayed in a digital format
 Comment[te]=సమయం డిజిటల్ ఫార్మాట్‌లో ప్రదర్శించబడుతుంది
 Comment[th]=เวลาที่จะแสดงในรูปแบบดิจิทัล
-Comment[tr]=Dijital biçimde gösterilen saat 
+Comment[tr]=Dijital biçimde gösterilen saat
 Comment[uk]=Час, показаний у цифровому форматі
 Comment[x-test]=xxTime displayed in a digital formatxx
 Comment[zh_CN]=以数字格式显示时间
 Comment[zh_TW]=以數位格式顯示時間
 
-Icon=clock
+Icon=preferences-system-time
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
 
