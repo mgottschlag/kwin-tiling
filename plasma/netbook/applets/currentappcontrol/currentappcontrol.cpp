@@ -241,6 +241,11 @@ void CurrentAppControl::toggleMaximizedWindow()
 
 void CurrentAppControl::listWindows()
 {
+    QGraphicsView *v = view();
+    if (v) {
+        KWindowSystem::forceActiveWindow(v->winId());
+    }
+
     if (Plasma::WindowEffects::isEffectAvailable(Plasma::WindowEffects::PresentWindows)) {
         Plasma::WindowEffects::presentWindows(view()->winId() , KWindowSystem::currentDesktop());
     } else if (!m_listDialog) {
