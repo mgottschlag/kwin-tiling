@@ -642,7 +642,7 @@
           <item>
            <widget class="QStackedWidget" name="stackPreview">
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="pageCommonPreview">
              <layout class="QVBoxLayout" name="verticalLayout">
@@ -907,22 +907,6 @@
          </property>
         </spacer>
        </item>
-       <item row="3" column="0" colspan="4">
-        <widget class="PreviewWidget" name="inactivePreview" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>10</height>
-          </size>
-         </property>
-        </widget>
-       </item>
        <item row="4" column="0" colspan="4">
         <spacer name="verticalSpacer_3">
          <property name="orientation">
@@ -935,6 +919,31 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="3" column="0" colspan="4">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Preview</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_6">
+          <item>
+           <widget class="PreviewWidget" name="inactivePreview" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>10</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -1148,22 +1157,6 @@
          </property>
         </spacer>
        </item>
-       <item row="3" column="0" colspan="4">
-        <widget class="PreviewWidget" name="disabledPreview" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>10</height>
-          </size>
-         </property>
-        </widget>
-       </item>
        <item row="4" column="0" colspan="4">
         <spacer name="verticalSpacer_2">
          <property name="orientation">
@@ -1176,6 +1169,31 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="3" column="0" colspan="4">
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Preview</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_8">
+          <item>
+           <widget class="PreviewWidget" name="disabledPreview" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>10</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
       </layout>
      </widget>
