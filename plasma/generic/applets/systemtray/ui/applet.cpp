@@ -367,10 +367,10 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
 
     if (constraints & Plasma::ImmutableConstraint) {
         if (m_plasmoidTasksInterface) {
-            bool immutable = (immutability() != Plasma::Mutable);
-            m_plasmoidTasksUi.applets->setEnabled(!immutable);
-            m_plasmoidTasksUi.unlockLabel->setVisible(immutable);
-            m_plasmoidTasksUi.unlockButton->setVisible(immutable);
+            bool visible = (immutability() == Plasma::UserImmutable);
+            m_plasmoidTasksUi.applets->setEnabled(immutability() == Plasma::Mutable);
+            m_plasmoidTasksUi.unlockLabel->setVisible(visible);
+            m_plasmoidTasksUi.unlockButton->setVisible(visible);
         }
     }
 
@@ -590,10 +590,10 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         parent->addPage(m_autoHideInterface.data(), i18n("Auto Hide"), "window-suppressed");
         parent->addPage(m_plasmoidTasksInterface.data(), i18n("Plasma Widgets"), "plasma");
 
-        bool immutable = (immutability() != Plasma::Mutable);
-        m_plasmoidTasksUi.applets->setEnabled(!immutable);
-        m_plasmoidTasksUi.unlockLabel->setVisible(immutable);
-        m_plasmoidTasksUi.unlockButton->setVisible(immutable);
+        bool visible = (immutability() == Plasma::UserImmutable);
+        m_plasmoidTasksUi.applets->setEnabled(immutability() == Plasma::Mutable);
+        m_plasmoidTasksUi.unlockLabel->setVisible(visible);
+        m_plasmoidTasksUi.unlockButton->setVisible(visible);
     }
 
     m_autoHideUi.icons->clear();
