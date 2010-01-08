@@ -170,6 +170,7 @@ void PlasmoidTask::appletDestroyed(QObject *object)
 {
     if (object == d->applet) {
         emit taskDeleted(d->typeId);
+        deleteLater();
     }
 }
 

@@ -22,6 +22,7 @@
 #include "taskarea.h"
 
 #include <QtCore/QSet>
+#include <QtCore/QTimer>
 #include <QtGui/QApplication>
 #include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QWidget> // QWIDGETSIZE_MAX
@@ -249,14 +250,20 @@ void TaskArea::removeTask(Task *task)
 {
     QGraphicsWidget *widget = task->widget(d->host, false);
 
-    if (!widget) {
-        return;
+    if (widget) {
+        //try to remove from all three layouts, one will succeed
+        d->firstTasksLayout->removeItem(widget);
+        d->normalTasksLayout->removeItem(widget);
+        d->lastTasksLayout->removeItem(widget);
+        relayout();
+    } else {
+        relayout();relayout();
+        QTimer::singleShot(200, this, SLOT(relayout()));
     }
+}
 
-    //try to remove from all three layouts, one will succeed
-    d->firstTasksLayout->removeItem(widget);
-    d->normalTasksLayout->removeItem(widget);
-    d->lastTasksLayout->removeItem(widget);
+void TaskArea::relayout()
+{
     d->topLayout->invalidate();
     emit sizeHintChanged(Qt::PreferredSize);
 }
