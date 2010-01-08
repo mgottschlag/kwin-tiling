@@ -37,7 +37,7 @@ PlasmaDesktopRunner::PlasmaDesktopRunner(QObject *parent, const QVariantList &ar
       m_desktopConsoleKeyword(i18nc("Note this is a KRunner keyword", "desktop console")),
       m_enabled(false)
 {
-    setObjectName("Command");
+    setObjectName("Plasma-Desktop");
     setIgnoredTypes(Plasma::RunnerContext::FileSystem |
                     Plasma::RunnerContext::NetworkLocation |
                     Plasma::RunnerContext::Help);
@@ -53,7 +53,7 @@ PlasmaDesktopRunner::~PlasmaDesktopRunner()
 
 void PlasmaDesktopRunner::match(Plasma::RunnerContext &context)
 {
-    if (m_enabled && context.query().startsWith(m_desktopConsoleKeyword)) {
+    if (m_enabled && context.query().startsWith(m_desktopConsoleKeyword, Qt::CaseInsensitive)) {
         Plasma::QueryMatch match(this);
         match.setId("plasma-desktop-console");
         match.setType(Plasma::QueryMatch::ExactMatch);
@@ -68,7 +68,6 @@ void PlasmaDesktopRunner::run(const Plasma::RunnerContext &context, const Plasma
 {
     Q_UNUSED(match)
 
-        kDebug() << m_enabled;
     if (m_enabled) {
         QDBusMessage message;
 
@@ -98,6 +97,9 @@ void PlasmaDesktopRunner::checkAvailability(const QString &name, const QString &
         enabled = QDBusConnection::sessionBus().interface()->isServiceRegistered(s_plasmaService).value();
     } else if (name == s_plasmaService) {
         enabled = !newOwner.isNull();
+    } else {
+        // it's not something we're interested in
+        return;
     }
 
     if (m_enabled != enabled) {
