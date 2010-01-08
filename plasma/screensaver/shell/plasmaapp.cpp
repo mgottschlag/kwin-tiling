@@ -163,7 +163,7 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     size_t size = sizeof(sysctlbuf);
     int memorySize;
     // This could actually use hw.physmem instead, but I can't find
-    // reliable documentation on how to read the value (which may 
+    // reliable documentation on how to read the value (which may
     // not fit in a 32 bit integer).
     if (!sysctlbyname("vm.stats.vm.v_page_size", sysctlbuf, &size, NULL, 0)) {
         memorySize = sysctlbuf[0] / 1024;
@@ -519,17 +519,9 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
 
         m_configDialog = new BackgroundDialog(resolution, containment, m_view);
         m_configDialog->setAttribute(Qt::WA_DeleteOnClose);
-        connect(m_configDialog, SIGNAL(destroyed(QObject*)),
-                this, SLOT(configDialogRemoved(QObject*)));
     }
 
     m_configDialog->show();
-}
-
-void PlasmaApp::configDialogRemoved(QObject* dialog)
-{
-    Q_UNUSED(dialog)
-    m_configDialog = 0;
 }
 
 void PlasmaApp::lock()

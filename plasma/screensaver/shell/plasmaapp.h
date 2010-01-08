@@ -22,6 +22,7 @@
 #define PLASMA_APP_H
 
 #include <QList>
+#include <QPointer>
 
 #include <KUniqueApplication>
 
@@ -100,7 +101,6 @@ private Q_SLOTS:
     void hideDialogs();
     void showDialogs();
     void configureContainment(Plasma::Containment*);
-    void configDialogRemoved(QObject* dialog);
     void syncConfig();
     void immutabilityChanged(Plasma::ImmutabilityType immutability);
 
@@ -113,7 +113,7 @@ private:
     Plasma::Corona *m_corona;
     SaverView *m_view;
     QList<QWidget*> m_dialogs;
-    BackgroundDialog *m_configDialog;
+    QPointer<BackgroundDialog> m_configDialog;
 
     qreal m_activeOpacity;
     qreal m_idleOpacity;
