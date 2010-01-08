@@ -121,7 +121,7 @@ void PlacesRunner::setupComplete(QModelIndex index, bool success)
     //kDebug() << "setup complete" << places << sender();
     if (success && places) {
         new KRun(places->url(index), 0);
-        delete places;
+        places->deleteLater();
     }
 }
 
