@@ -29,8 +29,6 @@ PlacesRunner::PlacesRunner(QObject* parent, const QVariantList &args)
 {
     Q_UNUSED(args)
     setObjectName("Places");
-    m_filePlaces = new KFilePlacesModel(this);
-    connect(m_filePlaces, SIGNAL(setupDone(QModelIndex, bool)), SLOT(setupComplete(QModelIndex, bool)));
     addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds file manager locations that match :q:")));
     addSyntax(Plasma::RunnerSyntax(i18n("places"), i18n("Lists all file manager locations")));
 }
@@ -49,13 +47,13 @@ void PlacesRunner::match(Plasma::RunnerContext &context)
     }
 
     const bool all = term.compare(i18n("places"), Qt::CaseInsensitive) == 0;
-
-    for (int i = 0; i <= m_filePlaces->rowCount(); i++) {
-        QModelIndex current_index = m_filePlaces->index(i, 0);
+    KFilePlacesModel places;
+    for (int i = 0; i <= places.rowCount(); i++) {
+        QModelIndex current_index = places.index(i, 0);
         Plasma::QueryMatch::Type type = Plasma::QueryMatch::NoMatch;
         qreal relevance = 0;
 
-        const QString text = m_filePlaces->text(current_index);
+        const QString text = places.text(current_index);
         if ((all && !text.isEmpty()) || text.compare(term, Qt::CaseInsensitive) == 0) {
             type = Plasma::QueryMatch::ExactMatch;
             relevance = all ? 0.9 : 1.0;
@@ -68,14 +66,14 @@ void PlacesRunner::match(Plasma::RunnerContext &context)
             Plasma::QueryMatch match(this);
             match.setType(type);
             match.setRelevance(relevance);
-            match.setIcon(KIcon(m_filePlaces->icon(current_index)));
+            match.setIcon(KIcon(places.icon(current_index)));
             match.setText(text);
 
             //if we have to mount it set the device udi instead of the URL, as we can't open it directly
-            if (m_filePlaces->isDevice(current_index) && m_filePlaces->setupNeeded(current_index)) {
-                match.setData(m_filePlaces->deviceForIndex(current_index).udi());
+            if (places.isDevice(current_index) && places.setupNeeded(current_index)) {
+                match.setData(places.deviceForIndex(current_index).udi());
             } else {
-                match.setData(m_filePlaces->url(current_index));
+                match.setData(places.url(current_index));
             }
 
             matches << match;
@@ -96,12 +94,22 @@ void PlacesRunner::run(const Plasma::RunnerContext &context, const Plasma::Query
         //search our list for the device with the same udi, then set it up (mount it).
         QString deviceUdi = action.data().toString();
 
-        for (int i = 0; i <= m_filePlaces->rowCount();i++) {
-            QModelIndex current_index = m_filePlaces->index(i, 0);
-            if (m_filePlaces->isDevice(current_index) && m_filePlaces->deviceForIndex(current_index).udi() == deviceUdi) {
-                m_filePlaces->requestSetup(current_index);
+        // gets deleted in setupComplete
+        KFilePlacesModel *places = new KFilePlacesModel(this);
+        connect(places, SIGNAL(setupDone(QModelIndex, bool)), SLOT(setupComplete(QModelIndex, bool)));
+        bool found = false;
+
+        for (int i = 0; i <= places->rowCount();i++) {
+            QModelIndex current_index = places->index(i, 0);
+            if (places->isDevice(current_index) && places->deviceForIndex(current_index).udi() == deviceUdi) {
+                places->requestSetup(current_index);
+                found = true;
                 break;
             }
+        }
+
+        if (!found) {
+            delete places;
         }
     }
 }
@@ -109,8 +117,11 @@ void PlacesRunner::run(const Plasma::RunnerContext &context, const Plasma::Query
 //if a device needed mounting, this slot gets called when it's finished.
 void PlacesRunner::setupComplete(QModelIndex index, bool success)
 {
-    if (success) {
-        new KRun(m_filePlaces->url(index), 0);
+    KFilePlacesModel *places = qobject_cast<KFilePlacesModel*>(sender());
+    //kDebug() << "setup complete" << places << sender();
+    if (success && places) {
+        new KRun(places->url(index), 0);
+        delete places;
     }
 }
 

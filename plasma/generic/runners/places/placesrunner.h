@@ -34,8 +34,7 @@ public:
 
     void match(Plasma::RunnerContext &context);
     void run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &action);
-private:
-    KFilePlacesModel *m_filePlaces;
+
 private slots:
     void setupComplete(QModelIndex, bool);
 };
