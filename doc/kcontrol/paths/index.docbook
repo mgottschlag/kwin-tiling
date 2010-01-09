@@ -70,7 +70,7 @@ The Autostart folder contains applications or links to applications or scripts y
 </varlistentry>
 <varlistentry>
 <term><guilabel>Download path:</guilabel></term>
-<listitem><para>This folder will be used by default to your downloaded items.</para></listitem>
+<listitem><para>This folder will be used by default to save your downloaded items.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Movies path:</guilabel></term>
