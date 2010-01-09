@@ -238,13 +238,31 @@ QString CalculatorRunner::calculate(const QString& term)
 {
     //kDebug() << "calculating" << term;
     QScriptEngine eng;
-    QScriptValue result = eng.evaluate(term);
+    QScriptValue result = eng.evaluate(" var result ="+term+"; result");
 
     if (result.isError()) {
         return QString();
     }
 
-    return result.toString();
+    QString resultString = result.toString();
+    if (resultString.isEmpty()) {
+        return QString();
+    }
+
+    if (!resultString.contains('.')) {
+            return resultString;
+        }
+
+    //ECMAScript has issues with the last digit in simple rational computations
+    //This script rounds off the last digit; see bug 167986
+    QString roundedResultString = eng.evaluate("var exponent = 15-(1+Math.floor(Math.log(result)/Math.log(10)));\
+                                                var order=Math.pow(10,exponent);\
+                                                (order > 0? Math.round(result*order)/order : 0)").toString();
+
+    roundedResultString.replace(".", KGlobal::locale()->decimalSymbol(), Qt::CaseInsensitive);
+
+    return roundedResultString;
+
 }
 
 #include "calculatorrunner.moc"
