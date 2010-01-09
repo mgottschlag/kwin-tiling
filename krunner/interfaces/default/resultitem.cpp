@@ -90,9 +90,9 @@ ResultItem::~ResultItem()
 
 QGraphicsWidget* ResultItem::arrangeTabOrder(QGraphicsWidget* last)
 {
-    QGraphicsWidget* sceneWidget = static_cast<QGraphicsWidget*>(parent());
+    QGraphicsWidget *sceneWidget = static_cast<QGraphicsWidget*>(parent());
     sceneWidget->setTabOrder(last, this);
-    QGraphicsWidget* currentWidget = this;
+    QGraphicsWidget *currentWidget = this;
 
     if (m_configButton) {
         sceneWidget->setTabOrder(this, m_configButton);
@@ -103,8 +103,8 @@ QGraphicsWidget* ResultItem::arrangeTabOrder(QGraphicsWidget* last)
         }
     }
     if (m_actionsWidget) {
-        for (int i = 0; i< m_actionsLayout->count(); i++) {
-            QGraphicsWidget* button = static_cast<QGraphicsWidget*>(m_actionsLayout->itemAt(i));
+        for (int i = 0; i < m_actionsLayout->count(); ++i) {
+            QGraphicsWidget *button = static_cast<QGraphicsWidget*>(m_actionsLayout->itemAt(i));
             sceneWidget->setTabOrder(currentWidget, button);
             currentWidget = button;
         }
@@ -118,13 +118,19 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
     m_icon = KIcon(match.icon());
 
     if (m_configWidget) {
-        scene()->removeItem(m_configWidget);
+        if (scene()) {
+            scene()->removeItem(m_configWidget);
+        }
+
         delete m_configWidget;
         m_configWidget = 0;
     }
 
     if (m_actionsWidget) {
-        scene()->removeItem(m_actionsWidget);
+        if (scene()) {
+            scene()->removeItem(m_actionsWidget);
+        }
+
         delete m_actionsWidget;
         m_actionsWidget = 0;
     }
@@ -142,7 +148,10 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
             m_configButton->installEventFilter(this);
         }
     } else if (m_configButton) {
-        scene()->removeItem(m_configButton);
+        if (scene()) {
+            scene()->removeItem(m_configButton);
+        }
+
         delete m_configButton;
         m_configButton = 0;
     }
@@ -161,7 +170,7 @@ void ResultItem::setupActions()
         m_actionsWidget = new QGraphicsWidget(this);
         m_actionsLayout = new QGraphicsLinearLayout(Qt::Horizontal, m_actionsWidget);
 
-        foreach ( QAction* action, actionList ) {
+        foreach (QAction* action, actionList) {
             Plasma::ToolButton * actionButton = new Plasma::ToolButton(m_actionsWidget);
             actionButton->setFlag(QGraphicsItem::ItemIsFocusable);
             actionButton->setAction(action);
@@ -183,7 +192,9 @@ bool ResultItem::eventFilter(QObject *obj, QEvent *event)
 
     if (actionButton) {
         if (event->type() == QEvent::GraphicsSceneHoverEnter) {
-            scene()->setFocusItem(actionButton);
+            if (scene()) {
+                scene()->setFocusItem(actionButton);
+            }
         } else if (event->type() == QEvent::FocusIn) {
             focusInEvent(static_cast<QFocusEvent*>(event));
             actionButton->setAutoRaise(false);
@@ -230,6 +241,10 @@ QString ResultItem::name() const
 
 QString ResultItem::description() const
 {
+    if (!scene()) {
+        return QString();
+    }
+
     Plasma::ToolButton* actionButton = qobject_cast<Plasma::ToolButton*>(static_cast<QGraphicsWidget*>(scene()->focusItem()));
 
     //if a button is focused and it  belongs to the item
@@ -429,7 +444,11 @@ void ResultItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 {
     QGraphicsItem::hoverEnterEvent(e);
     setFocus(Qt::MouseFocusReason);
-    scene()->clearSelection();
+
+    if (scene()) {
+        scene()->clearSelection();
+    }
+
     setSelected(true);
 }
 
@@ -463,7 +482,10 @@ void ResultItem::focusInEvent(QFocusEvent * event)
 
     m_mouseHovered = (event->reason() == Qt::MouseFocusReason);
 
-    scene()->clearSelection();
+    if (scene()) {
+        scene()->clearSelection();
+    }
+
     setSelected(true);
     emit ensureVisibility(this);
 
@@ -497,7 +519,7 @@ void ResultItem::keyPressEvent(QKeyEvent *event)
 
 QVariant ResultItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if (change == QGraphicsItem::ItemSceneHasChanged && scene()) {
+    if (change == QGraphicsItem::ItemSceneHasChanged) {
         calculateSize();
     }
 
@@ -521,7 +543,10 @@ void ResultItem::changeEvent(QEvent *event)
 void ResultItem::showConfig()
 {
     if (m_configWidget) {
-        scene()->removeItem(m_configWidget);
+        if (scene()) {
+            scene()->removeItem(m_configWidget);
+        }
+
         delete m_configWidget;
         m_configWidget = 0;
     } else {
@@ -542,7 +567,7 @@ void ResultItem::showConfig()
 void ResultItem::calculateSize()
 {
     if (scene()) {
-        calculateSize(scene()->width(),scene()->height());
+        calculateSize(scene()->width(), scene()->height());
     }
 }
 
