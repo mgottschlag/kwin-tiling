@@ -9,6 +9,7 @@ set(sal_SRCS
     stripwidget.cpp
     resultwidget.cpp
     runnersconfig.cpp
+    iconactioncollection.cpp
     )
 
 kde4_add_plugin(plasma_containment_sal ${sal_SRCS})

@@ -44,6 +44,7 @@ namespace Plasma
 
 class QGraphicsGridLayout;
 class QTimer;
+class IconActionCollection;
 
 class StripWidget : public QGraphicsWidget
 {
@@ -88,6 +89,7 @@ private:
     QTimer *m_scrollTimer;
     //FIXME: connecting to an animationcomplete signal from the icon?
     QTimer *m_setCurrentTimer;
+    IconActionCollection *m_iconActionCollection;
     int m_shownIcons;
     int m_offset;
     bool m_startupCompleted;

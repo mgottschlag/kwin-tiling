@@ -38,15 +38,22 @@
 #include <Plasma/ToolTipManager>
 
 #include "itemview.h"
+#include "iconactioncollection.h"
 
 StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
       m_runnermg(rm),
       m_itemView(0),
       m_offset(0),
+      m_iconActionCollection(0),
       m_startupCompleted(false)
 {
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
+    Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(parent);
+    if (applet) {
+        m_iconActionCollection = new IconActionCollection(applet, this);
+    }
 
     m_arrowsLayout = new QGraphicsLinearLayout(this);
     m_arrowsLayout->setContentsMargins(0, 0, 0, 0);
@@ -130,6 +137,10 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     action->setIcon(KIcon("list-remove"));
     fav->addIconAction(action);
     connect(action, SIGNAL(triggered()), this, SLOT(removeFavourite()));
+
+    if (m_iconActionCollection) {
+        m_iconActionCollection->addAction(action);
+    }
 
     m_favouritesIcons.insert(fav, match);
     m_itemView->insertItem(fav, -1);

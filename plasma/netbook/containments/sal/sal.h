@@ -33,6 +33,7 @@ class StripWidget;
 class ItemView;
 class LinearAppletOverlay;
 class NetToolBox;
+class IconActionCollection;
 
 namespace Plasma
 {
@@ -124,6 +125,7 @@ private:
     LinearAppletOverlay *m_appletOverlay;
 
     NetToolBox *m_toolBox;
+    IconActionCollection *m_iconActionCollection;
 
     bool m_stripUninitialized;
 };

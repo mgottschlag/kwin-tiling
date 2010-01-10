@@ -25,6 +25,7 @@
 #include "../common/linearappletoverlay.h"
 #include "../common/appletmovespacer.h"
 #include "../common/nettoolbox.h"
+#include "iconactioncollection.h"
 
 #include <QAction>
 #include <QTimer>
@@ -68,9 +69,11 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
       m_firstItem(0),
       m_appletsLayout(0),
       m_appletOverlay(0),
+      m_iconActionCollection(0),
       m_stripUninitialized(true)
 {
     setContainmentType(Containment::CustomContainment);
+    m_iconActionCollection = new IconActionCollection(this, this);
     setHasConfigurationInterface(true);
     setFocusPolicy(Qt::StrongFocus);
     setFlag(QGraphicsItem::ItemIsFocusable, true);
@@ -249,6 +252,7 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &matches)
             QAction *action = new QAction(icon);
             action->setIcon(KIcon("favorites"));
             icon->addIconAction(action);
+            m_iconActionCollection->addAction(action);
             connect(action, SIGNAL(triggered()), this, SLOT(addFavourite()));
         }
 
