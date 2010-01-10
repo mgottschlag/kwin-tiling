@@ -96,4 +96,4 @@ X-KDE-PluginInfo-Name=windows
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=true
-X-Plasma-AdvertiseSingleRunnerMode=true
+X-Plasma-AdvertiseSingleRunnerQueryMode=true
