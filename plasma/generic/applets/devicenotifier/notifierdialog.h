@@ -102,6 +102,8 @@ namespace Notifier
           **/
           void insertAction(const QString &udi, const QString &action);
 
+          QStringList deviceActions(const QString &udi) const;
+
           /**
           * insert a device in the layout of the dialog
           * @param udi the udi of the device
@@ -150,6 +152,8 @@ namespace Notifier
           * @param udi the udi of the device
           **/
           void removeDevice(const QString &udi);
+
+          void removeAction(const QString &udi, const QString &action);
 
           /**
           * Gets a list of the action to be shown in the context menu

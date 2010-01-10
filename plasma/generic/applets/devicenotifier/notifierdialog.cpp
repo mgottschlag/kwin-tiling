@@ -159,12 +159,17 @@ void NotifierDialog::insertAction(const QString& udi, const QString& action)
     }
 }
 
+QStringList NotifierDialog::deviceActions(const QString &udi) const
+{
+    return itemForUdi(udi)->actions();
+}
+
 void NotifierDialog::clearItemBackgroundTarget()
 {
     m_itemBackground->setTargetItem(0);
 }
 
-void NotifierDialog::itemHoverEnter(DeviceItem * item)
+void NotifierDialog::itemHoverEnter(DeviceItem *item)
 {
     // make sure the popup is not only shown, but doesn't automatically retract on us when we're
     // mousing around in it
@@ -438,6 +443,11 @@ void NotifierDialog::removeDevice(const QString &udi)
     updateMainLabelText();
 
     m_devicesScrollWidget->widget()->adjustSize();
+}
+
+void NotifierDialog::removeAction(const QString &udi, const QString &action)
+{
+    itemForUdi(udi)->removeAction(action);
 }
 
 void NotifierDialog::buildDialog()

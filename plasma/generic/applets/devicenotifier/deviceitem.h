@@ -73,6 +73,10 @@ class DeviceItem : public QGraphicsWidget
         **/
         void addAction(const QString &action);
 
+        QStringList actions() const;
+
+        void removeAction(const QString &action);
+
         /**
         * Hides the actions
         **/

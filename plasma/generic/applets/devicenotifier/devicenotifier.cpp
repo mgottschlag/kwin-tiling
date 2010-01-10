@@ -170,13 +170,23 @@ void DeviceNotifier::dataUpdated(const QString &udi, Plasma::DataEngine::Data da
         //kDebug() << "adding" << data["udi"];
         int nb_actions = 0;
         QString lastActionLabel;
-        foreach (const QString &desktop, data["predicateFiles"].toStringList()) {
+        QStringList currentActions = m_dialog->deviceActions(udi);
+        QStringList newActions = data["predicateFiles"].toStringList();
+        foreach (const QString &desktop, newActions) {
             QString filePath = KStandardDirs::locate("data", "solid/actions/" + desktop);
             QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(filePath, true);
             nb_actions += services.size();
-            m_dialog->insertAction(udi, desktop);
+
+            if (!currentActions.contains(desktop)) {
+                m_dialog->insertAction(udi, desktop);
+            }
             if (services.size() > 0) {
                 lastActionLabel = QString(services[0].text());
+            }
+        }
+        foreach (const QString &action, currentActions) {
+            if (!newActions.contains(action)) {
+                m_dialog->removeAction(udi, action);
             }
         }
 
@@ -217,8 +227,10 @@ void DeviceNotifier::dataUpdated(const QString &udi, Plasma::DataEngine::Data da
                 const QString desktop("test-predicate-openinwindow.desktop");
                 QString filePath = KStandardDirs::locate("data", "solid/actions/" + desktop);
                 QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(filePath, true);
-                m_dialog->insertAction(udi, desktop);
-                m_dialog->setDeviceData(udi, services[0].text(), NotifierDialog::DescriptionRole);
+                if (services.size() > 0) { //in case there is no action at all
+                    m_dialog->insertAction(udi, desktop);
+                    m_dialog->setDeviceData(udi, services[0].text(), NotifierDialog::DescriptionRole);
+                }
 
                 m_dialog->setDeviceLeftAction(udi, DeviceItem::Nothing);
             }

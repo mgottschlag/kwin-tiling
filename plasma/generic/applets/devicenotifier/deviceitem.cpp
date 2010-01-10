@@ -197,6 +197,28 @@ void DeviceItem::addAction(const QString &action)
     }
 }
 
+QStringList DeviceItem::actions() const
+{
+    QStringList list;
+    for (int i = 0; i < m_actionsLayout->count(); ++i) {
+        QGraphicsLayoutItem *item = m_actionsLayout->itemAt(i);
+        list << item->graphicsItem()->data(NotifierDialog::ActionRole).toString();
+    }
+
+    return list;
+}
+
+void DeviceItem::removeAction(const QString &action)
+{
+    for (int i = 0; i < m_actionsLayout->count(); ++i) {
+        QGraphicsLayoutItem *item = m_actionsLayout->itemAt(i);
+        if (item->graphicsItem()->data(NotifierDialog::ActionRole).toString() == action) {
+            m_actionsLayout->removeAt(i);
+            delete item;
+        }
+    }
+}
+
 QString DeviceItem::udi() const
 {
     return data(NotifierDialog::SolidUdiRole).toString();
