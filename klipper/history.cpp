@@ -130,6 +130,7 @@ void History::slotMoveToTop(const QByteArray& uuid) {
         return;
     }
     if (*it == m_top) {
+        emit topChanged();
         return;
     }
     m_topIsUserSelected = true;
