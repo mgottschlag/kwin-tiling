@@ -52,21 +52,22 @@ static const int LAST_ROW = FIXED_ROW;
 
 struct UsageInfo {
     UsageInfo()
-            : used(0),
-            available(0),
-            dirty(true) {}
+        : used(0),
+          available(0)
+     {}
 
     quint64 used;
     quint64 available;
-    bool dirty;
 };
 
 class SystemModel::Private
 {
 public:
     Private(SystemModel *parent)
-            : q(parent)
-            , placesModel(new KFilePlacesModel(parent)) {
+            : q(parent),
+              placesModel(new KFilePlacesModel(parent)),
+              currentPlacesModelUsageIndex(0)
+    {
         q->setSourceModel(placesModel);
 
         connect(placesModel, SIGNAL(dataChanged(QModelIndex, QModelIndex)),
@@ -84,44 +85,15 @@ public:
         << i18n("Places")
         << i18n("Removable Storage")
         << i18n("Storage");
-        loadApplications();
-        connect(&refreshTimer, SIGNAL(timeout()),
-                q, SLOT(startRefreshingUsageInfo()));
-        refreshTimer.start(10000);
-        QTimer::singleShot(0, q, SLOT(startRefreshingUsageInfo()));
         connect(KSycoca::self(), SIGNAL(databaseChanged(const QStringList&)), q, SLOT(reloadApplications()));
-    }
-
-    void queryFreeSpace(const QString& mountPoint) {
-        KDiskFreeSpaceInfo freeSpace = KDiskFreeSpaceInfo::freeSpaceInfo(mountPoint);
-        if (freeSpace.isValid())
-            q->freeSpaceInfoAvailable(freeSpace.mountPoint(), freeSpace.size() / 1024,
-                                      freeSpace.used() / 1024, freeSpace.available() / 1024);
-    }
-
-    void loadApplications() {
-        const QStringList apps = Kickoff::systemApplicationList();
-        appsList.clear();
-
-        foreach(const QString &app, apps) {
-            KService::Ptr service = KService::serviceByStorageId(app);
-
-            if (!service) {
-                continue;
-            }
-
-            appsList << service;
-        }
-        //kDebug() << "*************" << appsList;
     }
 
     SystemModel * const q;
     KFilePlacesModel *placesModel;
     QStringList topLevelSections;
     KService::List appsList;
-    QList<QString> mountPointsQueue;
     QMap<QString, UsageInfo> usageByMountpoint;
-    QTimer refreshTimer;
+    int currentPlacesModelUsageIndex;
 };
 
 SystemModel::SystemModel(QObject *parent)
@@ -137,7 +109,9 @@ SystemModel::~SystemModel()
 
 QModelIndex SystemModel::mapFromSource(const QModelIndex &sourceIndex) const
 {
-    if (!sourceIndex.isValid()) return QModelIndex();
+    if (!sourceIndex.isValid()) {
+        return QModelIndex();
+    }
 
     QModelIndex parent;
 
@@ -356,71 +330,56 @@ QVariant SystemModel::headerData(int section, Qt::Orientation orientation, int r
     }
 }
 
-void SystemModel::startRefreshingUsageInfo()
+void SystemModel::refreshUsageInfo()
 {
-    if (!d->mountPointsQueue.isEmpty()) {
+    d->currentPlacesModelUsageIndex = 0;
+    QTimer::singleShot(100, this, SLOT(refreshNextUsageInfo()));
+}
+
+void SystemModel::stopRefreshingUsageInfo()
+{
+    d->currentPlacesModelUsageIndex = d->placesModel->rowCount();
+}
+
+void SystemModel::refreshNextUsageInfo()
+{
+    if (d->currentPlacesModelUsageIndex >= d->placesModel->rowCount()) {
         return;
     }
 
-    int rowCount = d->placesModel->rowCount();
-    for (int i = 0; i < rowCount; ++i) {
-        QModelIndex index = d->placesModel->index(i, 0);
-        if (d->placesModel->isDevice(index)) {
-            Solid::Device dev = d->placesModel->deviceForIndex(index);
-            Solid::StorageAccess *access = dev.as<Solid::StorageAccess>();
+    QModelIndex sourceIndex = d->placesModel->index(d->currentPlacesModelUsageIndex, 0);
+    if (d->placesModel->isDevice(sourceIndex)) {
+        Solid::Device dev = d->placesModel->deviceForIndex(sourceIndex);
+        Solid::StorageAccess *access = dev.as<Solid::StorageAccess>();
 
-            if (access && !access->filePath().isEmpty()) {
-                d->mountPointsQueue << access->filePath();
+        if (access && !access->filePath().isEmpty()) {
+            KDiskFreeSpaceInfo freeSpace = KDiskFreeSpaceInfo::freeSpaceInfo(access->filePath());
+            if (freeSpace.isValid()) {
+                UsageInfo info;
+                info.used = freeSpace.used() / 1024;
+                info.available = freeSpace.available() / 1024;
+
+                d->usageByMountpoint[freeSpace.mountPoint()] = info;
+                QModelIndex index = mapFromSource(sourceIndex);
+                emit dataChanged(index, index);
             }
         }
     }
 
-    if (!d->mountPointsQueue.isEmpty()) {
-        d->queryFreeSpace(d->mountPointsQueue.takeFirst());
-    }
+    ++d->currentPlacesModelUsageIndex;
+    QTimer::singleShot(0, this, SLOT(refreshNextUsageInfo()));
 }
 
 void SystemModel::reloadApplications()
 {
-    d->loadApplications();
-}
+    const QStringList apps = Kickoff::systemApplicationList();
+    d->appsList.clear();
 
-void SystemModel::freeSpaceInfoAvailable(const QString& mountPoint, quint64,
-        quint64 kbUsed, quint64 kbAvailable)
-{
-    UsageInfo info;
-    info.used = kbUsed;
-    info.available = kbAvailable;
+    foreach (const QString &app, apps) {
+        KService::Ptr service = KService::serviceByStorageId(app);
 
-    d->usageByMountpoint[mountPoint] = info;
-
-    // More to process
-    if (!d->mountPointsQueue.isEmpty()) {
-        d->queryFreeSpace(d->mountPointsQueue.takeFirst());
-        return;
-    }
-
-    // We're done, let's emit the changes
-    int rowCount = d->placesModel->rowCount();
-    for (int i = 0; i < rowCount; ++i) {
-        QModelIndex sourceIndex = d->placesModel->index(i, 0);
-        if (d->placesModel->isDevice(sourceIndex)) {
-            Solid::Device dev = d->placesModel->deviceForIndex(sourceIndex);
-            Solid::StorageAccess *access = dev.as<Solid::StorageAccess>();
-
-            if (access && d->usageByMountpoint.contains(access->filePath())) {
-                info = d->usageByMountpoint[access->filePath()];
-
-                if (info.dirty) {
-                    info.dirty = false;
-                    d->usageByMountpoint[access->filePath()] = info;
-                } else {
-                    d->usageByMountpoint.remove(access->filePath());
-                }
-
-                QModelIndex index = mapFromSource(sourceIndex);
-                emit dataChanged(index, index);
-            }
+        if (service) {
+            d->appsList << service;
         }
     }
 }

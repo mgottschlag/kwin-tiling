@@ -48,13 +48,12 @@ public:
     virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+    void refreshUsageInfo();
+    void stopRefreshingUsageInfo();
 
 private Q_SLOTS:
-    void startRefreshingUsageInfo();
+    void refreshNextUsageInfo();
     void reloadApplications();
-    void freeSpaceInfoAvailable(const QString& mountPoint, quint64 kbSize,
-                                quint64 kbUsed, quint64 kbAvailable);
-
     void sourceDataChanged(const QModelIndex &start, const QModelIndex &end);
     void sourceRowsAboutToBeInserted(const QModelIndex &parent, int start, int end);
     void sourceRowsInserted(const QModelIndex &parent, int start, int end);

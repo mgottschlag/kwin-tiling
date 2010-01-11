@@ -228,7 +228,7 @@ public:
 
     void setupSystemView()
     {
-        SystemModel *model = new SystemModel(q);
+        systemModel = new SystemModel(q);
         UrlItemView *view = new UrlItemView();
         ItemDelegate *delegate = new ItemDelegate(q);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, SubTitleRole);
@@ -236,7 +236,7 @@ public:
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
 
-        addView(i18n("Computer"), systemIcon(), model, view);
+        addView(i18n("Computer"), systemIcon(), systemModel, view);
     }
 
     void setupSearchView()
@@ -448,6 +448,7 @@ public:
     ApplicationModel  *applicationModel;
     RecentlyUsedModel *recentlyUsedModel;
     KRunnerModel *searchModel;
+    SystemModel *systemModel;
     LeaveModel *leaveModel;
     SearchBar *searchBar;
     QWidget *footer;
@@ -805,6 +806,7 @@ void Launcher::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event)
     reset();
+    d->systemModel->stopRefreshingUsageInfo();
 }
 
 void Launcher::keyPressEvent(QKeyEvent *event)
@@ -826,6 +828,7 @@ void Launcher::keyPressEvent(QKeyEvent *event)
 void Launcher::showEvent(QShowEvent *e)
 {
     d->searchBar->setFocus();
+    d->systemModel->refreshUsageInfo();
 
     QWidget::showEvent(e);
 }
