@@ -241,7 +241,7 @@ void AuthDialog::createUserCB(const QStringList &adminUsers)
         // For each user
         foreach(const QString &adminUser, adminUsers) {
             // First check to see if the user is valid
-            KUser user = KUser::KUser(adminUser);
+            KUser user(adminUser);
             if (!user.isValid()) {
                 kWarning() << "User invalid: " << user.loginName();
                 continue;
