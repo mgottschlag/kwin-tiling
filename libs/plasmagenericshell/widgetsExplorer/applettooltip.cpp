@@ -44,6 +44,16 @@ AppletToolTipWidget::AppletToolTipWidget(QWidget *parent, AppletIconWidget *appl
 
 AppletToolTipWidget::~AppletToolTipWidget()
 {
+    if (m_widget->scene()) {
+        Plasma::Corona *corona = qobject_cast<Plasma::Corona *>(m_widget->scene());
+        if (corona) {
+            corona->removeOffscreenWidget(m_widget);
+        }
+
+        m_widget->scene()->removeItem(m_widget);
+    }
+
+    delete m_widget;
 }
 
 void AppletToolTipWidget::setScene(QGraphicsScene *scene)
@@ -68,9 +78,7 @@ void AppletToolTipWidget::setAppletIconWidget(AppletIconWidget *applet)
 
 void AppletToolTipWidget::updateContent()
 {
-    if(m_widget != 0) {
-        m_widget->updateInfo();
-    }
+    m_widget->updateInfo();
 }
 
 AppletIconWidget *AppletToolTipWidget::appletIconWidget()
@@ -114,7 +122,7 @@ void AppletInfoWidget::init()
     m_iconWidget = new Plasma::IconWidget(this);
     m_nameLabel = new Plasma::Label(this);
     m_versionLabel = new Plasma::Label(this);
-    m_aboutLabel = new Plasma::TextBrowser(this);
+    m_aboutLabel = new Plasma::Label(this);
 
     m_uninstallButton = new Plasma::PushButton(this);
     m_uninstallButton->setText(i18n("Uninstall Widget"));
@@ -125,21 +133,18 @@ void AppletInfoWidget::init()
 
     // layout init
     QGraphicsLinearLayout *textLayout = new QGraphicsLinearLayout(Qt::Vertical);
-    textLayout->addStretch();
     textLayout->addItem(m_nameLabel);
     textLayout->addItem(m_versionLabel);
     textLayout->addStretch();
 
-    m_mainLayout = new QGraphicsLinearLayout();
-    m_mainLayout->addItem(m_iconWidget);
-    m_mainLayout->addItem(textLayout);
-    m_mainLayout->setContentsMargins(10, 10, 10, 10);
-    m_mainLayout->setAlignment(m_iconWidget, Qt::AlignVCenter);
+    QGraphicsLinearLayout *headerLayout = new QGraphicsLinearLayout();
+    headerLayout->addItem(m_iconWidget);
+    headerLayout->addItem(textLayout);
+    headerLayout->setAlignment(m_iconWidget, Qt::AlignVCenter);
 
     m_mainVerticalLayout = new QGraphicsLinearLayout(Qt::Vertical);
-    m_mainVerticalLayout->addItem(m_mainLayout);
+    m_mainVerticalLayout->addItem(headerLayout);
     m_mainVerticalLayout->addItem(m_aboutLabel);
-    m_mainVerticalLayout->addStretch();
     m_mainVerticalLayout->addItem(m_uninstallButton);
 
     // header init
@@ -156,9 +161,6 @@ void AppletInfoWidget::init()
     font.setBold(true);
     font.setPointSizeF(1.2 * font.pointSizeF());
     m_nameLabel->setFont(font);
-
-    m_aboutLabel->nativeWidget()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_aboutLabel->nativeWidget()->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     setLayout(m_mainVerticalLayout);
 }
@@ -178,8 +180,10 @@ void AppletInfoWidget::updateInfo()
         if (!m_appletItem->description().isEmpty()) {
             description += m_appletItem->description() + "<br/><br/>";
         }
+
+        const QString color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor).name();
         if (!m_appletItem->author().isEmpty()) {
-            description += i18n("<font color=\"%1\">Author:</font>") + "<div style=\"margin-left: 15px; color:%1\">" +
+            description += i18n("<font color=\"%1\">Author:</font>", color) + "<div style=\"margin-left: 15px; color:%1\">" +
                            m_appletItem->author();
             if (!m_appletItem->email().isEmpty()) {
                  description += " <a href=\"mailto:" + m_appletItem->email() + "\">" +
@@ -188,14 +192,15 @@ void AppletInfoWidget::updateInfo()
             description += "</div>";
         }
         if (!m_appletItem->website().isEmpty()) {
-            description += i18n("<font color=\"%1\">Website:</font>") + "<div style=\"margin-left: 15px; color:%1\">" + "<a href=\"" +
+            description += i18n("<font color=\"%1\">Website:</font>", color) + "<div style=\"margin-left: 15px; color:%1\">" + "<a href=\"" +
                            m_appletItem->website() + "\">" + m_appletItem->website() +
                            "</a></div>";
         }
-        description += i18n("<font color=\"%1\">License:</font>") + "<div style=\"margin-left: 15px; color:%1\">" +
+        description += i18n("<font color=\"%1\">License:</font>", color) + "<div style=\"margin-left: 15px; color:%1\">" +
                        m_appletItem->license() + "</div>";
         description += "</body></html>";
         description = description.arg(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor).name());
+        kDebug() << description;
 
         m_aboutLabel->setText(description);
         m_uninstallButton->setVisible(m_appletItem->isLocal());
@@ -204,6 +209,8 @@ void AppletInfoWidget::updateInfo()
         m_nameLabel->setText(i18n("Unknown Applet"));
         m_uninstallButton->setVisible(false);
     }
+
+    adjustSize();
 }
 
 void AppletInfoWidget::uninstall()

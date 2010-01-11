@@ -262,12 +262,14 @@ void AppletsListWidget::timerEvent(QTimerEvent *event)
         m_modelFilterItems->setSearch(m_searchString);
         m_searchDelayTimer.stop();
     } else if (event->timerId() == m_toolTipAppearTimer.timerId()) {
-        setToolTipPosition();
         m_toolTip->updateContent();
+        m_toolTip->syncToGraphicsWidget();
+        setToolTipPosition();
         m_toolTip->setVisible(true);
         m_toolTipAppearTimer.stop();
     } else if (event->timerId() == m_toolTipAppearWhenAlreadyVisibleTimer.timerId()) {
         m_toolTip->updateContent();
+        m_toolTip->syncToGraphicsWidget();
         setToolTipPosition();
         m_toolTipAppearWhenAlreadyVisibleTimer.stop();
     } else if (event->timerId() == m_toolTipDisappearTimer.timerId()) {
@@ -347,10 +349,20 @@ void AppletsListWidget::setToolTipPosition()
 
     Plasma::Corona *corona = static_cast<Plasma::WidgetExplorer*>(parentItem())->corona();
     if (corona) {
-        toolTipMoveTo = corona->popupPosition(m_toolTip->appletIconWidget(), m_toolTip->geometry().size());
+        toolTipMoveTo = corona->popupPosition(m_toolTip->appletIconWidget(),
+                                              m_toolTip->geometry().size(),
+                                              Qt::AlignCenter);
     } else {
         toolTipMoveTo = QPoint(appletPosition.x(), appletPosition.y());
     }
+
+    if (m_orientation == Qt::Horizontal) {
+        toolTipMoveFrom.setY(toolTipMoveTo.y());
+    } else {
+        toolTipMoveFrom.setX(toolTipMoveTo.x());
+    }
+
+    m_toolTip->move(toolTipMoveTo);
 
     if (m_toolTip->isVisible()) {
         animateToolTipMove();
@@ -581,9 +593,9 @@ void AppletsListWidget::scrollUpLeft(int step)
     manageArrows();
 }
 
-void AppletsListWidget::animateToolTipMove( )
+void AppletsListWidget::animateToolTipMove()
 {
-    if ( toolTipMoveTimeLine.state() != QTimeLine::Running && toolTipMoveFrom != toolTipMoveTo) {
+    if (toolTipMoveTimeLine.state() != QTimeLine::Running && toolTipMoveFrom != toolTipMoveTo) {
          toolTipMoveTimeLine.start();
     }
 }

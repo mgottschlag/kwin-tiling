@@ -49,13 +49,13 @@ class AppletInfoWidget : public QGraphicsWidget {
 
     private:
         PlasmaAppletItem *m_appletItem;
-        QGraphicsLinearLayout *m_mainLayout;
         QGraphicsLinearLayout *m_mainVerticalLayout;
 
         Plasma::IconWidget *m_iconWidget;
         Plasma::Label *m_nameLabel;
         Plasma::Label *m_versionLabel;
-        Plasma::TextBrowser *m_aboutLabel;
+//        Plasma::TextBrowser *m_aboutLabel;
+        Plasma::Label *m_aboutLabel;
         Plasma::PushButton *m_uninstallButton;
 };
 
