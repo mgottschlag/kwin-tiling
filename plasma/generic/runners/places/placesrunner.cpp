@@ -70,12 +70,15 @@ void PlacesRunner::match(Plasma::RunnerContext &context)
             match.setText(text);
 
             //if we have to mount it set the device udi instead of the URL, as we can't open it directly
+            KUrl url;
             if (places.isDevice(current_index) && places.setupNeeded(current_index)) {
-                match.setData(places.deviceForIndex(current_index).udi());
+                url = places.deviceForIndex(current_index).udi();
             } else {
-                match.setData(places.url(current_index));
+                url = places.url(current_index);
             }
 
+            match.setData(url);
+            match.setId(url.prettyUrl());
             matches << match;
         }
     }
