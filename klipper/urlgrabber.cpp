@@ -92,7 +92,7 @@ URLGrabber::~URLGrabber()
 void URLGrabber::invokeAction( const HistoryItem* item )
 {
     m_myClipItem = item;
-    actionMenu( false );
+    actionMenu( item, false );
 }
 
 
@@ -178,15 +178,17 @@ const ActionList& URLGrabber::matchingActions( const QString& clipData, bool aut
 void URLGrabber::checkNewData( const HistoryItem* item )
 {
     // kDebug() << "** checking new data: " << clipData;
-    m_myClipItem = item;
-
-    actionMenu( true ); // also creates m_myMatches
+    actionMenu( item, true ); // also creates m_myMatches
 }
 
 
-void URLGrabber::actionMenu( bool automatically_invoked )
+void URLGrabber::actionMenu( const HistoryItem* item, bool automatically_invoked )
 {
-    QString text(m_myClipItem->text());
+    if (!item) {
+      qWarning("Attempt to invoke URLGrabber without an item");
+      return;
+    }
+    QString text(item->text());
     if (m_trimmed) {
         text = text.trimmed();
     }
@@ -245,6 +247,7 @@ void URLGrabber::actionMenu( bool automatically_invoked )
         QAction *cancelAction = new QAction(KIcon("dialog-cancel"), i18n("&Cancel"), this);
         connect(cancelAction, SIGNAL(triggered()), m_myMenu, SLOT(hide()));
         m_myMenu->addAction(cancelAction);
+        m_myClipItem = item;
 
         if ( m_myPopupKillTimeout > 0 )
             m_myPopupKillTimer->start( 1000 * m_myPopupKillTimeout );

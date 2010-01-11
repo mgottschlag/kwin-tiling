@@ -74,7 +74,7 @@ private:
   const ActionList& matchingActions( const QString&, bool automatically_invoked );
   void execute( const ClipAction *action, int commandIdx ) const;
   bool isAvoidedWindow() const;
-  void actionMenu( bool wm_class_check );
+  void actionMenu( const HistoryItem* item, bool automatically_invoked );
   void matchingMimeActions(const QString& clipData);
 
   ActionList m_myActions;
@@ -92,7 +92,6 @@ private:
   History* m_history;
 
 private Q_SLOTS:
-  void slotActionMenu() { actionMenu( true ); }
   void slotItemSelected(QAction *action);
   void slotKillPopupMenu();
 
