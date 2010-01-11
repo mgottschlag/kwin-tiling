@@ -211,20 +211,36 @@ void PowerDevilRunner::updateStatus()
     updateSyntaxes();
 }
 
+
+bool PowerDevilRunner::parseQuery(const QString& query, const QList<QRegExp>& rxList, QString& parameter) const
+{
+    foreach (const QRegExp& rx, rxList) {
+        if (rx.exactMatch(query)) {
+             parameter = rx.cap(1).trimmed();
+             return true;
+        }
+    }
+    return false;
+}
+
 void PowerDevilRunner::match(Plasma::RunnerContext &context)
 {
-    const QString term = context.query().toLower();
+    const QString term = context.query();
     if (term.length() < m_shortestCommand) {
         return;
     }
 
     QList<Plasma::QueryMatch> matches;
 
-    if (term.startsWith(i18nc("Note this is a KRunner keyword", "power profile"))) {
+    QString parameter;
+
+    if (parseQuery(term,
+                   QList<QRegExp>() << QRegExp(i18nc("Note this is a KRunner keyword; %1 is a parameter", "power profile %1", "(.*)"), Qt::CaseInsensitive)
+                                    << QRegExp(i18nc("Note this is a KRunner keyword", "power profile"), Qt::CaseInsensitive),
+                   parameter)) {
         foreach(const QString &profile, m_availableProfiles) {
-            const QStringList strings = term.split(' ');
-            if (strings.count() == 3) {
-                if (!profile.startsWith(strings.at(2))) {
+            if (!parameter.isEmpty()) {
+                if (!profile.startsWith(parameter, Qt::CaseInsensitive)) {
                     continue;
                 }
             }
@@ -237,12 +253,15 @@ void PowerDevilRunner::match(Plasma::RunnerContext &context)
             match.setId("ProfileChange "+profile);
             matches.append(match);
         }
-    } else if (term.startsWith(i18nc("Note this is a KRunner keyword", "cpu policy")) ||
-               term.startsWith(i18nc("Note this is a KRunner keyword", "power governor"))) {
+    } else if (parseQuery(term,
+                          QList<QRegExp>() << QRegExp(i18nc("Note this is a KRunner keyword; %1 is a parameter", "cpu policy %1", "(.*)"), Qt::CaseInsensitive)
+                                           << QRegExp(i18nc("Note this is a KRunner keyword", "cpu policy"), Qt::CaseInsensitive)
+                                           << QRegExp(i18nc("Note this is a KRunner keyword; %1 is a parameter", "power governor %1", "(.*)"), Qt::CaseInsensitive)
+                                           << QRegExp(i18nc("Note this is a KRunner keyword", "power governor"), Qt::CaseInsensitive),
+                          parameter)) {
         foreach(const QString &ent, m_supportedGovernors) {
-            const QStringList strings = term.split(' ');
-            if (strings.count() == 3) {
-                if (!ent.startsWith(strings.at(2))) {
+            if (!parameter.isEmpty()) {
+                if (!ent.startsWith(parameter, Qt::CaseInsensitive)) {
                     continue;
                 }
             }
@@ -276,11 +295,13 @@ void PowerDevilRunner::match(Plasma::RunnerContext &context)
             match.setId("GovernorChange "+ent);
             matches.append(match);
         }
-    } else if (term.startsWith(i18nc("Note this is a KRunner keyword", "power scheme"))) {
+    } else if (parseQuery(term,
+                   QList<QRegExp>() << QRegExp(i18nc("Note this is a KRunner keyword; %1 is a parameter", "power scheme %1", "(.*)"), Qt::CaseInsensitive)
+                                    << QRegExp(i18nc("Note this is a KRunner keyword", "power scheme"), Qt::CaseInsensitive),
+                   parameter)) {
         foreach(const QString &ent, m_supportedSchemes) {
-            const QStringList strings = term.split(' ');
-            if (strings.count() == 3) {
-                if (!ent.startsWith(strings.at(2))) {
+            if (!parameter.isEmpty()) {
+                if (!ent.startsWith(parameter, Qt::CaseInsensitive)) {
                     continue;
                 }
             }
@@ -297,12 +318,15 @@ void PowerDevilRunner::match(Plasma::RunnerContext &context)
             match.setId("SchemeChange "+ent);
             matches.append(match);
         }
-    } else if (term.startsWith(i18nc("Note this is a KRunner keyword", "screen brightness")) ||
-               term.startsWith(i18nc("Note this is a KRunner keyword", "dim screen"))) {
-        const QStringList strings = term.split(' ');
-        if (strings.count() == 3) {
+    } else if (parseQuery(term,
+                          QList<QRegExp>() << QRegExp(i18nc("Note this is a KRunner keyword; %1 is a parameter", "screen brightness %1", "(.*)"), Qt::CaseInsensitive)
+                                           << QRegExp(i18nc("Note this is a KRunner keyword", "screen brightness"), Qt::CaseInsensitive)
+                                           << QRegExp(i18nc("Note this is a KRunner keyword; %1 is a parameter", "dim screen %1", "(.*)"), Qt::CaseInsensitive)
+                                           << QRegExp(i18nc("Note this is a KRunner keyword", "dim screen"), Qt::CaseInsensitive),
+                          parameter)) {
+        if (!parameter.isEmpty()) {
             bool test;
-            int b = strings.at(2).toInt(&test);
+            int b = parameter.toInt(&test);
             if (test) {
                 int brightness = qBound(0, b, 100);
                 Plasma::QueryMatch match(this);
@@ -314,7 +338,7 @@ void PowerDevilRunner::match(Plasma::RunnerContext &context)
                 match.setId("BrightnessChange");
                 matches.append(match);
             }
-        } else if (strings.count() == 2) {
+        } else {
             Plasma::QueryMatch match1(this);
             match1.setType(Plasma::QueryMatch::ExactMatch);
             match1.setIcon(KIcon("preferences-system-power-management"));
