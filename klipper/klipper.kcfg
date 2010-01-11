@@ -32,7 +32,7 @@
     </entry>
     <entry name="Synchronize" type="Int">
       <label>Backwards compability, don't touch.</label>
-      <default>1</default>
+      <default>3</default>
     </entry>
     <entry name="SyncClipboards" type="Bool">
       <label>Synchronize clipboard and selection</label>
