@@ -15,11 +15,9 @@ kde4_add_plugin(plasma_engine_calendar ${calendar_engine_srcs})
 
 target_link_libraries(
     plasma_engine_calendar
-    kholidays
-    ${KDE4_KDECORE_LIBS} ${KDE4_AKONADI_LIBS}
+    ${KDEPIMLIBS_KHOLIDAYS_LIBRARY}
+    ${KDE4_KDECORE_LIBS}
     ${KDE4_PLASMA_LIBS}
-    ${KDE4_KMIME_LIBS}
-    ${KDE4_AKONADI_KMIME_LIBS}
 )
 
 install(TARGETS plasma_engine_calendar DESTINATION ${PLUGIN_INSTALL_DIR})
