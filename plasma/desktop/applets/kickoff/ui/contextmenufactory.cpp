@@ -115,6 +115,10 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
     QString url = index.data(UrlRole).value<QString>();
     qDebug() << "ContextMenuFactory::showContextMenu: " << url;
 
+    if (url.isEmpty()) {
+        return;
+    }
+    
     // ivan: The url handling is dirty - instead of handling it in
     // the source data models (that define them), we are handling
     // them here. So, we need to make urls from KRunner model
@@ -135,11 +139,6 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
         qDebug() << "ContextMenuFactory::showContextMenu: " << "KRunner service runner: " << url;
     }
 
-    qDebug() << "ContextMenuFactory::showContextMenu: " << url;
-
-    if (url.isEmpty()) {
-        return;
-    }
 
     const bool isFavorite = FavoritesModel::isFavorite(url);
 
@@ -199,11 +198,13 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
             actions << addToPanelAction;
         }
     }
-
-    // advanced item actions
+    
     QAction *advancedSeparator = new QAction(this);
-    advancedSeparator->setSeparator(true);
-    actions << advancedSeparator;
+    if (actions.count() > 0) {
+        // advanced item actions
+        advancedSeparator->setSeparator(true);
+        actions << advancedSeparator;
+    }
 
     QAction *advanced = d->advancedActionsMenu(url);
     if (advanced) {
@@ -225,18 +226,21 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
         actions << ejectAction;
     }
 
+    // add view specific actions
+    QAction *viewSeparator = new QAction(this);
+    if (view) {
+        if (actions.count() > 0) {
+            viewSeparator->setSeparator(true);
+            actions << viewSeparator;
+        }
+        actions << viewActions(view);
+    }
+
     //return if we added just a separator so far
     if (actions.count() < 2) {
         return;
     }
 
-    // add view specific actions
-    QAction *viewSeparator = new QAction(this);
-    if (view) {
-        viewSeparator->setSeparator(true);
-        actions << viewSeparator;
-        actions << viewActions(view);
-    }
 
     // display menu
     KMenu menu;
@@ -301,6 +305,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
     delete favoriteAction;
     delete addToDesktopAction;
     delete addToPanelAction;
+    delete advancedSeparator;
     delete viewSeparator;
     delete ejectAction;
 }
