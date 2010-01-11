@@ -38,6 +38,18 @@ GeneralWidget::GeneralWidget(QWidget* parent)
     m_ui.setupUi(this);
     m_ui.kcfg_TimeoutForActionPopups->setSuffix(ki18np(" second", " seconds"));
     m_ui.kcfg_MaxClipItems->setSuffix(ki18np(" entry", " entries"));
+
+}
+
+void GeneralWidget::updateWidgets()
+{
+  if (m_ui.kcfg_IgnoreSelection->isChecked()) {
+    m_ui.kcfg_SyncClipboards->setEnabled(false);
+    m_ui.kcfg_SelectionTextOnly->setEnabled(false);
+  } else if (m_ui.kcfg_SyncClipboards->isChecked()) {
+    m_ui.kcfg_IgnoreSelection->setEnabled(false);
+  }
+
 }
 
 ActionsWidget::ActionsWidget(QWidget* parent)
@@ -251,14 +263,16 @@ void ActionsWidget::onAdvanced()
 
 ConfigDialog::ConfigDialog(QWidget *parent, KConfigSkeleton *skeleton, const Klipper* klipper, KActionCollection *collection,
                            bool isApplet)
-    : KConfigDialog(parent, "preferences", skeleton), m_klipper(klipper)
+    : KConfigDialog(parent, "preferences", skeleton),
+    m_generalPage(new GeneralWidget(this)),
+    m_actionsPage(new ActionsWidget(this)),
+    m_klipper(klipper)
 {
-    if ( isApplet )
+    if ( isApplet ) {
         setHelp( QString(), "klipper" );
+    }
 
-    m_actionsPage = new ActionsWidget(this);
-
-    addPage(new GeneralWidget(this), i18nc("General Config", "General"), "klipper", i18n("General Config"));
+    addPage(m_generalPage, i18nc("General Config", "General"), "klipper", i18n("General Config"));
     addPage(m_actionsPage, i18nc("Actions Config", "Actions"), "system-run", i18n("Actions Config"));
 
     QWidget* w = new QWidget(this);
@@ -301,6 +315,7 @@ void ConfigDialog::updateWidgets()
         kDebug() << "Klipper or grabber object is null";
         return;
     }
+    m_generalPage->updateWidgets();
 }
 
 void ConfigDialog::updateWidgetsDefault()

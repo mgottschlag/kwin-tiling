@@ -41,6 +41,7 @@ class GeneralWidget : public QWidget
     Q_OBJECT
 public:
     GeneralWidget(QWidget* parent);
+    void updateWidgets();
 
 private:
     Ui::GeneralWidget m_ui;
@@ -115,6 +116,7 @@ private:
     void updateWidgetsDefault();
 
 private:
+    GeneralWidget* m_generalPage;
     ActionsWidget *m_actionsPage;
     KShortcutsEditor *m_shortcutsWidget;
 
