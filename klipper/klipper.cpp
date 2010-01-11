@@ -306,8 +306,7 @@ void Klipper::loadSettings()
     // 0 is the id of "Ignore selection" radiobutton
     m_bIgnoreSelection = KlipperSettings::ignoreSelection();
     m_bIgnoreImages = KlipperSettings::ignoreImages();
-    // 0 is the id of "Synchronize contents" radiobutton
-    m_bSynchronize = KlipperSettings::synchronize();
+    m_bSynchronize = KlipperSettings::syncClipboards();
     // NOTE: not used atm - kregexpeditor is not ported to kde4
     m_bUseGUIRegExpEditor = KlipperSettings::useGUIRegExpEditor();
     m_bSelectionTextOnly = KlipperSettings::selectionTextOnly();
@@ -315,8 +314,23 @@ void Klipper::loadSettings()
     m_bURLGrabber = KlipperSettings::uRLGrabberEnabled();
     // this will cause it to loadSettings too
     setURLGrabberEnabled(m_bURLGrabber);
-
     history()->setMaxSize( KlipperSettings::maxClipItems() );
+    // Convert 4.3 settings
+    if (KlipperSettings::synchronize() != 3) {
+      // 2 was the id of "Ignore selection" radiobutton
+      m_bIgnoreSelection = KlipperSettings::synchronize() == 2;
+      // 0 was the id of "Synchronize contents" radiobutton
+      m_bSynchronize = KlipperSettings::synchronize() == 0;
+      KConfigSkeletonItem* item = KlipperSettings::self()->findItem("SyncClipboards");
+      item->setProperty(m_bSynchronize);
+      item = KlipperSettings::self()->findItem("IgnoreSelection");
+      item->setProperty(m_bIgnoreSelection);
+      item =  KlipperSettings::self()->findItem("Synchronize"); // Mark property as converted.
+      item->setProperty(3);
+      KlipperSettings::self()->writeConfig();
+      KlipperSettings::self()->readConfig();
+
+    }
 }
 
 void Klipper::saveSettings() const

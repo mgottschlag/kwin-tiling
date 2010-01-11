@@ -74,7 +74,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="kcfg_Synchronize">
+       <widget class="QCheckBox" name="kcfg_SyncClipboards">
         <property name="text">
          <string>Synchronize contents of the clipboard and the selection</string>
         </property>
@@ -154,7 +154,7 @@
   <connection>
    <sender>kcfg_IgnoreSelection</sender>
    <signal>clicked(bool)</signal>
-   <receiver>kcfg_Synchronize</receiver>
+   <receiver>kcfg_SyncClipboards</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -168,7 +168,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>kcfg_Synchronize</sender>
+   <sender>kcfg_SyncClipboards</sender>
    <signal>clicked(bool)</signal>
    <receiver>kcfg_IgnoreSelection</receiver>
    <slot>setDisabled(bool)</slot>

@@ -30,9 +30,13 @@
       <default>false</default>
       <whatsthis><qt>When an area of the screen is selected with mouse or keyboard, this is called "the selection". If this option is set, the selection is not entered into the clipboard history, though it is still available for pasting using the middle mouse button.</qt></whatsthis>
     </entry>
-    <entry name="Synchronize" type="Bool">
-      <label>Synchronize clipboard and selection</label>
+    <entry name="Synchronize" type="Int">
+      <label>Backwards compability, don't touch.</label>
       <default>1</default>
+    </entry>
+    <entry name="SyncClipboards" type="Bool">
+      <label>Synchronize clipboard and selection</label>
+      <default>false</default>
       <whatsthis><qt>When an area of the screen is selected with mouse or keyboard, this is called "the selection". If this option is selected, the selection and the clipboard is kept the same, so that anything in the selection is immediately available for pasting elsewhere using any method, including the traditional middle mouse button. Otherwise, the selection is recorded in the clipboard history, but the selection can only be pasted using the middle mouse button. Also see the 'Ignore Selection' option.</qt></whatsthis>
     </entry>
     <entry name="SelectionTextOnly" type="Bool">
