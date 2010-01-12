@@ -155,14 +155,9 @@ Solid::Control::IPv4Config NMNetworkInterface::ipV4Config() const
                     routeObjects.append(addr);
                 }
             }
-            //convert nameservers into correct byte order
-            UIntList nameservers = iface.nameservers(),
-                     nameserversHostByteOrder;
-            foreach (quint32 nameserver, nameservers) {
-                nameserversHostByteOrder << htonl(nameserver);
-            }
+            // nameservers' IP addresses are always in network byte order
             return Solid::Control::IPv4Config(addressObjects,
-                nameserversHostByteOrder, iface.domains(),
+                iface.nameservers(), iface.domains(),
                 routeObjects);
         } else {
             return Solid::Control::IPv4Config();
