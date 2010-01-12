@@ -102,6 +102,7 @@ class Battery : public Plasma::PopupApplet
         Battery *m_extenderApplet;
         bool m_extenderVisible;
 
+        QGraphicsWidget *m_controls;
         QGraphicsGridLayout *m_controlsLayout;
         //QGraphicsGridLayout *m_batteryLayout;
         //QGraphicsGridLayout *m_infoLayout;
