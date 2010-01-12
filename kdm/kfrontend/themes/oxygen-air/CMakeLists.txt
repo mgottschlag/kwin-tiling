@@ -2,7 +2,7 @@ install(FILES
     KdmGreeterTheme.desktop
     oxygen-air.xml
     screenshot.png
-    1920x1200.jpg
+    1920x1200.png
     caps.png
     icon-kde.png
     pw-entry-li.png
