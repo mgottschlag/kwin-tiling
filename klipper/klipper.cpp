@@ -785,7 +785,7 @@ void Klipper::checkClipData( bool selectionMode )
 #endif
     const QMimeData* data = m_clip->mimeData( selectionMode ? QClipboard::Selection : QClipboard::Clipboard );
     if ( !data ) {
-        kWarning("No data in clipboard. This not not supposed to happen." );
+        kWarning() << "No data in clipboard. This not not supposed to happen.";
         return;
     }
     // TODO: Rewrite to Qt4 !!!
