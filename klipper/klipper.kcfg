@@ -31,7 +31,7 @@
       <whatsthis><qt>When an area of the screen is selected with mouse or keyboard, this is called "the selection". If this option is set, the selection is not entered into the clipboard history, though it is still available for pasting using the middle mouse button.</qt></whatsthis>
     </entry>
     <entry name="Synchronize" type="Int">
-      <label>Backwards compability, don't touch.</label>
+      <label comment="KDE::DoNotExtract">Backwards compatibility, don't touch.</label>
       <default>3</default>
     </entry>
     <entry name="SyncClipboards" type="Bool">
