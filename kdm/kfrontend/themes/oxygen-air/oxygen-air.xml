@@ -23,7 +23,7 @@
 
 			<item type="label" id="welcome">
 				<pos anchor="c" x="50%" y="46%"/>
-				<normal alpha="0.5" font="Sans Bold 18" color="#FFFFFF"/>
+				<normal alpha="0.5" font="Sans Bold 18" color="#334560"/>
 				<stock type="welcome-label"/>
 			</item>
 
@@ -61,7 +61,7 @@
 			
 					<item type="label">
 						<pos anchor="se" x="96%" y="70%"/>
-						<normal alpha="0.5" font="Sans 8" color="#ffffff"/>
+						<normal alpha="0.5" font="Sans 8" color="#334560"/>
 						<text>%c</text>
 					</item>			
 
