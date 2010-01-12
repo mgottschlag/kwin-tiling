@@ -52,6 +52,7 @@ dbus_add_activation_service(dbus/org.kde.krunner.service.in)
 if(NOT WIN32)
 set(krunner_SRCS
     ${krunner_SRCS}
+    ksystemactivitydialog.cpp
     startupid.cpp
     screensaver/saverengine.cpp
     screensaver/xautolock.cpp

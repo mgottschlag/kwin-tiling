@@ -21,18 +21,9 @@
 
 #ifndef Q_WS_WIN
 
-#include "processui/ksysguardprocesslist.h"
-#include "krunnersettings.h"
-
-#include <QAbstractScrollArea>
-#include <QCloseEvent>
-#include <QLayout>
-#include <QString>
-#include <QTreeView>
-#include <KConfigGroup>
 #include <KDialog>
-#include <KGlobal>
-#include <KWindowSystem>
+
+#include "processui/ksysguardprocesslist.h"
 
 /** This creates a simple dialog box with a KSysguardProcessList
  *
@@ -42,71 +33,29 @@
 class KSystemActivityDialog : public KDialog
 {
     public:
-        KSystemActivityDialog(QWidget *parent = NULL) : KDialog(parent), processList(0) {
-            setWindowTitle(i18n("System Activity"));
-            setWindowIcon(KIcon("utilities-system-monitor"));
-            setButtons(0);
-            setMainWidget(&processList);
-            processList.setScriptingEnabled(true);
-            setSizeGripEnabled(true);
-            (void)minimumSizeHint(); //Force the dialog to be laid out now
-            layout()->setContentsMargins(0,0,0,0);
-            processList.treeView()->setCornerWidget(new QWidget);
-
-            setInitialSize(QSize(650, 420));
-            KConfigGroup cg = KGlobal::config()->group("TaskDialog");
-            restoreDialogSize(cg);
-
-            processList.loadSettings(cg);
-            // Since we default to forcing the window to be KeepAbove, if the user turns this off, remember this
-            const bool keepAbove = KRunnerSettings::keepTaskDialogAbove();
-            if (keepAbove) {
-                KWindowSystem::setState(winId(), NET::KeepAbove );
-            }
-        }
+        KSystemActivityDialog(QWidget *parent = NULL);
 
         /** Show the dialog and set the focus
          *
          *  This can be called even when the dialog is already showing to bring it
          *  to the front again and move it to the current desktop etc.
          */
-        void run() {
-            show();
-            raise();
-            KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
-            KWindowSystem::forceActiveWindow(winId());
-        }
+        void run();
+
         /** Set the text in the filter line in the process list widget */
-        void setFilterText(const QString &filterText) {
-            processList.filterLineEdit()->setText(filterText);
-            processList.filterLineEdit()->setFocus();
-        }
-        /** Save the settings if the user clicks (x) button on the window */
-        void closeEvent(QCloseEvent *event) {
-            saveDialogSettings();
-            if(event)
-                event->accept();
-        }
+        void setFilterText(const QString &filterText);
 
         /** Save the settings if the user presses the ESC key */
-        virtual void reject () {
-            saveDialogSettings();
-            QDialog::reject();
-        }
+        virtual void reject();
+
+    protected:
+        /** Save the settings if the user clicks (x) button on the window */
+        void closeEvent(QCloseEvent *event);
 
     private:
-        void saveDialogSettings() {
-            //When the user closes the dialog, save the position and the KeepAbove state
-            KConfigGroup cg = KGlobal::config()->group("TaskDialog");
-            saveDialogSize(cg);
-            processList.saveSettings(cg);
+        void saveDialogSettings();
 
-            // Since we default to forcing the window to be KeepAbove, if the user turns this off, remember this
-            bool keepAbove = KWindowSystem::windowInfo(winId(), NET::WMState).hasState(NET::KeepAbove);
-            KRunnerSettings::setKeepTaskDialogAbove(keepAbove);
-            KGlobal::config()->sync();
-        }
-        KSysGuardProcessList processList;
+        KSysGuardProcessList m_processList;
 };
 #endif // not Q_WS_WIN
 
