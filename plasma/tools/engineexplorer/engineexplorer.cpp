@@ -321,7 +321,16 @@ QString EngineExplorer::convertToString(const QVariant &value) const
             return QString("%1").arg(value.toLocale().name());
         }
         case QVariant::Map: {
-            return i18np("&lt;1 item&gt;", "&lt;%1 items&gt;", value.toMap().size());
+            QVariantMap map = value.toMap();
+            QString str = i18np("&lt;1 item&gt;", "&lt;%1 items&gt;", map.size());
+
+            QMapIterator<QString, QVariant> it(map);
+            while (it.hasNext()) {
+                it.next();
+                str += "\n" + it.key() + ": " + convertToString(it.value());
+            }
+
+            return str;
         }
         case QVariant::Pixmap: {
             QPixmap pixmap = value.value<QPixmap>();
