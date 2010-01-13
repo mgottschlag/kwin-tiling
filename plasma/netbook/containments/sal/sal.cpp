@@ -226,7 +226,7 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &matches)
         icon->setNumDisplayLines(4);
         icon->hide();
         icon->setOrientation(Qt::Vertical);
-        icon->setText(match.text());
+        icon->setText(!match.text().isEmpty()?match.text():match.subtext());
         icon->setIcon(match.icon());
         Plasma::ToolTipContent toolTipData = Plasma::ToolTipContent();
         toolTipData.setAutohide(true);
