@@ -91,6 +91,8 @@ void ActionEditor::saveParameter()
     currentItem->property = actionData()->propertyInternal( currentItem->ifaceType, ui.CbValueName->currentText() );
     currentItem->value = QVariant( ui.LeValueMatch->text() );
     currentItem->setComparisonByInt( ui.CbValueMatch->currentIndex() );
+
+    rootModel->itemUpdated( current );
 }
 
 QString ActionEditor::predicateString()

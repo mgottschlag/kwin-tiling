@@ -143,4 +143,9 @@ void PredicateModel::setRootPredicate( PredicateItem * item )
     reset();
 }
 
+void PredicateModel::itemUpdated( const QModelIndex& item )
+{
+    emit dataChanged( item, item );
+}
+
 #include "PredicateModel.moc"

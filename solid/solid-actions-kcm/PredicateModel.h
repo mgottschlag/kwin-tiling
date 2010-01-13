@@ -40,6 +40,7 @@ public:
     int columnCount( const QModelIndex &parent = QModelIndex() ) const;
 
     void setRootPredicate( PredicateItem * item );
+    void itemUpdated( const QModelIndex& item );
 
 protected:
     PredicateItem * rootItem() const;
