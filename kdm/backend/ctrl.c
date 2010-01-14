@@ -42,6 +42,7 @@ from the copyright holder.
 #include <string.h>
 #include <signal.h>
 #include <pwd.h>
+#include <sys/stat.h>
 
 static void
 acceptSock( CtrlRec *cr )
