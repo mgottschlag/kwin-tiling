@@ -244,7 +244,7 @@ QString CalculatorRunner::calculate(const QString& term)
         return QString();
     }
 
-    QString resultString = result.toString();
+    const QString resultString = result.toString();
     if (resultString.isEmpty()) {
         return QString();
     }
