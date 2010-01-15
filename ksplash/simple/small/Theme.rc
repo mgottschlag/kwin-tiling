@@ -4,3 +4,5 @@ Description = Small Very Simple Optimized Splash Screen
 Version = 1.0
 Author = Lubos Lunak <l.lunak@kde.org>
 Engine = Simple
+License = GPL
+Homepage = http://www.kde.org
