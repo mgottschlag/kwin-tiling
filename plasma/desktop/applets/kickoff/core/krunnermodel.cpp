@@ -222,6 +222,8 @@ void KRunnerModel::matchesChanged(const QList< Plasma::QueryMatch > & m)
 
     qSort(matches.begin(), matches.end());
 
+    clear();
+
     while (matches.size()) {
         Plasma::QueryMatch match = matches.takeLast();
 
