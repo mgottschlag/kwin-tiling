@@ -34,7 +34,6 @@ DESCRIPTION
 #include <kaction.h>
 #include <kdebug.h>
 #include <kconfig.h>
-#include <ktoolinvocation.h>
 #include <kglobalsettings.h>
 #include <kactioncollection.h>
 #include <kapplication.h>
@@ -453,8 +452,10 @@ bool KxkbCore::x11EventFilter ( XEvent * event )
     }
   }
   else {
-    if( X11Helper::isNewDeviceEvent(event) ) {
-        initLayoutGroups();
+    if( m_mode == KXKB_MAIN && ! m_kxkbConfig.m_indicatorOnly ) {
+	if( X11Helper::isNewDeviceEvent(event) ) {
+    	    initLayoutGroups();
+	}
     }
 //  else  kDebug() << "other x11 event, type" << event->type;
   }
