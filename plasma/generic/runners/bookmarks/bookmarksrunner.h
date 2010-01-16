@@ -28,7 +28,7 @@
 class KBookmark;
 class KBookmarkManager;
 
-/** This runner searchs for bookmarks in browsers like Konqueror and Firefox */
+/** This runner searchs for bookmarks in browsers like Konqueror, Firefox and Opera */
 class BookmarksRunner : public Plasma::AbstractRunner
 {
     Q_OBJECT
@@ -52,6 +52,7 @@ class BookmarksRunner : public Plasma::AbstractRunner
           */
         enum Browser { Konqueror, ///< the browser is Konqueror
                        Firefox, ///< the browser is Firefox
+                       Opera, ///< the browser is Opera
                        Default = Konqueror ///< Konqueror is default
                      };
 
@@ -63,6 +64,10 @@ class BookmarksRunner : public Plasma::AbstractRunner
                                                       const QString& term);
         /** Get the bookmarks from Konqueror */
         void matchKonquerorBookmarks(Plasma::RunnerContext& context, bool allBookmarks,
+                                                        const QString& term);
+
+        /** Get the bookmarks from Opera */
+        void matchOperaBookmarks(Plasma::RunnerContext& context, bool allBookmarks,
                                                         const QString& term);
 
         /** @returns the browser to get the bookmarks from
@@ -78,6 +83,7 @@ class BookmarksRunner : public Plasma::AbstractRunner
         QString m_dbCacheFile;
         QSqlDatabase m_db;
         KBookmarkManager *m_bookmarkManager;
+        QStringList m_operaBookmarkEntries;
 
     private Q_SLOTS:
         void prep();

@@ -59,48 +59,50 @@ BookmarksRunner::~BookmarksRunner()
 
 void BookmarksRunner::reloadConfiguration()
 {
-    if (QSqlDatabase::isDriverAvailable("QSQLITE")) {
-        KConfigGroup grp = config();
-        /* This allows the user to specify a profile database */
-        m_dbFile = grp.readEntry<QString>("dbfile", "");
-        if (m_dbFile.isEmpty()) {//Try to get the right database file, the default profile is used
-            KConfig firefoxProfile(QDir::homePath() + "/.mozilla/firefox/profiles.ini",
-                                   KConfig::SimpleConfig);
-            QStringList profilesList = firefoxProfile.groupList();
-            profilesList = profilesList.filter(QRegExp("^Profile\\d+$"));
-            int size = profilesList.size();
+    if (m_browser == Firefox) {
+        if (QSqlDatabase::isDriverAvailable("QSQLITE")) {
+            KConfigGroup grp = config();
+            /* This allows the user to specify a profile database */
+            m_dbFile = grp.readEntry<QString>("dbfile", "");
+            if (m_dbFile.isEmpty()) {//Try to get the right database file, the default profile is used
+                KConfig firefoxProfile(QDir::homePath() + "/.mozilla/firefox/profiles.ini",
+                                       KConfig::SimpleConfig);
+                QStringList profilesList = firefoxProfile.groupList();
+                profilesList = profilesList.filter(QRegExp("^Profile\\d+$"));
+                int size = profilesList.size();
 
-            QString profilePath;
-            if (size == 1) {
-                // There is only 1 profile so we select it
-                KConfigGroup fGrp = firefoxProfile.group(profilesList.first());
-                profilePath = fGrp.readEntry("Path", "");
-            } else {
-                // There are multiple profiles, find the default one
-                foreach(const QString & profileName, profilesList) {
-                    KConfigGroup fGrp = firefoxProfile.group(profileName);
-                    if (fGrp.readEntry<int>("Default", 0)) {
-                        profilePath = fGrp.readEntry("Path", "");
-                        break;
+                QString profilePath;
+                if (size == 1) {
+                    // There is only 1 profile so we select it
+                    KConfigGroup fGrp = firefoxProfile.group(profilesList.first());
+                    profilePath = fGrp.readEntry("Path", "");
+                } else {
+                    // There are multiple profiles, find the default one
+                    foreach(const QString & profileName, profilesList) {
+                        KConfigGroup fGrp = firefoxProfile.group(profileName);
+                        if (fGrp.readEntry<int>("Default", 0)) {
+                            profilePath = fGrp.readEntry("Path", "");
+                            break;
+                        }
                     }
                 }
-            }
 
-            if (profilePath.isEmpty()) {
-              kDebug() << "No default firefox profile found";
-              m_db = QSqlDatabase();
-              return;
-            }
+                if (profilePath.isEmpty()) {
+                    kDebug() << "No default firefox profile found";
+                    m_db = QSqlDatabase();
+                    return;
+                }
 
-            profilePath.prepend(QString("%1/.mozilla/firefox/").arg(QDir::homePath()));
-            m_dbFile = profilePath + "/places.sqlite";
-            grp.writeEntry("dbfile", m_dbFile);
+                profilePath.prepend(QString("%1/.mozilla/firefox/").arg(QDir::homePath()));
+                m_dbFile = profilePath + "/places.sqlite";
+                grp.writeEntry("dbfile", m_dbFile);
+            }
+            m_db = QSqlDatabase::addDatabase("QSQLITE");
+            m_db.setHostName("localhost");
+        } else {
+            kDebug() << "SQLITE driver isn't available";
+            m_db = QSqlDatabase();
         }
-        m_db = QSqlDatabase::addDatabase("QSQLITE");
-        m_db.setHostName("localhost");
-    } else {
-        kDebug() << "SQLITE driver isn't available";
-        m_db = QSqlDatabase();
     }
 }
 
@@ -115,18 +117,45 @@ void BookmarksRunner::prep()
             m_dbOK = m_db.open();
             kDebug() << "Database was opened: " << m_dbOK;
         }
+    } else if (m_browser == Opera) {
+        // open bookmarks file
+        QString operaBookmarksFilePath = QDir::homePath() + "/.opera/bookmarks.adr";
+        QFile operaBookmarksFile(operaBookmarksFilePath);
+        if (!operaBookmarksFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            kDebug() << "Could not open Operas Bookmark File " + operaBookmarksFilePath;
+            return;
+        }
+
+        // check format
+        QString firstLine = operaBookmarksFile.readLine();
+        if (firstLine.compare("Opera Hotlist version 2.0\n")) {
+            kDebug() << "Format of Opera Bookmarks File might have changed.";
+        }
+        operaBookmarksFile.readLine(); // skip options line ("Options: encoding = utf8, version=3")
+        operaBookmarksFile.readLine(); // skip empty line
+
+        // load contents
+        QString contents = operaBookmarksFile.readAll();
+        m_operaBookmarkEntries = contents.split("\n\n", QString::SkipEmptyParts);
+
+        // close file
+        operaBookmarksFile.close();
     }
 }
 
 void BookmarksRunner::down()
 {
-    if (m_db.isOpen()) {
-        m_db.close();
-        m_dbOK = false;
-        QFile db_CacheFile(m_dbCacheFile);
-        if (db_CacheFile.exists()) {
-            kDebug() << "Cache file was removed: " << db_CacheFile.remove();
+    if (m_browser == Firefox) {
+        if (m_db.isOpen()) {
+            m_db.close();
+            m_dbOK = false;
+            QFile db_CacheFile(m_dbCacheFile);
+            if (db_CacheFile.exists()) {
+                kDebug() << "Cache file was removed: " << db_CacheFile.remove();
+            }
         }
+    } else if (m_browser == Opera) {
+        m_operaBookmarkEntries.clear();
     }
 }
 
@@ -142,6 +171,8 @@ void BookmarksRunner::match(Plasma::RunnerContext &context)
         matchKonquerorBookmarks(context, allBookmarks, term);
     } else if (m_browser == Firefox) {
         matchFirefoxBookmarks(context, allBookmarks, term);
+    } else if (m_browser == Opera) {
+        matchOperaBookmarks(context, allBookmarks, term);
     }
 }
 
@@ -164,6 +195,89 @@ KIcon BookmarksRunner::favicon(const KUrl &url)
     KIcon icon = KIcon(iconFile);
 
     return icon;
+}
+
+void BookmarksRunner::matchOperaBookmarks(Plasma::RunnerContext& context, bool allBookmarks,
+                                                        const QString& term)
+{
+    QList<Plasma::QueryMatch> matches;
+
+    QLatin1String nameStart("\tNAME=");
+    QLatin1String urlStart("\tURL=");
+    QLatin1String descriptionStart("\tDESCRIPTION=");
+
+    // search
+    foreach (const QString & entry, m_operaBookmarkEntries) {
+        if (!context.isValid()) {
+            return;
+        }
+
+        QStringList entryLines = entry.split("\n");
+        if (!entryLines.first().startsWith(QString("#URL"))) {
+            continue; // skip folder entries
+        }
+        entryLines.pop_front();
+
+        QString name;
+        QString url;
+        QString description;
+
+        foreach (const QString & line, entryLines) {
+            if (line.startsWith(nameStart)) {
+                name = line.mid( QString(nameStart).length() ).simplified();
+            } else if (line.startsWith(urlStart)) {
+                url = line.mid( QString(urlStart).length() ).simplified();
+            } else if (line.startsWith(descriptionStart)) {
+                description = line.mid(QString(descriptionStart).length())
+                              .simplified();
+            }
+        }
+
+        if (url.simplified().isEmpty())
+            continue; // skip useless entries
+
+        Plasma::QueryMatch::Type type = Plasma::QueryMatch::NoMatch;
+        qreal relevance = 0;
+
+        if (name.compare(term, Qt::CaseInsensitive) == 0
+             || description.compare(term, Qt::CaseInsensitive) == 0) {
+            type = Plasma::QueryMatch::ExactMatch;
+            relevance = 1.0;
+        } else if (name.contains(term, Qt::CaseInsensitive)) {
+            type = Plasma::QueryMatch::PossibleMatch;
+            relevance = 0.45;
+        } else if (description.contains(term, Qt::CaseInsensitive)) {
+            type = Plasma::QueryMatch::PossibleMatch;
+            relevance = 0.3;
+        } else if (url.contains(term, Qt::CaseInsensitive)) {
+            type = Plasma::QueryMatch::PossibleMatch;
+            relevance = 0.2;
+        } else if (allBookmarks) {
+            type = Plasma::QueryMatch::PossibleMatch;
+            relevance = 0.18;
+        }
+
+        if (type != Plasma::QueryMatch::NoMatch) {
+            bool isNameEmpty = name.isEmpty();
+            bool isDescriptionEmpty = description.isEmpty();
+
+            Plasma::QueryMatch match(this);
+            match.setType(type);
+            match.setRelevance(relevance);
+            match.setIcon(m_icon);
+
+            // Try to set the following as text in this order: name, description, url
+            match.setText( isNameEmpty
+                           ?
+                           (!isDescriptionEmpty ? description : url)
+                           :
+                           name );
+
+            match.setData(url);
+            matches << match;
+        }
+    }
+    context.addMatches(term, matches);
 }
 
 void BookmarksRunner::matchKonquerorBookmarks(Plasma::RunnerContext& context, bool allBookmarks,
@@ -312,6 +426,8 @@ BookmarksRunner::Browser BookmarksRunner::whichBrowser()
     kDebug() << exec;
     if (exec.contains("firefox", Qt::CaseInsensitive)) {
         return Firefox;
+    } else if (exec.contains("opera", Qt::CaseInsensitive)) {
+        return Opera;
     } else if (exec.contains("konqueror", Qt::CaseInsensitive)) {
         return Konqueror;
     } else {
