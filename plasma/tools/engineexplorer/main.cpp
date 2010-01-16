@@ -71,6 +71,7 @@ int main(int argc, char **argv)
     aboutData.addAuthor(ki18n("Aaron J. Seigo"),
                         ki18n( "Author and maintainer" ),
                         "aseigo@kde.org");
+    aboutData.setProgramIconName("plasma");
 
     KCmdLineArgs::init(argc, argv, &aboutData);
 
