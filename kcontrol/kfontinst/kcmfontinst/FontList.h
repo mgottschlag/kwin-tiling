@@ -338,7 +338,8 @@ class CFontListView : public QTreeView
     void            reload();
 
     public Q_SLOTS:
-
+        
+    void            listingPercent(int percent);
     void            refreshFilter();
     void            filterText(const QString &text);
     void            filterCriteria(int crit, qulonglong ws);

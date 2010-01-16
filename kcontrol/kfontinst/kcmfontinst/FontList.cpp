@@ -1378,6 +1378,7 @@ CFontListView::CFontListView(QWidget *parent, CFontList *model)
     connect(this, SIGNAL(collapsed(const QModelIndex &)), SLOT(itemCollapsed(const QModelIndex &)));
     connect(header(), SIGNAL(sectionClicked(int)), SLOT(setSortColumn(int)));
     connect(itsProxy, SIGNAL(refresh()), SIGNAL(refresh()));
+    connect(itsModel, SIGNAL(listingPercent(int)), SLOT(listingPercent(int)));
 
     setWhatsThis(model->whatsThis());
     header()->setWhatsThis(whatsThis());
@@ -1539,6 +1540,14 @@ void CFontListView::setFilterGroup(CGroupListItem *grp)
             itsModel->refresh(!grp || !grp->isPersonal(),
                               !grp || !grp->isSystem());
     }
+}
+
+void CFontListView::listingPercent(int percent)
+{
+    // when the font list is first loaded, for some reason it is not always sorted.
+    // re-enabling sorting here seems to fix the issue - BUG 221610
+    if(100==percent)
+        setSortingEnabled(true);
 }
 
 void CFontListView::refreshFilter()
