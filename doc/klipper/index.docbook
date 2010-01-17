@@ -30,8 +30,8 @@
 
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2005-01-31</date>
-<releaseinfo>2.92.00</releaseinfo>
+<date>2010-01-14</date>
+<releaseinfo>0.9.7 (&kde; 4.4)</releaseinfo>
 
 <abstract>
 <para>&klipper; is the &kde; clipboard cut &amp; paste utility.</para>
@@ -49,10 +49,8 @@
 <title>Introduction</title>
 <para>&klipper; is the &kde; clipboard utility. It stores clipboard
 history, and allows you to link clipboard contents to application
-actions. Please report any problems or feature requests to Esben Mose
-Hansen (see <ulink
-url="http://mosehansen.dk/about">http://mosehansen.dk/about</ulink>
-for contact details).</para>
+actions. Please report any problems or feature requests to<ulink
+url="http://bugs.kde.org">KDEs bugzilla</ulink> or use the "report bug" feature.</para>
 
 </chapter>
 
@@ -89,9 +87,9 @@ example, to clear the clipboard history when the &klipper; menu is
 open, press <keycombo action="simul">&Alt;<keycap>L</keycap>
 </keycombo>.</para>
 
-<para>To remove &klipper;, click on the handle next to it (a small
-black triangle), and from the menu that appears, select
-<guimenuitem>Remove Klipper</guimenuitem>.</para>
+<para>To disable &klipper;, click on its icon and 
+from the menu that appears, select
+<guimenuitem>Quit</guimenuitem>.</para>
 
 </sect1>
 
@@ -101,30 +99,35 @@ black triangle), and from the menu that appears, select
 <para>&klipper; can perform actions on the contents of the clipboard,
 based on whether they match a particular regular expression. For
 example, any clipboard contents starting with <quote>http://</quote> can
-be passed to &Netscape; or &konqueror; as &URL;s to open.</para>
+be passed to Firefox or &konqueror; as &URL;s to open. In addition, if the 
+contents matches a path, similar actions can be performed according to the file's
+type. E.g, if the path to a pdf file is copied to the clipboard, the file can be 
+view in Okular</para>
 
-<para>To use this feature, just copy a &URL; or filename to the
-clipboard. If there is a matching regular expression in &klipper;'s
-list, a menu will appear showing you the options you have (&eg; Open
-&URL; in &konqueror;, open &URL; in &Netscape;). Use the mouse or
-keyboard to select the option you want, and &klipper; will run the
-program you have selected, opening the address pointed to by the
-clipboard contents.</para>
+<para>To use this feature, just select a &URL; or path. <!-- starting with slash ?-->
+If there is a matching regular expression in &klipper;'s
+list, a menu will appear showing you the programs for your selection. 
+Use the mouse or cursor keys to select a program, and &klipper; will run 
+this program, opening the address pointed to by the
+selection.</para>
 
 <para>If you do not want to perform any actions on the clipboard
-contents, select <guimenuitem>Do Nothing</guimenuitem> on the pop-up menu
+contents, select <guimenuitem>Disable This Popup</guimenuitem> on the pop-up menu
 to return to what you were doing before. If you leave the menu, it will
 disappear, leaving you to continue your work. You can change the time
 that the menu remains for in the <guilabel>Configure Klipper...</guilabel>
-dialog, with the option <guilabel>Timeout for action pop-ups</guilabel>
-under the <guilabel>General</guilabel> tab.</para>
-	  
+dialog, with the option <guilabel>Timeout for action popups</guilabel>
+under the <guilabel>General</guilabel> tab. You can separately disable the 
+file path part using the option <guilabel>Enable MIME-based actions</guilabel> under
+the <guilabel>Actions</guilabel> tab.</para>
+  
 <para>Actions can be disabled completely by clicking on &klipper; and
-selecting <guimenuitem>Actions Enabled</guimenuitem>, or by pressing
+deselecting <guimenuitem>Actions Enabled</guimenuitem>, or by pressing
 <keycombo action="simul">&Ctrl;&Alt;<keycap>X</keycap></keycombo>.</para>
 
 <para>Clipboard contents which match a regular expression can also be
-edited before performing an action on them. Select <guimenuitem>Edit contents...</guimenuitem> on the &klipper; pop-up menu, and you can
+edited before performing an action on them. Select <guimenuitem>Edit 
+contents...</guimenuitem> on the &klipper; pop-up menu, and you can
 change the clipboard contents in the dialog which appears, before
 clicking the <guibutton>OK</guibutton> button to run the appropriate
 action.</para>
@@ -178,10 +181,11 @@ contents of this clipboard.
 <sect2 id="changing-clipboard-modes">
 <title>Changing Clipboard/Selection Behavior</title>
 <para>
+<!-- this has changed in kde 4.4-->
 In order to change clipboard/selection behavior, select
-<guimenuitem>Configure Klipper...</guimenuitem> from the &klipper; pop-up menu,
+<guimenuitem>Configure &klipper;...</guimenuitem> from the &klipper; pop-up menu,
 and in the dialog box that appears, select the
-<guilabel>General</guilabel> tab. Selecting <guilabel>Separate clipboard and
+<guilabel>General</guilabel> tab. Unchecking <guilabel>Synchronize contents of the clipboard and the
 selection</guilabel> makes the clipboard and selection function as completely
 separate buffers as described above. With this option set, the option
 <guilabel>Ignore selection</guilabel> will prevent &klipper; from
@@ -243,13 +247,10 @@ history will be saved when &klipper; exits, allowing you to use it next time
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>Remove white space when executing actions</guilabel></term>
-<listitem><para>If selected, any white space (spaces, tabs, &etc;) at the
-beginning and end of the clipboard contents will be removed before passing the
-clipboard contents to an application. This is useful, for example, if the
-clipboard contains a &URL; with spaces which, if opened by a web browser, would
-cause an error.</para>
-</listitem>
+<term><guilabel>Prevent empty clipboard</guilabel></term>
+<listitem><para>If selected, the clipboard will never be empty: &klipper; will
+insert the most recent item from the clipboard history into the clipboard
+instead of allowing it to be empty.</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -262,35 +263,58 @@ appropriate.</para>
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>Prevent empty clipboard</guilabel></term>
-<listitem><para>If selected, the clipboard will never be empty: &klipper; will
-insert the most recent item from the clipboard history into the clipboard
-instead of allowing it to be empty.</para></listitem>
+<term><guilabel>Remove white space when executing actions</guilabel></term>
+<listitem><para>If selected, any white space (spaces, tabs, &etc;) at the
+beginning and end of the clipboard contents will be removed before passing the
+clipboard contents to an application. This is useful, for example, if the
+clipboard contains a &URL; with spaces which, if opened by a web browser, would
+cause an error.</para>
+</listitem>
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>Ignore selection</guilabel></term>
-<listitem><para>Sets the clipboard mode. See <xref linkend="clipboard-modes"/>.
+<term><guilabel>Ignore images</guilabel></term>
+<listitem><para>When an area of the screen is selected with mouse or keyboard, 
+this is called the <quote>selection</quote>. If this option is selected, only text 
+selections are stored in the history, while images and other selections are not.
 </para>
 </listitem>
 </varlistentry> 
 
+<varlistentry>
+<term><guilabel>Ignore selection</guilabel></term>
+<listitem><para>Sets the clipboard mode. This option will prevent &klipper; from
+including the contents of the selection in its clipboard history and from
+performing actions on the contents of the selection. See <xref linkend="clipboard-modes"/>.
+</para>
+</listitem>
+</varlistentry> 
+
+<varlistentry>
+<term><guilabel>Text selection only</guilabel></term>
+<listitem><para>When an area of the screen is selected with mouse or keyboard, this is 
+called the <quote>selection</quote>. If this option is selected, only text selections 
+are stored in the history, while images and other selections are not.
+See <xref linkend="clipboard-modes"/>.
+</para>
+</listitem>
+</varlistentry> 
 
 <varlistentry>
 <term><guilabel>Synchronize contents of the clipboard and the
 selection</guilabel></term>
-<listitem><para>Sets the clipboard mode. See <xref linkend="clipboard-modes"/>.
+<listitem><para>Sets the clipboard mode. 
+When an area of the screen is selected with mouse or keyboard, this is 
+called the <quote>selection</quote>. If this option is selected, the selection and the 
+clipboard is kept the same, so that anything in the selection is immediately 
+"available for pasting elsewhere using any method, including the traditional 
+middle mouse button. Otherwise, the selection is recorded in the clipboard 
+history, but the selection can only be pasted using the middle mouse button. 
+Also see the <guilabel>Ignore selection</guilabel> option. 
+See <xref linkend="clipboard-modes"/>.
 </para>
 </listitem>
 </varlistentry> 
-
-<varlistentry>
-<term><guilabel>Separate clipboard and selection</guilabel></term>
-<listitem><para>Sets the clipboard mode. See <xref linkend="clipboard-modes"/>.
-</para>
-</listitem>
-</varlistentry> 
-
 
 <varlistentry>
 <term><guilabel>Timeout for Action pop-ups</guilabel></term>
@@ -317,7 +341,7 @@ in the clipboard history.</para></listitem>
 <listitem><para>On the <guilabel>Actions</guilabel> tab, double-click
 the regular expression or action that you want to edit. An in-place text editing
 box will appear in which the text can be edited as you wish. Make sure you
-press <keysym>Enter</keysym> when you are done.</para></listitem>
+press &Enter; when you are done.</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -344,15 +368,15 @@ appears in the tree under the regular expression.</para>
 
 <para>Note that <token>%s</token> in the command line is replaced with
 the clipboard contents, &eg; if your command definition is
-<userinput><command>kedit</command> <token>%s</token></userinput> and
+<userinput><command>kwrite</command> <token>%s</token></userinput> and
 your clipboard contents are <filename>/home/phil/textfile</filename>,
-the command <userinput><command>kedit</command>
+the command <userinput><command>kwrite</command>
 <filename>/home/phil/textfile</filename></userinput> will be run. To
 include <token>%s</token> in the command line, escape it with a
 backslash, as so: <userinput>\%s</userinput>.</para></listitem>
 </varlistentry>
 
-<varlistentry><term><guibutton>Advanced...</guibutton></term>
+<varlistentry><term><guibutton>Advanced</guibutton></term>
 <listitem><para>Brings up the <guilabel>Disable Actions for windows of type
 WM_CLASS</guilabel> dialog.</para>
 <para>Some programs, such as &konqueror;,
@@ -398,9 +422,9 @@ shortcuts referred to in this manual.</para></listitem>
 <varlistentry>
 <term><guilabel>Custom</guilabel></term>
 <listitem><para>The selected action is assigned to the keys you choose.</para>
-<para>To choose a custom key for the action you have selected, click on the
-representation of a key in the lower right of the screen to activate it, and
-type the desired key combination on your keyboard, as in any &kde; application. 
+<para>To choose a custom key for the action you have selected, click on 
+<guilabel>Custom</guilabel> and then <guilabel>None</guilabel>.
+Now type the desired key combination on your keyboard, as in any &kde; application. 
 </para> </listitem>
 </varlistentry>
 </variablelist>
@@ -447,12 +471,7 @@ Documentation copyright 2000-2003, 2005 &Philip.Rodrigues;
 
 <sect1 id="compilation">
 <title>Compilation and Installation</title>
-<para>&klipper; should compile and install along with the kdebase
-package, and appear on your &kde; panel (&kicker;) when you run &kde;
-3. If it does not appear, you can start it by selecting
-<guimenuitem>Add Applet to Panel...</guimenuitem> 
-in any context menu in &kicker;, the &kde; Panel 
-and choosing <guilabel>Klipper</guilabel> in the dialog.</para> 
+&install.compile.documentation; 
 
 <screenshot>
 <screeninfo>&klipper; icon</screeninfo>
