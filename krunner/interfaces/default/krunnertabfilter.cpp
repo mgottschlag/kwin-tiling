@@ -26,7 +26,7 @@
 #include "krunnertabfilter.h"
 #include "resultscene.h"
 
-KrunnerTabFilter::KrunnerTabFilter(ResultScene* scene, KLineEdit* edit, QWidget * parent) 
+KrunnerTabFilter::KrunnerTabFilter(ResultScene* scene, KLineEdit* edit, QWidget * parent)
     : QObject(parent),
       m_resultScene(scene),
       m_lineEdit(edit)
@@ -40,16 +40,16 @@ KrunnerTabFilter::~KrunnerTabFilter()
 bool KrunnerTabFilter::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::FocusOut) {
-        //FIXME: find a reliable way to see if the scene is empty; now defaults to 
+        //FIXME: find a reliable way to see if the scene is empty; now defaults to
         //       never complete
-        bool emptyScene = false; 
+        bool emptyScene = false;
         bool suggestedCompletion = (m_lineEdit->text() != m_lineEdit->userText());
 
         if (emptyScene &&  suggestedCompletion) {
             // We hit TAB with an empty scene and a suggested completion:
             // Complete but don't lose focus
             m_lineEdit->setText(m_lineEdit->text());
-            return true; 
+            return true;
         } else if (suggestedCompletion) {
             // We hit TAB with a non-empty scene and a suggested completion:
             // Assume the user wants to switch input to the results scene and discard the completion
