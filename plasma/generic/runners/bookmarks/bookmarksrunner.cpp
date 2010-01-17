@@ -162,7 +162,7 @@ void BookmarksRunner::down()
 void BookmarksRunner::match(Plasma::RunnerContext &context)
 {
     const QString term = context.query();
-    if (term.length() < 3) {
+    if ((term.length() < 3) && (!context.singleRunnerQueryMode())) {
         return;
     }
     bool allBookmarks = term.compare(i18nc("list of all konqueror bookmarks", "bookmarks"),
