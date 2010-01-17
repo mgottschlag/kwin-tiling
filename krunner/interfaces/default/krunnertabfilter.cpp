@@ -39,7 +39,13 @@ KrunnerTabFilter::~KrunnerTabFilter()
 
 bool KrunnerTabFilter::eventFilter(QObject *obj, QEvent *event)
 {
-    if (event->type() == QEvent::FocusOut) {
+    bool enterPressed = false;
+    if ( event->type() == QEvent::KeyPress ) {
+        QKeyEvent *e = static_cast<QKeyEvent *>( event );
+        enterPressed = ( e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter );
+    }
+
+    if ((event->type() == QEvent::FocusOut) || enterPressed) {
         //FIXME: find a reliable way to see if the scene is empty; now defaults to
         //       never complete
         bool emptyScene = false;
