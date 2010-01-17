@@ -513,6 +513,7 @@ void CFontList::load()
     emit layoutChanged();
     emit listingPercent(0);
 
+    CJobRunner::startDbusService();
     CJobRunner::dbus()->list(FontInst::SYS_MASK|FontInst::USR_MASK, getpid());
 }
 
