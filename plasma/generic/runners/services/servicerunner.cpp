@@ -192,7 +192,7 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
                     continue;
                 }
                 Plasma::QueryMatch match(this);
-                match.setType(Plasma::QueryMatch::ExactMatch);
+                match.setType(Plasma::QueryMatch::PossibleMatch);
                 setupMatch(service, match);
 
                 qreal relevance = 0.6;
