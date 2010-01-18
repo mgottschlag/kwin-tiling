@@ -44,8 +44,8 @@ There are three ways that scripts can be executed in plasma-desktop:
 
 API: Screen Geometry
 --------------------
-* screenCount(): returns the number of screens connected to the computer
-* screenGeometry(int screen): returns a rect object representing the geometry of a screen
+* number screenCount(): returns the number of screens connected to the computer
+* number screenGeometry(int screen): returns a rect object representing the geometry of a screen
 
 API: Activities
 ---------------
@@ -53,11 +53,11 @@ Activities (or in sightly more technical terms, desktop containments) can be enu
 created, destroyed and modified. In the global scope of the script, the following functions
 are available:
 
-* activityIds(): returns a list of integer ids of all existing Plasma activities
-* activityById(int id): return an object representing the activity with the given id
-* activityForScreen(int screen, int dekstop): returns an object representing the activity
+* Array[number] activityIds(): returns a list of integer ids of all existing Plasma activities
+* Containment activityById(int id): return an object representing the activity with the given id
+* Containment activityForScreen(int screen, int dekstop): returns an object representing the activity
   currently associated with the given screen and, optionally, the given desktop
-* createActivity(string name): creates a new activity of type name (e.g. "desktop" or "folderview";
+* Containment createActivity(string name): creates a new activity of type name (e.g. "desktop" or "folderview";
   this maps to the X-KDE-PluginInfo-Name= entry in the plugin's .desktop file) and returns an
   object representing it. On failure, an invalid object will be returned
 
@@ -86,35 +86,38 @@ in the plugin's .desktop file).
 API: Activities and Panels
 --------------------------
 Activity and Panel objects (ones created by the script, or as returned by activityById, activityForScreen,
-or panelById) provide the following properties:
+or panelById) provide the following read-only properties:
 
 * id: the integer id of this activity
-* name: the name of this activity, may also be changed by assigning a new string to it (settable)
-* screen: the screen this activity is associated with, or -1 for none (settable)
-* desktop: the virtual desktop this activity is associated with, or -1 for none (settable)
-* location: returns the location of the activity (only relevant for Panels) (settable)
 * formFactor: returns the form factor of the activity, e.g. "planar" for most desktop activities,
   "mediacenter" for media centers and either "horizontal" or "vertical" for panels.
 * widgetIds: a list of integer ids of all the widgets in this Activity
 
+as well as the following read/write properties:
+
+* number desktop: the virtual desktop this activity is associated with, or -1 for none
+* number screen: the screen this activity is associated with, or -1 for none
+* string name: the name of this activity
+
 and the following methods:
 
 * remove(): deletes this activity and all widgets inside of it
-* widgetById(id): returns an object representing the widget with the given id
-* addWidget(string name): adds a new widget to the activity; the name maps to the X-KDE-PluginInfo-Name= entry
+* Widget widgetById(id): returns an object representing the widget with the given id
+* Widget addWidget(string name): adds a new widget to the activity; the name maps to the X-KDE-PluginInfo-Name= entry
   in the widget's .desktop file
-* addWidget(Object widget): adds an existing widget to this activity; useful for moving widgets between Activities and Panels
+* Widget addWidget(Object widget): adds an existing widget to this activity; useful for moving widgets between Activities and Panels
 * showConfigurationInteface(): shows the configuration user interface for this Activity or Panel on the screen
 
-In addition, Panel objects provide the folowing properties, all of which are settable:
-* length: the number of pixels along the screen edge used
-* height: the height (or for vertical panels, the width) of the panel
-* hiding: the hiding mode of the panel, one of "none" (for no hiding), "autohide", "windowscover" or "windowsbelow"
-* alignment: right, left or center alignment of the panel (for vertical panels, right corrsponds to top and left to bottom)
+In addition, Panel objects provide the folowing read/write properties:
+* number length: the number of pixels along the screen edge used
+* number height: the height (or for vertical panels, the width) of the panel
+* string hiding: the hiding mode of the panel, one of "none" (for no hiding), "autohide", "windowscover" or "windowsbelow"
+* string alignment: right, left or center alignment of the panel (for vertical panels, right corrsponds to top and left to bottom)
+* string location: returns the location of the activity (only relevant for Panels); valid values include "top", "bottom", "left", "right" and "floating"
 
 API: Miscelaneous
 -----------------
-* locked: whether the desktop shell and widgets are locked or not (settable)
+* bool locked: whether the desktop shell and widgets are locked or not (settable)
 * sleep(int): sleeps the script for the specified number of millseconds
 
 API: Widgets
@@ -123,14 +126,17 @@ Widgets may be enumerated by calling the widgetIds property on a Activity or Pan
 With a widget id in hand, a Widget object can be retrieved by calling widgetById(id) on the
 Activity or Panel.
 
-A widget object provides the following properties:
+A widget object provides the following read-only properties:
 
-* id: the id of the widget
-* type: the plugin type of this widget
-* configKeys: a list of all keys that are set in the current configuration
-* configGroups: a list of all the groups in the current configuration
+* number id: the id of the widget
+* String type: the plugin type of this widget
+* Array[String] configKeys: a list of all keys that are set in the current configuration
+* Array[String] configGroups: a list of all the groups in the current configuration
+* number index: the layout index of the widget; in a Panel this corresponds to the order in appears in
+
+as well as the following read-write properties:
+
 * geometry: the geometry of the widget (settable)
-* index: the layout index of the widget; in a Panel this corresponds to the order in appears in
 
 and methods:
 
