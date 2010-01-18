@@ -36,7 +36,6 @@ public:
     void run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &action);
 
 private slots:
-    void prepPlacesModel();
     void setupComplete(QModelIndex, bool);
 };
 
