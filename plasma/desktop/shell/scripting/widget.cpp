@@ -28,7 +28,7 @@
 Widget::Widget(Plasma::Applet *applet, QObject *parent)
     : QObject(parent),
       m_applet(applet),
-      m_configGroup(applet->config()),
+      m_configGroup(applet ? applet->config() : KConfigGroup()),
       m_configDirty(false)
 {
 
@@ -68,37 +68,60 @@ void Widget::remove()
     }
 }
 
-void Widget::setConfigGroup(const QString &config)
+void Widget::setCurrentConfigGroup(const QStringList &groupNames)
 {
     if (!m_applet) {
+        m_configGroup = KConfigGroup();
+        m_configGroupPath.clear();
         return;
     }
 
     m_configGroup = m_applet.data()->config();
-    if (!config.isEmpty()) {
-        m_configGroup = KConfigGroup(&m_configGroup, config);
+    m_configGroupPath = groupNames;
+
+    foreach (const QString &groupName, groupNames) {
+        m_configGroup = KConfigGroup(&m_configGroup, groupName);
     }
+}
+
+QStringList Widget::currentConfigGroup() const
+{
+    return m_configGroupPath;
 }
 
 QStringList Widget::configKeys() const
 {
-    return m_configGroup.keyList();
+    if (m_configGroup.isValid()) {
+        return m_configGroup.keyList();
+    }
+
+    return QStringList();
 }
 
 QStringList Widget::configGroups() const
 {
-    return m_configGroup.groupList();
+    if (m_configGroup.isValid()) {
+        return m_configGroup.groupList();
+    }
+
+    return QStringList();
 }
 
 QVariant Widget::readConfig(const QString &key, const QVariant &def) const
 {
-    return m_configGroup.readEntry(key, def);
+    if (m_configGroup.isValid()) {
+        return m_configGroup.readEntry(key, def);
+    } else {
+        return QVariant();
+    }
 }
 
 void Widget::writeConfig(const QString &key, const QVariant &value)
 {
-    m_configGroup.writeEntry(key, value);
-    m_configDirty = true;
+    if (m_configGroup.isValid()) {
+        m_configGroup.writeEntry(key, value);
+        m_configDirty = true;
+    }
 }
 
 Plasma::Applet *Widget::applet() const

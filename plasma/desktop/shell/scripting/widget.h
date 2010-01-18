@@ -39,6 +39,7 @@ class Widget : public QObject
     Q_PROPERTY(QStringList configGroups READ configGroups)
     Q_PROPERTY(int index WRITE setIndex READ index)
     Q_PROPERTY(QRectF geometry WRITE setGeometry READ geometry)
+    Q_PROPERTY(QStringList currentConfigGroup WRITE setCurrentConfigGroup READ currentConfigGroup)
 
 
 public:
@@ -59,9 +60,11 @@ public:
     QRectF geometry() const;
     void setGeometry(const QRectF &geometry);
 
+    void setCurrentConfigGroup(const QStringList &groupNames);
+    QStringList currentConfigGroup() const;
+
 public Q_SLOTS:
     void remove();
-    void setConfigGroup(const QString &config);
     QVariant readConfig(const QString &key, const QVariant &def = QString()) const;
     void writeConfig(const QString &key, const QVariant &value);
     void showConfigurationInterface();
@@ -69,6 +72,7 @@ public Q_SLOTS:
 private:
     QWeakPointer<Plasma::Applet> m_applet;
     KConfigGroup m_configGroup;
+    QStringList m_configGroupPath;
     bool m_configDirty;
 };
 
