@@ -31,6 +31,10 @@ PlacesRunner::PlacesRunner(QObject* parent, const QVariantList &args)
     setObjectName("Places");
     addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds file manager locations that match :q:")));
     addSyntax(Plasma::RunnerSyntax(i18n("places"), i18n("Lists all file manager locations")));
+
+    // ensure the bookmarkmanager, etc. in the places model gets creates created in the main thread
+    // otherwise crashes ensue
+    KFilePlacesModel places;
 }
 
 PlacesRunner::~PlacesRunner()
