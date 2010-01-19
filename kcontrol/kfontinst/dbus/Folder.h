@@ -75,6 +75,7 @@ class Folder
 
     void                      init(bool system, bool systemBus);
     const QString &           location() const                           { return itsLocation; }
+    bool                      allowToggling() const;
     void                      loadDisabled();
     void                      saveDisabled();
     void                      setDisabledDirty()                         { itsDisabledCfg.dirty=true; }

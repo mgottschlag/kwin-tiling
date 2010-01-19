@@ -1007,6 +1007,11 @@ void FontInst::toggle(bool enable, const QString &family, quint32 style, bool in
         KFI_DBUG << "not authenticated";
         emit status(pid, KIO::ERR_COULD_NOT_AUTHENTICATE);
     }
+    else if(!theFolders[theSystemService ? FontInst::FOLDER_SYS : FontInst::FOLDER_USER].allowToggling())
+    {
+        KFI_DBUG << "can not acces disabled file";
+        emit status(pid, KIO::ERR_WRITE_ACCESS_DENIED);
+    }
     else
     {
         KFI_DBUG << "process";

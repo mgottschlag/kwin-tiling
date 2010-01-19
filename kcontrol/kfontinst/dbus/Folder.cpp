@@ -103,6 +103,13 @@ void Folder::init(bool system, bool systemBus)
     }
 }
 
+bool Folder::allowToggling() const
+{
+    return Misc::fExists(itsDisabledCfg.name)
+            ? Misc::fWritable(itsDisabledCfg.name)
+            : Misc::dWritable(Misc::getDir(itsDisabledCfg.name));
+}
+
 void Folder::loadDisabled()
 {
     if(itsDisabledCfg.dirty)
@@ -184,7 +191,7 @@ void Folder::loadDisabled()
 
 void Folder::saveDisabled()
 {
-    if(itsDisabledCfg.dirty && Misc::fWritable(itsDisabledCfg.name))
+    if(itsDisabledCfg.dirty)
     {
         KFI_DBUG << itsDisabledCfg.name;
 
