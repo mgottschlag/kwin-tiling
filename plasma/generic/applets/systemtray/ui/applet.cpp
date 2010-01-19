@@ -149,11 +149,6 @@ Applet::~Applet()
 
 void Applet::init()
 {
-    KConfigGroup cg = config();
-    QStringList hiddenTypes = cg.readEntry("hidden", QStringList());
-    QStringList alwaysShownTypes = cg.readEntry("alwaysShown", QStringList());
-
-    setTaskAreaGeometry();
     connect(s_manager, SIGNAL(taskAdded(SystemTray::Task*)),
             m_taskArea, SLOT(addTask(SystemTray::Task*)));
     //TODO: we re-add the task when it changed: slightly silly!
@@ -162,40 +157,14 @@ void Applet::init()
     connect(s_manager, SIGNAL(taskRemoved(SystemTray::Task*)),
             m_taskArea, SLOT(removeTask(SystemTray::Task*)));
 
-    m_taskArea->setHiddenTypes(hiddenTypes);
-    m_taskArea->setAlwaysShownTypes(alwaysShownTypes);
     connect(m_taskArea, SIGNAL(sizeHintChanged(Qt::SizeHint)),
             this, SLOT(propogateSizeHintChange(Qt::SizeHint)));
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
             this, SLOT(checkSizes()));
-    checkSizes();
 
     extender()->setEmptyExtenderMessage(i18n("No notifications and no jobs"));
     extender()->setWindowFlags(Qt::X11BypassWindowManagerHint);
-
-    KConfigGroup globalCg = globalConfig();
-
-    if (globalCg.readEntry("ShowApplicationStatus", true)) {
-        m_shownCategories.insert(Task::ApplicationStatus);
-    }
-    if (globalCg.readEntry("ShowCommunications", true)) {
-        m_shownCategories.insert(Task::Communications);
-    }
-    if (globalCg.readEntry("ShowSystemServices", true)) {
-        m_shownCategories.insert(Task::SystemServices);
-    }
-    if (globalCg.readEntry("ShowHardware", true)) {
-        m_shownCategories.insert(Task::Hardware);
-    }
-
-    if (config().readEntry("AutoHidePopup", true)) {
-        m_autoHideTimeout = 6000;
-    } else {
-        m_autoHideTimeout = 0;
-    }
-
-    m_shownCategories.insert(Task::UnknownCategory);
 
     //destroy any item in the systray, that doesn't belong to the completedJobsGroup, since running
     //jobs and notifications can't really survive reboots anyways
@@ -205,29 +174,80 @@ void Applet::init()
         }
     }
 
-    bool createExtenderTask = false;
+    configChanged();
+}
 
+void Applet::configChanged()
+{
+    KConfigGroup cg = config();
+
+    const QStringList hiddenTypes = cg.readEntry("hidden", QStringList());
+    const QStringList alwaysShownTypes = cg.readEntry("alwaysShown", QStringList());
+    m_taskArea->setHiddenTypes(hiddenTypes);
+    m_taskArea->setAlwaysShownTypes(alwaysShownTypes);
+
+    m_shownCategories.clear();
+
+    if (cg.readEntry("ShowApplicationStatus", true)) {
+        m_shownCategories.insert(Task::ApplicationStatus);
+    }
+
+    if (cg.readEntry("ShowCommunications", true)) {
+        m_shownCategories.insert(Task::Communications);
+    }
+
+    if (cg.readEntry("ShowSystemServices", true)) {
+        m_shownCategories.insert(Task::SystemServices);
+    }
+
+    if (cg.readEntry("ShowHardware", true)) {
+        m_shownCategories.insert(Task::Hardware);
+    }
+
+    m_shownCategories.insert(Task::UnknownCategory);
+
+    if (cg.readEntry("AutoHidePopup", true)) {
+        m_autoHideTimeout = 6000;
+    } else {
+        m_autoHideTimeout = 0;
+    }
+
+    KConfigGroup globalCg = globalConfig();
+    bool createExtenderTask = false;
     if (globalCg.readEntry("ShowJobs", true)) {
         createExtenderTask = true;
         createJobGroups();
 
         s_manager->registerJobProtocol();
         connect(s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
-                this, SLOT(addJob(SystemTray::Job*)));
+                this, SLOT(addJob(SystemTray::Job*)), Qt::UniqueConnection);
         connect(s_manager, SIGNAL(jobRemoved(SystemTray::Job*)),
-                this, SLOT(finishJob(SystemTray::Job*)));
+                this, SLOT(finishJob(SystemTray::Job*)), Qt::UniqueConnection);
+    } else {
+        s_manager->unregisterJobProtocol();
+        disconnect(s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
+                   this, SLOT(addJob(SystemTray::Job*)));
+        disconnect(s_manager, SIGNAL(jobRemoved(SystemTray::Job*)),
+                   this, SLOT(finishJob(SystemTray::Job*)));
     }
 
     if (globalCg.readEntry("ShowNotifications", true)) {
         createExtenderTask = true;
         s_manager->registerNotificationProtocol();
         connect(s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
-                this, SLOT(addNotification(SystemTray::Notification*)));
+                this, SLOT(addNotification(SystemTray::Notification*)), Qt::UniqueConnection);
+    } else {
+        s_manager->unregisterNotificationProtocol();
+        disconnect(s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
+                   this, SLOT(addNotification(SystemTray::Notification*)));
     }
 
-    initExtenderTask(createExtenderTask);
-    s_manager->loadApplets(config(), this);
+
+    s_manager->loadApplets(cg, this);
     m_taskArea->syncTasks(s_manager->tasks());
+    initExtenderTask(createExtenderTask);
+    checkSizes();
+    setTaskAreaGeometry();
 }
 
 void Applet::initExtenderTask(bool create)
@@ -237,8 +257,10 @@ void Applet::initExtenderTask(bool create)
         m_taskArea->addTask(s_manager->extenderTask());
     } else if (s_manager->extenderTask(false)) {
         m_taskArea->removeTask(s_manager->extenderTask());
-        QGraphicsWidget *widget = s_manager->extenderTask(false)->widget(this, false);
-        widget->deleteLater();
+        QGraphicsWidget *widget = s_manager->extenderTask()->widget(this, false);
+        if (widget) {
+            widget->deleteLater();
+        }
     }
 }
 
@@ -649,7 +671,6 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
             m_plasmoidTasksUi.applets->addItem(listItem);
         }
     }
-
 }
 
 void Applet::configAccepted()
@@ -670,77 +691,18 @@ void Applet::configAccepted()
         }
     }
 
-    m_taskArea->setHiddenTypes(hiddenTypes);
-    m_taskArea->setAlwaysShownTypes(alwaysShownTypes);
-    m_taskArea->syncTasks(s_manager->tasks());
-
     KConfigGroup cg = config();
     cg.writeEntry("hidden", hiddenTypes);
     cg.writeEntry("alwaysShown", alwaysShownTypes);
-
     cg.writeEntry("AutoHidePopup", m_autoHideUi.autoHide->isChecked());
-    if (m_autoHideUi.autoHide->isChecked()) {
-        m_autoHideTimeout = 6000;
-    } else {
-        m_autoHideTimeout = 0;
-    }
 
     KConfigGroup globalCg = globalConfig();
     globalCg.writeEntry("ShowJobs", m_notificationUi.showJobs->isChecked());
     globalCg.writeEntry("ShowNotifications", m_notificationUi.showNotifications->isChecked());
-    bool createExtenderTask = false;
-
-    disconnect(s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
-               this, SLOT(addJob(SystemTray::Job*)));
-    if (m_notificationUi.showJobs->isChecked()) {
-        createJobGroups();
-        createExtenderTask = true;
-
-        s_manager->registerJobProtocol();
-        connect(s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
-                this, SLOT(addJob(SystemTray::Job*)));
-    } else {
-        s_manager->unregisterJobProtocol();
-    }
-
-    disconnect(s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
-               this, SLOT(addNotification(SystemTray::Notification*)));
-    if (m_notificationUi.showNotifications->isChecked()) {
-        createExtenderTask = true;
-        s_manager->registerNotificationProtocol();
-        connect(s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
-                this, SLOT(addNotification(SystemTray::Notification*)));
-    } else {
-        s_manager->unregisterNotificationProtocol();
-    }
-
-
-    initExtenderTask(createExtenderTask);
-    m_shownCategories.clear();
-
     globalCg.writeEntry("ShowApplicationStatus", m_notificationUi.showApplicationStatus->isChecked());
-    if (m_notificationUi.showApplicationStatus->isChecked()) {
-        m_shownCategories.insert(Task::ApplicationStatus);
-    }
-
     globalCg.writeEntry("ShowCommunications", m_notificationUi.showCommunications->isChecked());
-    if (m_notificationUi.showCommunications->isChecked()) {
-        m_shownCategories.insert(Task::Communications);
-    }
-
     globalCg.writeEntry("ShowSystemServices", m_notificationUi.showSystemServices->isChecked());
-    if (m_notificationUi.showSystemServices->isChecked()) {
-        m_shownCategories.insert(Task::SystemServices);
-    }
-
     globalCg.writeEntry("ShowHardware", m_notificationUi.showHardware->isChecked());
-    if (m_notificationUi.showHardware->isChecked()) {
-        m_shownCategories.insert(Task::Hardware);
-    }
-
-    m_shownCategories.insert(Task::UnknownCategory);
-
-    m_taskArea->syncTasks(manager()->tasks());
 
     QStringList applets = s_manager->applets(this);
     for (int i = 0; i < m_plasmoidTasksUi.applets->count(); ++i) {
@@ -1015,7 +977,7 @@ void Applet::finishJob(SystemTray::Job *job)
 
 void Applet::open(const QString &url)
 {
-    kDebug() << "open " << url;
+    //kDebug() << "open " << url;
     QProcess::startDetached("kde-open", QStringList() << url);
 }
 

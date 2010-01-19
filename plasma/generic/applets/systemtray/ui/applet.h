@@ -65,6 +65,7 @@ protected:
     void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
     void createConfigurationInterface(KConfigDialog *parent);
     void initExtenderItem(Plasma::ExtenderItem *extenderItem);
+    void configChanged();
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event) { Q_UNUSED(event); }
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) { Q_UNUSED(event); }
