@@ -174,9 +174,8 @@ mouse), you still have fine control of the mouse pointer on the screen,
 whereas larger movements of the physical device will move the mouse
 pointer rapidly to different areas on the screen.</para>
 
-<para>You can set the threshold value by dragging the slider button or
-by clicking the up/down arrows on the spin-button to the left of the
-slider.</para>
+<para>You can set the threshold by entering a value into the edit box or
+by clicking the up/down arrows to the right of the box.</para>
 
 <tip><para>In general, the higher you set the <guilabel>Pointer
 acceleration</guilabel> value, the higher you will want to set the
