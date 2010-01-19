@@ -1153,7 +1153,7 @@ bool FontInst::openSystemConnection(int pid)
 
         bool started=false;
         for(int check=0; check<10 && !started; ++check)
-            if((started=isStarted(itsSystemInterface)))
+            if(!(started=isStarted(itsSystemInterface)))
                 ::usleep(500*1000);
 
         if(started)
