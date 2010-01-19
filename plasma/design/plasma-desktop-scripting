@@ -136,7 +136,8 @@ A widget object provides the following read-only properties:
 
 as well as the following read-write properties:
 
-* geometry: the geometry of the widget (settable)
+* QRectF geometry: the geometry of the widget (settable)
+* String globalShortcut: the shortcut sequence (in the format used by QKeySequence, e.g. "Alt+F1") associated with this widget
 * Array[String] currentConfigGroup: the current configuration group path, with each entry in the array representing a sub-group. This allows one to access trees of groups with code such as: widget.currentConfigGroup = new Array('topGroup', 'subGroupOfTopGroup'). An empty Array means the default (top-level) configuration group for the widget
 
 and methods:
