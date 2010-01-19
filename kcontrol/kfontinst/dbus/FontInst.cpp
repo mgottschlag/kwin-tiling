@@ -138,6 +138,11 @@ FontInst::~FontInst()
         theFolders[i].saveDisabled();
 }
 
+int FontInst::ping()
+{
+    return PING_STATUS_ALIVE;
+}
+
 void FontInst::list(int folders, int pid)
 {
     KFI_DBUG << folders << pid;

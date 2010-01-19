@@ -8,8 +8,8 @@
  * Do not edit! All changes made to it will be lost.
  */
 
-#ifndef FONTINSTIFACE_H_1253199091
-#define FONTINSTIFACE_H_1253199091
+#ifndef FONTINSTIFACE_H
+#define FONTINSTIFACE_H
 
 #include <QtCore/QObject>
 #include <QtCore/QByteArray>
@@ -77,6 +77,12 @@ public Q_SLOTS: // METHODS
         QList<QVariant> argumentList;
         argumentList << qVariantFromValue(family) << qVariantFromValue(style) << qVariantFromValue(toSystem) << qVariantFromValue(pid) << qVariantFromValue(xid) << qVariantFromValue(checkConfig);
         callWithArgumentList(QDBus::NoBlock, QLatin1String("move"), argumentList);
+    }
+
+    inline QDBusPendingReply<int> ping()
+    {
+        QList<QVariant> argumentList;
+        return asyncCallWithArgumentList(QLatin1String("ping"), argumentList);
     }
 
     inline Q_NOREPLY void reconfigure(int pid)

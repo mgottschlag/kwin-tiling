@@ -67,6 +67,11 @@ class KFONTINST_EXPORT FontInst : public QObject
         STATUS_NO_SYS_CONNECTION
     };
 
+    enum EPingStatus
+    {
+        PING_STATUS_ALIVE = 1
+    };
+    
     enum EFolder
     {
         FOLDER_SYS,
@@ -93,17 +98,9 @@ class KFONTINST_EXPORT FontInst : public QObject
 
     static bool isStarted(OrgKdeFontinstInterface *iface)
     {
-        QDBusReply<QStringList> reply=iface->connection().interface()->registeredServiceNames();
-        if(reply.isValid())
-        {
-            QStringList                services(reply.value());
-            QStringList::ConstIterator it(services.begin()),
-                                        end(services.end());
-            for(; it!=end; ++it)
-                if((*it)==OrgKdeFontinstInterface::staticInterfaceName())
-                    return true;
-        }
-        return false;
+        int status=iface->ping();
+        printf("STATUS:%d\n", status);
+        return PING_STATUS_ALIVE==status;
     }
     
     FontInst(bool onSystemBus);
@@ -111,6 +108,7 @@ class KFONTINST_EXPORT FontInst : public QObject
 
     public Q_SLOTS:
 
+    Q_SCRIPTABLE int  ping();
     Q_NOREPLY    void list(int folders, int pid);
     Q_NOREPLY    void stat(const QString &font, int folders, int pid);
     Q_NOREPLY    void install(const QString &file, bool createAfm, bool toSystem, int pid, unsigned int xid, bool checkConfig);

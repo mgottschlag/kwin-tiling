@@ -23,5 +23,13 @@ configure_file(org.kde.fontinst.service.cmake ${CMAKE_CURRENT_BINARY_DIR}/sessio
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/session/org.kde.fontinst.service DESTINATION ${DBUS_SERVICES_INSTALL_DIR} )
 
 # Use KAuth macros to create and install system dbus and policykit files
-kde4_install_auth_helper_files(fontinst org.kde.fontinst root)
+# Because I'm not using KAuth, but Polkit directly - org.kde.auth.conf needs 'policy context="default"' settings
+# So, for the moment, dont use KAurth macro...
+# kde4_install_auth_helper_files(fontinst org.kde.fontinst root)
+
+install( FILES org.kde.fontinst.conf
+         DESTINATION ${SYSCONF_INSTALL_DIR}/dbus-1/system.d )
+configure_file(org.kde.fontinst.system-service.cmake ${CMAKE_CURRENT_BINARY_DIR}/org.kde.fontinst.service)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.kde.fontinst.service DESTINATION ${DBUS_SYSTEM_SERVICES_INSTALL_DIR} )
+
 kde4_install_auth_actions(org.kde.fontinst fontinst.actions)

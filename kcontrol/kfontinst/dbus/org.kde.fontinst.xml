@@ -27,6 +27,9 @@
       <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="const KFI::Families &amp;"/>
       <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="const KFI::Families &amp;"/>
     </signal>
+    <method name="ping">
+      <arg type="i" direction="out"/>
+    </method>
     <method name="list">
       <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QList&lt;KFI::Families&gt;"/>
       <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="QList&lt;KFI::Families&gt;"/>
