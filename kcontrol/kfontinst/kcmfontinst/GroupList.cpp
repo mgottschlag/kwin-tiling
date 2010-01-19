@@ -750,12 +750,12 @@ class CGroupListViewDelegate : public QStyledItemDelegate
         CGroupListItem       *grp=static_cast<CGroupListItem *>(idx.internalPointer());
         QStyleOptionViewItem opt(option);
 
-        if(grp->isUnclassified())
+        if(grp && grp->isUnclassified())
             opt.rect.adjust(0, 0, 0, -1);
             
         QStyledItemDelegate::paint(painter, opt, idx);
 
-        if(grp->isUnclassified())
+        if(grp && grp->isUnclassified())
         {
             opt.rect.adjust(2, 0, -2, 1);
             painter->setPen(QApplication::palette().color(QPalette::Text));
@@ -769,7 +769,7 @@ class CGroupListViewDelegate : public QStyledItemDelegate
 
         CGroupListItem *grp=static_cast<CGroupListItem *>(idx.internalPointer());
 
-        if(grp->isUnclassified())
+        if(grp && grp->isUnclassified())
             sz.setHeight(sz.height()+1);
         return sz;
     }
