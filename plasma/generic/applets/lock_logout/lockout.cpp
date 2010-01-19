@@ -48,7 +48,7 @@
 #include <windows.h>
 #endif // Q_OS_WIN
 
-static const int MINBUTTONSIZE = 21;
+static const int MINBUTTONSIZE = 16;
 static const int MARGINSIZE = 1;
 
 LockOut::LockOut(QObject *parent, const QVariantList &args)
@@ -135,7 +135,7 @@ void LockOut::checkLayout()
 
     switch (formFactor()) {
         case Plasma::Vertical:
-            if (width < MINBUTTONSIZE * 0.55 * m_visibleButtons + MARGINSIZE) {
+            if (width < (MINBUTTONSIZE + MARGINSIZE)* m_visibleButtons ) {
                 direction = Qt::Vertical;
                 ratioToKeep = m_visibleButtons;
             } else {
@@ -144,7 +144,7 @@ void LockOut::checkLayout()
             }
             break;
         case Plasma::Horizontal:
-            if (height < (MINBUTTONSIZE * 0.55 * m_visibleButtons + MARGINSIZE)) {
+            if (height < (MINBUTTONSIZE + MARGINSIZE)* m_visibleButtons) {
                 direction = Qt::Horizontal;
                 ratioToKeep = m_visibleButtons;
             } else {
@@ -155,12 +155,6 @@ void LockOut::checkLayout()
         default:
             direction = Qt::Vertical;
     }
-
-#ifndef Q_OS_WIN
-    if (!m_showLockButton || !m_showLogoutButton || !m_showSleepButton || !m_showHibernateButton) {
-        //ratioToKeep = 1;
-    }
-#endif
 
     if (direction != m_layout->orientation()) {
         m_layout->setOrientation(direction);
@@ -180,6 +174,7 @@ void LockOut::checkLayout()
         setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
         setMinimumSize(40,40);
     }
+    
 }
 
 void LockOut::constraintsEvent(Plasma::Constraints constraints)
