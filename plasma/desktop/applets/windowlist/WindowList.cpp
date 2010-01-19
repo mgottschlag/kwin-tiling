@@ -291,7 +291,7 @@ void WindowList::showMenu(bool onlyCurrentDesktop)
     }
 
     if (formFactor() == Plasma::Vertical || formFactor() == Plasma::Horizontal) {
-        m_listMenu->popup(popupPosition(m_listMenu->size())); 
+        m_listMenu->popup(popupPosition(m_listMenu->sizeHint())); 
     } else {
         m_listMenu->popup(QCursor::pos());
     }
