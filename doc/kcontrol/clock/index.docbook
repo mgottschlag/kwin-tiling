@@ -43,7 +43,12 @@ you the current settings, but your changes will not be saved.</para></note>
 <sect2 id="date-change">
 <title><guilabel>Date and Time</guilabel> tab</title>
 
-<para>You set the date using the left half of the tab.  Simply
+<para>If you check <guilabel>Set date and time automatically</guilabel> you are able
+to select a <guilabel>Time server</guilabel> from the drop down box and all other 
+settings in this dialog are disabled.</para>
+
+<para>If you do not use a time server, you are able to set the date manually 
+using the left half of the tab.  Simply
 choose your month and year using the controls at the top of the calendar
 and the day of the month by clicking on the day in the
 calendar.</para>
@@ -65,12 +70,6 @@ to 8:00 AM, you should set the hour spinbox to
 <sect2 id="date-time-tone">
 <title><guilabel>Time Zone</guilabel> tab</title>
 <para>To set a new time zone, simply select your area from the list below.</para>
-</sect2>
-
-<sect2 id="date-ntp">
-<title><guilabel>NTP</guilabel> tab</title>
-<para>If you check <guilabel>Set date and time automatically</guilabel> you are able
-to select a <guilabel>Time server</guilabel> from the drop down box.</para>
 </sect2>
 
 </sect1>
