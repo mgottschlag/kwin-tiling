@@ -39,6 +39,7 @@ Widget::~Widget()
     if (m_configDirty && m_applet) {
         KConfigGroup cg = m_applet.data()->config();
         m_applet.data()->restore(cg);
+        m_applet.data()->configChanged();
     }
 }
 
