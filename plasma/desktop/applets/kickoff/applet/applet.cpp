@@ -92,6 +92,7 @@ LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
         d(new Private(this))
 {
     KGlobal::locale()->insertCatalog("plasma_applet_launcher");
+    setAspectRatioMode(Plasma::IgnoreAspectRatio);
     setHasConfigurationInterface(true);
 }
 
