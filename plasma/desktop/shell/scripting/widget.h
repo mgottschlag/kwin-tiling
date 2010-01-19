@@ -40,6 +40,7 @@ class Widget : public QObject
     Q_PROPERTY(int index WRITE setIndex READ index)
     Q_PROPERTY(QRectF geometry WRITE setGeometry READ geometry)
     Q_PROPERTY(QStringList currentConfigGroup WRITE setCurrentConfigGroup READ currentConfigGroup)
+    Q_PROPERTY(QString globalShortcut WRITE setGlobalShortcut READ globalShorcut)
 
 
 public:
@@ -62,6 +63,9 @@ public:
 
     void setCurrentConfigGroup(const QStringList &groupNames);
     QStringList currentConfigGroup() const;
+
+    void setGlobalShortcut(const QString &shortcut);
+    QString globalShorcut() const;
 
 public Q_SLOTS:
     void remove();

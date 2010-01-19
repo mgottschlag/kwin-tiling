@@ -125,6 +125,22 @@ void Widget::writeConfig(const QString &key, const QVariant &value)
     }
 }
 
+void Widget::setGlobalShortcut(const QString &shortcut)
+{
+    if (m_applet) {
+        m_applet.data()->setGlobalShortcut(KShortcut(shortcut));
+    }
+}
+
+QString Widget::globalShorcut() const
+{
+    if (m_applet) {
+        return m_applet.data()->globalShortcut().toString();
+    }
+
+    return QString();
+}
+
 Plasma::Applet *Widget::applet() const
 {
     return m_applet.data();
