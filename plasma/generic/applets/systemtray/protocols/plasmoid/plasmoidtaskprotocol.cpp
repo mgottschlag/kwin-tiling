@@ -55,11 +55,23 @@ void PlasmoidProtocol::forwardConstraintsEvent(Plasma::Constraints constraints)
 
 void PlasmoidProtocol::loadFromConfig(const KConfigGroup &cg, Plasma::Applet *parent)
 {
+    QHash<QString, PlasmoidTask*> existingTasks = m_tasks;
+    m_tasks.clear();
+
     KConfigGroup appletGroup(&cg, "Applets");
     foreach (const QString &groupName, appletGroup.groupList()) {
-
         KConfigGroup childGroup(&appletGroup, groupName);
         QString appletName = childGroup.readEntry("plugin", QString());
+
+        if (m_tasks.contains(appletName)) {
+            continue;
+        }
+
+        if (existingTasks.contains(appletName)) {
+            m_tasks.insert(appletName, existingTasks.value(appletName));
+            existingTasks.remove(appletName);
+            continue;
+        }
 
         kDebug() << "Registering task with the manager" << appletName;
 
@@ -72,12 +84,22 @@ void PlasmoidProtocol::loadFromConfig(const KConfigGroup &cg, Plasma::Applet *pa
         if (!task->isValid()) {
             // we failed to load our applet *sob*
             delete task;
-            return;
+            continue;
         }
 
-        m_tasks[appletName] = task;
+        m_tasks.insert(appletName, task);
         connect(task, SIGNAL(taskDeleted(QString)), this, SLOT(cleanupTask(QString)));
         emit taskCreated(task);
+        existingTasks.remove(appletName);
+    }
+
+    QHashIterator<QString, PlasmoidTask*> it(existingTasks);
+    while (it.hasNext()) {
+        it.next();
+        Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(it.value()->widget(parent, true));
+        if (applet) {
+            applet->destroy();
+        }
     }
 }
 
