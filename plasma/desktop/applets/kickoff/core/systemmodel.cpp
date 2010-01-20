@@ -217,7 +217,7 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
                 case SubTitleRole:
                     return i18n("Run a command or a search query");
                 case UrlRole:
-                    return i18n("run:/");
+                    return "run:/";
                 default:
                     return QVariant();
             }
