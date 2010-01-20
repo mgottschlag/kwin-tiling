@@ -210,12 +210,6 @@
         <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="minimumSize">
-         <size>
-          <width>80</width>
-          <height>0</height>
-         </size>
-        </property>
         <property name="whatsThis">
          <string>Show a full screen preview of the screen saver.</string>
         </property>
