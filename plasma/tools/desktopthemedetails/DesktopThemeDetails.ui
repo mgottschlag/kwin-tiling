@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>570</width>
+    <width>661</width>
     <height>487</height>
    </rect>
   </property>
@@ -37,6 +37,12 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="toolTip">
+      <string>Choose an item and customize it by assigning it a theme</string>
+     </property>
+     <property name="whatsThis">
+      <string>You can set any theme to any item. The available themes for the item are in the dropdown box on the right.</string>
+     </property>
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>
@@ -62,6 +68,12 @@
      <layout class="QGridLayout" name="gLayout1">
       <item row="0" column="0">
        <widget class="QCheckBox" name="m_enableAdvanced">
+        <property name="toolTip">
+         <string>Enable more options</string>
+        </property>
+        <property name="whatsThis">
+         <string>This will expand the dialog and give you options to export your custom theme as well as to remove a theme.</string>
+        </property>
         <property name="text">
          <string>More</string>
         </property>
@@ -74,6 +86,12 @@
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="toolTip">
+           <string>Remove the selected theme</string>
+          </property>
+          <property name="whatsThis">
+           <string>Clicking this button will remove the selected theme. You will be asked for a confirmation.</string>
+          </property>
           <property name="text">
            <string>Remove Theme</string>
           </property>
@@ -83,6 +101,12 @@
          <widget class="QPushButton" name="m_exportThemeButton">
           <property name="enabled">
            <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>Save your theme in a zip archive</string>
+          </property>
+          <property name="whatsThis">
+           <string>You can save your theme in a zip archive in order to share it with the community.</string>
           </property>
           <property name="text">
            <string>Export Theme to File...</string>
@@ -120,7 +144,14 @@
          </widget>
         </item>
         <item>
-         <widget class="KLineEdit" name="m_newThemeName"/>
+         <widget class="KLineEdit" name="m_newThemeName">
+          <property name="toolTip">
+           <string>Custom theme name</string>
+          </property>
+          <property name="whatsThis">
+           <string>Give a name to your custom theme.</string>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QLabel" name="m_newThemeAuthorLabel">
@@ -136,7 +167,14 @@
          </widget>
         </item>
         <item>
-         <widget class="KLineEdit" name="m_newThemeAuthor"/>
+         <widget class="KLineEdit" name="m_newThemeAuthor">
+          <property name="toolTip">
+           <string>Custom theme author </string>
+          </property>
+          <property name="whatsThis">
+           <string>Enter the author name of your custom theme.</string>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QLabel" name="m_newThemeVersionLabel">
@@ -152,7 +190,14 @@
          </widget>
         </item>
         <item>
-         <widget class="KLineEdit" name="m_newThemeVersion"/>
+         <widget class="KLineEdit" name="m_newThemeVersion">
+          <property name="toolTip">
+           <string>Custom theme version number</string>
+          </property>
+          <property name="whatsThis">
+           <string>Enter the version number of your custom theme.</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -178,6 +223,12 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Custom theme description</string>
+          </property>
+          <property name="whatsThis">
+           <string>Enter a description which will explain your custom theme.</string>
           </property>
          </widget>
         </item>
@@ -312,6 +363,12 @@
         </colorrole>
        </disabled>
       </palette>
+     </property>
+     <property name="toolTip">
+      <string>Available themes</string>
+     </property>
+     <property name="whatsThis">
+      <string>Choose a start theme in this list then customize some items below. All less important items not listed below will use this start theme.</string>
      </property>
      <property name="verticalScrollBarPolicy">
       <enum>Qt::ScrollBarAlwaysOff</enum>
