@@ -466,13 +466,22 @@ void KScreenSaver::findSavers()
         mTestBt->setEnabled(true);
     }
 
-    connect( mSaverListView, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *) ),
-             this, SLOT( slotScreenSaver( QTreeWidgetItem * ) ) );
+    connect( mSaverListView, SIGNAL( itemSelectionChanged() ),
+             this, SLOT( slotSelectionChanged() ) );
 
     setMonitor();
 
 }
 
+void KScreenSaver::slotSelectionChanged()
+{
+    QList<QTreeWidgetItem *> selection = mSaverListView->selectedItems();
+    if (selection.isEmpty()) {
+        slotScreenSaver(0);
+    } else {
+        slotScreenSaver(selection.at(0));
+    }
+}
 //---------------------------------------------------------------------------
 //
 void KScreenSaver::setMonitor()

@@ -67,6 +67,7 @@ public:
 
 protected Q_SLOTS:
     void slotEnable( bool );
+    void slotSelectionChanged();
     void slotScreenSaver( QTreeWidgetItem* );
     void slotSetup();
     void slotAdvanced();
