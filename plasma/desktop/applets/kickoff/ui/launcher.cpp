@@ -634,11 +634,13 @@ void Launcher::setShowAppsByName(bool showAppsByName)
 
     if (showAppsByName) {
         d->applicationModel->setNameDisplayOrder(Kickoff::NameBeforeDescription);
+        d->applicationModel->setPrimaryNamePolicy(Kickoff::ApplicationModel::AppNamePrimary);
         d->recentlyUsedModel->setNameDisplayOrder(Kickoff::NameBeforeDescription);
         d->favoritesModel->setNameDisplayOrder(Kickoff::NameBeforeDescription);
         d->searchModel->setNameDisplayOrder(Kickoff::NameBeforeDescription);
     } else {
         d->applicationModel->setNameDisplayOrder(Kickoff::NameAfterDescription);
+        d->applicationModel->setPrimaryNamePolicy(Kickoff::ApplicationModel::GenericNamePrimary);
         d->recentlyUsedModel->setNameDisplayOrder(Kickoff::NameAfterDescription);
         d->favoritesModel->setNameDisplayOrder(Kickoff::NameAfterDescription);
         d->searchModel->setNameDisplayOrder(Kickoff::NameAfterDescription);
