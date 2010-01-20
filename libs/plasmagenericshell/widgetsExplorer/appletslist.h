@@ -117,6 +117,7 @@ private slots:
 
     void onRightArrowPress();
     void onLeftArrowPress();
+    void scrollStepFinished();
 
     //checks if arrows should be enabled or not
     void manageArrows();

@@ -68,6 +68,8 @@ AppletsListWidget::AppletsListWidget(Qt::Orientation orientation, QGraphicsItem 
     m_appletIconBgSvg->setImagePath("widgets/translucentbackground");
 
     m_slide = Plasma::Animator::create(Plasma::Animator::SlideAnimation);
+    m_slide->setEasingCurve(QEasingCurve::Linear);
+    connect(m_slide, SIGNAL(finished()), this, SLOT(scrollStepFinished()));
 
     toolTipMoveTimeLine.setFrameRange(0, 100);
     toolTipMoveTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
@@ -530,6 +532,7 @@ void AppletsListWidget::scrollDownRight(int step)
     }
 
     if (nextFirstItemIndex < 0) {
+        manageArrows();
         return;
     }
 
@@ -555,6 +558,7 @@ void AppletsListWidget::scrollDownRight(int step)
     m_firstItemIndex = nextFirstItemIndex;
 
     m_slide->stop();
+
     if (m_orientation == Qt::Horizontal) {
         m_slide->setProperty("movementDirection", Plasma::Animation::MoveLeft);
     } else {
@@ -573,7 +577,9 @@ void AppletsListWidget::scrollUpLeft(int step)
     if (nextFirstItemIndex < 0) {
         nextFirstItemIndex = 0;
     }
+
     if (nextFirstItemIndex > m_currentAppearingAppletsOnList.count() - 1) {
+        manageArrows();
         return;
     }
 
@@ -583,15 +589,30 @@ void AppletsListWidget::scrollUpLeft(int step)
     m_firstItemIndex = nextFirstItemIndex;
 
     m_slide->stop();
+
     if (m_orientation == Qt::Horizontal) {
         m_slide->setProperty("movementDirection", Plasma::Animation::MoveLeft);
     } else {
         m_slide->setProperty("movementDirection", Plasma::Animation::MoveUp);
     }
+
     m_slide->setProperty("distance", move);
     m_slide->start();
 
     manageArrows();
+}
+
+void AppletsListWidget::scrollStepFinished()
+{
+    manageArrows();
+    bool movingLeftUp = m_slide->property("distance").value<qreal>() < 0;
+    if (movingLeftUp) {
+        if (m_upLeftArrow->isEnabled() && m_upLeftArrow->isDown()) {
+            onLeftArrowPress();
+        }
+    } else if (m_downRightArrow->isEnabled() && m_downRightArrow->isDown()) {
+        onRightArrowPress();
+    }
 }
 
 void AppletsListWidget::animateToolTipMove()
