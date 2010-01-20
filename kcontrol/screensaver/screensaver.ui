@@ -192,13 +192,6 @@
       <string>Screen Saver</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0" colspan="3">
-       <widget class="K3ListView" name="mSaverListView">
-        <property name="whatsThis">
-         <string>Select the screen saver to use.</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <spacer name="horizontalSpacer_8">
         <property name="orientation">
@@ -244,28 +237,19 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="0" colspan="3">
+       <widget class="QTreeWidget" name="mSaverListView">
+        <property name="whatsThis">
+         <string>Select the screen saver to use.</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>Q3Frame</class>
-   <extends>QFrame</extends>
-   <header>Qt3Support/Q3Frame</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>Q3ListView</class>
-   <extends>Q3Frame</extends>
-   <header>q3listview.h</header>
-  </customwidget>
-  <customwidget>
-   <class>K3ListView</class>
-   <extends>Q3ListView</extends>
-   <header>k3listview.h</header>
-  </customwidget>
   <customwidget>
    <class>KIntSpinBox</class>
    <extends>QSpinBox</extends>

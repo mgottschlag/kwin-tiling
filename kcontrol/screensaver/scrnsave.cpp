@@ -1,14 +1,32 @@
-//-----------------------------------------------------------------------------
-//
-// KDE Display screen saver setup module
-//
-// Copyright (c)  Martin R. Jones 1996,1999,2002
-//
-// Converted to a kcc module by Matthias Hoelzer 1997
-//
-
+/*
+* scrnsave.cpp
+* Copyright 1997       Matthias Hoelzer
+* Copyright 1996,1999,2002    Martin R. Jones
+* Copyright 2004       Chris Howells
+* Copyright 2007-2008  Benjamin Meyer <ben@meyerhome.net>
+* Copyright 2007-2008  Hamish Rodda <rodda@kde.org>
+* Copyright 2009       Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright 2009       Davide Bettio
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License as
+* published by the Free Software Foundation; either version 2 of
+* the License or (at your option) version 3 or any later version
+* accepted by the membership of KDE e.V. (or its successor approved
+* by the membership of KDE e.V.), which shall act as a proxy
+* defined in Section 14 of version 3 of the license.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include <config-workspace.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -17,18 +35,13 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#include <kservicetypetrader.h>
-#include <kstandarddirs.h>
 #include <QCheckBox>
-#include <Qt3Support/Q3Header>
 #include <QLabel>
-#include <Qt3Support/Q3CheckListItem>
 #include <QPushButton>
 #include <QTimer>
-#include <kmacroexpander.h>
-#include <kshell.h>
-
-//Added by qt3to4:
+#include <QTreeWidget>
+#include <QHeaderView>
+#include <QTreeWidgetItem>
 #include <QTextStream>
 #include <QKeyEvent>
 #include <QHBoxLayout>
@@ -36,29 +49,33 @@
 #include <QVBoxLayout>
 #include <QResizeEvent>
 #include <QMouseEvent>
-
-
 #include <QtDBus/QtDBus>
-#include <kaboutdata.h>
-#include <kapplication.h>
-#include <kdebug.h>
-#include <kdialog.h>
-#include <kiconloader.h>
-#include <knuminput.h>
-#include <k3process.h>
-#include <kservicegroup.h>
+
+#include <QDesktopWidget>
+
+#include <kmacroexpander.h>
+#include <KShell>
+#include <KServiceTypeTrader>
+#include <KStandardDirs>
+#include <KApplication>
+#include <KDebug>
+#include <KDialog>
+#include <KAboutData>
+#include <KIcon>
+#include <KNumInput>
+#include <KProcess>
+//#include <KServiceGroup>
+#include <KPluginFactory>
+#include <KPluginLoader>
+
+#include <kscreensaver_interface.h>
+#include <kworkspace/screenpreviewwidget.h>
 
 #include <X11/Xlib.h>
 #include <fixx11h.h>
 
 #include "scrnsave.h"
 #include <QX11Info>
-#include <QDesktopWidget>
-#include <kscreensaver_interface.h>
-#include <KPluginFactory>
-#include <KPluginLoader>
-
-#include <kworkspace/screenpreviewwidget.h>
 
 template class QList<SaverConfig*>;
 
@@ -109,22 +126,20 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
 
 
     setupUi(this);
-    
+
     readSettings();
 
-    mSetupProc = new K3Process;
-    connect(mSetupProc, SIGNAL(processExited(K3Process *)),
-            this, SLOT(slotSetupDone(K3Process *)));
+    mSetupProc = new KProcess;
+    connect(mSetupProc, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotSetupDone()));
 
-    mPreviewProc = new K3Process;
-    connect(mPreviewProc, SIGNAL(processExited(K3Process *)),
-            this, SLOT(slotPreviewExited(K3Process *)));
+    mPreviewProc = new KProcess;
+    connect(mPreviewProc, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotPreviewExited()));
 
-    mSaverListView->addColumn("");
+    mSaverListView->setColumnCount(1);
     mSaverListView->header()->hide();
     mSelected = -1;
-    connect( mSaverListView, SIGNAL(doubleClicked ( Q3ListViewItem *)), this, SLOT( slotSetup()));
-    
+    connect( mSaverListView, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(slotSetup()));
+
     connect( mSetupBt, SIGNAL( clicked() ), SLOT( slotSetup() ) );
     connect( mTestBt, SIGNAL( clicked() ), SLOT( slotTest() ) );
 
@@ -227,14 +242,13 @@ KScreenSaver::~KScreenSaver()
 {
     if (mPreviewProc)
     {
-        if (mPreviewProc->isRunning())
+        if (mPreviewProc->state() == QProcess::Running)
         {
             //Avoid triggering slotPreviewExited on close
-            disconnect(mPreviewProc, SIGNAL(processExited(K3Process *)),
-              this, SLOT(slotPreviewExited(K3Process *)));
+            disconnect(mPreviewProc);
 
             mPreviewProc->kill( );
-            mPreviewProc->wait( );
+            mPreviewProc->waitForFinished( );
         }
         delete mPreviewProc;
     }
@@ -255,28 +269,17 @@ void KScreenSaver::load()
 //with the following line, the Test and Setup buttons are not enabled correctly
 //if no saver was selected, the "Reset" and the "Enable screensaver", it is only called when starting and when pressing reset, aleXXX
 //    mSelected = -1;
-    int i = 0;
-    Q3ListViewItem *selectedItem = 0;
-	Q_FOREACH( SaverConfig* saver, mSaverList ){
-        if (saver->file() == mSaver)
-        {
-            selectedItem = mSaverListView->findItem ( saver->name(), 0 );
-            if (selectedItem) {
-                mSelected = i;
-                break;
-            }
-        }
-        i++;
-    }
-    if ( selectedItem )
-    {
-      mSaverListView->setSelected( selectedItem, true );
-      mSaverListView->setCurrentItem( selectedItem );
-      slotScreenSaver( selectedItem );
+
+    QTreeWidgetItem * selectedItem = treeItemForSaverFile(mSaver);
+    if (selectedItem) {
+        mSelected = indexForSaverFile(mSaver);
+        mSaverListView->setCurrentItem(selectedItem, QItemSelectionModel::ClearAndSelect);
+        slotScreenSaver(selectedItem);
     }
 
     updateValues();
     mChanged = false;
+
     emit changed(false);
 }
 
@@ -326,12 +329,10 @@ void KScreenSaver::defaults()
     if (mImmutable) return;
 
     slotScreenSaver( 0 );
-
-    Q3ListViewItem *item = mSaverListView->firstChild();
+    QTreeWidgetItem *item = mSaverListView->topLevelItem(0);
     if (item) {
-        mSaverListView->setSelected( item, true );
-        mSaverListView->setCurrentItem( item );
-        mSaverListView->ensureItemVisible( item );
+        mSaverListView->setCurrentItem(item, QItemSelectionModel::ClearAndSelect);
+        mSaverListView->scrollToItem(item);
     }
     slotTimeoutChanged( 5 );
     slotLockTimeoutChanged( 60 );
@@ -376,8 +377,8 @@ void KScreenSaver::save()
 void KScreenSaver::findSavers()
 {
     if ( !mNumLoaded ) {
-	mSaverServices = KServiceTypeTrader::self()->query( "ScreenSaver");
-        new Q3ListViewItem ( mSaverListView, i18n("Loading...") );
+        mSaverServices = KServiceTypeTrader::self()->query( "ScreenSaver");
+        new QTreeWidgetItem ( mSaverListView, QStringList() << i18n("Loading...") );
         if ( mSaverServices.isEmpty() )
             mLoadTimer->stop();
         else
@@ -389,89 +390,103 @@ void KScreenSaver::findSavers()
       SaverConfig *saver = new SaverConfig;
       QString file = KStandardDirs::locate("services", (*it)->entryPath());
       if (saver->read(file)) {
-	      mSaverList.append(saver);
+          mSaverList.append(saver);
         } else
             delete saver;
     }
 
-    if ( mNumLoaded == mSaverServices.count() ) {
-        Q3ListViewItem *selectedItem = 0;
-        int categoryCount = 0;
-        int indx = 0;
-
-        mLoadTimer->stop();
-        delete mLoadTimer;
-		qSort(mSaverList.begin(), mSaverList.end());
-
-        mSelected = -1;
-        mSaverListView->clear();
-        Q_FOREACH( SaverConfig *s, mSaverList )
-        {
-            Q3ListViewItem *item;
-            if (s->category().isEmpty())
-                item = new Q3ListViewItem ( mSaverListView, s->name(), '2' + s->name() );
-            else
-            {
-                Q3ListViewItem *categoryItem = mSaverListView->findItem( s->category(), 0 );
-                if ( !categoryItem ) {
-                    categoryItem = new Q3ListViewItem ( mSaverListView, s->category(), '1' + s->category() );
-                    categoryItem->setPixmap ( 0, SmallIcon ( "preferences-desktop-screensaver" ) );
-                }
-                item = new Q3ListViewItem ( categoryItem, s->name(), s->name() );
-                categoryCount++;
-            }
-            if (s->file() == mSaver) {
-                mSelected = indx;
-                selectedItem = item;
-            }
-            indx++;
-        }
-
-        // Delete categories with only one item
-        Q3ListViewItemIterator it ( mSaverListView );
-        for ( ; it.current(); it++ )
-            if ( it.current()->childCount() == 1 ) {
-               Q3ListViewItem *item = it.current()->firstChild();
-               it.current()->takeItem( item );
-               mSaverListView->insertItem ( item );
-               delete it.current();
-               categoryCount--;
-            }
-
-        mSaverListView->setRootIsDecorated ( categoryCount > 0 );
-        mSaverListView->setSorting ( 1 );
-
-        if ( mSelected > -1 )
-        {
-            mSaverListView->setSelected(selectedItem, true);
-            mSaverListView->setCurrentItem(selectedItem);
-            mSaverListView->ensureItemVisible(selectedItem);
-            mSetupBt->setEnabled(!mSaverList.at(mSelected)->setup().isEmpty());
-            mTestBt->setEnabled(true);
-        }
-
-        connect( mSaverListView, SIGNAL( currentChanged( Q3ListViewItem * ) ),
-                 this, SLOT( slotScreenSaver( Q3ListViewItem * ) ) );
-
-        setMonitor();
+    if ( mNumLoaded != mSaverServices.count() ) {
+        return;
     }
+
+    int categoryCount = 0;
+
+    mLoadTimer->stop();
+    delete mLoadTimer;
+
+    qSort(mSaverList.begin(), mSaverList.end());
+
+    mSaverListView->clear();
+    //Create the treewidget items
+    Q_FOREACH( SaverConfig *s, mSaverList )
+    {
+        QTreeWidgetItem *item = 0;
+        if (s->category().isEmpty()) {
+            //Create top level item without category
+            item = new QTreeWidgetItem ( mSaverListView, QStringList() << s->name() << '2' + s->name() );
+            item->setData(0, Qt::UserRole, s->file());
+        } else {
+            //Create item within a category
+            QList<QTreeWidgetItem*> categoryItemList = mSaverListView->findItems( s->category(), Qt::MatchExactly );
+            QTreeWidgetItem * categoryItem = 0;
+            if ( categoryItemList.isEmpty() ) { //Create the category toplevel item
+                categoryItem = new QTreeWidgetItem ( mSaverListView, QStringList() << s->category() << '1' + s->category() );
+                categoryItem->setIcon ( 0, KIcon ( "preferences-desktop-screensaver" ) );
+            } else {
+                categoryItem = categoryItemList.first();
+            }
+            //Add the child item to the category
+            item = new QTreeWidgetItem ( categoryItem, QStringList() << s->name() << '2' + s->name() );
+            item->setData(0, Qt::UserRole, s->file());
+            categoryCount++;
+        }
+    }
+
+    //Get the current Item and index
+    mSelected = indexForSaverFile(mSaver);
+    QTreeWidgetItem *selectedItem = treeItemForSaverFile(mSaver);
+
+    // Delete categories with only one item
+    QList<QTreeWidgetItem*> itemsToBeDeleted;
+    QList<QTreeWidgetItem*> itemsToBeAddedAsTopLevel;
+    QTreeWidgetItemIterator it(mSaverListView, QTreeWidgetItemIterator::HasChildren);
+    while ((*it)) {
+        if ((*it)->childCount() == 1) {
+            QTreeWidgetItem * item = (*it)->child(0);
+            (*it)->removeChild(item);
+            itemsToBeAddedAsTopLevel.append(item);
+            itemsToBeDeleted.append((*it));
+        }
+        ++it;
+    }
+    mSaverListView->addTopLevelItems(itemsToBeAddedAsTopLevel);
+    qDeleteAll(itemsToBeDeleted);
+
+    mSaverListView->setRootIsDecorated ( categoryCount > 0 );
+    mSaverListView->sortByColumn ( 0, Qt::AscendingOrder );
+
+    //Set the current screensaver
+    if ( mSelected > -1 )
+    {
+        mSaverListView->setCurrentItem(selectedItem, QItemSelectionModel::ClearAndSelect);
+        mSaverListView->scrollToItem(selectedItem);
+
+        mSetupBt->setEnabled(!mSaverList.at(mSelected)->setup().isEmpty());
+        mTestBt->setEnabled(true);
+    }
+
+    connect( mSaverListView, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *) ),
+             this, SLOT( slotScreenSaver( QTreeWidgetItem * ) ) );
+
+    setMonitor();
+
 }
 
 //---------------------------------------------------------------------------
 //
 void KScreenSaver::setMonitor()
 {
-    if (mPreviewProc->isRunning())
+    if (mPreviewProc->state() == QProcess::Running)
     // CC: this will automatically cause a "slotPreviewExited"
     // when the viewer exits
     mPreviewProc->kill();
     else
-    slotPreviewExited(mPreviewProc);
+    slotPreviewExited();
 }
 
 //---------------------------------------------------------------------------
 //
-void KScreenSaver::slotPreviewExited(K3Process *)
+void KScreenSaver::slotPreviewExited()
 {
     // Ugly hack to prevent continual respawning of savers that crash
     if (mSelected == mPrevSelected)
@@ -495,9 +510,10 @@ void KScreenSaver::slotPreviewExited(K3Process *)
     XSelectInput(QX11Info::display(), mMonitor->winId(), widgetEventMask );
 
     if (mSelected >= 0) {
-        mPreviewProc->clearArguments();
+        mPreviewProc->clearProgram();
 
         QString saver = mSaverList.at(mSelected)->saver();
+
         QHash<QChar, QString> keyMap;
         keyMap.insert('w', QString::number(mMonitor->winId()));
         *mPreviewProc << KShell::splitArgs(KMacroExpander::expandMacrosShellQuote(saver, keyMap));
@@ -540,7 +556,7 @@ void KScreenSaver::slotPlasmaSetup()
 
 //---------------------------------------------------------------------------
 //
-void KScreenSaver::slotScreenSaver(Q3ListViewItem *item)
+void KScreenSaver::slotScreenSaver(QTreeWidgetItem *item)
 {
     if (!item)
     {
@@ -548,26 +564,9 @@ void KScreenSaver::slotScreenSaver(Q3ListViewItem *item)
         mTestBt->setEnabled(false);
         return;
     }
-    int i = 0, indx = -1;
-	Q_FOREACH( SaverConfig* saver , mSaverList ){
-        if ( item->parent() )
-        {
-            if (  item->parent()->text( 0 ) == saver->category() && saver->name() == item->text (0))
-            {
-                indx = i;
-                break;
-            }
-        }
-        else
-        {
-            if (  saver->name() == item->text (0) )
-            {
-                indx = i;
-                break;
-            }
-        }
-		i++;
-    }
+
+    //Get the index of the saver file of the current selected treewidget item
+    int indx = indexForSaverFile(item->data(0, Qt::UserRole).toString());
 
     mSetupBt->setEnabled(item->childCount()==0);
     mTestBt->setEnabled(item->childCount()==0);
@@ -578,7 +577,7 @@ void KScreenSaver::slotScreenSaver(Q3ListViewItem *item)
 
     bool bChanged = (indx != mSelected);
 
-    if (!mSetupProc->isRunning())
+    if (mSetupProc->state() != QProcess::Running)
         mSetupBt->setEnabled(!mSaverList.at(indx)->setup().isEmpty());
     mTestBt->setEnabled(true);
     mSaver = mSaverList.at(indx)->file();
@@ -599,10 +598,10 @@ void KScreenSaver::slotSetup()
     if ( mSelected < 0 )
     return;
 
-    if (mSetupProc->isRunning())
+    if (mSetupProc->state() == QProcess::Running)
     return;
 
-    mSetupProc->clearArguments();
+    mSetupProc->clearProgram();
 
     QString saver = mSaverList.at(mSelected)->setup();
     if( saver.isEmpty())
@@ -668,11 +667,11 @@ void KScreenSaver::slotTest()
         return;
 
     if (!mTestProc) {
-        mTestProc = new K3Process;
+        mTestProc = new KProcess;
     } else {
         mPreviewProc->kill();
-        mPreviewProc->wait();
-        mTestProc->clearArguments();
+        mPreviewProc->waitForFinished();
+        mTestProc->clearProgram();
     }
 
     if (!mTestWin)
@@ -699,7 +698,7 @@ void KScreenSaver::slotTest()
     keyMap.insert('w', QString::number(mTestWin->winId()));
     *mTestProc << KShell::splitArgs(KMacroExpander::expandMacrosShellQuote(saver, keyMap));
 
-    mTestProc->start(K3Process::NotifyOnExit);
+    mTestProc->start();
 
     mTesting = true;
 }
@@ -708,9 +707,9 @@ void KScreenSaver::slotTest()
 //
 void KScreenSaver::slotStopTest()
 {
-    if (mTestProc->isRunning()) {
+    if (mTestProc->state() == QProcess::Running) {
         mTestProc->kill();
-        mTestProc->wait();
+        mTestProc->waitForFinished(500);
     }
     releaseMouse();
     releaseKeyboard();
@@ -752,12 +751,39 @@ void KScreenSaver::slotLock( bool l )
 
 //---------------------------------------------------------------------------
 //
-void KScreenSaver::slotSetupDone(K3Process *)
+void KScreenSaver::slotSetupDone()
 {
     mPrevSelected = -1;  // see ugly hack in slotPreviewExited()
     setMonitor();
     mSetupBt->setEnabled( true );
     emit changed(true);
+}
+
+QTreeWidgetItem * KScreenSaver::treeItemForSaverFile(const QString & saver)
+{
+    QTreeWidgetItem * item = 0;
+    QTreeWidgetItemIterator it(mSaverListView);
+    while ((*it) && item == 0) {
+        if ((*it)->data(0, Qt::UserRole) == saver) {
+            item = (*it);
+        }
+        ++it;
+    }
+    return item;
+}
+
+int KScreenSaver::indexForSaverFile(const QString & saver)
+{
+    int index = -1;
+    int i = 0;
+    Q_FOREACH( SaverConfig* saverConfig, mSaverList ) {
+        if (saverConfig->file() == saver) {
+            index = i;
+            break;
+        }
+        i++;
+    }
+    return index;
 }
 
 #include "scrnsave.moc"

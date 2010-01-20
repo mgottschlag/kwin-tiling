@@ -4,17 +4,14 @@ check_library_exists(GL glXChooseVisual "" HAVE_GLXCHOOSEVISUAL)
 endif(WITH_OpenGL)
 configure_file (config-screensaver.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-screensaver.h )
 
-add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
-
 ########### next target ###############
 
-set(kcm_screensaver_PART_SRCS 
-   scrnsave.cpp 
-   testwin.cpp 
-   saverlist.cpp 
-   saverconfig.cpp 
-   advanceddialog.cpp 
-   kswidget.cpp )
+set(kcm_screensaver_PART_SRCS
+   scrnsave.cpp
+   testwin.cpp
+   saverconfig.cpp
+   advanceddialog.cpp
+   kswidget.cpp)
 
 set(kscreensaver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/dbus/org.kde.screensaver.xml)
 QT4_ADD_DBUS_INTERFACE( kcm_screensaver_PART_SRCS ${kscreensaver_xml} kscreensaver_interface )
