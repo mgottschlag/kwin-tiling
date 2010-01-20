@@ -100,7 +100,7 @@ void SystemMonitorEngine::updateSensors()
 void SystemMonitorEngine::answerReceived(int id, const QList<QByteArray> &answer)
 {
     if (id < -1) {
-        if (answer.isEmpty() || m_sensors.count() < (-id - 2)) {
+        if (answer.isEmpty() || m_sensors.count() <= (-id - 2)) {
             kDebug() << "sensor info answer was empty, (" << answer.isEmpty() << ") or sensors does not exist to us ("
                      << (m_sensors.count() < (-id - 2)) << ") for index" << (-id - 2);
             return;
