@@ -148,7 +148,8 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
             this, SLOT(slotEnable(bool)));
 
     mWaitEdit->setRange(1, INT_MAX);
-    mWaitEdit->setSuffix(ki18np(" minute", " minutes"));
+    mWaitEdit->setSuffix(ki18ncp("unit of time. minutes until the screensaver is triggered",
+                                 " minute", " minutes"));
     mWaitEdit->setValue(mTimeout/60);
     mWaitEdit->setEnabled(mEnabled);
     connect(mWaitEdit, SIGNAL(valueChanged(int)),
