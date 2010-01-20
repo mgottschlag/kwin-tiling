@@ -13,77 +13,78 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2009-05-18</date>
-<releaseinfo>0.9</releaseinfo>
+<date>2010-01-20</date>
+<releaseinfo>1.0</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
 <keyword>System Settings</keyword>
 <keyword>desktop</keyword>
 <keyword>theme</keyword>
+<keyword>plasma</keyword>
 </keywordset>
 </articleinfo>
 
 <sect1 id="kcm_desktopthemedetails">
 <title><guilabel>Desktop Theme Details</guilabel></title>
 
-<para>The KDE plasma desktop theme is made up of several components or items.  This 
-module allows you to customize your desktop Plasma theme and to replace theme items 
+<para>A &kde; plasma desktop theme is made up of several components or items,
+consisting mostly in svg backgrounds and colors schemes. This module allows you
+to customize your desktop Plasma theme and to replace theme items 
 with items from other themes or from files.
 </para>
-<para>Desktop theme items consist in panel theme item, kickoff theme item,... all in default
-theme.</para>
+
+<para>Desktop theme items consist in panel theme item, kickoff theme item,
+analog clock, ...</para>
+
+<note><para>
+If you want to change your current theme for a full new theme (for example from
+Air to Glassified) then you can do so in <interface>System Settings -&gt;
+General -&gt; Appearance -&gt; Style -&gt; Workspace tab</interface>.
+</para></note>
+
 <sect2 id="start">
 <title>Quick start</title>
 <para>First download one or several themes you want to use to customize your 
-desktop items by clicking the <guibutton>Get New Theme...</guibutton> button.</para>
-<para>You can then start customizing each item you want to change with a new theme, 
-for example you can have the panel in Glassified theme, ...</para>
-<para>When you have finished, click the <guibutton>Apply</guibutton> button. You will then get an information 
-message that tells you to enable the <guilabel>(Customized)</guilabel> theme on the 
-Desktop settings dialog.</para>
+desktop items by clicking the <guibutton>Get New Theme...</guibutton>
+button.</para>
+
+<para>All the available themes will be displayed on top.</para>
+
+<para>You can then start customizing each item you want to change with a new
+theme, for example you can have the panel in Glassified theme, the widget
+backgrounds in Air and so on.</para>
+
+<para>Here Air is the theme for most widgets and we changed the panel background
+to Glassified, the Analog clock to Glassified and the Notes to Oxygen.</para>
 
 <para>
 <screenshot>
-<screeninfo>The information message</screeninfo>
+<screeninfo>Customizing your plasma theme</screeninfo>
   <mediaobject>
     <imageobject>
-      <imagedata fileref="message.png" format="PNG"/>
+      <imagedata fileref="customizing.png" format="PNG"/>
     </imageobject>
     <textobject>
-      <phrase>The information message</phrase>
+      <phrase>Customizing your plasma theme</phrase>
     </textobject>
   </mediaobject>
 </screenshot>
 </para>
 
-<para>You then need to change the Desktop settings to <guilabel>(Customized)</guilabel> 
-in order for the theme details to be applied to your desktop.</para>
-
 <para>
-<screenshot>
-<screeninfo>Desktop Settings Dialog</screeninfo>
-  <mediaobject>
-    <imageobject>
-      <imagedata fileref="desktop-settings.png" format="PNG"/>
-    </imageobject>
-    <textobject>
-      <phrase>Desktop Settings Dialog</phrase>
-    </textobject>
-  </mediaobject>
-</screenshot>
+Clicking the <guibutton>Apply</guibutton> will create a new theme named
+<guilabel>(Customized)</guilabel> and will apply it to your desktop.
 </para>
-
-<para>Click the <guibutton>Apply</guibutton> button on the dialog above to get the desktop settings applying your 
-new choice.</para>
 </sect2>
 
 <sect2 id="custom">
 <title>Creating a custom theme</title>
-<para>When the module is opened, it will show items from the current desktop theme. 
-If you would like to start customizing with a different theme, select it from 
-the drop box above the list of theme items. This theme from the drop box is the starting 
-theme, the base for your new customized desktop theme.</para>
+<para>When the module is opened, it will show items from the current desktop
+theme. If you would like to start customizing with a different theme, select it
+from 
+the drop box above the list of theme items. This theme from the drop box is the
+starting theme, the base for your new customized desktop theme.</para>
 
 <para>
 In the list of items, for each item you would like to replace, select 
@@ -94,9 +95,23 @@ color scheme file.
 </para>
 
 <para>
-Click <guibutton>Apply</guibutton> when all the changes have been made.  This will create a new 
-theme named <guilabel>(Customized)</guilabel> which you can select from the Appearance Settings 
-dialog on the desktop.
+Click <guibutton>Apply</guibutton> when all the changes have been made.  This
+will create a new theme named <guilabel>(Customized)</guilabel> which you can
+select from the Appearance Settings dialog on the desktop.
+</para>
+
+<para>
+<screenshot>
+<screeninfo>Your custom theme</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="clicking-apply.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Customized</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
 </para>
 
 <note><para>
@@ -110,9 +125,11 @@ the start of creating the customized theme.
 <sect2 id="naming">
 <title>Naming a custom theme</title>
 <para>
-To provide a name for your customized theme, click on the <guilabel>More</guilabel> checkbox and 
+To provide a name for your customized theme, click on the
+<guilabel>More</guilabel> checkbox and 
 enter the name of the theme.  You may also provide your name (author), a theme 
-version and a description of your theme.  Click <guibutton>Apply</guibutton> when done.
+version and a description of your theme.  Click <guibutton>Apply</guibutton>
+when done.
 </para>
 </sect2>
 
@@ -120,7 +137,8 @@ version and a description of your theme.  Click <guibutton>Apply</guibutton> whe
 <title>Removing a theme</title>
 <para>
 Select the theme you would like to remove from the drop box above the list of 
-theme items. Click on the <guilabel>More</guilabel> check box. Click the <guibutton>Remove Theme</guibutton> button to 
+theme items. Click on the <guilabel>More</guilabel> check box. Click the
+<guibutton>Remove Theme</guibutton> button to 
 remove the selected theme.
 </para>
 </sect2>
@@ -130,8 +148,10 @@ remove the selected theme.
 <para>
 You can share your newly customized theme with the community by exporting the 
 theme to a file. Select your customized theme from the drop box above the list 
-of theme items.  Click on the <guilabel>More</guilabel> check box.  Click the <guibutton>Export Theme to 
-File...</guibutton>.  Enter the name of the zip file to which the theme will be saved.
+of theme items.  Click on the <guilabel>More</guilabel> check box.  Click the
+<guibutton>Export Theme to 
+File...</guibutton>.  Enter the name of the zip file to which the theme will be
+saved.
 </para>
 </sect2>
 
