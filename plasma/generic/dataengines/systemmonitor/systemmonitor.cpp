@@ -106,11 +106,16 @@ void SystemMonitorEngine::answerReceived(int id, const QList<QByteArray> &answer
             return;
         }
 
+        DataEngine::SourceDict sources = containerDict();
+        DataEngine::SourceDict::const_iterator it = sources.constFind(m_sensors.value(-id - 2));
+
         const QStringList newSensorInfo = QString::fromUtf8(answer[0]).split('\t');
 
         if (newSensorInfo.count() < 4) {
             kDebug() << "bad sensor info, only" << newSensorInfo.count()
-                     << "entries, and we were expecting 4";
+                     << "entries, and we were expecting 4. Answer was " << answer;
+            if(it != sources.constEnd())
+                kDebug() << "value =" << it.value()->data()["value"] << "type=" << it.value()->data()["type"];
             return;
         }
 
@@ -118,8 +123,6 @@ void SystemMonitorEngine::answerReceived(int id, const QList<QByteArray> &answer
         const QString min = newSensorInfo[1];
         const QString max = newSensorInfo[2];
         const QString unit = newSensorInfo[3];
-        DataEngine::SourceDict sources = containerDict();
-        DataEngine::SourceDict::const_iterator it = sources.constFind(m_sensors.value(-id - 2));
 
         if (it != sources.constEnd()) {
             it.value()->setData("name", sensorName);
@@ -142,6 +145,8 @@ void SystemMonitorEngine::answerReceived(int id, const QList<QByteArray> &answer
             if (newSensorInfo.count() < 2) {
                 continue;
             }
+            if(newSensorInfo.at(1) == "logfile")
+                continue; // logfile data type not currently supported
 
             const QString newSensor = newSensorInfo[0];
             sensors.insert(newSensor);
