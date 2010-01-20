@@ -128,7 +128,7 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
     d->hasTasksThatCanHide = false;
     d->hasHiddenTasks = false;
     foreach (Task *task, tasks) {
-        kDebug() << "checking" << task->name() << d->showingHidden;
+        //kDebug() << "checking" << task->name() << d->showingHidden;
         if (d->hiddenTypes.contains(task->typeId())) {
             task->setHidden(task->hidden()|Task::UserHidden);
         } else if (d->alwaysShownTypes.contains(task->typeId())) {
@@ -161,14 +161,14 @@ void TaskArea::addTask(Task *task)
 void TaskArea::addWidgetForTask(SystemTray::Task *task)
 {
     if (!task->isEmbeddable(d->host)) {
-        kDebug() << "task is not embeddable, so FAIL" << task->name();
+        //kDebug() << "task is not embeddable, so FAIL" << task->name();
         return;
     }
 
     QGraphicsWidget *widget = task->widget(d->host);
 
     if (!widget) {
-        kDebug() << "embeddable, but we received no widget?!";
+        //kDebug() << "embeddable, but we received no widget?!";
         return;
     }
 
@@ -182,7 +182,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
     }
 
     if (widget) {
-        kDebug() << "widget already exists, trying to reposition it";
+        //kDebug() << "widget already exists, trying to reposition it";
         d->firstTasksLayout->removeItem(widget);
         d->normalTasksLayout->removeItem(widget);
         d->lastTasksLayout->removeItem(widget);
@@ -203,10 +203,10 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
     d->hasTasksThatCanHide = d->hasTasksThatCanHide || (task->hidden() != Task::NotHidden);
 
     if (!d->showingHidden && task->hidden() != Task::NotHidden && !d->alwaysShownTypes.contains(task->typeId())) {
-        kDebug() << "is a hidden type";
+        //kDebug() << "is a hidden type";
         d->hasHiddenTasks = true;
         if (widget) {
-            kDebug() << "just hiding the widget";
+            //kDebug() << "just hiding the widget";
             widget->hide();
         }
     } else {
