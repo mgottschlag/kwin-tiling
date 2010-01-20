@@ -163,9 +163,9 @@
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <spacer>
+             <spacer name="horizontalSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -181,79 +181,35 @@
              </spacer>
             </item>
             <item>
-             <layout class="QGridLayout">
-              <property name="margin">
+             <widget class="KIntNumInput" name="slAutoSelect">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="label">
+               <string comment="label. delay (on milliseconds) to automatically select icons">Delay</string>
+              </property>
+              <property name="minimum">
                <number>0</number>
               </property>
-              <item row="0" column="0">
-               <widget class="QLabel" name="lDelay">
-                <property name="text">
-                 <string>Dela&amp;y:</string>
-                </property>
-                <property name="wordWrap">
-                 <bool>false</bool>
-                </property>
-                <property name="buddy">
-                 <cstring>slAutoSelect</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1" colspan="2">
-               <widget class="QSlider" name="slAutoSelect">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>250</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximum">
-                 <number>2000</number>
-                </property>
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QLabel" name="lb_short">
-                <property name="text">
-                 <string>Short</string>
-                </property>
-                <property name="wordWrap">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="2">
-               <widget class="QLabel" name="lb_long">
-                <property name="text">
-                 <string>Long</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-                <property name="wordWrap">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+              <property name="maximum">
+               <number>2000</number>
               </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
+              <property name="singleStep">
+               <number>125</number>
               </property>
-             </spacer>
+              <property name="suffix">
+               <string comment="milliseconds. time to automatically select the items"> ms</string>
+              </property>
+              <property name="sliderEnabled">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -282,14 +238,21 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KIntNumInput</class>
+   <extends>QWidget</extends>
+   <header>knuminput.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>rightHanded</tabstop>
   <tabstop>leftHanded</tabstop>
+  <tabstop>cbScrollPolarity</tabstop>
+  <tabstop>doubleClick</tabstop>
   <tabstop>singleClick</tabstop>
   <tabstop>cb_pointershape</tabstop>
   <tabstop>cbAutoSelect</tabstop>
-  <tabstop>slAutoSelect</tabstop>
-  <tabstop>doubleClick</tabstop>
  </tabstops>
  <includes>
   <include location="global">kdialog.h</include>

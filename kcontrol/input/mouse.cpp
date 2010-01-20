@@ -147,13 +147,6 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
          " want only to select the icon without activating it.");
     generalTab->cbAutoSelect->setWhatsThis( wtstr );
 
-//    slAutoSelect = new QSlider(0, 2000, 10, 0, QSlider::Horizontal, generalTab);
-    generalTab->slAutoSelect->setSingleStep( 125 );
-    generalTab->slAutoSelect->setPageStep( 125 );
-    generalTab->slAutoSelect->setTickPosition( QSlider::TicksBelow );
-    generalTab->slAutoSelect->setTickInterval( 250 );
-    generalTab->slAutoSelect->setTracking( true );
-
     wtstr = i18n("If you have checked the option to automatically select"
          " icons, this slider allows you to select how long the mouse pointer"
          " must be paused over the icon before it is selected.");
@@ -607,10 +600,6 @@ void MouseConfig::slotClick()
   // Delay has a meaning only for autoselect
   bool bDelay = generalTab->cbAutoSelect->isChecked() && ! generalTab->doubleClick->isChecked();
    generalTab->slAutoSelect->setEnabled( bDelay );
-   generalTab->lDelay->setEnabled( bDelay );
-   generalTab->lb_short->setEnabled( bDelay );
-   generalTab->lb_long->setEnabled( bDelay );
-
 }
 
 /** No descriptions */
@@ -837,10 +826,7 @@ void MouseConfig::slotScrollPolarityChanged()
 void MouseConfig::slotSmartSliderEnabling()
 {
   bool enabled = generalTab->singleClick->isChecked() ? generalTab->cbAutoSelect->isChecked() : false;
-  generalTab->lDelay->setEnabled(enabled);
   generalTab->slAutoSelect->setEnabled(enabled);
-  generalTab->lb_short->setEnabled(enabled);
-  generalTab->lb_long->setEnabled(enabled);
 }
 
 #include "mouse.moc"
