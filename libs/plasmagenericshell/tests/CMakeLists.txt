@@ -6,14 +6,14 @@ include_directories(..
 add_definitions(-DPLASMAGENERICSHELL_EXPORT="")
 
 set(appletexplorer_SRCS
-   ../widgetsExplorer/kcategorizeditemsviewmodels.cpp
-   ../widgetsExplorer/plasmaappletitemmodel.cpp
-   ../widgetsExplorer/appleticon.cpp
-   ../widgetsExplorer/appletsfiltering.cpp
-   ../widgetsExplorer/applettooltip.cpp
-   ../widgetsExplorer/appletslist.cpp
-   ../widgetsExplorer/widgetexplorer.cpp
-   ../widgetsExplorer/openwidgetassistant.cpp
+   ../widgetsexplorer/kcategorizeditemsviewmodels.cpp
+   ../widgetsexplorer/plasmaappletitemmodel.cpp
+   ../widgetsexplorer/appleticon.cpp
+   ../widgetsexplorer/appletsfiltering.cpp
+   ../widgetsexplorer/applettooltip.cpp
+   ../widgetsexplorer/appletslist.cpp
+   ../widgetsexplorer/widgetexplorer.cpp
+   ../widgetsexplorer/openwidgetassistant.cpp
    main.cpp
    )
 kde4_add_executable(plasmaappletexplorer ${appletexplorer_SRCS})
