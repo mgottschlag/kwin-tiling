@@ -1,14 +1,14 @@
 add_subdirectory(tests)
 
 set(appletbrowserdialog_SRCS
-    widgetsExplorer/kcategorizeditemsviewmodels.cpp
-    widgetsExplorer/plasmaappletitemmodel.cpp
-    widgetsExplorer/appleticon.cpp
-    widgetsExplorer/appletsfiltering.cpp
-    widgetsExplorer/applettooltip.cpp
-    widgetsExplorer/appletslist.cpp
-    widgetsExplorer/widgetexplorer.cpp
-    widgetsExplorer/openwidgetassistant.cpp
+    widgetsexplorer/kcategorizeditemsviewmodels.cpp
+    widgetsexplorer/plasmaappletitemmodel.cpp
+    widgetsexplorer/appleticon.cpp
+    widgetsexplorer/appletsfiltering.cpp
+    widgetsexplorer/applettooltip.cpp
+    widgetsexplorer/appletslist.cpp
+    widgetsexplorer/widgetexplorer.cpp
+    widgetsexplorer/openwidgetassistant.cpp
 )
 
 set(plasmagenericshell_LIB_SRCS

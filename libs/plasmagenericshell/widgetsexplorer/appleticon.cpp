@@ -19,90 +19,115 @@
 
 #include "appleticon.h"
 
-#include <kiconloader.h>
+#include <QFontMetrics>
 
-AppletIconWidget::AppletIconWidget(QGraphicsItem *parent, PlasmaAppletItem *appletItem)
-    : Plasma::IconWidget(parent)
+#include <KIconLoader>
+#include <KIcon>
+#include <KGlobalSettings>
+
+#include <Plasma/Theme>
+
+AppletIconWidget::AppletIconWidget(QGraphicsItem *parent, PlasmaAppletItem *appletItem, Plasma::FrameSvg *bgSvg)
+    : QGraphicsWidget(parent),
+      m_appletItem(appletItem),
+      m_selectedBackgroundSvg(bgSvg),
+      m_runningIcon("dialog-ok"),
+      m_iconHeight(DEFAULT_ICON_SIZE),
+      m_selected(false),
+      m_hovered(false)
 {
-    m_appletItem = appletItem;
-    m_hovered = false;
-    m_selected = false;
-    m_selectedBackgroundSvg = new Plasma::FrameSvg(this);
-    m_selectedBackgroundSvg->setImagePath("widgets/translucentbackground");
-
-    updateApplet(appletItem);
+    setCacheMode(DeviceCoordinateCache);
+    setFont(KGlobalSettings::smallestReadableFont());
+    setAcceptHoverEvents(true);
+    setCursor(Qt::OpenHandCursor);
 }
 
 AppletIconWidget::~AppletIconWidget()
 {
-    m_appletItem = 0;
 }
 
 PlasmaAppletItem *AppletIconWidget::appletItem()
 {
-    return m_appletItem;
+    return m_appletItem.data();
+}
+
+void AppletIconWidget::setIconSize(int height)
+{
+    m_iconHeight = height;
+
+    QFontMetrics fm(font());
+    const int minHeight = height + 2 + fm.height();
+    qreal l, t, r, b;
+    getContentsMargins(&l, &t, &r, &b);
+    setMinimumHeight(minHeight + t + b);
+
+//    kDebug() << height << minimumHeight();
+    update();
 }
 
 void AppletIconWidget::setAppletItem(PlasmaAppletItem *appletIcon)
 {
    m_appletItem = appletIcon;
+   update();
 }
 
-void AppletIconWidget::updateApplet(PlasmaAppletItem *appletItem)
+void AppletIconWidget::hoverEnterEvent(QGraphicsSceneHoverEvent *)
 {
-    if (appletItem != 0) {
-        m_appletItem = appletItem;
-        setText(m_appletItem->name());
-        setIcon(m_appletItem->icon());
-    } else {
-        setText("no name");
-        setIcon("widgets/clock");
-    }
-}
-
-void AppletIconWidget::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    Plasma::IconWidget::hoverEnterEvent(event);
     m_hovered = true;
     emit(hoverEnter(this));
 }
 
-void AppletIconWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+void AppletIconWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
 {
-    Plasma::IconWidget::hoverLeaveEvent(event);
     m_hovered = false;
     emit(hoverLeave(this));
 }
 
-void AppletIconWidget::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
+void AppletIconWidget::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    Plasma::IconWidget::mouseMoveEvent(event);
-    if (event->button() != Qt::LeftButton
-        && (event->pos() - event->buttonDownPos(Qt::LeftButton)).toPoint().manhattanLength() > QApplication::startDragDistance()) {
+    if (m_appletItem && event->button() != Qt::LeftButton &&
+        (event->pos() - event->buttonDownPos(Qt::LeftButton)).toPoint().manhattanLength() > QApplication::startDragDistance()) {
         event->accept();
         qDebug() << "Start Dragging";
         QDrag *drag = new QDrag(event->widget());
         QPixmap p = appletItem()->icon().pixmap(KIconLoader::SizeLarge, KIconLoader::SizeLarge);
         drag->setPixmap(p);
 
-        QMimeData *data = m_appletItem->mimeData();
+        QMimeData *data = m_appletItem.data()->mimeData();
 
         drag->setMimeData(data);
         drag->exec();
 
         mouseReleaseEvent(event);
+        update(boundingRect());
     }
+}
+
+void AppletIconWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsWidget::mouseReleaseEvent(event);
+    setCursor(Qt::OpenHandCursor);
+}
+
+void AppletIconWidget::resizeEvent(QGraphicsSceneResizeEvent *)
+{
+    QFontMetrics fm(font());
+    qreal l, t, r, b;
+    getContentsMargins(&l, &t, &r, &b);
+    m_iconHeight = qBound(0, int(size().height() - fm.height() - t - b - 2), int(size().height()));
 }
 
 void AppletIconWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
+    setCursor(Qt::ClosedHandCursor);
     emit(selected(this));
 }
 
 void AppletIconWidget::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
+    update(boundingRect());
     emit(doubleClicked(this));
 }
 
@@ -113,15 +138,33 @@ void AppletIconWidget::setSelected(bool selected)
 }
 
 void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
- {
-    if (m_selected || m_hovered) {
-        m_selectedBackgroundSvg->resizeFrame(boundingRect().size());
-        m_selectedBackgroundSvg->paintFrame(painter, boundingRect().topLeft());
-        if (m_selected) {
-            //again
-            m_selectedBackgroundSvg->paintFrame(painter, boundingRect().topLeft());
-        }
-     }
+{
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
 
-    Plasma::IconWidget::paint(painter, option, widget);
- }
+    PlasmaAppletItem *appletItem = m_appletItem.data();
+    if (!appletItem) {
+        return;
+    }
+
+
+    const QRectF rect = contentsRect();
+    const int width = rect.width();
+    const int height = rect.height();
+
+    QRect iconRect(rect.x() + qMax(0, (width / 2) - (m_iconHeight / 2)), rect.y(), m_iconHeight, m_iconHeight);
+    painter->drawPixmap(iconRect, appletItem->icon().pixmap(m_iconHeight, m_iconHeight));
+
+    if (appletItem->running() > 0) {
+        QSize runningIconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+        painter->drawPixmap(iconRect.bottomLeft().x(), iconRect.bottomLeft().y() - runningIconSize.height(),
+                            m_runningIcon.pixmap(runningIconSize));
+    }
+
+    QRectF textRect(rect.x(), iconRect.bottom() + 2, width, height - iconRect.height() - 2);
+    painter->setPen(
+        Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+    painter->drawText(textRect, Qt::AlignTop | Qt::AlignCenter | Qt::TextWordWrap, appletItem->name());
+}
+
+

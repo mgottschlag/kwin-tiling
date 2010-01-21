@@ -30,6 +30,8 @@
 
 #include "plasmaappletitemmodel_p.h"
 
+#include "plasmagenericshell_export.h"
+
 namespace Plasma
 {
 
@@ -39,7 +41,7 @@ class Applet;
 class WidgetExplorerPrivate;
 class WidgetExplorerPrivate;
 
-class WidgetExplorer : public QGraphicsWidget
+class PLASMAGENERICSHELL_EXPORT WidgetExplorer : public QGraphicsWidget
 {
 
     Q_OBJECT
@@ -48,22 +50,23 @@ public:
     WidgetExplorer(QGraphicsItem *parent = 0);
     ~WidgetExplorer();
 
-    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
-
     QString application();
-    void setApplication(const QString &application = QString());
+
+    /**
+     * Populates the widget list for the given application. This must be called
+     * before the widget explorer will be usable as the widget list will remain
+     * empty up to that point.
+     *
+     * @arg application the application which the widgets should be loaded for.
+     */
+    void populateWidgetList(const QString &application = QString());
+
     /**
      * Changes the current default containment to add applets to
      *
      * @arg containment the new default
      */
     void setContainment(Plasma::Containment *containment);
-    /**
-     * Register the corona 
-     *
-     * @arg containment the new default
-     */
-    void setCorona(Plasma::Corona *corona);
 
     /**
      * @return the current default containment to add applets to
@@ -75,19 +78,30 @@ public:
     Plasma::Corona *corona() const;
 
     /**
-     * Set the orientation of the widgets explorer
+     * Set the orientation of the widget explorer
      *
      * @arg the new orientation
      */
     void setOrientation(Qt::Orientation orientation);
 
-protected:
+    /**
+     * @return the orientation of the widget explorer
+     */
+    Qt::Orientation orientation();
 
-    void resizeEvent(QGraphicsSceneResizeEvent *event);
+    /**
+     * Sets the icon size for the widget explorer
+     */
+    void setIconSize(int size);
+
+    /**
+     * @return the icon size of the wiget explorer
+     */
+    int iconSize() const;
 
 Q_SIGNALS:
-
     void orientationChanged(Qt::Orientation orientation);
+    void closeClicked();
 
 public Q_SLOTS:
     /**
@@ -99,27 +113,10 @@ public Q_SLOTS:
      * Adds applet
      */
     void addApplet(PlasmaAppletItem *appletItem);
-
-    /**
-     * Destroy all applets with this name
-     */
-    void destroyApplets(const QString &name);
-
-    /**
-     * Launches a download dialog to retrieve new applets from the Internet
-     *
-     * @arg type the type of widget to download; an empty string means the default
-     *           Plasma widgets will be accessed, any other value should map to a
-     *           PackageStructure PluginInfo-Name entry that provides a widget browser.
-     */
-    void downloadWidgets(const QString &type = QString());
-
-    /**
-     * Opens a file dialog to open a widget from a local file
-     */
-    void openWidgetFile();
-
-    void populateWidgetsMenu();
+    
+protected:    
+  
+    void showEvent(QShowEvent *e);
 
 private:
     Q_PRIVATE_SLOT(d, void appletAdded(Plasma::Applet*))
@@ -127,7 +124,6 @@ private:
     Q_PRIVATE_SLOT(d, void containmentDestroyed())
 
     WidgetExplorerPrivate * const d;
-    Plasma::FrameSvg *m_backgroundSvg;
 
 };
 

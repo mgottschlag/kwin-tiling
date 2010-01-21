@@ -36,34 +36,34 @@ class PlasmaAppletItem : public QObject, public KCategorizedItemsViewModels::Abs
 public:
     enum FilterFlag {
         NoFilter = 0,
-        Favorite = 1,
-        Used = 2
+        Favorite = 1
     };
 
     Q_DECLARE_FLAGS(FilterFlags, FilterFlag)
 
-    PlasmaAppletItem(PlasmaAppletItemModel *model, const QMap<QString, QVariant>& info, FilterFlags flags = NoFilter, QMap<QString, QVariant> *extraAttrs = NULL);
+    PlasmaAppletItem(PlasmaAppletItemModel *model, const KPluginInfo& info, FilterFlags flags = NoFilter);
 
     QString pluginName() const;
-    virtual QString name() const;
-    virtual QString description() const;
-    virtual QString license() const;
-    virtual QString website() const;
-    virtual QString version() const;
-    virtual QString author() const;
-    virtual QString email() const;
+    QString name() const;
+    QString category() const;
+    QString description() const;
+    QString license() const;
+    QString website() const;
+    QString version() const;
+    QString author() const;
+    QString email() const;
 
-    virtual int running() const;
-    virtual bool used() const;
-    virtual void setUsed(bool used);
-    virtual void setFavorite(bool favorite);
+    int running() const;
+    bool isLocal() const;
+    void setFavorite(bool favorite);
+    PlasmaAppletItemModel* appletItemModel();
 
     //set how many instances of this applet are running
-    virtual void setRunning(int count);
-    virtual bool passesFiltering(const KCategorizedItemsViewModels::Filter & filter) const;
-    virtual QVariantList arguments() const;
-    virtual QMimeData *mimeData() const;
-    virtual QStringList mimeTypes() const;
+    void setRunning(int count);
+    bool passesFiltering(const KCategorizedItemsViewModels::Filter & filter) const;
+    QVariantList arguments() const;
+    QMimeData *mimeData() const;
+    QStringList mimeTypes() const;
 
 private:
     PlasmaAppletItemModel * m_model;
@@ -77,6 +77,7 @@ public:
     explicit PlasmaAppletItemModel(KConfigGroup configGroup, QObject * parent = 0);
 
     QStringList mimeTypes() const;
+    QSet<QString> categories() const;
 
     QMimeData *mimeData(const QModelIndexList &indexes) const;
 
@@ -90,7 +91,6 @@ public:
 private:
     QString m_application;
     QStringList m_favorites;
-    QStringList m_used;
     KConfigGroup m_configGroup;
 
 private slots:

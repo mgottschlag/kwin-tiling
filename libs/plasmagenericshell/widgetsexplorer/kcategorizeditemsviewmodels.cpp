@@ -141,7 +141,7 @@ bool DefaultItemFilterProxyModel::filterAcceptsRow(int sourceRow,
     AbstractItem *item = (AbstractItem *) model->itemFromIndex(index);
     //kDebug() << "ITEM " << (item ? "IS NOT " : "IS") << " NULL\n";
 
-    return
+    return item &&
         (m_filter.first.isEmpty() || item->passesFiltering(m_filter)) &&
         (m_searchPattern.isEmpty() || item->matches(m_searchPattern));
 }

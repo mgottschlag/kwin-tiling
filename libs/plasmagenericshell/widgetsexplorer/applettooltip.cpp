@@ -21,25 +21,53 @@
 #include "applettooltip.h"
 
 #include <kiconloader.h>
+#include <kpushbutton.h>
+#include <ktextbrowser.h>
+#include <KStandardDirs>
+
+#include <Plasma/Corona>
+#include <Plasma/Theme>
 
 //AppletToolTipWidget
 
 AppletToolTipWidget::AppletToolTipWidget(QWidget *parent, AppletIconWidget *applet)
         : Plasma::Dialog(parent)
 {
+    setAcceptDrops(true);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
     m_applet = applet;
     m_widget = new AppletInfoWidget();
-    QGraphicsScene * scene = new QGraphicsScene();
-    scene->addItem(m_widget);
-    if(m_applet) {
+    if (m_applet) {
         m_widget->setAppletItem(m_applet->appletItem());
     }
-    setGraphicsWidget(m_widget);
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
 }
 
 AppletToolTipWidget::~AppletToolTipWidget()
 {
+    if (m_widget->scene()) {
+        Plasma::Corona *corona = qobject_cast<Plasma::Corona *>(m_widget->scene());
+        if (corona) {
+            corona->removeOffscreenWidget(m_widget);
+        }
+
+        m_widget->scene()->removeItem(m_widget);
+    }
+
+    delete m_widget;
+}
+
+void AppletToolTipWidget::setScene(QGraphicsScene *scene)
+{
+    if (scene) {
+        Plasma::Corona *corona = qobject_cast<Plasma::Corona *>(scene);
+        if (corona) {
+            corona->addOffscreenWidget(m_widget);
+        } else {
+            scene->addItem(m_widget);
+        }
+
+        setGraphicsWidget(m_widget);
+    }
 }
 
 void AppletToolTipWidget::setAppletIconWidget(AppletIconWidget *applet)
@@ -70,6 +98,12 @@ void AppletToolTipWidget::leaveEvent(QEvent *event)
     emit(leave());
 }
 
+void AppletToolTipWidget::dragEnterEvent(QDragEnterEvent *event)
+{
+    Q_UNUSED(event);
+    emit(leave());
+}
+
 //AppletInfoWidget
 
 AppletInfoWidget::AppletInfoWidget(QGraphicsItem *parent, PlasmaAppletItem *appletItem)
@@ -85,31 +119,33 @@ AppletInfoWidget::~AppletInfoWidget()
 
 void AppletInfoWidget::init()
 {
-    m_mainLayout = new QGraphicsLinearLayout();
-    m_mainLayout->setOrientation(Qt::Vertical);
+    m_iconWidget = new Plasma::IconWidget(this);
+    m_nameLabel = new Plasma::Label(this);
+    m_versionLabel = new Plasma::Label(this);
+    m_aboutLabel = new Plasma::Label(this);
 
-    m_iconWidget   = new Plasma::IconWidget();
-    m_nameLabel    = new Plasma::Label();
-    m_tabs         = new Plasma::TabBar();
+    m_uninstallButton = new Plasma::PushButton(this);
+    m_uninstallButton->setText(i18n("Uninstall Widget"));
+    m_uninstallButton->setIcon(KIcon("application-exit"));
+    m_uninstallButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum, QSizePolicy::ButtonBox);
+    m_uninstallButton->setVisible(false);
+    connect(m_uninstallButton, SIGNAL(clicked()), this, SLOT(uninstall()));
 
-    m_aboutLabel   = new Plasma::Label();
-    m_actionsLabel = new Plasma::Label();
-    m_detailsLabel = new Plasma::Label();
+    // layout init
+    QGraphicsLinearLayout *textLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    textLayout->addItem(m_nameLabel);
+    textLayout->addItem(m_versionLabel);
+    textLayout->addStretch();
 
-    // main layout init
-    QGraphicsLinearLayout * headerLayout = new QGraphicsLinearLayout();
-    headerLayout->setOrientation(Qt::Horizontal);
+    QGraphicsLinearLayout *headerLayout = new QGraphicsLinearLayout();
     headerLayout->addItem(m_iconWidget);
-    headerLayout->addItem(m_nameLabel);
+    headerLayout->addItem(textLayout);
+    headerLayout->setAlignment(m_iconWidget, Qt::AlignVCenter);
 
-    headerLayout->setAlignment(m_iconWidget, Qt::AlignHCenter);
-
-    m_mainLayout->addItem(headerLayout);
-    m_mainLayout->addItem(m_tabs);
-
-    m_mainLayout->setContentsMargins(10, 10, 10, 0);
-
-    m_tabs->setPreferredSize(250, 150);
+    m_mainVerticalLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    m_mainVerticalLayout->addItem(headerLayout);
+    m_mainVerticalLayout->addItem(m_aboutLabel);
+    m_mainVerticalLayout->addItem(m_uninstallButton);
 
     // header init
     m_iconWidget->setAcceptHoverEvents(false);
@@ -117,27 +153,16 @@ void AppletInfoWidget::init()
     m_iconWidget->setMinimumSize(IconSize(KIconLoader::Desktop), IconSize(KIconLoader::Desktop));
     m_iconWidget->setMaximumSize(IconSize(KIconLoader::Desktop), IconSize(KIconLoader::Desktop));
 
-    QFont font = m_nameLabel->nativeWidget()->font();
+    QFont font = m_versionLabel->nativeWidget()->font();
     font.setBold(true);
-    font.setPointSize(1.2 * font.pointSize());
-    m_nameLabel->nativeWidget()->setFont(font);
-    m_nameLabel->nativeWidget()->setScaledContents(true);
-    m_nameLabel->setMaximumHeight(m_iconWidget->maximumHeight());
+    font.setPointSizeF(0.9 * font.pointSizeF());
+    m_versionLabel->setFont(font);
+    font = m_nameLabel->nativeWidget()->font();
+    font.setBold(true);
+    font.setPointSizeF(1.2 * font.pointSizeF());
+    m_nameLabel->setFont(font);
 
-    // about tab
-    m_tabs->addTab(i18n("About"), m_aboutLabel);
-    font.setBold(false);
-    m_aboutLabel->setFont(font);
-    m_aboutLabel->nativeWidget()->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-
-    // actions tab
-    m_tabs->addTab(i18n("Actions"), m_actionsLabel);
-
-    // author tab
-    m_tabs->addTab(i18n("Details"), m_detailsLabel);
-    m_detailsLabel->nativeWidget()->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-
-    setLayout(m_mainLayout);
+    setLayout(m_mainVerticalLayout);
 }
 
 void AppletInfoWidget::setAppletItem(PlasmaAppletItem *appletItem)
@@ -147,28 +172,55 @@ void AppletInfoWidget::setAppletItem(PlasmaAppletItem *appletItem)
 
 void AppletInfoWidget::updateInfo()
 {
-    if(m_appletItem != 0) {
+    if (m_appletItem) {
         m_iconWidget->setIcon(m_appletItem->icon());
         m_nameLabel->setText(m_appletItem->name());
+        m_versionLabel->setText(i18n("Version %1", m_appletItem->version()));
+        QString description = "<html><body>";
+        if (!m_appletItem->description().isEmpty()) {
+            description += m_appletItem->description() + "<br/><br/>";
+        }
 
-        m_aboutLabel->setText(
-            m_appletItem->description());
+        const QString color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor).name();
+        if (!m_appletItem->author().isEmpty()) {
+            description += i18n("<font color=\"%1\">Author:</font>", color) + "<div style=\"margin-left: 15px; color:%1\">" +
+                           m_appletItem->author();
+            if (!m_appletItem->email().isEmpty()) {
+                 description += " <a href=\"mailto:" + m_appletItem->email() + "\">" +
+                                m_appletItem->email() + "</a>";
+            }
+            description += "</div>";
+        }
+        if (!m_appletItem->website().isEmpty()) {
+            description += i18n("<font color=\"%1\">Website:</font>", color) + "<div style=\"margin-left: 15px; color:%1\">" + "<a href=\"" +
+                           m_appletItem->website() + "\">" + m_appletItem->website() +
+                           "</a></div>";
+        }
+        description += i18n("<font color=\"%1\">License:</font>", color) + "<div style=\"margin-left: 15px; color:%1\">" +
+                       m_appletItem->license() + "</div>";
+        description += "</body></html>";
+        description = description.arg(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor).name());
+        kDebug() << description;
 
-        m_detailsLabel->setText(
-            i18n("<html><p>Version: %4</p><p>Author: %1 (%2)</p><p>License: %3</p></html>")
-                .arg(m_appletItem->author())
-                .arg(m_appletItem->email())
-                .arg(m_appletItem->license())
-                .arg(m_appletItem->version())
-                );
+        m_aboutLabel->setText(description);
+        m_uninstallButton->setVisible(m_appletItem->isLocal());
     } else {
         m_iconWidget->setIcon("plasma");
-        m_nameLabel->setText("Unknown applet");
+        m_nameLabel->setText(i18n("Unknown Applet"));
+        m_uninstallButton->setVisible(false);
     }
 
-    m_mainLayout->invalidate();
-    m_mainLayout->activate();
-
-    QSizeF prefSize = m_mainLayout->sizeHint(Qt::PreferredSize) + QSizeF(32, 32);
-    resize(prefSize);
+    adjustSize();
 }
+
+void AppletInfoWidget::uninstall()
+{
+    Plasma::PackageStructure installer;
+    installer.uninstallPackage(m_appletItem->pluginName(),
+                               KStandardDirs::locateLocal("data", "plasma/plasmoids/"));
+    PlasmaAppletItemModel *model = m_appletItem->appletItemModel();
+    model->takeRow(model->indexFromItem(m_appletItem).row());
+    delete m_appletItem;
+    m_appletItem = 0;
+}
+

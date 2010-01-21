@@ -19,25 +19,42 @@
 
 #include "plasmaappletitemmodel_p.h"
 
+#include <KStandardDirs>
 #include <KSycoca>
 
 PlasmaAppletItem::PlasmaAppletItem(PlasmaAppletItemModel *model,
-                                   const QMap<QString, QVariant>& info,
-                                   FilterFlags flags,
-                                   QMap<QString, QVariant> *extraAttrs)
+                                   const KPluginInfo& info,
+                                   FilterFlags flags)
     : QObject(model), m_model(model)
 {
-    QMap<QString, QVariant> attrs(info);
-
+    QMap<QString, QVariant> attrs;
+    attrs.insert("name", info.name());
+    attrs.insert("pluginName", info.pluginName());
+    attrs.insert("description", info.comment());
+    attrs.insert("category", info.category().toLower());
+    attrs.insert("license", info.fullLicense().name(KAboutData::FullName));
+    attrs.insert("website", info.website());
+    attrs.insert("version", info.version());
+    attrs.insert("author", info.author());
+    attrs.insert("email", info.email());
     attrs.insert("favorite", flags & Favorite ? true : false);
-    attrs.insert("used", flags & Used ? true : false);
-    //attrs.insert("recommended", flags & Recommended ? true : false);
-    if (extraAttrs) {
-        attrs.unite(* extraAttrs);
+
+    const QString api(info.property("X-Plasma-API").toString());
+    bool local = false;
+    if (!api.isEmpty()) {
+        QDir dir(KStandardDirs::locateLocal("data", "plasma/plasmoids/" + info.pluginName() + '/'));
+        local = dir.exists();
     }
-    setText(info["name"].toString() + " - "+ info["category"].toString());
+    attrs.insert("local", local);
+
+    //attrs.insert("recommended", flags & Recommended ? true : false);
+    setText(info.name() + " - "+ info.category().toLower());
+
+    const QString iconName = info.icon().isEmpty() ? "application-x-plasma" : info.icon();
+    KIcon icon(iconName);
+    attrs.insert("icon", static_cast<QIcon>(icon));
+    setIcon(icon);
     setData(attrs);
-    setIcon(qvariant_cast<QIcon>(info["icon"]));
 }
 
 QString PlasmaAppletItem::pluginName() const
@@ -58,6 +75,11 @@ QString PlasmaAppletItem::description() const
 QString PlasmaAppletItem::license() const
 {
     return data().toMap()["license"].toString();
+}
+
+QString PlasmaAppletItem::category() const
+{
+    return data().toMap()["category"].toString();
 }
 
 QString PlasmaAppletItem::website() const
@@ -85,11 +107,6 @@ int PlasmaAppletItem::running() const
     return data().toMap()["runningCount"].toInt();
 }
 
-bool PlasmaAppletItem::used() const
-{
-    return data().toMap()["used"].toBool();
-}
-
 void PlasmaAppletItem::setFavorite(bool favorite)
 {
     QMap<QString, QVariant> attrs = data().toMap();
@@ -100,6 +117,11 @@ void PlasmaAppletItem::setFavorite(bool favorite)
     m_model->setFavorite(pluginName, favorite);
 }
 
+bool PlasmaAppletItem::isLocal() const
+{
+    return data().toMap()["local"].toBool();
+}
+
 void PlasmaAppletItem::setRunning(int count)
 {
     QMap<QString, QVariant> attrs = data().toMap();
@@ -108,15 +130,7 @@ void PlasmaAppletItem::setRunning(int count)
     setData(QVariant(attrs));
 }
 
-void PlasmaAppletItem::setUsed(bool used)
-{
-    QMap<QString, QVariant> attrs = data().toMap();
-    attrs.insert("used", used);
-    setData(QVariant(attrs));
-}
-
-bool PlasmaAppletItem::passesFiltering(
-        const KCategorizedItemsViewModels::Filter & filter) const
+bool PlasmaAppletItem::passesFiltering(const KCategorizedItemsViewModels::Filter & filter) const
 {
     return data().toMap()[filter.first] == filter.second;
 }
@@ -142,13 +156,17 @@ QStringList PlasmaAppletItem::mimeTypes() const
     return types;
 }
 
+PlasmaAppletItemModel* PlasmaAppletItem::appletItemModel()
+{
+    return m_model;
+}
+
 //PlasmaAppletItemModel
 
 PlasmaAppletItemModel::PlasmaAppletItemModel(KConfigGroup configGroup, QObject * parent) :
     QStandardItemModel(parent),
     m_configGroup(configGroup)
 {
-    m_used = m_configGroup.readEntry("used").split(',');
     m_favorites = m_configGroup.readEntry("favorites").split(',');
     connect(KSycoca::self(), SIGNAL(databaseChanged()), this, SLOT(populateModel()));
 }
@@ -158,23 +176,6 @@ void PlasmaAppletItemModel::populateModel()
     clear();
     //kDebug() << "populating model, our application is" << m_application;
 
-    // Recommended emblems and filters
-    QRegExp rx("recommended[.]([0-9A-Za-z]+)[.]plugins");
-    QMapIterator<QString, QString> i(m_configGroup.entryMap());
-    QMap < QString, QMap < QString, QVariant > > extraPluginAttrs;
-    while (i.hasNext()) {
-        i.next();
-        if (!rx.exactMatch(i.key())) {
-            continue;
-        }
-        QString id = rx.cap(1);
-
-        foreach (const QString &plugin, i.value().split(',')) {
-            extraPluginAttrs[plugin]["recommended." + id] = true;
-        }
-    }
-
-    //TODO: get recommended, favorite, used, etc out of listAppletInfo()
     //kDebug() << "number of applets is"
     //         <<  Plasma::Applet::listAppletInfo(QString(), m_application).count();
     foreach (const KPluginInfo &info, Plasma::Applet::listAppletInfo(QString(), m_application)) {
@@ -185,24 +186,15 @@ void PlasmaAppletItemModel::populateModel()
         }
         //kDebug() << info.pluginName() << " is the name of the plugin\n";
 
-        QMap<QString, QVariant> attrs;
-        attrs.insert("name", info.name());
-        attrs.insert("pluginName", info.pluginName());
-        attrs.insert("description", info.comment());
-        attrs.insert("category", info.category().toLower());
-        attrs.insert("license", info.fullLicense().name(KAboutData::FullName));
-        attrs.insert("website", info.website());
-        attrs.insert("version", info.version());
-        attrs.insert("author", info.author());
-        attrs.insert("email", info.email());
-        attrs.insert("icon",
-                     static_cast<QIcon>(KIcon(info.icon().isEmpty() ?
-                                              "application-x-plasma" : info.icon())));
+        //qDebug() << info.name() << info.property("X-Plasma-Thumbnail");
+        //qDebug() << info.entryPath();
 
-        qDebug() << info.name() << info.property("X-Plasma-Thumbnail");
-        qDebug() << info.entryPath();
+        PlasmaAppletItem::FilterFlags flags(PlasmaAppletItem::NoFilter);
+        if (m_favorites.contains(info.pluginName())) {
+            flags |= PlasmaAppletItem::Favorite;
+        }
 
-        appendRow(new PlasmaAppletItem(this, attrs,((m_favorites.contains(info.pluginName())) ? PlasmaAppletItem::Favorite : PlasmaAppletItem::NoFilter) | ((m_used.contains(info.pluginName())) ? PlasmaAppletItem::Used : PlasmaAppletItem::NoFilter), &(extraPluginAttrs[info.pluginName()])));
+        appendRow(new PlasmaAppletItem(this, info, flags));
     }
 }
 
@@ -215,19 +207,9 @@ void PlasmaAppletItemModel::setRunningApplets(const QHash<QString, int> &apps)
 
         if (p) {
             const bool running = apps.value(p->pluginName());
-            const bool used = m_used.contains(p->pluginName());
-
             p->setRunning(running);
-            //mark just used applets that arent't running
-            p->setUsed(!running && used);
-
-            if (running && !used) {
-                m_used.append(p->pluginName());
-            }
         }
     }
-
-    m_configGroup.writeEntry("used", m_used.join(","));
 }
 
 void PlasmaAppletItemModel::setRunningApplets(const QString &name, int count)
@@ -236,18 +218,9 @@ void PlasmaAppletItemModel::setRunningApplets(const QString &name, int count)
         QStandardItem *i = item(r);
         PlasmaAppletItem *p = dynamic_cast<PlasmaAppletItem *>(i);
         if (p && p->pluginName() == name) {
-            const bool used = m_used.contains(p->pluginName());
-
             p->setRunning(count);
-            p->setUsed(used && count == 0);
-
-            if (count > 0 && !used) {
-                m_used.append(p->pluginName());
-            }
         }
     }
-
-    m_configGroup.writeEntry("used", m_used.join(","));
 }
 
 QStringList PlasmaAppletItemModel::mimeTypes() const
@@ -257,9 +230,23 @@ QStringList PlasmaAppletItemModel::mimeTypes() const
     return types;
 }
 
+QSet<QString> PlasmaAppletItemModel::categories() const
+{
+    QSet<QString> cats;
+    for (int r = 0; r < rowCount(); ++r) {
+        QStandardItem *i = item(r);
+        PlasmaAppletItem *p = dynamic_cast<PlasmaAppletItem *>(i);
+        if (p) {
+            cats.insert(p->category());
+        }
+    }
+
+    return cats;
+}
+
 QMimeData *PlasmaAppletItemModel::mimeData(const QModelIndexList &indexes) const
 {
-    kDebug() << "GETTING MIME DATA\n";
+    //kDebug() << "GETTING MIME DATA\n";
     if (indexes.count() <= 0) {
         return 0;
     }

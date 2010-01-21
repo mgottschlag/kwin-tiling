@@ -23,15 +23,20 @@
 
 #include <QBasicTimer>
 #include <QTimeLine>
-#include <QtCore>
-#include <QtGui>
 
-#include <plasma/widgets/pushbutton.h>
+#include <Plasma/Svg>
+#include <plasma/widgets/toolbutton.h>
 
 #include "kcategorizeditemsviewmodels_p.h"
 #include "plasmaappletitemmodel_p.h"
 #include "appleticon.h"
 #include "applettooltip.h"
+
+namespace Plasma
+{
+    class ItemBackground;
+    class Animation;
+} // namespace Plasma
 
 class AppletsListWidget : public QGraphicsWidget
 {
@@ -45,9 +50,13 @@ public:
     //not used yet
     QList <KCategorizedItemsViewModels::AbstractItem *> selectedItems() const;
 
-    void setItemModel(QStandardItemModel *model);
+    void setItemModel(PlasmaAppletItemModel *model);
     void setFilterModel(QStandardItemModel *model);
     void setOrientation(Qt::Orientation orientation);
+
+    // default size of the icons
+    void setIconSize(int size);
+    int iconSize() const;
 
     enum ScrollPolicy {
         DownRight = 0,
@@ -76,22 +85,26 @@ private:
     void eraseList();
     void setToolTipPosition();
 
-    //according to the orientation, paramenter position can be the X or the Y of a QPoint
-    bool isItemUnder(int itemIndex, qreal position);
-
-    int findFirstVisibleApplet(int firstVisiblePositionOnList);
-    int findLastVisibleApplet(int lastVisiblePositionOnList);
-
     //returns the what's the visible rect of the list widget
     QRectF visibleListRect();
-
+    //returns window's start position
+    qreal visibleStartPosition();
+    //returns window's end position
+    qreal visibleEndPosition();
+    //returns list size
+    qreal listSize();
+    //returns windows size relative to list
+    qreal windowSize();
+    //returns item position
+    qreal itemPosition(int i);
+    
     void scroll(ScrollPolicy side, ScrollPolicy how);
 
     //scrolls down or right according to orientation
-    void scrollDownRight(int step, QRectF visibleRect);
+    void scrollDownRight(int step);
 
     //scrolls up or left according to orientation
-    void scrollUpLeft(int step, QRectF visibleRect);
+    void scrollUpLeft(int step);
 
     void wheelEvent(QGraphicsSceneWheelEvent *event);
 
@@ -102,8 +115,9 @@ private slots:
     void filterChanged(int index);
     void updateList();
 
-    void onRightArrowClick();
-    void onLeftArrowClick();
+    void onRightArrowPress();
+    void onLeftArrowPress();
+    void scrollStepFinished();
 
     //checks if arrows should be enabled or not
     void manageArrows();
@@ -118,43 +132,42 @@ private slots:
     void onToolTipEnter();
     void onToolTipLeave();
 
-    /* TODO: Remove this and animate using plasma's
-     * animation framework when it is created */
-    void animateMoveBy(int amount);
-    void scrollTimeLineFrameChanged(int frame);
-
     void animateToolTipMove();
     void toolTipMoveTimeLineFrameChanged(int frame);
+    void rowsAboutToBeRemoved(const QModelIndex& parent, int row, int column);
 
 protected:
-    void resizeEvent(QGraphicsSceneResizeEvent *event);
     bool eventFilter(QObject *obj, QEvent *event);
     void timerEvent(QTimerEvent *event);
+    QVariant itemChange(GraphicsItemChange change, const QVariant & value);
 
 Q_SIGNALS:
     void appletDoubleClicked(PlasmaAppletItem *appletItem);
-    void listScrolled();
 
 private:
 
     //Hash containing all widgets that represents the applets
-    QHash<QString, AppletIconWidget *> *m_allAppletsHash;
+    QHash<QString, AppletIconWidget *> m_allAppletsHash;
 
     //list containing the applet icons of the filter proxy model
-    QList<AppletIconWidget *> *m_currentAppearingAppletsOnList;
+    QList<AppletIconWidget *> m_currentAppearingAppletsOnList;
 
     QGraphicsLinearLayout *m_appletListLinearLayout;
     QGraphicsWidget *m_appletsListWidget;
     QGraphicsWidget *m_appletsListWindowWidget;
     QGraphicsLinearLayout *m_arrowsLayout;
 
-    Plasma::PushButton *m_downRightArrow;
-    Plasma::PushButton *m_upLeftArrow;
+    Plasma::ToolButton *m_downRightArrow;
+    Plasma::ToolButton *m_upLeftArrow;
+    Plasma::Svg *m_arrowsSvg;
+    Plasma::FrameSvg *m_appletIconBgSvg;
 
     Qt::Orientation m_orientation;
 
     //One single tootip to show applets info
     AppletToolTipWidget *m_toolTip;
+    Plasma::ItemBackground *m_selectionIndicator;
+    Plasma::ItemBackground *m_hoverIndicator;
 
     QStandardItemModel *m_modelItems;
 
@@ -164,6 +177,9 @@ private:
     //model that filters the item models
     KCategorizedItemsViewModels::DefaultItemFilterProxyModel *m_modelFilterItems;
 
+    //index of current first item
+    int m_firstItemIndex;
+    
     AppletIconWidget *m_selectedItem;
 
     QVariant m_dataFilterAboutToApply;
@@ -176,17 +192,13 @@ private:
 
     int arrowClickStep;
     int wheelStep;
+    int m_iconSize;
 
-    /* TODO: Remove this and animate using plasma's
-     * animation framework when it is created */
-    QTimeLine scrollTimeLine;
-    qreal scrollTo;
-    qreal scrollFrom;
+    Plasma::Animation *m_slide;
 
     QTimeLine toolTipMoveTimeLine;
     QPoint toolTipMoveFrom;
     QPoint toolTipMoveTo;
-
 };
 
 #endif //APPLETSLIST_H

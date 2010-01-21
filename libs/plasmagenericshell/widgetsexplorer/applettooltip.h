@@ -24,13 +24,11 @@
 #include "plasmaappletitemmodel_p.h"
 #include "appleticon.h"
 
-#include <QtCore>
-#include <QtGui>
-
-#include <plasma/widgets/iconwidget.h>
-#include <plasma/widgets/label.h>
-#include <plasma/widgets/tabbar.h>
 #include <plasma/dialog.h>
+#include <plasma/widgets/iconwidget.h>
+#include <plasma/widgets/pushbutton.h>
+#include <plasma/widgets/textbrowser.h>
+#include <plasma/widgets/label.h>
 
 class AppletInfoWidget : public QGraphicsWidget {
 
@@ -46,17 +44,19 @@ class AppletInfoWidget : public QGraphicsWidget {
     public Q_SLOTS:
         void updateInfo();
 
+    protected Q_SLOTS:
+        void uninstall();
+
     private:
-        PlasmaAppletItem * m_appletItem;
-        QGraphicsLinearLayout * m_mainLayout;
+        PlasmaAppletItem *m_appletItem;
+        QGraphicsLinearLayout *m_mainVerticalLayout;
 
-        Plasma::IconWidget * m_iconWidget;
-        Plasma::Label  * m_nameLabel;
-        Plasma::TabBar * m_tabs;
-
-        Plasma::Label   * m_aboutLabel;
-        Plasma::Label   * m_actionsLabel;
-        Plasma::Label   * m_detailsLabel;
+        Plasma::IconWidget *m_iconWidget;
+        Plasma::Label *m_nameLabel;
+        Plasma::Label *m_versionLabel;
+//        Plasma::TextBrowser *m_aboutLabel;
+        Plasma::Label *m_aboutLabel;
+        Plasma::PushButton *m_uninstallButton;
 };
 
 class AppletToolTipWidget : public Plasma::Dialog {
@@ -70,6 +70,7 @@ class AppletToolTipWidget : public Plasma::Dialog {
         void setAppletIconWidget(AppletIconWidget *applet);
         void updateContent();
         AppletIconWidget *appletIconWidget();
+        void setScene(QGraphicsScene *scene);
 
     Q_SIGNALS:
         void enter();
@@ -78,6 +79,7 @@ class AppletToolTipWidget : public Plasma::Dialog {
     protected:
         void enterEvent(QEvent *event);
         void leaveEvent(QEvent *event);
+        void dragEnterEvent(QDragEnterEvent *event);
 
     private:
         AppletIconWidget *m_applet;
