@@ -127,7 +127,6 @@ PlasmaApp* PlasmaApp::self()
 PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     : KUniqueApplication(display, visual, colormap),
       m_corona(0),
-      m_view(0),
       m_configDialog(0)
 {
     //load translations for libplasma
@@ -143,7 +142,9 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     // Add 10% so that other (smaller) pixmaps can also be cached.
     int cacheSize = 0;
     QDesktopWidget *desktop = QApplication::desktop();
-    for (int i = 0; i < desktop->numScreens(); i++) {
+    int numScreens = desktop->numScreens();
+    m_views.resize(numScreens);
+    for (int i = 0; i < numScreens; i++) {
         QRect geometry = desktop->screenGeometry(i);
         cacheSize += 4 * geometry.width() * geometry.height() / 1024;
     }
@@ -211,7 +212,6 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     // this line initializes the corona.
     corona();
 
-    connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize(int)));
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
 
     setup(KCmdLineArgs::parsedArgs()->isSet("setup"));
@@ -227,8 +227,8 @@ void PlasmaApp::cleanup()
         m_corona->saveLayout();
     }
 
-    delete m_view;
-    delete m_corona;
+    //delete m_view; //should not be needed
+    delete m_corona; //should not be needed?
 
     KGlobal::config()->sync();
 }
@@ -239,10 +239,7 @@ void PlasmaApp::setActiveOpacity(qreal opacity)
         return;
     }
     m_activeOpacity = opacity;
-    if (m_view) {
-        //assume it's active, since things are happening
-        m_view->setWindowOpacity(opacity);
-    }
+    emit setViewOpacity(opacity);
     KConfigGroup cg(KGlobal::config(), "General");
     cg.writeEntry("activeOpacity", opacity);
     m_corona->requestConfigSync();
@@ -272,42 +269,21 @@ qreal PlasmaApp::idleOpacity() const
 
 void PlasmaApp::setActive(bool activate)
 {
-    if (!m_view) {
-        return;
-    }
-
     if (activate) {
-        m_view->setWindowOpacity(m_activeOpacity);
-        m_view->showView();
-        m_view->containment()->openToolBox();
-    } else if (m_view->isVisible()) {
+        emit setViewOpacity(m_activeOpacity);
+        emit showViews();
+        emit openToolBox();
+    } else {
         if (qFuzzyCompare(m_idleOpacity + qreal(1.0), qreal(1.0))) {
             //opacity is 0
-            m_view->hideView();
+            emit hideViews();
         } else {
             lock();
-            m_view->setWindowOpacity(m_idleOpacity);
-            m_view->containment()->closeToolBox();
+            emit setViewOpacity(m_idleOpacity);
+            emit showViews();
+            emit closeToolBox();
         }
-    } else {
-        if (m_idleOpacity > 0) {
-            m_view->setWindowOpacity(m_idleOpacity);
-            m_view->showView();
-        }
-        lock();
     }
-}
-
-void PlasmaApp::adjustSize(int screen)
-{
-    Q_UNUSED(screen);
-    if (! m_view) {
-        return;
-    }
-    //FIXME someone needs to tell us what size to use if we've got >1 screen
-    QDesktopWidget *desktop = QApplication::desktop();
-    QRect geom = desktop->screenGeometry(0);
-    m_view->setGeometry(geom);
 }
 
 void PlasmaApp::syncConfig()
@@ -356,51 +332,50 @@ void PlasmaApp::createView(Plasma::Containment *containment)
              <<  "| screen:" << containment->screen()
              << "| geometry:" << containment->geometry()
              << "| zValue:" << containment->zValue();
+    int screen = containment->screen();
 
-    if (m_view) {
-        // we already have a view for this screen
-        return;
-    }
-
-    kDebug() << "creating a view for" << containment->screen() << "and we have"
+    kDebug() << "creating a view for" << screen << "and we have"
         << QApplication::desktop()->numScreens() << "screens";
 
     // we have a new screen. neat.
-    m_view = new SaverView(containment, 0);
+    SaverView *view = new SaverView(containment, 0);
                 /*if (m_corona) {
                     connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
                             view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
                 }*/
-    //FIXME is this the right geometry for multi-screen?
-    m_view->setGeometry(QApplication::desktop()->screenGeometry(containment->screen()));
+    view->setGeometry(QApplication::desktop()->screenGeometry(screen));
 
     //FIXME why do I get BadWindow?
     //unsigned char data = VIEW;
-    //XChangeProperty(QX11Info::display(), m_view->effectiveWinId(), tag, tag, 8, PropModeReplace, &data, 1);
+    //XChangeProperty(QX11Info::display(), view->effectiveWinId(), tag, tag, 8, PropModeReplace, &data, 1);
 
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
 
     //a hack to make sure the keyboard shortcut works
-    m_view->addAction(corona()->action("unlock desktop"));
-    m_view->addAction(corona()->action("unlock widgets"));
-
-    connect(m_view, SIGNAL(hidden()), SLOT(lock()));
-    connect(m_view, SIGNAL(hidden()), SIGNAL(hidden()));
-
+    view->addAction(corona()->action("unlock desktop"));
+    view->addAction(corona()->action("unlock widgets"));
+    m_views.insert(screen, view);
+    connect(view, SIGNAL(hidden()), SLOT(lock()));
+    connect(view, SIGNAL(hidden()), SIGNAL(hidden()));
+    connect(this, SIGNAL(showViews()), view, SLOT(show()));
+    connect(this, SIGNAL(hideViews()), view, SLOT(hide()));
+    connect(this, SIGNAL(setViewOpacity(qreal)), view, SLOT(setOpacity(qreal)));
+    connect(this, SIGNAL(enableSetupMode()), view, SLOT(disableSetupMode()));
+    connect(this, SIGNAL(disableSetupMode()), view, SLOT(disableSetupMode()));
+    connect(this, SIGNAL(openToolBox()), view, SLOT(openToolBox()));
+    connect(this, SIGNAL(closeToolBox()), view, SLOT(closeToolBox()));
+    connect(QApplication::desktop(), SIGNAL(resized(int)), view, SLOT(adjustSize(int)));
+    emit(openToolBox());
     kDebug() << "view created";
 }
 
 void PlasmaApp::setup(bool setupMode)
 {
-    kDebug() << setupMode;
-    if (! m_view) {
-        kDebug() << "too soon!!";
-        return;
-    }
+    kDebug() << "setup mode:" << setupMode;
 
     if (setupMode) {
-        m_view->enableSetupMode();
+        emit enableSetupMode();
         if (m_corona->immutability() == Plasma::UserImmutable) {
             m_corona->setImmutability(Plasma::Mutable);
         }
@@ -442,6 +417,7 @@ bool PlasmaApp::eventFilter(QObject *obj, QEvent *event)
                     //we force-disable window management and frames to cut off access to wm-y stuff
                     //and to make it easy to check the tag (frames are a pain)
                     kDebug() << "!!!!!!!setting flags on!!!!!" << widget;
+                    QDesktopWidget *desktop = QApplication::desktop();
                     if (qobject_cast<Plasma::Dialog*>(widget)) {
                         //this is a terrible horrible hack that breaks extenders but it mostly works
                         //weird thing is, it sometimes makes the calendar popup too small.
@@ -451,8 +427,14 @@ bool PlasmaApp::eventFilter(QObject *obj, QEvent *event)
                         //but configdialogs need it
                         m_dialogs.append(widget);
                         connect(widget, SIGNAL(destroyed(QObject*)), SLOT(dialogDestroyed(QObject*)));
+                        connect(this, SIGNAL(showDialogs()), widget, SLOT(show()));
+                        connect(this, SIGNAL(hideDialogs()), widget, SLOT(hide()));
                     }
                     widget->setWindowFlags(newFlags);
+                    //we do not know the screen this widget should appear on
+                    QRect availableGeometry = desktop->availableGeometry();
+                    //move to the default screen
+                    widget->move(availableGeometry.x(), availableGeometry.y());
                     widget->show(); //setting the flags hid it :(
                     //qApp->setActiveWindow(widget); //gives kbd but not mouse events
                     //kDebug() << "parent" << widget->parentWidget();
@@ -474,50 +456,32 @@ bool PlasmaApp::eventFilter(QObject *obj, QEvent *event)
 void PlasmaApp::dialogDestroyed(QObject *obj)
 {
     m_dialogs.removeAll(qobject_cast<QWidget*>(obj));
-    if (m_dialogs.isEmpty()) {
-        if (m_view) {
+    //if (m_dialogs.isEmpty()) {
+        //FIXME multiview
+        //if (m_view) {
             //this makes qactions work again
-            m_view->activateWindow();
-        }
+            //m_view->activateWindow();
+        //}
     /*} else { failed attempt to fix kbd input after a subdialog closes
         QWidget *top = m_dialogs.last();
         top->activateWindow();
         kDebug() << top;*/
-    }
-}
-
-void PlasmaApp::hideDialogs()
-{
-    foreach (QWidget *w, m_dialogs) {
-        w->hide();
-    }
-
-    if (m_view) {
-        m_view->hideWidgetExplorer();
-    }
-    //FIXME where does the focus go?
-}
-
-void PlasmaApp::showDialogs()
-{
-    foreach (QWidget *w, m_dialogs) {
-        w->show();
-    }
-    //FIXME where does the focus go?
+    //}
 }
 
 void PlasmaApp::configureContainment(Plasma::Containment *containment)
 {
-    if (!m_view) {
-        return;
-    }
+//     SaverView *view = viewForScreen(containment->screen());
+//     if (!view) {
+//         return;
+//     }
 
     if (m_configDialog) {
         m_configDialog->reloadConfig();
     } else {
         const QSize resolution = QApplication::desktop()->screenGeometry(containment->screen()).size();
 
-        m_configDialog = new BackgroundDialog(resolution, containment, m_view);
+        m_configDialog = new BackgroundDialog(resolution, containment);
         m_configDialog->setAttribute(Qt::WA_DeleteOnClose);
     }
 
@@ -526,6 +490,7 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
 
 void PlasmaApp::lock()
 {
+    kDebug() << "lock";
     if (corona() && corona()->immutability() == Plasma::Mutable) {
         corona()->setImmutability(Plasma::UserImmutable);
     }
@@ -539,13 +504,17 @@ void PlasmaApp::quit()
 void PlasmaApp::immutabilityChanged(Plasma::ImmutabilityType immutability)
 {
     if (immutability == Plasma::Mutable) {
-        showDialogs();
+        emit showDialogs();
     } else {
-        hideDialogs();
-        if (m_view) {
-            m_view->disableSetupMode();
-        }
+        emit hideDialogs();
+        emit hideWidgetExplorer();
+        emit disableSetupMode();
     }
+}
+
+SaverView *PlasmaApp::viewForScreen(int screen)
+{
+    return m_views.at(screen);
 }
 
 #include "plasmaapp.moc"

@@ -46,10 +46,8 @@ SaverCorona::SaverCorona(QObject *parent)
 void SaverCorona::init()
 {
     QDesktopWidget *desktop = QApplication::desktop();
+    connect(desktop,SIGNAL(screenCountChanged(int)), SLOT(numScreensUpdated(int)));
     m_numScreens = desktop->numScreens();
-    if (m_numScreens > 1) {
-        kDebug() << "maybe someone should implement multiple screen support";
-    }
 
     Plasma::ContainmentActionsPluginsConfig plugins;
     plugins.addPlugin(Qt::NoModifier, Qt::RightButton, "minimalcontextmenu");
@@ -86,6 +84,7 @@ void SaverCorona::loadDefaultLayout()
 {
     kDebug();
     QString defaultConfig = KStandardDirs::locate("appdata", "plasma-overlay-default-layoutrc");
+
     if (!defaultConfig.isEmpty()) {
         kDebug() << "attempting to load the default layout from:" << defaultConfig;
         loadLayout(defaultConfig);
@@ -94,27 +93,31 @@ void SaverCorona::loadDefaultLayout()
 
     QDesktopWidget *desktop = QApplication::desktop();
 
-    // create a containment for the screen
-    QRect g = desktop->screenGeometry(0);
-    kDebug() << "     screen geometry is" << g;
-    Plasma::Containment *c = addContainment("saverdesktop");
-    c->setScreen(0);
-    c->setFormFactor(Plasma::Planar);
-    c->flushPendingConstraintsEvents();
+    // create a containment for the screens
+    Plasma::Containment *c;
+    for(int screen=0; screen<m_numScreens; ++screen)
+    {
+      QRect g = desktop->screenGeometry(screen);
+      kDebug() << "     screen" << screen << "geometry is" << g;
+      c = addContainment("saverdesktop");
+      c->setScreen(screen);
+      c->setFormFactor(Plasma::Planar);
+      c->flushPendingConstraintsEvents();
+    }
 
     // a default clock
-    Plasma::Applet *clock =  Plasma::Applet::load("clock", c->id() + 1);
+    c = containmentForScreen(desktop->primaryScreen());
+    Plasma::Applet *clock =  Plasma::Applet::load("clock"/*, c->id() + 1*/);
     c->addApplet(clock, QPointF(KDialog::spacingHint(), KDialog::spacingHint()), true);
     clock->init();
     clock->flushPendingConstraintsEvents();
 
-    emit containmentAdded(c);
-
+    //emit containmentAdded(c);
 }
 
 int SaverCorona::numScreens() const
 {
-    return QApplication::desktop()->numScreens();
+    return m_numScreens;
 }
 
 QRect SaverCorona::screenGeometry(int id) const
@@ -190,6 +193,12 @@ void SaverCorona::unlockDesktop()
         kDebug() << "bailing out!";
         qApp->quit();
     }
+}
+
+void SaverCorona::numScreensUpdated(int newCount)
+{
+    m_numScreens = newCount;
+    //do something?
 }
 
 

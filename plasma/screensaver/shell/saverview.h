@@ -54,6 +54,8 @@ protected:
 public slots:
     void showView();
     void hideView();
+    void setOpacity(qreal opacity);
+    void adjustSize(int screen);
 
     /**
      * Sets the containment for this view, which will also cause the view
@@ -70,6 +72,8 @@ public slots:
 protected slots:
     void showWidgetExplorer(); //FIXME actually this is toggle
     void suppressShowTimeout();
+    void openToolBox();
+    void closeToolBox();
 
 private:
     QWeakPointer<Plasma::WidgetExplorer> m_widgetExplorer;

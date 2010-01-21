@@ -22,6 +22,7 @@
 #define PLASMA_APP_H
 
 #include <QList>
+#include <QVector>
 #include <QPointer>
 
 #include <KUniqueApplication>
@@ -96,22 +97,33 @@ public Q_SLOTS:
 private Q_SLOTS:
     void cleanup();
     void createView(Plasma::Containment *containment);
-    void adjustSize(int screen);
+    //void adjustSize(int screen);
     void dialogDestroyed(QObject *obj);
-    void hideDialogs();
-    void showDialogs();
     void configureContainment(Plasma::Containment*);
     void syncConfig();
     void immutabilityChanged(Plasma::ImmutabilityType immutability);
+
+Q_SIGNALS:
+    void showViews();
+    void hideViews();
+    void setViewOpacity(qreal opacity);
+    void showDialogs();
+    void hideDialogs();
+    void hideWidgetExplorer();
+    void enableSetupMode();
+    void disableSetupMode();
+    void openToolBox();
+    void closeToolBox();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
 
 private:
     PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap);
+    SaverView *viewForScreen(int screen);
 
     Plasma::Corona *m_corona;
-    SaverView *m_view;
+    QVector<SaverView*> m_views;
     QList<QWidget*> m_dialogs;
     QPointer<BackgroundDialog> m_configDialog;
 

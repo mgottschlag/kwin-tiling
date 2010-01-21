@@ -1414,8 +1414,31 @@ bool LockProcess::x11Event(XEvent *event)
             {
                 //kDebug() << "forward to plasma";
                 XEvent ev2 = *event;
-                ev2.xkey.window = ev2.xkey.subwindow = mForeignInputWindows.first();
-                XSendEvent(QX11Info::display(), ev2.xkey.window, False, NoEventMask, &ev2);
+                Window root_return;
+                int x_return, y_return;
+                unsigned int width_return, height_return, border_width_return, depth_return;
+                WId targetWindow = 0;
+                //kDebug() << "root is" << winId();
+                //kDebug() << "search window under pointer with" << mForeignInputWindows.size() << "windows";
+                foreach(WId window, mForeignInputWindows)
+                {
+                    XGetGeometry(QX11Info::display(), window, &root_return,
+                                &x_return, &y_return,
+                                &width_return, &height_return,
+                                &border_width_return, &depth_return);
+                    if( (event->xkey.x>=x_return && event->xkey.x<=x_return+(int)width_return)
+                        &&
+                        (event->xkey.y>=y_return && event->xkey.y<=y_return+(int)height_return) )
+                    {
+                        //kDebug() << "found window" << window;
+                        targetWindow = window;
+                        ev2.xkey.window = ev2.xkey.subwindow = targetWindow;
+                        ev2.xkey.x = event->xkey.x - x_return;
+                        ev2.xkey.y = event->xkey.y - y_return;
+                        break;
+                    }
+                }
+                XSendEvent(QX11Info::display(), targetWindow, False, NoEventMask, &ev2);
                 ret = true;
             }
         default:

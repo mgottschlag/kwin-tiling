@@ -34,10 +34,10 @@ typedef QPair<QString, QString> WallpaperInfo;
 Q_DECLARE_METATYPE(WallpaperInfo)
 
 
-BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Plasma::View* view, QWidget* parent)
+BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, /*Plasma::View* view,*/ QWidget* parent)
     : KDialog(parent),
       m_wallpaper(0),
-      m_view(view),
+      //m_view(view),
       m_containment(c),
       m_preview(0)
 {

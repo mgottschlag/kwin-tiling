@@ -52,6 +52,7 @@ private Q_SLOTS:
     void unlock(QDBusMessage reply);
     void dbusError(QDBusError error);
     void unlockDesktop();
+    void numScreensUpdated(int newCount);
 
 private:
     void init();

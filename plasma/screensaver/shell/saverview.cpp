@@ -283,5 +283,31 @@ void SaverView::keyPressEvent(QKeyEvent *event)
     Plasma::View::keyPressEvent(event);
 }
 
-#include "saverview.moc"
+void SaverView::setOpacity(qreal opacity)
+{
+    setWindowOpacity(opacity);
+}
 
+void SaverView::openToolBox()
+{
+    kDebug() << "close toolbox";
+    containment()->openToolBox();
+}
+
+void SaverView::closeToolBox()
+{
+    kDebug() << "close toolbox";
+    containment()->closeToolBox();
+}
+
+void SaverView::adjustSize(int screen)
+{
+    QDesktopWidget *desktop = QApplication::desktop();
+    int thisScreen = desktop->screenNumber(this);
+    if(screen == thisScreen)
+    {
+        setGeometry(desktop->screenGeometry(screen));
+    }
+}
+
+#include "saverview.moc"

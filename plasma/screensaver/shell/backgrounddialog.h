@@ -27,7 +27,7 @@ class BackgroundDialog : public KDialog, public Ui::BackgroundDialog
     Q_OBJECT
 public:
     BackgroundDialog(const QSize &res, Plasma::Containment *containment,
-                     Plasma::View *view, QWidget *parent = 0);
+                     /*Plasma::View *view,*/ QWidget *parent = 0);
     ~BackgroundDialog();
 
     void reloadConfig();
@@ -44,7 +44,7 @@ private slots:
 
 private:
     Plasma::Wallpaper* m_wallpaper;
-    Plasma::View* m_view;
+    //Plasma::View* m_view;
     Plasma::Containment* m_containment;
     ScreenPreviewWidget* m_preview;
 };
