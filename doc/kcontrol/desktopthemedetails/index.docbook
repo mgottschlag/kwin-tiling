@@ -50,10 +50,11 @@ desktop items by clicking the <guibutton>Get New Theme...</guibutton>
 button in <interface>System Settings -&gt;
 General -&gt; Appearance -&gt; Style -&gt; Workspace tab</interface>.</para>
 
-<para>All the available themes will be displayed on top.</para>
+<para>All the available themes will be displayed on top, the current one being highlighted.</para>
 
-<para>You can then start customizing each item you want to change with a new
-theme, for example you can have the panel in Glassified theme, the widget
+<para>In the theme list, select a base theme that will be used for most widgets and start
+customizing each item you want to change with a new theme, for example you can
+have the panel in Glassified theme, the widget
 backgrounds in Air and so on.</para>
 
 <para>Here Air is the theme for most widgets and we changed the panel background
