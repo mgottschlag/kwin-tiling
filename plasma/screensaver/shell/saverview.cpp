@@ -30,7 +30,7 @@
 #include <Plasma/Containment>
 #include <Plasma/Svg>
 
-#include <widgetsExplorer/widgetexplorer.h>
+#include <widgetsexplorer/widgetexplorer.h>
 
 #include "plasmaapp.h"
 

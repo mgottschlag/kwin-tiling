@@ -49,7 +49,7 @@
 #include "plasmaapp.h"
 #include "positioningruler.h"
 #include "toolbutton.h"
-#include "widgetsExplorer/widgetexplorer.h"
+#include "widgetsexplorer/widgetexplorer.h"
 
 #include <kephal/screens.h>
 

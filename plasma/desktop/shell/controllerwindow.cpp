@@ -34,7 +34,7 @@
 #include <Plasma/View>
 #include <Plasma/WindowEffects>
 
-#include "widgetsExplorer/widgetexplorer.h"
+#include "widgetsexplorer/widgetexplorer.h"
 
 #include <kephal/screens.h>
 

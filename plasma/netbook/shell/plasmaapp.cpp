@@ -47,7 +47,7 @@
 #include "netcorona.h"
 #include "netview.h"
 
-#include "widgetsExplorer/widgetexplorer.h"
+#include "widgetsexplorer/widgetexplorer.h"
 #include "plasmagenericshell/backgrounddialog.h"
 
 #ifdef Q_WS_X11

@@ -38,7 +38,7 @@
 
 #include "plasmaapp.h"
 #include "plasma-shell-desktop.h"
-#include "widgetsExplorer/widgetexplorer.h"
+#include "widgetsexplorer/widgetexplorer.h"
 
 static const int SUPPRESS_SHOW_TIMEOUT = 500; // Number of millis to prevent reshow of dashboard
 
