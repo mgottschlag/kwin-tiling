@@ -42,7 +42,7 @@ public:
     ScreenSaverWidgetExplorer(QGraphicsWidget *parent)
         : Plasma::WidgetExplorer(parent)
     {
-
+        connect(this, SIGNAL(closeClicked()), this, SLOT(deleteLater()));
     }
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
