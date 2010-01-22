@@ -19,15 +19,19 @@
 
 #include "scriptengine.h"
 
-#include <QScriptValueIterator>
 #include <QEventLoop>
+#include <QFile>
+#include <QScriptValueIterator>
 #include <QTimer>
+
+#include <KShell>
 
 #include <Plasma/Applet>
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 
 #include "containment.h"
+#include "plasmaapp.h"
 #include "widget.h"
 
 QScriptValue constructQRectFClass(QScriptEngine *engine);
@@ -111,7 +115,6 @@ QScriptValue ScriptEngine::newPanel(QScriptContext *context, QScriptEngine *engi
     return createContainment("panel", "panel", context, engine);
 }
 
-#include "plasmaapp.h"
 QScriptValue ScriptEngine::createContainment(const QString &type, const QString &defaultPlugin,
                                              QScriptContext *context, QScriptEngine *engine)
 {
@@ -241,6 +244,22 @@ QScriptValue ScriptEngine::panelById(QScriptContext *context, QScriptEngine *eng
     return engine->undefinedValue();
 }
 
+QScriptValue ScriptEngine::fileExists(QScriptContext *context, QScriptEngine *engine)
+{
+    Q_UNUSED(engine)
+    if (context->argumentCount() == 0) {
+        return false;
+    }
+
+    const QString path = context->argument(0).toString();
+    if (path.isEmpty()) {
+        return false;
+    }
+
+    QFile f(KShell::tildeExpand(path));
+    return f.exists();
+}
+
 void ScriptEngine::setupEngine()
 {
     QScriptValue v = globalObject();
@@ -259,6 +278,7 @@ void ScriptEngine::setupEngine()
     m_scriptSelf.setProperty("activityById", newFunction(ScriptEngine::activityById));
     m_scriptSelf.setProperty("activityForScreen", newFunction(ScriptEngine::activityForScreen));
     m_scriptSelf.setProperty("panelById", newFunction(ScriptEngine::panelById));
+    m_scriptSelf.setProperty("fileExists", newFunction(ScriptEngine::fileExists));
 
     setGlobalObject(m_scriptSelf);
 }

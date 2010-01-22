@@ -68,6 +68,7 @@ private:
     static QScriptValue activityById(QScriptContext *context, QScriptEngine *engine);
     static QScriptValue activityForScreen(QScriptContext *context, QScriptEngine *engine);
     static QScriptValue panelById(QScriptContext *context, QScriptEngine *engine);
+    static QScriptValue fileExists(QScriptContext *context, QScriptEngine *engine);
 
     // helpers
     static QScriptValue createContainment(const QString &type, const QString &defautPlugin,
