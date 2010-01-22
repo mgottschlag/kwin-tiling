@@ -1,4 +1,4 @@
 #! /usr/bin/env bash
 $EXTRACTRC *.ui >> rc.cpp
-$XGETTEXT *.cpp widgetsExplorer/*.cpp -o $podir/plasmagenericshell.pot
+$XGETTEXT `find . -name \*.cpp -o -name \*.h` -o $podir/plasmagenericshell.pot
 rm -f rc.cpp
