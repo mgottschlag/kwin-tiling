@@ -75,10 +75,11 @@ key bindings dialog.</para>
 <title><guilabel>Standard Keyboard Shortcuts</guilabel> tab</title>
 <para>At the bottom of this dialog you see an input box, where you can
 search interactively for shortcut names (&eg; Copy) or combination of keys 
-(&eg; Ctrl+C) by typing them here.</para>
+(&eg; <keycombo action="simul">&Ctrl;<keycap>C</keycap> </keycombo>) by typing them here.</para>
 <para>Below the search box you can see a list of key bindings, &ie; associations between actions 
-(&eg; Copy) shown in the <guilabel>Actions</guilabel> column and keys or combination of keys (&eg;
-Ctrl+V) shown in the <guilabel>Shortcut</guilabel> or <guilabel>Alternate</guilabel> column.
+(&eg; Copy) shown in the <guilabel>Actions</guilabel> column and keys or combination of keys 
+(&eg; <keycombo action="simul">&Ctrl;<keycap>C</keycap> </keycombo>) shown in the 
+<guilabel>Shortcut</guilabel> or <guilabel>Alternate</guilabel> column.
 </para>
 <!-- Global column is empty what's that???-->
 </sect3>
@@ -123,7 +124,7 @@ enabled, you can create a key combination for the selected
 action. Click on the button labeled either <guibutton>None</guibutton> 
 or labeled with the previously selected custom shortcut. Now the button label
 changes to <guibutton>Input</guibutton>. Then press any modifier key 
-(&ie; &Shift;, &Ctrl;, or &Alt;) and then normal key or a function key (&eg; F11) 
+(&ie; &Shift;, &Ctrl;, or &Alt;) and then normal key or a function key (&eg; <keycap>F11</keycap>) 
 you want to assign to this key combination.</para>
 <para>Clicking on the <guilabel>Alternate</guilabel> column of the selected row
 allows to edit this shortcut for the action.</para></listitem>
