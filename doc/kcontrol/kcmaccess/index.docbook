@@ -97,7 +97,8 @@ bell.  The default value is 500ms, or half a second.
 <sect3 id="access-modifier-keys">
 <title><guilabel>Modifier keys</guilabel></title>
 
-<para>There are two sections to this panel.</para>
+<para>There are the two sections <guilabel>Sticky Keys</guilabel>
+and <guilabel>Locking Keys</guilabel> to this panel.</para>
 
 <variablelist>
 <varlistentry>
@@ -148,8 +149,24 @@ de-select the &Shift; key, press it again.
 </listitem>
 </varlistentry>
 </variablelist>
+<!--this is missing - explain it
+<para><guilabel>Turn sticky keys off when two keys are pressed simultaneously</guilabel></para>
+<para><guilabel>Use system bell whenever a modifier gets latched, locked or unlocked</guilabel></para>
+-->
 </listitem>
 </varlistentry>
+<!-- explain use case etc
+<varlistentry>
+<term><guilabel>Use system bell whenever a locking key gets activated or deactivated</guilabel></term>
+<listitem><para></para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Use KDE's system notification mechanism whenever a modifier or locking key 
+changes its state</guilabel></term>
+<listitem><para>Click the <guibutton>Configure Notifications...</guibutton> button to open a dialog 
+which allows you to edit the notifications for status changes of all keys</para></listitem>
+</varlistentry>
+-->
 </variablelist>
 
 </sect3>
