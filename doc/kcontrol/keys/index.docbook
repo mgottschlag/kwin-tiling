@@ -107,7 +107,7 @@ find it in the columns right to it. Just select the action you want to
 configure.</para>
 
 <para>After you have selected an action in the list you will notice that 
-this item is displayed bold and you see two additional check boxes below 
+this item is highlighted and you see two additional check boxes below 
 this item in the list view. There you can configure a
 combination of keys or maybe no key binding at all for the selected
 action. </para>
@@ -126,8 +126,8 @@ or labeled with the previously selected custom shortcut. Now the button label
 changes to <guibutton>Input</guibutton>. Then press any modifier key 
 (&ie; &Shift;, &Ctrl;, or &Alt;) and then normal key or a function key (&eg; <keycap>F11</keycap>) 
 you want to assign to this key combination.</para>
-<para>Clicking on the <guilabel>Alternate</guilabel> column of the selected row
-allows to edit this shortcut for the action.</para></listitem>
+<para>Clicking on the <guilabel>Alternate</guilabel> column of a row in the list
+allows to edit the second shortcut for the action.</para></listitem>
 </itemizedlist>
 
 </sect3>
