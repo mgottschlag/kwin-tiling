@@ -176,7 +176,7 @@ void JobWidget::updateJobState()
         m_extenderItem->setTitle(m_job.data()->message());
         if (m_job.data()->eta()) {
             m_eta->setText(i18n("%1 (%2 remaining)", m_job.data()->speed(),
-                                 KGlobal::locale()->formatDuration(m_job.data()->eta())));
+                                 KGlobal::locale()->prettyFormatDuration(m_job.data()->eta())));
         } else {
             m_eta->setText(QString());
         }
@@ -205,7 +205,7 @@ void JobWidget::updateJob()
     if (m_job.data()->state() == SystemTray::Job::Running) {
         if (m_job.data()->eta()) {
             m_eta->setText(i18n("%1 (%2 remaining)", m_job.data()->speed(),
-                                 KGlobal::locale()->formatDuration(m_job.data()->eta())));
+                                 KGlobal::locale()->prettyFormatDuration(m_job.data()->eta())));
         } else {
             m_eta->setText(QString());
         }
