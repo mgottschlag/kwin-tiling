@@ -50,6 +50,7 @@ class IconApplet : public Plasma::Applet
     public slots:
         void openUrl();
         void updateDesktopFile();
+        void configChanged();
 
     protected:
         void dropEvent(QGraphicsSceneDragDropEvent *event);

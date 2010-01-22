@@ -77,7 +77,7 @@ void IconApplet::init()
         cg.writeEntry("Url", m_url);
         emit configNeedsSaving();
     } else {
-        setUrl(cg.readEntry("Url", m_url));
+        configChanged();
     }
 
     setDisplayLines(2);
@@ -89,6 +89,12 @@ IconApplet::~IconApplet()
 {
     delete m_dialog;
     delete m_watcher;
+}
+
+void IconApplet::configChanged()
+{
+    KConfigGroup cg = config();
+    setUrl(cg.readEntry("Url", m_url));
 }
 
 void IconApplet::saveState(KConfigGroup &cg) const
