@@ -94,7 +94,7 @@ The main display is a list of the installed fonts, grouped via the fonts' family
 <sect2 id="font-preview">
 <title>Preview</title>
 <para>This displays a preview text in different font sizes.</para>
-<para>Using the context menu enables you to zoom in and out, select a preview type (<guilabel>Standard Preview</guilabel>, <guilabel>All Characters</guilabel>, &etc;) and change the preview text.</para>
+<para>Using the context menu enables you to zoom in and out, select a preview type (<guilabel>Standard Preview</guilabel> or <guilabel>All Characters</guilabel>) and change the preview text.</para>
 </sect2>
 </sect1>
 </article>
