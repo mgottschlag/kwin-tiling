@@ -596,13 +596,13 @@ void Battery::updateStatus()
                     batteriesLabel.append("<br />");
                     batteriesInfo.append("<br />");
                 }
-                batteriesLabel.append(i18nc("Placeholder is the battery ID", "<b>Battery %1:</b> ", bnum));
+                batteriesLabel.append(i18nc("Placeholder is the battery ID", "<b>Battery %1:</b>", bnum));
                 if (state == "NoCharge") {
-                    batteriesInfo.append(i18n("%1% (charged)", battery_data.value()["Percent"].toString()));
+                    batteriesInfo.append(i18nc("state of battery", "%1% (charged)", battery_data.value()["Percent"].toString()));
                 } else if (state == "Discharging") {
-                    batteriesInfo.append(i18n("%2% (discharging)", bnum, battery_data.value()["Percent"].toString()));
+                    batteriesInfo.append(i18nc("state of battery", "%1% (discharging)", battery_data.value()["Percent"].toString()));
                 } else {
-                    batteriesInfo.append(i18n("%2% (charging)", bnum, battery_data.value()["Percent"].toString()));
+                    batteriesInfo.append(i18nc("state of battery", "%1% (charging)", battery_data.value()["Percent"].toString()));
                 }
             }
         }
