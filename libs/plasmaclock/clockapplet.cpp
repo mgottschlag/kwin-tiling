@@ -170,7 +170,7 @@ public:
             if (tzParts.count() == 1) {
                 prettyTimezone = timezonetranslated;
             } else {
-                prettyTimezone = tzParts.value(1);
+                prettyTimezone = tzParts.last();
             }
         } else {
             prettyTimezone = localTimezone();
