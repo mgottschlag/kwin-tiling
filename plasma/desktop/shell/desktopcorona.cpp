@@ -24,6 +24,9 @@
 #include <QDir>
 #include <QGraphicsLayout>
 #include <QTimer>
+#include <QMenu>
+#include <QSignalMapper>
+
 
 #include <KDebug>
 #include <KDialog>
@@ -48,6 +51,11 @@ DesktopCorona::DesktopCorona(QObject *parent)
     init();
 }
 
+DesktopCorona::~DesktopCorona()
+{
+    delete m_addPanelsMenu;
+}
+
 void DesktopCorona::init()
 {
     Kephal::Screens *screens = Kephal::Screens::self();
@@ -64,6 +72,37 @@ void DesktopCorona::init()
     setContainmentActionsDefaults(Plasma::Containment::DesktopContainment, desktopPlugins);
     setContainmentActionsDefaults(Plasma::Containment::PanelContainment, panelPlugins);
     setContainmentActionsDefaults(Plasma::Containment::CustomPanelContainment, panelPlugins);
+
+    //FIXME what if it's a panel? what if it's a customcontainment?
+    KPluginInfo::List panelContainmentPlugins = Plasma::Containment::listContainmentsOfType("panel");
+
+    if (panelContainmentPlugins.size() == 1) {
+        m_addPanelAction = new QAction(i18n("Add Panel"), this);
+        connect(m_addPanelAction, SIGNAL(triggered(bool)), this, SLOT(addPanel()));
+    } else if (!panelContainmentPlugins.isEmpty()) {
+        m_addPanelsMenu = new QMenu();
+        m_addPanelAction = m_addPanelsMenu->menuAction();
+        m_addPanelAction->setText(i18n("Add Panel"));
+
+        QSignalMapper *mapper = new QSignalMapper(this);
+        connect(mapper, SIGNAL(mapped(QString)), this, SLOT(addPanel(QString)));
+
+        foreach (const KPluginInfo &plugin, panelContainmentPlugins) {
+            QAction *action = new QAction(plugin.name(), this);
+            if (!plugin.icon().isEmpty()) {
+                action->setIcon(KIcon(plugin.icon()));
+            }
+
+            mapper->setMapping(action, plugin.pluginName());
+            connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
+            m_addPanelsMenu->addAction(action);
+        }
+    }
+
+    if (m_addPanelAction) {
+        m_addPanelAction->setIcon(KIcon("list-add"));
+        addAction("add panel", m_addPanelAction);
+    }
 }
 
 void DesktopCorona::checkScreens(bool signalWhenExists)
@@ -417,6 +456,75 @@ void DesktopCorona::screenAdded(Kephal::Screen *s)
 {
     kDebug() << s->id();
     checkScreen(s->id(), true);
+}
+
+void DesktopCorona::addPanel()
+{
+    KPluginInfo::List panelPlugins = Plasma::Containment::listContainmentsOfType("panel");
+
+    if (!panelPlugins.isEmpty()) {
+        addPanel(panelPlugins.first().pluginName());
+    }
+}
+
+void DesktopCorona::addPanel(const QString &plugin)
+{
+    Plasma::Containment* panel = addContainment(plugin);
+    panel->showConfigurationInterface();
+
+    //Fall back to the cursor position since we don't know what is the originating containment
+    const int screen = Kephal::ScreenUtils::screenId(QCursor::pos());
+
+    panel->setScreen(screen);
+
+    QList<Plasma::Location> freeEdges = DesktopCorona::freeEdges(screen);
+    //kDebug() << freeEdges;
+    Plasma::Location destination;
+    if (freeEdges.contains(Plasma::TopEdge)) {
+        destination = Plasma::TopEdge;
+    } else if (freeEdges.contains(Plasma::BottomEdge)) {
+        destination = Plasma::BottomEdge;
+    } else if (freeEdges.contains(Plasma::LeftEdge)) {
+        destination = Plasma::LeftEdge;
+    } else if (freeEdges.contains(Plasma::RightEdge)) {
+        destination = Plasma::RightEdge;
+    } else destination = Plasma::TopEdge;
+
+    panel->setLocation(destination);
+
+    // trigger an instant layout so we immediately have a proper geometry
+    // rather than waiting around for the event loop
+    panel->updateConstraints(Plasma::StartupCompletedConstraint);
+    panel->flushPendingConstraintsEvents();
+
+    const QRect screenGeom = screenGeometry(screen);
+    const QRegion availGeom = availableScreenRegion(screen);
+    int minH = 10;
+    int minW = 10;
+    int w = 35;
+    int h = 35;
+
+    if (destination == Plasma::LeftEdge) {
+        QRect r = availGeom.intersected(QRect(0, 0, w, screenGeom.height())).boundingRect();
+        h = r.height();
+        minW = 35;
+    } else if (destination == Plasma::RightEdge) {
+        QRect r = availGeom.intersected(QRect(screenGeom.width() - w, 0, w, screenGeom.height())).boundingRect();
+        h = r.height();
+        minW = 35;
+    } else if (destination == Plasma::TopEdge) {
+        QRect r = availGeom.intersected(QRect(0, 0, screenGeom.width(), h)).boundingRect();
+        w = r.width();
+        minH = 35;
+    } else if (destination == Plasma::BottomEdge) {
+        QRect r = availGeom.intersected(QRect(0, screenGeom.height() - h, screenGeom.width(), h)).boundingRect();
+        w = r.width();
+        minH = 35;
+    }
+
+    panel->setMinimumSize(minW, minH);
+    panel->setMaximumSize(w, h);
+    panel->resize(w, h);
 }
 
 #include "desktopcorona.moc"

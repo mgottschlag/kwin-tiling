@@ -24,6 +24,9 @@
 
 #include <Plasma/Corona>
 
+class QMenu;
+class QAction;
+
 namespace Plasma
 {
     class Applet;
@@ -42,6 +45,7 @@ class DesktopCorona : public Plasma::Corona
 
 public:
     explicit DesktopCorona(QObject * parent = 0);
+    ~DesktopCorona();
 
     /**
      * Loads the default (system wide) layout for this user
@@ -71,6 +75,10 @@ public:
     void processUpdateScripts();
     void addDesktopContainment(int screen, int desktop = -1);
 
+public Q_SLOTS:
+    void addPanel();
+    void addPanel(const QString &plugin);
+
 protected Q_SLOTS:
     void evaluateScripts(QMap<QString, QString> scripts);
     void screenAdded(Kephal::Screen *s);
@@ -82,6 +90,9 @@ private:
     void init();
 
     Plasma::Applet *loadDefaultApplet(const QString &pluginName, Plasma::Containment *c);
+
+    QAction *m_addPanelAction;
+    QMenu *m_addPanelsMenu;
 };
 
 #endif

@@ -49,11 +49,8 @@ public slots:
     void startLogout();
     void logout();
 
-    void addPanel();
-    void addPanel(const QString &plugin);
 
 private:
-    QMenu *m_addPanelsMenu;
     QAction *m_addPanelAction;
     QAction *m_runCommandAction;
     QAction *m_lockScreenAction;

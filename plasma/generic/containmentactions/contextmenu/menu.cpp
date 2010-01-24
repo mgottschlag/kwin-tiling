@@ -46,7 +46,6 @@
 
 ContextMenu::ContextMenu(QObject *parent, const QVariantList &args)
     : Plasma::ContainmentActions(parent, args),
-      m_addPanelsMenu(0),
       m_addPanelAction(0),
       m_runCommandAction(0),
       m_lockScreenAction(0),
@@ -60,7 +59,6 @@ ContextMenu::ContextMenu(QObject *parent, const QVariantList &args)
 
 ContextMenu::~ContextMenu()
 {
-    delete m_addPanelsMenu;
 }
 
 void ContextMenu::init(const KConfigGroup &config)
@@ -95,34 +93,8 @@ void ContextMenu::init(const KConfigGroup &config)
 
     connect(c->corona(), SIGNAL(immutabilityChanged(const Plasma::ImmutabilityType)), this, SLOT(updateImmutability(const Plasma::ImmutabilityType)));
 
-    //FIXME what if it's a panel? what if it's a customcontainment?
-    KPluginInfo::List panelPlugins = c->listContainmentsOfType("panel");
-
-    if (panelPlugins.size() == 1) {
-        m_addPanelAction = new QAction(i18n("Add Panel"), this);
-        connect(m_addPanelAction, SIGNAL(triggered(bool)), this, SLOT(addPanel()));
-    } else if (!panelPlugins.isEmpty()) {
-        m_addPanelsMenu = new QMenu();
-        m_addPanelAction = m_addPanelsMenu->menuAction();
-        m_addPanelAction->setText(i18n("Add Panel"));
-
-        QSignalMapper *mapper = new QSignalMapper(this);
-        connect(mapper, SIGNAL(mapped(QString)), this, SLOT(addPanel(QString)));
-
-        foreach (const KPluginInfo &plugin, panelPlugins) {
-            QAction *action = new QAction(plugin.name(), this);
-            if (!plugin.icon().isEmpty()) {
-                action->setIcon(KIcon(plugin.icon()));
-            }
-
-            mapper->setMapping(action, plugin.pluginName());
-            connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
-            m_addPanelsMenu->addAction(action);
-        }
-    }
-
-    if (m_addPanelAction) {
-        m_addPanelAction->setIcon(KIcon("list-add"));
+    if (c->corona()) {
+        m_addPanelAction = c->corona()->action("add panel");
     }
 
     if (c->containmentType() == Plasma::Containment::PanelContainment ||
@@ -156,7 +128,9 @@ void ContextMenu::init(const KConfigGroup &config)
 void ContextMenu::updateImmutability(const Plasma::ImmutabilityType immutable)
 {
     bool locked = immutable != Plasma::Mutable;
-    m_addPanelAction->setVisible(!locked);
+    if (m_addPanelAction) {
+        m_addPanelAction->setVisible(!locked);
+    }
 }
 
 void ContextMenu::contextEvent(QEvent *event)
@@ -237,76 +211,6 @@ QAction *ContextMenu::action(const QString &name)
         return c->action(name);
     }
     return 0;
-}
-
-void ContextMenu::addPanel()
-{
-    KPluginInfo::List panelPlugins = Plasma::Containment::listContainmentsOfType("panel");
-
-    if (!panelPlugins.isEmpty()) {
-        addPanel(panelPlugins.first().pluginName());
-    }
-}
-
-//FIXME maybe this function belongs somewhere else. corona? plasmaapp?
-void ContextMenu::addPanel(const QString &plugin)
-{
-    Plasma::Containment *c = containment();
-    if (c->corona()) {
-        Plasma::Containment* panel = c->corona()->addContainment(plugin);
-        panel->showConfigurationInterface();
-
-        panel->setScreen(c->screen());
-
-        QList<Plasma::Location> freeEdges = c->corona()->freeEdges(c->screen());
-        //kDebug() << freeEdges;
-        Plasma::Location destination;
-        if (freeEdges.contains(Plasma::TopEdge)) {
-            destination = Plasma::TopEdge;
-        } else if (freeEdges.contains(Plasma::BottomEdge)) {
-            destination = Plasma::BottomEdge;
-        } else if (freeEdges.contains(Plasma::LeftEdge)) {
-            destination = Plasma::LeftEdge;
-        } else if (freeEdges.contains(Plasma::RightEdge)) {
-            destination = Plasma::RightEdge;
-        } else destination = Plasma::TopEdge;
-
-        panel->setLocation(destination);
-
-        // trigger an instant layout so we immediately have a proper geometry
-        // rather than waiting around for the event loop
-        panel->updateConstraints(Plasma::StartupCompletedConstraint);
-        panel->flushPendingConstraintsEvents();
-
-        const QRect screenGeom = c->corona()->screenGeometry(c->screen());
-        const QRegion availGeom = c->corona()->availableScreenRegion(c->screen());
-        int minH = 10;
-        int minW = 10;
-        int w = 35;
-        int h = 35;
-
-        if (destination == Plasma::LeftEdge) {
-            QRect r = availGeom.intersected(QRect(0, 0, w, screenGeom.height())).boundingRect();
-            h = r.height();
-            minW = 35;
-        } else if (destination == Plasma::RightEdge) {
-            QRect r = availGeom.intersected(QRect(screenGeom.width() - w, 0, w, screenGeom.height())).boundingRect();
-            h = r.height();
-            minW = 35;
-        } else if (destination == Plasma::TopEdge) {
-            QRect r = availGeom.intersected(QRect(0, 0, screenGeom.width(), h)).boundingRect();
-            w = r.width();
-            minH = 35;
-        } else if (destination == Plasma::BottomEdge) {
-            QRect r = availGeom.intersected(QRect(0, screenGeom.height() - h, screenGeom.width(), h)).boundingRect();
-            w = r.width();
-            minH = 35;
-        }
-
-        panel->setMinimumSize(minW, minH);
-        panel->setMaximumSize(w, h);
-        panel->resize(w, h);
-    }
 }
 
 void ContextMenu::runCommand()
