@@ -28,6 +28,7 @@
 #include <KIconLoader>
 
 #include <plasma/applet.h>
+#include <plasma/popupapplet.h>
 #include <plasma/plasma.h>
 
 
@@ -178,6 +179,9 @@ void PlasmoidTask::newAppletStatus(Plasma::ItemStatus status)
 {
     switch (status) {
     case Plasma::PassiveStatus:
+       if (Plasma::PopupApplet *popupApplet = qobject_cast<Plasma::PopupApplet *>(d->applet)) {
+           popupApplet->hidePopup();
+       }
        setStatus(Task::Passive);
        break;
 
