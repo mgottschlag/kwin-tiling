@@ -119,9 +119,9 @@ extern char **environ;
 # define GETUTENT getutent
 # define PUTUTLINE pututline
 # define ENDUTENT endutent
-#endif
-#ifndef HAVE_STRUCT_UTMP_UT_USER
-# define ut_user ut_name
+# ifndef HAVE_STRUCT_UTMP_UT_USER
+#  define ut_user ut_name
+# endif
 #endif
 #ifndef WTMP_FILE
 # ifdef _PATH_WTMPX
