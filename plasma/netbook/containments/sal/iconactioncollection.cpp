@@ -62,11 +62,7 @@ QList<QAction *> IconActionCollection::actions() const
 
 void IconActionCollection::actionDestroyed(QObject *object)
 {
-    QAction *action = qobject_cast<QAction *>(object);
-
-    if (action) {
-        m_actions.remove(action);
-    }
+    m_actions.remove(static_cast<QAction *>(object));
 }
 
 void IconActionCollection::immutabilityChanged(Plasma::ImmutabilityType immutability)
