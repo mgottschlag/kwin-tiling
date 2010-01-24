@@ -102,7 +102,6 @@ extern char **environ;
 # define Jmp_buf sigjmp_buf
 #endif
 
-#include <utmp.h>
 #ifdef HAVE_UTMPX
 # include <utmpx.h>
 # define STRUCTUTMP struct utmpx
@@ -113,6 +112,7 @@ extern char **environ;
 # define ENDUTENT endutxent
 # define ut_time ut_tv.tv_sec
 #else
+# include <utmp.h>
 # define STRUCTUTMP struct utmp
 # define UTMPNAME utmpname
 # define SETUTENT setutent
