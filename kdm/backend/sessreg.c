@@ -42,6 +42,11 @@ from The Open Group.
 #if defined(__svr4__) || defined(__Lynx__) || defined(__QNX__) || defined(__APPLE__) || defined(_SEQUENT_) /*|| defined(USE_PAM)*/
 # define NO_LASTLOG
 #endif
+#ifdef __FreeBSD__
+# if __FreeBSD_version >= 900007
+#  define NO_LASTLOG
+# endif
+#endif
 
 #ifndef NO_LASTLOG
 # ifdef HAVE_LASTLOG_H
