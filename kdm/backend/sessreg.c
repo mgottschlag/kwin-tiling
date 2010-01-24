@@ -274,7 +274,6 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 	}
   skip:
 # else
-	UTMPNAME( UTMP_FILE );
 	SETUTENT();
 	PUTUTLINE( &ut_ent ); /* Returns void on some systems => no error check. */
 	ENDUTENT();
