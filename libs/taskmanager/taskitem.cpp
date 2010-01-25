@@ -102,11 +102,9 @@ void TaskItem::setTaskPointer(TaskPtr task)
 
 TaskPtr TaskItem::task() const
 {
-    /*
-    if (d->task.isNull()) {
-        kDebug() << "pointer is Null";
+    if (!d->task) {
+        return TaskPtr(0);
     }
-    */
     return TaskPtr(d->task.data());
 }
 
