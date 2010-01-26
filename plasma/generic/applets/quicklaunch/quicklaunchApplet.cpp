@@ -706,10 +706,20 @@ bool QuicklaunchApplet::dropHandler(const int pos, const QMimeData *mimedata)
     
     bool rtn = false;
 
+    if(pos < 0) { //just to be sure, m_icons.move(icon_pos, pos); crashed on me
+        return false;
+    }
+    
     foreach (const KUrl &url, urls) {
         foreach (QuicklaunchIcon *icon, m_icons) {
             if (icon->url().url() == url.url()) {
-                m_icons.move(m_icons.indexOf(icon), pos);
+                int icon_pos = m_icons.indexOf(icon);
+                
+                if(icon_pos == -1) {//just to be sure, m_icons.move(icon_pos, pos); crashed on me
+                    return false;
+                }
+                
+                m_icons.move(icon_pos, pos);
                 urls.removeOne(url);
                 rtn = true;
                 break;
