@@ -45,6 +45,8 @@ OutputConfig::OutputConfig(QWidget *parent, RandROutput *output, OutputConfigLis
 	connect(m_output, SIGNAL(outputChanged(RROutput, int)),
 	        this,     SLOT(outputChanged(RROutput, int)));
 		  
+	load();
+
 	connect(sizeCombo,    SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
 	connect(refreshCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
 	connect(orientationCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
@@ -63,7 +65,6 @@ OutputConfig::OutputConfig(QWidget *parent, RandROutput *output, OutputConfigLis
 	updatePositionListTimer.setSingleShot( true );
 	connect( &updatePositionListTimer, SIGNAL( timeout()), SLOT( updatePositionListDelayed()));
 
-	load();
 }
 
 OutputConfig::~OutputConfig()
@@ -294,6 +295,9 @@ void OutputConfig::updatePositionList(void)
 
 void OutputConfig::updatePositionListDelayed()
 {
+	disconnect(positionCombo,    SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
+	disconnect(positionOutputCombo,    SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
+
 	bool enable = !resolution().isEmpty();
 	positionCombo->setEnabled( enable );
 	positionLabel->setEnabled( enable );
@@ -338,6 +342,9 @@ void OutputConfig::updatePositionListDelayed()
 		if(index != -1)
 			positionOutputCombo->setCurrentIndex(index);
 	}*/
+
+	connect(positionCombo,    SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
+	connect(positionOutputCombo,    SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
 }
 
 void OutputConfig::updateRotationList(void)
