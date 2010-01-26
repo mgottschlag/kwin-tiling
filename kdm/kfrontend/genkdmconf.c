@@ -52,7 +52,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 static int old_scripts, no_old_scripts, old_confs, no_old,
 	no_backup, no_in_notice, use_destdir, mixed_scripts;
-static const char *newdir = KDMCONF, *facesrc = KDMDATA "/pics/users",
+static const char newdir[] = KDMCONF, facesrc[] = KDMDATA "/pics/users",
 	*oldxdm, *oldkde, *oldkdepfx;
 
 static int oldver;
@@ -2861,7 +2861,7 @@ fprintfLineWrap( FILE *f, const char *msg, ... )
 }
 
 
-static const char *oldkdes[] = {
+static const char * const oldkdes[] = {
 	KDE_CONFDIR,
 	"/opt/kde4/share/config",
 	"/usr/local/kde4/share/config",
@@ -2875,7 +2875,7 @@ static const char *oldkdes[] = {
 	"/usr/local/kde3/share/config",
 };
 
-static const char *oldxdms[] = {
+static const char * const oldxdms[] = {
 	"/etc/X11/xdm",
 	XLIBDIR "/xdm",
 };

@@ -484,7 +484,7 @@ KGVerify::vrfMsgBox( QWidget *parent, const QString &user,
 	               mesg : i18n("Logging in %1...\n\n", user ) + mesg );
 }
 
-static const char *msgs[]= {
+static const char * const msgs[]= {
 	I18N_NOOP( "You are required to change your password immediately (password aged)." ),
 	I18N_NOOP( "You are required to change your password immediately (root enforced)." ),
 	I18N_NOOP( "You are not allowed to login at the moment." ),
