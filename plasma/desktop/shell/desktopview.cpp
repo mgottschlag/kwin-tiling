@@ -89,7 +89,6 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     lower();
 
     if (containment) {
-        containment->enableAction("zoom in", false);
         connect(PlasmaApp::self()->corona(), SIGNAL(containmentAdded(Plasma::Containment *)), this, SLOT(containmentAdded(Plasma::Containment *)));
     }
 
@@ -99,7 +98,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     action = m_actions->action("prev");
     connect(action, SIGNAL(triggered()), this, SLOT(previousContainment()));
 
-
+    /*
     const int w = 25;
     QPixmap tile(w * 2, w * 2);
     tile.fill(palette().base().color());
@@ -111,6 +110,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     pt.end();
     QBrush b(tile);
     setBackgroundBrush(tile);
+    */
 
     m_dashboardFollowsDesktop = (dashboardContainment() == 0);
 
@@ -313,12 +313,6 @@ void DesktopView::setContainment(Plasma::Containment *containment)
     }
 
     m_init = true;
-    Plasma::ZoomLevel zoomLevel = PlasmaApp::self()->desktopZoomLevel();
-    if (zoomLevel == Plasma::DesktopZoom && containment) {
-        //make sure actions are up-to-date
-        //this is icky but necessary to have the toolbox show the right actions for the zoom level
-        containment->enableAction("zoom in", false);
-    }
 
     if (m_dashboard && m_dashboardFollowsDesktop) {
         m_dashboard->setContainment(containment);
@@ -327,10 +321,6 @@ void DesktopView::setContainment(Plasma::Containment *containment)
     if (oldContainment) {
         disconnect(oldContainment, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(toolBoxOpened(bool)));
         disconnect(oldContainment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
-        if (zoomLevel == Plasma::DesktopZoom) {
-            //make sure actions are up-to-date
-            oldContainment->enableAction("zoom in", false);
-        }
     }
 
     if (containment) {
@@ -405,70 +395,7 @@ void DesktopView::syncSceneRect()
     setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom() + TOOLBOX_MARGIN));
 }
 
-void DesktopView::zoomIn(Plasma::ZoomLevel zoomLevel)
-{
-    if (zoomLevel == Plasma::DesktopZoom) {
-        setDragMode(NoDrag);
-        qreal factor = Plasma::scalingFactor(zoomLevel) / matrix().m11();
-        scale(factor, factor);
-        if (containment()) {
-            //disconnect from other containments
-            Plasma::Corona *corona = PlasmaApp::self()->corona();
-            if (corona) {
-                QList<Plasma::Containment*> containments = corona->containments();
-                foreach (Plasma::Containment *c, containments) {
-                    if (c == containment() || PlasmaApp::isPanelContainment(c)) {
-                        continue;
-                    }
-                    disconnect(c, 0, this, 0);
-                }
-            }
-            setSceneRect(containment()->geometry());
-        }
-
-        toolBoxOpened(false);
-    } else if (zoomLevel == Plasma::GroupZoom) {
-        qreal factor = Plasma::scalingFactor(zoomLevel);
-        factor = factor / matrix().m11();
-        scale(factor, factor);
-        setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom() + TOOLBOX_MARGIN));
-    } else {
-        setDragMode(NoDrag);
-    }
-}
-
-void DesktopView::zoomOut(Plasma::ZoomLevel zoomLevel)
-{
-    setDragMode(ScrollHandDrag);
-    qreal factor = Plasma::scalingFactor(zoomLevel);
-    qreal s = factor / matrix().m11();
-    scale(s, s);
-    setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom() + TOOLBOX_MARGIN));
-
-    if (containment()) {
-        ensureVisible(containment()->sceneBoundingRect());
-    }
-}
-
-void DesktopView::wheelEvent(QWheelEvent* event)
-{
-    QGraphicsItem * item = scene() ? scene()->itemAt(sceneRect().topLeft() + event->pos()) : 0;
-
-    if ((!item || item == (QGraphicsItem*)containment()) && event->modifiers() & Qt::ControlModifier) {
-        if (event->modifiers() & Qt::ControlModifier) {
-            if (event->delta() < 0) {
-                PlasmaApp::self()->zoom(containment(), Plasma::ZoomOut);
-            } else {
-                PlasmaApp::self()->zoom(containment(), Plasma::ZoomIn);
-            }
-        }
-
-        event->accept();
-        return;
-    }
-
-    Plasma::View::wheelEvent(event);
-}
+/*
 
 // This function is reimplemented from QGraphicsView to work around the problem
 // that QPainter::fillRect(QRectF/QRect, QBrush), which QGraphicsView uses, is
@@ -480,8 +407,7 @@ void DesktopView::wheelEvent(QWheelEvent* event)
 // CompositionMode_Source.
 void DesktopView::drawBackground(QPainter *painter, const QRectF &rect)
 {
-    Plasma::ZoomLevel zoomLevel = PlasmaApp::self()->desktopZoomLevel();
-    if (zoomLevel == Plasma::DesktopZoom) {
+    if (!isTransformed() || !transform().isScaling()) {
         return;
     }
 
@@ -515,6 +441,7 @@ void DesktopView::drawBackground(QPainter *painter, const QRectF &rect)
         break;
     }
 }
+*/
 
 void DesktopView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* newContainment)
 {

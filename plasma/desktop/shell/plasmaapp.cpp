@@ -99,8 +99,6 @@ PlasmaApp* PlasmaApp::self()
 PlasmaApp::PlasmaApp()
     : KUniqueApplication(),
       m_corona(0),
-      m_controllerDialog(0),
-      m_zoomLevel(Plasma::DesktopZoom),
       m_panelHidden(0),
       m_mapper(new QSignalMapper(this)),
       m_startupSuspendWaitCount(0)
@@ -405,11 +403,6 @@ void PlasmaApp::panelHidden(bool hidden)
     }
 }
 
-Plasma::ZoomLevel PlasmaApp::desktopZoomLevel() const
-{
-    return m_zoomLevel;
-}
-
 QList<PanelView*> PlasmaApp::panelViews() const
 {
     return m_panels;
@@ -634,13 +627,6 @@ Plasma::Corona* PlasmaApp::corona()
         activityAction->setShortcut(KShortcut("alt+d, alt+a"));
         activityAction->setShortcutContext(Qt::ApplicationShortcut);
 
-        KAction *zoomAction = c->addAction("zoom out");
-        zoomAction->setText(i18n("Zoom Out"));
-        zoomAction->setIcon(KIcon("zoom-out"));
-        zoomAction->setData(Plasma::AbstractToolBox::ControlTool);
-        connect(zoomAction, SIGNAL(triggered()), this, SLOT(zoomOut()));
-        zoomAction->setShortcut(KShortcut("alt+d, -"));
-
         c->updateShortcuts();
 
         //add stuff to shortcut config
@@ -807,13 +793,10 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
 
     createView(containment);
     disconnect(containment, 0, this, 0);
-    connect(containment, SIGNAL(zoomRequested(Plasma::Containment*,Plasma::ZoomDirection)),
-            this, SLOT(zoom(Plasma::Containment*,Plasma::ZoomDirection)));
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
 
-    if (containment->containmentType() == Plasma::Containment::DesktopContainment &&
-        m_zoomLevel == Plasma::DesktopZoom) {
+    if (containment->containmentType() == Plasma::Containment::DesktopContainment) {
         foreach (QAction *action, m_corona->actions()) {
             containment->addToolBoxAction(action);
         }
@@ -887,143 +870,6 @@ void PlasmaApp::addContainment()
     }
 }
 
-void PlasmaApp::zoomOut()
-{
-    zoom(0, Plasma::ZoomOut);
-}
-
-void PlasmaApp::zoom(Plasma::Containment *containment, Plasma::ZoomDirection direction)
-{
-    if (direction == Plasma::ZoomIn) {
-        zoomIn(containment);
-        foreach (DesktopView *view, m_desktops) {
-            view->zoomIn(m_zoomLevel);
-        }
-
-        if (m_zoomLevel == Plasma::DesktopZoom) {
-            int currentDesktop = -1;
-            if (AppSettings::perVirtualDesktopViews()) {
-                currentDesktop = KWindowSystem::currentDesktop()-1;
-            }
-
-            DesktopView *view = viewForScreen(desktop()->screenNumber(QCursor::pos()), currentDesktop);
-
-            if (view && view->containment() != containment) {
-                // zooming in all the way, so lets swap containments about if need be
-                view->setContainment(containment);
-            }
-            //FIXME: toolbox must be fixed in the proper way!
-            foreach (Plasma::Containment *cont, m_corona->containments()) {
-                cont->openToolBox();
-                cont->closeToolBox();
-            }
-        }
-    } else if (direction == Plasma::ZoomOut) {
-        zoomOut(containment);
-        foreach (DesktopView *view, m_desktops) {
-            view->zoomOut(m_zoomLevel);
-        }
-    }
-}
-
-void PlasmaApp::zoomIn(Plasma::Containment *containment)
-{
-    bool isMutable = m_corona->immutability() == Plasma::Mutable;
-    bool zoomIn = true;
-    bool zoomOut = true;
-    bool addSibling = isMutable;
-    bool remove = isMutable;
-
-    if (m_zoomLevel == Plasma::GroupZoom) {
-        setControllerVisible(false);
-        m_zoomLevel = Plasma::DesktopZoom;
-        containment->closeToolBox();
-        zoomIn = false;
-        //remove = false;
-    } else if (m_zoomLevel == Plasma::OverviewZoom) {
-        m_zoomLevel = Plasma::GroupZoom;
-    }
-
-    //make sure everybody can zoom out again
-    foreach (Plasma::Containment *c, m_corona->containments()) {
-        if (isPanelContainment(c)) {
-            continue;
-        }
-
-        if (m_zoomLevel == Plasma::DesktopZoom) {
-            foreach (QAction *action, m_corona->actions()) {
-                c->addToolBoxAction(action);
-            }
-        }
-
-        c->enableAction("zoom in", zoomIn);
-        c->enableAction("remove", remove);
-        c->enableAction("add widgets", isMutable);
-    }
-    m_corona->enableAction("zoom out", zoomOut);
-    m_corona->enableAction("add sibling containment", addSibling);
-}
-
-void PlasmaApp::zoomOut(Plasma::Containment *)
-{
-    bool isMutable = m_corona->immutability() == Plasma::Mutable;
-    bool zoomIn = true;
-    bool zoomOut = true;
-    bool addSibling = isMutable;
-    bool addWidgets = isMutable;
-
-    if (m_zoomLevel == Plasma::DesktopZoom) {
-        setControllerVisible(true);
-        m_zoomLevel = Plasma::GroupZoom;
-    } else if (m_zoomLevel == Plasma::GroupZoom) {
-        m_zoomLevel = Plasma::OverviewZoom;
-        zoomOut = false;
-        addWidgets = false;
-    }
-
-    //make sure everybody can zoom out again
-    foreach (Plasma::Containment *c, m_corona->containments()) {
-        if (isPanelContainment(c)) {
-            continue;
-        }
-
-        if (m_zoomLevel == Plasma::GroupZoom) {
-            foreach (QAction *action, m_corona->actions()) {
-                c->removeToolBoxAction(action);
-            }
-        }
-
-        c->enableAction("zoom in", zoomIn);
-        c->enableAction("remove", isMutable);
-        c->enableAction("add widgets", addWidgets);
-    }
-
-    m_corona->enableAction("zoom out", zoomOut);
-    m_corona->enableAction("add sibling containment", addSibling);
-}
-
-void PlasmaApp::setControllerVisible(bool show)
-{
-    if (show) {
-        if (!m_controllerDialog) {
-            m_controllerDialog = new Plasma::Dialog;
-            QVBoxLayout *layout = new QVBoxLayout(m_controllerDialog);
-
-            foreach (QAction *action, m_corona->actions()) {
-                ToolButton *actionButton = new ToolButton(m_controllerDialog);
-                actionButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-                actionButton->setDefaultAction(action);
-                layout->addWidget(actionButton);
-            }
-        }
-
-        m_controllerDialog->show();
-    } else if (!show) {
-        delete m_controllerDialog;
-        m_controllerDialog = 0;
-    }
-}
-
 void PlasmaApp::setPerVirtualDesktopViews(bool perDesktopViews)
 {
     AppSettings::setPerVirtualDesktopViews(perDesktopViews);
@@ -1048,14 +894,6 @@ void PlasmaApp::setPerVirtualDesktopViews(bool perDesktopViews)
 
         m_desktops.clear();
         m_corona->checkScreens(true);
-    }
-
-    foreach (DesktopView *view, m_desktops) {
-        view->zoomOut(m_zoomLevel);
-    }
-
-    foreach (Plasma::Containment *c, m_corona->containments()) {
-        c->enableAction("zoom in", true);
     }
 }
 

@@ -73,13 +73,6 @@ public:
     static KActionCollection* shortcutActions(QObject *parent);
 
 public slots:
-    /**
-     * zoom in towards the given containment.
-     * if toContainment is null, the current containment is used instead.
-     * zooming in also sets toContainment as current.
-     */
-    void zoomIn(Plasma::ZoomLevel zoomLevel);
-    void zoomOut(Plasma::ZoomLevel zoomLevel);
     void toggleDashboard();
     void showDashboard(bool show);
 
@@ -127,8 +120,7 @@ Q_SIGNALS:
     void dashboardClosed();
 
 protected:
-    void wheelEvent(QWheelEvent *event);
-    void drawBackground(QPainter *painter, const QRectF &rect);
+    //void drawBackground(QPainter *painter, const QRectF &rect);
     void prepDashboard();
 
 private:

@@ -69,11 +69,6 @@ public:
     void panelHidden(bool hidden);
 
     /**
-     * Current desktop zoom level
-     */
-     Plasma::ZoomLevel desktopZoomLevel() const;
-
-    /**
      * Returns the PanelViews
      */
     QList<PanelView*> panelViews() const;
@@ -107,10 +102,6 @@ public Q_SLOTS:
     void setFixedDashboard(bool fixedDashboard);
     bool fixedDashboard() const;
 
-    /**
-     * Request a zoom based on the containment
-     */
-    void zoom(Plasma::Containment*, Plasma::ZoomDirection);
     void createWaitingPanels();
 
 protected:
@@ -123,11 +114,8 @@ protected:
 private:
     PlasmaApp();
     DesktopView* viewForScreen(int screen, int desktop) const;
-    void zoomIn(Plasma::Containment *containment);
-    void zoomOut(Plasma::Containment *containment);
 
 private Q_SLOTS:
-    void zoomOut();
     void setupDesktop();
     void cleanup();
     void containmentAdded(Plasma::Containment *containment);
@@ -153,10 +141,8 @@ private:
     DesktopCorona *m_corona;
     QList<PanelView*> m_panels;
     QList<Plasma::Containment*> m_panelsWaiting;
-    Plasma::Dialog *m_controllerDialog;
     QList<DesktopView*> m_desktops;
     QTimer *m_panelViewCreationTimer;
-    Plasma::ZoomLevel m_zoomLevel;
     QWeakPointer<InteractiveConsole> m_console;
     int m_panelHidden;
     QSignalMapper *m_mapper;
