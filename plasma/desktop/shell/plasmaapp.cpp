@@ -912,6 +912,11 @@ void PlasmaApp::zoom(Plasma::Containment *containment, Plasma::ZoomDirection dir
                 // zooming in all the way, so lets swap containments about if need be
                 view->setContainment(containment);
             }
+            //FIXME: toolbox must be fixed in the proper way!
+            foreach (Plasma::Containment *cont, m_corona->containments()) {
+                cont->openToolBox();
+                cont->closeToolBox();
+            }
         }
     } else if (direction == Plasma::ZoomOut) {
         zoomOut(containment);
