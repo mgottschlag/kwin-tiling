@@ -332,10 +332,10 @@ bool KXftConfig::apply()
 
                         //
                         // Check document syntax...
-                        static const char * qtXmlHeader   = "<?xml version = '1.0'?>";
-                        static const char * xmlHeader     = "<?xml version=\"1.0\"?>";
-                        static const char * qtDocTypeLine = "<!DOCTYPE fontconfig>";
-                        static const char * docTypeLine   = "<!DOCTYPE fontconfig SYSTEM "
+                        static const char qtXmlHeader[]   = "<?xml version = '1.0'?>";
+                        static const char xmlHeader[]     = "<?xml version=\"1.0\"?>";
+                        static const char qtDocTypeLine[] = "<!DOCTYPE fontconfig>";
+                        static const char docTypeLine[]   = "<!DOCTYPE fontconfig SYSTEM "
                                                             "\"fonts.dtd\">";
 
                         QString str(m_doc.toString());

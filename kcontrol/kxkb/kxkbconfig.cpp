@@ -30,14 +30,14 @@
 #include "x11helper.h"
 
 
-static const char* switchModes[SWITCH_POLICY_COUNT] = {
+static const char* const switchModes[SWITCH_POLICY_COUNT] = {
   "Global", "Desktop", "WinClass", "Window"
 };
 
 const LayoutUnit DEFAULT_LAYOUT_UNIT = LayoutUnit("us", "");
-const char* DEFAULT_MODEL = "pc104";
+const char* const DEFAULT_MODEL = "pc104";
 
-const char* KxkbConfig::OPTIONS_SEPARATOR = ",";
+const char* const KxkbConfig::OPTIONS_SEPARATOR = ",";
 
 KxkbConfig::KxkbConfig() {
 	m_layouts.append( DEFAULT_LAYOUT_UNIT );
@@ -285,7 +285,7 @@ QString LayoutUnit::getDefaultDisplayName(const QString& layout, const QString& 
  */
 const QString LayoutUnit::parseLayout(const QString &layvar)
 {
-	static const char* LAYOUT_PATTERN = "[a-zA-Z0-9_/-]*";
+	static const char LAYOUT_PATTERN[] = "[a-zA-Z0-9_/-]*";
 	QString varLine = layvar.trimmed();
 	QRegExp rx(LAYOUT_PATTERN);
 	int pos = rx.indexIn(varLine, 0);
@@ -304,7 +304,7 @@ const QString LayoutUnit::parseLayout(const QString &layvar)
  */
 const QString LayoutUnit::parseVariant(const QString &layvar)
 {
-	static const char* VARIANT_PATTERN = "\\([a-zA-Z0-9_-]*\\)";
+	static const char VARIANT_PATTERN[] = "\\([a-zA-Z0-9_-]*\\)";
 	QString varLine = layvar.trimmed();
 	QRegExp rx(VARIANT_PATTERN);
 	int pos = rx.indexIn(varLine, 0);

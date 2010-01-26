@@ -26,9 +26,9 @@
 #include <KCModule>
 //Qt
 
-static const char * CONFIG_USE_TRIGGERWORD = "useTriggerWord";
-static const char * CONFIG_TRIGGERWORD = "triggerWord";
-static const char * CONFIG_SORTING = "sorting";
+static const char CONFIG_USE_TRIGGERWORD[] = "useTriggerWord";
+static const char CONFIG_TRIGGERWORD[] = "triggerWord";
+static const char CONFIG_SORTING[] = "sorting";
 
 class KillRunnerConfigForm : public QWidget, public Ui::KillRunnerConfigUi
 {

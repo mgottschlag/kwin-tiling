@@ -139,7 +139,7 @@ bool isAPfm(const QString &fname)
 // This function is *only* used for the generation of AFMs from PFMs.
 bool isAType1(const QString &fname)
 {
-    static const char *       constStr="%!PS-AdobeFont-";
+    static const char         constStr[]="%!PS-AdobeFont-";
     static const unsigned int constStrLen=15;
     static const unsigned int constPfbOffset=6;
     static const unsigned int constPfbLen=constStrLen+constPfbOffset;

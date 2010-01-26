@@ -100,7 +100,7 @@ public:
 };
 
 extern const LayoutUnit DEFAULT_LAYOUT_UNIT;
-extern const char* DEFAULT_MODEL;
+extern const char* const DEFAULT_MODEL;
 
 struct XkbConfig {
     QString model;
@@ -112,7 +112,7 @@ class KxkbConfig
 {
 public:
 	enum { LOAD_ACTIVE_OPTIONS, LOAD_ALL };
-        static const char* OPTIONS_SEPARATOR;
+        static const char* const OPTIONS_SEPARATOR;
 	
 	bool m_useKxkb;
 	bool m_indicatorOnly;

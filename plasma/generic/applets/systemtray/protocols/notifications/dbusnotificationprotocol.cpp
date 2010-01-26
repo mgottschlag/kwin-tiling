@@ -32,7 +32,7 @@
 namespace SystemTray
 {
 
-static const char *engineName = "notifications";
+static const char engineName[] = "notifications";
 
 DBusNotificationProtocol::DBusNotificationProtocol(QObject *parent)
     : Protocol(parent),

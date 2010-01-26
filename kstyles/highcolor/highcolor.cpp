@@ -93,7 +93,7 @@ static const int itemHMargin     = 3;
 static const int itemVMargin     = 0;
 static const int arrowHMargin    = 6;
 static const int rightBorder     = 12;
-static const char* kdeToolbarWidget = "kde toolbar widget";
+static const char kdeToolbarWidget[] = "kde toolbar widget";
 
 // ---------------------------------------------------------------------------
 

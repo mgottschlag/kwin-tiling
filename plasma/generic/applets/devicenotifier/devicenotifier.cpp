@@ -48,7 +48,7 @@
 using namespace Plasma;
 using namespace Notifier;
 
-static const char *DEFAULT_ICON_NAME = "device-notifier";
+static const char DEFAULT_ICON_NAME[] = "device-notifier";
 static const int NOTIFICATION_TIMEOUT = 10000;
 
 K_EXPORT_PLASMA_APPLET(devicenotifier, DeviceNotifier)

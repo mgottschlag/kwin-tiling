@@ -61,7 +61,7 @@ inline QString xDirSyntax(const QString &d) { return Misc::fileSyntax(d); }
 QString getConfigFile(bool system)
 {
 #if (FC_VERSION>=20300)
-    static const char * constKdeRootFcFile="00kde.conf";
+    static const char constKdeRootFcFile[] = "00kde.conf";
 #endif
 
     FcStrList   *list=FcConfigGetConfigFiles(FcConfigGetCurrent());
@@ -157,10 +157,10 @@ void addDir(const QString &dir, bool system)
                 {
                     //
                     // Check document syntax...
-                    static const char * qtXmlHeader   = "<?xml version = '1.0'?>";
-                    static const char * xmlHeader     = "<?xml version=\"1.0\"?>";
-                    static const char * qtDocTypeLine = "<!DOCTYPE fontconfig>";
-                    static const char * docTypeLine   = "<!DOCTYPE fontconfig SYSTEM "
+                    static const char qtXmlHeader[]   = "<?xml version = '1.0'?>";
+                    static const char xmlHeader[]     = "<?xml version=\"1.0\"?>";
+                    static const char qtDocTypeLine[] = "<!DOCTYPE fontconfig>";
+                    static const char docTypeLine[]   = "<!DOCTYPE fontconfig SYSTEM "
                                                         "\"fonts.dtd\">";
 
                     QString str(doc.toString());

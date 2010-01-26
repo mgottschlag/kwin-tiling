@@ -172,7 +172,7 @@ void LayoutIcon::dimPixmap(QPixmap& pm)
 	pm = QPixmap::fromImage(image);
 }
 
-static const char* ERROR_LABEL = "err";
+static const char ERROR_LABEL[] = "err";
 
 //private
 QPixmap* LayoutIcon::createErrorPixmap()

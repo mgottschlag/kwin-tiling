@@ -22,7 +22,7 @@
 #include <KDebug>
 #include <KServiceTypeTrader>
 
-static const char* SOURCE = "location";
+static const char SOURCE[] = "location";
 
 Geolocation::Geolocation(QObject* parent, const QVariantList& args)
     : Plasma::DataEngine(parent, args),

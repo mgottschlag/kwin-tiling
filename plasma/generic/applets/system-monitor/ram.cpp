@@ -25,8 +25,8 @@
 #include <QGraphicsLinearLayout>
 
 /* All sources we are interested in. */
-static const char *phys_source = "mem/physical/application";
-static const char *swap_source = "mem/swap/used";
+static const char phys_source[] = "mem/physical/application";
+static const char swap_source[] = "mem/swap/used";
 
 SM::Ram::Ram(QObject *parent, const QVariantList &args)
     : SM::Applet(parent, args)

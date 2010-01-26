@@ -39,7 +39,7 @@
 #include "extension.h"
 
 
-static const char* SETXKBMAP_SEPARATOR=",";
+static const char SETXKBMAP_SEPARATOR[] = ",";
 
 QString XKBExtension::m_setxkbmap_exe = "";
 

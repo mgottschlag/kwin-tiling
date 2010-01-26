@@ -819,7 +819,7 @@ sub process_scripts_txt ($)
     print $out "#include <QtCore/qglobal.h>\n";
     print $out "#include <klocalizedstring.h>\n\n";
 
-    print $out "static const char *constUnicodeScriptList[] =\n";
+    print $out "static const char * const constUnicodeScriptList[] =\n";
     print $out "{\n";
     my $i = 0;
     for my $script (sort keys %scripts)

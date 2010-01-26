@@ -30,7 +30,7 @@
 namespace SystemTray
 {
 
-static const char *engineName = "applicationjobs";
+static const char engineName[] = "applicationjobs";
 
 DBusJobProtocol::DBusJobProtocol(QObject *parent)
     : Protocol(parent),
