@@ -199,7 +199,9 @@ void MenuView::updateAction(QAbstractItemModel *model, QAction *action, const QM
     }
 
     action->setSeparator(isSeparator);
-    action->setIcon(index.data(Qt::DecorationRole).value<QIcon>());
+    if (!isSeparator) {
+        action->setIcon(index.data(Qt::DecorationRole).value<QIcon>());
+    }
 
     // we map modelindex and action together
     action->setData(qVariantFromValue(QPersistentModelIndex(index)));
