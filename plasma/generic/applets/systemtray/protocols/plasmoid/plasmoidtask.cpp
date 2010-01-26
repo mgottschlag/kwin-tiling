@@ -126,6 +126,11 @@ QGraphicsWidget* PlasmoidTask::createWidget(Plasma::Applet *host)
     d->applet->updateConstraints(Plasma::AllConstraints);
     d->applet->flushPendingConstraintsEvents();
 
+    // make sure to record it in the configuration so that if we reload from the config,
+    // this applet is remembered
+    KConfigGroup dummy;
+    d->applet->save(dummy);
+
     connect(d->applet, SIGNAL(newStatus(Plasma::ItemStatus)), this, SLOT(newAppletStatus(Plasma::ItemStatus)));
 
     newAppletStatus(d->applet->status());
