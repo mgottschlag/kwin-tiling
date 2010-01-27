@@ -150,10 +150,10 @@ void WidgetExplorerPrivate::initFilters()
 void WidgetExplorerPrivate::init(Qt::Orientation orient)
 {
     //init widgets
+    orientation = orient;
     mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
     mainLayout->setSpacing(0);
     filteringLayout = new QGraphicsLinearLayout(Qt::Horizontal);
-    orientation = orient;
     filteringWidget = new FilteringWidget(orientation, q);
     appletsListWidget = new AppletsListWidget(orientation);
     close = new Plasma::ToolButton;
@@ -166,15 +166,23 @@ void WidgetExplorerPrivate::init(Qt::Orientation orient)
     QObject::connect(close, SIGNAL(clicked()), q, SIGNAL(closeClicked()));
 
     //adding to layout
-    filteringLayout->addItem(filteringWidget);
+    if (orientation == Qt::Horizontal) {
+        filteringLayout->addItem(filteringWidget);
+    } else {
+        mainLayout->addItem(filteringWidget);
+    }
+
     mainLayout->addItem(filteringLayout);
     mainLayout->addItem(appletsListWidget);
     appletsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mainLayout->setAlignment(appletsListWidget, Qt::AlignVCenter | Qt::AlignHCenter);
+    mainLayout->setAlignment(appletsListWidget, Qt::AlignTop | Qt::AlignHCenter);
+
     if (orientation == Qt::Horizontal) {
         filteringLayout->addItem(close);
         filteringLayout->setAlignment(close, Qt::AlignVCenter | Qt::AlignHCenter);
     } else {
+        mainLayout->setAlignment(filteringWidget, Qt::AlignTop | Qt::AlignHCenter);
+        mainLayout->setStretchFactor(appletsListWidget, 10);
         mainLayout->addItem(close);
     }
 
@@ -187,16 +195,26 @@ void WidgetExplorerPrivate::init(Qt::Orientation orient)
 
 void WidgetExplorerPrivate::setOrientation(Qt::Orientation orient)
 {
+    if (orientation == orient) {
+        return;
+    }
+
     orientation = orient;
     filteringWidget->setListOrientation(orientation);
     appletsListWidget->setOrientation(orientation);
     if (orientation == Qt::Horizontal) {
+        mainLayout->removeItem(filteringWidget);
         mainLayout->removeItem(close);
+        filteringLayout->addItem(filteringWidget);
         filteringLayout->addItem(close);
         filteringLayout->setAlignment(close, Qt::AlignVCenter | Qt::AlignHCenter);
     } else {
+        filteringLayout->removeItem(filteringWidget);
         filteringLayout->removeItem(close);
+        mainLayout->insertItem(0, filteringWidget);
         mainLayout->addItem(close);
+        mainLayout->setAlignment(filteringWidget, Qt::AlignTop | Qt::AlignHCenter);
+        mainLayout->setStretchFactor(appletsListWidget, 10);
     }
 }
 
@@ -267,6 +285,13 @@ void WidgetExplorerPrivate::appletRemoved(Plasma::Applet *applet)
 }
 
 //WidgetExplorer
+
+WidgetExplorer::WidgetExplorer(Qt::Orientation orientation, QGraphicsItem *parent)
+        :QGraphicsWidget(parent),
+        d(new WidgetExplorerPrivate(this))
+{
+    d->init(orientation);
+}
 
 WidgetExplorer::WidgetExplorer(QGraphicsItem *parent)
         :QGraphicsWidget(parent),

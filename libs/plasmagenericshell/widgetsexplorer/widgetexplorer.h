@@ -47,7 +47,8 @@ class PLASMAGENERICSHELL_EXPORT WidgetExplorer : public QGraphicsWidget
     Q_OBJECT
 
 public:
-    WidgetExplorer(QGraphicsItem *parent = 0);
+    explicit WidgetExplorer(Qt::Orientation orientation, QGraphicsItem *parent = 0);
+    explicit WidgetExplorer(QGraphicsItem *parent = 0);
     ~WidgetExplorer();
 
     QString application();

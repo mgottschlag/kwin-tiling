@@ -166,7 +166,6 @@ private:
 
     //One single tootip to show applets info
     AppletToolTipWidget *m_toolTip;
-    Plasma::ItemBackground *m_selectionIndicator;
     Plasma::ItemBackground *m_hoverIndicator;
 
     QStandardItemModel *m_modelItems;

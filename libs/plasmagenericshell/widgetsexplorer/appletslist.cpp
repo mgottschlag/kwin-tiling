@@ -51,7 +51,6 @@ AppletsListWidget::AppletsListWidget(Qt::Orientation orientation, QGraphicsItem 
     : QGraphicsWidget(parent),
       m_arrowsSvg(new Plasma::Svg(this)),
       m_appletIconBgSvg(new Plasma::FrameSvg(this)),
-      m_selectionIndicator(new Plasma::ItemBackground(this)),
       m_hoverIndicator(new Plasma::ItemBackground(this)),
       m_iconSize(16)
 {
@@ -179,6 +178,9 @@ bool AppletsListWidget::eventFilter(QObject *obj, QEvent *event)
             int maxVisibleIconsOnList = maximumAproxVisibleIconsOnList();
             arrowClickStep = ceil((float)maxVisibleIconsOnList/4);
             wheelStep = ceil((float)maxVisibleIconsOnList/2);
+            if (m_orientation == Qt::Vertical) {
+                m_appletsListWidget->setMinimumSize(m_appletsListWindowWidget->size().width(), 0);
+            }
             return false;
         }
     }
@@ -434,7 +436,6 @@ void AppletsListWidget::itemSelected(AppletIconWidget *applet)
 
     applet->setSelected(true);
     m_selectedItem = applet;
-    m_selectionIndicator->setTargetItem(m_selectedItem);
 }
 
 void AppletsListWidget::appletIconDoubleClicked(AppletIconWidget *applet)

@@ -147,7 +147,6 @@ void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *
         return;
     }
 
-
     const QRectF rect = contentsRect();
     const int width = rect.width();
     const int height = rect.height();
@@ -162,9 +161,14 @@ void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     }
 
     QRectF textRect(rect.x(), iconRect.bottom() + 2, width, height - iconRect.height() - 2);
-    painter->setPen(
-        Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
-    painter->drawText(textRect, Qt::AlignTop | Qt::AlignCenter | Qt::TextWordWrap, appletItem->name());
+    painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+
+    int flags = Qt::AlignTop | Qt::TextWordWrap;
+    QFontMetrics fm(font());
+    if (fm.width(appletItem->name()) < textRect.width()) {
+        flags |= Qt::AlignCenter;
+    }
+    painter->drawText(textRect, flags, appletItem->name());
 }
 
 

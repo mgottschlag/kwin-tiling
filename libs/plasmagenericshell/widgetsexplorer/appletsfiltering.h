@@ -20,32 +20,27 @@
 #ifndef APPLETSFILTERING_H
 #define APPLETSFILTERING_H
 
+#include <Plasma/TabBar>
+#include <Plasma/TreeView>
+
 #include "kcategorizeditemsviewmodels_p.h"
 #include "plasmaappletitemmodel_p.h"
-#include "widgetexplorer.h"
-#include <plasma/widgets/tabbar.h>
 
 class KMenu;
 namespace Plasma {
     class LineEdit;
     class PushButton;
-    class TreeView;
     class WidgetExplorer;
 }
 
-class FilteringTreeView : public QGraphicsWidget
+class FilteringTreeView : public Plasma::TreeView
 {
     Q_OBJECT
 
 public:
-    explicit FilteringTreeView(QGraphicsItem * parent = 0, Qt::WindowFlags wFlags = 0);
+    explicit FilteringTreeView(QGraphicsWidget *parent = 0, Qt::WindowFlags wFlags = 0);
     virtual ~FilteringTreeView();
 
-    /*
-     * Sets focus to the lineedit for the quicksearch
-     */
-    void setFocus();
-    void setModel(QStandardItemModel *model);
 
 Q_SIGNALS:
     void filterChanged(int index);
@@ -55,9 +50,6 @@ private slots:
 
 private:
     void init();
-
-    QStandardItemModel *m_model;
-    Plasma::TreeView *m_treeView;
 };
 
 class FilteringTabs : public Plasma::TabBar
