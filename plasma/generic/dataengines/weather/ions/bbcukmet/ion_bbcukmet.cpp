@@ -577,7 +577,7 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                     data.humidity.chop(1);
                 }
 
-                data.pressure = observeData[5].split(',')[0].split(' ')[1].split("mB")[0];
+                data.pressure = observeData[5].split(',')[0].split(' ')[1].split("mb")[0];
                 data.pressureTendency = observeData[5].split(',')[1].trimmed();
 
                 data.visibilityStr = observeData[6].trimmed();
