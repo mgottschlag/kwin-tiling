@@ -34,6 +34,7 @@
 #include <KStandardDirs>
 #include <KWindowSystem>
 
+#include <Plasma/AbstractToolBox>
 #include <Plasma/Containment>
 #include <plasma/containmentactionspluginsconfig.h>
 #include <Plasma/DataEngineManager>
@@ -78,11 +79,13 @@ void DesktopCorona::init()
 
     if (panelContainmentPlugins.size() == 1) {
         m_addPanelAction = new QAction(i18n("Add Panel"), this);
+        m_addPanelAction->setData(Plasma::AbstractToolBox::AddTool);
         connect(m_addPanelAction, SIGNAL(triggered(bool)), this, SLOT(addPanel()));
     } else if (!panelContainmentPlugins.isEmpty()) {
         m_addPanelsMenu = new QMenu();
         m_addPanelAction = m_addPanelsMenu->menuAction();
         m_addPanelAction->setText(i18n("Add Panel"));
+        m_addPanelAction->setData(Plasma::AbstractToolBox::AddTool);
 
         QSignalMapper *mapper = new QSignalMapper(this);
         connect(mapper, SIGNAL(mapped(QString)), this, SLOT(addPanel(QString)));
