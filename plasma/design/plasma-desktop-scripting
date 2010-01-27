@@ -117,7 +117,13 @@ In addition, Panel objects provide the folowing read/write properties:
 
 API: Miscelaneous
 -----------------
+Read-write properties:
 * bool locked: whether the desktop shell and widgets are locked or not (settable)
+
+Read-only property:
+* boolean hasBattery: whether or not the system has the ability to run on battery power, e.g. a laptop or mobile device
+
+Functions:
 * sleep(int): sleeps the script for the specified number of millseconds
 
 API: Widgets
