@@ -52,7 +52,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 static int old_scripts, no_old_scripts, old_confs, no_old,
 	no_backup, no_in_notice, use_destdir, mixed_scripts;
-static const char newdir[] = KDMCONF, facesrc[] = KDMDATA "/pics/users",
+static const char *newdir = KDMCONF, *facesrc = KDMDATA "/pics/users",
 	*oldxdm, *oldkde, *oldkdepfx;
 
 static int oldver;
