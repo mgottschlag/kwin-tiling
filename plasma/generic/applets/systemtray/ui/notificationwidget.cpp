@@ -84,20 +84,19 @@ public:
 };
 
 NotificationWidget::NotificationWidget(SystemTray::Notification *notification, QGraphicsItem *parent)
-    : QGraphicsWidget(parent),
+    : Plasma::Frame(parent),
       d(new NotificationWidgetPrivate(this))
 {
     setMinimumWidth(300);
     setPreferredWidth(400);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    Plasma::Frame *titleFrame = new Plasma::Frame(this);
-    QGraphicsLinearLayout *titleLayout = new QGraphicsLinearLayout(Qt::Horizontal, titleFrame);
-    d->icon = new Plasma::IconWidget(titleFrame);
+    QGraphicsLinearLayout *titleLayout = new QGraphicsLinearLayout(Qt::Horizontal);
+    d->icon = new Plasma::IconWidget(this);
     d->icon->setMaximumSize(d->icon->sizeFromIconSize(KIconLoader::SizeSmall));
     d->icon->setMinimumSize(d->icon->maximumSize());
-    d->title = new Plasma::Label(titleFrame);
-    Plasma::IconWidget *closeButton = new Plasma::IconWidget(titleFrame);
+    d->title = new Plasma::Label(this);
+    Plasma::IconWidget *closeButton = new Plasma::IconWidget(this);
     titleLayout->addItem(d->icon);
     titleLayout->addItem(d->title);
     titleLayout->addItem(closeButton);
@@ -111,7 +110,7 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, Q
     d->body = new Plasma::Label(this);
     d->body->nativeWidget()->setTextFormat(Qt::RichText);
 
-    d->mainLayout->addItem(titleFrame);
+    d->mainLayout->addItem(titleLayout);
     d->labelLayout->addItem(d->body);
     d->mainLayout->addItem(d->labelLayout);
 
