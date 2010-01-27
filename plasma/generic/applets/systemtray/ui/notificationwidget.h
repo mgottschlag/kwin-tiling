@@ -38,7 +38,7 @@ class NotificationWidget : public Plasma::Frame
     Q_OBJECT
 
 public:
-    NotificationWidget(SystemTray::Notification *notification, QGraphicsItem *parent);
+    NotificationWidget(SystemTray::Notification *notification, QGraphicsWidget *parent);
     ~NotificationWidget();
 
     /**

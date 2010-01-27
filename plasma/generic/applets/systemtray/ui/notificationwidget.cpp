@@ -83,7 +83,7 @@ public:
     QSignalMapper *signalMapper;
 };
 
-NotificationWidget::NotificationWidget(SystemTray::Notification *notification, QGraphicsItem *parent)
+NotificationWidget::NotificationWidget(SystemTray::Notification *notification, QGraphicsWidget *parent)
     : Plasma::Frame(parent),
       d(new NotificationWidgetPrivate(this))
 {
