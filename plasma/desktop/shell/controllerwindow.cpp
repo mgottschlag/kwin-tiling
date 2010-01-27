@@ -180,18 +180,7 @@ void ControllerWindow::setLocation(const Plasma::Location &loc)
     }
 
     if (m_widgetExplorer) {
-        switch (loc) {
-        case Plasma::LeftEdge:
-        case Plasma::RightEdge:
-            m_widgetExplorer->setOrientation(Qt::Vertical);
-            break;
-        case Plasma::TopEdge:
-        case Plasma::BottomEdge:
-        default:
-            m_widgetExplorer->setOrientation(Qt::Horizontal);
-            break;
-            break;
-        }
+        m_widgetExplorer->setOrientation(orientation());
     }
 }
 
@@ -251,7 +240,7 @@ void ControllerWindow::showWidgetExplorer()
     }
 
     if (!m_widgetExplorer) {
-        m_widgetExplorer = new Plasma::WidgetExplorer();
+        m_widgetExplorer = new Plasma::WidgetExplorer(orientation());
         m_widgetExplorer->setContainment(m_containment);
         m_widgetExplorer->populateWidgetList();
         m_widgetExplorer->resize(m_widgetExplorerView->size());
@@ -263,9 +252,9 @@ void ControllerWindow::showWidgetExplorer()
         m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
 
         connect(m_widgetExplorer, SIGNAL(closeClicked()), this, SLOT(close()));
+    } else {
+        m_widgetExplorer->setOrientation(orientation());
     }
-
-    m_widgetExplorer->setOrientation(orientation());
 
     if (orientation() == Qt::Horizontal) {
         resize(width(), m_widgetExplorer->size().height());
