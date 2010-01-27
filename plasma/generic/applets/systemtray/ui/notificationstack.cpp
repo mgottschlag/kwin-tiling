@@ -55,6 +55,7 @@ void NotificationStack::addNotification(Notification *notification)
         Notification *notif = m_notifications.first();
         m_notificationWidgets[notif]->deleteLater();
         m_notificationWidgets.remove(notif);
+        m_notifications.pop_front();
     }
 
     m_mainLayout->insertItem(0, notificationWidget);
