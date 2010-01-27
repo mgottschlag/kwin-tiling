@@ -109,19 +109,19 @@ static QScriptValue height(QScriptContext *ctx, QScriptEngine *eng)
 
 static QScriptValue empty(QScriptContext *ctx, QScriptEngine *eng)
 {
-    DECLARE_SELF(QRectF, isEmpty);
+    DECLARE_SELF(QRectF, empty);
     return QScriptValue(eng, self->isEmpty());
 }
 
 static QScriptValue null(QScriptContext *ctx, QScriptEngine *eng)
 {
-    DECLARE_SELF(QRectF, isNull);
+    DECLARE_SELF(QRectF, null);
     return QScriptValue(eng, self->isNull());
 }
 
 static QScriptValue valid(QScriptContext *ctx, QScriptEngine *eng)
 {
-    DECLARE_SELF(QRectF, isValid);
+    DECLARE_SELF(QRectF, valid);
     return QScriptValue(eng, self->isValid());
 }
 
