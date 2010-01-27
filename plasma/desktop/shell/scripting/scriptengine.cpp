@@ -29,6 +29,7 @@
 #include <Plasma/Applet>
 #include <Plasma/Containment>
 #include <Plasma/Corona>
+#include <Plasma/DataEngineManager>
 
 #include "containment.h"
 #include "plasmaapp.h"
@@ -314,6 +315,16 @@ void ScriptEngine::sleep(int ms)
     QEventLoop loop;
     QTimer::singleShot(ms, &loop, SLOT(quit()));
     loop.exec();
+}
+
+bool ScriptEngine::hasBattery() const
+{
+  Plasma::DataEngineManager *engines = Plasma::DataEngineManager::self();
+  Plasma::DataEngine *power = engines->loadEngine("powermanagement");
+
+  const QStringList batteries = power->query("Battery")["sources"].toStringList();
+  engines->unloadEngine("powermanagement");
+  return !batteries.isEmpty();
 }
 
 #include "scriptengine.moc"
