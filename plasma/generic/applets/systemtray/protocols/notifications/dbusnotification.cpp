@@ -40,6 +40,7 @@ DBusNotification::~DBusNotification()
 void DBusNotification::remove()
 {
     emit unregisterNotification(m_source);
+    deleteLater();
 }
 
 void DBusNotification::triggerAction(const QString &actionId)

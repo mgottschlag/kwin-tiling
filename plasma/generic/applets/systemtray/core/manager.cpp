@@ -144,6 +144,8 @@ void Manager::addNotification(Notification* notification)
             this, SLOT(removeNotification(SystemTray::Notification*)));
     connect(notification, SIGNAL(changed(SystemTray::Notification*)),
             this, SIGNAL(notificationChanged(SystemTray::Notification*)));
+    connect(notification, SIGNAL(expired(SystemTray::Notification*)),
+            this, SIGNAL(notificationExpired(SystemTray::Notification*)));
 
     d->notifications.append(notification);
     emit notificationAdded(notification);

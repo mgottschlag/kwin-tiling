@@ -37,10 +37,11 @@
 #include <KPushButton>
 
 #include <plasma/extender.h>
-#include <plasma/extenderitem.h>
 #include <plasma/theme.h>
 #include <plasma/widgets/pushbutton.h>
 #include <Plasma/Label>
+#include <Plasma/Frame>
+#include <Plasma/IconWidget>
 
 class NotificationWidgetPrivate
 {
@@ -71,6 +72,8 @@ public:
     QString message;
     Plasma::Label *body;
     Plasma::Label *image;
+    Plasma::Label *title;
+    Plasma::IconWidget *icon;
     QGraphicsLinearLayout *mainLayout;
     QGraphicsLinearLayout *labelLayout;
     QGraphicsWidget *actionsWidget;
@@ -80,22 +83,39 @@ public:
     QSignalMapper *signalMapper;
 };
 
-NotificationWidget::NotificationWidget(SystemTray::Notification *notification, Plasma::ExtenderItem *extenderItem)
-    : QGraphicsWidget(extenderItem),
+NotificationWidget::NotificationWidget(SystemTray::Notification *notification, QGraphicsItem *parent)
+    : QGraphicsWidget(parent),
       d(new NotificationWidgetPrivate(this))
 {
     setMinimumWidth(300);
     setPreferredWidth(400);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
+    Plasma::Frame *titleFrame = new Plasma::Frame(this);
+    QGraphicsLinearLayout *titleLayout = new QGraphicsLinearLayout(Qt::Horizontal, titleFrame);
+    d->icon = new Plasma::IconWidget(titleFrame);
+    d->icon->setMaximumSize(d->icon->sizeFromIconSize(KIconLoader::SizeSmall));
+    d->icon->setMinimumSize(d->icon->maximumSize());
+    d->title = new Plasma::Label(titleFrame);
+    Plasma::IconWidget *closeButton = new Plasma::IconWidget(titleFrame);
+    titleLayout->addItem(d->icon);
+    titleLayout->addItem(d->title);
+    titleLayout->addItem(closeButton);
+    closeButton->setSvg("widgets/configuration-icons", "close");
+    closeButton->setMaximumSize(closeButton->sizeFromIconSize(KIconLoader::SizeSmall));
+    closeButton->setMinimumSize(closeButton->maximumSize());
+    connect(closeButton, SIGNAL(clicked()), this, SLOT(deleteLater()));
+
     d->mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
     d->labelLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     d->body = new Plasma::Label(this);
     d->body->nativeWidget()->setTextFormat(Qt::RichText);
 
+    d->mainLayout->addItem(titleFrame);
     d->labelLayout->addItem(d->body);
     d->mainLayout->addItem(d->labelLayout);
 
+    //This thould always be true now
     if (notification) {
         d->notification = notification;
 
@@ -105,24 +125,11 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, P
                 this, SLOT(updateNotification()));
         connect(notification, SIGNAL(destroyed()),
                 this, SLOT(destroy()));
-        connect(notification, SIGNAL(expired()),
-                this, SLOT(destroy()));
-
-        extenderItem->showCloseButton();
-        QAction *closeAction = extenderItem->action("close");
-        if (closeAction) {
-            connect(closeAction, SIGNAL(triggered()),
-                    notification, SLOT(deleteLater()));
-        }
-
-
+       //TODO: rey out notification when expired
+        /*connect(notification, SIGNAL(expired()),
+                this, SLOT(destroy()));*/
 
         d->updateNotification();
-    } else {
-        d->setTextFields(extenderItem->config().readEntry("applicationName", ""),
-                         extenderItem->config().readEntry("summary", ""),
-                         extenderItem->config().readEntry("message", ""));
-        extenderItem->showCloseButton();
     }
 }
 
@@ -130,7 +137,7 @@ NotificationWidget::~NotificationWidget()
 {
     if (d->notification) {
         // we were destroyed by the user, and the notification still exists
-        //d->notification.data()->remove();
+        d->notification.data()->remove();
     }
 
     delete d;
@@ -139,6 +146,8 @@ NotificationWidget::~NotificationWidget()
 void NotificationWidget::setAutoHide(bool autoHide)
 {
     if (autoHide != d->autoHide) {
+        //TODO: this will destroy the notification in single mode, grey out in explore mode
+        /*
         if (autoHide) {
             connect(d->notification.data(), SIGNAL(expired()),
                     this, SLOT(destroy()));
@@ -146,6 +155,7 @@ void NotificationWidget::setAutoHide(bool autoHide)
             disconnect(d->notification.data(), SIGNAL(expired()),
                        this, SLOT(destroy()));
         }
+        */
         d->autoHide = autoHide;
     }
 }
@@ -158,12 +168,10 @@ bool NotificationWidget::autoHide() const
 void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
                                                 const QString &summary, const QString &message)
 {
-    Plasma::ExtenderItem *extenderItem = dynamic_cast<Plasma::ExtenderItem*>(q->parentWidget());
-
     if (!summary.isEmpty()) {
-        extenderItem->setTitle(summary);
+        title->setText(summary);
     } else {
-        extenderItem->setTitle(i18n("Notification from %1", applicationName));
+        title->setText(i18n("Notification from %1", applicationName));
     }
 
     //Don't show more than 8 lines
@@ -232,16 +240,9 @@ void NotificationWidgetPrivate::updateNotification()
         return;
     }
 
-    Plasma::ExtenderItem *extenderItem = dynamic_cast<Plasma::ExtenderItem*>(q->parentWidget());
-
-    //store the notification
-    extenderItem->config().writeEntry("applicationName", notification.data()->applicationName());
-    extenderItem->config().writeEntry("summary", notification.data()->summary());
-    extenderItem->config().writeEntry("message", notification.data()->message());
-
     //set text fields and icon
     setTextFields(notification.data()->applicationName(), notification.data()->summary(), notification.data()->message());
-    extenderItem->setIcon(notification.data()->applicationIcon());
+    icon->setIcon(notification.data()->applicationIcon());
 
     //set the actions provided
     actions = notification.data()->actions();
@@ -251,10 +252,18 @@ void NotificationWidgetPrivate::updateNotification()
     if (!notification.data()->image().isNull()) {
         if (!image) {
             image = new Plasma::Label(q);
+            image->setScaledContents(true);
         }
         image->nativeWidget()->setPixmap(QPixmap::fromImage(notification.data()->image()));
-        image->setMinimumSize(notification.data()->image().size());
-        image->setMaximumSize(notification.data()->image().size());
+
+        QSize imageSize = notification.data()->image().size();
+
+        if (imageSize.width() > KIconLoader::SizeHuge || imageSize.height() > KIconLoader::SizeHuge) {
+            imageSize.scale(KIconLoader::SizeHuge, KIconLoader::SizeHuge, Qt::KeepAspectRatio);
+        }
+
+        image->setMinimumSize(imageSize);
+        image->setMaximumSize(imageSize);
         labelLayout->insertItem(0, image);
     } else {
         labelLayout->setContentsMargins(0, 0, 0, 0);
@@ -264,7 +273,6 @@ void NotificationWidgetPrivate::updateNotification()
         }
     }
 
-    extenderItem->showCloseButton();
 
     //FIXME: this sounds wrong
     q->setPreferredHeight(mainLayout->effectiveSizeHint(Qt::MinimumSize).height());
@@ -272,14 +280,7 @@ void NotificationWidgetPrivate::updateNotification()
 
 void NotificationWidgetPrivate::destroy()
 {
-    Plasma::ExtenderItem *extenderItem = dynamic_cast<Plasma::ExtenderItem *>(q->parentItem());
-
-    if (extenderItem->isDetached()) {
-        completeDetach();
-    } else {
-        completeDetach();
-        extenderItem->destroy();
-    }
+    q->deleteLater();
 }
 
 #include "notificationwidget.moc"

@@ -46,6 +46,7 @@ class JobTotalsWidget;
 class Manager;
 class Notification;
 class TaskArea;
+class NotificationScroller;
 
 class Applet : public Plasma::PopupApplet
 {
@@ -79,16 +80,13 @@ private slots:
     void configAccepted();
     void propogateSizeHintChange(Qt::SizeHint which);
     void checkSizes();
-    NotificationWidget *addNotification(SystemTray::Notification *notification);
+    void addNotification(SystemTray::Notification *notification);
     void addJob(SystemTray::Job *job);
     void clearAllCompletedJobs();
-    void clearOldNotifications();
     void finishJob(SystemTray::Job *job);
     void open(const QString &url);
     void addDefaultApplets();
-    void showTaskNotifications(int barIndex);
     void syncNotificationBarNeeded();
-    void notificationDestroyed(SystemTray::Notification *notification);
     void notificationExpired(SystemTray::Notification *notification);
 
 private:
@@ -106,7 +104,6 @@ private:
     QSet<Task::Category> m_shownCategories;
     QDateTime m_lastActivity;
 
-    QWeakPointer<Plasma::TabBar> m_notificationBar;
 
     Plasma::FrameSvg *m_background;
     Plasma::Svg *m_icons;
@@ -114,8 +111,7 @@ private:
     int m_autoHideTimeout;
     int m_timerId;
 
-    QHash<QString, QList<Notification*> > m_notificationsForApp;
-    QList<Notification*> m_recentNotifications;
+    NotificationScroller *m_notificationScroller;
 
     Ui::ProtocolsConfig m_notificationUi;
     Ui::AutoHideConfig m_autoHideUi;

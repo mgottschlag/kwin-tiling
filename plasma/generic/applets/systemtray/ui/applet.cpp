@@ -62,9 +62,10 @@
 #endif // HAVE_LIBXSS
 
 #include "../core/manager.h"
+#include "../core/notification.h"
 #include "jobwidget.h"
 #include "jobtotalswidget.h"
-#include "notificationwidget.h"
+#include "notificationscroller.h"
 #include "taskarea.h"
 
 namespace SystemTray
@@ -137,7 +138,6 @@ Applet::~Applet()
     }
 
     clearAllCompletedJobs();
-    clearOldNotifications();
 
     --s_managerUsage;
     if (s_managerUsage < 1) {
@@ -179,10 +179,6 @@ void Applet::init()
 
 void Applet::configChanged()
 {
-    if (m_autoHideInterface) {
-        configAccepted();
-    }
-
     KConfigGroup cg = config();
 
     const QStringList hiddenTypes = cg.readEntry("hidden", QStringList());
@@ -247,10 +243,7 @@ void Applet::configChanged()
     }
 
 
-    if (!m_autoHideInterface) {
-        s_manager->loadApplets(cg, this);
-    }
-
+    s_manager->loadApplets(cg, this);
     m_taskArea->syncTasks(s_manager->tasks());
     initExtenderTask(createExtenderTask);
     checkSizes();
@@ -278,97 +271,30 @@ void Applet::syncNotificationBarNeeded()
     }
 
     if (s_manager->notifications().count() > 0) {
-        if (!extender()->group("oldNotificationsGroup")) {
-            Plasma::ExtenderGroup *group = new Plasma::ExtenderGroup(extender());
-            group->setName("oldNotificationsGroup");
-            group->setTitle(i18n("Recent notifications"));
-            group->setIcon("dialog-information");
-            group->showCloseButton();
-            group->setAutoHide(false);
-            group->setAutoCollapse(true);
-            group->collapseGroup();
-            QAction *closeAction = group->action("close");
+        if (!extender()->item("notifications")) {
+            Plasma::ExtenderItem *extenderItem = new Plasma::ExtenderItem(extender());
+            extenderItem->config().writeEntry("type", "notification");
+            extenderItem->setName("notifications");
+            extenderItem->setTitle(i18n("Notifications"));
+            extenderItem->setIcon("dialog-information");
+            extenderItem->showCloseButton();
 
-            connect(closeAction, SIGNAL(triggered()), this, SLOT(clearOldNotifications()));
-
-            QGraphicsWidget *widget = new QGraphicsWidget(group);
-            group->setWidget(widget);
-            widget->setContentsMargins(0, 0, 0, 4);
-            QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(widget);
-            lay->addStretch();
-            m_notificationBar = new Plasma::TabBar(widget);
-            //arbitrary maximum size before enabling scroll arrows
-            m_notificationBar.data()->nativeWidget()->setMaximumWidth(400);
-            m_notificationBar.data()->nativeWidget()->setMaximumHeight(KIconLoader::SizeMedium);
-            lay->addItem(m_notificationBar.data());
-            lay->addStretch();
-            m_notificationBar.data()->addTab(KIcon("dialog-information"), i18nc("Show all recent notifications", "Recent"));
-            connect(m_notificationBar.data(), SIGNAL(currentChanged(int)), this, SLOT(showTaskNotifications(int)));
-        } else {
-            for (int i = 1; i < m_notificationBar.data()->count(); ++i) {
-                if (!m_notificationsForApp.contains(m_notificationBar.data()->tabText(i))) {
-                    m_notificationBar.data()->removeTab(i);
-                    showTaskNotifications(m_notificationBar.data()->currentIndex());
-                }
-            }
+            m_notificationScroller = new NotificationScroller(extenderItem);
+            connect(m_notificationScroller, SIGNAL(scrollerEmpty()), extenderItem, SLOT(destroy()));
+            extenderItem->setWidget(m_notificationScroller);
+            extenderItem->setExtender(extender());
         }
-    } else if (extender()->group("oldNotificationsGroup")) {
+    } else if (extender()->item("notifications")) {
         //don't let him in the config file
-        extender()->group("oldNotificationsGroup")->destroy();
+        extender()->item("notifications")->destroy();
     }
 }
 
-void Applet::notificationDestroyed(SystemTray::Notification *notification)
-{
-    if (notification) {
-        const QString name = notification->applicationName();
-        if (m_notificationsForApp.contains(name)) {
-            m_notificationsForApp[name].removeAll(notification);
-            if (m_notificationsForApp.value(name).count() == 0) {
-                m_notificationsForApp.remove(name);
-            }
-        }
-        m_recentNotifications.removeAll(notification);
-    }
 
-    syncNotificationBarNeeded();
-}
 
 void Applet::notificationExpired(SystemTray::Notification *notification)
 {
-    if (notification) {
-        m_recentNotifications.removeAll(notification);
-    }
-}
-
-void Applet::showTaskNotifications(int barIndex)
-{
-    QList<Notification *> notifications;
-    if (barIndex > 0) {
-        notifications = m_notificationsForApp[m_notificationBar.data()->tabText(barIndex)];
-    } else {
-        foreach (Notification *notification, s_manager->notifications()) {
-            if (!notification->isExpired()) {
-                notifications.append(notification);
-            }
-        }
-    }
-
-    foreach (Plasma::ExtenderItem *item, extender()->items()) {
-        if (dynamic_cast<NotificationWidget *>(item->widget())) {
-            item->destroy();
-        }
-    }
-
-    foreach (Notification *notification, notifications) {
-        NotificationWidget *notificationWidget = addNotification(notification);
-        if (barIndex > 0) {
-            notificationWidget->setAutoHide(false);
-            if (notification->isExpired()) {
-                notification->setRead(true);
-            }
-        }
-    }
+    //STUB
 }
 
 void Applet::constraintsEvent(Plasma::Constraints constraints)
@@ -610,6 +536,9 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         }
 
 
+        connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+        connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+
         parent->addPage(m_notificationInterface.data(), i18n("Information"),
                         "preferences-desktop-notification",
                         i18n("Choose which information to show"));
@@ -711,12 +640,13 @@ void Applet::configAccepted()
     QStringList applets = s_manager->applets(this);
     for (int i = 0; i < m_plasmoidTasksUi.applets->count(); ++i) {
         QListWidgetItem * item = m_plasmoidTasksUi.applets->item(i);
+        QString appletName = item->data(Qt::UserRole).toString();
 
-        if (item->checkState() != Qt::Unchecked) {
-            QString appletName = item->data(Qt::UserRole).toString();
-            if (!applets.contains(appletName)) {
-                s_manager->addApplet(appletName, this);
-            }
+        if (item->checkState() != Qt::Unchecked && !applets.contains(appletName)) {
+            s_manager->addApplet(appletName, this);
+        }
+
+        if (item->checkState() == Qt::Checked) {
             applets.removeAll(appletName);
         }
     }
@@ -747,74 +677,15 @@ void Applet::addDefaultApplets()
     }
 }
 
-NotificationWidget *Applet::addNotification(Notification *notification)
+void Applet::addNotification(Notification *notification)
 {
-    if (sender() == s_manager && m_notificationBar) {
-        m_notificationBar.data()->setCurrentIndex(0);
-    }
     syncNotificationBarNeeded();
 
-    Plasma::ExtenderItem *extenderItem = new Plasma::ExtenderItem(extender());
-    extenderItem->config().writeEntry("type", "notification");
-    NotificationWidget *notificationWidget = new NotificationWidget(notification, extenderItem);
-    extenderItem->setWidget(notificationWidget);
-
-    if (extender()->hasItem("oldNotificationsGroup") && notification->isExpired()) {
-        extenderItem->setGroup(extender()->group("oldNotificationsGroup"));
-    }
+    //At this point we are sure the pointer is valid
+    m_notificationScroller->addNotification(notification);
 
     emit activate();
-
-    //notification->timeout() = 0 actually means eternal life
-    if (notification->timeout() > 0) {
-        showPopup(qMin(m_autoHideTimeout, notification->timeout()));
-    } else {
-        showPopup(m_autoHideTimeout);
-    }
-
-
-    bool found = false;
-    for (int i = 0; i < m_notificationBar.data()->count(); ++i) {
-        if (m_notificationBar.data()->tabText(i) == notification->applicationName()) {
-            found = true;
-            break;
-        }
-    }
-
-    QList<Notification *> &appNotifications = m_notificationsForApp[notification->applicationName()];
-    if (!appNotifications.contains(notification)) {
-        appNotifications.append(notification);
-        //FIXME: arbitrary limit
-        if (appNotifications.count() > 10) {
-            Notification *oldNotification = appNotifications.first();
-            appNotifications.pop_front();
-            oldNotification->deleteLater();
-        }
-    }
-
-    if (!m_recentNotifications.contains(notification)) {
-        m_recentNotifications.append(notification);
-        while (m_recentNotifications.count() > 10) {
-            Notification *oldNotification = m_recentNotifications.first();
-            m_recentNotifications.pop_front();
-            oldNotification->hide();
-        }
-    }
-
-    if (!found) {
-        m_notificationBar.data()->addTab(notification->applicationIcon(), notification->applicationName());
-    }
-
-    disconnect(notification, 0, this, 0);
-    connect(notification, SIGNAL(notificationDestroyed(SystemTray::Notification *)), this, SLOT(notificationDestroyed(SystemTray::Notification *)));
-
-    connect(notification, SIGNAL(expired(SystemTray::Notification *)), this, SLOT(notificationExpired(SystemTray::Notification *)));
-
-    if (notification->isRead()) {
-        extenderItem->setCollapsed(true);
-    }
-
-    return notificationWidget;
+    showPopup(m_autoHideTimeout);
 }
 
 void Applet::addJob(Job *job)
@@ -850,9 +721,7 @@ void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
         return;
     }
 
-    if (extenderItem->config().readEntry("type", "") == "notification") {
-        extenderItem->setWidget(new NotificationWidget(0, extenderItem));
-    } else if (extenderItem->config().readEntry("type", "") == "completedJob") {
+    if (extenderItem->config().readEntry("type", "") == "completedJob") {
         Plasma::Label *label = new Plasma::Label(extenderItem);
         label->nativeWidget()->setLineWidth(300);
         label->setMinimumWidth(300);
@@ -935,24 +804,6 @@ void Applet::clearAllCompletedJobs()
     }
 }
 
-
-void Applet::clearOldNotifications()
-{
-    s_manager->clearNotifications();
-
-    Plasma::ExtenderGroup *oldNotificationsGroup = extender()->group("oldNotificationsGroup");
-    if (!oldNotificationsGroup) {
-        return;
-    }
-
-    oldNotificationsGroup->config().deleteGroup();
-
-    foreach (Plasma::ExtenderItem *item, oldNotificationsGroup->items()) {
-        item->destroy();
-    }
-
-    oldNotificationsGroup->destroy();
-}
 
 void Applet::finishJob(SystemTray::Job *job)
 {

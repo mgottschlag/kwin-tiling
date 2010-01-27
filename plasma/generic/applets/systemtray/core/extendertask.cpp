@@ -61,6 +61,8 @@ ExtenderTaskBusyWidget::ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, cons
             this, SLOT(updateTask()));
     connect(manager, SIGNAL(notificationChanged(SystemTray::Notification*)),
             this, SLOT(updateTask()));
+    connect(manager, SIGNAL(notificationExpired(SystemTray::Notification*)),
+            this, SLOT(updateTask()));
     connect(manager, SIGNAL(jobAdded(SystemTray::Job*)),
             this, SLOT(updateTask()));
     connect(manager, SIGNAL(jobRemoved(SystemTray::Job*)),

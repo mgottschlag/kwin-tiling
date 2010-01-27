@@ -21,17 +21,12 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef NOTIFICATIONITEM_H
-#define NOTIFICATIONITEM_H
+#ifndef NOTIFICATIONWIDGET_H
+#define NOTIFICATIONWIDGET_H
 
 #include <QGraphicsWidget>
 
 #include "../core/notification.h"
-
-namespace Plasma
-{
-    class ExtenderItem;
-}
 
 class NotificationWidgetPrivate;
 
@@ -43,7 +38,7 @@ class NotificationWidget : public QGraphicsWidget
     Q_OBJECT
 
 public:
-    NotificationWidget(SystemTray::Notification *notification, Plasma::ExtenderItem *parent);
+    NotificationWidget(SystemTray::Notification *notification, QGraphicsItem *parent);
     ~NotificationWidget();
 
     void setAutoHide(bool autoHide);

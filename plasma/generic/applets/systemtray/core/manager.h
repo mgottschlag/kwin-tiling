@@ -141,6 +141,11 @@ signals:
     void notificationChanged(SystemTray::Notification *notification);
 
     /**
+     * The notification is expired and wants to hide itself
+     */
+    void notificationExpired(SystemTray::Notification *notification);
+
+    /**
      * Emitted when a notification has been removed
      **/
     void notificationRemoved(SystemTray::Notification *notification);
