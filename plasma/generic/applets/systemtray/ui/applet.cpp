@@ -52,6 +52,8 @@
 #include <Plasma/TabBar>
 #include <Plasma/Containment>
 #include <Plasma/Corona>
+#include <Plasma/Dialog>
+#include <Plasma/WindowEffects>
 
 #include "config.h"
 #ifdef HAVE_LIBXSS      // Idle detection.
@@ -66,6 +68,7 @@
 #include "jobwidget.h"
 #include "jobtotalswidget.h"
 #include "notificationscroller.h"
+#include "notificationstack.h"
 #include "taskarea.h"
 
 namespace SystemTray
@@ -88,7 +91,8 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
       m_taskArea(0),
       m_background(0),
       m_jobSummaryWidget(0),
-      m_timerId(0)
+      m_timerId(0),
+      m_notificationStack(0)
 {
     if (!s_manager) {
         s_manager = new SystemTray::Manager();
@@ -684,8 +688,25 @@ void Applet::addNotification(Notification *notification)
     //At this point we are sure the pointer is valid
     m_notificationScroller->addNotification(notification);
 
-    emit activate();
-    showPopup(m_autoHideTimeout);
+    if (!m_notificationStack) {
+        m_notificationStack = new NotificationStack(this);
+        if (containment() && containment()->corona()) {
+            containment()->corona()->addOffscreenWidget(m_notificationStack);
+        }
+        m_notificationStackDialog = new Plasma::Dialog;
+        m_notificationStackDialog->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
+        m_notificationStackDialog->setGraphicsWidget(m_notificationStack);
+        connect(m_notificationStack, SIGNAL(stackEmpty()), m_notificationStackDialog, SLOT(hide()));
+    }
+
+    m_notificationStack->addNotification(notification);
+    m_notificationStackDialog->syncToGraphicsWidget();
+
+    if (containment() && containment()->corona()) {
+        m_notificationStackDialog->move(containment()->corona()->popupPosition(this, m_notificationStackDialog->size()));
+        m_notificationStackDialog->show();
+        Plasma::WindowEffects::slideWindow(m_notificationStackDialog, location());
+    }
 }
 
 void Applet::addJob(Job *job)

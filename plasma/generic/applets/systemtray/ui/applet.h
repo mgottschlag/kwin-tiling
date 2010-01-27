@@ -34,6 +34,7 @@ namespace Plasma
 {
 class ExtenderItem;
 class TabBar;
+class Dialog;
 }
 
 class NotificationWidget;
@@ -47,6 +48,7 @@ class Manager;
 class Notification;
 class TaskArea;
 class NotificationScroller;
+class NotificationStack;
 
 class Applet : public Plasma::PopupApplet
 {
@@ -112,6 +114,8 @@ private:
     int m_timerId;
 
     NotificationScroller *m_notificationScroller;
+    NotificationStack *m_notificationStack;
+    Plasma::Dialog *m_notificationStackDialog;
 
     Ui::ProtocolsConfig m_notificationUi;
     Ui::AutoHideConfig m_autoHideUi;

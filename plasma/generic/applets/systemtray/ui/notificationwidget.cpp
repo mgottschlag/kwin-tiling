@@ -49,7 +49,7 @@ public:
     NotificationWidgetPrivate(NotificationWidget *q)
         : q(q),
           destroyOnClose(true),
-          autoHide(true),
+          autoDelete(false),
           image(0),
           actionsWidget(0),
           signalMapper(new QSignalMapper(q))
@@ -67,7 +67,7 @@ public:
 
     QWeakPointer<SystemTray::Notification> notification;
     bool destroyOnClose;
-    bool autoHide;
+    bool autoDelete;
 
     QString message;
     Plasma::Label *body;
@@ -103,7 +103,7 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, Q
     closeButton->setSvg("widgets/configuration-icons", "close");
     closeButton->setMaximumSize(closeButton->sizeFromIconSize(KIconLoader::SizeSmall));
     closeButton->setMinimumSize(closeButton->maximumSize());
-    connect(closeButton, SIGNAL(clicked()), this, SLOT(deleteLater()));
+    connect(closeButton, SIGNAL(clicked()), notification, SLOT(deleteLater()));
 
     d->mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
     d->labelLayout = new QGraphicsLinearLayout(Qt::Horizontal);
@@ -114,54 +114,43 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, Q
     d->labelLayout->addItem(d->body);
     d->mainLayout->addItem(d->labelLayout);
 
-    //This thould always be true now
-    if (notification) {
-        d->notification = notification;
 
-        connect(d->signalMapper, SIGNAL(mapped(const QString &)),
-                d->notification.data(), SLOT(triggerAction(const QString &)));
-        connect(notification, SIGNAL(changed()),
-                this, SLOT(updateNotification()));
-        connect(notification, SIGNAL(destroyed()),
-                this, SLOT(destroy()));
-       //TODO: rey out notification when expired
-        /*connect(notification, SIGNAL(expired()),
-                this, SLOT(destroy()));*/
+    d->notification = notification;
 
-        d->updateNotification();
-    }
+    connect(d->signalMapper, SIGNAL(mapped(const QString &)),
+            d->notification.data(), SLOT(triggerAction(const QString &)));
+    connect(notification, SIGNAL(changed()),
+            this, SLOT(updateNotification()));
+    connect(notification, SIGNAL(destroyed()),
+            this, SLOT(destroy()));
+
+    d->updateNotification();
 }
 
 NotificationWidget::~NotificationWidget()
 {
-    if (d->notification) {
-        // we were destroyed by the user, and the notification still exists
-        d->notification.data()->remove();
-    }
 
     delete d;
 }
 
-void NotificationWidget::setAutoHide(bool autoHide)
+void NotificationWidget::setAutoDelete(bool autoDelete)
 {
-    if (autoHide != d->autoHide) {
-        //TODO: this will destroy the notification in single mode, grey out in explore mode
-        /*
-        if (autoHide) {
+    if (autoDelete != d->autoDelete) {
+        if (autoDelete) {
             connect(d->notification.data(), SIGNAL(expired()),
                     this, SLOT(destroy()));
         } else {
             disconnect(d->notification.data(), SIGNAL(expired()),
                        this, SLOT(destroy()));
         }
-        */
-        d->autoHide = autoHide;
+
+        d->autoDelete = autoDelete;
     }
 }
 
-bool NotificationWidget::autoHide() const
+bool NotificationWidget::isAutoDelete() const
 {
-    return d->autoHide;
+    return d->autoDelete;
 }
 
 void NotificationWidgetPrivate::setTextFields(const QString &applicationName,

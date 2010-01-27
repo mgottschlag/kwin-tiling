@@ -41,8 +41,11 @@ public:
     NotificationWidget(SystemTray::Notification *notification, QGraphicsItem *parent);
     ~NotificationWidget();
 
-    void setAutoHide(bool autoHide);
-    bool autoHide() const;
+    /**
+     * Delete when the notification expires
+     */
+    void setAutoDelete(bool autoDelete);
+    bool isAutoDelete() const;
 
 private:
     NotificationWidgetPrivate* const d;

@@ -41,6 +41,7 @@ set(systemtray_SRCS
     ui/jobtotalswidget.cpp
     ui/jobwidget.cpp
     ui/notificationscroller.cpp
+    ui/notificationstack.cpp
     )
 
 kde4_add_ui_files(systemtray_SRCS
