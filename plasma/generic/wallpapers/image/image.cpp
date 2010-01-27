@@ -14,6 +14,8 @@
 
 #include <QPainter>
 #include <QFile>
+#include <QEasingCurve>
+#include <QPropertyAnimation>
 
 #include <KDirSelectDialog>
 #include <KDirWatch>
@@ -24,7 +26,6 @@
 #include <knewstuff3/downloaddialog.h>
 
 #include <Plasma/Theme>
-#include <Plasma/Animator>
 #include "backgroundlistmodel.h"
 #include "backgrounddelegate.h"
 #include "ksmserver_interface.h"
@@ -36,6 +37,8 @@ Image::Image(QObject *parent, const QVariantList &args)
       m_configWidget(0),
       m_wallpaperPackage(0),
       m_currentSlide(-1),
+      m_fadeValue(0),
+      m_animation(0),
       m_model(0),
       m_dialog(0),
       m_randomize(true),
@@ -50,6 +53,7 @@ Image::Image(QObject *parent, const QVariantList &args)
 
 Image::~Image()
 {
+    delete m_animation;
 }
 
 void Image::init(const KConfigGroup &config)
@@ -88,6 +92,12 @@ void Image::init(const KConfigGroup &config)
         actions.push_back(nextWallpaperAction);
         setContextualActions(actions);
     }
+
+    m_animation = new QPropertyAnimation(this, "fadeValue");
+    m_animation->setProperty("easingCurve", QEasingCurve::InQuad);
+    m_animation->setProperty("duration", 1000);
+    m_animation->setProperty("startValue", 0.0);
+    m_animation->setProperty("endValue", 1.0);
 }
 
 void Image::save(KConfigGroup &config)
@@ -624,7 +634,7 @@ void Image::updateBackground(const QImage &img)
     m_pixmap = QPixmap::fromImage(img);
 
     if (!m_oldPixmap.isNull()) {
-        Plasma::Animator::self()->customAnimation(254, 1000, Plasma::Animator::EaseInCurve, this, "updateFadedImage");
+        m_animation->start();
     } else {
         emit update(boundingRect());
     }
@@ -635,10 +645,17 @@ void Image::updateScreenshot(QPersistentModelIndex index)
     m_uiImage.m_view->update(index);
 }
 
-void Image::updateFadedImage(qreal frame)
+const qreal Image::fadeValue()
 {
+    return m_fadeValue;
+}
+
+void Image::setFadeValue(qreal value)
+{
+    m_fadeValue = value;
+
     //If we are done, delete the pixmaps and don't draw.
-    if (qFuzzyCompare(frame, qreal(1.0))) {
+    if (qFuzzyCompare(m_fadeValue, qreal(1.0))) {
         m_oldFadedPixmap = QPixmap();
         m_oldPixmap = QPixmap();
         emit update(boundingRect());
@@ -653,7 +670,7 @@ void Image::updateFadedImage(qreal frame)
     p.drawPixmap(0, 0, m_oldPixmap);
 
     p.setCompositionMode(QPainter::CompositionMode_DestinationIn);  
-    p.fillRect(m_oldFadedPixmap.rect(), QColor(0, 0, 0, 254 * (1-frame)));//255*((150 - frame)/150)));
+    p.fillRect(m_oldFadedPixmap.rect(), QColor(0, 0, 0, 254 * (1-m_fadeValue)));//255*((150 - m_fadeValue)/150)));
 
     p.end();
 

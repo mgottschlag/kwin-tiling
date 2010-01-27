@@ -21,6 +21,8 @@
 #include "ui_imageconfig.h"
 #include "ui_slideshowconfig.h"
 
+class QPropertyAnimation;
+
 class KFileDialog;
 class KJob;
 
@@ -33,6 +35,8 @@ class BackgroundListModel;
 class Image : public Plasma::Wallpaper
 {
     Q_OBJECT
+    Q_PROPERTY(qreal fadeValue READ fadeValue WRITE setFadeValue)
+
     public:
         Image(QObject* parent, const QVariantList& args);
         ~Image();
@@ -41,6 +45,7 @@ class Image : public Plasma::Wallpaper
         virtual void paint(QPainter* painter, const QRectF& exposedRect);
         virtual QWidget* createConfigurationInterface(QWidget* parent);
         void updateScreenshot(QPersistentModelIndex index);
+        const qreal fadeValue();
 
     signals:
         void settingsChanged(bool);
@@ -57,7 +62,7 @@ class Image : public Plasma::Wallpaper
         void nextSlide();
         void updateBackground(const QImage &img);
         void showFileDialog();
-        void updateFadedImage(qreal frame);
+        void setFadeValue(qreal value);
         void configWidgetDestroyed();
         void startSlideshow();
         void modified();
@@ -99,6 +104,8 @@ class Image : public Plasma::Wallpaper
         QPixmap m_oldPixmap;
         QPixmap m_oldFadedPixmap;
         int m_currentSlide;
+        qreal m_fadeValue;
+        QPropertyAnimation *m_animation;
         BackgroundListModel *m_model;
         KFileDialog *m_dialog;
         QSize m_size;
