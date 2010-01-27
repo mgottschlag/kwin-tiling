@@ -298,7 +298,7 @@ void Applet::syncNotificationBarNeeded()
             lay->addStretch();
             m_notificationBar = new Plasma::TabBar(widget);
             //arbitrary maximum size before enabling scroll arrows
-            m_notificationBar.data()->setMaximumWidth(400);
+            m_notificationBar.data()->nativeWidget()->setMaximumWidth(400);
             m_notificationBar.data()->nativeWidget()->setMaximumHeight(KIconLoader::SizeMedium);
             lay->addItem(m_notificationBar.data());
             lay->addStretch();
