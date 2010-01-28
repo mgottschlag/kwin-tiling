@@ -24,6 +24,7 @@
 #include <QGraphicsWidget>
 
 class QGraphicsLinearLayout;
+class QTimer;
 
 class NotificationWidget;
 
@@ -56,6 +57,7 @@ private:
     QGraphicsLinearLayout *m_mainLayout;
     int m_size;
     QWeakPointer<NotificationWidget> m_currentNotificationWidget;
+    QTimer *m_separatorTimer;
 };
 
 }

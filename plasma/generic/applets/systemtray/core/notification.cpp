@@ -158,7 +158,6 @@ void Notification::setTimeout(int timeout)
     }
 }
 
-
 QHash<QString, QString> Notification::actions() const
 {
     return d->actions;

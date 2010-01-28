@@ -44,6 +44,7 @@ public:
     QIcon applicationIcon() const;
     QString message() const;
     QString summary() const;
+    void setTimeout(int timeout);
     int timeout() const;
     QImage image() const;
 
@@ -81,7 +82,6 @@ protected:
     void setApplicationIcon(const QIcon &applicationIcon);
     void setMessage(const QString &message);
     void setSummary(const QString &summary);
-    void setTimeout(int timeout);
     void setImage(QImage image);
 
     void setActions(const QHash<QString, QString> &actions);

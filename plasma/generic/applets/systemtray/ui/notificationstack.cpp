@@ -22,9 +22,11 @@
 #include "../core/notification.h"
 #include "notificationwidget.h"
 
+#include <QGraphicsLinearLayout>
+#include <QTimer>
+
 #include <KDebug>
 
-#include <QGraphicsLinearLayout>
 
 namespace SystemTray
 {
@@ -34,6 +36,8 @@ NotificationStack::NotificationStack(QGraphicsItem *parent)
      m_size(3)
 {
     m_mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
+    m_separatorTimer = new QTimer(this);
+    m_separatorTimer->setSingleShot(true);
 }
 
 NotificationStack::~NotificationStack()
@@ -42,6 +46,12 @@ NotificationStack::~NotificationStack()
 
 void NotificationStack::addNotification(Notification *notification)
 {
+    //artificially enlarge the  timeout of notifications to be able to see at least a second of each one
+    if (m_separatorTimer->isActive()) {
+        notification->setTimeout(notification->timeout() + 1000);
+    }
+    m_separatorTimer->start(1000);
+
     connect(notification, SIGNAL(notificationDestroyed(SystemTray::Notification *)), this, SLOT(removeNotification(SystemTray::Notification *)));
     connect(notification, SIGNAL(expired(SystemTray::Notification *)), this, SLOT(removeNotification(SystemTray::Notification *)));
 
