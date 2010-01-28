@@ -42,6 +42,9 @@ public:
 
     void addNotification(SystemTray::Notification *notification);
 
+    //TODO:accessor
+    void setCurrentNotification(SystemTray::Notification *notification);
+
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
 

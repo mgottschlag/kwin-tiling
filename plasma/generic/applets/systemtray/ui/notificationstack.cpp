@@ -103,11 +103,26 @@ void NotificationStack::removeNotification(SystemTray::Notification *notificatio
     m_notificationWidgets.remove(notification);
     m_notifications.removeAll(notification);
 
+    if (m_notifications.count() > 0) {
+        setCurrentNotification(m_notifications.first());
+    }
+
     if (m_notifications.count() == 0) {
         emit stackEmpty();
     }
 
     resize(sizeHint(Qt::MinimumSize, QSizeF()));
+}
+
+void NotificationStack::setCurrentNotification(SystemTray::Notification *notification)
+{
+    if (m_notificationWidgets.contains(notification)) {
+        if (m_currentNotificationWidget) {
+            m_currentNotificationWidget.data()->setCollapsed(true);
+        }
+        m_currentNotificationWidget = m_notificationWidgets.value(notification);
+        m_currentNotificationWidget.data()->setCollapsed(false);
+    }
 }
 
 bool NotificationStack::eventFilter(QObject *watched, QEvent *event)
