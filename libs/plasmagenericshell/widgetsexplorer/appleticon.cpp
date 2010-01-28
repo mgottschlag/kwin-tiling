@@ -163,7 +163,7 @@ void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     QRectF textRect(rect.x(), iconRect.bottom() + 2, width, height - iconRect.height() - 2);
     painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
 
-    int flags = Qt::AlignTop | Qt::TextWordWrap;
+    int flags = Qt::AlignTop;// | Qt::TextWordWrap;
     QFontMetrics fm(font());
     if (fm.width(appletItem->name()) < textRect.width()) {
         flags |= Qt::AlignCenter;
