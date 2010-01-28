@@ -52,10 +52,25 @@ void NotificationStack::addNotification(Notification *notification)
     m_notifications.append(notification);
 
     if (m_notifications.size() > m_size) {
-        Notification *notif = m_notifications.first();
-        m_notificationWidgets[notif]->deleteLater();
-        m_notificationWidgets.remove(notif);
-        m_notifications.pop_front();
+        bool found = false;
+
+        //try to kill the oldest notification of the same app
+        foreach (Notification *notif, m_notifications) {
+            if (notif->applicationName() == notification->applicationName()) {
+                m_notificationWidgets[notif]->deleteLater();
+                m_notificationWidgets.remove(notif);
+                m_notifications.removeAll(notif);
+                found = true;
+                break;
+            }
+        }
+        //or kill the oldest one
+        if (!found) {
+            Notification *notif = m_notifications.first();
+            m_notificationWidgets[notif]->deleteLater();
+            m_notificationWidgets.remove(notif);
+            m_notifications.pop_front();
+        }
     }
 
     m_mainLayout->insertItem(0, notificationWidget);
