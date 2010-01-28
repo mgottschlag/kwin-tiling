@@ -52,6 +52,7 @@ private:
     QHash<Notification *, NotificationWidget *> m_notificationWidgets;
     QGraphicsLinearLayout *m_mainLayout;
     int m_size;
+    int m_currentIndex;
 };
 
 }

@@ -31,7 +31,8 @@ namespace SystemTray
 
 NotificationStack::NotificationStack(QGraphicsItem *parent)
    : QGraphicsWidget(parent),
-     m_size(3)
+     m_size(3),
+     m_currentIndex(0)
 {
     m_mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
 }
@@ -50,6 +51,12 @@ void NotificationStack::addNotification(Notification *notification)
 
     m_notificationWidgets[notification] = notificationWidget;
     m_notifications.append(notification);
+
+    if (m_notifications.size() > 1) {
+        //notificationWidget->setCollapsed(true);
+    } else {
+        m_currentIndex = 0;
+    }
 
     if (m_notifications.size() > m_size) {
         bool found = false;

@@ -50,6 +50,7 @@ public:
         : q(q),
           destroyOnClose(true),
           autoDelete(false),
+          collapsed(false),
           image(0),
           actionsWidget(0),
           signalMapper(new QSignalMapper(q))
@@ -68,12 +69,14 @@ public:
     QWeakPointer<SystemTray::Notification> notification;
     bool destroyOnClose;
     bool autoDelete;
+    bool collapsed;
 
     QString message;
     Plasma::Label *body;
     Plasma::Label *image;
     Plasma::Label *title;
     Plasma::IconWidget *icon;
+    QGraphicsLinearLayout *titleLayout;
     QGraphicsLinearLayout *mainLayout;
     QGraphicsLinearLayout *labelLayout;
     QGraphicsWidget *actionsWidget;
@@ -91,15 +94,15 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, Q
     setPreferredWidth(400);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    QGraphicsLinearLayout *titleLayout = new QGraphicsLinearLayout(Qt::Horizontal);
+    d->titleLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     d->icon = new Plasma::IconWidget(this);
     d->icon->setMaximumSize(d->icon->sizeFromIconSize(KIconLoader::SizeSmall));
     d->icon->setMinimumSize(d->icon->maximumSize());
     d->title = new Plasma::Label(this);
     Plasma::IconWidget *closeButton = new Plasma::IconWidget(this);
-    titleLayout->addItem(d->icon);
-    titleLayout->addItem(d->title);
-    titleLayout->addItem(closeButton);
+    d->titleLayout->addItem(d->icon);
+    d->titleLayout->addItem(d->title);
+    d->titleLayout->addItem(closeButton);
     closeButton->setSvg("widgets/configuration-icons", "close");
     closeButton->setMaximumSize(closeButton->sizeFromIconSize(KIconLoader::SizeSmall));
     closeButton->setMinimumSize(closeButton->maximumSize());
@@ -110,7 +113,7 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, Q
     d->body = new Plasma::Label(this);
     d->body->nativeWidget()->setTextFormat(Qt::RichText);
 
-    d->mainLayout->addItem(titleLayout);
+    d->mainLayout->addItem(d->titleLayout);
     d->labelLayout->addItem(d->body);
     d->mainLayout->addItem(d->labelLayout);
 
@@ -151,6 +154,37 @@ void NotificationWidget::setAutoDelete(bool autoDelete)
 bool NotificationWidget::isAutoDelete() const
 {
     return d->autoDelete;
+}
+
+void NotificationWidget::setCollapsed(bool collapse)
+{
+    if (collapse == d->collapsed) {
+        return;
+    }
+
+    //use this weird way to make easy to animate
+    if (collapse) {
+        setFlag(QGraphicsItem::ItemClipsToShape);
+        setMaximumHeight(d->titleLayout->geometry().bottom());
+        d->body->hide();
+        if (d->image) {
+            d->image->hide();
+        }
+    } else {
+        setFlag(QGraphicsItem::ItemClipsToShape, false);
+        setMaximumHeight(QWIDGETSIZE_MAX);
+        d->body->show();
+        if (d->image) {
+            d->image->show();
+        }
+    }
+
+    d->collapsed = collapse;
+}
+
+bool NotificationWidget::isCollapsed() const
+{
+    return d->collapsed;
 }
 
 void NotificationWidgetPrivate::setTextFields(const QString &applicationName,

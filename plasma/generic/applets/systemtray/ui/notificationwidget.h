@@ -47,6 +47,9 @@ public:
     void setAutoDelete(bool autoDelete);
     bool isAutoDelete() const;
 
+    void setCollapsed(bool collapse);
+    bool isCollapsed() const;
+
 private:
     NotificationWidgetPrivate* const d;
 
