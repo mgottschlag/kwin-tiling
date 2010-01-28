@@ -46,6 +46,8 @@ public:
     void setCurrentNotification(SystemTray::Notification *notification);
 
 protected:
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
 
 public Q_SLOTS:
@@ -64,6 +66,7 @@ private:
     QHash<Notification *, NotificationWidget *> m_notificationWidgets;
     QGraphicsLinearLayout *m_mainLayout;
     int m_size;
+    bool m_underMouse;
     QWeakPointer<NotificationWidget> m_currentNotificationWidget;
     QTimer *m_delayedRemoveTimer;
 };

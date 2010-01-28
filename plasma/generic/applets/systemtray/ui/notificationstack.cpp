@@ -33,12 +33,14 @@ namespace SystemTray
 
 NotificationStack::NotificationStack(QGraphicsItem *parent)
    : QGraphicsWidget(parent),
-     m_size(3)
+     m_size(3),
+     m_underMouse(false)
 {
     m_mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
     m_delayedRemoveTimer = new QTimer(this);
     m_delayedRemoveTimer->setSingleShot(true);
     connect(m_delayedRemoveTimer, SIGNAL(timeout()), this, SLOT(popNotification()));
+    setAcceptsHoverEvents(true);
 }
 
 NotificationStack::~NotificationStack()
@@ -115,7 +117,9 @@ void NotificationStack::removeNotification(SystemTray::Notification *notificatio
 void NotificationStack::delayedRemoveNotification(SystemTray::Notification *notification)
 {
     m_notificationsToRemove.append(notification);
-    m_delayedRemoveTimer->start(1000);
+    if (!m_underMouse) {
+        m_delayedRemoveTimer->start(1000);
+    }
 }
 
 void NotificationStack::setCurrentNotification(SystemTray::Notification *notification)
@@ -127,6 +131,22 @@ void NotificationStack::setCurrentNotification(SystemTray::Notification *notific
         m_currentNotificationWidget = m_notificationWidgets.value(notification);
         m_currentNotificationWidget.data()->setCollapsed(false);
     }
+}
+
+void NotificationStack::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event)
+
+    m_underMouse = true;
+    m_delayedRemoveTimer->stop();
+}
+
+void NotificationStack::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event)
+
+    m_underMouse = false;
+    m_delayedRemoveTimer->start(1000);
 }
 
 bool NotificationStack::eventFilter(QObject *watched, QEvent *event)
