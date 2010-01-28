@@ -27,6 +27,8 @@
 
 #include <KDebug>
 
+#include <Plasma/FrameSvg>
+#include <Plasma/Dialog>
 
 namespace SystemTray
 {
@@ -36,6 +38,12 @@ NotificationStack::NotificationStack(QGraphicsItem *parent)
      m_size(3),
      m_underMouse(false)
 {
+    m_background = new Plasma::FrameSvg(this);
+    m_background->setImagePath("widgets/extender-background");
+    qreal left, top, right, bottom;
+    m_background->getMargins(left, top, right, bottom);
+    setContentsMargins(left, top, right, bottom);
+
     m_mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
     m_delayedRemoveTimer = new QTimer(this);
     m_delayedRemoveTimer->setSingleShot(true);
@@ -149,8 +157,61 @@ void NotificationStack::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     m_delayedRemoveTimer->start(1000);
 }
 
+void NotificationStack::paint(QPainter *painter,
+                              const QStyleOptionGraphicsItem *option,
+                              QWidget *widget)
+{
+    if (!m_currentNotificationWidget) {
+        return;
+    }
+
+    for (int i = 0; i < m_mainLayout->count(); ++i) {
+        //assumption++ all items are NotificationWidget
+        NotificationWidget *nw = static_cast<NotificationWidget *>(m_mainLayout->itemAt(i));
+
+        //first element
+        if (i == 0 && m_currentNotificationWidget.data() != nw) {
+            continue;
+        } else if (i == 0) {
+            m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)(Plasma::FrameSvg::AllBorders&~Plasma::FrameSvg::TopBorder));
+        //last element
+        } else if (i == m_mainLayout->count()-1 && m_currentNotificationWidget.data() != nw) {
+            continue;
+        } else if (i == m_mainLayout->count()-1) {
+            m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)Plasma::FrameSvg::AllBorders&~Plasma::FrameSvg::BottomBorder);
+        //element under the active one
+        } else if (m_currentNotificationWidget.data()->pos().y() < nw->pos().y()) {
+            m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)Plasma::FrameSvg::AllBorders^Plasma::FrameSvg::TopBorder);
+        //element over the active one
+        } else if (m_currentNotificationWidget.data()->pos().y() > nw->pos().y()) {
+            m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)Plasma::FrameSvg::AllBorders^Plasma::FrameSvg::BottomBorder);
+        //active element
+        } else {
+            m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+        }
+
+        qreal left, top, right, bottom;
+        m_background->getMargins(left, top, right, bottom);
+        m_background->resizeFrame(QSizeF(size().width(), nw->size().height() + top+bottom));
+
+        m_background->paintFrame(painter, QPointF(0, nw->pos().y() - top));
+    }
+}
+
 bool NotificationStack::eventFilter(QObject *watched, QEvent *event)
 {
+    //FIXME: shouldn't be there :)
+    Plasma::Dialog *dialog = qobject_cast<Plasma::Dialog *>(watched);
+    if (dialog) {
+        if (event->type() == QEvent::ContentsRectChange) {
+            int left, top, right, bottom;
+            dialog->getContentsMargins(&left, &top, &right, &bottom);
+            left = 0;
+            right = 0;
+            dialog->setContentsMargins(left, top, right, bottom);
+        }
+    }
+
     NotificationWidget *nw = qobject_cast<NotificationWidget *>(watched);
 
     if (!nw) {
@@ -163,6 +224,8 @@ bool NotificationStack::eventFilter(QObject *watched, QEvent *event)
         }
         nw->setCollapsed(false);
         m_currentNotificationWidget = nw;
+    } else if (event->type() == QEvent::GraphicsSceneMove) {
+        update();
     }
 
     return false;
