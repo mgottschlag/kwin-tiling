@@ -1541,6 +1541,8 @@ void CFontListView::setFilterGroup(CGroupListItem *grp)
             itsModel->refresh(!grp || !grp->isPersonal(),
                               !grp || !grp->isSystem());
     }
+    // when switching groups, for some reason it is not always sorted.
+    setSortingEnabled(true);
 }
 
 void CFontListView::listingPercent(int percent)
