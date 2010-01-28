@@ -47,7 +47,9 @@
 #include "scripting/scriptengine.h"
 
 DesktopCorona::DesktopCorona(QObject *parent)
-    : Plasma::Corona(parent)
+    : Plasma::Corona(parent),
+      m_addPanelAction(0),
+      m_addPanelsMenu(0)
 {
     init();
 }
@@ -74,32 +76,19 @@ void DesktopCorona::init()
     setContainmentActionsDefaults(Plasma::Containment::PanelContainment, panelPlugins);
     setContainmentActionsDefaults(Plasma::Containment::CustomPanelContainment, panelPlugins);
 
-    //FIXME what if it's a panel? what if it's a customcontainment?
     KPluginInfo::List panelContainmentPlugins = Plasma::Containment::listContainmentsOfType("panel");
-
     if (panelContainmentPlugins.size() == 1) {
         m_addPanelAction = new QAction(i18n("Add Panel"), this);
         m_addPanelAction->setData(Plasma::AbstractToolBox::AddTool);
         connect(m_addPanelAction, SIGNAL(triggered(bool)), this, SLOT(addPanel()));
     } else if (!panelContainmentPlugins.isEmpty()) {
-        m_addPanelsMenu = new QMenu();
+        m_addPanelsMenu = new QMenu;
         m_addPanelAction = m_addPanelsMenu->menuAction();
         m_addPanelAction->setText(i18n("Add Panel"));
         m_addPanelAction->setData(Plasma::AbstractToolBox::AddTool);
-
-        QSignalMapper *mapper = new QSignalMapper(this);
-        connect(mapper, SIGNAL(mapped(QString)), this, SLOT(addPanel(QString)));
-
-        foreach (const KPluginInfo &plugin, panelContainmentPlugins) {
-            QAction *action = new QAction(plugin.name(), this);
-            if (!plugin.icon().isEmpty()) {
-                action->setIcon(KIcon(plugin.icon()));
-            }
-
-            mapper->setMapping(action, plugin.pluginName());
-            connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
-            m_addPanelsMenu->addAction(action);
-        }
+        kDebug() << "populateAddPanelsMenu" << panelContainmentPlugins.count();
+        connect(m_addPanelsMenu, SIGNAL(aboutToShow()), this, SLOT(populateAddPanelsMenu()));
+        connect(m_addPanelsMenu, SIGNAL(triggered(QAction*)), this, SLOT(addPanel(QAction*)));
     }
 
     if (m_addPanelAction) {
@@ -461,12 +450,35 @@ void DesktopCorona::screenAdded(Kephal::Screen *s)
     checkScreen(s->id(), true);
 }
 
+void DesktopCorona::populateAddPanelsMenu()
+{
+    m_addPanelsMenu->clear();
+
+    KPluginInfo::List panelContainmentPlugins = Plasma::Containment::listContainmentsOfType("panel");
+    foreach (const KPluginInfo &plugin, panelContainmentPlugins) {
+        QAction *action = m_addPanelsMenu->addAction(plugin.name());
+        if (!plugin.icon().isEmpty()) {
+            action->setIcon(KIcon(plugin.icon()));
+        }
+
+        action->setData(plugin.pluginName());
+    }
+}
+
 void DesktopCorona::addPanel()
 {
     KPluginInfo::List panelPlugins = Plasma::Containment::listContainmentsOfType("panel");
 
     if (!panelPlugins.isEmpty()) {
         addPanel(panelPlugins.first().pluginName());
+    }
+}
+
+void DesktopCorona::addPanel(QAction *action)
+{
+    const QString plugin = action->data().toString();
+    if (!plugin.isEmpty()) {
+        addPanel(plugin);
     }
 }
 

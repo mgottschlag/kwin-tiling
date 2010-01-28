@@ -77,7 +77,9 @@ public:
 
 public Q_SLOTS:
     void addPanel();
+    void addPanel(QAction *action);
     void addPanel(const QString &plugin);
+    void populateAddPanelsMenu();
 
 protected Q_SLOTS:
     void evaluateScripts(QMap<QString, QString> scripts);
