@@ -1,0 +1,44 @@
+Notifications visualization
+===========================
+
+Overview
+--------
+Plasma-desktop offers facilities to display the visual notifications confirming to the Freedesktop's notification specification, this document describes the component used to achieve the visualization in the most informative, while less distracting way.
+
+Components
+----------
+* Notification dataengine: this exposes the org.freedesktop.Notifications interface, collecting notifications arriving from all applications, in a cross-desktop fashion.
+   As all dataengines, it organizes the notification datafields in a Plasma::Dataengine::Data structure
+* Systemtray widget: (TODO: move out of systray) the widget connects to the Notifications dataengine and provides a proper visualization for the arriving notifications, . An important distinction is done between the "alert" aspect of them and a pure informative one, providing two different user interfaces for them.
+
+Visualization components
+------------------------
+
+Alert
+
+As soon as notifications arrive, they are placed in the NotificationStack widget: it is an automatic popup, so in order to disturb the user workflow as less as possible, the size is kept fairly small, limiting the maximum nuber of notification displayed. For the same reason ony one notification at a time is displayed: the oldest (newest?) one, with the others partially covered, but permitting to still see the title.
+Moving the mouse over the title of the semi-hidden notifications will show them completely.
+When a new notification arrives it is added in the NotificationStack with the following strategy:
+* Let MAX be the maximum number of allowed notifications, usually 3
+* If the current displayed notifications is less than MAX place the new notification partially covered in the last position
+* If MAX notifications are already there
+  * If there i at least one notification of the same application remove it (or the oldest if more than one)
+  * Elese remove the oldest notification from the stack
+* Place the new notification partially covered in the last position
+
+
+Information
+
+If the user missed some notification, it's possible to view the old ones by manually invoking a different ui by hitting the "i" button.
+The notifications are contained in a widget called NotificationScroller, that appears as a popup window. A tabbar lets the user filter the notifications by the sender application (useful for instance if the user is looking for informations about completition of an old running file tranfer or battery warning notices).
+Notifications are in a scrolling view that permits a fairly large amount of those to be displayed without using too much screen space.
+It features also the the following behaviour:
+* If a new notification arrives the current status of the widget is not changed, to not interrupt the user workflow. (current selected tab and scrollbar value)
+* If the user manually dismisses a notification, bot there and in the NotificationStack it goes away both in the NotificationStack and in the NotificationScroller
+
+
+Notifications and jobs
+----------------------
+
+TODO
+
