@@ -144,18 +144,22 @@ void Notification::setImage(QImage image)
 
 void Notification::setTimeout(int timeout)
 {
-    d->timeout = timeout;
     //keep it available for 30 minutes
     d->deleteTimer->start(30*60*1000);
 
-    if (timeout) {
-        if (!d->hideTimer) {
-            d->hideTimer = new QTimer(this);
-            d->hideTimer->setSingleShot(true);
-            connect(d->hideTimer, SIGNAL(timeout()), this, SLOT(hide()));
-        }
-        d->hideTimer->start(d->timeout);
+    //show them at most 30 seconds
+    if (!timeout) {
+        d->timeout = 30 * 1000;
+    } else {
+        d->timeout = timeout;
     }
+
+    if (!d->hideTimer) {
+        d->hideTimer = new QTimer(this);
+        d->hideTimer->setSingleShot(true);
+        connect(d->hideTimer, SIGNAL(timeout()), this, SLOT(hide()));
+    }
+    d->hideTimer->start(d->timeout);
 }
 
 QHash<QString, QString> Notification::actions() const
