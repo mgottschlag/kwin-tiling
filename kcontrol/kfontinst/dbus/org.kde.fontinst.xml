@@ -27,9 +27,6 @@
       <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="const KFI::Families &amp;"/>
       <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="const KFI::Families &amp;"/>
     </signal>
-    <method name="ping">
-      <arg type="i" direction="out"/>
-    </method>
     <method name="list">
       <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QList&lt;KFI::Families&gt;"/>
       <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="QList&lt;KFI::Families&gt;"/>
@@ -50,7 +47,6 @@
       <arg name="createAfm" type="b" direction="in"/>
       <arg name="toSystem" type="b" direction="in"/>
       <arg name="pid" type="i" direction="in"/>
-      <arg name="xid" type="u" direction="in"/>
       <arg name="checkConfig" type="b" direction="in"/>
       <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
     </method>
@@ -59,7 +55,6 @@
       <arg name="style" type="u" direction="in"/>
       <arg name="fromSystem" type="b" direction="in"/>
       <arg name="pid" type="i" direction="in"/>
-      <arg name="xid" type="u" direction="in"/>
       <arg name="checkConfig" type="b" direction="in"/>
       <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
     </method>
@@ -67,7 +62,6 @@
       <arg name="name" type="s" direction="in"/>
       <arg name="fromSystem" type="b" direction="in"/>
       <arg name="pid" type="i" direction="in"/>
-      <arg name="xid" type="u" direction="in"/>
       <arg name="checkConfig" type="b" direction="in"/>
       <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
     </method>
@@ -76,19 +70,7 @@
       <arg name="style" type="u" direction="in"/>
       <arg name="toSystem" type="b" direction="in"/>
       <arg name="pid" type="i" direction="in"/>
-      <arg name="xid" type="u" direction="in"/>
       <arg name="checkConfig" type="b" direction="in"/>
-      <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
-    </method>
-    <method name="move">
-      <arg name="families" type="(ba(sa(utba(ssi))))" direction="in"/>
-      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="const KFI::Families &amp;"/>
-      <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="const KFI::Families &amp;"/>
-      <arg name="dest" type="s" direction="in"/>
-      <arg name="toSystem" type="b" direction="in"/>
-      <arg name="uid" type="i" direction="in"/>
-      <arg name="gid" type="i" direction="in"/>
-      <arg name="pid" type="i" direction="in"/>
       <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
     </method>
     <method name="enable">
@@ -96,7 +78,6 @@
       <arg name="style" type="u" direction="in"/>
       <arg name="inSystem" type="b" direction="in"/>
       <arg name="pid" type="i" direction="in"/>
-      <arg name="xid" type="u" direction="in"/>
       <arg name="checkConfig" type="b" direction="in"/>
       <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
     </method>
@@ -105,7 +86,6 @@
       <arg name="style" type="u" direction="in"/>
       <arg name="inSystem" type="b" direction="in"/>
       <arg name="pid" type="i" direction="in"/>
-      <arg name="xid" type="u" direction="in"/>
       <arg name="checkConfig" type="b" direction="in"/>
       <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
     </method>
@@ -115,7 +95,6 @@
       <arg name="file" type="s" direction="in"/>
       <arg name="fromSystem" type="b" direction="in"/>
       <arg name="pid" type="i" direction="in"/>
-      <arg name="xid" type="u" direction="in"/>
       <arg name="checkConfig" type="b" direction="in"/>
       <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
     </method>

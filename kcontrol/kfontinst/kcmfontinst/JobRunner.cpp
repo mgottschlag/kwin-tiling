@@ -360,29 +360,29 @@ void CJobRunner::doNext()
                     bool createAfm=Item::TYPE1_PFM==(*itsIt).type && 
                                    (itsPrev==itsEnd || (*itsIt).fileName!=(*itsPrev).fileName || Item::TYPE1_AFM!=(*itsPrev).type);
  
-                    dbus()->install(itsCurrentFile, createAfm, itsDestIsSystem, getpid(), (unsigned int)window()->winId(), false);
+                    dbus()->install(itsCurrentFile, createAfm, itsDestIsSystem, getpid(), false);
                 }
                 break;
             }
             case CMD_DELETE:
                 decode(*itsIt, font, system);
-                dbus()->uninstall(font.family, font.styleInfo, system, getpid(), (unsigned int)window()->winId(), false);
+                dbus()->uninstall(font.family, font.styleInfo, system, getpid(), false);
                 break;
             case CMD_ENABLE:
                 decode(*itsIt, font, system);
-                dbus()->enable(font.family, font.styleInfo, system, getpid(), (unsigned int)window()->winId(), false);
+                dbus()->enable(font.family, font.styleInfo, system, getpid(), false);
                 break;
             case CMD_DISABLE:
                 decode(*itsIt, font, system);
-                dbus()->disable(font.family, font.styleInfo, system, getpid(), (unsigned int)window()->winId(), false);
+                dbus()->disable(font.family, font.styleInfo, system, getpid(), false);
                 break;
             case CMD_MOVE:
                 decode(*itsIt, font, system);
-                dbus()->move(font.family, font.styleInfo, itsDestIsSystem, getpid(), (unsigned int)window()->winId(), false);
+                dbus()->move(font.family, font.styleInfo, itsDestIsSystem, getpid(), false);
                 break;
             case CMD_REMOVE_FILE:
                 decode(*itsIt, font, system);
-                dbus()->removeFile(font.family, font.styleInfo, (*itsIt).fileName, system, getpid(), (unsigned int)window()->winId(), false);
+                dbus()->removeFile(font.family, font.styleInfo, (*itsIt).fileName, system, getpid(), false);
                 break;
             default:
                 break;

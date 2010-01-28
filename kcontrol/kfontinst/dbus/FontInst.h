@@ -38,14 +38,6 @@
 
 class QTimer;
 
-struct Wibble
-{
-    QString a;
-    QString b;
-};
-
-Q_DECLARE_METATYPE(Wibble)
-
 namespace KFI
 {
 
@@ -65,11 +57,6 @@ class KFONTINST_EXPORT FontInst : public QObject
         STATUS_NOT_FONT_FILE,
         STATUS_PARTIAL_DELETE,
         STATUS_NO_SYS_CONNECTION
-    };
-
-    enum EPingStatus
-    {
-        PING_STATUS_ALIVE = 1
     };
     
     enum EFolder
@@ -98,29 +85,34 @@ class KFONTINST_EXPORT FontInst : public QObject
 
     static bool isStarted(OrgKdeFontinstInterface *iface)
     {
-        int status=iface->ping();
-        printf("STATUS:%d\n", status);
-        return PING_STATUS_ALIVE==status;
-    }
+        QDBusReply<QStringList> reply=iface->connection().interface()->registeredServiceNames();
+        if(reply.isValid())
+        {
+            QStringList services(reply.value());
+            QStringList::ConstIterator it(services.begin()),
+                                       end(services.end());
+            for(; it!=end; ++it)
+                if((*it)==OrgKdeFontinstInterface::staticInterfaceName())
+                    return true;
+        }
+        return false;
+    } 
     
-    FontInst(bool onSystemBus);
+    FontInst();
     ~FontInst();
 
     public Q_SLOTS:
 
-    Q_SCRIPTABLE int  ping();
     Q_NOREPLY    void list(int folders, int pid);
     Q_NOREPLY    void stat(const QString &font, int folders, int pid);
-    Q_NOREPLY    void install(const QString &file, bool createAfm, bool toSystem, int pid, unsigned int xid, bool checkConfig);
-    Q_NOREPLY    void uninstall(const QString &family, quint32 style, bool fromSystem, int pid, unsigned int xid,
-                                bool checkConfig);
-    Q_NOREPLY    void uninstall(const QString &name, bool fromSystem, int pid, unsigned int xid, bool checkConfig);
-    Q_NOREPLY    void move(const QString &family, quint32 style, bool toSystem, int pid, unsigned int xid, bool checkConfig);
-    Q_NOREPLY    void move(const KFI::Families &families, const QString &dest, bool toSystem, int uid, int gid, int pid);
-    Q_NOREPLY    void enable(const QString &family, quint32 style, bool inSystem, int pid, unsigned int xid, bool checkConfig);
-    Q_NOREPLY    void disable(const QString &family, quint32 style, bool inSystem, int pid, unsigned int xid, bool checkConfig);
+    Q_NOREPLY    void install(const QString &file, bool createAfm, bool toSystem, int pid, bool checkConfig);
+    Q_NOREPLY    void uninstall(const QString &family, quint32 style, bool fromSystem, int pid, bool checkConfig);
+    Q_NOREPLY    void uninstall(const QString &name, bool fromSystem, int pid, bool checkConfig);
+    Q_NOREPLY    void move(const QString &family, quint32 style, bool toSystem, int pid, bool checkConfig);
+    Q_NOREPLY    void enable(const QString &family, quint32 style, bool inSystem, int pid, bool checkConfig);
+    Q_NOREPLY    void disable(const QString &family, quint32 style, bool inSystem, int pid, bool checkConfig);
     Q_NOREPLY    void removeFile(const QString &family, quint32 style, const QString &file, bool fromSystem, int pid,
-                                 unsigned int xid, bool checkConfig);
+                                 bool checkConfig);
     Q_NOREPLY    void reconfigure(int pid);
     Q_SCRIPTABLE void saveDisabled();
 
@@ -136,20 +128,12 @@ class KFONTINST_EXPORT FontInst : public QObject
 
     void connectionsTimeout();
     void fontListTimeout();
-    void systemStatus(int pid, int value);
-    void systemFontsAdded(const KFI::Families &families);
-    void systemFontsRemoved(const KFI::Families &families);
-    void systemServiceOwnerChanged(const QString &name, const QString &from, const QString &to);
 
     private:
 
     void updateFontList(bool emitChanges=true);
-    void toggle(bool enable, const QString &family, quint32 style, bool inSystem, int pid, unsigned int xid, bool checkConfig);
+    void toggle(bool enable, const QString &family, quint32 style, bool inSystem, int pid, bool checkConfig);
     void addModifedSysFolders(const Family &family);
-    bool authenticate(int pid, unsigned int xid);
-    bool isAuthenticated(int pid);
-    bool openSystemConnection(int pid);
-    void closeSystemConnection();
     void checkConnections();
     bool findFontReal(const QString &family, const QString &style, EFolder folder,
                       FamilyCont::ConstIterator &fam, StyleCont::ConstIterator &st);
@@ -161,18 +145,15 @@ class KFONTINST_EXPORT FontInst : public QObject
     bool findFont(const QString &family, quint32 style, EFolder folder,
                   FamilyCont::ConstIterator &fam, StyleCont::ConstIterator &st,
                   bool updateList=true);
-    int checkWriteAction(const QString &family, quint32 style, EFolder folder,
-                         FamilyCont::ConstIterator &fam, StyleCont::ConstIterator &st);
+    int performAction(const QVariantMap &args);
 
     static void emergencySave(int sig);
 
     private:
 
-    OrgKdeFontinstInterface *itsSystemInterface;
-    QTimer                  *itsConnectionsTimer,
-                            *itsFontListTimer;
-    QSet<int>               itsConnections;
-    QList<int>              itsSystemActivePids;
+    QTimer    *itsConnectionsTimer,
+              *itsFontListTimer;
+    QSet<int> itsConnections;
 };
 
 }

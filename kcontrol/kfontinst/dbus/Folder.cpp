@@ -117,6 +117,7 @@ void Folder::loadDisabled()
 
     QFile f(itsDisabledCfg.name);
 
+    KFI_DBUG << itsDisabledCfg.name;
     itsDisabledCfg.dirty=false;
     if(f.open(QIODevice::ReadOnly))
     {
@@ -161,7 +162,10 @@ void Folder::loadDisabled()
                                         if(!file.path().isEmpty())
                                             files.append(file);
                                         else
+                                        {
+                                            KFI_DBUG << "Set dirty from load";
                                             itsDisabledCfg.dirty=true;
+                                        }
                                     }
                                 }
                             }
@@ -193,29 +197,38 @@ void Folder::saveDisabled()
 {
     if(itsDisabledCfg.dirty)
     {
-        KFI_DBUG << itsDisabledCfg.name;
+        if(!itsIsSystem || Misc::root())
+        {
+            KFI_DBUG << itsDisabledCfg.name;
 
-        KSaveFile file;
+            KSaveFile file;
 
-        file.setFileName(itsDisabledCfg.name);
+            file.setFileName(itsDisabledCfg.name);
 
-        if(!file.open())
-            qApp->exit(0);
+            if(!file.open())
+            {
+                KFI_DBUG << "Exit - cant open save file";
+                qApp->exit(0);
+            }
 
-        QTextStream str(&file);
+            QTextStream str(&file);
 
-        str << "<"DISABLED_FONTS">" << endl;
+            str << "<"DISABLED_FONTS">" << endl;
 
-        FamilyCont::ConstIterator it(itsFonts.begin()),
-                                  end(itsFonts.end());
+            FamilyCont::ConstIterator it(itsFonts.begin()),
+                                      end(itsFonts.end());
 
-        for(; it!=end; ++it)
-            (*it).toXml(true, str);
-        str << "</"DISABLED_FONTS">" << endl;
-        str.flush();
+            for(; it!=end; ++it)
+                (*it).toXml(true, str);
+            str << "</"DISABLED_FONTS">" << endl;
+            str.flush();
 
-        if(!file.finalize())
-            qApp->exit(0);
+            if(!file.finalize())
+            {
+                KFI_DBUG << "Exit - cant finalize save file";
+                qApp->exit(0);
+            }
+        }
         itsDisabledCfg.updateTimeStamp();
         itsDisabledCfg.dirty=false;
     }

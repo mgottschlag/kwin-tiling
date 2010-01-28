@@ -1,4 +1,4 @@
-if (X11_Xft_FOUND AND POLKITQT_FOUND)
+if (X11_Xft_FOUND)
     configure_file(config-fontinst.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-fontinst.h)
     include_directories(
         ${KDE4_INCLUDES}
@@ -34,6 +34,6 @@ if (X11_Xft_FOUND AND POLKITQT_FOUND)
 
     kde4_install_icons( ${ICON_INSTALL_DIR} )
 
-endif (X11_Xft_FOUND AND POLKITQT_FOUND)
+endif (X11_Xft_FOUND)
 
 macro_log_feature(X11_Xft_FOUND "libxft" "X FreeType interface library" "http://www.x.org" FALSE "" "Font installer and font previews")

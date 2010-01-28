@@ -37,24 +37,24 @@ public:
     ~OrgKdeFontinstInterface();
 
 public Q_SLOTS: // METHODS
-    inline Q_NOREPLY void disable(const QString &family, uint style, bool inSystem, int pid, uint xid, bool checkConfig)
+    inline Q_NOREPLY void disable(const QString &family, uint style, bool inSystem, int pid, bool checkConfig)
     {
         QList<QVariant> argumentList;
-        argumentList << qVariantFromValue(family) << qVariantFromValue(style) << qVariantFromValue(inSystem) << qVariantFromValue(pid) << qVariantFromValue(xid) << qVariantFromValue(checkConfig);
+        argumentList << qVariantFromValue(family) << qVariantFromValue(style) << qVariantFromValue(inSystem) << qVariantFromValue(pid) << qVariantFromValue(checkConfig);
         callWithArgumentList(QDBus::NoBlock, QLatin1String("disable"), argumentList);
     }
 
-    inline Q_NOREPLY void enable(const QString &family, uint style, bool inSystem, int pid, uint xid, bool checkConfig)
+    inline Q_NOREPLY void enable(const QString &family, uint style, bool inSystem, int pid, bool checkConfig)
     {
         QList<QVariant> argumentList;
-        argumentList << qVariantFromValue(family) << qVariantFromValue(style) << qVariantFromValue(inSystem) << qVariantFromValue(pid) << qVariantFromValue(xid) << qVariantFromValue(checkConfig);
+        argumentList << qVariantFromValue(family) << qVariantFromValue(style) << qVariantFromValue(inSystem) << qVariantFromValue(pid) << qVariantFromValue(checkConfig);
         callWithArgumentList(QDBus::NoBlock, QLatin1String("enable"), argumentList);
     }
 
-    inline Q_NOREPLY void install(const QString &file, bool createAfm, bool toSystem, int pid, uint xid, bool checkConfig)
+    inline Q_NOREPLY void install(const QString &file, bool createAfm, bool toSystem, int pid, bool checkConfig)
     {
         QList<QVariant> argumentList;
-        argumentList << qVariantFromValue(file) << qVariantFromValue(createAfm) << qVariantFromValue(toSystem) << qVariantFromValue(pid) << qVariantFromValue(xid) << qVariantFromValue(checkConfig);
+        argumentList << qVariantFromValue(file) << qVariantFromValue(createAfm) << qVariantFromValue(toSystem) << qVariantFromValue(pid) << qVariantFromValue(checkConfig);
         callWithArgumentList(QDBus::NoBlock, QLatin1String("install"), argumentList);
     }
 
@@ -65,24 +65,11 @@ public Q_SLOTS: // METHODS
         callWithArgumentList(QDBus::NoBlock, QLatin1String("list"), argumentList);
     }
 
-    inline Q_NOREPLY void move(const KFI::Families & families, const QString &dest, bool toSystem, int uid, int gid, int pid)
+    inline Q_NOREPLY void move(const QString &family, uint style, bool toSystem, int pid, bool checkConfig)
     {
         QList<QVariant> argumentList;
-        argumentList << qVariantFromValue(families) << qVariantFromValue(dest) << qVariantFromValue(toSystem) << qVariantFromValue(uid) << qVariantFromValue(gid) << qVariantFromValue(pid);
+        argumentList << qVariantFromValue(family) << qVariantFromValue(style) << qVariantFromValue(toSystem) << qVariantFromValue(pid) << qVariantFromValue(checkConfig);
         callWithArgumentList(QDBus::NoBlock, QLatin1String("move"), argumentList);
-    }
-
-    inline Q_NOREPLY void move(const QString &family, uint style, bool toSystem, int pid, uint xid, bool checkConfig)
-    {
-        QList<QVariant> argumentList;
-        argumentList << qVariantFromValue(family) << qVariantFromValue(style) << qVariantFromValue(toSystem) << qVariantFromValue(pid) << qVariantFromValue(xid) << qVariantFromValue(checkConfig);
-        callWithArgumentList(QDBus::NoBlock, QLatin1String("move"), argumentList);
-    }
-
-    inline QDBusPendingReply<int> ping()
-    {
-        QList<QVariant> argumentList;
-        return asyncCallWithArgumentList(QLatin1String("ping"), argumentList);
     }
 
     inline Q_NOREPLY void reconfigure(int pid)
@@ -92,10 +79,10 @@ public Q_SLOTS: // METHODS
         callWithArgumentList(QDBus::NoBlock, QLatin1String("reconfigure"), argumentList);
     }
 
-    inline Q_NOREPLY void removeFile(const QString &family, uint style, const QString &file, bool fromSystem, int pid, uint xid, bool checkConfig)
+    inline Q_NOREPLY void removeFile(const QString &family, uint style, const QString &file, bool fromSystem, int pid, bool checkConfig)
     {
         QList<QVariant> argumentList;
-        argumentList << qVariantFromValue(family) << qVariantFromValue(style) << qVariantFromValue(file) << qVariantFromValue(fromSystem) << qVariantFromValue(pid) << qVariantFromValue(xid) << qVariantFromValue(checkConfig);
+        argumentList << qVariantFromValue(family) << qVariantFromValue(style) << qVariantFromValue(file) << qVariantFromValue(fromSystem) << qVariantFromValue(pid) << qVariantFromValue(checkConfig);
         callWithArgumentList(QDBus::NoBlock, QLatin1String("removeFile"), argumentList);
     }
 
@@ -112,17 +99,17 @@ public Q_SLOTS: // METHODS
         callWithArgumentList(QDBus::NoBlock, QLatin1String("stat"), argumentList);
     }
 
-    inline Q_NOREPLY void uninstall(const QString &name, bool fromSystem, int pid, uint xid, bool checkConfig)
+    inline Q_NOREPLY void uninstall(const QString &name, bool fromSystem, int pid, bool checkConfig)
     {
         QList<QVariant> argumentList;
-        argumentList << qVariantFromValue(name) << qVariantFromValue(fromSystem) << qVariantFromValue(pid) << qVariantFromValue(xid) << qVariantFromValue(checkConfig);
+        argumentList << qVariantFromValue(name) << qVariantFromValue(fromSystem) << qVariantFromValue(pid) << qVariantFromValue(checkConfig);
         callWithArgumentList(QDBus::NoBlock, QLatin1String("uninstall"), argumentList);
     }
 
-    inline Q_NOREPLY void uninstall(const QString &family, uint style, bool fromSystem, int pid, uint xid, bool checkConfig)
+    inline Q_NOREPLY void uninstall(const QString &family, uint style, bool fromSystem, int pid, bool checkConfig)
     {
         QList<QVariant> argumentList;
-        argumentList << qVariantFromValue(family) << qVariantFromValue(style) << qVariantFromValue(fromSystem) << qVariantFromValue(pid) << qVariantFromValue(xid) << qVariantFromValue(checkConfig);
+        argumentList << qVariantFromValue(family) << qVariantFromValue(style) << qVariantFromValue(fromSystem) << qVariantFromValue(pid) << qVariantFromValue(checkConfig);
         callWithArgumentList(QDBus::NoBlock, QLatin1String("uninstall"), argumentList);
     }
 

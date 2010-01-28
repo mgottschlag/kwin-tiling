@@ -1,7 +1,10 @@
+#ifndef HELPER_H
+#define HELPER_H
+
 /*
  * KFontInst - KDE Font Installer
  *
- * Copyright 2003-2009 Craig Drummond <craig@kde.org>
+ * Copyright 2003-2010 Craig Drummond <craig@kde.org>
  *
  * ----
  *
@@ -21,16 +24,40 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "FontInst.h"
-#include "Misc.h"
-#include <QtCore/QCoreApplication>
+#include <QtCore/QObject>
+#include <QtCore/QSet>
+#include <kauth.h>
 
-int main(int argc, char *argv[])
+using namespace KAuth;
+
+namespace KFI
 {
-    QCoreApplication *app=new QCoreApplication(argc, argv);
-    KFI::FontInst    fi;
 
-    int rv=app->exec();
-    delete app;
-    return rv;
+class Helper : public QObject
+{
+    Q_OBJECT
+
+    public:
+
+    Helper();
+    ~Helper();
+
+    public Q_SLOTS:
+
+    ActionReply manage(const QVariantMap &args);
+
+    private:
+
+    int install(const QVariantMap &args);
+    int uninstall(const QVariantMap &args);
+    int move(const QVariantMap &args);
+    int toggle(const QVariantMap &args);
+    int removeFile(const QVariantMap &args);
+    int reconfigure();
+    int saveDisabled();
+    int checkWriteAction(const QStringList &files);
+};
+
 }
+
+#endif

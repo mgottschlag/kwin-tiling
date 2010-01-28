@@ -1,4 +1,4 @@
-[org.kde.fontinst]
+[org.kde.fontinst.manage]
 Name=Manage system-wide fonts.
 Name[ca]=Gestiona els tipus de lletra del sistema.
 Name[csb]=Sprôwianié sytemòwą szérzą fòntów.

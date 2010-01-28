@@ -61,14 +61,14 @@ FontInstInterface::~FontInstInterface()
 int FontInstInterface::install(const QString &file, bool toSystem)
 {
     KFI_DBUG;
-    itsInterface->install(file, true, toSystem, getpid(), 0, true);
+    itsInterface->install(file, true, toSystem, getpid(), true);
     return waitForResponse();
 }
 
 int FontInstInterface::uninstall(const QString &name, bool fromSystem)
 {
     KFI_DBUG;
-    itsInterface->uninstall(name, fromSystem, getpid(), 0, true);
+    itsInterface->uninstall(name, fromSystem, getpid(), true);
     return waitForResponse();
 }
 
