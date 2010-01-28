@@ -31,8 +31,7 @@ namespace SystemTray
 
 NotificationStack::NotificationStack(QGraphicsItem *parent)
    : QGraphicsWidget(parent),
-     m_size(3),
-     m_currentIndex(0)
+     m_size(3)
 {
     m_mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
 }
@@ -48,14 +47,16 @@ void NotificationStack::addNotification(Notification *notification)
 
     NotificationWidget *notificationWidget = new NotificationWidget(notification, this);
     notificationWidget->setAutoDelete(true);
+    notificationWidget->installEventFilter(this);
+    notificationWidget->setAcceptsHoverEvents(this);
 
     m_notificationWidgets[notification] = notificationWidget;
     m_notifications.append(notification);
 
     if (m_notifications.size() > 1) {
-        //notificationWidget->setCollapsed(true);
+        notificationWidget->setCollapsed(true);
     } else {
-        m_currentIndex = 0;
+        m_currentNotificationWidget = notificationWidget;
     }
 
     if (m_notifications.size() > m_size) {
@@ -97,6 +98,25 @@ void NotificationStack::removeNotification(SystemTray::Notification *notificatio
     }
 
     resize(sizeHint(Qt::MinimumSize, QSizeF()));
+}
+
+bool NotificationStack::eventFilter(QObject *watched, QEvent *event)
+{
+    NotificationWidget *nw = qobject_cast<NotificationWidget *>(watched);
+
+    if (!nw) {
+        return false;
+    }
+
+    if (event->type() == QEvent::GraphicsSceneHoverEnter) {
+        if (m_currentNotificationWidget) {
+            m_currentNotificationWidget.data()->setCollapsed(true);
+        }
+        nw->setCollapsed(false);
+        m_currentNotificationWidget = nw;
+    }
+
+    return false;
 }
 
 }

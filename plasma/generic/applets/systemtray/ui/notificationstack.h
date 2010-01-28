@@ -41,6 +41,9 @@ public:
 
     void addNotification(SystemTray::Notification *notification);
 
+protected:
+    bool eventFilter(QObject *watched, QEvent *event);
+
 public Q_SLOTS:
     void removeNotification(SystemTray::Notification *notification);
 
@@ -52,7 +55,7 @@ private:
     QHash<Notification *, NotificationWidget *> m_notificationWidgets;
     QGraphicsLinearLayout *m_mainLayout;
     int m_size;
-    int m_currentIndex;
+    QWeakPointer<NotificationWidget> m_currentNotificationWidget;
 };
 
 }
