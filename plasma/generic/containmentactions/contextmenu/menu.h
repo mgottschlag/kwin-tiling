@@ -41,17 +41,12 @@ public:
     void save(KConfigGroup &config);
 
 public slots:
-    void updateImmutability(const Plasma::ImmutabilityType immutable);
-
     void runCommand();
-
     void lockScreen();
     void startLogout();
     void logout();
 
-
 private:
-    QAction *m_addPanelAction;
     QAction *m_runCommandAction;
     QAction *m_lockScreenAction;
     QAction *m_logoutAction;

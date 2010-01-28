@@ -46,7 +46,6 @@
 
 ContextMenu::ContextMenu(QObject *parent, const QVariantList &args)
     : Plasma::ContainmentActions(parent, args),
-      m_addPanelAction(0),
       m_runCommandAction(0),
       m_lockScreenAction(0),
       m_logoutAction(0),
@@ -91,12 +90,6 @@ void ContextMenu::init(const KConfigGroup &config)
         return; //below here is stuff we only want to do once
     }
 
-    connect(c->corona(), SIGNAL(immutabilityChanged(const Plasma::ImmutabilityType)), this, SLOT(updateImmutability(const Plasma::ImmutabilityType)));
-
-    if (c->corona()) {
-        m_addPanelAction = c->corona()->action("add panel");
-    }
-
     if (c->containmentType() == Plasma::Containment::PanelContainment ||
             c->containmentType() == Plasma::Containment::CustomPanelContainment) {
         //panel does its own config action atm... FIXME how do I fit it in properly?
@@ -120,16 +113,6 @@ void ContextMenu::init(const KConfigGroup &config)
         m_separator2->setSeparator(true);
         m_separator3 = new QAction(this);
         m_separator3->setSeparator(true);
-    }
-
-    updateImmutability(c->immutability());
-}
-
-void ContextMenu::updateImmutability(const Plasma::ImmutabilityType immutable)
-{
-    bool locked = immutable != Plasma::Mutable;
-    if (m_addPanelAction) {
-        m_addPanelAction->setVisible(!locked);
     }
 }
 
@@ -193,7 +176,9 @@ QAction *ContextMenu::action(const QString &name)
     } else if (name == "_sep3") {
         return m_separator3;
     } else if (name == "_add panel") {
-        return m_addPanelAction;
+        if (c->corona() && c->corona()->immutability() == Plasma::Mutable) {
+            return c->corona()->action("add panel");
+        }
     } else if (name == "_run_command") {
         if (KAuthorized::authorizeKAction("run_command")) {
             return m_runCommandAction;
