@@ -36,8 +36,9 @@ NotificationStack::NotificationStack(QGraphicsItem *parent)
      m_size(3)
 {
     m_mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
-    m_separatorTimer = new QTimer(this);
-    m_separatorTimer->setSingleShot(true);
+    m_delayedRemoveTimer = new QTimer(this);
+    m_delayedRemoveTimer->setSingleShot(true);
+    connect(m_delayedRemoveTimer, SIGNAL(timeout()), this, SLOT(popNotification()));
 }
 
 NotificationStack::~NotificationStack()
@@ -46,17 +47,10 @@ NotificationStack::~NotificationStack()
 
 void NotificationStack::addNotification(Notification *notification)
 {
-    //artificially enlarge the  timeout of notifications to be able to see at least a second of each one
-    if (m_separatorTimer->isActive()) {
-        notification->setTimeout(notification->timeout() + 1000);
-    }
-    m_separatorTimer->start(1000);
-
     connect(notification, SIGNAL(notificationDestroyed(SystemTray::Notification *)), this, SLOT(removeNotification(SystemTray::Notification *)));
-    connect(notification, SIGNAL(expired(SystemTray::Notification *)), this, SLOT(removeNotification(SystemTray::Notification *)));
+    connect(notification, SIGNAL(expired(SystemTray::Notification *)), this, SLOT(delayedRemoveNotification(SystemTray::Notification *)));
 
     NotificationWidget *notificationWidget = new NotificationWidget(notification, this);
-    notificationWidget->setAutoDelete(true);
     notificationWidget->installEventFilter(this);
     notificationWidget->setAcceptsHoverEvents(this);
 
@@ -99,7 +93,11 @@ void NotificationStack::addNotification(Notification *notification)
 
 void NotificationStack::removeNotification(SystemTray::Notification *notification)
 {
-    m_mainLayout->removeItem(m_notificationWidgets.value(notification));
+    NotificationWidget *nw = m_notificationWidgets.value(notification);
+    if (nw) {
+        nw->deleteLater();
+    }
+    m_mainLayout->removeItem(nw);
     m_notificationWidgets.remove(notification);
     m_notifications.removeAll(notification);
 
@@ -112,6 +110,12 @@ void NotificationStack::removeNotification(SystemTray::Notification *notificatio
     }
 
     resize(sizeHint(Qt::MinimumSize, QSizeF()));
+}
+
+void NotificationStack::delayedRemoveNotification(SystemTray::Notification *notification)
+{
+    m_notificationsToRemove.append(notification);
+    m_delayedRemoveTimer->start(1000);
 }
 
 void NotificationStack::setCurrentNotification(SystemTray::Notification *notification)
@@ -142,6 +146,18 @@ bool NotificationStack::eventFilter(QObject *watched, QEvent *event)
     }
 
     return false;
+}
+
+void NotificationStack::popNotification()
+{
+    if (m_notificationsToRemove.isEmpty()) {
+        return;
+    }
+
+    Notification *notif = m_notificationsToRemove.first();
+    removeNotification(notif);
+    m_notificationsToRemove.pop_front();
+    m_delayedRemoveTimer->start(1000);
 }
 
 }

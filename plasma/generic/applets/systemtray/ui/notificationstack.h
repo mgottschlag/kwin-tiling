@@ -50,17 +50,22 @@ protected:
 
 public Q_SLOTS:
     void removeNotification(SystemTray::Notification *notification);
+    void delayedRemoveNotification(SystemTray::Notification *notification);
+
+private Q_SLOTS:
+    void popNotification();
 
 Q_SIGNALS:
     void stackEmpty();
 
 private:
     QList<Notification *> m_notifications;
+    QList<Notification *> m_notificationsToRemove;
     QHash<Notification *, NotificationWidget *> m_notificationWidgets;
     QGraphicsLinearLayout *m_mainLayout;
     int m_size;
     QWeakPointer<NotificationWidget> m_currentNotificationWidget;
-    QTimer *m_separatorTimer;
+    QTimer *m_delayedRemoveTimer;
 };
 
 }
