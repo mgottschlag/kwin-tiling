@@ -36,6 +36,7 @@ class NotificationWidgetPrivate;
 class NotificationWidget : public Plasma::Frame
 {
     Q_OBJECT
+    Q_PROPERTY(qreal maximumHeight READ maximumHeight WRITE setMaximumHeight)
 
 public:
     NotificationWidget(SystemTray::Notification *notification, QGraphicsWidget *parent);

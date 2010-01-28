@@ -32,6 +32,7 @@
 #include <QtGui/QPainter>
 #include <QAction>
 #include <QLabel>
+#include <QPropertyAnimation>
 
 #include <KColorScheme>
 #include <KPushButton>
@@ -82,6 +83,7 @@ public:
     QGraphicsWidget *actionsWidget;
     QHash<QString, QString> actions;
     QStringList actionOrder;
+    QPropertyAnimation *hideAnimation;
 
     QSignalMapper *signalMapper;
 };
@@ -93,6 +95,10 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, Q
     setMinimumWidth(300);
     setPreferredWidth(400);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    setFlag(QGraphicsItem::ItemClipsChildrenToShape);
+
+    d->hideAnimation = new QPropertyAnimation(this, "maximumHeight", this);
+    d->hideAnimation->setDuration(250);
 
     d->titleLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     d->icon = new Plasma::IconWidget(this);
@@ -164,19 +170,13 @@ void NotificationWidget::setCollapsed(bool collapse)
 
     //use this weird way to make easy to animate
     if (collapse) {
-        setFlag(QGraphicsItem::ItemClipsToShape);
-        setMaximumHeight(d->titleLayout->geometry().bottom());
-        d->body->hide();
-        if (d->image) {
-            d->image->hide();
-        }
+        d->hideAnimation->setStartValue(size().height());
+        d->hideAnimation->setEndValue(d->titleLayout->geometry().bottom());
+        d->hideAnimation->start();
     } else {
-        setFlag(QGraphicsItem::ItemClipsToShape, false);
-        setMaximumHeight(QWIDGETSIZE_MAX);
-        d->body->show();
-        if (d->image) {
-            d->image->show();
-        }
+        d->hideAnimation->setStartValue(size().height());
+        d->hideAnimation->setEndValue(sizeHint(Qt::PreferredSize, QSizeF()).height());
+        d->hideAnimation->start();
     }
 
     d->collapsed = collapse;
