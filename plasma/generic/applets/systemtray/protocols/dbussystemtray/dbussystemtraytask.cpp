@@ -328,8 +328,8 @@ QPixmap DBusSystemTrayTaskPrivate::KDbusImageStructToPixmap(const KDbusImageStru
 {
     //swap from network byte order if we are little endian
     if (QSysInfo::ByteOrder == QSysInfo::LittleEndian) {
-        uint32_t *uintBuf = (uint32_t *) icon.data.data();
-        for (uint i = 0; i < icon.data.size()/sizeof(uint32_t); ++i) {
+        uint *uintBuf = (uint *) icon.data.data();
+        for (uint i = 0; i < icon.data.size()/sizeof(uint); ++i) {
             *uintBuf = ntohl(*uintBuf);
             ++uintBuf;
         }
