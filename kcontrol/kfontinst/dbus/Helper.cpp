@@ -33,6 +33,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sys/errno.h>
 
 #define KFI_DBUG kDebug() << time(0L)
 
@@ -184,11 +185,10 @@ int Helper::uninstall(const QVariantMap &args)
 
 static bool renameFontFile(const QString &from, const QString &to, int uid=-1, int gid=-1)
 {
-    QByteArray src(QFile::encodeName(from)),
-               dest(QFile::encodeName(to));
-
-    if(KDE_rename(src.data(), dest.data()))
+    if(!QFile::rename(from, to))
         return false;
+
+    QByteArray dest(QFile::encodeName(to));
 
     Misc::setFilePerms(dest);
     if(-1!=uid && -1!=gid)
@@ -204,7 +204,7 @@ int Helper::move(const QVariantMap &args)
     int         uid(args["uid"].toInt()),
                 gid(args["gid"].toInt());
 
-    KFI_DBUG << files << toSystem;
+    KFI_DBUG << files << dest << toSystem;
 
     int                        result=FontInst::STATUS_OK;
     QStringList::ConstIterator it(files.begin()),
@@ -212,7 +212,7 @@ int Helper::move(const QVariantMap &args)
 
     // Cant move hidden fonts - need to unhide first.
     for(; it!=end && FontInst::STATUS_OK==result; ++it)
-        if(Misc::isHidden(*it))
+        if(Misc::isHidden(Misc::getFile(*it)))
             result=KIO::ERR_UNSUPPORTED_ACTION;
 
     if(FontInst::STATUS_OK==result)
@@ -236,7 +236,7 @@ int Helper::move(const QVariantMap &args)
                     ::chown(QFile::encodeName(destFolder).data(), toUid, toGid);
             }
 
-            if(renameFontFile(*it, destFolder+name))
+            if(renameFontFile(*it, destFolder+name, toUid, toGid))
             {
                 movedFiles[*it]=destFolder+name;
                 // Now try to move an associated AFM or PFM files...
