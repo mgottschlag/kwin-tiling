@@ -22,6 +22,9 @@
 #define TOOLBUTTON_H
 
 #include <QToolButton>
+#include <QWeakPointer>
+
+class QPropertyAnimation;
 
 namespace Plasma
 {
@@ -31,10 +34,12 @@ namespace Plasma
 class ToolButton: public QToolButton
 {
     Q_OBJECT
+    Q_PROPERTY(qreal alphaValue READ alphaValue WRITE setAlphaValue)
 
 public:
     ToolButton(QWidget *parent);
     void setAction(QAction *action);
+    qreal alphaValue() const;
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -44,12 +49,14 @@ protected:
 protected slots:
     void actionDestroyed(QObject *);
     void syncToAction();
-    void animationUpdate(qreal progress);
+    void setAlphaValue(qreal progress);
+    void animationFinished();
 
 private:
     QAction *m_action;
     Plasma::FrameSvg *m_background;
-    int m_animationId;
+    QWeakPointer<QPropertyAnimation> m_animation;
+    bool m_isAnimating;
     qreal m_alpha;
     bool m_fadeIn;
 };

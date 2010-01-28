@@ -27,6 +27,8 @@
 #include <QStyle>
 #include <QStyleOptionToolButton>
 #include <QGraphicsSceneHoverEvent>
+#include <QEasingCurve>
+#include <QPropertyAnimation>
 
 //KDE
 #include <KColorUtils>
@@ -35,12 +37,11 @@
 #include <Plasma/PaintUtils>
 #include <Plasma/Theme>
 #include <Plasma/FrameSvg>
-#include <Plasma/Animator>
 
 ToolButton::ToolButton(QWidget *parent)
     : QToolButton(parent),
       m_action(0),
-      m_animationId(0),
+      m_isAnimating(false),
       m_alpha(0),
       m_fadeIn(true)
 {
@@ -103,7 +104,7 @@ void ToolButton::paintEvent(QPaintEvent *event)
     QStyleOptionToolButton buttonOpt;
     initStyleOption(&buttonOpt);
 
-    if (m_animationId || (buttonOpt.state & QStyle::State_MouseOver) || (buttonOpt.state & QStyle::State_On)) {
+    if (m_isAnimating || (buttonOpt.state & QStyle::State_MouseOver) || (buttonOpt.state & QStyle::State_On)) {
         if (buttonOpt.state & QStyle::State_Sunken || (buttonOpt.state & QStyle::State_On)) {
             m_background->setElementPrefix("pressed");
         } else {
@@ -111,7 +112,7 @@ void ToolButton::paintEvent(QPaintEvent *event)
         }
         m_background->resizeFrame(size());
 
-        if (m_animationId) {
+        if (m_isAnimating) {
             QPixmap buffer = m_background->framePixmap();
 
             QPainter bufferPainter(&buffer);
@@ -144,16 +145,23 @@ void ToolButton::enterEvent(QEvent *event)
         return;
     }
 
-    const int FadeInDuration = 75;
-
-    if (m_animationId) {
-        Plasma::Animator::self()->stopElementAnimation(m_animationId);
+    QPropertyAnimation *animation = m_animation.data();
+    if (animation) {
+        animation->stop();
+        m_animation.clear();
     }
 
     m_fadeIn = true;
-    m_animationId = Plasma::Animator::self()->customAnimation(
-        40 / (1000 / FadeInDuration), FadeInDuration,
-        Plasma::Animator::LinearCurve, this, "animationUpdate");
+    m_isAnimating = true;
+
+    animation = new QPropertyAnimation(this, "alphaValue");
+    animation->setProperty("duration", 75);
+    animation->setProperty("startValue", 0.0);
+    animation->setProperty("endValue", 1.0);
+    animation->start();
+    m_animation = animation;
+
+    connect(animation, SIGNAL(finished()), this, SLOT(animationFinished()));
 }
 
 void ToolButton::leaveEvent(QEvent *event)
@@ -164,30 +172,34 @@ void ToolButton::leaveEvent(QEvent *event)
         return;
     }
 
-    const int FadeOutDuration = 150;
-
-    if (m_animationId) {
-        Plasma::Animator::self()->stopElementAnimation(m_animationId);
+    QPropertyAnimation *animation = m_animation.data();
+    if (m_isAnimating) {
+        animation->stop();
     }
 
     m_fadeIn = false;
-    m_animationId = Plasma::Animator::self()->customAnimation(
-        40 / (1000 / FadeOutDuration), FadeOutDuration,
-        Plasma::Animator::LinearCurve, this, "animationUpdate");
+    m_isAnimating = true;
+
+    animation->setProperty("duration", 150);
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
-
-void ToolButton::animationUpdate(qreal progress)
+qreal ToolButton::alphaValue() const
 {
-    if (qFuzzyCompare(progress, 1)) {
-        m_animationId = 0;
-        m_fadeIn = true;
-    }
+    return m_alpha;
+}
 
+void ToolButton::setAlphaValue(qreal progress)
+{
     m_alpha = m_fadeIn ? progress : 1 - progress;
 
     // explicit update
     update();
+}
+
+void ToolButton::animationFinished()
+{
+    m_isAnimating = false;
 }
 
 #include "toolbutton.moc"
