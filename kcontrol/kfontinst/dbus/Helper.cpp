@@ -224,7 +224,7 @@ int Helper::move(const QVariantMap &args)
                                 fromGid=toSystem ? gid : getgid();
 
         // Move fonts!
-        for(it=files.begin(); it!=end && FontInst::STATUS_OK==result; ++it)
+        for(it=files.constBegin(); it!=end && FontInst::STATUS_OK==result; ++it)
         {
             QString name(Utils::modifyName(Misc::getFile(*it))),
                     destFolder(Utils::getDestFolder(dest, name));
