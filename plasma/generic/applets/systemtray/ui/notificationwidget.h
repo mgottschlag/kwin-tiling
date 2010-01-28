@@ -42,12 +42,6 @@ public:
     NotificationWidget(SystemTray::Notification *notification, QGraphicsWidget *parent);
     ~NotificationWidget();
 
-    /**
-     * Delete when the notification expires
-     */
-    void setAutoDelete(bool autoDelete);
-    bool isAutoDelete() const;
-
     void setCollapsed(bool collapse);
     bool isCollapsed() const;
 

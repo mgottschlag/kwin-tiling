@@ -149,26 +149,6 @@ NotificationWidget::~NotificationWidget()
     delete d;
 }
 
-void NotificationWidget::setAutoDelete(bool autoDelete)
-{
-    if (autoDelete != d->autoDelete) {
-        if (autoDelete) {
-            connect(d->notification.data(), SIGNAL(expired()),
-                    this, SLOT(destroy()));
-        } else {
-            disconnect(d->notification.data(), SIGNAL(expired()),
-                       this, SLOT(destroy()));
-        }
-
-        d->autoDelete = autoDelete;
-    }
-}
-
-bool NotificationWidget::isAutoDelete() const
-{
-    return d->autoDelete;
-}
-
 void NotificationWidget::setCollapsed(bool collapse)
 {
     if (collapse == d->collapsed) {
