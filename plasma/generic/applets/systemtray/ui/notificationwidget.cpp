@@ -41,7 +41,7 @@
 #include <plasma/theme.h>
 #include <plasma/widgets/pushbutton.h>
 #include <Plasma/Label>
-#include <Plasma/Frame>
+#include <Plasma/FrameSvg>
 #include <Plasma/IconWidget>
 
 class NotificationWidgetPrivate
@@ -64,6 +64,7 @@ public:
     void updateNotification();
     void destroy();
     void buttonClicked();
+    void syncBorders();
 
     NotificationWidget *q;
 
@@ -84,18 +85,24 @@ public:
     QHash<QString, QString> actions;
     QStringList actionOrder;
     QPropertyAnimation *hideAnimation;
+    Plasma::FrameSvg *background;
 
     QSignalMapper *signalMapper;
 };
 
 NotificationWidget::NotificationWidget(SystemTray::Notification *notification, QGraphicsWidget *parent)
-    : Plasma::Frame(parent),
+    : QGraphicsWidget(parent),
       d(new NotificationWidgetPrivate(this))
 {
     setMinimumWidth(300);
     setPreferredWidth(400);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     setFlag(QGraphicsItem::ItemClipsChildrenToShape);
+
+    d->background = new Plasma::FrameSvg(this);
+    d->background->setImagePath("widgets/frame");
+    d->background->setElementPrefix("plain");
+
 
     d->hideAnimation = new QPropertyAnimation(this, "maximumHeight", this);
     d->hideAnimation->setDuration(250);
@@ -187,6 +194,21 @@ bool NotificationWidget::isCollapsed() const
     return d->collapsed;
 }
 
+void NotificationWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
+{
+    d->background->resizeFrame(event->newSize());
+
+    QGraphicsWidget::resizeEvent(event);
+}
+
+void NotificationWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
+
+    d->background->paintFrame(painter);
+}
+
 void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
                                                 const QString &summary, const QString &message)
 {
@@ -207,6 +229,16 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
 
     processed.replace('\n', "<br>");
     body->setText(processed);
+}
+
+void NotificationWidgetPrivate::syncBorders()
+{
+    //set margins from the normal element
+    qreal left, top, right, bottom;
+
+    background->getMargins(left, top, right, bottom);
+
+    q->setContentsMargins(left, top, right, bottom);
 }
 
 void NotificationWidgetPrivate::completeDetach()
