@@ -162,8 +162,8 @@ int Helper::uninstall(const QVariantMap &args)
 
     if(FontInst::STATUS_OK==result)
     {
-        QStringList::ConstIterator it(files.begin()),
-                                   end(files.end());
+        QStringList::ConstIterator it(files.constBegin()),
+                                   end(files.constEnd());
 
         for(; it!=end; ++it)
             if(!Misc::fExists(*it) || QFile::remove(*it))
@@ -207,8 +207,8 @@ int Helper::move(const QVariantMap &args)
     KFI_DBUG << files << dest << toSystem;
 
     int                        result=FontInst::STATUS_OK;
-    QStringList::ConstIterator it(files.begin()),
-                               end(files.end());
+    QStringList::ConstIterator it(files.constBegin()),
+                               end(files.constEnd());
 
     // Cant move hidden fonts - need to unhide first.
     for(; it!=end && FontInst::STATUS_OK==result; ++it)
@@ -287,8 +287,8 @@ int Helper::toggle(const QVariantMap &args)
     int                     result=FontInst::STATUS_OK;
     FileCont                files((*font.styles().begin()).files()),
                             toggledFiles;
-    FileCont::ConstIterator it(files.begin()),
-                            end(files.end());
+    FileCont::ConstIterator it(files.constBegin()),
+                            end(files.constEnd());
     QHash<File, QString>    movedFonts;
     QHash<QString, QString> movedAssoc;
     QSet<QString>           modifiedDirs;
@@ -414,8 +414,8 @@ int Helper::saveDisabled()
 
 int Helper::checkWriteAction(const QStringList &files)
 {
-    QStringList::ConstIterator it(files.begin()),
-                               end(files.end());
+    QStringList::ConstIterator it(files.constBegin()),
+                               end(files.constEnd());
 
     for(; it!=end; ++it)
         if(!Misc::dWritable(Misc::getDir(*it)))
