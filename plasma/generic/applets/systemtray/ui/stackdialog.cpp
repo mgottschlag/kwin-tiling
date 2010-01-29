@@ -44,12 +44,13 @@ void StackDialog::setNotificationStack(SystemTray::NotificationStack *stack)
 {
     setGraphicsWidget(stack);
     if (m_notificationStack) {
-        disconnect(m_notificationStack, SIGNAL(updateRequested()), this, SLOT(update()));
+        disconnect(m_notificationStack, 0, this, 0);
     }
 
     m_notificationStack = stack;
 
     connect(m_notificationStack, SIGNAL(updateRequested()), this, SLOT(update()));
+    connect(m_notificationStack, SIGNAL(hideRequested()), this, SLOT(hide()));
 }
 
 SystemTray::NotificationStack *StackDialog::notificartionStack() const

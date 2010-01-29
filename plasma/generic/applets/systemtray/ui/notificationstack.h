@@ -50,6 +50,8 @@ public:
 protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
 
 public Q_SLOTS:
@@ -62,6 +64,7 @@ private Q_SLOTS:
 Q_SIGNALS:
     void stackEmpty();
     void updateRequested();
+    void hideRequested();
 
 private:
     QList<Notification *> m_notifications;
@@ -72,6 +75,7 @@ private:
     bool m_underMouse;
     QWeakPointer<NotificationWidget> m_currentNotificationWidget;
     QTimer *m_delayedRemoveTimer;
+    QTimer *m_canDismissTimer;
 };
 
 }

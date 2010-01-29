@@ -39,6 +39,9 @@ NotificationStack::NotificationStack(QGraphicsItem *parent)
      m_underMouse(false)
 {
     m_mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
+    m_canDismissTimer = new QTimer(this);
+    m_canDismissTimer->setSingleShot(true);
+
     m_delayedRemoveTimer = new QTimer(this);
     m_delayedRemoveTimer->setSingleShot(true);
     connect(m_delayedRemoveTimer, SIGNAL(timeout()), this, SLOT(popNotification()));
@@ -51,6 +54,7 @@ NotificationStack::~NotificationStack()
 
 void NotificationStack::addNotification(Notification *notification)
 {
+    m_canDismissTimer->start(1000);
     connect(notification, SIGNAL(notificationDestroyed(SystemTray::Notification *)), this, SLOT(removeNotification(SystemTray::Notification *)));
     connect(notification, SIGNAL(expired(SystemTray::Notification *)), this, SLOT(delayedRemoveNotification(SystemTray::Notification *)));
 
@@ -153,6 +157,19 @@ void NotificationStack::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     m_delayedRemoveTimer->start(1000);
 }
 
+void NotificationStack::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    event->accept();
+}
+
+void NotificationStack::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    Q_UNUSED(event)
+
+    if (!m_canDismissTimer->isActive()) {
+        emit hideRequested();
+    }
+}
 
 NotificationWidget *NotificationStack::currentNotificationWidget() const
 {
@@ -177,6 +194,7 @@ bool NotificationStack::eventFilter(QObject *watched, QEvent *event)
         }
         nw->setCollapsed(false);
         m_currentNotificationWidget = nw;
+        m_canDismissTimer->start(1000);
     } else if (event->type() == QEvent::GraphicsSceneMove) {
         emit updateRequested();
     }
