@@ -42,12 +42,12 @@ class Clock : public ClockApplet
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
 
     public slots:
-        void configChanged();
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
         void updateColors();
 
     protected slots:
         void clockConfigAccepted();
+        void clockConfigChanged();
         void constraintsEvent(Plasma::Constraints constraints);
         void resetSize();
 

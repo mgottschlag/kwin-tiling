@@ -155,7 +155,7 @@ void Clock::updateSize()
     // kDebug(96669) << "minZize: " << minimumSize();
 }
 
-void Clock::configChanged()
+void Clock::clockConfigChanged()
 {
     KConfigGroup cg = config();
     
