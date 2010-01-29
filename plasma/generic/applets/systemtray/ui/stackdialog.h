@@ -45,10 +45,13 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *e);
+    bool event(QEvent *event);
 
 private:
     Plasma::FrameSvg *m_background;
     SystemTray::NotificationStack *m_notificationStack;
+    bool m_drawLeft;
+    bool m_drawRight;
 };
 
 #endif

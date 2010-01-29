@@ -28,7 +28,9 @@
 
 StackDialog::StackDialog(QWidget *parent, Qt::WindowFlags f)
       : Plasma::Dialog(parent, f),
-        m_notificationStack(0)
+        m_notificationStack(0),
+        m_drawLeft(true),
+        m_drawRight(true)
 {
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/extender-background");
@@ -84,10 +86,10 @@ void StackDialog::paintEvent(QPaintEvent *e)
                 m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)Plasma::FrameSvg::AllBorders&~Plasma::FrameSvg::BottomBorder);
             //element under the active one
             } else if (m_notificationStack->currentNotificationWidget()->pos().y() < nw->pos().y()) {
-                m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)Plasma::FrameSvg::AllBorders^Plasma::FrameSvg::TopBorder);
+                m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)Plasma::FrameSvg::AllBorders&~Plasma::FrameSvg::TopBorder);
             //element over the active one
             } else if (m_notificationStack->currentNotificationWidget()->pos().y() > nw->pos().y()) {
-                m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)Plasma::FrameSvg::AllBorders^Plasma::FrameSvg::BottomBorder);
+                m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)Plasma::FrameSvg::AllBorders&~Plasma::FrameSvg::BottomBorder);
             //active element
             } else {
                 m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
@@ -99,9 +101,32 @@ void StackDialog::paintEvent(QPaintEvent *e)
 
             int topMargin = contentsRect().top();
 
+            if (!m_drawLeft) {
+                m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)m_background->enabledBorders()&~Plasma::FrameSvg::LeftBorder);
+            }
+            if (!m_drawRight) {
+                m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)m_background->enabledBorders()&~Plasma::FrameSvg::RightBorder);
+            }
+
             m_background->paintFrame(&painter, QPointF(0, nw->pos().y() - top + topMargin));
         }
     }
+}
+
+bool StackDialog::event(QEvent *event)
+{
+    bool ret = Dialog::event(event);
+
+    if (event->type() == QEvent::ContentsRectChange) {
+        int left, top, right, bottom;
+        getContentsMargins(&left, &top, &right, &bottom);
+
+        m_drawLeft = (left != 0);
+        m_drawRight = (right != 0);
+        update();
+    }
+
+    return ret;
 }
 
 #include "stackdialog.moc"
