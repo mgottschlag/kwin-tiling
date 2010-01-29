@@ -66,6 +66,7 @@ public:
     void updateNotification();
     void destroy();
     void buttonClicked();
+    void hideFinished();
 
     NotificationWidget *q;
 
@@ -76,13 +77,15 @@ public:
     bool backgroundVisible;
 
     QString message;
-    Plasma::Label *body;
+    Plasma::Label *messageLabel;
     Plasma::Label *image;
     Plasma::Label *title;
     Plasma::IconWidget *icon;
     QGraphicsLinearLayout *titleLayout;
     QGraphicsLinearLayout *mainLayout;
-    QGraphicsLinearLayout *labelLayout;
+    QGraphicsLinearLayout *messageLayout;
+    QGraphicsLinearLayout *bodyLayout;
+    QGraphicsWidget *body;
     QGraphicsWidget *actionsWidget;
     QHash<QString, QString> actions;
     QStringList actionOrder;
@@ -98,10 +101,10 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, Q
     setMinimumWidth(300);
     setPreferredWidth(400);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    setFlag(QGraphicsItem::ItemClipsChildrenToShape);
 
     d->hideAnimation = new QPropertyAnimation(this, "maximumHeight", this);
     d->hideAnimation->setDuration(250);
+    connect(d->hideAnimation, SIGNAL(finished()), this, SLOT(hideFinished()));
 
     d->titleLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     d->icon = new Plasma::IconWidget(this);
@@ -117,14 +120,17 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, Q
     closeButton->setMinimumSize(closeButton->maximumSize());
     connect(closeButton, SIGNAL(clicked()), notification, SLOT(deleteLater()));
 
+    d->body = new QGraphicsWidget(this);
+    d->bodyLayout = new QGraphicsLinearLayout(Qt::Vertical, d->body);
     d->mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
-    d->labelLayout = new QGraphicsLinearLayout(Qt::Horizontal);
-    d->body = new Plasma::Label(this);
-    d->body->nativeWidget()->setTextFormat(Qt::RichText);
+    d->messageLayout = new QGraphicsLinearLayout(Qt::Horizontal);
+    d->messageLabel = new Plasma::Label(this);
+    d->messageLabel->nativeWidget()->setTextFormat(Qt::RichText);
 
     d->mainLayout->addItem(d->titleLayout);
-    d->labelLayout->addItem(d->body);
-    d->mainLayout->addItem(d->labelLayout);
+    d->messageLayout->addItem(d->messageLabel);
+    d->bodyLayout->addItem(d->messageLayout);
+    d->mainLayout->addItem(d->body);
 
 
     d->notification = notification;
@@ -141,7 +147,6 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, Q
 
 NotificationWidget::~NotificationWidget()
 {
-
     delete d;
 }
 
@@ -161,6 +166,8 @@ void NotificationWidget::setCollapsed(bool collapse)
         d->hideAnimation->setEndValue(sizeHint(Qt::PreferredSize, QSizeF()).height());
         d->hideAnimation->start();
     }
+
+    setFlag(QGraphicsItem::ItemClipsChildrenToShape);
 
     d->collapsed = collapse;
 }
@@ -202,14 +209,14 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
     //Don't show more than 8 lines
     //in the end it could be more than 8 lines depending on how much \n characters will be there
     QString processed = message.trimmed();
-    QFontMetricsF fm(body->font());
-    int totalWidth = qMax((qreal)200, body->boundingRect().width()) * 8;
+    QFontMetricsF fm(messageLabel->font());
+    int totalWidth = qMax((qreal)200, messageLabel->boundingRect().width()) * 8;
     if (fm.width(processed) > totalWidth) {
         processed = fm.elidedText(processed, Qt::ElideRight, totalWidth);
     }
 
     processed.replace('\n', "<br>");
-    body->setText(processed);
+    messageLabel->setText(processed);
 }
 
 void NotificationWidgetPrivate::completeDetach()
@@ -248,7 +255,7 @@ void NotificationWidgetPrivate::updateActions()
         layout->addItem(button);
     }
 
-    mainLayout->addItem(actionsWidget);
+    bodyLayout->addItem(actionsWidget);
 }
 
 void NotificationWidgetPrivate::buttonClicked()
@@ -289,9 +296,9 @@ void NotificationWidgetPrivate::updateNotification()
 
         image->setMinimumSize(imageSize);
         image->setMaximumSize(imageSize);
-        labelLayout->insertItem(0, image);
+        messageLayout->insertItem(0, image);
     } else {
-        labelLayout->setContentsMargins(0, 0, 0, 0);
+        messageLayout->setContentsMargins(0, 0, 0, 0);
         if (image) {
             image->deleteLater();
             image = 0;
@@ -306,6 +313,12 @@ void NotificationWidgetPrivate::updateNotification()
 void NotificationWidgetPrivate::destroy()
 {
     q->deleteLater();
+}
+
+void NotificationWidgetPrivate::hideFinished()
+{
+    body->setVisible(!collapsed);
+    body->setFlag(QGraphicsItem::ItemClipsChildrenToShape, false);
 }
 
 #include "notificationwidget.moc"
