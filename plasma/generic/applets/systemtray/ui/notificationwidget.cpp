@@ -264,6 +264,7 @@ void NotificationWidgetPrivate::buttonClicked()
     if (actionsWidget) {
         actionsWidget->hide();
     }
+    emit q->actionTriggered(notification.data());
 }
 
 void NotificationWidgetPrivate::updateNotification()

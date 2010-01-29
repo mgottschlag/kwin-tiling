@@ -54,7 +54,11 @@ protected:
                const QStyleOptionGraphicsItem *option,
                QWidget *widget);
 
+Q_SIGNALS:
+    void actionTriggered(SystemTray::Notification *);
+
 private:
+    friend class NotificationWidgetPrivate;
     NotificationWidgetPrivate* const d;
 
     Q_PRIVATE_SLOT(d, void updateNotification())

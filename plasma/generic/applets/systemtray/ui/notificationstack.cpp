@@ -58,6 +58,7 @@ void NotificationStack::addNotification(Notification *notification)
     notificationWidget->installEventFilter(this);
     notificationWidget->setAcceptsHoverEvents(this);
     notificationWidget->setBackgroundVisible(false);
+    connect(notificationWidget, SIGNAL(actionTriggered(SystemTray::Notification *)), this, SLOT(removeNotification(SystemTray::Notification *)));
 
     m_notificationWidgets[notification] = notificationWidget;
     m_notifications.append(notification);
