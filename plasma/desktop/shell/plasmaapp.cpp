@@ -101,7 +101,8 @@ PlasmaApp::PlasmaApp()
       m_corona(0),
       m_panelHidden(0),
       m_mapper(new QSignalMapper(this)),
-      m_startupSuspendWaitCount(0)
+      m_startupSuspendWaitCount(0),
+      m_ignoreDashboardClosures(false)
 {
     PlasmaApp::suspendStartup(true);
     KGlobal::locale()->insertCatalog("libplasma");
@@ -346,21 +347,37 @@ void PlasmaApp::syncConfig()
 
 void PlasmaApp::toggleDashboard()
 {
+    // we don't want to listen to dashboard closure signals when toggling
+    // otherwise we get toggleDashboard -> dashboardClosed -> showDashboard
+    // and the wrong state of shown dashboards occurs.
+    m_ignoreDashboardClosures = true;
+
     foreach (DesktopView *view, m_desktops) {
         view->toggleDashboard();
     }
+
+    m_ignoreDashboardClosures = false;
 }
 
 void PlasmaApp::showDashboard(bool show)
 {
+    // we don't want to listen to dashboard closure signals when showing/hiding
+    // otherwise we get showDashboard -> dashboardClosed -> showDashboard
+    // and that could end up badly :)
+    m_ignoreDashboardClosures = true;
+
     foreach (DesktopView *view, m_desktops) {
         view->showDashboard(show);
     }
+
+    m_ignoreDashboardClosures = false;
 }
 
 void PlasmaApp::dashboardClosed()
 {
-    showDashboard(false);
+    if (!m_ignoreDashboardClosures) {
+        showDashboard(false);
+    }
 }
 
 void PlasmaApp::showInteractiveConsole()
