@@ -95,6 +95,16 @@ void DesktopCorona::init()
         m_addPanelAction->setIcon(KIcon("list-add"));
         addAction("add panel", m_addPanelAction);
     }
+
+    connect(this, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)),
+            this, SLOT(updateImmutability(Plasma::ImmutabilityType)));
+}
+
+void DesktopCorona::updateImmutability(Plasma::ImmutabilityType immutability)
+{
+    if (m_addPanelAction) {
+        m_addPanelAction->setEnabled(immutability == Plasma::Mutable);
+    }
 }
 
 void DesktopCorona::checkScreens(bool signalWhenExists)

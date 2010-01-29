@@ -87,6 +87,7 @@ protected Q_SLOTS:
     void saveDefaultSetup();
     void printScriptError(const QString &error);
     void printScriptMessage(const QString &error);
+    void updateImmutability(Plasma::ImmutabilityType immutability);
 
 private:
     void init();
