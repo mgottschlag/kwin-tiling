@@ -696,10 +696,7 @@ void Applet::addNotification(Notification *notification)
         }
         m_notificationStackDialog = new StackDialog;
         m_notificationStackDialog->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
-        m_notificationStackDialog->setGraphicsWidget(m_notificationStack);
-        //FIXME: ugly hack
-        m_notificationStackDialog->installEventFilter(m_notificationStack);
-        m_notificationStackDialog->setContentsMargins(0,0,0,0);
+        m_notificationStackDialog->setNotificationStack(m_notificationStack);
         connect(m_notificationStack, SIGNAL(stackEmpty()), m_notificationStackDialog, SLOT(hide()));
     }
 

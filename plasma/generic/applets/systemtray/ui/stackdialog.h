@@ -23,6 +23,16 @@
 
 #include <Plasma/Dialog>
 
+namespace Plasma
+{
+    class FrameSvg;
+}
+
+namespace SystemTray
+{
+    class NotificationStack;
+}
+
 class StackDialog : public Plasma::Dialog
 {
     Q_OBJECT
@@ -30,7 +40,15 @@ public:
     StackDialog(QWidget *parent = 0, Qt::WindowFlags f = Qt::Window);
     ~StackDialog();
 
-    
+    void setNotificationStack(SystemTray::NotificationStack *stack);
+    SystemTray::NotificationStack *notificartionStack() const;
+
+protected:
+    void paintEvent(QPaintEvent *e);
+
+private:
+    Plasma::FrameSvg *m_background;
+    SystemTray::NotificationStack *m_notificationStack;
 };
 
 #endif

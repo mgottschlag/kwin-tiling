@@ -19,15 +19,89 @@
  ***************************************************************************/
 
 #include "stackdialog.h"
+#include "notificationstack.h"
+#include "notificationwidget.h"
+
+#include <QGraphicsLayout>
+
+#include <Plasma/FrameSvg>
 
 StackDialog::StackDialog(QWidget *parent, Qt::WindowFlags f)
-      : Plasma::Dialog(parent, f)
+      : Plasma::Dialog(parent, f),
+        m_notificationStack(0)
 {
-    
+    m_background = new Plasma::FrameSvg(this);
+    m_background->setImagePath("widgets/extender-background");
 }
 
 StackDialog::~StackDialog()
 {
+}
+
+void StackDialog::setNotificationStack(SystemTray::NotificationStack *stack)
+{
+    setGraphicsWidget(stack);
+    if (m_notificationStack) {
+        disconnect(m_notificationStack, SIGNAL(updateRequested()), this, SLOT(update()));
+    }
+
+    m_notificationStack = stack;
+
+    connect(m_notificationStack, SIGNAL(updateRequested()), this, SLOT(update()));
+}
+
+SystemTray::NotificationStack *StackDialog::notificartionStack() const
+{
+    return m_notificationStack;
+}
+
+void StackDialog::paintEvent(QPaintEvent *e)
+{
+    Plasma::Dialog::paintEvent(e);
+
+    QPainter painter(this);
+    if (m_notificationStack) {
+        //FIXME: assumption++
+        QGraphicsLayout *mainLayout = static_cast<QGraphicsLayout *>(m_notificationStack->layout());
+
+        if (!m_notificationStack->currentNotificationWidget() || mainLayout->count() < 2) {
+            return;
+        }
+
+        for (int i = 0; i < mainLayout->count(); ++i) {
+            //assumption++ all items are NotificationWidget
+            NotificationWidget *nw = static_cast<NotificationWidget *>(mainLayout->itemAt(i));
+
+            //first element
+            if (i == 0 && m_notificationStack->currentNotificationWidget() != nw) {
+                continue;
+            } else if (i == 0) {
+                m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)(Plasma::FrameSvg::AllBorders&~Plasma::FrameSvg::TopBorder));
+            //last element
+            } else if (i == mainLayout->count()-1 && m_notificationStack->currentNotificationWidget() != nw) {
+                continue;
+            } else if (i == mainLayout->count()-1) {
+                m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)Plasma::FrameSvg::AllBorders&~Plasma::FrameSvg::BottomBorder);
+            //element under the active one
+            } else if (m_notificationStack->currentNotificationWidget()->pos().y() < nw->pos().y()) {
+                m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)Plasma::FrameSvg::AllBorders^Plasma::FrameSvg::TopBorder);
+            //element over the active one
+            } else if (m_notificationStack->currentNotificationWidget()->pos().y() > nw->pos().y()) {
+                m_background->setEnabledBorders((Plasma::FrameSvg::EnabledBorders)Plasma::FrameSvg::AllBorders^Plasma::FrameSvg::BottomBorder);
+            //active element
+            } else {
+                m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+            }
+
+            qreal left, top, right, bottom;
+            m_background->getMargins(left, top, right, bottom);
+            m_background->resizeFrame(QSizeF(size().width(), nw->size().height() + top+bottom));
+
+            int topMargin = contentsRect().top();
+
+            m_background->paintFrame(&painter, QPointF(0, nw->pos().y() - top + topMargin));
+        }
+    }
 }
 
 #include "stackdialog.moc"

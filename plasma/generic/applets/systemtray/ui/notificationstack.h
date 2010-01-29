@@ -28,11 +28,6 @@ class QTimer;
 
 class NotificationWidget;
 
-namespace Plasma
-{
-    class FrameSvg;
-}
-
 namespace SystemTray
 {
 class Notification;
@@ -50,13 +45,12 @@ public:
     //TODO:accessor
     void setCurrentNotification(SystemTray::Notification *notification);
 
+    NotificationWidget *currentNotificationWidget() const;
+
 protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
-    void paint(QPainter *painter,
-               const QStyleOptionGraphicsItem *option,
-               QWidget *widget);
 
 public Q_SLOTS:
     void removeNotification(SystemTray::Notification *notification);
@@ -67,6 +61,7 @@ private Q_SLOTS:
 
 Q_SIGNALS:
     void stackEmpty();
+    void updateRequested();
 
 private:
     QList<Notification *> m_notifications;
@@ -77,7 +72,6 @@ private:
     bool m_underMouse;
     QWeakPointer<NotificationWidget> m_currentNotificationWidget;
     QTimer *m_delayedRemoveTimer;
-    Plasma::FrameSvg *m_background;
 };
 
 }
