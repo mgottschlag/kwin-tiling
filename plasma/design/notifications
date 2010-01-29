@@ -9,7 +9,7 @@ Components
 ----------
 * Notification dataengine: this exposes the org.freedesktop.Notifications interface, collecting notifications arriving from all applications, in a cross-desktop fashion.
    As all dataengines, it organizes the notification datafields in a Plasma::Dataengine::Data structure
-* Systemtray widget: (TODO: move out of systray) the widget connects to the Notifications dataengine and provides a proper visualization for the arriving notifications, . An important distinction is done between the "alert" aspect of them and a pure informative one, providing two different user interfaces for them.
+* Systemtray widget: (TODO: move out of systray) the widget connects to the Notifications dataengine and provides a proper visualization for the arriving notifications. An important distinction is done between the "alert" aspect of them and a pure informative one, providing two different user interfaces for them.
 
 Visualization components
 ------------------------
@@ -25,6 +25,12 @@ When a new notification arrives it is added in the NotificationStack with the fo
   * If there i at least one notification of the same application remove it (or the oldest if more than one)
   * Elese remove the oldest notification from the stack
 * Place the new notification partially covered in the last position
+
+To view partially hidden notifications is enough to move the mouse over its title. the notification will show, hiding the previously showing one.
+Clicking on an action button, removes a notification from the stack.
+Clicking anywhere in the stack area hides the whole stack, but in order to prevent accidental closing, only after a second of timeout after
+* A new notification appeared
+* A notification was open, closing the old one
 
 
 Information
