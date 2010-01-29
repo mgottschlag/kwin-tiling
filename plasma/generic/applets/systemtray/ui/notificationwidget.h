@@ -4,6 +4,7 @@
  *   Copyright (C) 2008 Dmitry Suzdalev <dimsuz@gmail.com>                 *
  *   Copyright (C) 2008 Rob Scheepmaker <r.scheepmaker@student.utwente.nl> *
  *   Copyright (C) 2008 Jason Stubbs <jasonbstubbs@gmail.com>              *
+ *   Copyright (C) 2010 Marco Martin <notmart@gmail.com>                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
