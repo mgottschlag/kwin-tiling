@@ -57,6 +57,7 @@ void NotificationStack::addNotification(Notification *notification)
     NotificationWidget *notificationWidget = new NotificationWidget(notification, this);
     notificationWidget->installEventFilter(this);
     notificationWidget->setAcceptsHoverEvents(this);
+    notificationWidget->setBackgroundVisible(false);
 
     m_notificationWidgets[notification] = notificationWidget;
     m_notifications.append(notification);

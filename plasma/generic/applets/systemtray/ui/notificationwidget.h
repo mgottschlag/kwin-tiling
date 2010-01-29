@@ -46,6 +46,14 @@ public:
     void setCollapsed(bool collapse);
     bool isCollapsed() const;
 
+    void setBackgroundVisible(bool visible);
+    bool isBackgroundVisible() const;
+
+protected:
+    void paint(QPainter *painter,
+               const QStyleOptionGraphicsItem *option,
+               QWidget *widget);
+
 private:
     NotificationWidgetPrivate* const d;
 

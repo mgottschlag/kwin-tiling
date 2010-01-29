@@ -53,6 +53,7 @@ public:
           destroyOnClose(true),
           autoDelete(false),
           collapsed(false),
+          backgroundVisible(true),
           image(0),
           actionsWidget(0),
           signalMapper(new QSignalMapper(q))
@@ -72,6 +73,7 @@ public:
     bool destroyOnClose;
     bool autoDelete;
     bool collapsed;
+    bool backgroundVisible;
 
     QString message;
     Plasma::Label *body;
@@ -166,6 +168,26 @@ void NotificationWidget::setCollapsed(bool collapse)
 bool NotificationWidget::isCollapsed() const
 {
     return d->collapsed;
+}
+
+void NotificationWidget::setBackgroundVisible(bool visible)
+{
+    d->backgroundVisible = visible;
+    update();
+}
+
+bool NotificationWidget::isBackgroundVisible() const
+{
+    return d->backgroundVisible;
+}
+
+void NotificationWidget::paint(QPainter *painter,
+                               const QStyleOptionGraphicsItem *option,
+                               QWidget *widget)
+{
+    if (d->backgroundVisible) {
+        Plasma::Frame::paint(painter, option, widget);
+    }
 }
 
 void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
