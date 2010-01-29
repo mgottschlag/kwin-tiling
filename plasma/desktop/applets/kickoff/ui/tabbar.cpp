@@ -28,9 +28,10 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QIcon>
+#include <QEasingCurve>
+#include <QPropertyAnimation>
 
 #include <Plasma/Plasma>
-#include <Plasma/Animator>
 #include <Plasma/Theme>
 #include <Plasma/FrameSvg>
 
@@ -377,10 +378,27 @@ void TabBar::switchToHoveredTab()
 void TabBar::startAnimation()
 {
     storeLastIndex();
-    Plasma::Animator::self()->customAnimation(10, 150, Plasma::Animator::EaseInOutCurve, this, "onValueChanged");
+
+    QPropertyAnimation *animation = m_animation.data();
+    if (animation) {
+        animation->pause();
+    } else {
+        animation = new QPropertyAnimation(this, "animValue");
+        animation->setProperty("easingCurve", QEasingCurve::InOutQuad);
+        animation->setProperty("duration", 150);
+        animation->setProperty("startValue", 0.0);
+        animation->setProperty("endValue", 1.0);
+    }
+
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
-void TabBar::onValueChanged(qreal value)
+qreal TabBar::animValue() const
+{
+    return m_animProgress;
+}
+
+void TabBar::setAnimValue(qreal value)
 {
     if ((m_animProgress = value) == 1.0) {
         animationFinished();

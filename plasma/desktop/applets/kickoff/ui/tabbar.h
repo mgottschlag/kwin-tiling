@@ -22,6 +22,9 @@
 
 #include <KTabBar>
 #include <QTimer>
+#include <QWeakPointer>
+
+class QPropertyAnimation;
 
 namespace Plasma
 {
@@ -34,6 +37,7 @@ namespace Kickoff
 class TabBar : public KTabBar
 {
     Q_OBJECT
+    Q_PROPERTY(qreal animValue READ animValue WRITE setAnimValue)
 
 public:
     TabBar(QWidget *parent);
@@ -50,6 +54,7 @@ public:
     void setAnimateSwitch(bool animateSwitch);
     bool animateSwitch() const ;
     void setShape(Shape shape);
+    qreal animValue() const;
 
 protected:
     int lastIndex() const;
@@ -69,7 +74,7 @@ protected slots:
     void switchToHoveredTab();
     void animationFinished();
     void startAnimation();
-    void onValueChanged(qreal val);
+    void setAnimValue(qreal value);
 
 private:
     QPainterPath tabPath(const QRectF &r);
@@ -81,6 +86,7 @@ private:
     bool m_animateSwitch;
     QRectF m_currentAnimRect;
     int m_lastIndex[2];
+    QWeakPointer<QPropertyAnimation> m_animation;
     qreal m_animProgress;
     Plasma::FrameSvg *background;
 
