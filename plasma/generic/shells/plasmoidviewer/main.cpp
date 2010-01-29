@@ -57,9 +57,9 @@ public:
         : QObject(manager)
     {
         kDebug();
-        connect(manager, SIGNAL(remotePlasmoidAdded(Plasma::PackageMetadata)),
+        connect(manager, SIGNAL(remoteAppletAnnounced(Plasma::PackageMetadata)),
                 this, SLOT(slotServiceAdded(Plasma::PackageMetadata)));
-        connect(manager, SIGNAL(remotePlasmoidRemoved(Plasma::PackageMetadata)),
+        connect(manager, SIGNAL(remoteAppletUnannounced(Plasma::PackageMetadata)),
                 this, SLOT(slotServiceRemoved(Plasma::PackageMetadata)));
     }
 
