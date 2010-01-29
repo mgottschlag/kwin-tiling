@@ -41,6 +41,8 @@
 #include <plasma/extender.h>
 #include <plasma/theme.h>
 #include <plasma/widgets/pushbutton.h>
+#include <Plasma/Animator>
+#include <Plasma/Animation>
 #include <Plasma/Label>
 #include <Plasma/Frame>
 #include <Plasma/IconWidget>
@@ -313,7 +315,10 @@ void NotificationWidgetPrivate::updateNotification()
 
 void NotificationWidgetPrivate::destroy()
 {
-    q->deleteLater();
+    Plasma::Animation *zoomAnim = Plasma::Animator::create(Plasma::Animator::ZoomAnimation);
+    QObject::connect(zoomAnim, SIGNAL(finished()), q, SLOT(deleteLater()));
+    zoomAnim->setTargetWidget(q);
+    zoomAnim->start();
 }
 
 void NotificationWidgetPrivate::hideFinished()
