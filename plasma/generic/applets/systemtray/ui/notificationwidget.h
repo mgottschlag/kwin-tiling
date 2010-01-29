@@ -24,7 +24,7 @@
 #ifndef NOTIFICATIONWIDGET_H
 #define NOTIFICATIONWIDGET_H
 
-#include <QGraphicsWidget>
+#include <Plasma/Frame>
 
 #include "../core/notification.h"
 
@@ -33,7 +33,7 @@ class NotificationWidgetPrivate;
 /**
  *  A graphics item, representing notification message.
  */
-class NotificationWidget : public QGraphicsWidget
+class NotificationWidget : public Plasma::Frame
 {
     Q_OBJECT
     Q_PROPERTY(qreal maximumHeight READ maximumHeight WRITE setMaximumHeight)
@@ -44,12 +44,6 @@ public:
 
     void setCollapsed(bool collapse);
     bool isCollapsed() const;
-
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-
-
-protected:
-    void resizeEvent(QGraphicsSceneResizeEvent *event);
 
 private:
     NotificationWidgetPrivate* const d;
