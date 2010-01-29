@@ -365,15 +365,47 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
     }
     d->ui.clockDefaultsTo->setCurrentIndex(defaultSelection);
 
-    parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
-    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
-    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
     connect(d->ui.timeZones, SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(updateClockDefaultsTo()));
 }
 
 void ClockApplet::createClockConfigurationInterface(KConfigDialog *parent)
 {
     Q_UNUSED(parent)
+}
+
+void ClockApplet::clockConfigChanged()
+{
+
+}
+
+void ClockApplet::configChanged()
+{
+    if (isUserConfiguring()) {
+        configAccepted();
+    }
+
+    KConfigGroup cg = config();
+    d->selectedTimezones = cg.readEntry("timeZones", QStringList());
+    d->timezone = cg.readEntry("timezone", d->timezone);
+    d->defaultTimezone = cg.readEntry("defaultTimezone", d->timezone);
+    d->forceTzDisplay = d->timezone != d->defaultTimezone;
+    d->setPrettyTimezone();
+    d->announceInterval = cg.readEntry("announceInterval", 0);
+
+    clockConfigChanged();
+
+    if (isUserConfiguring()) {
+        constraintsEvent(Plasma::SizeConstraint);
+        update();
+    } else {
+        // d->calendarWidget->configAccepted(cg); is called in configAccepted(), 
+        // as is setCurrentTimezone
+        // so we only need to do this in the case where the user hasn't been
+        // configuring things
+        d->calendarWidget->applyConfiguration(cg);
+        Plasma::DataEngine::Data data = dataEngine("time")->query(d->timezone);
+        d->calendarWidget->setDate(data["Date"].toDate());
+    }
 }
 
 void ClockApplet::clockConfigAccepted()
@@ -385,29 +417,25 @@ void ClockApplet::configAccepted()
 {
     KConfigGroup cg = config();
 
-    d->selectedTimezones = d->ui.timeZones->selection();
-    cg.writeEntry("timeZones", d->selectedTimezones);
+    cg.writeEntry("timeZones", d->ui.timeZones->selection());
 
     if (d->ui.clockDefaultsTo->currentIndex() == 0) {
         //The first position in ui.clockDefaultsTo is "Local"
-        d->defaultTimezone = localTimezoneUntranslated();
+        cg.writeEntry("defaultTimezone", localTimezoneUntranslated());
     } else {
-        d->defaultTimezone = d->ui.clockDefaultsTo->itemData(d->ui.clockDefaultsTo->currentIndex()).toString();
+        cg.writeEntry("defaultTimezone",
+                      d->ui.clockDefaultsTo->itemData(d->ui.clockDefaultsTo->currentIndex()).toString());
     }
 
-    cg.writeEntry("defaultTimezone", d->defaultTimezone);
     QString cur = currentTimezone();
     setCurrentTimezone(d->defaultTimezone);
     changeEngineTimezone(cur, d->defaultTimezone);
 
     d->calendarWidget->configAccepted(cg);
 
-    d->announceInterval = d->generalUi.interval->value();
-    cg.writeEntry("announceInterval", d->announceInterval);
+    cg.writeEntry("announceInterval", d->generalUi.interval->value());
 
     clockConfigAccepted();
-    constraintsEvent(Plasma::SizeConstraint);
-    update();
 
     emit configNeedsSaving();
 }
@@ -549,28 +577,17 @@ void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
 
 void ClockApplet::init()
 {
-    KConfigGroup cg = config();
-    d->selectedTimezones = cg.readEntry("timeZones", QStringList());
-    d->timezone = cg.readEntry("timezone", d->timezone);
-    d->defaultTimezone = cg.readEntry("defaultTimezone", d->timezone);
-    d->forceTzDisplay = d->timezone != d->defaultTimezone;
-
-    d->setPrettyTimezone();
-
-    d->announceInterval = cg.readEntry("announceInterval", 0);
-
     Plasma::ToolTipManager::self()->registerWidget(this);
 
     d->calendarWidget = new Plasma::Calendar();
     d->calendarWidget->setMinimumSize(QSize(230, 220));
     d->calendarWidget->setDataEngine(dataEngine("calendar"));
     connect(d->calendarWidget, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateChanged(const QDate &)));
-    d->calendarWidget->applyConfiguration(cg);
-    Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
-    d->calendarWidget->setDate(data["Date"].toDate());
     d->createCalendarExtender();
 
     extender();
+
+    configChanged();
     QTimer::singleShot(0, this, SLOT(createToday()));
 }
 
@@ -608,6 +625,9 @@ void ClockApplet::setCurrentTimezone(const QString &tz)
 
     d->forceTzDisplay = d->timezone != d->defaultTimezone;
     d->setPrettyTimezone();
+
+    Plasma::DataEngine::Data data = dataEngine("time")->query(d->timezone);
+    d->calendarWidget->setDate(data["Date"].toDate());
 
     KConfigGroup cg = config();
     cg.writeEntry("timezone", d->timezone);
