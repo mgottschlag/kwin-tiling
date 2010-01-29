@@ -35,7 +35,7 @@ namespace SystemTray
 
 NotificationStack::NotificationStack(QGraphicsItem *parent)
    : QGraphicsWidget(parent),
-     m_size(3),
+     m_size(4),
      m_underMouse(false)
 {
     m_mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
