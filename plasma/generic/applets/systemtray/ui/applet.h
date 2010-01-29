@@ -34,10 +34,10 @@ namespace Plasma
 {
 class ExtenderItem;
 class TabBar;
-class Dialog;
 }
 
 class NotificationWidget;
+class StackDialog;
 
 namespace SystemTray
 {
@@ -115,7 +115,7 @@ private:
 
     NotificationScroller *m_notificationScroller;
     NotificationStack *m_notificationStack;
-    Plasma::Dialog *m_notificationStackDialog;
+    StackDialog *m_notificationStackDialog;
 
     Ui::ProtocolsConfig m_notificationUi;
     Ui::AutoHideConfig m_autoHideUi;

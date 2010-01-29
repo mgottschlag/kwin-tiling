@@ -70,6 +70,7 @@
 #include "notificationscroller.h"
 #include "notificationstack.h"
 #include "taskarea.h"
+#include "stackdialog.h"
 
 namespace SystemTray
 {
@@ -693,7 +694,7 @@ void Applet::addNotification(Notification *notification)
         if (containment() && containment()->corona()) {
             containment()->corona()->addOffscreenWidget(m_notificationStack);
         }
-        m_notificationStackDialog = new Plasma::Dialog;
+        m_notificationStackDialog = new StackDialog;
         m_notificationStackDialog->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
         m_notificationStackDialog->setGraphicsWidget(m_notificationStack);
         //FIXME: ugly hack
