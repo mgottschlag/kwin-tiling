@@ -161,7 +161,7 @@ void NotificationStack::paint(QPainter *painter,
                               const QStyleOptionGraphicsItem *option,
                               QWidget *widget)
 {
-    if (!m_currentNotificationWidget) {
+    if (!m_currentNotificationWidget || m_mainLayout->count() < 2) {
         return;
     }
 
