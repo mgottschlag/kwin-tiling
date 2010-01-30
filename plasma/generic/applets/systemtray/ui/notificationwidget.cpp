@@ -126,7 +126,7 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, Q
     d->bodyLayout = new QGraphicsLinearLayout(Qt::Vertical, d->body);
     d->mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
     d->messageLayout = new QGraphicsLinearLayout(Qt::Horizontal);
-    d->messageLabel = new Plasma::Label(this);
+    d->messageLabel = new Plasma::Label(d->body);
     connect(d->messageLabel, SIGNAL(linkActivated(const QString &)),
             notification, SLOT(linkActivated(const QString &)));
     d->messageLabel->nativeWidget()->setTextFormat(Qt::RichText);
@@ -238,7 +238,7 @@ void NotificationWidgetPrivate::updateActions()
         return;
     }
 
-    actionsWidget = new QGraphicsWidget(q);
+    actionsWidget = new QGraphicsWidget(body);
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(actionsWidget);
     layout->setOrientation(Qt::Horizontal);
     layout->addStretch();
@@ -288,7 +288,7 @@ void NotificationWidgetPrivate::updateNotification()
 
     if (!notification.data()->image().isNull()) {
         if (!image) {
-            image = new Plasma::Label(q);
+            image = new Plasma::Label(body);
             image->setScaledContents(true);
         }
         image->nativeWidget()->setPixmap(QPixmap::fromImage(notification.data()->image()));
