@@ -28,13 +28,12 @@ static const int UPDATE_TIMER_INTERVAL = 200;
 namespace SystemTray
 {
 
-JobTotalsWidget::JobTotalsWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
+JobTotalsWidget::JobTotalsWidget(SystemTray::Job *job, QGraphicsWidget *parent)
     : Meter(parent),
-      m_extenderItem(parent),
       m_job(job),
       m_updateTimerId(0)
 {
-    Q_ASSERT(m_extenderItem);
+    m_extenderItem = qobject_cast<Plasma::ExtenderItem *>(parent),
 
     setSvg("widgets/bar_meter_horizontal");
     setMeterType(Plasma::Meter::BarMeterHorizontal);
@@ -77,8 +76,10 @@ void JobTotalsWidget::updateJob()
 {
     setValue(m_job->percentage());
 
-    m_extenderItem->setTitle(m_job->message());
-    m_extenderItem->setIcon(m_job->applicationIconName());
+    if (m_extenderItem) {
+        m_extenderItem->setTitle(m_job->message());
+        m_extenderItem->setIcon(m_job->applicationIconName());
+    }
 }
 
 } // namespace SystemTray

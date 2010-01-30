@@ -38,6 +38,7 @@
 
 #include <KConfigDialog>
 #include <KComboBox>
+#include <KWindowSystem>
 
 #include <Solid/Device>
 
@@ -93,7 +94,10 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
       m_background(0),
       m_jobSummaryWidget(0),
       m_timerId(0),
-      m_notificationStack(0)
+      m_notificationStack(0),
+      m_notificationStackDialog(0),
+      m_standaloneJobSummaryWidget(0),
+      m_standaloneJobSummaryDialog(0)
 {
     if (!s_manager) {
         s_manager = new SystemTray::Manager();
@@ -150,6 +154,7 @@ Applet::~Applet()
         s_manager = 0;
         s_managerUsage = 0;
     }
+    delete m_notificationStackDialog;
 }
 
 void Applet::init()
@@ -715,10 +720,32 @@ void Applet::addJob(Job *job)
     extenderItem->config().writeEntry("type", "job");
     extenderItem->setWidget(new JobWidget(job, extenderItem));
 
-    emit activate();
-    showPopup(m_autoHideTimeout);
-
     extenderItem->setGroup(extender()->group("jobGroup"));
+
+    //show the tiny standalone overview
+    if (!m_standaloneJobSummaryWidget) {
+        m_standaloneJobSummaryDialog = new Plasma::Dialog();
+
+        KWindowSystem::setState(m_standaloneJobSummaryDialog->winId(), NET::SkipTaskbar|NET::SkipPager);
+        KWindowSystem::setOnAllDesktops(m_standaloneJobSummaryDialog->winId(), true);
+
+        m_standaloneJobSummaryWidget = new JobTotalsWidget(s_manager->jobTotals(), this);
+        if (containment() && containment()->corona()) {
+            containment()->corona()->addOffscreenWidget(m_standaloneJobSummaryWidget);
+        }
+        m_standaloneJobSummaryDialog->setGraphicsWidget(m_standaloneJobSummaryWidget);
+        //FIXME:sizing hack and layout issues..
+        m_standaloneJobSummaryWidget->resize(m_standaloneJobSummaryWidget->size().width(), 16);
+    }
+
+    m_standaloneJobSummaryDialog->syncToGraphicsWidget();
+
+    if (containment() && containment()->corona()) {
+        m_standaloneJobSummaryDialog->move(containment()->corona()->popupPosition(this, m_standaloneJobSummaryDialog->size()));
+        m_standaloneJobSummaryDialog->show();
+        KWindowSystem::raiseWindow(m_standaloneJobSummaryDialog->winId());
+        Plasma::WindowEffects::slideWindow(m_standaloneJobSummaryDialog, location());
+    }
 }
 
 void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
@@ -800,6 +827,16 @@ void Applet::timerEvent(QTimerEvent *event)
 
 void Applet::popupEvent(bool show)
 {
+    //decide about showing the tiny progressbar or not
+    if (m_standaloneJobSummaryDialog) {
+        if (show || !s_manager->jobs().isEmpty()) {
+            m_standaloneJobSummaryDialog->setVisible(!show);
+            if (!show) {
+                KWindowSystem::raiseWindow(m_standaloneJobSummaryDialog->winId());
+            }
+        }
+    }
+
     Plasma::ExtenderGroup * jobGroup = extender()->group("jobGroup");
     if (!jobGroup) {
         return;
@@ -841,6 +878,10 @@ void Applet::finishJob(SystemTray::Job *job)
 
     initExtenderItem(item);
     item->setGroup(extender()->group("completedJobsGroup"));
+
+    if (m_standaloneJobSummaryDialog && s_manager->jobs().isEmpty()) {
+        m_standaloneJobSummaryDialog->hide();
+    }
 
     if (job->elapsed() < shortJobsLength) {
         item->setAutoExpireDelay(completedShortJobExpireDelay);

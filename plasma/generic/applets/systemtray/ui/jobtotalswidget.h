@@ -45,7 +45,7 @@ class JobTotalsWidget : public Plasma::Meter
     Q_OBJECT
 
     public:
-        explicit JobTotalsWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent);
+        explicit JobTotalsWidget(SystemTray::Job *job, QGraphicsWidget *parent);
         ~JobTotalsWidget();
 
     protected:
