@@ -455,7 +455,7 @@ void PasswordDlg::gplugStart()
                "-m", mPlugin->info->method,
                "-S", fdbuf,
                (char *)0);
-        exit(20);
+        _exit(20);
     }
     ::close(sfd[1]);
     sFd = sfd[0];
