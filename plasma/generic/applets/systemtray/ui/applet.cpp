@@ -301,12 +301,6 @@ void Applet::syncNotificationBarNeeded()
 }
 
 
-
-void Applet::notificationExpired(SystemTray::Notification *notification)
-{
-    //STUB
-}
-
 void Applet::constraintsEvent(Plasma::Constraints constraints)
 {
     setBackgroundHints(NoBackground);

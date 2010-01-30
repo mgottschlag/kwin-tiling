@@ -90,7 +90,6 @@ private slots:
     void open(const QString &url);
     void addDefaultApplets();
     void syncNotificationBarNeeded();
-    void notificationExpired(SystemTray::Notification *notification);
 
 private:
     void createJobGroups();
