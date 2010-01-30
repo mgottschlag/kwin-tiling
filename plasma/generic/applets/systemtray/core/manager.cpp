@@ -40,6 +40,7 @@
 namespace SystemTray
 {
 
+static const int idleCheckInterval = 60 * 1000;
 
 class Manager::Private
 {
@@ -55,6 +56,7 @@ public:
     }
 
     void setupProtocol(Protocol *protocol);
+    void checkIdle();
 
     Manager *q;
     Task *extenderTask;
@@ -65,6 +67,7 @@ public:
     Protocol *jobProtocol;
     Protocol *notificationProtocol;
     PlasmoidProtocol *plasmoidProtocol;
+    QTimer *idleTimer;
 };
 
 
@@ -75,6 +78,10 @@ Manager::Manager()
     d->setupProtocol(d->plasmoidProtocol);
     d->setupProtocol(new SystemTray::FdoProtocol(this));
     d->setupProtocol(new SystemTray::DBusSystemTrayProtocol(this));
+
+    d->idleTimer = new QTimer(this);
+    d->idleTimer->setSingleShot(false);
+    connect(d->idleTimer, SIGNAL(timeout()), this, SLOT(checkIdle()));
 }
 
 Manager::~Manager()
@@ -148,6 +155,12 @@ void Manager::addNotification(Notification* notification)
             this, SIGNAL(notificationExpired(SystemTray::Notification*)));
 
     d->notifications.append(notification);
+
+    if (!d->idleTimer->isActive()) {
+        d->idleTimer->start(idleCheckInterval);
+    }
+    connect(this, SIGNAL(idleTerminated()), notification, SLOT(startDeletionCountdown()));
+
     emit notificationAdded(notification);
 }
 
@@ -155,6 +168,12 @@ void Manager::removeNotification(Notification *notification)
 {
     d->notifications.removeAll(notification);
     disconnect(notification, 0, this, 0);
+    disconnect(this, 0, notification, 0);
+
+    if (d->notifications.isEmpty()) {
+        d->idleTimer->stop();
+    }
+
     emit notificationRemoved(notification);
 }
 
@@ -183,15 +202,6 @@ void Manager::unregisterJobProtocol()
         delete d->jobProtocol;
         d->jobProtocol = 0;
     }
-}
-
-void Manager::Private::setupProtocol(Protocol *protocol)
-{
-    connect(protocol, SIGNAL(jobCreated(SystemTray::Job*)), q, SLOT(addJob(SystemTray::Job*)));
-    connect(protocol, SIGNAL(taskCreated(SystemTray::Task*)), q, SLOT(addTask(SystemTray::Task*)));
-    connect(protocol, SIGNAL(notificationCreated(SystemTray::Notification*)),
-            q, SLOT(addNotification(SystemTray::Notification*)));
-    protocol->init();
 }
 
 void Manager::addJob(Job *job)
@@ -269,6 +279,34 @@ void Manager::removeApplet(const QString appletName, Plasma::Applet *parent)
 QStringList Manager::applets(Plasma::Applet *parent) const
 {
     return d->plasmoidProtocol->applets(parent);
+}
+
+void Manager::checkIdle()
+{
+    int totalIdle;
+#ifdef HAVE_LIBXSS      // Idle detection.
+    XScreenSaverInfo*  _mit_info;
+    _mit_info = XScreenSaverAllocInfo();
+    XScreenSaverQueryInfo( QX11Info::display(), QX11Info::appRootWindow(), _mit_info );
+    totalIdle =  _mit_info->idle;
+    XFree( _mit_info );
+#else
+    totalIdle = 0;
+#endif // HAVE_LIBXSS
+
+    if (totalIdle < idleCheckInterval) {
+        d->idleTimer->stop();
+        emit idleTerminated();
+    }
+}
+
+void Manager::Private::setupProtocol(Protocol *protocol)
+{
+    connect(protocol, SIGNAL(jobCreated(SystemTray::Job*)), q, SLOT(addJob(SystemTray::Job*)));
+    connect(protocol, SIGNAL(taskCreated(SystemTray::Task*)), q, SLOT(addTask(SystemTray::Task*)));
+    connect(protocol, SIGNAL(notificationCreated(SystemTray::Notification*)),
+            q, SLOT(addNotification(SystemTray::Notification*)));
+    protocol->init();
 }
 
 }

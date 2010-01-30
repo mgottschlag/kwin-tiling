@@ -83,18 +83,12 @@ K_EXPORT_PLASMA_APPLET(systemtray, Applet)
 
 Manager *Applet::s_manager = 0;
 int Applet::s_managerUsage = 0;
-static const int idleCheckInterval = 60 * 1000;
-static const int completedJobExpireDelay = 5 * 60 * 1000;
-static const int completedShortJobExpireDelay = 40 * 1000;
-static const uint shortJobsLength = 30 * 1000;
-static const int oldNotificationsExpireDelay = 5 * 60 * 1000;
 
 Applet::Applet(QObject *parent, const QVariantList &arguments)
     : Plasma::PopupApplet(parent, arguments),
       m_taskArea(0),
       m_background(0),
       m_jobSummaryWidget(0),
-      m_timerId(0),
       m_notificationStack(0),
       m_notificationStackDialog(0),
       m_standaloneJobSummaryWidget(0),
@@ -764,60 +758,13 @@ void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
         return;
     }
 
-    if (extenderItem->config().readEntry("type", "") == "completedJob") {
-        Plasma::Label *label = new Plasma::Label(extenderItem);
-        label->nativeWidget()->setLineWidth(300);
-        label->setMinimumWidth(300);
-        label->setText(extenderItem->config().readEntry("text", ""));
-        label->setPreferredSize(label->minimumSize());
-        connect(label, SIGNAL(linkActivated(const QString &)),
-                this, SLOT(open(const QString &)));
-
-        extenderItem->setWidget(label);
-        extenderItem->showCloseButton();
-    } else if (extenderItem->config().readEntry("type", "") == "job") {
+    if (extenderItem->config().readEntry("type", "") == "job") {
         extenderItem->setWidget(new JobWidget(0, extenderItem));
     //unknown type, this should never happen
     } else {
         extenderItem->destroy();
     }
 
-}
-
-void Applet::timerEvent(QTimerEvent *event)
-{
-    if (event->timerId() != m_timerId) {
-        Plasma::Applet::timerEvent(event);
-        return;
-    }
-
-    int totalIdle;
-#ifdef HAVE_LIBXSS      // Idle detection.
-    XScreenSaverInfo*  _mit_info;
-    _mit_info = XScreenSaverAllocInfo();
-    XScreenSaverQueryInfo( QX11Info::display(), QX11Info::appRootWindow(), _mit_info );
-    totalIdle =  _mit_info->idle;
-    XFree( _mit_info );
-#else
-    totalIdle = 0;
-#endif // HAVE_LIBXSS
-
-    if (totalIdle < idleCheckInterval) {
-        Plasma::ExtenderGroup *group = extender()->group("completedJobsGroup");
-        if (group) {
-            foreach (Plasma::ExtenderItem *item, group->items()) {
-                item->setAutoExpireDelay(completedJobExpireDelay);
-            }
-        }
-        foreach (Notification *notification, s_manager->notifications()) {
-            if (!notification->isExpired()) {
-                notification->setDeleteTimeout(oldNotificationsExpireDelay);
-            }
-        }
-
-        killTimer(m_timerId);
-        m_timerId = 0;
-    }
 }
 
 void Applet::popupEvent(bool show)
@@ -860,30 +807,6 @@ void Applet::clearAllCompletedJobs()
 
 void Applet::finishJob(SystemTray::Job *job)
 {
-    //old ah hoc extender item
-    Plasma::ExtenderItem *item = new Plasma::ExtenderItem(extender());
-    item->setTitle(i18n("%1 [Finished]", job->message()));
-    item->setIcon(job->applicationIconName());
-
-    item->config().writeEntry("type", "completedJob");
-    if (job->error().isEmpty()) {
-        item->config().writeEntry("text", job->completedMessage());
-    } else {
-        item->config().writeEntry("text", job->error());
-    }
-
-    initExtenderItem(item);
-    item->setGroup(extender()->group("completedJobsGroup"));
-
-    if (job->elapsed() < shortJobsLength) {
-        item->setAutoExpireDelay(completedShortJobExpireDelay);
-    } else if (!m_timerId) {
-        m_timerId = startTimer(idleCheckInterval);
-    }
-
-    //showPopup(m_autoHideTimeout);
-
-
     //finished all jobs? hide the mini progressbar
     if (m_standaloneJobSummaryDialog && s_manager->jobs().isEmpty()) {
         m_standaloneJobSummaryDialog->hide();

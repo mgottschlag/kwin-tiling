@@ -21,8 +21,11 @@
 #include "completedjobnotification.h"
 #include "job.h"
 
+#include <QProcess>
+
 #include <KIcon>
 #include <KLocale>
+#include <KDebug>
 
 namespace SystemTray
 {
@@ -59,6 +62,12 @@ void CompletedJobNotification::setJob(Job *job)
     }
 
     m_job = job;
+}
+
+void CompletedJobNotification::linkActivated(const QString &url)
+{
+    kDebug() << "open " << url;
+    QProcess::startDetached("kde-open", QStringList() << url);
 }
 
 Job *CompletedJobNotification::job() const

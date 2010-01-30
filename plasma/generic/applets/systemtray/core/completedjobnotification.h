@@ -18,6 +18,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
+#ifndef COMPLETEDJOBNOTIFICATION_H
+#define COMPLETEDJOBNOTIFICATION_H
+
 #include "notification.h"
 
 namespace SystemTray
@@ -27,6 +30,8 @@ class Job;
 
 class CompletedJobNotification : public Notification
 {
+    Q_OBJECT
+
 public:
     CompletedJobNotification(QObject *parent = 0);
     virtual ~CompletedJobNotification();
@@ -34,9 +39,14 @@ public:
     void setJob(Job *job);
     Job *job() const;
 
+public Q_SLOTS:
+    void linkActivated(const QString &link);
+
 private:
     Job *m_job;
 };
 
 }
+
+#endif
 

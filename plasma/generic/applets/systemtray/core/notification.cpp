@@ -31,7 +31,6 @@
 namespace SystemTray
 {
 
-
 class Notification::Private
 {
 public:
@@ -60,7 +59,6 @@ public:
     QHash<QString, QString> actions;
     QStringList actionOrder;
 };
-
 
 Notification::Notification(QObject *parent)
     : QObject(parent),
@@ -195,6 +193,11 @@ void Notification::triggerAction(const QString &actionId)
 void Notification::remove()
 {
     kDebug() << "remove requested but no handler implemented";
+}
+
+void Notification::linkActivated(const QString &link)
+{
+    kDebug() << "link activation requested but no handler implemented";
 }
 
 void Notification::hide()

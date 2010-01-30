@@ -170,6 +170,11 @@ signals:
      **/
     void jobRemoved(SystemTray::Job *job);
 
+    /**
+     * the pc is out of idle and is starting being used
+     */
+    void idleTerminated();
+
 private slots:
     void addTask(SystemTray::Task *task);
     void removeTask(SystemTray::Task *task);
@@ -178,6 +183,7 @@ private slots:
     void addJob(SystemTray::Job *job);
     void removeJob(SystemTray::Job *job);
     void updateTotals();
+    void checkIdle();
 
 private:
     class Private;

@@ -127,6 +127,8 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, Q
     d->mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
     d->messageLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     d->messageLabel = new Plasma::Label(this);
+    connect(d->messageLabel, SIGNAL(linkActivated(const QString &)),
+            notification, SLOT(linkActivated(const QString &)));
     d->messageLabel->nativeWidget()->setTextFormat(Qt::RichText);
 
     d->mainLayout->addItem(d->titleLayout);

@@ -76,7 +76,6 @@ protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) { Q_UNUSED(event); }
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) { Q_UNUSED(event); }
 
-    void timerEvent(QTimerEvent *event);
     void popupEvent(bool show);
 
 private slots:
@@ -111,7 +110,6 @@ private:
     Plasma::Svg *m_icons;
     JobTotalsWidget *m_jobSummaryWidget;
     int m_autoHideTimeout;
-    int m_timerId;
 
     NotificationScroller *m_notificationScroller;
     NotificationStack *m_notificationStack;
