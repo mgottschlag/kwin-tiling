@@ -61,6 +61,14 @@ void CompletedJobNotification::setJob(Job *job)
         setTimeout(completedJobExpireDelay);
     }
 
+    if (job->destination().isValid()) {
+        QHash<QString, QString> actions;
+        actions.insert("open", i18n("Open destination"));
+        setActions(actions);
+        setActionOrder(QStringList()<<"open");
+        m_destinationPrettyUrl = job->destination().prettyUrl();
+    }
+
     m_job = job;
 }
 
@@ -73,6 +81,13 @@ void CompletedJobNotification::linkActivated(const QString &url)
 Job *CompletedJobNotification::job() const
 {
     return m_job;
+}
+
+void CompletedJobNotification::triggerAction(const QString &actionId)
+{
+    if (actionId == "open" && !m_destinationPrettyUrl.isNull()) {
+        linkActivated(m_destinationPrettyUrl);
+    }
 }
 
 }

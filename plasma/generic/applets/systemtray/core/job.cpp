@@ -187,6 +187,11 @@ QString Job::completedMessage() const
     }
 }
 
+KUrl Job::destination() const
+{
+    return d->destination;
+}
+
 ulong Job::eta() const
 {
     return d->eta;

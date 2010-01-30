@@ -23,6 +23,8 @@
 #include <QtCore/QHash>
 #include <QtCore/QObject>
 
+#include <KUrl>
+
 namespace SystemTray
 {
 
@@ -109,6 +111,11 @@ public:
      * total elapsed job time
      */
     uint elapsed() const;
+
+    /**
+     * Destination url
+     */
+    KUrl destination() const;
 
 public slots:
     /**

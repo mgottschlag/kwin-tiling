@@ -62,6 +62,7 @@ public slots:
     virtual void triggerAction(const QString &actionId);
     virtual void remove();
     virtual void linkActivated(const QString &link);
+    void startDeletionCountdown();
     void hide();
 
 signals:

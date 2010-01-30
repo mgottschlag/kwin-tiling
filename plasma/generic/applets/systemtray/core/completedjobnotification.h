@@ -41,9 +41,11 @@ public:
 
 public Q_SLOTS:
     void linkActivated(const QString &link);
+    void triggerAction(const QString &actionId);
 
 private:
     Job *m_job;
+    QString m_destinationPrettyUrl;
 };
 
 }

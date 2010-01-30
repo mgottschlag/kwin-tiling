@@ -142,9 +142,6 @@ void Notification::setImage(QImage image)
 
 void Notification::setTimeout(int timeout)
 {
-    //keep it available for 30 minutes
-    d->deleteTimer->start(30*60*1000);
-
     //show them at most 30 seconds
     if (!timeout) {
         d->timeout = 30 * 1000;
@@ -169,6 +166,7 @@ QHash<QString, QString> Notification::actions() const
 void Notification::setActions(const QHash<QString, QString> &actions)
 {
     d->actions = actions;
+    emit changed(this);
 }
 
 
@@ -197,6 +195,7 @@ void Notification::remove()
 
 void Notification::linkActivated(const QString &link)
 {
+    Q_UNUSED(link)
     kDebug() << "link activation requested but no handler implemented";
 }
 
@@ -204,6 +203,12 @@ void Notification::hide()
 {
     d->expired = true;
     emit expired(this);
+}
+
+void Notification::startDeletionCountdown()
+{
+    //keep it available for 20 minutes
+    d->deleteTimer->start(20*60*1000);
 }
 
 bool Notification::isExpired() const
