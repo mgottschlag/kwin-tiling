@@ -120,11 +120,10 @@ Battery::Battery(QObject *parent, const QVariantList &args)
 void Battery::init()
 {
     setHasConfigurationInterface(true);
-    KConfigGroup cg = config();
-    m_showBatteryString = cg.readEntry("showBatteryString", false);
-    m_showRemainingTime = cg.readEntry("showRemainingTime", false);
-    m_showMultipleBatteries = cg.readEntry("showMultipleBatteries", !m_isEmbedded);
 
+    // read config
+    configChanged();
+    
     m_theme->resize(contentsRect().size());
     m_font = QApplication::font();
     m_font.setWeight(QFont::Bold);
@@ -155,14 +154,24 @@ void Battery::init()
         initExtenderItem(eItem);
         extender()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     }
-
-    if (m_showBatteryString) {
-        showLabel(m_showBatteryString);
-    }
+    
     if (m_acAdapterPlugged) {
         showAcAdapter(true);
     }
 
+}
+
+void Battery::configChanged()
+{
+    KConfigGroup cg = config();
+    m_showBatteryString = cg.readEntry("showBatteryString", false);
+    m_showRemainingTime = cg.readEntry("showRemainingTime", false);
+    m_showMultipleBatteries = cg.readEntry("showMultipleBatteries", !m_isEmbedded);
+    
+    if (m_showBatteryString) {
+        showLabel(true);
+    }
+    
 }
 
 void Battery::updateBattery()
