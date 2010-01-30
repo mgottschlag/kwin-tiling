@@ -66,6 +66,7 @@
 
 #include "../core/manager.h"
 #include "../core/notification.h"
+#include "../core/completedjobnotification.h"
 #include "jobwidget.h"
 #include "jobtotalswidget.h"
 #include "notificationscroller.h"
@@ -859,6 +860,7 @@ void Applet::clearAllCompletedJobs()
 
 void Applet::finishJob(SystemTray::Job *job)
 {
+    //old ah hoc extender item
     Plasma::ExtenderItem *item = new Plasma::ExtenderItem(extender());
     item->setTitle(i18n("%1 [Finished]", job->message()));
     item->setIcon(job->applicationIconName());
@@ -873,16 +875,24 @@ void Applet::finishJob(SystemTray::Job *job)
     initExtenderItem(item);
     item->setGroup(extender()->group("completedJobsGroup"));
 
-    if (m_standaloneJobSummaryDialog && s_manager->jobs().isEmpty()) {
-        m_standaloneJobSummaryDialog->hide();
-    }
-
     if (job->elapsed() < shortJobsLength) {
         item->setAutoExpireDelay(completedShortJobExpireDelay);
     } else if (!m_timerId) {
         m_timerId = startTimer(idleCheckInterval);
     }
-    showPopup(m_autoHideTimeout);
+
+    //showPopup(m_autoHideTimeout);
+
+
+    //finished all jobs? hide the mini progressbar
+    if (m_standaloneJobSummaryDialog && s_manager->jobs().isEmpty()) {
+        m_standaloneJobSummaryDialog->hide();
+    }
+
+    //create a fake notification
+    CompletedJobNotification *notification = new CompletedJobNotification(this);
+    notification->setJob(job);
+    s_manager->addNotification(notification);
 }
 
 void Applet::open(const QString &url)

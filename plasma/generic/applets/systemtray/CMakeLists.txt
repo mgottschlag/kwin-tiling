@@ -9,6 +9,7 @@ set(systemtray_SRCS
     core/protocol.cpp
     core/task.cpp
     core/notification.cpp
+    core/completedjobnotification.cpp
     core/job.cpp
 
     protocols/fdo/fdoprotocol.cpp
