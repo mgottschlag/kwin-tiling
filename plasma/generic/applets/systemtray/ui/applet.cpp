@@ -695,7 +695,6 @@ void Applet::addNotification(Notification *notification)
             containment()->corona()->addOffscreenWidget(m_notificationStack);
         }
         m_notificationStackDialog = new StackDialog;
-        m_notificationStackDialog->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
         m_notificationStackDialog->setNotificationStack(m_notificationStack);
         connect(m_notificationStack, SIGNAL(stackEmpty()), m_notificationStackDialog, SLOT(hide()));
     }

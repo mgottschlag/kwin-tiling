@@ -34,6 +34,8 @@ StackDialog::StackDialog(QWidget *parent, Qt::WindowFlags f)
 {
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/extender-background");
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
+
 }
 
 StackDialog::~StackDialog()
