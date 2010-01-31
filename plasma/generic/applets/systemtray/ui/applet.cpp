@@ -689,8 +689,13 @@ void Applet::addNotification(Notification *notification)
             containment()->corona()->addOffscreenWidget(m_notificationStack);
         }
         m_notificationStackDialog = new StackDialog;
+        m_notificationStackDialog->setApplet(this);
         m_notificationStackDialog->setNotificationStack(m_notificationStack);
         connect(m_notificationStack, SIGNAL(stackEmpty()), m_notificationStackDialog, SLOT(hide()));
+
+        if (m_standaloneJobSummaryDialog) {
+            m_notificationStackDialog->setWindowToTile(m_standaloneJobSummaryDialog);
+        }
     }
 
     m_notificationStack->addNotification(notification);
@@ -714,6 +719,9 @@ void Applet::addJob(Job *job)
     //show the tiny standalone overview
     if (!m_standaloneJobSummaryWidget) {
         m_standaloneJobSummaryDialog = new Plasma::Dialog();
+        if (m_notificationStackDialog) {
+            m_notificationStackDialog->setWindowToTile(m_standaloneJobSummaryDialog);
+        }
 
         KWindowSystem::setState(m_standaloneJobSummaryDialog->winId(), NET::SkipTaskbar|NET::SkipPager);
         KWindowSystem::setOnAllDesktops(m_standaloneJobSummaryDialog->winId(), true);

@@ -25,12 +25,17 @@
 #include <QGraphicsLayout>
 #include <QTimer>
 
+#include <Plasma/Applet>
+#include <Plasma/Containment>
+#include <Plasma/Corona>
 #include <Plasma/FrameSvg>
 
 static const uint hideTimeout = 15 * 1000;
 
 StackDialog::StackDialog(QWidget *parent, Qt::WindowFlags f)
       : Plasma::Dialog(parent, f),
+        m_applet(0),
+        m_windowToTile(0),
         m_notificationStack(0),
         m_drawLeft(true),
         m_drawRight(true)
@@ -64,6 +69,40 @@ void StackDialog::setNotificationStack(SystemTray::NotificationStack *stack)
 SystemTray::NotificationStack *StackDialog::notificartionStack() const
 {
     return m_notificationStack;
+}
+
+void StackDialog::setApplet(Plasma::Applet *applet)
+{
+    m_applet = applet;
+}
+
+Plasma::Applet *StackDialog::applet() const
+{
+    return m_applet;
+}
+
+void StackDialog::setWindowToTile(QWidget *widget)
+{
+    m_windowToTile = widget;
+}
+
+QWidget *StackDialog::windowToTile() const
+{
+    return m_windowToTile;
+}
+
+void StackDialog::adjustWindowToTilePos()
+{
+    if (m_applet && m_windowToTile && isVisible()) {
+        //FIXME assumption that y starts from 0
+        if (m_applet->location() == Plasma::TopEdge || pos().y() < m_windowToTile->size().height()) {
+            m_windowToTile->move(m_windowToTile->pos().x(), geometry().bottom());
+        } else {
+            m_windowToTile->move(m_windowToTile->pos().x(), pos().y() - m_windowToTile->size().height());
+        }
+    } else if (m_applet && m_applet->containment() && m_applet->containment()->corona()) {
+        m_windowToTile->move(m_applet->containment()->corona()->popupPosition(m_applet, m_windowToTile->size()));
+    }
 }
 
 void StackDialog::paintEvent(QPaintEvent *e)
@@ -127,6 +166,8 @@ void StackDialog::showEvent(QShowEvent *event)
     Q_UNUSED(event)
 
     m_hideTimer->start(hideTimeout);
+
+    adjustWindowToTilePos();
 }
 
 void StackDialog::hideEvent(QHideEvent *event)
@@ -134,6 +175,22 @@ void StackDialog::hideEvent(QHideEvent *event)
     Q_UNUSED(event)
 
     m_hideTimer->stop();
+
+    adjustWindowToTilePos();
+}
+
+void StackDialog::resizeEvent(QResizeEvent *event)
+{
+    Q_UNUSED(event)
+
+    adjustWindowToTilePos();
+}
+
+void StackDialog::moveEvent(QMoveEvent *event)
+{
+    Q_UNUSED(event)
+
+    adjustWindowToTilePos();
 }
 
 void StackDialog::enterEvent(QEvent *event)

@@ -23,10 +23,13 @@
 
 #include <Plasma/Dialog>
 
+#include <QPoint>
+
 class QTimer;
 
 namespace Plasma
 {
+    class Applet;
     class FrameSvg;
 }
 
@@ -45,15 +48,28 @@ public:
     void setNotificationStack(SystemTray::NotificationStack *stack);
     SystemTray::NotificationStack *notificartionStack() const;
 
+    void setApplet(Plasma::Applet *applet);
+    Plasma::Applet *applet() const;
+
+    void setWindowToTile(QWidget *widget);
+    QWidget *windowToTile() const;
+
 protected:
+    void adjustWindowToTilePos();
+
     void paintEvent(QPaintEvent *e);
     bool event(QEvent *event);
     void showEvent(QShowEvent *event);
     void hideEvent(QHideEvent *event);
     void enterEvent(QEvent *event);
     void leaveEvent(QEvent *event);
+    void resizeEvent(QResizeEvent *event);
+    void moveEvent(QMoveEvent *event);
 
 private:
+    Plasma::Applet *m_applet;
+    QWidget *m_windowToTile;
+
     Plasma::FrameSvg *m_background;
     SystemTray::NotificationStack *m_notificationStack;
     QTimer *m_hideTimer;
