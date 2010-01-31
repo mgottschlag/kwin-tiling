@@ -167,6 +167,7 @@ void NotificationWidget::setCollapsed(bool collapse)
         d->hideAnimation->setEndValue(d->titleLayout->geometry().bottom());
         d->hideAnimation->start();
     } else {
+        d->body->setVisible(true);
         d->hideAnimation->setStartValue(size().height());
         d->hideAnimation->setEndValue(sizeHint(Qt::PreferredSize, QSizeF()).height());
         d->hideAnimation->start();
