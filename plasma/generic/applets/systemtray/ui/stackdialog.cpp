@@ -83,7 +83,12 @@ Plasma::Applet *StackDialog::applet() const
 
 void StackDialog::setWindowToTile(QWidget *widget)
 {
+    if (m_windowToTile) {
+        m_windowToTile->removeEventFilter(this);
+    }
+
     m_windowToTile = widget;
+    m_windowToTile->installEventFilter(this);
 }
 
 QWidget *StackDialog::windowToTile() const
@@ -221,6 +226,16 @@ bool StackDialog::event(QEvent *event)
     }
 
     return ret;
+}
+
+bool StackDialog::eventFilter(QObject *watched, QEvent *event)
+{
+    if (m_windowToTile && watched == m_windowToTile &&
+        event->type() == QEvent::Show && isVisible()) {
+        adjustWindowToTilePos();
+    }
+
+    return Plasma::Dialog::eventFilter(watched, event);
 }
 
 #include "stackdialog.moc"

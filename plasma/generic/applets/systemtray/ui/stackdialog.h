@@ -58,13 +58,14 @@ protected:
     void adjustWindowToTilePos();
 
     void paintEvent(QPaintEvent *e);
-    bool event(QEvent *event);
     void showEvent(QShowEvent *event);
     void hideEvent(QHideEvent *event);
     void enterEvent(QEvent *event);
     void leaveEvent(QEvent *event);
     void resizeEvent(QResizeEvent *event);
     void moveEvent(QMoveEvent *event);
+    bool event(QEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event);
 
 private:
     Plasma::Applet *m_applet;
