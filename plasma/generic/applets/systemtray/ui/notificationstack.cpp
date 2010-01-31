@@ -33,8 +33,6 @@
 namespace SystemTray
 {
 
-static const uint hideTimeout = 15 * 1000;
-
 NotificationStack::NotificationStack(QGraphicsItem *parent)
    : QGraphicsWidget(parent),
      m_size(4),
@@ -47,10 +45,6 @@ NotificationStack::NotificationStack(QGraphicsItem *parent)
     m_delayedRemoveTimer = new QTimer(this);
     m_delayedRemoveTimer->setSingleShot(true);
     connect(m_delayedRemoveTimer, SIGNAL(timeout()), this, SLOT(popNotification()));
-
-    m_hideTimer = new QTimer(this);
-    m_hideTimer->setSingleShot(true);
-    connect(m_hideTimer, SIGNAL(timeout()), this, SLOT(hide()));
 
     setAcceptsHoverEvents(true);
 }
@@ -187,15 +181,7 @@ NotificationWidget *NotificationStack::currentNotificationWidget() const
     }
 }
 
-void NotificationStack::showEvent(QShowEvent *event)
-{
-    m_hideTimer->start(hideTimeout);
-}
 
-void NotificationStack::hideEvent(QShowEvent *event)
-{
-    m_hideTimer->stop();
-}
 
 bool NotificationStack::eventFilter(QObject *watched, QEvent *event)
 {

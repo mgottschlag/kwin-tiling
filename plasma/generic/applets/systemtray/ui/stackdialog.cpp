@@ -23,8 +23,11 @@
 #include "notificationwidget.h"
 
 #include <QGraphicsLayout>
+#include <QTimer>
 
 #include <Plasma/FrameSvg>
+
+static const uint hideTimeout = 15 * 1000;
 
 StackDialog::StackDialog(QWidget *parent, Qt::WindowFlags f)
       : Plasma::Dialog(parent, f),
@@ -36,6 +39,9 @@ StackDialog::StackDialog(QWidget *parent, Qt::WindowFlags f)
     m_background->setImagePath("widgets/extender-background");
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
 
+    m_hideTimer = new QTimer(this);
+    m_hideTimer->setSingleShot(true);
+    connect(m_hideTimer, SIGNAL(timeout()), this, SLOT(hide()));
 }
 
 StackDialog::~StackDialog()
@@ -114,6 +120,34 @@ void StackDialog::paintEvent(QPaintEvent *e)
             m_background->paintFrame(&painter, QPointF(0, nw->pos().y() - top + topMargin));
         }
     }
+}
+
+void StackDialog::showEvent(QShowEvent *event)
+{
+    Q_UNUSED(event)
+
+    m_hideTimer->start(hideTimeout);
+}
+
+void StackDialog::hideEvent(QHideEvent *event)
+{
+    Q_UNUSED(event)
+
+    m_hideTimer->stop();
+}
+
+void StackDialog::enterEvent(QEvent *event)
+{
+    Q_UNUSED(event)
+
+    m_hideTimer->stop();
+}
+
+void StackDialog::leaveEvent(QEvent *event)
+{
+    Q_UNUSED(event)
+
+    m_hideTimer->start(hideTimeout);
 }
 
 bool StackDialog::event(QEvent *event)

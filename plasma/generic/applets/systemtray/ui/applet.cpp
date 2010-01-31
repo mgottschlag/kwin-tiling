@@ -779,6 +779,10 @@ void Applet::popupEvent(bool show)
         }
     }
 
+    if (m_notificationStackDialog && show) {
+        m_notificationStackDialog->hide();
+    }
+
     Plasma::ExtenderGroup * jobGroup = extender()->group("jobGroup");
     if (!jobGroup) {
         return;
