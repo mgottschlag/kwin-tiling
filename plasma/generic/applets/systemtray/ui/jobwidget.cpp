@@ -35,6 +35,7 @@
 #include <Plasma/PushButton>
 #include <Plasma/Service>
 #include <Plasma/Theme>
+#include <Plasma/ToolTipManager>
 
 static const int UPDATE_INTERVAL = 200;
 
@@ -354,7 +355,16 @@ void JobWidget::updateLabels()
         label0 = KUrl(label0).toLocalFile();
     }
 
-    m_fromLabel->setText(fm.elidedText(label0, Qt::ElideMiddle, m_fromLabel->size().width()));
+    const QString shortLabel0(fm.elidedText(label0, Qt::ElideMiddle, m_fromLabel->size().width()));
+    m_fromLabel->setText(shortLabel0);
+
+
+    Plasma::ToolTipContent data;
+
+    if (label0.length() > shortLabel0.length()) {
+        data.setSubText(label0);
+        Plasma::ToolTipManager::self()->setContent(m_fromLabel, data);
+    }
 
     if (!labelName1.isEmpty()) {
         m_toNameLabel->setText(QString("%1: ").arg(labelName1));
@@ -363,7 +373,13 @@ void JobWidget::updateLabels()
         label1 = KUrl(label1).toLocalFile();
     }
 
-    m_toLabel->setText(fm.elidedText(label1, Qt::ElideMiddle, m_toLabel->size().width()));
+    const QString shortLabel1(fm.elidedText(label1, Qt::ElideMiddle, m_toLabel->size().width()));
+    m_toLabel->setText(shortLabel1);
+
+    if (label1.length() > shortLabel1.length()) {
+        data.setSubText(label1);
+        Plasma::ToolTipManager::self()->setContent(m_toLabel, data);
+    }
 }
 
 void JobWidget::detailsClicked()
