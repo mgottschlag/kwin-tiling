@@ -104,7 +104,7 @@ PlasmaApp::PlasmaApp()
       m_startupSuspendWaitCount(0),
       m_ignoreDashboardClosures(false)
 {
-    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "plasma app ctor start";
+    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "plasma app ctor start" << "(line:" << __LINE__ << ")";
     PlasmaApp::suspendStartup(true);
     KGlobal::locale()->insertCatalog("libplasma");
     KGlobal::locale()->insertCatalog("plasmagenericshell");
@@ -245,7 +245,7 @@ PlasmaApp::PlasmaApp()
         Plasma::AuthorizationManager::PinPairing);
 
     QTimer::singleShot(0, this, SLOT(setupDesktop()));
-    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "plasma app ctor end";
+    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "plasma app ctor end" << "(line:" << __LINE__ << ")";
 }
 
 PlasmaApp::~PlasmaApp()
@@ -291,7 +291,7 @@ void PlasmaApp::setupDesktop()
 
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
     
-    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "Plasma App SetupDesktop()";
+    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "Plasma App SetupDesktop()" << "(line:" << __LINE__ << ")";
 }
 
 void PlasmaApp::quit()
@@ -726,6 +726,7 @@ bool PlasmaApp::isPanelContainment(Plasma::Containment *containment)
 
 void PlasmaApp::createView(Plasma::Containment *containment)
 {
+    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "Plasma App createView() start" << "(line:" << __LINE__ << ")";
     kDebug() << "Containment name:" << containment->name()
              << "| type" << containment->containmentType()
              <<  "| screen:" << containment->screen()
@@ -768,8 +769,6 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         view->show();
         setWmClass(view->winId());
     }
-    
-    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "Plasma App createView()";
 }
 
 void PlasmaApp::setWmClass(WId id)

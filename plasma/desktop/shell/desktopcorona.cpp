@@ -61,6 +61,7 @@ DesktopCorona::~DesktopCorona()
 
 void DesktopCorona::init()
 {
+    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "DesktopCorona init start" << "(line:" << __LINE__ << ")";
     Kephal::Screens *screens = Kephal::Screens::self();
     connect(screens, SIGNAL(screenAdded(Kephal::Screen *)), SLOT(screenAdded(Kephal::Screen *)));
     connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SIGNAL(availableScreenRegionChanged()));
@@ -98,6 +99,8 @@ void DesktopCorona::init()
 
     connect(this, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)),
             this, SLOT(updateImmutability(Plasma::ImmutabilityType)));
+            
+    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "DesktopCorona init end" << "(line:" << __LINE__ << ")";
 }
 
 void DesktopCorona::updateImmutability(Plasma::ImmutabilityType immutability)

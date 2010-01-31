@@ -45,7 +45,7 @@ static const char version[] = "0.3";
 extern "C"
 KDE_EXPORT int kdemain(int argc, char **argv)
 {
-    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "START";
+    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "START" << "(line:" << __LINE__ << ")";
   
     // dual head support
     int associatedScreen = 0;
