@@ -23,6 +23,9 @@
 #include <KGlobalSettings>
 #include <KLocale>
 #include <KIcon>
+#include <KDebug>
+
+#include <QTime>
 
 #include <config-workspace.h>
 #include "plasmaapp.h"
@@ -42,6 +45,8 @@ static const char version[] = "0.3";
 extern "C"
 KDE_EXPORT int kdemain(int argc, char **argv)
 {
+    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "START";
+  
     // dual head support
     int associatedScreen = 0;
 #ifdef Q_WS_X11
@@ -109,7 +114,8 @@ KDE_EXPORT int kdemain(int argc, char **argv)
     PlasmaApp *app = PlasmaApp::self();
     QApplication::setWindowIcon(KIcon("plasma"));
     app->disableSessionManagement(); // autostarted
-    int rc = app->exec();
+    
+    int rc = app->exec();    
     delete app;
     return rc;
 }

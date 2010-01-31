@@ -104,6 +104,7 @@ PlasmaApp::PlasmaApp()
       m_startupSuspendWaitCount(0),
       m_ignoreDashboardClosures(false)
 {
+    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "plasma app ctor start";
     PlasmaApp::suspendStartup(true);
     KGlobal::locale()->insertCatalog("libplasma");
     KGlobal::locale()->insertCatalog("plasmagenericshell");
@@ -244,6 +245,7 @@ PlasmaApp::PlasmaApp()
         Plasma::AuthorizationManager::PinPairing);
 
     QTimer::singleShot(0, this, SLOT(setupDesktop()));
+    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "plasma app ctor end";
 }
 
 PlasmaApp::~PlasmaApp()
@@ -288,6 +290,8 @@ void PlasmaApp::setupDesktop()
     desktop()->setPalette(palette);
 
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
+    
+    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "Plasma App SetupDesktop()";
 }
 
 void PlasmaApp::quit()
@@ -764,6 +768,8 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         view->show();
         setWmClass(view->winId());
     }
+    
+    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "Plasma App createView()";
 }
 
 void PlasmaApp::setWmClass(WId id)
