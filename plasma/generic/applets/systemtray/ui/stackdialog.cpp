@@ -183,6 +183,7 @@ void StackDialog::showEvent(QShowEvent *event)
     m_hideTimer->start(hideTimeout);
 
     adjustWindowToTilePos();
+    Plasma::Dialog::showEvent(event);
 }
 
 void StackDialog::hideEvent(QHideEvent *event)
@@ -192,6 +193,7 @@ void StackDialog::hideEvent(QHideEvent *event)
     m_hideTimer->stop();
 
     adjustWindowToTilePos();
+    Plasma::Dialog::hideEvent(event);
 }
 
 void StackDialog::resizeEvent(QResizeEvent *event)
@@ -199,6 +201,7 @@ void StackDialog::resizeEvent(QResizeEvent *event)
     Q_UNUSED(event)
 
     adjustWindowToTilePos();
+    Plasma::Dialog::resizeEvent(event);
 }
 
 void StackDialog::moveEvent(QMoveEvent *event)
@@ -206,6 +209,7 @@ void StackDialog::moveEvent(QMoveEvent *event)
     Q_UNUSED(event)
 
     adjustWindowToTilePos();
+    Plasma::Dialog::moveEvent(event);
 }
 
 void StackDialog::enterEvent(QEvent *event)
@@ -220,6 +224,7 @@ void StackDialog::leaveEvent(QEvent *event)
     Q_UNUSED(event)
 
     m_hideTimer->start(hideTimeout);
+    Plasma::Dialog::leaveEvent(event);
 }
 
 bool StackDialog::event(QEvent *event)

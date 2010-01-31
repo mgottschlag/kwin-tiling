@@ -37,7 +37,9 @@ JobTotalsWidget::JobTotalsWidget(SystemTray::Job *job, QGraphicsWidget *parent)
 
     setSvg("widgets/bar_meter_horizontal");
     setMeterType(Plasma::Meter::BarMeterHorizontal);
-    setMaximumHeight(16);
+    if (m_extenderItem) {
+        setMaximumHeight(16);
+    }
     setMinimumWidth(350);
     setMaximum(100);
     setValue(0);
@@ -79,6 +81,9 @@ void JobTotalsWidget::updateJob()
     if (m_extenderItem) {
         m_extenderItem->setTitle(m_job->message());
         m_extenderItem->setIcon(m_job->applicationIconName());
+    } else {
+        setLabelAlignment(0, Qt::AlignLeft|Qt::AlignVCenter);
+        setLabel(0, m_job->message());
     }
 }
 

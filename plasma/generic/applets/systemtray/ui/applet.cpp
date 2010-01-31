@@ -732,7 +732,7 @@ void Applet::addJob(Job *job)
         }
         m_standaloneJobSummaryDialog->setGraphicsWidget(m_standaloneJobSummaryWidget);
         //FIXME:sizing hack and layout issues..
-        m_standaloneJobSummaryWidget->resize(m_standaloneJobSummaryWidget->size().width(), 16);
+        m_standaloneJobSummaryWidget->resize(m_standaloneJobSummaryWidget->size().width(), 32);
     }
 
     m_standaloneJobSummaryDialog->syncToGraphicsWidget();
