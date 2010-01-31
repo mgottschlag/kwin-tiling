@@ -31,7 +31,7 @@ namespace SystemTray
 {
 
 static const int completedJobExpireDelay = 60 * 1000;
-static const int completedShortJobExpireDelay = 40 * 1000;
+static const int completedShortJobExpireDelay = 8 * 1000;
 static const uint shortJobsLength = 30 * 1000;
 
 CompletedJobNotification::CompletedJobNotification(QObject *parent)
