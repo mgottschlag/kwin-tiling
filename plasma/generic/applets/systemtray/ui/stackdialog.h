@@ -25,6 +25,7 @@
 
 #include <QPoint>
 
+class QPropertyAnimation;
 class QTimer;
 
 namespace Plasma
@@ -70,6 +71,7 @@ protected:
 private:
     Plasma::Applet *m_applet;
     QWidget *m_windowToTile;
+    QPropertyAnimation *m_windowToTileAnimation;
 
     Plasma::FrameSvg *m_background;
     SystemTray::NotificationStack *m_notificationStack;

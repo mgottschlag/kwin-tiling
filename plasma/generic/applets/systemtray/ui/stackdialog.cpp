@@ -23,6 +23,7 @@
 #include "notificationwidget.h"
 
 #include <QGraphicsLayout>
+#include <QPropertyAnimation>
 #include <QTimer>
 
 #include <Plasma/Applet>
@@ -85,10 +86,14 @@ void StackDialog::setWindowToTile(QWidget *widget)
 {
     if (m_windowToTile) {
         m_windowToTile->removeEventFilter(this);
+        delete m_windowToTileAnimation;
     }
 
     m_windowToTile = widget;
     m_windowToTile->installEventFilter(this);
+    m_windowToTileAnimation = new QPropertyAnimation(m_windowToTile, "pos", this);
+    m_windowToTileAnimation->setDuration(250);
+    m_windowToTileAnimation->setEasingCurve(QEasingCurve::InOutQuad);
 }
 
 QWidget *StackDialog::windowToTile() const
@@ -98,15 +103,20 @@ QWidget *StackDialog::windowToTile() const
 
 void StackDialog::adjustWindowToTilePos()
 {
-    if (m_applet && m_windowToTile && isVisible()) {
-        //FIXME assumption that y starts from 0
-        if (m_applet->location() == Plasma::TopEdge || pos().y() < m_windowToTile->size().height()) {
-            m_windowToTile->move(m_windowToTile->pos().x(), geometry().bottom());
-        } else {
-            m_windowToTile->move(m_windowToTile->pos().x(), pos().y() - m_windowToTile->size().height());
+    if (m_applet && m_windowToTile) {
+        m_windowToTileAnimation->setStartValue(m_windowToTile->pos());
+
+        if (isVisible()) {
+            //FIXME assumption that y starts from 0
+            if (m_applet->location() == Plasma::TopEdge || pos().y() < m_windowToTile->size().height()) {
+                m_windowToTileAnimation->setEndValue(QPoint(m_windowToTile->pos().x(), geometry().bottom()));
+            } else {
+                m_windowToTileAnimation->setEndValue(QPoint(m_windowToTile->pos().x(), pos().y() - m_windowToTile->size().height()));
+            }
+        } else if (m_applet && m_applet->containment() && m_applet->containment()->corona()) {
+            m_windowToTileAnimation->setEndValue(QPoint(m_applet->containment()->corona()->popupPosition(m_applet, m_windowToTile->size())));
         }
-    } else if (m_applet && m_applet->containment() && m_applet->containment()->corona()) {
-        m_windowToTile->move(m_applet->containment()->corona()->popupPosition(m_applet, m_windowToTile->size()));
+        m_windowToTileAnimation->start();
     }
 }
 
