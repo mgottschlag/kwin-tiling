@@ -683,6 +683,10 @@ void Applet::addNotification(Notification *notification)
     //At this point we are sure the pointer is valid
     m_notificationScroller->addNotification(notification);
 
+    if (isPopupShowing()) {
+        return;
+    }
+
     if (!m_notificationStack) {
         m_notificationStack = new NotificationStack(this);
         if (containment() && containment()->corona()) {
@@ -698,11 +702,17 @@ void Applet::addNotification(Notification *notification)
         }
     }
 
+
     m_notificationStack->addNotification(notification);
     m_notificationStackDialog->syncToGraphicsWidget();
 
     if (containment() && containment()->corona()) {
         m_notificationStackDialog->move(containment()->corona()->popupPosition(this, m_notificationStackDialog->size()));
+
+        if (!m_notificationStackDialog->isVisible()) {
+            m_notificationStack->setCurrentNotification(notification);
+        }
+
         m_notificationStackDialog->show();
         Plasma::WindowEffects::slideWindow(m_notificationStackDialog, location());
     }
