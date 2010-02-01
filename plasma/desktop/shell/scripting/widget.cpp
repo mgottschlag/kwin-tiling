@@ -31,6 +31,7 @@ Widget::Widget(Plasma::Applet *applet, QObject *parent)
       m_configGroup(applet ? applet->config() : KConfigGroup()),
       m_configDirty(false)
 {
+    kDebug() << "creating widget object" << applet;
 
 }
 
@@ -38,8 +39,11 @@ Widget::~Widget()
 {
     if (m_configDirty && m_applet) {
         KConfigGroup cg = m_applet.data()->config();
+        kDebug() << cg.readEntry("Url", QString());
         m_applet.data()->restore(cg);
         m_applet.data()->configChanged();
+    } else {
+        kDebug() << m_configDirty << m_applet;
     }
 }
 
@@ -122,6 +126,8 @@ void Widget::writeConfig(const QString &key, const QVariant &value)
     if (m_configGroup.isValid()) {
         m_configGroup.writeEntry(key, value);
         m_configDirty = true;
+    } else {
+        kDebug() << "invalid config";
     }
 }
 

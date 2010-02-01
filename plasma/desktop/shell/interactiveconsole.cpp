@@ -49,7 +49,7 @@
 
 InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     : KDialog(parent),
-      m_engine(new ScriptEngine(corona, this)),
+      m_corona(corona),
       m_splitter(new QSplitter(Qt::Vertical, this)),
       m_editorPart(0),
       m_editor(0),
@@ -134,8 +134,6 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
 
     scriptTextChanged();
 
-    connect(m_engine, SIGNAL(print(QString)), this, SLOT(print(QString)));
-    connect(m_engine, SIGNAL(printError(QString)), this, SLOT(print(QString)));
     connect(m_executeAction, SIGNAL(triggered()), this, SLOT(evaluateScript()));
 
     m_executeAction->setShortcut(Qt::CTRL + Qt::Key_E);
@@ -341,7 +339,13 @@ void InteractiveConsole::evaluateScript()
     cursor.insertBlock(block, format);
     QTime t;
     t.start();
-    m_engine->evaluateScript(m_editorPart ? m_editorPart->text() : m_editor->toPlainText());
+
+    {
+        ScriptEngine engine(m_corona, this);
+        connect(&engine, SIGNAL(print(QString)), this, SLOT(print(QString)));
+        connect(&engine, SIGNAL(printError(QString)), this, SLOT(print(QString)));
+        engine.evaluateScript(m_editorPart ? m_editorPart->text() : m_editor->toPlainText());
+    }
 
     cursor.insertText("\n\n");
     format.setFontWeight(QFont::Bold);

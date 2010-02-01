@@ -75,7 +75,7 @@ private Q_SLOTS:
     void openScriptUrlSelected();
 
 private:
-    ScriptEngine *m_engine;
+    Plasma::Corona *m_corona;
     QSplitter *m_splitter;
     KTextEditor::Document *m_editorPart;
     KTextEdit *m_editor;

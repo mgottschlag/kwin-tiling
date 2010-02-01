@@ -294,11 +294,11 @@ bool DesktopCorona::loadDefaultLayoutScripts()
 
 void DesktopCorona::evaluateScripts(QMap<QString, QString> scripts)
 {
-    ScriptEngine scriptEngine(this);
-    connect(&scriptEngine, SIGNAL(printError(QString)), this, SLOT(printScriptError(QString)));
-    connect(&scriptEngine, SIGNAL(print(QString)), this, SLOT(printScriptMessage(QString)));
-
     foreach (const QString &script, scripts) {
+        ScriptEngine scriptEngine(this);
+        connect(&scriptEngine, SIGNAL(printError(QString)), this, SLOT(printScriptError(QString)));
+        connect(&scriptEngine, SIGNAL(print(QString)), this, SLOT(printScriptMessage(QString)));
+
         QFile file(script);
         if (file.open(QIODevice::ReadOnly | QIODevice::Text) ) {
             QString code = file.readAll();
