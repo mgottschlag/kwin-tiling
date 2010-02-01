@@ -733,7 +733,6 @@ void Applet::addJob(Job *job)
             m_notificationStackDialog->setWindowToTile(m_standaloneJobSummaryDialog);
         }
 
-        KWindowSystem::setState(m_standaloneJobSummaryDialog->winId(), NET::SkipTaskbar|NET::SkipPager);
         KWindowSystem::setOnAllDesktops(m_standaloneJobSummaryDialog->winId(), true);
 
         m_standaloneJobSummaryWidget = new JobTotalsWidget(s_manager->jobTotals(), this);
@@ -745,6 +744,7 @@ void Applet::addJob(Job *job)
         m_standaloneJobSummaryWidget->resize(m_standaloneJobSummaryWidget->size().width(), 32);
     }
 
+    KWindowSystem::setState(m_standaloneJobSummaryDialog->winId(), NET::SkipTaskbar|NET::SkipPager);
     m_standaloneJobSummaryDialog->syncToGraphicsWidget();
 
     if (containment() && containment()->corona()) {
