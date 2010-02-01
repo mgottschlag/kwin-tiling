@@ -437,11 +437,11 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
         connect(containment(), SIGNAL(activate()), this, SLOT(unhide()));
     }
 
-    if (mode != AutoHide) {
+    if (mode == AutoHide) {
+        hideMousePoll();
+    } else {
         updatePanelGeometry();
         show();
-    } else {
-        hideMousePoll();
     }
 
     //kDebug() << "panel state set to" << state << NET::Sticky;
@@ -451,7 +451,7 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
     m_visibilityMode = mode;
     config().writeEntry("panelVisibility", (int)mode);
 
-    if (m_visibilityMode == AutoHide && !m_editting) {
+    if ((mode == AutoHide || mode == LetWindowsCover) && !m_editting) {
         QTimer::singleShot(2000, this, SLOT(startAutoHide()));
     }
 }
