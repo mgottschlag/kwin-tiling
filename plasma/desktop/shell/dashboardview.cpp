@@ -247,15 +247,15 @@ void DashboardView::showDashboard(bool showDashboard)
         }
 
         KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
-        setWindowState(Qt::WindowFullScreen);
 
         if (AppSettings::perVirtualDesktopViews()) {
             //kDebug() << "pvdv dashboard, setting" << winId() << "on desktop" << m_view->desktop() + 1;
-            KWindowSystem::setOnDesktop(winId(), m_view->desktop());
+            KWindowSystem::setOnDesktop(winId(), m_view->desktop() + 1);
         } else {
             KWindowSystem::setOnAllDesktops(winId(), true);
         }
 
+        setWindowState(Qt::WindowFullScreen);
         QAction *action = containment()->action("zoom out");
         m_zoomOut = action ? action->isEnabled() : false;
         action = containment()->action("zoom in");
