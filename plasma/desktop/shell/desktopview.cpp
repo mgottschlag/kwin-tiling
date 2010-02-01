@@ -170,9 +170,13 @@ void DesktopView::updateShortcuts()
 
 void DesktopView::toggleDashboard()
 {
+    //kDebug() << "toggling dashboard for screen" << screen() << "and destop" << desktop() <<
+    //    (m_dashboard ? (m_dashboard->isVisible() ? "visible" : "hidden") : "non-existent");
     prepDashboard();
-    m_dashboard->toggleVisibility();
-    //kDebug() << "toggling dashboard for screen" << screen() << m_dashboard->isVisible();
+    if (m_dashboard) {
+        m_dashboard->toggleVisibility();
+    }
+    //kDebug() << "toggling dashboard for screen" << screen() << "and destop" << desktop() << m_dashboard->isVisible();
 }
 
 void DesktopView::showDashboard(bool show)
@@ -182,7 +186,9 @@ void DesktopView::showDashboard(bool show)
     }
 
     prepDashboard();
-    m_dashboard->showDashboard(show);
+    if (m_dashboard) {
+        m_dashboard->showDashboard(show);
+    }
 }
 
 void DesktopView::prepDashboard()
