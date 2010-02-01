@@ -24,6 +24,7 @@
 
 #include <Plasma/Applet>
 #include <Plasma/Containment>
+#include <Plasma/Corona>
 
 Widget::Widget(Plasma::Applet *applet, QObject *parent)
     : QObject(parent),
@@ -31,19 +32,12 @@ Widget::Widget(Plasma::Applet *applet, QObject *parent)
       m_configGroup(applet ? applet->config() : KConfigGroup()),
       m_configDirty(false)
 {
-    kDebug() << "creating widget object" << applet;
-
 }
 
 Widget::~Widget()
 {
-    if (m_configDirty && m_applet) {
-        KConfigGroup cg = m_applet.data()->config();
-        kDebug() << cg.readEntry("Url", QString());
-        m_applet.data()->restore(cg);
-        m_applet.data()->configChanged();
-    } else {
-        kDebug() << m_configDirty << m_applet;
+    if (m_configDirty) {
+        reloadConfig();
     }
 }
 
@@ -126,8 +120,20 @@ void Widget::writeConfig(const QString &key, const QVariant &value)
     if (m_configGroup.isValid()) {
         m_configGroup.writeEntry(key, value);
         m_configDirty = true;
-    } else {
-        kDebug() << "invalid config";
+    }
+}
+
+void Widget::reloadConfig()
+{
+    Plasma::Applet *applet = m_applet.data();
+    if (applet) {
+        KConfigGroup cg = applet->config();
+        applet->restore(cg);
+        applet->configChanged();
+        if (applet->containment() && applet->containment()->corona()) {
+            applet->containment()->corona()->requestConfigSync();
+        }
+        m_configDirty = false;
     }
 }
 

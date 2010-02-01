@@ -71,6 +71,7 @@ public Q_SLOTS:
     void remove();
     QVariant readConfig(const QString &key, const QVariant &def = QString()) const;
     void writeConfig(const QString &key, const QVariant &value);
+    void reloadConfig();
     void showConfigurationInterface();
 
 private:
