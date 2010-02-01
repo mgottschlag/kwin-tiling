@@ -241,12 +241,18 @@ void DashboardView::toggleVisibility()
 void DashboardView::showDashboard(bool showDashboard)
 {
     if (showDashboard) {
+        if (!containment()) {
+            return;
+        }
+
         if (m_suppressShow) {
             //kDebug() << "DashboardView::toggleVisibility but show was suppressed";
             return;
         }
 
         KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
+        setWindowFlags(Qt::FramelessWindowHint);
+        setWindowState(Qt::WindowFullScreen);
 
         if (AppSettings::perVirtualDesktopViews()) {
             //kDebug() << "pvdv dashboard, setting" << winId() << "on desktop" << m_view->desktop() + 1;
@@ -255,7 +261,6 @@ void DashboardView::showDashboard(bool showDashboard)
             KWindowSystem::setOnAllDesktops(winId(), true);
         }
 
-        setWindowState(Qt::WindowFullScreen);
         QAction *action = containment()->action("zoom out");
         m_zoomOut = action ? action->isEnabled() : false;
         action = containment()->action("zoom in");
