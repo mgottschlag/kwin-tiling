@@ -743,6 +743,12 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         m_panelViewCreationTimer->start();
     } else if (containment->screen() > -1 &&
                containment->screen() < Kephal::ScreenUtils::numScreens()) {
+        if (AppSettings::perVirtualDesktopViews()) {
+            if (containment->desktop() < 0 ||
+                containment->desktop() > KWindowSystem::numberOfDesktops() - 1) {
+                return;
+            }
+        }
         KConfigGroup viewIds(KGlobal::config(), "ViewIds");
         int id = viewIds.readEntry(QString::number(containment->id()), 0);
         DesktopView *view = viewForScreen(containment->screen(), containment->desktop());

@@ -250,7 +250,8 @@ void DashboardView::showDashboard(bool showDashboard)
         setWindowState(Qt::WindowFullScreen);
 
         if (AppSettings::perVirtualDesktopViews()) {
-            KWindowSystem::setOnDesktop(winId(), m_view->desktop()+1);
+            //kDebug() << "pvdv dashboard, setting" << winId() << "on desktop" << m_view->desktop() + 1;
+            KWindowSystem::setOnDesktop(winId(), m_view->desktop());
         } else {
             KWindowSystem::setOnAllDesktops(winId(), true);
         }
