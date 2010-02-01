@@ -27,18 +27,14 @@
 #include <Plasma/Corona>
 
 Widget::Widget(Plasma::Applet *applet, QObject *parent)
-    : QObject(parent),
-      m_applet(applet),
-      m_configGroup(applet ? applet->config() : KConfigGroup()),
-      m_configDirty(false)
+    : Applet(parent),
+      m_applet(applet)
 {
+    setCurrentConfigGroup(QStringList());
 }
 
 Widget::~Widget()
 {
-    if (m_configDirty) {
-        reloadConfig();
-    }
 }
 
 uint Widget::id() const
@@ -64,76 +60,6 @@ void Widget::remove()
     if (m_applet) {
         m_applet.data()->destroy();
         m_applet.clear();
-    }
-}
-
-void Widget::setCurrentConfigGroup(const QStringList &groupNames)
-{
-    if (!m_applet) {
-        m_configGroup = KConfigGroup();
-        m_configGroupPath.clear();
-        return;
-    }
-
-    m_configGroup = m_applet.data()->config();
-    m_configGroupPath = groupNames;
-
-    foreach (const QString &groupName, groupNames) {
-        m_configGroup = KConfigGroup(&m_configGroup, groupName);
-    }
-}
-
-QStringList Widget::currentConfigGroup() const
-{
-    return m_configGroupPath;
-}
-
-QStringList Widget::configKeys() const
-{
-    if (m_configGroup.isValid()) {
-        return m_configGroup.keyList();
-    }
-
-    return QStringList();
-}
-
-QStringList Widget::configGroups() const
-{
-    if (m_configGroup.isValid()) {
-        return m_configGroup.groupList();
-    }
-
-    return QStringList();
-}
-
-QVariant Widget::readConfig(const QString &key, const QVariant &def) const
-{
-    if (m_configGroup.isValid()) {
-        return m_configGroup.readEntry(key, def);
-    } else {
-        return QVariant();
-    }
-}
-
-void Widget::writeConfig(const QString &key, const QVariant &value)
-{
-    if (m_configGroup.isValid()) {
-        m_configGroup.writeEntry(key, value);
-        m_configDirty = true;
-    }
-}
-
-void Widget::reloadConfig()
-{
-    Plasma::Applet *applet = m_applet.data();
-    if (applet) {
-        KConfigGroup cg = applet->config();
-        applet->restore(cg);
-        applet->configChanged();
-        if (applet->containment() && applet->containment()->corona()) {
-            applet->containment()->corona()->requestConfigSync();
-        }
-        m_configDirty = false;
     }
 }
 

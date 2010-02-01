@@ -20,10 +20,11 @@
 #ifndef CONTAINMENT
 #define CONTAINMENT
 
-#include <QObject>
 #include <QScriptContext>
 #include <QScriptValue>
 #include <QWeakPointer>
+
+#include "applet.h"
 
 namespace Plasma
 {
@@ -33,9 +34,13 @@ namespace Plasma
 class Widget;
 class PanelView;
 
-class Containment : public QObject
+class Containment : public Applet
 {
     Q_OBJECT
+    Q_PROPERTY(QStringList configKeys READ configKeys)
+    Q_PROPERTY(QStringList configGroups READ configGroups)
+    Q_PROPERTY(QStringList currentConfigGroup WRITE setCurrentConfigGroup READ currentConfigGroup)
+
     Q_PROPERTY(QString name READ name WRITE setName)
     Q_PROPERTY(QString type READ type)
     Q_PROPERTY(QString formFactor READ formFactor)
@@ -88,12 +93,19 @@ public:
     QString hiding() const;
     void setHiding(const QString &mode);
 
+    Plasma::Applet *applet() const;
+
     static QScriptValue widgetById(QScriptContext *context, QScriptEngine *engine);
     static QScriptValue addWidget(QScriptContext *context, QScriptEngine *engine);
 
 public Q_SLOTS:
     void remove();
     void showConfigurationInterface();
+
+    // from the applet interface
+    QVariant readConfig(const QString &key, const QVariant &def = QString()) const { return Applet::readConfig(key, def); }
+    void writeConfig(const QString &key, const QVariant &value) { Applet::writeConfig(key, value); }
+    void reloadConfig() { Applet::reloadConfig(); }
 
 private:
     PanelView *panel() const;

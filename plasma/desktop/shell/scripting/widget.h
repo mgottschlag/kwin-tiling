@@ -20,17 +20,16 @@
 #ifndef WIDGET
 #define WIDGET
 
-#include <QObject>
 #include <QWeakPointer>
 
-#include <KConfigGroup>
+#include "applet.h"
 
 namespace Plasma
 {
     class Applet;
 } // namespace Plasma
 
-class Widget : public QObject
+class Widget : public Applet
 {
     Q_OBJECT
     Q_PROPERTY(QString type READ type)
@@ -50,35 +49,28 @@ public:
     uint id() const;
     QString type() const;
 
-    QStringList configKeys() const;
-    QStringList configGroups() const;
-
-    Plasma::Applet *applet() const;
-
     int index() const;
     void setIndex(int index);
 
     QRectF geometry() const;
     void setGeometry(const QRectF &geometry);
 
-    void setCurrentConfigGroup(const QStringList &groupNames);
-    QStringList currentConfigGroup() const;
-
     void setGlobalShortcut(const QString &shortcut);
     QString globalShorcut() const;
 
+    Plasma::Applet *applet() const;
+
 public Q_SLOTS:
     void remove();
-    QVariant readConfig(const QString &key, const QVariant &def = QString()) const;
-    void writeConfig(const QString &key, const QVariant &value);
-    void reloadConfig();
     void showConfigurationInterface();
+
+    // from the applet interface
+    QVariant readConfig(const QString &key, const QVariant &def = QString()) const { return Applet::readConfig(key, def); }
+    void writeConfig(const QString &key, const QVariant &value) { Applet::writeConfig(key, value); }
+    void reloadConfig() { Applet::reloadConfig(); }
 
 private:
     QWeakPointer<Plasma::Applet> m_applet;
-    KConfigGroup m_configGroup;
-    QStringList m_configGroupPath;
-    bool m_configDirty;
 };
 
 #endif

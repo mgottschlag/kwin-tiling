@@ -30,10 +30,11 @@
 #include "widget.h"
 
 Containment::Containment(Plasma::Containment *containment, QObject *parent)
-    : QObject(parent),
+    : Applet(parent),
       m_containment(containment),
       m_isPanel(containment && ScriptEngine::isPanel(containment))
 {
+    setCurrentConfigGroup(QStringList());
 }
 
 Containment::~Containment()
@@ -272,6 +273,11 @@ void Containment::showConfigurationInterface()
             configAction->trigger();
         }
     }
+}
+
+Plasma::Applet *Containment::applet() const
+{
+    return m_containment.data();
 }
 
 PanelView *Containment::panel() const

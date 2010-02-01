@@ -3,6 +3,7 @@ include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${KDEBASE_WORKSPACE_SOU
 add_subdirectory(configupdates)
 
 set(plasma_SRCS
+    scripting/applet.cpp
     scripting/containment.cpp
     scripting/rect.cpp
     scripting/scriptengine.cpp
