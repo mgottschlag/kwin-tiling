@@ -49,6 +49,7 @@ class KSMShutdownFeedback : public QWidget
 public:
     static void start();
     static void stop();
+    static void logoutCanceled();
 
 protected:
     ~KSMShutdownFeedback() {}

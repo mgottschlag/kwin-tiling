@@ -120,8 +120,16 @@ void KSMShutdownFeedback::start()
             if( props != NULL )
                 XFree( props );
         }
-        if( wmsupport )
+        if( wmsupport ) {
+            // Announce that the user MAY be logging out (Intended for the compositor)
+            Atom announce = XInternAtom(dpy, "_KDE_LOGGING_OUT", False);
+            unsigned char dummy = 0;
+            XChangeProperty(dpy, QX11Info::appRootWindow(), announce, announce, 8, PropModeReplace,
+                &dummy, 1);
+
+            // Don't show our own effect
             return;
+        }
     }
     s_pSelf = new KSMShutdownFeedback();
     s_pSelf->show();
@@ -131,6 +139,16 @@ void KSMShutdownFeedback::stop()
 {
     delete s_pSelf;
     s_pSelf = NULL;
+}
+
+void KSMShutdownFeedback::logoutCanceled()
+{
+    if( KWindowSystem::compositingActive()) {
+        // We are no longer logging out, announce (Intended for the compositor)
+        Display* dpy = QX11Info::display();
+        Atom announce = XInternAtom(dpy, "_KDE_LOGGING_OUT", False);
+        XDeleteProperty(QX11Info::display(), QX11Info::appRootWindow(), announce);
+    }
 }
 
 ////////////

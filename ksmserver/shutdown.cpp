@@ -220,6 +220,8 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
         }
         if ( clients.isEmpty() )
             completeShutdownOrCheckpoint();
+    } else {
+        KSMShutdownFeedback::logoutCanceled(); // make the screen become normal again
     }
     dialogActive = false;
 }
@@ -369,6 +371,7 @@ void KSMServer::cancelShutdown( KSMClient* c )
 {
     Solid::PowerManagement::stopSuppressingSleep(inhibitCookie);
     kDebug( 1218 ) << "Client " << c->program() << " (" << c->clientId() << ") canceled shutdown.";
+    KSMShutdownFeedback::logoutCanceled(); // make the screen become normal again
     KNotification::event( "cancellogout" , i18n( "Logout canceled by '%1'", c->program()),
         QPixmap() , 0l , KNotification::DefaultEvent  );
     clientInteracting = 0;
