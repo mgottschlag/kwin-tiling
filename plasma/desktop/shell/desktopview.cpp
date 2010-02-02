@@ -114,7 +114,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
 
     KConfigGroup cg = config();
     const uint dashboardContainmentId = cg.readEntry("DashboardContainment", uint(0));
-    m_dashboardFollowsDesktop = dashboardContainmentId > 0;
+    m_dashboardFollowsDesktop = dashboardContainmentId == 0;
 
     // since Plasma::View has a delayed init we need to
     // put a delay also for this call in order to be sure
