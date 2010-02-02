@@ -147,6 +147,10 @@ QSize ControllerWindow::sizeHint() const
 
 void ControllerWindow::setLocation(const Plasma::Location &loc)
 {
+    if (m_location == loc) {
+        return;
+    }
+
     Plasma::WindowEffects::slideWindow(this, loc);
 
     m_location = loc;
