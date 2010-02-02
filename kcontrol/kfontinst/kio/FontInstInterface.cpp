@@ -36,9 +36,7 @@ namespace KFI
 FontInstInterface::FontInstInterface()
                  : itsInterface(new OrgKdeFontinstInterface(OrgKdeFontinstInterface::staticInterfaceName(),
                                                             FONTINST_PATH,
-                                                            Misc::root()
-                                                                ? QDBusConnection::systemBus()
-                                                                : QDBusConnection::sessionBus(), 0L))
+                                                            QDBusConnection::sessionBus(), 0L))
                  , itsActive(false)
 {
     KFI_DBUG;
