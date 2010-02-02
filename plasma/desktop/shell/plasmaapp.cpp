@@ -356,8 +356,14 @@ void PlasmaApp::toggleDashboard()
     // and the wrong state of shown dashboards occurs.
     m_ignoreDashboardClosures = true;
 
+    const int currentDesktop = KWindowSystem::currentDesktop() - 1;
     foreach (DesktopView *view, m_desktops) {
-        view->toggleDashboard();
+        if (AppSettings::perVirtualDesktopViews() && view->desktop() != currentDesktop) {
+            // always hide the dashboard if it isn't on the current desktop
+            view->showDashboard(false);
+        } else {
+            view->toggleDashboard();
+        }
     }
 
     m_ignoreDashboardClosures = false;
@@ -370,8 +376,14 @@ void PlasmaApp::showDashboard(bool show)
     // and that could end up badly :)
     m_ignoreDashboardClosures = true;
 
+    const int currentDesktop = KWindowSystem::currentDesktop() - 1;
     foreach (DesktopView *view, m_desktops) {
-        view->showDashboard(show);
+        if (AppSettings::perVirtualDesktopViews() && view->desktop() != currentDesktop) {
+            // always hide the dashboard if it isn't on the current desktop
+            view->showDashboard(false);
+        } else {
+            view->showDashboard(show);
+        }
     }
 
     m_ignoreDashboardClosures = false;
