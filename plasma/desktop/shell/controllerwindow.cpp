@@ -48,6 +48,10 @@ ControllerWindow::ControllerWindow(QWidget* parent)
      m_widgetExplorer(0)
 {
     Q_UNUSED(parent)
+
+    m_background->setImagePath("dialogs/background");
+    m_background->setContainsMultipleImages(true);
+
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky | NET::KeepAbove);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -59,9 +63,8 @@ ControllerWindow::ControllerWindow(QWidget* parent)
     pal.setBrush(backgroundRole(), Qt::transparent);
     setPalette(pal);
 
-    m_background->setImagePath("dialogs/background");
-    m_background->setContainsMultipleImages(true);
     Plasma::WindowEffects::overrideShadow(winId(), true);
+
 
     m_layout->setContentsMargins(0, 0, 0, 0);
 
@@ -144,10 +147,6 @@ QSize ControllerWindow::sizeHint() const
 
 void ControllerWindow::setLocation(const Plasma::Location &loc)
 {
-    if (m_location == loc) {
-        return;
-    }
-
     Plasma::WindowEffects::slideWindow(this, loc);
 
     m_location = loc;
@@ -156,26 +155,26 @@ void ControllerWindow::setLocation(const Plasma::Location &loc)
     case Plasma::LeftEdge:
         m_background->setEnabledBorders(Plasma::FrameSvg::RightBorder);
         m_layout->setDirection(QBoxLayout::TopToBottom);
-        m_layout->setContentsMargins(0, 0, m_background->marginSize(Plasma::RightMargin), 0);
+        setContentsMargins(0, 0, m_background->marginSize(Plasma::RightMargin), 0);
         break;
 
     case Plasma::RightEdge:
         m_background->setEnabledBorders(Plasma::FrameSvg::LeftBorder);
         m_layout->setDirection(QBoxLayout::TopToBottom);
-        m_layout->setContentsMargins(m_background->marginSize(Plasma::LeftMargin), 0, 0, 0);
+        setContentsMargins(m_background->marginSize(Plasma::LeftMargin), 0, 0, 0);
         break;
 
     case Plasma::TopEdge:
         m_background->setEnabledBorders(Plasma::FrameSvg::BottomBorder);
         m_layout->setDirection(QBoxLayout::BottomToTop);
-        m_layout->setContentsMargins(0, 0, 0, m_background->marginSize(Plasma::BottomMargin));
+        setContentsMargins(0, 0, 0, m_background->marginSize(Plasma::BottomMargin));
         break;
 
     case Plasma::BottomEdge:
     default:
         m_background->setEnabledBorders(Plasma::FrameSvg::TopBorder);
         m_layout->setDirection(QBoxLayout::TopToBottom);
-        m_layout->setContentsMargins(0, m_background->marginSize(Plasma::TopMargin), 0, 0);
+        setContentsMargins(0, m_background->marginSize(Plasma::TopMargin), 0, 0);
         break;
     }
 
