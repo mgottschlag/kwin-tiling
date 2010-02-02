@@ -114,9 +114,11 @@ public Q_SLOTS:
      * Adds applet
      */
     void addApplet(PlasmaAppletItem *appletItem);
-    
-protected:    
-  
+
+protected Q_SLOTS:
+    void immutabilityChanged(Plasma::ImmutabilityType);
+
+protected:
     void showEvent(QShowEvent *e);
 
 private:

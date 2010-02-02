@@ -356,6 +356,7 @@ void WidgetExplorer::setContainment(Plasma::Containment *containment)
 
         if (d->containment) {
             connect(d->containment, SIGNAL(destroyed(QObject*)), this, SLOT(containmentDestroyed()));
+            connect(d->containment, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)), this, SLOT(immutabilityChanged(Plasma::ImmutabilityType)));
         }
 
         d->initRunningApplets();
@@ -403,6 +404,13 @@ void WidgetExplorer::showEvent(QShowEvent *e)
 {
     d->filteringWidget->setFocus();
     QGraphicsWidget::showEvent(e);
+}
+
+void WidgetExplorer::immutabilityChanged(Plasma::ImmutabilityType type)
+{
+    if (type != Plasma::Mutable) {
+        emit closeClicked();
+    }
 }
 
 } // namespace Plasma
