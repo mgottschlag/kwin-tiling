@@ -963,6 +963,7 @@ void PlasmaApp::setFixedDashboard(bool fixedDashboard)
             maxViewSize = view->size();
         }
     }
+
     if (fixedDashboard) {
         c->resize(maxViewSize);
     }
