@@ -112,7 +112,9 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     setBackgroundBrush(tile);
     */
 
-    m_dashboardFollowsDesktop = (dashboardContainment() == 0);
+    KConfigGroup cg = config();
+    const uint dashboardContainmentId = cg.readEntry("DashboardContainment", uint(0));
+    m_dashboardFollowsDesktop = dashboardContainmentId > 0;
 
     // since Plasma::View has a delayed init we need to
     // put a delay also for this call in order to be sure
@@ -224,11 +226,11 @@ Plasma::Containment *DesktopView::dashboardContainment() const
 {
     KConfigGroup cg = config();
     Plasma::Containment *dc = 0;
-    int containmentId = cg.readEntry("DashboardContainment", 0);
+    const uint containmentId = cg.readEntry("DashboardContainment", uint(0));
 
     if (containmentId > 0) {
         foreach (Plasma::Containment *c, PlasmaApp::self()->corona()->containments()) {
-            if ((int)c->id() == containmentId) {
+            if (c->id() == containmentId) {
                 dc = c;
                 break;
             }
@@ -249,11 +251,14 @@ void DesktopView::setDashboardContainment(Plasma::Containment *containment)
         if (dashboardContainment()) {
             dashboardContainment()->destroy(false);
         }
-        config().writeEntry("DashboardContainment", 0);
+
+        config().deleteEntry("DashboardContainment");
         if (m_dashboard) {
             m_dashboard->setContainment(View::containment());
         }
     }
+
+    m_dashboardFollowsDesktop = containment == 0;
 }
 
 void DesktopView::screenResized(Kephal::Screen *s)
@@ -302,12 +307,16 @@ bool DesktopView::dashboardFollowsDesktop() const
 
 void DesktopView::setDashboardFollowsDesktop(bool follow)
 {
+    if (m_dashboardFollowsDesktop == follow) {
+        return;
+    }
+
     m_dashboardFollowsDesktop = follow;
 
     if (follow) {
         config().writeEntry("DashboardContainment", containment()->id());
     } else {
-        config().writeEntry("DashboardContainment", 0);
+        config().deleteEntry("DashboardContainment");
     }
 }
 
