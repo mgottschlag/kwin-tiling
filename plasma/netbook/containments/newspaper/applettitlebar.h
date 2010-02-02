@@ -20,10 +20,10 @@
 #ifndef APPLETTITLEBAR_H
 #define APPLETTITLEBAR_H
 
-
+#include <QAbstractAnimation>
 #include <QGraphicsWidget>
 
-#include <Plasma/Plasma>
+#include <plasma/animations/animation.h>
 
 namespace Plasma
 {
@@ -59,7 +59,7 @@ protected Q_SLOTS:
     void syncMargins();
     void appletRemoved(Plasma::Applet *applet);
     void themeChanged();
-    void animationFinished(int id);
+    void animationFinished();
 
 private:
     enum PressedButton{
@@ -76,9 +76,9 @@ private:
     QRectF m_configureButtonRect;
     QRectF m_closeButtonRect;
 
-    int m_maximizeButtonAnimationId;
-    int m_configureButtonAnimationId;
-    int m_closeButtonAnimationId;
+    Plasma::Animation *confAnim;
+    Plasma::Animation *closeAnim;
+    Plasma::Animation *maxAnim;
 
     Plasma::Svg *m_icons;
     Plasma::Svg *m_separator;

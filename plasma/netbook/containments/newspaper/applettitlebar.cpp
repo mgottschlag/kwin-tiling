@@ -30,21 +30,15 @@
 
 #include <KIconLoader>
 
-#include <Plasma/Animator>
-#include <Plasma/IconWidget>
-#include <Plasma/Label>
-#include <Plasma/Separator>
-#include <Plasma/Svg>
-#include <Plasma/Theme>
-
+#include <plasma/animations/animation.h>
+#include <plasma/applet.h>
+#include <plasma/svg.h>
+#include <plasma/theme.h>
 
 AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
        : QGraphicsWidget(applet),
          m_applet(applet),
          m_pressedButton(NoButton),
-         m_maximizeButtonAnimationId(0),
-         m_configureButtonAnimationId(0),
-         m_closeButtonAnimationId(0),
          m_separator(0),
          m_background(0),
          m_savedAppletTopMargin(0),
@@ -76,14 +70,11 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
         connect(applet->containment(), SIGNAL(appletRemoved(Plasma::Applet *)), this, SLOT(appletRemoved(Plasma::Applet *)));
     }
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
-
-    connect(Plasma::Animator::self(), SIGNAL(elementAnimationFinished(int)), this, SLOT(animationFinished(int)));
 }
 
 AppletTitleBar::~AppletTitleBar()
 {
 }
-
 
 void AppletTitleBar::syncMargins()
 {
@@ -154,6 +145,7 @@ void AppletTitleBar::syncIconRects()
 bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
 {
     Q_UNUSED(watched)
+
     if (event->type() == QEvent::GraphicsSceneResize) {
         syncSize();
     } else if (event->type() == QEvent::GraphicsSceneHoverEnter) {
@@ -161,46 +153,31 @@ bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
         m_showButtons = true;
         syncIconRects();
 
-        if (m_maximizeButtonAnimationId) {
-            Plasma::Animator::self()->stopElementAnimation(m_maximizeButtonAnimationId);
-        }
-        m_maximizeButtonAnimationId = Plasma::Animator::self()->animateElement(this, Plasma::Animator::AppearAnimation);
-        Plasma::Animator::self()->setInitialPixmap(m_maximizeButtonAnimationId, m_icons->pixmap("maximize"));
+        confAnim = Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation, this);
+        closeAnim = Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation, this);
 
-        if (m_configureButtonAnimationId) {
-            Plasma::Animator::self()->stopElementAnimation(m_maximizeButtonAnimationId);
-        }
-        m_configureButtonAnimationId = Plasma::Animator::self()->animateElement(this, Plasma::Animator::AppearAnimation);
-        Plasma::Animator::self()->setInitialPixmap(m_configureButtonAnimationId, m_icons->pixmap("configure"));
+        confAnim->setProperty("startPixmap", m_icons->pixmap("configure"));
+        confAnim->setTargetWidget(this);
+        confAnim->start(QAbstractAnimation::DeleteWhenStopped);
 
-        if (m_closeButtonAnimationId) {
-            Plasma::Animator::self()->stopElementAnimation(m_maximizeButtonAnimationId);
-        }
-        m_closeButtonAnimationId = Plasma::Animator::self()->animateElement(this, Plasma::Animator::AppearAnimation);
-        Plasma::Animator::self()->setInitialPixmap(m_closeButtonAnimationId, m_icons->pixmap("close"));
-
-        update();
+        closeAnim->setProperty("startPixmap", m_icons->pixmap("close"));
+        closeAnim->setTargetWidget(this);
+        closeAnim->start(QAbstractAnimation::DeleteWhenStopped);
     } else if (event->type() == QEvent::GraphicsSceneHoverLeave) {
         m_underMouse = false;
-        if (m_maximizeButtonAnimationId) {
-            Plasma::Animator::self()->stopElementAnimation(m_maximizeButtonAnimationId);
-        }
-        m_maximizeButtonAnimationId = Plasma::Animator::self()->animateElement(this, Plasma::Animator::DisappearAnimation);
-        Plasma::Animator::self()->setInitialPixmap(m_maximizeButtonAnimationId, m_icons->pixmap("maximize"));
+        confAnim = Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation, this);
+        closeAnim = Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation, this);
 
-        if (m_configureButtonAnimationId) {
-            Plasma::Animator::self()->stopElementAnimation(m_maximizeButtonAnimationId);
-        }
-        m_configureButtonAnimationId = Plasma::Animator::self()->animateElement(this, Plasma::Animator::DisappearAnimation);
-        Plasma::Animator::self()->setInitialPixmap(m_configureButtonAnimationId, m_icons->pixmap("configure"));
+        confAnim->setProperty("startPixmap", m_icons->pixmap("configure"));
+        confAnim->setProperty("direction", QAbstractAnimation::Backward);
+        confAnim->setTargetWidget(this);
+        confAnim->start(QAbstractAnimation::DeleteWhenStopped);
 
-        if (m_closeButtonAnimationId) {
-            Plasma::Animator::self()->stopElementAnimation(m_maximizeButtonAnimationId);
-        }
-        m_closeButtonAnimationId = Plasma::Animator::self()->animateElement(this, Plasma::Animator::DisappearAnimation);
-        Plasma::Animator::self()->setInitialPixmap(m_closeButtonAnimationId, m_icons->pixmap("close"));
-
-        update();
+        closeAnim->setProperty("direction", QAbstractAnimation::Backward);
+        closeAnim->setProperty("startPixmap", m_icons->pixmap("close"));
+        closeAnim->setTargetWidget(this);
+        closeAnim->start(QAbstractAnimation::DeleteWhenStopped);
+        animationFinished();
     }
 
     return false;
@@ -289,24 +266,24 @@ void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     if (m_showButtons) {
         if (m_applet->hasValidAssociatedApplication()) {
-            if (m_maximizeButtonAnimationId) {
-                QPixmap animPixmap = Plasma::Animator::self()->currentPixmap(m_maximizeButtonAnimationId);
-                painter->drawPixmap(m_maximizeButtonRect, animPixmap, animPixmap.rect());
+            if (maxAnim) {
+               QPixmap animPixmap = qvariant_cast<QPixmap>(maxAnim->property("startPixmap"));
+               painter->drawPixmap(m_maximizeButtonRect, animPixmap, animPixmap.rect());
             } else {
                 m_icons->paint(painter, m_maximizeButtonRect, "maximize");
             }
         }
         if (m_applet->hasConfigurationInterface()) {
-            if (m_maximizeButtonAnimationId) {
-                QPixmap animPixmap = Plasma::Animator::self()->currentPixmap(m_configureButtonAnimationId);
+            if (confAnim) {
+                QPixmap animPixmap = qvariant_cast<QPixmap>(confAnim->property("startPixmap"));
                 painter->drawPixmap(m_configureButtonRect, animPixmap, animPixmap.rect());
             } else {
                 m_icons->paint(painter, m_configureButtonRect, "configure");
             }
         }
         if (m_applet->immutability() == Plasma::Mutable) {
-            if (m_maximizeButtonAnimationId) {
-                QPixmap animPixmap = Plasma::Animator::self()->currentPixmap(m_closeButtonAnimationId);
+            if (closeAnim) {
+                QPixmap animPixmap = qvariant_cast<QPixmap>(closeAnim->property("startPixmap"));
                 painter->drawPixmap(m_closeButtonRect, animPixmap, animPixmap.rect());
             } else {
                 m_icons->paint(painter, m_closeButtonRect, "close");
@@ -344,19 +321,12 @@ void AppletTitleBar::themeChanged()
     QTimer::singleShot(0, this, SLOT(syncMargins()));
 }
 
-void AppletTitleBar::animationFinished(int id)
+void AppletTitleBar::animationFinished()
 {
     if (!m_underMouse) {
         m_showButtons = false;
     }
 
-    if (id == m_maximizeButtonAnimationId) {
-        m_maximizeButtonAnimationId = 0;
-    } else if (id == m_configureButtonAnimationId) {
-        m_configureButtonAnimationId = 0;
-    } else if (id == m_closeButtonAnimationId) {
-        m_closeButtonAnimationId = 0;
-    }
 }
 
 #include <applettitlebar.moc>
