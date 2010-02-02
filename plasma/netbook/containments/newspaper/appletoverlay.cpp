@@ -19,6 +19,7 @@
 
 #include "appletoverlay.h"
 #include "newspaper.h"
+#include "appletscontainer.h"
 #include "../common/appletmovespacer.h"
 
 #include <QGraphicsSceneMouseEvent>
@@ -79,7 +80,7 @@ void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
         QRectF geom = m_applet->contentsRect();
         geom.translate(m_applet->pos());
         //FIXME: calculate the offset ONE time, mmkay?
-        QPointF offset = m_newspaper->m_mainWidget->pos() + m_newspaper->m_scrollWidget->pos();
+        QPointF offset = m_newspaper->m_container->pos() + m_newspaper->m_scrollWidget->pos();
         geom.moveTopLeft(geom.topLeft() + offset);
         geom = geom.intersected(m_newspaper->m_scrollWidget->geometry());
         c = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
@@ -137,7 +138,7 @@ void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
         return;
     }
 
-    QPointF offset = m_newspaper->m_mainWidget->pos() + m_newspaper->m_scrollWidget->pos();
+    QPointF offset = m_newspaper->m_container->pos() + m_newspaper->m_scrollWidget->pos();
     disconnect(m_applet, SIGNAL(destroyed()), this, SLOT(appletDestroyed()));
     m_applet = 0;
 
@@ -264,12 +265,12 @@ void AppletOverlay::showSpacer(const QPointF &pos)
         return;
     }
 
-    QPointF translatedPos = pos - m_newspaper->m_mainWidget->pos() - m_newspaper->m_scrollWidget->pos();
+    QPointF translatedPos = pos - m_newspaper->m_container->pos() - m_newspaper->m_scrollWidget->pos();
 
     QGraphicsLinearLayout *lay = 0;
 
-    for (int i = 0; i < m_newspaper->m_mainLayout->count(); ++i) {
-        QGraphicsLinearLayout *candidateLay = dynamic_cast<QGraphicsLinearLayout *>(m_newspaper->m_mainLayout->itemAt(i));
+    for (int i = 0; i < m_newspaper->m_container->count(); ++i) {
+        QGraphicsLinearLayout *candidateLay = dynamic_cast<QGraphicsLinearLayout *>(m_newspaper->m_container->itemAt(i));
 
         //normally should never happen
         if (!candidateLay) {
@@ -292,7 +293,7 @@ void AppletOverlay::showSpacer(const QPointF &pos)
 
     //couldn't decide: is the last column empty?
     if (!lay) {
-        QGraphicsLinearLayout *candidateLay = dynamic_cast<QGraphicsLinearLayout *>(m_newspaper->m_mainLayout->itemAt(m_newspaper->m_mainLayout->count()-1));
+        QGraphicsLinearLayout *candidateLay = dynamic_cast<QGraphicsLinearLayout *>(m_newspaper->m_container->itemAt(m_newspaper->m_container->count()-1));
 
         if (candidateLay && candidateLay->count() <= 2) {
             lay = candidateLay;
@@ -301,7 +302,7 @@ void AppletOverlay::showSpacer(const QPointF &pos)
 
     //give up, make a new column
     if (!lay) {
-        lay = m_newspaper->addColumn();
+        lay = m_newspaper->m_container->addColumn();
     }
 
     if (pos == QPoint()) {
@@ -355,7 +356,7 @@ void AppletOverlay::showSpacer(const QPointF &pos)
     if (insertIndex != -1) {
         if (!m_spacer) {
             m_spacer = new AppletMoveSpacer(this);
-            connect (m_spacer, SIGNAL(dropRequested(QGraphicsSceneDragDropEvent *)), 
+            connect (m_spacer, SIGNAL(dropRequested(QGraphicsSceneDragDropEvent *)),
                      this, SLOT(spacerRequestedDrop(QGraphicsSceneDragDropEvent *)));
         }
         if (m_spacerLayout) {
@@ -375,25 +376,25 @@ void AppletOverlay::scrollTimeout()
 
     if (m_newspaper->orientation() == Qt::Vertical) {
         if (m_scrollDown) {
-            if (m_newspaper->m_mainWidget->geometry().bottom() > m_newspaper->m_scrollWidget->geometry().bottom()) {
-                m_newspaper->m_mainWidget->moveBy(0, -10);
+            if (m_newspaper->m_container->geometry().bottom() > m_newspaper->m_scrollWidget->geometry().bottom()) {
+                m_newspaper->m_container->moveBy(0, -10);
                 m_applet->moveBy(0, 10);
             }
         } else {
-            if (m_newspaper->m_mainWidget->pos().y() < 0) {
-                m_newspaper->m_mainWidget->moveBy(0, 10);
+            if (m_newspaper->m_container->pos().y() < 0) {
+                m_newspaper->m_container->moveBy(0, 10);
                 m_applet->moveBy(0, -10);
             }
         }
     } else {
         if (m_scrollDown) {
-            if (m_newspaper->m_mainWidget->geometry().right() > m_newspaper->m_scrollWidget->geometry().right()) {
-                m_newspaper->m_mainWidget->moveBy(-10, 0);
+            if (m_newspaper->m_container->geometry().right() > m_newspaper->m_scrollWidget->geometry().right()) {
+                m_newspaper->m_container->moveBy(-10, 0);
                 m_applet->moveBy(10, 0);
             }
         } else {
-            if (m_newspaper->m_mainWidget->pos().x() < 0) {
-                m_newspaper->m_mainWidget->moveBy(10, 0);
+            if (m_newspaper->m_container->pos().x() < 0) {
+                m_newspaper->m_container->moveBy(10, 0);
                 m_applet->moveBy(-10, 0);
             }
         }

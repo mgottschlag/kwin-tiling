@@ -28,6 +28,7 @@ class AppletOverlay;
 class AppletTitleBar;
 class NetToolBox;
 class QGraphicsLinearLayout;
+class AppletsContainer;
 
 namespace Plasma
 {
@@ -50,19 +51,13 @@ public:
     void constraintsEvent(Plasma::Constraints constraints);
 
 protected:
-    void createAppletTitle(Plasma::Applet *applet);
     void changeEvent(QEvent *event);
 
     void saveContents(KConfigGroup &group) const;
     void restore(KConfigGroup &group);
 
-    QGraphicsLinearLayout *addColumn();
-    void removeColumn(int column);
-
     void setOrientation(Qt::Orientation orientation);
     Qt::Orientation orientation() const;
-
-    void syncColumnSizes();
 
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
     void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
@@ -71,8 +66,6 @@ protected:
 
 private Q_SLOTS:
     void toggleImmutability();
-    void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
-    void cleanupColumns();
     void updateSize();
     void appletSizeHintChanged();
     void updateConfigurationMode(bool config);
@@ -88,10 +81,8 @@ private Q_SLOTS:
     void containmentRemoved(QObject *containment);
 
 private:
-    QGraphicsWidget *m_mainWidget;
     Plasma::ScrollWidget *m_scrollWidget;
     QGraphicsLinearLayout *m_externalLayout;
-    QGraphicsLinearLayout *m_mainLayout;
     Qt::Orientation m_orientation;
     Plasma::FrameSvg *m_background;
     AppletOverlay *m_appletOverlay;
@@ -102,6 +93,7 @@ private:
     QTimer *m_scrollTimer;
     QTimer *m_updateSizeTimer;
     QTimer *m_relayoutTimer;
+    AppletsContainer *m_container;
 };
 
 

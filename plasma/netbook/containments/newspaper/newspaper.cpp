@@ -22,6 +22,7 @@
 #include "newspaper.h"
 #include "appletoverlay.h"
 #include "applettitlebar.h"
+#include "appletscontainer.h"
 #include "../common/nettoolbox.h"
 
 #include <limits>
@@ -65,6 +66,7 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
       m_leftArrow(0),
       m_rightArrow(0)
 {
+    m_container = new AppletsContainer();
     setContainmentType(Containment::CustomContainment);
 
     connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
@@ -75,12 +77,13 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
 
     m_updateSizeTimer = new QTimer(this);
     m_updateSizeTimer->setSingleShot(true);
-    connect(m_updateSizeTimer, SIGNAL(timeout()), this, SLOT(updateSize()));
+    connect(m_updateSizeTimer, SIGNAL(timeout()), m_container, SLOT(updateSize()));
 
     m_relayoutTimer = new QTimer(this);
     m_relayoutTimer->setSingleShot(true);
-    connect(m_relayoutTimer, SIGNAL(timeout()), this, SLOT(updateSize()));
-    connect(m_relayoutTimer, SIGNAL(timeout()), this, SLOT(cleanupColumns()));
+    connect(m_relayoutTimer, SIGNAL(timeout()), m_container, SLOT(updateSize()));
+    connect(m_relayoutTimer, SIGNAL(timeout()), m_container, SLOT(cleanupColumns()));
+    connect(m_container, SIGNAL(appletSizeHintChanged()), this, SLOT(appletSizeHintChanged()));
 }
 
 Newspaper::~Newspaper()
@@ -94,15 +97,14 @@ void Newspaper::init()
     m_externalLayout->setContentsMargins(0, 0, 0, 0);
     m_scrollWidget = new Plasma::ScrollWidget(this);
     m_externalLayout->addItem(m_scrollWidget);
-    m_mainWidget = new QGraphicsWidget(m_scrollWidget);
-    m_scrollWidget->setWidget(m_mainWidget);
+    m_container->setParent(m_scrollWidget);
+    m_scrollWidget->setWidget(m_container);
 
     m_orientation = (Qt::Orientation)config().readEntry("orientation", (int)Qt::Vertical);
+    m_container->setOrientation(m_orientation);
 
-    m_mainLayout = new QGraphicsLinearLayout(m_mainWidget);
-    addColumn();
+    m_container->addColumn();
     setOrientation(m_orientation);
-
 
     Plasma::Svg *borderSvg = new Plasma::Svg(this);
     borderSvg->setImagePath("newspaper/border");
@@ -151,6 +153,11 @@ void Newspaper::init()
     addAction("previous containment", a);
 }
 
+void Newspaper::updateSize()
+{
+    m_container->updateSize();
+}
+
 void Newspaper::toggleImmutability()
 {
     if (immutability() == Plasma::UserImmutable) {
@@ -160,92 +167,6 @@ void Newspaper::toggleImmutability()
     }
 }
 
-void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
-{
-    QGraphicsLinearLayout *lay = 0;
-
-    for (int i = 0; i < m_mainLayout->count(); ++i) {
-        QGraphicsLinearLayout *candidateLay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(i));
-
-        //normally should never happen
-        if (!candidateLay) {
-            continue;
-        }
-
-        if (m_orientation == Qt::Horizontal) {
-            if (pos.y() < candidateLay->geometry().bottom()) {
-                lay = candidateLay;
-                break;
-            }
-        //vertical
-        } else {
-            if (pos.x() < candidateLay->geometry().right()) {
-                lay = candidateLay;
-                break;
-            }
-        }
-    }
-
-    //couldn't decide: is the last column empty?
-    if (!lay) {
-        QGraphicsLinearLayout *candidateLay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(m_mainLayout->count()-1));
-
-        if (candidateLay && candidateLay->count() == 1) {
-            lay = candidateLay;
-        }
-    }
-
-    //give up, make a new column
-    if (!lay) {
-        lay = addColumn();
-    }
-
-    int insertIndex = -1;
-
-    QPointF localPos = mapToItem(m_mainWidget, pos);
-
-    //if localPos is (-1,-1) insert at the end of the Newspaper
-    if (localPos != QPoint(-1, -1)) {
-        for (int i = 0; i < lay->count(); ++i) {
-            QGraphicsLayoutItem *li = lay->itemAt(i);
-
-            QRectF siblingGeometry = li->geometry();
-            if (m_orientation == Qt::Horizontal) {
-                qreal middle = (siblingGeometry.left() + siblingGeometry.right()) / 2.0;
-                if (localPos.x() < middle) {
-                    insertIndex = i;
-                    break;
-                } else if (localPos.x() <= siblingGeometry.right()) {
-                    insertIndex = i + 1;
-                    break;
-                }
-            } else { //Vertical
-                qreal middle = (siblingGeometry.top() + siblingGeometry.bottom()) / 2.0;
-
-                if (localPos.y() < middle) {
-                    insertIndex = i;
-                    break;
-                } else if (localPos.y() <= siblingGeometry.bottom()) {
-                    insertIndex = i + 1;
-                    break;
-                }
-            }
-        }
-    }
-
-
-    if (insertIndex == -1) {
-        lay->insertItem(lay->count()-1, applet);
-    } else {
-        lay->insertItem(qMin(insertIndex, lay->count()-1), applet);
-    }
-
-    connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(appletSizeHintChanged()));
-    updateSize();
-    createAppletTitle(applet);
-    syncColumnSizes();
-}
-
 void Newspaper::refreshLayout()
 {
     if (!m_relayoutTimer->isActive()) {
@@ -253,36 +174,20 @@ void Newspaper::refreshLayout()
     }
 }
 
-void Newspaper::cleanupColumns()
-{
-    //clean up all empty columns
-    for (int i = 0; i < m_mainLayout->count(); ++i) {
-        QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(i));
-
-        if (!lay) {
-            continue;
-        }
-
-        if (lay->count() == 1) {
-            removeColumn(i);
-        }
-    }
-}
-
 void Newspaper::setOrientation(Qt::Orientation orientation)
 {
     m_orientation = orientation;
-    m_mainLayout->setOrientation(orientation==Qt::Vertical?Qt::Horizontal:Qt::Vertical);
+    m_container->setOrientation(m_orientation);
     m_externalLayout->setOrientation(m_orientation);
 
     if (m_orientation == Qt::Vertical) {
-        m_mainWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        m_container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         if (m_leftArrow) {
             m_leftArrow->deleteLater();
             m_rightArrow->deleteLater();
         }
     } else {
-        m_mainWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+        m_container->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
         if (!m_leftArrow) {
             m_leftArrow = new Plasma::ToolButton(this);
             m_leftArrow->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
@@ -307,8 +212,8 @@ void Newspaper::setOrientation(Qt::Orientation orientation)
         }
     }
 
-    for (int i = 0; i < m_mainLayout->count(); ++i) {
-        QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(i));
+    for (int i = 0; i < m_container->count(); ++i) {
+        QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_container->itemAt(i));
 
         if (!lay) {
             continue;
@@ -324,7 +229,7 @@ void Newspaper::goRight()
     ev.setDelta(-120);
     scene()->sendEvent(m_scrollWidget, &ev);
 
-    if (m_mainWidget->geometry().right()-2 <= m_scrollWidget->viewportGeometry().right() && sender() == m_rightArrow) {
+    if (m_container->geometry().right()-2 <= m_scrollWidget->viewportGeometry().right() && sender() == m_rightArrow) {
         action("next containment")->trigger();
     }
 }
@@ -335,7 +240,7 @@ void Newspaper::goLeft()
     ev.setDelta(120);
     scene()->sendEvent(m_scrollWidget, &ev);
 
-    if (m_mainWidget->geometry().left() >= -2 && sender() == m_leftArrow) {
+    if (m_container->geometry().left() >= -2 && sender() == m_leftArrow) {
         action("previous containment")->trigger();
     }
 }
@@ -365,41 +270,13 @@ void Newspaper::appletSizeHintChanged()
     }
 }
 
-void Newspaper::updateSize()
-{
-    QSizeF hint = m_mainWidget->effectiveSizeHint(Qt::PreferredSize);
-
-    //FIXME: it appears to work only with hardcoded values
-    if (m_orientation == Qt::Horizontal) {
-        m_mainWidget->resize(qMax((int)hint.width(), 300), m_mainWidget->size().height());
-    } else {
-        m_mainWidget->resize(m_mainWidget->size().width(), qMax((int)hint.height(), 300));
-    }
-}
-
-//FIXME: this is really bad, but without hardcoded maximum sizes the cpu usage goes nuts, causing continuous resizes for a minute or so
-void Newspaper::syncColumnSizes()
-{
-    for (int i = 0; i < m_mainLayout->count(); ++i) {
-        QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(i));
-
-        if (m_orientation == Qt::Vertical) {
-            lay->setMaximumWidth(m_scrollWidget->viewportGeometry().size().width()/m_mainLayout->count());
-            lay->setMaximumHeight(QWIDGETSIZE_MAX);
-        } else {
-            lay->setMaximumHeight(m_scrollWidget->viewportGeometry().size().height()/m_mainLayout->count());
-            lay->setMaximumWidth(QWIDGETSIZE_MAX);
-        }
-    }
-}
-
 void Newspaper::constraintsEvent(Plasma::Constraints constraints)
 {
     kDebug() << "constraints updated with" << constraints << "!!!!!!";
 
     if (constraints & Plasma::StartupCompletedConstraint) {
         connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
-                this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
+                m_container, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
         Plasma::Corona *c = corona();
         if (c) {
             connect(c, SIGNAL(containmentAdded(Plasma::Containment *)),
@@ -419,9 +296,9 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::SizeConstraint && m_appletOverlay) {
         m_appletOverlay->resize(size());
     }
-    
+
     if (constraints & Plasma::SizeConstraint) {
-        syncColumnSizes();
+        m_container->syncColumnSizes();
     }
 
     if (constraints & Plasma::ImmutableConstraint) {
@@ -506,15 +383,9 @@ void Newspaper::updateConfigurationMode(bool config)
     m_externalLayout->setContentsMargins(extraLeft, extraTop, extraRight, extraBottom);
 
     if (!config) {
-        cleanupColumns();
+        m_container->cleanupColumns();
     }
 
-}
-
-void Newspaper::createAppletTitle(Plasma::Applet *applet)
-{
-    AppletTitleBar *appletTitleBar = new AppletTitleBar(applet);
-    appletTitleBar->show();
 }
 
 void Newspaper::changeEvent(QEvent *event)
@@ -596,10 +467,10 @@ void Newspaper::restore(KConfigGroup &group)
     }
 
     //if the required columns does not exist, create them
-    if (m_mainLayout->count() < orderedApplets.count()) {
-        int columnsToAdd = orderedApplets.count()-m_mainLayout->count();
+    if (m_container->count() < orderedApplets.count()) {
+        int columnsToAdd = orderedApplets.count()-m_container->count();
         for (int i = 0; i < columnsToAdd; ++i) {
-            addColumn();
+            m_container->addColumn();
         }
     }
 
@@ -608,7 +479,7 @@ void Newspaper::restore(KConfigGroup &group)
     QMap<int, QMap<int, Applet *> >::const_iterator it = orderedApplets.constBegin();
 
     while (it != orderedApplets.constEnd()) {
-        QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(column));
+        QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_container->itemAt(column));
         ++column;
 
         //this should never happen
@@ -619,17 +490,17 @@ void Newspaper::restore(KConfigGroup &group)
 
         foreach (Applet *applet, it.value()) {
             lay->insertItem(lay->count()-1, applet);
-            createAppletTitle(applet);
+            m_container->createAppletTitle(applet);
         }
         ++it;
     }
 
     //add all the remaining applets
     foreach (Applet *applet, unorderedApplets) {
-        layoutApplet(applet, applet->pos());
+        m_container->layoutApplet(applet, applet->pos());
     }
 
-    updateSize();
+    m_container->updateSize();
 }
 
 void Newspaper::saveContents(KConfigGroup &group) const
@@ -637,8 +508,8 @@ void Newspaper::saveContents(KConfigGroup &group) const
     Containment::saveContents(group);
 
     KConfigGroup appletsConfig(&group, "Applets");
-    for (int column = 0; column < m_mainLayout->count(); ++column) {
-        QGraphicsLinearLayout *lay = static_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(column));
+    for (int column = 0; column < m_container->count(); ++column) {
+        QGraphicsLinearLayout *lay = static_cast<QGraphicsLinearLayout *>(m_container->itemAt(column));
         for (int row = 0; row < lay->count(); ++row) {
             const Applet *applet = dynamic_cast<Applet *>(lay->itemAt(row));
             if (applet) {
@@ -650,50 +521,6 @@ void Newspaper::saveContents(KConfigGroup &group) const
             }
         }
     }
-}
-
-QGraphicsLinearLayout *Newspaper::addColumn()
-{
-    QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(m_orientation);
-    m_mainLayout->addItem(lay);
-
-    QGraphicsWidget *spacer = new QGraphicsWidget(m_mainWidget);
-    spacer->setPreferredSize(0, 0);
-    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    lay->addItem(spacer);
-
-    syncColumnSizes();
-
-    return lay;
-}
-
-void Newspaper::removeColumn(int column)
-{
-    QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(column));
-
-    if (!lay) {
-        return;
-    }
-
-    m_mainLayout->removeAt(column);
-
-    for (int i = 0; i < lay->count(); ++i) {
-        QGraphicsLayoutItem *item = lay->itemAt(i);
-        QGraphicsWidget *widget = dynamic_cast<QGraphicsWidget *>(item);
-        Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(widget);
-
-        //find a new home for the applet
-        if (applet) {
-            layoutApplet(applet, applet->pos());
-        //delete spacers
-        } else if (widget) {
-            widget->deleteLater();
-        }
-    }
-
-    syncColumnSizes();
-
-    delete lay;
 }
 
 void Newspaper::updateRemoveActionVisibility()
