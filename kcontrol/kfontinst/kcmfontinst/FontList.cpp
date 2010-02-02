@@ -736,7 +736,7 @@ void CFontList::fontsAdded(const KFI::Families &families)
     if(itsSlowUpdates)
         storeSlowedMessage(families, MSG_ADD);
     else
-        addFonts(families.items, families.isSystem);
+        addFonts(families.items, families.isSystem && !Misc::root());
 }
 
 void CFontList::fontsRemoved(const KFI::Families &families)
@@ -745,7 +745,7 @@ void CFontList::fontsRemoved(const KFI::Families &families)
     if(itsSlowUpdates)
         storeSlowedMessage(families, MSG_DEL);
     else
-        removeFonts(families.items, families.isSystem);
+        removeFonts(families.items, families.isSystem && !Misc::root());
 }
 
 void CFontList::storeSlowedMessage(const Families &families, EMsgType type)
@@ -795,9 +795,9 @@ void CFontList::actionSlowedUpdates(bool sys)
         if(!itsSlowedMsgs[i][folder].isEmpty())
         {
             if(MSG_ADD==i)
-                addFonts(itsSlowedMsgs[i][folder], sys);
+                addFonts(itsSlowedMsgs[i][folder], sys && !Misc::root());
             else
-                removeFonts(itsSlowedMsgs[i][folder], sys);
+                removeFonts(itsSlowedMsgs[i][folder], sys && !Misc::root());
             itsSlowedMsgs[i][folder].clear();
         }
 }
