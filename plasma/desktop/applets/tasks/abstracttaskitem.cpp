@@ -660,7 +660,7 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
                 } else {
                     result = Plasma::PaintUtils::transition(result,
                                         effect->apply(result, KIconLoader::Desktop,
-                                        KIconLoader::ActiveState), m_backgroundPrefix == "normal" ? 1 - m_alpha : m_alpha);
+                                        KIconLoader::ActiveState), m_backgroundPrefix != "hover" ? 1 - m_alpha : m_alpha);
                 }
             }
 
