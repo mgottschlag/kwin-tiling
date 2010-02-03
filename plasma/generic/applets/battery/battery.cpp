@@ -922,8 +922,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         // Show the charge percentage with a box on top of the battery
         QString batteryLabel;
         if (has_battery) {
-            batteryLabel = QString::number(battery_charge);
-            batteryLabel.append("%");
+            batteryLabel = i18nc("overlay on the battery, needs to be really tiny", "%1%", battery_charge);
             paintLabel(p, contentsRect, batteryLabel);
         }
     }
