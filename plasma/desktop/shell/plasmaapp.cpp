@@ -358,9 +358,11 @@ void PlasmaApp::toggleDashboard()
 
     const int currentDesktop = KWindowSystem::currentDesktop() - 1;
     foreach (DesktopView *view, m_desktops) {
-        if (AppSettings::perVirtualDesktopViews() && view->desktop() != currentDesktop) {
+        if (AppSettings::perVirtualDesktopViews()) {
             // always hide the dashboard if it isn't on the current desktop
-            view->showDashboard(false);
+            if (view->desktop() == currentDesktop) {
+                view->toggleDashboard();
+            }
         } else {
             view->toggleDashboard();
         }
@@ -378,9 +380,11 @@ void PlasmaApp::showDashboard(bool show)
 
     const int currentDesktop = KWindowSystem::currentDesktop() - 1;
     foreach (DesktopView *view, m_desktops) {
-        if (AppSettings::perVirtualDesktopViews() && view->desktop() != currentDesktop) {
+        if (AppSettings::perVirtualDesktopViews()) {
             // always hide the dashboard if it isn't on the current desktop
-            view->showDashboard(false);
+            if (view->desktop() == currentDesktop) {
+                view->showDashboard(show);
+            }
         } else {
             view->showDashboard(show);
         }
