@@ -893,7 +893,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
                     tmpLocale.setTimeFormat("%k:%M");
                     batteryLabel = tmpLocale.formatTime(t, false, true); // minutes, hours as duration
                 } else {
-                    batteryLabel = i18nc("hover overlay on the battery", "%1%", battery_data.value()["Percent"].toString());
+                    batteryLabel = i18nc("overlay on the battery, needs to be really tiny", "%1%", battery_data.value()["Percent"].toString());
                 }
                 paintLabel(p, corect, batteryLabel);
             }
