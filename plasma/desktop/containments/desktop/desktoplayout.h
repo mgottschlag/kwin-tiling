@@ -18,6 +18,11 @@
 
 #include "itemspace.h"
 
+namespace Plasma
+{
+    class Animation;
+}
+
 class DesktopLayout : public QObject
 {
     Q_OBJECT
@@ -153,7 +158,7 @@ private:
      **/
     QMap<int, DesktopLayoutItem> items;
 
-    QHash<QGraphicsItem*, int> m_animatingItems;
+    QHash<QGraphicsItem*, QWeakPointer<Plasma::Animation> > m_animatingItems;
     QPointF workingStart;
 
     // layout configuration

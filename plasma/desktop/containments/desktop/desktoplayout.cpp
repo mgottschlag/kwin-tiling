@@ -16,6 +16,7 @@
 
 #include <KDebug>
 
+#include <Plasma/Animation>
 #include <Plasma/Animator>
 
 #include "desktoplayout.h"
@@ -25,8 +26,6 @@ DesktopLayout::DesktopLayout()
         temporaryPlacement(false),
         visibilityTolerance(0)
 {
-    connect(Plasma::Animator::self(), SIGNAL(movementFinished(QGraphicsItem*)),
-            this, SLOT(movementFinished(QGraphicsItem*)));
 }
 
 void DesktopLayout::addItem(QGraphicsWidget *item, bool pushBack, bool position)
@@ -310,18 +309,20 @@ void DesktopLayout::adjustPhysicalPositions()
 
             if (desktopItem.item->geometry() != absoluteGeom) {
                 if (spaceItem.animateMovement)  {
-                    Plasma::Animator *anim = Plasma::Animator::self();
-                    bool animating = m_animatingItems.contains(desktopItem.item);
-                    if (animating) {
-                        anim->stopItemMovement(m_animatingItems.value(desktopItem.item));
-                    }
-                    int id = Plasma::Animator::self()->moveItem(desktopItem.item, Plasma::Animator::FastSlideInMovement,
-                                                                absoluteGeom.topLeft().toPoint());
-                    if (id > 0) {
-                        m_animatingItems.insert(desktopItem.item, id);
-                    } else if (animating) {
+                    if (m_animatingItems.contains(desktopItem.item)) {
+                        Plasma::Animation *anim = m_animatingItems.value(desktopItem.item).data();
+                        anim->stop();
                         m_animatingItems.remove(desktopItem.item);
                     }
+
+                    Plasma::Animation *anim = Plasma::Animator::create(Plasma::Animator::SlideAnimation);
+                    anim->setProperty("startValue", desktopItem.item->pos());
+                    anim->setProperty("endValue", absoluteGeom.topLeft().toPoint());
+                    anim->setTargetWidget(desktopItem.item);
+                    anim->start(QAbstractAnimation::DeleteWhenStopped);
+
+                    m_animatingItems.insert(desktopItem.item, anim);
+                    connect(anim, SIGNAL(finished()), this, SLOT(movementFinished()));
 
                     spaceItem.animateMovement = false;
                 } else {
