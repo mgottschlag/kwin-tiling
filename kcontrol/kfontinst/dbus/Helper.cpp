@@ -321,11 +321,12 @@ int Helper::toggle(const QVariantMap &args)
                             QString(enable ? Misc::unhide(Misc::getFile(*ait))
                                            : Misc::hide(Misc::getFile(*ait)));
 
-                    if(to!=*ait)
+                    if(to!=*ait) {
                         if(renameFontFile(*ait, to))
                             movedAssoc[*ait]=to;
                         else
                             result=KIO::ERR_WRITE_ACCESS_DENIED;
+                    }
                 }
             }
             else
