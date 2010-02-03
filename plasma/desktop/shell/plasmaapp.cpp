@@ -765,9 +765,11 @@ void PlasmaApp::createView(Plasma::Containment *containment)
                 return;
             }
         }
+
         KConfigGroup viewIds(KGlobal::config(), "ViewIds");
         int id = viewIds.readEntry(QString::number(containment->id()), 0);
-        DesktopView *view = viewForScreen(containment->screen(), containment->desktop());
+        DesktopView *view = viewForScreen(containment->screen(),
+                                          AppSettings::perVirtualDesktopViews() ? containment->desktop() : -1);
         if (view) {
             kDebug() << "had a view for" << containment->screen() << containment->desktop();
             // we already have a view for this screen
