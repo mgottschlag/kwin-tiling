@@ -27,12 +27,11 @@
 
 #include <KIconLoader>
 
-#include <Plasma/Animator>
+#include <Plasma/Animation>
 #include <Plasma/Containment>
 #include <Plasma/IconWidget>
 #include <Plasma/ItemBackground>
 #include <Plasma/PaintUtils>
-#include <Plasma/FrameSvg>
 #include <Plasma/Svg>
 
 
@@ -97,6 +96,7 @@ public:
 
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     {
+        Q_UNUSED(event);
         m_itemBackground->hide();
     }
 
@@ -168,7 +168,6 @@ NetToolBox::NetToolBox(Plasma::Containment *parent)
      m_containment(parent),
      m_icon("plasma"),
      m_iconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall),
-     m_animHighlightId(0),
      m_animHighlightFrame(0),
      m_hovering(false),
      m_showing(false),
@@ -193,8 +192,17 @@ NetToolBox::NetToolBox(Plasma::Containment *parent)
     connect(m_containment, SIGNAL(geometryChanged()), this, SLOT(containmentGeometryChanged()));
     containmentGeometryChanged();
 
-    connect(Plasma::Animator::self(), SIGNAL(movementFinished(QGraphicsItem*)),
-            this, SLOT(movementFinished(QGraphicsItem*)));
+    slideAnim = Plasma::Animator::create(Plasma::Animator::SlideAnimation, this);
+    connect(slideAnim, SIGNAL(stateChanged(QAbstractAnimation::State,
+                        QAbstractAnimation::State)),
+                this, SLOT(onMovement(QAbstractAnimation::State, QAbstractAnimation::State)));
+    connect(slideAnim, SIGNAL(finished()), this, SLOT(movementFinished()));
+
+    anim = new QPropertyAnimation(this, "highlight", this);
+    anim->setDuration(250);
+    anim->setStartValue(0);
+    anim->setEndValue(1);
+
 }
 
 NetToolBox::~NetToolBox()
@@ -209,68 +217,49 @@ bool NetToolBox::isShowing() const
 void NetToolBox::setShowing(const bool show)
 {
     m_showing = show;
-
     if (show != m_toolContainer->isVisible()) {
         emit toggled();
         emit visibilityChanged(show);
     }
 
     if (show) {
-        QPoint finalPos;
         switch (m_location) {
         case Plasma::TopEdge:
             m_toolContainer->setPos(boundingRect().topLeft() - QPoint(0, m_toolContainer->size().height()));
-            finalPos = QPoint(0, 0);
             break;
         case Plasma::LeftEdge:
             m_toolContainer->setPos(boundingRect().topLeft() - QPoint(m_toolContainer->size().width(), 0));
-            finalPos = QPoint(0, 0);
             break;
         case Plasma::RightEdge:
             m_toolContainer->setPos(boundingRect().topRight());
-            finalPos = QPoint(size().width()-m_toolContainer->size().width(), 0);
             break;
         case Plasma::BottomEdge:
         default:
             m_toolContainer->setPos(boundingRect().bottomLeft());
-            finalPos = QPoint(0, size().height()-m_toolContainer->size().height());
             break;
         }
 
-        m_toolContainer->show();
+        slideAnim->setProperty("distance", m_toolContainer->size().height());
+        slideAnim->setTargetWidget(m_toolContainer);
+        slideAnim->start();
 
-        if (m_animSlideId) {
-            Plasma::Animator::self()->stopItemMovement(m_animSlideId);
-        }
-
-        m_animSlideId = Plasma::Animator::self()->moveItem(m_toolContainer, Plasma::Animator::SlideOutMovement, finalPos);
     } else {
-        QPoint finalPos;
         switch (m_location) {
         case Plasma::TopEdge:
-            finalPos = QPoint((boundingRect().topLeft() - QPoint(0, m_toolContainer->size().height())).toPoint());
             m_toolContainer->setPos(0, 0);
             break;
         case Plasma::LeftEdge:
-            finalPos = QPoint(boundingRect().topLeft().toPoint() - QPoint(m_toolContainer->size().width(), 0));
             m_toolContainer->setPos(size().width()-m_toolContainer->size().width(), 0);
             break;
         case Plasma::RightEdge:
-            finalPos = QPoint(boundingRect().topRight().toPoint());
             m_toolContainer->setPos(0, 0);
             break;
         case Plasma::BottomEdge:
         default:
-            finalPos = QPoint(boundingRect().bottomLeft().toPoint());
             m_toolContainer->setPos(0, size().height()-m_toolContainer->size().height());
             break;
         }
-
-        if (m_animSlideId) {
-            Plasma::Animator::self()->stopItemMovement(m_animSlideId);
-        }
-
-        m_animSlideId = Plasma::Animator::self()->moveItem(m_toolContainer, Plasma::Animator::SlideInMovement, finalPos);
+        slideAnim->start();
     }
 }
 
@@ -401,7 +390,6 @@ void NetToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 {
     Q_UNUSED(option)
     Q_UNUSED(widget)
-
     QPoint iconPos;
     QString svgElement;
 
@@ -445,14 +433,8 @@ void NetToolBox::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
         QGraphicsWidget::hoverEnterEvent(event);
         return;
     }
-    Plasma::Animator *animdriver = Plasma::Animator::self();
-    if (m_animHighlightId) {
-        animdriver->stopCustomAnimation(m_animHighlightId);
-    }
-    m_hovering = true;
-    m_animHighlightId =
-        animdriver->customAnimation(
-            10, 240, Plasma::Animator::EaseInCurve, this, "animateHighlight");
+
+    highlight(true);
 
     QGraphicsWidget::hoverEnterEvent(event);
 }
@@ -466,19 +448,27 @@ void NetToolBox::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
         return;
     }
 
-    Plasma::Animator *animdriver = Plasma::Animator::self();
-    if (m_animHighlightId) {
-        animdriver->stopCustomAnimation(m_animHighlightId);
-    }
-    m_hovering = false;
-    m_animHighlightId =
-        animdriver->customAnimation(
-            10, 240, Plasma::Animator::EaseOutCurve, this, "animateHighlight");
+    highlight(false);
 
     QGraphicsWidget::hoverLeaveEvent(event);
 }
 
-void NetToolBox::animateHighlight(qreal progress)
+void NetToolBox::highlight(bool highlighting)
+{
+    if (m_hovering == highlighting) {
+        return;
+    }
+
+    m_hovering = highlighting;
+
+    if (anim->state() != QAbstractAnimation::Stopped) {
+        anim->stop();
+    }
+
+    anim->start();
+}
+
+void NetToolBox::setHighlight(qreal progress)
 {
     if (m_hovering) {
         m_animHighlightFrame = progress;
@@ -486,19 +476,31 @@ void NetToolBox::animateHighlight(qreal progress)
         m_animHighlightFrame = 1.0 - progress;
     }
 
-    if (progress >= 1) {
-        m_animHighlightId = 0;
-    }
-
     update();
 }
 
-void NetToolBox::movementFinished(QGraphicsItem *item)
+qreal NetToolBox::highlight()
 {
-    Q_UNUSED(item)
+    return m_animHighlightFrame;
+}
 
-    m_animSlideId = 0;
+void NetToolBox::movementFinished()
+{
+    if (slideAnim) {
+        if (slideAnim->property("direction") == QAbstractAnimation::Forward) {
+            slideAnim->setProperty("direction", QAbstractAnimation::Backward);
+        } else {
+            slideAnim->setProperty("direction", QAbstractAnimation::Forward);
+        }
+    }
     m_toolContainer->setVisible(m_showing);
+}
+
+void NetToolBox::onMovement(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)
+{
+    Q_UNUSED(newState);
+    Q_UNUSED(oldState);
+    m_toolContainer->show();
 }
 
 #include "nettoolbox.moc"

@@ -21,11 +21,11 @@
 #define NETTOOLBOX_H
 
 #include <QGraphicsWidget>
-
+#include <QPropertyAnimation>
 #include <KIcon>
 
-#include <Plasma/Plasma>
 #include <plasma/abstracttoolbox.h>
+#include <plasma/containment.h>
 
 
 class QGraphicsLinearLayout;
@@ -43,6 +43,7 @@ class NetToolBox : public Plasma::AbstractToolBox
 {
     Q_OBJECT
     Q_PROPERTY(bool showing READ isShowing WRITE setShowing )
+    Q_PROPERTY(qreal highlight READ highlight WRITE setHighlight)
 public:
     NetToolBox(Plasma::Containment *parent = 0);
     ~NetToolBox();
@@ -75,10 +76,13 @@ protected:
 
 private Q_SLOTS:
     void containmentGeometryChanged();
-    void animateHighlight(qreal progress);
-    void movementFinished(QGraphicsItem *item);
+    void setHighlight(qreal progress);
+    qreal highlight();
+    void movementFinished();
+    void onMovement(QAbstractAnimation::State newState, QAbstractAnimation::State oldState);
 
 private:
+    void highlight(bool highlighting);
     ToolContainer *m_toolContainer;
     QGraphicsLinearLayout *m_toolContainerLayout;
     QHash<QAction *, Plasma::IconWidget *> m_actionButtons;
@@ -86,8 +90,8 @@ private:
     Plasma::Svg *m_background;
     KIcon m_icon;
     QSize m_iconSize;
-    int m_animHighlightId;
-    int m_animSlideId;
+    Plasma::Animation *slideAnim;
+    QPropertyAnimation *anim;
     qreal m_animHighlightFrame;
     bool m_hovering;
     bool m_showing;
