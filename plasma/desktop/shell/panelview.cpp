@@ -625,6 +625,8 @@ void PanelView::updatePanelGeometry()
             o->syncOrientation();
         }
     }
+
+    recreateUnhideTrigger();
 }
 
 bool PanelView::isHorizontal() const
@@ -788,6 +790,7 @@ void PanelView::pinchContainment(const QRect &screenGeom)
     }
 
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
+    recreateUnhideTrigger();
     kDebug() << "Done pinching, containement's geom" << c->geometry() << "own geom" << geometry();
 }
 
@@ -1030,7 +1033,8 @@ void PanelView::updateStruts()
                                              strut.bottom_width,
                                              strut.bottom_start,
                                              strut.bottom_end);
-  if (m_panelController) {
+
+    if (m_panelController) {
         m_panelController->setLocation(containment()->location());
 
         if (m_panelController->isVisible()) {
@@ -1042,6 +1046,8 @@ void PanelView::updateStruts()
             o->syncOrientation();
         }
     }
+
+    recreateUnhideTrigger();
 }
 
 /*
