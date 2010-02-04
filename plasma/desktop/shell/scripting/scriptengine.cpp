@@ -32,6 +32,7 @@
 #include <Plasma/DataEngineManager>
 
 #include "containment.h"
+#include "panel.h"
 #include "plasmaapp.h"
 #include "widget.h"
 
@@ -163,7 +164,7 @@ QScriptValue ScriptEngine::wrap(Plasma::Applet *w, QScriptEngine *engine)
 
 QScriptValue ScriptEngine::wrap(Plasma::Containment *c, QScriptEngine *engine)
 {
-    Containment *wrapper = new Containment(c);
+    Containment *wrapper = isPanel(c) ? new Panel(c) : new Containment(c);
     QScriptValue v = engine->newQObject(wrapper, QScriptEngine::ScriptOwnership,
                                         QScriptEngine::ExcludeSuperClassProperties |
                                         QScriptEngine::ExcludeSuperClassMethods);

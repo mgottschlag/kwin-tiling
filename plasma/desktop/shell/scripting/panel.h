@@ -17,24 +17,16 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CONTAINMENT
-#define CONTAINMENT
+#ifndef PANEL
+#define PANEL
 
 #include <QScriptContext>
 #include <QScriptValue>
 #include <QWeakPointer>
 
-#include "applet.h"
+#include "containment.h"
 
-namespace Plasma
-{
-    class Containment;
-} // namespace Plasma
-
-class Widget;
-class PanelView;
-
-class Containment : public Applet
+class Panel : public Containment
 {
     Q_OBJECT
     Q_PROPERTY(QStringList configKeys READ configKeys)
@@ -47,35 +39,41 @@ class Containment : public Applet
     Q_PROPERTY(QList<int> widgetIds READ widgetIds)
     Q_PROPERTY(int screen READ screen WRITE setScreen)
     Q_PROPERTY(int desktop READ desktop WRITE setDesktop)
+    Q_PROPERTY(QString location READ location WRITE setLocation)
     Q_PROPERTY(int id READ id)
 
+    // panel properties
+    Q_PROPERTY(QString alignment READ alignment WRITE setAlignment)
+    Q_PROPERTY(int offset READ offset WRITE setOffset)
+    Q_PROPERTY(int length READ length WRITE setLength)
+    Q_PROPERTY(int height READ height WRITE setHeight)
+    Q_PROPERTY(QString hiding READ hiding WRITE setHiding)
+
 public:
-    Containment(Plasma::Containment *containment, QObject *parent = 0);
-    ~Containment();
+    Panel(Plasma::Containment *containment, QObject *parent = 0);
+    ~Panel();
 
-    uint id() const;
-    QString type() const;
-    QString formFactor() const;
-    QList<int> widgetIds() const;
+    QString location() const;
+    void setLocation(const QString &location);
 
-    QString name() const;
-    void setName(const QString &name);
+    QString alignment() const;
+    void setAlignment(const QString &alignment);
 
-    int desktop() const;
-    void setDesktop(int desktop);
+    int offset() const;
+    void setOffset(int pixels);
 
-    int screen() const;
-    void setScreen(int screen);
+    int length() const;
+    void setLength(int pixels);
 
-    Plasma::Applet *applet() const;
-    Plasma::Containment *containment() const;
+    int height() const;
+    void setHeight(int height);
 
-    static QScriptValue widgetById(QScriptContext *context, QScriptEngine *engine);
-    static QScriptValue addWidget(QScriptContext *context, QScriptEngine *engine);
+    QString hiding() const;
+    void setHiding(const QString &mode);
 
 public Q_SLOTS:
-    void remove();
-    void showConfigurationInterface();
+    void remove() { Containment::remove(); }
+    void showConfigurationInterface() { Containment::showConfigurationInterface(); }
 
     // from the applet interface
     QVariant readConfig(const QString &key, const QVariant &def = QString()) const { return Applet::readConfig(key, def); }
@@ -83,7 +81,7 @@ public Q_SLOTS:
     void reloadConfig() { Applet::reloadConfig(); }
 
 private:
-    QWeakPointer<Plasma::Containment> m_containment;
+    PanelView *panel() const;
 };
 
 #endif

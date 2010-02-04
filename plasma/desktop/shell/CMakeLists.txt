@@ -5,6 +5,7 @@ add_subdirectory(configupdates)
 set(plasma_SRCS
     scripting/applet.cpp
     scripting/containment.cpp
+    scripting/panel.cpp
     scripting/rect.cpp
     scripting/scriptengine.cpp
     scripting/widget.cpp
