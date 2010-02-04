@@ -19,18 +19,16 @@
 
 #include "scriptengine.h"
 
-#include <QEventLoop>
 #include <QFile>
 #include <QScriptValueIterator>
-#include <QTimer>
 
 #include <KShell>
 
 #include <Plasma/Applet>
 #include <Plasma/Containment>
 #include <Plasma/Corona>
-#include <Plasma/DataEngineManager>
 
+#include "appinterface.h"
 #include "containment.h"
 #include "panel.h"
 #include "widget.h"
@@ -39,43 +37,20 @@ QScriptValue constructQRectFClass(QScriptEngine *engine);
 
 ScriptEngine::ScriptEngine(Plasma::Corona *corona, QObject *parent)
     : QScriptEngine(parent),
-      m_corona(corona),
-      m_scriptSelf(newQObject(this, QScriptEngine::QtOwnership,
-                              QScriptEngine::ExcludeSuperClassProperties |
-                              QScriptEngine::ExcludeSuperClassMethods))
+      m_corona(corona)
 {
     Q_ASSERT(m_corona);
+    AppInterface *interface = new AppInterface(corona, this);
+    connect(interface, SIGNAL(print(QString)), this, SIGNAL(print(QString)));
+    m_scriptSelf = newQObject(interface, QScriptEngine::QtOwnership,
+                              QScriptEngine::ExcludeSuperClassProperties | QScriptEngine::ExcludeSuperClassMethods);
+    kDebug( )<< "*****************************";
     setupEngine();
     connect(this, SIGNAL(signalHandlerException(QScriptValue)), this, SLOT(exception(QScriptValue)));
 }
 
 ScriptEngine::~ScriptEngine()
 {
-}
-
-int ScriptEngine::screenCount() const
-{
-    return m_corona->numScreens();
-}
-
-QRectF ScriptEngine::screenGeometry(int screen) const
-{
-    return m_corona->screenGeometry(screen);
-}
-
-QList<int> ScriptEngine::activityIds() const
-{
-    //FIXME: the ints could overflow since Applet::id() returns a uint,
-    //       however QScript deals with QList<uint> very, very poory
-    QList<int> containments;
-
-    foreach (Plasma::Containment *c, m_corona->containments()) {
-        if (!isPanel(c)) {
-            containments.append(c->id());
-        }
-    }
-
-    return containments;
 }
 
 QScriptValue ScriptEngine::activityById(QScriptContext *context, QScriptEngine *engine)
@@ -88,7 +63,7 @@ QScriptValue ScriptEngine::activityById(QScriptContext *context, QScriptEngine *
     ScriptEngine *env = envFor(engine);
     foreach (Plasma::Containment *c, env->m_corona->containments()) {
         if (c->id() == id && !isPanel(c)) {
-            return wrap(c, engine);
+            return env->wrap(c, engine);
         }
     }
 
@@ -103,7 +78,8 @@ QScriptValue ScriptEngine::activityForScreen(QScriptContext *context, QScriptEng
 
     const uint screen = context->argument(0).toInt32();
     const uint desktop = context->argumentCount() > 1 ? context->argument(1).toInt32() : -1;
-    return wrap(envFor(engine)->m_corona->containmentForScreen(screen, desktop), engine);
+    ScriptEngine *env = envFor(engine);
+    return env->wrap(env->m_corona->containmentForScreen(screen, desktop), engine);
 }
 
 QScriptValue ScriptEngine::newActivity(QScriptContext *context, QScriptEngine *engine)
@@ -149,7 +125,7 @@ QScriptValue ScriptEngine::createContainment(const QString &type, const QString 
         emit env->createPendingPanelViews();
     }
 
-    return wrap(c, engine);
+    return env->wrap(c, engine);
 }
 
 QScriptValue ScriptEngine::wrap(Plasma::Applet *w, QScriptEngine *engine)
@@ -163,8 +139,13 @@ QScriptValue ScriptEngine::wrap(Plasma::Applet *w, QScriptEngine *engine)
 
 QScriptValue ScriptEngine::wrap(Plasma::Containment *c, QScriptEngine *engine)
 {
-    Containment *wrapper = isPanel(c) ? new Panel(c) : new Containment(c);
-    QScriptValue v = engine->newQObject(wrapper, QScriptEngine::ScriptOwnership,
+    Containment *wrapper = new Containment(c);
+    return wrap(wrapper, engine);
+}
+
+QScriptValue ScriptEngine::wrap(Containment *c, QScriptEngine *engine)
+{
+    QScriptValue v = engine->newQObject(c, QScriptEngine::ScriptOwnership,
                                         QScriptEngine::ExcludeSuperClassProperties |
                                         QScriptEngine::ExcludeSuperClassMethods);
     v.setProperty("widgetById", engine->newFunction(Containment::widgetById));
@@ -175,39 +156,16 @@ QScriptValue ScriptEngine::wrap(Plasma::Containment *c, QScriptEngine *engine)
 
 ScriptEngine *ScriptEngine::envFor(QScriptEngine *engine)
 {
-    QObject *appletObject = engine->globalObject().toQObject();
-    Q_ASSERT(appletObject);
+    QObject *object = engine->globalObject().toQObject();
+    Q_ASSERT(object);
 
-    ScriptEngine *env = qobject_cast<ScriptEngine*>(appletObject);
+    AppInterface *interface = qobject_cast<AppInterface *>(object);
+    Q_ASSERT(interface);
+
+    ScriptEngine *env = qobject_cast<ScriptEngine *>(interface->parent());
     Q_ASSERT(env);
 
     return env;
-}
-
-QList<int> ScriptEngine::panelIds() const
-{
-    //FIXME: the ints could overflow since Applet::id() returns a uint,
-    //       however QScript deals with QList<uint> very, very poory
-    QList<int> panels;
-
-    foreach (Plasma::Containment *c, m_corona->containments()) {
-        //kDebug() << "checking" << (QObject*)c << isPanel(c);
-        if (isPanel(c)) {
-            panels.append(c->id());
-        }
-    }
-
-    return panels;
-}
-
-void ScriptEngine::lockCorona(bool locked)
-{
-    m_corona->setImmutability(locked ? Plasma::UserImmutable : Plasma::Mutable);
-}
-
-bool ScriptEngine::coronaLocked() const
-{
-    return m_corona->immutability() != Plasma::Mutable;
 }
 
 QScriptValue ScriptEngine::panelById(QScriptContext *context, QScriptEngine *engine)
@@ -220,7 +178,7 @@ QScriptValue ScriptEngine::panelById(QScriptContext *context, QScriptEngine *eng
     ScriptEngine *env = envFor(engine);
     foreach (Plasma::Containment *c, env->m_corona->containments()) {
         if (c->id() == id && isPanel(c)) {
-            return wrap(c, engine);
+            return env->wrap(c, engine);
         }
     }
 
@@ -290,23 +248,6 @@ void ScriptEngine::exception(const QScriptValue &value)
 {
     //kDebug() << "exception caught!" << value.toVariant();
     emit printError(value.toVariant().toString());
-}
-
-void ScriptEngine::sleep(int ms)
-{
-    QEventLoop loop;
-    QTimer::singleShot(ms, &loop, SLOT(quit()));
-    loop.exec();
-}
-
-bool ScriptEngine::hasBattery() const
-{
-  Plasma::DataEngineManager *engines = Plasma::DataEngineManager::self();
-  Plasma::DataEngine *power = engines->loadEngine("powermanagement");
-
-  const QStringList batteries = power->query("Battery")["sources"].toStringList();
-  engines->unloadEngine("powermanagement");
-  return !batteries.isEmpty();
 }
 
 #include "scriptengine.moc"

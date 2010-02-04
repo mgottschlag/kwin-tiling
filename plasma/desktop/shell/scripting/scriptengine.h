@@ -35,11 +35,6 @@ class Containment;
 class ScriptEngine : public QScriptEngine
 {
     Q_OBJECT
-    Q_PROPERTY(bool locked READ coronaLocked WRITE lockCorona)
-    Q_PROPERTY(bool hasBattery READ hasBattery)
-    Q_PROPERTY(int screenCount READ screenCount)
-    Q_PROPERTY(QList<int> activityIds READ activityIds)
-    Q_PROPERTY(QList<int> panelIds READ panelIds)
 
 public:
     ScriptEngine(Plasma::Corona *corona, QObject *parent = 0);
@@ -47,19 +42,11 @@ public:
 
     void evaluateScript(const QString &script);
     static bool isPanel(const Plasma::Containment *c);
-    static QScriptValue wrap(Plasma::Applet *w, QScriptEngine *engine);
-    static QScriptValue wrap(Plasma::Containment *c, QScriptEngine *engine);
+    QScriptValue wrap(Plasma::Applet *w, QScriptEngine *engine);
+    virtual QScriptValue wrap(Plasma::Containment *c, QScriptEngine *engine);
+    QScriptValue wrap(Containment *c, QScriptEngine *engine);
 
-    bool hasBattery() const;
-    int screenCount() const;
-    QList<int> activityIds() const;
-    QList<int> panelIds() const;
-    bool coronaLocked() const;
-
-public Q_SLOTS:
-    QRectF screenGeometry(int screen) const;
-    void lockCorona(bool locked);
-    void sleep(int ms);
+    static ScriptEngine *envFor(QScriptEngine *engine);
 
 Q_SIGNALS:
     void print(const QString &string);
@@ -80,7 +67,6 @@ private:
     // helpers
     static QScriptValue createContainment(const QString &type, const QString &defautPlugin,
                                           QScriptContext *context, QScriptEngine *engine);
-    static ScriptEngine *envFor(QScriptEngine *engine);
 
 private Q_SLOTS:
     void exception(const QScriptValue &value);

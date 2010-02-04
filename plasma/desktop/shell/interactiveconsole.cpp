@@ -42,7 +42,7 @@
 #include <Plasma/Corona>
 
 #include "plasmaapp.h"
-#include "scripting/scriptengine.h"
+#include "scripting/desktopscriptengine.h"
 
 //TODO:
 // use text editor KPart for syntax highlighting?
@@ -342,7 +342,7 @@ void InteractiveConsole::evaluateScript()
     t.start();
 
     {
-        ScriptEngine scriptEngine(m_corona, this);
+        DesktopScriptEngine scriptEngine(m_corona, this);
         connect(&scriptEngine, SIGNAL(print(QString)), this, SLOT(print(QString)));
         connect(&scriptEngine, SIGNAL(printError(QString)), this, SLOT(print(QString)));
         connect(&scriptEngine, SIGNAL(createPendingPanelViews()), PlasmaApp::self(), SLOT(createWaitingPanels()));

@@ -44,7 +44,7 @@
 #include "panelview.h"
 #include "plasmaapp.h"
 #include "plasma-shell-desktop.h"
-#include "scripting/scriptengine.h"
+#include "scripting/desktopscriptengine.h"
 
 DesktopCorona::DesktopCorona(QObject *parent)
     : Plasma::Corona(parent),
@@ -295,7 +295,7 @@ bool DesktopCorona::loadDefaultLayoutScripts()
 void DesktopCorona::evaluateScripts(QMap<QString, QString> scripts)
 {
     foreach (const QString &script, scripts) {
-        ScriptEngine scriptEngine(this);
+        DesktopScriptEngine scriptEngine(this);
         connect(&scriptEngine, SIGNAL(printError(QString)), this, SLOT(printScriptError(QString)));
         connect(&scriptEngine, SIGNAL(print(QString)), this, SLOT(printScriptMessage(QString)));
         connect(&scriptEngine, SIGNAL(createPendingPanelViews()), PlasmaApp::self(), SLOT(createWaitingPanels()));
