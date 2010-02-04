@@ -29,6 +29,7 @@
 #include <QX11Info>
 #include <QDBusInterface>
 #include <QTextDocument>
+#include <QPropertyAnimation>
 
 #include <KColorScheme>
 #include <KConfigDialog>
@@ -55,6 +56,38 @@ const int UPDATE_DELAY = 500;
 const int DRAG_SWITCH_DELAY = 1000;
 const int MAXDESKTOPS = 20;
 
+DesktopRectangle::DesktopRectangle(QObject *parent)
+    : QObject(parent),
+      m_alpha(0)
+{
+    setObjectName("desktopRectangle");
+}
+
+QPropertyAnimation *DesktopRectangle::animation() const
+{
+    return m_animation.data();
+}
+
+void DesktopRectangle::setAnimation(QPropertyAnimation *animation)
+{
+    m_animation = animation;
+}
+
+qreal DesktopRectangle::alphaValue() const
+{
+    return m_alpha;
+}
+
+void DesktopRectangle::setAlphaValue(qreal value)
+{
+    qCritical() << __func__ << parent()->objectName();
+
+    m_alpha = value;
+
+    Pager *parentItem = qobject_cast<Pager*>(parent());
+    parentItem->update();
+}
+
 Pager::Pager(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_displayedText(None),
@@ -79,6 +112,8 @@ Pager::Pager(QObject *parent, const QVariantList &args)
     setAcceptsHoverEvents(true);
     setAcceptDrops(true);
     setHasConfigurationInterface(true);
+
+    setObjectName("pager");
 
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/pager");
@@ -397,20 +432,17 @@ void Pager::recalculateGeometry()
         m_heightScaleFactor = itemHeight / Kephal::ScreenUtils::desktopGeometry().height();
     }
 
-    m_hoverIndex = -1;
     m_hoverRect = QRectF();
     m_rects.clear();
-    m_animations.clear();
+    while (!m_animations.isEmpty()) {
+        delete m_animations.takeLast();
+    }
     QRectF itemRect(QPoint(leftMargin, topMargin) , QSize(floor(itemWidth), floor(itemHeight)));
     for (int i = 0; i < m_desktopCount; i++) {
         itemRect.moveLeft(leftMargin + floor(i % columns  * (itemWidth + padding)));
         itemRect.moveTop(topMargin + floor(i / columns * (itemHeight + padding)));
         m_rects.append(itemRect);
-        AnimInfo anim;
-        anim.animId = -1;
-        anim.fadeIn = true;
-        anim.alpha = 0;
-        m_animations.append(anim);
+        m_animations.append(new DesktopRectangle(this));
     }
 
     //Resize background svgs as needed
@@ -883,20 +915,23 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 // This method provides the common implementation for hoverMoveEvent and dragMoveEvent.
 void Pager::handleHoverMove(const QPointF& pos)
 {
-    bool changedHover = !m_hoverRect.contains(pos);
-    Plasma::Animator *anim = Plasma::Animator::self();
-
-    if (changedHover && m_hoverIndex > -1) {
-        if (m_animations[m_hoverIndex].animId != -1) {
-            Plasma::Animator::self()->stopCustomAnimation(m_animations[m_hoverIndex].animId);
-        }
-        m_animations[m_hoverIndex].fadeIn = false;
-        m_animations[m_hoverIndex].alpha = 1;
-        m_animations[m_hoverIndex].animId = anim->customAnimation(40 / (1000 / s_FadeOutDuration), s_FadeOutDuration,Plasma::Animator::EaseOutCurve, this,"animationUpdate");
-    }
-
-    if (!changedHover) {
+    if (m_hoverRect.contains(pos)) {
         return;
+    } else if (m_hoverIndex > -1) {
+        QPropertyAnimation *animation = m_animations[m_hoverIndex]->animation();
+        if (animation && animation->state() == QAbstractAnimation::Running) {
+            animation->pause();
+        } else {
+            animation = new QPropertyAnimation(m_animations[m_hoverIndex], "alphaValue");
+            animation->setObjectName("propertyAnimation");
+            m_animations[m_hoverIndex]->setAnimation(animation);
+        }
+
+        animation->setProperty("duration", s_FadeOutDuration);
+        animation->setProperty("easingCurve", QEasingCurve::OutQuad);
+        animation->setProperty("startValue", 1.0);
+        animation->setProperty("endValue", 0.0);
+        animation->start(QAbstractAnimation::DeleteWhenStopped);
     }
 
     int i = 0;
@@ -905,12 +940,21 @@ void Pager::handleHoverMove(const QPointF& pos)
             if (m_hoverRect != rect) {
                 m_hoverRect = rect;
                 m_hoverIndex = i;
-                if (m_animations[m_hoverIndex].animId != -1) {
-                    anim->stopCustomAnimation(m_animations[i].animId);
+
+                QPropertyAnimation *animation = m_animations[m_hoverIndex]->animation();
+                if (animation && animation->state() == QAbstractAnimation::Running) {
+                    animation->pause();
+                } else {
+                    animation = new QPropertyAnimation(m_animations[m_hoverIndex], "alphaValue");
+                    m_animations[m_hoverIndex]->setAnimation(animation);
                 }
-                m_animations[m_hoverIndex].fadeIn = true;
-                m_animations[m_hoverIndex].alpha = 0;
-                m_animations[m_hoverIndex].animId = anim->customAnimation(40 / (1000 / s_FadeInDuration), s_FadeInDuration,Plasma::Animator::EaseInCurve, this,"animationUpdate");
+
+                animation->setProperty("duration", s_FadeInDuration);
+                animation->setProperty("easingCurve", QEasingCurve::InQuad);
+                animation->setProperty("startValue", 0.0);
+                animation->setProperty("endValue", 1.0);
+                animation->start(QAbstractAnimation::DeleteWhenStopped);
+
                 update();
                 updateToolTip();
             }
@@ -918,7 +962,6 @@ void Pager::handleHoverMove(const QPointF& pos)
         }
         ++i;
     }
-    m_hoverIndex = -1;
     m_hoverRect = QRectF();
     update();
 }
@@ -933,13 +976,19 @@ void Pager::handleHoverLeave()
     }
 
     if (m_hoverIndex != -1) {
-        if (m_animations[m_hoverIndex].animId != -1) {
-            Plasma::Animator::self()->stopCustomAnimation(m_animations[m_hoverIndex].animId);
+        QPropertyAnimation *animation = m_animations[m_hoverIndex]->animation();
+        if (animation && animation->state() == QAbstractAnimation::Running) {
+            animation->pause();
+        } else {
+            animation = new QPropertyAnimation(m_animations[m_hoverIndex], "alphaValue");
+            m_animations[m_hoverIndex]->setAnimation(animation);
         }
-        m_animations[m_hoverIndex].fadeIn = false;
-        m_animations[m_hoverIndex].alpha = 1;
-        m_animations[m_hoverIndex].animId = Plasma::Animator::self()->customAnimation(40 / (1000 / s_FadeOutDuration), s_FadeOutDuration,Plasma::Animator::EaseOutCurve, this,"animationUpdate");
-        m_hoverIndex = -1;
+
+        animation->setProperty("duration", s_FadeOutDuration);
+        animation->setProperty("easingCurve", QEasingCurve::OutQuad);
+        animation->setProperty("startValue", 1.0);
+        animation->setProperty("endValue", 0.0);
+        animation->start(QAbstractAnimation::DeleteWhenStopped);
     }
 
     // The applet doesn't always get mouseReleaseEvents, for example when starting a drag
@@ -1028,31 +1077,6 @@ void Pager::dropEvent(QGraphicsSceneDragDropEvent *event)
     }
 }
 
-void Pager::animationUpdate(qreal progress, int animId)
-{
-    int i = 0;
-    foreach (const AnimInfo &anim, m_animations) {
-        if (anim.animId == animId) {
-            break;
-        }
-        i++;
-    }
-
-    if (i >= m_animations.size()) {
-        return;
-    }
-
-    m_animations[i].alpha = m_animations[i].fadeIn ? progress : 1 - progress;
-
-    if (progress == 1) {
-        m_animations[i].animId = -1;
-        m_animations[i].fadeIn = true;
-    }
-
-    // explicit update
-    update();
-}
-
 void Pager::dragSwitch()
 {
     if (m_dragSwitchDesktop == -1) {
@@ -1110,8 +1134,8 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
         for (int i = 0; i < m_rects.count(); i++) {
             if (m_rects[i] == m_hoverRect) {
                 QColor animHoverColor = hoverColor;
-                if (m_animations[i].animId > -1) {
-                    animHoverColor.setAlpha(hoverColor.alpha()*m_animations[i].alpha);
+                if (m_animations[i]->animation()) {
+                    animHoverColor.setAlpha(hoverColor.alpha() * m_animations[i]->alphaValue());
                 }
                 painter->setBrush(animHoverColor);
                 painter->drawRect(m_rects[i]);
@@ -1177,10 +1201,10 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
         //Paint the panel or fallback if we don't have that prefix
         if (m_background->hasElementPrefix(prefix)) {
             m_background->setElementPrefix(prefix);
-            if (m_animations[i].animId > -1) {
+            if (m_animations[i]->animation()) {
                 QPixmap normal = m_background->framePixmap();
                 m_background->setElementPrefix("hover");
-                QPixmap result = Plasma::PaintUtils::transition(normal, m_background->framePixmap(), m_animations[i].alpha);
+                QPixmap result = Plasma::PaintUtils::transition(normal, m_background->framePixmap(), m_animations[i]->alphaValue());
                 painter->drawPixmap(m_rects[i].topLeft(), result);
             } else {
                 //no anims, simpler thing
@@ -1204,10 +1228,10 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
         }
 
         //Draw text
-        if (m_animations[i].animId == -1) {
+        if (!m_animations[i]->animation()) {
             defaultTextColor.setAlphaF(1);
         }
-        defaultTextColor.setAlphaF(m_animations[i].alpha / 2 + 0.5);
+        defaultTextColor.setAlphaF(m_animations[i]->alphaValue() / 2 + 0.5);
         painter->setPen(defaultTextColor);
 
         QColor shadowColor(Qt::black);

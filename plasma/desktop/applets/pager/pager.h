@@ -22,10 +22,13 @@
 
 #include <QGraphicsSceneHoverEvent>
 #include <QList>
+#include <QWeakPointer>
 
 #include <Plasma/Applet>
 #include <Plasma/DataEngine>
 #include "ui_pagerConfig.h"
+
+class QPropertyAnimation;
 
 class KSelectionOwner;
 class KColorScheme;
@@ -35,6 +38,27 @@ namespace Plasma
 {
     class FrameSvg;
 }
+
+class DesktopRectangle : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(qreal alphaValue READ alphaValue WRITE setAlphaValue)
+
+    public:
+        DesktopRectangle(QObject *parent);
+
+        QPropertyAnimation *animation() const;
+        void setAnimation(QPropertyAnimation *animation);
+
+        qreal alphaValue() const;
+
+    protected slots:
+        void setAlphaValue(qreal value);
+
+    private:
+        QWeakPointer<QPropertyAnimation> m_animation;
+        qreal m_alpha;
+};
 
 class Pager : public Plasma::Applet
 {
@@ -83,7 +107,6 @@ class Pager : public Plasma::Applet
         void slotRemoveDesktop();
 #endif
         void lostDesktopLayoutOwner();
-        void animationUpdate(qreal progress, int animId);
         void dragSwitch();
 
     protected:
@@ -112,14 +135,6 @@ class Pager : public Plasma::Applet
             ShowDashboard
         };
 
-        struct AnimInfo
-        {
-            int animId;
-            qreal alpha;
-            bool fadeIn;
-            bool operator == (AnimInfo otherAnim) const { return otherAnim.animId == animId; }
-        };
-
         DisplayedText m_displayedText;
         CurrentDesktopSelected m_currentDesktopSelected;
         bool m_showWindowIcons;
@@ -134,7 +149,7 @@ class Pager : public Plasma::Applet
         QSizeF m_size;
         QList<QRectF> m_rects;
         //list of info about animations for each desktop
-        QList<AnimInfo> m_animations;
+        QList<DesktopRectangle*> m_animations;
         QRectF m_hoverRect;
         int m_hoverIndex;
         QList<QList<QPair<WId, QRect> > > m_windowRects;
