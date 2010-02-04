@@ -167,6 +167,7 @@ void SearchLaunch::init()
 void SearchLaunch::configChanged()
 {
     setOrientation((Qt::Orientation)config().readEntry("orientation", (int)Qt::Vertical));
+kWarning()<<(Qt::Orientation)config().readEntry("orientation", (int)Qt::Vertical)<<Qt::Vertical;
 
     m_stripWidget->setIconSize(config().readEntry("FavouritesIconSize", (int)KIconLoader::SizeLarge));
 
@@ -543,7 +544,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
 void SearchLaunch::setOrientation(Qt::Orientation orientation)
 {
-    if (m_orientation != orientation) {
+    if (m_orientation == orientation) {
         return;
     }
 
