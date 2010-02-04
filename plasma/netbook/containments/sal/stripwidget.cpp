@@ -88,6 +88,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
 
     connect(m_itemView, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launchFavourite(Plasma::IconWidget *)));
     connect(m_itemView, SIGNAL(scrollBarsNeededChanged(ItemView::ScrollBarFlags)), this, SLOT(arrowsNeededChanged(ItemView::ScrollBarFlags)));
+    connect(m_itemView, SIGNAL(itemReordered(Plasma::IconWidget *, int)), this, SLOT(itemReordered(Plasma::IconWidget *, int)));
 
     m_arrowsLayout->addItem(m_leftArrow);
     m_arrowsLayout->addItem(m_itemView);
@@ -190,6 +191,15 @@ void StripWidget::removeFavourite()
 
     if (icon) {
         remove(icon);
+    }
+}
+
+void StripWidget::itemReordered(Plasma::IconWidget *icon, int index)
+{
+    if (m_favouritesIcons.contains(icon)) {
+        Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
+        m_favouritesMatches.removeAll(match);
+        m_favouritesMatches.insert(index, match);
     }
 }
 

@@ -75,6 +75,7 @@ private Q_SLOTS:
     void goLeft();
     void goRight();
     void scrollTimeout();
+    void itemReordered(Plasma::IconWidget *icon, int index);
     //FIXME: this needs to go
     void highlightCurrentItem();
 

@@ -83,6 +83,7 @@ Q_SIGNALS:
     void itemActivated(Plasma::IconWidget *);
     void resetRequested();
     void scrollBarsNeededChanged(ItemView::ScrollBarFlags);
+    void itemReordered(Plasma::IconWidget *, int);
 
 private:
     ItemContainer *m_itemContainer;

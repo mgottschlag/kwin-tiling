@@ -83,6 +83,7 @@ Q_SIGNALS:
     void itemSelected(Plasma::IconWidget *);
     void itemActivated(Plasma::IconWidget *);
     void resetRequested();
+    void itemReordered(Plasma::IconWidget *, int);
 
 private:
     QGraphicsGridLayout *m_layout;

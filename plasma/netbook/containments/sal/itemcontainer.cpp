@@ -501,6 +501,9 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
             insertItem(icon, (key+key2)/2);
         }
 
+        //sloooow
+        emit itemReordered(icon, m_items.values().indexOf(icon));
+
         askRelayout();
     }
 

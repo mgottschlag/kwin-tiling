@@ -40,6 +40,7 @@ ItemView::ItemView(QGraphicsWidget *parent)
     connect(m_itemContainer, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SIGNAL(itemActivated(Plasma::IconWidget *)));
     connect(m_itemContainer, SIGNAL(resetRequested()), this, SIGNAL(resetRequested()));
     connect(m_itemContainer, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
+    connect(m_itemContainer, SIGNAL(itemReordered(Plasma::IconWidget *, int)), this, SIGNAL(itemReordered(Plasma::IconWidget *, int)));
 }
 
 ItemView::~ItemView()
