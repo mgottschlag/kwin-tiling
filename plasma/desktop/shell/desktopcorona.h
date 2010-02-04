@@ -68,14 +68,16 @@ public:
      */
     Plasma::Containment *findFreeContainment() const;
 
-    virtual int numScreens() const;
-    virtual QRect screenGeometry(int id) const;
-    virtual QRegion availableScreenRegion(int id) const;
+    int numScreens() const;
+    QRect screenGeometry(int id) const;
+    QRegion availableScreenRegion(int id) const;
+
     bool loadDefaultLayoutScripts();
     void processUpdateScripts();
     void addDesktopContainment(int screen, int desktop = -1);
 
 public Q_SLOTS:
+    QRect availableScreenRect(int id) const;
     void addPanel();
     void addPanel(QAction *action);
     void addPanel(const QString &plugin);

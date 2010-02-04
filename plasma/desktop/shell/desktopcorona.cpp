@@ -228,6 +228,46 @@ QRegion DesktopCorona::availableScreenRegion(int id) const
     return r;
 }
 
+QRect DesktopCorona::availableScreenRect(int id) const
+{
+    QRect r(screenGeometry(id));
+    foreach (PanelView *view, PlasmaApp::self()->panelViews()) {
+        if (view->screen() == id && view->visibilityMode() == PanelView::NormalPanel) {
+            QRect v = view->geometry();
+            switch (view->location()) {
+                case Plasma::TopEdge:
+                    if (v.bottom() > r.top()) {
+                        r.setTop(v.bottom());
+                    }
+                    break;
+
+                case Plasma::BottomEdge:
+                    if (v.top() < r.bottom()) {
+                        r.setBottom(v.top());
+                    }
+                    break;
+
+                case Plasma::LeftEdge:
+                    if (v.right() > r.left()) {
+                        r.setLeft(v.right());
+                    }
+                    break;
+
+                case Plasma::RightEdge:
+                    if (v.left() < r.right()) {
+                        r.setRight(v.left());
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    return r;
+}
+
 void DesktopCorona::processUpdateScripts()
 {
     QStringList scripts = KGlobal::dirs()->findAllResources("data", "plasma-desktop/updates/*.js");
@@ -533,6 +573,8 @@ void DesktopCorona::addPanel(const QString &plugin)
     int w = 35;
     int h = 35;
 
+    //FIXME: this should really step through the rects on the relevant screen edge to find
+    //appropriate space
     if (destination == Plasma::LeftEdge) {
         QRect r = availGeom.intersected(QRect(0, 0, w, screenGeom.height())).boundingRect();
         h = r.height();
