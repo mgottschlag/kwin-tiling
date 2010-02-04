@@ -30,6 +30,7 @@ ItemView::ItemView(QGraphicsWidget *parent)
     : Plasma::ScrollWidget(parent)
 {
     setFocusPolicy(Qt::StrongFocus);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_itemContainer = new ItemContainer(this);
     setWidget(m_itemContainer);
     m_noActivateTimer = new QTimer(this);
@@ -163,11 +164,6 @@ bool ItemView::eventFilter(QObject *watched, QEvent *event)
             scrollBars |= VerticalScrollBar;
         }
         emit scrollBarsNeededChanged(scrollBars);
-
-        //FIXME: this is not desired probably?
-        if (orientation() == Qt::Horizontal) {
-            setMinimumHeight(re->newSize().height() + (size().height()-contentsRect().height()+6));
-        }
     } else if (watched == m_itemContainer && event->type() == QEvent::GraphicsSceneMove) {
         m_noActivateTimer->start(300);
         ScrollBarFlags scrollBars = NoScrollBar;

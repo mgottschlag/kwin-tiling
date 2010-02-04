@@ -38,7 +38,7 @@ ItemContainer::ItemContainer(QGraphicsWidget *parent)
       m_currentIconIndexX(-1),
       m_currentIconIndexY(-1),
       m_iconSize(KIconLoader::SizeHuge),
-      m_maxColumnWidth(0),
+      m_maxColumnWidth(1),
       m_maxRowHeight(1),
       m_firstRelayout(true),
       m_dragAndDropEnabled(false)
@@ -112,12 +112,6 @@ void ItemContainer::insertItem(Plasma::IconWidget *icon, qreal weight)
     icon->setMaximumSize(icon->sizeFromIconSize(m_iconSize));
     icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    if (icon->size().width() > m_maxColumnWidth) {
-        m_maxColumnWidth = icon->size().width();
-    }
-    if (icon->size().height() > m_maxRowHeight) {
-        m_maxRowHeight = icon->size().height();
-    }
     icon->hide();
 
     if (weight != -1 || m_items.count() == 0) {
@@ -135,7 +129,6 @@ void ItemContainer::insertItem(Plasma::IconWidget *icon, qreal weight)
 
 void ItemContainer::clear()
 {
-    m_maxColumnWidth = 1;
     m_hoverIndicator->setTargetItem(0);
     for (int i = 0; i < m_layout->count(); ++i) {
         m_layout->removeAt(0);
@@ -269,6 +262,18 @@ void ItemContainer::relayout()
 
     setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 
+    //FIXME: here is inefficient but we ore sure only there abut what items are in
+    int maxColumnWidth = 0;
+    int maxRowHeight = 0;
+    foreach (Plasma::IconWidget *icon, m_items) {
+        if (icon->size().width() > maxColumnWidth) {
+            maxColumnWidth = icon->size().width();
+        }
+        if (icon->size().height() > maxRowHeight) {
+            maxRowHeight = icon->size().height();
+        }
+    }
+
     if (m_orientation == Qt::Vertical) {
 
         int nColumns;
@@ -276,7 +281,7 @@ void ItemContainer::relayout()
         if (validColumn > 0 && m_layout->columnCount() > 0 &&  m_layout->rowCount() > 0) {
             nColumns = m_layout->columnCount();
         } else {
-            nColumns = qMax(1, int(availableSize.width() / m_maxColumnWidth));
+            nColumns = qMax(1, int(availableSize.width() / maxColumnWidth));
         }
         int i = 0;
 
@@ -307,10 +312,9 @@ void ItemContainer::relayout()
         if (validRow > 0 && m_layout->columnCount() > 0 &&  m_layout->rowCount() > 0) {
             nRows = m_layout->rowCount();
         } else {
-            nRows = qMax(1, int(availableSize.height() / m_maxRowHeight));
+            nRows = qMax(1, int(availableSize.height() / maxRowHeight));
         }
         int i = 0;
-
 
         Plasma::IconWidget *lastIcon = 0;
         foreach (Plasma::IconWidget *icon, m_items) {
