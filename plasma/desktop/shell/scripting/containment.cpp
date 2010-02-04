@@ -24,8 +24,6 @@
 #include <Plasma/Corona>
 #include <Plasma/Containment>
 
-#include "panelview.h"
-#include "plasmaapp.h"
 #include "scriptengine.h"
 #include "widget.h"
 
