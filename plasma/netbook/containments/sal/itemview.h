@@ -64,6 +64,9 @@ public:
     void setIconSize(int size);
     int iconSize() const;
 
+    void setDragAndDropEnabled(bool enable);
+    bool isDragAndDropEnabled() const;
+
     //FIXME: this won't be necessary, more logic will have to be moved from the users to the itemcontainer
     Plasma::IconWidget *createItem();
 

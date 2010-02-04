@@ -84,6 +84,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     m_itemView->installEventFilter(this);
     m_itemView->setOrientation(Qt::Horizontal);
     m_itemView->setIconSize(KIconLoader::SizeLarge);
+    m_itemView->setDragAndDropEnabled(true);
 
     connect(m_itemView, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launchFavourite(Plasma::IconWidget *)));
     connect(m_itemView, SIGNAL(scrollBarsNeededChanged(ItemView::ScrollBarFlags)), this, SLOT(arrowsNeededChanged(ItemView::ScrollBarFlags)));

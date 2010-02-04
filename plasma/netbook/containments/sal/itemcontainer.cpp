@@ -40,7 +40,8 @@ ItemContainer::ItemContainer(QGraphicsWidget *parent)
       m_iconSize(KIconLoader::SizeHuge),
       m_maxColumnWidth(0),
       m_maxRowHeight(1),
-      m_firstRelayout(true)
+      m_firstRelayout(true),
+      m_dragAndDropEnabled(false)
 {
     m_positionAnimation = new QPropertyAnimation(this, "pos", this);
     m_positionAnimation->setEasingCurve(QEasingCurve::InOutQuad);
@@ -202,6 +203,16 @@ int ItemContainer::iconSize() const
     return m_iconSize;
 }
 
+void ItemContainer::setDragAndDropEnabled(bool enable)
+{
+    m_dragAndDropEnabled = enable;
+}
+
+bool ItemContainer::isDragAndDropEnabled() const
+{
+    return m_dragAndDropEnabled;
+}
+
 void ItemContainer::askRelayout()
 {
     m_relayoutTimer->start(500);
@@ -352,6 +363,10 @@ void ItemContainer::itemRemoved(QObject *object)
 
 void ItemContainer::dragStartRequested(Plasma::IconWidget *icon)
 {
+    if (!m_dragAndDropEnabled) {
+        return;
+    }
+
     for (int i = 0; i < m_layout->count(); ++i) {
         if (m_layout->itemAt(i) == icon) {
             m_layout->removeAt(i);

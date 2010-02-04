@@ -56,6 +56,9 @@ public:
     void setIconSize(int size);
     int iconSize() const;
 
+    void setDragAndDropEnabled(bool enable);
+    bool isDragAndDropEnabled() const;
+
     QList<Plasma::IconWidget *>items() const;
 
     Plasma::IconWidget *createItem();
@@ -97,6 +100,7 @@ private:
     int m_maxColumnWidth;
     int m_maxRowHeight;
     bool m_firstRelayout;
+    bool m_dragAndDropEnabled;
 };
 
 #endif
