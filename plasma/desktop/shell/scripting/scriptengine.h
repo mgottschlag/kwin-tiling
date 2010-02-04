@@ -64,6 +64,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void print(const QString &string);
     void printError(const QString &string);
+    void createPendingPanelViews();
 
 private:
     void setupEngine();

@@ -41,6 +41,7 @@
 
 #include <Plasma/Corona>
 
+#include "plasmaapp.h"
 #include "scripting/scriptengine.h"
 
 //TODO:
@@ -341,10 +342,11 @@ void InteractiveConsole::evaluateScript()
     t.start();
 
     {
-        ScriptEngine engine(m_corona, this);
-        connect(&engine, SIGNAL(print(QString)), this, SLOT(print(QString)));
-        connect(&engine, SIGNAL(printError(QString)), this, SLOT(print(QString)));
-        engine.evaluateScript(m_editorPart ? m_editorPart->text() : m_editor->toPlainText());
+        ScriptEngine scriptEngine(m_corona, this);
+        connect(&scriptEngine, SIGNAL(print(QString)), this, SLOT(print(QString)));
+        connect(&scriptEngine, SIGNAL(printError(QString)), this, SLOT(print(QString)));
+        connect(&scriptEngine, SIGNAL(createPendingPanelViews()), PlasmaApp::self(), SLOT(createWaitingPanels()));
+        scriptEngine.evaluateScript(m_editorPart ? m_editorPart->text() : m_editor->toPlainText());
     }
 
     cursor.insertText("\n\n");

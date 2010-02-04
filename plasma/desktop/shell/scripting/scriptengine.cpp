@@ -33,7 +33,6 @@
 
 #include "containment.h"
 #include "panel.h"
-#include "plasmaapp.h"
 #include "widget.h"
 
 QScriptValue constructQRectFClass(QScriptEngine *engine);
@@ -147,7 +146,7 @@ QScriptValue ScriptEngine::createContainment(const QString &type, const QString 
         }
         c->updateConstraints(Plasma::AllConstraints | Plasma::StartupCompletedConstraint);
         c->flushPendingConstraintsEvents();
-        PlasmaApp::self()->createWaitingPanels();
+        emit env->createPendingPanelViews();
     }
 
     return wrap(c, engine);
@@ -170,24 +169,6 @@ QScriptValue ScriptEngine::wrap(Plasma::Containment *c, QScriptEngine *engine)
                                         QScriptEngine::ExcludeSuperClassMethods);
     v.setProperty("widgetById", engine->newFunction(Containment::widgetById));
     v.setProperty("addWidget", engine->newFunction(Containment::addWidget));
-    /*
-    TODO: this does not actually work, look into why
-    if (!isPanel(c)) {
-        // remove all items we don't want showing to non-panel containments
-        QScriptValueIterator it(v);
-        QSet<QString> blacklist;
-        blacklist << "alignment";
-        while (it.hasNext()) {
-            it.next();
-            kDebug() << it.name();
-            if (blacklist.contains(it.name())) {
-                kDebug() << "removing" << it.name();
-                it.remove();
-                v.setProperty(it.name(), QScriptValue());
-            }
-        }
-    }
-    */
 
     return v;
 }

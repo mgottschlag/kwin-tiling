@@ -298,6 +298,7 @@ void DesktopCorona::evaluateScripts(QMap<QString, QString> scripts)
         ScriptEngine scriptEngine(this);
         connect(&scriptEngine, SIGNAL(printError(QString)), this, SLOT(printScriptError(QString)));
         connect(&scriptEngine, SIGNAL(print(QString)), this, SLOT(printScriptMessage(QString)));
+        connect(&scriptEngine, SIGNAL(createPendingPanelViews()), PlasmaApp::self(), SLOT(createWaitingPanels()));
 
         QFile file(script);
         if (file.open(QIODevice::ReadOnly | QIODevice::Text) ) {
