@@ -303,7 +303,7 @@ void ItemContainer::relayout()
     } else {
 
         int nRows;
-        // if we already decided how many columns are going to be don't decide again
+        // if we already decided how many rows are going to be don't decide again
         if (validRow > 0 && m_layout->columnCount() > 0 &&  m_layout->rowCount() > 0) {
             nRows = m_layout->rowCount();
         } else {
