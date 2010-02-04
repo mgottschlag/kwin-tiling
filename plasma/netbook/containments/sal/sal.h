@@ -109,8 +109,10 @@ private:
     QHash<Plasma::IconWidget*, Plasma::QueryMatch> m_matches;
 
     Plasma::LineEdit *m_searchField;
+
     ItemView *m_resultsView;
     StripWidget *m_stripWidget;
+
     Qt::Orientation m_orientation;
     Plasma::ToolButton *m_leftArrow;
     Plasma::ToolButton *m_rightArrow;

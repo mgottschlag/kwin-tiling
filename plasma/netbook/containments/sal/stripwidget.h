@@ -60,6 +60,9 @@ public:
     void save(KConfigGroup &cg);
     void restore(KConfigGroup &cg);
 
+    void setIconSize(int iconSize);
+    int iconSize() const;
+
 protected:
     void createIcon(Plasma::QueryMatch *match, int idx);
     void focusInEvent(QFocusEvent *event);

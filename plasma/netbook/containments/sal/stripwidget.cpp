@@ -328,6 +328,16 @@ void StripWidget::restore(KConfigGroup &cg)
     m_startupCompleted = true;
 }
 
+void StripWidget::setIconSize(int iconSize)
+{
+    m_itemView->setIconSize(iconSize);
+}
+
+int StripWidget::iconSize() const
+{
+    return m_itemView->iconSize();
+}
+
 void StripWidget::focusInEvent(QFocusEvent *event)
 {
     Q_UNUSED(event)

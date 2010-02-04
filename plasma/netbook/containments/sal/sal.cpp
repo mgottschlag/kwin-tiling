@@ -113,8 +113,6 @@ void SearchLaunch::init()
     connect(m_toolBox, SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));
     m_toolBox->show();
 
-    configChanged();
-
     QAction *a = action("add widgets");
     if (a) {
         m_toolBox->addTool(a);
@@ -168,7 +166,11 @@ void SearchLaunch::init()
 
 void SearchLaunch::configChanged()
 {
-    m_orientation = (Qt::Orientation)config().readEntry("orientation", (int)Qt::Vertical);
+    setOrientation((Qt::Orientation)config().readEntry("orientation", (int)Qt::Vertical));
+
+    m_stripWidget->setIconSize(config().readEntry("FavouritesIconSize", (int)KIconLoader::SizeLarge));
+
+    m_resultsView->setIconSize(config().readEntry("ResultsIconSize", (int)KIconLoader::SizeHuge));
 }
 
 void SearchLaunch::toggleImmutability()
@@ -422,11 +424,14 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_resultsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
             m_resultsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
             m_resultsLayout->addItem(m_resultsView);
-            setOrientation(m_orientation);
 
             connect(m_resultsView, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launch(Plasma::IconWidget *)));
 
             m_stripWidget = new StripWidget(m_runnermg, this);
+
+            //load all config, only at this point we are sure it won't crash
+            configChanged();
+
             m_appletsLayout = new QGraphicsLinearLayout(Qt::Horizontal);
             m_appletsLayout->setPreferredHeight(KIconLoader::SizeMedium);
             m_appletsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -538,6 +543,10 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
 void SearchLaunch::setOrientation(Qt::Orientation orientation)
 {
+    if (m_orientation != orientation) {
+        return;
+    }
+
     m_orientation = orientation;
     m_resultsView->setOrientation(orientation);
     if (m_orientation == Qt::Vertical) {
