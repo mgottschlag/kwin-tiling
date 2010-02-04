@@ -21,6 +21,7 @@
 #include "resultwidget.h"
 
 #include <QGraphicsGridLayout>
+#include <QGraphicsSceneMouseEvent>
 #include <QTimer>
 #include <QWidget>
 #include <QWeakPointer>
@@ -125,6 +126,8 @@ void ItemContainer::insertItem(Plasma::IconWidget *icon, qreal weight)
     }
 
     connect(icon, SIGNAL(destroyed(QObject *)), this, SLOT(itemRemoved(QObject *)));
+
+    connect(icon, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SLOT(dragStartRequested(Plasma::IconWidget *)));
 
     m_relayoutTimer->start(300);
 }
@@ -347,9 +350,20 @@ void ItemContainer::itemRemoved(QObject *object)
     m_relayoutTimer->start(400);
 }
 
+void ItemContainer::dragStartRequested(Plasma::IconWidget *icon)
+{
+    for (int i = 0; i < m_layout->count(); ++i) {
+        if (m_layout->itemAt(i) == icon) {
+            m_layout->removeAt(i);
+            icon->setZValue(900);
+            icon->installEventFilter(this);
+            return;
+        }
+    }
+}
+
 void ItemContainer::keyPressEvent(QKeyEvent *event)
 {
-
     switch (event->key()) {
     case Qt::Key_Left: {
         m_currentIcon.clear();
@@ -404,6 +418,79 @@ void ItemContainer::keyPressEvent(QKeyEvent *event)
     }
 }
 
+bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
+{
+    Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
+
+    if (event->type() == QEvent::GraphicsSceneMouseMove) {
+        QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
+
+        icon->setPos(icon->mapToParent(me->pos()) - icon->boundingRect().center());
+    } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
+        icon->setZValue(10);
+        icon->removeEventFilter(this);
+
+        {
+            QMapIterator<qreal, Plasma::IconWidget *> i(m_items);
+            while (i.hasNext()) {
+                i.next();
+                if (i.value() == icon) {
+                    m_items.remove(i.key(), i.value());
+                    break;
+                }
+            }
+        }
+
+        //FIXME: this code is ugly as sin and inefficient as well, but we would need a -proper- model
+        //find the two items that will be neighbours
+        int row = 0;
+        int column = 0;
+        for (int x = 0; x < m_layout->columnCount(); ++x) {
+            QGraphicsLayoutItem *item = 0;
+            for (int y = 0; y < m_layout->rowCount(); ++y) {
+                item = m_layout->itemAt(y, x);
+                if (item && item->geometry().center().y() < icon->geometry().center().y()) {
+                    row = y;
+                } else {
+                    //break;
+                }
+            }
+            if (item && item->geometry().center().x() < icon->geometry().center().x()) {
+                column = x;
+            } else {
+                //break;
+            }
+        }
+
+        kDebug() << "The item will be put at" << column << row;
+        Plasma::IconWidget *iconToReplace = static_cast<Plasma::IconWidget *>(m_layout->itemAt(row, column));
+
+        qreal key = 0;
+        qreal key2 = -1;
+        {
+            QMapIterator<qreal, Plasma::IconWidget *> i(m_items);
+            while (i.hasNext()) {
+                i.next();
+                if (i.value() == iconToReplace) {
+                    key = i.key();
+                } else if (key != 0) {
+                    key2 = i.key();
+                    break;
+                }
+            }
+        }
+
+        if (key2 == -1) {
+            insertItem(icon, key2);
+        } else {
+            insertItem(icon, (key+key2)/2);
+        }
+
+        askRelayout();
+    }
+
+    return false;
+}
 
 void ItemContainer::focusInEvent(QFocusEvent *event)
 {

@@ -68,11 +68,13 @@ protected:
     void keyPressEvent(QKeyEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
     void resizeEvent(QGraphicsSceneResizeEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event);
 
 private Q_SLOTS:
     void relayout();
     void syncCurrentItem();
     void itemRemoved(QObject *object);
+    void dragStartRequested(Plasma::IconWidget *);
 
 Q_SIGNALS:
     void itemSelected(Plasma::IconWidget *);

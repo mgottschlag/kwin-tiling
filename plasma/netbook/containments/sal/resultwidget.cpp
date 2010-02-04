@@ -19,6 +19,8 @@
 
 #include "resultwidget.h"
 
+#include <QApplication>
+#include <QGraphicsSceneMouseEvent>
 #include <QPropertyAnimation>
 
 ResultWidget::ResultWidget(QGraphicsItem *parent)
@@ -35,6 +37,29 @@ ResultWidget::ResultWidget(QGraphicsItem *parent)
 
 ResultWidget::~ResultWidget()
 {
+}
+
+void ResultWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    Plasma::IconWidget::mousePressEvent(event);
+}
+
+void ResultWidget::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    const int distance = QPointF(boundingRect().center() - event->pos()).manhattanLength();
+
+    //arbitrary drag distance: this has to be way more than the usual:
+    //double of the average of width and height
+    if (distance > ((size().width() + size().height())/2)*2) {
+        emit dragStartRequested(this);
+    }
+
+    Plasma::IconWidget::mouseMoveEvent(event);
+}
+
+void ResultWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    Plasma::IconWidget::mouseReleaseEvent(event);
 }
 
 void ResultWidget::hideEvent(QHideEvent *event)

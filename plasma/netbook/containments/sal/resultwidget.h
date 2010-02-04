@@ -40,11 +40,18 @@ public:
     void setAnimationPos(const QPointF &pos);
 
 protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+
     void hideEvent(QHideEvent *event);
     void showEvent(QShowEvent *event);
 
 protected Q_SLOTS:
     void hideTimeout();
+
+Q_SIGNALS:
+    void dragStartRequested(Plasma::IconWidget *);
 
 private:
     QPropertyAnimation *m_animation;
