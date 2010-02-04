@@ -14,7 +14,7 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2009-11-17</date>
+<date>2010-02-04</date>
 <releaseinfo>&kde; 4.4</releaseinfo>
 
 <keywordset>
@@ -34,12 +34,18 @@ will get activated on each edge and corner of the screen.
 in the context menu. Edges with a black square have already an attached effect, 
 a grey colored square indicates that no effect is selected for this edge.</para>
 
-<!-- apparently not in kde4
+<para>The number of accessible items in the context menu depends on the settings in the module
+<menuchoice><guilabel>Look &amp; Feel</guilabel> <guilabel>Desktop</guilabel>
+</menuchoice> on the <ulink url="help:/kcontrol/kwincompositing/index.html">
+<guilabel>Desktop Effects</guilabel></ulink> page. Select <guilabel>Enable desktop 
+effects</guilabel> to activate compositing, then choose your favorite effects on the 
+<guilabel>All Effects</guilabel> tab from the <guilabel>Windows Management</guilabel> 
+group. This activates the corresponding items in the context menu.</para>
+
 <para>If you are looking for the setting to enable switching of desktops by 
 pushing your mouse cursor against the edge of the screen you can find it in 
-the settings module <ulink url="help:/kcontrol/windowbehaviour/index.html#action-advanced">
-<guilabel>Window Behavior</guilabel></ulink> on the <guilabel>Advanced</guilabel> 
-tab in the section <guilabel>Active Desktop Borders</guilabel>.
-</para>
--->
+the settings module <menuchoice><guilabel>Look &amp; Feel</guilabel> <guilabel>Window 
+Behaviour</guilabel></menuchoice> on the <ulink url="help:/kcontrol/kwintabbox/index.html">
+<guilabel>Navigate Through Windows</guilabel></ulink> page.</para>
+
 </article>
