@@ -113,7 +113,7 @@ void SearchLaunch::init()
     connect(m_toolBox, SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));
     m_toolBox->show();
 
-    m_orientation = (Qt::Orientation)config().readEntry("orientation", (int)Qt::Vertical);
+    configChanged();
 
     QAction *a = action("add widgets");
     if (a) {
@@ -164,6 +164,11 @@ void SearchLaunch::init()
     addAction("next containment", a);
     a = new QAction(i18n("Previous activity"), this);
     addAction("previous containment", a);
+}
+
+void SearchLaunch::configChanged()
+{
+    m_orientation = (Qt::Orientation)config().readEntry("orientation", (int)Qt::Vertical);
 }
 
 void SearchLaunch::toggleImmutability()

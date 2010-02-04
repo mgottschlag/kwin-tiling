@@ -68,6 +68,7 @@ protected:
     void doSearch(const QString &query, const QString &runner = QString());
 
 public Q_SLOTS:
+    void configChanged();
     void dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data);
 
 private Q_SLOTS:
