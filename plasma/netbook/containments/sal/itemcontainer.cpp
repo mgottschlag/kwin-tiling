@@ -488,6 +488,7 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
         icon->setZValue(10);
         icon->removeEventFilter(this);
         icon->setParentItem(this);
+        icon->setPos(icon->pos()-pos());
 
         {
             QMap<qreal, Plasma::IconWidget *>::iterator i = m_items.begin();
