@@ -464,6 +464,25 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
 
         icon->setPos(icon->mapToParent(me->pos()) - icon->boundingRect().center());
 
+        if (parentItem()) {
+            m_dragging = false;
+            QPointF newPos = pos()-(me->pos()-me->lastPos());
+
+            if (parentItem()->boundingRect().width() >= size().width()) {
+                newPos.setX(pos().x());
+            } else {
+                newPos.setX(qBound(parentItem()->boundingRect().width() - size().width(), newPos.x(), (qreal)0.0));
+            }
+
+            if (parentItem()->boundingRect().height() >= size().height()) {
+                newPos.setY(pos().y());
+            } else {
+                newPos.setX(qBound(parentItem()->boundingRect().height() - size().height(), newPos.y(), (qreal)0.0));
+            }
+
+            setPos(newPos);
+            m_dragging = true;
+        }
     } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
         m_dragging = false;
         icon->setZValue(10);
