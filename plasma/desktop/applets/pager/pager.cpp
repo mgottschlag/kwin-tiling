@@ -60,7 +60,6 @@ DesktopRectangle::DesktopRectangle(QObject *parent)
     : QObject(parent),
       m_alpha(0)
 {
-    setObjectName("desktopRectangle");
 }
 
 QPropertyAnimation *DesktopRectangle::animation() const
@@ -110,8 +109,6 @@ Pager::Pager(QObject *parent, const QVariantList &args)
     setAcceptsHoverEvents(true);
     setAcceptDrops(true);
     setHasConfigurationInterface(true);
-
-    setObjectName("pager");
 
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/pager");
@@ -921,7 +918,6 @@ void Pager::handleHoverMove(const QPointF& pos)
             animation->pause();
         } else {
             animation = new QPropertyAnimation(m_animations[m_hoverIndex], "alphaValue");
-            animation->setObjectName("propertyAnimation");
             m_animations[m_hoverIndex]->setAnimation(animation);
         }
 
