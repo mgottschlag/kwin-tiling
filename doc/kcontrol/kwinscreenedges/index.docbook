@@ -38,7 +38,8 @@ a grey colored square indicates that no effect is selected for this edge.</para>
 <menuchoice><guilabel>Look &amp; Feel</guilabel> <guilabel>Desktop</guilabel>
 </menuchoice> on the <ulink url="help:/kcontrol/kwincompositing/index.html">
 <guilabel>Desktop Effects</guilabel></ulink> page. Select <guilabel>Enable desktop 
-effects</guilabel> to activate compositing, then choose your favorite effects on the 
+effects</guilabel> to activate compositing, select the compositing type 
+<guilabel>OpenGL</guilabel>, and then choose your favorite effects on the 
 <guilabel>All Effects</guilabel> tab from the <guilabel>Windows Management</guilabel> 
 group. This activates the corresponding items in the context menu.</para>
 
