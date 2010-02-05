@@ -375,6 +375,8 @@ void ItemContainer::dragStartRequested(Plasma::IconWidget *icon)
             m_layout->removeAt(i);
             icon->setZValue(900);
             icon->installEventFilter(this);
+            //ugly but necessary to don't make it clipped
+            icon->setParentItem(0);
             return;
         }
     }
@@ -447,6 +449,7 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
     } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
         icon->setZValue(10);
         icon->removeEventFilter(this);
+        icon->setParentItem(this);
 
         {
             QMap<qreal, Plasma::IconWidget *>::iterator i = m_items.begin();
