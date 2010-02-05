@@ -72,6 +72,7 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 private Q_SLOTS:
     void relayout();
@@ -102,6 +103,7 @@ private:
     int m_maxRowHeight;
     bool m_firstRelayout;
     bool m_dragAndDropEnabled;
+    bool m_dragging;
 };
 
 #endif

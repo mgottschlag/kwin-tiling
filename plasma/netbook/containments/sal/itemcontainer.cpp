@@ -22,6 +22,7 @@
 
 #include <QGraphicsGridLayout>
 #include <QGraphicsSceneMouseEvent>
+
 #include <QTimer>
 #include <QWidget>
 #include <QWeakPointer>
@@ -41,7 +42,8 @@ ItemContainer::ItemContainer(QGraphicsWidget *parent)
       m_maxColumnWidth(1),
       m_maxRowHeight(1),
       m_firstRelayout(true),
-      m_dragAndDropEnabled(false)
+      m_dragAndDropEnabled(false),
+      m_dragging(false)
 {
     m_positionAnimation = new QPropertyAnimation(this, "pos", this);
     m_positionAnimation->setEasingCurve(QEasingCurve::InOutQuad);
@@ -373,6 +375,7 @@ void ItemContainer::dragStartRequested(Plasma::IconWidget *icon)
     for (int i = 0; i < m_layout->count(); ++i) {
         if (m_layout->itemAt(i) == icon) {
             m_layout->removeAt(i);
+            m_dragging = true;
             icon->setZValue(900);
             icon->installEventFilter(this);
             //ugly but necessary to don't make it clipped
@@ -438,6 +441,20 @@ void ItemContainer::keyPressEvent(QKeyEvent *event)
     }
 }
 
+QVariant ItemContainer::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if (change == ItemPositionChange) {
+        QPointF newPos = value.toPointF();
+        if (m_dragging) {
+            return pos();
+        } else {
+            return newPos;
+        }
+    }
+
+    return QGraphicsItem::itemChange(change, value);
+}
+
 bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
 {
     Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
@@ -446,7 +463,9 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
 
         icon->setPos(icon->mapToParent(me->pos()) - icon->boundingRect().center());
+
     } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
+        m_dragging = false;
         icon->setZValue(10);
         icon->removeEventFilter(this);
         icon->setParentItem(this);
