@@ -80,8 +80,6 @@ qreal DesktopRectangle::alphaValue() const
 
 void DesktopRectangle::setAlphaValue(qreal value)
 {
-    qCritical() << __func__ << parent()->objectName();
-
     m_alpha = value;
 
     Pager *parentItem = qobject_cast<Pager*>(parent());
