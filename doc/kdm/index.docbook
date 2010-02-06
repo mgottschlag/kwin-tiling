@@ -408,7 +408,7 @@ your login box, corresponding to setting <option>Language</option> in
 &kdmrc;.</para>
 
 <para>In the <guilabel>Appearance</guilabel> section you have an option to use 
-&kdm; in themed mode. If <guilabel>Used themed greeter</guilabel> is checked, 
+&kdm; in themed mode. If <guilabel>Use themed greeter</guilabel> is checked, 
 the settings on the <guilabel>Dialog</guilabel> and <guilabel>Background</guilabel> 
 pages cannot be configured separately.</para>
 
@@ -879,7 +879,7 @@ defaults to
 
 <para>When <guilabel>Boot manager</guilabel> is set to <guilabel>Grub</guilabel> 
 or <guilabel>Lilo</guilabel>, &kdm;
-will on reboot offer you options for these boot managers.Note that this
+will on reboot offer you options for these boot managers. Note that this
 option is not available on all operating systems.</para>
 
 </sect2>
