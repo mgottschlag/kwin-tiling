@@ -1,6 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Memory Status
+Name[pt]=Estado da Memória
+Name[sv]=Minnesstatus
+Name[uk]=Стан пам’яті
+Name[x-test]=xxMemory Statusxx
 Comment=A RAM usage monitor
 Comment[ar]=مراقب استعمال الذاكرة العشوائية
 Comment[bg]=Изпозлване на оперативната памет (RAM)

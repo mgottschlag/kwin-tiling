@@ -1,6 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Hardware Temperature
+Name[pt]=Temperatura do 'Hardware'
+Name[sv]=Hårdvarutemperatur
+Name[uk]=Температура обладнання
+Name[x-test]=xxHardware Temperaturexx
 Comment=A system temperature monitor
 Comment[ar]=يراقب حرارة النظام
 Comment[be@latin]=Nazirańnik za temperaturaju systemy

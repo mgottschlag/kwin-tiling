@@ -1,6 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Hard Disk Status
+Name[pt]=Estado do Disco Rígido
+Name[sv]=Hårddiskstatus
+Name[uk]=Стан жорсткого диска
+Name[x-test]=xxHard Disk Statusxx
 Comment=A hard disk usage monitor
 Comment[ar]=يراقب استعمال القرص الصلب
 Comment[be@latin]=Nazirańnik zaniataści ćviordaha dysku

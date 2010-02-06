@@ -1,6 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=CPU Monitor
+Name[pt]=Monitor do CPU
+Name[sv]=Övervakning av processoranvändning
+Name[uk]=Використання процесора
+Name[x-test]=xxCPU Monitorxx
 Comment=A CPU usage monitor
 Comment[ar]=مراقب استعمال المعالج
 Comment[be@latin]=Nazirańnik zaniataści „CPU”
