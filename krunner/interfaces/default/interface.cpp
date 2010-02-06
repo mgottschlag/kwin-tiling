@@ -258,7 +258,7 @@ void Interface::updateSystemActivityToolTip()
 }
 void Interface::setConfigWidget(QWidget *w)
 {
-    m_resultsView->hide();
+    m_resultsContainer->hide();
     m_searchTerm->setEnabled(false);
     m_layout->addWidget(w);
     resize(m_defaultSize);
@@ -272,9 +272,8 @@ void Interface::configWidgetDestroyed()
 
 void Interface::cleanupAfterConfigWidget()
 {
-    m_resultsView->show();
-    resize(qMax(minimumSizeHint().width(), m_defaultSize.width()), minimumSizeHint().height());
     m_searchTerm->setEnabled(true);
+    resetInterface();
     m_searchTerm->setFocus();
 }
 
@@ -584,7 +583,7 @@ void Interface::matchCountChanged(int count)
         return;
     }
 
-    if (m_resultsView->isVisible() == show) {
+    if (m_resultsContainer->isVisible() == show) {
         return;
     }
 
