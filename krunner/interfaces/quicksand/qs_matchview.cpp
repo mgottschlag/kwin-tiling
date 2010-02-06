@@ -206,6 +206,7 @@ void QsMatchView::setItems(const QList<MatchItem*> &items, bool popup, bool appe
         d->m_items << items;
     }
     qStableSort(d->m_items.begin(), d->m_items.end(), queryMatchCompare);
+    d->m_compBox->clear();
 
     foreach(MatchItem *item, d->m_items) {
         if (item) {
