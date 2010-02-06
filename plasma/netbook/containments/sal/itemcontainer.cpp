@@ -21,6 +21,7 @@
 #include "resultwidget.h"
 
 #include <QGraphicsGridLayout>
+#include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 
 #include <QTimer>
@@ -368,31 +369,36 @@ void ItemContainer::itemRemoved(QObject *object)
 
 void ItemContainer::dragStartRequested(Plasma::IconWidget *icon)
 {
-    switch (m_dragAndDropMode) {
-    case CopyDragAndDrop: {
-        //no parent, dangerous but we can intercept it anyways and delete if it wasnt't picked by another view
-        Plasma::IconWidget *iconCopy = new Plasma::IconWidget;
-        iconCopy->setIcon(icon->icon());
-        iconCopy->setText(icon->text());
-        icon->setZValue(900);
-        break;
+    if (m_dragging) {
+        return;
     }
-    case MoveDragAndDrop:
-        for (int i = 0; i < m_layout->count(); ++i) {
-            if (m_layout->itemAt(i) == icon) {
-                m_layout->removeAt(i);
-                m_dragging = true;
-                icon->setZValue(900);
-                icon->installEventFilter(this);
-                //ugly but necessary to don't make it clipped
-                icon->setParentItem(0);
-                return;
+
+    for (int i = 0; i < m_layout->count(); ++i) {
+        if (m_layout->itemAt(i) == icon) {
+            m_layout->removeAt(i);
+            m_dragging = true;
+            icon->setZValue(900);
+            icon->installEventFilter(this);
+            //ugly but necessary to don't make it clipped
+            icon->setParentItem(0);
+
+            if (m_dragAndDropMode == CopyDragAndDrop) {
+                m_ghostIcon = new Plasma::IconWidget;
+                scene()->addItem(m_ghostIcon);
+                m_ghostIcon->setIcon(icon->icon());
+                m_ghostIcon->setText(icon->text());
+                m_ghostIcon->setMinimumSize(icon->size());
+                m_ghostIcon->setMaximumSize(m_ghostIcon->minimumSize());
+                m_ghostIcon->show();
+                qreal left, top, right, bottom;
+                icon->getContentsMargins(&left, &top, &right, &bottom);
+                m_ghostIcon->setContentsMargins(left, top, right, bottom);
+                m_ghostIcon->setOrientation(icon->orientation());
+                m_layout->addItem(m_ghostIcon, m_currentIconIndexY, m_currentIconIndexX);
             }
+
+            return;
         }
-        break;
-    case NoDragAndDrop:
-    default:
-        break;
     }
 }
 
@@ -498,8 +504,16 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
         m_dragging = false;
         icon->setZValue(10);
         icon->removeEventFilter(this);
+        icon->setPos(icon->mapToItem(this, QPoint(0,0)));
         icon->setParentItem(this);
-        icon->setPos(icon->pos()-pos());
+
+        if (m_dragAndDropMode == CopyDragAndDrop) {
+            m_ghostIcon->deleteLater();
+            m_ghostIcon = 0;
+            m_layout->addItem(icon, m_currentIconIndexY, m_currentIconIndexX);
+            emit itemDroppedOutside(icon);
+            return false;
+        }
 
         {
             QMap<qreal, Plasma::IconWidget *>::iterator i = m_items.begin();

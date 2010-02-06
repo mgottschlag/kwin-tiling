@@ -91,10 +91,12 @@ Q_SIGNALS:
     void itemActivated(Plasma::IconWidget *);
     void resetRequested();
     void itemReordered(Plasma::IconWidget *, int);
+    void itemDroppedOutside(Plasma::IconWidget *);
 
 private:
     QGraphicsGridLayout *m_layout;
     QWeakPointer<Plasma::IconWidget> m_currentIcon;
+    Plasma::IconWidget *m_ghostIcon;
     Plasma::ItemBackground *m_hoverIndicator;
     QTimer *m_relayoutTimer;
     QTimer *m_setCurrentTimer;

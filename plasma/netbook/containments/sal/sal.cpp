@@ -421,11 +421,13 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
             m_resultsView = new ItemView(this);
 
+            m_resultsView->setDragAndDropMode(ItemContainer::CopyDragAndDrop);
             m_resultsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
             m_resultsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
             m_resultsLayout->addItem(m_resultsView);
 
             connect(m_resultsView, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launch(Plasma::IconWidget *)));
+            connect(m_resultsView, SIGNAL(itemDroppedOutside(Plasma::IconWidget *)), this, SLOT(resultsViewRequestedDrop(Plasma::IconWidget *)));
 
             m_stripWidget = new StripWidget(m_runnermg, this);
 
@@ -648,6 +650,16 @@ void SearchLaunch::updateConfigurationMode(bool config)
 void SearchLaunch::overlayRequestedDrop(QGraphicsSceneDragDropEvent *event)
 {
     dropEvent(event);
+}
+
+void SearchLaunch::resultsViewRequestedDrop(Plasma::IconWidget *icon)
+{
+    kWarning()<<"AAAAA"<<m_stripWidget->mapToScene(m_stripWidget->geometry()).boundingRect()<<icon->mapToScene(QPoint(0,0));
+    if (m_stripWidget->collidesWithItem(icon)) {
+        if (m_matches.contains(icon)) {
+            m_stripWidget->add(m_matches.value(icon, Plasma::QueryMatch(0)), m_runnermg->searchContext()->query());
+        }
+    }
 }
 
 void SearchLaunch::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *, const QRect &)
