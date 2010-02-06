@@ -20,8 +20,8 @@
 #include "manager.h"
 
 // KDE includes
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 
-typedef KGenericFactory<NMNetworkManager, Solid::Control::Ifaces::NetworkManager> NetworkManagerBackendFactory;
-K_EXPORT_COMPONENT_FACTORY(solid_networkmanager07, NetworkManagerBackendFactory("NetworkManagerbackend"))
+K_PLUGIN_FACTORY(NetworkManagerBackendFactory, registerPlugin<NMNetworkManager>(); )
+K_EXPORT_PLUGIN(NetworkManagerBackendFactory("NetworkManagerbackend"))
 

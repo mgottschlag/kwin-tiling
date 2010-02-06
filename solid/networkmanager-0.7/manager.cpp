@@ -41,7 +41,7 @@ NMNetworkManagerPrivate::NMNetworkManagerPrivate() : iface(NMNetworkManager::DBU
     kDebug(1441) << NMNetworkManager::DBUS_SERVICE;
 }
 
-NMNetworkManager::NMNetworkManager(QObject * parent, const QStringList &) 
+NMNetworkManager::NMNetworkManager(QObject * parent, const QVariantList &) 
 {
     qDBusRegisterMetaType<QList<QDBusObjectPath> >();
     d_ptr = new NMNetworkManagerPrivate;

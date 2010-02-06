@@ -40,7 +40,7 @@ public:
     static const QString DBUS_USER_SETTINGS_PATH;
     static const QString DBUS_SYSTEM_SETTINGS_PATH;
 
-    NMNetworkManager(QObject * parent, const QStringList & args);
+    NMNetworkManager(QObject * parent, const QVariantList & args);
     ~NMNetworkManager();
     Solid::Networking::Status status() const;
     QStringList networkInterfaces() const;
