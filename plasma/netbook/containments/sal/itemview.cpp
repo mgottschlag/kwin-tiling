@@ -111,14 +111,14 @@ int ItemView::iconSize() const
     return m_itemContainer->iconSize();
 }
 
-void ItemView::setDragAndDropEnabled(bool enable)
+void ItemView::setDragAndDropMode(ItemContainer::DragAndDropMode mode)
 {
-    m_itemContainer->setDragAndDropEnabled(enable);
+    m_itemContainer->setDragAndDropMode(mode);
 }
 
-bool ItemView::isDragAndDropEnabled() const
+ItemContainer::DragAndDropMode ItemView::dragAndDropMode() const
 {
-    return m_itemContainer->isDragAndDropEnabled();
+    return m_itemContainer->dragAndDropMode();
 }
 
 Plasma::IconWidget *ItemView::createItem()

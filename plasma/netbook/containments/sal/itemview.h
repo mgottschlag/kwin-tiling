@@ -24,6 +24,8 @@
 
 #include <Plasma/ScrollWidget>
 
+#include "itemcontainer.h"
+
 class QGraphicsGridLayout;
 
 namespace Plasma
@@ -32,7 +34,6 @@ namespace Plasma
     class ItemBackground;
 }
 
-class ItemContainer;
 class QTimer;
 
 class ItemView : public Plasma::ScrollWidget
@@ -64,8 +65,8 @@ public:
     void setIconSize(int size);
     int iconSize() const;
 
-    void setDragAndDropEnabled(bool enable);
-    bool isDragAndDropEnabled() const;
+    void setDragAndDropMode(ItemContainer::DragAndDropMode mode);
+    ItemContainer::DragAndDropMode dragAndDropMode() const;
 
     //FIXME: this won't be necessary, more logic will have to be moved from the users to the itemcontainer
     Plasma::IconWidget *createItem();

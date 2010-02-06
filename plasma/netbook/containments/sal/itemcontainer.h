@@ -40,6 +40,12 @@ class ItemContainer : public QGraphicsWidget
     Q_OBJECT
 
 public:
+    enum DragAndDropMode{
+        NoDragAndDrop = 0,
+        CopyDragAndDrop = 1,
+        MoveDragAndDrop = 2
+    };
+
     ItemContainer(QGraphicsWidget *parent);
     ~ItemContainer();
 
@@ -56,8 +62,8 @@ public:
     void setIconSize(int size);
     int iconSize() const;
 
-    void setDragAndDropEnabled(bool enable);
-    bool isDragAndDropEnabled() const;
+    void setDragAndDropMode(DragAndDropMode mode);
+    DragAndDropMode dragAndDropMode() const;
 
     QList<Plasma::IconWidget *>items() const;
 
@@ -102,7 +108,7 @@ private:
     int m_maxColumnWidth;
     int m_maxRowHeight;
     bool m_firstRelayout;
-    bool m_dragAndDropEnabled;
+    DragAndDropMode m_dragAndDropMode;
     bool m_dragging;
 };
 

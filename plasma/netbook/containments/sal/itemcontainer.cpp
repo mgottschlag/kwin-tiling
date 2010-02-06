@@ -42,7 +42,7 @@ ItemContainer::ItemContainer(QGraphicsWidget *parent)
       m_maxColumnWidth(1),
       m_maxRowHeight(1),
       m_firstRelayout(true),
-      m_dragAndDropEnabled(false),
+      m_dragAndDropMode(ItemContainer::NoDragAndDrop),
       m_dragging(false)
 {
     m_positionAnimation = new QPropertyAnimation(this, "pos", this);
@@ -198,14 +198,14 @@ int ItemContainer::iconSize() const
     return m_iconSize;
 }
 
-void ItemContainer::setDragAndDropEnabled(bool enable)
+void ItemContainer::setDragAndDropMode(DragAndDropMode mode)
 {
-    m_dragAndDropEnabled = enable;
+    m_dragAndDropMode = mode;
 }
 
-bool ItemContainer::isDragAndDropEnabled() const
+ItemContainer::DragAndDropMode ItemContainer::dragAndDropMode() const
 {
-    return m_dragAndDropEnabled;
+    return m_dragAndDropMode;
 }
 
 void ItemContainer::askRelayout()
@@ -368,20 +368,31 @@ void ItemContainer::itemRemoved(QObject *object)
 
 void ItemContainer::dragStartRequested(Plasma::IconWidget *icon)
 {
-    if (!m_dragAndDropEnabled) {
-        return;
+    switch (m_dragAndDropMode) {
+    case CopyDragAndDrop: {
+        //no parent, dangerous but we can intercept it anyways and delete if it wasnt't picked by another view
+        Plasma::IconWidget *iconCopy = new Plasma::IconWidget;
+        iconCopy->setIcon(icon->icon());
+        iconCopy->setText(icon->text());
+        icon->setZValue(900);
+        break;
     }
-
-    for (int i = 0; i < m_layout->count(); ++i) {
-        if (m_layout->itemAt(i) == icon) {
-            m_layout->removeAt(i);
-            m_dragging = true;
-            icon->setZValue(900);
-            icon->installEventFilter(this);
-            //ugly but necessary to don't make it clipped
-            icon->setParentItem(0);
-            return;
+    case MoveDragAndDrop:
+        for (int i = 0; i < m_layout->count(); ++i) {
+            if (m_layout->itemAt(i) == icon) {
+                m_layout->removeAt(i);
+                m_dragging = true;
+                icon->setZValue(900);
+                icon->installEventFilter(this);
+                //ugly but necessary to don't make it clipped
+                icon->setParentItem(0);
+                return;
+            }
         }
+        break;
+    case NoDragAndDrop:
+    default:
+        break;
     }
 }
 
