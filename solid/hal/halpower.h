@@ -37,7 +37,7 @@ class KDE_EXPORT HalPower : public Solid::Control::Ifaces::PowerManager
     Q_OBJECT
 
 public:
-    HalPower(QObject *parent, const QStringList &args);
+    HalPower(QObject *parent, const QVariantList &args);
     virtual ~HalPower();
 
     virtual QStringList supportedSchemes() const;

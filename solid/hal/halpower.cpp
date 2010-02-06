@@ -32,7 +32,7 @@
 #include <solid/button.h>
 #include <solid/genericinterface.h>
 
-HalPower::HalPower(QObject *parent, const QStringList  & /*args */)
+HalPower::HalPower(QObject *parent, const QVariantList  & /*args */)
     : PowerManager(parent),
       m_halComputer("org.freedesktop.Hal",
                      "/org/freedesktop/Hal/devices/computer",

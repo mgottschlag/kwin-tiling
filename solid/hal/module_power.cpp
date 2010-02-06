@@ -17,10 +17,10 @@
 
 */
 
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 
 #include "halpower.h"
 
-typedef KGenericFactory<HalPower, Solid::Control::Ifaces::PowerManager> HalBackendFactory;
-K_EXPORT_COMPONENT_FACTORY(solid_hal_power, HalBackendFactory("halbackend"))
+K_PLUGIN_FACTORY(HalBackendFactory, registerPlugin<HalPower>(); )
+K_EXPORT_PLUGIN(HalBackendFactory("halbackend"))
 
