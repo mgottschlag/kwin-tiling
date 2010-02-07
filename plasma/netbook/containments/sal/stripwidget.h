@@ -54,7 +54,7 @@ public:
     StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent = 0);
     ~StripWidget();
 
-    void add(Plasma::QueryMatch match, const QString &query);
+    void add(Plasma::QueryMatch match, const QString &query, const QPointF &point = QPointF());
     void remove(Plasma::IconWidget *favourite);
 
     void save(KConfigGroup &cg);
@@ -67,7 +67,7 @@ public:
     void setImmutability(Plasma::ImmutabilityType immutability);
 
 protected:
-    void createIcon(Plasma::QueryMatch *match, int idx);
+    void createIcon(Plasma::QueryMatch *match, const QPointF &point);
     void focusInEvent(QFocusEvent *event);
 
 private Q_SLOTS:

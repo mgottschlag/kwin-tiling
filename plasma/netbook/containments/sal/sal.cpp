@@ -673,7 +673,7 @@ void SearchLaunch::resultsViewRequestedDrop(Plasma::IconWidget *icon)
 {
     if (m_stripWidget->mapToScene(m_stripWidget->geometry()).boundingRect().intersects(icon->mapToScene(icon->boundingRect()).boundingRect())) {
         if (m_matches.contains(icon)) {
-            m_stripWidget->add(m_matches.value(icon, Plasma::QueryMatch(0)), m_runnermg->searchContext()->query());
+            m_stripWidget->add(m_matches.value(icon, Plasma::QueryMatch(0)), m_runnermg->searchContext()->query(), icon->geometry().center());
         }
     }
 }

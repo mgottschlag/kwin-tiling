@@ -110,9 +110,8 @@ StripWidget::~StripWidget()
     }
 }
 
-void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
+void StripWidget::createIcon(Plasma::QueryMatch *match, const QPointF &point)
 {
-    Q_UNUSED(idx)
     // create new IconWidget for favourite strip
 
     Plasma::IconWidget *fav = m_itemView->createItem();
@@ -145,7 +144,11 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     }
 
     m_favouritesIcons.insert(fav, match);
-    m_itemView->addItem(fav);
+    if (point != QPointF()) {
+        m_itemView->insertItem(fav, m_itemView->positionToWeight(point));
+    } else {
+        m_itemView->addItem(fav);
+    }
 
     if (m_startupCompleted) {
         m_itemView->setCurrentItem(fav);
@@ -167,15 +170,14 @@ void StripWidget::highlightCurrentItem()
     m_itemView->setCurrentItem(m_itemView->currentItem());
 }
 
-void StripWidget::add(Plasma::QueryMatch match, const QString &query)
+void StripWidget::add(Plasma::QueryMatch match, const QString &query, const QPointF &point)
 {
     // add to layout and data structures
     Plasma::QueryMatch *newMatch = new Plasma::QueryMatch(match);
     m_favouritesMatches.append(newMatch);
     m_favouritesQueries.insert(newMatch, query);
 
-    int idx = m_itemView->count();
-    createIcon(newMatch, idx);
+    createIcon(newMatch, point);
 }
 
 void StripWidget::remove(Plasma::IconWidget *favourite)

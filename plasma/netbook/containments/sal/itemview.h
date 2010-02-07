@@ -72,6 +72,8 @@ public:
     //FIXME: this won't be necessary, more logic will have to be moved from the users to the itemcontainer
     Plasma::IconWidget *createItem();
 
+    qreal positionToWeight(const QPointF &point);
+
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);

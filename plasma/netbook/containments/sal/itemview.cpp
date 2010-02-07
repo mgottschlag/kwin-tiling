@@ -134,6 +134,11 @@ Plasma::IconWidget *ItemView::createItem()
     return m_itemContainer->createItem();
 }
 
+qreal ItemView::positionToWeight(const QPointF &point)
+{
+    return m_itemContainer->positionToWeight(point);
+}
+
 void ItemView::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     QRectF rect = boundingRect();
