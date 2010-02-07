@@ -494,7 +494,7 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
             if (parentItem()->boundingRect().height() >= size().height()) {
                 newPos.setY(pos().y());
             } else {
-                newPos.setX(qBound(parentItem()->boundingRect().height() - size().height(), newPos.y(), (qreal)0.0));
+                newPos.setY(qBound(parentItem()->boundingRect().height() - size().height(), newPos.y(), (qreal)0.0));
             }
 
             setPos(newPos);
