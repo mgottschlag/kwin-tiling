@@ -116,16 +116,16 @@ KDModule::KDModule( QWidget *parent, const QVariantList & )
 		"the user's language settings."
 		"<h2>Dialog</h2>Here you can configure the look of the \"classical\" "
 		"dialog based mode if you have chosen to use it. "
-		"<h2>Background</h2>If you want to set a special background for the dialog based "
+		"<h2>Background</h2>If you want to set a special background for the dialog-based "
 		"login screen, this is where to do it."
-		"<h2>Themes</h2> Here you can specify a theme to be used by the Login Manager."
+		"<h2>Themes</h2> Here you can specify the theme to be used by the Login Manager."
 		"<h2>Shutdown</h2> Here you can specify who is allowed to shutdown/reboot the machine "
 		"and whether a boot manager should be used."
 		"<h2>Users</h2>On this tab page, you can select which users the Login Manager "
 		"will offer you for logging in."
 		"<h2>Convenience</h2> Here you can specify a user to be logged in automatically, "
 		"users not needing to provide a password to log in, and other convenience features.<br/>"
-		"Note, that these settings are security holes by their nature, so use them very carefully.") );
+		"Note that by their nature, these settings are security holes, so use them very carefully.") );
 
 	setAboutData( about );
 
