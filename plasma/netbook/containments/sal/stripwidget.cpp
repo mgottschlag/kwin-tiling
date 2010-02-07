@@ -156,7 +156,7 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
 void StripWidget::setImmutability(Plasma::ImmutabilityType immutability)
 {
     if (immutability == Plasma::Mutable) {
-        m_itemView->setDragAndDropMode(ItemContainer::CopyDragAndDrop);
+        m_itemView->setDragAndDropMode(ItemContainer::MoveDragAndDrop);
     } else {
         m_itemView->setDragAndDropMode(ItemContainer::NoDragAndDrop);
     }

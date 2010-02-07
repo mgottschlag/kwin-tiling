@@ -289,6 +289,7 @@ void SearchLaunch::launch(Plasma::IconWidget *icon)
         } else {
             doSearch(data.first());
         }
+        m_lastQuery = data.first();
     } else {
         m_runnermg->run(match);
         reset();
@@ -548,7 +549,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_appletOverlay->deleteLater();
             m_appletOverlay = 0;
         }
-
+kWarning()<<"AAAAAA"<<immutability()<<Plasma::Mutable<<m_lastQuery.isNull();
         //enable or disable drag and drop
         if (immutability() == Plasma::Mutable && !m_lastQuery.isNull()) {
             m_resultsView->setDragAndDropMode(ItemContainer::CopyDragAndDrop);
