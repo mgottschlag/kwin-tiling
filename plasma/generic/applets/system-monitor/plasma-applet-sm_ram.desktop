@@ -1,7 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Memory Status
+Name[de]=Speicherstatus
 Name[pt]=Estado da Memória
+Name[pt_BR]=Status da memória
 Name[sv]=Minnesstatus
 Name[uk]=Стан пам’яті
 Name[x-test]=xxMemory Statusxx

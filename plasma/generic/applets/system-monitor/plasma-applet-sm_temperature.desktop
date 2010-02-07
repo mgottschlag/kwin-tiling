@@ -1,7 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Hardware Temperature
+Name[de]=Hardwaretemperatur
 Name[pt]=Temperatura do 'Hardware'
+Name[pt_BR]=Temperatura do hardware
 Name[sv]=Hårdvarutemperatur
 Name[uk]=Температура обладнання
 Name[x-test]=xxHardware Temperaturexx

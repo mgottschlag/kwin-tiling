@@ -1,7 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Network Monitor
+Name[de]=Netzwerküberwachung
 Name[pt]=Monitor da Rede
+Name[pt_BR]=Monitor da rede
 Name[sv]=Nätverksövervakning
 Name[uk]=Монітор мережі
 Name[x-test]=xxNetwork Monitorxx

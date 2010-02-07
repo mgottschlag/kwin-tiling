@@ -1,7 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Hard Disk Status
+Name[de]=Festplattenstatus
 Name[pt]=Estado do Disco Rígido
+Name[pt_BR]=Status do disco rígido
 Name[sv]=Hårddiskstatus
 Name[uk]=Стан жорсткого диска
 Name[x-test]=xxHard Disk Statusxx
