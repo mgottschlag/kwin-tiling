@@ -90,7 +90,7 @@
            <string>Remove the selected theme</string>
           </property>
           <property name="whatsThis">
-           <string>Clicking this button will remove the selected theme. You will be asked for a confirmation.</string>
+           <string>Clicking this button will remove the selected theme. You will be asked for confirmation.</string>
           </property>
           <property name="text">
            <string>Remove Theme</string>
