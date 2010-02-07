@@ -56,6 +56,7 @@ public:
     Plasma::IconWidget *currentItem() const;
 
     void insertItem(Plasma::IconWidget *item, qreal weight);
+    void addItem(Plasma::IconWidget *item);
     void clear();
     int count() const;
 

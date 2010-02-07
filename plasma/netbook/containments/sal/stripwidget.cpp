@@ -145,7 +145,7 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     }
 
     m_favouritesIcons.insert(fav, match);
-    m_itemView->insertItem(fav, -1);
+    m_itemView->addItem(fav);
 
     if (m_startupCompleted) {
         m_itemView->setCurrentItem(fav);

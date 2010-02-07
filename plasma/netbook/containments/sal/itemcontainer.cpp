@@ -117,17 +117,22 @@ void ItemContainer::insertItem(Plasma::IconWidget *icon, qreal weight)
 
     icon->hide();
 
-    if (weight != -1 || m_items.count() == 0) {
-        m_items.insert(weight, icon);
-    } else {
-        m_items.insert(m_items.uniqueKeys().last()+1, icon);
-    }
+    m_items.insert(weight, icon);
 
     connect(icon, SIGNAL(destroyed(QObject *)), this, SLOT(itemRemoved(QObject *)));
 
     connect(icon, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SLOT(dragStartRequested(Plasma::IconWidget *)));
 
     m_relayoutTimer->start(300);
+}
+
+void ItemContainer::addItem(Plasma::IconWidget *icon)
+{
+    if (m_items.count() > 0) {
+        insertItem(icon, m_items.uniqueKeys().last()+1);
+    } else {
+        insertItem(icon, 0);
+    }
 }
 
 void ItemContainer::clear()
@@ -525,27 +530,42 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
 
         QPoint layoutPos = pointToLayoutPosition(icon->geometry().center());
 
-        Plasma::IconWidget *iconToReplace = static_cast<Plasma::IconWidget *>(m_layout->itemAt(layoutPos.y(), layoutPos.x()));
 
-        qreal key = 0;
-        qreal key2 = -1;
-        {
+        qreal key1 = 0;
+        bool key1Found = false;
+        qreal key2 = 0;
+        bool key2Found = false;
+        if (layoutPos.x() >= 0) {
+            layoutPos.setY(qMax(0, layoutPos.y()));
+            Plasma::IconWidget *iconToReplace = static_cast<Plasma::IconWidget *>(m_layout->itemAt(layoutPos.y(), layoutPos.x()));
+
             QMapIterator<qreal, Plasma::IconWidget *> i(m_items);
             while (i.hasNext()) {
                 i.next();
+
                 if (i.value() == iconToReplace) {
-                    key = i.key();
-                } else if (key != 0) {
-                    key2 = i.key();
+                    key1 = i.key();
+                    key1Found = true;
+
+                    if (i.hasNext()) {
+                        key2 = i.peekNext().key();
+                        key2Found = true;
+                    }
                     break;
                 }
             }
+        } else {
+            key2 = m_items.uniqueKeys().first();
+            key2Found = true;
         }
 
-        if (key2 == -1) {
-            insertItem(icon, key2);
+
+        if (!key1Found) {
+            insertItem(icon, key2-0.5);
+        } else if (!key2Found) {
+            insertItem(icon, key1+0.5);
         } else {
-            insertItem(icon, (key+key2)/2);
+            insertItem(icon, (key1+key2)/2);
         }
 
         //sloooow
@@ -561,25 +581,30 @@ QPoint ItemContainer::pointToLayoutPosition(const QPointF &point)
 {
     //FIXME: this code is ugly as sin and inefficient as well, but we would need a -proper- model
     //find the two items that will be neighbours
-    int row = 0;
-    int column = 0;
-    for (int x = 0; x < m_layout->columnCount(); ++x) {
-        QGraphicsLayoutItem *item = 0;
-        for (int y = 0; y < m_layout->rowCount(); ++y) {
-            item = m_layout->itemAt(y, x);
-            if (item && item->geometry().center().y() < point.y()) {
-                row = y;
-            } else {
-                //break;
-            }
+    int row = -1;
+    int column = -1;
+
+    QGraphicsLayoutItem *item = 0;
+    for (int y = 0; y < m_layout->rowCount(); ++y) {
+        item = m_layout->itemAt(y, 0);
+
+        if (item && item->geometry().center().y() < point.y()) {
+            row = y;
+        } else {
+            //break;
         }
+    }
+
+    for (int x = 0; x < m_layout->columnCount(); ++x) {
+        item = m_layout->itemAt(0, x);
+
         if (item && item->geometry().center().x() < point.x()) {
             column = x;
         } else {
             //break;
         }
     }
-    kDebug() << "The item will be put at" << column << row;
+    kDebug() << "The item will be put at" << row << column;
 
     return QPoint(column, row);
 }

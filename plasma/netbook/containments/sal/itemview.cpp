@@ -78,6 +78,13 @@ void ItemView::insertItem(Plasma::IconWidget *icon, qreal weight)
     registerAsDragHandle(icon);
 }
 
+void ItemView::addItem(Plasma::IconWidget *icon)
+{
+    m_itemContainer->addItem(icon);
+    icon->installEventFilter(this);
+    registerAsDragHandle(icon);
+}
+
 void ItemView::clear()
 {
     QList<Plasma::IconWidget *>items = m_itemContainer->items();
