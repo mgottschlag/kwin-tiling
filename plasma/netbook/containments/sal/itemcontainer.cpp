@@ -464,12 +464,10 @@ QVariant ItemContainer::itemChange(GraphicsItemChange change, const QVariant &va
         QPointF newPos = value.toPointF();
         if (m_dragging) {
             return pos();
-        } else {
-            return newPos;
         }
     }
 
-    return QGraphicsItem::itemChange(change, value);
+    return QGraphicsWidget::itemChange(change, value);
 }
 
 bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
