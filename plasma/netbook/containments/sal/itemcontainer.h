@@ -72,9 +72,12 @@ public:
 
     void askRelayout();
 
+    //the weight an item would have to appear at the given pixel coordinates (in item coordinates)
+    qreal positionToWeight(const QPointF &point);
+
 protected:
     //The returning QPoint is not a pixel coordinate, rather a column-row coordinate in a QGraphicsGridLayout
-    QPoint pointToLayoutPosition(const QPointF &point);
+    QPoint positionToLayoutPosition(const QPointF &point);
 
     void focusInEvent(QFocusEvent *event);
     void focusOutEvent(QFocusEvent *event);

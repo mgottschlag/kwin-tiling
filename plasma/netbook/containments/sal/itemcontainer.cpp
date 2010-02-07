@@ -528,45 +528,8 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
             }
         }
 
-        QPoint layoutPos = pointToLayoutPosition(icon->geometry().center());
-
-
-        qreal key1 = 0;
-        bool key1Found = false;
-        qreal key2 = 0;
-        bool key2Found = false;
-        if (layoutPos.x() >= 0) {
-            layoutPos.setY(qMax(0, layoutPos.y()));
-            Plasma::IconWidget *iconToReplace = static_cast<Plasma::IconWidget *>(m_layout->itemAt(layoutPos.y(), layoutPos.x()));
-
-            QMapIterator<qreal, Plasma::IconWidget *> i(m_items);
-            while (i.hasNext()) {
-                i.next();
-
-                if (i.value() == iconToReplace) {
-                    key1 = i.key();
-                    key1Found = true;
-
-                    if (i.hasNext()) {
-                        key2 = i.peekNext().key();
-                        key2Found = true;
-                    }
-                    break;
-                }
-            }
-        } else {
-            key2 = m_items.uniqueKeys().first();
-            key2Found = true;
-        }
-
-
-        if (!key1Found) {
-            insertItem(icon, key2-0.5);
-        } else if (!key2Found) {
-            insertItem(icon, key1+0.5);
-        } else {
-            insertItem(icon, (key1+key2)/2);
-        }
+        const qreal weight = positionToWeight(icon->geometry().center());
+        insertItem(icon, weight);
 
         //sloooow
         emit itemReordered(icon, m_items.values().indexOf(icon));
@@ -577,7 +540,50 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
     return false;
 }
 
-QPoint ItemContainer::pointToLayoutPosition(const QPointF &point)
+qreal ItemContainer::positionToWeight(const QPointF &point)
+{
+    QPoint layoutPos = positionToLayoutPosition(point);
+
+    //layout position to weight
+    qreal key1 = 0;
+    bool key1Found = false;
+    qreal key2 = 0;
+    bool key2Found = false;
+    if (layoutPos.x() >= 0) {
+        layoutPos.setY(qMax(0, layoutPos.y()));
+        Plasma::IconWidget *iconToReplace = static_cast<Plasma::IconWidget *>(m_layout->itemAt(layoutPos.y(), layoutPos.x()));
+
+        QMapIterator<qreal, Plasma::IconWidget *> i(m_items);
+        while (i.hasNext()) {
+            i.next();
+
+            if (i.value() == iconToReplace) {
+                key1 = i.key();
+                key1Found = true;
+
+                if (i.hasNext()) {
+                    key2 = i.peekNext().key();
+                    key2Found = true;
+                }
+                break;
+            }
+        }
+    } else {
+        key2 = m_items.uniqueKeys().first();
+        key2Found = true;
+    }
+
+
+    if (!key1Found) {
+        return key2 - 0.5;
+    } else if (!key2Found) {
+        return key1 + 0.5;
+    } else {
+        return (key1+key2)/2;
+    }
+}
+
+QPoint ItemContainer::positionToLayoutPosition(const QPointF &point)
 {
     //FIXME: this code is ugly as sin and inefficient as well, but we would need a -proper- model
     //find the two items that will be neighbours
