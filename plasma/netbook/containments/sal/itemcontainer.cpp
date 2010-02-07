@@ -523,29 +523,9 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
             }
         }
 
-        //FIXME: this code is ugly as sin and inefficient as well, but we would need a -proper- model
-        //find the two items that will be neighbours
-        int row = 0;
-        int column = 0;
-        for (int x = 0; x < m_layout->columnCount(); ++x) {
-            QGraphicsLayoutItem *item = 0;
-            for (int y = 0; y < m_layout->rowCount(); ++y) {
-                item = m_layout->itemAt(y, x);
-                if (item && item->geometry().center().y() < icon->geometry().center().y()) {
-                    row = y;
-                } else {
-                    //break;
-                }
-            }
-            if (item && item->geometry().center().x() < icon->geometry().center().x()) {
-                column = x;
-            } else {
-                //break;
-            }
-        }
+        QPoint layoutPos = pointToLayoutPosition(icon->geometry().center());
 
-        kDebug() << "The item will be put at" << column << row;
-        Plasma::IconWidget *iconToReplace = static_cast<Plasma::IconWidget *>(m_layout->itemAt(row, column));
+        Plasma::IconWidget *iconToReplace = static_cast<Plasma::IconWidget *>(m_layout->itemAt(layoutPos.y(), layoutPos.x()));
 
         qreal key = 0;
         qreal key2 = -1;
@@ -575,6 +555,33 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
     }
 
     return false;
+}
+
+QPoint ItemContainer::pointToLayoutPosition(const QPointF &point)
+{
+    //FIXME: this code is ugly as sin and inefficient as well, but we would need a -proper- model
+    //find the two items that will be neighbours
+    int row = 0;
+    int column = 0;
+    for (int x = 0; x < m_layout->columnCount(); ++x) {
+        QGraphicsLayoutItem *item = 0;
+        for (int y = 0; y < m_layout->rowCount(); ++y) {
+            item = m_layout->itemAt(y, x);
+            if (item && item->geometry().center().y() < point.y()) {
+                row = y;
+            } else {
+                //break;
+            }
+        }
+        if (item && item->geometry().center().x() < point.x()) {
+            column = x;
+        } else {
+            //break;
+        }
+    }
+    kDebug() << "The item will be put at" << column << row;
+
+    return QPoint(column, row);
 }
 
 void ItemContainer::focusInEvent(QFocusEvent *event)

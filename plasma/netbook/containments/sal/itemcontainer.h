@@ -72,6 +72,9 @@ public:
     void askRelayout();
 
 protected:
+    //The returning QPoint is not a pixel coordinate, rather a column-row coordinate in a QGraphicsGridLayout
+    QPoint pointToLayoutPosition(const QPointF &point);
+
     void focusInEvent(QFocusEvent *event);
     void focusOutEvent(QFocusEvent *event);
     void keyPressEvent(QKeyEvent *event);
