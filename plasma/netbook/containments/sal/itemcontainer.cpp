@@ -369,7 +369,7 @@ void ItemContainer::itemRemoved(QObject *object)
 
 void ItemContainer::dragStartRequested(Plasma::IconWidget *icon)
 {
-    if (m_dragging) {
+    if (m_dragging || dragAndDropMode() == NoDragAndDrop) {
         return;
     }
 
