@@ -528,7 +528,7 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
             }
         }
 
-        const qreal weight = positionToWeight(icon->geometry().center());
+        const qreal weight = positionToWeight(mapToScene(icon->geometry().center()));
         insertItem(icon, weight);
 
         //sloooow
@@ -542,7 +542,7 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
 
 qreal ItemContainer::positionToWeight(const QPointF &point)
 {
-    QPoint layoutPos = positionToLayoutPosition(point);
+    QPoint layoutPos = positionToLayoutPosition(mapFromScene(point));
 
     //layout position to weight
     qreal key1 = 0;

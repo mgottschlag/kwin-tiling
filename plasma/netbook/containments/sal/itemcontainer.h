@@ -72,7 +72,7 @@ public:
 
     void askRelayout();
 
-    //the weight an item would have to appear at the given pixel coordinates (in item coordinates)
+    //the weight an item would have to appear at the given pixel coordinates (in scene coordinates)
     qreal positionToWeight(const QPointF &point);
 
 protected:
