@@ -435,6 +435,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             connect(m_resultsView, SIGNAL(itemDroppedOutside(Plasma::IconWidget *)), this, SLOT(resultsViewRequestedDrop(Plasma::IconWidget *)));
 
             m_stripWidget = new StripWidget(m_runnermg, this);
+            m_stripWidget->setImmutability(immutability());
 
             //load all config, only at this point we are sure it won't crash
             configChanged();
@@ -554,6 +555,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
         } else {
             m_resultsView->setDragAndDropMode(ItemContainer::NoDragAndDrop);
         }
+        m_stripWidget->setImmutability(immutability());
     }
 }
 
@@ -668,7 +670,6 @@ void SearchLaunch::overlayRequestedDrop(QGraphicsSceneDragDropEvent *event)
 
 void SearchLaunch::resultsViewRequestedDrop(Plasma::IconWidget *icon)
 {
-    kWarning()<<"AAAAA"<<m_stripWidget->mapToScene(m_stripWidget->geometry()).boundingRect()<<icon->mapToScene(QPoint(0,0));
     if (m_stripWidget->collidesWithItem(icon)) {
         if (m_matches.contains(icon)) {
             m_stripWidget->add(m_matches.value(icon, Plasma::QueryMatch(0)), m_runnermg->searchContext()->query());

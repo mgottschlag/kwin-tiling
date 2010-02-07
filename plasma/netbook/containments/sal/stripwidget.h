@@ -63,6 +63,9 @@ public:
     void setIconSize(int iconSize);
     int iconSize() const;
 
+    //TODO: geter and setter?
+    void setImmutability(Plasma::ImmutabilityType immutability);
+
 protected:
     void createIcon(Plasma::QueryMatch *match, int idx);
     void focusInEvent(QFocusEvent *event);

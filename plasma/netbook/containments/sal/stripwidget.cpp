@@ -44,8 +44,8 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
       m_runnermg(rm),
       m_itemView(0),
-      m_offset(0),
       m_iconActionCollection(0),
+      m_offset(0),
       m_startupCompleted(false)
 {
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -150,6 +150,15 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     if (m_startupCompleted) {
         m_itemView->setCurrentItem(fav);
         m_setCurrentTimer->start(300);
+    }
+}
+
+void StripWidget::setImmutability(Plasma::ImmutabilityType immutability)
+{
+    if (immutability == Plasma::Mutable) {
+        m_itemView->setDragAndDropMode(ItemContainer::CopyDragAndDrop);
+    } else {
+        m_itemView->setDragAndDropMode(ItemContainer::NoDragAndDrop);
     }
 }
 
