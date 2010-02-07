@@ -205,8 +205,14 @@ void SearchLaunch::doSearch(const QString &query, const QString &runner)
 
         setQueryMatches(m_defaultMatches);
         m_backButton->hide();
+        m_resultsView->setDragAndDropMode(ItemContainer::NoDragAndDrop);
     } else if (m_backButton) {
         m_backButton->show();
+        if (immutability() == Plasma::Mutable) {
+            m_resultsView->setDragAndDropMode(ItemContainer::CopyDragAndDrop);
+        } else {
+            m_resultsView->setDragAndDropMode(ItemContainer::NoDragAndDrop);
+        }
     }
 }
 
@@ -421,7 +427,6 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
             m_resultsView = new ItemView(this);
 
-            m_resultsView->setDragAndDropMode(ItemContainer::CopyDragAndDrop);
             m_resultsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
             m_resultsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
             m_resultsLayout->addItem(m_resultsView);
@@ -509,6 +514,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::ImmutableConstraint) {
+        //update lock button
         QAction *a = action("lock page");
         if (a) {
             switch (immutability()) {
@@ -533,12 +539,20 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             }
         }
 
+        //kill or create the config overlay if needed
         if (immutability() == Plasma::Mutable && !m_appletOverlay && m_toolBox->isShowing()) {
             m_appletOverlay = new LinearAppletOverlay(this, m_appletsLayout);
             m_appletOverlay->resize(size());
         } else if (immutability() != Plasma::Mutable && m_appletOverlay && m_toolBox->isShowing()) {
             m_appletOverlay->deleteLater();
             m_appletOverlay = 0;
+        }
+
+        //enable or disable drag and drop
+        if (immutability() == Plasma::Mutable) {
+            m_resultsView->setDragAndDropMode(ItemContainer::CopyDragAndDrop);
+        } else {
+            m_resultsView->setDragAndDropMode(ItemContainer::NoDragAndDrop);
         }
     }
 }
