@@ -19,6 +19,7 @@ ksplashx <theme> [--test]
 NOTES:
 Add a comment in description.txt and update it everytime you change anything.
 Caching of the splash is done and the timestamp of description.txt is used.
+Alternatively, update at least Theme.rc.
 
 New images are alphablended (if needed) with what's in the splash window
 and then they replace what's at their position. Animations have all frames

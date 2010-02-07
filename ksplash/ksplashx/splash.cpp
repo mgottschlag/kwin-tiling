@@ -839,6 +839,12 @@ void runSplash( const char* them, bool t, int p )
         exit( 2 );
         }
     timestamp = stat_buf.st_mtime;
+    // check also Theme.rc, as artists are likely to just ignore updating description.txt
+    // when updating the theme but will touch info in Theme.rc
+    char tmp[ 1024 ];
+    snprintf( tmp, 1024, "%s/Theme.rc", theme_dir );
+    if( stat( tmp, &stat_buf ) == 0 && stat_buf.st_mtime > timestamp )
+	timestamp = stat_buf.st_mtime;
     double ratiox = double( desc_w ) / screenGeometry(0).width(); // only for coordinates in the description file
     double ratioy = double( desc_h ) / screenGeometry(0).height(); // only for coordinates in the description file
     XSelectInput( qt_xdisplay(), DefaultRootWindow( qt_xdisplay()), SubstructureNotifyMask );
