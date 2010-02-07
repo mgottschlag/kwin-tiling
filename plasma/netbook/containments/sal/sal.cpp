@@ -549,7 +549,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
         }
 
         //enable or disable drag and drop
-        if (immutability() == Plasma::Mutable) {
+        if (immutability() == Plasma::Mutable && !m_lastQuery.isNull()) {
             m_resultsView->setDragAndDropMode(ItemContainer::CopyDragAndDrop);
         } else {
             m_resultsView->setDragAndDropMode(ItemContainer::NoDragAndDrop);
