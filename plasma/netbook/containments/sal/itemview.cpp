@@ -43,6 +43,8 @@ ItemView::ItemView(QGraphicsWidget *parent)
     connect(m_itemContainer, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
     connect(m_itemContainer, SIGNAL(itemReordered(Plasma::IconWidget *, int)), this, SIGNAL(itemReordered(Plasma::IconWidget *, int)));
     connect(m_itemContainer, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SIGNAL(dragStartRequested(Plasma::IconWidget *)));
+
+    connect(m_itemContainer, SIGNAL(dragMoveMouseMoved(const QPointF &)), this, SLOT(setScrollPositionFromDragPosition(const QPointF &)));
 }
 
 ItemView::~ItemView()
@@ -139,7 +141,7 @@ qreal ItemView::positionToWeight(const QPointF &point)
     return m_itemContainer->positionToWeight(point);
 }
 
-void ItemView::setScrollFromDragPosition(const QPointF &point)
+void ItemView::setScrollPositionFromDragPosition(const QPointF &point)
 {
     const qreal xRatio = point.x() / size().width();
     const qreal yRatio = point.y() / size().height();

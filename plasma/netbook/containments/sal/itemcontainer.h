@@ -99,6 +99,7 @@ Q_SIGNALS:
     void resetRequested();
     void itemReordered(Plasma::IconWidget *, int);
     void dragStartRequested(Plasma::IconWidget *);
+    void dragMoveMouseMoved(const QPointF &);
 
 private:
     QGraphicsGridLayout *m_layout;

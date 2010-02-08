@@ -394,7 +394,7 @@ void StripWidget::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 
 void StripWidget::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 {
-    m_itemView->setScrollFromDragPosition(event->pos());
+    m_itemView->setScrollPositionFromDragPosition(event->pos());
 }
 
 void StripWidget::dropEvent(QGraphicsSceneDragDropEvent *event)
