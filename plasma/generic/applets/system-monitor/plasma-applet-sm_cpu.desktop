@@ -2,11 +2,13 @@
 Encoding=UTF-8
 Name=CPU Monitor
 Name[de]=Überwachungsmonitor für Prozessoren
+Name[en_GB]=CPU Monitor
 Name[pt]=Monitor do CPU
 Name[pt_BR]=Monitor da CPU
 Name[sv]=Övervakning av processoranvändning
 Name[uk]=Використання процесора
 Name[x-test]=xxCPU Monitorxx
+Name[zh_TW]=CPU 監視器
 Comment=A CPU usage monitor
 Comment[ar]=مراقب استعمال المعالج
 Comment[be@latin]=Nazirańnik zaniataści „CPU”

@@ -2,11 +2,13 @@
 Encoding=UTF-8
 Name=Hard Disk Status
 Name[de]=Festplattenstatus
+Name[en_GB]=Hard Disk Status
 Name[pt]=Estado do Disco Rígido
 Name[pt_BR]=Status do disco rígido
 Name[sv]=Hårddiskstatus
 Name[uk]=Стан жорсткого диска
 Name[x-test]=xxHard Disk Statusxx
+Name[zh_TW]=硬碟狀態
 Comment=A hard disk usage monitor
 Comment[ar]=يراقب استعمال القرص الصلب
 Comment[be@latin]=Nazirańnik zaniataści ćviordaha dysku

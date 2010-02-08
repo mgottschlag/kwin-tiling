@@ -2,11 +2,13 @@
 Encoding=UTF-8
 Name=Hardware Info
 Name[de]=Hardwareinformationen
+Name[en_GB]=Hardware Info
 Name[pt]=Informação do 'Hardware'
 Name[pt_BR]=Informações do hardware
 Name[sv]=Hårdvaruinformation
 Name[uk]=Відомості про обладнання
 Name[x-test]=xxHardware Infoxx
+Name[zh_TW]=硬體資訊
 Comment=Show hardware info
 Comment[ar]=يظهر معلومات العتاد
 Comment[be@latin]=Pakazvaje źviestki pra aparaturu

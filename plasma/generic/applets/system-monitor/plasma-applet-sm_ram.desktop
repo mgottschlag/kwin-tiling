@@ -2,11 +2,13 @@
 Encoding=UTF-8
 Name=Memory Status
 Name[de]=Speicherstatus
+Name[en_GB]=Memory Status
 Name[pt]=Estado da Memória
 Name[pt_BR]=Status da memória
 Name[sv]=Minnesstatus
 Name[uk]=Стан пам’яті
 Name[x-test]=xxMemory Statusxx
+Name[zh_TW]=記憶體狀態
 Comment=A RAM usage monitor
 Comment[ar]=مراقب استعمال الذاكرة العشوائية
 Comment[bg]=Изпозлване на оперативната памет (RAM)
