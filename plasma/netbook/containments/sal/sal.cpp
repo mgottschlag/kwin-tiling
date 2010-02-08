@@ -31,6 +31,7 @@
 #include <QTimer>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsAnchorLayout>
+#include <QGraphicsView>
 #include <QApplication>
 
 #include <KAction>
@@ -432,8 +433,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_resultsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
             m_resultsLayout->addItem(m_resultsView);
 
-            connect(m_resultsView, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launch(Plasma::IconWidget *)));
-            connect(m_resultsView, SIGNAL(itemDroppedOutside(Plasma::IconWidget *)), this, SLOT(resultsViewRequestedDrop(Plasma::IconWidget *)));
+            connect(m_resultsView, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SLOT(resultsViewRequestedDrag(Plasma::IconWidget *)));
 
             m_stripWidget = new StripWidget(m_runnermg, this);
             m_stripWidget->setImmutability(immutability());
@@ -675,6 +675,29 @@ void SearchLaunch::resultsViewRequestedDrop(Plasma::IconWidget *icon)
         if (m_matches.contains(icon)) {
             m_stripWidget->add(m_matches.value(icon, Plasma::QueryMatch(0)), m_runnermg->searchContext()->query(), icon->geometry().center());
         }
+    }
+}
+
+void SearchLaunch::resultsViewRequestedDrag(Plasma::IconWidget *icon)
+{
+    if (m_matches.contains(icon)) {
+        Plasma::QueryMatch match(m_matches.value(icon, Plasma::QueryMatch(0)));
+        if (!match.runner()) {
+            return;
+        }
+
+        QByteArray itemData;
+        QDataStream dataStream(&itemData, QIODevice::WriteOnly);
+        dataStream << m_runnermg->searchContext()->query() << match.runner()->id()<<match.id();
+
+        QMimeData *mimeData = new QMimeData;
+        mimeData->setData("application/x-plasma-salquerymatch", itemData);
+
+        QDrag *drag = new QDrag(view());
+        drag->setMimeData(mimeData);
+        drag->setPixmap(icon->icon().pixmap(KIconLoader::SizeHuge, KIconLoader::SizeHuge));
+
+        drag->exec(Qt::CopyAction);
     }
 }
 

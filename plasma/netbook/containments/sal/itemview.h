@@ -88,7 +88,7 @@ Q_SIGNALS:
     void resetRequested();
     void scrollBarsNeededChanged(ItemView::ScrollBarFlags);
     void itemReordered(Plasma::IconWidget *, int);
-    void itemDroppedOutside(Plasma::IconWidget *);
+    void dragStartRequested(Plasma::IconWidget *);
 
 private:
     ItemContainer *m_itemContainer;

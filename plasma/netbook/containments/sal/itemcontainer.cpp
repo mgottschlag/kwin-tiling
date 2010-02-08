@@ -121,7 +121,7 @@ void ItemContainer::insertItem(Plasma::IconWidget *icon, qreal weight)
 
     connect(icon, SIGNAL(destroyed(QObject *)), this, SLOT(itemRemoved(QObject *)));
 
-    connect(icon, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SLOT(dragStartRequested(Plasma::IconWidget *)));
+    connect(icon, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SLOT(itemRequestedDrag(Plasma::IconWidget *)));
 
     m_relayoutTimer->start(300);
 }
@@ -372,7 +372,7 @@ void ItemContainer::itemRemoved(QObject *object)
     m_relayoutTimer->start(400);
 }
 
-void ItemContainer::dragStartRequested(Plasma::IconWidget *icon)
+void ItemContainer::itemRequestedDrag(Plasma::IconWidget *icon)
 {
     if (m_dragging || dragAndDropMode() == NoDragAndDrop) {
         return;
@@ -380,28 +380,16 @@ void ItemContainer::dragStartRequested(Plasma::IconWidget *icon)
 
     for (int i = 0; i < m_layout->count(); ++i) {
         if (m_layout->itemAt(i) == icon) {
-            m_layout->removeAt(i);
-            m_dragging = true;
-            icon->setZValue(900);
-            icon->installEventFilter(this);
-            //ugly but necessary to don't make it clipped
-            icon->setParentItem(0);
-
-            if (m_dragAndDropMode == CopyDragAndDrop) {
-                m_ghostIcon = new Plasma::IconWidget;
-                scene()->addItem(m_ghostIcon);
-                m_ghostIcon->setIcon(icon->icon());
-                m_ghostIcon->setText(icon->text());
-                m_ghostIcon->setMinimumSize(icon->size());
-                m_ghostIcon->setMaximumSize(m_ghostIcon->minimumSize());
-                m_ghostIcon->show();
-                qreal left, top, right, bottom;
-                icon->getContentsMargins(&left, &top, &right, &bottom);
-                m_ghostIcon->setContentsMargins(left, top, right, bottom);
-                m_ghostIcon->setOrientation(icon->orientation());
-                m_layout->addItem(m_ghostIcon, m_currentIconIndexY, m_currentIconIndexX);
+            if (dragAndDropMode() == MoveDragAndDrop) {
+                m_layout->removeAt(i);
+                m_dragging = true;
+                icon->setZValue(900);
+                icon->installEventFilter(this);
+                //ugly but necessary to don't make it clipped
+                icon->setParentItem(0);
+            } else {
+                emit dragStartRequested(icon);
             }
-
             return;
         }
     }

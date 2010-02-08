@@ -91,7 +91,7 @@ private Q_SLOTS:
     void relayout();
     void syncCurrentItem();
     void itemRemoved(QObject *object);
-    void dragStartRequested(Plasma::IconWidget *);
+    void itemRequestedDrag(Plasma::IconWidget *);
 
 Q_SIGNALS:
     void itemSelected(Plasma::IconWidget *);
@@ -99,6 +99,7 @@ Q_SIGNALS:
     void resetRequested();
     void itemReordered(Plasma::IconWidget *, int);
     void itemDroppedOutside(Plasma::IconWidget *);
+    void dragStartRequested(Plasma::IconWidget *);
 
 private:
     QGraphicsGridLayout *m_layout;

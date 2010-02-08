@@ -49,6 +49,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
       m_startupCompleted(false)
 {
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    setAcceptDrops(true);
 
     Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(parent);
     if (applet) {
@@ -360,13 +361,6 @@ int StripWidget::iconSize() const
     return m_itemView->iconSize();
 }
 
-void StripWidget::focusInEvent(QFocusEvent *event)
-{
-    Q_UNUSED(event)
-
-    m_itemView->setFocus();
-}
-
 void StripWidget::arrowsNeededChanged(ItemView::ScrollBarFlags flags)
 {
     bool leftNeeded = false;
@@ -384,3 +378,36 @@ void StripWidget::arrowsNeededChanged(ItemView::ScrollBarFlags flags)
     m_arrowsLayout->invalidate();
 }
 
+
+
+void StripWidget::focusInEvent(QFocusEvent *event)
+{
+    Q_UNUSED(event)
+
+    m_itemView->setFocus();
+}
+
+void StripWidget::dropEvent(QGraphicsSceneDragDropEvent *event)
+{
+    if (event->mimeData()->hasFormat("application/x-plasma-salquerymatch")) {
+         QByteArray itemData = event->mimeData()->data("application/x-plasma-salquerymatch");
+         QDataStream dataStream(&itemData, QIODevice::ReadOnly);
+
+         QString query;
+         QString runnerId;
+         QString matchId;
+
+         dataStream >>query>>runnerId>>matchId;
+
+         m_runnermg->execQuery(query, runnerId);
+
+         Plasma::QueryMatch match(m_runnermg->searchContext()->match(matchId));
+
+         if (match.isValid()) {
+             add(match, query, event->pos());
+         }
+
+     } else {
+         event->ignore();
+     }
+}
