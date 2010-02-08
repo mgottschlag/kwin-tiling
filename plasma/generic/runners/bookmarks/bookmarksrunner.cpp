@@ -55,6 +55,10 @@ BookmarksRunner::BookmarksRunner( QObject* parent, const QVariantList &args )
 
 BookmarksRunner::~BookmarksRunner()
 {
+    QFile db_CacheFile(m_dbCacheFile);
+    if (db_CacheFile.exists()) {
+        kDebug() << "Cache file was removed: " << db_CacheFile.remove();
+    }
 }
 
 void BookmarksRunner::reloadConfiguration()
@@ -108,14 +112,16 @@ void BookmarksRunner::reloadConfiguration()
 
 void BookmarksRunner::prep()
 {
+    QTime t;
+    t.start();
     m_browser = whichBrowser();
+    kDebug() << 1 << t.elapsed();
     if (m_browser == Firefox) {
         if (m_db.isValid()) {
-            kDebug() << "Cache file was removed: " << QFile(m_dbCacheFile).remove();
-            kDebug() << "Database was copyed: " << QFile(m_dbFile).copy(m_dbCacheFile);
-            m_db.setDatabaseName(m_dbCacheFile);
-            m_dbOK = m_db.open();
-            kDebug() << "Database was opened: " << m_dbOK;
+            KIO::Job *job = KIO::file_copy(m_dbFile, m_dbCacheFile, -1,
+                                           KIO::HideProgressInfo | KIO::Overwrite);
+            connect(job, SIGNAL(result(KJob*)), this, SLOT(dbCopied(KJob*)));
+    kDebug() << 3 << t.elapsed();
         }
     } else if (m_browser == Opera) {
         // open bookmarks file
@@ -143,16 +149,19 @@ void BookmarksRunner::prep()
     }
 }
 
+void BookmarksRunner::dbCopied(KJob *job)
+{
+    m_db.setDatabaseName(m_dbCacheFile);
+    m_dbOK = m_db.open();
+    kDebug() << "Database was opened: " << m_dbOK;
+}
+
 void BookmarksRunner::down()
 {
     if (m_browser == Firefox) {
         if (m_db.isOpen()) {
             m_db.close();
             m_dbOK = false;
-            QFile db_CacheFile(m_dbCacheFile);
-            if (db_CacheFile.exists()) {
-                kDebug() << "Cache file was removed: " << db_CacheFile.remove();
-            }
         }
     } else if (m_browser == Opera) {
         m_operaBookmarkEntries.clear();
