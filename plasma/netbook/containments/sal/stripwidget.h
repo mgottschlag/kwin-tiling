@@ -69,6 +69,8 @@ public:
 protected:
     void createIcon(Plasma::QueryMatch *match, const QPointF &point);
     void focusInEvent(QFocusEvent *event);
+    void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
+    void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
     void dropEvent(QGraphicsSceneDragDropEvent *event);
 
 private Q_SLOTS:

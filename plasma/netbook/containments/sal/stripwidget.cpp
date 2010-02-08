@@ -387,6 +387,16 @@ void StripWidget::focusInEvent(QFocusEvent *event)
     m_itemView->setFocus();
 }
 
+void StripWidget::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
+{
+     event->setAccepted(event->mimeData()->hasFormat("application/x-plasma-salquerymatch"));
+}
+
+void StripWidget::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    m_itemView->setScrollFromDragPosition(event->pos());
+}
+
 void StripWidget::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     if (event->mimeData()->hasFormat("application/x-plasma-salquerymatch")) {

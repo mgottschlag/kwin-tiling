@@ -139,6 +139,23 @@ qreal ItemView::positionToWeight(const QPointF &point)
     return m_itemContainer->positionToWeight(point);
 }
 
+void ItemView::setScrollFromDragPosition(const QPointF &point)
+{
+    const qreal xRatio = point.x() / size().width();
+    const qreal yRatio = point.y() / size().height();
+
+    QPointF newPos(-scrollPosition());
+
+    if (size().width() < contentsSize().width()) {
+        newPos.setX(xRatio * (size().width() - contentsSize().width()));
+    }
+    if (size().height() < contentsSize().height()) {
+        newPos.setY(yRatio * (size().height() - contentsSize().height()));
+    }
+
+    setScrollPosition(-newPos);
+}
+
 void ItemView::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     QRectF rect = boundingRect();
