@@ -87,6 +87,7 @@ private:
     qreal m_savedAppletTopMargin;
     bool m_underMouse;
     bool m_showButtons;
+    bool m_appletHasBackground;
 };
 
 #endif

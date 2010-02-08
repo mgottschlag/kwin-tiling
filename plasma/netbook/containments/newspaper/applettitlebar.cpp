@@ -43,7 +43,8 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
          m_background(0),
          m_savedAppletTopMargin(0),
          m_underMouse(false),
-         m_showButtons(false)
+         m_showButtons(false),
+         m_appletHasBackground(false)
 {
     m_maximizeButtonRect = m_configureButtonRect = m_closeButtonRect = QRect(0, 0, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
 
@@ -51,6 +52,9 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
     m_icons->setImagePath("widgets/configuration-icons");
     m_icons->setContainsMultipleImages(true);
 
+    if (applet->backgroundHints() != Plasma::Applet::NoBackground) {
+        m_appletHasBackground = true;
+    }
 
     if (applet->backgroundHints() & Plasma::Applet::StandardBackground ||
         applet->backgroundHints() & Plasma::Applet::TranslucentBackground) {
@@ -260,7 +264,7 @@ void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
-    if (m_background) {
+    if (m_background && (m_appletHasBackground || m_showButtons)) {
         m_background->paintFrame(painter);
     }
 
@@ -291,16 +295,18 @@ void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
         }
     }
 
-    painter->save();
-    painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
-    painter->setFont(Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
-    painter->drawText(contentsRect(), Qt::AlignCenter, m_applet->name());
-    painter->restore();
+    if (m_appletHasBackground || m_showButtons) {
+        painter->save();
+        painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+        painter->setFont(Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
+        painter->drawText(contentsRect(), Qt::AlignCenter, m_applet->name());
+        painter->restore();
 
-    if (m_separator) {
-        QRectF lineRect = contentsRect();
-        lineRect.setTop(lineRect.bottom() - m_separator->elementSize("horizontal-line").height());
-        m_separator->paint(painter, lineRect, "horizontal-line");
+        if (m_separator) {
+            QRectF lineRect = contentsRect();
+            lineRect.setTop(lineRect.bottom() - m_separator->elementSize("horizontal-line").height());
+            m_separator->paint(painter, lineRect, "horizontal-line");
+        }
     }
 }
 
