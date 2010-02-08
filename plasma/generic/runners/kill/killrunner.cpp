@@ -18,16 +18,18 @@
  */
 
 #include "killrunner.h"
-#include "killrunner_config.h"
-#include "ksysguard/processcore/processes.h"
-#include "ksysguard/processcore/process.h"
+
+#include <QAction>
 
 #include <KDebug>
 #include <KIcon>
 #include <KProcess>
 #include <KUser>
 
-#include <QAction>
+#include "ksysguard/processcore/processes.h"
+#include "ksysguard/processcore/process.h"
+
+#include "killrunner_config.h"
 
 KillRunner::KillRunner(QObject *parent, const QVariantList& args)
         : Plasma::AbstractRunner(parent, args),
@@ -39,6 +41,10 @@ KillRunner::KillRunner(QObject *parent, const QVariantList& args)
 
     connect(this, SIGNAL(prepare()), this, SLOT(prep()));
     connect(this, SIGNAL(teardown()), this, SLOT(cleanup()));
+
+    m_delayedCleanupTimer.setInterval(50);
+    m_delayedCleanupTimer.setSingleShot(true);
+    connect(&m_delayedCleanupTimer, SIGNAL(timeout()), this, SLOT(cleanup()));
 }
 
 KillRunner::~KillRunner()
@@ -63,16 +69,24 @@ void KillRunner::reloadConfiguration()
 
 void KillRunner::prep()
 {
-    if (!m_processes) {
-        m_processes = KSysGuard::Processes::getInstance();
-    }
+    m_delayedCleanupTimer.stop();
 }
 
 void KillRunner::cleanup()
 {
-    if (m_processes) {
-        KSysGuard::Processes::returnInstance();
-        m_processes = 0;
+    if (!m_processes) {
+        return;
+    }
+
+    if (m_prepLock.tryLockForWrite()) {
+        if (m_processes) {
+            KSysGuard::Processes::returnInstance();
+            m_processes = 0;
+        }
+
+        m_prepLock.unlock();
+    } else {
+        m_delayedCleanupTimer.stop();
     }
 }
 
@@ -83,6 +97,16 @@ void KillRunner::match(Plasma::RunnerContext &context)
     if (hasTrigger && !term.startsWith(m_triggerWord, Qt::CaseInsensitive)) {
         return;
     }
+
+    m_prepLock.lockForRead();
+    if (!m_processes) {
+        m_prepLock.unlock();
+        m_prepLock.lockForWrite();
+        if (!m_processes) {
+            m_processes = KSysGuard::Processes::getInstance();
+        }
+    }
+    m_prepLock.unlock();
 
     term = term.right(term.length() - m_triggerWord.length());
 

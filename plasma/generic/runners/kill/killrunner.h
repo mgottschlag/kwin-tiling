@@ -20,8 +20,12 @@
 #ifndef KILLRUNNER_H
 #define KILLRUNNER_H
 
+#include <QReadWriteLock>
+#include <QTimer>
+
+#include <Plasma/AbstractRunner>
+
 #include "killrunner_config.h"
-#include <plasma/abstractrunner.h>
 class QAction;
 
 namespace KSysGuard
@@ -61,6 +65,12 @@ private:
 
     /** process lister */
     KSysGuard::Processes *m_processes;
+
+    /** lock for initializing m_processes */
+    QReadWriteLock m_prepLock;
+
+    /** timer for retrying the cleanup due to lock contention */
+    QTimer m_delayedCleanupTimer;
 };
 K_EXPORT_PLASMA_RUNNER(kill, KillRunner)
 
