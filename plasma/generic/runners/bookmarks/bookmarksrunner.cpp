@@ -145,7 +145,7 @@ void BookmarksRunner::prep()
     }
 }
 
-void BookmarksRunner::dbCopied(KJob *job)
+void BookmarksRunner::dbCopied(KJob *)
 {
     m_db.setDatabaseName(m_dbCacheFile);
     m_dbOK = m_db.open();
