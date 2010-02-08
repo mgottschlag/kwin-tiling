@@ -112,16 +112,12 @@ void BookmarksRunner::reloadConfiguration()
 
 void BookmarksRunner::prep()
 {
-    QTime t;
-    t.start();
     m_browser = whichBrowser();
-    kDebug() << 1 << t.elapsed();
     if (m_browser == Firefox) {
         if (m_db.isValid()) {
             KIO::Job *job = KIO::file_copy(m_dbFile, m_dbCacheFile, -1,
                                            KIO::HideProgressInfo | KIO::Overwrite);
             connect(job, SIGNAL(result(KJob*)), this, SLOT(dbCopied(KJob*)));
-    kDebug() << 3 << t.elapsed();
         }
     } else if (m_browser == Opera) {
         // open bookmarks file
