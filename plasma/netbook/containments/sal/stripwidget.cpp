@@ -335,7 +335,10 @@ void StripWidget::restore(KConfigGroup &cg)
     QString currentQuery;
     for (int i = 0; i < queries.size(); ++i ) {
         // perform the query
-        if (currentQuery == queries[i] || m_runnermg->execQuery(queries[i], runnerIds[i])) {
+        m_runnermg->blockSignals(true);
+        const bool found = m_runnermg->execQuery(queries[i], runnerIds[i]);
+        m_runnermg->blockSignals(false);
+        if (currentQuery == queries[i] || found) {
             currentQuery = queries[i];
             // find our match
             Plasma::QueryMatch match(m_runnermg->searchContext()->match(matchIds[i]));
@@ -410,7 +413,9 @@ void StripWidget::dropEvent(QGraphicsSceneDragDropEvent *event)
          dataStream >>query>>runnerId>>matchId;
 
          //FIXME: another inefficient async query
+         m_runnermg->blockSignals(true);
          m_runnermg->execQuery(query, runnerId);
+         m_runnermg->blockSignals(false);
 
          Plasma::QueryMatch match(m_runnermg->searchContext()->match(matchId));
 
