@@ -18,6 +18,8 @@
  ***************************************************************************/
 #include "windowsrunner.h"
 
+#include <QTimer>
+
 #include <KDebug>
 #include <KIcon>
 #include <KWindowSystem>
@@ -28,7 +30,9 @@
 #endif
 
 WindowsRunner::WindowsRunner(QObject* parent, const QVariantList& args)
-    : AbstractRunner(parent, args)
+    : AbstractRunner(parent, args),
+      m_inSession(false),
+      m_ready(false)
 {
     Q_UNUSED(args)
     setObjectName("Windows");
@@ -57,8 +61,12 @@ WindowsRunner::~WindowsRunner()
 {
 }
 
-void WindowsRunner::prepareForMatchSession()
+void WindowsRunner::gatherInfo()
 {
+    if (!m_inSession) {
+        return;
+    }
+
     foreach (const WId w, KWindowSystem::windows()) {
         KWindowInfo info = KWindowSystem::windowInfo(w, NET::WMWindowType | NET::WMDesktop |
                                                         NET::WMState | NET::XAWMState |
@@ -79,13 +87,25 @@ void WindowsRunner::prepareForMatchSession()
             m_icons.insert(w, QIcon(KWindowSystem::icon(w)));
         }
     }
+
     for (int i=1; i<=KWindowSystem::numberOfDesktops(); i++) {
         m_desktopNames << KWindowSystem::desktopName(i);
     }
+
+    m_ready = true;
+}
+
+void WindowsRunner::prepareForMatchSession()
+{
+    m_inSession = true;
+    m_ready = false;
+    QTimer::singleShot(0, this, SLOT(gatherInfo()));
 }
 
 void WindowsRunner::matchSessionComplete()
 {
+    m_inSession = false;
+    m_ready = false;
     m_desktopNames.clear();
     m_icons.clear();
     m_windows.clear();
@@ -93,6 +113,10 @@ void WindowsRunner::matchSessionComplete()
 
 void WindowsRunner::match(Plasma::RunnerContext& context)
 {
+    if (!m_ready) {
+        return;
+    }
+
     QString term = context.query();
 
     if (!context.singleRunnerQueryMode() && (term.length() < 3)) {

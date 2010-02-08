@@ -37,6 +37,7 @@ class WindowsRunner : public Plasma::AbstractRunner
     private Q_SLOTS:
         void prepareForMatchSession();
         void matchSessionComplete();
+        void gatherInfo();
 
     private:
         enum WindowAction {
@@ -57,6 +58,9 @@ class WindowsRunner : public Plasma::AbstractRunner
         QHash<WId, KWindowInfo> m_windows;
         QHash<WId, QIcon> m_icons;
         QStringList m_desktopNames;
+
+        bool m_inSession : 1;
+        bool m_ready : 1;
 };
 
 K_EXPORT_PLASMA_RUNNER(windows, WindowsRunner)
