@@ -498,14 +498,6 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
         icon->setPos(icon->mapToItem(this, QPoint(0,0)));
         icon->setParentItem(this);
 
-        if (m_dragAndDropMode == CopyDragAndDrop) {
-            m_ghostIcon->deleteLater();
-            m_ghostIcon = 0;
-            m_layout->addItem(icon, m_currentIconIndexY, m_currentIconIndexX);
-            emit itemDroppedOutside(icon);
-            return false;
-        }
-
         {
             QMap<qreal, Plasma::IconWidget *>::iterator i = m_items.begin();
             for (i = m_items.begin(); i != m_items.end(); ++i) {

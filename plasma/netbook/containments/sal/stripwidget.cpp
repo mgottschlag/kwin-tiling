@@ -399,6 +399,7 @@ void StripWidget::dropEvent(QGraphicsSceneDragDropEvent *event)
 
          dataStream >>query>>runnerId>>matchId;
 
+         //FIXME: another inefficient async query
          m_runnermg->execQuery(query, runnerId);
 
          Plasma::QueryMatch match(m_runnermg->searchContext()->match(matchId));

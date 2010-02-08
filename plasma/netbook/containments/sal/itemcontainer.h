@@ -98,7 +98,6 @@ Q_SIGNALS:
     void itemActivated(Plasma::IconWidget *);
     void resetRequested();
     void itemReordered(Plasma::IconWidget *, int);
-    void itemDroppedOutside(Plasma::IconWidget *);
     void dragStartRequested(Plasma::IconWidget *);
 
 private:

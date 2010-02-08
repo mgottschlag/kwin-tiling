@@ -79,7 +79,6 @@ private Q_SLOTS:
     void restoreStrip();
     void updateConfigurationMode(bool config);
     void overlayRequestedDrop(QGraphicsSceneDragDropEvent *event);
-    void resultsViewRequestedDrop(Plasma::IconWidget *icon);
     void resultsViewRequestedDrag(Plasma::IconWidget *icon);
 
     void setQueryMatches(const QList<Plasma::QueryMatch> &m);
