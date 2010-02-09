@@ -58,7 +58,8 @@ public:
     ~WebBrowser();
 
     QGraphicsWidget *graphicsWidget();
-
+    void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
+    
     //TODO: put in a separate file
     enum BookmarkRoles
     {

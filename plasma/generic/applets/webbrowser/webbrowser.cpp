@@ -27,6 +27,7 @@
 #include <QStandardItemModel>
 #include <QModelIndex>
 #include <QAction>
+#include <QPainter>
 #include <QTimer>
 #include <QTreeView>
 #include <QWebPage>
@@ -520,6 +521,16 @@ void WebBrowser::configAccepted()
     }
 
     emit configNeedsSaving();
+}
+
+void WebBrowser::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
+{
+    p->save();
+    p->setBrush(QApplication::palette().window());
+    p->setRenderHint(QPainter::Antialiasing);
+    p->setPen(Qt::NoPen);
+    p->drawRoundedRect(m_browser->pos().x() + contentsRect.x() - 2, m_browser->pos().y() + contentsRect.y() - 2,  m_browser->geometry().width() + 4, m_browser->geometry().height() + 4, 2, 2);
+    p->restore();
 }
 
 #include "webbrowser.moc"
