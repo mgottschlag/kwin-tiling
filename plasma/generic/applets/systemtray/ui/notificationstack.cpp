@@ -192,7 +192,9 @@ bool NotificationStack::eventFilter(QObject *watched, QEvent *event)
     }
 
     if (event->type() == QEvent::GraphicsSceneHoverEnter) {
-        if (m_currentNotificationWidget) {
+        if (m_currentNotificationWidget && m_currentNotificationWidget.data() == nw) {
+            return false;
+        } else if (m_currentNotificationWidget) {
             m_currentNotificationWidget.data()->setCollapsed(true);
         }
         nw->setCollapsed(false);
