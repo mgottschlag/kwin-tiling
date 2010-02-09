@@ -74,7 +74,8 @@ protected:
     void saveState(KConfigGroup &cg) const;
     Plasma::IconWidget *addTool(const QString &iconString, QGraphicsLinearLayout *layout);
     void createConfigurationInterface(KConfigDialog *parent);
-
+    void constraintsEvent(Plasma::Constraints constraints);
+    
 protected Q_SLOTS:
     void back();
     void forward();
@@ -94,7 +95,8 @@ protected Q_SLOTS:
 
 private:
     void fillGroup(BookmarkItem *parentItem, const KBookmarkGroup &group);
-
+    void updateBookmarksViewGeometry();
+    
     QGraphicsLinearLayout *m_layout;
     QGraphicsLinearLayout *m_toolbarLayout;
     QGraphicsLinearLayout *m_statusbarLayout;

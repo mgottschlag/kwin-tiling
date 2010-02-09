@@ -126,15 +126,10 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     bookmarksModelInit();
 
     m_bookmarksView = new Plasma::TreeView(this);
-    m_bookmarksView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_bookmarksView->setModel(m_bookmarkModel);
     m_bookmarksView->nativeWidget()->setHeaderHidden(true);
     //m_bookmarksView->nativeWidget()->viewport()->setAutoFillBackground(false);
-    m_bookmarksView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_bookmarksView->hide();
-    //FIXME: this is probably a Qt bug, QGraphicslayout always behaves as the hidden element is present, unlike QLayouts
-    m_bookmarksView->setMaximumHeight(0);
-    m_layout->addItem(m_bookmarksView);
 
     m_bookmarksDelegate = new BookmarksDelegate(this);
     m_bookmarksView->nativeWidget()->setItemDelegate(m_bookmarksDelegate);
@@ -424,14 +419,11 @@ void WebBrowser::bookmarksToggle()
 {
     if (m_bookmarksView->isVisible()) {
         m_bookmarksView->hide();
-        m_bookmarksView->setMaximumHeight(0);
         m_browser->show();
-        m_browser->setMaximumHeight(INT_MAX);
     } else {
+        updateBookmarksViewGeometry();
         m_bookmarksView->show();
-        m_bookmarksView->setMaximumHeight(INT_MAX);
         m_browser->hide();
-        m_browser->setMaximumHeight(0);
     }
 }
 
@@ -521,6 +513,18 @@ void WebBrowser::configAccepted()
     }
 
     emit configNeedsSaving();
+}
+
+void WebBrowser::constraintsEvent(Plasma::Constraints constraints)
+{
+    if (m_bookmarksView->isVisible()) {
+        updateBookmarksViewGeometry();
+    }
+}
+
+void WebBrowser::updateBookmarksViewGeometry()
+{
+    m_bookmarksView->setGeometry(QRect(m_browser->pos().x() + contentsRect().x(), m_browser->pos().y() + contentsRect().y(),  m_browser->geometry().width(), m_browser->geometry().height()));
 }
 
 void WebBrowser::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
