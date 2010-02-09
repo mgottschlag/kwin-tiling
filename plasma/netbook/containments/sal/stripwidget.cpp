@@ -422,7 +422,7 @@ void StripWidget::dropEvent(QGraphicsSceneDragDropEvent *event)
          Plasma::QueryMatch match(m_runnermg->searchContext()->match(matchId));
 
          if (match.isValid()) {
-             add(match, query, event->pos());
+             add(match, query, mapToScene(event->pos()));
          }
 
      } else {
