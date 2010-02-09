@@ -208,7 +208,9 @@ void StripWidget::removeFavourite()
 
 void StripWidget::itemReordered(Plasma::IconWidget *icon, int index)
 {
-    if (m_favouritesIcons.contains(icon)) {
+    if (!geometry().intersects(icon->mapToItem(this, icon->boundingRect()).boundingRect())) {
+        remove(icon);
+    } else if (m_favouritesIcons.contains(icon)) {
         Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
         m_favouritesMatches.removeAll(match);
         m_favouritesMatches.insert(index, match);
