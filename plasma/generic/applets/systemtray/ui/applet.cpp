@@ -744,12 +744,12 @@ void Applet::addJob(Job *job)
         m_standaloneJobSummaryWidget->resize(m_standaloneJobSummaryWidget->size().width(), 32);
     }
 
-    KWindowSystem::setState(m_standaloneJobSummaryDialog->winId(), NET::SkipTaskbar|NET::SkipPager);
     m_standaloneJobSummaryDialog->syncToGraphicsWidget();
 
     if (containment() && containment()->corona()) {
         m_standaloneJobSummaryDialog->move(containment()->corona()->popupPosition(this, m_standaloneJobSummaryDialog->size()));
         m_standaloneJobSummaryDialog->show();
+        KWindowSystem::setState(m_standaloneJobSummaryDialog->winId(), NET::SkipTaskbar|NET::SkipPager);
         KWindowSystem::raiseWindow(m_standaloneJobSummaryDialog->winId());
         Plasma::WindowEffects::slideWindow(m_standaloneJobSummaryDialog, location());
     }
