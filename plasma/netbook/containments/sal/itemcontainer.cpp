@@ -361,10 +361,11 @@ void ItemContainer::itemRemoved(QObject *object)
 {
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget *>(object);
 
-    QMap<qreal, Plasma::IconWidget *>::iterator i = m_items.begin();
-    for (i = m_items.begin(); i != m_items.end(); ++i) {
+    QMutableMapIterator<qreal, Plasma::IconWidget*> i(m_items);
+    while (i.hasNext()) {
+        i.next();
         if (i.value() == icon) {
-            m_items.erase(i);
+            i.remove();
             break;
         }
     }
@@ -484,10 +485,11 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
         icon->setParentItem(this);
 
         {
-            QMap<qreal, Plasma::IconWidget *>::iterator i = m_items.begin();
-            for (i = m_items.begin(); i != m_items.end(); ++i) {
+            QMutableMapIterator<qreal, Plasma::IconWidget*> i(m_items);
+            while (i.hasNext()) {
+                i.next();
                 if (i.value() == icon) {
-                    m_items.erase(i);
+                    i.remove();
                     break;
                 }
             }
