@@ -793,6 +793,7 @@ void Applet::popupEvent(bool show)
             m_standaloneJobSummaryDialog->setVisible(!show);
             if (!show) {
                 KWindowSystem::raiseWindow(m_standaloneJobSummaryDialog->winId());
+                KWindowSystem::setState(m_standaloneJobSummaryDialog->winId(), NET::SkipTaskbar|NET::SkipPager);
             }
         }
     }
