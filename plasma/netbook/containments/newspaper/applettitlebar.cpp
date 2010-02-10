@@ -25,6 +25,7 @@
 #include <QGraphicsSceneResizeEvent>
 #include <QLabel>
 #include <QPainter>
+#include <QParallelAnimationGroup>
 #include <QTimer>
 
 
@@ -78,6 +79,7 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
 
 AppletTitleBar::~AppletTitleBar()
 {
+    delete m_animations.data();
 }
 
 void AppletTitleBar::syncMargins()
@@ -157,31 +159,75 @@ bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
         m_showButtons = true;
         syncIconRects();
 
-        confAnim = Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation, this);
-        closeAnim = Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation, this);
+        if (!m_animations.data()) {
+            QParallelAnimationGroup *group = new QParallelAnimationGroup(this);
+            Plasma::Animation *confAnim =
+                Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation);
+            Plasma::Animation *closeAnim =
+                Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation);
+            confAnim->setProperty("startPixmap", m_icons->pixmap("configure"));
+            confAnim->setTargetWidget(this);
 
-        confAnim->setProperty("startPixmap", m_icons->pixmap("configure"));
-        confAnim->setTargetWidget(this);
-        confAnim->start(QAbstractAnimation::DeleteWhenStopped);
+            closeAnim->setProperty("startPixmap", m_icons->pixmap("close"));
+            closeAnim->setTargetWidget(this);
+            group->addAnimation(closeAnim);
+            group->addAnimation(confAnim);
 
-        closeAnim->setProperty("startPixmap", m_icons->pixmap("close"));
-        closeAnim->setTargetWidget(this);
-        closeAnim->start(QAbstractAnimation::DeleteWhenStopped);
+            group->start();
+            m_animations = group;
+            connect(group, SIGNAL(finished()), this, SLOT(animationFinished()));
+        } else {
+            QParallelAnimationGroup *group = m_animations.data();
+            if (group) {
+                if (group->state() == QAbstractAnimation::Running && group->direction() ==
+                        QAbstractAnimation::Forward) {
+                    group->stop();
+                } else if (group->direction() == QAbstractAnimation::Backward) {
+                    if (group->state() == QAbstractAnimation::Running) {
+                        group->stop();
+                    }
+
+                    Plasma::Animation *confAnim =
+                        Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation);
+                    Plasma::Animation *closeAnim =
+                        Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation);
+                    confAnim->setProperty("startPixmap", m_icons->pixmap("configure"));
+                    confAnim->setTargetWidget(this);
+
+                    closeAnim->setProperty("startPixmap", m_icons->pixmap("close"));
+                    closeAnim->setTargetWidget(this);
+                    group = new QParallelAnimationGroup;
+                    group->addAnimation(closeAnim);
+                    group->addAnimation(confAnim);
+                    group->setDirection(QAbstractAnimation::Forward);
+                    m_animations = group;
+                }
+                group->start();
+            }
+        }
+
     } else if (event->type() == QEvent::GraphicsSceneHoverLeave) {
         m_underMouse = false;
-        confAnim = Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation, this);
-        closeAnim = Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation, this);
+        QParallelAnimationGroup *group = m_animations.data();
+        if (group) {
+            group->setDirection(QAbstractAnimation::Backward);
+            group->start(QAbstractAnimation::DeleteWhenStopped);
+        } else {
+            QParallelAnimationGroup *group = new QParallelAnimationGroup(this);
+            Plasma::Animation *confAnim =
+                Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation);
+            Plasma::Animation *closeAnim =
+                Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation);
+            confAnim->setProperty("startPixmap", m_icons->pixmap("configure"));
+            confAnim->setTargetWidget(this);
 
-        confAnim->setProperty("startPixmap", m_icons->pixmap("configure"));
-        confAnim->setProperty("direction", QAbstractAnimation::Backward);
-        confAnim->setTargetWidget(this);
-        confAnim->start(QAbstractAnimation::DeleteWhenStopped);
-
-        closeAnim->setProperty("direction", QAbstractAnimation::Backward);
-        closeAnim->setProperty("startPixmap", m_icons->pixmap("close"));
-        closeAnim->setTargetWidget(this);
-        closeAnim->start(QAbstractAnimation::DeleteWhenStopped);
-        animationFinished();
+            closeAnim->setProperty("startPixmap", m_icons->pixmap("close"));
+            closeAnim->setTargetWidget(this);
+            group->addAnimation(closeAnim);
+            group->addAnimation(confAnim);
+            group->setDirection(QAbstractAnimation::Backward);
+            group->start(QAbstractAnimation::DeleteWhenStopped);
+        }
     }
 
     return false;
@@ -269,26 +315,29 @@ void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     }
 
     if (m_showButtons) {
-        if (m_applet->hasValidAssociatedApplication()) {
-            if (maxAnim) {
-               QPixmap animPixmap = qvariant_cast<QPixmap>(maxAnim->property("startPixmap"));
-               painter->drawPixmap(m_maximizeButtonRect, animPixmap, animPixmap.rect());
-            } else {
-                m_icons->paint(painter, m_maximizeButtonRect, "maximize");
-            }
-        }
+        QParallelAnimationGroup *group = m_animations.data();
         if (m_applet->hasConfigurationInterface()) {
-            if (confAnim) {
-                QPixmap animPixmap = qvariant_cast<QPixmap>(confAnim->property("startPixmap"));
-                painter->drawPixmap(m_configureButtonRect, animPixmap, animPixmap.rect());
-            } else {
-                m_icons->paint(painter, m_configureButtonRect, "configure");
+            if (group) {
+                if (group->state() == QAbstractAnimation::Running) {
+                    QAbstractAnimation *confAnim = group->animationAt(1);
+                    QPixmap animPixmap = qvariant_cast<QPixmap>(confAnim->property("currentPixmap"));
+                    painter->drawPixmap(m_configureButtonRect, animPixmap, animPixmap.rect());
+                 } else if (group->state() == QAbstractAnimation::Stopped && group->direction() != QAbstractAnimation::Backward) {
+                     m_icons->paint(painter, m_configureButtonRect, "configure");
+                 }
             }
+        } else {
+            m_icons->paint(painter, m_configureButtonRect, "configure");
         }
         if (m_applet->immutability() == Plasma::Mutable) {
-            if (closeAnim) {
-                QPixmap animPixmap = qvariant_cast<QPixmap>(closeAnim->property("startPixmap"));
-                painter->drawPixmap(m_closeButtonRect, animPixmap, animPixmap.rect());
+            if (group) {
+                if (group->state() == QAbstractAnimation::Running) {
+                    QAbstractAnimation *closeAnim = group->animationAt(0);
+                    QPixmap animPixmap = qvariant_cast<QPixmap>(closeAnim->property("currentPixmap"));
+                    painter->drawPixmap(m_closeButtonRect, animPixmap, animPixmap.rect());
+                } else if (group->state() == QAbstractAnimation::Stopped && group->direction() != QAbstractAnimation::Backward) {
+                    m_icons->paint(painter, m_closeButtonRect, "close");
+                }
             } else {
                 m_icons->paint(painter, m_closeButtonRect, "close");
             }

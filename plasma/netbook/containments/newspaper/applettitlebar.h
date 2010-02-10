@@ -22,6 +22,8 @@
 
 #include <QAbstractAnimation>
 #include <QGraphicsWidget>
+#include <QParallelAnimationGroup>
+#include <QWeakPointer>
 
 #include <plasma/animations/animation.h>
 
@@ -76,10 +78,7 @@ private:
     QRectF m_configureButtonRect;
     QRectF m_closeButtonRect;
 
-    Plasma::Animation *confAnim;
-    Plasma::Animation *closeAnim;
-    Plasma::Animation *maxAnim;
-
+    QWeakPointer<QParallelAnimationGroup> m_animations;
     Plasma::Svg *m_icons;
     Plasma::Svg *m_separator;
     Plasma::FrameSvg *m_background;
