@@ -63,6 +63,7 @@ class Clock : public ClockApplet
 
     protected slots:
         void clockConfigAccepted();
+        void clockConfigChanged();
         void repaintNeeded();
         void moveSecondHand();
 

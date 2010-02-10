@@ -80,21 +80,8 @@ void Clock::init()
 {
     ClockApplet::init();
 
-    KConfigGroup cg = config();
-    m_showSecondHand = cg.readEntry("showSecondHand", false);
-    m_showTimezoneString = cg.readEntry("showTimezoneString", false);
-    m_showingTimezone = m_showTimezoneString;
-    m_fancyHands = cg.readEntry("fancyHands", false);
-    setCurrentTimezone(cg.readEntry("timezone", localTimezone()));
-
-    if (m_showSecondHand) {
-        //We don't need to cache the applet if it update every seconds
-        setCacheMode(QGraphicsItem::NoCache);
-    } else {
-        setCacheMode(QGraphicsItem::DeviceCoordinateCache);
-    }
-
-    connectToEngine();
+    configChanged();
+    
     invalidateCache();
 }
 
@@ -108,6 +95,25 @@ void Clock::connectToEngine()
     } else {
         timeEngine->connectSource(currentTimezone(), this, 6000, Plasma::AlignToMinute);
     }
+}
+
+void Clock::clockConfigChanged()
+{
+    KConfigGroup cg = config();
+    m_showSecondHand = cg.readEntry("showSecondHand", false);
+    m_showTimezoneString = cg.readEntry("showTimezoneString", false);
+    m_showingTimezone = m_showTimezoneString;
+    m_fancyHands = cg.readEntry("fancyHands", false);
+    setCurrentTimezone(cg.readEntry("timezone", localTimezone()));
+    
+    if (m_showSecondHand) {
+        //We don't need to cache the applet if it update every seconds
+                        setCacheMode(QGraphicsItem::NoCache);
+    } else {
+        setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+    }
+
+    connectToEngine();
 }
 
 void Clock::constraintsEvent(Plasma::Constraints constraints)
