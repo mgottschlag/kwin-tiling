@@ -168,6 +168,7 @@ void AppletInfoWidget::init()
 void AppletInfoWidget::setAppletItem(PlasmaAppletItem *appletItem)
 {
     m_appletItem = appletItem;
+    updateInfo();
 }
 
 void AppletInfoWidget::updateInfo()
@@ -226,5 +227,6 @@ void AppletInfoWidget::uninstall()
     model->takeRow(model->indexFromItem(m_appletItem).row());
     delete m_appletItem;
     m_appletItem = 0;
+    hide();
 }
 
