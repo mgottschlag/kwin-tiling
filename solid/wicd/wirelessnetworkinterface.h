@@ -52,7 +52,6 @@ Q_SIGNALS:
     void modeChanged(Solid::Control::WirelessNetworkInterface::OperationMode);
     void accessPointAppeared(const QString &);
     void accessPointDisappeared(const QString &);
-    void connectionStateChanged(int state);
 private:
     class Private;
     Private *d;
