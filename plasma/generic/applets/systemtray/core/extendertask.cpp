@@ -22,6 +22,7 @@
 
 #include <QtGui/QPainter>
 #include <QtGui/QTextOption>
+#include <QtGui/QStyleOptionGraphicsItem>
 #include <QtGui/QWidget> // QWIDGETSIZE_MAX
 
 #include <plasma/extender.h>
@@ -84,6 +85,14 @@ void ExtenderTaskBusyWidget::paint(QPainter *painter, const QStyleOptionGraphics
 {
     if (m_state == Running) {
         Plasma::BusyWidget::paint(painter, option, widget);
+        kWarning()<<360*(qreal)m_manager->jobTotals()->percentage()/100;
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing);
+        QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+        color.setAlphaF(0.6);
+        painter->setPen(color);
+        painter->drawArc(option->rect, 90*16, -(360*(qreal)m_manager->jobTotals()->percentage()/100)*16);
+        painter->restore();
     } else if (m_state == Empty) {
         //TODO: something nicer perhaps .. right now we just paint a centered, disabled 'i' icon
         QPixmap pixmap = m_icon.pixmap(size().toSize(), QIcon::Disabled);
