@@ -45,6 +45,7 @@ class LockOut : public Plasma::Applet
         virtual void constraintsEvent(Plasma::Constraints constraints);
 
     public slots:
+        void configChanged();
         void clickLogout();
         void clickLock();
         void clickSleep();

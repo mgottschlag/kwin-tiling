@@ -65,14 +65,6 @@ void LockOut::init()
     m_layout->setContentsMargins(0,0,0,0);
     m_layout->setSpacing(0);
 
-#ifndef Q_OS_WIN
-    KConfigGroup cg = config();
-    m_showLockButton = cg.readEntry("showLockButton", true);
-    m_showLogoutButton = cg.readEntry("showLogoutButton", true);
-    m_showSleepButton = cg.readEntry("showSleepButton", false);
-    m_showHibernateButton = cg.readEntry("showHibernateButton", false);
-#endif
-
     //Tooltip strings maybe should be different (eg. "Leave..."->"Logout")?
     m_iconLock = new Plasma::IconWidget(KIcon("system-lock-screen"), "", this);
     connect(m_iconLock, SIGNAL(clicked()), this, SLOT(clickLock()));
@@ -94,6 +86,19 @@ void LockOut::init()
     Plasma::ToolTipContent hibernateToolTip(i18n("Hibernate"),i18n("Hibernate (suspend to disk)"),m_iconHibernate->icon());
     Plasma::ToolTipManager::self()->setContent(m_iconHibernate, hibernateToolTip);
    
+    configChanged();
+}
+
+void LockOut::configChanged()
+{
+    #ifndef Q_OS_WIN
+        KConfigGroup cg = config();
+        m_showLockButton = cg.readEntry("showLockButton", true);
+        m_showLogoutButton = cg.readEntry("showLogoutButton", true);
+        m_showSleepButton = cg.readEntry("showSleepButton", false);
+        m_showHibernateButton = cg.readEntry("showHibernateButton", false);
+    #endif
+    
     countButtons();
     showButtons();
 }
