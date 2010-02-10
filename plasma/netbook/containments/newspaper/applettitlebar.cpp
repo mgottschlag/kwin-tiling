@@ -166,6 +166,14 @@ bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
 
         if (!m_animations.data()) {
             QParallelAnimationGroup *group = new QParallelAnimationGroup(this);
+            if (m_applet->hasValidAssociatedApplication()) {
+                Plasma::Animation *maximizeAnim =
+                Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation);
+                maximizeAnim->setProperty("startPixmap", m_icons->pixmap("maximize"));
+                maximizeAnim->setTargetWidget(this);
+                group->addAnimation(maximizeAnim);
+            }
+
             Plasma::Animation *confAnim =
                 Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation);
             Plasma::Animation *closeAnim =
@@ -175,8 +183,8 @@ bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
 
             closeAnim->setProperty("startPixmap", m_icons->pixmap("close"));
             closeAnim->setTargetWidget(this);
-            group->addAnimation(closeAnim);
             group->addAnimation(confAnim);
+            group->addAnimation(closeAnim);
 
             group->start();
             m_animations = group;
@@ -190,6 +198,14 @@ bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
                 } else if (group->direction() == QAbstractAnimation::Backward) {
                     if (group->state() == QAbstractAnimation::Running) {
                         group->stop();
+                    }
+
+                    if (m_applet->hasValidAssociatedApplication()) {
+                        Plasma::Animation *maximizeAnim =
+                        Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation);
+                        maximizeAnim->setProperty("startPixmap", m_icons->pixmap("maximize"));
+                        maximizeAnim->setTargetWidget(this);
+                        group->addAnimation(maximizeAnim);
                     }
 
                     Plasma::Animation *confAnim =
@@ -219,6 +235,15 @@ bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
             group->start(QAbstractAnimation::DeleteWhenStopped);
         } else {
             QParallelAnimationGroup *group = new QParallelAnimationGroup(this);
+
+            if (m_applet->hasValidAssociatedApplication()) {
+                Plasma::Animation *maximizeAnim =
+                Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation);
+                maximizeAnim->setProperty("startPixmap", m_icons->pixmap("maximize"));
+                maximizeAnim->setTargetWidget(this);
+                group->addAnimation(maximizeAnim);
+            }
+
             Plasma::Animation *confAnim =
                 Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation);
             Plasma::Animation *closeAnim =
@@ -322,23 +347,44 @@ void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     if (m_showButtons) {
         QParallelAnimationGroup *group = m_animations.data();
+
+        int i = 0;
+
+        if (m_applet->hasValidAssociatedApplication()) {
+            if (group) {
+                if (group->state() == QAbstractAnimation::Running) {
+                    QAbstractAnimation *maximizeAnim = group->animationAt(i);
+                    ++i;
+                    QPixmap animPixmap = qvariant_cast<QPixmap>(maximizeAnim->property("currentPixmap"));
+                    painter->drawPixmap(m_maximizeButtonRect, animPixmap, animPixmap.rect());
+                 } else if (group->state() == QAbstractAnimation::Stopped && group->direction() != QAbstractAnimation::Backward) {
+                     m_icons->paint(painter, m_maximizeButtonRect, "maximize");
+                 }
+            } else {
+                m_icons->paint(painter, m_configureButtonRect, "maximize");
+            }
+        }
+
         if (m_applet->hasConfigurationInterface()) {
             if (group) {
                 if (group->state() == QAbstractAnimation::Running) {
-                    QAbstractAnimation *confAnim = group->animationAt(1);
+                    QAbstractAnimation *confAnim = group->animationAt(i);
+                    ++i;
                     QPixmap animPixmap = qvariant_cast<QPixmap>(confAnim->property("currentPixmap"));
                     painter->drawPixmap(m_configureButtonRect, animPixmap, animPixmap.rect());
                  } else if (group->state() == QAbstractAnimation::Stopped && group->direction() != QAbstractAnimation::Backward) {
                      m_icons->paint(painter, m_configureButtonRect, "configure");
                  }
+            } else {
+                m_icons->paint(painter, m_configureButtonRect, "configure");
             }
-        } else {
-            m_icons->paint(painter, m_configureButtonRect, "configure");
         }
+
         if (m_applet->immutability() == Plasma::Mutable) {
             if (group) {
                 if (group->state() == QAbstractAnimation::Running) {
-                    QAbstractAnimation *closeAnim = group->animationAt(0);
+                    QAbstractAnimation *closeAnim = group->animationAt(i);
+                    ++i;
                     QPixmap animPixmap = qvariant_cast<QPixmap>(closeAnim->property("currentPixmap"));
                     painter->drawPixmap(m_closeButtonRect, animPixmap, animPixmap.rect());
                 } else if (group->state() == QAbstractAnimation::Stopped && group->direction() != QAbstractAnimation::Backward) {
