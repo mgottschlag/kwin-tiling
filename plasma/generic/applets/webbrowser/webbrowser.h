@@ -92,7 +92,8 @@ protected Q_SLOTS:
     void loadProgress(int progress);
     void bookmarksModelInit();
     void configAccepted();
-
+    void bookmarksAnimationFinished();
+    
 private:
     void fillGroup(BookmarkItem *parentItem, const KBookmarkGroup &group);
     void updateBookmarksViewGeometry();
@@ -109,7 +110,8 @@ private:
     KBookmarkManager *m_bookmarkManager;
     QStandardItemModel *m_bookmarkModel;
     Plasma::TreeView *m_bookmarksView;
-
+    Plasma::Animation *m_bookmarksViewAnimation;
+    
     QTimer *m_autoRefreshTimer;
     bool m_autoRefresh;
     int m_autoRefreshInterval;

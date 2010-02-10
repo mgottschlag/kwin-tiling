@@ -33,6 +33,7 @@
 #include <QWebPage>
 #include <QWebFrame>
 #include <QWebHistory>
+#include <QScrollBar>
 
 #include <KIcon>
 #include <KCompletion>
@@ -44,6 +45,7 @@
 #include <KConfigDialog>
 #include <KHistoryComboBox>
 
+#include <Plasma/Animation>
 #include <Plasma/ComboBox>
 #include <Plasma/IconWidget>
 #include <Plasma/LineEdit>
@@ -126,6 +128,10 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     bookmarksModelInit();
 
     m_bookmarksView = new Plasma::TreeView(this);
+    m_bookmarksView->setZValue(1);
+    m_bookmarksView->nativeWidget()->setAttribute(Qt::WA_NoSystemBackground, false);
+    m_bookmarksView->nativeWidget()->verticalScrollBar()->setStyle(QApplication::style());
+    m_bookmarksView->nativeWidget()->horizontalScrollBar()->setStyle(QApplication::style());
     m_bookmarksView->setModel(m_bookmarkModel);
     m_bookmarksView->nativeWidget()->setHeaderHidden(true);
     //m_bookmarksView->nativeWidget()->viewport()->setAutoFillBackground(false);
@@ -143,7 +149,10 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     m_removeBookmarkAction = new QAction(KIcon("list-remove"), QString(), this);
     m_organizeBookmarks = addTool("bookmarks-organize", m_statusbarLayout);
 
-
+    m_bookmarksViewAnimation = Plasma::Animator::create(Plasma::Animator::FadeAnimation, this);
+    m_bookmarksViewAnimation->setTargetWidget(m_bookmarksView);
+    connect(m_bookmarksViewAnimation, SIGNAL(finished()), this, SLOT(bookmarksAnimationFinished()));
+    
     m_progress = new Plasma::Meter(this);
     m_progress->setMeterType(Plasma::Meter::BarMeterHorizontal);
     m_progress->setMinimum(0);
@@ -418,12 +427,23 @@ void WebBrowser::removeBookmark()
 void WebBrowser::bookmarksToggle()
 {
     if (m_bookmarksView->isVisible()) {
-        m_bookmarksView->hide();
-        m_browser->show();
+        m_bookmarksViewAnimation->setProperty("startOpacity", 1);
+        m_bookmarksViewAnimation->setProperty("targetOpacity", 0);
+        m_bookmarksViewAnimation->start();
     } else {
         updateBookmarksViewGeometry();
+        m_bookmarksView->setOpacity(0);
         m_bookmarksView->show();
-        m_browser->hide();
+        m_bookmarksViewAnimation->setProperty("startOpacity", 0);
+        m_bookmarksViewAnimation->setProperty("targetOpacity", 1);
+        m_bookmarksViewAnimation->start();
+    }
+}
+
+void WebBrowser::bookmarksAnimationFinished()
+{
+    if (qFuzzyCompare(m_bookmarksView->opacity() + 1, 1)){
+        m_bookmarksView->hide();
     }
 }
 
