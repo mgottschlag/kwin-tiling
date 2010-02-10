@@ -34,30 +34,27 @@ UKMETIon::UKMETIon(QObject *parent, const QVariantList &args)
 
 UKMETIon::~UKMETIon()
 {
-    // Destroy each forecast stored in a QVector
-    foreach(const WeatherData &item, m_weatherData) {
-        foreach(WeatherData::ForecastInfo *forecast, item.forecasts) {
-            if (forecast) {
-                delete forecast;
-            }
-        }
-    }
+    deleteForecasts();
 }
 
 void UKMETIon::reset()
 {
-    // Destroy each forecast stored in a QVector
-    foreach(const WeatherData &item, m_weatherData) {
-        foreach(WeatherData::ForecastInfo *forecast, item.forecasts) {
-            if (forecast) {
-                delete forecast;
-            }
-        }
-    }
-
+    deleteForecasts();
     emit(resetCompleted(this, true));
 }
 
+
+void UKMETIon::deleteForecasts()
+{
+    // Destroy each forecast stored in a QVector
+    QHash<QString, WeatherData>::iterator
+        it = m_weatherData.begin(),
+        end = m_weatherData.end();
+    for (; it != end; ++it) {
+        qDeleteAll(it.value().forecasts);
+        it.value().forecasts.clear();
+    }
+}
 
 
 // Get the master list of locations to be parsed

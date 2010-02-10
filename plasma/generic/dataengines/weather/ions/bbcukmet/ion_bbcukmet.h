@@ -170,6 +170,7 @@ private:
 
     QDateTime m_dateFormat;
 
+    void deleteForecasts();
 };
 
 K_EXPORT_PLASMA_DATAENGINE(bbcukmet, UKMETIon)
