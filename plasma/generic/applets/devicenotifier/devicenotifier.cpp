@@ -80,11 +80,8 @@ DeviceNotifier::~DeviceNotifier()
 
 void DeviceNotifier::init()
 {
-    KConfigGroup cg = config();
-    m_numberItems = cg.readEntry("NumberItems", 4);
-    m_itemsValidity = cg.readEntry("ItemsValidity", 5);
-    m_showDevices = cg.readEntry("ShowDevices", (int)RemovableOnly);
-
+    configChanged();
+    
     m_solidEngine = dataEngine("hotplug");
     m_solidDeviceEngine = dataEngine("soliddevice");
 
@@ -94,7 +91,7 @@ void DeviceNotifier::init()
 
     setPopupIcon(DEFAULT_ICON_NAME);
 
-    //connect to engine when a device is plug
+    //connect to engine when a device is plugged in
     connect(m_solidEngine, SIGNAL(sourceAdded(const QString&)),
             this, SLOT(onSourceAdded(const QString&)));
     connect(m_solidEngine, SIGNAL(sourceRemoved(const QString&)),
@@ -108,6 +105,14 @@ void DeviceNotifier::init()
     } else {
         setStatus(Plasma::ActiveStatus);
     }
+}
+
+void DeviceNotifier::configChanged()
+{
+    KConfigGroup cg = config();
+    m_numberItems = cg.readEntry("NumberItems", 4);
+    m_itemsValidity = cg.readEntry("ItemsValidity", 5);
+    m_showDevices = cg.readEntry("ShowDevices", (int)RemovableOnly);
 }
 
 QGraphicsWidget *DeviceNotifier::graphicsWidget()

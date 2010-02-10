@@ -112,6 +112,11 @@ class DeviceNotifier : public Plasma::PopupApplet
 
     public slots:
         /**
+        * Reimplemented from Plasma::Applet
+        **/
+        void configChanged();
+        
+        /**
         * @internal Sets the tooltip content properly before showing.
         */
         void toolTipAboutToShow();
