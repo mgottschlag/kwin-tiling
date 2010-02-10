@@ -45,7 +45,7 @@ class Image : public Plasma::Wallpaper
         virtual void paint(QPainter* painter, const QRectF& exposedRect);
         virtual QWidget* createConfigurationInterface(QWidget* parent);
         void updateScreenshot(QPersistentModelIndex index);
-        const qreal fadeValue();
+        qreal fadeValue() const;
 
     signals:
         void settingsChanged(bool);

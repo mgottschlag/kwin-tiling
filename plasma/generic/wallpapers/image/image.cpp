@@ -645,7 +645,7 @@ void Image::updateScreenshot(QPersistentModelIndex index)
     m_uiImage.m_view->update(index);
 }
 
-const qreal Image::fadeValue()
+qreal Image::fadeValue() const
 {
     return m_fadeValue;
 }
