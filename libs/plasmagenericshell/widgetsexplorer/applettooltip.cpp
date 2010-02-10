@@ -215,6 +215,10 @@ void AppletInfoWidget::updateInfo()
 
 void AppletInfoWidget::uninstall()
 {
+    if (!m_appletItem) {
+        return;
+    }
+
     Plasma::PackageStructure installer;
     installer.uninstallPackage(m_appletItem->pluginName(),
                                KStandardDirs::locateLocal("data", "plasma/plasmoids/"));
