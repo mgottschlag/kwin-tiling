@@ -37,6 +37,7 @@
 #include "../core/manager.h"
 #include "../core/job.h"
 #include "../core/notification.h"
+#include "../core/completedjobnotification.h"
 
 
 namespace SystemTray
@@ -155,24 +156,17 @@ void ExtenderTaskBusyWidget::updateTask()
         }
     }
 
-    //FIXME: assumptions++
-    Plasma::Extender *extender = qobject_cast<Plasma::Extender *>(m_systray->graphicsWidget());
-    if (extender) {
-        Plasma::ExtenderGroup *group = extender->group("completedJobsGroup");
-        if (group) {
-            completedJobs = group->items().count();
-            group->setTitle(i18np("%1 Recently Completed Job:", "%1 Recently Completed Jobs:",
-                           completedJobs));
-        }
-    }
-
-    int total = m_manager->jobs().count() + completedJobs;
+    int total = m_manager->jobs().count();
 
     foreach (Notification *notification, m_manager->notifications()) {
-        if (!notification->isExpired()) {
+        if (qobject_cast<CompletedJobNotification *>(notification)) {
+            ++completedJobs;
+        } else if (!notification->isExpired()) {
             ++total;
         }
     }
+
+    total += completedJobs;
 
 
     if (!(total + m_manager->notifications().count())) {
@@ -199,6 +193,10 @@ void ExtenderTaskBusyWidget::updateTask()
 
     if (pausedJobs > 0) {
         tooltipContent += i18np("%1 suspended job", "%1 suspended jobs", pausedJobs) + "<br>";
+    }
+
+    if (completedJobs > 0) {
+        tooltipContent += i18np("%1 completed job", "%1 completed jobs", completedJobs) + "<br>";
     }
 
     if (!m_manager->notifications().isEmpty()) {
