@@ -33,6 +33,7 @@ namespace Plasma
     class FrameSvg;
     class IconWidget;
     class Svg;
+    class AbstractAnimation;
 }
 
 class AppletTitleBar : public QGraphicsWidget
@@ -82,6 +83,8 @@ private:
     Plasma::Svg *m_icons;
     Plasma::Svg *m_separator;
     Plasma::FrameSvg *m_background;
+
+    Plasma::Animation *m_pulse;
 
     qreal m_savedAppletTopMargin;
     bool m_underMouse;

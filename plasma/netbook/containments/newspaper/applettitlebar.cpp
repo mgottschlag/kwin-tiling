@@ -47,6 +47,10 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
          m_showButtons(false),
          m_appletHasBackground(false)
 {
+    m_pulse =
+    Plasma::Animator::create(Plasma::Animator::PulseAnimation);
+    m_pulse->setTargetWidget(applet);
+
     m_maximizeButtonRect = m_configureButtonRect = m_closeButtonRect = QRect(0, 0, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
 
     m_icons = new Plasma::Svg(this);
@@ -79,6 +83,7 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
 
 AppletTitleBar::~AppletTitleBar()
 {
+    delete m_pulse;
     delete m_animations.data();
 }
 
@@ -262,6 +267,7 @@ void AppletTitleBar::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if (m_pressedButton == MaximizeButton && m_maximizeButtonRect.contains(event->pos())) {
         if (m_applet->hasValidAssociatedApplication()) {
+            m_pulse->start();
             m_applet->runAssociatedApplication();
         }
     } else if (m_pressedButton == ConfigureButton && m_configureButtonRect.contains(event->pos())) {
