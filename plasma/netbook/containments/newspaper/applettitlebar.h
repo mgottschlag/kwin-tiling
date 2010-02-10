@@ -55,6 +55,7 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    void initAnimations();
     /*void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);*/
 
