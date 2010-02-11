@@ -51,16 +51,22 @@ Temperature::~Temperature()
 void Temperature::init()
 {
     KGlobal::locale()->insertCatalog("plasma_applet_system-monitor");
-    KConfigGroup cg = config();
     setEngine(dataEngine("systemmonitor"));
-    setInterval(cg.readEntry("interval", 2.0) * 1000);
     setTitle(i18n("Temperature"));
 
+    configChanged();
+    
     /* At the time this method is running, not all source may be connected. */
     connect(engine(), SIGNAL(sourceAdded(QString)), this, SLOT(sourceAdded(const QString)));
     foreach (const QString& source, engine()->sources()) {
         sourceAdded(source);
     }
+}
+
+void Temperature::configChanged()
+{
+    KConfigGroup cg = config();
+    setInterval(cg.readEntry("interval", 2.0) * 1000);
 }
 
 void Temperature::sourceAdded(const QString& name)
