@@ -34,6 +34,9 @@ public:
     void constraintsEvent(Plasma::Constraints constraints);
     QList<QAction*> contextualActions();
 
+public slots:
+    void configChanged();
+    
 private Q_SLOTS:
     void updateConfigurationMode(bool config);
     void toggleFixed(bool flexible);

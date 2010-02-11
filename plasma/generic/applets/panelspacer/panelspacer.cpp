@@ -73,13 +73,19 @@ void PanelSpacer::init()
     if (containment()) {
         connect(containment(), SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
     }
+    
+    configChanged();
+}
 
+void PanelSpacer::configChanged()
+{
+    kDebug();
     m_fixedSize = config().readEntry("FixedSize", false);
     toggleFixed(!m_fixedSize);
     QAction *fixedAction = action("toggle fixed");
     if (fixedAction) {
         fixedAction->setChecked(!m_fixedSize);
-    }
+    }    
 }
 
 void PanelSpacer::constraintsEvent(Plasma::Constraints constraints)
