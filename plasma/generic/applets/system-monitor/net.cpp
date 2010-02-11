@@ -45,6 +45,8 @@ void SM::Net::init()
     setEngine(dataEngine("systemmonitor"));
     setTitle(i18n("Network"));
 
+    configChanged();
+    
     connect(engine(), SIGNAL(sourceAdded(const QString&)),
             this, SLOT(sourceAdded(const QString&)));
     connect(engine(), SIGNAL(sourceRemoved(const QString&)),
