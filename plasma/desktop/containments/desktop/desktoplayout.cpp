@@ -311,7 +311,9 @@ void DesktopLayout::adjustPhysicalPositions()
                 if (spaceItem.animateMovement)  {
                     if (m_animatingItems.contains(desktopItem.item)) {
                         Plasma::Animation *anim = m_animatingItems.value(desktopItem.item).data();
-                        anim->stop();
+                        if (anim) {
+                            anim->stop();
+                        }
                         m_animatingItems.remove(desktopItem.item);
                     }
 
