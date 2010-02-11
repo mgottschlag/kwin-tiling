@@ -92,6 +92,7 @@ protected Q_SLOTS:
     void loadProgress(int progress);
     void bookmarksModelInit();
     void configAccepted();
+    void configChanged();
     void bookmarksAnimationFinished();
     
 private:

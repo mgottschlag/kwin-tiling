@@ -86,9 +86,6 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
         return m_graphicsWidget;
     }
 
-    KConfigGroup cg = config();
-
-
     m_layout = new QGraphicsLinearLayout(Qt::Vertical);
     m_toolbarLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     m_statusbarLayout = new QGraphicsLinearLayout(Qt::Horizontal);
@@ -113,11 +110,9 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
 
     m_layout->addItem(m_toolbarLayout);
 
-
     m_browser = new Plasma::WebView(this);
     m_browser->setPreferredSize(400, 400);
     m_browser->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_browser->setDragToScroll(cg.readEntry("DragToScroll", false));
 
 
     m_layout->addItem(m_browser);
@@ -169,26 +164,9 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     m_zoom->setMaximumWidth(0);
     m_statusbarLayout->addItem(m_zoom);
 
-    if (!m_url.isValid()) {
-        m_url = KUrl(cg.readEntry("Url", "http://www.kde.org"));
-        m_verticalScrollValue = cg.readEntry("VerticalScrollValue", 0);
-        m_horizontalScrollValue = cg.readEntry("HorizontalScrollValue", 0);
-        int value = cg.readEntry("Zoom", 1);
-        m_zoom->setValue(value);
-        m_browser->mainFrame()->setZoomFactor((qreal)0.2 + ((qreal)value/(qreal)50));
-    }
     connect(m_zoom, SIGNAL(valueChanged(int)), this, SLOT(zoom(int)));
     m_browser->setUrl(m_url);
     m_browser->update();
-
-    m_autoRefresh = cg.readEntry("autoRefresh", false);
-    m_autoRefreshInterval = qMax(2, cg.readEntry("autoRefreshInterval", 5));
-
-    if (m_autoRefresh) {
-        m_autoRefreshTimer = new QTimer(this);
-        m_autoRefreshTimer->start(m_autoRefreshInterval*60*1000);
-        connect(m_autoRefreshTimer, SIGNAL(timeout()), this, SLOT(reload()));
-    }
 
     connect(m_back->action(), SIGNAL(triggered()), this, SLOT(back()));
     connect(m_forward->action(), SIGNAL(triggered()), this, SLOT(forward()));
@@ -211,15 +189,13 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     m_completion = new KCompletion();
     m_nativeHistoryCombo->setCompletionObject(m_completion);
 
-    QStringList list = cg.readEntry("History list", QStringList());
-    m_nativeHistoryCombo->setHistoryItems(list);
-
     m_graphicsWidget = new QGraphicsWidget(this);
     m_graphicsWidget->setLayout(m_layout);
 
     m_back->setEnabled(m_browser->page()->history()->canGoBack());
     m_forward->setEnabled(m_browser->page()->history()->canGoForward());
 
+    configChanged();
 
     return m_graphicsWidget;
 }
@@ -250,6 +226,34 @@ void WebBrowser::bookmarksModelInit()
     }
 
     fillGroup(0, m_bookmarkManager->root());
+}
+
+void WebBrowser::configChanged()
+{
+    KConfigGroup cg = config();
+    
+    m_browser->setDragToScroll(cg.readEntry("DragToScroll", false));
+    
+    if (!m_url.isValid()) {
+        m_url = KUrl(cg.readEntry("Url", "http://www.kde.org"));
+        m_verticalScrollValue = cg.readEntry("VerticalScrollValue", 0);
+        m_horizontalScrollValue = cg.readEntry("HorizontalScrollValue", 0);
+        int value = cg.readEntry("Zoom", 1);
+        m_zoom->setValue(value);
+        m_browser->mainFrame()->setZoomFactor((qreal)0.2 + ((qreal)value/(qreal)50));
+    }
+    
+    m_autoRefresh = cg.readEntry("autoRefresh", false);
+    m_autoRefreshInterval = qMax(2, cg.readEntry("autoRefreshInterval", 5));
+    
+    if (m_autoRefresh) {
+        m_autoRefreshTimer = new QTimer(this);
+        m_autoRefreshTimer->start(m_autoRefreshInterval*60*1000);
+        connect(m_autoRefreshTimer, SIGNAL(timeout()), this, SLOT(reload()));
+    }
+        
+    QStringList list = cg.readEntry("History list", QStringList());
+    m_nativeHistoryCombo->setHistoryItems(list);
 }
 
 void WebBrowser::fillGroup(BookmarkItem *parentItem, const KBookmarkGroup &group)
