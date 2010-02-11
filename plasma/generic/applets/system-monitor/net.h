@@ -43,6 +43,7 @@ class Net : public Applet
 
     public slots:
         void configAccepted();
+        void configChanged();
         void dataUpdated(const QString &name,
                          const Plasma::DataEngine::Data &data);
         void sourceAdded(const QString &name);
