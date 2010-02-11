@@ -42,6 +42,7 @@ class Hdd : public SM::Applet
         virtual void createConfigurationInterface(KConfigDialog *parent);
 
     public slots:
+        void configChanged();
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
 
     private slots:

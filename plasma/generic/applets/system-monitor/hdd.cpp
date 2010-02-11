@@ -41,20 +41,28 @@ Hdd::~Hdd()
 void Hdd::init()
 {
     KGlobal::locale()->insertCatalog("plasma_applet_system-monitor");
-    KConfigGroup cg = config();
     QString predicateString("IS StorageVolume");
     setEngine(dataEngine("soliddevice"));
+
+    setTitle(i18n("Disk Space"), true);
+    
+    configChanged();
+    connectToEngine();
+}
+
+void Hdd::configChanged()
+{
+    KConfigGroup cg = config();
+    
     QStringList items = cg.readEntry("uuids", QStringList());
     if (items.isEmpty()) {
         items = mounted();
     }
+    
     setItems(items);
     setInterval(cg.readEntry("interval", 2) * 60 * 1000);
-
-    setTitle(i18n("Disk Space"), true);
-    connectToEngine();
 }
-
+        
 QStringList Hdd::mounted()
 {
     Plasma::DataEngine::Data data;
