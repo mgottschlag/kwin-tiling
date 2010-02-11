@@ -22,6 +22,8 @@
    Boston, MA 02110-1301, USA.
 */
 
+#include <config-X11.h>
+
 #include <QtDBus/QDBusConnection>
 
 #include <kaboutdata.h>
@@ -53,6 +55,9 @@
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#ifdef HAVE_XFIXES
+#include <X11/extensions/Xfixes.h>
+#endif
 #endif
 
 //#define NOISY_KLIPPER
@@ -127,6 +132,8 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     m_clip = kapp->clipboard();
 
     connect( m_clip, SIGNAL(changed(QClipboard::Mode)),
+             this, SLOT( newClipData( QClipboard::Mode) ) );
+    connect( &m_empty_detector, SIGNAL(changed(QClipboard::Mode)),
              this, SLOT( newClipData( QClipboard::Mode) ) );
 
     connect( &m_overflowClearTimer, SIGNAL( timeout()), SLOT( slotClearOverflow()));
@@ -1175,6 +1182,60 @@ QString Klipper::cycleText() const
     }
     rv += "</table>";
     return rv;
+}
+
+// http://bugreports.qt.nokia.com/browse/QTBUG-8157
+#if KDE_IS_VERSION( 4, 4, 85 )
+#warning Check if this is still needed, hopefully not.
+#endif
+KlipperEmptyDetector::KlipperEmptyDetector()
+: m_xfixes_event_base( -1 )
+, m_xa_clipboard( None )
+{
+#ifdef HAVE_XFIXES
+    m_xa_clipboard = XInternAtom( QX11Info::display(), "CLIPBOARD", False );
+    kapp->installX11EventFilter( this );
+    int dummy;
+    if( XFixesQueryExtension( QX11Info::display(), &m_xfixes_event_base, &dummy ))
+    {
+        XFixesSelectSelectionInput( QX11Info::display(), QX11Info::appRootWindow( 0 ), XA_PRIMARY,
+            XFixesSetSelectionOwnerNotifyMask |
+            XFixesSelectionWindowDestroyNotifyMask |
+            XFixesSelectionClientCloseNotifyMask );
+        XFixesSelectSelectionInput( QX11Info::display(), QX11Info::appRootWindow( 0 ), m_xa_clipboard,
+            XFixesSetSelectionOwnerNotifyMask |
+            XFixesSelectionWindowDestroyNotifyMask |
+            XFixesSelectionClientCloseNotifyMask );
+    }
+#endif
+}
+
+bool KlipperEmptyDetector::x11Event( XEvent* e )
+{
+#ifdef HAVE_XFIXES
+    if( m_xfixes_event_base != -1 && e->type == m_xfixes_event_base + XFixesSelectionNotify )
+    {
+        XFixesSelectionNotifyEvent* ev = reinterpret_cast< XFixesSelectionNotifyEvent* >( e );
+        if( ev->subtype == XFixesSelectionWindowDestroyNotify || ev->subtype == XFixesSelectionClientCloseNotify )
+        {
+            if( ev->selection == XA_PRIMARY && !kapp->clipboard()->ownsSelection())
+            {
+#ifdef NOISY_KLIPPER
+                kDebug() << "Selection lost";
+#endif
+                emit changed( QClipboard::Selection );
+            }
+            else if( ev->selection == m_xa_clipboard && !kapp->clipboard()->ownsClipboard())
+            {
+#ifdef NOISY_KLIPPER
+                kDebug() << "Clipboard lost";
+#endif
+                emit changed( QClipboard::Clipboard );
+            }
+        }
+    }
+#endif
+    return false;
 }
 
 #include "klipper.moc"
