@@ -57,7 +57,12 @@ class PythonAppletScript(Plasma.AppletScript):
             relpath = relpath[:-3]
         relpath = relpath.replace("/",".")
         self.module = __import__(self.pluginName+'.'+relpath)
-        self.pyapplet = self.module.main.CreateApplet(None)
+
+        # Plasma main scripts not necessarily are named "main"
+        # So we use __dict__ to get the right main script name
+        basename = os.path.basename(str(self.mainScript()))
+        basename = os.path.splitext(basename)[0]
+        self.pyapplet = self.module.__dict__[basename].CreateApplet(None)
         self.pyapplet.setApplet(self.applet())
         self.pyapplet.setAppletScript(self)
         self.connect(self.applet(), SIGNAL('extenderItemRestored(Plasma::ExtenderItem*)'),
