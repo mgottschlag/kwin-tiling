@@ -44,10 +44,10 @@ SM::Ram::~Ram()
 void SM::Ram::init()
 {
     KGlobal::locale()->insertCatalog("plasma_applet_system-monitor");
-    KConfigGroup cg = config();
     setEngine(dataEngine("systemmonitor"));
-    setInterval(cg.readEntry("interval", 2.0) * 1000);
     setTitle(i18n("RAM"));
+    
+    configChanged();
 
     /* At the time this method is running, not all source may be connected. */
     connect(engine(), SIGNAL(sourceAdded(const QString&)),
@@ -55,6 +55,12 @@ void SM::Ram::init()
     foreach (const QString& source, engine()->sources()) {
         sourceAdded(source);
     }
+}
+
+void SM::Ram::configChanged()
+{
+    KConfigGroup cg = config();
+    setInterval(cg.readEntry("interval", 2.0) * 1000);
 }
 
 void SM::Ram::sourceAdded(const QString& name)

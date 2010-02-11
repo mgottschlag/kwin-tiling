@@ -45,6 +45,7 @@ class Ram : public Applet
         void sourceAdded(const QString &name);
         void sourcesAdded();
         void configAccepted();
+        void configChanged();
 
     private:
         Ui::config ui;
