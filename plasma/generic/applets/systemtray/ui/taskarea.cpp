@@ -149,6 +149,9 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 void TaskArea::addTask(Task *task)
 {
     if (d->hiddenTypes.contains(task->typeId())) {
+        if (!d->showingHidden && (task->hidden() & Task::UserHidden)) {
+            return;
+        }
         task->setHidden(task->hidden() | Task::UserHidden);
     }
 
