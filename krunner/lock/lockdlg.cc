@@ -85,7 +85,8 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, const
     : KDialog(parent, Qt::X11BypassWindowManagerHint),
       mPlugin( plugin ),
       mCapsLocked(-1),
-      mUnlockingFailed(false)
+      mUnlockingFailed(false),
+      sNot(0)
 {
     QWidget* w = mainWidget();
 
@@ -435,6 +436,8 @@ void PasswordDlg::cantCheck()
 //
 void PasswordDlg::gplugStart()
 {
+    if (sNot)
+        return;
     int sfd[2];
     char fdbuf[16];
 
@@ -465,6 +468,7 @@ void PasswordDlg::gplugStart()
     sFd = sfd[0];
     sNot = new QSocketNotifier(sFd, QSocketNotifier::Read, this);
     connect(sNot, SIGNAL(activated(int)), SLOT(handleVerify()));
+    connect(sNot, SIGNAL(destroyed()), SLOT(slotNotifierDestroyed()));
 }
 
 void PasswordDlg::gplugChanged()
@@ -649,6 +653,11 @@ void PasswordDlg::slotSessionActivated()
     LockListViewItem *itm = (LockListViewItem *)lv->currentItem();
     if (itm && itm->vt > 0)
         KDisplayManager().switchVT( itm->vt );
+}
+
+void PasswordDlg::slotNotifierDestroyed()
+{
+    sNot = 0;
 }
 
 void PasswordDlg::capsLocked()
