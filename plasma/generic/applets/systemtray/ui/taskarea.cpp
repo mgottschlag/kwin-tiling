@@ -264,7 +264,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
 void TaskArea::removeTask(Task *task)
 {
     d->hiddenTasks.remove(task);
-    d->hasTasksThatCanHide = d->hiddenTasks.count() > 0;
+    d->hasTasksThatCanHide = !d->hiddenTasks.isEmpty();
     
     QGraphicsWidget *widget = task->widget(d->host, false);
 
@@ -275,7 +275,8 @@ void TaskArea::removeTask(Task *task)
         d->lastTasksLayout->removeItem(widget);
         relayout();
     } else {
-        relayout();
+        //this is not a typo
+        relayout();relayout();
         QTimer::singleShot(200, this, SLOT(relayout()));
     }
 }
