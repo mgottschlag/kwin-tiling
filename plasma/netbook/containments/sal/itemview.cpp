@@ -149,13 +149,14 @@ void ItemView::setScrollPositionFromDragPosition(const QPointF &point)
     QPointF newPos(-scrollPosition());
 
     if (size().width() < contentsSize().width()) {
-        newPos.setX(xRatio * (size().width() - contentsSize().width()));
+        qreal newXPos = xRatio * (size().width() - contentsSize().width());
+        newPos.setX(qBound(0.0, -newXPos, contentsSize().width() - viewportGeometry().width()));
     }
     if (size().height() < contentsSize().height()) {
-        newPos.setY(yRatio * (size().height() - contentsSize().height()));
+        newPos.setY(-(yRatio * (size().height() - contentsSize().height())));
     }
 
-    setScrollPosition(-newPos);
+    setScrollPosition(newPos);
 }
 
 void ItemView::resizeEvent(QGraphicsSceneResizeEvent *event)
