@@ -36,6 +36,7 @@
 #ifndef Q_OS_WIN
 #include <KConfigDialog>
 #include <KSharedConfig>
+#include <KAuthorized>
 #include <kworkspace/kworkspace.h>
 #include <screensaver_interface.h>
 #endif
