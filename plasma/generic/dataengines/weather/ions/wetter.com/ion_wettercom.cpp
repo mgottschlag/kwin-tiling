@@ -52,8 +52,12 @@ WetterComIon::~WetterComIon()
 void WetterComIon::cleanup()
 {
     // Clean up dynamically allocated forecasts
-    foreach (const WeatherData &item, m_weatherData) {
+    QMutableHashIterator<QString, WeatherData> it(m_weatherData);
+    while (it.hasNext()) {
+        it.next();
+        WeatherData &item = it.value();
         qDeleteAll(item.forecasts);
+        item.forecasts.clear();
     }
 }
 

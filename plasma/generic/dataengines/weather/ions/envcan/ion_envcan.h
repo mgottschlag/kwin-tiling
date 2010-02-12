@@ -163,6 +163,7 @@ protected Q_SLOTS:
 
 private:
     /* Environment Canada Methods - Internal for Ion */
+    void deleteForecasts();
 
     QMap<QString, ConditionIcons> setupConditionIconMappings(void) const;
     QMap<QString, ConditionIcons> setupForecastIconMappings(void) const;

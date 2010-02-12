@@ -32,27 +32,26 @@ EnvCanadaIon::EnvCanadaIon(QObject *parent, const QVariantList &args)
 {
 }
 
+void EnvCanadaIon::deleteForecasts()
+{
+    QMutableHashIterator<QString, WeatherData> it(m_weatherData);
+    while (it.hasNext()) {
+        it.next();
+        WeatherData &item = it.value();
+        qDeleteAll(item.warnings);
+        item.warnings.clear();
+
+        qDeleteAll(item.watches);
+        item.watches.clear();
+
+        qDeleteAll(item.forecasts);
+        item.forecasts.clear();
+    }
+}
+
 void EnvCanadaIon::reset()
 {
-    foreach(const WeatherData &item, m_weatherData) {
-        foreach(WeatherData::WeatherEvent *warning, item.warnings) {
-            if (warning) {
-                delete warning;
-            }
-        }
-
-        foreach(WeatherData::WeatherEvent *watch, item.watches) {
-            if (watch) {
-                delete watch;
-            }
-        }
-
-        foreach(WeatherData::ForecastInfo *forecast, item.forecasts) {
-            if (forecast) {
-                delete forecast;
-            }
-        }
-    }
+    deleteForecasts();
     setInitialized(false);
     emitWhenSetup = true;
     redoXMLSetup();
@@ -61,25 +60,7 @@ void EnvCanadaIon::reset()
 EnvCanadaIon::~EnvCanadaIon()
 {
     // Destroy each watch/warning stored in a QVector
-    foreach(const WeatherData &item, m_weatherData) {
-        foreach(WeatherData::WeatherEvent *warning, item.warnings) {
-            if (warning) {
-                delete warning;
-            }
-        }
-
-        foreach(WeatherData::WeatherEvent *watch, item.watches) {
-            if (watch) {
-                delete watch;
-            }
-        }
-
-        foreach(WeatherData::ForecastInfo *forecast, item.forecasts) {
-            if (forecast) {
-                delete forecast;
-            }
-        }
-    }
+    deleteForecasts();
 }
 
 // Get the master list of locations to be parsed
@@ -1489,18 +1470,22 @@ QString const EnvCanadaIon::country(const QString& source) const
     // This will always return Canada
     return m_weatherData[source].countryName;
 }
+
 QString EnvCanadaIon::territory(const QString& source) const
 {
     return m_weatherData[source].shortTerritoryName;
 }
+
 QString EnvCanadaIon::city(const QString& source) const
 {
     return m_weatherData[source].cityName;
 }
+
 QString EnvCanadaIon::region(const QString& source) const
 {
     return m_weatherData[source].regionName;
 }
+
 QString EnvCanadaIon::station(const QString& source) const
 {
     if (!m_weatherData[source].stationID.isEmpty()) {
