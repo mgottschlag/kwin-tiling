@@ -208,6 +208,10 @@ void LockOut::clickLock()
 
 void LockOut::clickLogout()
 {
+    if (!KAuthorized::authorizeKAction("logout")) {
+        return;
+    }
+    
     kDebug()<<"LockOut:: logout clicked ";
 #ifndef Q_OS_WIN
     KWorkSpace::requestShutDown( KWorkSpace::ShutdownConfirmYes,
