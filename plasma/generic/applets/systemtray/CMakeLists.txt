@@ -4,7 +4,6 @@ kde4_no_enable_final(plasma-systemtray)
 
 set(systemtray_SRCS
 
-    core/extendertask.cpp
     core/manager.cpp
     core/protocol.cpp
     core/task.cpp

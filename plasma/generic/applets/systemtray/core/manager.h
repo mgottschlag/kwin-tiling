@@ -57,52 +57,7 @@ public:
     /**
      * @return a list of all known Task instances
      **/
-    Task* extenderTask(bool createIfNecessary = true) const;
-
-    /**
-     * @return a list of all known Task instances
-     **/
     QList<Task*> tasks() const;
-
-    /**
-     * @return a list of all known Notification instances
-     **/
-    QList<Notification*> notifications() const;
-
-    /**
-     * clear all notifications
-     */
-    void clearNotifications();
-
-    /**
-     * @return a list of all known Job instances
-     **/
-    QList<Job*> jobs() const;
-
-    /**
-     * @return a Job instance that can be used to monitor total progress
-     **/
-    Job *jobTotals() const;
-
-    /**
-     * Integrates the Job progress info into the applet's notification system
-     **/
-    void registerJobProtocol();
-
-    /**
-     * Iintegrates the notifications into the applet's notification system
-     **/
-    void registerNotificationProtocol();
-
-      /**
-     * Removes the Job progress info from the applet's notification system
-     **/
-    void unregisterJobProtocol();
-
-    /**
-     * Removes the notifications from the applet's notification system
-     **/
-    void unregisterNotificationProtocol();
 
     void forwardConstraintsEvent(Plasma::Constraints constraints);
 
@@ -131,60 +86,9 @@ signals:
      **/
     void taskRemoved(SystemTray::Task *task);
 
-    /**
-     * Emitted when a new notification has been added
-     **/
-    void notificationAdded(SystemTray::Notification *notification);
-
-    /**
-     * Emitted when something about a notification changes
-     **/
-    void notificationChanged(SystemTray::Notification *notification);
-
-    /**
-     * The notification is expired and wants to hide itself
-     */
-    void notificationExpired(SystemTray::Notification *notification);
-
-    /**
-     * Emitted when a notification has been removed
-     **/
-    void notificationRemoved(SystemTray::Notification *notification);
-
-    /**
-     * Emitted when a new job has been added
-     **/
-    void jobAdded(SystemTray::Job *job);
-
-    /**
-     * Emitted when the state of a job changes
-     **/
-    void jobStateChanged(SystemTray::Job *job);
-
-    /**
-     * Emitted when something about a job changes
-     **/
-    void jobChanged(SystemTray::Job *job);
-
-    /**
-     * Emitted when a job has been removed
-     **/
-    void jobRemoved(SystemTray::Job *job);
-
-    /**
-     * the pc is out of idle and is starting being used
-     */
-    void idleTerminated();
-
 private slots:
     void addTask(SystemTray::Task *task);
     void removeTask(SystemTray::Task *task);
-    void addNotification(SystemTray::Notification *notification);
-    void removeNotification(SystemTray::Notification *notification);
-    void addJob(SystemTray::Job *job);
-    void removeJob(SystemTray::Job *job);
-    void updateTotals();
-    void checkIdle();
 
 private:
     class Private;

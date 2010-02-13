@@ -23,9 +23,6 @@
 
 #include "notifications.h"
 
-//FIXME: this has to go ASAP
-#define NOTIFICATIONAPPLET
-
 #include <QtGui/QApplication>
 #include <QtGui/QGraphicsLayout>
 #include <QtGui/QGraphicsLinearLayout>

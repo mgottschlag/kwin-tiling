@@ -35,12 +35,7 @@
 #include <KIcon>
 #include <KGlobalSettings>
 
-//FIXME: has to go ASAP
-#ifdef NOTIFICATIONAPPLET
 #include "../core/notificationsmanager.h"
-#else
-#include "../core/manager.h"
-#endif
 #include "../core/job.h"
 #include "../core/notification.h"
 #include "../core/completedjobnotification.h"
