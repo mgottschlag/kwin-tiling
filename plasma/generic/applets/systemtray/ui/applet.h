@@ -85,7 +85,6 @@ private slots:
     void checkSizes();
     void addNotification(SystemTray::Notification *notification);
     void addJob(SystemTray::Job *job);
-    void clearAllCompletedJobs();
     void finishJob(SystemTray::Job *job);
     void open(const QString &url);
     void addDefaultApplets();

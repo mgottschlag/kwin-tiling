@@ -142,8 +142,6 @@ Applet::~Applet()
         disconnect(notification, 0, this, 0);
     }
 
-    clearAllCompletedJobs();
-
     --s_managerUsage;
     if (s_managerUsage < 1) {
         delete s_manager;
@@ -756,19 +754,6 @@ void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
         return;
     }
 
-    if (extenderItem->name() == "completedJobsGroup") {
-        QGraphicsWidget *widget = new QGraphicsWidget(this);
-        widget->setMaximumHeight(0);
-        extenderItem->setWidget(widget);
-
-        QAction *clearAction = new QAction(this);
-        clearAction->setIcon(KIcon(m_icons->pixmap("close")));
-        extenderItem->addAction("space", new QAction(this));
-        extenderItem->addAction("clear", clearAction);
-        connect(clearAction, SIGNAL(triggered()), this, SLOT(clearAllCompletedJobs()));
-        return;
-    }
-
     if (extenderItem->config().readEntry("type", "") == "job") {
         extenderItem->setWidget(new JobWidget(0, extenderItem));
     //unknown type, this should never happen
@@ -808,19 +793,6 @@ void Applet::popupEvent(bool show)
     }
 }
 
-void Applet::clearAllCompletedJobs()
-{
-    Plasma::ExtenderGroup *completedJobsGroup = extender()->group("completedJobsGroup");
-    if (!completedJobsGroup) {
-        return;
-    }
-
-    foreach (Plasma::ExtenderItem *item, completedJobsGroup->items()) {
-        item->destroy();
-    }
-}
-
-
 void Applet::finishJob(SystemTray::Job *job)
 {
     //finished all jobs? hide the mini progressbar
@@ -846,14 +818,6 @@ void Applet::createJobGroups()
         Plasma::ExtenderGroup *extenderGroup = new Plasma::ExtenderGroup(extender());
         extenderGroup->setName("jobGroup");
         initExtenderItem(extenderGroup);
-    }
-
-    if (!extender()->hasItem("completedJobsGroup")) {
-        Plasma::ExtenderGroup *completedJobsGroup = new Plasma::ExtenderGroup(extender());
-        completedJobsGroup->setName("completedJobsGroup");
-        completedJobsGroup->setTitle(i18n("Recently Completed Jobs"));
-        initExtenderItem(completedJobsGroup);
-        completedJobsGroup->expandGroup();
     }
 }
 
