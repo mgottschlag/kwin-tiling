@@ -229,6 +229,8 @@ void Notifications::createConfigurationInterface(KConfigDialog *parent)
         m_notificationUi.showJobs->setChecked(globalCg.readEntry("ShowJobs", true));
         m_notificationUi.showNotifications->setChecked(globalCg.readEntry("ShowNotifications", true));
 
+        m_notificationUi.autoHide->setChecked(config().readEntry("AutoHidePopup", true));
+
         connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
         connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
@@ -246,6 +248,8 @@ void Notifications::configAccepted()
     KConfigGroup globalCg = globalConfig();
     globalCg.writeEntry("ShowJobs", m_notificationUi.showJobs->isChecked());
     globalCg.writeEntry("ShowNotifications", m_notificationUi.showNotifications->isChecked());
+    KConfigGroup cg = config();
+    cg.writeEntry("AutoHidePopup", m_notificationUi.autoHide->isChecked());
 
     emit configNeedsSaving();
 }
