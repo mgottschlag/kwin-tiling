@@ -227,8 +227,7 @@ void PlasmaApp::cleanup()
         m_corona->saveLayout();
     }
 
-    //delete m_view; //should not be needed
-    delete m_corona; //should not be needed?
+    qDeleteAll(m_views);
 
     KGlobal::config()->sync();
 }

@@ -36,6 +36,7 @@
 
 static const int SUPPRESS_SHOW_TIMEOUT = 500; // Number of millis to prevent reshow of dashboard
 
+
 class ScreenSaverWidgetExplorer : public Plasma::WidgetExplorer
 {
 public:
