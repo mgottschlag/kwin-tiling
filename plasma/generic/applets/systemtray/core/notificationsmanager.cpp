@@ -28,7 +28,6 @@
 
 #include <plasma/applet.h>
 
-#include "extendertask.h"
 #include "job.h"
 #include "notification.h"
 #include "protocol.h"
@@ -47,7 +46,6 @@ class Manager::Private
 public:
     Private(Manager *manager)
         : q(manager),
-          extenderTask(0),
           jobTotals(new Job(manager)),
           jobProtocol(0),
           notificationProtocol(0)
@@ -58,7 +56,6 @@ public:
     void checkIdle();
 
     Manager *q;
-    Task *extenderTask;
     QList<Task *> tasks;
     QList<Notification*> notifications;
     QList<Job *> jobs;
@@ -80,18 +77,6 @@ Manager::Manager()
 Manager::~Manager()
 {
     delete d;
-}
-
-
-Task* Manager::extenderTask(bool createIfNecessary) const
-{
-    if (!d->extenderTask && createIfNecessary) {
-        d->extenderTask = new ExtenderTask(this);
-        connect(d->extenderTask, SIGNAL(destroyed(SystemTray::Task*)), this, SLOT(removeTask(SystemTray::Task*)));
-        connect(d->extenderTask, SIGNAL(changed(SystemTray::Task*)), this, SIGNAL(taskChanged(SystemTray::Task*)));
-    }
-
-    return d->extenderTask;
 }
 
 void Manager::registerNotificationProtocol()

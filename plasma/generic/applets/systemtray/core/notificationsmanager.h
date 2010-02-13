@@ -55,11 +55,6 @@ public:
     ~Manager();
 
     /**
-     * @return a list of all known Task instances
-     **/
-    Task* extenderTask(bool createIfNecessary = true) const;
-
-    /**
      * @return a list of all known Notification instances
      **/
     QList<Notification*> notifications() const;
