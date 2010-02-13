@@ -403,6 +403,8 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         m_notificationUi.showSystemServices->setChecked(globalCg.readEntry("ShowSystemServices", true));
         m_notificationUi.showHardware->setChecked(globalCg.readEntry("ShowHardware", true));
 
+        m_autoHideUi.setupUi(m_autoHideInterface.data());
+
         m_plasmoidTasksUi.setupUi(m_plasmoidTasksInterface.data());
 
         QAction *unlockAction = 0;
