@@ -172,14 +172,6 @@ void Applet::init()
     extender()->setEmptyExtenderMessage(i18n("No notifications and no jobs"));
     extender()->setWindowFlags(Qt::X11BypassWindowManagerHint);
 
-    //destroy any item in the systray, that doesn't belong to the completedJobsGroup, since running
-    //jobs and notifications can't really survive reboots anyways
-    foreach (Plasma::ExtenderItem *item, extender()->attachedItems()) {
-        if (!item->isGroup() && (item->group() != extender()->group("completedJobsGroup"))) {
-            item->destroy();
-        }
-    }
-
     configChanged();
 }
 
