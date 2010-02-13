@@ -135,6 +135,7 @@ void Notifications::init()
     extender()->setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     m_busyWidget = new ExtenderTaskBusyWidget(this, s_manager);
+    connect(m_busyWidget, SIGNAL(clicked()), this, SLOT(togglePopup()));
     QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(this);
     lay->addItem(m_busyWidget);
 
@@ -152,9 +153,7 @@ void Notifications::configChanged()
     }
 
     KConfigGroup globalCg = globalConfig();
-    bool createExtenderTask = false;
     if (globalCg.readEntry("ShowJobs", true)) {
-        createExtenderTask = true;
         createJobGroups();
 
         s_manager->registerJobProtocol();
@@ -171,7 +170,6 @@ void Notifications::configChanged()
     }
 
     if (globalCg.readEntry("ShowNotifications", true)) {
-        createExtenderTask = true;
         s_manager->registerNotificationProtocol();
         connect(s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
                 this, SLOT(addNotification(SystemTray::Notification*)), Qt::UniqueConnection);
