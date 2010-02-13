@@ -20,7 +20,6 @@
  ***************************************************************************/
 
 #include "notification.h"
-#include "task.h"
 
 #include <QImage>
 #include <QtCore/QTimer>
@@ -36,7 +35,6 @@ class Notification::Private
 public:
     Private()
         : timeout(0),
-          owner(0),
           hideTimer(0),
           expired(false),
           read(false)
@@ -50,7 +48,6 @@ public:
     QString summary;
     int timeout;
     QImage image;
-    Task *owner;
     QTimer *deleteTimer;
     QTimer *hideTimer;
     bool expired;

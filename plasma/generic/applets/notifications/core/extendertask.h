@@ -24,8 +24,6 @@
 
 #include <Plasma/BusyWidget>
 
-#include "../core/task.h"
-
 class QStyleOptionGraphicsItem;
 
 namespace Plasma
@@ -62,33 +60,6 @@ private:
     Plasma::Svg *m_svg;
     Plasma::PopupApplet *m_systray;
     const Manager *m_manager;
-};
-
-class ExtenderTask : public SystemTray::Task
-{
-    Q_OBJECT
-
-public:
-    ExtenderTask(const Manager *manager);
-    virtual ~ExtenderTask();
-
-    bool isValid() const;
-    bool isEmbeddable() const;
-    QString name() const;
-    QString typeId() const;
-    QIcon icon() const;
-    void setIcon(const QString &icon);
-    bool isHideable() const;
-
-signals:
-    void taskDeleted(QString typeId);
-
-protected:
-    QGraphicsWidget* createWidget(Plasma::Applet *applet);
-
-private:
-    class Private;
-    Private* const d;
 };
 
 }

@@ -67,7 +67,6 @@
 
 #include "../core/notificationsmanager.h"
 #include "../core/notification.h"
-#include "../core/task.h"
 #include "../core/extendertask.h"
 #include "../core/completedjobnotification.h"
 #include "jobwidget.h"

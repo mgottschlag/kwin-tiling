@@ -31,7 +31,6 @@
 #include "job.h"
 #include "notification.h"
 #include "protocol.h"
-#include "task.h"
 
 #include "../protocols/notifications/dbusnotificationprotocol.h"
 #include "../protocols/jobs/dbusjobprotocol.h"

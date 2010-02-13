@@ -19,7 +19,6 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#include "fdonotification.h"
 #include "fdoselectionmanager.h"
 #include "fdotask.h"
 #include "x11embedpainter.h"
@@ -149,7 +148,7 @@ public:
 
     QHash<WId, MessageRequest> messageRequests;
     QHash<WId, FdoTask*> tasks;
-    QHash<WId, FdoNotification*> notifications;
+    //QHash<WId, FdoNotification*> notifications;
 
     FdoSelectionManager *q;
     bool haveComposite;
@@ -383,14 +382,18 @@ void FdoSelectionManagerPrivate::createNotification(WId winId)
     QString message = QString::fromUtf8(request.message);
     message = QTextDocument(message).toHtml();
 
+    //FIXME: fix this probably by a service of the notifications dataengine
+/*
     FdoNotification *notification = new FdoNotification(winId, task);
     notification->setApplicationName(task->name());
     notification->setApplicationIcon(task->icon());
     notification->setMessage(message);
     notification->setTimeout(request.timeout);
+    
 
     q->connect(notification, SIGNAL(notificationDeleted(WId)), q, SLOT(cleanupNotification(WId)));
     emit q->notificationCreated(notification);
+*/
 }
 
 
@@ -401,15 +404,15 @@ void FdoSelectionManagerPrivate::handleCancelMessage(const XClientMessageEvent &
 
     if (messageRequests.contains(winId) && messageRequests[winId].messageId == messageId) {
         messageRequests.remove(winId);
-    } else if (notifications.contains(winId)) {
+    }/* else if (notifications.contains(winId)) {
         notifications.take(winId)->deleteLater();
-    }
+    }*/
 }
 
 
 void FdoSelectionManager::cleanupNotification(WId winId)
 {
-    d->notifications.remove(winId);
+    //d->notifications.remove(winId);
 }
 
 }
