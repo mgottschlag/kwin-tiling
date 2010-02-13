@@ -146,7 +146,7 @@ void ItemView::setScrollPositionFromDragPosition(const QPointF &point)
     const qreal xRatio = point.x() / size().width();
     const qreal yRatio = point.y() / size().height();
 
-    QPointF newPos(-scrollPosition());
+    QPointF newPos(scrollPosition());
 
     if (size().width() < contentsSize().width()) {
         qreal newXPos = xRatio * (size().width() - contentsSize().width());
