@@ -120,6 +120,8 @@ Notifications::~Notifications()
         disconnect(notification, 0, this, 0);
     }
 
+    //has to be deleted before the manager because it will access it
+    delete m_busyWidget;
     --s_managerUsage;
     if (s_managerUsage < 1) {
         delete s_manager;
