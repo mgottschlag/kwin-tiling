@@ -58,22 +58,9 @@
 #include <Plasma/WindowEffects>
 
 #include "config.h"
-#ifdef HAVE_LIBXSS      // Idle detection.
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/extensions/scrnsaver.h>
-#include <fixx11h.h>
-#endif // HAVE_LIBXSS
 
 #include "../core/manager.h"
-#include "../core/notification.h"
-#include "../core/completedjobnotification.h"
-#include "jobwidget.h"
-#include "jobtotalswidget.h"
-#include "notificationscroller.h"
-#include "notificationstack.h"
 #include "taskarea.h"
-#include "stackdialog.h"
 
 namespace SystemTray
 {
@@ -88,12 +75,7 @@ int Applet::s_managerUsage = 0;
 Applet::Applet(QObject *parent, const QVariantList &arguments)
     : Plasma::PopupApplet(parent, arguments),
       m_taskArea(0),
-      m_background(0),
-      m_jobSummaryWidget(0),
-      m_notificationStack(0),
-      m_notificationStackDialog(0),
-      m_standaloneJobSummaryWidget(0),
-      m_standaloneJobSummaryDialog(0)
+      m_background(0)
 {
     if (!s_manager) {
         s_manager = new SystemTray::Manager();
@@ -137,18 +119,12 @@ Applet::~Applet()
         delete task->widget(this, false);
     }
 
-    foreach (Notification *notification, s_manager->notifications()) {
-        // we don't want a destroyed managed after the destruction of manager
-        disconnect(notification, 0, this, 0);
-    }
-
     --s_managerUsage;
     if (s_managerUsage < 1) {
         delete s_manager;
         s_manager = 0;
         s_managerUsage = 0;
     }
-    delete m_notificationStackDialog;
 }
 
 void Applet::init()
@@ -166,9 +142,6 @@ void Applet::init()
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
             this, SLOT(checkSizes()));
-
-    extender()->setEmptyExtenderMessage(i18n("No notifications and no jobs"));
-    extender()->setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     configChanged();
 }
@@ -202,88 +175,10 @@ void Applet::configChanged()
 
     m_shownCategories.insert(Task::UnknownCategory);
 
-    if (cg.readEntry("AutoHidePopup", true)) {
-        m_autoHideTimeout = 6000;
-    } else {
-        m_autoHideTimeout = 0;
-    }
-
-    KConfigGroup globalCg = globalConfig();
-    bool createExtenderTask = false;
-    if (globalCg.readEntry("ShowJobs", false)) {
-        createExtenderTask = true;
-        createJobGroups();
-
-        s_manager->registerJobProtocol();
-        connect(s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
-                this, SLOT(addJob(SystemTray::Job*)), Qt::UniqueConnection);
-        connect(s_manager, SIGNAL(jobRemoved(SystemTray::Job*)),
-                this, SLOT(finishJob(SystemTray::Job*)), Qt::UniqueConnection);
-    } else {
-        s_manager->unregisterJobProtocol();
-        disconnect(s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
-                   this, SLOT(addJob(SystemTray::Job*)));
-        disconnect(s_manager, SIGNAL(jobRemoved(SystemTray::Job*)),
-                   this, SLOT(finishJob(SystemTray::Job*)));
-    }
-
-    if (globalCg.readEntry("ShowNotifications", false)) {
-        createExtenderTask = true;
-        s_manager->registerNotificationProtocol();
-        connect(s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
-                this, SLOT(addNotification(SystemTray::Notification*)), Qt::UniqueConnection);
-    } else {
-        s_manager->unregisterNotificationProtocol();
-        disconnect(s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
-                   this, SLOT(addNotification(SystemTray::Notification*)));
-    }
-
-
     s_manager->loadApplets(cg, this);
     m_taskArea->syncTasks(s_manager->tasks());
-    initExtenderTask(createExtenderTask);
     checkSizes();
     setTaskAreaGeometry();
-}
-
-void Applet::initExtenderTask(bool create)
-{
-    if (create) {
-        extender(); // make sure it exists
-        m_taskArea->addTask(s_manager->extenderTask());
-    } else if (s_manager->extenderTask(false)) {
-        m_taskArea->removeTask(s_manager->extenderTask());
-        QGraphicsWidget *widget = s_manager->extenderTask()->widget(this, false);
-        if (widget) {
-            widget->deleteLater();
-        }
-    }
-}
-
-void Applet::syncNotificationBarNeeded()
-{
-    if (!s_manager) {
-        return;
-    }
-
-    if (s_manager->notifications().count() > 0) {
-        if (!extender()->item("notifications")) {
-            Plasma::ExtenderItem *extenderItem = new Plasma::ExtenderItem(extender());
-            extenderItem->config().writeEntry("type", "notification");
-            extenderItem->setName("notifications");
-            extenderItem->setTitle(i18n("Notifications"));
-            extenderItem->setIcon("dialog-information");
-            extenderItem->showCloseButton();
-
-            m_notificationScroller = new NotificationScroller(extenderItem);
-            connect(m_notificationScroller, SIGNAL(scrollerEmpty()), extenderItem, SLOT(destroy()));
-            extenderItem->setWidget(m_notificationScroller);
-            extenderItem->setExtender(extender());
-        }
-    } else if (extender()->item("notifications")) {
-        //don't let him in the config file
-        extender()->item("notifications")->destroy();
-    }
 }
 
 
@@ -503,16 +398,10 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
 
         m_notificationUi.setupUi(m_notificationInterface.data());
 
-        m_notificationUi.showJobs->setChecked(globalCg.readEntry("ShowJobs", false));
-        m_notificationUi.showNotifications->setChecked(globalCg.readEntry("ShowNotifications", false));
-
         m_notificationUi.showApplicationStatus->setChecked(globalCg.readEntry("ShowApplicationStatus", true));
         m_notificationUi.showCommunications->setChecked(globalCg.readEntry("ShowCommunications", true));
         m_notificationUi.showSystemServices->setChecked(globalCg.readEntry("ShowSystemServices", true));
         m_notificationUi.showHardware->setChecked(globalCg.readEntry("ShowHardware", true));
-
-        m_autoHideUi.setupUi(m_autoHideInterface.data());
-        m_autoHideUi.autoHide->setChecked(config().readEntry("AutoHidePopup", true));
 
         m_plasmoidTasksUi.setupUi(m_plasmoidTasksInterface.data());
 
@@ -617,11 +506,8 @@ void Applet::configAccepted()
     KConfigGroup cg = config();
     cg.writeEntry("hidden", hiddenTypes);
     cg.writeEntry("alwaysShown", alwaysShownTypes);
-    cg.writeEntry("AutoHidePopup", m_autoHideUi.autoHide->isChecked());
 
     KConfigGroup globalCg = globalConfig();
-    globalCg.writeEntry("ShowJobs", m_notificationUi.showJobs->isChecked());
-    globalCg.writeEntry("ShowNotifications", m_notificationUi.showNotifications->isChecked());
     globalCg.writeEntry("ShowApplicationStatus", m_notificationUi.showApplicationStatus->isChecked());
     globalCg.writeEntry("ShowCommunications", m_notificationUi.showCommunications->isChecked());
     globalCg.writeEntry("ShowSystemServices", m_notificationUi.showSystemServices->isChecked());
@@ -667,160 +553,6 @@ void Applet::addDefaultApplets()
             }
         }
         engines->unloadEngine("powermanagement");
-    }
-}
-
-void Applet::addNotification(Notification *notification)
-{
-    syncNotificationBarNeeded();
-
-    //At this point we are sure the pointer is valid
-    m_notificationScroller->addNotification(notification);
-
-    if (isPopupShowing()) {
-        return;
-    }
-
-    if (!m_notificationStack) {
-        m_notificationStack = new NotificationStack(this);
-        if (containment() && containment()->corona()) {
-            containment()->corona()->addOffscreenWidget(m_notificationStack);
-        }
-        m_notificationStackDialog = new StackDialog;
-        m_notificationStackDialog->setApplet(this);
-        m_notificationStackDialog->setNotificationStack(m_notificationStack);
-        connect(m_notificationStack, SIGNAL(stackEmpty()), m_notificationStackDialog, SLOT(hide()));
-
-        if (m_standaloneJobSummaryDialog) {
-            m_notificationStackDialog->setWindowToTile(m_standaloneJobSummaryDialog);
-        }
-    }
-
-
-    m_notificationStack->addNotification(notification);
-    m_notificationStackDialog->syncToGraphicsWidget();
-
-    if (containment() && containment()->corona()) {
-        m_notificationStackDialog->move(containment()->corona()->popupPosition(this, m_notificationStackDialog->size()));
-
-        if (!m_notificationStackDialog->isVisible()) {
-            m_notificationStack->setCurrentNotification(notification);
-        }
-
-        m_notificationStackDialog->show();
-        Plasma::WindowEffects::slideWindow(m_notificationStackDialog, location());
-    }
-}
-
-void Applet::addJob(Job *job)
-{
-    Plasma::ExtenderItem *extenderItem = new Plasma::ExtenderItem(extender());
-    extenderItem->config().writeEntry("type", "job");
-    extenderItem->setWidget(new JobWidget(job, extenderItem));
-
-    extenderItem->setGroup(extender()->group("jobGroup"));
-
-    //show the tiny standalone overview
-    if (!m_standaloneJobSummaryWidget) {
-        m_standaloneJobSummaryDialog = new Plasma::Dialog();
-        if (m_notificationStackDialog) {
-            m_notificationStackDialog->setWindowToTile(m_standaloneJobSummaryDialog);
-        }
-
-        KWindowSystem::setOnAllDesktops(m_standaloneJobSummaryDialog->winId(), true);
-
-        m_standaloneJobSummaryWidget = new JobTotalsWidget(s_manager->jobTotals(), this);
-        if (containment() && containment()->corona()) {
-            containment()->corona()->addOffscreenWidget(m_standaloneJobSummaryWidget);
-        }
-        m_standaloneJobSummaryDialog->setGraphicsWidget(m_standaloneJobSummaryWidget);
-        //FIXME:sizing hack and layout issues..
-        m_standaloneJobSummaryWidget->resize(m_standaloneJobSummaryWidget->size().width(), 32);
-    }
-
-    m_standaloneJobSummaryDialog->syncToGraphicsWidget();
-
-    if (containment() && containment()->corona()) {
-        m_standaloneJobSummaryDialog->move(containment()->corona()->popupPosition(this, m_standaloneJobSummaryDialog->size()));
-        m_standaloneJobSummaryDialog->show();
-        KWindowSystem::setState(m_standaloneJobSummaryDialog->winId(), NET::SkipTaskbar|NET::SkipPager);
-        KWindowSystem::raiseWindow(m_standaloneJobSummaryDialog->winId());
-        Plasma::WindowEffects::slideWindow(m_standaloneJobSummaryDialog, location());
-    }
-}
-
-void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
-{
-    if (extenderItem->name() == "jobGroup") {
-        m_jobSummaryWidget = new JobTotalsWidget(s_manager->jobTotals(), extenderItem);
-        extenderItem->setWidget(m_jobSummaryWidget);
-        return;
-    }
-
-    if (extenderItem->config().readEntry("type", "") == "job") {
-        extenderItem->setWidget(new JobWidget(0, extenderItem));
-    //unknown type, this should never happen
-    } else {
-        extenderItem->destroy();
-    }
-
-}
-
-void Applet::popupEvent(bool show)
-{
-    //decide about showing the tiny progressbar or not
-    if (m_standaloneJobSummaryDialog) {
-        if (show || !s_manager->jobs().isEmpty()) {
-            m_standaloneJobSummaryDialog->setVisible(!show);
-            if (!show) {
-                KWindowSystem::raiseWindow(m_standaloneJobSummaryDialog->winId());
-                KWindowSystem::setState(m_standaloneJobSummaryDialog->winId(), NET::SkipTaskbar|NET::SkipPager);
-            }
-        }
-    }
-
-    if (m_notificationStackDialog && show) {
-        m_notificationStackDialog->hide();
-    }
-
-    Plasma::ExtenderGroup * jobGroup = extender()->group("jobGroup");
-    if (!jobGroup) {
-        return;
-    }
-
-    foreach (Plasma::ExtenderItem *item, jobGroup->items()) {
-        JobWidget *job = dynamic_cast<JobWidget *>(item->widget());
-        if (job) {
-            job->poppedUp(show);
-        }
-    }
-}
-
-void Applet::finishJob(SystemTray::Job *job)
-{
-    //finished all jobs? hide the mini progressbar
-    if (m_standaloneJobSummaryDialog && s_manager->jobs().isEmpty()) {
-        m_standaloneJobSummaryDialog->hide();
-    }
-
-    //create a fake notification
-    CompletedJobNotification *notification = new CompletedJobNotification(this);
-    notification->setJob(job);
-    s_manager->addNotification(notification);
-}
-
-void Applet::open(const QString &url)
-{
-    //kDebug() << "open " << url;
-    QProcess::startDetached("kde-open", QStringList() << url);
-}
-
-void Applet::createJobGroups()
-{
-    if (!extender()->hasItem("jobGroup")) {
-        Plasma::ExtenderGroup *extenderGroup = new Plasma::ExtenderGroup(extender());
-        extenderGroup->setName("jobGroup");
-        initExtenderItem(extenderGroup);
     }
 }
 

@@ -25,7 +25,7 @@
 
 #include <plasma/popupapplet.h>
 
-#include "ui_protocols.h"
+#include "ui_notificationsconfig.h"
 
 
 namespace Plasma
@@ -95,7 +95,7 @@ private:
 
     ExtenderTaskBusyWidget *m_busyWidget;
 
-    Ui::ProtocolsConfig m_notificationUi;
+    Ui::NotificationsConfig m_notificationUi;
 };
 
 }

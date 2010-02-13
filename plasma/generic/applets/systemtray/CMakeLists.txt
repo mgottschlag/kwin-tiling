@@ -109,7 +109,7 @@ set(notifications_SRCS
     )
 
 kde4_add_ui_files(notifications_SRCS
-                  ui/protocols.ui)
+                  ui/notificationsconfig.ui)
 
 
 #include (CheckLibraryExists)

@@ -228,7 +228,6 @@ void Manager::checkIdle()
 void Manager::Private::setupProtocol(Protocol *protocol)
 {
     connect(protocol, SIGNAL(jobCreated(SystemTray::Job*)), q, SLOT(addJob(SystemTray::Job*)));
-    connect(protocol, SIGNAL(taskCreated(SystemTray::Task*)), q, SLOT(addTask(SystemTray::Task*)));
     connect(protocol, SIGNAL(notificationCreated(SystemTray::Notification*)),
             q, SLOT(addNotification(SystemTray::Notification*)));
     protocol->init();

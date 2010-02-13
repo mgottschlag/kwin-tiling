@@ -38,19 +38,11 @@ class TabBar;
 class Dialog;
 }
 
-class NotificationWidget;
-class StackDialog;
-
 namespace SystemTray
 {
 
-class Job;
-class JobTotalsWidget;
 class Manager;
-class Notification;
 class TaskArea;
-class NotificationScroller;
-class NotificationStack;
 
 class Applet : public Plasma::PopupApplet
 {
@@ -69,7 +61,6 @@ public:
 protected:
     void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
     void createConfigurationInterface(KConfigDialog *parent);
-    void initExtenderItem(Plasma::ExtenderItem *extenderItem);
     void configChanged();
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event) { Q_UNUSED(event); }
@@ -77,22 +68,13 @@ protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) { Q_UNUSED(event); }
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) { Q_UNUSED(event); }
 
-    void popupEvent(bool show);
-
 private slots:
     void configAccepted();
     void propogateSizeHintChange(Qt::SizeHint which);
     void checkSizes();
-    void addNotification(SystemTray::Notification *notification);
-    void addJob(SystemTray::Job *job);
-    void finishJob(SystemTray::Job *job);
-    void open(const QString &url);
     void addDefaultApplets();
-    void syncNotificationBarNeeded();
 
 private:
-    void createJobGroups();
-    void initExtenderTask(bool create);
     void setTaskAreaGeometry();
 
     static SystemTray::Manager *s_manager;
@@ -108,14 +90,6 @@ private:
 
     Plasma::FrameSvg *m_background;
     Plasma::Svg *m_icons;
-    JobTotalsWidget *m_jobSummaryWidget;
-    int m_autoHideTimeout;
-
-    NotificationScroller *m_notificationScroller;
-    NotificationStack *m_notificationStack;
-    StackDialog *m_notificationStackDialog;
-    JobTotalsWidget *m_standaloneJobSummaryWidget;
-    Plasma::Dialog *m_standaloneJobSummaryDialog;
 
     Ui::ProtocolsConfig m_notificationUi;
     Ui::AutoHideConfig m_autoHideUi;
