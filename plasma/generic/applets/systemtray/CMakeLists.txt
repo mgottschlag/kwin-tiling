@@ -79,3 +79,51 @@ target_link_libraries(plasma_applet_systemtray ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_
 
 install(TARGETS plasma_applet_systemtray DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-applet-systemtray.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+
+###################################################################################
+# Notifications: to be pulled out once separation is complete
+
+set(notifications_SRCS
+
+    core/extendertask.cpp
+    core/notificationsmanager.cpp
+    core/protocol.cpp
+    core/task.cpp
+    core/notification.cpp
+    core/completedjobnotification.cpp
+    core/job.cpp
+
+    protocols/notifications/dbusnotificationprotocol.cpp
+    protocols/notifications/dbusnotification.cpp
+
+    protocols/jobs/dbusjobprotocol.cpp
+    protocols/jobs/dbusjob.cpp
+
+    ui/notifications.cpp
+    ui/notificationwidget.cpp
+    ui/jobtotalswidget.cpp
+    ui/jobwidget.cpp
+    ui/notificationscroller.cpp
+    ui/notificationstack.cpp
+    ui/stackdialog.cpp
+    )
+
+kde4_add_ui_files(notifications_SRCS
+                  ui/protocols.ui)
+
+
+#include (CheckLibraryExists)
+#check_library_exists (Xss XScreenSaverQueryInfo "" HAVE_LIBXSS)
+#configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+#IF (HAVE_LIBXSS)
+#   SET (IDLE_DETECTION_LIB "Xss")
+#ENDIF (HAVE_LIBXSS)
+
+
+
+kde4_add_plugin(plasma_applet_notifications ${notifications_SRCS})
+include_directories(${CMAKE_SOURCE_DIR})
+target_link_libraries(plasma_applet_notifications ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_LIBS} ${X11_LIBRARIES} ${X11_Xrender_LIB} ${X11_Xfixes_LIB} ${X11_Xdamage_LIB} ${X11_Xcomposite_LIB} ${KDE4_SOLID_LIBS} ${IDLE_DETECTION_LIB})
+
+install(TARGETS plasma_applet_notifications DESTINATION ${PLUGIN_INSTALL_DIR})
+install(FILES plasma-applet-notifications.desktop DESTINATION ${SERVICES_INSTALL_DIR})
