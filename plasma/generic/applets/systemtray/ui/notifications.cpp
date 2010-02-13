@@ -71,6 +71,7 @@
 #include "../core/notificationsmanager.h"
 #include "../core/notification.h"
 #include "../core/task.h"
+#include "../core/extendertask.h"
 #include "../core/completedjobnotification.h"
 #include "jobwidget.h"
 #include "jobtotalswidget.h"
@@ -133,6 +134,10 @@ void Notifications::init()
     extender()->setEmptyExtenderMessage(i18n("No notifications and no jobs"));
     extender()->setWindowFlags(Qt::X11BypassWindowManagerHint);
 
+    m_busyWidget = new ExtenderTaskBusyWidget(this, s_manager);
+    QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(this);
+    lay->addItem(m_busyWidget);
+
     configChanged();
 }
 
@@ -174,26 +179,6 @@ void Notifications::configChanged()
         s_manager->unregisterNotificationProtocol();
         disconnect(s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
                    this, SLOT(addNotification(SystemTray::Notification*)));
-    }
-
-
-    //FIXME: create the extender task as main widget
-    initExtenderTask(true);
-}
-
-void Notifications::initExtenderTask(bool create)
-{
-    if (create) {
-        extender(); // make sure it exists
-        if (layout()) {
-            QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(layout());
-            lay->addItem(s_manager->extenderTask()->widget(this, true));
-        }
-    } else if (s_manager->extenderTask(false)) {
-        QGraphicsWidget *widget = s_manager->extenderTask()->widget(this, false);
-        if (widget) {
-            widget->deleteLater();
-        }
     }
 }
 

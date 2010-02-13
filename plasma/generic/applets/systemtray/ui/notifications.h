@@ -47,6 +47,7 @@ class Manager;
 class Notification;
 class NotificationScroller;
 class NotificationStack;
+class ExtenderTaskBusyWidget;
 
 class Notifications : public Plasma::PopupApplet
 {
@@ -76,7 +77,6 @@ private slots:
 
 private:
     void createJobGroups();
-    void initExtenderTask(bool create);
 
     static SystemTray::Manager *s_manager;
     static int s_managerUsage;
@@ -92,6 +92,8 @@ private:
     StackDialog *m_notificationStackDialog;
     JobTotalsWidget *m_standaloneJobSummaryWidget;
     Plasma::Dialog *m_standaloneJobSummaryDialog;
+
+    ExtenderTaskBusyWidget *m_busyWidget;
 
     Ui::ProtocolsConfig m_notificationUi;
 };
