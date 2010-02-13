@@ -210,7 +210,7 @@ void Applet::configChanged()
 
     KConfigGroup globalCg = globalConfig();
     bool createExtenderTask = false;
-    if (globalCg.readEntry("ShowJobs", true)) {
+    if (globalCg.readEntry("ShowJobs", false)) {
         createExtenderTask = true;
         createJobGroups();
 
@@ -227,7 +227,7 @@ void Applet::configChanged()
                    this, SLOT(finishJob(SystemTray::Job*)));
     }
 
-    if (globalCg.readEntry("ShowNotifications", true)) {
+    if (globalCg.readEntry("ShowNotifications", false)) {
         createExtenderTask = true;
         s_manager->registerNotificationProtocol();
         connect(s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
@@ -503,8 +503,8 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
 
         m_notificationUi.setupUi(m_notificationInterface.data());
 
-        m_notificationUi.showJobs->setChecked(globalCg.readEntry("ShowJobs", true));
-        m_notificationUi.showNotifications->setChecked(globalCg.readEntry("ShowNotifications", true));
+        m_notificationUi.showJobs->setChecked(globalCg.readEntry("ShowJobs", false));
+        m_notificationUi.showNotifications->setChecked(globalCg.readEntry("ShowNotifications", false));
 
         m_notificationUi.showApplicationStatus->setChecked(globalCg.readEntry("ShowApplicationStatus", true));
         m_notificationUi.showCommunications->setChecked(globalCg.readEntry("ShowCommunications", true));
@@ -653,6 +653,9 @@ void Applet::addDefaultApplets()
     QStringList applets = s_manager->applets(this);
     if (!applets.contains("notifier")) {
         s_manager->addApplet("notifier", this);
+    }
+    if (!applets.contains("notifications")) {
+        s_manager->addApplet("notifications", this);
     }
     if (!applets.contains("battery")) {
         Plasma::DataEngineManager *engines = Plasma::DataEngineManager::self();
