@@ -137,6 +137,8 @@ void Notifications::init()
     m_busyWidget = new ExtenderTaskBusyWidget(this, s_manager);
     connect(m_busyWidget, SIGNAL(clicked()), this, SLOT(togglePopup()));
     QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(this);
+    setContentsMargins(0, 0, 0, 0);
+    lay->setContentsMargins(0, 0, 0, 0);
     lay->addItem(m_busyWidget);
 
     configChanged();
