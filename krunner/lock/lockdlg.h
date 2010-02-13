@@ -63,7 +63,6 @@ private Q_SLOTS:
     void slotOK();
     void slotActivity();
     void handleVerify();
-    void slotNotifierDestroyed();
 
 private:
     void capsLocked();

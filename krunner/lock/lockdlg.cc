@@ -318,6 +318,7 @@ void PasswordDlg::reapVerify()
 {
     sNot->setEnabled( false );
     sNot->deleteLater();
+    sNot = 0;
     ::close( sFd );
     int status;
     while (::waitpid( sPid, &status, 0 ) < 0)
@@ -436,11 +437,11 @@ void PasswordDlg::cantCheck()
 //
 void PasswordDlg::gplugStart()
 {
-    if (sNot)
-        return;
     int sfd[2];
     char fdbuf[16];
 
+    if (sNot)
+        return;
     if (::socketpair(AF_LOCAL, SOCK_STREAM, 0, sfd)) {
         cantCheck();
         return;
@@ -468,7 +469,6 @@ void PasswordDlg::gplugStart()
     sFd = sfd[0];
     sNot = new QSocketNotifier(sFd, QSocketNotifier::Read, this);
     connect(sNot, SIGNAL(activated(int)), SLOT(handleVerify()));
-    connect(sNot, SIGNAL(destroyed()), SLOT(slotNotifierDestroyed()));
 }
 
 void PasswordDlg::gplugChanged()
@@ -653,11 +653,6 @@ void PasswordDlg::slotSessionActivated()
     LockListViewItem *itm = (LockListViewItem *)lv->currentItem();
     if (itm && itm->vt > 0)
         KDisplayManager().switchVT( itm->vt );
-}
-
-void PasswordDlg::slotNotifierDestroyed()
-{
-    sNot = 0;
 }
 
 void PasswordDlg::capsLocked()
