@@ -35,20 +35,27 @@ void NotificationAction::start()
 
     const QStringList dest = destination().split(' ');
 
+    uint id = 0;
     if (dest.count() >  1 && !dest[1].toInt()) {
         setErrorText(i18n("Invalid destination: %1", destination()));
         setError(-2);
         emitResult();
         return;
+    } else if (dest.count() >  1) {
+        id = dest[1].toUInt();
     }
-
-    uint id = dest[1].toUInt();
 
     if (operationName() == "invokeAction") {
         //kDebug() << "invoking action on " << id;
         emit m_engine->ActionInvoked(id, parameters()["actionId"].toString());
     } else if (operationName() == "userClosed") {
         m_engine->CloseNotification(id);
+    } else if (operationName() == "createNotification") {
+        m_engine->createNotification(parameters().value("appName").toString(),
+                            parameters().value("appIcon").toString(),
+                            parameters().value("summary").toString(),
+                            parameters().value("body").toString(),
+                            parameters().value("timeout").toInt());
     }
 
     emitResult();

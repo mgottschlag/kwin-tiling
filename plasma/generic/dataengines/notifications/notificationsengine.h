@@ -53,6 +53,8 @@ public:
 
     QString GetServerInformation(QString& vendor, QString& version, QString& specVersion);
 
+    void createNotification(const QString &appName, const QString &appIcon, const QString &summary, const QString &body, int timeout);
+
 signals:
     void NotificationClosed( uint id, uint reason );
     void ActionInvoked( uint id, const QString& actionKey );

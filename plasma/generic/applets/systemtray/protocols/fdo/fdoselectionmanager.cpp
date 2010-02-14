@@ -32,6 +32,10 @@
 #include <QtGui/QTextDocument>
 #include <QtGui/QX11Info>
 
+#include <KIconLoader>
+
+#include <Plasma/DataEngine>
+#include <Plasma/DataEngineManager>
 
 #include <config-X11.h>
 
@@ -112,7 +116,9 @@ class FdoSelectionManagerPrivate
 {
 public:
     FdoSelectionManagerPrivate(FdoSelectionManager *q)
-        : q(q), haveComposite(false)
+        : q(q),
+          notificationsEngine(0),
+          haveComposite(false)
     {
         display = QX11Info::display();
         selectionAtom = XInternAtom(display, "_NET_SYSTEM_TRAY_S" + QByteArray::number(QX11Info::appScreen()), false);
@@ -148,9 +154,10 @@ public:
 
     QHash<WId, MessageRequest> messageRequests;
     QHash<WId, FdoTask*> tasks;
-    //QHash<WId, FdoNotification*> notifications;
 
     FdoSelectionManager *q;
+    Plasma::DataEngine *notificationsEngine;
+
     bool haveComposite;
 };
 
@@ -382,18 +389,25 @@ void FdoSelectionManagerPrivate::createNotification(WId winId)
     QString message = QString::fromUtf8(request.message);
     message = QTextDocument(message).toHtml();
 
-    //FIXME: fix this probably by a service of the notifications dataengine
-/*
-    FdoNotification *notification = new FdoNotification(winId, task);
-    notification->setApplicationName(task->name());
-    notification->setApplicationIcon(task->icon());
-    notification->setMessage(message);
-    notification->setTimeout(request.timeout);
-    
+    if (!notificationsEngine) {
+        notificationsEngine = Plasma::DataEngineManager::self()->loadEngine("notifications");
+    }
+    //FIXME: who is the source in this case?
+    Plasma::Service *service = notificationsEngine->serviceForSource("notification");
+    KConfigGroup op = service->operationDescription("createNotification");
 
-    q->connect(notification, SIGNAL(notificationDeleted(WId)), q, SLOT(cleanupNotification(WId)));
-    emit q->notificationCreated(notification);
-*/
+    if (op.isValid()) {
+        op.writeEntry("appName", task->name());
+        //FIXME: find a way to pass icons trough here
+        op.writeEntry("appIcon", task->name());
+
+        //op.writeEntry("summary", task->name());
+        op.writeEntry("body", message);
+        op.writeEntry("timeout", (int)request.timeout);
+        service->startOperationCall(op);
+    } else {
+        kDebug() << "invalid operation";
+    }
 }
 
 
@@ -404,15 +418,8 @@ void FdoSelectionManagerPrivate::handleCancelMessage(const XClientMessageEvent &
 
     if (messageRequests.contains(winId) && messageRequests[winId].messageId == messageId) {
         messageRequests.remove(winId);
-    }/* else if (notifications.contains(winId)) {
-        notifications.take(winId)->deleteLater();
-    }*/
+    }
 }
 
-
-void FdoSelectionManager::cleanupNotification(WId winId)
-{
-    //d->notifications.remove(winId);
-}
 
 }

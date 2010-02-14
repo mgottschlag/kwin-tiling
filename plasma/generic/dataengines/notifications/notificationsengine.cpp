@@ -248,6 +248,20 @@ QString NotificationsEngine::GetServerInformation(QString& vendor, QString& vers
     return "Plasma";
 }
 
+void NotificationsEngine::createNotification(const QString &appName, const QString &appIcon, const QString &summary, const QString &body, int timeout)
+{
+    const QString source = QString("notification %1").arg(++m_nextId);
+    Plasma::DataEngine::Data notificationData;
+    notificationData.insert("id", QString::number(m_nextId));
+    notificationData.insert("appName", appName);
+    notificationData.insert("appIcon", appIcon);
+    notificationData.insert("summary", summary);
+    notificationData.insert("body", body);
+    notificationData.insert("expireTimeout", timeout);
+
+    setData(source, notificationData );
+}
+
 K_EXPORT_PLASMA_DATAENGINE(notifications, NotificationsEngine)
 
 #include "notificationsengine.moc"

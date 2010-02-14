@@ -57,7 +57,6 @@ protected:
 private slots:
     void initSelection();
     void cleanupTask(WId winId);
-    void cleanupNotification(WId winId);
 
 private:
     friend class FdoSelectionManagerPrivate;

@@ -9,4 +9,23 @@
   </group>
   <group name="userClosed">
   </group>
+
+  <group name="createNotification">
+    <entry name="appName" type="String">
+      <label>The name of the notifying application</label>
+    </entry>
+    <entry name="appIcon" type="String">
+      <label>The name of the icon of the notifying application</label>
+    </entry>
+    <entry name="summary" type="String">
+      <label>Summary of the notificaton text</label>
+    </entry>
+    <entry name="body" type="String">
+      <label>The whole text of the notification</label>
+    </entry>
+    <entry name="timeout" type="Integer">
+      <label>The timeout after which the notification will be closed</label>
+    </entry>
+  </group>
+
 </kcfg>
