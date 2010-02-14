@@ -1,3 +1,10 @@
+2010-02-14  Richard Dale  <richard.j.dale@gmail.com>
+
+* Special case the constructors of the new Plasma widgets so that they can be
+passed a PlasmaScripting::Applet as parent
+* Fixed the dialog handling so that it uses the standardConfigurationDialog()
+and addStandardConfigurationPages() methods
+ 
 2009-08-07  Richard Dale  <richard.j.dale@gmail.com>
 * Fixed typo in the type signature of the initExtenderItem() slot. Thanks to
 David Palacio for reporting the bug

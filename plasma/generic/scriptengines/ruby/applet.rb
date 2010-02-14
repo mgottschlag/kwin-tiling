@@ -1,5 +1,5 @@
 =begin
- *   Copyright 2008 by Richard Dale <richard.j.dale@gmail.com>
+ *   Copyright 2008-2010 by Richard Dale <richard.j.dale@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -72,7 +72,7 @@ module PlasmaScripting
     end
 
     def initExtenderItem(item)
-       puts "Missing implementation of initExtenderItem in the applet " \
+      puts "Missing implementation of initExtenderItem in the applet " \
                    "#{item.config.readEntry('SourceAppletPluginName', '')}" \
                    "!\n Any applet that uses extenders should implement initExtenderItem to " \
                    "instantiate a widget."
@@ -109,20 +109,6 @@ module PlasmaScripting
     end
 
     def showConfigurationInterface
-        dialogId = "#{@applet_script.applet.id}settings#{@applet_script.applet.name}"
-        windowTitle = KDE::i18nc("@title:window", "%s Settings" % @applet_script.applet.name)
-        @nullManager = KDE::ConfigSkeleton.new(nil)
-        @dialog = KDE::ConfigDialog.new(nil, dialogId, @nullManager)
-        @dialog.faceType = KDE::PageDialog::Auto
-        @dialog.windowTitle = windowTitle
-        @dialog.setAttribute(Qt::WA_DeleteOnClose, true)
-        createConfigurationInterface(@dialog)
-        # TODO: would be nice to not show dialog if there are no pages added?
-        # Don't connect to the deleteLater() slot in Ruby as it causes crashes
-        # connect(@dialog, SIGNAL(:finished), @nullManager, SLOT(:deleteLater))
-        # TODO: Apply button does not correctly work for now, so do not show it
-        @dialog.showButton(KDE::Dialog::Apply, false)
-        @dialog.show
     end
 
     def dataEngine(engine)
@@ -220,7 +206,10 @@ module PlasmaScriptengineRuby
     end
 
     def showConfigurationInterface
-      @applet_script.showConfigurationInterface
+      dialog = standardConfigurationDialog()
+      @applet_script.createConfigurationInterface(dialog)
+      addStandardConfigurationPages(dialog)
+      dialog.show
     end
 
     protected
@@ -416,6 +405,16 @@ module Plasma
     end
   end
 
+  class ItemBackground < Qt::Base
+    def initialize(parent = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
   class Label < Qt::Base
     def initialize(parent = nil)
       if parent.kind_of?(PlasmaScripting::Applet)
@@ -480,6 +479,16 @@ module Plasma
     def initialize(parent = nil)
       if parent.kind_of?(PlasmaScripting::Applet)
         super(parent.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
+  class Separator < Qt::Base
+    def initialize(parent = nil, wFlags = 0)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet, wFlags)
       else
         super
       end
@@ -577,7 +586,7 @@ module Plasma
       end
     end
   end
-
+  
   class ToolTipManager < Qt::Base
     def setContent(widget, data)
       if widget.kind_of?(PlasmaScripting::Applet)
@@ -658,7 +667,7 @@ module Plasma
     end
   end
 
-  class WebView < Qt::Base
+  class VideoWidget < Qt::Base
     def initialize(parent = nil)
       if parent.kind_of?(PlasmaScripting::Applet)
         super(parent.applet_script.applet)
@@ -668,7 +677,7 @@ module Plasma
     end
   end
 
-  class VideoWidget < Qt::Base
+  class WebView < Qt::Base
     def initialize(parent = nil)
       if parent.kind_of?(PlasmaScripting::Applet)
         super(parent.applet_script.applet)
