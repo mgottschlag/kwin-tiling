@@ -39,12 +39,12 @@ endif(X11_Xinerama_FOUND)
 #TODO needs porting to what changed in KDE4 + please also rethink if it's really needed/useful to provide a duplicated nav-hierachy for colors, fonts, etc. - thx :)
 #add_subdirectory( kthememanager )
 
+# TODO needs porting
+#add_subdirectory( smartcard )
+
 add_subdirectory( hardware )
 
 if(FONTCONFIG_FOUND AND FREETYPE_FOUND AND NOT WIN32)
     add_subdirectory( fonts )
     add_subdirectory( kfontinst )
 endif(FONTCONFIG_FOUND AND FREETYPE_FOUND AND NOT WIN32)
-
-message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(KSMCARD_SUBDIR)")
-
