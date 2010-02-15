@@ -82,6 +82,11 @@ Name[x-test]=xxNotificationsxx
 Name[zh_CN]=通知
 Name[zh_TW]=通知
 Comment=Display notifications and jobs
+Comment[pt]=Mostrar as notificações e tarefas
+Comment[pt_BR]=Exibe notificações e tarefas
+Comment[sv]=Visa underrättelser och jobb
+Comment[uk]=Показ сповіщень і завдань
+Comment[x-test]=xxDisplay notifications and jobsxx
 
 Icon=dialog-information
 Type=Service
