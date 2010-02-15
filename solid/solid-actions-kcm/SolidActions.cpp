@@ -67,7 +67,7 @@ SolidActions::SolidActions(QWidget* parent, const QVariantList&)
 
     // Prepare + connect up with Edit dialog
     editUi = new ActionEditor(this);
-    connect( editUi, SIGNAL(okClicked()), this, SLOT(acceptActionChanges()) );
+    connect( editUi, SIGNAL(accepted()), this, SLOT(acceptActionChanges()) );
 
     // Prepare + connect up add action dialog
     addDialog = new KDialog(this);
@@ -148,20 +148,15 @@ void SolidActions::editAction()
     if( !selectedItem ) {
         return;
     }
-    // Set all the text appropriately
-    editUi->ui.IbActionIcon->setIcon( selectedItem->icon() );
-    editUi->ui.LeActionFriendlyName->setText( selectedItem->name() );
-    editUi->ui.LeActionCommand->setPath( selectedItem->exec() );
-    editUi->setCaption( i18n("Editing Action %1", selectedItem->name()) ); // Set a friendly i18n caption
-    // Import the device conditions
-    Solid::Predicate item = selectedItem->predicate();
+
     // We should error out here if we have to
-    if( !item.isValid() ) {
+    if( !selectedItem->predicate().isValid() ) {
         KMessageBox::error(this, i18n("It appears that the predicate for this action is not valid."), i18n("Error parsing device conditions"));
         return;
     }
-    editUi->setPredicate( item );
+
     // Display us!
+    editUi->setActionToEdit( selectedItem );
     editUi->setWindowIcon( windowIcon() );
     editUi->show();
 }
@@ -194,30 +189,6 @@ void SolidActions::fillActionsList()
 
 void SolidActions::acceptActionChanges()
 {
-    ActionItem * selectedItem = selectedAction();
-    QString iconName = editUi->ui.IbActionIcon->icon();
-    QString actionName = editUi->ui.LeActionFriendlyName->text();
-    QString command = editUi->ui.LeActionCommand->text();
-    QString predicate = editUi->predicateString(); // retrieve the predicate
-    // We need to ensure that they are all valid before applying
-    if (iconName.isEmpty() || actionName.isEmpty() || command.isEmpty() || !Solid::Predicate::fromString(predicate).isValid()) {
-        editUi->show();
-        KMessageBox::error(this, i18n("It appears that the action name, command, icon or condition are not valid.\nTherefore, changes will not be applied."), i18n("Invalid action"));
-        return;
-    }
-    // apply the changes
-    if (iconName != selectedItem->icon()) {  // Has the icon changed?
-        selectedItem->setIcon( editUi->ui.IbActionIcon->icon() ); // Write the change
-    }
-    if (actionName != selectedItem->name()) {  // Has the friendly name changed?
-        selectedItem->setName( editUi->ui.LeActionFriendlyName->text() ); // Write the change
-    }
-    if (command != selectedItem->exec()) {  // Has the command changed?
-        selectedItem->setExec( editUi->ui.LeActionCommand->text() ); // Write the change
-    }
-    if (predicate != selectedItem->predicate().toString() ) {  // Has it changed?
-        selectedItem->setPredicate( predicate ); // Write the change
-    }
     // Re-read the actions list to ensure changes are reflected
     KBuildSycocaProgressDialog::rebuildKSycoca(this);
     fillActionsList();

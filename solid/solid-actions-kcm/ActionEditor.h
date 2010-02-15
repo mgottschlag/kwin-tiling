@@ -22,6 +22,7 @@
 
 #include <KDialog>
 
+#include "ActionItem.h"
 #include "PredicateItem.h"
 #include "PredicateModel.h"
 #include "SolidActionData.h"
@@ -34,14 +35,17 @@ public:
      ActionEditor(QWidget *parent = 0);
     ~ActionEditor();
 
-    void setPredicate( Solid::Predicate predicate );
-    QString predicateString();
+    void setActionToEdit( ActionItem * item );
 
-    Ui::ActionEditor ui;
+public slots:
+    virtual void accept();
 
 private:
     SolidActionData * actionData();
+    QString predicateString();
 
+    Ui::ActionEditor ui;
+    ActionItem * activeItem;
     PredicateItem * topItem;
     PredicateItem * rootItem;
     PredicateModel * rootModel;
@@ -51,6 +55,7 @@ private slots:
     void manageControlStatus();
     void updateParameter();
     void saveParameter();
+    void setPredicate( Solid::Predicate predicate );
 
 };
 

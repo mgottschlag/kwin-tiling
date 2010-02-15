@@ -19,6 +19,8 @@
 
 #include "ActionEditor.h"
 
+#include <KMessageBox>
+
 #include <Solid/Predicate>
 
 ActionEditor::ActionEditor(QWidget *parent) : KDialog(parent)
@@ -50,6 +52,17 @@ ActionEditor::~ActionEditor()
     if( topItem ) {
         delete topItem;
     }
+}
+
+void ActionEditor::setActionToEdit( ActionItem * item )
+{
+    // Set all the text appropriately
+    ui.IbActionIcon->setIcon( item->icon() );
+    ui.LeActionFriendlyName->setText( item->name() );
+    ui.LeActionCommand->setPath( item->exec() );
+
+    setPredicate( item->predicate() );
+    setCaption( i18n("Editing Action %1", item->name()) ); // Set a friendly i18n caption
 }
 
 void ActionEditor::setPredicate( Solid::Predicate predicate )
@@ -132,6 +145,34 @@ void ActionEditor::manageControlStatus()
 SolidActionData * ActionEditor::actionData()
 {
     return SolidActionData::instance();
+}
+
+void ActionEditor::accept()
+{
+    QString iconName = ui.IbActionIcon->icon();
+    QString actionName = ui.LeActionFriendlyName->text();
+    QString command = ui.LeActionCommand->text();
+    QString predicate = predicateString(); // retrieve the predicate
+    // We need to ensure that they are all valid before applying
+    if (iconName.isEmpty() || actionName.isEmpty() || command.isEmpty() || !Solid::Predicate::fromString(predicate).isValid()) {
+        KMessageBox::error(this, i18n("It appears that the action name, command, icon or condition are not valid.\nTherefore, changes will not be applied."), i18n("Invalid action"));
+        return;
+    }
+    // apply the changes
+    if (iconName != activeItem->icon()) {  // Has the icon changed?
+        activeItem->setIcon( ui.IbActionIcon->icon() ); // Write the change
+    }
+    if (actionName != activeItem->name()) {  // Has the friendly name changed?
+        activeItem->setName( ui.LeActionFriendlyName->text() ); // Write the change
+    }
+    if (command != activeItem->exec()) {  // Has the command changed?
+        activeItem->setExec( ui.LeActionCommand->text() ); // Write the change
+    }
+    if (predicate != activeItem->predicate().toString() ) {  // Has it changed?
+        activeItem->setPredicate( predicate ); // Write the change
+    }
+
+    KDialog::accept();
 }
 
 #include "ActionEditor.moc"
