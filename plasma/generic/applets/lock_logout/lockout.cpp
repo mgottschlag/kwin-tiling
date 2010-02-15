@@ -33,10 +33,10 @@
 // KDE
 #include <KIcon>
 #include <KJob>
+#include <KAuthorized>
 #ifndef Q_OS_WIN
 #include <KConfigDialog>
 #include <KSharedConfig>
-#include <KAuthorized>
 #include <kworkspace/kworkspace.h>
 #include <screensaver_interface.h>
 #endif
@@ -45,7 +45,6 @@
 
 // Windows
 #ifdef Q_OS_WIN
-#define _WIN32_WINNT 0x0500 // require NT 5.0 (win 2k pro)
 #include <windows.h>
 #endif // Q_OS_WIN
 
