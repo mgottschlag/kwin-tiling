@@ -57,7 +57,7 @@
 #include "bookmarksdelegate.h"
 #include "bookmarkitem.h"
 
-using namespace Plasma;
+using Plasma::MessageButton;
 
 WebBrowser::WebBrowser(QObject *parent, const QVariantList &args)
         : Plasma::PopupApplet(parent, args),

@@ -51,7 +51,7 @@ namespace Plasma
 }
 
 
-using namespace Plasma;
+using Plasma::MessageButton;
 
 class WebBrowser : public Plasma::PopupApplet
 {
