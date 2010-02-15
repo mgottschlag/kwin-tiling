@@ -399,7 +399,7 @@ void WebBrowser::removeBookmark(const QModelIndex &index)
         KBookmark bookmark = item->bookmark();
 
         const QString text(i18nc("@info", "Do you really want to remove the bookmark to %1?", bookmark.url().host()));
-        showMessage(KIcon("dialog-warning"), text, (Plasma::MessageButton) (Plasma::ButtonYes | Plasma::ButtonNo));
+        showMessage(KIcon("dialog-warning"), text, Plasma::ButtonYes | Plasma::ButtonNo);
         return;
     }
 
