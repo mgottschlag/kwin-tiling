@@ -50,6 +50,9 @@ namespace Plasma
     class Slider;
 }
 
+
+using namespace Plasma;
+
 class WebBrowser : public Plasma::PopupApplet
 {
     Q_OBJECT
@@ -94,11 +97,13 @@ protected Q_SLOTS:
     void configAccepted();
     void configChanged();
     void bookmarksAnimationFinished();
+    void removeBookmarkMessageButtonPressed(const MessageButton button);
     
 private:
     void fillGroup(BookmarkItem *parentItem, const KBookmarkGroup &group);
     void updateBookmarksViewGeometry();
-    
+
+
     QGraphicsLinearLayout *m_layout;
     QGraphicsLinearLayout *m_toolbarLayout;
     QGraphicsLinearLayout *m_statusbarLayout;

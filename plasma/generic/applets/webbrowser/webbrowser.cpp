@@ -57,6 +57,8 @@
 #include "bookmarksdelegate.h"
 #include "bookmarkitem.h"
 
+using namespace Plasma;
+
 WebBrowser::WebBrowser(QObject *parent, const QVariantList &args)
         : Plasma::PopupApplet(parent, args),
           m_browser(0),
@@ -197,6 +199,8 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
 
     configChanged();
 
+    connect(this, SIGNAL(messageButtonPressed(const MessageButton)), this, SLOT(removeBookmarkMessageButtonPressed(const MessageButton)));
+    
     return m_graphicsWidget;
 }
 
@@ -395,18 +399,8 @@ void WebBrowser::removeBookmark(const QModelIndex &index)
         KBookmark bookmark = item->bookmark();
 
         const QString text(i18nc("@info", "Do you really want to remove the bookmark to %1?", bookmark.url().host()));
-        const bool del = KMessageBox::warningContinueCancel(0,
-                                                            text,
-                                                            QString(),
-                                                            KGuiItem(i18nc("@action:button", "Delete Bookmark"))
-                                                            ) == KMessageBox::Continue;
-
-        if (!del) {
-            return;
-        }
-
-        bookmark.parentGroup().deleteBookmark(bookmark);
-        m_bookmarkManager->save();
+        showMessage(KIcon("dialog-warning"), text, (Plasma::MessageButton) (Plasma::ButtonYes | Plasma::ButtonNo));
+        return;
     }
 
     if (item && item->parent()) {
@@ -417,6 +411,34 @@ void WebBrowser::removeBookmark(const QModelIndex &index)
 
 }
 
+void WebBrowser::removeBookmarkMessageButtonPressed(const Plasma::MessageButton button)
+{  
+    if (button == Plasma::ButtonNo){
+        return;
+    }
+    
+    const QModelIndexList list = m_bookmarkModel->match(m_bookmarkModel->index(0,0), BookmarkItem::UrlRole, m_url.prettyUrl());
+
+    if (!list.isEmpty()) {
+        const QModelIndex &index = list.first();
+        BookmarkItem *item = dynamic_cast<BookmarkItem *>(m_bookmarkModel->itemFromIndex(index));
+        
+        if (item) {
+            KBookmark bookmark = item->bookmark();
+            
+            bookmark.parentGroup().deleteBookmark(bookmark);
+            m_bookmarkManager->save();
+        }
+        
+        if (item && item->parent()) {
+            item->parent()->removeRow(index.row());
+        } else {
+            m_bookmarkModel->removeRow(index.row());
+        }
+    }
+    
+    m_addBookmark->setAction(m_addBookmarkAction);
+}
 void WebBrowser::removeBookmark()
 {
     const QModelIndexList list = m_bookmarkModel->match(m_bookmarkModel->index(0,0), BookmarkItem::UrlRole, m_url.prettyUrl());
@@ -424,8 +446,6 @@ void WebBrowser::removeBookmark()
     if (!list.isEmpty()) {
         removeBookmark(list.first());
     }
-
-    m_addBookmark->setAction(m_addBookmarkAction);
 }
 
 void WebBrowser::bookmarksToggle()
