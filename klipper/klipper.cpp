@@ -22,7 +22,9 @@
    Boston, MA 02110-1301, USA.
 */
 
+#ifdef Q_WS_X11
 #include <config-X11.h>
+#endif
 
 #include <QtDBus/QDBusConnection>
 
@@ -1190,7 +1192,6 @@ QString Klipper::cycleText() const
 #endif
 KlipperEmptyDetector::KlipperEmptyDetector()
 : m_xfixes_event_base( -1 )
-, m_xa_clipboard( None )
 {
 #ifdef HAVE_XFIXES
     m_xa_clipboard = XInternAtom( QX11Info::display(), "CLIPBOARD", False );
@@ -1210,6 +1211,7 @@ KlipperEmptyDetector::KlipperEmptyDetector()
 #endif
 }
 
+#ifdef Q_WS_X11
 bool KlipperEmptyDetector::x11Event( XEvent* e )
 {
 #ifdef HAVE_XFIXES
@@ -1237,5 +1239,6 @@ bool KlipperEmptyDetector::x11Event( XEvent* e )
 #endif
     return false;
 }
+#endif
 
 #include "klipper.moc"

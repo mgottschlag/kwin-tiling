@@ -53,7 +53,9 @@ public:
 signals:
     void changed( QClipboard::Mode m );
 protected:
+#ifdef Q_WS_X11
     virtual bool x11Event( XEvent* e );
+#endif
 private:
     int m_xfixes_event_base;
     unsigned int m_xa_clipboard;
