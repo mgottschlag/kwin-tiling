@@ -80,7 +80,7 @@ void Clock::init()
 {
     ClockApplet::init();
 
-    clockConfigChanged();
+    configChanged();
     
     invalidateCache();
 }
