@@ -163,8 +163,13 @@ int main( int argc, char* argv[])
     int pos = 0;
     int state = 1; // cannot check dcop connection - make this state initial
     const int delay = 200; // ms
+    const int doubleclick_delay = 200; // mouse doubleclick delay - in ms
     time_t final_time = time( NULL ) + 300;
     time_t test_time = time( NULL ) + 1;
+    struct timeval button_press_time, current_time; // we need timeval to deal with milliseconds
+    button_press_time.tv_sec = 0;
+    button_press_time.tv_usec = 0;
+    long click_delay, click_delay_seconds, click_delay_useconds;
     Atom kde_splash_progress = XInternAtom( dpy, "_KDE_SPLASH_PROGRESS", False );
     for(;;)
         {
@@ -174,8 +179,20 @@ int main( int argc, char* argv[])
             XNextEvent( dpy, &ev );
             if( ev.type == ButtonPress && ev.xbutton.button == Button1 )
                 {
-                final_time = time( NULL );
-                break;
+                gettimeofday( &current_time, NULL );
+                
+                // find difference in milliseconds with current and previous mouse presses times
+                click_delay_seconds  = current_time.tv_sec  - button_press_time.tv_sec;
+                click_delay_useconds = current_time.tv_usec - button_press_time.tv_usec;
+                click_delay = ( click_delay_seconds * 1000 + click_delay_useconds / 1000.0 ) + 0.5;
+            
+                if( click_delay <= doubleclick_delay )
+                    {
+                    // close splash on doubleclick
+                    final_time = time( NULL );
+                    break;
+                    }
+                gettimeofday( &button_press_time, NULL );
                 }
             if( ev.type == ConfigureNotify && ev.xconfigure.event == DefaultRootWindow( dpy ))
                 {
