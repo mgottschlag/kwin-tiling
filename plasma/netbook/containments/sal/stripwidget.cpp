@@ -314,7 +314,8 @@ void StripWidget::restore(KConfigGroup &cg)
         runnerIds.resize(4);
         queries.resize(4);
         matchIds.resize(4);
-        matchIds << "services_kde-konqbrowser.desktop" << "services_kde4-KMail.desktop" << "services_kde4-systemsettings.desktop" << "places";
+        QString homePlace = "places_file://"+QDir::homePath();
+        matchIds << "services_kde4-konqbrowser.desktop" << "services_kde4-KMail.desktop" << "services_kde4-systemsettings.desktop" << homePlace;
         queries << "konqueror" << "kmail" << "systemsettings" << "home";
         runnerIds << "services" << "services" << "services" << "places";
     } else {
