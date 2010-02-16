@@ -45,6 +45,10 @@ ActionEditor::ActionEditor(QWidget *parent) : KDialog(parent)
     connect( ui.PbParameterReset, SIGNAL(clicked()), this, SLOT(updateParameter()) );
     connect( ui.CbDeviceType, SIGNAL(currentIndexChanged(int)), this, SLOT(updatePropertyList()) );
     connect( ui.CbParameterType, SIGNAL(currentIndexChanged(int)), this, SLOT(manageControlStatus()) );
+
+    if( !KGlobalSettings::singleClick() ) {
+        connect( ui.TvPredicateTree, SIGNAL(clicked(QModelIndex)), this, SLOT(updateParameter()) );
+    }
 }
 
 ActionEditor::~ActionEditor()
