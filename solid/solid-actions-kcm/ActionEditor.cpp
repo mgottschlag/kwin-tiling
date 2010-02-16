@@ -79,6 +79,7 @@ void ActionEditor::setPredicate( Solid::Predicate predicate )
     // Select the top item, not the hidden root
     QModelIndex topItem = rootModel->index( 0, 0, QModelIndex() );
     ui.TvPredicateTree->setCurrentIndex( topItem );
+    ui.TvPredicateTree->expandToDepth( 2 );
     updateParameter();
 }
 
