@@ -91,6 +91,13 @@ QuicklaunchApplet::~QuicklaunchApplet()
     delete m_dialogWidget;
 }
 
+void QuicklaunchApplet::saveConfig()
+{
+    KConfigGroup cg = config();
+    saveState(cg);
+    emit configNeedsSaving();
+}
+
 void QuicklaunchApplet::saveState(KConfigGroup &config) const
 {
     QStringList iconUrls;
@@ -488,7 +495,7 @@ void QuicklaunchApplet::dropApp(QGraphicsSceneDragDropEvent *event, bool dropped
     int pos = 0;
     if (droppedOnDialog) {
         QPointF point = event->pos();
-        for(int i = 0; i < m_dialogLayout->count(); i++) {
+        for (int i = 0; i < m_dialogLayout->count(); i++) {
            QGraphicsLayoutItem *item = m_dialogLayout->itemAt(i);
            if (item->geometry().contains(point)) {
                //m_dialogLayout->insertItem(dropedItem, i + 1);
@@ -588,11 +595,6 @@ bool QuicklaunchApplet::eventFilter(QObject * object, QEvent * event)
                     m_icons.removeAll(icon);
                     icon->hide();
                     icon->deleteLater();
-
-                    KConfigGroup cg = config();
-                    saveState(cg);
-                    emit configNeedsSaving();
-
                     performUiRefactor();
                 }
             }
@@ -667,9 +669,7 @@ void QuicklaunchApplet::addProgram(int index, const QString &url, bool isNewIcon
     m_icons.insert(index, container);
 
     if (isNewIcon) {
-        KConfigGroup cg = config();
-        saveState(cg);
-        emit configNeedsSaving();
+        saveConfig();
     }
 }
 
@@ -686,10 +686,7 @@ void QuicklaunchApplet::removeCurrentIcon()
     m_rightClickedIcon->hide();
     m_rightClickedIcon->deleteLater();
     performUiRefactor();
-
-    KConfigGroup cg = config();
-    saveState(cg);
-    emit configNeedsSaving();
+    saveConfig();
 }
 
 bool QuicklaunchApplet::dropHandler(const int pos, const QMimeData *mimedata)

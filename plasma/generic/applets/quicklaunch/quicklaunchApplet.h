@@ -158,7 +158,7 @@ class QuicklaunchApplet : public Plasma::Applet
         /**
          * Saves icons into plasma applet config file
          */
-        void saveConfig() {}
+        void saveConfig();
 
         bool dropHandler(const int pos, const QMimeData *mimedata);
 	
