@@ -29,8 +29,6 @@
 
 #include <Plasma/DataEngine>
 
-namespace SystemTray
-{
 
 class DBusNotification;
 
@@ -57,7 +55,6 @@ private:
     QHash<QString, DBusNotification*> m_notifications;
 };
 
-}
 
 
 #endif

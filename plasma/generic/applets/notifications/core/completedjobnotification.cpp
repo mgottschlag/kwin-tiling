@@ -27,8 +27,6 @@
 #include <KLocale>
 #include <KDebug>
 
-namespace SystemTray
-{
 
 static const int completedJobExpireDelay = 60 * 1000;
 static const int completedShortJobExpireDelay = 8 * 1000;
@@ -90,6 +88,5 @@ void CompletedJobNotification::triggerAction(const QString &actionId)
     }
 }
 
-}
 
 #include "completedjobnotification.moc"

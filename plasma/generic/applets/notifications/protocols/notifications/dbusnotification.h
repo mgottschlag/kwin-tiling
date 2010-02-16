@@ -25,8 +25,6 @@
 #include "../../core/notification.h"
 
 
-namespace SystemTray
-{
 
 class DBusNotification : public Notification
 {
@@ -51,7 +49,6 @@ private:
     QString m_source;
 };
 
-}
 
 
 #endif

@@ -19,21 +19,16 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef SYSTEMTRAYPROTOCOL_H
-#define SYSTEMTRAYPROTOCOL_H
+#ifndef PROTOCOL_H
+#define PROTOCOL_H
 
 #include <QtCore/QObject>
 
-namespace SystemTray
-{
-    class Job;
-    class Notification;
-    class Task;
-}
 
+class Job;
+class Notification;
+class Task;
 
-namespace SystemTray
-{
 
 /**
  * @short System tray protocol base class
@@ -55,20 +50,19 @@ signals:
     /**
      * Signals that a new task has been created
      **/
-    void taskCreated(SystemTray::Task *task);
+    void taskCreated(Task *task);
 
     /**
      * Signals that a new notification has been created
      **/
-    void jobCreated(SystemTray::Job *job);
+    void jobCreated(Job *job);
 
     /**
      * Signals that a new notification has been created
      **/
-    void notificationCreated(SystemTray::Notification *notification);
+    void notificationCreated(Notification *notification);
 };
 
-}
 
 
 #endif

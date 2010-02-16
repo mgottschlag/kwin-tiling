@@ -27,9 +27,6 @@
 #include <KUrl>
 #include <KLocalizedString>
 
-namespace SystemTray
-{
-
 
 class Job::Private
 {
@@ -340,6 +337,5 @@ void Job::timerEvent(QTimerEvent *)
     emit changed(this);
 }
 
-}
 
 #include "job.moc"

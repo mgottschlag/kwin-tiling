@@ -29,9 +29,6 @@
 #include <plasma/service.h>
 
 
-namespace SystemTray
-{
-
 static const char engineName[] = "notifications";
 
 DBusNotificationProtocol::DBusNotificationProtocol(QObject *parent)
@@ -164,6 +161,5 @@ void DBusNotificationProtocol::notificationDeleted(const QString &source)
     m_notifications.remove(source);
 }
 
-}
 
 #include "dbusnotificationprotocol.moc"

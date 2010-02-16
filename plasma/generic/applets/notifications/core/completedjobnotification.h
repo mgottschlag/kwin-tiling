@@ -23,8 +23,6 @@
 
 #include "notification.h"
 
-namespace SystemTray
-{
 
 class Job;
 
@@ -48,7 +46,6 @@ private:
     QString m_destinationPrettyUrl;
 };
 
-}
 
 #endif
 

@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef SYSTEMTRAYNOTIFICATION_H
-#define SYSTEMTRAYNOTIFICATION_H
+#ifndef NOTIFICATION_H
+#define NOTIFICATION_H
 
 #include <QImage>
 #include <QtCore/QHash>
@@ -29,8 +29,6 @@
 #include <QtGui/QIcon>
 
 
-namespace SystemTray
-{
 
 class Notification : public QObject
 {
@@ -66,17 +64,17 @@ public slots:
     void hide();
 
 signals:
-    void changed(SystemTray::Notification *notification = 0);
+    void changed(Notification *notification = 0);
 
     /**
      * Emitted when the notification is about to be destroyed
      **/
-    void notificationDestroyed(SystemTray::Notification *notification = 0);
+    void notificationDestroyed(Notification *notification = 0);
 
     /**
      * emitted when the notification wants to hide itself
      */
-    void expired(SystemTray::Notification *notification = 0);
+    void expired(Notification *notification = 0);
 
 protected:
     void setApplicationName(const QString &applicationName);
@@ -93,7 +91,6 @@ private:
     Private* const d;
 };
 
-}
 
 
 #endif

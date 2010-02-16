@@ -21,11 +21,10 @@
 
 #include <KDebug>
 
-namespace SystemTray
-{
+
 
 DBusJob::DBusJob(const QString &source, QObject *parent)
-    : SystemTray::Job(parent),
+    : Job(parent),
       m_source(source)
 {
 }
@@ -53,4 +52,3 @@ void DBusJob::stop()
     kDebug() << "cancel";
 }
 
-}

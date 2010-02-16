@@ -54,7 +54,7 @@ StackDialog::~StackDialog()
 {
 }
 
-void StackDialog::setNotificationStack(SystemTray::NotificationStack *stack)
+void StackDialog::setNotificationStack(NotificationStack *stack)
 {
     setGraphicsWidget(stack);
     if (m_notificationStack) {
@@ -67,7 +67,7 @@ void StackDialog::setNotificationStack(SystemTray::NotificationStack *stack)
     connect(m_notificationStack, SIGNAL(hideRequested()), this, SLOT(hide()));
 }
 
-SystemTray::NotificationStack *StackDialog::notificartionStack() const
+NotificationStack *StackDialog::notificartionStack() const
 {
     return m_notificationStack;
 }

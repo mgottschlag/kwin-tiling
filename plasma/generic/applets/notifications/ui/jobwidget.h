@@ -39,22 +39,20 @@ namespace Plasma
     class Meter;
 } // namespace Plasma
 
-namespace SystemTray
-{
-    class Job;
-}
+class Job;
+
 
 class JobWidget : public QGraphicsWidget
 {
     Q_OBJECT
 
     public:
-        explicit JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent);
+        explicit JobWidget(Job *job, Plasma::ExtenderItem *parent);
         ~JobWidget();
 
         void poppedUp(bool shown);
 
-        SystemTray::Job *job() const;
+        Job *job() const;
 
     protected:
         void resizeEvent(QGraphicsSceneResizeEvent *event);
@@ -73,7 +71,7 @@ class JobWidget : public QGraphicsWidget
         void updateJob();
 
         Plasma::ExtenderItem *m_extenderItem;
-        QWeakPointer<SystemTray::Job>m_job;
+        QWeakPointer<Job>m_job;
 
         Plasma::Meter *m_meter;
         Plasma::Label *m_fromNameLabel;

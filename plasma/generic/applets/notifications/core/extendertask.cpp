@@ -41,9 +41,6 @@
 #include "../core/completedjobnotification.h"
 
 
-namespace SystemTray
-{
-
 
 ExtenderTaskBusyWidget::ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, const Manager *manager)
     : Plasma::BusyWidget(parent),
@@ -57,19 +54,19 @@ ExtenderTaskBusyWidget::ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, cons
     m_svg->setImagePath("widgets/tasks");
     setRunning(false);
 
-    connect(manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
+    connect(manager, SIGNAL(notificationAdded(Notification*)),
             this, SLOT(updateTask()));
-    connect(manager, SIGNAL(notificationRemoved(SystemTray::Notification*)),
+    connect(manager, SIGNAL(notificationRemoved(Notification*)),
             this, SLOT(updateTask()));
-    connect(manager, SIGNAL(notificationChanged(SystemTray::Notification*)),
+    connect(manager, SIGNAL(notificationChanged(Notification*)),
             this, SLOT(updateTask()));
-    connect(manager, SIGNAL(notificationExpired(SystemTray::Notification*)),
+    connect(manager, SIGNAL(notificationExpired(Notification*)),
             this, SLOT(updateTask()));
-    connect(manager, SIGNAL(jobAdded(SystemTray::Job*)),
+    connect(manager, SIGNAL(jobAdded(Job*)),
             this, SLOT(updateTask()));
-    connect(manager, SIGNAL(jobRemoved(SystemTray::Job*)),
+    connect(manager, SIGNAL(jobRemoved(Job*)),
             this, SLOT(updateTask()));
-    connect(manager, SIGNAL(jobStateChanged(SystemTray::Job*)),
+    connect(manager, SIGNAL(jobStateChanged(Job*)),
             this, SLOT(updateTask()));
 
     Plasma::Extender *extender = qobject_cast<Plasma::Extender *>(m_systray->graphicsWidget());
@@ -223,6 +220,5 @@ void ExtenderTaskBusyWidget::updateTask()
     Plasma::ToolTipManager::self()->setContent(this, data);
 }
 
-}
 
 #include "extendertask.moc"

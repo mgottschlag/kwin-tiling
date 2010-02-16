@@ -34,10 +34,8 @@ namespace Plasma
     class FrameSvg;
 }
 
-namespace SystemTray
-{
-    class NotificationStack;
-}
+class NotificationStack;
+
 
 class StackDialog : public Plasma::Dialog
 {
@@ -46,8 +44,8 @@ public:
     StackDialog(QWidget *parent = 0, Qt::WindowFlags f = Qt::Window);
     ~StackDialog();
 
-    void setNotificationStack(SystemTray::NotificationStack *stack);
-    SystemTray::NotificationStack *notificartionStack() const;
+    void setNotificationStack(NotificationStack *stack);
+    NotificationStack *notificartionStack() const;
 
     void setApplet(Plasma::Applet *applet);
     Plasma::Applet *applet() const;
@@ -74,7 +72,7 @@ private:
     QPropertyAnimation *m_windowToTileAnimation;
 
     Plasma::FrameSvg *m_background;
-    SystemTray::NotificationStack *m_notificationStack;
+    NotificationStack *m_notificationStack;
     QTimer *m_hideTimer;
     bool m_drawLeft;
     bool m_drawRight;

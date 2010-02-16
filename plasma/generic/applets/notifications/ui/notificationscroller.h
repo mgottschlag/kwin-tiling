@@ -33,8 +33,7 @@ namespace Plasma
 
 class NotificationWidget;
 
-namespace SystemTray
-{
+
 class Notification;
 
 class NotificationScroller : public QGraphicsWidget
@@ -45,12 +44,12 @@ public:
     NotificationScroller(QGraphicsItem *parent = 0);
     ~NotificationScroller();
 
-    void addNotification(SystemTray::Notification *notification);
+    void addNotification(Notification *notification);
 
     void filterNotificationsByOwner(const QString &owner);
 
 public Q_SLOTS:
-    void removeNotification(SystemTray::Notification *notification);
+    void removeNotification(Notification *notification);
 
 protected Q_SLOTS:
     void tabSwitched(int index);
@@ -72,6 +71,5 @@ private:
     QString m_currentFilter;
 };
 
-}
 
 #endif

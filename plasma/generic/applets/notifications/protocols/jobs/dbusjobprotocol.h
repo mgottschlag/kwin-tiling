@@ -25,9 +25,6 @@
 #include <plasma/dataengine.h>
 
 
-namespace SystemTray
-{
-
 class DBusJob;
 
 class DBusJobProtocol : public Protocol
@@ -53,7 +50,6 @@ private:
     QHash<QString, DBusJob*> m_jobs;
 };
 
-}
 
 
 #endif

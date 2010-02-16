@@ -72,7 +72,7 @@ public:
 
     NotificationWidget *q;
 
-    QWeakPointer<SystemTray::Notification> notification;
+    QWeakPointer<Notification> notification;
     bool destroyOnClose;
     bool autoDelete;
     bool collapsed;
@@ -96,7 +96,7 @@ public:
     QSignalMapper *signalMapper;
 };
 
-NotificationWidget::NotificationWidget(SystemTray::Notification *notification, QGraphicsWidget *parent)
+NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidget *parent)
     : Plasma::Frame(parent),
       d(new NotificationWidgetPrivate(this))
 {

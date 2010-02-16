@@ -28,8 +28,6 @@ class QTimer;
 
 class NotificationWidget;
 
-namespace SystemTray
-{
 class Notification;
 
 class NotificationStack : public QGraphicsWidget
@@ -40,10 +38,10 @@ public:
     NotificationStack(QGraphicsItem *parent = 0);
     ~NotificationStack();
 
-    void addNotification(SystemTray::Notification *notification);
+    void addNotification(Notification *notification);
 
     //TODO:accessor
-    void setCurrentNotification(SystemTray::Notification *notification);
+    void setCurrentNotification(Notification *notification);
 
     NotificationWidget *currentNotificationWidget() const;
 
@@ -55,8 +53,8 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event);
 
 public Q_SLOTS:
-    void removeNotification(SystemTray::Notification *notification);
-    void delayedRemoveNotification(SystemTray::Notification *notification);
+    void removeNotification(Notification *notification);
+    void delayedRemoveNotification(Notification *notification);
 
 private Q_SLOTS:
     void popNotification();
@@ -77,7 +75,5 @@ private:
     QTimer *m_delayedRemoveTimer;
     QTimer *m_canDismissTimer;
 };
-
-}
 
 #endif

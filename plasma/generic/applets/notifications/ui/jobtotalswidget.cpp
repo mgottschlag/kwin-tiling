@@ -25,10 +25,8 @@
 
 static const int UPDATE_TIMER_INTERVAL = 200;
 
-namespace SystemTray
-{
 
-JobTotalsWidget::JobTotalsWidget(SystemTray::Job *job, QGraphicsWidget *parent)
+JobTotalsWidget::JobTotalsWidget(Job *job, QGraphicsWidget *parent)
     : Meter(parent),
       m_job(job),
       m_updateTimerId(0)
@@ -45,7 +43,7 @@ JobTotalsWidget::JobTotalsWidget(SystemTray::Job *job, QGraphicsWidget *parent)
     setValue(0);
 
     if (m_job) {
-        connect(m_job, SIGNAL(changed(SystemTray::Job*)),
+        connect(m_job, SIGNAL(changed(Job*)),
                 this, SLOT(scheduleJobUpdate()));
 
         updateJob();
@@ -87,7 +85,6 @@ void JobTotalsWidget::updateJob()
     }
 }
 
-} // namespace SystemTray
 
 #include "jobtotalswidget.moc"
 

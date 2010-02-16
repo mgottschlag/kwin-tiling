@@ -33,8 +33,6 @@ namespace Plasma
     class Svg;
 }
 
-namespace SystemTray
-{
 
 class Manager;
 
@@ -62,6 +60,5 @@ private:
     const Manager *m_manager;
 };
 
-}
 
 #endif

@@ -32,8 +32,6 @@
 #include <Plasma/TabBar>
 #include <Plasma/ScrollWidget>
 
-namespace SystemTray
-{
 
 NotificationScroller::NotificationScroller(QGraphicsItem *parent)
    : QGraphicsWidget(parent)
@@ -69,7 +67,7 @@ NotificationScroller::~NotificationScroller()
 
 void NotificationScroller::addNotification(Notification *notification)
 {
-    connect(notification, SIGNAL(notificationDestroyed(SystemTray::Notification *)), this, SLOT(removeNotification(SystemTray::Notification *)));
+    connect(notification, SIGNAL(notificationDestroyed(Notification *)), this, SLOT(removeNotification(Notification *)));
 
     NotificationWidget *notificationWidget = new NotificationWidget(notification, m_mainWidget);
     connect(notificationWidget, SIGNAL(destroyed()), this, SLOT(adjustSize()));
@@ -102,7 +100,7 @@ void NotificationScroller::addNotification(Notification *notification)
     adjustSize();
 }
 
-void NotificationScroller::removeNotification(SystemTray::Notification *notification)
+void NotificationScroller::removeNotification(Notification *notification)
 {
     m_mainWidgetLayout->removeItem(m_notificationWidgets.value(notification));
     m_notificationWidgets.remove(notification);
@@ -176,4 +174,3 @@ void NotificationScroller::adjustSize()
     }
 }
 
-} //End namespace SystemTray

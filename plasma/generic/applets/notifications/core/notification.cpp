@@ -27,9 +27,6 @@
 #include <KDebug>
 
 
-namespace SystemTray
-{
-
 class Notification::Private
 {
 public:
@@ -235,7 +232,6 @@ int Notification::deleteTimeOut() const
     return d->deleteTimer->interval();
 }
 
-}
 
 
 #include "notification.moc"

@@ -35,8 +35,6 @@
 #include "../protocols/notifications/dbusnotificationprotocol.h"
 #include "../protocols/jobs/dbusjobprotocol.h"
 
-namespace SystemTray
-{
 
 static const int idleCheckInterval = 60 * 1000;
 
@@ -96,12 +94,12 @@ void Manager::unregisterNotificationProtocol()
 
 void Manager::addNotification(Notification* notification)
 {
-    connect(notification, SIGNAL(notificationDestroyed(SystemTray::Notification*)),
-            this, SLOT(removeNotification(SystemTray::Notification*)));
-    connect(notification, SIGNAL(changed(SystemTray::Notification*)),
-            this, SIGNAL(notificationChanged(SystemTray::Notification*)));
-    connect(notification, SIGNAL(expired(SystemTray::Notification*)),
-            this, SIGNAL(notificationExpired(SystemTray::Notification*)));
+    connect(notification, SIGNAL(notificationDestroyed(Notification*)),
+            this, SLOT(removeNotification(Notification*)));
+    connect(notification, SIGNAL(changed(Notification*)),
+            this, SIGNAL(notificationChanged(Notification*)));
+    connect(notification, SIGNAL(expired(Notification*)),
+            this, SIGNAL(notificationExpired(Notification*)));
 
     d->notifications.append(notification);
 
@@ -155,11 +153,11 @@ void Manager::unregisterJobProtocol()
 
 void Manager::addJob(Job *job)
 {
-    connect(job, SIGNAL(destroyed(SystemTray::Job*)), this, SLOT(removeJob(SystemTray::Job*)));
-    connect(job, SIGNAL(changed(SystemTray::Job*)), this, SIGNAL(jobChanged(SystemTray::Job*)));
-    connect(job, SIGNAL(stateChanged(SystemTray::Job*)), this, SIGNAL(jobStateChanged(SystemTray::Job*)));
-    connect(job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(updateTotals()));
-    connect(job, SIGNAL(destroyed(SystemTray::Job*)), this, SLOT(updateTotals()));
+    connect(job, SIGNAL(destroyed(Job*)), this, SLOT(removeJob(Job*)));
+    connect(job, SIGNAL(changed(Job*)), this, SIGNAL(jobChanged(Job*)));
+    connect(job, SIGNAL(stateChanged(Job*)), this, SIGNAL(jobStateChanged(Job*)));
+    connect(job, SIGNAL(changed(Job*)), this, SLOT(updateTotals()));
+    connect(job, SIGNAL(destroyed(Job*)), this, SLOT(updateTotals()));
 
     d->jobs.append(job);
     emit jobAdded(job);
@@ -226,13 +224,12 @@ void Manager::checkIdle()
 
 void Manager::Private::setupProtocol(Protocol *protocol)
 {
-    connect(protocol, SIGNAL(jobCreated(SystemTray::Job*)), q, SLOT(addJob(SystemTray::Job*)));
-    connect(protocol, SIGNAL(notificationCreated(SystemTray::Notification*)),
-            q, SLOT(addNotification(SystemTray::Notification*)));
+    connect(protocol, SIGNAL(jobCreated(Job*)), q, SLOT(addJob(Job*)));
+    connect(protocol, SIGNAL(notificationCreated(Notification*)),
+            q, SLOT(addNotification(Notification*)));
     protocol->init();
 }
 
-}
 
 
 #include "notificationsmanager.moc"

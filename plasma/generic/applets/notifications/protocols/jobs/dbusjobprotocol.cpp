@@ -27,8 +27,6 @@
 #include <plasma/service.h>
 
 
-namespace SystemTray
-{
 
 static const char engineName[] = "applicationjobs";
 
@@ -83,8 +81,8 @@ void DBusJobProtocol::dataUpdated(const QString &source, const Plasma::DataEngin
                 this, SLOT(resume(const QString&)));
         connect(job, SIGNAL(stop(const QString&)),
                 this, SLOT(stop(const QString&)));
-        connect(job, SIGNAL(ready(SystemTray::Job*)),
-                this, SIGNAL(jobCreated(SystemTray::Job*)));
+        connect(job, SIGNAL(ready(Job*)),
+                this, SIGNAL(jobCreated(Job*)));
     }
 
     job->setApplicationName(data.value("appName").toString());
@@ -168,6 +166,5 @@ void DBusJobProtocol::stop(const QString &source)
     service->startOperationCall(op);
 }
 
-}
 
 #include "dbusjobprotocol.moc"

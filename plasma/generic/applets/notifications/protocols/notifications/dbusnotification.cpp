@@ -23,8 +23,6 @@
 
 #include <KDebug>
 
-namespace SystemTray
-{
 
 DBusNotification::DBusNotification(const QString &source, QObject *parent)
     : Notification(parent),
@@ -48,4 +46,3 @@ void DBusNotification::triggerAction(const QString &actionId)
     emit actionTriggered(m_source, actionId);
 }
 
-}

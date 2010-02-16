@@ -38,8 +38,6 @@ class Dialog;
 class NotificationWidget;
 class StackDialog;
 
-namespace SystemTray
-{
 
 class Job;
 class JobTotalsWidget;
@@ -69,16 +67,16 @@ protected:
 
 private slots:
     void configAccepted();
-    void addNotification(SystemTray::Notification *notification);
-    void addJob(SystemTray::Job *job);
-    void finishJob(SystemTray::Job *job);
+    void addNotification(Notification *notification);
+    void addJob(Job *job);
+    void finishJob(Job *job);
     void open(const QString &url);
     void syncNotificationBarNeeded();
 
 private:
     void createJobGroups();
 
-    static SystemTray::Manager *s_manager;
+    static Manager *s_manager;
     static int s_managerUsage;
 
     QWeakPointer<QWidget> m_notificationInterface;
@@ -98,7 +96,6 @@ private:
     Ui::NotificationsConfig m_notificationUi;
 };
 
-}
 
 
 #endif

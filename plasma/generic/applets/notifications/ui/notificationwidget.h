@@ -40,7 +40,7 @@ class NotificationWidget : public Plasma::Frame
     Q_PROPERTY(qreal maximumHeight READ maximumHeight WRITE setMaximumHeight)
 
 public:
-    NotificationWidget(SystemTray::Notification *notification, QGraphicsWidget *parent);
+    NotificationWidget(Notification *notification, QGraphicsWidget *parent);
     ~NotificationWidget();
 
     void setCollapsed(bool collapse);
@@ -55,7 +55,7 @@ protected:
                QWidget *widget);
 
 Q_SIGNALS:
-    void actionTriggered(SystemTray::Notification *);
+    void actionTriggered(Notification *);
 
 private:
     friend class NotificationWidgetPrivate;

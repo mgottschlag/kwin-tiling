@@ -30,9 +30,6 @@
 #include <Plasma/FrameSvg>
 #include <Plasma/Dialog>
 
-namespace SystemTray
-{
-
 NotificationStack::NotificationStack(QGraphicsItem *parent)
    : QGraphicsWidget(parent),
      m_size(4),
@@ -56,14 +53,14 @@ NotificationStack::~NotificationStack()
 void NotificationStack::addNotification(Notification *notification)
 {
     m_canDismissTimer->start(1000);
-    connect(notification, SIGNAL(notificationDestroyed(SystemTray::Notification *)), this, SLOT(removeNotification(SystemTray::Notification *)));
-    connect(notification, SIGNAL(expired(SystemTray::Notification *)), this, SLOT(delayedRemoveNotification(SystemTray::Notification *)));
+    connect(notification, SIGNAL(notificationDestroyed(Notification *)), this, SLOT(removeNotification(Notification *)));
+    connect(notification, SIGNAL(expired(Notification *)), this, SLOT(delayedRemoveNotification(Notification *)));
 
     NotificationWidget *notificationWidget = new NotificationWidget(notification, this);
     notificationWidget->installEventFilter(this);
     notificationWidget->setAcceptsHoverEvents(this);
     notificationWidget->setBackgroundVisible(false);
-    connect(notificationWidget, SIGNAL(actionTriggered(SystemTray::Notification *)), this, SLOT(removeNotification(SystemTray::Notification *)));
+    connect(notificationWidget, SIGNAL(actionTriggered(Notification *)), this, SLOT(removeNotification(Notification *)));
 
     m_notificationWidgets[notification] = notificationWidget;
     m_notifications.append(notification);
@@ -102,7 +99,7 @@ void NotificationStack::addNotification(Notification *notification)
     resize(effectiveSizeHint(Qt::PreferredSize));
 }
 
-void NotificationStack::removeNotification(SystemTray::Notification *notification)
+void NotificationStack::removeNotification(Notification *notification)
 {
     NotificationWidget *nw = m_notificationWidgets.value(notification);
     if (nw) {
@@ -123,7 +120,7 @@ void NotificationStack::removeNotification(SystemTray::Notification *notificatio
     resize(sizeHint(Qt::MinimumSize, QSizeF()));
 }
 
-void NotificationStack::delayedRemoveNotification(SystemTray::Notification *notification)
+void NotificationStack::delayedRemoveNotification(Notification *notification)
 {
     m_notificationsToRemove.append(notification);
     if (!m_underMouse) {
@@ -131,7 +128,7 @@ void NotificationStack::delayedRemoveNotification(SystemTray::Notification *noti
     }
 }
 
-void NotificationStack::setCurrentNotification(SystemTray::Notification *notification)
+void NotificationStack::setCurrentNotification(Notification *notification)
 {
     if (m_notificationWidgets.contains(notification)) {
         if (m_currentNotificationWidget) {
@@ -220,6 +217,5 @@ void NotificationStack::popNotification()
     m_delayedRemoveTimer->start(1000);
 }
 
-}
 
 #include "notificationstack.moc"

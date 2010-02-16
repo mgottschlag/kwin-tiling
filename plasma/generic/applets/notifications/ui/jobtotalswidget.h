@@ -36,16 +36,15 @@ namespace Plasma
     class Meter;
 } // namespace Plasma
 
-namespace SystemTray
-{
-    class Job;
+
+class Job;
 
 class JobTotalsWidget : public Plasma::Meter
 {
     Q_OBJECT
 
     public:
-        explicit JobTotalsWidget(SystemTray::Job *job, QGraphicsWidget *parent);
+        explicit JobTotalsWidget(Job *job, QGraphicsWidget *parent);
         ~JobTotalsWidget();
 
     protected:
@@ -58,9 +57,9 @@ class JobTotalsWidget : public Plasma::Meter
         void updateJob();
 
         Plasma::ExtenderItem *m_extenderItem;
-        SystemTray::Job *m_job;
+        Job *m_job;
         int m_updateTimerId;
 };
-}
+
 
 #endif

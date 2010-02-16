@@ -23,8 +23,6 @@
 #include "../../core/job.h"
 
 
-namespace SystemTray
-{
 
 class DBusJob : public Job
 {
@@ -51,7 +49,6 @@ private:
     QString m_source;
 };
 
-}
 
 
 #endif

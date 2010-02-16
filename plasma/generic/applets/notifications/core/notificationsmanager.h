@@ -34,9 +34,6 @@ namespace Plasma
 class Applet;
 }
 
-namespace SystemTray
-{
-
 class Notifications;
 class Notification;
 class Task;
@@ -98,42 +95,42 @@ signals:
     /**
      * Emitted when a new notification has been added
      **/
-    void notificationAdded(SystemTray::Notification *notification);
+    void notificationAdded(Notification *notification);
 
     /**
      * Emitted when something about a notification changes
      **/
-    void notificationChanged(SystemTray::Notification *notification);
+    void notificationChanged(Notification *notification);
 
     /**
      * The notification is expired and wants to hide itself
      */
-    void notificationExpired(SystemTray::Notification *notification);
+    void notificationExpired(Notification *notification);
 
     /**
      * Emitted when a notification has been removed
      **/
-    void notificationRemoved(SystemTray::Notification *notification);
+    void notificationRemoved(Notification *notification);
 
     /**
      * Emitted when a new job has been added
      **/
-    void jobAdded(SystemTray::Job *job);
+    void jobAdded(Job *job);
 
     /**
      * Emitted when the state of a job changes
      **/
-    void jobStateChanged(SystemTray::Job *job);
+    void jobStateChanged(Job *job);
 
     /**
      * Emitted when something about a job changes
      **/
-    void jobChanged(SystemTray::Job *job);
+    void jobChanged(Job *job);
 
     /**
      * Emitted when a job has been removed
      **/
-    void jobRemoved(SystemTray::Job *job);
+    void jobRemoved(Job *job);
 
     /**
      * the pc is out of idle and is starting being used
@@ -141,10 +138,10 @@ signals:
     void idleTerminated();
 
 private slots:
-    void addNotification(SystemTray::Notification *notification);
-    void removeNotification(SystemTray::Notification *notification);
-    void addJob(SystemTray::Job *job);
-    void removeJob(SystemTray::Job *job);
+    void addNotification(Notification *notification);
+    void removeNotification(Notification *notification);
+    void addJob(Job *job);
+    void removeJob(Job *job);
     void updateTotals();
     void checkIdle();
 
@@ -155,7 +152,6 @@ private:
     friend class Notifications;
 };
 
-}
 
 
 #endif

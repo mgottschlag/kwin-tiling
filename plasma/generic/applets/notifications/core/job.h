@@ -17,16 +17,14 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef SYSTEMTRAYJOB_H
-#define SYSTEMTRAYJOB_H
+#ifndef JOB_H
+#define JOB_H
 
 #include <QtCore/QHash>
 #include <QtCore/QObject>
 
 #include <KUrl>
 
-namespace SystemTray
-{
 
 class Job : public QObject
 {
@@ -137,22 +135,22 @@ signals:
     /**
      * Emitted when the job is ready to be shown
      */
-    void ready(SystemTray::Job *job);
+    void ready(Job *job);
 
     /**
      * Emitted when the job changes state
      */
-    void stateChanged(SystemTray::Job *job);
+    void stateChanged(Job *job);
 
     /**
      * Emitted when the job details change
      */
-    void changed(SystemTray::Job *job);
+    void changed(Job *job);
 
     /**
      * Emitted when the job is about to be destroyed
      **/
-    void destroyed(SystemTray::Job *job);
+    void destroyed(Job *job);
 
 protected:
     void setApplicationName(const QString &applicationName);
@@ -181,5 +179,4 @@ private:
     friend class Manager;
 };
 
-}
 #endif

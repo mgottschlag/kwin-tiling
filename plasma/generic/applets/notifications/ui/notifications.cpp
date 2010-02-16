@@ -75,9 +75,6 @@
 #include "notificationstack.h"
 #include "stackdialog.h"
 
-namespace SystemTray
-{
-
 
 K_EXPORT_PLASMA_APPLET(notifications, Notifications)
 
@@ -94,7 +91,7 @@ Notifications::Notifications(QObject *parent, const QVariantList &arguments)
       m_standaloneJobSummaryDialog(0)
 {
     if (!s_manager) {
-        s_manager = new SystemTray::Manager();
+        s_manager = new Manager();
     }
 
     ++s_managerUsage;
@@ -158,26 +155,26 @@ void Notifications::configChanged()
         createJobGroups();
 
         s_manager->registerJobProtocol();
-        connect(s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
-                this, SLOT(addJob(SystemTray::Job*)), Qt::UniqueConnection);
-        connect(s_manager, SIGNAL(jobRemoved(SystemTray::Job*)),
-                this, SLOT(finishJob(SystemTray::Job*)), Qt::UniqueConnection);
+        connect(s_manager, SIGNAL(jobAdded(Job*)),
+                this, SLOT(addJob(Job*)), Qt::UniqueConnection);
+        connect(s_manager, SIGNAL(jobRemoved(Job*)),
+                this, SLOT(finishJob(Job*)), Qt::UniqueConnection);
     } else {
         s_manager->unregisterJobProtocol();
-        disconnect(s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
-                   this, SLOT(addJob(SystemTray::Job*)));
-        disconnect(s_manager, SIGNAL(jobRemoved(SystemTray::Job*)),
-                   this, SLOT(finishJob(SystemTray::Job*)));
+        disconnect(s_manager, SIGNAL(jobAdded(Job*)),
+                   this, SLOT(addJob(Job*)));
+        disconnect(s_manager, SIGNAL(jobRemoved(Job*)),
+                   this, SLOT(finishJob(Job*)));
     }
 
     if (globalCg.readEntry("ShowNotifications", true)) {
         s_manager->registerNotificationProtocol();
-        connect(s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
-                this, SLOT(addNotification(SystemTray::Notification*)), Qt::UniqueConnection);
+        connect(s_manager, SIGNAL(notificationAdded(Notification*)),
+                this, SLOT(addNotification(Notification*)), Qt::UniqueConnection);
     } else {
         s_manager->unregisterNotificationProtocol();
-        disconnect(s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
-                   this, SLOT(addNotification(SystemTray::Notification*)));
+        disconnect(s_manager, SIGNAL(notificationAdded(Notification*)),
+                   this, SLOT(addNotification(Notification*)));
     }
 }
 
@@ -208,7 +205,7 @@ void Notifications::syncNotificationBarNeeded()
 }
 
 
-SystemTray::Manager *Notifications::manager() const
+Manager *Notifications::manager() const
 {
     return s_manager;
 }
@@ -376,7 +373,7 @@ void Notifications::popupEvent(bool show)
     }
 }
 
-void Notifications::finishJob(SystemTray::Job *job)
+void Notifications::finishJob(Job *job)
 {
     //finished all jobs? hide the mini progressbar
     if (m_standaloneJobSummaryDialog && s_manager->jobs().isEmpty()) {
@@ -404,6 +401,5 @@ void Notifications::createJobGroups()
     }
 }
 
-}
 
 #include "notifications.moc"

@@ -39,7 +39,7 @@
 
 static const int UPDATE_INTERVAL = 200;
 
-JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
+JobWidget::JobWidget(Job *job, Plasma::ExtenderItem *parent)
     : QGraphicsWidget(parent),
       m_extenderItem(parent),
       m_job(job),
@@ -99,8 +99,8 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     if (m_job.data()) {
         m_details->setText(i18n("More"));
 
-        connect(m_job.data(), SIGNAL(stateChanged(SystemTray::Job*)), this, SLOT(updateJobState()));
-        connect(m_job.data(), SIGNAL(destroyed(SystemTray::Job*)), this, SLOT(destroyExtenderItem()));
+        connect(m_job.data(), SIGNAL(stateChanged(Job*)), this, SLOT(updateJobState()));
+        connect(m_job.data(), SIGNAL(destroyed(Job*)), this, SLOT(destroyExtenderItem()));
         connect(m_details, SIGNAL(clicked()), this, SLOT(detailsClicked()));
 
         //the suspend action
@@ -173,7 +173,7 @@ void JobWidget::updateJobState()
     //show the current status in the title.
     if (!m_job.data()->error().isEmpty()) {
         m_extenderItem->setTitle(m_job.data()->error());
-    } else if (m_job.data()->state() == SystemTray::Job::Running) {
+    } else if (m_job.data()->state() == Job::Running) {
         m_extenderItem->setTitle(m_job.data()->message());
         if (m_job.data()->eta()) {
             m_eta->setText(i18n("%1 (%2 remaining)", m_job.data()->speed(),
@@ -181,7 +181,7 @@ void JobWidget::updateJobState()
         } else {
             m_eta->setText(QString());
         }
-    } else if (m_job.data()->state() == SystemTray::Job::Suspended) {
+    } else if (m_job.data()->state() == Job::Suspended) {
         m_extenderItem->setTitle(
             i18nc("%1 is the name of the job, can be things like Copying, deleting, moving",
                   "%1 [Paused]", m_job.data()->message()));
@@ -203,7 +203,7 @@ void JobWidget::updateJob()
     m_meter->setValue(m_job.data()->percentage());
 
     //Update the ETA and job speed (only if running)
-    if (m_job.data()->state() == SystemTray::Job::Running) {
+    if (m_job.data()->state() == Job::Running) {
         if (m_job.data()->eta()) {
             m_eta->setText(i18n("%1 (%2 remaining)", m_job.data()->speed(),
                                  KGlobal::locale()->prettyFormatDuration(m_job.data()->eta())));
@@ -233,17 +233,17 @@ void JobWidget::updateJob()
     //set the correct actions to visible.
     if (m_extenderItem->action("suspend")) {
         m_extenderItem->action("suspend")->setVisible(m_job.data()->isSuspendable() &&
-                                            m_job.data()->state() == SystemTray::Job::Running);
+                                            m_job.data()->state() == Job::Running);
     }
 
     if (m_extenderItem->action("resume")) {
         m_extenderItem->action("resume")->setVisible(m_job.data()->isSuspendable() &&
-                                           m_job.data()->state() == SystemTray::Job::Suspended);
+                                           m_job.data()->state() == Job::Suspended);
     }
 
     if (m_extenderItem->action("stop")) {
         m_extenderItem->action("stop")->setVisible(m_job.data()->isKillable() &&
-                                         m_job.data()->state() != SystemTray::Job::Stopped);
+                                         m_job.data()->state() != Job::Stopped);
     }
 
     QMap<QString, qlonglong> processed = m_job.data()->processedAmounts();
@@ -295,8 +295,8 @@ void JobWidget::showEvent(QShowEvent *)
     Plasma::PopupApplet *applet = qobject_cast<Plasma::PopupApplet *>(m_extenderItem->extender()->applet());
     if (applet && applet->isPopupShowing()) {
         updateJob();
-        disconnect(m_job.data(), SIGNAL(changed(SystemTray::Job*)), this, SLOT(scheduleUpdateJob()));
-        connect(m_job.data(), SIGNAL(changed(SystemTray::Job*)), this, SLOT(scheduleUpdateJob()));
+        disconnect(m_job.data(), SIGNAL(changed(Job*)), this, SLOT(scheduleUpdateJob()));
+        connect(m_job.data(), SIGNAL(changed(Job*)), this, SLOT(scheduleUpdateJob()));
         return;
     }
 }
@@ -307,7 +307,7 @@ void JobWidget::hideEvent(QHideEvent *)
         return;
     }
 
-    disconnect(m_job.data(), SIGNAL(changed(SystemTray::Job*)), this, SLOT(scheduleUpdateJob()));
+    disconnect(m_job.data(), SIGNAL(changed(Job*)), this, SLOT(scheduleUpdateJob()));
 }
 
 void JobWidget::poppedUp(bool shown)
@@ -316,16 +316,16 @@ void JobWidget::poppedUp(bool shown)
         return;
     }
 
-    disconnect(m_job.data(), SIGNAL(changed(SystemTray::Job*)), this, SLOT(scheduleUpdateJob()));
+    disconnect(m_job.data(), SIGNAL(changed(Job*)), this, SLOT(scheduleUpdateJob()));
 
     if (shown && isVisible()) {
         updateJob();
-        connect(m_job.data(), SIGNAL(changed(SystemTray::Job*)), this, SLOT(scheduleUpdateJob()));
+        connect(m_job.data(), SIGNAL(changed(Job*)), this, SLOT(scheduleUpdateJob()));
         return;
     }
 }
 
-SystemTray::Job *JobWidget::job() const
+Job *JobWidget::job() const
 {
     return m_job.data();
 }

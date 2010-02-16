@@ -22,14 +22,10 @@
 #include "protocol.h"
 
 
-namespace SystemTray
-{
-
 Protocol::Protocol(QObject *parent)
     : QObject(parent)
 {
 }
 
-}
 
 #include "protocol.moc"
