@@ -242,9 +242,13 @@ void WebBrowser::configChanged()
         m_url = KUrl(cg.readEntry("Url", "http://www.kde.org"));
         m_verticalScrollValue = cg.readEntry("VerticalScrollValue", 0);
         m_horizontalScrollValue = cg.readEntry("HorizontalScrollValue", 0);
-        int value = cg.readEntry("Zoom", 1);
+        int value = cg.readEntry("Zoom", 50);
         m_zoom->setValue(value);
-        m_browser->mainFrame()->setZoomFactor((qreal)0.2 + ((qreal)value/(qreal)50));
+        qreal zoomFactor = qMax((qreal)0.2, ((qreal)value/(qreal)50));
+        if ((zoomFactor > 0.95) && (zoomFactor < 1.05)){
+            zoomFactor = 1;
+        }
+        m_browser->mainFrame()->setZoomFactor(zoomFactor);
     }
     
     m_autoRefresh = cg.readEntry("autoRefresh", false);
