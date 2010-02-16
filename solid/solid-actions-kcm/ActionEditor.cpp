@@ -56,6 +56,8 @@ ActionEditor::~ActionEditor()
 
 void ActionEditor::setActionToEdit( ActionItem * item )
 {
+    activeItem = item;
+
     // Set all the text appropriately
     ui.IbActionIcon->setIcon( item->icon() );
     ui.LeActionFriendlyName->setText( item->name() );
@@ -149,10 +151,15 @@ SolidActionData * ActionEditor::actionData()
 
 void ActionEditor::accept()
 {
+    // Save any open parameter changes first...
+    saveParameter();
+
+    // Read the data and prepare to save
     QString iconName = ui.IbActionIcon->icon();
     QString actionName = ui.LeActionFriendlyName->text();
     QString command = ui.LeActionCommand->text();
-    QString predicate = predicateString(); // retrieve the predicate
+    QString predicate = predicateString();
+
     // We need to ensure that they are all valid before applying
     if (iconName.isEmpty() || actionName.isEmpty() || command.isEmpty() || !Solid::Predicate::fromString(predicate).isValid()) {
         KMessageBox::error(this, i18n("It appears that the action name, command, icon or condition are not valid.\nTherefore, changes will not be applied."), i18n("Invalid action"));
