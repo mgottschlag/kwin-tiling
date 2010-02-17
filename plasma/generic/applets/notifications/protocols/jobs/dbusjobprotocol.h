@@ -21,6 +21,7 @@
 #define DBUSJOBPROTOCOL_H
 
 #include "../../core/protocol.h"
+#include "../../core/notificationsmanager.h"
 
 #include <plasma/dataengine.h>
 
@@ -32,7 +33,7 @@ class DBusJobProtocol : public Protocol
     Q_OBJECT
 
 public:
-    DBusJobProtocol(QObject *parent);
+    DBusJobProtocol(Manager *parent);
     ~DBusJobProtocol();
     void init();
 
@@ -46,6 +47,7 @@ private slots:
     void stop(const QString &source);
 
 private:
+    Manager *m_manager;
     Plasma::DataEngine *m_engine;
     QHash<QString, DBusJob*> m_jobs;
 };

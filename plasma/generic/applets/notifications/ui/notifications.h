@@ -76,7 +76,7 @@ private slots:
 private:
     void createJobGroups();
 
-    static Manager *s_manager;
+    Manager *m_manager;
     static int s_managerUsage;
 
     QWeakPointer<QWidget> m_notificationInterface;

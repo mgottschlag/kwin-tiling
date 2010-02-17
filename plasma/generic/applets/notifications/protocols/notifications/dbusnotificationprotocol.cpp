@@ -31,8 +31,9 @@
 
 static const char engineName[] = "notifications";
 
-DBusNotificationProtocol::DBusNotificationProtocol(QObject *parent)
+DBusNotificationProtocol::DBusNotificationProtocol(Manager *parent)
     : Protocol(parent),
+      m_manager(parent),
       m_engine(0)
 {
 }
@@ -48,7 +49,7 @@ DBusNotificationProtocol::~DBusNotificationProtocol()
 
 void DBusNotificationProtocol::init()
 {
-    m_engine = Plasma::DataEngineManager::self()->loadEngine(engineName);
+    m_engine = m_manager->applet()->dataEngine(engineName);
 
     if (!m_engine->isValid()) {
         m_engine = 0;

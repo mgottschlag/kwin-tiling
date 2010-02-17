@@ -30,8 +30,9 @@
 
 static const char engineName[] = "applicationjobs";
 
-DBusJobProtocol::DBusJobProtocol(QObject *parent)
+DBusJobProtocol::DBusJobProtocol(Manager *parent)
     : Protocol(parent),
+      m_manager(parent),
       m_engine(0)
 {
 }
@@ -47,7 +48,7 @@ DBusJobProtocol::~DBusJobProtocol()
 
 void DBusJobProtocol::init()
 {
-    m_engine = Plasma::DataEngineManager::self()->loadEngine(engineName);
+    m_engine = m_manager->applet()->dataEngine(engineName);
 
     if (!m_engine->isValid()) {
         Plasma::DataEngineManager::self()->unloadEngine(engineName);

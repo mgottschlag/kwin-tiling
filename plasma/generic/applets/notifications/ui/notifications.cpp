@@ -79,9 +79,6 @@
 K_EXPORT_PLASMA_APPLET(notifications, Notifications)
 
 
-Manager *Notifications::s_manager = 0;
-int Notifications::s_managerUsage = 0;
-
 Notifications::Notifications(QObject *parent, const QVariantList &arguments)
     : Plasma::PopupApplet(parent, arguments),
       m_jobSummaryWidget(0),
@@ -90,11 +87,7 @@ Notifications::Notifications(QObject *parent, const QVariantList &arguments)
       m_standaloneJobSummaryWidget(0),
       m_standaloneJobSummaryDialog(0)
 {
-    if (!s_manager) {
-        s_manager = new Manager();
-    }
-
-    ++s_managerUsage;
+    m_manager = new Manager(this);
 
     setPopupIcon(QIcon());
     setPassivePopup(true);
@@ -106,21 +99,15 @@ Notifications::Notifications(QObject *parent, const QVariantList &arguments)
 Notifications::~Notifications()
 {
     // stop listening to the manager
-    disconnect(s_manager, 0, this, 0);
+    disconnect(m_manager, 0, this, 0);
 
-    foreach (Notification *notification, s_manager->notifications()) {
+    foreach (Notification *notification, m_manager->notifications()) {
         // we don't want a destroyed managed after the destruction of manager
         disconnect(notification, 0, this, 0);
     }
 
     //has to be deleted before the manager because it will access it
     delete m_busyWidget;
-    --s_managerUsage;
-    if (s_managerUsage < 1) {
-        delete s_manager;
-        s_manager = 0;
-        s_managerUsage = 0;
-    }
     delete m_notificationStackDialog;
 }
 
@@ -129,7 +116,7 @@ void Notifications::init()
     extender()->setEmptyExtenderMessage(i18n("No notifications and no jobs"));
     extender()->setWindowFlags(Qt::X11BypassWindowManagerHint);
 
-    m_busyWidget = new ExtenderTaskBusyWidget(this, s_manager);
+    m_busyWidget = new ExtenderTaskBusyWidget(this, m_manager);
     connect(m_busyWidget, SIGNAL(clicked()), this, SLOT(togglePopup()));
     QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(this);
     setContentsMargins(0, 0, 0, 0);
@@ -154,37 +141,37 @@ void Notifications::configChanged()
     if (globalCg.readEntry("ShowJobs", true)) {
         createJobGroups();
 
-        s_manager->registerJobProtocol();
-        connect(s_manager, SIGNAL(jobAdded(Job*)),
+        m_manager->registerJobProtocol();
+        connect(m_manager, SIGNAL(jobAdded(Job*)),
                 this, SLOT(addJob(Job*)), Qt::UniqueConnection);
-        connect(s_manager, SIGNAL(jobRemoved(Job*)),
+        connect(m_manager, SIGNAL(jobRemoved(Job*)),
                 this, SLOT(finishJob(Job*)), Qt::UniqueConnection);
     } else {
-        s_manager->unregisterJobProtocol();
-        disconnect(s_manager, SIGNAL(jobAdded(Job*)),
+        m_manager->unregisterJobProtocol();
+        disconnect(m_manager, SIGNAL(jobAdded(Job*)),
                    this, SLOT(addJob(Job*)));
-        disconnect(s_manager, SIGNAL(jobRemoved(Job*)),
+        disconnect(m_manager, SIGNAL(jobRemoved(Job*)),
                    this, SLOT(finishJob(Job*)));
     }
 
     if (globalCg.readEntry("ShowNotifications", true)) {
-        s_manager->registerNotificationProtocol();
-        connect(s_manager, SIGNAL(notificationAdded(Notification*)),
+        m_manager->registerNotificationProtocol();
+        connect(m_manager, SIGNAL(notificationAdded(Notification*)),
                 this, SLOT(addNotification(Notification*)), Qt::UniqueConnection);
     } else {
-        s_manager->unregisterNotificationProtocol();
-        disconnect(s_manager, SIGNAL(notificationAdded(Notification*)),
+        m_manager->unregisterNotificationProtocol();
+        disconnect(m_manager, SIGNAL(notificationAdded(Notification*)),
                    this, SLOT(addNotification(Notification*)));
     }
 }
 
 void Notifications::syncNotificationBarNeeded()
 {
-    if (!s_manager) {
+    if (!m_manager) {
         return;
     }
 
-    if (s_manager->notifications().count() > 0) {
+    if (m_manager->notifications().count() > 0) {
         if (!extender()->item("notifications")) {
             Plasma::ExtenderItem *extenderItem = new Plasma::ExtenderItem(extender());
             extenderItem->config().writeEntry("type", "notification");
@@ -207,7 +194,7 @@ void Notifications::syncNotificationBarNeeded()
 
 Manager *Notifications::manager() const
 {
-    return s_manager;
+    return m_manager;
 }
 
 
@@ -306,7 +293,7 @@ void Notifications::addJob(Job *job)
 
         KWindowSystem::setOnAllDesktops(m_standaloneJobSummaryDialog->winId(), true);
 
-        m_standaloneJobSummaryWidget = new JobTotalsWidget(s_manager->jobTotals(), this);
+        m_standaloneJobSummaryWidget = new JobTotalsWidget(m_manager->jobTotals(), this);
         if (containment() && containment()->corona()) {
             containment()->corona()->addOffscreenWidget(m_standaloneJobSummaryWidget);
         }
@@ -329,7 +316,7 @@ void Notifications::addJob(Job *job)
 void Notifications::initExtenderItem(Plasma::ExtenderItem *extenderItem)
 {
     if (extenderItem->name() == "jobGroup") {
-        m_jobSummaryWidget = new JobTotalsWidget(s_manager->jobTotals(), extenderItem);
+        m_jobSummaryWidget = new JobTotalsWidget(m_manager->jobTotals(), extenderItem);
         extenderItem->setWidget(m_jobSummaryWidget);
         return;
     }
@@ -347,7 +334,7 @@ void Notifications::popupEvent(bool show)
 {
     //decide about showing the tiny progressbar or not
     if (m_standaloneJobSummaryDialog) {
-        if (show || !s_manager->jobs().isEmpty()) {
+        if (show || !m_manager->jobs().isEmpty()) {
             m_standaloneJobSummaryDialog->setVisible(!show);
             if (!show) {
                 KWindowSystem::raiseWindow(m_standaloneJobSummaryDialog->winId());
@@ -376,14 +363,14 @@ void Notifications::popupEvent(bool show)
 void Notifications::finishJob(Job *job)
 {
     //finished all jobs? hide the mini progressbar
-    if (m_standaloneJobSummaryDialog && s_manager->jobs().isEmpty()) {
+    if (m_standaloneJobSummaryDialog && m_manager->jobs().isEmpty()) {
         m_standaloneJobSummaryDialog->hide();
     }
 
     //create a fake notification
     CompletedJobNotification *notification = new CompletedJobNotification(this);
     notification->setJob(job);
-    s_manager->addNotification(notification);
+    m_manager->addNotification(notification);
 }
 
 void Notifications::open(const QString &url)

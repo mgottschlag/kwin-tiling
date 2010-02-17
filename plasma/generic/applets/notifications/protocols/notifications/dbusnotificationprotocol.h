@@ -24,6 +24,7 @@
 #define DBUSNOTIFICATIONPROTOCOL_H
 
 #include "../../core/protocol.h"
+#include "../../core/notificationsmanager.h"
 
 #include <QHash>
 
@@ -37,7 +38,7 @@ class DBusNotificationProtocol : public Protocol
     Q_OBJECT
 
 public:
-    DBusNotificationProtocol(QObject *parent);
+    DBusNotificationProtocol(Manager *parent);
     ~DBusNotificationProtocol();
     void init();
 
@@ -51,6 +52,7 @@ private slots:
     void hideNotification(const QString &source);
 
 private:
+    Manager *m_manager;
     Plasma::DataEngine *m_engine;
     QHash<QString, DBusNotification*> m_notifications;
 };

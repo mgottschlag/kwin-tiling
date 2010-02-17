@@ -57,15 +57,18 @@ public:
     QList<Notification*> notifications;
     QList<Job *> jobs;
     Job *jobTotals;
+    Notifications *notificationsApplet;
     Protocol *jobProtocol;
     Protocol *notificationProtocol;
     QTimer *idleTimer;
 };
 
 
-Manager::Manager()
-    : d(new Private(this))
+Manager::Manager(Notifications *parentApplet)
+    : QObject(parentApplet),
+      d(new Private(this))
 {
+    d->notificationsApplet = parentApplet;
     d->idleTimer = new QTimer(this);
     d->idleTimer->setSingleShot(false);
     connect(d->idleTimer, SIGNAL(timeout()), this, SLOT(checkIdle()));
@@ -230,6 +233,10 @@ void Manager::Private::setupProtocol(Protocol *protocol)
     protocol->init();
 }
 
+Notifications *Manager::applet() const
+{
+    return d->notificationsApplet;
+}
 
 
 #include "notificationsmanager.moc"

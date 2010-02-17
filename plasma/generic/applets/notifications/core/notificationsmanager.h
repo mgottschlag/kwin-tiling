@@ -28,6 +28,8 @@
 #include <KConfigGroup>
 
 #include <plasma/plasma.h>
+#include "../ui/notifications.h"
+
 
 namespace Plasma
 {
@@ -48,7 +50,7 @@ class Manager : public QObject
     Q_OBJECT
 
 public:
-    Manager();
+    Manager(Notifications *parentApplet);
     ~Manager();
 
     /**
@@ -90,6 +92,8 @@ public:
      * Removes the notifications from the applet's notification system
      **/
     void unregisterNotificationProtocol();
+
+    Notifications *applet() const;
 
 signals:
     /**
