@@ -1,3 +1,5 @@
-[KNewStuff2]
-ProvidersUrl=http://download.kde.org/khotnewstuff/kde4colorschemes-providers.xml
+[KNewStuff3]
+ProvidersUrl=http://download.kde.org/ocs/providers.xml
 TargetDir=color-schemes
+Uncompress=archive
+Categories=KDE Color Scheme KDE4

@@ -41,7 +41,7 @@
 #include <KMessageBox>
 #include <KStandardDirs>
 #include <kio/netaccess.h>
-#include <knewstuff2/engine.h>
+#include <knewstuff3/downloaddialog.h>
 
 K_PLUGIN_FACTORY( KolorFactory, registerPlugin<KColorCm>(); )
 K_EXPORT_PLUGIN( KolorFactory("kcmcolors") )
@@ -360,15 +360,11 @@ void KColorCm::on_schemeImportButton_clicked()
 
 void KColorCm::on_schemeKnsButton_clicked()
 {
-    KNS::Engine engine(this);
-    if (engine.init("colorschemes.knsrc")) {
-
-
-        KNS::Entry::List entries = engine.downloadDialogModal(this);
-        if (!entries.isEmpty())
-        {
-            populateSchemeList();
-        }
+    KNS3::DownloadDialog dialog("colorschemes.knsrc", this);
+    dialog.exec();
+    if ( ! dialog.changedEntries().isEmpty() )
+    {
+        populateSchemeList();
     }
 }
 
