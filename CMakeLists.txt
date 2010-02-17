@@ -134,6 +134,11 @@ if(NOT WIN32)
     macro_optional_add_subdirectory( PolicyKit-kde )
   endif(POLKITQT_FOUND)
 endif(NOT WIN32)
+
+if (Q_WS_X11)
+  add_subdirectory(kinfocenter)
+endif (Q_WS_X11)
+
 macro_optional_add_subdirectory( klipper )
 macro_optional_add_subdirectory( krunner )
 macro_optional_add_subdirectory( solid )
