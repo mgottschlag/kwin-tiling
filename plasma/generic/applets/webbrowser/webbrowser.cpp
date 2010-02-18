@@ -206,6 +206,8 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
 
 WebBrowser::~WebBrowser()
 {
+    KConfigGroup cg = config();
+    saveState(cg);
     delete m_completion;
     delete m_bookmarkModel;
 }
@@ -249,6 +251,7 @@ void WebBrowser::configChanged()
             zoomFactor = 1;
         }
         m_browser->mainFrame()->setZoomFactor(zoomFactor);
+        m_browser->setUrl(m_url);
     }
     
     m_autoRefresh = cg.readEntry("autoRefresh", false);
