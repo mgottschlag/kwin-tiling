@@ -353,7 +353,7 @@ QIcon DBusSystemTrayTaskPrivate::imageVectorToPixmap(const KDbusImageVector &vec
 
 void DBusSystemTrayTaskPrivate::overlayIcon(QIcon *icon, QIcon *overlay)
 {
-    //kDebug() << "WRRRRRRROOOOOOOOOOOOOONG!";
+    QIcon tmp;
     QPixmap iconPixmap = icon->pixmap(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
 
     QPainter p(&iconPixmap);
@@ -361,6 +361,7 @@ void DBusSystemTrayTaskPrivate::overlayIcon(QIcon *icon, QIcon *overlay)
     const int size = KIconLoader::SizeSmall/2;
     p.drawPixmap(QRect(size, size, size, size), overlay->pixmap(size, size), QRect(0,0,size,size));
     p.end();
+    tmp.addPixmap(iconPixmap);
 
     //if an icon exactly that size wasn't found don't add it to the vector
     iconPixmap = icon->pixmap(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
@@ -369,7 +370,7 @@ void DBusSystemTrayTaskPrivate::overlayIcon(QIcon *icon, QIcon *overlay)
         QPainter p(&iconPixmap);
         p.drawPixmap(QRect(iconPixmap.width()-size, iconPixmap.height()-size, size, size), overlay->pixmap(size, size), QRect(0,0,size,size));
         p.end();
-        icon->addPixmap(iconPixmap);
+        tmp.addPixmap(iconPixmap);
     }
 
     iconPixmap = icon->pixmap(KIconLoader::SizeMedium, KIconLoader::SizeMedium);
@@ -378,7 +379,7 @@ void DBusSystemTrayTaskPrivate::overlayIcon(QIcon *icon, QIcon *overlay)
         QPainter p(&iconPixmap);
         p.drawPixmap(QRect(iconPixmap.width()-size, iconPixmap.height()-size, size, size), overlay->pixmap(size, size), QRect(0,0,size,size));
         p.end();
-        icon->addPixmap(iconPixmap);
+        tmp.addPixmap(iconPixmap);
     }
 
     iconPixmap = icon->pixmap(KIconLoader::SizeLarge, KIconLoader::SizeLarge);
@@ -387,9 +388,14 @@ void DBusSystemTrayTaskPrivate::overlayIcon(QIcon *icon, QIcon *overlay)
         QPainter p(&iconPixmap);
         p.drawPixmap(QRect(iconPixmap.width()-size, iconPixmap.height()-size, size, size), overlay->pixmap(size, size), QRect(0,0,size,size));
         p.end();
-        icon->addPixmap(iconPixmap);
+        tmp.addPixmap(iconPixmap);
     }
 
+    // We can't do 'icon->addPixmap()' because if 'icon' uses KIconEngine,
+    // it will ignore the added pixmaps. This is not a bug in KIconEngine,
+    // QIcon::addPixmap() doc says: "Custom icon engines are free to ignore
+    // additionally added pixmaps".
+    *icon = tmp;
     //hopefully huge and enormous not necessary right now, since it's quite costly
 }
 
