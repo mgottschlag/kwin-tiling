@@ -43,6 +43,7 @@ endif(X11_Xinerama_FOUND)
 #add_subdirectory( smartcard )
 
 add_subdirectory( hardware )
+add_subdirectory( desktoppaths )
 
 if(FONTCONFIG_FOUND AND FREETYPE_FOUND AND NOT WIN32)
     add_subdirectory( fonts )
