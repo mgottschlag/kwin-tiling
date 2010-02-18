@@ -227,7 +227,6 @@ void Applet::deleteMeters(QGraphicsLinearLayout* layout)
         if (!layout) {
             return;
         }
-        m_meters.clear();
         m_plotters.clear();
         m_toolTips.clear();
         m_header = 0;
@@ -292,19 +291,6 @@ QVariant Applet::itemChange(GraphicsItemChange change, const QVariant &value)
     }
 }
 
-QColor Applet::adjustColor(const QColor& color, uint percentage)
-{
-    qreal h, s, v, a;
-    color.getHsvF(&h, &s, &v, &a);
-    qreal d = fabs(v - 0.5) * (percentage / 100.0);
-    if (v > 0.5) {
-        v -= d;
-    } else {
-        v += d;
-    }
-    return QColor::fromHsvF(h, s, v, a);
-}
-
 void Applet::toolTipAboutToShow()
 {
     if (mode() == SM::Applet::Panel && !m_toolTips.isEmpty()) {
@@ -330,6 +316,31 @@ void Applet::appendPlotter(const QString& source, SM::Plotter* plotter)
 QHash<QString, SM::Plotter*> Applet::plotters()
 {
     return m_plotters;
+}
+
+uint Applet::interval()
+{
+    return m_interval;
+}
+
+void Applet::setInterval(uint interval)
+{
+    m_interval = interval;
+}
+
+QString Applet::title()
+{
+    return m_title;
+}
+
+SM::Applet::Mode Applet::mode()
+{
+    return m_mode;
+}
+
+void Applet::setToolTip(const QString &source, const QString &tipContent)
+{
+    m_toolTips.insert(source, tipContent);
 }
 
 }

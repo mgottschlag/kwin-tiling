@@ -55,6 +55,7 @@ class Hdd : public SM::Applet
         QHash<const QString, MonitorIcon *> m_icons;
         QHash<QString, QList<Plasma::Meter *> > m_diskMap;
         QStringList mounted();
+        QHash<QString, Plasma::Meter*> m_meters;
 
         QString hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data);
         QString guessHddTitle(const Plasma::DataEngine::Data &data);

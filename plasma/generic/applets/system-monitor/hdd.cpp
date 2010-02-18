@@ -23,6 +23,7 @@
 #include <Plasma/Theme>
 #include <Plasma/ToolTipManager>
 #include <KConfigDialog>
+#include <KColorUtils>
 #include <QFileInfo>
 #include <QGraphicsLinearLayout>
 
@@ -45,7 +46,7 @@ void Hdd::init()
     setEngine(dataEngine("soliddevice"));
 
     setTitle(i18n("Disk Space"), true);
-    
+
     configChanged();
     connectToEngine();
 }
@@ -53,16 +54,16 @@ void Hdd::init()
 void Hdd::configChanged()
 {
     KConfigGroup cg = config();
-    
+
     QStringList items = cg.readEntry("uuids", QStringList());
     if (items.isEmpty()) {
         items = mounted();
     }
-    
+
     setItems(items);
     setInterval(cg.readEntry("interval", 2) * 60 * 1000);
 }
-        
+
 QStringList Hdd::mounted()
 {
     Plasma::DataEngine::Data data;
@@ -226,7 +227,8 @@ bool Hdd::addMeter(const QString& source)
         w->setSvg("system-monitor/hdd_panel");
     }
     QColor text = theme->color(Plasma::Theme::TextColor);
-    QColor darkerText(adjustColor(text, 40));
+    QColor bg = theme->color(Plasma::Theme::BackgroundColor);
+    QColor darkerText = KColorUtils::tint(text, bg, 0.4);
     w->setLabel(0, hddTitle(source, data));
     w->setLabelColor(0, text);
     w->setLabelColor(1, darkerText);
@@ -243,7 +245,7 @@ bool Hdd::addMeter(const QString& source)
     kDebug() << w->labelRect(2);
     w->setMaximum(data["Size"].toULongLong() / (1024 * 1024));
     layout->addItem(w);
-    appendMeter(source, w);
+    m_meters[source] = w;
     mainLayout()->addItem(layout);
     dataUpdated(source, data);
     setPreferredItemHeight(layout->preferredSize().height());
@@ -262,9 +264,10 @@ bool Hdd::addMeter(const QString& source)
 void Hdd::themeChanged()
 {
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
-    foreach (Plasma::Meter *w, meters()) {
+    foreach (Plasma::Meter *w, m_meters) {
         QColor text = theme->color(Plasma::Theme::TextColor);
-        QColor darkerText(adjustColor(text, 40));
+        QColor bg = theme->color(Plasma::Theme::BackgroundColor);
+        QColor darkerText = KColorUtils::tint(text, bg, 0.4);
         w->setLabelColor(0, text);
         w->setLabelColor(1, darkerText);
         w->setLabelColor(2, darkerText);
@@ -319,7 +322,7 @@ void Hdd::dataUpdated(const QString& source,
             }
         }
     } else {
-        Plasma::Meter *w = meters().value(source);
+        Plasma::Meter *w = m_meters.value(source);
         if (!w) {
             return;
         }

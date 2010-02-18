@@ -67,15 +67,9 @@ class SM_EXPORT Applet : public Plasma::Applet
         void disconnectSources();
         void checkGeometry();
         QGraphicsLinearLayout* mainLayout();
-        void setTitle(const QString& title, bool spacer = false);
-        uint interval() { return m_interval; };
-        void setInterval(uint interval) { m_interval = interval; };
         qreal preferredItemHeight() { return m_preferredItemHeight; };
         void setPreferredItemHeight(qreal preferredItemHeight)
                 { m_preferredItemHeight = preferredItemHeight; };
-        QString title() { return m_title; };
-        bool titleSpacer() { return m_titleSpacer; };
-        Plasma::Frame* header() { return m_header; };
         QStringList items() { return m_items; };
         void appendItem(const QString& item) { m_items.append(item); };
         void setItems(const QStringList& items) { m_items = items; };
@@ -83,29 +77,23 @@ class SM_EXPORT Applet : public Plasma::Applet
         QStringList connectedSources() { return m_connectedSources; };
         void setEngine(Plasma::DataEngine* engine) { m_engine = engine; };
         Plasma::DataEngine* engine() { return m_engine; };
-        Qt::Orientation ratioOrientation() { return m_ratioOrientation; };
-        void setRatioOrientation(Qt::Orientation ratioOrientation)
-                { m_ratioOrientation = ratioOrientation; };
-        QHash<QString,Plasma::Meter*> meters() { return m_meters; };
-        void appendMeter(const QString& source, Plasma::Meter* meter)
-                { m_meters[source] = meter; };
-        QHash<QString, QString> tooltips() const;
-        void setToolTip(const QString &source, const QString &tipContent)
-                { m_toolTips.insert(source, tipContent); }
-        Qt::Orientation orientation() { return m_orientation; };
-        Mode mode() { return m_mode; };
-        Detail detail() { return m_detail; };
         qreal minimumWidth() { return m_minimumWidth; };
         void setMinimumWidth(qreal minimumWidth) { m_minimumWidth = minimumWidth; };
 
         QHash<QString, SM::Plotter*> plotters();
         void appendPlotter(const QString& source, SM::Plotter* plotter);
+        uint interval();
+        void setInterval(uint interval);
+        QString title();
+        void setTitle(const QString& title, bool spacer = false);
+        QHash<QString, QString> tooltips() const;
+        void setToolTip(const QString &source, const QString &tipContent);
+        Mode mode();
 
         virtual bool addMeter(const QString&) { return false; };
         void displayNoAvailableSources();
         virtual void deleteMeters(QGraphicsLinearLayout* layout = 0);
         virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-        QColor adjustColor(const QColor& color, uint percentage);
 
     private:
         uint m_interval;
@@ -118,7 +106,6 @@ class SM_EXPORT Applet : public Plasma::Applet
         QStringList m_connectedSources;
         Plasma::DataEngine *m_engine;
         Qt::Orientation m_ratioOrientation;
-        QHash<QString, Plasma::Meter*> m_meters;
         QHash<QString, SM::Plotter*> m_plotters;
         QHash<QString, QString> m_toolTips;
         Qt::Orientation m_orientation;
