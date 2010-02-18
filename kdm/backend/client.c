@@ -1340,7 +1340,8 @@ startClient( volatile int *pid )
 			logError( "Cannot open ConsoleKit session, likely OOM\n" );
 		}
 		ck_connector_unref( ckConnector );
-		V_RET;
+		ckConnector = 0;
+		V_RET_FAIL( 0 );
 	}
 #endif
 
