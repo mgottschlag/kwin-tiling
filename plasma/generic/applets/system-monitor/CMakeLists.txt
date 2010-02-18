@@ -6,11 +6,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} )
 set(lib_SRCS
     monitoricon.cpp
     applet.cpp
+    plotter.cpp
 )
 kde4_add_library(plasma_applet-system-monitor SHARED ${lib_SRCS})
-
 target_link_libraries(plasma_applet-system-monitor ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS})
-
 set_target_properties(plasma_applet-system-monitor PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 
 # HDD Monitor

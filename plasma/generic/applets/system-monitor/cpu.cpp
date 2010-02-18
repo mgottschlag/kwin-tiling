@@ -17,11 +17,11 @@
  */
 
 #include "cpu.h"
-#include <Plasma/SignalPlotter>
 #include <Plasma/Theme>
 #include <KConfigDialog>
 #include <QTimer>
 #include <QGraphicsLinearLayout>
+#include "plotter.h"
 
 SM::Cpu::Cpu(QObject *parent, const QVariantList &args)
     : SM::Applet(parent, args)
@@ -30,7 +30,6 @@ SM::Cpu::Cpu(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
     resize(234 + 20 + 23, 135 + 20 + 25);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
     m_sourceTimer.setSingleShot(true);
     connect(&m_sourceTimer, SIGNAL(timeout()), this, SLOT(sourcesAdded()));
 }
@@ -94,47 +93,18 @@ bool SM::Cpu::addMeter(const QString& source)
         return false;
     }
     QString cpu = l[1];
-    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
-    Plasma::SignalPlotter *plotter = new Plasma::SignalPlotter(this);
-    plotter->addPlot(adjustColor(theme->color(Plasma::Theme::TextColor), 40));
-    plotter->setUseAutoRange(false);
-    plotter->setVerticalRange(0.0, 100.0);
-    plotter->setThinFrame(false);
-    plotter->setShowLabels(false);
-    plotter->setShowTopBar(true);
-    plotter->setShowVerticalLines(false);
-    plotter->setShowHorizontalLines(false);
-    plotter->setFontColor(theme->color(Plasma::Theme::TextColor));
-    QFont font = theme->font(Plasma::Theme::DefaultFont);
-    font.setPointSize(8);
-    plotter->setFont(font);
-    QColor linesColor = theme->color(Plasma::Theme::TextColor);
-    linesColor.setAlphaF(0.4);
-    plotter->setHorizontalLinesColor(linesColor);
-    plotter->setVerticalLinesColor(linesColor);
-    plotter->setHorizontalLinesCount(4);
-    plotter->setSvgBackground("widgets/plot-background");
+    SM::Plotter *plotter = new SM::Plotter(this);
+    plotter->setMinMax(0.0, 100.0);
     plotter->setTitle(cpuTitle(cpu));
     plotter->setUnit("%");
     appendPlotter(source, plotter);
-    mainLayout()->addItem(plotter);
     setPreferredItemHeight(80);
     return true;
 }
 
-void SM::Cpu::themeChanged()
-{
-    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
-    foreach (Plasma::SignalPlotter *plotter, plotters()) {
-        plotter->setFontColor(theme->color(Plasma::Theme::TextColor));
-        plotter->setHorizontalLinesColor(theme->color(Plasma::Theme::TextColor));
-        plotter->setVerticalLinesColor(theme->color(Plasma::Theme::TextColor));
-    }
-}
-
 void SM::Cpu::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
-    Plasma::SignalPlotter *plotter = plotters()[source];
+    SM::Plotter *plotter = plotters()[source];
     if (plotter) {
         double value = data["value"].toDouble();
         QString temp = KGlobal::locale()->formatNumber(value, 1);
@@ -143,7 +113,6 @@ void SM::Cpu::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
             setToolTip(source, QString("<tr><td>%1&nbsp;</td><td>%2%</td></tr>")
                                       .arg(plotter->title()).arg(temp));
         }
-        setPlotterOverlayText(plotter, temp);
     }
 }
 

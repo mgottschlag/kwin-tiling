@@ -37,6 +37,8 @@ namespace Plasma {
 
 namespace SM {
 
+class Plotter;
+
 class SM_EXPORT Applet : public Plasma::Applet
 {
     Q_OBJECT
@@ -64,7 +66,6 @@ class SM_EXPORT Applet : public Plasma::Applet
         void connectSource(const QString& source);
         void disconnectSources();
         void checkGeometry();
-        void checkPlotters();
         QGraphicsLinearLayout* mainLayout();
         void setTitle(const QString& title, bool spacer = false);
         uint interval() { return m_interval; };
@@ -85,22 +86,20 @@ class SM_EXPORT Applet : public Plasma::Applet
         Qt::Orientation ratioOrientation() { return m_ratioOrientation; };
         void setRatioOrientation(Qt::Orientation ratioOrientation)
                 { m_ratioOrientation = ratioOrientation; };
-        void appendKeepRatio(QGraphicsWidget* w) { m_keepRatio.append(w); };
         QHash<QString,Plasma::Meter*> meters() { return m_meters; };
         void appendMeter(const QString& source, Plasma::Meter* meter)
                 { m_meters[source] = meter; };
         QHash<QString, QString> tooltips() const;
         void setToolTip(const QString &source, const QString &tipContent)
                 { m_toolTips.insert(source, tipContent); }
-        QHash<QString,Plasma::SignalPlotter*> plotters() { return m_plotters; };
-        void appendPlotter(const QString& source, Plasma::SignalPlotter* plotter)
-                { m_plotters[source] = plotter; };
         Qt::Orientation orientation() { return m_orientation; };
         Mode mode() { return m_mode; };
         Detail detail() { return m_detail; };
         qreal minimumWidth() { return m_minimumWidth; };
         void setMinimumWidth(qreal minimumWidth) { m_minimumWidth = minimumWidth; };
-        void setPlotterOverlayText(Plasma::SignalPlotter* plotter, const QString& text);
+
+        QHash<QString, SM::Plotter*> plotters();
+        void appendPlotter(const QString& source, SM::Plotter* plotter);
 
         virtual bool addMeter(const QString&) { return false; };
         void displayNoAvailableSources();
@@ -119,9 +118,8 @@ class SM_EXPORT Applet : public Plasma::Applet
         QStringList m_connectedSources;
         Plasma::DataEngine *m_engine;
         Qt::Orientation m_ratioOrientation;
-        QList<QGraphicsWidget*> m_keepRatio;
         QHash<QString, Plasma::Meter*> m_meters;
-        QHash<QString, Plasma::SignalPlotter*> m_plotters;
+        QHash<QString, SM::Plotter*> m_plotters;
         QHash<QString, QString> m_toolTips;
         Qt::Orientation m_orientation;
         Plasma::IconWidget *m_noSourcesIcon;
@@ -133,7 +131,6 @@ class SM_EXPORT Applet : public Plasma::Applet
 
         QGraphicsLinearLayout *m_mainLayout;
         Plasma::Applet *m_configSource;
-        QHash<Plasma::SignalPlotter*, Plasma::Frame *> m_overlayFrames;
 };
 
 }

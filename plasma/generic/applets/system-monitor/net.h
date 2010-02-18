@@ -57,9 +57,6 @@ class Net : public Applet
         QMap<QString, QList<double> > m_data;
         QTimer m_sourceTimer;
         QRegExp m_rx;
-
-    private slots:
-        void themeChanged();
 };
 }
 

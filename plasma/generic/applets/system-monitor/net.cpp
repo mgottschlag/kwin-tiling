@@ -17,11 +17,11 @@
  */
 
 #include "net.h"
-#include <Plasma/SignalPlotter>
 #include <Plasma/Theme>
 #include <Plasma/ToolTipManager>
 #include <KConfigDialog>
 #include <QGraphicsLinearLayout>
+#include <plotter.h>
 
 SM::Net::Net(QObject *parent, const QVariantList &args)
     : SM::Applet(parent, args)
@@ -30,7 +30,6 @@ SM::Net::Net(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
     resize(234 + 20 + 23, 135 + 20 + 25);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
     m_sourceTimer.setSingleShot(true);
     connect(&m_sourceTimer, SIGNAL(timeout()), this, SLOT(sourcesAdded()));
 }
@@ -46,7 +45,7 @@ void SM::Net::init()
     setTitle(i18n("Network"));
 
     configChanged();
-    
+
     connect(engine(), SIGNAL(sourceAdded(const QString&)),
             this, SLOT(sourceAdded(const QString&)));
     connect(engine(), SIGNAL(sourceRemoved(const QString&)),
@@ -97,44 +96,14 @@ bool SM::Net::addMeter(const QString& source)
         return false;
     }
     QString interface = l[2];
-    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
-    Plasma::SignalPlotter *plotter = new Plasma::SignalPlotter(this);
-    plotter->addPlot(adjustColor(theme->color(Plasma::Theme::TextColor), 40));
-    plotter->addPlot(adjustColor(theme->color(Plasma::Theme::BackgroundColor), 70));
-    plotter->setUseAutoRange(true);
-    plotter->setThinFrame(false);
-    plotter->setShowLabels(false);
-    plotter->setShowTopBar(true);
-    plotter->setShowVerticalLines(false);
-    plotter->setShowHorizontalLines(false);
-    plotter->setStackPlots(false);
-    plotter->setFontColor(theme->color(Plasma::Theme::TextColor));
-    QFont font = theme->font(Plasma::Theme::DefaultFont);
-    font.setPointSize(8);
-    plotter->setFont(font);
-    QColor linesColor = theme->color(Plasma::Theme::TextColor);
-    linesColor.setAlphaF(0.4);
-    plotter->setHorizontalLinesColor(linesColor);
-    plotter->setVerticalLinesColor(linesColor);
-    plotter->setHorizontalLinesCount(4);
-    plotter->setSvgBackground("widgets/plot-background");
+    SM::Plotter *plotter = new SM::Plotter(this);
     plotter->setTitle(interface);
     plotter->setUnit("KiB/s");
+    plotter->setPlotCount(2);
     appendPlotter(interface, plotter);
-    mainLayout()->addItem(plotter);
     connectSource("network/interfaces/" + interface + "/receiver/data");
     setPreferredItemHeight(80);
     return true;
-}
-
-void SM::Net::themeChanged()
-{
-    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
-    foreach (Plasma::SignalPlotter *plotter, plotters()) {
-        plotter->setFontColor(theme->color(Plasma::Theme::TextColor));
-        plotter->setHorizontalLinesColor(theme->color(Plasma::Theme::TextColor));
-        plotter->setVerticalLinesColor(theme->color(Plasma::Theme::TextColor));
-    }
 }
 
 void SM::Net::dataUpdated(const QString& source,
@@ -151,7 +120,8 @@ void SM::Net::dataUpdated(const QString& source,
     }
     m_data[interface][index] = qMax(0.0, data["value"].toDouble());
     if (!m_data[interface].contains(-1)) {
-        Plasma::SignalPlotter *plotter = plotters()[interface];
+        SM::Plotter *plotter = plotters()[interface];
+        kDebug() << plotter << interface;
         if (plotter) {
             plotter->addSample(m_data[interface]);
             if (mode() == SM::Applet::Panel) {
@@ -161,8 +131,6 @@ void SM::Net::dataUpdated(const QString& source,
                                          .arg(m_data[interface][1]));
             }
         }
-        //setPlotterOverlayText(plotter, QString("in %1 out %2").arg(m_data[interface][0])
-        //                                                    .arg(m_data[interface][1]));
         m_data[interface] = QList<double>() << -1 << -1;
     }
 }

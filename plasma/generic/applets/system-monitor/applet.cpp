@@ -27,6 +27,7 @@
 #include <KIcon>
 #include <KDebug>
 #include <QGraphicsLinearLayout>
+#include "plotter.h"
 
 namespace SM {
 
@@ -89,37 +90,6 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
         }
     } else if (constraints & Plasma::SizeConstraint) {
         checkGeometry();
-        checkPlotters();
-        if (m_keepRatio.count() > 0) {
-            foreach (QGraphicsWidget* item, m_keepRatio) {
-                QSizeF size = QSizeF(qMin(item->size().width(), contentsRect().size().width()),
-                                     qMin(item->size().height(), contentsRect().size().height()));
-
-                if (size == QSizeF(0, 0)) {
-                    continue;
-                }
-                qreal ratio = item->preferredSize().height() / item->preferredSize().width();
-                if (m_ratioOrientation == Qt::Vertical) {
-                    size = QSizeF(size.width(), size.width() * ratio);
-                } else {
-                    size = QSizeF(size.height() * (1.0 / ratio), size.height());
-                }
-                item->setPreferredSize(size);
-                if (m_mode == Panel) {
-                    item->setMaximumSize(size);
-                    item->setMinimumSize(size);
-                }
-            }
-            for (int i = mainLayout()->count() - 1; i >= 0; --i) {
-                QGraphicsLayoutItem* item = mainLayout()->itemAt(i);
-                if (item) {
-                    QGraphicsLinearLayout* l = dynamic_cast<QGraphicsLinearLayout *>(item);
-                    if (l) {
-                        l->invalidate();
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -137,7 +107,7 @@ QGraphicsLinearLayout* Applet::mainLayout()
    if (!m_mainLayout) {
       m_mainLayout = new QGraphicsLinearLayout(m_orientation);
       m_mainLayout->setContentsMargins(0, 0, 0, 0);
-      m_mainLayout->setSpacing(0);
+      m_mainLayout->setSpacing(5);
       setLayout(m_mainLayout);
    }
    return m_mainLayout;
@@ -175,37 +145,6 @@ void Applet::connectToEngine()
     }
     mainLayout()->activate();
     constraintsEvent(Plasma::SizeConstraint);
-}
-
-void Applet::checkPlotters()
-{
-    if (m_plotters.isEmpty()) {
-        return;
-    }
-
-    Plasma::SignalPlotter *plotter = m_plotters.begin().value();
-    QFontMetrics metrics(plotter->font());
-    bool showTopBar = (metrics.height() < plotter->size().height() / 3);
-
-    foreach (plotter, m_plotters) {
-        plotter->setShowTopBar(showTopBar);
-    }
-
-    Detail detail;
-
-    if (size().width() > 250 && size().height() / m_items.count() > 150) {
-        detail = High;
-    } else {
-        detail = Low;
-    }
-
-    if (m_detail != detail && m_mode != Monitor) {
-        m_detail = detail;
-        foreach (plotter, m_plotters) {
-            plotter->setShowLabels(detail == SM::Applet::High);
-            plotter->setShowHorizontalLines(detail == SM::Applet::High);
-        }
-    }
 }
 
 void Applet::checkGeometry()
@@ -290,21 +229,8 @@ void Applet::deleteMeters(QGraphicsLinearLayout* layout)
         }
         m_meters.clear();
         m_plotters.clear();
-        m_keepRatio.clear();
         m_toolTips.clear();
         m_header = 0;
-    }
-    m_overlayFrames.clear();
-    for (int i = layout->count() - 1; i >= 0; --i) {
-        QGraphicsLayoutItem* item = layout->itemAt(i);
-        if (item) {
-            QGraphicsLinearLayout* l = dynamic_cast<QGraphicsLinearLayout *>(item);
-            if (l) {
-                deleteMeters(l);
-            }
-        }
-        layout->removeAt(i);
-        delete item;
     }
 }
 
@@ -395,26 +321,15 @@ void Applet::toolTipAboutToShow()
     }
 }
 
-void Applet::setPlotterOverlayText(Plasma::SignalPlotter* plotter, const QString& text)
+void Applet::appendPlotter(const QString& source, SM::Plotter* plotter)
 {
-    if (!m_overlayFrames.contains(plotter)) {
-        Plasma::Frame* frame;
-        QGraphicsLinearLayout* layout = new QGraphicsLinearLayout(Qt::Vertical, plotter);
-        plotter->setLayout(layout);
-        frame = new Plasma::Frame(plotter);
-        frame->setZValue(10);
-        frame->resize(frame->size().height() * 2.5, frame->size().height());
-        m_overlayFrames[plotter] = frame;
-        frame->hide();
-        layout->addStretch();
-        QGraphicsLinearLayout* layout2 = new QGraphicsLinearLayout(Qt::Horizontal, layout);
-        layout2->addStretch();
-        layout2->addItem(frame);
-        layout2->addStretch();
-        layout->addItem(layout2);
-    }
-    m_overlayFrames[plotter]->setText(text);
-    m_overlayFrames[plotter]->show();
+    m_plotters[source] = plotter;
+    mainLayout()->addItem(plotter);
+}
+
+QHash<QString, SM::Plotter*> Applet::plotters()
+{
+    return m_plotters;
 }
 
 }

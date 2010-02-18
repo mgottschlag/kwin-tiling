@@ -47,7 +47,6 @@ class Temperature : public SM::Applet
         void configAccepted();
         void sourceAdded(const QString& name);
         void sourcesAdded();
-        void themeChanged();
 
     private:
         Ui::config ui;

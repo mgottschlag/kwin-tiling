@@ -57,9 +57,6 @@ class Cpu : public Applet
         QStringList m_cpus;
         QTimer m_sourceTimer;
         QRegExp m_rx;
-
-    private slots:
-        void themeChanged();
 };
 }
 

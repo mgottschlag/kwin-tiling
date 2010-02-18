@@ -52,9 +52,6 @@ class Ram : public Applet
         QStandardItemModel m_model;
         QStringList m_memories;
         QHash<QString, double> m_max;
-
-    private slots:
-        void themeChanged();
 };
 }
 

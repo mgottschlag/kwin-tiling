@@ -18,7 +18,6 @@
  */
 
 #include "temperature.h"
-#include <Plasma/SignalPlotter>
 #include <Plasma/Meter>
 #include <Plasma/Containment>
 #include <Plasma/Theme>
@@ -28,6 +27,7 @@
 #include <QGraphicsLinearLayout>
 #include <QTimer>
 #include <cmath>
+#include "plotter.h"
 
 using namespace KUnitConversion;
 
@@ -39,7 +39,6 @@ Temperature::Temperature(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
     resize(215 + 20 + 23, 109 + 20 + 25);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
     m_sourceTimer.setSingleShot(true);
     connect(&m_sourceTimer, SIGNAL(timeout()), this, SLOT(sourcesAdded()));
 }
@@ -55,7 +54,7 @@ void Temperature::init()
     setTitle(i18n("Temperature"));
 
     configChanged();
-    
+
     /* At the time this method is running, not all source may be connected. */
     connect(engine(), SIGNAL(sourceAdded(QString)), this, SLOT(sourceAdded(const QString)));
     foreach (const QString& source, engine()->sources()) {
@@ -154,82 +153,28 @@ QString Temperature::temperatureTitle(const QString& source)
 bool Temperature::addMeter(const QString& source)
 {
     Plasma::DataEngine *engine = dataEngine("systemmonitor");
-    Plasma::DataEngine::Data data;
-    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
 
     if (!engine) {
         return false;
     }
-    int min, max;
+
+    SM::Plotter *plotter = new SM::Plotter(this);
+    plotter->setTitle(temperatureTitle(source));
+    plotter->setAnalog(true);
+
     if (KGlobal::locale()->measureSystem() == KLocale::Metric) {
-        min = 0;
-        max = 110;
+        plotter->setMinMax(0, 110);
+        plotter->setUnit(QString::fromUtf8("°C"));
     } else {
-        min = 32;
-        max = 230;
+        plotter->setMinMax(32, 230);
+        plotter->setUnit(QString::fromUtf8("°F"));
     }
-    data = engine->query(source);
-    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(Qt::Horizontal);
-    layout->setContentsMargins(3, 3, 3, 3);
-    layout->setSpacing(5);
-    QString title = temperatureTitle(source);
-
-    if (mode() != SM::Applet::Panel) {
-        Plasma::Meter *meter = new Plasma::Meter(this);
-        meter->setMeterType(Plasma::Meter::AnalogMeter);
-        if (mode() != SM::Applet::Panel) {
-            meter->setLabel(0, title);
-            meter->setLabelColor(0, theme->color(Plasma::Theme::TextColor));
-            meter->setLabel(1, QString());
-            meter->setLabelColor(1, QColor("#000"));
-            meter->setLabelAlignment(1, Qt::AlignCenter);
-            QFont font = theme->font(Plasma::Theme::DefaultFont);
-            font.setPointSize(7);
-            meter->setLabelFont(0, font);
-            meter->setLabelFont(1, font);
-        }
-        meter->setMinimum(min);
-        meter->setMaximum(max);
-        layout->addItem(meter);
-        appendMeter(source, meter);
-        appendKeepRatio(meter);
-        setMinimumWidth(24);
-    }
-    Plasma::SignalPlotter *plotter = new Plasma::SignalPlotter(this);
-    plotter->addPlot(adjustColor(theme->color(Plasma::Theme::TextColor), 40));
-    plotter->setThinFrame(false);
-    plotter->setShowLabels(false);
-    plotter->setShowTopBar(true);
-    plotter->setShowVerticalLines(false);
-    plotter->setShowHorizontalLines(false);
-    plotter->setTitle(title);
-    plotter->setUseAutoRange(false);
-    plotter->setVerticalRange(min, max);
-    plotter->setFontColor(theme->color(Plasma::Theme::TextColor));
-    QFont font = theme->font(Plasma::Theme::DefaultFont);
-    font.setPointSize(8);
-    plotter->setFont(font);
-    plotter->setSvgBackground("widgets/plot-background");
-    layout->addItem(plotter);
     appendPlotter(source, plotter);
-    setRatioOrientation(Qt::Horizontal);
-    mainLayout()->addItem(layout);
 
+    Plasma::DataEngine::Data data = engine->query(source);
     dataUpdated(source, data);
     setPreferredItemHeight(80);
     return true;
-}
-
-void Temperature::themeChanged()
-{
-    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
-    foreach (Plasma::Meter *w, meters()) {
-        w->setLabelColor(0, theme->color(Plasma::Theme::TextColor));
-        QFont font = theme->font(Plasma::Theme::DefaultFont);
-        font.setPointSize(7);
-        w->setLabelFont(0, font);
-        w->setLabelFont(1, font);
-    }
 }
 
 void Temperature::dataUpdated(const QString& source,
@@ -238,8 +183,7 @@ void Temperature::dataUpdated(const QString& source,
     if (!items().contains(source)) {
         return;
     }
-    Plasma::Meter *w = meters().value(source);
-    Plasma::SignalPlotter *plotter = plotters().value(source);
+    SM::Plotter *plotter = plotters().value(source);
     QString temp;
     QString unit = data["units"].toString();
     double doubleValue = data["value"].toDouble();
@@ -251,19 +195,12 @@ void Temperature::dataUpdated(const QString& source,
         value = value.convertTo(Fahrenheit);
     }
 
-    value.round(1);
-    temp = value.toSymbolString();
-
-    if (w) {
-        w->setValue(doubleValue);
-        if (mode() != SM::Applet::Panel) {
-            w->setLabel(1, temp);
-        }
-    }
     if (plotter) {
         plotter->addSample(QList<double>() << doubleValue);
-        setPlotterOverlayText(plotter, temp);
     }
+
+    value.round(1);
+    temp = value.toSymbolString();
 
     if (mode() == SM::Applet::Panel) {
         setToolTip(source,

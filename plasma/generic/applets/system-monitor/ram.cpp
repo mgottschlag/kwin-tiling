@@ -17,12 +17,12 @@
  */
 
 #include "ram.h"
-#include <Plasma/SignalPlotter>
 #include <Plasma/Theme>
 #include <Plasma/ToolTipManager>
 #include <KConfigDialog>
 #include <QTimer>
 #include <QGraphicsLinearLayout>
+#include "plotter.h"
 
 /* All sources we are interested in. */
 static const char phys_source[] = "mem/physical/application";
@@ -34,7 +34,6 @@ SM::Ram::Ram(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
     resize(234 + 20 + 23, 135 + 20 + 25);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
 }
 
 SM::Ram::~Ram()
@@ -46,7 +45,7 @@ void SM::Ram::init()
     KGlobal::locale()->insertCatalog("plasma_applet_system-monitor");
     setEngine(dataEngine("systemmonitor"));
     setTitle(i18n("RAM"));
-    
+
     configChanged();
 
     /* At the time this method is running, not all source may be connected. */
@@ -88,46 +87,17 @@ bool SM::Ram::addMeter(const QString& source)
         return false;
     }
     QString ram = l[1];
-    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
-    Plasma::SignalPlotter *plotter = new Plasma::SignalPlotter(this);
-    plotter->addPlot(adjustColor(theme->color(Plasma::Theme::TextColor), 40));
-    plotter->setUseAutoRange(false);
-    plotter->setThinFrame(false);
-    plotter->setShowLabels(false);
-    plotter->setShowTopBar(true);
-    plotter->setShowVerticalLines(false);
-    plotter->setShowHorizontalLines(false);
-    plotter->setFontColor(theme->color(Plasma::Theme::TextColor));
-    QFont font = theme->font(Plasma::Theme::DefaultFont);
-    font.setPointSize(8);
-    plotter->setFont(font);
-    QColor linesColor = theme->color(Plasma::Theme::TextColor);
-    linesColor.setAlphaF(0.4);
-    plotter->setHorizontalLinesColor(linesColor);
-    plotter->setVerticalLinesColor(linesColor);
-    plotter->setHorizontalLinesCount(4);
-    plotter->setSvgBackground("widgets/plot-background");
+    SM::Plotter *plotter = new SM::Plotter(this);
     plotter->setTitle(ram);
     plotter->setUnit("B");
     appendPlotter(source, plotter);
-    mainLayout()->addItem(plotter);
     setPreferredItemHeight(80);
     return true;
 }
 
-void SM::Ram::themeChanged()
-{
-    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
-    foreach (Plasma::SignalPlotter *plotter, plotters()) {
-        plotter->setFontColor(theme->color(Plasma::Theme::TextColor));
-        plotter->setHorizontalLinesColor(theme->color(Plasma::Theme::TextColor));
-        plotter->setVerticalLinesColor(theme->color(Plasma::Theme::TextColor));
-    }
-}
-
 void SM::Ram::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
-    Plasma::SignalPlotter *plotter = plotters()[source];
+    SM::Plotter *plotter = plotters()[source];
     if (plotter) {
         /* A factor to convert from default units to bytes.
          * If units is not "KB", assume it is bytes. */
@@ -137,7 +107,7 @@ void SM::Ram::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
         static const QStringList units = QStringList() << "B" << "KiB" << "MiB" << "GiB" << "TiB";
         if (value_b > m_max[source]) {
             m_max[source] = max_b;
-            plotter->setVerticalRange(0.0, max_b);
+            plotter->setMinMax(0.0, max_b);
             qreal scale = 1.0;
             int i = 0;
             while (max_b / scale > 1024.0 && i < units.size()) {
@@ -145,7 +115,7 @@ void SM::Ram::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
                 ++i;
             }
             plotter->setUnit(units[i]);
-            plotter->scale(scale);
+            plotter->setScale(scale);
         }
 
         plotter->addSample(QList<double>() << value_b);
@@ -156,7 +126,6 @@ void SM::Ram::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
                                       .arg(temp)
                                       .arg(KGlobal::locale()->formatByteSize(m_max[source])));
         }
-        setPlotterOverlayText(plotter, temp);
     }
 }
 
