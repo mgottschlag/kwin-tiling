@@ -121,7 +121,6 @@ void SM::Net::dataUpdated(const QString& source,
     m_data[interface][index] = qMax(0.0, data["value"].toDouble());
     if (!m_data[interface].contains(-1)) {
         SM::Plotter *plotter = plotters()[interface];
-        kDebug() << plotter << interface;
         if (plotter) {
             plotter->addSample(m_data[interface]);
             if (mode() == SM::Applet::Panel) {

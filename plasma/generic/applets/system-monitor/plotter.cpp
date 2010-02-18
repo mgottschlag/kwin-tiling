@@ -21,6 +21,7 @@
 #include <Plasma/Meter>
 #include <Plasma/Theme>
 #include <Plasma/Frame>
+#include <KColorUtils>
 #include <QGraphicsLinearLayout>
 
 namespace SM {
@@ -71,6 +72,7 @@ void Plotter::setMinMax(double min, double max)
         m_meter->setMinimum(min);
         m_meter->setMaximum(max);
     }
+    m_plotter->setUseAutoRange(false);
     m_plotter->setVerticalRange(min, max);
     m_min = min;
     m_max = max;
@@ -107,10 +109,12 @@ void Plotter::setPlotCount(int count)
         m_plotter->removePlot(0);
     }
     m_plotCount = count;
+    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
+    QColor text = theme->color(Plasma::Theme::TextColor);
+    QColor bg = theme->color(Plasma::Theme::BackgroundColor);
     for (int i = 0; i < m_plotCount; ++i) {
-        // TODO color adjust
-        Plasma::Theme* theme = Plasma::Theme::defaultTheme();
-        m_plotter->addPlot(theme->color(Plasma::Theme::TextColor));
+        QColor color = KColorUtils::tint(text, bg, 0.4 + ((double)i / 2.5));
+        m_plotter->addPlot(color);
     }
 }
 
@@ -127,7 +131,7 @@ void Plotter::createWidgets()
     m_plotter->setShowTopBar(true);
     m_plotter->setShowVerticalLines(false);
     m_plotter->setShowHorizontalLines(false);
-    m_plotter->setUseAutoRange(false);
+    m_plotter->setUseAutoRange(true);
     m_plotter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_layout->addItem(m_plotter);
     themeChanged();
