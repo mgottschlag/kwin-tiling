@@ -96,10 +96,9 @@ void HWInfo::connectToEngine()
     QString path = QString::fromLocal8Bit(qgetenv("PATH"))
                  + QString::fromLatin1(":/usr/sbin:/sbin/");
     QString exe = KStandardDirs::findExe( "lspci", path );
-    if (exe.isEmpty())
+    if (exe.isEmpty()) {
        kError()  << "lspci not found in " << path << endl;
-    else
-    {
+    } else {
        QString tmp = exe + " | grep VGA | sed 's/.*: //g'";
        engine->connectSource(tmp, this);
     }
