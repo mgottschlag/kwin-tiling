@@ -1,0 +1,93 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"/usr/share/apps/ksgmltools2/customization/dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<title>Device Information</title>
+<articleinfo>
+
+<authorgroup>
+<author>
+<personname>
+<firstname>David</firstname>
+<surname>Hubner</surname>
+</personname>
+</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2010-01-01</date>
+<releaseinfo>0.70.00</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>Device</keyword>
+<keyword>System Information</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="devinfo">
+<title>Device Information</title>
+<para>Device Information is a device viewer module. It shows all relevant devices that are present within your <acronym>PC</acronym>. It has three sections,
+a device viewer, a information panel and a <acronym>UDI</acronym> listing for the currently selected device.</para> 
+<sect2 id="devlist">
+<title>Device Listing</title>
+<para>The device viewer displays all the current devices detected on your <acronym>PC</acronym> in a tree. The main topics at the beginning of the tree 
+are the device categories, click on the <emphasis>+</emphasis> symbol to show all devices in that category. To collapse a category just click the <emphasis>-</emphasis> symbol.
+To display information about a device, left click on the device in the viewer, the information will display on the right information panel.
+You can right click on the device viewer to show the following options: </para>
+<itemizedlist>
+<listitem><para><guimenuitem>Collapse All</guimenuitem>: Collapses the tree to show only the main categories.</para></listitem>
+<listitem><para><guimenuitem>Expand All</guimenuitem>: Expands the tree to show all the children devices.</para></listitem>
+<listitem><para><guimenuitem>Show All Devices</guimenuitem>: Show all the categories no matter if devices are present in those categories</para></listitem>
+<listitem><para><guimenuitem>Show Relevant Devices</guimenuitem>: Only show categories that have devices present.</para></listitem>
+</itemizedlist>
+<para>The default display is to collapse all while showing only relevant devices. Please note that the devices shown
+in the device listing are not all devices within your PC, they are just devices that have been detected via the Solid back end.</para>
+<para> The device viewer can show the following devices:</para>
+<itemizedlist>
+<listitem><para>Processors: These are your computers <acronym>CPU</acronym>s ( Central Processing Units ).</para></listitem>
+<listitem><para>Storage Drives: Devices that are used to store your <acronym>PC</acronym>s files and data.</para></listitem>
+<listitem><para>Network Interfaces: Devices that allow you to connect to a network or to another <acronym>PC</acronym>.</para></listitem> 
+<listitem><para>Audio Interfaces: Devices that allow your <acronym>PC</acronym> to play Sound. They are split into 2 categories, <acronym>ALSA</acronym> and <acronym>OSS</acronym> sound architectures.</para></listitem>
+<listitem><para>Video Devices: Devices that allow you to stream live video. </para></listitem>
+<listitem><para>Serial Devices: Devices that are connected to your serial port in your PC.</para></listitem>
+<listitem><para>Smart Card Devices: Devices that are smart card readers. </para></listitem>
+<listitem><para>Digital Video Broadcasting Devices: Devices that use the open standards for digital television.</para></listitem>
+<listitem><para>Device Buttons: These are buttons that are present on your <acronym>PC</acronym> or external devices. </para></listitem>
+<listitem><para>Batteries: These are battery devices that are plugged into your laptop. </para></listitem>
+<listitem><para><acronym>AC</acronym> Adapters: These devices will be present when you plug in your <acronym>AC</acronym> Adapter. </para></listitem>
+<listitem><para>Multimedia Players: Devices that play media files, like a music player. </para></listitem>
+<listitem><para>Camera Devices: These are digital camera that are connected to your <acronym>PC</acronym>.</para></listitem>
+</itemizedlist>
+<note>
+<para>Video devices do not include your video card adapter</para>
+</note>
+</sect2>
+<sect2 id="infopanel">
+<title>Information Panel</title>
+<para>The information panel is where device information is shown when you select a device. The first two information topics are always:</para>
+<itemizedlist>
+<listitem><para><guilabel>Product</guilabel>: The name of the device.</para></listitem>
+<listitem><para><guilabel>Vendor</guilabel>: The vendors name of the device.</para></listitem>
+</itemizedlist>
+<para>The following information topics are dependent on the device chosen. They are labeled with easy to understand names. 
+The information labels have the ability to be selected and copied from.</para>
+<note>
+<para>Processor <quote>Max Speed</quote> and <quote>Supported Instruction sets</quote> topics are usual not set by solid.</para>  
+</note>
+<note>
+<para>Top categories in the device listing do not show any information.</para>  
+</note>
+</sect2>
+<sect2 id="udilabel">
+<title><acronym>UDI</acronym> Information</title>
+<para>The bottom information panel shows the current selected devices <acronym>UDI</acronym>. This is the unique device identifier.
+The label has the ability to be selected and copied from.</para>
+</sect2>
+</sect1>
+</article>
