@@ -67,6 +67,7 @@ class SM_EXPORT Plotter : public QGraphicsWidget
         double m_min;
         double m_max;
         Plasma::Frame* m_overlayFrame;
+        bool m_showAnalogValue;
 };
 
 }

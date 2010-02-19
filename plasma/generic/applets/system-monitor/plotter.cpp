@@ -22,7 +22,9 @@
 #include <Plasma/Theme>
 #include <Plasma/Frame>
 #include <KColorUtils>
+#include <KGlobalSettings>
 #include <QGraphicsLinearLayout>
+#include <QWidget>
 
 namespace SM {
 
@@ -50,15 +52,12 @@ void Plotter::setAnalog(bool analog)
     if (analog && m_layout->count() < 2) {
         m_meter = new Plasma::Meter(this);
         m_meter->setMeterType(Plasma::Meter::AnalogMeter);
-        m_meter->setLabel(0, m_title);
-        m_meter->setLabel(1, QString());
         m_meter->setLabelAlignment(1, Qt::AlignCenter);
         m_layout->insertItem(0, m_meter);
         m_meter->setMinimum(m_min);
         m_meter->setMaximum(m_max);
         m_meter->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
         themeChanged();
-        resizeEvent(0);
     } else if (m_layout->count() > 1) {
         m_layout->removeAt(0);
         delete m_meter;
@@ -135,7 +134,6 @@ void Plotter::createWidgets()
     m_plotter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_layout->addItem(m_plotter);
     themeChanged();
-    resizeEvent(0);
 }
 
 void Plotter::themeChanged()
@@ -143,16 +141,9 @@ void Plotter::themeChanged()
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
     if (m_meter) {
         m_meter->setLabelColor(0, theme->color(Plasma::Theme::TextColor));
-        QFont font = theme->font(Plasma::Theme::DefaultFont);
-        font.setPointSize(7);
-        m_meter->setLabelFont(0, font);
-        m_meter->setLabelFont(1, font);
         m_meter->setLabelColor(0, theme->color(Plasma::Theme::TextColor));
         m_meter->setLabelColor(1, QColor("#000"));
     }
-    QFont font = theme->font(Plasma::Theme::DefaultFont);
-    font.setPointSize(8);
-    m_plotter->setFont(font);
     m_plotter->setFontColor(theme->color(Plasma::Theme::TextColor));
     m_plotter->setSvgBackground("widgets/plot-background");
     QColor linesColor = theme->color(Plasma::Theme::TextColor);
@@ -160,6 +151,7 @@ void Plotter::themeChanged()
     m_plotter->setHorizontalLinesColor(linesColor);
     m_plotter->setVerticalLinesColor(linesColor);
     setPlotCount(m_plotCount);
+    resizeEvent(0);
 }
 
 void Plotter::addSample(const QList<double>& values)
@@ -170,6 +162,9 @@ void Plotter::addSample(const QList<double>& values)
         list << QString("%1 %2").arg(value, 0, 'f', (value > 1000.0) ? 0 : 1).arg(m_unit);
     }
     setOverlayText(list.join(" / "));
+    if (m_meter) {
+        m_meter->setValue(values[0]);
+    }
 }
 
 void Plotter::setOverlayText(const QString& text)
@@ -187,10 +182,15 @@ void Plotter::setOverlayText(const QString& text)
         layout2->addItem(m_overlayFrame);
         layout2->addStretch();
         layout->addItem(layout2);
+        resizeEvent(0);
     }
     m_overlayFrame->setText(text);
     if (m_meter) {
-        m_meter->setLabel(1, text);
+        if (m_showAnalogValue) {
+            m_meter->setLabel(1, text);
+        } else {
+            m_meter->setLabel(1, QString());
+        }
     }
 }
 
@@ -198,22 +198,49 @@ void Plotter::resizeEvent(QGraphicsSceneResizeEvent* event)
 {
     Q_UNUSED(event)
     qreal h = size().height();
-    QFontMetrics metrics(m_plotter->font());
-    bool showTopBar = (metrics.height() < m_plotter->size().height() / 3);
-
-    m_plotter->setShowTopBar(showTopBar);
-
+    qreal fontHeight = h / (7.0 * 1.5); // Seven rows
+    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
+    QFont font = theme->font(Plasma::Theme::DefaultFont);
+    QFont smallest = KGlobalSettings::smallestReadableFont();
     bool show = false;
-
-    if (size().width() > 250 && h > 150) {
-        show = true;
+    QFontMetrics metrics(font);
+    QStringList list;
+    for (int i = 0; i < m_plotCount; ++i) {
+        list << QString("888.0 %2").arg(m_unit);
     }
+    QString valueText = list.join(" / ");
+
+    font.setPointSizeF(smallest.pointSizeF());
+    forever {
+        metrics = QFontMetrics(font);
+        if (metrics.height() > fontHeight) {
+            break;
+        }
+        font.setPointSizeF(font.pointSizeF() + 0.5);
+        show = true;
+    };
+    m_plotter->setFont(font);
+    m_plotter->setShowTopBar(metrics.height() < h / 3);
     m_plotter->setShowLabels(show);
     m_plotter->setShowHorizontalLines(show);
-    // TODO show/hide overlay text
+    if (m_overlayFrame) {
+        m_overlayFrame->setVisible(metrics.height() < h / 3 &&
+                                   metrics.width(valueText) < size().width() * 0.8);
+        m_overlayFrame->setFont(font);
+    }
 
     if (m_meter) {
-        m_meter->setMinimumSize(h, h);
+        m_meter->setLabelFont(0, font);
+        m_meter->setLabelFont(1, font);
+        // Make analog meter square
+        m_meter->setMinimumSize(h, 8);
+        m_showAnalogValue = (m_meter->size().width() * 0.7 > metrics.width(valueText));
+        if (m_meter->size().width() * 0.9 > metrics.width(m_title)) {
+            m_meter->setLabel(0, m_title);
+        } else {
+            m_meter->setLabel(0, QString());
+        }
+        m_meter->setLabel(1, QString());
     }
 }
 
