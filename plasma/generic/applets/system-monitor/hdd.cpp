@@ -198,7 +198,6 @@ bool Hdd::addMeter(const QString& source)
     Plasma::Meter *w;
     Plasma::DataEngine *engine = dataEngine("soliddevice");
     Plasma::DataEngine::Data data;
-    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
 
     if (!engine) {
         return false;
@@ -226,24 +225,12 @@ bool Hdd::addMeter(const QString& source)
     } else {
         w->setSvg("system-monitor/hdd_panel");
     }
-    QColor text = theme->color(Plasma::Theme::TextColor);
-    QColor bg = theme->color(Plasma::Theme::BackgroundColor);
-    QColor darkerText = KColorUtils::tint(text, bg, 0.4);
     w->setLabel(0, hddTitle(source, data));
-    w->setLabelColor(0, text);
-    w->setLabelColor(1, darkerText);
-    w->setLabelColor(2, darkerText);
-    QFont font = theme->font(Plasma::Theme::DefaultFont);
-    font.setPointSize(9);
-    w->setLabelFont(0, font);
-    font.setPointSizeF(7.5);
-    w->setLabelFont(1, font);
-    w->setLabelFont(2, font);
     w->setLabelAlignment(0, Qt::AlignVCenter | Qt::AlignLeft);
     w->setLabelAlignment(1, Qt::AlignVCenter | Qt::AlignRight);
     w->setLabelAlignment(2, Qt::AlignVCenter | Qt::AlignCenter);
-    kDebug() << w->labelRect(2);
     w->setMaximum(data["Size"].toULongLong() / (1024 * 1024));
+    applyTheme(w);
     layout->addItem(w);
     m_meters[source] = w;
     mainLayout()->addItem(layout);
@@ -261,22 +248,27 @@ bool Hdd::addMeter(const QString& source)
     return true;
 }
 
-void Hdd::themeChanged()
+void Hdd::applyTheme(Plasma::Meter *w)
 {
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
+    QColor text = theme->color(Plasma::Theme::TextColor);
+    QColor bg = theme->color(Plasma::Theme::BackgroundColor);
+    QColor darkerText = KColorUtils::tint(text, bg, 0.4);
+    w->setLabelColor(0, text);
+    w->setLabelColor(1, darkerText);
+    w->setLabelColor(2, darkerText);
+    QFont font = theme->font(Plasma::Theme::DefaultFont);
+    font.setPointSize(9);
+    w->setLabelFont(0, font);
+    font.setPointSizeF(7.5);
+    w->setLabelFont(1, font);
+    w->setLabelFont(2, font);
+}
+
+void Hdd::themeChanged()
+{
     foreach (Plasma::Meter *w, m_meters) {
-        QColor text = theme->color(Plasma::Theme::TextColor);
-        QColor bg = theme->color(Plasma::Theme::BackgroundColor);
-        QColor darkerText = KColorUtils::tint(text, bg, 0.4);
-        w->setLabelColor(0, text);
-        w->setLabelColor(1, darkerText);
-        w->setLabelColor(2, darkerText);
-        QFont font = theme->font(Plasma::Theme::DefaultFont);
-        font.setPointSize(9);
-        w->setLabelFont(0, font);
-        font.setPointSizeF(7.5);
-        w->setLabelFont(1, font);
-        w->setLabelFont(2, font);
+        applyTheme(w);
     }
 }
 
@@ -284,6 +276,7 @@ void Hdd::deleteMeters()
 {
     Applet::deleteMeters();
     m_diskMap.clear();
+    m_meters.clear();
 }
 
 bool Hdd::isValidDevice(const QString& uuid, Plasma::DataEngine::Data* data)

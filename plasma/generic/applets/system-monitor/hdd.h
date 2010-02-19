@@ -52,6 +52,7 @@ class Hdd : public SM::Applet
         bool addMeter(const QString& source);
         virtual void deleteMeters();
         bool isValidDevice(const QString& uuid, Plasma::DataEngine::Data* data);
+        void applyTheme(Plasma::Meter *w);
 
     protected slots:
         void configAccepted();
