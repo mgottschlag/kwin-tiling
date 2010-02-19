@@ -52,7 +52,6 @@ class SM_EXPORT Applet : public Plasma::Applet
         virtual void constraintsEvent(Plasma::Constraints constraints);
         void save(KConfigGroup &config) const;
         void saveConfig(KConfigGroup &config);
-        QSizeF minSize() const { return m_min; };
 
     public Q_SLOTS:
         void toolTipAboutToShow();
@@ -61,12 +60,6 @@ class SM_EXPORT Applet : public Plasma::Applet
         void geometryChecked();
 
     protected:
-        KConfigGroup config();
-        void connectToEngine();
-        void connectSource(const QString& source);
-        void disconnectSources();
-        void checkGeometry();
-        QGraphicsLinearLayout* mainLayout();
         qreal preferredItemHeight() { return m_preferredItemHeight; };
         void setPreferredItemHeight(qreal preferredItemHeight)
                 { m_preferredItemHeight = preferredItemHeight; };
@@ -74,12 +67,16 @@ class SM_EXPORT Applet : public Plasma::Applet
         void appendItem(const QString& item) { m_items.append(item); };
         void setItems(const QStringList& items) { m_items = items; };
         void clearItems() { m_items.clear(); };
-        QStringList connectedSources() { return m_connectedSources; };
-        void setEngine(Plasma::DataEngine* engine) { m_engine = engine; };
-        Plasma::DataEngine* engine() { return m_engine; };
-        qreal minimumWidth() { return m_minimumWidth; };
-        void setMinimumWidth(qreal minimumWidth) { m_minimumWidth = minimumWidth; };
 
+        KConfigGroup config();
+        void connectToEngine();
+        void connectSource(const QString& source);
+        QStringList connectedSources();
+        void disconnectSources();
+        void checkGeometry();
+        QGraphicsLinearLayout* mainLayout();
+        Plasma::DataEngine* engine();
+        void setEngine(Plasma::DataEngine* engine);
         QHash<QString, SM::Plotter*> plotters();
         void appendPlotter(const QString& source, SM::Plotter* plotter);
         uint interval();
@@ -89,33 +86,25 @@ class SM_EXPORT Applet : public Plasma::Applet
         QHash<QString, QString> tooltips() const;
         void setToolTip(const QString &source, const QString &tipContent);
         Mode mode();
-
-        virtual bool addMeter(const QString&) { return false; };
+        virtual bool addMeter(const QString&);
         void displayNoAvailableSources();
-        virtual void deleteMeters(QGraphicsLinearLayout* layout = 0);
+        virtual void deleteMeters();
         virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
     private:
         uint m_interval;
         qreal m_preferredItemHeight;
-        qreal m_minimumWidth;
         QString m_title;
         bool m_titleSpacer;
         Plasma::Frame* m_header;
         QStringList m_items;
         QStringList m_connectedSources;
         Plasma::DataEngine *m_engine;
-        Qt::Orientation m_ratioOrientation;
         QHash<QString, SM::Plotter*> m_plotters;
         QHash<QString, QString> m_toolTips;
         Qt::Orientation m_orientation;
         Plasma::IconWidget *m_noSourcesIcon;
         Mode m_mode;
-        Detail m_detail;
-        QSizeF m_min;
-        QSizeF m_pref;
-        QSizeF m_max;
-
         QGraphicsLinearLayout *m_mainLayout;
         Plasma::Applet *m_configSource;
 };

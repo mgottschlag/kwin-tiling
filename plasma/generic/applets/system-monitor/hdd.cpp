@@ -280,9 +280,9 @@ void Hdd::themeChanged()
     }
 }
 
-void Hdd::deleteMeters(QGraphicsLinearLayout* layout)
+void Hdd::deleteMeters()
 {
-    Applet::deleteMeters(layout);
+    Applet::deleteMeters();
     m_diskMap.clear();
 }
 

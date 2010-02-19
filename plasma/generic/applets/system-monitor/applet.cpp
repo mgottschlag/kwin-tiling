@@ -35,15 +35,12 @@ Applet::Applet(QObject *parent, const QVariantList &args)
    : Plasma::Applet(parent, args),
      m_interval(10000),
      m_preferredItemHeight(42),
-     m_minimumWidth(MINIMUM),
      m_titleSpacer(false),
      m_header(0),
      m_engine(0),
-     m_ratioOrientation(Qt::Vertical),
      m_orientation(Qt::Vertical),
      m_noSourcesIcon(0),
      m_mode(Desktop),
-     m_detail(Low),
      m_mainLayout(0),
      m_configSource(0)
 {
@@ -84,7 +81,6 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
             }
             if (mode != m_mode) {
                 m_mode = mode;
-                m_ratioOrientation = m_orientation;
                 connectToEngine();
             }
         }
@@ -149,6 +145,10 @@ void Applet::connectToEngine()
 
 void Applet::checkGeometry()
 {
+    QSizeF min;
+    QSizeF pref;
+    QSizeF max;
+
     if (m_mode != Panel) {
         qreal height = 0;
         qreal width = MINIMUM;
@@ -157,15 +157,15 @@ void Applet::checkGeometry()
             height = m_header->minimumSize().height();
             width = m_header->minimumSize().width();
         }
-        m_min.setHeight(qMax(height + m_items.count() * MINIMUM,
+        min.setHeight(qMax(height + m_items.count() * MINIMUM,
                              mainLayout()->minimumSize().height()));
-        m_min.setWidth(qMax(width + MINIMUM, m_minimumWidth));
-        m_pref.setHeight(height + m_items.count() * m_preferredItemHeight);
-        m_pref.setWidth(PREFERRED);
-        m_max = QSizeF();
+        min.setWidth(width + MINIMUM);
+        pref.setHeight(height + m_items.count() * m_preferredItemHeight);
+        pref.setWidth(PREFERRED);
+        max = QSizeF();
         if (m_mode != Monitor) {
-            m_min += size() - contentsRect().size();
-            m_pref += size() - contentsRect().size();
+            min += size() - contentsRect().size();
+            pref += size() - contentsRect().size();
         } else {
             // Reset margins
             setBackgroundHints(NoBackground);
@@ -189,14 +189,14 @@ void Applet::checkGeometry()
             y = m_items.count();
             s = size.width();
         }
-        m_min = QSizeF(16 * x, 16 * y);
-        m_max = m_pref = QSizeF(s * x, s * y);
+        min = QSizeF(16 * x, 16 * y);
+        max = pref = QSizeF(s * x, s * y);
         setAspectRatioMode(Plasma::KeepAspectRatio);
         setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     }
-    setMinimumSize(m_min);
-    setPreferredSize(m_pref);
-    setMaximumSize(m_max);
+    setMinimumSize(min);
+    setPreferredSize(pref);
+    setMaximumSize(max);
     //kDebug() << m_min << m_pref << m_max << metaObject()->className();
     emit geometryChecked();
 }
@@ -220,17 +220,14 @@ void Applet::disconnectSources()
    m_connectedSources.clear();
 }
 
-void Applet::deleteMeters(QGraphicsLinearLayout* layout)
+void Applet::deleteMeters()
 {
-    if (!layout) {
-        layout = m_mainLayout;
-        if (!layout) {
-            return;
-        }
-        m_plotters.clear();
-        m_toolTips.clear();
-        m_header = 0;
+    if (!m_mainLayout) {
+        return;
     }
+    m_plotters.clear();
+    m_toolTips.clear();
+    m_header = 0;
 }
 
 void Applet::displayNoAvailableSources()
@@ -341,6 +338,26 @@ SM::Applet::Mode Applet::mode()
 void Applet::setToolTip(const QString &source, const QString &tipContent)
 {
     m_toolTips.insert(source, tipContent);
+}
+
+void Applet::setEngine(Plasma::DataEngine* engine)
+{
+    m_engine = engine;
+}
+
+Plasma::DataEngine* Applet::engine()
+{
+    return m_engine;
+}
+
+bool Applet::addMeter(const QString&)
+{
+    return false;
+};
+
+QStringList Applet::connectedSources()
+{
+    return m_connectedSources;
 }
 
 }

@@ -45,7 +45,15 @@ class Hdd : public SM::Applet
         void configChanged();
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
 
-    private slots:
+    protected:
+        QString hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data);
+        QString guessHddTitle(const Plasma::DataEngine::Data &data);
+        QString filePath(const Plasma::DataEngine::Data &data);
+        bool addMeter(const QString& source);
+        virtual void deleteMeters();
+        bool isValidDevice(const QString& uuid, Plasma::DataEngine::Data* data);
+
+    protected slots:
         void configAccepted();
         void themeChanged();
 
@@ -56,13 +64,6 @@ class Hdd : public SM::Applet
         QHash<QString, QList<Plasma::Meter *> > m_diskMap;
         QStringList mounted();
         QHash<QString, Plasma::Meter*> m_meters;
-
-        QString hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data);
-        QString guessHddTitle(const Plasma::DataEngine::Data &data);
-        QString filePath(const Plasma::DataEngine::Data &data);
-        bool addMeter(const QString& source);
-        void deleteMeters(QGraphicsLinearLayout* layout = 0);
-        bool isValidDevice(const QString& uuid, Plasma::DataEngine::Data* data);
 };
 
 K_EXPORT_PLASMA_APPLET(sm_hdd, Hdd)
