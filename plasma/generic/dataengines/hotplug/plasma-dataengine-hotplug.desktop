@@ -70,6 +70,7 @@ Comment[ca]=Segueix els dispositius de connexió en calent quan apareixen i desa
 Comment[ca@valencia]=Segueix els dispositius de connexió en calent quan apareixen i desapareixen.
 Comment[da]=Holder styr på flytbare enheder efterhånden som de dukker op og forsvinder.
 Comment[de]=Überwacht Hotplug-Geräte auf Aktivierung und Deaktivierung
+Comment[el]=Ανίχνευση συσκευών hot-plug καθώς εμφανίζονται και εξαφανίζονται.
 Comment[en_GB]=Tracks hot-pluggable devices as they appear and disappear.
 Comment[es]=Registra los dispositivos extraíbles cuando aparecen y desaparecen.
 Comment[et]=Töö ajal ühendatavate seadmete ilmumise ja kadumise jälgimine.

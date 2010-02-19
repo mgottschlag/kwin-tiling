@@ -82,6 +82,7 @@ Name[x-test]=xxNotificationsxx
 Name[zh_CN]=通知
 Name[zh_TW]=通知
 Comment=Display notifications and jobs
+Comment[de]=Benachrichtigungen und Aktionen anzeigen
 Comment[el]=Εμφανίζει ειδοποιήσεις και εργασίες
 Comment[es]=Mostrar notificaciones y tareas
 Comment[pt]=Mostrar as notificações e tarefas
