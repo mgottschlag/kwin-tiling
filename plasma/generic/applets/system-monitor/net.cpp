@@ -156,7 +156,7 @@ void SM::Net::createConfigurationInterface(KConfigDialog *parent)
     ui.treeView->setModel(&m_model);
     ui.treeView->resizeColumnToContents(0);
     ui.intervalSpinBox->setValue(interval() / 1000.0);
-    ui.intervalSpinBox->setSuffix(i18n("s"));
+    ui.intervalSpinBox->setSuffix(i18nc("second", " s"));
     parent->addPage(widget, i18n("Interfaces"), "network-workgroup");
 
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
