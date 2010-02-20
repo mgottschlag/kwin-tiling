@@ -74,6 +74,7 @@ class Clock : public ClockApplet
         Plasma::FrameSvg *tzFrame();
         void invalidateCache();
 
+        QString m_oldTimezone;
         bool m_showSecondHand;
         bool m_fancyHands;
         bool m_showTimezoneString;

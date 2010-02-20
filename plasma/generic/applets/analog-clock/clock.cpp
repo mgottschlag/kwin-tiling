@@ -79,16 +79,18 @@ Clock::~Clock()
 void Clock::init()
 {
     ClockApplet::init();
-
+    m_oldTimezone = currentTimezone();
     configChanged();
 }
 
 void Clock::connectToEngine()
 {
     m_lastTimeSeen = QTime();
-
+    
     Plasma::DataEngine* timeEngine = dataEngine("time");
-    timeEngine->disconnectSource(currentTimezone(), this);
+    timeEngine->disconnectSource(m_oldTimezone, this);
+    m_oldTimezone = currentTimezone();
+    
     if (m_showSecondHand) {
         timeEngine->connectSource(currentTimezone(), this, 500);
     } else {
