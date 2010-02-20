@@ -41,14 +41,11 @@ SM::Cpu::~Cpu()
 void SM::Cpu::init()
 {
     KGlobal::locale()->insertCatalog("plasma_applet_system-monitor");
-    KConfigGroup cg = config();
     setEngine(dataEngine("systemmonitor"));
-    setInterval(cg.readEntry("interval", 2.0) * 1000);
     setTitle(i18n("CPU"));
 
     /* At the time this method is running, not all source may be connected. */
-    connect(engine(), SIGNAL(sourceAdded(const QString&)),
-            this, SLOT(sourceAdded(const QString&)));
+    connect(engine(), SIGNAL(sourceAdded(const QString&)), this, SLOT(sourceAdded(const QString&)));
     foreach (const QString& source, engine()->sources()) {
         sourceAdded(source);
     }
@@ -68,12 +65,19 @@ void SM::Cpu::sourceAdded(const QString& name)
 
 void SM::Cpu::sourcesAdded()
 {
+    configChanged();
+}
+
+void SM::Cpu::configChanged()
+{
     KConfigGroup cg = config();
     QStringList default_cpus;
+
     if(m_cpus.contains("cpu/system/TotalLoad"))
         default_cpus << "cpu/system/TotalLoad";
     else
         default_cpus = m_cpus;
+    setInterval(cg.readEntry("interval", 2.0) * 1000.0);
     setItems(cg.readEntry("cpus", default_cpus));
     connectToEngine();
 }
@@ -164,10 +168,8 @@ void SM::Cpu::configAccepted()
 
     double interval = ui.intervalSpinBox->value();
     cg.writeEntry("interval", interval);
-    setInterval(interval * 1000.0);
 
     emit configNeedsSaving();
-    connectToEngine();
 }
 
 #include "cpu.moc"

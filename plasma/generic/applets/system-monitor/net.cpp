@@ -44,16 +44,11 @@ void SM::Net::init()
     setEngine(dataEngine("systemmonitor"));
     setTitle(i18n("Network"));
 
-    configChanged();
-
-    connect(engine(), SIGNAL(sourceAdded(const QString&)),
-            this, SLOT(sourceAdded(const QString&)));
+    connect(engine(), SIGNAL(sourceAdded(const QString&)), this, SLOT(sourceAdded(const QString&)));
     connect(engine(), SIGNAL(sourceRemoved(const QString&)),
             this, SLOT(sourceRemoved(const QString&)));
-    if (!engine()->sources().isEmpty()) {
-        foreach (const QString& source, engine()->sources()) {
-            sourceAdded(source);
-        }
+    foreach (const QString& source, engine()->sources()) {
+        sourceAdded(source);
     }
 }
 
@@ -61,6 +56,8 @@ void SM::Net::configChanged()
 {
     KConfigGroup cg = config();
     setInterval(cg.readEntry("interval", 2.0) * 1000);
+    setItems(cg.readEntry("interfaces", m_interfaces));
+    connectToEngine();
 }
 
 void SM::Net::sourceAdded(const QString& name)
@@ -78,10 +75,7 @@ void SM::Net::sourceAdded(const QString& name)
 
 void SM::Net::sourcesAdded()
 {
-    //kDebug() << m_interfaces;
-    KConfigGroup cg = config();
-    setItems(cg.readEntry("interfaces", m_interfaces));
-    connectToEngine();
+    configChanged();
 }
 
 void SM::Net::sourceRemoved(const QString& name)
@@ -181,10 +175,8 @@ void SM::Net::configAccepted()
 
     double interval = ui.intervalSpinBox->value();
     cg.writeEntry("interval", interval);
-    setInterval(interval * 1000.0);
 
     emit configNeedsSaving();
-    connectToEngine();
 }
 
 #include "net.moc"

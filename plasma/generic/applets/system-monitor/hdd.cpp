@@ -48,7 +48,6 @@ void Hdd::init()
     setTitle(i18n("Disk Space"), true);
 
     configChanged();
-    connectToEngine();
 }
 
 void Hdd::configChanged()
@@ -62,6 +61,7 @@ void Hdd::configChanged()
 
     setItems(items);
     setInterval(cg.readEntry("interval", 2) * 60 * 1000);
+    connectToEngine();
 }
 
 QStringList Hdd::mounted()
@@ -141,11 +141,8 @@ void Hdd::configAccepted()
 
     uint interval = ui.intervalSpinBox->value();
     cg.writeEntry("interval", interval);
-    interval *= 60 * 1000;
-    setInterval(interval);
 
     emit configNeedsSaving();
-    connectToEngine();
 }
 
 QString Hdd::hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data)

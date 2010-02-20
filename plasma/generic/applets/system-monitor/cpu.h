@@ -47,6 +47,7 @@ class Cpu : public Applet
         void sourceAdded(const QString &name);
         void sourcesAdded();
         void configAccepted();
+        void configChanged();
 
     protected:
         QString cpuTitle(const QString &name);

@@ -53,10 +53,8 @@ void Temperature::init()
     setEngine(dataEngine("systemmonitor"));
     setTitle(i18n("Temperature"));
 
-    configChanged();
-
     /* At the time this method is running, not all source may be connected. */
-    connect(engine(), SIGNAL(sourceAdded(QString)), this, SLOT(sourceAdded(const QString)));
+    connect(engine(), SIGNAL(sourceAdded(const QString&)), this, SLOT(sourceAdded(const QString&)));
     foreach (const QString& source, engine()->sources()) {
         sourceAdded(source);
     }
@@ -65,7 +63,9 @@ void Temperature::init()
 void Temperature::configChanged()
 {
     KConfigGroup cg = config();
-    setInterval(cg.readEntry("interval", 2.0) * 1000);
+    setInterval(cg.readEntry("interval", 2.0) * 1000.0);
+    setItems(cg.readEntry("temps", m_sources.mid(0, 5)));
+    connectToEngine();
 }
 
 void Temperature::sourceAdded(const QString& name)
@@ -81,9 +81,7 @@ void Temperature::sourceAdded(const QString& name)
 
 void Temperature::sourcesAdded()
 {
-    KConfigGroup cg = config();
-    setItems(cg.readEntry("temps", m_sources.mid(0, 5)));
-    connectToEngine();
+    configChanged();
 }
 
 void Temperature::createConfigurationInterface(KConfigDialog *parent)
@@ -138,10 +136,8 @@ void Temperature::configAccepted()
     cg.writeEntry("temps", items());
     uint interval = ui.intervalSpinBox->value();
     cg.writeEntry("interval", interval);
-    setInterval(interval * 1000.0);
 
     emit configNeedsSaving();
-    connectToEngine();
 }
 
 QString Temperature::temperatureTitle(const QString& source)

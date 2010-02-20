@@ -46,11 +46,8 @@ void SM::Ram::init()
     setEngine(dataEngine("systemmonitor"));
     setTitle(i18n("RAM"));
 
-    configChanged();
-
     /* At the time this method is running, not all source may be connected. */
-    connect(engine(), SIGNAL(sourceAdded(const QString&)),
-            this, SLOT(sourceAdded(const QString&)));
+    connect(engine(), SIGNAL(sourceAdded(const QString&)), this, SLOT(sourceAdded(const QString&)));
     foreach (const QString& source, engine()->sources()) {
         sourceAdded(source);
     }
@@ -59,7 +56,10 @@ void SM::Ram::init()
 void SM::Ram::configChanged()
 {
     KConfigGroup cg = config();
-    setInterval(cg.readEntry("interval", 2.0) * 1000);
+    setInterval(cg.readEntry("interval", 2.0) * 1000.0);
+    setItems(cg.readEntry("memories", m_memories));
+    m_max.clear();
+    connectToEngine();
 }
 
 void SM::Ram::sourceAdded(const QString& name)
@@ -75,9 +75,7 @@ void SM::Ram::sourceAdded(const QString& name)
 
 void SM::Ram::sourcesAdded()
 {
-    KConfigGroup cg = config();
-    setItems(cg.readEntry("memories", m_memories));
-    connectToEngine();
+    configChanged();
 }
 
 bool SM::Ram::addMeter(const QString& source)
@@ -178,11 +176,8 @@ void SM::Ram::configAccepted()
 
     double interval = ui.intervalSpinBox->value();
     cg.writeEntry("interval", interval);
-    setInterval(interval * 1000.0);
 
-    m_max.clear();
     emit configNeedsSaving();
-    connectToEngine();
 }
 
 #include "ram.moc"
