@@ -29,6 +29,7 @@ Name[x-test]=xxLow Disk Spacexx
 
 [Context/warningnot]
 Name=Warning
+Name[de]=Warnung
 Name[en_GB]=Warning
 Name[es]=Advertencia
 Name[et]=Hoiatus
