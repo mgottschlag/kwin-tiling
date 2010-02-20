@@ -20,10 +20,14 @@
 #ifndef WEBBROWSER_H
 #define WEBBROWSER_H
 
+#include <QWebPage>
+
 #include <Plasma/PopupApplet>
 #include <Plasma/DataEngine>
 
 #include "ui_webbrowserconfig.h"
+
+class WebViewOverlay;
 
 class QGraphicsLinearLayout;
 class QStandardItemModel;
@@ -62,6 +66,7 @@ public:
 
     QGraphicsWidget *graphicsWidget();
     void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
+    QWebPage *createWindow(QWebPage::WebWindowType type);
     
     //TODO: put in a separate file
     enum BookmarkRoles
@@ -98,6 +103,7 @@ protected Q_SLOTS:
     void configChanged();
     void bookmarksAnimationFinished();
     void removeBookmarkMessageButtonPressed(const MessageButton button);
+    void closeOverlay();
     
 private:
     void fillGroup(BookmarkItem *parentItem, const KBookmarkGroup &group);
@@ -108,6 +114,7 @@ private:
     QGraphicsLinearLayout *m_toolbarLayout;
     QGraphicsLinearLayout *m_statusbarLayout;
     Plasma::WebView *m_browser;
+    WebViewOverlay *m_webOverlay;
     KUrl m_url;
     int m_verticalScrollValue;
     int m_horizontalScrollValue;

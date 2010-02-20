@@ -19,6 +19,8 @@
 
 #include "webbrowser.h"
 
+#include "webviewoverlay.h"
+ 
 #include <limits.h>
 
 #include <QGraphicsLinearLayout>
@@ -44,6 +46,7 @@
 #include <KMessageBox>
 #include <KConfigDialog>
 #include <KHistoryComboBox>
+#include <KWebPage>
 
 #include <Plasma/Animation>
 #include <Plasma/ComboBox>
@@ -59,6 +62,25 @@
 
 using Plasma::MessageButton;
 
+class WebBrowserPage : public KWebPage
+{
+  public:
+      WebBrowserPage(WebBrowser *parent)
+          : KWebPage(parent, false)
+      {
+          browser = parent;
+      }
+  
+  private:
+        WebBrowser *browser;
+  
+  protected:
+      QWebPage *createWindow(WebWindowType type)
+      {
+          return browser->createWindow(type);
+      }
+};
+
 WebBrowser::WebBrowser(QObject *parent, const QVariantList &args)
         : Plasma::PopupApplet(parent, args),
           m_browser(0),
@@ -69,7 +91,8 @@ WebBrowser::WebBrowser(QObject *parent, const QVariantList &args)
           m_bookmarkModel(0),
           m_autoRefreshTimer(0),
           m_graphicsWidget(0),
-          m_historyCombo(0)
+          m_historyCombo(0),
+          m_webOverlay(0)
 {
     setHasConfigurationInterface(true);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
@@ -113,9 +136,10 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     m_layout->addItem(m_toolbarLayout);
 
     m_browser = new Plasma::WebView(this);
+    m_browser->setPage(new WebBrowserPage(this));
     m_browser->setPreferredSize(400, 400);
     m_browser->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
+    connect(m_browser, SIGNAL(windowCloseRequested()), this, SLOT(closeOverlay()));
 
     m_layout->addItem(m_browser);
 
@@ -576,6 +600,10 @@ void WebBrowser::constraintsEvent(Plasma::Constraints constraints)
 void WebBrowser::updateBookmarksViewGeometry()
 {
     m_bookmarksView->setGeometry(QRect(m_browser->pos().x() + contentsRect().x(), m_browser->pos().y() + contentsRect().y(),  m_browser->geometry().width(), m_browser->geometry().height()));
+    
+    if (m_webOverlay){
+      m_webOverlay->setGeometry(QRect(m_browser->pos().x() + contentsRect().x(), m_browser->pos().y() + contentsRect().y(),  m_browser->geometry().width(), m_browser->geometry().height()));
+    }
 }
 
 void WebBrowser::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
@@ -586,6 +614,27 @@ void WebBrowser::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *opt
     p->setPen(Qt::NoPen);
     p->drawRoundedRect(m_browser->pos().x() + contentsRect.x() - 2, m_browser->pos().y() + contentsRect.y() - 2,  m_browser->geometry().width() + 4, m_browser->geometry().height() + 4, 2, 2);
     p->restore();
+}
+
+void WebBrowser::closeOverlay()
+{
+    if (m_webOverlay){
+      m_webOverlay->hide();
+    }
+}
+
+QWebPage *WebBrowser::createWindow(QWebPage::WebWindowType type)
+{
+    if (!m_webOverlay){
+        m_webOverlay = new WebViewOverlay(this);
+        m_webOverlay->setGeometry(QRect(m_browser->pos().x() + contentsRect().x(), m_browser->pos().y() + contentsRect().y(),  m_browser->geometry().width(), m_browser->geometry().height()));
+        m_webOverlay->setZValue(999);
+        connect(m_webOverlay, SIGNAL(closeRequested()), this, SLOT(closeOverlay()));
+    }else{
+        m_webOverlay->show();
+    }
+
+    return m_webOverlay->page();
 }
 
 #include "webbrowser.moc"
