@@ -250,7 +250,7 @@ void WebBrowser::configChanged()
         if ((zoomFactor > 0.95) && (zoomFactor < 1.05)){
             zoomFactor = 1;
         }
-        m_browser->mainFrame()->setZoomFactor(zoomFactor);
+        m_browser->setZoomFactor(zoomFactor);
         m_browser->setUrl(m_url);
     }
     
@@ -495,7 +495,7 @@ void WebBrowser::bookmarkClicked(const QModelIndex &index)
 void WebBrowser::zoom(int value)
 {
     config().writeEntry("Zoom", value);
-    m_browser->mainFrame()->setZoomFactor((qreal)0.2 + ((qreal)value/(qreal)50));
+    m_browser->setZoomFactor((qreal)0.2 + ((qreal)value/(qreal)50));
 }
 
 void WebBrowser::loadProgress(int progress)
