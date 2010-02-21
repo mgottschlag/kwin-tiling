@@ -19,8 +19,6 @@
 
 #include "webbrowser.h"
 
-#include "webviewoverlay.h"
- 
 #include <limits.h>
 
 #include <QGraphicsLinearLayout>
@@ -49,16 +47,16 @@
 #include <KWebPage>
 
 #include <Plasma/Animation>
-#include <Plasma/ComboBox>
 #include <Plasma/IconWidget>
 #include <Plasma/LineEdit>
-#include <Plasma/Meter>
 #include <Plasma/WebView>
 #include <Plasma/TreeView>
 #include <Plasma/Slider>
 
 #include "bookmarksdelegate.h"
 #include "bookmarkitem.h"
+#include "webviewoverlay.h"
+#include "browserhistorycombobox.h"
 
 using Plasma::MessageButton;
 
@@ -119,7 +117,7 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     m_forward = addTool("go-next", m_toolbarLayout);
 
     m_nativeHistoryCombo = new KHistoryComboBox();
-    m_historyCombo = new Plasma::ComboBox(this);
+    m_historyCombo = new Plasma::BrowserHistoryComboBox(this);
     m_historyCombo->setNativeWidget(m_nativeHistoryCombo);
     m_historyCombo->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_historyCombo->setZValue(999);
@@ -173,12 +171,7 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     m_bookmarksViewAnimation = Plasma::Animator::create(Plasma::Animator::FadeAnimation, this);
     m_bookmarksViewAnimation->setTargetWidget(m_bookmarksView);
     connect(m_bookmarksViewAnimation, SIGNAL(finished()), this, SLOT(bookmarksAnimationFinished()));
-    
-    m_progress = new Plasma::Meter(this);
-    m_progress->setMeterType(Plasma::Meter::BarMeterHorizontal);
-    m_progress->setMinimum(0);
-    m_progress->setMaximum(100);
-    m_statusbarLayout->addItem(m_progress);
+
     m_stop = addTool("process-stop", m_statusbarLayout);
 
     m_zoom = new Plasma::Slider(this);
@@ -524,12 +517,10 @@ void WebBrowser::zoom(int value)
 
 void WebBrowser::loadProgress(int progress)
 {
-    m_progress->setValue(progress);
-    m_progress->update();
+    m_historyCombo->setProgressValue(progress);
 
     if (progress == 100) {
-        m_progress->setMaximumWidth(0);
-        m_progress->hide();
+        m_historyCombo->setDisplayProgress(false);
         m_stop->hide();
         m_stop->setMaximumWidth(0);
         m_zoom->show();
@@ -539,10 +530,9 @@ void WebBrowser::loadProgress(int progress)
         m_browser->page()->mainFrame()->setScrollBarValue(Qt::Vertical, m_verticalScrollValue);
         m_browser->page()->mainFrame()->setScrollBarValue(Qt::Horizontal, m_horizontalScrollValue);
     } else {
-        m_progress->show();
+        m_historyCombo->setDisplayProgress(true);
         m_stop->show();
         m_stop->setMaximumWidth(INT_MAX);
-        m_progress->setMaximumWidth(INT_MAX);
         m_zoom->setMaximumWidth(0);
         m_zoom->hide();
         m_statusbarLayout->invalidate();

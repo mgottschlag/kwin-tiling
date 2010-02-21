@@ -5,6 +5,7 @@ set(webbrowser_SRCS
     bookmarkitem.cpp
     webbrowser.cpp
     webviewoverlay.cpp
+    browserhistorycombobox.cpp
    )
 
 kde4_add_ui_files(webbrowser_SRCS webbrowserconfig.ui )

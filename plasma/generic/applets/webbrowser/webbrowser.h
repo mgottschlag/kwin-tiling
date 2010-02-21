@@ -46,8 +46,8 @@ class BookmarkItem;
 
 namespace Plasma
 {
+    class BrowserHistoryComboBox;
     class IconWidget;
-    class Meter;
     class ComboBox;
     class WebView;
     class TreeView;
@@ -131,7 +131,7 @@ private:
 
     QGraphicsWidget *m_graphicsWidget;
 
-    Plasma::ComboBox *m_historyCombo;
+    Plasma::BrowserHistoryComboBox *m_historyCombo;
     KHistoryComboBox *m_nativeHistoryCombo;
     BookmarksDelegate *m_bookmarksDelegate;
 
@@ -148,7 +148,6 @@ private:
 
     Plasma::IconWidget *m_organizeBookmarks;
     Plasma::IconWidget *m_stop;
-    Plasma::Meter *m_progress;
     Plasma::Slider *m_zoom;
 
     Ui::WebBrowserConfig ui;
