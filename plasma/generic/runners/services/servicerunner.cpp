@@ -18,13 +18,15 @@
 
 #include "servicerunner.h"
 
-#include <KIcon>
+#include <QMimeData>
 
+#include <KIcon>
 #include <KDebug>
 #include <KLocale>
 #include <KRun>
 #include <KService>
 #include <KServiceTypeTrader>
+#include <KUrl>
 
 ServiceRunner::ServiceRunner(QObject *parent, const QVariantList &args)
     : Plasma::AbstractRunner(parent, args)
@@ -240,6 +242,20 @@ void ServiceRunner::setupMatch(const KService::Ptr &service, Plasma::QueryMatch 
     if (!service->icon().isEmpty()) {
         match.setIcon(KIcon(service->icon()));
     }
+}
+
+QMimeData * ServiceRunner::mimeDataForMatch(const Plasma::QueryMatch *match)
+{
+    KService::Ptr service = KService::serviceByStorageId(match->data().toString());
+    if (service) {
+        QMimeData * result = new QMimeData();
+        QList<QUrl> urls;
+        urls << KUrl(service->entryPath());
+        kDebug() << urls;
+        result->setUrls(urls);
+        return result;
+    }
+    
 }
 
 #include "servicerunner.moc"
