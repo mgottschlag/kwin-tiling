@@ -38,7 +38,7 @@
 #include <ktar.h>
 #include <kservicetypetrader.h>
 #include <kio/netaccess.h>
-#include <knewstuff2/engine.h>
+#include <knewstuff3/downloaddialog.h>
 
 ThemeListBox::ThemeListBox(QWidget *parent)
   : KListWidget(parent)
@@ -477,11 +477,10 @@ void SplashInstaller::slotSetTheme(int id)
 //-----------------------------------------------------------------------------
 void SplashInstaller::slotNew()
 {
-  KNS::Engine engine(this);
-  if (engine.init("ksplash.knsrc")) {
-    const KNS::Entry::List entries = engine.downloadDialogModal(this);
-    if ( !entries.isEmpty() )
-        readThemesList();
+  KNS3::DownloadDialog dialog("ksplash.knsrc", this);
+  dialog.exec();
+  if (!dialog.changedEntries().isEmpty()) {
+    readThemesList();
   }
 }
 
