@@ -107,7 +107,7 @@ protected Q_SLOTS:
     
 private:
     void fillGroup(BookmarkItem *parentItem, const KBookmarkGroup &group);
-    void updateBookmarksViewGeometry();
+    void updateOverlaysGeometry();
 
 
     QGraphicsLinearLayout *m_layout;

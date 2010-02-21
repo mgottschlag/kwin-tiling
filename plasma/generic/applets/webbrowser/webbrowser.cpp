@@ -478,7 +478,7 @@ void WebBrowser::bookmarksToggle()
         m_bookmarksViewAnimation->setProperty("targetOpacity", 0);
         m_bookmarksViewAnimation->start();
     } else {
-        updateBookmarksViewGeometry();
+        updateOverlaysGeometry();
         m_bookmarksView->setOpacity(0);
         m_bookmarksView->show();
         m_bookmarksViewAnimation->setProperty("startOpacity", 0);
@@ -581,17 +581,22 @@ void WebBrowser::configAccepted()
 
 void WebBrowser::constraintsEvent(Plasma::Constraints constraints)
 {
-    if (m_bookmarksView->isVisible()) {
-        updateBookmarksViewGeometry();
-    }
+    updateOverlaysGeometry();
 }
 
-void WebBrowser::updateBookmarksViewGeometry()
+void WebBrowser::updateOverlaysGeometry()
 {
-    m_bookmarksView->setGeometry(QRect(m_browser->pos().x() + contentsRect().x(), m_browser->pos().y() + contentsRect().y(),  m_browser->geometry().width(), m_browser->geometry().height()));
-    
-    if (m_webOverlay){
-      m_webOverlay->setGeometry(QRect(m_browser->pos().x() + contentsRect().x(), m_browser->pos().y() + contentsRect().y(),  m_browser->geometry().width(), m_browser->geometry().height()));
+    QRect overlayGeometry(m_browser->pos().x() + contentsRect().x(),
+                          m_browser->pos().y() + contentsRect().y(),
+                          m_browser->geometry().width(),
+                          m_browser->geometry().height());
+
+    if (m_bookmarksView->isVisible()) {
+      m_bookmarksView->setGeometry(overlayGeometry);
+    }
+      
+    if (m_webOverlay && m_webOverlay->isVisible()){
+      m_webOverlay->setGeometry(overlayGeometry);
     }
 }
 
@@ -623,6 +628,7 @@ QWebPage *WebBrowser::createWindow(QWebPage::WebWindowType type)
         m_webOverlay->show();
     }
 
+    updateOverlaysGeometry();
     return m_webOverlay->page();
 }
 
