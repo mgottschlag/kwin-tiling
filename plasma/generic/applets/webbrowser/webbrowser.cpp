@@ -137,8 +137,7 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     m_browser->setPage(new WebBrowserPage(this));
     m_browser->setPreferredSize(400, 400);
     m_browser->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(m_browser, SIGNAL(windowCloseRequested()), this, SLOT(closeOverlay()));
-
+    
     m_layout->addItem(m_browser);
 
     //bookmarks

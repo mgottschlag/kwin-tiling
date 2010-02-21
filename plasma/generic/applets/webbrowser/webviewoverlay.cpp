@@ -41,6 +41,7 @@ WebViewOverlay::WebViewOverlay(QGraphicsWidget *parent)
       m_closeButton->setText("Close");
       connect(m_closeButton, SIGNAL(clicked()), this, SIGNAL(closeRequested()));
       layout->addItem(m_closeButton);
+      connect(m_webView->page(), SIGNAL(windowCloseRequested()), this, SIGNAL(closeRequested()));
 }
 
 QWebPage *WebViewOverlay::page()
