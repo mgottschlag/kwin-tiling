@@ -17,10 +17,12 @@ install(FILES
 
 install(FILES
     wallpapers/background.png
+    wallpapers/background-600x400.png
     wallpapers/background-800x600.png
     wallpapers/background-1024x768.png
     wallpapers/background-1280x800.png
     wallpapers/background-1280x1024.png
+    wallpapers/background-1366x768.png
     wallpapers/background-1440x900.png
     wallpapers/background-1600x1200.png
     wallpapers/background-1920x1080.png
