@@ -22,6 +22,7 @@
 
 #include <KIcon>
 #include <QSqlDatabase>
+#include <QMimeData>
 #include <Plasma/AbstractRunner>
 
 
@@ -85,6 +86,9 @@ class BookmarksRunner : public Plasma::AbstractRunner
         QSqlDatabase m_db;
         KBookmarkManager *m_bookmarkManager;
         QStringList m_operaBookmarkEntries;
+
+    protected Q_SLOTS:
+        QMimeData * mimeDataForMatch(const Plasma::QueryMatch *match);
 
     private Q_SLOTS:
         void prep();
