@@ -44,7 +44,7 @@
 #include <KDebug>
 #include <KColorScheme>
 #include <KStandardDirs>
-#include <knewstuff3/downloaddialog.h>
+#include <KNS/Engine>
 
 #include <Plasma/FrameSvg>
 #include <Plasma/Theme>
@@ -722,10 +722,22 @@ void KCMStyle::setStyleDirty()
 
 void KCMStyle::getNewThemes()
 {
-	KNS3::DownloadDialog dialog("plasma-themes.knsrc", this);
-	dialog.exec();
-	if (!dialog.changedEntries().isEmpty()) {
-		loadDesktopTheme();
+	KNS::Engine engine(this);
+	if (engine.init("plasma-themes.knsrc")) {
+		KNS::Entry::List entries = engine.downloadDialogModal(this);
+
+		if (entries.size() > 0) {
+			m_themeModel->reload();
+
+			QString themeName;
+			if (m_isNetbook) {
+				KConfigGroup cg(KSharedConfig::openConfig("plasmarc"), "Theme-plasma-netbook");
+				themeName = cg.readEntry("name", "air-netbook");
+			} else {
+				themeName = Plasma::Theme::defaultTheme()->themeName();
+			}
+			themeUi.m_theme->setCurrentIndex(m_themeModel->indexOf(themeName));
+		}
 	}
 }
 
