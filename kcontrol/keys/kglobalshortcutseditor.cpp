@@ -186,7 +186,7 @@ KGlobalShortcutsEditor::~KGlobalShortcutsEditor()
 {
     // Before closing the door, undo all changes
     undo();
-    qDeleteAll(d->components.values());
+    qDeleteAll(d->components);
     delete d;
 }
 
@@ -282,7 +282,7 @@ void KGlobalShortcutsEditor::defaults(ComponentScope scope)
 void KGlobalShortcutsEditor::clear()
 {
     // Remove all components and their associated editors
-    qDeleteAll(d->components.values());
+    qDeleteAll(d->components);
     d->components.clear();
     d->ui.components->clear();
 }
