@@ -23,6 +23,9 @@
 #include <QScriptEngine>
 
 #include <KIcon>
+#include <KDebug>
+
+#include <Plasma/QueryMatch>
 
 CalculatorRunner::CalculatorRunner( QObject* parent, const QVariantList &args )
     : Plasma::AbstractRunner(parent, args)
@@ -263,6 +266,14 @@ QString CalculatorRunner::calculate(const QString& term)
 
     return roundedResultString;
 
+}
+
+QMimeData * CalculatorRunner::setupMimeDataForMatch(const Plasma::QueryMatch *match)
+{
+    kDebug();
+    QMimeData * result = new QMimeData();
+    result->setText(match->text());
+    return result;
 }
 
 #include "calculatorrunner.moc"

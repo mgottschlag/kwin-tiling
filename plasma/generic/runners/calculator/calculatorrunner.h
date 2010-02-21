@@ -19,9 +19,9 @@
 #ifndef CALCULATORRUNNER_H
 #define CALCULATORRUNNER_H
 
+#include <QMimeData>
 
 #include <Plasma/AbstractRunner>
-
 
 /**
  * This class evaluates the basic expressions given in the interface.
@@ -35,6 +35,9 @@ class CalculatorRunner : public Plasma::AbstractRunner
         ~CalculatorRunner();
 
         void match(Plasma::RunnerContext &context);
+
+    protected slots:
+        QMimeData * setupMimeDataForMatch(const Plasma::QueryMatch *match);
 
     private:
         QString calculate(const QString& term);
