@@ -46,7 +46,7 @@ ${kde_confdir} is usually ${prefix}/share/config
 ${kde_datadir} is usually ${prefix}/share/apps
 The indented locations are envisioned for a configuration shared with GDM.
 
-${kde_confdir}/kdm/{kdmrc,Xservers,Xaccess,Xwilling,...}
+${kde_confdir}/kdm/{kdmrc,Xaccess,Xwilling,...}
 ${kde_datadir}/kdm/sessions/*.desktop
   /etc/X11/sessions/,/usr/share/xsessions/
 ${kde_datadir}/kdm/pics/users/

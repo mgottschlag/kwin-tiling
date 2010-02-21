@@ -646,26 +646,9 @@ static const char def_startup[] =
 "#\n"
 "#chown $USER /dev/console\n"
 "\n"
-#ifdef _AIX
-"# We create a pseudodevice for finger.  (host:0 becomes xdm/host_0)\n"
-"# Without it, finger errors out with \"Cannot stat /dev/host:0\".\n"
-"#\n"
-"#devname=`echo $DISPLAY | cut -c1-8`\n"
-"#if [ ! -d /dev/xdm ]; then\n"
-"#  mkdir /dev/xdm\n"
-"#  chmod 755 /dev/xdm\n"
-"#fi\n"
-"#touch /dev/xdm/$devname\n"
-"#chmod 644 /dev/xdm/$devname\n"
-"#exec sessreg -a -l xdm/$devname -h \"`echo $DISPLAY | cut -d: -f1`\""
-#else
-"#exec sessreg -a -l $DISPLAY -h \"`echo $DISPLAY | cut -d: -f1`\""
-# ifdef BSD
-" -x " KDMCONF "/Xservers"
-# endif
-#endif /* _AIX */
-" $USER\n"
-"\n# NOTE: The session is aborted if the last command returns non-zero.\n";
+"# XDM configurations typically have sessreg here. KDM has it built-in.\n"
+"\n"
+"# NOTE: The session is aborted if the last command returns non-zero.\n";
 
 static const char def_reset[] =
 "#! /bin/sh\n"
@@ -677,16 +660,7 @@ static const char def_reset[] =
 "#chown root /dev/console\n"
 "#chmod 622 /dev/console\n"
 "\n"
-#ifdef _AIX
-"#devname=`echo $DISPLAY | cut -c1-8`\n"
-"#exec sessreg -d -l xdm/$devname -h \"`echo $DISPLAY | cut -d: -f1`\""
-#else
-"#exec sessreg -d -l $DISPLAY -h \"`echo $DISPLAY | cut -d: -f1`\""
-# ifdef BSD
-" -x " KDMCONF "/Xservers"
-# endif
-#endif /* _AIX */
-" $USER\n";
+"# XDM configurations typically have sessreg here. KDM has it built-in.\n";
 
 static const char def_session1[] =
 "#! /bin/sh\n"
