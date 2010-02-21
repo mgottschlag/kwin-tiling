@@ -70,6 +70,7 @@ match( char *obuf, int *blen, const char *key, int klen )
 
 #define GRUB_MENU "/boot/grub/menu.lst"
 
+static char *grubSetDefault;
 static char *grub;
 
 static int
@@ -80,7 +81,9 @@ getGrub( char ***opts, int *def, int *cur )
 	int len;
 	char line[1000];
 
-	if (!grub && !(grub = locate( "grub-set-default" )))
+	if (!grubSetDefault && !grub &&
+	    !(grubSetDefault = locate( "grub-set-default" )) &&
+	    !(grub = locate( "grub" )))
 		return BO_NOMAN;
 
 	*def = 0;
@@ -130,15 +133,31 @@ setGrub( const char *opt, SdRec *sdr )
 static void
 commitGrub( void )
 {
-	char index[16];
-	const char *args[3] = { grub, index, 0 };
-
 	if (sdRec.bmstamp != mTime( GRUB_MENU ) &&
 	    setGrub( sdRec.osname, &sdRec ) != BO_OK)
 		return;
 
-	sprintf( index, "%d", sdRec.osindex );
-	runAndWait( (char **)args, environ );
+	if (grubSetDefault) {
+		/* The grub-set-default command must be used, which is
+		 * not so good because there is no way of setting an
+		 * entry for the next boot only. */
+		char index[16];
+		const char *args[] = { grubSetDefault, index, 0 };
+		sprintf( index, "%d", sdRec.osindex );
+		runAndWait( (char **)args, environ );
+	} else {
+		/* The grub shell can be used with `savedefault'.
+		 * That requires a (widely distributed) patch to grub, e.g.
+		 * grub-0.97-once.patch. It won't work with a vanilla grub.*/
+		FILE *f;
+		int pid;
+		static const char *args[] = { 0, "--batch", "--no-floppy", 0 };
+		args[0] = grub;
+		if ((f = pOpen( (char **)args, 'w', &pid ))) {
+			fprintf( f, "savedefault --default=%d --once\n", sdRec.osindex );
+			pClose( f, &pid );
+		}
+	}
 }
 
 static char *lilo;
