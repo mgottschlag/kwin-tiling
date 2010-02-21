@@ -19,6 +19,8 @@
 
 #include "recentdocuments.h"
 
+#include <QMimeData>
+
 #include <KConfig>
 #include <KConfigGroup>
 #include <KDebug>
@@ -93,6 +95,17 @@ void RecentDocuments::run(const Plasma::RunnerContext &context, const Plasma::Qu
     QString url = match.data().toString();
     kDebug() << "Opening Recent Document" << url;
     new KRun(url, 0);
+}
+
+QMimeData * RecentDocuments::mimeDataForMatch(const Plasma::QueryMatch * match)
+{
+    QMimeData * result = new QMimeData();
+    QList<QUrl> urls;
+    urls << QUrl(match->data().toString());
+    result->setUrls(urls);
+
+    result->setText(match->data().toString());
+    return result;
 }
 
 #include "recentdocuments.moc"
