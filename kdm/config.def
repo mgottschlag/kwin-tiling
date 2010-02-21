@@ -32,6 +32,8 @@
 #define KDMCONF KDE_CONFDIR "/kdm"
 #define KDMDATA KDE_DATADIR "/kdm"
 
+#include <sys/param.h> /* for #define BSD */
+
 #ifdef _AIX
 # define HALT_CMD	"/usr/sbin/shutdown -h now"
 # define REBOOT_CMD	"/usr/sbin/shutdown -r now"
