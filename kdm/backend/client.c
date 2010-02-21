@@ -136,7 +136,10 @@ displayStr( int lv, const char *msg )
 	gRecvInt();
 }
 
-#if !defined(USE_PAM) && (defined(HAVE_STRUCT_PASSWD_PW_EXPIRE) || defined(USESHADOW))
+#if (!defined(USE_PAM) && !defined(_AIX) \
+     && (defined(HAVE_STRUCT_PASSWD_PW_EXPIRE) || defined(USESHADOW) \
+         || (defined(KERBEROS) && defined(AFS)))) \
+    || defined(HAVE_CKCONNECTOR)
 static void
 displayMsg( int lv, const char *msg, ... )
 {
@@ -1335,13 +1338,17 @@ startClient( volatile int *pid )
 	if (!ckStatus) {
 		if (dbus_error_is_set( &error )) {
 			logError( "Cannot open ConsoleKit session: %s\n", error.message );
+			displayMsg( V_MSG_ERR,
+			            "Warning: Cannot open ConsoleKit session: %s",
+			             error.message );
 			dbus_error_free( &error );
 		} else {
 			logError( "Cannot open ConsoleKit session, likely OOM\n" );
+			displayStr( V_MSG_ERR,
+			            "Warning: Cannot open ConsoleKit session." );
 		}
 		ck_connector_unref( ckConnector );
 		ckConnector = 0;
-		V_RET_FAIL( 0 );
 	}
 #endif
 
