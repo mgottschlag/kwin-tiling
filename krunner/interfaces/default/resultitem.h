@@ -105,6 +105,7 @@ protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *e);
     void timerEvent(QTimerEvent *e);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *);
     void focusInEvent(QFocusEvent *event);
     void focusOutEvent(QFocusEvent *event);
     void keyPressEvent(QKeyEvent *event);

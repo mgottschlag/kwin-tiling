@@ -469,6 +469,19 @@ void ResultItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
+void ResultItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    kDebug() << event->button() << Qt::LeftButton;
+
+    QMimeData * mime = m_runnerManager->mimeDataForMatch(m_match);
+
+    if (mime) {
+        QDrag * drag = new QDrag(event->widget());
+        drag->setMimeData(mime);
+        drag->exec();
+    }
+}
+
 bool ResultItem::mouseHovered() const
 {
     return m_mouseHovered;
