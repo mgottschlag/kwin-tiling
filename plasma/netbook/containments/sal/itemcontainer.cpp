@@ -78,11 +78,13 @@ void ItemContainer::setCurrentItem(Plasma::IconWidget *currentIcon)
     }
 
     QWeakPointer<Plasma::IconWidget> currentWeakIcon = currentIcon;
-    m_currentIcon.clear();
+    //m_currentIcon.clear();
 
     for (int x = 0; x < m_layout->columnCount(); ++x) {
         for (int y = 0; y < m_layout->rowCount(); ++y) {
-            if (m_layout->itemAt(y, x) == currentIcon) {
+            if (m_currentIcon.data() == currentIcon) {
+                break;
+            } if (m_layout->itemAt(y, x) == currentIcon) {
                 m_currentIcon = currentIcon;
                 m_currentIconIndexX = x;
                 m_currentIconIndexY = y;
