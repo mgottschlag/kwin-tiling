@@ -27,7 +27,7 @@ namespace Plasma
 {
   class PushButton;
   class WebView;
-};
+}
 
 class WebViewOverlay : public QGraphicsWidget
 {

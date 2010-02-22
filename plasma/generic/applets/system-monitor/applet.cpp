@@ -353,7 +353,7 @@ Plasma::DataEngine* Applet::engine()
 bool Applet::addMeter(const QString&)
 {
     return false;
-};
+}
 
 QStringList Applet::connectedSources()
 {
