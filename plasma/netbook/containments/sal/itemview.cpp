@@ -89,7 +89,7 @@ void ItemView::addItem(Plasma::IconWidget *icon)
 
 void ItemView::clear()
 {
-    Plasma::Animator::self()->stopScrollingWidget(this);
+    // Plasma::Animator::self()->stopScrollingWidget(this);
     QList<Plasma::IconWidget *>items = m_itemContainer->items();
     foreach (Plasma::IconWidget *item, items) {
         unregisterAsDragHandle(item);
