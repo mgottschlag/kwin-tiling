@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Detecting RANDR (monitor) changes
+Name=Display Management change monitor
 Name[ca]=S'està detectant els canvis en el RANDR (monitor)
 Name[ca@valencia]=S'està detectant els canvis en el RANDR (monitor)
 Name[cs]=Detekuje změny RANDR (monitor)
@@ -44,6 +44,7 @@ Name[uk]=Виявляє зміни у RANDR (стані монітора)
 Name[x-test]=xxDetecting RANDR (monitor) changesxx
 Name[zh_CN]=正在检测 RANDR(显示器)的改变
 Name[zh_TW]=偵測 RANDR（螢幕）的變更
+Comment=Is this required when kephal has its own kded module?
 Type=Service
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=randrmonitor

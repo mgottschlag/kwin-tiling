@@ -7,7 +7,7 @@ X-KDE-DBus-ModuleName=kephal
 X-KDE-Kded-autoload=false
 X-KDE-Kded-load-on-demand=true
 
-Name=KDED-module for screen-management
+Name=Display Management
 Name[ar]=وحدة KDED  لإدارة الشاشة
 Name[be@latin]=Modul „KDED” dla kiravańnia ekranam
 Name[ca]=Mòdul del KDED per a la gestió de la pantalla
@@ -72,3 +72,4 @@ Name[uk]=Модуль KDED для керування екраном
 Name[x-test]=xxKDED-module for screen-managementxx
 Name[zh_CN]=用于管理屏幕的 KDED 模块
 Name[zh_TW]=螢幕管理的 KDED 模組
+Comment=Manages displays and video outputs

@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Service
-Name=KDED Status Notifier watcher
+Name=Status Notifier Manager
 Name[ca]=Vigilant de notificacions de l'estat del KDED
 Name[ca@valencia]=Vigilant de notificacions de l'estat del KDED
 Name[csb]=Ùsłëżnota dôwaniô wiédzë dozérôcza KDE
@@ -48,7 +48,7 @@ Name[uk]=Переглядач сповіщень про стан KDED
 Name[x-test]=xxKDED Status Notifier watcherxx
 Name[zh_CN]=KDED 状态通知监视器
 Name[zh_TW]=KDE 狀態通知監控器 
-Comment=Keep track of applications that want to use the D-Bus based status notifier protocol.
+Comment=Manages services that provide status notifier user interfaces
 Comment[ca]=Fa un seguiment de les aplicacions que volen utilitzar el protocol de notificacions basat en l'estat del D-Bus.
 Comment[ca@valencia]=Fa un seguiment de les aplicacions que volen utilitzar el protocol de notificacions basat en l'estat del D-Bus.
 Comment[da]=Hold styr på programmer som vil bruge D-Bus-baseret protokol til statusbekendtgørelser.

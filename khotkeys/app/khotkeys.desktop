@@ -1,6 +1,6 @@
 [Desktop Entry]
 Exec=khotkeys
-Name=KHotKeys
+Name=Input Actions
 Name[af]=KDE Kortpad Sleutels
 Name[ar]=اختصارات كدي
 Name[be]=KHotKeys
@@ -85,7 +85,7 @@ Name[wa]=KTchôdèsTapes
 Name[x-test]=xxKHotKeysxx
 Name[zh_CN]=KHotKeys
 Name[zh_TW]=KDE 熱鍵
-Comment=KHotKeys daemon. No daemon, no hotkeys.
+Comment=Input Actions service performing configured actions on key presses
 Comment[ar]=مراقب اختصارات كيدي . لا مراقب لا اختصارات
 Comment[be@latin]=Słužba skarotaŭ „KHotKeys”.
 Comment[bg]=Демон KHotKeys. Няма демон - няма клавиши.
