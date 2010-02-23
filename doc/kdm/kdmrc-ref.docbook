@@ -4,7 +4,7 @@
 <title>The Files &kdm; Uses for Configuration</title>
 
 <para>This chapter documents the files that control &kdm;'s behavior.
-Some of this can be also controlled from the &kcontrol; module, but
+Some of this can be also controlled from the &systemsettings; module, but
 not all.</para>
 
 <sect1 id="kdmrc">
@@ -126,7 +126,7 @@ two levels of quoting.</para>
 
 <note><para>A pristine &kdmrc; is very thoroughly commented.
 All comments will be lost if you change this file with the
-kcontrol frontend.</para></note>
+&systemsettings; frontend.</para></note>
 
 
 <sect2 id="kdmrc-general">

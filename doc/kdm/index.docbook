@@ -378,7 +378,7 @@ comments from the file.  All available options in &kdmrc; are covered
 in <xref linkend="kdm-files"/>.</para>
 
 <para>The options listed in this chapter are cross referenced with
-their equivalents in &kdmrc;. All options available in the &kcontrol;
+their equivalents in &kdmrc;. All options available in the &systemsettings;
 module are also available directly in &kdmrc; but the reverse is not
 true.</para></note>
 
