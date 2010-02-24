@@ -31,6 +31,8 @@
 #include <KIconLoader>
 #include <KRun>
 
+#include <Plasma/Animation>
+#include <Plasma/Animator>
 #include <Plasma/Frame>
 #include <Plasma/ToolButton>
 #include <Plasma/IconWidget>
@@ -172,6 +174,10 @@ void StripWidget::showDeleteTarget()
     }
     m_deleteTarget->setPos(mapToScene(boundingRect().bottomLeft()));
     m_deleteTarget->show();
+    Plasma::Animation *zoomAnim = Plasma::Animator::create(Plasma::Animator::ZoomAnimation);
+    zoomAnim->setTargetWidget(m_deleteTarget);
+    zoomAnim->setProperty("zoom", 1.0);
+    zoomAnim->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 void StripWidget::setImmutability(Plasma::ImmutabilityType immutability)
@@ -273,12 +279,15 @@ void StripWidget::itemReordered(Plasma::IconWidget *icon, int index)
 {
     if (m_deleteTarget && m_deleteTarget->geometry().intersects(icon->mapToItem(this, icon->boundingRect()).boundingRect())) {
         remove(icon);
-        m_deleteTarget->hide();
     } else if (m_favouritesIcons.contains(icon)) {
         Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
         m_favouritesMatches.removeAll(match);
         m_favouritesMatches.insert(index, match);
     }
+
+    Plasma::Animation *zoomAnim = Plasma::Animator::create(Plasma::Animator::ZoomAnimation);
+    zoomAnim->setTargetWidget(m_deleteTarget);
+    zoomAnim->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 void StripWidget::launchFavourite()
