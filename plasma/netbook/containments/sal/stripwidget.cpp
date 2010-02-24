@@ -28,6 +28,7 @@
 
 #include <KIcon>
 #include <KIconLoader>
+#include <KRun>
 
 #include <Plasma/Frame>
 #include <Plasma/ToolButton>
@@ -159,6 +160,51 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, const QPointF &point)
     }
 }
 
+Plasma::IconWidget *StripWidget::createIcon(const QPointF &point)
+{
+    // create new IconWidget for favourite strip
+
+    Plasma::IconWidget *fav = m_itemView->createItem();
+    fav->hide();
+    fav->setTextBackgroundColor(QColor());
+    fav->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    fav->installEventFilter(this);
+
+
+    Plasma::ToolTipContent toolTipData = Plasma::ToolTipContent();
+    toolTipData.setAutohide(true);
+
+
+    Plasma::ToolTipManager::self()->registerWidget(this);
+    Plasma::ToolTipManager::self()->setContent(fav, toolTipData);
+
+    connect(fav, SIGNAL(activated()), this, SLOT(launchFavourite()));
+
+    // set an action to be able to remove from favourites
+    QAction *action = new QAction(fav);
+    action->setIcon(KIcon("list-remove"));
+    fav->addIconAction(action);
+    connect(action, SIGNAL(triggered()), this, SLOT(removeFavourite()));
+
+    if (m_iconActionCollection) {
+        m_iconActionCollection->addAction(action);
+    }
+
+    if (point != QPointF()) {
+        m_itemView->insertItem(fav, m_itemView->positionToWeight(point));
+    } else {
+        m_itemView->addItem(fav);
+    }
+
+    if (m_startupCompleted) {
+        m_itemView->setCurrentItem(fav);
+        m_setCurrentTimer->start(300);
+    }
+
+    return fav;
+}
+
+
 void StripWidget::setImmutability(Plasma::ImmutabilityType immutability)
 {
     if (immutability == Plasma::Mutable) {
@@ -180,23 +226,69 @@ void StripWidget::add(Plasma::QueryMatch match, const QString &query, const QPoi
     m_favouritesMatches.append(newMatch);
     m_favouritesQueries.insert(newMatch, query);
 
-    createIcon(newMatch, point);
+    Plasma::IconWidget *icon = createIcon(point);
+
+    icon->setText(newMatch->text());
+    icon->setIcon(newMatch->icon());
+
+    icon->setMinimumSize(icon->sizeFromIconSize(m_itemView->iconSize()));
+    icon->setMaximumSize(icon->sizeFromIconSize(m_itemView->iconSize()));
+
+    Plasma::ToolTipContent toolTipData = Plasma::ToolTipContent();
+    toolTipData.setAutohide(true);
+    toolTipData.setMainText(newMatch->text());
+    toolTipData.setSubText(newMatch->subtext());
+    toolTipData.setImage(newMatch->icon());
+
+    Plasma::ToolTipManager::self()->registerWidget(icon);
+    Plasma::ToolTipManager::self()->setContent(icon, toolTipData);
+
+    m_favouritesIcons.insert(icon, newMatch);
+}
+
+void StripWidget::add(const QString &fileName, const QPointF &point)
+{
+    KDesktopFile *file = new KDesktopFile(fileName);
+    Plasma::IconWidget * icon = createIcon(point);
+
+    icon->setIcon(file->readIcon());
+    icon->setText(file->readName());
+
+    icon->setMinimumSize(icon->sizeFromIconSize(m_itemView->iconSize()));
+    icon->setMaximumSize(icon->sizeFromIconSize(m_itemView->iconSize()));
+
+    Plasma::ToolTipContent toolTipData = Plasma::ToolTipContent();
+    toolTipData.setAutohide(true);
+    toolTipData.setMainText(file->readName());
+    toolTipData.setSubText(file->readGenericName());
+    toolTipData.setImage(KIcon(file->readIcon()));
+
+    Plasma::ToolTipManager::self()->registerWidget(icon);
+    Plasma::ToolTipManager::self()->setContent(icon, toolTipData);
+
+    m_desktopFiles.insert(icon, file);
 }
 
 void StripWidget::remove(Plasma::IconWidget *favourite)
 {
-    if (!favourite || !m_favouritesIcons.contains(favourite)) {
+    if (!favourite) {
         return;
     }
 
-    Plasma::QueryMatch *match = m_favouritesIcons.value(favourite);
-    m_favouritesMatches.removeOne(match);
-    m_favouritesQueries.remove(match);
-    m_favouritesIcons.remove(favourite);
+    if (m_favouritesIcons.contains(favourite)) {
+        Plasma::QueryMatch *match = m_favouritesIcons.value(favourite);
+        m_favouritesMatches.removeOne(match);
+        m_favouritesQueries.remove(match);
+        m_favouritesIcons.remove(favourite);
 
-    // must be deleteLater because the IconWidget will return from the action?
-    favourite->deleteLater();
-    delete match;
+        // must be deleteLater because the IconWidget will return from the action?
+        favourite->deleteLater();
+        delete match;
+    } else if (m_desktopFiles.contains(favourite)) {
+        delete m_desktopFiles.value(favourite);
+        m_desktopFiles.remove(favourite);
+        favourite->deleteLater();
+    }
 }
 
 void StripWidget::removeFavourite()
@@ -222,11 +314,16 @@ void StripWidget::itemReordered(Plasma::IconWidget *icon, int index)
 void StripWidget::launchFavourite()
 {
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender());
-    Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
+    
+    if (m_favouritesIcons.contains(icon)) {
+        Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
 
-    Plasma::RunnerContext context;
-    context.setQuery(m_favouritesQueries.value(match));
-    match->run(context);
+        Plasma::RunnerContext context;
+        context.setQuery(m_favouritesQueries.value(match));
+        match->run(context);
+    } else if (m_desktopFiles.contains(icon)) {
+        KRun::run(KService(m_desktopFiles.value(icon)), KUrl::List(), 0, false);
+    }
 }
 
 void StripWidget::launchFavourite(Plasma::IconWidget *icon)
@@ -280,13 +377,25 @@ void StripWidget::save(KConfigGroup &cg)
     KConfigGroup stripGroup(&cg, "stripwidget");
 
     int id = 0;
-    foreach(Plasma::QueryMatch *match, m_favouritesMatches) {
+    foreach(Plasma::IconWidget *icon, m_itemView->items()) {
         // Write now just saves one for tests. Later will save
         // all the strip
         KConfigGroup config(&stripGroup, QString("favourite-%1").arg(id));
-        config.writeEntry("runnerid", match->runner()->id());
-        config.writeEntry("query", m_favouritesQueries.value(match));
-        config.writeEntry("matchId", match->id());
+
+        //config.writeEntry("icon", match->);
+        config.writeEntry("text", icon->text());
+
+        if (m_favouritesIcons.contains(icon)) {
+            Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
+            config.writeEntry("runnerid", match->runner()->id());
+            config.writeEntry("query", m_favouritesQueries.value(match));
+            config.writeEntry("matchId", match->id());
+            config.writeEntry("subText", match->subtext());
+        } else if (m_desktopFiles.contains(icon)) {
+            config.writeEntry("url", (m_desktopFiles[icon])->fileName());
+            config.writeEntry("subText", m_desktopFiles[icon]->readGenericName());
+        }
+
         ++id;
     }
 }
@@ -311,6 +420,7 @@ void StripWidget::restore(KConfigGroup &cg)
     QVector<QString> runnerIds;
     QVector<QString> queries;
     QVector<QString> matchIds;
+    QVector<QString> urls;
 
     if (favouritesConfigs.isEmpty()) {
         runnerIds.resize(4);
@@ -324,6 +434,7 @@ void StripWidget::restore(KConfigGroup &cg)
         runnerIds.resize(favouritesConfigs.size());
         queries.resize(favouritesConfigs.size());
         matchIds.resize(favouritesConfigs.size());
+        urls.resize(favouritesConfigs.size());
         QMap<uint, KConfigGroup>::const_iterator it = favouritesConfigs.constBegin();
         int i = 0;
         while (it != favouritesConfigs.constEnd()) {
@@ -332,26 +443,32 @@ void StripWidget::restore(KConfigGroup &cg)
             runnerIds[i] = favouriteConfig.readEntry("runnerid");
             queries[i] = favouriteConfig.readEntry("query");
             matchIds[i] = favouriteConfig.readEntry("matchId");
+            urls[i] = favouriteConfig.readEntry("url");
             ++i;
             ++it;
         }
     }
 
     QString currentQuery;
-    for (int i = 0; i < queries.size(); ++i ) {
-        // perform the query
-        m_runnermg->blockSignals(true);
-        const bool found = m_runnermg->execQuery(queries[i], runnerIds[i]);
-        m_runnermg->blockSignals(false);
-        if (currentQuery == queries[i] || found) {
-            currentQuery = queries[i];
-            // find our match
-            Plasma::QueryMatch match(m_runnermg->searchContext()->match(matchIds[i]));
+    int numIcons = stripGroup.groupList().size();
+    for (int i = 0; i < numIcons; ++i ) {
+        if (!urls[i].isNull()) {
+            add(urls[i]);
+        } else {
+            // perform the query
+            m_runnermg->blockSignals(true);
+            const bool found = m_runnermg->execQuery(queries[i], runnerIds[i]);
+            m_runnermg->blockSignals(false);
+            if (currentQuery == queries[i] || found) {
+                currentQuery = queries[i];
+                // find our match
+                Plasma::QueryMatch match(m_runnermg->searchContext()->match(matchIds[i]));
 
-            // we should verify some other saved information to avoid putting the
-            // wrong item if the search result is different!
-            if (match.isValid()) {
-                add(match, queries[i]);
+                // we should verify some other saved information to avoid putting the
+                // wrong item if the search result is different!
+                if (match.isValid()) {
+                    add(match, queries[i]);
+                }
             }
         }
     }
@@ -397,7 +514,7 @@ void StripWidget::focusInEvent(QFocusEvent *event)
 
 void StripWidget::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
-     event->setAccepted(event->mimeData()->hasFormat("application/x-plasma-salquerymatch"));
+     event->setAccepted(event->mimeData()->hasFormat("application/x-plasma-salquerymatch") || event->mimeData()->hasFormat("text/uri-list"));
 }
 
 void StripWidget::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
@@ -428,6 +545,8 @@ void StripWidget::dropEvent(QGraphicsSceneDragDropEvent *event)
              add(match, query, mapToScene(event->pos()));
          }
 
+     } else if (event->mimeData()->urls().size() > 0) {
+         add(event->mimeData()->urls().first().path(), mapToScene(event->pos()));
      } else {
          event->ignore();
      }

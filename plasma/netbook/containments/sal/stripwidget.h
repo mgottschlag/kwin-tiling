@@ -22,6 +22,7 @@
 
 
 #include <KConfigGroup>
+#include <KDesktopFile>
 
 #include <QPair>
 #include <QGraphicsLinearLayout>
@@ -55,6 +56,7 @@ public:
     ~StripWidget();
 
     void add(Plasma::QueryMatch match, const QString &query, const QPointF &point = QPointF());
+    void add(const QString &fileName, const QPointF &point = QPointF());
     void remove(Plasma::IconWidget *favourite);
 
     void save(KConfigGroup &cg);
@@ -68,6 +70,7 @@ public:
 
 protected:
     void createIcon(Plasma::QueryMatch *match, const QPointF &point);
+    Plasma::IconWidget *createIcon(const QPointF &point);
     void focusInEvent(QFocusEvent *event);
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
     void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
@@ -94,6 +97,7 @@ private:
     QList<Plasma::QueryMatch*> m_favouritesMatches;
     QHash<Plasma::QueryMatch*, QString> m_favouritesQueries;
     QHash<Plasma::IconWidget*, Plasma::QueryMatch*> m_favouritesIcons;
+    QHash<Plasma::IconWidget*, KDesktopFile*> m_desktopFiles;
     ItemView *m_itemView;
     Plasma::RunnerContext *m_context;
     QTimer *m_scrollTimer;

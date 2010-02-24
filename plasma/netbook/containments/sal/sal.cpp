@@ -678,12 +678,16 @@ void SearchLaunch::resultsViewRequestedDrag(Plasma::IconWidget *icon)
             return;
         }
 
-        QByteArray itemData;
-        QDataStream dataStream(&itemData, QIODevice::WriteOnly);
-        dataStream << m_runnermg->searchContext()->query() << match.runner()->id()<<match.id();
+        QMimeData *mimeData = m_runnermg->mimeDataForMatch(match);
 
-        QMimeData *mimeData = new QMimeData;
-        mimeData->setData("application/x-plasma-salquerymatch", itemData);
+        if (!mimeData || mimeData->urls().count() == 0) {
+            QByteArray itemData;
+            QDataStream dataStream(&itemData, QIODevice::WriteOnly);
+            dataStream << m_runnermg->searchContext()->query() << match.runner()->id()<<match.id();
+
+            mimeData = new QMimeData;
+            mimeData->setData("application/x-plasma-salquerymatch", itemData);
+        }
 
         QDrag *drag = new QDrag(view());
         drag->setMimeData(mimeData);

@@ -66,6 +66,8 @@ public:
     void setIconSize(int size);
     int iconSize() const;
 
+    QList<Plasma::IconWidget *>items() const;
+
     void setDragAndDropMode(ItemContainer::DragAndDropMode mode);
     ItemContainer::DragAndDropMode dragAndDropMode() const;
 

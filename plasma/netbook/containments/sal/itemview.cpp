@@ -117,6 +117,11 @@ void ItemView::setIconSize(int size)
     m_itemContainer->setIconSize(size);
 }
 
+QList<Plasma::IconWidget *> ItemView::items() const
+{
+    return m_itemContainer->items();
+}
+
 int ItemView::iconSize() const
 {
     return m_itemContainer->iconSize();
