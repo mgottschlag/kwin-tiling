@@ -159,7 +159,8 @@ void Plotter::addSample(const QList<double>& values)
     m_plotter->addSample(values);
     QStringList list;
     foreach (double value, values) {
-        list << QString("%1 %2").arg(value, 0, 'f', (value > 1000.0) ? 0 : 1).arg(m_unit);
+        double v = value / m_plotter->scaledBy();
+        list << QString("%1 %2").arg(v, 0, 'f', (v > 1000.0) ? 0 : 1).arg(m_unit);
     }
     setOverlayText(list.join(" / "));
     if (m_meter) {
@@ -218,7 +219,7 @@ void Plotter::resizeEvent(QGraphicsSceneResizeEvent* event)
         }
         font.setPointSizeF(font.pointSizeF() + 0.5);
         show = true;
-    };
+    }
     m_plotter->setFont(font);
     m_plotter->setShowTopBar(metrics.height() < h / 3);
     m_plotter->setShowLabels(show);
