@@ -103,7 +103,7 @@ protected Q_SLOTS:
     void configChanged();
     void bookmarksAnimationFinished();
     void removeBookmarkMessageButtonPressed(const MessageButton button);
-    void closeOverlay();
+    void closeWebViewOverlay();
     
 private:
     void fillGroup(BookmarkItem *parentItem, const KBookmarkGroup &group);

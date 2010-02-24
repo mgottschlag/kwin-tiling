@@ -1,5 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 Marco Martin <notmart@gmail.com>                   *
+ *   Copyright (C) 2010 Davide Bettio <davide.bettio@kdemail.net>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,21 +20,16 @@
 
 #include "webbrowser.h"
 
-#include <limits.h>
-
 #include <QGraphicsLinearLayout>
-#include <QGraphicsProxyWidget>
-#include <QGraphicsSceneMouseEvent>
-#include <QStandardItemModel>
 #include <QModelIndex>
-#include <QAction>
 #include <QPainter>
+#include <QScrollBar>
+#include <QStandardItemModel>
 #include <QTimer>
 #include <QTreeView>
 #include <QWebPage>
 #include <QWebFrame>
 #include <QWebHistory>
-#include <QScrollBar>
 
 #include <KIcon>
 #include <KCompletion>
@@ -48,7 +44,6 @@
 
 #include <Plasma/Animation>
 #include <Plasma/IconWidget>
-#include <Plasma/LineEdit>
 #include <Plasma/WebView>
 #include <Plasma/TreeView>
 #include <Plasma/Slider>
@@ -87,13 +82,14 @@ WebBrowser::WebBrowser(QObject *parent, const QVariantList &args)
           m_completion(0),
           m_bookmarkManager(0),
           m_bookmarkModel(0),
-          m_autoRefreshTimer(0),
-          m_graphicsWidget(0),
-          m_historyCombo(0),
-          m_webOverlay(0)
+          m_autoRefreshTimer(0)
 {
     setHasConfigurationInterface(true);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
+
+    m_historyCombo = 0;
+    m_graphicsWidget = 0;
+    m_webOverlay = 0;
 
     m_layout = 0;
     resize(500,500);
@@ -152,7 +148,6 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     m_bookmarksView->nativeWidget()->horizontalScrollBar()->setStyle(QApplication::style());
     m_bookmarksView->setModel(m_bookmarkModel);
     m_bookmarksView->nativeWidget()->setHeaderHidden(true);
-    //m_bookmarksView->nativeWidget()->viewport()->setAutoFillBackground(false);
     m_bookmarksView->hide();
 
     m_bookmarksDelegate = new BookmarksDelegate(this);
@@ -528,6 +523,7 @@ void WebBrowser::loadProgress(int progress)
 
         m_browser->page()->mainFrame()->setScrollBarValue(Qt::Vertical, m_verticalScrollValue);
         m_browser->page()->mainFrame()->setScrollBarValue(Qt::Horizontal, m_horizontalScrollValue);
+
     } else {
         m_historyCombo->setDisplayProgress(true);
         m_stop->show();
@@ -581,7 +577,9 @@ void WebBrowser::configAccepted()
 
 void WebBrowser::constraintsEvent(Plasma::Constraints constraints)
 {
-    updateOverlaysGeometry();
+    if (constraints & Plasma::SizeConstraint){
+        updateOverlaysGeometry();
+    }
 }
 
 void WebBrowser::updateOverlaysGeometry()
@@ -602,15 +600,22 @@ void WebBrowser::updateOverlaysGeometry()
 
 void WebBrowser::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
+    Q_UNUSED(option)
+    Q_UNUSED(contentsRect)
+  
     p->save();
     p->setBrush(QApplication::palette().window());
     p->setRenderHint(QPainter::Antialiasing);
     p->setPen(Qt::NoPen);
-    p->drawRoundedRect(m_browser->pos().x() + contentsRect.x() - 2, m_browser->pos().y() + contentsRect.y() - 2,  m_browser->geometry().width() + 4, m_browser->geometry().height() + 4, 2, 2);
+    p->drawRoundedRect(m_browser->pos().x() + contentsRect.x() - 2,
+                       m_browser->pos().y() + contentsRect.y() - 2,
+                       m_browser->geometry().width() + 4,
+                       m_browser->geometry().height() + 4,
+                       2, 2);
     p->restore();
 }
 
-void WebBrowser::closeOverlay()
+void WebBrowser::closeWebViewOverlay()
 {
     if (m_webOverlay){
       m_webOverlay->deleteLater();
@@ -620,16 +625,15 @@ void WebBrowser::closeOverlay()
 
 QWebPage *WebBrowser::createWindow(QWebPage::WebWindowType type)
 {
+    Q_UNUSED(type)
+  
     if (!m_webOverlay){
         m_webOverlay = new WebViewOverlay(this);
-        m_webOverlay->setGeometry(QRect(m_browser->pos().x() + contentsRect().x(), m_browser->pos().y() + contentsRect().y(),  m_browser->geometry().width(), m_browser->geometry().height()));
+        updateOverlaysGeometry();
         m_webOverlay->setZValue(999);
-        connect(m_webOverlay, SIGNAL(closeRequested()), this, SLOT(closeOverlay()));
-    }else{
-        m_webOverlay->show();
+        connect(m_webOverlay, SIGNAL(closeRequested()), this, SLOT(closeWebViewOverlay()));
     }
 
-    updateOverlaysGeometry();
     return m_webOverlay->page();
 }
 
