@@ -54,6 +54,7 @@ static SolidActionData * actData = 0;
 SolidActionData::SolidActionData(bool includeFiles)
 {
     QStringList allPossibleDevices;
+    int propertyOffset = Solid::DeviceInterface::staticMetaObject.propertyOffset();
 
     QList<QMetaObject> interfaceList = fillInterfaceList();
     foreach( const QMetaObject &interface, interfaceList ) {
@@ -64,7 +65,7 @@ SolidActionData::SolidActionData(bool includeFiles)
         types.insert( ifaceDev, cleanName );
 
         QMap<QString, QString> deviceValues;
-        for( int doneProps = 0; interface.propertyCount() > doneProps; doneProps = doneProps + 1 ) {
+        for( int doneProps = propertyOffset; interface.propertyCount() > doneProps; doneProps = doneProps + 1 ) {
             QMetaProperty ifaceProp = interface.property(doneProps);
             deviceValues.insert( ifaceProp.name(), generateUserString(ifaceProp.name()) );
         }
