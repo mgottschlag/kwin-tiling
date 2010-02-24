@@ -69,7 +69,6 @@ public:
     void setImmutability(Plasma::ImmutabilityType immutability);
 
 protected:
-    void createIcon(Plasma::QueryMatch *match, const QPointF &point);
     Plasma::IconWidget *createIcon(const QPointF &point);
     void focusInEvent(QFocusEvent *event);
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);

@@ -114,52 +114,6 @@ StripWidget::~StripWidget()
     }
 }
 
-void StripWidget::createIcon(Plasma::QueryMatch *match, const QPointF &point)
-{
-    // create new IconWidget for favourite strip
-
-    Plasma::IconWidget *fav = m_itemView->createItem();
-    fav->hide();
-    fav->setTextBackgroundColor(QColor());
-    fav->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    fav->installEventFilter(this);
-    fav->setText(match->text());
-    fav->setIcon(match->icon());
-
-    Plasma::ToolTipContent toolTipData = Plasma::ToolTipContent();
-    toolTipData.setAutohide(true);
-    toolTipData.setMainText(match->text());
-    toolTipData.setSubText(match->subtext());
-    toolTipData.setImage(match->icon());
-
-    Plasma::ToolTipManager::self()->registerWidget(this);
-    Plasma::ToolTipManager::self()->setContent(fav, toolTipData);
-
-    connect(fav, SIGNAL(activated()), this, SLOT(launchFavourite()));
-
-    // set an action to be able to remove from favourites
-    QAction *action = new QAction(fav);
-    action->setIcon(KIcon("list-remove"));
-    fav->addIconAction(action);
-    connect(action, SIGNAL(triggered()), this, SLOT(removeFavourite()));
-
-    if (m_iconActionCollection) {
-        m_iconActionCollection->addAction(action);
-    }
-
-    m_favouritesIcons.insert(fav, match);
-    if (point != QPointF()) {
-        m_itemView->insertItem(fav, m_itemView->positionToWeight(point));
-    } else {
-        m_itemView->addItem(fav);
-    }
-
-    if (m_startupCompleted) {
-        m_itemView->setCurrentItem(fav);
-        m_setCurrentTimer->start(300);
-    }
-}
-
 Plasma::IconWidget *StripWidget::createIcon(const QPointF &point)
 {
     // create new IconWidget for favourite strip
