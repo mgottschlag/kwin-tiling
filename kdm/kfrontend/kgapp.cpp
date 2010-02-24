@@ -327,7 +327,7 @@ main( int argc ATTR_UNUSED, char **argv )
 
 	KCrash::setFlags( KCrash::KeepFDs | KCrash::SaferDialog | KCrash::AlwaysDirectly );
 	KCrash::setApplicationName( QLatin1String( fakeArgv[0] ) );
-	KCrash::setCrashHandler( KCrash::defaultCrashHandler );
+	KCrash::setDrKonqiEnabled( true );
 	XSetIOErrorHandler( xIOErr );
 	KComponentData inst( fakeArgv[0] );
 	GreeterApp app( fakeArgc, fakeArgv );
