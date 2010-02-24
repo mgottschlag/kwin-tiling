@@ -33,6 +33,7 @@
 #include <QGraphicsAnchorLayout>
 #include <QGraphicsView>
 #include <QApplication>
+#include <QFileInfo>
 
 #include <KAction>
 #include <KDebug>
@@ -680,7 +681,15 @@ void SearchLaunch::resultsViewRequestedDrag(Plasma::IconWidget *icon)
 
         QMimeData *mimeData = m_runnermg->mimeDataForMatch(match);
 
-        if (!mimeData || mimeData->urls().count() == 0) {
+        bool valid = false;
+        if (mimeData  && !mimeData->urls().isEmpty()) {
+            QFileInfo fi(mimeData->urls().first().path());
+            if (fi.exists()) {
+                valid = true;
+            }
+        }
+
+        if (!valid) {
             QByteArray itemData;
             QDataStream dataStream(&itemData, QIODevice::WriteOnly);
             dataStream << m_runnermg->searchContext()->query() << match.runner()->id()<<match.id();
