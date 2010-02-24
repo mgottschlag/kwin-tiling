@@ -86,6 +86,7 @@ private Q_SLOTS:
     void itemReordered(Plasma::IconWidget *icon, int index);
     //FIXME: this needs to go
     void highlightCurrentItem();
+    void showDeleteTarget();
 
 private:
     Plasma::ToolButton *m_leftArrow;
@@ -102,6 +103,7 @@ private:
     QTimer *m_scrollTimer;
     //FIXME: connecting to an animationcomplete signal from the icon?
     QTimer *m_setCurrentTimer;
+    Plasma::IconWidget *m_deleteTarget;
     IconActionCollection *m_iconActionCollection;
     int m_shownIcons;
     int m_offset;

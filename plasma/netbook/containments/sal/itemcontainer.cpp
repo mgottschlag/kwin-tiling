@@ -390,9 +390,8 @@ void ItemContainer::itemRequestedDrag(Plasma::IconWidget *icon)
                 icon->installEventFilter(this);
                 //ugly but necessary to don't make it clipped
                 icon->setParentItem(0);
-            } else {
-                emit dragStartRequested(icon);
             }
+            emit dragStartRequested(icon);
             return;
         }
     }

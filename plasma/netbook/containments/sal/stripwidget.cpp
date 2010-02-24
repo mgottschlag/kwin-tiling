@@ -20,6 +20,7 @@
 #include "stripwidget.h"
 
 #include <QGraphicsGridLayout>
+#include <QGraphicsScene>
 #include <QToolButton>
 #include <QAction>
 #include <QTimer>
@@ -47,6 +48,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
       m_runnermg(rm),
       m_itemView(0),
+      m_deleteTarget(0),
       m_iconActionCollection(0),
       m_offset(0),
       m_startupCompleted(false)
@@ -93,6 +95,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     connect(m_itemView, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launchFavourite(Plasma::IconWidget *)));
     connect(m_itemView, SIGNAL(scrollBarsNeededChanged(ItemView::ScrollBarFlags)), this, SLOT(arrowsNeededChanged(ItemView::ScrollBarFlags)));
     connect(m_itemView, SIGNAL(itemReordered(Plasma::IconWidget *, int)), this, SLOT(itemReordered(Plasma::IconWidget *, int)));
+    connect(m_itemView, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SLOT(showDeleteTarget()));
 
     m_arrowsLayout->addItem(m_leftArrow);
     m_arrowsLayout->addItem(m_itemView);
@@ -158,6 +161,18 @@ Plasma::IconWidget *StripWidget::createIcon(const QPointF &point)
     return fav;
 }
 
+void StripWidget::showDeleteTarget()
+{
+    if (!m_deleteTarget) {
+        m_deleteTarget = new Plasma::IconWidget();
+        scene()->addItem(m_deleteTarget);
+        m_deleteTarget->setIcon("user-trash");
+        m_deleteTarget->resize(KIconLoader::SizeHuge, KIconLoader::SizeHuge);
+        m_deleteTarget->setZValue(99);
+    }
+    m_deleteTarget->setPos(mapToScene(boundingRect().bottomLeft()));
+    m_deleteTarget->show();
+}
 
 void StripWidget::setImmutability(Plasma::ImmutabilityType immutability)
 {
@@ -256,8 +271,9 @@ void StripWidget::removeFavourite()
 
 void StripWidget::itemReordered(Plasma::IconWidget *icon, int index)
 {
-    if (!geometry().intersects(icon->mapToItem(this, icon->boundingRect()).boundingRect())) {
+    if (m_deleteTarget && m_deleteTarget->geometry().intersects(icon->mapToItem(this, icon->boundingRect()).boundingRect())) {
         remove(icon);
+        m_deleteTarget->hide();
     } else if (m_favouritesIcons.contains(icon)) {
         Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
         m_favouritesMatches.removeAll(match);
