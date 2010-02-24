@@ -177,8 +177,9 @@ void FilteringWidget::init()
     m_textSearch->setClearButtonShown(true);
 
     m_newWidgetsButton = new Plasma::PushButton(this);
-    m_newWidgetsButton->setText(i18n("Get New Widgets"));
-    m_newWidgetsMenu = new KMenu(i18n("Get New Widgets"));
+    m_newWidgetsButton->setText(i18n("Get New Widgets..."));
+    m_newWidgetsButton->setIcon(KIcon("get-hot-new-stuff"));
+    m_newWidgetsMenu = new KMenu(i18n("Get New Widgets..."));
     connect(m_newWidgetsMenu, SIGNAL(aboutToShow()), this, SLOT(populateWidgetsMenu()));
     m_newWidgetsButton->nativeWidget()->setMenu(m_newWidgetsMenu);
     m_newWidgetsButton->setMinimumWidth(m_newWidgetsButton->effectiveSizeHint(Qt::PreferredSize).width());
@@ -256,8 +257,8 @@ void FilteringWidget::setListOrientation(Qt::Orientation orientation)
         m_textSearch->setPreferredWidth(200);
         m_textSearch->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
         m_textSearch->setPreferredHeight(-1);
-        m_linearLayout->addItem(m_newWidgetsButton);
         m_linearLayout->addItem(m_categoriesTabs);
+        m_linearLayout->addItem(m_newWidgetsButton);
         m_categoriesTabs->setVisible(true);
     } else {
         if (m_categoriesTabs) {
@@ -278,9 +279,9 @@ void FilteringWidget::setListOrientation(Qt::Orientation orientation)
         m_textSearch->setPreferredHeight(30);
         m_textSearch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         m_textSearch->setPreferredWidth(-1);
-        m_linearLayout->addItem(m_newWidgetsButton);
         m_categoriesTreeView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
         m_linearLayout->addItem(m_categoriesTreeView);
+        m_linearLayout->addItem(m_newWidgetsButton);
         m_categoriesTreeView->setVisible(true);
     }
 
