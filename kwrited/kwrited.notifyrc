@@ -1,6 +1,6 @@
 [Global]
 IconName=utilities-terminal
-Comment=KDE write daemon
+Comment=Local system message service
 Comment[ar]=مراقب كتابة لكدي
 Comment[be@latin]=Słužba „write” dla „KDE”
 Comment[bg]=Демон за писане (KDE)

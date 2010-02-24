@@ -1,6 +1,6 @@
 [Global]
-IconName=kaccess
-Comment=KDE Accessibility Tool
+IconName=preferences-desktop-accessibility
+Comment=Accessibility
 Comment[af]=KDE toeganklikheid program
 Comment[ar]=أداة تسهيل الاستخدام في كدي
 Comment[be]=Даступнасць KDE
