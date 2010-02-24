@@ -41,6 +41,7 @@
 #include <KConfigDialog>
 #include <KHistoryComboBox>
 #include <KWebPage>
+#include <kwebwallet.h>
 
 #include <Plasma/Animation>
 #include <Plasma/IconWidget>
@@ -52,6 +53,7 @@
 #include "bookmarkitem.h"
 #include "webviewoverlay.h"
 #include "browserhistorycombobox.h"
+#include "browsermessagebox.h"
 
 using Plasma::MessageButton;
 
@@ -59,7 +61,7 @@ class WebBrowserPage : public KWebPage
 {
   public:
       WebBrowserPage(WebBrowser *parent)
-          : KWebPage(parent, false)
+          : KWebPage(parent)
       {
           browser = parent;
       }
@@ -132,8 +134,9 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     m_browser = new Plasma::WebView(this);
     m_browser->setPage(new WebBrowserPage(this));
     m_browser->setPreferredSize(400, 400);
+
     m_browser->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    
+
     m_layout->addItem(m_browser);
 
     //bookmarks
@@ -192,7 +195,8 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     connect(m_historyCombo, SIGNAL(activated(const QString&)), this, SLOT(comboTextChanged(const QString&)));
     connect(m_browser->page()->mainFrame(), SIGNAL(urlChanged(const QUrl &)), this, SLOT(urlChanged(const QUrl &)));
     connect(m_browser, SIGNAL(loadProgress(int)), this, SLOT(loadProgress(int)));
-
+    connect(m_browser, SIGNAL(loadFinished(bool)), this, SLOT(loadFinished(bool)));
+    
     connect(m_addBookmarkAction, SIGNAL(triggered()), this, SLOT(addBookmark()));
     connect(m_removeBookmarkAction, SIGNAL(triggered()), this, SLOT(removeBookmark()));
     connect(m_organizeBookmarks->action(), SIGNAL(triggered()), this, SLOT(bookmarksToggle()));
@@ -211,6 +215,9 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     configChanged();
 
     connect(this, SIGNAL(messageButtonPressed(const MessageButton)), this, SLOT(removeBookmarkMessageButtonPressed(const MessageButton)));
+
+    connect(static_cast<KWebPage *>(m_browser->page())->wallet(), SIGNAL(saveFormDataRequested(const QString &, const QUrl &)),
+                this, SLOT(saveFormDataRequested(const QString &, const QUrl &)));
     
     return m_graphicsWidget;
 }
@@ -636,5 +643,43 @@ QWebPage *WebBrowser::createWindow(QWebPage::WebWindowType type)
 
     return m_webOverlay->page();
 }
+
+void WebBrowser::loadFinished(bool ok)
+{
+    if (ok){
+        static_cast<KWebPage *>(m_browser->page())->wallet()->fillFormData(m_browser->page()->mainFrame());
+    }
+}
+
+//
+// Wallet managment
+//
+
+void WebBrowser::saveFormDataRequested(const QString &uid, const QUrl &url)
+{
+    BrowserMessageBox *messageBox = new BrowserMessageBox(this, i18n("Do you want to store this password for %1?", url.host()));
+    m_layout->insertItem(1, messageBox);
+    walletRequests.insert(messageBox, uid);
+    connect(messageBox, SIGNAL(okClicked()), this, SLOT(acceptWalletRequest()));
+    connect(messageBox, SIGNAL(cancelClicked()), this, SLOT(rejectWalletRequest()));
+}
+
+void WebBrowser::acceptWalletRequest()
+{
+    static_cast<KWebPage *>(m_browser->page())->wallet()->acceptSaveFormDataRequest(
+                            walletRequests[static_cast<BrowserMessageBox *>(QObject::sender())]);
+    QObject::sender()->deleteLater();
+}
+
+void WebBrowser::rejectWalletRequest()
+{
+    static_cast<KWebPage *>(m_browser->page())->wallet()->rejectSaveFormDataRequest(
+                           walletRequests[static_cast<BrowserMessageBox *>(QObject::sender())]);
+    QObject::sender()->deleteLater();
+}
+
+//
+// End of wallet managment
+//
 
 #include "webbrowser.moc"

@@ -20,12 +20,14 @@
 #ifndef WEBBROWSER_H
 #define WEBBROWSER_H
 
+#include <QHash>
 #include <QWebPage>
 
 #include <Plasma/PopupApplet>
 #include <Plasma/DataEngine>
 
 #include "ui_webbrowserconfig.h"
+#include "browsermessagebox.h"
 
 class WebViewOverlay;
 
@@ -105,10 +107,16 @@ protected Q_SLOTS:
     void removeBookmarkMessageButtonPressed(const MessageButton button);
     void closeWebViewOverlay();
     
+    void loadFinished(bool ok);
+    
+    void saveFormDataRequested(const QString &uid, const QUrl &url);
+    void acceptWalletRequest();
+    void rejectWalletRequest();
 private:
     void fillGroup(BookmarkItem *parentItem, const KBookmarkGroup &group);
     void updateOverlaysGeometry();
-
+    QHash<BrowserMessageBox *, QString> walletRequests;
+    
 
     QGraphicsLinearLayout *m_layout;
     QGraphicsLinearLayout *m_toolbarLayout;
