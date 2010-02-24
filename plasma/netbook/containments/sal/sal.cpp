@@ -308,7 +308,13 @@ void SearchLaunch::addFavourite()
 {
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
     Plasma::QueryMatch match = m_matches.value(icon, Plasma::QueryMatch(0));
-    m_stripWidget->add(match, m_runnermg->searchContext()->query());
+    QMimeData *mimeData = m_runnermg->mimeDataForMatch(match);
+
+    if (mimeData  && !mimeData->urls().isEmpty()) {
+        m_stripWidget->add(mimeData->urls().first().path());
+    } else {
+        m_stripWidget->add(match, m_runnermg->searchContext()->query());
+    }
 }
 
 void SearchLaunch::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
