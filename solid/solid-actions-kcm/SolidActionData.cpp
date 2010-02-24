@@ -175,7 +175,6 @@ QList<QMetaObject> SolidActionData::fillInterfaceList()
     interfaces.append( Solid::Button::staticMetaObject );
     interfaces.append( Solid::Camera::staticMetaObject );
     interfaces.append( Solid::DvbInterface::staticMetaObject );
-    interfaces.append( Solid::GenericInterface::staticMetaObject );
     interfaces.append( Solid::NetworkInterface::staticMetaObject );
     interfaces.append( Solid::PortableMediaPlayer::staticMetaObject );
     interfaces.append( Solid::Processor::staticMetaObject );

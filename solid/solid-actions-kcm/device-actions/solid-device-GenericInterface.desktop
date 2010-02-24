@@ -1,9 +1,0 @@
-[Desktop Action ]
-Name=
-
-[Desktop Entry]
-Actions=;
-Name=Solid Device
-Type=Service
-X-KDE-ServiceTypes=SolidDevice
-X-KDE-Solid-Actions-Type=GenericInterface
