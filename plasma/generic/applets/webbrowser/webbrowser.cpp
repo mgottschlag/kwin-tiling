@@ -595,7 +595,7 @@ void WebBrowser::updateOverlaysGeometry()
       m_bookmarksView->setGeometry(overlayGeometry);
     }
       
-    if (m_webOverlay && m_webOverlay->isVisible()){
+    if (m_webOverlay){
       m_webOverlay->setGeometry(overlayGeometry);
     }
 }
@@ -613,7 +613,8 @@ void WebBrowser::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *opt
 void WebBrowser::closeOverlay()
 {
     if (m_webOverlay){
-      m_webOverlay->hide();
+      m_webOverlay->deleteLater();
+      m_webOverlay = 0;
     }
 }
 
