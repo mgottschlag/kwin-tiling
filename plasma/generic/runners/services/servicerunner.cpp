@@ -255,7 +255,8 @@ QMimeData * ServiceRunner::mimeDataForMatch(const Plasma::QueryMatch *match)
         result->setUrls(urls);
         return result;
     }
-    
+
+    return 0;
 }
 
 #include "servicerunner.moc"
