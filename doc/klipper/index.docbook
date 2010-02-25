@@ -339,9 +339,9 @@ in the clipboard history.</para></listitem>
 <varlistentry>
 <term>Editing Expressions/Actions</term>
 <listitem><para>On the <guilabel>Actions</guilabel> tab, double-click
-the regular expression or action that you want to edit. An in-place text editing
-box will appear in which the text can be edited as you wish. Make sure you
-press &Enter; when you are done.</para></listitem>
+the regular expression or action that you want to edit or select it and 
+the <guibutton>Edit Action</guibutton>. An dialog will appear in which the 
+expression text can be edited as you wish.</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -362,9 +362,8 @@ Note that &klipper; does not support the wildcard mode mentioned on this
 page.</para></note> 
 
 <para>Edit the regular expression as described above. To add a command
-to execute, <mousebutton>right</mousebutton> click, select
-<guimenuitem>Add Command</guimenuitem> and edit the command which
-appears in the tree under the regular expression.</para>
+to execute, click <guimenuitem>Add Command</guimenuitem> and edit the command 
+in an in-place text editing box. Double-clicking on a command allows you to edit it.</para>
 
 <para>Note that <token>%s</token> in the command line is replaced with
 the clipboard contents, &eg; if your command definition is
