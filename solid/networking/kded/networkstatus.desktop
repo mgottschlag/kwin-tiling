@@ -1,5 +1,10 @@
 [Desktop Entry]
 Name=Network Status
+Name[pt]=Estado da Rede
+Name[pt_BR]=Status da rede
+Name[sv]=Nätverksstatus
+Name[uk]=Стан мережі
+Name[x-test]=xxNetwork Statusxx
 Comment=Tracks status of network interfaces and provides notification to applications using the network.
 Comment[ar]=حالة مسارات واجهة الشبكة ومبلغ بالاجهزة التي تستخدم الشبكة
 Comment[be@latin]=Naziraje za stanoviščam sietkavych interfejsaŭ, infarmuje aplikacyi pra źmieny.
