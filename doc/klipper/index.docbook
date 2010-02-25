@@ -49,7 +49,7 @@
 <title>Introduction</title>
 <para>&klipper; is the &kde; clipboard utility. It stores clipboard
 history, and allows you to link clipboard contents to application
-actions. Please report any problems or feature requests to<ulink
+actions. Please report any problems or feature requests to <ulink
 url="http://bugs.kde.org">KDEs bugzilla</ulink> or use the "report bug" feature.</para>
 
 </chapter>
