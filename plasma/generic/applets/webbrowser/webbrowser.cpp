@@ -68,6 +68,8 @@ class WebBrowserPage : public KWebPage
           : KWebPage(parent)
       {
           browser = parent;
+          //settings()->setAttribute(QWebSettings::JavaEnabled, true);
+          settings()->setAttribute(QWebSettings::PluginsEnabled, true);
       }
   
   private:
