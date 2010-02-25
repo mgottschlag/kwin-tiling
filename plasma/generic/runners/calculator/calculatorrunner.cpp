@@ -270,7 +270,7 @@ QString CalculatorRunner::calculate(const QString& term)
 
 QMimeData * CalculatorRunner::mimeDataForMatch(const Plasma::QueryMatch *match)
 {
-    kDebug();
+    //kDebug();
     QMimeData * result = new QMimeData();
     result->setText(match->text());
     return result;
