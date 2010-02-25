@@ -101,8 +101,8 @@ based on whether they match a particular regular expression. For
 example, any clipboard contents starting with <quote>http://</quote> can
 be passed to Firefox or &konqueror; as &URL;s to open. In addition, if the 
 contents matches a path, similar actions can be performed according to the file's
-type. E.g, if the path to a pdf file is copied to the clipboard, the file can be 
-view in Okular</para>
+type. E.g, if the path to a <acronym>PDF</acronym> file is copied to the clipboard, the file can be 
+viewed in &okular;.</para>
 
 <para>To use this feature, just select a &URL; or path. <!-- starting with slash ?-->
 If there is a matching regular expression in &klipper;'s
@@ -117,9 +117,9 @@ to return to what you were doing before. If you leave the menu, it will
 disappear, leaving you to continue your work. You can change the time
 that the menu remains for in the <guilabel>Configure Klipper...</guilabel>
 dialog, with the option <guilabel>Timeout for action popups</guilabel>
-under the <guilabel>General</guilabel> tab. You can separately disable the 
+under the <guilabel>General</guilabel> page. You can separately disable the 
 file path part using the option <guilabel>Enable MIME-based actions</guilabel> under
-the <guilabel>Actions</guilabel> tab.</para>
+the <guilabel>Actions</guilabel> page.</para>
   
 <para>Actions can be disabled completely by clicking on &klipper; and
 deselecting <guimenuitem>Actions Enabled</guimenuitem>, or by pressing
@@ -185,7 +185,7 @@ contents of this clipboard.
 In order to change clipboard/selection behavior, select
 <guimenuitem>Configure &klipper;...</guimenuitem> from the &klipper; pop-up menu,
 and in the dialog box that appears, select the
-<guilabel>General</guilabel> tab. Unchecking <guilabel>Synchronize contents of the clipboard and the
+<guilabel>General</guilabel> page. Unchecking <guilabel>Synchronize contents of the clipboard and the
 selection</guilabel> makes the clipboard and selection function as completely
 separate buffers as described above. With this option set, the option
 <guilabel>Ignore selection</guilabel> will prevent &klipper; from
@@ -225,7 +225,7 @@ below.</para>
 
 </sect1>
 
-<sect1 id="general-tab">
+<sect1 id="general-page">
 <title>General Options</title>
 
 <variablelist>
@@ -332,15 +332,15 @@ in the clipboard history.</para></listitem>
 
 </sect1>
 
-<sect1 id="actions-tab">
+<sect1 id="actions-page">
 <title>Actions Options</title>
 
 <variablelist>
 <varlistentry>
 <term>Editing Expressions/Actions</term>
-<listitem><para>On the <guilabel>Actions</guilabel> tab, double-click
+<listitem><para>On the <guilabel>Actions</guilabel> page, double-click
 the regular expression or action that you want to edit or select it and 
-the <guibutton>Edit Action</guibutton>. An dialog will appear in which the 
+press the <guibutton>Edit Action</guibutton> button. An dialog will appear in which the 
 expression text can be edited as you wish.</para></listitem>
 </varlistentry>
 
@@ -400,10 +400,10 @@ windows of that application.</para>
 
 </sect1>
 
-<sect1 id="shortcuts-tab">
+<sect1 id="shortcuts-page">
 <title>Shortcuts Options</title>
 
-<para>The shortcuts tab allows you to change the keyboard shortcuts
+<para>The shortcuts page allows you to change the keyboard shortcuts
 which are used to access &klipper; functions. You can change the
 shortcut to one of three things:</para>
 
