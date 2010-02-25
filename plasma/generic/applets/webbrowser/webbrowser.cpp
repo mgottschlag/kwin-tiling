@@ -22,6 +22,7 @@
 
 #include <QGraphicsLinearLayout>
 #include <QModelIndex>
+#include <QNetworkReply>
 #include <QPainter>
 #include <QScrollBar>
 #include <QStandardItemModel>
@@ -42,11 +43,13 @@
 #include <KHistoryComboBox>
 #include <KWebPage>
 #include <kwebwallet.h>
+#include <KStandardDirs>
 
 #include <Plasma/Animation>
 #include <Plasma/IconWidget>
 #include <Plasma/WebView>
 #include <Plasma/TreeView>
+#include <Plasma/PushButton>
 #include <Plasma/Slider>
 
 #include "bookmarksdelegate.h"
@@ -54,7 +57,8 @@
 #include "webviewoverlay.h"
 #include "browserhistorycombobox.h"
 #include "browsermessagebox.h"
-
+#include "errorpage.h"
+	 
 using Plasma::MessageButton;
 
 class WebBrowserPage : public KWebPage
@@ -218,6 +222,7 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
 
     connect(static_cast<KWebPage *>(m_browser->page())->wallet(), SIGNAL(saveFormDataRequested(const QString &, const QUrl &)),
                 this, SLOT(saveFormDataRequested(const QString &, const QUrl &)));
+    connect(m_browser->page()->networkAccessManager(), SIGNAL(finished(QNetworkReply*)), this, SLOT(networkAccessFinished(QNetworkReply *)));
     
     return m_graphicsWidget;
 }
@@ -651,6 +656,20 @@ void WebBrowser::loadFinished(bool ok)
     }
 }
 
+void WebBrowser::networkAccessFinished(QNetworkReply *nReply)
+{
+    switch (nReply->error()){
+        case QNetworkReply::NoError:
+        case QNetworkReply::UnknownContentError:
+        case QNetworkReply::ContentNotFoundError:
+           return;
+
+        default:
+           kDebug() << KIconLoader::global()->iconPath( "dialog-warning", -KIconLoader::SizeHuge );
+           m_browser->page()->mainFrame()->setHtml(errorPageHtml(webKitErrorToKIOError(nReply->error()), nReply->url().toString(), nReply->url()));
+    }
+}
+
 //
 // Wallet managment
 //
@@ -658,6 +677,10 @@ void WebBrowser::loadFinished(bool ok)
 void WebBrowser::saveFormDataRequested(const QString &uid, const QUrl &url)
 {
     BrowserMessageBox *messageBox = new BrowserMessageBox(this, i18n("Do you want to store this password for %1?", url.host()));
+    messageBox->okButton()->setText(i18n("Store"));
+    messageBox->okButton()->setIcon(KIcon("document-save"));
+    messageBox->cancelButton()->setText(i18n("Do not store this time"));
+    messageBox->cancelButton()->setIcon(KIcon("dialog-cancel"));
     m_layout->insertItem(1, messageBox);
     walletRequests.insert(messageBox, uid);
     connect(messageBox, SIGNAL(okClicked()), this, SLOT(acceptWalletRequest()));

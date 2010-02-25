@@ -112,6 +112,7 @@ protected Q_SLOTS:
     void saveFormDataRequested(const QString &uid, const QUrl &url);
     void acceptWalletRequest();
     void rejectWalletRequest();
+    void networkAccessFinished(QNetworkReply *nReply);
 private:
     void fillGroup(BookmarkItem *parentItem, const KBookmarkGroup &group);
     void updateOverlaysGeometry();

@@ -7,6 +7,7 @@ set(webbrowser_SRCS
     webviewoverlay.cpp
     browserhistorycombobox.cpp
     browsermessagebox.cpp
+    errorpage.cpp
    )
 
 kde4_add_ui_files(webbrowser_SRCS webbrowserconfig.ui )

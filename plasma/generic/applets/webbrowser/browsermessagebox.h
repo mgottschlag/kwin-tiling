@@ -22,13 +22,25 @@
 
 #include <QGraphicsWidget>
 
+namespace Plasma
+{
+    class PushButton;
+}
+
 class BrowserMessageBox : public QGraphicsWidget
 {
   Q_OBJECT
   
   public:
     BrowserMessageBox(QGraphicsWidget *parent, QString message);
-    
+
+    Plasma::PushButton *okButton();
+    Plasma::PushButton *cancelButton();
+
+  private:
+    Plasma::PushButton *m_okButton;
+    Plasma::PushButton *m_cancelButton;
+
   Q_SIGNALS:
     void okClicked();
     void cancelClicked();

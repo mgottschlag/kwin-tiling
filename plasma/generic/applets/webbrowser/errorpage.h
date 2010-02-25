@@ -17,43 +17,13 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#include "browsermessagebox.h"
+#ifndef ERRORPAGE_H
+#define ERRORPAGE_H
 
-#include <QGraphicsLinearLayout>
+#include <QString>
+#include <KUrl>
 
-#include <Plasma/Label>
-#include <Plasma/PushButton>
-#include <Plasma/WebView>
+int webKitErrorToKIOError(int eValue);
+QString errorPageHtml( int errorCode, const QString& text, const KUrl& reqUrl );
 
-BrowserMessageBox::BrowserMessageBox(QGraphicsWidget *parent, QString message)
-    : QGraphicsWidget(parent)
-{
-      QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
-      layout->setOrientation(Qt::Horizontal);
-
-      Plasma::Label *messageLabel = new Plasma::Label(this);
-      messageLabel->setText(message);
-      layout->addItem(messageLabel);
-      
-      m_okButton = new Plasma::PushButton(this);
-      m_okButton->setText("OK");
-      connect(m_okButton, SIGNAL(clicked()), this, SIGNAL(okClicked()));
-      layout->addItem(m_okButton);
-      
-      m_cancelButton = new Plasma::PushButton(this);
-      m_cancelButton->setText("Cancel");
-      connect(m_cancelButton, SIGNAL(clicked()), this, SIGNAL(cancelClicked()));
-      layout->addItem(m_cancelButton);
-}
-
-Plasma::PushButton *BrowserMessageBox::okButton()
-{
-    return m_okButton;
-}
-
-Plasma::PushButton *BrowserMessageBox::cancelButton()
-{
-    return m_cancelButton;
-}
-
-#include "browsermessagebox.moc"
+#endif
