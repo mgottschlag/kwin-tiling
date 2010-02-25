@@ -58,29 +58,9 @@
 #include "browserhistorycombobox.h"
 #include "browsermessagebox.h"
 #include "errorpage.h"
-	 
-using Plasma::MessageButton;
+#include "webbrowserpage.h"
 
-class WebBrowserPage : public KWebPage
-{
-  public:
-      WebBrowserPage(WebBrowser *parent)
-          : KWebPage(parent)
-      {
-          browser = parent;
-          //settings()->setAttribute(QWebSettings::JavaEnabled, true);
-          settings()->setAttribute(QWebSettings::PluginsEnabled, true);
-      }
-  
-  private:
-        WebBrowser *browser;
-  
-  protected:
-      QWebPage *createWindow(WebWindowType type)
-      {
-          return browser->createWindow(type);
-      }
-};
+using Plasma::MessageButton;
 
 WebBrowser::WebBrowser(QObject *parent, const QVariantList &args)
         : Plasma::PopupApplet(parent, args),
@@ -706,5 +686,7 @@ void WebBrowser::rejectWalletRequest()
 //
 // End of wallet managment
 //
+
+K_EXPORT_PLASMA_APPLET(webbrowser, WebBrowser)
 
 #include "webbrowser.moc"

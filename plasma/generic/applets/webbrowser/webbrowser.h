@@ -162,6 +162,4 @@ private:
     Ui::WebBrowserConfig ui;
 };
 
-K_EXPORT_PLASMA_APPLET(webbrowser, WebBrowser)
-
 #endif
