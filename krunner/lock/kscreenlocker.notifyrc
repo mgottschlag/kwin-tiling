@@ -1,6 +1,10 @@
 [Global]
 IconName=system-lock-screen
 Comment=Screen Saver
+Comment[pt]=Protector de Ecrã
+Comment[pt_BR]=Protetor de tela
+Comment[uk]=Зберігач екрана
+Comment[x-test]=xxScreen Saverxx
 
 [Event/savingstarted]
 Name=Screen saver started

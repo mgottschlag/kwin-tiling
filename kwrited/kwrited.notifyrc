@@ -1,6 +1,10 @@
 [Global]
 IconName=utilities-terminal
 Comment=Local system message service
+Comment[pt]=Serviço de mensagens do sistema local
+Comment[pt_BR]=Serviço de mensagens do sistema local
+Comment[uk]=Служба повідомлень локальної системи
+Comment[x-test]=xxLocal system message servicexx
 
 [Event/NewMessage]
 Name=New message received
