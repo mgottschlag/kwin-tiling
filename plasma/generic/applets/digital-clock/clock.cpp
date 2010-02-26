@@ -54,7 +54,6 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_showSeconds(false),
       m_showTimezone(false),
       m_dateTimezoneBesides(false),
-      m_dateString(0),
       m_layout(0)
 {
     KGlobal::locale()->insertCatalog("libplasmaclock");

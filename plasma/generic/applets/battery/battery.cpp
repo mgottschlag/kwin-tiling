@@ -80,7 +80,6 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_hours(0),
       m_theme(0),
       m_availableProfiles(QStringList()),
-      m_currentProfile(0),
       m_numOfBattery(0),
       m_acAdapterPlugged(false),
       m_remainingMSecs(0),
