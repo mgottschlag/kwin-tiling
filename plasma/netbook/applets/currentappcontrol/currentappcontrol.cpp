@@ -91,9 +91,23 @@ void CurrentAppControl::init()
     lay->setContentsMargins(0, 0, 0, 0);
     lay->setSpacing(0);
     lay->addItem(m_currentTask);
-    lay->addItem(m_maximizeTask);
     lay->addItem(m_closeTask);
     activeWindowChanged(KWindowSystem::activeWindow());
+    configChanged();
+}
+
+void CurrentAppControl::configChanged()
+{
+    QGraphicsLinearLayout *lay = static_cast<QGraphicsLinearLayout *>(layout());
+    if (config().readEntry("ShowMaximize", true)) {
+        m_maximizeTask->show();
+        lay->insertItem(lay->count()-1, m_maximizeTask);
+        m_closeTask->setMaximumWidth(KIconLoader::SizeSmallMedium);
+    } else {
+        m_maximizeTask->hide();
+        lay->removeItem(m_maximizeTask);
+        m_closeTask->setMaximumWidth(KIconLoader::SizeSmallMedium*2);
+    }
 }
 
 void CurrentAppControl::constraintsEvent(Plasma::Constraints constraints)

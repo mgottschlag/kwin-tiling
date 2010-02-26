@@ -39,6 +39,7 @@ public:
     ~CurrentAppControl();
 
     void init();
+    void configChanged();
     void constraintsEvent(Plasma::Constraints constraints);
 
 protected:
