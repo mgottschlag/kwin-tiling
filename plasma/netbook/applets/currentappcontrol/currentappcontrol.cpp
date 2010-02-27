@@ -53,7 +53,8 @@ CurrentAppControl::CurrentAppControl(QObject *parent, const QVariantList &args)
       m_activeWindow(0),
       m_pendingActiveWindow(0),
       m_listDialog(0),
-      m_listWidget(0)
+      m_listWidget(0),
+      m_showMaximize(false)
 {
     m_currentTask = new Plasma::IconWidget(this);
     m_currentTask->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -99,14 +100,15 @@ void CurrentAppControl::init()
 void CurrentAppControl::configChanged()
 {
     QGraphicsLinearLayout *lay = static_cast<QGraphicsLinearLayout *>(layout());
-    if (config().readEntry("ShowMaximize", true)) {
+    m_showMaximize = config().readEntry("ShowMaximize", true);
+    if (m_showMaximize) {
         m_maximizeTask->show();
         lay->insertItem(lay->count()-1, m_maximizeTask);
         m_closeTask->setMaximumWidth(KIconLoader::SizeSmallMedium);
     } else {
-        m_maximizeTask->hide();
         lay->removeItem(m_maximizeTask);
         m_closeTask->setMaximumWidth(KIconLoader::SizeSmallMedium*2);
+        m_maximizeTask->hide();
     }
 }
 
@@ -191,7 +193,9 @@ void CurrentAppControl::syncActiveWindow()
         //FIXME: this is utterly bad: the layout seems to -not- resize it?
         m_currentTask->resize(size().width() - m_closeTask->size().width(), m_currentTask->size().height());
         m_closeTask->show();
-        m_maximizeTask->show();
+        if (m_showMaximize) {
+            m_maximizeTask->show();
+        }
 
         if (info.state() & (NET::MaxVert|NET::MaxHoriz)) {
             m_maximizeTask->setSvg("widgets/configuration-icons", "unmaximize");

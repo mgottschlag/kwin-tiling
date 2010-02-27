@@ -68,6 +68,7 @@ private:
 
     Plasma::Dialog *m_listDialog;
     QGraphicsWidget *m_listWidget;
+    bool m_showMaximize;
     QHash<Plasma::IconWidget *, WId> m_windowIcons;
 };
 
