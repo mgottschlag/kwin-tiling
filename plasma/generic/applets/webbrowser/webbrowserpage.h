@@ -26,11 +26,17 @@ class WebBrowser;
 
 class WebBrowserPage : public KWebPage
 {
+  Q_OBJECT
+  
   public:
       WebBrowserPage(WebBrowser *parent);
 
   protected:
       QWebPage *createWindow(WebWindowType type);
+
+  private Q_SLOTS:
+      void pageLoadFinished(bool ok);
+      void networkAccessFinished(QNetworkReply *nReply);
 
   private:
       WebBrowser *m_browser;

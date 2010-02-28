@@ -19,6 +19,12 @@
 
 #include "webbrowserpage.h"
 #include "webbrowser.h"
+#include "errorpage.h"
+
+#include <QNetworkReply>
+#include <QWebFrame>
+
+#include <kwebwallet.h>
 
 WebBrowserPage::WebBrowserPage(WebBrowser *parent)
           : KWebPage(parent)
@@ -26,9 +32,36 @@ WebBrowserPage::WebBrowserPage(WebBrowser *parent)
     m_browser = parent;
     //settings()->setAttribute(QWebSettings::JavaEnabled, true);
     settings()->setAttribute(QWebSettings::PluginsEnabled, true);
+
+    connect(networkAccessManager(), SIGNAL(finished(QNetworkReply*)), this, SLOT(networkAccessFinished(QNetworkReply *)));
+    connect(this, SIGNAL(loadFinished(bool)), this, SLOT(pageLoadFinished(bool)));
+    connect(wallet(), SIGNAL(saveFormDataRequested(const QString &, const QUrl &)),
+            m_browser, SLOT(saveFormDataRequested(const QString &, const QUrl &)));
 }
   
 QWebPage *WebBrowserPage::createWindow(WebWindowType type)
 {
     return m_browser->createWindow(type);
 }
+
+void WebBrowserPage::pageLoadFinished(bool ok)
+{
+    if (ok){
+        wallet()->fillFormData(mainFrame());
+    }
+}
+
+void WebBrowserPage::networkAccessFinished(QNetworkReply *nReply)
+{
+    switch (nReply->error()){
+        case QNetworkReply::NoError:
+        case QNetworkReply::UnknownContentError:
+        case QNetworkReply::ContentNotFoundError:
+           return;
+
+        default:
+           mainFrame()->setHtml(errorPageHtml(webKitErrorToKIOError(nReply->error()), nReply->url().toString(), nReply->url()));
+    }
+}
+
+#include "webbrowserpage.moc"

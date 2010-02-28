@@ -181,7 +181,6 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     connect(m_historyCombo, SIGNAL(activated(const QString&)), this, SLOT(comboTextChanged(const QString&)));
     connect(m_browser->page()->mainFrame(), SIGNAL(urlChanged(const QUrl &)), this, SLOT(urlChanged(const QUrl &)));
     connect(m_browser, SIGNAL(loadProgress(int)), this, SLOT(loadProgress(int)));
-    connect(m_browser, SIGNAL(loadFinished(bool)), this, SLOT(loadFinished(bool)));
     
     connect(m_addBookmarkAction, SIGNAL(triggered()), this, SLOT(addBookmark()));
     connect(m_removeBookmarkAction, SIGNAL(triggered()), this, SLOT(removeBookmark()));
@@ -201,10 +200,6 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     configChanged();
 
     connect(this, SIGNAL(messageButtonPressed(const MessageButton)), this, SLOT(removeBookmarkMessageButtonPressed(const MessageButton)));
-
-    connect(static_cast<KWebPage *>(m_browser->page())->wallet(), SIGNAL(saveFormDataRequested(const QString &, const QUrl &)),
-                this, SLOT(saveFormDataRequested(const QString &, const QUrl &)));
-    connect(m_browser->page()->networkAccessManager(), SIGNAL(finished(QNetworkReply*)), this, SLOT(networkAccessFinished(QNetworkReply *)));
     
     return m_graphicsWidget;
 }
@@ -467,9 +462,9 @@ void WebBrowser::bookmarksToggle()
         m_bookmarksViewAnimation->setProperty("targetOpacity", 0);
         m_bookmarksViewAnimation->start();
     } else {
-        updateOverlaysGeometry();
-        m_bookmarksView->setOpacity(0);
         m_bookmarksView->show();
+        m_bookmarksView->setOpacity(0);
+        updateOverlaysGeometry();
         m_bookmarksViewAnimation->setProperty("startOpacity", 0);
         m_bookmarksViewAnimation->setProperty("targetOpacity", 1);
         m_bookmarksViewAnimation->start();
@@ -629,27 +624,6 @@ QWebPage *WebBrowser::createWindow(QWebPage::WebWindowType type)
     }
 
     return m_webOverlay->page();
-}
-
-void WebBrowser::loadFinished(bool ok)
-{
-    if (ok){
-        static_cast<KWebPage *>(m_browser->page())->wallet()->fillFormData(m_browser->page()->mainFrame());
-    }
-}
-
-void WebBrowser::networkAccessFinished(QNetworkReply *nReply)
-{
-    switch (nReply->error()){
-        case QNetworkReply::NoError:
-        case QNetworkReply::UnknownContentError:
-        case QNetworkReply::ContentNotFoundError:
-           return;
-
-        default:
-           kDebug() << KIconLoader::global()->iconPath( "dialog-warning", -KIconLoader::SizeHuge );
-           m_browser->page()->mainFrame()->setHtml(errorPageHtml(webKitErrorToKIOError(nReply->error()), nReply->url().toString(), nReply->url()));
-    }
 }
 
 //

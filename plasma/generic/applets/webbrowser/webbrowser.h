@@ -79,7 +79,8 @@ public:
 
 public Q_SLOTS:
     void dataUpdated(const QString &source, const Plasma::DataEngine::Data &data);
-
+    void saveFormDataRequested(const QString &uid, const QUrl &url);
+    
 protected:
     void saveState(KConfigGroup &cg) const;
     Plasma::IconWidget *addTool(const QString &iconString, QGraphicsLinearLayout *layout);
@@ -106,13 +107,10 @@ protected Q_SLOTS:
     void bookmarksAnimationFinished();
     void removeBookmarkMessageButtonPressed(const MessageButton button);
     void closeWebViewOverlay();
-    
-    void loadFinished(bool ok);
-    
-    void saveFormDataRequested(const QString &uid, const QUrl &url);
+
     void acceptWalletRequest();
     void rejectWalletRequest();
-    void networkAccessFinished(QNetworkReply *nReply);
+
 private:
     void fillGroup(BookmarkItem *parentItem, const KBookmarkGroup &group);
     void updateOverlaysGeometry();
