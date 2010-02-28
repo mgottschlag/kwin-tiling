@@ -1115,6 +1115,44 @@ setUser( const char *name, int uid, int gid )
 	return False;
 }
 
+int
+changeUser( const char *user, const char *authfile )
+{
+	struct passwd *pw;
+	char *ok;
+	int uid;
+
+	if (!*user)
+		return True;
+
+	if (!(pw = getpwnam( user ))) {
+		uid = strtol( user, &ok, 10 );
+		if (*ok || !(pw = getpwuid( uid ))) {
+			logError( "no user like %'s\n", user );
+			return False;
+		}
+	}
+
+	if (authfile && chown( authfile, pw->pw_uid, pw->pw_gid ))
+		logWarn( "chmod for %s failed: %m\n", authfile );
+
+#ifdef AIXV3
+	if (setpcred( user, NULL )) {
+		logError( "setusercontext for %s failed: %m\n", user );
+		return False;
+	}
+	return True;
+#elif defined(HAS_SETUSERCONTEXT)
+	if (setusercontext( NULL, pw, pw->pw_uid, LOGIN_SETALL )) {
+		logError( "setpcred for %s failed: %m\n", user );
+		return False;
+	}
+	return True;
+#else
+	return setUser( user, pw->pw_uid, pw->pw_gid );
+#endif
+}
+
 #if defined(SECURE_RPC) || defined(K5AUTH)
 static void
 nukeAuth( int len, const char *name )

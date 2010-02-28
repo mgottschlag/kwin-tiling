@@ -507,6 +507,7 @@ int startClient( volatile int *pid );
 void clientExited( void );
 void sessionExit( int status ) ATTR_NORETURN;
 int readDmrc( void );
+int changeUser( const char *user, const char *authfile );
 extern char **userEnviron, **systemEnviron;
 extern char *curuser, *curpass, *curtype, *newpass,
             *dmrcuser, *curdmrc, *newdmrc;

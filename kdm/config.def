@@ -1412,6 +1412,15 @@ Description:
  <literal>/dev/</literal>) for activity. If the line is not used for some time,
  &kdm; switches back to the X login.
 
+Key: ServerUID
+Type: string
+Default: ""
+User: core
+Instance: #:*/"_x11"
+Comment: &
+Description:
+ The user the &X-Server; should run as. Empty results in <systemitem class="username">root</systemitem>.
+
 Key: PingInterval
 Type: int
 Default: 5

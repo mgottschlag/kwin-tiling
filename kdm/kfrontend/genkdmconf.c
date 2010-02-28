@@ -1109,8 +1109,6 @@ getInitTab( void )
 #endif
 
 
-/* TODO: handle solaris' local_uid specs */
-
 static char *
 readWord( File *file, int EOFatEOL )
 {
@@ -1301,15 +1299,19 @@ joinArgs( StrList *argv )
 	return rs;
 }
 
+typedef enum { InvalidDpy, LocalDpy, LocalUidDpy, ForeignDpy } DisplayMatchType;
+
 static struct displayMatch {
 	const char *name;
-	int len, local;
+	int len;
+	DisplayMatchType type;
 } displayTypes[] = {
-	{ "local", 5, True },
-	{ "foreign", 7, False },
+	{ "local", 5, LocalDpy },
+	{ "local_uid", 9, LocalUidDpy },
+	{ "foreign", 7, ForeignDpy },
 };
 
-static int
+static DisplayMatchType
 parseDisplayType( const char *string, const char **atPos )
 {
 	struct displayMatch *d;
@@ -1321,18 +1323,31 @@ parseDisplayType( const char *string, const char **atPos )
 		{
 			if (string[d->len] == '@' && string[d->len + 1])
 				*atPos = string + d->len + 1;
-			return d->local;
+			return d->type;
 		}
 	}
-	return -1;
+	return InvalidDpy;
 }
 
 typedef struct serverEntry {
 	struct serverEntry *next;
-	const char *name, *class2, *console, *argvs, *arglvs;
+	const char *name, *class2, *console, *owner, *argvs, *arglvs;
 	StrList *argv, *arglv;
-	int local, reserve, vt;
+	DisplayMatchType type;
+	int reserve, vt;
 } ServerEntry;
+
+static int
+mstrcmp( const char *s1, const char *s2 )
+{
+	if (s1 == s2)
+		return 0;
+	if (!s1)
+		return -1;
+	if (!s2)
+		return 1;
+	return strcmp( s1, s2 );
+}
 
 static void
 absorbXservers( const char *sect ATTR_UNUSED, char **value )
@@ -1343,7 +1358,7 @@ absorbXservers( const char *sect ATTR_UNUSED, char **value )
 	StrList **argp, **arglp, *ap, *ap2;
 	File file;
 	int nldpys = 0, nrdpys = 0, dpymask = 0;
-	int cpcmd, cpcmdl;
+	int cpuid, cpcmd, cpcmdl;
 #ifdef HAVE_VTS
 	int dn, cpvt, mtty;
 #endif
@@ -1367,23 +1382,26 @@ absorbXservers( const char *sect ATTR_UNUSED, char **value )
 		se->name = word;
 		if (!(word = readWord( &file, 1 )))
 			continue;
-		se->local = parseDisplayType( word, &se->console );
-		if (se->local < 0) {
+		se->type = parseDisplayType( word, &se->console );
+		if (se->type == InvalidDpy) {
 			se->class2 = word;
 			if (!(word = readWord( &file, 1 )))
 				continue;
-			se->local = parseDisplayType( word, &se->console );
-			if (se->local < 0) {
+			se->type = parseDisplayType( word, &se->console );
+			if (se->type == InvalidDpy) {
 				while (readWord( &file, 1 ));
 				continue;
 			}
 		}
+		if (se->type == LocalUidDpy)
+			if (!(se->owner = readWord( &file, 1 )))
+				continue;
 		word = readWord( &file, 1 );
 		if (word && !strcmp( word, "reserve" )) {
 			se->reserve = True;
 			word = readWord( &file, 1 );
 		}
-		if (se->local != (word != 0))
+		if ((se->type != ForeignDpy) != (word != 0))
 			continue;
 		argp = &se->argv;
 		arglp = &se->arglv;
@@ -1422,7 +1440,7 @@ absorbXservers( const char *sect ATTR_UNUSED, char **value )
 			word = readWord( &file, 1 );
 		}
 		*argp = *arglp = 0;
-		if (se->local) {
+		if (se->type != ForeignDpy) {
 			nldpys++;
 			dpymask |= 1 << atoi( se->name + 1 );
 			if (se->reserve)
@@ -1438,7 +1456,7 @@ absorbXservers( const char *sect ATTR_UNUSED, char **value )
 	cpvt = False;
 	getInitTab();
 	for (se = serverList, mtty = maxTTY; se; se = se->next)
-		if (se->local) {
+		if (se->type != ForeignDpy) {
 			mtty++;
 			if (se->vt != mtty) {
 				cpvt = True;
@@ -1452,9 +1470,9 @@ absorbXservers( const char *sect ATTR_UNUSED, char **value )
 		se->arglvs = joinArgs( se->arglv );
 	}
 
-	se1 = 0, cpcmd = cpcmdl = False;
+	se1 = 0, cpuid = cpcmd = cpcmdl = False;
 	for (se = serverList; se; se = se->next)
-		if (se->local) {
+		if (se->type != ForeignDpy) {
 			if (!se1)
 				se1 = se;
 			else {
@@ -1462,13 +1480,17 @@ absorbXservers( const char *sect ATTR_UNUSED, char **value )
 					cpcmd = True;
 				if (strcmp( se1->arglvs, se->arglvs ))
 					cpcmdl = True;
+				if (mstrcmp( se1->owner, se->owner ))
+					cpuid = True;
 			}
 		}
 	if (se1) {
 		putFqVal( "X-:*-Core", "ServerCmd", se1->argvs );
+		if (se1->owner)
+			putFqVal( "X-:*-Core", "ServerUID", se1->owner );
 		putFqVal( "X-:*-Core", "ServerArgsLocal", se1->arglvs );
 		for (se = serverList; se; se = se->next)
-			if (se->local) {
+			if (se->type != ForeignDpy) {
 				char sec[32];
 				sprintf( sec, "X-%s-Core", se->name );
 				if (cpcmd)
@@ -1485,6 +1507,8 @@ absorbXservers( const char *sect ATTR_UNUSED, char **value )
 				if (se->console)
 					putFqVal( sec, "ServerTTY", se->console );
 #endif
+				if (cpuid && se->owner)
+					putFqVal( sec, "ServerUID", se->owner );
 			}
 	}
 

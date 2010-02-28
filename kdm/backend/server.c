@@ -65,6 +65,10 @@ prepareServerArgv( struct display *d, const char *args )
 	                        sprintf( vtstr, "vt%d", d->serverVT ) )))
 		exit( 47 );
 #endif
+
+	if (!changeUser( d->serverUID, d->authFile ))
+		exit( 49 );
+
 	return argv;
 }
 
