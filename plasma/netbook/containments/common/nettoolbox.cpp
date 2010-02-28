@@ -370,7 +370,7 @@ void NetToolBox::containmentGeometryChanged()
         break;
     default:
         m_toolContainer->resize(m_toolContainer->effectiveSizeHint(Qt::PreferredSize));
-        m_toolContainer->setPos(m_containment->contentsRect().left(), m_containment->contentsRect().bottom()-m_toolContainer->size().height());
+        m_toolContainer->setPos(0, size().height()-m_toolContainer->size().height());
         break;
     }
 }
