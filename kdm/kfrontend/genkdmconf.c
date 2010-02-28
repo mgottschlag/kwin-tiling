@@ -3121,7 +3121,7 @@ int main( int argc, char **argv )
 	defminuid = "1000";
 	defmaxuid = "65000";
 #endif
-	for (i = 0; i < CONF_MAX_PRIO; i++)
+	for (i = 0; i <= CONF_MAX_PRIO; i++)
 		for (cs = config; cs; cs = cs->next)
 			for (ce = cs->ents; ce; ce = ce->next)
 				if (ce->spec->func && i == ce->spec->prio)
