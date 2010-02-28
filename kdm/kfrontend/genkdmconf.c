@@ -526,7 +526,7 @@ writeKdmrc( FILE *f )
 						goto havit;
 					}
 				if (!(sp = malloc( sizeof(*sp) )))
-					fprintf_( stderr, "Warning: Out of memory\n" );
+					fprintf( stderr, "Warning: Out of memory\n" );
 				else {
 					sp->str = cmt;
 					sp->next = sl; sl = sp;
