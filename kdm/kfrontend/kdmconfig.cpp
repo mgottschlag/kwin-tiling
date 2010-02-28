@@ -93,6 +93,9 @@ void initConfig( void )
 		(_grabInputPre == GRAB_ALWAYS) ? 1 :
 		!_authorized;
 
+	QByteArray dd = _dataDir.toUtf8();
+	if (access( dd.constData(), W_OK ))
+		logError( "Data directory %\"s not accessible: %m\n", dd.constData());
 	_stsFile = _dataDir + "/kdmsts";
 
 	// Greet String
