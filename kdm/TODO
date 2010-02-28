@@ -11,7 +11,6 @@
 
 - do something about GreetString, i18n & theming. need some magic for the default.
 
-- message after switching to text mode
 - report critical startup errors to the console
 - set LANGUAGE in the backend for i18n-capable PAM libs
 

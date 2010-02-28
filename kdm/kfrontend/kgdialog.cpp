@@ -167,21 +167,19 @@ KGDialog::slotSwitch()
 void
 KGDialog::slotConsole()
 {
+	QList<DpySpec> sess;
 #ifdef HAVE_VTS
-	QList<DpySpec> sess = fetchSessions( 0 );
-	if (!sess.isEmpty()) {
-		if (verify)
-			verify->suspend();
-		int ret = KDMConfShutdown( -1, sess, SHUT_CONSOLE, 0 ).exec();
-		if (verify)
-			verify->resume();
-		if (!ret)
-			return;
-	}
-#else
+	sess = fetchSessions( 0 );
+#endif
+	if (verify)
+		verify->suspend();
+	int ret = KDMConfShutdown( -1, sess, SHUT_CONSOLE, 0 ).exec();
+	if (verify)
+		verify->resume();
+	if (!ret)
+		return;
 	if (verify)
 		verify->abort();
-#endif
 	gSet( 1 );
 	gSendInt( G_Console );
 	gSet( 0 );

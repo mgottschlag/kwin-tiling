@@ -582,6 +582,11 @@ KDMSlimShutdown::externShutdown( int type, const QString &os, int uid, bool ask 
 	doShutdown( type, os );
 }
 
+#define SHUT_CONSOLE_HELP I18N_NOOP( \
+	"<br/>Switching to console mode will terminate all local X servers and" \
+	" leave you with console logins only. Graphical mode is automatically" \
+	" resumed 10 seconds after the last console session ends or after" \
+	" 40 seconds if no-one logs in in the first place.<br/>")
 
 KDMConfShutdown::KDMConfShutdown( int _uid, const QList<DpySpec> &sessions, int type,
                                   const QString &os, QWidget *_parent )
@@ -591,9 +596,13 @@ KDMConfShutdown::KDMConfShutdown( int _uid, const QList<DpySpec> &sessions, int 
 	if (type == SHUT_CONSOLE)
 		willShut = false;
 #endif
-	box->addWidget( new QLabel( QString( "<qt><center><b><nobr>"
-	                                     "%1%2"
-	                                     "</nobr></b></center></qt>" )
+	QLabel *lbl = new QLabel( QString( "<qt><center><b><nobr>"
+	                                   "%1%2"
+	                                   "</nobr></b></center>"
+#ifdef HAVE_VTS
+	                                   "%3"
+#endif
+	                                   "</qt>" )
 	                            .arg( (type == SHUT_HALT) ?
 	                                  i18n("Turn Off Computer") :
 #ifdef HAVE_VTS
@@ -603,8 +612,15 @@ KDMConfShutdown::KDMConfShutdown( int _uid, const QList<DpySpec> &sessions, int 
 	                                  i18n("Restart Computer") )
 	                            .arg( !os.isEmpty() ?
 	                                  i18n("<br/>(Next boot: %1)", os ) :
-	                                  QString() ),
-	                            this ) );
+	                                  QString() )
+#ifdef HAVE_VTS
+	                            .arg( (type == SHUT_CONSOLE) ?
+	                                  i18n(SHUT_CONSOLE_HELP) :
+	                                  QString() )
+#endif
+	                            );
+	lbl->setWordWrap( true );
+	box->addWidget( lbl );
 
 	if (!sessions.isEmpty()) {
 		if (willShut && _scheduledSd != SHUT_NEVER)

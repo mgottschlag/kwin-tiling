@@ -546,8 +546,6 @@ switchToTTY( struct display *d )
 	if ((vt = TTYtoVT( *consoleTTYs )))
 		activateVT( vt );
 #endif
-
-	/* XXX output something useful here */
 }
 
 #ifdef HAVE_VTS
