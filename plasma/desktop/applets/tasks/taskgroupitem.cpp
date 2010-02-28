@@ -1275,7 +1275,7 @@ AbstractTaskItem * TaskGroupItem::selectSubTask(int index)
 
 void TaskGroupItem::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
-    focusSubTask((event->delta() > 0), true);
+    focusSubTask((event->delta() < 0), true);
 }
 
 int TaskGroupItem::maxRows()
