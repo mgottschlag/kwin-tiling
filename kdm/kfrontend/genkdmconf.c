@@ -1039,7 +1039,7 @@ writeFile( const char *tname, int mode, const char *cont )
 
 
 static void
-handleBgCfg( Entry *ce, Section *cs ATTR_UNUSED )
+handleBgCfg( Entry *ce, Section *cs )
 {
 	if (!ce->active) /* can be only the X-*-Greeter one */
 		writeFile( def_BackgroundCfg, 0644, def_background );
@@ -1954,7 +1954,7 @@ upd_maxshowuid( Entry *ce, Section *cs ATTR_UNUSED )
 }
 
 static void
-upd_hiddenusers( Entry *ce, Section *cs ATTR_UNUSED )
+upd_hiddenusers( Entry *ce, Section *cs )
 {
 	char *nv;
 	const char *msu, *pt, *et;
