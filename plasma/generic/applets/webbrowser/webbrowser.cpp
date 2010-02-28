@@ -157,13 +157,19 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
 
     m_stop = addTool("process-stop", m_statusbarLayout);
 
+    QGraphicsWidget *spacer = new QGraphicsWidget(this);
+    spacer->setMaximumWidth(INT_MAX);
+    spacer->setMaximumHeight(0);
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_statusbarLayout->addItem(spacer);
+    
     m_zoom = new Plasma::Slider(this);
     m_zoom->setMaximum(100);
     m_zoom->setMinimum(0);
     m_zoom->setValue(50);
     m_zoom->setOrientation(Qt::Horizontal);
     m_zoom->hide();
-    m_zoom->setMaximumWidth(0);
+    m_zoom->setMaximumWidth(200);
     m_statusbarLayout->addItem(m_zoom);
 
     connect(m_zoom, SIGNAL(valueChanged(int)), this, SLOT(zoom(int)));
@@ -507,7 +513,6 @@ void WebBrowser::loadProgress(int progress)
         m_stop->hide();
         m_stop->setMaximumWidth(0);
         m_zoom->show();
-        m_zoom->setMaximumWidth(INT_MAX);
         m_statusbarLayout->invalidate();
 
         m_browser->page()->mainFrame()->setScrollBarValue(Qt::Vertical, m_verticalScrollValue);
@@ -517,7 +522,6 @@ void WebBrowser::loadProgress(int progress)
         m_historyCombo->setDisplayProgress(true);
         m_stop->show();
         m_stop->setMaximumWidth(INT_MAX);
-        m_zoom->setMaximumWidth(0);
         m_zoom->hide();
         m_statusbarLayout->invalidate();
     }

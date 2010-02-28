@@ -23,6 +23,8 @@
 #include <QGraphicsWidget>
 #include <QWebPage>
 
+class WebBrowser;
+
 namespace Plasma
 {
   class PushButton;
@@ -34,7 +36,7 @@ class WebViewOverlay : public QGraphicsWidget
   Q_OBJECT
   
   public:
-    WebViewOverlay(QGraphicsWidget *parent);
+    WebViewOverlay(WebBrowser *parent);
     QWebPage *page();
 
   Q_SIGNALS:

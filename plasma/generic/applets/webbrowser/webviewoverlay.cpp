@@ -27,15 +27,18 @@
 #include <Plasma/PushButton>
 #include <Plasma/WebView>
 
-WebViewOverlay::WebViewOverlay(QGraphicsWidget *parent)
+#include "webbrowser.h"
+#include "webbrowserpage.h"
+
+WebViewOverlay::WebViewOverlay(WebBrowser *parent)
     : QGraphicsWidget(parent)
 {
       QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
       layout->setOrientation(Qt::Vertical);
       
       m_webView = new Plasma::WebView(this);
+      m_webView->setPage(new WebBrowserPage(parent));
       m_webView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-      m_webView->page()->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
       layout->addItem(m_webView);
       
       m_closeButton = new Plasma::PushButton(this);
