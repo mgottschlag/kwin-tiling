@@ -288,6 +288,7 @@ struct display {
 	Xauth **authorizations;     /* authorization data */
 	int authNum;                /* number of authorizations */
 	char *authFile;             /* file to store authorization in */
+	char *greeterAuthFile;      /* file to store authorization for greeter in */
 };
 
 #define d_location   1
@@ -475,7 +476,7 @@ int gFork( GPipe *pajp, const char *pname, char *cname,
 void gClosen( GPipe *pajp );
 int gOpen( GProc *proc,
            char **argv, const char *what, char **env, char *cname,
-           GPipe *igp );
+           const char *user, const char *authfile, GPipe *igp );
 int gClose( GProc *proc, GPipe *gp, int force );
 
 void gSendInt( int val );

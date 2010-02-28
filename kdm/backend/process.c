@@ -471,7 +471,7 @@ gFork( GPipe *pajp, const char *pname, char *cname,
 
 int
 gOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
-       GPipe *gp )
+       const char *user, const char *authfile, GPipe *gp )
 {
 	char **margv;
 	int pip[2];
@@ -516,23 +516,26 @@ gOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
 		(void)Signal( SIGPIPE, SIG_IGN );
 		close( pip[0] );
 		fcntl( pip[1], F_SETFD, FD_CLOEXEC );
-		if (gp)
-			sprintf( coninfo, "CONINFO=%d %d %d %d",
-			         proc->pipe.fd.r, proc->pipe.fd.w, gp->fd.r, gp->fd.w );
-		else
-			sprintf( coninfo, "CONINFO=%d %d",
-			         proc->pipe.fd.r, proc->pipe.fd.w );
-		env = putEnv( coninfo, env );
-		if (debugLevel & DEBUG_VALGRIND) {
-			char **nmargv = xCopyStrArr( 1, margv );
-			nmargv[0] = locate( "valgrind" );
-			execute( nmargv, env );
-		} else if (debugLevel & DEBUG_STRACE) {
-			char **nmargv = xCopyStrArr( 1, margv );
-			nmargv[0] = locate( "strace" );
-			execute( nmargv, env );
-		} else
-			execute( margv, env );
+		if (changeUser( user, authfile )) {
+			if (gp)
+				sprintf( coninfo, "CONINFO=%d %d %d %d",
+				         proc->pipe.fd.r, proc->pipe.fd.w, gp->fd.r, gp->fd.w );
+			else
+				sprintf( coninfo, "CONINFO=%d %d",
+				         proc->pipe.fd.r, proc->pipe.fd.w );
+			env = putEnv( coninfo, env );
+			if (debugLevel & DEBUG_VALGRIND) {
+				char **nmargv = xCopyStrArr( 1, margv );
+				nmargv[0] = locate( "valgrind" );
+				execute( nmargv, env );
+			} else if (debugLevel & DEBUG_STRACE) {
+				char **nmargv = xCopyStrArr( 1, margv );
+				nmargv[0] = locate( "strace" );
+				execute( nmargv, env );
+			} else {
+				execute( margv, env );
+			}
+		}
 		write( pip[1], "", 1 );
 		exit( 1 );
 	default:

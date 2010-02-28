@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <time.h>
 #include <limits.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <sys/param.h>
 
 #define WANT_CONF_GEN
@@ -397,6 +398,28 @@ locate( const char *exe )
 		path = pathe;
 	} while (*path++ != '\0');
 	return 0;
+}
+
+static int
+runAndWait( char **args )
+{
+	int pid, ret;
+
+	switch ((pid = fork())) {
+	case 0:
+		execv( args[0], args );
+		fprintf( stderr, "Cannot execute %s: %s\n",
+		         args[0], strerror( errno ) );
+		_exit( 127 );
+	case -1:
+		fprintf( stderr, "Cannot fork to execute %s: %s\n",
+		         args[0], strerror( errno ) );
+		return -1;
+	}
+	while (waitpid( pid, &ret, 0 ) < 0)
+		if (errno != EINTR)
+			return -1;
+	return ret;
 }
 
 
@@ -2042,20 +2065,78 @@ upd_fifodir( Entry *ce, Section *cs ATTR_UNUSED )
 	chmod( dir, st.st_mode | 0755 );
 }
 
+static gid_t greeter_gid;
+static uid_t greeter_uid;
+
+static void
+upd_greeteruid( Entry *ce, Section *cs ATTR_UNUSED )
+{
+	struct passwd *pw;
+	char *ok, *adduser;
+	int uid;
+
+	if (use_destdir || !ce->active)
+		return;
+	if (!(pw = getpwnam( ce->value ))) {
+		uid = strtol( ce->value, &ok, 10 );
+		if (*ok || !(pw = getpwuid( uid ))) {
+			if ((adduser = locate( "adduser" ))) { /* Debian-style */
+				const char *args[] = {
+					adduser, "--system", "--group",
+					"--home", "/var", "--no-create-home",
+					ce->value, 0
+				};
+				if (runAndWait( (char **)args )) {
+					fprintf( stderr, "Warning: Creation of missing GreeterUID"
+					                 " user %s failed\n", ce->value );
+					ce->active = False;
+					return;
+				}
+			} else {
+				fprintf( stderr, "Warning: Do not know how to create missing"
+				                 " GreeterUID user %s\n", ce->value );
+				ce->active = False;
+				return;
+			}
+			if (!(pw = getpwnam( ce->value ))) {
+				fprintf( stderr, "Warning: Newly created GreeterUID user %s"
+				                 " still missing!?\n", ce->value );
+				ce->active = False;
+				return;
+			}
+		}
+	}
+	greeter_uid = pw->pw_uid;
+	greeter_gid = pw->pw_gid;
+}
+
 static void
 upd_datadir( Entry *ce, Section *cs ATTR_UNUSED )
 {
 	char *oldsts, *newsts;
 	const char *dir;
+	struct stat st;
 
 	if (use_destdir)
 		return;
 	dir = ce->active ? ce->value : def_DataDir;
+	ASPrintf( &newsts, "%s/kdmsts", dir );
 	if (mkdirp( dir, 0755, "data", 0 ) && oldkde) {
 		ASPrintf( &oldsts, "%s/kdm/kdmsts", oldkde );
-		ASPrintf( &newsts, "%s/kdmsts", dir );
 		rename( oldsts, newsts );
 	}
+	if (stat( dir, &st ))
+		return;
+	if ((st.st_uid != greeter_uid || st.st_gid != greeter_gid) &&
+	    chown( dir, greeter_uid, greeter_gid ))
+		fprintf( stderr, "Warning: Cannot assign ownership of data directory"
+		                 " %s: %s\n", dir, strerror( errno ) );
+	if (stat( newsts, &st ))
+		return;
+	if ((st.st_uid != greeter_uid || st.st_gid != greeter_gid) &&
+	    chown( newsts, greeter_uid, greeter_gid ))
+		fprintf( stderr, "Warning: Cannot assign ownership of status file"
+		                 " %s: %s\n", newsts, strerror( errno ) );
 }
 
 static void

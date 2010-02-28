@@ -335,7 +335,7 @@ mkTempFile( char *nambuf, int namelen )
 #define NAMELEN 255
 
 static FILE *
-makeServerAuthFile( struct display *d )
+makeServerAuthFile( struct display *d, char **authFile )
 {
 	FILE *f;
 	int i;
@@ -352,34 +352,32 @@ makeServerAuthFile( struct display *d )
 	cleanUpFileName( d->name, cleanname, NAMELEN - 8 );
 	i = sprintf( nambuf, "%s/A%s-", authDir, cleanname );
 	if ((f = mkTempFile( nambuf, i ))) {
-		strDup( &d->authFile, nambuf );
+		strDup( authFile, nambuf );
 		return f;
 	}
 	return 0;
 }
 
-int
-saveServerAuthorizations( struct display *d, Xauth **auths, int count )
+static int
+saveAuthorizations( struct display *d, char **authFile, Xauth **auths, int count )
 {
 	FILE *auth_file;
 	int i;
 
-	if (!d->authFile && d->clientAuthFile && *d->clientAuthFile)
-		strDup( &d->authFile, d->clientAuthFile );
-	if (d->authFile) {
-		if (!(auth_file = fdOpenW( creat( d->authFile, 0600 ) ))) {
-			logError( "Cannot open X server authorization file %s\n", d->authFile );
-			free( d->authFile );
-			d->authFile = 0;
+	if (*authFile) {
+		if (!(auth_file = fdOpenW( creat( *authFile, 0600 ) ))) {
+			logError( "Cannot open X server authorization file %s\n", *authFile );
+			free( *authFile );
+			*authFile = 0;
 			return False;
 		}
 	} else {
-		if (!(auth_file = makeServerAuthFile( d ))) {
+		if (!(auth_file = makeServerAuthFile( d, authFile ))) {
 			logError( "Cannot create X server authorization file\n" );
 			return False;
 		}
 	}
-	debug( "file: %s  auth: %p\n", d->authFile, auths );
+	debug( "file: %s  auth: %p\n", *authFile, auths );
 	for (i = 0; i < count; i++) {
 		/*
 		 * User-based auths may not have data until
@@ -395,13 +393,28 @@ saveServerAuthorizations( struct display *d, Xauth **auths, int count )
 	if (fclose( auth_file ) == EOF) {
 	  whoops:
 		logError( "Cannot write X server authorization file %s: %m\n",
-		          d->authFile );
-		unlink( d->authFile );
-		free( d->authFile );
-		d->authFile = 0;
+		          *authFile );
+		unlink( *authFile );
+		free( *authFile );
+		*authFile = 0;
 		return False;
 	}
 	return True;
+}
+
+int
+saveGreeterAuthorizations( struct display *d )
+{
+	return saveAuthorizations( d, &d->greeterAuthFile,
+	                           d->authorizations, d->authNum );
+}
+
+int
+saveServerAuthorizations( struct display *d, Xauth **auths, int count )
+{
+	if (!d->authFile && d->clientAuthFile && *d->clientAuthFile)
+		strDup( &d->authFile, d->clientAuthFile );
+	return saveAuthorizations( d, &d->authFile, auths, count );
 }
 
 void

@@ -192,8 +192,6 @@ internal stuff:
 - the process reaping from gClose should be in sync with the main loop.
 - kill warning on AIX - see bug #13628 (really present?)
 - xdmcp.c: make networkAddressToName use networkAddressToHostname?
-- options for running the greeter and the core unprivileged. problem: xauth.
-- make the openbsd _x11-user hack in auth.c sane
 - rethink the coupling of the kdm components, particularily the config reader.
   options:
   - keep things basically as-is, make the Xaccess interface even more flexible,

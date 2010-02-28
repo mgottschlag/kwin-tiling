@@ -4,7 +4,8 @@ if they affect the configuration.
 
 2010-02-28  Oswald Buddenhagen <ossi@kde.org>
 
-	* Made it possible to run X server as non-root. Option ServerUID.
+	* Made it possible to run X server and greeter as non-root.
+	  Options ServerUID and GreeterUID.
 
 2009-10-17  Oswald Buddenhagen <ossi@kde.org>
 

@@ -35,6 +35,7 @@ from the copyright holder.
  */
 
 #include "dm.h"
+#include "dm_auth.h"
 #include "dm_error.h"
 
 #include <X11/Xlib.h>
@@ -433,9 +434,13 @@ openGreeter()
 	/* Load system default Resources (if any) */
 	loadXloginResources();
 
+	if (*greeterUID && !saveGreeterAuthorizations( td ))
+		sessionExit( EX_UNMANAGE_DPY );
+
 	grttalk.pipe = &grtproc.pipe;
 	env = systemEnv( dupEnv(), 0 );
-	if (gOpen( &grtproc, (char **)0, "_greet", env, name, &td->gpipe ))
+	if (gOpen( &grtproc, (char **)0, "_greet", env, name,
+	           greeterUID, td->greeterAuthFile, &td->gpipe ))
 		sessionExit( EX_UNMANAGE_DPY );
 	freeStrArr( env );
 	if ((cmd = ctrlGreeterWait( True ))) {
@@ -460,6 +465,12 @@ closeGreeter( int force )
 	if (wcCode( ret ) > EX_NORMAL && wcCode( ret ) <= EX_MAX) {
 		debug( "greeter-initiated session exit, code %d\n", wcCode( ret ) );
 		sessionExit( wcCode( ret ) );
+	}
+
+	if (td->greeterAuthFile) {
+		(void)unlink( td->greeterAuthFile );
+		free( td->greeterAuthFile );
+		td->greeterAuthFile = 0;
 	}
 
 	deleteXloginResources();
@@ -825,9 +836,11 @@ baseEnv( char **env, const char *user )
 char **
 systemEnv( char **env, const char *user )
 {
+	const char *authFile;
+
 	env = baseEnv( env, user );
-	if (td->authFile)
-		env = setEnv( env, "XAUTHORITY", td->authFile );
+	if ((authFile = td->greeterAuthFile) || (authFile = td->authFile))
+		env = setEnv( env, "XAUTHORITY", authFile );
 	env = setEnv( env, "PATH", td->systemPath );
 	env = setEnv( env, "SHELL", td->systemShell );
 	return env;

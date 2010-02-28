@@ -54,7 +54,7 @@ openGetter()
 	if (!getter.pid) {
 		if (gOpen( &getter,
 		           originalArgv, "_config", 0, strdup( "config reader" ),
-		           0 ))
+		           "", 0, 0 ))
 			logPanic( "Cannot run config reader\n" );
 		debug( "getter now ready\n" );
 	}

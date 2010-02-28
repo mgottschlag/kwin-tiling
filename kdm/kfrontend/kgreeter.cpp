@@ -366,14 +366,15 @@ KGreeter::insertUsers()
 {
 	struct passwd *ps;
 
-	// XXX remove seteuid-voodoo when we run as nobody
-	if (!(ps = getpwnam( "nobody" )))
-		return;
-	if (setegid( ps->pw_gid ))
-		return;
-	if (seteuid( ps->pw_uid )) {
-		setegid( 0 );
-		return;
+	if (!getuid()) {
+		if (!(ps = getpwnam( "nobody" )))
+			return;
+		if (setegid( ps->pw_gid ))
+			return;
+		if (seteuid( ps->pw_uid )) {
+			setegid( 0 );
+			return;
+		}
 	}
 
 	QImage default_pix;
@@ -436,9 +437,10 @@ KGreeter::insertUsers()
 			userList->sort();
 	}
 
-	// XXX remove seteuid-voodoo when we run as nobody
-	seteuid( 0 );
-	setegid( 0 );
+	if (!getuid()) {
+		seteuid( 0 );
+		setegid( 0 );
+	}
 }
 
 void

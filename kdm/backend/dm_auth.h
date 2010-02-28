@@ -83,6 +83,7 @@ setProtoDisplayAuthorization( struct protoDisplay *pdpy,
 
 #endif /* XDMCP */
 
+int saveGreeterAuthorizations( struct display *d );
 int saveServerAuthorizations( struct display *d, Xauth **auths, int count );
 void cleanUpFileName( const char *src, char *dst, int len );
 void removeUserAuthorization( struct display *d );

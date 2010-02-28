@@ -1029,12 +1029,23 @@ Description:
  The group to which the global command socket should belong;
  can be either a name or a numerical ID.
 
+Key: GreeterUID
+Type: string
+Default: ""
+User: core
+Instance: "kdm"
+Update: upd_greeteruid
+Comment: &
+Description:
+ The user the greeter should run as. Empty results in <systemitem class="username">root</systemitem>.
+ Consider the impact on <option>LogSource</option> when setting it.
+
 Key: DataDir
 Type: path
 Default: *"/var/lib/kdm"
 User: greeter
 Instance: #""
-Update: upd_datadir
+Update: upd_datadir/1
 Comment:
  The directory in which &kdm; should store persistent working data.
 Description:

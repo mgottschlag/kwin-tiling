@@ -218,6 +218,10 @@ removeDisplay( struct display *old )
 				(void)unlink( d->authFile );
 				free( d->authFile );
 			}
+			if (d->greeterAuthFile) {
+				(void)unlink( d->greeterAuthFile );
+				free( d->greeterAuthFile );
+			}
 #ifdef XDMCP
 			XdmcpDisposeARRAY8( &d->peer );
 			XdmcpDisposeARRAY8( &d->from );
