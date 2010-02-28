@@ -537,8 +537,12 @@ qreal ItemContainer::positionToWeight(const QPointF &point)
             }
         }
     } else {
-        key2 = m_items.uniqueKeys().first();
-        key2Found = true;
+        if (m_items.count() > 0) {
+            key2 = m_items.uniqueKeys().first();
+            key2Found = true;
+        } else {
+            key2 = 0;
+        }
     }
 
 
