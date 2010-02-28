@@ -41,9 +41,6 @@ from the copyright holder.
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdlib.h>
-#ifdef __OpenBSD__
-#include <pwd.h>
-#endif
 
 #include <sys/ioctl.h>
 
@@ -366,9 +363,6 @@ saveServerAuthorizations( struct display *d, Xauth **auths, int count )
 {
 	FILE *auth_file;
 	int i;
-#ifdef __OpenBSD__
-	struct passwd *x11;
-#endif
 
 	if (!d->authFile && d->clientAuthFile && *d->clientAuthFile)
 		strDup( &d->authFile, d->clientAuthFile );
@@ -385,14 +379,6 @@ saveServerAuthorizations( struct display *d, Xauth **auths, int count )
 			return False;
 		}
 	}
-#ifdef __OpenBSD__
-	/* Give read capability to group _x11 */
-	if (!(x11 = getpwnam( "_x11" )))
-		logError( "Cannot find _x11 user\n" );
-	else
-		fchown( fileno( auth_file ), x11->pw_uid, x11->pw_gid );
-	endpwent();
-#endif
 	debug( "file: %s  auth: %p\n", d->authFile, auths );
 	for (i = 0; i < count; i++) {
 		/*
