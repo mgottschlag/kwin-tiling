@@ -223,25 +223,33 @@ void StripWidget::add(Plasma::QueryMatch match, const QString &query, const QPoi
 
 void StripWidget::add(const QString &fileName, const QPointF &point)
 {
-    KDesktopFile *file = new KDesktopFile(fileName);
+    KService::Ptr service = KService::serviceByDesktopPath(fileName);
+
+    if (!service) {
+        service = KService::serviceByDesktopName(fileName);
+        if (!service) {
+            return;
+        }
+    }
+
     Plasma::IconWidget * icon = createIcon(point);
 
-    icon->setIcon(file->readIcon());
-    icon->setText(file->readName());
+    icon->setIcon(service->icon());
+    icon->setText(service->name());
 
     icon->setMinimumSize(icon->sizeFromIconSize(m_itemView->iconSize()));
     icon->setMaximumSize(icon->sizeFromIconSize(m_itemView->iconSize()));
 
     Plasma::ToolTipContent toolTipData = Plasma::ToolTipContent();
     toolTipData.setAutohide(true);
-    toolTipData.setMainText(file->readName());
-    toolTipData.setSubText(file->readGenericName());
-    toolTipData.setImage(KIcon(file->readIcon()));
+    toolTipData.setMainText(service->name());
+    toolTipData.setSubText(service->genericName());
+    toolTipData.setImage(KIcon(service->icon()));
 
     Plasma::ToolTipManager::self()->registerWidget(icon);
     Plasma::ToolTipManager::self()->setContent(icon, toolTipData);
 
-    m_desktopFiles.insert(icon, file);
+    m_services.insert(icon, service);
 }
 
 void StripWidget::remove(Plasma::IconWidget *favourite)
@@ -259,9 +267,9 @@ void StripWidget::remove(Plasma::IconWidget *favourite)
         // must be deleteLater because the IconWidget will return from the action?
         favourite->deleteLater();
         delete match;
-    } else if (m_desktopFiles.contains(favourite)) {
-        delete m_desktopFiles.value(favourite);
-        m_desktopFiles.remove(favourite);
+    } else if (m_services.contains(favourite)) {
+        m_services.value(favourite);
+        m_services.remove(favourite);
         favourite->deleteLater();
     }
 }
@@ -300,8 +308,8 @@ void StripWidget::launchFavourite()
         Plasma::RunnerContext context;
         context.setQuery(m_favouritesQueries.value(match));
         match->run(context);
-    } else if (m_desktopFiles.contains(icon)) {
-        KRun::run(KService(m_desktopFiles.value(icon)), KUrl::List(), 0, false);
+    } else if (m_services.contains(icon)) {
+        KRun::run(*m_services.value(icon).data(), KUrl::List(), 0, false);
     }
 }
 
@@ -370,9 +378,9 @@ void StripWidget::save(KConfigGroup &cg)
             config.writeEntry("query", m_favouritesQueries.value(match));
             config.writeEntry("matchId", match->id());
             config.writeEntry("subText", match->subtext());
-        } else if (m_desktopFiles.contains(icon)) {
-            config.writeEntry("url", (m_desktopFiles[icon])->fileName());
-            config.writeEntry("subText", m_desktopFiles[icon]->readGenericName());
+        } else if (m_services.contains(icon)) {
+            config.writeEntry("url", (m_services[icon])->entryPath());
+            config.writeEntry("subText", m_services[icon]->genericName());
         }
 
         ++id;
@@ -400,15 +408,14 @@ void StripWidget::restore(KConfigGroup &cg)
     QVector<QString> queries;
     QVector<QString> matchIds;
     QVector<QString> urls;
+    int numIcons;
 
     if (favouritesConfigs.isEmpty()) {
+        numIcons = 4;
         runnerIds.resize(4);
         queries.resize(4);
         matchIds.resize(4);
-        QString homePlace = "places_file://"+QDir::homePath();
-        matchIds << "services_kde4-konqbrowser.desktop" << "services_kde4-KMail.desktop" << "services_kde4-systemsettings.desktop" << homePlace;
-        queries << "konqueror" << "kmail" << "systemsettings" << "home";
-        runnerIds << "services" << "services" << "services" << "places";
+        urls << "konqueror" << "kmail" << "systemsettings" << "dolphin";
     } else {
         runnerIds.resize(favouritesConfigs.size());
         queries.resize(favouritesConfigs.size());
@@ -426,10 +433,10 @@ void StripWidget::restore(KConfigGroup &cg)
             ++i;
             ++it;
         }
+        numIcons = stripGroup.groupList().size();
     }
 
     QString currentQuery;
-    int numIcons = stripGroup.groupList().size();
     for (int i = 0; i < numIcons; ++i ) {
         if (!urls[i].isNull()) {
             add(urls[i]);

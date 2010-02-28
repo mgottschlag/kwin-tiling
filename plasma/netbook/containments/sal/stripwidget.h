@@ -22,7 +22,7 @@
 
 
 #include <KConfigGroup>
-#include <KDesktopFile>
+#include <KService>
 
 #include <QPair>
 #include <QGraphicsLinearLayout>
@@ -97,7 +97,7 @@ private:
     QList<Plasma::QueryMatch*> m_favouritesMatches;
     QHash<Plasma::QueryMatch*, QString> m_favouritesQueries;
     QHash<Plasma::IconWidget*, Plasma::QueryMatch*> m_favouritesIcons;
-    QHash<Plasma::IconWidget*, KDesktopFile*> m_desktopFiles;
+    QHash<Plasma::IconWidget*, KService::Ptr> m_services;
     ItemView *m_itemView;
     Plasma::RunnerContext *m_context;
     QTimer *m_scrollTimer;
