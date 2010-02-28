@@ -560,6 +560,7 @@ int reader( int fd, void *buf, int len );
 int writer( int fd, const void *buf, int len );
 int fGets( char *buf, int max, FILE *f );
 time_t mTime( const char *fn );
+void randomStr( char *s );
 int hexToBinary( char *out, const char *in );
 void listSessions( int flags, struct display *d, void *ctx,
                    void (*emitXSess)( struct display *, struct display *, void * ),

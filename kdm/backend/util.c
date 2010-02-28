@@ -35,6 +35,7 @@ from the copyright holder.
  */
 
 #include "dm.h"
+#include "dm_auth.h"
 #include "dm_error.h"
 
 #include <string.h>
@@ -568,6 +569,20 @@ mTime( const char *fn )
 		return -1;
 	else
 		return st.st_mtime;
+}
+
+void
+randomStr( char *s )
+{
+	static const char letters[] =
+		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	unsigned i, rn = secureRandom();
+
+	for (i = 0; i < 6; i++) {
+		*s++ = letters[rn % 62];
+		rn /= 62;
+	}
+	*s = 0;
 }
 
 static int
