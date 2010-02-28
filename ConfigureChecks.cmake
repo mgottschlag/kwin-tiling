@@ -29,7 +29,6 @@ if (PAM_FOUND)
     endmacro(install_pam_service)
 
     define_pam_service(KDM)
-    define_pam_service(kcheckpass)
     define_pam_service(kscreensaver)
 
 else (PAM_FOUND)

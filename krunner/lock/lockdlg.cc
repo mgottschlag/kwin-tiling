@@ -457,9 +457,6 @@ void PasswordDlg::gplugStart()
         sprintf(fdbuf, "%d", sfd[1]);
         execlp(QFile::encodeName(KStandardDirs::findExe("kcheckpass")).data(),
                "kcheckpass",
-#ifdef HAVE_PAM
-               "-c", KSCREENSAVER_PAM_SERVICE,
-#endif
                "-m", mPlugin->info->method,
                "-S", fdbuf,
                (char *)0);

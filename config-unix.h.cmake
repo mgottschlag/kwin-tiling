@@ -10,9 +10,6 @@
 /* The PAM service to be used by kdm */
 #cmakedefine KDM_PAM_SERVICE ${KDM_PAM_SERVICE}
 
-/* The PAM service to be used by kcheckpass */
-#cmakedefine KCHECKPASS_PAM_SERVICE ${KCHECKPASS_PAM_SERVICE}
-
 /* The PAM service to be used by kscreensaver */
 #cmakedefine KSCREENSAVER_PAM_SERVICE ${KSCREENSAVER_PAM_SERVICE}
 

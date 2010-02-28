@@ -28,6 +28,4 @@ install(CODE "
     EXECUTE_PROCESS(COMMAND sh -c \"chown root '\${KCP_PATH}' && chmod +s '\${KCP_PATH}'\")
 ")
 
-install_pam_service(kcheckpass)
-
 #EXTRA_DIST = README

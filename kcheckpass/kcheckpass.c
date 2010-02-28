@@ -306,7 +306,7 @@ int
 main(int argc, char **argv)
 {
 #ifdef HAVE_PAM
-  const char	*caller = KCHECKPASS_PAM_SERVICE;
+  const char	*caller = KSCREENSAVER_PAM_SERVICE;
 #endif
   const char	*method = "classic";
   const char	*username = 0;
