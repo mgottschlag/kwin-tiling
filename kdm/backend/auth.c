@@ -1217,7 +1217,7 @@ setUserAuthorization( struct display *d )
 			}
 #endif
 			if (!new) {
-				logError( "Cannot create authorization file in %s\n",
+				logError( "Cannot create authorization file in %s: %m\n",
 				          d->userAuthDir );
 				return;
 			}

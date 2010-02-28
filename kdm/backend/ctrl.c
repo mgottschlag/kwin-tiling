@@ -98,7 +98,7 @@ openCtrl( struct display *d )
 	if (cr->fd < 0) {
 		if (mkdir( fifoDir, 0755 )) {
 			if (errno != EEXIST) {
-				logError( "mkdir %\"s failed; no control FiFos will be available\n",
+				logError( "mkdir %\"s failed: %m; no control FiFos will be available\n",
 				          fifoDir );
 				return;
 			}
@@ -114,14 +114,14 @@ openCtrl( struct display *d )
 					logError( "path %\"s too long; no control sockets will be available\n",
 					          cr->path );
 				else if (mkdir( sockdir, 0755 ) && errno != EEXIST)
-					logError( "mkdir %\"s failed; no control sockets will be available\n",
+					logError( "mkdir %\"s failed: %m; no control sockets will be available\n",
 					          sockdir );
 				else {
 					if (!d)
 						chown( sockdir, -1, fifoGroup );
 					chmod( sockdir, 0750 );
 					if ((cr->fd = socket( PF_UNIX, SOCK_STREAM, 0 )) < 0)
-						logError( "Cannot create control socket\n" );
+						logError( "Cannot create control socket: %m\n" );
 					else {
 						unlink( cr->path );
 						sa.sun_family = AF_UNIX;
@@ -135,10 +135,10 @@ openCtrl( struct display *d )
 								return;
 							}
 							unlink( cr->path );
-							logError( "Cannot listen on control socket %\"s\n",
+							logError( "Cannot listen on control socket %\"s: %m\n",
 							          cr->path );
 						} else
-							logError( "Cannot bind control socket %\"s\n",
+							logError( "Cannot bind control socket %\"s: %m\n",
 							          cr->path );
 						close( cr->fd );
 						cr->fd = -1;
