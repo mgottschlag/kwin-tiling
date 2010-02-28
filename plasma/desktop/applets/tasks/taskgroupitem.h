@@ -101,7 +101,7 @@ public:
 
     TaskItemLayout *tasksLayout();
 
-    int indexOf(AbstractTaskItem *task);
+    int indexOf(AbstractTaskItem *task, bool descendGroups = true);
 
     int optimumCapacity();
 

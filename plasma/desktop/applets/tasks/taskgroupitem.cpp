@@ -703,7 +703,6 @@ bool TaskGroupItem::focusSubTask(bool next, bool activate)
             for (int i = 0; i < subTasks; ++i) {
                 if (selectSubTask(i)->taskFlags() & TaskHasFocus) {
                     index = i;
-
                     break;
                 }
             }
@@ -728,19 +727,16 @@ bool TaskGroupItem::focusSubTask(bool next, bool activate)
 
         if (taskItem) {
             taskItem->setFocus();
-
             m_activeTaskIndex = index;
         }
 
         if (activate && taskItem) {
             stopWindowHoverEffect();
-
             taskItem->activate();
         }
 
         return true;
-    }
-    else {
+    } else {
         return false;
     }
 }
@@ -1168,7 +1164,7 @@ void TaskGroupItem::updateActive(AbstractTaskItem *task)
     m_activeTaskIndex = indexOf(task);
 }
 
-int TaskGroupItem::indexOf(AbstractTaskItem *task)
+int TaskGroupItem::indexOf(AbstractTaskItem *task, bool descendGroups)
 {
     if (!m_group || !task) {
         //kDebug() << "Error";
@@ -1181,29 +1177,35 @@ int TaskGroupItem::indexOf(AbstractTaskItem *task)
         AbstractTaskItem *taskItem = abstractTaskItem(item);
         if (taskItem) {
             if (task == taskItem) {
-                TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
-                if (groupItem) {
-                    int subIndex = groupItem->indexOf(groupItem->activeSubTask());
-                    if (subIndex == -1) {
-                        index += groupItem->count();
-                    } else {
-                        return index + subIndex;
+                if (descendGroups) {
+                    TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
+                    if (groupItem) {
+                        int subIndex = groupItem->indexOf(groupItem->activeSubTask());
+                        if (subIndex == -1) {
+                            index += groupItem->count();
+                        } else {
+                            return index + subIndex;
+                        }
                     }
                 }
 
                 return index;
             }
 
-            TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
-            if (groupItem) {
-                int subIndex = groupItem->indexOf(task);
-                if(subIndex == -1) {
-                    index += groupItem->count();
+            if (descendGroups) {
+                TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
+                if (groupItem) {
+                    int subIndex = groupItem->indexOf(task);
+                    if (subIndex == -1) {
+                        index += groupItem->count();
+                    } else {
+                        return index+subIndex;
+                    }
                 } else {
-                    return index+subIndex;
+                    ++index;
                 }
             } else {
-                index++;
+                ++index;
             }
         }
     }
@@ -1253,7 +1255,7 @@ int TaskGroupItem::totalSubTasks()
 
 AbstractTaskItem * TaskGroupItem::selectSubTask(int index)
 {
-    foreach(AbstractGroupableItem *item, group()->members()) {
+    foreach (AbstractGroupableItem *item, group()->members()) {
         AbstractTaskItem *taskItem = abstractTaskItem(item);
         if (taskItem) {
             TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);

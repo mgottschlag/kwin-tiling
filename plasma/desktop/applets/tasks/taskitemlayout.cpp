@@ -96,7 +96,7 @@ void TaskItemLayout::addTaskItem(AbstractTaskItem * item)
         //kDebug() << "itemScene" << item->scene();
     }
 
-    if (!insert(m_groupItem->indexOf(item), item)) {
+    if (!insert(m_groupItem->indexOf(item, false), item)) {
         kDebug() << "error on  insert";
         return;
     }
@@ -132,7 +132,7 @@ bool TaskItemLayout::insert(int index, AbstractTaskItem* item)
 
     int listIndex;
     for (listIndex = 0; listIndex < m_itemPositions.size(); listIndex++) {
-        if (index <= m_groupItem->indexOf(m_itemPositions.at(listIndex))) {
+        if (index <= m_groupItem->indexOf(m_itemPositions.at(listIndex), false)) {
             break;
         }
     }
