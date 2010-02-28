@@ -309,34 +309,28 @@ fail_delay( int retval ATTR_UNUSED, unsigned usec_delay ATTR_UNUSED,
 # endif
 
 # ifdef PAM_XDISPLAY
-/* Inspired by Eamon Walsh's patch for gdm. */
 static struct pam_xauth_data *
-getPAMXauthData( const char *xauth_file )
+getPAMXauthData( void )
 {
-	FILE *fp;
-	Xauth *auth;
+	int i;
 	struct pam_xauth_data *ret;
 
-	if (!(fp = fopen( xauth_file, "r" )))
-		return 0;
-
-	auth = XauReadAuth( fp );
-	fclose( fp );
-	if (!auth)
-		return 0;
-
-	if ((ret = malloc( sizeof(*ret) + auth->name_length + 1 + auth->data_length ))) {
-		ret->name = (char *)ret + sizeof(*ret);
-		ret->namelen = auth->name_length;
-		memcpy( ret->name, auth->name, auth->name_length );
-		ret->name[ret->namelen] = 0;
-		ret->data = ret->name + ret->namelen + 1;
-		ret->datalen = auth->data_length;
-		memcpy( ret->data, auth->data, auth->data_length );
+	for (i = 0; i < td->authNum; i++) {
+		Xauth *auth = td->authorizations[i];
+		if (auth->data_length > 0) {
+			if ((ret = malloc( sizeof(*ret) + auth->name_length + 1 + auth->data_length ))) {
+				ret->name = (char *)ret + sizeof(*ret);
+				ret->namelen = auth->name_length;
+				memcpy( ret->name, auth->name, auth->name_length );
+				ret->name[ret->namelen] = 0;
+				ret->data = ret->name + ret->namelen + 1;
+				ret->datalen = auth->data_length;
+				memcpy( ret->data, auth->data, auth->data_length );
+			}
+			return ret;
+		}
 	}
-
-	XauDisposeAuth( auth );
-	return ret;
+	return 0;
 }
 # endif
 
@@ -382,7 +376,7 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 	                           displayName( td ) )) != PAM_SUCCESS)
 		debug( "setting PAM_XDISPLAY failed: %s\n",
 		       pam_strerror( 0, pretc ) );
-	else if (td->authFile && (pam_xauth = getPAMXauthData( td->authFile ))) {
+	else if ((pam_xauth = getPAMXauthData())) {
 		pretc = pam_set_item( pamh, PAM_XAUTHDATA, pam_xauth );
 		free( pam_xauth );
 		if (pretc != PAM_SUCCESS)
