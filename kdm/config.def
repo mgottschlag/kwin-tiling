@@ -2355,6 +2355,8 @@ Description:
  Currently the big image is used only as a fallback and is scaled down,
  but in the future it might be displayed full-size in the logo area or a
  tooltip.
+ To be accessible to &kdm;, the images must be world readable and their
+ parent directories must be world executable.
 
 Key: FaceDir
 Type: string
