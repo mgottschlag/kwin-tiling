@@ -48,6 +48,7 @@
 #include <KGlobalSettings>
 #include <KRun>
 #include <KLocale>
+#include <KPassivePopup>
 #include <KService>
 #include <KServiceTypeTrader>
 #include <KTimeZone>
@@ -208,7 +209,7 @@ void ClockApplet::speakTime(const QTime &time)
         if (!QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.kttsd")) {
             QString error;
             if (KToolInvocation::startServiceByDesktopName("kttsd", QStringList(), &error)) {
-                KMessageBox::error(0, i18n( "Starting KTTSD Failed"), error );
+                KPassivePopup::message(i18n("Starting KTTSD Failed"), error, static_cast<QWidget *>(0));
                 return;
             }
         }
