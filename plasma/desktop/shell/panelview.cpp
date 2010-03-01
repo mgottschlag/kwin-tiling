@@ -131,9 +131,9 @@ public:
         }
 
         if (m_direction == Plasma::Left || m_direction == Plasma::Right) {
-            p.drawPixmap(QPoint(0, 0), l);
-            p.drawTiledPixmap(QRect(0, l.height(), c.width(), height() - l.height() - r.height()), c);
-            p.drawPixmap(QPoint(0, height() - r.height()), r);
+            p.drawPixmap(pixmapPosition, l);
+            p.drawTiledPixmap(QRect(pixmapPosition.x(), l.height(), c.width(), height() - l.height() - r.height()), c);
+            p.drawPixmap(QPoint(pixmapPosition.x(), height() - r.height()), r);
         } else {
             p.drawPixmap(pixmapPosition, l);
             p.drawTiledPixmap(QRect(l.width(), pixmapPosition.y(), width() - l.width() - r.width(), c.height()), c);
