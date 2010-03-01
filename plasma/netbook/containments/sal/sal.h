@@ -80,6 +80,7 @@ private Q_SLOTS:
     void updateConfigurationMode(bool config);
     void overlayRequestedDrop(QGraphicsSceneDragDropEvent *event);
     void resultsViewRequestedDrag(Plasma::IconWidget *icon);
+    void availableScreenRegionChanged();
 
     void setQueryMatches(const QList<Plasma::QueryMatch> &m);
     void delayedQuery();

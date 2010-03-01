@@ -79,6 +79,7 @@ private Q_SLOTS:
     void updateRemoveActionVisibility();
     void containmentAdded(Plasma::Containment *containment);
     void containmentRemoved(QObject *containment);
+    void availableScreenRegionChanged();
 
 private:
     Plasma::ScrollWidget *m_scrollWidget;

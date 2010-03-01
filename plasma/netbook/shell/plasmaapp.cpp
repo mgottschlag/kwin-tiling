@@ -346,38 +346,22 @@ void PlasmaApp::positionPanel()
     }
 
 
-    int left = 0;
-    int right = 0;
-    int top = 0;
-    int bottom = 0;
-
-    switch (m_controlBar->location()) {
-    case Plasma::LeftEdge:
-        left = m_controlBar->width();
-        break;
-    case Plasma::RightEdge:
-        right = m_controlBar->width();
-        break;
-    case Plasma::TopEdge:
-        top = m_controlBar->height();
-        break;
-    case Plasma::BottomEdge:
-        bottom = m_controlBar->height();
-        break;
-    default:
-        break;
-    }
-
     m_controlBar->containment()->setMaximumSize(m_controlBar->size());
     m_controlBar->containment()->setMinimumSize(m_controlBar->size());
 
-    if (m_widgetExplorerView) {
-        top += m_widgetExplorerView->size().height();
-    }
 
     foreach (Plasma::Containment *containment, m_corona->containments()) {
         if (containment->location() == Plasma::Desktop ||
             containment->location() == Plasma::Floating) {
+
+            qreal left, top, right, bottom;
+            containment->getContentsMargins(&left, &top, &right, &bottom);
+
+            //FIXME: horrid heuristic: the widgetexplorer has to move in the toolbox itself
+            if (m_widgetExplorerView) {
+                top += m_widgetExplorerView->size().height();
+            }
+
             containment->setContentsMargins(left, top, right, bottom);
         }
     }
@@ -837,7 +821,6 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
                (watched == m_controlBar &&
                 event->type() == QEvent::Leave &&
                 !hasForegroundWindows())) {
-kWarning()<<event;
         //delayed hide
         if (m_unHideTimer) {
             m_unHideTimer->start(400);

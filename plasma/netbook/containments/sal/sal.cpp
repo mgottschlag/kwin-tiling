@@ -164,6 +164,11 @@ void SearchLaunch::init()
     addAction("next containment", a);
     a = new QAction(i18n("Previous activity"), this);
     addAction("previous containment", a);
+
+    if (corona()) {
+        connect(corona(), SIGNAL(availableScreenRegionChanged()), this, SLOT(availableScreenRegionChanged()));
+        availableScreenRegionChanged();
+    }
 }
 
 void SearchLaunch::configChanged()
@@ -173,6 +178,25 @@ void SearchLaunch::configChanged()
     m_stripWidget->setIconSize(config().readEntry("FavouritesIconSize", (int)KIconLoader::SizeLarge));
 
     m_resultsView->setIconSize(config().readEntry("ResultsIconSize", (int)KIconLoader::SizeHuge));
+}
+
+void SearchLaunch::availableScreenRegionChanged()
+{
+    if (!corona()) {
+        return;
+    }
+
+    QRect maxRect;
+    int maxArea = 0;
+    //we don't want the bounding rect (that could include panels too), but the maximumone representing the desktop
+    foreach (QRect rect, corona()->availableScreenRegion(screen()).rects()) {
+        int area = rect.width() * rect.height();
+        if (area > maxArea) {
+            maxRect = rect;
+            maxArea = area;
+        }
+    }
+    setContentsMargins(maxRect.left(), maxRect.top(), size().width() - maxRect.right(), size().height() - maxRect.bottom());
 }
 
 void SearchLaunch::toggleImmutability()

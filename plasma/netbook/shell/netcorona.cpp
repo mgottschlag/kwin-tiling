@@ -29,6 +29,7 @@
 #include <KDialog>
 #include <KGlobalSettings>
 #include <KStandardDirs>
+#include <KWindowSystem>
 
 #include <kephal/screens.h>
 
@@ -49,6 +50,7 @@ void NetCorona::init()
 {
     QDesktopWidget *desktop = QApplication::desktop();
     QObject::connect(desktop, SIGNAL(resized(int)), this, SLOT(screenResized(int)));
+    connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SIGNAL(availableScreenRegionChanged()));
 
     Plasma::ContainmentActionsPluginsConfig desktopPlugins;
     desktopPlugins.addPlugin(Qt::NoModifier, Qt::MidButton, "paste");
@@ -182,13 +184,7 @@ QRect NetCorona::screenGeometry(int id) const
 
 QRegion NetCorona::availableScreenRegion(int id) const
 {
-    QRegion r(screenGeometry(id));
-    NetView *view = PlasmaApp::self()->controlBar();
-    if (view) {
-        r = r.subtracted(view->geometry());
-    }
-
-    return r;
+    return KWindowSystem::workArea();
 }
 
 
