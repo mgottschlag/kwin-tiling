@@ -196,7 +196,7 @@ void SearchLaunch::availableScreenRegionChanged()
             maxArea = area;
         }
     }
-    setContentsMargins(maxRect.left(), maxRect.top(), size().width() - maxRect.right(), size().height() - maxRect.bottom());
+    setContentsMargins(maxRect.left(), maxRect.top(), qMax((qreal)0.0, size().width() - maxRect.right()), qMax((qreal)0.0, size().height() - maxRect.bottom()));
 }
 
 void SearchLaunch::toggleImmutability()
