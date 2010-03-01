@@ -98,7 +98,7 @@ openCtrl( struct display *d )
 	if (cr->fd < 0) {
 		if (mkdir( fifoDir, 0755 )) {
 			if (errno != EEXIST) {
-				logError( "mkdir %\"s failed: %m; no control FiFos will be available\n",
+				logError( "mkdir %\"s failed: %m; no control sockets will be available\n",
 				          fifoDir );
 				return;
 			}
@@ -111,10 +111,10 @@ openCtrl( struct display *d )
 			strApp( &cr->path, sockdir, "/socket", (char *)0 );
 			if (cr->path) {
 				if (strlen( cr->path ) >= sizeof(sa.sun_path))
-					logError( "path %\"s too long; no control sockets will be available\n",
+					logError( "path %\"s too long; control socket will not be available\n",
 					          cr->path );
 				else if (mkdir( sockdir, 0755 ) && errno != EEXIST)
-					logError( "mkdir %\"s failed: %m; no control sockets will be available\n",
+					logError( "mkdir %\"s failed: %m; control socket will not be available\n",
 					          sockdir );
 				else {
 					if (!d)
