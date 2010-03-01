@@ -226,20 +226,23 @@ void NetToolBox::setShowing(const bool show)
         switch (m_location) {
         case Plasma::TopEdge:
             m_toolContainer->setPos(boundingRect().topLeft() - QPoint(0, m_toolContainer->size().height()));
+            slideAnim->setProperty("distancePointF", QPointF(-m_toolContainer->size().height(), 0));
             break;
         case Plasma::LeftEdge:
             m_toolContainer->setPos(boundingRect().topLeft() - QPoint(m_toolContainer->size().width(), 0));
+            slideAnim->setProperty("distancePointF", QPointF(0, -m_toolContainer->size().height()));
             break;
         case Plasma::RightEdge:
             m_toolContainer->setPos(boundingRect().topRight());
+            slideAnim->setProperty("distancePointF", QPointF(0, -m_toolContainer->size().height()));
             break;
         case Plasma::BottomEdge:
         default:
             m_toolContainer->setPos(boundingRect().bottomLeft());
+            slideAnim->setProperty("distancePointF", QPointF(m_toolContainer->size().height(), 0));
             break;
         }
 
-        slideAnim->setProperty("distance", m_toolContainer->size().height());
         slideAnim->setTargetWidget(m_toolContainer);
         slideAnim->start();
 
