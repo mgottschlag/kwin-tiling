@@ -144,6 +144,7 @@ macro_optional_add_subdirectory( solid )
 macro_optional_add_subdirectory( kmenuedit )
 macro_optional_add_subdirectory( plasma )
 macro_optional_add_subdirectory( kstartupconfig )
+macro_optional_add_subdirectory(kstyles)
 
 
 # apps we need to figure out what to do with
