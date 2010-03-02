@@ -48,6 +48,7 @@ class AppletIconWidget : public QGraphicsWidget
         void hoverLeave(AppletIconWidget *applet);
         void selected(AppletIconWidget *applet);
         void doubleClicked(AppletIconWidget *applet);
+        void dragStarted(AppletIconWidget *applet);
 
     protected:
         //listen to events and emit signals
