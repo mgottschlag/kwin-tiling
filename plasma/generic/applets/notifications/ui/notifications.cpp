@@ -254,6 +254,7 @@ void Notifications::addNotification(Notification *notification)
         m_notificationStackDialog->setApplet(this);
         m_notificationStackDialog->setNotificationStack(m_notificationStack);
         connect(m_notificationStack, SIGNAL(stackEmpty()), m_notificationStackDialog, SLOT(hide()));
+        connect(m_notificationStack, SIGNAL(showRequested()), m_notificationStackDialog, SLOT(show()));
 
         if (m_standaloneJobSummaryDialog) {
             m_notificationStackDialog->setWindowToTile(m_standaloneJobSummaryDialog);

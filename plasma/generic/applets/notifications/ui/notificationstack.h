@@ -58,11 +58,13 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void popNotification();
+    void notificationChanged(Notification *notification);
 
 Q_SIGNALS:
     void stackEmpty();
     void updateRequested();
     void hideRequested();
+    void showRequested();
 
 private:
     QList<Notification *> m_notifications;

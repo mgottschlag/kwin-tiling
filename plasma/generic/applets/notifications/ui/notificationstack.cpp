@@ -56,6 +56,9 @@ void NotificationStack::addNotification(Notification *notification)
     connect(notification, SIGNAL(notificationDestroyed(Notification *)), this, SLOT(removeNotification(Notification *)));
     connect(notification, SIGNAL(expired(Notification *)), this, SLOT(delayedRemoveNotification(Notification *)));
 
+    disconnect(notification, SIGNAL(changed(Notification *)), this, SLOT(notificationChanged(Notification *)));
+    connect(notification, SIGNAL(changed(Notification *)), this, SLOT(notificationChanged(Notification *)));
+
     NotificationWidget *notificationWidget = new NotificationWidget(notification, this);
     notificationWidget->installEventFilter(this);
     notificationWidget->setAcceptsHoverEvents(this);
@@ -97,6 +100,15 @@ void NotificationStack::addNotification(Notification *notification)
     m_mainLayout->activate();
     updateGeometry();
     resize(effectiveSizeHint(Qt::PreferredSize));
+}
+
+void NotificationStack::notificationChanged(Notification *notification)
+{
+    //if it was gone away put in on the stack again
+    if (!m_notificationWidgets.contains(notification)) {
+        addNotification(notification);
+    }
+    emit showRequested();
 }
 
 void NotificationStack::removeNotification(Notification *notification)
