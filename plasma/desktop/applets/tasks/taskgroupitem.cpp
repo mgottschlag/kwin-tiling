@@ -600,6 +600,18 @@ void TaskGroupItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     AbstractTaskItem::mouseReleaseEvent(event);
 }
 
+void TaskGroupItem::handleActiveWindowChanged(WId id)
+{
+    if (!m_popupDialog) {
+        return;
+    }
+    if (id == m_popupDialog->winId()) {
+        return;
+    }
+
+    m_popupDialog->hide();
+}
+
 void TaskGroupItem::popupMenu()
 {
     //kDebug();
@@ -631,7 +643,7 @@ void TaskGroupItem::popupMenu()
         KWindowSystem::setType(m_popupDialog->winId(), NET::PopupMenu);
         m_popupDialog->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
         connect(m_popupDialog, SIGNAL(dialogVisible(bool)), m_applet, SLOT(setPopupDialog(bool)));
-        connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), m_popupDialog, SLOT(hide()));
+        connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(handleActiveWindowChanged(WId)));
         KWindowSystem::setState(m_popupDialog->winId(), NET::SkipTaskbar| NET::SkipPager);
         m_popupDialog->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
         //TODO in the future it may be possible to use the Qt::Popup flag instead of the eventFilter, but for now the focus works better with the eventFilter
@@ -666,7 +678,6 @@ void TaskGroupItem::popupMenu()
         m_offscreenWidget->layout()->activate();
         m_offscreenWidget->resize(m_offscreenWidget->effectiveSizeHint(Qt::PreferredSize));
         m_popupDialog->raise();
-        KWindowSystem::activateWindow(m_popupDialog->winId());
         //kDebug() << m_popupDialog->size() << m_tasksLayout->size();
     }
 }
