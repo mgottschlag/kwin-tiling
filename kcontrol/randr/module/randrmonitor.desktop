@@ -1,15 +1,16 @@
 [Desktop Entry]
 Name=Display Management change monitor
+Name[el]=Εμφάνιση διαχείρισης αλλαγής οθόνης
 Name[pt]=Monitoriza as alterações de Gestão do Ecrã
 Name[pt_BR]=Monitora as alterações de gerenciamento de tela
 Name[sv]=Skärmhantering bildskärmsbyte
-Name[uk]=Зміна монітора керування показом
 Name[x-test]=xxDisplay Management change monitorxx
 Comment=Is this required when kephal has its own kded module?
+Comment[el]=Είναι αυτό απαραίτητο όταν το kephal έχει το δικό του άρθρωμα kded;
+Comment[es]=¿Es necesario cuando kephal tiene su propio módulo de kded?
 Comment[pt]=Isto será necessário quando o 'kephal' tem o seu próprio módulo do 'kded'?
 Comment[pt_BR]=Isto será necessário quando o kephal tem o seu próprio módulo do kded?
 Comment[sv]=Krävs det här när Kephal har sin egen KDED-modul?
-Comment[uk]=Чи потрібен, якщо для цього власний модуль kded kephal?
 Comment[x-test]=xxIs this required when kephal has its own kded module?xx
 Type=Service
 X-KDE-ServiceTypes=KDEDModule

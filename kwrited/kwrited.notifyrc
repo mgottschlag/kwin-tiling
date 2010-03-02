@@ -1,9 +1,10 @@
 [Global]
 IconName=utilities-terminal
 Comment=Local system message service
+Comment[el]=Τοπική υπηρεσία μηνυμάτων συστήματος
+Comment[es]=Servicio de mensajes del sistema local
 Comment[pt]=Serviço de mensagens do sistema local
 Comment[pt_BR]=Serviço de mensagens do sistema local
-Comment[uk]=Служба повідомлень локальної системи
 Comment[x-test]=xxLocal system message servicexx
 
 [Event/NewMessage]
@@ -31,7 +32,6 @@ Name[gu]=નવો સંદેશ મેળવાયો
 Name[he]=הגיעה הודעה חדשה
 Name[hi]=नया संदेश मिला
 Name[hne]=नवा संदेस मिलिस
-Name[hr]=Primljena je nova poruka
 Name[hsb]=Nowa powěsć
 Name[hu]=Új üzenet érkezett
 Name[id]=Pesan baru diterima
@@ -70,7 +70,6 @@ Name[te]=కొత్త సందేశము స్వీకరించబడ
 Name[tg]=Паёми нав қабул шуд
 Name[th]=ได้รับข้อความใหม่
 Name[tr]=Yeni ileti alındı
-Name[uk]=Отримано нове повідомлення
 Name[x-test]=xxNew message receivedxx
 Name[zh_CN]=收到新消息
 Name[zh_TW]=接到新訊息
@@ -97,7 +96,6 @@ Comment[gu]=ડેમોને wall(1) અથવા write(1) સાથે મો
 Comment[he]=שירות הרקע קיבל הודעה שנשלחה עם wall(1) או write(1)
 Comment[hi]=डेमन द्वारा राइट(1) या वाल(1) के जरिए भेजे गए संदेश प्राप्त किया गया
 Comment[hne]=वाल(१) या राइट (१) से भेजे वाले नवा संदेस डेमन ल मिलिस
-Comment[hr]=Daemon je primio novu poruku poslanu sa wall(1) ili write(1)
 Comment[hsb]=Demon je powěsć dóstał, pósłanu z wall(1) abo write(1)
 Comment[hu]=A szolgáltatás új üzenetet kapott wall(1) vagy write(1) paranccsal
 Comment[id]=Jurik menerima sebuah pesan baru yang dikirim dengan wall(1) atau write(1)
@@ -134,7 +132,6 @@ Comment[ta]=The daemon received a new message sent with wall(1) or write(1)
 Comment[te]=wall(1) లేదా write(1)తో పంపబడిన కొత్త సందేశమును డెమోన్ స్వీకరించినది
 Comment[th]=ดีมอนที่จะทำการรับข้อความใหม่ที่ถูกส่งมาจาก wall(1) หรือ write(1)
 Comment[tr]=Servis wall(1) ya da write(1) ile gönderilen yeni bir ileti aldı
-Comment[uk]=Фоновою службою отримано нове повідомлення, надіслане за допомогою wall(1) або write(1)
 Comment[x-test]=xxThe daemon received a new message sent with wall(1) or write(1)xx
 Comment[zh_CN]=此守护程序可以接受由 wall(1) 或 write(1) 命令发出的消息
 Comment[zh_TW]=伺服程式接收到從 wall(1) 或 write(1) 送出的新訊息
