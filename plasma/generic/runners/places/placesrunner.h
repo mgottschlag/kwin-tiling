@@ -24,6 +24,22 @@
 #include <plasma/abstractrunner.h>
 #include <kfileplacesmodel.h>
 
+class PlacesRunner;
+
+class PlacesRunnerHelper : public QObject
+{
+    Q_OBJECT
+
+public:
+    PlacesRunnerHelper(PlacesRunner *runner);
+
+public Q_SLOTS:
+    void match(Plasma::RunnerContext *context);
+
+private:
+    KFilePlacesModel m_places;
+};
+
 class PlacesRunner : public Plasma::AbstractRunner
 {
     Q_OBJECT
@@ -35,8 +51,14 @@ public:
     void match(Plasma::RunnerContext &context);
     void run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &action);
 
+Q_SIGNALS:
+    void doMatch(Plasma::RunnerContext *context);
+
 private slots:
     void setupComplete(QModelIndex, bool);
+
+private:
+    PlacesRunnerHelper *m_helper;
 };
 
 K_EXPORT_PLASMA_RUNNER(placesrunner, PlacesRunner)

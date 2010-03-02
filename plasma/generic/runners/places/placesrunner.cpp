@@ -19,14 +19,20 @@
 
 #include "placesrunner.h"
 
+#include <QCoreApplication>
+#include <QThread>
+#include <QTimer>
+
 #include <KDebug>
 #include <KIcon>
 #include <KRun>
 #include <KUrl>
 
+//Q_DECLARE_METATYPE(Plasma::RunnerContext)
 PlacesRunner::PlacesRunner(QObject* parent, const QVariantList &args)
         : Plasma::AbstractRunner(parent, args)
 {
+//    qRegisterMetaType
     Q_UNUSED(args)
     setObjectName("Places");
     addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds file manager locations that match :q:")));
@@ -34,7 +40,7 @@ PlacesRunner::PlacesRunner(QObject* parent, const QVariantList &args)
 
     // ensure the bookmarkmanager, etc. in the places model gets creates created in the main thread
     // otherwise crashes ensue
-    KFilePlacesModel places;
+    m_helper = new PlacesRunnerHelper(this);
 }
 
 PlacesRunner::~PlacesRunner()
@@ -43,21 +49,48 @@ PlacesRunner::~PlacesRunner()
 
 void PlacesRunner::match(Plasma::RunnerContext &context)
 {
+    if (QThread::currentThread() == QCoreApplication::instance()->thread()) {
+        // from the main thread
+        //kDebug() << "calling";
+        m_helper->match(&context);
+    } else {
+        // from the non-gui thread
+        //kDebug() << "emitting";
+        emit doMatch(&context);
+    }
+    //m_helper->match(c);
+}
+
+PlacesRunnerHelper::PlacesRunnerHelper(PlacesRunner *runner)
+    : QObject(runner)
+{
+    Q_ASSERT(QThread::currentThread() == QCoreApplication::instance()->thread());
+    connect(runner, SIGNAL(doMatch(Plasma::RunnerContext*)),
+            this, SLOT(match(Plasma::RunnerContext*)),
+            Qt::BlockingQueuedConnection);
+}
+
+void PlacesRunnerHelper::match(Plasma::RunnerContext *c)
+{
+    Plasma::RunnerContext &context = *c;
+    if (!context.isValid()) {
+        return;
+    }
+
     const QString term = context.query();
-    QList<Plasma::QueryMatch> matches;
 
     if (term.length() < 3) {
         return;
     }
 
+    QList<Plasma::QueryMatch> matches;
     const bool all = term.compare(i18n("places"), Qt::CaseInsensitive) == 0;
-    KFilePlacesModel places;
-    for (int i = 0; i <= places.rowCount(); i++) {
-        QModelIndex current_index = places.index(i, 0);
+    for (int i = 0; i <= m_places.rowCount(); i++) {
+        QModelIndex current_index = m_places.index(i, 0);
         Plasma::QueryMatch::Type type = Plasma::QueryMatch::NoMatch;
         qreal relevance = 0;
 
-        const QString text = places.text(current_index);
+        const QString text = m_places.text(current_index);
         if ((all && !text.isEmpty()) || text.compare(term, Qt::CaseInsensitive) == 0) {
             type = Plasma::QueryMatch::ExactMatch;
             relevance = all ? 0.9 : 1.0;
@@ -67,18 +100,18 @@ void PlacesRunner::match(Plasma::RunnerContext &context)
         }
 
         if (type != Plasma::QueryMatch::NoMatch) {
-            Plasma::QueryMatch match(this);
+            Plasma::QueryMatch match(static_cast<PlacesRunner *>(parent()));
             match.setType(type);
             match.setRelevance(relevance);
-            match.setIcon(KIcon(places.icon(current_index)));
+            match.setIcon(KIcon(m_places.icon(current_index)));
             match.setText(text);
 
             //if we have to mount it set the device udi instead of the URL, as we can't open it directly
             KUrl url;
-            if (places.isDevice(current_index) && places.setupNeeded(current_index)) {
-                url = places.deviceForIndex(current_index).udi();
+            if (m_places.isDevice(current_index) && m_places.setupNeeded(current_index)) {
+                url = m_places.deviceForIndex(current_index).udi();
             } else {
-                url = places.url(current_index);
+                url = m_places.url(current_index);
             }
 
             match.setData(url);
