@@ -529,6 +529,7 @@ QString mouseKeysShortcut (Display *display) {
      return ""; // Somehow the keycode -> keysym mapping is flawed
 
   XEvent ev;
+  ev.type = KeyPress;
   ev.xkey.display = display;
   ev.xkey.keycode = code;
   ev.xkey.state = 0;
