@@ -71,6 +71,7 @@ class Image : public Plasma::Wallpaper
         void setWallpaper(const QString &path);
         void wallpaperRetrieved(KJob *job);
         void newStuffFinished();
+        void setConfigurationInterfaceModel();
 
     protected:
         void init(const KConfigGroup &config);

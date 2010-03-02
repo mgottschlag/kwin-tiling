@@ -16,6 +16,7 @@
 #include <QFile>
 #include <QEasingCurve>
 #include <QPropertyAnimation>
+#include <QTimer>
 
 #include <KDirSelectDialog>
 #include <KDirWatch>
@@ -87,7 +88,7 @@ void Image::init(const KConfigGroup &config)
         setSingleImage();
         setContextualActions(QList<QAction*>());
     } else {
-        QTimer::singleShot(0, this, SLOT(startSlideshow()));
+        QTimer::singleShot(200, this, SLOT(startSlideshow()));
         QList<QAction*> actions;
         actions.push_back(nextWallpaperAction);
         setContextualActions(actions);
@@ -129,7 +130,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         m_model->setResizeMethod(m_resizeMethod);
         m_model->setWallpaperSize(m_size);
         m_model->reload(m_usersWallpapers);
-        m_uiImage.m_view->setModel(m_model);
+        QTimer::singleShot(0, this, SLOT(setConfigurationInterfaceModel()));
         m_uiImage.m_view->setItemDelegate(new BackgroundDelegate(m_uiImage.m_view,
                                                                  ratio, m_configWidget));
         m_uiImage.m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
@@ -223,6 +224,11 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
 
     connect(this, SIGNAL(settingsChanged(bool)), parent, SLOT(settingsChanged(bool)));
     return m_configWidget;
+}
+
+void Image::setConfigurationInterfaceModel()
+{
+    m_uiImage.m_view->setModel(m_model);
 }
 
 void Image::modified()
