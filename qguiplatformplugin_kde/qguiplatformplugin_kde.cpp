@@ -152,6 +152,7 @@ public:
     KQGuiPlatformPlugin()
     {
         connect(KGlobalSettings::self(), SIGNAL(toolbarAppearanceChanged(int)), this, SLOT(updateToolbarStyle()));
+        connect(KGlobalSettings::self(), SIGNAL(kdisplayStyleChanged()), this, SLOT(updateWidgetStyle()));
     }
 
     virtual QStringList keys() const { return QStringList() << QLatin1String("kde"); }
@@ -339,6 +340,13 @@ private slots:
                 QEvent event(QEvent::StyleChange);
                 QApplication::sendEvent(widget, &event);
             }
+        }
+    }
+
+    void updateWidgetStyle()
+    {
+        if (qApp) {
+            qApp->setStyle(styleName());
         }
     }
 };
