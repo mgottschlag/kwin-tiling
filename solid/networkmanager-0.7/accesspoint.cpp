@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class NMAccessPoint::Private
 {
 public:
-    Private( const QString & path ) : iface( NMNetworkManager::DBUS_SERVICE, path, QDBusConnection::systemBus()), capabilities(0), wpaFlags(0), rsnFlags(0), frequency(0), hardwareAddress(0), maxBitRate(0), mode((Solid::Control::WirelessNetworkInterface::OperationMode)0), signalStrength(0)
+    Private( const QString & path ) : iface( NMNetworkManager::DBUS_SERVICE, path, QDBusConnection::systemBus()), capabilities(0), wpaFlags(0), rsnFlags(0), frequency(0), maxBitRate(0), mode((Solid::Control::WirelessNetworkInterface::OperationMode)0), signalStrength(0)
     {
     }
     OrgFreedesktopNetworkManagerAccessPointInterface iface;
