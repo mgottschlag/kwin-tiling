@@ -159,6 +159,10 @@ void DBusNotificationProtocol::removeNotification(const QString &source)
 
 void DBusNotificationProtocol::notificationDeleted(const QString &source)
 {
+    Plasma::Service *service = m_engine->serviceForSource(source);
+    KConfigGroup op = service->operationDescription("userClosed");
+    service->startOperationCall(op);
+
     m_notifications.remove(source);
 }
 
