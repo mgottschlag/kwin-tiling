@@ -263,26 +263,26 @@ void AppletsListWidget::searchTermChanged(const QString &text)
 void AppletsListWidget::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == m_searchDelayTimer.timerId()) {
-        m_modelFilterItems->setSearch(m_searchString);
         m_searchDelayTimer.stop();
+        m_modelFilterItems->setSearch(m_searchString);
     } else if (event->timerId() == m_toolTipAppearTimer.timerId()) {
+        m_toolTipAppearTimer.stop();
         m_toolTip->updateContent();
         m_toolTip->syncToGraphicsWidget();
         setToolTipPosition();
         m_toolTip->setVisible(true);
-        m_toolTipAppearTimer.stop();
     } else if (event->timerId() == m_toolTipAppearWhenAlreadyVisibleTimer.timerId()) {
+        m_toolTipAppearWhenAlreadyVisibleTimer.stop();
         m_toolTip->updateContent();
         m_toolTip->syncToGraphicsWidget();
         setToolTipPosition();
-        m_toolTipAppearWhenAlreadyVisibleTimer.stop();
     } else if (event->timerId() == m_toolTipDisappearTimer.timerId()) {
-        m_toolTip->setVisible(false);
         m_toolTipDisappearTimer.stop();
+        m_toolTip->setVisible(false);
     } else if (event->timerId() == m_filterApplianceTimer.timerId()) {
+        m_filterApplianceTimer.stop();
         m_modelFilterItems->setFilter(qVariantValue<KCategorizedItemsViewModels::Filter>
                                       (m_dataFilterAboutToApply));
-        m_filterApplianceTimer.stop();
     }
 
     QGraphicsWidget::timerEvent(event);
@@ -763,8 +763,10 @@ void AppletsListWidget::rowsAboutToBeRemoved(const QModelIndex& parent, int row,
     Q_UNUSED(column)
     PlasmaAppletItem *item = dynamic_cast<PlasmaAppletItem*>(m_modelItems->item(row));
     if (item) {
-        m_allAppletsHash.remove(item->id());
-        updateList();
         m_toolTip->hide();
+        m_toolTip->setAppletIconWidget(0);
+        m_allAppletsHash.remove(item->id());
+        item->deleteLater();
+        updateList();
     }
 }

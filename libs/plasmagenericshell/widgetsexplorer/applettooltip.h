@@ -30,16 +30,19 @@
 #include <plasma/widgets/textbrowser.h>
 #include <plasma/widgets/label.h>
 
+class AppletToolTipWidget;
+
 class AppletInfoWidget : public QGraphicsWidget {
 
     Q_OBJECT
 
     public:
-        AppletInfoWidget(QGraphicsItem *parent = 0, PlasmaAppletItem *appletItem = 0);
+        explicit AppletInfoWidget(QGraphicsWidget *parent = 0);
         ~AppletInfoWidget();
 
         void init();
-        void setAppletItem(PlasmaAppletItem *appletItem);
+        void setApplet(AppletIconWidget *applet);
+        AppletIconWidget *applet() const;
 
     public Q_SLOTS:
         void updateInfo();
@@ -48,7 +51,7 @@ class AppletInfoWidget : public QGraphicsWidget {
         void uninstall();
 
     private:
-        PlasmaAppletItem *m_appletItem;
+        AppletIconWidget *m_applet;
         QGraphicsLinearLayout *m_mainVerticalLayout;
 
         Plasma::IconWidget *m_iconWidget;
@@ -68,8 +71,8 @@ class AppletToolTipWidget : public Plasma::Dialog {
         virtual ~AppletToolTipWidget();
 
         void setAppletIconWidget(AppletIconWidget *applet);
+        AppletIconWidget *appletIconWidget() const;
         void updateContent();
-        AppletIconWidget *appletIconWidget();
         void setScene(QGraphicsScene *scene);
 
     Q_SIGNALS:
@@ -82,7 +85,6 @@ class AppletToolTipWidget : public Plasma::Dialog {
         void dragEnterEvent(QDragEnterEvent *event);
 
     private:
-        AppletIconWidget *m_applet;
         AppletInfoWidget *m_widget;
 };
 
