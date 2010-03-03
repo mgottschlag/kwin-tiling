@@ -47,7 +47,9 @@ class PythonRunnerScript(Plasma.RunnerScript):
             relpath = relpath[:-3]
         relpath = relpath.replace("/",".")
         self.module = __import__(self.pluginName+'.'+relpath)
-        self.pyrunner = self.module.main.CreateRunner(None)
+        basename = os.path.basename(str(self.mainScript()))
+        basename = os.path.splitext(basename)[0]
+        self.pyrunner = self.module.__dict__[basename].CreateRunner(None)
         self.pyrunner.setRunner(self.runner())
         self.pyrunner.setRunnerScript(self)
         self.connect(self, SIGNAL('prepare()'), self, SLOT('prepare()'))
