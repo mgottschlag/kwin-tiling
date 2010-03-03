@@ -143,7 +143,6 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
                 fillMetaInfo(b);
             }
         }
-        connect(m_uiImage.m_view->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(pictureChanged(const QModelIndex &)));
 
         m_uiImage.m_pictureUrlButton->setIcon(KIcon("document-open"));
         connect(m_uiImage.m_pictureUrlButton, SIGNAL(clicked()), this, SLOT(showFileDialog()));
@@ -229,6 +228,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
 void Image::setConfigurationInterfaceModel()
 {
     m_uiImage.m_view->setModel(m_model);
+    connect(m_uiImage.m_view->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(pictureChanged(const QModelIndex &)));
 }
 
 void Image::modified()
