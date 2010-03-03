@@ -340,7 +340,7 @@ in the clipboard history.</para></listitem>
 <term>Editing Expressions/Actions</term>
 <listitem><para>On the <guilabel>Actions</guilabel> page, double-click
 the regular expression or action that you want to edit or select it and 
-press the <guibutton>Edit Action</guibutton> button. An dialog will appear in which the 
+press the <guibutton>Edit Action</guibutton> button. A dialog will appear in which the 
 expression text can be edited as you wish.</para></listitem>
 </varlistentry>
 
