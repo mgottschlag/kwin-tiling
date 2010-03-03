@@ -42,7 +42,6 @@ BookmarksRunner::BookmarksRunner( QObject* parent, const QVariantList &args )
     m_icon = KIcon("bookmarks");
     m_bookmarkManager = KBookmarkManager::userBookmarksManager();
     m_browser = whichBrowser();
-    m_dbCacheFile = KStandardDirs::locateLocal("cache", "") + "bookmarkrunnerfirefoxdbfile.sqlite";
     addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds web browser bookmarks matching :q:.")));
     setDefaultSyntax(Plasma::RunnerSyntax(i18nc("list of all web browser bookmarks", "bookmarks"),
                                    i18n("List all web browser bookmarks")));
@@ -55,9 +54,11 @@ BookmarksRunner::BookmarksRunner( QObject* parent, const QVariantList &args )
 
 BookmarksRunner::~BookmarksRunner()
 {
-    QFile db_CacheFile(m_dbCacheFile);
-    if (db_CacheFile.exists()) {
-        kDebug() << "Cache file was removed: " << db_CacheFile.remove();
+    if (!m_dbCacheFile.isEmpty()) {
+        QFile db_CacheFile(m_dbCacheFile);
+        if (db_CacheFile.exists()) {
+            kDebug() << "Cache file was removed: " << db_CacheFile.remove();
+        }
     }
 }
 
@@ -115,6 +116,10 @@ void BookmarksRunner::prep()
     m_browser = whichBrowser();
     if (m_browser == Firefox) {
         if (m_db.isValid()) {
+            if (m_dbCacheFile.isEmpty()) {
+                m_dbCacheFile = KStandardDirs::locateLocal("cache", "") + "bookmarkrunnerfirefoxdbfile.sqlite";
+            }
+
             KIO::Job *job = KIO::file_copy(m_dbFile, m_dbCacheFile, -1,
                                            KIO::HideProgressInfo | KIO::Overwrite);
             connect(job, SIGNAL(result(KJob*)), this, SLOT(dbCopied(KJob*)));
@@ -170,14 +175,19 @@ void BookmarksRunner::match(Plasma::RunnerContext &context)
     if ((term.length() < 3) && (!context.singleRunnerQueryMode())) {
         return;
     }
+
     bool allBookmarks = term.compare(i18nc("list of all konqueror bookmarks", "bookmarks"),
                                      Qt::CaseInsensitive) == 0;
-    if (m_browser == Konqueror) {
-        matchKonquerorBookmarks(context, allBookmarks, term);
-    } else if (m_browser == Firefox) {
-        matchFirefoxBookmarks(context, allBookmarks, term);
-    } else if (m_browser == Opera) {
-        matchOperaBookmarks(context, allBookmarks, term);
+    switch (m_browser) {
+        case Firefox:
+            matchFirefoxBookmarks(context, allBookmarks, term);
+            break;
+        case Opera:
+            matchOperaBookmarks(context, allBookmarks, term);
+            break;
+        case Default:
+            matchKonquerorBookmarks(context, allBookmarks, term);
+            break;
     }
 }
 
@@ -433,8 +443,6 @@ BookmarksRunner::Browser BookmarksRunner::whichBrowser()
         return Firefox;
     } else if (exec.contains("opera", Qt::CaseInsensitive)) {
         return Opera;
-    } else if (exec.contains("konqueror", Qt::CaseInsensitive)) {
-        return Konqueror;
     } else {
         return Default;
     }

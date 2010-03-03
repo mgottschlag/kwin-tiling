@@ -52,10 +52,10 @@ class BookmarksRunner : public Plasma::AbstractRunner
           * -adding a statement to whichBrowser()
           * @see whichBrowser()
           */
-        enum Browser { Konqueror, ///< the browser is Konqueror
+        enum Browser {
                        Firefox, ///< the browser is Firefox
                        Opera, ///< the browser is Opera
-                       Default = Konqueror ///< Konqueror is default
+                       Default ///< KDE bookmarks
                      };
 
         /** @returns the favicon for the url */
