@@ -438,7 +438,7 @@ BookmarksRunner::Browser BookmarksRunner::whichBrowser()
 {
     KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), QLatin1String("General") );
     QString exec = config.readPathEntry( QLatin1String("BrowserApplication"), QString("") );
-    kDebug() << exec;
+    //kDebug() << exec;
     if (exec.contains("firefox", Qt::CaseInsensitive)) {
         return Firefox;
     } else if (exec.contains("opera", Qt::CaseInsensitive)) {
