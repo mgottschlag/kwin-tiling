@@ -41,7 +41,7 @@ class WebshortcutRunner : public Plasma::AbstractRunner {
         void loadSyntaxes();
 
     private Q_SLOTS:
-        void loadDelimiter();
+        void readFiltersConfig();
         void sycocaChanged(const QStringList &changes);
         void resetState();
 
@@ -53,6 +53,7 @@ class WebshortcutRunner : public Plasma::AbstractRunner {
         QString m_lastKey;
         QString m_lastServiceName;
         KDirWatch m_watch;
+        KService::List m_searchEngines; // Contains all currently enabled search engines.
 };
 
 K_EXPORT_PLASMA_RUNNER(webshortcuts, WebshortcutRunner)
