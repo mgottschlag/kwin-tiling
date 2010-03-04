@@ -413,16 +413,14 @@ Plasma::Location PanelView::location() const
 void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
 {
     m_visibilityMode = mode;
-    //life is vastly simpler if we ensure we're visible now
-    unhide();
 
     if (mode == LetWindowsCover) {
         KWindowSystem::setState(winId(), NET::KeepBelow);
     } else {
         KWindowSystem::clearState(winId(), NET::KeepBelow);
     }
-    //somehow setting state mucks up on-all-desktops
-    KWindowSystem::setOnAllDesktops(winId(), true);
+    //life is vastly simpler if we ensure we're visible now
+    unhide();
 
     disconnect(containment(), SIGNAL(activate()), this, SLOT(unhide()));
     if (mode == NormalPanel || mode == WindowsGoBelow) {
@@ -437,6 +435,7 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
 
     //if the user didn't cause this, hide again in a bit
     if ((mode == AutoHide || mode == LetWindowsCover) && !m_editting) {
+        m_mousePollTimer->stop();
         QTimer::singleShot(2000, this, SLOT(startAutoHide()));
     }
 }
@@ -1223,6 +1222,7 @@ void PanelView::unhide(bool destroyTrigger)
     }
     //FIXME investigate whether the mouse poll is really needed all the time or if leave events are
     //good enough
+    //welll, if we didn't create it here something would have to when a popup dies
     disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
     connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
     m_mousePollTimer->start(200);
