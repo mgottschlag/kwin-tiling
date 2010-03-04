@@ -49,7 +49,6 @@ private:
     DBusSystemTrayTaskPrivate *const d;
     friend class DBusSystemTrayTaskPrivate;
 
-    Q_PRIVATE_SLOT(d, void iconDestroyed(QObject *obj))
     Q_PRIVATE_SLOT(d, void refresh())
     Q_PRIVATE_SLOT(d, void syncStatus(QString status))
     Q_PRIVATE_SLOT(d, void refreshCallback(QDBusPendingCallWatcher *))

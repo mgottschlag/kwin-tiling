@@ -190,6 +190,8 @@ Q_SIGNALS:
 protected:
     Task(QObject *parent = 0);
 
+    QHash<Plasma::Applet *, QGraphicsWidget *> widgetsByHost() const;
+
     /**
      * Called when a new widget is required
      *

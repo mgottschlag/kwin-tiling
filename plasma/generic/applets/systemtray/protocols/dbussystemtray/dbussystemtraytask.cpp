@@ -92,7 +92,6 @@ public:
     QIcon attentionIcon;
     QMovie *movie;
     QTimer *blinkTimer;
-    QHash<Plasma::Applet *, Plasma::IconWidget *>iconWidgets;
     Plasma::ToolTipContent toolTipData;
     org::kde::StatusNotifierItem *statusNotifierItemInterface;
     bool blink : 1;
@@ -138,19 +137,12 @@ DBusSystemTrayTask::~DBusSystemTrayTask()
 
 QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
 {
-    if (d->iconWidgets.contains(host)) {
-        return d->iconWidgets[host];
-    }
-
     DBusSystemTrayWidget *iconWidget = new DBusSystemTrayWidget(host, d->statusNotifierItemInterface);
     iconWidget->show();
 
     iconWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     iconWidget->setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
     iconWidget->setPreferredSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
-
-    connect(iconWidget, SIGNAL(destroyed(QObject *)), this, SLOT(iconDestroyed(QObject *)));
-    d->iconWidgets[host] = iconWidget;
 
     //Delay because syncStatus needs that createWidget is done
     QTimer::singleShot(0, this, SLOT(refresh()));
@@ -183,20 +175,6 @@ QIcon DBusSystemTrayTask::icon() const
 }
 
 //DBusSystemTrayTaskPrivate
-
-void DBusSystemTrayTaskPrivate::iconDestroyed(QObject *obj)
-{
-    Plasma::IconWidget *iw = static_cast<Plasma::IconWidget *>(obj);
-
-    QHash<Plasma::Applet *, Plasma::IconWidget*>::const_iterator i = iconWidgets.constBegin();
-    while (i != iconWidgets.constEnd()) {
-        if (i.value() == iw) {
-            iconWidgets.remove(i.key());
-            return;
-        }
-        ++i;
-    }
-}
 
 void DBusSystemTrayTaskPrivate::refresh()
 {
@@ -281,7 +259,12 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
         }
 
         if (q->status() != Task::NeedsAttention) {
-            foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
+            foreach (QGraphicsWidget *widget, q->widgetsByHost()) {
+                Plasma::IconWidget *iconWidget = qobject_cast<Plasma::IconWidget *>(widget);
+                if (!iconWidget) {
+                    continue;
+                }
+
                 iconWidget->setIcon(icon);
                 //This hardcoded number is needed to support pixel perfection of icons coming from other environments, in kde actualsize will jusrt return our usual 22x22
                 QSize size = icon.actualSize(QSize(24, 24));
@@ -401,13 +384,10 @@ void DBusSystemTrayTaskPrivate::overlayIcon(QIcon *icon, QIcon *overlay)
 
 void DBusSystemTrayTaskPrivate::blinkAttention()
 {
-    if (blink) {
-        foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
-            iconWidget->setIcon(attentionIcon);
-        }
-    } else {
-        foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
-            iconWidget->setIcon(icon);
+    foreach (QGraphicsWidget *widget, q->widgetsByHost()) {
+        Plasma::IconWidget *iconWidget = qobject_cast<Plasma::IconWidget *>(widget);
+        if (iconWidget) {
+            iconWidget->setIcon(blink ? attentionIcon : icon);
         }
     }
     blink = !blink;
@@ -436,8 +416,11 @@ void DBusSystemTrayTaskPrivate::updateMovieFrame()
 {
     Q_ASSERT(movie);
     QPixmap pix = movie->currentPixmap();
-    foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
-        iconWidget->setIcon(pix);
+    foreach (QGraphicsWidget *widget, q->widgetsByHost()) {
+        Plasma::IconWidget *iconWidget = qobject_cast<Plasma::IconWidget *>(widget);
+        if (iconWidget) {
+            iconWidget->setIcon(pix);
+        }
     }
 }
 
@@ -447,8 +430,8 @@ void DBusSystemTrayTaskPrivate::updateMovieFrame()
 void DBusSystemTrayTaskPrivate::syncToolTip(const KDbusToolTipStruct &tipStruct)
 {
     if (tipStruct.title.isEmpty()) {
-        foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
-            Plasma::ToolTipManager::self()->clearContent(iconWidget);
+        foreach (QGraphicsWidget *widget, q->widgetsByHost()) {
+            Plasma::ToolTipManager::self()->clearContent(widget);
         }
         return;
     }
@@ -463,8 +446,8 @@ void DBusSystemTrayTaskPrivate::syncToolTip(const KDbusToolTipStruct &tipStruct)
     toolTipData.setMainText(tipStruct.title);
     toolTipData.setSubText(tipStruct.subTitle);
     toolTipData.setImage(toolTipIcon);
-    foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
-        Plasma::ToolTipManager::self()->setContent(iconWidget, toolTipData);
+    foreach (QGraphicsWidget *widget, q->widgetsByHost()) {
+        Plasma::ToolTipManager::self()->setContent(widget, toolTipData);
     }
 }
 
@@ -501,8 +484,11 @@ void DBusSystemTrayTaskPrivate::syncStatus(QString newStatus)
             blinkTimer = 0;
         }
 
-        foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
-            iconWidget->setIcon(icon);
+        foreach (QGraphicsWidget *widget, q->widgetsByHost()) {
+            Plasma::IconWidget *iconWidget = qobject_cast<Plasma::IconWidget *>(widget);
+            if (iconWidget) {
+                iconWidget->setIcon(icon);
+            }
         }
     }
 

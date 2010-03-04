@@ -88,6 +88,11 @@ bool Task::isEmbeddable(Plasma::Applet *host)
     return d->widgetsByHost.value(host) || isEmbeddable();
 }
 
+QHash<Plasma::Applet *, QGraphicsWidget *> Task::widgetsByHost() const
+{
+    return d->widgetsByHost;
+}
+
 void Task::widgetDeleted()
 {
     bool wasEmbeddable = isEmbeddable();

@@ -88,9 +88,9 @@ void DBusSystemTrayProtocol::cleanupTask(QString typeId)
     kDebug() << "task with typeId" << typeId << "removed";
     DBusSystemTrayTask *task = m_tasks.value(typeId);
     if (task) {
+        m_tasks.remove(typeId);
         emit task->destroyed(task);
         delete task;
-        m_tasks.remove(typeId);
     }
 }
 
