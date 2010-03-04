@@ -201,7 +201,6 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     KrunnerTabFilter *krunnerTabFilter = new KrunnerTabFilter(m_resultsScene, lineEdit, this);
     m_searchTerm->installEventFilter(krunnerTabFilter);
     m_singleRunnerSearchTerm->installEventFilter(krunnerTabFilter);
-    m_searchTerm->installEventFilter(this);
     lineEdit->installEventFilter(this);
 
     themeUpdated();
