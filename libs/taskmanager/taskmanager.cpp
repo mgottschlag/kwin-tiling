@@ -70,6 +70,12 @@ public:
     {
     }
 
+    void onAppExitCleanup()
+    {
+        tasksByWId.clear();
+        startups.clear();
+    }
+
     TaskPtr active;
     KStartupInfo* startupInfo;
     TaskDict tasksByWId;
@@ -93,6 +99,9 @@ TaskManager::TaskManager()
             this,       SLOT(currentDesktopChanged(int)));
     connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,unsigned int)),
             this,       SLOT(windowChanged(WId,unsigned int)));
+    if (QCoreApplication::instance()) {
+        connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(onAppExitCleanup()));
+    }
 
     // register existing windows
     const QList<WId> windows = KWindowSystem::windows();
