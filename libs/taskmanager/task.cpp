@@ -56,31 +56,26 @@ class Task::Private
 {
 public:
     Private(WId w)
-     : active(false),
-       win(w),
+     : win(w),
        frameId(w),
        info(KWindowSystem::windowInfo(w, windowInfoFlags, windowInfoFlags2)),
        lastWidth(0),
        lastHeight(0),
-       lastResize(false),
-       lastIcon(),
        cachedChanges(0),
-       cachedChangesTimerId(0)
+       cachedChangesTimerId(0),
+       active(false),
+       lastResize(false)
     {
     }
 
-    bool active;
     WId win;
     WId frameId;
-    QPixmap pixmap;
     KWindowInfo info;
     WindowList transients;
     WindowList transientsDemandingAttention;
 
     int lastWidth;
     int lastHeight;
-    bool lastResize;
-    QPixmap lastIcon;
     QIcon icon;
 
     QRect iconGeometry;
@@ -88,6 +83,10 @@ public:
     QTime lastUpdate;
     unsigned int cachedChanges;
     int cachedChangesTimerId;
+    QPixmap pixmap;
+    QPixmap lastIcon;
+    bool active : 1;
+    bool lastResize : 1;
 };
 
 Task::Task(WId w, QObject *parent, const char *name)
@@ -97,21 +96,7 @@ Task::Task(WId w, QObject *parent, const char *name)
     setObjectName(name);
 
     // try to load icon via net_wm
-    d->pixmap = KWindowSystem::icon(d->win, 16, 16, true);
-
-    // try to guess the icon from the classhint
-    if (d->pixmap.isNull()) {
-        KIconLoader::global()->loadIcon(className().toLower(),
-                                                    KIconLoader::Small,
-                                                    KIconLoader::Small,
-                                                    KIconLoader::DefaultState,
-                                                    QStringList(), 0, true);
-    }
-
-    // load the icon for X applications
-    if (d->pixmap.isNull()) {
-        d->pixmap = SmallIcon("xorg");
-    }
+    refreshIcon();
 }
 
 Task::~Task()
@@ -134,15 +119,19 @@ void Task::timerEvent(QTimerEvent *)
 void Task::refreshIcon()
 {
     // try to load icon via net_wm
+    if (!d->pixmap) {
+        return;
+    }
+
     d->pixmap = KWindowSystem::icon(d->win, 16, 16, true);
 
     // try to guess the icon from the classhint
     if (d->pixmap.isNull()) {
         d->pixmap = KIconLoader::global()->loadIcon(className().toLower(),
-                                                    KIconLoader::Small,
-                                                    KIconLoader::Small,
-                                                    KIconLoader::DefaultState,
-                                                    QStringList(), 0, true);
+                                                     KIconLoader::Small,
+                                                     KIconLoader::Small,
+                                                     KIconLoader::DefaultState,
+                                                     QStringList(), 0, true);
 
         // load the icon for X applications
         if (d->pixmap.isNull()) {
@@ -403,18 +392,19 @@ QString Task::classClass() const
 
 QPixmap Task::icon( int width, int height, bool allowResize )
 {
-  if ( (width == d->lastWidth)
-       && (height == d->lastHeight)
-       && (allowResize == d->lastResize )
-       && (!d->lastIcon.isNull()) )
-    return d->lastIcon;
+  if (width == d->lastWidth &&
+      height == d->lastHeight &&
+      allowResize == d->lastResize &&
+      !d->lastIcon.isNull()) {
+      return d->lastIcon;
+  }
 
   QPixmap newIcon = KWindowSystem::icon( d->win, width, height, allowResize );
-  if ( !newIcon.isNull() ) {
-    d->lastIcon = newIcon;
-    d->lastWidth = width;
-    d->lastHeight = height;
-    d->lastResize = allowResize;
+  if (!newIcon.isNull()) {
+      d->lastIcon = newIcon;
+      d->lastWidth = width;
+      d->lastHeight = height;
+      d->lastResize = allowResize;
   }
 
   return newIcon;
@@ -422,13 +412,12 @@ QPixmap Task::icon( int width, int height, bool allowResize )
 
 QIcon Task::icon()
 {
-    if ( !d->icon.isNull() )
-        return d->icon;
-
-    d->icon.addPixmap(KWindowSystem::icon( d->win, KIconLoader::SizeSmall, KIconLoader::SizeSmall, false));
-    d->icon.addPixmap(KWindowSystem::icon( d->win, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium, false));
-    d->icon.addPixmap(KWindowSystem::icon( d->win, KIconLoader::SizeMedium, KIconLoader::SizeMedium, false));
-    d->icon.addPixmap(KWindowSystem::icon( d->win, KIconLoader::SizeLarge, KIconLoader::SizeLarge, false));
+    if (d->icon.isNull()) {
+        d->icon.addPixmap(KWindowSystem::icon( d->win, KIconLoader::SizeSmall, KIconLoader::SizeSmall, false));
+        d->icon.addPixmap(KWindowSystem::icon( d->win, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium, false));
+        d->icon.addPixmap(KWindowSystem::icon( d->win, KIconLoader::SizeMedium, KIconLoader::SizeMedium, false));
+        d->icon.addPixmap(KWindowSystem::icon( d->win, KIconLoader::SizeLarge, KIconLoader::SizeLarge, false));
+    }
 
     return d->icon;
 }
@@ -451,10 +440,10 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
   switch( size ) {
   case KIconLoader::SizeSmall:
     {
-      pixmap = icon( 16, 16, true  );
+      pixmap = icon(16, 16, true);
 
       // Icon of last resort
-      if( pixmap.isNull() ) {
+      if (pixmap.isNull()) {
         pixmap = KIconLoader::global()->loadIcon( "xorg",
                                                   KIconLoader::NoGroup,
                                                   KIconLoader::SizeSmall );
@@ -825,6 +814,13 @@ void Task::publishIconGeometry(QRect rect)
         r.size.height = rect.height();
     }
     ni.setIconGeometry(r);
+}
+
+void Task::clearPixmapData()
+{
+    d->lastIcon = QPixmap();
+    d->pixmap = QPixmap();
+    d->icon = QIcon();
 }
 
 void Task::addMimeData(QMimeData *mimeData) const

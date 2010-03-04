@@ -76,6 +76,11 @@ public:
     void addWindowMatch(WId window);
     bool matchesWindow(WId window) const;
 
+    /**
+     * Releases pixmap objects; useful to clear out pixmap usage prior to application stoppage
+     */
+    void clearPixmapData();
+
 Q_SIGNALS:
     /**
      * Indicates that this startup has changed in some way.

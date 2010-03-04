@@ -371,6 +371,11 @@ public Q_SLOTS:
      */
     void publishIconGeometry(QRect);
 
+    /**
+     * Releases pixmap objects; useful to clear out pixmap usage prior to application stoppage
+     */
+    void clearPixmapData();
+
 Q_SIGNALS:
     /**
      * Indicates that this task has changed in some way.

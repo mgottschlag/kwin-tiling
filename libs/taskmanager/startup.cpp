@@ -105,6 +105,11 @@ bool Startup::matchesWindow(WId window) const
     return d->windowMatches.contains(window);
 }
 
+void Startup::clearPixmapData()
+{
+    d->icon = QIcon();
+}
+
 } // TaskManager namespace
 
 

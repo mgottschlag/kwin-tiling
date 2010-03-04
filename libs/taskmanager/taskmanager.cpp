@@ -72,8 +72,13 @@ public:
 
     void onAppExitCleanup()
     {
-        tasksByWId.clear();
-        startups.clear();
+        foreach (TaskPtr task, tasksByWId) {
+            task->clearPixmapData();
+        }
+
+        foreach (StartupPtr startup, startups) {
+            startup->clearPixmapData();
+        }
     }
 
     TaskPtr active;
