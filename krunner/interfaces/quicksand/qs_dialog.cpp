@@ -24,7 +24,6 @@
 #include <QDesktopWidget>
 #include <QLabel>
 #include <QTimer>
-#include <QToolButton>
 
 #include <KAction>
 #include <KStandardGuiItem>
@@ -35,6 +34,8 @@
 #include <Plasma/RunnerManager>
 #include <Plasma/Svg>
 #include <Plasma/Theme>
+
+#include "toolbutton.h"
 
 #include "qs_dialog.h"
 #include "qs_matchview.h"
@@ -48,7 +49,7 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
     QHBoxLayout *hLayout = new QHBoxLayout();
 
-    m_configButton = new QToolButton(this);
+    m_configButton = new ToolButton(this);
     m_configButton->setText(i18n("Settings"));
     m_configButton->setToolTip(i18n("Settings"));
     m_configButton->setIcon(m_iconSvg->pixmap("configure"));
@@ -59,7 +60,7 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
     QLabel *label = new QLabel(this);
     label->setText("<b>QuickSand</b>");
 
-    QToolButton *m_closeButton = new QToolButton(this);
+    QToolButton *m_closeButton = new ToolButton(this);
     KGuiItem guiItem = KStandardGuiItem::close();
     m_closeButton->setText(guiItem.text());
     m_closeButton->setToolTip(guiItem.text().remove('&'));
@@ -85,24 +86,6 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_actionView->setTitle(i18n("Actions"));
     m_actionView->setCountingActions(true);
     m_actionView->hide();
-
-    Plasma::Theme *theme = Plasma::Theme::defaultTheme();
-    QString stylesheet = QString("* {color: %1}").arg(theme->color(Plasma::Theme::TextColor).name());
-    setStyleSheet(stylesheet);
-    QColor buttonBgColor = theme->color(Plasma::Theme::BackgroundColor);
-    QString buttonStyleSheet = QString("QToolButton { border: 1px solid %4; border-radius: 4px; padding: 2px;"
-                                        " background-color: rgba(%1, %2, %3, %5); }")
-                                        .arg(buttonBgColor.red())
-                                        .arg(buttonBgColor.green())
-                                        .arg(buttonBgColor.blue())
-                                        .arg(theme->color(Plasma::Theme::HighlightColor).name(), "50%");
-    buttonBgColor = theme->color(Plasma::Theme::TextColor);
-    buttonStyleSheet += QString("QToolButton:hover { border: 2px solid %1; }")
-                            .arg(theme->color(Plasma::Theme::HighlightColor).name());
-    buttonStyleSheet += QString("QToolButton:focus { border: 2px solid %1; }")
-                            .arg(theme->color(Plasma::Theme::HighlightColor).name());
-    m_configButton->setStyleSheet(buttonStyleSheet);
-    m_closeButton->setStyleSheet(buttonStyleSheet);
 
     connect(m_runnerManager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
              this, SLOT(setMatches(const QList<Plasma::QueryMatch>&)));
