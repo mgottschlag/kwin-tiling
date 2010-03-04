@@ -56,6 +56,7 @@
 #include "interfaces/default/resultitem.h"
 #include "interfaces/default/krunnertabfilter.h"
 #include "interfaces/default/resultsview.h"
+#include "../../toolbutton.h"
 
 static const int MIN_WIDTH = 420;
 
@@ -75,7 +76,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     QHBoxLayout *bottomLayout = new QHBoxLayout(m_buttonContainer);
     bottomLayout->setMargin(0);
 
-    m_configButton = new QToolButton(m_buttonContainer);
+    m_configButton = new ToolButton(m_buttonContainer);
     m_configButton->setText(i18n("Settings"));
     m_configButton->setToolTip(i18n("Settings"));
     connect(m_configButton, SIGNAL(clicked()), SLOT(toggleConfigDialog()));
@@ -93,7 +94,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     */
 
     //Set up the system activity button, using the krunner global action, showing the global shortcut in the tooltip
-    m_activityButton = new QToolButton(m_buttonContainer);
+    m_activityButton = new ToolButton(m_buttonContainer);
     KRunnerApp *krunnerApp = KRunnerApp::self();
     QAction *showSystemActivityAction = krunnerApp->actionCollection()->action("Show System Activity");
     m_activityButton->setDefaultAction(showSystemActivityAction);
@@ -109,7 +110,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_singleRunnerDisplayName = new QLabel();
     bottomLayout->addWidget(m_singleRunnerDisplayName);
 
-    m_helpButton = new QToolButton(m_buttonContainer);
+    m_helpButton = new ToolButton(m_buttonContainer);
     m_helpButton->setText(i18n("Help"));
     m_helpButton->setToolTip(i18n("Information on using this application"));
     connect(m_helpButton, SIGNAL(clicked(bool)), SLOT(showHelp()));
@@ -119,7 +120,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     QSpacerItem* closeButtonSpacer = new QSpacerItem(0,0,QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
     bottomLayout->addSpacerItem(closeButtonSpacer);
 
-    m_closeButton = new QToolButton(m_buttonContainer);
+    m_closeButton = new ToolButton(m_buttonContainer);
     KGuiItem guiItem = KStandardGuiItem::close();
     m_closeButton->setText(guiItem.text());
     m_closeButton->setToolTip(guiItem.text().remove('&'));
@@ -350,28 +351,7 @@ void Interface::searchTermSetFocus()
 
 void Interface::themeUpdated()
 {
-    Plasma::Theme *theme = Plasma::Theme::defaultTheme();
-    QColor buttonBgColor = theme->color(Plasma::Theme::BackgroundColor);
-    QString buttonStyleSheet = QString("QToolButton { border: 1px solid %4; border-radius: 4px; padding: 0px;"
-                                       " background-color: rgba(%1, %2, %3, %5); }")
-                                      .arg(buttonBgColor.red())
-                                      .arg(buttonBgColor.green())
-                                      .arg(buttonBgColor.blue())
-                                      .arg(theme->color(Plasma::Theme::BackgroundColor).name(), "50%");
-    buttonBgColor = theme->color(Plasma::Theme::TextColor);
-    buttonStyleSheet += QString("QToolButton:hover { border: 1px solid %1; }")
-                               .arg(theme->color(Plasma::Theme::HighlightColor).name());
-    buttonStyleSheet += QString("QToolButton:focus { border: 1px solid %1; }")
-                               .arg(theme->color(Plasma::Theme::HighlightColor).name());
-    m_configButton->setStyleSheet(buttonStyleSheet);
-    m_activityButton->setStyleSheet(buttonStyleSheet);
-    m_helpButton->setStyleSheet(buttonStyleSheet);
-    m_closeButton->setStyleSheet(buttonStyleSheet);
-    //kDebug() << "stylesheet is" << buttonStyleSheet;
-
     //reset the icons
-    kDebug() << "pixmap size is" << m_iconSvg->pixmap("help").size() <<
-        m_iconSvg->pixmap("close").size() << m_iconSvg->pixmap("configure").size();
     m_helpButton->setIcon(m_iconSvg->pixmap("help"));
     m_configButton->setIcon(m_iconSvg->pixmap("configure"));
     m_activityButton->setIcon(m_iconSvg->pixmap("status"));
