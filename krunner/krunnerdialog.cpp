@@ -208,6 +208,7 @@ void KRunnerDialog::setFreeFloating(bool floating)
     m_floating = floating;
     m_screenPos.clear();
     m_oldScreen = -1;
+    unsetCursor();
 
     if (m_floating) {
         m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
@@ -520,13 +521,41 @@ void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
             move(newX, y());
             checkBorders(r);
         }
-    } else if (e->x() < qMax(5, m_leftBorderWidth) || e->x() > width() - qMax(5, m_rightBorderWidth)) {
-        setCursor(Qt::SizeHorCursor);
-    } else if ((e->y() > height() - qMax(5, m_bottomBorderHeight)) && (e->y() < height())) {
-        setCursor(Qt::SizeVerCursor);
     } else {
-        unsetCursor();
+        checkCursor(e->pos());
     }
+}
+
+void KRunnerDialog::timerEvent(QTimerEvent *event)
+{
+    killTimer(event->timerId());
+    if (checkCursor(mapFromGlobal(QCursor::pos()))) {
+        startTimer(100);
+    }
+}
+
+bool KRunnerDialog::checkCursor(const QPoint &pos)
+{
+    if (pos.x() < qMax(5, m_leftBorderWidth) || pos.x() > width() - qMax(5, m_rightBorderWidth)) {
+        if (cursor().shape() != Qt::SizeHorCursor) {
+            setCursor(Qt::SizeHorCursor);
+            startTimer(100);
+            return false;
+        }
+
+        return true;
+    } else if ((pos.y() > height() - qMax(5, m_bottomBorderHeight)) && (pos.y() < height())) {
+        if (cursor().shape() != Qt::SizeVerCursor) {
+            setCursor(Qt::SizeVerCursor);
+            startTimer(100);
+            return false;
+        }
+
+        return true;
+    }
+
+    unsetCursor();
+    return false;
 }
 
 #include "krunnerdialog.moc"

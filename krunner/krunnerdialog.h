@@ -70,6 +70,7 @@ class KRunnerDialog : public QWidget
 
     protected Q_SLOTS:
         void toggleConfigDialog();
+        void timerEvent(QTimerEvent *event);
 
         /**
          * React to configuration being done
@@ -95,6 +96,7 @@ class KRunnerDialog : public QWidget
 
     private:
         bool checkBorders(const QRect &screenGeom);
+        bool checkCursor(const QPoint &pos);
         void updateMask();
         void paintBackground(QPainter* painter, const QRect &exposedRect);
 
