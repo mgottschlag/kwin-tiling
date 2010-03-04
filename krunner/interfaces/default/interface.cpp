@@ -56,7 +56,7 @@
 #include "interfaces/default/resultitem.h"
 #include "interfaces/default/krunnertabfilter.h"
 #include "interfaces/default/resultsview.h"
-#include "../../toolbutton.h"
+#include "toolbutton.h"
 
 static const int MIN_WIDTH = 420;
 
