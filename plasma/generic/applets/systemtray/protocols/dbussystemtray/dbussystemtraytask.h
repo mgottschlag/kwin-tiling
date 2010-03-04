@@ -22,6 +22,10 @@
 #define DBUSSYSTEMTRAYTASK_H
 
 #include "../../core/task.h"
+#include "systemtraytypes.h"
+#include "statusnotifieritem_interface.h"
+
+class QDBusPendingCallWatcher;
 
 namespace SystemTray
 {
@@ -46,14 +50,35 @@ public:
     virtual QIcon icon() const;
 
 private:
-    DBusSystemTrayTaskPrivate *const d;
-    friend class DBusSystemTrayTaskPrivate;
+    QPixmap KDbusImageStructToPixmap(const KDbusImageStruct &image) const;
+    QIcon imageVectorToPixmap(const KDbusImageVector &vector) const;
+    void overlayIcon(QIcon *icon, QIcon *overlay);
 
-    Q_PRIVATE_SLOT(d, void refresh())
-    Q_PRIVATE_SLOT(d, void syncStatus(QString status))
-    Q_PRIVATE_SLOT(d, void refreshCallback(QDBusPendingCallWatcher *))
-    Q_PRIVATE_SLOT(d, void updateMovieFrame())
-    Q_PRIVATE_SLOT(d, void blinkAttention())
+    void syncToolTip();
+
+    //callbacks
+    void syncToolTip(const KDbusToolTipStruct &);
+    void syncMovie(const QString &);
+
+private Q_SLOTS:
+    void refresh();
+    void syncStatus(QString status);
+    void refreshCallback(QDBusPendingCallWatcher *);
+    void updateMovieFrame();
+    void blinkAttention();
+
+private:
+    QString m_typeId;
+    QString m_name;
+    QString m_title;
+    QIcon m_icon;
+    QIcon m_attentionIcon;
+    QMovie *m_movie;
+    QTimer *m_blinkTimer;
+    org::kde::StatusNotifierItem *m_statusNotifierItemInterface;
+    bool m_blink : 1;
+    bool m_valid : 1;
+    bool m_embeddable : 1;
 };
 
 }
