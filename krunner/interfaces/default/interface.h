@@ -56,6 +56,7 @@ class Interface : public KRunnerDialog
         ~Interface();
 
         void setConfigWidget(QWidget *w);
+        bool eventFilter(QObject *obj, QEvent *event);
 
     public Q_SLOTS:
         void display(const QString& term = QString());

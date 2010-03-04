@@ -44,6 +44,7 @@
 #include <KGlobalSettings>
 #include <KPushButton>
 #include <KTitleWidget>
+#include <KWindowSystem>
 
 #include <Plasma/AbstractRunner>
 #include <Plasma/RunnerManager>
@@ -199,6 +200,9 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
     KrunnerTabFilter *krunnerTabFilter = new KrunnerTabFilter(m_resultsScene, lineEdit, this);
     m_searchTerm->installEventFilter(krunnerTabFilter);
+    m_singleRunnerSearchTerm->installEventFilter(krunnerTabFilter);
+    m_searchTerm->installEventFilter(this);
+    lineEdit->installEventFilter(this);
 
     themeUpdated();
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
@@ -238,6 +242,19 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     connect(&m_delayedQueryTimer, SIGNAL(timeout()), this, SLOT(delayedQueryLaunch()));
 
     QTimer::singleShot(0, this, SLOT(resetInterface()));
+}
+
+bool Interface::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::MouseButtonPress) {
+        if (KWindowSystem::activeWindow() != winId()) {
+            // this overcomes problems with click-to-focus and being a Dock window
+            KWindowSystem::forceActiveWindow(winId());
+            searchTermSetFocus();
+        }
+    }
+
+    return KRunnerDialog::eventFilter(obj, event);
 }
 
 void Interface::saveDialogSize(KConfigGroup &group)
@@ -292,7 +309,7 @@ void Interface::cleanupAfterConfigWidget()
 {
     m_searchTerm->setEnabled(true);
     resetInterface();
-    m_searchTerm->setFocus();
+    searchTermSetFocus();
 }
 
 void Interface::resizeEvent(QResizeEvent *event)
