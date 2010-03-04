@@ -57,6 +57,7 @@ public:
     {
         setAttribute(Qt::WA_TranslucentBackground);
         KWindowSystem::setOnAllDesktops(winId(), true);
+        //FIXME redundant
         unsigned long state = NET::Sticky;
         KWindowSystem::setState(winId(), state);
         KWindowSystem::setType(winId(), NET::Dock);
@@ -429,6 +430,10 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
         KWindowSystem::clearState(winId(), NET::KeepBelow);
     }
 
+    //FIXME we should *always* disconnect it, just in case
+    //then only connect it if it's a hide-y panel.
+    //although destroying the unhide trigger... well.. wtf? we're almost guaranteed to be unhidden.
+    //perhaps try calling unhide instead. which will also handle the show.
     if (mode == NormalPanel || mode == WindowsGoBelow) {
         // we need to kill the input window if it exists!
         destroyUnhideTrigger();
@@ -445,6 +450,7 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
     }
 
     //kDebug() << "panel state set to" << state << NET::Sticky;
+    //FIXME nooo bad sticky
     KWindowSystem::setState(winId(), state);
     KWindowSystem::setOnAllDesktops(winId(), true);
 
@@ -904,8 +910,9 @@ void PanelView::edittingComplete()
 
     containment()->closeToolBox();
     updateStruts();
-    m_firstPaint = true; // triggers autohide
+    m_firstPaint = true; // triggers autohide FIXME does not! delete this var.
 
+    //FIXME no, you should autohide if it's any auohide mode and the mouse isn't on the panel.
     if (m_visibilityMode == LetWindowsCover) {
          startAutoHide();
     }
@@ -1221,6 +1228,8 @@ void PanelView::unhide(bool destroyTrigger)
         m_mousePollTimer = new QTimer(this);
     }
 
+    //FIXME investigate whether the mouse poll is really needed all the time or if leave events are
+    //good enough
     disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
     connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
     m_mousePollTimer->start(200);
@@ -1231,10 +1240,15 @@ void PanelView::unhide(bool destroyTrigger)
     if (m_visibilityMode == AutoHide || m_visibilityMode == LetWindowsCover) {
         // LetWindowsCover panels are always shown, so don't bother and prevent
         // some unsightly flickers
+        // FIXME well then that if-statement is wrong
+        // actually, we should only call this if the panel's not visible
         Plasma::WindowEffects::slideWindow(this, location());
         show();
     }
 
+    //FIXME why are we doing this here?
+    //is it something we have to do after show? or..?
+    //also, setting sticky is redundant.
     KWindowSystem::setOnAllDesktops(winId(), true);
     unsigned long state = NET::Sticky;
     KWindowSystem::setState(winId(), state);
@@ -1276,7 +1290,7 @@ void PanelView::startAutoHide()
 void PanelView::leaveEvent(QEvent *event)
 {
     if (m_visibilityMode == LetWindowsCover && m_triggerEntered) {
-        //kDebug() << "not creating!";
+        //this prevents crazy hide-unhide loops that can happen at times
         m_triggerEntered = false;
     } else if (containment() &&
                (m_visibilityMode == AutoHide || m_visibilityMode == LetWindowsCover) && !m_editting) {
