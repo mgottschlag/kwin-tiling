@@ -1157,8 +1157,7 @@ bool PanelView::hintOrUnhide(const QPoint &point, bool dueToDnd)
             m_mousePollTimer = new QTimer(this);
         }
 
-        disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(unhideHintMousePoll()));
-        connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(unhideHintMousePoll()));
+        connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(unhideHintMousePoll()), Qt::UniqueConnection);
         m_mousePollTimer->start(200);
     }
 

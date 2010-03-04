@@ -24,6 +24,8 @@
 #include <QToolButton>
 #include <QWeakPointer>
 
+#include "plasmagenericshell_export.h"
+
 class QPropertyAnimation;
 
 namespace Plasma
@@ -31,7 +33,7 @@ namespace Plasma
     class FrameSvg;
 }
 
-class ToolButton: public QToolButton
+class PLASMAGENERICSHELL_EXPORT ToolButton: public QToolButton
 {
     Q_OBJECT
     Q_PROPERTY(qreal alphaValue READ alphaValue WRITE setAlphaValue)

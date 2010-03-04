@@ -23,7 +23,6 @@ set(plasma_SRCS
     panelappletoverlay.cpp
     plasmaapp.cpp
     positioningruler.cpp
-    toolbutton.cpp
     ${wallpaper_SRCS}
 )
 

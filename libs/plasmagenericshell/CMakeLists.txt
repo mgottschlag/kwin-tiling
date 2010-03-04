@@ -17,6 +17,7 @@ set(plasmagenericshell_LIB_SRCS
     mouseplugins.cpp
     mousepluginwidget.cpp
     wallpaperpreview.cpp
+    toolbutton.cpp
     ${appletbrowserdialog_SRCS}
 )
 
