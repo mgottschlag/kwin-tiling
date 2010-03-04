@@ -20,15 +20,17 @@
 #ifndef KRUNNERCONFIG_H
 #define KRUNNERCONFIG_H
 
+
 #include <KTabWidget>
 
 #include "ui_interfaceOptions.h"
 
 class KRunnerDialog;
 
-class KPluginSelector;
 class QDialogButtonBox;
 class QTabWidget;
+
+class KPluginSelector;
 
 namespace Plasma {
     class RunnerManager;
@@ -45,7 +47,7 @@ Q_OBJECT
         void finished();
 
     private slots:
-        void save();
+        void save(QAbstractButton *pushed);
         void previewInterface();
         void setInterface(int type);
         void updateRunner(const QByteArray& runnerName);
@@ -58,6 +60,7 @@ Q_OBJECT
         KRunnerDialog *m_preview;
         KPluginSelector *m_sel;
         KTabWidget *m_tabWidget;
+        QDialogButtonBox *m_buttons;
         Plasma::RunnerManager *m_manager;
         Ui::InterfaceOptions m_uiOptions;
 };

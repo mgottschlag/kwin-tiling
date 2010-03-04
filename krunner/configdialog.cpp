@@ -81,14 +81,14 @@ KRunnerConfigWidget::KRunnerConfigWidget(Plasma::RunnerManager *manager, QWidget
     QList<KPluginInfo> runnerInfo = KPluginInfo::fromServices(offers);
     m_sel->addPlugins(runnerInfo, KPluginSelector::ReadConfigFile, i18n("Available Features"), QString(), KSharedConfig::openConfig("krunnerrc"));
 
-    QDialogButtonBox *buttons = new QDialogButtonBox(this);
-    buttons->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-    connect(buttons, SIGNAL(accepted()), this, SLOT(save()));
-    connect(buttons, SIGNAL(rejected()), this, SIGNAL(finished()));
+    m_buttons = new QDialogButtonBox(this);
+    m_buttons->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel);
+    connect(m_buttons, SIGNAL(clicked(QAbstractButton*)), this, SLOT(save(QAbstractButton*)));
+    connect(m_buttons, SIGNAL(rejected()), this, SIGNAL(finished()));
 
     QVBoxLayout *topLayout = new QVBoxLayout(this);
     topLayout->addWidget(m_tabWidget);
-    topLayout->addWidget(buttons);
+    topLayout->addWidget(m_buttons);
 }
 
 KRunnerConfigWidget::~KRunnerConfigWidget()
@@ -139,14 +139,19 @@ void KRunnerConfigWidget::updateRunner(const QByteArray &name)
     }
 }
 
-void KRunnerConfigWidget::save()
+void KRunnerConfigWidget::save(QAbstractButton *pushed)
 {
-    m_sel->save();
-    m_manager->reloadConfiguration();
-    KRunnerSettings::setInterface(m_interfaceType);
-    KRunnerSettings::setFreeFloating(m_uiOptions.freeFloatingButton->isChecked());
-    KRunnerSettings::self()->writeConfig();
-    emit finished();
+    if (m_buttons->buttonRole(pushed) == QDialogButtonBox::ApplyRole) {
+        m_sel->save();
+        m_manager->reloadConfiguration();
+        KRunnerSettings::setInterface(m_interfaceType);
+        KRunnerSettings::setFreeFloating(m_uiOptions.freeFloatingButton->isChecked());
+        KRunnerSettings::self()->writeConfig();
+
+        if (m_buttons->standardButton(pushed) == QDialogButtonBox::Ok) {
+            emit finished();
+        }
+    }
 }
 
 #include "configdialog.moc"
