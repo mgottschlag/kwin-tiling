@@ -156,7 +156,7 @@ void ItemView::setScrollPositionFromDragPosition(const QPointF &point)
 
     if (size().width() < contentsSize().width()) {
         qreal newXPos = xRatio * (size().width() - contentsSize().width());
-        newPos.setX(qBound(0.0, -newXPos, contentsSize().width() - viewportGeometry().width()));
+        newPos.setX(qBound(qreal(0.0), -newXPos, contentsSize().width() - viewportGeometry().width()));
     }
     if (size().height() < contentsSize().height()) {
         newPos.setY(-(yRatio * (size().height() - contentsSize().height())));
