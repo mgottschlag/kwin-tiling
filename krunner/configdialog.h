@@ -34,17 +34,18 @@ namespace Plasma {
     class RunnerManager;
 }
 
-class KRunnerConfigDialog : public KTabWidget
+class KRunnerConfigWidget : public QWidget
 {
 Q_OBJECT
     public:
-        KRunnerConfigDialog(Plasma::RunnerManager *manager, QWidget *parent = 0);
-        ~KRunnerConfigDialog();
+        KRunnerConfigWidget(Plasma::RunnerManager *manager, QWidget *parent = 0);
+        ~KRunnerConfigWidget();
 
-    public slots:
-        void accept();
+    Q_SIGNALS:
+        void finished();
 
     private slots:
+        void save();
         void previewInterface();
         void setInterface(int type);
         void updateRunner(const QByteArray& runnerName);
@@ -56,6 +57,7 @@ Q_OBJECT
         int m_interfaceType;
         KRunnerDialog *m_preview;
         KPluginSelector *m_sel;
+        KTabWidget *m_tabWidget;
         Plasma::RunnerManager *m_manager;
         Ui::InterfaceOptions m_uiOptions;
 };

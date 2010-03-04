@@ -84,6 +84,8 @@ class Interface : public KRunnerDialog
         void updateSystemActivityToolTip();
 
     private:
+        void saveDialogSize(KConfigGroup &group);
+        void restoreDialogSize(KConfigGroup &group);
         void centerOnScreen();
         void setStaticQueryMode(bool staticQuery);
         void resetResultsArea();

@@ -30,9 +30,9 @@ namespace Plasma
     class Svg;
 }
 
-class KRunnerConfigDialog;
+class KRunnerConfigWidget;
 
-class KRunnerDialog : public KDialog
+class KRunnerDialog : public QWidget
 {
     Q_OBJECT
 
@@ -59,6 +59,7 @@ class KRunnerDialog : public KDialog
         void mousePressEvent(QMouseEvent *event);
         void mouseReleaseEvent(QMouseEvent *event);
         void mouseMoveEvent(QMouseEvent *event);
+        void leaveEvent(QEvent *e);
         bool event(QEvent *event);
         void showEvent(QShowEvent *);
         void hideEvent(QHideEvent *);
@@ -68,8 +69,7 @@ class KRunnerDialog : public KDialog
         virtual void setStaticQueryMode(bool staticQuery);
 
     protected Q_SLOTS:
-        void slotButtonClicked(int button);
-        void showConfigDialog();
+        void toggleConfigDialog();
 
         /**
          * React to configuration being done
@@ -98,7 +98,7 @@ class KRunnerDialog : public KDialog
         void updateMask();
         void paintBackground(QPainter* painter, const QRect &exposedRect);
 
-        KRunnerConfigDialog *m_configDialog;
+        KRunnerConfigWidget *m_configWidget;
         Plasma::FrameSvg *m_background;
         QPixmap *m_cachedBackground;
         QHash<int, QPoint> m_screenPos;

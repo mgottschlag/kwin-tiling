@@ -68,19 +68,17 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_hideResultsTimer.setSingleShot(true);
     connect(&m_hideResultsTimer, SIGNAL(timeout()), this, SLOT(hideResultsArea()));
 
-    QWidget *w = mainWidget();
-    m_layout = new QVBoxLayout(w);
+    m_layout = new QVBoxLayout(this);
     m_layout->setMargin(0);
 
-    m_buttonContainer = new QWidget(w);
+    m_buttonContainer = new QWidget(this);
     QHBoxLayout *bottomLayout = new QHBoxLayout(m_buttonContainer);
     bottomLayout->setMargin(0);
 
     m_configButton = new QToolButton(m_buttonContainer);
     m_configButton->setText(i18n("Settings"));
     m_configButton->setToolTip(i18n("Settings"));
-    m_configButton->setIcon(m_iconSvg->pixmap("configure"));
-    connect(m_configButton, SIGNAL(clicked()), SLOT(showConfigDialog()));
+    connect(m_configButton, SIGNAL(clicked()), SLOT(toggleConfigDialog()));
     bottomLayout->addWidget( m_configButton );
 
     /*
@@ -102,7 +100,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
     updateSystemActivityToolTip();
     connect(showSystemActivityAction, SIGNAL(globalShortcutChanged(const QKeySequence &)), this, SLOT(updateSystemActivityToolTip()));
-    connect(showSystemActivityAction, SIGNAL(triggered(bool)), this, SLOT(close()));
+    connect(showSystemActivityAction, SIGNAL(triggered(bool)), this, SLOT(actionTriggered()));
     bottomLayout->addWidget(m_activityButton);
     //bottomLayout->addStretch(10);
 
@@ -114,7 +112,6 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_helpButton = new QToolButton(m_buttonContainer);
     m_helpButton->setText(i18n("Help"));
     m_helpButton->setToolTip(i18n("Information on using this application"));
-    m_helpButton->setIcon(m_iconSvg->pixmap("help"));
     connect(m_helpButton, SIGNAL(clicked(bool)), SLOT(showHelp()));
     connect(m_helpButton, SIGNAL(clicked(bool)), SLOT(configCompleted()));
     bottomLayout->addWidget(m_helpButton);
@@ -126,15 +123,14 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     KGuiItem guiItem = KStandardGuiItem::close();
     m_closeButton->setText(guiItem.text());
     m_closeButton->setToolTip(guiItem.text().remove('&'));
-    m_closeButton->setIcon(m_iconSvg->pixmap("close"));
 //    m_closeButton->setDefault(false);
 //    m_closeButton->setAutoDefault(false);
-    connect(m_closeButton, SIGNAL(clicked(bool)), SLOT(close()));
+    connect(m_closeButton, SIGNAL(clicked(bool)), SLOT(actionTriggered()));
     bottomLayout->addWidget(m_closeButton);
 
     m_layout->addWidget(m_buttonContainer);
 
-    m_searchTerm = new KHistoryComboBox(false, w);
+    m_searchTerm = new KHistoryComboBox(false, this);
     m_searchTerm->setPalette(QApplication::palette());
     m_searchTerm->setDuplicatesEnabled(false);
 
@@ -166,10 +162,10 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_completion->insertItems(pastQueryItems);
     bottomLayout->insertWidget(4, m_searchTerm, 10);
 
-    m_singleRunnerSearchTerm = new KLineEdit(w);
+    m_singleRunnerSearchTerm = new KLineEdit(this);
     bottomLayout->insertWidget(4, m_singleRunnerSearchTerm, 10 );
 
-    m_resultsContainer = new QWidget(w);
+    m_resultsContainer = new QWidget(this);
     QVBoxLayout* resultsLayout = new QVBoxLayout(m_resultsContainer);
     resultsLayout->setMargin(0);
 
@@ -206,7 +202,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     themeUpdated();
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
 
-    new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(close()));
+    new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(actionTriggered()));
 
     m_layout->setAlignment(Qt::AlignTop);
 
@@ -242,26 +238,47 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
     QTimer::singleShot(0, this, SLOT(resetInterface()));
 }
+
+void Interface::saveDialogSize(KConfigGroup &group)
+{
+    group.writeEntry("Size", size());
+}
+
+void Interface::restoreDialogSize(KConfigGroup &group)
+{
+    resize(group.readEntry("Size", size()));
+}
+
 void Interface::updateSystemActivityToolTip()
 {
     /* Set the tooltip for the Show System Activity button to include the global shortcut */
     KRunnerApp *krunnerApp = KRunnerApp::self();
     KAction *showSystemActivityAction = dynamic_cast<KAction *>(krunnerApp->actionCollection()->action("Show System Activity"));
-    if(!showSystemActivityAction)
-        return;
-
-    QString shortcut = showSystemActivityAction->globalShortcut().toString();
-    if(!shortcut.isEmpty())
-        m_activityButton->setToolTip( i18nc("tooltip, shortcut", "%1 (%2)", showSystemActivityAction->toolTip(), shortcut));
-    else
-        m_activityButton->setToolTip( showSystemActivityAction->toolTip() );
+    if (showSystemActivityAction) {
+        QString shortcut = showSystemActivityAction->globalShortcut().toString();
+        if (shortcut.isEmpty()) {
+            m_activityButton->setToolTip( showSystemActivityAction->toolTip() );
+        } else {
+            m_activityButton->setToolTip( i18nc("tooltip, shortcut", "%1 (%2)", showSystemActivityAction->toolTip(), shortcut));
+        }
+    }
 }
+
 void Interface::setConfigWidget(QWidget *w)
 {
+    //FIXME: would like to use kephal here, but it doesn't provide an availableGeometry call
+    const int screenId = qApp->desktop()->screenNumber(this); //Kephal::ScreenUtils::screenId(geometry().center());
+    const int maxHeight = qApp->desktop()->availableGeometry(screenId).height(); //Kephal::Screens::self()->screen(screenId)->geometry().height();
+
+    int left, top, right, bottom;
+    getContentsMargins(&left, &top, &right, &bottom);
+    const int padding = top + bottom + m_activityButton->height();
+    resize(width(), qMin(maxHeight, qMax(w->sizeHint().height() + padding, m_defaultSize.height())));
+
     m_resultsContainer->hide();
     m_searchTerm->setEnabled(false);
     m_layout->addWidget(w);
-    resize(m_defaultSize);
+
     connect(w, SIGNAL(destroyed(QObject*)), this, SLOT(configWidgetDestroyed()));
 }
 
@@ -335,16 +352,16 @@ void Interface::themeUpdated()
 {
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
     QColor buttonBgColor = theme->color(Plasma::Theme::BackgroundColor);
-    QString buttonStyleSheet = QString("QToolButton { border: 1px solid %4; border-radius: 4px; padding: 2px;"
+    QString buttonStyleSheet = QString("QToolButton { border: 1px solid %4; border-radius: 4px; padding: 0px;"
                                        " background-color: rgba(%1, %2, %3, %5); }")
                                       .arg(buttonBgColor.red())
                                       .arg(buttonBgColor.green())
                                       .arg(buttonBgColor.blue())
                                       .arg(theme->color(Plasma::Theme::BackgroundColor).name(), "50%");
     buttonBgColor = theme->color(Plasma::Theme::TextColor);
-    buttonStyleSheet += QString("QToolButton:hover { border: 2px solid %1; }")
+    buttonStyleSheet += QString("QToolButton:hover { border: 1px solid %1; }")
                                .arg(theme->color(Plasma::Theme::HighlightColor).name());
-    buttonStyleSheet += QString("QToolButton:focus { border: 2px solid %1; }")
+    buttonStyleSheet += QString("QToolButton:focus { border: 1px solid %1; }")
                                .arg(theme->color(Plasma::Theme::HighlightColor).name());
     m_configButton->setStyleSheet(buttonStyleSheet);
     m_activityButton->setStyleSheet(buttonStyleSheet);
@@ -353,6 +370,9 @@ void Interface::themeUpdated()
     //kDebug() << "stylesheet is" << buttonStyleSheet;
 
     //reset the icons
+    kDebug() << "pixmap size is" << m_iconSvg->pixmap("help").size() <<
+        m_iconSvg->pixmap("close").size() << m_iconSvg->pixmap("configure").size();
+    m_helpButton->setIcon(m_iconSvg->pixmap("help"));
     m_configButton->setIcon(m_iconSvg->pixmap("configure"));
     m_activityButton->setIcon(m_iconSvg->pixmap("status"));
     m_closeButton->setIcon(m_iconSvg->pixmap("close"));
@@ -474,16 +494,17 @@ void Interface::setStaticQueryMode(bool staticQuery)
 
 void Interface::hideEvent(QHideEvent *e)
 {
+        resetInterface();
     KRunnerDialog::hideEvent(e);
 
-    if (!m_running) {
-        resetInterface();
-    } else {
+        /*
+    if (m_running) {
         m_delayedRun = false;
         resetResultsArea();
         adjustSize();
-    }
-    e->accept();
+    } else {
+        resetInterface();
+    }*/
 }
 
 void Interface::run(ResultItem *item)
@@ -520,19 +541,19 @@ void Interface::run(ResultItem *item)
     }
 
     m_running = true;
+    resetInterface();
     close();
     m_resultsScene->run(item);
     m_running = false;
 
     //TODO: check if run is succesful before adding the term to history
     m_searchTerm->addToHistory(m_searchTerm->currentText().trimmed());
-    resetInterface();
 }
 
 void Interface::actionTriggered()
 {
-    close();
     resetInterface();
+    close();
 }
 
 
@@ -609,22 +630,15 @@ void Interface::matchCountChanged(int count)
 void Interface::hideResultsArea()
 {
     searchTermSetFocus();
-
     resetResultsArea();
-
     resize(qMax(minimumSizeHint().width(), m_defaultSize.width()), minimumSizeHint().height());
 }
 
 void Interface::resetResultsArea()
 {
-    setMinimumSize(QSize(MIN_WIDTH,0));
     m_resultsContainer->hide();
-
-    //This is a workaround for some Qt bug which is not fully understood; it seems that
-    //adding a qgv to a layout and then hiding it gives some issues with resizing
-    //Calling updateGeometry should not be necessary, but it probably triggers some updates which do the trick
-
-    mainWidget()->updateGeometry();
+    setMinimumSize(QSize(MIN_WIDTH, 0));
+    adjustSize();
 }
 
 #include "interface.moc"

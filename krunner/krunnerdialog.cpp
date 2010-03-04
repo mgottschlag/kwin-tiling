@@ -51,9 +51,9 @@
 #endif
 
 KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *parent, Qt::WindowFlags f)
-    : KDialog(parent, f),
+    : QWidget(parent, f),
       m_runnerManager(runnerManager),
-      m_configDialog(0),
+      m_configWidget(0),
       m_lastPressPos(-1),
       m_oldScreen(-1),
       m_floating(!KRunnerSettings::freeFloating()),
@@ -63,7 +63,7 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
 {
     setAttribute(Qt::WA_TranslucentBackground);
     setMouseTracking(true);
-    setButtons(0);
+    //setButtons(0);
     setWindowTitle(i18n("Run Command"));
     setWindowIcon(KIcon("system-run"));
 
@@ -73,7 +73,6 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
 
     m_iconSvg = new Plasma::Svg(this);
     m_iconSvg->setImagePath("widgets/configuration-icons");
-    m_iconSvg->setContainsMultipleImages(true);
 
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("dialogs/krunner");
@@ -95,13 +94,13 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
 
 KRunnerDialog::~KRunnerDialog()
 {
-    kDebug( )<< "!!!!!!!!!! deleting" << m_floating << m_screenPos.count();
+    //kDebug( )<< "!!!!!!!!!! deleting" << m_floating << m_screenPos.count();
     if (!m_floating) {
         KConfigGroup cg(KGlobal::config(), "EdgePositions");
         QHashIterator<int, QPoint> it(m_screenPos);
         while (it.hasNext()) {
             it.next();
-            kDebug() << "saving" << "Screen" + QString::number(it.key()) << it.value();
+            //kDebug() << "saving" << "Screen" + QString::number(it.key()) << it.value();
             cg.writeEntry("Screen" + QString::number(it.key()), it.value());
         }
     }
@@ -123,19 +122,18 @@ void KRunnerDialog::screenChanged(Kephal::Screen* screen)
 void KRunnerDialog::resetScreenPos()
 {
     if (!m_floating) {
-        QHashIterator<int, QPoint> it(m_screenPos);
+        QMutableHashIterator<int, QPoint> it(m_screenPos);
         QRect r = KWindowSystem::workArea();
         while (it.hasNext()) {
-            QPoint p = it.next().value();
-            if (r.left() < p.x()) {
+            QPoint &p = it.next().value();
+
+            if (r.left() > p.x()) {
                 p.setX(r.left());
-            } else if (r.right() > p.x() + width() - 1) {
+            } else if (r.right() < p.x() + width() - 1) {
                 p.setX(r.right() - width());
             }
 
-            if (r.top() > p.y()) {
-                p.setY(r.top());
-            }
+            p.setY(r.top());
         }
 
         m_oldScreen = -1;
@@ -187,7 +185,6 @@ void KRunnerDialog::positionOnScreen()
 
     if (m_floating) {
         KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
-        Plasma::WindowEffects::slideWindow(this, Plasma::Floating);
     } else {
         KWindowSystem::setOnAllDesktops(winId(), true);
         Plasma::WindowEffects::slideWindow(this, Plasma::TopEdge);
@@ -214,6 +211,7 @@ void KRunnerDialog::setFreeFloating(bool floating)
 
     if (m_floating) {
         m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+        KWindowSystem::setType(winId(), NET::Normal);
     } else {
         // load the positions for each screen from our config
         const int numScreens = Kephal::ScreenUtils::numScreens();
@@ -225,9 +223,10 @@ void KRunnerDialog::setFreeFloating(bool floating)
                 m_screenPos.insert(i, QPoint(p.x(), r.top()));
             }
         }
+        QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen > -1 ? m_oldScreen : 0);
+        checkBorders(r);
+        KWindowSystem::setType(winId(), NET::Dock);
     }
-
-    m_iconSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
 
     if (isVisible()) {
         positionOnScreen();
@@ -279,35 +278,40 @@ void KRunnerDialog::switchUser()
     }
 }
 
-void KRunnerDialog::showConfigDialog()
+void KRunnerDialog::toggleConfigDialog()
 {
-    if (!m_configDialog) {
-        m_configDialog = new KRunnerConfigDialog(m_runnerManager, this);
-        connect(this, SIGNAL(okClicked()), m_configDialog, SLOT(accept()));
-        setButtons(Ok | Cancel);
-        setConfigWidget(m_configDialog);
+    if (m_configWidget) {
+        delete m_configWidget;
+        m_configWidget = 0;
+    } else {
+        m_configWidget = new KRunnerConfigWidget(m_runnerManager, this);
+        connect(m_configWidget, SIGNAL(finished()), this, SLOT(configCompleted()));
+        setConfigWidget(m_configWidget);
     }
 }
 
 void KRunnerDialog::configCompleted()
 {
-    if (m_configDialog) {
-        disconnect(this, SIGNAL(finished()), this, SLOT(configCompleted()));
-        setButtons(0);
-        m_configDialog->deleteLater();
-        m_configDialog = 0;
+    if (m_configWidget) {
+        m_configWidget->deleteLater();
+        m_configWidget = 0;
     }
 }
 
 void KRunnerDialog::themeUpdated()
 {
-    int margin = marginHint();
-    const int topHeight = qMax(0, int(m_background->marginSize(Plasma::TopMargin)) - margin);
-    m_leftBorderWidth = qMax(0, int(m_background->marginSize(Plasma::LeftMargin)) - margin);
-    m_rightBorderWidth = qMax(0, int(m_background->marginSize(Plasma::RightMargin)) - margin);
-    m_bottomBorderHeight = qMax(0, int(m_background->marginSize(Plasma::BottomMargin)) - margin);
+    m_leftBorderWidth = qMax(0, int(m_background->marginSize(Plasma::LeftMargin)));
+    m_rightBorderWidth = qMax(0, int(m_background->marginSize(Plasma::RightMargin)));
+    m_bottomBorderHeight = qMax(0, int(m_background->marginSize(Plasma::BottomMargin)));
+    // the -2 in the non-floating case is not optimal, but it gives it a bit of a "more snug to the
+    // top" feel; best would be if we could tell exactly where the edge/shadow of the frame svg was
+    // but this works nicely
+    const int topHeight = m_floating ? qMax(0, int(m_background->marginSize(Plasma::TopMargin)))
+                                     : qMax(1, m_bottomBorderHeight - 2);
 
-    setContentsMargins(m_leftBorderWidth, topHeight, m_rightBorderWidth, m_bottomBorderHeight);
+    //kDebug() << m_leftBorderWidth<< topHeight<< m_rightBorderWidth<< m_bottomBorderHeight;
+    // the +1 gives us the extra mouseMoveEvent needed to always reset the resize cursor
+    setContentsMargins(m_leftBorderWidth + 1, topHeight, m_rightBorderWidth + 1, m_bottomBorderHeight + 1);
 }
 
 void KRunnerDialog::paintEvent(QPaintEvent *e)
@@ -328,7 +332,7 @@ bool KRunnerDialog::event(QEvent *event)
         p.fillRect(rect(), Qt::transparent);
     }
 
-    return KDialog::event(event);
+    return QWidget::event(event);
 }
 
 void KRunnerDialog::showEvent(QShowEvent *)
@@ -342,24 +346,11 @@ void KRunnerDialog::showEvent(QShowEvent *)
     m_runnerManager->setupMatchSession();
 }
 
-void KRunnerDialog::slotButtonClicked(int button)
-{
-    if (button == KDialog::Ok) {
-        if (m_configDialog) {
-            m_configDialog->accept();
-        }
-        configCompleted();
-    } else if (button == KDialog::Cancel) {
-        configCompleted();
-    } else {
-        KDialog::slotButtonClicked(button);
-    }
-}
-
-void KRunnerDialog::hideEvent(QHideEvent *event)
+void KRunnerDialog::hideEvent(QHideEvent *)
 {
     m_runnerManager->matchSessionComplete();
-    KDialog::hideEvent(event);
+    delete m_configWidget;
+    m_configWidget = 0;
 }
 
 void KRunnerDialog::updateMask()
@@ -407,8 +398,6 @@ void KRunnerDialog::resizeEvent(QResizeEvent *e)
     } else {
         updateMask();
     }
-
-    KDialog::resizeEvent(e);
 }
 
 void KRunnerDialog::mousePressEvent(QMouseEvent *e)
@@ -475,6 +464,11 @@ bool KRunnerDialog::checkBorders(const QRect &screenGeom)
     }
 
     return false;
+}
+
+void KRunnerDialog::leaveEvent(QEvent *)
+{
+    unsetCursor();
 }
 
 void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)

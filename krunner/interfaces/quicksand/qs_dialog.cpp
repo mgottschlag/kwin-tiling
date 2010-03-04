@@ -44,23 +44,22 @@
 QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
     : KRunnerDialog(runnerManager, parent)
 {
-    QWidget *w = mainWidget();
-    QVBoxLayout *layout = new QVBoxLayout(w);
+    QVBoxLayout *layout = new QVBoxLayout(this);
 
     QHBoxLayout *hLayout = new QHBoxLayout();
 
-    m_configButton = new QToolButton(w);
+    m_configButton = new QToolButton(this);
     m_configButton->setText(i18n("Settings"));
     m_configButton->setToolTip(i18n("Settings"));
     m_configButton->setIcon(m_iconSvg->pixmap("configure"));
-    connect(m_configButton, SIGNAL(clicked()), SLOT(showConfigDialog()));
+    connect(m_configButton, SIGNAL(clicked()), SLOT(toggleConfigDialog()));
 
-    m_singleRunnerIcon = new QLabel(w);
+    m_singleRunnerIcon = new QLabel(this);
 
-    QLabel *label = new QLabel(w);
+    QLabel *label = new QLabel(this);
     label->setText("<b>QuickSand</b>");
 
-    QToolButton *m_closeButton = new QToolButton(w);
+    QToolButton *m_closeButton = new QToolButton(this);
     KGuiItem guiItem = KStandardGuiItem::close();
     m_closeButton->setText(guiItem.text());
     m_closeButton->setToolTip(guiItem.text().remove('&'));
@@ -75,13 +74,13 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
     hLayout->addWidget(m_closeButton);
     layout->addLayout(hLayout);
 
-    m_matchView = new QuickSand::QsMatchView(w);
+    m_matchView = new QuickSand::QsMatchView(this);
     layout->addWidget(m_matchView);
     connect(m_matchView, SIGNAL(textChanged(const QString&)), m_matchView, SLOT(setTitle(const QString&)));
 
     m_currentMatch = 0;
 
-    m_actionView = new QuickSand::QsMatchView(w);
+    m_actionView = new QuickSand::QsMatchView(this);
     layout->addWidget(m_actionView);
     m_actionView->setTitle(i18n("Actions"));
     m_actionView->setCountingActions(true);
@@ -128,7 +127,7 @@ void QsDialog::clearHistory()
 void QsDialog::setConfigWidget(QWidget *w)
 {
     m_matchView->hide();
-    QVBoxLayout *layout = static_cast<QVBoxLayout*>(mainWidget()->layout());
+    QVBoxLayout *layout = static_cast<QVBoxLayout*>(this->layout());
     layout->addWidget(w);
     adjustSize();
     connect(w, SIGNAL(destroyed(QObject*)), this, SLOT(configWidgetDestroyed()));

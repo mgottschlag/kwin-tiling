@@ -20,6 +20,7 @@
 #include "configdialog.h"
 
 #include <QButtonGroup>
+#include <QDialogButtonBox>
 #include <QGroupBox>
 #include <QDialogButtonBox>
 #include <QPushButton>
@@ -41,15 +42,16 @@
 #include "krunnersettings.h"
 #include "interfaces/quicksand/qs_dialog.h"
 
-KRunnerConfigDialog::KRunnerConfigDialog(Plasma::RunnerManager *manager, QWidget *parent)
-    : KTabWidget(parent),
+KRunnerConfigWidget::KRunnerConfigWidget(Plasma::RunnerManager *manager, QWidget *parent)
+    : QWidget(parent),
       m_preview(0),
       m_manager(manager)
 {
-    m_sel = new KPluginSelector(this);
-    addTab(m_sel, i18n("Plugins"));
+    m_tabWidget = new KTabWidget(this);
+    m_sel = new KPluginSelector(m_tabWidget);
+    m_tabWidget->addTab(m_sel, i18n("Plugins"));
 
-    QWidget *m_generalSettings = new QWidget(this);
+    QWidget *m_generalSettings = new QWidget(m_tabWidget);
     //QVBoxLayout *genLayout = new QVBoxLayout(m_generalSettings);
 
     m_interfaceType = KRunnerSettings::interface();
@@ -71,16 +73,29 @@ KRunnerConfigDialog::KRunnerConfigDialog(Plasma::RunnerManager *manager, QWidget
 
     connect(m_uiOptions.previewButton, SIGNAL(clicked()), this, SLOT(previewInterface()));
 
-    addTab(m_generalSettings, i18n("User Interface"));
+    m_tabWidget->addTab(m_generalSettings, i18n("User Interface"));
 
     connect(m_sel, SIGNAL(configCommitted(const QByteArray&)), this, SLOT(updateRunner(const QByteArray&)));
 
     KService::List offers = KServiceTypeTrader::self()->query("Plasma/Runner");
     QList<KPluginInfo> runnerInfo = KPluginInfo::fromServices(offers);
     m_sel->addPlugins(runnerInfo, KPluginSelector::ReadConfigFile, i18n("Available Features"), QString(), KSharedConfig::openConfig("krunnerrc"));
+
+    QDialogButtonBox *buttons = new QDialogButtonBox(this);
+    buttons->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(buttons, SIGNAL(accepted()), this, SLOT(save()));
+    connect(buttons, SIGNAL(rejected()), this, SIGNAL(finished()));
+
+    QVBoxLayout *topLayout = new QVBoxLayout(this);
+    topLayout->addWidget(m_tabWidget);
+    topLayout->addWidget(buttons);
 }
 
-void KRunnerConfigDialog::syncPalette()
+KRunnerConfigWidget::~KRunnerConfigWidget()
+{
+}
+
+void KRunnerConfigWidget::syncPalette()
 {
     QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     QPalette p = palette();
@@ -94,7 +109,7 @@ void KRunnerConfigDialog::syncPalette()
     setPalette(p);
 }
 
-void KRunnerConfigDialog::previewInterface()
+void KRunnerConfigWidget::previewInterface()
 {
     delete m_preview;
     switch (m_interfaceType) {
@@ -110,12 +125,12 @@ void KRunnerConfigDialog::previewInterface()
     m_preview->show();
 }
 
-void KRunnerConfigDialog::setInterface(int type)
+void KRunnerConfigWidget::setInterface(int type)
 {
     m_interfaceType = type;
 }
 
-void KRunnerConfigDialog::updateRunner(const QByteArray &name)
+void KRunnerConfigWidget::updateRunner(const QByteArray &name)
 {
     Plasma::AbstractRunner *runner = m_manager->runner(name);
     //Update runner if runner is loaded
@@ -124,18 +139,14 @@ void KRunnerConfigDialog::updateRunner(const QByteArray &name)
     }
 }
 
-KRunnerConfigDialog::~KRunnerConfigDialog()
-{
-}
-
-void KRunnerConfigDialog::accept()
+void KRunnerConfigWidget::save()
 {
     m_sel->save();
     m_manager->reloadConfiguration();
     KRunnerSettings::setInterface(m_interfaceType);
     KRunnerSettings::setFreeFloating(m_uiOptions.freeFloatingButton->isChecked());
     KRunnerSettings::self()->writeConfig();
-    close();
+    emit finished();
 }
 
 #include "configdialog.moc"
