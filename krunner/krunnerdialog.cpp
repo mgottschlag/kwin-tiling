@@ -391,7 +391,7 @@ void KRunnerDialog::resizeEvent(QResizeEvent *e)
         if (borders & Plasma::FrameSvg::LeftBorder) {
             const int dx = x() + (e->oldSize().width() / 2) - (width() / 2);
             int dy = r.top();
-            move(qBound(r.left(), dx, r.right() - width()), dy);
+            move(qBound(r.left(), dx, r.right() - width() + 1), dy);
             m_screenPos.insert(m_oldScreen, pos());
             if (!checkBorders(r)) {
                 updateMask();
@@ -492,16 +492,15 @@ void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
                 QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
                 const int deltaX = (m_rightResize ? -1 : 1) * (m_lastPressPos - e->globalX());
                 int newWidth = width() + deltaX;
-                const Plasma::FrameSvg::EnabledBorders borders = m_background->enabledBorders();
                 // don't let it grow beyond the opposite screen edge
                 if (m_rightResize) {
-                    if (borders & Plasma::FrameSvg::LeftBorder) {
+                    if (m_leftBorderWidth > 0) {
                         newWidth += qMin(deltaX, x() - r.left());
                     }
-                } else if (borders & Plasma::FrameSvg::RightBorder) {
+                } else if (m_rightBorderWidth > 0) {
                     newWidth += qBound(0, deltaX, r.right() - (x() + width() - 1));
                 } else if (newWidth > minimumWidth() && newWidth < width()) {
-                    move(x() - deltaX, y());
+                    move(r.right() - newWidth + 1, y());
                 }
 
                 if (newWidth > minimumWidth()) {
@@ -511,7 +510,7 @@ void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
             }
         } else {
             QRect r = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
-            int newX = qBound(r.left(), x() - (m_lastPressPos - e->globalX()), r.right() - width());
+            int newX = qBound(r.left(), x() - (m_lastPressPos - e->globalX()), r.right() - width() + 1);
             if (abs(r.center().x() - (newX + (width() / 2))) < 20) {
                 newX = r.center().x() - (width() / 2);
             } else {
@@ -536,7 +535,9 @@ void KRunnerDialog::timerEvent(QTimerEvent *event)
 
 bool KRunnerDialog::checkCursor(const QPoint &pos)
 {
-    if (pos.x() < qMax(5, m_leftBorderWidth) || pos.x() > width() - qMax(5, m_rightBorderWidth)) {
+    //Plasma::FrameSvg borders = m_background->enabledBoders();
+    if ((m_leftBorderWidth > 0 && pos.x() < qMax(5, m_leftBorderWidth)) ||
+        (m_rightBorderWidth > 0 && pos.x() > width() - qMax(5, m_rightBorderWidth))) {
         if (cursor().shape() != Qt::SizeHorCursor) {
             setCursor(Qt::SizeHorCursor);
             startTimer(100);
