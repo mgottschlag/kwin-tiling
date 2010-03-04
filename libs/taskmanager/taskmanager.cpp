@@ -64,14 +64,22 @@ TaskManager* TaskManager::self()
 class TaskManager::Private
 {
 public:
-    Private()
-        : active(0),
-          startupInfo(0)
+    Private(TaskManager *manager)
+        : q(manager),
+          active(0),
+          startupInfo(0),
+          watcher(0)
     {
     }
 
     void onAppExitCleanup()
     {
+        q->disconnect(KWindowSystem::self(), 0, q, 0);
+        delete watcher;
+        watcher = 0;
+        delete startupInfo;
+        startupInfo = 0;
+
         foreach (TaskPtr task, tasksByWId) {
             task->clearPixmapData();
         }
@@ -81,8 +89,10 @@ public:
         }
     }
 
+    TaskManager *q;
     TaskPtr active;
     KStartupInfo* startupInfo;
+    KDirWatch *watcher;
     TaskDict tasksByWId;
     StartupList startups;
     WindowList skiptaskbarWindows;
@@ -91,7 +101,7 @@ public:
 
 TaskManager::TaskManager()
     : QObject(),
-      d(new Private)
+      d(new Private(this))
 {
     KGlobal::locale()->insertCatalog("libtaskmanager");
     connect(KWindowSystem::self(), SIGNAL(windowAdded(WId)),
@@ -120,11 +130,11 @@ TaskManager::TaskManager()
     WId win = KWindowSystem::activeWindow();
     activeWindowChanged(win);
 
-    KDirWatch *watcher = new KDirWatch(this);
-    watcher->addFile(KGlobal::dirs()->locateLocal("config", "klaunchrc"));
-    connect(watcher, SIGNAL(dirty(const QString&)), this, SLOT(configureStartup()));
-    connect(watcher, SIGNAL(created(const QString&)), this, SLOT(configureStartup()));
-    connect(watcher, SIGNAL(deleted(const QString&)), this, SLOT(configureStartup()));
+    d->watcher = new KDirWatch(this);
+    d->watcher->addFile(KGlobal::dirs()->locateLocal("config", "klaunchrc"));
+    connect(d->watcher, SIGNAL(dirty(const QString&)), this, SLOT(configureStartup()));
+    connect(d->watcher, SIGNAL(created(const QString&)), this, SLOT(configureStartup()));
+    connect(d->watcher, SIGNAL(deleted(const QString&)), this, SLOT(configureStartup()));
 
     configureStartup();
 }
