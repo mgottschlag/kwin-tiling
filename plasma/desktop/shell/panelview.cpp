@@ -413,7 +413,6 @@ Plasma::Location PanelView::location() const
 void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
 {
     m_visibilityMode = mode;
-    //    updatePanelGeometry();
     //life is vastly simpler if we ensure we're visible now
     unhide();
 
@@ -893,9 +892,8 @@ void PanelView::edittingComplete()
     updateStruts();
     m_firstPaint = true; // triggers autohide FIXME does not! delete this var.
 
-    //FIXME no, you should autohide if it's any auohide mode and the mouse isn't on the panel.
-    if (m_visibilityMode == LetWindowsCover) {
-         startAutoHide();
+    if (m_visibilityMode == LetWindowsCover || m_visibilityMode == AutoHide) {
+         hideMousePoll();
     }
 }
 
