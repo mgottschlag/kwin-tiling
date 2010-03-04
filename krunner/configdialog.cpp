@@ -141,14 +141,15 @@ void KRunnerConfigWidget::updateRunner(const QByteArray &name)
 
 void KRunnerConfigWidget::save(QAbstractButton *pushed)
 {
-    if (m_buttons->buttonRole(pushed) == QDialogButtonBox::ApplyRole) {
+    if (m_buttons->buttonRole(pushed) == QDialogButtonBox::ApplyRole ||
+        m_buttons->buttonRole(pushed) == QDialogButtonBox::AcceptRole) {
         m_sel->save();
         m_manager->reloadConfiguration();
         KRunnerSettings::setInterface(m_interfaceType);
         KRunnerSettings::setFreeFloating(m_uiOptions.freeFloatingButton->isChecked());
         KRunnerSettings::self()->writeConfig();
 
-        if (m_buttons->standardButton(pushed) == QDialogButtonBox::Ok) {
+        if (m_buttons->buttonRole(pushed) == QDialogButtonBox::AcceptRole) {
             emit finished();
         }
     }
