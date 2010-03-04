@@ -171,12 +171,6 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     QVBoxLayout* resultsLayout = new QVBoxLayout(m_resultsContainer);
     resultsLayout->setMargin(0);
 
-    m_dividerLine = new QWidget(m_resultsContainer);
-    m_dividerLine->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
-    m_dividerLine->setFixedHeight(1);
-    m_dividerLine->setAutoFillBackground(true);
-    resultsLayout->addWidget(m_dividerLine);
-
     m_resultsView = new ResultsView(m_resultsContainer);
 
     //kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize();
@@ -323,20 +317,9 @@ void Interface::resizeEvent(QResizeEvent *event)
         }
     }
 
-    Plasma::Theme *theme = Plasma::Theme::defaultTheme();
-    int gradientWidth = contentsRect().width() - KDialog::marginHint()*2;
-    QLinearGradient gr(0, 0, gradientWidth, 0);
-    gr.setColorAt(0, Qt::transparent);
-    gr.setColorAt(.35, theme->color(Plasma::Theme::TextColor));
-    gr.setColorAt(.65, theme->color(Plasma::Theme::TextColor));
-    gr.setColorAt(1, Qt::transparent);
-    {
-        QPalette p = palette();
-        p.setBrush(QPalette::Background, gr);
-        m_dividerLine->setPalette(p);
+    if (m_resultsContainer->isVisible()) {
+        m_resultsScene->resize(m_resultsView->width(), qMax(m_resultsView->height(), int(m_resultsScene->height())));
     }
-
-    m_resultsScene->resize(m_resultsView->width(), qMax(m_resultsView->height(), int(m_resultsScene->height())));
 
     KRunnerDialog::resizeEvent(event);
 }

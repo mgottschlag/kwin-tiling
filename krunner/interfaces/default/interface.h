@@ -105,7 +105,6 @@ class Interface : public KRunnerDialog
         KHistoryComboBox* m_searchTerm;
         KCompletion *m_completion;
         QGraphicsView *m_resultsView;
-        QWidget *m_dividerLine;
         ResultScene *m_resultsScene;
         QSize m_defaultSize;
         QLabel *m_singleRunnerIcon;
