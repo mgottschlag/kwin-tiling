@@ -1111,6 +1111,7 @@ void PanelView::resizeEvent(QResizeEvent *event)
     }
 }
 
+//FIXME that's a confusing function name
 void PanelView::hideMousePoll()
 {
     QPoint mousePos = QCursor::pos();
@@ -1120,6 +1121,7 @@ void PanelView::hideMousePoll()
     }
 }
 
+//FIXME that's a confusing function name
 void PanelView::unhideHintMousePoll()
 {
 #ifdef Q_WS_X11
@@ -1187,6 +1189,7 @@ bool PanelView::hintOrUnhide(const QPoint &point, bool dueToDnd)
 #endif
 }
 
+//FIXME that's a confusing function name
 void PanelView::unhintHide()
 {
     //kDebug() << "hide the glow";
@@ -1218,41 +1221,35 @@ bool PanelView::hasPopup()
 
 void PanelView::unhide(bool destroyTrigger)
 {
-    //kDebug() << destroyTrigger;
+    //kill the unhide stuff
     unhintHide();
     if (destroyTrigger) {
         destroyUnhideTrigger();
     }
 
+    //ensure it's visible
+    if (! isVisible()) {
+        Plasma::WindowEffects::slideWindow(this, location());
+        show();
+        KWindowSystem::setOnAllDesktops(winId(), true);
+    }
+
+    //non-hiding panels stop here
+    if (m_visibilityMode == NormalPanel || m_visibilityMode == WindowsGoBelow) {
+        return;
+    }
+
+    //set up the re-hiding stuff
     if (!m_mousePollTimer) {
         m_mousePollTimer = new QTimer(this);
     }
-
     //FIXME investigate whether the mouse poll is really needed all the time or if leave events are
     //good enough
     disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
     connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
     m_mousePollTimer->start(200);
 
-    QRect screenRect = Kephal::ScreenUtils::screenGeometry(screen());
-
-
-    if (m_visibilityMode == AutoHide || m_visibilityMode == LetWindowsCover) {
-        // LetWindowsCover panels are always shown, so don't bother and prevent
-        // some unsightly flickers
-        // FIXME well then that if-statement is wrong
-        // actually, we should only call this if the panel's not visible
-        Plasma::WindowEffects::slideWindow(this, location());
-        show();
-    }
-
-    //FIXME why are we doing this here?
-    //is it something we have to do after show? or..?
-    //also, setting sticky is redundant.
-    KWindowSystem::setOnAllDesktops(winId(), true);
-    unsigned long state = NET::Sticky;
-    KWindowSystem::setState(winId(), state);
-
+    //avoid hide-show loops
     if (m_visibilityMode == LetWindowsCover) {
         m_triggerEntered = true;
         KWindowSystem::raiseWindow(winId());
