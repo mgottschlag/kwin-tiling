@@ -228,6 +228,9 @@ void KRunnerDialog::setFreeFloating(bool floating)
         KWindowSystem::setType(winId(), NET::Dock);
     }
 
+    // recalc the contents margins
+    themeUpdated();
+
     if (isVisible()) {
         positionOnScreen();
     }
