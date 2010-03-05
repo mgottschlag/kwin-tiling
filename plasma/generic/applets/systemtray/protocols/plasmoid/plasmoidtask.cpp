@@ -65,7 +65,7 @@ public:
 };
 
 
-PlasmoidTask::PlasmoidTask(QString appletname, int id, QObject *parent, Plasma::Applet *host)
+PlasmoidTask::PlasmoidTask(const QString &appletname, int id, QObject *parent, Plasma::Applet *host)
     : Task(parent),
       d(new Private(appletname, id, this, host))
 {
@@ -91,6 +91,10 @@ bool PlasmoidTask::isValid() const
 
 QString PlasmoidTask::name() const
 {
+    if (d->applet) {
+        return d->applet->name();
+    }
+
     return d->name;
 }
 
