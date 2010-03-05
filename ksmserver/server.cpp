@@ -658,6 +658,8 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
         int i;
         while( (i = display.indexOf(':')) >= 0)
            display[i] = '_';
+        while( (i = display.indexOf('/')) >= 0)
+           display[i] = '_';
 
         fName += '_'+display.toLocal8Bit();
         FILE *f;
@@ -727,6 +729,8 @@ void KSMServer::cleanUp()
     display.replace(QRegExp("\\.[0-9]+$"), "");
     int i;
     while( (i = display.indexOf(':')) >= 0)
+         display[i] = '_';
+    while( (i = display.indexOf('/')) >= 0)
          display[i] = '_';
 
     fName += '_'+display.toLocal8Bit();

@@ -225,6 +225,8 @@ void propagateSessionManager()
     int i;
     while( (i = display.indexOf(':')) >= 0)
        display[i] = '_';
+    while( (i = display.indexOf('/')) >= 0)
+       display[i] = '_';
 
     fName += '_';
     fName += display.toLocal8Bit();
