@@ -50,7 +50,7 @@
 #include <kwindowsystem.h>
 #include <kdesktopfile.h>
 #include <kimagefilepreview.h>
-#include <knewstuff2/engine.h>
+#include <knewstuff3/downloaddialog.h>
 
 #include <stdlib.h>
 
@@ -1101,12 +1101,10 @@ void BGDialog::slotGetNewStuff()
    // We use the more complicated KNewStuff2 API here because these settings
    // might affect both kcmshell and kcontrol
 
-   KNS::Engine *engine = new KNS::Engine(this);
-   engine->init("background.knsrc");
+   KNS3::DownloadDialog dialog("background.knsrc", this);
+   dialog.exec();
    //FIXME (KNS2): monday change
    //engine->setTitle(i18n("Get New Wallpapers"));
-   engine->downloadDialogModal();
-   delete engine;
 
    // FIXME (KNS2): engine->download gives us meta infos, write those into
    // the .desktop files

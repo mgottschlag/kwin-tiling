@@ -30,7 +30,7 @@
 #include <KTar>
 #include <KUrlRequester>
 #include <KUrlRequesterDialog>
-#include <knewstuff2/engine.h>
+#include <knewstuff3/downloaddialog.h>
 #include <KDebug>
 #include <KIO/Job>
 #include <KIO/DeleteJob>
@@ -324,20 +324,19 @@ void KDMThemeWidget::removeSelectedThemes()
 
 void KDMThemeWidget::getNewStuff()
 {
-	KNS::Engine engine( this );
-	if (engine.init( "kdm.knsrc" )) {
-		KNS::Entry::List entries = engine.downloadDialogModal( this );
-		for (int i = 0; i < entries.size(); i ++) {
-			if (entries.at( i )->status() == KNS::Entry::Installed) {
-				if (!entries.at( i )->installedFiles().isEmpty()) {
-					QString name = entries.at( i )->installedFiles().at( 0 ).section( '/', -2, -2 );
-					insertTheme( themeDir + name );
-				}
-			} else if (entries.at( i )->status() == KNS::Entry::Deleted) {
-				if (!entries.at( i )->uninstalledFiles().isEmpty()) {
-					QString name = entries.at( i )->uninstalledFiles().at( 0 ).section( '/', -2, -2 );
-					removeTheme( themeDir + name );
-				}
+	KNS3::DownloadDialog dialog("kdm.knsrc", this);
+    dialog.exec();
+	KNS3::Entry::List entries = dialog.changedEntries();
+	for (int i = 0; i < entries.size(); i ++) {
+		if (entries.at( i ).status() == KNS3::Entry::Installed) {
+			if (!entries.at( i ).installedFiles().isEmpty()) {
+				QString name = entries.at( i ).installedFiles().at( 0 ).section( '/', -2, -2 );
+				insertTheme( themeDir + name );
+			}
+		} else if (entries.at( i ).status() == KNS3::Entry::Deleted) {
+			if (!entries.at( i ).uninstalledFiles().isEmpty()) {
+				QString name = entries.at( i ).uninstalledFiles().at( 0 ).section( '/', -2, -2 );
+				removeTheme( themeDir + name );
 			}
 		}
 	}
