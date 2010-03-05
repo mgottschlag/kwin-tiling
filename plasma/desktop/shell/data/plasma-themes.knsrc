@@ -1,5 +1,6 @@
-[KNewStuff2]
-ProvidersUrl=http://download.kde.org/khotnewstuff/plasmathemes-providers.xml
+[KNewStuff3]
+ProvidersUrl=http://download.kde.org/ocs/providers.xml
+Categories=Theme/Style for KDE 4.0
 StandardResource=tmp
 InstallationCommand=plasmapkg -t theme -i %f
 UninstallCommand=plasmapkg -t theme -r %f

@@ -44,7 +44,7 @@
 #include <KDebug>
 #include <KColorScheme>
 #include <KStandardDirs>
-#include <KNS/Engine>
+#include <knewstuff3/downloaddialog.h>
 
 #include <Plasma/FrameSvg>
 #include <Plasma/Theme>
@@ -722,23 +722,22 @@ void KCMStyle::setStyleDirty()
 
 void KCMStyle::getNewThemes()
 {
-	KNS::Engine engine(this);
-	if (engine.init("plasma-themes.knsrc")) {
-		KNS::Entry::List entries = engine.downloadDialogModal(this);
+    KNS3::DownloadDialog dialog("plasma-themes.knsrc", this);
+    dialog.exec();
+    KNS3::Entry::List entries = dialog.changedEntries();
 
-		if (entries.size() > 0) {
-			m_themeModel->reload();
+    if (entries.size() > 0) {
+        m_themeModel->reload();
 
-			QString themeName;
-			if (m_isNetbook) {
-				KConfigGroup cg(KSharedConfig::openConfig("plasmarc"), "Theme-plasma-netbook");
-				themeName = cg.readEntry("name", "air-netbook");
-			} else {
-				themeName = Plasma::Theme::defaultTheme()->themeName();
-			}
-			themeUi.m_theme->setCurrentIndex(m_themeModel->indexOf(themeName));
-		}
-	}
+        QString themeName;
+        if (m_isNetbook) {
+            KConfigGroup cg(KSharedConfig::openConfig("plasmarc"), "Theme-plasma-netbook");
+            themeName = cg.readEntry("name", "air-netbook");
+        } else {
+            themeName = Plasma::Theme::defaultTheme()->themeName();
+        }
+        themeUi.m_theme->setCurrentIndex(m_themeModel->indexOf(themeName));
+    }
 }
 
 void KCMStyle::loadDesktopTheme()
