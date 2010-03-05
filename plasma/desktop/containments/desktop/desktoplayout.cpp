@@ -371,10 +371,11 @@ void DesktopLayout::itemTransformed(QGraphicsWidget *layoutItem, ItemTransformTy
     items[itemKey].revertTransform = revertTransform;
 }
 
-void DesktopLayout::movementFinished(QGraphicsItem* item)
+void DesktopLayout::movementFinished()
 {
-    if (m_animatingItems.contains(item)) {
-        m_animatingItems.remove(item);
+    Plasma::Animation *anim = qobject_cast<Plasma::Animation *>(sender());
+    if (anim) {
+        m_animatingItems.remove(anim->targetWidget());
     }
 }
 

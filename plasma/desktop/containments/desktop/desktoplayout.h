@@ -123,7 +123,7 @@ public:
     void removeAt(int index);
 
 private slots:
-    void movementFinished(QGraphicsItem *);
+    void movementFinished();
 
 private:
 
