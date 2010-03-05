@@ -53,6 +53,19 @@
           </widget>
          </item>
          <item>
+          <widget class="KPushButton" name="schemeKnsUploadButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string>Share the selected scheme in the Internet</string>
+           </property>
+           <property name="text">
+            <string>&amp;Upload Scheme...</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="KPushButton" name="schemeImportButton">
            <property name="toolTip">
             <string>Import a color scheme from a file</string>
