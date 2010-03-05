@@ -240,9 +240,9 @@ void
 KdmItem::setWidgetAttribs( QWidget *widget )
 {
 	widget->setPalette( style.palette );
+	::setWidgetAttribs( widget, style, style.frame );
 	widget->installEventFilter( this );
 	updatePalette( myWidget );
-	::setWidgetAttribs( widget, style, style.frame );
 }
 
 void

@@ -61,6 +61,8 @@ protected:
 
 	virtual void doPlugActions( bool plug );
 
+	virtual void updatePalette( QWidget *w );
+
 	struct LabelStruct {
 		QString text;
 		bool isTimer;

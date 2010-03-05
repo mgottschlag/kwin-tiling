@@ -199,7 +199,7 @@ protected:
 
 	bool eventFilter( QObject *o, QEvent *e );
 	void setWidgetAttribs( QWidget * );
-	void updatePalette( QWidget *w );
+	virtual void updatePalette( QWidget *w );
 
 	void updateThisVisible();
 
