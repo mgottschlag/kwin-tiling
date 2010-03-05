@@ -386,6 +386,7 @@ void Notifications::createJobGroups()
         Plasma::ExtenderGroup *extenderGroup = new Plasma::ExtenderGroup(extender());
         extenderGroup->setName("jobGroup");
         initExtenderItem(extenderGroup);
+        extenderGroup->setAutoHide(true);
     }
 }
 
