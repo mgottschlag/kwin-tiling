@@ -35,151 +35,122 @@
 namespace SystemTray
 {
 
-class PlasmoidTask::Private
-{
-public:
-    Private(QString name, int appletId, PlasmoidTask *q, Plasma::Applet *parentApplet)
-        : q(q),
-          name(name),
-          id(appletId),
-          typeId(name),
-          applet(0),
-          host(parentApplet),
-          takenByParent(false)
-    {
-        if (!name.isEmpty()) {
-            setupApplet();
-        }
-    }
-
-    void setupApplet();
-
-    PlasmoidTask *q;
-    QString name;
-    int id;
-    QString typeId;
-    QIcon icon;
-    Plasma::Applet *applet;
-    Plasma::Applet *host;
-    bool takenByParent;
-};
-
-
 PlasmoidTask::PlasmoidTask(const QString &appletname, int id, QObject *parent, Plasma::Applet *host)
     : Task(parent),
-      d(new Private(appletname, id, this, host))
+      m_name(appletname),
+      m_typeId(appletname),
+      m_applet(0),
+      m_host(host),
+      m_takenByParent(false)
 {
+    setupApplet(appletname, id);
 }
 
 
 PlasmoidTask::~PlasmoidTask()
 {
-    emit taskDeleted(d->typeId);
-    delete d;
+    emit taskDeleted(m_typeId);
 }
 
 
 bool PlasmoidTask::isEmbeddable() const
 {
-    return d->applet != 0 && !d->takenByParent;
+    return m_applet && !m_takenByParent;
 }
 
 bool PlasmoidTask::isValid() const
 {
-    return !d->name.isEmpty();
+    return !m_name.isEmpty();
 }
 
 QString PlasmoidTask::name() const
 {
-    if (d->applet) {
-        return d->applet->name();
+    if (m_applet) {
+        return m_applet->name();
     }
 
-    return d->name;
+    return m_name;
 }
 
 
 QString PlasmoidTask::typeId() const
 {
-    return d->typeId;
+    return m_typeId;
 }
 
 
 QIcon PlasmoidTask::icon() const
 {
-    return d->icon;
+    return m_icon;
 }
 
 Plasma::Applet *PlasmoidTask::host() const
 {
-    return d->host;
+    return m_host;
 }
 
 QGraphicsWidget* PlasmoidTask::createWidget(Plasma::Applet *host)
 {
-    if (host != d->host || !d->applet) {
+    if (host != m_host || !m_applet) {
         return 0;
     }
 
-    d->takenByParent = true;
-    d->applet->setParent(host);
-    d->applet->setParentItem(host);
-    d->applet->init();
-    d->applet->updateConstraints(Plasma::StartupCompletedConstraint);
-    d->applet->flushPendingConstraintsEvents();
-    d->applet->updateConstraints(Plasma::AllConstraints);
-    d->applet->flushPendingConstraintsEvents();
+    m_takenByParent = true;
+    m_applet->setParent(host);
+    m_applet->setParentItem(host);
+    m_applet->init();
+    m_applet->updateConstraints(Plasma::StartupCompletedConstraint);
+    m_applet->flushPendingConstraintsEvents();
+    m_applet->updateConstraints(Plasma::AllConstraints);
+    m_applet->flushPendingConstraintsEvents();
 
     // make sure to record it in the configuration so that if we reload from the config,
     // this applet is remembered
     KConfigGroup dummy;
-    d->applet->save(dummy);
+    m_applet->save(dummy);
 
-    connect(d->applet, SIGNAL(newStatus(Plasma::ItemStatus)), this, SLOT(newAppletStatus(Plasma::ItemStatus)));
+    connect(m_applet, SIGNAL(newStatus(Plasma::ItemStatus)), this, SLOT(newAppletStatus(Plasma::ItemStatus)));
 
-    newAppletStatus(d->applet->status());
+    newAppletStatus(m_applet->status());
 
-    connect(d->applet, SIGNAL(configNeedsSaving()), host, SIGNAL(configNeedsSaving()));
-    connect(d->applet, SIGNAL(releaseVisualFocus()), host, SIGNAL(releaseVisualFocus()));
+    connect(m_applet, SIGNAL(configNeedsSaving()), host, SIGNAL(configNeedsSaving()));
+    connect(m_applet, SIGNAL(releaseVisualFocus()), host, SIGNAL(releaseVisualFocus()));
 
-    return static_cast<QGraphicsWidget*>(d->applet);
+    return static_cast<QGraphicsWidget*>(m_applet);
 }
 
 void PlasmoidTask::forwardConstraintsEvent(Plasma::Constraints constraints)
 {
-    if (d->applet) {
-        d->applet->updateConstraints(constraints);
-        d->applet->flushPendingConstraintsEvents();
+    if (m_applet) {
+        m_applet->updateConstraints(constraints);
+        m_applet->flushPendingConstraintsEvents();
     }
 }
 
-void PlasmoidTask::Private::setupApplet()
+void PlasmoidTask::setupApplet(const QString &plugin, int id)
 {
-    applet = Plasma::Applet::load(name, id);
+    m_applet = Plasma::Applet::load(plugin, id);
 
-    if (!applet) {
-        kDebug() << "Could not load applet" << name;
-        name.clear();
+    if (!m_applet) {
+        kDebug() << "Could not load applet" << plugin;
         return;
     }
 
-    icon = KIcon(applet->icon());
+    m_icon = KIcon(m_applet->icon());
 
-    //applet->setParent(q);
-    applet->setFlag(QGraphicsItem::ItemIsMovable, false);
+    m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
 
-    connect(applet, SIGNAL(destroyed(QObject*)), q, SLOT(appletDestroyed(QObject*)));
-    applet->setBackgroundHints(Plasma::Applet::NoBackground);
+    connect(m_applet, SIGNAL(destroyed(QObject*)), this, SLOT(appletDestroyed(QObject*)));
+    m_applet->setBackgroundHints(Plasma::Applet::NoBackground);
 
-
-    applet->setPreferredSize(KIconLoader::SizeSmallMedium+2, KIconLoader::SizeSmallMedium+2);
-    kDebug() << applet->name() << " Applet loaded";
+    m_applet->setPreferredSize(KIconLoader::SizeSmallMedium+2, KIconLoader::SizeSmallMedium+2);
+    kDebug() << m_applet->name() << " Applet loaded";
 }
 
 void PlasmoidTask::appletDestroyed(QObject *object)
 {
-    if (object == d->applet) {
-        emit taskDeleted(d->typeId);
+    if (object == m_applet) {
+        m_applet = 0;
         deleteLater();
     }
 }
@@ -188,7 +159,7 @@ void PlasmoidTask::newAppletStatus(Plasma::ItemStatus status)
 {
     switch (status) {
     case Plasma::PassiveStatus:
-       if (Plasma::PopupApplet *popupApplet = qobject_cast<Plasma::PopupApplet *>(d->applet)) {
+       if (Plasma::PopupApplet *popupApplet = qobject_cast<Plasma::PopupApplet *>(m_applet)) {
            popupApplet->hidePopup();
        }
        setStatus(Task::Passive);

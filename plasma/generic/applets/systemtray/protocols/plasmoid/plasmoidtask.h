@@ -59,8 +59,14 @@ protected:
     virtual QGraphicsWidget* createWidget(Plasma::Applet *applet);
 
 private:
-    class Private;
-    Private* const d;
+    void setupApplet(const QString &plugin, int id);
+
+    QString m_name;
+    QString m_typeId;
+    QIcon m_icon;
+    Plasma::Applet *m_applet;
+    Plasma::Applet *m_host;
+    bool m_takenByParent;
 };
 
 }

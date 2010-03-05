@@ -115,7 +115,7 @@ void PlasmoidProtocol::addApplet(const QString appletName, Plasma::Applet *paren
         return;
     }
 
-    m_tasks[appletName] = task;
+    m_tasks.insert(appletName, task);
     connect(task, SIGNAL(taskDeleted(QString)), this, SLOT(cleanupTask(QString)));
     emit taskCreated(task);
 }
