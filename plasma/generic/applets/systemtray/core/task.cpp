@@ -56,6 +56,10 @@ Task::Task(QObject *parent)
 Task::~Task()
 {
     emit destroyed(this);
+    foreach (QGraphicsWidget * widget, d->widgetsByHost) {
+        disconnect(widget, 0, this, 0);
+        delete widget;
+    }
     delete d;
 }
 
@@ -72,7 +76,6 @@ QGraphicsWidget* Task::widget(Plasma::Applet *host, bool createIfNecessary)
         if (widget) {
             d->widgetsByHost.insert(host, widget);
             connect(widget, SIGNAL(destroyed()), this, SLOT(widgetDeleted()));
-            connect(this, SIGNAL(destroyed()), widget, SLOT(deleteLater()));
         }
     }
 
