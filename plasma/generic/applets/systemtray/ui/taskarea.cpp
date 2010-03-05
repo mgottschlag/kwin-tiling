@@ -24,6 +24,7 @@
 #include <QtCore/QSet>
 #include <QtCore/QTimer>
 #include <QtGui/QApplication>
+#include <QtGui/QGraphicsGridLayout>
 #include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QWidget> // QWIDGETSIZE_MAX
 #include <QtGui/QGraphicsScene>
@@ -45,67 +46,72 @@
 namespace SystemTray
 {
 
-class HiddenTaskWidget : public QGraphicsWidget
+class HiddenTaskLabel : public Plasma::Label
 {
 public:
-    HiddenTaskWidget(QGraphicsWidget *taskIcon, const QString &label, QGraphicsItem *parent = 0)
-        : QGraphicsWidget(parent),
+    HiddenTaskLabel(QGraphicsWidget *taskIcon, const QString &label, QGraphicsWidget *parent = 0)
+        : Plasma::Label(parent),
           m_taskIcon(taskIcon)
     {
-        m_oldMaxHeight = taskIcon->maximumHeight();
-        m_oldMinWidth = taskIcon->minimumWidth();
-
-        taskIcon->setMaximumHeight(24);
+        taskIcon->setMaximumHeight(48);
+        taskIcon->setMinimumHeight(24);
         taskIcon->setMinimumWidth(24);
 
         setContentsMargins(0, 0, 0, 0);
-        setMinimumHeight(24);
-        setMaximumHeight(24);
 
-        QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(this);
-        lay->setContentsMargins(0, 0, 0, 0);
-        lay->addItem(m_taskIcon);
-
-        m_label = new Plasma::Label(this);
-        m_label->setWordWrap(false);
-        m_label->setText(label);
-        lay->addItem(m_label);
+        setWordWrap(false);
+        setText(label);
     }
 
 protected:
+    template<class T> void forwardEvent(T *event)
+    {
+        if (m_taskIcon) {
+            QGraphicsItem *item = scene()->itemAt(m_taskIcon.data()->scenePos() + QPoint(3, 3));
+            if (item) {
+                event->setPos(item->boundingRect().topLeft());
+                scene()->sendEvent(item, event);
+            }
+        }
+    }
+
     void mousePressEvent(QGraphicsSceneMouseEvent *event)
     {
-        QGraphicsItem *item = scene()->itemAt(m_taskIcon->scenePos()+QPoint(3,3));
-        event->setPos(QPoint(3,3));
-        scene()->sendEvent(item, event);
+        forwardEvent(event);
     }
 
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     {
-        QGraphicsItem *item = scene()->itemAt(m_taskIcon->scenePos()+QPoint(3,3));
-        event->setPos(QPoint(3,3));
-        scene()->sendEvent(item, event);
+        forwardEvent(event);
     }
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     {
-        QGraphicsItem *item = scene()->itemAt(m_taskIcon->scenePos()+QPoint(3,3));
-        event->setPos(QPoint(3,3));
-        scene()->sendEvent(item, event);
+        forwardEvent(event);
     }
 
     void wheelEvent(QGraphicsSceneWheelEvent *event)
     {
-        QGraphicsItem *item = scene()->itemAt(m_taskIcon->scenePos()+QPoint(3,3));
-        event->setPos(QPoint(3,3));
-        scene()->sendEvent(item, event);
+        forwardEvent(event);
+    }
+
+    void hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
+    {
+        forwardEvent(event);
+    }
+
+    void hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
+    {
+        forwardEvent(event);
+    }
+
+    void hoverMoveEvent ( QGraphicsSceneHoverEvent * event)
+    {
+        forwardEvent(event);
     }
 
 private:
-    QGraphicsWidget *m_taskIcon;
-    Plasma::Label *m_label;
-    qreal m_oldMaxHeight;
-    qreal m_oldMinWidth;
+    QWeakPointer<QGraphicsWidget> m_taskIcon;
 };
 
 class TaskArea::Private
@@ -132,12 +138,12 @@ public:
     CompactLayout *normalTasksLayout;
     CompactLayout *lastTasksLayout;
     QGraphicsWidget *hiddenTasksWidget;
-    QGraphicsLinearLayout *hiddenTasksLayout;
+    QGraphicsGridLayout *hiddenTasksLayout;
     Plasma::Location location;
 
     QSet<QString> hiddenTypes;
     QSet<QString> alwaysShownTypes;
-    QHash<SystemTray::Task*, HiddenTaskWidget *> hiddenTasks;
+    QHash<SystemTray::Task*, HiddenTaskLabel *> hiddenTasks;
     bool showingHidden : 1;
     bool hasHiddenTasks : 1;
     bool hasTasksThatCanHide : 1;
@@ -155,7 +161,7 @@ TaskArea::TaskArea(SystemTray::Applet *parent)
     d->topLayout->setContentsMargins(0, 0, 0, 0);
 
     d->hiddenTasksWidget = new QGraphicsWidget(this);
-    d->hiddenTasksLayout = new QGraphicsLinearLayout(Qt::Vertical, d->hiddenTasksWidget);
+    d->hiddenTasksLayout = new QGraphicsGridLayout(d->hiddenTasksWidget);
 }
 
 
@@ -286,28 +292,38 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
     // it may be autohidden for a while until the final one which will not be hidden
     // therefore we need a way to track the hidden tasks
     // if the task appears in the hidden list, then we know there are hidden tasks
-    if (task->hidden() != Task::NotHidden) {
-        if (!d->hiddenTasks.contains(task)) {
-            HiddenTaskWidget *hiddenWidget = new HiddenTaskWidget(widget, task->name(), d->hiddenTasksWidget);
-            d->hiddenTasks[task] = hiddenWidget;
-        }
-    } else {
+    if (task->hidden() == Task::NotHidden) {
         if (d->hiddenTasks.contains(task)) {
             widget->setParentItem(d->host);
             d->hiddenTasks.value(task)->deleteLater();
             d->hiddenTasks.remove(task);
         }
+    } else if (!d->hiddenTasks.contains(task)) {
+        HiddenTaskLabel *hiddenWidget = new HiddenTaskLabel(widget, task->name(), d->hiddenTasksWidget);
+        d->hiddenTasks.insert(task, hiddenWidget);
+
+        if (widget) {
+            const int row = d->hiddenTasksLayout->rowCount();
+            kDebug() << "putting" << task->name() << "into" << row;
+            d->hiddenTasksLayout->addItem(widget, row, 0);
+            d->hiddenTasksLayout->addItem(d->hiddenTasks.value(task), row, 1);
+        }
+
     }
 
     d->hasTasksThatCanHide = !d->hiddenTasks.isEmpty();
 
     if (widget) {
-        if (task->hidden() != Task::NotHidden) {
-            d->hiddenTasksLayout->addItem(d->hiddenTasks.value(task));
-        } else {
-            d->hiddenTasksLayout->removeItem(widget);
+        if (task->hidden() == Task::NotHidden) {
+            for (int i = 0; i < d->hiddenTasksLayout->count(); ++i) {
+                if (d->hiddenTasksLayout->itemAt(i) == widget) {
+                    d->hiddenTasksLayout->removeAt(i);
+                    break;
+                }
+            }
+
             switch (task->order()) {
-            case SystemTray::Task::First:
+                case SystemTray::Task::First:
                 if (d->firstTasksLayout->count() == 0) {
                     d->topLayout->addItem(d->firstTasksLayout);
                 }
@@ -326,6 +342,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
                 break;
             }
         }
+
         widget->show();
     }
 
@@ -341,7 +358,7 @@ void TaskArea::removeTask(Task *task)
 {
     d->hiddenTasks.remove(task);
     d->hasTasksThatCanHide = !d->hiddenTasks.isEmpty();
-    
+
     QGraphicsWidget *widget = task->widget(d->host, false);
 
     if (widget) {
@@ -366,12 +383,10 @@ void TaskArea::relayout()
 int TaskArea::leftEasement() const
 {
     if (d->unhider) {
-        const int cheat = 6;
-
         if (d->topLayout->orientation() == Qt::Horizontal) {
-            return d->unhider->size().width() / 2 + cheat;
+            return d->unhider->size().width();
         } else {
-            return d->unhider->size().height() / 2 + cheat;
+            return d->unhider->size().height();
         }
     }
 
