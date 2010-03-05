@@ -49,7 +49,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_P
 find_package(libgps)
 macro_log_feature(LIBGPS_FOUND "libgps" "GPS support for geolocation" "http://gpsd.berlios.de/" FALSE "" "")
 if(LIBGPS_FOUND)
-    include_directories(${LIBGPS_INCLUDES})
+    include_directories(${LIBGPS_INCLUDES} ${LIBGPS_INCLUDE_DIR})
     set(plasma_geolocation_gps_SRCS location_gps.cpp)
     kde4_add_plugin(plasma-geolocation-gps ${plasma_geolocation_gps_SRCS})
     target_link_libraries(plasma-geolocation-gps plasma-geolocation-interface ${LIBGPS_LIBRARIES})
