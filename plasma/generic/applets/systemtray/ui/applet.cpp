@@ -87,6 +87,7 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
     m_background->setImagePath("widgets/systemtray");
     m_background->setCacheAllRenderedFrames(true);
     m_taskArea = new TaskArea(this);
+    connect(m_taskArea, SIGNAL(toggleHiddenItems()), this, SLOT(togglePopup()));
 
     m_icons = new Plasma::Svg(this);
     m_icons->setImagePath("widgets/configuration-icons");
@@ -146,6 +147,11 @@ void Applet::init()
     configChanged();
 }
 
+QGraphicsWidget *Applet::graphicsWidget()
+{
+    return m_taskArea->hiddenTasksWidget();
+}
+
 void Applet::configChanged()
 {
     KConfigGroup cg = config();
@@ -181,6 +187,10 @@ void Applet::configChanged()
     setTaskAreaGeometry();
 }
 
+void Applet::popupEvent(bool show)
+{
+    m_taskArea->setShowHiddenItems(show);
+}
 
 void Applet::constraintsEvent(Plasma::Constraints constraints)
 {

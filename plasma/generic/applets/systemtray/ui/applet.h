@@ -53,6 +53,7 @@ public:
     ~Applet();
 
     void init();
+    QGraphicsWidget *graphicsWidget();
     void constraintsEvent(Plasma::Constraints constraints);
     void setGeometry(const QRectF &rect);
     Manager *manager() const;
@@ -62,6 +63,7 @@ protected:
     void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
     void createConfigurationInterface(KConfigDialog *parent);
     void configChanged();
+    void popupEvent(bool show);
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event) { Q_UNUSED(event); }
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) { Q_UNUSED(event); }
@@ -81,6 +83,7 @@ private:
     static int s_managerUsage;
 
     TaskArea *m_taskArea;
+    TaskArea *m_hiddenTaskArea;
     QWeakPointer<QWidget> m_notificationInterface;
     QWeakPointer<QWidget> m_autoHideInterface;
     QWeakPointer<QWidget> m_plasmoidTasksInterface;

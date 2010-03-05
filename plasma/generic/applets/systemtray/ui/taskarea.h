@@ -40,6 +40,7 @@ public:
     TaskArea(SystemTray::Applet *parent);
     ~TaskArea();
 
+    QGraphicsWidget *hiddenTasksWidget() const;
     void setHiddenTypes(const QStringList &hiddenTypes);
     QStringList hiddenTypes() const;
     void setAlwaysShownTypes(const QStringList &alwaysShownTypes);
@@ -52,6 +53,7 @@ public:
     int leftEasement() const;
     int rightEasement() const;
     void setOrientation(Qt::Orientation);
+    void setShowHiddenItems(bool show);
 
 public slots:
     void addTask(SystemTray::Task *task);
@@ -59,9 +61,9 @@ public slots:
 
 signals:
     void sizeHintChanged(Qt::SizeHint which);
+    void toggleHiddenItems();
 
 private slots:
-    void toggleHiddenItems();
     void relayout();
 
 private:
