@@ -145,7 +145,7 @@ private:
 #if defined(Q_WS_X11) || defined(Q_OS_TEMP)
     friend void qt_setCoords( QRect *r, int xp1, int yp1, int xp2, int yp2 );
 #endif
-#if defined(Q_OS_MAC)
+#if defined(Q_WS_MAC)
     QCOORD y1;
     QCOORD x1;
     QCOORD y2;
