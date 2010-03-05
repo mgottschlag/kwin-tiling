@@ -90,7 +90,7 @@ void DBusSystemTrayProtocol::cleanupTask(QString typeId)
     if (task) {
         m_tasks.remove(typeId);
         emit task->destroyed(task);
-        delete task;
+        task->deleteLater();
     }
 }
 
