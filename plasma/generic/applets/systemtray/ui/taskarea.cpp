@@ -214,11 +214,13 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
         //kDebug() << "checking" << task->name() << d->showingHidden;
         if (d->hiddenTypes.contains(task->typeId())) {
             task->setHidden(task->hidden()|Task::UserHidden);
+            d->hasHiddenTasks = true;
         } else if (d->alwaysShownTypes.contains(task->typeId())) {
             task->setHidden(task->hidden() & ~Task::UserHidden);
             task->setHidden(task->hidden() & ~Task::AutoHidden);
         } else if (task->hidden() & Task::UserHidden) {
             task->setHidden(task->hidden() & ~Task::UserHidden);
+            d->hasHiddenTasks = true;
         }
 
         addWidgetForTask(task);
