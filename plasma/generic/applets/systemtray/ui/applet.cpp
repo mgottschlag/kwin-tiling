@@ -211,6 +211,10 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
         m_taskArea->setOrientation(vertical ? Qt::Vertical : Qt::Horizontal);
     }
 
+    if (constraints & Plasma::LocationConstraint) {
+        m_taskArea->setLocation(location());
+    }
+
     if (constraints & Plasma::SizeConstraint) {
         checkSizes();
     }

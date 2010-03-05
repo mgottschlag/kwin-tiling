@@ -26,6 +26,8 @@
 
 #include "../protocols/dbussystemtray/dbussystemtraytask.h"
 
+#include <Plasma/Plasma>
+
 namespace SystemTray
 {
 
@@ -54,6 +56,7 @@ public:
     int rightEasement() const;
     void setOrientation(Qt::Orientation);
     void setShowHiddenItems(bool show);
+    void setLocation(Plasma::Location location);
 
 public slots:
     void addTask(SystemTray::Task *task);

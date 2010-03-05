@@ -118,6 +118,7 @@ public:
           firstTasksLayout(new CompactLayout()),
           normalTasksLayout(new CompactLayout()),
           lastTasksLayout(new CompactLayout()),
+          location(Plasma::BottomEdge),
           showingHidden(false),
           hasHiddenTasks(false),
           hasTasksThatCanHide(false)
@@ -132,6 +133,7 @@ public:
     CompactLayout *lastTasksLayout;
     QGraphicsWidget *hiddenTasksWidget;
     QGraphicsLinearLayout *hiddenTasksLayout;
+    Plasma::Location location;
 
     QSet<QString> hiddenTypes;
     QSet<QString> alwaysShownTypes;
@@ -470,13 +472,41 @@ void TaskArea::updateUnhideToolIcon()
     Plasma::ToolTipContent data;
     if (d->showingHidden) {
         data.setSubText(i18n("Hide icons"));
-        d->unhider->setSvg("widgets/systemtray", "expander-down");
     } else {
         data.setSubText(i18n("Show hidden icons"));
-        d->unhider->setSvg("widgets/systemtray", "expander-up");
     }
     Plasma::ToolTipManager::self()->setContent(d->unhider, data);
 
+    switch(d->location) {
+    case Plasma::LeftEdge:
+        if (d->showingHidden) {
+            d->unhider->setSvg("widgets/systemtray", "expander-left");
+        } else {
+            d->unhider->setSvg("widgets/systemtray", "expander-right");
+        }
+        break;
+    case Plasma::RightEdge:
+        if (d->showingHidden) {
+            d->unhider->setSvg("widgets/systemtray", "expander-right");
+        } else {
+            d->unhider->setSvg("widgets/systemtray", "expander-left");
+        }
+        break;
+    case Plasma::TopEdge:
+        if (d->showingHidden) {
+            d->unhider->setSvg("widgets/systemtray", "expander-up");
+        } else {
+            d->unhider->setSvg("widgets/systemtray", "expander-down");
+        }
+        break;
+    case Plasma::BottomEdge:
+    default:
+        if (d->showingHidden) {
+            d->unhider->setSvg("widgets/systemtray", "expander-down");
+        } else {
+            d->unhider->setSvg("widgets/systemtray", "expander-up");
+        }
+    }
 }
 
 void TaskArea::checkUnhideTool()
@@ -496,6 +526,12 @@ void TaskArea::checkUnhideTool()
 void TaskArea::setShowHiddenItems(bool show)
 {
     d->showingHidden = show;
+    updateUnhideToolIcon();
+}
+
+void TaskArea::setLocation(Plasma::Location location)
+{
+    d->location = location;
     updateUnhideToolIcon();
 }
 
