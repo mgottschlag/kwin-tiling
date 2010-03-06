@@ -414,7 +414,7 @@ void DBusSystemTrayTask::syncStatus(QString newStatus)
         } else if (!m_attentionIcon.isNull()) {
             if (!m_blinkTimer) {
                 m_blinkTimer = new QTimer(this);
-                connect(m_blinkTimer, SIGNAL(timeout()), this, SLOT(m_blinkAttention()));
+                connect(m_blinkTimer, SIGNAL(timeout()), this, SLOT(blinkAttention()));
                 m_blinkTimer->start(500);
             }
         }
