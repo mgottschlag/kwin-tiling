@@ -36,7 +36,7 @@ public:
 
 public slots:
     void configChanged();
-    
+
 private Q_SLOTS:
     void updateConfigurationMode(bool config);
     void toggleFixed(bool flexible);
