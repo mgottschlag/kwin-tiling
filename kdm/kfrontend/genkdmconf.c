@@ -2080,7 +2080,8 @@ upd_greeteruid( Entry *ce, Section *cs ATTR_UNUSED )
 	if (!(pw = getpwnam( ce->value ))) {
 		uid = strtol( ce->value, &ok, 10 );
 		if (*ok || !(pw = getpwuid( uid ))) {
-			if ((adduser = locate( "adduser" ))) { /* Debian-style */
+			if (!access( "/etc/debian_version", R_OK )
+			    && (adduser = locate( "adduser" ))) {
 				const char *args[] = {
 					adduser, "--system", "--group",
 					"--home", "/var", "--no-create-home",

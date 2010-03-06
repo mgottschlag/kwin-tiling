@@ -112,7 +112,7 @@ add_dependencies(kdmctl ConfigCi)
 install(TARGETS kdmctl ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 
-## use 'GENKDMCONF_FLAGS=... make install' to add flags to the config generation (try genkdmconf -h)
-#install(CODE "
-#exec_program(\"${CMAKE_CURRENT_BINARY_DIR}/genkdmconf\" ARGS --in \\\"\\\$DESTDIR${CONFIG_INSTALL_DIR}/kdm\\\" --no-in-notice --face-src \\\"${CMAKE_CURRENT_SOURCE_DIR}/pics\\\" \\\$GENKDMCONF_FLAGS)
-#")
+# use 'GENKDMCONF_FLAGS=... make install' to add flags to the config generation (try genkdmconf -h)
+install(CODE "
+exec_program(\"${CMAKE_CURRENT_BINARY_DIR}/genkdmconf\" ARGS --in \\\"\\\$DESTDIR${CONFIG_INSTALL_DIR}/kdm\\\" --no-in-notice --face-src \\\"${CMAKE_CURRENT_SOURCE_DIR}/pics\\\" \\\$GENKDMCONF_FLAGS)
+")
