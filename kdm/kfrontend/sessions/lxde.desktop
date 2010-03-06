@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=XSession
+Exec=startlxde
+TryExec=startlxde
+Name=LXDE
+Comment=Lightweight X11 desktop environment
