@@ -34,6 +34,7 @@
 #include <KIconLoader>
 
 #include <Plasma/IconWidget>
+#include <Plasma/ItemBackground>
 #include <Plasma/Label>
 #include <Plasma/ToolTipManager>
 
@@ -61,9 +62,37 @@ public:
 
         setWordWrap(false);
         setText(label);
+
+        if (s_itemBackgroundUsage == 0) {
+            scene()->addItem(s_itemBackground);
+            s_itemBackground->show();
+            takeItemBackgroundOwnership();
+        }
+        ++s_itemBackgroundUsage;
+    }
+
+    ~HiddenTaskLabel()
+    {
+        --s_itemBackgroundUsage;
+        if (!s_itemBackgroundUsage) {
+            delete s_itemBackground;
+        }
     }
 
 protected:
+    void takeItemBackgroundOwnership()
+    {
+        if (m_taskIcon) {
+            QRectF totalRect = geometry().united(m_taskIcon.data()->geometry());
+            totalRect.moveTopLeft(QPoint(0,0));
+            totalRect = m_taskIcon.data()->mapToScene(totalRect).boundingRect();
+            qreal left, top, right, bottom;
+            s_itemBackground->getContentsMargins(&left, &top, &right, &bottom);
+            totalRect.adjust(-left/2, -top/2, right/2, bottom/2);
+            s_itemBackground->setTarget(totalRect);
+        }
+    }
+
     template<class T> void forwardEvent(T *event)
     {
         if (m_taskIcon) {
@@ -97,6 +126,7 @@ protected:
 
     void hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
     {
+        takeItemBackgroundOwnership();
         forwardEvent(event);
     }
 
@@ -112,7 +142,13 @@ protected:
 
 private:
     QWeakPointer<QGraphicsWidget> m_taskIcon;
+
+    static Plasma::ItemBackground *s_itemBackground;
+    static int s_itemBackgroundUsage;
 };
+
+Plasma::ItemBackground *HiddenTaskLabel::s_itemBackground = new Plasma::ItemBackground;
+int HiddenTaskLabel::s_itemBackgroundUsage = 0;
 
 class TaskArea::Private
 {
@@ -307,6 +343,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
         if (widget) {
             const int row = d->hiddenTasksLayout->rowCount();
             kDebug() << "putting" << task->name() << "into" << row;
+            d->hiddenTasksLayout->setRowMinimumHeight(row, 24);
             d->hiddenTasksLayout->addItem(widget, row, 0);
             d->hiddenTasksLayout->addItem(d->hiddenTasks.value(task), row, 1);
         }
