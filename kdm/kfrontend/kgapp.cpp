@@ -322,6 +322,11 @@ main( int argc ATTR_UNUSED, char **argv )
 		setenv( "LANGUAGE", _language, 1 );
 	}
 
+	// fool qt's platform detection so it loads the kde platform plugin
+	setenv( "KDE_FULL_SESSION", "true", 1 );
+	setenv( "KDE_SESSION_VERSION", "4", 1 );
+	setenv( "DESKTOP_SESSION", "kde", 1 ); // for qt 4.6 only
+
 	static char *fakeArgv[] = { (char *)"kdmgreet", 0 };
 	static int fakeArgc = as(fakeArgv) - 1;
 
@@ -330,9 +335,9 @@ main( int argc ATTR_UNUSED, char **argv )
 	KCrash::setDrKonqiEnabled( true );
 	XSetIOErrorHandler( xIOErr );
 	KComponentData inst( fakeArgv[0] );
-	GreeterApp app( fakeArgc, fakeArgv );
 	foreach (const QString &dir, KGlobal::dirs()->resourceDirs( "qtplugins" ))
-		app.addLibraryPath( dir );
+		QCoreApplication::addLibraryPath( dir );
+	GreeterApp app( fakeArgc, fakeArgv );
 	initQAppConfig();
 	KGlobalSettings::self()->activate();
 
