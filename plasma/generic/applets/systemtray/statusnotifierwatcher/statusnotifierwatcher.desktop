@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Status Notifier Manager
+Name[de]=Statusbenachrichtigungs-Verwaltung
 Name[el]=Επόπτης κατάστασης ειδοποιήσεων
 Name[es]=Gestor del notificador del estado
 Name[nb]=Håndtering av statusvarsler
