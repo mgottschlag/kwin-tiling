@@ -29,6 +29,7 @@
 #include <KConfig>
 #include <KConfigGroup>
 #include <KGlobalSettings>
+#include <KShell>
 #include <KStandardDirs>
 #include <KOpenWithDialog>
 #include <KPropertiesDialog>
@@ -36,9 +37,9 @@
 #include <KMessageBox>
 #include <KAboutData>
 #include <KDebug>
-#include <KIO/NetAccess>                                                                         
-#include <KIO/DeleteJob>                                                                         
-#include <KIO/CopyJob> 
+#include <KIO/NetAccess>
+#include <KIO/DeleteJob>
+#include <KIO/CopyJob>
 
 #include <QDir>
 #include <QTreeWidget>
@@ -177,8 +178,19 @@ void Autostart::load()
             bool desktopFile = filename.endsWith(".desktop");
             if ( desktopFile )
             {
-                DesktopStartItem *item = new DesktopStartItem( fi.absoluteFilePath(), m_programItem, this );
                 KDesktopFile config(fi.absoluteFilePath());
+                //kDebug() << fi.absoluteFilePath() << "trying" << config.desktopGroup().readEntry("Exec");
+                QStringList commandLine = KShell::splitArgs(config.desktopGroup().readEntry("Exec"));
+                if (commandLine.isEmpty()) {
+                    continue;
+                }
+
+                const QString exe = commandLine.first();
+                if (exe.isEmpty() || KStandardDirs::findExe(exe).isEmpty()) {
+                    continue;
+                }
+
+                DesktopStartItem *item = new DesktopStartItem( fi.absoluteFilePath(), m_programItem, this );
                 const KConfigGroup grp = config.desktopGroup();
                 bool status = grp.readEntry("Hidden", false);
                 int indexPath = m_paths.indexOf((item->fileName().directory()+'/' ) );
