@@ -407,12 +407,8 @@ void TaskArea::removeTask(Task *task)
         d->firstTasksLayout->removeItem(widget);
         d->normalTasksLayout->removeItem(widget);
         d->lastTasksLayout->removeItem(widget);
-        relayout();
-    } else {
-        //this is not a typo
-        relayout();relayout();
-        QTimer::singleShot(200, this, SLOT(relayout()));
     }
+    relayout();
 }
 
 void TaskArea::relayout()
