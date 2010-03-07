@@ -444,17 +444,17 @@ void Applet::propogateSizeHintChange(Qt::SizeHint which)
 void Applet::createConfigurationInterface(KConfigDialog *parent)
 {
     if (!m_autoHideInterface) {
-        KConfigGroup globalCg = globalConfig();
+        KConfigGroup cg = config();
         m_notificationInterface = new QWidget();
         m_autoHideInterface = new QWidget();
         m_plasmoidTasksInterface = new QWidget();
 
         m_notificationUi.setupUi(m_notificationInterface.data());
 
-        m_notificationUi.showApplicationStatus->setChecked(globalCg.readEntry("ShowApplicationStatus", true));
-        m_notificationUi.showCommunications->setChecked(globalCg.readEntry("ShowCommunications", true));
-        m_notificationUi.showSystemServices->setChecked(globalCg.readEntry("ShowSystemServices", true));
-        m_notificationUi.showHardware->setChecked(globalCg.readEntry("ShowHardware", true));
+        m_notificationUi.showApplicationStatus->setChecked(cg.readEntry("ShowApplicationStatus", true));
+        m_notificationUi.showCommunications->setChecked(cg.readEntry("ShowCommunications", true));
+        m_notificationUi.showSystemServices->setChecked(cg.readEntry("ShowSystemServices", true));
+        m_notificationUi.showHardware->setChecked(cg.readEntry("ShowHardware", true));
 
         m_autoHideUi.setupUi(m_autoHideInterface.data());
 
@@ -562,11 +562,10 @@ void Applet::configAccepted()
     cg.writeEntry("hidden", hiddenTypes);
     cg.writeEntry("alwaysShown", alwaysShownTypes);
 
-    KConfigGroup globalCg = globalConfig();
-    globalCg.writeEntry("ShowApplicationStatus", m_notificationUi.showApplicationStatus->isChecked());
-    globalCg.writeEntry("ShowCommunications", m_notificationUi.showCommunications->isChecked());
-    globalCg.writeEntry("ShowSystemServices", m_notificationUi.showSystemServices->isChecked());
-    globalCg.writeEntry("ShowHardware", m_notificationUi.showHardware->isChecked());
+    cg.writeEntry("ShowApplicationStatus", m_notificationUi.showApplicationStatus->isChecked());
+    cg.writeEntry("ShowCommunications", m_notificationUi.showCommunications->isChecked());
+    cg.writeEntry("ShowSystemServices", m_notificationUi.showSystemServices->isChecked());
+    cg.writeEntry("ShowHardware", m_notificationUi.showHardware->isChecked());
 
     QStringList applets = s_manager->applets(this);
     for (int i = 0; i < m_plasmoidTasksUi.applets->count(); ++i) {
