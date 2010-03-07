@@ -409,7 +409,8 @@ uint SaverEngine::Inhibit(const QString &/*application_name*/, const QString &/*
     sr.type = ScreenSaverRequest::Inhibit;
     m_requests.append( sr );
     m_nr_inhibited++;
-    enable( false );
+    if (KScreenSaverSettings::screenSaverEnabled())
+        enable( false );
     return sr.cookie;
 }
 
@@ -421,7 +422,8 @@ void SaverEngine::UnInhibit(uint cookie)
         if ( it.next().cookie == cookie ) {
             it.remove();
             if ( !--m_nr_inhibited )
-                enable( true );
+                if (KScreenSaverSettings::screenSaverEnabled())
+                    enable( true );
         }
     }
 }
