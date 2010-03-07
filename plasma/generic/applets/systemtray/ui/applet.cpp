@@ -335,6 +335,7 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
 
     if (m_taskArea->leftEasement() > 0) {
         Plasma::FrameSvg::EnabledBorders borders = Plasma::FrameSvg::AllBorders;
+        Plasma::FrameSvg::EnabledBorders oldBorders = m_background->enabledBorders();
 
         m_background->setElementPrefix(QString());
 
@@ -368,7 +369,7 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
         m_background->resizeFrame(iconRect.size());
         m_background->paintFrame(painter, iconRect.topLeft());
 
-        m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+        m_background->setEnabledBorders(oldBorders);
     }
 
     QRect normalRect = rect().toRect();
