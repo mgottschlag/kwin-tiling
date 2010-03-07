@@ -405,7 +405,9 @@ void Interface::resetInterface()
     m_delayedRun = false;
     m_searchTerm->setCurrentItem(QString(), true, 0);
     m_singleRunnerSearchTerm->clear();
-    m_resultsScene->clearQuery();
+    if (!m_running) {
+        m_resultsScene->clearQuery();
+    }
     resetResultsArea();
     resize(qMax(minimumSizeHint().width(), m_defaultSize.width()), minimumSizeHint().height());
 }
