@@ -47,6 +47,16 @@
 namespace SystemTray
 {
 
+struct ItemBackgroundStore
+{
+    ItemBackgroundStore() : useCount(0) {}
+    int useCount;
+    Plasma::ItemBackground itemBackground;
+};
+
+K_GLOBAL_STATIC(ItemBackgroundStore, s_bgStore)
+
+
 class HiddenTaskLabel : public Plasma::Label
 {
 public:
@@ -63,20 +73,17 @@ public:
         setWordWrap(false);
         setText(label);
 
-        if (s_itemBackgroundUsage == 0) {
-            scene()->addItem(s_itemBackground);
-            s_itemBackground->show();
+        if (s_bgStore->useCount == 0) {
+            scene()->addItem(&s_bgStore->itemBackground);
+            s_bgStore->itemBackground.show();
             takeItemBackgroundOwnership();
         }
-        ++s_itemBackgroundUsage;
+        s_bgStore->useCount++;
     }
 
     ~HiddenTaskLabel()
     {
-        --s_itemBackgroundUsage;
-        if (!s_itemBackgroundUsage) {
-            delete s_itemBackground;
-        }
+        s_bgStore->useCount--;
     }
 
 protected:
@@ -87,9 +94,9 @@ protected:
             totalRect.moveTopLeft(QPoint(0,0));
             totalRect = m_taskIcon.data()->mapToScene(totalRect).boundingRect();
             qreal left, top, right, bottom;
-            s_itemBackground->getContentsMargins(&left, &top, &right, &bottom);
+            s_bgStore->itemBackground.getContentsMargins(&left, &top, &right, &bottom);
             totalRect.adjust(-left/2, -top/2, right/2, bottom/2);
-            s_itemBackground->setTarget(totalRect);
+            s_bgStore->itemBackground.setTarget(totalRect);
         }
     }
 
@@ -142,13 +149,8 @@ protected:
 
 private:
     QWeakPointer<QGraphicsWidget> m_taskIcon;
-
-    static Plasma::ItemBackground *s_itemBackground;
-    static int s_itemBackgroundUsage;
 };
 
-Plasma::ItemBackground *HiddenTaskLabel::s_itemBackground = new Plasma::ItemBackground;
-int HiddenTaskLabel::s_itemBackgroundUsage = 0;
 
 class TaskArea::Private
 {
