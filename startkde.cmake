@@ -40,14 +40,10 @@ unset DYLD_FORCE_FLAT_NAMESPACE
 # -- this is for trunk only, we remove it for releases
 if [ "x$MALLOC_CHECK_" = "x" ] && [ -x /lib/libc.so.6 ]; then
     # Extract the first two components of the version from the output.
-    glibc_version=$(LC_ALL=C /lib/libc.so.6 | head -1 | sed -e 's/[^0-9]*\([0-9]\.[0-9]\+\).*/\1/')
+    glibc_version=$(LC_ALL=C /lib/libc.so.6 | sed -e 's/[^0-9]*\([0-9]\.[0-9]\+\).*/\1/;s/\.\([0-9]\)$/.0\1/;q')
 
     MALLOC_CHECK_=2 # Default to 2 unless glibc 2.9 or higher.
-
-    # POSIX test or sh can't do the string compare, use perl
-    # The s/// is to make 2.d$ --> 2.0d$ for sorting.
-    ver_script='$vers = $ARGV[0]; $vers =~ s/\.([0-9])$/.0$1/; if ("${vers}" ge "2.09") { exit 0; } exit 1;'
-    perl -e "$ver_script" $glibc_version >/dev/null 2>&1 && MALLOC_CHECK_=3
+    test $glibc_version \> 2.08 && MALLOC_CHECK_=3
 
     export MALLOC_CHECK_
 fi
