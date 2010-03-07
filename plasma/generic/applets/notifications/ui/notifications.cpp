@@ -137,8 +137,7 @@ void Notifications::configChanged()
         m_autoHideTimeout = 0;
     }
 
-    KConfigGroup globalCg = globalConfig();
-    if (globalCg.readEntry("ShowJobs", true)) {
+    if (cg.readEntry("ShowJobs", true)) {
         createJobGroups();
 
         m_manager->registerJobProtocol();
@@ -154,7 +153,7 @@ void Notifications::configChanged()
                    this, SLOT(finishJob(Job*)));
     }
 
-    if (globalCg.readEntry("ShowNotifications", true)) {
+    if (cg.readEntry("ShowNotifications", true)) {
         m_manager->registerNotificationProtocol();
         connect(m_manager, SIGNAL(notificationAdded(Notification*)),
                 this, SLOT(addNotification(Notification*)), Qt::UniqueConnection);
@@ -201,13 +200,13 @@ Manager *Notifications::manager() const
 void Notifications::createConfigurationInterface(KConfigDialog *parent)
 {
     if (!m_notificationInterface) {
-        KConfigGroup globalCg = globalConfig();
+        KConfigGroup cg = config();
         m_notificationInterface = new QWidget();
 
         m_notificationUi.setupUi(m_notificationInterface.data());
 
-        m_notificationUi.showJobs->setChecked(globalCg.readEntry("ShowJobs", true));
-        m_notificationUi.showNotifications->setChecked(globalCg.readEntry("ShowNotifications", true));
+        m_notificationUi.showJobs->setChecked(cg.readEntry("ShowJobs", true));
+        m_notificationUi.showNotifications->setChecked(cg.readEntry("ShowNotifications", true));
 
         m_notificationUi.autoHide->setChecked(config().readEntry("AutoHidePopup", true));
 
@@ -225,10 +224,9 @@ void Notifications::configAccepted()
     //TODO put in a single page
     //cg.writeEntry("AutoHidePopup", m_autoHideUi.autoHide->isChecked());
 
-    KConfigGroup globalCg = globalConfig();
-    globalCg.writeEntry("ShowJobs", m_notificationUi.showJobs->isChecked());
-    globalCg.writeEntry("ShowNotifications", m_notificationUi.showNotifications->isChecked());
     KConfigGroup cg = config();
+    cg.writeEntry("ShowJobs", m_notificationUi.showJobs->isChecked());
+    cg.writeEntry("ShowNotifications", m_notificationUi.showNotifications->isChecked());
     cg.writeEntry("AutoHidePopup", m_notificationUi.autoHide->isChecked());
 
     emit configNeedsSaving();
