@@ -52,6 +52,8 @@
 #include <plasma/dataenginemanager.h>
 #include <plasma/dataengine.h>
 #include <Plasma/TabBar>
+#include <Plasma/Animator>
+#include <Plasma/Animation>
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 #include <Plasma/Dialog>
@@ -273,6 +275,10 @@ void Notifications::addNotification(Notification *notification)
         m_notificationStackDialog->show();
         Plasma::WindowEffects::slideWindow(m_notificationStackDialog, location());
     }
+
+    Plasma::Animation *pulse = Plasma::Animator::create(Plasma::Animator::PulseAnimation, m_busyWidget);
+    pulse->setTargetWidget(m_busyWidget);
+    pulse->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 void Notifications::addJob(Job *job)
