@@ -153,8 +153,6 @@ void DBusSystemTrayTask::refreshCallback(QDBusPendingCallWatcher *call)
             }
         }
 
-        syncStatus(properties["Status"].toString());
-
         QString m_title = properties["Title"].toString();
         if (!m_title.isEmpty()) {
             m_name = m_title;
@@ -242,6 +240,8 @@ void DBusSystemTrayTask::refreshCallback(QDBusPendingCallWatcher *call)
 
         QString m_movieName = properties["AttentionMovieName"].toString();
         syncMovie(m_movieName);
+
+        syncStatus(properties["Status"].toString());
 
         KDbusToolTipStruct toolTip;
         properties["ToolTip"].value<QDBusArgument>() >> toolTip;
