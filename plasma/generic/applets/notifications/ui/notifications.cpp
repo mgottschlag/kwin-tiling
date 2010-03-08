@@ -183,6 +183,7 @@ void Notifications::syncNotificationBarNeeded()
 
             m_notificationScroller = new NotificationScroller(extenderItem);
             connect(m_notificationScroller, SIGNAL(scrollerEmpty()), extenderItem, SLOT(destroy()));
+
             extenderItem->setWidget(m_notificationScroller);
             extenderItem->setExtender(extender());
         }

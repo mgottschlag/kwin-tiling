@@ -62,6 +62,7 @@ NotificationScroller::NotificationScroller(QGraphicsItem *parent)
 
 NotificationScroller::~NotificationScroller()
 {
+    qDeleteAll(m_notifications);
 }
 
 
