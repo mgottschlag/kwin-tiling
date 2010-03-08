@@ -270,17 +270,17 @@ void QuicklaunchApplet::performUiRefactor()
     } else {
         m_arrow->hide();
     }
+
     int cols = qMax(1,m_innerLayout->columnCount());
-    
     if (count > m_visibleIcons && m_visibleIcons != -1) {
         cols++;
     }
-    
+
     int icons = qMax(1, qMin(m_icons.size(), m_visibleIcons));
 
     setPreferredSize(QSize((m_iconSize + 6) * cols,
                            (m_iconSize + 6) * ceil(icons / (double)cols)));
-    
+
     if (m_dialog) {
         m_dialog->close();
         m_dialogLayout->updateGeometry();
@@ -504,64 +504,30 @@ void QuicklaunchApplet::dropApp(QGraphicsSceneDragDropEvent *event, bool dropped
                break;
            }
         }
-    } else if (!m_icons.isEmpty()) {
-        //qreal left, top, bottom, right;
-        //getContentsMargins(&left, &top, &bottom, &right);
-        QPointF point = mapFromScene(event->scenePos());//) + QPointF(left, top);
-        int rowCount = m_innerLayout->rowCount();
-        //kDebug() << "RowCount = " << rowCount;
-        int colCount = m_innerLayout->columnCount();
+    }
+    else if (!m_icons.isEmpty()) {
+        QPointF point = mapFromScene(event->scenePos());
+        const int rowCount = m_innerLayout->rowCount();
+        const int colCount = m_innerLayout->columnCount();
+
+        int row = 0;
+        while ((row + 1) < rowCount && point.y() > m_innerLayout->itemAt(row + 1, 0)->geometry().center().y()) {
+            row++;
+        }
+
         int col = 0;
-        while (col < colCount) {
-
-            if (col == colCount || col * rowCount >= m_icons.count()) {
-                break;
-            }
-
-            //kDebug() << col << m_icons.at(col * rowCount)->geometry().left() << point.x();
-            if (m_icons.at(col * rowCount)->geometry().left() > point.x()) {
-                //kDebug() << "broke col at" << col;
-                break;
-            }
-
-            ++col;
+        while ((col + 1) < colCount && point.x() > m_innerLayout->itemAt(0, col + 1)->geometry().center().x()) {
+            col++;
         }
 
-        //int col = static_cast<int>((round(point.x()) * colCount / m_innerLayout->geometry().width()));
-        //col = (col >= colCount) ? colCount - 1 : col;
-        //int row = static_cast<int>(floor(point.y() * rowCount / m_innerLayout->geometry().height()));
-        //row = (row >= m_innerLayout->rowCount()) ? m_innerLayout->rowCount() - 1 : row;
-        //kDebug() << "doing rows";
-        int row = -1;
-        while (row < rowCount) {
-            ++row;
-            if (row == rowCount || row == m_icons.count()) {
-                //kDebug() << "row made rowCount" << row;
-                break;
-            }
-
-            //kDebug() << "row: " << row << m_icons.count();
-            if (m_icons.at(row)->geometry().center().y() > point.y()) {
-                //kDebug() << "broke row at" << row;
-                break;
-            }
-        }
-
-        //kDebug() << "row = " << row << "rows = " << rowCount << "cols = " << colCount << "col = " << col;
-        if (rowCount > 1) {
-            pos = row + rowCount * (col - 1);
-        } else {
-            pos = col;
-        }
-
-        //kDebug() << "position is " << pos;
+        pos = col*rowCount+row;
     }
 
     if (dropHandler(pos, event->mimeData())) {
-       event->setDropAction(Qt::MoveAction);
-       event->accept();
-       saveConfig();
-       performUiRefactor();
+        event->setDropAction(Qt::MoveAction);
+        event->accept();
+        saveConfig();
+        performUiRefactor();
     }
 }
 
@@ -623,7 +589,7 @@ void QuicklaunchApplet::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 
 void QuicklaunchApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
-    dropApp(static_cast<QGraphicsSceneDragDropEvent*>(event),false);
+    dropApp(event, false);
 }
 
 void QuicklaunchApplet::addProgram(int index, const QString &url, bool isNewIcon)
@@ -691,6 +657,8 @@ void QuicklaunchApplet::removeCurrentIcon()
 
 bool QuicklaunchApplet::dropHandler(const int pos, const QMimeData *mimedata)
 {
+    Q_ASSERT(pos >= 0 && pos <= m_icons.size());
+
     if (!KUrl::List::canDecode(mimedata)) {
         return false;
     }
@@ -700,30 +668,29 @@ bool QuicklaunchApplet::dropHandler(const int pos, const QMimeData *mimedata)
     if (urls.isEmpty()) {
         return false;
     }
-    
+
     bool rtn = false;
 
-    if(pos < 0) { //just to be sure, m_icons.move(icon_pos, pos); crashed on me
-        return false;
-    }
-    
+
     foreach (const KUrl &url, urls) {
         foreach (QuicklaunchIcon *icon, m_icons) {
             if (icon->url().url() == url.url()) {
                 int icon_pos = m_icons.indexOf(icon);
-                
-                if(icon_pos == -1) {//just to be sure, m_icons.move(icon_pos, pos); crashed on me
-                    return false;
+
+                if (pos == m_icons.size()) {
+                    m_icons.removeAt(icon_pos);
+                    m_icons.append(icon);
+                } else {
+                    m_icons.move(icon_pos, pos);
                 }
-                
-                m_icons.move(icon_pos, pos);
+
                 urls.removeOne(url);
                 rtn = true;
                 break;
             }
         }
     }
-    
+
     if (urls.count()) {
         foreach (const KUrl &url, urls) {
             if (KDesktopFile::isDesktopFile(url.toLocalFile())) {
