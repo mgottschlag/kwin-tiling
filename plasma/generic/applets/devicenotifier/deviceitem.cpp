@@ -446,9 +446,10 @@ bool DeviceItem::eventFilter(QObject* obj, QEvent *event)
             case QEvent::GraphicsSceneHoverEnter:
                 emit highlightActionItem(item);
                 break;
-            case QEvent::GraphicsSceneMousePress: {
+            case QEvent::GraphicsSceneMouseRelease: {
                 QGraphicsSceneMouseEvent *e = static_cast<QGraphicsSceneMouseEvent *>(event);
-                if (e->button() == Qt::LeftButton) {
+                if (e->button() == Qt::LeftButton &&
+                    item->geometry().contains(item->mapToParent(e->pos()))) {
                     actionClicked(item);
                     return true;
                 }
@@ -512,10 +513,9 @@ void DeviceItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void DeviceItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (event->button() != Qt::LeftButton || !boundingRect().contains(event->pos())) {
-        return;
+    if (event->button() == Qt::LeftButton && boundingRect().contains(event->pos())) {
+        clicked();
     }
-    clicked();
 }
 
 void DeviceItem::clicked()
