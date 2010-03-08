@@ -367,12 +367,9 @@ void KRunnerDialog::updateMask()
     if (!QX11Info::isCompositingManagerRunning()) {
         setMask(m_background->mask());
     } else {
-        //HACK: we set a trivial mask in order to fool kwin
-        //      to think we are shaped and thus avoid drawing
-        //      shadows behind us.
-        //      This is also done in Oxygen and Aurorae windecos
-        //      to obtain the same result
-        setMask(QRect(QPoint(0, 0), size()));
+        const QRegion mask = m_background->mask();
+        Plasma::WindowEffects::enableBlurBehind(winId(), true, mask);
+        Plasma::WindowEffects::overrideShadow(winId(), true);
     }
 
 #else
