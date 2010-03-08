@@ -49,7 +49,7 @@ void QuicklaunchLayout::addItem(Plasma::IconWidget *icon)
     //kDebug() << "Adding icon to row = " << row << ", column = " << column;
     int row = 0;
     int column = 0;
-    while (itemAt(row, column))
+    while (row < rowCount() && column < columnCount() && itemAt(row, column))
     {
         //kDebug() << "Row is" << row << "column is" << column;
         if (row < m_rowCount - 1) {
