@@ -55,6 +55,7 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
       m_udi(udi),
       m_hovered(false),
       m_mounted(false),
+      m_job(DeviceItem::Idle),
       m_labelFade(0),
       m_barFade(0),
       m_iconFade(0)
@@ -392,26 +393,36 @@ void DeviceItem::setData(int key, const QVariant & value)
     }
 }
 
-void DeviceItem::setBusy()
+void DeviceItem::setJob(DeviceItem::JobType job)
 {
-    if (m_busyWidgetTimer.isActive()) {
-        return;
-    }
-    m_busyWidgetTimer.start(300);
-}
+    m_job = job;
 
-void DeviceItem::setReady()
-{
-    if (m_busyWidgetTimer.isActive()) {
-        m_busyWidgetTimer.stop();
-    }
+    if (job == Idle) {
+        m_descriptionLabel->setText(description());
 
-    if (m_busyWidget->isVisible()) {
-        m_busyWidget->hide();
-        m_mainLayout->removeItem(m_busyWidget);
-        m_mainLayout->addItem(m_leftActionIcon);
-        m_mainLayout->setAlignment(m_leftActionIcon, Qt::AlignVCenter);
-        m_leftActionIcon->show();
+        if (m_busyWidgetTimer.isActive()) {
+            m_busyWidgetTimer.stop();
+        }
+
+        if (m_busyWidget->isVisible()) {
+            m_busyWidget->hide();
+            m_mainLayout->removeItem(m_busyWidget);
+            m_mainLayout->addItem(m_leftActionIcon);
+            m_mainLayout->setAlignment(m_leftActionIcon, Qt::AlignVCenter);
+            m_leftActionIcon->show();
+        }
+    } else {
+        if (m_busyWidgetTimer.isActive()) {
+            return;
+        }
+        m_busyWidgetTimer.start(300);
+
+        if (job == Mounting) {
+            m_descriptionLabel->setText(i18n("Mounting..."));
+        } else {
+            collapse();
+            m_descriptionLabel->setText(i18n("Unmounting..."));
+        }
     }
 }
 
@@ -509,7 +520,7 @@ void DeviceItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void DeviceItem::clicked()
 {
-    if (m_actionsLayout->count() == 0) {
+    if ((m_actionsLayout->count() == 0) || (m_job == Umounting)) {
         return;
     }
 

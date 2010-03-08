@@ -55,6 +55,12 @@ class DeviceItem : public QGraphicsWidget
             Unlock = 4
         };
 
+        enum JobType {
+            Idle = 0,
+            Mounting = 1,
+            Umounting =2
+        };
+
         /**
         * Constructor of the item
         * @param udi the udi of the device
@@ -178,9 +184,9 @@ class DeviceItem : public QGraphicsWidget
         void setData(int key, const QVariant & value);
 
         /**
-        * Sets the state of the device to busy
+        * Sets the state of the device
         **/
-        void setBusy();
+        void setJob(JobType job);
 
         /**
         * Update colors on a theme change
@@ -198,11 +204,6 @@ class DeviceItem : public QGraphicsWidget
         static const int LEFTACTION_SIZE = 22;
 
     public slots:
-        /**
-        * Sets the state of the device to ready
-        **/
-        void setReady();
-
         void setHoverDisplayOpacity(qreal opacity);
 
     signals:
@@ -273,9 +274,6 @@ class DeviceItem : public QGraphicsWidget
         ///The name of the icon
         QString m_iconName;
 
-        ///The subtitle of the device
-        QString m_description;
-
         ///True if the device is visible
         bool m_visibility;
 
@@ -320,6 +318,8 @@ class DeviceItem : public QGraphicsWidget
 
         ///The timer that makes the busy widget show up
         QTimer m_busyWidgetTimer;
+
+        JobType m_job;
 
         Plasma::Animation *m_labelFade;
         Plasma::Animation *m_barFade;

@@ -520,7 +520,7 @@ void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorD
     //show the message only one time
     disconnect(sender(), SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
                this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant, const QString &)));
-    itemForUdi(udi)->setReady();
+    itemForUdi(udi)->setJob(DeviceItem::Idle);
 
 }
 
@@ -554,7 +554,7 @@ void NotifierDialog::storageSetupDone(Solid::ErrorType error, QVariant errorData
     //show the message only one time
     disconnect(sender(), SIGNAL(setupDone(Solid::ErrorType, QVariant, const QString &)),
                this, SLOT(storageSetupDone(Solid::ErrorType, QVariant, const QString &)));
-    itemForUdi(udi)->setReady();
+    itemForUdi(udi)->setJob(DeviceItem::Idle);
 }
 
 DeviceItem *NotifierDialog::itemForUdi(const QString &udi) const
@@ -588,7 +588,7 @@ void NotifierDialog::leftActionActivated(DeviceItem *item)
         if (device.is<Solid::OpticalDisc>()) {
             Solid::OpticalDrive *drive = device.parent().as<Solid::OpticalDrive>();
             if (drive) {
-                item->setBusy();
+                item->setJob(DeviceItem::Umounting);
                 connect(drive, SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
                         this, SLOT(storageEjectDone(Solid::ErrorType, QVariant, const QString &)));
                 drive->eject();
@@ -596,7 +596,7 @@ void NotifierDialog::leftActionActivated(DeviceItem *item)
         } else if (device.is<Solid::StorageVolume>()) {
             Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
             if (access && access->isAccessible()) {
-                item->setBusy();
+                item->setJob(DeviceItem::Umounting);
                 connect(access, SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
                         this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant, const QString &)));
                 access->teardown();
@@ -607,7 +607,7 @@ void NotifierDialog::leftActionActivated(DeviceItem *item)
 
         // only unmounted devices
         if (access && !access->isAccessible()) {
-            item->setBusy();
+            item->setJob(DeviceItem::Mounting);
             connect(access, SIGNAL(setupDone(Solid::ErrorType, QVariant, const QString &)),
                     this, SLOT(storageSetupDone(Solid::ErrorType, QVariant , const QString &)));
             access->setup();
