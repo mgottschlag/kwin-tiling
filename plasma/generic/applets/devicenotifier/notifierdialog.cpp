@@ -56,6 +56,7 @@ NotifierDialog::NotifierDialog(DeviceNotifier * notifier, QObject *parent)
     : QObject(parent),
       m_widget(0),
       m_notifier(notifier),
+      m_deviceCount(0),
       m_collapsing(false)
 {
     buildDialog();
@@ -127,6 +128,7 @@ void NotifierDialog::insertDevice(const QString &udi)
         return;
     }
 
+    ++m_deviceCount;
     DeviceItem *devItem = new DeviceItem(udi);
     connect(devItem, SIGNAL(leftActionActivated(DeviceItem *)), this, SLOT(leftActionActivated(DeviceItem *)));
     connect(devItem, SIGNAL(actionActivated(DeviceItem *, const QString &, const QString &)),
@@ -416,6 +418,7 @@ void NotifierDialog::removeDevice(const QString &udi)
     resetSelection();
     m_deviceLayout->removeItem(item);
     item->deleteLater();
+    --m_deviceCount;
 
     for (int i = 0; i < m_deviceLayout->count(); ++i) {
         Plasma::Separator *separator = dynamic_cast<Plasma::Separator *>(m_deviceLayout->itemAt(i));
@@ -424,9 +427,11 @@ void NotifierDialog::removeDevice(const QString &udi)
             if (!nextItem) {
                 m_deviceLayout->removeAt(i);
                 QGraphicsLayoutItem *category = m_deviceLayout->itemAt(i);
-                m_deviceLayout->removeAt(i);
+                if (category) {
+                    m_deviceLayout->removeAt(i);
+                    delete category;
+                }
                 delete separator;
-                delete category;
                 --i;
             }
         }
@@ -816,10 +821,10 @@ void NotifierDialog::updateCategoryColors(Plasma::Label * category)
 
 void NotifierDialog::updateMainLabelText()
 {
-    if (m_deviceLayout->count() == 0) {
-        m_mainLabel->setText(i18n("No devices plugged in."));
+    if (m_deviceCount > 0) {
+        m_mainLabel->setText(i18n("Available Devices"));
     } else {
-        m_mainLabel->setText(i18n("Devices recently plugged in:"));
+        m_mainLabel->setText(i18n("No Devices Available"));
     }
 }
 

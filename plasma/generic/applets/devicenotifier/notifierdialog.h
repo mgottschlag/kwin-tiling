@@ -331,6 +331,7 @@ namespace Notifier
           DeviceItem* hoveredItem();
           Plasma::IconWidget* hoveredAction();
 
+    private:
           /// The graphics widget which displays the panel
           QGraphicsWidget *m_widget;
 
@@ -361,9 +362,9 @@ namespace Notifier
 
           QTimer m_clearItemBackgroundTargetTimer;
 
-          bool m_collapsing;
-
           Plasma::Label *m_mainLabel;
+          int m_deviceCount;
+          bool m_collapsing;
   };
 
 }
