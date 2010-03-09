@@ -58,7 +58,7 @@
             <bool>false</bool>
            </property>
            <property name="toolTip">
-            <string>Share the selected scheme in the Internet</string>
+            <string>Share the selected scheme on the Internet</string>
            </property>
            <property name="text">
             <string>&amp;Upload Scheme...</string>
