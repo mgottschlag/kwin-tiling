@@ -561,11 +561,6 @@ void DesktopCorona::addPanel(const QString &plugin)
 
     panel->setLocation(destination);
 
-    // trigger an instant layout so we immediately have a proper geometry
-    // rather than waiting around for the event loop
-    panel->updateConstraints(Plasma::StartupCompletedConstraint);
-    panel->flushPendingConstraintsEvents();
-
     const QRect screenGeom = screenGeometry(screen);
     const QRegion availGeom = availableScreenRegion(screen);
     int minH = 10;
