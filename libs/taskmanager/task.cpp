@@ -277,6 +277,10 @@ bool Task::isModified() const
 
 int Task::desktop() const
 {
+    if (KWindowSystem::numberOfDesktops() < 2) {
+        return 0;
+    }
+
     return d->info.desktop();
 }
 

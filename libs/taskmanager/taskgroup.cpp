@@ -422,6 +422,10 @@ int TaskGroup::desktop() const
         return 0;
     }
 
+    if (KWindowSystem::numberOfDesktops() < 2) {
+        return 0;
+    }
+
     int desk = d->members.first()->desktop();
     foreach (AbstractGroupableItem *item, d->members) {
         if (item->desktop() != desk) {
