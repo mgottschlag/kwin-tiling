@@ -155,6 +155,7 @@ QGraphicsWidget *Applet::graphicsWidget()
 
 void Applet::configChanged()
 {
+    KConfigGroup gcg = globalConfig();
     KConfigGroup cg = config();
 
     const QStringList hiddenTypes = cg.readEntry("hidden", QStringList());
@@ -164,19 +165,19 @@ void Applet::configChanged()
 
     m_shownCategories.clear();
 
-    if (cg.readEntry("ShowApplicationStatus", true)) {
+    if (cg.readEntry("ShowApplicationStatus", gcg.readEntry("ShowApplicationStatus", true))) {
         m_shownCategories.insert(Task::ApplicationStatus);
     }
 
-    if (cg.readEntry("ShowCommunications", true)) {
+    if (cg.readEntry("ShowCommunications", gcg.readEntry("ShowCommunications", true))) {
         m_shownCategories.insert(Task::Communications);
     }
 
-    if (cg.readEntry("ShowSystemServices", true)) {
+    if (cg.readEntry("ShowSystemServices", gcg.readEntry("ShowSystemServices", true))) {
         m_shownCategories.insert(Task::SystemServices);
     }
 
-    if (cg.readEntry("ShowHardware", true)) {
+    if (cg.readEntry("ShowHardware", gcg.readEntry("ShowHardware", true))) {
         m_shownCategories.insert(Task::Hardware);
     }
 
@@ -445,17 +446,23 @@ void Applet::propogateSizeHintChange(Qt::SizeHint which)
 void Applet::createConfigurationInterface(KConfigDialog *parent)
 {
     if (!m_autoHideInterface) {
+        KConfigGroup gcg = config();
         KConfigGroup cg = config();
+
         m_notificationInterface = new QWidget();
         m_autoHideInterface = new QWidget();
         m_plasmoidTasksInterface = new QWidget();
 
         m_notificationUi.setupUi(m_notificationInterface.data());
 
-        m_notificationUi.showApplicationStatus->setChecked(cg.readEntry("ShowApplicationStatus", true));
-        m_notificationUi.showCommunications->setChecked(cg.readEntry("ShowCommunications", true));
-        m_notificationUi.showSystemServices->setChecked(cg.readEntry("ShowSystemServices", true));
-        m_notificationUi.showHardware->setChecked(cg.readEntry("ShowHardware", true));
+        m_notificationUi.showApplicationStatus->setChecked(cg.readEntry("ShowApplicationStatus",
+                                                           gcg.readEntry("ShowApplicationStatus", true)));
+        m_notificationUi.showCommunications->setChecked(cg.readEntry("ShowCommunications",
+                                                        gcg.readEntry("ShowCommunications", true)));
+        m_notificationUi.showSystemServices->setChecked(cg.readEntry("ShowSystemServices",
+                                                        gcg.readEntry("ShowSystemServices", true)));
+        m_notificationUi.showHardware->setChecked(cg.readEntry("ShowHardware",
+                                                  gcg.readEntry("ShowHardware", true)));
 
         m_autoHideUi.setupUi(m_autoHideInterface.data());
 
