@@ -48,6 +48,7 @@
 #include <Plasma/AbstractToolBox>
 #include <Plasma/View>
 #include <Plasma/PaintUtils>
+#include <Plasma/WindowEffects>
 
 #include <kephal/screens.h>
 
@@ -570,7 +571,9 @@ void Panel::paintInterface(QPainter *painter,
 
         updateBorders(viewGeom);
         if (containmentOpt && containmentOpt->view && !m_background->mask().isEmpty()) {
-            containmentOpt->view->setMask(m_background->mask());
+            const QRegion mask = m_background->mask();
+            containmentOpt->view->setMask(mask);
+            Plasma::WindowEffects::enableBlurBehind(containmentOpt->view->winId(), true, mask);
         }
     }
 
