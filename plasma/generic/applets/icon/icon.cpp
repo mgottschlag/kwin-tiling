@@ -162,9 +162,6 @@ void IconApplet::setUrl(const KUrl& url)
         Plasma::ToolTipManager::self()->setContent(m_icon, data);
     }
 
-    if (formFactor() == Plasma::Planar || formFactor() == Plasma::MediaCenter) {
-        resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
-    }
     //kDebug() << "url was" << url << "and is" << m_url;
 }
 
