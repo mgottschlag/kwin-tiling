@@ -30,6 +30,7 @@
 #include <KLocale>
 #include <KAction>
 #include <KShell>
+#include <KMessageBox>
 #include <KServiceTypeTrader>
 #include <KStandardAction>
 #include <KTextBrowser>
@@ -145,6 +146,7 @@ InteractiveConsole::~InteractiveConsole()
     KConfigGroup cg(KGlobal::config(), "InteractiveConsole");
     saveDialogSize(cg);
     cg.writeEntry("SplitterState", m_splitter->saveState());
+    kDebug();
 }
 
 void InteractiveConsole::loadScript(const QString &script)
@@ -174,6 +176,44 @@ void InteractiveConsole::showEvent(QShowEvent *)
     } else {
         m_editor->setFocus();
     }
+}
+
+void InteractiveConsole::closeEvent(QCloseEvent *event)
+{
+    if (confirmClose()) {
+        KDialog::closeEvent(event);
+    } else {
+        event->ignore();
+    }
+}
+
+void InteractiveConsole::reject()
+{
+    if (confirmClose()) {
+        KDialog::reject();
+    }
+}
+
+bool InteractiveConsole::confirmClose()
+{
+    if (m_saveAction->isEnabled()) {
+        // need to save first!
+        const QString msg = i18n("There are unsaved changes in the script editor. Would you like to save these changes before closing the the interactive console?");
+        int rv = KMessageBox::warningYesNoCancel(this, msg, i18n("Unsaved Changes"),
+                                                 KStandardGuiItem::save(),
+                                                 KStandardGuiItem::dontSave(),
+                                                 KStandardGuiItem::cancel(),
+                                                "InteractiveConsoleSaveOnQuit");
+        if (rv == KMessageBox::Yes) {
+            saveScript();
+            m_closeWhenCompleted = true;
+            return !m_saveAction->isEnabled();
+        } else if (rv == KMessageBox::Cancel) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void InteractiveConsole::print(const QString &string)
@@ -235,7 +275,7 @@ void InteractiveConsole::openScriptUrlSelected()
 
         m_job = KIO::get(url, KIO::Reload, KIO::HideProgressInfo);
         connect(m_job.data(), SIGNAL(data(KIO::Job*,QByteArray)), this, SLOT(scriptFileDataRecvd(KIO::Job*,QByteArray)));
-        connect(m_job.data(), SIGNAL(result(KJob*)), this, SLOT(reenableEditor()));
+        connect(m_job.data(), SIGNAL(result(KJob*)), this, SLOT(reenableEditor(KJob*)));
     }
 }
 
@@ -251,7 +291,8 @@ void InteractiveConsole::scriptFileDataRecvd(KIO::Job *job, const QByteArray &da
 void InteractiveConsole::saveScript()
 {
     if (m_editorPart) {
-        m_editorPart->documentSaveAs();
+        const bool success = m_editorPart->documentSaveAs();
+        m_saveAction->setEnabled(!success);
         return;
     }
 
@@ -261,7 +302,7 @@ void InteractiveConsole::saveScript()
 
     m_fileDialog = new KFileDialog(KUrl(), QString(), 0);
     m_fileDialog->setOperationMode(KFileDialog::Saving);
-    m_fileDialog->setCaption(i18n("Open Script File"));
+    m_fileDialog->setCaption(i18n("Save Script File"));
 
     QStringList mimetypes;
     mimetypes << "application/javascript";
@@ -283,7 +324,7 @@ void InteractiveConsole::saveScriptUrlSelected()
     }
 
     if (m_editorPart) {
-        m_editorPart->saveAs(url);
+        m_saveAction->setEnabled(!m_editorPart->saveAs(url));
     } else {
         m_editor->setEnabled(false);
 
@@ -293,7 +334,7 @@ void InteractiveConsole::saveScriptUrlSelected()
 
         m_job = KIO::put(url, -1, KIO::HideProgressInfo);
         connect(m_job.data(), SIGNAL(dataReq(KIO::Job*,QByteArray&)), this, SLOT(scriptFileDataReq(KIO::Job*,QByteArray&)));
-        connect(m_job.data(), SIGNAL(result(KJob*)), this, SLOT(reenableEditor()));
+        connect(m_job.data(), SIGNAL(result(KJob*)), this, SLOT(reenableEditor(KJob*)));
     }
 }
 
@@ -309,9 +350,15 @@ void InteractiveConsole::scriptFileDataReq(KIO::Job *job, QByteArray &data)
     m_job.clear();
 }
 
-void InteractiveConsole::reenableEditor()
+void InteractiveConsole::reenableEditor(KJob* job)
 {
     Q_ASSERT(m_editor);
+    if (m_closeWhenCompleted && job->error() != 0) {
+        close();
+    }
+
+    m_closeWhenCompleted = false;
+    m_saveAction->setEnabled(job->error() != 0);
     m_editor->setEnabled(true);
 }
 

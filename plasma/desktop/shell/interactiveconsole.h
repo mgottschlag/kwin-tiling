@@ -58,9 +58,11 @@ public:
 
 protected:
     void showEvent(QShowEvent *);
+    void closeEvent(QCloseEvent *event);
 
 protected Q_SLOTS:
     void print(const QString &string);
+    void reject();
 
 private Q_SLOTS:
     void openScriptFile();
@@ -70,11 +72,13 @@ private Q_SLOTS:
     void clearEditor();
     void scriptFileDataRecvd(KIO::Job *job, const QByteArray &data);
     void scriptFileDataReq(KIO::Job *job, QByteArray &data);
-    void reenableEditor();
+    void reenableEditor(KJob *job);
     void saveScriptUrlSelected();
     void openScriptUrlSelected();
 
 private:
+    bool confirmClose();
+
     Plasma::Corona *m_corona;
     QSplitter *m_splitter;
     KTextEditor::Document *m_editorPart;
@@ -87,6 +91,7 @@ private:
 
     KFileDialog *m_fileDialog;
     QWeakPointer<KIO::Job> m_job;
+    bool m_closeWhenCompleted;
 };
 
 #endif
