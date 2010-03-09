@@ -19,6 +19,7 @@
 
 #include "icon.h"
 
+#include <QFile>
 #include <QGraphicsSceneDragDropEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsItem>
@@ -116,9 +117,12 @@ void IconApplet::setUrl(const KUrl& url)
     m_mimetype = KMimeType::findByUrl(url);
 
     delete m_watcher;
-    m_watcher = new KDirWatch;
-    m_watcher->addFile(m_url.toLocalFile());
-    connect(m_watcher, SIGNAL(deleted(const QString &)), this, SLOT(destroy()));
+    m_watcher = 0;
+    if (m_url.isLocalFile()) {
+        m_watcher = new KDirWatch;
+        m_watcher->addFile(m_url.toLocalFile());
+        connect(m_watcher, SIGNAL(deleted(const QString &)), this, SLOT(delayedDestroy()));
+    }
 
     if (m_url.isLocalFile() && KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
         KDesktopFile f(m_url.toLocalFile());
@@ -163,6 +167,18 @@ void IconApplet::setUrl(const KUrl& url)
     }
 
     //kDebug() << "url was" << url << "and is" << m_url;
+}
+
+void IconApplet::delayedDestroy()
+{
+    QTimer::singleShot(5000, this, SLOT(checkExistenceOfUrl()));
+}
+
+void IconApplet::checkExistenceOfUrl()
+{
+    if (m_url.isLocalFile() && !QFile::exists(m_url.toLocalFile())) {
+        destroy();
+    }
 }
 
 void IconApplet::updateDesktopFile()

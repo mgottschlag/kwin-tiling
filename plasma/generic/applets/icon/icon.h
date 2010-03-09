@@ -60,6 +60,8 @@ class IconApplet : public Plasma::Applet
     private slots:
         void acceptedPropertiesDialog();
         void propertiesDialogClosed();
+        void delayedDestroy();
+        void checkExistenceOfUrl();
 
     private:
         //dropUrls from DolphinDropController
