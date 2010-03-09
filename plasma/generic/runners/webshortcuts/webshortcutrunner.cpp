@@ -93,17 +93,24 @@ void WebshortcutRunner::loadSyntaxes()
                 continue;
             }
 
+            const QStringList keys = offer->property("Keys", QVariant::String).toString().split(",");
+            if (keys.isEmpty()) {
+                continue;
+            }
+
             m_searchEngines.append(offer);
 
-            QString keys = offer->property("Keys", QVariant::String).toString();
-            QString name = offer->name();
-            Plasma::RunnerSyntax s(keys + m_delimiter + ":q:",
-                    i18n("Opens \"%1\" in a web browser with the query :q:.", name));
+            Plasma::RunnerSyntax s(keys.at(0) + m_delimiter + ":q:",
+                                   i18n("Opens \"%1\" in a web browser with the query :q:.", offer->name()));
             // If there's more than one shorthand for one search engine, try to
             // counter potential confusion by displaying one definite
             // shorthand as an example.
-            if (keys.contains(",")) {
-                s.addExampleQuery(keys.split(",").at(0) + m_delimiter + ":q:");
+            if (keys.count() > 1) {
+                QStringListIterator it(keys);
+                it.next(); // skip the first key, we already have it!
+                while (it.hasNext()) {
+                    s.addExampleQuery(it.next() + m_delimiter + ":q:");
+                }
             }
 
             syns << s;
