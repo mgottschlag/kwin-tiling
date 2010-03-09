@@ -24,6 +24,7 @@
 //Qt
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
+#include <QLabel>
 #include <QMetaEnum>
 #include <QGraphicsLinearLayout>
 #include <QGraphicsSceneContextMenuEvent>

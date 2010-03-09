@@ -374,30 +374,46 @@ void DeviceNotifier::createConfigurationInterface(KConfigDialog *parent)
     m_deviceActionsWidget = new KCModuleProxy("solid-actions");
     m_autoMountingWidget = new KCModuleProxy("device_automounter_kcm");
 
-    parent->addPage(configurationWidget, i18nc("General options page", "General"), icon());
+    parent->addPage(configurationWidget, i18n("Display"), icon());
     parent->addPage(m_deviceActionsWidget, m_deviceActionsWidget->moduleInfo().moduleName(), 
                     m_deviceActionsWidget->moduleInfo().icon());
-    parent->addPage(m_autoMountingWidget, m_autoMountingWidget->moduleInfo().moduleName(),
+    parent->addPage(m_autoMountingWidget, i18n("Automounting"),
                     m_autoMountingWidget->moduleInfo().icon());
 
     parent->setButtons( KDialog::Ok | KDialog::Cancel);
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
-    m_configurationUi.showDevices->setCurrentIndex(m_showDevices);
+    switch (m_showDevices) {
+        case RemovableOnly:
+            m_configurationUi.removableDevices->setChecked(true);
+            break;
+        case NonRemovableOnly:
+            m_configurationUi.nonRemovableDevices->setChecked(true);
+            break;
+        case AllDevices:
+            m_configurationUi.allDevices->setChecked(true);
+            break;
+    }
 }
 
 void DeviceNotifier::configAccepted()
 {
     KConfigGroup cg = config();
 
-    m_showDevices = m_configurationUi.showDevices->currentIndex();
+    if (m_configurationUi.allDevices->isChecked()) {
+        m_showDevices = AllDevices;
+    } else if (m_configurationUi.nonRemovableDevices->isChecked()) {
+        m_showDevices = NonRemovableOnly;
+    } else {
+        m_showDevices = RemovableOnly;
+    }
 
     cg.writeEntry("ShowDevices", m_showDevices);
 
     //Save the configurations of the embedded KCMs
     m_deviceActionsWidget->save();
     m_autoMountingWidget->save();
-    
+
     emit configNeedsSaving();
 
     resetDevices();
