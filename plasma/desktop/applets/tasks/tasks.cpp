@@ -80,7 +80,6 @@ void Tasks::init()
     //TODO: for 4.5, make this option visible
     m_showTooltip = cg.readEntry("showTooltip", true);
     m_highlightWindows = cg.readEntry("highlightWindows", false);
-    m_scrollSwitch - cg.readEntry("scrollSwitch", true);
 
     m_groupManager = new TaskManager::GroupManager(this);
     Plasma::Containment* appletContainment = containment();
@@ -253,7 +252,6 @@ void Tasks::createConfigurationInterface(KConfigDialog *parent)
 
     m_ui.showTooltip->setChecked(m_showTooltip);
     m_ui.highlightWindows->setChecked(m_highlightWindows);
-    m_ui.scrollSwitch->setChecked(m_scrollSwitch);
     m_ui.showOnlyCurrentDesktop->setChecked(m_groupManager->showOnlyCurrentDesktop());
     m_ui.showOnlyCurrentScreen->setChecked(m_groupManager->showOnlyCurrentScreen());
     m_ui.showOnlyMinimized->setChecked(m_groupManager->showOnlyMinimized());
@@ -338,7 +336,6 @@ void Tasks::configAccepted()
         changed = true;
     }
 
-
     if (m_groupManager->groupingStrategy() != (m_ui.groupingStrategy->currentIndex())) {
         m_groupManager->setGroupingStrategy(static_cast<TaskManager::GroupManager::TaskGroupingStrategy>(m_ui.groupingStrategy->itemData(m_ui.groupingStrategy->currentIndex()).toInt()));
         KConfigGroup cg = config();
@@ -381,13 +378,7 @@ void Tasks::configAccepted()
         cg.writeEntry("showTooltip", m_showTooltip);
         changed = true;
     }
-    if (m_scrollSwitch != (m_ui.scrollSwitch->checkState() == Qt::Checked)) {
-        m_scrollSwitch = !m_scrollSwitch;
-        KConfigGroup cg = config();
-        cg.writeEntry("scrollSwitch", m_scrollSwitch);
-        changed = true;
-    }
-    
+
     if (m_highlightWindows != (m_ui.highlightWindows->checkState() == Qt::Checked)) {
         m_highlightWindows = !m_highlightWindows;
         KConfigGroup cg = config();
@@ -437,10 +428,6 @@ void Tasks::setPopupDialog(bool status)
     } else if (m_popupDialog.data() == widget) {
         m_popupDialog.clear();
     }
-}
-
-bool Tasks::scrollSwitch() const{
-    return m_scrollSwitch;
 }
 
 K_EXPORT_PLASMA_APPLET(tasks, Tasks)

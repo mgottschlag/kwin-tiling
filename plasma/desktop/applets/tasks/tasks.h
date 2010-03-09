@@ -101,7 +101,7 @@ public:
 
         bool showToolTip() const;
         bool highlightWindows() const;
-        bool scrollSwitch() const;
+
         void needsVisualFocus();
         QWidget *popupDialog() const;
 signals:
@@ -131,7 +131,6 @@ private slots:
 private:
         bool m_showTooltip;
         bool m_highlightWindows;
-	bool m_scrollSwitch;
         Plasma::LayoutAnimator *m_animator;
         QGraphicsLinearLayout *layout;
 

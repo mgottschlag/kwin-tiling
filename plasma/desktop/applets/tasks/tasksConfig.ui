@@ -7,24 +7,32 @@
     <x>0</x>
     <y>0</y>
     <width>539</width>
-    <height>474</height>
+    <height>530</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="2">
-    <widget class="QLabel" name="label_5">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
+  <layout class="QFormLayout" name="formLayout">
+   <item row="2" column="1">
+    <widget class="QCheckBox" name="showTooltip">
      <property name="text">
-      <string>Appearance and Interaction</string>
+      <string/>
      </property>
     </widget>
    </item>
-   <item row="6" column="2">
+   <item row="4" column="1">
+    <widget class="QCheckBox" name="fillRows">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QCheckBox" name="highlightWindows">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
     <spacer name="verticalSpacer_6">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -40,20 +48,7 @@
      </property>
     </spacer>
    </item>
-   <item row="7" column="0" colspan="2">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Maximum rows:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="buddy">
-      <cstring>maxRows</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="2">
+   <item row="9" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="KIntSpinBox" name="maxRows">
@@ -80,49 +75,7 @@
      </item>
     </layout>
    </item>
-   <item row="8" column="1">
-    <spacer name="verticalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>64</width>
-       <height>10</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="9" column="0" colspan="3">
-    <widget class="QLabel" name="label_6">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Grouping and Sorting</string>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="1">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Grouping:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="buddy">
-      <cstring>groupingStrategy</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="2">
+   <item row="14" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QComboBox" name="groupingStrategy">
@@ -149,7 +102,7 @@
      </item>
     </layout>
    </item>
-   <item row="11" column="2">
+   <item row="15" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
       <spacer name="horizontalSpacer">
@@ -182,7 +135,7 @@
      </item>
     </layout>
    </item>
-   <item row="12" column="1">
+   <item row="16" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>Sorting:</string>
@@ -195,7 +148,7 @@
      </property>
     </widget>
    </item>
-   <item row="12" column="2">
+   <item row="16" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="QComboBox" name="sortingStrategy">
@@ -222,7 +175,7 @@
      </item>
     </layout>
    </item>
-   <item row="13" column="2">
+   <item row="17" column="1">
     <spacer name="verticalSpacer_4">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -238,20 +191,28 @@
      </property>
     </spacer>
    </item>
-   <item row="14" column="0">
-    <widget class="QLabel" name="label_4">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
+   <item row="19" column="0" colspan="2">
+    <widget class="QCheckBox" name="showOnlyCurrentDesktop">
      <property name="text">
-      <string>Filters</string>
+      <string>Only show tasks from the current desktop</string>
      </property>
     </widget>
    </item>
-   <item row="21" column="2">
+   <item row="20" column="0" colspan="2">
+    <widget class="QCheckBox" name="showOnlyCurrentScreen">
+     <property name="text">
+      <string>Only show tasks from the current screen</string>
+     </property>
+    </widget>
+   </item>
+   <item row="21" column="0" colspan="2">
+    <widget class="QCheckBox" name="showOnlyMinimized">
+     <property name="text">
+      <string>Only show tasks that are minimized</string>
+     </property>
+    </widget>
+   </item>
+   <item row="22" column="1">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -264,54 +225,119 @@
      </property>
     </spacer>
    </item>
-   <item row="3" column="1">
-    <widget class="QCheckBox" name="showTooltip">
+   <item row="18" column="0" colspan="2">
+    <widget class="QLabel" name="label_4">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="text">
-      <string>Show tooltips</string>
+      <string>Filters</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
-    <widget class="QCheckBox" name="fillRows">
+   <item row="11" column="0" colspan="2">
+    <widget class="QLabel" name="label_6">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="text">
-      <string>Force row settings</string>
+      <string>Grouping &amp; Sorting</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
-    <widget class="QCheckBox" name="highlightWindows">
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="label_5">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="text">
-      <string>Highlight windows</string>
+      <string>Appearance</string>
      </property>
     </widget>
    </item>
-   <item row="20" column="1">
-    <widget class="QCheckBox" name="showOnlyMinimized">
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_9">
      <property name="text">
-      <string>Only show tasks that are minimized</string>
+      <string>Highlight windows:</string>
+     </property>
+     <property name="buddy">
+      <cstring>fillRows</cstring>
      </property>
     </widget>
    </item>
-   <item row="19" column="1">
-    <widget class="QCheckBox" name="showOnlyCurrentScreen">
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_8">
      <property name="text">
-      <string>Only show tasks from the current screen</string>
+      <string>Force row settings:</string>
+     </property>
+     <property name="buddy">
+      <cstring>fillRows</cstring>
      </property>
     </widget>
    </item>
-   <item row="18" column="1">
-    <widget class="QCheckBox" name="showOnlyCurrentDesktop">
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_7">
      <property name="text">
-      <string>Only show tasks from the current desktop</string>
+      <string>Show tooltips:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy">
+      <cstring>showTooltip</cstring>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QCheckBox" name="scrollSwitch">
+   <item row="9" column="0">
+    <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>Switch tasks using scroll wheel</string>
+      <string>Maximum rows:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy">
+      <cstring>maxRows</cstring>
      </property>
     </widget>
+   </item>
+   <item row="14" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Grouping:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy">
+      <cstring>groupingStrategy</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0">
+    <spacer name="verticalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>64</width>
+       <height>10</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
