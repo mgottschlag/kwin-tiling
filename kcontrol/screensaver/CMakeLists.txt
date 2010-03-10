@@ -10,7 +10,6 @@ set(kcm_screensaver_PART_SRCS
    scrnsave.cpp
    testwin.cpp
    saverconfig.cpp
-   advanceddialog.cpp
    kswidget.cpp)
 
 set(kscreensaver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/dbus/org.kde.screensaver.xml)
@@ -18,7 +17,7 @@ QT4_ADD_DBUS_INTERFACE( kcm_screensaver_PART_SRCS ${kscreensaver_xml} kscreensav
 
 
 
-kde4_add_ui_files(kcm_screensaver_PART_SRCS screensaver.ui advanceddialogimpl.ui )
+kde4_add_ui_files(kcm_screensaver_PART_SRCS screensaver.ui )
 
 kde4_add_plugin(kcm_screensaver ${kcm_screensaver_PART_SRCS})
 

@@ -180,9 +180,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     mMonitorPreview->setRatio((qreal)avail.width()/(qreal)avail.height());
     mMonitorPreview->setWhatsThis( i18n("A preview of the selected screen saver.") );
     mPreviewAreaWidget->layout()->addWidget(mMonitorPreview);
-    
-    connect( advancedBt, SIGNAL( clicked() ),
-             this, SLOT( slotAdvanced() ) );
 
     if (mImmutable)
     {
@@ -656,17 +653,6 @@ void KScreenSaver::slotSetup()
 
         mSetupProc->start();
     }
-}
-
-//---------------------------------------------------------------------------
-//
-void KScreenSaver::slotAdvanced()
-{
-   KScreenSaverAdvancedDialog dlg( window() );
-   if ( dlg.exec() ) {
-       mChanged = true;
-       emit changed(true);
-  }
 }
 
 //---------------------------------------------------------------------------

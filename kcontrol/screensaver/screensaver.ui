@@ -50,13 +50,6 @@
       </widget>
      </item>
      <item>
-      <widget class="KPushButton" name="advancedBt">
-       <property name="text">
-        <string>Advanced &amp;Options</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <spacer name="verticalSpacer_2">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -236,6 +229,11 @@
         <property name="whatsThis">
          <string>Select the screen saver to use.</string>
         </property>
+        <column>
+         <property name="text">
+          <string notr="true">1</string>
+         </property>
+        </column>
        </widget>
       </item>
      </layout>

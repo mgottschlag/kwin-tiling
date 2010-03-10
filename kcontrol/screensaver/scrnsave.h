@@ -38,7 +38,6 @@
 #include "kssmonitor.h"
 #include "saverconfig.h"
 #include "testwin.h"
-#include "advanceddialog.h"
 #include "ui_screensaver.h"
 
 class QTimer;
@@ -70,7 +69,6 @@ protected Q_SLOTS:
     void slotSelectionChanged();
     void slotScreenSaver( QTreeWidgetItem* );
     void slotSetup();
-    void slotAdvanced();
     void slotTest();
     void slotStopTest();
     void slotTimeoutChanged( int );
