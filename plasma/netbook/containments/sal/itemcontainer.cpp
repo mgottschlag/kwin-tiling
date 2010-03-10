@@ -18,6 +18,7 @@
  */
 
 #include "itemcontainer.h"
+#include "itemview.h"
 #include "resultwidget.h"
 
 #include <QGraphicsGridLayout>
@@ -27,6 +28,7 @@
 #include <QTimer>
 #include <QWidget>
 #include <QWeakPointer>
+#include <QAbstractItemModel>
 #include <QPropertyAnimation>
 
 #include <KIconLoader>
@@ -34,7 +36,7 @@
 #include <Plasma/IconWidget>
 #include <Plasma/ItemBackground>
 
-ItemContainer::ItemContainer(QGraphicsWidget *parent)
+ItemContainer::ItemContainer(ItemView *parent)
     : QGraphicsWidget(parent),
       m_orientation(Qt::Vertical),
       m_currentIconIndexX(-1),
@@ -44,7 +46,9 @@ ItemContainer::ItemContainer(QGraphicsWidget *parent)
       m_maxRowHeight(1),
       m_firstRelayout(true),
       m_dragAndDropMode(ItemContainer::NoDragAndDrop),
-      m_dragging(false)
+      m_dragging(false),
+      m_model(0),
+      m_itemView(parent)
 {
     m_positionAnimation = new QPropertyAnimation(this, "pos", this);
     m_positionAnimation->setEasingCurve(QEasingCurve::InOutQuad);
@@ -107,34 +111,16 @@ Plasma::IconWidget *ItemContainer::currentItem() const
     return m_currentIcon.data();
 }
 
+//FIXME:remove
 void ItemContainer::insertItem(Plasma::IconWidget *icon, qreal weight)
 {
-    qreal left, top, right, bottom;
-    m_hoverIndicator->getContentsMargins(&left, &top, &right, &bottom);
-    icon->setContentsMargins(left, top, right, bottom);
-
-    icon->setMinimumSize(icon->sizeFromIconSize(m_iconSize));
-    icon->setMaximumSize(icon->sizeFromIconSize(m_iconSize));
-    icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-    icon->hide();
-
-    m_items.insert(weight, icon);
-
-    connect(icon, SIGNAL(destroyed(QObject *)), this, SLOT(itemRemoved(QObject *)));
-
-    connect(icon, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SLOT(itemRequestedDrag(Plasma::IconWidget *)));
-
-    m_relayoutTimer->start(300);
+    return;
 }
 
+//FIXME: remove
 void ItemContainer::addItem(Plasma::IconWidget *icon)
 {
-    if (m_items.count() > 0) {
-        insertItem(icon, m_items.uniqueKeys().last()+1);
-    } else {
-        insertItem(icon, 0);
-    }
+    return;
 }
 
 void ItemContainer::clear()
@@ -143,25 +129,17 @@ void ItemContainer::clear()
     for (int i = 0; i < m_layout->count(); ++i) {
         m_layout->removeAt(0);
     }
-    int i = 0;
-    foreach (Plasma::IconWidget *icon, m_items) {
-        //recycle until 40 icons
-        if (i < 40) {
-            icon->hide();
-            icon->removeIconAction(0);
-            disconnect(icon, 0, 0, 0);
-            m_usedItems.append(icon);
-            ++i;
-        } else {
-            icon->deleteLater();
-        }
+    foreach (Plasma::IconWidget *icon, m_itemsForModel) {
+        disposeItem(icon);
     }
-    m_items.clear();
+    m_itemsForModel.clear();
+    m_itemToIndex.clear();
 }
 
+//FIXME: remove
 QList<Plasma::IconWidget *> ItemContainer::items() const
 {
-    return m_items.values();
+    return m_itemsForModel.values();
 }
 
 Plasma::IconWidget *ItemContainer::createItem()
@@ -172,8 +150,24 @@ Plasma::IconWidget *ItemContainer::createItem()
         m_usedItems.pop_back();
     } else {
         item = new ResultWidget(this);
+        m_itemView->registerAsDragHandle(item);
     }
+
+    item->installEventFilter(m_itemView);
     return item;
+}
+
+void ItemContainer::disposeItem(Plasma::IconWidget *icon)
+{
+    if (m_usedItems.count() < 40) {
+        icon->hide();
+        icon->removeIconAction(0);
+        disconnect(icon, 0, 0, 0);
+        m_usedItems.append(icon);
+        icon->removeEventFilter(m_itemView);
+    } else {
+        icon->deleteLater();
+    }
 }
 
 int ItemContainer::count() const
@@ -223,6 +217,10 @@ void ItemContainer::askRelayout()
 
 void ItemContainer::relayout()
 {
+    if (!m_model) {
+        return;
+    }
+
     if (m_layout->count() == 0) {
         hide();
     }
@@ -240,7 +238,11 @@ void ItemContainer::relayout()
         availableSize = size();
     }
 
-    if (m_layout->rowCount() > 0 && size().width() <= availableSize.width()) {
+    generateItems(m_rootIndex, 0, m_model->rowCount());
+
+
+    //TODO: restore the validRow/validcolumn count
+    /*if (m_layout->rowCount() > 0 && size().width() <= availableSize.width()) {
         int i = 0;
         foreach (Plasma::IconWidget *icon, m_items) {
             const int row = i / m_layout->rowCount();
@@ -252,7 +254,7 @@ void ItemContainer::relayout()
                 break;
             }
         }
-    }
+    }*/
 
     const int nRows = m_layout->rowCount();
     const int nColumns = m_layout->columnCount();
@@ -275,7 +277,7 @@ void ItemContainer::relayout()
     //FIXME: here is inefficient but we ore sure only there abut what items are in
     int maxColumnWidth = 0;
     int maxRowHeight = 0;
-    foreach (Plasma::IconWidget *icon, m_items) {
+    foreach (Plasma::IconWidget *icon, m_itemsForModel) {
         if (icon->size().width() > maxColumnWidth) {
             maxColumnWidth = icon->size().width();
         }
@@ -293,27 +295,21 @@ void ItemContainer::relayout()
         } else {
             nColumns = qMax(1, int(availableSize.width() / maxColumnWidth));
         }
-        int i = 0;
 
-
-        Plasma::IconWidget *lastIcon = 0;
-        foreach (Plasma::IconWidget *icon, m_items) {
-            //this kinda hacky thing to send less important items in a new line will be avoided if we will ever use a model
-            if (lastIcon && icon->size().height() < lastIcon->size().height()/2) {
-                i += nColumns - (i % nColumns);
-            }
+        for (int i = 0; i <= m_model->rowCount() - 1; i++) {
             const int row = i / nColumns;
             const int column = i % nColumns;
             if (m_layout->itemAt(row, column) != 0) {
-                ++i;
                 continue;
             }
 
-            m_layout->addItem(icon, row, column);
-            m_layout->setAlignment(icon, Qt::AlignHCenter);
-            icon->show();
-            ++i;
-            lastIcon = icon;
+            QModelIndex index = m_model->index(i, 0, m_rootIndex);
+            Plasma::IconWidget *icon = m_itemsForModel.value(index);
+            if (icon) {
+                m_layout->addItem(icon, row, column);
+                m_layout->setAlignment(icon, Qt::AlignHCenter);
+                icon->show();
+            }
         }
     } else {
 
@@ -324,25 +320,21 @@ void ItemContainer::relayout()
         } else {
             nRows = qMax(1, int(availableSize.height() / maxRowHeight));
         }
-        int i = 0;
 
-        Plasma::IconWidget *lastIcon = 0;
-        foreach (Plasma::IconWidget *icon, m_items) {
-            if (lastIcon && icon->size().height() < lastIcon->size().height()/2) {
-                i += (nRows - (i % nRows));
-            }
+        for (int i = 0; i <= m_model->rowCount() - 1; i++) {
             const int row = i % nRows;
             const int column = i / nRows;
             if (m_layout->itemAt(row, column) != 0) {
-                ++i;
                 continue;
             }
 
-            m_layout->addItem(icon, row, column);
-            m_layout->setAlignment(icon, Qt::AlignCenter);
-            icon->show();
-            ++i;
-            lastIcon = icon;
+            QModelIndex index = m_model->index(i, 0, m_rootIndex);
+            Plasma::IconWidget *icon = m_itemsForModel.value(index);
+            if (icon) {
+                m_layout->addItem(icon, row, column);
+                m_layout->setAlignment(icon, Qt::AlignCenter);
+                icon->show();
+            }
         }
     }
 
@@ -359,20 +351,10 @@ void ItemContainer::relayout()
     m_firstRelayout = false;
 }
 
+//FIXME: remove
 void ItemContainer::itemRemoved(QObject *object)
 {
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget *>(object);
 
-    QMutableMapIterator<qreal, Plasma::IconWidget*> i(m_items);
-    while (i.hasNext()) {
-        i.next();
-        if (i.value() == icon) {
-            i.remove();
-            break;
-        }
-    }
-
-    m_relayoutTimer->start(400);
 }
 
 void ItemContainer::itemRequestedDrag(Plasma::IconWidget *icon)
@@ -391,7 +373,8 @@ void ItemContainer::itemRequestedDrag(Plasma::IconWidget *icon)
                 //ugly but necessary to don't make it clipped
                 icon->setParentItem(0);
             }
-            emit dragStartRequested(icon);
+
+            emit dragStartRequested(m_itemToIndex.value(icon));
             return;
         }
     }
@@ -442,7 +425,9 @@ void ItemContainer::keyPressEvent(QKeyEvent *event)
     }
     case Qt::Key_Enter:
     case Qt::Key_Return:
-        emit itemActivated(m_currentIcon.data());
+        if (m_currentIcon) {
+            emit itemActivated(m_itemToIndex.value(m_currentIcon.data()));
+        }
         break;
     case Qt::Key_Backspace:
     case Qt::Key_Home:
@@ -485,6 +470,7 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
         icon->setPos(icon->mapToItem(this, QPoint(0,0)));
         icon->setParentItem(this);
 
+        /*FIXME: make this work again
         {
             QMutableMapIterator<qreal, Plasma::IconWidget*> i(m_items);
             while (i.hasNext()) {
@@ -501,7 +487,7 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
 
         //sloooow
         emit itemReordered(icon, m_items.values().indexOf(icon));
-
+*/
         askRelayout();
     }
 
@@ -510,6 +496,7 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
 
 qreal ItemContainer::positionToWeight(const QPointF &point)
 {
+    /*FIXME: probably remove
     QPoint layoutPos = positionToLayoutPosition(mapFromScene(point));
 
     //layout position to weight
@@ -552,7 +539,7 @@ qreal ItemContainer::positionToWeight(const QPointF &point)
         return key1 + 0.5;
     } else {
         return (key1+key2)/2;
-    }
+    }*/
 }
 
 QPoint ItemContainer::positionToLayoutPosition(const QPointF &point)
@@ -649,5 +636,94 @@ void ItemContainer::resizeEvent(QGraphicsSceneResizeEvent *event)
 
     m_relayoutTimer->start(300);
 }
+
+void ItemContainer::setModel(QAbstractItemModel *model)
+{
+    if (m_model) {
+        disconnect(m_model, 0, this, 0);
+    }
+
+    m_model = model;
+    connect (m_model, SIGNAL(modelAboutToBeReset()), this, SLOT(reset()));
+    connect (m_model, SIGNAL(rowsInserted(const QModelIndex & , int, int)), this, SLOT(generateItems(const QModelIndex&, int, int)));
+    connect (m_model, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(removeItems(const QModelIndex&, int, int)));
+}
+
+QAbstractItemModel *ItemContainer::model() const
+{
+    return m_model;
+}
+
+void ItemContainer::reset()
+{
+    clear();
+    askRelayout();
+}
+
+void ItemContainer::generateItems(const QModelIndex &parent, int start, int end)
+{
+    if (parent != m_rootIndex) {
+        return;
+    }
+
+    for (int i = start; i <= end; i++) {
+        QModelIndex index = m_model->index(i, 0, m_rootIndex);
+        if (!m_itemsForModel.contains(index)) {
+            Plasma::IconWidget *icon = createItem();
+            icon->setIcon(index.data(Qt::DecorationRole).value<QIcon>());
+            icon->setText(index.data(Qt::DisplayRole).value<QString>());
+
+            qreal left, top, right, bottom;
+            m_hoverIndicator->getContentsMargins(&left, &top, &right, &bottom);
+            icon->setContentsMargins(left, top, right, bottom);
+
+            icon->setMinimumSize(icon->sizeFromIconSize(m_iconSize));
+            icon->setMaximumSize(icon->sizeFromIconSize(m_iconSize));
+            icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+            m_itemsForModel.insert(index, icon);
+            m_itemToIndex.insert(icon, index);
+            connect(icon, SIGNAL(clicked()), this, SLOT(resultClicked()));
+            connect(icon, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SLOT(itemRequestedDrag(Plasma::IconWidget *)));
+        }
+    }
+}
+
+void ItemContainer::removeItems(const QModelIndex &parent, int start, int end)
+{
+    if (m_rootIndex != parent) {
+        return;
+    }
+
+    for (int i = start; i <= end; i++) {
+        QModelIndex index = m_model->index(i, 0, m_rootIndex);
+        if (m_itemsForModel.contains(index)) {
+            Plasma::IconWidget *icon = m_itemsForModel.value(index);
+            m_itemsForModel.remove(index);
+            m_itemToIndex.remove(icon);
+            disposeItem(icon);
+        }
+    }
+}
+
+void ItemContainer::resultClicked()
+{
+    Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(sender());
+    if (icon) {
+        QModelIndex index = m_itemToIndex.value(icon);
+        emit itemActivated(index);
+    }
+}
+
+void ItemContainer::setRootIndex(QModelIndex index)
+{
+    m_rootIndex = index;
+    reset();
+}
+
+QModelIndex ItemContainer::rootIndex() const
+{
+    return m_rootIndex;
+}
+
 
 #include <itemcontainer.moc>

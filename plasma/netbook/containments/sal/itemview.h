@@ -21,6 +21,7 @@
 #define ITEMVIEW_H
 
 #include <QGraphicsWidget>
+#include <QModelIndex>
 
 #include <Plasma/ScrollWidget>
 
@@ -75,6 +76,10 @@ public:
     Plasma::IconWidget *createItem();
 
     qreal positionToWeight(const QPointF &point);
+    void setModel(QAbstractItemModel *model);
+    QAbstractItemModel *model() const;
+    void setRootIndex(QModelIndex index);
+    QModelIndex rootIndex() const;
 
 public Q_SLOTS:
     void setScrollPositionFromDragPosition(const QPointF &point);
@@ -89,11 +94,11 @@ protected Q_SLOTS:
 
 Q_SIGNALS:
     void itemSelected(Plasma::IconWidget *);
-    void itemActivated(Plasma::IconWidget *);
+    void itemActivated(QModelIndex);
     void resetRequested();
     void scrollBarsNeededChanged(ItemView::ScrollBarFlags);
     void itemReordered(Plasma::IconWidget *, int);
-    void dragStartRequested(Plasma::IconWidget *);
+    void dragStartRequested(QModelIndex index);
 
 private:
     ItemContainer *m_itemContainer;

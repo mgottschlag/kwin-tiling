@@ -38,11 +38,11 @@ ItemView::ItemView(QGraphicsWidget *parent)
     m_itemContainer->installEventFilter(this);
 
     connect(m_itemContainer, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SIGNAL(itemSelected(Plasma::IconWidget *)));
-    connect(m_itemContainer, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SIGNAL(itemActivated(Plasma::IconWidget *)));
+    connect(m_itemContainer, SIGNAL(itemActivated(QModelIndex)), this, SIGNAL(itemActivated(QModelIndex)));
     connect(m_itemContainer, SIGNAL(resetRequested()), this, SIGNAL(resetRequested()));
     connect(m_itemContainer, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
     connect(m_itemContainer, SIGNAL(itemReordered(Plasma::IconWidget *, int)), this, SIGNAL(itemReordered(Plasma::IconWidget *, int)));
-    connect(m_itemContainer, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SIGNAL(dragStartRequested(Plasma::IconWidget *)));
+    connect(m_itemContainer, SIGNAL(dragStartRequested(QModelIndex)), this, SIGNAL(dragStartRequested(QModelIndex)));
 
     connect(m_itemContainer, SIGNAL(dragMoveMouseMoved(const QPointF &)), this, SLOT(setScrollPositionFromDragPosition(const QPointF &)));
 }
@@ -216,6 +216,26 @@ bool ItemView::eventFilter(QObject *watched, QEvent *event)
     }
 
     return Plasma::ScrollWidget::eventFilter(watched, event);
+}
+
+void ItemView::setModel(QAbstractItemModel *model)
+{
+    m_itemContainer->setModel(model);
+}
+
+QAbstractItemModel *ItemView::model() const
+{
+    return m_itemContainer->model();
+}
+
+void ItemView::setRootIndex(QModelIndex index)
+{
+    m_itemContainer->setRootIndex(index);
+}
+
+QModelIndex ItemView::rootIndex() const
+{
+    return m_itemContainer->rootIndex();
 }
 
 #include <itemview.moc>

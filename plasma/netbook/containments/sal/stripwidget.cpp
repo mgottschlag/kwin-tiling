@@ -18,6 +18,7 @@
  */
 
 #include "stripwidget.h"
+#include "favouritesmodel.h"
 
 #include <QGraphicsGridLayout>
 #include <QGraphicsScene>
@@ -55,6 +56,9 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
       m_offset(0),
       m_startupCompleted(false)
 {
+    m_favouritesModel = new FavouritesModel(this);
+    m_runnermg = m_favouritesModel->runnerManager();
+
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     setAcceptDrops(true);
 
@@ -93,6 +97,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     m_itemView->setOrientation(Qt::Horizontal);
     m_itemView->setIconSize(KIconLoader::SizeLarge);
     m_itemView->setDragAndDropMode(ItemContainer::MoveDragAndDrop);
+    m_itemView->setModel(m_favouritesModel);
 
     connect(m_itemView, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launchFavourite(Plasma::IconWidget *)));
     connect(m_itemView, SIGNAL(scrollBarsNeededChanged(ItemView::ScrollBarFlags)), this, SLOT(arrowsNeededChanged(ItemView::ScrollBarFlags)));
@@ -196,29 +201,14 @@ void StripWidget::highlightCurrentItem()
 
 void StripWidget::add(Plasma::QueryMatch match, const QString &query, const QPointF &point)
 {
-    // add to layout and data structures
-    Plasma::QueryMatch *newMatch = new Plasma::QueryMatch(match);
-    m_favouritesMatches.append(newMatch);
-    m_favouritesQueries.insert(newMatch, query);
-
-    Plasma::IconWidget *icon = createIcon(point);
-
-    icon->setText(newMatch->text());
-    icon->setIcon(newMatch->icon());
-
-    icon->setMinimumSize(icon->sizeFromIconSize(m_itemView->iconSize()));
-    icon->setMaximumSize(icon->sizeFromIconSize(m_itemView->iconSize()));
-
-    Plasma::ToolTipContent toolTipData = Plasma::ToolTipContent();
-    toolTipData.setAutohide(true);
-    toolTipData.setMainText(newMatch->text());
-    toolTipData.setSubText(newMatch->subtext());
-    toolTipData.setImage(newMatch->icon());
-
-    Plasma::ToolTipManager::self()->registerWidget(icon);
-    Plasma::ToolTipManager::self()->setContent(icon, toolTipData);
-
-    m_favouritesIcons.insert(icon, newMatch);
+    m_favouritesModel->appendRow(
+            StandardItemFactory::createItem(
+                match.icon(),
+                match.text(),
+                match.subtext(),
+                QString("krunner://") + match.runner()->id() + "/" + match.id()
+                )
+            );
 }
 
 void StripWidget::add(const QString &fileName, const QPointF &point)
@@ -232,24 +222,14 @@ void StripWidget::add(const QString &fileName, const QPointF &point)
         }
     }
 
-    Plasma::IconWidget * icon = createIcon(point);
-
-    icon->setIcon(service->icon());
-    icon->setText(service->name());
-
-    icon->setMinimumSize(icon->sizeFromIconSize(m_itemView->iconSize()));
-    icon->setMaximumSize(icon->sizeFromIconSize(m_itemView->iconSize()));
-
-    Plasma::ToolTipContent toolTipData = Plasma::ToolTipContent();
-    toolTipData.setAutohide(true);
-    toolTipData.setMainText(service->name());
-    toolTipData.setSubText(service->genericName());
-    toolTipData.setImage(KIcon(service->icon()));
-
-    Plasma::ToolTipManager::self()->registerWidget(icon);
-    Plasma::ToolTipManager::self()->setContent(icon, toolTipData);
-
-    m_services.insert(icon, service);
+    m_favouritesModel->appendRow(
+            StandardItemFactory::createItem(
+                KIcon(service->icon()),
+                service->name(),
+                service->genericName(),
+                service->entryPath()
+                )
+            );
 }
 
 void StripWidget::remove(Plasma::IconWidget *favourite)

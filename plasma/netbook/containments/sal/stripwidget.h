@@ -47,6 +47,8 @@ class QGraphicsGridLayout;
 class QTimer;
 class IconActionCollection;
 
+class FavouritesModel;
+
 class StripWidget : public QGraphicsWidget
 {
     Q_OBJECT
@@ -108,6 +110,7 @@ private:
     int m_shownIcons;
     int m_offset;
     bool m_startupCompleted;
+    FavouritesModel *m_favouritesModel;
 };
 
 #endif

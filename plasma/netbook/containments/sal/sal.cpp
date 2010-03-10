@@ -90,8 +90,6 @@ SearchLaunch::~SearchLaunch()
     KConfigGroup cg = config();
     m_stripWidget->save(cg);
     config().writeEntry("orientation", (int)m_orientation);
-
-    delete m_runnermg;
 }
 
 void SearchLaunch::init()
@@ -103,11 +101,6 @@ void SearchLaunch::init()
             this, SLOT(appletRemoved(Plasma::Applet*)));
 
     connect(this, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
-
-    m_runnermg = new Plasma::RunnerManager(this);
-    m_runnermg->reloadConfiguration();
-    connect(m_runnermg, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
-            this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
 
     m_toolBox = new NetToolBox(this);
     setToolBox(m_toolBox);
@@ -210,126 +203,32 @@ void SearchLaunch::toggleImmutability()
 
 void SearchLaunch::doSearch(const QString &query, const QString &runner)
 {
-    m_queryCounter = 0;
-    m_firstItem = 0;
-    m_resultsView->clear();
-
-    const bool stillEmpty = query.isEmpty() && m_runnermg->query().isEmpty();
-    if (!stillEmpty) {
-        m_resultsView->clear();
-    }
-
-    m_maxColumnWidth = 0;
-    m_matches.clear();
-
-    m_runnermg->launchQuery(query, runner);
-
-    if (m_resultsView && query.isEmpty()) {
-        if (m_resultsView->count()) {
-            m_resultsView->clear();
-        }
-
-        setQueryMatches(m_defaultMatches);
-        m_backButton->hide();
+    m_runnerModel->setQuery(query, runner);
+    m_lastQuery = query;
+    //enable or disable drag and drop
+    if (immutability() == Plasma::Mutable && !m_lastQuery.isNull()) {
+        m_resultsView->setDragAndDropMode(ItemContainer::CopyDragAndDrop);
+    } else {
         m_resultsView->setDragAndDropMode(ItemContainer::NoDragAndDrop);
-    } else if (m_backButton) {
-        m_backButton->show();
-        if (immutability() == Plasma::Mutable) {
-            m_resultsView->setDragAndDropMode(ItemContainer::CopyDragAndDrop);
-        } else {
-            m_resultsView->setDragAndDropMode(ItemContainer::NoDragAndDrop);
-        }
     }
 }
 
 void SearchLaunch::reset()
 {
-    if (!m_runnermg->query().isEmpty()) {
-        m_searchField->setText(QString());
-        doSearch(QString());
-    }
+    m_searchField->setText(QString());
+    doSearch(QString());
 }
 
-void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &matches)
+void SearchLaunch::launch(QModelIndex index)
 {
-    if (matches.isEmpty()) {
-        return;
-    }
-
-    // just add new QueryMatch
-
-    foreach (Plasma::QueryMatch match, matches) {
-
-        // create new IconWidget with information from the match
-        Plasma::IconWidget *icon = m_resultsView->createItem();
-        icon->setNumDisplayLines(4);
-        icon->hide();
-        icon->setOrientation(Qt::Vertical);
-        icon->setText(!match.text().isEmpty()?match.text():match.subtext());
-        icon->setIcon(match.icon());
-        Plasma::ToolTipContent toolTipData = Plasma::ToolTipContent();
-        toolTipData.setAutohide(true);
-        toolTipData.setMainText(match.text());
-        toolTipData.setSubText(match.subtext());
-        toolTipData.setImage(match.icon());
-
-        Plasma::ToolTipManager::self()->registerWidget(this);
-        Plasma::ToolTipManager::self()->setContent(icon, toolTipData);
-
-        m_resultsView->insertItem(icon, 1/match.relevance());
-
-        if (match.relevance() < 0.4) {
-            icon->setOrientation(Qt::Horizontal);
-            icon->setMinimumSize(icon->sizeFromIconSize(KIconLoader::SizeSmall));
-            icon->setMaximumSize(icon->sizeFromIconSize(KIconLoader::SizeSmall));
-        }
-
-        connect(icon, SIGNAL(activated()), this, SLOT(launch()));
-
-        if (!m_runnermg->searchContext()->query().isEmpty()) {
-            // create action to add to favourites strip
-            QAction *action = new QAction(icon);
-            action->setIcon(KIcon("favorites"));
-            icon->addIconAction(action);
-            m_iconActionCollection->addAction(action);
-            connect(action, SIGNAL(triggered()), this, SLOT(addFavourite()));
-        }
-
-        // add to data structure
-        m_matches.insert(icon, match);
-        if (!m_firstItem || match.relevance() > m_matches.value(m_firstItem, Plasma::QueryMatch(0)).relevance()) {
-            m_firstItem = icon;
-        }
-    }
-    m_queryCounter = matches.count();
-}
-
-void SearchLaunch::launch(Plasma::IconWidget *icon)
-{
-    Plasma::QueryMatch match = m_matches.value(icon, Plasma::QueryMatch(0));
-    if (m_runnermg->searchContext()->query().isEmpty()) {
-        QStringList data = match.data().value<QStringList>();
-
-        if (data.count() == 2) {
-            doSearch(data.first(), data.last());
-        } else {
-            doSearch(data.first());
-        }
-        m_lastQuery = data.first();
-    } else {
-        m_runnermg->run(match);
-        reset();
-    }
-}
-
-void SearchLaunch::launch()
-{
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender());
-    launch(icon);
+    //FIXME: role name
+    KUrl url(index.data(Qt::UserRole+2).value<QString>());
+    m_runnerUrlHandler.openUrl(url);
 }
 
 void SearchLaunch::addFavourite()
 {
+    /*TODO: figure out how the hell do this
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
     Plasma::QueryMatch match = m_matches.value(icon, Plasma::QueryMatch(0));
     QMimeData *mimeData = m_runnermg->mimeDataForMatch(match);
@@ -339,6 +238,7 @@ void SearchLaunch::addFavourite()
     } else {
         m_stripWidget->add(match, m_runnermg->searchContext()->query());
     }
+    */
 }
 
 void SearchLaunch::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
@@ -464,9 +364,14 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_resultsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
             m_resultsLayout->addItem(m_resultsView);
 
-            connect(m_resultsView, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SLOT(resultsViewRequestedDrag(Plasma::IconWidget *)));
+            connect(m_resultsView, SIGNAL(dragStartRequested(QModelIndex)), this, SLOT(resultsViewRequestedDrag(QModelIndex)));
+            connect(m_resultsView, SIGNAL(itemActivated(QModelIndex)), this, SLOT(launch(QModelIndex)));
 
-            m_stripWidget = new StripWidget(m_runnermg, this);
+            m_runnerModel = new KRunnerModel(this);
+            m_resultsView->setModel(m_runnerModel);
+
+            //TODO how to do the strip widget?
+            m_stripWidget = new StripWidget(0, this);
             m_stripWidget->setImmutability(immutability());
 
             //load all config, only at this point we are sure it won't crash
@@ -701,39 +606,22 @@ void SearchLaunch::overlayRequestedDrop(QGraphicsSceneDragDropEvent *event)
 }
 
 
-void SearchLaunch::resultsViewRequestedDrag(Plasma::IconWidget *icon)
+void SearchLaunch::resultsViewRequestedDrag(QModelIndex index)
 {
-    if (m_matches.contains(icon)) {
-        Plasma::QueryMatch match(m_matches.value(icon, Plasma::QueryMatch(0)));
-        if (!match.runner()) {
-            return;
-        }
-
-        QMimeData *mimeData = m_runnermg->mimeDataForMatch(match);
-
-        bool valid = false;
-        if (mimeData  && !mimeData->urls().isEmpty()) {
-            QFileInfo fi(mimeData->urls().first().path());
-            if (fi.exists()) {
-                valid = true;
-            }
-        }
-
-        if (!valid) {
-            QByteArray itemData;
-            QDataStream dataStream(&itemData, QIODevice::WriteOnly);
-            dataStream << m_runnermg->searchContext()->query() << match.runner()->id()<<match.id();
-
-            mimeData = new QMimeData;
-            mimeData->setData("application/x-plasma-salquerymatch", itemData);
-        }
-
-        QDrag *drag = new QDrag(view());
-        drag->setMimeData(mimeData);
-        drag->setPixmap(icon->icon().pixmap(KIconLoader::SizeHuge, KIconLoader::SizeHuge));
-
-        drag->exec(Qt::CopyAction);
+    if (m_resultsView->model() != m_runnerModel) {
+        return;
     }
+
+
+    QModelIndexList list;
+    list.append(index);
+    QMimeData *mimeData = m_runnerModel->mimeData(list);
+
+    QDrag *drag = new QDrag(view());
+    drag->setMimeData(mimeData);
+    drag->setPixmap(index.data(Qt::DecorationRole).value<QIcon>().pixmap(KIconLoader::SizeHuge, KIconLoader::SizeHuge));
+
+    drag->exec(Qt::CopyAction);
 }
 
 void SearchLaunch::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *, const QRect &)
@@ -745,6 +633,7 @@ void SearchLaunch::paintInterface(QPainter *painter, const QStyleOptionGraphicsI
         m_background->resizeFrame(QSizeF(size().width(), m_stripWidget->geometry().bottom()));
         m_background->paintFrame(painter);
     }
+    painter->drawText(boundingRect().center(), "Under heavy development, please don't report bugs!");
 }
 
 void SearchLaunch::delayedQuery()
@@ -763,13 +652,14 @@ void SearchLaunch::searchReturnPressed()
 {
     QString query = m_searchField->text();
     //by pressing enter  do a query or
-    if (m_firstItem && query == m_lastQuery && !query.isEmpty()) {
+    //FIXME
+    /*if (m_firstItem && query == m_lastQuery && !query.isEmpty()) {
         m_runnermg->run(m_matches.value(m_firstItem, Plasma::QueryMatch(0)));
         reset();
     } else {
         doSearch(query);
         m_lastQuery = query;
-    }
+    }*/
 }
 
 void SearchLaunch::goRight()
@@ -848,11 +738,13 @@ void SearchLaunch::changeEvent(QEvent *event)
 
 void SearchLaunch::createConfigurationInterface(KConfigDialog *parent)
 {
+    /*FIXME
     RunnersConfig *runnersConfig = new RunnersConfig(m_runnermg, parent);
     parent->addPage(runnersConfig, i18nc("Title of the page that lets the user choose the loaded krunner plugins", "Search plugins"), "edit-find");
 
     connect(parent, SIGNAL(applyClicked()), runnersConfig, SLOT(accept()));
     connect(parent, SIGNAL(okClicked()), runnersConfig, SLOT(accept()));
+    */
 }
 
 K_EXPORT_PLASMA_APPLET(sal, SearchLaunch)

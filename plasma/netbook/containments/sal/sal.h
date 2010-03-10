@@ -23,6 +23,8 @@
 #ifndef SEARCHLAUNCH_CONTAINMENT_H
 #define SEARCHLAUNCH_CONTAINMENT_H
 
+#include "krunnermodel.h"
+
 #include <Plasma/Containment>
 #include <Plasma/DataEngine>
 
@@ -34,6 +36,7 @@ class ItemView;
 class LinearAppletOverlay;
 class NetToolBox;
 class IconActionCollection;
+class KRunnerModel;
 
 namespace Plasma
 {
@@ -79,15 +82,13 @@ private Q_SLOTS:
     void restoreStrip();
     void updateConfigurationMode(bool config);
     void overlayRequestedDrop(QGraphicsSceneDragDropEvent *event);
-    void resultsViewRequestedDrag(Plasma::IconWidget *icon);
+    void resultsViewRequestedDrag(QModelIndex index);
     void availableScreenRegionChanged();
 
-    void setQueryMatches(const QList<Plasma::QueryMatch> &m);
     void delayedQuery();
     void query();
     void searchReturnPressed();
-    void launch();
-    void launch(Plasma::IconWidget *icon);
+    void launch(QModelIndex index);
     void addFavourite();
     void reset();
 
@@ -101,7 +102,8 @@ private:
     void setFormFactorFromLocation(Plasma::Location loc);
 
     Plasma::FrameSvg *m_background;
-    Plasma::RunnerManager *m_runnermg;
+    KRunnerModel *m_runnerModel;
+    KRunnerItemHandler m_runnerUrlHandler;
     Plasma::IconWidget *m_backButton;
 
     int m_queryCounter;

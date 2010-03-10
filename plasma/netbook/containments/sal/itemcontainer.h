@@ -21,19 +21,24 @@
 #define ITEMCONTAINER_H
 
 #include <QGraphicsWidget>
+#include <QModelIndex>
 
 #include <Plasma/Plasma>
 
 #include <QWeakPointer>
+#include <QModelIndex>
 
 class QGraphicsGridLayout;
 class QPropertyAnimation;
+class QAbstractItemModel;
 
 namespace Plasma
 {
     class IconWidget;
     class ItemBackground;
 }
+
+class ItemView;
 
 class ItemContainer : public QGraphicsWidget
 {
@@ -46,7 +51,7 @@ public:
         MoveDragAndDrop = 2
     };
 
-    ItemContainer(QGraphicsWidget *parent);
+    ItemContainer(ItemView *parent);
     ~ItemContainer();
 
     void setCurrentItem(Plasma::IconWidget *currentItem);
@@ -75,6 +80,11 @@ public:
     //the weight an item would have to appear at the given pixel coordinates (in scene coordinates)
     qreal positionToWeight(const QPointF &point);
 
+    void setModel(QAbstractItemModel *model);
+    QAbstractItemModel *model() const;
+    void setRootIndex(QModelIndex index);
+    QModelIndex rootIndex() const;
+
 protected:
     //The returning QPoint is not a pixel coordinate, rather a column-row coordinate in a QGraphicsGridLayout
     QPoint positionToLayoutPosition(const QPointF &point);
@@ -86,19 +96,24 @@ protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+    void disposeItem(Plasma::IconWidget *icon);
 
 private Q_SLOTS:
     void relayout();
     void syncCurrentItem();
     void itemRemoved(QObject *object);
     void itemRequestedDrag(Plasma::IconWidget *);
+    void reset();
+    void generateItems(const QModelIndex &parent, int start, int end);
+    void removeItems(const QModelIndex &parent, int start, int end);
+    void resultClicked();
 
 Q_SIGNALS:
     void itemSelected(Plasma::IconWidget *);
-    void itemActivated(Plasma::IconWidget *);
+    void itemActivated(QModelIndex);
     void resetRequested();
     void itemReordered(Plasma::IconWidget *, int);
-    void dragStartRequested(Plasma::IconWidget *);
+    void dragStartRequested(QModelIndex index);
     void dragMoveMouseMoved(const QPointF &);
 
 private:
@@ -108,7 +123,8 @@ private:
     Plasma::ItemBackground *m_hoverIndicator;
     QTimer *m_relayoutTimer;
     QTimer *m_setCurrentTimer;
-    QMultiMap<qreal, Plasma::IconWidget*> m_items;
+    QHash<QModelIndex, Plasma::IconWidget*> m_itemsForModel;
+    QHash<Plasma::IconWidget*, QModelIndex> m_itemToIndex;
     QList<Plasma::IconWidget*> m_usedItems;
     Qt::Orientation m_orientation;
     QPropertyAnimation *m_positionAnimation;
@@ -120,6 +136,9 @@ private:
     bool m_firstRelayout;
     DragAndDropMode m_dragAndDropMode;
     bool m_dragging;
+    QAbstractItemModel *m_model;
+    QModelIndex m_rootIndex;
+    ItemView *m_itemView;
 };
 
 #endif
