@@ -2,6 +2,7 @@
 IconName=utilities-terminal
 Comment=Local system message service
 Comment[el]=Τοπική υπηρεσία μηνυμάτων συστήματος
+Comment[en_GB]=Local system message service
 Comment[es]=Servicio de mensajes del sistema local
 Comment[hr]=Lokalni servis za sistemske poruke
 Comment[nb]=Lokal systemmeldingstjeneste
