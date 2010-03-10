@@ -270,15 +270,17 @@ void WindowsRunner::match(Plasma::RunnerContext& context)
         }
         // check if window name, class or role contains the query
         KWindowInfo info = it.value();
-        QString windowClass = QString::fromUtf8(info.windowClassName()) + " " +
-                              QString::fromUtf8(info.windowClassClass());
-        if((info.name().contains(term, Qt::CaseInsensitive) ||
-            windowClass.contains(term, Qt::CaseInsensitive) ||
-            QString::fromUtf8(info.windowRole()).contains(term, Qt::CaseInsensitive)) &&
-            actionSupported(info, action)) {
+        QString className = QString::fromUtf8(info.windowClassName());
+        if (info.name().startsWith(term, Qt::CaseInsensitive) ||
+            className.startsWith(term, Qt::CaseInsensitive)) {
             matches << windowMatch(info, action, 0.8, Plasma::QueryMatch::ExactMatch);
+        } else if ((info.name().contains(term, Qt::CaseInsensitive) ||
+             className.contains(term, Qt::CaseInsensitive)) && 
+            actionSupported(info, action)) {
+            matches << windowMatch(info, action, 0.7, Plasma::QueryMatch::PossibleMatch);
         }
     }
+
     // check for matching desktops by name
     foreach (const QString& desktopName, m_desktopNames) {
         int desktop = m_desktopNames.indexOf(desktopName) +1;
@@ -300,6 +302,7 @@ void WindowsRunner::match(Plasma::RunnerContext& context)
             }
         }
     }
+
     if (!matches.isEmpty()) {
         context.addMatches(context.query(), matches);
     }
