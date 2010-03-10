@@ -1,5 +1,5 @@
-[KNewStuff2]
-ProvidersUrl=http://download.kde.org/khotnewstuff/splashscreens-providers.xml
-#StandardResource=data
-Uncompress=archive
+[KNewStuff3]
+ProvidersUrl=http://download.kde.org/ocs/providers.xml
+Uncompress=always
 TargetDir=ksplash/Themes
+Categories=KDE 4.x Splash Screen
