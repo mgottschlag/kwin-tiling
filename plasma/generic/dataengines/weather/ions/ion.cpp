@@ -186,9 +186,9 @@ QString IonInterface::getWeatherIcon(ConditionIcons condition) const
     case FreezingDrizzle:
         return "weather-freezing-rain";
     case ChanceThunderstormDay:
-        return "weather-scattered-storms-day";
+        return "weather-storm-day";
     case ChanceThunderstormNight:
-        return "weather-scattered-storms-night";
+        return "weather-storm-night";
     case NotAvailable:
         return "weather-none-available";
     }
