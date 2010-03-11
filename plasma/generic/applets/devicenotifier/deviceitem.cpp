@@ -93,12 +93,13 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
     m_nameLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     m_nameLabel->setPreferredWidth(0);
     m_nameLabel->nativeWidget()->setWordWrap(false);
+    m_nameLabel->setAcceptedMouseButtons(0);
 
     m_descriptionLabel = new Plasma::Label(this);
     m_descriptionLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     m_descriptionLabel->setPreferredWidth(0);
     m_descriptionLabel->nativeWidget()->setWordWrap(false);
-    m_descriptionLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    m_descriptionLabel->setAcceptedMouseButtons(0);
     QFont font = m_descriptionLabel->font();
     font.setPointSize(KGlobalSettings::smallestReadableFont().pointSize());
     font.setItalic(true);
