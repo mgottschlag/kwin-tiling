@@ -498,6 +498,7 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
     return false;
 }
 
+#if 0
 qreal ItemContainer::positionToWeight(const QPointF &point)
 {
     /*FIXME: probably remove
@@ -545,6 +546,7 @@ qreal ItemContainer::positionToWeight(const QPointF &point)
         return (key1+key2)/2;
     }*/
 }
+#endif
 
 QModelIndex ItemContainer::indexForPosition(const QPointF &point)
 {

@@ -142,10 +142,12 @@ Plasma::IconWidget *ItemView::createItem()
     return m_itemContainer->createItem();
 }
 
+#if 0
 qreal ItemView::positionToWeight(const QPointF &point)
 {
     return m_itemContainer->positionToWeight(point);
 }
+#endif
 
 void ItemView::setScrollPositionFromDragPosition(const QPointF &point)
 {

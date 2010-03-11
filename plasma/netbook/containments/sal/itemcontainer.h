@@ -78,7 +78,7 @@ public:
     void askRelayout();
 
     //the weight an item would have to appear at the given pixel coordinates (in scene coordinates)
-    qreal positionToWeight(const QPointF &point);
+    //qreal positionToWeight(const QPointF &point);
 
     void setModel(QAbstractItemModel *model);
     QAbstractItemModel *model() const;
