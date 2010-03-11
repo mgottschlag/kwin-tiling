@@ -141,24 +141,48 @@ void FavouritesModel::add(const QString &urlString, const QModelIndex &before)
         Plasma::QueryMatch match(runnerManager()->searchContext()->match(matchId));
 
         if (match.isValid()) {
+            if (before.isValid()) {
+                insertRow(
+                    before.row(),
+                    StandardItemFactory::createItem(
+                        match.icon(),
+                        match.text(),
+                        match.subtext(),
+                        urlString
+                        )
+                    );
+            } else {
+                appendRow(
+                    StandardItemFactory::createItem(
+                        match.icon(),
+                        match.text(),
+                        match.subtext(),
+                        urlString
+                        )
+                    );
+            }
+        }
+    } else {
+        if (before.isValid()) {
+            insertRow(
+                before.row(),
+                StandardItemFactory::createItem(
+                    KIcon(service->icon()),
+                    service->name(),
+                    service->genericName(),
+                    service->entryPath()
+                    )
+                );
+        } else {
             appendRow(
                 StandardItemFactory::createItem(
-                    match.icon(),
-                    match.text(),
-                    match.subtext(),
-                    urlString
+                    KIcon(service->icon()),
+                    service->name(),
+                    service->genericName(),
+                    service->entryPath()
                     )
                 );
         }
-    } else {
-        appendRow(
-            StandardItemFactory::createItem(
-                KIcon(service->icon()),
-                service->name(),
-                service->genericName(),
-                service->entryPath()
-                )
-            );
     }
 }
 

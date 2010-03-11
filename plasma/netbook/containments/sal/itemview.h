@@ -80,6 +80,7 @@ public:
     QAbstractItemModel *model() const;
     void setRootIndex(QModelIndex index);
     QModelIndex rootIndex() const;
+    QModelIndex indexForPosition(const QPointF &point);
 
 public Q_SLOTS:
     void setScrollPositionFromDragPosition(const QPointF &point);

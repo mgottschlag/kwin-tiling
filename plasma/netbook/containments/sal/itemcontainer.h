@@ -84,11 +84,9 @@ public:
     QAbstractItemModel *model() const;
     void setRootIndex(QModelIndex index);
     QModelIndex rootIndex() const;
+    QModelIndex indexForPosition(const QPointF &point);
 
 protected:
-    //The returning QPoint is not a pixel coordinate, rather a column-row coordinate in a QGraphicsGridLayout
-    QPoint positionToLayoutPosition(const QPointF &point);
-
     void focusInEvent(QFocusEvent *event);
     void focusOutEvent(QFocusEvent *event);
     void keyPressEvent(QKeyEvent *event);

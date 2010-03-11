@@ -238,4 +238,9 @@ QModelIndex ItemView::rootIndex() const
     return m_itemContainer->rootIndex();
 }
 
+QModelIndex ItemView::indexForPosition(const QPointF &point)
+{
+    return m_itemContainer->indexForPosition(point);
+}
+
 #include <itemview.moc>

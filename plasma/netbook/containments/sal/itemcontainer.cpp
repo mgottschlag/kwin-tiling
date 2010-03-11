@@ -542,7 +542,7 @@ qreal ItemContainer::positionToWeight(const QPointF &point)
     }*/
 }
 
-QPoint ItemContainer::positionToLayoutPosition(const QPointF &point)
+QModelIndex ItemContainer::indexForPosition(const QPointF &point)
 {
     //FIXME: this code is ugly as sin and inefficient as well, but we would need a -proper- model
     //find the two items that will be neighbours
@@ -555,6 +555,7 @@ QPoint ItemContainer::positionToLayoutPosition(const QPointF &point)
 
         if (item && item->geometry().center().y() < point.y()) {
             row = y;
+            break;
         } else {
             //break;
         }
@@ -565,13 +566,14 @@ QPoint ItemContainer::positionToLayoutPosition(const QPointF &point)
 
         if (item && item->geometry().center().x() < point.x()) {
             column = x;
+            break;
         } else {
             //break;
         }
     }
     kDebug() << "The item will be put at" << row << column;
 
-    return QPoint(column, row);
+    return m_itemToIndex.value(dynamic_cast<Plasma::IconWidget *>(item));
 }
 
 void ItemContainer::focusInEvent(QFocusEvent *event)
@@ -686,6 +688,7 @@ void ItemContainer::generateItems(const QModelIndex &parent, int start, int end)
             connect(icon, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SLOT(itemRequestedDrag(Plasma::IconWidget *)));
         }
     }
+    m_relayoutTimer->start(500);
 }
 
 void ItemContainer::removeItems(const QModelIndex &parent, int start, int end)
@@ -703,6 +706,7 @@ void ItemContainer::removeItems(const QModelIndex &parent, int start, int end)
             disposeItem(icon);
         }
     }
+    m_relayoutTimer->start(500);
 }
 
 void ItemContainer::resultClicked()
