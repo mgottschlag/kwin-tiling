@@ -55,7 +55,7 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
       m_udi(udi),
       m_hovered(false),
       m_mounted(false),
-      m_job(DeviceItem::Idle),
+      m_state(DeviceItem::Idle),
       m_labelFade(0),
       m_barFade(0),
       m_iconFade(0)
@@ -394,11 +394,11 @@ void DeviceItem::setData(int key, const QVariant & value)
     }
 }
 
-void DeviceItem::setJob(DeviceItem::JobType job)
+void DeviceItem::setState(DeviceItem::State state)
 {
-    m_job = job;
+    m_state = state;
 
-    if (job == Idle) {
+    if (state == Idle) {
         m_descriptionLabel->setText(description());
 
         if (m_busyWidgetTimer.isActive()) {
@@ -418,7 +418,7 @@ void DeviceItem::setJob(DeviceItem::JobType job)
         }
         m_busyWidgetTimer.start(300);
 
-        if (job == Mounting) {
+        if (state == Mounting) {
             m_descriptionLabel->setText(i18n("Mounting..."));
         } else {
             collapse();
@@ -521,7 +521,7 @@ void DeviceItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void DeviceItem::clicked()
 {
-    if ((m_actionsLayout->count() == 0) || (m_job == Umounting)) {
+    if ((m_actionsLayout->count() == 0) || (m_state == Umounting)) {
         return;
     }
 

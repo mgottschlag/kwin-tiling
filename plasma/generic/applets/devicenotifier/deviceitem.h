@@ -55,7 +55,7 @@ class DeviceItem : public QGraphicsWidget
             Unlock = 4
         };
 
-        enum JobType {
+        enum State {
             Idle = 0,
             Mounting = 1,
             Umounting =2
@@ -186,7 +186,7 @@ class DeviceItem : public QGraphicsWidget
         /**
         * Sets the state of the device
         **/
-        void setJob(JobType job);
+        void setState(State state);
 
         /**
         * Update colors on a theme change
@@ -319,7 +319,7 @@ class DeviceItem : public QGraphicsWidget
         ///The timer that makes the busy widget show up
         QTimer m_busyWidgetTimer;
 
-        JobType m_job;
+        State m_state;
 
         Plasma::Animation *m_labelFade;
         Plasma::Animation *m_barFade;
