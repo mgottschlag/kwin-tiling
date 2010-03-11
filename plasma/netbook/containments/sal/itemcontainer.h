@@ -121,7 +121,8 @@ private:
     Plasma::ItemBackground *m_hoverIndicator;
     QTimer *m_relayoutTimer;
     QTimer *m_setCurrentTimer;
-    QList<Plasma::IconWidget*> m_items;
+    QHash<QPersistentModelIndex, Plasma::IconWidget*> m_items;
+    QHash<Plasma::IconWidget*, QPersistentModelIndex> m_itemToIndex;
     QList<Plasma::IconWidget*> m_usedItems;
     Qt::Orientation m_orientation;
     QPropertyAnimation *m_positionAnimation;

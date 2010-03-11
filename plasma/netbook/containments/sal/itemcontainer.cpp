@@ -133,12 +133,13 @@ void ItemContainer::clear()
         disposeItem(icon);
     }
     m_items.clear();
+    m_itemToIndex.clear();
 }
 
 //FIXME: remove
 QList<Plasma::IconWidget *> ItemContainer::items() const
 {
-    return m_items;
+    return m_items.values();
 }
 
 Plasma::IconWidget *ItemContainer::createItem()
@@ -300,7 +301,8 @@ void ItemContainer::relayout()
                 continue;
             }
 
-            Plasma::IconWidget *icon = m_items.value(i);
+            QModelIndex index = m_model->index(i, 0, m_rootIndex);
+            Plasma::IconWidget *icon = m_items.value(index);
             if (icon) {
                 m_layout->addItem(icon, row, column);
                 m_layout->setAlignment(icon, Qt::AlignHCenter);
@@ -324,7 +326,8 @@ void ItemContainer::relayout()
                 continue;
             }
 
-            Plasma::IconWidget *icon = m_items.value(i);
+            QModelIndex index = m_model->index(i, 0, m_rootIndex);
+            Plasma::IconWidget *icon = m_items.value(index);
             if (icon) {
                 m_layout->addItem(icon, row, column);
                 m_layout->setAlignment(icon, Qt::AlignCenter);
@@ -369,9 +372,9 @@ void ItemContainer::itemRequestedDrag(Plasma::IconWidget *icon)
                 icon->setParentItem(0);
             }
 
-            int index = m_items.indexOf(icon);
-            if (index != -1) {
-                emit dragStartRequested(m_model->index(index, 0, m_rootIndex));
+            QModelIndex index = m_model->index(i, 0, m_rootIndex);
+            if (index.isValid()) {
+                emit dragStartRequested(index);
             }
             return;
         }
@@ -424,9 +427,9 @@ void ItemContainer::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Enter:
     case Qt::Key_Return:
         if (m_currentIcon) {
-            int index = m_items.indexOf(m_currentIcon.data());
-            if (index != -1) {
-                emit itemActivated(m_model->index(index, 0, m_rootIndex));
+            QModelIndex index = m_itemToIndex.value(m_currentIcon.data());
+            if (index.isValid()) {
+                emit itemActivated(m_model->index(index.row(), 0, m_rootIndex));
             }
         }
         break;
@@ -570,9 +573,9 @@ QModelIndex ItemContainer::indexForPosition(const QPointF &point)
 
     Plasma::IconWidget *icon = dynamic_cast<Plasma::IconWidget *>(m_layout->itemAt(row, column));
     if (icon) {
-        int index = m_items.indexOf(icon);
-        if (index != -1) {
-            return m_model->index(index, 0, m_rootIndex);
+        QModelIndex index = m_itemToIndex.value(icon);
+        if (index.isValid()) {
+            return m_model->index(index.row(), 0, m_rootIndex);
         }
     }
     return QModelIndex();
@@ -685,7 +688,8 @@ void ItemContainer::generateItems(const QModelIndex &parent, int start, int end)
             icon->setMinimumSize(icon->sizeFromIconSize(m_iconSize));
             icon->setMaximumSize(icon->sizeFromIconSize(m_iconSize));
             icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-            m_items.insert(i, icon);
+            m_items.insert(QPersistentModelIndex(index), icon);
+            m_itemToIndex.insert(icon, QPersistentModelIndex(index));
             connect(icon, SIGNAL(clicked()), this, SLOT(resultClicked()));
             connect(icon, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SLOT(itemRequestedDrag(Plasma::IconWidget *)));
         }
@@ -700,8 +704,10 @@ void ItemContainer::removeItems(const QModelIndex &parent, int start, int end)
     }
 
     for (int i = start; i <= end; i++) {
-        Plasma::IconWidget *icon = m_items.value(i);
-        m_items.removeAll(icon);
+        QModelIndex index = m_model->index(i, 0, m_rootIndex);
+        Plasma::IconWidget *icon = m_items.value(index);
+        m_items.remove(index);
+        m_itemToIndex.remove(icon);
         disposeItem(icon);
     }
     m_relayoutTimer->start(500);
@@ -710,10 +716,11 @@ void ItemContainer::removeItems(const QModelIndex &parent, int start, int end)
 void ItemContainer::resultClicked()
 {
     Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(sender());
+
     if (icon) {
-        int i = m_items.indexOf(icon);
-        if (i != -1) {
-            QModelIndex index = m_model->index(i, 0, m_rootIndex);
+        QModelIndex i = m_itemToIndex.value(icon);
+        if (i.isValid()) {
+            QModelIndex index = m_model->index(i.row(), 0, m_rootIndex);
             emit itemActivated(index);
         }
     }
