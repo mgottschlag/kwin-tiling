@@ -43,8 +43,7 @@ public:
     virtual ~FavouritesModel();
 
     void save(KConfigGroup &cg);
-    void add(const QString &fileName, const QPointF &point = QPointF());
-    void add(Plasma::QueryMatch match, const QString &query, const QPointF &point = QPointF());
+    void add(const QString &urlString, const QModelIndex &before = QModelIndex());
     void restore(KConfigGroup &cg);
 
     static Plasma::RunnerManager *runnerManager();

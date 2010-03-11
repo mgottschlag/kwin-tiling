@@ -285,10 +285,11 @@ void StripWidget::dropEvent(QGraphicsSceneDragDropEvent *event)
 
          dataStream >>url;
 
-         m_favouritesModel->add(url.toString(), mapToScene(event->pos()));
+         //TODO: proper index
+         m_favouritesModel->add(url.toString(), QModelIndex());
 
      } else if (event->mimeData()->urls().size() > 0) {
-         m_favouritesModel->add(event->mimeData()->urls().first().path(), mapToScene(event->pos()));
+         m_favouritesModel->add(event->mimeData()->urls().first().path(), QModelIndex());
      } else {
          event->ignore();
      }

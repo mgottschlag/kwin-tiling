@@ -22,14 +22,7 @@
 #include "favouritesmodel.h"
 #include "krunnermodel.h"
 
-         /*
 // Qt
-#include <QBasicTimer>
-#include <QDebug>
-#include <QList>
-#include <QMimeData>
-#include <QString>
-#include <QTimerEvent>*/
 
 // KDE
 #include <KService>
@@ -117,20 +110,8 @@ void FavouritesModel::restore(KConfigGroup &cg)
     }
 }
 
-void FavouritesModel::add(Plasma::QueryMatch match, const QString &query, const QPointF &point)
-{
 
-    appendRow(
-            StandardItemFactory::createItem(
-                match.icon(),
-                match.text(),
-                match.subtext(),
-                QString("krunner://") + match.runner()->id() + "/" + match.id() + "#" + runnerManager()->query()
-                )
-            );
-}
-
-void FavouritesModel::add(const QString &urlString, const QPointF &point)
+void FavouritesModel::add(const QString &urlString, const QModelIndex &before)
 {
 
     KService::Ptr service = KService::serviceByDesktopPath(urlString);
