@@ -281,22 +281,11 @@ void StripWidget::dropEvent(QGraphicsSceneDragDropEvent *event)
          QByteArray itemData = event->mimeData()->data("application/x-plasma-salquerymatch");
          QDataStream dataStream(&itemData, QIODevice::ReadOnly);
 
-         QString query;
-         QString runnerId;
-         QString matchId;
+         QUrl url;
 
-         dataStream >>query>>runnerId>>matchId;
+         dataStream >>url;
 
-         //FIXME: another inefficient async query
-         m_runnermg->blockSignals(true);
-         m_runnermg->execQuery(query, runnerId);
-         m_runnermg->blockSignals(false);
-
-         Plasma::QueryMatch match(m_runnermg->searchContext()->match(matchId));
-
-         if (match.isValid()) {
-             m_favouritesModel->add(match, query, mapToScene(event->pos()));
-         }
+         m_favouritesModel->add(url.toString(), mapToScene(event->pos()));
 
      } else if (event->mimeData()->urls().size() > 0) {
          m_favouritesModel->add(event->mimeData()->urls().first().path(), mapToScene(event->pos()));

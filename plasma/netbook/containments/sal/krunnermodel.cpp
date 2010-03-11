@@ -158,7 +158,7 @@ void KRunnerModel::matchesChanged(const QList< Plasma::QueryMatch > & m)
                 match.icon(),
                 match.text(),
                 match.subtext(),
-                QString("krunner://") + match.runner()->id() + "/" + match.id()
+                QString("krunner://") + match.runner()->id() + "/" + match.id() + "#" + ::runnerManager()->query()
                 )
             );
     }

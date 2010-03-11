@@ -89,31 +89,19 @@ void FavouritesModel::restore(KConfigGroup &cg)
         }
     }
 
-    QVector<QString> runnerIds;
-    QVector<QString> queries;
-    QVector<QString> matchIds;
     QVector<QString> urls;
     int numIcons;
 
     if (favouritesConfigs.isEmpty()) {
         numIcons = 4;
-        runnerIds.resize(4);
-        queries.resize(4);
-        matchIds.resize(4);
         urls << "konqueror" << "kmail" << "systemsettings" << "dolphin";
     } else {
-        runnerIds.resize(favouritesConfigs.size());
-        queries.resize(favouritesConfigs.size());
-        matchIds.resize(favouritesConfigs.size());
         urls.resize(favouritesConfigs.size());
         QMap<uint, KConfigGroup>::const_iterator it = favouritesConfigs.constBegin();
         int i = 0;
         while (it != favouritesConfigs.constEnd()) {
             KConfigGroup favouriteConfig = it.value();
 
-            runnerIds[i] = favouriteConfig.readEntry("runnerid");
-            queries[i] = favouriteConfig.readEntry("query");
-            matchIds[i] = favouriteConfig.readEntry("matchId");
             urls[i] = favouriteConfig.readEntry("url");
             ++i;
             ++it;
@@ -125,50 +113,64 @@ void FavouritesModel::restore(KConfigGroup &cg)
     for (int i = 0; i < numIcons; ++i ) {
         if (!urls[i].isNull()) {
             add(urls[i]);
-        } else {
-            // perform the query
-            runnerManager()->blockSignals(true);
-            const bool found = runnerManager()->execQuery(queries[i], runnerIds[i]);
-            runnerManager()->blockSignals(false);
-            if (currentQuery == queries[i] || found) {
-                currentQuery = queries[i];
-                // find our match
-                Plasma::QueryMatch match(runnerManager()->searchContext()->match(matchIds[i]));
-
-                // we should verify some other saved information to avoid putting the
-                // wrong item if the search result is different!
-                if (match.isValid()) {
-                    add(match, queries[i]);
-                }
-            }
         }
     }
 }
 
 void FavouritesModel::add(Plasma::QueryMatch match, const QString &query, const QPointF &point)
 {
+
     appendRow(
             StandardItemFactory::createItem(
                 match.icon(),
                 match.text(),
                 match.subtext(),
-                QString("krunner://") + match.runner()->id() + "/" + match.id()
+                QString("krunner://") + match.runner()->id() + "/" + match.id() + "#" + runnerManager()->query()
                 )
             );
 }
 
-void FavouritesModel::add(const QString &fileName, const QPointF &point)
+void FavouritesModel::add(const QString &urlString, const QPointF &point)
 {
-    KService::Ptr service = KService::serviceByDesktopPath(fileName);
+
+    KService::Ptr service = KService::serviceByDesktopPath(urlString);
 
     if (!service) {
-        service = KService::serviceByDesktopName(fileName);
-        if (!service) {
-            return;
-        }
+        service = KService::serviceByDesktopName(urlString);
     }
 
-    appendRow(
+    if (!service) {
+        QUrl url(urlString);
+        if (!url.isValid()) {
+            return;
+        }
+
+        QString query = url.fragment();
+        QString runnerId = url.host();
+        QString matchId = url.path();
+        if (matchId.startsWith(QLatin1String("/"))) {
+            matchId = matchId.remove(0, 1);
+        }
+
+        //FIXME: another inefficient async query
+        runnerManager()->blockSignals(true);
+        runnerManager()->execQuery(query, runnerId);
+        runnerManager()->blockSignals(false);
+
+        Plasma::QueryMatch match(runnerManager()->searchContext()->match(matchId));
+
+        if (match.isValid()) {
+            appendRow(
+                StandardItemFactory::createItem(
+                    match.icon(),
+                    match.text(),
+                    match.subtext(),
+                    urlString
+                    )
+                );
+        }
+    } else {
+        appendRow(
             StandardItemFactory::createItem(
                 KIcon(service->icon()),
                 service->name(),
@@ -176,6 +178,7 @@ void FavouritesModel::add(const QString &fileName, const QPointF &point)
                 service->entryPath()
                 )
             );
+    }
 }
 
 void FavouritesModel::save(KConfigGroup &cg)
@@ -188,29 +191,15 @@ void FavouritesModel::save(KConfigGroup &cg)
 
     KConfigGroup stripGroup(&cg, "stripwidget");
 
-    int id = 0;
-    //TODO: do it with qmodelindex
-/*    foreach(Plasma::IconWidget *icon, m_itemView->items()) {
-        // Write now just saves one for tests. Later will save
-        // all the strip
-        KConfigGroup config(&stripGroup, QString("favourite-%1").arg(id));
-
-        //config.writeEntry("icon", match->);
-        config.writeEntry("text", icon->text());
-
-        if (m_favouritesIcons.contains(icon)) {
-            Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
-            config.writeEntry("runnerid", match->runner()->id());
-            config.writeEntry("query", m_favouritesQueries.value(match));
-            config.writeEntry("matchId", match->id());
-            config.writeEntry("subText", match->subtext());
-        } else if (m_services.contains(icon)) {
-            config.writeEntry("url", (m_services[icon])->entryPath());
-            config.writeEntry("subText", m_services[icon]->genericName());
+    for (int i = 0; i <= rowCount(); i++) {
+        QModelIndex currentIndex = index(i, 0);
+        KConfigGroup config(&stripGroup, QString("favourite-%1").arg(i));
+        //TODO: role name
+        QString url = currentIndex.data(Qt::UserRole+2).value<QString>();
+        if (!url.isNull()) {
+            config.writeEntry("url", url);
         }
-
-        ++id;
-    }*/
+    }
 }
 
 #include "favouritesmodel.moc"
