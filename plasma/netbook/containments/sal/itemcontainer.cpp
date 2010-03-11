@@ -673,20 +673,22 @@ void ItemContainer::generateItems(const QModelIndex &parent, int start, int end)
     for (int i = start; i <= end; i++) {
         QModelIndex index = m_model->index(i, 0, m_rootIndex);
 
-        Plasma::IconWidget *icon = createItem();
-        icon->setIcon(index.data(Qt::DecorationRole).value<QIcon>());
-        icon->setText(index.data(Qt::DisplayRole).value<QString>());
+        if (index.isValid()) {
+            Plasma::IconWidget *icon = createItem();
+            icon->setIcon(index.data(Qt::DecorationRole).value<QIcon>());
+            icon->setText(index.data(Qt::DisplayRole).value<QString>());
 
-        qreal left, top, right, bottom;
-        m_hoverIndicator->getContentsMargins(&left, &top, &right, &bottom);
-        icon->setContentsMargins(left, top, right, bottom);
+            qreal left, top, right, bottom;
+            m_hoverIndicator->getContentsMargins(&left, &top, &right, &bottom);
+            icon->setContentsMargins(left, top, right, bottom);
 
-        icon->setMinimumSize(icon->sizeFromIconSize(m_iconSize));
-        icon->setMaximumSize(icon->sizeFromIconSize(m_iconSize));
-        icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        m_items.insert(i, icon);
-        connect(icon, SIGNAL(clicked()), this, SLOT(resultClicked()));
-        connect(icon, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SLOT(itemRequestedDrag(Plasma::IconWidget *)));
+            icon->setMinimumSize(icon->sizeFromIconSize(m_iconSize));
+            icon->setMaximumSize(icon->sizeFromIconSize(m_iconSize));
+            icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+            m_items.insert(i, icon);
+            connect(icon, SIGNAL(clicked()), this, SLOT(resultClicked()));
+            connect(icon, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SLOT(itemRequestedDrag(Plasma::IconWidget *)));
+        }
     }
     m_relayoutTimer->start(500);
 }
