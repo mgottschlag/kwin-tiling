@@ -57,10 +57,6 @@ public:
     StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent = 0);
     ~StripWidget();
 
-    void add(Plasma::QueryMatch match, const QString &query, const QPointF &point = QPointF());
-    void add(const QString &fileName, const QPointF &point = QPointF());
-    void remove(Plasma::IconWidget *favourite);
-
     void save(KConfigGroup &cg);
     void restore(KConfigGroup &cg);
 
@@ -78,7 +74,6 @@ protected:
     void dropEvent(QGraphicsSceneDragDropEvent *event);
 
 private Q_SLOTS:
-    void removeFavourite();
     void launchFavourite();
     void launchFavourite(Plasma::IconWidget *icon);
     void arrowsNeededChanged(ItemView::ScrollBarFlags flags);
@@ -86,8 +81,6 @@ private Q_SLOTS:
     void goRight();
     void scrollTimeout();
     void itemReordered(Plasma::IconWidget *icon, int index);
-    //FIXME: this needs to go
-    void highlightCurrentItem();
     void showDeleteTarget();
 
 private:
@@ -103,8 +96,6 @@ private:
     ItemView *m_itemView;
     Plasma::RunnerContext *m_context;
     QTimer *m_scrollTimer;
-    //FIXME: connecting to an animationcomplete signal from the icon?
-    QTimer *m_setCurrentTimer;
     Plasma::IconWidget *m_deleteTarget;
     IconActionCollection *m_iconActionCollection;
     int m_shownIcons;

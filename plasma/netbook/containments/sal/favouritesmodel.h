@@ -24,6 +24,9 @@
 #include <QStandardItemModel>
 
 #include <KUrl>
+#include <KConfigGroup>
+
+#include <Plasma/QueryMatch>
 
 #include "standarditemfactory.h"
 
@@ -39,7 +42,12 @@ public:
     FavouritesModel(QObject *parent);
     virtual ~FavouritesModel();
 
-    Plasma::RunnerManager *runnerManager();
+    void save(KConfigGroup &cg);
+    void add(const QString &fileName, const QPointF &point = QPointF());
+    void add(Plasma::QueryMatch match, const QString &query, const QPointF &point = QPointF());
+    void restore(KConfigGroup &cg);
+
+    static Plasma::RunnerManager *runnerManager();
 
 private:
     class Private;
