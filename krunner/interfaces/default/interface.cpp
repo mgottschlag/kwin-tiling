@@ -522,9 +522,11 @@ void Interface::run(ResultItem *item)
     }
 
     m_running = true;
-    resetInterface();
-    close();
+    // must run the result first before clearing the interface
+    // in a way that will cause the results scene to be cleared and
+    // the RunnerManager to be cleared of context as a result
     m_resultsScene->run(item);
+    close();
     m_running = false;
 
     //TODO: check if run is succesful before adding the term to history
