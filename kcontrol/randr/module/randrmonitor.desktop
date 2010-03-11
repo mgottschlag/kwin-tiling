@@ -7,6 +7,7 @@ Name[nb]=Overvåker endringer i skjermstyring
 Name[pt]=Monitoriza as alterações de Gestão do Ecrã
 Name[pt_BR]=Monitora as alterações de gerenciamento de tela
 Name[sv]=Skärmhantering bildskärmsbyte
+Name[th]=การจัดการระบบแสดงผล - เปลี่ยนจอภาพ
 Name[uk]=Зміна монітора керування показом
 Name[x-test]=xxDisplay Management change monitorxx
 Comment=Is this required when kephal has its own kded module?

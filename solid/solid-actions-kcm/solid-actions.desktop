@@ -121,6 +121,7 @@ Comment[sr@ijekavian]=Поставна алатка за управљање ра
 Comment[sr@ijekavianlatin]=Postavna alatka za upravljanje radnjama dostupnim korisniku pri povezivanju novih uređaja na računar.
 Comment[sr@latin]=Postavna alatka za upravljanje radnjama dostupnim korisniku pri povezivanju novih uređaja na računar.
 Comment[sv]=Ett inställningsverktyg för att hantera tillgängliga åtgärder för användare när nya enheter ansluts till datorn
+Comment[th]=เครื่องปรับแต่งค่าสำหรับการจัดการการกระทำต่าง ๆ ที่มีให้ผู้ใช้ได้ใช้งาน เมื่อมีการเชื่อมต่ออุปกรณ์ใหม่ ๆ เข้ามายังคอมพิวเตอร์
 Comment[tr]=Bilgisayara yeni bir aygıt takıldığında kullanıcı tarafından kullanılabilecek eylemleri yönetmek için bir yapılandırma aracı.
 Comment[uk]=Керування діями, доступними користувачеві після з’єднання пристроїв з комп’ютером
 Comment[x-test]=xxA configuration tool for managing the actions available to the user when connecting new devices to the computerxx

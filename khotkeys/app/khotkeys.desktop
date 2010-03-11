@@ -89,6 +89,7 @@ Comment[nb]=Tjeneste for inndata-handlinger, som utfører definerte handlinger f
 Comment[pt]=Serviço de acções de entrada que efectua acções configuradas ao carregar nas teclas
 Comment[pt_BR]=Serviço de ações de entrada que realiza ações configuradas ao pressionar as teclas
 Comment[sv]=Tjänst för inmatningsåtgärder som utför inställda åtgärder vid tangentnedtryckning
+Comment[th]=บริการการกระทำเพื่อป้อนข้อมูลสำหรับเรียกการกระทำที่ได้ปรับแต่งไว้เมื่อมีการกดปุ่มพิมพ์
 Comment[uk]=Служба «Ввід» виконує вказані дії у відповідь на натискання певних клавіш
 Comment[x-test]=xxInput Actions service performing configured actions on key pressesxx
 Type=Service
