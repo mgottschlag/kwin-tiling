@@ -18,7 +18,7 @@
  */
 
 #include "stripwidget.h"
-#include "favouritesmodel.h"
+#include "models/favouritesmodel.h"
 
 #include <QGraphicsGridLayout>
 #include <QGraphicsScene>

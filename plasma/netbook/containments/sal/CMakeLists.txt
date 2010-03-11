@@ -10,9 +10,9 @@ set(sal_SRCS
     resultwidget.cpp
     runnersconfig.cpp
     iconactioncollection.cpp
-    krunnermodel.cpp
-    standarditemfactory.cpp
-    favouritesmodel.cpp
+    models/krunnermodel.cpp
+    models/standarditemfactory.cpp
+    models/favouritesmodel.cpp
     )
 
 kde4_add_plugin(plasma_containment_sal ${sal_SRCS})

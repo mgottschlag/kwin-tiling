@@ -23,7 +23,7 @@
 #ifndef SEARCHLAUNCH_CONTAINMENT_H
 #define SEARCHLAUNCH_CONTAINMENT_H
 
-#include "krunnermodel.h"
+#include "models/krunnermodel.h"
 
 #include <Plasma/Containment>
 #include <Plasma/DataEngine>
