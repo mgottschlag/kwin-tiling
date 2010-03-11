@@ -521,16 +521,17 @@ void Interface::run(ResultItem *item)
         return;
     }
 
+    //TODO: check if run is succesful before adding the term to history
+    m_searchTerm->addToHistory(m_searchTerm->currentText().trimmed());
+
     m_running = true;
     // must run the result first before clearing the interface
     // in a way that will cause the results scene to be cleared and
     // the RunnerManager to be cleared of context as a result
     m_resultsScene->run(item);
-    close();
     m_running = false;
 
-    //TODO: check if run is succesful before adding the term to history
-    m_searchTerm->addToHistory(m_searchTerm->currentText().trimmed());
+    close();
 }
 
 void Interface::actionTriggered()
