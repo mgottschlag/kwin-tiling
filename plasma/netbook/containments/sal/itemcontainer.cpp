@@ -556,9 +556,6 @@ QModelIndex ItemContainer::indexForPosition(const QPointF &point)
 
         if (item && item->geometry().center().y() < point.y()) {
             row = y;
-            break;
-        } else {
-            //break;
         }
     }
 
@@ -567,14 +564,11 @@ QModelIndex ItemContainer::indexForPosition(const QPointF &point)
 
         if (item && item->geometry().center().x() < point.x()) {
             column = x;
-            break;
-        } else {
-            //break;
         }
     }
     kDebug() << "The item will be put at" << row << column;
 
-    Plasma::IconWidget *icon = dynamic_cast<Plasma::IconWidget *>(item);
+    Plasma::IconWidget *icon = dynamic_cast<Plasma::IconWidget *>(m_layout->itemAt(row, column));
     if (icon) {
         int index = m_items.indexOf(icon);
         if (index != -1) {
