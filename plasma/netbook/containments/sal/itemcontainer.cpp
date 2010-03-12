@@ -21,6 +21,7 @@
 #include "itemview.h"
 #include "resultwidget.h"
 #include "models/commonmodel.h"
+#include "iconactioncollection.h"
 
 #include <QGraphicsGridLayout>
 #include <QGraphicsScene>
@@ -31,9 +32,12 @@
 #include <QWeakPointer>
 #include <QAbstractItemModel>
 #include <QPropertyAnimation>
+#include <QAction>
 
 #include <KIconLoader>
+#include <KIcon>
 
+#include <Plasma/Applet>
 #include <Plasma/IconWidget>
 #include <Plasma/ItemBackground>
 #include <Plasma/ToolTipContent>
@@ -57,6 +61,18 @@ ItemContainer::ItemContainer(ItemView *parent)
     m_positionAnimation->setEasingCurve(QEasingCurve::InOutQuad);
     m_positionAnimation->setDuration(250);
     m_layout = new QGraphicsGridLayout(this);
+
+    QGraphicsItem *pi = parent->parentItem();
+    Plasma::Applet *applet = 0;
+    while (pi) {
+        applet = dynamic_cast<Plasma::Applet *>(pi);
+        if (applet) {
+            break;
+        } else {
+            pi = pi->parentItem();
+        }
+    }
+    m_iconActionCollection = new IconActionCollection(applet, this);
 
     setFocusPolicy(Qt::StrongFocus);
     setAcceptHoverEvents(true);
@@ -610,6 +626,18 @@ void ItemContainer::generateItems(const QModelIndex &parent, int start, int end)
 
             Plasma::ToolTipManager::self()->registerWidget(this);
             Plasma::ToolTipManager::self()->setContent(icon, toolTipData);
+
+            CommonModel::ActionType actionType = (CommonModel::ActionType)index.data(CommonModel::ActionTypeRole).value<int>();
+            if (actionType != CommonModel::NoAction) {
+                QAction *action = new QAction(icon);
+                if (actionType == CommonModel::AddAction) {
+                    action->setIcon(KIcon("favorites"));
+                } else {
+                    action->setIcon(KIcon("list-remove"));
+                }
+                icon->addIconAction(action);
+                m_iconActionCollection->addAction(action);
+            }
 
             qreal left, top, right, bottom;
             m_hoverIndicator->getContentsMargins(&left, &top, &right, &bottom);

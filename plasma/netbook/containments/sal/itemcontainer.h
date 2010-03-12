@@ -39,6 +39,7 @@ namespace Plasma
 }
 
 class ItemView;
+class IconActionCollection;
 
 class ItemContainer : public QGraphicsWidget
 {
@@ -129,6 +130,7 @@ private:
     QAbstractItemModel *m_model;
     QModelIndex m_rootIndex;
     ItemView *m_itemView;
+    IconActionCollection *m_iconActionCollection;
 };
 
 #endif
