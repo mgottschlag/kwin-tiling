@@ -20,6 +20,7 @@
 #include "itemcontainer.h"
 #include "itemview.h"
 #include "resultwidget.h"
+#include "models/commonmodel.h"
 
 #include <QGraphicsGridLayout>
 #include <QGraphicsScene>
@@ -604,8 +605,7 @@ void ItemContainer::generateItems(const QModelIndex &parent, int start, int end)
             Plasma::ToolTipContent toolTipData = Plasma::ToolTipContent();
             toolTipData.setAutohide(true);
             toolTipData.setMainText(index.data(Qt::DisplayRole).value<QString>());
-            //FIXME: role name
-            toolTipData.setSubText(index.data(Qt::UserRole+1).value<QString>());
+            toolTipData.setSubText(index.data(CommonModel::Description).value<QString>());
             toolTipData.setImage(index.data(Qt::DecorationRole).value<QIcon>());
 
             Plasma::ToolTipManager::self()->registerWidget(this);

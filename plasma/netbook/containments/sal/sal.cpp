@@ -26,6 +26,7 @@
 #include "../common/appletmovespacer.h"
 #include "../common/nettoolbox.h"
 #include "iconactioncollection.h"
+#include "models/commonmodel.h"
 
 #include <QAction>
 #include <QTimer>
@@ -219,8 +220,7 @@ void SearchLaunch::reset()
 
 void SearchLaunch::launch(QModelIndex index)
 {
-    //FIXME: role name
-    KUrl url(index.data(Qt::UserRole+2).value<QString>());
+    KUrl url(index.data(CommonModel::Url).value<QString>());
     KRunnerItemHandler::openUrl(url);
 }
 

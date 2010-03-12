@@ -20,6 +20,7 @@
 
 // Own
 #include "krunnermodel.h"
+#include "models/commonmodel.h"
 
 // Qt
 #include <QBasicTimer>
@@ -104,8 +105,10 @@ KRunnerModel::KRunnerModel(QObject *parent)
             SLOT(matchesChanged (const QList< Plasma::QueryMatch > & )));
 
     QHash<int, QByteArray> newRoleNames = roleNames();
-    newRoleNames[Qt::UserRole + 1] = "description";
-    newRoleNames[Qt::UserRole + 2] = "url";
+    newRoleNames[CommonModel::Description] = "description";
+    newRoleNames[CommonModel::Url] = "url";
+    newRoleNames[CommonModel::Weight] = "weight";
+    newRoleNames[CommonModel::Action] = "action";
 
 
     setRoleNames(newRoleNames);
@@ -169,7 +172,7 @@ Qt::ItemFlags KRunnerModel::flags(const QModelIndex &index) const
     Qt::ItemFlags flags = QStandardItemModel::flags(index);
 
     if (index.isValid()) {
-        KUrl url = data(index, Qt::UserRole+2).toString();
+        KUrl url = data(index, CommonModel::Url).toString();
         QString host = url.host();
         if (host != "services") {
             flags &= ~ ( Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled );
@@ -186,7 +189,7 @@ QMimeData * KRunnerModel::mimeData(const QModelIndexList &indexes) const
     KUrl::List urls;
 
     foreach (const QModelIndex & index, indexes) {
-        KUrl url = data(index, Qt::UserRole+2).toString();
+        KUrl url = data(index, CommonModel::Url).toString();
 
         KService::Ptr service = serviceForUrl(url);
 
@@ -203,7 +206,7 @@ QMimeData * KRunnerModel::mimeData(const QModelIndexList &indexes) const
         QByteArray itemData;
         QDataStream dataStream(&itemData, QIODevice::WriteOnly);
         foreach (const QModelIndex & index, indexes) {
-            dataStream << QUrl(data(index, Qt::UserRole+2).toString());
+            dataStream << QUrl(data(index, CommonModel::Url).toString());
         }
 
         mimeData = new QMimeData;

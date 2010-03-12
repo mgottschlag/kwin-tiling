@@ -20,6 +20,7 @@
 #include "stripwidget.h"
 #include "models/favouritesmodel.h"
 #include "models/krunnermodel.h"
+#include "models/commonmodel.h"
 
 #include <QGraphicsGridLayout>
 #include <QGraphicsScene>
@@ -175,13 +176,7 @@ void StripWidget::restore(KConfigGroup &cg)
 
 void StripWidget::launchFavourite(const QModelIndex &index)
 {
-    /*Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
-
-    Plasma::RunnerContext context;
-    context.setQuery(m_favouritesQueries.value(match));
-    match->run(context);*/
-
-    KUrl url(index.data(Qt::UserRole+2).value<QString>());
+    KUrl url(index.data(CommonModel::Url).value<QString>());
     if (!KServiceItemHandler::openUrl(url)) {
         KRunnerItemHandler::openUrl(url);
     }

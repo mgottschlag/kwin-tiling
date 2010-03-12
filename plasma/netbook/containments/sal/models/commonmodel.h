@@ -1,5 +1,4 @@
 /*
-    Copyright 2009 Ivan Cukic <ivan.cukic+kde@gmail.com>
     Copyright 2010 Marco Martin <notmart@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -18,17 +17,19 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include "standarditemfactory.h"
+#ifndef COMMONMODEL_H
+#define COMMONMODEL_H
 
-QStandardItem *StandardItemFactory::createItem(const QIcon & icon, const QString & title,
-        const QString & description, const QString & url)
+#include <Qt>
+
+namespace CommonModel
 {
-    QStandardItem *appItem = new QStandardItem;
-
-    appItem->setText(title);
-    appItem->setIcon(icon);
-    appItem->setData(description, Qt::UserRole + 1);
-    appItem->setData(url, Qt::UserRole + 2);
-
-    return appItem;
+    enum Roles {
+        Description = Qt::UserRole+1,
+        Url = Qt::UserRole+2,
+        Weight = Qt::UserRole+3,
+        Action = Qt::UserRole+4
+    };
 }
+
+#endif

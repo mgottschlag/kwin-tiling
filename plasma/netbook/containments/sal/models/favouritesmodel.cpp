@@ -21,6 +21,7 @@
 // Own
 #include "favouritesmodel.h"
 #include "krunnermodel.h"
+#include "commonmodel.h"
 
 // Qt
 
@@ -67,8 +68,10 @@ FavouritesModel::FavouritesModel(QObject *parent)
         , d(new Private())
 {
     QHash<int, QByteArray> newRoleNames = roleNames();
-    newRoleNames[Qt::UserRole + 1] = "description";
-    newRoleNames[Qt::UserRole + 2] = "url";
+    newRoleNames[CommonModel::Description] = "description";
+    newRoleNames[CommonModel::Url] = "url";
+    newRoleNames[CommonModel::Weight] = "weight";
+    newRoleNames[CommonModel::Action] = "action";
 
     setRoleNames(newRoleNames);
 }
@@ -217,8 +220,7 @@ void FavouritesModel::save(KConfigGroup &cg)
     for (int i = 0; i <= rowCount(); i++) {
         QModelIndex currentIndex = index(i, 0);
         KConfigGroup config(&stripGroup, QString("favourite-%1").arg(i));
-        //TODO: role name
-        QString url = currentIndex.data(Qt::UserRole+2).value<QString>();
+        QString url = currentIndex.data(CommonModel::Url).value<QString>();
         if (!url.isNull()) {
             config.writeEntry("url", url);
         }
