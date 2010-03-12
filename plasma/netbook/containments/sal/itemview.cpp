@@ -73,20 +73,6 @@ void ItemView::focusInEvent(QFocusEvent *event)
     Plasma::ScrollWidget::focusInEvent(event);
 }
 
-void ItemView::clear()
-{
-    // Plasma::Animator::self()->stopScrollingWidget(this);
-    QList<Plasma::IconWidget *>items = m_itemContainer->items();
-    foreach (Plasma::IconWidget *item, items) {
-        unregisterAsDragHandle(item);
-    }
-    m_itemContainer->clear();
-}
-
-int ItemView::count() const
-{
-    return m_itemContainer->count();
-}
 
 void ItemView::setOrientation(Qt::Orientation orientation)
 {

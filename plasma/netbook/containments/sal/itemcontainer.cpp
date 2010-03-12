@@ -111,19 +111,6 @@ Plasma::IconWidget *ItemContainer::currentItem() const
     return m_currentIcon.data();
 }
 
-void ItemContainer::clear()
-{
-    m_hoverIndicator->setTargetItem(0);
-    for (int i = 0; i < m_layout->count(); ++i) {
-        m_layout->removeAt(0);
-    }
-    foreach (Plasma::IconWidget *icon, m_items) {
-        disposeItem(icon);
-    }
-    m_items.clear();
-    m_itemToIndex.clear();
-}
-
 //FIXME: remove
 QList<Plasma::IconWidget *> ItemContainer::items() const
 {
@@ -156,11 +143,6 @@ void ItemContainer::disposeItem(Plasma::IconWidget *icon)
     } else {
         icon->deleteLater();
     }
-}
-
-int ItemContainer::count() const
-{
-    return m_layout->count();
 }
 
 void ItemContainer::setOrientation(Qt::Orientation orientation)
@@ -664,7 +646,15 @@ QAbstractItemModel *ItemContainer::model() const
 
 void ItemContainer::reset()
 {
-    clear();
+    m_hoverIndicator->setTargetItem(0);
+    for (int i = 0; i < m_layout->count(); ++i) {
+        m_layout->removeAt(0);
+    }
+    foreach (Plasma::IconWidget *icon, m_items) {
+        disposeItem(icon);
+    }
+    m_items.clear();
+    m_itemToIndex.clear();
     askRelayout();
 }
 

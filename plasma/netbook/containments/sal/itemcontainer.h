@@ -57,9 +57,6 @@ public:
     void setCurrentItem(Plasma::IconWidget *currentItem);
     Plasma::IconWidget *currentItem() const;
 
-    void clear();
-    int count() const;
-
     void setOrientation(Qt::Orientation orientation);
     Qt::Orientation orientation() const;
 
