@@ -578,12 +578,15 @@ void ItemContainer::setModel(QAbstractItemModel *model)
 {
     if (m_model) {
         disconnect(m_model, 0, this, 0);
+        reset();
     }
 
     m_model = model;
     connect (m_model, SIGNAL(modelAboutToBeReset()), this, SLOT(reset()));
     connect (m_model, SIGNAL(rowsInserted(const QModelIndex & , int, int)), this, SLOT(generateItems(const QModelIndex&, int, int)));
     connect (m_model, SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)), this, SLOT(removeItems(const QModelIndex&, int, int)));
+
+    generateItems(m_rootIndex, 0, m_model->rowCount());
 }
 
 QAbstractItemModel *ItemContainer::model() const

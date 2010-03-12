@@ -37,6 +37,7 @@ class LinearAppletOverlay;
 class NetToolBox;
 class IconActionCollection;
 class KRunnerModel;
+class KServiceModel;
 
 namespace Plasma
 {
@@ -103,6 +104,7 @@ private:
 
     Plasma::FrameSvg *m_background;
     KRunnerModel *m_runnerModel;
+    KServiceModel *m_serviceModel;
     Plasma::IconWidget *m_backButton;
 
     int m_queryCounter;

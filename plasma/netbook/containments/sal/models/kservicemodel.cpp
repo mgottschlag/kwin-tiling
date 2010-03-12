@@ -29,6 +29,7 @@
 #include <KIcon>
 #include <KDebug>
 #include <KRun>
+#include <KServiceTypeTrader>
 
 //Plasma
 #include <Plasma/AbstractRunner>
@@ -62,6 +63,26 @@ KServiceModel::KServiceModel(QObject *parent)
     newRoleNames[CommonModel::ActionTypeRole] = "action";
 
     setRoleNames(newRoleNames);
+
+    KService::List services = KServiceTypeTrader::self()->query("Plasma/Sal/Menu");
+    if (!services.isEmpty()) {
+        foreach (const KService::Ptr &service, services) {
+            const QString query = service->property("X-Plasma-Sal-Query", QVariant::String).toString();
+            const QString runner = service->property("X-Plasma-Sal-Runner", QVariant::String).toString();
+            const int relevance = service->property("X-Plasma-Sal-Relevance", QVariant::Int).toInt();
+
+            appendRow(
+                    StandardItemFactory::createItem(
+                        KIcon(service->icon()),
+                        service->name(),
+                        service->comment(),
+                        QString("krunner://") + runner + "/#" + query,
+                        relevance, //don't need weigt here
+                        CommonModel::NoAction
+                        )
+                    );
+        }
+    }
 }
 
 KServiceModel::~KServiceModel()

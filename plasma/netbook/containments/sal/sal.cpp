@@ -27,6 +27,7 @@
 #include "../common/nettoolbox.h"
 #include "iconactioncollection.h"
 #include "models/commonmodel.h"
+#include "models/kservicemodel.h"
 
 #include <QAction>
 #include <QTimer>
@@ -125,28 +126,6 @@ void SearchLaunch::init()
     QObject::connect(lockAction, SIGNAL(triggered(bool)), this, SLOT(toggleImmutability()));
     m_toolBox->addTool(lockAction);
 
-    KService::List services = KServiceTypeTrader::self()->query("Plasma/Sal/Menu");
-    if (!services.isEmpty()) {
-        foreach (const KService::Ptr &service, services) {
-            const QString query = service->property("X-Plasma-Sal-Query", QVariant::String).toString();
-            const QString runner = service->property("X-Plasma-Sal-Runner", QVariant::String).toString();
-            const int relevance = service->property("X-Plasma-Sal-Relevance", QVariant::Int).toInt();
-
-            Plasma::QueryMatch match(0);
-            match.setType(Plasma::QueryMatch::ExactMatch);
-            match.setRelevance(relevance);
-            match.setId(query);
-            match.setIcon(KIcon(service->icon()));
-            match.setText(service->name());
-            match.setSubtext(service->comment());
-            QStringList data;
-            data << query << runner;
-            match.setData(data);
-
-            m_defaultMatches.append(match);
-        }
-    }
-
     //SAL doesn't want to be removed:
     //FIXME: wise to do it here?
     a = action("remove");
@@ -202,6 +181,7 @@ void SearchLaunch::toggleImmutability()
 
 void SearchLaunch::doSearch(const QString &query, const QString &runner)
 {
+    m_resultsView->setModel(m_runnerModel);
     m_runnerModel->setQuery(query, runner);
     m_lastQuery = query;
     //enable or disable drag and drop
@@ -216,6 +196,7 @@ void SearchLaunch::reset()
 {
     m_searchField->setText(QString());
     doSearch(QString());
+    m_resultsView->setModel(m_serviceModel);
 }
 
 void SearchLaunch::launch(QModelIndex index)
@@ -360,7 +341,8 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             connect(m_resultsView, SIGNAL(addActionTriggered(const QModelIndex &)), this, SLOT(addFavourite(const QModelIndex &)));
 
             m_runnerModel = new KRunnerModel(this);
-            m_resultsView->setModel(m_runnerModel);
+            m_serviceModel = new KServiceModel(this);
+            m_resultsView->setModel(m_serviceModel);
 
             //TODO how to do the strip widget?
             m_stripWidget = new StripWidget(0, this);
