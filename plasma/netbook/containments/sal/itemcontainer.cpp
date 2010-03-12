@@ -35,6 +35,8 @@
 
 #include <Plasma/IconWidget>
 #include <Plasma/ItemBackground>
+#include <Plasma/ToolTipContent>
+#include <Plasma/ToolTipManager>
 
 ItemContainer::ItemContainer(ItemView *parent)
     : QGraphicsWidget(parent),
@@ -598,6 +600,16 @@ void ItemContainer::generateItems(const QModelIndex &parent, int start, int end)
             Plasma::IconWidget *icon = createItem();
             icon->setIcon(index.data(Qt::DecorationRole).value<QIcon>());
             icon->setText(index.data(Qt::DisplayRole).value<QString>());
+
+            Plasma::ToolTipContent toolTipData = Plasma::ToolTipContent();
+            toolTipData.setAutohide(true);
+            toolTipData.setMainText(index.data(Qt::DisplayRole).value<QString>());
+            //FIXME: role name
+            toolTipData.setSubText(index.data(Qt::UserRole+1).value<QString>());
+            toolTipData.setImage(index.data(Qt::DecorationRole).value<QIcon>());
+
+            Plasma::ToolTipManager::self()->registerWidget(this);
+            Plasma::ToolTipManager::self()->setContent(icon, toolTipData);
 
             qreal left, top, right, bottom;
             m_hoverIndicator->getContentsMargins(&left, &top, &right, &bottom);

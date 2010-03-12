@@ -42,8 +42,7 @@
 #include <Plasma/AbstractRunner>
 #include <Plasma/RunnerManager>
 #include <Plasma/ScrollWidget>
-#include <Plasma/ToolTipContent>
-#include <Plasma/ToolTipManager>
+
 
 #include "itemview.h"
 #include "iconactioncollection.h"

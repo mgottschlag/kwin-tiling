@@ -54,8 +54,6 @@
 #include <Plasma/QueryMatch>
 #include <Plasma/ScrollWidget>
 #include <Plasma/ToolButton>
-#include <Plasma/ToolTipContent>
-#include <Plasma/ToolTipManager>
 
 
 SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
