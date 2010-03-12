@@ -97,7 +97,7 @@ private Q_SLOTS:
     void reset();
     void generateItems(const QModelIndex &parent, int start, int end);
     void removeItems(const QModelIndex &parent, int start, int end);
-    void resultClicked();
+    void itemClicked();
     void actionTriggered();
 
 Q_SIGNALS:

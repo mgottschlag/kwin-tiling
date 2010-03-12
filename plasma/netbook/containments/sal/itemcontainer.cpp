@@ -650,7 +650,7 @@ void ItemContainer::generateItems(const QModelIndex &parent, int start, int end)
             icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
             m_items.insert(QPersistentModelIndex(index), icon);
             m_itemToIndex.insert(icon, QPersistentModelIndex(index));
-            connect(icon, SIGNAL(clicked()), this, SLOT(resultClicked()));
+            connect(icon, SIGNAL(clicked()), this, SLOT(itemClicked()));
             connect(icon, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SLOT(itemRequestedDrag(Plasma::IconWidget *)));
         }
     }
@@ -687,7 +687,7 @@ void ItemContainer::removeItems(const QModelIndex &parent, int start, int end)
     m_relayoutTimer->start(500);
 }
 
-void ItemContainer::resultClicked()
+void ItemContainer::itemClicked()
 {
     Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(sender());
 
