@@ -33,7 +33,7 @@ class StandardItemFactory
 {
 public:
     static QStandardItem *createItem(const QIcon & icon, const QString & title,
-        const QString & description, const QString & url);
+        const QString & description, const QString & url, qreal weight, int actionType);
 
 private:
     static void setSpecialUrlProperties(const KUrl& url, QStandardItem *item);

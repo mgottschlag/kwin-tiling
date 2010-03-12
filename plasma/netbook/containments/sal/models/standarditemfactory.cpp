@@ -19,16 +19,19 @@
 */
 
 #include "standarditemfactory.h"
+#include "commonmodel.h"
 
 QStandardItem *StandardItemFactory::createItem(const QIcon & icon, const QString & title,
-        const QString & description, const QString & url)
+        const QString & description, const QString & url, qreal weight, int actionType)
 {
     QStandardItem *appItem = new QStandardItem;
 
     appItem->setText(title);
     appItem->setIcon(icon);
-    appItem->setData(description, Qt::UserRole + 1);
-    appItem->setData(url, Qt::UserRole + 2);
+    appItem->setData(description, CommonModel::Description);
+    appItem->setData(url, CommonModel::Url);
+    appItem->setData(weight, CommonModel::Weight);
+    appItem->setData(actionType, CommonModel::ActionTypeRole);
 
     return appItem;
 }

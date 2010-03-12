@@ -108,7 +108,7 @@ KRunnerModel::KRunnerModel(QObject *parent)
     newRoleNames[CommonModel::Description] = "description";
     newRoleNames[CommonModel::Url] = "url";
     newRoleNames[CommonModel::Weight] = "weight";
-    newRoleNames[CommonModel::Action] = "action";
+    newRoleNames[CommonModel::ActionTypeRole] = "action";
 
 
     setRoleNames(newRoleNames);
@@ -161,7 +161,9 @@ void KRunnerModel::matchesChanged(const QList< Plasma::QueryMatch > & m)
                 match.icon(),
                 match.text(),
                 match.subtext(),
-                QString("krunner://") + match.runner()->id() + "/" + match.id() + "#" + ::runnerManager()->query()
+                QString("krunner://") + match.runner()->id() + "/" + match.id() + "#" + ::runnerManager()->query(),
+                match.relevance(),
+                CommonModel::AddAction
                 )
             );
     }

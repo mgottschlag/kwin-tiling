@@ -71,7 +71,7 @@ FavouritesModel::FavouritesModel(QObject *parent)
     newRoleNames[CommonModel::Description] = "description";
     newRoleNames[CommonModel::Url] = "url";
     newRoleNames[CommonModel::Weight] = "weight";
-    newRoleNames[CommonModel::Action] = "action";
+    newRoleNames[CommonModel::ActionTypeRole] = "action";
 
     setRoleNames(newRoleNames);
 }
@@ -169,7 +169,9 @@ void FavouritesModel::add(const QString &urlString, const QModelIndex &before)
                         match.icon(),
                         match.text(),
                         match.subtext(),
-                        urlString
+                        urlString,
+                        1, //don't need weigt here
+                        CommonModel::RemoveAction
                         )
                     );
             } else {
@@ -178,7 +180,9 @@ void FavouritesModel::add(const QString &urlString, const QModelIndex &before)
                         match.icon(),
                         match.text(),
                         match.subtext(),
-                        urlString
+                        urlString,
+                        1, //don't need weigt here
+                        CommonModel::RemoveAction
                         )
                     );
             }
@@ -191,7 +195,9 @@ void FavouritesModel::add(const QString &urlString, const QModelIndex &before)
                     KIcon(service->icon()),
                     service->name(),
                     service->genericName(),
-                    service->entryPath()
+                    service->entryPath(),
+                    1, //don't need weigt here
+                    CommonModel::RemoveAction
                     )
                 );
         } else {
@@ -200,7 +206,9 @@ void FavouritesModel::add(const QString &urlString, const QModelIndex &before)
                     KIcon(service->icon()),
                     service->name(),
                     service->genericName(),
-                    service->entryPath()
+                    service->entryPath(),
+                    1, //don't need weigt here
+                    CommonModel::RemoveAction
                     )
                 );
         }

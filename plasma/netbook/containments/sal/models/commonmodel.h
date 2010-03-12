@@ -24,11 +24,17 @@
 
 namespace CommonModel
 {
+    enum ActionType {
+        NoAction = 0,
+        AddAction = 1,
+        RemoveAction = 2
+    };
+
     enum Roles {
         Description = Qt::UserRole+1,
         Url = Qt::UserRole+2,
         Weight = Qt::UserRole+3,
-        Action = Qt::UserRole+4
+        ActionTypeRole = Qt::UserRole+4
     };
 }
 
