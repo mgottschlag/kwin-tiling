@@ -626,14 +626,14 @@ void SearchLaunch::searchReturnPressed()
 {
     QString query = m_searchField->text();
     //by pressing enter  do a query or
-    //FIXME
+    //FIXME: make it work again
     /*if (m_firstItem && query == m_lastQuery && !query.isEmpty()) {
         m_runnermg->run(m_matches.value(m_firstItem, Plasma::QueryMatch(0)));
         reset();
-    } else {
+    } else*/ {
         doSearch(query);
         m_lastQuery = query;
-    }*/
+    }
 }
 
 void SearchLaunch::goRight()
