@@ -19,6 +19,7 @@
 
 #include "stripwidget.h"
 #include "models/favouritesmodel.h"
+#include "models/krunnermodel.h"
 
 #include <QGraphicsGridLayout>
 #include <QGraphicsScene>
@@ -99,7 +100,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     m_itemView->setDragAndDropMode(ItemContainer::MoveDragAndDrop);
     m_itemView->setModel(m_favouritesModel);
 
-    connect(m_itemView, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launchFavourite(Plasma::IconWidget *)));
+    connect(m_itemView, SIGNAL(itemActivated(const QModelIndex &)), this, SLOT(launchFavourite(const QModelIndex &)));
     connect(m_itemView, SIGNAL(scrollBarsNeededChanged(ItemView::ScrollBarFlags)), this, SLOT(arrowsNeededChanged(ItemView::ScrollBarFlags)));
     connect(m_itemView, SIGNAL(itemAskedReorder(const QModelIndex &, const QPointF &)), this, SLOT(reorderItem(const QModelIndex &, const QPointF&)));
     connect(m_itemView, SIGNAL(dragStartRequested(const QModelIndex &)), this, SLOT(showDeleteTarget()));
@@ -161,7 +162,6 @@ void StripWidget::reorderItem(const QModelIndex &index, const QPointF &pos)
     Plasma::Animation *zoomAnim = Plasma::Animator::create(Plasma::Animator::ZoomAnimation);
     zoomAnim->setTargetWidget(m_deleteTarget);
     zoomAnim->start(QAbstractAnimation::DeleteWhenStopped);
-
 }
 
 void StripWidget::save(KConfigGroup &cg)
@@ -174,28 +174,18 @@ void StripWidget::restore(KConfigGroup &cg)
     m_favouritesModel->restore(cg);
 }
 
-void StripWidget::launchFavourite()
+void StripWidget::launchFavourite(const QModelIndex &index)
 {
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender());
-    
-    if (m_favouritesIcons.contains(icon)) {
-        Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
-
-        Plasma::RunnerContext context;
-        context.setQuery(m_favouritesQueries.value(match));
-        match->run(context);
-    } else if (m_services.contains(icon)) {
-        KRun::run(*m_services.value(icon).data(), KUrl::List(), 0, false);
-    }
-}
-
-void StripWidget::launchFavourite(Plasma::IconWidget *icon)
-{
-    Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
+    /*Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
 
     Plasma::RunnerContext context;
     context.setQuery(m_favouritesQueries.value(match));
-    match->run(context);
+    match->run(context);*/
+
+    KUrl url(index.data(Qt::UserRole+2).value<QString>());
+    if (!KServiceItemHandler::openUrl(url)) {
+        KRunnerItemHandler::openUrl(url);
+    }
 }
 
 void StripWidget::goRight()

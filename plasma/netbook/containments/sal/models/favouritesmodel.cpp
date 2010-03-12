@@ -28,10 +28,28 @@
 #include <KService>
 #include <KIcon>
 #include <KDebug>
+#include <KRun>
+
+//Plasma
 #include <Plasma/AbstractRunner>
 #include <Plasma/RunnerManager>
 
 
+bool KServiceItemHandler::openUrl(const KUrl& url)
+{
+    QString urlString = url.path();
+    KService::Ptr service = KService::serviceByDesktopPath(urlString);
+
+    if (!service) {
+        service = KService::serviceByDesktopName(urlString);
+    }
+
+    if (!service) {
+        return false;
+    }
+
+    return KRun::run(*service, KUrl::List(), 0);
+}
 
 class FavouritesModel::Private {
 public:

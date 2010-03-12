@@ -90,7 +90,7 @@ protected Q_SLOTS:
 
 Q_SIGNALS:
     void itemSelected(Plasma::IconWidget *);
-    void itemActivated(QModelIndex);
+    void itemActivated(const QModelIndex &index);
     void resetRequested();
     void scrollBarsNeededChanged(ItemView::ScrollBarFlags);
     void itemAskedReorder(const QModelIndex &index, const QPointF &point);

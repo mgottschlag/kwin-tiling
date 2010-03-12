@@ -100,7 +100,7 @@ private Q_SLOTS:
 
 Q_SIGNALS:
     void itemSelected(Plasma::IconWidget *);
-    void itemActivated(QModelIndex);
+    void itemActivated(const QModelIndex &);
     void resetRequested();
     void itemAskedReorder(const QModelIndex &index, const QPointF &point);
     void dragStartRequested(const QModelIndex &index);

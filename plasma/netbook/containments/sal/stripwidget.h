@@ -74,8 +74,7 @@ protected:
     void dropEvent(QGraphicsSceneDragDropEvent *event);
 
 private Q_SLOTS:
-    void launchFavourite();
-    void launchFavourite(Plasma::IconWidget *icon);
+    void launchFavourite(const QModelIndex &index);
     void arrowsNeededChanged(ItemView::ScrollBarFlags flags);
     void goLeft();
     void goRight();

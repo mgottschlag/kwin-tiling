@@ -38,7 +38,7 @@ ItemView::ItemView(QGraphicsWidget *parent)
     m_itemContainer->installEventFilter(this);
 
     connect(m_itemContainer, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SIGNAL(itemSelected(Plasma::IconWidget *)));
-    connect(m_itemContainer, SIGNAL(itemActivated(QModelIndex)), this, SIGNAL(itemActivated(QModelIndex)));
+    connect(m_itemContainer, SIGNAL(itemActivated(const QModelIndex &)), this, SIGNAL(itemActivated(const QModelIndex &)));
     connect(m_itemContainer, SIGNAL(resetRequested()), this, SIGNAL(resetRequested()));
     connect(m_itemContainer, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
     connect(m_itemContainer, SIGNAL(itemAskedReorder(const QModelIndex &, const QPointF &)), this, SIGNAL(itemAskedReorder(const QModelIndex &, const QPointF &)));

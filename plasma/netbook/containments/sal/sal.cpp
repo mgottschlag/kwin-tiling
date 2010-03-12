@@ -223,7 +223,7 @@ void SearchLaunch::launch(QModelIndex index)
 {
     //FIXME: role name
     KUrl url(index.data(Qt::UserRole+2).value<QString>());
-    m_runnerUrlHandler.openUrl(url);
+    KRunnerItemHandler::openUrl(url);
 }
 
 void SearchLaunch::addFavourite()

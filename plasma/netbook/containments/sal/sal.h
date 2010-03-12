@@ -103,7 +103,6 @@ private:
 
     Plasma::FrameSvg *m_background;
     KRunnerModel *m_runnerModel;
-    KRunnerItemHandler m_runnerUrlHandler;
     Plasma::IconWidget *m_backButton;
 
     int m_queryCounter;

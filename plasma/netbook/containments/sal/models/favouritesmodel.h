@@ -34,6 +34,10 @@ namespace Plasma {
     class RunnerManager;
 }
 
+namespace KServiceItemHandler {
+    bool openUrl(const KUrl& url);
+};
+
 class  FavouritesModel : public QStandardItemModel
 {
     Q_OBJECT

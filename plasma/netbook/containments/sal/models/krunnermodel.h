@@ -34,8 +34,7 @@ namespace Plasma
     class RunnerManager;
 }
 
-class KRunnerItemHandler {
-public:
+namespace KRunnerItemHandler {
     bool openUrl(const KUrl& url);
 };
 
