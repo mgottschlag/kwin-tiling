@@ -42,9 +42,7 @@ public:
     KServiceModel(QObject *parent);
     virtual ~KServiceModel();
 
-private:
-    class Private;
-    Private * const d;
+
 };
 
 #endif // KSERVICEMODEL_H

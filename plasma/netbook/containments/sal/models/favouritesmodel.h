@@ -49,9 +49,6 @@ public:
 
     static Plasma::RunnerManager *runnerManager();
 
-private:
-    class Private;
-    Private * const d;
 };
 
 #endif // FAVOURITESMODEL_H

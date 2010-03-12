@@ -51,20 +51,9 @@ bool KServiceItemHandler::openUrl(const KUrl& url)
     return KRun::run(*service, KUrl::List(), 0);
 }
 
-class KServiceModel::Private {
-public:
-    Private()
-    {
-    }
-
-    ~Private()
-    {
-    }
-};
 
 KServiceModel::KServiceModel(QObject *parent)
         : QStandardItemModel(parent)
-        , d(new Private())
 {
     QHash<int, QByteArray> newRoleNames = roleNames();
     newRoleNames[CommonModel::Description] = "description";
@@ -77,7 +66,6 @@ KServiceModel::KServiceModel(QObject *parent)
 
 KServiceModel::~KServiceModel()
 {
-    delete d;
 }
 
 

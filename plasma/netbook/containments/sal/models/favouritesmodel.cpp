@@ -37,20 +37,8 @@
 #include <Plasma/RunnerManager>
 
 
-class FavouritesModel::Private {
-public:
-    Private()
-    {
-    }
-
-    ~Private()
-    {
-    }
-};
-
 FavouritesModel::FavouritesModel(QObject *parent)
         : QStandardItemModel(parent)
-        , d(new Private())
 {
     QHash<int, QByteArray> newRoleNames = roleNames();
     newRoleNames[CommonModel::Description] = "description";
@@ -63,7 +51,6 @@ FavouritesModel::FavouritesModel(QObject *parent)
 
 FavouritesModel::~FavouritesModel()
 {
-    delete d;
 }
 
 Plasma::RunnerManager *FavouritesModel::runnerManager()
