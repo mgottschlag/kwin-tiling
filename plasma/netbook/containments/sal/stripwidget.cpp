@@ -182,6 +182,11 @@ void StripWidget::launchFavourite(const QModelIndex &index)
     }
 }
 
+void StripWidget::add(const QUrl &url)
+{
+    m_favouritesModel->add(url);
+}
+
 void StripWidget::goRight()
 {
     QRectF rect(m_itemView->boundingRect());

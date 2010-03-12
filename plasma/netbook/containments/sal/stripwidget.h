@@ -65,6 +65,7 @@ public:
 
     //TODO: geter and setter?
     void setImmutability(Plasma::ImmutabilityType immutability);
+    void add(const QUrl &url);
 
 protected:
     Plasma::IconWidget *createIcon(const QPointF &point);

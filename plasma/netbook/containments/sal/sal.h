@@ -89,7 +89,7 @@ private Q_SLOTS:
     void query();
     void searchReturnPressed();
     void launch(QModelIndex index);
-    void addFavourite();
+    void addFavourite(const QModelIndex &index);
     void reset();
 
     void goRight();

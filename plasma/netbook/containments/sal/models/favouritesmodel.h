@@ -47,7 +47,7 @@ public:
     virtual ~FavouritesModel();
 
     void save(KConfigGroup &cg);
-    void add(const QString &urlString, const QModelIndex &before = QModelIndex());
+    void add(const QUrl &url, const QModelIndex &before = QModelIndex());
     void restore(KConfigGroup &cg);
 
     static Plasma::RunnerManager *runnerManager();

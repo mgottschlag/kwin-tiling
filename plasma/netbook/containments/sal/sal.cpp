@@ -224,19 +224,12 @@ void SearchLaunch::launch(QModelIndex index)
     KRunnerItemHandler::openUrl(url);
 }
 
-void SearchLaunch::addFavourite()
+void SearchLaunch::addFavourite(const QModelIndex &index)
 {
-    /*TODO: figure out how the hell do this
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
-    Plasma::QueryMatch match = m_matches.value(icon, Plasma::QueryMatch(0));
-    QMimeData *mimeData = m_runnermg->mimeDataForMatch(match);
-
-    if (mimeData  && !mimeData->urls().isEmpty()) {
-        m_stripWidget->add(mimeData->urls().first().path());
-    } else {
-        m_stripWidget->add(match, m_runnermg->searchContext()->query());
+    QMimeData *mimeData = m_runnerModel->mimeData(QModelIndexList()<<index);
+    if (mimeData && !mimeData->urls().isEmpty()) {
+        m_stripWidget->add(mimeData->urls().first());
     }
-    */
 }
 
 void SearchLaunch::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
@@ -364,6 +357,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
             connect(m_resultsView, SIGNAL(dragStartRequested(QModelIndex)), this, SLOT(resultsViewRequestedDrag(QModelIndex)));
             connect(m_resultsView, SIGNAL(itemActivated(QModelIndex)), this, SLOT(launch(QModelIndex)));
+            connect(m_resultsView, SIGNAL(addActionTriggered(const QModelIndex &)), this, SLOT(addFavourite(const QModelIndex &)));
 
             m_runnerModel = new KRunnerModel(this);
             m_resultsView->setModel(m_runnerModel);
@@ -736,13 +730,11 @@ void SearchLaunch::changeEvent(QEvent *event)
 
 void SearchLaunch::createConfigurationInterface(KConfigDialog *parent)
 {
-    /*FIXME
-    RunnersConfig *runnersConfig = new RunnersConfig(m_runnermg, parent);
+    RunnersConfig *runnersConfig = new RunnersConfig(m_runnerModel->runnerManager(), parent);
     parent->addPage(runnersConfig, i18nc("Title of the page that lets the user choose the loaded krunner plugins", "Search plugins"), "edit-find");
 
     connect(parent, SIGNAL(applyClicked()), runnersConfig, SLOT(accept()));
     connect(parent, SIGNAL(okClicked()), runnersConfig, SLOT(accept()));
-    */
 }
 
 K_EXPORT_PLASMA_APPLET(sal, SearchLaunch)

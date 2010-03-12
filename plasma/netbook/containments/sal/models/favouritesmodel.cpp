@@ -132,17 +132,16 @@ void FavouritesModel::restore(KConfigGroup &cg)
 }
 
 
-void FavouritesModel::add(const QString &urlString, const QModelIndex &before)
+void FavouritesModel::add(const QUrl &url, const QModelIndex &before)
 {
 
-    KService::Ptr service = KService::serviceByDesktopPath(urlString);
+    KService::Ptr service = KService::serviceByDesktopPath(url.path());
 
     if (!service) {
-        service = KService::serviceByDesktopName(urlString);
+        service = KService::serviceByDesktopName(url.path());
     }
-
+kWarning()<<"AAAAAA"<<url;
     if (!service) {
-        QUrl url(urlString);
         if (!url.isValid()) {
             return;
         }
@@ -169,7 +168,7 @@ void FavouritesModel::add(const QString &urlString, const QModelIndex &before)
                         match.icon(),
                         match.text(),
                         match.subtext(),
-                        urlString,
+                        url.path(),
                         1, //don't need weigt here
                         CommonModel::RemoveAction
                         )
@@ -180,7 +179,7 @@ void FavouritesModel::add(const QString &urlString, const QModelIndex &before)
                         match.icon(),
                         match.text(),
                         match.subtext(),
-                        urlString,
+                        url.path(),
                         1, //don't need weigt here
                         CommonModel::RemoveAction
                         )

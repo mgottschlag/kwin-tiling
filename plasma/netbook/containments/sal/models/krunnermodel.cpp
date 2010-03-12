@@ -33,6 +33,7 @@
 // KDE
 #include <KService>
 #include <KStandardDirs>
+#include <KDebug>
 #include <Plasma/AbstractRunner>
 #include <Plasma/RunnerManager>
 
@@ -205,14 +206,13 @@ QMimeData * KRunnerModel::mimeData(const QModelIndexList &indexes) const
     if (!urls.isEmpty()) {
         urls.populateMimeData(mimeData);
     } else {
-        QByteArray itemData;
-        QDataStream dataStream(&itemData, QIODevice::WriteOnly);
+        QList<QUrl> urls;
         foreach (const QModelIndex & index, indexes) {
-            dataStream << QUrl(data(index, CommonModel::Url).toString());
+            urls << QUrl(data(index, CommonModel::Url).toString());
         }
 
         mimeData = new QMimeData;
-        mimeData->setData("application/x-plasma-salquerymatch", itemData);
+        mimeData->setUrls(urls);
     }
 
     return mimeData;
