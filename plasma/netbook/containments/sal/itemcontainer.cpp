@@ -448,7 +448,7 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
         icon->setPos(icon->mapToParent(me->pos()) - icon->boundingRect().center());
         m_dragging = false;
 
-        emit dragMoveMouseMoved(icon->mapToParent(me->pos()));
+        m_itemView->setScrollPositionFromDragPosition(icon->mapToParent(me->pos()));
         m_dragging = true;
 
     } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {

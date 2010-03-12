@@ -106,7 +106,6 @@ Q_SIGNALS:
     void resetRequested();
     void itemAskedReorder(const QModelIndex &index, const QPointF &point);
     void dragStartRequested(const QModelIndex &index);
-    void dragMoveMouseMoved(const QPointF &);
     void addActionTriggered(const QModelIndex &index);
 
 private:
