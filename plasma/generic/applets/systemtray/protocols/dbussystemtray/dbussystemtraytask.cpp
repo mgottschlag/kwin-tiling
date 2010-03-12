@@ -28,6 +28,7 @@
 
 #include <KIcon>
 #include <KIconLoader>
+#include <KStandardDirs>
 
 #include <plasma/plasma.h>
 #include <Plasma/Corona>
@@ -46,6 +47,7 @@ namespace SystemTray
 
 DBusSystemTrayTask::DBusSystemTrayTask(const QString &service, QObject *parent)
     : Task(parent),
+      m_customIconLoader(0),
       m_movie(0),
       m_blinkTimer(0),
       m_blink(false),
@@ -83,6 +85,10 @@ DBusSystemTrayTask::~DBusSystemTrayTask()
     delete m_blinkTimer;
 }
 
+KIconLoader *DBusSystemTrayTask::iconLoader() const
+{
+    return m_customIconLoader ? m_customIconLoader : KIconLoader::global();
+}
 
 QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
 {
@@ -143,6 +149,30 @@ void DBusSystemTrayTask::refreshCallback(QDBusPendingCallWatcher *call)
         m_valid = false;
         m_embeddable = false;
     } else {
+        //IconThemePath (handle this one first, because it has an impact on
+        //others)
+        if (!m_customIconLoader) {
+            QString path = properties["IconThemePath"].toString();
+            if (!path.isEmpty()) {
+                // FIXME: If last part of path is not "icons", this won't work!
+                QStringList tokens = path.split('/', QString::SkipEmptyParts);
+                if (tokens.length() >= 3 && tokens.takeLast() == "icons") {
+                    QString appName = tokens.takeLast();
+                    QString prefix = '/' + tokens.join("/");
+                    // FIXME: Fix KIconLoader and KIconTheme so that we can use
+                    // our own instance of KStandardDirs
+                    KGlobal::dirs()->addResourceDir("data", prefix);
+                    // We use a separate instance of KIconLoader to avoid
+                    // adding all application dirs to KIconLoader::global(), to
+                    // avoid potential icon name clashes between application
+                    // icons
+                    m_customIconLoader = new KIconLoader(appName, 0 /* dirs */, this);
+                } else {
+                    kWarning() << "Wrong IconThemePath" << path << ": too short or does not end with 'icons'";
+                }
+            }
+        }
+
         QString cat = properties["Category"].toString();
         if (!cat.isEmpty()) {
             int index = metaObject()->indexOfEnumerator("Category");
@@ -179,7 +209,7 @@ void DBusSystemTrayTask::refreshCallback(QDBusPendingCallWatcher *call)
                 QString m_iconName = properties["OverlayIconName"].toString();
                 if (!m_iconName.isEmpty()) {
                     overlayNames << m_iconName;
-                    overlay = KIcon(m_iconName);
+                    overlay = KIcon(m_iconName, iconLoader());
                 }
             } else {
                 overlay = imageVectorToPixmap(image);
@@ -189,7 +219,7 @@ void DBusSystemTrayTask::refreshCallback(QDBusPendingCallWatcher *call)
             if (image.isEmpty()) {
                 QString m_iconName = properties["IconName"].toString();
                 if (!m_iconName.isEmpty()) {
-                    m_icon = KIcon(m_iconName, 0, overlayNames);
+                    m_icon = KIcon(m_iconName, iconLoader(), overlayNames);
 
                     if (overlayNames.isEmpty() && !overlay.isNull()) {
                         overlayIcon(&m_icon, &overlay);
@@ -224,7 +254,7 @@ void DBusSystemTrayTask::refreshCallback(QDBusPendingCallWatcher *call)
             if (image.isEmpty()) {
                 QString m_iconName = properties["AttentionIconName"].toString();
                 if (!m_iconName.isEmpty()) {
-                    m_attentionIcon = KIcon(m_iconName, 0, overlayNames);
+                    m_attentionIcon = KIcon(m_iconName, iconLoader(), overlayNames);
 
                     if (overlayNames.isEmpty() && !overlay.isNull()) {
                         overlayIcon(&m_attentionIcon, &overlay);
@@ -385,7 +415,7 @@ void DBusSystemTrayTask::syncToolTip(const KDbusToolTipStruct &tipStruct)
 
     QIcon toolTipIcon;
     if (tipStruct.image.size() == 0) {
-        toolTipIcon = KIcon(tipStruct.icon);
+        toolTipIcon = KIcon(tipStruct.icon, iconLoader());
     } else {
         toolTipIcon = imageVectorToPixmap(tipStruct.image);
     }

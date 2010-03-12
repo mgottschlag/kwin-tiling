@@ -27,6 +27,8 @@
 
 class QDBusPendingCallWatcher;
 
+class KIconLoader;
+
 namespace SystemTray
 {
 
@@ -53,6 +55,7 @@ private:
     QPixmap KDbusImageStructToPixmap(const KDbusImageStruct &image) const;
     QIcon imageVectorToPixmap(const KDbusImageVector &vector) const;
     void overlayIcon(QIcon *icon, QIcon *overlay);
+    KIconLoader *iconLoader() const;
 
     void syncToolTip();
 
@@ -73,6 +76,7 @@ private:
     QString m_title;
     QIcon m_icon;
     QIcon m_attentionIcon;
+    KIconLoader *m_customIconLoader;
     QMovie *m_movie;
     QTimer *m_blinkTimer;
     org::kde::StatusNotifierItem *m_statusNotifierItemInterface;
