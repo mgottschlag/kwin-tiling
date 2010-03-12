@@ -42,7 +42,7 @@ ItemView::ItemView(QGraphicsWidget *parent)
     connect(m_itemContainer, SIGNAL(resetRequested()), this, SIGNAL(resetRequested()));
     connect(m_itemContainer, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
     connect(m_itemContainer, SIGNAL(itemAskedReorder(const QModelIndex &, const QPointF &)), this, SIGNAL(itemAskedReorder(const QModelIndex &, const QPointF &)));
-    connect(m_itemContainer, SIGNAL(dragStartRequested(QModelIndex)), this, SIGNAL(dragStartRequested(QModelIndex)));
+    connect(m_itemContainer, SIGNAL(dragStartRequested(const QModelIndex &)), this, SIGNAL(dragStartRequested(const QModelIndex&)));
 
     connect(m_itemContainer, SIGNAL(dragMoveMouseMoved(const QPointF &)), this, SLOT(setScrollPositionFromDragPosition(const QPointF &)));
 }

@@ -102,7 +102,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
     connect(m_itemView, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launchFavourite(Plasma::IconWidget *)));
     connect(m_itemView, SIGNAL(scrollBarsNeededChanged(ItemView::ScrollBarFlags)), this, SLOT(arrowsNeededChanged(ItemView::ScrollBarFlags)));
     connect(m_itemView, SIGNAL(itemAskedReorder(const QModelIndex &, const QPointF &)), this, SLOT(reorderItem(const QModelIndex &, const QPointF&)));
-    connect(m_itemView, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SLOT(showDeleteTarget()));
+    connect(m_itemView, SIGNAL(dragStartRequested(const QModelIndex &)), this, SLOT(showDeleteTarget()));
 
     m_arrowsLayout->addItem(m_leftArrow);
     m_arrowsLayout->addItem(m_itemView);
@@ -148,20 +148,15 @@ void StripWidget::setImmutability(Plasma::ImmutabilityType immutability)
 
 
 void StripWidget::reorderItem(const QModelIndex &index, const QPointF &pos)
-{//TODO: do with the model
-/*
-    if (m_deleteTarget && m_deleteTarget->geometry().intersects(icon->mapToItem(this, icon->boundingRect()).boundingRect())) {
-        remove(icon);
-    } else if (m_favouritesIcons.contains(icon)) {
-        Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
-        m_favouritesMatches.removeAll(match);
-        m_favouritesMatches.insert(index, match);
-    }*/
+{
+    if (m_deleteTarget && m_deleteTarget->geometry().contains(m_itemView->widget()->mapToItem(this, pos))) {
+        m_favouritesModel->removeRow(index.row());
+    } else {
+        QList<QStandardItem *>items = m_favouritesModel->takeRow(index.row());
+        int row = m_itemView->rowForPosition(pos);
 
-    QList<QStandardItem *>items = m_favouritesModel->takeRow(index.row());
-    int row = m_itemView->rowForPosition(pos);
-
-    m_favouritesModel->insertRow(row, items);
+        m_favouritesModel->insertRow(row, items);
+    }
 
     Plasma::Animation *zoomAnim = Plasma::Animator::create(Plasma::Animator::ZoomAnimation);
     zoomAnim->setTargetWidget(m_deleteTarget);

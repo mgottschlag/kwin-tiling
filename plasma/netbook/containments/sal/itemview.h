@@ -99,7 +99,7 @@ Q_SIGNALS:
     void resetRequested();
     void scrollBarsNeededChanged(ItemView::ScrollBarFlags);
     void itemAskedReorder(const QModelIndex &index, const QPointF &point);
-    void dragStartRequested(QModelIndex index);
+    void dragStartRequested(const QModelIndex &index);
 
 private:
     ItemContainer *m_itemContainer;
