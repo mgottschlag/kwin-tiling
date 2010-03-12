@@ -210,9 +210,10 @@ void ItemContainer::relayout()
 
 
     //TODO: restore the validRow/validcolumn count
-    /*if (m_layout->rowCount() > 0 && size().width() <= availableSize.width()) {
-        int i = 0;
-        foreach (Plasma::IconWidget *icon, m_items) {
+    if (m_layout->rowCount() > 0 && size().width() <= availableSize.width()) {
+        for (int i = 0; i <= m_model->rowCount() - 1; i++) {
+            QModelIndex index = m_model->index(i, 0, m_rootIndex);
+            Plasma::IconWidget *icon = m_items.value(index);
             const int row = i / m_layout->rowCount();
             const int column = i % m_layout->columnCount();
             if (m_layout->itemAt(row, column) == icon) {
@@ -222,7 +223,7 @@ void ItemContainer::relayout()
                 break;
             }
         }
-    }*/
+    }
 
     const int nRows = m_layout->rowCount();
     const int nColumns = m_layout->columnCount();
