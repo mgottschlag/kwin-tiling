@@ -21,6 +21,7 @@
 // Own
 #include "favouritesmodel.h"
 #include "krunnermodel.h"
+#include "kservicemodel.h"
 #include "commonmodel.h"
 
 // Qt
@@ -35,22 +36,6 @@
 #include <Plasma/AbstractRunner>
 #include <Plasma/RunnerManager>
 
-
-bool KServiceItemHandler::openUrl(const KUrl& url)
-{
-    QString urlString = url.path();
-    KService::Ptr service = KService::serviceByDesktopPath(urlString);
-
-    if (!service) {
-        service = KService::serviceByDesktopName(urlString);
-    }
-
-    if (!service) {
-        return false;
-    }
-
-    return KRun::run(*service, KUrl::List(), 0);
-}
 
 class FavouritesModel::Private {
 public:

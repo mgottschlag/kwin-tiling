@@ -20,6 +20,7 @@
 #include "stripwidget.h"
 #include "models/favouritesmodel.h"
 #include "models/krunnermodel.h"
+#include "models/kservicemodel.h"
 #include "models/commonmodel.h"
 
 #include <QGraphicsGridLayout>

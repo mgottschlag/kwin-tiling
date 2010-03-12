@@ -13,6 +13,7 @@ set(sal_SRCS
     models/krunnermodel.cpp
     models/standarditemfactory.cpp
     models/favouritesmodel.cpp
+    models/kservicemodel.cpp
     )
 
 kde4_add_plugin(plasma_containment_sal ${sal_SRCS})

@@ -1,5 +1,4 @@
 /*
-    Copyright 2009 Ivan Cukic <ivan.cukic+kde@gmail.com>
     Copyright 2010 Marco Martin <notmart@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -18,15 +17,12 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef FAVOURITESMODEL_H
-#define FAVOURITESMODEL_H
+#ifndef KSERVICEMODEL_H
+#define KSERVICEMODEL_H
 
 #include <QStandardItemModel>
 
 #include <KUrl>
-#include <KConfigGroup>
-
-#include <Plasma/QueryMatch>
 
 #include "standarditemfactory.h"
 
@@ -34,25 +30,22 @@ namespace Plasma {
     class RunnerManager;
 }
 
+namespace KServiceItemHandler {
+    bool openUrl(const KUrl& url);
+};
 
-class  FavouritesModel : public QStandardItemModel
+class  KServiceModel : public QStandardItemModel
 {
     Q_OBJECT
 
 public:
-    FavouritesModel(QObject *parent);
-    virtual ~FavouritesModel();
-
-    void save(KConfigGroup &cg);
-    void add(const QUrl &url, const QModelIndex &before = QModelIndex());
-    void restore(KConfigGroup &cg);
-
-    static Plasma::RunnerManager *runnerManager();
+    KServiceModel(QObject *parent);
+    virtual ~KServiceModel();
 
 private:
     class Private;
     Private * const d;
 };
 
-#endif // FAVOURITESMODEL_H
+#endif // KSERVICEMODEL_H
 
