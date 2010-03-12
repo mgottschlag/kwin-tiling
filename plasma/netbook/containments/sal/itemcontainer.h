@@ -85,6 +85,7 @@ public:
     void setRootIndex(QModelIndex index);
     QModelIndex rootIndex() const;
     QModelIndex indexForPosition(const QPointF &point);
+    int rowForPosition(const QPointF &point);
 
 protected:
     void focusInEvent(QFocusEvent *event);
@@ -110,7 +111,7 @@ Q_SIGNALS:
     void itemSelected(Plasma::IconWidget *);
     void itemActivated(QModelIndex);
     void resetRequested();
-    void itemReordered(Plasma::IconWidget *, int);
+    void itemAskedReorder(const QModelIndex &index, const QPointF &point);
     void dragStartRequested(QModelIndex index);
     void dragMoveMouseMoved(const QPointF &);
 

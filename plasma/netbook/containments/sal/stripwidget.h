@@ -80,7 +80,7 @@ private Q_SLOTS:
     void goLeft();
     void goRight();
     void scrollTimeout();
-    void itemReordered(Plasma::IconWidget *icon, int index);
+    void reorderItem(const QModelIndex &index, const QPointF &point);
     void showDeleteTarget();
 
 private:

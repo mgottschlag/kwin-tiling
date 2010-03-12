@@ -101,7 +101,7 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
 
     connect(m_itemView, SIGNAL(itemActivated(Plasma::IconWidget *)), this, SLOT(launchFavourite(Plasma::IconWidget *)));
     connect(m_itemView, SIGNAL(scrollBarsNeededChanged(ItemView::ScrollBarFlags)), this, SLOT(arrowsNeededChanged(ItemView::ScrollBarFlags)));
-    connect(m_itemView, SIGNAL(itemReordered(Plasma::IconWidget *, int)), this, SLOT(itemReordered(Plasma::IconWidget *, int)));
+    connect(m_itemView, SIGNAL(itemAskedReorder(const QModelIndex &, const QPointF &)), this, SLOT(reorderItem(const QModelIndex &, const QPointF&)));
     connect(m_itemView, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SLOT(showDeleteTarget()));
 
     m_arrowsLayout->addItem(m_leftArrow);
@@ -147,7 +147,7 @@ void StripWidget::setImmutability(Plasma::ImmutabilityType immutability)
 }
 
 
-void StripWidget::itemReordered(Plasma::IconWidget *icon, int index)
+void StripWidget::reorderItem(const QModelIndex &index, const QPointF &pos)
 {//TODO: do with the model
 /*
     if (m_deleteTarget && m_deleteTarget->geometry().intersects(icon->mapToItem(this, icon->boundingRect()).boundingRect())) {
@@ -156,12 +156,17 @@ void StripWidget::itemReordered(Plasma::IconWidget *icon, int index)
         Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
         m_favouritesMatches.removeAll(match);
         m_favouritesMatches.insert(index, match);
-    }
+    }*/
+
+    QList<QStandardItem *>items = m_favouritesModel->takeRow(index.row());
+    int row = m_itemView->rowForPosition(pos);
+
+    m_favouritesModel->insertRow(row, items);
 
     Plasma::Animation *zoomAnim = Plasma::Animator::create(Plasma::Animator::ZoomAnimation);
     zoomAnim->setTargetWidget(m_deleteTarget);
     zoomAnim->start(QAbstractAnimation::DeleteWhenStopped);
-    */
+
 }
 
 void StripWidget::save(KConfigGroup &cg)
@@ -285,11 +290,15 @@ void StripWidget::dropEvent(QGraphicsSceneDragDropEvent *event)
 
          dataStream >>url;
 
+         int row = m_itemView->rowForPosition(event->pos());
+         QModelIndex index = m_favouritesModel->index(row, 0, QModelIndex());
          //TODO: proper index
-         m_favouritesModel->add(url.toString(), m_itemView->indexForPosition(event->pos()));
+         m_favouritesModel->add(url.toString(), index);
 
      } else if (event->mimeData()->urls().size() > 0) {
-         m_favouritesModel->add(event->mimeData()->urls().first().path(), m_itemView->indexForPosition(event->pos()));
+         int row = m_itemView->rowForPosition(event->pos());
+         QModelIndex index = m_favouritesModel->index(row, 0, QModelIndex());
+         m_favouritesModel->add(event->mimeData()->urls().first().path(), index);
      } else {
          event->ignore();
      }

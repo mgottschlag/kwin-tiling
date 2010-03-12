@@ -41,7 +41,7 @@ ItemView::ItemView(QGraphicsWidget *parent)
     connect(m_itemContainer, SIGNAL(itemActivated(QModelIndex)), this, SIGNAL(itemActivated(QModelIndex)));
     connect(m_itemContainer, SIGNAL(resetRequested()), this, SIGNAL(resetRequested()));
     connect(m_itemContainer, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
-    connect(m_itemContainer, SIGNAL(itemReordered(Plasma::IconWidget *, int)), this, SIGNAL(itemReordered(Plasma::IconWidget *, int)));
+    connect(m_itemContainer, SIGNAL(itemAskedReorder(const QModelIndex &, const QPointF &)), this, SIGNAL(itemAskedReorder(const QModelIndex &, const QPointF &)));
     connect(m_itemContainer, SIGNAL(dragStartRequested(QModelIndex)), this, SIGNAL(dragStartRequested(QModelIndex)));
 
     connect(m_itemContainer, SIGNAL(dragMoveMouseMoved(const QPointF &)), this, SLOT(setScrollPositionFromDragPosition(const QPointF &)));
@@ -240,9 +240,9 @@ QModelIndex ItemView::rootIndex() const
     return m_itemContainer->rootIndex();
 }
 
-QModelIndex ItemView::indexForPosition(const QPointF &point)
+int ItemView::rowForPosition(const QPointF &point)
 {
-    return m_itemContainer->indexForPosition(point);
+    return m_itemContainer->rowForPosition(point);
 }
 
 #include <itemview.moc>

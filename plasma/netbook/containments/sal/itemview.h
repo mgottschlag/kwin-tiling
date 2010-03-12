@@ -80,7 +80,7 @@ public:
     QAbstractItemModel *model() const;
     void setRootIndex(QModelIndex index);
     QModelIndex rootIndex() const;
-    QModelIndex indexForPosition(const QPointF &point);
+    int rowForPosition(const QPointF &point);
 
 public Q_SLOTS:
     void setScrollPositionFromDragPosition(const QPointF &point);
@@ -98,7 +98,7 @@ Q_SIGNALS:
     void itemActivated(QModelIndex);
     void resetRequested();
     void scrollBarsNeededChanged(ItemView::ScrollBarFlags);
-    void itemReordered(Plasma::IconWidget *, int);
+    void itemAskedReorder(const QModelIndex &index, const QPointF &point);
     void dragStartRequested(QModelIndex index);
 
 private:

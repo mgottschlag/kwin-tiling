@@ -474,6 +474,11 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
         icon->setPos(icon->mapToItem(this, QPoint(0,0)));
         icon->setParentItem(this);
 
+        QModelIndex index = m_itemToIndex.value(icon);
+        if (index.isValid()) {
+            emit itemAskedReorder(index, icon->geometry().center());
+        }
+
         /*FIXME: make this work again
         {
             QMutableMapIterator<qreal, Plasma::IconWidget*> i(m_items);
@@ -548,7 +553,7 @@ qreal ItemContainer::positionToWeight(const QPointF &point)
 }
 #endif
 
-QModelIndex ItemContainer::indexForPosition(const QPointF &point)
+int ItemContainer::rowForPosition(const QPointF &point)
 {
     //FIXME: this code is ugly as sin and inefficient as well, but we would need a -proper- model
     //find the two items that will be neighbours
@@ -563,6 +568,9 @@ QModelIndex ItemContainer::indexForPosition(const QPointF &point)
             row = y;
         }
     }
+    if (row == -1 && point.y() > m_layout->geometry().center().y()) {
+        row = m_layout->rowCount();
+    }
 
     for (int x = 0; x < m_layout->columnCount(); ++x) {
         item = m_layout->itemAt(0, x);
@@ -571,16 +579,19 @@ QModelIndex ItemContainer::indexForPosition(const QPointF &point)
             column = x;
         }
     }
+    if (column == -1 && point.x() > m_layout->geometry().center().x()) {
+        column = m_layout->columnCount();
+    }
+
+    row = qBound(0, row, m_layout->rowCount()-1);
+
     kDebug() << "The item will be put at" << row << column;
 
-    Plasma::IconWidget *icon = dynamic_cast<Plasma::IconWidget *>(m_layout->itemAt(row, column));
-    if (icon) {
-        QModelIndex index = m_itemToIndex.value(icon);
-        if (index.isValid()) {
-            return m_model->index(index.row(), 0, m_rootIndex);
-        }
-    }
-    return QModelIndex();
+    int modelRow = row*m_layout->columnCount() + qBound(0, column, m_layout->columnCount());
+
+    kDebug() << "Corresponding to the model row" << modelRow;
+
+    return modelRow;
 }
 
 void ItemContainer::focusInEvent(QFocusEvent *event)
@@ -655,7 +666,7 @@ void ItemContainer::setModel(QAbstractItemModel *model)
     m_model = model;
     connect (m_model, SIGNAL(modelAboutToBeReset()), this, SLOT(reset()));
     connect (m_model, SIGNAL(rowsInserted(const QModelIndex & , int, int)), this, SLOT(generateItems(const QModelIndex&, int, int)));
-    connect (m_model, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(removeItems(const QModelIndex&, int, int)));
+    connect (m_model, SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)), this, SLOT(removeItems(const QModelIndex&, int, int)));
 }
 
 QAbstractItemModel *ItemContainer::model() const
