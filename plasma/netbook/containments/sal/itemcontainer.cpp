@@ -449,83 +449,16 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
             emit itemAskedReorder(index, icon->geometry().center());
         }
 
-        /*FIXME: make this work again
-        {
-            QMutableMapIterator<qreal, Plasma::IconWidget*> i(m_items);
-            while (i.hasNext()) {
-                i.next();
-                if (i.value() == icon) {
-                    i.remove();
-                    break;
-                }
-            }
-        }
-
-        const qreal weight = positionToWeight(mapToScene(icon->geometry().center()));
-        insertItem(icon, weight);
-
-        //sloooow
-        emit itemReordered(icon, m_items.values().indexOf(icon));
-*/
         askRelayout();
     }
 
     return false;
 }
 
-#if 0
-qreal ItemContainer::positionToWeight(const QPointF &point)
-{
-    /*FIXME: probably remove
-    QPoint layoutPos = positionToLayoutPosition(mapFromScene(point));
-
-    //layout position to weight
-    qreal key1 = 0;
-    bool key1Found = false;
-    qreal key2 = 0;
-    bool key2Found = false;
-    if (layoutPos.x() >= 0) {
-        layoutPos.setY(qMax(0, layoutPos.y()));
-        Plasma::IconWidget *iconToReplace = static_cast<Plasma::IconWidget *>(m_layout->itemAt(layoutPos.y(), layoutPos.x()));
-
-        QMapIterator<qreal, Plasma::IconWidget *> i(m_items);
-        while (i.hasNext()) {
-            i.next();
-
-            if (i.value() == iconToReplace) {
-                key1 = i.key();
-                key1Found = true;
-
-                if (i.hasNext()) {
-                    key2 = i.peekNext().key();
-                    key2Found = true;
-                }
-                break;
-            }
-        }
-    } else {
-        if (m_items.count() > 0) {
-            key2 = m_items.uniqueKeys().first();
-            key2Found = true;
-        } else {
-            key2 = 0;
-        }
-    }
-
-
-    if (!key1Found) {
-        return key2 - 0.5;
-    } else if (!key2Found) {
-        return key1 + 0.5;
-    } else {
-        return (key1+key2)/2;
-    }*/
-}
-#endif
 
 int ItemContainer::rowForPosition(const QPointF &point)
 {
-    //FIXME: this code is ugly as sin and inefficient as well, but we would need a -proper- model
+    //FIXME: this code is ugly as sin and inefficient as well
     //find the two items that will be neighbours
     int row = -1;
     int column = -1;
