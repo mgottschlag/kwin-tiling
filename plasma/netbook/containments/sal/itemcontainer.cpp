@@ -209,7 +209,6 @@ void ItemContainer::relayout()
     }
 
 
-    //TODO: restore the validRow/validcolumn count
     if (m_layout->rowCount() > 0 && size().width() <= availableSize.width()) {
         for (int i = 0; i <= m_model->rowCount() - 1; i++) {
             QModelIndex index = m_model->index(i, 0, m_rootIndex);
@@ -318,12 +317,6 @@ void ItemContainer::relayout()
     resize(newSize);
     m_relayoutTimer->stop();
     m_firstRelayout = false;
-}
-
-//FIXME: remove
-void ItemContainer::itemRemoved(QObject *object)
-{
-
 }
 
 void ItemContainer::itemRequestedDrag(Plasma::IconWidget *icon)

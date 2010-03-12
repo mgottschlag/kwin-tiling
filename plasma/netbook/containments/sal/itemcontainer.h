@@ -92,7 +92,6 @@ protected:
 private Q_SLOTS:
     void relayout();
     void syncCurrentItem();
-    void itemRemoved(QObject *object);
     void itemRequestedDrag(Plasma::IconWidget *);
     void reset();
     void generateItems(const QModelIndex &parent, int start, int end);
