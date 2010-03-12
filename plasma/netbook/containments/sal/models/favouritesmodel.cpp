@@ -140,7 +140,7 @@ void FavouritesModel::add(const QUrl &url, const QModelIndex &before)
     if (!service) {
         service = KService::serviceByDesktopName(url.path());
     }
-kWarning()<<"AAAAAA"<<url;
+
     if (!service) {
         if (!url.isValid()) {
             return;
