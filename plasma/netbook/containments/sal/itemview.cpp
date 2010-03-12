@@ -45,6 +45,8 @@ ItemView::ItemView(QGraphicsWidget *parent)
     connect(m_itemContainer, SIGNAL(dragStartRequested(const QModelIndex &)), this, SIGNAL(dragStartRequested(const QModelIndex&)));
 
     connect(m_itemContainer, SIGNAL(dragMoveMouseMoved(const QPointF &)), this, SLOT(setScrollPositionFromDragPosition(const QPointF &)));
+
+    connect(m_itemContainer, SIGNAL(addActionTriggered(const QModelIndex &)), this, SIGNAL(addActionTriggered(const QModelIndex &)));
 }
 
 ItemView::~ItemView()

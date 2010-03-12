@@ -667,7 +667,7 @@ void ItemContainer::actionTriggered()
     if (actionType == CommonModel::RemoveAction) {
         m_model->removeRow(index.row());
     } else if (actionType == CommonModel::AddAction) {
-        emit addActionRequested(index);
+        emit addActionTriggered(index);
     }
 }
 
