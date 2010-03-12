@@ -73,20 +73,6 @@ void ItemView::focusInEvent(QFocusEvent *event)
     Plasma::ScrollWidget::focusInEvent(event);
 }
 
-void ItemView::insertItem(Plasma::IconWidget *icon, qreal weight)
-{
-    m_itemContainer->insertItem(icon, weight);
-    icon->installEventFilter(this);
-    registerAsDragHandle(icon);
-}
-
-void ItemView::addItem(Plasma::IconWidget *icon)
-{
-    m_itemContainer->addItem(icon);
-    icon->installEventFilter(this);
-    registerAsDragHandle(icon);
-}
-
 void ItemView::clear()
 {
     // Plasma::Animator::self()->stopScrollingWidget(this);

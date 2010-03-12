@@ -111,18 +111,6 @@ Plasma::IconWidget *ItemContainer::currentItem() const
     return m_currentIcon.data();
 }
 
-//FIXME:remove
-void ItemContainer::insertItem(Plasma::IconWidget *icon, qreal weight)
-{
-    return;
-}
-
-//FIXME: remove
-void ItemContainer::addItem(Plasma::IconWidget *icon)
-{
-    return;
-}
-
 void ItemContainer::clear()
 {
     m_hoverIndicator->setTargetItem(0);
