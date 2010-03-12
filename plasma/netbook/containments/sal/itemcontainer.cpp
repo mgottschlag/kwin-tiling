@@ -64,6 +64,7 @@ ItemContainer::ItemContainer(ItemView *parent)
 
     QGraphicsItem *pi = parent->parentItem();
     Plasma::Applet *applet = 0;
+    //FIXME: this way to find the Applet is quite horrible
     while (pi) {
         applet = dynamic_cast<Plasma::Applet *>(pi);
         if (applet) {
@@ -637,6 +638,7 @@ void ItemContainer::generateItems(const QModelIndex &parent, int start, int end)
                 }
                 icon->addIconAction(action);
                 m_iconActionCollection->addAction(action);
+                connect(action, SIGNAL(triggered()), this, SLOT(actionTriggered()));
             }
 
             qreal left, top, right, bottom;
@@ -653,6 +655,20 @@ void ItemContainer::generateItems(const QModelIndex &parent, int start, int end)
         }
     }
     m_relayoutTimer->start(500);
+}
+
+void ItemContainer::actionTriggered()
+{
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
+    QModelIndex index = m_itemToIndex.value(icon);
+
+    CommonModel::ActionType actionType = (CommonModel::ActionType)index.data(CommonModel::ActionTypeRole).value<int>();
+
+    if (actionType == CommonModel::RemoveAction) {
+        m_model->removeRow(index.row());
+    } else if (actionType == CommonModel::AddAction) {
+        emit addActionRequested(index);
+    }
 }
 
 void ItemContainer::removeItems(const QModelIndex &parent, int start, int end)

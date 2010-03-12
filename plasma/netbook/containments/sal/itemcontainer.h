@@ -98,6 +98,7 @@ private Q_SLOTS:
     void generateItems(const QModelIndex &parent, int start, int end);
     void removeItems(const QModelIndex &parent, int start, int end);
     void resultClicked();
+    void actionTriggered();
 
 Q_SIGNALS:
     void itemSelected(Plasma::IconWidget *);
@@ -106,6 +107,7 @@ Q_SIGNALS:
     void itemAskedReorder(const QModelIndex &index, const QPointF &point);
     void dragStartRequested(const QModelIndex &index);
     void dragMoveMouseMoved(const QPointF &);
+    void addActionRequested(const QModelIndex &index);
 
 private:
     QGraphicsGridLayout *m_layout;
