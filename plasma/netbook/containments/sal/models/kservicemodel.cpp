@@ -64,6 +64,8 @@ KServiceModel::KServiceModel(QObject *parent)
 
     setRoleNames(newRoleNames);
 
+    setSortRole(CommonModel::Weight);
+
     KService::List services = KServiceTypeTrader::self()->query("Plasma/Sal/Menu");
     if (!services.isEmpty()) {
         foreach (const KService::Ptr &service, services) {
@@ -83,6 +85,8 @@ KServiceModel::KServiceModel(QObject *parent)
                     );
         }
     }
+
+    sort(0, Qt::DescendingOrder);
 }
 
 KServiceModel::~KServiceModel()

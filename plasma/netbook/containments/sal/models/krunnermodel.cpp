@@ -111,8 +111,9 @@ KRunnerModel::KRunnerModel(QObject *parent)
     newRoleNames[CommonModel::Weight] = "weight";
     newRoleNames[CommonModel::ActionTypeRole] = "action";
 
-
     setRoleNames(newRoleNames);
+
+    setSortRole(CommonModel::Weight);
 }
 
 KRunnerModel::~KRunnerModel()
@@ -168,6 +169,8 @@ void KRunnerModel::matchesChanged(const QList< Plasma::QueryMatch > & m)
                 )
             );
     }
+
+    sort(0, Qt::DescendingOrder);
 }
 
 Qt::ItemFlags KRunnerModel::flags(const QModelIndex &index) const
