@@ -24,14 +24,15 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "kcmmisc.h"
+#include "ui_kcmmiscwidget.h"
 
 #include <config-workspace.h>
 #include <config-X11.h>
 #include <math.h>
 
-#include <QCheckBox>
-
-#include <QWhatsThis>
+#include <QtGui/QCheckBox>
+#include <QtGui/QWhatsThis>
 
 #include <klocale.h>
 #include <kconfig.h>
@@ -40,20 +41,13 @@
 #include <kglobal.h>
 #include <kstandarddirs.h>
 #include <kprocess.h>
-#include <kdialog.h>
-#include <KPluginFactory>
-#include <KPluginLoader>
 
-#include "kcmmisc.h"
 #include <X11/Xlib.h>
 
-K_PLUGIN_FACTORY(KeyboardConfigFactory,
-        registerPlugin<KeyboardConfig>("keyboard");
-        )
-K_EXPORT_PLUGIN(KeyboardConfigFactory("kcmkeyboard"))
 
-KeyboardConfig::KeyboardConfig(QWidget *parent, const QVariantList &)
-	: KCModule(KeyboardConfigFactory::componentData(), parent)
+KCMiscKeyboardWidget::KCMiscKeyboardWidget(QWidget *parent)
+	: QWidget(parent),
+	  ui(*new Ui_KeyboardConfigWidget)
 {
   QString wtstr;
   ui.setupUi(this);
@@ -92,25 +86,30 @@ KeyboardConfig::KeyboardConfig(QWidget *parent, const QVariantList &)
 //  lay->addStretch();
 }
 
-int  KeyboardConfig::getClick()
+KCMiscKeyboardWidget::~KCMiscKeyboardWidget()
+{
+	delete &ui;
+}
+
+int  KCMiscKeyboardWidget::getClick()
 {
     return ui.click->value();
 }
 
 // set the slider and LCD values
-void KeyboardConfig::setRepeat(int r, int delay_, double rate_)
+void KCMiscKeyboardWidget::setRepeat(int r, int delay_, double rate_)
 {
     ui.repeatBox->setChecked(r == AutoRepeatModeOn);
     ui.delay->setValue(delay_);
     ui.rate->setValue(rate_);
 }
 
-void KeyboardConfig::setClick(int v)
+void KCMiscKeyboardWidget::setClick(int v)
 {
     ui.click->setValue(v);
 }
 
-int KeyboardConfig::getNumLockState()
+int KCMiscKeyboardWidget::getNumLockState()
 {
     int selected = ui.numlockGroup->selected();
     if( selected < 0 )
@@ -118,12 +117,12 @@ int KeyboardConfig::getNumLockState()
     return selected;
 }
 
-void KeyboardConfig::setNumLockState( int s )
+void KCMiscKeyboardWidget::setNumLockState( int s )
 {
     ui.numlockGroup->setSelected( s );
 }
 
-void KeyboardConfig::load()
+void KCMiscKeyboardWidget::load()
 {
   KConfigGroup config(KSharedConfig::openConfig("kcminputrc", KConfig::NoGlobals), "Keyboard");
 
@@ -151,7 +150,7 @@ void KeyboardConfig::load()
   ui.click->blockSignals(false);
 }
 
-void KeyboardConfig::save()
+void KCMiscKeyboardWidget::save()
 {
   KConfigGroup config(KSharedConfig::openConfig("kcminputrc", KConfig::NoGlobals), "Keyboard");
 
@@ -178,15 +177,15 @@ void KeyboardConfig::save()
   config.sync();
 }
 
-void KeyboardConfig::defaults()
+void KCMiscKeyboardWidget::defaults()
 {
     setClick(50);
     setRepeat(true, 660, 25);
     setNumLockState( 2 );
-    emit KCModule::changed(true);
+    emit changed(true);
 }
 
-QString KeyboardConfig::quickHelp() const
+QString KCMiscKeyboardWidget::quickHelp() const
 {
   return QString();
 
@@ -198,39 +197,39 @@ QString KeyboardConfig::quickHelp() const
      " has no effect because this feature is not available on your system." */
 }
 
-void KeyboardConfig::delaySliderChanged (int value) {
+void KCMiscKeyboardWidget::delaySliderChanged (int value) {
 	double alpha  = sliderMax / (log(5000.0L) - log(100.0L));
 	double linearValue = exp (value/alpha + log(100.0L));
 
 	ui.delay->setValue((int)floor(0.5 + linearValue));
 
-	emit KCModule::changed(true);
+	emit changed(true);
 }
 
-void KeyboardConfig::delaySpinboxChanged (int value) {
+void KCMiscKeyboardWidget::delaySpinboxChanged (int value) {
 	double alpha  = sliderMax / (log(5000.0L) - log(100.0L));
 	double logVal = alpha * (log((double)value)-log(100.0L));
 
 	ui.delaySlider->setValue ((int)floor (0.5 + logVal));
 
-	emit KCModule::changed(true);
+	emit changed(true);
 }
 
-void KeyboardConfig::rateSliderChanged (int value) {
+void KCMiscKeyboardWidget::rateSliderChanged (int value) {
 	ui.rate->setValue(value/100.0);
 
-	emit KCModule::changed(true);
+	emit changed(true);
 }
 
-void KeyboardConfig::rateSpinboxChanged (double value) {
+void KCMiscKeyboardWidget::rateSpinboxChanged (double value) {
 	ui.rateSlider->setValue ((int)(value*100));
 
-	emit KCModule::changed(true);
+	emit changed(true);
 }
 
-void KeyboardConfig::changed()
+void KCMiscKeyboardWidget::changed()
 {
-  emit KCModule::changed(true);
+  emit changed(true);
 }
 
 /*
@@ -483,9 +482,9 @@ void set_repeatrate(int delay, double rate)
 }
 #endif
 
-void KeyboardConfig::init_keyboard()
+void KCMiscKeyboardWidget::init_keyboard()
 {
-        KConfigGroup config(KSharedConfig::openConfig( "kcminputrc" ), "Keyboard");
+    KConfigGroup config(KSharedConfig::openConfig( "kcminputrc" ), "Keyboard");
 
 	XKeyboardState   kbd;
 	XKeyboardControl kbdc;
@@ -510,15 +509,4 @@ void KeyboardConfig::init_keyboard()
 	if( numlockState != 2 )
 		numlockx_change_numlock_state( numlockState == 0 );
 }
-
-
-extern "C"
-{
-	KDE_EXPORT void kcminit_keyboard()
-	{
-		KeyboardConfig::init_keyboard();
-	}
-}
-
-#include "kcmmisc.moc"
 

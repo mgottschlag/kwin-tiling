@@ -1,0 +1,41 @@
+Arch:
+* start applet from kxkb kcm
+
+rules, iso_codes:
+	error handling
+
+kded
+	kcm_init ->
+		kcmmisc init (test)
+		kded start
+	
+KCM UI
+* KDE shortcut (Done, for old compatibility need to be named "kxkb")
+
+* change layout order
+* name / vendor for keyb model
+
+* send configChanged() (for flag) to applet
+* show flag config
+
+* kxkb config compatibility
+
+plasma applet & part
+  auto layout name for dup layouts
+  tootip
+  
+plasma
+  config UI (showFlag)
+
+KCM module:
+* listen for config change in each kcm module
+
+Optimization:
+* don't start daemon if not needed
+* don't create two kcm libraries
+
+Improvement:
+* remove XInput libs from plasma applet and layout widget (find a nicer way)
+* optimize fetching groups and layouts (cache them) / fetch current group directly
+* show current layouts when "configure layouts" disabled
+

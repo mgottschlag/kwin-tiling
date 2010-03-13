@@ -1,0 +1,16 @@
+[Desktop Entry]
+Name=Keyboard Layout Applet
+Comment=Applet to display and switch layouts
+Type=Service
+ServiceTypes=Plasma/Applet
+ 
+X-KDE-Library=plasma_applet_keyboard
+X-KDE-PluginInfo-Author=Andriy Rysin
+X-KDE-PluginInfo-Email=rysin@kde.org
+X-KDE-PluginInfo-Name=keyboard_applet
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=
+X-KDE-PluginInfo-Category=System Information
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true

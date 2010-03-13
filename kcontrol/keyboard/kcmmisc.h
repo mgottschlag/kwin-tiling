@@ -24,17 +24,17 @@
 #ifndef __KCMMISC_H__
 #define __KCMMISC_H__
 
+#include <QtCore/QString>
+#include <QtGui/QWidget>
 
-#include <kapplication.h>
-#include <kcmodule.h>
+class Ui_KeyboardConfigWidget;
 
-#include "ui_kcmmiscwidget.h"
-
-class KeyboardConfig : public KCModule
+class KCMiscKeyboardWidget : public QWidget
 {
   Q_OBJECT
 public:
-  KeyboardConfig(QWidget *parent, const QVariantList &args);
+  KCMiscKeyboardWidget(QWidget *parent);
+  ~KCMiscKeyboardWidget();
 
   void save();
   void load();
@@ -52,8 +52,10 @@ private slots:
   void rateSliderChanged (int value);
   void rateSpinboxChanged (double value);
 
-private:
+Q_SIGNALS:
+	void changed(bool state);
 
+private:
   void setClick( int );
   void setRepeat( int flag, int delay, double rate);
   void setRepeatRate( int );
@@ -66,7 +68,7 @@ private:
   int sliderMax;
   int clickVolume, keyboardRepeat;
   int numlockState; // 0 = on, 1 = off, 2 = don't change
-  Ui_KeyboardConfigWidget ui;
+  Ui_KeyboardConfigWidget& ui;
 };
 
 void numlockx_change_numlock_state( bool set_P );

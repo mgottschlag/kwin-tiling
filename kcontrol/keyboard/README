@@ -1,0 +1,24 @@
+This is new project to replace keyboard (kcmmisc) and kxkb 
+to manage keyboard harware configuration and layouts.
+
+Components:
+
+Keyboard daemon:
+* configures keyboard (hardware??? and layout) on start
+* provides DBUS API "org.kde.keyboard/keyboard" (was "org.kde.kxkb")
+* listens to window/desktop switching if layout switch mode is not global
+* listens to new keyboard devices and reinitializes keyboard layouts
+* listens to Global KDE Shortcut to switch layouts
+* listens to Global Shortcut settings change
+* listens to keyboard configuration changed (TODO)
+
+Keyboard applet:
+* displays current layout with text and (optionally flag)
+* allows to configure if flag should be displayed
+
+Layout widget:
+* displays current layout with text and (optionally flag) embedded in another widget
+* dynamically loaded as a plugin
+* currently only short text (no flag or long text)
+
+KCM Module:

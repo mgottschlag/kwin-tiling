@@ -1,26 +1,158 @@
-# TODO: add this piece to kdeinit
 
-########### KCM ###############
+if( X11_Xinput_FOUND AND XiGetDevicePresenceNotifyEvent_EXISTS )
+    set(XiGetDevicePresence_FOUND 1)
+else( X11_Xinput_FOUND AND XiGetDevicePresenceNotifyEvent_EXISTS )
+    MESSAGE(STATUS "_XiGetDevicePresenceNotifyEvent is not found, libXi version 1.2.0 or later is required to keep layouts with keyboard hotplugging")
+endif( X11_Xinput_FOUND AND XiGetDevicePresenceNotifyEvent_EXISTS )
+
+macro_bool_to_01(XiGetDevicePresence_FOUND HAVE_XINPUT)
+ADD_DEFINITIONS(-DHAVE_XINPUT=${HAVE_XINPUT})
+
+
+
+### kded daemon ###
+
+set( kded_keyboard_SRCS
+    keyboard_daemon.cpp
+    layout_memory.cpp
+    x11_helper.cpp
+    x11_helper_xinput.cpp
+    xkb_helper.cpp
+    keyboard_config.cpp
+)
+
+#  qt4_add_dbus_adaptor(kded_keyboard_SRCS org.kde.Keyboard.xml keyboard_daemon.h Keyboard)
+
+kde4_add_plugin(kded_keyboard ${kded_keyboard_SRCS})
+
+target_link_libraries(kded_keyboard
+    ${KDE4_KDECORE_LIBS}  ${KDE4_KDEUI_LIBS} ${X11_LIBRARIES} 
+)
+
+#  ${QT_QTGUI_LIBRARY}
+
+if(XiGetDevicePresence_FOUND)
+  target_link_libraries(kded_keyboard ${X11_Xinput_LIB})
+endif(XiGetDevicePresence_FOUND)
+
+install( TARGETS kded_keyboard DESTINATION ${PLUGIN_INSTALL_DIR} )
+install( FILES keyboard.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kded )
+
+
+### plasma applet ###
+
+set( plasma_applet_keyboard_SRCS
+    keyboard_applet.cpp
+    flags.cpp
+    xkb_rules.cpp
+    x11_helper.cpp
+)
+
+kde4_add_plugin(plasma_applet_keyboard ${plasma_applet_keyboard_SRCS})
+
+target_link_libraries(plasma_applet_keyboard
+     ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} ${X11_Xkbfile_LIB} ${X11_LIBRARIES}
+)
+#TODO: remove XInput
+#if(XiGetDevicePresence_FOUND)
+#  target_link_libraries(plasma_applet_keyboard ${X11_Xinput_LIB})
+#endif(XiGetDevicePresence_FOUND)
+
+install( TARGETS plasma_applet_keyboard DESTINATION ${PLUGIN_INSTALL_DIR} )
+install( FILES plasma_applet_keyboard.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
+
+
+### widget lib ###
+
+set( layout_widget_SRCS
+    layout_widget.cpp
+    flags.cpp
+    x11_helper.cpp
+)
+
+# MODULE?
+kde4_add_plugin(layout_widget ${layout_widget_SRCS})
+
+#TODO: remove XInput
+target_link_libraries(layout_widget
+     ${KDE4_KDEUI_LIBS} ${X11_LIBRARIES}
+)
+
+#if(XiGetDevicePresence_FOUND)
+#  target_link_libraries(layout_widget ${X11_Xinput_LIB})
+#endif(XiGetDevicePresence_FOUND)
+
+install( TARGETS layout_widget DESTINATION ${PLUGIN_INSTALL_DIR} )
+
+
+### kcm ###
+
+set(kcm_keyboard_layout_PART_SRCS 
+  kcm_keyboard.cpp
+  kcm_keyboard_widget.cpp
+  kcm_view_models.cpp
+  kcm_add_layout_dialog.cpp
+  keyboard_config.cpp
+  x11_helper.cpp
+  xkb_helper.cpp
+  xkb_rules.cpp
+  flags.cpp
+  iso_codes.cpp
+  kcmmisc.cpp
+)
+
+kde4_add_ui_files(kcm_keyboard_layout_PART_SRCS kcm_keyboard.ui kcm_add_layout_dialog.ui kcmmiscwidget.ui)
+
+kde4_add_plugin(kcm_keyboard_layout ${kcm_keyboard_layout_PART_SRCS})
+
+set_target_properties(kcm_keyboard_layout PROPERTIES COMPILE_DEFINITIONS DEFAULT_TAB=1) 
+
+target_link_libraries(kcm_keyboard_layout
+    ${KDE4_KIO_LIBS} ${X11_Xkbfile_LIB} ${X11_LIBRARIES}
+)
+
+# for kcmmisc
+if(X11_XTest_FOUND)
+  target_link_libraries(kcm_keyboard_layout ${X11_XTest_LIB})
+endif(X11_XTest_FOUND)
+
+install(TARGETS kcm_keyboard_layout DESTINATION ${PLUGIN_INSTALL_DIR} )
+
+install( FILES kcm_keyboard_layout.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
+
+
+### kcm keyboard ###
 
 set(kcm_keyboard_PART_SRCS 
+  kcm_keyboard.cpp
+  kcm_keyboard_widget.cpp
+  kcm_view_models.cpp
+  kcm_add_layout_dialog.cpp
+  keyboard_config.cpp
+  x11_helper.cpp
+  xkb_helper.cpp
+  xkb_rules.cpp
+  flags.cpp
+  iso_codes.cpp
   kcmmisc.cpp
-  ${kxkb_COMMON_SRCS}
 )
 
 
-kde4_add_ui_files(kcm_keyboard_PART_SRCS kcmmiscwidget.ui )
+kde4_add_ui_files(kcm_keyboard_PART_SRCS kcm_keyboard.ui kcm_add_layout_dialog.ui kcmmiscwidget.ui)
 
 kde4_add_plugin(kcm_keyboard ${kcm_keyboard_PART_SRCS})
 
+set_target_properties(kcm_keyboard PROPERTIES COMPILE_DEFINITIONS DEFAULT_TAB=0) 
 
 target_link_libraries(kcm_keyboard
-    ${KDE4_KIO_LIBS} 
+    ${KDE4_KIO_LIBS} ${X11_Xkbfile_LIB} ${X11_LIBRARIES}
 )
-target_link_libraries(kcm_keyboard ${X11_LIBRARIES})
+
+# for kcmmisc
 if(X11_XTest_FOUND)
   target_link_libraries(kcm_keyboard ${X11_XTest_LIB})
 endif(X11_XTest_FOUND)
 
-install(TARGETS kcm_keyboard  DESTINATION ${PLUGIN_INSTALL_DIR} )
+install(TARGETS kcm_keyboard DESTINATION ${PLUGIN_INSTALL_DIR} )
 
-install( FILES keyboard.desktop kcm_keyboard.desktop DESTINATION  ${SERVICES_INSTALL_DIR} )
+install( FILES kcm_keyboard.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
