@@ -155,11 +155,11 @@ Plasma::IconWidget *ItemContainer::createItem()
 void ItemContainer::disposeItem(Plasma::IconWidget *icon)
 {
     if (m_usedItems.count() < 40) {
-        icon->hide();
         icon->removeIconAction(0);
         disconnect(icon, 0, 0, 0);
         m_usedItems.append(icon);
         icon->removeEventFilter(m_itemView);
+        icon->hide();
     } else {
         icon->deleteLater();
     }
@@ -596,10 +596,12 @@ QAbstractItemModel *ItemContainer::model() const
 
 void ItemContainer::reset()
 {
+    const int count = m_layout->count();
     m_hoverIndicator->setTargetItem(0);
-    for (int i = 0; i < m_layout->count(); ++i) {
+    for (int i = 0; i < count; ++i) {
         m_layout->removeAt(0);
     }
+
     foreach (Plasma::IconWidget *icon, m_items) {
         disposeItem(icon);
     }
