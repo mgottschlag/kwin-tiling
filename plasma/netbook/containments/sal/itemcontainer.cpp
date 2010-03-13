@@ -652,6 +652,7 @@ void ItemContainer::generateItems(const QModelIndex &parent, int start, int end)
 
             icon->setMinimumSize(icon->sizeFromIconSize(m_iconSize));
             icon->setMaximumSize(icon->sizeFromIconSize(m_iconSize));
+            icon->setMaximumWidth(KIconLoader::SizeEnormous);
             icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
             m_items.insert(QPersistentModelIndex(index), icon);
             m_itemToIndex.insert(icon, QPersistentModelIndex(index));
