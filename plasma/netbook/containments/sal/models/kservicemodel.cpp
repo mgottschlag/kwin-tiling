@@ -30,6 +30,7 @@
 #include <KDebug>
 #include <KRun>
 #include <KServiceTypeTrader>
+#include <KSycocaEntry>
 
 //Plasma
 #include <Plasma/AbstractRunner>
@@ -66,6 +67,26 @@ KServiceModel::KServiceModel(QObject *parent)
 
     setSortRole(CommonModel::Weight);
 
+    loadRootEntries();
+}
+
+KServiceModel::~KServiceModel()
+{
+}
+
+void KServiceModel::setPath(const QString &path)
+{
+    clear();
+
+    if (path == "/") {
+        loadRootEntries();
+    } else {
+        loadServiceGroup(KServiceGroup::group(path));
+    }
+}
+
+void KServiceModel::loadRootEntries()
+{
     KService::List services = KServiceTypeTrader::self()->query("Plasma/Sal/Menu");
     if (!services.isEmpty()) {
         foreach (const KService::Ptr &service, services) {
@@ -79,19 +100,77 @@ KServiceModel::KServiceModel(QObject *parent)
                         service->name(),
                         service->comment(),
                         QString("krunner://") + runner + "/" + query,
-                        relevance, //don't need weigt here
+                        relevance,
                         CommonModel::NoAction
                         )
                     );
         }
     }
 
+    KServiceGroup::Ptr group = KServiceGroup::root();
+    KServiceGroup::List list = group->entries();
+
+    for( KServiceGroup::List::ConstIterator it = list.begin();
+         it != list.end(); it++) {
+        const KSycocaEntry::Ptr p = (*it);
+
+        if (p->isType(KST_KServiceGroup)) {
+            const KServiceGroup::Ptr subGroup = KServiceGroup::Ptr::staticCast(p);
+
+            if (!subGroup->noDisplay() || subGroup->childCount() == 0) {
+                appendRow(
+                    StandardItemFactory::createItem(
+                        KIcon(subGroup->icon()),
+                        subGroup->name(),
+                        subGroup->comment(),
+                        QString("kservicegroup://root/") + subGroup->relPath(),
+                        0.5,
+                        CommonModel::NoAction
+                        )
+                    );
+            }
+        }
+
+    }
+
     sort(0, Qt::DescendingOrder);
 }
 
-KServiceModel::~KServiceModel()
+void KServiceModel::loadServiceGroup(KServiceGroup::Ptr group)
 {
-}
+    if (group && group->isValid()) {
+        KServiceGroup::List list = group->entries();
 
+        for( KServiceGroup::List::ConstIterator it = list.begin();
+             it != list.end(); it++) {
+            const KSycocaEntry::Ptr p = (*it);
+
+            if (p->isType(KST_KService)) {
+                const KService::Ptr service = KService::Ptr::staticCast(p);
+
+                appendRow(
+                    StandardItemFactory::createItem(
+                        KIcon(service->icon()),
+                        service->name(),
+                        service->comment(),
+                        service->path(),
+                        0.5,
+                        CommonModel::AddAction
+                        )
+                    );
+
+
+            } else if (p->isType(KST_KServiceGroup)) {
+                const KServiceGroup::Ptr subGroup = KServiceGroup::Ptr::staticCast(p);
+
+                if (!subGroup->noDisplay() || subGroup->childCount() == 0) {
+                    loadServiceGroup(subGroup);
+                }
+            }
+
+        }
+
+    }
+}
 
 #include "kservicemodel.moc"

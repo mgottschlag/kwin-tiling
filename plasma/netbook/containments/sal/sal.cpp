@@ -196,6 +196,7 @@ void SearchLaunch::reset()
 {
     m_searchField->setText(QString());
     doSearch(QString());
+    m_serviceModel->setPath("/");
     m_resultsView->setModel(m_serviceModel);
 }
 
@@ -206,12 +207,16 @@ void SearchLaunch::launch(QModelIndex index)
     if (m_resultsView->model() == m_runnerModel) {
         KRunnerItemHandler::openUrl(url);
     } else {
-        m_resultsView->setModel(m_runnerModel);
         QString id = url.path();
         if (id.startsWith(QLatin1String("/"))) {
             id = id.remove(0, 1);
         }
-        m_runnerModel->setQuery(id, url.host());
+        if (url.protocol() == "kservicegroup") {
+            m_serviceModel->setPath(id);
+        } else {
+            m_resultsView->setModel(m_runnerModel);
+            m_runnerModel->setQuery(id, url.host());
+        }
     }
 }
 

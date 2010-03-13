@@ -23,6 +23,7 @@
 #include <QStandardItemModel>
 
 #include <KUrl>
+#include <KServiceGroup>
 
 #include "standarditemfactory.h"
 
@@ -42,7 +43,11 @@ public:
     KServiceModel(QObject *parent);
     virtual ~KServiceModel();
 
+    void setPath(const QString &path);
 
+protected:
+    void loadRootEntries();
+    void loadServiceGroup(KServiceGroup::Ptr group);
 };
 
 #endif // KSERVICEMODEL_H
