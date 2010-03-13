@@ -25,14 +25,11 @@
 
 ResultWidget::ResultWidget(QGraphicsItem *parent)
    : Plasma::IconWidget(parent),
-     m_animationLock(false),
-     m_hiding(false)
+     m_animationLock(false)
 {
     m_animation = new QPropertyAnimation(this, "animationPos", this);
     m_animation->setEasingCurve(QEasingCurve::InOutQuad);
     m_animation->setDuration(250);
-    m_hideTimer = new QTimer(this);
-    connect(m_hideTimer, SIGNAL(timeout()), this, SLOT(hideTimeout()));
 }
 
 ResultWidget::~ResultWidget()
@@ -60,21 +57,6 @@ void ResultWidget::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void ResultWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Plasma::IconWidget::mouseReleaseEvent(event);
-}
-
-void ResultWidget::hideEvent(QHideEvent *event)
-{
-    if (!m_hiding) {
-        show();
-        m_hiding = true;
-        m_hideTimer->start(400);
-    }
-}
-
-void ResultWidget::showEvent(QShowEvent *event)
-{
-    m_hiding = false;
-    m_hideTimer->stop();
 }
 
 void ResultWidget::hideTimeout()

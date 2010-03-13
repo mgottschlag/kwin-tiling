@@ -168,7 +168,7 @@ void ItemContainer::disposeItem(Plasma::IconWidget *icon)
         m_usedItems.insert(row, icon);
         icon->removeEventFilter(m_itemView);
         //if they will be immediately recycled they won't be hidden at all
-        m_hideUsedItemsTimer->start(300);
+        m_hideUsedItemsTimer->start(500);
     } else {
         icon->deleteLater();
     }

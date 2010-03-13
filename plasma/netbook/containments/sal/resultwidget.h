@@ -44,8 +44,6 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
-    void hideEvent(QHideEvent *event);
-    void showEvent(QShowEvent *event);
 
 protected Q_SLOTS:
     void hideTimeout();
@@ -55,9 +53,7 @@ Q_SIGNALS:
 
 private:
     QPropertyAnimation *m_animation;
-    QTimer *m_hideTimer;
     bool m_animationLock;
-    bool m_hiding;
 };
 
 #endif
