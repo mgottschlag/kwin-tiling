@@ -87,26 +87,7 @@ void KServiceModel::setPath(const QString &path)
 
 void KServiceModel::loadRootEntries()
 {
-    KService::List services = KServiceTypeTrader::self()->query("Plasma/Sal/Menu");
-    if (!services.isEmpty()) {
-        foreach (const KService::Ptr &service, services) {
-            const QString query = service->property("X-Plasma-Sal-Query", QVariant::String).toString();
-            const QString runner = service->property("X-Plasma-Sal-Runner", QVariant::String).toString();
-            const int relevance = service->property("X-Plasma-Sal-Relevance", QVariant::Int).toInt();
-
-            appendRow(
-                    StandardItemFactory::createItem(
-                        KIcon(service->icon()),
-                        service->name(),
-                        service->comment(),
-                        QString("krunner://") + runner + "/" + query,
-                        relevance,
-                        CommonModel::NoAction
-                        )
-                    );
-        }
-    }
-
+    QSet<QString> groupSet;
     KServiceGroup::Ptr group = KServiceGroup::root();
     KServiceGroup::List list = group->entries();
 
@@ -118,19 +99,30 @@ void KServiceModel::loadRootEntries()
             const KServiceGroup::Ptr subGroup = KServiceGroup::Ptr::staticCast(p);
 
             if (!subGroup->noDisplay() && subGroup->childCount() > 0) {
-                appendRow(
-                    StandardItemFactory::createItem(
-                        KIcon(subGroup->icon()),
-                        subGroup->caption(),
-                        subGroup->comment(),
-                        QString("kservicegroup://root/") + subGroup->relPath(),
-                        0.5,
-                        CommonModel::NoAction
-                        )
-                    );
+                groupSet.insert(subGroup->relPath());
             }
         }
 
+    }
+kWarning()<<groupSet;
+    KService::List services = KServiceTypeTrader::self()->query("Plasma/Sal/Menu");
+    if (!services.isEmpty()) {
+        foreach (const KService::Ptr &service, services) {
+            const QUrl url = QUrl(service->property("X-Plasma-Sal-Url", QVariant::String).toString());
+            const int relevance = service->property("X-Plasma-Sal-Relevance", QVariant::Int).toInt();
+
+            if (url.scheme() != "kservicegroup" || groupSet.contains(url.path().remove(0, 1)))
+            appendRow(
+                    StandardItemFactory::createItem(
+                        KIcon(service->icon()),
+                        service->name(),
+                        service->comment(),
+                        url.toString(),
+                        relevance,
+                        CommonModel::NoAction
+                        )
+                    );
+        }
     }
 
     setSortRole(CommonModel::Weight);

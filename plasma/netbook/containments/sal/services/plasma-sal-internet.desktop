@@ -142,6 +142,5 @@ Type=Service
 X-KDE-ServiceTypes=Plasma/Sal/Menu
 X-KDE-PluginInfo-Name=plasma-sal-internet
 
-X-Plasma-Sal-Query=network
-X-Plasma-Sal-Runner=services
+X-Plasma-Sal-Url=kservicegroup://root/Internet/
 X-Plasma-Sal-Relevance=1

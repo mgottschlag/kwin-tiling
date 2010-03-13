@@ -99,10 +99,7 @@ Comment[x-test]=xxMenu entry for The Plasma search and launch activityxx
 Comment[zh_CN]=提供 Plasma 搜索与程序启动特性的菜单项
 Comment[zh_TW]=Plasma 搜尋與啟動的選單項目
 
-[PropertyDef::X-Plasma-Sal-Query]
-Type=QString
-
-[PropertyDef::X-Plasma-Sal-Runner]
+[PropertyDef::X-Plasma-Sal-Url]
 Type=QString
 
 [PropertyDef::X-Plasma-Sal-Relevance]
