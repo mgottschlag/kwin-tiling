@@ -99,6 +99,7 @@ private Q_SLOTS:
     void removeItems(const QModelIndex &parent, int start, int end);
     void itemClicked();
     void actionTriggered();
+    void hideUsedItems();
 
 Q_SIGNALS:
     void itemSelected(Plasma::IconWidget *);
@@ -115,10 +116,11 @@ private:
     Plasma::ItemBackground *m_hoverIndicator;
     QTimer *m_relayoutTimer;
     QTimer *m_setCurrentTimer;
+    QTimer *m_hideUsedItemsTimer;
     QHash<QPersistentModelIndex, Plasma::IconWidget*> m_items;
     QHash<Plasma::IconWidget*, QPersistentModelIndex> m_itemToIndex;
     //we store the old row to sort them, necessary to do a good animation
-    QMap<int, Plasma::IconWidget*> m_usedItems;
+    QMultiMap<int, Plasma::IconWidget*> m_usedItems;
     Qt::Orientation m_orientation;
     QPropertyAnimation *m_positionAnimation;
     int m_currentIconIndexX;

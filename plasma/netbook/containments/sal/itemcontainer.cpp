@@ -88,6 +88,10 @@ ItemContainer::ItemContainer(ItemView *parent)
     m_setCurrentTimer = new QTimer(this);
     m_setCurrentTimer->setSingleShot(true);
     connect(m_setCurrentTimer, SIGNAL(timeout()), this, SLOT(syncCurrentItem()));
+
+    m_hideUsedItemsTimer = new QTimer(this);
+    m_hideUsedItemsTimer->setSingleShot(true);
+    connect(m_hideUsedItemsTimer, SIGNAL(timeout()), this, SLOT(hideUsedItems()));
 }
 
 ItemContainer::~ItemContainer()
@@ -141,10 +145,9 @@ Plasma::IconWidget *ItemContainer::createItem()
 {
     Plasma::IconWidget *item;
     if (!m_usedItems.isEmpty()) {
-        QMapIterator<int, Plasma::IconWidget *> it(m_usedItems);
-        it.next();
-        item = it.value();
-        m_usedItems.remove(it.key());
+        int key = m_usedItems.keys().first();
+        item = m_usedItems.values(key).first();
+        m_usedItems.remove(key, item);
     } else {
         item = new ResultWidget(this);
         m_itemView->registerAsDragHandle(item);
@@ -159,9 +162,13 @@ void ItemContainer::disposeItem(Plasma::IconWidget *icon)
     if (m_usedItems.count() < 40) {
         icon->removeIconAction(0);
         disconnect(icon, 0, 0, 0);
-        m_usedItems.insert(m_itemToIndex.value(icon).row(), icon);
+
+        int row = m_itemToIndex.value(icon).row();
+
+        m_usedItems.insert(row, icon);
         icon->removeEventFilter(m_itemView);
-        icon->hide();
+        //if they will be immediately recycled they won't be hidden at all
+        m_hideUsedItemsTimer->start(300);
     } else {
         icon->deleteLater();
     }
@@ -688,9 +695,9 @@ void ItemContainer::removeItems(const QModelIndex &parent, int start, int end)
     for (int i = start; i <= end; i++) {
         QModelIndex index = m_model->index(i, 0, m_rootIndex);
         Plasma::IconWidget *icon = m_items.value(index);
+        disposeItem(icon);
         m_items.remove(index);
         m_itemToIndex.remove(icon);
-        disposeItem(icon);
     }
     m_relayoutTimer->start(500);
 }
@@ -719,5 +726,15 @@ QModelIndex ItemContainer::rootIndex() const
     return m_rootIndex;
 }
 
+void ItemContainer::hideUsedItems()
+{
+    QMapIterator<int, Plasma::IconWidget *> i(m_usedItems);
+    while (i.hasNext()) {
+        i.next();
+        foreach (Plasma::IconWidget *icon, m_usedItems.values(i.key())) {
+            icon->hide();
+        }
+    }
+}
 
 #include <itemcontainer.moc>
