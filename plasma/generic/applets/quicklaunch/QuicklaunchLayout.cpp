@@ -41,28 +41,6 @@ int QuicklaunchLayout::preferredRowCount() const
     return m_rowCount;
 }
 
-void QuicklaunchLayout::addItem(Plasma::IconWidget *icon)
-{
-    //kDebug() << "Row count is" << rowCount() << "Wanted row count is" << m_rowCount;
-    //int row = m_rowCount == rowCount() || rowCount() == -1 ? 0 : rowCount();
-    //int column = m_rowCount == rowCount()  || columnCount() == 0 ? columnCount() : columnCount() - 1;
-    //kDebug() << "Adding icon to row = " << row << ", column = " << column;
-    int row = 0;
-    int column = 0;
-    while (row < rowCount() && column < columnCount() && itemAt(row, column))
-    {
-        //kDebug() << "Row is" << row << "column is" << column;
-        if (row < m_rowCount - 1) {
-            row++;
-        } else {
-            //kDebug() << "column++";
-            row = 0;
-            column++;
-        }
-    }
-    QGraphicsGridLayout::addItem(icon, row, column);
-}
-
 QSizeF QuicklaunchLayout::sizeHint(Qt::SizeHint which, const QSizeF & constraint) const
 {
     if (which == Qt::PreferredSize) {

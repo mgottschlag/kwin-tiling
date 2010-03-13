@@ -34,7 +34,6 @@ class QuicklaunchLayout : public QGraphicsGridLayout
         ~QuicklaunchLayout();
         void setPreferredRowCount(int rowCount);
         int preferredRowCount() const;
-        void addItem(Plasma::IconWidget *icon);
         QSizeF sizeHint(Qt::SizeHint which, const QSizeF & constraint = QSizeF()) const;
 
     private:

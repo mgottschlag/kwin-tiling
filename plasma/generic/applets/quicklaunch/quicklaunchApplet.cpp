@@ -112,10 +112,14 @@ void QuicklaunchApplet::init()
 {
     m_isBusy = true;
     KConfigGroup cg = config();
-    m_preferredIconSize = m_iconSize = qMax(s_defaultIconSize, (int)cg.readEntry("iconSize", contentsRect().height() / 2));
-    m_visibleIcons = qMax(-1, cg.readEntry("visibleIcons", m_visibleIcons));
-    m_dialogIconSize = qMax(s_defaultIconSize, (int)cg.readEntry("dialogIconSize", contentsRect().height() / 2));
 
+    m_preferredIconSize =
+        qMax(s_defaultIconSize, int(cg.readEntry("iconSize", contentsRect().height() / 2)));
+    m_iconSize = m_preferredIconSize;
+    m_dialogIconSize =
+        qMax(s_defaultIconSize, (int)cg.readEntry("dialogIconSize", contentsRect().height() / 2));
+
+    m_visibleIcons = qMax(-1, cg.readEntry("visibleIcons", m_visibleIcons));
     m_showIconNames = (bool)cg.readEntry("showIconNames", false);
     setShowIconNames(m_showIconNames);
 
@@ -183,7 +187,10 @@ QSizeF QuicklaunchApplet::sizeHint(Qt::SizeHint which, const QSizeF & constraint
         if (!m_innerLayout) {
             return sizeHint;
         }
-        qreal newWidth = m_innerLayout->columnCount() * sizeHint.height() / qMax(1, m_innerLayout->preferredRowCount());
+        qreal newWidth =
+            m_innerLayout->columnCount() * sizeHint.height() /
+            qMax(1, m_innerLayout->preferredRowCount());
+
         if (m_icons.size() > m_visibleIcons) {
             sizeHint.setWidth(newWidth + sizeHint.height());
         } else {
@@ -215,55 +222,76 @@ void QuicklaunchApplet::performUiRefactor()
     clearLayout(m_innerLayout);
 
     //Don't accept values under 16 nor anything over applet's height
-    m_iconSize = qMin(qMax(m_preferredIconSize, s_defaultIconSize), (int)(contentsRect().height() - 2 * s_defaultSpacing));
+    m_iconSize =
+        qMin(
+            qMax(m_preferredIconSize, s_defaultIconSize),
+            int(contentsRect().height() - 2 * s_defaultSpacing));
+
     m_dialogIconSize = qMax(m_dialogIconSize, s_defaultIconSize);
+
+    const int numInnerLayoutIcons =
+        m_visibleIcons != -1 ?
+            qMin(m_icons.size(), m_visibleIcons) :
+            m_icons.size();
+
+    // Determine the number of rows to show.
+    int rowCount;
+    int colCount;
+
+    if (formFactor() == Plasma::Vertical) {
+        // Use as many columns as possible.
+        colCount = qMax(1, int(contentsRect().width() / m_iconSize));
+        rowCount = qMax(1, numInnerLayoutIcons / colCount + numInnerLayoutIcons % colCount);
+    } else {
+        // Use as many rows as possible.
+        rowCount = qMax(1, int(contentsRect().height() / m_iconSize));
+        colCount = qMax(1, numInnerLayoutIcons / rowCount + numInnerLayoutIcons % rowCount);
+    }
+
+    m_innerLayout->setPreferredRowCount(rowCount);
+
+    // Add the items that are shown in the inner layout
+    for (int i = 0; i < numInnerLayoutIcons; i++) {
+        QuicklaunchIcon *icon = m_icons.at(i);
+        icon->resize(QSize(m_iconSize, m_iconSize));
+        icon->setIconSize(m_iconSize);
+        icon->show();
+
+        m_innerLayout->addItem(icon, i / colCount, i % colCount);
+    }
 
     if (m_dialogLayout) {
         clearLayout(m_dialogLayout);
-        m_dialogLayout->setPreferredRowCount((int)(size().height() / qMin(m_dialogIconSize, m_dialog->size().height())));
-    }
 
-    int rowCount;
-    if (formFactor() == Plasma::Vertical) {
-        int numIcons = qMin(m_icons.count(), m_visibleIcons);
-        int colCount = qMax(qreal(1), contentsRect().width() / m_iconSize);
-        rowCount = numIcons / colCount + numIcons % colCount;
-        // prevent possible division by zero if size().width() is 0
-    } else {
-        rowCount = contentsRect().height() / m_iconSize;
-        // prevent possible division by zero if size().height() is 0
-    }
+        if (numInnerLayoutIcons < m_icons.size()) {
 
-    rowCount = qMax(1, rowCount);
-    m_innerLayout->setPreferredRowCount(rowCount);
-    int count = 0;
-    //kDebug() << m_icons.count() << "pixel icons in" << rowCount
-    //         << "rows, with a max of" << m_visibleIcons << "visible";
-    foreach (QuicklaunchIcon *icon, m_icons) {
-        //icon->setMinimumSize(minSize);
-        //icon->setMaximumSize(maxSize);
-        if (count < m_visibleIcons || m_visibleIcons == -1) {
-            icon->resize(QSize(m_iconSize, m_iconSize));
-            icon->setIconSize(m_iconSize);
-            icon->show();
-            m_innerLayout->addItem(icon);
-        } else if (m_dialogLayout) {
-            icon->setMinimumSize(QSize(m_dialogIconSize, m_dialogIconSize));//TODO: Remove maximum/minimum sizes
-            icon->setMaximumSize(QSize(m_dialogIconSize, m_dialogIconSize));
-            icon->setIconSize(m_dialogIconSize);
-            icon->show();
-            m_dialogLayout->addItem(icon);
-        } else {
-            icon->hide();
+            int numDialogIcons = m_icons.size() - numInnerLayoutIcons;
+            int dialogRowCount =
+                qMax(1, int(size().height() / qMin(m_dialogIconSize, m_dialog->size().height())));
+            int dialogColCount =
+                qMax(1, numDialogIcons / dialogRowCount + numDialogIcons % dialogRowCount);
+
+            m_dialogLayout->setPreferredRowCount(dialogRowCount);
+
+            for (int i = numInnerLayoutIcons; i < m_icons.size(); i++) {
+                QuicklaunchIcon *icon = m_icons.at(i);
+                icon->setMinimumSize(QSize(m_dialogIconSize, m_dialogIconSize)); //TODO: Remove maximum/minimum sizes
+                icon->setMaximumSize(QSize(m_dialogIconSize, m_dialogIconSize));
+                icon->setIconSize(m_dialogIconSize);
+                icon->show();
+
+                int dialogIconIndex = i - numInnerLayoutIcons;
+                m_dialogLayout->addItem(icon, dialogIconIndex / dialogColCount, dialogIconIndex % dialogColCount);
+            }
         }
-
-        ++count;
+    } else { // !m_dialogLayout
+        for (int i = numInnerLayoutIcons; i < m_icons.size(); i++) {
+            m_icons.at(i)->hide();
+        }
     }
 
     m_layout->removeItem(m_arrow);
-    if (count > m_visibleIcons && m_visibleIcons != -1) {
-        //m_arrow->setMinimumSize(minSize);
-        //m_arrow->setMaximumSize(maxSize);
+    if (m_icons.size() > m_visibleIcons && m_visibleIcons != -1) {
         m_arrow->resize(QSize(size().height(), size().height()));
         m_layout->addItem(m_arrow);
         m_arrow->show();
@@ -271,15 +299,8 @@ void QuicklaunchApplet::performUiRefactor()
         m_arrow->hide();
     }
 
-    int cols = qMax(1,m_innerLayout->columnCount());
-    if (count > m_visibleIcons && m_visibleIcons != -1) {
-        cols++;
-    }
-
-    int icons = qMax(1, qMin(m_icons.size(), m_visibleIcons));
-
-    setPreferredSize(QSize((m_iconSize + 6) * cols,
-                           (m_iconSize + 6) * ceil(icons / (double)cols)));
+    setPreferredSize(QSize((m_iconSize + 6) * colCount,
+                           (m_iconSize + 6) * ceil(qMax(1, numInnerLayoutIcons) / double(colCount))));
 
     if (m_dialog) {
         m_dialog->close();
@@ -350,7 +371,7 @@ void QuicklaunchApplet::createConfigurationInterface(KConfigDialog *parent)
     uiConfig.iconSizeSlider->setValue(m_preferredIconSize);
     uiConfig.dialogIconSizeSpin->setValue(m_dialogIconSize);
     uiConfig.dialogIconSizeSlider->setValue(m_dialogIconSize);
-    
+
     uiConfig.iconNamesCheckBox->setChecked(m_showIconNames);
 
     uiConfig.icons->setValue(m_visibleIcons);
@@ -384,7 +405,7 @@ void QuicklaunchApplet::configAccepted()
         cg.writeEntry("dialogIconSize", m_dialogIconSize);
         changed = true;
     }
-    
+
     bool iconNames = uiConfig.iconNamesCheckBox->isChecked();
     if (m_showIconNames != iconNames) {
         m_showIconNames = iconNames;
@@ -418,7 +439,7 @@ QList<QAction*> QuicklaunchApplet::contextActions(QuicklaunchIcon *icon)
         }
         tempActions << m_removeAction;
     }
-    
+
     if (!m_sortappAscending) {
         m_sortappAscending = new QAction(KIcon("view-sort-ascending"), i18n("Sort Alphabetically (A to Z)"), this);
         connect(m_sortappAscending, SIGNAL(triggered(bool)), this, SLOT(ascendingSort()));
@@ -434,7 +455,7 @@ QList<QAction*> QuicklaunchApplet::contextActions(QuicklaunchIcon *icon)
     return tempActions;
 }
 
-void QuicklaunchApplet::ascendingSort() 
+void QuicklaunchApplet::ascendingSort()
 {
     m_isBusy = true;
     sortQuicklaunch(AscendingSort);
@@ -520,7 +541,7 @@ void QuicklaunchApplet::dropApp(QGraphicsSceneDragDropEvent *event, bool dropped
             col++;
         }
 
-        pos = col*rowCount+row;
+        pos = row * colCount + col;
     }
 
     if (dropHandler(pos, event->mimeData())) {
@@ -710,31 +731,34 @@ void QuicklaunchApplet::showAddInterface()
     appChooseDialog.setSaveNewApplications(true);
 
     if (appChooseDialog.exec() == QDialog::Accepted) {
-	QString programPath = appChooseDialog.service()->entryPath();
-	if (appChooseDialog.service()->icon() == NULL) {
-	    // If the program chosen doesn't have an icon, then we give
-	    // it a default icon and open up its properties in a dialog
-	    // so the user can change it's icon and name etc
-	    KConfig kc(programPath, KConfig::SimpleConfig);
-	    KConfigGroup kcg = kc.group("Desktop Entry");
-	    kcg.writeEntry("Icon","system-run");
-	    kc.sync();
+        QString programPath = appChooseDialog.service()->entryPath();
+        if (appChooseDialog.service()->icon() == NULL) {
+            // If the program chosen doesn't have an icon, then we give
+            // it a default icon and open up its properties in a dialog
+            // so the user can change it's icon and name etc
+            KConfig kc(programPath, KConfig::SimpleConfig);
+            KConfigGroup kcg = kc.group("Desktop Entry");
+            kcg.writeEntry("Icon","system-run");
+            kc.sync();
 
-	    KPropertiesDialog propertiesDialog(KUrl(programPath), NULL);
-	    if (propertiesDialog.exec() != QDialog::Accepted) {
-		return;
-	    }
+            KPropertiesDialog propertiesDialog(KUrl(programPath), NULL);
+            if (propertiesDialog.exec() != QDialog::Accepted) {
+                return;
+            }
 
-	    // In case the name changed
-	    programPath = propertiesDialog.kurl().path();
-	}
+            // In case the name changed
+            programPath = propertiesDialog.kurl().path();
+        }
 
-	KUrl::List uniqueUrls = removeDuplicateUrls(KUrl::List(programPath));
-	if (uniqueUrls.count() == 1) { 
-	    int insertplace = m_rightClickedIcon ? m_icons.indexOf(m_rightClickedIcon) : m_icons.size();
-	    addProgram(insertplace, programPath, true);
-	    performUiRefactor();
-	}
+        KUrl::List uniqueUrls = removeDuplicateUrls(KUrl::List(programPath));
+        if (uniqueUrls.count() == 1) {
+            int pos =
+                m_rightClickedIcon
+                    ? m_icons.indexOf(m_rightClickedIcon)
+                    : m_icons.size();
+            addProgram(pos, programPath, true);
+            performUiRefactor();
+        }
     }
 }
 
@@ -759,7 +783,7 @@ KUrl::List QuicklaunchApplet::removeDuplicateUrls(const KUrl::List &urls)
         warningDialog->setButtons(KDialog::Ok);
         warningDialog->setModal(false);
         warningDialog->setDefaultButton(KDialog::Ok);
-        
+
         QString warningMessage;
         int count = duplicateWarningMessage.count();
 
@@ -770,10 +794,10 @@ KUrl::List QuicklaunchApplet::removeDuplicateUrls(const KUrl::List &urls)
         KMessageBox::createKMessageBox(warningDialog,
             QMessageBox::Warning,
 	    // xgettext:no-c-format
-            i18np("The following is already in quicklaunch, ignoring it:\n%2", 
-                  "The following are already in quicklaunch, ignoring them:\n%2", 
-                  count, 
-                  warningMessage), 
+            i18np("The following is already in quicklaunch, ignoring it:\n%2",
+                  "The following are already in quicklaunch, ignoring them:\n%2",
+                  count,
+                  warningMessage),
             QStringList(),
             QString(""),
             NULL,
