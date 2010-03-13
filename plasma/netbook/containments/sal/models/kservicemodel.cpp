@@ -65,8 +65,6 @@ KServiceModel::KServiceModel(QObject *parent)
 
     setRoleNames(newRoleNames);
 
-    setSortRole(CommonModel::Weight);
-
     loadRootEntries();
 }
 
@@ -82,6 +80,8 @@ void KServiceModel::setPath(const QString &path)
         loadRootEntries();
     } else {
         loadServiceGroup(KServiceGroup::group(path));
+        setSortRole(Qt::DisplayRole);
+        sort(0, Qt::AscendingOrder);
     }
 }
 
@@ -121,7 +121,7 @@ void KServiceModel::loadRootEntries()
                 appendRow(
                     StandardItemFactory::createItem(
                         KIcon(subGroup->icon()),
-                        subGroup->name(),
+                        subGroup->caption(),
                         subGroup->comment(),
                         QString("kservicegroup://root/") + subGroup->relPath(),
                         0.5,
@@ -133,6 +133,7 @@ void KServiceModel::loadRootEntries()
 
     }
 
+    setSortRole(CommonModel::Weight);
     sort(0, Qt::DescendingOrder);
 }
 
