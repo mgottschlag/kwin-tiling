@@ -117,7 +117,7 @@ void KServiceModel::loadRootEntries()
         if (p->isType(KST_KServiceGroup)) {
             const KServiceGroup::Ptr subGroup = KServiceGroup::Ptr::staticCast(p);
 
-            if (!subGroup->noDisplay() || subGroup->childCount() == 0) {
+            if (!subGroup->noDisplay() && subGroup->childCount() > 0) {
                 appendRow(
                     StandardItemFactory::createItem(
                         KIcon(subGroup->icon()),
@@ -163,7 +163,7 @@ void KServiceModel::loadServiceGroup(KServiceGroup::Ptr group)
             } else if (p->isType(KST_KServiceGroup)) {
                 const KServiceGroup::Ptr subGroup = KServiceGroup::Ptr::staticCast(p);
 
-                if (!subGroup->noDisplay() || subGroup->childCount() == 0) {
+                if (!subGroup->noDisplay() && subGroup->childCount() > 0) {
                     loadServiceGroup(subGroup);
                 }
             }
