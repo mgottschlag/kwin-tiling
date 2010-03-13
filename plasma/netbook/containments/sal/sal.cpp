@@ -213,9 +213,12 @@ void SearchLaunch::launch(QModelIndex index)
         }
         if (url.protocol() == "kservicegroup") {
             m_serviceModel->setPath(id);
-        } else {
+        } else if (url.protocol() == "krunner") {
             m_resultsView->setModel(m_runnerModel);
             m_runnerModel->setQuery(id, url.host());
+        } else {
+            KServiceItemHandler::openUrl(url);
+            reset();
         }
     }
 }

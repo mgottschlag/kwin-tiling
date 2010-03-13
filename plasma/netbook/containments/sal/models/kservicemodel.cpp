@@ -104,7 +104,7 @@ void KServiceModel::loadRootEntries()
         }
 
     }
-kWarning()<<groupSet;
+
     KService::List services = KServiceTypeTrader::self()->query("Plasma/Sal/Menu");
     if (!services.isEmpty()) {
         foreach (const KService::Ptr &service, services) {
@@ -146,7 +146,7 @@ void KServiceModel::loadServiceGroup(KServiceGroup::Ptr group)
                         KIcon(service->icon()),
                         service->name(),
                         service->comment(),
-                        service->path(),
+                        service->entryPath(),
                         0.5,
                         CommonModel::AddAction
                         )
