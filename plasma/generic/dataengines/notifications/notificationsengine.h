@@ -55,6 +55,8 @@ public:
 
     void createNotification(const QString &appName, const QString &appIcon, const QString &summary, const QString &body, int timeout);
 
+    void userClosedNotification(uint id);
+
 signals:
     void NotificationClosed( uint id, uint reason );
     void ActionInvoked( uint id, const QString& actionKey );

@@ -211,6 +211,7 @@ void NotificationsEngine::timerEvent(QTimerEvent *event)
         m_sourceTimers.remove(source);
         m_timeouts.remove(event->timerId());
         removeSource(source);
+        emit NotificationClosed(source.split(" ").last().toInt(), 1);
         return;
     }
 
@@ -220,7 +221,13 @@ void NotificationsEngine::timerEvent(QTimerEvent *event)
 void NotificationsEngine::CloseNotification(uint id)
 {
     removeSource(QString("notification %1").arg(id));
-    emit NotificationClosed(id, 0);
+    emit NotificationClosed(id, 3);
+}
+
+void NotificationsEngine::userClosedNotification(uint id)
+{
+    removeSource(QString("notification %1").arg(id));
+    emit NotificationClosed(id, 2);
 }
 
 Plasma::Service* NotificationsEngine::serviceForSource(const QString& source)
