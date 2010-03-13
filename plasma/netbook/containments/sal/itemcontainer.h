@@ -117,7 +117,8 @@ private:
     QTimer *m_setCurrentTimer;
     QHash<QPersistentModelIndex, Plasma::IconWidget*> m_items;
     QHash<Plasma::IconWidget*, QPersistentModelIndex> m_itemToIndex;
-    QList<Plasma::IconWidget*> m_usedItems;
+    //we store the old row to sort them, necessary to do a good animation
+    QMap<int, Plasma::IconWidget*> m_usedItems;
     Qt::Orientation m_orientation;
     QPropertyAnimation *m_positionAnimation;
     int m_currentIconIndexX;

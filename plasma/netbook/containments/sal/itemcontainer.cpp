@@ -141,8 +141,10 @@ Plasma::IconWidget *ItemContainer::createItem()
 {
     Plasma::IconWidget *item;
     if (!m_usedItems.isEmpty()) {
-        item = m_usedItems.last();
-        m_usedItems.pop_back();
+        QMapIterator<int, Plasma::IconWidget *> it(m_usedItems);
+        it.next();
+        item = it.value();
+        m_usedItems.remove(it.key());
     } else {
         item = new ResultWidget(this);
         m_itemView->registerAsDragHandle(item);
@@ -157,7 +159,7 @@ void ItemContainer::disposeItem(Plasma::IconWidget *icon)
     if (m_usedItems.count() < 40) {
         icon->removeIconAction(0);
         disconnect(icon, 0, 0, 0);
-        m_usedItems.append(icon);
+        m_usedItems.insert(m_itemToIndex.value(icon).row(), icon);
         icon->removeEventFilter(m_itemView);
         icon->hide();
     } else {
