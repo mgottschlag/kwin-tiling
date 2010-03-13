@@ -45,6 +45,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <sys/param.h>
+#ifdef BSD
+# include <utmp.h>
+#endif
 
 #define WANT_CONF_GEN
 #include <config.ci>
@@ -1847,7 +1850,7 @@ edit_startup( File *file )
 #else
 # ifdef BSD
 			delstr( file, "\n"
-"exec sessreg -a -l $DISPLAY -x */Xservers $USER\n" ) |
+"exec sessreg -a -l $DISPLAY -x */Xservers -u " _PATH_UTMP " $USER\n" ) |
 # endif
 #endif /* _AIX */
 			delstr( file, "\n"
@@ -1896,7 +1899,7 @@ edit_reset( File *file )
 #else
 # ifdef BSD
 		delstr( file, "\n"
-"exec sessreg -d -l $DISPLAY -x */Xservers $USER\n" ) |
+"exec sessreg -d -l $DISPLAY -x */Xservers -u " _PATH_UTMP " $USER\n" ) |
 # endif
 #endif /* _AIX */
 		delstr( file, "\n"
