@@ -76,7 +76,7 @@ KServiceModel::KServiceModel(QObject *parent)
                         KIcon(service->icon()),
                         service->name(),
                         service->comment(),
-                        QString("krunner://") + runner + "/#" + query,
+                        QString("krunner://") + runner + "/" + query,
                         relevance, //don't need weigt here
                         CommonModel::NoAction
                         )

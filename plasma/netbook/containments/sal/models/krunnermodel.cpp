@@ -51,7 +51,7 @@ Plasma::RunnerManager * runnerManager() {
 KService::Ptr serviceForUrl(const KUrl & url)
 {
     QString runner = url.host();
-    QString id = url.path();
+    QString id = url.fragment();
 
     if (id.startsWith(QLatin1String("/"))) {
         id = id.remove(0, 1);
@@ -72,7 +72,7 @@ KService::Ptr serviceForUrl(const KUrl & url)
 bool KRunnerItemHandler::openUrl(const KUrl& url)
 {
     QString runner = url.host();
-    QString id = url.path();
+    QString id = url.fragment();
     if (id.startsWith(QLatin1String("/"))) {
         id = id.remove(0, 1);
     }
@@ -162,7 +162,7 @@ void KRunnerModel::matchesChanged(const QList< Plasma::QueryMatch > & m)
                 match.icon(),
                 match.text(),
                 match.subtext(),
-                QString("krunner://") + match.runner()->id() + "/" + match.id() + "#" + ::runnerManager()->query(),
+                QString("krunner://") + match.runner()->id() + "/" + ::runnerManager()->query() + "#" + match.id(),
                 match.relevance(),
                 CommonModel::AddAction
                 )

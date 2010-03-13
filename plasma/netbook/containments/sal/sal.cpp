@@ -202,7 +202,17 @@ void SearchLaunch::reset()
 void SearchLaunch::launch(QModelIndex index)
 {
     KUrl url(index.data(CommonModel::Url).value<QString>());
-    KRunnerItemHandler::openUrl(url);
+
+    if (m_resultsView->model() == m_runnerModel) {
+        KRunnerItemHandler::openUrl(url);
+    } else {
+        m_resultsView->setModel(m_runnerModel);
+        QString id = url.path();
+        if (id.startsWith(QLatin1String("/"))) {
+            id = id.remove(0, 1);
+        }
+        m_runnerModel->setQuery(id, url.host());
+    }
 }
 
 void SearchLaunch::addFavourite(const QModelIndex &index)
