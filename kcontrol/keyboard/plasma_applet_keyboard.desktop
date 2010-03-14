@@ -3,7 +3,7 @@ Name=Keyboard Layout Applet
 Comment=Applet to display and switch layouts
 Type=Service
 ServiceTypes=Plasma/Applet
- 
+
 X-KDE-Library=plasma_applet_keyboard
 X-KDE-PluginInfo-Author=Andriy Rysin
 X-KDE-PluginInfo-Email=rysin@kde.org
