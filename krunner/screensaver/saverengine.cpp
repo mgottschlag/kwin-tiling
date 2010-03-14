@@ -17,6 +17,7 @@
 #include <krandom.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <kprocess.h>
 #include <QFile>
 #include <QX11Info>
 #include <QDBusConnection>
@@ -55,13 +56,11 @@ SaverEngine::SaverEngine()
 
     mState = Waiting;
     mXAutoLock = 0;
+    mLockProcess = 0;
 
     m_nr_throttled = 0;
     m_nr_inhibited = 0;
     m_actived_time = -1;
-
-    connect(&mLockProcess, SIGNAL(finished(int, QProcess::ExitStatus)),
-                        SLOT(lockProcessExited()));
 
     connect(QDBusConnection::sessionBus().interface(),
                 SIGNAL(serviceOwnerChanged(QString,QString,QString)),
@@ -99,6 +98,7 @@ SaverEngine::SaverEngine()
 SaverEngine::~SaverEngine()
 {
     delete mXAutoLock;
+    // Just let mLockProcess leak, so the saver is not killed
 
     // Restore X screensaver parameters
     XSetScreenSaver(QX11Info::display(), mXTimeout, mXInterval, mXBlanking,
@@ -116,7 +116,7 @@ void SaverEngine::Lock()
     else
     {
         // XXX race condition here
-        ::kill(mLockProcess.pid(), SIGHUP);
+        ::kill(mLockProcess->pid(), SIGHUP);
     }
 }
 
@@ -141,7 +141,7 @@ void SaverEngine::saverLockReady()
     kDebug() << "Saver Lock Ready";
     processLockTransactions();
     if (m_nr_throttled)
-        ::kill(mLockProcess.pid(), SIGSTOP);
+        ::kill(mLockProcess->pid(), SIGSTOP);
 }
 
 void SaverEngine::SimulateUserActivity()
@@ -266,28 +266,32 @@ bool SaverEngine::startLockProcess( LockType lock_type )
         kDebug() << "Can't find kscreenlocker!";
         return false;
     }
-    mLockProcess.clearProgram();
-    mLockProcess << path;
+    mLockProcess = new KProcess; // No parent, so it is not auto-deleted
+    connect(mLockProcess, SIGNAL(finished(int, QProcess::ExitStatus)),
+            SLOT(lockProcessExited()));
+    *mLockProcess << path;
     switch( lock_type )
     {
     case ForceLock:
-        mLockProcess << QString( "--forcelock" );
+        *mLockProcess << QString( "--forcelock" );
         break;
     case DontLock:
-        mLockProcess << QString( "--dontlock" );
+        *mLockProcess << QString( "--dontlock" );
         break;
     case PlasmaSetup:
-        mLockProcess << "--plasmasetup";
+        *mLockProcess << "--plasmasetup";
         break;
     default:
         break;
     }
 
     m_actived_time = time( 0 );
-    mLockProcess.start();
-    if (mLockProcess.waitForStarted() == false )
+    mLockProcess->start();
+    if (mLockProcess->waitForStarted() == false )
     {
         kDebug() << "Failed to start kscreenlocker!";
+        delete mLockProcess;
+        mLockProcess = 0;
         m_actived_time = -1;
         return false;
     }
@@ -320,13 +324,16 @@ void SaverEngine::stopLockProcess()
     Q_ASSERT(mState != Waiting);
     kDebug() << "SaverEngine: stopping lock process";
 
-    mLockProcess.kill();
+    mLockProcess->kill();
 }
 
 void SaverEngine::lockProcessExited()
 {
     Q_ASSERT(mState != Waiting);
     kDebug() << "SaverEngine: lock process exited";
+
+    delete mLockProcess;
+    mLockProcess = 0;
 
     if (mXAutoLock)
     {
@@ -438,8 +445,9 @@ uint SaverEngine::Throttle(const QString &/*application_name*/, const QString &/
     sr.dbusid = message().service();
     m_requests.append( sr );
     m_nr_throttled++;
-    if (mLockProcess.state() == QProcess::Running)
-        ::kill(mLockProcess.pid(), SIGSTOP);
+    if (mLockProcess)
+        // XXX race condition here (locker may be not ready yet)
+        ::kill(mLockProcess->pid(), SIGSTOP);
     return sr.cookie;
 }
 
@@ -451,8 +459,8 @@ void SaverEngine::UnThrottle(uint cookie)
         if ( it.next().cookie == cookie ) {
             it.remove();
             if ( !--m_nr_throttled )
-                if (mLockProcess.state() == QProcess::Running)
-                    ::kill(mLockProcess.pid(), SIGCONT);
+                if (mLockProcess)
+                    ::kill(mLockProcess->pid(), SIGCONT);
         }
     }
 }

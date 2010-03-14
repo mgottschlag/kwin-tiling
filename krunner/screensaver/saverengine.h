@@ -9,10 +9,11 @@
 #define SAVERENGINE_H
 
 #include <QWidget>
-#include <kprocess.h>
 #include <QVector>
 #include <QDBusContext>
 #include <QDBusMessage>
+
+class KProcess;
 
 #include "xautolock.h"
 #include "xautolock_c.h"
@@ -160,7 +161,7 @@ private:
 
     State       mState;
     XAutoLock   *mXAutoLock;
-    KProcess    mLockProcess;
+    KProcess    *mLockProcess;
 
     // the original X screensaver parameters
     int         mXTimeout;
