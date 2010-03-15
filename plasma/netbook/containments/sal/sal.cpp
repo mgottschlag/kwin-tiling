@@ -646,11 +646,10 @@ void SearchLaunch::searchReturnPressed()
 {
     QString query = m_searchField->text();
     //by pressing enter  do a query or
-    //FIXME: make it work again
-    /*if (m_firstItem && query == m_lastQuery && !query.isEmpty()) {
-        m_runnermg->run(m_matches.value(m_firstItem, Plasma::QueryMatch(0)));
+    if (query == m_lastQuery && !query.isEmpty()) {
+        launch(m_resultsView->model()->index(0, 0, QModelIndex()));
         reset();
-    } else*/ {
+    } else {
         doSearch(query);
         m_lastQuery = query;
     }
