@@ -93,6 +93,56 @@ QString KServiceModel::path() const
     return m_path;
 }
 
+QStandardItemModel *KServiceModel::allRootEntriesModel()
+{
+    if (!m_allRootEntriesModel) {
+        m_allRootEntriesModel = new QStandardItemModel(this);
+        QSet<QString> groupSet;
+        KServiceGroup::Ptr group = KServiceGroup::root();
+        KServiceGroup::List list = group->entries();
+
+        for( KServiceGroup::List::ConstIterator it = list.constBegin();
+            it != list.constEnd(); it++) {
+            const KSycocaEntry::Ptr p = (*it);
+
+            if (p->isType(KST_KServiceGroup)) {
+                const KServiceGroup::Ptr subGroup = KServiceGroup::Ptr::staticCast(p);
+
+                if (!subGroup->noDisplay() && subGroup->childCount() > 0) {
+                    groupSet.insert(subGroup->relPath());
+                }
+            }
+
+        }
+
+        KService::List services = KServiceTypeTrader::self()->query("Plasma/Sal/Menu");
+        if (!services.isEmpty()) {
+            foreach (const KService::Ptr &service, services) {
+                const QUrl url = QUrl(service->property("X-Plasma-Sal-Url", QVariant::String).toString());
+                const int relevance = service->property("X-Plasma-Sal-Relevance", QVariant::Int).toInt();
+
+                if (url.scheme() != "kservicegroup" || groupSet.contains(url.path().remove(0, 1))) {
+                    m_allRootEntriesModel->appendRow(
+                            StandardItemFactory::createItem(
+                                KIcon(service->icon()),
+                                service->name(),
+                                service->comment(),
+                                service->storageId(),
+                                relevance,
+                                CommonModel::NoAction
+                                )
+                            );
+                }
+            }
+        }
+
+        setSortRole(CommonModel::Weight);
+        sort(0, Qt::DescendingOrder);
+    }
+
+    return m_allRootEntriesModel;
+}
+
 void KServiceModel::loadRootEntries()
 {
     QStringList defaultEnabledEntries;

@@ -47,6 +47,8 @@ public:
     void setPath(const QString &path);
     QString path() const;
 
+    QStandardItemModel *allRootEntriesModel();
+
 protected:
     void loadRootEntries();
     void loadServiceGroup(KServiceGroup::Ptr group);
@@ -54,6 +56,7 @@ protected:
 private:
     KConfigGroup m_config;
     QString m_path;
+    QStandardItemModel *m_allRootEntriesModel;
 };
 
 #endif // KSERVICEMODEL_H
