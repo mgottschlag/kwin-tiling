@@ -66,10 +66,10 @@ endif(NOT WIN32)
 
 kde4_add_kdeinit_executable(krunner ${krunner_SRCS})
 
+target_link_libraries(kdeinit_krunner kworkspace  plasmagenericshell ${KDE4_PLASMA_LIBS} ${KDE4_SOLID_LIBRARIES} ${KDE4_THREADWEAVER_LIBRARIES} ${KDE4_KDEUI_LIBS}  ${KDE4_KUTILS_LIBS} )
+
 if(NOT WIN32)
-target_link_libraries(kdeinit_krunner kworkspace processui kephal plasmagenericshell ${KDE4_PLASMA_LIBS} ${KDE4_SOLID_LIBRARIES} ${KDE4_THREADWEAVER_LIBRARIES} ${X11_Xrender_LIB} ${KDE4_KDEUI_LIBS}  ${KDE4_KUTILS_LIBS} ${X11_LIBRARIES})
-else(NOT WIN32)
-target_link_libraries(kdeinit_krunner kephal ${KDE4_PLASMA_LIBS} ${KDE4_SOLID_LIBRARIES} ${KDE4_THREADWEAVER_LIBRARIES} ${KDE4_KDEUI_LIBS}  ${KDE4_KUTILS_LIBS})
+  target_link_libraries(kdeinit_krunner processui kephal ${X11_Xrender_LIB} ${X11_LIBRARIES})
 endif(NOT WIN32)
 
 if(X11_Xss_LIB)
