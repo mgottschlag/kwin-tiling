@@ -182,7 +182,13 @@ void SearchLaunch::toggleImmutability()
 
 void SearchLaunch::doSearch(const QString &query, const QString &runner)
 {
-    m_resultsView->setModel(m_runnerModel);
+    if (!query.isEmpty()) {
+        m_resultsView->setModel(m_runnerModel);
+    } else {
+        m_resultsView->setModel(m_serviceModel);
+        m_serviceModel->setPath("/");
+    }
+
     m_runnerModel->setQuery(query, runner);
     m_lastQuery = query;
     //enable or disable drag and drop
