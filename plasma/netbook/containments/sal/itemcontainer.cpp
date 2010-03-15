@@ -151,6 +151,8 @@ Plasma::IconWidget *ItemContainer::createItem()
     } else {
         item = new ResultWidget(this);
         m_itemView->registerAsDragHandle(item);
+        item->hide();
+        item->setPos(boundingRect().center().x(), size().height());
     }
 
     item->installEventFilter(m_itemView);
