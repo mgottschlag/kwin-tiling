@@ -425,9 +425,14 @@ int EngineExplorer::showData(QStandardItem* parent, Plasma::DataEngine::Data dat
                 parent->setChild(rowCount, 3, new QStandardItem(var.typeName()));
                 ++rowCount;
             }
-        }
-        else {
-            QStandardItem *item = new QStandardItem(convertToString(it.value()));
+        } else {
+            QStandardItem *item;
+            if (it.value().canConvert<QIcon>()) {
+                item = new QStandardItem(it.value().value<QIcon>(), "");
+            } else {
+                item = new QStandardItem(convertToString(it.value()));
+            }
+
             item->setToolTip(item->text());
             parent->setChild(rowCount, 2, item);
             parent->setChild(rowCount, 3, new QStandardItem(it.value().typeName()));
@@ -450,6 +455,7 @@ void EngineExplorer::updateTitle()
                              "%1 Engine - 1 data source", "%1 Engine - %2 data sources")
                               .subs(KStringHandler::capwords(m_engine->name()))
                               .subs(m_sourceCount).toString());
+
     if (m_engine->icon().isEmpty()) {
         m_title->setPixmap(KIcon("plasma").pixmap(IconSize(KIconLoader::Dialog)));
     } else {
