@@ -628,7 +628,6 @@ void SearchLaunch::paintInterface(QPainter *painter, const QStyleOptionGraphicsI
         m_background->resizeFrame(QSizeF(size().width(), m_stripWidget->geometry().bottom()));
         m_background->paintFrame(painter);
     }
-    painter->drawText(boundingRect().center(), "Under heavy development, please don't report bugs!");
 }
 
 void SearchLaunch::delayedQuery()
