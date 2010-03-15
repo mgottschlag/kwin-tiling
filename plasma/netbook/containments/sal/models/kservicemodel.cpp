@@ -185,7 +185,7 @@ void KServiceModel::loadRootEntries()
         << "plasma-sal-games.desktop" << "plasma-sal-office.desktop";
     QSet <QString> enabledEntries = m_config.readEntry("EnabledEntries", defaultEnabledEntries).toSet();
 
-    QSet<QString> groupSet;
+    QHash<QString, KServiceGroup::Ptr> groupSet;
     KServiceGroup::Ptr group = KServiceGroup::root();
     KServiceGroup::List list = group->entries();
 
@@ -194,10 +194,10 @@ void KServiceModel::loadRootEntries()
         const KSycocaEntry::Ptr p = (*it);
 
         if (p->isType(KST_KServiceGroup)) {
-            const KServiceGroup::Ptr subGroup = KServiceGroup::Ptr::staticCast(p);
+            KServiceGroup::Ptr subGroup = KServiceGroup::Ptr::staticCast(p);
 
             if (!subGroup->noDisplay() && subGroup->childCount() > 0) {
-                groupSet.insert(subGroup->relPath());
+                groupSet.insert(subGroup->relPath(), subGroup);
             }
         }
 
@@ -208,9 +208,10 @@ void KServiceModel::loadRootEntries()
         foreach (const KService::Ptr &service, services) {
             const QUrl url = QUrl(service->property("X-Plasma-Sal-Url", QVariant::String).toString());
             const int relevance = service->property("X-Plasma-Sal-Relevance", QVariant::Int).toInt();
+            const QString groupName = url.path().remove(0, 1);
 
             if (enabledEntries.contains(service->storageId()) &&
-                (url.scheme() != "kservicegroup" || groupSet.contains(url.path().remove(0, 1)))) {
+                (url.scheme() != "kservicegroup" || groupSet.contains(groupName))) {
                 appendRow(
                         StandardItemFactory::createItem(
                             KIcon(service->icon()),
@@ -221,7 +222,25 @@ void KServiceModel::loadRootEntries()
                             CommonModel::NoAction
                             )
                         );
+                if (groupSet.contains(groupName)) {
+                    groupSet.remove(groupName);
+                }
             }
+        }
+    }
+
+    foreach (const KServiceGroup::Ptr group, groupSet) {
+        if (enabledEntries.contains(group->relPath())) {
+            appendRow(
+                    StandardItemFactory::createItem(
+                        KIcon(group->icon()),
+                        group->caption(),
+                        group->comment(),
+                        QString("kserviceGroup://root/") + group->relPath(),
+                        0.1,
+                        CommonModel::NoAction
+                        )
+                    );
         }
     }
 
