@@ -237,17 +237,22 @@ void KServiceModel::loadServiceGroup(KServiceGroup::Ptr group)
             if (p->isType(KST_KService)) {
                 const KService::Ptr service = KService::Ptr::staticCast(p);
 
-                appendRow(
-                    StandardItemFactory::createItem(
-                        KIcon(service->icon()),
-                        service->name(),
-                        service->comment(),
-                        service->entryPath(),
-                        0.5,
-                        CommonModel::AddAction
-                        )
-                    );
-
+                if (!service->noDisplay()) {
+                    QString genericName = service->genericName();
+                    if (genericName.isNull()) {
+                        genericName = service->comment();
+                    }
+                    appendRow(
+                        StandardItemFactory::createItem(
+                            KIcon(service->icon()),
+                            service->name(),
+                            genericName,
+                            service->entryPath(),
+                            0.5,
+                            CommonModel::AddAction
+                            )
+                        );
+                }
 
             } else if (p->isType(KST_KServiceGroup)) {
                 const KServiceGroup::Ptr subGroup = KServiceGroup::Ptr::staticCast(p);
