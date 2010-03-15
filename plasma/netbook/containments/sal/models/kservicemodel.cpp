@@ -54,8 +54,9 @@ bool KServiceItemHandler::openUrl(const KUrl& url)
 }
 
 
-KServiceModel::KServiceModel(QObject *parent)
-        : QStandardItemModel(parent)
+KServiceModel::KServiceModel(const KConfigGroup &group, QObject *parent)
+        : QStandardItemModel(parent),
+          m_config(group)
 {
     QHash<int, QByteArray> newRoleNames = roleNames();
     newRoleNames[CommonModel::Description] = "description";
@@ -87,6 +88,13 @@ void KServiceModel::setPath(const QString &path)
 
 void KServiceModel::loadRootEntries()
 {
+    QStringList defaultEnabledEntries;
+    defaultEnabledEntries << "plasma-sal-contacts.desktop" << "plasma-sal-bookmarks.desktop"
+        << "plasma-sal-multimedia.desktop" << "plasma-sal-internet.desktop"
+        << "plasma-sal-graphics.desktop" << "plasma-sal-education.desktop"
+        << "plasma-sal-games.desktop" << "plasma-sal-office.desktop";
+    QSet <QString> enabledEntries = m_config.readEntry("EnabledEntries", defaultEnabledEntries).toSet();
+
     QSet<QString> groupSet;
     KServiceGroup::Ptr group = KServiceGroup::root();
     KServiceGroup::List list = group->entries();
@@ -111,17 +119,19 @@ void KServiceModel::loadRootEntries()
             const QUrl url = QUrl(service->property("X-Plasma-Sal-Url", QVariant::String).toString());
             const int relevance = service->property("X-Plasma-Sal-Relevance", QVariant::Int).toInt();
 
-            if (url.scheme() != "kservicegroup" || groupSet.contains(url.path().remove(0, 1)))
-            appendRow(
-                    StandardItemFactory::createItem(
-                        KIcon(service->icon()),
-                        service->name(),
-                        service->comment(),
-                        url.toString(),
-                        relevance,
-                        CommonModel::NoAction
-                        )
-                    );
+            if (enabledEntries.contains(service->storageId()) &&
+                (url.scheme() != "kservicegroup" || groupSet.contains(url.path().remove(0, 1)))) {
+                appendRow(
+                        StandardItemFactory::createItem(
+                            KIcon(service->icon()),
+                            service->name(),
+                            service->comment(),
+                            url.toString(),
+                            relevance,
+                            CommonModel::NoAction
+                            )
+                        );
+            }
         }
     }
 

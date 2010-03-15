@@ -49,9 +49,8 @@
 #include "itemview.h"
 #include "iconactioncollection.h"
 
-StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
+StripWidget::StripWidget(QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
-      m_runnermg(rm),
       m_itemView(0),
       m_deleteTarget(0),
       m_iconActionCollection(0),
@@ -59,7 +58,6 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent)
       m_startupCompleted(false)
 {
     m_favouritesModel = new FavouritesModel(this);
-    m_runnermg = m_favouritesModel->runnerManager();
 
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     setAcceptDrops(true);

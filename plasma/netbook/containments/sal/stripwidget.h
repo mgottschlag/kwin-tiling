@@ -54,7 +54,7 @@ class StripWidget : public QGraphicsWidget
     Q_OBJECT
 
 public:
-    StripWidget(Plasma::RunnerManager *rm, QGraphicsWidget *parent = 0);
+    StripWidget(QGraphicsWidget *parent = 0);
     ~StripWidget();
 
     void save(KConfigGroup &cg);
@@ -88,7 +88,6 @@ private:
     Plasma::ToolButton *m_rightArrow;
     QGraphicsLinearLayout *m_arrowsLayout;
 
-    Plasma::RunnerManager *m_runnermg;
     QList<Plasma::QueryMatch*> m_favouritesMatches;
     QHash<Plasma::QueryMatch*, QString> m_favouritesQueries;
     QHash<Plasma::IconWidget*, Plasma::QueryMatch*> m_favouritesIcons;

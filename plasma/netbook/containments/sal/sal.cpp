@@ -359,11 +359,11 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             connect(m_resultsView, SIGNAL(addActionTriggered(const QModelIndex &)), this, SLOT(addFavourite(const QModelIndex &)));
 
             m_runnerModel = new KRunnerModel(this);
-            m_serviceModel = new KServiceModel(this);
+            m_serviceModel = new KServiceModel(config(), this);
             m_resultsView->setModel(m_serviceModel);
 
             //TODO how to do the strip widget?
-            m_stripWidget = new StripWidget(0, this);
+            m_stripWidget = new StripWidget(this);
             m_stripWidget->setImmutability(immutability());
 
             //load all config, only at this point we are sure it won't crash

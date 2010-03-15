@@ -24,6 +24,7 @@
 
 #include <KUrl>
 #include <KServiceGroup>
+#include <KConfigGroup>
 
 #include "standarditemfactory.h"
 
@@ -40,7 +41,7 @@ class  KServiceModel : public QStandardItemModel
     Q_OBJECT
 
 public:
-    KServiceModel(QObject *parent);
+    KServiceModel(const KConfigGroup &group, QObject *parent);
     virtual ~KServiceModel();
 
     void setPath(const QString &path);
@@ -48,6 +49,9 @@ public:
 protected:
     void loadRootEntries();
     void loadServiceGroup(KServiceGroup::Ptr group);
+
+private:
+    KConfigGroup m_config;
 };
 
 #endif // KSERVICEMODEL_H
