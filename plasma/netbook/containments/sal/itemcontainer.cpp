@@ -168,6 +168,7 @@ void ItemContainer::disposeItem(Plasma::IconWidget *icon)
 
         m_usedItems.insert(row, icon);
         icon->removeEventFilter(m_itemView);
+
         //if they will be immediately recycled they won't be hidden at all
         m_hideUsedItemsTimer->start(500);
     } else {
@@ -219,10 +220,6 @@ void ItemContainer::relayout()
 {
     if (!m_model) {
         return;
-    }
-
-    if (m_layout->count() == 0) {
-        hide();
     }
 
     //Relayout the grid
@@ -338,7 +335,6 @@ void ItemContainer::relayout()
 
     if (!isVisible()) {
         m_layout->activate();
-        show();
     }
 
     const QSizeF newSize = sizeHint(Qt::MinimumSize, QSizeF());

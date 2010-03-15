@@ -25,11 +25,13 @@
 
 ResultWidget::ResultWidget(QGraphicsItem *parent)
    : Plasma::IconWidget(parent),
-     m_animationLock(false)
+     m_animationLock(false),
+     m_shouldBeVisible(true)
 {
     m_animation = new QPropertyAnimation(this, "animationPos", this);
     m_animation->setEasingCurve(QEasingCurve::InOutQuad);
     m_animation->setDuration(250);
+    connect(m_animation, SIGNAL(finished()), this, SLOT(animationFinished()));
 }
 
 ResultWidget::~ResultWidget()
@@ -59,9 +61,9 @@ void ResultWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     Plasma::IconWidget::mouseReleaseEvent(event);
 }
 
-void ResultWidget::hideTimeout()
+void ResultWidget::animationFinished()
 {
-    hide();
+    setVisible(m_shouldBeVisible);
 }
 
 void ResultWidget::setAnimationPos(const QPointF &pos)
@@ -81,7 +83,7 @@ void ResultWidget::setGeometry(const QRectF &rect)
     QPointF oldPos = pos();
     IconWidget::setGeometry(rect);
 
-    if (m_animationLock) {
+    if (m_animationLock || !isVisible()) {
         return;
     }
 
@@ -94,4 +96,21 @@ void ResultWidget::setGeometry(const QRectF &rect)
     m_animation->setEndValue(rect.topLeft());
 
     m_animation->start();
+}
+
+QVariant ResultWidget::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if (change == QGraphicsItem::ItemVisibleChange) {
+        bool shouldBeVisible = m_shouldBeVisible;
+        m_shouldBeVisible = value.toBool();
+        if (shouldBeVisible && !value.toBool()) {
+            QGraphicsItem *parent = parentItem();
+            if (parent) {
+                setGeometry(QRectF(QPointF(parent->boundingRect().center().x(), parent->boundingRect().bottom()), size()));
+                return true;
+            }
+        }
+    }
+
+    return QGraphicsWidget::itemChange(change, value);
 }

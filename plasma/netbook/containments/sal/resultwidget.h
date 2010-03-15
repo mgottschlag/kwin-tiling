@@ -43,10 +43,11 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 
 protected Q_SLOTS:
-    void hideTimeout();
+    void animationFinished();
 
 Q_SIGNALS:
     void dragStartRequested(Plasma::IconWidget *);
@@ -54,6 +55,7 @@ Q_SIGNALS:
 private:
     QPropertyAnimation *m_animation;
     bool m_animationLock;
+    bool m_shouldBeVisible;
 };
 
 #endif
