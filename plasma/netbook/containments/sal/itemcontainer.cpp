@@ -164,6 +164,7 @@ void ItemContainer::disposeItem(Plasma::IconWidget *icon)
         disconnect(icon, 0, 0, 0);
 
         int row = m_itemToIndex.value(icon).row();
+        row = icon->pos().x() + icon->pos().y()/10 * size().width();
 
         m_usedItems.insert(row, icon);
         icon->removeEventFilter(m_itemView);
