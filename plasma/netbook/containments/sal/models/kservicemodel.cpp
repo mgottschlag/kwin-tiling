@@ -56,7 +56,8 @@ bool KServiceItemHandler::openUrl(const KUrl& url)
 
 KServiceModel::KServiceModel(const KConfigGroup &group, QObject *parent)
         : QStandardItemModel(parent),
-          m_config(group)
+          m_config(group),
+          m_path("/")
 {
     QHash<int, QByteArray> newRoleNames = roleNames();
     newRoleNames[CommonModel::Description] = "description";
@@ -84,6 +85,12 @@ void KServiceModel::setPath(const QString &path)
         setSortRole(Qt::DisplayRole);
         sort(0, Qt::AscendingOrder);
     }
+    m_path = path;
+}
+
+QString KServiceModel::path() const
+{
+    return m_path;
 }
 
 void KServiceModel::loadRootEntries()

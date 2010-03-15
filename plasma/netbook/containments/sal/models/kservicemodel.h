@@ -45,6 +45,7 @@ public:
     virtual ~KServiceModel();
 
     void setPath(const QString &path);
+    QString path() const;
 
 protected:
     void loadRootEntries();
@@ -52,6 +53,7 @@ protected:
 
 private:
     KConfigGroup m_config;
+    QString m_path;
 };
 
 #endif // KSERVICEMODEL_H

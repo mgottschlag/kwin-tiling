@@ -194,10 +194,12 @@ void SearchLaunch::doSearch(const QString &query, const QString &runner)
 
 void SearchLaunch::reset()
 {
-    m_searchField->setText(QString());
-    doSearch(QString());
-    m_serviceModel->setPath("/");
-    m_resultsView->setModel(m_serviceModel);
+    if (m_resultsView->model() != m_serviceModel || m_serviceModel->path() != "/") {
+        m_searchField->setText(QString());
+        doSearch(QString());
+        m_serviceModel->setPath("/");
+        m_resultsView->setModel(m_serviceModel);
+    }
 }
 
 void SearchLaunch::launch(QModelIndex index)
