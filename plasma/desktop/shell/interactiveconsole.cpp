@@ -198,7 +198,7 @@ bool InteractiveConsole::confirmClose()
 {
     if (m_saveAction->isEnabled()) {
         // need to save first!
-        const QString msg = i18n("There are unsaved changes in the script editor. Would you like to save these changes before closing the the interactive console?");
+        const QString msg = i18n("There are unsaved changes in the script editor. Would you like to save these changes before closing the interactive console?");
         int rv = KMessageBox::warningYesNoCancel(this, msg, i18n("Unsaved Changes"),
                                                  KStandardGuiItem::save(),
                                                  KStandardGuiItem::dontSave(),
