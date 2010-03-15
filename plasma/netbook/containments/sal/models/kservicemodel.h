@@ -49,6 +49,9 @@ public:
 
     QStandardItemModel *allRootEntriesModel();
 
+public Q_SLOTS:
+    void saveConfig();
+
 protected:
     void loadRootEntries();
     void loadServiceGroup(KServiceGroup::Ptr group);

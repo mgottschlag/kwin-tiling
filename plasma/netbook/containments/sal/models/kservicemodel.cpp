@@ -57,7 +57,8 @@ bool KServiceItemHandler::openUrl(const KUrl& url)
 KServiceModel::KServiceModel(const KConfigGroup &group, QObject *parent)
         : QStandardItemModel(parent),
           m_config(group),
-          m_path("/")
+          m_path("/"),
+          m_allRootEntriesModel(0)
 {
     QHash<int, QByteArray> newRoleNames = roleNames();
     newRoleNames[CommonModel::Description] = "description";
@@ -93,9 +94,37 @@ QString KServiceModel::path() const
     return m_path;
 }
 
+void KServiceModel::saveConfig()
+{
+    if (!m_allRootEntriesModel) {
+        return;
+    }
+
+    QStringList enabledEntries;
+
+    for (int i = 0; i <= m_allRootEntriesModel->rowCount() - 1; i++) {
+        QModelIndex index = m_allRootEntriesModel->index(i, 0, QModelIndex());
+        QStandardItem *item = m_allRootEntriesModel->itemFromIndex(index);
+        if (item && item->checkState() == Qt::Checked) {
+            enabledEntries << index.data(CommonModel::Url).value<QString>();
+        }
+    }
+
+    m_config.writeEntry("EnabledEntries", enabledEntries);
+
+    setPath("/");
+}
+
 QStandardItemModel *KServiceModel::allRootEntriesModel()
 {
     if (!m_allRootEntriesModel) {
+        QStringList defaultEnabledEntries;
+        defaultEnabledEntries << "plasma-sal-contacts.desktop" << "plasma-sal-bookmarks.desktop"
+            << "plasma-sal-multimedia.desktop" << "plasma-sal-internet.desktop"
+            << "plasma-sal-graphics.desktop" << "plasma-sal-education.desktop"
+            << "plasma-sal-games.desktop" << "plasma-sal-office.desktop";
+        QSet <QString> enabledEntries = m_config.readEntry("EnabledEntries", defaultEnabledEntries).toSet();
+
         m_allRootEntriesModel = new QStandardItemModel(this);
         QSet<QString> groupSet;
         KServiceGroup::Ptr group = KServiceGroup::root();
@@ -122,16 +151,17 @@ QStandardItemModel *KServiceModel::allRootEntriesModel()
                 const int relevance = service->property("X-Plasma-Sal-Relevance", QVariant::Int).toInt();
 
                 if (url.scheme() != "kservicegroup" || groupSet.contains(url.path().remove(0, 1))) {
-                    m_allRootEntriesModel->appendRow(
-                            StandardItemFactory::createItem(
+                    QStandardItem * item  = StandardItemFactory::createItem(
                                 KIcon(service->icon()),
                                 service->name(),
                                 service->comment(),
                                 service->storageId(),
                                 relevance,
                                 CommonModel::NoAction
-                                )
-                            );
+                                );
+                    item->setCheckable(true);
+                    item->setCheckState(enabledEntries.contains(service->storageId())?Qt::Checked:Qt::Unchecked);
+                    m_allRootEntriesModel->appendRow(item);
                 }
             }
         }

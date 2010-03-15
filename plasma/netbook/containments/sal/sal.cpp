@@ -36,6 +36,7 @@
 #include <QGraphicsView>
 #include <QApplication>
 #include <QFileInfo>
+#include <QListView>
 
 #include <KAction>
 #include <KDebug>
@@ -737,6 +738,14 @@ void SearchLaunch::createConfigurationInterface(KConfigDialog *parent)
 
     connect(parent, SIGNAL(applyClicked()), runnersConfig, SLOT(accept()));
     connect(parent, SIGNAL(okClicked()), runnersConfig, SLOT(accept()));
+
+    QListView *enabledEntries = new QListView(parent);
+    enabledEntries->setModel(m_serviceModel->allRootEntriesModel());
+    enabledEntries->setModelColumn(0);
+    parent->addPage(enabledEntries, i18nc("Title of the page that lets the user choose what entries will be allowed in the main menu", "Main menu"), "view-list-icons");
+
+    connect(parent, SIGNAL(applyClicked()), m_serviceModel, SLOT(saveConfig()));
+    connect(parent, SIGNAL(okClicked()), m_serviceModel, SLOT(saveConfig()));
 }
 
 K_EXPORT_PLASMA_APPLET(sal, SearchLaunch)
