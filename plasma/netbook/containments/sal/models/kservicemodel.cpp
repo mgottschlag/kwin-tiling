@@ -112,6 +112,9 @@ void KServiceModel::saveConfig()
 
     m_config.writeEntry("EnabledEntries", enabledEntries);
 
+    //sync should be kinda safe here this function is very rarely called
+    m_config.sync();
+
     setPath("/");
 }
 
