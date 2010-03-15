@@ -1,6 +1,14 @@
 [Desktop Entry]
 Name=Keyboard Layout Applet
+Name[pt]='Applet' da Disposição do Teclado
+Name[sv]=Miniprogram för tangentbordslayout
+Name[uk]=Аплет розкладок клавіатури
+Name[x-test]=xxKeyboard Layout Appletxx
 Comment=Applet to display and switch layouts
+Comment[pt]='Applet' para mostrar e mudar de disposições de teclado
+Comment[sv]=Miniprogram för att visa och byta layout
+Comment[uk]=Аплет для показу та перемикання розкладок
+Comment[x-test]=xxApplet to display and switch layoutsxx
 Type=Service
 ServiceTypes=Plasma/Applet
 

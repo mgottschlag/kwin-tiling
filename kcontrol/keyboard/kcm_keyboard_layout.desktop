@@ -15,3 +15,7 @@ X-KDE-Weight=50
 OnlyShowIn=KDE
 
 Name=Keyboard Map Tool
+Name[pt]=Disposição do Teclado
+Name[sv]=Verktyg för tangentbordsavbildning
+Name[uk]=Утиліта розкладки клавіатури
+Name[x-test]=xxKeyboard Map Toolxx

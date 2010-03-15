@@ -14,8 +14,16 @@ X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
 X-KDE-Weight=50
 
 Name=Keyboard
+Name[pt]=Teclado
+Name[sv]=Tangentbord
+Name[uk]=Клавіатура
+Name[x-test]=xxKeyboardxx
 
 Comment=Keyboard settings
+Comment[pt]=Configuração do teclado
+Comment[sv]=Tangentbordsinställningar
+Comment[uk]=Параметри клавіатури
+Comment[x-test]=xxKeyboard settingsxx
 
 X-KDE-Keywords=Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume
 X-KDE-Keywords[be]=Клавіятура,Паўтор клавішаў,Гучнасць націску,Прылады ўводу,Паўтор,Гучнасць,Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume
