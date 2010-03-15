@@ -53,7 +53,7 @@ public Q_SLOTS:
     void saveConfig();
 
 protected:
-    void loadRootEntries();
+    void loadRootEntries(QStandardItemModel *model);
     void loadServiceGroup(KServiceGroup::Ptr group);
 
 private:
