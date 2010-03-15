@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Development
+Comment=Applications targeted to software development
+
+Icon=applications-development
+
+Type=Service
+X-KDE-ServiceTypes=Plasma/Sal/Menu
+X-KDE-PluginInfo-Name=plasma-sal-utility
+
+X-Plasma-Sal-Url=kservicegroup://root/Development/
+X-Plasma-Sal-Relevance=0.8
