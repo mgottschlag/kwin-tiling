@@ -228,6 +228,8 @@ void PlasmaApp::cleanup()
     }
 
     qDeleteAll(m_views);
+    delete m_corona;
+    m_corona = 0;
 
     KGlobal::config()->sync();
 }
