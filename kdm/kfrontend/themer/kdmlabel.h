@@ -61,7 +61,7 @@ protected:
 
 	virtual void doPlugActions( bool plug );
 
-	virtual void updatePalette( QWidget *w );
+	virtual void setWidget( QWidget *widget );
 
 	struct LabelStruct {
 		QString text;
@@ -87,6 +87,8 @@ private:
 	QString lookupText( const QString &t );
 
 	void setCText( const QString &txt );
+
+	void updateWidgetAttribs();
 
 	QString cText, pText;
 	QSize pTextSize;

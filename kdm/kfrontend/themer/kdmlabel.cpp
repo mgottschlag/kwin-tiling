@@ -219,8 +219,7 @@ KdmLabel::statusChanged( bool descend )
 	if ((state == Sprelight && !label.prelight.present) ||
 	    (state == Sactive && !label.active.present))
 		return;
-	if (myWidget)
-		updatePalette( myWidget );
+	updateWidgetAttribs();
 	needUpdate();
 }
 
@@ -339,18 +338,26 @@ KdmLabel::lookupText( const QString &t )
 }
 
 void
-KdmLabel::updatePalette( QWidget *w )
+KdmLabel::setWidget( QWidget *widget )
 {
+	KdmItem::setWidget( widget );
+	updateWidgetAttribs();
+}
+
+void
+KdmLabel::updateWidgetAttribs()
+{
+	if (!myWidget)
+		return;
 	struct LabelStruct::LabelClass *l = &label.normal;
 	if (state == Sactive && label.active.present)
 		l = &label.active;
 	else if (state == Sprelight && label.prelight.present)
 		l = &label.prelight;
-	w->setFont( l->font.font );
+	myWidget->setFont( l->font.font );
 	QPalette p;
 	p.setColor( QPalette::WindowText, l->color );
-	w->setPalette( p );
-	KdmItem::updatePalette( w );
+	myWidget->setPalette( p );
 }
 
 #include "kdmlabel.moc"
