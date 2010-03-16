@@ -238,20 +238,26 @@ void ItemContainer::relayout()
     }
 
 
-    if (m_layout->rowCount() > 0 && size().width() <= availableSize.width()) {
+    if (m_layout->rowCount() > 0) {
         for (int i = 0; i <= m_model->rowCount() - 1; i++) {
             QModelIndex index = m_model->index(i, 0, m_rootIndex);
             Plasma::IconWidget *icon = m_items.value(index);
-            const int row = i / m_layout->rowCount();
+            const int row = i / m_layout->columnCount();
             const int column = i % m_layout->columnCount();
+
             if (m_layout->itemAt(row, column) == icon) {
                 validRow = row;
                 validColumn = column;
+                if (row > 0 && (qAbs(size().width() - availableSize.width()) > m_iconSize)) {
+                    validRow = 0;
+                    break;
+                }
             } else {
                 break;
             }
         }
     }
+
 
     const int nRows = m_layout->rowCount();
     const int nColumns = m_layout->columnCount();
