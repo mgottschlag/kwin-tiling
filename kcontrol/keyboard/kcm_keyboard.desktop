@@ -14,12 +14,16 @@ X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
 X-KDE-Weight=50
 
 Name=Keyboard
+Name[nb]=Tastatur
+Name[nn]=Tastatur
 Name[pt]=Teclado
 Name[sv]=Tangentbord
 Name[uk]=Клавіатура
 Name[x-test]=xxKeyboardxx
 
 Comment=Keyboard settings
+Comment[nb]=Tastaturinnstillinger
+Comment[nn]=Tastaturinnstillingar
 Comment[pt]=Configuração do teclado
 Comment[sv]=Tangentbordsinställningar
 Comment[uk]=Параметри клавіатури
