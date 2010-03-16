@@ -242,7 +242,7 @@ KdmItem::setWidgetAttribs( QWidget *widget )
 	widget->setPalette( style.palette );
 	::setWidgetAttribs( widget, style, style.frame );
 	widget->installEventFilter( this );
-	updatePalette( myWidget );
+	updatePalette( widget );
 }
 
 void
