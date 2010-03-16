@@ -77,8 +77,9 @@ bool XkbHelper::initializeKeyboardLayouts()
 		KeyboardConfig config;
 		config.load();
 
-		XkbHelper::initializeKeyboardLayouts(config);
+		return XkbHelper::initializeKeyboardLayouts(config);
 	}
+	return false;
 }
 
 bool XkbHelper::initializeKeyboardLayouts(KeyboardConfig& config)

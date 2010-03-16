@@ -3,14 +3,18 @@ to manage keyboard harware configuration and layouts.
 
 Components:
 
+kcm_init:
+* initializes keyboard hardware (kcmmisc)
+* starts keyboard daemon if needed (layouts are configured)
+
 Keyboard daemon:
-* configures keyboard (hardware??? and layout) on start
-* provides DBUS API "org.kde.keyboard/keyboard" (was "org.kde.kxkb")
+* configures keyboard layouts on start
+* provides DBUS API "org.kde.KXKB/kxkb"
 * listens to window/desktop switching if layout switch mode is not global
 * listens to new keyboard devices and reinitializes keyboard layouts
 * listens to Global KDE Shortcut to switch layouts
 * listens to Global Shortcut settings change
-* listens to keyboard configuration changed (TODO)
+* listens to keyboard configuration changed
 
 Keyboard applet:
 * displays current layout with text and (optionally flag)
@@ -22,3 +26,4 @@ Layout widget:
 * currently only short text (no flag or long text)
 
 KCM Module:
+* allows to configure keyboard hardware, layouts and xkb options (advanced)

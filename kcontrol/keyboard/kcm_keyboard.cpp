@@ -26,6 +26,7 @@
 
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusInterface>
 
 #include "kcm_keyboard_widget.h"
 #include "x11_helper.h"
@@ -120,13 +121,37 @@ bool XEventNotifier::isNewDeviceEvent(XEvent* /*event*/)
 }
 
 
+static const char* KEYBOARD_KDED_NAME = "keyboard";
+
 extern "C"
 {
 	KDE_EXPORT void kcminit_keyboard()
 	{
-		kDebug() << "kcminit_keyboard";
+	    kDebug() << "kcminit_keyboard";
 		KCMiscKeyboardWidget::init_keyboard();
-		//TODO: start kded_keyboard from here if needed
-		//XkbHelper::initializeKeyboardLayouts();
+
+		KeyboardConfig config;
+		config.load();
+
+		// start/stop kded_keyboard from here if needed
+	    QDBusInterface dbus_iface("org.kde.kded", "/kded");
+	    bool daemonRunning = dbus_iface.call("loadedModules").arguments().at(0).toStringList().contains(KEYBOARD_KDED_NAME);
+	    qDebug() << daemonRunning;
+	    if( config.configureLayouts ) {
+	    	if( ! daemonRunning ) {
+	    		bool started = dbus_iface.call("loadModule", KEYBOARD_KDED_NAME).arguments().at(0).toBool();
+	    		qDebug() << "keyboard daemon started" << started;
+	    	}
+	    	else {
+	    		// initialize keyboard model and xkb options as daemon won't be there to do it
+	    		XkbHelper::initializeKeyboardLayouts();
+	    	}
+	    }
+	    else {
+	    	if( daemonRunning ) {
+	    		bool stopped = dbus_iface.call("unloadModule", KEYBOARD_KDED_NAME).arguments().at(0).toBool();
+	    		qDebug() << "keyboard daemon stopped" << stopped;
+	    	}
+	    }
 	}
 }

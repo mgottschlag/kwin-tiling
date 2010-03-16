@@ -29,7 +29,7 @@ static const char* LIST_SEPARATOR = ",";
 static const char* DEFAULT_LAYOUT = "us";
 static const char* DEFAULT_MODEL = "pc104";
 
-static const QString CONFIG_FILENAME("keyboardrc");	//TODO: name?
+static const QString CONFIG_FILENAME("kxkbrc");
 static const QString CONFIG_GROUPNAME("Layout");
 
 static const char* LAYOUT_VARIANT_SEPARATOR_PREFIX = "(";

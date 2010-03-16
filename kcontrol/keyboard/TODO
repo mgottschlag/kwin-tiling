@@ -1,38 +1,28 @@
 Arch:
 * start applet from kxkb kcm
 
-rules, iso_codes:
-	error handling
-
-kded
-	kcm_init ->
-		kcmmisc init (test)
-		kded start
+* merge kcm_keyboard.desktop and keyboard.desktop ?
 	
 KCM UI
 * KDE shortcut (Done, for old compatibility need to be named "kxkb")
+* find right default for reset xkb options
 
-* change layout order
-* name / vendor for keyb model
+* allow changing layout order
+* allow changing variant without readding layout
 
 * send configChanged() (for flag) to applet
 * show flag config
 
-* kxkb config compatibility
-
 plasma applet & part
-  auto layout name for dup layouts
-  tootip
+*  auto layout name (DisplayNames) for dup layouts
+*  tooltip
   
 plasma
-  config UI (showFlag)
+*  config UI (showFlag)
 
-KCM module:
-* listen for config change in each kcm module
-
-Optimization:
-* don't start daemon if not needed
-* don't create two kcm libraries
+Cleanup:
+* rules, iso_codes:
+	better error handling
 
 Improvement:
 * remove XInput libs from plasma applet and layout widget (find a nicer way)

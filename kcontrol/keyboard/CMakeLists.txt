@@ -86,6 +86,7 @@ install( TARGETS layout_widget DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ### kcm ###
+if(INSTALL_KEYBOARD_LAYOUT STREQUAL ON)
 
 set(kcm_keyboard_layout_PART_SRCS 
   kcm_keyboard.cpp
@@ -119,6 +120,8 @@ endif(X11_XTest_FOUND)
 install(TARGETS kcm_keyboard_layout DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 install( FILES kcm_keyboard_layout.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
+
+endif(INSTALL_KEYBOARD_LAYOUT STREQUAL ON)
 
 
 ### kcm keyboard ###

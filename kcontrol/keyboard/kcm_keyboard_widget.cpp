@@ -113,7 +113,7 @@ void KCMKeyboardWidget::initializeKeyboardModelUI()
     	if( vendor.isEmpty() ) {
     		vendor = i18nc("unknown keyboard model vendor", "Unknown");
     	}
-		uiWidget->keyboardModelComboBox->addItem(vendor + " | " + modelInfo->description, modelInfo->name);
+		uiWidget->keyboardModelComboBox->addItem(i18nc("vendor, keyboard model", "%1 | %2", vendor, modelInfo->description, modelInfo->name));
 	}
     uiWidget->keyboardModelComboBox->model()->sort(0);
 	connect(uiWidget->keyboardModelComboBox, SIGNAL(activated(int)), this, SLOT(uiChanged()));
@@ -177,12 +177,14 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 //	connect(uiWidget->xkbGrpClearBtn, SIGNAL(triggered(QAction*)), this, SLOT(uiChanged()));
 //	connect(uiWidget->xkb3rdLevelClearBtn, SIGNAL(triggered(QAction*)), this, SLOT(uiChanged()));
 	connect(uiWidget->kdeKeySequence, SIGNAL(keySequenceChanged (const QKeySequence &)), this, SLOT(uiChanged()));
-	connect(uiWidget->switchingButtonGroup, SIGNAL(clicked(int)), this, SLOT(uiChanged()));
+	connect(uiWidget->switchingPolicyButtonGroup, SIGNAL(clicked(int)), this, SLOT(uiChanged()));
 
 	connect(uiWidget->xkbGrpShortcutBtn, SIGNAL(clicked(bool)), this, SLOT(scrollToGroupShortcut()));
 	connect(uiWidget->xkb3rdLevelShortcutBtn, SIGNAL(clicked(bool)), this, SLOT(scrollTo3rdLevelShortcut()));
 
 	connect(uiWidget->configureLayoutsChk, SIGNAL(toggled(bool)), uiWidget->layoutsGroupBox, SLOT(setEnabled(bool)));
+	connect(uiWidget->configureLayoutsChk, SIGNAL(toggled(bool)), uiWidget->shortcutsGroupBox, SLOT(setEnabled(bool)));
+	connect(uiWidget->configureLayoutsChk, SIGNAL(toggled(bool)), uiWidget->switchingPolicyButtonGroup, SLOT(setEnabled(bool)));
 	connect(uiWidget->configureLayoutsChk, SIGNAL(toggled(bool)), this, SLOT(uiChanged()));
 }
 
