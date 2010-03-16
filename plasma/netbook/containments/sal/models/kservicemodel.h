@@ -34,7 +34,7 @@ namespace Plasma {
 
 namespace KServiceItemHandler {
     bool openUrl(const KUrl& url);
-};
+}
 
 class  KServiceModel : public QStandardItemModel
 {

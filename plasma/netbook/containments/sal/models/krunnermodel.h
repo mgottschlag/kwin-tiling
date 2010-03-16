@@ -36,7 +36,7 @@ namespace Plasma
 
 namespace KRunnerItemHandler {
     bool openUrl(const KUrl& url);
-};
+}
 
 class KRunnerModel : public QStandardItemModel
 {
