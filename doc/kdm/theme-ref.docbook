@@ -1014,6 +1014,12 @@ Screenshot=screenshot.png
       </para>
 
       <para>
+        The <literal>guistyle</literal> attribute can used to override the
+        Qt GUI style for embedded widgets. The default is given by
+        <option>GUIStyle</option> in &kdmrc;
+      </para>
+
+      <para>
         It is possible to specify almost the entire palette for the widgets
         as documented at
         <ulink type="http" url="http://doc.trolltech.com/4.3/qpalette.html">Trolltech's site</ulink>.

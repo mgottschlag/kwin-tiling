@@ -28,6 +28,7 @@
 #include <QFrame>
 #include <QLineEdit>
 #include <QStack>
+#include <QStyleFactory>
 #include <QWidget>
 
 void
@@ -248,6 +249,9 @@ parseStyle( const QDomElement &el, StyleType &style )
 	QString frame = el.attribute( "frame", QString() );
 	if (!frame.isNull())
 		style.frame = frame == "true";
+	QString guistyle = el.attribute( "guistyle", QString() );
+	if (!guistyle.isNull())
+		style.guistyle = QStyleFactory::create( guistyle );
 }
 
 void

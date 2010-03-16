@@ -102,7 +102,7 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 
 	KdmItem *parentItem = qobject_cast<KdmItem *>( parent );
 	if (!parentItem)
-		style.frame = false;
+		style.frame = false, style.guistyle = 0;
 	else
 		style = parentItem->style;
 
@@ -239,6 +239,7 @@ KdmItem::widgetGone()
 void
 KdmItem::setWidgetAttribs( QWidget *widget )
 {
+	widget->setStyle( style.guistyle );
 	widget->setPalette( style.palette );
 	::setWidgetAttribs( widget, style, style.frame );
 	widget->installEventFilter( this );

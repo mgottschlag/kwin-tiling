@@ -28,6 +28,7 @@
 #include <QPalette>
 
 class QString;
+class QStyle;
 class QColor;
 class QDomElement;
 
@@ -47,6 +48,7 @@ struct FontType {
 };
 
 struct StyleType {
+	QStyle *guistyle;
 	QPalette palette;
 	FontType font, editfont;
 	bool frame;
