@@ -23,6 +23,9 @@
 
 #include <kdm_greet.h>
 
+#include <KGlobalSettings>
+#include <KStandardDirs>
+
 #include <QComboBox>
 #include <QDomElement>
 #include <QFrame>
@@ -236,6 +239,14 @@ parseStyle( const QDomElement &el, StyleType &style )
 {
 	parseFont( el, style.font );
 	parseFont( el.attribute( "edit-font", QString() ), style.editfont );
+	QString colorscheme = el.attribute( "colorscheme", QString() );
+	if (!colorscheme.isNull()) {
+		colorscheme = KStandardDirs::locate( "data", "color-schemes/" + colorscheme + ".colors" );
+		if (!colorscheme.isEmpty()) {
+			KSharedConfigPtr config = KSharedConfig::openConfig( colorscheme, KConfig::SimpleConfig );
+			style.palette = KGlobalSettings::createApplicationPalette( config );
+		}
+	}
 	parsePalEnt( el, "window", style.palette, QPalette::Window );
 	parsePalEnt( el, "window-text", style.palette, QPalette::WindowText );
 	parsePalEnt( el, "base", style.palette, QPalette::Base );

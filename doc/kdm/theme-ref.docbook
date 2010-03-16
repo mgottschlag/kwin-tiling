@@ -1044,6 +1044,15 @@ Screenshot=screenshot.png
       </para>
 
       <para>
+        As an alternative to specifying the palette inline, the
+        <literal>colorscheme</literal> attribute can be used to load
+        a complete &kde; color scheme. The default is given by
+        <option>ColorScheme</option> in &kdmrc;.
+        Individual <literal>color</literal> specifications will override
+        the colors from the scheme.
+      </para>
+
+      <para>
         Example:
 <programlisting>
 &lt;style edit-font=&quot;Comic 16&quot; text-color=&quot;#dddddd&quot; frame=&quot;true&quot;/&gt;
