@@ -89,6 +89,9 @@ Name[x-test]=xxDevelopmentxx
 Name[zh_CN]=开发
 Name[zh_TW]=程式開發
 Comment=Applications targeted to software development
+Comment[km]=កម្មវិធីមានគោលដៅ​​ទៅនឹង​ការអភិវឌ្ឍន៍​កម្មវិធី
+Comment[pt]=Aplicações destinadas ao desenvolvimento de 'software'
+Comment[uk]=Програми, призначені для розробки програмного забезпечення
 
 Icon=applications-development
 
