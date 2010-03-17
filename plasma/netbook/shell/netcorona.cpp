@@ -39,6 +39,7 @@
 #include "plasmaapp.h"
 #include "netview.h"
 #include <plasma/containmentactionspluginsconfig.h>
+#include <plasmagenericshell/scripting/scriptengine.h>
 
 NetCorona::NetCorona(QObject *parent)
     : Plasma::Corona(parent)
@@ -68,6 +69,10 @@ void NetCorona::init()
 
 void NetCorona::loadDefaultLayout()
 {
+    if (loadDefaultLayoutScripts()) {
+        return;
+    }
+
     QString defaultConfig = KStandardDirs::locate("appdata", "plasma-default-layoutrc");
     if (!defaultConfig.isEmpty()) {
         kDebug() << "attempting to load the default layout from:" << defaultConfig;
@@ -187,6 +192,96 @@ QRegion NetCorona::availableScreenRegion(int id) const
     return KWindowSystem::workArea();
 }
 
+void NetCorona::processUpdateScripts()
+{
+    QStringList scripts = KGlobal::dirs()->findAllResources("data", "plasma-netbook/updates/*.js");
+    if (scripts.isEmpty()) {
+        //kDebug() << "no update scripts";
+        return ;
+    }
+
+    KConfigGroup cg(KGlobal::config(), "Updates");
+    QStringList performed = cg.readEntry("performed", QStringList());
+    const QString localDir = KGlobal::dirs()->localkdedir();
+    const QString localXdgDir = KGlobal::dirs()->localxdgdatadir();
+
+    QMultiMap<QString, QString> scriptPaths;
+    foreach (const QString &script, scripts) {
+        if (performed.contains(script)) {
+            continue;
+        }
+
+        if (script.startsWith(localDir) || script.startsWith(localXdgDir)) {
+            kDebug() << "skipping user local script: " << script;
+            continue;
+        }
+
+        QFileInfo f(script);
+        QString filename = f.fileName();
+        scriptPaths.insert(filename, script);
+        performed.append(script);
+    }
+
+    evaluateScripts(scriptPaths);
+    cg.writeEntry("performed", performed);
+    KGlobal::config()->sync();
+}
+
+bool NetCorona::loadDefaultLayoutScripts()
+{
+    QStringList scripts = KGlobal::dirs()->findAllResources("data", "plasma-netbook/init/*.js");
+    if (scripts.isEmpty()) {
+        //kDebug() << "no javascript based layouts";
+        return false;
+    }
+
+    const QString localDir = KGlobal::dirs()->localkdedir();
+    const QString localXdgDir = KGlobal::dirs()->localxdgdatadir();
+
+    QMap<QString, QString> scriptPaths;
+    foreach (const QString &script, scripts) {
+        if (script.startsWith(localDir) || script.startsWith(localXdgDir)) {
+            kDebug() << "skipping user local script: " << script;
+            continue;
+        }
+
+        QFileInfo f(script);
+        QString filename = f.fileName();
+        if (!scriptPaths.contains(filename)) {
+            scriptPaths.insert(filename, script);
+        }
+    }
+
+    evaluateScripts(scriptPaths);
+    return !containments().isEmpty();
+}
+
+void NetCorona::evaluateScripts(QMap<QString, QString> scripts)
+{
+    foreach (const QString &script, scripts) {
+        ScriptEngine scriptEngine(this);
+        connect(&scriptEngine, SIGNAL(printError(QString)), this, SLOT(printScriptError(QString)));
+        connect(&scriptEngine, SIGNAL(print(QString)), this, SLOT(printScriptMessage(QString)));
+        connect(&scriptEngine, SIGNAL(createPendingPanelViews()), PlasmaApp::self(), SLOT(createWaitingPanels()));
+
+        QFile file(script);
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text) ) {
+            QString code = file.readAll();
+            kDebug() << "evaluating startup script:" << script;
+            scriptEngine.evaluateScript(code);
+        }
+    }
+}
+
+void NetCorona::printScriptError(const QString &error)
+{
+    kWarning() << "Startup script errror:" << error;
+}
+
+void NetCorona::printScriptMessage(const QString &error)
+{
+    kDebug() << "Startup script: " << error;
+}
 
 
 #include "netcorona.moc"

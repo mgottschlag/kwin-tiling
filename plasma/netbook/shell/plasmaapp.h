@@ -42,6 +42,7 @@ namespace Plasma
 } // namespace Plasma
 
 class NetView;
+class NetCorona;
 class QTimer;
 class GlowBar;
 
@@ -124,7 +125,7 @@ private Q_SLOTS:
     void unhideHintMousePoll();
 
 private:
-    Plasma::Corona *m_corona;
+    NetCorona *m_corona;
     Plasma::Dialog *m_widgetExplorerView;
     Plasma::WidgetExplorer *m_widgetExplorer;
 #ifdef Q_WS_X11

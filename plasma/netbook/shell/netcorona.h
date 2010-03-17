@@ -46,12 +46,18 @@ public:
 
     Plasma::Containment *findFreeContainment() const;
 
+    bool loadDefaultLayoutScripts();
+    void processUpdateScripts();
+
     virtual int numScreens() const;
     virtual QRect screenGeometry(int id) const;
     virtual QRegion availableScreenRegion(int id) const;
 
 protected Q_SLOTS:
     void screenResized(int);
+    void evaluateScripts(QMap<QString, QString> scripts);
+    void printScriptError(const QString &error);
+    void printScriptMessage(const QString &error);
 
 private:
     void init();

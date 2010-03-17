@@ -501,6 +501,7 @@ Plasma::Corona* PlasmaApp::corona()
 
         m_corona->setItemIndexMethod(QGraphicsScene::NoIndex);
         m_corona->initializeLayout();
+        m_corona->processUpdateScripts();
 
         m_mainView->show();
 
