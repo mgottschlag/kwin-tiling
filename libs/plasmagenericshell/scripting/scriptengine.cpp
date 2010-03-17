@@ -30,7 +30,6 @@
 
 #include "appinterface.h"
 #include "containment.h"
-#include "panel.h"
 #include "widget.h"
 
 QScriptValue constructQRectFClass(QScriptEngine *engine);

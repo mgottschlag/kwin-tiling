@@ -11,6 +11,15 @@ set(appletbrowserdialog_SRCS
     widgetsexplorer/openwidgetassistant.cpp
 )
 
+set(scripting_SRC
+    scripting/appinterface.cpp
+    scripting/applet.cpp
+    scripting/containment.cpp
+    scripting/rect.cpp
+    scripting/scriptengine.cpp
+    scripting/widget.cpp
+)
+
 set(plasmagenericshell_LIB_SRCS
     backgrounddialog.cpp
     mouseinputbutton.cpp
@@ -18,6 +27,7 @@ set(plasmagenericshell_LIB_SRCS
     mousepluginwidget.cpp
     wallpaperpreview.cpp
     toolbutton.cpp
+    ${scripting_SRC}
     ${appletbrowserdialog_SRCS}
 )
 
@@ -25,7 +35,7 @@ kde4_add_ui_files(plasmagenericshell_LIB_SRCS ActivityConfiguration.ui Backgroun
 
 kde4_add_library(plasmagenericshell SHARED ${plasmagenericshell_LIB_SRCS})
 
-target_link_libraries(plasmagenericshell ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_KFILE_LIBS} kworkspace)
+target_link_libraries(plasmagenericshell ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_KFILE_LIBS} ${QT_QTSCRIPT_LIBRARY} kworkspace)
 
 set_target_properties(plasmagenericshell PROPERTIES VERSION ${GENERIC_LIB_VERSION}
 SOVERSION ${GENERIC_LIB_SOVERSION} )

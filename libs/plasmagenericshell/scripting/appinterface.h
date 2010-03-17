@@ -23,6 +23,8 @@
 #include <QObject>
 #include <QRectF>
 
+#include "../plasmagenericshell_export.h"
+
 namespace Plasma
 {
     class Applet;
@@ -30,7 +32,7 @@ namespace Plasma
     class Corona;
 } // namespace Plasma
 
-class AppInterface : public QObject
+class PLASMAGENERICSHELL_EXPORT AppInterface : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool locked READ coronaLocked WRITE lockCorona)

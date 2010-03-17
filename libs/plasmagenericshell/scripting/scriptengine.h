@@ -23,6 +23,8 @@
 #include <QScriptEngine>
 #include <QScriptValue>
 
+#include "../plasmagenericshell_export.h"
+
 namespace Plasma
 {
     class Applet;
@@ -32,7 +34,7 @@ namespace Plasma
 
 class Containment;
 
-class ScriptEngine : public QScriptEngine
+class PLASMAGENERICSHELL_EXPORT ScriptEngine : public QScriptEngine
 {
     Q_OBJECT
 

@@ -24,7 +24,7 @@
 #include <QScriptValue>
 #include <QWeakPointer>
 
-#include "containment.h"
+#include <plasmagenericshell/scripting/containment.h>
 
 class Panel : public Containment
 {

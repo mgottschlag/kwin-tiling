@@ -19,7 +19,9 @@
 
 #include "desktopscriptengine.h"
 
-#include "containment.h"
+#include <plasmagenericshell/scripting/containment.h>
+#include <plasmagenericshell/scripting/appinterface.h>
+
 #include "panel.h"
 
 DesktopScriptEngine::DesktopScriptEngine(Plasma::Corona *corona, QObject *parent)

@@ -20,7 +20,7 @@
 #ifndef DESKTOPSCRIPTENGINE
 #define DESKTOPSCRIPTENGINE
 
-#include "scriptengine.h"
+#include <plasmagenericshell/scripting/scriptengine.h>
 
 class DesktopScriptEngine : public ScriptEngine
 {

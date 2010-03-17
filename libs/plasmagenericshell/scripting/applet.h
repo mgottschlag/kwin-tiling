@@ -25,12 +25,14 @@
 
 #include <KConfigGroup>
 
+#include "../plasmagenericshell_export.h"
+
 namespace Plasma
 {
     class Applet;
 } // namespace Plasma
 
-class Applet : public QObject
+class PLASMAGENERICSHELL_EXPORT Applet : public QObject
 {
     Q_OBJECT
 

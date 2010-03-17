@@ -24,12 +24,14 @@
 
 #include "applet.h"
 
+#include "../plasmagenericshell_export.h"
+
 namespace Plasma
 {
     class Applet;
 } // namespace Plasma
 
-class Widget : public Applet
+class PLASMAGENERICSHELL_EXPORT Widget : public Applet
 {
     Q_OBJECT
     Q_PROPERTY(QString type READ type)

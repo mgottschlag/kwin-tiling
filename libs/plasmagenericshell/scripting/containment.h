@@ -26,6 +26,8 @@
 
 #include "applet.h"
 
+#include "../plasmagenericshell_export.h"
+
 namespace Plasma
 {
     class Containment;
@@ -34,7 +36,7 @@ namespace Plasma
 class Widget;
 class PanelView;
 
-class Containment : public Applet
+class PLASMAGENERICSHELL_EXPORT Containment : public Applet
 {
     Q_OBJECT
     Q_PROPERTY(QStringList configKeys READ configKeys)

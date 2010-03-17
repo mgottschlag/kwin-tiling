@@ -40,6 +40,8 @@
 
 #include <QtCore/QSharedData>
 
+#include "../plasmagenericshell_export.h"
+
 #define DECLARE_SELF(Class, __fn__) \
     Class* self = qscriptvalue_cast<Class*>(ctx->thisObject()); \
     if (!self) { \
@@ -210,7 +212,7 @@ enum {
 };
 
 template <typename T>
-class Pointer : public QSharedData
+class PLASMAGENERICSHELL_EXPORT Pointer : public QSharedData
 {
 public:
     typedef T* pointer_type;

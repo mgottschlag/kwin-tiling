@@ -26,8 +26,9 @@
 
 #include "panelview.h"
 #include "plasmaapp.h"
-#include "scriptengine.h"
-#include "widget.h"
+#include <plasmagenericshell/scripting/scriptengine.h>
+#include <plasmagenericshell/scripting/widget.h>
+
 
 Panel::Panel(Plasma::Containment *containment, QObject *parent)
     : Containment(containment, parent)
