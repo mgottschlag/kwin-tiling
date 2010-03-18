@@ -1014,7 +1014,7 @@ Screenshot=screenshot.png
       </para>
 
       <para>
-        The <literal>guistyle</literal> attribute can used to override the
+        The <literal>guistyle</literal> attribute can be used to override the
         Qt GUI style for embedded widgets. The default is given by
         <option>GUIStyle</option> in &kdmrc;
       </para>
