@@ -32,6 +32,7 @@ ItemView::ItemView(QGraphicsWidget *parent)
     setFocusPolicy(Qt::StrongFocus);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_itemContainer = new ItemContainer(this);
+    setAlignment(Qt::AlignCenter);
     setWidget(m_itemContainer);
     m_noActivateTimer = new QTimer(this);
     m_noActivateTimer->setSingleShot(true);

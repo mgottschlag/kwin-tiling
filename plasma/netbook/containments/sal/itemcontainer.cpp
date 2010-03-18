@@ -150,7 +150,6 @@ Plasma::IconWidget *ItemContainer::createItem()
         m_usedItems.remove(key, item);
     } else {
         item = new ResultWidget(this);
-        m_itemView->registerAsDragHandle(item);
         item->hide();
         item->setPos(boundingRect().center().x(), size().height());
     }
