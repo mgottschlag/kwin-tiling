@@ -23,6 +23,7 @@
 #include "commonmodel.h"
 
 // Qt
+#include <QMimeData>
 
 // KDE
 #include <KService>
@@ -73,6 +74,34 @@ KServiceModel::KServiceModel(const KConfigGroup &group, QObject *parent)
 
 KServiceModel::~KServiceModel()
 {
+}
+
+QMimeData * KServiceModel::mimeData(const QModelIndexList &indexes) const
+{
+    KUrl::List urls;
+
+    foreach (const QModelIndex & index, indexes) {
+        QString urlString = data(index, CommonModel::Url).toString();
+
+        KService::Ptr service = KService::serviceByDesktopPath(urlString);
+
+        if (!service) {
+            service = KService::serviceByDesktopName(urlString);
+        }
+
+        if (service) {
+            urls << KUrl(service->entryPath());
+        }
+    }
+
+    QMimeData *mimeData = new QMimeData();
+
+    if (!urls.isEmpty()) {
+        urls.populateMimeData(mimeData);
+    }
+
+    return mimeData;
+
 }
 
 void KServiceModel::setPath(const QString &path)

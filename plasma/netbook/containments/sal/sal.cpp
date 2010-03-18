@@ -192,7 +192,7 @@ void SearchLaunch::doSearch(const QString &query, const QString &runner)
     m_runnerModel->setQuery(query, runner);
     m_lastQuery = query;
     //enable or disable drag and drop
-    if (immutability() == Plasma::Mutable && !m_lastQuery.isNull()) {
+    if (immutability() == Plasma::Mutable && (m_resultsView->model() != m_serviceModel || m_serviceModel->path() != "/")) {
         m_resultsView->setDragAndDropMode(ItemContainer::CopyDragAndDrop);
     } else {
         m_resultsView->setDragAndDropMode(ItemContainer::NoDragAndDrop);
@@ -230,11 +230,18 @@ void SearchLaunch::launch(QModelIndex index)
             reset();
         }
     }
+
+    //enable or disable drag and drop
+    if (immutability() == Plasma::Mutable && (m_resultsView->model() != m_serviceModel || m_serviceModel->path() != "/")) {
+        m_resultsView->setDragAndDropMode(ItemContainer::CopyDragAndDrop);
+    } else {
+        m_resultsView->setDragAndDropMode(ItemContainer::NoDragAndDrop);
+    }
 }
 
 void SearchLaunch::addFavourite(const QModelIndex &index)
 {
-    QMimeData *mimeData = m_runnerModel->mimeData(QModelIndexList()<<index);
+    QMimeData *mimeData = m_resultsView->model()->mimeData(QModelIndexList()<<index);
     if (mimeData && !mimeData->urls().isEmpty()) {
         m_stripWidget->add(mimeData->urls().first());
     }
@@ -488,7 +495,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
         }
 
         //enable or disable drag and drop
-        if (immutability() == Plasma::Mutable && !m_lastQuery.isNull()) {
+        if (immutability() == Plasma::Mutable && (m_resultsView->model() != m_serviceModel || m_serviceModel->path() != "/")) {
             m_resultsView->setDragAndDropMode(ItemContainer::CopyDragAndDrop);
         } else {
             m_resultsView->setDragAndDropMode(ItemContainer::NoDragAndDrop);
@@ -609,14 +616,14 @@ void SearchLaunch::overlayRequestedDrop(QGraphicsSceneDragDropEvent *event)
 
 void SearchLaunch::resultsViewRequestedDrag(QModelIndex index)
 {
-    if (m_resultsView->model() != m_runnerModel) {
+    if (!m_resultsView->model()) {
         return;
     }
 
 
     QModelIndexList list;
     list.append(index);
-    QMimeData *mimeData = m_runnerModel->mimeData(list);
+    QMimeData *mimeData = m_resultsView->model()->mimeData(list);
 
     QDrag *drag = new QDrag(view());
     drag->setMimeData(mimeData);

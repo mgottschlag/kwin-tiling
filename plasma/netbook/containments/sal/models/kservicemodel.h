@@ -44,6 +44,8 @@ public:
     KServiceModel(const KConfigGroup &group, QObject *parent);
     virtual ~KServiceModel();
 
+    virtual QMimeData *mimeData(const QModelIndexList &indexes) const;
+
     void setPath(const QString &path);
     QString path() const;
 
