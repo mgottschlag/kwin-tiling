@@ -250,6 +250,8 @@ PlasmaApp::PlasmaApp()
     connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SLOT(positionPanel()));
     m_mainView->installEventFilter(this);
 
+    connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(controlBarVisibilityUpdate()));
+
     m_raiseTimer = new QTimer(this);
     m_raiseTimer->setSingleShot(true);
     connect(m_raiseTimer, SIGNAL(timeout()), this, SLOT(raiseMainView()));
