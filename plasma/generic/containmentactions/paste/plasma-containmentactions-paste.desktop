@@ -2,6 +2,7 @@
 Name=Paste
 Name[ca]=Enganxa
 Name[ca@valencia]=Enganxa
+Name[cs]=Vložit
 Name[csb]=Wlepi
 Name[da]=Indsæt
 Name[de]=Einfügen
@@ -58,6 +59,7 @@ Icon=edit-paste
 Comment=Creates a widget from the contents of the clipboard
 Comment[ca]=Crea un estri a partir del contingut del porta-retalls
 Comment[ca@valencia]=Crea un estri a partir del contingut del porta-retalls
+Comment[cs]=Vytvoří widget z obsahu schránky
 Comment[da]=Opretter en widget ud fra indholdet af udklipsholderen
 Comment[de]=Erzeugt ein Miniprogramm aus dem Inhalt der Zwischenablage
 Comment[el]=Δημιουργία γραφικού συστατικού από τα περιεχόμενα του προχείρου.

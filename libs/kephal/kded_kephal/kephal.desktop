@@ -8,6 +8,7 @@ X-KDE-Kded-autoload=false
 X-KDE-Kded-load-on-demand=true
 
 Name=Display Management
+Name[cs]=Správa zobrazení
 Name[de]=Anzeigeverwaltung
 Name[el]=Εμφάνιση διαχείρισης
 Name[en_GB]=Display Management
@@ -22,6 +23,7 @@ Name[th]=การจัดการระบบแสดงผล
 Name[uk]=Керування дисплеєм
 Name[x-test]=xxDisplay Managementxx
 Comment=Manages displays and video outputs
+Comment[cs]=Spravuje displeje a výstupy obrazu
 Comment[el]=Διαχείριση εμφάνισης και εξόδων βίντεο
 Comment[en_GB]=Manages displays and video outputs
 Comment[es]=Gestiona pantallas y salidas de vídeo

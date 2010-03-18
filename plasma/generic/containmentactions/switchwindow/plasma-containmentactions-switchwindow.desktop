@@ -2,6 +2,7 @@
 Name=Switch Window
 Name[ca]=Canvi de finestra
 Name[ca@valencia]=Canvi de finestra
+Name[cs]=Přepnout okna
 Name[da]=Skift vindue
 Name[de]=Fenster wechseln
 Name[el]=Εναλλαγή παραθύρου
@@ -57,6 +58,7 @@ Icon=preferences-system-windows
 Comment=Show a list of windows to switch to
 Comment[ca]=Mostra una llista de les finestres per a canviar
 Comment[ca@valencia]=Mostra una llista de les finestres per a canviar
+Comment[cs]=Zobrazit seznam oken k přepnutí
 Comment[da]=Vis en liste over åbne vinduer at skifte til
 Comment[de]=Eine Liste aller Fenster anzeigen
 Comment[el]=Εμφάνιση λίστας παραθύρων για εναλλαγή

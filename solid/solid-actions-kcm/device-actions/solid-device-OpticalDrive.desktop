@@ -581,6 +581,7 @@ Actions=bus;driveType;hotpluggable;readSpeed;removable;size;supportedMedia;write
 Name=Solid Device
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid
+Name[cs]=Solid zařízení
 Name[da]=Solid-enhed
 Name[de]=Solid-Gerät
 Name[el]=Συμπαγής συσκευή

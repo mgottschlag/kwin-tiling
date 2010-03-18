@@ -3,6 +3,7 @@
 Name=Devices
 Name[ca]=Dispositius
 Name[ca@valencia]=Dispositius
+Name[cs]=Zařízení
 Name[csb]=Ùrządzenia
 Name[da]=Enheder
 Name[de]=Geräte
@@ -52,6 +53,7 @@ Name[zh_TW]=裝置
 Comment=Manage removable devices
 Comment[ca]=Gestiona dispositius extraïbles
 Comment[ca@valencia]=Gestiona dispositius extraïbles
+Comment[cs]=Spravovat odpojitelná zařízení
 Comment[csb]=Sprôwiôj przenosnyma ùrządzeniama
 Comment[da]=Håndtér flytbare enheder
 Comment[de]=Wechselmedien verwalten

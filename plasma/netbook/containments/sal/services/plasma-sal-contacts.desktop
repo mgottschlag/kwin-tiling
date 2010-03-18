@@ -2,6 +2,7 @@
 Name=Contacts
 Name[ca]=Contactes
 Name[ca@valencia]=Contactes
+Name[cs]=Kontakty
 Name[csb]=Łączbë
 Name[da]=Kontakter
 Name[de]=Kontakte
@@ -56,6 +57,7 @@ Name[zh_TW]=聯絡人
 Comment=List all your contacts
 Comment[ca]=Llista tots els contactes
 Comment[ca@valencia]=Llista tots els contactes
+Comment[cs]=Seznam všech vašich kontaktů
 Comment[csb]=Wëskrzëni wszëtczé twòjé łączbë
 Comment[da]=Oplist alle dine kontakter
 Comment[de]=Alle Kontakte auflisten

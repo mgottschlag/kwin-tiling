@@ -2,6 +2,7 @@
 Name=Terminate Applications
 Name[ca]=Finalitza aplicacions
 Name[ca@valencia]=Finalitza aplicacions
+Name[cs]=Ukončit aplikace
 Name[csb]=Zamëkô apliakcëje
 Name[da]=Afslut programmer
 Name[de]=Programme beenden
@@ -55,6 +56,7 @@ Name[zh_TW]=終端機應用程式
 Comment=Stop applications that are currently running
 Comment[ca]=Atura aplicacions que estan actualment en execució
 Comment[ca@valencia]=Atura aplicacions que estan actualment en execució
+Comment[cs]=Ukončit aktuálně spuštěné aplikace
 Comment[csb]=Zamëkô prawie robiącé aplikacëje
 Comment[da]=Stop programmer der kører i øjeblikket
 Comment[de]=Gerade laufende Anwendungen beenden

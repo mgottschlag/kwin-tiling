@@ -2,6 +2,7 @@
 Name=wetter.com
 Name[ca]=wetter.com
 Name[ca@valencia]=wetter.com
+Name[cs]=wetter.com
 Name[da]=wetter.com
 Name[de]=wetter.com
 Name[el]=wetter.com
@@ -52,6 +53,7 @@ Name[zh_TW]=wetter.com
 Comment=Weather forecast by wetter.com
 Comment[ca]=Previsió meteorològica per wetter.com
 Comment[ca@valencia]=Previsió meteorològica per wetter.com
+Comment[cs]=Předpověď počasí od wetter.com
 Comment[da]=Vejrudsigt fra wetter.com
 Comment[de]=Wettervorhersage von wetter.com
 Comment[el]=Πρόγνωση καιρού από το wetter.com

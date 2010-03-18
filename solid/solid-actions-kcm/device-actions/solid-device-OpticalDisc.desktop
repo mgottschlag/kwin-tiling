@@ -770,6 +770,7 @@ Actions=appendable;availableContent;blank;capacity;discType;fsType;ignored;label
 Name=Solid Device
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid
+Name[cs]=Solid zařízení
 Name[da]=Solid-enhed
 Name[de]=Solid-Gerät
 Name[el]=Συμπαγής συσκευή
