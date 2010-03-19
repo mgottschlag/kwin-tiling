@@ -28,8 +28,9 @@
 #include <QVarLengthArray>
 
 //KDE
-#include <kwindowsystem.h>
-#include <kiconloader.h>
+#include <KWindowSystem>
+#include <KIconLoader>
+#include <KIcon>
 #include <netwm.h>
 
 //Plasma
@@ -40,6 +41,8 @@
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 #include <Plasma/WindowEffects>
+#include <Plasma/ToolTipContent>
+#include <Plasma/ToolTipManager>
 
 //X
 #ifdef Q_WS_X11
@@ -159,6 +162,8 @@ void CurrentAppControl::activeWindowChanged(WId id)
 
 void CurrentAppControl::windowRemoved(WId id)
 {
+    Q_UNUSED(id)
+
     QTimer::singleShot(300, this, SLOT(syncActiveWindow()));
 }
 
@@ -175,7 +180,11 @@ void CurrentAppControl::syncActiveWindow()
          }
      }
 
-    if (applicationActive) {
+    Plasma::ToolTipContent toolTipData = Plasma::ToolTipContent();
+    toolTipData.setAutohide(true);
+    toolTipData.setSubText(i18n("Click here to have an overview of all the running applications"));
+
+    if (applicationActive && m_pendingActiveWindow > 0) {
         m_activeWindow = 0;
         m_currentTask->setIcon("preferences-system-windows");
         const int activeWindows = qMax(0, windowsCount()-1);
@@ -186,8 +195,13 @@ void CurrentAppControl::syncActiveWindow()
         }
         m_closeTask->hide();
         m_maximizeTask->hide();
+
+        toolTipData.setMainText(m_currentTask->text());
+        toolTipData.setImage(KIcon("preferences-system-windows"));
+
     } else if (m_pendingActiveWindow <= 0) {
-        return;
+        toolTipData.setMainText(m_currentTask->text());
+        toolTipData.setImage(KWindowSystem::icon(m_activeWindow, KIconLoader::SizeHuge, KIconLoader::SizeHuge));
     } else {
         m_activeWindow = m_pendingActiveWindow;
         KWindowInfo info = KWindowSystem::windowInfo(m_activeWindow, NET::WMName|NET::WMState);
@@ -200,6 +214,9 @@ void CurrentAppControl::syncActiveWindow()
             m_maximizeTask->show();
         }
 
+        toolTipData.setMainText(info.name());
+        toolTipData.setImage(KWindowSystem::icon(m_activeWindow, KIconLoader::SizeHuge, KIconLoader::SizeHuge));
+
         if (info.state() & (NET::MaxVert|NET::MaxHoriz)) {
             m_maximizeTask->setSvg("widgets/configuration-icons", "unmaximize");
         } else {
@@ -207,6 +224,8 @@ void CurrentAppControl::syncActiveWindow()
         }
     }
 
+    Plasma::ToolTipManager::self()->registerWidget(this);
+    Plasma::ToolTipManager::self()->setContent(m_currentTask, toolTipData);
     m_pendingActiveWindow = 0;
 }
 
