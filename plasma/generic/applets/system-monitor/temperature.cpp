@@ -191,11 +191,11 @@ void Temperature::dataUpdated(const QString& source,
         value = value.convertTo(Fahrenheit);
     }
 
+    value.round(1);
     if (plotter) {
-        plotter->addSample(QList<double>() << doubleValue);
+        plotter->addSample(QList<double>() << value.number());
     }
 
-    value.round(1);
     temp = value.toSymbolString();
 
     if (mode() == SM::Applet::Panel) {
