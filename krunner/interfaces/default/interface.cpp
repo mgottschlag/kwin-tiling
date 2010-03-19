@@ -513,9 +513,13 @@ void Interface::run(ResultItem *item)
                 }
             }
 
-            m_searchTerm->setItemText(0, info);
-            m_searchTerm->lineEdit()->setCursorPosition(editPos);
+            QStringList history = m_searchTerm->historyItems();
+            history.prepend(m_searchTerm->currentText().trimmed());
+            kDebug() << m_searchTerm->currentText() << history;
+            m_searchTerm->setHistoryItems(history);
             m_searchTerm->setCurrentIndex(0);
+            m_searchTerm->lineEdit()->setText(info);
+            m_searchTerm->lineEdit()->setCursorPosition(editPos);
             QApplication::clipboard()->setText(info);
         }
         return;
