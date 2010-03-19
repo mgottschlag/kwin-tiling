@@ -55,7 +55,7 @@ public:
 
 protected Q_SLOTS:
     void screenResized(int);
-    void evaluateScripts(QMap<QString, QString> scripts);
+    void evaluateScripts(const QStringList &scripts);
     void printScriptError(const QString &error);
     void printScriptMessage(const QString &error);
 

@@ -69,7 +69,8 @@ void NetCorona::init()
 
 void NetCorona::loadDefaultLayout()
 {
-    if (loadDefaultLayoutScripts()) {
+    evaluateScripts(ScriptEngine::defaultLayoutScripts());
+    if (!containments().isEmpty()) {
         return;
     }
 
@@ -194,69 +195,10 @@ QRegion NetCorona::availableScreenRegion(int id) const
 
 void NetCorona::processUpdateScripts()
 {
-    QStringList scripts = KGlobal::dirs()->findAllResources("data", "plasma-netbook/updates/*.js");
-    if (scripts.isEmpty()) {
-        //kDebug() << "no update scripts";
-        return ;
-    }
-
-    KConfigGroup cg(KGlobal::config(), "Updates");
-    QStringList performed = cg.readEntry("performed", QStringList());
-    const QString localDir = KGlobal::dirs()->localkdedir();
-    const QString localXdgDir = KGlobal::dirs()->localxdgdatadir();
-
-    QMultiMap<QString, QString> scriptPaths;
-    foreach (const QString &script, scripts) {
-        if (performed.contains(script)) {
-            continue;
-        }
-
-        if (script.startsWith(localDir) || script.startsWith(localXdgDir)) {
-            kDebug() << "skipping user local script: " << script;
-            continue;
-        }
-
-        QFileInfo f(script);
-        QString filename = f.fileName();
-        scriptPaths.insert(filename, script);
-        performed.append(script);
-    }
-
-    evaluateScripts(scriptPaths);
-    cg.writeEntry("performed", performed);
-    KGlobal::config()->sync();
+    evaluateScripts(ScriptEngine::pendingUpdateScripts());
 }
 
-bool NetCorona::loadDefaultLayoutScripts()
-{
-    QStringList scripts = KGlobal::dirs()->findAllResources("data", "plasma-netbook/init/*.js");
-    if (scripts.isEmpty()) {
-        //kDebug() << "no javascript based layouts";
-        return false;
-    }
-
-    const QString localDir = KGlobal::dirs()->localkdedir();
-    const QString localXdgDir = KGlobal::dirs()->localxdgdatadir();
-
-    QMap<QString, QString> scriptPaths;
-    foreach (const QString &script, scripts) {
-        if (script.startsWith(localDir) || script.startsWith(localXdgDir)) {
-            kDebug() << "skipping user local script: " << script;
-            continue;
-        }
-
-        QFileInfo f(script);
-        QString filename = f.fileName();
-        if (!scriptPaths.contains(filename)) {
-            scriptPaths.insert(filename, script);
-        }
-    }
-
-    evaluateScripts(scriptPaths);
-    return !containments().isEmpty();
-}
-
-void NetCorona::evaluateScripts(QMap<QString, QString> scripts)
+void NetCorona::evaluateScripts(const QStringList &scripts)
 {
     foreach (const QString &script, scripts) {
         ScriptEngine scriptEngine(this);
