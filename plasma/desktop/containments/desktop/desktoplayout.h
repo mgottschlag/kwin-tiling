@@ -132,6 +132,7 @@ private:
     QRectF transformRect(const QRectF &rect, const QTransform &transform);
     void getItemInstantRelativeGeometry(QGraphicsWidget *item, QRectF &outGeometry, QTransform &outRevertTransform);
     QRectF geometryRelativeToAbsolute(int itemKey, const QRectF &relative);
+    QRectF predictNewItemGeometry(const QRectF &logicalGeom);
 
     class DesktopLayoutItem
     {

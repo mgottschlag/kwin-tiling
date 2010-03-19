@@ -40,6 +40,10 @@ void DesktopLayout::addItem(QGraphicsWidget *item, bool pushBack, bool position)
 
     if (position) {
         logicalGeom = positionNewItem(logicalGeom.size());
+    } else {
+        if (itemSpace.positionVisibility(predictNewItemGeometry(logicalGeom)) < 1.0 - visibilityTolerance) {
+            logicalGeom = positionNewItem(logicalGeom.size());
+        }
     }
 
     ItemSpace::ItemSpaceItem spaceItem;
@@ -79,28 +83,7 @@ QRectF DesktopLayout::positionNewItem(QSizeF itemSize)
         QPointF bestPosition = QPointF();
         qreal bestVisibility = 0;
         foreach (const QPointF &position, possiblePositions) {
-            // see how much the item can be pushed into the working area:
-            // copy our ItemSpace, add the item to the copy
-            // and check the resulting position's visibility
-
-            ItemSpace tempItemSpace(itemSpace);
-
-            ItemSpace::ItemSpaceItem spaceItem;
-            spaceItem.pushBack = false;
-            spaceItem.animateMovement = false;
-            spaceItem.preferredPosition = position;
-            spaceItem.lastGeometry = QRectF(position, itemSize);
-            spaceItem.user = QVariant(-1);
-
-            tempItemSpace.addItem(spaceItem);
-            int tempGroup, tempItem;
-            tempItemSpace.locateItemByUser(QVariant(-1), &tempGroup, &tempItem);
-
-            QRectF resultingGeom = tempItemSpace.m_groups[tempGroup].m_groupItems[tempItem].lastGeometry;
-            qreal visibility = tempItemSpace.positionVisibility(resultingGeom);
-
-            //kDebug() << "Trying " << position << " visibility " << visibility;
-
+            qreal visibility = itemSpace.positionVisibility(predictNewItemGeometry(QRectF(position, itemSize)));
             if (visibility > bestVisibility) {
                 bestPosition = position;
                 bestVisibility = visibility;
@@ -283,6 +266,24 @@ QRectF DesktopLayout::geometryRelativeToAbsolute(int itemKey, const QRectF &rela
     QRectF translated = relative.translated(workingStart);
     QRectF detransformed = transformRect(translated, items[itemKey].revertTransform);
     return detransformed;
+}
+
+QRectF DesktopLayout::predictNewItemGeometry(const QRectF &logicalGeom)
+{
+    ItemSpace tempItemSpace(itemSpace);
+
+    ItemSpace::ItemSpaceItem spaceItem;
+    spaceItem.pushBack = false;
+    spaceItem.animateMovement = false;
+    spaceItem.preferredPosition = logicalGeom.topLeft();
+    spaceItem.lastGeometry = logicalGeom;
+    spaceItem.user = QVariant(-1);
+
+    tempItemSpace.addItem(spaceItem);
+    int tempGroup, tempItem;
+    tempItemSpace.locateItemByUser(QVariant(-1), &tempGroup, &tempItem);
+
+    return tempItemSpace.m_groups[tempGroup].m_groupItems[tempItem].lastGeometry;
 }
 
 void DesktopLayout::adjustPhysicalPositions()
