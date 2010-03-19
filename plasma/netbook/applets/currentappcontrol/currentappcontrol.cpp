@@ -121,10 +121,13 @@ void CurrentAppControl::constraintsEvent(Plasma::Constraints constraints)
         if (formFactor() == Plasma::Vertical) {
             m_currentTask->setOrientation(Qt::Vertical);
             //FIXME: all this minimum/maximum sizes shouldn't be necessary
-            m_currentTask->setMaximumSize(size().width(), QWIDGETSIZE_MAX);
+            m_currentTask->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+            m_currentTask->setMinimumSize(0, 0);
         } else {
             m_currentTask->setOrientation(Qt::Horizontal);
-            m_currentTask->setMaximumSize(KIconLoader::SizeSmallMedium*2 + fm.width('M')*30, size().height());
+            const int width = qMin((qreal)(KIconLoader::SizeSmallMedium*2 + fm.width('M')*30), containment()->size().width()/4);
+            m_currentTask->setMaximumSize(width, QWIDGETSIZE_MAX);
+            m_currentTask->setMinimumSize(width, 0);
         }
     }
 }
