@@ -270,69 +270,10 @@ QRect DesktopCorona::availableScreenRect(int id) const
 
 void DesktopCorona::processUpdateScripts()
 {
-    QStringList scripts = KGlobal::dirs()->findAllResources("data", "plasma-desktop/updates/*.js");
-    if (scripts.isEmpty()) {
-        //kDebug() << "no update scripts";
-        return ;
-    }
-
-    KConfigGroup cg(KGlobal::config(), "Updates");
-    QStringList performed = cg.readEntry("performed", QStringList());
-    const QString localDir = KGlobal::dirs()->localkdedir();
-    const QString localXdgDir = KGlobal::dirs()->localxdgdatadir();
-
-    QMultiMap<QString, QString> scriptPaths;
-    foreach (const QString &script, scripts) {
-        if (performed.contains(script)) {
-            continue;
-        }
-
-        if (script.startsWith(localDir) || script.startsWith(localXdgDir)) {
-            kDebug() << "skipping user local script: " << script;
-            continue;
-        }
-
-        QFileInfo f(script);
-        QString filename = f.fileName();
-        scriptPaths.insert(filename, script);
-        performed.append(script);
-    }
-
-    evaluateScripts(scriptPaths);
-    cg.writeEntry("performed", performed);
-    KGlobal::config()->sync();
+    evaluateScripts(ScriptEngine::pendingUpdateScripts());
 }
 
-bool DesktopCorona::loadDefaultLayoutScripts()
-{
-    QStringList scripts = KGlobal::dirs()->findAllResources("data", "plasma-desktop/init/*.js");
-    if (scripts.isEmpty()) {
-        //kDebug() << "no javascript based layouts";
-        return false;
-    }
-
-    const QString localDir = KGlobal::dirs()->localkdedir();
-    const QString localXdgDir = KGlobal::dirs()->localxdgdatadir();
-
-    QMap<QString, QString> scriptPaths;
-    foreach (const QString &script, scripts) {
-        if (script.startsWith(localDir) || script.startsWith(localXdgDir)) {
-            kDebug() << "skipping user local script: " << script;
-            continue;
-        }
-
-        QFileInfo f(script);
-        QString filename = f.fileName();
-        if (!scriptPaths.contains(filename)) {
-            scriptPaths.insert(filename, script);
-        }
-    }
-
-    evaluateScripts(scriptPaths);
-    return !containments().isEmpty();
-}
-
-void DesktopCorona::evaluateScripts(QMap<QString, QString> scripts)
+void DesktopCorona::evaluateScripts(const QStringList &scripts)
 {
     foreach (const QString &script, scripts) {
         DesktopScriptEngine scriptEngine(this);
@@ -361,7 +302,8 @@ void DesktopCorona::printScriptMessage(const QString &error)
 
 void DesktopCorona::loadDefaultLayout()
 {
-    if (loadDefaultLayoutScripts()) {
+    evaluateScripts(ScriptEngine::defaultLayoutScripts());
+    if (!containments().isEmpty()) {
         return;
     }
 

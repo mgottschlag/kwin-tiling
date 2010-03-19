@@ -84,7 +84,7 @@ public Q_SLOTS:
     void populateAddPanelsMenu();
 
 protected Q_SLOTS:
-    void evaluateScripts(QMap<QString, QString> scripts);
+    void evaluateScripts(const QStringList &scripts);
     void screenAdded(Kephal::Screen *s);
     void saveDefaultSetup();
     void printScriptError(const QString &error);
