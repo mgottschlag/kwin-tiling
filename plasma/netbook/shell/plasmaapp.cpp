@@ -40,8 +40,9 @@
 #include <kephal/screens.h>
 
 #include <Plasma/Containment>
-#include <Plasma/Theme>
 #include <Plasma/Dialog>
+#include <Plasma/Theme>
+#include <Plasma/Wallpaper>
 #include <Plasma/WindowEffects>
 
 #include "netcorona.h"
@@ -215,8 +216,10 @@ PlasmaApp::PlasmaApp()
       m_mainView(0),
       m_isDesktop(false),
       m_autoHideControlBar(true),
-      m_unHideTimer(0)
+      m_unHideTimer(0),
+      m_startupSuspendWaitCount(0)
 {
+    PlasmaApp::suspendStartup(true);
     KGlobal::locale()->insertCatalog("libplasma");
     KGlobal::locale()->insertCatalog("plasmagenericshell");
 
@@ -224,7 +227,6 @@ PlasmaApp::PlasmaApp()
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     bool isDesktop = args->isSet("desktop");
     if (isDesktop) {
-        notifyStartup(false);
         KCrash::setFlags(KCrash::AutoRestart);
     }
 
@@ -283,10 +285,6 @@ PlasmaApp::PlasmaApp()
     corona();
     //setIsDesktop(isDesktop);
     reserveStruts();
-
-    if (isDesktop) {
-        notifyStartup(true);
-    }
 
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
 }
@@ -512,7 +510,37 @@ Plasma::Corona* PlasmaApp::corona()
 
     }
 
+    foreach (Plasma::Containment *containment, m_corona->containments()) {
+        if (containment->screen() != -1 && containment->wallpaper()) {
+            ++m_startupSuspendWaitCount;
+            connect(containment->wallpaper(), SIGNAL(update(QRectF)), this, SLOT(wallpaperCheckedIn()));
+        }
+    }
+
+    QTimer::singleShot(5000, this, SLOT(wallpaperCheckInTimeout()));
+
     return m_corona;
+}
+
+void PlasmaApp::wallpaperCheckInTimeout()
+{
+    if (m_startupSuspendWaitCount > 0) {
+        m_startupSuspendWaitCount = 0;
+        suspendStartup(false);
+    }
+}
+
+void PlasmaApp::wallpaperCheckedIn()
+{
+    if (m_startupSuspendWaitCount < 1) {
+        return;
+    }
+
+    --m_startupSuspendWaitCount;
+    if (m_startupSuspendWaitCount < 1) {
+        m_startupSuspendWaitCount = 0;
+        suspendStartup(false);
+    }
 }
 
 bool PlasmaApp::hasComposite()
@@ -520,15 +548,15 @@ bool PlasmaApp::hasComposite()
     return KWindowSystem::compositingActive();
 }
 
-void PlasmaApp::notifyStartup(bool completed)
+void PlasmaApp::suspendStartup(bool suspend)
 {
     org::kde::KSMServerInterface ksmserver("org.kde.ksmserver", "/KSMServer", QDBusConnection::sessionBus());
 
-    const QString startupID("workspace desktop");
-    if (completed) {
-        ksmserver.resumeStartup(startupID);
-    } else {
+    const QString startupID("netbook desktop");
+    if (suspend) {
         ksmserver.suspendStartup(startupID);
+    } else {
+        ksmserver.resumeStartup(startupID);
     }
 }
 

@@ -60,7 +60,7 @@ public:
     static PlasmaApp* self();
     static bool hasComposite();
 
-    void notifyStartup(bool completed);
+    void suspendStartup(bool suspend);
     Plasma::Corona* corona();
 
     /**
@@ -123,6 +123,8 @@ private Q_SLOTS:
     void configureContainment(Plasma::Containment *containment);
     void updateToolBoxVisibility(bool visible);
     void unhideHintMousePoll();
+    void wallpaperCheckedIn();
+    void wallpaperCheckInTimeout();
 
 private:
     NetCorona *m_corona;
@@ -141,6 +143,7 @@ private:
     bool m_autoHideControlBar;
     QTimer *m_unHideTimer;
     QTimer *m_raiseTimer;
+    int m_startupSuspendWaitCount;
 };
 
 #endif // multiple inclusion guard
