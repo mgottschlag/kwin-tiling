@@ -96,7 +96,7 @@ void PlasmaDesktopRunner::checkAvailability(const QString &name, const QString &
     if (name.isEmpty()) {
         enabled = QDBusConnection::sessionBus().interface()->isServiceRegistered(s_plasmaService).value();
     } else if (name == s_plasmaService) {
-        enabled = !newOwner.isNull();
+        enabled = !newOwner.isEmpty();
     } else {
         // it's not something we're interested in
         return;
