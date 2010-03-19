@@ -9,7 +9,7 @@ set(kuiserver_engine_SRCS
     jobaction.cpp
 )
 
-qt4_add_dbus_adaptor(kuiserver_engine_SRCS ${KDE4_DBUS_INTERFACES_DIR}/org.kde.JobView.xml kuiserverengine.h JobView jobviewadaptor )
+qt4_add_dbus_adaptor(kuiserver_engine_SRCS ${KDE4_DBUS_INTERFACES_DIR}/org.kde.JobViewV2.xml kuiserverengine.h JobView jobviewadaptor )
 qt4_add_dbus_adaptor(kuiserver_engine_SRCS ${KDE4_DBUS_INTERFACES_DIR}/org.kde.JobViewServer.xml kuiserverengine.h KuiserverEngine jobviewserveradaptor )
 
 kde4_add_plugin(plasma_engine_applicationjobs ${kuiserver_engine_SRCS})

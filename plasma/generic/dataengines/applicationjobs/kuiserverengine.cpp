@@ -46,13 +46,16 @@ JobView::JobView(QObject* parent)
     m_jobId = ++KuiserverEngine::s_jobId;
     setObjectName(QString("Job %1").arg(KuiserverEngine::s_jobId));
 
-    new JobViewAdaptor(this);
+    new JobViewV2Adaptor(this);
+
+    m_objectPath.setPath(QString("/DataEngine/applicationjobs/JobView_%1").arg(m_jobId));
+    QDBusConnection::sessionBus().registerObject(m_objectPath.path(), this);
+
     setSuspended(false);
 }
 
 JobView::~JobView()
 {
-    //kDebug();
 }
 
 uint JobView::jobId() const
@@ -186,6 +189,11 @@ void JobView::setProcessedAmount(qlonglong amount, const QString &unit)
     }
 }
 
+void JobView::setDestUrl(const QDBusVariant & destUrl)
+{
+    Q_UNUSED(destUrl);
+}
+
 void JobView::setPercent(uint percent)
 {
     if (m_percent != percent) {
@@ -232,7 +240,6 @@ bool JobView::setDescriptionField(uint number, const QString &name, const QStrin
         setData(labelString, value);
         scheduleUpdate();
     }
-
     return true;
 }
 
@@ -295,15 +302,19 @@ KuiserverEngine::KuiserverEngine(QObject* parent, const QVariantList& args)
 {
     new JobViewServerAdaptor(this);
 
-    QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.JobViewServer"));
-    QDBusConnection::sessionBus().registerObject(QLatin1String("/JobViewServer"), this);
+    QDBusConnection bus = QDBusConnection::sessionBus();
+    bus.registerObject(QLatin1String("/DataEngine/applicationjobs/JobWatcher"), this);
 
     setMinimumPollingInterval(500);
+
+    //ready, attempt to sign up for updates from kuiserver
+    attemptRegister();
 }
 
 KuiserverEngine::~KuiserverEngine()
 {
-    QDBusConnection::sessionBus().unregisterService("org.kde.JobViewServer");
+    QDBusConnection::sessionBus()
+    .unregisterObject(QLatin1String("/DataEngine/applicationjobs/JobWatcher"), QDBusConnection::UnregisterTree);
 }
 
 QDBusObjectPath KuiserverEngine::requestView(const QString &appName,
@@ -317,11 +328,7 @@ QDBusObjectPath KuiserverEngine::requestView(const QString &appName,
     addSource(jobView);
     connect(jobView, SIGNAL(becameUnused(QString)), this, SLOT(removeSource(QString)));
 
-    QDBusObjectPath path;
-    path.setPath(QString("/JobViewServer/JobView_%1").arg(jobView->jobId()));
-    QDBusConnection::sessionBus().registerObject(path.path(), jobView);
-
-    return path;
+    return jobView->objectPath();
 }
 
 Plasma::Service* KuiserverEngine::serviceForSource(const QString& source)
@@ -334,6 +341,13 @@ Plasma::Service* KuiserverEngine::serviceForSource(const QString& source)
     }
 }
 
+void KuiserverEngine::attemptRegister()
+{
+  QDBusInterface interface("org.kde.kuiserver", "/JobViewServer"/* object to connect to */,
+                           ""/* use the default interface */, QDBusConnection::sessionBus(), this);
+    interface.asyncCall("registerService", "org.kde.plasma-desktop", "/DataEngine/applicationjobs/JobWatcher");
+}
+
 void KuiserverEngine::init()
 {
 }
@@ -341,4 +355,3 @@ void KuiserverEngine::init()
 K_EXPORT_PLASMA_DATAENGINE(kuiserver, KuiserverEngine)
 
 #include "kuiserverengine.moc"
-

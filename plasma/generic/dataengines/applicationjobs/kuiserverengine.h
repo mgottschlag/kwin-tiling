@@ -49,12 +49,15 @@ public:
 
 protected:
     void init();
+
+private:
+    void attemptRegister();
 };
 
 class JobView : public Plasma::DataContainer
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.kde.JobView")
+    Q_CLASSINFO("D-Bus Interface", "org.kde.JobViewV2")
 
 public:
     enum State {
@@ -89,6 +92,9 @@ public:
     void setCapabilities(int capabilities);
     void setPercent(uint percent);
     void setSuspended(bool suspended);
+
+    //vestigal, required to implement this dbus interface
+    void setDestUrl(const QDBusVariant &destUrl);
 
     void terminate(const QString &errorMessage);
 
