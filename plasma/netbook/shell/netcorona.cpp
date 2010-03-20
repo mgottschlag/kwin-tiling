@@ -195,6 +195,10 @@ QRegion NetCorona::availableScreenRegion(int id) const
     if (view) {
         r = r.subtracted(view->geometry());
     }
+    QWidget *explorer = PlasmaApp::self()->widgetExplorer();
+    if (explorer) {
+        r = r.subtracted(explorer->geometry());
+    }
 
     return r;
 }

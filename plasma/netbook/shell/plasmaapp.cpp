@@ -352,23 +352,6 @@ void PlasmaApp::positionPanel()
     m_controlBar->containment()->setMaximumSize(m_controlBar->size());
     m_controlBar->containment()->setMinimumSize(m_controlBar->size());
 
-
-    foreach (Plasma::Containment *containment, m_corona->containments()) {
-        if (containment->location() == Plasma::Desktop ||
-            containment->location() == Plasma::Floating) {
-
-            qreal left, top, right, bottom;
-            containment->getContentsMargins(&left, &top, &right, &bottom);
-
-            //FIXME: horrid heuristic: the widgetexplorer has to move in the toolbox itself
-            if (m_widgetExplorerView) {
-                top += m_widgetExplorerView->size().height();
-            }
-
-            containment->setContentsMargins(left, top, right, bottom);
-        }
-    }
-
     if (m_autoHideControlBar && m_controlBar->isVisible()) {
         destroyUnHideTrigger();
         createUnhideTrigger();
@@ -493,6 +476,11 @@ NetView *PlasmaApp::controlBar() const
 NetView *PlasmaApp::mainView() const
 {
     return m_mainView;
+}
+
+QWidget *PlasmaApp::widgetExplorer() const
+{
+    return m_widgetExplorerView;
 }
 
 Plasma::Corona* PlasmaApp::corona()
@@ -771,6 +759,7 @@ void PlasmaApp::showWidgetExplorer(Plasma::Containment *containment)
             m_widgetExplorerView->resize(m_mainView->size().width(), KIconLoader::SizeEnormous);
             m_widgetExplorerView->move(0,0);
         }
+
     }
 
     if (!m_widgetExplorer) {

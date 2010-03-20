@@ -79,6 +79,8 @@ public:
 
     NetView *mainView() const;
 
+    QWidget *widgetExplorer() const;
+
     /**
      * Returns true if this widget is currently a desktop window.
      * See setIsDesktop()
