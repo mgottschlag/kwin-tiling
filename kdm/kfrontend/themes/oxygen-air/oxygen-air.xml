@@ -2,10 +2,9 @@
 <!DOCTYPE greeter SYSTEM "greeter.dtd">
 
 <greeter id="theme">
-	<style font="Sans 12" window-text-color="#bfd9ff"
-	       base-color="#bfd9ff" alternate-base-color="#666666"
-	       text-color="#0b678c" disabled-text-color="#111111"/>
-	       
+	<style font="Sans 12" guistyle="Oxygen"
+	       base-color="#bfd9ff" text-color="#0b678c"/>
+
 	<item type="pixmap" id="background" background="true">
 		<normal file="1920x1200.png" scalemode="crop"/>
 		<pos width="100%" height="100%"/>
@@ -30,28 +29,33 @@
 			<item type="rect" id="user-field">
 				<pos anchor="c" x="50%" y="43%" width="400" height="144"/>
 				<box orientation="vertical" spacing="0" homogeneous="true">
-				
-					<item type="pixmap" butoon="true">
-						<normal file="user-entry.png"/>
-						<prelight file="user-entry-li.png"/>
-						<active file="user-entry-li.png"/>
-						<pos anchor="c" x="50%" y="100%"/>
-					</item>
-					
-					<item type="entry" id="user-entry">
-						<pos anchor="c" x="52%" y="0%" width="110" height="22"/>
+
+					<item type="rect">
+						<pos anchor="c" x="50%" y="60%" height="box" width="box"/>
+						<box orientation="horizontal" spacing="10">
+							<item type="pixmap">
+								<normal file="user-entry.png"/>
+							</item>
+							<item type="entry" id="user-entry">
+								<pos width="157" height="30"/>
+								<style frame="true"/>
+							</item>
+						</box>
 					</item>
 
-					<item type="pixmap">
-						<normal file="pw-entry.png"/>
-						<prelight file="pw-entry-li.png"/>
-						<pos anchor="c" x="50%" y="100%"/>
+					<item type="rect">
+						<pos anchor="c" x="50%" y="40%" height="box" width="box"/>
+						<box orientation="horizontal" spacing="10">
+							<item type="pixmap">
+								<normal file="pw-entry.png"/>
+							</item>
+							<item type="entry" id="pw-entry">
+								<pos width="157" height="30"/>
+								<style frame="true"/>
+							</item>
+						</box>
 					</item>
-									
-					<item type="entry" id="pw-entry">
-						<pos anchor="c" x="52%" y="0%" width="110" height="22"/>
-					</item>
-					
+
 				</box>
 			</item>
 			
@@ -67,7 +71,7 @@
 
 					<item type="pixmap" id="session_button" button="true">
 						<normal file="session_button.png"/>
-						 <prelight file="session_button-li.png"/>
+						<prelight file="session_button-li.png"/>
 						<active file="session_button-li.png"/>
 						<pos anchor="w" x="15" y="50%"/>
 					</item>
