@@ -73,7 +73,6 @@ protected:
 	void switchStyle(const QString& styleName, bool force = false);
 	void setStyleRecursive(QWidget* w, QStyle* s);
 
-	void loadDesktopTheme();
 	void loadStyle( KConfig& config );
 	void loadEffects( KConfig& config );
 	void addWhatsThis();
@@ -81,6 +80,8 @@ protected:
 	virtual void changeEvent( QEvent *event );
 
 protected Q_SLOTS:
+	void loadDesktopTheme();
+
 	void styleSpecificConfig();
 	void updateConfigButton();
 
@@ -91,6 +92,8 @@ protected Q_SLOTS:
 	void styleChanged();
 	
 	void getNewThemes();
+
+	void tabChanged(int);
 
 private:
 	QString currentStyle();
@@ -121,6 +124,7 @@ private:
 	QStyle* appliedStyle;
 	QPalette palette;
 	bool m_isNetbook;
+	bool m_workspaceThemeTabActivated;
 
 	// Page2 widgets
 	Ui::FineTuning fineTuningUi;

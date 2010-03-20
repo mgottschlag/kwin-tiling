@@ -149,7 +149,6 @@ private:
 ThemeModel::ThemeModel( QObject *parent )
     : QAbstractListModel( parent )
 {
-    reload();
 }
 
 ThemeModel::~ThemeModel()
@@ -388,6 +387,8 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 
 	connect(themeUi.m_theme, SIGNAL(clicked(const QModelIndex &)), this, SLOT(setDesktopThemeDirty()));
 	connect(themeUi.m_newThemeButton, SIGNAL(clicked()), this, SLOT(getNewThemes()));
+
+	m_workspaceThemeTabActivated = false;
   
 	// Add Page1 (Applications Style)
 	// -----------------
@@ -463,6 +464,8 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	tabWidget->addTab(page1, i18nc("@title:tab", "&Applications"));
 	tabWidget->addTab(page0, i18nc("@title:tab", "&Workspace"));
 	tabWidget->addTab(page2, i18nc("@title:tab", "&Fine Tuning"));
+
+	connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 }
 
 
@@ -557,7 +560,9 @@ void KCMStyle::load()
 {
 	KConfig config( "kdeglobals", KConfig::FullConfig );
 
-	loadDesktopTheme();
+	if (m_workspaceThemeTabActivated) {
+		loadDesktopTheme();
+	}
 	loadStyle( config );
 	loadEffects( config );
 
@@ -716,6 +721,14 @@ void KCMStyle::setStyleDirty()
 	emit changed(true);
 }
 
+void KCMStyle::tabChanged(int index)
+{
+	if (index == 1 && !m_workspaceThemeTabActivated) { //Workspace theme tab (never loaded before)
+		m_workspaceThemeTabActivated = true;
+		QTimer::singleShot(100, this, SLOT(loadDesktopTheme()));
+	}
+}
+
 // ----------------------------------------------------------------
 // All the Desktop Theme stuff
 // ----------------------------------------------------------------
@@ -727,21 +740,13 @@ void KCMStyle::getNewThemes()
     KNS3::Entry::List entries = dialog.changedEntries();
 
     if (entries.size() > 0) {
-        m_themeModel->reload();
-
-        QString themeName;
-        if (m_isNetbook) {
-            KConfigGroup cg(KSharedConfig::openConfig("plasmarc"), "Theme-plasma-netbook");
-            themeName = cg.readEntry("name", "air-netbook");
-        } else {
-            themeName = Plasma::Theme::defaultTheme()->themeName();
-        }
-        themeUi.m_theme->setCurrentIndex(m_themeModel->indexOf(themeName));
+        loadDesktopTheme();
     }
 }
 
 void KCMStyle::loadDesktopTheme()
 {
+	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 	m_themeModel->reload();
 	QString themeName;
 	if (m_isNetbook) {
@@ -751,6 +756,7 @@ void KCMStyle::loadDesktopTheme()
 		themeName = Plasma::Theme::defaultTheme()->themeName();
 	}
 	themeUi.m_theme->setCurrentIndex(m_themeModel->indexOf(themeName));
+	QApplication::restoreOverrideCursor();
 }
 
 // ----------------------------------------------------------------
