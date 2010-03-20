@@ -194,6 +194,9 @@ parseColor( const QString &s, const QString &a, QColor &color )
 				color.setRgb( hexColor );
 		} else
 			return false;
+	} else if (!s.isNull() && s.isEmpty()) {
+		color = QColor();
+		ok = true;
 	}
 	if (!a.isEmpty()) {
 		float fltAlpha = a.toFloat( &ok );
