@@ -249,8 +249,12 @@ KdmItem::setWidgetAttribs( QWidget *widget )
 void
 KdmItem::updatePalette( QWidget *w )
 {
-	bool set = w->palette().isBrushSet( w->palette().currentColorGroup(),
-	                                    w->backgroundRole() );
+	// line edits set Base as the background role. however, they actively paint
+	// the background of the "text area" themselves anyway, and setting this
+	// property would also fill the surrounding window aera, which is ugly.
+	bool set = !qobject_cast<QLineEdit *>(w) &&
+		w->palette().isBrushSet( w->palette().currentColorGroup(),
+		                         w->backgroundRole() );
 	w->setAutoFillBackground( set );
 }
 
