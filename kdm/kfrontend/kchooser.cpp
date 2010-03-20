@@ -67,8 +67,8 @@ ChooserDlg::ChooserDlg()
 	host_view->setHeaderLabels( QStringList()
 		<< i18nc("@title:column", "Hostname")
 		<< i18nc("@title:column ... of named host", "Status") );
-	host_view->setColumnWidth( 0, fontMetrics().width( "login.crap.net" ) );
-	host_view->setMinimumWidth( fontMetrics().width( "login.crap.com Display not authorized to connect this server" ) );
+	host_view->setColumnWidth( 0, fontMetrics().width( "login.domain.com" ) );
+	host_view->setMinimumWidth( fontMetrics().width( "login.domain.com Display not authorized to connect this server" ) );
 	host_view->setAllColumnsShowFocus( true );
 	vbox->addWidget( host_view );
 

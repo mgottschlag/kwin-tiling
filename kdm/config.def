@@ -2560,7 +2560,7 @@ If: defined(XDMCP)
 Type: list
 Default: "*"
 User: core
-Instance: #:*/"*,ugly,sky,dino,kiste.local,login.crap.com"
+Instance: #:*/"*,host1,host2,host3.local,login.domain.com"
 Comment:
  A list of hosts to be automatically added to the remote login menu. The
  special name "*" means broadcast.
