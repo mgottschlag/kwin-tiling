@@ -932,15 +932,27 @@ Screenshot=screenshot.png
             </para>
 
             <para>
+              <literal>wallpaper</literal> can be used instead of
+              <literal>file</literal> to have &kdm; look for images in the
+              usual locations for &kde; wallpapers. Plasma wallpaper packages
+              are supported.
+            </para>
+
+            <para>
               <literal>element</literal> specifies the element id of a SVG file.
               If empty, the whole SVG image will be rendered.
             </para>
 
             <para>
-              For <literal>pixmap</literal> nodes, &kdm; first tries to open
-              a file that matches <replaceable>basename</replaceable><literal>-</literal><replaceable>width</replaceable><literal>x</literal><replaceable>height</replaceable><literal>.</literal><replaceable>extension</replaceable>
-              based on the specified file name, so the best-quality image
-              for a given resolution can be used.
+              For <literal>pixmap</literal> nodes, it is possible to provide
+              multiple images, so the best-quality image for a given resolution
+              can be used. Size-tagged file names have the format
+              <replaceable>basename</replaceable><literal>-</literal><replaceable>width</replaceable><literal>x</literal><replaceable>height</replaceable><literal>.</literal><replaceable>extension</replaceable>.
+              If the not size-tagged file exists and it is no Plasma
+              wallpaper package, &kdm; will accept only a perfect match
+              for a given size and otherwise fall back to the original file.
+              Otherwise it will try to find an image whose dimensions come
+              closest to the required size if no perfect match is found.
             </para>
 
             <!--

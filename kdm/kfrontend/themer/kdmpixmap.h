@@ -55,7 +55,8 @@ protected:
 	struct PixmapStruct {
 		struct PixmapClass {
 			PixmapClass()
-				: svgRenderer(0), present(false), svgImage(false), aspectMode(Qt::IgnoreAspectRatio) {}
+				: svgRenderer(0), present(false), svgImage(false), package(false),
+				  aspectMode(Qt::IgnoreAspectRatio) {}
 			QString fullpath;
 			QImage image;
 			KSvgRenderer *svgRenderer;
@@ -64,6 +65,7 @@ protected:
 			QColor tint;
 			bool present;
 			bool svgImage;
+			bool package;
 			QString svgElement;
 			QSize svgSizeHint;
 			Qt::AspectRatioMode aspectMode;
@@ -75,6 +77,8 @@ protected:
 private:
 	// Method to load the image given by the theme
 	void definePixmap( const QDomElement &el, PixmapStruct::PixmapClass &pc );
+	QString findBestPixmap( const QString &dir, const QString &pat,
+	                        const QRect &area, Qt::AspectRatioMode aspectMode );
 	bool loadPixmap( PixmapStruct::PixmapClass &pc );
 	bool loadSvg( PixmapStruct::PixmapClass &pc );
 	bool calcTargetArea( PixmapStruct::PixmapClass &pClass, const QSize &sh );

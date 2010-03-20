@@ -22,10 +22,14 @@
 #include "kdmpixmap.h"
 #include "kdmthemer.h"
 
+#include <kstandarddirs.h>
 #include <ksvgrenderer.h>
 
+#include <QDirIterator>
 #include <QPainter>
 #include <QSignalMapper>
+
+#include <math.h>
 
 KdmPixmap::KdmPixmap( QObject *parent, const QDomNode &node )
 	: KdmItem( parent, node )
@@ -65,8 +69,26 @@ void
 KdmPixmap::definePixmap( const QDomElement &el, PixmapStruct::PixmapClass &pClass )
 {
 	QString fileName = el.attribute( "file" );
-	if (fileName.isEmpty())
-		return;
+	if (!fileName.isEmpty()) {
+		if (fileName.at( 0 ) != '/')
+			fileName.prepend( themer()->baseDir() + '/' );
+		pClass.fullpath = fileName;
+	} else {
+		fileName = el.attribute( "wallpaper" );
+		if (fileName.isEmpty())
+			return;
+		QString xf = KStandardDirs::locate( "wallpaper", fileName + "/contents/images/" );
+		if (!xf.isEmpty()) {
+			pClass.package = true;
+		} else {
+			xf = KStandardDirs::locate( "wallpaper", fileName );
+			if (xf.isEmpty()) {
+				kWarning() << "Cannot find wallpaper" << fileName;
+				return;
+			}
+		}
+		pClass.fullpath = xf;
+	}
 
 	QString aspect = el.attribute( "scalemode", "free" );
 	pClass.aspectMode =
@@ -74,13 +96,59 @@ KdmPixmap::definePixmap( const QDomElement &el, PixmapStruct::PixmapClass &pClas
 			(aspect == "crop") ? Qt::KeepAspectRatioByExpanding :
 			Qt::IgnoreAspectRatio;
 
-	pClass.fullpath = fileName;
-	if (fileName.at( 0 ) != '/')
-		pClass.fullpath = themer()->baseDir() + '/' + fileName;
-
 	pClass.svgImage = fileName.endsWith( ".svg" ) || fileName.endsWith( ".svgz" );
 	if (pClass.svgImage)
 		pClass.svgElement = el.attribute( "element" );
+}
+
+QString
+KdmPixmap::findBestPixmap( const QString &dir, const QString &pat,
+                           const QRect &area, Qt::AspectRatioMode aspectMode )
+{
+	int tw = area.width(), th = area.height();
+	float tar = 1.0 * tw / th;
+	float tpn = tw * th;
+	QString best;
+	float bestPenalty = 0;
+	QRegExp rx( QRegExp::escape( dir ) + pat );
+	QDirIterator dit( dir );
+	while (dit.hasNext()) {
+		QString fn = dit.next();
+		if (rx.exactMatch( fn )) {
+			int w = rx.cap( 1 ).toInt(), h = rx.cap( 2 ).toInt();
+			// This algorithm considers need for zooming and distortion of
+			// aspect ratio / discarded pixels / pixels left free. The weighting
+			// gives good results in the tested cases, but is pretty arbitrary
+			// by all practical means.
+			float ar = 1.0 * w / h;
+			float pn = w * h;
+			float rawAspect = ((tar > ar) ? tar / ar : ar / tar);
+			float penalty = rawAspect - 1;
+			if (aspectMode != Qt::IgnoreAspectRatio) {
+				bool exp = (aspectMode == Qt::KeepAspectRatioByExpanding);
+				// Give an advantage to non-zooming cases.
+				if ((w == tw && (h > th) == exp) || (h == th && (w > tw) == exp))
+					goto skipSize;
+				else
+					penalty *= 5;
+				// Dropped pixels don't contribute to the input area.
+				if (exp)
+					pn /= rawAspect;
+			} else {
+				// This mode does not preserve aspect ratio, so give an
+				// advantage to pics with a better ratio to start with.
+				penalty *= 10;
+			}
+			// Too small is worse than too big - within limits.
+			penalty += sqrt( (tpn > pn) ? (tpn / pn - 1) * 2 : pn / tpn - 1 );
+		    skipSize:
+			if (best.isEmpty() || penalty < bestPenalty) {
+				best = fn;
+				bestPenalty = penalty;
+			}
+		}
+	}
+	return best;
 }
 
 bool
@@ -90,20 +158,43 @@ KdmPixmap::loadPixmap( PixmapStruct::PixmapClass &pClass )
 		return true;
 	if (pClass.fullpath.isEmpty())
 		return false;
-	if (area.isValid()) {
-		int dot = pClass.fullpath.lastIndexOf( '.' );
-		if (pClass.image.load( pClass.fullpath.left( dot )
-				.append( QString( "-%1x%2" )
-					.arg( area.width() ).arg( area.height() ) )
-				.append( pClass.fullpath.mid( dot ) ) ))
-			goto gotit;
+	QString fn;
+	if (pClass.package) {
+		// Always find best fit from package.
+		fn = findBestPixmap( pClass.fullpath, "(\\d+)x(\\d+)\\.[^.]+",
+		                     area.isValid() ? area : QRect( 0, 0, 1600, 1200 ),
+		                     pClass.aspectMode );
+	} else {
+		if (area.isValid()) {
+			if (QFile::exists( pClass.fullpath )) {
+				// If base file exists, use only a perfect match.
+				int dot = pClass.fullpath.lastIndexOf( '.' );
+				fn = pClass.fullpath.left( dot );
+				fn += QString( "-%1x%2" ).arg( area.width() ).arg( area.height() );
+				fn += pClass.fullpath.mid( dot );
+				if (!QFile::exists( fn ))
+					fn = pClass.fullpath;
+			} else {
+				// Otherwise find best match.
+				int sep = pClass.fullpath.lastIndexOf( '/' );
+				int dot = pClass.fullpath.lastIndexOf( '.' );
+				if (dot < sep)
+					dot = pClass.fullpath.length();
+				QString f = QRegExp::escape( pClass.fullpath.mid( sep + 1, dot - sep - 1 ) );
+				f += "-(\\d+)x(\\d+)";
+				f += QRegExp::escape( pClass.fullpath.mid( dot ) );
+				fn = findBestPixmap( pClass.fullpath.left( sep + 1 ), f, area,
+				                     pClass.aspectMode );
+			}
+		} else {
+			fn = pClass.fullpath;
+		}
 	}
-	if (!pClass.image.load( pClass.fullpath )) {
-		kWarning() << "failed to load " << pClass.fullpath ;
+	if (!pClass.image.load( fn )) {
+		kWarning() << "failed to load" << fn;
 		pClass.fullpath.clear();
 		return false;
 	}
-  gotit:
 	if (pClass.image.format() != QImage::Format_ARGB32)
 		pClass.image = pClass.image.convertToFormat( QImage::Format_ARGB32 );
 	applyTint( pClass, pClass.image );
