@@ -126,6 +126,9 @@ private Q_SLOTS:
     void wallpaperCheckedIn();
     void wallpaperCheckInTimeout();
 
+Q_SIGNALS:
+    void controlBarChanged();
+
 private:
     NetCorona *m_corona;
     Plasma::Dialog *m_widgetExplorerView;

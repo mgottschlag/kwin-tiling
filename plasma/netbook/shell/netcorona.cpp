@@ -51,7 +51,7 @@ void NetCorona::init()
 {
     QDesktopWidget *desktop = QApplication::desktop();
     QObject::connect(desktop, SIGNAL(resized(int)), this, SLOT(screenResized(int)));
-    connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SIGNAL(availableScreenRegionChanged()));
+    connect(PlasmaApp::self(), SIGNAL(controlBarChanged()), this, SIGNAL(availableScreenRegionChanged()));
 
     Plasma::ContainmentActionsPluginsConfig desktopPlugins;
     desktopPlugins.addPlugin(Qt::NoModifier, Qt::MidButton, "paste");
@@ -190,7 +190,13 @@ QRect NetCorona::screenGeometry(int id) const
 
 QRegion NetCorona::availableScreenRegion(int id) const
 {
-    return KWindowSystem::workArea();
+    QRegion r(screenGeometry(id));
+    NetView *view = PlasmaApp::self()->controlBar();
+    if (view) {
+        r = r.subtracted(view->geometry());
+    }
+
+    return r;
 }
 
 void NetCorona::processUpdateScripts()

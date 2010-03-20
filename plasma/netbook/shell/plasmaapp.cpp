@@ -373,6 +373,8 @@ void PlasmaApp::positionPanel()
         destroyUnHideTrigger();
         createUnhideTrigger();
     }
+
+    emit controlBarChanged();
 }
 
 void PlasmaApp::mainContainmentActivated()
@@ -620,6 +622,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         m_autoHideControlBar = m_controlBar->config().readEntry("panelAutoHide", true);
 
         setAutoHideControlBar(m_autoHideControlBar);
+        emit controlBarChanged();
     } else {
         containment->setScreen(-1);
     }
