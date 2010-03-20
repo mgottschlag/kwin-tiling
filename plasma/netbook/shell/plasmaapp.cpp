@@ -252,6 +252,9 @@ PlasmaApp::PlasmaApp()
     connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SLOT(positionPanel()));
     m_mainView->installEventFilter(this);
 
+    bool useGL = args->isSet("opengl");
+    m_mainView->setUseGL(useGL);
+
     connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(controlBarVisibilityUpdate()));
 
     m_raiseTimer = new QTimer(this);

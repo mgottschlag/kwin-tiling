@@ -53,6 +53,9 @@ public:
     static int mainViewId() { return 1; }
     static int controlBarId() { return 2; }
 
+    void setUseGL(const bool on);
+    bool useGL() const;
+
 
 public Q_SLOTS:
     void setContainment(Plasma::Containment *containment);
@@ -78,6 +81,7 @@ protected:
 private:
     NetPanelController *m_panelController;
     bool m_configurationMode;
+    bool m_useGL;
 };
 
 #endif // multiple inclusion guard

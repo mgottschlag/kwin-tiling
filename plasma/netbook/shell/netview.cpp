@@ -23,6 +23,10 @@
 #include <QAction>
 #include <QCoreApplication>
 
+#ifndef QT_NO_OPENGL
+#include <QtOpenGL/QtOpenGL>
+#endif
+
 #include <KWindowSystem>
 
 #include <Plasma/Applet>
@@ -33,27 +37,40 @@
 NetView::NetView(Plasma::Containment *containment, int uid, QWidget *parent)
     : Plasma::View(containment, uid, parent),
       m_panelController(0),
-      m_configurationMode(false)
+      m_configurationMode(false),
+      m_useGL(false)
 {
     setFocusPolicy(Qt::NoFocus);
     connectContainment(containment);
 
-    const int w = 25;
-    QPixmap tile(w * 2, w * 2);
-    tile.fill(palette().base().color());
-    QPainter pt(&tile);
-    QColor color = palette().mid().color();
-    color.setAlphaF(.6);
-    pt.fillRect(0, 0, w, w, color);
-    pt.fillRect(w, w, w, w, color);
-    pt.end();
-    QBrush b(tile);
-    setBackgroundBrush(tile);
     connect(this, SIGNAL(lostContainment()), SLOT(grabContainment()));
+    //setOptimizationFlags(QGraphicsView::DontSavePainterState);
+    setAttribute(Qt::WA_TranslucentBackground, false);
 }
 
 NetView::~NetView()
 {
+}
+
+void NetView::setUseGL(const bool on)
+{
+#ifndef QT_NO_OPENGL
+    if (on) {
+      QGLWidget *glWidget = new QGLWidget;
+      glWidget->setAutoFillBackground(false);
+      setViewport(glWidget);
+    } else {
+      QWidget *widget = new QWidget;
+      widget->setAutoFillBackground(false);
+      setViewport(widget);
+    }
+#endif
+    m_useGL = on;
+}
+
+bool NetView::useGL() const
+{
+    return m_useGL;
 }
 
 void NetView::connectContainment(Plasma::Containment *containment)
@@ -129,42 +146,7 @@ void NetView::immutabilityChanged(Plasma::ImmutabilityType immutability)
 // CompositionMode_Source.
 void NetView::drawBackground(QPainter *painter, const QRectF &rect)
 {
-    const QPainter::CompositionMode savedMode = painter->compositionMode();
-    const QBrush brush = backgroundBrush();
-
-    if (containment() && (containment()->containmentType() == Plasma::Containment::PanelContainment ||
-        containment()->containmentType() == Plasma::Containment::CustomPanelContainment)) {
-        painter->setCompositionMode(QPainter::CompositionMode_Source);
-        painter->fillRect(rect.toAlignedRect(), Qt::transparent);
-        painter->setCompositionMode(savedMode);
-        return;
-    }
-
-    switch (brush.style())
-    {
-    case Qt::TexturePattern:
-    {
-        // Note: this assumes that the brush origin is (0, 0), and that
-        //       the brush has an identity transformation matrix.
-        const QPixmap texture = brush.texture();
-        QRect r = rect.toAlignedRect();
-        r.setLeft(r.left() - (r.left() % texture.width()));
-        r.setTop(r.top() - (r.top() % texture.height()));
-        painter->setCompositionMode(QPainter::CompositionMode_Source);
-        painter->drawTiledPixmap(r, texture);
-        painter->setCompositionMode(savedMode);
-        return;
-    }
-
-    case Qt::SolidPattern:
-        painter->setCompositionMode(QPainter::CompositionMode_Source);
-        painter->fillRect(rect.toAlignedRect(), brush.color());
-        painter->setCompositionMode(savedMode);
-        return;
-
-    default:
-        QGraphicsView::drawBackground(painter, rect);
-    }
+    painter->fillRect(rect.toAlignedRect(), Qt::black);
 }
 
 

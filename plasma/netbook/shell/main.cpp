@@ -57,6 +57,7 @@ KDE_EXPORT int kdemain(int argc, char **argv)
 
     KCmdLineOptions options;
     options.add("nodesktop", ki18n("Starts as a normal application instead of as the primary user interface"));
+    options.add("opengl", ki18n("Use Opengl to draw the main screen"));
     options.add("screen <geometry>", ki18n("The geometry of the screen"), "800x480");
     KCmdLineArgs::addCmdLineOptions(options);
 
