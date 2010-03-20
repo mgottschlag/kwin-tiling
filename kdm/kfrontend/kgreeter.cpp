@@ -51,6 +51,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QMovie>
 #include <QPainter>
 #include <QPushButton>
+#include <QShortcut>
 #include <QStyle>
 
 #include <sys/types.h>
@@ -895,6 +896,10 @@ KThemedGreeter::KThemedGreeter( KdmThemer *_themer )
 
 	themer->setWidget( this );
 
+	if (_allowThemeDebug)
+		new QShortcut( QKeySequence( QLatin1String("Ctrl+Alt+D") ),
+		               this, SLOT(slotDebugToggled()) );
+
 	connect( themer, SIGNAL(activated( const QString & )),
 	         SLOT(slotThemeActivated( const QString & )) );
 
@@ -991,6 +996,13 @@ KThemedGreeter::KThemedGreeter( KdmThemer *_themer )
 KThemedGreeter::~KThemedGreeter()
 {
 	themer->setWidget( 0 );
+}
+
+void
+KThemedGreeter::slotDebugToggled()
+{
+	if ((debugLevel ^= DEBUG_THEMING))
+		themer->slotNeedPlacement();
 }
 
 bool

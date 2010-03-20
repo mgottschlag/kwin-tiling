@@ -2706,3 +2706,12 @@ Comment: &
 Description:
  The theme to use for the greeter. Can point to either a directory or an XML
  file.
+
+Key: AllowThemeDebug
+Type: bool
+Default: false
+User: greeter
+Instance: #*/true
+Comment: &
+Description:
+ Enable the Alt-Ctrl-D shortcut to toggle greeter theme debugging.

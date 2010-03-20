@@ -136,6 +136,7 @@ class KThemedGreeter : public KGreeter {
 	void slotThemeActivated( const QString &id );
 	void slotSessMenu();
 	void slotActionMenu();
+	void slotDebugToggled();
 
   protected:
 	virtual void updateStatus( bool fail, bool caps, int timedleft );

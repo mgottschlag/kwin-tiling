@@ -72,6 +72,9 @@ public:
 
 	void paintBackground( QPaintDevice *dev, const QRect &rect, bool primaryScreen );
 
+public Q_SLOTS:
+	void slotNeedPlacement();
+
 Q_SIGNALS:
 	void activated( const QString &id );
 
@@ -104,7 +107,6 @@ private:
 
 private Q_SLOTS:
 	void update( int x, int y, int w, int h );
-	void slotNeedPlacement();
 	void slotNeedPlugging();
 
 };
