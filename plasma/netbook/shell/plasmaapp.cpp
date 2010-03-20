@@ -601,16 +601,6 @@ void PlasmaApp::createView(Plasma::Containment *containment)
             connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
                     this, SLOT(adjustSize(Kephal::Screen *)));
 
-            m_controlBar->show();
-            KWindowSystem::setOnAllDesktops(m_controlBar->effectiveWinId(), true);
-            m_controlBar->setWindowFlags(m_mainView->windowFlags() | Qt::FramelessWindowHint);
-            m_controlBar->setFrameShape(QFrame::NoFrame);
-            unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
-            KWindowSystem::setState(m_controlBar->effectiveWinId(), state);
-            KWindowSystem::setType(m_controlBar->effectiveWinId(), NET::Dock);
-
-            m_controlBar->show();
-
             m_controlBar->setAutoFillBackground(false);
             m_controlBar->viewport()->setAutoFillBackground(false);
             m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
@@ -622,6 +612,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         }
 
         m_controlBar->setContainment(containment);
+        setControlBarVisible(true);
         containment->setMaximumSize(m_controlBar->size());
         containment->setMinimumSize(m_controlBar->size());
         containment->setImmutability(Plasma::UserImmutable);
@@ -713,7 +704,7 @@ void PlasmaApp::setAutoHideControlBar(bool autoHide)
         destroyUnHideTrigger();
         delete m_unHideTimer;
         m_unHideTimer = 0;
-        m_controlBar->show();
+        setControlBarVisible(true);
     }
 
     m_autoHideControlBar = autoHide;
@@ -845,7 +836,7 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
         destroyUnHideTrigger();
         if (m_controlBar) {
             Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
-            m_controlBar->show();
+            setControlBarVisible(true);
             m_raiseTimer->start(100);
             reserveStruts();
         }
@@ -927,7 +918,10 @@ void PlasmaApp::raiseMainView()
 
 void PlasmaApp::controlBarVisibilityUpdate()
 {
-    if (hasForegroundWindows() && m_controlBar->isVisible()) {
+    if (!m_autoHideControlBar) {
+        setControlBarVisible(true);
+        return;
+    } else if (m_autoHideControlBar && hasForegroundWindows() && m_controlBar->isVisible()) {
         return;
     }
 
@@ -938,7 +932,7 @@ void PlasmaApp::controlBarVisibilityUpdate()
         if (!m_controlBar->isVisible()) {
             destroyUnHideTrigger();
             Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
-            m_controlBar->show();
+            setControlBarVisible(true);
         }
     } else if (!m_controlBar->geometry().contains(cursorPos)) {
         Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
@@ -959,11 +953,21 @@ void PlasmaApp::hideControlBar()
 
 void PlasmaApp::setControlBarVisible(bool visible)
 {
-   if (visible) {
+    if (!m_controlBar || m_controlBar->isVisible() == visible) {
+        return;
+    }
+
+    if (visible) {
         destroyUnHideTrigger();
         Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
         m_controlBar->show();
-    } else {
+        KWindowSystem::setOnAllDesktops(m_controlBar->effectiveWinId(), m_isDesktop);
+        m_controlBar->setWindowFlags(m_mainView->windowFlags() | Qt::FramelessWindowHint);
+        m_controlBar->setFrameShape(QFrame::NoFrame);
+        unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
+        KWindowSystem::setState(m_controlBar->effectiveWinId(), state);
+        KWindowSystem::setType(m_controlBar->effectiveWinId(), NET::Dock);
+    } else if (!m_autoHideControlBar) {
         Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
         m_controlBar->hide();
         createUnhideTrigger();
