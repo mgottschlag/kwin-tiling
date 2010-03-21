@@ -197,7 +197,7 @@ void SolidRunner::run(const Plasma::RunnerContext& context, const Plasma::QueryM
 
     DeviceWrapper *device = m_deviceList.value(match.data().toString());
     if (device) {
-        device->runDefaultAction();
+        device->runAction(match.selectedAction());
     }
 }
 
@@ -205,7 +205,6 @@ void SolidRunner::registerAction(QString &id, QString icon, QString text, QStrin
 {
     QAction* action = addAction(id, KIcon(icon), text);
     action->setData(desktop);
-    connect (action, SIGNAL(triggered()), sender(), SLOT(actionTriggered()));
 }
 
 void SolidRunner::refreshMatch(QString &id)

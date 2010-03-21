@@ -45,15 +45,12 @@ class DeviceWrapper : public QObject
     bool isAccessible() const;
     QString description() const;
     QString defaultAction() const;
-    void runDefaultAction() ;
+    void runAction(QAction *) ;
     QStringList actionIds() const;
     
     signals:
     void registerAction(QString &id, QString icon, QString text, QString desktop);
     void refreshMatch(QString &id);
-
-    public slots:
-    void actionTriggered();
 
     protected slots:
 

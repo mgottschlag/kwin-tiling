@@ -141,41 +141,37 @@ QString DeviceWrapper::defaultAction() const {
     return actionString;
 }
 
-void DeviceWrapper::runDefaultAction()
+void DeviceWrapper::runAction(QAction * action)
 {
-
-    if (m_device.is<Solid::StorageVolume>()) {
-        Solid::StorageAccess *access = m_device.as<Solid::StorageAccess>();
-        if (access) {
-            if (access->isAccessible()) {
-                connect(access, SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant)));
-                access->teardown();
-            } else {
-                connect(access, SIGNAL(setupDone(Solid::ErrorType, QVariant, const QString &)),this, SLOT(storageSetupDone(Solid::ErrorType, QVariant)));
-                access->setup();
+    if (action) {
+        QString desktopAction = action->data().toString();
+        if (!desktopAction.isEmpty()) {
+            QStringList desktopFiles;
+            desktopFiles.append(desktopAction);
+            QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
+            QDBusReply<void> reply = soliduiserver.call("showActionsDialog", id(), desktopFiles);
+        }
+    } else {
+        if (m_device.is<Solid::StorageVolume>()) {
+            Solid::StorageAccess *access = m_device.as<Solid::StorageAccess>();
+            if (access) {
+                if (access->isAccessible()) {
+                    connect(access, SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant)));
+                    access->teardown();
+                } else {
+                    connect(access, SIGNAL(setupDone(Solid::ErrorType, QVariant, const QString &)),this, SLOT(storageSetupDone(Solid::ErrorType, QVariant)));
+                    access->setup();
+                }
+                return;
             }
-            return;
         }
-    }
-
-    if (m_device.is<Solid::OpticalDisc>()) {
-        Solid::OpticalDrive *drive = m_device.parent().as<Solid::OpticalDrive>();
-        if (drive) {
-            connect(drive, SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)), this, SLOT(storageEjectDone(Solid::ErrorType, QVariant)));
-            drive->eject();
+        if (m_device.is<Solid::OpticalDisc>()) {
+            Solid::OpticalDrive *drive = m_device.parent().as<Solid::OpticalDrive>();
+            if (drive) {
+                connect(drive, SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)), this, SLOT(storageEjectDone(Solid::ErrorType, QVariant)));
+                drive->eject();
+            }
         }
-    }
-}
-
-void DeviceWrapper::actionTriggered()
-{
-    QAction *action = qobject_cast<QAction*>(sender());
-    QString desktopAction = action->data().toString();
-    if (!desktopAction.isEmpty()) {
-        QStringList desktopFiles;
-        desktopFiles.append(desktopAction);
-        QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
-        QDBusReply<void> reply = soliduiserver.call("showActionsDialog", id(), desktopFiles);
     }
 }
 
