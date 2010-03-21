@@ -33,6 +33,8 @@
 #include "../protocols/plasmoid/plasmoidtaskprotocol.h"
 #include "../protocols/dbussystemtray/dbussystemtrayprotocol.h"
 
+#include <QTimer>
+
 namespace SystemTray
 {
 

@@ -1,6 +1,7 @@
 /***************************************************************************
  *                                                                         *
  *   Copyright (C) 2009 Marco Martin <notmart@gmail.com>                   *
+ *   Copyright (C) 2009 Matthieu Gallien <matthieu_gallien@yahoo.fr>       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,70 +19,50 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef DBUSSYSTEMTRAYTASK_H
-#define DBUSSYSTEMTRAYTASK_H
+#ifndef STATUSNOTIFIERITEMSOURCE_H
+#define STATUSNOTIFIERITEMSOURCE_H
 
-#include "../../core/task.h"
+#include <Plasma/DataContainer>
+#include <QString>
+#include <QDBusPendingCallWatcher>
 
-#include <Plasma/DataEngine>
+#include "statusnotifieritem_interface.h"
 
-namespace Plasma
+class KIconLoader;
+
+class StatusNotifierItemSource : public Plasma::DataContainer
 {
 
-class Service;
-
-}
-
-namespace SystemTray
-{
-
-class DBusSystemTrayTaskPrivate;
-
-class DBusSystemTrayTask : public Task
-{
     Q_OBJECT
 
-    friend class DBusSystemTrayProtocol;
-
 public:
-    DBusSystemTrayTask(const QString &serviceName, Plasma::Service *service, QObject *parent);
-    ~DBusSystemTrayTask();
+    StatusNotifierItemSource(const QString &service, QObject *parent);
+    ~StatusNotifierItemSource();
+    Plasma::Service *createService();
 
-    QGraphicsWidget* createWidget(Plasma::Applet *host);
-    bool isValid() const;
-    bool isEmbeddable() const;
-    virtual QString name() const;
-    virtual QString typeId() const;
-    virtual QIcon icon() const;
+    void activate(int x, int y);
+    void secondaryActivate(int x, int y);
+    void scroll(int delta, const QString &direction);
+    void contextMenu(int x, int y);
 
-private:
-    void syncToolTip();
+private slots:
 
-    //callbacks
-    void syncToolTip(const QString &title, const QString &subTitle, const QIcon &toolTipIcon);
-    void syncMovie(const QString &);
-
-private Q_SLOTS:
-    void syncStatus(QString status);
-    void updateMovieFrame();
-    void blinkAttention();
-    void dataUpdated(const QString &taskName, const Plasma::DataEngine::Data &taskData);
+    void refresh();
+    void syncStatus(QString);
+    void refreshCallback(QDBusPendingCallWatcher *);
 
 private:
+
+    QPixmap KDbusImageStructToPixmap(const KDbusImageStruct &image) const;
+    QIcon imageVectorToPixmap(const KDbusImageVector &vector) const;
+    void overlayIcon(QIcon *icon, QIcon *overlay);
+    KIconLoader *iconLoader() const;
+
+    bool m_valid;
     QString m_typeId;
     QString m_name;
-    QString m_title;
-    QIcon m_icon;
-    QIcon m_attentionIcon;
-    QMovie *m_movie;
-    QTimer *m_blinkTimer;
-    Plasma::Service *m_service;
-    bool m_blink : 1;
-    bool m_valid : 1;
-    bool m_embeddable : 1;
+    KIconLoader *m_customIconLoader;
+    org::kde::StatusNotifierItem *m_statusNotifierItemInterface;
 };
 
-}
-
-
-#endif
+#endif // STATUSNOTIFIERITEMSOURCE_H

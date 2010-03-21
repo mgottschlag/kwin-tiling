@@ -20,16 +20,12 @@
 #ifndef DBUSSYSTEMTRAYWIDGET_H
 #define DBUSSYSTEMTRAYWIDGET_H
 
-#include <QWeakPointer>
-
 #include <Plasma/IconWidget>
 
 namespace Plasma
 {
     class Applet;
 }
-
-class QDBusAbstractInterface;
 
 namespace SystemTray
 {
@@ -39,7 +35,7 @@ class DBusSystemTrayWidget : public Plasma::IconWidget
     Q_OBJECT
 
 public:
-    DBusSystemTrayWidget(Plasma::Applet *parent, QDBusAbstractInterface *iface);
+    DBusSystemTrayWidget(Plasma::Applet *parent, Plasma::Service *service);
 
 Q_SIGNALS:
     void clicked(const QPoint &pos);
@@ -54,7 +50,7 @@ private Q_SLOTS:
     void calculateShowPosition();
 
 private:
-    QWeakPointer<QDBusAbstractInterface> m_iface;
+    Plasma::Service *m_service;
     Plasma::Applet *m_host;
 };
 

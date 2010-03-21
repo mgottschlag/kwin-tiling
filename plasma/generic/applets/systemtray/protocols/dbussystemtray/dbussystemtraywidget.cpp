@@ -28,9 +28,9 @@
 namespace SystemTray
 {
 
-DBusSystemTrayWidget::DBusSystemTrayWidget(Plasma::Applet *parent, QDBusAbstractInterface *iface)
+    DBusSystemTrayWidget::DBusSystemTrayWidget(Plasma::Applet *parent, Plasma::Service *service)
     : Plasma::IconWidget(parent),
-      m_iface(iface),
+      m_service(service),
       m_host(parent)
 {
     connect(this, SIGNAL(clicked()), this, SLOT(calculateShowPosition()));
@@ -47,8 +47,11 @@ void DBusSystemTrayWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void DBusSystemTrayWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (event->button() == Qt::MidButton && m_iface) {
-        m_iface.data()->call(QDBus::NoBlock, "SecondaryActivate", event->screenPos().x(), event->screenPos().y());
+    if (event->button() == Qt::MidButton) {
+        KConfigGroup params = m_service->operationDescription("SecondaryActivate");
+        params.writeEntry("x", event->screenPos().x());
+        params.writeEntry("y", event->screenPos().y());
+        m_service->startOperationCall(params);
     }
 
     Plasma::IconWidget::mouseReleaseEvent(event);
@@ -56,27 +59,29 @@ void DBusSystemTrayWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void DBusSystemTrayWidget::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
-    //kDebug() << m_iface << event->delta();
-    if (m_iface) {
-        m_iface.data()->call(QDBus::NoBlock, "Scroll", event->delta(), "Vertical");
-    }
+    KConfigGroup params = m_service->operationDescription("Scroll");
+    params.writeEntry("delta", event->delta());
+    params.writeEntry("direction", "Vertical");
+    m_service->startOperationCall(params);
 }
 
 void DBusSystemTrayWidget::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
-    if (m_iface) {
-        m_iface.data()->call(QDBus::NoBlock, "ContextMenu", event->screenPos().x(), event->screenPos().y());
-    }
+    KConfigGroup params = m_service->operationDescription("ContextMenu");
+    params.writeEntry("x", event->screenPos().x());
+    params.writeEntry("y", event->screenPos().y());
+    m_service->startOperationCall(params);
 }
 
 void DBusSystemTrayWidget::calculateShowPosition()
 {
-    if (m_iface) {
-        Plasma::Corona *corona = m_host->containment()->corona();
-        QSize s(1, 1);
-        QPoint pos = corona->popupPosition(this, s);
-        m_iface.data()->call(QDBus::NoBlock, "Activate", pos.x(), pos.y());
-    }
+    Plasma::Corona *corona = m_host->containment()->corona();
+    QSize s(1, 1);
+    QPoint pos = corona->popupPosition(this, s);
+    KConfigGroup params = m_service->operationDescription("Activate");
+    params.writeEntry("x", pos.x());
+    params.writeEntry("y", pos.y());
+    m_service->startOperationCall(params);
 }
 
 }

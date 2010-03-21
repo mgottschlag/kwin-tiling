@@ -22,7 +22,7 @@
 
 #include "../../core/protocol.h"
 
-#include "statusnotifierwatcher_interface.h"
+#include <Plasma/DataEngine>
 
 #include <QHash>
 
@@ -49,20 +49,12 @@ protected:
     void initRegisteredServices();
 
 protected Q_SLOTS:
-    void serviceChange(const QString& name,
-                       const QString& oldOwner,
-                       const QString& newOwner);
-    void registerWatcher(const QString& service);
-    void unregisterWatcher(const QString& service);
-    void serviceRegistered(const QString &service);
-    void serviceUnregistered(const QString &service);
+    void taskAdded(const QString &taskName);
+    void taskRemoved(const QString &taskName);
 
 private:
-    QDBusConnection m_dbus;
+    Plasma::DataEngine *m_dataEngine;
     QHash<QString, DBusSystemTrayTask*> m_tasks;
-    org::kde::StatusNotifierWatcher *m_statusNotifierWatcher;
-    QString m_serviceName;
-    static const int s_protocolVersion = 0;
 };
 
 }

@@ -25,6 +25,8 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <QIcon>
 #include <QMovie>
+#include <QTimer>
+#include <QMetaEnum>
 
 #include <KIcon>
 #include <KIconLoader>
@@ -37,6 +39,7 @@
 #include <Plasma/ToolTipContent>
 #include <Plasma/ToolTipManager>
 #include <Plasma/Applet>
+#include <Plasma/DataEngineManager>
 
 #include "dbussystemtraywidget.h"
 
@@ -45,39 +48,26 @@
 namespace SystemTray
 {
 
-DBusSystemTrayTask::DBusSystemTrayTask(const QString &service, QObject *parent)
+DBusSystemTrayTask::DBusSystemTrayTask(const QString &service, Plasma::Service *dataService, QObject *parent)
     : Task(parent),
-      m_customIconLoader(0),
       m_movie(0),
       m_blinkTimer(0),
+      m_service(dataService),
       m_blink(false),
       m_valid(false),
       m_embeddable(false)
 {
-    setObjectName("DBusSystemTrayTask");
-    qDBusRegisterMetaType<KDbusImageStruct>();
-    qDBusRegisterMetaType<KDbusImageVector>();
-    qDBusRegisterMetaType<KDbusToolTipStruct>();
-
+    kDebug();
     m_typeId = service;
     m_name = service;
 
-    m_statusNotifierItemInterface = new org::kde::StatusNotifierItem(service, "/StatusNotifierItem",
-                                                                  QDBusConnection::sessionBus(), this);
-
     //TODO: how to behave if its not m_valid?
-    m_valid = !service.isEmpty() && m_statusNotifierItemInterface->isValid();
+    m_valid = !service.isEmpty();
 
     if (m_valid) {
-        connect(m_statusNotifierItemInterface, SIGNAL(NewIcon()), this, SLOT(refresh()));
-        connect(m_statusNotifierItemInterface, SIGNAL(NewAttentionIcon()), this, SLOT(refresh()));
-        connect(m_statusNotifierItemInterface, SIGNAL(NewOverlayIcon()), this, SLOT(refresh()));
-        connect(m_statusNotifierItemInterface, SIGNAL(NewToolTip()), this, SLOT(refresh()));
-        connect(m_statusNotifierItemInterface, SIGNAL(NewStatus(QString)), this, SLOT(syncStatus(QString)));
-        refresh();
+        dataUpdated(service, Plasma::DataEngine::Data());
     }
 }
-
 
 DBusSystemTrayTask::~DBusSystemTrayTask()
 {
@@ -85,14 +75,10 @@ DBusSystemTrayTask::~DBusSystemTrayTask()
     delete m_blinkTimer;
 }
 
-KIconLoader *DBusSystemTrayTask::iconLoader() const
-{
-    return m_customIconLoader ? m_customIconLoader : KIconLoader::global();
-}
-
 QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
 {
-    DBusSystemTrayWidget *m_iconWidget = new DBusSystemTrayWidget(host, m_statusNotifierItemInterface);
+    kDebug();
+    DBusSystemTrayWidget *m_iconWidget = new DBusSystemTrayWidget(host, m_service);
     m_iconWidget->show();
 
     m_iconWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -100,7 +86,7 @@ QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
     m_iconWidget->setPreferredSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
 
     //Delay because syncStatus needs that createWidget is done
-    QTimer::singleShot(0, this, SLOT(refresh()));
+//     QTimer::singleShot(0, this, SLOT(connectToData()));
     return m_iconWidget;
 }
 
@@ -129,234 +115,66 @@ QIcon DBusSystemTrayTask::icon() const
     return m_icon;
 }
 
-void DBusSystemTrayTask::refresh()
+void DBusSystemTrayTask::dataUpdated(const QString &taskName, const Plasma::DataEngine::Data &properties)
 {
-    QDBusMessage message = QDBusMessage::createMethodCall(m_statusNotifierItemInterface->service(),
-    m_statusNotifierItemInterface->path(), "org.freedesktop.DBus.Properties", "GetAll");
+    kDebug();
+    Q_UNUSED(taskName);
 
-    message << m_statusNotifierItemInterface->interface();
-    QDBusPendingCall call = m_statusNotifierItemInterface->connection().asyncCall(message);
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
-    connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher *)), this, SLOT(refreshCallback(QDBusPendingCallWatcher *)));
-}
+    QString cat = properties["Category"].toString();
+    if (!cat.isEmpty()) {
+        int index = metaObject()->indexOfEnumerator("Category");
+        int key = metaObject()->enumerator(index).keyToValue(cat.toLatin1());
 
-
-void DBusSystemTrayTask::refreshCallback(QDBusPendingCallWatcher *call)
-{
-    QDBusPendingReply<QVariantMap> reply = *call;
-    QVariantMap properties = reply.argumentAt<0>();
-    if (reply.isError()) {
-        m_valid = false;
-        m_embeddable = false;
-    } else {
-        //IconThemePath (handle this one first, because it has an impact on
-        //others)
-        if (!m_customIconLoader) {
-            QString path = properties["IconThemePath"].toString();
-            if (!path.isEmpty()) {
-                // FIXME: If last part of path is not "icons", this won't work!
-                QStringList tokens = path.split('/', QString::SkipEmptyParts);
-                if (tokens.length() >= 3 && tokens.takeLast() == "icons") {
-                    QString appName = tokens.takeLast();
-                    QString prefix = '/' + tokens.join("/");
-                    // FIXME: Fix KIconLoader and KIconTheme so that we can use
-                    // our own instance of KStandardDirs
-                    KGlobal::dirs()->addResourceDir("data", prefix);
-                    // We use a separate instance of KIconLoader to avoid
-                    // adding all application dirs to KIconLoader::global(), to
-                    // avoid potential icon name clashes between application
-                    // icons
-                    m_customIconLoader = new KIconLoader(appName, 0 /* dirs */, this);
-                } else {
-                    kWarning() << "Wrong IconThemePath" << path << ": too short or does not end with 'icons'";
-                }
-            }
+        if (key != -1) {
+            setCategory((Task::Category)key);
         }
-
-        QString cat = properties["Category"].toString();
-        if (!cat.isEmpty()) {
-            int index = metaObject()->indexOfEnumerator("Category");
-            int key = metaObject()->enumerator(index).keyToValue(cat.toLatin1());
-
-            if (key != -1) {
-                setCategory((Task::Category)key);
-            }
-        }
-
-        QString m_title = properties["Title"].toString();
-        if (!m_title.isEmpty()) {
-            m_name = m_title;
-
-            if (m_typeId.isEmpty()) {
-                m_typeId = m_title;
-            }
-        }
-
-        QString id = properties["Id"].toString();
-        if (!id.isEmpty()) {
-            m_typeId = id;
-        }
-
-        QIcon overlay;
-        QStringList overlayNames;
-
-        //Icon
-        {
-            KDbusImageVector image;
-
-            properties["OverlayIconPixmap"].value<QDBusArgument>() >> image;
-            if (image.isEmpty()) {
-                QString m_iconName = properties["OverlayIconName"].toString();
-                if (!m_iconName.isEmpty()) {
-                    overlayNames << m_iconName;
-                    overlay = KIcon(m_iconName, iconLoader());
-                }
-            } else {
-                overlay = imageVectorToPixmap(image);
-            }
-
-            properties["IconPixmap"].value<QDBusArgument>() >> image;
-            if (image.isEmpty()) {
-                QString m_iconName = properties["IconName"].toString();
-                if (!m_iconName.isEmpty()) {
-                    m_icon = KIcon(m_iconName, iconLoader(), overlayNames);
-
-                    if (overlayNames.isEmpty() && !overlay.isNull()) {
-                        overlayIcon(&m_icon, &overlay);
-                    }
-                }
-            } else {
-                m_icon = imageVectorToPixmap(image);
-                if (!m_icon.isNull() && !overlay.isNull()) {
-                    overlayIcon(&m_icon, &overlay);
-                }
-            }
-        }
-
-        if (status() != Task::NeedsAttention) {
-            foreach (QGraphicsWidget *widget, widgetsByHost()) {
-                Plasma::IconWidget *m_iconWidget = qobject_cast<Plasma::IconWidget *>(widget);
-                if (!m_iconWidget) {
-                    continue;
-                }
-
-                m_iconWidget->setIcon(m_icon);
-                //This hardcoded number is needed to support pixel perfection of m_icons coming from other environments, in kde actualsize will jusrt return our usual 22x22
-                QSize size = m_icon.actualSize(QSize(24, 24));
-                m_iconWidget->setPreferredSize(m_iconWidget->sizeFromIconSize(qMax(size.width(), size.height())));
-            }
-        }
-
-        //Attention m_icon
-        {
-            KDbusImageVector image;
-            properties["AttentionIconPixmap"].value<QDBusArgument>() >> image;
-            if (image.isEmpty()) {
-                QString m_iconName = properties["AttentionIconName"].toString();
-                if (!m_iconName.isEmpty()) {
-                    m_attentionIcon = KIcon(m_iconName, iconLoader(), overlayNames);
-
-                    if (overlayNames.isEmpty() && !overlay.isNull()) {
-                        overlayIcon(&m_attentionIcon, &overlay);
-                    }
-                }
-            } else {
-                m_attentionIcon = imageVectorToPixmap(image);
-                if (!m_attentionIcon.isNull() && !overlay.isNull()) {
-                    overlayIcon(&m_icon, &overlay);
-                }
-            }
-        }
-
-        QString m_movieName = properties["AttentionMovieName"].toString();
-        syncMovie(m_movieName);
-
-        syncStatus(properties["Status"].toString());
-
-        KDbusToolTipStruct toolTip;
-        properties["ToolTip"].value<QDBusArgument>() >> toolTip;
-        syncToolTip(toolTip);
-
-        m_embeddable = true;
     }
+
+    QString m_title = properties["Title"].toString();
+    if (!m_title.isEmpty()) {
+        m_name = m_title;
+
+        if (m_typeId.isEmpty()) {
+            m_typeId = m_title;
+        }
+    }
+
+    QString id = properties["Id"].toString();
+    if (!id.isEmpty()) {
+        m_typeId = id;
+    }
+
+    m_icon = properties["Icon"].value<QIcon>();
+
+    if (status() != Task::NeedsAttention) {
+        foreach (QGraphicsWidget *widget, widgetsByHost()) {
+            Plasma::IconWidget *m_iconWidget = qobject_cast<Plasma::IconWidget *>(widget);
+            if (!m_iconWidget) {
+                continue;
+            }
+
+            m_iconWidget->setIcon(m_icon);
+            //This hardcoded number is needed to support pixel perfection of m_icons coming from other environments, in kde actualsize will jusrt return our usual 22x22
+            QSize size = m_icon.actualSize(QSize(24, 24));
+            m_iconWidget->setPreferredSize(m_iconWidget->sizeFromIconSize(qMax(size.width(), size.height())));
+        }
+    }
+
+    m_attentionIcon = properties["AttentionIcon"].value<QIcon>();
+
+    QString m_movieName = properties["AttentionMovieName"].toString();
+    syncMovie(m_movieName);
+
+    syncStatus(properties["Status"].toString());
+
+    syncToolTip(properties["ToolTipTitle"].toString(),
+                properties["ToolTipSubTitle"].toString(),
+                properties["ToolTipIcon"].value<QIcon>());
+
+
+    m_embeddable = true;
 
     emit changed(this);
-    delete call;
-}
-
-QPixmap DBusSystemTrayTask::KDbusImageStructToPixmap(const KDbusImageStruct &m_icon) const
-{
-    //swap from network byte order if we are little endian
-    if (QSysInfo::ByteOrder == QSysInfo::LittleEndian) {
-        uint *uintBuf = (uint *) m_icon.data.data();
-        for (uint i = 0; i < m_icon.data.size()/sizeof(uint); ++i) {
-            *uintBuf = ntohl(*uintBuf);
-            ++uintBuf;
-        }
-    }
-    QImage m_iconImage( m_icon.width, m_icon.height, QImage::Format_ARGB32 );
-    memcpy(m_iconImage.bits(), (uchar*)m_icon.data.data(), m_iconImage.numBytes());
-
-    return QPixmap::fromImage(m_iconImage);
-}
-
-QIcon DBusSystemTrayTask::imageVectorToPixmap(const KDbusImageVector &vector) const
-{
-    QIcon m_icon;
-
-    for (int i = 0; i<vector.size(); ++i) {
-        m_icon.addPixmap(KDbusImageStructToPixmap(vector[i]));
-    }
-
-    return m_icon;
-}
-
-void DBusSystemTrayTask::overlayIcon(QIcon *m_icon, QIcon *overlay)
-{
-    QIcon tmp;
-    QPixmap m_iconPixmap = m_icon->pixmap(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
-
-    QPainter p(&m_iconPixmap);
-
-    const int size = KIconLoader::SizeSmall/2;
-    p.drawPixmap(QRect(size, size, size, size), overlay->pixmap(size, size), QRect(0,0,size,size));
-    p.end();
-    tmp.addPixmap(m_iconPixmap);
-
-    //if an m_icon exactly that size wasn't found don't add it to the vector
-    m_iconPixmap = m_icon->pixmap(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
-    if (m_iconPixmap.width() == KIconLoader::SizeSmallMedium) {
-        const int size = KIconLoader::SizeSmall;
-        QPainter p(&m_iconPixmap);
-        p.drawPixmap(QRect(m_iconPixmap.width()-size, m_iconPixmap.height()-size, size, size), overlay->pixmap(size, size), QRect(0,0,size,size));
-        p.end();
-        tmp.addPixmap(m_iconPixmap);
-    }
-
-    m_iconPixmap = m_icon->pixmap(KIconLoader::SizeMedium, KIconLoader::SizeMedium);
-    if (m_iconPixmap.width() == KIconLoader::SizeMedium) {
-        const int size = KIconLoader::SizeSmall;
-        QPainter p(&m_iconPixmap);
-        p.drawPixmap(QRect(m_iconPixmap.width()-size, m_iconPixmap.height()-size, size, size), overlay->pixmap(size, size), QRect(0,0,size,size));
-        p.end();
-        tmp.addPixmap(m_iconPixmap);
-    }
-
-    m_iconPixmap = m_icon->pixmap(KIconLoader::SizeLarge, KIconLoader::SizeLarge);
-    if (m_iconPixmap.width() == KIconLoader::SizeLarge) {
-        const int size = KIconLoader::SizeSmallMedium;
-        QPainter p(&m_iconPixmap);
-        p.drawPixmap(QRect(m_iconPixmap.width()-size, m_iconPixmap.height()-size, size, size), overlay->pixmap(size, size), QRect(0,0,size,size));
-        p.end();
-        tmp.addPixmap(m_iconPixmap);
-    }
-
-    // We can't do 'm_icon->addPixmap()' because if 'm_icon' uses KIconEngine,
-    // it will ignore the added pixmaps. This is not a bug in KIconEngine,
-    // QIcon::addPixmap() doc says: "Custom m_icon engines are free to ignore
-    // additionally added pixmaps".
-    *m_icon = tmp;
-    //hopefully huge and enormous not necessary right now, since it's quite costly
 }
 
 void DBusSystemTrayTask::blinkAttention()
@@ -404,23 +222,16 @@ void DBusSystemTrayTask::updateMovieFrame()
 
 //toolTip
 
-void DBusSystemTrayTask::syncToolTip(const KDbusToolTipStruct &tipStruct)
+void DBusSystemTrayTask::syncToolTip(const QString &title, const QString &subTitle, const QIcon &toolTipIcon)
 {
-    if (tipStruct.title.isEmpty()) {
+    if (title.isEmpty()) {
         foreach (QGraphicsWidget *widget, widgetsByHost()) {
             Plasma::ToolTipManager::self()->clearContent(widget);
         }
         return;
     }
 
-    QIcon toolTipIcon;
-    if (tipStruct.image.size() == 0) {
-        toolTipIcon = KIcon(tipStruct.icon, iconLoader());
-    } else {
-        toolTipIcon = imageVectorToPixmap(tipStruct.image);
-    }
-
-    Plasma::ToolTipContent toolTipData(tipStruct.title, tipStruct.subTitle, toolTipIcon);
+    Plasma::ToolTipContent toolTipData(title, subTitle, toolTipIcon);
     foreach (QGraphicsWidget *widget, widgetsByHost()) {
         Plasma::ToolTipManager::self()->setContent(widget, toolTipData);
     }

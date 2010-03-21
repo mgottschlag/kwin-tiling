@@ -1,6 +1,7 @@
 /***************************************************************************
  *                                                                         *
  *   Copyright (C) 2009 Marco Martin <notmart@gmail.com>                   *
+ *   Copyright (C) 2009 Matthieu Gallien <matthieu_gallien@yahoo.fr>       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,70 +19,44 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef DBUSSYSTEMTRAYTASK_H
-#define DBUSSYSTEMTRAYTASK_H
+#ifndef STATUSNOTIFIERITEM_ENGINE_H
+#define STATUSNOTIFIERITEM_ENGINE_H
 
-#include "../../core/task.h"
-
+#include "statusnotifierwatcher_interface.h"
 #include <Plasma/DataEngine>
+#include <Plasma/Service>
+#include <QDBusConnection>
 
-namespace Plasma
-{
-
-class Service;
-
-}
-
-namespace SystemTray
-{
-
-class DBusSystemTrayTaskPrivate;
-
-class DBusSystemTrayTask : public Task
-{
+// Define our plasma Runner
+class StatusNotifierItemEngine : public Plasma::DataEngine {
     Q_OBJECT
 
-    friend class DBusSystemTrayProtocol;
-
 public:
-    DBusSystemTrayTask(const QString &serviceName, Plasma::Service *service, QObject *parent);
-    ~DBusSystemTrayTask();
+    // Basic Create/Destroy
+    StatusNotifierItemEngine( QObject *parent, const QVariantList& args );
+    ~StatusNotifierItemEngine();
+    Plasma::Service *serviceForSource(const QString &name);
+protected:
 
-    QGraphicsWidget* createWidget(Plasma::Applet *host);
-    bool isValid() const;
-    bool isEmbeddable() const;
-    virtual QString name() const;
-    virtual QString typeId() const;
-    virtual QIcon icon() const;
+    virtual void init();
+    void newItem(const QString &service);
+    void cleanupItem(const QString &service);
 
-private:
-    void syncToolTip();
-
-    //callbacks
-    void syncToolTip(const QString &title, const QString &subTitle, const QIcon &toolTipIcon);
-    void syncMovie(const QString &);
-
-private Q_SLOTS:
-    void syncStatus(QString status);
-    void updateMovieFrame();
-    void blinkAttention();
-    void dataUpdated(const QString &taskName, const Plasma::DataEngine::Data &taskData);
+protected Q_SLOTS:
+    void serviceChange(const QString& name,
+                       const QString& oldOwner,
+                       const QString& newOwner);
+    void registerWatcher(const QString& service);
+    void unregisterWatcher(const QString& service);
+    void serviceRegistered(const QString &service);
+    void serviceUnregistered(const QString &service);
 
 private:
-    QString m_typeId;
-    QString m_name;
-    QString m_title;
-    QIcon m_icon;
-    QIcon m_attentionIcon;
-    QMovie *m_movie;
-    QTimer *m_blinkTimer;
-    Plasma::Service *m_service;
-    bool m_blink : 1;
-    bool m_valid : 1;
-    bool m_embeddable : 1;
+
+    QDBusConnection m_dbus;
+    org::kde::StatusNotifierWatcher *m_statusNotifierWatcher;
+    QString m_serviceName;
+    static const int s_protocolVersion = 0;
 };
-
-}
-
 
 #endif

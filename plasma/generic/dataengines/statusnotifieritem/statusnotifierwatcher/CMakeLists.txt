@@ -9,7 +9,7 @@ QT4_ADD_DBUS_ADAPTOR(kded_statusnotifierwatcher_SRCS     ${KDE4_DBUS_INTERFACES_
 set(statusnotifieritem_xml ${KDE4_DBUS_INTERFACES_DIR}/org.kde.StatusNotifierItem.xml)
 set_source_files_properties(${statusnotifieritem_xml} PROPERTIES
    NO_NAMESPACE false
-   INCLUDE "../protocols/dbussystemtray/systemtraytypes.h"
+   INCLUDE "../systemtraytypes.h"
    CLASSNAME OrgKdeStatusNotifierItemInterface
 )
 QT4_ADD_DBUS_INTERFACE(kded_statusnotifierwatcher_SRCS ${statusnotifieritem_xml} statusnotifieritem_interface)

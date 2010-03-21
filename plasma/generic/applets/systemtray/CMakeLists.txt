@@ -25,7 +25,6 @@ set(systemtray_SRCS
     protocols/dbussystemtray/dbussystemtraytask.cpp
     protocols/dbussystemtray/dbussystemtrayprotocol.cpp
     protocols/dbussystemtray/dbussystemtraywidget.cpp
-    protocols/dbussystemtray/systemtraytypes.cpp
 
     ui/applet.cpp
     ui/compactlayout.cpp
@@ -37,27 +36,12 @@ kde4_add_ui_files(systemtray_SRCS
                   ui/autohide.ui
                   ui/plasmoidtasks.ui)
 
-add_subdirectory(statusnotifierwatcher)
-
 include (CheckLibraryExists)
 check_library_exists (Xss XScreenSaverQueryInfo "" HAVE_LIBXSS)
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 IF (HAVE_LIBXSS)
    SET (IDLE_DETECTION_LIB "Xss")
 ENDIF (HAVE_LIBXSS)
-
-set(statusnotifierwatcher_xml ${KDE4_DBUS_INTERFACES_DIR}/org.kde.StatusNotifierWatcher.xml)
-QT4_ADD_DBUS_INTERFACE(systemtray_SRCS ${statusnotifierwatcher_xml} statusnotifierwatcher_interface)
-
-
-set(statusnotifieritem_xml ${KDE4_DBUS_INTERFACES_DIR}/org.kde.StatusNotifierItem.xml)
-
-set_source_files_properties(${statusnotifieritem_xml} PROPERTIES
-   NO_NAMESPACE false
-   INCLUDE "protocols/dbussystemtray/systemtraytypes.h"
-   CLASSNAME OrgKdeStatusNotifierItem
-)
-QT4_ADD_DBUS_INTERFACE(systemtray_SRCS ${statusnotifieritem_xml} statusnotifieritem_interface)
 
 kde4_add_plugin(plasma_applet_systemtray ${systemtray_SRCS})
 include_directories(${CMAKE_SOURCE_DIR})
