@@ -98,6 +98,5 @@ void KSystemActivityDialog::saveDialogSettings()
     KGlobal::config()->sync();
 }
 
-#include "ksystemactivitydialog.moc"
 #endif // not Q_WS_WIN
 
