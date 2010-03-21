@@ -133,6 +133,8 @@ void StatusNotifierItemSource::refreshCallback(QDBusPendingCallWatcher *call)
         setData("Status", properties["Status"]);
         setData("Title", properties["Title"]);
         setData("Id", properties["Id"]);
+        setData("WindowId", properties["WindowId"]);
+
         //Attention Movie
         setData("AttentionMovieName", properties["AttentionMovieName"]);
 
