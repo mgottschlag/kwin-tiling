@@ -24,6 +24,8 @@
 
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsLinearLayout>
+#include <QGraphicsBlurEffect>
+#include <QPropertyAnimation>
 #include <QPainter>
 #include <QTimer>
 
@@ -46,6 +48,21 @@ AppletOverlay::AppletOverlay(QGraphicsWidget *parent, Newspaper *newspaper)
       m_scrollDown(false),
       m_clickDrag(false)
 {
+    foreach(Plasma::Applet *applet, newspaper->applets()) {
+        QGraphicsBlurEffect *effect = new QGraphicsBlurEffect(applet);
+        effect->setBlurHints(QGraphicsBlurEffect::PerformanceHint);
+        effect->setBlurRadius(0);
+        applet->setGraphicsEffect(effect);
+
+        QPropertyAnimation *animation = new QPropertyAnimation(effect, "blurRadius", effect);
+        animation->setEasingCurve(QEasingCurve::InOutQuad);
+        animation->setDuration(250);
+        animation->setStartValue(0);
+        animation->setEndValue(4);
+        animation->start(QAbstractAnimation::DeleteWhenStopped);
+    }
+
+
     setAcceptHoverEvents(true);
     setAcceptDrops(true);
     setZValue(900);
@@ -60,6 +77,10 @@ AppletOverlay::AppletOverlay(QGraphicsWidget *parent, Newspaper *newspaper)
 
 AppletOverlay::~AppletOverlay()
 {
+    m_newspaper->m_container->setGraphicsEffect(0);
+    foreach(Plasma::Applet *applet, m_newspaper->applets()) {
+        applet->setGraphicsEffect(0);
+    }
 }
 
 void AppletOverlay::appletDestroyed()
