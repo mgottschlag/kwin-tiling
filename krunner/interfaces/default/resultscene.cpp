@@ -263,7 +263,6 @@ ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool use
             connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
             connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SIGNAL(itemHoverEnter(ResultItem*)));
             connect(item, SIGNAL(hoverLeave(ResultItem*)), this, SIGNAL(itemHoverLeave(ResultItem*)));
-            connect(item, SIGNAL(actionTriggered()), this, SIGNAL(actionTriggered()));
         } else {
             //kDebug() << "returning failure for" << match.id();
             return 0;

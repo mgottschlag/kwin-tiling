@@ -179,11 +179,18 @@ void ResultItem::setupActions()
                                                         QSize(KIconLoader::SizeSmall,
                                                               KIconLoader::SizeSmall)));
             m_actionsLayout->addItem(actionButton);
-            connect(actionButton, SIGNAL(clicked()), this , SIGNAL(actionTriggered()));
+            connect(actionButton, SIGNAL(clicked()), this , SLOT(actionClicked()));
             actionButton->installEventFilter(this);
         }
         m_actionsWidget->show();
     }
+}
+
+void ResultItem::actionClicked()
+{
+    Plasma::ToolButton * actionButton = static_cast<Plasma::ToolButton*>(sender());
+    m_match.setSelectedAction(actionButton->action());
+    emit activated(this);
 }
 
 bool ResultItem::eventFilter(QObject *obj, QEvent *event)
@@ -206,8 +213,8 @@ bool ResultItem::eventFilter(QObject *obj, QEvent *event)
             QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
             if (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return) {
                 if (actionButton->action()) {
-                        actionButton->action()->trigger();
-                        emit actionTriggered();
+                    m_match.setSelectedAction(actionButton->action());
+                    emit activated(this);
                     } else {
                         showConfig();
                     }

@@ -97,7 +97,6 @@ signals:
     void hoverEnter(ResultItem *item);
     void hoverLeave(ResultItem *item);
     void sizeChanged(ResultItem *item);
-    void actionTriggered();
     void ensureVisibility(QGraphicsItem *item);
 
 protected:
@@ -122,6 +121,9 @@ protected slots:
 private:
     // must always call remove()
     ~ResultItem();
+
+private slots:
+    void actionClicked();
 
 private:
     Plasma::QueryMatch m_match;

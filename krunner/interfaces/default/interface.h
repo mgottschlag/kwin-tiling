@@ -80,7 +80,7 @@ class Interface : public KRunnerDialog
         void cleanupAfterConfigWidget();
         void configWidgetDestroyed();
         void searchTermSetFocus();
-        void actionTriggered();
+        void resetAndClose();
         void delayedQueryLaunch();
         void updateSystemActivityToolTip();
 
