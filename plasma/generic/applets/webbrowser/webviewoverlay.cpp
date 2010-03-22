@@ -42,7 +42,7 @@ WebViewOverlay::WebViewOverlay(WebBrowser *parent)
       layout->addItem(m_webView);
       
       m_closeButton = new Plasma::PushButton(this);
-      m_closeButton->setText("Close");
+      m_closeButton->setText(i18n("Close"));
       connect(m_closeButton, SIGNAL(clicked()), this, SIGNAL(closeRequested()));
       layout->addItem(m_closeButton);
       connect(m_webView->page(), SIGNAL(windowCloseRequested()), this, SIGNAL(closeRequested()));

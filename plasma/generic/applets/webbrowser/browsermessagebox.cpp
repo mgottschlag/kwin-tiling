@@ -36,12 +36,12 @@ BrowserMessageBox::BrowserMessageBox(QGraphicsWidget *parent, QString message)
       layout->addItem(messageLabel);
       
       m_okButton = new Plasma::PushButton(this);
-      m_okButton->setText("OK");
+      m_okButton->setText(i18n("OK"));
       connect(m_okButton, SIGNAL(clicked()), this, SIGNAL(okClicked()));
       layout->addItem(m_okButton);
       
       m_cancelButton = new Plasma::PushButton(this);
-      m_cancelButton->setText("Cancel");
+      m_cancelButton->setText(i18n("Cancel"));
       connect(m_cancelButton, SIGNAL(clicked()), this, SIGNAL(cancelClicked()));
       layout->addItem(m_cancelButton);
 }
