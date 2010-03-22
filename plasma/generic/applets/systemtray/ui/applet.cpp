@@ -94,7 +94,7 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
     m_icons->setImagePath("widgets/configuration-icons");
 
     setPopupIcon(QIcon());
-    setPassivePopup(true);
+    setPassivePopup(false);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
     setBackgroundHints(NoBackground);
     setHasConfigurationInterface(true);
