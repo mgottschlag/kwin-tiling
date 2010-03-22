@@ -53,13 +53,6 @@ AppletOverlay::AppletOverlay(QGraphicsWidget *parent, Newspaper *newspaper)
         effect->setBlurHints(QGraphicsBlurEffect::PerformanceHint);
         effect->setBlurRadius(0);
         applet->setGraphicsEffect(effect);
-
-        QPropertyAnimation *animation = new QPropertyAnimation(effect, "blurRadius", effect);
-        animation->setEasingCurve(QEasingCurve::InOutQuad);
-        animation->setDuration(250);
-        animation->setStartValue(0);
-        animation->setEndValue(4);
-        animation->start(QAbstractAnimation::DeleteWhenStopped);
     }
 
 
@@ -159,11 +152,12 @@ void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
         return;
     }
 
+   Plasma::Applet *oldApplet = m_applet;
+
     QPointF offset = m_newspaper->m_container->pos() + m_newspaper->m_scrollWidget->pos();
     disconnect(m_applet, SIGNAL(destroyed()), this, SLOT(appletDestroyed()));
     m_applet = 0;
 
-    Plasma::Applet *oldApplet;
 
     //FIXME: is there a way more efficient than this linear one? scene()itemAt() won't work because it would always be == this
     foreach (Plasma::Applet *applet, m_newspaper->applets()) {
@@ -175,6 +169,38 @@ void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     }
     if (m_applet != oldApplet) {
         update();
+
+        if (m_applet) {
+            m_applet->setGraphicsEffect(0);
+
+            QGraphicsBlurEffect *newEffect = new QGraphicsBlurEffect(m_applet);
+            newEffect->setBlurHints(QGraphicsBlurEffect::PerformanceHint);
+            newEffect->setBlurRadius(0);
+            m_applet->setGraphicsEffect(newEffect);
+
+            QPropertyAnimation *newAnimation = new QPropertyAnimation(newEffect, "blurRadius", newEffect);
+            newAnimation->setEasingCurve(QEasingCurve::InOutQuad);
+            newAnimation->setDuration(250);
+            newAnimation->setStartValue(0);
+            newAnimation->setEndValue(4);
+            newAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+        }
+
+        if (oldApplet) {
+            oldApplet->setGraphicsEffect(0);
+
+            QGraphicsBlurEffect *oldEffect = new QGraphicsBlurEffect(oldApplet);
+            oldEffect->setBlurHints(QGraphicsBlurEffect::PerformanceHint);
+            oldEffect->setBlurRadius(4);
+            oldApplet->setGraphicsEffect(oldEffect);
+
+            QPropertyAnimation *oldAnimation = new QPropertyAnimation(oldEffect, "blurRadius", oldEffect);
+            oldAnimation->setEasingCurve(QEasingCurve::InOutQuad);
+            oldAnimation->setDuration(250);
+            oldAnimation->setStartValue(4);
+            oldAnimation->setEndValue(0);
+            oldAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+        }
     }
 }
 
