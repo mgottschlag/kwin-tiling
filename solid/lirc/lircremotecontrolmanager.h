@@ -44,11 +44,6 @@ private Q_SLOTS:
     void reconnect();
     void connectionClosed();
     void newRemoteList(const QStringList &remoteList);
-    
-Q_SIGNALS:
-    void remoteControlAdded(const QString &name);
-    void remoteControlRemoved(const QString &name);
-    void statusChanged(bool connected);
 
 private:
     LircRemoteControlManagerPrivate * d;
