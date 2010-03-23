@@ -85,6 +85,7 @@ Name[zh_TW]=輸入動作
 Comment=Input Actions service performing configured actions on key presses
 Comment[el]=Υπηρεσία ενεργειών εισόδου εκτελεί ρυθμισμένες ενέργειες με το πάτημα πλήκτρων
 Comment[en_GB]=Input Actions service performing configured actions on key presses
+Comment[et]=Sisestustoimingute teenus, mis võimaldab klahve vajutades ette võtta teatavaid määratud toiminguid
 Comment[km]=បាន​កំណត់​រចនាសម្ព័ន្ធ​ការ​អនុវត្ត​សេវា​សកម្មភាព​បញ្ចូល នៅពេល​ចុច​គ្រាប់​ចុច
 Comment[nb]=Tjeneste for inndata-handlinger, som utfører definerte handlinger for tastetrykk
 Comment[pt]=Serviço de acções de entrada que efectua acções configuradas ao carregar nas teclas
