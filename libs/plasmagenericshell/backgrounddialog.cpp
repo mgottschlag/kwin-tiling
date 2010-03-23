@@ -398,6 +398,7 @@ void BackgroundDialog::changeBackgroundMode(int mode)
     }
 
     if (d->wallpaper) {
+        d->wallpaper->setPreviewing(true);
         d->preview->setPreview(d->wallpaper);
         d->wallpaper->setRenderingMode(wallpaperInfo.second);
         KConfigGroup cfg = wallpaperConfig(wallpaperInfo.first);
