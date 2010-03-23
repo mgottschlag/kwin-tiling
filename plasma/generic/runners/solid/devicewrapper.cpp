@@ -149,7 +149,7 @@ void DeviceWrapper::runAction(QAction * action)
             QStringList desktopFiles;
             desktopFiles.append(desktopAction);
             QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
-            QDBusReply<void> reply = soliduiserver.call("showActionsDialog", id(), desktopFiles);
+            soliduiserver.asyncCall("showActionsDialog", id(), desktopFiles);
         }
     } else {
         if (m_device.is<Solid::StorageVolume>()) {
