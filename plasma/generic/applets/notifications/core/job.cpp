@@ -22,6 +22,8 @@
 #include <QtCore/QTimer>
 #include <QtCore/QTime>
 #include <QTextDocument>
+#include <QFontMetrics>
+#include <QApplication>
 
 #include <KDebug>
 #include <KUrl>
@@ -169,9 +171,12 @@ QString Job::completedMessage() const
             destinationString = location.prettyUrl();
         }
 
+        //FIXME: this is visualization stuff, but putting html here is not so model as well
+        QFontMetrics fm(QApplication::font());
+
         kDebug() << "href = " << location.url();
         QString destinationLink = QString("<a href=\"%1\">%2</a>").arg(location.url())
-                                                                  .arg(Qt::escape(destinationString));
+                                  .arg(Qt::escape(fm.elidedText(destinationString, Qt::ElideMiddle, 350)));
 
         if (totalAmounts().value("files") > 1) {
             return i18np("%1 file, to: %2", "%1 files, to: %2", totalAmounts().value("files"),
