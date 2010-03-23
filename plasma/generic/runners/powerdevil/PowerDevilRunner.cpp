@@ -145,7 +145,7 @@ void PowerDevilRunner::initUpdateTriggers()
 
         QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.kded", "/modules/powerdevil",
                            "org.kde.PowerDevil", "streamData");
-        m_dbus.call(msg);
+        m_dbus.asyncCall(msg);
     }
 }
 
@@ -155,7 +155,7 @@ void PowerDevilRunner::updateStatus()
     {
         QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.kded",
                             "/modules/powerdevil", "org.kde.PowerDevil", "getSupportedGovernors");
-        QDBusReply<QVariantMap> govs = m_dbus.call(msg);
+        QDBusReply<QVariantMap> govs = m_dbus.asyncCall(msg);
         m_supportedGovernors = govs.value().keys();
         foreach(const QString &governor, m_supportedGovernors) {
             m_governorData[governor] = govs.value()[governor].toInt();
@@ -182,7 +182,7 @@ void PowerDevilRunner::updateStatus()
     {
         QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.kded",
                             "/modules/powerdevil", "org.kde.PowerDevil", "getSupportedSchemes");
-        QDBusReply<QStringList> schemes = m_dbus.call(msg);
+        QDBusReply<QStringList> schemes = m_dbus.asyncCall(msg);
         m_supportedSchemes = schemes.value();
     }
 
@@ -190,7 +190,7 @@ void PowerDevilRunner::updateStatus()
     {
         QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.kded",
                                 "/modules/powerdevil", "org.kde.PowerDevil", "getSupportedSuspendMethods");
-        QDBusReply<QVariantMap> methods = m_dbus.call(msg);
+        QDBusReply<QVariantMap> methods = m_dbus.asyncCall(msg);
         QMapIterator<QString, QVariant> it(methods);
         m_suspendMethods.clear();
         m_synonyms.clear();
@@ -407,23 +407,23 @@ void PowerDevilRunner::run(const Plasma::RunnerContext &context, const Plasma::Q
 {
     Q_UNUSED(context)
 
-        QDBusInterface iface("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", m_dbus);
+    QDBusInterface iface("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", m_dbus);
     if (match.id().startsWith("PowerDevil_ProfileChange")) {
-        iface.call("setProfile", match.data().toString());
+        iface.asyncCall("setProfile", match.data().toString());
     } else if (match.id().startsWith("PowerDevil_GovernorChange")) {
-        iface.call("setGovernor", match.data().toInt());
+        iface.asyncCall("setGovernor", match.data().toInt());
     } else if (match.id().startsWith("PowerDevil_SchemeChange")) { 
-        iface.call("setPowersavingScheme", match.data().toString());
+        iface.asyncCall("setPowersavingScheme", match.data().toString());
     } else if (match.id() == "PowerDevil_BrightnessChange") {
-        iface.call("setBrightness", match.data().toInt());
+        iface.asyncCall("setBrightness", match.data().toInt());
     } else if (match.id() == "PowerDevil_DimTotal") {
-        iface.call("setBrightness", 0);
+        iface.asyncCall("setBrightness", 0);
     } else if (match.id() == "PowerDevil_DimHalf") {
-        iface.call("setBrightness", -2);
+        iface.asyncCall("setBrightness", -2);
     } else if (match.id() == "PowerDevil_TurnOffScreen") {
-        iface.call("turnOffScreen");
+        iface.asyncCall("turnOffScreen");
     } else if (match.id().startsWith("PowerDevil_Suspend")) {
-        iface.call("suspend", match.data().toInt());
+        iface.asyncCall("suspend", match.data().toInt());
     }
 }
 
