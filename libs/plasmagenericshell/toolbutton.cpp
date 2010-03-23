@@ -129,9 +129,14 @@ void ToolButton::paintEvent(QPaintEvent *event)
             m_background->paintFrame(&painter);
             buttonOpt.palette.setColor(QPalette::ButtonText, Plasma::Theme::defaultTheme()->color(Plasma::Theme::ButtonTextColor));
         }
-
     } else {
         buttonOpt.palette.setColor(QPalette::ButtonText, Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+    }
+
+    if (hasFocus()) {
+        m_background->setElementPrefix("focus");
+        m_background->resizeFrame(size());
+        m_background->paintFrame(&painter);
     }
 
     style()->drawControl(QStyle::CE_ToolButtonLabel, &buttonOpt, &painter, this);
