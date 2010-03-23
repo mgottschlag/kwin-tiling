@@ -28,6 +28,7 @@
 #include "ui_colorsettings.h"
 
 class QStackedWidget;
+class QListWidgetItem;
 
 /**
  * The Desktop/Colors tab in kcontrol.
@@ -63,7 +64,10 @@ private slots:
     void variesClicked();
 
     /** slot called when the schemeList selection changes */
-    void loadScheme();
+    void loadScheme(QListWidgetItem *currentItem, QListWidgetItem *previousItem);
+
+    /** reselect the previously selected scheme in schemeList without loading it */
+    void selectPreviousSchemeAgain();
 
     /** slot called when the remove button is clicked*/
     void on_schemeRemoveButton_clicked();
@@ -196,6 +200,11 @@ private:
 
     bool m_disableUpdates;
     bool m_loadedSchemeHasUnsavedChanges;
+    // don't (re)load the scheme, only select it in schemeList
+    bool m_dontLoadSelectedScheme;
+
+    // the item previously selected in schemeList
+    QListWidgetItem *m_previousSchemeItem;
 };
 
 #endif

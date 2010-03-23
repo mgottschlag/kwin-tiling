@@ -23,6 +23,7 @@
 #include "../krdb/krdb.h"
 
 #include <QtCore/QFileInfo>
+#include <QtCore/QTimer>
 #include <QtGui/QHeaderView>
 #include <QtGui/QStackedWidget>
 #include <QtGui/QPainter>
@@ -71,7 +72,8 @@ QColor KColorCm::WindecoColors::color(WindecoColors::Role role) const
 
 KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     : KCModule( KolorFactory::componentData(), parent ), m_disableUpdates(false),
-      m_loadedSchemeHasUnsavedChanges(false)
+      m_loadedSchemeHasUnsavedChanges(false), m_dontLoadSelectedScheme(false),
+      m_previousSchemeItem(0)
 {
     KAboutData* about = new KAboutData(
         "kcmcolors", 0, ki18n("Colors"), 0, KLocalizedString(),
@@ -89,7 +91,8 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     schemeKnsButton->setIcon( KIcon("get-hot-new-stuff") );
     schemeKnsUploadButton->setIcon( KIcon("get-hot-new-stuff") );
     connect(colorSet, SIGNAL(currentIndexChanged(int)), this, SLOT(updateColorTable()));
-    connect(schemeList, SIGNAL(currentRowChanged(int)), this, SLOT(loadScheme()));
+    connect(schemeList, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
+            this, SLOT(loadScheme(QListWidgetItem*, QListWidgetItem*)));
     connect(applyToAlien, SIGNAL(toggled(bool)), this, SLOT(emitChanged()));
 
     // only needs to be called once
@@ -217,12 +220,42 @@ void KColorCm::loadScheme(KSharedConfigPtr config) // const QString &path)
     //m_changed = false;
 }
 
-void KColorCm::loadScheme()
+void KColorCm::selectPreviousSchemeAgain()
 {
-    if (schemeList->currentItem() != NULL)
+    m_dontLoadSelectedScheme = true;
+    schemeList->setCurrentItem(m_previousSchemeItem);
+    m_dontLoadSelectedScheme = false;
+}
+
+void KColorCm::loadScheme(QListWidgetItem *currentItem, QListWidgetItem *previousItem)
+{
+    m_previousSchemeItem = previousItem;
+
+    if (m_dontLoadSelectedScheme)
     {
-        const QString name = schemeList->currentItem()->text();
-        const QString fileBaseName = schemeList->currentItem()->data(Qt::UserRole).toString();
+        return;
+    }
+
+    if (currentItem != NULL)
+    {
+        if (m_loadedSchemeHasUnsavedChanges) // if changes made to loaded scheme
+        {
+            if (KMessageBox::Continue != KMessageBox::warningContinueCancel(this,
+                i18n("Selecting another scheme will discard any changes you have made"),
+                i18n("Are you sure?"),
+                KStandardGuiItem::cont(),
+                KStandardGuiItem::cancel(),
+                "noDiscardWarning")) // if the user decides to cancel
+            {
+                QTimer::singleShot(0, this, SLOT(selectPreviousSchemeAgain()));
+                return;
+            }
+        }
+
+        // load it
+
+        const QString name = currentItem->text();
+        const QString fileBaseName = currentItem->data(Qt::UserRole).toString();
         if (name == i18nc("Default color scheme", "Default"))
         {
             schemeRemoveButton->setEnabled(false);
@@ -251,19 +284,6 @@ void KColorCm::loadScheme()
             kDebug() << "checking permissions of " << path;
             schemeRemoveButton->setEnabled(canWrite);
             schemeKnsUploadButton->setEnabled(true);
-
-            if (0) // TODO if changes made to loaded scheme
-            {
-                if (KMessageBox::Continue != KMessageBox::warningContinueCancel(this,
-                    i18n("Selecting another scheme will discard any changes you have made"),
-                    i18n("Are you sure?"),
-                    KStandardGuiItem::cont(),
-                    KStandardGuiItem::cancel(),
-                    "noDiscardWarning"))
-                {
-                    return;
-                }
-            }
 
             KSharedConfigPtr config = KSharedConfig::openConfig(path);
             loadScheme(config);
@@ -386,7 +406,7 @@ void KColorCm::on_schemeKnsUploadButton_clicked()
                                i18n("Please save"));
             return;
         }
-        
+
         // find path
         const QString basename = schemeList->currentItem()->data(Qt::UserRole).toString();
         const QString path = KGlobal::dirs()->findResource("data",
@@ -455,7 +475,7 @@ void KColorCm::saveScheme(const QString &name)
                 return;
             }
         }
-        
+
         // go ahead and save it
         QString newpath = KGlobal::dirs()->saveLocation("data", "color-schemes/");
         newpath += filename + ".colors";
@@ -468,6 +488,8 @@ void KColorCm::saveScheme(const QString &name)
         group.writeEntry("Name", name);
         // sync it
         m_config->sync();
+
+        m_loadedSchemeHasUnsavedChanges = false;
 
         QList<QListWidgetItem*> foundItems = schemeList->findItems(name, Qt::MatchExactly);
         QIcon icon = createSchemePreviewIcon(m_config);
@@ -490,8 +512,6 @@ void KColorCm::saveScheme(const QString &name)
 
         // set m_config back to the system one
         m_config = temp;
-        
-        m_loadedSchemeHasUnsavedChanges = false;
 
         emit changed(true);
     }
@@ -1041,7 +1061,7 @@ void KColorCm::changeColor(int row, const QColor &newColor)
 
     updateColorSchemes();
     updatePreviews();
-    
+
     m_loadedSchemeHasUnsavedChanges = true;
 
     emit changed(true);
@@ -1218,7 +1238,7 @@ void KColorCm::emitChanged()
 void KColorCm::on_inactiveIntensityBox_currentIndexChanged(int index)
 {
     Q_UNUSED( index );
-    
+
     updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
@@ -1230,7 +1250,7 @@ void KColorCm::on_inactiveIntensityBox_currentIndexChanged(int index)
 void KColorCm::on_inactiveIntensitySlider_valueChanged(int value)
 {
     Q_UNUSED( value );
-    
+
     updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
@@ -1242,7 +1262,7 @@ void KColorCm::on_inactiveIntensitySlider_valueChanged(int value)
 void KColorCm::on_inactiveColorBox_currentIndexChanged(int index)
 {
     Q_UNUSED( index );
-    
+
     updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
@@ -1254,7 +1274,7 @@ void KColorCm::on_inactiveColorBox_currentIndexChanged(int index)
 void KColorCm::on_inactiveColorSlider_valueChanged(int value)
 {
     Q_UNUSED( value );
-    
+
     updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
@@ -1266,7 +1286,7 @@ void KColorCm::on_inactiveColorSlider_valueChanged(int value)
 void KColorCm::on_inactiveColorButton_changed(const QColor& color)
 {
     Q_UNUSED( color );
-    
+
     updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
@@ -1278,7 +1298,7 @@ void KColorCm::on_inactiveColorButton_changed(const QColor& color)
 void KColorCm::on_inactiveContrastBox_currentIndexChanged(int index)
 {
     Q_UNUSED( index );
-    
+
     updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
@@ -1290,7 +1310,7 @@ void KColorCm::on_inactiveContrastBox_currentIndexChanged(int index)
 void KColorCm::on_inactiveContrastSlider_valueChanged(int value)
 {
     Q_UNUSED( value );
-    
+
     updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
@@ -1303,7 +1323,7 @@ void KColorCm::on_inactiveContrastSlider_valueChanged(int value)
 void KColorCm::on_disabledIntensityBox_currentIndexChanged(int index)
 {
     Q_UNUSED( index );
-    
+
     updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
@@ -1315,7 +1335,7 @@ void KColorCm::on_disabledIntensityBox_currentIndexChanged(int index)
 void KColorCm::on_disabledIntensitySlider_valueChanged(int value)
 {
     Q_UNUSED( value );
-    
+
     updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
@@ -1327,7 +1347,7 @@ void KColorCm::on_disabledIntensitySlider_valueChanged(int value)
 void KColorCm::on_disabledColorBox_currentIndexChanged(int index)
 {
     Q_UNUSED( index );
-    
+
     updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
@@ -1339,7 +1359,7 @@ void KColorCm::on_disabledColorBox_currentIndexChanged(int index)
 void KColorCm::on_disabledColorSlider_valueChanged(int value)
 {
     Q_UNUSED( value );
-    
+
     updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
@@ -1351,7 +1371,7 @@ void KColorCm::on_disabledColorSlider_valueChanged(int value)
 void KColorCm::on_disabledColorButton_changed(const QColor& color)
 {
     Q_UNUSED( color );
-    
+
     updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
@@ -1363,7 +1383,7 @@ void KColorCm::on_disabledColorButton_changed(const QColor& color)
 void KColorCm::on_disabledContrastBox_currentIndexChanged(int index)
 {
     Q_UNUSED( index );
-    
+
     updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
@@ -1375,7 +1395,7 @@ void KColorCm::on_disabledContrastBox_currentIndexChanged(int index)
 void KColorCm::on_disabledContrastSlider_valueChanged(int value)
 {
     Q_UNUSED( value );
-    
+
     updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
