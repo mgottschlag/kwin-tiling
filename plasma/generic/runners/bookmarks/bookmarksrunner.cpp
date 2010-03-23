@@ -195,7 +195,7 @@ KIcon BookmarksRunner::favicon(const KUrl &url)
 {
     // query the favicons module
     QDBusInterface favicon("org.kde.kded", "/modules/favicons", "org.kde.FavIcon");
-    QDBusReply<QString> reply = favicon.call("iconForUrl", url.url());
+    QDBusReply<QString> reply = favicon.asyncCall("iconForUrl", url.url());
 
     if (!reply.isValid()) {
         return KIcon();
@@ -349,20 +349,17 @@ void BookmarksRunner::matchKonquerorBookmarks(Plasma::RunnerContext& context, bo
 
         if (type != Plasma::QueryMatch::NoMatch) {
             //kDebug() << "Found bookmark: " << bookmark.text() << " (" << bookmark.url().prettyUrl() << ")";
-            // getting the favicon is too slow and can easily lead to starving the thread pool out
-            /*
-            QIcon icon = getFavicon(bookmark.url());
-            if (icon.isNull()) {
-                match->setIcon(m_icon);
-            }
-            else {
-                match->setIcon(icon);
-            }
-            */
             Plasma::QueryMatch match(this);
+
+            QIcon icon = favicon(bookmark.url());
+            if (icon.isNull()) {
+                match.setIcon(m_icon);
+            } else {
+                match.setIcon(icon);
+            }
+
             match.setType(type);
             match.setRelevance(relevance);
-            match.setIcon(m_icon);
             match.setText(bookmark.text());
             match.setData(bookmark.url().url());
             matches << match;
