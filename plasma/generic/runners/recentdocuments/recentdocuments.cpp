@@ -52,7 +52,7 @@ RecentDocuments::~RecentDocuments()
 
 void RecentDocuments::loadRecentDocuments()
 {
-    kDebug()<<" Refreshing recent documents.";
+    //kDebug() << "Refreshing recent documents.";
     m_recentdocuments = KRecentDocument::recentDocuments();
 }
 
