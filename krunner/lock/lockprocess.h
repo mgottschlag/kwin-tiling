@@ -36,6 +36,7 @@ struct GreeterPluginHandle {
 
 const int TIMEOUT_CODE = 2; //from PasswordDlg
 
+class QDBusServiceWatcher;
 
 //===========================================================================
 //
@@ -190,6 +191,7 @@ private:
     bool        mBusy;
     KProcess    mHackProc;
     org::kde::plasmaoverlay::App *mPlasmaDBus;
+    QDBusServiceWatcher *mServiceWatcher;
     bool        mPlasmaEnabled;
     bool        mSetupMode;
     QString     mSaverExec;

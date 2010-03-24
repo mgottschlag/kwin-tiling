@@ -60,6 +60,7 @@
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
 #include <QDBusInterface>
+#include <QDBusServiceWatcher>
 
 #include <QDateTime>
 
@@ -124,6 +125,7 @@ int XSelectInput( Display* dpy, Window w, long e )
 }
 #endif
 
+static QString s_overlayServiceName("org.kde.plasma-overlay");
 
 //===========================================================================
 //
@@ -135,6 +137,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
       mLocked(false),
       mBusy(false),
       mPlasmaDBus(0),
+      mServiceWatcher(0),
       mSetupMode(false),
       mOpenGLVisual(false),
       child_saver(child),
@@ -932,9 +935,8 @@ bool LockProcess::startPlasma()
     kDebug() << "looking for plasma-overlay";
     if (!mPlasmaDBus) {
         //try to get it, in case it's already running somehow
-        //FIXME I don't like hardcoded strings
-        //mPlasmaDBus = new QDBusInterface("org.kde.plasma-overlay", "/MainApplication", QString(),
-        mPlasmaDBus = new org::kde::plasmaoverlay::App("org.kde.plasma-overlay", "/App",
+        //mPlasmaDBus = new QDBusInterface(s_overlayServiceName, "/MainApplication", QString(),
+        mPlasmaDBus = new org::kde::plasmaoverlay::App(s_overlayServiceName, "/App",
                                                        QDBusConnection::sessionBus(), this);
         //FIXME this might-already-be-running stuff seems really really Wrong.
     }
@@ -949,8 +951,12 @@ bool LockProcess::startPlasma()
     delete mPlasmaDBus;
     mPlasmaDBus = 0;
 
-    connect(QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(QString, QString, QString)),
-            this, SLOT(newService(QString, QString, QString)));
+    if (!mServiceWatcher) {
+        mServiceWatcher = new QDBusServiceWatcher(s_overlayServiceName, QDBusConnection::sessionBus(),
+                                                   QDBusServiceWatcher::WatchForOwnerChange, this);
+        connect(mServiceWatcher, SIGNAL(serviceOwnerChanged(QString,QString,QString)),
+                this, SLOT(newService(QString,QString,QString)));
+    }
 
     KProcess *plasmaProc = new KProcess;
     plasmaProc->setProgram("plasma-overlay");
@@ -1025,10 +1031,8 @@ void LockProcess::stopPlasma()
 
 void LockProcess::newService(QString name, QString oldOwner, QString newOwner)
 {
+    Q_UNUSED(name);
     Q_UNUSED(oldOwner);
-    if (name != "org.kde.plasma-overlay") {
-        return;
-    }
 
     if (mPlasmaDBus) {
         if (newOwner.isEmpty()) {
@@ -1041,8 +1045,7 @@ void LockProcess::newService(QString name, QString oldOwner, QString newOwner)
     }
 
     kDebug() << "plasma! yaay!";
-    mPlasmaDBus = new org::kde::plasmaoverlay::App(name, "/App",
-            QDBusConnection::sessionBus(), this);
+    mPlasmaDBus = new org::kde::plasmaoverlay::App(s_overlayServiceName, "/App", QDBusConnection::sessionBus(), this);
 
     //XXX this isn't actually used any more iirc
     connect(mPlasmaDBus, SIGNAL(hidden()), SLOT(unSuppressUnlock()));
