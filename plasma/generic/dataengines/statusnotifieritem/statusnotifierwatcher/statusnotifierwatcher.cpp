@@ -20,6 +20,7 @@
 #include "statusnotifierwatcher.h"
 
 #include <QDBusConnection>
+#include <QDBusServiceWatcher>
 
 #include <kglobal.h>
 #include <kaboutdata.h>
@@ -49,10 +50,11 @@ StatusNotifierWatcher::StatusNotifierWatcher(QObject *parent, const QList<QVaria
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.registerService("org.kde.StatusNotifierWatcher");
     dbus.registerObject("/StatusNotifierWatcher", this);
-    m_dbusInterface = dbus.interface();
 
-    connect(m_dbusInterface, SIGNAL(serviceOwnerChanged(QString,QString,QString)),
-           this, SLOT(serviceChange(QString,QString,QString)));
+    m_serviceWatcher = new QDBusServiceWatcher(this);
+    m_serviceWatcher->setConnection(dbus);
+    m_serviceWatcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
+    connect(m_serviceWatcher, SIGNAL(serviceUnregistered(QString)), this, SLOT(serviceUnregistered(QString)));
 }
 
 StatusNotifierWatcher::~StatusNotifierWatcher()
@@ -64,7 +66,7 @@ StatusNotifierWatcher::~StatusNotifierWatcher()
 
 void StatusNotifierWatcher::RegisterStatusNotifierItem(const QString &service)
 {
-    if (m_dbusInterface->isServiceRegistered(service).value() &&
+    if (QDBusConnection::sessionBus().interface()->isServiceRegistered(service).value() &&
         !m_registeredServices.contains(service)) {
         kDebug()<<"Registering"<<service<<"to system tray";
 
@@ -73,6 +75,7 @@ void StatusNotifierWatcher::RegisterStatusNotifierItem(const QString &service)
                                         QDBusConnection::sessionBus());
         if (trayclient.isValid()) {
             m_registeredServices.append(service);
+            m_serviceWatcher->addWatchedService(service);
             emit StatusNotifierItemRegistered(service);
         }
     }
@@ -84,33 +87,30 @@ QStringList StatusNotifierWatcher::RegisteredStatusNotifierItems() const
 }
 
 
-void StatusNotifierWatcher::serviceChange(const QString& name,
-                                const QString& oldOwner,
-                                const QString& newOwner)
+void StatusNotifierWatcher::serviceUnregistered(const QString& name)
 {
-    Q_UNUSED(oldOwner)
-    //kDebug()<<"Service "<<name<<"status change, old owner:"<<oldOwner<<"new:"<<newOwner;
+    //kDebug()<<"Service "<< name << "unregistered";
+    m_serviceWatcher->removeWatchedService(name);
 
-    if (newOwner.isEmpty()) {
-        if (m_registeredServices.contains(name)) {
-            m_registeredServices.removeAll(name);
-            emit StatusNotifierItemUnregistered(name);
-        }
+    if (m_registeredServices.contains(name)) {
+        m_registeredServices.removeAll(name);
+        emit StatusNotifierItemUnregistered(name);
+    }
 
-        if (m_statusNotifierHostServices.contains(name)) {
-            m_statusNotifierHostServices.remove(name);
-        }
+    if (m_statusNotifierHostServices.contains(name)) {
+        m_statusNotifierHostServices.remove(name);
     }
 }
 
 void StatusNotifierWatcher::RegisterStatusNotifierHost(const QString &service)
 {
     if (service.contains("org.kde.StatusNotifierHost-") &&
-        m_dbusInterface->isServiceRegistered(service).value() &&
+        QDBusConnection::sessionBus().interface()->isServiceRegistered(service).value() &&
         !m_statusNotifierHostServices.contains(service)) {
         kDebug()<<"Registering"<<service<<"as system tray";
 
         m_statusNotifierHostServices.insert(service);
+        m_serviceWatcher->addWatchedService(service);
         emit StatusNotifierHostRegistered();
     }
 }

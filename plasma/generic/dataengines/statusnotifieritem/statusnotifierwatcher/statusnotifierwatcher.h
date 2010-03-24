@@ -26,7 +26,7 @@
 #include <QStringList>
 #include <QSet>
 
-class QDBusConnectionInterface;
+class QDBusServiceWatcher;
 
 class StatusNotifierWatcher : public KDEDModule
 {
@@ -51,9 +51,7 @@ public Q_SLOTS:
     void RegisterStatusNotifierHost(const QString &service);
 
 protected Q_SLOTS:
-    void serviceChange(const QString& name,
-                       const QString& oldOwner,
-                       const QString& newOwner);
+    void serviceUnregistered(const QString& name);
 
 Q_SIGNALS:
     void StatusNotifierItemRegistered(const QString &service);
@@ -62,7 +60,7 @@ Q_SIGNALS:
     void StatusNotifierHostRegistered();
 
 private:
-    QDBusConnectionInterface *m_dbusInterface;
+    QDBusServiceWatcher *m_serviceWatcher;
     QStringList m_registeredServices;
     QSet<QString> m_statusNotifierHostServices;
 };

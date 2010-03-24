@@ -26,9 +26,10 @@
 #include <KIcon>
 #include <iostream>
 
+static const QString s_watcherServiceName("org.kde.StatusNotifierWatcher");
+
 StatusNotifierItemEngine::StatusNotifierItemEngine(QObject *parent, const QVariantList& args)
     : Plasma::DataEngine(parent, args),
-      m_dbus(QDBusConnection::sessionBus()),
       m_statusNotifierWatcher(0)
 {
     Q_UNUSED(args);
@@ -36,7 +37,7 @@ StatusNotifierItemEngine::StatusNotifierItemEngine(QObject *parent, const QVaria
 
 StatusNotifierItemEngine::~StatusNotifierItemEngine()
 {
-    m_dbus.unregisterService(m_serviceName);
+    QDBusConnection::sessionBus().unregisterService(m_serviceName);
 }
 
 Plasma::Service* StatusNotifierItemEngine::serviceForSource(const QString &name)
@@ -54,33 +55,23 @@ Plasma::Service* StatusNotifierItemEngine::serviceForSource(const QString &name)
 
 void StatusNotifierItemEngine::init()
 {
-    if (m_dbus.isConnected()) {
-        QDBusConnectionInterface *dbusInterface = m_dbus.interface();
-
+    if (QDBusConnection::sessionBus().isConnected()) {
+        QDBusConnectionInterface *dbusInterface = QDBusConnection::sessionBus().interface();
         m_serviceName = "org.kde.StatusNotifierHost-" + QString::number(QCoreApplication::applicationPid());
-        m_dbus.registerService(m_serviceName);
+        QDBusConnection::sessionBus().registerService(m_serviceName);
 
-        //FIXME: understand why registerWatcher/unregisterWatcher doesn't work
-        /*connect(dbusInterface, SIGNAL(serviceRegistered(const QString&)),
-            this, SLOT(registerWatcher(const QString&)));
-        connect(dbusInterface, SIGNAL(serviceUnregistered(const QString&)),
-            this, SLOT(unregisterWatcher(const QString&)));*/
-        connect(dbusInterface, SIGNAL(serviceOwnerChanged(QString,QString,QString)),
+        QDBusServiceWatcher *watcher = new QDBusServiceWatcher(s_watcherServiceName, QDBusConnection::sessionBus(),
+                                                               QDBusServiceWatcher::WatchForOwnerChange, this);
+        connect(watcher, SIGNAL(serviceOwnerChanged(QString,QString,QString)),
                 this, SLOT(serviceChange(QString,QString,QString)));
 
-        registerWatcher("org.kde.StatusNotifierWatcher");
+        registerWatcher(s_watcherServiceName);
     }
 }
 
-void StatusNotifierItemEngine::serviceChange(const QString& name,
-					      const QString& oldOwner,
-					      const QString& newOwner)
+void StatusNotifierItemEngine::serviceChange(const QString& name, const QString& oldOwner, const QString& newOwner)
 {
-    if (name != "org.kde.StatusNotifierWatcher") {
-        return;
-    }
-
-    kDebug()<<"Service "<<name<<"status change, old owner:"<<oldOwner<<"new:"<<newOwner;
+    kDebug()<< "Service" << name << "status change, old owner:" << oldOwner << "new:" << newOwner;
 
     if (newOwner.isEmpty()) {
         //unregistered
@@ -94,13 +85,12 @@ void StatusNotifierItemEngine::serviceChange(const QString& name,
 void StatusNotifierItemEngine::registerWatcher(const QString& service)
 {
     kDebug()<<"service appeared"<<service;
-    if (service == "org.kde.StatusNotifierWatcher") {
-        QString interface("org.kde.StatusNotifierWatcher");
+    if (service == s_watcherServiceName) {
         if (m_statusNotifierWatcher) {
             delete m_statusNotifierWatcher;
         }
 
-        m_statusNotifierWatcher = new org::kde::StatusNotifierWatcher(interface, "/StatusNotifierWatcher",
+        m_statusNotifierWatcher = new org::kde::StatusNotifierWatcher(s_watcherServiceName, "/StatusNotifierWatcher",
 								      QDBusConnection::sessionBus());
         if (m_statusNotifierWatcher->isValid() &&
             m_statusNotifierWatcher->property("ProtocolVersion").toBool() == s_protocolVersion) {
@@ -123,8 +113,8 @@ void StatusNotifierItemEngine::registerWatcher(const QString& service)
 
 void StatusNotifierItemEngine::unregisterWatcher(const QString& service)
 {
-    if (service == "org.kde.StatusNotifierWatcher") {
-        kDebug()<<"org.kde.StatusNotifierWatcher disappeared";
+    if (service == s_watcherServiceName) {
+        kDebug()<< s_watcherServiceName << "disappeared";
 
         disconnect(m_statusNotifierWatcher, SIGNAL(StatusNotifierItemRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
         disconnect(m_statusNotifierWatcher, SIGNAL(StatusNotifierItemUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));

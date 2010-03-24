@@ -52,8 +52,6 @@ protected Q_SLOTS:
     void serviceUnregistered(const QString &service);
 
 private:
-
-    QDBusConnection m_dbus;
     org::kde::StatusNotifierWatcher *m_statusNotifierWatcher;
     QString m_serviceName;
     static const int s_protocolVersion = 0;
