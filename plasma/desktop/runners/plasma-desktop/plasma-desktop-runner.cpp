@@ -21,6 +21,7 @@
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
 #include <QDBusInterface>
+#include <QDBusServiceWatcher>
 
 #include <KDebug>
 #include <KIcon>
@@ -41,9 +42,10 @@ PlasmaDesktopRunner::PlasmaDesktopRunner(QObject *parent, const QVariantList &ar
     setIgnoredTypes(Plasma::RunnerContext::FileSystem |
                     Plasma::RunnerContext::NetworkLocation |
                     Plasma::RunnerContext::Help);
-
-    QObject::connect(QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(QString,QString,QString)),
-                     this, SLOT(checkAvailability(QString,QString,QString)));
+    QDBusServiceWatcher *watcher = new QDBusServiceWatcher(s_plasmaService, QDBusConnection::sessionBus(),
+                                                           QDBusServiceWatcher::WatchForOwnerChange, this);
+    connect(watcher, SIGNAL(serviceOwnerChanged(QString,QString,QString)),
+            this, SLOT(checkAvailability(QString,QString,QString)));
     checkAvailability(QString(), QString(), QString());
 }
 
@@ -95,11 +97,8 @@ void PlasmaDesktopRunner::checkAvailability(const QString &name, const QString &
     bool enabled = false;
     if (name.isEmpty()) {
         enabled = QDBusConnection::sessionBus().interface()->isServiceRegistered(s_plasmaService).value();
-    } else if (name == s_plasmaService) {
-        enabled = !newOwner.isEmpty();
     } else {
-        // it's not something we're interested in
-        return;
+        enabled = !newOwner.isEmpty();
     }
 
     if (m_enabled != enabled) {
