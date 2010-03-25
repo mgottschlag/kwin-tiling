@@ -56,7 +56,6 @@ Plasma::Service* StatusNotifierItemEngine::serviceForSource(const QString &name)
 void StatusNotifierItemEngine::init()
 {
     if (QDBusConnection::sessionBus().isConnected()) {
-        QDBusConnectionInterface *dbusInterface = QDBusConnection::sessionBus().interface();
         m_serviceName = "org.kde.StatusNotifierHost-" + QString::number(QCoreApplication::applicationPid());
         QDBusConnection::sessionBus().registerService(m_serviceName);
 
