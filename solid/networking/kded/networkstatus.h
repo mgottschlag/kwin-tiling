@@ -52,7 +52,7 @@ Q_SIGNALS:
      */
     void statusChanged( uint status );
 protected Q_SLOTS:
-    void serviceOwnerChanged( const QString & name ,const QString & oldOwner, const QString & newOwner );
+    void serviceUnregistered( const QString & name );
     void solidNetworkingStatusChanged( Solid::Networking::Status status );
 protected:
     // set up embedded backend

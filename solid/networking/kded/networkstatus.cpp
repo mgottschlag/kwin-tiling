@@ -22,6 +22,7 @@
 
 #include "networkstatus.h"
 
+#include <QDBusServiceWatcher>
 #include <QMap>
 
 #include <KDebug>
@@ -45,7 +46,7 @@ typedef QMap< QString, Network * > NetworkMap;
 class NetworkStatusModule::Private
 {
 public:
-    Private() : status( Solid::Networking::Unknown )
+    Private() : status( Solid::Networking::Unknown ), serviceWatcher( 0 )
     {
 
     }
@@ -56,6 +57,7 @@ public:
     NetworkMap networks;
     Solid::Networking::Status status;
     Solid::Control::NetworkManager::Notifier * notifier;
+    QDBusServiceWatcher *serviceWatcher;
 };
 
 // CTORS/DTORS
@@ -66,10 +68,6 @@ NetworkStatusModule::NetworkStatusModule(QObject* parent, const QList<QVariant>&
     new ClientAdaptor( this );
     new ServiceAdaptor( this );
 
-    QDBusConnection dbus = QDBusConnection::sessionBus();
-    QDBusConnectionInterface * sessionBus = dbus.interface();
-
-    connect( sessionBus, SIGNAL(serviceOwnerChanged(const QString&,const QString&,const QString&)), this, SLOT(serviceOwnerChanged(const QString&,const QString&,const QString&)) );
     init();
 }
 
@@ -108,23 +106,21 @@ void NetworkStatusModule::updateStatus()
     }
 }
 
-void NetworkStatusModule::serviceOwnerChanged( const QString & name ,const QString & oldOwner, const QString & newOwner )
+void NetworkStatusModule::serviceUnregistered( const QString & name )
 {
-  if ( !oldOwner.isEmpty() && newOwner.isEmpty( ) ) {
     // unregister and delete any networks owned by a service that has just unregistered
+    d->serviceWatcher->removeWatchedService( name );
     QMutableMapIterator<QString,Network*> it( d->networks );
     while ( it.hasNext() ) {
-      it.next();
-      if ( it.value()->service() == name )
-      {
-        kDebug( 1222 ) << "Departing service " << name << " owned network " << it.value()->name() << ", removing it";
-        Network * removedNet = it.value();
-        it.remove();
-        updateStatus();
-        delete removedNet;
-      }
+        it.next();
+        if ( it.value()->service() == name ) {
+            kDebug( 1222 ) << "Departing service " << name << " owned network " << it.value()->name() << ", removing it";
+            Network * removedNet = it.value();
+            it.remove();
+            updateStatus();
+            delete removedNet;
+        }
     }
-  }
 }
 
 // SERVICE INTERFACE //
@@ -144,7 +140,7 @@ void NetworkStatusModule::setNetworkStatus( const QString & networkName, int st 
     kDebug( 1222 ) << networkName << ", " << st;
     Solid::Networking::Status changedStatus = (Solid::Networking::Status)st;
     if ( d->networks.contains( networkName ) ) {
-      Network * net = d->networks[ networkName ];
+        Network * net = d->networks[ networkName ];
         net->setStatus( changedStatus );
         updateStatus();
     } else {
@@ -161,6 +157,11 @@ void NetworkStatusModule::registerNetwork( const QString & networkName, int stat
     kDebug( 1222 ) << networkName << ", with status " << status << " is owned by " << uniqueOwner;
 
     d->networks.insert( networkName, new Network( networkName, status, uniqueOwner ) );
+
+    if ( d->serviceWatcher ) {
+        d->serviceWatcher->addWatchedService( uniqueOwner );
+    }
+
     updateStatus();
 }
 
@@ -168,6 +169,13 @@ void NetworkStatusModule::unregisterNetwork( const QString & networkName )
 {
     if ( networkName != QLatin1String("SolidNetwork") ) {
         kDebug( 1222 ) << networkName << " unregistered.";
+
+        if ( d->serviceWatcher ) {
+            Network * net = d->networks.value( networkName );
+            if ( net ) {
+                d->serviceWatcher->removeWatchedService( net->service() );
+            }
+        }
 
         d->networks.remove( networkName );
         updateStatus();
@@ -181,6 +189,11 @@ void NetworkStatusModule::init()
             this, SLOT(solidNetworkingStatusChanged(Solid::Networking::Status)));
     Solid::Networking::Status status = Solid::Control::NetworkManager::status();
     registerNetwork( QLatin1String("SolidNetwork"), status, QLatin1String("org.kde.kded") );
+
+    d->serviceWatcher = new QDBusServiceWatcher(this);
+    d->serviceWatcher->setConnection(QDBusConnection::sessionBus());
+    d->serviceWatcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
+    connect(d->serviceWatcher, SIGNAL(serviceUnregistered(QString&)), SLOT(serviceUnregistered(QString&)));
 }
 
 void NetworkStatusModule::solidNetworkingStatusChanged( Solid::Networking::Status status )
@@ -190,4 +203,3 @@ void NetworkStatusModule::solidNetworkingStatusChanged( Solid::Networking::Statu
 }
 
 #include "networkstatus.moc"
-// vim: set noet sw=4 ts=4:
