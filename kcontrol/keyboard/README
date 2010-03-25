@@ -29,6 +29,19 @@ KCM Module:
 * allows to configure keyboard hardware, layouts and xkb options (advanced)
 
 
+Advantages:
+* One UI module to configure keyboard layouts and hardware
+* Allows to configure keyboard model/xkb options without configuring layouts
+* Less cluttered layout configuration control (add layout is separate)
+* Layout control/DBus interface is separate from the indicator
+* Does not require libxklvier
+* Information about current layouts is always taken from X server, so should be more robust
+* Cleaner code (rewritten from scratch)
+* Due to many points above should start faster (though no benchmarks performed)
+
+New features:
+* Allow selection of keyboard layout by language
+
 Regressions:
 * can't configure layout short names displayed in applet
 * does not start applet automatically when keyboard layouts are configured
