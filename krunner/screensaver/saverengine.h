@@ -13,6 +13,7 @@
 #include <QDBusContext>
 #include <QDBusMessage>
 
+class QDBusServiceWatcher;
 class KProcess;
 
 #include "xautolock.h"
@@ -146,7 +147,7 @@ Q_SIGNALS:
 protected Q_SLOTS:
     void idleTimeout();
     void lockProcessExited();
-    void serviceOwnerChanged(const QString&, const QString&, const QString&);
+    void serviceUnregistered(const QString&);
 
 protected:
     enum LockType { DontLock, DefaultLock, ForceLock, PlasmaSetup };
@@ -171,6 +172,7 @@ private:
 
     time_t      m_actived_time;
     QList<ScreenSaverRequest> m_requests;
+    QDBusServiceWatcher *m_serviceWatcher;
     uint        m_next_cookie;
     
     int        m_nr_throttled;

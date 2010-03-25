@@ -21,6 +21,7 @@
 #include <QFile>
 #include <QX11Info>
 #include <QDBusConnection>
+#include <QDBusServiceWatcher>
 #include <assert.h>
 #include <stdlib.h>
 #include <time.h>
@@ -62,9 +63,11 @@ SaverEngine::SaverEngine()
     m_nr_inhibited = 0;
     m_actived_time = -1;
 
-    connect(QDBusConnection::sessionBus().interface(),
-                SIGNAL(serviceOwnerChanged(QString,QString,QString)),
-            SLOT(serviceOwnerChanged(QString,QString,QString)));
+    m_serviceWatcher = new QDBusServiceWatcher(this);
+    m_serviceWatcher->setConnection(QDBusConnection::sessionBus());
+    m_serviceWatcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
+    connect(m_serviceWatcher, SIGNAL(serviceUnregistered(QString&)),
+            SLOT(serviceUnregistered(QString&)));
 
     // Also receive updates triggered through the DBus (from powerdevil) see Bug #177123
     QStringList modules;
@@ -415,6 +418,7 @@ uint SaverEngine::Inhibit(const QString &/*application_name*/, const QString &/*
     sr.dbusid = message().service();
     sr.type = ScreenSaverRequest::Inhibit;
     m_requests.append( sr );
+    m_serviceWatcher->addWatchedService(sr.dbusid);
     m_nr_inhibited++;
     if (KScreenSaverSettings::screenSaverEnabled())
         enable( false );
@@ -444,6 +448,7 @@ uint SaverEngine::Throttle(const QString &/*application_name*/, const QString &/
     sr.type = ScreenSaverRequest::Throttle;
     sr.dbusid = message().service();
     m_requests.append( sr );
+    m_serviceWatcher->addWatchedService(sr.dbusid);
     m_nr_throttled++;
     if (mLockProcess)
         // XXX race condition here (locker may be not ready yet)
@@ -465,11 +470,9 @@ void SaverEngine::UnThrottle(uint cookie)
     }
 }
 
-void SaverEngine::serviceOwnerChanged(const QString& name, const QString &, const QString &newOwner)
+void SaverEngine::serviceUnregistered(const QString& name)
 {
-    if ( !newOwner.isEmpty() ) // looking for deaths
-        return;
-
+    m_serviceWatcher->removeWatchedService( name );
     QListIterator<ScreenSaverRequest> it( m_requests );
     while ( it.hasNext() )
     {
