@@ -1,14 +1,18 @@
 [Desktop Entry]
 Name=StatusNotifierItem Informations
+Name[es]=Información StatusNotifierItem
 Name[et]=Oleku märguandja teave
 Name[kk]=StatusNotifierItem мәліметі
 Name[pt]=Informações do Item de Notificação do Estado
+Name[pt_BR]=Informações do StatusNotifierItem
 Name[sv]=Information från statusunderrättelser
 Name[uk]=Відомості запису сповіщення про стан
 Comment=Engine for Applications status information based on the StatusNotifier protocol.
+Comment[es]=Motor para informar del estado de aplicaciones basado en el protocolo StatusNotifier.
 Comment[et]=Rakenduse olekuteabe mootor StatusNotifieri protokolli alusel.
 Comment[kk]=Күй-жайы туралы құлақтандыру (StatusNotifier) протоколын пайдаланбақ қолданбаларды бақылау тетігі.
 Comment[pt]=Motor para a informação do estado das aplicações, baseado no protocolo StatusNotifier.
+Comment[pt_BR]=Mecanismo para informação de status de aplicativos baseado no protocoloStatusNotifier.
 Comment[sv]=Gränssnitt för statusinformation om program baserat på protokollet för statusunderrättelser.
 Comment[uk]=Рушій даних щодо стану програм, заснований на протоколі StatusNotifier (сповіщення про стан).
 Icon=
