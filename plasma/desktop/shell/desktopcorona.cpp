@@ -513,21 +513,25 @@ void DesktopCorona::addPanel(const QString &plugin)
     //FIXME: this should really step through the rects on the relevant screen edge to find
     //appropriate space
     if (destination == Plasma::LeftEdge) {
-        QRect r = availGeom.intersected(QRect(0, 0, w, screenGeom.height())).boundingRect();
+        QRect r = availGeom.intersected(QRect(screenGeom.x(), screenGeom.y(), w, screenGeom.height())).boundingRect();
         h = r.height();
         minW = 35;
+        minH = h;
     } else if (destination == Plasma::RightEdge) {
-        QRect r = availGeom.intersected(QRect(screenGeom.width() - w, 0, w, screenGeom.height())).boundingRect();
+        QRect r = availGeom.intersected(QRect(screenGeom.right() - w, screenGeom.y(), w, screenGeom.height())).boundingRect();
         h = r.height();
         minW = 35;
+        minH = h;
     } else if (destination == Plasma::TopEdge) {
-        QRect r = availGeom.intersected(QRect(0, 0, screenGeom.width(), h)).boundingRect();
+        QRect r = availGeom.intersected(QRect(screenGeom.x(), screenGeom.y(), screenGeom.width(), h)).boundingRect();
         w = r.width();
         minH = 35;
+        minW = w;
     } else if (destination == Plasma::BottomEdge) {
-        QRect r = availGeom.intersected(QRect(0, screenGeom.height() - h, screenGeom.width(), h)).boundingRect();
+        QRect r = availGeom.intersected(QRect(screenGeom.x(), screenGeom.bottom() - h, screenGeom.width(), h)).boundingRect();
         w = r.width();
         minH = 35;
+        minW = w;
     }
 
     panel->setMinimumSize(minW, minH);
