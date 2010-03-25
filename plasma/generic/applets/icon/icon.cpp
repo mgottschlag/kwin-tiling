@@ -145,7 +145,7 @@ void IconApplet::setUrl(const KUrl& url)
         } else if(m_text.isEmpty()) {
             m_text = m_url.prettyUrl();
 
-            if(m_text.endsWith(QLating1String(":/"))) {
+            if(m_text.endsWith(QLatin1String(":/"))) {
                 m_text = m_url.protocol();
             }
         }
