@@ -10,7 +10,7 @@ X-KDE-PluginKeyword=keyboard
 X-KDE-Init-Symbol=keyboard
 X-KDE-ParentApp=kcontrol
 
-X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
+X-KDE-System-Settings-Parent-Category=input-actions
 X-KDE-Weight=50
 
 Name=Keyboard

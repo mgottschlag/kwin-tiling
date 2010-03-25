@@ -1,3 +1,5 @@
+SET(CMAKE_REQUIRED_LIBRARIES -lXi)
+CHECK_FUNCTION_EXISTS(_XiGetDevicePresenceNotifyEvent XiGetDevicePresenceNotifyEvent_EXISTS)
 
 if( X11_Xinput_FOUND AND XiGetDevicePresenceNotifyEvent_EXISTS )
     set(XiGetDevicePresence_FOUND 1)

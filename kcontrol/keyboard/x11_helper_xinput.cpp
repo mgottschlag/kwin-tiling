@@ -28,13 +28,13 @@
 #include <X11/XKBlib.h>
 #include <X11/extensions/XKBrules.h>
 
-#ifdef HAVE_XINPUT
+#if HAVE_XINPUT==1
 #include <X11/extensions/XInput.h>
 #endif
 
 
 
-#ifdef HAVE_XINPUT
+#if HAVE_XINPUT==1
 
 extern "C" {
     extern int _XiGetDevicePresenceNotifyEvent(Display *);
