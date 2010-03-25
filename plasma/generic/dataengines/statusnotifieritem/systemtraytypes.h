@@ -22,36 +22,18 @@
 #define SYSTEMTRAYTYPES_H
 
 #include <QDBusArgument>
-#include <QVector>
 
-struct KDbusImageStruct {
-    int width;
-    int height;
-    QByteArray data;
-};
+#include "systemtraytypedefs.h"
 
 const QDBusArgument &operator<<(QDBusArgument &argument, const KDbusImageStruct &icon);
 const QDBusArgument &operator>>(const QDBusArgument &argument, KDbusImageStruct &icon);
 
-Q_DECLARE_METATYPE(KDbusImageStruct)
 
-typedef QVector<KDbusImageStruct> KDbusImageVector;
 const QDBusArgument &operator<<(QDBusArgument &argument, const KDbusImageVector &iconVector);
 const QDBusArgument &operator>>(const QDBusArgument &argument, KDbusImageVector &iconVector);
-
-Q_DECLARE_METATYPE(KDbusImageVector)
-
-
-struct KDbusToolTipStruct {
-    QString icon;
-    KDbusImageVector image;
-    QString title;
-    QString subTitle;
-};
 
 const QDBusArgument &operator<<(QDBusArgument &argument, const KDbusToolTipStruct &toolTip);
 const QDBusArgument &operator>>(const QDBusArgument &argument, KDbusToolTipStruct &toolTip);
 
-Q_DECLARE_METATYPE(KDbusToolTipStruct)
 
 #endif

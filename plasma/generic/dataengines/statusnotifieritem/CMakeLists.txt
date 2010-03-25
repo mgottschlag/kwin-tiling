@@ -1,5 +1,7 @@
 project(plasma-statusnotifieritem_engine)
 
+include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/statusnotifierwatcher)
+
 # We add our source code here
 set(statusnotifieritem_engine_SRCS
     statusnotifieritem_engine.cpp
@@ -23,8 +25,6 @@ QT4_ADD_DBUS_INTERFACE(statusnotifieritem_engine_SRCS ${statusnotifieritem_xml} 
 
 kde4_add_plugin(plasma_engine_statusnotifieritem ${statusnotifieritem_engine_SRCS})
 target_link_libraries(plasma_engine_statusnotifieritem ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_LIBS})
-
-add_subdirectory(statusnotifierwatcher)
 
 install(TARGETS plasma_engine_statusnotifieritem DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma_engine_statusnotifieritem.desktop DESTINATION ${SERVICES_INSTALL_DIR})

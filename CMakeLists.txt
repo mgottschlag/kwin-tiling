@@ -129,6 +129,7 @@ if(NOT WIN32)
   macro_optional_add_subdirectory( powerdevil )
   macro_optional_add_subdirectory( kwrited )
   macro_optional_add_subdirectory( qguiplatformplugin_kde )
+
   if(POLKITQT_FOUND)
     macro_optional_add_subdirectory( PolicyKit-kde )
   endif(POLKITQT_FOUND)
@@ -146,6 +147,7 @@ macro_optional_add_subdirectory( kmenuedit )
 endif (${QT_QT3SUPPORT_FOUND})
 macro_optional_add_subdirectory( plasma )
 macro_optional_add_subdirectory( kstartupconfig )
+macro_optional_add_subdirectory( statusnotifierwatcher )
 macro_optional_add_subdirectory(kstyles)
 
 
