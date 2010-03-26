@@ -29,7 +29,6 @@ set(khotkeysprivate_SRCS
     conditions/active_window_condition.cpp
     conditions/and_condition.cpp
     conditions/condition.cpp
-    conditions/conditions.cpp
     conditions/conditions_list_base.cpp
     conditions/conditions_list.cpp
     conditions/existing_window_condition.cpp
