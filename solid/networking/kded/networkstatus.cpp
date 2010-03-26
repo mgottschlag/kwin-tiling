@@ -193,7 +193,7 @@ void NetworkStatusModule::init()
     d->serviceWatcher = new QDBusServiceWatcher(this);
     d->serviceWatcher->setConnection(QDBusConnection::sessionBus());
     d->serviceWatcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
-    connect(d->serviceWatcher, SIGNAL(serviceUnregistered(QString&)), SLOT(serviceUnregistered(QString&)));
+    connect(d->serviceWatcher, SIGNAL(serviceUnregistered(QString)), SLOT(serviceUnregistered(QString)));
 }
 
 void NetworkStatusModule::solidNetworkingStatusChanged( Solid::Networking::Status status )
