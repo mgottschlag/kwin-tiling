@@ -66,8 +66,8 @@ SaverEngine::SaverEngine()
     m_serviceWatcher = new QDBusServiceWatcher(this);
     m_serviceWatcher->setConnection(QDBusConnection::sessionBus());
     m_serviceWatcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
-    connect(m_serviceWatcher, SIGNAL(serviceUnregistered(QString&)),
-            SLOT(serviceUnregistered(QString&)));
+    connect(m_serviceWatcher, SIGNAL(serviceUnregistered(const QString&)),
+            this, SLOT(serviceUnregistered(const QString&)));
 
     // Also receive updates triggered through the DBus (from powerdevil) see Bug #177123
     QStringList modules;
