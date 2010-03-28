@@ -72,7 +72,9 @@ private:
     QString m_name;
     QString m_title;
     QIcon m_icon;
+    QString m_iconName;
     QIcon m_attentionIcon;
+    QString m_attentionIconName;
     QMovie *m_movie;
     QTimer *m_blinkTimer;
     Plasma::Service *m_service;

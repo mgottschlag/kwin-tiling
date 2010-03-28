@@ -24,6 +24,7 @@
 
 #include <Plasma/Containment>
 #include <Plasma/Corona>
+#include <Plasma/Theme>
 
 namespace SystemTray
 {
@@ -83,6 +84,20 @@ void DBusSystemTrayWidget::calculateShowPosition()
     params.writeEntry("y", pos.y());
     m_service->startOperationCall(params);
 }
+
+void DBusSystemTrayWidget::setIcon(const QString &iconName, const QIcon &icon)
+{
+    if (!iconName.isEmpty()) {
+        QString name = QString("icons/") + iconName.split("-").first();
+        if (!Plasma::Theme::defaultTheme()->imagePath(name).isEmpty()) {
+            setSvg(name, iconName);
+        }
+        Plasma::IconWidget::setIcon(icon);
+    } else {
+        Plasma::IconWidget::setIcon(icon);
+    }
+}
+
 
 }
 

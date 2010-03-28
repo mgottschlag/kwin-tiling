@@ -149,6 +149,7 @@ void StatusNotifierItemSource::refreshCallback(QDBusPendingCallWatcher *call)
             properties["OverlayIconPixmap"].value<QDBusArgument>() >> image;
             if (image.isEmpty()) {
                 QString iconName = properties["OverlayIconName"].toString();
+                setData("OverlayIconName", iconName);
                 if (!iconName.isEmpty()) {
                     overlayNames << iconName;
                     overlay = KIcon(iconName, iconLoader());
@@ -160,6 +161,7 @@ void StatusNotifierItemSource::refreshCallback(QDBusPendingCallWatcher *call)
             properties["IconPixmap"].value<QDBusArgument>() >> image;
             if (image.isEmpty()) {
                 QString iconName = properties["IconName"].toString();
+                setData("IconName", iconName);
                 if (!iconName.isEmpty()) {
                     icon = KIcon(iconName, iconLoader(), overlayNames);
 
@@ -184,6 +186,7 @@ void StatusNotifierItemSource::refreshCallback(QDBusPendingCallWatcher *call)
             properties["AttentionIconPixmap"].value<QDBusArgument>() >> image;
             if (image.isEmpty()) {
                 QString iconName = properties["AttentionIconName"].toString();
+                setData("AttentionIconName", iconName);
                 if (!iconName.isEmpty()) {
                     attentionIcon = KIcon(iconName, iconLoader(), overlayNames);
 

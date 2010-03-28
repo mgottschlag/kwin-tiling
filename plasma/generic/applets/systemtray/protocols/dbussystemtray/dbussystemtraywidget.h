@@ -36,6 +36,7 @@ class DBusSystemTrayWidget : public Plasma::IconWidget
 
 public:
     DBusSystemTrayWidget(Plasma::Applet *parent, Plasma::Service *service);
+    void setIcon(const QString &iconName, const QIcon &icon);
 
 Q_SIGNALS:
     void clicked(const QPoint &pos);

@@ -145,22 +145,25 @@ void DBusSystemTrayTask::dataUpdated(const QString &taskName, const Plasma::Data
     }
 
     m_icon = properties["Icon"].value<QIcon>();
+    m_iconName = properties["IconName"].toString();
 
     if (status() != Task::NeedsAttention) {
         foreach (QGraphicsWidget *widget, widgetsByHost()) {
-            Plasma::IconWidget *m_iconWidget = qobject_cast<Plasma::IconWidget *>(widget);
-            if (!m_iconWidget) {
+            DBusSystemTrayWidget *iconWidget = qobject_cast<DBusSystemTrayWidget *>(widget);
+            if (!iconWidget) {
                 continue;
             }
 
-            m_iconWidget->setIcon(m_icon);
+            iconWidget->setIcon(m_iconName, m_icon);
+
             //This hardcoded number is needed to support pixel perfection of m_icons coming from other environments, in kde actualsize will jusrt return our usual 22x22
             QSize size = m_icon.actualSize(QSize(24, 24));
-            m_iconWidget->setPreferredSize(m_iconWidget->sizeFromIconSize(qMax(size.width(), size.height())));
+            iconWidget->setPreferredSize(iconWidget->sizeFromIconSize(qMax(size.width(), size.height())));
         }
     }
 
     m_attentionIcon = properties["AttentionIcon"].value<QIcon>();
+    m_attentionIconName = properties["AttentionIconName"].toString();
 
     QString m_movieName = properties["AttentionMovieName"].toString();
     syncMovie(m_movieName);
@@ -180,9 +183,9 @@ void DBusSystemTrayTask::dataUpdated(const QString &taskName, const Plasma::Data
 void DBusSystemTrayTask::blinkAttention()
 {
     foreach (QGraphicsWidget *widget, widgetsByHost()) {
-        Plasma::IconWidget *m_iconWidget = qobject_cast<Plasma::IconWidget *>(widget);
-        if (m_iconWidget) {
-            m_iconWidget->setIcon(m_blink ? m_attentionIcon : m_icon);
+        DBusSystemTrayWidget *iconWidget = qobject_cast<DBusSystemTrayWidget *>(widget);
+        if (iconWidget) {
+            iconWidget->setIcon(m_blink?m_attentionIconName:m_iconName, m_blink?m_attentionIcon:m_icon);
         }
     }
     m_blink = !m_blink;
@@ -212,9 +215,9 @@ void DBusSystemTrayTask::updateMovieFrame()
     Q_ASSERT(m_movie);
     QPixmap pix = m_movie->currentPixmap();
     foreach (QGraphicsWidget *widget, widgetsByHost()) {
-        Plasma::IconWidget *m_iconWidget = qobject_cast<Plasma::IconWidget *>(widget);
-        if (m_iconWidget) {
-            m_iconWidget->setIcon(pix);
+        Plasma::IconWidget *iconWidget = qobject_cast<Plasma::IconWidget *>(widget);
+        if (iconWidget) {
+            iconWidget->setIcon(pix);
         }
     }
 }
@@ -271,9 +274,9 @@ void DBusSystemTrayTask::syncStatus(QString newStatus)
         }
 
         foreach (QGraphicsWidget *widget, widgetsByHost()) {
-            Plasma::IconWidget *m_iconWidget = qobject_cast<Plasma::IconWidget *>(widget);
-            if (m_iconWidget) {
-                m_iconWidget->setIcon(m_icon);
+            DBusSystemTrayWidget *iconWidget = qobject_cast<DBusSystemTrayWidget *>(widget);
+            if (iconWidget) {
+                iconWidget->setIcon(m_iconName, m_icon);
             }
         }
     }
