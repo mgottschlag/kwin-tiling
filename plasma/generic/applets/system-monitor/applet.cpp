@@ -292,10 +292,9 @@ void Applet::toolTipAboutToShow()
 {
     if (mode() == SM::Applet::Panel && !m_toolTips.isEmpty()) {
         QString html = "<table>";
-        foreach (const QString& s, items()) {
-            QString senstorHtml = m_toolTips.value(s);
-            if (!senstorHtml.isEmpty()) {
-                html += senstorHtml;
+        foreach (const QString& s, m_toolTips.values()) {
+            if (!s.isEmpty()) {
+                html += s;
             }
         }
         html += "</table>";
@@ -338,6 +337,9 @@ SM::Applet::Mode Applet::mode()
 void Applet::setToolTip(const QString &source, const QString &tipContent)
 {
     m_toolTips.insert(source, tipContent);
+    if (Plasma::ToolTipManager::self()->isVisible(this)) {
+        toolTipAboutToShow();
+    }
 }
 
 void Applet::setEngine(Plasma::DataEngine* engine)
