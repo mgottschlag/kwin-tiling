@@ -30,12 +30,15 @@ public:
     virtual QSize sizeHint(const QStyleOptionViewItem &option,
                            const QModelIndex &index) const;
 
-    static const int SCREENSHOT_SIZE = 60;
+    static const int SCREENSHOT_SIZE = 64;
 
 private:
-    static const int MARGIN = 5;
+    static const int MARGIN = 0;
     QObject *m_listener;
     float m_ratio;
+
+    int m_maxHeight;
+    int m_maxWidth;
 };
 
 #endif // BACKGROUNDDELEGATEL_H

@@ -1,5 +1,6 @@
 /*
   Copyright (c) 2007 Paolo Capriotti <p.capriotti@gmail.com>
+  Copyright (c) 2010 Dario Andres Rodriguez  <andresbajotierra@gmail.com>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -10,9 +11,10 @@
 #include "backgrounddelegate.h"
 
 #include <QApplication>
-#include <QPen>
+#include <QTextDocument>
 #include <QPainter>
 
+#include <KDebug>
 #include <KGlobalSettings>
 #include <KLocalizedString>
 
@@ -21,80 +23,75 @@ BackgroundDelegate::BackgroundDelegate(QObject *listener, float ratio, QObject *
       m_listener(listener),
       m_ratio(ratio)
 {
+    m_maxHeight = SCREENSHOT_SIZE;
+    m_maxWidth = int(m_maxHeight * m_ratio);
 }
 
 void BackgroundDelegate::paint(QPainter *painter,
                                const QStyleOptionViewItem &option,
                                const QModelIndex &index) const
 {
-    QString title = index.model()->data(index, Qt::DisplayRole).toString();
-    QString author = index.model()->data(index, AuthorRole).toString();
-    QString resolution = index.model()->data(index, ResolutionRole).toString();
-    QPixmap pix = index.model()->data(index, ScreenshotRole).value<QPixmap>();
+    const QString title = index.model()->data(index, Qt::DisplayRole).toString();
+    const QString author = index.model()->data(index, AuthorRole).toString();
+    const QString resolution = index.model()->data(index, ResolutionRole).toString();
+    const QPixmap pix = index.model()->data(index, ScreenshotRole).value<QPixmap>();
 
-    // highlight selected item
+    // Highlight selected item
     QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &option, painter);
 
-    // draw pixmap
-    int maxheight = SCREENSHOT_SIZE;
-    int maxwidth = int(maxheight * m_ratio);
+    // Draw wallpaper thumbnail
     if (!pix.isNull()) {
-        QSize sz = pix.size();
-        int x = MARGIN + (maxwidth - pix.width()) / 2;
-        int y = MARGIN + (maxheight - pix.height()) / 2;
+        const int x = (option.rect.width() - pix.width()) / 2;
+        // the y ix aligned to the baseline of the icons
+        const int y = MARGIN + qMax(0, m_maxHeight - pix.height());
         QRect imgRect = QRect(option.rect.topLeft(), pix.size()).translated(x, y);
         painter->drawPixmap(imgRect, pix);
     }
 
-    // draw text
-    painter->save();
-    QFont font = painter->font();
-    font.setWeight(QFont::Bold);
-    painter->setFont(font);
-    if (option.state & QStyle::State_Selected) {
-        painter->setPen(QApplication::palette().brush(QPalette::HighlightedText).color());
-    }else{
-        painter->setPen(QApplication::palette().brush(QPalette::Text).color());
-    }
-    int x = option.rect.left() + MARGIN * 2 + maxwidth;
+    //Use a QTextDocument to layout the text
+    QTextDocument document;
 
-    QRect textRect(x,
-                   option.rect.top() + MARGIN,
-                   option.rect.width() - x - MARGIN,
-                   maxheight);
-    QString text = title;
-    QString authorCaption;
+    QString html = QString("<strong>%1</strong>").arg(title);
+
     if (!author.isEmpty()) {
-        authorCaption = i18nc("Caption to wallpaper preview, %1 author name",
+        QString authorCaption = i18nc("Caption to wallpaper preview, %1 author name",
                               "by %1", author);
-        text += '\n' + authorCaption;
-    }
 
-    QRect boundingRect = painter->boundingRect(
-        textRect, Qt::AlignVCenter | Qt::TextWordWrap, text) & option.rect;
-    painter->drawText(boundingRect, Qt::TextWordWrap, title);
-    QRect titleRect = painter->boundingRect(boundingRect, Qt::TextWordWrap, title);
-    QPoint lastText(titleRect.bottomLeft());
-
-    if (!author.isEmpty()) {
-        QRect authorRect = QRect(lastText, textRect.size()) & option.rect;
-
-        if (!authorRect.isEmpty()) {
-            painter->setFont(KGlobalSettings::smallestReadableFont());
-            painter->drawText(authorRect, Qt::TextWordWrap, authorCaption);
-            lastText = painter->boundingRect(authorRect, Qt::TextWordWrap, authorCaption).bottomLeft();
-        }
+        html += QString("<br /><span style=\"font-size: %1pt;\">%2</span>")
+                .arg(KGlobalSettings::smallestReadableFont().pointSize())
+                .arg(authorCaption);
     }
 
     if (!resolution.isEmpty()) {
-        QRect resolutionRect = QRect(lastText, textRect.size()) & option.rect;
-
-        if (!resolutionRect.isEmpty()) {
-            painter->setFont(KGlobalSettings::smallestReadableFont());
-            painter->drawText(resolutionRect, Qt::TextWordWrap, resolution);
-        }
+        html += QString("<br /><span style=\"font-size: %1pt;\">%2</span>")
+                .arg(KGlobalSettings::smallestReadableFont().pointSize())
+                .arg(resolution);
     }
 
+    //Set the text color according to the item state
+    QColor color;
+    if (option.state & QStyle::State_Selected) {
+        color = QApplication::palette().brush(QPalette::HighlightedText).color();
+    }else{
+        color = QApplication::palette().brush(QPalette::Text).color();
+    }
+    html = QString("<div style=\"color: %1\" align=\"center\">%2</div>").arg(color.name()).arg(html);
+
+    document.setHtml(html);
+
+    //Calculate positioning
+    int x = option.rect.left();// + MARGIN * 2 + m_maxWidth;
+
+    //Enable word-wrap
+    document.setTextWidth(option.rect.width());
+
+    //Center text on the row
+    int y = option.rect.top() + m_maxHeight + MARGIN * 2; //qMax(0 ,(int)((option.rect.height() - document.size().height()) / 2));
+
+    //Draw text
+    painter->save();
+    painter->translate(x, y);
+    document.drawContents(painter, QRect(QPoint(0, 0), option.rect.size()));
     painter->restore();
 }
 
@@ -102,11 +99,21 @@ QSize BackgroundDelegate::sizeHint(const QStyleOptionViewItem &option,
                                    const QModelIndex &index) const
 {
     const QString title = index.model()->data(index, Qt::DisplayRole).toString();
-    const int maxwidth = int(SCREENSHOT_SIZE * m_ratio);
-    QFont font = option.font;
-    font.setWeight(QFont::Bold);
-    QFontMetrics fm(font);
-    //kDebug() << QSize(maxwidth + qBound(100, fm.width(title), 500), Background::SCREENSHOT_SIZE + MARGIN * 2);
-    return QSize(maxwidth + qBound(100, fm.width(title), 500), SCREENSHOT_SIZE + MARGIN * 2);
+    const QString author = index.model()->data(index, AuthorRole).toString();
+    const int fontSize = KGlobalSettings::smallestReadableFont().pointSize();
+
+    //Generate a sample complete entry (with the real title) to calculate sizes
+    QTextDocument document;
+    QString html = QString("<strong>%1</strong><br />").arg(title);
+    if (!author.isEmpty()) {
+        html += QString("<span style=\"font-size: %1pt;\">by %2</span><br />").arg(fontSize).arg(author);
+    }
+    html += QString("<span style=\"font-size: %1pt;\">1600x1200</span>").arg(fontSize);
+
+    document.setHtml(html);
+    document.setTextWidth(m_maxWidth + MARGIN * 2);
+
+    return QSize(qMax(m_maxWidth + MARGIN * 2, (int)(document.size().width())),
+                 m_maxHeight + MARGIN * 2 + (int)(document.size().height()));
 }
 

@@ -71,6 +71,7 @@ private:
 
     QSize m_size;
     Plasma::Wallpaper::ResizeMethod m_resizeMethod;
+    QPixmap m_previewUnavailablePix;
 };
 
 class BackgroundFinder : public QObject

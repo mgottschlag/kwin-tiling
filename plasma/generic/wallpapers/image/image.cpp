@@ -138,8 +138,6 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         m_uiImage.m_pictureUrlButton->setIcon(KIcon("document-open"));
         connect(m_uiImage.m_pictureUrlButton, SIGNAL(clicked()), this, SLOT(showFileDialog()));
 
-        m_uiImage.m_emailLine->setTextInteractionFlags(Qt::TextSelectableByMouse);
-
         m_uiImage.m_resizeMethod->addItem(i18n("Scaled & Cropped"), ScaledAndCroppedResize);
         m_uiImage.m_resizeMethod->addItem(i18n("Scaled"), ScaledResize);
         m_uiImage.m_resizeMethod->addItem(i18n("Scaled, keep proportions"), MaxpectResize);
@@ -218,18 +216,18 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
 
 void Image::setConfigurationInterfaceModel()
 {
+    QTime t;
+    t.start();
     m_uiImage.m_view->setModel(m_model);
+    kDebug() << t.restart();
     connect(m_uiImage.m_view->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(pictureChanged(const QModelIndex &)));
 
     QModelIndex index = m_model->indexOf(m_wallpaper);
-    kDebug() << m_wallpaper << index;
+    kDebug() << t.restart();
     if (index.isValid()) {
         m_uiImage.m_view->setCurrentIndex(index);
-        Plasma::Package *b = m_model->package(index.row());
-        if (b) {
-            fillMetaInfo(b);
-        }
     }
+    kDebug() << m_wallpaper << index << t.restart();
 }
 
 void Image::modified()
@@ -440,7 +438,6 @@ void Image::pictureChanged(const QModelIndex &index)
         return;
     }
 
-    fillMetaInfo(b);
     if (b->structure()->contentsPrefix().isEmpty()) {
         // it's not a full package, but a single paper
         m_wallpaper = b->filePath("preferred");
@@ -465,52 +462,6 @@ void Image::positioningChanged(int index)
 
     if (m_model) {
         m_model->setResizeMethod(m_resizeMethod);
-    }
-}
-
-void Image::fillMetaInfo(Plasma::Package *b)
-{
-    // Prepare more user-friendly forms of some pieces of data.
-    // - license by config is more a of a key value,
-    //   try to get the proper name if one of known licenses.
-
-    // not needed for now...
-    //QString license = b->license();
-    /*
-    KAboutLicense knownLicense = KAboutLicense::byKeyword(license);
-    if (knownLicense.key() != KAboutData::License_Custom) {
-        license = knownLicense.name(KAboutData::ShortName);
-    }
-    */
-    // - last ditch attempt to localize author's name, if not such by config
-    //   (translators can "hook" names from outside if resolute enough).
-    QString author = b->metadata().author();
-    #if 0
-    if (author.isEmpty()) {
-        setMetadata(m_uiImage.m_authorLine, QString());
-        m_uiImage.m_authorLabel->setAlignment(Qt::AlignLeft);
-    } else {
-        QString authorIntl = i18nc("Wallpaper info, author name", "%1", author);
-        m_uiImage.m_authorLabel->setAlignment(Qt::AlignRight);
-        setMetadata(m_uiImage.m_authorLine, authorIntl);
-    }
-    #endif
-    setMetadata(m_uiImage.m_licenseLine, QString());
-    setMetadata(m_uiImage.m_emailLine, QString());
-    m_uiImage.m_emailLabel->hide();
-    m_uiImage.m_licenseLabel->hide();
-}
-
-bool Image::setMetadata(QLabel *label, const QString &text)
-{
-    if (text.isEmpty()) {
-        label->hide();
-        return false;
-    }
-    else {
-        label->show();
-        label->setText(text);
-        return true;
     }
 }
 

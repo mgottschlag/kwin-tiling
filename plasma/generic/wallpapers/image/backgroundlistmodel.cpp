@@ -25,15 +25,23 @@
 #include "backgrounddelegate.h"
 #include "image.h"
 
+/*
+class ImageSizeFinder : QRunnable
+{
+};
+*/
 BackgroundListModel::BackgroundListModel(float ratio, Plasma::Wallpaper *listener, QObject *parent)
     : QAbstractListModel(parent),
       m_listener(listener),
       m_structureParent(listener),
       m_ratio(ratio),
       m_size(0,0),
-      m_resizeMethod(Plasma::Wallpaper::ScaledResize)
+      m_resizeMethod(Plasma::Wallpaper::ScaledResize),
+      m_previewUnavailablePix(BackgroundDelegate::SCREENSHOT_SIZE, BackgroundDelegate::SCREENSHOT_SIZE)
 {
     connect(&m_dirwatch, SIGNAL(deleted(QString)), this, SLOT(removeBackground(QString)));
+    m_previewUnavailablePix.fill(Qt::transparent);
+    //m_previewUnavailablePix = KIcon("unknown").pixmap(m_previewUnavailablePix.size());
 }
 
 BackgroundListModel::~BackgroundListModel()
@@ -60,6 +68,8 @@ void BackgroundListModel::reload()
 
 void BackgroundListModel::reload(const QStringList &selected)
 {
+    QTime t;
+    t.start();
     const QStringList dirs = KGlobal::dirs()->findDirs("wallpaper", "");
     QList<Plasma::Package *> tmp;
 
@@ -95,6 +105,7 @@ void BackgroundListModel::reload(const QStringList &selected)
         m_packages = tmp;
         endInsertRows();
     }
+    kDebug() << t.elapsed();
 }
 
 QStringList BackgroundFinder::papersFound() const
@@ -206,11 +217,12 @@ QVariant BackgroundListModel::data(const QModelIndex &index, int role) const
 
         KUrl file(b->filePath("preferred"));
 
-        if (file.isValid()) {
+        if (!m_previewJobs.contains(file) && file.isValid()) {
             KIO::PreviewJob* job = KIO::filePreview(KUrl::List() << file,
                                                     BackgroundDelegate::SCREENSHOT_SIZE,
                                                     BackgroundDelegate::SCREENSHOT_SIZE);
 
+            job->setIgnoreMaximumSize(true);
             connect(job, SIGNAL(gotPreview(const KFileItem&, const QPixmap&)),
                     this, SLOT(showPreview(const KFileItem&, const QPixmap&)));
             connect(job, SIGNAL(failed(const KFileItem&)),
@@ -218,10 +230,8 @@ QVariant BackgroundListModel::data(const QModelIndex &index, int role) const
             const_cast<BackgroundListModel *>(this)->m_previewJobs.insert(file, QPersistentModelIndex(index));
         }
 
-        QPixmap pix(BackgroundDelegate::SCREENSHOT_SIZE, BackgroundDelegate::SCREENSHOT_SIZE);
-        pix.fill(Qt::transparent);
-        const_cast<BackgroundListModel *>(this)->m_previews.insert(b, pix);
-        return pix;
+        //const_cast<BackgroundListModel *>(this)->m_previews.insert(b, m_previewUnavailablePix);
+        return m_previewUnavailablePix;
     }
     break;
 

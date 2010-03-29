@@ -76,8 +76,6 @@ class Image : public Plasma::Wallpaper
     protected:
         void init(const KConfigGroup &config);
         void updateDirs();
-        void fillMetaInfo(Plasma::Package *b);
-        bool setMetadata(QLabel *label, const QString &text);
         void renderWallpaper(const QString& image = QString());
         void suspendStartup(bool suspend); // for ksmserver
         void calculateGeometry();
