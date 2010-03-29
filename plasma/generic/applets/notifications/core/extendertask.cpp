@@ -51,7 +51,8 @@ ExtenderTaskBusyWidget::ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, cons
       m_manager(manager)
 {
     setAcceptsHoverEvents(true);
-    m_svg->setImagePath("widgets/tasks");
+    m_svg->setImagePath("widgets/notifications");
+    m_svg->setContainsMultipleImages(true);
     setRunning(false);
 
     connect(manager, SIGNAL(notificationAdded(Notification*)),
@@ -80,24 +81,47 @@ ExtenderTaskBusyWidget::ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, cons
 
 void ExtenderTaskBusyWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    QRectF iconRect(0, 0, qMin(size().width(), size().height()), qMin(size().width(), size().height()));
+    iconRect.moveCenter(boundingRect().center());
+
     if (m_state == Running) {
+        const int arcStart = 90*16;
+        const int arcEnd = -(360*(qreal)m_manager->jobTotals()->percentage()/100)*16;
+
+        kWarning() << arcStart << arcEnd;
+
+        QPixmap activePixmap(iconRect.size().toSize());
+        activePixmap.fill(Qt::transparent);
+        QPixmap inActivePixmap(iconRect.size().toSize());
+        inActivePixmap.fill(Qt::transparent);
+
+        QPainter p(&activePixmap);
+        p.setPen(Qt::NoPen);
+        p.setBrush(Qt::black);
+        p.setCompositionMode(QPainter::CompositionMode_Source);
+        p.drawPie(QRectF(QPointF(0, 0), iconRect.size()), arcStart, arcEnd);
+        p.setCompositionMode(QPainter::CompositionMode_SourceIn);
+        m_svg->paint(&p, QRectF(QPointF(0, 0), iconRect.size()), "progress-active");
+        p.end();
+
+        p.begin(&inActivePixmap);
+        p.setPen(Qt::NoPen);
+        p.setBrush(Qt::black);
+        p.setCompositionMode(QPainter::CompositionMode_Source);
+        p.drawPie(QRectF(QPointF(0, 0), iconRect.size()), arcStart, (360*16)+arcEnd);
+        p.setCompositionMode(QPainter::CompositionMode_SourceIn);
+        m_svg->paint(&p, QRectF(QPointF(0, 0), iconRect.size()), "progress-inactive");
+        p.end();
+
+        painter->drawPixmap(iconRect, activePixmap, activePixmap.rect());
+        painter->drawPixmap(iconRect, inActivePixmap, inActivePixmap.rect());
+
         Plasma::BusyWidget::paint(painter, option, widget);
-        kWarning()<<360*(qreal)m_manager->jobTotals()->percentage()/100;
-        painter->save();
-        painter->setRenderHint(QPainter::Antialiasing);
-        QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-        color.setAlphaF(0.6);
-        painter->setPen(color);
-        painter->drawArc(option->rect, 90*16, -(360*(qreal)m_manager->jobTotals()->percentage()/100)*16);
-        painter->restore();
     } else if (m_state == Empty) {
-        //TODO: something nicer perhaps .. right now we just paint a centered, disabled 'i' icon
-        QPixmap pixmap = m_icon.pixmap(size().toSize(), QIcon::Disabled);
-        QPoint p(qMax(qreal(0), (size().width() - pixmap.width()) / 2),
-                 qMax(qreal(0), (size().height() - pixmap.height()) / 2));
-        painter->drawPixmap(p, pixmap);
+        m_svg->paint(painter, iconRect, "notification-inactive");
     } else {
         // m_state ==  Info
+        m_svg->paint(painter, iconRect, "notification-empty");
         QFont font(KGlobalSettings::smallestReadableFont());
         painter->setFont(font);
         QRectF r = rect();
@@ -133,14 +157,14 @@ QString ExtenderTaskBusyWidget::expanderElement() const
 {
     switch (m_systray->location()) {
         case Plasma::TopEdge:
-            return "group-expander-top";
+            return "expander-top";
         case Plasma::RightEdge:
-            return "group-expander-right";
+            return "expander-right";
         case Plasma::LeftEdge:
-            return "group-expander-left";
+            return "expander-left";
         case Plasma::BottomEdge:
         default:
-            return "group-expander-bottom";
+            return "expander-bottom";
     }
 }
 
