@@ -115,9 +115,9 @@ public:
     QRect unhideHintGeometry() const;
 
     /**
-     * Hides any hide hinting
+     * Hides any unhide hinting
      */
-    void unhintHide();
+    void hideHinter();
 
 public Q_SLOTS:
     /**
@@ -214,13 +214,20 @@ private Q_SLOTS:
     void init();
     void togglePanelController();
     void showWidgetExplorer();
-    void edittingComplete();
+    void editingComplete();
     void overlayDestroyed(PanelAppletOverlay *overlay);
     void overlayMoved(PanelAppletOverlay *overlay);
     void panelDeleted();
     void startAutoHide();
-    void hideMousePoll();
-    void unhideHintMousePoll();
+    /**
+     * hides the panel if there's nothing keeping it open
+     */
+    void hideIfNotInUse();
+    /**
+     * update the appearance of the unhide hinter
+     * and get rid of it if the mouse has gone elsewhere
+     */
+    void updateHinter();
     void resetTriggerEnteredSuppression();
 
     /**
@@ -255,8 +262,7 @@ private:
     bool m_lastHorizontal : 1;
     bool m_init : 1;
 
-    bool m_editting : 1;
-    bool m_firstPaint : 1;
+    bool m_editing : 1;
     bool m_triggerEntered : 1;
     static const int STRUTSTIMERDELAY = 200;
 };

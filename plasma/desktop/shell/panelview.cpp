@@ -207,8 +207,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_visibilityMode(NormalPanel),
       m_lastHorizontal(true),
       m_init(false),
-      m_editting(false),
-      m_firstPaint(true),
+      m_editing(false),
       m_triggerEntered(false)
 {
     kDebug() << "Panel geometry is" << panel->geometry();
@@ -434,7 +433,7 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
     config().writeEntry("panelVisibility", (int)mode);
 
     //if the user didn't cause this, hide again in a bit
-    if ((mode == AutoHide || mode == LetWindowsCover) && !m_editting) {
+    if ((mode == AutoHide || mode == LetWindowsCover) && !m_editing) {
         m_mousePollTimer->stop();
         QTimer::singleShot(2000, this, SLOT(startAutoHide()));
     }
@@ -813,7 +812,7 @@ Qt::Alignment PanelView::alignment() const
 void PanelView::togglePanelController()
 {
     //kDebug();
-    m_editting = false;
+    m_editing = false;
     if (containment()->immutability() != Plasma::Mutable) {
         delete m_panelController;
         m_panelController = 0;
@@ -828,7 +827,7 @@ void PanelView::togglePanelController()
         m_panelController->setOffset(m_offset);
         m_panelController->setVisibilityMode(m_visibilityMode);
 
-        connect(m_panelController, SIGNAL(destroyed(QObject*)), this, SLOT(edittingComplete()));
+        connect(m_panelController, SIGNAL(destroyed(QObject*)), this, SLOT(editingComplete()));
         connect(m_panelController, SIGNAL(offsetChanged(int)), this, SLOT(setOffset(int)));
         connect(m_panelController, SIGNAL(alignmentChanged(Qt::Alignment)), this, SLOT(setAlignment(Qt::Alignment)));
         connect(m_panelController, SIGNAL(locationChanged(Plasma::Location)), this, SLOT(setLocation(Plasma::Location)));
@@ -861,7 +860,7 @@ void PanelView::togglePanelController()
     }
 
     if (!m_panelController->isVisible()) {
-        m_editting = true;
+        m_editing = true;
         m_panelController->resize(m_panelController->sizeHint());
         m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
         Plasma::WindowEffects::slideWindow(m_panelController, location());
@@ -874,12 +873,11 @@ void PanelView::togglePanelController()
     }
 }
 
-//FIXME "editing"
-void PanelView::edittingComplete()
+void PanelView::editingComplete()
 {
     //kDebug();
     m_panelController = 0;
-    m_editting = false;
+    m_editing = false;
     qDeleteAll(m_appletOverlays);
     m_appletOverlays.clear();
 
@@ -889,10 +887,9 @@ void PanelView::edittingComplete()
 
     containment()->closeToolBox();
     updateStruts();
-    m_firstPaint = true; // triggers autohide FIXME does not! delete this var.
 
     if (m_visibilityMode == LetWindowsCover || m_visibilityMode == AutoHide) {
-         hideMousePoll();
+         hideIfNotInUse();
     }
 }
 
@@ -1089,8 +1086,7 @@ void PanelView::resizeEvent(QResizeEvent *event)
     }
 }
 
-//FIXME that's a confusing function name
-void PanelView::hideMousePoll()
+void PanelView::hideIfNotInUse()
 {
     QPoint mousePos = QCursor::pos();
 
@@ -1099,15 +1095,14 @@ void PanelView::hideMousePoll()
     }
 }
 
-//FIXME that's a confusing function name
-void PanelView::unhideHintMousePoll()
+void PanelView::updateHinter()
 {
 #ifdef Q_WS_X11
     QPoint mousePos = QCursor::pos();
     m_glowBar->updateStrength(mousePos);
 
     if (!m_unhideTriggerGeom.contains(mousePos)) {
-        unhintHide();
+        hideHinter();
         XMoveResizeWindow(QX11Info::display(), m_unhideTrigger, m_unhideTriggerGeom.x(), m_unhideTriggerGeom.y(), m_unhideTriggerGeom.width(), m_unhideTriggerGeom.height());
     }
 #endif
@@ -1156,7 +1151,7 @@ bool PanelView::hintOrUnhide(const QPoint &point, bool dueToDnd)
             m_mousePollTimer = new QTimer(this);
         }
 
-        connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(unhideHintMousePoll()), Qt::UniqueConnection);
+        connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(updateHinter()), Qt::UniqueConnection);
         m_mousePollTimer->start(200);
     }
 
@@ -1166,13 +1161,12 @@ bool PanelView::hintOrUnhide(const QPoint &point, bool dueToDnd)
 #endif
 }
 
-//FIXME that's a confusing function name
-void PanelView::unhintHide()
+void PanelView::hideHinter()
 {
     //kDebug() << "hide the glow";
     if (m_mousePollTimer) {
         m_mousePollTimer->stop();
-        disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(unhideHintMousePoll()));
+        disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(updateHinter()));
     }
 
     delete m_glowBar;
@@ -1199,7 +1193,7 @@ bool PanelView::hasPopup()
 void PanelView::unhide(bool destroyTrigger)
 {
     //kill the unhide stuff
-    unhintHide();
+    hideHinter();
     if (destroyTrigger) {
         destroyUnhideTrigger();
     }
@@ -1223,8 +1217,8 @@ void PanelView::unhide(bool destroyTrigger)
     //FIXME investigate whether the mouse poll is really needed all the time or if leave events are
     //good enough
     //welll, if we didn't create it here something would have to when a popup dies
-    disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
-    connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
+    disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideIfNotInUse()));
+    connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideIfNotInUse()));
     m_mousePollTimer->start(200);
 
     //avoid hide-show loops
@@ -1249,7 +1243,7 @@ void PanelView::startAutoHide()
 {
     if (m_mousePollTimer) {
         m_mousePollTimer->stop();
-        disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
+        disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideIfNotInUse()));
     }
 
     if (m_visibilityMode == LetWindowsCover) {
@@ -1268,7 +1262,7 @@ void PanelView::leaveEvent(QEvent *event)
         //this prevents crazy hide-unhide loops that can happen at times
         m_triggerEntered = false;
     } else if (containment() &&
-               (m_visibilityMode == AutoHide || m_visibilityMode == LetWindowsCover) && !m_editting) {
+               (m_visibilityMode == AutoHide || m_visibilityMode == LetWindowsCover) && !m_editing) {
         // even if we dont have a popup, we'll start a timer, so
         // that the panel stays if the mouse only leaves for a
         // few ms
@@ -1276,8 +1270,8 @@ void PanelView::leaveEvent(QEvent *event)
             m_mousePollTimer = new QTimer(this);
         }
 
-        disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
-        connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
+        disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideIfNotInUse()));
+        connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideIfNotInUse()));
         m_mousePollTimer->start(200);
     }
 
@@ -1297,9 +1291,6 @@ void PanelView::drawBackground(QPainter *painter, const QRectF &rect)
 void PanelView::paintEvent(QPaintEvent *event)
 {
     Plasma::View::paintEvent(event);
-    if (m_firstPaint) {
-        m_firstPaint = false;
-    }
 }
 
 bool PanelView::event(QEvent *event)
