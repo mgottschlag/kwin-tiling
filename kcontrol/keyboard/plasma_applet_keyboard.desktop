@@ -1,11 +1,13 @@
 [Desktop Entry]
 Name=Keyboard Layout Applet
+Name[en_GB]=Keyboard Layout Applet
 Name[es]=Miniaplicación de disposición del teclado
 Name[pt]='Applet' da Disposição do Teclado
 Name[sv]=Miniprogram för tangentbordslayout
 Name[uk]=Аплет розкладок клавіатури
 Name[x-test]=xxKeyboard Layout Appletxx
 Comment=Applet to display and switch layouts
+Comment[en_GB]=Applet to display and switch layouts
 Comment[es]=Miniaplicación para mostrar y cambiar disposiciones
 Comment[pt]='Applet' para mostrar e mudar de disposições de teclado
 Comment[sv]=Miniprogram för att visa och byta layout
