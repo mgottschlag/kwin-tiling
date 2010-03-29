@@ -88,7 +88,7 @@ void ExtenderTaskBusyWidget::paint(QPainter *painter, const QStyleOptionGraphics
         const int arcStart = 90*16;
         const int arcEnd = -(360*(qreal)m_manager->jobTotals()->percentage()/100)*16;
 
-        kWarning() << arcStart << arcEnd;
+        //kWarning() << arcStart << arcEnd;
 
         QPixmap activePixmap(iconRect.size().toSize());
         activePixmap.fill(Qt::transparent);
@@ -113,8 +113,8 @@ void ExtenderTaskBusyWidget::paint(QPainter *painter, const QStyleOptionGraphics
         m_svg->paint(&p, QRectF(QPointF(0, 0), iconRect.size()), "progress-inactive");
         p.end();
 
-        painter->drawPixmap(iconRect, activePixmap, activePixmap.rect());
-        painter->drawPixmap(iconRect, inActivePixmap, inActivePixmap.rect());
+        painter->drawPixmap(iconRect.topLeft().toPoint(), activePixmap);
+        painter->drawPixmap(iconRect.topLeft().toPoint(), inActivePixmap);
 
         Plasma::BusyWidget::paint(painter, option, widget);
     } else if (m_state == Empty) {
