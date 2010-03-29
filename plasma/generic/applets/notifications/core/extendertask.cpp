@@ -102,21 +102,27 @@ void ExtenderTaskBusyWidget::paint(QPainter *painter, const QStyleOptionGraphics
         p.drawPie(QRectF(QPointF(0, 0), iconRect.size()), arcStart, arcEnd);
         p.setCompositionMode(QPainter::CompositionMode_SourceIn);
         m_svg->paint(&p, QRectF(QPointF(0, 0), iconRect.size()), "progress-active");
+        //FIXME: agreat hack: the label will be drawn half from us half from the base implementation
+        p.setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+        p.drawText(QRectF(QPointF(0, 0), iconRect.size()), Qt::AlignCenter, label());
         p.end();
 
         p.begin(&inActivePixmap);
-        p.setPen(Qt::NoPen);
-        p.setBrush(Qt::black);
         p.setCompositionMode(QPainter::CompositionMode_Source);
-        p.drawPie(QRectF(QPointF(0, 0), iconRect.size()), arcStart, (360*16)+arcEnd);
-        p.setCompositionMode(QPainter::CompositionMode_SourceIn);
         m_svg->paint(&p, QRectF(QPointF(0, 0), iconRect.size()), "progress-inactive");
+        p.setCompositionMode(QPainter::CompositionMode_SourceOver);
+        Plasma::BusyWidget::paint(&p, option, widget);
+        p.setPen(Qt::NoPen);
+        //not fully opaque or the omposition mode will be disabled
+        p.setBrush(QColor(0,0,0,1));
+        p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+        //p.drawPie(QRectF(QPointF(0, 0), iconRect.size()), arcStart, (360*16)+arcEnd);
+        p.drawPie(QRectF(QPointF(0, 0), iconRect.size()), arcStart, arcEnd);
         p.end();
 
         painter->drawPixmap(iconRect.topLeft().toPoint(), activePixmap);
         painter->drawPixmap(iconRect.topLeft().toPoint(), inActivePixmap);
 
-        Plasma::BusyWidget::paint(painter, option, widget);
     } else if (m_state == Empty) {
         m_svg->paint(painter, iconRect, "notification-inactive");
     } else {
