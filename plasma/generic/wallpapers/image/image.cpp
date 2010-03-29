@@ -133,16 +133,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         QTimer::singleShot(0, this, SLOT(setConfigurationInterfaceModel()));
         m_uiImage.m_view->setItemDelegate(new BackgroundDelegate(m_uiImage.m_view,
                                                                  ratio, m_configWidget));
-        m_uiImage.m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-        QModelIndex index = m_model->indexOf(m_wallpaper);
-        kDebug() << m_wallpaper << index;
-        if (index.isValid()) {
-            m_uiImage.m_view->setCurrentIndex(index);
-            Plasma::Package *b = m_model->package(index.row());
-            if (b) {
-                fillMetaInfo(b);
-            }
-        }
+        //m_uiImage.m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
         m_uiImage.m_pictureUrlButton->setIcon(KIcon("document-open"));
         connect(m_uiImage.m_pictureUrlButton, SIGNAL(clicked()), this, SLOT(showFileDialog()));
@@ -229,6 +220,16 @@ void Image::setConfigurationInterfaceModel()
 {
     m_uiImage.m_view->setModel(m_model);
     connect(m_uiImage.m_view->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(pictureChanged(const QModelIndex &)));
+
+    QModelIndex index = m_model->indexOf(m_wallpaper);
+    kDebug() << m_wallpaper << index;
+    if (index.isValid()) {
+        m_uiImage.m_view->setCurrentIndex(index);
+        Plasma::Package *b = m_model->package(index.row());
+        if (b) {
+            fillMetaInfo(b);
+        }
+    }
 }
 
 void Image::modified()
