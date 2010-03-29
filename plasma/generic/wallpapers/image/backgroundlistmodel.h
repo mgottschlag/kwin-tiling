@@ -12,6 +12,7 @@
 
 #include <QAbstractListModel>
 #include <QPixmap>
+#include <QRunnable>
 
 #include <KDirWatch>
 #include <KFileItem>
@@ -25,6 +26,20 @@ namespace Plasma
 {
     class Package;
 } // namespace Plasma
+
+class ImageSizeFinder : public QObject, public QRunnable
+{
+    Q_OBJECT
+    public:
+        ImageSizeFinder(const QString &path, QObject *parent = 0);
+        void run();
+
+    Q_SIGNALS:
+        void sizeFound(const QString &path, const QSize &size);
+
+    private:
+        QString m_path;
+};
 
 class BackgroundListModel : public QAbstractListModel
 {
@@ -56,11 +71,11 @@ protected Q_SLOTS:
     void removeBackground(const QString &path);
     void showPreview(const KFileItem &item, const QPixmap &preview);
     void previewFailed(const KFileItem &item);
+    void sizeFound(const QString &path, const QSize &s);
 
 private:
     QSize bestSize(Plasma::Package *package) const;
 
-    Plasma::Wallpaper *m_listener;
     Plasma::Wallpaper *m_structureParent;
     QList<Plasma::Package *> m_packages;
     QHash<Plasma::Package *, QSize> m_sizeCache;

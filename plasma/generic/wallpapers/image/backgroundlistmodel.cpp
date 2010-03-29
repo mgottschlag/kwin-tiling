@@ -11,6 +11,7 @@
 
 #include <QFile>
 #include <QDir>
+#include <QThreadPool>
 
 #include <KDebug>
 #include <KFileMetaInfo>
@@ -25,14 +26,21 @@
 #include "backgrounddelegate.h"
 #include "image.h"
 
-/*
-class ImageSizeFinder : QRunnable
+ImageSizeFinder::ImageSizeFinder(const QString &path, QObject *parent)
+    : QObject(parent),
+      m_path(path)
 {
-};
-*/
+}
+
+void ImageSizeFinder::run()
+{
+    QImage image(m_path);
+    emit sizeFound(m_path, image.size());
+}
+
+
 BackgroundListModel::BackgroundListModel(float ratio, Plasma::Wallpaper *listener, QObject *parent)
     : QAbstractListModel(parent),
-      m_listener(listener),
       m_structureParent(listener),
       m_ratio(ratio),
       m_size(0,0),
@@ -172,15 +180,28 @@ QSize BackgroundListModel::bestSize(Plasma::Package *package) const
     KFileMetaInfo info(image, QString(), KFileMetaInfo::TechnicalInfo);
     QSize size(info.item("http://freedesktop.org/standards/xesam/1.0/core#width").value().toInt(),
                info.item("http://freedesktop.org/standards/xesam/1.0/core#height").value().toInt());
-
     //backup solution if strigi does not work
     if (size.width() == 0 || size.height() == 0) {
-        kDebug() << "fall back to QImage, check your strigi";
-        size = QImage(image).size();
+//        kDebug() << "fall back to QImage, check your strigi";
+        ImageSizeFinder *finder = new ImageSizeFinder(image);
+        connect(finder, SIGNAL(sizeFound(QString,QSize)), this,
+                SLOT(sizeFound(QString,QSize)));
+        QThreadPool::globalInstance()->start(finder);
+        size = QSize(-1, -1);
     }
 
     const_cast<BackgroundListModel *>(this)->m_sizeCache.insert(package, size);
     return size;
+}
+
+void BackgroundListModel::sizeFound(const QString &path, const QSize &s)
+{
+    QModelIndex index = indexOf(path);
+    if (index.isValid()) {
+        Plasma::Package *package = m_packages.at(index.row());
+        m_sizeCache.insert(package, s);
+        static_cast<Image *>(m_structureParent)->updateScreenshot(index);
+    }
 }
 
 QVariant BackgroundListModel::data(const QModelIndex &index, int role) const
@@ -216,12 +237,10 @@ QVariant BackgroundListModel::data(const QModelIndex &index, int role) const
         }
 
         KUrl file(b->filePath("preferred"));
-
         if (!m_previewJobs.contains(file) && file.isValid()) {
             KIO::PreviewJob* job = KIO::filePreview(KUrl::List() << file,
                                                     BackgroundDelegate::SCREENSHOT_SIZE,
                                                     BackgroundDelegate::SCREENSHOT_SIZE);
-
             job->setIgnoreMaximumSize(true);
             connect(job, SIGNAL(gotPreview(const KFileItem&, const QPixmap&)),
                     this, SLOT(showPreview(const KFileItem&, const QPixmap&)));
@@ -230,7 +249,7 @@ QVariant BackgroundListModel::data(const QModelIndex &index, int role) const
             const_cast<BackgroundListModel *>(this)->m_previewJobs.insert(file, QPersistentModelIndex(index));
         }
 
-        //const_cast<BackgroundListModel *>(this)->m_previews.insert(b, m_previewUnavailablePix);
+        const_cast<BackgroundListModel *>(this)->m_previews.insert(b, m_previewUnavailablePix);
         return m_previewUnavailablePix;
     }
     break;
@@ -271,7 +290,7 @@ void BackgroundListModel::showPreview(const KFileItem &item, const QPixmap &prev
     }
 
     m_previews.insert(b, preview);
-    static_cast<Image*>(m_listener)->updateScreenshot(index);
+    static_cast<Image *>(m_structureParent)->updateScreenshot(index);
 }
 
 void BackgroundListModel::previewFailed(const KFileItem &item)
