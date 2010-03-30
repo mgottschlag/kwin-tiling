@@ -51,7 +51,7 @@ ExtenderTaskBusyWidget::ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, cons
       m_manager(manager)
 {
     setAcceptsHoverEvents(true);
-    m_svg->setImagePath("widgets/notifications");
+    m_svg->setImagePath("icons/notification");
     m_svg->setContainsMultipleImages(true);
     setRunning(false);
 
