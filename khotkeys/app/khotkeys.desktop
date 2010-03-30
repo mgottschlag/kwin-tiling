@@ -96,6 +96,7 @@ Comment[sv]=Tjänst för inmatningsåtgärder som utför inställda åtgärder v
 Comment[th]=บริการการกระทำเพื่อป้อนข้อมูลสำหรับเรียกการกระทำที่ได้ปรับแต่งไว้เมื่อมีการกดปุ่มพิมพ์
 Comment[uk]=Служба «Ввід» виконує вказані дії у відповідь на натискання певних клавіш
 Comment[x-test]=xxInput Actions service performing configured actions on key pressesxx
+Comment[zh_TW]=輸入動作服務，在按下按鍵時執行設定好的動作。
 Type=Service
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=khotkeys

@@ -19,6 +19,7 @@ Comment[sv]=Skärmsläckare
 Comment[th]=โปรแกรมรักษาจอภาพ
 Comment[uk]=Зберігач екрана
 Comment[x-test]=xxScreen Saverxx
+Comment[zh_TW]=螢幕保護程式
 
 [Event/savingstarted]
 Name=Screen saver started

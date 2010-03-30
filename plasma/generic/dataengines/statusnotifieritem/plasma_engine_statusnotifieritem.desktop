@@ -9,6 +9,7 @@ Name[pt_BR]=Informações do StatusNotifierItem
 Name[sv]=Information från statusunderrättelser
 Name[uk]=Відомості запису сповіщення про стан
 Name[x-test]=xxStatusNotifierItem Informationsxx
+Name[zh_TW]=狀態通知器項目資訊
 Comment=Engine for Applications status information based on the StatusNotifier protocol.
 Comment[es]=Motor para informar del estado de aplicaciones basado en el protocolo StatusNotifier.
 Comment[et]=Rakenduse olekuteabe mootor StatusNotifieri protokolli alusel.
@@ -19,6 +20,7 @@ Comment[pt_BR]=Mecanismo para informação de status de aplicativos baseado no p
 Comment[sv]=Gränssnitt för statusinformation om program baserat på protokollet för statusunderrättelser.
 Comment[uk]=Рушій даних щодо стану програм, заснований на протоколі StatusNotifier (сповіщення про стан).
 Comment[x-test]=xxEngine for Applications status information based on the StatusNotifier protocol.xx
+Comment[zh_TW]=基於狀態通知器協定的應用程式狀態資訊引擎。
 Icon=
 
 X-KDE-ServiceTypes=Plasma/DataEngine

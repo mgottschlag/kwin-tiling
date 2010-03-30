@@ -100,6 +100,7 @@ Comment[sv]=Visa underrättelser och jobb
 Comment[th]=แสดงการแจ้งให้ทราบและงานต่าง ๆ
 Comment[uk]=Показ сповіщень і завдань
 Comment[x-test]=xxDisplay notifications and jobsxx
+Comment[zh_TW]=顯示通知與工作
 
 Icon=dialog-information
 Type=Service

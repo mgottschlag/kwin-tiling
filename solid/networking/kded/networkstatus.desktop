@@ -18,6 +18,7 @@ Name[sv]=Nätverksstatus
 Name[th]=สถานะเครือข่าย
 Name[uk]=Стан мережі
 Name[x-test]=xxNetwork Statusxx
+Name[zh_TW]=網路狀態
 Comment=Tracks status of network interfaces and provides notification to applications using the network.
 Comment[ar]=حالة مسارات واجهة الشبكة ومبلغ بالاجهزة التي تستخدم الشبكة
 Comment[be@latin]=Naziraje za stanoviščam sietkavych interfejsaŭ, infarmuje aplikacyi pra źmieny.
