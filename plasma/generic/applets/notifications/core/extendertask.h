@@ -25,9 +25,11 @@
 #include <Plasma/BusyWidget>
 
 class QStyleOptionGraphicsItem;
+class QSequentialAnimationGroup;
 
 namespace Plasma
 {
+    class Animation;
     class Extender;
     class PopupApplet;
     class Svg;
@@ -58,6 +60,10 @@ private:
     Plasma::Svg *m_svg;
     Plasma::PopupApplet *m_systray;
     const Manager *m_manager;
+    Plasma::Animation *m_fadeInAnimation;
+    Plasma::Animation *m_fadeOutAnimation;
+    QSequentialAnimationGroup *m_fadeGroup;
+    int m_total;
 };
 
 

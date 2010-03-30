@@ -24,6 +24,7 @@
 #include <QtGui/QTextOption>
 #include <QtGui/QStyleOptionGraphicsItem>
 #include <QtGui/QWidget> // QWIDGETSIZE_MAX
+#include <QSequentialAnimationGroup>
 
 #include <plasma/extender.h>
 #include <plasma/extenderitem.h>
@@ -31,6 +32,8 @@
 #include <plasma/popupapplet.h>
 #include <plasma/tooltipmanager.h>
 #include <plasma/theme.h>
+#include <Plasma/Animation>
+#include <Plasma/Animator>
 
 #include <KIcon>
 #include <KGlobalSettings>
@@ -48,12 +51,28 @@ ExtenderTaskBusyWidget::ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, cons
       m_state(Empty),
       m_svg(new Plasma::Svg(this)),
       m_systray(parent),
-      m_manager(manager)
+      m_manager(manager),
+      m_total(0)
 {
     setAcceptsHoverEvents(true);
     m_svg->setImagePath("icons/notification");
     m_svg->setContainsMultipleImages(true);
     setRunning(false);
+
+    m_fadeInAnimation = Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation);
+    m_fadeInAnimation->setTargetWidget(this);
+    m_fadeInAnimation->setProperty("duration", 500);
+    m_fadeInAnimation->setProperty("targetPixmap", m_svg->pixmap("notification-active"));
+
+    m_fadeOutAnimation = Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation);
+    m_fadeOutAnimation->setTargetWidget(this);
+    m_fadeOutAnimation->setProperty("duration", 500);
+    m_fadeOutAnimation->setProperty("startPixmap", m_svg->pixmap("notification-active"));
+
+
+    m_fadeGroup = new QSequentialAnimationGroup(this);
+    m_fadeGroup->addAnimation(m_fadeInAnimation);
+    m_fadeGroup->addAnimation(m_fadeOutAnimation);
 
     connect(manager, SIGNAL(notificationAdded(Notification*)),
             this, SLOT(updateTask()));
@@ -90,7 +109,7 @@ void ExtenderTaskBusyWidget::paint(QPainter *painter, const QStyleOptionGraphics
 
         Plasma::BusyWidget::paint(painter, option, widget);
 
-        //kWarning() << arcStart << arcEnd;
+        //kDebug() << arcStart << arcEnd;
 
         QPixmap activePixmap(iconRect.size().toSize());
         activePixmap.fill(Qt::transparent);
@@ -142,6 +161,14 @@ void ExtenderTaskBusyWidget::paint(QPainter *painter, const QStyleOptionGraphics
         } else {
             painter->drawText(r, Qt::AlignCenter, label());
         }
+    }
+
+    if (m_fadeInAnimation->state() == QAbstractAnimation::Running) {
+        QPixmap pix = m_fadeInAnimation->property("currentPixmap").value<QPixmap>();
+        painter->drawPixmap(iconRect, pix, pix.rect());
+    } else if (m_fadeOutAnimation->state() == QAbstractAnimation::Running) {
+        QPixmap pix = m_fadeOutAnimation->property("currentPixmap").value<QPixmap>();
+        painter->drawPixmap(iconRect, pix, pix.rect());
     }
 }
 
@@ -205,6 +232,11 @@ void ExtenderTaskBusyWidget::updateTask()
     if (!(total + m_manager->notifications().count())) {
         m_systray->hidePopup();
     }
+
+    if (total > m_total) {
+        m_fadeGroup->start();
+    }
+    m_total = total;
 
     if (!total) {
         setState(ExtenderTaskBusyWidget::Empty);
