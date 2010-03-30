@@ -46,7 +46,7 @@ class BackgroundListModel : public QAbstractListModel
     Q_OBJECT
 
 public:
-    BackgroundListModel(float ratio, Plasma::Wallpaper *listener, QObject *parent);
+    BackgroundListModel(Plasma::Wallpaper *listener, QObject *parent);
     virtual ~BackgroundListModel();
 
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -81,7 +81,6 @@ private:
     QHash<Plasma::Package *, QSize> m_sizeCache;
     QHash<Plasma::Package *, QPixmap> m_previews;
     QHash<KUrl, QPersistentModelIndex> m_previewJobs;
-    float m_ratio;
     KDirWatch m_dirwatch;
 
     QSize m_size;

@@ -28,6 +28,9 @@
      <property name="layoutMode">
       <enum>QListView::Batched</enum>
      </property>
+     <property name="spacing">
+      <number>2</number>
+     </property>
      <property name="viewMode">
       <enum>QListView::IconMode</enum>
      </property>

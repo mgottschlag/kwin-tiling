@@ -12,6 +12,7 @@
 
 #include "image.h"
 
+#include <QApplication>
 #include <QPainter>
 #include <QFile>
 #include <QEasingCurve>
@@ -96,7 +97,7 @@ void Image::init(const KConfigGroup &config)
 
     m_animation = new QPropertyAnimation(this, "fadeValue");
     m_animation->setProperty("easingCurve", QEasingCurve::InQuad);
-    m_animation->setProperty("duration", 1000);
+    m_animation->setProperty("duration", 500);
     m_animation->setProperty("startValue", 0.0);
     m_animation->setProperty("endValue", 1.0);
 }
@@ -125,15 +126,21 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
     if (m_mode == "SingleImage") {
         m_uiImage.setupUi(m_configWidget);
 
-        qreal ratio = m_size.isEmpty() ? 1.0 : m_size.width() / qreal(m_size.height());
-        m_model = new BackgroundListModel(ratio, this, m_configWidget);
+        m_model = new BackgroundListModel(this, m_configWidget);
         m_model->setResizeMethod(m_resizeMethod);
         m_model->setWallpaperSize(m_size);
         m_model->reload(m_usersWallpapers);
         QTimer::singleShot(0, this, SLOT(setConfigurationInterfaceModel()));
-        m_uiImage.m_view->setItemDelegate(new BackgroundDelegate(m_uiImage.m_view,
-                                                                 ratio, m_configWidget));
-        //m_uiImage.m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+        m_uiImage.m_view->setItemDelegate(new BackgroundDelegate(m_uiImage.m_view));
+        //FIXME: setting the minimum width is rather ugly, but this gets us 3 columns of papers
+        //which looks quite good as a default. the magic number 7 at the end of the calculation is
+        //evidently making up for some other PM involved in the QListView that isn't being caught.
+        //if a cleaner way can be found to achieve all this, that would be great
+        m_uiImage.m_view->setMinimumWidth((BackgroundDelegate::SCREENSHOT_SIZE + BackgroundDelegate::MARGIN * 2) * 3 +
+                                           m_uiImage.m_view->spacing() * 4 +
+                                           QApplication::style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 
+                                           QApplication::style()->pixelMetric(QStyle::PM_DefaultFrameWidth) * 2 + 7);
+        m_uiImage.m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
         m_uiImage.m_pictureUrlButton->setIcon(KIcon("document-open"));
         connect(m_uiImage.m_pictureUrlButton, SIGNAL(clicked()), this, SLOT(showFileDialog()));

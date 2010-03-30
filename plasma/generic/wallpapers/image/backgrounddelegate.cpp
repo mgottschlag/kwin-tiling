@@ -11,20 +11,19 @@
 #include "backgrounddelegate.h"
 
 #include <QApplication>
-#include <QTextDocument>
 #include <QPainter>
+#include <QTextDocument>
+#include <QTime>
 
 #include <KDebug>
 #include <KGlobalSettings>
 #include <KLocalizedString>
 
-BackgroundDelegate::BackgroundDelegate(QObject *listener, float ratio, QObject *parent)
-    : QAbstractItemDelegate(parent), 
-      m_listener(listener),
-      m_ratio(ratio)
+BackgroundDelegate::BackgroundDelegate(QObject *parent)
+    : QAbstractItemDelegate(parent)
 {
     m_maxHeight = SCREENSHOT_SIZE;
-    m_maxWidth = int(m_maxHeight * m_ratio);
+    m_maxWidth = SCREENSHOT_SIZE;
 }
 
 void BackgroundDelegate::paint(QPainter *painter,
@@ -80,10 +79,10 @@ void BackgroundDelegate::paint(QPainter *painter,
     document.setHtml(html);
 
     //Calculate positioning
-    int x = option.rect.left();// + MARGIN * 2 + m_maxWidth;
+    int x = option.rect.left() + MARGIN;
 
     //Enable word-wrap
-    document.setTextWidth(option.rect.width());
+    document.setTextWidth(m_maxWidth);
 
     //Center text on the row
     int y = option.rect.top() + m_maxHeight + MARGIN * 2; //qMax(0 ,(int)((option.rect.height() - document.size().height()) / 2));
@@ -91,13 +90,14 @@ void BackgroundDelegate::paint(QPainter *painter,
     //Draw text
     painter->save();
     painter->translate(x, y);
-    document.drawContents(painter, QRect(QPoint(0, 0), option.rect.size()));
+    document.drawContents(painter, QRect(QPoint(0, 0), option.rect.size() - QSize(0, m_maxHeight + MARGIN * 2)));
     painter->restore();
 }
 
 QSize BackgroundDelegate::sizeHint(const QStyleOptionViewItem &option,
                                    const QModelIndex &index) const
 {
+    Q_UNUSED(option)
     const QString title = index.model()->data(index, Qt::DisplayRole).toString();
     const QString author = index.model()->data(index, AuthorRole).toString();
     const int fontSize = KGlobalSettings::smallestReadableFont().pointSize();
@@ -111,9 +111,10 @@ QSize BackgroundDelegate::sizeHint(const QStyleOptionViewItem &option,
     html += QString("<span style=\"font-size: %1pt;\">1600x1200</span>").arg(fontSize);
 
     document.setHtml(html);
-    document.setTextWidth(m_maxWidth + MARGIN * 2);
+    document.setTextWidth(m_maxWidth);
 
-    return QSize(qMax(m_maxWidth + MARGIN * 2, (int)(document.size().width())),
-                 m_maxHeight + MARGIN * 2 + (int)(document.size().height()));
+    QSize s(m_maxWidth + MARGIN * 2, 
+            m_maxHeight + MARGIN * 3 + (int)(document.size().height()));
+    return s;
 }
 

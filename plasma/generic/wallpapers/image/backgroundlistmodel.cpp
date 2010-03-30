@@ -39,10 +39,9 @@ void ImageSizeFinder::run()
 }
 
 
-BackgroundListModel::BackgroundListModel(float ratio, Plasma::Wallpaper *listener, QObject *parent)
+BackgroundListModel::BackgroundListModel(Plasma::Wallpaper *listener, QObject *parent)
     : QAbstractListModel(parent),
       m_structureParent(listener),
-      m_ratio(ratio),
       m_size(0,0),
       m_resizeMethod(Plasma::Wallpaper::ScaledResize),
       m_previewUnavailablePix(BackgroundDelegate::SCREENSHOT_SIZE, BackgroundDelegate::SCREENSHOT_SIZE)
@@ -290,6 +289,7 @@ void BackgroundListModel::showPreview(const KFileItem &item, const QPixmap &prev
     }
 
     m_previews.insert(b, preview);
+    //kDebug() << "preview size:" << preview.size();
     static_cast<Image *>(m_structureParent)->updateScreenshot(index);
 }
 

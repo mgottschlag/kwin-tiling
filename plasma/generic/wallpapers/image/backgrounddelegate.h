@@ -21,8 +21,7 @@ public:
         ResolutionRole
     };
 
-    BackgroundDelegate(QObject *listener,
-                       float ratio, QObject *parent = 0);
+    BackgroundDelegate(QObject *parent = 0);
 
     virtual void paint(QPainter *painter,
                        const QStyleOptionViewItem &option,
@@ -30,14 +29,12 @@ public:
     virtual QSize sizeHint(const QStyleOptionViewItem &option,
                            const QModelIndex &index) const;
 
-    static const int SCREENSHOT_SIZE = 64;
+    static const int SCREENSHOT_SIZE = 128;
+    static const int MARGIN = 6;
 
-private:
-    static const int MARGIN = 0;
-    QObject *m_listener;
-    float m_ratio;
-
+    void resetMaxHeight() { m_maxHeight = 0; }
     int m_maxHeight;
+private:
     int m_maxWidth;
 };
 
