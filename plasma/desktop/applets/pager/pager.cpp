@@ -1172,9 +1172,10 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
 
                 painter->drawRect(rect);
 
-                if ((rect.width() > 16) && (rect.height() > 16) && m_showWindowIcons) {
-                    painter->drawPixmap(rect.x() + (rect.width() - 16) / 2, rect.y() + (rect.height() - 16) / 2, 16, 16,
-                            KWindowSystem::icon(m_windowRects[i][j].first, 16, 16, true));
+                int size = qMin(16, qMin(rect.width(), rect.height()));
+                if (size >= 12 && m_showWindowIcons) {
+                  painter->drawPixmap(rect.x() + (rect.width() - size) / 2, rect.y() + (rect.height() - size) / 2, size, size,
+                    KWindowSystem::icon(m_windowRects[i][j].first, size, size, true));
                 }
             }
         }
