@@ -60,6 +60,11 @@ public:
     virtual WindowList winIds() const;
 
     /**
+     * @return unique identifier of this item
+     */
+    int id() const;
+
+    /**
     *   Returns the parent group of this item
     */
     GroupPtr parentGroup() const;
@@ -71,6 +76,8 @@ public:
 
     bool isGroupMember(const GroupPtr group) const;
     virtual bool isGroupItem() const = 0;
+
+    virtual bool isStartupItem() const;
 
     virtual bool isOnCurrentDesktop() const = 0;
     virtual bool isOnAllDesktops() const = 0;

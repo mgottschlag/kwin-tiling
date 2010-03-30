@@ -40,18 +40,25 @@ class AbstractGroupableItem::Private
 {
 public:
     Private()
+        : m_id(m_nextId++)
     {
     }
 
     QWeakPointer<TaskGroup> m_parentGroup;
+
+    int m_id;
+
+private:
+    static int m_nextId;
 };
+
+int AbstractGroupableItem::Private::m_nextId = 1;
 
 
 AbstractGroupableItem::AbstractGroupableItem(QObject *parent)
 :   QObject(parent),
     d(new Private)
 {
-
 }
 
 
@@ -81,9 +88,14 @@ QString AbstractGroupableItem::name() const
     return QString();
 }
 
+int AbstractGroupableItem::id() const
+{
+    return d->m_id;
+}
+
 WindowList AbstractGroupableItem::winIds() const
-{ 
-    return WindowList(); 
+{
+    return WindowList();
 }
 
 GroupPtr AbstractGroupableItem::parentGroup() const
@@ -113,6 +125,11 @@ bool AbstractGroupableItem::isGroupMember(const GroupPtr group) const
     }
 
     return group->members().contains(const_cast<AbstractGroupableItem*>(this));
+}
+
+bool AbstractGroupableItem::isStartupItem() const
+{
+    return false;
 }
 
 

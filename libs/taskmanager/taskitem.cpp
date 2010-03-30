@@ -118,6 +118,11 @@ StartupPtr TaskItem::startup() const
     return d->startupTask;
 }
 
+bool TaskItem::isStartupItem() const
+{
+    return !d->startupTask.isNull();
+}
+
 WindowList TaskItem::winIds() const
 {
     if (!d->task) {

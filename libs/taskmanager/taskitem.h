@@ -55,6 +55,7 @@ public:
     QIcon icon() const;
     QString name() const;
 
+    bool isStartupItem() const;
     bool isOnCurrentDesktop() const;
     bool isOnAllDesktops() const;
     int desktop() const;

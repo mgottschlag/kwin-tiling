@@ -49,11 +49,31 @@ void DesktopSortingStrategy::sortItems(ItemList &items)
 
 bool DesktopSortingStrategy::lessThan(const AbstractGroupableItem *left, const AbstractGroupableItem *right)
 {
-    if (left->desktop() == right->desktop()) {
-        return left->name().toLower() < right->name().toLower();
+    /*
+     * Sorting strategy is as follows:
+     * For two items being compared
+     *   - Startup items will be sorted out to the end of the list and sorted by name there
+     *   - If both are not startup tasks first compare items by desktop number,
+     *     and then for items which belong to the same desktop sort by their id.
+     */
+    if (left->isStartupItem()) {
+        if (right->isStartupItem()) {
+            return left->name().toLower() < right->name().toLower();
+        }
+        return false;
     }
 
-    return left->desktop() < right->desktop();
+    if (right->isStartupItem()) {
+            return true;
+    }
+
+    const int leftDesktop = left->desktop();
+    const int rightDesktop = right->desktop();
+    if (leftDesktop == rightDesktop) {
+            return left->id() < right->id();
+    }
+
+    return leftDesktop < rightDesktop;
 }
 
 void DesktopSortingStrategy::handleItem(AbstractGroupableItem *item)
