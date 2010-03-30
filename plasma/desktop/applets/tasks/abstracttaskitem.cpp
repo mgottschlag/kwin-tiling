@@ -547,7 +547,7 @@ void AbstractTaskItem::syncActiveRect()
     // check to see if there is enough room!
     QFontMetrics fm(font());
     const int minimumWidth = left + 8 + IconTextSpacing + right;
-    m_showText = (size().width() >= fm.width("mmm") + minimumWidth);
+    m_showText = (size().width() >= fm.width("M") * 6 + minimumWidth);
 }
 
 void AbstractTaskItem::resizeEvent(QGraphicsSceneResizeEvent *event)
