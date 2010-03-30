@@ -157,6 +157,17 @@ void NetView::resizeEvent(QResizeEvent *event)
     emit geometryChanged();
 }
 
+bool NetView::event(QEvent *e)
+{
+    if (e->type() == QEvent::Close) {
+        //prevent ALT+F4 from killing the shell
+        e->ignore();
+        return true;
+    } else {
+        return Plasma::View::event(e);
+    }
+}
+
 void NetView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment)
 {
     kDebug() << "was, is, containment:" << wasScreen << isScreen << (QObject*)containment;

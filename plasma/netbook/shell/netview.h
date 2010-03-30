@@ -77,6 +77,7 @@ Q_SIGNALS:
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
     void resizeEvent(QResizeEvent *event);
+    bool event(QEvent *e);
 
 private:
     NetPanelController *m_panelController;
