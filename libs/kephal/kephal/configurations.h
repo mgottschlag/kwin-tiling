@@ -188,7 +188,7 @@ namespace Kephal {
             void reverted();
 
         protected:
-            static Configurations * m_instance;
+            static Configurations * s_instance;
     };
 
 }

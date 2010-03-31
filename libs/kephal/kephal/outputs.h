@@ -305,7 +305,7 @@ namespace Kephal {
             void outputReflected(Kephal::Output * o, bool oldX, bool oldY, bool newX, bool newY);
 
         protected:
-            static Outputs * m_instance;
+            static Outputs * s_instance;
     };
 
 }

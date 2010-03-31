@@ -52,21 +52,21 @@ namespace Kephal {
 
 
 
-    BackendOutputs * BackendOutputs::m_instance = 0;
+    BackendOutputs * BackendOutputs::s_instance = 0;
 
     BackendOutputs * BackendOutputs::self() {
-        return m_instance;
+        return s_instance;
     }
 
     BackendOutputs::BackendOutputs(QObject * parent)
         : Outputs(parent)
     {
-        m_instance = this;
+        s_instance = this;
     }
 
     BackendOutputs::~BackendOutputs()
     {
-        m_instance = 0;
+        s_instance = 0;
     }
 
     QList<BackendOutput *> BackendOutputs::backendOutputs() {

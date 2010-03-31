@@ -34,22 +34,22 @@ namespace Kephal {
 
     Screens * Screens::self() {
 #ifdef SCREENS_FACTORY
-        if (Screens::m_instance == 0) {
+        if (Screens::s_instance == 0) {
             SCREENS_FACTORY();
         }
 #endif
-        return Screens::m_instance;
+        return Screens::s_instance;
     }
 
     Screens::Screens(QObject * parent)
             : QObject(parent)
     {
-        Screens::m_instance = this;
+        Screens::s_instance = this;
     }
 
     Screens::~Screens()
     {
-        Screens::m_instance = 0;
+        Screens::s_instance = 0;
     }
 
     Screen * Screens::screen(int id) {
@@ -71,7 +71,7 @@ namespace Kephal {
         return screen(id);
     }
 
-    Screens * Screens::m_instance = 0;
+    Screens * Screens::s_instance = 0;
 
 
 

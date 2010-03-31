@@ -137,7 +137,7 @@ namespace Kephal {
             virtual BackendConfiguration * activeBackendConfiguration();
 
         private:
-            static BackendConfigurations * m_instance;
+            static BackendConfigurations * s_instance;
     };
 
 }

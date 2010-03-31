@@ -61,7 +61,7 @@ namespace Kephal {
             virtual BackendOutput * backendOutput(const QString & id);
 
         private:
-            static BackendOutputs * m_instance;
+            static BackendOutputs * s_instance;
     };
 
 }

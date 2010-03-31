@@ -36,25 +36,25 @@ namespace Kephal {
 
     Configurations * Configurations::self() {
 #ifdef CONFIGURATIONS_FACTORY
-        if (Configurations::m_instance == 0) {
+        if (Configurations::s_instance == 0) {
             CONFIGURATIONS_FACTORY();
         }
 #endif
-        return Configurations::m_instance;
+        return Configurations::s_instance;
     }
 
     Configurations::Configurations(QObject * parent)
             : QObject(parent)
     {
-        Configurations::m_instance = this;
+        Configurations::s_instance = this;
     }
 
     Configurations::~Configurations()
     {
-        Configurations::m_instance = 0;
+        Configurations::s_instance = 0;
     }
 
-    Configurations * Configurations::m_instance = 0;
+    Configurations * Configurations::s_instance = 0;
 
     Configuration * Configurations::configuration(QString name) {
         foreach (Configuration * config, configurations()) {

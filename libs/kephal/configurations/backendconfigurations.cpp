@@ -28,22 +28,22 @@
 namespace Kephal {
 
     BackendConfigurations * BackendConfigurations::self() {
-        return BackendConfigurations::m_instance;
+        return BackendConfigurations::s_instance;
     }
 
     BackendConfigurations::BackendConfigurations(QObject * parent)
         : Configurations(parent)/*,
         m_status(new StatusMessage(this))*/
     {
-        BackendConfigurations::m_instance = this;
+        BackendConfigurations::s_instance = this;
     }
 
     BackendConfigurations::~BackendConfigurations()
     {
-        BackendConfigurations::m_instance = 0;
+        BackendConfigurations::s_instance = 0;
     }
 
-    BackendConfigurations * BackendConfigurations::m_instance = 0;
+    BackendConfigurations * BackendConfigurations::s_instance = 0;
 
     BackendConfiguration * BackendConfigurations::activeBackendConfiguration() {
         return (BackendConfiguration *) activeConfiguration();

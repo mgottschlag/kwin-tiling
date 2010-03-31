@@ -34,21 +34,21 @@ namespace Kephal {
 
     Outputs * Outputs::self() {
 #ifdef OUTPUTS_FACTORY
-        if (Outputs::m_instance == 0) {
+        if (Outputs::s_instance == 0) {
             OUTPUTS_FACTORY();
         }
 #endif
-        return Outputs::m_instance;
+        return Outputs::s_instance;
     }
 
     Outputs::Outputs(QObject * parent)
             : QObject(parent)
     {
-        Outputs::m_instance = this;
+        Outputs::s_instance = this;
     }
 
     Outputs::~Outputs() {
-        Outputs::m_instance = 0;
+        Outputs::s_instance = 0;
     }
 
     Output * Outputs::output(const QString & id) {
@@ -60,7 +60,7 @@ namespace Kephal {
         return 0;
     }
 
-    Outputs * Outputs::m_instance = 0;
+    Outputs * Outputs::s_instance = 0;
 
 
 
