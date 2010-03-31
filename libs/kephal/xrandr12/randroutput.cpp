@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2007      Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
  * Copyright (c) 2007, 2008 Harry Bock <hbock@providence.edu>
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -67,7 +67,7 @@ bool RandROutput::queryOutputInfo(void)
         RandR::timestamp = info->timestamp;
                 //changes = true;
         }
-    
+
     // Set up the output's connection status, name, and current
     // CRT controller.
         bool pConn = m_connected;
@@ -76,20 +76,20 @@ bool RandROutput::queryOutputInfo(void)
             changes = true;
         }
     m_name = info->name;
-    
+
     setCrtc(m_screen->crtc(info->crtc));
     m_crtc->loadSettings(false);
-    
+
     for(int i = 0; i < info->ncrtc; ++i)
         m_possibleCrtcs.append(info->crtcs[i]);
-    
+
     //TODO: is it worth notifying changes on mode list changing?
     m_modes.clear();
     m_preferredMode = m_screen->mode(info->modes[info->npreferred]);
-    
+
     for (int i = 0; i < info->nmode; ++i)
         m_modes.append(info->modes[i]);
-    
+
     //get all possible rotations
     m_rotations = 0;
     for (int i = 0; i < m_possibleCrtcs.count(); ++i)
@@ -101,24 +101,24 @@ bool RandROutput::queryOutputInfo(void)
     m_originalRotation = m_crtc->rotation();
     m_originalRate     = m_crtc->refreshRate();
     m_originalRect     = m_crtc->rect();
-    
+
     if(isConnected()) {
         qDebug() << "Output name:" << m_name;
         qDebug() << "Output refresh rate:" << m_originalRate;
         qDebug() << "Output rect:" << m_originalRect;
         qDebug() << "Output rotation:" << m_originalRotation;
     }
-    
+
     XRRFreeOutputInfo(info);
-        
-        return changes;
+
+    return changes;
 }
 
 void RandROutput::loadSettings(bool notify)
 {
     Q_UNUSED(notify);
     queryOutputInfo();
-    
+
     qDebug() << "STUB: calling queryOutputInfo instead. Check if this has "
              << "any undesired effects. ";
 }
@@ -137,7 +137,7 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
     // Disable for now.
     //qWarning() << "FIXME: Output event ignored!";
     //return;
-    
+
     RRCrtc currentCrtc = m_crtc->id();
     if (event->crtc != currentCrtc)
     {
@@ -153,10 +153,10 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 
     if (event->mode != mode().id())
         changed |= RandR::ChangeMode;
-    
+
     if (event->rotation != rotation())
         changed |= RandR::ChangeRotation;
-    
+
     if((event->connection == RR_Connected) != m_connected)
     {
         changed |= RandR::ChangeConnection;
@@ -176,10 +176,10 @@ void RandROutput::handlePropertyEvent(XRROutputPropertyNotifyEvent *event)
     // are configured through XRANDR are:
     // - LVDS Backlights
     // - TV output formats
-    
+
     char *name = XGetAtomName(QX11Info::display(), event->property);
     qDebug() << "Got XRROutputPropertyNotifyEvent for property Atom " << name;
-    XFree(name);    
+    XFree(name);
 }
 
 QString RandROutput::name() const
@@ -189,14 +189,14 @@ QString RandROutput::name() const
 
 QString RandROutput::icon() const
 {
-    // FIXME: check what names we should use and what kind of outputs randr can 
+    // FIXME: check what names we should use and what kind of outputs randr can
     // report. It would also be interesting to be able to get the monitor name
     // using EDID or something like that, just don't know if it is even possible.
     if (m_name.contains("VGA"))
         return "video-display";
     else if (m_name.contains("LVDS"))
         return "video-display";
-    
+
     // I doubt this is a good choice; can't find anything better in the spec.
     // video-x-generic might work, but that's a mimetype, which is inappropriate
     // for an output connection type.
@@ -342,10 +342,10 @@ void RandROutput::slotEnable()
 {
     if(!m_connected)
         return;
-    
+
     qDebug() << "Attempting to enable " << m_name;
     RandRCrtc *crtc = findEmptyCrtc();
-    
+
     if(crtc)
         setCrtc(crtc);
 }
@@ -401,13 +401,13 @@ bool RandROutput::setCrtc(RandRCrtc *crtc, bool applyNow)
     Q_UNUSED(applyNow);
     if( !crtc || (m_crtc && crtc->id() == m_crtc->id()) )
         return false;
-    
+
     qDebug() << "Setting CRTC" << crtc->id() << "on output" << m_name << "(previous" << (m_crtc ? m_crtc->id() : 0) << ")";
 
     if(m_crtc && m_crtc->isValid()) {
-        disconnect(m_crtc, SIGNAL(crtcChanged(RRCrtc, int)), 
+        disconnect(m_crtc, SIGNAL(crtcChanged(RRCrtc, int)),
                    this, SLOT(slotCrtcChanged(RRCrtc, int)));
-                 
+
         m_crtc->removeOutput(m_id);
 //         m_crtc->applyProposed();
     }
@@ -416,13 +416,13 @@ bool RandROutput::setCrtc(RandRCrtc *crtc, bool applyNow)
         return false;
 
     if (!m_crtc->addOutput(m_id)) {
-            return false;
-        }
-        
-        qDebug() << "CRTC outputs:" << m_crtc->connectedOutputs();
+        return false;
+    }
+
+    qDebug() << "CRTC outputs:" << m_crtc->connectedOutputs();
     connect(m_crtc, SIGNAL(crtcChanged(RRCrtc, int)),
             this, SLOT(slotCrtcChanged(RRCrtc, int)));
-           
+
     return true;
 }
 
@@ -436,42 +436,39 @@ void RandROutput::slotCrtcChanged(RRCrtc c, int changes)
 
 bool RandROutput::applyProposed(int changes)
 {
-        RandRCrtc *crtc;
+    RandRCrtc *crtc;
 
-        QRect r;
+    QRect r;
 
-        if (changes & RandR::ChangeRect)
-                r = m_proposedRect;
+    if (changes & RandR::ChangeRect)
+        r = m_proposedRect;
 
 
-        // first try to apply to the already attached crtc if any
-        if (m_crtc->isValid())
+    // first try to apply to the already attached crtc if any
+    if (m_crtc->isValid())
+    {
+        crtc = m_crtc;
+        if (tryCrtc(crtc, changes))
         {
-                crtc = m_crtc;
-                if (tryCrtc(crtc, changes))
-                {
-                    return true;
-                }
-                return false;
+            return true;
         }
-
-        //then try an empty crtc
-        crtc = findEmptyCrtc();
-
-        // TODO: check if we can add this output to a CRTC which already has an output 
-        // connection
-        if (!crtc)
-                return false;
-                
-        // try the crtc, and if no confirmation is needed or the user confirm, save the new settings
-        if (tryCrtc(crtc, changes)) 
-        {
-                return true;
-        }
-
         return false;
+    }
+
+    //then try an empty crtc
+    crtc = findEmptyCrtc();
+
+    // TODO: check if we can add this output to a CRTC which already has an output
+    // connection
+    if (!crtc)
+        return false;
+
+    // try the crtc, and if no confirmation is needed or the user confirm, save the new settings
+    if (tryCrtc(crtc, changes))
+    {
+        return true;
+    }
+
+    return false;
 }
-
-
-
 

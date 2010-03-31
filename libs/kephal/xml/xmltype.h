@@ -30,46 +30,46 @@
 namespace Kephal {
 
     class XMLNodeHandler;
-    
+
 
     class XMLType : public QObject {
         Q_OBJECT
     };
-    
-    
+
+
     class XMLFactory {
         public:
             XMLFactory();
             virtual ~XMLFactory();
-            
+
             QDomNode save(XMLType * data, QDomDocument doc, QString name);
             XMLType * load(QDomNode node);
-            
+
         protected:
             void element(QString name, XMLNodeHandler * element);
             void attribute(QString name, XMLNodeHandler * attribute);
-            
+
             virtual XMLType * newInstance() = 0;
             virtual void schema() = 0;
-            
+
         private:
             QMap<QString, XMLNodeHandler *> m_elements;
             QMap<QString, XMLNodeHandler *> m_attributes;
-            
+
             bool m_schema;
     };
-    
+
     class XMLRootFactory : public XMLFactory {
         public:
             XMLRootFactory(QString name);
             virtual ~XMLRootFactory() {}
             bool save(XMLType * data, QString fileName);
             XMLType * load(QString fileName);
-            
+
         private:
             QString m_name;
     };
-    
+
 }
 
 

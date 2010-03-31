@@ -32,12 +32,12 @@ namespace Kephal {
 
     class ScreenXML : public XMLType {
         Q_OBJECT
-        
+
         PROPERTY(int, id, setId)
         PROPERTY(int, rightOf, setRightOf)
         PROPERTY(int, bottomOf, setBottomOf)
         PROPERTY(bool, privacy, setPrivacy)
-        
+
         public:
             ScreenXML() : m_rightOf(-1), m_bottomOf(-1) {}
     };
@@ -46,25 +46,25 @@ namespace Kephal {
 
     class ConfigurationXML : public XMLType {
         Q_OBJECT
-        
+
         PROPERTY(QString, name, setName)
         PROPERTY(bool, modifiable, setModifiable)
         PROPERTY(int, primaryScreen, setPrimaryScreen)
-        
+
         public:
             ConfigurationXML();
-            
+
             QList<ScreenXML *> & screens();
-            
+
         private:
             QList<ScreenXML *> m_screens;
     };
-    
-    
-    
+
+
+
     class OutputXML : public XMLType {
         Q_OBJECT
-        
+
         PROPERTY(QString, name, setName)
         PROPERTY(int, screen, setScreen)
         PROPERTY(QString, vendor, setVendor)
@@ -77,19 +77,19 @@ namespace Kephal {
         PROPERTY(bool, reflectY, setReflectY)
         PROPERTY(double, rate, setRate)
         PROPERTY(QString, actualOutput, setActualOutput)
-        
+
         public:
             OutputXML() : m_screen(-1), m_product(-1), m_serial(0),
                 m_width(-1), m_height(-1), m_rotation(0),
                 m_reflectX(false), m_reflectY(false), m_rate(0)
                 { }
     };
-    
-    
-    
+
+
+
     class OutputsXML : public XMLType {
         Q_OBJECT
-        
+
         PROPERTY(QString, configuration, setConfiguration)
 
         public:
@@ -97,29 +97,29 @@ namespace Kephal {
         private:
             QList<OutputXML *> m_outputs;
     };
-    
-    
-    
+
+
+
     class ConfigurationsXML : public XMLType {
         Q_OBJECT
-        
+
         PROPERTY(bool, polling, setPolling)
-        
+
         public:
             ConfigurationsXML() : m_polling(false) {}
-            
+
             QList<ConfigurationXML *> & configurations();
             QList<OutputsXML *> & outputs();
-            
+
         private:
             QList<ConfigurationXML *> m_configurations;
             QList<OutputsXML *> m_outputs;
     };
-    
+
     class ConfigurationsXMLFactory : public XMLRootFactory {
         public:
             ConfigurationsXMLFactory();
-            
+
         protected:
             virtual XMLType * newInstance();
             virtual void schema();

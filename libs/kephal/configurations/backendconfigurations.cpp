@@ -30,32 +30,32 @@ namespace Kephal {
     BackendConfigurations * BackendConfigurations::self() {
         return BackendConfigurations::m_instance;
     }
-    
+
     BackendConfigurations::BackendConfigurations(QObject * parent)
         : Configurations(parent)/*,
         m_status(new StatusMessage(this))*/
     {
         BackendConfigurations::m_instance = this;
     }
-    
+
     BackendConfigurations::~BackendConfigurations()
     {
         BackendConfigurations::m_instance = 0;
     }
-    
+
     BackendConfigurations * BackendConfigurations::m_instance = 0;
-    
+
     BackendConfiguration * BackendConfigurations::activeBackendConfiguration() {
         return (BackendConfiguration *) activeConfiguration();
     }
-    
-    
-    
+
+
+
     BackendConfiguration::BackendConfiguration(QObject * parent)
         : Configuration(parent)
     {
     }
-    
+
     QMap<int, QRect> BackendConfiguration::realLayout() {
         QMap<Output *, int> outputScreens;
         foreach (Output * output, Outputs::self()->outputs()) {
@@ -69,7 +69,7 @@ namespace Kephal {
         QMap<int, QPoint> simpleLayout = layout();
         return realLayout(simpleLayout, outputScreens);
     }
-    
+
     QMap<int, QRect> BackendConfiguration::realLayout(const QMap<int, QPoint> & sLayout, const QMap<Output *, int> & outputScreens) {
         QMap<Output *, QSize> outputSizes;
         foreach (Output * output, outputScreens.keys()) {
@@ -77,35 +77,35 @@ namespace Kephal {
         }
         return realLayout(sLayout, outputScreens, outputSizes);
     }
-    
+
     QMap<int, QRect> BackendConfiguration::realLayout(const QMap<int, QPoint> & sLayout, const QMap<Output *, int> & outputScreens, const QMap<Output *, QSize> & outputSizes) {
         //qDebug() << "calculating real layout for:" << sLayout << outputScreens;
-        
+
         QMap<int, QRect> screens;
         QMap<int, QPoint> simpleLayout = sLayout;
-        
+
         QMap<int, QSize> screenSizes;
         foreach (int screen, simpleLayout.keys()) {
             screenSizes.insert(screen, QSize());
         }
-        
+
         foreach (Output * output, outputScreens.keys()) {
             if (outputScreens[output] < 0) {
                 continue;
             }
-            
+
             if (! screenSizes.contains(outputScreens[output])) {
                 INVALID_CONFIGURATION("outputs and configuration don't match");
                 return screens;
             }
             screenSizes[outputScreens[output]] = screenSizes[outputScreens[output]].expandedTo(outputSizes[output]);
         }
-        
+
         int begin = simpleLayout.begin().key();
         screens.insert(begin, QRect(QPoint(0, 0), screenSizes[begin]));
         simpleToReal(simpleLayout, screenSizes, begin, screens);
         Configurations::translateOrigin(screens);
-        
+
         for (QMap<int, QRect>::const_iterator i = screens.constBegin(); i != screens.constEnd(); ++i) {
             for (QMap<int, QRect>::const_iterator j = (i + 1); j != screens.constEnd(); ++j) {
                 if (i.value().intersects(j.value())) {
@@ -115,13 +115,13 @@ namespace Kephal {
                 }
             }
         }
-        
+
         return screens;
     }
-    
+
     void BackendConfiguration::simpleToReal(QMap<int, QPoint> & simpleLayout, const QMap<int, QSize> & screenSizes, int index, QMap<int, QRect> & screens) {
         QPoint pos = simpleLayout.take(index);
-        
+
         // to the right
         QPoint nextPos(pos.x() + 1, pos.y());
         int nextIndex = simpleLayout.key(nextPos, -1);
@@ -129,7 +129,7 @@ namespace Kephal {
             screens.insert(nextIndex, QRect(screens[index].topRight() + QPoint(1, 0), screenSizes[nextIndex]));
             simpleToReal(simpleLayout, screenSizes, nextIndex, screens);
         }
-        
+
         // to the left
         nextPos = QPoint(pos.x() - 1, pos.y());
         nextIndex = simpleLayout.key(nextPos, -1);
@@ -138,7 +138,7 @@ namespace Kephal {
             screens.insert(nextIndex, QRect(screens[index].topLeft() - QPoint(screenSize.width(), 0), screenSize));
             simpleToReal(simpleLayout, screenSizes, nextIndex, screens);
         }
-        
+
         // to the bottom
         nextPos = QPoint(pos.x(), pos.y() + 1);
         nextIndex = simpleLayout.key(nextPos, -1);
@@ -156,7 +156,7 @@ namespace Kephal {
             simpleToReal(simpleLayout, screenSizes, nextIndex, screens);
         }
     }
-    
+
     QMap<int, QPoint> BackendConfiguration::cloneLayout(int screen) {
         QSet<QPoint> positions = clonePositions(screen);
         QMap<int, QPoint> layout;
@@ -165,11 +165,11 @@ namespace Kephal {
             layout.insert(i, p);
             ++i;
         }
-        
+
         Configurations::translateOrigin(layout);
         return layout;
     }
-    
+
     QSet<QPoint> BackendConfiguration::clonePositions(int screen) {
         QList<QSet<QPoint> > partitions = partition(screen);
         if (partitions.size() == 1) {
@@ -177,7 +177,7 @@ namespace Kephal {
         }
         return QSet<QPoint>();
     }
-    
+
     QSet<QPoint> BackendConfiguration::positions() {
         QSet<QPoint> result;
         foreach (const QPoint& p, layout()) {
@@ -185,7 +185,7 @@ namespace Kephal {
         }
         return result;
     }
-    
+
     QSet<QPoint> BackendConfiguration::possiblePositions(int screen) {
         QList<QSet<QPoint> > partitions = partition(screen);
         QSet<QPoint> result = border(partitions[0]);
@@ -194,7 +194,7 @@ namespace Kephal {
         }
         return result;
     }
-    
+
     QList<QSet<QPoint> > BackendConfiguration::partition(int screen) {
         QHash<QPoint, QSet<QPoint> * > partitions;
         QMap<int, QPoint> layout = this->layout();
@@ -210,7 +210,7 @@ namespace Kephal {
             partitions.insert(p, new QSet<QPoint>());
             partitions[p]->insert(p);
         }
-        
+
         foreach (const QPoint& p, layout) {
             if (exclude && (p == excludePoint)) {
                 continue;
@@ -231,21 +231,21 @@ namespace Kephal {
                 partitions[c] = partitions[p];
             }
         }
-        
+
         QSet<QSet<QPoint> * > unique;
         foreach (QSet<QPoint> * partition, partitions) {
             unique.insert(partition);
         }
-        
+
         QList<QSet<QPoint> > result;
         foreach (QSet<QPoint> * partition, unique) {
             result.append(* partition);
             delete partition;
         }
-        
+
         return result;
     }
-    
+
     QSet<QPoint> BackendConfiguration::border(QSet<QPoint> screens) {
         QSet<QPoint> result;
         QList<QPoint> borders;
@@ -257,7 +257,7 @@ namespace Kephal {
                 }
             }
         }
-        
+
         return result;
     }
 

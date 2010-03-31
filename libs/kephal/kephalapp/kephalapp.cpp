@@ -53,7 +53,7 @@ KephalApp::~KephalApp()
 void KephalApp::init(int & argc, char ** argv) {
     for (int i = 1; i < argc; ++i) {
         QString arg = argv[i];
-        
+
         if (arg == "--listen" || arg == "-l") {
             m_listen = true;
         } else if (arg == "--help" || arg == "-?") {
@@ -66,13 +66,13 @@ void KephalApp::init(int & argc, char ** argv) {
             return;
         }
     }
-    
+
     QTimer::singleShot(0, this, SLOT(run()));
 }
 
 void KephalApp::unknownArg() {
     QTextStream cerr(stderr);
-    
+
     cerr << "Unknown argument: " << m_arg << "\n";
     cerr << "Try: " << m_exec << " --help\n";
     exit(1);
@@ -91,7 +91,7 @@ void KephalApp::run() {
     if (! m_listen) {
         exit(0);
     }
-    
+
     connect(Kephal::Screens::self(), SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)), this, SLOT(screenMoved(Kephal::Screen *, QPoint, QPoint)));
     connect(Kephal::Screens::self(), SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)), this, SLOT(screenResized(Kephal::Screen *, QSize, QSize)));
     connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)), this, SLOT(screenRemoved(int)));
@@ -138,19 +138,19 @@ void KephalApp::query() {
         cout << "  Screen " << screen->id() << ":\n";
         cout << "    Size: " << screen->size().width() << "x" << screen->size().height() << "\n";
         cout << "    Position: (" << screen->position().x() << "," << screen->position().y() << ")\n";
-        
+
         foreach (Output * output, screen->outputs()) {
             cout << "    Output: " << output->id() << "\n";
         }
     }
-    
+
     cout << "\nOutputs:\n";
     foreach (Output * output, Outputs::self()->outputs()) {
         cout << "  Output " << output->id() << ":\n";
         cout << "    Connected: " << output->isConnected() << "\n";
-        
+
         if (! output->isConnected()) continue;
-        
+
         cout << "    Activated: " << output->isActivated() << "\n";
         cout << "    Size: " << output->size().width() << "x" << output->size().height() << "\n";
         cout << "    Position: (" << output->position().x() << "," << output->position().y() << ")\n";
@@ -176,7 +176,7 @@ void KephalApp::query() {
         foreach (float rate, output->availableRates()) {
             cout << rate << ", ";
         }
-        
+
         cout << "\n";
     }
 }

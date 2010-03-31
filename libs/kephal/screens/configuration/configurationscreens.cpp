@@ -32,24 +32,24 @@ namespace Kephal {
     {
         connect(Configurations::self(), SIGNAL(configurationActivated(Kephal::Configuration *)), this, SLOT(configurationActivated(Kephal::Configuration *)));
     }
-    
+
     void ConfigurationScreens::configurationActivated(Configuration * configuration) {
         Q_UNUSED(configuration)
         qDebug() << "ConfigurationScreens::configurationActivated";
         triggerRebuildScreens();
     }
-    
+
     void ConfigurationScreens::prepareScreens(QMap<int, OutputScreen *> & screens) {
         BackendConfiguration * config = BackendConfigurations::self()->activeBackendConfiguration();
         if (! config) {
             return;
         }
-        
+
         if (config->name() == "external") {
             screens.clear();
             return;
         }
-        
+
         QMap<int, QRect> layout = config->realLayout();
         for (QMap<int, QRect>::const_iterator i = layout.constBegin(); i != layout.constEnd(); ++i) {
             if (screens.contains(i.key())) {
@@ -61,7 +61,7 @@ namespace Kephal {
                 screens.insert(screen->id(), screen);
             }
         }
-        
+
         for (QMap<int, OutputScreen *>::iterator i = screens.begin(); i != screens.end();) {
             if (! layout.contains(i.key())) {
                 i = screens.erase(i);
@@ -70,6 +70,6 @@ namespace Kephal {
             }
         }
     }
-    
+
 }
 

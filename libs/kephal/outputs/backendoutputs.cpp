@@ -29,7 +29,7 @@ namespace Kephal {
         : Output(parent)
     {
     }
-    
+
     void BackendOutput::mark() {
         m_markedActive = isActivated();
         if (m_markedActive) {
@@ -40,7 +40,7 @@ namespace Kephal {
             m_markedReflectY = reflectY();
         }
     }
-    
+
     void BackendOutput::revert() {
         if (m_markedActive) {
             applyGeom(m_markedGeom, m_markedRate);
@@ -49,26 +49,26 @@ namespace Kephal {
             deactivate();
         }
     }
-    
-    
-    
+
+
+
     BackendOutputs * BackendOutputs::m_instance = 0;
-    
+
     BackendOutputs * BackendOutputs::self() {
         return m_instance;
     }
-    
+
     BackendOutputs::BackendOutputs(QObject * parent)
         : Outputs(parent)
     {
         m_instance = this;
     }
-    
+
     BackendOutputs::~BackendOutputs()
     {
         m_instance = 0;
     }
-    
+
     QList<BackendOutput *> BackendOutputs::backendOutputs() {
         QList<BackendOutput *> result;
         foreach (Output * output, outputs()) {
@@ -76,7 +76,7 @@ namespace Kephal {
         }
         return result;
     }
-    
+
     BackendOutput * BackendOutputs::backendOutput(const QString & id) {
         foreach (BackendOutput * output, backendOutputs()) {
             if (output->id() == id) {
@@ -85,10 +85,10 @@ namespace Kephal {
         }
         return 0;
     }
-    
+
     bool BackendOutputs::activateLayout(const QMap<Output *, QRect> & layout) {
         qDebug() << "activate layout:" << layout;
-        
+
         QList<BackendOutput *> outputs = backendOutputs();
         foreach (BackendOutput * output, outputs) {
             //output->mark();
@@ -101,16 +101,16 @@ namespace Kephal {
         for (QMap<Output *, QRect>::const_iterator i = layout.constBegin(); i != layout.constEnd(); ++i) {
             BackendOutput * output = (BackendOutput *) i.key();
             qDebug() << "setting output" << output->id() << "to" << i.value();
-            
+
             if (! output->applyGeom(i.value(), 0)) {
                 qDebug() << "setting" << output->id() << "to" << i.value() << "failed!!";
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
 }
 
 #ifndef NO_KDE

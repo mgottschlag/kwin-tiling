@@ -36,39 +36,39 @@ namespace Kephal {
     class ConfigurationXML;
     class OutputsXML;
     class OutputXML;
-    
-    
+
+
 
     class XMLConfiguration : public BackendConfiguration {
         Q_OBJECT
         public:
             XMLConfiguration(XMLConfigurations * parent, ConfigurationXML * configuration);
-            
+
             QString name();
             bool isModifiable();
             bool isActivated();
             void activate();
             QMap<int, QPoint> layout();
             int primaryScreen();
-            
+
             ConfigurationXML * configuration();
             void setLayout(const QMap<int, QPoint> & layout);
-            
+
         Q_SIGNALS:
             void activate(XMLConfiguration * configuration);
-            
+
         private:
             ConfigurationXML * m_configuration;
             XMLConfigurations * m_parent;
             QMap<int, QPoint> m_layout;
     };
-    
-    
+
+
     class XMLConfigurations : public BackendConfigurations {
         Q_OBJECT
         public:
             XMLConfigurations(QObject * parent);
-            
+
             QMap<QString, Configuration *> configurations();
             Configuration * findConfiguration();
             Configuration * activeConfiguration();
@@ -86,12 +86,12 @@ namespace Kephal {
             bool polling();
             void confirm();
             void revert();
-            
+
         private Q_SLOTS:
             void confirmTimerTimeout();
             bool activate(XMLConfiguration * configuration);
             void activateExternal();
-            
+
         private:
             void init();
             void findOutputs();
@@ -117,7 +117,7 @@ namespace Kephal {
             OutputXML * outputXml(const QString & id);
             QMap<int, QRect> resizeLayout(Output * output, const QSize & size, QMap<Output *, int> & outputScreens, QMap<Output *, QSize> & outputSizes);
             void requireConfirm();
-            
+
             QMap<QString, XMLConfiguration *> m_configurations;
             XMLConfiguration * m_activeConfiguration;
             XMLConfiguration * m_markedConfiguration;
@@ -130,7 +130,7 @@ namespace Kephal {
             int m_confirmLeft;
             bool m_awaitingConfirm;
     };
-    
+
 }
 
 

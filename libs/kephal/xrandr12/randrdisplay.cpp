@@ -30,7 +30,7 @@ RandRDisplay::RandRDisplay()
     : m_valid(true)
 {
     m_dpy = QX11Info::display();
-    
+
     // Check extension
     if(XRRQueryExtension(m_dpy, &m_eventBase, &m_errorBase) == False) {
         m_valid = false;
@@ -45,7 +45,7 @@ RandRDisplay::RandRDisplay()
         if (! m_valid) {
             return;
         }
-    
+
     qDebug() << "XRANDR error base: " << m_errorBase;
     m_numScreens = ScreenCount(m_dpy);
     m_currentScreenIndex = 0;
@@ -120,7 +120,7 @@ bool RandRDisplay::needsRefresh() const
 {
     Time time, config_timestamp;
     time = XRRTimes(m_dpy, m_currentScreenIndex, &config_timestamp);
-    
+
     qDebug() << "Cache:" << RandR::timestamp << "Server:" << time << "Config:" << config_timestamp;
     return (RandR::timestamp < time);
 }
@@ -133,7 +133,7 @@ void RandRDisplay::refresh()
         }
 }
 
-bool RandRDisplay::canHandle(const XEvent *e) const 
+bool RandRDisplay::canHandle(const XEvent *e) const
 {
     if (e->type == m_eventBase + RRScreenChangeNotify)
         return true;
@@ -153,7 +153,7 @@ void RandRDisplay::handleEvent(XEvent *e)
                 if (screen->rootWindow() == event->root)
                     screen->handleEvent(event);
             }
-            
+
     }
     else if (e->type == m_eventBase + RRNotify) {
         //forward the event to the right screen
@@ -168,7 +168,7 @@ void RandRDisplay::handleEvent(XEvent *e)
         }
     }
     else {
-        qDebug() << "RandRDisplay::handleEvent - Other";            
+        qDebug() << "RandRDisplay::handleEvent - Other";
     }
 }
 

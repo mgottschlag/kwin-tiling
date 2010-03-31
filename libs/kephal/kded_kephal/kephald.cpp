@@ -29,7 +29,7 @@
 #include <KConfig>
 #include <KConfigGroup>
 
-#ifdef HAS_RANDR_1_2 
+#ifdef HAS_RANDR_1_2
 #include "xrandr12/randrdisplay.h"
 #include "xrandr12/randrscreen.h"
 #endif
@@ -102,26 +102,26 @@ void KephalD::init() {
     foreach (Output * output, Outputs::self()->outputs()) {
         qDebug() << "output:" << output->id() << output->geom() << output->rotation() << output->reflectX() << output->reflectY();
     }
-    
+
     new XMLConfigurations(this);
     new ConfigurationScreens(this);
-    
+
     foreach (Kephal::Screen * screen, Screens::self()->screens()) {
         qDebug() << "screen:" << screen->id() << screen->geom();
     }
-    
+
     activateConfiguration();
     connect(Outputs::self(), SIGNAL(outputDisconnected(Kephal::Output *)), this, SLOT(outputDisconnected(Kephal::Output *)));
     connect(Outputs::self(), SIGNAL(outputConnected(Kephal::Output *)), this, SLOT(outputConnected(Kephal::Output *)));
-    
+
     QDBusConnection dbus = QDBusConnection::sessionBus();
     bool result = dbus.registerService("org.kde.Kephal");
     qDebug() << "registered the service:" << result;
-    
+
     new DBusAPIScreens(this);
     new DBusAPIOutputs(this);
     new DBusAPIConfigurations(this);
-    
+
     if (m_outputs) {
         m_eventFilter = new X11EventFilter(m_outputs);
         kapp->installX11EventFilter(m_eventFilter);
@@ -178,7 +178,7 @@ void KephalD::outputConnected(Output * output) {
 //     activateConfiguration();
 }
 
-#ifdef Q_WS_X11 
+#ifdef Q_WS_X11
 bool X11EventFilter::x11Event(XEvent * e) {
 #ifdef HAS_RANDR_1_2
     if (m_outputs && m_outputs->display()->canHandle(e)) {

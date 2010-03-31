@@ -32,7 +32,7 @@ namespace Kephal {
         m_connected = connected;
         m_activated = activated;
     }
-    
+
     SimpleOutput::SimpleOutput(QObject * parent)
         : Output(parent),
         m_id(""),
@@ -42,7 +42,7 @@ namespace Kephal {
         m_activated(false)
     {
     }
-    
+
     SimpleOutput::SimpleOutput(QObject * parent, Output * output)
         : Output(parent)
     {
@@ -52,8 +52,8 @@ namespace Kephal {
         m_connected = output->isConnected();
         m_activated = output->isActivated();
     }
-    
-    
+
+
     QString SimpleOutput::id()
     {
         return m_id;
@@ -62,7 +62,7 @@ namespace Kephal {
     QSize SimpleOutput::size() {
         return m_size;
     }
-    
+
     QList<QSize> SimpleOutput::availableSizes() {
         if (m_availableSizes.empty()) {
             QList<QSize> result;
@@ -71,7 +71,7 @@ namespace Kephal {
         }
         return m_availableSizes;
     }
-    
+
     QPoint SimpleOutput::position() {
         return m_position;
     }
@@ -79,67 +79,67 @@ namespace Kephal {
     void SimpleOutput::_setId(const QString & id) {
         m_id = id;
     }
-    
+
     void SimpleOutput::_setSize(const QSize & size) {
         m_size = size;
     }
-    
+
     void SimpleOutput::_setAvailableSizes(const QList<QSize> & sizes) {
         m_availableSizes = sizes;
     }
-    
+
     void SimpleOutput::_setPosition(const QPoint & position) {
         m_position = position;
     }
-    
+
     void SimpleOutput::_setConnected(bool connected) {
         m_connected = connected;
     }
-    
+
     void SimpleOutput::_setActivated(bool activated) {
         m_activated = activated;
     }
-    
+
     bool SimpleOutput::isConnected() {
         return m_connected;
     }
-    
+
     bool SimpleOutput::isActivated() {
         return m_connected && m_activated;
     }
-    
+
     void SimpleOutput::_setVendor(const QString & vendor) {
         m_vendor = vendor;
     }
-    
+
     QString SimpleOutput::vendor() {
         return m_vendor;
     }
-    
+
     void SimpleOutput::_setProductId(int productId) {
         m_productId = productId;
     }
-    
+
     int SimpleOutput::productId() {
         return m_productId;
     }
-    
+
     void SimpleOutput::_setSerialNumber(unsigned int serialNumber) {
         m_serialNumber = serialNumber;
     }
-    
+
     unsigned int SimpleOutput::serialNumber() {
         return m_serialNumber;
     }
-    
+
     QSize SimpleOutput::preferredSize() {
         return m_preferredSize;
     }
-    
+
     void SimpleOutput::_setPreferredSize(const QSize & size) {
         m_preferredSize = size;
     }
-    
+
     void SimpleOutput::_setRotation(Rotation rotation) {
         m_rotation = rotation;
     }

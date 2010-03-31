@@ -37,16 +37,16 @@ namespace Kephal {
             }
     };
 
-    
-    
+
+
     ConfigurationXML::ConfigurationXML()
         : m_modifiable(true),
         m_primaryScreen(0)
     { }
-    
+
     QList<ScreenXML *> & ConfigurationXML::screens() { return m_screens; }
-    
-    
+
+
     class ConfigurationXMLFactory : public XMLFactory {
         protected:
             virtual XMLType * newInstance() { return new ConfigurationXML(); }
@@ -58,7 +58,7 @@ namespace Kephal {
             }
     };
 
-    
+
     class OutputXMLFactory : public XMLFactory {
         protected:
             virtual XMLType * newInstance() { return new OutputXML(); }
@@ -76,8 +76,8 @@ namespace Kephal {
                 DOUBLE_ELEMENT("refresh-rate", OutputXML, rate, setRate);
             }
     };
-    
-    
+
+
     class OutputsXMLFactory : public XMLFactory {
         protected:
             virtual XMLType * newInstance() { return new OutputsXML(); }
@@ -86,23 +86,23 @@ namespace Kephal {
                 COMPLEX_ELEMENT_LIST("output", OutputsXML, outputs, new OutputXMLFactory(), OutputXML);
             }
     };
-    
-    
+
+
     QList<ConfigurationXML *> & ConfigurationsXML::configurations() { return m_configurations; }
     QList<OutputsXML *> & ConfigurationsXML::outputs() { return m_outputs; }
-    
+
     ConfigurationsXMLFactory::ConfigurationsXMLFactory() : XMLRootFactory("configurations") {
     }
-    
+
     XMLType * ConfigurationsXMLFactory::newInstance() {
         return new ConfigurationsXML();
     }
-    
+
     void ConfigurationsXMLFactory::schema() {
         BOOL_ELEMENT("polling", ConfigurationsXML, polling, setPolling);
         COMPLEX_ELEMENT_LIST("configuration", ConfigurationsXML, configurations, new ConfigurationXMLFactory(), ConfigurationXML);
         COMPLEX_ELEMENT_LIST("outputs", ConfigurationsXML, outputs, new OutputsXMLFactory(), OutputsXML);
     }
-    
+
 }
 

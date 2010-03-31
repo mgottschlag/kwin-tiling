@@ -35,7 +35,7 @@ namespace Kephal {
         Q_OBJECT
         public:
             BackendConfiguration(QObject * parent);
-            
+
             /**
              * Returns the real layout, with screen-sizes
              * taken from the actual Outputs.
@@ -48,7 +48,7 @@ namespace Kephal {
              *          Outputs instead of the current ones.
              */
             QMap<int, QRect> realLayout(const QMap<int, QPoint> & simpleLayout, const QMap<Output *, int> & outputScreens, const QMap<Output *, QSize> & outputSizes);
-            
+
             /**
              * Returns the real layout, with screen-sizes
              * taken from the actual Outputs.
@@ -79,67 +79,67 @@ namespace Kephal {
              * mapping as currently active if possible.
              */
             QMap<int, QRect> realLayout();
-            
+
             /**
              * Returns a set of points covered in the
              * layout returned by layout().
              */
             QSet<QPoint> positions();
-            
+
             /**
              * Returns the positions as in positions
              * to which the Screen can be cloned.
              */
             QSet<QPoint> clonePositions(int screen);
-            
+
             /**
              * Returns the layout if the Screen screen
              * was to be cloned to any of the other
              * Screens.
              */
             QMap<int, QPoint> cloneLayout(int screen);
-            
+
             /**
              * Returns the possible positions as in
              * positions() to move the Screen screen
              * to.
              */
             QSet<QPoint> possiblePositions(int screen);
-            
+
         private:
             void simpleToReal(QMap<int, QPoint> & simpleLayout, const QMap<int, QSize> & screenSizes, int index, QMap<int, QRect> & screens);
             QList<QSet<QPoint> > partition(int screen);
             QSet<QPoint> border(QSet<QPoint> screens);
     };
-    
-    
+
+
 
     class BackendConfigurations : public Configurations {
         Q_OBJECT
         public:
             static BackendConfigurations * self();
-            
+
             BackendConfigurations(QObject * parent);
             virtual ~BackendConfigurations();
-            
+
             /**
              * Find the Configuration for the currently
              * connected Outputs.
              */
             virtual Configuration * findConfiguration() = 0;
-            
+
             /**
              * Apply Output-specific settings such as size,
              * refresh-rate and rotation.
              */
             virtual void applyOutputSettings() = 0;
-            
+
             virtual BackendConfiguration * activeBackendConfiguration();
-            
+
         private:
             static BackendConfigurations * m_instance;
     };
-    
+
 }
 
 

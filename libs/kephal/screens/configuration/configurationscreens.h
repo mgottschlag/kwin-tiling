@@ -33,14 +33,14 @@ namespace Kephal {
         Q_OBJECT
         public:
             ConfigurationScreens(QObject * parent);
-            
+
         protected:
             void prepareScreens(QMap<int, OutputScreen *> & screens);
-            
+
         private Q_SLOTS:
             void configurationActivated(Kephal::Configuration * configuration);
     };
-    
+
 }
 
 #endif // KEPHAL_CONFIGURATIONSCREENS_H

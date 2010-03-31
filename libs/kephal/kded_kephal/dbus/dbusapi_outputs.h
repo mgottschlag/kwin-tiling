@@ -39,10 +39,10 @@ class DBusAPIOutputs : public QObject
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.kde.Kephal.Outputs")
-    
+
     public:
         DBusAPIOutputs(QObject * parent);
-        
+
     public Q_SLOTS:
         QStringList outputIds();
         QSize size(QString id);
@@ -57,7 +57,7 @@ class DBusAPIOutputs : public QObject
         bool reflectY(QString id);
         int numAvailableRates(QString id);
         double availableRate(QString id, int index);
-        
+
     Q_SIGNALS:
         void outputConnected(QString id);
         void outputDisconnected(QString id);
@@ -68,7 +68,7 @@ class DBusAPIOutputs : public QObject
         void outputRateChanged(QString id);
         void outputRotated(QString id);
         void outputReflected(QString id);
-        
+
     private Q_SLOTS:
         void outputConnectedSlot(Kephal::Output * o);
         void outputDisconnectedSlot(Kephal::Output * o);
@@ -79,7 +79,7 @@ class DBusAPIOutputs : public QObject
         void outputRateChangedSlot(Kephal::Output * o, float oldRate, float newRate);
         void outputRotatedSlot(Kephal::Output * o, Kephal::Rotation oldRotation, Kephal::Rotation newRotation);
         void outputReflectedSlot(Kephal::Output * o, bool oldX, bool oldY, bool newX, bool newY);
-        
+
     private:
         QMap<QString, QList<QSize> > m_sizes;
         QMap<QString, QList<float> > m_rates;

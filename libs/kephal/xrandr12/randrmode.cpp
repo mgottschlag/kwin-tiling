@@ -23,7 +23,7 @@ RandRMode::RandRMode(XRRModeInfo *info)
     : m_size(0, 0)
 {
     m_valid = false;
-    
+
     if (info)
         m_valid = true;
     else
@@ -40,7 +40,7 @@ RandRMode::RandRMode(XRRModeInfo *info)
 
     m_size.setWidth(info->width);
     m_size.setHeight(info->height);
-    
+
     // calculate the refresh rate
     if (info->hTotal && info->vTotal)
         m_rate = ((float) info->dotClock / ((float) info->hTotal * (float) info->vTotal));

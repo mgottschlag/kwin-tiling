@@ -37,10 +37,10 @@ namespace Kephal {
             if (! isVirtual) {
                 i = desktop->primaryScreen();
             }
-            
+
             QRect geom = desktop->screenGeometry(i);
             qDebug() << "adding an output" << i << "with geom: " << geom;
-            
+
             SimpleOutput * output = new SimpleOutput(this,
                     "SCREEN-" + QString::number(i),
                     geom.size(),
@@ -48,7 +48,7 @@ namespace Kephal {
                     true,
                     true);
             m_outputs.append(output);
-            
+
             if (! isVirtual) {
                 break;
             }
@@ -56,7 +56,7 @@ namespace Kephal {
         if (isVirtual) {
             for (int i = desktop->numScreens(); i < 4; i++) {
                 qDebug() << "adding a disconnected output" << i;
-                
+
                 SimpleOutput * output = new SimpleOutput(this,
                         "SCREEN-" + QString::number(i),
                         QSize(0, 0),
@@ -66,10 +66,10 @@ namespace Kephal {
                 m_outputs.append(output);
             }
         }
-        
+
         connect(desktop, SIGNAL(resized(int)), this, SLOT(screenChanged(int)));
     }
-    
+
     DesktopWidgetOutputs::~DesktopWidgetOutputs() {
         foreach(Output * output, m_outputs) {
             delete output;
@@ -85,19 +85,19 @@ namespace Kephal {
         }
         return result;
     }
-    
+
     void DesktopWidgetOutputs::activateLayout(const QMap<Output *, QRect> & layout)
     {
         Q_UNUSED(layout)
     }
-    
+
     void DesktopWidgetOutputs::screenChanged(int screen)
     {
         Q_UNUSED(screen)
-        
+
         QDesktopWidget * desktop = QApplication::desktop();
         bool isVirtual = desktop->isVirtualDesktop();
-        
+
         if (isVirtual) {
             for(int i = m_outputs.size() - 1; i >= desktop->numScreens(); i--) {
                 SimpleOutput * output = m_outputs.at(i);
@@ -110,7 +110,7 @@ namespace Kephal {
                 }
             }
         }
-        
+
         for(int i = 0; i < desktop->numScreens(); i++) {
             if (m_outputs.size() <= i) {
                 m_outputs.append(new SimpleOutput(this,
@@ -120,19 +120,19 @@ namespace Kephal {
                     false,
                     false));
             }
-            
+
             SimpleOutput * output = m_outputs[i];
             if (! isVirtual) {
                 i = desktop->primaryScreen();
             }
-            
+
             QRect geom = desktop->screenGeometry(i);
             if (! output->isConnected()) {
                 output->_setConnected(true);
                 output->_setActivated(true);
                 output->_setPosition(geom.topLeft());
                 output->_setSize(geom.size());
-                
+
                 emit outputConnected(output);
                 emit outputActivated(output);
             }
@@ -140,7 +140,7 @@ namespace Kephal {
                 QPoint oldPos = output->position();
                 QPoint newPos = geom.topLeft();
                 qDebug() << "output" << i << "moved" << oldPos << "->" << newPos;
-                
+
                 output->_setPosition(newPos);
                 emit outputMoved(output, oldPos, newPos);
             }
@@ -148,16 +148,16 @@ namespace Kephal {
                 QSize oldSize = output->size();
                 QSize newSize = geom.size();
                 qDebug() << "output" << i << "resized" << oldSize << "->" << newSize;
-                
+
                 output->_setSize(newSize);
                 emit outputResized(output, oldSize, newSize);
             }
-            
+
             if (! isVirtual) {
                 break;
             }
         }
     }
-    
+
 }
 

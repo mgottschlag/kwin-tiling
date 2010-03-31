@@ -42,20 +42,20 @@ namespace Kephal {
 #endif
         return Configurations::m_instance;
     }
-    
+
     Configurations::Configurations(QObject * parent)
             : QObject(parent)
     {
         Configurations::m_instance = this;
     }
-    
+
     Configurations::~Configurations()
     {
         Configurations::m_instance = 0;
     }
-    
+
     Configurations * Configurations::m_instance = 0;
-    
+
     Configuration * Configurations::configuration(QString name) {
         foreach (Configuration * config, configurations()) {
             if (config->name() == name) {
@@ -64,7 +64,7 @@ namespace Kephal {
         }
         return 0;
     }
-    
+
     void Configurations::translateOrigin(QMap<int, QPoint> & layout) {
         QPoint origin;
         bool first = true;
@@ -79,13 +79,13 @@ namespace Kephal {
         }
         translateOrigin(layout, origin);
     }
-    
+
     void Configurations::translateOrigin(QMap<int, QPoint> & layout, QPoint origin) {
         for (QMap<int, QPoint>::iterator i = layout.begin(); i != layout.end(); ++i) {
             i.value() -= origin;
         }
     }
-    
+
     void Configurations::translateOrigin(QMap<int, QRect> & layout) {
         QPoint origin;
         bool first = true;
@@ -100,7 +100,7 @@ namespace Kephal {
         }
         translateOrigin(layout, origin);
     }
-    
+
     void Configurations::translateOrigin(QMap<int, QRect> & layout, QPoint origin) {
         QPoint offset(0, 0);
         offset -= origin;
@@ -108,14 +108,14 @@ namespace Kephal {
             i.value().translate(offset);
         }
     }
-    
-    
-    
+
+
+
     Configuration::Configuration(QObject * parent)
             : QObject(parent)
     {
     }
-    
-    
+
+
 }
 

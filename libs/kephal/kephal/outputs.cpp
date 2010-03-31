@@ -40,17 +40,17 @@ namespace Kephal {
 #endif
         return Outputs::m_instance;
     }
-    
+
     Outputs::Outputs(QObject * parent)
             : QObject(parent)
     {
         Outputs::m_instance = this;
     }
-    
+
     Outputs::~Outputs() {
         Outputs::m_instance = 0;
     }
-    
+
     Output * Outputs::output(const QString & id) {
         foreach (Output * o, outputs()) {
             if (o->id() == id) {
@@ -59,25 +59,25 @@ namespace Kephal {
         }
         return 0;
     }
-    
+
     Outputs * Outputs::m_instance = 0;
-    
-    
-    
+
+
+
     Output::Output(QObject * parent)
             : QObject(parent)
     {
     }
-    
+
     QRect Output::geom() {
         return QRect(position(), size());
     }
-    
+
     Screen * Output::screen() {
         if (! isActivated()) {
             return 0;
         }
-        
+
         foreach (Screen * screen, Screens::self()->screens()) {
             if (screen->outputs().contains(this)) {
                 return screen;
@@ -85,23 +85,23 @@ namespace Kephal {
         }
         return 0;
     }
-    
+
     QList<QPoint> Output::availablePositions() {
         return Configurations::self()->possiblePositions(this);
     }
-    
+
     bool Output::move(const QPoint & position) {
         return Configurations::self()->move(this, position);
     }
-    
+
     bool Output::resize(const QSize & size) {
         return Configurations::self()->resize(this, size);
     }
-    
+
     bool Output::rotate(Rotation rotation) {
         return Configurations::self()->rotate(this, rotation);
     }
-    
+
     bool Output::reflectX(bool reflect) {
         return Configurations::self()->reflectX(this, reflect);
     }

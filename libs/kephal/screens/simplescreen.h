@@ -35,7 +35,7 @@ namespace Kephal {
         public:
             SimpleScreen(QObject * parent, int id, const QSize & resolution, const QPoint & position, bool privacy);
             SimpleScreen(QObject * parent);
-            
+
             virtual int id();
 
             virtual QSize size();
@@ -43,18 +43,18 @@ namespace Kephal {
 
             virtual bool isPrivacyMode();
             virtual void setPrivacyMode(bool b);
-            
+
             QList<Output *> outputs();
-            
+
             void _setId(int id);
             void _setSize(const QSize & size);
             void _setPosition(const QPoint & position);
             void _setGeom(const QRect & geom);
             QList<Output *> & _outputs();
-            
+
         Q_SIGNALS:
             void privacyModeChangeRequested(SimpleScreen * screen, bool privacy);
-            
+
         private:
             int m_id;
             QSize m_size;
@@ -62,7 +62,7 @@ namespace Kephal {
             bool m_privacy;
             QList<Output *> m_outputs;
     };
-    
+
 }
 
 

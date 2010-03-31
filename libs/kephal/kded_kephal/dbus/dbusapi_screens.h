@@ -35,10 +35,10 @@ class DBusAPIScreens : public QObject
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.kde.Kephal.Screens")
-    
+
     public:
         DBusAPIScreens(QObject * parent);
-        
+
     public Q_SLOTS:
         int numScreens();
         int id(int index);
@@ -46,13 +46,13 @@ class DBusAPIScreens : public QObject
         QPoint position(int id);
         int primaryScreen();
         QStringList outputs(int id);
-        
+
     private Q_SLOTS:
         void screenResized(Kephal::Screen * s, QSize oldSize, QSize newSize);
         void screenMoved(Kephal::Screen * s, QPoint oldPosition, QPoint newPosition);
         void screenAdded(Kephal::Screen * s);
         void screenRemovedSlot(int id);
-        
+
     Q_SIGNALS:
         void screenResized(int screen);
         void screenMoved(int screen);

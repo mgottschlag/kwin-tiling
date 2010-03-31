@@ -32,10 +32,10 @@ DBusAPIOutputs::DBusAPIOutputs(QObject * parent)
 {
     new OutputsAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    
+
     const bool result = dbus.registerObject("/modules/kephal/Outputs", this);
     qDebug() << "outputs registered on the bus:" << result;
-    
+
     connect(Outputs::self(), SIGNAL(outputConnected(Kephal::Output *)), this, SLOT(outputConnectedSlot(Kephal::Output *)));
     connect(Outputs::self(), SIGNAL(outputDisconnected(Kephal::Output *)), this, SLOT(outputDisconnectedSlot(Kephal::Output *)));
     connect(Outputs::self(), SIGNAL(outputActivated(Kephal::Output *)), this, SLOT(outputActivatedSlot(Kephal::Output *)));

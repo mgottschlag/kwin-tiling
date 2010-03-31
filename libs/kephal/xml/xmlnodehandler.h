@@ -31,12 +31,12 @@ namespace Kephal {
 
     class XMLType;
     class XMLFactory;
-    
+
 
     class XMLNodeHandler {
         public:
             virtual ~XMLNodeHandler() {}
-            
+
             virtual void beginSave(XMLType * element) = 0;
             virtual void beginLoad(XMLType * element) = 0;
             virtual bool hasMore(XMLType * element) = 0;
@@ -44,145 +44,145 @@ namespace Kephal {
             virtual QDomNode node(XMLType * element, QDomDocument doc, QString name) = 0;
             virtual QString str(XMLType * element) = 0;
     };
-    
-    
+
+
     template <class ElementType, typename SimpleType>
     class XMLSimpleNodeHandler : public XMLNodeHandler {
         public:
             typedef void (ElementType::*Setter)(SimpleType);
             typedef SimpleType (ElementType::*Getter)();
-            
+
             XMLSimpleNodeHandler(Getter getter, Setter setter);
-            
+
             virtual void beginSave(XMLType * element);
             virtual void beginLoad(XMLType * element);
             virtual bool hasMore(XMLType * element);
             virtual void setNode(XMLType * element, QDomNode node);
             virtual QDomNode node(XMLType * element, QDomDocument doc, QString name);
             virtual QString str(XMLType * element);
-        
+
         protected:
             virtual SimpleType toValue(QString str) = 0;
             virtual QString toString(SimpleType value) = 0;
-            
+
         private:
             Getter m_getter;
             Setter m_setter;
             bool m_saved;
     };
-    
-    
+
+
     template <class ElementType>
     class XMLStringNodeHandler : public XMLSimpleNodeHandler<ElementType, QString> {
         public:
             typedef void (ElementType::*Setter)(QString);
             typedef QString (ElementType::*Getter)();
-            
+
             XMLStringNodeHandler(Getter getter, Setter setter);
-        
+
         protected:
             virtual QString toValue(QString str);
             virtual QString toString(QString value);
     };
-    
-    
+
+
     template <class ElementType>
     class XMLIntNodeHandler : public XMLSimpleNodeHandler<ElementType, int> {
         public:
             typedef void (ElementType::*Setter)(int);
             typedef int (ElementType::*Getter)();
-            
+
             XMLIntNodeHandler(Getter getter, Setter setter);
-        
+
         protected:
             virtual int toValue(QString str);
             virtual QString toString(int value);
     };
-    
-    
+
+
     template <class ElementType>
     class XMLUIntNodeHandler : public XMLSimpleNodeHandler<ElementType, unsigned int> {
         public:
             typedef void (ElementType::*Setter)(unsigned int);
             typedef unsigned int (ElementType::*Getter)();
-            
+
             XMLUIntNodeHandler(Getter getter, Setter setter);
-        
+
         protected:
             virtual unsigned int toValue(QString str);
             virtual QString toString(unsigned int value);
     };
-    
-    
+
+
     template <class ElementType>
     class XMLDoubleNodeHandler : public XMLSimpleNodeHandler<ElementType, double> {
         public:
             typedef void (ElementType::*Setter)(double);
             typedef double (ElementType::*Getter)();
-            
+
             XMLDoubleNodeHandler(Getter getter, Setter setter);
-        
+
         protected:
             virtual double toValue(QString str);
             virtual QString toString(double value);
     };
-    
-    
+
+
     template <class ElementType>
     class XMLBoolNodeHandler : public XMLSimpleNodeHandler<ElementType, bool> {
         public:
             typedef void (ElementType::*Setter)(bool);
             typedef bool (ElementType::*Getter)();
-            
+
             XMLBoolNodeHandler(Getter getter, Setter setter);
-        
+
         protected:
             virtual bool toValue(QString str);
             virtual QString toString(bool value);
     };
-    
-    
+
+
     template <class ElementType, class ComplexType>
     class XMLComplexNodeHandler : public XMLNodeHandler {
         public:
             typedef void (ElementType::*Setter)(ComplexType *);
-            
+
             XMLComplexNodeHandler(XMLFactory * factory, Setter setter);
-            
+
             virtual void beginSave(XMLType * element);
             virtual void beginLoad(XMLType * element);
             virtual bool hasMore(XMLType * element);
             virtual void setNode(XMLType * element, QDomNode node);
             virtual QDomNode node(XMLType * element, QDomDocument doc, QString name);
             virtual QString str(XMLType * element);
-        
+
         private:
             XMLFactory * m_factory;
             Setter m_setter;
             bool m_saved;
     };
-    
-    
+
+
     template <class ElementType, class ComplexType>
     class XMLComplexListNodeHandler : public XMLNodeHandler {
         public:
             typedef QList<ComplexType *> & (ElementType::*ListGetter)();
-            
+
             XMLComplexListNodeHandler(XMLFactory * factory, ListGetter listGetter);
-            
+
             virtual void beginSave(XMLType * element);
             virtual void beginLoad(XMLType * element);
             virtual bool hasMore(XMLType * element);
             virtual void setNode(XMLType * element, QDomNode node);
             virtual QDomNode node(XMLType * element, QDomDocument doc, QString name);
             virtual QString str(XMLType * element);
-        
+
         private:
             XMLFactory * m_factory;
             ListGetter m_listGetter;
             int m_pos;
     };
-    
+
 }
 
 #include "xmlnodehandler.h.cpp"

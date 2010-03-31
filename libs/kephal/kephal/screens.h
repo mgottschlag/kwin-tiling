@@ -44,7 +44,7 @@ namespace Kephal {
         Q_OBJECT
         public:
             Screen(QObject * parent = 0);
-            
+
             /**
              * Returns the id of this Screen. The id
              * is part of the Configuration and will
@@ -56,11 +56,11 @@ namespace Kephal {
             /**
              * The actual size of the screen in pixels.
              * This is the smallest area possible, so
-             * that all Outputs are completely 
+             * that all Outputs are completely
              * contained.
              */
             virtual QSize size() = 0;
-            
+
             /**
              * The actual position on the framebuffer
              * in pixels.
@@ -75,18 +75,18 @@ namespace Kephal {
              * user forces this.
              */
             virtual bool isPrivacyMode() = 0;
-            
+
             /**
              * Sets the state of the privacy-mode.
              */
             virtual void setPrivacyMode(bool b) = 0;
-            
+
             /**
              * Return a list of Outputs currently
              * being part of this Screen.
              */
             virtual QList<Output *> outputs() = 0;
-            
+
             /**
              * Returns whether this screen is the
              * current primary screen.
@@ -95,14 +95,14 @@ namespace Kephal {
              * the configuration used.
              */
             bool isPrimary();
-            
+
             /**
              * Make this Screen the primary one.
              * This just calls the appropriate
              * method in the Configuration.
              */
             void setAsPrimary();
-            
+
             /**
              * Returns the position and size of the
              * Screen as QRect.
@@ -110,9 +110,9 @@ namespace Kephal {
              */
             QRect geom();
     };
-    
-    
-    
+
+
+
     /**
      * Screens is the entrance-point for all Screen-
      * related operations.
@@ -126,10 +126,10 @@ namespace Kephal {
              * Returns the currently active instance.
              */
             static Screens * self();
-            
+
             Screens(QObject * parent);
             virtual ~Screens();
-            
+
             /**
              * Returns the list of all current
              * Screens.
@@ -137,17 +137,17 @@ namespace Kephal {
              * and a non-zero size.
              */
             virtual QList<Screen *> screens() = 0;
-            
+
             /**
              * Find a Screen by its id.
              */
             virtual Screen * screen(int id);
-            
+
             /**
              * Returns the current primary Screen.
              */
             Screen * primaryScreen();
-            
+
         Q_SIGNALS:
             /**
              * This signal is emitted when a new
@@ -164,7 +164,7 @@ namespace Kephal {
              * Configuration being changed.
              */
             void screenRemoved(int id);
-            
+
             /**
              * This signal is emitted when the size
              * of the Screen changes.
@@ -176,11 +176,11 @@ namespace Kephal {
              * position of the Screen changes.
              */
             void screenMoved(Kephal::Screen * s, QPoint oldPosition, QPoint newPosition);
-            
+
         protected:
             static Screens * m_instance;
     };
-    
+
     /**
      * Defines a handful help methods for common tasks
      */
@@ -188,26 +188,26 @@ namespace Kephal {
         public:
             /** Returns the number of screens. */
             static int numScreens();
-            
+
             /** Returns the geometry of the given screen */
             static QRect screenGeometry(int id);
-            
+
             /** Returns the size of the given screen */
             static QSize screenSize(int id);
-            
+
             /** Returns the geometry of the whole desktop */
             static QRect desktopGeometry();
-            
+
             /** Returns the id of the screen that contains the given point */
             static int screenId(QPoint p);
-            
+
             /** Returns the id of the primary screen */
             static int primaryScreenId();
-            
+
         private:
             static int distance(const QRect & r, const QPoint & p);
     };
-    
+
 }
 
 

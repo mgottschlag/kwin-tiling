@@ -55,7 +55,7 @@ public:
 
     CrtcMap  crtcs() const;
     RandRCrtc *crtc(RRCrtc id) const;
-    
+
     OutputMap outputs() const;
     RandROutput *output(RROutput id) const;
 
@@ -82,7 +82,7 @@ public:
     SizeList unifiedSizes() const;
 
     QRect rect() const;
-        
+
     void pollState();
 
 protected:
@@ -109,7 +109,7 @@ private:
     CrtcMap m_crtcs;
     OutputMap m_outputs;
     ModeMap m_modes;
-        
+
 };
 
 #endif

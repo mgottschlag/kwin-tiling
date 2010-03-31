@@ -42,7 +42,7 @@ public:
     int numScreens() const;
     RandRScreen* screen(int index);
     RandRScreen* currentScreen();
-    
+
     void setCurrentScreen(int index);
     int    currentScreenIndex() const;
 
@@ -58,7 +58,7 @@ private:
     Display *m_dpy;
     int    m_numScreens;
     int    m_currentScreenIndex;
-    
+
     ScreenList m_screens;
 
     bool m_valid;

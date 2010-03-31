@@ -66,21 +66,21 @@ namespace Kephal {
              * pixels if the Output is active.
              */
             virtual QPoint position() = 0;
-            
+
             /**
              * Returns whether this Output is
              * currently connected to a
              * monitor.
              */
             virtual bool isConnected() = 0;
-            
+
             /**
              * Returns whether this Output is
              * currently activated and part
              * of a Screen.
              */
             virtual bool isActivated() = 0;
-            
+
             /**
              * Returns a list of sizes, which
              * are supported by this Output.
@@ -88,58 +88,58 @@ namespace Kephal {
              * monitor.
              */
             virtual QList<QSize> availableSizes() = 0;
-            
+
             /**
              * Returns the vendor-code as
              * it is part of the EDID-block.
              */
             virtual QString vendor() = 0;
-            
+
             /**
              * Returns the product-id as
              * it is part of the EDID-block.
              */
             virtual int productId() = 0;
-            
+
             /**
              * Returns the serial-number as
              * it is part of the EDID-block.
              */
             virtual unsigned int serialNumber() = 0;
-            
+
             /**
              * Returns the preffered size of
              * this Output. This depends on
              * the connected monitor.
              */
             virtual QSize preferredSize() = 0;
-            
+
             /**
              * Returns the current rotation of
              * this Output.
              */
             virtual Rotation rotation() = 0;
-            
+
             /**
              * Returns whether this Output is
              * currently reflected over the
              * x-axis.
              */
             virtual bool reflectX() = 0;
-            
+
             /**
              * Returns whether this Output is
              * currently reflected over the
              * y-axis.
              */
             virtual bool reflectY() = 0;
-            
+
             /**
              * Returns the current refresh-rate
              * of this Output.
              */
             virtual float rate() = 0;
-            
+
             /**
              * Returns all possible refresh-rates
              * of this Output.
@@ -147,22 +147,22 @@ namespace Kephal {
              * monitor.
              */
             virtual QList<float> availableRates() = 0;
-            
+
             /**
              * This is just a convenience
-             * method for looking up the 
+             * method for looking up the
              * Screen this Output belongs to.
              * Returns 0 if not active.
              */
             Screen * screen();
-            
+
             /**
              * This convenience method
              * returns size and position of
              * this Output if active.
              */
             QRect geom();
-            
+
             /**
              * Returns all available
              * positions for this Output.
@@ -172,7 +172,7 @@ namespace Kephal {
              * active Outputs.
              */
             QList<QPoint> availablePositions();
-            
+
         public Q_SLOTS:
             /**
              * This calls the appropriate
@@ -187,34 +187,34 @@ namespace Kephal {
              * to move this Output.
              */
             bool move(const QPoint & position);
-            
+
             /**
              * This will set this Ouputs rotation
              * to the given value.
              */
             bool rotate(Rotation rotation);
-            
+
             /**
              * This will set this Output to be
              * reflected over the x-axis if reflect
              * is true.
              */
             bool reflectX(bool reflect);
-            
+
             /**
              * This will set this Output to be
              * reflected over the y-axis if reflect
              * is true.
              */
             bool reflectY(bool reflect);
-            
+
             /**
              * This will change this Outputs
              * refresh-rate to rate.
              */
             bool changeRate(double rate);
     };
-    
+
 
 
     /**
@@ -231,23 +231,23 @@ namespace Kephal {
              * instance.
              */
             static Outputs * self();
-            
+
             Outputs(QObject * parent);
             virtual ~Outputs();
-            
+
             /**
              * Returns a list of all known Outputs,
              * even if they are inactive or
              * disconnected.
              */
             virtual QList<Output *> outputs() = 0;
-            
+
             /**
              * Find an Output by its id.
              * Returns 0 if the id is not known.
              */
             virtual Output * output(const QString & id);
-            
+
         Q_SIGNALS:
             /**
              * This signal is emitted when an Output
@@ -285,29 +285,29 @@ namespace Kephal {
              * oldPosition to newPosition.
              */
             void outputMoved(Kephal::Output * o, QPoint oldPosition, QPoint newPosition);
-            
+
             /**
              * This signal is emitted when the refresh-rate
              * of Output o changes.
              */
             void outputRateChanged(Kephal::Output * o, float oldRate, float newRate);
-            
+
             /**
              * This signal is emitted when the rotation of
              * Output o changes.
              */
             void outputRotated(Kephal::Output * o, Kephal::Rotation oldRotation, Kephal::Rotation newRotation);
-            
+
             /**
              * This signal is emitted when the reflection
              * state of Output o is changed.
              */
             void outputReflected(Kephal::Output * o, bool oldX, bool oldY, bool newX, bool newY);
-            
+
         protected:
             static Outputs * m_instance;
     };
-    
+
 }
 
 

@@ -36,7 +36,7 @@ namespace Kephal {
             SimpleOutput(QObject * parent, QString id, QSize resolution, QPoint position, bool connected, bool activated);
             SimpleOutput(QObject * parent);
             SimpleOutput(QObject * parent, Output * output);
-            
+
             QString id();
 
             QSize size();
@@ -46,10 +46,10 @@ namespace Kephal {
             QString vendor();
             int productId();
             unsigned int serialNumber();
-            
+
             bool isConnected();
             bool isActivated();
-            
+
             Rotation rotation();
             bool reflectX();
             bool reflectY();
@@ -71,7 +71,7 @@ namespace Kephal {
             void _setReflectY(bool reflect);
             void _setRate(float rate);
             void _setAvailableRates(const QList<float> & rates);
-            
+
         private:
             QString m_id;
             QSize m_size;
@@ -89,7 +89,7 @@ namespace Kephal {
             float m_rate;
             QList<float> m_rates;
     };
-    
+
 }
 
 

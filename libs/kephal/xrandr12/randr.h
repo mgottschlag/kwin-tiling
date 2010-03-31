@@ -65,10 +65,10 @@ class RandR
 public:
     //static bool has_1_2;
     static Time timestamp;
-    
+
     static const int OrientationCount = 6;
     static const int RotationCount    = 4;
-    
+
     enum Orientations {
         Rotate0        = RR_Rotate_0,
         Rotate90       = RR_Rotate_90,
@@ -80,9 +80,8 @@ public:
         ReflectMask    = (RR_Reflect_X | RR_Reflect_Y),
         OrientationMask = (RotateMask | ReflectMask)
     };
-    
-    enum Changes 
-    {
+
+    enum Changes {
         ChangeCrtc       = 0x01,
         ChangeOutputs    = 0x02,
         ChangeMode       = 0x04,

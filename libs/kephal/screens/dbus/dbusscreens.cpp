@@ -37,28 +37,28 @@ namespace Kephal {
             "/modules/kephal/Screens",
             QDBusConnection::sessionBus(),
             this);
-            
+
         if (! m_interface->isValid()) {
             m_valid = false;
             return;
         }
-            
+
         m_valid = true;
-        
+
         int numScreens = m_interface->numScreens();
         for (int i = 0; i < numScreens; ++i) {
             int id = m_interface->id(i);
             QPoint pos = m_interface->position(id);
             QSize size = m_interface->size(id);
             //qDebug() << "adding a screen" << id << "with geom: " << pos << size;
-            
+
             SimpleScreen * screen = new SimpleScreen(this,
                     id,
                     size,
                     pos,
                     false);
             m_screens.append(screen);
-            
+
             const QStringList outputIds = m_interface->outputs(id);
             foreach (const QString& outputId, outputIds) {
                 Output * output = Outputs::self()->output(outputId);
@@ -67,13 +67,13 @@ namespace Kephal {
                 }
             }
         }
-        
+
         connect(m_interface, SIGNAL(screenResized(int)), this, SLOT(screenResizedSlot(int)));
         connect(m_interface, SIGNAL(screenMoved(int)), this, SLOT(screenMovedSlot(int)));
         connect(m_interface, SIGNAL(screenAdded(int)), this, SLOT(screenAddedSlot(int)));
         connect(m_interface, SIGNAL(screenRemoved(int)), this, SLOT(screenRemovedSlot(int)));
     }
-    
+
     void DBusScreens::screenResizedSlot(int id) {
         SimpleScreen * s = (SimpleScreen *) screen(id);
         if (s) {
@@ -82,7 +82,7 @@ namespace Kephal {
             emit screenResized(s, prev, s->size());
         }
     }
-    
+
     void DBusScreens::screenMovedSlot(int id) {
         SimpleScreen * s = (SimpleScreen *) screen(id);
         if (s) {
@@ -91,12 +91,12 @@ namespace Kephal {
             emit screenMoved(s, prev, s->position());
         }
     }
-    
+
     void DBusScreens::screenAddedSlot(int id) {
         QPoint pos = m_interface->position(id);
         QSize size = m_interface->size(id);
         //qDebug() << "adding a screen" << id << "with geom: " << pos << size;
-        
+
         SimpleScreen * screen = new SimpleScreen(this,
                 id,
                 size,
@@ -140,10 +140,10 @@ namespace Kephal {
         }
         return result;
     }
-    
+
     bool DBusScreens::isValid() {
         return m_valid;
     }
-    
+
 }
 

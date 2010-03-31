@@ -35,19 +35,19 @@ namespace Kephal {
             ~DBusScreens();
             virtual QList<Screen *> screens();
             bool isValid();
-            
+
         private Q_SLOTS:
             void screenResizedSlot(int id);
             void screenMovedSlot(int id);
             void screenAddedSlot(int id);
             void screenRemovedSlot(int id);
-            
+
         private:
             QList<SimpleScreen *> m_screens;
             org::kde::Kephal::Screens * m_interface;
             bool m_valid;
     };
-    
+
 }
 
 

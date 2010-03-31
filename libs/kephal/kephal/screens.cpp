@@ -40,18 +40,18 @@ namespace Kephal {
 #endif
         return Screens::m_instance;
     }
-    
+
     Screens::Screens(QObject * parent)
             : QObject(parent)
     {
         Screens::m_instance = this;
     }
-    
+
     Screens::~Screens()
     {
         Screens::m_instance = 0;
     }
-    
+
     Screen * Screens::screen(int id) {
         foreach (Screen * screen, screens()) {
             if (screen->id() == id) {
@@ -60,62 +60,62 @@ namespace Kephal {
         }
         return 0;
     }
-    
+
     Screen * Screens::primaryScreen() {
         Configuration * config = Configurations::self()->activeConfiguration();
         if (! config) {
             return 0;
         }
         int id = config->primaryScreen();
-        
+
         return screen(id);
     }
-    
+
     Screens * Screens::m_instance = 0;
-    
-    
-    
+
+
+
     Screen::Screen(QObject * parent)
         : QObject(parent)
     {
     }
-    
+
     QRect Screen::geom() {
         return QRect(position(), size());
     }
-    
+
     bool Screen::isPrimary() {
         return Screens::self()->primaryScreen() == this;
     }
-    
+
     int ScreenUtils::numScreens() {
         return Screens::self()->screens().size();
     }
-    
+
     QRect ScreenUtils::screenGeometry(int id) {
-        if (id >= numScreens()) 
+        if (id >= numScreens())
             return QRect();
-        
-        if (id == -1) 
+
+        if (id == -1)
             return QApplication::desktop()->screenGeometry();
         else
             return Screens::self()->screen(id)->geom();
     }
-    
+
     QSize ScreenUtils::screenSize(int id) {
-        if (id >= numScreens()) 
+        if (id >= numScreens())
             return QSize();
-        
-        if (id == -1) 
+
+        if (id == -1)
             return QApplication::desktop()->screenGeometry().size();
         else
             return Screens::self()->screen(id)->size();
-    }            
+    }
 
     QRect ScreenUtils::desktopGeometry() {
         return QApplication::desktop()->geometry();
     }
-    
+
     int ScreenUtils::distance(const QRect & r, const QPoint & p) {
         if (! r.isValid()) {
             return p.manhattanLength();

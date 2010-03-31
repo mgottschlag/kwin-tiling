@@ -32,20 +32,20 @@ class KephalApp : public QApplication
     public:
         KephalApp(int & argc, char ** argv);
         ~KephalApp();
-        
+
     private:
         bool m_listen;
         QString m_arg;
         QString m_exec;
-        
+
         void init(int & argc, char ** argv);
         void query();
-        
+
     private Q_SLOTS:
         void run();
         void printHelp();
         void unknownArg();
-        
+
         void screenMoved(Kephal::Screen * s, QPoint o, QPoint n);
         void screenResized(Kephal::Screen * s, QSize o, QSize n);
         void screenRemoved(int s);

@@ -34,27 +34,27 @@ namespace Kephal {
         Q_OBJECT
         public:
             DBusConfiguration(DBusConfigurations * parent, QString name);
-            
+
             QString name();
             bool isModifiable();
             bool isActivated();
             QMap<int, QPoint> layout();
             int primaryScreen();
-            
+
         public Q_SLOTS:
             void activate();
-            
+
         private:
             QString m_name;
             DBusConfigurations * m_parent;
     };
-    
-    
+
+
     class DBusConfigurations : public Configurations {
         Q_OBJECT
         public:
             DBusConfigurations(QObject * parent);
-            
+
             QMap<QString, Configuration *> configurations();
             Configuration * activeConfiguration();
             QList<Configuration *> alternateConfigurations();
@@ -71,19 +71,19 @@ namespace Kephal {
             bool polling();
             void confirm();
             void revert();
-            
+
             bool isValid();
             org::kde::Kephal::Configurations * interface();
-            
+
         private Q_SLOTS:
             void configurationActivatedSlot(QString name);
-            
+
         private:
             org::kde::Kephal::Configurations * m_interface;
             bool m_valid;
             QMap<QString, DBusConfiguration *> m_configs;
     };
-    
+
 }
 
 

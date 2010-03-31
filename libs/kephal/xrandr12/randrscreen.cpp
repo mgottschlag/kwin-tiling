@@ -32,16 +32,16 @@ RandRScreen::RandRScreen(int screenIndex)
     m_connectedCount = 0;
     m_activeCount = 0;
 
-        // select for randr input events
-        int mask = RRScreenChangeNotifyMask | 
-                   RRCrtcChangeNotifyMask   | 
-                   RROutputChangeNotifyMask | 
-                   RROutputPropertyNotifyMask;
-        
-        XRRSelectInput(QX11Info::display(), rootWindow(), 0);
-        XRRSelectInput(QX11Info::display(), rootWindow(), mask);
-        
-        qDebug() << "RRInput mask is set!!";
+    // select for randr input events
+    int mask = RRScreenChangeNotifyMask |
+        RRCrtcChangeNotifyMask   |
+        RROutputChangeNotifyMask |
+        RROutputPropertyNotifyMask;
+
+    XRRSelectInput(QX11Info::display(), rootWindow(), 0);
+    XRRSelectInput(QX11Info::display(), rootWindow(), mask);
+
+    qDebug() << "RRInput mask is set!!";
 
     loadSettings();
 }
@@ -110,7 +110,7 @@ void RandRScreen::loadSettings(bool notify)
     //get all crtcs
     RandRCrtc *c_none = new RandRCrtc(this, None);
     m_crtcs[None] = c_none;
-    
+
     for (int i = 0; i < m_resources->ncrtc; ++i)
     {
         RRCrtc crtc = m_resources->crtcs[i];
@@ -167,21 +167,21 @@ bool RandRScreen::loadModes()
             changed = true;
         }
     }
-    
+
     return changed;
 }
 
 void RandRScreen::handleEvent(XRRScreenChangeNotifyEvent* event)
 {
     qDebug() << "RandRScreen::handleEvent";
-    
+
     m_rect.setWidth(event->width);
     m_rect.setHeight(event->height);
-    
+
     reloadResources();
     loadModes();
     qDebug() << "Reloaded modes";
-    
+
 //     foreach(RandROutput *output, m_outputs) {
 //         output->loadSettings(false);
 //     }
@@ -232,10 +232,10 @@ void RandRScreen::handleRandREvent(XRRNotifyEvent* event)
                 qDebug() << "RandRScreen::handleRandREvent - output not found";
             }
             return;
-            
+
         default:
             qDebug() << "RandRScreen::handleRandREvent - Other";
-    }    
+    }
 }
 
 QSize RandRScreen::minSize() const
@@ -290,7 +290,7 @@ RandRMode RandRScreen::mode(RRMode id) const
 bool RandRScreen::adjustSize(const QRect &minimumSize)
 {
     //try to find a size in which all outputs fit
-    
+
     //start with a given minimum rect
     QRect rect = QRect(0, 0, 0, 0).united(minimumSize);
 
@@ -323,7 +323,7 @@ bool RandRScreen::setSize(const QSize &s)
     if (s == m_rect.size())
         return true;
 
-    if (s.width() < m_minSize.width() || 
+    if (s.width() < m_minSize.width() ||
         s.height() < m_minSize.height() ||
         s.width() > m_maxSize.width() ||
         s.height() > m_maxSize.height())
@@ -375,5 +375,4 @@ void RandRScreen::slotOutputChanged(RROutput id, int changes)
     m_connectedCount = connected;
     m_activeCount = active;
 }
-
 

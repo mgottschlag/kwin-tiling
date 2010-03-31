@@ -34,7 +34,7 @@ RandRCrtc::RandRCrtc(RandRScreen *parent, RRCrtc id)
     m_currentRate = m_originalRate = m_proposedRate = 0;
     m_currentMode = 0;
     m_rotations = RandR::Rotate0;
-    
+
     m_id = id;
 }
 
@@ -67,7 +67,7 @@ void RandRCrtc::loadSettings(bool notify)
 {
     if(m_id == None)
         return;
-    
+
     int changes = 0;
     XRRCrtcInfo *info = XRRGetCrtcInfo(QX11Info::display(), m_screen->resources(), m_id);
     Q_ASSERT(info);
@@ -82,7 +82,7 @@ void RandRCrtc::loadSettings(bool notify)
         changes |= RandR::ChangeRect;
     }
 
-    // get all connected outputs 
+    // get all connected outputs
     // and create a list of modes that are available in all connected outputs
     OutputList outputs;
 
@@ -93,9 +93,9 @@ void RandRCrtc::loadSettings(bool notify)
     if (outputs != m_connectedOutputs)
     {
         changes |= RandR::ChangeOutputs;
-        m_connectedOutputs = outputs;    
+        m_connectedOutputs = outputs;
     }
-    
+
     // get all outputs this crtc can be connected to
     outputs.clear();
     for (int i = 0; i < info->npossible; ++i)
@@ -134,7 +134,7 @@ void RandRCrtc::loadSettings(bool notify)
     m_proposedRect = m_currentRect;
     m_proposedRotation = m_currentRotation;
     m_proposedRate = m_currentRate;
-        
+
     // free the info
     XRRFreeCrtcInfo(info);
 
@@ -158,7 +158,7 @@ void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
         changed |= RandR::ChangeMode;
         m_currentMode = event->mode;
     }
-    
+
     if (event->rotation != m_currentRotation)
     {
         qDebug() << "   Changed rotation: " << event->rotation;
@@ -259,7 +259,7 @@ bool RandRCrtc::applyProposed()
             }
         }
     }
-    
+
     // if no output was connected, set the mode to None
     if (!m_connectedOutputs.count())
         mode = RandRMode();
@@ -287,7 +287,7 @@ bool RandRCrtc::applyProposed()
                 return false;
             }
 
-            // if the desired mode is bigger than the current screen size, first change the 
+            // if the desired mode is bigger than the current screen size, first change the
             // screen size, and then the crtc size
             if (!m_screen->rect().contains(r))
             {
@@ -313,7 +313,7 @@ bool RandRCrtc::applyProposed()
                     delete[] outputs;
                     return false;
                 }
-                
+
                 // adjust the screen size
                 r = r.united(m_currentRect);
                 if (!m_screen->adjustSize(r))
@@ -327,12 +327,12 @@ bool RandRCrtc::applyProposed()
 
 
         qDebug() << "calling XRRSetCrtcConfig()";
-    Status s = XRRSetCrtcConfig(QX11Info::display(), m_screen->resources(), m_id, 
+    Status s = XRRSetCrtcConfig(QX11Info::display(), m_screen->resources(), m_id,
                     RandR::timestamp, m_proposedRect.x(), m_proposedRect.y(), mode.id(),
-                    m_proposedRotation, outputs, m_connectedOutputs.count()); 
-    
+                    m_proposedRotation, outputs, m_connectedOutputs.count());
+
     delete[] outputs;
-    
+
     bool ret;
     if (s == RRSetConfigSuccess)
     {
@@ -436,7 +436,7 @@ bool RandRCrtc::removeOutput(RROutput output)
 
     m_connectedOutputs.removeAt(index);
     return true;
-}    
+}
 
 OutputList RandRCrtc::connectedOutputs() const
 {
@@ -444,7 +444,7 @@ OutputList RandRCrtc::connectedOutputs() const
 }
 
 ModeList RandRCrtc::modes() const
-{    
+{
     ModeList modeList;
 
     bool first = true;

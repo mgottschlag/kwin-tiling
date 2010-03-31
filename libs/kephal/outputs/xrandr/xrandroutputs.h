@@ -35,7 +35,7 @@ namespace Kephal {
         Q_OBJECT
         public:
             XRandROutput(XRandROutputs * parent, RROutput rrId);
-            
+
             QString id();
 
             QSize size();
@@ -52,10 +52,10 @@ namespace Kephal {
             bool reflectY();
             float rate();
             QList<float> availableRates();
-            
+
             bool applyGeom(const QRect & rect, float rate);
             bool applyOrientation(Rotation rotation, bool reflectX, bool reflectY);
-            
+
             //void _revert();
             void deactivate();
             //void _activate();
@@ -63,7 +63,7 @@ namespace Kephal {
 
         public Q_SLOTS:
             void outputChanged(RROutput id, int changes);
-            
+
         Q_SIGNALS:
             void outputConnected(Kephal::Output * o);
             void outputDisconnected(Kephal::Output * o);
@@ -74,12 +74,12 @@ namespace Kephal {
             void outputRateChanged(Kephal::Output * o, float oldRate, float newRate);
             void outputRotated(Kephal::Output * o, Kephal::Rotation oldRotation, Kephal::Rotation newRotation);
             void outputReflected(Kephal::Output * o, bool oldX, bool oldY, bool newX, bool newY);
-            
+
         private:
             RandROutput * output();
             void parseEdid();
             void saveAsPrevious();
-            
+
             XRandROutputs * m_outputs;
             RROutput m_rrId;
             QString m_vendor;
@@ -93,26 +93,26 @@ namespace Kephal {
             bool m_previousReflectX;
             bool m_previousReflectY;
     };
-    
+
 
     class XRandROutputs : public BackendOutputs {
         Q_OBJECT
         public:
             XRandROutputs(QObject * parent, RandRDisplay * display);
-            
+
             QList<Output *> outputs();
-            
+
             RandROutput * output(RROutput rrId);
             using Outputs::output;
             RandRDisplay * display();
-            
+
         private:
             void init();
-            
+
             RandRDisplay * m_display;
             QMap<QString, XRandROutput *> m_outputs;
     };
-    
+
 }
 
 

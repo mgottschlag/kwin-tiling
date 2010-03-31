@@ -33,47 +33,47 @@ namespace Kephal {
         Q_OBJECT
         public:
             OutputScreen(QObject * parent);
-            
+
             void add(Output * output);
             void remove(Output * output);
             void clearOutputs();
             QList<Output *> outputs();
-            
+
         private:
             QList<Output *> m_outputs;
     };
-    
+
 
     class OutputScreens : public Screens {
         Q_OBJECT
         public:
             OutputScreens(QObject * parent);
             virtual QList<Screen *> screens();
-            
+
         protected:
             virtual void prepareScreens(QMap<int, OutputScreen *> & screens);
             void rebuildScreens();
             void triggerRebuildScreens(); // Triggers a rebuild aftera short delay; requests are coalesced.
-            
+
             void timerEvent(QTimerEvent *event);
-            
+
         private Q_SLOTS:
             void outputActivated(Kephal::Output * o);
             void outputDeactivated(Kephal::Output * o);
             void outputResized(Kephal::Output * o, QSize oldSize, QSize newSize);
             void outputMoved(Kephal::Output * o, QPoint oldPosition, QPoint newPosition);
-            
+
         private:
             void init();
             void buildScreens();
             int findId();
-            
+
             QMap<int, OutputScreen *> m_screens;
-            
+
             int m_rebuildTimerId;
             int m_rebuildDelay;
     };
-    
+
 }
 
 

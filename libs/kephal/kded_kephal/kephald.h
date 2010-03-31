@@ -56,18 +56,18 @@ class KephalD : public KDEDModule
     public:
         KephalD(QObject* parent, const QList<QVariant>&);
         ~KephalD();
-        
+
     private Q_SLOTS:
         void outputDisconnected(Kephal::Output * output);
         void outputConnected(Kephal::Output * output);
         void poll();
         void pollingActivated();
         void pollingDeactivated();
-        
+
     private:
         void init();
         void activateConfiguration();
-        
+
         bool m_noXRandR;
         XRandROutputs * m_outputs;
         QTimer * m_pollTimer;

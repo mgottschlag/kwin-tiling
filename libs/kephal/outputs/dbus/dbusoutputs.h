@@ -33,12 +33,12 @@ namespace Kephal {
         Q_OBJECT
         public:
             DBusOutputs(QObject * parent);
-            
+
             QList<Output *> outputs();
             void activateLayout(const QMap<Output *, QRect> & layout);
-            
+
             bool isValid();
-            
+
         private Q_SLOTS:
             void outputConnectedSlot(QString id);
             void outputDisconnectedSlot(QString id);
@@ -49,13 +49,13 @@ namespace Kephal {
             void outputRotatedSlot(QString id);
             void outputRateChangedSlot(QString id);
             void outputReflectedSlot(QString id);
-        
+
         private:
             QList<SimpleOutput *> m_outputs;
             org::kde::Kephal::Outputs * m_interface;
             bool m_valid;
     };
-    
+
 }
 
 

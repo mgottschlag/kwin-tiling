@@ -37,10 +37,10 @@ class DBusAPIConfigurations : public QObject
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.kde.Kephal.Configurations")
-    
+
     public:
         DBusAPIConfigurations(QObject * parent);
-        
+
     public Q_SLOTS:
         QStringList configurations();
         QStringList alternateConfigurations();
@@ -55,27 +55,27 @@ class DBusAPIConfigurations : public QObject
         bool reflectX(QString output, bool reflect);
         bool reflectY(QString output, bool reflect);
         int screen(QString output);
-        
+
         bool isModifiable(QString config);
         bool isActivated(QString config);
         void activate(QString config);
         int primaryScreen(QString config);
-        
+
         void setPolling(bool polling);
         bool polling();
-        
+
         void confirm();
         void revert();
-        
+
     Q_SIGNALS:
         void configurationActivated(QString name);
         void confirmTimeout(int seconds);
         void confirmed();
         void reverted();
-        
+
     private Q_SLOTS:
         void configurationActivatedSlot(Kephal::Configuration * configuration);
-        
+
     private:
         QMap<QString, QList<QPoint> > m_outputAvailablePositions;
 };

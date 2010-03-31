@@ -53,11 +53,11 @@ public:
     bool proposePosition(const QPoint &p);
     bool proposeRotation(int rotation);
     bool proposeRefreshRate(float rate);
-    
+
     // applying stuff
     bool applyProposed();
     void proposeOriginal();
-    void setOriginal(); 
+    void setOriginal();
     bool proposedChanged();
 
     bool addOutput(RROutput output, const QSize &size = QSize());
@@ -72,7 +72,7 @@ signals:
 private:
     RRCrtc m_id;
     RRMode m_currentMode;
-    
+
     QRect m_currentRect;
     float m_currentRate;
     int m_currentRotation;
@@ -85,7 +85,7 @@ private:
     QRect m_proposedRect;
     float m_proposedRate;
     int m_proposedRotation;
-    
+
     OutputList m_connectedOutputs;
     OutputList m_possibleOutputs;
     int m_rotations;

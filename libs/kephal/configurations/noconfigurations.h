@@ -32,13 +32,13 @@ namespace Kephal {
         Q_OBJECT
         public:
             SimpleConfiguration(NoConfigurations * parent);
-            
+
             QString name();
             bool isModifiable();
             bool isActivated();
             QMap<int, QPoint> layout();
             int primaryScreen();
-            
+
         public Q_SLOTS:
             void activate();
     };
@@ -47,7 +47,7 @@ namespace Kephal {
         Q_OBJECT
         public:
             NoConfigurations(QObject * parent);
-            
+
             QMap<QString, Configuration *> configurations();
             Configuration * findConfiguration();
             Configuration * activeConfiguration();
@@ -65,11 +65,11 @@ namespace Kephal {
             bool polling();
             void confirm();
             void revert();
-            
+
         private:
             SimpleConfiguration * m_config;
     };
-    
+
 }
 
 #endif // KEPHAL_NOCONFIGURATIONS_H

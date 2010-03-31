@@ -46,17 +46,17 @@ using namespace Kephal;
 void libkephal_factory() {
     //qDebug() << "trying to access kephald...";
     QDBusInterface interface("org.kde.kded", "/modules/kephal");
-    
+
     DBusConfigurations * configurations = new DBusConfigurations(qApp);
     DBusOutputs * outputs = new DBusOutputs(qApp);
     DBusScreens * screens = new DBusScreens(qApp);
     if ((! screens->isValid()) || (! outputs->isValid()) || (! configurations->isValid())) {
         qWarning() << "could not access kephald, falling back to QDesktopWidget";
-        
+
         delete screens;
         delete outputs;
         delete configurations;
-        
+
         new NoConfigurations(qApp);
         new DesktopWidgetOutputs(qApp);
         new OutputScreens(qApp);

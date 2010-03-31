@@ -33,23 +33,23 @@ namespace Kephal {
     QString ExternalConfiguration::name() {
         return QString("external");
     }
-    
+
     bool ExternalConfiguration::isModifiable() {
         return false;
     }
-    
+
     bool ExternalConfiguration::isActivated() {
         return m_parent->activeBackendConfiguration() == this;
     }
-    
+
     QMap<int, QPoint> ExternalConfiguration::layout() {
         return QMap<int, QPoint>();
     }
-    
+
     int ExternalConfiguration::primaryScreen() {
         return 0;
     }
-    
+
     void ExternalConfiguration::activate() {
         emit activateExternal();
     }

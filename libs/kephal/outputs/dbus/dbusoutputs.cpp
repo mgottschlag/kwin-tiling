@@ -37,14 +37,14 @@ namespace Kephal {
             "/modules/kephal/Outputs",
             QDBusConnection::sessionBus(),
             this);
-            
+
         if (! m_interface->isValid()) {
             m_valid = false;
             return;
         }
-            
+
         m_valid = true;
-        
+
         const QStringList ids = m_interface->outputIds();
         foreach (const QString& id, ids) {
             QPoint pos = m_interface->position(id);
@@ -52,27 +52,27 @@ namespace Kephal {
             bool connected = m_interface->isConnected(id);
             bool activated = m_interface->isActivated(id);
             //qDebug() << "adding an output" << id << "with geom: " << pos << size;
-            
+
             SimpleOutput * output = new SimpleOutput(this,
                     id,
                     size,
                     pos,
                     connected,
                     activated);
-            
+
             m_outputs << output;
-                    
+
             if (connected) {
                 output->_setRate(m_interface->rate(id));
                 int rotation = m_interface->rotation(id);
                 output->_setRotation((Rotation) rotation);
                 output->_setReflectX(m_interface->reflectX(id));
                 output->_setReflectY(m_interface->reflectY(id));
-                
+
                 outputConnectedSlot(id);
             }
         }
-        
+
         connect(m_interface, SIGNAL(outputConnected(QString)), this, SLOT(outputConnectedSlot(QString)));
         connect(m_interface, SIGNAL(outputDisconnected(QString)), this, SLOT(outputDisconnectedSlot(QString)));
         connect(m_interface, SIGNAL(outputActivated(QString)), this, SLOT(outputActivatedSlot(QString)));
@@ -83,7 +83,7 @@ namespace Kephal {
         connect(m_interface, SIGNAL(outputRateChanged(QString)), this, SLOT(outputRateChangedSlot(QString)));
         connect(m_interface, SIGNAL(outputReflected(QString)), this, SLOT(outputReflectedSlot(QString)));
     }
-    
+
     QList<Output *> DBusOutputs::outputs()
     {
         QList<Output *> result;
@@ -92,28 +92,28 @@ namespace Kephal {
         }
         return result;
     }
-    
+
     void DBusOutputs::activateLayout(const QMap<Output *, QRect> & layout)
     {
         Q_UNUSED(layout)
     }
-    
+
     bool DBusOutputs::isValid() {
         return m_valid;
     }
-    
+
     void DBusOutputs::outputConnectedSlot(QString id) {
         SimpleOutput * o = (SimpleOutput *) output(id);
         if (o) {
             o->_setConnected(true);
-            
+
             int numSizes = m_interface->numAvailableSizes(id);
             QList<QSize> sizes;
             for (int i = 0; i < numSizes; ++i) {
                 sizes << m_interface->availableSize(id, i);
             }
             o->_setAvailableSizes(sizes);
-            
+
             int numRates = m_interface->numAvailableRates(id);
             QList<float> rates;
             for (int i = 0; i < numRates; ++i) {
@@ -124,7 +124,7 @@ namespace Kephal {
             emit outputConnected(o);
         }
     }
-    
+
     void DBusOutputs::outputDisconnectedSlot(QString id) {
         SimpleOutput * o = (SimpleOutput *) output(id);
         if (o) {

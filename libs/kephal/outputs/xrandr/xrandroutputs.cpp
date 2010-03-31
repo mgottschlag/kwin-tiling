@@ -35,7 +35,7 @@ namespace Kephal {
         m_display = display;
         init();
     }
-    
+
     QList<Output *> XRandROutputs::outputs() {
         QList<Output *> result;
         foreach (XRandROutput * output, m_outputs) {
@@ -43,7 +43,7 @@ namespace Kephal {
         }
         return result;
     }
-    
+
     void XRandROutputs::init() {
         qDebug() << "XRandROutputs::init";
         RandRScreen * screen = m_display->screen(0);
@@ -53,25 +53,25 @@ namespace Kephal {
             m_outputs.insert(o->id(), o);
         }
     }
-    
+
     RandROutput * XRandROutputs::output(RROutput rrId) {
         return m_display->screen(0)->outputs()[rrId];
     }
-    
+
     RandRDisplay * XRandROutputs::display() {
         return m_display;
     }
-    
+
     XRandROutput::XRandROutput(XRandROutputs * parent, RROutput rrId)
             : BackendOutput(parent)
     {
         m_outputs = parent;
         m_rrId = rrId;
-        
+
         parseEdid();
-        
+
         saveAsPrevious();
-        
+
         connect(this, SIGNAL(outputConnected(Kephal::Output *)), parent, SIGNAL(outputConnected(Kephal::Output *)));
         connect(this, SIGNAL(outputDisconnected(Kephal::Output *)), parent, SIGNAL(outputDisconnected(Kephal::Output *)));
         connect(this, SIGNAL(outputActivated(Kephal::Output *)), parent, SIGNAL(outputActivated(Kephal::Output *)));
@@ -81,24 +81,24 @@ namespace Kephal {
         connect(this, SIGNAL(outputRateChanged(Kephal::Output *, float, float)), parent, SIGNAL(outputRateChanged(Kephal::Output *, float, float)));
         connect(this, SIGNAL(outputRotated(Kephal::Output *, Kephal::Rotation, Kephal::Rotation)), parent, SIGNAL(outputRotated(Kephal::Output *, Kephal::Rotation, Kephal::Rotation)));
         connect(this, SIGNAL(outputReflected(Kephal::Output *, bool, bool, bool, bool)), parent, SIGNAL(outputReflected(Kephal::Output *, bool, bool, bool, bool)));
-        
+
         connect(output(), SIGNAL(outputChanged(RROutput, int)), this, SLOT(outputChanged(RROutput, int)));
         //connect(this, SLOT(_activate()), output(), SLOT(slotEnable()));
         //connect(this, SLOT(_deactivate()), output(), SLOT(slotDisable()));
     }
-    
+
     void XRandROutput::parseEdid() {
         m_vendor = "";
         m_productId = -1;
         m_serialNumber = 0;
-        
+
         Atom atom = XInternAtom (QX11Info::display(), "EDID_DATA", false);
         Atom type;
         unsigned char * data;
         unsigned long size;
         unsigned long after;
         int format;
-        
+
         XRRGetOutputProperty(QX11Info::display(), m_rrId, atom, 0, 100,
                 False, False, AnyPropertyType,
                 &type, &format, &size, &after, &data);
@@ -110,39 +110,39 @@ namespace Kephal {
              * parse the 3 letter vendor code
              */
             char * vendor = new char[4];
-            
+
             vendor[0] = EDID_VENDOR_1(data);
             vendor[1] = EDID_VENDOR_2(data);
             vendor[2] = EDID_VENDOR_3(data);
             vendor[3] = 0x00;
             m_vendor = vendor;
-            
+
             qDebug() << "vendor code:" << m_vendor;
-            
+
             delete[] vendor;
-            
+
             /**
              * parse the 16bit product id
              */
             m_productId = EDID_PRODUCT_ID(data);
-            
+
             qDebug() << "product id:" << m_productId;
-            
+
             /**
              * parse the 32bit serial number
              */
             m_serialNumber = EDID_SERIAL_NUMBER(data);
-            
+
             qDebug() << "serial number:" << m_serialNumber;
         } else {
             m_vendor = "";
             m_productId = -1;
             m_serialNumber = 0;
         }
-        
+
         XFree(data);
     }
-    
+
     void XRandROutput::outputChanged(RROutput id, int changes) {
         Q_ASSERT(id == m_rrId);
         qDebug() << "XRandROutput::outputChanged" << isConnected() << isActivated() << geom();
@@ -176,7 +176,7 @@ namespace Kephal {
             }
             return;
         }
-        
+
         QRect previousGeom = m_previousGeom;
         Rotation previousRotation = m_previousRotation;
         float previousRate = m_previousRate;
@@ -199,7 +199,7 @@ namespace Kephal {
             emit outputReflected(this, previousReflectX, previousReflectY, reflectX(), reflectY());
         }
     }
-    
+
     void XRandROutput::saveAsPrevious() {
         m_previousConnected = isConnected();
         m_previousActivated = isActivated();
@@ -209,12 +209,12 @@ namespace Kephal {
         m_previousReflectX = reflectX();
         m_previousReflectY = reflectY();
     }
-    
+
     bool XRandROutput::applyGeom(const QRect & geom, float rate) {
         if ((geom == this->geom()) && ((rate < 1) || (qFuzzyCompare(rate, this->rate())))) {
             return true;
         }
-        
+
         output()->proposeRect(geom);
         if (rate < 1) {
             rate = output()->refreshRate();
@@ -234,17 +234,17 @@ namespace Kephal {
         if (rate > 1) {
             output()->proposeRefreshRate(rate);
         }
-        
+
         return output()->applyProposed();
     }
-    
+
     bool XRandROutput::applyOrientation(Rotation rotation, bool reflectX, bool reflectY) {
         if ((rotation == this->rotation()) && (reflectX == this->reflectX()) && (reflectY == this->reflectY())) {
             return true;
         }
-        
+
         int orientation = 0;
-        
+
         switch (rotation) {
             case RotateRight:
                 orientation |= RandR::Rotate90;
@@ -258,7 +258,7 @@ namespace Kephal {
             default:
                 orientation |= RandR::Rotate0;
         }
-        
+
         if (reflectX) {
             orientation |= RandR::ReflectX;
         }
@@ -269,15 +269,15 @@ namespace Kephal {
         output()->proposeRotation(orientation);
         return output()->applyProposed();
     }
-    
+
     void XRandROutput::deactivate() {
         output()->slotDisable();
     }
-    
+
     RandROutput * XRandROutput::output() {
         return m_outputs->output(m_rrId);
     }
-    
+
     QString XRandROutput::id() {
         return output()->name();
     }
@@ -285,47 +285,47 @@ namespace Kephal {
     QSize XRandROutput::size() {
         return output()->rect().size();
     }
-    
+
     QSize XRandROutput::preferredSize() {
         if (! output()->preferredMode().size().isEmpty()) {
             return output()->preferredMode().size();
         }
         return QSize(800, 600);
     }
-    
+
     QList<QSize> XRandROutput::availableSizes() {
         QList<QSize> sizes = output()->sizes();
         return sizes;
     }
-    
+
     QPoint XRandROutput::position() {
         return output()->rect().topLeft();
     }
-    
+
     bool XRandROutput::isConnected() {
         return output()->isConnected();
     }
-    
+
     bool XRandROutput::isActivated() {
         return output()->isActive();
     }
-    
+
     QString XRandROutput::vendor() {
         return m_vendor;
     }
-    
+
     int XRandROutput::productId() {
         return m_productId;
     }
-    
+
     unsigned int XRandROutput::serialNumber() {
         return m_serialNumber;
     }
-    
+
     RROutput XRandROutput::_id() {
         return m_rrId;
     }
-    
+
     Rotation XRandROutput::rotation() {
         switch (output()->rotation() & RandR::RotateMask) {
             case RandR::Rotate90:

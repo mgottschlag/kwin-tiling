@@ -31,7 +31,7 @@ namespace Kephal {
         m_position = position;
         m_privacy = privacy;
     }
-    
+
     SimpleScreen::SimpleScreen(QObject * parent)
         : Screen(parent),
         m_id(-1),
@@ -40,8 +40,8 @@ namespace Kephal {
         m_privacy(false)
     {
     }
-    
-    
+
+
     int SimpleScreen::id()
     {
         return m_id;
@@ -50,7 +50,7 @@ namespace Kephal {
     QSize SimpleScreen::size() {
         return m_size;
     }
-    
+
     QPoint SimpleScreen::position() {
         return m_position;
     }
@@ -59,39 +59,39 @@ namespace Kephal {
     {
         return m_privacy;
     }
-    
+
     void SimpleScreen::setPrivacyMode(bool privacy)
     {
         emit privacyModeChangeRequested(this, privacy);
     }
-    
+
     void SimpleScreen::_setId(int id) {
         m_id = id;
     }
-    
+
     void SimpleScreen::_setSize(const QSize & size) {
         m_size = size;
     }
-    
+
     void SimpleScreen::_setPosition(const QPoint & position)
     {
         m_position = position;
     }
-    
+
     void SimpleScreen::_setGeom(const QRect & geom)
     {
         _setPosition(geom.topLeft());
         _setSize(geom.size());
     }
-    
+
     QList<Output *> SimpleScreen::outputs() {
         return m_outputs;
     }
-    
+
     QList<Output *> & SimpleScreen::_outputs() {
         return m_outputs;
     }
-    
+
 }
 
 #ifndef NO_KDE

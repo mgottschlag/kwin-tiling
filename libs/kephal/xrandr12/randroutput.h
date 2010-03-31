@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2007 Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
  * Copyright (c) 2007, 2008 Harry Bock <hbock@providence.edu>
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -28,7 +28,7 @@
 #include "randr.h"
 #include "randrmode.h"
 
-    
+
 /** Class representing an RROutput identifier. This class is used
  * to control a particular output's configuration (i.e., the mode or
  * refresh rate of a DVI-I port, or the resolution of a VGA port). */
@@ -39,15 +39,15 @@ class RandROutput : public QObject
 public:
     RandROutput(RandRScreen *parent, RROutput id);
     ~RandROutput();
-    
+
     /** Returns the internal RANDR identifier for a particular output. */
     RROutput id() const;
-    
+
     /** Return the screen that this output belongs to. */
     RandRScreen *screen() const;
-    
+
     void loadSettings(bool notify = false);
-    
+
     /** Handle an event from RANDR signifying a change in this output's
      * configuration. */
     void handleEvent(XRROutputChangeNotifyEvent *event);
@@ -64,7 +64,7 @@ public:
 
     /** List possible CRT controllers for this output. */
     CrtcList possibleCrtcs() const;
-    
+
     /** Returns the current CRTC for this output. */
     RandRCrtc *crtc() const;
 
@@ -76,7 +76,7 @@ public:
 
     /** Returns the preferred mode for this output. */
     RandRMode preferredMode(void) const;
-    
+
     /** The list of supported sizes */
     SizeList sizes() const;
     QRect rect() const;
@@ -92,14 +92,14 @@ public:
      * to. */
     int rotations() const;
 
-    /** Returns the curent rotation of the CRTC this output is currently 
+    /** Returns the curent rotation of the CRTC this output is currently
      * connected to */
     int rotation() const;
 
     /** Determines whether this output is connected to a display device.
      * It is not necessarily active. */
     bool isConnected() const;
-    
+
     /** Determines whether this output is currently driving a display
      * device. */
     bool isActive() const;
@@ -129,18 +129,18 @@ protected:
     /** Query Xrandr for information about this output, and set
      * up this instance accordingly. */
     bool queryOutputInfo(void);
-    
+
     /** Find the first CRTC that is not controlling any
      * display devices. */
     RandRCrtc *findEmptyCrtc(void);
     bool tryCrtc(RandRCrtc *crtc, int changes);
 
     /** Set the current CRT controller for this output.
-     * The CRTC should never be set directly; it should be added through 
+     * The CRTC should never be set directly; it should be added through
      * this function to properly manage signals related to this output. */
     bool setCrtc(RandRCrtc *crtc, bool applyNow = true);
-    
-private:    
+
+private:
     RROutput m_id;
     XRROutputInfo* m_info;
     QString m_name;
@@ -150,7 +150,7 @@ private:
 
     RandRScreen *m_screen;
     RandRCrtc *m_crtc;
-    
+
     //proposed stuff (mostly to read from the configuration)
     QRect m_proposedRect;
     int   m_proposedRotation;

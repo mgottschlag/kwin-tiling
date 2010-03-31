@@ -33,17 +33,17 @@ namespace Kephal {
         public:
             DesktopWidgetOutputs(QObject * parent);
             ~DesktopWidgetOutputs();
-            
+
             QList<Output *> outputs();
             void activateLayout(const QMap<Output *, QRect> & layout);
-            
+
         private Q_SLOTS:
             void screenChanged(int screen);
-            
+
         private:
             QList<SimpleOutput *> m_outputs;
     };
-    
+
 }
 
 

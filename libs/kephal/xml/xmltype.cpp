@@ -30,12 +30,12 @@ namespace Kephal {
     XMLFactory::XMLFactory() {
         m_schema = false;
     }
-    
+
     XMLFactory::~XMLFactory() {
         qDeleteAll(m_attributes);
         qDeleteAll(m_elements);
     }
-    
+
     XMLType * XMLRootFactory::load(QString fileName) {
         QFile file(fileName);
         if (! file.open(QIODevice::ReadOnly)) {
@@ -45,7 +45,7 @@ namespace Kephal {
             }
             return 0;
         }
-        
+
         QDomDocument dom;
         if (! dom.setContent(&file)) {
             //qDebug() << "couldnt parse xml!!";
@@ -56,7 +56,7 @@ namespace Kephal {
             return 0;
         }
         file.close();
-        
+
         QDomElement root = dom.documentElement();
         if (root.nodeName() == m_name) {
             return XMLFactory::load(root);
@@ -64,36 +64,36 @@ namespace Kephal {
             return 0;
         }
     }
-    
+
     XMLType * XMLFactory::load(QDomNode root) {
         if (! m_schema) {
             schema();
             m_schema = true;
         }
-        
+
         //qDebug() << "root:" << root.isElement() << root.nodeName();
         if (! root.isElement()) {
             return 0;
         }
-        
+
         XMLType * result = newInstance();
         if (! result) {
             //qDebug() << "newInstance() returned 0";
             return 0;
         }
-        
+
         foreach (XMLNodeHandler * n, m_attributes) {
             n->beginLoad(result);
         }
         foreach (XMLNodeHandler * n, m_elements) {
             n->beginLoad(result);
         }
-        
+
         QDomNamedNodeMap attrs = root.attributes();
         for (int i = 0; i < attrs.size(); ++i) {
             QDomNode attr = attrs.item(i);
             //qDebug() << "attr:" << attr.isElement() << attr.nodeName();
-            
+
             QString name = attr.nodeName();
             if (m_attributes.contains(name)) {
                 //qDebug() << "is known attribute...";
@@ -102,14 +102,14 @@ namespace Kephal {
                 //qDebug() << "value has been set!!";
             }
         }
-        
+
         QDomNode node = root.firstChild();
         while (! node.isNull()) {
             //qDebug() << "node:" << node.isElement() << node.nodeName();
             if (! node.isElement()) {
                 continue;
             }
-            
+
             QString name = node.nodeName();
             if (m_elements.contains(name)) {
                 //qDebug() << "is known element...";
@@ -120,10 +120,10 @@ namespace Kephal {
 
             node = node.nextSibling();
         }
-        
+
         return result;
     }
-    
+
     bool XMLRootFactory::save(XMLType * data, QString fileName) {
         QDomDocument doc;
         QDomProcessingInstruction header = doc.createProcessingInstruction("xml", "version=\"1.0\"");
@@ -133,7 +133,7 @@ namespace Kephal {
             doc.appendChild(node);
         }
         QString content = doc.toString();
-        
+
         QFile file(fileName);
         QFile backup(fileName + '~');
         if (file.exists()) {
@@ -150,24 +150,24 @@ namespace Kephal {
             QTextStream out(&file);
             out << content;
             file.close();
-            
+
             if (file.error() != QFile::NoError) {
                 return false;
             }
-            
+
             backup.remove();
             return true;
         }
-        
+
         return false;
     }
-    
+
     QDomNode XMLFactory::save(XMLType * data, QDomDocument doc, QString name) {
         if (! m_schema) {
             schema();
             m_schema = true;
         }
-        
+
         QDomElement node = doc.createElement(name);
         for (QMap<QString, XMLNodeHandler *>::const_iterator i = m_attributes.constBegin(); i != m_attributes.constEnd(); ++i) {
             //qDebug() << "save attribute:" << i.key();
@@ -189,18 +189,18 @@ namespace Kephal {
         }
         return node;
     }
-    
+
     void XMLFactory::element(QString name, XMLNodeHandler * element) {
         m_elements.insert(name, element);
     }
-    
+
     void XMLFactory::attribute(QString name, XMLNodeHandler * attribute) {
         m_attributes.insert(name, attribute);
     }
-    
+
     XMLRootFactory::XMLRootFactory(QString name) {
         m_name = name;
     }
-    
+
 }
 

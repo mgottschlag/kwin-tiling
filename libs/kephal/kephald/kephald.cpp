@@ -59,7 +59,7 @@ KephalD::KephalD(int & argc, char ** argv)
     m_noXRandR(false)
 {
     qDebug() << "kephald starting up";
-    
+
     parseArgs(argc, argv);
     init();
 }
@@ -72,7 +72,7 @@ void KephalD::parseArgs(int & argc, char ** argv) {
     for (int i = 0; i < argc; ++i) {
         QString arg(argv[i]);
         qDebug() << "arg:" << i << arg;
-        
+
         if (arg == "--no-xrandr") {
             m_noXRandR = true;
         }
@@ -84,42 +84,42 @@ void KephalD::init() {
     if (! m_noXRandR) {
         display = new RandRDisplay();
     }
-    
+
     if ((! m_noXRandR) && display->isValid()) {
         m_outputs = new XRandROutputs(this, display);
     } else {
         m_outputs = 0;
         new DesktopWidgetOutputs(this);
     }
-    
+
     foreach (Output * output, Outputs::self()->outputs()) {
         qDebug() << "output:" << output->id() << output->geom() << output->rotation() << output->reflectX() << output->reflectY();
     }
-    
+
     new XMLConfigurations(this);
     new ConfigurationScreens(this);
-    
+
     foreach (Kephal::Screen * screen, Screens::self()->screens()) {
         qDebug() << "screen:" << screen->id() << screen->geom();
     }
-    
+
     activateConfiguration();
     connect(Outputs::self(), SIGNAL(outputDisconnected(Kephal::Output *)), this, SLOT(outputDisconnected(Kephal::Output *)));
     connect(Outputs::self(), SIGNAL(outputConnected(Kephal::Output *)), this, SLOT(outputConnected(Kephal::Output *)));
-    
+
     qDebug() << "will check for possible positions...";
     foreach (Output * output, Outputs::self()->outputs()) {
         qDebug() << "possible positions for:" << output->id() << Configurations::self()->possiblePositions(output);
     }
-    
+
     QDBusConnection dbus = QDBusConnection::sessionBus();
     bool result = dbus.registerService("org.kde.Kephal");
     qDebug() << "registered the service:" << result;
-    
+
     new DBusAPIScreens(this);
     new DBusAPIOutputs(this);
     new DBusAPIConfigurations(this);
-    
+
     if (m_outputs) {
         m_pollTimer = new QTimer(this);
         connect(m_pollTimer, SIGNAL(timeout()), this, SLOT(poll()));
@@ -155,7 +155,7 @@ bool KephalD::x11EventFilter(XEvent* e)
     if (m_outputs && m_outputs->display()->canHandle(e)) {
         m_outputs->display()->handleEvent(e);
     }
-    
+
     return QApplication::x11EventFilter(e);
 }
 #endif

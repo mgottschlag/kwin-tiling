@@ -27,52 +27,52 @@ namespace Kephal {
         : Configuration(parent)
     {
     }
-    
+
     QString SimpleConfiguration::name() {
         return "simple";
     }
-    
+
     bool SimpleConfiguration::isModifiable() {
         return false;
     }
-    
+
     bool SimpleConfiguration::isActivated() {
         return true;
     }
-    
+
     QMap<int, QPoint> SimpleConfiguration::layout() {
         return QMap<int, QPoint>();
     }
-    
+
     void SimpleConfiguration::activate() {
     }
-    
+
     int SimpleConfiguration::primaryScreen() {
         return 0;
     }
-    
-    
-    
+
+
+
     NoConfigurations::NoConfigurations(QObject * parent)
         : Configurations(parent)
     {
         m_config = new SimpleConfiguration(this);
     }
-    
+
     QMap<QString, Configuration *> NoConfigurations::configurations() {
         QMap<QString, Configuration *> result;
         result.insert(m_config->name(), m_config);
         return result;
     }
-    
+
     Configuration * NoConfigurations::findConfiguration() {
         return m_config;
     }
-    
+
     Configuration * NoConfigurations::activeConfiguration() {
         return m_config;
     }
-    
+
     QList<Configuration *> NoConfigurations::alternateConfigurations() {
         return QList<Configuration *>();
     }
@@ -93,7 +93,7 @@ namespace Kephal {
         Q_UNUSED(size)
         return false;
     }
-    
+
     int NoConfigurations::screen(Output * output) {
         Q_UNUSED(output)
         return -1;
@@ -129,17 +129,17 @@ namespace Kephal {
     void NoConfigurations::setPolling(bool polling) {
         Q_UNUSED(polling)
     }
-    
+
     bool NoConfigurations::polling() {
         return false;
     }
-    
+
     void NoConfigurations::confirm() {
     }
-    
+
     void NoConfigurations::revert() {
     }
-    
+
 }
 
 

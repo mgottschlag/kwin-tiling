@@ -34,11 +34,11 @@ namespace Kephal {
         m_parent(parent)
     {
     }
-    
+
     QString DBusConfiguration::name() {
         return m_name;
     }
-    
+
     bool DBusConfiguration::isModifiable() {
         return m_parent->interface()->isModifiable(m_name);
     }
@@ -54,7 +54,7 @@ namespace Kephal {
     void DBusConfiguration::activate() {
         m_parent->interface()->activate(m_name);
     }
-    
+
     int DBusConfiguration::primaryScreen() {
         return m_parent->interface()->primaryScreen(m_name);
     }
@@ -69,25 +69,25 @@ namespace Kephal {
             "/modules/kephal/Configurations",
             QDBusConnection::sessionBus(),
             this);
-            
+
         if (! m_interface->isValid()) {
             m_valid = false;
             return;
         }
-            
+
         m_valid = true;
-        
+
         const QStringList names = m_interface->configurations();
         foreach (const QString& name, names) {
             m_configs.insert(name, new DBusConfiguration(this, name));
         }
-        
+
         connect(m_interface, SIGNAL(configurationActivated(QString)), this, SLOT(configurationActivatedSlot(QString)));
         connect(m_interface, SIGNAL(confirmed()), this, SIGNAL(confirmed()));
         connect(m_interface, SIGNAL(reverted()), this, SIGNAL(reverted()));
         connect(m_interface, SIGNAL(confirmTimeout(int)), this, SIGNAL(confirmTimeout(int)));
     }
-    
+
 
     QMap<QString, Configuration *> DBusConfigurations::configurations() {
         QMap<QString, Configuration *> result;
@@ -96,7 +96,7 @@ namespace Kephal {
         }
         return result;
     }
-    
+
     Configuration * DBusConfigurations::activeConfiguration() {
         QString name = m_interface->activeConfiguration();
         if ((! name.isEmpty()) && m_configs.contains(name)) {
@@ -104,7 +104,7 @@ namespace Kephal {
         }
         return 0;
     }
-    
+
     QList<Configuration *> DBusConfigurations::alternateConfigurations() {
         const QStringList names = m_interface->alternateConfigurations();
         QList<Configuration *> result;
@@ -115,7 +115,7 @@ namespace Kephal {
         }
         return result;
     }
-    
+
     QList<QPoint> DBusConfigurations::possiblePositions(Output * output) {
         QList<QPoint> result;
         int num = m_interface->numAvailablePositions(output->id());
@@ -124,15 +124,15 @@ namespace Kephal {
         }
         return result;
     }
-    
+
     bool DBusConfigurations::move(Output * output, const QPoint & position) {
         return m_interface->move(output->id(), position);
     }
-    
+
     bool DBusConfigurations::resize(Output * output, const QSize & size) {
         return m_interface->resize(output->id(), size);
     }
-    
+
     bool DBusConfigurations::rotate(Output * output, Rotation rotation) {
         return m_interface->rotate(output->id(), rotation);
     }
@@ -152,15 +152,15 @@ namespace Kephal {
     bool DBusConfigurations::isValid() {
         return m_valid;
     }
-    
+
     org::kde::Kephal::Configurations * DBusConfigurations::interface() {
         return m_interface;
     }
-    
+
     int DBusConfigurations::screen(Output * output) {
         return m_interface->screen(output->id());
     }
-    
+
     void DBusConfigurations::applyOutputSettings() {
     }
 
@@ -171,7 +171,7 @@ namespace Kephal {
     bool DBusConfigurations::polling() {
         return m_interface->polling();
     }
-    
+
     void DBusConfigurations::configurationActivatedSlot(QString name) {
         if ((! name.isEmpty()) && m_configs.contains(name)) {
             emit configurationActivated(m_configs[name]);
@@ -181,9 +181,9 @@ namespace Kephal {
     void DBusConfigurations::confirm() {
         m_interface->confirm();
     }
-    
+
     void DBusConfigurations::revert() {
         m_interface->revert();
     }
-    
+
 }

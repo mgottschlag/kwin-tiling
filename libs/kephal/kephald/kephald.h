@@ -53,12 +53,12 @@ class KephalD : public QApplication
         void poll();
         void pollingActivated();
         void pollingDeactivated();
-        
+
     private:
         void init();
         void parseArgs(int & argc, char ** argv);
         void activateConfiguration();
-        
+
         bool m_noXRandR;
         XRandROutputs * m_outputs;
         QTimer * m_pollTimer;
