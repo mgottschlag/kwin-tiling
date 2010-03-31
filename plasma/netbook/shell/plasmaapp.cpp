@@ -573,13 +573,14 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
     int id = viewIds.readEntry(QString::number(containment->id()), defaultId);
 
-    kDebug() << "new containment" << (QObject*)containment << containment->id()<<"view id"<<id;
+
+    kDebug() << "new containment" << (QObject*)containment << containment->id() << "view id" << id;
 
     //is it a desktop -and- is it active?
     if ((m_mainView && id == NetView::mainViewId()) ||
         (containment->containmentType() != Plasma::Containment::PanelContainment &&
          containment->containmentType() != Plasma::Containment::CustomPanelContainment &&
-         !viewIds.exists() && m_mainView->containment() == 0)) {
+         !viewIds.exists() && containment->screen() == 0)) {
         m_mainView->setContainment(containment);
         containment->setScreen(0);
     //is it a panel?
