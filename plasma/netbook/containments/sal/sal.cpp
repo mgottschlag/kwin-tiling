@@ -407,7 +407,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_searchField = new Plasma::LineEdit(this);
             m_searchField->setPreferredWidth(200);
             m_searchField->nativeWidget()->setClearButtonShown(true);
-            m_searchField->nativeWidget()->setClickMessage(i18n("Enter your query here"));
+            m_searchField->nativeWidget()->setClickMessage(i18n("Search..."));
             connect(m_searchField, SIGNAL(returnPressed()), this, SLOT(searchReturnPressed()));
             connect(m_searchField->nativeWidget(), SIGNAL(textEdited(const QString &)), this, SLOT(delayedQuery()));
             m_searchTimer = new QTimer(this);
