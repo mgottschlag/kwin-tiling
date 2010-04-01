@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009 by Ana Cecília Martins <anaceciliamb@gmail.com>
+ *   Copyright 2010 by Chani Armitage <chani@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library/Lesser General Public License
@@ -17,32 +17,22 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef APPLETICON_H
-#define APPLETICON_H
+#ifndef ACTIVITYBAR_H
+#define ACTIVITYBAR_H
 
-#include "plasmaappletitemmodel_p.h"
-#include "abstracticon.h"
+//gonna need a top bar with filtery things, and a bottom bar with the scrollything.
 
-#include <QWeakPointer>
+namespace Plasma
+{
 
-class AppletIconWidget : public AbstractIcon
+class PLASMAGENERICSHELL_EXPORT ActivityBar : public QGraphicsWidget
 {
     Q_OBJECT
+public:
+    ActivityBar(Qt::Orientation orientation, QGraphicsItem *parent=0);
+    ActivityBar(QGraphicsItem *parent=0);
 
-    public:
-        explicit AppletIconWidget(PlasmaAppletItem *appletItem);
-        virtual ~AppletIconWidget();
-
-        void setAppletItem(PlasmaAppletItem *appletIcon);
-        PlasmaAppletItem *appletItem();
-
-        QPixmap pixmap(const QSize &size);
-        QMimeData* mimeData();
-        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
-
-    private:
-        QWeakPointer<PlasmaAppletItem> m_appletItem;
-        KIcon m_runningIcon;
 };
+} // namespace Plasma
 
-#endif //APPLETICON_H
+#endif

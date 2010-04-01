@@ -22,11 +22,13 @@ set(scripting_SRC
 
 set(plasmagenericshell_LIB_SRCS
     backgrounddialog.cpp
+    abstracticonlist.cpp
+    abstracticon.cpp
     mouseinputbutton.cpp
     mouseplugins.cpp
     mousepluginwidget.cpp
-    wallpaperpreview.cpp
     toolbutton.cpp
+    wallpaperpreview.cpp
     ${scripting_SRC}
     ${appletbrowserdialog_SRCS}
 )
