@@ -408,14 +408,14 @@ void MenuFile::moveMenu(const QString &oldMenu, const QString &newMenu)
       commonMenuName += '/' + oldMenuParts[i];
    }
    QString oldMenuName;
-   for(int j = i; j < oldMenuParts.count(); j++)
+   for(int j = i; j < oldMenuParts.count()-1; j++)
    {
       if (i != j)
          oldMenuName += '/';
       oldMenuName += oldMenuParts[j];
    }
    QString newMenuName;
-   for(int j = i; j < newMenuParts.count(); j++)
+   for(int j = i; j < newMenuParts.count()-1; j++)
    {
       if (i != j)
          newMenuName += '/';
