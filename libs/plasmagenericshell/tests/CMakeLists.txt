@@ -14,6 +14,8 @@ set(appletexplorer_SRCS
    ../widgetsexplorer/appletslist.cpp
    ../widgetsexplorer/widgetexplorer.cpp
    ../widgetsexplorer/openwidgetassistant.cpp
+   ../abstracticon.cpp
+   ../abstracticonlist.cpp
    main.cpp
    )
 kde4_add_executable(plasmaappletexplorer ${appletexplorer_SRCS})
