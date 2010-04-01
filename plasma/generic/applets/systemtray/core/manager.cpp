@@ -38,8 +38,6 @@
 namespace SystemTray
 {
 
-static const int idleCheckInterval = 60 * 1000;
-
 class Manager::Private
 {
 public:
@@ -50,12 +48,10 @@ public:
     }
 
     void setupProtocol(Protocol *protocol);
-    void checkIdle();
 
     Manager *q;
     QList<Task *> tasks;
     PlasmoidProtocol *plasmoidProtocol;
-    QTimer *idleTimer;
 };
 
 
@@ -66,10 +62,6 @@ Manager::Manager()
     d->setupProtocol(d->plasmoidProtocol);
     d->setupProtocol(new SystemTray::FdoProtocol(this));
     d->setupProtocol(new SystemTray::DBusSystemTrayProtocol(this));
-
-    d->idleTimer = new QTimer(this);
-    d->idleTimer->setSingleShot(false);
-    connect(d->idleTimer, SIGNAL(timeout()), this, SLOT(checkIdle()));
 }
 
 Manager::~Manager()
