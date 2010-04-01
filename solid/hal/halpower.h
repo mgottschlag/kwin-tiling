@@ -40,10 +40,7 @@ public:
     HalPower(QObject *parent, const QVariantList &args);
     virtual ~HalPower();
 
-    virtual QStringList supportedSchemes() const;
-    virtual QString schemeDescription(const QString &schemeName) const;
-    virtual QString scheme() const;
-    virtual bool setScheme(const QString &name);
+    virtual bool setPowerSave(bool powersave);
 
     virtual Solid::Control::PowerManager::BatteryState batteryState() const;
     virtual int batteryChargePercent() const;

@@ -119,37 +119,13 @@ namespace Control
 
         typedef QHash<QString, BrightnessControlType> BrightnessControlsList;
 
-
         /**
-         * Retrieves the list of power management schemes available on this system.
+         * Changes the current power management policy of the system
          *
-         * @return the available power management schemes
+         * @param true if powersaving should be enabled
+         * @return true if the policy change succeeded, false otherwise
          */
-        SOLIDCONTROL_EXPORT QStringList supportedSchemes();
-
-        /**
-         * Retrieves a localized description corresponding to the given scheme.
-         *
-         * @param schemeName the name of the scheme we request the description for
-         * @return the associated description
-         */
-        SOLIDCONTROL_EXPORT QString schemeDescription(const QString &schemeName);
-
-        /**
-         * Retrieves the name of the current power management scheme used
-         * by the system.
-         *
-         * @return the current scheme
-         */
-        SOLIDCONTROL_EXPORT QString scheme();
-
-        /**
-         * Changes the current power management scheme.
-         *
-         * @param name the name of the new scheme
-         * @return true if the scheme change succeeded, false otherwise
-         */
-        SOLIDCONTROL_EXPORT bool setScheme(const QString &name);
+        SOLIDCONTROL_EXPORT bool setPowerSave(bool powersave);
 
 
         /**
@@ -272,13 +248,6 @@ namespace Control
         {
             Q_OBJECT
         Q_SIGNALS:
-            /**
-             * This signal is emitted when the power management scheme has changed.
-             *
-             * @param newScheme the new scheme name
-             */
-            void schemeChanged(QString newScheme);
-
             /**
              * This signal is emitted when the AC adapter is plugged or unplugged.
              *

@@ -196,19 +196,15 @@ int main(int argc, char **argv)
 
       cout << endl << i18n("Syntax:") << endl << endl;
 
-      cout << "  solid-powermanagement query (suspend|scheme|cpufreq)" << endl;
+      cout << "  solid-powermanagement query (suspend|cpufreq)" << endl;
       cout << i18n("             # List a particular set of information regarding power management.\n"
                     "             # - If the 'suspend' option is specified, give the list of suspend\n"
                     "             # methods supported by the system\n"
-                    "             # - If the 'scheme' option is specified, give the list of\n"
-                    "             # power management schemes supported by this system\n"
                     "             # - If the 'cpufreq' option is specified, give the list of\n"
                     "             # supported CPU frequency policies\n") << endl;
 
-      cout << "  solid-powermanagement set (scheme|cpufreq) 'value'" << endl;
+      cout << "  solid-powermanagement set (cpufreq) 'value'" << endl;
       cout << i18n("             # Set power management options of the system.\n"
-                    "             # - If the 'scheme' option is specified, the power management\n"
-                    "             # scheme set corresponds to 'value'\n"
                     "             # - If the 'cpufreq' option is specified, the CPU frequency policy\n"
                     "             # set corresponds to 'value'\n") << endl;
 
@@ -257,10 +253,6 @@ bool SolidPowermanagement::doIt()
         {
             return shell.powerQuerySuspendMethods();
         }
-        else if (type == "scheme")
-        {
-            return shell.powerQuerySchemes();
-        }
         else if (type == "cpufreq")
         {
             return shell.powerQueryCpuPolicies();
@@ -276,11 +268,7 @@ bool SolidPowermanagement::doIt()
         QString type(args->arg(1));
         QString value(args->arg(2));
     
-        if (type == "scheme")
-        {
-            return shell.powerChangeScheme(value);
-        }
-        else if (type == "cpufreq")
+        if (type == "cpufreq")
         {
             return shell.powerChangeCpuPolicy(value);
         }
@@ -378,41 +366,6 @@ bool SolidPowermanagement::powerSuspend(const QString &strMethod)
     {
         return true;
     }
-}
-
-bool SolidPowermanagement::powerQuerySchemes()
-{
-    QString current = Solid::Control::PowerManager::scheme();
-    QStringList schemes = Solid::Control::PowerManager::supportedSchemes();
-
-    foreach (const QString& scheme, schemes)
-    {
-        cout << scheme << " (" << Solid::Control::PowerManager::schemeDescription(scheme) << ")";
-
-        if (scheme==current)
-        {
-            cout << " [*]" << endl;
-        }
-        else
-        {
-            cout << endl;
-        }
-    }
-
-    return true;
-}
-
-bool SolidPowermanagement::powerChangeScheme(const QString &schemeName)
-{
-    QStringList supported = Solid::Control::PowerManager::supportedSchemes();
-
-    if (!supported.contains(schemeName))
-    {
-        cerr << i18n("Unsupported scheme: %1" , schemeName) << endl;
-        return false;
-    }
-
-    return Solid::Control::PowerManager::setScheme(schemeName);
 }
 
 bool SolidPowermanagement::powerQueryCpuPolicies()

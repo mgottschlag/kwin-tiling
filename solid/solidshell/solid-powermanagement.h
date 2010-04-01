@@ -45,9 +45,6 @@ public:
     bool powerQuerySuspendMethods();
     bool powerSuspend(const QString &method);
 
-    bool powerQuerySchemes();
-    bool powerChangeScheme(const QString &schemeName);
-
     bool powerQueryCpuPolicies();
     bool powerChangeCpuPolicy(const QString &policyName);
 

@@ -72,52 +72,8 @@ HalPower::~HalPower()
     qDeleteAll(m_buttons);
 }
 
-QStringList HalPower::supportedSchemes() const
+bool HalPower::setPowerSave(bool powersave)
 {
-    return QStringList() << "performance" << "powersaving";
-}
-
-QString HalPower::schemeDescription(const QString &schemeName) const
-{
-    if (schemeName=="performance")
-    {
-        return "Use all the performances of the system";
-    }
-    else if (schemeName=="powersaving")
-    {
-        return "Try to keep as much power as possible to improve battery life";
-    }
-    else
-    {
-        return QString();
-    }
-
-    return QString();
-}
-
-QString HalPower::scheme() const
-{
-    // FIXME: We miss an accessor in HAL to make scheme management useful
-    return QString();
-}
-
-bool HalPower::setScheme(const QString &name)
-{
-    bool powersave;
-
-    if (name=="powersaving")
-    {
-        powersave = true;
-    }
-    else if (name=="performance")
-    {
-        powersave = false;
-    }
-    else
-    {
-        return false;
-    }
-
     QDBusReply<int> reply = m_halPowerManagement.call("SetPowerSave", powersave);
 
     if (reply.isValid())

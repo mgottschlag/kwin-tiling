@@ -34,8 +34,6 @@ Solid::Control::PowerManagerPrivate::PowerManagerPrivate()
     loadBackend("Power Management", "SolidPowerManager", "Solid::Control::Ifaces::PowerManager");
 
     if (managerBackend()!=0) {
-        connect(managerBackend(), SIGNAL(schemeChanged(QString)),
-                this, SIGNAL(schemeChanged(QString)));
         connect(managerBackend(), SIGNAL(acAdapterStateChanged(int)),
                 this, SIGNAL(acAdapterStateChanged(int)));
         connect(managerBackend(), SIGNAL(batteryStateChanged(int)),
@@ -53,27 +51,10 @@ Solid::Control::PowerManagerPrivate::~PowerManagerPrivate()
 {
 }
 
-QStringList Solid::Control::PowerManager::supportedSchemes()
+bool Solid::Control::PowerManager::setPowerSave(bool powersave)
 {
     return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
-                      QStringList(), supportedSchemes());
-}
-
-QString Solid::Control::PowerManager::schemeDescription(const QString &schemeName)
-{
-    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
-                      QString(), schemeDescription(schemeName));
-}
-
-QString Solid::Control::PowerManager::scheme()
-{
-    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(), QString(), scheme());
-}
-
-bool Solid::Control::PowerManager::setScheme(const QString &name)
-{
-    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
-                      false, setScheme(name));
+                      false, setPowerSave(powersave));
 }
 
 Solid::Control::PowerManager::BatteryState Solid::Control::PowerManager::batteryState()

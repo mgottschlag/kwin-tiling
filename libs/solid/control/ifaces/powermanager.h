@@ -58,39 +58,6 @@ namespace Ifaces
          */
         virtual ~PowerManager();
 
-
-        /**
-         * Retrieves the list of power management schemes available on this system.
-         *
-         * @return the available power management schemes
-         */
-        virtual QStringList supportedSchemes() const = 0;
-
-        /**
-         * Retrieves a localized description corresponding to the given scheme.
-         *
-         * @param schemeName the name of the scheme we request the description for
-         * @return the associated description
-         */
-        virtual QString schemeDescription(const QString &schemeName) const = 0;
-
-        /**
-         * Retrieves the name of the current power management scheme used
-         * by the system.
-         *
-         * @return the current scheme
-         */
-        virtual QString scheme() const = 0;
-
-        /**
-         * Changes the current power management scheme.
-         *
-         * @param name the name of the new scheme
-         * @return true if the scheme change succeeded, false otherwise
-         */
-        virtual bool setScheme(const QString &name) = 0;
-
-
         /**
          * Retrieves the current state of the system battery.
          *
@@ -158,6 +125,15 @@ namespace Ifaces
         virtual Solid::Control::PowerManager::CpuFreqPolicy cpuFreqPolicy() const = 0;
 
         /**
+         * Changes the current power management policy of the system.
+         *
+         * @param powersave if powersaving should be anabled
+         * @return true if the policy change succeeded, false otherwise
+         * @see Solid::Control::PowerManager::setPowerSave
+         */
+        virtual bool setPowerSave(bool powersave) = 0;
+
+        /**
          * Changes the current CPU frequency policy of the system.
          *
          * @param newPolicy the new policy
@@ -208,13 +184,6 @@ namespace Ifaces
         virtual bool setBrightness(float brightness, const QString &panel = QString()) = 0;
 
     Q_SIGNALS:
-        /**
-         * This signal is emitted when the power management scheme has changed.
-         *
-         * @param newScheme the new scheme name
-         */
-        void schemeChanged(QString newScheme);
-
         /**
          * This signal is emitted when the AC adapter is plugged or unplugged.
          *
