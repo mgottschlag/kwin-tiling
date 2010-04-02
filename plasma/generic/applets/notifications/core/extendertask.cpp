@@ -61,12 +61,12 @@ ExtenderTaskBusyWidget::ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, cons
 
     m_fadeInAnimation = Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation);
     m_fadeInAnimation->setTargetWidget(this);
-    m_fadeInAnimation->setProperty("duration", 500);
+    m_fadeInAnimation->setProperty("duration", 1000);
     m_fadeInAnimation->setProperty("targetPixmap", m_svg->pixmap("notification-active"));
 
     m_fadeOutAnimation = Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation);
     m_fadeOutAnimation->setTargetWidget(this);
-    m_fadeOutAnimation->setProperty("duration", 500);
+    m_fadeOutAnimation->setProperty("duration", 1000);
     m_fadeOutAnimation->setProperty("startPixmap", m_svg->pixmap("notification-active"));
 
 
@@ -122,7 +122,7 @@ void ExtenderTaskBusyWidget::paint(QPainter *painter, const QStyleOptionGraphics
         p.setCompositionMode(QPainter::CompositionMode_Source);
         p.drawPie(QRectF(QPointF(0, 0), iconRect.size()), arcStart, arcEnd);
         p.setCompositionMode(QPainter::CompositionMode_SourceIn);
-        m_svg->paint(&p, QRectF(QPointF(0, 0), iconRect.size()), "notification-progress");
+        m_svg->paint(&p, QRectF(QPointF(0, 0), iconRect.size()), "notification-progress-active");
         p.end();
 
         p.begin(&inActivePixmap);
@@ -131,7 +131,7 @@ void ExtenderTaskBusyWidget::paint(QPainter *painter, const QStyleOptionGraphics
         p.setCompositionMode(QPainter::CompositionMode_Source);
         p.drawPie(QRectF(QPointF(0, 0), iconRect.size()), arcStart, (360*16)+arcEnd);
         p.setCompositionMode(QPainter::CompositionMode_SourceIn);
-        m_svg->paint(&p, QRectF(QPointF(0, 0), iconRect.size()), "notification-empty");
+        m_svg->paint(&p, QRectF(QPointF(0, 0), iconRect.size()), "notification-progress-inactive");
         p.end();
 
         painter->drawPixmap(iconRect.topLeft().toPoint(), activePixmap);
