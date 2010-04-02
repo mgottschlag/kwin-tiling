@@ -391,11 +391,15 @@ void TaskArea::removeTask(Task *task)
     QGraphicsWidget *widget = task->widget(d->host, false);
 
     if (d->hiddenTasks.contains(task)) {
-        if (widget) {
+        QGraphicsWidget *taskLabel = d->hiddenTasks[task];
+        if (widget || taskLabel) {
             for (int i = 0; i < d->hiddenTasksLayout->count(); ++i) {
                 if (d->hiddenTasksLayout->itemAt(i) == widget) {
                     d->hiddenTasksLayout->removeAt(i);
-                    break;
+                }
+                if (d->hiddenTasksLayout->itemAt(i) == taskLabel) {
+                    d->hiddenTasksLayout->removeAt(i);
+                    taskLabel->deleteLater();
                 }
             }
         }
