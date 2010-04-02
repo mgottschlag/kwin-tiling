@@ -85,9 +85,9 @@ void DBusSystemTrayProtocol::newTask(QString service)
 void DBusSystemTrayProtocol::cleanupTask(QString service)
 {
     DBusSystemTrayTask *task = m_tasks.value(service);
-    m_dataEngine->disconnectSource(service, task);
 
     if (task) {
+        m_dataEngine->disconnectSource(service, task);
         m_tasks.remove(service);
         emit task->destroyed(task);
         task->deleteLater();

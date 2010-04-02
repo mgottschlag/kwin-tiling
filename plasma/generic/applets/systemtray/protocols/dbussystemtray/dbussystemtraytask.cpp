@@ -117,7 +117,6 @@ QIcon DBusSystemTrayTask::icon() const
 
 void DBusSystemTrayTask::dataUpdated(const QString &taskName, const Plasma::DataEngine::Data &properties)
 {
-    kDebug();
     Q_UNUSED(taskName);
 
     QString cat = properties["Category"].toString();
