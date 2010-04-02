@@ -388,10 +388,20 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
 
 void TaskArea::removeTask(Task *task)
 {
-    d->hiddenTasks.remove(task);
-    d->hasTasksThatCanHide = !d->hiddenTasks.isEmpty();
-
     QGraphicsWidget *widget = task->widget(d->host, false);
+
+    if (d->hiddenTasks.contains(task)) {
+        if (widget) {
+            for (int i = 0; i < d->hiddenTasksLayout->count(); ++i) {
+                if (d->hiddenTasksLayout->itemAt(i) == widget) {
+                    d->hiddenTasksLayout->removeAt(i);
+                    break;
+                }
+            }
+        }
+        d->hiddenTasks.remove(task);
+    }
+    d->hasTasksThatCanHide = !d->hiddenTasks.isEmpty();
 
     if (widget) {
         //try to remove from all three layouts, one will succeed
