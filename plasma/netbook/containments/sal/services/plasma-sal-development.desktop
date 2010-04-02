@@ -89,6 +89,7 @@ Name[x-test]=xxDevelopmentxx
 Name[zh_CN]=开发
 Name[zh_TW]=程式開發
 Comment=Applications targeted to software development
+Comment[de]=Anwendungen für die Software-Entwicklung
 Comment[en_GB]=Applications targeted to software development
 Comment[es]=Aplicaciones orientadas al desarrollo de software
 Comment[et]=Tarkvara arendamiseks mõeldud rakendused
