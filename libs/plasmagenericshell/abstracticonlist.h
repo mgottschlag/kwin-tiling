@@ -54,13 +54,6 @@ public:
     void setIconSize(int size);
     int iconSize() const;
 
-    enum ScrollPolicy {
-        DownRight = 0,
-        UpLeft = 1,
-        Wheel = 4,
-        Button = 5
-    };
-
 protected:
     /**
      * add a new icon (or rather, do a bunchofstuff that needs doing when it's added)
@@ -87,6 +80,11 @@ protected:
      */
     virtual void setSearch(const QString &searchString) = 0;
 
+    /**
+     * scroll to a specific item
+     */
+    virtual void scrollTo(int index);
+
 private:
     void init();
 
@@ -109,14 +107,6 @@ private:
     //returns item position
     qreal itemPosition(int i);
 
-    void scroll(ScrollPolicy side, ScrollPolicy how);
-
-    //scrolls down or right according to orientation
-    void scrollDownRight(int step);
-
-    //scrolls up or left according to orientation
-    void scrollUpLeft(int step);
-
     void wheelEvent(QGraphicsSceneWheelEvent *event);
 
     void setContentsPropertiesAccordingToOrientation();
@@ -126,8 +116,8 @@ public slots:
     void updateList();
 
 private slots:
-    void onRightArrowPress();
-    void onLeftArrowPress();
+    void scrollDownRight();
+    void scrollUpLeft();
     void scrollStepFinished();
 
     //checks if arrows should be enabled or not
@@ -173,8 +163,7 @@ private:
     QTimer *m_searchDelayTimer;
     QString m_searchString;
 
-    int arrowClickStep;
-    int wheelStep;
+    int m_scrollStep;
     int m_iconSize;
 
     Plasma::Animation *m_slide;

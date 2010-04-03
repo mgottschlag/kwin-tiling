@@ -50,8 +50,7 @@ AbstractIconList::AbstractIconList(Qt::Orientation orientation, QGraphicsItem *p
       m_searchDelayTimer(new QTimer(this)),
       m_iconSize(16)
 {
-    arrowClickStep = 0;
-    wheelStep = 0;
+    m_scrollStep = 0;
     m_firstItemIndex = 0;
     m_selectedItem = 0;
     m_orientation = orientation;
@@ -110,8 +109,8 @@ void AbstractIconList::init()
         m_downRightArrow->setMaximumSize(-1, IconSize(KIconLoader::Panel));
     }
 
-    connect(m_downRightArrow, SIGNAL(pressed()), this, SLOT(onRightArrowPress()));
-    connect(m_upLeftArrow, SIGNAL(pressed()), this, SLOT(onLeftArrowPress()));
+    connect(m_downRightArrow, SIGNAL(pressed()), this, SLOT(scrollDownRight()));
+    connect(m_upLeftArrow, SIGNAL(pressed()), this, SLOT(scrollUpLeft()));
 
     //XXX rename later
     //init window that shows the applets of the list - it clips the appletsListWidget
@@ -165,9 +164,7 @@ bool AbstractIconList::eventFilter(QObject *obj, QEvent *event)
             // the resize occurred with the window widget
             // FIXME rename this too, eew.
             int maxVisibleIconsOnList = maximumAproxVisibleIconsOnList();
-            //FIXME these are members...?
-            arrowClickStep = ceil((float)maxVisibleIconsOnList/4);
-            wheelStep = ceil((float)maxVisibleIconsOnList/2);
+            m_scrollStep = ceil((float)maxVisibleIconsOnList/2);
             if (m_orientation == Qt::Vertical) {
                 m_appletsListWidget->setMinimumSize(m_appletsListWindowWidget->size().width(), 0);
             }
@@ -334,55 +331,22 @@ void AbstractIconList::updateList()
 
 void AbstractIconList::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
-    ScrollPolicy side;
-    bool canScroll;
+    bool isDownRight = event->delta() < 0;
 
-    side = event->delta() < 0 ? AbstractIconList::DownRight : AbstractIconList::UpLeft;
-
-    if (side == AbstractIconList::DownRight) {
-        canScroll = m_downRightArrow->isEnabled();
+    if (isDownRight) {
+        if (m_downRightArrow->isEnabled()) {
+            scrollDownRight();
+        }
     } else {
-        canScroll = m_upLeftArrow->isEnabled();
-    }
-
-    if (canScroll) {
-        scroll(side, AbstractIconList::Wheel);
+        if (m_upLeftArrow->isEnabled()) {
+            scrollUpLeft();
+        }
     }
 }
 
-//FIXME wheel!?!?!
-void AbstractIconList::onRightArrowPress()
+void AbstractIconList::scrollDownRight()
 {
-    scroll(AbstractIconList::DownRight, AbstractIconList::Wheel);
-}
-
-void AbstractIconList::onLeftArrowPress()
-{
-    scroll(AbstractIconList::UpLeft, AbstractIconList::Wheel);
-}
-
-void AbstractIconList::scroll(ScrollPolicy side, ScrollPolicy how)
-{
-    const int step = (how == AbstractIconList::Wheel) ? wheelStep : arrowClickStep;
-
-    //FIXME i can haz tooltip?
-    //m_toolTip->setVisible(false);
-
-    switch (side) {
-        case AbstractIconList::DownRight:
-            scrollDownRight(step);
-            break;
-        case AbstractIconList::UpLeft:
-            scrollUpLeft(step);
-            break;
-        default:
-            break;
-    }
-}
-
-void AbstractIconList::scrollDownRight(int step)
-{
-    int nextFirstItemIndex = m_firstItemIndex + step;
+    int nextFirstItemIndex = m_firstItemIndex + m_scrollStep;
     if (nextFirstItemIndex > m_currentAppearingAppletsOnList.count() - 1) {
         nextFirstItemIndex = m_currentAppearingAppletsOnList.count() - 1;
     }
@@ -399,37 +363,20 @@ void AbstractIconList::scrollDownRight(int step)
     if (endPosition > listSize()) {
         // find a better first item
         qreal searchPosition = startPosition - (endPosition - listSize());
-        int i;
-        for (i = 0; i < m_currentAppearingAppletsOnList.count(); i++) {
+        for (int i = 0; i < m_currentAppearingAppletsOnList.count(); i++) {
             if (itemPosition(i) >= searchPosition) {
                 nextFirstItemIndex = i;
-                startPosition = itemPosition(nextFirstItemIndex);
-                endPosition = startPosition + (visibleEndPosition() - visibleStartPosition());
                 break;
             }
         }
     }
 
-    const qreal move = startPosition - visibleStartPosition();
-    m_firstItemIndex = nextFirstItemIndex;
-
-    m_slide->stop();
-
-    if (m_orientation == Qt::Horizontal) {
-        m_slide->setProperty("movementDirection", Plasma::Animation::MoveLeft);
-    } else {
-        m_slide->setProperty("movementDirection", Plasma::Animation::MoveUp);
-    }
-
-    m_slide->setProperty("distance", move);
-    m_slide->start();
-
-    manageArrows();
+    scrollTo(nextFirstItemIndex);
 }
 
-void AbstractIconList::scrollUpLeft(int step)
+void AbstractIconList::scrollUpLeft()
 {
-    int nextFirstItemIndex = m_firstItemIndex - step;
+    int nextFirstItemIndex = m_firstItemIndex - m_scrollStep;
     if (nextFirstItemIndex < 0) {
         nextFirstItemIndex = 0;
     }
@@ -439,10 +386,15 @@ void AbstractIconList::scrollUpLeft(int step)
         return;
     }
 
-    qreal startPosition = itemPosition(nextFirstItemIndex);
+    scrollTo(nextFirstItemIndex);
+}
+
+void AbstractIconList::scrollTo(int index)
+{
+    qreal startPosition = itemPosition(index);
     qreal move = startPosition - visibleStartPosition();
 
-    m_firstItemIndex = nextFirstItemIndex;
+    m_firstItemIndex = index;
 
     m_slide->stop();
 
@@ -456,18 +408,21 @@ void AbstractIconList::scrollUpLeft(int step)
     m_slide->start();
 
     manageArrows();
+    //FIXME i can haz tooltip?
+    //m_toolTip->setVisible(false);
 }
 
 void AbstractIconList::scrollStepFinished()
 {
     manageArrows();
+    //keep scrolling if the button is held down
     bool movingLeftUp = m_slide->property("distance").value<qreal>() < 0;
     if (movingLeftUp) {
         if (m_upLeftArrow->isEnabled() && m_upLeftArrow->isDown()) {
-            onLeftArrowPress();
+            scrollUpLeft();
         }
     } else if (m_downRightArrow->isEnabled() && m_downRightArrow->isDown()) {
-        onRightArrowPress();
+        scrollDownRight();
     }
 }
 
