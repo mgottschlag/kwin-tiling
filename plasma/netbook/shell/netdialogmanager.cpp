@@ -42,7 +42,7 @@ NetDialogManager::~NetDialogManager()
 
 void NetDialogManager::showDialog(QWidget *widget, Plasma::Applet *applet)
 {
-
+    Q_UNUSED(applet)
     widget->setAttribute(Qt::WA_WindowPropagation, false);
     widget->setAttribute(Qt::WA_TranslucentBackground);
     widget->setAttribute(Qt::WA_NoSystemBackground, false);

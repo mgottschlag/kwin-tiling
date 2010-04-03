@@ -41,7 +41,8 @@ public:
     explicit NetDialogManager(Plasma::Corona *parent=0);
     ~NetDialogManager();
 
-    virtual void showDialog(QWidget *widget, Plasma::Applet *applet);
+public Q_SLOTS:
+    void showDialog(QWidget *widget, Plasma::Applet *applet);
 
 private:
     Plasma::Corona *m_corona;
