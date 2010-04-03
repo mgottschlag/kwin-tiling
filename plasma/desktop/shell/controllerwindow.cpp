@@ -313,6 +313,8 @@ void ControllerWindow::resizeEvent(QResizeEvent * event)
 {
     m_background->resizeFrame(size());
 
+    Plasma::WindowEffects::enableBlurBehind(effectiveWinId(), true, m_background->mask());
+
     qDebug() << "ControllerWindow::resizeEvent" << event->oldSize();
 
     // We want to stay aligned to the edge we are at
