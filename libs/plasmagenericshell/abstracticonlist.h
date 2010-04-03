@@ -109,8 +109,6 @@ private:
 
     void wheelEvent(QGraphicsSceneWheelEvent *event);
 
-    void setContentsPropertiesAccordingToOrientation();
-
 public slots:
     void searchTermChanged(const QString &text);
     void updateList();

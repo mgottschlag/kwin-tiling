@@ -175,23 +175,15 @@ bool AbstractIconList::eventFilter(QObject *obj, QEvent *event)
     return QObject::eventFilter(obj, event);
 }
 
-void AbstractIconList::setOrientation(Qt::Orientation orientation)
-{
-    m_orientation = orientation;
-    //FIXME this doesn't deserve to be its own method
-    setContentsPropertiesAccordingToOrientation();
-
-    //FIXME I have doubts this belongs here at ALL
-    updateList();
-}
-
 Qt::Orientation AbstractIconList::orientation()
 {
     return m_orientation;
 }
 
-void AbstractIconList::setContentsPropertiesAccordingToOrientation()
+void AbstractIconList::setOrientation(Qt::Orientation orientation)
 {
+    m_orientation = orientation;
+
     m_appletListLinearLayout->invalidate();
     m_appletListLinearLayout->setOrientation(m_orientation);
     m_arrowsLayout->setOrientation(m_orientation);
@@ -232,7 +224,7 @@ void AbstractIconList::iconHoverEnter(AbstractIcon *icon)
     }
 }
 
-//hey *now* I have an actual use for this, with the subclassing :P
+//what do we need the visible-list for? getting position, finding the end of the list, calculating
 void AbstractIconList::insertAppletIcon(AbstractIcon *appletIconWidget)
 {
     if (appletIconWidget != 0) {
@@ -243,6 +235,7 @@ void AbstractIconList::insertAppletIcon(AbstractIcon *appletIconWidget)
     }
 }
 
+//uses the average icon size to guess how many will fit
 int AbstractIconList::maximumAproxVisibleIconsOnList()
 {
     qreal windowSize;
