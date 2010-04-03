@@ -18,6 +18,7 @@
  */
 
 #include "netcorona.h"
+#include "netdialogmanager.h"
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -65,6 +66,7 @@ void NetCorona::init()
     setContainmentActionsDefaults(Plasma::Containment::CustomPanelContainment, panelPlugins);
 
     enableAction("lock widgets", false);
+    setDialogManager(new NetDialogManager(this));
 }
 
 void NetCorona::loadDefaultLayout()

@@ -7,6 +7,7 @@ set(plasma-netbook_SRCS
     main.cpp
     plasmaapp.cpp
     netpanelcontroller.cpp
+    netdialogmanager.cpp
 )
 
 set(ksmserver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
