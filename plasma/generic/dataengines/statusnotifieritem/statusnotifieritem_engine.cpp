@@ -133,18 +133,13 @@ void StatusNotifierItemEngine::serviceRegistered(const QString &service)
 
 void StatusNotifierItemEngine::serviceUnregistered(const QString &service)
 {
-    cleanupItem(service);
+    removeSource(service);
 }
 
 void StatusNotifierItemEngine::newItem(const QString &service)
 {
     StatusNotifierItemSource *itemSource = new StatusNotifierItemSource(service, this);
     addSource(itemSource);
-}
-
-void StatusNotifierItemEngine::cleanupItem(const QString &service)
-{
-    removeSource(service);
 }
 
 K_EXPORT_PLASMA_DATAENGINE(statusnotifieritem, StatusNotifierItemEngine)

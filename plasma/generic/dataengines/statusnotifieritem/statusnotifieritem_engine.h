@@ -40,7 +40,6 @@ protected:
 
     virtual void init();
     void newItem(const QString &service);
-    void cleanupItem(const QString &service);
 
 protected Q_SLOTS:
     void serviceChange(const QString& name,
