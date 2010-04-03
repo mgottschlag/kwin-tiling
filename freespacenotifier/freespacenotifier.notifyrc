@@ -14,6 +14,7 @@ Comment[sv]=KDE:s demon för information om ledigt utrymme
 Comment[uk]=Фонова служба сповіщення про переповнення диска KDE
 Comment[x-test]=xxKDE Free Space Notifier Daemonxx
 Name=Low Disk Space
+Name[cs]=Málo místa na disku
 Name[en_GB]=Low Disk Space
 Name[es]=Poco espacio en disco
 Name[et]=Kettaruumi napib
