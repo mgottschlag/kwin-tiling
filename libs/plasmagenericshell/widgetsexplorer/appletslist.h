@@ -73,9 +73,10 @@ protected: //FIXME wuh?
     void timerEvent(QTimerEvent *event);
     QVariant itemChange(GraphicsItemChange change, const QVariant & value);
 
-    //virtuals
+    //virtuals from AbstractIconList
     void populateList();
     void setSearch(const QString &searchString);
+    void scrollTo(int index);
 
 Q_SIGNALS:
     void appletDoubleClicked(PlasmaAppletItem *appletItem);

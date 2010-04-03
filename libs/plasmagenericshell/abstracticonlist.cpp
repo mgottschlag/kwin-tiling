@@ -408,8 +408,6 @@ void AbstractIconList::scrollTo(int index)
     m_slide->start();
 
     manageArrows();
-    //FIXME i can haz tooltip?
-    //m_toolTip->setVisible(false);
 }
 
 void AbstractIconList::scrollStepFinished()
