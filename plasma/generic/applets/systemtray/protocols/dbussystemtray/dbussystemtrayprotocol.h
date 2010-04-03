@@ -44,8 +44,8 @@ public:
     void init();
 
 protected:
-    void newTask(QString service);
-    void cleanupTask(QString typeId);
+    void newTask(const QString &service);
+    void cleanupTask(const QString &typeId);
     void initRegisteredServices();
 
 protected Q_SLOTS:

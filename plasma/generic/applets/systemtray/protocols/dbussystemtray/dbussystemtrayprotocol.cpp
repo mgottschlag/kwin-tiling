@@ -61,7 +61,7 @@ void DBusSystemTrayProtocol::taskRemoved(const QString &taskName)
     cleanupTask(taskName);
 }
 
-void DBusSystemTrayProtocol::newTask(QString service)
+void DBusSystemTrayProtocol::newTask(const QString &service)
 {
     if (m_tasks.contains(service)) {
         return;
@@ -82,7 +82,7 @@ void DBusSystemTrayProtocol::newTask(QString service)
     emit taskCreated(task);
 }
 
-void DBusSystemTrayProtocol::cleanupTask(QString service)
+void DBusSystemTrayProtocol::cleanupTask(const QString &service)
 {
     DBusSystemTrayTask *task = m_tasks.value(service);
 
