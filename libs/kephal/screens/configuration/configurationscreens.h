@@ -29,6 +29,10 @@ namespace Kephal {
 
     class Configuration;
 
+    /**
+     * updates the geometries of Screen objects using active Configuration
+     * Has a special case for the 'external' configuration. Why?
+     */
     class ConfigurationScreens : public OutputScreens {
         Q_OBJECT
         public:

@@ -28,6 +28,9 @@
 
 namespace Kephal {
 
+    /**
+     * Client stub to Screens as provided by the Kephal service
+     */
     class DBusScreens : public Screens {
         Q_OBJECT
         public:

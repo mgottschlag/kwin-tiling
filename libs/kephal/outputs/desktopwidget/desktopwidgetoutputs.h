@@ -28,6 +28,10 @@
 
 namespace Kephal {
 
+    /**
+     * Fallback Outputs for when there is no XRandR
+     * If BackendOutputs is doing its job, shouldn't this inherit from it?
+     */
     class DesktopWidgetOutputs : public Outputs {
         Q_OBJECT
         public:

@@ -29,6 +29,10 @@
 
 namespace Kephal {
 
+    /**
+     * Client side interface to outputs.  Setup by libkephal.cpp
+     * Deals in SimpleOutput
+     */
     class DBusOutputs : public Outputs {
         Q_OBJECT
         public:

@@ -28,6 +28,9 @@ namespace Kephal {
 
     class NoConfigurations;
 
+    /**
+     * Dummy Configuration object for NoConfigurations to return
+     */
     class SimpleConfiguration : public Configuration {
         Q_OBJECT
         public:
@@ -43,6 +46,9 @@ namespace Kephal {
             void activate();
     };
 
+    /**
+     * Dummy Configurations to use when no real backend is available
+     */
     class NoConfigurations : public Configurations {
         Q_OBJECT
         public:

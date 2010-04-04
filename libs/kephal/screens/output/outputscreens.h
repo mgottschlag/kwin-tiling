@@ -29,6 +29,9 @@
 
 namespace Kephal {
 
+    /**
+     * Maps outputs to a single Screen
+     */
     class OutputScreen : public SimpleScreen {
         Q_OBJECT
         public:
@@ -44,6 +47,9 @@ namespace Kephal {
     };
 
 
+    /**
+     * Screens object containing output signalling and mapping between Outputs and Screens
+     */
     class OutputScreens : public Screens {
         Q_OBJECT
         public:
@@ -51,6 +57,7 @@ namespace Kephal {
             virtual QList<Screen *> screens();
 
         protected:
+            //cannot be pure virtual because libkephal.cpp instantates an OutputScreens
             virtual void prepareScreens(QMap<int, OutputScreen *> & screens);
             void rebuildScreens();
             void triggerRebuildScreens(); // Triggers a rebuild aftera short delay; requests are coalesced.

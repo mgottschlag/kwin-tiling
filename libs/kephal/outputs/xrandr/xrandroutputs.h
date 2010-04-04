@@ -31,6 +31,9 @@ namespace Kephal {
 
     class XRandROutputs;
 
+    /**
+     * Maps RandROutput class to Kephal::Output
+     */
     class XRandROutput : public BackendOutput {
         Q_OBJECT
         public:
@@ -95,6 +98,9 @@ namespace Kephal {
     };
 
 
+    /**
+     * Maps RandRDisplay to Kephal::Outputs
+     */
     class XRandROutputs : public BackendOutputs {
         Q_OBJECT
         public:

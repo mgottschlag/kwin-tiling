@@ -26,6 +26,10 @@
 
 namespace Kephal {
 
+    /**
+     * Configuration which is hardwired to name 'external'.
+     * Is this a hardwired permanent configuration object? If so where is 'single'?
+     */
     class ExternalConfiguration : public BackendConfiguration {
         Q_OBJECT
         public:

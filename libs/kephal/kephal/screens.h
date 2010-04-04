@@ -35,10 +35,15 @@ namespace Kephal {
 
     /**
      * A Screen is the area that is significant for
-     * displaying windows.
+     * displaying windows. or panels.
      * Every activated Output belongs to exactly one
      * Screen and is completely contained within that
      * Screen. No 2 Screens overlap each other.
+     *
+     * Hence:
+     * 1 Output -> 1 Screen
+     * 2 Non-overlapping Outputs -> 2 Screen
+     * 2 Overlapping Outputs -> 1 Screen
      */
     class KEPHAL_EXPORT Screen : public QObject {
         Q_OBJECT

@@ -56,6 +56,10 @@ namespace Kephal {
             BackendOutputs(QObject * parent);
             virtual ~BackendOutputs();
 
+            /**
+             * Deactivates any Outputs not in the layout and applies the geometry in the layout to
+             * those that are in
+             */
             virtual bool activateLayout(const QMap<Output *, QRect> & layout);
             virtual QList<BackendOutput *> backendOutputs();
             virtual BackendOutput * backendOutput(const QString & id);

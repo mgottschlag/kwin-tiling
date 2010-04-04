@@ -30,6 +30,11 @@ namespace Kephal {
 
     class DBusConfigurations;
 
+    /**
+     * Client side representation of a Configuration.
+     * Basic implementation of the Configuration interface for DBusConfigurations to return.
+     * Most methods are implemented by calling back through to DBusConfigurations.
+     */
     class DBusConfiguration : public Configuration {
         Q_OBJECT
         public:
@@ -50,6 +55,9 @@ namespace Kephal {
     };
 
 
+    /**
+     * DBUS stub to remote configurations provided by Kephal daemon
+     */
     class DBusConfigurations : public Configurations {
         Q_OBJECT
         public:

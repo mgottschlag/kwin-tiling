@@ -31,6 +31,9 @@
 
 namespace Kephal {
 
+    /**
+     * A configuration forming part of the backend (Kephal service)
+     */
     class BackendConfiguration : public Configuration {
         Q_OBJECT
         public:
@@ -114,6 +117,9 @@ namespace Kephal {
 
 
 
+    /**
+     * A manager of configurations, on the backend
+     */
     class BackendConfigurations : public Configurations {
         Q_OBJECT
         public:
