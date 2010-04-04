@@ -163,10 +163,11 @@ PlasmaAppletItemModel* PlasmaAppletItem::appletItemModel()
 
 //PlasmaAppletItemModel
 
-PlasmaAppletItemModel::PlasmaAppletItemModel(KConfigGroup configGroup, QObject * parent) :
-    QStandardItemModel(parent),
-    m_configGroup(configGroup)
+PlasmaAppletItemModel::PlasmaAppletItemModel(QObject * parent)
+    : QStandardItemModel(parent)
 {
+    KConfig config("plasmarc");
+    m_configGroup = KConfigGroup(&config, "Applet Browser");
     m_favorites = m_configGroup.readEntry("favorites").split(',');
     connect(KSycoca::self(), SIGNAL(databaseChanged()), this, SLOT(populateModel()));
 }

@@ -61,9 +61,7 @@ public:
     WidgetExplorerPrivate(WidgetExplorer *w)
         : q(w),
           containment(0),
-          config("plasmarc"),
-          configGroup(&config, "Applet Browser"),
-          itemModel(configGroup, w),
+          itemModel(w),
           filterModel(w),
           iconSize(16)
     {
@@ -94,9 +92,6 @@ public:
     QHash<QString, int> runningApplets; // applet name => count
     //extra hash so we can look up the names of deleted applets
     QHash<Plasma::Applet *,QString> appletNames;
-
-    KConfig config;
-    KConfigGroup configGroup;
 
     PlasmaAppletItemModel itemModel;
     KCategorizedItemsViewModels::DefaultFilterModel filterModel;

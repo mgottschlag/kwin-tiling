@@ -74,7 +74,7 @@ class PlasmaAppletItemModel : public QStandardItemModel
     Q_OBJECT
 
 public:
-    explicit PlasmaAppletItemModel(KConfigGroup configGroup, QObject * parent = 0);
+    explicit PlasmaAppletItemModel(QObject * parent = 0);
 
     QStringList mimeTypes() const;
     QSet<QString> categories() const;
