@@ -61,18 +61,17 @@ protected:
      */
     void addIcon(AbstractIcon *applet);
 
-    /**
-     * Adds the icon to the list layout
-     */
-    void insertAppletIcon(AbstractIcon *appletIconWidget);
+    void showIcon(AbstractIcon *icon);
+
+    void hideIcon(AbstractIcon *icon);
+
+    void hideAllIcons();
 
     /**
      * subclasses must implement this:
-     * it should insert all items that should be visible
-     * FIXME the wording is kinda bad. but first I need to choose whether this stuff is
-     * adding/removing from hte layout or simply changing hte visibility of items.
+     * it should show/hide icons as appropriate for the current filter.
      */
-    virtual void populateList() = 0;
+    virtual void updateVisibleIcons() = 0;
 
     /**
      * subclasses must implement this:

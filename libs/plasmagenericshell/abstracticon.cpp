@@ -35,6 +35,7 @@
 AbstractIcon::AbstractIcon(QGraphicsItem *parent)
     : QGraphicsWidget(parent),
       m_iconHeight(DEFAULT_ICON_SIZE),
+      m_maxSize(maximumSize()),
       m_selected(false),
       m_hovered(false)
 {
@@ -76,6 +77,24 @@ void AbstractIcon::setName(const QString &name)
 QString AbstractIcon::name() const
 {
     return m_name;
+}
+
+void AbstractIcon::collapse()
+{
+    if (isVisible()) {
+        setVisible(false);
+        m_maxSize = maximumSize();
+        kDebug() << m_maxSize;
+        setMaximumSize(0, 0);
+    }
+}
+
+void AbstractIcon::expand()
+{
+    if (! isVisible()) {
+        setVisible(true);
+        setMaximumSize(m_maxSize);
+    }
 }
 
 void AbstractIcon::hoverEnterEvent(QGraphicsSceneHoverEvent *)

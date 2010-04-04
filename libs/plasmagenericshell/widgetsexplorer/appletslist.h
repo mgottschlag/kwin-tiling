@@ -74,7 +74,7 @@ protected: //FIXME wuh?
     QVariant itemChange(GraphicsItemChange change, const QVariant & value);
 
     //virtuals from AbstractIconList
-    void populateList();
+    void updateVisibleIcons();
     void setSearch(const QString &searchString);
     void scrollTo(int index);
 

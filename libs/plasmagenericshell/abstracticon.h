@@ -40,6 +40,9 @@ class AbstractIcon : public QGraphicsWidget
         void setName(const QString &name);
         QString name() const;
 
+        void expand();
+        void collapse();
+
         /**
          * return the background image
          */
@@ -70,6 +73,7 @@ class AbstractIcon : public QGraphicsWidget
     private:
         QString m_name;
         int m_iconHeight;
+        QSizeF m_maxSize;
         bool m_selected : 1;
         bool m_hovered : 1;
 };

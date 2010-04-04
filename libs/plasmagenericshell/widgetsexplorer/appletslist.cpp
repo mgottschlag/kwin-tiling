@@ -223,21 +223,24 @@ void AppletsListWidget::appletIconDoubleClicked(AbstractIcon *icon)
     emit(appletDoubleClicked(static_cast<AppletIconWidget*>(icon)->appletItem()));
 }
 
-
-void AppletsListWidget::populateList()
+void AppletsListWidget::updateVisibleIcons()
 {
+    m_toolTip->setVisible(false); // hides possibly open tooltip when list updates
+
+    //not sure if this is the fastest way or not; depends on the speed of model-view stuff
+    hideAllIcons();
+
     //insert items that match the filter
     for (int i = 0; i < m_modelFilterItems->rowCount(); i++) {
         PlasmaAppletItem *appletItem = static_cast<PlasmaAppletItem*>(getItemByProxyIndex(m_modelFilterItems->index(i, 0)));
 
-        //the contains check may be redundant?
+        //FIXME the contains check may be redundant?
         if (appletItem && m_allAppletsHash.contains(appletItem->id())) {
             AbstractIcon *appletIconWidget = m_allAppletsHash.value(appletItem->id());
-            insertAppletIcon(appletIconWidget);
+            showIcon(appletIconWidget);
         }
     }
 
-    m_toolTip->setVisible(false); // hides possibly open tooltip when list updates
 }
 
 void AppletsListWidget::animateToolTipMove()
@@ -262,7 +265,8 @@ void AppletsListWidget::populateAllAppletsHash()
 {
     qDeleteAll(m_allAppletsHash);
     m_allAppletsHash.clear();
-
+//FIXME only the ones matching the filter? okay, the filter matches everything at the start but
+//this still feels Wrong.
     const int indexesCount = m_modelFilterItems->rowCount();
     for (int i = 0; i < indexesCount ; i++) {
         PlasmaAppletItem *appletItem = static_cast<PlasmaAppletItem*>(getItemByProxyIndex(m_modelFilterItems->index(i, 0)));

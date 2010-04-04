@@ -122,6 +122,7 @@ void AbstractIconList::init()
     m_appletsListWidget = new QGraphicsWidget(m_appletsListWindowWidget);
     m_appletsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_appletListLinearLayout = new QGraphicsLinearLayout(m_orientation, m_appletsListWidget);
+    m_appletListLinearLayout->setSpacing(0);
 
     m_slide->setTargetWidget(m_appletsListWidget);
 
@@ -224,15 +225,35 @@ void AbstractIconList::iconHoverEnter(AbstractIcon *icon)
     }
 }
 
-//what do we need the visible-list for? getting position, finding the end of the list, calculating
-void AbstractIconList::insertAppletIcon(AbstractIcon *appletIconWidget)
+//all items are always in the list. filter updates just hide/show.
+//what do we need the visible-list for? getting position, finding the end of the list,
+//calculating how many fit on the list...
+//TODO it might be a bit easier if we explicitly told all icons to be the same (set) size.
+void AbstractIconList::showIcon(AbstractIcon *icon)
 {
-    if (appletIconWidget != 0) {
-        appletIconWidget->setVisible(true);
-        m_appletListLinearLayout->addItem(appletIconWidget);
-        m_appletListLinearLayout->setAlignment(appletIconWidget, Qt::AlignHCenter);
-        m_currentAppearingAppletsOnList.append(appletIconWidget);
+    if (icon) {
+        icon->expand();
+        m_currentAppearingAppletsOnList.append(icon);
     }
+}
+
+//FIXME this isn't ideal. it'd be nicer if I could just use setVisible
+//but I haven't eliminated the need for the visible-list yet.
+void AbstractIconList::hideIcon(AbstractIcon *icon)
+{
+    if (icon) {
+        icon->collapse();
+        m_currentAppearingAppletsOnList.removeAll(icon);
+    }
+}
+
+//a faster way, given that we still need the visible-list
+void AbstractIconList::hideAllIcons()
+{
+    foreach (AbstractIcon *icon, m_currentAppearingAppletsOnList) {
+        icon->collapse();
+    }
+    m_currentAppearingAppletsOnList.clear();
 }
 
 //uses the average icon size to guess how many will fit
@@ -262,7 +283,7 @@ int AbstractIconList::maximumAproxVisibleIconsOnList()
 
 void AbstractIconList::addIcon(AbstractIcon *icon)
 {
-    icon->setParent(m_appletsListWidget);
+    icon->setParent(m_appletsListWidget); //FIXME redundant?
     icon->setMinimumSize(100, 0);
     qreal l, t, r, b;
     m_hoverIndicator->getContentsMargins(&l, &t, &r, &b);
@@ -274,6 +295,10 @@ void AbstractIconList::addIcon(AbstractIcon *icon)
     if (m_iconSize != AbstractIcon::DEFAULT_ICON_SIZE) {
         icon->setIconSize(m_iconSize);
     }
+
+    m_appletListLinearLayout->addItem(icon);
+    m_appletListLinearLayout->setAlignment(icon, Qt::AlignHCenter);
+    showIcon(icon);
 
     connect(icon, SIGNAL(hoverEnter(AbstractIcon*)), this, SLOT(iconHoverEnter(AbstractIcon*)));
     connect(icon, SIGNAL(selected(AbstractIcon*)), this, SLOT(itemSelected(AbstractIcon*)));
@@ -289,32 +314,15 @@ void AbstractIconList::itemSelected(AbstractIcon *icon)
     m_selectedItem = icon;
 }
 
-//FIXME this doesn't deserve to be a function; if it was it'd be clear()
-//FIXME setVisible is not erase!!!!!!!!!!!!!!!!!!!!!111
-void AbstractIconList::eraseList()
-{
-    QList<QGraphicsItem *> applets = m_appletsListWidget->childItems();
-    foreach (QGraphicsItem *applet, applets) {
-        applet->setVisible(false);
-    }
-}
-
 //FIXME wow, do we really need to start from scratch?
 //this could still be cleaned up a lot.
 //and we should split the orientation from the filtering.
 void AbstractIconList::updateList()
 {
-    m_appletsListWidget->setLayout(NULL);
-    m_appletListLinearLayout = new QGraphicsLinearLayout(m_orientation);
-    m_appletListLinearLayout->setSpacing(0);
-
-    m_currentAppearingAppletsOnList.clear();
-    eraseList();
 
     //pure virtual
-    populateList();
+    updateVisibleIcons();
 
-    m_appletsListWidget->setLayout(m_appletListLinearLayout);
     m_appletsListWidget->adjustSize();
 
     updateGeometry();
