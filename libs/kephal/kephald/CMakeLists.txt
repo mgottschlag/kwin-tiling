@@ -4,7 +4,11 @@ INCLUDE_DIRECTORIES (. .. ../kded_kephal ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/ 
 
 ADD_DEFINITIONS (-DNO_KDE)
 
+configure_file (config-kephal.h.cmake
+${CMAKE_CURRENT_BINARY_DIR}/config-kephal.h )
+
 SET (kephald_SRCS
+        kephalservice.cpp
         ../xml/xmltype.cpp
         ../xml/configurations_xml.cpp
         ../xml/xmlnodehandler.cpp
@@ -32,12 +36,12 @@ SET (kephald_SRCS
         ../configurations/externalconfiguration.cpp
         ../configurations/xml/xmlconfigurations.cpp)
 QT4_WRAP_CPP (kephald_SRCS
+        kephalservice.h
         ../xml/xmltype.h
         ../xml/configurations_xml.h
         ../xrandr12/randrscreen.h
         ../xrandr12/randroutput.h
         ../xrandr12/randrcrtc.h
-        kephald.h
         ../kephal/screens.h
         ../screens/simplescreen.h
         ../screens/output/outputscreens.h

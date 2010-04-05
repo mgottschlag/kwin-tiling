@@ -1,0 +1,45 @@
+INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR}/../shared/ ${CMAKE_CURRENT_BINARY_DIR}/../shared ${CMAKE_CURRENT_BINARY_DIR})
+
+ADD_DEFINITIONS (-DSCREENS_FACTORY=libkephal_factory)
+ADD_DEFINITIONS (-DOUTPUTS_FACTORY=libkephal_factory)
+ADD_DEFINITIONS (-DCONFIGURATIONS_FACTORY=libkephal_factory)
+
+SET (kephalshared_SRCS
+   ${CMAKE_CURRENT_SOURCE_DIR}/../shared/outputs.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/../shared/screens.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/../shared/configurations.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/../shared/simplescreen.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/../shared/simpleoutput.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/../shared/desktopwidgetoutputs.cpp
+   )
+
+set(libkephal_SRCS
+   ${kephalshared_SRCS}
+   libkephal.cpp
+   dbusconfigurations.cpp
+   dbusoutputs.cpp
+   dbusscreens.cpp
+   noconfigurations.cpp
+   )
+
+# generate dbus-interface from class and add the generated sources
+QT4_GENERATE_DBUS_INTERFACE(../service/dbus/dbusapi_screens.h org.kde.Kephal.Screens.xml)
+QT4_ADD_DBUS_INTERFACE(libkephal_SRCS ${CMAKE_CURRENT_BINARY_DIR}/org.kde.Kephal.Screens.xml screens_interface)
+QT4_GENERATE_DBUS_INTERFACE(../service/dbus/dbusapi_outputs.h org.kde.Kephal.Outputs.xml)
+QT4_ADD_DBUS_INTERFACE(libkephal_SRCS ${CMAKE_CURRENT_BINARY_DIR}/org.kde.Kephal.Outputs.xml outputs_interface)
+QT4_GENERATE_DBUS_INTERFACE(../service/dbus/dbusapi_configurations.h org.kde.Kephal.Configurations.xml)
+QT4_ADD_DBUS_INTERFACE(libkephal_SRCS ${CMAKE_CURRENT_BINARY_DIR}/org.kde.Kephal.Configurations.xml configurations_interface)
+
+KDE4_ADD_LIBRARY(kephal SHARED ${libkephal_SRCS})
+
+TARGET_LINK_LIBRARIES (kephal ${QT_QTDBUS_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
+
+set_target_properties(kephal PROPERTIES
+   VERSION ${GENERIC_LIB_VERSION}
+   SOVERSION ${GENERIC_LIB_SOVERSION}
+   INSTALL_RPATH_USE_LINK_PATH true
+   )
+
+INSTALL (TARGETS kephal EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS})
+
+INSTALL (FILES FindKephal.cmake DESTINATION ${DATA_INSTALL_DIR}/cmake/modules)

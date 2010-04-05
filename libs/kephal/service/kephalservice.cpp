@@ -17,69 +17,77 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "kephalservice.h"
 
-#include <QApplication>
+#include "config-kephal.h"
 
-#if 0
 #include <QDebug>
 #include <QDBusConnection>
-#include <QAbstractEventDispatcher>
-#include <QThread>
+#include <QApplication>
+#include <QTimer>
+
+#include <KConfig>
+#include <KConfigGroup>
+#include <KApplication>
 
 
-#include "outputs/desktopwidget/desktopwidgetoutputs.h"
-#include "screens/configuration/configurationscreens.h"
-#ifdef Q_WS_X11
-#include "outputs/xrandr/xrandroutputs.h"
-#endif
-#include "dbus/dbusapi_screens.h"
-#include "dbus/dbusapi_outputs.h"
-#include "dbus/dbusapi_configurations.h"
-#include "configurations/xml/xmlconfigurations.h"
-#ifdef Q_WS_X11
+#ifdef HAS_RANDR_1_2
 #include "xrandr12/randrdisplay.h"
 #include "xrandr12/randrscreen.h"
 #endif
+
+#include "desktopwidgetoutputs.h"
+#include "configurationscreens.h"
+
+#ifdef HAS_RANDR_1_2
+#include "xrandroutputs.h"
 #endif
 
-#include "kephalservice.h"
+#include "dbus/dbusapi_screens.h"
+#include "dbus/dbusapi_outputs.h"
+#include "dbus/dbusapi_configurations.h"
+#include "xmlconfigurations.h"
 
+using namespace Kephal;
 
+X11EventFilter::X11EventFilter(Kephal::XRandROutputs * outputs)
+: m_outputs(outputs)
+{}
 
-int main(int argc, char *argv[])
-{
-    QApplication app(argc, argv);
-    new KephalService(&app);
-    return app.exec();
+X11EventFilter::~X11EventFilter()
+{}
+
+#ifdef Q_WS_X11
+bool X11EventFilter::x11Event(XEvent * e) {
+#ifdef HAS_RANDR_1_2
+    if (m_outputs && m_outputs->display()->canHandle(e)) {
+        m_outputs->display()->handleEvent(e);
+    }
+#endif
+    return false;
 }
+#endif
 
-#if 0
-KephalD::KephalD(int & argc, char ** argv)
-    : QApplication(argc, argv),
+KephalService::KephalService(QObject * parent)
+    : QObject(parent),
     m_noXRandR(false)
 {
     qDebug() << "kephald starting up";
-
-    parseArgs(argc, argv);
     init();
 }
 
-KephalD::~KephalD()
+KephalService::~KephalService()
 {
+    delete m_eventFilter;
 }
 
-void KephalD::parseArgs(int & argc, char ** argv) {
-    for (int i = 0; i < argc; ++i) {
-        QString arg(argv[i]);
-        qDebug() << "arg:" << i << arg;
+void KephalService::init()
+{ KConfig config("kephalrc");
+    KConfigGroup general(&config, "General");
+    m_noXRandR = general.readEntry("NoXRandR", false);
 
-        if (arg == "--no-xrandr") {
-            m_noXRandR = true;
-        }
-    }
-}
-
-void KephalD::init() {
+    m_outputs = 0;
+#ifdef HAS_RANDR_1_2
     RandRDisplay * display;
     if (! m_noXRandR) {
         display = new RandRDisplay();
@@ -87,9 +95,15 @@ void KephalD::init() {
 
     if ((! m_noXRandR) && display->isValid()) {
         m_outputs = new XRandROutputs(this, display);
-    } else {
-        m_outputs = 0;
+        if (m_outputs->outputs().size() <= 1) {
+            delete m_outputs;
+            m_outputs = 0;
+        }
+    }
+#endif
+    if (! m_outputs) {
         new DesktopWidgetOutputs(this);
+
     }
 
     foreach (Output * output, Outputs::self()->outputs()) {
@@ -121,6 +135,9 @@ void KephalD::init() {
     new DBusAPIConfigurations(this);
 
     if (m_outputs) {
+        m_eventFilter = new X11EventFilter(m_outputs);
+        kapp->installX11EventFilter(m_eventFilter);
+
         m_pollTimer = new QTimer(this);
         connect(m_pollTimer, SIGNAL(timeout()), this, SLOT(poll()));
         if (Configurations::self()->polling()) {
@@ -128,37 +145,35 @@ void KephalD::init() {
         }
     } else {
         m_pollTimer = 0;
+        m_eventFilter = 0;
     }
 }
 
-void KephalD::pollingActivated() {
+void KephalService::pollingActivated()
+{
     if (m_pollTimer && m_outputs) {
         m_pollTimer->start(10000);
     }
 }
 
-void KephalD::pollingDeactivated() {
+void KephalService::pollingDeactivated()
+{
     if (m_pollTimer && m_outputs) {
         m_pollTimer->stop();
     }
 }
 
-void KephalD::poll() {
+void KephalService::poll()
+{
+#ifdef HAS_RANDR_1_2
     if (m_outputs) {
         m_outputs->display()->screen(0)->pollState();
     }
+#endif
 }
 
-bool KephalD::x11EventFilter(XEvent* e)
+void KephalService::activateConfiguration()
 {
-    if (m_outputs && m_outputs->display()->canHandle(e)) {
-        m_outputs->display()->handleEvent(e);
-    }
-
-    return QApplication::x11EventFilter(e);
-}
-
-void KephalD::activateConfiguration() {
     BackendConfigurations * configs = BackendConfigurations::self();
     Configuration * config = configs->findConfiguration();
     configs->applyOutputSettings();
@@ -169,12 +184,18 @@ void KephalD::activateConfiguration() {
     }
 }
 
-void KephalD::outputDisconnected(Output * output) {
+void KephalService::outputDisconnected(Output * output)
+{
+    Q_UNUSED(output)
 //     activateConfiguration();
 }
 
-void KephalD::outputConnected(Output * output) {
+void KephalService::outputConnected(Output * output)
+{
+    Q_UNUSED(output)
 //     activateConfiguration();
 }
 
-#endif
+#include "kephalservice.moc"
+
+// vim: sw=4 sts=4 et tw=100
