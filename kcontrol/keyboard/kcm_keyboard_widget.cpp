@@ -45,7 +45,7 @@
 
 static const QString GROUP_SWITCH_GROUP_NAME("grp");
 static const QString LV3_SWITCH_GROUP_NAME("lv3");
-static const QString RESET_XKB_OPTIONS("-option");
+//static const QString RESET_XKB_OPTIONS("-option");
 
 static const int TAB_HARDWARE = 0;
 //static const int TAB_LAYOUTS = 1;
@@ -93,14 +93,15 @@ void KCMKeyboardWidget::uiChanged()
 	keyboardConfig->configureLayouts = uiWidget->configureLayoutsChk->isChecked();
 	keyboardConfig->keyboardModel = uiWidget->keyboardModelComboBox->itemData(uiWidget->keyboardModelComboBox->currentIndex()).toString();
 
-    if( uiWidget->resetOldOptionsChk->isChecked() ) {
-    	if( ! keyboardConfig->xkbOptions.contains(RESET_XKB_OPTIONS) ) {
-    		keyboardConfig->xkbOptions.insert(0, RESET_XKB_OPTIONS);
-    	}
-    }
-    else {
-    	keyboardConfig->xkbOptions.removeAll(RESET_XKB_OPTIONS);
-    }
+	keyboardConfig->resetOldXkbOptions = uiWidget->configureKeyboardOptionsChk->isChecked();
+//    if( keyboardConfig->resetOldXkbOptions ) {
+//    	if( ! keyboardConfig->xkbOptions.contains(RESET_XKB_OPTIONS) ) {
+//    		keyboardConfig->xkbOptions.insert(0, RESET_XKB_OPTIONS);
+//    	}
+//    }
+//    else {
+//    	keyboardConfig->xkbOptions.removeAll(RESET_XKB_OPTIONS);
+//    }
 
 	updateXkbShortcutsButtons();
 	emit changed(true);
@@ -227,37 +228,10 @@ void KCMKeyboardWidget::initializeXkbOptionsUI()
 {
 	XkbOptionsTreeModel* model = new XkbOptionsTreeModel(rules, keyboardConfig, uiWidget->xkbOptionsTreeView);
 	uiWidget->xkbOptionsTreeView->setModel(model);
-//	connect(model, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(updateXkbShortcutsButtons()));
 	connect(model, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(uiChanged()));
-	connect(uiWidget->resetOldOptionsChk, SIGNAL(clicked(bool)), this, SLOT(uiChanged()));
 
-//    uiWidget->xkbOptionsToolbox->removeTab(0);
-//    foreach(OptionGroupInfo* optionGroupInfo, rules->optionGroupInfos) {
-//		QWidget* tab0 = new QWidget(uiWidget->xkbOptionsToolbox);
-//
-//		QWidget* tab = new QWidget(tab0);
-//
-//		QVBoxLayout *layout = new QVBoxLayout(tab);
-//		layout->setMargin(0);
-//		layout->setSpacing(KDialog::spacingHint());
-//
-//		if( optionGroupInfo->exlusive ) {
-//			QRadioButton* btn = new QRadioButton(i18n("None"), tab);
-//			btn->setChecked(true);
-//			layout->addWidget(btn);
-//		}
-//		foreach(OptionInfo* optionInfo, optionGroupInfo->optionInfos) {
-//			QPushButton* checkBox = optionGroupInfo->exlusive
-//					? (QPushButton*)new QRadioButton(optionInfo->description, tab)
-//					: (QPushButton*)new QCheckBox(optionInfo->description, tab);
-//			layout->addWidget(checkBox);
-//		}
-//
-//		QScrollArea* scrollArea = new QScrollArea(tab0);
-//		scrollArea->setWidget(tab);
-//
-//		uiWidget->xkbOptionsToolbox->addTab(tab0, optionGroupInfo->description);
-//	}
+	connect(uiWidget->configureKeyboardOptionsChk, SIGNAL(toggled(bool)), uiWidget->xkbOptionsTreeView, SLOT(setEnabled(bool)));
+	connect(uiWidget->configureKeyboardOptionsChk, SIGNAL(toggled(bool)), this, SLOT(uiChanged()));
 }
 
 void KCMKeyboardWidget::updateSwitcingPolicyUI()
@@ -317,7 +291,7 @@ void KCMKeyboardWidget::updateShortcutsUI()
 
 void KCMKeyboardWidget::updateXkbOptionsUI()
 {
-    uiWidget->resetOldOptionsChk->setChecked(keyboardConfig->xkbOptions.contains(RESET_XKB_OPTIONS));
+    uiWidget->configureKeyboardOptionsChk->setChecked(keyboardConfig->resetOldXkbOptions);
 }
 
 void KCMKeyboardWidget::updateLayoutsUI()

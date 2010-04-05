@@ -14,7 +14,7 @@
    <string>TabWidget</string>
   </property>
   <property name="currentIndex">
-   <number>1</number>
+   <number>2</number>
   </property>
   <widget class="QWidget" name="tabHardware">
    <attribute name="title">
@@ -148,6 +148,9 @@
          <property name="showGrid">
           <bool>false</bool>
          </property>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
          <attribute name="verticalHeaderVisible">
           <bool>false</bool>
          </attribute>
@@ -299,17 +302,17 @@
    </attribute>
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0" colspan="2">
-     <widget class="QCheckBox" name="resetOldOptionsChk">
+     <widget class="QCheckBox" name="configureKeyboardOptionsChk">
       <property name="text">
-       <string>&amp;Reset old options</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
+       <string>&amp;Configure keyboard options</string>
       </property>
      </widget>
     </item>
     <item row="1" column="0">
      <widget class="QTreeView" name="xkbOptionsTreeView">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="selectionMode">
        <enum>QAbstractItemView::NoSelection</enum>
       </property>

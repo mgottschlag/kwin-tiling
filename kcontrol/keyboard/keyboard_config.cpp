@@ -134,7 +134,12 @@ void KeyboardConfig::save()
     config.writeEntry("Model", keyboardModel);
 
     config.writeEntry("ResetOldOptions", resetOldXkbOptions);
-    config.writeEntry("Options", xkbOptions.join(LIST_SEPARATOR));
+    if( resetOldXkbOptions ) {
+    	config.writeEntry("Options", xkbOptions.join(LIST_SEPARATOR));
+    }
+    else {
+        config.deleteEntry("Options");
+    }
 
     config.writeEntry("Use", configureLayouts);
 
