@@ -119,10 +119,6 @@ void Task::timerEvent(QTimerEvent *)
 void Task::refreshIcon()
 {
     // try to load icon via net_wm
-    if (!d->pixmap) {
-        return;
-    }
-
     d->pixmap = KWindowSystem::icon(d->win, 16, 16, true);
 
     // try to guess the icon from the classhint
