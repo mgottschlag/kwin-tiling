@@ -1,16 +1,16 @@
-INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR}/../shared/ ${CMAKE_CURRENT_BINARY_DIR}/../shared ${CMAKE_CURRENT_BINARY_DIR})
+INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR}/../kephal ${CMAKE_CURRENT_BINARY_DIR}/../kephal ${CMAKE_CURRENT_BINARY_DIR})
 
 ADD_DEFINITIONS (-DSCREENS_FACTORY=libkephal_factory)
 ADD_DEFINITIONS (-DOUTPUTS_FACTORY=libkephal_factory)
 ADD_DEFINITIONS (-DCONFIGURATIONS_FACTORY=libkephal_factory)
 
 SET (kephalshared_SRCS
-   ${CMAKE_CURRENT_SOURCE_DIR}/../shared/outputs.cpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/../shared/screens.cpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/../shared/configurations.cpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/../shared/simplescreen.cpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/../shared/simpleoutput.cpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/../shared/desktopwidgetoutputs.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/outputs.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/screens.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/configurations.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/simplescreen.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/simpleoutput.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/desktopwidgetoutputs.cpp
    )
 
 set(libkephal_SRCS
