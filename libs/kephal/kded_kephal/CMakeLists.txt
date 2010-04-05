@@ -5,6 +5,7 @@ ${CMAKE_CURRENT_BINARY_DIR}/config-kephal.h )
 
 SET (kded_kephal_SRCS
         kephald.cpp
+        kephalservice.cpp
         ../xml/xmltype.cpp
         ../xml/configurations_xml.cpp
         ../xml/xmlnodehandler.cpp
