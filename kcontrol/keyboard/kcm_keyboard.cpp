@@ -100,6 +100,7 @@ void KCMKeyboard::load()
 	widget->getKcmMiscWidget()->load();
 }
 
+static void initializeKeyboardSettings();
 void KCMKeyboard::save()
 {
 	keyboardConfig->save();
@@ -107,6 +108,8 @@ void KCMKeyboard::save()
 
 	QDBusMessage message = QDBusMessage::createSignal(KEYBOARD_DBUS_OBJECT_PATH, KEYBOARD_DBUS_SERVICE_NAME, KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE);
     QDBusConnection::sessionBus().send(message);
+
+    initializeKeyboardSettings();
 }
 
 //TODO: exclude XInput somehow nicer
@@ -120,38 +123,41 @@ bool XEventNotifier::isNewDeviceEvent(XEvent* /*event*/)
 	return false;
 }
 
-
 static const char* KEYBOARD_KDED_NAME = "keyboard";
+
+static void initializeKeyboardSettings()
+{
+    kDebug() << "kcminit_keyboard";
+	KCMiscKeyboardWidget::init_keyboard();
+
+	KeyboardConfig config;
+	config.load();
+
+	// start/stop kded_keyboard from here if needed
+    QDBusInterface dbus_iface("org.kde.kded", "/kded");
+    bool daemonRunning = dbus_iface.call("loadedModules").arguments().at(0).toStringList().contains(KEYBOARD_KDED_NAME);
+    if( config.configureLayouts ) {
+    	if( ! daemonRunning ) {
+    		bool started = dbus_iface.call("loadModule", KEYBOARD_KDED_NAME).arguments().at(0).toBool();
+    		kDebug() << "keyboard daemon started" << started;
+    	}
+    	else {
+    		// initialize keyboard model and xkb options as daemon won't be there to do it
+    		XkbHelper::initializeKeyboardLayouts();
+    	}
+    }
+    else {
+    	if( daemonRunning ) {
+    		bool stopped = dbus_iface.call("unloadModule", KEYBOARD_KDED_NAME).arguments().at(0).toBool();
+    		kDebug() << "keyboard daemon stopped" << stopped;
+    	}
+    }
+}
 
 extern "C"
 {
 	KDE_EXPORT void kcminit_keyboard()
 	{
-	    kDebug() << "kcminit_keyboard";
-		KCMiscKeyboardWidget::init_keyboard();
-
-		KeyboardConfig config;
-		config.load();
-
-		// start/stop kded_keyboard from here if needed
-	    QDBusInterface dbus_iface("org.kde.kded", "/kded");
-	    bool daemonRunning = dbus_iface.call("loadedModules").arguments().at(0).toStringList().contains(KEYBOARD_KDED_NAME);
-	    qDebug() << daemonRunning;
-	    if( config.configureLayouts ) {
-	    	if( ! daemonRunning ) {
-	    		bool started = dbus_iface.call("loadModule", KEYBOARD_KDED_NAME).arguments().at(0).toBool();
-	    		qDebug() << "keyboard daemon started" << started;
-	    	}
-	    	else {
-	    		// initialize keyboard model and xkb options as daemon won't be there to do it
-	    		XkbHelper::initializeKeyboardLayouts();
-	    	}
-	    }
-	    else {
-	    	if( daemonRunning ) {
-	    		bool stopped = dbus_iface.call("unloadModule", KEYBOARD_KDED_NAME).arguments().at(0).toBool();
-	    		qDebug() << "keyboard daemon stopped" << stopped;
-	    	}
-	    }
+		initializeKeyboardSettings();
 	}
 }

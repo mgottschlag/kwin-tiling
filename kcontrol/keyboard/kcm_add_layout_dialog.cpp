@@ -85,7 +85,8 @@ void AddLayoutDialog::languageChanged(int langIdx)
 void AddLayoutDialog::layoutChanged(int layoutIdx)
 {
 	layoutDialogUi->variantComboBox->clear();
-	const LayoutInfo* layoutInfo = rules->layoutInfos[layoutIdx];
+	QString layoutName = layoutDialogUi->layoutComboBox->itemData(layoutIdx).toString();
+	const LayoutInfo* layoutInfo = rules->getLayoutInfo(layoutName);
     foreach(const VariantInfo* variantInfo, layoutInfo->variantInfos) {
     	layoutDialogUi->variantComboBox->addItem(variantInfo->description, variantInfo->name);
     }

@@ -45,7 +45,6 @@ class KeyboardConfig
 public:
 	static const int MAX_LABEL_LEN = 3;
 
-//	enum NumLockSate { ON = 0, OFF = 1, NO_CHANGE = 2 };
 	enum SwitchingPolicy {
 		SWITCH_POLICY_GLOBAL = 0,
 		SWITCH_POLICY_DESKTOP = 1,
@@ -53,20 +52,13 @@ public:
 		SWITCH_POLICY_WINDOW = 3
 	};
 
-	// init hardware options
-//	int clickVolume;
-//	bool keyboardRepeat;
-//	int repeatDelay;
-//	int repeatRate;
-//	NumLockSate numlockState;
-
 	QString keyboardModel;
 	bool resetOldXkbOptions;
 	QStringList xkbOptions;
 
 	// init layouts options
 	bool configureLayouts;
-	QList<LayoutConfig> layouts;		// one layout is "layout : variant" or "layout"
+	QList<LayoutConfig> layouts;
 
 	// switch cotrol options
 	SwitchingPolicy switchingPolicy;

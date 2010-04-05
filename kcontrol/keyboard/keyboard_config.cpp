@@ -20,11 +20,10 @@
 
 #include <ksharedconfig.h>
 #include <kconfiggroup.h>
-//#include <kdebug.h>
+#include <kdebug.h>
 
 
 static const char* SWITCHING_POLICIES[] = {"Global", "Desktop", "WinClass", "Window", NULL };
-//static const char* NUMLOCK_POLICIES[] = {"On", "Off", "NoChange", NULL };
 static const char* LIST_SEPARATOR = ",";
 static const char* DEFAULT_LAYOUT = "us";
 static const char* DEFAULT_MODEL = "pc104";
@@ -67,12 +66,6 @@ static LayoutConfig createLayoutConfig(const QString& string)
 
 void KeyboardConfig::setDefaults()
 {
-//	keyboardRepeat = true;
-//	repeatDelay = 660;
-//	repeatRate = 25;
-//	clickVolume = 0;
-//	numlockState = NO_CHANGE;
-
 	keyboardModel = DEFAULT_MODEL;
 	resetOldXkbOptions = false;
 	xkbOptions.clear();
@@ -97,13 +90,6 @@ void KeyboardConfig::load()
 {
     KConfigGroup config(KSharedConfig::openConfig( CONFIG_FILENAME, KConfig::NoGlobals ), CONFIG_GROUPNAME);
 
-//    keyboardRepeat = config.readEntry("KeyboardRepeating", true);
-//    repeatDelay = config.readEntry( "RepeatDelay", 660 );
-//    repeatRate = config.readEntry( "RepeatRate", 25. );
-//    clickVolume = config.readEntry("ClickVolume", 0 );
-//    QString state = config.readEntry( "NumLock", "NoChange" );
-//	numlockState = static_cast<NumLockSate>(findStringIndex(NUMLOCK_POLICIES, state, NO_CHANGE));
-
     keyboardModel = config.readEntry("Model", "");
 
     resetOldXkbOptions = config.readEntry("ResetOldOptions", false);
@@ -125,6 +111,8 @@ void KeyboardConfig::load()
 	switchingPolicy = static_cast<SwitchingPolicy>(findStringIndex(SWITCHING_POLICIES, layoutMode, SWITCH_POLICY_GLOBAL));
 
 	showFlag = config.readEntry("ShowFlag", true);
+
+	kDebug() << "configuring layouts" << configureLayouts << ", configuring options" << resetOldXkbOptions;
 }
 
 void KeyboardConfig::save()

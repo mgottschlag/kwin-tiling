@@ -4,9 +4,6 @@ Arch:
 * merge kcm_keyboard.desktop and keyboard.desktop ?
 	
 KCM UI
-* KDE shortcut (Done, for old compatibility need to be named "kxkb")
-* find right default for reset xkb options
-
 * allow changing layout order
 * allow changing variant without readding layout
 
@@ -17,8 +14,8 @@ plasma applet & part
 *  auto layout name (DisplayNames) for dup layouts
 *  tooltip
   
-plasma
-*  config UI (showFlag)
+plasma applet
+*  config UI (showFlag/bring kcm)
 
 Cleanup:
 * rules, iso_codes:
