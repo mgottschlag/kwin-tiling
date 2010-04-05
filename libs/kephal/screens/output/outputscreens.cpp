@@ -21,15 +21,16 @@
 #include "outputscreens.h"
 
 #include <QDebug>
-
+#include <QTimer>
 
 namespace Kephal {
 
     OutputScreens::OutputScreens(QObject * parent)
         : Screens(parent),
-        m_rebuildTimerId(0),
-        m_rebuildDelay(0)
+        m_rebuildTimer(new QTimer(this))
     {
+        m_rebuildTimer->setSingleShot(true);
+        connect(m_rebuildTimer, SIGNAL(timeout()), this, SLOT(rebuildTimeout()));
         init();
     }
 
@@ -89,10 +90,12 @@ namespace Kephal {
 
     void OutputScreens::buildScreens() {
         foreach (Output * output, Outputs::self()->outputs()) {
+            // for each connected and active output,
             if (! output->isConnected() || ! output->isActivated()) {
                 continue;
             }
 
+            // look for any screen which intersects this output, and add it to the screen
             bool found = false;
             foreach (OutputScreen * screen, m_screens) {
                 if (screen->geom().intersects(output->geom())) {
@@ -101,6 +104,7 @@ namespace Kephal {
                     break;
                 }
             }
+            // if the output did not intersect, add it to the first empty screen found
             if (! found) {
                 foreach (OutputScreen * screen, m_screens) {
                     if (screen->outputs().empty()) {
@@ -110,6 +114,7 @@ namespace Kephal {
                     }
                 }
             }
+            // if no empty screen found, generate one and add this output to it.
             if (! found) {
                 OutputScreen * screen = new OutputScreen(this);
                 screen->_setId(findId());
@@ -118,6 +123,7 @@ namespace Kephal {
             }
         }
 
+        // remove any remaining empty screens 
         for (QMap<int, OutputScreen *>::iterator i = m_screens.begin(); i != m_screens.end();) {
             if (i.value()->outputs().empty()) {
                 i = m_screens.erase(i);
@@ -126,6 +132,7 @@ namespace Kephal {
             }
         }
 
+        // remove any intersecting Screens and add removed Screens' Outputs to the intersected Screen
         bool changed;
         do {
             changed = false;
@@ -153,8 +160,11 @@ namespace Kephal {
             }
         } while (changed);
 
+        // I think this tries to renumber m_screens from 0, removing any gaps due to removed
+        // intersecting screens
         for (int i = 0; i < m_screens.size(); ++i) {
             if (! m_screens.contains(i)) {
+                // get the lowest numbered screen in m_screens
                 int min = -1;
                 for (QMap<int, OutputScreen *>::iterator it = m_screens.begin(); it != m_screens.end(); ++it) {
                     if ((min == -1) || (it.key() < min)) {
@@ -170,23 +180,12 @@ namespace Kephal {
 
     void OutputScreens::triggerRebuildScreens() {
         qDebug() << "OutputScreens::triggerRebuildScreens()";
-        m_rebuildDelay = 5;
-        if (! m_rebuildTimerId)
-            m_rebuildTimerId = startTimer(40);
+        m_rebuildTimer->start(200);
     }
 
-    void OutputScreens::timerEvent(QTimerEvent *event) {
-        Q_UNUSED(event)
-        if (m_rebuildDelay == 0) {
-            killTimer(m_rebuildTimerId);
-            m_rebuildTimerId = 0;
-            rebuildScreens();
-        }
-
-        m_rebuildDelay--;
+    void OutputScreens::rebuildTimeout() {
+        rebuildScreens();
     }
-
-
 
     void OutputScreens::rebuildScreens() {
         qDebug() << "OutputScreens::rebuildScreens()";

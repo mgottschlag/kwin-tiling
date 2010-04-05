@@ -27,6 +27,7 @@
 #include "kephal/outputs.h"
 
 
+class QTimer;
 namespace Kephal {
 
     /**
@@ -62,13 +63,12 @@ namespace Kephal {
             void rebuildScreens();
             void triggerRebuildScreens(); // Triggers a rebuild aftera short delay; requests are coalesced.
 
-            void timerEvent(QTimerEvent *event);
-
         private Q_SLOTS:
             void outputActivated(Kephal::Output * o);
             void outputDeactivated(Kephal::Output * o);
             void outputResized(Kephal::Output * o, QSize oldSize, QSize newSize);
             void outputMoved(Kephal::Output * o, QPoint oldPosition, QPoint newPosition);
+            void rebuildTimeout();
 
         private:
             void init();
@@ -77,8 +77,7 @@ namespace Kephal {
 
             QMap<int, OutputScreen *> m_screens;
 
-            int m_rebuildTimerId;
-            int m_rebuildDelay;
+            QTimer * m_rebuildTimer;
     };
 
 }
