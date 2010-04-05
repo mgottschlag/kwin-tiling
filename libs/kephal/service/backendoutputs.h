@@ -21,7 +21,7 @@
 #ifndef KEPHAL_BACKENDOUTPUTS_H
 #define KEPHAL_BACKENDOUTPUTS_H
 
-#include "kephal/outputs.h"
+#include "outputs.h"
 
 
 namespace Kephal {

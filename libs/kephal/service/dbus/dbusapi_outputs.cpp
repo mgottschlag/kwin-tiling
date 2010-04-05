@@ -19,7 +19,7 @@
 
 
 #include "dbusapi_outputs.h"
-#include "kephal/outputs.h"
+#include "outputs.h"
 #include "outputsadaptor.h"
 
 #include <QDebug>

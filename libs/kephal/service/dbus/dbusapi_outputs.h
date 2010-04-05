@@ -24,7 +24,7 @@
 
 #include <QObject>
 
-#include "kephal/kephal.h"
+#include "kephal.h"
 
 #include <QSize>
 #include <QPoint>

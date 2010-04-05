@@ -19,9 +19,9 @@
 
 
 #include "dbusapi_configurations.h"
-#include "kephal/configurations.h"
+#include "configurations.h"
 #include "configurationsadaptor.h"
-#include "kephal/outputs.h"
+#include "outputs.h"
 
 #include <QDebug>
 #include <QObject>

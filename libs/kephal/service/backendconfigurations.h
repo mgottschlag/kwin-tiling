@@ -26,7 +26,7 @@
 #include <QPoint>
 #include <QRect>
 
-#include "kephal/configurations.h"
+#include "configurations.h"
 
 
 namespace Kephal {

@@ -18,12 +18,12 @@
  */
 
 
-#include "kephal/outputs.h"
+#include "outputs.h"
 
 #include <QDebug>
 
-#include "kephal/screens.h"
-#include "kephal/configurations.h"
+#include "screens.h"
+#include "configurations.h"
 
 #ifdef OUTPUTS_FACTORY
 void OUTPUTS_FACTORY();

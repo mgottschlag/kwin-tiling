@@ -21,7 +21,7 @@
 #ifndef KEPHAL_NOCONFIGURATIONS_H
 #define KEPHAL_NOCONFIGURATIONS_H
 
-#include "kephal/configurations.h"
+#include "configurations.h"
 
 
 namespace Kephal {

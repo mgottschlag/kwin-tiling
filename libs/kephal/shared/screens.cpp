@@ -18,8 +18,8 @@
  */
 
 
-#include "kephal/screens.h"
-#include "kephal/configurations.h"
+#include "screens.h"
+#include "configurations.h"
 
 #include <QApplication>
 #include <QDesktopWidget>
