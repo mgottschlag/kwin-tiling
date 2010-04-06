@@ -494,8 +494,9 @@ int ItemContainer::rowForPosition(const QPointF &point)
     for (int y = 0; y < m_layout->rowCount(); ++y) {
         item = m_layout->itemAt(y, 0);
 
-        if (item && item->geometry().center().y() < point.y()) {
+        if (item && item->geometry().center().y() > point.y()) {
             row = y;
+            break;
         }
     }
     if (row == -1 && point.y() > m_layout->geometry().center().y()) {
@@ -505,8 +506,9 @@ int ItemContainer::rowForPosition(const QPointF &point)
     for (int x = 0; x < m_layout->columnCount(); ++x) {
         item = m_layout->itemAt(0, x);
 
-        if (item && item->geometry().center().x() < point.x()) {
+        if (item && item->geometry().center().x() > point.x()) {
             column = x;
+            break;
         }
     }
     if (column == -1 && point.x() > m_layout->geometry().center().x()) {
