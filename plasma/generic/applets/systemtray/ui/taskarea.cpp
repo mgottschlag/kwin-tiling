@@ -326,6 +326,12 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
     if (task->hidden() == Task::NotHidden) {
         if (d->hiddenTasks.contains(task)) {
             widget->setParentItem(d->host);
+            for (int i = 0; i < d->hiddenTasksLayout->count(); ++i) {
+                if (d->hiddenTasksLayout->itemAt(i) == d->hiddenTasks.value(task)) {
+                    d->hiddenTasksLayout->removeAt(i);
+                    break;
+                }
+            }
             d->hiddenTasks.value(task)->deleteLater();
             d->hiddenTasks.remove(task);
         }
