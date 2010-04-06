@@ -61,6 +61,7 @@
 Dtime::Dtime(QWidget * parent)
   : QWidget(parent)
 {
+  KGlobal::locale()->insertCatalog( "timezones4" );
   setupUi(this);
 
   connect(setDateTimeAuto, SIGNAL(toggled(bool)), this, SLOT(serverTimeCheck()));
