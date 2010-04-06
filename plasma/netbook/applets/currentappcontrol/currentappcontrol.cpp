@@ -300,6 +300,7 @@ void CurrentAppControl::listWindows()
 
         m_listDialog->setWindowFlags(Qt::FramelessWindowHint|Qt::Dialog);
         KWindowSystem::setType(m_listDialog->winId(), NET::PopupMenu);
+        KWindowSystem::setState(m_listDialog->winId(), NET::SkipTaskbar);
         m_listDialog->setAttribute(Qt::WA_DeleteOnClose);
         m_listDialog->installEventFilter(this);
 
@@ -309,17 +310,19 @@ void CurrentAppControl::listWindows()
         lay->setOrientation(Qt::Vertical);
 
         foreach(WId window, KWindowSystem::stackingOrder()) {
-            KWindowInfo info = KWindowSystem::windowInfo(window, NET::WMName);
-            Plasma::IconWidget *icon = new Plasma::IconWidget(m_listWidget);
-            icon->setOrientation(Qt::Horizontal);
-            icon->setText(info.name());
-            icon->setIcon(KWindowSystem::icon(window, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium));
-            icon->setTextBackgroundColor(QColor());
-            icon->setDrawBackground(true);
-            icon->setMinimumSize(icon->effectiveSizeHint(Qt::PreferredSize));
-            connect(icon, SIGNAL(clicked()), this, SLOT(windowItemClicked()));
-            m_windowIcons[icon] = window;
-            lay->addItem(icon);
+            KWindowInfo info = KWindowSystem::windowInfo(window, NET::WMName|NET::WMState|NET::WMWindowType);
+            if (!(info.state() & NET::SkipTaskbar) && info.windowType(NET::NormalMask) == NET::Normal) {
+                Plasma::IconWidget *icon = new Plasma::IconWidget(m_listWidget);
+                icon->setOrientation(Qt::Horizontal);
+                icon->setText(info.name());
+                icon->setIcon(KWindowSystem::icon(window, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium));
+                icon->setTextBackgroundColor(QColor());
+                icon->setDrawBackground(true);
+                icon->setMinimumSize(icon->effectiveSizeHint(Qt::PreferredSize));
+                connect(icon, SIGNAL(clicked()), this, SLOT(windowItemClicked()));
+                m_windowIcons[icon] = window;
+                lay->addItem(icon);
+            }
         }
         if (corona) {
             m_listDialog->move(containment()->corona()->popupPosition(this, m_listDialog->size()));
