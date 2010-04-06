@@ -68,6 +68,7 @@ signals:
 
 private slots:
     void relayout();
+    void relayoutHiddenTasks();
 
 private:
     void addWidgetForTask(SystemTray::Task *task);

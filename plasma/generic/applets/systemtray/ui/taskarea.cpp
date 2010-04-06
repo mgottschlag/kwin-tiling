@@ -167,6 +167,7 @@ public:
     QGraphicsGridLayout *hiddenTasksLayout;
     Plasma::Location location;
     Plasma::ItemBackground *itemBackground;
+    QTimer *hiddenRelayoutTimer;
 
     QSet<QString> hiddenTypes;
     QSet<QString> alwaysShownTypes;
@@ -190,6 +191,9 @@ TaskArea::TaskArea(SystemTray::Applet *parent)
 
     d->hiddenTasksWidget = new QGraphicsWidget(this);
     d->hiddenTasksLayout = new QGraphicsGridLayout(d->hiddenTasksWidget);
+    d->hiddenRelayoutTimer = new QTimer(this);
+    d->hiddenRelayoutTimer->setSingleShot(true);
+    connect(d->hiddenRelayoutTimer, SIGNAL(timeout()), this, SLOT(relayoutHiddenTasks()));
 }
 
 
@@ -334,6 +338,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
             }
             d->hiddenTasks.value(task)->deleteLater();
             d->hiddenTasks.remove(task);
+            d->hiddenRelayoutTimer->start(250);
         }
     } else if (!d->hiddenTasks.contains(task)) {
         HiddenTaskLabel *hiddenWidget = new HiddenTaskLabel(widget, task->name(), d->itemBackground, d->hiddenTasksWidget);
@@ -356,6 +361,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
             for (int i = 0; i < d->hiddenTasksLayout->count(); ++i) {
                 if (d->hiddenTasksLayout->itemAt(i) == widget) {
                     d->hiddenTasksLayout->removeAt(i);
+                    d->hiddenRelayoutTimer->start(250);
                     break;
                 }
             }
@@ -426,6 +432,22 @@ void TaskArea::relayout()
 {
     d->topLayout->invalidate();
     emit sizeHintChanged(Qt::PreferredSize);
+}
+
+void TaskArea::relayoutHiddenTasks()
+{
+    for (int i = 0; i < d->hiddenTasksLayout->count(); ++i) {
+         d->hiddenTasksLayout->removeAt(i);
+    }
+
+    QHash<SystemTray::Task*, HiddenTaskLabel *>::const_iterator i = d->hiddenTasks.constBegin();
+    int row = 0;
+    while (i != d->hiddenTasks.constEnd()) {
+        d->hiddenTasksLayout->addItem(i.key()->widget(d->host), row, 0);
+        d->hiddenTasksLayout->addItem(i.value(), row, 1);
+        ++i;
+        ++row;
+    }
 }
 
 int TaskArea::leftEasement() const
