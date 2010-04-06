@@ -304,6 +304,8 @@ void Notifications::addJob(Job *job)
         m_standaloneJobSummaryDialog->setGraphicsWidget(m_standaloneJobSummaryWidget);
         //FIXME:sizing hack and layout issues..
         m_standaloneJobSummaryWidget->resize(m_standaloneJobSummaryWidget->size().width(), 32);
+        m_standaloneJobSummaryWidget->setMaximumHeight(48);
+        m_standaloneJobSummaryWidget->setMinimumHeight(48);
     }
 
     m_standaloneJobSummaryDialog->syncToGraphicsWidget();
