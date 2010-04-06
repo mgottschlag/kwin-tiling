@@ -93,7 +93,7 @@ FDialog::adjustGeometry()
 
 	QRect scr = dsk->screenGeometry( _greeterScreen );
 	if (!winFrame)
-		setFixedSize( scr.size() );
+		setGeometry( scr );
 	else {
 		setMaximumSize( scr.size() * .9 );
 		setMinimumSize( 0, 0 );
