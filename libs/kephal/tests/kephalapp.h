@@ -23,8 +23,11 @@
 
 #include <QApplication>
 
-#include <kephal/screens.h>
 
+namespace Kephal
+{
+    class Screen;
+} // namespace Kephal
 
 class KephalApp : public QApplication
 {

@@ -19,8 +19,8 @@
 
 
 #include "kephalapp.h"
-#include "screens.h"
-#include "outputs.h"
+#include "kephal/screens.h"
+#include "kephal/outputs.h"
 
 
 #include <QDebug>
