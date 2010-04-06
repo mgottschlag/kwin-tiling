@@ -153,7 +153,7 @@ void StripWidget::reorderItem(const QModelIndex &index, const QPointF &pos)
         m_favouritesModel->removeRow(index.row());
     } else {
         QList<QStandardItem *>items = m_favouritesModel->takeRow(index.row());
-        int row = m_itemView->rowForPosition(pos);
+        int row = m_itemView->rowForPosition(m_itemView->mapFromParent(pos));
 
         m_favouritesModel->insertRow(row, items);
     }
@@ -273,7 +273,7 @@ void StripWidget::dropEvent(QGraphicsSceneDragDropEvent *event)
 
          dataStream >>url;
 
-         int row = m_itemView->rowForPosition(event->pos());
+         int row = m_itemView->rowForPosition(m_itemView->mapFromParent(event->pos()));
          QModelIndex index = m_favouritesModel->index(row, 0, QModelIndex());
          //TODO: proper index
          m_favouritesModel->add(url.toString(), index);
