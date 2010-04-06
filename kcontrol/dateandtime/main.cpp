@@ -77,30 +77,33 @@ KclockModule::KclockModule(QWidget *parent, const QVariantList &)
   setButtons(Help|Apply);
 
   setNeedsAuthorization(true);
-  
+
   process = NULL;
 }
 
 void KclockModule::save()
 {
+  setDisabled(true);
+
   QVariantMap helperargs;
   dtime->save( helperargs );
-  
+
   Action *action = authAction();
   action->setArguments(helperargs);
-  
+
   ActionReply reply = action->execute();
-  
-  if (reply.failed())
-  {
+
+  if (reply.failed()) {
     if (reply.type() == ActionReply::KAuthError) {
           KMessageBox::error(this, i18n("Unable to authenticate/execute the action: %1, %2", reply.errorCode(), reply.errorDescription()));
     } else {
         dtime->processHelperErrors(reply.errorCode());
     }
-    
   }
+
+  setDisabled(false);
 }
+
 void KclockModule::slotDateTimeHelperFinished(int exitCode)
 {
     dtime->processHelperErrors( exitCode );
