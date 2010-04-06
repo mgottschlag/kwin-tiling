@@ -25,6 +25,7 @@
 #include <KRandom>
 #include <KStandardDirs>
 #include <KIO/Job>
+#include <krun.h>
 #include <knewstuff3/downloaddialog.h>
 
 #include <Plasma/Theme>
@@ -44,13 +45,17 @@ Image::Image(QObject *parent, const QVariantList &args)
       m_model(0),
       m_dialog(0),
       m_randomize(true),
-      m_newStuffDialog(0)
+      m_newStuffDialog(0),
+      m_nextWallpaperAction(0),
+      m_openImageAction(0)
 {
     connect(this, SIGNAL(renderCompleted(QImage)), this, SLOT(updateBackground(QImage)));
     connect(this, SIGNAL(urlDropped(KUrl)), this, SLOT(setWallpaper(KUrl)));
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(nextSlide()));
-    nextWallpaperAction = new QAction(KIcon("user-desktop"), i18n("Next Wallpaper Image"), NULL);
-    connect(nextWallpaperAction, SIGNAL(triggered(bool)), this, SLOT(nextSlide()));
+    m_nextWallpaperAction = new QAction(KIcon("user-desktop"), i18n("Next Wallpaper Image"), NULL);
+    connect(m_nextWallpaperAction, SIGNAL(triggered(bool)), this, SLOT(nextSlide()));
+    m_openImageAction = new QAction(KIcon("document-open"), i18n("Open Wallpaper Image"), NULL);
+    connect(m_openImageAction, SIGNAL(triggered(bool)), this, SLOT(openSlide()));
 }
 
 Image::~Image()
@@ -91,7 +96,8 @@ void Image::init(const KConfigGroup &config)
     } else {
         QTimer::singleShot(200, this, SLOT(startSlideshow()));
         QList<QAction*> actions;
-        actions.push_back(nextWallpaperAction);
+        actions.push_back(m_nextWallpaperAction);
+        actions.push_back(m_openImageAction);
         setContextualActions(actions);
     }
 
@@ -138,7 +144,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         //if a cleaner way can be found to achieve all this, that would be great
         m_uiImage.m_view->setMinimumWidth((BackgroundDelegate::SCREENSHOT_SIZE + BackgroundDelegate::MARGIN * 2) * 3 +
                                            m_uiImage.m_view->spacing() * 4 +
-                                           QApplication::style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 
+                                           QApplication::style()->pixelMetric(QStyle::PM_ScrollBarExtent) +
                                            QApplication::style()->pixelMetric(QStyle::PM_DefaultFrameWidth) * 2 + 7);
         m_uiImage.m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
@@ -579,6 +585,14 @@ void Image::nextSlide()
     renderWallpaper(current);
 }
 
+void Image::openSlide()
+{
+    // open in image viewer
+    KUrl filepath(m_wallpaperPackage->filePath("preferred"));
+    kDebug() << "opening file " << filepath.path();
+    new KRun(filepath, NULL);
+}
+
 void Image::renderWallpaper(const QString& image)
 {
     if (!image.isEmpty()) {
@@ -634,7 +648,7 @@ void Image::setFadeValue(qreal value)
     p.begin(&m_oldFadedPixmap);
     p.drawPixmap(0, 0, m_oldPixmap);
 
-    p.setCompositionMode(QPainter::CompositionMode_DestinationIn);  
+    p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
     p.fillRect(m_oldFadedPixmap.rect(), QColor(0, 0, 0, 254 * (1-m_fadeValue)));//255*((150 - m_fadeValue)/150)));
 
     p.end();

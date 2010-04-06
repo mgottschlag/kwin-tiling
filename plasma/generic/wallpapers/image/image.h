@@ -60,6 +60,10 @@ class Image : public Plasma::Wallpaper
         void pictureChanged(const QModelIndex &);
         void wallpaperBrowseCompleted();
         void nextSlide();
+        /**
+         * Open the current slide in the default image application
+         */
+        void openSlide();
         void updateBackground(const QImage &img);
         void showFileDialog();
         void setFadeValue(qreal value);
@@ -113,7 +117,8 @@ class Image : public Plasma::Wallpaper
         bool m_randomize;
         KNS3::DownloadDialog* m_newStuffDialog;
 
-        QAction* nextWallpaperAction;
+        QAction* m_nextWallpaperAction;
+        QAction* m_openImageAction;
 };
 
 #endif
