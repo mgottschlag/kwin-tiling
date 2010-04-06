@@ -99,7 +99,7 @@ int ClockHelper::date( const QString& newdate, const QString& olddate )
 int ClockHelper::tz( const QString& selectedzone )
 {
     int ret = 0;
-#if defined(USE_SOLARIS)  // MARCO
+#if defined(USE_SOLARIS)	// MARCO
 
         KTemporaryFile tf;
         tf.setPrefix("kde-tzone");
@@ -165,25 +165,17 @@ int ClockHelper::tz( const QString& selectedzone )
 #else
         QString tz = "/usr/share/zoneinfo/" + selectedzone;
 
-        if( !KStandardDirs::findExe( "zic" ).isEmpty())
-        {
+        if( !KStandardDirs::findExe( "zic" ).isEmpty()) {
             KProcess::execute("zic", QStringList() << "-l" << selectedzone);
-        }
-        else
-        {
-            if (!QFile::remove("/etc/localtime"))
-            {
-                ret |= TimezoneError;
-            }
-            else
-                if (!QFile::copy(tz,"/etc/localtime"))
-                    ret |= TimezoneError;
+        } else if (!QFile::remove("/etc/localtime")) {
+          ret |= TimezoneError;
+        } else if (!QFile::copy(tz, "/etc/localtime")) {
+          ret |= TimezoneError;
         }
 
         QFile fTimezoneFile("/etc/timezone");
 
-        if (fTimezoneFile.exists() && fTimezoneFile.open(QIODevice::WriteOnly | QIODevice::Truncate) )
-        {
+        if (fTimezoneFile.exists() && fTimezoneFile.open(QIODevice::WriteOnly | QIODevice::Truncate) ) {
             QTextStream t(&fTimezoneFile);
             t << selectedzone;
             fTimezoneFile.close();

@@ -109,9 +109,8 @@ Dtime::Dtime(QWidget * parent)
 
   kclock->setEnabled(false);
 
-
   //Timezone
-  connect( tzonelist, SIGNAL(itemSelectionChanged()), SLOT(handleZoneChange()) );
+  connect( tzonelist, SIGNAL(itemSelectionChanged()), SLOT(configChanged()) );
   tzonesearch->setTreeWidget(tzonelist);
 }
 
@@ -254,12 +253,12 @@ void Dtime::save( QVariantMap& helperargs )
 
   QStringList selectedZones(tzonelist->selection());
 
-  if (selectedZones.count() > 0){
+  if (selectedZones.count() > 0) {
     QString selectedzone(selectedZones[0]);
     helperargs["tz"] = true;
     helperargs["tzone"] = selectedzone;
   } else {
-      helperargs["tzreset"] = true; // // make the helper reset the timezone
+    helperargs["tzreset"] = true; // // make the helper reset the timezone
   }
 
   currentZone();
@@ -276,7 +275,7 @@ void Dtime::processHelperErrors( int code )
   }
   if( code & ClockHelper::TimezoneError)
     KMessageBox::error( this, i18n("Error setting new time zone."),
-        i18n("Time zone Error"));
+                        i18n("Time zone Error"));
 }
 
 void Dtime::timeout()

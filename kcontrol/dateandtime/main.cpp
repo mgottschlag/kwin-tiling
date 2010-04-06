@@ -101,7 +101,14 @@ void KclockModule::save()
     }
   }
 
-  setDisabled(false);
+  // NOTE: super nasty hack #1
+  // Try to work around time mismatch between KSystemTimeZones' update of local
+  // timezone and reloading of data, so that the new timezone is taken into account.
+  // The Ultimate solution to this would be if KSTZ emitted a signal when a new
+  // local timezone was found.
+  QTimer::singleShot(5000, this, SLOT(load()));
+
+  // setDisable(false) happens in load(), since QTimer::singleShot is non-blocking
 }
 
 void KclockModule::slotDateTimeHelperFinished(int exitCode)
@@ -117,4 +124,5 @@ void KclockModule::slotDateTimeHelperFinished(int exitCode)
 void KclockModule::load()
 {
   dtime->load();
+  setDisabled(false);
 }
