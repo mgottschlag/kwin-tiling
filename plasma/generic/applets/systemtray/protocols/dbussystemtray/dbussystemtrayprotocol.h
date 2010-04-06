@@ -44,13 +44,11 @@ public:
     void init();
 
 protected:
-    void newTask(const QString &service);
-    void cleanupTask(const QString &typeId);
     void initRegisteredServices();
 
 protected Q_SLOTS:
-    void taskAdded(const QString &taskName);
-    void taskRemoved(const QString &taskName);
+    void newTask(const QString &service);
+    void cleanupTask(const QString &typeId);
 
 private:
     Plasma::DataEngine *m_dataEngine;

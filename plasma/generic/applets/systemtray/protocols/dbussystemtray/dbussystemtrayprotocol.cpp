@@ -45,20 +45,10 @@ void DBusSystemTrayProtocol::init()
     if (m_dataEngine->isValid()) {
         initRegisteredServices();
         connect(m_dataEngine, SIGNAL(sourceAdded(const QString&)),
-                this, SLOT(taskAdded(const QString&)));
+                this, SLOT(newTask(const QString&)));
         connect(m_dataEngine, SIGNAL(sourceRemoved(const QString&)),
-                this, SLOT(taskRemoved(const QString&)));
+                this, SLOT(cleanupTask(const QString&)));
     }
-}
-
-void DBusSystemTrayProtocol::taskAdded(const QString &taskName)
-{
-    newTask(taskName);
-}
-
-void DBusSystemTrayProtocol::taskRemoved(const QString &taskName)
-{
-    cleanupTask(taskName);
 }
 
 void DBusSystemTrayProtocol::newTask(const QString &service)
