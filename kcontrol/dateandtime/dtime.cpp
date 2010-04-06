@@ -104,10 +104,10 @@ Dtime::Dtime(QWidget * parent)
   connect( cal, SIGNAL(dateChanged(QDate)), SLOT(changeDate(QDate)));
 
   connect( &internalTimer, SIGNAL(timeout()), SLOT(timeout()) );
-  
+
   kclock->setEnabled(false);
-  
-  
+
+
   //Timezone
   connect( tzonelist, SIGNAL(itemSelectionChanged()), SLOT(handleZoneChange()) );
 }
@@ -133,23 +133,24 @@ void Dtime::serverTimeCheck() {
 
 void Dtime::findNTPutility(){
   QByteArray envpath = qgetenv("PATH");
-  if (!envpath.isEmpty() && envpath[0] == ':')
+  if (!envpath.isEmpty() && envpath[0] == ':') {
     envpath = envpath.mid(1);
+  }
+
   QString path = "/sbin:/usr/sbin:";
-  if (!envpath.isEmpty())
+  if (!envpath.isEmpty()) {
     path += QString::fromLocal8Bit(envpath);
-  else
+  } else {
     path += QLatin1String("/bin:/usr/bin");
-  if(!KStandardDirs::findExe("ntpdate", path).isEmpty()) {
-    ntpUtility = "ntpdate";
-    kDebug() << "ntpUtility = " << ntpUtility;
-    return;
   }
-  if(!KStandardDirs::findExe("rdate").isEmpty()) {
-    ntpUtility = "rdate";
-    kDebug() << "ntpUtility = " << ntpUtility;
-    return;
+
+  foreach(QString possible_ntputility, QStringList() << "ntpdate" << "rdate" ) {
+    if( !((ntpUtility = KStandardDirs::findExe(possible_ntputility, path)).isEmpty()) ) {
+      kDebug() << "ntpUtility = " << ntpUtility;
+      return;
+    }
   }
+
   ///privateLayoutWidget->hide();
   kDebug() << "ntpUtility not found!";
 }
@@ -201,7 +202,7 @@ oceania.pool.ntp.org")).split(',', QString::SkipEmptyParts));
   internalTimer.start( 1000 );
 
   timeout();
-  
+
   //Timezone
   currentZone();
 
@@ -223,10 +224,11 @@ void Dtime::save( QVariantMap& helperargs )
     if( list.count() == 10)
       break;
   }
-  
+
   helperargs["ntp"] = true;
   helperargs["ntpServers"] = list;
   helperargs["ntpEnabled"] = setDateTimeAuto->isChecked();
+  helperargs["ntpUtility"] = ntpUtility;
 
   if(setDateTimeAuto->isChecked() && !ntpUtility.isEmpty()){
     // NTP Time setting - done in helper
@@ -246,8 +248,7 @@ void Dtime::save( QVariantMap& helperargs )
 
   // restart time
   internalTimer.start( 1000 );
-  
-  //
+
   QStringList selectedZones(tzonelist->selection());
 
   if (selectedZones.count() > 0){
@@ -257,7 +258,7 @@ void Dtime::save( QVariantMap& helperargs )
   } else {
       helperargs["tzreset"] = true; // // make the helper reset the timezone
   }
-  
+
   currentZone();
 }
 
@@ -336,7 +337,7 @@ void Kclock::setClockSize(const QSize &size)
 }
 
 void Kclock::setTime(const QTime &time)
-{  
+{
     if (time.minute() != this->time.minute() || time.hour() != this->time.hour()) {
         if (m_repaintCache == RepaintNone) {
             m_repaintCache = RepaintHands;

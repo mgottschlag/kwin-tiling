@@ -27,33 +27,26 @@ using namespace KAuth;
 
 class ClockHelper : public QObject
 {
-    Q_OBJECT    
-    
+    Q_OBJECT
+
     public:
         enum
         {
             CallError       = 1 << 0,
-            TimezoneError      = 1 << 1,
+            TimezoneError   = 1 << 1,
             NTPError        = 1 << 2,
             DateError       = 1 << 3
         };
-    
+
     public slots:
         ActionReply save(const QVariantMap &map);
-        
-    private:        
-        int ntp(const QStringList& ntpServers, bool ntpEnabled);
+
+    private:
+        int ntp(const QStringList& ntpServers, bool ntpEnabled,
+                const QString& ntpUtility);
         int date(const QString& newdate, const QString& olddate);
         int tz(const QString& selectedzone);
         int tzreset();
 };
-
-/*
- commands:
-   ntp <count> <servers> <enabled/disabled>
-   date <date>
-   tz <timezone>
-   tzreset
-*/
 
 #endif // CLOCK_HELPER_H
