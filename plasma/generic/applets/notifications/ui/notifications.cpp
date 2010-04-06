@@ -297,8 +297,6 @@ void Notifications::addJob(Job *job)
             m_notificationStackDialog->setWindowToTile(m_standaloneJobSummaryDialog);
         }
 
-        KWindowSystem::setOnAllDesktops(m_standaloneJobSummaryDialog->winId(), true);
-
         m_standaloneJobSummaryWidget = new JobTotalsWidget(m_manager->jobTotals(), this);
         if (containment() && containment()->corona()) {
             containment()->corona()->addOffscreenWidget(m_standaloneJobSummaryWidget);
@@ -313,7 +311,10 @@ void Notifications::addJob(Job *job)
     if (containment() && containment()->corona()) {
         m_standaloneJobSummaryDialog->move(containment()->corona()->popupPosition(this, m_standaloneJobSummaryDialog->size()));
         m_standaloneJobSummaryDialog->show();
-        KWindowSystem::setState(m_standaloneJobSummaryDialog->winId(), NET::SkipTaskbar|NET::SkipPager);
+        KWindowSystem::setOnAllDesktops(m_standaloneJobSummaryDialog->winId(), true);
+        KWindowSystem::setState(m_standaloneJobSummaryDialog->winId(), NET::SkipTaskbar|NET::SkipPager|NET::KeepBelow);
+        KWindowSystem::setType(m_standaloneJobSummaryDialog->winId(), NET::Dock);
+        KWindowSystem::clearState(m_standaloneJobSummaryDialog->winId(), NET::KeepAbove|NET::StaysOnTop);
         KWindowSystem::raiseWindow(m_standaloneJobSummaryDialog->winId());
         Plasma::WindowEffects::slideWindow(m_standaloneJobSummaryDialog, location());
     }
