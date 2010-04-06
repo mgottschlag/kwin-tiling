@@ -2,27 +2,21 @@ Kephal provides an API for easier handling of multihead systems.
 
 The architecture features features 2 main components:
 
-* kded_kephal
+* kded_kephal (service/)
     The KDED-module that provides all of the data and configuration-options.
     It will currently query for xrandr-extension and fallback to
     QDesktopWidget if XRandR 1.2 is not available.
-    The directory kded_kephal only contains the actual module-class and
-    classes for the dbus-interface. All other needed classes are contained
-    in configurations/, outputs/, screens/ and the "interface-classes" in
-    kephal/.
+    The directory 'service' contains the actual module class, kephald.*, and
+    classes for the service and its dbus interface. Interfaces and shared logic
+    are in shared/
 
-* libkephal
+* libkephal (client/)
     This is the lib that wraps all of Kephals DBus-API. It uses the same
-    "interface-classes" from kephal/ as kded_kephal, but uses the
-    implementations found in configurations/dbus/, outputs/dbus/ and
-    screens/dbus/ instead of the xml/xrandr-classes.
+    interface classes from shared/ as kded_kephal, but uses the
+    dbus client stubs that access kded_kephal, and if this is not available, queries
+    QDesktopWidget directly.
 
-
-kephalapp and kephald are currently not built, since they are of little use
-on most setups. They are primarily intended for development/testing.
-
-All other dirs contain files that are referenced from either kded_kephal
-or libkephal. These are organized by implemented interface since a few are
-used in both.
+kephalapp and kephald are intended for development/testing.
+They are not installed.
 
 Some more infos are in READMEs in the subdirs or as API-Docs.
