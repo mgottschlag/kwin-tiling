@@ -50,6 +50,7 @@
 #include <kconfig.h>
 #include <kcolorscheme.h>
 #include <ksystemtimezone.h>
+#include <KTreeWidgetSearchLine>
 
 #include <Plasma/Svg>
 
@@ -110,6 +111,7 @@ Dtime::Dtime(QWidget * parent)
 
   //Timezone
   connect( tzonelist, SIGNAL(itemSelectionChanged()), SLOT(handleZoneChange()) );
+  tzonesearch->setTreeWidget(tzonelist);
 }
 
 void Dtime::currentZone()
