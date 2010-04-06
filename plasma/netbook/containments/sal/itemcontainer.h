@@ -77,7 +77,6 @@ public:
     QAbstractItemModel *model() const;
     void setRootIndex(QModelIndex index);
     QModelIndex rootIndex() const;
-    QModelIndex indexForPosition(const QPointF &point);
     int rowForPosition(const QPointF &point);
 
 protected:
