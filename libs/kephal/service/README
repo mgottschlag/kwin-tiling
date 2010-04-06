@@ -1,0 +1,5 @@
+This directory contains the Kephal service components.
+
+The main component is a KDED module providing a DBUS interface to the Kephal Screens, Configurations and Outputs interfaces.
+
+The same code is also built standalone as a an application for testing purposes.  The resulting 'kephald' is not installed.

@@ -60,9 +60,18 @@ SET(kded_kephal_SRCS
    kephald.cpp
    )
 
-KDE4_ADD_PLUGIN (kded_kephal ${kded_kephal_SRCS})
+SET(standalone_kephald_SRCS
+   ${kephal_service_SRCS}
+   standalonekephald.cpp
+   )
 
-TARGET_LINK_LIBRARIES (kded_kephal ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY} ${QT_QTXML_LIBRARY} ${X11_LIBRARIES} ${X11_Xrandr_LIB})
+SET(service_libs ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY} ${QT_QTXML_LIBRARY} ${X11_LIBRARIES} ${X11_Xrandr_LIB})
+
+KDE4_ADD_PLUGIN (kded_kephal ${kded_kephal_SRCS})
+TARGET_LINK_LIBRARIES (kded_kephal ${service_libs})
+
+KDE4_ADD_EXECUTABLE (kephald ${standalone_kephald_SRCS})
+TARGET_LINK_LIBRARIES (kephald ${service_libs})
 
 INSTALL (TARGETS kded_kephal DESTINATION ${PLUGIN_INSTALL_DIR})
 

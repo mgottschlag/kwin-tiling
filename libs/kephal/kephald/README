@@ -1,4 +1,0 @@
-This is the standalone version of the Kephal backend. It can be used instead
-of the KDED-module.
-This is mostly interesting for development, since it makes restarting KDED
-unnecessary. It is not build by default.
