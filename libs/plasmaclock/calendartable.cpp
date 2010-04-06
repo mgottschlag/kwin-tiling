@@ -69,20 +69,18 @@ class CalendarTablePrivate
     public:
 
         CalendarTablePrivate(CalendarTable *calTable, const QDate &initialDate = QDate::currentDate())
+            : q(calTable),
+              calendarType("locale"),
+              calendar(KGlobal::locale()->calendar()),
+              displayHolidays(false),
+              dataEngine(0),
+              opacity(0.5)
         {
             svg = new Svg();
             svg->setImagePath("widgets/calendar");
             svg->setContainsMultipleImages(true);
 
-            calendarTable = calTable;
-            calendarType = "locale";
-            calendar = KGlobal::locale()->calendar();
-            dataEngine = 0;
-            displayHolidays = false;
-
             setDate(initialDate);
-
-            opacity = 0.5; //transparency for the inactive text
         }
 
         ~CalendarTablePrivate()
@@ -113,8 +111,8 @@ class CalendarTablePrivate
             // Force date update to refresh cached date componants then update display
             setDate(selectedDate);
             updateHoveredPainting(QPointF());
-            calendarTable->populateHolidays();
-            calendarTable->update();
+            q->populateHolidays();
+            q->update();
         }
 
         void setDate(const QDate &setDate)
@@ -137,7 +135,7 @@ class CalendarTablePrivate
         //This version does not adjust for RTL, so should not be used directly for drawing
         int columnToX(int column)
         {
-            return calendarTable->boundingRect().x() +
+            return q->boundingRect().x() +
                    centeringSpace +
                    weekBarSpace +
                    cellW +
@@ -147,7 +145,7 @@ class CalendarTablePrivate
         //Returns the y co-ordinate for given row, row is 0 to (DISPLAYED_WEEKS - 1)
         int rowToY(int row)
         {
-            return (int) calendarTable->boundingRect().y() +
+            return (int) q->boundingRect().y() +
                          headerHeight +
                          headerSpace +
                          ((cellH + cellSpace) * row);
@@ -176,7 +174,7 @@ class CalendarTablePrivate
         int adjustColumn(int column)
         {
             if (column >= 0 && column < daysInWeek) {
-                if (calendarTable->layoutDirection() == Qt::RightToLeft) {
+                if (q->layoutDirection() == Qt::RightToLeft) {
                     return daysInWeek - column - 1;
                 } else {
                     return column;
@@ -253,12 +251,13 @@ class CalendarTablePrivate
             if (hoverRect != oldHoverRect) {
                 //FIXME: update only of a piece seems to paint over the old stuff
                 /*if (oldHoverRect.isValid()) {
-                    calendarTable->update(oldHoverRect);
+                    q->update(oldHoverRect);
                 }
                 if (hoverRect.isValid()) {
-                    calendarTable->update(hoverRect);
+                    q->update(hoverRect);
                 }*/
-                calendarTable->update();
+                emit q->dateHovered(dateFromRowColumn(hoverWeekRow, hoverWeekdayColumn));
+                q->update();
             }
         }
 
@@ -290,7 +289,7 @@ class CalendarTablePrivate
             return QString();
         }
 
-        CalendarTable *calendarTable;
+        CalendarTable *q;
         QString calendarType;
         const KCalendarSystem *calendar;
 
@@ -311,7 +310,7 @@ class CalendarTablePrivate
         Ui::calendarConfig calendarConfigUi;
 
         Plasma::Svg *svg;
-        float opacity;
+        float opacity; //transparency for the inactive text
         QRectF hoverRect;
         int hoverWeekRow;
         int hoverWeekdayColumn;

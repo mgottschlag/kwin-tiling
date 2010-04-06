@@ -141,6 +141,7 @@ void Calendar::init(CalendarTable *calendarTable)
 
     m_layout->addItem(d->calendarTable);
     connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated(const QDate &)));
+    connect(d->calendarTable, SIGNAL(dateHovered(const QDate &)), this, SIGNAL(dateHovered(const QDate &)));
 
     d->jumpToday = new Plasma::ToolButton(this);
     d->jumpToday->nativeWidget()->setIcon(KIcon("go-jump-today"));
