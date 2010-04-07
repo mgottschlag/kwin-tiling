@@ -25,6 +25,7 @@
 #include <QtGui/QGraphicsSceneWheelEvent>
 #include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QGraphicsProxyWidget>
+#include <QtGui/QGraphicsView>
 #include <QtGui/QLabel>
 #include <QtGui/QMenu>
 #include <QtGui/QSpinBox>
@@ -47,6 +48,8 @@
 #include <Plasma/SpinBox>
 #include <Plasma/ToolButton>
 #include <Plasma/DataEngine>
+
+#include <kephal/screens.h>
 
 namespace Plasma
 {
@@ -132,6 +135,8 @@ void Calendar::init(CalendarTable *calendarTable)
     d->month = new Plasma::ToolButton(this);
     d->month->setText(calendar()->monthName(calendar()->month(date()), calendar()->year(date())));
     d->month->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    d->monthMenu = new QMenu();
+    d->month->nativeWidget()->setMenu(d->monthMenu);
     connect(d->month, SIGNAL(clicked()), this, SLOT(monthsPopup()));
     m_hLayout->addItem(d->month);
 
@@ -346,9 +351,7 @@ void Calendar::nextMonth()
 
 void Calendar::monthsPopup()
 {
-    delete d->monthMenu;
-    d->monthMenu = new QMenu();
-
+    d->monthMenu->clear();
     int year = calendar()->year(date());
     int monthsInYear = calendar()->monthsInYear(date());
 
@@ -359,7 +362,21 @@ void Calendar::monthsPopup()
         d->monthMenu->addAction(tmpAction);
     }
 
-    d->monthMenu->popup(QCursor::pos());
+    QGraphicsView *view = Plasma::viewFor(d->month);
+    if (view) {
+        d->monthMenu->adjustSize();
+        const int x = d->month->sceneBoundingRect().center().x() - d->monthMenu->width() / 2;
+        QPoint pos(x, d->month->sceneBoundingRect().bottom());
+        pos = view->mapToGlobal(view->mapFromScene(pos));
+        QRect r = Kephal::ScreenUtils::screenGeometry(Kephal::ScreenUtils::screenId(view->geometry().center()));
+        if (pos.y() + d->monthMenu->height() > r.bottom()) {
+            pos = QPoint(x, d->month->sceneBoundingRect().top() - d->monthMenu->height());
+            pos = view->mapToGlobal(view->mapFromScene(pos));
+        }
+        d->monthMenu->popup(pos);
+    } else {
+        d->monthMenu->popup(QCursor::pos());
+    }
 }
 
 void Calendar::monthTriggered()
