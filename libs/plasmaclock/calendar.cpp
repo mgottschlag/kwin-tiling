@@ -119,9 +119,9 @@ Calendar::~Calendar()
 
 void Calendar::init(CalendarTable *calendarTable)
 {
-    QGraphicsLinearLayout *m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
-    QGraphicsLinearLayout *m_hLayout = new QGraphicsLinearLayout(m_layout);
-    QGraphicsLinearLayout *m_layoutTools = new QGraphicsLinearLayout(m_layout);
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(Qt::Vertical, this);
+    QGraphicsLinearLayout *hLayout = new QGraphicsLinearLayout(layout);
+    QGraphicsLinearLayout *layoutTools = new QGraphicsLinearLayout(layout);
 
     d->calendarTable = calendarTable;
     d->calendarTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -132,9 +132,9 @@ void Calendar::init(CalendarTable *calendarTable)
     d->back->setText("<");
     d->back->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(d->back, SIGNAL(clicked()), this, SLOT(prevMonth()));
-    m_hLayout->addItem(d->back);
+    hLayout->addItem(d->back);
 
-    m_hLayout->addStretch();
+    hLayout->addStretch();
 
     d->month = new WheelyToolButton(this);
     d->month->setText(calendar()->monthName(calendar()->month(date()), calendar()->year(date())));
@@ -144,7 +144,7 @@ void Calendar::init(CalendarTable *calendarTable)
     connect(d->month, SIGNAL(clicked()), this, SLOT(monthsPopup()));
     connect(d->month, SIGNAL(wheelUp()), this, SLOT(prevMonth()));
     connect(d->month, SIGNAL(wheelDown()), this, SLOT(nextMonth()));
-    m_hLayout->addItem(d->month);
+    hLayout->addItem(d->month);
 
     d->year = new WheelyToolButton(this);
     d->year->setText(calendar()->yearString(date()));
@@ -152,7 +152,7 @@ void Calendar::init(CalendarTable *calendarTable)
     connect(d->year, SIGNAL(wheelUp()), this, SLOT(prevYear()));
     connect(d->year, SIGNAL(wheelDown()), this, SLOT(nextYear()));
     connect(d->year, SIGNAL(clicked()), this, SLOT(showYearSpinBox()));
-    m_hLayout->addItem(d->year);
+    hLayout->addItem(d->year);
 
     d->yearSpinBox = new Plasma::SpinBox(this);
     d->yearSpinBox->setRange(calendar()->year(calendar()->earliestValidDate()), calendar()->year(calendar()->latestValidDate()));
@@ -160,36 +160,36 @@ void Calendar::init(CalendarTable *calendarTable)
     d->yearSpinBox->hide();
     connect(d->yearSpinBox->nativeWidget(), SIGNAL(editingFinished()), this, SLOT(hideYearSpinBox()));
 
-    m_hLayout->addStretch();
+    hLayout->addStretch();
 
     d->forward = new Plasma::ToolButton(this);
     d->forward->setText(">");
     d->forward->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(d->forward, SIGNAL(clicked()), this, SLOT(nextMonth()));
-    m_hLayout->addItem(d->forward);
+    hLayout->addItem(d->forward);
 
     d->jumpToday = new Plasma::ToolButton(this);
     d->jumpToday->nativeWidget()->setIcon(KIcon("go-jump-today"));
     d->jumpToday->nativeWidget()->setMinimumWidth(25);
     connect(d->jumpToday, SIGNAL(clicked()), this, SLOT(goToToday()));
-    m_layoutTools->addItem(d->jumpToday);
-    m_layoutTools->addStretch();
+    layoutTools->addItem(d->jumpToday);
+    layoutTools->addStretch();
 
     d->dateText = new Plasma::LineEdit(this);
     d->dateText->setText(calendar()->formatDate(date(),  KLocale::ShortDate));
     connect(d->dateText->nativeWidget(), SIGNAL(returnPressed()), this, SLOT(manualDateChange()));
-    m_layoutTools->addItem(d->dateText);
-    m_layoutTools->addStretch();
+    layoutTools->addItem(d->dateText);
+    layoutTools->addStretch();
 
     d->weekSpinBox = new Plasma::SpinBox(this);
     d->weekSpinBox->setMinimum(1);
     d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
     connect(d->weekSpinBox, SIGNAL(valueChanged(int)), this, SLOT(goToWeek(int)));
-    m_layoutTools->addItem(d->weekSpinBox);
+    layoutTools->addItem(d->weekSpinBox);
 
-    m_layout->addItem(m_hLayout);
-    m_layout->addItem(d->calendarTable);
-    m_layout->addItem(m_layoutTools);
+    layout->addItem(hLayout);
+    layout->addItem(d->calendarTable);
+    layout->addItem(layoutTools);
 
     dateUpdated(date());
 }
@@ -420,11 +420,12 @@ void Calendar::showYearSpinBox()
 {
     QGraphicsLinearLayout *hLayout = (QGraphicsLinearLayout*)d->year->parentLayoutItem();
 
-    d->yearSpinBox->setValue(calendar()->year(date()));
-    d->yearSpinBox->setMinimumWidth(d->yearSpinBox->preferredSize().width());
     d->year->hide();
     hLayout->removeItem(d->year);
+    d->yearSpinBox->setValue(calendar()->year(date()));
+    d->yearSpinBox->setMinimumWidth(d->yearSpinBox->preferredSize().width());
     hLayout->insertItem(s_yearWidgetIndex, d->yearSpinBox);
+    hLayout->activate();
     d->yearSpinBox->show();
     d->yearSpinBox->nativeWidget()->setFocus(Qt::MouseFocusReason);
 }
