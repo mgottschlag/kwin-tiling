@@ -72,6 +72,7 @@ class CalendarTablePrivate
             : q(calTable),
               calendarType("locale"),
               calendar(KGlobal::locale()->calendar()),
+              displayEvents(false),
               displayHolidays(false),
               dataEngine(0),
               opacity(0.5)
@@ -112,6 +113,7 @@ class CalendarTablePrivate
             setDate(selectedDate);
             updateHoveredPainting(QPointF());
             q->populateHolidays();
+            q->populateEvents();
             q->update();
         }
 
@@ -301,11 +303,14 @@ class CalendarTablePrivate
         int daysInSelectedMonth;
         int daysShownInPrevMonth;
 
+        bool displayEvents;
         bool displayHolidays;
         QString holidaysRegion;
         Plasma::DataEngine *dataEngine;
         // Hash key: int = Julian Day number, QString = what's special
         QHash<int, QString> specialDates;
+        // Hash key: int = Julian Day number, QString = what's going on
+        QHash<int, QString> events;
 
         Ui::calendarConfig calendarConfigUi;
 
@@ -343,10 +348,10 @@ CalendarTable::~CalendarTable()
     delete d;
 }
 
-bool CalendarTable::setCalendar(const QString &newCalendarType)
+void CalendarTable::setCalendar(const QString &newCalendarType)
 {
     if (newCalendarType == d->calendarType) {
-        return true;
+        return;
     }
 
     if (newCalendarType == "locale") {
@@ -358,14 +363,12 @@ bool CalendarTable::setCalendar(const QString &newCalendarType)
     // Signal out date change so any dependents will update as well
     emit dateChanged(date(), date());
     emit dateChanged(date());
-
-    return true;
 }
 
-bool CalendarTable::setCalendar(const KCalendarSystem *newCalendar)
+void CalendarTable::setCalendar(const KCalendarSystem *newCalendar)
 {
     if (newCalendar == d->calendar) {
-        return true;
+        return;
     }
 
     d->setCalendar(newCalendar);
@@ -373,8 +376,6 @@ bool CalendarTable::setCalendar(const KCalendarSystem *newCalendar)
     // Signal out date change so any dependents will update as well
     emit dateChanged(date(), date());
     emit dateChanged(date());
-
-    return true;
 }
 
 const KCalendarSystem *CalendarTable::calendar() const
@@ -382,16 +383,16 @@ const KCalendarSystem *CalendarTable::calendar() const
     return d->calendar;
 }
 
-bool CalendarTable::setDate(const QDate &newDate)
+void CalendarTable::setDate(const QDate &newDate)
 {
     // New date must be valid in the current calendar system
     if (!calendar()->isValid(newDate)) {
-        return false;
+        return;
     }
 
     // If new date is the same as old date don't actually need to do anything
     if (newDate == date()) {
-        return true;
+        return;
     }
 
     int oldYear = d->selectedYear;
@@ -405,6 +406,7 @@ bool CalendarTable::setDate(const QDate &newDate)
 
     if (oldYear != d->selectedYear || oldMonth != d->selectedMonth) {
         populateHolidays();
+        populateEvents();
         update();
     } else {
         // only update the old and the new areas
@@ -420,7 +422,6 @@ bool CalendarTable::setDate(const QDate &newDate)
 
     emit dateChanged(newDate, oldDate);
     emit dateChanged(newDate);
-    return true;
 }
 
 const QDate& CalendarTable::date() const
@@ -434,6 +435,7 @@ void CalendarTable::setDataEngine(Plasma::DataEngine *dataEngine)
     if (d->dataEngine != dataEngine) {
         d->dataEngine = dataEngine;
         populateHolidays();
+        populateEvents();
     }
 }
 
@@ -442,27 +444,24 @@ const Plasma::DataEngine *CalendarTable::dataEngine() const
     return d->dataEngine;
 }
 
-bool CalendarTable::setDisplayHolidays(bool showHolidays)
+void CalendarTable::setDisplayHolidays(bool showHolidays)
 {
     if (showHolidays) {
-
         if (!dataEngine() ||
         !dataEngine()->query("holidaysRegions").value("holidaysRegions").toStringList().contains(holidaysRegion())) {
-            return false;
+            clearDateProperties();
+            return;
         }
 
         if (holidaysRegion().isEmpty()) {
             setHolidaysRegion(d->defaultHolidaysRegion());
         }
-
     }
 
     if (d->displayHolidays != showHolidays) {
         d->displayHolidays = showHolidays;
         populateHolidays();
     }
-
-    return true;
 }
 
 bool CalendarTable::displayHolidays()
@@ -470,17 +469,35 @@ bool CalendarTable::displayHolidays()
     return d->displayHolidays && !holidaysRegion().isEmpty();
 }
 
-bool CalendarTable::setHolidaysRegion(const QString &region)
+bool CalendarTable::displayEvents()
 {
-    if(!dataEngine()->query("holidaysRegions").value("holidaysRegions").toStringList().contains(region)){
-        return false;
+    return d->displayEvents;
+}
+
+void CalendarTable::setDisplayEvents(bool display)
+{
+    if (d->displayEvents == display) {
+        return;
+    }
+
+    d->displayEvents = display;
+    if (display) {
+        populateEvents();
+    } else {
+        d->events.clear();
+    }
+}
+
+void CalendarTable::setHolidaysRegion(const QString &region)
+{
+    if (!dataEngine()->query("holidaysRegions").value("holidaysRegions").toStringList().contains(region)) {
+        return;
     }
 
     if (d->holidaysRegion != region) {
         d->holidaysRegion = region;
         populateHolidays();
     }
-    return true;
 }
 
 QString CalendarTable::holidaysRegion() const
@@ -548,6 +565,25 @@ void CalendarTable::populateHolidays()
             setDateProperty(tempDate, reason);
         }
     }
+}
+
+void CalendarTable::populateEvents()
+{
+    d->events.clear();
+
+    if (!d->displayEvents || !d->dataEngine) {
+        return;
+    }
+
+    //kDebug() << "WOOOHOOOO!";
+    QDate queryDate = date();
+    queryDate.setDate(queryDate.year(), queryDate.month(), 1);
+    d->dataEngine->connectSource("eventsInMonth:" + queryDate.toString(Qt::ISODate), this);
+}
+
+void CalendarTable::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
+{
+    //kDebug() << "***************" << source << data.count() << data;
 }
 
 void CalendarTable::applyConfiguration(KConfigGroup cg)

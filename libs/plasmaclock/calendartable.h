@@ -25,7 +25,8 @@
 
 #include "plasmaclock_export.h"
 
-#include <KDE/KCalendarSystem>
+#include <KCalendarSystem>
+#include <Plasma/DataEngine>
 
 class KConfigDialog;
 class KConfigGroup;
@@ -54,20 +55,23 @@ public:
     explicit CalendarTable(const QDate &, QGraphicsWidget *parent = 0);
     ~CalendarTable();
 
-    bool setCalendar(const QString &newCalendarType = "locale");
-    bool setCalendar(const KCalendarSystem *calendar);
+    void setCalendar(const QString &newCalendarType = "locale");
+    void setCalendar(const KCalendarSystem *calendar);
     const KCalendarSystem *calendar () const;
 
-    bool setDate(const QDate &date);
+    void setDate(const QDate &date);
     const QDate& date() const;
 
     void setDataEngine(Plasma::DataEngine *dataEngine);
     const Plasma::DataEngine *dataEngine() const;
 
-    bool setDisplayHolidays(bool showHolidays);
+    void setDisplayEvents(bool display);
+    bool displayEvents();
+
+    void setDisplayHolidays(bool showHolidays);
     bool displayHolidays();
 
-    bool setHolidaysRegion(const QString &region);
+    void setHolidaysRegion(const QString &region);
     QString holidaysRegion() const;
 
     void clearDateProperties();
@@ -87,6 +91,9 @@ Q_SIGNALS:
     void dateHovered(const QDate &date);
     void tableClicked();
 
+public Q_SLOTS:
+    void dataUpdated(const QString &source, const Plasma::DataEngine::Data &data);
+
 protected:
     int cellX(int weekDay);
     int cellY(int week);
@@ -104,6 +111,8 @@ protected:
 
 private:
     void populateHolidays();
+    void populateEvents();
+
     friend class CalendarTablePrivate;
     CalendarTablePrivate* const d;
 };

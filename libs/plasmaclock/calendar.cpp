@@ -202,24 +202,22 @@ CalendarTable *Calendar::calendarTable() const
     return d->calendarTable;
 }
 
-bool Calendar::setCalendar(const QString &newCalendarType)
+void Calendar::setCalendar(const QString &newCalendarType)
 {
-    bool ret = calendarTable()->setCalendar(newCalendarType);
+    calendarTable()->setCalendar(newCalendarType);
     d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
     d->yearSpinBox->setRange(calendar()->year(calendar()->earliestValidDate()),
                              calendar()->year(calendar()->latestValidDate()));
     refreshWidgets();
-    return ret;
 }
 
-bool Calendar::setCalendar(const KCalendarSystem *newCalendar)
+void Calendar::setCalendar(const KCalendarSystem *newCalendar)
 {
-    bool ret = calendarTable()->setCalendar(newCalendar);
+    calendarTable()->setCalendar(newCalendar);
     d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
     d->yearSpinBox->setRange(calendar()->year(calendar()->earliestValidDate()),
                              calendar()->year(calendar()->latestValidDate()));
     refreshWidgets();
-    return ret;
 }
 
 const KCalendarSystem *Calendar::calendar() const
@@ -227,18 +225,17 @@ const KCalendarSystem *Calendar::calendar() const
     return calendarTable()->calendar();
 }
 
-bool Calendar::setDate(const QDate &toDate)
+void Calendar::setDate(const QDate &toDate)
 {
-    bool ret = d->calendarTable->setDate(toDate);
+    d->calendarTable->setDate(toDate);
 
     //If set date failed force refresh of nav widgets to reset any user entry
     //If set date successful refresh will be triggered through signal/slot
-    if (!ret) {
+    if (d->calendarTable->date() != toDate) {
         refreshWidgets();
     }
-    d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
 
-    return ret;
+    d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
 }
 
 const QDate& Calendar::date() const
@@ -256,9 +253,9 @@ const Plasma::DataEngine *Calendar::dataEngine() const
     return calendarTable()->dataEngine();
 }
 
-bool Calendar::setDisplayHolidays(bool showHolidays)
+void Calendar::setDisplayHolidays(bool showHolidays)
 {
-    return calendarTable()->setDisplayHolidays(showHolidays);
+    calendarTable()->setDisplayHolidays(showHolidays);
 }
 
 bool Calendar::displayHolidays()
@@ -266,9 +263,9 @@ bool Calendar::displayHolidays()
     return calendarTable()->displayHolidays();
 }
 
-bool Calendar::setHolidaysRegion(const QString &region)
+void Calendar::setHolidaysRegion(const QString &region)
 {
-    return calendarTable()->setHolidaysRegion(region);
+    calendarTable()->setHolidaysRegion(region);
 }
 
 QString Calendar::holidaysRegion() const

@@ -50,20 +50,20 @@ public:
 
     CalendarTable *calendarTable() const;
 
-    bool setCalendar(const QString &newCalendarType = "locale");
-    bool setCalendar(const KCalendarSystem *calendar);
+    void setCalendar(const QString &newCalendarType = "locale");
+    void setCalendar(const KCalendarSystem *calendar);
     const KCalendarSystem *calendar () const;
 
-    bool setDate(const QDate &date);
+    void setDate(const QDate &date);
     const QDate& date() const;
 
     void setDataEngine(Plasma::DataEngine *dataEngine);
     const Plasma::DataEngine *dataEngine() const;
 
-    bool setDisplayHolidays(bool showHolidays);
+    void setDisplayHolidays(bool showHolidays);
     bool displayHolidays();
 
-    bool setHolidaysRegion(const QString &region);
+    void setHolidaysRegion(const QString &region);
     QString holidaysRegion() const;
 
     void clearDateProperties();
