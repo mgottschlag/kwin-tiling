@@ -102,6 +102,16 @@ void TaskJob::start()
             setResult(true);
             return;
         }
+        else if (operation == "resize") {
+            m_source->getTask()->resize();
+            setResult(true);
+            return;
+        }
+        else if (operation == "move") {
+            m_source->getTask()->move();
+            setResult(true);
+            return;
+        }
         else if (operation == "raise") {
             m_source->getTask()->raise();
             setResult(true);

@@ -26,6 +26,8 @@
     <group name="toggleAlwaysOnTop" />
     <group name="toggleKeptBelowOthers" />
     <group name="restore" />
+    <group name="resize" />
+    <group name="move" />
     <group name="raise" />
     <group name="lower" />
     <group name="activate" />
