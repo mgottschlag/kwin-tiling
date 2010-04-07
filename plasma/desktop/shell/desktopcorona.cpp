@@ -27,9 +27,9 @@
 #include <QMenu>
 #include <QSignalMapper>
 
-
 #include <KDebug>
 #include <KDialog>
+#include <KGlobal>
 #include <KGlobalSettings>
 #include <KStandardDirs>
 #include <KWindowSystem>
@@ -78,7 +78,9 @@ void DesktopCorona::init()
     setContainmentActionsDefaults(Plasma::Containment::CustomPanelContainment, panelPlugins);
 
     KPluginInfo::List panelContainmentPlugins = Plasma::Containment::listContainmentsOfType("panel");
-    if (panelContainmentPlugins.size() == 1) {
+    //FIXME: this will have to become a dynamic choice between a menu and  simple action, i think
+    const int templates = KGlobal::dirs()->findAllResources("appdata", "templates/panels/*").count();
+    if (panelContainmentPlugins.size() + templates == 1) {
         m_addPanelAction = new QAction(i18n("Add Panel"), this);
         m_addPanelAction->setData(Plasma::AbstractToolBox::AddTool);
         connect(m_addPanelAction, SIGNAL(triggered(bool)), this, SLOT(addPanel()));
@@ -99,7 +101,7 @@ void DesktopCorona::init()
 
     connect(this, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)),
             this, SLOT(updateImmutability(Plasma::ImmutabilityType)));
-            
+
     kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "DesktopCorona init end" << "(line:" << __LINE__ << ")";
 }
 
@@ -451,13 +453,34 @@ void DesktopCorona::populateAddPanelsMenu()
     m_addPanelsMenu->clear();
 
     KPluginInfo::List panelContainmentPlugins = Plasma::Containment::listContainmentsOfType("panel");
+    QMap<QString, QPair<KPluginInfo, QString> > sorted;
     foreach (const KPluginInfo &plugin, panelContainmentPlugins) {
-        QAction *action = m_addPanelsMenu->addAction(plugin.name());
-        if (!plugin.icon().isEmpty()) {
-            action->setIcon(KIcon(plugin.icon()));
-        }
+        sorted.insert(plugin.name(), qMakePair(plugin, QString()));
+    }
 
-        action->setData(plugin.pluginName());
+    KPluginInfo emptyInfo;
+    QStringList templates = KGlobal::dirs()->findAllResources("appdata", "templates/panels/*");
+    foreach (const QString &script, templates) {
+        sorted.insert(script, qMakePair(emptyInfo, script));
+    }
+
+    QMapIterator<QString, QPair<KPluginInfo, QString> > it(sorted);
+    while (it.hasNext()) {
+        it.next();
+        QPair<KPluginInfo, QString> pair = it.value();
+        if (pair.first.isValid()) {
+            KPluginInfo plugin = pair.first;
+            QAction *action = m_addPanelsMenu->addAction(plugin.name());
+            if (!plugin.icon().isEmpty()) {
+                action->setIcon(KIcon(plugin.icon()));
+            }
+
+            action->setData(plugin.pluginName());
+        } else {
+            //FIXME: proper names
+            QAction *action = m_addPanelsMenu->addAction(pair.second);
+            action->setData("plasma-desktop-template:" + pair.second);
+        }
     }
 }
 
@@ -473,7 +496,9 @@ void DesktopCorona::addPanel()
 void DesktopCorona::addPanel(QAction *action)
 {
     const QString plugin = action->data().toString();
-    if (!plugin.isEmpty()) {
+    if (plugin.startsWith("plasma-desktop-template:")) {
+        evaluateScripts(QStringList() << plugin.right(plugin.length() - qstrlen("plasma-desktop-template:")));
+    } else if (!plugin.isEmpty()) {
         addPanel(plugin);
     }
 }
