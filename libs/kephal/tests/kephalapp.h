@@ -24,6 +24,8 @@
 #include <QApplication>
 
 
+class QDesktopWidget;
+
 namespace Kephal
 {
     class Screen;
@@ -40,6 +42,7 @@ class KephalApp : public QApplication
         bool m_listen;
         QString m_arg;
         QString m_exec;
+        QDesktopWidget * m_widget;
 
         void init(int & argc, char ** argv);
         void query();
@@ -53,6 +56,10 @@ class KephalApp : public QApplication
         void screenResized(Kephal::Screen * s, QSize o, QSize n);
         void screenRemoved(int s);
         void screenAdded(Kephal::Screen * s);
+
+        void qdwScreenResized(int screen);
+        void qdwScreenCountChanged(int newCount);
+        void qdwWorkAreaResized(int screen);
 };
 
 

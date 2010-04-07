@@ -24,6 +24,7 @@
 
 
 #include <QDebug>
+#include <QDesktopWidget>
 #include <QTimer>
 
 #include <QTextStream>
@@ -66,6 +67,10 @@ void KephalApp::init(int & argc, char ** argv) {
             return;
         }
     }
+
+    connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(qdwScreenResized(int)));
+    connect(QApplication::desktop(), SIGNAL(screenCountChanged(int)), SLOT(qdwScreenCountChanged(int)));
+    connect(QApplication::desktop(), SIGNAL(workAreaResized(int)), SLOT(qdwWorkAreaResized(int)));
 
     QTimer::singleShot(0, this, SLOT(run()));
 }
@@ -179,6 +184,44 @@ void KephalApp::query() {
 
         cout << "\n";
     }
+}
+
+void KephalApp::qdwScreenResized(int screen)
+{
+    QTextStream cout(stdout);
+    cout << "                   *****************\n";
+    cout << "                   ** QDesktopWidget:\n";
+    cout << "                   ** screenResized: " << screen << "\n";
+    QRect geom = QApplication::desktop()->screenGeometry(screen);
+    cout << "                   ** New geometry: \n";
+    cout << "                   ** Size: " << geom.width() << "x" << geom.height() << "\n";
+    cout << "                   ** Position: (" << geom.x() << "," << geom.y() << ")\n";
+    cout << "                   *****************\n\n";
+    cout.flush();
+}
+
+void KephalApp::qdwScreenCountChanged(int newCount)
+{
+    QTextStream cout(stdout);
+    cout << "                   *****************\n";
+    cout << "                   ** QDesktopWidget:\n";
+    cout << "                   ** Screen Count Changed, now:" << newCount << "\n";
+    cout << "                   *****************\n\n";
+    cout.flush();
+}
+
+void KephalApp::qdwWorkAreaResized(int screen)
+{
+    QTextStream cout(stdout);
+    cout << "                   *****************\n";
+    cout << "                   ** QDesktopWidget:\n";
+    cout << "                   ** workAreaResized: " << screen << "\n";
+    QRect geom = QApplication::desktop()->availableGeometry(screen);
+    cout << "                   ** New geometry: \n";
+    cout << "                   ** Size: " << geom.width() << "x" << geom.height() << "\n";
+    cout << "                   ** Position: (" << geom.x() << "," << geom.y() << ")\n";
+    cout << "                   *****************\n\n";
+    cout.flush();
 }
 
 
