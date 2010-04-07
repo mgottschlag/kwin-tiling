@@ -87,6 +87,7 @@ private Q_SLOTS:
     void prevYear();
     void nextYear();
     void dateUpdated(const QDate &newDate);
+    void showTip(const QDate &date);
     void goToToday();
     void goToWeek(int week);
     void manualDateChange();

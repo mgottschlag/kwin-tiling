@@ -635,7 +635,9 @@ void CalendarTable::wheelEvent(QGraphicsSceneWheelEvent * event)
 void CalendarTable::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     event->accept();
-    setDate(d->dateFromPoint(event->pos()));
+    QDate date = d->dateFromPoint(event->pos());
+    setDate(date);
+    emit dateSelected(date);
 }
 
 void CalendarTable::mouseMoveEvent(QGraphicsSceneMouseEvent *event)

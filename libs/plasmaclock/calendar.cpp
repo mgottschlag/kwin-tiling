@@ -47,6 +47,7 @@
 #include <Plasma/LineEdit>
 #include <Plasma/SpinBox>
 #include <Plasma/ToolButton>
+#include <Plasma/ToolTipManager>
 #include <Plasma/DataEngine>
 
 #include <kephal/screens.h>
@@ -127,6 +128,8 @@ void Calendar::init(CalendarTable *calendarTable)
     d->calendarTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated(const QDate &)));
     connect(d->calendarTable, SIGNAL(dateHovered(const QDate &)), this, SIGNAL(dateHovered(const QDate &)));
+    connect(this, SIGNAL(dateSelected(const QDate &)), this, SLOT(showTip(const QDate &)));
+    connect(this, SIGNAL(dateHovered(const QDate &)), this, SLOT(showTip(const QDate &)));
 
     d->back = new Plasma::ToolButton(this);
     d->back->setText("<");
@@ -327,10 +330,30 @@ void Calendar::dateUpdated(const QDate &newDate)
 {
     // Ignore the date passed in, only ever show the date to match the CalendarTable
     Q_UNUSED(newDate);
-
     refreshWidgets();
-
     emit dateChanged(date());
+}
+
+void Calendar::showTip(const QDate &date)
+{
+    QGraphicsWidget *item = parentWidget();
+    if (!item) {
+        item = this;
+    }
+
+    if (dateProperty(date).isEmpty()) {
+        if (Plasma::ToolTipManager::self()->isVisible(item)) {
+            Plasma::ToolTipManager::self()->hide(item);
+        }
+        Plasma::ToolTipManager::self()->setContent(item, Plasma::ToolTipContent());
+    } else {
+        Plasma::ToolTipContent content(calendar()->formatDate(date),
+                                       dateProperty(date),
+                                       KIcon("view-pim-calendar"));
+        content.setAutohide(false);
+        Plasma::ToolTipManager::self()->setContent(item, content);
+        Plasma::ToolTipManager::self()->show(item);
+    }
 }
 
 // Update the nav widgets to show the current date in the CalendarTable

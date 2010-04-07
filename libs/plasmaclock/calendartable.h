@@ -83,6 +83,7 @@ public:
 Q_SIGNALS:
     void dateChanged(const QDate &newDate, const QDate &oldDate);
     void dateChanged(const QDate &newDate);
+    void dateSelected(const QDate &date);
     void dateHovered(const QDate &date);
     void tableClicked();
 
