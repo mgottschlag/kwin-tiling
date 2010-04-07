@@ -71,6 +71,7 @@ private:
 	KActionCollection* actionCollection;
 	LayoutsTableModel* layoutsTableModel;
 	KCMiscKeyboardWidget* kcmMiscWidget;
+	bool uiUpdating;
 
 	void initializeLayoutsUI();
 	void initializeXkbOptionsUI();

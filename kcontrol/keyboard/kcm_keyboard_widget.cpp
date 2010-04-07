@@ -53,7 +53,8 @@ static const int TAB_ADVANCED = 2;
 
 KCMKeyboardWidget::KCMKeyboardWidget(Rules* rules_, KeyboardConfig* keyboardConfig_, const KComponentData componentData_, QWidget* /*parent*/):
 	componentData(componentData_),
-	actionCollection(NULL)
+	actionCollection(NULL),
+	uiUpdating(false)
 {
 	flags = new Flags();
 	rules = rules_;
@@ -81,15 +82,20 @@ void KCMKeyboardWidget::updateUI()
 	uiWidget->layoutsTableView->setModel(uiWidget->layoutsTableView->model());
 	((LayoutsTableModel*)uiWidget->layoutsTableView->model())->refresh();
 
+	uiUpdating = true;
 	updateHardwareUI();
 	updateXkbOptionsUI();
 	updateSwitcingPolicyUI();
     updateLayoutsUI();
     updateShortcutsUI();
+    uiUpdating = false;
 }
 
 void KCMKeyboardWidget::uiChanged()
 {
+	if( uiUpdating )
+		return;
+
 	keyboardConfig->configureLayouts = uiWidget->configureLayoutsChk->isChecked();
 	keyboardConfig->keyboardModel = uiWidget->keyboardModelComboBox->itemData(uiWidget->keyboardModelComboBox->currentIndex()).toString();
 
