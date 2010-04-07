@@ -54,6 +54,22 @@ namespace Plasma
 class CalendarPrivate
 {
     public:
+        CalendarPrivate()
+            : back(0),
+              spacer0(0),
+              month(0),
+              yearSpinBox(0),
+              year(0),
+              spacer1(0),
+              forward(0),
+              calendarTable(0),
+              dateText(0),
+              jumpToday(0),
+              monthMenu(0),
+              weekSpinBox(0)
+        {
+        }
+
         ToolButton *back;
         Plasma::Label *spacer0;
         Plasma::ToolButton *month;
@@ -102,6 +118,8 @@ void Calendar::init(CalendarTable *calendarTable)
 
     d->calendarTable = calendarTable;
     d->calendarTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated(const QDate &)));
+    connect(d->calendarTable, SIGNAL(dateHovered(const QDate &)), this, SIGNAL(dateHovered(const QDate &)));
 
     d->back = new Plasma::ToolButton(this);
     d->back->setText("<");
@@ -137,12 +155,6 @@ void Calendar::init(CalendarTable *calendarTable)
     connect(d->forward, SIGNAL(clicked()), this, SLOT(nextMonth()));
     m_hLayout->addItem(d->forward);
 
-    m_layout->addItem(m_hLayout);
-
-    m_layout->addItem(d->calendarTable);
-    connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated(const QDate &)));
-    connect(d->calendarTable, SIGNAL(dateHovered(const QDate &)), this, SIGNAL(dateHovered(const QDate &)));
-
     d->jumpToday = new Plasma::ToolButton(this);
     d->jumpToday->nativeWidget()->setIcon(KIcon("go-jump-today"));
     d->jumpToday->nativeWidget()->setMinimumWidth(25);
@@ -162,9 +174,9 @@ void Calendar::init(CalendarTable *calendarTable)
     connect(d->weekSpinBox, SIGNAL(valueChanged(int)), this, SLOT(goToWeek(int)));
     m_layoutTools->addItem(d->weekSpinBox);
 
+    m_layout->addItem(m_hLayout);
+    m_layout->addItem(d->calendarTable);
     m_layout->addItem(m_layoutTools);
-
-    d->monthMenu = 0;
 
     dateUpdated(date());
 }
