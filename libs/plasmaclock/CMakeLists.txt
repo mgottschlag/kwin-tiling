@@ -4,6 +4,7 @@ set(plasmaclock_LIB_SRCS
     clockapplet.cpp
     calendar.cpp
     calendartable.cpp
+    wheelytoolbutton.cpp
 )
 
 kde4_add_ui_files(plasmaclock_LIB_SRCS timezonesConfig.ui calendarConfig.ui generalConfig.ui)

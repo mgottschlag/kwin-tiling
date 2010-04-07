@@ -51,8 +51,12 @@
 
 #include <kephal/screens.h>
 
+#include "wheelytoolbutton.h"
+
 namespace Plasma
 {
+
+static const int s_yearWidgetIndex = 3;
 
 class CalendarPrivate
 {
@@ -132,17 +136,21 @@ void Calendar::init(CalendarTable *calendarTable)
 
     m_hLayout->addStretch();
 
-    d->month = new Plasma::ToolButton(this);
+    d->month = new WheelyToolButton(this);
     d->month->setText(calendar()->monthName(calendar()->month(date()), calendar()->year(date())));
     d->month->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     d->monthMenu = new QMenu();
     d->month->nativeWidget()->setMenu(d->monthMenu);
     connect(d->month, SIGNAL(clicked()), this, SLOT(monthsPopup()));
+    connect(d->month, SIGNAL(wheelUp()), this, SLOT(prevMonth()));
+    connect(d->month, SIGNAL(wheelDown()), this, SLOT(nextMonth()));
     m_hLayout->addItem(d->month);
 
-    d->year = new Plasma::ToolButton(this);
+    d->year = new WheelyToolButton(this);
     d->year->setText(calendar()->yearString(date()));
     d->year->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(d->year, SIGNAL(wheelUp()), this, SLOT(prevYear()));
+    connect(d->year, SIGNAL(wheelDown()), this, SLOT(nextYear()));
     connect(d->year, SIGNAL(clicked()), this, SLOT(showYearSpinBox()));
     m_hLayout->addItem(d->year);
 
@@ -349,6 +357,16 @@ void Calendar::nextMonth()
     setDate(calendar()->addMonths(date(), 1));
 }
 
+void Calendar::prevYear()
+{
+    setDate(calendar()->addYears(date(), -1));
+}
+
+void Calendar::nextYear()
+{
+    setDate(calendar()->addYears(date(), 1));
+}
+
 void Calendar::monthsPopup()
 {
     d->monthMenu->clear();
@@ -400,22 +418,22 @@ void Calendar::goToWeek(int newWeek)
 
 void Calendar::showYearSpinBox()
 {
-    QGraphicsLinearLayout *m_hLayout = (QGraphicsLinearLayout*)d->year->parentLayoutItem();
+    QGraphicsLinearLayout *hLayout = (QGraphicsLinearLayout*)d->year->parentLayoutItem();
 
     d->yearSpinBox->setValue(calendar()->year(date()));
-    m_hLayout->removeItem(d->year);
-    m_hLayout->insertItem(3,d->yearSpinBox);
-    //d->yearSpinBox->setGeometry(d->year->geometry());
+    d->yearSpinBox->setMinimumWidth(d->yearSpinBox->preferredSize().width());
     d->year->hide();
+    hLayout->removeItem(d->year);
+    hLayout->insertItem(s_yearWidgetIndex, d->yearSpinBox);
     d->yearSpinBox->show();
     d->yearSpinBox->nativeWidget()->setFocus(Qt::MouseFocusReason);
 }
 
 void Calendar::hideYearSpinBox()
 {
-    QGraphicsLinearLayout *m_hLayout = (QGraphicsLinearLayout*)d->yearSpinBox->parentLayoutItem();
-    m_hLayout->removeItem(d->yearSpinBox);
-    m_hLayout->insertItem(3,d->year);
+    QGraphicsLinearLayout *hLayout = (QGraphicsLinearLayout*)d->yearSpinBox->parentLayoutItem();
+    hLayout->removeItem(d->yearSpinBox);
+    hLayout->insertItem(s_yearWidgetIndex, d->year);
     d->yearSpinBox->hide();
 
     int newYear = d->yearSpinBox->value();

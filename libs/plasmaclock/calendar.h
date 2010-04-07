@@ -84,6 +84,8 @@ Q_SIGNALS:
 private Q_SLOTS:
     void prevMonth();
     void nextMonth();
+    void prevYear();
+    void nextYear();
     void dateUpdated(const QDate &newDate);
     void goToToday();
     void goToWeek(int week);
