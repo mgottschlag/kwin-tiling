@@ -43,6 +43,8 @@ TaskSource::TaskSource(TaskPtr task, QObject *parent) :
     setObjectName(TasksEngine::getTaskName(m_task));
     setData("startup", false);
     setData("task", true);
+    setData("className", m_task->className());
+    setData("classClass", m_task->classClass());
     updateTask(TaskManager::EverythingChanged);
 }
 
