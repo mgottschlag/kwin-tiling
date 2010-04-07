@@ -29,7 +29,8 @@ namespace Kephal {
 
     /**
      * Fallback Outputs for when there is no XRandR
-     * If BackendOutputs is doing its job, shouldn't this inherit from it?
+     * Although QDesktopWidget does not report outputs, this class
+     * fakes them using the screens that QDesktopWidget reports
      */
     class KEPHAL_EXPORT DesktopWidgetOutputs : public Outputs {
         Q_OBJECT
