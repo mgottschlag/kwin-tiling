@@ -636,17 +636,23 @@ QString ClockApplet::localTimezoneUntranslated()
 
 void ClockApplet::dateChanged(const QDate &date)
 {
+    QGraphicsWidget *item = extender()->item("calendar");
+    if (!item) {
+        item = d->calendarWidget;
+    }
+
     if (d->calendarWidget->dateProperty(date).isEmpty()) {
-        if (Plasma::ToolTipManager::self()->isVisible(d->calendarWidget)) {
-            Plasma::ToolTipManager::self()->hide(d->calendarWidget);
+        if (Plasma::ToolTipManager::self()->isVisible(item)) {
+            Plasma::ToolTipManager::self()->hide(item);
         }
+        Plasma::ToolTipManager::self()->setContent(item, Plasma::ToolTipContent());
     } else {
         Plasma::ToolTipContent content(calendar()->formatDate(date),
                                        d->calendarWidget->dateProperty(date),
                                        KIcon("view-pim-calendar"));
         content.setAutohide(false);
-        Plasma::ToolTipManager::self()->setContent(d->calendarWidget, content);
-        Plasma::ToolTipManager::self()->show(d->calendarWidget);
+        Plasma::ToolTipManager::self()->setContent(item, content);
+        Plasma::ToolTipManager::self()->show(item);
     }
 }
 
