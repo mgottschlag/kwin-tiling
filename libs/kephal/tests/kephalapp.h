@@ -35,7 +35,7 @@ class KephalApp : public QApplication
 {
     Q_OBJECT
     public:
-        KephalApp(int & argc, char ** argv);
+        KephalApp(bool listen, int & argc, char ** argv);
         ~KephalApp();
 
     private:
@@ -44,13 +44,10 @@ class KephalApp : public QApplication
         QString m_exec;
         QDesktopWidget * m_widget;
 
-        void init(int & argc, char ** argv);
         void query();
 
     private Q_SLOTS:
         void run();
-        void printHelp();
-        void unknownArg();
 
         void screenMoved(Kephal::Screen * s, QPoint o, QPoint n);
         void screenResized(Kephal::Screen * s, QSize o, QSize n);

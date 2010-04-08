@@ -29,199 +29,187 @@
 
 #include <QTextStream>
 
+#include <KAboutData>
+#include <KCmdLineArgs>
+
 #include <iostream>
 
+#define WITH_OUTPUTS 1
 
 using namespace Kephal;
 
 int main(int argc, char *argv[])
 {
-    KephalApp app(argc, argv);
+    KAboutData aboutData( "kephalapp", "filetypes", ki18n("KEditFileType"), "1.0",
+            ki18n("KDE file type editor - simplified version for editing a single file type"),
+            KAboutData::License_GPL,
+            ki18n("(c) 2000, KDE developers") );
+
+    aboutData.addAuthor(ki18n("Aike J Sommer"), ki18n("Original author"), "dev@aikesommer.name");
+    aboutData.addAuthor(ki18n("Will Stephenson"), ki18n("Developer"), "wstephenson@kde.org");
+
+    KCmdLineArgs::init( argc, argv, &aboutData );
+    KCmdLineOptions options;
+
+    options.add("listen", ki18n("keep running and report events"));
+    KCmdLineArgs::addCmdLineOptions(options);
+    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+
+    KephalApp app(args->isSet("listen"), argc, argv);
     return app.exec();
 }
 
 
-KephalApp::KephalApp(int & argc, char ** argv)
-    : QApplication(argc, argv), m_listen(false)
+KephalApp::KephalApp(bool listen, int & argc, char ** argv)
+: QApplication(argc, argv), m_listen(listen)
 {
-    init(argc, argv);
+    QTimer::singleShot(0, this, SLOT(run()));
 }
 
 KephalApp::~KephalApp()
 {
 }
 
-void KephalApp::init(int & argc, char ** argv) {
-    for (int i = 1; i < argc; ++i) {
-        QString arg = argv[i];
 
-        if (arg == "--listen" || arg == "-l") {
-            m_listen = true;
-        } else if (arg == "--help" || arg == "-?") {
-            QTimer::singleShot(0, this, SLOT(printHelp()));
-            return;
-        } else {
-            m_exec = argv[0];
-            m_arg = arg;
-            QTimer::singleShot(0, this, SLOT(unknownArg()));
-            return;
-        }
+void KephalApp::run() {
+    query();
+    if (!m_listen) {
+        QApplication::exit(0);
     }
 
     connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(qdwScreenResized(int)));
     connect(QApplication::desktop(), SIGNAL(screenCountChanged(int)), SLOT(qdwScreenCountChanged(int)));
     connect(QApplication::desktop(), SIGNAL(workAreaResized(int)), SLOT(qdwWorkAreaResized(int)));
 
-    QTimer::singleShot(0, this, SLOT(run()));
+    connect(Kephal::Screens::self(), SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)),
+            this, SLOT(screenMoved(Kephal::Screen *, QPoint, QPoint)));
+    connect(Kephal::Screens::self(), SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
+            this, SLOT(screenResized(Kephal::Screen *, QSize, QSize)));
+    connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)),
+            this, SLOT(screenRemoved(int)));
+    connect(Kephal::Screens::self(), SIGNAL(screenAdded(Kephal::Screen *)),
+            this, SLOT(screenAdded(Kephal::Screen *)));
 }
 
-void KephalApp::unknownArg() {
-    QTextStream cerr(stderr);
-
-    cerr << "Unknown argument: " << m_arg << "\n";
-    cerr << "Try: " << m_exec << " --help\n";
-    exit(1);
+void KephalApp::screenMoved(Kephal::Screen * s, QPoint o, QPoint n)
+{
+    qDebug() << "****************";
+    qDebug() << "* New message coming in:";
+    qDebug() << "* screenMoved: " << s->id() << " from " << o << " to " << n;
+    qDebug() << "****************";
 }
 
-void KephalApp::printHelp() {
-    QTextStream cout(stdout);
-    cout << "Usage:\n";
-    cout << "    --help      Display this message\n";
-    cout << "    --listen    Listen for Kephal-signals\n";
-    exit(0);
+void KephalApp::screenResized(Kephal::Screen * s, QSize o, QSize n)
+{
+    qDebug() << "****************";
+    qDebug() << "* New message coming in:";
+    qDebug() << "* screenResized: " << s->id() << " from " << o << " to " << n;
+    qDebug() << "****************";
 }
 
-void KephalApp::run() {
-    query();
-    if (! m_listen) {
-        exit(0);
-    }
-
-    connect(Kephal::Screens::self(), SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)), this, SLOT(screenMoved(Kephal::Screen *, QPoint, QPoint)));
-    connect(Kephal::Screens::self(), SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)), this, SLOT(screenResized(Kephal::Screen *, QSize, QSize)));
-    connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)), this, SLOT(screenRemoved(int)));
-    connect(Kephal::Screens::self(), SIGNAL(screenAdded(Kephal::Screen *)), this, SLOT(screenAdded(Kephal::Screen *)));
+void KephalApp::screenRemoved(int s)
+{
+    qDebug() << "****************";
+    qDebug() << "* New message coming in:";
+    qDebug() << "* screenRemoved: " << s;
+    qDebug() << "****************";
 }
 
-void KephalApp::screenMoved(Kephal::Screen * s, QPoint o, QPoint n) {
-    QTextStream cout(stdout);
-    cout << "****************\n";
-    cout << "* New message coming in:\n";
-    cout << "* screenMoved: " << s->id() << " from (" << o.x() << ", " << o.y() << ") to (" << n.x() << ", " << n.y() << ")\n";
-    cout << "****************\n";
-}
-
-void KephalApp::screenResized(Kephal::Screen * s, QSize o, QSize n) {
-    QTextStream cout(stdout);
-    cout << "****************\n";
-    cout << "* New message coming in:\n";
-    cout << "* screenResized: " << s->id() << " from (" << o.width() << ", " << o.height() << ") to (" << n.width() << ", " << n.height() << ")\n";
-    cout << "****************\n";
-}
-
-void KephalApp::screenRemoved(int s) {
-    QTextStream cout(stdout);
-    cout << "****************\n";
-    cout << "* New message coming in:\n";
-    cout << "* screenRemoved: " << s << "\n";
-    cout << "****************\n";
-}
-
-void KephalApp::screenAdded(Kephal::Screen * s) {
-    QTextStream cout(stdout);
-    cout << "****************\n";
-    cout << "* New message coming in:\n";
-    cout << "* screenAdded: " << s->id() << " at (" << s->position().x() << ", " << s->position().y() << ") with size (" << s->size().width() << ", " << s->size().height() << ")\n";
-    cout << "****************\n";
+void KephalApp::screenAdded(Kephal::Screen * s)
+{
+    qDebug() << "****************";
+    qDebug() << "* New message coming in:";
+    qDebug() << "* screenAdded: " << s->id() << " at " << s->position() << " with size " << s->size();
+    qDebug() << "****************";
 }
 
 
-void KephalApp::query() {
-    QTextStream cout(stdout);
-    cout << "Screens:\n";
+void KephalApp::query()
+{
+    qDebug() << "Screens:";
     foreach (Screen * screen, Screens::self()->screens()) {
-        cout << "  Screen " << screen->id() << ":\n";
-        cout << "    Size: " << screen->size().width() << "x" << screen->size().height() << "\n";
-        cout << "    Position: (" << screen->position().x() << "," << screen->position().y() << ")\n";
+        qDebug() << "  Screen " << screen->id();
+        qDebug() << "    Size: " << screen->size();
+        qDebug() << "    Position: " << screen->position();
 
+#if WITH_OUTPUTS
         foreach (Output * output, screen->outputs()) {
-            cout << "    Output: " << output->id() << "\n";
+            qDebug() << "    Output: " << output->id() << "\n";
         }
+#endif
     }
 
-    cout << "\nOutputs:\n";
+#if WITH_OUTPUTS
+    qDebug() << "\nOutputs:\n";
     foreach (Output * output, Outputs::self()->outputs()) {
-        cout << "  Output " << output->id() << ":\n";
-        cout << "    Connected: " << output->isConnected() << "\n";
+        qDebug() << "  Output " << output->id() << ":\n";
+        qDebug() << "    Connected: " << output->isConnected() << "\n";
 
         if (! output->isConnected()) continue;
 
-        cout << "    Activated: " << output->isActivated() << "\n";
-        cout << "    Size: " << output->size().width() << "x" << output->size().height() << "\n";
-        cout << "    Position: (" << output->position().x() << "," << output->position().y() << ")\n";
-        cout << "    Vendor: " << output->vendor() << "\n";
-        cout << "    PreferredSize: " << output->preferredSize().width() << "x" << output->preferredSize().height() << "\n";
-        cout << "    Rotation: " << output->rotation() << "\n";
-        cout << "    ReflectX: " << output->reflectX() << "\n";
-        cout << "    ReflectY: " << output->reflectY() << "\n";
-        cout << "    Rate: " << output->rate() << "\n";
-        cout << "    Screen: " << (output->screen() ? output->screen()->id() : -1) << "\n";
+        qDebug() << "    Activated: " << output->isActivated() << "\n";
+        qDebug() << "    Size: " << output->size().width() << "x" << output->size().height() << "\n";
+        qDebug() << "    Position: (" << output->position().x() << "," << output->position().y() << ")\n";
+        qDebug() << "    Vendor: " << output->vendor() << "\n";
+        qDebug() << "    PreferredSize: " << output->preferredSize().width() << "x" << output->preferredSize().height() << "\n";
+        qDebug() << "    Rotation: " << output->rotation() << "\n";
+        qDebug() << "    ReflectX: " << output->reflectX() << "\n";
+        qDebug() << "    ReflectY: " << output->reflectY() << "\n";
+        qDebug() << "    Rate: " << output->rate() << "\n";
+        qDebug() << "    Screen: " << (output->screen() ? output->screen()->id() : -1) << "\n";
 
-        cout << "\n    Available sizes: ";
+        qDebug() << "\n    Available sizes: ";
         foreach (const QSize &size, output->availableSizes()) {
-            cout << size.width() << "x" << size.height() << ", ";
+            qDebug() << size.width() << "x" << size.height() << ", ";
         }
 
-        cout << "\n    Available positions: ";
+        qDebug() << "\n    Available positions: ";
         foreach (const QPoint &pos, output->availablePositions()) {
-            cout << "(" << pos.x() << "," << pos.y() << "), ";
+            qDebug() << "(" << pos.x() << "," << pos.y() << "), ";
         }
 
-        cout << "\n    Available rates: ";
+        qDebug() << "\n    Available rates: ";
         foreach (float rate, output->availableRates()) {
-            cout << rate << ", ";
+            qDebug() << rate << ", ";
         }
 
-        cout << "\n";
+        qDebug() << "\n";
     }
+#endif
 }
 
 void KephalApp::qdwScreenResized(int screen)
 {
-    QTextStream cout(stdout);
-    cout << "                   *****************\n";
-    cout << "                   ** QDesktopWidget:\n";
-    cout << "                   ** screenResized: " << screen << "\n";
+    qDebug() << "                   *****************";
+    qDebug() << "                   ** QDesktopWidget:";
+    qDebug() << "                   ** screenResized: " << screen;
     QRect geom = QApplication::desktop()->screenGeometry(screen);
-    cout << "                   ** New geometry: \n";
-    cout << "                   ** Size: " << geom.width() << "x" << geom.height() << "\n";
-    cout << "                   ** Position: (" << geom.x() << "," << geom.y() << ")\n";
-    cout << "                   *****************\n\n";
-    cout.flush();
+    qDebug() << "                   ** New geometry:";
+    qDebug() << "                   ** Size: " << geom.width() << "x" << geom.height();
+    qDebug() << "                   ** Position: " << geom.x() << "," << geom.y();
+    qDebug() << "                   ** isVirtual: " << QApplication::desktop()->isVirtualDesktop();
+    qDebug() << "                   *****************";
 }
 
 void KephalApp::qdwScreenCountChanged(int newCount)
 {
-    QTextStream cout(stdout);
-    cout << "                   *****************\n";
-    cout << "                   ** QDesktopWidget:\n";
-    cout << "                   ** Screen Count Changed, now:" << newCount << "\n";
-    cout << "                   *****************\n\n";
-    cout.flush();
+    qDebug() << "                   *****************";
+    qDebug() << "                   ** QDesktopWidget:";
+    qDebug() << "                   ** Screen Count Changed, now:" << newCount;
+    qDebug() << "                   *****************";
 }
 
 void KephalApp::qdwWorkAreaResized(int screen)
 {
-    QTextStream cout(stdout);
-    cout << "                   *****************\n";
-    cout << "                   ** QDesktopWidget:\n";
-    cout << "                   ** workAreaResized: " << screen << "\n";
+    qDebug() << "                   *****************";
+    qDebug() << "                   ** QDesktopWidget:";
+    qDebug() << "                   ** workAreaResized: " << screen;
     QRect geom = QApplication::desktop()->availableGeometry(screen);
-    cout << "                   ** New geometry: \n";
-    cout << "                   ** Size: " << geom.width() << "x" << geom.height() << "\n";
-    cout << "                   ** Position: (" << geom.x() << "," << geom.y() << ")\n";
-    cout << "                   *****************\n\n";
-    cout.flush();
+    qDebug() << "                   ** New geometry:";
+    qDebug() << "                   ** Size: " << geom.width() << "x" << geom.height();
+    qDebug() << "                   ** Position: (" << geom.x() << "," << geom.y();
+    qDebug() << "                   ** isVirtual: " << (QApplication::desktop()->isVirtualDesktop() ? "true" : "false" );
+    qDebug() << "                   *****************";
 }
 
 
