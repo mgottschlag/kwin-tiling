@@ -324,7 +324,7 @@ QActionGroup *KRandRSystemTray::populateRotations(KMenu *menu, int rotations, in
 {
 	QAction *action;
 	QActionGroup *rotateGroup = new QActionGroup(menu);
-
+	rotateGroup->setExclusive(true);
 
 	for (int i = 0; i < 6; i++) 
 	{
@@ -332,13 +332,12 @@ QActionGroup *KRandRSystemTray::populateRotations(KMenu *menu, int rotations, in
 		{
 			action = menu->addAction(QIcon(RandR::rotationIcon(1 << i, rotation)), 
 							   RandR::rotationName(1 << i));
+			action->setCheckable(true);
 
 			action->setData(1 << i);
 			if (rotation & (1 << i))
 			{
-				QFont font = action->font();
-				font.setBold(true);
-				action->setFont(font);
+				action->setChecked(true);
 			}
 			rotateGroup->addAction(action);
 		}
@@ -350,16 +349,16 @@ QActionGroup *KRandRSystemTray::populateSizes(KMenu *menu, const SizeList &sizes
 {
 	QAction *action;
 	QActionGroup *sizeGroup = new QActionGroup(menu);
+	sizeGroup->setExclusive(true);
 	for (int i = 0; i < sizes.count(); ++i) 
 	{
 		QSize s = sizes[i];
 		action = menu->addAction(QString("%1 x %2").arg(s.width()).arg(s.height()));
+		action->setCheckable(true);
 		action->setData(s);
 		if (s == size) 
 		{
-			QFont font = action->font();
-			font.setBold(true);
-			action->setFont(font);
+			action->setChecked(true);
 		}
 		sizeGroup->addAction(action);
 	}
@@ -370,16 +369,16 @@ QActionGroup *KRandRSystemTray::populateRates(KMenu *menu, const RateList &rates
 {
 	QAction *action;
 	QActionGroup *rateGroup = new QActionGroup(menu);
+	rateGroup->setExclusive(true);
 
 	foreach(float r, rates)
 	{
 		action = menu->addAction(ki18n("%1 Hz").subs(r, 0, 'f', 1).toString());
+		action->setCheckable(true);
 		action->setData(r);
 		if (r == rate)
 		{
-			QFont f = action->font();
-			f.setBold(true);
-			action->setFont(f);
+			action->setChecked(true);
 		}
 		rateGroup->addAction(action);
 	}
