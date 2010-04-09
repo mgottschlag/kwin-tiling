@@ -33,6 +33,7 @@
 #include <KGlobalSettings>
 #include <KServiceTypeTrader>
 #include <KStandardDirs>
+#include <KSycoca>
 #include <KWindowSystem>
 
 #include <Plasma/AbstractToolBox>
@@ -83,6 +84,27 @@ void DesktopCorona::init()
     setContainmentActionsDefaults(Plasma::Containment::PanelContainment, panelPlugins);
     setContainmentActionsDefaults(Plasma::Containment::CustomPanelContainment, panelPlugins);
 
+    checkAddPanelAction();
+
+    connect(this, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)),
+            this, SLOT(updateImmutability(Plasma::ImmutabilityType)));
+    connect(KSycoca::self(), SIGNAL(databaseChanged(QString)), this, SLOT(checkAddPanelAction(QString)));
+
+    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "DesktopCorona init end" << "(line:" << __LINE__ << ")";
+}
+
+void DesktopCorona::checkAddPanelAction(const QString &sycocaChanges)
+{
+    if (sycocaChanges != "services") {
+        return;
+    }
+
+    delete m_addPanelAction;
+    m_addPanelAction = 0;
+
+    delete m_addPanelsMenu;
+    m_addPanelsMenu = 0;
+
     KPluginInfo::List panelContainmentPlugins = Plasma::Containment::listContainmentsOfType("panel");
     //FIXME: this will have to become a dynamic choice between a menu and  simple action, i think
     const QString constraint = QString("[X-Plasma-Shell] == '%1'")
@@ -107,11 +129,6 @@ void DesktopCorona::init()
         m_addPanelAction->setIcon(KIcon("list-add"));
         addAction("add panel", m_addPanelAction);
     }
-
-    connect(this, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)),
-            this, SLOT(updateImmutability(Plasma::ImmutabilityType)));
-
-    kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "DesktopCorona init end" << "(line:" << __LINE__ << ")";
 }
 
 void DesktopCorona::updateImmutability(Plasma::ImmutabilityType immutability)

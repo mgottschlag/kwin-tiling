@@ -90,6 +90,7 @@ protected Q_SLOTS:
     void printScriptError(const QString &error);
     void printScriptMessage(const QString &error);
     void updateImmutability(Plasma::ImmutabilityType immutability);
+    void checkAddPanelAction(const QString &sycocaChanges = "services");
 
 private:
     void init();
