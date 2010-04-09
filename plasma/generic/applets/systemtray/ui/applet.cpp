@@ -98,9 +98,6 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
     setBackgroundHints(NoBackground);
     setHasConfigurationInterface(true);
-    QAction *addDefaultApplets = new QAction(i18n("add default applets"), this);
-    connect(addDefaultApplets, SIGNAL(triggered()), this, SLOT(addDefaultApplets()));
-    addAction("add default applets", addDefaultApplets);
 }
 
 Applet::~Applet()
@@ -145,6 +142,7 @@ void Applet::init()
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
             this, SLOT(checkSizes()));
 
+    checkDefaultApplets();
     configChanged();
 }
 
@@ -596,15 +594,22 @@ void Applet::configAccepted()
     emit configNeedsSaving();
 }
 
-void Applet::addDefaultApplets()
+void Applet::checkDefaultApplets()
 {
+    if (config().readEntry("DefaultAppletsAdded", false)) {
+        return;
+    }
+
+
     QStringList applets = s_manager->applets(this);
     if (!applets.contains("notifier")) {
         s_manager->addApplet("notifier", this);
     }
+
     if (!applets.contains("notifications")) {
         s_manager->addApplet("notifications", this);
     }
+
     if (!applets.contains("battery")) {
         Plasma::DataEngineManager *engines = Plasma::DataEngineManager::self();
         Plasma::DataEngine *power = engines->loadEngine("powermanagement");
@@ -616,6 +621,8 @@ void Applet::addDefaultApplets()
         }
         engines->unloadEngine("powermanagement");
     }
+
+    config().writeEntry("DefaultAppletsAdded", false);
 }
 
 }

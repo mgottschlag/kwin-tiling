@@ -74,7 +74,7 @@ private slots:
     void configAccepted();
     void propogateSizeHintChange(Qt::SizeHint which);
     void checkSizes();
-    void addDefaultApplets();
+    void checkDefaultApplets();
 
 private:
     void setTaskAreaGeometry();
