@@ -332,6 +332,7 @@ void DesktopCorona::loadDefaultLayout()
 {
     evaluateScripts(ScriptEngine::defaultLayoutScripts());
     if (!containments().isEmpty()) {
+        QTimer::singleShot(1000, this, SLOT(saveDefaultSetup()));
         return;
     }
 
@@ -341,6 +342,7 @@ void DesktopCorona::loadDefaultLayout()
         loadLayout(defaultConfig);
 
         if (!containments().isEmpty()) {
+            QTimer::singleShot(1000, this, SLOT(saveDefaultSetup()));
             return;
         }
     }
@@ -422,15 +424,7 @@ void DesktopCorona::loadDefaultLayout()
 
     loadDefaultApplet("pager", panel);
     loadDefaultApplet("tasks", panel);
-    Plasma::Applet *sysTray = loadDefaultApplet("systemtray", panel);
-
-    if (sysTray) {
-        QAction *addDefaultApplets = sysTray->action("add default applets");
-        if (addDefaultApplets) {
-            addDefaultApplets->trigger();
-        }
-    }
-
+    loadDefaultApplet("systemtray", panel);
     loadDefaultApplet("digital-clock", panel);
     emit containmentAdded(panel);
 
