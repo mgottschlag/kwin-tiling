@@ -15,6 +15,7 @@ set(scripting_SRC
     scripting/appinterface.cpp
     scripting/applet.cpp
     scripting/containment.cpp
+    scripting/layouttemplatepackagestructure.cpp
     scripting/rect.cpp
     scripting/scriptengine.cpp
     scripting/widget.cpp
@@ -43,3 +44,5 @@ set_target_properties(plasmagenericshell PROPERTIES VERSION ${GENERIC_LIB_VERSIO
 SOVERSION ${GENERIC_LIB_SOVERSION} )
 
 install(TARGETS plasmagenericshell EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
+INSTALL(FILES plasma-layout-template.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR})
+
