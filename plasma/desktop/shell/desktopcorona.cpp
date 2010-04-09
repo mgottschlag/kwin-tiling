@@ -31,6 +31,7 @@
 #include <KDialog>
 #include <KGlobal>
 #include <KGlobalSettings>
+#include <KServiceTypeTrader>
 #include <KStandardDirs>
 #include <KWindowSystem>
 
@@ -38,13 +39,18 @@
 #include <Plasma/Containment>
 #include <plasma/containmentactionspluginsconfig.h>
 #include <Plasma/DataEngineManager>
+#include <Plasma/Package>
 
 #include <kephal/screens.h>
+
+#include <scripting/layouttemplatepackagestructure.h>
 
 #include "panelview.h"
 #include "plasmaapp.h"
 #include "plasma-shell-desktop.h"
 #include "scripting/desktopscriptengine.h"
+
+static const QString s_panelTemplatesPath("plasma-layout-templates/panels/*");
 
 DesktopCorona::DesktopCorona(QObject *parent)
     : Plasma::Corona(parent),
@@ -79,8 +85,11 @@ void DesktopCorona::init()
 
     KPluginInfo::List panelContainmentPlugins = Plasma::Containment::listContainmentsOfType("panel");
     //FIXME: this will have to become a dynamic choice between a menu and  simple action, i think
-    const int templates = KGlobal::dirs()->findAllResources("appdata", "templates/panels/*").count();
-    if (panelContainmentPlugins.size() + templates == 1) {
+    const QString constraint = QString("[X-Plasma-Shell] == '%1'")
+                                      .arg(KGlobal::mainComponent().componentName());
+    KService::List templates = KServiceTypeTrader::self()->query("Plasma/LayoutTemplate", constraint);
+
+    if (panelContainmentPlugins.count() + templates.count() == 1) {
         m_addPanelAction = new QAction(i18n("Add Panel"), this);
         m_addPanelAction->setData(Plasma::AbstractToolBox::AddTool);
         connect(m_addPanelAction, SIGNAL(triggered(bool)), this, SLOT(addPanel()));
@@ -451,23 +460,26 @@ void DesktopCorona::screenAdded(Kephal::Screen *s)
 void DesktopCorona::populateAddPanelsMenu()
 {
     m_addPanelsMenu->clear();
+    const KPluginInfo emptyInfo;
 
     KPluginInfo::List panelContainmentPlugins = Plasma::Containment::listContainmentsOfType("panel");
-    QMap<QString, QPair<KPluginInfo, QString> > sorted;
+    QMap<QString, QPair<KPluginInfo, KService::Ptr> > sorted;
     foreach (const KPluginInfo &plugin, panelContainmentPlugins) {
-        sorted.insert(plugin.name(), qMakePair(plugin, QString()));
+        sorted.insert(plugin.name(), qMakePair(plugin, KService::Ptr(0)));
     }
 
-    KPluginInfo emptyInfo;
-    QStringList templates = KGlobal::dirs()->findAllResources("appdata", "templates/panels/*");
-    foreach (const QString &script, templates) {
-        sorted.insert(script, qMakePair(emptyInfo, script));
+    const QString constraint = QString("[X-Plasma-Shell] == '%1'")
+                                      .arg(KGlobal::mainComponent().componentName());
+    KService::List templates = KServiceTypeTrader::self()->query("Plasma/LayoutTemplate", constraint);
+    foreach (const KService::Ptr &service, templates) {
+        sorted.insert(service->name(), qMakePair(emptyInfo, service));
     }
 
-    QMapIterator<QString, QPair<KPluginInfo, QString> > it(sorted);
+    QMapIterator<QString, QPair<KPluginInfo, KService::Ptr> > it(sorted);
+    Plasma::PackageStructure::Ptr templateStructure(new LayoutTemplatePackageStructure);
     while (it.hasNext()) {
         it.next();
-        QPair<KPluginInfo, QString> pair = it.value();
+        QPair<KPluginInfo, KService::Ptr> pair = it.value();
         if (pair.first.isValid()) {
             KPluginInfo plugin = pair.first;
             QAction *action = m_addPanelsMenu->addAction(plugin.name());
@@ -478,8 +490,17 @@ void DesktopCorona::populateAddPanelsMenu()
             action->setData(plugin.pluginName());
         } else {
             //FIXME: proper names
-            QAction *action = m_addPanelsMenu->addAction(pair.second);
-            action->setData("plasma-desktop-template:" + pair.second);
+            KPluginInfo info(pair.second);
+            Plasma::PackageStructure::Ptr structure(new LayoutTemplatePackageStructure);
+            const QString path = KStandardDirs::locate("data", structure->defaultPackageRoot() + '/' + info.pluginName() + '/');
+            if (!path.isEmpty()) {
+                Plasma::Package package(path, structure);
+                const QString scriptFile = package.filePath("mainscript");
+                if (!scriptFile.isEmpty()) {
+                    QAction *action = m_addPanelsMenu->addAction(info.name());
+                    action->setData("plasma-desktop-template:" + scriptFile);
+                }
+            }
         }
     }
 }
