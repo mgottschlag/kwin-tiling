@@ -23,6 +23,8 @@
 
 #include "applet.h"
 
+#include <QtCore/QProcess>
+#include <QtCore/QTimer>
 #include <QtGui/QApplication>
 #include <QtGui/QGraphicsLayout>
 #include <QtGui/QGraphicsLinearLayout>
@@ -34,7 +36,6 @@
 #include <QtGui/QCheckBox>
 #include <QtGui/QPainter>
 #include <QtGui/QX11Info>
-#include <QtCore/QProcess>
 
 
 #include <KConfigDialog>
@@ -142,7 +143,7 @@ void Applet::init()
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
             this, SLOT(checkSizes()));
 
-    checkDefaultApplets();
+    QTimer::singleShot(0, this, SLOT(checkDefaultApplets()));
     configChanged();
 }
 
