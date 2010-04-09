@@ -77,7 +77,8 @@ private Q_SLOTS:
     void openScriptUrlSelected();
 
 private:
-    bool confirmClose();
+    void onClose();
+    void saveScript(const KUrl &url);
 
     Plasma::Corona *m_corona;
     QSplitter *m_splitter;

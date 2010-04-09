@@ -33,6 +33,7 @@
 #include <KMessageBox>
 #include <KServiceTypeTrader>
 #include <KStandardAction>
+#include <KStandardDirs>
 #include <KTextBrowser>
 #include <KTextEdit>
 #include <KTextEditor/ConfigInterface>
@@ -48,6 +49,7 @@
 //TODO:
 // use text editor KPart for syntax highlighting?
 // interative help?
+static const QString s_autosaveFileName("interactiveconsoleautosave.js");
 
 InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     : KDialog(parent),
@@ -61,6 +63,10 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
       m_executeAction(new KAction(KIcon("system-run"), i18n("&Execute"), this)),
       m_fileDialog(0)
 {
+    addAction(KStandardAction::close(this, SLOT(close()), this));
+    addAction(m_saveAction);
+    addAction(m_clearAction);
+
     setWindowTitle(KDialog::makeStandardCaption(i18n("Desktop Shell Scripting Console")));
     setAttribute(Qt::WA_DeleteOnClose);
     setButtons(KDialog::None);
@@ -137,8 +143,12 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     scriptTextChanged();
 
     connect(m_executeAction, SIGNAL(triggered()), this, SLOT(evaluateScript()));
-
     m_executeAction->setShortcut(Qt::CTRL + Qt::Key_E);
+
+    const QString autosave = KStandardDirs::locateLocal("appdata", s_autosaveFileName);
+    if (QFile::exists(autosave)) {
+        loadScript(autosave);
+    }
 }
 
 InteractiveConsole::~InteractiveConsole()
@@ -180,40 +190,22 @@ void InteractiveConsole::showEvent(QShowEvent *)
 
 void InteractiveConsole::closeEvent(QCloseEvent *event)
 {
-    if (confirmClose()) {
-        KDialog::closeEvent(event);
-    } else {
-        event->ignore();
-    }
+    onClose();
+    KDialog::closeEvent(event);
 }
 
 void InteractiveConsole::reject()
 {
-    if (confirmClose()) {
-        KDialog::reject();
-    }
+    onClose();
+    KDialog::reject();
 }
 
-bool InteractiveConsole::confirmClose()
+void InteractiveConsole::onClose()
 {
-    if (m_saveAction->isEnabled()) {
-        // need to save first!
-        const QString msg = i18n("There are unsaved changes in the script editor. Would you like to save these changes before closing the interactive console?");
-        int rv = KMessageBox::warningYesNoCancel(this, msg, i18n("Unsaved Changes"),
-                                                 KStandardGuiItem::save(),
-                                                 KStandardGuiItem::dontSave(),
-                                                 KStandardGuiItem::cancel(),
-                                                "InteractiveConsoleSaveOnQuit");
-        if (rv == KMessageBox::Yes) {
-            saveScript();
-            m_closeWhenCompleted = true;
-            return !m_saveAction->isEnabled();
-        } else if (rv == KMessageBox::Cancel) {
-            return false;
-        }
-    }
-
-    return true;
+    // need to save first!
+    const QString path = KStandardDirs::locateLocal("appdata", s_autosaveFileName);
+    m_closeWhenCompleted = true;
+    saveScript(path);
 }
 
 void InteractiveConsole::print(const QString &string)
@@ -323,6 +315,11 @@ void InteractiveConsole::saveScriptUrlSelected()
         return;
     }
 
+    saveScript(url);
+}
+
+void InteractiveConsole::saveScript(const KUrl &url)
+{
     if (m_editorPart) {
         m_saveAction->setEnabled(!m_editorPart->saveAs(url));
     } else {
