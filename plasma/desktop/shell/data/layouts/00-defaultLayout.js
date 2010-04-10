@@ -1,4 +1,16 @@
-print("creating the layout")
+var topLeftScreen = 0
+var rect = screenGeometry(0)
+
+// find our "top left" screen to put the folderview on it
+for (var i = 1; i < screenCount; ++i) {
+    var g = screenGeometry(i)
+
+    if (g.x <= rect.x && g.top >= rect.top) {
+        rect = g
+        topLeftScreen = i
+    }
+}
+
 for (var i = 0; i < screenCount; ++i) {
     var desktop = new Activity
     desktop.screen = i
@@ -6,7 +18,7 @@ for (var i = 0; i < screenCount; ++i) {
     desktop.wallpaperMode = 'SingleImage'
 
     print("for screen " + i)
-    if (i == 0) {
+    if (i == topLeftScreen) {
         var folderview = desktop.addWidget("folderview")
         folderview.writeConfig("url", "desktop:/")
     }
