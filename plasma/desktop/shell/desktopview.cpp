@@ -88,10 +88,6 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     KWindowSystem::setType(winId(), NET::Desktop);
     lower();
 
-    if (containment) {
-        connect(PlasmaApp::self()->corona(), SIGNAL(containmentAdded(Plasma::Containment *)), this, SLOT(containmentAdded(Plasma::Containment *)));
-    }
-
     m_actions->addAssociatedWidget(this);
     QAction *action = m_actions->action("next");
     connect(action, SIGNAL(triggered()), this, SLOT(nextContainment()));
@@ -394,20 +390,6 @@ void DesktopView::showDesktopUntoggled(WId id)
     }
 
     KWindowSystem::activateWindow(id);
-}
-
-void DesktopView::containmentAdded(Plasma::Containment *c)
-{
-    Q_UNUSED(c)
-
-    if (transform().m11() != 1) {
-        QTimer::singleShot(0, this, SLOT(syncSceneRect()));
-    }
-}
-
-void DesktopView::syncSceneRect()
-{
-    setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom() + TOOLBOX_MARGIN));
 }
 
 /*

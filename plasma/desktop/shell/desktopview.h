@@ -82,8 +82,6 @@ public slots:
     void toolBoxOpened(bool);
     void showDesktopUntoggled(WId id);
     void showWidgetExplorer();
-    void containmentAdded(Plasma::Containment *c);
-    void syncSceneRect();
 
     void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
 
