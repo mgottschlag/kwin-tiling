@@ -3,6 +3,10 @@ INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/../kephal ${CMAKE_CURRENT_BINAR
 configure_file (../kephal/config-kephal.h.cmake
 ${CMAKE_CURRENT_BINARY_DIR}/config-kephal.h )
 
+IF(WIN32)
+    ADD_DEFINITIONS(-Dkephal_EXPORTS)
+ENDIF(WIN32)
+
 SET (kephalshared_SRCS
    ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/outputs.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/screens.cpp
