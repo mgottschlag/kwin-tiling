@@ -23,6 +23,7 @@
 #include <QHash>
 #include <QList>
 #include <QSize>
+#include <QTimer>
 #include <QWeakPointer>
 
 #include <KUniqueApplication>
@@ -31,7 +32,6 @@
 #include <plasma/packagemetadata.h>
 
 class QSignalMapper;
-class QTimer;
 
 namespace Plasma
 {
@@ -103,6 +103,8 @@ public Q_SLOTS:
     bool fixedDashboard() const;
 
     void createWaitingPanels();
+    void createWaitingDesktops();
+    void createView(Plasma::Containment *containment);
 
 protected:
 #ifdef Q_WS_X11
@@ -119,10 +121,9 @@ private Q_SLOTS:
     void setupDesktop();
     void cleanup();
     void containmentAdded(Plasma::Containment *containment);
+    void containmentScreenOwnerChanged(int, int, Plasma::Containment*);
     void syncConfig();
-    void createView(Plasma::Containment *containment);
     void panelRemoved(QObject* panel);
-    void waitingPanelRemoved(QObject* panel);
     void screenRemoved(int id);
     void compositingChanged();
     void addContainment();
@@ -140,9 +141,11 @@ private Q_SLOTS:
 private:
     DesktopCorona *m_corona;
     QList<PanelView*> m_panels;
-    QList<Plasma::Containment*> m_panelsWaiting;
+    QList<QWeakPointer<Plasma::Containment> > m_panelsWaiting;
+    QList<QWeakPointer<Plasma::Containment> > m_desktopsWaiting;
     QList<DesktopView*> m_desktops;
-    QTimer *m_panelViewCreationTimer;
+    QTimer m_panelViewCreationTimer;
+    QTimer m_desktopViewCreationTimer;
     QWeakPointer<InteractiveConsole> m_console;
     int m_panelHidden;
     QSignalMapper *m_mapper;

@@ -150,10 +150,13 @@ PlasmaApp::PlasmaApp()
     // - aseigo.
     KGlobalAccel::cleanComponent("plasma");
 
-    m_panelViewCreationTimer = new QTimer(this);
-    m_panelViewCreationTimer->setSingleShot(true);
-    m_panelViewCreationTimer->setInterval(0);
-    connect(m_panelViewCreationTimer, SIGNAL(timeout()), this, SLOT(createWaitingPanels()));
+    m_panelViewCreationTimer.setSingleShot(true);
+    m_panelViewCreationTimer.setInterval(0);
+    connect(&m_panelViewCreationTimer, SIGNAL(timeout()), this, SLOT(createWaitingPanels()));
+
+    m_desktopViewCreationTimer.setSingleShot(true);
+    m_desktopViewCreationTimer.setInterval(0);
+    connect(&m_desktopViewCreationTimer, SIGNAL(timeout()), this, SLOT(createWaitingDesktops()));
 
     new PlasmaAppAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/App", this);
@@ -290,7 +293,6 @@ void PlasmaApp::setupDesktop()
     desktop()->setPalette(palette);
 
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
-    
     kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "Plasma App SetupDesktop()" << "(line:" << __LINE__ << ")";
 }
 
@@ -649,6 +651,8 @@ Plasma::Corona* PlasmaApp::corona()
         connect(c, SIGNAL(configSynced()), this, SLOT(syncConfig()));
         connect(c, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)),
                 this, SLOT(updateActions(Plasma::ImmutabilityType)));
+        connect(c, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
+                this, SLOT(containmentScreenOwnerChanged(int,int,Plasma::Containment*)));
 
         foreach (DesktopView *view, m_desktops) {
             connect(c, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
@@ -755,8 +759,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
     if (isPanelContainment(containment)) {
         m_panelsWaiting << containment;
-        connect(containment, SIGNAL(destroyed(QObject*)), this, SLOT(waitingPanelRemoved(QObject*)));
-        m_panelViewCreationTimer->start();
+        m_panelViewCreationTimer.start();
     } else if (containment->screen() > -1 &&
                containment->screen() < Kephal::ScreenUtils::numScreens()) {
         if (AppSettings::perVirtualDesktopViews()) {
@@ -767,7 +770,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         }
 
         KConfigGroup viewIds(KGlobal::config(), "ViewIds");
-        int id = viewIds.readEntry(QString::number(containment->id()), 0);
+        const int id = viewIds.readEntry(QString::number(containment->id()), 0);
         DesktopView *view = viewForScreen(containment->screen(),
                                           AppSettings::perVirtualDesktopViews() ? containment->desktop() : -1);
         if (view) {
@@ -810,8 +813,12 @@ void PlasmaApp::setWmClass(WId id)
 
 void PlasmaApp::createWaitingPanels()
 {
-    foreach (Plasma::Containment *containment, m_panelsWaiting) {
-        disconnect(containment, SIGNAL(destroyed(QObject*)), this, SLOT(waitingPanelRemoved(QObject*)));
+    foreach (QWeakPointer<Plasma::Containment> containmentPtr, m_panelsWaiting) {
+        Plasma::Containment *containment = containmentPtr.data();
+        if (!containment) {
+            continue;
+        }
+
         KConfigGroup viewIds(KGlobal::config(), "ViewIds");
         int id = viewIds.readEntry(QString::number(containment->id()), 0);
         if (containment->screen() < Kephal::ScreenUtils::numScreens()) {
@@ -824,6 +831,17 @@ void PlasmaApp::createWaitingPanels()
     }
 
     m_panelsWaiting.clear();
+}
+
+void PlasmaApp::createWaitingDesktops()
+{
+    foreach (QWeakPointer<Plasma::Containment> containment, m_desktopsWaiting) {
+        if (containment) {
+            createView(containment.data());
+        }
+    }
+
+    m_desktopsWaiting.clear();
 }
 
 void PlasmaApp::containmentAdded(Plasma::Containment *containment)
@@ -851,6 +869,25 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
     if (!isPanelContainment(containment) && !KAuthorized::authorize("editable_desktop_icons")) {
         containment->setImmutability(Plasma::SystemImmutable);
     }
+}
+
+void PlasmaApp::containmentScreenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment *containment)
+{
+    Q_UNUSED(wasScreen)
+    //kDebug() << isScreen << wasScreen << (QObject*)containment;
+
+    if (isScreen < 0) {
+        return;
+    }
+
+    foreach (DesktopView *view, m_desktops) {
+        if (view->screen() == isScreen) {
+            return;
+        }
+    }
+
+    m_desktopsWaiting.append(containment);
+    m_desktopViewCreationTimer.start();
 }
 
 void PlasmaApp::configureContainment(Plasma::Containment *containment)
@@ -1002,11 +1039,6 @@ bool PlasmaApp::fixedDashboard() const
 void PlasmaApp::panelRemoved(QObject *panel)
 {
     m_panels.removeAll((PanelView *)panel);
-}
-
-void PlasmaApp::waitingPanelRemoved(QObject *panelContainment)
-{
-    m_panelsWaiting.removeAll((Plasma::Containment *)panelContainment);
 }
 
 void PlasmaApp::updateActions(Plasma::ImmutabilityType immutability)
