@@ -202,7 +202,7 @@ bool SaverEngine::enable( bool e, bool force )
     if (mState != Waiting)
         return false;
 
-    if (e && KScreenSaverSettings::screenSaverEnabled() )
+    if (e)
     {
         if (!mXAutoLock)
         {
