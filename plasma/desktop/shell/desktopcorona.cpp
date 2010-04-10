@@ -88,14 +88,14 @@ void DesktopCorona::init()
 
     connect(this, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)),
             this, SLOT(updateImmutability(Plasma::ImmutabilityType)));
-    connect(KSycoca::self(), SIGNAL(databaseChanged(QString)), this, SLOT(checkAddPanelAction(QString)));
+    connect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)), this, SLOT(checkAddPanelAction(QStringList)));
 
     kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "DesktopCorona init end" << "(line:" << __LINE__ << ")";
 }
 
-void DesktopCorona::checkAddPanelAction(const QString &sycocaChanges)
+void DesktopCorona::checkAddPanelAction(const QStringList &sycocaChanges)
 {
-    if (sycocaChanges != "services") {
+    if (!sycocaChanges.isEmpty() && !sycocaChanges.contains("services")) {
         return;
     }
 
@@ -331,102 +331,14 @@ void DesktopCorona::printScriptMessage(const QString &error)
 void DesktopCorona::loadDefaultLayout()
 {
     evaluateScripts(ScriptEngine::defaultLayoutScripts());
-    if (!containments().isEmpty()) {
-        QTimer::singleShot(1000, this, SLOT(saveDefaultSetup()));
-        return;
-    }
-
-    QString defaultConfig = KStandardDirs::locate("appdata", "plasma-default-layoutrc");
-    if (!defaultConfig.isEmpty()) {
-        kDebug() << "attempting to load the default layout from:" << defaultConfig;
-        loadLayout(defaultConfig);
-
-        if (!containments().isEmpty()) {
+    if (containments().isEmpty()) {
+        QString defaultConfig = KStandardDirs::locate("appdata", "plasma-default-layoutrc");
+        if (!defaultConfig.isEmpty()) {
+            kDebug() << "attempting to load the default layout from:" << defaultConfig;
+            loadLayout(defaultConfig);
             QTimer::singleShot(1000, this, SLOT(saveDefaultSetup()));
-            return;
         }
     }
-
-    kDebug() << "number of screens is" << Kephal::ScreenUtils::numScreens();
-    int topLeftScreen = 0;
-    QPoint topLeftCorner = Kephal::ScreenUtils::screenGeometry(0).topLeft();
-
-    // find our "top left" screen, use it as the primary
-    for (int i = 0; i < Kephal::ScreenUtils::numScreens(); ++i) {
-        QRect g = Kephal::ScreenUtils::screenGeometry(i);
-        kDebug() << "     screen " << i << "geometry is" << g;
-
-        if (g.x() <= topLeftCorner.x() && g.y() >= topLeftCorner.y()) {
-            topLeftCorner = g.topLeft();
-            topLeftScreen = i;
-        }
-    }
-
-    // create a containment for each screen
-    for (int i = 0; i < Kephal::ScreenUtils::numScreens(); ++i) {
-        // passing in an empty string will get us whatever the default
-        // containment type is!
-        Plasma::Containment* c = addContainmentDelayed(QString());
-
-        if (!c) {
-            continue;
-        }
-
-        c->init();
-        c->setScreen(i, -1);
-        c->resize(screenGeometry(i).size());
-        c->setWallpaper("image", "SingleImage");
-        c->setFormFactor(Plasma::Planar);
-        c->updateConstraints(Plasma::StartupCompletedConstraint);
-        c->flushPendingConstraintsEvents();
-
-        // put a folder view on the first screen
-        if (i == topLeftScreen) {
-            QString desktopPath = KGlobalSettings::desktopPath();
-            QDir desktopFolder(desktopPath);
-            if (desktopPath != QDir::homePath() && desktopFolder.exists()) {
-                Plasma::Applet *folderView =  Plasma::Applet::load("folderview", c->id() + 1);
-                if (folderView) {
-                    c->addApplet(folderView, QPointF(KDialog::spacingHint(), KDialog::spacingHint()), true);
-                    KConfigGroup config = folderView->config();
-                    config.writeEntry("url", "desktop:/");
-                }
-            }
-        }
-
-        emit containmentAdded(c);
-    }
-
-    // make a panel at the bottom
-    Plasma::Containment *panel = addContainmentDelayed("panel");
-
-    if (!panel) {
-        return;
-    }
-
-    panel->init();
-    panel->setScreen(topLeftScreen);
-    panel->setLocation(Plasma::BottomEdge);
-
-    const int newHeight = 28;
-    panel->resize(QSize((int)panel->size().width(), newHeight));
-    panel->setMinimumSize(QSize((int)panel->minimumSize().width(), newHeight));
-    panel->setMaximumSize(QSize((int)panel->maximumSize().width(), newHeight));
-
-    panel->updateConstraints(Plasma::StartupCompletedConstraint);
-    panel->flushPendingConstraintsEvents();
-
-    // some default applets to get a usable UI
-    Plasma::Applet *applet = loadDefaultApplet("launcher", panel);
-    if (applet) {
-        applet->setGlobalShortcut(KShortcut("Alt+F1"));
-    }
-
-    loadDefaultApplet("pager", panel);
-    loadDefaultApplet("tasks", panel);
-    loadDefaultApplet("systemtray", panel);
-    loadDefaultApplet("digital-clock", panel);
-    emit containmentAdded(panel);
 
     QTimer::singleShot(1000, this, SLOT(saveDefaultSetup()));
 }
@@ -438,11 +350,7 @@ void DesktopCorona::saveDefaultSetup()
 
     foreach (Plasma::Containment *containment, containments()) {
         containment->save(invalidConfig);
-
         foreach (Plasma::Applet* applet, containment->applets()) {
-            applet->init();
-            applet->updateConstraints(Plasma::AllConstraints | Plasma::StartupCompletedConstraint);
-            applet->flushPendingConstraintsEvents();
             applet->save(invalidConfig);
         }
     }
