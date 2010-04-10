@@ -20,8 +20,9 @@
 
 #include "outputscreens.h"
 
-#include <QDebug>
 #include <QTimer>
+
+#include <KDebug>
 
 namespace Kephal {
 
@@ -62,13 +63,13 @@ namespace Kephal {
 
     void OutputScreens::outputActivated(Kephal::Output * o) {
         Q_UNUSED(o)
-        qDebug() << "OutputScreens::outputActivated";
+        kDebug();
         triggerRebuildScreens();
     }
 
     void OutputScreens::outputDeactivated(Kephal::Output * o) {
         Q_UNUSED(o)
-        qDebug() << "OutputScreens::outputDeactivated";
+        kDebug();
         triggerRebuildScreens();
     }
 
@@ -76,7 +77,7 @@ namespace Kephal {
         Q_UNUSED(o)
         Q_UNUSED(oldPosition)
         Q_UNUSED(newPosition)
-        qDebug() << "OutputScreens::outputMoved";
+        kDebug();
         triggerRebuildScreens();
     }
 
@@ -84,7 +85,7 @@ namespace Kephal {
         Q_UNUSED(o)
         Q_UNUSED(oldSize)
         Q_UNUSED(newSize)
-        qDebug() << "OutputScreens::outputResized";
+        kDebug();
         triggerRebuildScreens();
     }
 
@@ -179,7 +180,7 @@ namespace Kephal {
     }
 
     void OutputScreens::triggerRebuildScreens() {
-        qDebug() << "OutputScreens::triggerRebuildScreens()";
+        kDebug();
         m_rebuildTimer->start(200);
     }
 
@@ -188,7 +189,7 @@ namespace Kephal {
     }
 
     void OutputScreens::rebuildScreens() {
-        qDebug() << "OutputScreens::rebuildScreens()";
+        kDebug();
 
         QMap<int, QRect> geoms;
         for (QMap<int, OutputScreen *>::const_iterator i = m_screens.constBegin(); i != m_screens.constEnd(); ++i) {
@@ -202,15 +203,15 @@ namespace Kephal {
         for (QMap<int, OutputScreen *>::const_iterator i = m_screens.constBegin(); i != m_screens.constEnd(); ++i) {
             if (! geoms.contains(i.key())) {
                 emit screenAdded(i.value());
-                qDebug() << "rebuild: emitted screenAdded " << i.key();
+                kDebug() << "emitted screenAdded " << i.key();
             } else if (geoms[i.key()] != i.value()->geom()) {
                 if (geoms[i.key()].topLeft() != i.value()->geom().topLeft()) {
                     emit screenMoved(i.value(), geoms[i.key()].topLeft(), i.value()->geom().topLeft());
-                    qDebug() << "rebuild: emitted screenMoved " << i.key() << " - old " << geoms[i.key()] << " - new " << i.value()->geom();
+                    kDebug() << "emitted screenMoved " << i.key() << " - old " << geoms[i.key()] << " - new " << i.value()->geom();
                 }
                 if (geoms[i.key()].size() != i.value()->geom().size()) {
                     emit screenResized(i.value(), geoms[i.key()].size(), i.value()->geom().size());
-                    qDebug() << "rebuild: emitted screenResized " << i.key() << " - old " << geoms[i.key()] << " - new " << i.value()->geom();
+                    kDebug() << "emitted screenResized " << i.key() << " - old " << geoms[i.key()] << " - new " << i.value()->geom();
                 }
             }
         }
@@ -218,7 +219,7 @@ namespace Kephal {
         for (QMap<int, QRect>::const_iterator i = geoms.constBegin(); i != geoms.constEnd(); ++i) {
             if (! m_screens.contains(i.key())) {
                 emit screenRemoved(i.key());
-                qDebug() << "rebuild: emitted screenRemoved " << i.key();
+                kDebug() << "emitted screenRemoved " << i.key();
             }
         }
     }

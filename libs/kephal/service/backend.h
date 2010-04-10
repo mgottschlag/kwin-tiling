@@ -29,12 +29,12 @@
         type name() { return m_##name; }
 
 
-#define INVALID_CONFIGURATION(desc) qDebug() << "INVALID CONFIGURATION:" << desc;
+#define INVALID_CONFIGURATION(desc) kDebug() << "INVALID CONFIGURATION:" << desc;
 
-#define CONFIGURATION_NOT_FOUND(name) qDebug() << "CONFIGURATION NOT FOUND:" << name;
+#define CONFIGURATION_NOT_FOUND(name) kDebug() << "CONFIGURATION NOT FOUND:" << name;
 
-#define FIX_ME(desc) qDebug() << "FIXME:" << desc;
+#define FIX_ME(desc) kDebug() << "FIXME:" << desc;
 
-#define OPERATION_FAILED(desc) qDebug() << "OPERATION FAILED:" << desc;
+#define OPERATION_FAILED(desc) kDebug() << "OPERATION FAILED:" << desc;
 
 #endif // KEPHAL_BACKEND_H

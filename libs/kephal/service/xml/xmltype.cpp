@@ -22,7 +22,7 @@
 #include "xmlnodehandler.h"
 
 #include <QFile>
-#include <QDebug>
+#include <KDebug>
 
 
 namespace Kephal {
@@ -39,7 +39,7 @@ namespace Kephal {
     XMLType * XMLRootFactory::load(QString fileName) {
         QFile file(fileName);
         if (! file.open(QIODevice::ReadOnly)) {
-            //qDebug() << "couldnt open file" << fileName;
+            //kDebug() << "couldnt open file" << fileName;
             if (! fileName.endsWith('~')) {
                 return load(fileName + '~');
             }
@@ -48,7 +48,7 @@ namespace Kephal {
 
         QDomDocument dom;
         if (! dom.setContent(&file)) {
-            //qDebug() << "couldnt parse xml!!";
+            //kDebug() << "couldnt parse xml!!";
             file.close();
             if (! fileName.endsWith('~')) {
                 return load(fileName + '~');
@@ -71,14 +71,14 @@ namespace Kephal {
             m_schema = true;
         }
 
-        //qDebug() << "root:" << root.isElement() << root.nodeName();
+        //kDebug() << "root:" << root.isElement() << root.nodeName();
         if (! root.isElement()) {
             return 0;
         }
 
         XMLType * result = newInstance();
         if (! result) {
-            //qDebug() << "newInstance() returned 0";
+            //kDebug() << "newInstance() returned 0";
             return 0;
         }
 
@@ -92,30 +92,30 @@ namespace Kephal {
         QDomNamedNodeMap attrs = root.attributes();
         for (int i = 0; i < attrs.size(); ++i) {
             QDomNode attr = attrs.item(i);
-            //qDebug() << "attr:" << attr.isElement() << attr.nodeName();
+            //kDebug() << "attr:" << attr.isElement() << attr.nodeName();
 
             QString name = attr.nodeName();
             if (m_attributes.contains(name)) {
-                //qDebug() << "is known attribute...";
+                //kDebug() << "is known attribute...";
                 XMLNodeHandler * xmlNode = m_attributes.value(name);
                 xmlNode->setNode(result, attr);
-                //qDebug() << "value has been set!!";
+                //kDebug() << "value has been set!!";
             }
         }
 
         QDomNode node = root.firstChild();
         while (! node.isNull()) {
-            //qDebug() << "node:" << node.isElement() << node.nodeName();
+            //kDebug() << "node:" << node.isElement() << node.nodeName();
             if (! node.isElement()) {
                 continue;
             }
 
             QString name = node.nodeName();
             if (m_elements.contains(name)) {
-                //qDebug() << "is known element...";
+                //kDebug() << "is known element...";
                 XMLNodeHandler * xmlNode = m_elements.value(name);
                 xmlNode->setNode(result, node);
-                //qDebug() << "value has been set!!";
+                //kDebug() << "value has been set!!";
             }
 
             node = node.nextSibling();
@@ -170,17 +170,17 @@ namespace Kephal {
 
         QDomElement node = doc.createElement(name);
         for (QMap<QString, XMLNodeHandler *>::const_iterator i = m_attributes.constBegin(); i != m_attributes.constEnd(); ++i) {
-            //qDebug() << "save attribute:" << i.key();
+            //kDebug() << "save attribute:" << i.key();
             QString value = i.value()->str(data);
             if (! value.isNull()) {
                 node.setAttribute(i.key(), value);
             }
         }
         for (QMap<QString, XMLNodeHandler *>::const_iterator i = m_elements.constBegin(); i != m_elements.constEnd(); ++i) {
-            //qDebug() << "save element:" << i.key();
+            //kDebug() << "save element:" << i.key();
             i.value()->beginSave(data);
             while (i.value()->hasMore(data)) {
-                //qDebug() << "-> instance";
+                //kDebug() << "-> instance";
                 QDomNode child = i.value()->node(data, doc, i.key());
                 if (! child.isNull()) {
                     node.appendChild(child);

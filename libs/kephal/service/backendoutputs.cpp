@@ -20,8 +20,7 @@
 
 #include "backendoutputs.h"
 
-#include <QDebug>
-
+#include <KDebug>
 
 namespace Kephal {
 
@@ -87,23 +86,23 @@ namespace Kephal {
     }
 
     bool BackendOutputs::activateLayout(const QMap<Output *, QRect> & layout) {
-        qDebug() << "activate layout:" << layout;
+        kDebug() << "activate layout:" << layout;
 
         QList<BackendOutput *> outputs = backendOutputs();
         foreach (BackendOutput * output, outputs) {
             //output->mark();
             if (! layout.contains(output)) {
-                qDebug() << "deactivating output:" << output->id();
+                kDebug() << "deactivating output:" << output->id();
                 output->deactivate();
             }
         }
 
         for (QMap<Output *, QRect>::const_iterator i = layout.constBegin(); i != layout.constEnd(); ++i) {
             BackendOutput * output = (BackendOutput *) i.key();
-            qDebug() << "setting output" << output->id() << "to" << i.value();
+            kDebug() << "setting output" << output->id() << "to" << i.value();
 
             if (! output->applyGeom(i.value(), 0)) {
-                qDebug() << "setting" << output->id() << "to" << i.value() << "failed!!";
+                kDebug() << "setting" << output->id() << "to" << i.value() << "failed!!";
                 return false;
             }
         }
@@ -112,8 +111,4 @@ namespace Kephal {
     }
 
 }
-
-#ifndef NO_KDE
-#include "backendoutputs.moc"
-#endif
 

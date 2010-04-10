@@ -23,7 +23,7 @@
 #include "configurationsadaptor.h"
 #include "outputs.h"
 
-#include <QDebug>
+#include <KDebug>
 #include <QObject>
 
 
@@ -36,7 +36,7 @@ DBusAPIConfigurations::DBusAPIConfigurations(QObject * parent)
     QDBusConnection dbus = QDBusConnection::sessionBus();
 
     const bool result = dbus.registerObject("/modules/kephal/Configurations", this);
-    qDebug() << "configurations registered on the bus:" << result;
+    kDebug() << "configurations registered on the bus:" << result;
 
     connect(Configurations::self(), SIGNAL(configurationActivated(Kephal::Configuration *)), this, SLOT(configurationActivatedSlot(Kephal::Configuration *)));
     connect(Configurations::self(), SIGNAL(confirmed()), this, SIGNAL(confirmed()));

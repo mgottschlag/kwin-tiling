@@ -24,7 +24,7 @@
 #include "backendoutputs.h"
 #include "screens.h"
 
-#include <QDebug>
+#include <KDebug>
 #include <QDir>
 #include <QTimer>
 
@@ -140,7 +140,7 @@ namespace Kephal {
         } while (changed);
 
         if (! remaining.empty()) {
-            //qDebug() << "invalid configuration (remaining):" << name() << remaining;
+            //kDebug() << "invalid configuration (remaining):" << name() << remaining;
             INVALID_CONFIGURATION("remaining screens")
             layout.clear();
         }
@@ -165,7 +165,7 @@ namespace Kephal {
         QDir dir = QDir::home();
         if (!dir.cd(".local"))
         {
-            qDebug() << QDir::homePath() + "/.local directory not found, creating now.";
+            kDebug() << QDir::homePath() + "/.local directory not found, creating now.";
             if (!dir.mkdir(".local"))
                 qWarning() << "Error during creation of " << QDir::homePath() + "/.local directory.";
 
@@ -333,12 +333,12 @@ namespace Kephal {
 
     Configuration * XMLConfigurations::findConfiguration()
     {
-        qDebug() << "looking for a matching configuration...";
+        kDebug() << "looking for a matching configuration...";
         findOutputs();
         if (! m_currentOutputs) {
             return 0;
         }
-        qDebug() << "found outputs, known:" << m_currentOutputsKnown;
+        kDebug() << "found outputs, known:" << m_currentOutputsKnown;
 
         if (m_currentOutputs->configuration() == "external") {
             return m_externalConfiguration;
@@ -346,7 +346,7 @@ namespace Kephal {
 
         XMLConfiguration * config = m_configurations[m_currentOutputs->configuration()];
         if (! config) {
-            //qDebug() << "config" << m_currentOutputs->configuration() << "does not exist!!";
+            //kDebug() << "config" << m_currentOutputs->configuration() << "does not exist!!";
             CONFIGURATION_NOT_FOUND(m_currentOutputs->configuration())
             return 0;
         }
@@ -423,7 +423,7 @@ namespace Kephal {
             }
         }
 
-        qDebug() << "connected:" << connected;
+        kDebug() << "connected:" << connected;
 
         qreal scoreAllMax = 0.01;
         OutputsXML * knownAllMax = 0;
@@ -439,7 +439,7 @@ namespace Kephal {
                     continue;
                 }
 
-                qDebug() << "looking for current" << current->id();
+                kDebug() << "looking for current" << current->id();
 
                 qreal scoreMax = 0.01;
                 OutputXML * knownMax = 0;
@@ -453,7 +453,7 @@ namespace Kephal {
                     score *= match(known->vendor(), current->vendor());
                     score *= match(known->product(), current->productId());
 
-                    qDebug() << "known" << known->name() << "has score:" << score;
+                    kDebug() << "known" << known->name() << "has score:" << score;
                     if (score > scoreMax) {
                         knownMax = known;
                         scoreMax = score;
@@ -511,12 +511,12 @@ namespace Kephal {
     }
 
     QList<XMLConfiguration *> XMLConfigurations::equivalentConfigurations(int numScreens) {
-        qDebug() << "looking for equivalent configurations with" << numScreens << "screens";
+        kDebug() << "looking for equivalent configurations with" << numScreens << "screens";
 
         QList<XMLConfiguration *> result;
         foreach (XMLConfiguration * config, m_configurations) {
             if ((! config->isModifiable()) && (config->layout().size() == numScreens)) {
-                qDebug() << "found:" << config->name();
+                kDebug() << "found:" << config->name();
                 result.append(config);
             }
         }
@@ -532,7 +532,7 @@ namespace Kephal {
         }
 
         if (! m_activeConfiguration) {
-            qDebug() << "don't have an active configuration";
+            kDebug() << "don't have an active configuration";
             return result;
         }
 
@@ -576,7 +576,7 @@ namespace Kephal {
         QMap<XMLConfiguration *, QPoint> positions;
         if (! m_activeConfiguration->isModifiable()) {
             positions = equivalentConfigurationsPositions(output);
-            qDebug() << "equiv pos for:" << output->id() << position << positions;
+            kDebug() << "equiv pos for:" << output->id() << position << positions;
             for (QMap<XMLConfiguration *, QPoint>::const_iterator i = positions.constBegin(); i != positions.constEnd(); ++i) {
                 if (i.value() == position) {
                     requireConfirm();
@@ -626,7 +626,7 @@ namespace Kephal {
     }
 
     bool XMLConfigurations::resize(Output * output, const QSize & size) {
-        qDebug() << "XMLConfigurations::resize() called" << output->id() << size;
+        kDebug() << output->id() << size;
         if ((! m_activeConfiguration) || (! output->isConnected()) || (! output->isActivated())) {
             return false;
         }
@@ -653,7 +653,7 @@ namespace Kephal {
     }
 
     QMap<XMLConfiguration *, QMap<int, QPoint> > XMLConfigurations::matchingConfigurationsLayouts(const QMap<int, QPoint> & currentLayout, int removedOutputs) {
-        //qDebug() << "searching matching layouts for" << currentLayout;
+        //kDebug() << "searching matching layouts for" << currentLayout;
         QMap<XMLConfiguration *, QMap<int, QPoint> > result;
         QList<XMLConfiguration *> configurations = equivalentConfigurations(currentLayout.size() + removedOutputs);
         foreach (XMLConfiguration * configuration, configurations) {
@@ -707,7 +707,7 @@ namespace Kephal {
 
     QMap<int, QRect> XMLConfigurations::calcMatchingLayout(const QMap<int, QPoint> & currentLayout, XMLConfiguration * configuration, QMap<int, QPoint> layout, Output * output, int * outputScreen) {
         QMap<int, int> match = matchLayouts(currentLayout, layout);
-        qDebug() << "match:" << match;
+        kDebug() << "match:" << match;
         QMap<Output *, int> outputs;
         Output * add = (match.contains(-1) ? output : 0);
         Output * remove = (add ? 0 : output);
@@ -790,13 +790,13 @@ namespace Kephal {
             }
         }
 
-        qDebug() << "current layout:" << currentLayout;
+        kDebug() << "current layout:" << currentLayout;
         layouts = matchingConfigurationsLayouts(currentLayout, 1);
         for (QMap<XMLConfiguration *, QMap<int, QPoint> >::const_iterator i = layouts.constBegin(); i != layouts.constEnd(); ++i) {
-            qDebug() << "matching layout:" << i.key()->name() << i.value();
+            kDebug() << "matching layout:" << i.key()->name() << i.value();
             int outputScreen = -1;
             QMap<int, QRect> layout = calcMatchingLayout(currentLayout, i.key(), i.value(), output, & outputScreen);
-            qDebug() << "results in:" << layout;
+            kDebug() << "results in:" << layout;
             if (layout.contains(outputScreen)) {
                 positions.insertMulti(i.key(), layout[outputScreen].topLeft());
             }
@@ -885,7 +885,7 @@ namespace Kephal {
             }
             QSet<QPoint> possible = noCloneConfig->possiblePositions(screenId);
 
-            //qDebug() << "trying" << possible << "as" << screenId << "in layout" << noCloneConfig->name() << noCloneLayout;
+            //kDebug() << "trying" << possible << "as" << screenId << "in layout" << noCloneConfig->name() << noCloneLayout;
 
             QMap<Output *, int> outputIndexes;
             foreach (Output * o, Outputs::self()->outputs()) {
@@ -896,11 +896,11 @@ namespace Kephal {
 
             foreach (const QPoint& p, possible) {
                 noCloneLayout.insert(screenId, p);
-                //qDebug() << "layout:" << noCloneLayout;
+                //kDebug() << "layout:" << noCloneLayout;
                 QMap<int, QRect> layout = noCloneConfig->realLayout(noCloneLayout, outputIndexes);
                 if (layout.contains(screenId)) {
                     translateToOther(layout, output);
-                    //qDebug() << "results in:" << layout;
+                    //kDebug() << "results in:" << layout;
                     positions.insertMulti(noCloneConfig, layout[screenId].topLeft());
                 }
             }
@@ -935,7 +935,7 @@ namespace Kephal {
 
         QSet<QPoint> possible = (cloned ? m_activeConfiguration->positions() : m_activeConfiguration->possiblePositions(screenId));
 
-        //qDebug() << "trying" << possible << "as" << screenId << "in layout" << m_activeConfiguration->name() << currentLayout;
+        //kDebug() << "trying" << possible << "as" << screenId << "in layout" << m_activeConfiguration->name() << currentLayout;
 
         QMap<Output *, int> outputIndexes;
         foreach (Output * o, Outputs::self()->outputs()) {
@@ -946,11 +946,11 @@ namespace Kephal {
 
         foreach (const QPoint& p, possible) {
             currentLayout.insert(screenId, p);
-            //qDebug() << "layout:" << currentLayout;
+            //kDebug() << "layout:" << currentLayout;
             QMap<int, QRect> layout = m_activeConfiguration->realLayout(currentLayout, outputIndexes);
             if (layout.contains(screenId)) {
                 translateToOther(layout, output);
-                //qDebug() << "results in:" << layout;
+                //kDebug() << "results in:" << layout;
                 positions.insertMulti(m_activeConfiguration, layout[screenId].topLeft());
             }
         }
@@ -959,19 +959,19 @@ namespace Kephal {
     }
 
     void XMLConfigurations::activateExternal() {
-        qDebug() << "activate external configuration!!";
+        kDebug() << "activate external configuration!!";
         m_activeConfiguration = 0;
     }
 
     bool XMLConfigurations::activate(XMLConfiguration * configuration) {
-        qDebug() << "activate configuration:" << configuration->name();
+        kDebug() << "activate configuration:" << configuration->name();
         if (configuration == m_activeConfiguration) {
             return true;
         }
         QMap<int, QPoint> layout = configuration->layout();
 
         if (! m_currentOutputsKnown) {
-            qDebug() << "saving xml for current outputs...";
+            kDebug() << "saving xml for current outputs...";
 
             OutputsXML * known = new OutputsXML();
             known->setParent(m_configXml);
@@ -1025,7 +1025,7 @@ namespace Kephal {
             return true;
         }
 
-        qDebug() << "failed to activate configuration:" << configuration->name();
+        kDebug() << "failed to activate configuration:" << configuration->name();
         return false;
     }
 
@@ -1129,7 +1129,7 @@ namespace Kephal {
             }
         }
 
-        qDebug() << "layout:" << layout;
+        kDebug() << "layout:" << layout;
         if (! m_awaitingConfirm) {
             foreach (BackendOutput * o, BackendOutputs::self()->backendOutputs()) {
                 o->mark();
@@ -1182,14 +1182,14 @@ namespace Kephal {
     }
 
     void XMLConfigurations::saveXml() {
-        qDebug() << "save xml";
+        kDebug() << "save xml";
         ConfigurationsXMLFactory * factory = new ConfigurationsXMLFactory();
         factory->save(m_configXml, m_configPath);
         delete factory;
     }
 
     void XMLConfigurations::loadXml() {
-        qDebug() << "load xml";
+        kDebug() << "load xml";
         ConfigurationsXMLFactory * factory = new ConfigurationsXMLFactory();
         m_configXml = (ConfigurationsXML *) factory->load(m_configPath);
         delete factory;
@@ -1224,7 +1224,7 @@ namespace Kephal {
                 bool reflectX = o->reflectX();
                 bool reflectY = o->reflectY();
                 if ((rotation != output->rotation()) || (reflectX != output->reflectX()) || (reflectY != output->reflectY())) {
-                    qDebug() << "applying orientation to" << output->id() << rotation << reflectX << reflectY;
+                    kDebug() << "applying orientation to" << output->id() << rotation << reflectX << reflectY;
                     if (! output->applyOrientation(rotation, reflectX, reflectY)) {
                         OPERATION_FAILED("apply orientation")
                         failed = true;
@@ -1234,7 +1234,7 @@ namespace Kephal {
                 QSize size(o->width(), o->height());
                 float rate = o->rate();
                 if ((! failed) && (! size.isEmpty()) && ((size != output->size()) || ((rate > 1) && (! qFuzzyCompare(rate, output->rate()))))) {
-                    qDebug() << "applying geom to" << output->id() << size << rate;
+                    kDebug() << "applying geom to" << output->id() << size << rate;
                     if (! output->applyGeom(QRect(output->position(), size), rate)) {
                         OPERATION_FAILED("apply geometry")
                         failed = true;
@@ -1242,7 +1242,7 @@ namespace Kephal {
                 }
 
                 if (failed) {
-                    qDebug() << "reverting output" << output->id();
+                    kDebug() << "reverting output" << output->id();
                     output->revert();
                 }
             }
@@ -1271,7 +1271,7 @@ namespace Kephal {
         if (o) {
             bool resizeNeeded = ((output->rotation() + rotation) % 180) != 0;
             if (resizeNeeded) {
-                qDebug() << "resize is needed for changing rotation from" << output->rotation() << "to" << rotation;
+                kDebug() << "resize is needed for changing rotation from" << output->rotation() << "to" << rotation;
 
                 QSize size(output->size().height(), output->size().width());
 
@@ -1296,7 +1296,7 @@ namespace Kephal {
 
                     return true;
                 } else {
-                    qDebug() << "setting rotation to" << rotation << "for" << o->id() << "failed";
+                    kDebug() << "setting rotation to" << rotation << "for" << o->id() << "failed";
 
                     revert();
                     return false;
@@ -1312,7 +1312,7 @@ namespace Kephal {
 
                     return true;
                 } else {
-                    qDebug() << "setting rotation to" << rotation << "for" << o->id() << "failed";
+                    kDebug() << "setting rotation to" << rotation << "for" << o->id() << "failed";
 
                     revert();
                     return false;
@@ -1339,7 +1339,7 @@ namespace Kephal {
 
                 return true;
             } else {
-                qDebug() << "setting reflect-x to" << reflect << "for" << o->id() << "failed";
+                kDebug() << "setting reflect-x to" << reflect << "for" << o->id() << "failed";
             }
         }
 
@@ -1363,7 +1363,7 @@ namespace Kephal {
 
                 return true;
             } else {
-                qDebug() << "setting reflect-y to" << reflect << "for" << o->id() << "failed";
+                kDebug() << "setting reflect-y to" << reflect << "for" << o->id() << "failed";
             }
         }
 
@@ -1387,7 +1387,7 @@ namespace Kephal {
 
                 return true;
             } else {
-                qDebug() << "setting rate to" << rate << "for" << o->id() << "failed";
+                kDebug() << "setting rate to" << rate << "for" << o->id() << "failed";
             }
         }
 

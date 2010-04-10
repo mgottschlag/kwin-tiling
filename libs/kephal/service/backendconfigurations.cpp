@@ -23,7 +23,7 @@
 #include "outputs.h"
 #include "backend.h"
 
-#include <QDebug>
+#include <KDebug>
 
 
 namespace Kephal {
@@ -80,7 +80,7 @@ namespace Kephal {
     }
 
     QMap<int, QRect> BackendConfiguration::realLayout(const QMap<int, QPoint> & sLayout, const QMap<Output *, int> & outputScreens, const QMap<Output *, QSize> & outputSizes) {
-        //qDebug() << "calculating real layout for:" << sLayout << outputScreens;
+        //kDebug() << "calculating real layout for:" << sLayout << outputScreens;
 
         QMap<int, QRect> screens;
         QMap<int, QPoint> simpleLayout = sLayout;

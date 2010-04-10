@@ -23,7 +23,7 @@
 #include "outputs.h"
 #include "screensadaptor.h"
 
-#include <QDebug>
+#include <KDebug>
 
 
 
@@ -36,7 +36,7 @@ DBusAPIScreens::DBusAPIScreens(QObject * parent)
     QDBusConnection dbus = QDBusConnection::sessionBus();
 
     const bool result = dbus.registerObject("/modules/kephal/Screens", this);
-    qDebug() << "screens registered on the bus:" << result;
+    kDebug() << "screens registered on the bus:" << result;
 
     connect(Screens::self(), SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)), this, SLOT(screenResized(Kephal::Screen *, QSize, QSize)));
     connect(Screens::self(), SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)), this, SLOT(screenMoved(Kephal::Screen *, QPoint, QPoint)));

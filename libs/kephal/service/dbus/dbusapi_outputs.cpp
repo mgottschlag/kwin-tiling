@@ -22,7 +22,7 @@
 #include "outputs.h"
 #include "outputsadaptor.h"
 
-#include <QDebug>
+#include <KDebug>
 
 
 using namespace Kephal;
@@ -34,7 +34,7 @@ DBusAPIOutputs::DBusAPIOutputs(QObject * parent)
     QDBusConnection dbus = QDBusConnection::sessionBus();
 
     const bool result = dbus.registerObject("/modules/kephal/Outputs", this);
-    qDebug() << "outputs registered on the bus:" << result;
+    kDebug() << "outputs registered on the bus:" << result;
 
     connect(Outputs::self(), SIGNAL(outputConnected(Kephal::Output *)), this, SLOT(outputConnectedSlot(Kephal::Output *)));
     connect(Outputs::self(), SIGNAL(outputDisconnected(Kephal::Output *)), this, SLOT(outputDisconnectedSlot(Kephal::Output *)));
@@ -90,9 +90,9 @@ QStringList DBusAPIOutputs::outputIds()
 {
     QList<Output *> outputs = Outputs::self()->outputs();
     QStringList result;
-    //qDebug() << "output-ids requested!!";
+    //kDebug() << "output-ids requested!!";
     foreach (Output * output, outputs) {
-        //qDebug() << "appending output-id:" << output->id();
+        //kDebug() << "appending output-id:" << output->id();
         result.append(output->id());
     }
     return result;

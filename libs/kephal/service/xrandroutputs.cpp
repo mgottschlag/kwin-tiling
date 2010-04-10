@@ -26,6 +26,7 @@
 
 #include <X11/Xatom.h>
 
+#include <KDebug>
 
 namespace Kephal {
 
@@ -45,11 +46,11 @@ namespace Kephal {
     }
 
     void XRandROutputs::init() {
-        qDebug() << "XRandROutputs::init";
+        kDebug();
         RandRScreen * screen = m_display->screen(0);
         foreach (RandROutput * output, screen->outputs()) {
             XRandROutput * o = new XRandROutput(this, output->id());
-            qDebug() << "  added output " << output->id();
+            kDebug() << "  added output " << output->id();
             m_outputs.insert(o->id(), o);
         }
     }
@@ -104,7 +105,7 @@ namespace Kephal {
                 &type, &format, &size, &after, &data);
 
         if (type == XA_INTEGER && format == 8 && EDID_TEST_HEADER(data)) {
-            qDebug() << "got a valid edid block...";
+            kDebug() << "got a valid edid block...";
 
             /**
              * parse the 3 letter vendor code
@@ -117,7 +118,7 @@ namespace Kephal {
             vendor[3] = 0x00;
             m_vendor = vendor;
 
-            qDebug() << "vendor code:" << m_vendor;
+            kDebug() << "vendor code:" << m_vendor;
 
             delete[] vendor;
 
@@ -126,14 +127,14 @@ namespace Kephal {
              */
             m_productId = EDID_PRODUCT_ID(data);
 
-            qDebug() << "product id:" << m_productId;
+            kDebug() << "product id:" << m_productId;
 
             /**
              * parse the 32bit serial number
              */
             m_serialNumber = EDID_SERIAL_NUMBER(data);
 
-            qDebug() << "serial number:" << m_serialNumber;
+            kDebug() << "serial number:" << m_serialNumber;
         } else {
             m_vendor = "";
             m_productId = -1;
@@ -145,7 +146,7 @@ namespace Kephal {
 
     void XRandROutput::outputChanged(RROutput id, int changes) {
         Q_ASSERT(id == m_rrId);
-        qDebug() << "XRandROutput::outputChanged" << isConnected() << isActivated() << geom();
+        kDebug() << isConnected() << isActivated() << geom();
         if (isConnected() != m_previousConnected) {
             if (isConnected()) {
                 saveAsPrevious();

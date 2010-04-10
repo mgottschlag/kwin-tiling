@@ -58,7 +58,7 @@ KephalD::KephalD(int & argc, char ** argv)
     : QApplication(argc, argv),
     m_noXRandR(false)
 {
-    qDebug() << "kephald starting up";
+    kDebug() << "kephald starting up";
 
     parseArgs(argc, argv);
     init();
@@ -71,7 +71,7 @@ KephalD::~KephalD()
 void KephalD::parseArgs(int & argc, char ** argv) {
     for (int i = 0; i < argc; ++i) {
         QString arg(argv[i]);
-        qDebug() << "arg:" << i << arg;
+        kDebug() << "arg:" << i << arg;
 
         if (arg == "--no-xrandr") {
             m_noXRandR = true;
@@ -93,28 +93,28 @@ void KephalD::init() {
     }
 
     foreach (Output * output, Outputs::self()->outputs()) {
-        qDebug() << "output:" << output->id() << output->geom() << output->rotation() << output->reflectX() << output->reflectY();
+        kDebug() << "output:" << output->id() << output->geom() << output->rotation() << output->reflectX() << output->reflectY();
     }
 
     new XMLConfigurations(this);
     new ConfigurationScreens(this);
 
     foreach (Kephal::Screen * screen, Screens::self()->screens()) {
-        qDebug() << "screen:" << screen->id() << screen->geom();
+        kDebug() << "screen:" << screen->id() << screen->geom();
     }
 
     activateConfiguration();
     connect(Outputs::self(), SIGNAL(outputDisconnected(Kephal::Output *)), this, SLOT(outputDisconnected(Kephal::Output *)));
     connect(Outputs::self(), SIGNAL(outputConnected(Kephal::Output *)), this, SLOT(outputConnected(Kephal::Output *)));
 
-    qDebug() << "will check for possible positions...";
+    kDebug() << "will check for possible positions...";
     foreach (Output * output, Outputs::self()->outputs()) {
-        qDebug() << "possible positions for:" << output->id() << Configurations::self()->possiblePositions(output);
+        kDebug() << "possible positions for:" << output->id() << Configurations::self()->possiblePositions(output);
     }
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
     bool result = dbus.registerService("org.kde.Kephal");
-    qDebug() << "registered the service:" << result;
+    kDebug() << "registered the service:" << result;
 
     new DBusAPIScreens(this);
     new DBusAPIOutputs(this);
@@ -165,7 +165,7 @@ void KephalD::activateConfiguration() {
     if (config) {
         config->activate();
     } else {
-        qDebug() << "couldnt find matching configuration!!";
+        kDebug() << "couldnt find matching configuration!!";
     }
 }
 
