@@ -582,7 +582,9 @@ void Image::nextSlide()
     QFileInfo info(current);
     m_previousModified = info.lastModified();
 
+    m_timer.stop();
     renderWallpaper(current);
+    m_timer.start(m_delay * 1000);
 }
 
 void Image::openSlide()
