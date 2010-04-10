@@ -54,4 +54,8 @@ install(FILES data/plasma.desktop data/plasma-desktop.desktop DESTINATION ${AUTO
 install(FILES data/plasma-shell-desktop.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
 install(FILES data/plasma-themes.knsrc DESTINATION  ${CONFIG_INSTALL_DIR})
 install(FILES data/plasma-desktop.notifyrc DESTINATION ${DATA_INSTALL_DIR}/plasma-desktop)
+install(FILES data/layouts/00-defaultLayout.js DESTINATION ${DATA_INSTALL_DIR}/plasma-desktop/init)
 install(FILES data/plasma-desktop-js.xml DESTINATION ${DATA_INSTALL_DIR}/katepart/syntax/)
+install(FILES data/layouts/org.kde.plasma-desktop.defaultPanel/metadata.desktop DESTINATION ${DATA_INSTALL_DIR}/plasma/layout-templates/org.kde.plasma-desktop.defaultPanel/)
+install(FILES data/layouts/org.kde.plasma-desktop.defaultPanel/contents/layout.js DESTINATION ${DATA_INSTALL_DIR}/plasma/layout-templates/org.kde.plasma-desktop.defaultPanel/contents/)
+install(FILES data/layouts/plasma-layout-org.kde.plasma-desktop.defaultPanel.desktop DESTINATION ${SERVICES_INSTALL_DIR})
