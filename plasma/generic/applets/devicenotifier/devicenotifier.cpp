@@ -447,7 +447,6 @@ void DeviceNotifier::setGlobalVisibility(bool visibility)
 void DeviceNotifier::showErrorMessage(const QString &message)
 {
     m_dialog->showStatusBarMessage(message);
-    emit activate();
     showPopup(NOTIFICATION_TIMEOUT);
     changeNotifierIcon("dialog-error");
     update();
