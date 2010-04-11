@@ -226,7 +226,7 @@ void HotkeysTreeViewContextMenu::exportAction()
         switch (widget->state())
             {
             case 0:
-                state = KHotKeys::Current;
+                state = KHotKeys::Retain;
                 break;
 
             case 1:

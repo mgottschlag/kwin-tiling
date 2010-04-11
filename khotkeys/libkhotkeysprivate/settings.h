@@ -34,7 +34,7 @@ enum ImportType
 
 enum ActionState
     {
-    Current,     //!< Keep the current state
+    Retain,      //!< Keep the current state
     Enabled,     //!< Enable all actions
     Disabled     //!< Disable all actions
     };

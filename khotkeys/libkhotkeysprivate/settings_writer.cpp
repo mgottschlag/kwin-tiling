@@ -126,7 +126,7 @@ void SettingsWriter::visitActionDataBase(const ActionDataBase *base)
 
     switch (_state)
         {
-        case KHotKeys::Current:
+        case KHotKeys::Retain:
             config->writeEntry( "Enabled", base->isEnabled(ActionDataBase::Ignore));
             break;
 

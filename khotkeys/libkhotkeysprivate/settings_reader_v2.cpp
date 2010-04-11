@@ -42,15 +42,15 @@
 SettingsReaderV2::SettingsReaderV2(
         KHotKeys::Settings *settings,
         bool loadAll,
-        bool loadDisabled,
+        KHotKeys::ActionState stateStrategy,
         const QString &importId)
     :   _settings(settings),
         _loadAll(loadAll),
-        _disableActions(loadDisabled),
+        _stateStrategy(stateStrategy),
         _importId(importId)
     {
 #ifdef KHOTKEYS_TRACE
-    kDebug() << "Created SettingsReader with disableActions(" << _disableActions << ")";
+    kDebug() << "Created SettingsReader with disableActions(" << _stateStrategy << ")";
 #endif
     }
 
@@ -136,13 +136,28 @@ KHotKeys::ActionDataGroup *SettingsReaderV2::readGroup(
             }
         }
 
-    // The group is complete. Activate it if needed
-    _disableActions
-        ? group->disable()
-        : config.readEntry("Enabled", false)
-            ? group->enable()
-            : group->disable();
+    // The object is complete. Activate it if needed
+    switch (_stateStrategy)
+        {
+        case KHotKeys::Retain:
+            config.readEntry("Enabled", false)
+                ? group->enable()
+                : group->disable();
+            break;
 
+        case KHotKeys::Disabled:
+            // Its disabled by default
+            break;
+
+        case KHotKeys::Enabled:
+            group->enable();
+            break;
+
+        default:
+            kWarning() << "Unkown stateStrategy";
+            Q_ASSERT(false);
+            break;
+        };
 
     return group;
     }
@@ -196,16 +211,31 @@ KHotKeys::ActionDataBase *SettingsReaderV2::readActionData(
     readTriggerList(config, newObject);
 
     // The object is complete. Activate it if needed
-    _disableActions
-        ? newObject->disable()
-        : config.readEntry("Enabled", false)
-            ? newObject->enable()
-            : newObject->disable();
+    switch (_stateStrategy)
+        {
+        case KHotKeys::Retain:
+            config.readEntry("Enabled", false)
+                ? newObject->enable()
+                : newObject->disable();
+            break;
+
+        case KHotKeys::Disabled:
+            // Its disabled by default
+            break;
+
+        case KHotKeys::Enabled:
+            newObject->enable();
+            break;
+
+        default:
+            kWarning() << "Unkown stateStrategy";
+            Q_ASSERT(false);
+            break;
+        };
 
 #ifdef KHOTKEYS_TRACE
     kDebug() << newObject->name() << "loaded into" << newObject->isEnabled(KHotKeys::ActionDataBase::Ignore) << "state";
 #endif
-
 
     return newObject;
     }

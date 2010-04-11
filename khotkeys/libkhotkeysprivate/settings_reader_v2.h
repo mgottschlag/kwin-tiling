@@ -22,6 +22,7 @@
 #include "action_data/action_data_visitor.h"
 #include "actions/actions.h"
 #include "triggers/triggers.h"
+#include "settings.h"
 
 class KConfigBase;
 class KConfigGroup;
@@ -52,10 +53,11 @@ class SettingsReaderV2 :
         public KHotKeys::GestureTriggerVisitor
     {
 public:
+
     SettingsReaderV2(
             KHotKeys::Settings *settings,
-            bool loadAll=true,
-            bool loadDisabled=true,
+            bool loadAll = true,
+            KHotKeys::ActionState _stateStrategy = KHotKeys::Disabled,
             const QString &importId = QString());
 
     virtual ~SettingsReaderV2();
@@ -99,7 +101,7 @@ private:
 
     bool _loadAll;
 
-    bool _disableActions;
+    KHotKeys::ActionState _stateStrategy;
 
     QString _importId;
 

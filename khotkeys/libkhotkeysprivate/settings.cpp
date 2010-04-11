@@ -463,14 +463,14 @@ bool Settings::reread_settings(bool include_disabled)
     KConfigGroup voiceConfig( &config, "Voice" );
     voice_shortcut=KShortcut( voiceConfig.readEntry("Shortcut" , "")  );
 
-    bool rc = read_settings(m_actions, config, include_disabled, Current);
+    bool rc = read_settings(m_actions, config, include_disabled, Retain);
     // Ensure the system groups exist
     validate();
     return rc;
     }
 
 
-bool Settings::read_settings(ActionDataGroup *root, KConfigBase const &config, bool include_disabled, ActionState state)
+bool Settings::read_settings(ActionDataGroup *root, KConfigBase const &config, bool include_disabled, ActionState stateStrategy)
     {
     // Make sure the given file is valid
     if (!isConfigFileValid(config, ImportSilent)) return false;
@@ -483,7 +483,7 @@ bool Settings::read_settings(ActionDataGroup *root, KConfigBase const &config, b
         case 2:
                 {
                 kDebug() << "Version 2 File!";
-                SettingsReaderV2 reader(this, include_disabled, state, import_id);
+                SettingsReaderV2 reader(this, include_disabled, stateStrategy, import_id);
                 reader.read(config, root);
                 }
             break;
@@ -508,7 +508,7 @@ bool Settings::update()
         {
         // Import checks if the file was already imported.
         KConfig file(path);
-        if (import(file, ImportSilent, Current))
+        if (import(file, ImportSilent, Retain))
             {
             kDebug() << "Imported file" << path;
             imported = true;
@@ -526,7 +526,7 @@ bool Settings::update()
 void Settings::write()
     {
     KConfig cfg( KHOTKEYS_CONFIG_FILE );
-    SettingsWriter writer(this, Current);
+    SettingsWriter writer(this, Retain);
     writer.writeTo(cfg);
     }
 

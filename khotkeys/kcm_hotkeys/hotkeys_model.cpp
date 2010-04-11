@@ -425,7 +425,7 @@ void KHotkeysModel::importInputActions(const QModelIndex &index, KConfigBase con
         groupIndex = index.parent();
         }
 
-    if (settings()->importFrom(group, config, KHotKeys::ImportAsk, KHotKeys::Current))
+    if (settings()->importFrom(group, config, KHotKeys::ImportAsk, KHotKeys::Retain))
         {
         kDebug();
         reset();
