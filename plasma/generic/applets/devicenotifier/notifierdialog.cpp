@@ -462,8 +462,8 @@ void NotifierDialog::buildDialog()
     m_widget->installEventFilter(this);
     m_widget->setFocusPolicy(Qt::ClickFocus);
 
-    QGraphicsLinearLayout *l_layout = new QGraphicsLinearLayout(Qt::Vertical, m_widget);
-    l_layout->setSpacing(0);
+    m_mainLayout = new QGraphicsLinearLayout(Qt::Vertical, m_widget);
+    m_mainLayout->setSpacing(0);
 
     Plasma::IconWidget *icon = new Plasma::IconWidget(m_widget);
     icon->setIcon(KIcon("emblem-mounted"));
@@ -486,7 +486,7 @@ void NotifierDialog::buildDialog()
     QGraphicsWidget *titleWidget = new QGraphicsWidget();
     titleWidget->setLayout(l_layout2);
 
-    l_layout->addItem(titleWidget);
+    m_mainLayout->addItem(titleWidget);
 
     m_devicesScrollWidget = new Plasma::ScrollWidget(m_widget);
     QGraphicsWidget *devicesWidget = new QGraphicsWidget(m_devicesScrollWidget);
@@ -496,7 +496,7 @@ void NotifierDialog::buildDialog()
     m_deviceLayout->setContentsMargins(0, 0, 0, 8);
     devicesWidget->setLayout(m_deviceLayout);
 
-    l_layout->addItem(m_devicesScrollWidget);
+    m_mainLayout->addItem(m_devicesScrollWidget);
 
     m_itemBackground = new Plasma::ItemBackground(devicesWidget);
     m_selectedItemBackground = new Plasma::ItemBackground(devicesWidget);
@@ -506,17 +506,72 @@ void NotifierDialog::buildDialog()
     connect(m_itemBackground, SIGNAL(animationStep(qreal)), this, SLOT(itemBackgroundMoving(qreal)));
     connect(m_selectedItemBackground, SIGNAL(animationStep(qreal)), this, SLOT(itemBackgroundMoving(qreal)));
 
+    m_statusWidget = new QGraphicsWidget();
+    QGraphicsLinearLayout *statusLayout = new QGraphicsLinearLayout(Qt::Vertical, m_statusWidget);
+
+    m_statusWidget->setLayout(statusLayout);
+    Plasma::Separator *statusSeparator = new Plasma::Separator();
+    statusSeparator->setOrientation(Qt::Horizontal);
+    statusSeparator->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    statusLayout->addItem(statusSeparator);
+
+    m_statusText = new Plasma::Label();
+    m_statusText->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
+
+    Plasma::IconWidget *closeButton = new Plasma::IconWidget();
+    closeButton->setSvg("widgets/configuration-icons", "close");
+    closeButton->setMaximumSize(closeButton->sizeFromIconSize(KIconLoader::SizeSmall/2));
+    closeButton->setMinimumSize(closeButton->maximumSize());
+
+    connect(closeButton, SIGNAL(clicked()), this, SLOT(dismissStatusBar()));
+
+    QGraphicsLinearLayout *labelLayout = new QGraphicsLinearLayout(Qt::Horizontal);
+    Plasma::IconWidget *infoIcon = new Plasma::IconWidget();
+    infoIcon->setIcon("preferences-desktop-notification");
+    infoIcon->setMaximumSize(infoIcon->sizeFromIconSize(KIconLoader::SizeSmall));
+    infoIcon->setMinimumSize(infoIcon->sizeFromIconSize(KIconLoader::SizeSmall));
+
+    labelLayout->addItem(infoIcon);
+    labelLayout->setAlignment(infoIcon, Qt::AlignVCenter);
+    labelLayout->addItem(m_statusText);
+    labelLayout->setAlignment(m_statusText, Qt::AlignVCenter);
+    labelLayout->addItem(closeButton);
+    labelLayout->setAlignment(closeButton, Qt::AlignVCenter);
+
+    statusLayout->addItem(labelLayout);
+
     devicesWidget->adjustSize();
     updateMainLabelText();
 
-    m_widget->setLayout(l_layout);
+    m_widget->setLayout(m_mainLayout);
     m_widget->setMinimumSize(250, 300);
+}
+
+void NotifierDialog::dismissStatusBar()
+{
+    m_statusWidget->hide();
+    m_mainLayout->removeItem(m_statusWidget);
+}
+
+void NotifierDialog::showStatusBarMessage(const QString & message)
+{
+    m_statusText->setText(message);
+    m_statusText->adjustSize();
+    m_statusWidget->adjustSize();
+    m_mainLayout->addItem(m_statusWidget);
+    m_statusWidget->show();
 }
 
 void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorData, const QString & udi)
 {
+    DeviceItem* devItem = itemForUdi(udi);
+    if (!devItem) {
+        return;
+    }
+
+
     if (error && errorData.isValid()) {
-        m_notifier->showErrorMessage(i18n("Could not unmount the device.\nOne or more files on this device are open within an application."));
+        m_notifier->showErrorMessage(i18n("Could not unmount device %1.\nOne or more files on this device are open within an application.", devItem->name()));
     } else {
         m_notifier->changeNotifierIcon("dialog-ok");
         m_notifier->update();
@@ -526,7 +581,7 @@ void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorD
     //show the message only one time
     disconnect(sender(), SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
                this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant, const QString &)));
-    itemForUdi(udi)->setState(DeviceItem::Idle);
+    devItem->setState(DeviceItem::Idle);
 
 }
 
@@ -549,8 +604,13 @@ void NotifierDialog::storageEjectDone(Solid::ErrorType error, QVariant errorData
 
 void NotifierDialog::storageSetupDone(Solid::ErrorType error, QVariant errorData, const QString &udi)
 {
+    DeviceItem *devItem = itemForUdi(udi);
+    if (!devItem) {
+        return;
+    }
+
      if (error && errorData.isValid()) {
-        m_notifier->showErrorMessage(i18n("Cannot mount the disc."));
+        m_notifier->showErrorMessage(i18n("Could not mount device %1.", devItem->name()));
     } else {
         m_notifier->changeNotifierIcon("dialog-ok");
         m_notifier->update();
@@ -560,7 +620,7 @@ void NotifierDialog::storageSetupDone(Solid::ErrorType error, QVariant errorData
     //show the message only one time
     disconnect(sender(), SIGNAL(setupDone(Solid::ErrorType, QVariant, const QString &)),
                this, SLOT(storageSetupDone(Solid::ErrorType, QVariant, const QString &)));
-    itemForUdi(udi)->setState(DeviceItem::Idle);
+    devItem->setState(DeviceItem::Idle);
 }
 
 DeviceItem *NotifierDialog::itemForUdi(const QString &udi) const

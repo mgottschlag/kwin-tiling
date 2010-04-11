@@ -167,6 +167,12 @@ namespace Notifier
           **/
           void setMenuActionsAt(QPointF scenePos);
 
+	  /**
+	   * Shows a message in the notifier status bar
+	   * @param message the message to show
+	   */
+	  void showStatusBarMessage(const QString & message);
+
       signals:
           /**
           * Emitted when a devices has been selected
@@ -277,6 +283,12 @@ namespace Notifier
 
           void updateColors();
 
+	  /**
+	   * @internal dismiss the status bar
+	   **/
+
+	  void dismissStatusBar();
+
     private :
           /**
           * @internal build the dialog depending where it is
@@ -335,6 +347,8 @@ namespace Notifier
           /// The graphics widget which displays the panel
           QGraphicsWidget *m_widget;
 
+	  QGraphicsLinearLayout *m_mainLayout;
+
           ///The layout handling the devices inside the scroll widget
           QGraphicsLinearLayout *m_deviceLayout;
 
@@ -350,6 +364,12 @@ namespace Notifier
 
           ///The ScrollWidget managing the view
           Plasma::ScrollWidget *m_devicesScrollWidget;
+
+	  // The graphics widget which displays status messages
+	  QGraphicsWidget *m_statusWidget;
+
+	  // Status label
+	  Plasma::Label *m_statusText;
 
           ///The context menu action that allows to show all the devices
           QAction *m_showAll;

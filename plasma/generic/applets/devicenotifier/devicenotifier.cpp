@@ -158,6 +158,7 @@ void DeviceNotifier::popupEvent(bool show)
     } else {
         m_dialog->collapseDevices();
     }
+    changeNotifierIcon();
 }
 
 void DeviceNotifier::dataUpdated(const QString &udi, Plasma::DataEngine::Data data)
@@ -445,7 +446,12 @@ void DeviceNotifier::setGlobalVisibility(bool visibility)
 
 void DeviceNotifier::showErrorMessage(const QString &message)
 {
-    showMessage(KIcon("dialog-error"), message, ButtonOk);
+    m_dialog->showStatusBarMessage(message);
+    emit activate();
+    showPopup(NOTIFICATION_TIMEOUT);
+    changeNotifierIcon("dialog-error");
+    update();
+    QTimer::singleShot(NOTIFICATION_TIMEOUT, m_dialog, SLOT(resetNotifierIcon()));
 }
 
 bool DeviceNotifier::areThereHiddenDevices()
