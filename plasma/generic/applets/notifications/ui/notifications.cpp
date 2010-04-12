@@ -289,7 +289,10 @@ void Notifications::addJob(Job *job)
     extenderItem->setWidget(new JobWidget(job, extenderItem));
 
     extenderItem->setGroup(extender()->group("jobGroup"));
-kWarning()<<"AAAA"<<extender()->effectiveSizeHint(Qt::PreferredSize);
+
+    if (isPopupShowing()) {
+        return;
+    }
 
     //show the tiny standalone overview
     if (!m_standaloneJobSummaryWidget) {
@@ -314,12 +317,13 @@ kWarning()<<"AAAA"<<extender()->effectiveSizeHint(Qt::PreferredSize);
     if (containment() && containment()->corona()) {
         m_standaloneJobSummaryDialog->move(containment()->corona()->popupPosition(this, m_standaloneJobSummaryDialog->size()));
         m_standaloneJobSummaryDialog->show();
-        KWindowSystem::setOnAllDesktops(m_standaloneJobSummaryDialog->winId(), true);
-        KWindowSystem::setState(m_standaloneJobSummaryDialog->winId(), NET::SkipTaskbar|NET::SkipPager|NET::KeepBelow);
-        KWindowSystem::setType(m_standaloneJobSummaryDialog->winId(), NET::Dock);
-        KWindowSystem::clearState(m_standaloneJobSummaryDialog->winId(), NET::KeepAbove|NET::StaysOnTop);
-        KWindowSystem::raiseWindow(m_standaloneJobSummaryDialog->winId());
         Plasma::WindowEffects::slideWindow(m_standaloneJobSummaryDialog, location());
+
+        KWindowSystem::setOnAllDesktops(m_standaloneJobSummaryDialog->winId(), true);
+        KWindowSystem::clearState(m_standaloneJobSummaryDialog->winId(), NET::KeepAbove|NET::StaysOnTop);
+
+        KWindowSystem::setState(m_standaloneJobSummaryDialog->winId(), NET::SkipTaskbar|NET::SkipPager);
+        KWindowSystem::raiseWindow(m_standaloneJobSummaryDialog->winId());
     }
 }
 
