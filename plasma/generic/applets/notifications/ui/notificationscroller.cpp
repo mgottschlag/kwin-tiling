@@ -30,6 +30,8 @@
 #include <KLocale>
 
 #include <Plasma/TabBar>
+#include <Plasma/ExtenderItem>
+#include <Plasma/Extender>
 #include <Plasma/ScrollWidget>
 
 
@@ -40,13 +42,13 @@ NotificationScroller::NotificationScroller(QGraphicsItem *parent)
     QGraphicsLinearLayout *tabsLayout = new QGraphicsLinearLayout(Qt::Horizontal);
 
     m_notificationBar = new Plasma::TabBar(this);
-    m_notificationBar->nativeWidget()->setMaximumSize(400, 32);
+    m_notificationBar->nativeWidget()->setMaximumWidth(400);
+    m_notificationBar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_notificationBar->addTab(KIcon("dialog-information"), i18nc("Show all  notifications", "All"));
     connect(m_notificationBar, SIGNAL(currentChanged(int)), this, SLOT(tabSwitched(int)));
 
     m_scroll = new Plasma::ScrollWidget(this);
     m_scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_scroll->setPreferredHeight(250);
 
     tabsLayout->addStretch();
     tabsLayout->addItem(m_notificationBar);
@@ -165,13 +167,11 @@ void NotificationScroller::adjustSize()
     m_mainWidgetLayout->invalidate();
     m_mainWidget->resize(m_mainWidget->effectiveSizeHint(Qt::MinimumSize));
 
-    //some layouting hacks still seem to be necessary
-    //FIXME: other ugly magic number
-    m_scroll->setMinimumWidth(m_mainWidget->size().width()+22);
-    updateGeometry();
-    //FIXME: weird extenderItem bug: resising the parentwidget (the extenderitem) as any size will make it relayout and resize to the proper one
-    if (parentWidget()) {
-        parentWidget()->resize(1,1);
+    Plasma::ExtenderItem *ei = qobject_cast<Plasma::ExtenderItem *>(parentWidget());
+    if (ei && ei->extender()) {
+        //FIXME: whi is necessary to add this?
+        QSizeF hint = ei->extender()->effectiveSizeHint(Qt::PreferredSize) + QSizeF(0, 100);
+        ei->extender()->resize(hint.width(), qMin(hint.height(), (qreal)500));
     }
 }
 
