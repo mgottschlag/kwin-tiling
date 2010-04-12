@@ -74,7 +74,7 @@ private:
     /**
      * recalculate which borders to show
      */
-    void updateBorders(const QRect &geom, bool themeChange = false);
+    void updateBorders(const QRect &geom, bool themeChange = false, bool inPaintEvent = false);
 
     Plasma::FrameSvg *m_background;
     QAction* m_configureAction;

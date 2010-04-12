@@ -349,7 +349,7 @@ void Panel::updateSize()
     }
 }
 
-void Panel::updateBorders(const QRect &geom, bool themeChange)
+void Panel::updateBorders(const QRect &geom, bool themeChange, bool inPaintEvent)
 {
     Plasma::Location loc = location();
     FrameSvg::EnabledBorders enabledBorders = FrameSvg::AllBorders;
@@ -457,19 +457,19 @@ void Panel::updateBorders(const QRect &geom, bool themeChange)
         }
 
         m_layout->setContentsMargins(leftWidth, topHeight, rightWidth, bottomHeight);
-
         m_layout->invalidate();
-        resize(preferredSize());
-    }
 
-    update();
+        if (!inPaintEvent) {
+            resize(preferredSize());
+        }
+    }
 }
 
 void Panel::constraintsEvent(Plasma::Constraints constraints)
 {
-    m_maskDirty = true;
-
     if (constraints & Plasma::FormFactorConstraint) {
+        m_maskDirty = true;
+
         Plasma::FormFactor form = formFactor();
         Qt::Orientation layoutDirection = form == Plasma::Vertical ? Qt::Vertical : Qt::Horizontal;
         // create or set up our layout!
@@ -481,6 +481,7 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
 
     //we need to know if the width or height is 100%
     if (constraints & Plasma::LocationConstraint || constraints & Plasma::SizeConstraint) {
+        m_maskDirty = true;
         m_currentSize = geometry().size().toSize();
         QRectF screenRect = screen() >= 0 ? Kephal::ScreenUtils::screenGeometry(screen()) :
                                             geometry();
@@ -534,6 +535,7 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
             m_configureAction->setVisible(unlocked);
         }
 
+        m_maskDirty = true;
         updateBorders(geometry().toRect());
     }
 }
@@ -563,13 +565,15 @@ void Panel::paintInterface(QPainter *painter,
     QRect viewGeom;
     if (containmentOpt && containmentOpt->view) {
         viewGeom = containmentOpt->view->geometry();
+    } else {
+        viewGeom = m_lastViewGeom;
     }
 
     if (m_maskDirty || m_lastViewGeom != viewGeom) {
         m_maskDirty = false;
         m_lastViewGeom = viewGeom;
 
-        updateBorders(viewGeom);
+        updateBorders(viewGeom, false, true);
         if (containmentOpt && containmentOpt->view && !m_background->mask().isEmpty()) {
             const QRegion mask = m_background->mask();
             containmentOpt->view->setMask(mask);
