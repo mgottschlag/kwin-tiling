@@ -310,6 +310,7 @@ void Notifications::addJob(Job *job)
         m_standaloneJobSummaryWidget->resize(m_standaloneJobSummaryWidget->size().width(), 32);
         m_standaloneJobSummaryWidget->setMaximumHeight(48);
         m_standaloneJobSummaryWidget->setMinimumHeight(48);
+        m_standaloneJobSummaryWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     }
 
     m_standaloneJobSummaryDialog->syncToGraphicsWidget();
@@ -324,6 +325,7 @@ void Notifications::addJob(Job *job)
 
         KWindowSystem::setState(m_standaloneJobSummaryDialog->winId(), NET::SkipTaskbar|NET::SkipPager);
         KWindowSystem::raiseWindow(m_standaloneJobSummaryDialog->winId());
+        KWindowSystem::setOnAllDesktops(m_standaloneJobSummaryDialog->winId(), true);
     }
 }
 
