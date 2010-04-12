@@ -1,5 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 Rob Scheepmaker <r.scheepmaker@student.utwente.nl> *
+ *   Copyright (C) 2010 Marco Martin <notmart@gmail.com>                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,8 +18,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef EXTENDERTASK_H
-#define EXTENDERTASK_H
+#ifndef NOTIFICATIONBUSYWIDGET_H
+#define NOTIFICATIONBUSYWIDGET_H
 
 #include <KIcon>
 
@@ -38,14 +39,14 @@ namespace Plasma
 
 class Manager;
 
-class ExtenderTaskBusyWidget : public Plasma::BusyWidget
+class BusyWidget : public Plasma::BusyWidget
 {
     Q_OBJECT
 
 public:
     enum State { Empty, Info, Running };
 
-    ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, const Manager *manager);
+    BusyWidget(Plasma::PopupApplet *parent, const Manager *manager);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
     void setState(State state);
 

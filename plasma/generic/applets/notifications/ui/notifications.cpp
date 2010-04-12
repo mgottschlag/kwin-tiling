@@ -69,8 +69,8 @@
 
 #include "../core/notificationsmanager.h"
 #include "../core/notification.h"
-#include "../core/extendertask.h"
 #include "../core/completedjobnotification.h"
+#include "busywidget.h"
 #include "jobwidget.h"
 #include "jobtotalswidget.h"
 #include "notificationscroller.h"
@@ -118,7 +118,7 @@ void Notifications::init()
     extender()->setEmptyExtenderMessage(i18n("No notifications and no jobs"));
     extender()->setWindowFlags(Qt::X11BypassWindowManagerHint);
 
-    m_busyWidget = new ExtenderTaskBusyWidget(this, m_manager);
+    m_busyWidget = new BusyWidget(this, m_manager);
     connect(m_busyWidget, SIGNAL(clicked()), this, SLOT(togglePopup()));
     QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(this);
     setContentsMargins(0, 0, 0, 0);
@@ -289,6 +289,7 @@ void Notifications::addJob(Job *job)
     extenderItem->setWidget(new JobWidget(job, extenderItem));
 
     extenderItem->setGroup(extender()->group("jobGroup"));
+kWarning()<<"AAAA"<<extender()->effectiveSizeHint(Qt::PreferredSize);
 
     //show the tiny standalone overview
     if (!m_standaloneJobSummaryWidget) {

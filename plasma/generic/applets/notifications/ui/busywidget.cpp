@@ -1,5 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008, 2009 Rob Scheepmaker <r.scheepmaker@student.utwente.nl> *
+ *   Copyright (C) 2010 Marco Martin <notmart@gmail.com>                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,7 +18,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#include "extendertask.h"
+#include "busywidget.h"
 #include <fixx11h.h>
 
 #include <QtGui/QPainter>
@@ -45,7 +46,7 @@
 
 
 
-ExtenderTaskBusyWidget::ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, const Manager *manager)
+BusyWidget::BusyWidget(Plasma::PopupApplet *parent, const Manager *manager)
     : Plasma::BusyWidget(parent),
       m_icon("dialog-information"),
       m_state(Empty),
@@ -98,7 +99,7 @@ ExtenderTaskBusyWidget::ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, cons
     updateTask();
 }
 
-void ExtenderTaskBusyWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void BusyWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     QRectF iconRect(0, 0, qMin(size().width(), size().height()), qMin(size().width(), size().height()));
     iconRect.moveCenter(boundingRect().center());
@@ -172,7 +173,7 @@ void ExtenderTaskBusyWidget::paint(QPainter *painter, const QStyleOptionGraphics
     }
 }
 
-void ExtenderTaskBusyWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
+void BusyWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     //regenerate pixmaps
     m_svg->resize(contentsRect().size());
@@ -181,7 +182,7 @@ void ExtenderTaskBusyWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
     m_svg->resize();
 }
 
-void ExtenderTaskBusyWidget::setState(State state)
+void BusyWidget::setState(State state)
 {
     if (m_state == state) {
         return;
@@ -192,7 +193,7 @@ void ExtenderTaskBusyWidget::setState(State state)
     update();
 }
 
-QString ExtenderTaskBusyWidget::expanderElement() const
+QString BusyWidget::expanderElement() const
 {
     switch (m_systray->location()) {
         case Plasma::TopEdge:
@@ -207,7 +208,7 @@ QString ExtenderTaskBusyWidget::expanderElement() const
     }
 }
 
-void ExtenderTaskBusyWidget::updateTask()
+void BusyWidget::updateTask()
 {
     int runningJobs = 0;
     int pausedJobs = 0;
@@ -248,14 +249,14 @@ void ExtenderTaskBusyWidget::updateTask()
     m_total = total;
 
     if (!total) {
-        setState(ExtenderTaskBusyWidget::Empty);
+        setState(BusyWidget::Empty);
         setLabel(QString());
     } else if (runningJobs) {
-        setState(ExtenderTaskBusyWidget::Running);
+        setState(BusyWidget::Running);
         setLabel(QString("%1/%2").arg(QString::number(total - runningJobs))
                                  .arg(QString::number(total)));
     } else {
-        setState(ExtenderTaskBusyWidget::Info);
+        setState(BusyWidget::Info);
         setLabel(QString::number(total));
     }
 
@@ -298,4 +299,4 @@ void ExtenderTaskBusyWidget::updateTask()
 }
 
 
-#include "extendertask.moc"
+#include "busywidget.moc"

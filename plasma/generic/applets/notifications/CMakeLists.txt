@@ -5,7 +5,6 @@ kde4_no_enable_final(plasma-notifications)
 
 set(notifications_SRCS
 
-    core/extendertask.cpp
     core/notificationsmanager.cpp
     core/protocol.cpp
     core/notification.cpp
@@ -18,6 +17,7 @@ set(notifications_SRCS
     protocols/jobs/dbusjobprotocol.cpp
     protocols/jobs/dbusjob.cpp
 
+    ui/busywidget.cpp
     ui/notifications.cpp
     ui/notificationwidget.cpp
     ui/jobtotalswidget.cpp
