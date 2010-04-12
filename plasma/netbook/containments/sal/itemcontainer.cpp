@@ -40,6 +40,7 @@
 #include <Plasma/Applet>
 #include <Plasma/IconWidget>
 #include <Plasma/ItemBackground>
+#include <Plasma/Theme>
 #include <Plasma/ToolTipContent>
 #include <Plasma/ToolTipManager>
 
@@ -227,14 +228,8 @@ void ItemContainer::relayout()
     int validRow = 0;
     int validColumn = 0;
 
-    QSizeF availableSize;
-    QGraphicsWidget *pw = parentWidget();
-    //FIXME: if this widget will be scrollwidget::widget itself this part could become a bit prettier
-    if (pw) {
-        availableSize = pw->size();
-    } else {
-        availableSize = size();
-    }
+    //FIXME: reserve a random fixed size for the scrollbars, regardless they're present or not
+    QSizeF availableSize(m_itemView->size() - QSizeF(30, 30));
 
 
     if (m_layout->rowCount() > 0) {
@@ -256,10 +251,16 @@ void ItemContainer::relayout()
             }
         }
     }
-
-
     const int nRows = m_layout->rowCount();
     const int nColumns = m_layout->columnCount();
+
+    for (int i = 0; i < nRows; ++i) {
+        m_layout->setRowFixedHeight(i, 0);
+    }
+    for (int i = 0; i < nColumns; ++i) {
+        m_layout->setColumnFixedWidth(i, 0);
+    }
+
     for (int row = validRow; row < nRows; ++row) {
         for (int column = validColumn; column < nColumns; ++column) {
             QGraphicsLayoutItem * item = m_layout->itemAt(row, column);
@@ -276,17 +277,11 @@ void ItemContainer::relayout()
 
     setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 
-    //FIXME: here is inefficient but we ore sure only there abut what items are in
-    int maxColumnWidth = 0;
-    int maxRowHeight = 0;
-    foreach (Plasma::IconWidget *icon, m_items) {
-        if (icon->size().width() > maxColumnWidth) {
-            maxColumnWidth = icon->size().width();
-        }
-        if (icon->size().height() > maxRowHeight) {
-            maxRowHeight = icon->size().height();
-        }
-    }
+    //Fixed size: probably better than actually finding out
+    int maxColumnWidth;
+    int maxRowHeight;
+    QFontMetrics fm(Plasma::Theme::defaultTheme()->font(Plasma::Theme::DesktopFont));
+    maxColumnWidth = maxRowHeight = m_iconSize + fm.height()*2 + 32;
 
     if (m_orientation == Qt::Vertical) {
 
@@ -338,6 +333,14 @@ void ItemContainer::relayout()
                 icon->show();
             }
         }
+    }
+
+    for (int i = 0; i < m_layout->rowCount(); ++i) {
+        m_layout->setRowFixedHeight(i, maxRowHeight);
+    }
+    for (int i = 0; i < m_layout->columnCount(); ++i) {
+        m_layout->setColumnFixedWidth(i, maxColumnWidth);
+        m_layout->setColumnAlignment(i, Qt::AlignCenter);
     }
 
     if (!isVisible()) {
@@ -611,6 +614,16 @@ QAbstractItemModel *ItemContainer::model() const
 
 void ItemContainer::reset()
 {
+    const int nRows = m_layout->rowCount();
+    const int nColumns = m_layout->columnCount();
+
+    for (int i = 0; i < nRows; ++i) {
+        m_layout->setRowFixedHeight(i, 0);
+    }
+    for (int i = 0; i < nColumns; ++i) {
+        m_layout->setColumnFixedWidth(i, 0);
+    }
+
     const int count = m_layout->count();
     m_hoverIndicator->setTargetItem(0);
     for (int i = 0; i < count; ++i) {
