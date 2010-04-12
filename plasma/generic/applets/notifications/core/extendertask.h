@@ -49,6 +49,9 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
     void setState(State state);
 
+protected:
+    void resizeEvent(QGraphicsSceneResizeEvent *event);
+
 protected slots:
     void updateTask();
 

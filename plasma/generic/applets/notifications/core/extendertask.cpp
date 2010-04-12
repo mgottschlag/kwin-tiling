@@ -172,6 +172,15 @@ void ExtenderTaskBusyWidget::paint(QPainter *painter, const QStyleOptionGraphics
     }
 }
 
+void ExtenderTaskBusyWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
+{
+    //regenerate pixmaps
+    m_svg->resize(contentsRect().size());
+    m_fadeInAnimation->setProperty("targetPixmap", m_svg->pixmap("notification-active"));
+    m_fadeOutAnimation->setProperty("startPixmap", m_svg->pixmap("notification-active"));
+    m_svg->resize();
+}
+
 void ExtenderTaskBusyWidget::setState(State state)
 {
     if (m_state == state) {
