@@ -100,6 +100,7 @@ SystemModel::SystemModel(QObject *parent)
         : KickoffProxyModel(parent)
         , d(new Private(this))
 {
+    reloadApplications();
 }
 
 SystemModel::~SystemModel()
