@@ -349,7 +349,7 @@ void Panel::updateSize()
     }
 }
 
-void Panel::updateBorders(const QRect &geom, bool themeChange, bool inPaintEvent)
+void Panel::updateBorders(const QRect &geom, bool inPaintEvent)
 {
     Plasma::Location loc = location();
     FrameSvg::EnabledBorders enabledBorders = FrameSvg::AllBorders;
@@ -447,17 +447,8 @@ void Panel::updateBorders(const QRect &geom, bool themeChange, bool inPaintEvent
         default:
             break;
         }
-        qreal oldLeft = leftWidth;
-        qreal oldTop = topHeight;
-        qreal oldRight = rightWidth;
-        qreal oldBottom = bottomHeight;
-
-        if (themeChange) {
-            m_layout->getContentsMargins(&oldLeft, &oldTop, &oldRight, &oldBottom);
-        }
 
         m_layout->setContentsMargins(leftWidth, topHeight, rightWidth, bottomHeight);
-        m_layout->invalidate();
 
         if (!inPaintEvent) {
             resize(preferredSize());
@@ -548,7 +539,7 @@ void Panel::saveState(KConfigGroup &config) const
 
 void Panel::themeUpdated()
 {
-    updateBorders(geometry().toRect(), true);
+    updateBorders(geometry().toRect());
 }
 
 void Panel::paintInterface(QPainter *painter,
@@ -573,7 +564,7 @@ void Panel::paintInterface(QPainter *painter,
         m_maskDirty = false;
         m_lastViewGeom = viewGeom;
 
-        updateBorders(viewGeom, false, true);
+        updateBorders(viewGeom, true);
         if (containmentOpt && containmentOpt->view && !m_background->mask().isEmpty()) {
             const QRegion mask = m_background->mask();
             containmentOpt->view->setMask(mask);
