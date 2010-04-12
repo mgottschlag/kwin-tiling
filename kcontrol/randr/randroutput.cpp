@@ -426,18 +426,27 @@ void RandROutput::save(KConfig &config)
 
 void RandROutput::proposeRefreshRate(float rate)
 {
+	if (!m_crtc->isValid())
+		slotEnable();
+	
 	m_originalRate = refreshRate();
 	m_proposedRate = rate;
 }
 
 void RandROutput::proposeRect(const QRect &r)
 {
+	if (!m_crtc->isValid())
+		slotEnable();
+	
 	m_originalRect = rect();
 	m_proposedRect = r;
 }
 
 void RandROutput::proposeRotation(int r)
 {
+	if (!m_crtc->isValid())
+		slotEnable();
+	
 	m_originalRotation = rotation();
 	m_proposedRotation = r;
 }
