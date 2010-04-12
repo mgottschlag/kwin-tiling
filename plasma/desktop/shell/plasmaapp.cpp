@@ -813,7 +813,10 @@ void PlasmaApp::setWmClass(WId id)
 
 void PlasmaApp::createWaitingPanels()
 {
-    foreach (QWeakPointer<Plasma::Containment> containmentPtr, m_panelsWaiting) {
+    const QList<QWeakPointer<Plasma::Containment> > containments = m_panelsWaiting;
+    m_panelsWaiting.clear();
+
+    foreach (QWeakPointer<Plasma::Containment> containmentPtr, containments) {
         Plasma::Containment *containment = containmentPtr.data();
         if (!containment) {
             continue;
@@ -822,6 +825,12 @@ void PlasmaApp::createWaitingPanels()
         KConfigGroup viewIds(KGlobal::config(), "ViewIds");
         int id = viewIds.readEntry(QString::number(containment->id()), 0);
         if (containment->screen() < Kephal::ScreenUtils::numScreens()) {
+            foreach (PanelView *view, m_panels) {
+                if (view->containment() == containment) {
+                    continue;
+                }
+            }
+
             PanelView *panelView = new PanelView(containment, id);
             connect(panelView, SIGNAL(destroyed(QObject*)), this, SLOT(panelRemoved(QObject*)));
             m_panels << panelView;
@@ -829,19 +838,18 @@ void PlasmaApp::createWaitingPanels()
             setWmClass(panelView->winId());
         }
     }
-
-    m_panelsWaiting.clear();
 }
 
 void PlasmaApp::createWaitingDesktops()
 {
-    foreach (QWeakPointer<Plasma::Containment> containment, m_desktopsWaiting) {
+    const QList<QWeakPointer<Plasma::Containment> > containments = m_desktopsWaiting;
+    m_desktopsWaiting.clear();
+
+    foreach (QWeakPointer<Plasma::Containment> containment, containments) {
         if (containment) {
             createView(containment.data());
         }
     }
-
-    m_desktopsWaiting.clear();
 }
 
 void PlasmaApp::containmentAdded(Plasma::Containment *containment)
@@ -876,7 +884,7 @@ void PlasmaApp::containmentScreenOwnerChanged(int wasScreen, int isScreen, Plasm
     Q_UNUSED(wasScreen)
     //kDebug() << isScreen << wasScreen << (QObject*)containment;
 
-    if (isScreen < 0) {
+    if (isScreen < 0 || isPanelContainment(containment)) {
         return;
     }
 
