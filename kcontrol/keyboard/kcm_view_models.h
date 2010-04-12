@@ -35,7 +35,7 @@ class LayoutsTableModel : public QAbstractTableModel
  public:
      LayoutsTableModel(Rules* rules, Flags *flags, KeyboardConfig* keyboardConfig, QObject *parent = 0);
 
-     int columnCount(const QModelIndex&) const { return 3; };
+     int columnCount(const QModelIndex&) const;
      QVariant headerData(int section, Qt::Orientation orientation,
                          int role = Qt::DisplayRole) const;
 

@@ -29,6 +29,7 @@
 
 #include "x11_helper.h"
 #include "xkb_rules.h"
+#include "keyboard_config.h"
 
 
 K_EXPORT_PLASMA_APPLET(keyboard, KeyboardApplet)
@@ -37,18 +38,21 @@ KeyboardApplet::KeyboardApplet(QObject *parent, const QVariantList &args):
 	Plasma::Applet(parent, args),
 	xEventNotifier(XEventNotifier::XKB),
 	actionGroup(NULL),
-	rules(NULL)
+	rules(NULL),
+	keyboardConfig(new KeyboardConfig())
 {
 	if( ! X11Helper::xkbSupported(NULL) ) {
 		setFailedToLaunch(true, "XKB extension failed to initialize");
 		return;
 	}
 
-	setHasConfigurationInterface(true);
+	setHasConfigurationInterface(false);
 
-	resize(32, 32);
-	setAspectRatioMode(Plasma::IgnoreAspectRatio);
-	setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
+//	resize(32, 32);
+	setMinimumSize(16, 16);
+
+	setAspectRatioMode(Plasma::KeepAspectRatio);
+	setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
 	setBackgroundHints(DefaultBackground);
 
 	rules = Rules::readRules();
@@ -62,8 +66,9 @@ KeyboardApplet::~KeyboardApplet()
 
 void KeyboardApplet::readConfig()
 {
-	KConfigGroup config = Plasma::Applet::config("KeyboardLayout");
-	drawFlag = config.readEntry("ShowFlag", true);
+//	KConfigGroup config = Plasma::Applet::config("KeyboardLayout");
+	keyboardConfig->load();
+//	drawFlag = keyboardConfig->readEntry("ShowFlag", true);
 }
 
 void KeyboardApplet::configChanged()
@@ -95,33 +100,54 @@ void KeyboardApplet::layoutChanged()
 	update();
 }
 
-QString KeyboardApplet::getDisplayText(const QString& fullLayout)
+QString KeyboardApplet::getDisplayText(const QString& fullLayoutName)
 {
-	if( fullLayout.isEmpty() )
+	if( fullLayoutName.isEmpty() )
 		return QString("--");
 
-	return fullLayout.split(X11Helper::LEFT_VARIANT_STR)[0];
+	LayoutConfig layoutConfig = LayoutConfig::createLayoutConfig(fullLayoutName);
+	QString layoutText = layoutConfig.layout;
+
+	foreach(const LayoutConfig& lc, keyboardConfig->layouts) {
+		if( layoutConfig.layout == lc.layout && layoutConfig.variant == lc.variant ) {
+			layoutText = lc.getDisplayName();
+			break;
+		}
+	}
+
+	return layoutText;
 }
 
-QString KeyboardApplet::getLongText(const QString& fullLayout)
+QString KeyboardApplet::getLongText(const QString& fullLayoutName)
 {
-	if( fullLayout.isEmpty() )
+	if( fullLayoutName.isEmpty() )
 		return "";
 
 	if( rules == NULL ) {
-		return fullLayout;
+		return fullLayoutName;
 	}
 
-	QString layout = fullLayout.split(X11Helper::LEFT_VARIANT_STR)[0];
+	LayoutConfig layoutConfig = LayoutConfig::createLayoutConfig(fullLayoutName);
+	QString layoutText = fullLayoutName;
 
-	const LayoutInfo* layoutInfo = rules->getLayoutInfo(layout);
-	return layoutInfo != NULL && ! layoutInfo->description.isEmpty()
-			? layoutInfo->description : fullLayout;
+	const LayoutInfo* layoutInfo = rules->getLayoutInfo(layoutConfig.layout);
+	if( layoutInfo != NULL ) {
+		layoutText = layoutInfo->description;
+
+		if( ! layoutConfig.variant.isEmpty() ) {
+			const VariantInfo* variantInfo = layoutInfo->getVariantInfo(layoutConfig.variant);
+			QString variantText = variantInfo != NULL ? variantInfo->description : layoutConfig.variant;
+
+			return QString("%1 - %2").arg(layoutText, variantText);
+		}
+	}
+
+	return layoutText;
 }
 
 const QIcon KeyboardApplet::getFlag(const QString& layout)
 {
-	return drawFlag ? flags.getIcon(layout) : QIcon();
+	return keyboardConfig->showFlag ? flags.getIcon(layout) : QIcon();
 }
 
 void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem */*option*/, const QRect &contentsRect)
@@ -139,9 +165,13 @@ void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 	}
 	p->save();
 	p->setPen(Qt::black);
-	//TODO: cache font?
 	QFont font = p->font();
-	int fontSize = contentsRect.height() > 9 ? contentsRect.height()-3 : 6;
+	int fontSize = layoutText.length() == 2
+			? contentsRect.height() * 7 / 10
+			: contentsRect.height() * 5 / 10;
+	if( fontSize < 6 ) {
+		fontSize = 6;
+	}
 	font.setPixelSize(fontSize);
 	p->setFont(font);
 	p->drawText(contentsRect, Qt::AlignCenter | Qt::AlignHCenter, layoutText);
@@ -183,15 +213,15 @@ QList<QAction*> KeyboardApplet::contextualActions()
 	return actionGroup->actions();
 }
 
-void KeyboardApplet::createConfigurationInterface(KConfigDialog *parent)
-{
-//	Applet::createConfigurationInterface(parent);
-	QWidget* widget = new QWidget();
-//	QCheckBox* showFlagCheckbox =
-			new QCheckBox(i18n("Show Flag"), widget);
-	parent->addPage(widget, i18n("Indicator Options"));
-	//TODO: apply config
-}
+//void KeyboardApplet::createConfigurationInterface(KConfigDialog *parent)
+//{
+////	Applet::createConfigurationInterface(parent);
+//	QWidget* widget = new QWidget();
+////	QCheckBox* showFlagCheckbox =
+//			new QCheckBox(i18n("Show Flag"), widget);
+//	parent->addPage(widget, i18n("Indicator Options"));
+//	//TODO: apply config
+//}
 
 //TODO: exclude XInput somehow nicer
 int XEventNotifier::registerForNewDeviceEvent(Display* /*display*/)

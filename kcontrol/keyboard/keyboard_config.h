@@ -27,6 +27,7 @@
 #include <QtCore/QPair>
 
 struct LayoutConfig {
+	//TODO: move these to private
 	QString layout;
 	QString variant;
 
@@ -34,7 +35,16 @@ struct LayoutConfig {
 	LayoutConfig(const LayoutConfig& layoutConfig) {
 		layout = layoutConfig.layout;
 		variant = layoutConfig.variant;
+		displayName = layoutConfig.displayName;
 	}
+
+	QString getDisplayName() const { return !displayName.isEmpty() ? displayName :  layout; }
+	void setDisplayName(const QString& name) { displayName = name; }
+
+	static LayoutConfig createLayoutConfig(const QString& fullLayoutName);
+
+private:
+	QString displayName;
 };
 
 /**

@@ -30,8 +30,9 @@
 static const int MAP_COLUMN = 0;
 static const int LAYOUT_COLUMN = 1;
 static const int VARIANT_COLUMN = 2;
+static const int DISPLAY_NAME_COLUMN = 3;
 
-static const char* headers[] = {"Map", "Layout", "Variant"};
+static const char* headers[] = {i18n("Map"), i18n("Layout"), i18n("Variant"), i18n("Label")};
 
 LayoutsTableModel::LayoutsTableModel(Rules* rules_, Flags *flags_, KeyboardConfig* keyboardConfig_, QObject* parent):
 	QAbstractTableModel(parent),
@@ -50,6 +51,11 @@ void LayoutsTableModel::refresh()
 int LayoutsTableModel::rowCount(const QModelIndex &/*parent*/) const
 {
 	return keyboardConfig->layouts.count();
+}
+
+int LayoutsTableModel::columnCount(const QModelIndex&) const
+{
+	return 4;
 }
 
 QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
@@ -92,6 +98,9 @@ QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
     		 return variantInfo != NULL ? variantInfo->description : layoutConfig.variant;
     	 }
          break;
+    	 case DISPLAY_NAME_COLUMN:
+    		 return layoutConfig.getDisplayName();
+    	 break;
     	 }
      }
      return QVariant();

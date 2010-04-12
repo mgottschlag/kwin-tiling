@@ -54,10 +54,10 @@ static QString& stripVariantName(QString& variant)
 	return variant;
 }
 
-static LayoutConfig createLayoutConfig(const QString& string)
+LayoutConfig LayoutConfig::createLayoutConfig(const QString& fullLayoutName)
 {
 	LayoutConfig layoutConfig;
-	QStringList lv = string.split(LAYOUT_VARIANT_SEPARATOR_PREFIX);
+	QStringList lv = fullLayoutName.split(LAYOUT_VARIANT_SEPARATOR_PREFIX);
 	layoutConfig.layout = lv[0];
 	QString variant = lv.size() > 1 ? stripVariantName(lv[1]) : "";
 	layoutConfig.variant = variant;
@@ -73,7 +73,7 @@ void KeyboardConfig::setDefaults()
 	// init layouts options
 	configureLayouts = false;
 	layouts.clear();
-	layouts.append(createLayoutConfig(DEFAULT_LAYOUT));
+	layouts.append(LayoutConfig::createLayoutConfig(DEFAULT_LAYOUT));
 
 	// switch cotrol options
 	switchingPolicy = SWITCH_POLICY_GLOBAL;
@@ -104,7 +104,7 @@ void KeyboardConfig::load()
     }
     layouts.clear();
     foreach(QString layoutString, layoutStrings) {
-    	layouts.append(createLayoutConfig(layoutString));
+    	layouts.append(LayoutConfig::createLayoutConfig(layoutString));
     }
 
 	QString layoutMode = config.readEntry("SwitchMode", "Global");
@@ -112,7 +112,15 @@ void KeyboardConfig::load()
 
 	showFlag = config.readEntry("ShowFlag", true);
 
-	kDebug() << "configuring layouts" << configureLayouts << ", configuring options" << resetOldXkbOptions;
+    QString labelsStr = config.readEntry("DisplayNames", "");
+    QStringList labels = labelsStr.split(LIST_SEPARATOR, QString::KeepEmptyParts);
+    for(int i=0; i<labels.count() && i<layouts.count(); i++) {
+    	if( !labels[i].isEmpty() && labels[i] != layouts[i].layout ) {
+    		layouts[i].setDisplayName(labels[i]);
+    	}
+    }
+
+	kDebug() << "configuring layouts" << configureLayouts << "configuring options" << resetOldXkbOptions;
 }
 
 void KeyboardConfig::save()

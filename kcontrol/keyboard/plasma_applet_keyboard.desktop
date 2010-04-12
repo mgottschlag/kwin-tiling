@@ -15,9 +15,11 @@ Comment[pt_BR]=Miniaplicativo para exibir e alternar layouts
 Comment[sv]=Miniprogram för att visa och byta layout
 Comment[uk]=Аплет для показу та перемикання розкладок
 Comment[x-test]=xxApplet to display and switch layoutsxx
-Type=Service
-ServiceTypes=Plasma/Applet
 
+Icon=preferences-desktop-keyboard
+Type=Service
+
+X-KDE-ServiceTypes=Plasma/Applet
 X-KDE-Library=plasma_applet_keyboard
 X-KDE-PluginInfo-Author=Andriy Rysin
 X-KDE-PluginInfo-Email=rysin@kde.org

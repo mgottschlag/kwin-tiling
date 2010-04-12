@@ -42,6 +42,7 @@ install( FILES keyboard.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kded )
 set( plasma_applet_keyboard_SRCS
     keyboard_applet.cpp
     flags.cpp
+    keyboard_config.cpp
     xkb_rules.cpp
     x11_helper.cpp
 )

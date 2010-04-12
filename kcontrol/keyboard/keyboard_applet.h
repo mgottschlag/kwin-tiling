@@ -33,6 +33,7 @@ class QAction;
 class KConfigDialog;
 class QActionGroup;
 class Rules;
+class KeyboardConfig;
 
 class KeyboardApplet : public Plasma::Applet
 {
@@ -55,7 +56,7 @@ public:
 protected:
 	void mousePressEvent ( QGraphicsSceneMouseEvent *event );
 	QList<QAction*> contextualActions();
-	void createConfigurationInterface(KConfigDialog *parent);
+//	void createConfigurationInterface(KConfigDialog *parent);
 
 private Q_SLOTS:
 	void actionTriggered(QAction* action);
@@ -66,11 +67,12 @@ private:
 	QString getDisplayText(const QString& layout);
 	const QIcon getFlag(const QString& layout);
 
-	bool drawFlag;
+//	bool drawFlag;
 	Flags flags;
 	XEventNotifier xEventNotifier;
 	QActionGroup* actionGroup;
 	Rules* rules;
+	KeyboardConfig* keyboardConfig;
 };
 
 #endif /* KEYBOARD_APPLET_H_ */

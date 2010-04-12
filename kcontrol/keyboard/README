@@ -5,7 +5,7 @@ Components:
 
 kcm_init:
 * initializes keyboard hardware (kcmmisc)
-* starts keyboard daemon if needed (layouts are configured)
+* starts keyboard daemon if needed (i.e. if layouts are configured)
 
 Keyboard daemon:
 * configures keyboard layouts on start
@@ -18,10 +18,9 @@ Keyboard daemon:
 
 Keyboard applet:
 * displays current layout with text and (optionally flag)
-* allows to configure if flag should be displayed
 
 Layout widget:
-* displays current layout with text and (optionally flag) embedded in another widget
+* displays current layout with text embedded in another widget
 * dynamically loaded as a plugin
 * currently only short text (no flag or long text)
 
@@ -43,6 +42,6 @@ New features:
 * Allow selection of keyboard layout by language
 
 Regressions:
-* can't configure layout short names displayed in applet
-* does not start applet automatically when keyboard layouts are configured
+* can't configure layout short names displayed in applet (reading the previously configured names is fine)
+* applet does not start automatically when keyboard layouts are configured (first time)
 * kcm does not allow changing layout variant (need to re-add)
