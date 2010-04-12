@@ -132,12 +132,11 @@ void ActivityBar::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint ) {
         if (formFactor() == Plasma::Vertical) {
             m_tabBar->nativeWidget()->setShape(QTabBar::RoundedWest);
-            setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding));
         } else {
             m_tabBar->nativeWidget()->setShape(QTabBar::RoundedNorth);
-            setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding));
         }
         setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
+        setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
         emit sizeHintChanged(Qt::PreferredSize);
     }
 
