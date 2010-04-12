@@ -1328,9 +1328,10 @@ void Pager::updateToolTip()
                      subtext += "<br />&bull;" + Qt::escape(winInfo.visibleName());
                 } else {
                     data.addResource(Plasma::ToolTipContent::ImageResource, QUrl("wicon://" + QString::number(taskCounter)), QVariant(icon));
-                    subtext += "<br /><img src=\"wicon://" + QString::number(taskCounter) + "\"/>";
+                    subtext += "<br /><img src=\"wicon://" + QString::number(taskCounter) + "\"/>&nbsp;";
                 }
-                subtext += (active ? "<u>" : "") + Qt::escape(winInfo.visibleName()) + (active ? "</u>" : "");
+                //TODO: elide text that is tooo long
+                subtext += (active ? "<u>" : "") + Qt::escape(winInfo.visibleName()).replace(' ', "&nbsp;") + (active ? "</u>" : "");
 
                 displayedTaskCounter++; 
                 windows.append(winInfo.win());
