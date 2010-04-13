@@ -56,7 +56,8 @@ namespace Kephal {
 
     Configurations * Configurations::s_instance = 0;
 
-    Configuration * Configurations::configuration(QString name) {
+    Configuration * Configurations::configuration(QString name) const
+    {
         foreach (Configuration * config, configurations()) {
             if (config->name() == name) {
                 return config;
@@ -65,7 +66,8 @@ namespace Kephal {
         return 0;
     }
 
-    void Configurations::translateOrigin(QMap<int, QPoint> & layout) {
+    void Configurations::translateOrigin(QMap<int, QPoint> & layout)
+    {
         QPoint origin;
         bool first = true;
         for (QMap<int, QPoint>::const_iterator i = layout.constBegin(); i != layout.constEnd(); ++i) {

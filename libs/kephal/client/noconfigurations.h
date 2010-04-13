@@ -36,11 +36,26 @@ namespace Kephal {
         public:
             SimpleConfiguration(NoConfigurations * parent);
 
-            QString name();
-            bool isModifiable();
-            bool isActivated();
-            QMap<int, QPoint> layout();
-            int primaryScreen();
+            /**
+             * @reimp Kephal::Configuration
+             */
+            QString name() const;
+            /**
+             * @reimp Kephal::Configuration
+             */
+            bool isModifiable() const;
+            /**
+             * @reimp Kephal::Configuration
+             */
+            bool isActivated() const;
+            /**
+             * @reimp Kephal::Configuration
+             */
+            QMap<int, QPoint> layout() const;
+            /**
+             * @reimp Kephal::Configuration
+             */
+            int primaryScreen() const;
 
         public Q_SLOTS:
             void activate();
@@ -54,21 +69,21 @@ namespace Kephal {
         public:
             NoConfigurations(QObject * parent);
 
-            QMap<QString, Configuration *> configurations();
-            Configuration * findConfiguration();
-            Configuration * activeConfiguration();
-            QList<Configuration *> alternateConfigurations();
-            QList<QPoint> possiblePositions(Output * output);
+            QMap<QString, Configuration *> configurations() const;
+            Configuration * findConfiguration() const;
+            Configuration * activeConfiguration() const;
+            QList<Configuration *> alternateConfigurations() const;
+            QList<QPoint> possiblePositions(const Output * output) const;
             bool move(Output * output, const QPoint & position);
             bool resize(Output * output, const QSize & size);
             bool rotate(Output * output, Rotation rotation);
             bool changeRate(Output * output, float rate);
             bool reflectX(Output * output, bool reflect);
             bool reflectY(Output * output, bool reflect);
-            int screen(Output * output);
+            int screen(Output * output) const;
             void applyOutputSettings();
             void setPolling(bool polling);
-            bool polling();
+            bool polling() const;
             void confirm();
             void revert();
 

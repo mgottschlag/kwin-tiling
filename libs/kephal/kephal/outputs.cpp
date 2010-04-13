@@ -69,27 +69,28 @@ namespace Kephal {
     {
     }
 
-    QRect Output::geom() {
+    QRect Output::geom() const {
         return QRect(position(), size());
     }
 
-    Screen * Output::screen() {
+// Outputs should not know about Screens
+    Screen * Output::screen() const {
         if (! isActivated()) {
             return 0;
         }
 
         foreach (Screen * screen, Screens::self()->screens()) {
-            if (screen->outputs().contains(this)) {
+            if (screen->contains(this)) {
                 return screen;
             }
         }
         return 0;
     }
-
-    QList<QPoint> Output::availablePositions() {
+    QList<QPoint> Output::availablePositions() const {
         return Configurations::self()->possiblePositions(this);
     }
 
+#if 0
     bool Output::move(const QPoint & position) {
         return Configurations::self()->move(this, position);
     }
@@ -113,5 +114,5 @@ namespace Kephal {
     bool Output::changeRate(double rate) {
         return Configurations::self()->changeRate(this, rate);
     }
-
+#endif
 }

@@ -35,7 +35,6 @@ namespace Kephal {
 
     SimpleOutput::SimpleOutput(QObject * parent)
         : Output(parent),
-        m_id(""),
         m_size(0, 0),
         m_position(0, 0),
         m_connected(false),
@@ -54,16 +53,16 @@ namespace Kephal {
     }
 
 
-    QString SimpleOutput::id()
+    QString SimpleOutput::id() const
     {
         return m_id;
     }
 
-    QSize SimpleOutput::size() {
+    QSize SimpleOutput::size() const {
         return m_size;
     }
 
-    QList<QSize> SimpleOutput::availableSizes() {
+    QList<QSize> SimpleOutput::availableSizes() const {
         if (m_availableSizes.empty()) {
             QList<QSize> result;
             result.append(size());
@@ -72,10 +71,11 @@ namespace Kephal {
         return m_availableSizes;
     }
 
-    QPoint SimpleOutput::position() {
+    QPoint SimpleOutput::position() const {
         return m_position;
     }
 
+#if 0
     void SimpleOutput::_setId(const QString & id) {
         m_id = id;
     }
@@ -159,24 +159,29 @@ namespace Kephal {
     void SimpleOutput::_setAvailableRates(const QList<float> & rates) {
         m_rates = rates;
     }
-
-    Rotation SimpleOutput::rotation() {
+#endif
+    Rotation SimpleOutput::rotation() const
+    {
         return m_rotation;
     }
 
-    bool SimpleOutput::reflectX() {
+    bool SimpleOutput::xReflected() const
+    {
         return m_reflectX;
     }
 
-    bool SimpleOutput::reflectY() {
+    bool SimpleOutput::yReflected() const
+    {
         return m_reflectY;
     }
 
-    float SimpleOutput::rate() {
+    float SimpleOutput::rate() const
+    {
         return m_rate;
     }
 
-    QList<float> SimpleOutput::availableRates() {
+    QList<float> SimpleOutput::availableRates() const
+    {
         return m_rates;
     }
 

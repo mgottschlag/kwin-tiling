@@ -26,7 +26,6 @@
 #include <QRect>
 
 #include "kephal.h"
-#include "kephal_export.h"
 
 namespace Kephal {
 
@@ -40,7 +39,7 @@ namespace Kephal {
      * This is most important for changing any
      * settings of the current setup.
      */
-    class KEPHAL_EXPORT Output : public QObject {
+    class Output : public QObject {
         Q_OBJECT
         public:
             Output(QObject * parent);
@@ -51,33 +50,33 @@ namespace Kephal {
              * be the names such as: VGA, LVDS,
              * TMDS-1.
              */
-            virtual QString id() = 0;
+            virtual QString id() const = 0;
 
             /**
              * Returns the actual size in pixels
              * if the Output is active.
              */
-            virtual QSize size() = 0;
+            virtual QSize size() const = 0;
 
             /**
              * Returns the actual position in
              * pixels if the Output is active.
              */
-            virtual QPoint position() = 0;
+            virtual QPoint position() const = 0;
 
             /**
              * Returns whether this Output is
              * currently connected to a
              * monitor.
              */
-            virtual bool isConnected() = 0;
+            virtual bool isConnected() const = 0;
 
             /**
              * Returns whether this Output is
              * currently activated and part
              * of a Screen.
              */
-            virtual bool isActivated() = 0;
+            virtual bool isActivated() const = 0;
 
             /**
              * Returns a list of sizes, which
@@ -85,58 +84,58 @@ namespace Kephal {
              * This depends on the connected
              * monitor.
              */
-            virtual QList<QSize> availableSizes() = 0;
+            virtual QList<QSize> availableSizes() const = 0;
 
             /**
              * Returns the vendor-code as
              * it is part of the EDID-block.
              */
-            virtual QString vendor() = 0;
+            virtual QString vendor() const = 0;
 
             /**
              * Returns the product-id as
              * it is part of the EDID-block.
              */
-            virtual int productId() = 0;
+            virtual int productId() const = 0;
 
             /**
              * Returns the serial-number as
              * it is part of the EDID-block.
              */
-            virtual unsigned int serialNumber() = 0;
+            virtual unsigned int serialNumber() const = 0;
 
             /**
-             * Returns the preffered size of
+             * Returns the preferred size of
              * this Output. This depends on
              * the connected monitor.
              */
-            virtual QSize preferredSize() = 0;
+            virtual QSize preferredSize() const = 0;
 
             /**
              * Returns the current rotation of
              * this Output.
              */
-            virtual Rotation rotation() = 0;
+            virtual Rotation rotation() const = 0;
 
             /**
              * Returns whether this Output is
              * currently reflected over the
              * x-axis.
              */
-            virtual bool reflectX() = 0;
+            virtual bool reflectX() const = 0;
 
             /**
              * Returns whether this Output is
              * currently reflected over the
              * y-axis.
              */
-            virtual bool reflectY() = 0;
+            virtual bool reflectY() const = 0;
 
             /**
              * Returns the current refresh-rate
              * of this Output.
              */
-            virtual float rate() = 0;
+            virtual float rate() const = 0;
 
             /**
              * Returns all possible refresh-rates
@@ -144,22 +143,23 @@ namespace Kephal {
              * This depends on the connected
              * monitor.
              */
-            virtual QList<float> availableRates() = 0;
+            virtual QList<float> availableRates() const = 0;
 
             /**
              * This is just a convenience
              * method for looking up the
              * Screen this Output belongs to.
              * Returns 0 if not active.
+             * WILL Outputs should not know about Screens
              */
-            Screen * screen();
+            Screen * screen() const;
 
             /**
              * This convenience method
              * returns size and position of
              * this Output if active.
              */
-            QRect geom();
+            QRect geom() const;
 
             /**
              * Returns all available
@@ -169,48 +169,17 @@ namespace Kephal {
              * the positions of the other
              * active Outputs.
              */
-            QList<QPoint> availablePositions();
+            QList<QPoint> availablePositions() const;
 
-        public Q_SLOTS:
-            /**
-             * This calls the appropriate
-             * methods in the Configuration
-             * to resize this Output.
-             */
-            bool resize(const QSize & size);
+            virtual void resize(const QSize & size) = 0;
 
-            /**
-             * This calls the appropriate
-             * methods in the Configuration
-             * to move this Output.
-             */
-            bool move(const QPoint & position);
+            virtual void rotate(Rotation rotation) = 0;
 
-            /**
-             * This will set this Ouputs rotation
-             * to the given value.
-             */
-            bool rotate(Rotation rotation);
+            virtual void setReflectX(bool reflect) = 0;
 
-            /**
-             * This will set this Output to be
-             * reflected over the x-axis if reflect
-             * is true.
-             */
-            bool reflectX(bool reflect);
+            virtual void setReflectY(bool reflect) = 0;
 
-            /**
-             * This will set this Output to be
-             * reflected over the y-axis if reflect
-             * is true.
-             */
-            bool reflectY(bool reflect);
-
-            /**
-             * This will change this Outputs
-             * refresh-rate to rate.
-             */
-            bool changeRate(double rate);
+            virtual void changeRate(double rate) = 0;
     };
 
 
@@ -221,7 +190,7 @@ namespace Kephal {
      * Use: Outputs::self() to obtain the currently
      * active instance.
      */
-    class KEPHAL_EXPORT Outputs : public QObject {
+    class Outputs : public QObject {
         Q_OBJECT
         public:
             /**

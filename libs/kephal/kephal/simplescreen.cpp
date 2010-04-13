@@ -23,7 +23,7 @@
 
 namespace Kephal {
 
-    SimpleScreen::SimpleScreen(QObject * parent, int id, const QSize & size, const QPoint & position, bool privacy)
+    SimpleScreen::SimpleScreen(int id, const QSize & size, const QPoint & position, bool privacy, QObject * parent)
         : Screen(parent)
     {
         m_id = id;
@@ -41,6 +41,10 @@ namespace Kephal {
     {
     }
 
+    SimpleScreen::~SimpleScreen()
+    {
+
+    }
 
     int SimpleScreen::id()
     {

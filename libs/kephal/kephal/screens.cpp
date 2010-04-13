@@ -61,7 +61,11 @@ namespace Kephal {
         return 0;
     }
 
-    Screen * Screens::primaryScreen() {
+    Screen * Screens::primaryScreen()
+    {
+#if 1
+        return screen(QApplication::desktop()->primaryScreen());
+#else
         Configuration * config = Configurations::self()->activeConfiguration();
         if (! config) {
             return 0;
@@ -69,6 +73,7 @@ namespace Kephal {
         int id = config->primaryScreen();
 
         return screen(id);
+#endif
     }
 
     Screens * Screens::s_instance = 0;

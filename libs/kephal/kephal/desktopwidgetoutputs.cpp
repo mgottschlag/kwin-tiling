@@ -32,11 +32,13 @@ namespace Kephal {
             : Outputs(parent)
     {
         QDesktopWidget * desktop = QApplication::desktop();
-        bool isVirtual = desktop->isVirtualDesktop();
         for (int i = 0; i < desktop->numScreens(); i++) {
+            /* This also looks wrong; all screens will receive id i*/
+            /*
             if (! isVirtual) {
                 i = desktop->primaryScreen();
             }
+            */
 
             QRect geom = desktop->screenGeometry(i);
             qDebug() << "adding an output" << i << "with geom: " << geom;
@@ -49,10 +51,17 @@ namespace Kephal {
                     true);
             m_outputs.append(output);
 
+            /* See above, this only ensures the loop exits with multiple screens*/
+            /*
             if (! isVirtual) {
                 break;
             }
+            */
         }
+        /* This is completely wrong, isVirtualDesktop() just returns true on x11 if Xinerama is in
+         * use - adding 4 disconnected outputs here makes no sens
+         */
+        /*
         if (isVirtual) {
             for (int i = desktop->numScreens(); i < 4; i++) {
                 qDebug() << "adding a disconnected output" << i;
@@ -67,6 +76,7 @@ namespace Kephal {
             }
         }
 
+        */
         connect(desktop, SIGNAL(resized(int)), this, SLOT(screenChanged(int)));
     }
 

@@ -113,7 +113,7 @@ namespace Kephal {
         return result;
     }
 
-    QList<QPoint> DBusConfigurations::possiblePositions(Output * output) {
+    QList<QPoint> DBusConfigurations::possiblePositions(const Output * output) {
         QList<QPoint> result;
         int num = m_interface->numAvailablePositions(output->id());
         for (int i = 0; i < num; ++i) {

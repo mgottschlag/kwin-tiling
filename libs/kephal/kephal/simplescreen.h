@@ -28,9 +28,9 @@ namespace Kephal {
     class SimpleScreen : public Screen {
         Q_OBJECT
         public:
-            SimpleScreen(QObject * parent, int id, const QSize & resolution, const QPoint & position, bool privacy);
-            SimpleScreen(QObject * parent);
-
+            SimpleScreen(int id, const QSize & resolution, const QPoint & position, bool privacy, QObject * parent = 0);
+            SimpleScreen(QObject * parent = 0);
+            virtual ~SimpleScreen();
             virtual int id();
 
             virtual QSize size();
@@ -39,6 +39,7 @@ namespace Kephal {
             virtual bool isPrivacyMode();
             virtual void setPrivacyMode(bool b);
 
+            bool contains() const;
             QList<Output *> outputs();
 
             void _setId(int id);

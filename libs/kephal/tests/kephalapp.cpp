@@ -34,7 +34,7 @@
 
 #include <iostream>
 
-#define WITH_OUTPUTS 1
+#define WITH_OUTPUTS 0
 
 using namespace Kephal;
 

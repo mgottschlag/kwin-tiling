@@ -53,11 +53,7 @@ namespace Kephal {
             QSize size = m_interface->size(id);
             //qDebug() << "adding a screen" << id << "with geom: " << pos << size;
 
-            SimpleScreen * screen = new SimpleScreen(this,
-                    id,
-                    size,
-                    pos,
-                    false);
+            SimpleScreen * screen = new SimpleScreen( id, size, pos, false, this);
             m_screens.append(screen);
 
             const QStringList outputIds = m_interface->outputs(id);
@@ -98,11 +94,7 @@ namespace Kephal {
         QSize size = m_interface->size(id);
         //qDebug() << "adding a screen" << id << "with geom: " << pos << size;
 
-        SimpleScreen * screen = new SimpleScreen(this,
-                id,
-                size,
-                pos,
-                false);
+        SimpleScreen * screen = new SimpleScreen(id, size, pos, false, this);
         m_screens.append(screen);
 
         const QStringList outputIds = m_interface->outputs(id);

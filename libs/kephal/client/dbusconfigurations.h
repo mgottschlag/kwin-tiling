@@ -40,11 +40,26 @@ namespace Kephal {
         public:
             DBusConfiguration(DBusConfigurations * parent, QString name);
 
-            QString name();
-            bool isModifiable();
-            bool isActivated();
-            QMap<int, QPoint> layout();
-            int primaryScreen();
+            /**
+             * @reimp Kephal::Configuration
+             */
+            QString name() const;
+            /**
+             * @reimp Kephal::Configuration
+             */
+            bool isModifiable() const;
+            /**
+             * @reimp Kephal::Configuration
+             */
+            bool isActivated() const;
+            /**
+             * @reimp Kephal::Configuration
+             */
+            QMap<int, QPoint> layout() const;
+            /**
+             * @reimp Kephal::Configuration
+             */
+            int primaryScreen() const;
 
         public Q_SLOTS:
             void activate();
@@ -63,20 +78,53 @@ namespace Kephal {
         public:
             DBusConfigurations(QObject * parent);
 
-            QMap<QString, Configuration *> configurations();
-            Configuration * activeConfiguration();
-            QList<Configuration *> alternateConfigurations();
-            QList<QPoint> possiblePositions(Output * output);
+            /**
+             * @reimp Kephal::Configurations
+             */
+            QMap<QString, Configuration *> configurations() const;
+            /**
+             * @reimp Kephal::Configurations
+             */
+            Configuration * activeConfiguration() const;
+            /**
+             * @reimp Kephal::Configurations
+             */
+            QList<Configuration *> alternateConfigurations() const;
+            /**
+             * @reimp Kephal::Configurations
+             */
+            QList<QPoint> possiblePositions(const Output * output) const;
+            /**
+             * @reimp Kephal::Configurations
+             */
             bool move(Output * output, const QPoint & position);
+            /**
+             * @reimp Kephal::Configurations
+             */
             bool resize(Output * output, const QSize & size);
+            /**
+             * @reimp Kephal::Configurations
+             */
             bool rotate(Output * output, Rotation rotation);
+            /**
+             * @reimp Kephal::Configurations
+             */
             bool reflectX(Output * output, bool reflect);
+            /**
+             * @reimp Kephal::Configurations
+             */
             bool reflectY(Output * output, bool reflect);
+            /**
+             * @reimp Kephal::Configurations
+             */
             bool changeRate(Output * output, float rate);
-            int screen(Output * output);
+            /**
+             * @reimp Kephal::Configurations
+             */
+            int screen(Output * output) const;
             void applyOutputSettings();
             void setPolling(bool polling);
-            bool polling();
+            bool polling() const;
             void confirm();
             void revert();
 

@@ -77,7 +77,7 @@ namespace Kephal {
         return QList<Configuration *>();
     }
 
-    QList<QPoint> NoConfigurations::possiblePositions(Output * output) {
+    QList<QPoint> NoConfigurations::possiblePositions(const Output * output) {
         Q_UNUSED(output)
         return QList<QPoint>();
     }

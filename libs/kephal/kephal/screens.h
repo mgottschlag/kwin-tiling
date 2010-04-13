@@ -158,6 +158,7 @@ namespace Kephal {
              * being activated or the Configuration
              * being changed.
              */
+            // QDW::screenCountChanged
             void screenAdded(Kephal::Screen * s);
 
             /**
@@ -166,18 +167,23 @@ namespace Kephal {
              * being deactivated or the
              * Configuration being changed.
              */
+            // QDW::screenCountChanged
             void screenRemoved(int id);
 
             /**
              * This signal is emitted when the size
              * of the Screen changes.
              */
+            // QDW::resized
+            // TODO: move to Screen and replace with no args version
             void screenResized(Kephal::Screen * s, QSize oldSize, QSize newSize);
 
             /**
              * This signal is emitted when the
              * position of the Screen changes.
              */
+            // QDW::resized emitted when position changes too - but not documented.
+            // TODO: move to Screen and replace with no args version
             void screenMoved(Kephal::Screen * s, QPoint oldPosition, QPoint newPosition);
 
         protected:
@@ -190,21 +196,27 @@ namespace Kephal {
     class KEPHAL_EXPORT ScreenUtils {
         public:
             /** Returns the number of screens. */
+            // PASSTHRU to QDW
             static int numScreens();
 
             /** Returns the geometry of the given screen */
+            // PASSTHRU to QDW
             static QRect screenGeometry(int id);
 
             /** Returns the size of the given screen */
+            // SYNTACTIC SUGAR around QDW
             static QSize screenSize(int id);
 
             /** Returns the geometry of the whole desktop */
+            // SYNTACTIC SUGAR around QApplication::desktop()->geometry()
             static QRect desktopGeometry();
 
             /** Returns the id of the screen that contains the given point */
+            // SYNTACTIC SUGAR around QDW::screenNumber()
             static int screenId(QPoint p);
 
             /** Returns the id of the primary screen */
+            // SYNTACTIC SUGAR around QDW::primaryScreen
             static int primaryScreenId();
 
         private:
