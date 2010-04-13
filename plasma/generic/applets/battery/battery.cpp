@@ -189,6 +189,15 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
     int minWidth;
     int minHeight;
 
+    if (constraints & Plasma::FormFactorConstraint) {
+        if (formFactor() == Plasma::Vertical ||
+            formFactor() == Plasma::Horizontal) {
+            m_theme->setImagePath("icons/battery");
+        } else {
+            m_theme->setImagePath("widgets/battery-oxygen");
+        }
+    }
+
     if (constraints & (Plasma::FormFactorConstraint | Plasma::SizeConstraint)) {
         if (formFactor() == Plasma::Vertical) {
             if (!m_showMultipleBatteries) {
