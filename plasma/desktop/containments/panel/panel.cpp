@@ -120,6 +120,7 @@ Panel::Panel(QObject *parent, const QVariantList &args)
 
     connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
             this, SLOT(appletRemoved(Plasma::Applet*)));
+    setContainmentType(Containment::PanelContainment);
 }
 
 Panel::~Panel()
@@ -128,8 +129,6 @@ Panel::~Panel()
 
 void Panel::init()
 {
-    setContainmentType(Containment::PanelContainment);
-
     Containment::init();
     //FIXME: This should be enabled, but in that case proxywidgets won't get rendered
     //setFlag(ItemClipsChildrenToShape, true);
