@@ -232,6 +232,9 @@ typedef struct {
 	struct cmdsock *css;  /* open connections */
 
 	char *path;           /* filename of the socket */
+#ifndef HONORS_SOCKET_PERMS
+	char *realdir;        /* real dirname of the socket */
+#endif
 	int fd;               /* fd of the socket */
 	int gid;              /* owner group of the socket */
 } CtrlRec;

@@ -80,6 +80,38 @@ if (NOT have_gethostbyname)
 	define_library(nsl gethostbyname)
 endif (NOT have_gethostbyname)
 
+macro_push_required_vars()
+set(CMAKE_REQUIRED_LIBRARIES ${SOCKET_LIBRARIES})
+check_c_source_runs("
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <string.h>
+#include <unistd.h>
+#include <errno.h>
+int main()
+{
+    int fd, fd2;
+    struct sockaddr_un sa;
+
+    if ((fd = socket(PF_UNIX, SOCK_STREAM, 0)) < 0)
+        return 2;
+    sa.sun_family = AF_UNIX;
+    strcpy(sa.sun_path, \"testsock\");
+    unlink(sa.sun_path);
+    if (bind(fd, (struct sockaddr *)&sa, sizeof(sa)))
+        return 2;
+    chmod(sa.sun_path, 0);
+    setuid(getuid() + 1000);
+    if ((fd2 = socket(PF_UNIX, SOCK_STREAM, 0)) < 0)
+        return 2;
+    connect(fd2, (struct sockaddr *)&sa, sizeof(sa));
+    return errno != EACCES;
+}
+" HONORS_SOCKET_PERMS)
+macro_pop_required_vars()
+
 # for genkdmconf; this is TODO
 #if (EXISTS /etc/ttys)
 #	set(BSD_INIT 1)

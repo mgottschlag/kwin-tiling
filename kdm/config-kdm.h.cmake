@@ -129,6 +129,9 @@
 /* Define to 1 if the ck-connector library is found */
 #cmakedefine HAVE_CKCONNECTOR 1
 
+/* Define to 1 if OS honors permission bits on socket inodes */
+#cmakedefine HONORS_SOCKET_PERMS 1
+
 /* $PATH defaults set by KDM */
 #cmakedefine KDM_DEF_USER_PATH "${KDM_DEF_USER_PATH}"
 #cmakedefine KDM_DEF_SYSTEM_PATH "${KDM_DEF_SYSTEM_PATH}"
