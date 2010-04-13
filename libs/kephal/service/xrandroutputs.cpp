@@ -27,6 +27,7 @@
 #include <X11/Xatom.h>
 
 #include <KDebug>
+#include <QX11Info>
 
 namespace Kephal {
 
