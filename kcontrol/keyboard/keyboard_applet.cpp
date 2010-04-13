@@ -26,10 +26,12 @@
 #include <QtGui/QAction>
 #include <QtGui/QActionGroup>
 #include <QtGui/QCheckBox>
+#include <QtDBus/QtDBus>
 
 #include "x11_helper.h"
 #include "xkb_rules.h"
 #include "keyboard_config.h"
+#include "keyboard_dbus.h"
 
 
 K_EXPORT_PLASMA_APPLET(keyboard, KeyboardApplet)
@@ -56,12 +58,24 @@ KeyboardApplet::KeyboardApplet(QObject *parent, const QVariantList &args):
 	setBackgroundHints(DefaultBackground);
 
 	rules = Rules::readRules();
+
+    QDBusConnection dbus = QDBusConnection::sessionBus();
+    dbus.connect(QString(), KEYBOARD_DBUS_OBJECT_PATH, KEYBOARD_DBUS_SERVICE_NAME, KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE, this, SLOT( configChanged() ));
 }
 
 KeyboardApplet::~KeyboardApplet()
 {
-	delete actionGroup;
+    QDBusConnection dbus = QDBusConnection::sessionBus();
+    dbus.disconnect(QString(), KEYBOARD_DBUS_OBJECT_PATH, KEYBOARD_DBUS_SERVICE_NAME, KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE, this, SLOT( configChanged() ));
+
+    delete actionGroup;
 	delete rules;
+}
+
+void KeyboardApplet::keyboardConfigChanged()
+{
+	readConfig();
+	update();
 }
 
 void KeyboardApplet::readConfig()

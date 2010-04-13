@@ -1,28 +1,22 @@
 Arch:
 * start applet from kxkb kcm
 
-* merge kcm_keyboard.desktop and keyboard.desktop ?
-	
 KCM UI
+* allow specifying display names
+* allow changing variant without re-adding layout
 * allow changing layout order
-* allow changing variant without readding layout
 
-* send configChanged() (for flag) to applet
-* show flag config
-
-plasma applet & part
-*  auto layout name (DisplayNames) for dup layouts
-*  tooltip
-  
-plasma applet
-*  config UI (showFlag/bring kcm)
+kxkb part
+* honor display names for layouts
+* tooltip
+* flag
 
 Cleanup:
 * rules, iso_codes:
-	better error handling
+  better error handling
 
 Improvement:
+* merge kcm_keyboard.desktop and keyboard.desktop ?
 * remove XInput libs from plasma applet and layout widget (find a nicer way)
 * optimize fetching groups and layouts (cache them) / fetch current group directly
 * show current layouts when "configure layouts" disabled
-

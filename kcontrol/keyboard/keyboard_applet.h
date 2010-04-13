@@ -60,6 +60,7 @@ protected:
 
 private Q_SLOTS:
 	void actionTriggered(QAction* action);
+	void keyboardConfigChanged();
 
 private:
 	void readConfig();

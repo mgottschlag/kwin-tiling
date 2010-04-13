@@ -14,7 +14,7 @@
    <string>TabWidget</string>
   </property>
   <property name="currentIndex">
-   <number>2</number>
+   <number>1</number>
   </property>
   <widget class="QWidget" name="tabHardware">
    <attribute name="title">
@@ -154,6 +154,13 @@
          <attribute name="verticalHeaderVisible">
           <bool>false</bool>
          </attribute>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="showFlagChk">
+         <property name="text">
+          <string>Show Flag</string>
+         </property>
         </widget>
        </item>
       </layout>

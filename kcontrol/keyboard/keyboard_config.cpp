@@ -153,7 +153,7 @@ void KeyboardConfig::save()
 
 	config.writeEntry("SwitchMode", SWITCHING_POLICIES[switchingPolicy]);
 
-	config.writeEntry("ShowFlag", true);
+	config.writeEntry("ShowFlag", showFlag);
 
 	config.sync();
 }

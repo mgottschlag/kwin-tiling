@@ -98,6 +98,7 @@ void KCMKeyboardWidget::uiChanged()
 
 	keyboardConfig->configureLayouts = uiWidget->configureLayoutsChk->isChecked();
 	keyboardConfig->keyboardModel = uiWidget->keyboardModelComboBox->itemData(uiWidget->keyboardModelComboBox->currentIndex()).toString();
+	keyboardConfig->showFlag = uiWidget->showFlagChk->isChecked();
 
 	keyboardConfig->resetOldXkbOptions = uiWidget->configureKeyboardOptionsChk->isChecked();
 //    if( keyboardConfig->resetOldXkbOptions ) {
@@ -177,6 +178,8 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 	connect(uiWidget->removeLayoutBtn, SIGNAL(clicked(bool)), this, SLOT(removeLayout()));
 //	connect(uiWidget->layoutsTable, SIGNAL(itemSelectionChanged ()), this, SLOT(layoutSelectionChanged()));
 	connect(uiWidget->layoutsTableView->selectionModel(), SIGNAL(selectionChanged ( const QItemSelection &, const QItemSelection &)), this, SLOT(layoutSelectionChanged()));
+
+	connect(uiWidget->showFlagChk, SIGNAL(clicked(bool)), this, SLOT(uiChanged()));
 
 	connect(uiWidget->xkbGrpClearBtn, SIGNAL(clicked(bool)), this, SLOT(clearGroupShortcuts()));
 	connect(uiWidget->xkb3rdLevelClearBtn, SIGNAL(clicked(bool)), this, SLOT(clear3rdLevelShortcuts()));
@@ -303,6 +306,7 @@ void KCMKeyboardWidget::updateXkbOptionsUI()
 void KCMKeyboardWidget::updateLayoutsUI()
 {
 	uiWidget->configureLayoutsChk->setChecked(keyboardConfig->configureLayouts);
+	uiWidget->showFlagChk->setChecked(keyboardConfig->showFlag);
 
 //    int i = 0;
 //    uiWidget->layoutsTable->setRowCount(keyboardConfig->layouts.size());

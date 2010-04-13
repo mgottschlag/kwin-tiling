@@ -18,6 +18,7 @@
 
 #include "kcm_view_models.h"
 
+#include <klocalizedstring.h>
 #include <QtGui/QTreeView>
 #include <QtGui/QComboBox>
 
@@ -32,7 +33,7 @@ static const int LAYOUT_COLUMN = 1;
 static const int VARIANT_COLUMN = 2;
 static const int DISPLAY_NAME_COLUMN = 3;
 
-static const char* headers[] = {i18n("Map"), i18n("Layout"), i18n("Variant"), i18n("Label")};
+static const QString headers[] = {i18n("Map"), i18n("Layout"), i18n("Variant"), i18n("Label")};
 
 LayoutsTableModel::LayoutsTableModel(Rules* rules_, Flags *flags_, KeyboardConfig* keyboardConfig_, QObject* parent):
 	QAbstractTableModel(parent),
