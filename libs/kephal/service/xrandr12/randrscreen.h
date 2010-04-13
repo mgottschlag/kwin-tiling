@@ -23,7 +23,6 @@
 
 #include "randr.h"
 
-#include <QX11Info>
 #include <QObject>
 #include <QMap>
 #include <QRect>

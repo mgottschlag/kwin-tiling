@@ -18,7 +18,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <QDebug>
+#include <KDebug>
 #include <QWidget>
 #include <QX11Info>
 
@@ -42,11 +42,11 @@ RandRDisplay::RandRDisplay()
 
     // check if we have the new version of the XRandR extension
     m_valid = (major_version > 1 || (major_version == 1 && minor_version >= 2));
-        if (! m_valid) {
-            return;
-        }
+    if (! m_valid) {
+        return;
+    }
 
-    qDebug() << "XRANDR error base: " << m_errorBase;
+    kDebug() << "XRANDR error code base: " << m_errorBase;
     m_numScreens = ScreenCount(m_dpy);
     m_currentScreenIndex = 0;
 
@@ -55,7 +55,6 @@ RandRDisplay::RandRDisplay()
 
     // This assumption is WRONG with Xinerama
     // Q_ASSERT(QApplication::desktop()->numScreens() == ScreenCount(QX11Info::display()));
-
     for (int i = 0; i < m_numScreens; i++) {
             m_screens.append(new RandRScreen(i));
     }
@@ -121,16 +120,15 @@ bool RandRDisplay::needsRefresh() const
     Time time, config_timestamp;
     time = XRRTimes(m_dpy, m_currentScreenIndex, &config_timestamp);
 
-    qDebug() << "Cache:" << RandR::timestamp << "Server:" << time << "Config:" << config_timestamp;
+    kDebug() << "Cache:" << RandR::timestamp << "Server:" << time << "Config:" << config_timestamp;
     return (RandR::timestamp < time);
 }
 
 void RandRDisplay::refresh()
 {
-        for (int i = 0; i < m_screens.count(); ++i) {
-            RandRScreen* s = m_screens.at(i);
-            s->loadSettings();
-        }
+    foreach (RandRScreen* s, m_screens) {
+        s->loadSettings();
+    }
 }
 
 bool RandRDisplay::canHandle(const XEvent *e) const
@@ -146,29 +144,28 @@ bool RandRDisplay::canHandle(const XEvent *e) const
 void RandRDisplay::handleEvent(XEvent *e)
 {
     if (e->type == m_eventBase + RRScreenChangeNotify) {
-            XRRScreenChangeNotifyEvent *event = (XRRScreenChangeNotifyEvent*)(e);
-            qDebug() << "RandRDisplay::handleEvent - RRScreenChangeNotify win: " << event->window << " root: " << event->root;
-            for (int i=0; i < m_screens.count(); ++i) {
-                RandRScreen *screen = m_screens.at(i);
-                if (screen->rootWindow() == event->root)
-                    screen->handleEvent(event);
-            }
-
+        XRRScreenChangeNotifyEvent *event = (XRRScreenChangeNotifyEvent*)(e);
+        kDebug() << "RRScreenChangeNotify window: " << event->window << " root: " << event->root;
+        for (int i=0; i < m_screens.count(); ++i) {
+            RandRScreen *screen = m_screens.at(i);
+            if (screen->rootWindow() == event->root)
+                screen->handleEvent(event);
+        }
     }
     else if (e->type == m_eventBase + RRNotify) {
         //forward the event to the right screen
         XRRNotifyEvent *event = (XRRNotifyEvent*)e;
-        qDebug() << "RandRDisplay::handleEvent - RRNotify win: " << event->window;
+        kDebug() << "RRNotify window: " << event->window;
         for (int i=0; i < m_screens.count(); ++i) {
             RandRScreen *screen = m_screens.at(i);
             // TODO: removed the window check because randr seems to pass an incorrect window
             // if ( screen->rootWindow() == event->window ) {
-                screen->handleRandREvent(event);
+            screen->handleRandREvent(event);
             // }
         }
     }
     else {
-        qDebug() << "RandRDisplay::handleEvent - Other";
+        kDebug() << "RandRDisplay::handleEvent - Other";
     }
 }
 

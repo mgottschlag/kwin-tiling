@@ -18,11 +18,14 @@
  */
 
 #include "randroutput.h"
+
+#include <QX11Info>
+#include <KDebug>
+
 #include "randrscreen.h"
 #include "randrcrtc.h"
 #include "randrmode.h"
 
-#include <QX11Info>
 
 
 RandROutput::RandROutput(RandRScreen *parent, RROutput id)
@@ -103,10 +106,10 @@ bool RandROutput::queryOutputInfo(void)
     m_originalRect     = m_crtc->rect();
 
     if(isConnected()) {
-        qDebug() << "Output name:" << m_name;
-        qDebug() << "Output refresh rate:" << m_originalRate;
-        qDebug() << "Output rect:" << m_originalRect;
-        qDebug() << "Output rotation:" << m_originalRotation;
+        kDebug() << "Output name:" << m_name;
+        kDebug() << "Output refresh rate:" << m_originalRate;
+        kDebug() << "Output rect:" << m_originalRect;
+        kDebug() << "Output rotation:" << m_originalRotation;
     }
 
     XRRFreeOutputInfo(info);
@@ -119,7 +122,7 @@ void RandROutput::loadSettings(bool notify)
     Q_UNUSED(notify);
     queryOutputInfo();
 
-    qDebug() << "STUB: calling queryOutputInfo instead. Check if this has "
+    kDebug() << "STUB: calling queryOutputInfo instead. Check if this has "
              << "any undesired effects. ";
 }
 
@@ -127,11 +130,11 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 {
     int changed = 0;
 
-    qDebug() << "[OUTPUT" << m_id << "] Got event for " << m_name;
-    qDebug() << "       crtc: " << event->crtc << "(current " << m_crtc->id() << ")";
-    qDebug() << "       mode: " << event->mode << "(current " << mode().id() << ")";
-    qDebug() << "       rotation: " << event->rotation;
-    qDebug() << "       connection: " << event->connection;
+    kDebug() << "[OUTPUT" << m_id << "] Got event for " << m_name;
+    kDebug() << "       crtc: " << event->crtc << "(current " << m_crtc->id() << ")";
+    kDebug() << "       mode: " << event->mode << "(current " << mode().id() << ")";
+    kDebug() << "       rotation: " << event->rotation;
+    kDebug() << "       connection: " << event->connection;
 
     //FIXME: handling these events incorrectly, causing an X11 I/O error...
     // Disable for now.
@@ -178,7 +181,7 @@ void RandROutput::handlePropertyEvent(XRROutputPropertyNotifyEvent *event)
     // - TV output formats
 
     char *name = XGetAtomName(QX11Info::display(), event->property);
-    qDebug() << "Got XRROutputPropertyNotifyEvent for property Atom " << name;
+    kDebug() << "Got XRROutputPropertyNotifyEvent for property Atom " << name;
     XFree(name);
 }
 
@@ -254,7 +257,7 @@ SizeList RandROutput::sizes() const
 
 QRect RandROutput::rect() const
 {
-    if (!m_crtc) qDebug() << "No Crtc for output" << m_id;
+    if (!m_crtc) kDebug() << "No Crtc for output" << m_id;
         Q_ASSERT(m_crtc);
     if (!m_crtc->isValid())
         return QRect(0, 0, 0, 0);
@@ -343,7 +346,7 @@ void RandROutput::slotEnable()
     if(!m_connected)
         return;
 
-    qDebug() << "Attempting to enable " << m_name;
+    kDebug() << "Attempting to enable " << m_name;
     RandRCrtc *crtc = findEmptyCrtc();
 
     if(crtc)
@@ -402,7 +405,7 @@ bool RandROutput::setCrtc(RandRCrtc *crtc, bool applyNow)
     if( !crtc || (m_crtc && crtc->id() == m_crtc->id()) )
         return false;
 
-    qDebug() << "Setting CRTC" << crtc->id() << "on output" << m_name << "(previous" << (m_crtc ? m_crtc->id() : 0) << ")";
+    kDebug() << "Setting CRTC" << crtc->id() << "on output" << m_name << "(previous" << (m_crtc ? m_crtc->id() : 0) << ")";
 
     if(m_crtc && m_crtc->isValid()) {
         disconnect(m_crtc, SIGNAL(crtcChanged(RRCrtc, int)),
@@ -419,7 +422,7 @@ bool RandROutput::setCrtc(RandRCrtc *crtc, bool applyNow)
         return false;
     }
 
-    qDebug() << "CRTC outputs:" << m_crtc->connectedOutputs();
+    kDebug() << "CRTC outputs:" << m_crtc->connectedOutputs();
     connect(m_crtc, SIGNAL(crtcChanged(RRCrtc, int)),
             this, SLOT(slotCrtcChanged(RRCrtc, int)));
 

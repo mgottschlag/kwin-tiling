@@ -17,6 +17,10 @@
  */
 
 #include "randrcrtc.h"
+
+#include <QX11Info>
+#include <KDebug>
+
 #include "randrscreen.h"
 #include "randroutput.h"
 #include "randrmode.h"
@@ -106,7 +110,7 @@ void RandRCrtc::loadSettings(bool notify)
         changes |= RandR::ChangeOutputs;
         m_possibleOutputs = outputs;
     }
-        //qDebug() << "loaded possible outputs:" << m_id << m_possibleOutputs;
+        //kDebug() << "loaded possible outputs:" << m_id << m_possibleOutputs;
 
     // get all rotations
     m_rotations = info->rotations;
@@ -144,30 +148,30 @@ void RandRCrtc::loadSettings(bool notify)
 
 void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 {
-    qDebug() << "[CRTC" << m_id << "] Event...";
-    qDebug() << "       mode: " << event->mode << "(current " << m_currentMode << ")";
-    qDebug() << "       pos: (" << event->x << "," << event->y << ")";
-    qDebug() << "       size: " << event->width << "x" << event->height;
-    qDebug() << "       rotation: " << event->rotation;
+    kDebug() << "[CRTC" << m_id << "] Event...";
+    kDebug() << "       mode: " << event->mode << "(current " << m_currentMode << ")";
+    kDebug() << "       pos: (" << event->x << "," << event->y << ")";
+    kDebug() << "       size: " << event->width << "x" << event->height;
+    kDebug() << "       rotation: " << event->rotation;
 
     int changed = 0;
 
     if (event->mode != m_currentMode)
     {
-        qDebug() << "   Changed mode - old " << m_currentMode << " - new " << event->mode;
+        kDebug() << "   Changed mode - old " << m_currentMode << " - new " << event->mode;
         changed |= RandR::ChangeMode;
         m_currentMode = event->mode;
     }
 
     if (event->rotation != m_currentRotation)
     {
-        qDebug() << "   Changed rotation: " << event->rotation;
+        kDebug() << "   Changed rotation: " << event->rotation;
         changed |= RandR::ChangeRotation;
         m_currentRotation = event->rotation;
     }
     if (event->x != m_currentRect.x() || event->y != m_currentRect.y())
     {
-        qDebug() << "   Changed position: " << event->x << "," << event->y;
+        kDebug() << "   Changed position: " << event->x << "," << event->y;
         changed |= RandR::ChangeRect;
         m_currentRect.moveTopLeft(QPoint(event->x, event->y));
     }
@@ -183,7 +187,7 @@ void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 
     if (newSize != m_currentRect.size())
     {
-        qDebug() << "   Changed size: " << newSize;
+        kDebug() << "   Changed size: " << newSize;
         changed |= RandR::ChangeRect;
         m_currentRect.setSize(newSize);
         //Do NOT use event->width and event->height here, as it is being returned wrongly
@@ -210,16 +214,16 @@ float RandRCrtc::refreshRate() const
 
 bool RandRCrtc::applyProposed()
 {
-    qDebug() << "[CRTC] Going to apply (" << m_id << ") ....";
-    qDebug() << "       Current Screen rect: " << m_screen->rect();
-    qDebug() << "       Current CRTC Rect: " << m_currentRect;
-    qDebug() << "       Current Rotation: " << m_currentRotation;
-    qDebug() << "       Proposed rect: " << m_proposedRect;
-    qDebug() << "       Proposed rotation: " << m_proposedRotation;
-    qDebug() << "       Proposed refresh rate: " << m_proposedRate;
-    qDebug() << "       Outputs: ";
+    kDebug() << "[CRTC] Going to apply (" << m_id << ") ....";
+    kDebug() << "       Current Screen rect: " << m_screen->rect();
+    kDebug() << "       Current CRTC Rect: " << m_currentRect;
+    kDebug() << "       Current Rotation: " << m_currentRotation;
+    kDebug() << "       Proposed rect: " << m_proposedRect;
+    kDebug() << "       Proposed rotation: " << m_proposedRotation;
+    kDebug() << "       Proposed refresh rate: " << m_proposedRate;
+    kDebug() << "       Outputs: ";
     for (int i = 0; i < m_connectedOutputs.count(); ++i)
-        qDebug() << "               - " << m_screen->output(m_connectedOutputs.at(i))->name();
+        kDebug() << "               - " << m_screen->output(m_connectedOutputs.at(i))->name();
 
     RandRMode mode;
     if (m_proposedRect.size() == m_currentRect.size() && m_proposedRate == m_currentRate)
@@ -326,7 +330,7 @@ bool RandRCrtc::applyProposed()
     }
 
 
-        qDebug() << "calling XRRSetCrtcConfig()";
+        kDebug() << "calling XRRSetCrtcConfig()";
     Status s = XRRSetCrtcConfig(QX11Info::display(), m_screen->resources(), m_id,
                     RandR::timestamp, m_proposedRect.x(), m_proposedRect.y(), mode.id(),
                     m_proposedRotation, outputs, m_connectedOutputs.count());
@@ -417,7 +421,7 @@ bool RandRCrtc::addOutput(RROutput output, const QSize &s)
     // if not, add it
     if (m_connectedOutputs.indexOf(output) == -1)
     {
-        qDebug() << "possible:" << m_possibleOutputs;
+        kDebug() << "possible:" << m_possibleOutputs;
         // the given output is not possible
         if (m_possibleOutputs.indexOf(output) == -1)
             return false;

@@ -17,6 +17,10 @@
  */
 
 #include "randrscreen.h"
+
+#include <QX11Info>
+#include <KDebug>
+
 #include "randrcrtc.h"
 #include "randroutput.h"
 #include "randrmode.h"
@@ -41,7 +45,7 @@ RandRScreen::RandRScreen(int screenIndex)
     XRRSelectInput(QX11Info::display(), rootWindow(), 0);
     XRRSelectInput(QX11Info::display(), rootWindow(), mask);
 
-    qDebug() << "RRInput mask is set!!";
+    kDebug() << "RRInput mask is set!!";
 
     loadSettings();
 }
@@ -118,7 +122,7 @@ void RandRScreen::loadSettings(bool notify)
             m_crtcs[crtc]->loadSettings(notify);
         else
         {
-            qDebug() << "RandRScreen::loadSettings - adding crtc: " << crtc;
+            kDebug() << "adding crtc: " << crtc;
             RandRCrtc *c = new RandRCrtc(this, crtc);
             c->loadSettings(notify);
             connect(c, SIGNAL(crtcChanged(RRCrtc, int)), this, SIGNAL(configChanged()));
@@ -135,7 +139,7 @@ void RandRScreen::loadSettings(bool notify)
             ;//m_outputs[m_resources->outputs[i]]->loadSettings(notify);
         else
         {
-            qDebug() << "RandRScreen::loadSettings - adding output: " << output;
+            kDebug() << "adding output: " << output;
             RandROutput *o = new RandROutput(this, output);
             connect(o, SIGNAL(outputChanged(RROutput, int)), this,
                       SLOT(slotOutputChanged(RROutput, int)));
@@ -162,7 +166,7 @@ bool RandRScreen::loadModes()
         XRRModeInfo mode = m_resources->modes[i];
         if (!m_modes.contains(mode.id))
         {
-            qDebug() << "RandRScreen::loadSettings - adding mode: " << mode.id << mode.width << "x" << mode.height;
+            kDebug() << "adding mode: " << mode.id << mode.width << "x" << mode.height;
             m_modes[mode.id] = RandRMode(&mode);
             changed = true;
         }
@@ -173,14 +177,20 @@ bool RandRScreen::loadModes()
 
 void RandRScreen::handleEvent(XRRScreenChangeNotifyEvent* event)
 {
-    qDebug() << "RandRScreen::handleEvent";
+    kDebug();
 
+    // rotation change not handled
     m_rect.setWidth(event->width);
     m_rect.setHeight(event->height);
 
+    // Will: the code between here and the emit was added in gpothiers 'fix many kephal bugs' commit 
+    // (910287).  The RandROutput::loadSettings() call was added commented out, so I think he was
+    // trying stuff out and forgot to remove it.  I don't know the difference between
+    // XRRScreenChangeNotifyEvent and XRRNotifyEvent, but XRRNotifyEvent is passed on to the output
+    // so presumably it handles those events
     reloadResources();
     loadModes();
-    qDebug() << "Reloaded modes";
+    kDebug() << "Reloaded modes";
 
 //     foreach(RandROutput *output, m_outputs) {
 //         output->loadSettings(false);
@@ -201,40 +211,40 @@ void RandRScreen::handleRandREvent(XRRNotifyEvent* event)
     // forward events to crtcs and outputs
     switch (event->subtype) {
         case RRNotify_CrtcChange:
-            qDebug() << "RandRScreen::handleRandREvent - CrtcChange";
+            kDebug() << "CrtcChange";
             crtcEvent = (XRRCrtcChangeNotifyEvent*)event;
             c = crtc(crtcEvent->crtc);
             if (c) {
                 c->handleEvent(crtcEvent);
             } else {
-                qDebug() << "RandRScreen::handleRandREvent - crtc not found";
+                kDebug() << "crtc not found";
             }
             return;
 
         case RRNotify_OutputChange:
-            qDebug() << "RandRScreen::handleRandREvent - OutputChange";
+            kDebug() << "OutputChange";
             outputEvent = (XRROutputChangeNotifyEvent*)event;
             o = output(outputEvent->output);
             if (o) {
                 o->handleEvent(outputEvent);
             } else {
-                qDebug() << "RandRScreen::handleRandREvent - output not found";
+                kDebug() << "output not found";
             }
             return;
 
         case RRNotify_OutputProperty:
-            qDebug() << "RandRScreen::handleRandREvent - OutputProperty";
+            kDebug() << "OutputProperty";
             propertyEvent = (XRROutputPropertyNotifyEvent*)event;
             o = output(propertyEvent->output);
             if (o) {
                 o->handlePropertyEvent(propertyEvent);
             } else {
-                qDebug() << "RandRScreen::handleRandREvent - output not found";
+                kDebug() << "output not found";
             }
             return;
 
         default:
-            qDebug() << "RandRScreen::handleRandREvent - Other";
+            kDebug() << "Other";
     }
 }
 

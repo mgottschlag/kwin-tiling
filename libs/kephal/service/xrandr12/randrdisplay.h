@@ -24,6 +24,9 @@
 
 //#include <X11/Xlib.h>
 
+/**
+ * Just wraps the X Display and provides access to RandRScreens
+ */
 class RandRDisplay
 {
 public:
@@ -34,6 +37,9 @@ public:
     const QString& errorCode() const;
     const QString& version() const;
 
+    /**
+     * Event and error code base offsets
+     */
     int eventBase() const;
     int errorBase() const;
 
