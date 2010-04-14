@@ -19,11 +19,15 @@
 #include <KGlobalSettings>
 #include <KLocalizedString>
 
+#include <Plasma/PaintUtils>
+
+static const int BLUR_PAD = 6;
+
 BackgroundDelegate::BackgroundDelegate(QObject *parent)
     : QAbstractItemDelegate(parent)
 {
-    m_maxHeight = SCREENSHOT_SIZE;
-    m_maxWidth = SCREENSHOT_SIZE;
+    m_maxHeight = SCREENSHOT_SIZE + BLUR_INCREMENT;
+    m_maxWidth = SCREENSHOT_SIZE + BLUR_INCREMENT;
 }
 
 void BackgroundDelegate::paint(QPainter *painter,
@@ -40,11 +44,26 @@ void BackgroundDelegate::paint(QPainter *painter,
 
     // Draw wallpaper thumbnail
     if (!pix.isNull()) {
-        const int x = (option.rect.width() - pix.width()) / 2;
-        // the y ix aligned to the baseline of the icons
-        const int y = MARGIN + qMax(0, m_maxHeight - pix.height());
-        QRect imgRect = QRect(option.rect.topLeft(), pix.size()).translated(x, y);
-        painter->drawPixmap(imgRect, pix);
+        // blur calculation
+        QImage blur(pix.size() + QSize(BLUR_INCREMENT + BLUR_PAD, BLUR_INCREMENT + BLUR_PAD), QImage::Format_ARGB32);
+        QRect blurRect = QRect(QPoint((blur.width() - pix.width()) / 2, (blur.height() - pix.height()) / 2), pix.size());
+        blur.fill(Qt::transparent);
+        QPainter p(&blur);
+        p.fillRect(blurRect, Qt::black);
+        p.end();
+
+        // apply blur with a radius of 2 as thumbnail shadow
+        Plasma::PaintUtils::shadowBlur(blur, 2, Qt::black);
+
+        // calculate point
+        const int bx = (option.rect.width() - blur.width()) / 2;
+        const int by = MARGIN + qMax(0, m_maxHeight - blur.height());
+        QRect shadowRect = QRect(option.rect.topLeft(), blur.size()).translated(bx, by);
+        // draw the blur
+        painter->drawImage(shadowRect.topLeft(), blur);
+        // draw the actual thumbnail
+        painter->drawPixmap(QRect(shadowRect.topLeft() + QPoint((shadowRect.width() - pix.width()) / 2, (shadowRect.height() - pix.height()) / 2),
+                                  pix.size()), pix);
     }
 
     //Use a QTextDocument to layout the text

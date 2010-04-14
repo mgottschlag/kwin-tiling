@@ -30,6 +30,7 @@ public:
                            const QModelIndex &index) const;
 
     static const int SCREENSHOT_SIZE = 128;
+    static const int BLUR_INCREMENT = 9;
     static const int MARGIN = 6;
 
     void resetMaxHeight() { m_maxHeight = 0; }

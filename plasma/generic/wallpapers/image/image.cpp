@@ -142,7 +142,8 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         //which looks quite good as a default. the magic number 7 at the end of the calculation is
         //evidently making up for some other PM involved in the QListView that isn't being caught.
         //if a cleaner way can be found to achieve all this, that would be great
-        m_uiImage.m_view->setMinimumWidth((BackgroundDelegate::SCREENSHOT_SIZE + BackgroundDelegate::MARGIN * 2) * 3 +
+        m_uiImage.m_view->setMinimumWidth((BackgroundDelegate::SCREENSHOT_SIZE + BackgroundDelegate::MARGIN * 2 +
+                                           BackgroundDelegate::BLUR_INCREMENT) * 3 +
                                            m_uiImage.m_view->spacing() * 4 +
                                            QApplication::style()->pixelMetric(QStyle::PM_ScrollBarExtent) +
                                            QApplication::style()->pixelMetric(QStyle::PM_DefaultFrameWidth) * 2 + 7);
