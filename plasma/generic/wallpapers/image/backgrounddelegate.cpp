@@ -49,11 +49,14 @@ void BackgroundDelegate::paint(QPainter *painter,
         QRect blurRect = QRect(QPoint((blur.width() - pix.width()) / 2, (blur.height() - pix.height()) / 2), pix.size());
         blur.fill(Qt::transparent);
         QPainter p(&blur);
-        p.fillRect(blurRect, Qt::black);
+        
+        QColor color = option.palette.color(QPalette::Base);
+        bool darkBaseColor = qGray(color.rgb()) < 192;
+        p.fillRect(blurRect, darkBaseColor ? Qt::white : Qt::black);
         p.end();
 
         // apply blur with a radius of 2 as thumbnail shadow
-        Plasma::PaintUtils::shadowBlur(blur, 2, Qt::black);
+        Plasma::PaintUtils::shadowBlur(blur, 2, darkBaseColor ? Qt::white : Qt::black);
 
         // calculate point
         const int bx = (option.rect.width() - blur.width()) / 2;
