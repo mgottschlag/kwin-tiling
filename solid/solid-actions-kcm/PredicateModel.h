@@ -41,6 +41,7 @@ public:
 
     void setRootPredicate( PredicateItem * item );
     void itemUpdated( const QModelIndex& item );
+    void childrenChanged( const QModelIndex& item );
 
 protected:
     PredicateItem * rootItem() const;

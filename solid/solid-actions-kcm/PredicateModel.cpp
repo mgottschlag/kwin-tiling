@@ -148,4 +148,15 @@ void PredicateModel::itemUpdated( const QModelIndex& item )
     emit dataChanged( item, item );
 }
 
+void PredicateModel::childrenChanged( const QModelIndex& item )
+{
+    if( rowCount(item) == 2 ) {
+        emit beginInsertRows( item, 0, 1 );
+        emit endInsertRows();
+    } else {
+        emit beginRemoveRows( item, 0, 1 );
+        emit endRemoveRows();
+    }
+}
+
 #include "PredicateModel.moc"
