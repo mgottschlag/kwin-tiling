@@ -521,6 +521,8 @@ int TaskArea::leftEasement() const
 int TaskArea::rightEasement() const
 {
     if (d->lastTasksLayout->count() > 0) {
+        d->lastTasksLayout->invalidate();
+        d->lastTasksLayout->updateGeometry();
         QGraphicsLayoutItem *item = d->lastTasksLayout->itemAt(0);
 
         if (d->topLayout->orientation() == Qt::Vertical) {
