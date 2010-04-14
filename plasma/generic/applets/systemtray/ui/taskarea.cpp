@@ -148,20 +148,50 @@ public:
           unhider(0),
           topLayout(new QGraphicsLinearLayout(Qt::Horizontal)),
           firstTasksLayout(new CompactLayout()),
-          normalTasksLayout(new CompactLayout()),
           lastTasksLayout(new CompactLayout()),
           location(Plasma::BottomEdge),
           showingHidden(false),
           hasHiddenTasks(false),
           hasTasksThatCanHide(false)
     {
+        normalTasksLayouts[Task::UnknownCategory] = new CompactLayout();
+        normalTasksLayouts[Task::ApplicationStatus] = new CompactLayout();
+        normalTasksLayouts[Task::Communications] = new CompactLayout();
+        normalTasksLayouts[Task::SystemServices] = new CompactLayout();
+        normalTasksLayouts[Task::Hardware] = new CompactLayout();
+    }
+
+    bool isTaskProperlyPlaced(Task *task)
+    {
+        QGraphicsWidget *widget = task->widget(host);
+        //existence of widget has already been checked
+        Q_ASSERT(widget);
+
+        if (task->hidden() == Task::NotHidden &&
+            host->shownCategories().contains(task->category())) {
+
+            if ((firstTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::First) ||
+                (lastTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::Last)) {
+                return true;
+
+            } else if (task->order() == SystemTray::Task::Normal) {
+                QHash<Task::Category, CompactLayout *>::const_iterator i = normalTasksLayouts.constBegin();
+                while (i != normalTasksLayouts.constEnd()) {
+                    if (task->category() == i.key() && i.value()->containsItem(widget)) {
+                        return true;
+                    }
+                    ++i;
+                }
+            }
+        }
+        return false;
     }
 
     SystemTray::Applet *host;
     Plasma::IconWidget *unhider;
     QGraphicsLinearLayout *topLayout;
     CompactLayout *firstTasksLayout;
-    CompactLayout *normalTasksLayout;
+    QHash<Task::Category, CompactLayout *> normalTasksLayouts;
     CompactLayout *lastTasksLayout;
     QGraphicsWidget *hiddenTasksWidget;
     QGraphicsGridLayout *hiddenTasksLayout;
@@ -185,7 +215,11 @@ TaskArea::TaskArea(SystemTray::Applet *parent)
     d->itemBackground = new Plasma::ItemBackground;
     setLayout(d->topLayout);
     d->topLayout->addItem(d->firstTasksLayout);
-    d->topLayout->addItem(d->normalTasksLayout);
+
+    foreach (CompactLayout *layout, d->normalTasksLayouts) {
+        d->topLayout->addItem(layout);
+    }
+
     d->topLayout->addItem(d->lastTasksLayout);
     d->topLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -200,7 +234,7 @@ TaskArea::TaskArea(SystemTray::Applet *parent)
 TaskArea::~TaskArea()
 {
     delete d->firstTasksLayout;
-    delete d->normalTasksLayout;
+    qDeleteAll(d->normalTasksLayouts);
     delete d->lastTasksLayout;
     delete d->itemBackground;
     delete d;
@@ -291,18 +325,19 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
     }
 
     //check if it's not necessary to move the icon
-    if (task->hidden() == Task::NotHidden &&
-        d->host->shownCategories().contains(task->category()) &&
-        ((d->firstTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::First) ||
-         (d->normalTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::Normal) ||
-         (d->lastTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::Last))) {
+    if (d->isTaskProperlyPlaced(task)) {
         return;
     }
 
     if (widget) {
         //kDebug() << "widget already exists, trying to reposition it";
         d->firstTasksLayout->removeItem(widget);
-        d->normalTasksLayout->removeItem(widget);
+        foreach (CompactLayout *layout, d->normalTasksLayouts) {
+            layout->removeItem(widget);
+            if (layout->count() == 0) {
+                d->topLayout->removeItem(layout);
+            }
+        }
         d->lastTasksLayout->removeItem(widget);
         if (d->firstTasksLayout->count() == 0) {
             d->topLayout->removeItem(d->firstTasksLayout);
@@ -374,10 +409,21 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
                 d->firstTasksLayout->addItem(widget);
                 break;
             case SystemTray::Task::Normal:
-                d->normalTasksLayout->addItem(widget);
+                if (d->normalTasksLayouts[task->category()]->count() == 0) {
+                    int insertIndex = 1;
+                    //search where to insert the layout in the toplevel one
+                    //Assumption on the enum value :/
+                    for (int i = Task::UnknownCategory; i <= task->category(); ++i) {
+                        if (d->normalTasksLayouts[(SystemTray::Task::Category)i]->count() > 0) {
+                            ++insertIndex;
+                        }
+                    }
+                    d->topLayout->insertItem(insertIndex, d->normalTasksLayouts[task->category()]);
+                }
+                d->normalTasksLayouts[task->category()]->addItem(widget);
                 break;
             case SystemTray::Task::Last:
-                //not really pretty, but for consistency attempts to put the extender expander always in the last position
+                //not really pretty, but for consistency attempts to put the notifications applet always in the last position
                 if (task->typeId() == "notifications") {
                     d->lastTasksLayout->addItem(widget);
                 } else {
@@ -422,7 +468,15 @@ void TaskArea::removeTask(Task *task)
     if (widget) {
         //try to remove from all three layouts, one will succeed
         d->firstTasksLayout->removeItem(widget);
-        d->normalTasksLayout->removeItem(widget);
+        if (d->firstTasksLayout->count() == 0) {
+            d->topLayout->removeItem(d->firstTasksLayout);
+        }
+        foreach (CompactLayout *layout, d->normalTasksLayouts) {
+            layout->removeItem(widget);
+            if (layout->count() == 0) {
+                d->topLayout->removeItem(layout);
+            }
+        }
         d->lastTasksLayout->removeItem(widget);
     }
     relayout();
