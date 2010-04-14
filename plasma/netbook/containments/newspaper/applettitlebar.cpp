@@ -100,7 +100,7 @@ void AppletTitleBar::initAnimations()
     if (m_applet->hasValidAssociatedApplication()) {
         Plasma::Animation *maximizeAnim =
         Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation);
-        maximizeAnim->setProperty("startPixmap", m_icons->pixmap("maximize"));
+        maximizeAnim->setProperty("targetPixmap", m_icons->pixmap("maximize"));
         maximizeAnim->setTargetWidget(this);
         group->addAnimation(maximizeAnim);
     }
@@ -109,10 +109,10 @@ void AppletTitleBar::initAnimations()
         Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation);
     Plasma::Animation *closeAnim =
         Plasma::Animator::create(Plasma::Animator::PixmapTransitionAnimation);
-    confAnim->setProperty("startPixmap", m_icons->pixmap("configure"));
+    confAnim->setProperty("targetPixmap", m_icons->pixmap("configure"));
     confAnim->setTargetWidget(this);
 
-    closeAnim->setProperty("startPixmap", m_icons->pixmap("close"));
+    closeAnim->setProperty("targetPixmap", m_icons->pixmap("close"));
     closeAnim->setTargetWidget(this);
     group->addAnimation(confAnim);
     group->addAnimation(closeAnim);
@@ -192,7 +192,6 @@ bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
         syncSize();
     } else if (event->type() == QEvent::GraphicsSceneHoverEnter) {
         m_underMouse = true;
-        m_showButtons = true;
         syncIconRects();
 
         if (!m_animations) {
@@ -209,6 +208,7 @@ bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
             group->start();
         }
 
+        m_showButtons = true;
     } else if (event->type() == QEvent::GraphicsSceneHoverLeave) {
         m_underMouse = false;
         initAnimations();
@@ -317,8 +317,6 @@ void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
                  } else if (group->state() == QAbstractAnimation::Stopped && group->direction() != QAbstractAnimation::Backward) {
                      m_icons->paint(painter, m_maximizeButtonRect, "maximize");
                  }
-            } else {
-                m_icons->paint(painter, m_configureButtonRect, "maximize");
             }
         }
 
@@ -332,8 +330,6 @@ void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
                  } else if (group->state() == QAbstractAnimation::Stopped && group->direction() != QAbstractAnimation::Backward) {
                      m_icons->paint(painter, m_configureButtonRect, "configure");
                  }
-            } else {
-                m_icons->paint(painter, m_configureButtonRect, "configure");
             }
         }
 
@@ -347,10 +343,8 @@ void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
                         painter->drawPixmap(m_closeButtonRect, animPixmap, animPixmap.rect());
                     }
                 } else if (group->state() == QAbstractAnimation::Stopped && group->direction() != QAbstractAnimation::Backward) {
-                    m_icons->paint(painter, m_closeButtonRect, "close");
+                   m_icons->paint(painter, m_closeButtonRect, "close");
                 }
-            } else {
-                m_icons->paint(painter, m_closeButtonRect, "close");
             }
         }
     }
