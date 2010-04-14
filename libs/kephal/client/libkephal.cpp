@@ -17,15 +17,16 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
+#include <QApplication>
+#include <QDebug>
 #include <QDBusInterface>
 
-#include "dbusscreens.h"
-#include "dbusoutputs.h"
-#include "dbusconfigurations.h"
-#include "noconfigurations.h"
+//#include "dbusscreens.h"
+//#include "dbusoutputs.h"
+//#include "dbusconfigurations.h"
+//include "noconfigurations.h"
 //#include "outputscreens.h"
-#include "desktopwidgetoutputs.h"
+//include "desktopwidgetoutputs.h"
 #include "desktopwidgetscreens.h"
 
 using namespace Kephal;
@@ -55,7 +56,7 @@ void libkephal_factory() {
         qWarning() << "could not access kephald, falling back to QDesktopWidget";
 
         delete screens;
-        //elete outputs;
+        //delete outputs;
         //delete configurations;
 
         //new NoConfigurations(qApp);

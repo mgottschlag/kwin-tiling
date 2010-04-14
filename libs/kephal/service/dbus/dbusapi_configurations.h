@@ -48,12 +48,12 @@ class DBusAPIConfigurations : public QObject
 
         int numAvailablePositions(QString output);
         QPoint availablePosition(QString output, int index);
-        bool move(QString output, QPoint position);
-        bool resize(QString output, QSize size);
-        bool rotate(QString output, int rotation);
-        bool changeRate(QString output, double rate);
-        bool reflectX(QString output, bool reflect);
-        bool reflectY(QString output, bool reflect);
+        //bool move(QString output, QPoint position);
+        //bool resize(QString output, QSize size);
+        //bool rotate(QString output, int rotation);
+        //bool changeRate(QString output, double rate);
+        //bool reflectX(QString output, bool reflect);
+        //bool reflectY(QString output, bool reflect);
         int screen(QString output);
 
         bool isModifiable(QString config);

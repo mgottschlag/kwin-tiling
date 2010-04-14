@@ -37,22 +37,22 @@ namespace Kephal {
         public:
             XRandROutput(XRandROutputs * parent, RROutput rrId);
 
-            QString id();
+            QString id() const;
 
-            QSize size();
-            QSize preferredSize();
-            QList<QSize> availableSizes();
-            QPoint position();
-            bool isConnected();
-            bool isActivated();
-            QString vendor();
-            int productId();
-            unsigned int serialNumber();
-            Rotation rotation();
-            bool reflectX();
-            bool reflectY();
-            float rate();
-            QList<float> availableRates();
+            QSize size() const;
+            QSize preferredSize() const;
+            QList<QSize> availableSizes() const;
+            QPoint position() const;
+            bool isConnected() const;
+            bool isActivated() const;
+            QString vendor() const;
+            int productId() const;
+            unsigned int serialNumber() const;
+            Rotation rotation() const;
+            bool reflectX() const;
+            bool reflectY() const;
+            float rate() const;
+            QList<float> availableRates() const;
 
             bool applyGeom(const QRect & rect, float rate);
             bool applyOrientation(Rotation rotation, bool reflectX, bool reflectY);
@@ -60,7 +60,17 @@ namespace Kephal {
             //void _revert();
             void deactivate();
             //void _activate();
-            RROutput _id();
+            RROutput _id() const;
+
+            void resize(const QSize & size);
+
+            void rotate(Rotation rotation);
+
+            void setReflectX(bool reflect);
+
+            void setReflectY(bool reflect);
+
+            void changeRate(double rate);
 
         public Q_SLOTS:
             void outputChanged(RROutput id, int changes);
@@ -77,7 +87,7 @@ namespace Kephal {
             void outputReflected(Kephal::Output * o, bool oldX, bool oldY, bool newX, bool newY);
 
         private:
-            RandROutput * output();
+            RandROutput * output() const;
             void parseEdid();
             void saveAsPrevious();
 

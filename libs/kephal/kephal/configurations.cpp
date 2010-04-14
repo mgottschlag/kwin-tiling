@@ -56,7 +56,7 @@ namespace Kephal {
 
     Configurations * Configurations::s_instance = 0;
 
-    Configuration * Configurations::configuration(QString name) const
+    Configuration * Configurations::configuration(QString name)
     {
         foreach (Configuration * config, configurations()) {
             if (config->name() == name) {

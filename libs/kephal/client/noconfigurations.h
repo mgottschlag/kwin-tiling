@@ -69,18 +69,18 @@ namespace Kephal {
         public:
             NoConfigurations(QObject * parent);
 
-            QMap<QString, Configuration *> configurations() const;
-            Configuration * findConfiguration() const;
-            Configuration * activeConfiguration() const;
-            QList<Configuration *> alternateConfigurations() const;
-            QList<QPoint> possiblePositions(const Output * output) const;
+            QMap<QString, Configuration *> configurations();
+            Configuration * findConfiguration();
+            Configuration * activeConfiguration();
+            QList<Configuration *> alternateConfigurations();
+            QList<QPoint> possiblePositions(const Output * output);
             bool move(Output * output, const QPoint & position);
             bool resize(Output * output, const QSize & size);
             bool rotate(Output * output, Rotation rotation);
             bool changeRate(Output * output, float rate);
             bool reflectX(Output * output, bool reflect);
             bool reflectY(Output * output, bool reflect);
-            int screen(Output * output) const;
+            int screen(Output * output);
             void applyOutputSettings();
             void setPolling(bool polling);
             bool polling() const;

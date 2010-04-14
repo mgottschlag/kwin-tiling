@@ -30,23 +30,23 @@ namespace Kephal {
         m_parent = parent;
     }
 
-    QString ExternalConfiguration::name() {
+    QString ExternalConfiguration::name() const {
         return QString("external");
     }
 
-    bool ExternalConfiguration::isModifiable() {
+    bool ExternalConfiguration::isModifiable() const {
         return false;
     }
 
-    bool ExternalConfiguration::isActivated() {
+    bool ExternalConfiguration::isActivated() const {
         return m_parent->activeBackendConfiguration() == this;
     }
 
-    QMap<int, QPoint> ExternalConfiguration::layout() {
+    QMap<int, QPoint> ExternalConfiguration::layout() const {
         return QMap<int, QPoint>();
     }
 
-    int ExternalConfiguration::primaryScreen() {
+    int ExternalConfiguration::primaryScreen() const {
         return 0;
     }
 

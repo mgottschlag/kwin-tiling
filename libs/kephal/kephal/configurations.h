@@ -108,18 +108,18 @@ namespace Kephal {
             /**
              * Returns a list of all known Configurations.
              */
-            virtual QMap<QString, Configuration *> configurations() const = 0;
+            virtual QMap<QString, Configuration *> configurations() = 0;
 
             /**
              * Returns the currently active Configuration.
              */
-            virtual Configuration * activeConfiguration() const = 0;
+            virtual Configuration * activeConfiguration() = 0;
 
             /**
              * Returns a list of all alternate Configuratios
              * for the currently connected Outputs.
              */
-            virtual QList<Configuration *> alternateConfigurations() const = 0;
+            virtual QList<Configuration *> alternateConfigurations() = 0;
 
             /**
              * Returns the list of all positions in pixels
@@ -127,19 +127,19 @@ namespace Kephal {
              * These are the only positions that can be
              * passed to move().
              */
-            virtual QList<QPoint> possiblePositions(const Output * output) const = 0;
+            virtual QList<QPoint> possiblePositions(Output * output) = 0;
 
             /**
              * Find a Configuration by its name.
              * This returns 0 if the name is not known.
              */
-            virtual Configuration * configuration(QString name) const;
+            virtual Configuration * configuration(QString name);
 
             /**
              * Return the id of the Screen this Output should
              * belong to.
              */
-            virtual int screen(Output * output) const = 0;
+            virtual int screen(Output * output) = 0;
 
             virtual void setPolling(bool polling) = 0;
             virtual bool polling() const = 0;

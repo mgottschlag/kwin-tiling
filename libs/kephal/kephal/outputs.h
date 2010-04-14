@@ -169,7 +169,7 @@ namespace Kephal {
              * the positions of the other
              * active Outputs.
              */
-            QList<QPoint> availablePositions() const;
+            QList<QPoint> availablePositions();
 
             virtual void resize(const QSize & size) = 0;
 

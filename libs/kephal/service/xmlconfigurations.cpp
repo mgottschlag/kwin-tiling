@@ -28,129 +28,9 @@
 #include <QDir>
 #include <QTimer>
 
+#include "xmlconfiguration.h"
+
 namespace Kephal {
-
-    XMLConfiguration::XMLConfiguration(XMLConfigurations * parent, ConfigurationXML * config)
-        : BackendConfiguration(parent),
-        m_configuration(config)
-    {
-    }
-
-    ConfigurationXML * XMLConfiguration::configuration()
-    {
-        return m_configuration;
-    }
-
-    QString XMLConfiguration::name()
-    {
-        return m_configuration->name();
-    }
-
-    bool XMLConfiguration::isModifiable()
-    {
-        return m_configuration->modifiable();
-    }
-
-    bool XMLConfiguration::isActivated()
-    {
-        return this == m_parent->activeConfiguration();
-    }
-
-    void XMLConfiguration::activate()
-    {
-        emit activate(this);
-    }
-
-    void XMLConfiguration::setLayout(const QMap<int, QPoint> & layout) {
-        m_layout = layout;
-    }
-
-    int XMLConfiguration::primaryScreen() {
-        return m_configuration->primaryScreen();
-    }
-
-    QMap<int, QPoint> XMLConfiguration::layout() {
-        if (! m_layout.empty()) {
-            return m_layout;
-        }
-
-        QMap<int, ScreenXML *> remaining;
-        foreach (ScreenXML * screen, m_configuration->screens()) {
-            remaining.insert(screen->id(), screen);
-        }
-
-        QMap<int, QPoint> layout;
-        bool changed;
-        do {
-            changed = false;
-            QSet<ScreenXML *> added;
-            foreach (ScreenXML * screen, remaining) {
-                QPoint pos;
-                bool found = false;
-                if (layout.empty()) {
-                    pos = QPoint(0, 0);
-                    found = true;
-                } else if (layout.contains(screen->rightOf())) {
-                    pos = QPoint(layout[screen->rightOf()]);
-                    pos.rx()++;
-                    found = true;
-                } else if (layout.contains(screen->bottomOf())) {
-                    pos = QPoint(layout[screen->bottomOf()]);
-                    pos.ry()++;
-                    found = true;
-                }
-
-                if (found) {
-                    layout.insert(screen->id(), pos);
-                    changed = true;
-                    remaining.remove(screen->id());
-                    added.insert(screen);
-                    break;
-                }
-            }
-
-            while (! added.empty()) {
-                QSet<ScreenXML *>::iterator i = added.begin();
-                while (i != added.end()) {
-                    ScreenXML * s = *i;
-                    if (remaining.contains(s->rightOf()) && ! layout.contains(s->rightOf())) {
-                        ScreenXML * toAdd = remaining[s->rightOf()];
-                        QPoint pos = QPoint(layout[s->id()]);
-                        pos.rx()--;
-
-                        layout.insert(toAdd->id(), pos);
-                        added.insert(toAdd);
-                        remaining.remove(toAdd->id());
-                        break;
-                    }
-                    if (remaining.contains(s->bottomOf()) && ! layout.contains(s->bottomOf())) {
-                        ScreenXML * toAdd = remaining[s->bottomOf()];
-                        QPoint pos = QPoint(layout[s->id()]);
-                        pos.ry()--;
-
-                        layout.insert(toAdd->id(), pos);
-                        added.insert(toAdd);
-                        remaining.remove(toAdd->id());
-                        break;
-                    }
-                    i = added.erase(i);
-                    //++i;
-                }
-            }
-        } while (changed);
-
-        if (! remaining.empty()) {
-            //kDebug() << "invalid configuration (remaining):" << name() << remaining;
-            INVALID_CONFIGURATION("remaining screens")
-            layout.clear();
-        }
-
-        Configurations::translateOrigin(layout);
-        m_layout = layout;
-
-        return layout;
-    }
-
 
     XMLConfigurations::XMLConfigurations(QObject * parent)
         : BackendConfigurations(parent),
@@ -334,6 +214,7 @@ namespace Kephal {
     Configuration * XMLConfigurations::findConfiguration()
     {
         kDebug() << "looking for a matching configuration...";
+        // This should be event-driven 
         findOutputs();
         if (! m_currentOutputs) {
             return 0;
@@ -499,7 +380,8 @@ namespace Kephal {
         }
     }
 
-    QList<Configuration *> XMLConfigurations::alternateConfigurations() {
+    QList<Configuration *> XMLConfigurations::alternateConfigurations()
+    {
         QList<Configuration *> configs;
         foreach (XMLConfiguration * config, m_configurations) {
             if (config->layout().size() <= m_currentOutputs->outputs().size()) {
@@ -524,7 +406,8 @@ namespace Kephal {
         return result;
     }
 
-    QList<QPoint> XMLConfigurations::possiblePositions(Output * output) {
+    QList<QPoint> XMLConfigurations::possiblePositions(Output * output)
+    {
         QList<QPoint> result;
         QSet<QPoint> unique;
         if (! output->isConnected()) {
@@ -609,7 +492,6 @@ namespace Kephal {
 
         return false;
     }
-
     QMap<int, QRect> XMLConfigurations::resizeLayout(Output * output, const QSize & size, QMap<Output *, int> & outputScreens, QMap<Output *, QSize> & outputSizes) {
         outputScreens.unite(currentOutputScreens());
         QMap<int, QPoint> simpleLayout = m_activeConfiguration->layout();
@@ -667,7 +549,7 @@ namespace Kephal {
         return result;
     }
 
-    QMap<int, int> XMLConfigurations::matchLayouts(const QMap<int, QPoint> & currentLayout, const QMap<int, QPoint> & layout) {
+    QMap<int, int> XMLConfigurations::matchLayouts(const QMap<int, QPoint> & currentLayout, const QMap<int, QPoint> & layout) const {
         QList<int> indexes = layout.keys();
         if (! currentLayout.empty()) {
             indexes.insert(0, currentLayout.keys()[0]);
@@ -705,7 +587,8 @@ namespace Kephal {
         return result;
     }
 
-    QMap<int, QRect> XMLConfigurations::calcMatchingLayout(const QMap<int, QPoint> & currentLayout, XMLConfiguration * configuration, QMap<int, QPoint> layout, Output * output, int * outputScreen) {
+    QMap<int, QRect> XMLConfigurations::calcMatchingLayout(const QMap<int, QPoint> & currentLayout, XMLConfiguration * configuration, QMap<int, QPoint> layout, Output * output, int * outputScreen)
+    {
         QMap<int, int> match = matchLayouts(currentLayout, layout);
         kDebug() << "match:" << match;
         QMap<Output *, int> outputs;
@@ -748,7 +631,9 @@ namespace Kephal {
         }
     }
 
-    QMap<XMLConfiguration *, QPoint> XMLConfigurations::equivalentConfigurationsPositions(Output * output) {
+    QMap<XMLConfiguration *, QPoint> XMLConfigurations::equivalentConfigurationsPositions(Output * output)
+    {
+
         bool cloned = false;
         if (! output->isActivated()) {
             cloned = true;
@@ -817,7 +702,8 @@ namespace Kephal {
         return positions;
     }
 
-    QMap<XMLConfiguration *, QPoint> XMLConfigurations::simpleConfigurationsPositions(Output * output, bool sameCount) {
+    QMap<XMLConfiguration *, QPoint> XMLConfigurations::simpleConfigurationsPositions(Output * output, bool sameCount)
+    {
         Screen * screen = output->screen();
         bool cloned = false;
         if (! output->isActivated()) {
@@ -909,7 +795,8 @@ namespace Kephal {
         return positions;
     }
 
-    QMap<XMLConfiguration *, QPoint> XMLConfigurations::sameConfigurationsPositions(Output * output, bool sameCount) {
+    QMap<XMLConfiguration *, QPoint> XMLConfigurations::sameConfigurationsPositions(Output * output, bool sameCount)
+    {
         Q_UNUSED(sameCount)
 
         Screen * screen = output->screen();
@@ -1017,7 +904,9 @@ namespace Kephal {
             saveXml();
         }
 
+        // get the current outputs->screens mapping
         QMap<Output *, int> outputScreens = currentOutputScreens();
+        // convert the symbolic layout to an absolute layout
         QMap<int, QRect> screens = configuration->realLayout(layout, outputScreens);
         if (activateLayout(screens, outputScreens)) {
             m_activeConfiguration = configuration;
@@ -1091,7 +980,8 @@ namespace Kephal {
         }
     }
 
-    QMap<Output *, int> XMLConfigurations::currentOutputScreens() {
+    QMap<Output *, int> XMLConfigurations::currentOutputScreens()
+    {
         QMap<Output *, int> outputScreens;
         foreach (Output * output, Outputs::self()->outputs()) {
             int screen = this->screen(output);
@@ -1103,10 +993,12 @@ namespace Kephal {
     }
 
     bool XMLConfigurations::activateLayout(const QMap<int, QRect> & screensLayout, const QMap<Output *, int> & outputScreens) {
+        // contains the sizes of the outputs
         QMap<Output *, QSize> outputSizes;
         foreach (Output * output, outputScreens.keys()) {
             outputSizes.insert(output, output->isActivated() ? output->size() : output->preferredSize());
         }
+        // passes the outputs' current sizes or preferred sizes through to next step
         return activateLayout(screensLayout, outputScreens, outputSizes);
     }
 
@@ -1120,15 +1012,20 @@ namespace Kephal {
             return false;
         }
 
+        // yet another set of output geometries...
         QMap<Output *, QRect> layout;
+        // for each of the proposed absolute geometries
         for (QMap<int, QRect>::const_iterator i = screensLayout.constBegin(); i != screensLayout.constEnd(); ++i) {
+            // for each of the outputs sizes
             for (QMap<Output *, int>::const_iterator j = outputScreens.constBegin(); j != outputScreens.constEnd(); ++j) {
                 if (j.value() == i.key()) {
+                    // output, (top left of the abs geom, current or preferred size)
                     layout.insert(j.key(), QRect(i.value().topLeft(), outputSizes[j.key()]));
                 }
             }
         }
 
+        // memorize the current layout, if no other confirmation is pending
         kDebug() << "layout:" << layout;
         if (! m_awaitingConfirm) {
             foreach (BackendOutput * o, BackendOutputs::self()->backendOutputs()) {
@@ -1136,7 +1033,9 @@ namespace Kephal {
             }
         }
 
+        // try to activate the new layout
         if (! BackendOutputs::self()->activateLayout(layout)) {
+            // revert it if it fails, if no other confirmation is pending
             if (! m_awaitingConfirm) {
                 foreach (BackendOutput * o, BackendOutputs::self()->backendOutputs()) {
                     o->revert();
@@ -1177,7 +1076,8 @@ namespace Kephal {
 
         saveXml();
 
-        m_configurations.insert(name, new XMLConfiguration(this, config));
+        // FIXME should also be event driven
+        //m_configurations.insert(name, new XMLConfiguration(this, config));
         return m_configurations[name];
     }
 
@@ -1221,11 +1121,11 @@ namespace Kephal {
                 output->mark();
 
                 Rotation rotation = (Rotation) o->rotation();
-                bool reflectX = o->reflectX();
-                bool reflectY = o->reflectY();
-                if ((rotation != output->rotation()) || (reflectX != output->reflectX()) || (reflectY != output->reflectY())) {
-                    kDebug() << "applying orientation to" << output->id() << rotation << reflectX << reflectY;
-                    if (! output->applyOrientation(rotation, reflectX, reflectY)) {
+                bool xReflected = o->reflectX();
+                bool yReflected = o->reflectY();
+                if ((rotation != output->rotation()) || (xReflected != output->reflectX()) || (yReflected != output->reflectY())) {
+                    kDebug() << "applying orientation to" << output->id() << rotation << xReflected << yReflected;
+                    if (! output->applyOrientation(rotation, xReflected, yReflected)) {
                         OPERATION_FAILED("apply orientation")
                         failed = true;
                     }
@@ -1355,7 +1255,7 @@ namespace Kephal {
         BackendOutput * o = BackendOutputs::self()->backendOutput(output->id());
         if (o) {
             requireConfirm();
-            if (o->applyOrientation(o->rotation(), o->reflectX(), reflect)) {
+            if (o->applyOrientation(o->rotation(), o->reflectY(), reflect)) {
                 OutputXML * xml = outputXml(o->id());
                 if (xml) {
                     xml->setReflectY(reflect);
@@ -1407,7 +1307,7 @@ namespace Kephal {
         }
     }
 
-    bool XMLConfigurations::polling() {
+    bool XMLConfigurations::polling() const {
         return m_configXml->polling();
     }
 

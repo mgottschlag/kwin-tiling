@@ -49,6 +49,7 @@ namespace Kephal {
              *          to Screens.
              * @param outputSizes The sizes to use for the
              *          Outputs instead of the current ones.
+             * WILL: used by XMLConf::resizeLayout()
              */
             QMap<int, QRect> realLayout(const QMap<int, QPoint> & simpleLayout, const QMap<Output *, int> & outputScreens, const QMap<Output *, QSize> & outputSizes);
 
@@ -71,6 +72,9 @@ namespace Kephal {
              *
              * @param outputScreens A mapping of Outputs
              *          to Screens.
+             * WILL used by XMLConfiguration::activate(Configuration*)
+             * WILL used by XMLConfiguration::calcMatchingLayout()
+             * WILL used by XMLConfiguration::simpleConfigurationsPositions()
              */
             QMap<int, QRect> realLayout(const QMap<Output *, int> & outputScreens);
 
@@ -107,12 +111,12 @@ namespace Kephal {
              * positions() to move the Screen screen
              * to.
              */
-            QSet<QPoint> possiblePositions(int screen);
+            QSet<QPoint> possiblePositions(int screen) const;
 
         private:
-            void simpleToReal(QMap<int, QPoint> & simpleLayout, const QMap<int, QSize> & screenSizes, int index, QMap<int, QRect> & screens);
-            QList<QSet<QPoint> > partition(int screen);
-            QSet<QPoint> border(QSet<QPoint> screens);
+            void simpleToReal(QMap<int, QPoint> & simpleLayout, const QMap<int, QSize> & screenSizes, int index, QMap<int, QRect> & screens) const;
+            QList<QSet<QPoint> > partition(int screen) const;
+            QSet<QPoint> border(QSet<QPoint> screens) const;
     };
 
 

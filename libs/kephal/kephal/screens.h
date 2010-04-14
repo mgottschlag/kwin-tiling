@@ -97,7 +97,7 @@ namespace Kephal {
              * since the real value is determined
              * the configuration used.
              */
-            bool isPrimary();
+            bool isPrimary() const;
 
             /**
              * Make this Screen the primary one.

@@ -120,7 +120,7 @@ namespace Kephal {
         return screens;
     }
 
-    void BackendConfiguration::simpleToReal(QMap<int, QPoint> & simpleLayout, const QMap<int, QSize> & screenSizes, int index, QMap<int, QRect> & screens) {
+    void BackendConfiguration::simpleToReal(QMap<int, QPoint> & simpleLayout, const QMap<int, QSize> & screenSizes, int index, QMap<int, QRect> & screens) const {
         QPoint pos = simpleLayout.take(index);
 
         // to the right
@@ -187,7 +187,7 @@ namespace Kephal {
         return result;
     }
 
-    QSet<QPoint> BackendConfiguration::possiblePositions(int screen) {
+    QSet<QPoint> BackendConfiguration::possiblePositions(int screen) const {
         QList<QSet<QPoint> > partitions = partition(screen);
         QSet<QPoint> result = border(partitions[0]);
         foreach (const QSet<QPoint> &partition, partitions) {
@@ -196,7 +196,8 @@ namespace Kephal {
         return result;
     }
 
-    QList<QSet<QPoint> > BackendConfiguration::partition(int screen) {
+    /*WILL: used by clonePositions and possiblePositions*/
+    QList<QSet<QPoint> > BackendConfiguration::partition(int screen) const {
         QHash<QPoint, QSet<QPoint> * > partitions;
         QMap<int, QPoint> layout = this->layout();
         bool exclude = layout.contains(screen);
@@ -247,7 +248,7 @@ namespace Kephal {
         return result;
     }
 
-    QSet<QPoint> BackendConfiguration::border(QSet<QPoint> screens) {
+    QSet<QPoint> BackendConfiguration::border(QSet<QPoint> screens) const {
         QSet<QPoint> result;
         QList<QPoint> borders;
         borders << QPoint(1, 0) << QPoint(0, 1) << QPoint(-1, 0) << QPoint(0, -1);

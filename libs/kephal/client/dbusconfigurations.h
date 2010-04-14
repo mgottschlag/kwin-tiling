@@ -81,19 +81,19 @@ namespace Kephal {
             /**
              * @reimp Kephal::Configurations
              */
-            QMap<QString, Configuration *> configurations() const;
+            QMap<QString, Configuration *> configurations();
             /**
              * @reimp Kephal::Configurations
              */
-            Configuration * activeConfiguration() const;
+            Configuration * activeConfiguration();
             /**
              * @reimp Kephal::Configurations
              */
-            QList<Configuration *> alternateConfigurations() const;
+            QList<Configuration *> alternateConfigurations();
             /**
              * @reimp Kephal::Configurations
              */
-            QList<QPoint> possiblePositions(const Output * output) const;
+            QList<QPoint> possiblePositions(const Output * output);
             /**
              * @reimp Kephal::Configurations
              */
@@ -121,7 +121,7 @@ namespace Kephal {
             /**
              * @reimp Kephal::Configurations
              */
-            int screen(Output * output) const;
+            int screen(Output * output);
             void applyOutputSettings();
             void setPolling(bool polling);
             bool polling() const;

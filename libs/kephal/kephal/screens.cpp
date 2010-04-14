@@ -89,7 +89,7 @@ namespace Kephal {
         return QRect(position(), size());
     }
 
-    bool Screen::isPrimary() {
+    bool Screen::isPrimary() const {
         return Screens::self()->primaryScreen() == this;
     }
 

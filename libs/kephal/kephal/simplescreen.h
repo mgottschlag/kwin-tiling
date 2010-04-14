@@ -39,7 +39,6 @@ namespace Kephal {
             virtual bool isPrivacyMode();
             virtual void setPrivacyMode(bool b);
 
-            bool contains() const;
             QList<Output *> outputs();
 
             void _setId(int id);

@@ -36,32 +36,7 @@ namespace Kephal {
     class OutputsXML;
     class OutputXML;
 
-
-
-    class XMLConfiguration : public BackendConfiguration {
-        Q_OBJECT
-        public:
-            XMLConfiguration(XMLConfigurations * parent, ConfigurationXML * configuration);
-
-            QString name();
-            bool isModifiable();
-            bool isActivated();
-            void activate();
-            QMap<int, QPoint> layout();
-            int primaryScreen();
-
-            ConfigurationXML * configuration();
-            void setLayout(const QMap<int, QPoint> & layout);
-
-        Q_SIGNALS:
-            void activate(XMLConfiguration * configuration);
-
-        private:
-            ConfigurationXML * m_configuration;
-            XMLConfigurations * m_parent;
-            QMap<int, QPoint> m_layout;
-    };
-
+    class XMLConfiguration;
 
     class XMLConfigurations : public BackendConfigurations {
         Q_OBJECT
@@ -69,20 +44,27 @@ namespace Kephal {
             XMLConfigurations(QObject * parent);
 
             QMap<QString, Configuration *> configurations();
+            /**
+             * Calculates the most appropriate configuration for the current hardware configuration
+             * This Configuration can then be activate()d to set up the screens as configured
+             * Changes state so can't be const
+             */
             Configuration * findConfiguration();
             Configuration * activeConfiguration();
             QList<Configuration *> alternateConfigurations();
             QList<QPoint> possiblePositions(Output * output);
+
             bool move(Output * output, const QPoint & position);
             bool resize(Output * output, const QSize & size);
             bool rotate(Output * output, Rotation rotation);
             bool changeRate(Output * output, float rate);
             bool reflectX(Output * output, bool reflect);
             bool reflectY(Output * output, bool reflect);
+
             int screen(Output * output);
             void applyOutputSettings();
             void setPolling(bool polling);
-            bool polling();
+            bool polling() const;
             void confirm();
             void revert();
 
@@ -93,12 +75,25 @@ namespace Kephal {
 
         private:
             void init();
+            /** populates m_currentOutputs using first findKnownOutputs then falls back to
+             * findBestOutputs
+             */
             void findOutputs();
+            /**
+             * looks for an exact match between configured sets of outputs and the current sets of
+             * outputs.
+             */
             OutputsXML * findKnownOutputs();
+            /**
+             * looks for the closest match out of configured outputs and current outputs, using a
+             * scoring mechanism
+             * The default hardcoded outputs should be sufficiently broad to always assure
+             * some match.
+             */
             OutputsXML * findBestOutputs();
             qreal match(QString known, QString current);
             qreal match(int known, int current);
-            QMap<int, int> matchLayouts(const QMap<int, QPoint> & currentLayout, const QMap<int, QPoint> & layout);
+            QMap<int, int> matchLayouts(const QMap<int, QPoint> & currentLayout, const QMap<int, QPoint> & layout) const;
             QMap<int, QRect> calcMatchingLayout(const QMap<int, QPoint> & currentLayout, XMLConfiguration * configuration, QMap<int, QPoint> layout, Output * output = 0, int * outputScreen = 0);
             void translateToOther(QMap<int, QRect> & layout, Output * base, QMap<int, int> match = (QMap<int, int>()));
             QList<XMLConfiguration *> equivalentConfigurations(int numScreens);
@@ -109,8 +104,25 @@ namespace Kephal {
             XMLConfiguration * simpleConfiguration(int numScreens);
             void saveXml();
             void loadXml();
+            /**
+             * Start the layout activation process.
+             *
+             * @param layout absolute layout geometries
+             * @param outputScreens current output->screen id mapping
+             */
             bool activateLayout(const QMap<int, QRect> & layout, const QMap<Output *, int> & outputScreens);
+            /**
+             * Second stage of activation applying the outputs' current sizes to stored
+             * configuration
+             *
+             * @param layout absolute layout geometries
+             * @param outputScreens current output->screen id mapping
+             * @param outputSizes current outputs' sizes
+             */
             bool activateLayout(const QMap<int, QRect> & layout, const QMap<Output *, int> & outputScreens, const QMap<Output *, QSize> & outputSizes);
+            /**
+             * Obtain the current mapping from Outputs to Screens
+             */
             QMap<Output *, int> currentOutputScreens();
             void matchOutputScreens(const QMap<int, QPoint> & layout);
             OutputXML * outputXml(const QString & id);

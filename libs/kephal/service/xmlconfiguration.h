@@ -18,52 +18,39 @@
  */
 
 
-#ifndef KEPHAL_EXTERNALCONFIGURATION_H
-#define KEPHAL_EXTERNALCONFIGURATION_H
+#ifndef XML_CONFIGURATION_H
+#define XML_CONFIGURATION_H
 
 #include "backendconfigurations.h"
 
-
 namespace Kephal {
 
-    /**
-     * Configuration which is hardwired to name 'external'.
-     * Is this a hardwired permanent configuration object? If so where is 'single'?
-     */
-    class ExternalConfiguration : public BackendConfiguration {
+    class XMLConfigurations;
+    class ConfigurationsXML;
+    class ConfigurationXML;
+
+    class XMLConfiguration : public BackendConfiguration {
         Q_OBJECT
         public:
-            ExternalConfiguration(BackendConfigurations * parent);
+            XMLConfiguration(XMLConfigurations * parent, ConfigurationXML * configuration);
 
-            /**
-             * @reimp Kephal::Configuration
-             */
             QString name() const;
-            /**
-             * @reimp Kephal::Configuration
-             */
             bool isModifiable() const;
-            /**
-             * @reimp Kephal::Configuration
-             */
             bool isActivated() const;
-            /**
-             * @reimp Kephal::Configuration
-             */
-            QMap<int, QPoint> layout() const;
-            /**
-             * @reimp Kephal::Configuration
-             */
-            int primaryScreen() const;
-        public Q_SLOTS:
             void activate();
+            QMap<int, QPoint> layout() const;
+            int primaryScreen() const;
+
+            ConfigurationXML * configuration() const;
+            void setLayout(const QMap<int, QPoint> & layout);
+
         Q_SIGNALS:
-            void activateExternal();
+            void configurationActivated(XMLConfiguration * configuration);
+
         private:
-            BackendConfigurations * m_parent;
+            ConfigurationXML * m_configuration;
+            XMLConfigurations * m_parent;
+            QMap<int, QPoint> m_layout;
     };
-
 }
-
-#endif
-
+#endif // XMLCONFIGURATION_H

@@ -80,13 +80,14 @@ namespace Kephal {
         }
 
         foreach (Screen * screen, Screens::self()->screens()) {
-            if (screen->contains(this)) {
+            Output * out = const_cast<Output*>(this);
+            if (screen->outputs().contains(out)) {
                 return screen;
             }
         }
         return 0;
     }
-    QList<QPoint> Output::availablePositions() const {
+    QList<QPoint> Output::availablePositions() {
         return Configurations::self()->possiblePositions(this);
     }
 

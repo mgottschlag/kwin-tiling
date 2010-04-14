@@ -84,6 +84,9 @@ QString DBusAPIConfigurations::activeConfiguration() {
     return "";
 }
 
+// Not needed. If Configurations provides access to configurations, it should not also provide ways
+// to temporarily modify the current configuration.  This should be done by a config UI.
+#if 0
 bool DBusAPIConfigurations::move(QString output, QPoint position) {
     Output * o = Outputs::self()->output(output);
     if (o) {
@@ -131,7 +134,7 @@ bool DBusAPIConfigurations::reflectY(QString output, bool reflect) {
     }
     return false;
 }
-
+#endif
 bool DBusAPIConfigurations::isModifiable(QString config) {
     Configuration * c = Configurations::self()->configuration(config);
     if (c) {

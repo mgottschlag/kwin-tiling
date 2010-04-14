@@ -21,27 +21,24 @@
 
 #include "config-kephal.h"
 
-#include <QDebug>
 #include <QDBusConnection>
 #include <QApplication>
 #include <QTimer>
 
+#include <KApplication>
 #include <KConfig>
 #include <KConfigGroup>
-#include <KApplication>
+#include <KDebug>
 
 
 #ifdef HAS_RANDR_1_2
 #include "xrandr12/randrdisplay.h"
 #include "xrandr12/randrscreen.h"
+#include "xrandroutputs.h"
 #endif
 
 #include "desktopwidgetoutputs.h"
 #include "configurationscreens.h"
-
-#ifdef HAS_RANDR_1_2
-#include "xrandroutputs.h"
-#endif
 
 #include "dbus/dbusapi_screens.h"
 #include "dbus/dbusapi_outputs.h"
@@ -72,7 +69,7 @@ KephalService::KephalService(QObject * parent)
     : QObject(parent),
     m_noXRandR(false)
 {
-    qDebug() << "kephald starting up";
+    kDebug() << "kephald starting up";
     init();
 }
 
@@ -102,37 +99,37 @@ void KephalService::init()
     }
 #endif
     if (! m_outputs) {
-        new DesktopWidgetOutputs(this);
+        //new DesktopWidgetOutputs(this);
 
     }
 
     foreach (Output * output, Outputs::self()->outputs()) {
-        qDebug() << "output:" << output->id() << output->geom() << output->rotation() << output->reflectX() << output->reflectY();
+        kDebug() << "output:" << output->id() << output->geom() << output->rotation() << output->reflectX() << output->reflectY();
     }
 
     new XMLConfigurations(this);
-    new ConfigurationScreens(this);
+    //new ConfigurationScreens(this);
 
-    foreach (Kephal::Screen * screen, Screens::self()->screens()) {
-        qDebug() << "screen:" << screen->id() << screen->geom();
-    }
-
+//X     foreach (Kephal::Screen * screen, Screens::self()->screens()) {
+//X         kDebug() << "screen:" << screen->id() << screen->geom();
+//X     }
+//X 
     activateConfiguration();
     connect(Outputs::self(), SIGNAL(outputDisconnected(Kephal::Output *)), this, SLOT(outputDisconnected(Kephal::Output *)));
     connect(Outputs::self(), SIGNAL(outputConnected(Kephal::Output *)), this, SLOT(outputConnected(Kephal::Output *)));
 
-    qDebug() << "will check for possible positions...";
+    kDebug() << "will check for possible positions...";
     foreach (Output * output, Outputs::self()->outputs()) {
-        qDebug() << "possible positions for:" << output->id() << Configurations::self()->possiblePositions(output);
+        kDebug() << "possible positions for:" << output->id() << Configurations::self()->possiblePositions(output);
     }
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
     bool result = dbus.registerService("org.kde.Kephal");
-    qDebug() << "registered the service:" << result;
+    kDebug() << "registered the service:" << result;
 
-    new DBusAPIScreens(this);
-    new DBusAPIOutputs(this);
-    new DBusAPIConfigurations(this);
+    //new DBusAPIScreens(this);
+    //new DBusAPIOutputs(this);
+    //new DBusAPIConfigurations(this);
 
     if (m_outputs) {
         m_eventFilter = new X11EventFilter(m_outputs);
@@ -180,7 +177,7 @@ void KephalService::activateConfiguration()
     if (config) {
         config->activate();
     } else {
-        qDebug() << "couldnt find matching configuration!!";
+        kDebug() << "couldnt find matching configuration!!";
     }
 }
 
