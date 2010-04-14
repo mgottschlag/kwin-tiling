@@ -346,7 +346,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
 
     //If the applet doesn't want to show FDO tasks, remove (not just hide) any of them
     //if the dbus icon has a category that the applet doesn't want to show remove it
-    if (!d->host->shownCategories().contains(task->category())) {
+    if (!d->host->shownCategories().contains(task->category()) && !qobject_cast<Plasma::Applet *>(widget)) {
         if (widget) {
             widget->deleteLater();
         }
