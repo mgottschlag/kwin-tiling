@@ -105,7 +105,9 @@ void ActionEditor::saveParameter()
 {
     QModelIndex current = ui.TvPredicateTree->currentIndex();
     PredicateItem * currentItem = static_cast<PredicateItem*>( current.internalPointer() );
-    int predicateChildren = currentItem->children().count();
+
+    // Hold onto this so we can determine if the number of children has changed...
+    Solid::Predicate::Type oldType = currentItem->itemType;
 
     currentItem->setTypeByInt( ui.CbParameterType->currentIndex() );
     currentItem->ifaceType = actionData()->interfaceFromName( ui.CbDeviceType->currentText() );
@@ -114,9 +116,7 @@ void ActionEditor::saveParameter()
     currentItem->setComparisonByInt( ui.CbValueMatch->currentIndex() );
 
     rootModel->itemUpdated( current );
-    if( predicateChildren != currentItem->children().count() ) {
-        rootModel->childrenChanged( current );
-    }
+    rootModel->childrenChanging( current, oldType );
 }
 
 QString ActionEditor::predicateString()

@@ -148,14 +148,28 @@ void PredicateModel::itemUpdated( const QModelIndex& item )
     emit dataChanged( item, item );
 }
 
-void PredicateModel::childrenChanged( const QModelIndex& item )
+void PredicateModel::childrenChanging( const QModelIndex& item, Solid::Predicate::Type oldType )
 {
-    if( rowCount(item) == 2 ) {
-        emit beginInsertRows( item, 0, 1 );
-        emit endInsertRows();
-    } else {
+    PredicateItem * currentItem = static_cast<PredicateItem*>( item.internalPointer() );
+    Solid::Predicate::Type newType = currentItem->itemType;
+    
+    if( oldType == newType ) {
+        return;
+    }
+
+    if( rowCount(item) != 0 && newType != Solid::Predicate::Conjunction && newType != Solid::Predicate::Disjunction ) {
         emit beginRemoveRows( item, 0, 1 );
+        currentItem->updateChildrenStatus();
         emit endRemoveRows();
+        return;
+    }
+
+    bool hasChildren = (newType == Solid::Predicate::Conjunction || newType == Solid::Predicate::Disjunction);
+ 
+    if( rowCount(item) == 0 && hasChildren ) {
+        emit beginInsertRows( item, 0, 1 );
+        currentItem->updateChildrenStatus();
+        emit endInsertRows();
     }
 }
 

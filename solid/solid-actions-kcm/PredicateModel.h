@@ -22,6 +22,8 @@
 
 #include <QtCore/QAbstractItemModel>
 
+#include <Solid/Predicate>
+
 class PredicateItem;
 
 class PredicateModel : public QAbstractItemModel
@@ -41,7 +43,7 @@ public:
 
     void setRootPredicate( PredicateItem * item );
     void itemUpdated( const QModelIndex& item );
-    void childrenChanged( const QModelIndex& item );
+    void childrenChanging( const QModelIndex& item, Solid::Predicate::Type oldType );
 
 protected:
     PredicateItem * rootItem() const;

@@ -158,20 +158,6 @@ QString PredicateItem::prettyName() const
     return typeName;
 }
 
-void PredicateItem::setItemType( Solid::Predicate::Type iType )
-{
-    if( iType != Solid::Predicate::Disjunction && iType != Solid::Predicate::Conjunction ) {
-        qDeleteAll( d->children );
-        d->children.clear();
-    } else if( d->children.count() == 0 ) {
-        Solid::Predicate templItem = Solid::Predicate::fromString("IS StorageVolume");
-        new PredicateItem( templItem, this );
-        new PredicateItem( templItem, this );
-    }
-
-    itemType = iType;
-}
-
 void PredicateItem::setTypeByInt( int item )
 {
     Solid::Predicate::Type iType = Solid::Predicate::InterfaceCheck;
@@ -191,7 +177,7 @@ void PredicateItem::setTypeByInt( int item )
         default:
             break;
     }
-    setItemType( iType );
+    itemType = iType;
 }
 
 void PredicateItem::setComparisonByInt( int item )
@@ -205,5 +191,17 @@ void PredicateItem::setComparisonByInt( int item )
             break;
         default:
             break;
+    }
+}
+
+void PredicateItem::updateChildrenStatus()
+{
+    if( itemType != Solid::Predicate::Disjunction && itemType != Solid::Predicate::Conjunction ) {
+        qDeleteAll( d->children );
+        d->children.clear();
+    } else if( d->children.count() == 0 ) {
+        Solid::Predicate templItem = Solid::Predicate::fromString("IS StorageVolume");
+        new PredicateItem( templItem, this );
+        new PredicateItem( templItem, this );
     }
 }

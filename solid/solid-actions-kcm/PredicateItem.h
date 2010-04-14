@@ -36,9 +36,9 @@ public:
     QList<PredicateItem*>& children() const;
     Solid::Predicate predicate() const;
     QString prettyName() const;
-    void setItemType( Solid::Predicate::Type itemType );
     void setTypeByInt( int item );
     void setComparisonByInt( int item );
+    void updateChildrenStatus();
 
     Solid::Predicate::Type itemType;
     Solid::DeviceInterface::Type ifaceType;
