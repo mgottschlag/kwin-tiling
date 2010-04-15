@@ -69,7 +69,6 @@ class KGreeter : public KGDialog, public KGVerifyHandler {
 	void slotUserEntered();
 
   protected:
-	void installUserList();
 	void insertUser( const QImage &, const QString &, struct passwd * );
 	void insertUsers();
 	void putSession( const QString &, const QString &, bool, const char * );
