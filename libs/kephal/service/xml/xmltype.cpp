@@ -27,6 +27,15 @@
 
 namespace Kephal {
 
+    XMLType::XMLType(QObject * parent)
+        :QObject(parent)
+    {
+    }
+
+    XMLType::~XMLType()
+    {
+    }
+
     XMLFactory::XMLFactory() {
         m_schema = false;
     }

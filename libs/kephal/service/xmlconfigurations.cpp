@@ -82,15 +82,13 @@ namespace Kephal {
             /**
              * Create default single layout
              */
-            ConfigurationXML * config = new ConfigurationXML();
-            config->setParent(m_configXml);
+            ConfigurationXML * config = new ConfigurationXML(m_configXml);
             m_configXml->configurations().append(config);
 
             config->setName("single");
             config->setModifiable(false);
 
-            ScreenXML * screen = new ScreenXML();
-            screen->setParent(config);
+            ScreenXML * screen = new ScreenXML(config);
             config->screens().append(screen);
 
             screen->setId(0);
@@ -100,22 +98,19 @@ namespace Kephal {
             /**
              * Create default extended-right layout
              */
-            config = new ConfigurationXML();
-            config->setParent(m_configXml);
+            config = new ConfigurationXML(m_configXml);
             m_configXml->configurations().append(config);
 
             config->setName("extended-right");
             config->setModifiable(false);
 
-            screen = new ScreenXML();
-            screen->setParent(config);
+            screen = new ScreenXML(config);
             config->screens().append(screen);
 
             screen->setId(0);
             screen->setPrivacy(false);
 
-            screen = new ScreenXML();
-            screen->setParent(config);
+            screen = new ScreenXML(config);
             config->screens().append(screen);
 
             screen->setId(1);
@@ -126,23 +121,20 @@ namespace Kephal {
             /**
              * Create default extended-left layout
              */
-            config = new ConfigurationXML();
-            config->setParent(m_configXml);
+            config = new ConfigurationXML(m_configXml);
             m_configXml->configurations().append(config);
 
             config->setName("extended-left");
             config->setModifiable(false);
 
-            screen = new ScreenXML();
-            screen->setParent(config);
+            screen = new ScreenXML(config);
             config->screens().append(screen);
 
             screen->setId(0);
             screen->setPrivacy(false);
             screen->setRightOf(1);
 
-            screen = new ScreenXML();
-            screen->setParent(config);
+            screen = new ScreenXML(config);
             config->screens().append(screen);
 
             screen->setId(1);
@@ -152,14 +144,12 @@ namespace Kephal {
             /**
              * Create outputs section for single output
              */
-            OutputsXML * outputs = new OutputsXML();
-            outputs->setParent(m_configXml);
+            OutputsXML * outputs = new OutputsXML(m_configXml);
             m_configXml->outputs().append(outputs);
 
             outputs->setConfiguration("external");
 
-            OutputXML * output = new OutputXML();
-            output->setParent(outputs);
+            OutputXML * output = new OutputXML(outputs);
             outputs->outputs().append(output);
 
             output->setName("*");
@@ -170,22 +160,19 @@ namespace Kephal {
             /**
              * Create outputs section for 2 screens
              */
-            outputs = new OutputsXML();
-            outputs->setParent(m_configXml);
+            outputs = new OutputsXML(m_configXml);
             m_configXml->outputs().append(outputs);
 
             outputs->setConfiguration("external");
 
-            output = new OutputXML();
-            output->setParent(outputs);
+            output = new OutputXML(outputs);
             outputs->outputs().append(output);
 
             output->setName("*");
             output->setScreen(0);
             output->setVendor("*");
 
-            output = new OutputXML();
-            output->setParent(outputs);
+            output = new OutputXML(outputs);
             outputs->outputs().append(output);
 
             output->setName("*");
@@ -205,7 +192,7 @@ namespace Kephal {
 
             XMLConfiguration * c = new XMLConfiguration(this, config);
             m_configurations.insert(config->name(), c);
-            connect(c, SIGNAL(activate(XMLConfiguration *)), this, SLOT(activate(XMLConfiguration *)));
+            connect(c, SIGNAL(configurationActivated(XMLConfiguration *)), this, SLOT(activate(XMLConfiguration *)));
         }
 
         findOutputs();
@@ -999,8 +986,7 @@ namespace Kephal {
         if (! m_currentOutputsKnown) {
             kDebug() << "saving xml for current outputs...";
 
-            OutputsXML * known = new OutputsXML();
-            known->setParent(m_configXml);
+            OutputsXML * known = new OutputsXML(m_configXml);
             m_configXml->outputs().append(known);
 
             known->setConfiguration(configuration->name());
@@ -1020,8 +1006,7 @@ namespace Kephal {
                     return false;
                 }
 
-                OutputXML * outputXml = new OutputXML();
-                outputXml->setParent(known);
+                OutputXML * outputXml = new OutputXML(known);
                 known->outputs().append(outputXml);
 
                 outputXml->setName(output->id());
@@ -1196,16 +1181,14 @@ namespace Kephal {
             return m_configurations[name];
         }
 
-        ConfigurationXML * config = new ConfigurationXML();
-        config->setParent(m_configXml);
+        ConfigurationXML * config = new ConfigurationXML(m_configXml);
         m_configXml->configurations().append(config);
 
         config->setName(name);
         config->setModifiable(true);
 
         for (int i = 0; i < numScreens; ++i) {
-            ScreenXML * screen = new ScreenXML();
-            screen->setParent(config);
+            ScreenXML * screen = new ScreenXML(config);
             config->screens().append(screen);
 
             screen->setId(i);

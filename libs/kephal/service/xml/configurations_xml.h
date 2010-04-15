@@ -30,29 +30,32 @@ namespace Kephal {
 
     class ScreenXML : public XMLType {
         Q_OBJECT
+        public:
+            ScreenXML(QObject * parent = 0);
+            ~ScreenXML();
+
 
         PROPERTY(int, id, setId)
         PROPERTY(int, rightOf, setRightOf)
         PROPERTY(int, bottomOf, setBottomOf)
         PROPERTY(bool, privacy, setPrivacy)
 
-        public:
-            ScreenXML() : m_rightOf(-1), m_bottomOf(-1) {}
     };
 
 
 
     class ConfigurationXML : public XMLType {
         Q_OBJECT
+        public:
+            ConfigurationXML(QObject * parent = 0);
+            ~ConfigurationXML();
+
+            QList<ScreenXML *> & screens();
+
 
         PROPERTY(QString, name, setName)
         PROPERTY(bool, modifiable, setModifiable)
         PROPERTY(int, primaryScreen, setPrimaryScreen)
-
-        public:
-            ConfigurationXML();
-
-            QList<ScreenXML *> & screens();
 
         private:
             QList<ScreenXML *> m_screens;
@@ -77,16 +80,18 @@ namespace Kephal {
         PROPERTY(QString, actualOutput, setActualOutput)
 
         public:
-            OutputXML() : m_screen(-1), m_product(-1), m_serial(0),
-                m_width(-1), m_height(-1), m_rotation(0),
-                m_reflectX(false), m_reflectY(false), m_rate(0)
-                { }
+        OutputXML(QObject * parent = 0);
+        ~OutputXML();
+
     };
 
 
 
     class OutputsXML : public XMLType {
         Q_OBJECT
+        public:
+            OutputsXML(QObject * parent = 0);
+            ~OutputsXML();
 
         PROPERTY(QString, configuration, setConfiguration)
 
@@ -104,7 +109,8 @@ namespace Kephal {
         PROPERTY(bool, polling, setPolling)
 
         public:
-            ConfigurationsXML() : m_polling(false) {}
+            ConfigurationsXML(QObject * parent = 0);
+            virtual ~ConfigurationsXML();
 
             QList<ConfigurationXML *> & configurations();
             QList<OutputsXML *> & outputs();
@@ -117,6 +123,7 @@ namespace Kephal {
     class ConfigurationsXMLFactory : public XMLRootFactory {
         public:
             ConfigurationsXMLFactory();
+            ~ConfigurationsXMLFactory();
 
         protected:
             virtual XMLType * newInstance();

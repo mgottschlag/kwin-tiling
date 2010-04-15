@@ -38,15 +38,6 @@ namespace Kephal {
     };
 
 
-
-    ConfigurationXML::ConfigurationXML()
-        : m_modifiable(true),
-        m_primaryScreen(0)
-    { }
-
-    QList<ScreenXML *> & ConfigurationXML::screens() { return m_screens; }
-
-
     class ConfigurationXMLFactory : public XMLFactory {
         protected:
             virtual XMLType * newInstance() { return new ConfigurationXML(); }
@@ -87,11 +78,59 @@ namespace Kephal {
             }
     };
 
+    ScreenXML::ScreenXML(QObject * parent)
+        : XMLType(parent), m_rightOf(-1), m_bottomOf(-1)
+    {
+    }
+
+    ScreenXML::~ScreenXML()
+    {
+    }
+
+    OutputXML::OutputXML(QObject * parent)
+        : XMLType(parent), m_screen(-1), m_product(-1), m_serial(0),
+                m_width(-1), m_height(-1), m_rotation(0),
+                m_reflectX(false), m_reflectY(false), m_rate(0)
+    { }
+
+    OutputXML::~OutputXML()
+    {}
+
+    ConfigurationXML::ConfigurationXML(QObject * parent)
+        : XMLType(parent), m_modifiable(true), m_primaryScreen(0)
+    { }
+
+    ConfigurationXML::~ConfigurationXML()
+    {
+    }
+
+    OutputsXML::OutputsXML(QObject * parent)
+        : XMLType(parent)
+    {
+
+    }
+    OutputsXML::~OutputsXML()
+    {
+    }
+
+    QList<ScreenXML *> & ConfigurationXML::screens() { return m_screens; }
+
+    ConfigurationsXML::ConfigurationsXML(QObject * parent)
+            : XMLType(parent), m_polling(false)
+    {
+    }
+
+    ConfigurationsXML::~ConfigurationsXML()
+    {
+    }
 
     QList<ConfigurationXML *> & ConfigurationsXML::configurations() { return m_configurations; }
     QList<OutputsXML *> & ConfigurationsXML::outputs() { return m_outputs; }
 
     ConfigurationsXMLFactory::ConfigurationsXMLFactory() : XMLRootFactory("configurations") {
+    }
+    ConfigurationsXMLFactory::~ConfigurationsXMLFactory()
+    {
     }
 
     XMLType * ConfigurationsXMLFactory::newInstance() {

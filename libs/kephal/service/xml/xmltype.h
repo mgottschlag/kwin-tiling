@@ -24,7 +24,6 @@
 #include <QObject>
 #include <QDomNode>
 #include <QMap>
-#include <QFile>
 
 
 namespace Kephal {
@@ -32,8 +31,12 @@ namespace Kephal {
     class XMLNodeHandler;
 
 
-    class XMLType : public QObject {
+    class XMLType : public QObject
+    {
         Q_OBJECT
+        public:
+            XMLType(QObject * parent = 0);
+            virtual ~XMLType();
     };
 
 
