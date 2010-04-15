@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2007 Barış Metin <baris@pardus.org.tr>
+ *   Copyright (C) 2010 Matteo Agostinelli <agostinelli@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -20,6 +21,10 @@
 #define CALCULATORRUNNER_H
 
 #include <QMimeData>
+
+#ifdef ENABLE_QALCULATE
+class QalculateEngine;
+#endif
 
 #include <Plasma/AbstractRunner>
 
@@ -44,6 +49,10 @@ class CalculatorRunner : public Plasma::AbstractRunner
         void userFriendlySubstitutions(QString& cmd);
         void powSubstitutions(QString& cmd);
         void hexSubstitutions(QString& cmd);
+ 
+        #ifdef ENABLE_QALCULATE
+        QalculateEngine* m_engine;
+        #endif
 };
 
 K_EXPORT_PLASMA_RUNNER(calculatorrunner, CalculatorRunner)

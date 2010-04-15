@@ -2,6 +2,7 @@
  *   Copyright (C) 2007 Barış Metin <baris@pardus.org.tr>
  *   Copyright (C) 2006 David Faure <faure@kde.org>
  *   Copyright (C) 2007 Richard Moore <rich@kde.org>
+ *   Copyright (C) 2010 Matteo Agostinelli <agostinelli@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -20,7 +21,11 @@
 
 #include "calculatorrunner.h"
 
+#ifdef ENABLE_QALCULATE
+#include "qalculate_engine.h"
+#else
 #include <QScriptEngine>
+#endif
 
 #include <KIcon>
 #include <KDebug>
@@ -31,6 +36,11 @@ CalculatorRunner::CalculatorRunner( QObject* parent, const QVariantList &args )
     : Plasma::AbstractRunner(parent, args)
 {
     Q_UNUSED(args)
+ 
+    #ifdef ENABLE_QALCULATE
+    m_engine = new QalculateEngine;
+    setSpeed(SlowSpeed);
+    #endif
 
     setObjectName("Calculator");
     setIgnoredTypes(Plasma::RunnerContext::Directory | Plasma::RunnerContext::File |
@@ -45,17 +55,20 @@ CalculatorRunner::CalculatorRunner( QObject* parent, const QVariantList &args )
 
 CalculatorRunner::~CalculatorRunner()
 {
+    #ifdef ENABLE_QALCULATE
+    delete m_engine;
+    #endif
 }
 
 void CalculatorRunner::powSubstitutions(QString& cmd)
 {
-     if (cmd.contains("e+", Qt::CaseInsensitive)) {
-         cmd=cmd.replace("e+", "*10^", Qt::CaseInsensitive);
-     }
+    if (cmd.contains("e+", Qt::CaseInsensitive)) {
+        cmd=cmd.replace("e+", "*10^", Qt::CaseInsensitive);
+    }
 
-     if (cmd.contains("e-", Qt::CaseInsensitive)) {
-         cmd=cmd.replace("e-", "*10^-", Qt::CaseInsensitive);
-     }
+    if (cmd.contains("e-", Qt::CaseInsensitive)) {
+        cmd=cmd.replace("e-", "*10^-", Qt::CaseInsensitive);
+    }
 
     // the below code is scary mainly because we have to honor priority
     // honor decimal numbers and parenthesis.
@@ -217,8 +230,11 @@ void CalculatorRunner::match(Plasma::RunnerContext &context)
         return;
     }
 
+    // substitutions not needed with libqalculate
+    #ifndef ENABLE_QALCULATE
     userFriendlySubstitutions(cmd);
     cmd.replace(QRegExp("([a-zA-Z]+)"), "Math.\\1"); //needed for accessing math funktions like sin(),....
+    #endif
 
     QString result = calculate(cmd);
 
@@ -239,6 +255,17 @@ void CalculatorRunner::match(Plasma::RunnerContext &context)
 
 QString CalculatorRunner::calculate(const QString& term)
 {
+    #ifdef ENABLE_QALCULATE
+    QString result = "";
+
+    try {
+        result = m_engine->evaluate(term);
+    } catch(std::exception& e) {
+        kDebug() << "qalculate error: " << e.what();
+    }
+
+    return result;
+    #else
     //kDebug() << "calculating" << term;
     QScriptEngine eng;
     QScriptValue result = eng.evaluate(" var result ="+term+"; result");
@@ -265,7 +292,7 @@ QString CalculatorRunner::calculate(const QString& term)
     roundedResultString.replace(".", KGlobal::locale()->decimalSymbol(), Qt::CaseInsensitive);
 
     return roundedResultString;
-
+    #endif
 }
 
 QMimeData * CalculatorRunner::mimeDataForMatch(const Plasma::QueryMatch *match)
