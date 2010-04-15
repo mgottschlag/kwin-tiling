@@ -2,6 +2,7 @@
 ########### next target ###############
 
 macro_optional_find_package(Qalculate)
+macro_log_feature(QALCULATE_FOUND "Qalculate!" "Qalculate Library" "http://qalculate.sourceforge.net/" FALSE "" "Needed to enable advanced features of the calculator runner")
 if ( QALCULATE_FOUND )
     add_definitions(-DENABLE_QALCULATE)
 
