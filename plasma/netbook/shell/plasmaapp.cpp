@@ -338,6 +338,9 @@ void PlasmaApp::positionPanel()
     }
 
     QRect screenRect = Kephal::ScreenUtils::screenGeometry(m_controlBar->screen());
+    if (!m_isDesktop) {
+        screenRect = m_mainView->geometry();
+    }
 
     //move
     controlBarMoved(m_controlBar);
