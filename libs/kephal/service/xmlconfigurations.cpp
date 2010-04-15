@@ -448,6 +448,22 @@ namespace Kephal {
         return result;
     }
 
+    QMap<int, QRect> XMLConfigurations::resizeLayout(Output * output, const QSize & size, QMap<Output *, int> & outputScreens, QMap<Output *, QSize> & outputSizes) {
+        outputScreens.unite(currentOutputScreens());
+        QMap<int, QPoint> simpleLayout = m_activeConfiguration->layout();
+
+        foreach (Output * o, outputScreens.keys()) {
+            if (o == output) {
+                outputSizes.insert(output, size);
+            } else if (o->isActivated()) {
+                outputSizes.insert(o, o->isActivated() ? o->size() : o->preferredSize());
+            }
+        }
+
+        return m_activeConfiguration->realLayout(simpleLayout, outputScreens, outputSizes);
+    }
+// disabled because they are only used by the dbus api
+#if 0 
     bool XMLConfigurations::move(Output * output, const QPoint & position) {
         if ((! m_activeConfiguration) || (! output->isConnected())) {
             return false;
@@ -492,20 +508,6 @@ namespace Kephal {
 
         return false;
     }
-    QMap<int, QRect> XMLConfigurations::resizeLayout(Output * output, const QSize & size, QMap<Output *, int> & outputScreens, QMap<Output *, QSize> & outputSizes) {
-        outputScreens.unite(currentOutputScreens());
-        QMap<int, QPoint> simpleLayout = m_activeConfiguration->layout();
-
-        foreach (Output * o, outputScreens.keys()) {
-            if (o == output) {
-                outputSizes.insert(output, size);
-            } else if (o->isActivated()) {
-                outputSizes.insert(o, o->isActivated() ? o->size() : o->preferredSize());
-            }
-        }
-
-        return m_activeConfiguration->realLayout(simpleLayout, outputScreens, outputSizes);
-    }
 
     bool XMLConfigurations::resize(Output * output, const QSize & size) {
         kDebug() << output->id() << size;
@@ -534,6 +536,143 @@ namespace Kephal {
         return false;
     }
 
+    bool XMLConfigurations::rotate(Output * output, Rotation rotation) {
+        if (! BackendOutputs::self()) {
+            return false;
+        }
+
+        if (! m_activeConfiguration) {
+            return false;
+        }
+
+        BackendOutput * o = BackendOutputs::self()->backendOutput(output->id());
+        if (o) {
+            bool resizeNeeded = ((output->rotation() + rotation) % 180) != 0;
+            if (resizeNeeded) {
+                kDebug() << "resize is needed for changing rotation from" << output->rotation() << "to" << rotation;
+
+                QSize size(output->size().height(), output->size().width());
+
+                QMap<Output *, QSize> outputSizes;
+                QMap<Output *, int> outputScreens;
+                QMap<int, QRect> layout = resizeLayout(output, size, outputScreens, outputSizes);
+
+                if (layout.empty()) {
+                    INVALID_CONFIGURATION("layout is empty")
+                    return false;
+                }
+
+                requireConfirm();
+                if (o->applyOrientation(rotation, o->reflectX(), o->reflectY()) && activateLayout(layout, outputScreens, outputSizes)) {
+                    OutputXML * xml = outputXml(output->id());
+                    if (xml) {
+                        xml->setWidth(size.width());
+                        xml->setHeight(size.height());
+                        xml->setRotation(rotation);
+                        //saveXml();
+                    }
+
+                    return true;
+                } else {
+                    kDebug() << "setting rotation to" << rotation << "for" << o->id() << "failed";
+
+                    revert();
+                    return false;
+                }
+            } else {
+                requireConfirm();
+                if (o->applyOrientation(rotation, o->reflectX(), o->reflectY())) {
+                    OutputXML * xml = outputXml(o->id());
+                    if (xml) {
+                        xml->setRotation(rotation);
+                        //saveXml();
+                    }
+
+                    return true;
+                } else {
+                    kDebug() << "setting rotation to" << rotation << "for" << o->id() << "failed";
+
+                    revert();
+                    return false;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool XMLConfigurations::changeRate(Output * output, float rate) {
+        if (! BackendOutputs::self()) {
+            return false;
+        }
+
+        BackendOutput * o = BackendOutputs::self()->backendOutput(output->id());
+        if (o) {
+            requireConfirm();
+            if (o->applyGeom(o->geom(), rate)) {
+                OutputXML * xml = outputXml(o->id());
+                if (xml) {
+                    xml->setRate(rate);
+                }
+
+                return true;
+            } else {
+                kDebug() << "setting rate to" << rate << "for" << o->id() << "failed";
+            }
+        }
+
+        revert();
+        return false;
+    }
+
+    bool XMLConfigurations::reflectX(Output * output, bool reflect) {
+        if (! BackendOutputs::self()) {
+            return false;
+        }
+
+        BackendOutput * o = BackendOutputs::self()->backendOutput(output->id());
+        if (o) {
+            requireConfirm();
+            if (o->applyOrientation(o->rotation(), reflect, o->reflectY())) {
+                OutputXML * xml = outputXml(o->id());
+                if (xml) {
+                    xml->setReflectX(reflect);
+                }
+
+                return true;
+            } else {
+                kDebug() << "setting reflect-x to" << reflect << "for" << o->id() << "failed";
+            }
+        }
+
+        revert();
+        return false;
+    }
+
+    bool XMLConfigurations::reflectY(Output * output, bool reflect) {
+        if (! BackendOutputs::self()) {
+            return false;
+        }
+
+        BackendOutput * o = BackendOutputs::self()->backendOutput(output->id());
+        if (o) {
+            requireConfirm();
+            if (o->applyOrientation(o->rotation(), o->reflectY(), reflect)) {
+                OutputXML * xml = outputXml(o->id());
+                if (xml) {
+                    xml->setReflectY(reflect);
+                }
+
+                return true;
+            } else {
+                kDebug() << "setting reflect-y to" << reflect << "for" << o->id() << "failed";
+            }
+        }
+
+        revert();
+        return false;
+    }
+#endif
     QMap<XMLConfiguration *, QMap<int, QPoint> > XMLConfigurations::matchingConfigurationsLayouts(const QMap<int, QPoint> & currentLayout, int removedOutputs) {
         //kDebug() << "searching matching layouts for" << currentLayout;
         QMap<XMLConfiguration *, QMap<int, QPoint> > result;
@@ -1156,143 +1295,6 @@ namespace Kephal {
             }
         }
         return 0;
-    }
-
-    bool XMLConfigurations::rotate(Output * output, Rotation rotation) {
-        if (! BackendOutputs::self()) {
-            return false;
-        }
-
-        if (! m_activeConfiguration) {
-            return false;
-        }
-
-        BackendOutput * o = BackendOutputs::self()->backendOutput(output->id());
-        if (o) {
-            bool resizeNeeded = ((output->rotation() + rotation) % 180) != 0;
-            if (resizeNeeded) {
-                kDebug() << "resize is needed for changing rotation from" << output->rotation() << "to" << rotation;
-
-                QSize size(output->size().height(), output->size().width());
-
-                QMap<Output *, QSize> outputSizes;
-                QMap<Output *, int> outputScreens;
-                QMap<int, QRect> layout = resizeLayout(output, size, outputScreens, outputSizes);
-
-                if (layout.empty()) {
-                    INVALID_CONFIGURATION("layout is empty")
-                    return false;
-                }
-
-                requireConfirm();
-                if (o->applyOrientation(rotation, o->reflectX(), o->reflectY()) && activateLayout(layout, outputScreens, outputSizes)) {
-                    OutputXML * xml = outputXml(output->id());
-                    if (xml) {
-                        xml->setWidth(size.width());
-                        xml->setHeight(size.height());
-                        xml->setRotation(rotation);
-                        //saveXml();
-                    }
-
-                    return true;
-                } else {
-                    kDebug() << "setting rotation to" << rotation << "for" << o->id() << "failed";
-
-                    revert();
-                    return false;
-                }
-            } else {
-                requireConfirm();
-                if (o->applyOrientation(rotation, o->reflectX(), o->reflectY())) {
-                    OutputXML * xml = outputXml(o->id());
-                    if (xml) {
-                        xml->setRotation(rotation);
-                        //saveXml();
-                    }
-
-                    return true;
-                } else {
-                    kDebug() << "setting rotation to" << rotation << "for" << o->id() << "failed";
-
-                    revert();
-                    return false;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    bool XMLConfigurations::reflectX(Output * output, bool reflect) {
-        if (! BackendOutputs::self()) {
-            return false;
-        }
-
-        BackendOutput * o = BackendOutputs::self()->backendOutput(output->id());
-        if (o) {
-            requireConfirm();
-            if (o->applyOrientation(o->rotation(), reflect, o->reflectY())) {
-                OutputXML * xml = outputXml(o->id());
-                if (xml) {
-                    xml->setReflectX(reflect);
-                }
-
-                return true;
-            } else {
-                kDebug() << "setting reflect-x to" << reflect << "for" << o->id() << "failed";
-            }
-        }
-
-        revert();
-        return false;
-    }
-
-    bool XMLConfigurations::reflectY(Output * output, bool reflect) {
-        if (! BackendOutputs::self()) {
-            return false;
-        }
-
-        BackendOutput * o = BackendOutputs::self()->backendOutput(output->id());
-        if (o) {
-            requireConfirm();
-            if (o->applyOrientation(o->rotation(), o->reflectY(), reflect)) {
-                OutputXML * xml = outputXml(o->id());
-                if (xml) {
-                    xml->setReflectY(reflect);
-                }
-
-                return true;
-            } else {
-                kDebug() << "setting reflect-y to" << reflect << "for" << o->id() << "failed";
-            }
-        }
-
-        revert();
-        return false;
-    }
-
-    bool XMLConfigurations::changeRate(Output * output, float rate) {
-        if (! BackendOutputs::self()) {
-            return false;
-        }
-
-        BackendOutput * o = BackendOutputs::self()->backendOutput(output->id());
-        if (o) {
-            requireConfirm();
-            if (o->applyGeom(o->geom(), rate)) {
-                OutputXML * xml = outputXml(o->id());
-                if (xml) {
-                    xml->setRate(rate);
-                }
-
-                return true;
-            } else {
-                kDebug() << "setting rate to" << rate << "for" << o->id() << "failed";
-            }
-        }
-
-        revert();
-        return false;
     }
 
     void XMLConfigurations::setPolling(bool polling) {

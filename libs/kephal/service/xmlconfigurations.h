@@ -54,12 +54,12 @@ namespace Kephal {
             QList<Configuration *> alternateConfigurations();
             QList<QPoint> possiblePositions(Output * output);
 
-            bool move(Output * output, const QPoint & position);
-            bool resize(Output * output, const QSize & size);
-            bool rotate(Output * output, Rotation rotation);
-            bool changeRate(Output * output, float rate);
-            bool reflectX(Output * output, bool reflect);
-            bool reflectY(Output * output, bool reflect);
+//X             bool move(Output * output, const QPoint & position);
+//X             bool resize(Output * output, const QSize & size);
+//X             bool rotate(Output * output, Rotation rotation);
+//X             bool changeRate(Output * output, float rate);
+//X             bool reflectX(Output * output, bool reflect);
+//X             bool reflectY(Output * output, bool reflect);
 
             int screen(Output * output);
             void applyOutputSettings();
@@ -126,7 +126,12 @@ namespace Kephal {
             QMap<Output *, int> currentOutputScreens();
             void matchOutputScreens(const QMap<int, QPoint> & layout);
             OutputXML * outputXml(const QString & id);
+            /**
+             * Helper method for resize and rotate dbus api methods;
+             * adapts the layout when an output is resized or rotated.
+             */
             QMap<int, QRect> resizeLayout(Output * output, const QSize & size, QMap<Output *, int> & outputScreens, QMap<Output *, QSize> & outputSizes);
+
             void requireConfirm();
 
             QMap<QString, XMLConfiguration *> m_configurations;

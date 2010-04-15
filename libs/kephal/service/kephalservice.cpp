@@ -118,10 +118,10 @@ void KephalService::init()
     connect(Outputs::self(), SIGNAL(outputDisconnected(Kephal::Output *)), this, SLOT(outputDisconnected(Kephal::Output *)));
     connect(Outputs::self(), SIGNAL(outputConnected(Kephal::Output *)), this, SLOT(outputConnected(Kephal::Output *)));
 
-    kDebug() << "will check for possible positions...";
-    foreach (Output * output, Outputs::self()->outputs()) {
-        kDebug() << "possible positions for:" << output->id() << Configurations::self()->possiblePositions(output);
-    }
+//X     kDebug() << "will check for possible positions...";
+//X     foreach (Output * output, Outputs::self()->outputs()) {
+//X         kDebug() << "possible positions for:" << output->id() << Configurations::self()->possiblePositions(output);
+//X     }
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
     bool result = dbus.registerService("org.kde.Kephal");
@@ -137,9 +137,9 @@ void KephalService::init()
 
         m_pollTimer = new QTimer(this);
         connect(m_pollTimer, SIGNAL(timeout()), this, SLOT(poll()));
-        if (Configurations::self()->polling()) {
-            m_pollTimer->start(10000);
-        }
+//X         if (Configurations::self()->polling()) {
+//X             m_pollTimer->start(10000);
+//X         }
     } else {
         m_pollTimer = 0;
         m_eventFilter = 0;
@@ -171,14 +171,14 @@ void KephalService::poll()
 
 void KephalService::activateConfiguration()
 {
-    BackendConfigurations * configs = BackendConfigurations::self();
-    Configuration * config = configs->findConfiguration();
-    configs->applyOutputSettings();
-    if (config) {
-        config->activate();
-    } else {
-        kDebug() << "couldnt find matching configuration!!";
-    }
+//X     BackendConfigurations * configs = BackendConfigurations::self();
+//X     Configuration * config = configs->findConfiguration();
+//X     configs->applyOutputSettings();
+//X     if (config) {
+//X         config->activate();
+//X     } else {
+//X         kDebug() << "couldnt find matching configuration!!";
+//X     }
 }
 
 void KephalService::outputDisconnected(Output * output)

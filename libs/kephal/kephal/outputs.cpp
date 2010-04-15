@@ -88,7 +88,8 @@ namespace Kephal {
         return 0;
     }
     QList<QPoint> Output::availablePositions() {
-        return Configurations::self()->possiblePositions(this);
+        return QList<QPoint>();
+        //return Configurations::self()->possiblePositions(this);
     }
 
 #if 0

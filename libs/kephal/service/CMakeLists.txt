@@ -10,8 +10,8 @@ ENDIF(WIN32)
 SET (kephalshared_SRCS
    ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/outputs.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/screens.cpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/configurations.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/simplescreen.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/configurations.cpp
    )
 set (unused_SRCS
    ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/simpleoutput.cpp
@@ -20,19 +20,19 @@ set (unused_SRCS
 
 SET(kephal_service_SRCS
    ${kephalshared_SRCS}
-   backendconfigurations.cpp
    kephalservice.cpp
-   outputscreens.cpp
-   configurationscreens.cpp
    backendoutputs.cpp
    externalconfiguration.cpp
-   xmlconfiguration.cpp
-   xmlconfigurations.cpp
    xml/xmltype.cpp
    xml/configurations_xml.cpp
    xml/xmlnodehandler.cpp
+   backendconfigurations.cpp
+   xmlconfiguration.cpp
+   xmlconfigurations.cpp
    )
 set(unused_SRCS
+   configurationscreens.cpp
+   outputscreens.cpp
    dbus/dbusapi_screens.cpp
    dbus/dbusapi_outputs.cpp
    dbus/dbusapi_configurations.cpp
