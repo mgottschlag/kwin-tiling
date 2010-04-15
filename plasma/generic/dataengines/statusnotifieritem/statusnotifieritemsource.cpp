@@ -38,19 +38,29 @@
 
 #include <netinet/in.h>
 
-StatusNotifierItemSource::StatusNotifierItemSource(const QString &service, QObject *parent)
+StatusNotifierItemSource::StatusNotifierItemSource(const QString &notifierItemId, QObject *parent)
     : Plasma::DataContainer(parent),
       m_customIconLoader(0)
 {
-    setObjectName(service);
+    setObjectName(notifierItemId);
     qDBusRegisterMetaType<KDbusImageStruct>();
     qDBusRegisterMetaType<KDbusImageVector>();
     qDBusRegisterMetaType<KDbusToolTipStruct>();
 
-    m_typeId = service;
-    m_name = service;
+    m_typeId = notifierItemId;
+    m_name = notifierItemId;
 
-    m_statusNotifierItemInterface = new org::kde::StatusNotifierItem(service, "/StatusNotifierItem",
+    int slash = notifierItemId.indexOf('/');
+    if (slash == -1) {
+        kError() << "Invalid notifierItemId:" << notifierItemId;
+        m_valid = false;
+        m_statusNotifierItemInterface = 0;
+        return;
+    }
+    QString service = notifierItemId.left(slash);
+    QString path = notifierItemId.mid(slash);
+
+    m_statusNotifierItemInterface = new org::kde::StatusNotifierItem(service, path,
                                                                      QDBusConnection::sessionBus(), this);
 
     m_valid = !service.isEmpty() && m_statusNotifierItemInterface->isValid();

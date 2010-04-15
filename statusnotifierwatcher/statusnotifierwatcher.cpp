@@ -64,19 +64,29 @@ StatusNotifierWatcher::~StatusNotifierWatcher()
 }
 
 
-void StatusNotifierWatcher::RegisterStatusNotifierItem(const QString &service)
+void StatusNotifierWatcher::RegisterStatusNotifierItem(const QString &serviceOrPath)
 {
+    QString service;
+    QString path;
+    if (serviceOrPath.startsWith('/')) {
+        service = message().service();
+        path = serviceOrPath;
+    } else {
+        service = serviceOrPath;
+        path = "/StatusNotifierItem";
+    }
+    QString notifierItemId = service + path;
     if (QDBusConnection::sessionBus().interface()->isServiceRegistered(service).value() &&
-        !m_registeredServices.contains(service)) {
-        kDebug()<<"Registering"<<service<<"to system tray";
+        !m_registeredServices.contains(notifierItemId)) {
+        kDebug()<<"Registering" << notifierItemId << "to system tray";
 
         //check if the service has registered a SystemTray object
-        org::kde::StatusNotifierItem trayclient(service, "/StatusNotifierItem",
-                                        QDBusConnection::sessionBus());
+        org::kde::StatusNotifierItem trayclient(service, path,
+                                                QDBusConnection::sessionBus());
         if (trayclient.isValid()) {
-            m_registeredServices.append(service);
-            m_serviceWatcher->addWatchedService(service);
-            emit StatusNotifierItemRegistered(service);
+            m_registeredServices.append(notifierItemId);
+            m_serviceWatcher->addWatchedService(notifierItemId);
+            emit StatusNotifierItemRegistered(notifierItemId);
         }
     }
 }
@@ -92,9 +102,16 @@ void StatusNotifierWatcher::serviceUnregistered(const QString& name)
     //kDebug()<<"Service "<< name << "unregistered";
     m_serviceWatcher->removeWatchedService(name);
 
-    if (m_registeredServices.contains(name)) {
-        m_registeredServices.removeAll(name);
-        emit StatusNotifierItemUnregistered(name);
+    QString match = name + '/';
+    QStringList::Iterator it = m_registeredServices.begin();
+    while (it != m_registeredServices.end()) {
+        if (it->startsWith(match)) {
+            QString name = *it;
+            it = m_registeredServices.erase(it);
+            emit StatusNotifierItemUnregistered(name);
+        } else {
+            ++it;
+        }
     }
 
     if (m_statusNotifierHostServices.contains(name)) {

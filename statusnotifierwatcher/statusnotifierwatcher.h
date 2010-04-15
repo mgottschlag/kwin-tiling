@@ -22,13 +22,14 @@
 
 #include <kdedmodule.h>
 
+#include <QDBusContext>
 #include <QObject>
 #include <QStringList>
 #include <QSet>
 
 class QDBusServiceWatcher;
 
-class StatusNotifierWatcher : public KDEDModule
+class StatusNotifierWatcher : public KDEDModule, protected QDBusContext
 {
     Q_OBJECT
     Q_PROPERTY(QStringList RegisteredStatusNotifierItems READ RegisteredStatusNotifierItems)
