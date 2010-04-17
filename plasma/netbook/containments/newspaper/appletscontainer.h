@@ -34,6 +34,7 @@ namespace Plasma
 }
 
 class QGraphicsLinearLayout;
+class QPropertyAnimation;
 
 class AppletsContainer : public QGraphicsWidget
 {
@@ -64,10 +65,13 @@ protected:
 
     bool sceneEventFilter(QGraphicsItem *i, QEvent *e);
 
-public slots:
+public Q_SLOTS:
     void layoutApplet(Plasma::Applet *applet, const QPointF &post);
     void updateSize();
     void cleanupColumns();
+
+private Q_SLOTS:
+    void delayedAppletActivation();
 
 Q_SIGNALS:
     void appletSizeHintChanged();
@@ -80,6 +84,7 @@ private:
     QSizeF m_viewportSize;
     Plasma::Containment *m_containment;
     bool m_expandAll;
+    QPropertyAnimation *m_preferredHeightAnimation;
 };
 
 #endif

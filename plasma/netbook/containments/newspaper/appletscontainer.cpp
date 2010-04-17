@@ -28,7 +28,9 @@
 
 #include <QGraphicsLinearLayout>
 #include <QGraphicsSceneMouseEvent>
+#include <QPropertyAnimation>
 #include <QWidget>
+#include <QTimer>
 
 #include <Plasma/Applet>
 #include <Plasma/Containment>
@@ -92,10 +94,11 @@ void AppletsContainer::setExpandAll(const bool expand)
         return;
     }
 
-    if (expand) {
+    if (expand && m_orientation != Qt::Horizontal) {
         foreach (Plasma::Applet *applet, m_containment->applets()) {
             applet->setPreferredHeight(-1);
         }
+
     } else {
         foreach (Plasma::Applet *applet, m_containment->applets()) {
             if (applet == m_currentApplet.data()) {
@@ -266,7 +269,7 @@ void AppletsContainer::createAppletTitle(Plasma::Applet *applet)
     if (!m_containment) {
         m_containment = applet->containment();
     }
-    if (m_expandAll) {
+    if (m_expandAll || m_orientation == Qt::Horizontal) {
         applet->setPreferredHeight(-1);
     } else {
         applet->setPreferredHeight(optimalAppletSize(applet, false).height());
@@ -291,14 +294,16 @@ QGraphicsLayoutItem *AppletsContainer::itemAt(int i)
 
 QSizeF AppletsContainer::optimalAppletSize(Plasma::Applet *applet, const bool maximized) const
 {
+    //FIXME: it was necessary to add hardcoded fixed qsizes to make things work, why?
     if (maximized) {
         //FIXME: this change of fixed preferred height could cause a relayout, unfortunately there is no other way
-        applet->setPreferredHeight(-1);
         int preferred = applet->preferredHeight();
-        return applet->effectiveSizeHint(Qt::PreferredSize).boundedTo(m_viewportSize);
+        applet->setPreferredHeight(-1);
+        QSizeF size = applet->effectiveSizeHint(Qt::PreferredSize).boundedTo(m_viewportSize)+QSizeF(12,12);
         applet->setPreferredHeight(preferred);
+        return size;
     } else {
-        return applet->effectiveSizeHint(Qt::MinimumSize).expandedTo(m_viewportSize/2);
+        return QSizeF(applet->effectiveSizeHint(Qt::MinimumSize)+QSizeF(0, 110)).expandedTo(m_viewportSize/2)+QSizeF(4,4);
     }
 }
 
@@ -306,7 +311,7 @@ void AppletsContainer::setViewportSize(const QSizeF &size)
 {
     m_viewportSize = size;
 
-    if (!m_containment || m_expandAll) {
+    if (!m_containment || m_expandAll || m_orientation == Qt::Horizontal) {
         return;
     }
     foreach (Plasma::Applet *applet, m_containment->applets()) {
@@ -325,11 +330,11 @@ QSizeF AppletsContainer::viewportSize() const
 
 bool AppletsContainer::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
 {
-    if (m_expandAll) {
+    if (m_expandAll || m_orientation == Qt::Horizontal) {
         return false;
     }
 
-    if (event->type() == QEvent::GraphicsSceneMouseRelease) {
+    if (event->type() == QEvent::GraphicsSceneMousePress) {
         foreach (Plasma::Applet *applet, m_containment->applets()) {
             if (applet->isAncestorOf(watched)) {
                 if (m_currentApplet.data()) {
@@ -337,12 +342,17 @@ bool AppletsContainer::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
                 }
                 m_currentApplet = applet;
                 applet->setPreferredHeight(optimalAppletSize(applet, true).height());
-                emit appletActivated(applet);
+                QTimer::singleShot(250, this, SLOT(delayedAppletActivation()));
                 break;
             }
         }
     }
     return false;
+}
+
+void AppletsContainer::delayedAppletActivation()
+{
+    emit appletActivated(m_currentApplet.data());
 }
 
 #include "appletscontainer.moc"
