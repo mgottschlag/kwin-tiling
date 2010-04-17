@@ -66,7 +66,6 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
       m_leftArrow(0),
       m_rightArrow(0)
 {
-    m_container = new AppletsContainer();
     setContainmentType(Containment::CustomContainment);
 
     connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
@@ -74,16 +73,6 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
 
 
     connect(this, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
-
-    m_updateSizeTimer = new QTimer(this);
-    m_updateSizeTimer->setSingleShot(true);
-    connect(m_updateSizeTimer, SIGNAL(timeout()), m_container, SLOT(updateSize()));
-
-    m_relayoutTimer = new QTimer(this);
-    m_relayoutTimer->setSingleShot(true);
-    connect(m_relayoutTimer, SIGNAL(timeout()), m_container, SLOT(updateSize()));
-    connect(m_relayoutTimer, SIGNAL(timeout()), m_container, SLOT(cleanupColumns()));
-    connect(m_container, SIGNAL(appletSizeHintChanged()), this, SLOT(appletSizeHintChanged()));
 }
 
 Newspaper::~Newspaper()
@@ -96,9 +85,22 @@ void Newspaper::init()
     m_externalLayout = new QGraphicsLinearLayout(this);
     m_externalLayout->setContentsMargins(0, 0, 0, 0);
     m_scrollWidget = new Plasma::ScrollWidget(this);
+    //this will depend from expandall and orientation
+    //m_scrollWidget->setFiltersChildEvents(false);
     m_externalLayout->addItem(m_scrollWidget);
-    m_container->setParent(m_scrollWidget);
+    m_container = new AppletsContainer(this);
     m_scrollWidget->setWidget(m_container);
+    connect(m_container, SIGNAL(appletActivated(Plasma::Applet *)), this, SLOT(appletActivated(Plasma::Applet *)));
+
+    m_updateSizeTimer = new QTimer(this);
+    m_updateSizeTimer->setSingleShot(true);
+    connect(m_updateSizeTimer, SIGNAL(timeout()), m_container, SLOT(updateSize()));
+
+    m_relayoutTimer = new QTimer(this);
+    m_relayoutTimer->setSingleShot(true);
+    connect(m_relayoutTimer, SIGNAL(timeout()), m_container, SLOT(updateSize()));
+    connect(m_relayoutTimer, SIGNAL(timeout()), m_container, SLOT(cleanupColumns()));
+    connect(m_container, SIGNAL(appletSizeHintChanged()), this, SLOT(appletSizeHintChanged()));
 
     m_orientation = (Qt::Orientation)config().readEntry("orientation", (int)Qt::Vertical);
     m_container->setOrientation(m_orientation);
@@ -304,6 +306,7 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
 
     if (constraints & Plasma::SizeConstraint) {
         m_container->syncColumnSizes();
+        m_container->setViewportSize(m_scrollWidget->viewportGeometry().size());
     }
 
     if (constraints & Plasma::ImmutableConstraint) {
@@ -543,6 +546,11 @@ void Newspaper::updateRemoveActionVisibility()
         a->setEnabled(newspapers > 1);
         a->setVisible(newspapers > 1);
     }
+}
+
+void Newspaper::appletActivated(Plasma::Applet *applet)
+{
+    m_scrollWidget->ensureItemVisible(applet);
 }
 
 void Newspaper::containmentAdded(Plasma::Containment *containment)

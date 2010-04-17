@@ -80,6 +80,7 @@ private Q_SLOTS:
     void containmentAdded(Plasma::Containment *containment);
     void containmentRemoved(QObject *containment);
     void availableScreenRegionChanged();
+    void appletActivated(Plasma::Applet *applet);
 
 private:
     Plasma::ScrollWidget *m_scrollWidget;

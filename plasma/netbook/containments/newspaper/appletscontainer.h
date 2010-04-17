@@ -30,6 +30,7 @@
 namespace Plasma
 {
     class Applet;
+    class Containment;
 }
 
 class QGraphicsLinearLayout;
@@ -38,7 +39,7 @@ class AppletsContainer : public QGraphicsWidget
 {
     Q_OBJECT
 public:
-    AppletsContainer(QGraphicsItem *item = 0);
+    AppletsContainer(QGraphicsItem *parent = 0);
     ~AppletsContainer();
 
     void syncColumnSizes();
@@ -52,6 +53,17 @@ public:
     int count() const;
     QGraphicsLayoutItem *itemAt(int i);
 
+    void setViewportSize(const QSizeF &size);
+    QSizeF viewportSize() const;
+
+    void setExpandAll(const bool expand);
+    bool expandAll() const;
+
+protected:
+    QSizeF optimalAppletSize(Plasma::Applet *applet, const bool maximized) const;
+
+    bool sceneEventFilter(QGraphicsItem *i, QEvent *e);
+
 public slots:
     void layoutApplet(Plasma::Applet *applet, const QPointF &post);
     void updateSize();
@@ -59,10 +71,15 @@ public slots:
 
 Q_SIGNALS:
     void appletSizeHintChanged();
+    void appletActivated(Plasma::Applet *applet);
 
 private:
     QGraphicsLinearLayout *m_mainLayout;
     Qt::Orientation m_orientation;
+    QWeakPointer<Plasma::Applet>m_currentApplet;
+    QSizeF m_viewportSize;
+    Plasma::Containment *m_containment;
+    bool m_expandAll;
 };
 
 #endif

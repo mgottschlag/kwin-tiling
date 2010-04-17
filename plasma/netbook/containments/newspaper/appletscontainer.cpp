@@ -27,17 +27,23 @@
 #include "applettitlebar.h"
 
 #include <QGraphicsLinearLayout>
+#include <QGraphicsSceneMouseEvent>
 #include <QWidget>
 
 #include <Plasma/Applet>
+#include <Plasma/Containment>
 
 using namespace Plasma;
 
 AppletsContainer::AppletsContainer(QGraphicsItem *item)
  : QGraphicsWidget(item),
-   m_orientation(Qt::Vertical)
+   m_orientation(Qt::Vertical),
+   m_viewportSize(size()),
+   m_containment(0),
+   m_expandAll(true)
 {
     m_mainLayout = new QGraphicsLinearLayout(this);
+    setFiltersChildEvents(!m_expandAll);
 }
 
 AppletsContainer::~AppletsContainer()
@@ -72,6 +78,33 @@ void AppletsContainer::updateSize()
     }
 }
 
+void AppletsContainer::setExpandAll(const bool expand)
+{
+    if (m_expandAll == expand) {
+        return;
+    }
+
+    setFiltersChildEvents(!m_expandAll);
+
+    if (expand) {
+        foreach (Plasma::Applet *applet, m_containment->applets()) {
+            applet->setPreferredHeight(-1);
+        }
+    } else {
+        foreach (Plasma::Applet *applet, m_containment->applets()) {
+            if (applet == m_currentApplet.data()) {
+                applet->setPreferredHeight(optimalAppletSize(applet, true).height());
+            } else {
+                applet->setPreferredHeight(optimalAppletSize(applet, false).height());
+            }
+        }
+    }
+}
+
+bool AppletsContainer::expandAll() const
+{
+    return m_expandAll;
+}
 
 QGraphicsLinearLayout *AppletsContainer::addColumn()
 {
@@ -223,6 +256,15 @@ void AppletsContainer::createAppletTitle(Plasma::Applet *applet)
 {
     AppletTitleBar *appletTitleBar = new AppletTitleBar(applet);
     appletTitleBar->show();
+
+    if (!m_containment) {
+        m_containment = applet->containment();
+    }
+    if (m_expandAll) {
+        applet->setPreferredHeight(-1);
+    } else {
+        applet->setPreferredHeight(optimalAppletSize(applet, false).height());
+    }
 }
 
 void AppletsContainer::setOrientation(Qt::Orientation orientation)
@@ -240,3 +282,62 @@ QGraphicsLayoutItem *AppletsContainer::itemAt(int i)
 {
     return m_mainLayout->itemAt(i);
 }
+
+QSizeF AppletsContainer::optimalAppletSize(Plasma::Applet *applet, const bool maximized) const
+{
+    if (maximized) {
+        //FIXME: this change of fixed preferred height could cause a relayout, unfortunately there is no other way
+        applet->setPreferredHeight(-1);
+        int preferred = applet->preferredHeight();
+        return applet->effectiveSizeHint(Qt::PreferredSize).boundedTo(m_viewportSize);
+        applet->setPreferredHeight(preferred);
+    } else {
+        return applet->effectiveSizeHint(Qt::MinimumSize).expandedTo(m_viewportSize/2);
+    }
+}
+
+void AppletsContainer::setViewportSize(const QSizeF &size)
+{
+    m_viewportSize = size;
+
+    if (!m_containment || m_expandAll) {
+        return;
+    }
+    foreach (Plasma::Applet *applet, m_containment->applets()) {
+        if (applet == m_currentApplet.data()) {
+            applet->setPreferredHeight(optimalAppletSize(applet, true).height());
+        } else {
+            applet->setPreferredHeight(optimalAppletSize(applet, false).height());
+        }
+    }
+}
+
+QSizeF AppletsContainer::viewportSize() const
+{
+    return m_viewportSize;
+}
+
+bool AppletsContainer::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
+{
+    if (m_expandAll) {
+        return false;
+    }
+
+    if (event->type() == QEvent::GraphicsSceneMouseRelease) {
+        foreach (Plasma::Applet *applet, m_containment->applets()) {
+            if (applet->isAncestorOf(watched)) {
+                if (m_currentApplet.data()) {
+                    m_currentApplet.data()->setPreferredHeight(optimalAppletSize(applet, false).height());
+                }
+                m_currentApplet = applet;
+                applet->setPreferredHeight(optimalAppletSize(applet, true).height());
+                emit appletActivated(applet);
+                break;
+            }
+        }
+    }
+    return false;
+}
+
+#include "appletscontainer.moc"
+
