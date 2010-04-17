@@ -10,6 +10,8 @@ include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/ksysguard
                     ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/screensaver
                     ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal)
 
+macro_bool_to_01(X11_Xscreensaver_FOUND HAVE_XSCREENSAVER)
+macro_log_feature(HAVE_XSCREENSAVER "libxss" "XScreenSaver Library" "http://www.x.org/" FALSE "" "Needed to enable screensaver status check")
 configure_file(config-xautolock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-xautolock.h)
 
 set(krunner_KCFG_SRCS kcfg/krunnersettings.kcfgc kcfg/kscreensaversettings.kcfgc kcfg/klaunchsettings.kcfgc)
