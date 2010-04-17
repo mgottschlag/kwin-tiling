@@ -25,6 +25,7 @@
 
 class BackgroundDialog;
 class NetPanelController;
+class QPropertyAnimation;
 
 namespace Plasma
 {
@@ -83,6 +84,7 @@ private:
     NetPanelController *m_panelController;
     bool m_configurationMode;
     bool m_useGL;
+    QPropertyAnimation *m_containmentSwitchAnimation;
 };
 
 #endif // multiple inclusion guard

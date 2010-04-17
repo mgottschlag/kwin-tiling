@@ -22,6 +22,7 @@
 
 #include <QAction>
 #include <QCoreApplication>
+#include <QPropertyAnimation>
 
 #ifndef QT_NO_OPENGL
 #include <QtOpenGL/QtOpenGL>
@@ -46,6 +47,8 @@ NetView::NetView(Plasma::Containment *containment, int uid, QWidget *parent)
     connect(this, SIGNAL(lostContainment()), SLOT(grabContainment()));
     //setOptimizationFlags(QGraphicsView::DontSavePainterState);
     setAttribute(Qt::WA_TranslucentBackground, false);
+
+    m_containmentSwitchAnimation = new QPropertyAnimation(this, "sceneRect", this);
 }
 
 NetView::~NetView()
@@ -109,9 +112,23 @@ void NetView::setContainment(Plasma::Containment *c)
         }
     }
 
+    if (id() == mainViewId()) {
+        setTrackContainmentChanges(false);
+    }
+
     Plasma::View::setContainment(c);
     connectContainment(c);
     updateGeometry();
+
+    if (id() == mainViewId()) {
+        if (c) {
+            m_containmentSwitchAnimation->setDuration(250);
+            m_containmentSwitchAnimation->setStartValue(sceneRect());
+            m_containmentSwitchAnimation->setEndValue(c->geometry());
+            m_containmentSwitchAnimation->start();
+        }
+        setTrackContainmentChanges(true);
+    }
 }
 
 bool NetView::autoHide() const
