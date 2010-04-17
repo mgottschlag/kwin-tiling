@@ -61,6 +61,7 @@ using namespace Plasma;
 Newspaper::Newspaper(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_orientation(Qt::Vertical),
+      m_expandAll(false),
       m_appletOverlay(0),
       m_dragging(0),
       m_leftArrow(0),
@@ -85,8 +86,6 @@ void Newspaper::init()
     m_externalLayout = new QGraphicsLinearLayout(this);
     m_externalLayout->setContentsMargins(0, 0, 0, 0);
     m_scrollWidget = new Plasma::ScrollWidget(this);
-    //this will depend from expandall and orientation
-    //m_scrollWidget->setFiltersChildEvents(false);
     m_externalLayout->addItem(m_scrollWidget);
     m_container = new AppletsContainer(this);
     m_scrollWidget->setWidget(m_container);
@@ -104,6 +103,10 @@ void Newspaper::init()
 
     m_orientation = (Qt::Orientation)config().readEntry("orientation", (int)Qt::Vertical);
     m_container->setOrientation(m_orientation);
+
+    m_expandAll = config().readEntry("ExpandAllApplets", false);
+    m_container->setExpandAll(m_expandAll);
+    m_scrollWidget->setFiltersChildEvents(m_expandAll || m_orientation == Qt::Horizontal);
 
     m_container->addColumn();
     setOrientation(m_orientation);

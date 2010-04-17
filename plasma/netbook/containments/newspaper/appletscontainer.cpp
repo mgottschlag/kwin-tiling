@@ -40,7 +40,7 @@ AppletsContainer::AppletsContainer(QGraphicsItem *item)
    m_orientation(Qt::Vertical),
    m_viewportSize(size()),
    m_containment(0),
-   m_expandAll(true)
+   m_expandAll(false)
 {
     m_mainLayout = new QGraphicsLinearLayout(this);
     setFiltersChildEvents(!m_expandAll);
@@ -84,7 +84,13 @@ void AppletsContainer::setExpandAll(const bool expand)
         return;
     }
 
+    m_expandAll = expand;
+
     setFiltersChildEvents(!m_expandAll);
+
+    if (!m_containment) {
+        return;
+    }
 
     if (expand) {
         foreach (Plasma::Applet *applet, m_containment->applets()) {

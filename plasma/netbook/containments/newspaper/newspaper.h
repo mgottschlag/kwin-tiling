@@ -86,6 +86,7 @@ private:
     Plasma::ScrollWidget *m_scrollWidget;
     QGraphicsLinearLayout *m_externalLayout;
     Qt::Orientation m_orientation;
+    bool m_expandAll;
     Plasma::FrameSvg *m_background;
     AppletOverlay *m_appletOverlay;
     NetToolBox *m_toolBox;
