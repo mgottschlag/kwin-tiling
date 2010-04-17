@@ -9,7 +9,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
 X-DocPath=kcontrol/solid-hardware/index.html
 
-Name=Hardware
+Name=Solid Backend
 Name[ar]=العتاد
 Name[be]=Прылады
 Name[be@latin]=Aparatura

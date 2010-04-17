@@ -8,7 +8,7 @@ Exec=kcmshell4 desktoppath
 X-KDE-Library=kcm_desktoppaths
 X-KDE-PluginKeyword=dpath
 X-KDE-ParentApp=kcontrol
-X-KDE-System-Settings-Parent-Category=about-me
+X-KDE-System-Settings-Parent-Category=account-details
 X-KDE-Weight=60
 
 Name=Paths

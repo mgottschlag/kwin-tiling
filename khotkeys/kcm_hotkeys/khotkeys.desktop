@@ -6,10 +6,10 @@ X-KDE-ServiceTypes=KCModule,KCModuleInit
 X-KDE-Library=kcm_hotkeys
 X-KDE-PluginKeyword=khotkeys
 X-KDE-Init-Symbol=khotkeys
-X-KDE-System-Settings-Parent-Category=input-actions
+X-KDE-System-Settings-Parent-Category=shortcuts-and-gestures
 X-KDE-ParentApp=kcontrol
 
-Name=Input Actions
+Name=Custom Shortcuts
 Name[af]=Inset Aksies
 Name[ar]=إجراءات الإدخال
 Name[be]=Дзеянні уводу

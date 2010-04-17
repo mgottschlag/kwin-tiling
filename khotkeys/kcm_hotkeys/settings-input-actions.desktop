@@ -2,10 +2,10 @@
 Type=Service
 X-KDE-ServiceTypes=SystemSettingsCategory
 X-KDE-System-Settings-Category=input-actions
-X-KDE-System-Settings-Parent-Category=computer-administration
-Icon=preferences-desktop-keyboard-khotkeys
+X-KDE-System-Settings-Parent-Category=hardware
+Icon=preferences-desktop-peripherals
 
-Name=Input Actions
+Name=Input Devices
 Name[af]=Inset Aksies
 Name[ar]=إجراءات الإدخال
 Name[be]=Дзеянні уводу

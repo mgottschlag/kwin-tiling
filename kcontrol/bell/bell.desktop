@@ -10,7 +10,7 @@ X-KDE-Library=kcm_bell
 X-KDE-Init-Symbol=bell
 X-KDE-ParentApp=kcontrol
 
-X-KDE-System-Settings-Parent-Category=notifications
+X-KDE-System-Settings-Parent-Category=application-and-system-notifications
 X-KDE-Weight=60
 
 Name=System Bell

@@ -9,7 +9,7 @@ X-KDE-Library=kcm_keys
 X-KDE-Init-Symbol=keys
 X-KDE-ParentApp=kcontrol
 
-X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
+X-KDE-System-Settings-Parent-Category=input-actions
 X-KDE-Weight=160
 
 Name=Global Keyboard Shortcuts
