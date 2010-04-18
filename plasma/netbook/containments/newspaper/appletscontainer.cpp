@@ -33,12 +33,14 @@
 #include <QTimer>
 
 #include <Plasma/Applet>
+#include <Plasma/ScrollWidget>
 #include <Plasma/Containment>
 
 using namespace Plasma;
 
-AppletsContainer::AppletsContainer(QGraphicsItem *item)
- : QGraphicsWidget(item),
+AppletsContainer::AppletsContainer(Plasma::ScrollWidget *parent)
+ : QGraphicsWidget(parent),
+   m_scrollWidget(parent),
    m_orientation(Qt::Vertical),
    m_viewportSize(size()),
    m_containment(0),
@@ -312,6 +314,7 @@ void AppletsContainer::setViewportSize(const QSizeF &size)
     m_viewportSize = size;
 
     if (!m_containment || m_expandAll || m_orientation == Qt::Horizontal) {
+        m_scrollWidget->setSnapSize(QSizeF());
         return;
     }
     foreach (Plasma::Applet *applet, m_containment->applets()) {
@@ -321,6 +324,7 @@ void AppletsContainer::setViewportSize(const QSizeF &size)
             applet->setPreferredHeight(optimalAppletSize(applet, false).height());
         }
     }
+    m_scrollWidget->setSnapSize(size/2);
 }
 
 QSizeF AppletsContainer::viewportSize() const

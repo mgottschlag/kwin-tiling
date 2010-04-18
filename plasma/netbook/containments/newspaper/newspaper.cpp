@@ -87,7 +87,7 @@ void Newspaper::init()
     m_externalLayout->setContentsMargins(0, 0, 0, 0);
     m_scrollWidget = new Plasma::ScrollWidget(this);
     m_externalLayout->addItem(m_scrollWidget);
-    m_container = new AppletsContainer(this);
+    m_container = new AppletsContainer(m_scrollWidget);
     m_scrollWidget->setWidget(m_container);
     connect(m_container, SIGNAL(appletActivated(Plasma::Applet *)), this, SLOT(appletActivated(Plasma::Applet *)));
 
@@ -107,6 +107,7 @@ void Newspaper::init()
     m_expandAll = config().readEntry("ExpandAllApplets", false);
     m_container->setExpandAll(m_expandAll);
     m_scrollWidget->setFiltersChildEvents(m_expandAll || m_orientation == Qt::Horizontal);
+
 
     m_container->addColumn();
     setOrientation(m_orientation);

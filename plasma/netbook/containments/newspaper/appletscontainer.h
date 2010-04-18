@@ -30,6 +30,7 @@
 namespace Plasma
 {
     class Applet;
+    class ScrollWidget;
     class Containment;
 }
 
@@ -40,7 +41,7 @@ class AppletsContainer : public QGraphicsWidget
 {
     Q_OBJECT
 public:
-    AppletsContainer(QGraphicsItem *parent = 0);
+    AppletsContainer(Plasma::ScrollWidget *parent);
     ~AppletsContainer();
 
     void syncColumnSizes();
@@ -78,6 +79,7 @@ Q_SIGNALS:
     void appletActivated(Plasma::Applet *applet);
 
 private:
+    Plasma::ScrollWidget *m_scrollWidget;
     QGraphicsLinearLayout *m_mainLayout;
     Qt::Orientation m_orientation;
     QWeakPointer<Plasma::Applet>m_currentApplet;
