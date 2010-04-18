@@ -343,6 +343,8 @@ void ItemContainer::relayout()
         m_layout->setColumnAlignment(i, Qt::AlignCenter);
     }
 
+    m_itemView->setSnapSize(QSizeF(maxColumnWidth, maxRowHeight) + QSizeF(qMax(m_layout->horizontalSpacing(), (qreal)0), qMax(m_layout->verticalSpacing(), (qreal)0)));
+
     if (!isVisible()) {
         m_layout->activate();
     }
