@@ -11,9 +11,9 @@ X-KDE-Library=kcm_kdm
 X-KDE-RootOnly=true
 X-KDE-ParentApp=kcontrol
 
-X-KDE-System-Settings-Parent-Category=system
+X-KDE-System-Settings-Parent-Category=security
 
-Name=Login Manager
+Name=Login Screen 
 Name[af]=Aanteken Bestuurder
 Name[ar]=مدير الولوج
 Name[be]=Кіраўнік уваходу

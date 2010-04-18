@@ -6,7 +6,7 @@ Type=Service
 X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_desktopthemedetails
 X-KDE-ParentApp=kcontrol
-X-KDE-System-Settings-Parent-Category=advanced-user-settings
+X-KDE-System-Settings-Parent-Category=desktop-appearance
 X-DocPath=kcontrol/desktopthemedetails/index.html
 
 Name=Desktop Theme Details

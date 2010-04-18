@@ -8,8 +8,9 @@ X-DocPath=kcontrol/clock/index.html
 X-KDE-Library=kcm_clock
 X-KDE-ParentApp=kcontrol
 
-#FIXME should this be in system settings when we can get to it through the panel?
-X-KDE-System-Settings-Parent-Category=computer-administration
+#should this be in system settings when we can get to it through the panel?
+#Answer: Yes.
+X-KDE-System-Settings-Parent-Category=system-administration
 
 Name=Date & Time
 Name[af]=Datum & Tyd

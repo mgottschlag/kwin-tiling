@@ -6,7 +6,7 @@ X-KDE-ServiceTypes=KCModule
 
 X-KDE-Library=kcm_solid
 X-KDE-ParentApp=kcontrol
-X-KDE-System-Settings-Parent-Category=advanced-user-settings
+X-KDE-System-Settings-Parent-Category=hardware
 X-DocPath=kcontrol/solid-hardware/index.html
 
 Name=Solid Backend

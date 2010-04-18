@@ -8,9 +8,9 @@ X-DocPath=kcontrol/kcmsmserver/index.html
 X-KDE-Library=kcm_smserver
 X-KDE-ParentApp=kcontrol
 
-X-KDE-System-Settings-Parent-Category=advanced-user-settings
+X-KDE-System-Settings-Parent-Category=startup-and-shutdown
 
-Name=Session Manager
+Name=Session Management
 Name[af]=Sessie Bestuurder
 Name[ar]=مدير الجلسات
 Name[be]=Кіраўнік сеансаў

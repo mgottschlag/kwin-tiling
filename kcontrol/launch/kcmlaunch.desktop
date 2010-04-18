@@ -8,7 +8,7 @@ Exec=kcmshell4 kcmlaunch
 X-KDE-Library=kcm_launch
 X-KDE-ParentApp=kcontrol
 
-X-KDE-System-Settings-Parent-Category=appearance
+X-KDE-System-Settings-Parent-Category=application-and-system-notifications
 X-KDE-Weight=80
 
 Name=Launch Feedback

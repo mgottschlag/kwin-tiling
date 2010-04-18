@@ -213,5 +213,5 @@ X-KDE-Keywords[zh_CN]=font,fonts,installer,truetype,type1,speedo,bitmap,字体,�
 X-KDE-Keywords[zh_TW]=font,fonts,installer,truetype,type1,bitmap,字型,安裝程式,點陣
 
 Categories=Qt;KDE;X-KDE-settings-system;
-X-KDE-System-Settings-Parent-Category=computer-administration
+X-KDE-System-Settings-Parent-Category=system-administration
 

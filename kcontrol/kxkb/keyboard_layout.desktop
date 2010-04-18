@@ -9,7 +9,7 @@ X-KDE-Library=kcm_keyboard_layout
 X-KDE-PluginKeyword=keyboard_layout
 X-KDE-Init-Symbol=keyboard_layout
 X-KDE-ParentApp=kcontrol
-X-KDE-System-Settings-Parent-Category=regional-and-language
+X-KDE-System-Settings-Parent-Category=main-input-devices
 X-KDE-Weight=60
 
 OnlyShowIn=KDE

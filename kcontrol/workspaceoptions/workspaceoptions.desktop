@@ -8,7 +8,7 @@ X-DocPath=kcontrol/workspaceoptions/index.html
 X-KDE-Library=kcm_workspaceoptions
 X-KDE-ParentApp=kcontrol
 
-X-KDE-System-Settings-Parent-Category=desktop
+X-KDE-System-Settings-Parent-Category=desktop-appearance
 
 Name=Workspace
 Name[ca]=Espai de treball
