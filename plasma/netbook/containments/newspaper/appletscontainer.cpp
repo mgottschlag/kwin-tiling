@@ -48,6 +48,7 @@ AppletsContainer::AppletsContainer(Plasma::ScrollWidget *parent)
 {
     m_mainLayout = new QGraphicsLinearLayout(this);
     setFiltersChildEvents(!m_expandAll);
+    m_scrollWidget->installEventFilter(this);
 }
 
 AppletsContainer::~AppletsContainer()
@@ -301,30 +302,32 @@ QSizeF AppletsContainer::optimalAppletSize(Plasma::Applet *applet, const bool ma
         //FIXME: this change of fixed preferred height could cause a relayout, unfortunately there is no other way
         int preferred = applet->preferredHeight();
         applet->setPreferredHeight(-1);
-        QSizeF size = applet->effectiveSizeHint(Qt::PreferredSize).boundedTo(m_viewportSize)+QSizeF(12,12);
+        QSizeF size = applet->effectiveSizeHint(Qt::PreferredSize).boundedTo(m_viewportSize - QSizeF(12,12));
         applet->setPreferredHeight(preferred);
         return size;
     } else {
-        return QSizeF(applet->effectiveSizeHint(Qt::MinimumSize)+QSizeF(0, 110)).expandedTo(m_viewportSize/2)+QSizeF(4,4);
+        return QSizeF(applet->effectiveSizeHint(Qt::MinimumSize)+QSizeF(0, 110)).expandedTo(m_viewportSize/2)-QSizeF(12,12);
     }
 }
 
-void AppletsContainer::setViewportSize(const QSizeF &size)
+bool AppletsContainer::eventFilter(QObject *watched, QEvent *event)
 {
-    m_viewportSize = size;
+    if (watched == m_scrollWidget && event->type() == QEvent::GraphicsSceneResize) {
+        m_viewportSize = m_scrollWidget->viewportGeometry().size();
 
-    if (!m_containment || m_expandAll || m_orientation == Qt::Horizontal) {
-        m_scrollWidget->setSnapSize(QSizeF());
-        return;
-    }
-    foreach (Plasma::Applet *applet, m_containment->applets()) {
-        if (applet == m_currentApplet.data()) {
-            applet->setPreferredHeight(optimalAppletSize(applet, true).height());
-        } else {
-            applet->setPreferredHeight(optimalAppletSize(applet, false).height());
+        if (!m_containment || m_expandAll || m_orientation == Qt::Horizontal) {
+            return false;
+        }
+        foreach (Plasma::Applet *applet, m_containment->applets()) {
+            if (applet == m_currentApplet.data()) {
+                applet->setPreferredHeight(optimalAppletSize(applet, true).height());
+            } else {
+                applet->setPreferredHeight(optimalAppletSize(applet, false).height());
+            }
         }
     }
-    m_scrollWidget->setSnapSize(size/2);
+
+    return false;
 }
 
 QSizeF AppletsContainer::viewportSize() const

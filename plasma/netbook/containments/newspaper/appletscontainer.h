@@ -65,6 +65,7 @@ protected:
     QSizeF optimalAppletSize(Plasma::Applet *applet, const bool maximized) const;
 
     bool sceneEventFilter(QGraphicsItem *i, QEvent *e);
+    bool eventFilter(QObject *watched, QEvent *event);
 
 public Q_SLOTS:
     void layoutApplet(Plasma::Applet *applet, const QPointF &post);

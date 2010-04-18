@@ -310,7 +310,6 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
 
     if (constraints & Plasma::SizeConstraint) {
         m_container->syncColumnSizes();
-        m_container->setViewportSize(m_scrollWidget->viewportGeometry().size());
     }
 
     if (constraints & Plasma::ImmutableConstraint) {
