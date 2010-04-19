@@ -304,11 +304,11 @@ QSizeF AppletsContainer::optimalAppletSize(Plasma::Applet *applet, const bool ma
         //FIXME: this change of fixed preferred height could cause a relayout, unfortunately there is no other way
         int preferred = applet->preferredHeight();
         applet->setPreferredHeight(-1);
-        QSizeF size = applet->effectiveSizeHint(Qt::PreferredSize).boundedTo(m_viewportSize - QSizeF(12,12));
+        QSizeF size = QSizeF(applet->effectiveSizeHint(Qt::PreferredSize) + QSizeF(0, 32)).boundedTo(m_viewportSize - QSizeF(12, 12));
         applet->setPreferredHeight(preferred);
         return size;
     } else {
-        return QSizeF(applet->effectiveSizeHint(Qt::MinimumSize)+QSizeF(0, 110)).expandedTo(m_viewportSize/2)-QSizeF(12,12);
+        return QSizeF(applet->effectiveSizeHint(Qt::MinimumSize)+QSizeF(0, 110)).expandedTo(m_viewportSize/2) - QSizeF(8, 8);
     }
 }
 
