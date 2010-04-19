@@ -103,6 +103,5 @@ install(
 
 install(
     FILES khotkeys.desktop
-          settings-input-actions.desktop
     DESTINATION ${SERVICES_INSTALL_DIR}
     )
