@@ -48,7 +48,9 @@ AppletsContainer::AppletsContainer(Plasma::ScrollWidget *parent)
 {
     m_mainLayout = new QGraphicsLinearLayout(this);
     setFiltersChildEvents(!m_expandAll);
-    m_scrollWidget->installEventFilter(this);
+
+    connect(m_scrollWidget, SIGNAL(viewportGeometryChanged(const QRectF &)),
+            this, SLOT(viewportGeometryChanged(const QRectF &)));
 }
 
 AppletsContainer::~AppletsContainer()
@@ -310,29 +312,25 @@ QSizeF AppletsContainer::optimalAppletSize(Plasma::Applet *applet, const bool ma
     }
 }
 
-bool AppletsContainer::eventFilter(QObject *watched, QEvent *event)
-{
-    if (watched == m_scrollWidget && event->type() == QEvent::GraphicsSceneResize) {
-        m_viewportSize = m_scrollWidget->viewportGeometry().size();
-
-        if (!m_containment || m_expandAll || m_orientation == Qt::Horizontal) {
-            return false;
-        }
-        foreach (Plasma::Applet *applet, m_containment->applets()) {
-            if (applet == m_currentApplet.data()) {
-                applet->setPreferredHeight(optimalAppletSize(applet, true).height());
-            } else {
-                applet->setPreferredHeight(optimalAppletSize(applet, false).height());
-            }
-        }
-    }
-
-    return false;
-}
-
 QSizeF AppletsContainer::viewportSize() const
 {
     return m_viewportSize;
+}
+
+void AppletsContainer::viewportGeometryChanged(const QRectF &geometry)
+{
+    m_viewportSize = geometry.size();
+
+    if (!m_containment || m_expandAll || m_orientation == Qt::Horizontal) {
+        return;
+    }
+    foreach (Plasma::Applet *applet, m_containment->applets()) {
+        if (applet == m_currentApplet.data()) {
+            applet->setPreferredHeight(optimalAppletSize(applet, true).height());
+        } else {
+            applet->setPreferredHeight(optimalAppletSize(applet, false).height());
+        }
+    }
 }
 
 bool AppletsContainer::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
