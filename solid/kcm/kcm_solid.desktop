@@ -10,6 +10,8 @@ X-KDE-System-Settings-Parent-Category=hardware
 X-DocPath=kcontrol/solid-hardware/index.html
 
 Name=Solid Backend
+Name[sv]=Solid bakgrundsprogram
+Name[uk]=Сервер Solid
 Name[x-test]=xxSolid Backendxx
 Comment=Hardware Integration Configuration with Solid
 Comment[ar]=ضبط تكامل العتاد بواسط سوليد

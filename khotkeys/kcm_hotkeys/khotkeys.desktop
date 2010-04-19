@@ -10,6 +10,8 @@ X-KDE-System-Settings-Parent-Category=shortcuts-and-gestures
 X-KDE-ParentApp=kcontrol
 
 Name=Custom Shortcuts
+Name[sv]=Egna webbgenvägar
+Name[uk]=Нетипові скорочення
 Name[x-test]=xxCustom Shortcutsxx
 
 Comment=Configure Input Actions settings
