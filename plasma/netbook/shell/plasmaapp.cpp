@@ -914,6 +914,10 @@ void PlasmaApp::raiseMainView()
 
 void PlasmaApp::controlBarVisibilityUpdate()
 {
+    if (!m_controlBar) {
+        return;
+    }
+
     if (!m_autoHideControlBar) {
         setControlBarVisible(true);
         return;
