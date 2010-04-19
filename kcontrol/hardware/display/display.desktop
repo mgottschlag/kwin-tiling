@@ -7,7 +7,6 @@ X-DocPath=kcontrol/kcmdisplay/index.html
 
 X-KDE-Library=kcm_display
 X-KDE-ParentApp=kcontrol
-X-KDE-System-Settings-Parent-Category=display
 
 Name=Display
 Name[af]=Skerm
