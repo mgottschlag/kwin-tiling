@@ -16,7 +16,6 @@ set(calendar_engine_srcs
     calendarengine.cpp
     eventdatacontainer.cpp
 # taken from kdepim/akonadi/kcal as long as it's not yet exported:
-    kdescendantsproxymodel.cpp
     daterangefilterproxymodel.cpp
     calendarmodel.cpp
     utils.cpp

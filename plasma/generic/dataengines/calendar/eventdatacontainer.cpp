@@ -77,28 +77,15 @@ void EventDataContainer::rowsRemoved(const QModelIndex& parent, int, int)
 
 void EventDataContainer::updateData(Akonadi::DateRangeFilterProxyModel* model, const QModelIndex& parent)
 {
-    // it would be better to use a Akonadi::EntityMimeTypeFilterModel,
-    // but for some reason I don't get any data
-    // out of it except for the summary
-    QStringList types;
-    types << QLatin1String("Event")
-        << QLatin1String("Todo")
-        << QLatin1String("Journal");
-
     for(int row = 0; row < model->rowCount(parent); ++row) {
-        //kDebug() << "type:" << model->index(row, Akonadi::CalendarModel::Type).data();
-        QByteArray type = model->index(row, Akonadi::CalendarModel::Type).data().toByteArray();
-        if (!types.contains(QString(type))) {
-            // this is one of the root items, the calendar itself
-            continue;
-        }
         QVariantMap eventData;
-        eventData["Type"] = type;
+        eventData["Type"] = model->index(row, Akonadi::CalendarModel::Type).data();
         eventData["StartDate"] = model->index(row, Akonadi::CalendarModel::DateTimeStart).data(Akonadi::CalendarModel::SortRole).toDateTime();
         eventData["EndDate"] = model->index(row, Akonadi::CalendarModel::DateTimeEnd).data(Akonadi::CalendarModel::SortRole).toDateTime();
         eventData["Summary"] = model->index(row, Akonadi::CalendarModel::Summary).data().toString();
-        QVariant collection = model->index(row, Akonadi::CalendarModel::Type).data(Akonadi::EntityTreeModel::ParentCollectionRole);
-        eventData["Source"] = collection.value<Akonadi::Collection>().name();   
+        //this does not work when setting setCollectionFetchStrategy(InvisibleFetch) in the calendarModel
+        //QVariant collection = model->index(row, Akonadi::CalendarModel::Type).data(Akonadi::EntityTreeModel::ParentCollectionRole);
+        //eventData["Source"] = collection.value<Akonadi::Collection>().name();
         setData(model->index(row, Akonadi::CalendarModel::Uid).data().toString(), eventData);
     }
     checkForUpdate();

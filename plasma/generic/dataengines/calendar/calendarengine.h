@@ -25,7 +25,6 @@
 #include <Plasma/DataEngine>
 
 class QModelIndex;
-class KDescendantsProxyModel;
 
 namespace Akonadi {
     class CalendarModel;
@@ -71,9 +70,6 @@ class CalendarEngine : public Plasma::DataEngine
 
         /// this is the representation of the root calendar itself. it contains everything (calendars, incidences)
         Akonadi::CalendarModel* m_calendarModel;
-
-        /// this is used to flatten m_calendarModel to a list. it will still contain items representing the calendars
-        KDescendantsProxyModel* m_descendantsModel;
 
         /// holiday calendar
         QHash<QString, KHolidays::HolidayRegion *> m_regions;

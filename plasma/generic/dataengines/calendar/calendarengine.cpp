@@ -26,9 +26,6 @@
 #include <KCalendarSystem>
 #include <KHolidays/Holidays>
 
-// get only child items
-#include "kdescendantsproxymodel_p.h"
-
 #include <akonadi/changerecorder.h>
 #include <akonadi/control.h>
 #include <akonadi/entitydisplayattribute.h>
@@ -152,7 +149,7 @@ bool CalendarEngine::akonadiCalendarSourceRequest(const QString& name, const QSt
     kDebug( )<< "Calendar source for" << KDateTime(start) << KDateTime(end);
 
     // create the corresponding EventDataContainer
-    addSource(new EventDataContainer(m_descendantsModel, name, KDateTime(start), KDateTime(end)));
+    addSource(new EventDataContainer(m_calendarModel, name, KDateTime(start), KDateTime(end)));
     return true;
 }
 
@@ -185,10 +182,7 @@ void CalendarEngine::initAkonadiCalendar()
 
     // create the models that contain the data. they will be updated automatically from akonadi.
     m_calendarModel = new Akonadi::CalendarModel(monitor, this);
-    // flaten m_calendarModel to a list
-    m_descendantsModel = new KDescendantsProxyModel(this);
-    m_descendantsModel->setSourceModel(m_calendarModel);
-    m_descendantsModel->setDisplayAncestorData(false);
+    m_calendarModel->setCollectionFetchStrategy(Akonadi::EntityTreeModel::InvisibleFetch);
 }
 
 #include "calendarengine.moc"
