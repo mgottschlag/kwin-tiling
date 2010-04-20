@@ -135,7 +135,7 @@ bool CalendarEngine::akonadiCalendarSourceRequest(const QString& name, const QSt
     // figure out what time range was requested from the source string
     QDate start;
     QDate end;
-    if (tokens.at(1) == "eventsInMonth") {
+    if (tokens.at(0) == "eventsInMonth") {
         start = QDate::fromString(tokens.at(1), Qt::ISODate);
         start.setDate(start.year(), start.month(), 1);
         end = QDate(start.year(), start.month(), start.daysInMonth());
