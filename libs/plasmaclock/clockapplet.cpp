@@ -278,8 +278,8 @@ void ClockApplet::updateTipContent()
         d->addTzToTipText(subText, tz);
     }
 
-    QString property = d->calendarWidget->dateProperty(tipDate);
-    if (!property.isEmpty()) {
+    if (d->calendarWidget->dateHasDetails(tipDate)) {
+        QString property = d->calendarWidget->dateDetails(tipDate);
         QString countryString = KGlobal::locale()->countryCodeToName(d->calendarWidget->holidaysRegion());
         if (countryString.isEmpty()) {
             subText.append("<br>").append(property);

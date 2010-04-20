@@ -273,19 +273,14 @@ QString Calendar::holidaysRegion() const
     return calendarTable()->holidaysRegion();
 }
 
-void Calendar::clearDateProperties()
+bool Calendar::dateHasDetails(const QDate &date) const
 {
-    calendarTable()->clearDateProperties();
+    return calendarTable()->dateHasDetails(date);
 }
 
-void Calendar::setDateProperty(QDate date, const QString &description)
+QString Calendar::dateDetails(const QDate &date) const
 {
-    calendarTable()->setDateProperty(date, description);
-}
-
-QString Calendar::dateProperty(QDate date) const
-{
-    return calendarTable()->dateProperty(date);
+    return calendarTable()->dateDetails(date);
 }
 
 void Calendar::applyConfiguration(KConfigGroup cg)
@@ -338,18 +333,19 @@ void Calendar::showTip(const QDate &date)
         item = this;
     }
 
-    if (dateProperty(date).isEmpty()) {
-        if (Plasma::ToolTipManager::self()->isVisible(item)) {
-            Plasma::ToolTipManager::self()->hide(item);
-        }
-        Plasma::ToolTipManager::self()->setContent(item, Plasma::ToolTipContent());
-    } else {
+    if (dateHasDetails(date)) {
+        const QString details = dateDetails(date);
         Plasma::ToolTipContent content(calendar()->formatDate(date),
-                                       dateProperty(date),
+                                       details,
                                        KIcon("view-pim-calendar"));
         content.setAutohide(false);
         Plasma::ToolTipManager::self()->setContent(item, content);
         Plasma::ToolTipManager::self()->show(item);
+    } else {
+        if (Plasma::ToolTipManager::self()->isVisible(item)) {
+            Plasma::ToolTipManager::self()->hide(item);
+        }
+        Plasma::ToolTipManager::self()->setContent(item, Plasma::ToolTipContent());
     }
 }
 

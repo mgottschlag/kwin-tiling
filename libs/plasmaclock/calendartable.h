@@ -48,7 +48,8 @@ public:
                     Hovered = 4,
                     Holiday = 8,
                     NotInCurrentMonth = 16,
-                    InvalidDate = 32 };
+                    InvalidDate = 32,
+                    Event = 64};
     Q_DECLARE_FLAGS(CellTypes, CellType)
 
     explicit CalendarTable(QGraphicsWidget *parent = 0);
@@ -74,9 +75,10 @@ public:
     void setHolidaysRegion(const QString &region);
     QString holidaysRegion() const;
 
-    void clearDateProperties();
-    void setDateProperty(QDate date, const QString &reason);
-    QString dateProperty(QDate date) const;
+    void clearHolidays();
+    void addHoliday(const QDate &date, const QString &reason);
+    bool dateHasDetails(const QDate &date) const;
+    QString dateDetails(const QDate &date) const;
 
     void applyConfiguration(KConfigGroup cg);
     void writeConfiguration(KConfigGroup cg);

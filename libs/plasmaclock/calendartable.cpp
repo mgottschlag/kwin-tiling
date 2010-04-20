@@ -29,6 +29,7 @@
 
 //KDECore
 #include <KGlobal>
+#include <KDateTime>
 #include <KDebug>
 #include <KConfigDialog>
 #include <KConfigGroup>
@@ -72,8 +73,8 @@ class CalendarTablePrivate
             : q(calTable),
               calendarType("locale"),
               calendar(KGlobal::locale()->calendar()),
-              displayEvents(false),
-              displayHolidays(false),
+              displayEvents(true),
+              displayHolidays(true),
               dataEngine(0),
               opacity(0.5)
         {
@@ -277,18 +278,43 @@ class CalendarTablePrivate
 
         QString defaultHolidaysRegion()
         {
-            QString tmpRegion = KGlobal::locale()->country();
-            if (tmpRegion == "C") {
-                // we assume 'C' means USA, which isn't the best of assumptions, really
-                // the user ought to set their region in system settings, however
-                tmpRegion = "us";
+            if (defaultHolidaysRegionName.isEmpty()) {
+                QString tmpRegion = KGlobal::locale()->country();
+                const QStringList lang = KGlobal::locale()->language().split('_');
+                if (tmpRegion == "C") {
+                    // we assume 'C' means USA, which isn't the best of assumptions, really
+                    // the user ought to set their region in system settings, however
+                    tmpRegion = "us";
+                }
+
+                //kDebug() << "checking for" << tmpRegion;
+                if (dataEngine) {
+                    const QStringList regions = dataEngine->query("holidaysRegions").value("holidaysRegions").toStringList();
+                    foreach (const QString &region, regions) {
+                        if (region == tmpRegion) {
+                            defaultHolidaysRegionName = region;
+                            break;
+                        }
+
+                        if (region.startsWith(tmpRegion)) {
+                            QString nonLocalePart = region.right(region.length() - tmpRegion.length());
+                            //kDebug() << "possible region" << region << nonLocalePart << tmpRegion << lang;
+                            foreach (const QString langBit, lang) {
+                                if (nonLocalePart.contains(langBit)) {
+                                    defaultHolidaysRegionName = region;
+                                    break;
+                                }
+                            }
+
+                            if (defaultHolidaysRegionName.isEmpty()) {
+                                defaultHolidaysRegionName = region;
+                            }
+                        }
+                    }
+                }
             }
 
-            if (dataEngine && dataEngine->query("holidaysRegions").value("holidaysRegions").toStringList().contains(tmpRegion)) {
-                return tmpRegion;
-            }
-
-            return QString();
+            return defaultHolidaysRegionName;
         }
 
         CalendarTable *q;
@@ -306,11 +332,14 @@ class CalendarTablePrivate
         bool displayEvents;
         bool displayHolidays;
         QString holidaysRegion;
+        QString defaultHolidaysRegionName;
         Plasma::DataEngine *dataEngine;
         // Hash key: int = Julian Day number, QString = what's special
-        QHash<int, QString> specialDates;
+        QHash<int, QString> holidays;
         // Hash key: int = Julian Day number, QString = what's going on
-        QHash<int, QString> events;
+        QHash<int, QStringList> events;
+        QHash<int, QStringList> todos;
+        QString eventsQuery;
 
         Ui::calendarConfig calendarConfigUi;
 
@@ -447,14 +476,17 @@ const Plasma::DataEngine *CalendarTable::dataEngine() const
 void CalendarTable::setDisplayHolidays(bool showHolidays)
 {
     if (showHolidays) {
-        if (!dataEngine() ||
-        !dataEngine()->query("holidaysRegions").value("holidaysRegions").toStringList().contains(holidaysRegion())) {
-            clearDateProperties();
+        if (!dataEngine()) {
+            clearHolidays();
             return;
         }
 
         if (holidaysRegion().isEmpty()) {
             setHolidaysRegion(d->defaultHolidaysRegion());
+        }
+
+        if (!dataEngine()->query("holidaysRegions").value("holidaysRegions").toStringList().contains(holidaysRegion())) {
+            return;
         }
     }
 
@@ -484,7 +516,11 @@ void CalendarTable::setDisplayEvents(bool display)
     if (display) {
         populateEvents();
     } else {
+        if (d->dataEngine) {
+            d->dataEngine->disconnectSource(d->eventsQuery, this);
+        }
         d->events.clear();
+        d->todos.clear();
     }
 }
 
@@ -505,25 +541,57 @@ QString CalendarTable::holidaysRegion() const
     return d->holidaysRegion;
 }
 
-void CalendarTable::clearDateProperties()
+void CalendarTable::clearHolidays()
 {
-    d->specialDates.clear();
+    d->holidays.clear();
 }
 
-void CalendarTable::setDateProperty(QDate date, const QString &description)
+void CalendarTable::addHoliday(const QDate &date, const QString &description)
 {
-    d->specialDates.insert(date.toJulianDay(), description);
+    d->holidays.insert(date.toJulianDay(), description);
 }
 
-QString CalendarTable::dateProperty(QDate date) const
+bool CalendarTable::dateHasDetails(const QDate &date) const
 {
-    return d->specialDates.value(date.toJulianDay());
+    const int julian = date.toJulianDay();
+    return d->holidays.contains(julian) || d->events.contains(julian) || d->todos.contains(julian);
+}
+
+QString CalendarTable::dateDetails(const QDate &date) const
+{
+    QString details;
+    const int julian = date.toJulianDay();
+    if (d->holidays.contains(julian)) {
+        details += i18n("<i>Holiday</i>: %1", d->holidays.value(julian));
+    }
+
+    if (d->events.contains(julian)) {
+        if (!details.isEmpty()) {
+            details += "<p>";
+        }
+
+        foreach (const QString &event, d->events.value(julian)) {
+            details += i18n("<i>Event</i>: %1<br>", event);
+        }
+    }
+
+    if (d->todos.contains(julian)) {
+        if (!details.isEmpty()) {
+            details += "<p>";
+        }
+
+        foreach (const QString &event, d->todos.value(julian)) {
+            details += i18n("<i>Todo</i>: %1<br>", event);
+        }
+    }
+
+    return details;
 }
 
 //JPL Looks to work OK even though non-Gregorian months do not match up, probably due to fetching 3 months worth
 void CalendarTable::populateHolidays()
 {
-    clearDateProperties();
+    clearHolidays();
 
     if (!displayHolidays() || !dataEngine() || holidaysRegion().isEmpty()) {
         return;
@@ -533,13 +601,12 @@ void CalendarTable::populateHolidays()
     QString prevMonthString = queryDate.addMonths(-1).toString(Qt::ISODate);
     QString nextMonthString = queryDate.addMonths(1).toString(Qt::ISODate);
 
-    Plasma::DataEngine::Data prevMonth = d->dataEngine->query("holidaysInMonth:" + holidaysRegion() +
-    ':' + prevMonthString);
+    Plasma::DataEngine::Data prevMonth = d->dataEngine->query("holidaysInMonth:" + holidaysRegion() + ':' + prevMonthString);
     for (int i = -10; i < 0; i++) {
         QDate tempDate = queryDate.addDays(i);
         QString reason = prevMonth.value(tempDate.toString(Qt::ISODate)).toString();
         if (!reason.isEmpty()) {
-            setDateProperty(tempDate, reason);
+            addHoliday(tempDate, reason);
         }
     }
 
@@ -551,18 +618,17 @@ void CalendarTable::populateHolidays()
         QDate tempDate = queryDate.addDays(i);
         QString reason = thisMonth.value(tempDate.toString(Qt::ISODate)).toString();
         if (!reason.isEmpty()) {
-            setDateProperty(tempDate, reason);
+            addHoliday(tempDate, reason);
         }
     }
 
     queryDate = queryDate.addMonths(1);
-    Plasma::DataEngine::Data nextMonth = d->dataEngine->query("holidaysInMonth:" + holidaysRegion() +
-    ':' + nextMonthString);
+    Plasma::DataEngine::Data nextMonth = d->dataEngine->query("holidaysInMonth:" + holidaysRegion() + ':' + nextMonthString);
     for (int i = 0; i < 10; i++) {
         QDate tempDate = queryDate.addDays(i);
         QString reason = nextMonth.value(tempDate.toString(Qt::ISODate)).toString();
         if (!reason.isEmpty()) {
-            setDateProperty(tempDate, reason);
+            addHoliday(tempDate, reason);
         }
     }
 }
@@ -570,6 +636,7 @@ void CalendarTable::populateHolidays()
 void CalendarTable::populateEvents()
 {
     d->events.clear();
+    d->todos.clear();
 
     if (!d->displayEvents || !d->dataEngine) {
         return;
@@ -578,18 +645,51 @@ void CalendarTable::populateEvents()
     //kDebug() << "WOOOHOOOO!";
     QDate queryDate = date();
     queryDate.setDate(queryDate.year(), queryDate.month(), 1);
-    d->dataEngine->connectSource("eventsInMonth:" + queryDate.toString(Qt::ISODate), this);
+    d->dataEngine->disconnectSource(d->eventsQuery, this);
+    d->eventsQuery = "eventsInMonth:" + queryDate.toString(Qt::ISODate);
+    d->dataEngine->connectSource(d->eventsQuery, this);
 }
 
 void CalendarTable::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
 {
+    Q_UNUSED(source)
     //kDebug() << "***************" << source << data.count() << data;
+    //QVariantList list
+    KLocale *loc = KGlobal::locale();
+    foreach (const QVariant &v, data) {
+        const QVariantMap map = v.toMap();
+
+        if (map["Type"].toString() == "Journal") {
+            continue;
+        }
+
+        QString description = QString("%1 - %2\n%3")
+                                .arg(loc->formatDateTime(KDateTime(map["StartDate"].toDateTime())))
+                                .arg(loc->formatDateTime(KDateTime(map["EndDate"].toDateTime())))
+                                .arg(map["Summary"].toString());
+        int julian = map["StartDate"].toDateTime().date().toJulianDay();
+        //kDebug() << "inserting" << julian << map["Type"].toString() << description;
+        if (map["Type"].toString() == "Todo") {
+            if (d->todos.contains(julian)) {
+                d->todos[julian].append(description);
+            } else {
+                d->todos.insert(julian, QStringList() << description);
+            }
+        } else {
+            if (d->events.contains(julian)) {
+                d->events[julian].append(description);
+            } else {
+                d->events.insert(julian, QStringList() << description);
+            }
+        }
+    }
+    update();
 }
 
 void CalendarTable::applyConfiguration(KConfigGroup cg)
 {
     setCalendar(cg.readEntry("calendarType", "locale"));
-    setHolidaysRegion(cg.readEntry("holidaysRegion", QString()));
+    setHolidaysRegion(cg.readEntry("holidaysRegion", d->defaultHolidaysRegion()));
     setDisplayHolidays(cg.readEntry("displayHolidays", true));
 }
 
@@ -754,7 +854,7 @@ void CalendarTable::paintBorder(QPainter *p, int cell, int weekRow, int weekdayC
         elementId = "today";
     } else if (type & Selected) {
         elementId = "selected";
-    } else if (type & Holiday) {
+    } else if (type & Holiday || type & Event) {
         elementId = "red";
     } else {
         return;
@@ -796,7 +896,8 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
             QDate cellDate = d->dateFromRowColumn(weekRow, weekdayColumn);
             CalendarTable::CellTypes type(CalendarTable::NoType);
             // get cell info
-            int cellDay = calendar()->day(cellDate);
+            const int cellDay = calendar()->day(cellDate);
+            const int julian = cellDate.toJulianDay();
 
             // check what kind of cell we are
             if (calendar()->month(cellDate) != d->selectedMonth) {
@@ -815,8 +916,12 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
                 type |= CalendarTable::Selected;
             }
 
-            if (d->specialDates.contains(cellDate.toJulianDay())) {
+            if (d->holidays.contains(julian)) {
                 type |= CalendarTable::Holiday;
+            }
+
+            if (d->events.contains(julian) || d->events.contains(julian)) {
+                type |= CalendarTable::Event;
             }
 
             if (type != CalendarTable::NoType && type != CalendarTable::NotInCurrentMonth) {

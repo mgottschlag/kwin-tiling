@@ -66,9 +66,8 @@ public:
     void setHolidaysRegion(const QString &region);
     QString holidaysRegion() const;
 
-    void clearDateProperties();
-    void setDateProperty(QDate date, const QString &reason);
-    QString dateProperty(QDate date) const;
+    bool dateHasDetails(const QDate &date) const;
+    QString dateDetails(const QDate &date) const;
 
     void applyConfiguration(KConfigGroup cg);
     void writeConfiguration(KConfigGroup cg);
