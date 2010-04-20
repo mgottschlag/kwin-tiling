@@ -85,7 +85,6 @@ void EventDataContainer::updateData(Akonadi::DateRangeFilterProxyModel* model, c
         << QLatin1String("Todo")
         << QLatin1String("Journal");
 
-    QVariantList incidents;
     for(int row = 0; row < model->rowCount(parent); ++row) {
         //kDebug() << "type:" << model->index(row, Akonadi::CalendarModel::Type).data();
         QByteArray type = model->index(row, Akonadi::CalendarModel::Type).data().toByteArray();
@@ -100,9 +99,8 @@ void EventDataContainer::updateData(Akonadi::DateRangeFilterProxyModel* model, c
         eventData["Summary"] = model->index(row, Akonadi::CalendarModel::Summary).data().toString();
         QVariant collection = model->index(row, Akonadi::CalendarModel::Type).data(Akonadi::EntityTreeModel::ParentCollectionRole);
         eventData["Source"] = collection.value<Akonadi::Collection>().name();   
-        incidents.append(eventData);
+        setData(model->index(row, Akonadi::CalendarModel::Uid).data().toString(), eventData);
     }
-    setData(m_name, incidents);
     checkForUpdate();
 }
 
