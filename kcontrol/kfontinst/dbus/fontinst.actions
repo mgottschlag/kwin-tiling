@@ -105,3 +105,4 @@ Description[x-test]=xxModifying the system-wide font configuration requires priv
 Description[zh_CN]=修改系统字体配置需要权限。
 Description[zh_TW]=變更系統字型設定需要有足夠的權限。
 Policy=auth_admin
+Persistence=session
