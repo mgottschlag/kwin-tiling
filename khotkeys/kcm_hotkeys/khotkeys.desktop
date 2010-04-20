@@ -10,9 +10,12 @@ X-KDE-System-Settings-Parent-Category=shortcuts-and-gestures
 X-KDE-ParentApp=kcontrol
 
 Name=Custom Shortcuts
+Name[ia]=Vias Breve Adaptabile
+Name[pt]=Atalhos Personalizados
 Name[sv]=Egna webbgenvägar
 Name[uk]=Нетипові скорочення
 Name[x-test]=xxCustom Shortcutsxx
+Name[zh_TW]=自訂捷徑
 
 Comment=Configure Input Actions settings
 Comment[ar]=اضبط إعدادات إدخال الإجراءات

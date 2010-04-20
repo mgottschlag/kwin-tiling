@@ -10,6 +10,7 @@ X-KDE-System-Settings-Parent-Category=hardware
 X-DocPath=kcontrol/solid-hardware/index.html
 
 Name=Information Sources
+Name[x-test]=xxInformation Sourcesxx
 Comment=Hardware Integration Configuration with Solid
 Comment[ar]=ضبط تكامل العتاد بواسط سوليد
 Comment[be@latin]=Nałady systemy absłuhoŭvańnia aparatury praz słužbu „Solid”

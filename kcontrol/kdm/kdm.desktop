@@ -14,7 +14,12 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=security
 
 Name=Login Screen
+Name[ia]=Schermo de accesso
+Name[pt]=Ecrã de Autenticação
+Name[sv]=Inloggningsfönster
+Name[uk]=Вікно вітання
 Name[x-test]=xxLogin Screenxx
+Name[zh_TW]=登入畫面
 
 Comment=Configure the login manager (KDM)
 Comment[af]=Konfigureer die aanteken bestuurder (Kdm)
