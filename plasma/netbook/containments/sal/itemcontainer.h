@@ -85,7 +85,7 @@ protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-    Plasma::IconWidget *createItem();
+    Plasma::IconWidget *createItem(QModelIndex index);
     void disposeItem(Plasma::IconWidget *icon);
 
 private Q_SLOTS:
