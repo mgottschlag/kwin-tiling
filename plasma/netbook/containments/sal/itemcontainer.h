@@ -69,8 +69,6 @@ public:
 
     QList<Plasma::IconWidget *>items() const;
 
-    Plasma::IconWidget *createItem();
-
     void askRelayout();
 
     void setModel(QAbstractItemModel *model);
@@ -87,6 +85,7 @@ protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+    Plasma::IconWidget *createItem();
     void disposeItem(Plasma::IconWidget *icon);
 
 private Q_SLOTS:

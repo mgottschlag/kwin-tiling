@@ -67,9 +67,6 @@ public:
     void setDragAndDropMode(ItemContainer::DragAndDropMode mode);
     ItemContainer::DragAndDropMode dragAndDropMode() const;
 
-    //FIXME: this won't be necessary, more logic will have to be moved from the users to the itemcontainer
-    Plasma::IconWidget *createItem();
-
     qreal positionToWeight(const QPointF &point);
     void setModel(QAbstractItemModel *model);
     QAbstractItemModel *model() const;
