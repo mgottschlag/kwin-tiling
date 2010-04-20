@@ -118,6 +118,13 @@ namespace Notifier
           DeviceItem *itemForUdi(const QString &udi) const;
 
           /**
+          * Get a list of DeviceItem children of a device with the specified udi
+          * @param udi the udi of the device
+          * @return a list of pointers to the DeviceItems
+          **/
+          QList<DeviceItem*> itemsForParentUdi(const QString &udi) const;
+
+          /**
           * Allow to get a data displayed by the view
           * @param udi the udi of the device
           * @param role the role where is the data
@@ -258,6 +265,24 @@ namespace Notifier
           * @param udi device identifier given by solid
           **/
           void storageSetupDone(Solid::ErrorType error, QVariant errorData, const QString & udi);
+
+	  /**
+	   * @internal slot called when a setup is requested
+	   * @param udi device identifier given by solid
+	   **/
+	  void setupRequested(const QString &udi);
+
+	  /**
+	   * @internal slot called when a teardown is requested
+	   * @param udi device identifier given by solid
+	   **/
+	  void teardownRequested(const QString &udi);
+
+	  /**
+	   * @internal slot called when an eject is requested
+	   * @param udi device (relative to the drive, not to the access) identifier given by solid
+	   **/
+	  void ejectRequested(const QString &udi);
 
           /**
           * @internal slot called to restore to the notifier his icon

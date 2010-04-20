@@ -149,6 +149,28 @@ void NotifierDialog::insertDevice(const QString &udi)
 
     m_deviceLayout->insertItem(index + 1, devItem);
 
+    if (device.is<Solid::OpticalDisc>()) {
+        Solid::OpticalDrive *drive = device.parent().as<Solid::OpticalDrive>();
+        if (drive) {
+            connect(drive, SIGNAL(ejectRequested(const QString&)),
+                    this, SLOT(ejectRequested(const QString&)));
+            connect(drive, SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
+                    this, SLOT(storageEjectDone(Solid::ErrorType, QVariant , const QString &)));
+        }
+    } else if (device.is<Solid::StorageVolume>()) {
+        Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
+        if (access ) {
+            connect(access, SIGNAL(teardownRequested(const QString &)),
+                    this, SLOT(teardownRequested(const QString &)));
+            connect(access, SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
+                    this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant , const QString &)));
+            connect(access, SIGNAL(setupRequested(const QString &)),
+                    this, SLOT(setupRequested(const QString &)));
+            connect(access, SIGNAL(setupDone(Solid::ErrorType, QVariant, const QString &)),
+                    this, SLOT(storageSetupDone(Solid::ErrorType, QVariant , const QString &)));
+        }
+    }
+
     collapseDevices();
     resetSelection();
     updateMainLabelText();
@@ -578,11 +600,7 @@ void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorD
         QTimer::singleShot(5000, this, SLOT(resetNotifierIcon()));
     }
 
-    //show the message only one time
-    disconnect(sender(), SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
-               this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant, const QString &)));
     devItem->setState(DeviceItem::Idle);
-
 }
 
 void NotifierDialog::storageEjectDone(Solid::ErrorType error, QVariant errorData, const QString &udi)
@@ -596,10 +614,6 @@ void NotifierDialog::storageEjectDone(Solid::ErrorType error, QVariant errorData
         m_notifier->update();
         QTimer::singleShot(2000, this, SLOT(resetNotifierIcon()));
     }
-
-    //show the message only one time
-    disconnect(sender(), SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
-               this, SLOT(storageEjectDone(Solid::ErrorType, QVariant, const QString &)));
 }
 
 void NotifierDialog::storageSetupDone(Solid::ErrorType error, QVariant errorData, const QString &udi)
@@ -617,9 +631,6 @@ void NotifierDialog::storageSetupDone(Solid::ErrorType error, QVariant errorData
         QTimer::singleShot(2000, this, SLOT(resetNotifierIcon()));
     }
 
-    //show the message only one time
-    disconnect(sender(), SIGNAL(setupDone(Solid::ErrorType, QVariant, const QString &)),
-               this, SLOT(storageSetupDone(Solid::ErrorType, QVariant, const QString &)));
     devItem->setState(DeviceItem::Idle);
 }
 
@@ -636,6 +647,19 @@ DeviceItem *NotifierDialog::itemForUdi(const QString &udi) const
     return 0;
 }
 
+QList<DeviceItem*> NotifierDialog::itemsForParentUdi(const QString &udi) const
+{
+    QList<DeviceItem*> deviceList;
+    for (int i=0; i<m_deviceLayout->count(); i++) {
+        DeviceItem* item = dynamic_cast<DeviceItem *>(m_deviceLayout->itemAt(i));
+        if (item && Solid::Device(item->udi()).parent().udi() == udi) {
+            deviceList << item;
+        }
+    }
+
+    return deviceList;
+}
+
 void NotifierDialog::collapseDevices()
 {
     for (int i = 0; i < m_deviceLayout->count(); ++i) {
@@ -646,6 +670,42 @@ void NotifierDialog::collapseDevices()
     }
 }
 
+void NotifierDialog::setupRequested(const QString& udi)
+{
+    DeviceItem *item = itemForUdi(udi);
+    if (!item) {
+        kDebug() << "udi not found -- This should just not happen";
+        return;
+    }
+
+    item->setState(DeviceItem::Mounting);
+}
+
+void NotifierDialog::teardownRequested(const QString& udi)
+{
+    DeviceItem *item = itemForUdi(udi);
+    if (!item) {
+        kDebug() << "udi not found -- This should just not happen";
+        return;
+    }
+
+    item->setState(DeviceItem::Umounting);
+}
+
+void NotifierDialog::ejectRequested(const QString& udi)
+{
+    QList<DeviceItem*> deviceList = itemsForParentUdi(udi);
+    if (deviceList.isEmpty()) {
+        kDebug() << "This should just not happen";
+        return;
+    }
+
+    foreach (DeviceItem* item, deviceList) {
+        item->setState(DeviceItem::Umounting);
+    }
+}
+
+
 void NotifierDialog::leftActionActivated(DeviceItem *item)
 {
     Solid::Device device(item->udi());
@@ -654,17 +714,11 @@ void NotifierDialog::leftActionActivated(DeviceItem *item)
         if (device.is<Solid::OpticalDisc>()) {
             Solid::OpticalDrive *drive = device.parent().as<Solid::OpticalDrive>();
             if (drive) {
-                item->setState(DeviceItem::Umounting);
-                connect(drive, SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
-                        this, SLOT(storageEjectDone(Solid::ErrorType, QVariant, const QString &)));
                 drive->eject();
             }
         } else if (device.is<Solid::StorageVolume>()) {
             Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
             if (access && access->isAccessible()) {
-                item->setState(DeviceItem::Umounting);
-                connect(access, SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
-                        this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant, const QString &)));
                 access->teardown();
             }
         }
@@ -673,9 +727,6 @@ void NotifierDialog::leftActionActivated(DeviceItem *item)
 
         // only unmounted devices
         if (access && !access->isAccessible()) {
-            item->setState(DeviceItem::Mounting);
-            connect(access, SIGNAL(setupDone(Solid::ErrorType, QVariant, const QString &)),
-                    this, SLOT(storageSetupDone(Solid::ErrorType, QVariant , const QString &)));
             access->setup();
         }
     }
