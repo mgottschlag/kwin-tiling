@@ -733,7 +733,7 @@ void PlasmaApp::showWidgetExplorer(Plasma::Containment *containment)
         KWindowSystem::setOnAllDesktops(m_widgetExplorerView->winId(), true);
         m_widgetExplorerView->show();
         KWindowSystem::activateWindow(m_widgetExplorerView->winId());
-        m_widgetExplorerView->setWindowFlags(Qt::Dialog|Qt::FramelessWindowHint);
+        m_widgetExplorerView->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
         m_widgetExplorerView->setAttribute(Qt::WA_TranslucentBackground);
         m_widgetExplorerView->setAttribute(Qt::WA_DeleteOnClose);
         KWindowSystem::setState(m_widgetExplorerView->winId(), NET::StaysOnTop|NET::KeepAbove);
