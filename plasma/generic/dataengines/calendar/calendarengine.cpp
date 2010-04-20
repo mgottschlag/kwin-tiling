@@ -1,5 +1,6 @@
 /*
     Copyright (c) 2009 Davide Bettio <davide.bettio@kdemail.net>
+    Copyright (c) 2010 Frederik Gladhorn <gladhorn@kde.org>
 
     This library is free software; you can redistribute it and/or modify it
     under the terms of the GNU Library General Public License as published by
@@ -20,13 +21,26 @@
 
 #include "calendarengine.h"
 
-#include <QDate>
+#include <QtCore/QDate>
 
 #include <KCalendarSystem>
 #include <KHolidays/Holidays>
 
+// get only child items
+#include "kdescendantsproxymodel_p.h"
+
+#include <akonadi/changerecorder.h>
+#include <akonadi/control.h>
+#include <akonadi/entitydisplayattribute.h>
+#include <akonadi/itemfetchscope.h>
+#include <akonadi/kcal/incidencemimetypevisitor.h>
+
+#include "calendarmodel.h"
+#include "eventdatacontainer.h"
+
 CalendarEngine::CalendarEngine(QObject* parent, const QVariantList& args)
-    : Plasma::DataEngine(parent)
+: Plasma::DataEngine(parent)
+, m_calendarModel(0)
 {
     Q_UNUSED(args);
 }
@@ -38,10 +52,10 @@ CalendarEngine::~CalendarEngine()
 
 bool CalendarEngine::sourceRequestEvent(const QString &name)
 {
-    kDebug() << name << "\n";
+    kDebug() << name << '\n';
     const QStringList tokens = name.split(':');
 
-    if (tokens.count() < 3) {
+    if (tokens.count() < 2) {
         if (name == "holidaysRegions") {
             setData(name, KHolidays::HolidayRegion::locations());
             return true;
@@ -50,8 +64,16 @@ bool CalendarEngine::sourceRequestEvent(const QString &name)
         }
     }
 
-    kDebug() << tokens[0];
-    kDebug() << tokens[2];
+    if (tokens.at(0) == "events" || tokens.at(0) == "eventsInMonth") {
+        return akonadiCalendarSourceRequest(name, tokens);
+    }
+
+    if (tokens.count() < 3) {
+        return false;
+    }
+
+    //kDebug() << tokens[0];
+    //kDebug() << tokens[2];
     const QString regionName = tokens[1];
     KHolidays::HolidayRegion *region = m_regions.value(regionName);
 
@@ -105,8 +127,68 @@ bool CalendarEngine::sourceRequestEvent(const QString &name)
         setData(name, summary);
     }
 
-
     return true;
+}
+
+bool CalendarEngine::akonadiCalendarSourceRequest(const QString& name, const QStringList& tokens)
+{
+    // figure out what time range was requested from the source string
+    QDate start;
+    QDate end;
+    if (tokens.at(1) == "eventsInMonth") {
+        start = QDate::fromString(tokens.at(1), Qt::ISODate);
+        start.setDate(start.year(), start.month(), 1);
+        end = QDate(start.year(), start.month(), start.daysInMonth());
+    } else if (tokens.size() == 2) {
+        start = QDate::fromString(tokens.at(1), Qt::ISODate);
+        end = start.addDays(1);
+    } else {
+        start = QDate::fromString(tokens.at(1), Qt::ISODate);
+        end = QDate::fromString(tokens.at(2), Qt::ISODate);
+    }
+
+    // start akonadi etc if needed
+    initAkonadiCalendar();
+    kDebug( )<< "Calendar source for" << KDateTime(start) << KDateTime(end);
+
+    // create the corresponding EventDataContainer
+    addSource(new EventDataContainer(m_descendantsModel, name, KDateTime(start), KDateTime(end)));
+    return true;
+}
+
+void CalendarEngine::initAkonadiCalendar()
+{
+    if (m_calendarModel != 0) {
+        // we have been initialized already
+        return;
+    }
+
+    // try to start akonadi if necessary
+    if ( !Akonadi::Control::start() ) {
+        kDebug() << "could not start akonadi!";
+        return;
+    }
+    // ask for akonadi events
+    Akonadi::ChangeRecorder* monitor = new Akonadi::ChangeRecorder(this);
+    Akonadi::ItemFetchScope scope;
+    scope.fetchFullPayload( true );
+    scope.fetchAttribute<Akonadi::EntityDisplayAttribute>();
+
+    // setup what part of akonadi data we want (calendar incidences)
+    monitor->setCollectionMonitored( Akonadi::Collection::root() );
+    monitor->fetchCollection( true );
+    monitor->setItemFetchScope( scope );
+    monitor->setMimeTypeMonitored( QLatin1String("text/calendar"), true );// FIXME: this one should not be needed, in fact it might cause the inclusion of free/busy, notes or other unwanted stuff
+    monitor->setMimeTypeMonitored( Akonadi::IncidenceMimeTypeVisitor::eventMimeType(), true );
+    monitor->setMimeTypeMonitored( Akonadi::IncidenceMimeTypeVisitor::todoMimeType(), true );
+    monitor->setMimeTypeMonitored( Akonadi::IncidenceMimeTypeVisitor::journalMimeType(), true );
+
+    // create the models that contain the data. they will be updated automatically from akonadi.
+    m_calendarModel = new Akonadi::CalendarModel(monitor, this);
+    // flaten m_calendarModel to a list
+    m_descendantsModel = new KDescendantsProxyModel(this);
+    m_descendantsModel->setSourceModel(m_calendarModel);
+    m_descendantsModel->setDisplayAncestorData(false);
 }
 
 #include "calendarengine.moc"
