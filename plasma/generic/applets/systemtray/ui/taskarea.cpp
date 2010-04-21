@@ -422,7 +422,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
                 }
 
                 d->normalTasksLayout->insertItem(insertIndex, widget);
-                 break;
+                break;
             }
             case SystemTray::Task::Last:
                 //not really pretty, but for consistency attempts to put the notifications applet always in the last position
@@ -439,11 +439,12 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
     }
 
     //the applet could have to be repainted due to easement change
-    QGraphicsWidget *applet = dynamic_cast<QGraphicsWidget *>(parentItem());
+    QTimer::singleShot(0, this, SLOT(delayedAppletUpdate()));
+}
 
-    if (applet) {
-        applet->update();
-    }
+void TaskArea::delayedAppletUpdate()
+{
+    d->host->update();
 }
 
 void TaskArea::removeTask(Task *task)

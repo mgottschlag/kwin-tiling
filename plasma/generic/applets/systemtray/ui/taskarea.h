@@ -61,6 +61,7 @@ public:
 public slots:
     void addTask(SystemTray::Task *task);
     void removeTask(SystemTray::Task *task);
+    void delayedAppletUpdate();
 
 signals:
     void sizeHintChanged(Qt::SizeHint which);
