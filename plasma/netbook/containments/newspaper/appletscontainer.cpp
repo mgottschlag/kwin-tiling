@@ -308,7 +308,7 @@ QSizeF AppletsContainer::optimalAppletSize(Plasma::Applet *applet, const bool ma
         applet->setPreferredHeight(preferred);
         return size;
     } else {
-        return QSizeF(applet->effectiveSizeHint(Qt::MinimumSize)+QSizeF(0, 110)).expandedTo(m_viewportSize/2) - QSizeF(8, 8);
+        return QSizeF(applet->effectiveSizeHint(Qt::MinimumSize)).expandedTo(m_viewportSize/2) - QSizeF(8, 8);
     }
 }
 
