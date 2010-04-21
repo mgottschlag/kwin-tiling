@@ -25,7 +25,6 @@
 class QAbstractItemModel;
 class QModelIndex;
 class QString;
-class QDateTime;
 
 namespace Akonadi {
     class DateRangeFilterProxyModel;

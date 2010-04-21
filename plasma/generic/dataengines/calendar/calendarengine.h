@@ -24,7 +24,6 @@
 
 #include <Plasma/DataEngine>
 
-class QModelIndex;
 
 namespace Akonadi {
     class CalendarModel;
