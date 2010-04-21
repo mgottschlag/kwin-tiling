@@ -83,9 +83,8 @@ void EventDataContainer::updateData(Akonadi::DateRangeFilterProxyModel* model, c
         eventData["StartDate"] = model->index(row, Akonadi::CalendarModel::DateTimeStart).data(Akonadi::CalendarModel::SortRole).toDateTime();
         eventData["EndDate"] = model->index(row, Akonadi::CalendarModel::DateTimeEnd).data(Akonadi::CalendarModel::SortRole).toDateTime();
         eventData["Summary"] = model->index(row, Akonadi::CalendarModel::Summary).data().toString();
-        //this does not work when setting setCollectionFetchStrategy(InvisibleFetch) in the calendarModel
-        //QVariant collection = model->index(row, Akonadi::CalendarModel::Type).data(Akonadi::EntityTreeModel::ParentCollectionRole);
-        //eventData["Source"] = collection.value<Akonadi::Collection>().name();
+        QVariant collection = model->index(row, Akonadi::CalendarModel::Type).data(Akonadi::EntityTreeModel::ParentCollectionRole);
+        eventData["Source"] = collection.value<Akonadi::Collection>().name();
         setData(model->index(row, Akonadi::CalendarModel::Uid).data().toString(), eventData);
     }
     checkForUpdate();
