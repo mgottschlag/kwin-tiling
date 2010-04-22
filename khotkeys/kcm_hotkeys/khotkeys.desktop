@@ -11,7 +11,9 @@ X-KDE-ParentApp=kcontrol
 
 Name=Custom Shortcuts
 Name[ia]=Vias Breve Adaptabile
+Name[kk]=Өзінің тіркесімдері
 Name[pt]=Atalhos Personalizados
+Name[pt_BR]=Atalhos personalizados
 Name[sv]=Egna webbgenvägar
 Name[uk]=Нетипові скорочення
 Name[x-test]=xxCustom Shortcutsxx
@@ -41,6 +43,7 @@ Comment[gu]=ઇનપુટ ક્રિયાઓ રૂપરેખાંકિ
 Comment[he]=הגדר פעולות קלט
 Comment[hr]=Konfiguriranje postavki ulaznih akcija
 Comment[hu]=A beviteli műveletek beállításai
+Comment[ia]=Il configura fixationes de actiones de ingresso
 Comment[id]=Atur pengaturan Aksi Masukan
 Comment[is]=Stillingar inntaksaðgerða
 Comment[it]=Configura le impostazioni delle azioni di immissione

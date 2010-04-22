@@ -11,8 +11,11 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=startup-and-shutdown
 
 Name=Session Management
-Name[ia]=Gerente de Session
+Name[cs]=Správa relací
+Name[ia]=Gestion de Session
+Name[kk]=Сеансты басқаруы
 Name[pt]=Gestão de Sessões
+Name[pt_BR]=Gerenciamento de sessões
 Name[sv]=Sessionshantering
 Name[uk]=Керування сеансами
 Name[x-test]=xxSession Managementxx
