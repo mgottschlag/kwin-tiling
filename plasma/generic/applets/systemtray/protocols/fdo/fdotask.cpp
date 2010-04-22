@@ -58,6 +58,7 @@ FdoTask::FdoTask(WId winId, QObject *parent)
     : Task(parent),
       d(new Private(winId))
 {
+    setCategory(ApplicationStatus);
 }
 
 
