@@ -481,6 +481,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
 
         m_plasmoidTasksUi.visibleItemsView->setCategoryDrawer(new KCategoryDrawerV3(m_plasmoidTasksUi.visibleItemsView));
         m_plasmoidTasksUi.visibleItemsView->setMouseTracking(true);
+        m_plasmoidTasksUi.visibleItemsView->setVerticalScrollMode(QListView::ScrollPerPixel);
 
         KCategorizedSortFilterProxyModel *visibleItemsModel = new KCategorizedSortFilterProxyModel();
 
