@@ -37,6 +37,7 @@
 #include <QtGui/QPainter>
 #include <QtGui/QX11Info>
 #include <QStandardItemModel>
+#include <QStyledItemDelegate>
 
 
 #include <KConfigDialog>
@@ -227,8 +228,7 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::ImmutableConstraint) {
         if (m_plasmoidTasksInterface) {
             bool visible = (immutability() == Plasma::UserImmutable);
-            //TODO:enable the new config ui
-            //m_plasmoidTasksUi.applets->setEnabled(immutability() == Plasma::Mutable);
+            m_plasmoidTasksUi.visibleItemsView->setEnabled(immutability() == Plasma::Mutable);
             m_plasmoidTasksUi.unlockLabel->setVisible(visible);
             m_plasmoidTasksUi.unlockButton->setVisible(visible);
         }
@@ -446,11 +446,9 @@ void Applet::propogateSizeHintChange(Qt::SizeHint which)
     emit sizeHintChanged(which);
 }
 
-
 void Applet::createConfigurationInterface(KConfigDialog *parent)
 {
     if (!m_autoHideInterface) {
-        m_notificationInterface = new QWidget();
         m_autoHideInterface = new QWidget();
         m_plasmoidTasksInterface = new QWidget();
 
@@ -477,17 +475,21 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         parent->addPage(m_autoHideInterface.data(), i18n("Auto Hide"), "window-suppressed");
 
         bool visible = (immutability() == Plasma::UserImmutable);
-        //TODO:enable the new widget
-        //m_plasmoidTasksUi.applets->setEnabled(immutability() == Plasma::Mutable);
+        m_plasmoidTasksUi.visibleItemsView->setEnabled(immutability() == Plasma::Mutable);
         m_plasmoidTasksUi.unlockLabel->setVisible(visible);
         m_plasmoidTasksUi.unlockButton->setVisible(visible);
 
-        KCategorizedSortFilterProxyModel *visibleItemsModel = new KCategorizedSortFilterProxyModel(m_plasmoidTasksUi.visibleItemsView);
-        m_plasmoidTasksUi.visibleItemsView->setModel(visibleItemsModel);
         m_plasmoidTasksUi.visibleItemsView->setCategoryDrawer(new KCategoryDrawerV3(m_plasmoidTasksUi.visibleItemsView));
-        m_visibleItemsSourceModel = new QStandardItemModel(m_plasmoidTasksUi.visibleItemsView);
-        visibleItemsModel->setSourceModel(m_visibleItemsSourceModel.data());
+        m_plasmoidTasksUi.visibleItemsView->setMouseTracking(true);
+
+        KCategorizedSortFilterProxyModel *visibleItemsModel = new KCategorizedSortFilterProxyModel();
+
         visibleItemsModel->setCategorizedModel(true);
+
+        m_visibleItemsSourceModel = new QStandardItemModel();
+        visibleItemsModel->setSourceModel(m_visibleItemsSourceModel.data());
+
+        m_plasmoidTasksUi.visibleItemsView->setModel(visibleItemsModel);
     }
 
     m_autoHideUi.icons->clear();
@@ -639,6 +641,7 @@ void Applet::configAccepted()
         }
     }
 
+    m_plasmoidTasksUi.visibleItemsView->model()->sort(0);
 
     foreach (const QString &appletName, applets) {
         s_manager->removeApplet(appletName, this);
