@@ -640,8 +640,6 @@ void Applet::configAccepted()
         }
     }
 
-    m_visibleItemsUi.visibleItemsView->model()->sort(0);
-
     foreach (const QString &appletName, applets) {
         s_manager->removeApplet(appletName, this);
     }
