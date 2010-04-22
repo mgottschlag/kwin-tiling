@@ -546,7 +546,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     bool checked = cg.readEntry("ShowApplicationStatus",
                                 gcg.readEntry("ShowApplicationStatus", true));
     applicationStatusItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
-    applicationStatusItem->setData(i18n("Item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
+    applicationStatusItem->setData(i18n("Shown item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     applicationStatusItem->setData("ShowApplicationStatus", Qt::UserRole+1);
     m_visibleItemsSourceModel.data()->appendRow(applicationStatusItem);
 
@@ -556,7 +556,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     checked = cg.readEntry("ShowCommunications",
                            gcg.readEntry("ShowCommunications", true));
     communicationsItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
-    communicationsItem->setData(i18n("Item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
+    communicationsItem->setData(i18n("Shown item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     communicationsItem->setData("ShowCommunications", Qt::UserRole+1);
     m_visibleItemsSourceModel.data()->appendRow(communicationsItem);
 
@@ -566,7 +566,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     checked = cg.readEntry("ShowSystemServices",
                            gcg.readEntry("ShowSystemServices", true));
     systemServicesItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
-    systemServicesItem->setData(i18n("Item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
+    systemServicesItem->setData(i18n("Shown item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     systemServicesItem->setData("ShowSystemServices", Qt::UserRole+1);
     m_visibleItemsSourceModel.data()->appendRow(systemServicesItem);
 
@@ -576,11 +576,9 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     checked = cg.readEntry("ShowHardware",
                            gcg.readEntry("ShowHardware", true));
     hardwareControlItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
-    hardwareControlItem->setData(i18n("Item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
+    hardwareControlItem->setData(i18n("Shown item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     hardwareControlItem->setData("ShowHardware", Qt::UserRole+1);
     m_visibleItemsSourceModel.data()->appendRow(hardwareControlItem);
-
-
 
     QStringList ownApplets = s_manager->applets(this);
     foreach (const KPluginInfo &info, Plasma::Applet::listAppletInfo()) {
