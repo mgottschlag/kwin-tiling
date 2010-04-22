@@ -43,6 +43,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QX11Info>
 #endif
 
+#ifdef Q_WS_WIN
+#include <windows.h>
+#endif
+
 #include <kephal/screens.h>
 
 namespace TaskManager
@@ -222,6 +226,7 @@ TaskPtr TaskManager::findTask(int desktop, const QPoint& p)
 
 void TaskManager::windowAdded(WId w )
 {
+#ifdef Q_WS_X11
     NETWinInfo info(QX11Info::display(), w, QX11Info::appRootWindow(),
                     NET::WMWindowType | NET::WMPid | NET::WMState);
 
@@ -264,6 +269,7 @@ void TaskManager::windowAdded(WId w )
             }
         }
     }
+#endif
 
     TaskPtr t(new Task(w, 0));
     d->tasksByWId[w] = t;
@@ -319,6 +325,7 @@ void TaskManager::windowRemoved(WId w)
 
 void TaskManager::windowChanged(WId w, unsigned int dirty)
 {
+#ifdef Q_WS_X11
     if (dirty & NET::WMState) {
         NETWinInfo info (QX11Info::display(), w, QX11Info::appRootWindow(),
                          NET::WMState | NET::XAWMState);
@@ -336,6 +343,7 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
             }
         }
     }
+#endif
 
     // check if any state we are interested in is marked dirty
     if (!(dirty & (NET::WMVisibleName | NET::WMName |
@@ -508,10 +516,11 @@ bool TaskManager::isOnTop(const Task* task) const
             if (t == task) {
                 return true;
             }
-
+#ifndef Q_WS_WIN
             if (!t->isIconified() && (t->isAlwaysOnTop() == task->isAlwaysOnTop())) {
                 return false;
             }
+#endif
         }
     } while (it-- != begin);
 

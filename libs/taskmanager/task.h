@@ -237,7 +237,9 @@ public:
     //* @internal
     ::TaskManager::TaskChanges refresh(unsigned int dirty);
     //* @internal
+#ifdef Q_WS_X11
     void addTransient( WId w, const NETWinInfo& info );
+#endif
     //* @internal
     void removeTransient( WId w );
     //* @internal

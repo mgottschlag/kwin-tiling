@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KDE/KSharedPtr>
 #include <KDE/KWindowSystem>
 
-class QUuid;
+struct QUuid;
 
 namespace TaskManager
 {

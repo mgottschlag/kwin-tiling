@@ -36,6 +36,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QX11Info>
 #endif
 
+#ifdef Q_WS_WIN
+#include <windows.h>
+#endif
+
 // KDE
 #include <KDebug>
 #include <KIconLoader>
@@ -88,6 +92,16 @@ public:
     bool active : 1;
     bool lastResize : 1;
 };
+}
+
+#if defined Q_WS_WIN
+# include "task_win.cpp"
+#else
+# include "task_x11.cpp"
+#endif
+
+namespace TaskManager
+{
 
 Task::Task(WId w, QObject *parent, const char *name)
   : QObject(parent),
@@ -306,30 +320,6 @@ QRect Task::geometry() const
     return d->info.geometry();
 }
 
-void Task::updateDemandsAttentionState( WId w )
-{
-    if (window() != w) {
-        // 'w' is a transient for this task
-        NETWinInfo i( QX11Info::display(), w, QX11Info::appRootWindow(), NET::WMState );
-        if (i.state() & NET::DemandsAttention) {
-            if (!d->transientsDemandingAttention.contains(w)) {
-                d->transientsDemandingAttention.insert(w);
-            }
-        } else {
-            d->transientsDemandingAttention.remove(w);
-        }
-    }
-}
-
-void Task::addTransient( WId w, const NETWinInfo& info )
-{
-    d->transients.insert(w);
-    if (info.state() & NET::DemandsAttention) {
-        d->transientsDemandingAttention.insert(w);
-        emit changed(TransientsChanged);
-    }
-}
-
 void Task::removeTransient(WId w)
 {
     d->transients.remove(w);
@@ -364,30 +354,6 @@ QString Task::visibleNameWithState() const
 QString Task::name() const
 {
     return d->info.name();
-}
-
-QString Task::className() const
-{
-    XClassHint hint;
-    if(XGetClassHint(QX11Info::display(), d->win, &hint)) {
-        QString nh( hint.res_name );
-        XFree( hint.res_name );
-        XFree( hint.res_class );
-        return nh;
-    }
-    return QString();
-}
-
-QString Task::classClass() const
-{
-    XClassHint hint;
-    if(XGetClassHint(QX11Info::display(), d->win, &hint)) {
-        QString ch( hint.res_class );
-        XFree( hint.res_name );
-        XFree( hint.res_class );
-        return ch;
-    }
-    return QString();
 }
 
 QPixmap Task::icon( int width, int height, bool allowResize )
@@ -523,111 +489,9 @@ bool Task::idMatch( const QString& id1, const QString& id2 )
   return false;
 }
 
-void Task::move()
-{
-    bool on_current = d->info.isOnCurrentDesktop();
-
-    if (!on_current)
-    {
-        KWindowSystem::setCurrentDesktop(d->info.desktop());
-        KWindowSystem::forceActiveWindow(d->win);
-    }
-
-    if (d->info.isMinimized())
-    {
-        KWindowSystem::unminimizeWindow(d->win);
-    }
-
-    QRect geom = d->info.geometry();
-    QCursor::setPos(geom.center());
-
-    NETRootInfo ri(QX11Info::display(), NET::WMMoveResize);
-    ri.moveResizeRequest(d->win, geom.center().x(),
-                         geom.center().y(), NET::Move);
-}
-
-void Task::resize()
-{
-    bool on_current = d->info.isOnCurrentDesktop();
-
-    if (!on_current)
-    {
-        KWindowSystem::setCurrentDesktop(d->info.desktop());
-        KWindowSystem::forceActiveWindow(d->win);
-    }
-
-    if (d->info.isMinimized())
-    {
-        KWindowSystem::unminimizeWindow(d->win);
-    }
-
-    QRect geom = d->info.geometry();
-    QCursor::setPos(geom.bottomRight());
-
-    NETRootInfo ri(QX11Info::display(), NET::WMMoveResize);
-    ri.moveResizeRequest(d->win, geom.bottomRight().x(),
-                         geom.bottomRight().y(), NET::BottomRight);
-}
-
-void Task::setMaximized(bool maximize)
-{
-    KWindowInfo info = KWindowSystem::windowInfo(d->win, NET::WMState | NET::XAWMState | NET::WMDesktop);
-    bool on_current = info.isOnCurrentDesktop();
-
-    if (!on_current)
-    {
-        KWindowSystem::setCurrentDesktop(info.desktop());
-    }
-
-    if (info.isMinimized())
-    {
-        KWindowSystem::unminimizeWindow(d->win);
-    }
-
-    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
-
-    if (maximize)
-    {
-        ni.setState(NET::Max, NET::Max);
-    }
-    else
-    {
-        ni.setState(0, NET::Max);
-    }
-
-    if (!on_current)
-    {
-        KWindowSystem::forceActiveWindow(d->win);
-    }
-}
-
 void Task::toggleMaximized()
 {
     setMaximized(!isMaximized());
-}
-
-void Task::restore()
-{
-    KWindowInfo info = KWindowSystem::windowInfo(d->win, NET::WMState | NET::XAWMState | NET::WMDesktop);
-    bool on_current = info.isOnCurrentDesktop();
-
-    if (!on_current)
-    {
-        KWindowSystem::setCurrentDesktop(info.desktop());
-    }
-
-    if( info.isMinimized())
-    {
-        KWindowSystem::unminimizeWindow(d->win);
-    }
-
-    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
-    ni.setState(0, NET::Max);
-
-    if (!on_current)
-    {
-        KWindowSystem::forceActiveWindow( d->win );
-    }
 }
 
 void Task::setIconified(bool iconify)
@@ -658,12 +522,6 @@ void Task::setIconified(bool iconify)
 void Task::toggleIconified()
 {
     setIconified(!isIconified());
-}
-
-void Task::close()
-{
-    NETRootInfo ri( QX11Info::display(), NET::CloseWindow );
-    ri.closeWindowRequest( d->win );
 }
 
 void Task::raise()
@@ -703,39 +561,9 @@ void Task::activateRaiseOrIconify()
     }
 }
 
-void Task::toDesktop(int desk)
-{
-    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMDesktop);
-    if (desk == 0) {
-        if (isOnAllDesktops()) {
-            ni.setDesktop(KWindowSystem::currentDesktop());
-            KWindowSystem::forceActiveWindow(d->win);
-        } else {
-            ni.setDesktop(NETWinInfo::OnAllDesktops);
-        }
-
-        return;
-    }
-
-    ni.setDesktop(desk);
-
-    if (desk == KWindowSystem::currentDesktop()) {
-        KWindowSystem::forceActiveWindow(d->win);
-    }
-}
-
 void Task::toCurrentDesktop()
 {
     toDesktop(KWindowSystem::currentDesktop());
-}
-
-void Task::setAlwaysOnTop(bool stay)
-{
-    NETWinInfo ni( QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
-    if(stay)
-        ni.setState( NET::StaysOnTop, NET::StaysOnTop );
-    else
-        ni.setState( 0, NET::StaysOnTop );
 }
 
 void Task::toggleAlwaysOnTop()
@@ -743,37 +571,9 @@ void Task::toggleAlwaysOnTop()
     setAlwaysOnTop( !isAlwaysOnTop() );
 }
 
-void Task::setKeptBelowOthers(bool below)
-{
-    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
-
-    if (below)
-    {
-        ni.setState(NET::KeepBelow, NET::KeepBelow);
-    }
-    else
-    {
-        ni.setState(0, NET::KeepBelow);
-    }
-}
-
 void Task::toggleKeptBelowOthers()
 {
     setKeptBelowOthers(!isKeptBelowOthers());
-}
-
-void Task::setFullScreen(bool fullscreen)
-{
-    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
-
-    if (fullscreen)
-    {
-        ni.setState(NET::FullScreen, NET::FullScreen);
-    }
-    else
-    {
-        ni.setState(0, NET::FullScreen);
-    }
 }
 
 void Task::toggleFullScreen()
@@ -781,39 +581,9 @@ void Task::toggleFullScreen()
     setFullScreen(!isFullScreen());
 }
 
-void Task::setShaded(bool shade)
-{
-    NETWinInfo ni( QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
-    if(shade)
-        ni.setState( NET::Shaded, NET::Shaded );
-    else
-        ni.setState( 0, NET::Shaded );
-}
-
 void Task::toggleShaded()
 {
     setShaded( !isShaded() );
-}
-
-void Task::publishIconGeometry(QRect rect)
-{
-    if (rect == d->iconGeometry)
-    {
-        return;
-    }
-
-    d->iconGeometry = rect;
-    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), 0);
-    NETRect r;
-
-    if (rect.isValid())
-    {
-        r.pos.x = rect.x();
-        r.pos.y = rect.y();
-        r.size.width = rect.width();
-        r.size.height = rect.height();
-    }
-    ni.setIconGeometry(r);
 }
 
 void Task::clearPixmapData()
