@@ -22,6 +22,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
+namespace TaskManager
+{
+
 void Task::updateDemandsAttentionState( WId w )
 {
     if (window() != w) {
@@ -148,11 +151,6 @@ void Task::setMaximized(bool maximize)
     }
 }
 
-void Task::toggleMaximized()
-{
-    setMaximized(!isMaximized());
-}
-
 void Task::restore()
 {
     KWindowInfo info = KWindowSystem::windowInfo(d->win, NET::WMState | NET::XAWMState | NET::WMDesktop);
@@ -270,3 +268,5 @@ void Task::publishIconGeometry(QRect rect)
     }
     ni.setIconGeometry(r);
 }
+
+} // namespace
