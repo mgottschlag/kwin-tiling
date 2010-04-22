@@ -25,7 +25,6 @@
 
 #include <plasma/popupapplet.h>
 
-#include "ui_protocols.h"
 #include "ui_autohide.h"
 #include "ui_plasmoidtasks.h"
 
@@ -95,7 +94,6 @@ private:
     Plasma::FrameSvg *m_background;
     Plasma::Svg *m_icons;
 
-    Ui::ProtocolsConfig m_notificationUi;
     Ui::AutoHideConfig m_autoHideUi;
     Ui::PlasmoidTasksConfig m_plasmoidTasksUi;
 

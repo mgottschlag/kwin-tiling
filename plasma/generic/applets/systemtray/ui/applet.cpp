@@ -457,17 +457,6 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         m_autoHideInterface = new QWidget();
         m_plasmoidTasksInterface = new QWidget();
 
-        m_notificationUi.setupUi(m_notificationInterface.data());
-
-        m_notificationUi.showApplicationStatus->setChecked(cg.readEntry("ShowApplicationStatus",
-                                                           gcg.readEntry("ShowApplicationStatus", true)));
-        m_notificationUi.showCommunications->setChecked(cg.readEntry("ShowCommunications",
-                                                        gcg.readEntry("ShowCommunications", true)));
-        m_notificationUi.showSystemServices->setChecked(cg.readEntry("ShowSystemServices",
-                                                        gcg.readEntry("ShowSystemServices", true)));
-        m_notificationUi.showHardware->setChecked(cg.readEntry("ShowHardware",
-                                                  gcg.readEntry("ShowHardware", true)));
-
         m_autoHideUi.setupUi(m_autoHideInterface.data());
 
         m_plasmoidTasksUi.setupUi(m_plasmoidTasksInterface.data());
@@ -485,11 +474,10 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
         connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
-        parent->addPage(m_notificationInterface.data(), i18n("Information"),
+        parent->addPage(m_plasmoidTasksInterface.data(), i18n("Information"),
                         "preferences-desktop-notification",
                         i18n("Choose which information to show"));
         parent->addPage(m_autoHideInterface.data(), i18n("Auto Hide"), "window-suppressed");
-        parent->addPage(m_plasmoidTasksInterface.data(), i18n("Plasma Widgets"), "plasma");
 
         bool visible = (immutability() == Plasma::UserImmutable);
         //TODO:enable the new widget
