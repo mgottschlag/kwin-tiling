@@ -226,11 +226,11 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::ImmutableConstraint) {
-        if (m_plasmoidTasksInterface) {
+        if (m_visibleItemsInterface) {
             bool visible = (immutability() == Plasma::UserImmutable);
-            m_plasmoidTasksUi.visibleItemsView->setEnabled(immutability() == Plasma::Mutable);
-            m_plasmoidTasksUi.unlockLabel->setVisible(visible);
-            m_plasmoidTasksUi.unlockButton->setVisible(visible);
+            m_visibleItemsUi.visibleItemsView->setEnabled(immutability() == Plasma::Mutable);
+            m_visibleItemsUi.unlockLabel->setVisible(visible);
+            m_visibleItemsUi.unlockButton->setVisible(visible);
         }
     }
 
@@ -450,38 +450,38 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
 {
     if (!m_autoHideInterface) {
         m_autoHideInterface = new QWidget();
-        m_plasmoidTasksInterface = new QWidget();
+        m_visibleItemsInterface = new QWidget();
 
         m_autoHideUi.setupUi(m_autoHideInterface.data());
 
-        m_plasmoidTasksUi.setupUi(m_plasmoidTasksInterface.data());
+        m_visibleItemsUi.setupUi(m_visibleItemsInterface.data());
 
         QAction *unlockAction = 0;
         if (containment() && containment()->corona()) {
             unlockAction = containment()->corona()->action("lock widgets");
         }
         if (unlockAction) {
-            disconnect(m_plasmoidTasksUi.unlockButton, SIGNAL(clicked()), unlockAction, SLOT(trigger()));
-            connect(m_plasmoidTasksUi.unlockButton, SIGNAL(clicked()), unlockAction, SLOT(trigger()));
+            disconnect(m_visibleItemsUi.unlockButton, SIGNAL(clicked()), unlockAction, SLOT(trigger()));
+            connect(m_visibleItemsUi.unlockButton, SIGNAL(clicked()), unlockAction, SLOT(trigger()));
         }
 
 
         connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
         connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
-        parent->addPage(m_plasmoidTasksInterface.data(), i18n("Information"),
+        parent->addPage(m_visibleItemsInterface.data(), i18n("Information"),
                         "preferences-desktop-notification",
                         i18n("Choose which information to show"));
         parent->addPage(m_autoHideInterface.data(), i18n("Auto Hide"), "window-suppressed");
 
         bool visible = (immutability() == Plasma::UserImmutable);
-        m_plasmoidTasksUi.visibleItemsView->setEnabled(immutability() == Plasma::Mutable);
-        m_plasmoidTasksUi.unlockLabel->setVisible(visible);
-        m_plasmoidTasksUi.unlockButton->setVisible(visible);
+        m_visibleItemsUi.visibleItemsView->setEnabled(immutability() == Plasma::Mutable);
+        m_visibleItemsUi.unlockLabel->setVisible(visible);
+        m_visibleItemsUi.unlockButton->setVisible(visible);
 
-        m_plasmoidTasksUi.visibleItemsView->setCategoryDrawer(new KCategoryDrawerV3(m_plasmoidTasksUi.visibleItemsView));
-        m_plasmoidTasksUi.visibleItemsView->setMouseTracking(true);
-        m_plasmoidTasksUi.visibleItemsView->setVerticalScrollMode(QListView::ScrollPerPixel);
+        m_visibleItemsUi.visibleItemsView->setCategoryDrawer(new KCategoryDrawerV3(m_visibleItemsUi.visibleItemsView));
+        m_visibleItemsUi.visibleItemsView->setMouseTracking(true);
+        m_visibleItemsUi.visibleItemsView->setVerticalScrollMode(QListView::ScrollPerPixel);
 
         KCategorizedSortFilterProxyModel *visibleItemsModel = new KCategorizedSortFilterProxyModel();
 
@@ -490,7 +490,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         m_visibleItemsSourceModel = new QStandardItemModel();
         visibleItemsModel->setSourceModel(m_visibleItemsSourceModel.data());
 
-        m_plasmoidTasksUi.visibleItemsView->setModel(visibleItemsModel);
+        m_visibleItemsUi.visibleItemsView->setModel(visibleItemsModel);
     }
 
     m_autoHideUi.icons->clear();
@@ -642,7 +642,7 @@ void Applet::configAccepted()
         }
     }
 
-    m_plasmoidTasksUi.visibleItemsView->model()->sort(0);
+    m_visibleItemsUi.visibleItemsView->model()->sort(0);
 
     foreach (const QString &appletName, applets) {
         s_manager->removeApplet(appletName, this);

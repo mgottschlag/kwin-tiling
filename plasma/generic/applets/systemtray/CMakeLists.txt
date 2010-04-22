@@ -33,7 +33,7 @@ set(systemtray_SRCS
 
 kde4_add_ui_files(systemtray_SRCS
                   ui/autohide.ui
-                  ui/plasmoidtasks.ui)
+                  ui/visibleitems.ui)
 
 include (CheckLibraryExists)
 check_library_exists (Xss XScreenSaverQueryInfo "" HAVE_LIBXSS)

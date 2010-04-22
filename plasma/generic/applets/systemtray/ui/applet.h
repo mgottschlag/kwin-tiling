@@ -26,7 +26,7 @@
 #include <plasma/popupapplet.h>
 
 #include "ui_autohide.h"
-#include "ui_plasmoidtasks.h"
+#include "ui_visibleitems.h"
 
 #include "../core/task.h"
 
@@ -85,9 +85,8 @@ private:
 
     TaskArea *m_taskArea;
     TaskArea *m_hiddenTaskArea;
-    QWeakPointer<QWidget> m_notificationInterface;
     QWeakPointer<QWidget> m_autoHideInterface;
-    QWeakPointer<QWidget> m_plasmoidTasksInterface;
+    QWeakPointer<QWidget> m_visibleItemsInterface;
     QSet<Task::Category> m_shownCategories;
     QDateTime m_lastActivity;
 
@@ -95,7 +94,7 @@ private:
     Plasma::Svg *m_icons;
 
     Ui::AutoHideConfig m_autoHideUi;
-    Ui::PlasmoidTasksConfig m_plasmoidTasksUi;
+    Ui::VisibleItemsConfig m_visibleItemsUi;
 
     QWeakPointer<QStandardItemModel> m_visibleItemsSourceModel;
 };
