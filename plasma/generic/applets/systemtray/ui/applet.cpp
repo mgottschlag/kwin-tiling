@@ -36,11 +36,15 @@
 #include <QtGui/QCheckBox>
 #include <QtGui/QPainter>
 #include <QtGui/QX11Info>
+#include <QStandardItemModel>
 
 
 #include <KConfigDialog>
 #include <KComboBox>
 #include <KWindowSystem>
+#include <KCategorizedView>
+#include <KCategorizedSortFilterProxyModel>
+#include <KCategoryDrawer>
 
 #include <Solid/Device>
 
@@ -223,7 +227,8 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::ImmutableConstraint) {
         if (m_plasmoidTasksInterface) {
             bool visible = (immutability() == Plasma::UserImmutable);
-            m_plasmoidTasksUi.applets->setEnabled(immutability() == Plasma::Mutable);
+            //TODO:enable the new config ui
+            //m_plasmoidTasksUi.applets->setEnabled(immutability() == Plasma::Mutable);
             m_plasmoidTasksUi.unlockLabel->setVisible(visible);
             m_plasmoidTasksUi.unlockButton->setVisible(visible);
         }
@@ -445,7 +450,7 @@ void Applet::propogateSizeHintChange(Qt::SizeHint which)
 void Applet::createConfigurationInterface(KConfigDialog *parent)
 {
     if (!m_autoHideInterface) {
-        KConfigGroup gcg = config();
+        KConfigGroup gcg = globalConfig();
         KConfigGroup cg = config();
 
         m_notificationInterface = new QWidget();
@@ -487,13 +492,23 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         parent->addPage(m_plasmoidTasksInterface.data(), i18n("Plasma Widgets"), "plasma");
 
         bool visible = (immutability() == Plasma::UserImmutable);
-        m_plasmoidTasksUi.applets->setEnabled(immutability() == Plasma::Mutable);
+        //TODO:enable the new widget
+        //m_plasmoidTasksUi.applets->setEnabled(immutability() == Plasma::Mutable);
         m_plasmoidTasksUi.unlockLabel->setVisible(visible);
         m_plasmoidTasksUi.unlockButton->setVisible(visible);
+
+        KCategorizedSortFilterProxyModel *visibleItemsModel = new KCategorizedSortFilterProxyModel(m_plasmoidTasksUi.visibleItemsView);
+        m_plasmoidTasksUi.visibleItemsView->setModel(visibleItemsModel);
+        m_plasmoidTasksUi.visibleItemsView->setCategoryDrawer(new KCategoryDrawerV3(m_plasmoidTasksUi.visibleItemsView));
+        m_visibleItemsSourceModel = new QStandardItemModel(m_plasmoidTasksUi.visibleItemsView);
+        visibleItemsModel->setSourceModel(m_visibleItemsSourceModel.data());
+        visibleItemsModel->setCategorizedModel(true);
     }
 
     m_autoHideUi.icons->clear();
-    m_plasmoidTasksUi.applets->clear();
+    if (m_visibleItemsSourceModel) {
+        m_visibleItemsSourceModel.data()->clear();
+    }
 
     QMultiMap<QString, const Task *> sortedTasks;
     foreach (const Task *task, s_manager->tasks()) {
@@ -531,18 +546,55 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
 
         m_autoHideUi.icons->addTopLevelItem(listItem);
     }
+    
+
+
+    QStandardItem *applicationStatusItem = new QStandardItem();
+    applicationStatusItem->setText(i18n("Application status"));
+    applicationStatusItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+    applicationStatusItem->setCheckState(1 ? Qt::Checked : Qt::Unchecked);
+    applicationStatusItem->setData(i18n("Item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
+    applicationStatusItem->setData("ShowApplicationStatus", Qt::UserRole+1);
+    m_visibleItemsSourceModel.data()->appendRow(applicationStatusItem);
+
+    QStandardItem *communicationsItem = new QStandardItem();
+    communicationsItem->setText(i18n("Communications"));
+    communicationsItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+    communicationsItem->setCheckState(1 ? Qt::Checked : Qt::Unchecked);
+    communicationsItem->setData(i18n("Item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
+    communicationsItem->setData("ShowCommunications", Qt::UserRole+1);
+    m_visibleItemsSourceModel.data()->appendRow(communicationsItem);
+
+    QStandardItem *systemServicesItem = new QStandardItem();
+    systemServicesItem->setText(i18n("System services"));
+    systemServicesItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+    systemServicesItem->setCheckState(1 ? Qt::Checked : Qt::Unchecked);
+    systemServicesItem->setData(i18n("Item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
+    systemServicesItem->setData("ShowSystemServices", Qt::UserRole+1);
+    m_visibleItemsSourceModel.data()->appendRow(systemServicesItem);
+
+    QStandardItem *hardwareControlItem = new QStandardItem();
+    hardwareControlItem->setText(i18n("Hardware control"));
+    hardwareControlItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+    hardwareControlItem->setCheckState(1 ? Qt::Checked : Qt::Unchecked);
+    hardwareControlItem->setData(i18n("Item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
+    hardwareControlItem->setData("ShowHardware", Qt::UserRole+1);
+    m_visibleItemsSourceModel.data()->appendRow(hardwareControlItem);
+
+
 
     QStringList ownApplets = s_manager->applets(this);
     foreach (const KPluginInfo &info, Plasma::Applet::listAppletInfo()) {
         KService::Ptr service = info.service();
         if (service->property("X-Plasma-NotificationArea", QVariant::Bool).toBool()) {
-            QListWidgetItem *listItem = new QListWidgetItem();
-            listItem->setText(service->name());
-            listItem->setIcon(KIcon(service->icon()));
-            listItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-            listItem->setData(Qt::UserRole, info.pluginName());
-            listItem->setCheckState(ownApplets.contains(info.pluginName()) ? Qt::Checked : Qt::Unchecked);
-            m_plasmoidTasksUi.applets->addItem(listItem);
+            QStandardItem *item = new QStandardItem();
+            item->setText(service->name());
+            item->setIcon(KIcon(service->icon()));
+            item->setCheckable(true);
+            item->setCheckState(ownApplets.contains(info.pluginName()) ? Qt::Checked : Qt::Unchecked);
+            item->setData(i18n("Extra items"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
+            item->setData(info.pluginName(), Qt::UserRole+2);
+            m_visibleItemsSourceModel.data()->appendRow(item);
         }
     }
 }
@@ -569,24 +621,28 @@ void Applet::configAccepted()
     cg.writeEntry("hidden", hiddenTypes);
     cg.writeEntry("alwaysShown", alwaysShownTypes);
 
-    cg.writeEntry("ShowApplicationStatus", m_notificationUi.showApplicationStatus->isChecked());
-    cg.writeEntry("ShowCommunications", m_notificationUi.showCommunications->isChecked());
-    cg.writeEntry("ShowSystemServices", m_notificationUi.showSystemServices->isChecked());
-    cg.writeEntry("ShowHardware", m_notificationUi.showHardware->isChecked());
-
     QStringList applets = s_manager->applets(this);
-    for (int i = 0; i < m_plasmoidTasksUi.applets->count(); ++i) {
-        QListWidgetItem * item = m_plasmoidTasksUi.applets->item(i);
-        QString appletName = item->data(Qt::UserRole).toString();
 
-        if (item->checkState() != Qt::Unchecked && !applets.contains(appletName)) {
-            s_manager->addApplet(appletName, this);
-        }
+    for (int i = 0; i <= m_visibleItemsSourceModel.data()->rowCount() - 1; i++) {
+        QModelIndex index = m_visibleItemsSourceModel.data()->index(i, 0);
+        QString itemCategory = index.data(Qt::UserRole+1).toString();
+        QString appletName = index.data(Qt::UserRole+2).toString();
+        if (!itemCategory.isEmpty()) {
+            QStandardItem *item = m_visibleItemsSourceModel.data()->itemFromIndex(index);
+            cg.writeEntry(itemCategory, (item->checkState() == Qt::Checked));
+        } else if (!appletName.isEmpty()){
+            QStandardItem *item = m_visibleItemsSourceModel.data()->itemFromIndex(index);
 
-        if (item->checkState() == Qt::Checked) {
-            applets.removeAll(appletName);
+            if (item->checkState() != Qt::Unchecked && !applets.contains(appletName)) {
+                s_manager->addApplet(appletName, this);
+            }
+
+            if (item->checkState() == Qt::Checked) {
+                applets.removeAll(appletName);
+            }
         }
     }
+
 
     foreach (const QString &appletName, applets) {
         s_manager->removeApplet(appletName, this);

@@ -38,6 +38,8 @@ class TabBar;
 class Dialog;
 }
 
+class QStandardItemModel;
+
 namespace SystemTray
 {
 
@@ -90,13 +92,14 @@ private:
     QSet<Task::Category> m_shownCategories;
     QDateTime m_lastActivity;
 
-
     Plasma::FrameSvg *m_background;
     Plasma::Svg *m_icons;
 
     Ui::ProtocolsConfig m_notificationUi;
     Ui::AutoHideConfig m_autoHideUi;
     Ui::PlasmoidTasksConfig m_plasmoidTasksUi;
+
+    QWeakPointer<QStandardItemModel> m_visibleItemsSourceModel;
 };
 
 }
