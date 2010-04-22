@@ -23,7 +23,6 @@ RandR1.2 TODO
 --> Clean up the RandR* classes
 
 
-Key_Display
 trying to rotate a screen fails, the UI re-reads the correct values, but the screen remains off
     and there is no message about this
 reverting doesn't work, it works in trunk
