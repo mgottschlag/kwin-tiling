@@ -450,9 +450,6 @@ void Applet::propogateSizeHintChange(Qt::SizeHint which)
 void Applet::createConfigurationInterface(KConfigDialog *parent)
 {
     if (!m_autoHideInterface) {
-        KConfigGroup gcg = globalConfig();
-        KConfigGroup cg = config();
-
         m_notificationInterface = new QWidget();
         m_autoHideInterface = new QWidget();
         m_plasmoidTasksInterface = new QWidget();
@@ -534,13 +531,18 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
 
         m_autoHideUi.icons->addTopLevelItem(listItem);
     }
-    
+
+
+    KConfigGroup gcg = globalConfig();
+    KConfigGroup cg = config();
 
 
     QStandardItem *applicationStatusItem = new QStandardItem();
     applicationStatusItem->setText(i18n("Application status"));
     applicationStatusItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-    applicationStatusItem->setCheckState(1 ? Qt::Checked : Qt::Unchecked);
+    bool checked = cg.readEntry("ShowApplicationStatus",
+                                gcg.readEntry("ShowApplicationStatus", true));
+    applicationStatusItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
     applicationStatusItem->setData(i18n("Item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     applicationStatusItem->setData("ShowApplicationStatus", Qt::UserRole+1);
     m_visibleItemsSourceModel.data()->appendRow(applicationStatusItem);
@@ -548,7 +550,9 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     QStandardItem *communicationsItem = new QStandardItem();
     communicationsItem->setText(i18n("Communications"));
     communicationsItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-    communicationsItem->setCheckState(1 ? Qt::Checked : Qt::Unchecked);
+    checked = cg.readEntry("ShowCommunications",
+                           gcg.readEntry("ShowCommunications", true));
+    communicationsItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
     communicationsItem->setData(i18n("Item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     communicationsItem->setData("ShowCommunications", Qt::UserRole+1);
     m_visibleItemsSourceModel.data()->appendRow(communicationsItem);
@@ -556,7 +560,9 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     QStandardItem *systemServicesItem = new QStandardItem();
     systemServicesItem->setText(i18n("System services"));
     systemServicesItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-    systemServicesItem->setCheckState(1 ? Qt::Checked : Qt::Unchecked);
+    checked = cg.readEntry("ShowSystemServices",
+                           gcg.readEntry("ShowSystemServices", true));
+    systemServicesItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
     systemServicesItem->setData(i18n("Item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     systemServicesItem->setData("ShowSystemServices", Qt::UserRole+1);
     m_visibleItemsSourceModel.data()->appendRow(systemServicesItem);
@@ -564,7 +570,9 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     QStandardItem *hardwareControlItem = new QStandardItem();
     hardwareControlItem->setText(i18n("Hardware control"));
     hardwareControlItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-    hardwareControlItem->setCheckState(1 ? Qt::Checked : Qt::Unchecked);
+    checked = cg.readEntry("ShowHardware",
+                           gcg.readEntry("ShowHardware", true));
+    hardwareControlItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
     hardwareControlItem->setData(i18n("Item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     hardwareControlItem->setData("ShowHardware", Qt::UserRole+1);
     m_visibleItemsSourceModel.data()->appendRow(hardwareControlItem);
