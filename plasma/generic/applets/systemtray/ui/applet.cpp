@@ -189,7 +189,7 @@ void Applet::configChanged()
         m_shownCategories.insert(Task::UnknownCategory);
     }
 
-    s_manager->loadApplets(cg, this);
+    s_manager->loadApplets(this);
     m_taskArea->syncTasks(s_manager->tasks());
     checkSizes();
     setTaskAreaGeometry();

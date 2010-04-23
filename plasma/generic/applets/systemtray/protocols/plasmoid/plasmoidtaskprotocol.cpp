@@ -53,8 +53,9 @@ void PlasmoidProtocol::forwardConstraintsEvent(Plasma::Constraints constraints)
     }
 }
 
-void PlasmoidProtocol::loadFromConfig(const KConfigGroup &cg, Plasma::Applet *parent)
+void PlasmoidProtocol::loadFromConfig(Plasma::Applet *parent)
 {
+    KConfigGroup cg = parent->config();
     QHash<QString, PlasmoidTask*> existingTasks = m_tasks;
     m_tasks.clear();
 

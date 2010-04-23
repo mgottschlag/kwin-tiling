@@ -61,7 +61,7 @@ public:
 
     void forwardConstraintsEvent(Plasma::Constraints constraints);
 
-    void loadApplets(const KConfigGroup &cg, Plasma::Applet *parent);
+    void loadApplets(Plasma::Applet *parent);
 
     void addApplet(const QString appletName, Plasma::Applet *parent);
 
