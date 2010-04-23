@@ -316,22 +316,30 @@ void StatusNotifierItemSource::overlayIcon(QIcon *icon, QIcon *overlay)
 
 void StatusNotifierItemSource::activate(int x, int y)
 {
-    m_statusNotifierItemInterface->call(QDBus::NoBlock, "Activate", x, y);
+    if (m_statusNotifierItemInterface && m_statusNotifierItemInterface->isValid()) {
+        m_statusNotifierItemInterface->call(QDBus::NoBlock, "Activate", x, y);
+    }
 }
 
 void StatusNotifierItemSource::secondaryActivate(int x, int y)
 {
-    m_statusNotifierItemInterface->call(QDBus::NoBlock, "SecondaryActivate", x, y);
+    if (m_statusNotifierItemInterface && m_statusNotifierItemInterface->isValid()) {
+        m_statusNotifierItemInterface->call(QDBus::NoBlock, "SecondaryActivate", x, y);
+    }
 }
 
 void StatusNotifierItemSource::scroll(int delta, const QString &direction)
 {
-    m_statusNotifierItemInterface->call(QDBus::NoBlock, "Scroll", delta, direction);
+    if (m_statusNotifierItemInterface && m_statusNotifierItemInterface->isValid()) {
+        m_statusNotifierItemInterface->call(QDBus::NoBlock, "Scroll", delta, direction);
+    }
 }
 
 void StatusNotifierItemSource::contextMenu(int x, int y)
 {
-    m_statusNotifierItemInterface->call(QDBus::NoBlock, "ContextMenu", x, y);
+    if (m_statusNotifierItemInterface && m_statusNotifierItemInterface->isValid()) {
+        m_statusNotifierItemInterface->call(QDBus::NoBlock, "ContextMenu", x, y);
+    }
 }
 
 #include "statusnotifieritemsource.moc"
