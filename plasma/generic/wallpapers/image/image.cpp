@@ -80,7 +80,7 @@ void Image::init(const KConfigGroup &config)
         }
     }
 
-    m_color = config.readEntry("wallpapercolor", QColor(56, 111, 150));
+    m_color = config.readEntry("wallpapercolor", QColor(Qt::black));
     m_usersWallpapers = config.readEntry("userswallpapers", QStringList());
     m_dirs = config.readEntry("slidepaths", QStringList());
 
@@ -265,6 +265,7 @@ void Image::paint(QPainter *painter, const QRectF& exposedRect)
     if (m_size != boundingRect().size().toSize()) {
         calculateGeometry();
         if (!m_size.isEmpty() && !m_img.isEmpty()) { // We have previous image
+            painter->fillRect(exposedRect, QBrush(m_color));
             renderWallpaper();
             //kDebug() << "re-rendering";
             return;
