@@ -1,17 +1,5 @@
 [Desktop Entry]
 Name=Free Space Notifier
-Name[en_GB]=Free Space Notifier
-Name[es]=Notificador de espacio libre
-Name[et]=Vaba ruumi teavitaja
-Name[fi]=Vapaan tilan ilmaisin
-Name[fr]=Outil de notification d'espace libre
-Name[km]=សារ​ជូន​ដំណឹង​អំពី​ទំហំ​ដែល​នៅ​​ទំនេរ
-Name[nl]=Vrije ruimte-melder
-Name[pt]=Notificação de Espaço Livre
-Name[pt_BR]=Notificação de Espaço Livre
-Name[sv]=Information om ledigt utrymme
-Name[tr]=Boş Alan Bildirici
-Name[uk]=Сповіщення про вільне місце
 Name[x-test]=xxFree Space Notifierxx
 Type=Service
 X-KDE-ServiceTypes=KDEDModule
