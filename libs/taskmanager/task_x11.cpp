@@ -22,6 +22,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
+#include "task_p.h"
+
+#include <QX11Info>
+
 namespace TaskManager
 {
 

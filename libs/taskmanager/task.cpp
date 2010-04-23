@@ -24,81 +24,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Own
 #include "task.h"
+#include "task_p.h"
 
 // Qt
 #include <QMimeData>
-#include <QTime>
 #include <QTimer>
 #include <QApplication>
 #include <QDesktopWidget>
-
-#ifdef Q_WS_X11
-#include <QX11Info>
-#endif
-
-#ifdef Q_WS_WIN
-#include <windows.h>
-#endif
 
 // KDE
 #include <KDebug>
 #include <KIconLoader>
 #include <KLocale>
-#include <NETWinInfo>
 
 #include "taskmanager.h"
-
-namespace TaskManager
-{
-
-static const unsigned long windowInfoFlags = NET::WMState | NET::XAWMState | NET::WMDesktop |
-                                             NET::WMVisibleName | NET::WMGeometry |
-                                             NET::WMWindowType | NET::WM2AllowedActions;
-static const unsigned long windowInfoFlags2 = NET::WM2AllowedActions;
-
-class Task::Private
-{
-public:
-    Private(WId w)
-     : win(w),
-       frameId(w),
-       info(KWindowSystem::windowInfo(w, windowInfoFlags, windowInfoFlags2)),
-       lastWidth(0),
-       lastHeight(0),
-       cachedChanges(0),
-       cachedChangesTimerId(0),
-       active(false),
-       lastResize(false)
-    {
-    }
-
-    WId win;
-    WId frameId;
-    KWindowInfo info;
-    WindowList transients;
-    WindowList transientsDemandingAttention;
-
-    int lastWidth;
-    int lastHeight;
-    QIcon icon;
-
-    QRect iconGeometry;
-
-    QTime lastUpdate;
-    unsigned int cachedChanges;
-    int cachedChangesTimerId;
-    QPixmap pixmap;
-    QPixmap lastIcon;
-    bool active : 1;
-    bool lastResize : 1;
-};
-}
-
-#if defined Q_WS_WIN
-# include "task_win.cpp"
-#else
-# include "task_x11.cpp"
-#endif
 
 namespace TaskManager
 {

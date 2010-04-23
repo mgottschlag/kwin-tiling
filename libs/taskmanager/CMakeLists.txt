@@ -23,6 +23,12 @@ set(taskmanager_LIB_SRCS
    taskmanager.cpp
    )
 
+if(WIN32)
+    set(taskmanager_LIB_SRCS ${taskmanager_LIB_SRCS} task_win.cpp)
+else(WIN32)
+    set(taskmanager_LIB_SRCS ${taskmanager_LIB_SRCS} task_x11.cpp)
+endif(WIN32)
+
 kde4_add_library(taskmanager SHARED ${taskmanager_LIB_SRCS})
 
 target_link_libraries(taskmanager ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${X11_LIBRARIES})
