@@ -56,7 +56,6 @@ private slots:
     void cleanupTask(Plasma::Applet *host, const QString &typeId);
 
 private:
-    //FIXME: applets must be indicized by name -and- parent
     QHash<Plasma::Applet *, QHash<QString, PlasmoidTask*> > m_tasks;
 };
 
