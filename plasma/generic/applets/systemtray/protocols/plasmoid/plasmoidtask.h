@@ -53,7 +53,7 @@ protected Q_SLOTS:
     void newAppletStatus(Plasma::ItemStatus status);
 
 Q_SIGNALS:
-    void taskDeleted(QString typeId);
+    void taskDeleted(Plasma::Applet *host, const QString &typeId);
 
 protected:
     virtual QGraphicsWidget* createWidget(Plasma::Applet *applet);

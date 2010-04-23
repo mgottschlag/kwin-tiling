@@ -594,6 +594,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     m_visibleItemsSourceModel.data()->appendRow(unknownItem);
 
     QStringList ownApplets = s_manager->applets(this);
+
     foreach (const KPluginInfo &info, Plasma::Applet::listAppletInfo()) {
         KService::Ptr service = info.service();
         if (service->property("X-Plasma-NotificationArea", QVariant::Bool).toBool()) {

@@ -48,16 +48,16 @@ public:
 
     void forwardConstraintsEvent(Plasma::Constraints constraints);
     void loadFromConfig(Plasma::Applet *parent);
-    void addApplet(const QString appletName, Plasma::Applet *parent);
+    void addApplet(const QString appletName, const int id, Plasma::Applet *parent);
     void removeApplet(const QString appletName, Plasma::Applet *parent);
-    QStringList applets(const Plasma::Applet *parent) const;
+    QStringList applets(Plasma::Applet *parent) const;
 
 private slots:
-    void cleanupTask(QString typeId);
+    void cleanupTask(Plasma::Applet *host, const QString &typeId);
 
 private:
     //FIXME: applets must be indicized by name -and- parent
-    QHash<QString, PlasmoidTask*> m_tasks;
+    QHash<Plasma::Applet *, QHash<QString, PlasmoidTask*> > m_tasks;
 };
 
 }

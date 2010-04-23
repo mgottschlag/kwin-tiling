@@ -48,33 +48,39 @@ void PlasmoidProtocol::init()
 
 void PlasmoidProtocol::forwardConstraintsEvent(Plasma::Constraints constraints)
 {
-    foreach (PlasmoidTask *task, m_tasks) {
-        task->forwardConstraintsEvent(constraints);
+    typedef QHash<QString, PlasmoidTask*> TfoType;
+    foreach (TfoType tasksForHost, m_tasks) {
+        foreach (PlasmoidTask *task, tasksForHost) {
+            task->forwardConstraintsEvent(constraints);
+        }
     }
 }
 
 void PlasmoidProtocol::loadFromConfig(Plasma::Applet *parent)
 {
     KConfigGroup cg = parent->config();
-    QHash<QString, PlasmoidTask*> existingTasks = m_tasks;
-    m_tasks.clear();
+    QHash<QString, PlasmoidTask*> existingTasks = m_tasks.value(parent);
+
+    if (m_tasks.contains(parent)) {
+        m_tasks[parent].clear();
+    }
 
     KConfigGroup appletGroup(&cg, "Applets");
     foreach (const QString &groupName, appletGroup.groupList()) {
         KConfigGroup childGroup(&appletGroup, groupName);
         QString appletName = childGroup.readEntry("plugin", QString());
 
-        if (m_tasks.contains(appletName)) {
+        if (m_tasks.contains(parent) && m_tasks.value(parent).contains(appletName)) {
             continue;
         }
 
         if (existingTasks.contains(appletName)) {
-            m_tasks.insert(appletName, existingTasks.value(appletName));
+            m_tasks[parent].insert(appletName, existingTasks.value(appletName));
             existingTasks.remove(appletName);
             continue;
         }
 
-        addApplet(appletName, parent);
+        addApplet(appletName, groupName.toInt(), parent);
 
         existingTasks.remove(appletName);
     }
@@ -89,11 +95,11 @@ void PlasmoidProtocol::loadFromConfig(Plasma::Applet *parent)
     }
 }
 
-void PlasmoidProtocol::addApplet(const QString appletName, Plasma::Applet *parent)
+void PlasmoidProtocol::addApplet(const QString appletName, const int id, Plasma::Applet *parent)
 {
     kDebug() << "Registering task with the manager" << appletName;
 
-    PlasmoidTask *task = new PlasmoidTask(appletName, 0, this, parent);
+    PlasmoidTask *task = new PlasmoidTask(appletName, id, this, parent);
 
     if (!task->isValid()) {
         // we failed to load our applet *sob*
@@ -101,36 +107,49 @@ void PlasmoidProtocol::addApplet(const QString appletName, Plasma::Applet *paren
         return;
     }
 
-    m_tasks.insert(appletName, task);
-    connect(task, SIGNAL(taskDeleted(QString)), this, SLOT(cleanupTask(QString)));
+
+    m_tasks[parent].insert(appletName, task);
+
+    connect(task, SIGNAL(taskDeleted(Plasma::Applet *, const QString &)), this, SLOT(cleanupTask(plasma::Applet *, const QString &)));
     emit taskCreated(task);
 }
 
 void PlasmoidProtocol::removeApplet(const QString appletName, Plasma::Applet *parent)
 {
-    Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(m_tasks[appletName]->widget(parent, true));
+    if (!m_tasks.contains(parent) || !m_tasks.value(parent).contains(appletName)) {
+        return;
+    }
+
+    Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(m_tasks.value(parent).value(appletName)->widget(parent, true));
 
     if (applet) {
         applet->destroy();
     }
 }
 
-void PlasmoidProtocol::cleanupTask(QString typeId)
+void PlasmoidProtocol::cleanupTask(Plasma::Applet *host, const QString &typeId)
 {
     kDebug() << "task with typeId" << typeId << "removed";
-    m_tasks.remove(typeId);
+    if (m_tasks.contains(host)) {
+        m_tasks[host].remove(typeId);
+        if (m_tasks.value(host).isEmpty()) {
+            m_tasks.remove(host);
+        }
+    }
 }
 
-QStringList PlasmoidProtocol::applets(const Plasma::Applet *host) const
+QStringList PlasmoidProtocol::applets(Plasma::Applet *host) const
 {
     QStringList list;
-    QHashIterator<QString, PlasmoidTask *> i(m_tasks);
+    if (!m_tasks.contains(host)) {
+        return list;
+    }
+
+    QHashIterator<QString, PlasmoidTask *> i(m_tasks.value(host));
 
     while (i.hasNext()) {
         i.next();
-        if (i.value()->host() == host) {
-            list << i.key();
-        }
+        list << i.key();
     }
 
     return list;

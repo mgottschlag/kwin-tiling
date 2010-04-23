@@ -49,7 +49,7 @@ PlasmoidTask::PlasmoidTask(const QString &appletname, int id, QObject *parent, P
 
 PlasmoidTask::~PlasmoidTask()
 {
-    emit taskDeleted(m_typeId);
+    emit taskDeleted(m_host, m_typeId);
 }
 
 
