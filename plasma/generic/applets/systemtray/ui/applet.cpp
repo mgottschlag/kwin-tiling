@@ -688,7 +688,7 @@ void Applet::checkDefaultApplets()
         engines->unloadEngine("powermanagement");
     }
 
-    config().writeEntry("DefaultAppletsAdded", false);
+    config().writeEntry("DefaultAppletsAdded", true);
 }
 
 }
