@@ -9,7 +9,10 @@ include( FindPNG )
 include_directories(${PNG_PNG_INCLUDE_DIR})
 
 include (CheckCXXSourceCompiles)
-CHECK_CXX_SOURCE_COMPILES(" int main() { __asm__(\"pxor %mm0, %mm0\") ; }" X86_MMX_FOUND)
+CHECK_CXX_SOURCE_COMPILES("	#ifdef __SUNPRO_CC
+					#define __asm__ asm
+				#endif
+				int main() { __asm__(\"pxor %mm0, %mm0\") ; }" X86_MMX_FOUND)
 
 ########### next target ###############
 
@@ -30,6 +33,8 @@ set( ksplashx_SRCS
     kcpuinfo.cpp
     scale.cpp )
 
+# this is intentionally disabled using the '2' since it doesn't work on x86_64,
+# so this needs somebody who knows assembly enough to fix it
 if( X86_MMX_FOUND2 )
     set( ksplashx_SRCS ${ksplashx_SRCS}
         asm_scale.S )
