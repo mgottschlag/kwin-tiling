@@ -59,7 +59,7 @@ public:
      **/
     QList<Task*> tasks() const;
 
-    void forwardConstraintsEvent(Plasma::Constraints constraints);
+    void forwardConstraintsEvent(Plasma::Constraints constraints, Plasma::Applet *host);
 
     void loadApplets(Plasma::Applet *parent);
 

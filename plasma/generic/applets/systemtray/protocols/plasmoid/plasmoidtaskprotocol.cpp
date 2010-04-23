@@ -46,10 +46,10 @@ void PlasmoidProtocol::init()
 {
 }
 
-void PlasmoidProtocol::forwardConstraintsEvent(Plasma::Constraints constraints)
+void PlasmoidProtocol::forwardConstraintsEvent(Plasma::Constraints constraints, Plasma::Applet *host)
 {
-    typedef QHash<QString, PlasmoidTask*> TfoType;
-    foreach (TfoType tasksForHost, m_tasks) {
+    if (m_tasks.contains(host)) {
+        QHash<QString, PlasmoidTask*> tasksForHost = m_tasks.value(host);
         foreach (PlasmoidTask *task, tasksForHost) {
             task->forwardConstraintsEvent(constraints);
         }

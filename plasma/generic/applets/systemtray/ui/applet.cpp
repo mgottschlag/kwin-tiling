@@ -236,7 +236,7 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
         }
     }
 
-    s_manager->forwardConstraintsEvent(constraints);
+    s_manager->forwardConstraintsEvent(constraints, this);
 }
 
 SystemTray::Manager *Applet::manager() const

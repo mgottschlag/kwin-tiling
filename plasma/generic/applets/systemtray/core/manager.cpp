@@ -94,9 +94,9 @@ void Manager::removeTask(Task *task)
     emit taskRemoved(task);
 }
 
-void Manager::forwardConstraintsEvent(Plasma::Constraints constraints)
+void Manager::forwardConstraintsEvent(Plasma::Constraints constraints, Plasma::Applet *host)
 {
-    d->plasmoidProtocol->forwardConstraintsEvent(constraints);
+    d->plasmoidProtocol->forwardConstraintsEvent(constraints, host);
 }
 
 void Manager::loadApplets(Plasma::Applet *parent)

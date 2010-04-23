@@ -46,7 +46,7 @@ public:
 
     void init();
 
-    void forwardConstraintsEvent(Plasma::Constraints constraints);
+    void forwardConstraintsEvent(Plasma::Constraints constraints, Plasma::Applet *host);
     void loadFromConfig(Plasma::Applet *parent);
     void addApplet(const QString appletName, const int id, Plasma::Applet *parent);
     void removeApplet(const QString appletName, Plasma::Applet *parent);
