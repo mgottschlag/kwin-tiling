@@ -10,9 +10,11 @@ X-KDE-System-Settings-Parent-Category=hardware
 X-DocPath=kcontrol/solid-hardware/index.html
 
 Name=Information Sources
+Name[en_GB]=Information Sources
 Name[ia]=Fonte de Information
 Name[kk]=Ақпарат көздері
 Name[pt]=Fontes de Informação
+Name[pt_BR]=Fontes de informação
 Name[sv]=Informationskällor
 Name[uk]=Джерела інформації
 Name[x-test]=xxInformation Sourcesxx
