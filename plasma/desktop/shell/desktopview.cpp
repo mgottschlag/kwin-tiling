@@ -395,54 +395,6 @@ void DesktopView::showDesktopUntoggled(WId id)
     KWindowSystem::activateWindow(id);
 }
 
-/*
-
-// This function is reimplemented from QGraphicsView to work around the problem
-// that QPainter::fillRect(QRectF/QRect, QBrush), which QGraphicsView uses, is
-// potentially slow when the anti-aliasing hint is set and as implemented won't
-// hit accelerated code at all when it isn't set.  This implementation avoids
-// the problem by using integer coordinates and by using drawTiledPixmap() in
-// the case of a texture brush, and fillRect(QRect, QColor) in the case of a
-// solid pattern.  As an additional optimization it draws the background with
-// CompositionMode_Source.
-void DesktopView::drawBackground(QPainter *painter, const QRectF &rect)
-{
-    if (!isTransformed() || !transform().isScaling()) {
-        return;
-    }
-
-    const QPainter::CompositionMode savedMode = painter->compositionMode();
-    const QBrush brush = backgroundBrush();
-
-    switch (brush.style())
-    {
-    case Qt::TexturePattern:
-    {
-        // Note: this assumes that the brush origin is (0, 0), and that
-        //       the brush has an identity transformation matrix.
-        const QPixmap texture = brush.texture();
-        QRect r = rect.toAlignedRect();
-        r.setLeft(r.left() - (r.left() % texture.width()));
-        r.setTop(r.top() - (r.top() % texture.height()));
-        painter->setCompositionMode(QPainter::CompositionMode_Source);
-        painter->drawTiledPixmap(r, texture);
-        painter->setCompositionMode(savedMode);
-        break;
-    }
-
-    case Qt::SolidPattern:
-        painter->setCompositionMode(QPainter::CompositionMode_Source);
-        painter->fillRect(rect.toAlignedRect(), brush.color());
-        painter->setCompositionMode(savedMode);
-        break;
-
-    default:
-        QGraphicsView::drawBackground(painter, rect);
-        break;
-    }
-}
-*/
-
 void DesktopView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* newContainment)
 {
     //kDebug() << "was:" << wasScreen << "is:" << isScreen << "my screen:" << screen() << "containment:" << (QObject*)newContainment << newContainment->activity() << "myself:" << (QObject*)this <<"containment desktop:"<<newContainment->desktop() << "my desktop:"<<containment()->desktop();

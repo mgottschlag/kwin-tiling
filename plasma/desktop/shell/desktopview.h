@@ -118,7 +118,6 @@ Q_SIGNALS:
     void dashboardClosed();
 
 protected:
-    //void drawBackground(QPainter *painter, const QRectF &rect);
     void prepDashboard();
 
 private:
