@@ -74,23 +74,8 @@ void PlasmoidProtocol::loadFromConfig(Plasma::Applet *parent)
             continue;
         }
 
-        kDebug() << "Registering task with the manager" << appletName;
+        addApplet(appletName, parent);
 
-        PlasmoidTask *task = new PlasmoidTask(appletName, groupName.toInt(), this, parent);
-        Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(task->widget(parent, true));
-        if (applet) {
-            applet->restore(childGroup);
-        }
-
-        if (!task->isValid()) {
-            // we failed to load our applet *sob*
-            delete task;
-            continue;
-        }
-
-        m_tasks.insert(appletName, task);
-        connect(task, SIGNAL(taskDeleted(QString)), this, SLOT(cleanupTask(QString)));
-        emit taskCreated(task);
         existingTasks.remove(appletName);
     }
 
