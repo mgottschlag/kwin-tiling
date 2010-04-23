@@ -185,7 +185,9 @@ void Applet::configChanged()
         m_shownCategories.insert(Task::Hardware);
     }
 
-    m_shownCategories.insert(Task::UnknownCategory);
+    if (cg.readEntry("ShowUnknown", gcg.readEntry("ShowUnknown", true))) {
+        m_shownCategories.insert(Task::UnknownCategory);
+    }
 
     s_manager->loadApplets(cg, this);
     m_taskArea->syncTasks(s_manager->tasks());
@@ -539,46 +541,57 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     KConfigGroup gcg = globalConfig();
     KConfigGroup cg = config();
 
+    const QString itemCategories = i18nc("Categories of items in the systemtray that will be shown or hidden", "Shown item categories");
 
     QStandardItem *applicationStatusItem = new QStandardItem();
-    applicationStatusItem->setText(i18n("Application status"));
+    applicationStatusItem->setText(i18nc("Systemtray items that describe the status of a generic application", "Application status"));
     applicationStatusItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
     bool checked = cg.readEntry("ShowApplicationStatus",
                                 gcg.readEntry("ShowApplicationStatus", true));
     applicationStatusItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
-    applicationStatusItem->setData(i18n("Shown item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
+    applicationStatusItem->setData(itemCategories, KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     applicationStatusItem->setData("ShowApplicationStatus", Qt::UserRole+1);
     m_visibleItemsSourceModel.data()->appendRow(applicationStatusItem);
 
     QStandardItem *communicationsItem = new QStandardItem();
-    communicationsItem->setText(i18n("Communications"));
+    communicationsItem->setText(i18nc("Items communication related, such as chat or email clients", "Communications"));
     communicationsItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
     checked = cg.readEntry("ShowCommunications",
                            gcg.readEntry("ShowCommunications", true));
     communicationsItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
-    communicationsItem->setData(i18n("Shown item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
+    communicationsItem->setData(itemCategories, KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     communicationsItem->setData("ShowCommunications", Qt::UserRole+1);
     m_visibleItemsSourceModel.data()->appendRow(communicationsItem);
 
     QStandardItem *systemServicesItem = new QStandardItem();
-    systemServicesItem->setText(i18n("System services"));
+    systemServicesItem->setText(i18nc("Items about the status of the system, such as a filesystem indexer", "System services"));
     systemServicesItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
     checked = cg.readEntry("ShowSystemServices",
                            gcg.readEntry("ShowSystemServices", true));
     systemServicesItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
-    systemServicesItem->setData(i18n("Shown item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
+    systemServicesItem->setData(itemCategories, KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     systemServicesItem->setData("ShowSystemServices", Qt::UserRole+1);
     m_visibleItemsSourceModel.data()->appendRow(systemServicesItem);
 
     QStandardItem *hardwareControlItem = new QStandardItem();
-    hardwareControlItem->setText(i18n("Hardware control"));
+    hardwareControlItem->setText(i18nc("Items about hardware, such as battery or volume control", "Hardware control"));
     hardwareControlItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
     checked = cg.readEntry("ShowHardware",
                            gcg.readEntry("ShowHardware", true));
     hardwareControlItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
-    hardwareControlItem->setData(i18n("Shown item categories"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
+    hardwareControlItem->setData(itemCategories, KCategorizedSortFilterProxyModel::CategoryDisplayRole);
     hardwareControlItem->setData("ShowHardware", Qt::UserRole+1);
     m_visibleItemsSourceModel.data()->appendRow(hardwareControlItem);
+
+    QStandardItem *unknownItem = new QStandardItem();
+    unknownItem->setText(i18nc("Other uncategorized systemtray items", "Miscellaneous"));
+    unknownItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+    checked = cg.readEntry("ShowUnknown",
+                           gcg.readEntry("ShowUnknown", true));
+    unknownItem->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
+    unknownItem->setData(itemCategories, KCategorizedSortFilterProxyModel::CategoryDisplayRole);
+    unknownItem->setData("ShowUnknown", Qt::UserRole+1);
+    m_visibleItemsSourceModel.data()->appendRow(unknownItem);
 
     QStringList ownApplets = s_manager->applets(this);
     foreach (const KPluginInfo &info, Plasma::Applet::listAppletInfo()) {
@@ -589,7 +602,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
             item->setIcon(KIcon(service->icon()));
             item->setCheckable(true);
             item->setCheckState(ownApplets.contains(info.pluginName()) ? Qt::Checked : Qt::Unchecked);
-            item->setData(i18n("Extra items"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
+            item->setData(i18nc("Extra items to be manually added in the systray, such as little Plasma widgets", "Extra items"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
             item->setData(info.pluginName(), Qt::UserRole+2);
             m_visibleItemsSourceModel.data()->appendRow(item);
         }
