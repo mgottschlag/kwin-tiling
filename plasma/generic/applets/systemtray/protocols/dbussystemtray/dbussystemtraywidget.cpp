@@ -91,8 +91,9 @@ void DBusSystemTrayWidget::setIcon(const QString &iconName, const QIcon &icon)
         QString name = QString("icons/") + iconName.split("-").first();
         if (!Plasma::Theme::defaultTheme()->imagePath(name).isEmpty()) {
             setSvg(name, iconName);
+        } else {
+            Plasma::IconWidget::setIcon(icon);
         }
-        Plasma::IconWidget::setIcon(icon);
     } else {
         Plasma::IconWidget::setIcon(icon);
     }
