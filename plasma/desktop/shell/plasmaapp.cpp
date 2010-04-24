@@ -769,32 +769,8 @@ void PlasmaApp::createView(Plasma::Containment *containment)
             }
         }
 
-        KConfigGroup viewIds(KGlobal::config(), "ViewIds");
-        const int id = viewIds.readEntry(QString::number(containment->id()), 0);
-        DesktopView *view = viewForScreen(containment->screen(),
-                                          AppSettings::perVirtualDesktopViews() ? containment->desktop() : -1);
-        if (view) {
-            kDebug() << "had a view for" << containment->screen() << containment->desktop();
-            // we already have a view for this screen
-            return;
-        }
-
-        kDebug() << "creating a new view for" << containment->screen() << containment->desktop()
-            << "and we have" << Kephal::ScreenUtils::numScreens() << "screens";
-
-        // we have a new screen. neat.
-        view = new DesktopView(containment, id, 0);
-        connect(view, SIGNAL(dashboardClosed()), this, SLOT(dashboardClosed()));
-        if (m_corona) {
-            connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
-                    view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
-            connect(m_corona, SIGNAL(shortcutsChanged()),
-                    view, SLOT(updateShortcuts()));
-        }
-
-        m_desktops.append(view);
-        view->show();
-        setWmClass(view->winId());
+        m_desktopsWaiting.append(containment);
+        m_desktopViewCreationTimer.start();
     }
 }
 
@@ -845,9 +821,35 @@ void PlasmaApp::createWaitingDesktops()
     const QList<QWeakPointer<Plasma::Containment> > containments = m_desktopsWaiting;
     m_desktopsWaiting.clear();
 
-    foreach (QWeakPointer<Plasma::Containment> containment, containments) {
-        if (containment) {
-            createView(containment.data());
+    foreach (QWeakPointer<Plasma::Containment> weakContainment, containments) {
+        if (weakContainment) {
+            Plasma::Containment *containment = weakContainment.data();
+            KConfigGroup viewIds(KGlobal::config(), "ViewIds");
+            const int id = viewIds.readEntry(QString::number(containment->id()), 0);
+            DesktopView *view = viewForScreen(containment->screen(),
+                                            AppSettings::perVirtualDesktopViews() ? containment->desktop() : -1);
+            if (view) {
+                kDebug() << "had a view for" << containment->screen() << containment->desktop();
+                // we already have a view for this screen
+                return;
+            }
+
+            kDebug() << "creating a new view for" << containment->screen() << containment->desktop()
+                << "and we have" << Kephal::ScreenUtils::numScreens() << "screens";
+
+            // we have a new screen. neat.
+            view = new DesktopView(containment, id, 0);
+            connect(view, SIGNAL(dashboardClosed()), this, SLOT(dashboardClosed()));
+            if (m_corona) {
+                connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
+                        view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
+                connect(m_corona, SIGNAL(shortcutsChanged()),
+                        view, SLOT(updateShortcuts()));
+            }
+
+            m_desktops.append(view);
+            view->show();
+            setWmClass(view->winId());
         }
     }
 }
@@ -863,7 +865,10 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
         }
     }
 
-    createView(containment);
+    if (isPanelContainment(containment)) {
+        createView(containment);
+    }
+
     disconnect(containment, 0, this, 0);
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
