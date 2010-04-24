@@ -22,8 +22,10 @@
 #define ABSTRACTICON_H
 
 #include <QGraphicsWidget>
+#include "plasmagenericshell_export.h"
 
-class AbstractIcon : public QGraphicsWidget
+namespace Plasma {
+class PLASMAGENERICSHELL_EXPORT AbstractIcon : public QGraphicsWidget
 {
     Q_OBJECT
 
@@ -77,5 +79,5 @@ class AbstractIcon : public QGraphicsWidget
         bool m_selected : 1;
         bool m_hovered : 1;
 };
-
+}
 #endif //APPLETICON_H

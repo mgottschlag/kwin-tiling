@@ -31,7 +31,7 @@
 #include "abstracticonlist.h"
 
 
-class AppletsListWidget : public AbstractIconList
+class AppletsListWidget : public Plasma::AbstractIconList
 {
 
     Q_OBJECT
@@ -59,9 +59,9 @@ private:
 private slots:
     void filterChanged(int index);
 
-    void appletIconDoubleClicked(AbstractIcon *icon);
-    void appletIconHoverLeave(AbstractIcon *icon);
-    void appletIconHoverEnter(AbstractIcon *icon);
+    void appletIconDoubleClicked(Plasma::AbstractIcon *icon);
+    void appletIconHoverLeave(Plasma::AbstractIcon *icon);
+    void appletIconHoverEnter(Plasma::AbstractIcon *icon);
     void onToolTipEnter();
     void onToolTipLeave();
 

@@ -25,7 +25,7 @@
 
 #include <QWeakPointer>
 
-class AppletIconWidget : public AbstractIcon
+class AppletIconWidget : public Plasma::AbstractIcon
 {
     Q_OBJECT
 

@@ -32,6 +32,9 @@
 
 #include <Plasma/Theme>
 
+namespace Plasma
+{
+
 AbstractIcon::AbstractIcon(QGraphicsItem *parent)
     : QGraphicsWidget(parent),
       m_iconHeight(DEFAULT_ICON_SIZE),
@@ -183,5 +186,7 @@ void AbstractIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     }
     painter->drawText(textRect, flags, m_name);
 }
+
+} // namespace Plasma
 
 

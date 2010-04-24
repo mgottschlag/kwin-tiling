@@ -131,7 +131,7 @@ QVariant AppletsListWidget::itemChange(GraphicsItemChange change, const QVariant
 }
 
 
-void AppletsListWidget::appletIconHoverEnter(AbstractIcon *icon)
+void AppletsListWidget::appletIconHoverEnter(Plasma::AbstractIcon *icon)
 {
     AppletIconWidget *applet = static_cast<AppletIconWidget*>(icon);
     if (!m_toolTip->isVisible()) {
@@ -151,7 +151,7 @@ void AppletsListWidget::appletIconHoverEnter(AbstractIcon *icon)
     }
 }
 
-void AppletsListWidget::appletIconHoverLeave(AbstractIcon *icon)
+void AppletsListWidget::appletIconHoverLeave(Plasma::AbstractIcon *icon)
 {
     Q_UNUSED(icon)
 
@@ -209,16 +209,16 @@ AppletIconWidget *AppletsListWidget::createAppletIcon(PlasmaAppletItem *appletIt
     AppletIconWidget *applet = new AppletIconWidget(appletItem);
     addIcon(applet);
 
-    connect(applet, SIGNAL(hoverEnter(AbstractIcon*)), this, SLOT(appletIconHoverEnter(AbstractIcon*)));
-    connect(applet, SIGNAL(hoverLeave(AbstractIcon*)), this, SLOT(appletIconHoverLeave(AbstractIcon*)));
-    connect(applet, SIGNAL(doubleClicked(AbstractIcon*)), this, SLOT(appletIconDoubleClicked(AbstractIcon*)));
+    connect(applet, SIGNAL(hoverEnter(Plasma::AbstractIcon*)), this, SLOT(appletIconHoverEnter(Plasma::AbstractIcon*)));
+    connect(applet, SIGNAL(hoverLeave(Plasma::AbstractIcon*)), this, SLOT(appletIconHoverLeave(Plasma::AbstractIcon*)));
+    connect(applet, SIGNAL(doubleClicked(Plasma::AbstractIcon*)), this, SLOT(appletIconDoubleClicked(Plasma::AbstractIcon*)));
     //FIXME no such signal, needs implementing?
     //connect(applet, SIGNAL(dragStarted(AbstractIcon*)), m_toolTip, SLOT(hide()));
 
     return applet;
 }
 
-void AppletsListWidget::appletIconDoubleClicked(AbstractIcon *icon)
+void AppletsListWidget::appletIconDoubleClicked(Plasma::AbstractIcon *icon)
 {
     emit(appletDoubleClicked(static_cast<AppletIconWidget*>(icon)->appletItem()));
 }
@@ -236,7 +236,7 @@ void AppletsListWidget::updateVisibleIcons()
 
         //FIXME the contains check may be redundant?
         if (appletItem && m_allAppletsHash.contains(appletItem->id())) {
-            AbstractIcon *appletIconWidget = m_allAppletsHash.value(appletItem->id());
+            Plasma::AbstractIcon *appletIconWidget = m_allAppletsHash.value(appletItem->id());
             showIcon(appletIconWidget);
         }
     }

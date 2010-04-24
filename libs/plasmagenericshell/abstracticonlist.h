@@ -29,6 +29,7 @@
 #include <Plasma/Svg>
 #include <plasma/widgets/toolbutton.h>
 
+#include "plasmagenericshell_export.h"
 #include "abstracticon.h"
 
 namespace Plasma
@@ -36,9 +37,8 @@ namespace Plasma
     class Animation;
     class ItemBackground;
     class ToolButton;
-} // namespace Plasma
 
-class AbstractIconList : public QGraphicsWidget
+class PLASMAGENERICSHELL_EXPORT AbstractIconList : public QGraphicsWidget
 {
 
     Q_OBJECT
@@ -165,5 +165,6 @@ private:
 
     Plasma::Animation *m_slide;
 };
+} // namespace Plasma
 
 #endif //ICONLIST_H

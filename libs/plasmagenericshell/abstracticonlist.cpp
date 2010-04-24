@@ -43,6 +43,9 @@ const int ICON_SIZE = 70;
 const int SEARCH_DELAY = 300;
 const int SCROLL_STEP_DURATION = 300;
 
+namespace Plasma
+{
+
 AbstractIconList::AbstractIconList(Qt::Orientation orientation, QGraphicsItem *parent)
     : QGraphicsWidget(parent),
       m_arrowsSvg(new Plasma::Svg(this)),
@@ -523,4 +526,6 @@ int AbstractIconList::iconSize() const
 {
     return m_iconSize;
 }
+
+} // namespace Plasma
 
