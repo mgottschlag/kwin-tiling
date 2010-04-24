@@ -26,6 +26,9 @@
 
 class QPixmap;
 class QIcon;
+// for text handling
+class KeyboardConfig;
+class Rules;
 
 class Flags {
 
@@ -35,6 +38,9 @@ public:
 
 //	const QPixmap* getPixmap(const QString& layout);
 	const QIcon getIcon(const QString& layout);
+
+	static QString getLongText(const QString& fullLayout, const Rules* rules);
+	static QString getDisplayText(const QString& layout, const KeyboardConfig& keyboardConfig);
 
 private:
 	QString getCountryFromLayoutName(const QString& layout);

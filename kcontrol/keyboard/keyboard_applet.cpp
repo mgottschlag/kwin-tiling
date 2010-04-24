@@ -114,51 +114,6 @@ void KeyboardApplet::layoutChanged()
 	update();
 }
 
-QString KeyboardApplet::getDisplayText(const QString& fullLayoutName)
-{
-	if( fullLayoutName.isEmpty() )
-		return QString("--");
-
-	LayoutConfig layoutConfig = LayoutConfig::createLayoutConfig(fullLayoutName);
-	QString layoutText = layoutConfig.layout;
-
-	foreach(const LayoutConfig& lc, keyboardConfig->layouts) {
-		if( layoutConfig.layout == lc.layout && layoutConfig.variant == lc.variant ) {
-			layoutText = lc.getDisplayName();
-			break;
-		}
-	}
-
-	return layoutText;
-}
-
-QString KeyboardApplet::getLongText(const QString& fullLayoutName)
-{
-	if( fullLayoutName.isEmpty() )
-		return "";
-
-	if( rules == NULL ) {
-		return fullLayoutName;
-	}
-
-	LayoutConfig layoutConfig = LayoutConfig::createLayoutConfig(fullLayoutName);
-	QString layoutText = fullLayoutName;
-
-	const LayoutInfo* layoutInfo = rules->getLayoutInfo(layoutConfig.layout);
-	if( layoutInfo != NULL ) {
-		layoutText = layoutInfo->description;
-
-		if( ! layoutConfig.variant.isEmpty() ) {
-			const VariantInfo* variantInfo = layoutInfo->getVariantInfo(layoutConfig.variant);
-			QString variantText = variantInfo != NULL ? variantInfo->description : layoutConfig.variant;
-
-			return QString("%1 - %2").arg(layoutText, variantText);
-		}
-	}
-
-	return layoutText;
-}
-
 const QIcon KeyboardApplet::getFlag(const QString& layout)
 {
 	return keyboardConfig->showFlag ? flags.getIcon(layout) : QIcon();
@@ -170,7 +125,7 @@ void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 	p->setRenderHint(QPainter::Antialiasing);
 
 	QString layout = X11Helper::getCurrentLayout();
-	QString layoutText = getDisplayText(layout);
+	QString layoutText = Flags::getDisplayText(layout, *keyboardConfig);
 
 	const QIcon icon(getFlag(layout));
 	if( ! icon.isNull() ) {
@@ -213,7 +168,7 @@ QList<QAction*> KeyboardApplet::contextualActions()
 	QStringList layouts = X11Helper::getLayoutsList();
 	foreach(QString layout, layouts) {
 		QAction* action;
-		QString menuText = getLongText(layout);
+		QString menuText = Flags::getLongText(layout, rules);
 //		if( pixmap != NULL ) {
 			action = new QAction(getFlag(layout), menuText, actionGroup);
 //		}

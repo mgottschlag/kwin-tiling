@@ -61,6 +61,7 @@ install( FILES plasma_applet_keyboard.desktop DESTINATION ${SERVICES_INSTALL_DIR
 
 set( keyboard_layout_widget_SRCS
     layout_widget.cpp
+    keyboard_config.cpp
     flags.cpp
     x11_helper.cpp
 )

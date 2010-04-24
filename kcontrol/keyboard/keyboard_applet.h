@@ -64,8 +64,6 @@ private Q_SLOTS:
 
 private:
 	void readConfig();
-	QString getLongText(const QString& fullLayout);
-	QString getDisplayText(const QString& layout);
 	const QIcon getFlag(const QString& layout);
 
 //	bool drawFlag;

@@ -27,6 +27,10 @@
 
 #include "x11_helper.h"
 
+//for text handling
+#include "keyboard_config.h"
+#include "xkb_rules.h"
+
 
 static const QString flagTemplate("l10n/%1/flag.png");
 
@@ -100,3 +104,52 @@ QString Flags::getCountryFromLayoutName(const QString& layout)
 
 	return countryCode;
 }
+
+//TODO: move this to some other class?
+
+QString Flags::getDisplayText(const QString& fullLayoutName, const KeyboardConfig& keyboardConfig)
+{
+	if( fullLayoutName.isEmpty() )
+		return QString("--");
+
+	LayoutConfig layoutConfig = LayoutConfig::createLayoutConfig(fullLayoutName);
+	QString layoutText = layoutConfig.layout;
+
+	foreach(const LayoutConfig& lc, keyboardConfig.layouts) {
+		if( layoutConfig.layout == lc.layout && layoutConfig.variant == lc.variant ) {
+			layoutText = lc.getDisplayName();
+			break;
+		}
+	}
+
+	return layoutText;
+}
+
+QString Flags::getLongText(const QString& fullLayoutName, const Rules* rules)
+{
+	if( fullLayoutName.isEmpty() )
+		return "";
+
+	if( rules == NULL ) {
+		return fullLayoutName;
+	}
+
+	LayoutConfig layoutConfig = LayoutConfig::createLayoutConfig(fullLayoutName);
+	QString layoutText = fullLayoutName;
+
+	const LayoutInfo* layoutInfo = rules->getLayoutInfo(layoutConfig.layout);
+	if( layoutInfo != NULL ) {
+		layoutText = layoutInfo->description;
+
+		if( ! layoutConfig.variant.isEmpty() ) {
+			const VariantInfo* variantInfo = layoutInfo->getVariantInfo(layoutConfig.variant);
+			QString variantText = variantInfo != NULL ? variantInfo->description : layoutConfig.variant;
+
+			return QString("%1 - %2").arg(layoutText, variantText);
+		}
+	}
+
+	return layoutText;
+}
+
+

@@ -29,6 +29,7 @@
 
 class QPushButton;
 class QPixmap;
+class KeyboardConfig;
 
 class LayoutWidget : public QWidget
 {
@@ -46,13 +47,14 @@ private Q_SLOTS:
 private:
 	void init();
 	void destroy();
-	QString getDisplayText(const QString& layout);
+//	QString getDisplayText(const QString& layout);
 //	const QPixmap* getFlag(const QString& layout);
 
 //    bool drawFlag;
 //	Flags flags;
 	XEventNotifier xEventNotifier;
 	QPushButton* widget;
+	KeyboardConfig* keyboardConfig;
 };
 
 

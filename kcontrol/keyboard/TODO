@@ -1,14 +1,16 @@
-Arch:
-* start applet from kxkb kcm
-
 KCM UI
 * allow specifying display names
 * allow changing variant without re-adding layout
 * allow changing layout order
+* merge flag and layout map
+* hide flag if show flag is false
+
+plasma applet:
+* make applet show nicely in taskbar (not just desktop)
+* start applet from kxkb kcm
 
 kxkb part
-* honor display names for layouts
-* tooltip
+* tooltip (will require loading xkb rules - not sure if overhead is worth it)
 * flag
 
 Cleanup:

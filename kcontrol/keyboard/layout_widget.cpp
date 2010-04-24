@@ -24,13 +24,15 @@
 #include <QtGui/QLabel>
 
 #include "x11_helper.h"
+#include "keyboard_config.h"
 
 K_PLUGIN_FACTORY(LayoutWidgetFactory, registerPlugin<LayoutWidget>();)
-K_EXPORT_PLUGIN(LayoutWidgetFactory("layout_widget"))
+K_EXPORT_PLUGIN(LayoutWidgetFactory("keyboard_layout_widget"))
 
 LayoutWidget::LayoutWidget(QWidget* parent, const QList<QVariant>& /*args*/):
 	QWidget(parent),
-	xEventNotifier(XEventNotifier::XKB)
+	xEventNotifier(XEventNotifier::XKB),
+	keyboardConfig(new KeyboardConfig())
 {
 	if( ! X11Helper::xkbSupported(NULL) ) {
 //		setFailedToLaunch(true, "XKB extension failed to initialize");
@@ -41,8 +43,7 @@ LayoutWidget::LayoutWidget(QWidget* parent, const QList<QVariant>& /*args*/):
 	widget = new QPushButton(this);
 	widget->setFlat(true);
 
-//	KConfigGroup config = Plasma::Applet::config("KeyboardLayout");
-//	drawFlag = config.readEntry("ShowFlag", true);
+	keyboardConfig->load();
 
 	layoutChanged();
 	init();
@@ -76,20 +77,24 @@ void LayoutWidget::toggleLayout()
 void LayoutWidget::layoutChanged()
 {
 	QString layout = X11Helper::getCurrentLayout();
-	widget->setText(getDisplayText(layout));
+	QString layoutText = Flags::getDisplayText(layout, *keyboardConfig);
+//	QString longText = Flags::getLongText(layout, rules);
+	widget->setText(layoutText);
+//	widget->setToolTip(longText);
+
 //	const QPixmap* pixmap = getFlag(layout);
 //	if( pixmap != NULL ) {
 //		p->drawPixmap(contentsRect, *pixmap);
 //	}
 }
 
-QString LayoutWidget::getDisplayText(const QString& layout)
-{
-	if( layout.isEmpty() )
-		return QString("--");
-
-	return layout.split(X11Helper::LEFT_VARIANT_STR)[0];
-}
+//QString LayoutWidget::getDisplayText(const QString& layout)
+//{
+//	if( layout.isEmpty() )
+//		return QString("--");
+//
+//	return layout.split(X11Helper::LEFT_VARIANT_STR)[0];
+//}
 
 //const QPixmap* LayoutWidget::getFlag(const QString& layout)
 //{
