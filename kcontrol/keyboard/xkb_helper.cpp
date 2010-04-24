@@ -35,6 +35,8 @@ static const char* SETXKBMAP_EXEC = "setxkbmap";
 static bool setxkbmapNotFound = false;
 static QString setxkbmapExe;
 
+static const QString COMMAND_OPTIONS_SEPARATOR(",");
+
 static
 QString getSetxkbmapExe()
 {
@@ -92,16 +94,16 @@ bool XkbHelper::initializeKeyboardLayouts(KeyboardConfig& config)
 	if( config.configureLayouts ) {
 		QStringList layouts;
 		QStringList variants;
-		foreach (LayoutConfig layoutConfig, config.layouts) {
+		foreach (const LayoutConfig& layoutConfig, config.layouts) {
 			layouts.append(layoutConfig.layout);
 			variants.append(layoutConfig.variant);
 		}
 
 		setxkbmapCommandArguments.append("-layout");
-		setxkbmapCommandArguments.append(layouts.join(","));
+		setxkbmapCommandArguments.append(layouts.join(COMMAND_OPTIONS_SEPARATOR));
 		if( ! variants.join("").isEmpty() ) {
 			setxkbmapCommandArguments.append("-variant");
-			setxkbmapCommandArguments.append(variants.join(","));
+			setxkbmapCommandArguments.append(variants.join(COMMAND_OPTIONS_SEPARATOR));
 		}
 	}
 	if( config.resetOldXkbOptions ) {
@@ -109,7 +111,7 @@ bool XkbHelper::initializeKeyboardLayouts(KeyboardConfig& config)
 	}
 	if( ! config.xkbOptions.isEmpty() ) {
 		setxkbmapCommandArguments.append("-option");
-		setxkbmapCommandArguments.append(config.xkbOptions.join(","));
+		setxkbmapCommandArguments.append(config.xkbOptions.join(COMMAND_OPTIONS_SEPARATOR));
 	}
 
 	if( ! setxkbmapCommandArguments.isEmpty() ) {

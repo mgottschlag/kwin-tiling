@@ -104,7 +104,7 @@ const IsoCodeEntry* IsoCodes::getEntry(const QString& attributeName, const QStri
 	if( ! d->loaded ) {
 		d->buildIsoEntryList();
 	}
-	for(QList<IsoCodeEntry>::Iterator it = d->isoEntryList.begin(); it != d->isoEntryList.end(); it++) {
+	for(QList<IsoCodeEntry>::Iterator it = d->isoEntryList.begin(); it != d->isoEntryList.end(); ++it) {
 		const IsoCodeEntry* isoCodeEntry = &(*it);
 		if( isoCodeEntry->value(attributeName) == attributeValue )
 			return isoCodeEntry;

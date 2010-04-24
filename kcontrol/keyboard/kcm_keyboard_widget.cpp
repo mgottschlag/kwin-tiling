@@ -26,7 +26,6 @@
 
 #include <QtGui/QMessageBox>
 #include <QtGui/QWidget>
-#include <QtGui/QPixmap>
 #include <QtGui/QCheckBox>
 #include <QtGui/QPixmap>
 #include <QtGui/QVBoxLayout>
@@ -45,6 +44,7 @@
 
 static const QString GROUP_SWITCH_GROUP_NAME("grp");
 static const QString LV3_SWITCH_GROUP_NAME("lv3");
+static const char XKB_OPTION_GROUP_SEPARATOR = ':';
 //static const QString RESET_XKB_OPTIONS("-option");
 
 static const int TAB_HARDWARE = 0;
@@ -121,7 +121,7 @@ void KCMKeyboardWidget::initializeKeyboardModelUI()
     	if( vendor.isEmpty() ) {
     		vendor = i18nc("unknown keyboard model vendor", "Unknown");
     	}
-		uiWidget->keyboardModelComboBox->addItem(i18nc("vendor, keyboard model", "%1 | %2", vendor, modelInfo->description, modelInfo->name));
+		uiWidget->keyboardModelComboBox->addItem(i18nc("vendor | keyboard model", "%1 | %2", vendor, modelInfo->description), modelInfo->name);
 	}
     uiWidget->keyboardModelComboBox->model()->sort(0);
 	connect(uiWidget->keyboardModelComboBox, SIGNAL(activated(int)), this, SLOT(uiChanged()));
@@ -149,7 +149,7 @@ void KCMKeyboardWidget::addLayout()
 void KCMKeyboardWidget::removeLayout()
 {
 	QModelIndexList selected = uiWidget->layoutsTableView->selectionModel()->selectedIndexes();
-	foreach(QModelIndex idx, selected) {
+	foreach(const QModelIndex& idx, selected) {
 		if( idx.column() == 0 ) {
 			keyboardConfig->layouts.removeAt(idx.row());
 		}
@@ -232,7 +232,7 @@ void KCMKeyboardWidget::clear3rdLevelShortcuts()
 void KCMKeyboardWidget::clearXkbGroup(const QString& groupName)
 {
 	for(int ii=keyboardConfig->xkbOptions.count()-1; ii>=0; ii--) {
-		if( keyboardConfig->xkbOptions[ii].startsWith(groupName+":") ) {
+		if( keyboardConfig->xkbOptions[ii].startsWith(groupName+XKB_OPTION_GROUP_SEPARATOR) ) {
 			keyboardConfig->xkbOptions.removeAt(ii);
 		}
 	}
@@ -272,10 +272,10 @@ void KCMKeyboardWidget::updateSwitcingPolicyUI()
 
 void KCMKeyboardWidget::updateXkbShortcutButton(const QString& groupName, QPushButton* button)
 {
-	QStringList grpOptions = keyboardConfig->xkbOptions.filter(QRegExp("^"+groupName+":"));
+	QStringList grpOptions = keyboardConfig->xkbOptions.filter(QRegExp("^"+groupName+XKB_OPTION_GROUP_SEPARATOR));
 	switch( grpOptions.size() ) {
 	case 0:
-		button->setText(i18n("None"));
+		button->setText(i18nc("no shourtcuts defined", "None"));
 	break;
 	case 1: {
 		const OptionGroupInfo* optionGroupInfo = rules->getOptionGroupInfo(groupName);

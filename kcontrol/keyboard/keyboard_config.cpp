@@ -103,7 +103,7 @@ void KeyboardConfig::load()
     	layoutStrings.append(DEFAULT_LAYOUT);
     }
     layouts.clear();
-    foreach(QString layoutString, layoutStrings) {
+    foreach(const QString& layoutString, layoutStrings) {
     	layouts.append(LayoutConfig::createLayoutConfig(layoutString));
     }
 
@@ -140,7 +140,7 @@ void KeyboardConfig::save()
     config.writeEntry("Use", configureLayouts);
 
     QStringList layoutStrings;
-    foreach(LayoutConfig layoutConfig, layouts) {
+    foreach(const LayoutConfig& layoutConfig, layouts) {
     	QString string(layoutConfig.layout);
     	if( ! layoutConfig.variant.isEmpty() ) {
     		string += LAYOUT_VARIANT_SEPARATOR_PREFIX;
@@ -152,7 +152,7 @@ void KeyboardConfig::save()
     config.writeEntry("LayoutList", layoutStrings.join(LIST_SEPARATOR));
 
     QStringList displayNames;
-    foreach(LayoutConfig layoutConfig, layouts) {
+    foreach(const LayoutConfig& layoutConfig, layouts) {
     	displayNames << layoutConfig.getRawDisplayName();
     }
     config.writeEntry("DisplayNames", displayNames.join(LIST_SEPARATOR));

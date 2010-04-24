@@ -260,7 +260,7 @@ DEALINGS IN THE SOFTWARE.
 
 ****************************************************************************/
 
-#include <X11/Xlib.h>
+//#include <X11/Xlib.h>
 
 #ifdef HAVE_XTEST
 #include <X11/extensions/XTest.h>

@@ -166,7 +166,7 @@ QList<QAction*> KeyboardApplet::contextualActions()
 	delete actionGroup;
 	actionGroup = new QActionGroup(this);
 	QStringList layouts = X11Helper::getLayoutsList();
-	foreach(QString layout, layouts) {
+	foreach(const QString& layout, layouts) {
 		QAction* action;
 		QString menuText = Flags::getLongText(layout, rules);
 //		if( pixmap != NULL ) {
