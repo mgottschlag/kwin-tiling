@@ -340,45 +340,6 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
     Q_UNUSED(option)
     Q_UNUSED(contentsRect)
 
-    if (m_taskArea->leftEasement() > 0) {
-        Plasma::FrameSvg::EnabledBorders borders = Plasma::FrameSvg::AllBorders;
-        Plasma::FrameSvg::EnabledBorders oldBorders = m_background->enabledBorders();
-
-        m_background->setElementPrefix(QString());
-
-        QRectF iconRect;
-        qreal left, top, right, bottom;
-        //we need also the border we're going to disable
-        m_background->getMargins(left, top, right, bottom);
-
-        switch (formFactor()) {
-        case Plasma::Vertical:
-            borders &= ~Plasma::FrameSvg::BottomBorder;
-            iconRect = QRect(left, 0, size().width() - left - right, m_taskArea->leftEasement() + top);
-            break;
-        case Plasma::Horizontal:
-        default:
-            if (QApplication::layoutDirection() == Qt::RightToLeft) {
-                borders &= ~Plasma::FrameSvg::LeftBorder;
-                iconRect = QRect(size().width() - m_taskArea->leftEasement() - right,
-                                 top,
-                                 m_taskArea->leftEasement(),
-                                 size().height() - top - bottom);
-            } else {
-                borders &= ~Plasma::FrameSvg::RightBorder;
-                iconRect = QRect(0, top, m_taskArea->leftEasement() + left, size().height() - top - bottom);
-            }
-            break;
-        }
-
-        m_background->setEnabledBorders(borders);
-
-        m_background->resizeFrame(iconRect.size());
-        m_background->paintFrame(painter, iconRect.topLeft());
-
-        m_background->setEnabledBorders(oldBorders);
-    }
-
     QRect normalRect = rect().toRect();
     QRect lastRect(normalRect);
     m_background->setElementPrefix("lastelements");

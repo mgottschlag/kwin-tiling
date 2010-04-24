@@ -218,6 +218,7 @@ TaskArea::TaskArea(SystemTray::Applet *parent)
     d->topLayout->addItem(d->normalTasksLayout);
     d->topLayout->addItem(d->lastTasksLayout);
     d->topLayout->setContentsMargins(0, 0, 0, 0);
+    d->topLayout->setSpacing(0);
 
     d->hiddenTasksWidget = new QGraphicsWidget(this);
     d->hiddenTasksLayout = new QGraphicsGridLayout(d->hiddenTasksWidget);
@@ -506,14 +507,6 @@ void TaskArea::relayoutHiddenTasks()
 
 int TaskArea::leftEasement() const
 {
-    if (d->unhider) {
-        if (d->topLayout->orientation() == Qt::Horizontal) {
-            return d->unhider->size().width();
-        } else {
-            return d->unhider->size().height();
-        }
-    }
-
     return 0;
 }
 
@@ -547,7 +540,6 @@ void TaskArea::setOrientation(Qt::Orientation o)
     d->topLayout->setOrientation(o);
 
     if (d->unhider) {
-        d->unhider->setOrientation(o);
         setUnhideToolIconSizes();
     }
     updateUnhideToolIcon();
@@ -579,7 +571,7 @@ void TaskArea::initUnhideTool()
     updateUnhideToolIcon();
     setUnhideToolIconSizes();
 
-    d->topLayout->insertItem(0, d->unhider);
+    d->topLayout->addItem(d->unhider);
     connect(d->unhider, SIGNAL(clicked()), this, SIGNAL(toggleHiddenItems()));
 
     emit sizeHintChanged(Qt::PreferredSize);
@@ -588,15 +580,9 @@ void TaskArea::initUnhideTool()
 void TaskArea::setUnhideToolIconSizes()
 {
     if (d->topLayout->orientation() == Qt::Horizontal) {
-        d->unhider->setMaximumSize(KIconLoader::SizeSmallMedium, QWIDGETSIZE_MAX);
-        d->unhider->setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
-        d->unhider->setPreferredSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
-        d->unhider->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+        d->unhider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     } else {
-        d->unhider->setMaximumSize(QWIDGETSIZE_MAX, KIconLoader::SizeSmallMedium);
-        d->unhider->setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
-        d->unhider->setPreferredSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
-        d->unhider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+        d->unhider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     }
 }
 
