@@ -4,6 +4,7 @@ Name[pt]=Notificação do Espaço Livre
 Name[sv]=Information om ledigt utrymme
 Name[uk]=Сповіщення про вільне місце
 Name[x-test]=xxFree Space Notifierxx
+Comment=Warns when running out of space on your home folder
 Type=Service
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=freespacenotifier

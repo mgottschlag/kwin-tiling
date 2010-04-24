@@ -45,7 +45,7 @@ FreeSpaceNotifier::FreeSpaceNotifier( QObject* parent )
 {
     // If we are running, notifications are enabled
     FreeSpaceNotifierSettings::setEnableNotification( true );
-    
+
     connect( &timer, SIGNAL( timeout() ), SLOT( checkFreeDiskSpace() ) );
     timer.start( 1000 * 60 /* 1 minute */ );
 }
@@ -68,7 +68,7 @@ void FreeSpaceNotifier::checkFreeDiskSpace()
 
         if (avail < 0 || sfs.f_blocks <= 0)
             return; // we better not say anything about it
-        
+
         long limit = FreeSpaceNotifierSettings::minimumSpace(); // MiB
         int availpct = int( 100 * avail / sfs.f_blocks );
         avail = ((long long)avail) * sfs.f_bsize / ( 1024 * 1024 ); // to MiB
@@ -93,8 +93,8 @@ void FreeSpaceNotifier::checkFreeDiskSpace()
         {
             notification = new KNotification( "freespacenotif", 0, KNotification::Persistent );
 
-            notification->setText( i18n( "You are running low on disk space on your home partition (currently %2%, %1 MiB free).\nWould you like to run a file manager to free some disk space?", avail, availpct ) );
-            notification->setActions( QStringList() << i18n( "Open File Manager" ) << i18n( "Do Nothing" ) << i18n( "Configure Warning" ) );
+            notification->setText( i18nc( "Warns the user that the system is running low on space on his home folder, indicating the percentage and absolute MiB size remaining, and asks if the user wants to do something about it", "You are running low on disk space on your home folder (currently %2%, %1 MiB free).\nWould you like to run a file manager to free some disk space?", avail, availpct ) );
+            notification->setActions( QStringList() << i18nc( "Opens a file manager like dolphin", "Open File Manager" ) << i18nc( "Closes the notification", "Do Nothing" ) << i18nc( "Allows the user to configure the warning notification being shown", "Configure Warning" ) );
             //notification->setPixmap( ... ); // TODO: Maybe add a picture here?
 
             connect( notification, SIGNAL( action1Activated() ), SLOT( openFileManager() ) );
@@ -128,7 +128,7 @@ void FreeSpaceNotifier::showConfiguration()
     Ui::freespacenotifier_prefs_base preferences;
     preferences.setupUi( generalSettingsDlg );
 
-    dialog->addPage( generalSettingsDlg, i18n( "General" ), "system-run" );
+    dialog->addPage( generalSettingsDlg, i18nc( "The settings dialog main page name, as in 'general settings'", "General" ), "system-run" );
     connect( dialog, SIGNAL( finished() ), this, SLOT( configDialogClosed() ) );
     dialog->setAttribute( Qt::WA_DeleteOnClose );
     dialog->show();
