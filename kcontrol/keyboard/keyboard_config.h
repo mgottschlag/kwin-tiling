@@ -32,12 +32,13 @@ struct LayoutConfig {
 	QString variant;
 
 	LayoutConfig() {}
-	LayoutConfig(const LayoutConfig& layoutConfig) {
+	/*explicit*/ LayoutConfig(const LayoutConfig& layoutConfig) {
 		layout = layoutConfig.layout;
 		variant = layoutConfig.variant;
 		displayName = layoutConfig.displayName;
 	}
 
+	QString getRawDisplayName() const { return displayName; }
 	QString getDisplayName() const { return !displayName.isEmpty() ? displayName :  layout; }
 	void setDisplayName(const QString& name) { displayName = name; }
 
@@ -77,7 +78,6 @@ public:
 
 	// display options
 	bool showFlag;
-//	QMap<QString, QString> displayNames;	// layoutPair -> display name
 
 	void setDefaults();
 	void load();

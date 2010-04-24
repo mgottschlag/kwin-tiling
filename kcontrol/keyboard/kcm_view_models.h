@@ -36,18 +36,20 @@ class LayoutsTableModel : public QAbstractTableModel
      LayoutsTableModel(Rules* rules, Flags *flags, KeyboardConfig* keyboardConfig, QObject *parent = 0);
 
      int columnCount(const QModelIndex&) const;
+     Qt::ItemFlags flags(const QModelIndex &index) const;
      QVariant headerData(int section, Qt::Orientation orientation,
                          int role = Qt::DisplayRole) const;
 
      int rowCount(const QModelIndex &parent = QModelIndex()) const;
      QVariant data(const QModelIndex &index, int role) const;
+     bool setData(const QModelIndex &index, const QVariant &value, int role);
 
      void refresh();
 
  private:
      KeyboardConfig* keyboardConfig;
      Rules *rules;
-     Flags *flags;
+     Flags *countryFlags;
 };
 
 class XkbOptionsTreeModel: public QAbstractItemModel

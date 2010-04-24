@@ -18,6 +18,7 @@
 
 #include "kcm_view_models.h"
 
+#include <kdebug.h>
 #include <klocalizedstring.h>
 #include <QtGui/QTreeView>
 #include <QtGui/QComboBox>
@@ -39,7 +40,7 @@ LayoutsTableModel::LayoutsTableModel(Rules* rules_, Flags *flags_, KeyboardConfi
 	QAbstractTableModel(parent),
 	keyboardConfig(keyboardConfig_),
 	rules(rules_),
-	flags(flags_)
+	countryFlags(flags_)
 {
 }
 
@@ -59,6 +60,20 @@ int LayoutsTableModel::columnCount(const QModelIndex&) const
 	return 4;
 }
 
+Qt::ItemFlags LayoutsTableModel::flags(const QModelIndex &index) const
+{
+	if (!index.isValid())
+		return 0;
+
+	Qt::ItemFlags flags = QAbstractTableModel::flags(index);
+
+	if( index.column() == DISPLAY_NAME_COLUMN ) {
+		flags |= Qt::ItemIsEditable;
+	}
+
+	return flags;
+}
+
 QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
 {
      if (!index.isValid())
@@ -67,14 +82,14 @@ QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
      if (index.row() >= keyboardConfig->layouts.size())
          return QVariant();
 
-	 LayoutConfig layoutConfig = keyboardConfig->layouts.at(index.row());
+	 const LayoutConfig& layoutConfig = keyboardConfig->layouts.at(index.row());
 
      if (role == Qt::DecorationRole) {
     	 switch( index.column() ) {
     	 case MAP_COLUMN: {
 //    			const QPixmap* pixmap = flags->getPixmap(layoutConfig.layout);
 //    			return pixmap != NULL ? *pixmap : QVariant();
-    			return flags->getIcon(layoutConfig.layout);
+    			return countryFlags->getIcon(layoutConfig.layout);
     	 }
     	 break;
     	 }
@@ -104,6 +119,14 @@ QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
     	 break;
     	 }
      }
+     else if (role==Qt::EditRole ) {
+    	 switch( index.column() ) {
+    	 case DISPLAY_NAME_COLUMN:
+    		 return layoutConfig.getDisplayName();
+    	 break;
+    	 default:;
+    	 }
+     }
      return QVariant();
 }
 
@@ -114,12 +137,37 @@ QVariant LayoutsTableModel::headerData(int section, Qt::Orientation orientation,
 
      if (orientation == Qt::Horizontal)
          return headers[section];
-//     else
-//         return QString("%1").arg(section+1);
+
      return QVariant();
 }
 
+bool LayoutsTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (role != Qt::EditRole || index.column() != DISPLAY_NAME_COLUMN )
+        return false;
 
+    if (index.row() >= keyboardConfig->layouts.size())
+        return false;
+
+	 LayoutConfig& layoutConfig = keyboardConfig->layouts[index.row()];
+	 QString displayText = value.toString().left(3);
+	 layoutConfig.setDisplayName(displayText);
+
+//    TreeItem *item = getItem(index);
+//    bool result = item->setData(index.column(), value);
+//
+//    if (result)
+	 kDebug() << "new display text" << displayText << layoutConfig.getDisplayName();
+        emit dataChanged(index, index);
+
+    return true; //result;
+}
+
+
+
+//
+// Xkb Options Tree View
+//
 
 int XkbOptionsTreeModel::rowCount(const QModelIndex& parent) const {
     if( ! parent.isValid() )

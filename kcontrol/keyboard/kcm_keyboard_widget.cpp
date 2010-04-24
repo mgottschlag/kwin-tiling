@@ -24,7 +24,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-#include <QtCore/QDebug>
+#include <QtGui/QMessageBox>
 #include <QtGui/QWidget>
 #include <QtGui/QPixmap>
 #include <QtGui/QCheckBox>
@@ -129,6 +129,14 @@ void KCMKeyboardWidget::initializeKeyboardModelUI()
 
 void KCMKeyboardWidget::addLayout()
 {
+	if( keyboardConfig->layouts.count() >= X11Helper::MAX_GROUP_COUNT ) {
+		QMessageBox msgBox;
+		msgBox.setText(i18n("Only up to %1 keyboard layouts is supported", X11Helper::MAX_GROUP_COUNT));
+		// more information https://bugs.freedesktop.org/show_bug.cgi?id=19501
+		msgBox.exec();
+		return;
+	}
+
     AddLayoutDialog dialog(rules, flags, this);
     dialog.setModal(true);
     if( dialog.exec() == QDialog::Accepted ) {
@@ -160,6 +168,7 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 {
 	layoutsTableModel = new LayoutsTableModel(rules, flags, keyboardConfig, uiWidget->layoutsTableView);
 	uiWidget->layoutsTableView->setModel(layoutsTableModel);
+	connect(layoutsTableModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(uiChanged()));
 
 //	connect(layoutsTableModel, SIGNAL(), this, SLOT(uiChanged()));
 //    connect(uiWidget->layoutsTableView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(layoutCellClicked(const QModelIndex &)));

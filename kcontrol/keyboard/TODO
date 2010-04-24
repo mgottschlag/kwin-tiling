@@ -1,8 +1,7 @@
 KCM UI
-* allow specifying display names
 * allow changing variant without re-adding layout
 * allow changing layout order
-* merge flag and layout map
+* merge flag and layout map in the column
 * hide flag if show flag is false
 
 plasma applet:
@@ -13,7 +12,10 @@ kxkb part
 * tooltip (will require loading xkb rules - not sure if overhead is worth it)
 * flag
 
-Cleanup:
+UI cleanup:
+* layouts, sizes etc in kcm
+
+Code cleanup:
 * rules, iso_codes:
   better error handling
 

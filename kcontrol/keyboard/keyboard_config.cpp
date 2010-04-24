@@ -151,6 +151,12 @@ void KeyboardConfig::save()
     }
     config.writeEntry("LayoutList", layoutStrings.join(LIST_SEPARATOR));
 
+    QStringList displayNames;
+    foreach(LayoutConfig layoutConfig, layouts) {
+    	displayNames << layoutConfig.getRawDisplayName();
+    }
+    config.writeEntry("DisplayNames", displayNames.join(LIST_SEPARATOR));
+
 	config.writeEntry("SwitchMode", SWITCHING_POLICIES[switchingPolicy]);
 
 	config.writeEntry("ShowFlag", showFlag);
