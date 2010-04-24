@@ -1,5 +1,6 @@
 /*
  *   Copyright 2006, 2007 Aaron Seigo <aseigo@kde.org>
+ *   Copyright 2010 Chani Armitage <chani@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as
@@ -74,9 +75,15 @@ public:
     QList<PanelView*> panelViews() const;
 
     void showWidgetExplorer(int screen, Plasma::Containment *c);
-    void hideWidgetExplorer(int screen);
+    void showActivityManager(int screen, Plasma::Containment *c);
+    void hideController(int screen);
 
     static bool isPanelContainment(Plasma::Containment *containment);
+
+    /**
+     * returns a list of all existing activities
+     */
+    QStringList listActivities();
 
 #ifdef Q_WS_X11
     Atom m_XdndAwareAtom;
@@ -86,6 +93,9 @@ public:
     Atom m_XdndStatusAtom;
     Atom m_XdndVersionAtom;
 #endif
+
+Q_SIGNALS:
+    void activityAdded(const QString &id);
 
 public Q_SLOTS:
     // DBUS interface. if you change these methods, you MUST run:
@@ -106,6 +116,20 @@ public Q_SLOTS:
     void createWaitingDesktops();
     void createView(Plasma::Containment *containment);
 
+    void showActivityManager();
+    /**
+     * makes activity @p id the current one
+     */
+    void activateActivity(const QString &id);
+    /**
+     * create a new activity based on the active one
+     */
+    void cloneCurrentActivity();
+    /**
+     * create a new blank activity with @p plugin containment type
+     */
+    void createActivity(const QString &plugin);
+
 protected:
 #ifdef Q_WS_X11
     PanelView *findPanelForTrigger(WId trigger) const;
@@ -116,6 +140,7 @@ protected:
 private:
     PlasmaApp();
     DesktopView* viewForScreen(int screen, int desktop) const;
+    void showController(int screen, Plasma::Containment *c, bool widgetExplorerMode);
 
 private Q_SLOTS:
     void setupDesktop();

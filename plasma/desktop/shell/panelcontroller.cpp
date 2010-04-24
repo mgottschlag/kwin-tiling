@@ -246,7 +246,7 @@ void PanelController::setContainment(Plasma::Containment *c)
     }
 
     ControllerWindow::setContainment(c);
-    PlasmaApp::self()->hideWidgetExplorer(containment()->screen());
+    PlasmaApp::self()->hideController(containment()->screen());
 
     QWidget *child;
     while (!m_actionWidgets.isEmpty()) {
@@ -475,7 +475,7 @@ bool PanelController::eventFilter(QObject *watched, QEvent *event)
 {
     ControllerWindow::eventFilter(watched, event);
 
-    if (watched == m_optionsDialog && event->type() == QEvent::WindowDeactivate && (!isWidgetExplorerVisible())) {
+    if (watched == m_optionsDialog && event->type() == QEvent::WindowDeactivate && (!isControllerViewVisible())) {
         if (!m_settingsTool->underMouse()) {
             m_optionsDialog->hide();
         }
@@ -631,7 +631,7 @@ void PanelController::mouseMoveFilter(QMouseEvent *event)
 void PanelController::focusOutEvent(QFocusEvent * event)
 {
     Q_UNUSED(event)
-    if (!m_optionsDialog->isActiveWindow() && !isWidgetExplorerVisible()) {
+    if (!m_optionsDialog->isActiveWindow() && !isControllerViewVisible()) {
         m_optionsDialog->hide();
         close();
     }

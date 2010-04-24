@@ -25,14 +25,18 @@
 #include <Plasma/Plasma>
 
 class QBoxLayout;
+class QGraphicsWidget;
 
 namespace Plasma
 {
     class Containment;
+    class Corona;
     class FrameSvg;
     class WidgetExplorer;
     class View;
 } // namespace Plasma
+
+class ActivityManager;
 
 class ControllerWindow : public QWidget
 {
@@ -53,7 +57,8 @@ public:
     QPoint positionForPanelGeometry(const QRect &panelGeom) const;
 
     void showWidgetExplorer();
-    bool isWidgetExplorerVisible() const;
+    void showActivityManager();
+    bool isControllerViewVisible() const;
 
     Plasma::FrameSvg *background() const;
 
@@ -69,11 +74,16 @@ private Q_SLOTS:
     void backgroundChanged();
 
 private:
+    void initView();
+
     Plasma::Location m_location;
     QBoxLayout *m_layout;
     Plasma::FrameSvg *m_background;
     Plasma::Containment *m_containment;
-    Plasma::View *m_widgetExplorerView;
+    Plasma::Corona *m_corona;
+    Plasma::View *m_view;
+    QGraphicsWidget *m_watchedWidget;
+    ActivityManager *m_activityManager;
     Plasma::WidgetExplorer *m_widgetExplorer;
 };
 

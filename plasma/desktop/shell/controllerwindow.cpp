@@ -1,6 +1,7 @@
 /*
  *   Copyright 2008 Marco Martin <notmart@gmail.com>
  *   Copyright 2009 Aaron Seigo <aseigo@kde.org>
+ *   Copyright 2010 Chani Armitage <chani@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -35,6 +36,7 @@
 #include <Plasma/WindowEffects>
 
 #include "widgetsexplorer/widgetexplorer.h"
+#include "activitymanager/activitymanager.h"
 
 #include <kephal/screens.h>
 
@@ -44,7 +46,10 @@ ControllerWindow::ControllerWindow(QWidget* parent)
      m_layout(new QBoxLayout(QBoxLayout::TopToBottom, this)),
      m_background(new Plasma::FrameSvg(this)),
      m_containment(0),
-     m_widgetExplorerView(0),
+     m_corona(0),
+     m_view(0),
+     m_watchedWidget(0),
+     m_activityManager(0),
      m_widgetExplorer(0)
 {
     Q_UNUSED(parent)
@@ -75,6 +80,12 @@ ControllerWindow::ControllerWindow(QWidget* parent)
 ControllerWindow::~ControllerWindow()
 {
 
+    if (m_activityManager) {
+        if (m_corona) {
+            m_corona->removeOffscreenWidget(m_activityManager);
+        }
+        //FIXME the qt4.6 comment below applies here too
+    }
     if (m_widgetExplorer) {
         if (m_containment) {
             m_widgetExplorer->corona()->removeOffscreenWidget(m_widgetExplorer);
@@ -86,8 +97,9 @@ ControllerWindow::~ControllerWindow()
         }
     }
 
+    delete m_activityManager;
     delete m_widgetExplorer;
-    delete m_widgetExplorerView;
+    delete m_view;
 }
 
 void ControllerWindow::backgroundChanged()
@@ -109,9 +121,10 @@ void ControllerWindow::setContainment(Plasma::Containment *containment)
     }
 
     m_containment = containment;
+    m_corona = m_containment->corona();
 
-    if (m_widgetExplorerView) {
-        m_widgetExplorerView->setScreen(m_containment->screen(), m_containment->desktop());
+    if (m_view) {
+        m_view->setScreen(m_containment->screen(), m_containment->desktop());
     }
 
     if (m_widgetExplorer) {
@@ -182,8 +195,14 @@ void ControllerWindow::setLocation(const Plasma::Location &loc)
         break;
     }
 
-    if (m_widgetExplorer) {
-        m_widgetExplorer->setOrientation(orientation());
+    if (m_watchedWidget) {
+        //FIXME maybe I should make these two inherit from something
+        //or make orientation a slot.
+        if (m_watchedWidget == (QGraphicsWidget*)m_widgetExplorer) {
+            m_widgetExplorer->setOrientation(orientation());
+        } else {
+            m_activityManager->setOrientation(orientation());
+        }
     }
 }
 
@@ -222,34 +241,40 @@ Qt::Orientation ControllerWindow::orientation() const
     return Qt::Horizontal;
 }
 
+void ControllerWindow::initView()
+{
+    if (!m_view) {
+        m_view = new Plasma::View(0, this);
+        m_view->setFocus();
+        m_view->setScene(m_containment->corona());
+        m_view->setScreen(m_containment->screen(), m_containment->desktop());
+
+        m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        m_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        m_view->setStyleSheet("background: transparent; border: none;");
+
+        m_view->installEventFilter(this);
+        m_layout->addWidget(m_view);
+    }
+}
+
 void ControllerWindow::showWidgetExplorer()
 {
     if (!m_containment) {
         return;
     }
 
-    if (!m_widgetExplorerView) {
-        m_widgetExplorerView = new Plasma::View(0, this);
-        m_widgetExplorerView->setFocus();
-        m_widgetExplorerView->setScene(m_containment->corona());
-        m_widgetExplorerView->setScreen(m_containment->screen(), m_containment->desktop());
-
-        m_widgetExplorerView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        m_widgetExplorerView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        m_widgetExplorerView->setStyleSheet("background: transparent; border: none;");
-
-        m_widgetExplorerView->installEventFilter(this);
-        m_layout->addWidget(m_widgetExplorerView);
-    }
+    initView();
 
     if (!m_widgetExplorer) {
         m_widgetExplorer = new Plasma::WidgetExplorer(orientation());
+        m_watchedWidget = m_widgetExplorer;
         m_widgetExplorer->setContainment(m_containment);
         m_widgetExplorer->populateWidgetList();
-        m_widgetExplorer->resize(m_widgetExplorerView->size());
+        m_widgetExplorer->resize(m_view->size());
 
         m_containment->corona()->addOffscreenWidget(m_widgetExplorer);
-        m_widgetExplorerView->setSceneRect(m_widgetExplorer->geometry());
+        m_view->setSceneRect(m_widgetExplorer->geometry());
 
         m_widgetExplorer->installEventFilter(this);
         m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
@@ -257,6 +282,8 @@ void ControllerWindow::showWidgetExplorer()
         connect(m_widgetExplorer, SIGNAL(closeClicked()), this, SLOT(close()));
     } else {
         m_widgetExplorer->setOrientation(orientation());
+        m_watchedWidget = m_widgetExplorer;
+        m_view->setSceneRect(m_widgetExplorer->geometry());
     }
 
     if (orientation() == Qt::Horizontal) {
@@ -266,12 +293,45 @@ void ControllerWindow::showWidgetExplorer()
     }
 
     m_widgetExplorer->show();
-    // connect signals
 }
 
-bool ControllerWindow::isWidgetExplorerVisible() const
+void ControllerWindow::showActivityManager()
 {
-    return m_widgetExplorerView && m_widgetExplorerView->isVisible();
+    if (!m_containment) {
+        return;
+    }
+    initView();
+
+    if (!m_activityManager) {
+        m_activityManager = new ActivityManager(orientation());
+        m_watchedWidget = m_activityManager;
+        m_activityManager->resize(m_view->size());
+
+        m_containment->corona()->addOffscreenWidget(m_activityManager);
+        m_view->setSceneRect(m_activityManager->geometry());
+
+        m_activityManager->installEventFilter(this);
+        m_activityManager->setIconSize(KIconLoader::SizeHuge);
+
+        connect(m_activityManager, SIGNAL(closeClicked()), this, SLOT(close()));
+    } else {
+        m_activityManager->setOrientation(orientation());
+        m_watchedWidget = m_activityManager;
+        m_view->setSceneRect(m_activityManager->geometry());
+    }
+
+    if (orientation() == Qt::Horizontal) {
+        resize(width(), m_activityManager->size().height());
+    } else {
+        resize(m_activityManager->size().width(), height());
+    }
+
+    m_activityManager->show();
+}
+
+bool ControllerWindow::isControllerViewVisible() const
+{
+    return m_view && m_view->isVisible();
 }
 
 Plasma::FrameSvg *ControllerWindow::background() const
@@ -286,7 +346,7 @@ void ControllerWindow::onActiveWindowChanged(WId id)
     //if the active window isn't the plasma desktop and the widgets explorer is visible,
     //then close the panel controller
     if (QApplication::activeWindow() == 0 || (QApplication::activeWindow()->winId() != KWindowSystem::activeWindow())) {
-        if (m_widgetExplorerView && m_widgetExplorerView->isVisible() && !isActiveWindow()) {
+        if (m_view && m_view->isVisible() && !isActiveWindow()) {
             close();
         }
     }
@@ -344,24 +404,24 @@ void ControllerWindow::resizeEvent(QResizeEvent * event)
 bool ControllerWindow::eventFilter(QObject *watched, QEvent *event)
 {
     //if widgetsExplorer moves or resizes, then the view has to adjust
-    if ((watched == (QObject*)m_widgetExplorer) && (event->type() == QEvent::GraphicsSceneResize || event->type() == QEvent::GraphicsSceneMove)) {
-        m_widgetExplorerView->resize(m_widgetExplorer->size().toSize());
-        m_widgetExplorerView->setSceneRect(m_widgetExplorer->geometry());
-        //kDebug() << "sizes are:" << m_widgetExplorer->size() << m_widgetExplorerView->size() << size();
+    if ((watched == (QObject*)m_watchedWidget) && (event->type() == QEvent::GraphicsSceneResize || event->type() == QEvent::GraphicsSceneMove)) {
+        m_view->resize(m_watchedWidget->size().toSize());
+        m_view->setSceneRect(m_watchedWidget->geometry());
+        //kDebug() << "sizes are:" << m_widgetExplorer->size() << m_view->size() << size();
     }
 
     //if the view resizes, then the widgetexplorer has to be resized
-    if (watched == m_widgetExplorerView && event->type() == QEvent::Resize) {
+    if (watched == m_view && event->type() == QEvent::Resize) {
         QResizeEvent *resizeEvent = static_cast<QResizeEvent *>(event);
-        m_widgetExplorer->resize(resizeEvent->size());
-        m_widgetExplorerView->setSceneRect(m_widgetExplorer->geometry());
+        m_watchedWidget->resize(resizeEvent->size());
+        m_view->setSceneRect(m_watchedWidget->geometry());
 
         QSize borderSize = size() - m_layout->contentsRect().size();
 
         if (orientation() == Qt::Horizontal) {
-            resize(width(), m_widgetExplorerView->height() + borderSize.height());
+            resize(width(), m_view->height() + borderSize.height());
         } else {
-            resize(m_widgetExplorerView->width() + borderSize.width(), height());
+            resize(m_view->width() + borderSize.width(), height());
         }
     }
 

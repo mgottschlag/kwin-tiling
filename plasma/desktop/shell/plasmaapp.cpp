@@ -1,5 +1,6 @@
 /*
  *   Copyright 2006 Aaron Seigo <aseigo@kde.org>
+ *   Copyright 2010 Chani Armitage <chani@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -449,6 +450,31 @@ QList<PanelView*> PlasmaApp::panelViews() const
 
 void PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment *containment)
 {
+    showController(screen, containment, true);
+}
+
+//FIXME it'd be easier if we knew which containment triggered this action
+//FIXME what if the dashboard is up?
+void PlasmaApp::showActivityManager()
+{
+    //try to find the "active" containment
+    int currentScreen = Kephal::ScreenUtils::screenId(QCursor::pos());
+    int currentDesktop = -1;
+    if (AppSettings::perVirtualDesktopViews()) {
+        currentDesktop = KWindowSystem::currentDesktop()-1;
+    }
+    Plasma::Containment *containment=m_corona->containmentForScreen(currentScreen, currentDesktop);
+
+    showController(currentScreen, containment, false);
+}
+
+void PlasmaApp::showActivityManager(int screen, Plasma::Containment *containment)
+{
+    showController(screen, containment, false);
+}
+
+void PlasmaApp::showController(int screen, Plasma::Containment *containment, bool widgetExplorerMode)
+{
     if (!containment) {
         kDebug() << "no containment";
         return;
@@ -465,7 +491,11 @@ void PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment *containment)
 
     controller->setContainment(containment);
     controller->setLocation(containment->location());
-    controller->showWidgetExplorer();
+    if (widgetExplorerMode) {
+        controller->showWidgetExplorer();
+    } else {
+        controller->showActivityManager();
+    }
     controller->resize(controller->sizeHint());
 
     bool moved = false;
@@ -492,7 +522,7 @@ void PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment *containment)
     KWindowSystem::activateWindow(controller->winId());
 }
 
-void PlasmaApp::hideWidgetExplorer(int screen)
+void PlasmaApp::hideController(int screen)
 {
     QWeakPointer<ControllerWindow> controller = m_widgetExplorers.value(screen);
     if (controller) {
@@ -660,11 +690,11 @@ Plasma::Corona* PlasmaApp::corona()
         }
 
         //actions!
-        KAction *activityAction = c->addAction("add sibling containment");
-        connect(activityAction, SIGNAL(triggered()), this, SLOT(addContainment()));
-        activityAction->setText(i18n("Add Activity"));
-        activityAction->setIcon(KIcon("list-add"));
-        activityAction->setData(Plasma::AbstractToolBox::AddTool);
+        KAction *activityAction = c->addAction("manage activities");
+        connect(activityAction, SIGNAL(triggered()), this, SLOT(showActivityManager()));
+        activityAction->setText(i18n("Activities..."));
+        activityAction->setIcon(KIcon("FIXME"));
+        activityAction->setData(Plasma::AbstractToolBox::ConfigureTool);
         activityAction->setShortcut(KShortcut("alt+d, alt+a"));
         activityAction->setShortcutContext(Qt::ApplicationShortcut);
 
@@ -1056,8 +1086,6 @@ void PlasmaApp::panelRemoved(QObject *panel)
 
 void PlasmaApp::updateActions(Plasma::ImmutabilityType immutability)
 {
-    bool enable = immutability == Plasma::Mutable;
-    m_corona->enableAction("add sibling containment", enable);
 }
 
 void PlasmaApp::remotePlasmoidAdded(Plasma::PackageMetadata metadata)
@@ -1095,6 +1123,74 @@ void PlasmaApp::plasmoidAccessFinished(Plasma::AccessAppletJob *job)
         kDebug() << "adding applet";
         c->addApplet(job->applet(), QPointF(-1, -1), false);
     }
+}
+
+QStringList PlasmaApp::listActivities()
+{
+    QStringList list;
+    //TODO get data from ivan's API
+    //this is just a temp. hack
+    foreach (Plasma::Containment *cont, m_corona->containments()) {
+        if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
+            cont->containmentType() == Plasma::Containment::CustomContainment) &&
+                !m_corona->offscreenWidgets().contains(cont)) {
+            list << cont->activity();
+        }
+    }
+    return list;
+}
+
+void PlasmaApp::activateActivity(const QString &id)
+{
+    //TODO: tell ivan's api
+    //and switch our desktopview(s) to the appropriate containment(s)
+    //FIXME this is a hack, using the old activity==containment meme
+    //TODO also load the activity if necessary
+
+    //find the right containment
+    Plasma::Containment *newCont = 0;
+    foreach (Plasma::Containment *cont, m_corona->containments()) {
+        if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
+            cont->containmentType() == Plasma::Containment::CustomContainment) &&
+                !m_corona->offscreenWidgets().contains(cont) && cont->activity() == id) {
+            newCont = cont;
+            break;
+        }
+    }
+    if (! newCont) {
+        kDebug() << "couldn't find activity" << id;
+        return;
+    }
+
+    //figure out where we are
+    int currentScreen = Kephal::ScreenUtils::screenId(QCursor::pos());
+    int currentDesktop = -1;
+    if (AppSettings::perVirtualDesktopViews()) {
+        currentDesktop = KWindowSystem::currentDesktop()-1;
+    }
+    //and bring the containment to where we are
+    newCont->setScreen(currentScreen, currentDesktop);
+
+}
+
+void PlasmaApp::cloneCurrentActivity()
+{
+    //TODO
+    //-make a full activity
+    //-make it clone eeeverything
+    addContainment();
+
+    emit activityAdded(QString());
+}
+
+void PlasmaApp::createActivity(const QString &plugin)
+{
+    //TODO
+    //-make a full activity
+    //-activate this new one
+    m_corona->addContainment(plugin);
+
+    emit activityAdded(QString());
 }
 
 

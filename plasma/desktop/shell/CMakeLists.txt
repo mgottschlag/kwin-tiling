@@ -2,6 +2,13 @@ include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${KDEBASE_WORKSPACE_SOU
 
 add_subdirectory(configupdates)
 
+set(activitymanager_SRCS
+    activitymanager/activitymanager.cpp
+    activitymanager/activityicon.cpp
+    activitymanager/activitylist.cpp
+    activitymanager/filterbar.cpp
+)
+
 set(plasma_SRCS
     scripting/desktopscriptengine.cpp
     scripting/panel.cpp
@@ -18,6 +25,7 @@ set(plasma_SRCS
     plasmaapp.cpp
     positioningruler.cpp
     ${wallpaper_SRCS}
+    ${activitymanager_SRCS}
 )
 
 kde4_add_kcfg_files(plasma_SRCS data/plasma-shell-desktop.kcfgc)
