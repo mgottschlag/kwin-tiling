@@ -30,6 +30,8 @@
 
 class KIconLoader;
 
+class DBusMenuImporter;
+
 class StatusNotifierItemSource : public Plasma::DataContainer
 {
 
@@ -62,6 +64,7 @@ private:
     QString m_typeId;
     QString m_name;
     KIconLoader *m_customIconLoader;
+    DBusMenuImporter *m_menuImporter;
     org::kde::StatusNotifierItem *m_statusNotifierItemInterface;
 };
 

@@ -22,6 +22,7 @@ find_package(KDE4 4.4.59 REQUIRED)
 find_package(Strigi REQUIRED)
 find_package(QImageBlitz REQUIRED)
 find_package(ZLIB REQUIRED)
+find_package(DBusMenuQt REQUIRED)
 
 if(Q_WS_X11)
   if(NOT X11_XTest_FOUND)

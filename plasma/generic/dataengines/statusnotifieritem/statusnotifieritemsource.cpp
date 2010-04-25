@@ -23,6 +23,8 @@
 #include "systemtraytypes.h"
 #include "statusnotifieritemservice.h"
 
+#include <QApplication>
+#include <QDesktopWidget>
 #include <QIcon>
 #include <KIcon>
 #include <KIconLoader>
@@ -33,14 +35,36 @@
 #include <QDBusPendingReply>
 #include <QVariantMap>
 #include <QImage>
+#include <QMenu>
 #include <QPixmap>
 #include <QSysInfo>
 
 #include <netinet/in.h>
 
+#include <dbusmenuimporter.h>
+
+class PlasmaDBusMenuImporter : public DBusMenuImporter
+{
+public:
+    PlasmaDBusMenuImporter(const QString &service, const QString &path, KIconLoader *iconLoader, QObject *parent)
+    : DBusMenuImporter(service, path, parent)
+    , m_iconLoader(iconLoader)
+    {}
+
+protected:
+    virtual QIcon iconForName(const QString &name)
+    {
+        return KIcon(name, m_iconLoader);
+    }
+
+private:
+    KIconLoader *m_iconLoader;
+};
+
 StatusNotifierItemSource::StatusNotifierItemSource(const QString &notifierItemId, QObject *parent)
     : Plasma::DataContainer(parent),
-      m_customIconLoader(0)
+      m_customIconLoader(0),
+      m_menuImporter(0)
 {
     setObjectName(notifierItemId);
     qDBusRegisterMetaType<KDbusImageStruct>();
@@ -233,6 +257,21 @@ void StatusNotifierItemSource::refreshCallback(QDBusPendingCallWatcher *call)
                 setData("ToolTipIcon", toolTipIcon);
             }
         }
+
+        //Menu
+        if (!m_menuImporter) {
+            QString menuObjectPath = properties["Menu"].value<QDBusObjectPath>().path();
+            if (!menuObjectPath.isEmpty()) {
+                if (menuObjectPath == "/NO_DBUSMENU") {
+                    // This is a hack to make it possible to disable DBusMenu in an
+                    // application. The string "/NO_DBUSMENU" must be the same as in
+                    // KStatusNotifierItem::setContextMenu().
+                    kWarning() << "DBusMenu disabled for this application";
+                } else {
+                    m_menuImporter = new PlasmaDBusMenuImporter(m_statusNotifierItemInterface->service(), menuObjectPath, iconLoader(), this);
+                }
+            }
+        }
     }
 
     checkForUpdate();
@@ -337,8 +376,35 @@ void StatusNotifierItemSource::scroll(int delta, const QString &direction)
 
 void StatusNotifierItemSource::contextMenu(int x, int y)
 {
-    if (m_statusNotifierItemInterface && m_statusNotifierItemInterface->isValid()) {
-        m_statusNotifierItemInterface->call(QDBus::NoBlock, "ContextMenu", x, y);
+    if (m_menuImporter) {
+        QMenu *menu = m_menuImporter->menu();
+        // Simulate an "aboutToShow" so that menu->sizeHint() is correct. Otherwise
+        // the menu may show up over the applet if new actions are added on the
+        // fly.
+        QMetaObject::invokeMethod(menu, "aboutToShow");
+
+        // Compute a reasonable position for the menu. Unfortunately we can't
+        // use Plasma::Corona::popupPosition() from here.
+        QPoint pos(x, y);
+        QRect availableRect = QApplication::desktop()->availableGeometry(pos);
+        QRect menuRect = QRect(pos, menu->sizeHint());
+        if (menuRect.left() < availableRect.left()) {
+            menuRect.moveLeft(availableRect.left());
+        } else if (menuRect.right() > availableRect.right()) {
+            menuRect.moveRight(availableRect.right());
+        }
+        if (menuRect.top() < availableRect.top()) {
+            menuRect.moveTop(availableRect.top());
+        } else if (menuRect.bottom() > availableRect.bottom()) {
+            menuRect.moveBottom(availableRect.bottom());
+        }
+
+        menu->popup(menuRect.topLeft());
+    } else {
+        kWarning() << "Could not find DBusMenu interface, falling back to calling ContextMenu()";
+        if (m_statusNotifierItemInterface && m_statusNotifierItemInterface->isValid()) {
+            m_statusNotifierItemInterface->call(QDBus::NoBlock, "ContextMenu", x, y);
+        }
     }
 }
 
