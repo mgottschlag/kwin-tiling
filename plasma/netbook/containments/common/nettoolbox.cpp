@@ -42,6 +42,7 @@ public:
          : QGraphicsWidget(parent)
     {
         m_itemBackground = new Plasma::ItemBackground(this);
+        m_itemBackground->hide();
 
         m_background = new Plasma::FrameSvg(this);
         m_background->setImagePath("widgets/frame");
@@ -156,6 +157,7 @@ protected:
         }
         return false;
     }
+
 
 private:
     Plasma::FrameSvg *m_background;
@@ -297,6 +299,10 @@ void NetToolBox::addTool(QAction *action)
         m_toolContainerLayout->insertItem(m_newToolsPosition, button);
     }
     ++m_newToolsPosition;
+
+    if (m_toolContainerLayout->count() == 1) {
+        m_toolContainer->itemBackground()->setTargetItem(button);
+    }
 }
 
 void NetToolBox::removeTool(QAction *action)
