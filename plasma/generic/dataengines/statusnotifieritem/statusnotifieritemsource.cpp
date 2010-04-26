@@ -100,6 +100,7 @@ StatusNotifierItemSource::StatusNotifierItemSource(const QString &notifierItemId
 
 StatusNotifierItemSource::~StatusNotifierItemSource()
 {
+    delete m_statusNotifierItemInterface;
 }
 
 KIconLoader *StatusNotifierItemSource::iconLoader() const
