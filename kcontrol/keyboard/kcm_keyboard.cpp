@@ -50,7 +50,7 @@ KCMKeyboard::KCMKeyboard(QWidget *parent, const QVariantList &/*args*/)
   KGlobal::locale()->insertCatalog("kcmmisc");
 
   KAboutData *about =
-		  new KAboutData(I18N_NOOP("kcmkeyboard"), 0, ki18n("KDE Keyboard Control Module"),
+		  new KAboutData("kcmkeyboard", 0, ki18n("KDE Keyboard Control Module"),
                   0, KLocalizedString(), KAboutData::License_GPL,
                   ki18n("(c) 2010 Andriy Rysin"));
 
