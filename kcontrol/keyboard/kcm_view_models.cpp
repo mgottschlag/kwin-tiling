@@ -34,7 +34,6 @@ static const int LAYOUT_COLUMN = 1;
 static const int VARIANT_COLUMN = 2;
 static const int DISPLAY_NAME_COLUMN = 3;
 
-static const QString headers[] = {i18nc("layout map name", "Map"), i18n("Layout"), i18n("Variant"), i18n("Label")};
 
 LayoutsTableModel::LayoutsTableModel(Rules* rules_, Flags *flags_, KeyboardConfig* keyboardConfig_, QObject* parent):
 	QAbstractTableModel(parent),
@@ -135,8 +134,10 @@ QVariant LayoutsTableModel::headerData(int section, Qt::Orientation orientation,
      if (role != Qt::DisplayRole)
          return QVariant();
 
-     if (orientation == Qt::Horizontal)
+     if (orientation == Qt::Horizontal) {
+	 const QString headers[] = {i18nc("layout map name", "Map"), i18n("Layout"), i18n("Variant"), i18n("Label")};
          return headers[section];
+     }
 
      return QVariant();
 }
