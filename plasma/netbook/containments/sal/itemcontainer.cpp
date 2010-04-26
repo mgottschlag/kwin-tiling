@@ -160,6 +160,8 @@ Plasma::IconWidget *ItemContainer::createItem(QModelIndex index)
 
     if (index.isValid()) {
         item->setPreferredIconSize(QSizeF(m_iconSize, m_iconSize));
+        item->setMaximumIconSize(QSizeF(m_iconSize, m_iconSize));
+        item->setMinimumIconSize(QSizeF(m_iconSize, m_iconSize));
         item->setIcon(index.data(Qt::DecorationRole).value<QIcon>());
         item->setText(index.data(Qt::DisplayRole).value<QString>());
 
@@ -244,6 +246,8 @@ void ItemContainer::setIconSize(int size)
 
     foreach (Plasma::IconWidget *icon, m_items) {
         icon->setPreferredIconSize(QSizeF(size, size));
+        icon->setMaximumIconSize(QSizeF(size, size));
+        icon->setMinimumIconSize(QSizeF(size, size));
     }
 }
 
