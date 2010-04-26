@@ -19,15 +19,22 @@
 
 #include "layout_widget.h"
 
-#include <kpluginfactory.h>
+// for sys tray icon
+#include <kdebug.h>
+#include <kstatusnotifieritem.h>
+#include <klocalizedstring.h>
+#include <kmenu.h>
+#include <QtGui/QAction>
+#include <QtGui/QMenu>
+#include "xkb_rules.h"
 
 #include <QtGui/QLabel>
 
 #include "x11_helper.h"
 #include "keyboard_config.h"
+#include "flags.h"
 
-K_PLUGIN_FACTORY(LayoutWidgetFactory, registerPlugin<LayoutWidget>();)
-K_EXPORT_PLUGIN(LayoutWidgetFactory("keyboard_layout_widget"))
+
 
 LayoutWidget::LayoutWidget(QWidget* parent, const QList<QVariant>& /*args*/):
 	QWidget(parent),
@@ -78,41 +85,118 @@ void LayoutWidget::layoutChanged()
 {
 	QString layout = X11Helper::getCurrentLayout();
 	QString layoutText = Flags::getDisplayText(layout, *keyboardConfig);
-//	QString longText = Flags::getLongText(layout, rules);
 	widget->setText(layoutText);
-//	widget->setToolTip(longText);
-
-//	const QPixmap* pixmap = getFlag(layout);
-//	if( pixmap != NULL ) {
-//		p->drawPixmap(contentsRect, *pixmap);
-//	}
 }
 
-//QString LayoutWidget::getDisplayText(const QString& layout)
-//{
-//	if( layout.isEmpty() )
-//		return QString("--");
-//
-//	return layout.split(X11Helper::LEFT_VARIANT_STR)[0];
-//}
 
-//const QPixmap* LayoutWidget::getFlag(const QString& layout)
-//{
-//	const QPixmap* pixmap = NULL;
-//	if( drawFlag ) {
-//		pixmap = flags.getPixmap(layout);
-//	}
-//	return pixmap;
-//}
-
-
-//TODO: exclude XInput somehow nicer
-int XEventNotifier::registerForNewDeviceEvent(Display* /*display*/)
+LayoutTrayIcon::LayoutTrayIcon():
+	xEventNotifier(XEventNotifier::XKB),
+	keyboardConfig(new KeyboardConfig()),
+	rules(NULL),
+	flags(new Flags()),
+	actionGroup(NULL)
 {
-	return -1;
+    m_notifierItem = new KStatusNotifierItem(this);
+    m_notifierItem->setCategory(KStatusNotifierItem::SystemServices);
+    m_notifierItem->setStatus(KStatusNotifierItem::Active);
+    m_notifierItem->setToolTipTitle(i18nc("tooltip title", "Keyboard Layout"));
+
+    KMenu* menu = new KMenu("");
+    m_notifierItem->setContextMenu(menu);
+//    m_notifierItem->contextMenu()->addTitle(i18nc("tooltip title", "Keyboard Layout"));
+	m_notifierItem->setStandardActionsEnabled(false);
+
+//    connect(m_notifierItem->contextMenu(), SIGNAL(triggered(QAction*)), SIGNAL(menuTriggered(QAction*)));
+    connect(m_notifierItem, SIGNAL(activateRequested(bool, QPoint)), SLOT(toggleLayout()));
+
+	rules = Rules::readRules();
+
+    layoutMapChanged();
+
+    m_notifierItem->setStatus(KStatusNotifierItem::Active);
+
+    init();
 }
 
-bool XEventNotifier::isNewDeviceEvent(XEvent* /*event*/)
+LayoutTrayIcon::~LayoutTrayIcon()
 {
-	return false;
+	destroy();
+}
+
+void LayoutTrayIcon::init()
+{
+//	connect(widget, SIGNAL(clicked(bool)), this, SLOT(toggleLayout()));
+	connect(&xEventNotifier, SIGNAL(layoutChanged()), this, SLOT(layoutChanged()));
+	connect(&xEventNotifier, SIGNAL(layoutMapChanged()), this, SLOT(layoutMapChanged()));
+	xEventNotifier.start();
+}
+
+void LayoutTrayIcon::destroy()
+{
+	xEventNotifier.stop();
+	disconnect(&xEventNotifier, SIGNAL(layoutMapChanged()), this, SLOT(layoutMapChanged()));
+	disconnect(&xEventNotifier, SIGNAL(layoutChanged()), this, SLOT(layoutChanged()));
+}
+
+void LayoutTrayIcon::layoutMapChanged()
+{
+	keyboardConfig->load();
+
+	QList<QAction*> actions = contextualActions();
+	foreach(QAction* action, actions) {
+		m_notifierItem->contextMenu()->addAction(action);
+	}
+
+	layoutChanged();
+}
+
+void LayoutTrayIcon::layoutChanged()
+{
+	QString fullLayoutText = X11Helper::getCurrentLayout();
+	QString layoutText = Flags::getDisplayText(fullLayoutText, *keyboardConfig);
+	QString longText = Flags::getLongText(fullLayoutText, rules);
+
+	m_notifierItem->setTitle(layoutText);
+	m_notifierItem->setToolTipSubTitle(longText);
+
+	const QIcon icon(flags->getIcon(fullLayoutText));
+	m_notifierItem->setToolTipIconByPixmap(icon);
+
+	QIcon textIcon = QIcon( flags->getIconWithText(fullLayoutText, *keyboardConfig) );
+	//		    m_notifierItem->setOverlayIconByPixmap( textIcon );
+	m_notifierItem->setIconByPixmap( textIcon );
+}
+
+void LayoutTrayIcon::toggleLayout()
+{
+	X11Helper::switchToNextLayout();
+}
+
+void LayoutTrayIcon::actionTriggered(QAction* action)
+{
+	X11Helper::setLayout(action->data().toString());
+}
+
+const QIcon LayoutTrayIcon::getFlag(const QString& layout) const
+{
+	return keyboardConfig->showFlag ? flags->getIcon(layout) : QIcon();
+}
+
+QList<QAction*> LayoutTrayIcon::contextualActions()
+{
+	if( actionGroup ) {
+		disconnect(actionGroup, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
+		delete actionGroup;
+	}
+	actionGroup = new QActionGroup(this);
+	QStringList layouts = X11Helper::getLayoutsList();
+	foreach(const QString& layout, layouts) {
+		QAction* action;
+		QString menuText = Flags::getLongText(layout, rules);
+		action = new QAction(getFlag(layout), menuText, actionGroup);
+		action->setData(layout);
+		actionGroup->addAction(action);
+	}
+	connect(actionGroup, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
+	return actionGroup->actions();
 }

@@ -58,4 +58,40 @@ private:
 };
 
 
+/*
+    System tray icon to show layouts
+*/
+class KStatusNotifierItem;
+class QActionGroup;
+class Rules;
+class Flags;
+class LayoutTrayIcon : public QObject
+{
+    Q_OBJECT
+
+public:
+    LayoutTrayIcon();
+    ~LayoutTrayIcon();
+
+private Q_SLOTS:
+	void toggleLayout();
+    void layoutChanged();
+    void layoutMapChanged();
+    void actionTriggered(QAction* action);
+
+private:
+	void init();
+	void destroy();
+	QList<QAction*> contextualActions();
+	const QIcon getFlag(const QString& layout) const;
+
+	XEventNotifier xEventNotifier;
+	KeyboardConfig* keyboardConfig;
+	Rules* rules;
+	Flags* flags;
+    KStatusNotifierItem *m_notifierItem;
+    QActionGroup* actionGroup;
+};
+
+
 #endif /* LAYOUT_WIDGET_H_ */

@@ -32,10 +32,12 @@
 #include "xkb_helper.h"
 #include "keyboard_dbus.h"
 
-K_PLUGIN_FACTORY(KeyboardFactory,
-                 registerPlugin<KeyboardDaemon>();)
-K_EXPORT_PLUGIN(KeyboardFactory("keyboard"))
+// for sys tray icon
+#include "layout_widget.h"
 
+
+K_PLUGIN_FACTORY(KeyboardFactory, registerPlugin<KeyboardDaemon>();)
+K_EXPORT_PLUGIN(KeyboardFactory("keyboard"))
 
 KeyboardDaemon::KeyboardDaemon(QObject *parent, const QList<QVariant>&)
 	: KDEDModule(parent),
@@ -53,6 +55,8 @@ KeyboardDaemon::KeyboardDaemon(QObject *parent, const QList<QVariant>&)
 	configureKeyboard();
 	registerListeners();
 	registerShortcut();
+
+	layoutTrayIcon = new LayoutTrayIcon();
 }
 
 KeyboardDaemon::~KeyboardDaemon()
@@ -66,6 +70,10 @@ KeyboardDaemon::~KeyboardDaemon()
 	unregisterShortcut();
 
 	delete xEventNotifier;
+
+	if( layoutTrayIcon ) {
+		delete layoutTrayIcon;
+	}
 }
 
 void KeyboardDaemon::configureKeyboard()

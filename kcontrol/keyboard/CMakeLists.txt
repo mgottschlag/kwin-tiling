@@ -21,13 +21,19 @@ set( kded_keyboard_SRCS
     x11_helper_xinput.cpp
     xkb_helper.cpp
     keyboard_config.cpp
+# next are temporary for sys tray UI
+    layout_widget.cpp
+    flags.cpp
+    xkb_rules.cpp
 )
 
 kde4_add_plugin(kded_keyboard ${kded_keyboard_SRCS})
 
 target_link_libraries(kded_keyboard
     ${KDE4_KDECORE_LIBS}  ${KDE4_KDEUI_LIBS} ${X11_LIBRARIES}
-)
+	# next are temporary for sys tray UI
+ 	${QT_QTXML_LIBRARY} ${X11_Xkbfile_LIB}
+ )
 
 if(XiGetDevicePresence_FOUND)
   target_link_libraries(kded_keyboard ${X11_Xinput_LIB})
@@ -60,10 +66,13 @@ install( FILES plasma_applet_keyboard.desktop DESTINATION ${SERVICES_INSTALL_DIR
 ### widget lib ###
 
 set( keyboard_layout_widget_SRCS
+    layout_widget_plugin.cpp
     layout_widget.cpp
     keyboard_config.cpp
     flags.cpp
     x11_helper.cpp
+    # for sys tray ui
+    xkb_rules.cpp
 )
 
 # MODULE?
@@ -71,6 +80,8 @@ kde4_add_plugin(keyboard_layout_widget ${keyboard_layout_widget_SRCS})
 
 target_link_libraries(keyboard_layout_widget
      ${KDE4_KDEUI_LIBS} ${X11_LIBRARIES}
+	# next are temporary for sys tray UI
+ 	${QT_QTXML_LIBRARY} ${X11_Xkbfile_LIB}
 )
 
 install( TARGETS keyboard_layout_widget DESTINATION ${PLUGIN_INSTALL_DIR} )

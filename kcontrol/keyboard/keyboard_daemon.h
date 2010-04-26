@@ -29,6 +29,7 @@
 
 class KActionCollection;
 class XEventNotifier;
+class LayoutTrayIcon;
 
 class KDE_EXPORT KeyboardDaemon : public KDEDModule
 {
@@ -38,6 +39,7 @@ class KDE_EXPORT KeyboardDaemon : public KDEDModule
     KActionCollection *actionCollection;
     XEventNotifier* xEventNotifier;
     LayoutMemory layoutMemory;
+    LayoutTrayIcon* layoutTrayIcon;
 
     void registerListeners();
     void registerShortcut();

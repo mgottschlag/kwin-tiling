@@ -20,9 +20,11 @@
 
 #include <kdebug.h>
 #include <kstandarddirs.h>
+#include <kiconloader.h>
 
 #include <QtCore/QStringList>
 #include <QtGui/QPixmap>
+#include <QtGui/QPainter>
 #include <QtGui/QIcon>
 
 #include "x11_helper.h"
@@ -36,9 +38,6 @@ static const QString flagTemplate("l10n/%1/flag.png");
 
 Flags::Flags()
 {
-//	QPixmap emptyPixmap(16, 16);
-//	emptyPixmap.fill(Qt::transparent);
-//	emptyIcon = new QIcon(emptyPixmap);
 }
 
 Flags::~Flags()
@@ -48,26 +47,6 @@ Flags::~Flags()
 //	}
 //	delete emptyIcon;
 }
-
-
-//const QPixmap* Flags::getPixmap(const QString& layout)
-//{
-//	if( pixmaps.contains(layout) ) {
-//		return pixmaps[ layout ];
-//	}
-//
-//	QPixmap* pixmap = NULL;
-//	if( ! layout.isEmpty() ) {
-//		QString countryCode = getCountryFromLayoutName( layout );
-//		if( ! countryCode.isEmpty() ) {
-//			QString file = KStandardDirs::locate("locale", flagTemplate.arg(countryCode));
-//			kDebug() << "Creating pixmap for" << layout << "with" << file;
-//			pixmap = new QPixmap(file);
-//		}
-//	}
-//	pixmaps[ layout ] = pixmap;
-//	return pixmap;
-//}
 
 const QIcon Flags::getIcon(const QString& layout)
 {
@@ -91,15 +70,16 @@ const QIcon Flags::getIcon(const QString& layout)
 //static
 //const QStringList NON_COUNTRY_LAYOUTS = QString("ara,brai,epo,latam,mao").split(",");
 
-QString Flags::getCountryFromLayoutName(const QString& layout)
+QString Flags::getCountryFromLayoutName(const QString& fullLayoutName)
 {
-	QString countryCode = layout.split(X11Helper::LEFT_VARIANT_STR)[0];
+	LayoutConfig layoutConfig = LayoutConfig::createLayoutConfig(fullLayoutName);
+	QString countryCode = layoutConfig.layout;
 
 	if( countryCode == "nec_vndr/jp" )
 		return "jp";
 
 //	if( NON_COUNTRY_LAYOUTS.contain(layout) )
-	if( layout.length() > 2 )
+	if( countryCode.length() > 2 )
 		return "";
 
 	return countryCode;
@@ -152,4 +132,65 @@ QString Flags::getLongText(const QString& fullLayoutName, const Rules* rules)
 	return layoutText;
 }
 
+//TODO: cache pixmaps
+static const int FLAG_MAX_WIDTH = 21;
+static const int FLAG_MAX_HEIGHT = 14;
+const QPixmap Flags::getIconWithText(const QString& fullLayoutName, const KeyboardConfig& keyboardConfig)
+{
+	QPixmap pm;
+	if( keyboardConfig.showFlag ) {
+		QIcon icon = getIcon(fullLayoutName);
+		if( ! icon.isNull() ) {
+			pm = QPixmap( icon.pixmap(KIconLoader::SizeLarge, KIconLoader::SizeLarge) );
+		}
+	}
 
+	bool noFlag = pm.isNull();
+	if( pm.isNull() ) {
+		pm = QPixmap(KIconLoader::SizeLarge, KIconLoader::SizeLarge);
+//		pm = QPixmap(FLAG_MAX_WIDTH, FLAG_MAX_WIDTH/*FLAG_MAX_HEIGHT*/);
+	}
+
+	QPainter p(&pm);
+	p.setRenderHint(QPainter::SmoothPixmapTransform);
+	p.setRenderHint(QPainter::Antialiasing);
+
+
+	QString layoutText = Flags::getDisplayText(fullLayoutName, keyboardConfig);
+
+	int height = noFlag ? 32 : pm.height();
+	int fontSize = layoutText.length() == 2
+			? height * 9 / 10
+			: height * 7 / 10;
+	if( fontSize < 6 ) {
+		fontSize = 6;
+	}
+
+	QFont font = p.font();
+	if( keyboardConfig.showFlag && ! noFlag ) {
+//		font.setPixelSize(fontSize);
+//		font.setWeight(QFont::Bold);
+//		p.setFont(font);
+////		p.setPen(Qt::white);
+////		p.drawText(pm.rect(), Qt::AlignCenter | Qt::AlignHCenter, layoutText);
+//
+//		p.setPen(Qt::black);
+//		p.drawText(1, 1, pm.width(), pm.height()-2, Qt::AlignCenter, layoutText);
+//		p.setPen(Qt::white);
+//		p.drawText(0, 0, pm.width(), pm.height()-2, Qt::AlignCenter, layoutText);
+	}
+	else {
+//		p.setBackgroundMode(Qt::OpaqueMode);
+//		p.setBackground(QBrush(Qt::gray));
+		p.fillRect(pm.rect(), QBrush(Qt::gray));
+
+//		p.setPen(Qt::black);
+		font.setPixelSize(fontSize);
+//		font.setWeight(QFont::Bold);
+		p.setFont(font);
+		p.drawText(pm.rect(), Qt::AlignCenter | Qt::AlignHCenter, layoutText);
+	}
+	p.end();
+
+	return pm;
+}

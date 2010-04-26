@@ -15,6 +15,7 @@ Keyboard daemon:
 * listens to Global KDE Shortcut to switch layouts
 * listens to Global Shortcut settings change
 * listens to keyboard configuration changed
+* provides systray icon for layout (shall be replaced with applet?)
 
 Keyboard applet:
 * displays current layout with text and (optionally flag)

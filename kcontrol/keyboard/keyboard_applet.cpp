@@ -18,8 +18,6 @@
 
 #include "keyboard_applet.h"
 
-#include <kconfigdialog.h>
-
 #include <QtGui/QPainter>
 #include <QtGui/QPixmap>
 #include <QtGui/QGraphicsSceneMouseEvent>
@@ -157,24 +155,22 @@ void KeyboardApplet::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 
 void KeyboardApplet::actionTriggered(QAction* action)
 {
-	kDebug() << "actionTriggerd" << action->data().toString();
+//	kDebug() << "actionTriggerd" << action->data().toString();
 	X11Helper::setLayout(action->data().toString());
 }
 
 QList<QAction*> KeyboardApplet::contextualActions()
 {
-	delete actionGroup;
+	if( actionGroup ) {
+		disconnect(actionGroup, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
+		delete actionGroup;
+	}
 	actionGroup = new QActionGroup(this);
 	QStringList layouts = X11Helper::getLayoutsList();
 	foreach(const QString& layout, layouts) {
 		QAction* action;
 		QString menuText = Flags::getLongText(layout, rules);
-//		if( pixmap != NULL ) {
-			action = new QAction(getFlag(layout), menuText, actionGroup);
-//		}
-//		else {
-//			action = new QAction(menuText, actionGroup);
-//		}
+		action = new QAction(getFlag(layout), menuText, actionGroup);
 		action->setData(layout);
 		actionGroup->addAction(action);
 	}
