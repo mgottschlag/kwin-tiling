@@ -249,7 +249,7 @@ void ContextMenu::logout()
         return;
     }
 #ifndef Q_WS_WIN
-    KWorkSpace::requestShutDown(KWorkSpace::ShutdownConfirmYes,
+    KWorkSpace::requestShutDown(KWorkSpace::ShutdownConfirmDefault,
                                 KWorkSpace::ShutdownTypeDefault,
                                 KWorkSpace::ShutdownModeDefault);
 #endif
