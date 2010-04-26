@@ -9,10 +9,4 @@ X-KDE-Kded-load-on-demand=true
 X-KDE-Kded-phase=1
 
 Name=Keyboard Daemon
-Name[en_GB]=Keyboard Dæmon
-Name[es]=Demonio de teclado
-Name[pt]=Servidor do Teclado
-Name[pt_BR]=Daemon do teclado
-Name[sv]=Tangentbordsdemon
-Name[uk]=Фонова служба клавіатури
 Name[x-test]=xxKeyboard Daemonxx

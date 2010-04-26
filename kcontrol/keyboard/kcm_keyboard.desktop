@@ -14,25 +14,14 @@ X-KDE-System-Settings-Parent-Category=input-actions
 X-KDE-Weight=50
 
 Name=Keyboard
-Name[en_GB]=Keyboard
-Name[es]=Teclado
-Name[nb]=Tastatur
-Name[nn]=Tastatur
-Name[pt]=Teclado
-Name[pt_BR]=Teclado
+Name[nds]=Tastatuur
 Name[sv]=Tangentbord
+Name[tr]=Klavye
 Name[uk]=Клавіатура
 Name[x-test]=xxKeyboardxx
+Name[zh_TW]=鍵盤
 
 Comment=Keyboard settings
-Comment[en_GB]=Keyboard settings
-Comment[es]=Preferencias de teclado
-Comment[nb]=Tastaturinnstillinger
-Comment[nn]=Tastaturinnstillingar
-Comment[pt]=Configuração do teclado
-Comment[pt_BR]=Configurações do teclado
-Comment[sv]=Tangentbordsinställningar
-Comment[uk]=Параметри клавіатури
 Comment[x-test]=xxKeyboard settingsxx
 
 X-KDE-Keywords=Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume
