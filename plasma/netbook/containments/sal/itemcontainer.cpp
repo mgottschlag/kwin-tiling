@@ -151,6 +151,7 @@ Plasma::IconWidget *ItemContainer::createItem(QModelIndex index)
         m_usedItems.remove(key, item);
     } else {
         item = new ResultWidget(this);
+        item->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         item->hide();
         item->setPos(boundingRect().center().x(), size().height());
     }
@@ -158,6 +159,7 @@ Plasma::IconWidget *ItemContainer::createItem(QModelIndex index)
     item->installEventFilter(m_itemView);
 
     if (index.isValid()) {
+        item->setPreferredIconSize(QSizeF(m_iconSize, m_iconSize));
         item->setIcon(index.data(Qt::DecorationRole).value<QIcon>());
         item->setText(index.data(Qt::DisplayRole).value<QString>());
 
@@ -234,7 +236,15 @@ Qt::Orientation ItemContainer::orientation() const
 
 void ItemContainer::setIconSize(int size)
 {
+    if (size != m_iconSize) {
+        return;
+    }
+
     m_iconSize = size;
+
+    foreach (Plasma::IconWidget *icon, m_items) {
+        icon->setPreferredIconSize(QSizeF(size, size));
+    }
 }
 
 int ItemContainer::iconSize() const
