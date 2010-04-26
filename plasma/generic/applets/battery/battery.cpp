@@ -481,8 +481,6 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         buttonLayout->setSpacing(0.0);
         //buttonLayout->addItem(m_profileCombo);
 
-        int buttonsize = KIconLoader::SizeMedium + 4;
-
         // Sleep and Hibernate buttons
         QSet<Solid::PowerManagement::SleepState> sleepstates = Solid::PowerManagement::supportedSleepStates();
         foreach (const Solid::PowerManagement::SleepState &sleepstate, sleepstates) {
@@ -491,12 +489,12 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
             } else if (sleepstate == Solid::PowerManagement::SuspendState) {
                 Plasma::IconWidget *suspendButton = new Plasma::IconWidget(m_controls);
+                suspendButton->setPreferredIconSize(QSizeF(KIconLoader::SizeSmall, KIconLoader::SizeSmall));
                 suspendButton->setIcon("system-suspend");
                 suspendButton->setText(i18n("Sleep"));
-                suspendButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+                suspendButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
                 suspendButton->setOrientation(Qt::Horizontal);
-                suspendButton->setMaximumHeight(buttonsize);
-                suspendButton->setMinimumHeight(buttonsize);
+
                 suspendButton->setDrawBackground(true);
                 suspendButton->setTextBackgroundColor(QColor(Qt::transparent));
                 //suspendButton->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
@@ -505,14 +503,14 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
                 connect(suspendButton, SIGNAL(clicked()), this, SLOT(suspend()));
             } else if (sleepstate == Solid::PowerManagement::HibernateState) {
                 Plasma::IconWidget *hibernateButton = new Plasma::IconWidget(m_controls);
+                hibernateButton->setPreferredIconSize(QSizeF(KIconLoader::SizeSmall, KIconLoader::SizeSmall));
                 hibernateButton->setIcon("system-suspend-hibernate");
                 hibernateButton->setText(i18n("Hibernate"));
                 hibernateButton->setOrientation(Qt::Horizontal);
-                hibernateButton->setMaximumHeight(buttonsize);
-                hibernateButton->setMinimumHeight(buttonsize);
+
                 hibernateButton->setDrawBackground(true);
                 hibernateButton->setTextBackgroundColor(QColor(Qt::transparent));
-                hibernateButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+                hibernateButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
                 buttonLayout->addItem(hibernateButton);
                 buttonLayout->setAlignment(hibernateButton, Qt::AlignLeft|Qt::AlignVCenter);
                 connect(hibernateButton, SIGNAL(clicked()), this, SLOT(hibernate()));
@@ -522,12 +520,9 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         Plasma::IconWidget *configButton = new Plasma::IconWidget(buttonWidget);
         configButton->setToolTip(i18nc("tooltip on the config button in the popup", "Configure Power Management..."));
         configButton->setOrientation(Qt::Horizontal);
-        configButton->setMaximumHeight(buttonsize);
-        configButton->setDrawBackground(false);
-        configButton->setMinimumHeight(buttonsize);
-        configButton->setMaximumWidth(buttonsize);
-        configButton->setMinimumWidth(buttonsize);
+        configButton->setPreferredIconSize(QSizeF(KIconLoader::SizeSmall, KIconLoader::SizeSmall));
         configButton->setDrawBackground(true);
+        configButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         configButton->setTextBackgroundColor(QColor(Qt::transparent));
         configButton->setIcon("configure");
         connect(configButton, SIGNAL(clicked()), this, SLOT(openConfig()));
