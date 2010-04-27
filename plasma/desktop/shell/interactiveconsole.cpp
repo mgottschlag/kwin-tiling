@@ -362,6 +362,9 @@ void InteractiveConsole::reenableEditor(KJob* job)
 void InteractiveConsole::evaluateScript()
 {
     //kDebug() << "evaluating" << m_editor->toPlainText();
+    const QString path = KStandardDirs::locateLocal("appdata", s_autosaveFileName);
+    saveScript(path);
+
     m_output->moveCursor(QTextCursor::End);
     QTextCursor cursor = m_output->textCursor();
     m_output->setTextCursor(cursor);
