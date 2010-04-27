@@ -963,6 +963,7 @@ void PlasmaApp::setControlBarVisible(bool visible)
         m_controlBar->show();
         KWindowSystem::setOnAllDesktops(m_controlBar->effectiveWinId(), m_isDesktop);
         m_controlBar->setWindowFlags(m_mainView->windowFlags() | Qt::FramelessWindowHint);
+        m_controlBar->show();
         m_controlBar->setFrameShape(QFrame::NoFrame);
         unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
         KWindowSystem::setState(m_controlBar->effectiveWinId(), state);
