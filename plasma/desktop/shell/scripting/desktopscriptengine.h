@@ -28,8 +28,8 @@ class DesktopScriptEngine : public ScriptEngine
 
 public:
     DesktopScriptEngine(Plasma::Corona *corona, QObject *parent = 0);
-    QScriptValue wrap(Plasma::Containment *c, QScriptEngine *engine);
-    QScriptValue wrap(Containment *c, QScriptEngine *engine);
+    QScriptValue wrap(Plasma::Containment *c);
+    QScriptValue wrap(Containment *c);
 };
 
 #endif

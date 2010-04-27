@@ -29,15 +29,15 @@ DesktopScriptEngine::DesktopScriptEngine(Plasma::Corona *corona, QObject *parent
 {
 }
 
-QScriptValue DesktopScriptEngine::wrap(Plasma::Containment *c, QScriptEngine *engine)
+QScriptValue DesktopScriptEngine::wrap(Plasma::Containment *c)
 {
     Containment *wrapper = isPanel(c) ? new Panel(c) : new Containment(c);
-    return wrap(wrapper, engine);
+    return wrap(wrapper);
 }
 
-QScriptValue DesktopScriptEngine::wrap(Containment *c, QScriptEngine *engine)
+QScriptValue DesktopScriptEngine::wrap(Containment *c)
 {
-    return ScriptEngine::wrap(c, engine);
+    return ScriptEngine::wrap(c);
 }
 
 #include "desktopscriptengine.moc"
