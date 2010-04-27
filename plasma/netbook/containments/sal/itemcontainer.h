@@ -124,8 +124,7 @@ private:
     int m_currentIconIndexX;
     int m_currentIconIndexY;
     int m_iconSize;
-    int m_maxColumnWidth;
-    int m_maxRowHeight;
+    QSize m_cellSize;
     bool m_firstRelayout;
     DragAndDropMode m_dragAndDropMode;
     bool m_dragging;

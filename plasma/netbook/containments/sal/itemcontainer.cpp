@@ -49,9 +49,7 @@ ItemContainer::ItemContainer(ItemView *parent)
       m_orientation(Qt::Vertical),
       m_currentIconIndexX(-1),
       m_currentIconIndexY(-1),
-      m_iconSize(KIconLoader::SizeHuge),
-      m_maxColumnWidth(1),
-      m_maxRowHeight(1),
+      m_iconSize(-1),
       m_firstRelayout(true),
       m_dragAndDropMode(ItemContainer::NoDragAndDrop),
       m_dragging(false),
@@ -62,6 +60,8 @@ ItemContainer::ItemContainer(ItemView *parent)
     m_positionAnimation->setEasingCurve(QEasingCurve::InOutQuad);
     m_positionAnimation->setDuration(250);
     m_layout = new QGraphicsGridLayout(this);
+
+    setIconSize(KIconLoader::SizeHuge);
 
     QGraphicsItem *pi = parent->parentItem();
     Plasma::Applet *applet = 0;
@@ -191,9 +191,8 @@ Plasma::IconWidget *ItemContainer::createItem(QModelIndex index)
         m_hoverIndicator->getContentsMargins(&left, &top, &right, &bottom);
         item->setContentsMargins(left, top, right, bottom);
 
-        item->setMinimumSize(item->sizeFromIconSize(m_iconSize));
-        item->setMaximumSize(item->sizeFromIconSize(m_iconSize));
-        item->setMaximumWidth(KIconLoader::SizeEnormous);
+        item->setMinimumSize(m_cellSize);
+        item->setMaximumSize(m_cellSize);
         item->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         connect(item, SIGNAL(clicked()), this, SLOT(itemClicked()));
         connect(item, SIGNAL(dragStartRequested(Plasma::IconWidget *)), this, SLOT(itemRequestedDrag(Plasma::IconWidget *)));
@@ -238,11 +237,15 @@ Qt::Orientation ItemContainer::orientation() const
 
 void ItemContainer::setIconSize(int size)
 {
-    if (size != m_iconSize) {
+    if (size == m_iconSize) {
         return;
     }
 
     m_iconSize = size;
+
+    QFontMetrics fm(Plasma::Theme::defaultTheme()->font(Plasma::Theme::DesktopFont));
+    int cellSize = m_iconSize + fm.height()*2 + 40;
+    m_cellSize = QSize(cellSize, cellSize);
 
     foreach (Plasma::IconWidget *icon, m_items) {
         icon->setPreferredIconSize(QSizeF(size, size));
@@ -330,12 +333,6 @@ void ItemContainer::relayout()
 
     setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 
-    //Fixed size: probably better than actually finding out
-    int maxColumnWidth;
-    int maxRowHeight;
-    QFontMetrics fm(Plasma::Theme::defaultTheme()->font(Plasma::Theme::DesktopFont));
-    maxColumnWidth = maxRowHeight = m_iconSize + fm.height()*2 + 32;
-
     if (m_orientation == Qt::Vertical) {
 
         int nColumns;
@@ -343,7 +340,7 @@ void ItemContainer::relayout()
         if (validColumn > 0 && m_layout->columnCount() > 0 &&  m_layout->rowCount() > 0) {
             nColumns = m_layout->columnCount();
         } else {
-            nColumns = qMax(1, int(availableSize.width() / maxColumnWidth));
+            nColumns = qMax(1, int(availableSize.width() / m_cellSize.width()));
         }
 
         for (int i = 0; i <= m_model->rowCount() - 1; i++) {
@@ -368,7 +365,7 @@ void ItemContainer::relayout()
         if (validRow > 0 && m_layout->columnCount() > 0 &&  m_layout->rowCount() > 0) {
             nRows = m_layout->rowCount();
         } else {
-            nRows = qMax(1, int(availableSize.height() / maxRowHeight));
+            nRows = qMax(1, int(availableSize.height() / m_cellSize.height()));
         }
 
         for (int i = 0; i <= m_model->rowCount() - 1; i++) {
@@ -389,14 +386,14 @@ void ItemContainer::relayout()
     }
 
     for (int i = 0; i < m_layout->rowCount(); ++i) {
-        m_layout->setRowFixedHeight(i, maxRowHeight);
+        m_layout->setRowFixedHeight(i, m_cellSize.height());
     }
     for (int i = 0; i < m_layout->columnCount(); ++i) {
-        m_layout->setColumnFixedWidth(i, maxColumnWidth);
+        m_layout->setColumnFixedWidth(i, m_cellSize.width());
         m_layout->setColumnAlignment(i, Qt::AlignCenter);
     }
 
-    m_itemView->setSnapSize(QSizeF(maxColumnWidth, maxRowHeight) + QSizeF(qMax(m_layout->horizontalSpacing(), (qreal)0), qMax(m_layout->verticalSpacing(), (qreal)0)));
+    m_itemView->setSnapSize(QSizeF(m_cellSize.width(), m_cellSize.height()) + QSizeF(qMax(m_layout->horizontalSpacing(), (qreal)0), qMax(m_layout->verticalSpacing(), (qreal)0)));
 
     if (!isVisible()) {
         m_layout->activate();
