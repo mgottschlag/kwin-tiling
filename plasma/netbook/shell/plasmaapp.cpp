@@ -607,6 +607,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         }
 
         m_controlBar->setContainment(containment);
+        positionPanel();
         setControlBarVisible(true);
         containment->setMaximumSize(m_controlBar->size());
         containment->setMinimumSize(m_controlBar->size());
@@ -961,11 +962,10 @@ void PlasmaApp::setControlBarVisible(bool visible)
     if (visible) {
         destroyUnHideTrigger();
         Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
-        m_controlBar->show();
         KWindowSystem::setOnAllDesktops(m_controlBar->effectiveWinId(), m_isDesktop);
         m_controlBar->setWindowFlags(m_mainView->windowFlags() | Qt::FramelessWindowHint);
-        m_controlBar->show();
         m_controlBar->setFrameShape(QFrame::NoFrame);
+        m_controlBar->show();
         unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
         KWindowSystem::setState(m_controlBar->effectiveWinId(), state);
         KWindowSystem::setType(m_controlBar->effectiveWinId(), NET::Dock);
