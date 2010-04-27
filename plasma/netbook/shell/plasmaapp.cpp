@@ -248,6 +248,7 @@ PlasmaApp::PlasmaApp()
     Plasma::Theme::defaultTheme()->setFont(cg.readEntry("desktopFont", font()));
 
     m_mainView = new NetView(0, NetView::mainViewId(), 0);
+    m_mainView->hide();
     connect(m_mainView, SIGNAL(containmentActivated()), this, SLOT(mainContainmentActivated()));
     connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SLOT(positionPanel()));
     m_mainView->installEventFilter(this);
@@ -280,9 +281,9 @@ PlasmaApp::PlasmaApp()
         }
     }
 
-    setIsDesktop(isDesktop);
     m_mainView->setFixedSize(width, height);
     m_mainView->move(0,0);
+    setIsDesktop(isDesktop);
 
     // this line initializes the corona.
     corona();
@@ -391,13 +392,13 @@ void PlasmaApp::setIsDesktop(bool isDesktop)
     m_isDesktop = isDesktop;
 
     if (isDesktop) {
+        KWindowSystem::setType(m_mainView->winId(), NET::Normal);
         m_mainView->setWindowFlags(m_mainView->windowFlags() | Qt::FramelessWindowHint);
         KWindowSystem::setOnAllDesktops(m_mainView->winId(), true);
         if (m_controlBar) {
             KWindowSystem::setOnAllDesktops(m_controlBar->winId(), true);
         }
         m_mainView->show();
-        KWindowSystem::setType(m_mainView->winId(), NET::Normal);
     } else {
         m_mainView->setWindowFlags(m_mainView->windowFlags() & ~Qt::FramelessWindowHint);
         KWindowSystem::setOnAllDesktops(m_mainView->winId(), false);
