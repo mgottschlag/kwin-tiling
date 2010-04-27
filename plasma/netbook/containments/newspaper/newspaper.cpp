@@ -78,6 +78,7 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
 
 Newspaper::~Newspaper()
 {
+    delete m_appletOverlay;
     config().writeEntry("orientation", (int)m_orientation);
 }
 
