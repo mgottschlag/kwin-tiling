@@ -553,7 +553,7 @@ PanelView *PlasmaApp::findPanelForTrigger(WId trigger) const
 
 bool PlasmaApp::x11EventFilter(XEvent *event)
 {
-    if (m_panelHidden &&
+    if (m_panelHidden > 0 &&
         (event->type == ClientMessage ||
          (event->xany.send_event != True && (event->type == EnterNotify ||
                                              event->type == MotionNotify)))) {
@@ -621,8 +621,6 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
                 //kDebug() << "motion" << motion->x << motion->y << panel->location();
                 panel->hintOrUnhide(QPoint(motion->x_root, motion->y_root));
             }
-
-            return true;
         }
     }
 
