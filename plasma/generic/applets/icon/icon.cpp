@@ -113,7 +113,6 @@ void IconApplet::saveState(KConfigGroup &cg) const
 void IconApplet::setUrl(const KUrl& url)
 {
     m_url = KIO::NetAccess::mostLocalUrl(url, 0);
-
     m_mimetype = KMimeType::findByUrl(url);
 
     delete m_watcher;
@@ -138,19 +137,25 @@ void IconApplet::setUrl(const KUrl& url)
         connect(m_watcher, SIGNAL(dirty(const QString &)), this, SLOT(updateDesktopFile()));
     } else {
         m_text = m_url.fileName();
+        m_service = KService::serviceByStorageId(m_url.prettyUrl());
 
-        if (m_text.isEmpty() && m_url.isLocalFile()) {
-            //handle special case like the / folder
-            m_text = m_url.directory();
-        } else if(m_text.isEmpty()) {
-            m_text = m_url.prettyUrl();
+        if (m_service) {
+            m_text = m_service->name();
+            m_icon->setIcon(m_service->icon());
+        } else {
+            if (m_text.isEmpty() && m_url.isLocalFile()) {
+                //handle special case like the / folder
+                m_text = m_url.directory();
+            } else if (m_text.isEmpty()) {
+                m_text = m_url.prettyUrl();
 
-            if(m_text.endsWith(QLatin1String(":/"))) {
-                m_text = m_url.protocol();
+                if (m_text.endsWith(QLatin1String(":/"))) {
+                    m_text = m_url.protocol();
+                }
             }
-        }
 
-        m_icon->setIcon(KMimeType::iconNameForUrl(url));
+            m_icon->setIcon(KMimeType::iconNameForUrl(url));
+        }
     }
 
     if (m_icon->icon().isNull()) {
@@ -188,7 +193,11 @@ void IconApplet::updateDesktopFile()
 
 void IconApplet::openUrl()
 {
-    if (m_url.isValid()) {
+    if (m_service) {
+        emit releaseVisualFocus();
+        KUrl::List urls;
+        KRun::run(*m_service, urls, 0);
+    } else if (m_url.isValid()) {
         emit releaseVisualFocus();
         new KRun(m_url, 0);
     }

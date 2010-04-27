@@ -23,6 +23,7 @@
 #include <KMimeType>
 #include <KUrl>
 #include <KDirWatch>
+#include <KService>
 
 #include <Plasma/Applet>
 
@@ -77,6 +78,7 @@ class IconApplet : public Plasma::Applet
         KUrl m_url;
         KDirWatch *m_watcher;
         QSize m_lastFreeSize;
+        KService::Ptr m_service;
 };
 
 K_EXPORT_PLASMA_APPLET(icon, IconApplet)
