@@ -34,6 +34,7 @@ class Panel : public Containment
     Q_PROPERTY(QStringList currentConfigGroup WRITE setCurrentConfigGroup READ currentConfigGroup)
 
     Q_PROPERTY(QString name READ name WRITE setName)
+    Q_PROPERTY(QString version READ version)
     Q_PROPERTY(QString type READ type)
     Q_PROPERTY(QString formFactor READ formFactor)
     Q_PROPERTY(QList<int> widgetIds READ widgetIds)
