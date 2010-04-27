@@ -6,6 +6,7 @@ Name[sv]=Information om ledigt utrymme
 Name[uk]=Сповіщення про вільне місце
 Name[x-test]=xxFree Space Notifierxx
 Comment=Warns when running out of space on your home folder
+Comment[es]=Avisa cuando se le está acabando el espacio en su carpeta personal
 Comment[pt]=Avisa quando ficar sem espaço na sua pasta pessoal
 Comment[sv]=Varnar när utrymmet i hemkatalogen håller på att ta slut
 Comment[uk]=Попереджає, якщо у домашній теці залишається мало місця
