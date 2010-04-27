@@ -48,6 +48,7 @@ Comment[gu]=નેટવર્ક ઇન્ટરફેસોની સ્થિ
 Comment[he]=עוקב אחר מצב ממשקי רשת ומספק עידכונים לתוכניות שמשתמשות ברשת
 Comment[hr]=Prati stanja mrežnih sučelja i pruža obavijesti aplikacijama koje koriste mrežu.
 Comment[hu]=Figyeli a hálózati csatolók állapotát és értesítéseket küld a csatolókat használó alkalmazásoknak.
+Comment[ia]=Il tracia le stato del interfaces de rete e il forni notification al applicationes que usa le rete.
 Comment[id]=Melacak status antarmuka jaringan dan menyediakan notifikasi ke aplikasi menggunakan jaringan
 Comment[is]=Fylgist með ástandi netviðmóta og veitir upplýsingar til þeirra forrita sem eru að nota netið.
 Comment[it]=Segue lo stato delle interfacce di rete e fornisce notifiche alle applicazioni la usano.
