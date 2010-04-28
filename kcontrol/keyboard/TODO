@@ -1,5 +1,5 @@
 General
-* prevent "transient" windows like context menu to have own layout (if "by window" option is on)
+* Why do we have our popup menu triggering window changed event?
 
 KCM UI
 * allow changing variant without re-adding layout
@@ -17,7 +17,7 @@ kxkb part
 
 systray icon
 * transparent background
-* text over flag (?)
+* text over flag (flag seems better without a text)
 
 UI cleanup:
 * layouts, sizes etc in kcm

@@ -33,6 +33,9 @@ class LayoutMemory : public QObject
     //QVariant does not support long for WId so we'll use QString instead
     QMap<QString, QString> layoutMap;
     KeyboardConfig::SwitchingPolicy switchingPolicy;
+    // if there's some transient windows coming up we'll need to either ignore it
+    // or in case of layout switcher popup menu to apply new layout to previous key
+    QString previousLayoutMapKey;
 
     void registerListeners();
     void unregisterListeners();

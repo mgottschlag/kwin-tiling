@@ -130,19 +130,21 @@ void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 		QPixmap pixmap = icon.pixmap(contentsRect.size());
 		p->drawPixmap(contentsRect, pixmap);
 	}
-	p->save();
-	p->setPen(Qt::black);
-	QFont font = p->font();
-	int fontSize = layoutText.length() == 2
-			? contentsRect.height() * 7 / 10
-			: contentsRect.height() * 5 / 10;
-	if( fontSize < 6 ) {
-		fontSize = 6;
+	else {
+		p->save();
+		p->setPen(Qt::black);
+		QFont font = p->font();
+		int fontSize = layoutText.length() == 2
+				? contentsRect.height() * 7 / 10
+						: contentsRect.height() * 5 / 10;
+		if( fontSize < 6 ) {
+			fontSize = 6;
+		}
+		font.setPixelSize(fontSize);
+		p->setFont(font);
+		p->drawText(contentsRect, Qt::AlignCenter | Qt::AlignHCenter, layoutText);
+		p->restore();
 	}
-	font.setPixelSize(fontSize);
-	p->setFont(font);
-	p->drawText(contentsRect, Qt::AlignCenter | Qt::AlignHCenter, layoutText);
-	p->restore();
 }
 
 void KeyboardApplet::mousePressEvent ( QGraphicsSceneMouseEvent * event )
