@@ -89,10 +89,10 @@ void DBusSystemTrayWidget::setIcon(const QString &iconName, const QIcon &icon)
 {
     if (!iconName.isEmpty()) {
         QString name = QString("icons/") + iconName.split("-").first();
-        if (!Plasma::Theme::defaultTheme()->imagePath(name).isEmpty()) {
-            setSvg(name, iconName);
-        } else {
+        if (Plasma::Theme::defaultTheme()->imagePath(name).isEmpty()) {
             Plasma::IconWidget::setIcon(icon);
+        } else {
+            setSvg(name, iconName);
         }
     } else {
         Plasma::IconWidget::setIcon(icon);
