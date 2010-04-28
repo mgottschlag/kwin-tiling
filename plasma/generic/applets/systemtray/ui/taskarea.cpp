@@ -553,9 +553,9 @@ void TaskArea::setOrientation(Qt::Orientation o)
         applet->getContentsMargins(&left, &top, &right, &bottom);
 
         if (o == Qt::Horizontal) {
-            d->topLayout->setSpacing(right*2);
+            d->topLayout->setSpacing(qMax(2, int(right)) * 2);
         } else {
-            d->topLayout->setSpacing(bottom*2);
+            d->topLayout->setSpacing(qMax(2, int(bottom)) * 2);
         }
     }
     syncTasks(d->host->manager()->tasks());
