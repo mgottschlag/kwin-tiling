@@ -1,33 +1,34 @@
-General
-* Why do we have our popup menu triggering window changed event?
-
 KCM UI
 * allow changing variant without re-adding layout
 * allow changing layout order
-* merge flag and layout map in the column
+* show nicer flag
 * hide flag if show flag is false
+* show current layouts when "configure layouts" disabled
+
+KCM UI cleanup:
+* layouts, sizes etc in kcm
+
+systray icon
+* transparent background
 
 plasma applet:
 * make applet show nicely in taskbar (not just desktop)
 * start applet from kxkb kcm (currently systray icon provided from kded)
 
 kxkb part
-* tooltip (will require loading xkb rules - not sure if overhead is worth it)
-* flag (may be text is ok)
-
-systray icon
-* transparent background
-* text over flag (flag seems better without a text)
-
-UI cleanup:
-* layouts, sizes etc in kcm
+* tooltip (will require loading xkb rules and translations - not sure if overhead is worth it)
+* flag (may be text is ok?)
 
 Code cleanup:
 * rules, iso_codes:
   better error handling
 
 Improvement:
-* merge kcm_keyboard.desktop and keyboard.desktop ?
 * remove XInput libs from plasma applet and layout widget (find a nicer way)
 * optimize fetching groups and layouts (cache them) / fetch current group directly
-* show current layouts when "configure layouts" disabled
+* refactor/optimize/clean the code
+
+External improvements:
+* Change KStatusNotifierItem menu window to be real popup window
+* Add KSharedConfig::configChanged() signal
+* move iso-codes to kdesupport

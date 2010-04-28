@@ -12,6 +12,7 @@ X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=input-actions
 X-KDE-Weight=50
+OnlyShowIn=KDE;
 
 Name=Keyboard
 Name[es]=Teclado

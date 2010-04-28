@@ -133,8 +133,8 @@ QString Flags::getLongText(const QString& fullLayoutName, const Rules* rules)
 }
 
 //TODO: cache pixmaps
-static const int FLAG_MAX_WIDTH = 21;
-static const int FLAG_MAX_HEIGHT = 14;
+//static const int FLAG_MAX_WIDTH = 21;
+//static const int FLAG_MAX_HEIGHT = 14;
 const QPixmap Flags::getIconWithText(const QString& fullLayoutName, const KeyboardConfig& keyboardConfig)
 {
 	QPixmap pm;

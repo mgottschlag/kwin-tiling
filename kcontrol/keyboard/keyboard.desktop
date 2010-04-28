@@ -7,6 +7,7 @@ X-KDE-DBus-ModuleName=kxkb
 X-KDE-Kded-autoload=false
 X-KDE-Kded-load-on-demand=true
 X-KDE-Kded-phase=1
+OnlyShowIn=KDE;
 
 Name=Keyboard Daemon
 Name[es]=Servicio del teclado
