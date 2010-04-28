@@ -854,7 +854,9 @@ void CalendarTable::paintBorder(QPainter *p, int cell, int weekRow, int weekdayC
         elementId = "today";
     } else if (type & Selected) {
         elementId = "selected";
-    } else if (type & Holiday || type & Event) {
+    } else if (type & Event) {
+        elementId = "green";
+    } else if (type & Holiday) {
         elementId = "red";
     } else {
         return;
