@@ -532,6 +532,10 @@ void Panel::saveContents(KConfigGroup &group) const
 {
     Containment::saveContents(group);
 
+    if (!m_layout) {
+        return;
+    }
+
     KConfigGroup appletsConfig(&group, "Applets");
     for (int order = 0; order < m_layout->count(); ++order) {
         const Applet *applet = dynamic_cast<Applet *>(m_layout->itemAt(order));
