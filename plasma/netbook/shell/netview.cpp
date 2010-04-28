@@ -112,7 +112,7 @@ void NetView::setContainment(Plasma::Containment *c)
         }
     }
 
-    if (id() == mainViewId()) {
+    if (containment() && id() == mainViewId()) {
         setTrackContainmentChanges(false);
     }
 
@@ -120,7 +120,7 @@ void NetView::setContainment(Plasma::Containment *c)
     connectContainment(c);
     updateGeometry();
 
-    if (id() == mainViewId()) {
+    if (containment() && id() == mainViewId()) {
         if (c) {
             m_containmentSwitchAnimation->setDuration(250);
             m_containmentSwitchAnimation->setStartValue(sceneRect());
@@ -197,7 +197,7 @@ void NetView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containmen
         setContainment(0);
     }
 
-    if (isScreen == screen() && this->containment( )!= containment) {
+    if ((isScreen == screen() || screen() == -1) && this->containment( )!= containment) {
         setContainment(containment);
     }
 }

@@ -495,16 +495,14 @@ Plasma::Corona* PlasmaApp::corona()
                 this, SLOT(createView(Plasma::Containment*)));
         connect(m_corona, SIGNAL(configSynced()), this, SLOT(syncConfig()));
 
+        connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
+                m_mainView, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
 
         m_corona->setItemIndexMethod(QGraphicsScene::NoIndex);
         m_corona->initializeLayout();
         m_corona->processUpdateScripts();
 
         m_mainView->show();
-
-        connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
-                m_mainView, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
-
     }
 
     foreach (Plasma::Containment *containment, m_corona->containments()) {
