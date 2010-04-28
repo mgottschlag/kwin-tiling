@@ -85,6 +85,7 @@ private Q_SLOTS:
     void overlayRequestedDrop(QGraphicsSceneDragDropEvent *event);
     void resultsViewRequestedDrag(QModelIndex index);
     void availableScreenRegionChanged();
+    void launchPackageManager();
 
     void delayedQuery();
     void query();
@@ -123,6 +124,8 @@ private:
     Plasma::ToolButton *m_rightArrow;
     QString m_lastQuery;
     Plasma::IconWidget *m_firstItem;
+
+    KSharedPtr<KService> m_packageManagerService;
 
     QList<Plasma::QueryMatch> m_defaultMatches;
 

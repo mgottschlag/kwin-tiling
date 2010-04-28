@@ -47,6 +47,8 @@
 #include <KService>
 #include <KServiceTypeTrader>
 #include <KConfigDialog>
+#include <KDesktopFile>
+#include <KRun>
 
 #include <Plasma/Theme>
 #include <Plasma/Frame>
@@ -114,6 +116,21 @@ void SearchLaunch::init()
         m_toolBox->addTool(a);
     }
 
+    QString packageManagerName = config().readEntry("PackageManagerCommand", "kpackagekit");
+    if (!packageManagerName.isEmpty()) {
+        m_packageManagerService = KService::serviceByDesktopName(packageManagerName);
+
+        if (m_packageManagerService && !m_packageManagerService->exec().isEmpty()) {
+            KAction *addApplicationsAction = new KAction(this);
+            addAction("add applications", addApplicationsAction);
+            addApplicationsAction->setText(i18n("Add applications"));
+            addApplicationsAction->setIcon(KIcon("applications-other"));
+            m_toolBox->addTool(addApplicationsAction);
+
+            connect(addApplicationsAction, SIGNAL(triggered()), this, SLOT(launchPackageManager()));
+        }
+    }
+
     a = action("configure");
     if (a) {
         m_toolBox->addTool(a);
@@ -141,6 +158,12 @@ void SearchLaunch::init()
         connect(corona(), SIGNAL(availableScreenRegionChanged()), this, SLOT(availableScreenRegionChanged()));
         availableScreenRegionChanged();
     }
+}
+
+void SearchLaunch::launchPackageManager()
+{
+    m_toolBox->setShowing(false);
+    KRun::run(*m_packageManagerService.data(), KUrl::List(), 0);
 }
 
 void SearchLaunch::configChanged()
