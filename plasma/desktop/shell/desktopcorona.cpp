@@ -90,6 +90,9 @@ void DesktopCorona::init()
             this, SLOT(updateImmutability(Plasma::ImmutabilityType)));
     connect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)), this, SLOT(checkAddPanelAction(QStringList)));
 
+    //FIXME: requires js anim support to work properly
+    //mapAnimation(Plasma::Animator::AppearAnimation, Plasma::Animator::PulseAnimation);
+    mapAnimation(Plasma::Animator::DisappearAnimation, Plasma::Animator::ZoomAnimation);
     kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "DesktopCorona init end" << "(line:" << __LINE__ << ")";
 }
 
