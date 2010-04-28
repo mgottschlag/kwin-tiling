@@ -91,6 +91,7 @@ void NetCorona::loadDefaultLayout()
         return;
     }
 
+    //TODO: all of this will go
     // used to force a save into the config file
     KConfigGroup invalidConfig;
 
