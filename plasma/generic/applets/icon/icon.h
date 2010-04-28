@@ -63,6 +63,7 @@ class IconApplet : public Plasma::Applet
         void propertiesDialogClosed();
         void delayedDestroy();
         void checkExistenceOfUrl();
+        void checkService(const QStringList &service);
 
     private:
         //dropUrls from DolphinDropController

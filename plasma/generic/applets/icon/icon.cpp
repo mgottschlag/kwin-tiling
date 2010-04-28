@@ -34,6 +34,7 @@
 #include <KRun>
 #include <KSharedConfig>
 #include <KShell>
+#include <KSycoca>
 #include <KUrl>
 #include <KWindowSystem>
 #include <kio/copyjob.h>
@@ -110,10 +111,20 @@ void IconApplet::saveState(KConfigGroup &cg) const
     }
 }
 
+void IconApplet::checkService(const QStringList &changedResources)
+{
+    if (changedResources.contains("apps")) {
+        setUrl(m_url);
+    }
+}
+
 void IconApplet::setUrl(const KUrl& url)
 {
     m_url = KIO::NetAccess::mostLocalUrl(url, 0);
     m_mimetype = KMimeType::findByUrl(url);
+    m_service = 0;
+    disconnect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)),
+               this, SLOT(checkService(QStringList)));
 
     delete m_watcher;
     m_watcher = 0;
@@ -138,6 +149,8 @@ void IconApplet::setUrl(const KUrl& url)
     } else {
         m_text = m_url.fileName();
         m_service = KService::serviceByStorageId(m_url.prettyUrl());
+        connect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)),
+                this, SLOT(checkService(QStringList)));
 
         if (m_service) {
             m_text = m_service->name();
