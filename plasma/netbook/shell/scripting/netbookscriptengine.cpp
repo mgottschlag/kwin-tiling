@@ -45,7 +45,9 @@ QScriptValue NetbookScriptEngine::wrap(Plasma::Containment *c)
         wrapper = new Containment(c);
     }
 
-    return wrap(wrapper);
+    QScriptValue v =  wrap(wrapper);
+    v.setProperty("addWidgetAt", newFunction(Newspaper::addWidgetAt));
+    return v;
 }
 
 QScriptValue NetbookScriptEngine::wrap(Containment *c)

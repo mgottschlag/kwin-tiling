@@ -47,9 +47,10 @@ public:
     Newspaper(Plasma::Containment *containment, QObject *parent = 0);
     ~Newspaper();
 
-    void addApplet(Plasma::Applet *applet, int row = -1, int column = -1);
+    static QScriptValue addWidgetAt(QScriptContext *context, QScriptEngine *engine);
 
 public Q_SLOTS:
+    void addApplet(Plasma::Applet *applet, int row = -1, int column = -1);
     void remove() { Containment::remove(); }
     void showConfigurationInterface() { Containment::showConfigurationInterface(); }
 

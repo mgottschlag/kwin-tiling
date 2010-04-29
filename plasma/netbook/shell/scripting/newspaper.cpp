@@ -40,8 +40,47 @@ Newspaper::~Newspaper()
 {
 }
 
-void Newspaper::addApplet(Plasma::Applet* applet, const int row, const int column)
+QScriptValue Newspaper::addWidgetAt(QScriptContext *context, QScriptEngine *engine)
 {
+    if (context->argumentCount() < 3) {
+        return context->throwError(i18n("widgetById requires a name of a widget or a widget object, with the row and column coordinates"));
+    }
+
+    Containment *c = qobject_cast<Containment*>(context->thisObject().toQObject());
+
+    if (!c || !c->containment()) {
+        return engine->undefinedValue();
+    }
+
+    QScriptValue v = context->argument(0);
+    int row = context->argument(1).toInt32();
+    int column = context->argument(2).toInt32();
+    Plasma::Applet *applet = 0;
+    if (v.isString()) {
+        kWarning()<<QMetaObject::invokeMethod(c->containment(), "addApplet", Qt::DirectConnection,
+                           Q_RETURN_ARG(Plasma::Applet *, applet),
+                           Q_ARG(QString, v.toString()),
+                           Q_ARG(int, row),
+                           Q_ARG(int, column));
+        if (applet) {
+            ScriptEngine *env = ScriptEngine::envFor(engine);
+            return env->wrap(applet);
+        }
+    } else if (Widget *widget = qobject_cast<Widget*>(v.toQObject())) {
+        applet = widget->applet();
+        QMetaObject::invokeMethod(c->containment(), "addApplet", Qt::DirectConnection,
+                           Q_ARG(Plasma::Applet *, applet),
+                           Q_ARG(int, row),
+                           Q_ARG(int, column));
+        c->containment()->addApplet(applet);
+        return v;
+    }
+
+    return engine->undefinedValue();
+}
+
+void Newspaper::addApplet(Plasma::Applet* applet, const int row, const int column)
+{kWarning()<<"AAAAAAAA";
     Plasma::Containment *c = containment();
     if (!c) {
         return;
@@ -53,4 +92,5 @@ void Newspaper::addApplet(Plasma::Applet* applet, const int row, const int colum
 }
 
 #include "newspaper.moc"
+
 
