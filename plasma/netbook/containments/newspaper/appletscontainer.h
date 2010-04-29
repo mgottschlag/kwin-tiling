@@ -63,6 +63,9 @@ public:
     void setExpandAll(const bool expand);
     bool expandAll() const;
 
+    void setAutomaticAppletLayout(const bool automatic);
+    bool automaticAppletLayout() const;
+
 protected:
     QSizeF optimalAppletSize(Plasma::Applet *applet, const bool maximized) const;
 
@@ -88,6 +91,7 @@ private:
     QWeakPointer<Plasma::Applet>m_currentApplet;
     QSizeF m_viewportSize;
     Plasma::Containment *m_containment;
+    bool m_automaticAppletLayout;
     bool m_expandAll;
     QPropertyAnimation *m_preferredHeightAnimation;
 };

@@ -235,9 +235,22 @@ void Newspaper::setOrientation(Qt::Orientation orientation)
     }
 }
 
-void Newspaper::addApplet(Plasma::Applet* applet, const int row, const int column)
+Plasma::Applet *Newspaper::addApplet(const QString &appletName, const int row, const int column)
 {
+    m_container->setAutomaticAppletLayout(false);
+    Plasma::Applet *applet = Containment::addApplet(appletName);
     m_container->addApplet(applet, row, column);
+    m_container->setAutomaticAppletLayout(true);
+    return applet;
+}
+
+Plasma::Applet *Newspaper::addApplet(Plasma::Applet *applet, const int row, const int column)
+{
+    m_container->setAutomaticAppletLayout(false);
+    Containment::addApplet(applet);
+    m_container->addApplet(applet, row, column);
+    m_container->setAutomaticAppletLayout(true);
+    return applet;
 }
 
 void Newspaper::goRight()

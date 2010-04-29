@@ -44,6 +44,7 @@ AppletsContainer::AppletsContainer(Plasma::ScrollWidget *parent)
    m_orientation(Qt::Vertical),
    m_viewportSize(size()),
    m_containment(0),
+   m_automaticAppletLayout(true),
    m_expandAll(false)
 {
     m_mainLayout = new QGraphicsLinearLayout(this);
@@ -55,6 +56,16 @@ AppletsContainer::AppletsContainer(Plasma::ScrollWidget *parent)
 
 AppletsContainer::~AppletsContainer()
 {
+}
+
+void AppletsContainer::setAutomaticAppletLayout(const bool automatic)
+{
+    m_automaticAppletLayout = automatic;
+}
+
+bool AppletsContainer::automaticAppletLayout() const
+{
+    return m_automaticAppletLayout;
 }
 
 void AppletsContainer::syncColumnSizes()
@@ -182,6 +193,10 @@ void AppletsContainer::removeColumn(int column)
 
 void AppletsContainer::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 {
+    if (!m_automaticAppletLayout) {
+        return;
+    }
+
     QGraphicsLinearLayout *lay = 0;
 
     for (int i = 0; i < m_mainLayout->count(); ++i) {
