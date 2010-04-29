@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Default Netbook Page
+Name[x-test]=xxDefault Netbook Pagexx
 Type=Service
 ServiceTypes=Plasma/LayoutTemplate
 X-Plasma-Shell=plasma-netbook
