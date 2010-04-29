@@ -126,14 +126,12 @@ void IconApplet::setUrl(const KUrl& url)
     }
 
     m_service = 0;
-    m_mimetype = 0;
     disconnect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)),
                this, SLOT(checkService(QStringList)));
 
     delete m_watcher;
     m_watcher = 0;
     if (m_url.isLocalFile()) {
-        m_mimetype = KMimeType::findByUrl(url);
         m_watcher = new KDirWatch;
         m_watcher->addFile(m_url.toLocalFile());
         connect(m_watcher, SIGNAL(deleted(const QString &)), this, SLOT(delayedDestroy()));
@@ -172,7 +170,6 @@ void IconApplet::setUrl(const KUrl& url)
                 }
             }
 
-            m_mimetype = KMimeType::findByUrl(url);
             m_icon->setIcon(KMimeType::iconNameForUrl(url));
         }
     }
@@ -332,13 +329,18 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
         setUrl(urls.first());
         //TODO: why we don't call updateConstraints()?
         constraintsEvent(Plasma::FormFactorConstraint);
+        return;
     } else if (m_service) {
         KRun::run(*m_service, urls, 0);
-    } else if (m_url.isLocalFile() &&
-               m_mimetype &&
-               (m_mimetype->is("application/x-executable") ||
-                m_mimetype->is("application/x-shellscript") ||
-                KDesktopFile::isDesktopFile(m_url.toLocalFile()))) {
+        return;
+    }
+
+    KMimeType::Ptr mimetype = KMimeType::findByUrl(m_url);
+
+    if (m_url.isLocalFile() &&
+        (mimetype && (mimetype->is("application/x-executable") ||
+                      mimetype->is("application/x-shellscript")) ||
+         KDesktopFile::isDesktopFile(m_url.toLocalFile()))) {
 
         //Parameters
         QString params;
@@ -370,7 +372,7 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
 
                 KUrl dest(path);
                 KMimeType::Ptr mime = KMimeType::findByUrl(dest);
-                if (m_mimetype->is("inode/directory")) {
+                if (mimetype->is("inode/directory")) {
                     dropUrls(urls, dest, event->modifiers());
                 }
             }
@@ -380,7 +382,7 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
         }
 
         KRun::runCommand(commandStr + ' ' + params, 0);
-    } else if (m_mimetype->is("inode/directory")) {
+    } else if (mimetype && mimetype->is("inode/directory")) {
         dropUrls(urls, m_url, event->modifiers());
     }
 }
