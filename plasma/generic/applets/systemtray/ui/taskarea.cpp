@@ -397,14 +397,20 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
                 }
             }
 
-            switch (task->order()) {
-                case SystemTray::Task::First:
+            //not really pretty, but for consistency attempts to put the notifications applet always in the same position
+            if (task->typeId() == "notifications") {
                 if (d->firstTasksLayout->count() == 0) {
-                    d->topLayout->addItem(d->firstTasksLayout);
+                    d->topLayout->insertItem(0, d->firstTasksLayout);
                 }
+
                 d->firstTasksLayout->addItem(widget);
-                break;
-            case SystemTray::Task::Normal: {
+            } else if (task->order() == SystemTray::Task::First) {
+                if (d->firstTasksLayout->count() == 0) {
+                    d->topLayout->insertItem(0, d->firstTasksLayout);
+                }
+
+                d->firstTasksLayout->addItem(widget);
+            } else if (task->order() == SystemTray::Task::Normal) {
                 int insertIndex = -1;
                 for (int i = 0; i < d->normalTasksLayout->count(); ++i) {
                     QGraphicsWidget *widget = static_cast<QGraphicsWidget *>(d->normalTasksLayout->itemAt(i));
@@ -418,21 +424,14 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
                         break;
                     }
                 }
+
                 if (insertIndex == -1) {
                     insertIndex = d->normalTasksLayout->count();
                 }
 
                 d->normalTasksLayout->insertItem(insertIndex, widget);
-                break;
-            }
-            case SystemTray::Task::Last:
-                //not really pretty, but for consistency attempts to put the notifications applet always in the last position
-                if (task->typeId() == "notifications") {
-                    d->lastTasksLayout->addItem(widget);
-                } else {
-                    d->lastTasksLayout->insertItem(0, widget);
-                }
-                break;
+            } else {
+                d->lastTasksLayout->insertItem(0, widget);
             }
         }
 
@@ -507,15 +506,28 @@ void TaskArea::relayoutHiddenTasks()
 
 int TaskArea::leftEasement() const
 {
-    return 0;
-}
+    if (d->firstTasksLayout->count() > 0) {
+//        d->firstTasksLayout->invalidate();
+//        d->firstTasksLayout->updateGeometry();
+        QGraphicsLayoutItem *item = d->firstTasksLayout->itemAt(d->firstTasksLayout->count() - 1);
 
+        if (d->topLayout->orientation() == Qt::Vertical) {
+            return size().height() - item->geometry().bottom() + d->topLayout->spacing()/2;
+        } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
+            return size().width() - item->geometry().left() + d->topLayout->spacing()/2;
+        } else {
+            return item->geometry().right() + d->topLayout->spacing()/2;
+        }
+    } else {
+        return 0;
+    }
+}
 
 int TaskArea::rightEasement() const
 {
     if (d->lastTasksLayout->count() > 0) {
-        d->lastTasksLayout->invalidate();
-        d->lastTasksLayout->updateGeometry();
+//        d->lastTasksLayout->invalidate();
+//        d->lastTasksLayout->updateGeometry();
         QGraphicsLayoutItem *item = d->lastTasksLayout->itemAt(0);
 
         if (d->topLayout->orientation() == Qt::Vertical) {
