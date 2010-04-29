@@ -297,6 +297,7 @@ void Notifications::addJob(Job *job)
     //show the tiny standalone overview
     if (!m_standaloneJobSummaryWidget) {
         m_standaloneJobSummaryDialog = new Plasma::Dialog();
+        KWindowSystem::setType(m_standaloneJobSummaryDialog->winId(), NET::Dock);
         if (m_notificationStackDialog) {
             m_notificationStackDialog->setWindowToTile(m_standaloneJobSummaryDialog);
         }
