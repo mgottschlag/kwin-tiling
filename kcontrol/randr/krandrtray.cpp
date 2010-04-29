@@ -471,18 +471,17 @@ void KRandRSystemTray::slotRefreshRateChanged(QAction *action)
 
 void KRandRSystemTray::slotPrefs()
 {
-	if (m_kcm) {
-	    KWindowSystem::setOnDesktop(m_kcm.data()->winId(), KWindowSystem::currentDesktop());
-	    m_kcm.data()->raise();
-	    return;
+	if (!m_kcm)
+	{
+	    KCMultiDialog *kcm = new KCMultiDialog( associatedWidget() );
+	    kcm->setFaceType( KCMultiDialog::Plain );
+	    kcm->setPlainCaption( i18n( "Configure Display" ) );
+	    kcm->addModule( "display" );
+	    kcm->setAttribute(Qt::WA_DeleteOnClose);
+	    m_kcm = kcm;
 	}
 
-	KCMultiDialog *kcm = new KCMultiDialog( associatedWidget() );
-	kcm->setFaceType( KCMultiDialog::Plain );
-	kcm->setPlainCaption( i18n( "Configure Display" ) );
-	kcm->addModule( "display" );
-	kcm->setAttribute(Qt::WA_DeleteOnClose);
-	m_kcm = kcm;
-	kcm->show();
-	kcm->raise();
+	KWindowSystem::setOnDesktop(m_kcm.data()->winId(), KWindowSystem::currentDesktop());
+	m_kcm.data()->show();
+	m_kcm.data()->raise();
 }
