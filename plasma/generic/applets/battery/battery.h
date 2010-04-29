@@ -56,7 +56,7 @@ class Battery : public Plasma::PopupApplet
         Qt::Orientations expandingDirections() const;
         void constraintsEvent(Plasma::Constraints constraints);
         void popupEvent(bool show);
-        void showBatteryLabel(bool show);
+        void setShowBatteryLabel(bool show);
 
         qreal labelAlpha();
         void setLabelAlpha(qreal alpha);
@@ -66,6 +66,7 @@ class Battery : public Plasma::PopupApplet
     public Q_SLOTS:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
         void configChanged();
+        void toolTipAboutToShow();
 
     protected Q_SLOTS:
         virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
@@ -97,6 +98,22 @@ class Battery : public Plasma::PopupApplet
         void connectSources();
         void initExtenderItem(Plasma::ExtenderItem *item);
         void updateStatus();
+        bool isConstrained();
+        QString stringForState(const QHash<QString, QVariant> &batteryData, bool *chargeChanging = 0);
+        QFont setupLabelPainting(const QRect &contentsRect, const QString &batterLabel);
+
+        /* Paint battery with proper charge level */
+        void paintBattery(QPainter *p, const QRect &contentsRect, const int batteryPercent, const bool plugState);
+        /* Paint a label on top of the battery */
+        void paintLabel(QPainter *p, const QRect &contentsRect, const QString& labelText);
+        /* Scale in/out Battery. */
+        //void showBattery(bool show);
+        /* Scale in/out Ac Adapter. */
+        void showAcAdapter(bool show);
+        /* Fade in/out the label above the battery. */
+        void showLabel(bool show);
+        /* Scale in a QRectF */
+        QRectF scaleRectF(qreal progress, QRectF rect);
 
         /* Prevent creating infinite loops by embedding applets inside applets */
         bool m_isEmbedded;
@@ -122,22 +139,10 @@ class Battery : public Plasma::PopupApplet
         Plasma::Slider *m_brightnessSlider;
         int m_inhibitCookie;
 
-        /* Paint battery with proper charge level */
-        void paintBattery(QPainter *p, const QRect &contentsRect, const int batteryPercent, const bool plugState);
-        /* Paint a label on top of the battery */
-        void paintLabel(QPainter *p, const QRect &contentsRect, const QString& labelText);
-        /* Scale in/out Battery. */
-        //void showBattery(bool show);
-        /* Scale in/out Ac Adapter. */
-        void showAcAdapter(bool show);
-        /* Fade in/out the label above the battery. */
-        void showLabel(bool show);
-        /* Scale in a QRectF */
-        QRectF scaleRectF(qreal progress, QRectF rect);
         /* Show multiple batteries with individual icons and charge info? */
         bool m_showMultipleBatteries;
         /* Should the battery charge information be shown on top? */
-        bool m_showBatteryString;
+        bool m_showBatteryLabel;
         /* Should that info be percentage (false) or time (true)? */
         bool m_showRemainingTime;
         int m_minutes;
@@ -156,8 +161,9 @@ class Battery : public Plasma::PopupApplet
         int m_batteryAnimId;
 
         // Internal data
-        QList<QVariant> batterylist, acadapterlist;
-        QHash<QString, QHash<QString, QVariant> > m_batteries_data;
+        QList<QVariant> batterylist;
+        QList<QVariant> acadapterlist;
+        QHash<QString, QHash<QString, QVariant> > m_batteriesData;
         QFont m_font;
         bool m_firstRun;
         QColor m_boxColor;

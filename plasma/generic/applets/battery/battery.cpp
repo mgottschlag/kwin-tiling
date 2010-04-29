@@ -48,20 +48,24 @@
 #include <solid/control/powermanager.h>
 #include <solid/powermanagement.h>
 
-#include <Plasma/Svg>
-#include <Plasma/Theme>
 #include <Plasma/Animator>
-#include <Plasma/Extender>
-#include <Plasma/ExtenderItem>
-#include <Plasma/PopupApplet>
-#include <Plasma/Label>
-#include <Plasma/Separator>
-#include <Plasma/Slider>
-#include <Plasma/PushButton>
 #include <Plasma/CheckBox>
 #include <Plasma/ComboBox>
 #include <Plasma/IconWidget>
+#include <Plasma/Extender>
+#include <Plasma/ExtenderItem>
+#include <Plasma/Label>
+#include <Plasma/PopupApplet>
+#include <Plasma/PushButton>
+#include <Plasma/Separator>
+#include <Plasma/Slider>
+#include <Plasma/Svg>
+#include <Plasma/Theme>
+#include <Plasma/ToolTipContent>
+#include <Plasma/ToolTipManager>
 
+
+typedef QHash<QString, QVariant> VariantDict;
 
 Battery::Battery(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
@@ -116,13 +120,17 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     connect(m_acAnimation, SIGNAL(finished()), this, SLOT(updateBattery()));
 }
 
+Battery::~Battery()
+{
+}
+
 void Battery::init()
 {
     setHasConfigurationInterface(true);
 
     // read config
     configChanged();
-    
+
     m_theme->resize(contentsRect().size());
     m_font = QApplication::font();
     m_font.setWeight(QFont::Bold);
@@ -153,29 +161,66 @@ void Battery::init()
         initExtenderItem(eItem);
         extender()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     }
-    
+
     if (m_acAdapterPlugged) {
         showAcAdapter(true);
     }
-
 }
 
 void Battery::configChanged()
 {
     KConfigGroup cg = config();
-    m_showBatteryString = cg.readEntry("showBatteryString", false);
+    m_showBatteryLabel = cg.readEntry("showBatteryString", false);
     m_showRemainingTime = cg.readEntry("showRemainingTime", false);
     m_showMultipleBatteries = cg.readEntry("showMultipleBatteries", false);
-    
-    if (m_showBatteryString) {
+
+    if (m_showBatteryLabel) {
         showLabel(true);
     }
-    
+}
+
+void Battery::toolTipAboutToShow()
+{
+    // for icon
+    // void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int batteryPercent, const bool plugState)
+    QString mainText;
+    QString subText;
+    int batteryCount = 0;
+    foreach (const VariantDict &batteryData, m_batteriesData) {
+        if (m_numOfBattery == 1) {
+            subText.append(i18n("Battery:"));
+        } else {
+            //kDebug() << "More batteries ...";
+            if (!subText.isEmpty()) {
+                subText.append("<br/>");
+            }
+
+            subText.append(i18nc("Placeholder is the battery ID", "Battery %1:", batteryCount));
+        }
+
+        subText.append(' ').append(stringForState(batteryData));
+        ++batteryCount;
+    }
+
+    if (!subText.isEmpty()) {
+        subText.append("<br/>");
+    }
+
+    subText.append(i18n("AC Adapter:")).append(' ');
+    subText.append(m_acAdapterPlugged ? i18n("Plugged in") : i18n("Not plugged in"));
+
+    Plasma::ToolTipContent c(mainText, subText, KIcon("battery"));
+    Plasma::ToolTipManager::self()->setContent(this, c);
 }
 
 void Battery::updateBattery()
 {
     update();
+}
+
+bool Battery::isConstrained()
+{
+    return formFactor() == Plasma::Vertical || formFactor() == Plasma::Horizontal;
 }
 
 void Battery::constraintsEvent(Plasma::Constraints constraints)
@@ -186,12 +231,9 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
     } else {
         setAspectRatioMode(Plasma::KeepAspectRatio);
     }
-    int minWidth;
-    int minHeight;
 
     if (constraints & Plasma::FormFactorConstraint) {
-        if (formFactor() == Plasma::Vertical ||
-            formFactor() == Plasma::Horizontal) {
+        if (isConstrained()) {
             m_theme->setImagePath("icons/battery");
         } else {
             m_theme->setImagePath("widgets/battery-oxygen");
@@ -199,32 +241,42 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
     }
 
     if (constraints & (Plasma::FormFactorConstraint | Plasma::SizeConstraint)) {
+        int minWidth = KIconLoader::SizeSmall;
+        int minHeight = KIconLoader::SizeSmall;
+        bool showToolTips = false;
         if (formFactor() == Plasma::Vertical) {
-            if (!m_showMultipleBatteries) {
-                minHeight = qMax(m_textRect.height(), size().width());
+            if (m_showBatteryLabel) {
+                minHeight = qMax(qMax(minHeight, int(m_textRect.height())), int(size().width()));
             } else {
-                minHeight = qMax(m_textRect.height(), size().width()*m_numOfBattery);
+                showToolTips = true;
+                minHeight = qMax(minHeight, int(size().width()));
             }
-            setMinimumWidth(0);
-            setMinimumHeight(minHeight);
+            minWidth = 0;
             //kDebug() << "Vertical FormFactor";
         } else if (formFactor() == Plasma::Horizontal) {
-            if (!m_showMultipleBatteries) {
-                minWidth = qMax(m_textRect.width(), size().height());
+            if (m_showBatteryLabel) {
+                minWidth = qMax(qMax(minWidth, int(m_textRect.width())), int(size().height()));
             } else {
-                minWidth = qMax(m_textRect.width(), size().height()*m_numOfBattery);
+                showToolTips = true;
+                minWidth = qMax(minWidth, int(size().height()));
             }
-            setMinimumWidth(minWidth);
-            setMinimumHeight(0);
+            minHeight = 0;
             //kDebug() << "Horizontal FormFactor" << m_textRect.width() << contentsRect().height();
         } else {
             setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+            Plasma::ToolTipManager::self()->unregisterWidget(this);
+        }
 
-            if (m_showMultipleBatteries) {
-                setMinimumSize(KIconLoader::SizeSmall * m_numOfBattery, KIconLoader::SizeSmall);
-            } else {
-                setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
-            }
+        if (m_showMultipleBatteries) {
+            setMinimumSize(minWidth * m_numOfBattery, minHeight);
+        } else {
+            setMinimumSize(minWidth, minHeight);
+        }
+
+        if (showToolTips) {
+            Plasma::ToolTipManager::self()->registerWidget(this);
+        } else {
+            Plasma::ToolTipManager::self()->unregisterWidget(this);
         }
 
         QSize c(contentsRect().size().toSize());
@@ -246,7 +298,7 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
 void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
     if (source.startsWith(QLatin1String("Battery"))) {
-        m_batteries_data[source] = data;
+        m_batteriesData[source] = data;
         //kDebug() << "new battery source" << source;
     } else if (source == "AC Adapter") {
         m_acAdapterPlugged = data["Plugged in"].toBool();
@@ -258,6 +310,7 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
     } else {
         kDebug() << "Applet::Dunno what to do with " << source;
     }
+
     if (source == "Battery0") {
         m_remainingMSecs  = data["Remaining msec"].toInt();
         //kDebug() << "Remaining msecs on battery:" << m_remainingMSecs;
@@ -265,7 +318,7 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
 
     if (m_numOfBattery == 0) {
         setStatus(Plasma::PassiveStatus);
-    } else if (m_batteries_data.count() > 0 && data["Percent"].toInt() < 10) {
+    } else if (m_batteriesData.count() > 0 && data.contains("Percent") && data["Percent"].toInt() < 10) {
         setStatus(Plasma::NeedsAttentionStatus);
     } else {
         setStatus(Plasma::ActiveStatus);
@@ -282,7 +335,7 @@ void Battery::createConfigurationInterface(KConfigDialog *parent)
     parent->addPage(widget, i18n("General"), Applet::icon());
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-    ui.showBatteryStringCheckBox->setChecked(m_showBatteryString ? Qt::Checked : Qt::Unchecked);
+    ui.showBatteryStringCheckBox->setChecked(m_showBatteryLabel ? Qt::Checked : Qt::Unchecked);
     ui.showMultipleBatteriesCheckBox->setChecked(m_showMultipleBatteries ? Qt::Checked : Qt::Unchecked);
 }
 
@@ -290,10 +343,9 @@ void Battery::configAccepted()
 {
     KConfigGroup cg = config();
 
-    if (m_showBatteryString != ui.showBatteryStringCheckBox->isChecked()) {
-        m_showBatteryString = !m_showBatteryString;
-        cg.writeEntry("showBatteryString", m_showBatteryString);
-        showLabel(m_showBatteryString);
+    if (m_showBatteryLabel != ui.showBatteryStringCheckBox->isChecked()) {
+        setShowBatteryLabel(!m_showBatteryLabel);
+        cg.writeEntry("showBatteryString", m_showBatteryLabel);
     }
 
     if (m_showMultipleBatteries != ui.showMultipleBatteriesCheckBox->isChecked()) {
@@ -314,24 +366,20 @@ void Battery::readColors()
 
 void Battery::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    if (!m_showBatteryString) {
+    if (!m_showBatteryLabel && !m_isEmbedded && !isConstrained()) {
         showLabel(true);
     }
-    //showAcAdapter(true);
+
     Applet::hoverEnterEvent(event);
 }
 
 void Battery::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    if (!m_showBatteryString && !m_isEmbedded) {
+    if (!m_showBatteryLabel && !m_isEmbedded && !isConstrained()) {
         showLabel(false);
     }
-    //showAcAdapter(false);
-    Applet::hoverLeaveEvent(event);
-}
 
-Battery::~Battery()
-{
+    Applet::hoverLeaveEvent(event);
 }
 
 void Battery::suspend()
@@ -429,7 +477,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
             m_extenderApplet->setBackgroundHints(NoBackground);
             m_extenderApplet->setFlag(QGraphicsItem::ItemIsMovable, false);
             m_extenderApplet->init();
-            m_extenderApplet->showBatteryLabel(false);
+            m_extenderApplet->setShowBatteryLabel(false);
             m_extenderApplet->setGeometry(QRectF(QPoint(m_controls->geometry().width()-s, 0), QSizeF(s, s)));
             m_extenderApplet->updateConstraints(Plasma::StartupCompletedConstraint);
         }
@@ -574,6 +622,29 @@ void Battery::setupFonts()
         m_remainingInfoLabel->setFont(infoFont);
     }
 }
+
+QString Battery::stringForState(const QHash<QString, QVariant> &batteryData, bool *chargeChanging)
+{
+    if (batteryData["Plugged in"].toBool()) {
+        const QString state = batteryData["State"].toString();
+        if (state == "NoCharge") {
+            return i18n("%1% (charged)", batteryData["Percent"].toString());
+            if (chargeChanging) {
+                *chargeChanging = true;
+            }
+        } else if (state == "Discharging") {
+            return i18n("%1% (discharging)", batteryData["Percent"].toString());
+            if (chargeChanging) {
+                *chargeChanging = true;
+            }
+        }
+
+        return i18n("%1% (charging)", batteryData["Percent"].toString());
+    }
+
+    return i18nc("Battery is not plugged in", "Not present");
+}
+
 void Battery::updateStatus()
 {
     if (!m_extenderVisible) {
@@ -582,50 +653,33 @@ void Battery::updateStatus()
 
     QString batteriesLabel;
     QString batteriesInfo;
-    if (m_numOfBattery && m_batteryLabelLabel) {
-        QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
-        int bnum = 0;
-        QString state;
-        while (battery_data.hasNext()) {
-            bnum++;
-            battery_data.next();
-            state = battery_data.value()["State"].toString();
+    if (m_numOfBattery > 0) {
+        bool showRemainingTime = m_showRemainingTime;
+        int batteryCount = 0;
+        foreach (const VariantDict &batteryData, m_batteriesData) {
             if (m_numOfBattery == 1) {
-                m_batteryLabelLabel->setText(i18n("Battery:"));
-                if (battery_data.value()["Plugged in"].toBool()) {
-                    if (state == "NoCharge") {
-                        m_batteryInfoLabel->setText(i18n("%1% (charged)", battery_data.value()["Percent"].toString()));
-                    } else if (state == "Discharging") {
-                        m_batteryInfoLabel->setText(i18nc("Shown when a time estimate is not available", "%1% (discharging)", battery_data.value()["Percent"].toString()));
-                    } else {
-                        m_batteryInfoLabel->setText(i18n("%1% (charging)", battery_data.value()["Percent"].toString()));
-                    }
-                } else {
-                    m_batteryInfoLabel->setText(i18nc("Battery is not plugged in", "Not present"));
-                }
+                batteriesLabel.append(i18n("Battery:"));
             } else {
                 //kDebug() << "More batteries ...";
-                if (bnum > 1) {
+                if (!batteriesInfo.isEmpty()) {
                     batteriesLabel.append("<br />");
                     batteriesInfo.append("<br />");
                 }
-                batteriesLabel.append(i18nc("Placeholder is the battery ID", "Battery %1:", bnum));
-                if (state == "NoCharge") {
-                    batteriesInfo.append(i18n("%1% (charged)", battery_data.value()["Percent"].toString()));
-                } else if (state == "Discharging") {
-                    batteriesInfo.append(i18n("%1% (discharging)", battery_data.value()["Percent"].toString()));
-                } else {
-                    batteriesInfo.append(i18n("%1% (charging)", battery_data.value()["Percent"].toString()));
-                }
+                batteriesLabel.append(i18nc("Placeholder is the battery ID", "Battery %1:", batteryCount));
             }
+
+            batteriesInfo.append(stringForState(batteryData, &showRemainingTime));
+            ++batteryCount;
         }
+
         m_acLabelLabel->setText(i18n("AC Adapter:")); // ouch ...
         if (m_acAdapterPlugged) {
-            m_acInfoLabel->setText(i18n("Plugged in "));
+            m_acInfoLabel->setText(i18n("Plugged in"));
         } else {
             m_acInfoLabel->setText(i18n("Not plugged in"));
         }
-        if ((state == "Discharging" || state == "Charging") && m_remainingMSecs > 0 && m_showRemainingTime) {
+
+        if (showRemainingTime && m_remainingMSecs > 0) {
             m_remainingTimeLabel->show();
             m_remainingInfoLabel->show();
             // we don't have too much accuracy so only give hours and minutes
@@ -636,13 +690,15 @@ void Battery::updateStatus()
             m_remainingInfoLabel->hide();
         }
     } else {
-        m_batteryLabelLabel->setText(i18n("<b>Battery:</b> "));
-        m_batteryInfoLabel->setText(i18nc("Battery is not plugged in", "Not present"));
+        batteriesLabel = i18n("<b>Battery:</b> ");
+        batteriesInfo = i18nc("Battery is not plugged in", "Not present");
     }
+
     if (!batteriesInfo.isEmpty()) {
         m_batteryInfoLabel->setText(batteriesInfo);
         m_batteryLabelLabel->setText(batteriesLabel);
     }
+
     if (!m_availableProfiles.empty() && m_profileCombo) {
         m_profileCombo->clear();
         m_profileCombo->addItem(m_currentProfile);
@@ -688,31 +744,19 @@ void Battery::setProfile(const QString &profile)
 
 void Battery::showLabel(bool show)
 {
-    if (show) {
-        m_labelAnimation->setDirection(QAbstractAnimation::Forward);
-        if (m_labelAnimation->state() != QAbstractAnimation::Running) {
-            m_labelAnimation->start();
-        }
-    } else {
-        m_labelAnimation->setDirection(QAbstractAnimation::Backward);
-        if (m_labelAnimation->state() != QAbstractAnimation::Running) {
-            m_labelAnimation->start();
-        }
+    m_labelAnimation->setDirection(show ? QAbstractAnimation::Forward
+                                        : QAbstractAnimation::Backward);
+    if (m_labelAnimation->state() != QAbstractAnimation::Running) {
+        m_labelAnimation->start();
     }
 }
 
 void Battery::showAcAdapter(bool show)
 {
-    if (show) {
-        m_acAnimation->setDirection(QAbstractAnimation::Forward);
-        if (m_acAnimation->state() != QAbstractAnimation::Running) {
-            m_acAnimation->start();
-        }
-    } else {
-        m_acAnimation->setDirection(QAbstractAnimation::Backward);
-        if (m_acAnimation->state() != QAbstractAnimation::Running) {
-            m_acAnimation->start();
-        }
+    m_acAnimation->setDirection(show ? QAbstractAnimation::Forward
+                                     : QAbstractAnimation::Backward);
+    if (m_acAnimation->state() != QAbstractAnimation::Running) {
+        m_acAnimation->start();
     }
 }
 
@@ -736,43 +780,47 @@ QRectF Battery::scaleRectF(const qreal progress, QRectF rect)
     return rect;
 }
 
-void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& labelText)
+
+QFont Battery::setupLabelPainting(const QRect &contentsRect, const QString &labelText)
 {
-    // Store font size, we want to restore it shortly
-    int original_font_size = m_font.pointSize();
-
     // Fonts smaller than smallestReadableFont don't make sense.
-    m_font.setPointSize(qMax(KGlobalSettings::smallestReadableFont().pointSize(), m_font.pointSize()));
-    QFontMetrics fm(m_font);
-    qreal text_width = fm.width(labelText);
+    QFont font = m_font;
+    int orginalPointSize = font.pointSize();
+    font.setPointSize(qMax(KGlobalSettings::smallestReadableFont().pointSize(), font.pointSize()));
+    QFontMetrics fm(font);
+    qreal textWidth = fm.width(labelText);
 
-    // Longer texts get smaller fonts
-    if (labelText.length() > 4) {
-        if (original_font_size/1.5 < KGlobalSettings::smallestReadableFont().pointSize()) {
-            m_font.setPointSize((KGlobalSettings::smallestReadableFont().pointSize()));
+    // Longer texts get smaller fonts, h/v constrained gets the small font we have
+    if (formFactor() == Plasma::Horizontal || formFactor() == Plasma::Vertical) {
+        font = KGlobalSettings::smallestReadableFont();
+        fm = QFontMetrics(font);
+        textWidth = (fm.width(labelText)+8);
+    } else if (labelText.length() > 4) {
+        if (orginalPointSize/1.5 < KGlobalSettings::smallestReadableFont().pointSize()) {
+            font.setPointSize((KGlobalSettings::smallestReadableFont().pointSize()));
         } else {
-            m_font.setPointSizeF(original_font_size/1.5);
+            font.setPointSizeF(orginalPointSize/1.5);
         }
-        fm = QFontMetrics(m_font);
-        text_width = (fm.width(labelText) * 1.2);
+        fm = QFontMetrics(font);
+        textWidth = (fm.width(labelText) * 1.2);
     } else {
         // Smaller texts get a wider box
-        text_width = (text_width * 1.4);
+        textWidth = (textWidth * 1.4);
     }
-    if (formFactor() == Plasma::Horizontal ||
-        formFactor() == Plasma::Vertical) {
-        m_font = KGlobalSettings::smallestReadableFont();
-        fm = QFontMetrics(m_font);
-        text_width = (fm.width(labelText)+8);
-    }
-    p->setFont(m_font);
 
     // Let's find a good position for painting the percentage on top of the battery
-    m_textRect = QRectF((contentsRect.left() + (contentsRect.width() - text_width) / 2),
-                            contentsRect.top() + ((contentsRect.height() - (int)fm.height()) / 2 * 0.9),
-                            (int)(text_width),
-                            fm.height() * 1.1 );
+    m_textRect = QRectF((contentsRect.left() + (contentsRect.width() - textWidth) / 2),
+                         contentsRect.top() + ((contentsRect.height() - (int)fm.height()) / 2 * 0.9),
+                         (int)(textWidth),
+                         fm.height() * 1.1);
+    return font;
+}
 
+void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString &labelText)
+{
+    // Store font size, we want to restore it shortly
+    QFont font = setupLabelPainting(contentsRect, labelText);
+    p->setFont(font);
     // Poor man's highlighting
     m_boxColor.setAlphaF(m_labelAlpha);
     p->setPen(m_boxColor);
@@ -789,9 +837,6 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
     m_textColor.setAlphaF(m_labelAlpha);
     p->setPen(m_textColor);
     p->drawText(m_textRect, Qt::AlignCenter, labelText);
-
-    // Reset font and box
-    m_font.setPointSize(original_font_size);
 }
 
 void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int batteryPercent, const bool plugState)
@@ -869,72 +914,81 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
                 xdelta = width;
             }
         }
-        QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
-        while (battery_data.hasNext()) {
-            battery_data.next();
+        QHashIterator<QString, QHash<QString, QVariant > > batteryData(m_batteriesData);
+        while (batteryData.hasNext()) {
+            batteryData.next();
             QRect corect = QRect(contentsRect.left() + battery_num * xdelta,
                                  contentsRect.top() + battery_num * ydelta,
                                  width, height);
             // paint battery with appropriate charge level
-            paintBattery(p, corect, battery_data.value()["Percent"].toInt(), battery_data.value()["Plugged in"].toBool());
+            paintBattery(p, corect, batteryData.value()["Percent"].toInt(), batteryData.value()["Plugged in"].toBool());
 
-            // Show the charge percentage with a box on top of the battery
-            QString batteryLabel;
-            if (battery_data.value()["Plugged in"].toBool()) {
-                int hours = m_remainingMSecs/1000/3600;
-                int minutes = qRound(m_remainingMSecs/60000) % 60;
-                if (!(minutes==0 && hours==0)) {
-                    m_minutes= minutes;
-                    m_hours= hours;
-                }
-                QString state = battery_data.value()["State"].toString();
+            if (m_showBatteryLabel || !isConstrained()) {
+                // Show the charge percentage with a box on top of the battery
+                QString batteryLabel;
+                if (batteryData.value()["Plugged in"].toBool()) {
+                    int hours = m_remainingMSecs/1000/3600;
+                    int minutes = qRound(m_remainingMSecs/60000) % 60;
+                    if (!(minutes==0 && hours==0)) {
+                        m_minutes= minutes;
+                        m_hours= hours;
+                    }
+                    QString state = batteryData.value()["State"].toString();
 
-                m_remainingMSecs = battery_data.value()["Remaining msec"].toInt();
-                if (m_remainingMSecs > 0 && (m_showRemainingTime && (state=="Charging" || state=="Discharging"))) {
-                    QTime t = QTime(m_hours, m_minutes);
-                    KLocale tmpLocale(*KGlobal::locale());
-                    tmpLocale.setTimeFormat("%k:%M");
-                    batteryLabel = tmpLocale.formatTime(t, false, true); // minutes, hours as duration
-                } else {
-                    batteryLabel = i18nc("overlay on the battery, needs to be really tiny", "%1%", battery_data.value()["Percent"].toString());
+                    m_remainingMSecs = batteryData.value()["Remaining msec"].toInt();
+                    if (m_remainingMSecs > 0 && (m_showRemainingTime && (state=="Charging" || state=="Discharging"))) {
+                        QTime t = QTime(m_hours, m_minutes);
+                        KLocale tmpLocale(*KGlobal::locale());
+                        tmpLocale.setTimeFormat("%k:%M");
+                        batteryLabel = tmpLocale.formatTime(t, false, true); // minutes, hours as duration
+                    } else {
+                        batteryLabel = i18nc("overlay on the battery, needs to be really tiny", "%1%", batteryData.value()["Percent"].toString());
+                    }
+                    paintLabel(p, corect, batteryLabel);
                 }
-                paintLabel(p, corect, batteryLabel);
             }
             ++battery_num;
         }
     } else {
         // paint only one battery and show cumulative charge level
-        int battery_num = 0;
-        int battery_charge = 0;
-        bool has_battery = false;
-        QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
-        while (battery_data.hasNext()) {
-            battery_data.next();
-            if (battery_data.value()["Plugged in"].toBool()) {
-                battery_charge += battery_data.value()["Percent"].toInt();
-                has_battery = true;
-                ++battery_num;
+        int batteryNum = 0;
+        int batteryCharge = 0;
+        bool hasBattery = false;
+        QHashIterator<QString, QHash<QString, QVariant > > batteryData(m_batteriesData);
+        while (batteryData.hasNext()) {
+            batteryData.next();
+            if (batteryData.value()["Plugged in"].toBool()) {
+                batteryCharge += batteryData.value()["Percent"].toInt();
+                hasBattery = true;
+                ++batteryNum;
             }
         }
-        if (battery_num > 0) {
-            battery_charge = battery_charge / battery_num;
+
+        if (batteryNum > 0) {
+            batteryCharge = batteryCharge / batteryNum;
         }
+
         // paint battery with appropriate charge level
-        paintBattery(p, contentsRect,  battery_charge, has_battery);
+        paintBattery(p, contentsRect,  batteryCharge, hasBattery);
+
         // Show the charge percentage with a box on top of the battery
-        QString batteryLabel;
-        if (has_battery) {
-            batteryLabel = i18nc("overlay on the battery, needs to be really tiny", "%1%", battery_charge);
+        if (hasBattery && (m_showBatteryLabel || !isConstrained())) {
+            QString batteryLabel = i18nc("overlay on the battery, needs to be really tiny", "%1%", batteryCharge);
             paintLabel(p, contentsRect, batteryLabel);
         }
     }
 }
 
-void Battery::showBatteryLabel(bool show)
+void Battery::setShowBatteryLabel(bool show)
 {
-    if (show != m_showBatteryString) {
+    if (show != m_showBatteryLabel) {
+        m_showBatteryLabel = show;
+        //FIXME this is not correct for multiple batteries shown: it needs to figure this out for
+        //each and ever battery shown
+        QString batteryLabel = i18nc("overlay on the battery, needs to be really tiny", "%1%", 99);
+        setupLabelPainting(contentsRect().toRect(), batteryLabel);
+        constraintsEvent(Plasma::FormFactorConstraint);
         showLabel(show);
-        m_showBatteryString = show;
     }
 }
 
@@ -970,7 +1024,7 @@ void Battery::sourceAdded(const QString& source)
 
 void Battery::sourceRemoved(const QString& source)
 {
-    if (m_batteries_data.remove(source)) {
+    if (m_batteriesData.remove(source)) {
         m_numOfBattery--;
         constraintsEvent(Plasma::SizeConstraint);
         update();
