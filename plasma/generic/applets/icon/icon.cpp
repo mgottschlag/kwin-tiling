@@ -120,15 +120,20 @@ void IconApplet::checkService(const QStringList &changedResources)
 
 void IconApplet::setUrl(const KUrl& url)
 {
-    m_url = KIO::NetAccess::mostLocalUrl(url, 0);
-    m_mimetype = KMimeType::findByUrl(url);
+    m_url = url;
+    if (!m_url.protocol().isEmpty()) {
+        m_url = KIO::NetAccess::mostLocalUrl(url, 0);
+    }
+
     m_service = 0;
+    m_mimetype = 0;
     disconnect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)),
                this, SLOT(checkService(QStringList)));
 
     delete m_watcher;
     m_watcher = 0;
     if (m_url.isLocalFile()) {
+        m_mimetype = KMimeType::findByUrl(url);
         m_watcher = new KDirWatch;
         m_watcher->addFile(m_url.toLocalFile());
         connect(m_watcher, SIGNAL(deleted(const QString &)), this, SLOT(delayedDestroy()));
@@ -148,7 +153,7 @@ void IconApplet::setUrl(const KUrl& url)
         connect(m_watcher, SIGNAL(dirty(const QString &)), this, SLOT(updateDesktopFile()));
     } else {
         m_text = m_url.fileName();
-        m_service = KService::serviceByStorageId(m_url.prettyUrl());
+        m_service = KService::serviceByStorageId(m_text);
         connect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)),
                 this, SLOT(checkService(QStringList)));
 
@@ -167,6 +172,7 @@ void IconApplet::setUrl(const KUrl& url)
                 }
             }
 
+            m_mimetype = KMimeType::findByUrl(url);
             m_icon->setIcon(KMimeType::iconNameForUrl(url));
         }
     }
@@ -326,6 +332,8 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
         setUrl(urls.first());
         //TODO: why we don't call updateConstraints()?
         constraintsEvent(Plasma::FormFactorConstraint);
+    } else if (m_service) {
+        KRun::run(*m_service, urls, 0);
     } else if (m_url.isLocalFile() &&
                m_mimetype &&
                (m_mimetype->is("application/x-executable") ||
