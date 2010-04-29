@@ -7,6 +7,7 @@ Comment[sv]=KDE:s demon för information om ledigt utrymme
 Comment[uk]=Фонова служба сповіщення про переповнення диска KDE
 Comment[x-test]=xxKDE Free Space Notifier Daemonxx
 Name=Low Disk Space
+Name[cs]=Málo místa na disku
 Name[es]=Poco espacio en disco
 Name[pt]=Espaço Livre Insuficiente
 Name[sv]=Ont om diskutrymme
@@ -15,6 +16,7 @@ Name[x-test]=xxLow Disk Spacexx
 
 [Context/warningnot]
 Name=Warning
+Name[cs]=Varování
 Name[el]=Προειδοποίηση
 Name[es]=Advertencia
 Name[pt]=Aviso
@@ -23,6 +25,7 @@ Name[uk]=Попередження
 Name[x-test]=xxWarningxx
 Name[zh_TW]=警告
 Comment=Used for warning notifications
+Comment[cs]=Použito pro varování a upozornění
 Comment[el]=Χρήση σε προειδοποιήσεις
 Comment[es]=Utilizado para notificaciones de advertencia
 Comment[pt]=Usado para as notificações de aviso
