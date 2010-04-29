@@ -30,15 +30,15 @@ NetbookScriptEngine::NetbookScriptEngine(Plasma::Corona *corona, QObject *parent
 {
 }
 
-QScriptValue NetbookScriptEngine::wrap(Plasma::Containment *c, QScriptEngine *engine)
+QScriptValue NetbookScriptEngine::wrap(Plasma::Containment *c)
 {
     Containment *wrapper = isPanel(c) ? new Panel(c) : new Containment(c);
-    return wrap(wrapper, engine);
+    return wrap(wrapper);
 }
 
 QScriptValue NetbookScriptEngine::wrap(Containment *c, QScriptEngine *engine)
 {
-    return ScriptEngine::wrap(c, engine);
+    return ScriptEngine::wrap(c);
 }
 
 #include "netbookscriptengine.moc"
