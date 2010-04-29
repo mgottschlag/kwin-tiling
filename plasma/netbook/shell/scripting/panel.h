@@ -44,6 +44,7 @@ class Panel : public Containment
     Q_PROPERTY(int desktop READ desktop WRITE setDesktop)
     Q_PROPERTY(QString location READ location WRITE setLocation)
     Q_PROPERTY(int id READ id)
+    Q_PROPERTY(bool locked READ locked WRITE setLocked)
 
     // panel properties
     Q_PROPERTY(int height READ height WRITE setHeight)
