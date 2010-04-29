@@ -40,7 +40,7 @@
 #include "plasmaapp.h"
 #include "netview.h"
 #include <plasma/containmentactionspluginsconfig.h>
-#include <plasmagenericshell/scripting/scriptengine.h>
+#include <netbookscriptengine.h>
 
 NetCorona::NetCorona(QObject *parent)
     : Plasma::Corona(parent)
@@ -71,7 +71,7 @@ void NetCorona::init()
 
 void NetCorona::loadDefaultLayout()
 {
-    evaluateScripts(ScriptEngine::defaultLayoutScripts());
+    evaluateScripts(NetbookScriptEngine::defaultLayoutScripts());
     if (!containments().isEmpty()) {
         return;
     }
@@ -208,13 +208,13 @@ QRegion NetCorona::availableScreenRegion(int id) const
 
 void NetCorona::processUpdateScripts()
 {
-    evaluateScripts(ScriptEngine::pendingUpdateScripts());
+    evaluateScripts(NetbookScriptEngine::pendingUpdateScripts());
 }
 
 void NetCorona::evaluateScripts(const QStringList &scripts)
 {
     foreach (const QString &script, scripts) {
-        ScriptEngine scriptEngine(this);
+        NetbookScriptEngine scriptEngine(this);
         connect(&scriptEngine, SIGNAL(printError(QString)), this, SLOT(printScriptError(QString)));
         connect(&scriptEngine, SIGNAL(print(QString)), this, SLOT(printScriptMessage(QString)));
         connect(&scriptEngine, SIGNAL(createPendingPanelViews()), PlasmaApp::self(), SLOT(createWaitingPanels()));
