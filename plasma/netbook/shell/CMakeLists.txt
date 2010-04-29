@@ -4,6 +4,7 @@ include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${KDEBASE_WORKSPACE_SOU
 set(plasma-netbook_SRCS
     scripting/netbookscriptengine.cpp
     scripting/panel.cpp
+    scripting/newspaper.cpp
     netcorona.cpp
     netview.cpp
     main.cpp
