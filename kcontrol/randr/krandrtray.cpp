@@ -29,6 +29,10 @@
 
 #include <config-randr.h>
 
+#include <QMouseEvent>
+#include <QVariant>
+
+#include <KAction>
 #include <KActionCollection>
 #include <KApplication>
 #include <KCMultiDialog>
@@ -38,9 +42,7 @@
 #include <KIconLoader>
 #include <KLocale>
 #include <KMenu>
-#include <KAction>
-#include <QMouseEvent>
-#include <QVariant>
+#include <KWindowSystem>
 
 KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)
 	: KStatusNotifierItem(parent),
@@ -57,15 +59,21 @@ KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)
 	setContextMenu(m_menu);
 	setStatus(Active);
 
-    //TODO: probably we need an about to show signal
+	//TODO: probably we need an about to show signal
 	connect(m_menu, SIGNAL(aboutToShow()), this, SLOT(slotPrepareMenu()));
 	m_display->refresh();
 }
 
+KRandRSystemTray::~KRandRSystemTray()
+{
+	if (m_kcm) {
+	    delete m_kcm.data();
+	}
+}
+
 void KRandRSystemTray::activate(const QPoint &pos)
 {
-    Q_UNUSED(pos)
-
+	Q_UNUSED(pos)
 	slotPrefs();
 }
 
@@ -463,10 +471,18 @@ void KRandRSystemTray::slotRefreshRateChanged(QAction *action)
 
 void KRandRSystemTray::slotPrefs()
 {
+	if (m_kcm) {
+	    KWindowSystem::setOnDesktop(m_kcm.data()->winId(), KWindowSystem::currentDesktop());
+	    m_kcm.data()->raise();
+	    return;
+	}
+
 	KCMultiDialog *kcm = new KCMultiDialog( associatedWidget() );
 	kcm->setFaceType( KCMultiDialog::Plain );
 	kcm->setPlainCaption( i18n( "Configure Display" ) );
 	kcm->addModule( "display" );
-	kcm->exec();
-	delete kcm;
+	kcm->setAttribute(Qt::WA_DeleteOnClose);
+	m_kcm = kcm;
+	kcm->show();
+	kcm->raise();
 }

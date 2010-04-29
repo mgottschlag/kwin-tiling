@@ -20,14 +20,16 @@
 #define KRANDRTRAY_H
 
 #include <QMouseEvent>
+#include <QWeakPointer>
 
 #include <KStatusNotifierItem>
 
 #include "randrdisplay.h"
 
-class KHelpMenu;
 class QAction;
 class QActionGroup;
+class KCMultiDialog;
+class KHelpMenu;
 class KMenu;
 
 class KRandRSystemTray : public KStatusNotifierItem
@@ -36,9 +38,10 @@ class KRandRSystemTray : public KStatusNotifierItem
 
 public:
 	explicit KRandRSystemTray(RandRDisplay *dpy, QWidget* parent = 0);
-    
+	~KRandRSystemTray();
+
 	void configChanged();
-    void activate(const QPoint &pos);
+	void activate(const QPoint &pos);
 
 protected Q_SLOTS:
 	void slotScreenActivated();
@@ -63,6 +66,7 @@ private:
 	QList<KMenu*> m_screenPopups;
 	KMenu* m_menu;
 	RandRDisplay *m_display;
+	QWeakPointer<KCMultiDialog> m_kcm;
 };
 
 #endif
