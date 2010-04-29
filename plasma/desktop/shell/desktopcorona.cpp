@@ -387,7 +387,10 @@ void DesktopCorona::populateAddPanelsMenu()
     KPluginInfo::List panelContainmentPlugins = Plasma::Containment::listContainmentsOfType("panel");
     QMap<QString, QPair<KPluginInfo, KService::Ptr> > sorted;
     foreach (const KPluginInfo &plugin, panelContainmentPlugins) {
-        sorted.insert(plugin.name(), qMakePair(plugin, KService::Ptr(0)));
+        //FIXME: a better way to filter out what is not wanted?
+        if (!plugin.property("X-Plasma-ContainmentCategories").value<QStringList>().contains("netbook")) {
+            sorted.insert(plugin.name(), qMakePair(plugin, KService::Ptr(0)));
+        }
     }
 
     const QString constraint = QString("[X-Plasma-Shell] == '%1'")
