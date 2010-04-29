@@ -36,7 +36,7 @@ QScriptValue NetbookScriptEngine::wrap(Plasma::Containment *c)
     return wrap(wrapper);
 }
 
-QScriptValue NetbookScriptEngine::wrap(Containment *c, QScriptEngine *engine)
+QScriptValue NetbookScriptEngine::wrap(Containment *c)
 {
     return ScriptEngine::wrap(c);
 }

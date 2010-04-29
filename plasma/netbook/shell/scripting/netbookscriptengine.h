@@ -29,8 +29,8 @@ class NetbookScriptEngine : public ScriptEngine
 
 public:
     NetbookScriptEngine(Plasma::Corona *corona, QObject *parent = 0);
-    QScriptValue wrap(Plasma::Containment *c;
-    QScriptValue wrap(Containment *c;
+    QScriptValue wrap(Plasma::Containment *c);
+    QScriptValue wrap(Containment *c);
 };
 
 #endif
