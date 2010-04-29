@@ -50,6 +50,8 @@ public:
 
     void constraintsEvent(Plasma::Constraints constraints);
 
+    Q_INVOKABLE void addApplet(Plasma::Applet* applet, const int row = -1, const int column = -1);
+
 protected:
     void changeEvent(QEvent *event);
 

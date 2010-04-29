@@ -266,6 +266,29 @@ void AppletsContainer::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     syncColumnSizes();
 }
 
+void AppletsContainer::addApplet(Plasma::Applet* applet, const int row, const int column)
+{
+    QGraphicsLinearLayout *lay;
+
+    //give up, make a new column
+    if (column < 0 || column >= m_mainLayout->count()) {
+        lay = addColumn();
+    } else {
+        lay = static_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(column));
+    }
+
+    if (row <= 0) {
+        lay->insertItem(lay->count()-1, applet);
+    } else {
+        lay->insertItem(qMin(row, lay->count()-1), applet);
+    }
+
+    connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SIGNAL(appletSizeHintChanged()));
+    updateSize();
+    createAppletTitle(applet);
+    syncColumnSizes();
+}
+
 void AppletsContainer::createAppletTitle(Plasma::Applet *applet)
 {
     AppletTitleBar *appletTitleBar = new AppletTitleBar(applet);

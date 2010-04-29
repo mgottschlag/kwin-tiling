@@ -44,6 +44,8 @@ public:
     AppletsContainer(Plasma::ScrollWidget *parent);
     ~AppletsContainer();
 
+    void addApplet(Plasma::Applet* applet, const int row = -1, const int column = -1);
+
     void syncColumnSizes();
     void createAppletTitle(Plasma::Applet *applet);
 

@@ -235,6 +235,11 @@ void Newspaper::setOrientation(Qt::Orientation orientation)
     }
 }
 
+void Newspaper::addApplet(Plasma::Applet* applet, const int row, const int column)
+{
+    m_container->addApplet(applet, row, column);
+}
+
 void Newspaper::goRight()
 {
     QGraphicsSceneWheelEvent ev(QEvent::GraphicsSceneWheel);
