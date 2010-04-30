@@ -4,7 +4,7 @@ var page = new Activity("newspaper")
 page.screen = -1
 page.wallpaperPlugin = 'image'
 page.wallpaperMode = 'SingleImage'
-page.name = 'Page one'
+page.name = templateName
 
 
 page.addWidgetAt("news", 0, 0)

@@ -1,12 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Name=Page one
-Comment=Default Netbook Page
-Comment[ia]=Pagina de Netbook Predefinite
-Comment[pt]=Página Predefinida do Netbook
-Comment[sv]=Standardsida för nätdator
-Comment[uk]=Типова сторінка субноутбука
-Comment[x-test]=xxDefault Netbook Pagexx
+Name=Search and launch
 
 Type=Service
 ServiceTypes=Plasma/LayoutTemplate
@@ -14,7 +8,7 @@ X-Plasma-Shell=plasma-netbook
 X-Plasma-ContainmentCategories=desktop
 X-KDE-PluginInfo-Author=Marco Martin
 X-KDE-PluginInfo-Email=notmart@gmail.com
-X-KDE-PluginInfo-Name=org.kde.plasma-netbook.defaultPage
+X-KDE-PluginInfo-Name=org.kde.plasma-netbook.defaultSal
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Category=
