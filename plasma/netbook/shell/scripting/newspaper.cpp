@@ -79,18 +79,6 @@ QScriptValue Newspaper::addWidgetAt(QScriptContext *context, QScriptEngine *engi
     return engine->undefinedValue();
 }
 
-void Newspaper::addApplet(Plasma::Applet* applet, const int row, const int column)
-{kWarning()<<"AAAAAAAA";
-    Plasma::Containment *c = containment();
-    if (!c) {
-        return;
-    }
-
-    QMetaObject::invokeMethod(c, "addApplet", Qt::DirectConnection,
-                           Q_ARG(int, row),
-                           Q_ARG(int, column));
-}
-
 #include "newspaper.moc"
 
 
