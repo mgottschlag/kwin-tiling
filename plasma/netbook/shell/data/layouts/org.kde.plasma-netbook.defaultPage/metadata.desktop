@@ -1,6 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Default Netbook Page
+Name[ia]=Pagina de Netbook Predefinite
+Name[pt]=Página Predefinida do Netbook
+Name[sv]=Standardsida för nätdator
+Name[uk]=Типова сторінка субноутбука
 Name[x-test]=xxDefault Netbook Pagexx
 
 Type=Service
