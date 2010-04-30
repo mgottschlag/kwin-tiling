@@ -47,14 +47,11 @@ private Q_SLOTS:
 private:
 	void init();
 	void destroy();
-//	QString getDisplayText(const QString& layout);
-//	const QPixmap* getFlag(const QString& layout);
 
-//    bool drawFlag;
-//	Flags flags;
 	XEventNotifier xEventNotifier;
 	QPushButton* widget;
 	KeyboardConfig* keyboardConfig;
+	Flags* flags;
 };
 
 

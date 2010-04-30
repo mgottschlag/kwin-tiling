@@ -37,15 +37,18 @@ public:
 	virtual ~Flags();
 
 	const QIcon getIcon(const QString& layout);
-	const QPixmap getIconWithText(const QString& fullLayoutName, const KeyboardConfig& keyboardConfig);
+	const QIcon getIconWithText(const QString& fullLayoutName, const KeyboardConfig& keyboardConfig);
 
 	static QString getLongText(const QString& fullLayout, const Rules* rules);
 	static QString getDisplayText(const QString& layout, const KeyboardConfig& keyboardConfig);
+	const QPixmap& getTransparentPixmap() { return *transparentIcon; }
 
 private:
 	QString getCountryFromLayoutName(const QString& fullLayoutName);
 
-	QMap<QString, QIcon> icons;
+	QMap<QString, QIcon> iconMap;
+	QMap<QString, QIcon> iconOrTextMap;
+	QPixmap* transparentIcon;
 };
 
 #endif /* FLAGS_H_ */

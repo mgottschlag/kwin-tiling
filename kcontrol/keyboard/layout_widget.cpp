@@ -39,7 +39,8 @@
 LayoutWidget::LayoutWidget(QWidget* parent, const QList<QVariant>& /*args*/):
 	QWidget(parent),
 	xEventNotifier(XEventNotifier::XKB),
-	keyboardConfig(new KeyboardConfig())
+	keyboardConfig(new KeyboardConfig()),
+	flags(new Flags())
 {
 	if( ! X11Helper::xkbSupported(NULL) ) {
 //		setFailedToLaunch(true, "XKB extension failed to initialize");
@@ -83,9 +84,22 @@ void LayoutWidget::toggleLayout()
 
 void LayoutWidget::layoutChanged()
 {
-	QString layout = X11Helper::getCurrentLayout();
-	QString layoutText = Flags::getDisplayText(layout, *keyboardConfig);
-	widget->setText(layoutText);
+	QString fullLayoutText = X11Helper::getCurrentLayout();
+	QIcon icon;
+	if( keyboardConfig->showFlag ) {
+		LayoutConfig layoutConfig = LayoutConfig::createLayoutConfig(fullLayoutText);
+		icon = flags->getIcon(layoutConfig.layout);
+	}
+	if( ! icon.isNull() ) {
+		widget->setIcon(icon);
+		widget->setText("");
+	}
+	else {
+		QString layoutText = Flags::getDisplayText(fullLayoutText, *keyboardConfig);
+		widget->setIcon(icon);
+		widget->setText(layoutText);
+//		widget->setShortcut(QKeySequence());
+	}
 }
 
 
@@ -162,9 +176,8 @@ void LayoutTrayIcon::layoutChanged()
 	const QIcon icon(flags->getIcon(fullLayoutText));
 	m_notifierItem->setToolTipIconByPixmap(icon);
 
-	QIcon textIcon = QIcon( flags->getIconWithText(fullLayoutText, *keyboardConfig) );
-	//		    m_notifierItem->setOverlayIconByPixmap( textIcon );
-	m_notifierItem->setIconByPixmap( textIcon );
+	QIcon textOrIcon = flags->getIconWithText(fullLayoutText, *keyboardConfig);
+	m_notifierItem->setIconByPixmap( textOrIcon );
 }
 
 void LayoutTrayIcon::toggleLayout()
@@ -189,11 +202,11 @@ QList<QAction*> LayoutTrayIcon::contextualActions()
 		delete actionGroup;
 	}
 	actionGroup = new QActionGroup(this);
+
 	QStringList layouts = X11Helper::getLayoutsList();
 	foreach(const QString& layout, layouts) {
-		QAction* action;
 		QString menuText = Flags::getLongText(layout, rules);
-		action = new QAction(getFlag(layout), menuText, actionGroup);
+		QAction* action = new QAction(getFlag(layout), menuText, actionGroup);
 		action->setData(layout);
 		actionGroup->addAction(action);
 	}

@@ -1,15 +1,15 @@
+Core:
+* better handling when layouts set manually and not present in config
+
 KCM UI
 * allow changing variant without re-adding layout
 * allow changing layout order
 * show nicer flag
-* hide flag if show flag is false
 * show current layouts when "configure layouts" disabled
+* handle no layouts/1 layout nicer
 
 KCM UI cleanup:
-* layouts, sizes etc in kcm
-
-systray icon
-* transparent background
+* layouts, sizes, alignment etc in kcm
 
 plasma applet:
 * make applet show nicely in taskbar (not just desktop)
@@ -17,7 +17,6 @@ plasma applet:
 
 kxkb part
 * tooltip (will require loading xkb rules and translations - not sure if overhead is worth it)
-* flag (may be text is ok?)
 
 Code cleanup:
 * rules, iso_codes:

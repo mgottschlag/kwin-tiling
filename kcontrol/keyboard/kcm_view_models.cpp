@@ -34,7 +34,6 @@ static const int LAYOUT_COLUMN = 1;
 static const int VARIANT_COLUMN = 2;
 static const int DISPLAY_NAME_COLUMN = 3;
 
-
 LayoutsTableModel::LayoutsTableModel(Rules* rules_, Flags *flags_, KeyboardConfig* keyboardConfig_, QObject* parent):
 	QAbstractTableModel(parent),
 	keyboardConfig(keyboardConfig_),
@@ -86,9 +85,10 @@ QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
      if (role == Qt::DecorationRole) {
     	 switch( index.column() ) {
     	 case MAP_COLUMN: {
-//    			const QPixmap* pixmap = flags->getPixmap(layoutConfig.layout);
-//    			return pixmap != NULL ? *pixmap : QVariant();
-    			return countryFlags->getIcon(layoutConfig.layout);
+    			if( keyboardConfig->showFlag ) {
+    				QIcon icon = countryFlags->getIcon(layoutConfig.layout);
+    				return icon.isNull() ? countryFlags->getTransparentPixmap() : icon;
+    			}
     	 }
     	 break;
     	 }

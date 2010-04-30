@@ -33,25 +33,25 @@
 #include "keyboard_config.h"
 #include "xkb_rules.h"
 
-
+static const int FLAG_MAX_WIDTH = 21;
+static const int FLAG_MAX_HEIGHT = 14;
 static const QString flagTemplate("l10n/%1/flag.png");
 
-Flags::Flags()
+Flags::Flags():
+	transparentIcon(new QPixmap(FLAG_MAX_WIDTH, FLAG_MAX_HEIGHT))
 {
+	transparentIcon->fill(Qt::transparent);
 }
 
 Flags::~Flags()
 {
-//	foreach(QString layout, pixmaps.keys()) {
-//		delete pixmaps[layout];
-//	}
-//	delete emptyIcon;
+	delete transparentIcon;
 }
 
 const QIcon Flags::getIcon(const QString& layout)
 {
-	if( icons.contains(layout) ) {
-		return icons[ layout ];
+	if( iconMap.contains(layout) ) {
+		return iconMap[ layout ];
 	}
 
 	QIcon icon;
@@ -63,7 +63,7 @@ const QIcon Flags::getIcon(const QString& layout)
 			icon.addFile(file);
 		}
 	}
-	icons[ layout ] = icon;
+	iconMap[ layout ] = icon;
 	return icon;
 }
 
@@ -132,65 +132,48 @@ QString Flags::getLongText(const QString& fullLayoutName, const Rules* rules)
 	return layoutText;
 }
 
-//TODO: cache pixmaps
-//static const int FLAG_MAX_WIDTH = 21;
-//static const int FLAG_MAX_HEIGHT = 14;
-const QPixmap Flags::getIconWithText(const QString& fullLayoutName, const KeyboardConfig& keyboardConfig)
+const QIcon Flags::getIconWithText(const QString& fullLayoutName, const KeyboardConfig& keyboardConfig)
 {
-	QPixmap pm;
+	QString keySuffix(keyboardConfig.showFlag ? "_wf" : "_nf");
+	QString key(fullLayoutName + keySuffix);
+	if( iconOrTextMap.contains(key) ) {
+		return iconOrTextMap[ key ];
+	}
+
 	if( keyboardConfig.showFlag ) {
 		QIcon icon = getIcon(fullLayoutName);
 		if( ! icon.isNull() ) {
-			pm = QPixmap( icon.pixmap(KIconLoader::SizeLarge, KIconLoader::SizeLarge) );
+			iconOrTextMap[ key ] = icon;
+			return icon;
 		}
 	}
 
-	bool noFlag = pm.isNull();
-	if( pm.isNull() ) {
-		pm = QPixmap(KIconLoader::SizeLarge, KIconLoader::SizeLarge);
-//		pm = QPixmap(FLAG_MAX_WIDTH, FLAG_MAX_WIDTH/*FLAG_MAX_HEIGHT*/);
-	}
+	QPixmap pm = QPixmap(KIconLoader::SizeLarge, KIconLoader::SizeLarge);
+	pm.fill(Qt::transparent);
 
 	QPainter p(&pm);
 	p.setRenderHint(QPainter::SmoothPixmapTransform);
 	p.setRenderHint(QPainter::Antialiasing);
 
-
+	QFont font = p.font();
 	QString layoutText = Flags::getDisplayText(fullLayoutName, keyboardConfig);
 
-	int height = noFlag ? 32 : pm.height();
+	int height = pm.height();
+
 	int fontSize = layoutText.length() == 2
-			? height * 9 / 10
-			: height * 7 / 10;
+			? height * 7 / 10
+			: height * 5 / 10;
+
 	if( fontSize < 6 ) {
 		fontSize = 6;
 	}
 
-	QFont font = p.font();
-	if( keyboardConfig.showFlag && ! noFlag ) {
-//		font.setPixelSize(fontSize);
-//		font.setWeight(QFont::Bold);
-//		p.setFont(font);
-////		p.setPen(Qt::white);
-////		p.drawText(pm.rect(), Qt::AlignCenter | Qt::AlignHCenter, layoutText);
-//
-//		p.setPen(Qt::black);
-//		p.drawText(1, 1, pm.width(), pm.height()-2, Qt::AlignCenter, layoutText);
-//		p.setPen(Qt::white);
-//		p.drawText(0, 0, pm.width(), pm.height()-2, Qt::AlignCenter, layoutText);
-	}
-	else {
-//		p.setBackgroundMode(Qt::OpaqueMode);
-//		p.setBackground(QBrush(Qt::gray));
-		p.fillRect(pm.rect(), QBrush(Qt::gray));
+	font.setPixelSize(fontSize);
+	p.setFont(font);
+	p.drawText(pm.rect(), Qt::AlignCenter | Qt::AlignHCenter, layoutText);
 
-//		p.setPen(Qt::black);
-		font.setPixelSize(fontSize);
-//		font.setWeight(QFont::Bold);
-		p.setFont(font);
-		p.drawText(pm.rect(), Qt::AlignCenter | Qt::AlignHCenter, layoutText);
-	}
-	p.end();
+	QIcon icon(pm);
+	iconOrTextMap[ key ] = icon;
 
-	return pm;
+	return icon;
 }

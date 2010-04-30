@@ -93,6 +93,8 @@ void KCMKeyboardWidget::updateUI()
 
 void KCMKeyboardWidget::uiChanged()
 {
+	((LayoutsTableModel*)uiWidget->layoutsTableView->model())->refresh();
+
 	if( uiUpdating )
 		return;
 
