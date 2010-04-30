@@ -80,67 +80,9 @@ void NetCorona::loadDefaultLayout()
     if (!defaultConfig.isEmpty()) {
         kDebug() << "attempting to load the default layout from:" << defaultConfig;
         loadLayout(defaultConfig);
-        //FIXME: pretty brutal way to localize the names, don't see other ways
-        foreach (Plasma::Containment *containment, containments()) {
-            if (containment->activity() == "Search and launch") {
-                containment->setActivity(i18n("Search and launch"));
-            } else if (containment->activity() == "Newspaper") {
-                containment->setActivity(i18n("Page one"));
-            } 
-        }
+
         return;
     }
-
-    //TODO: all of this will go
-    // used to force a save into the config file
-    KConfigGroup invalidConfig;
-
-    // FIXME: need to load the Netbook-specific containment
-    // passing in an empty string will get us whatever the default
-    // containment type is!
-    Plasma::Containment* c = addContainmentDelayed(QString());
-
-    if (!c) {
-        return;
-    }
-
-    c->init();
-
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-    bool isDesktop = args->isSet("desktop");
-
-    if (isDesktop) {
-        c->setScreen(0);
-    }
-
-    c->setWallpaper("image", "SingleImage");
-    c->setFormFactor(Plasma::Planar);
-    c->updateConstraints(Plasma::StartupCompletedConstraint);
-    c->flushPendingConstraintsEvents();
-    c->save(invalidConfig);
-
-    emit containmentAdded(c);
-
-    QVariantList netPanelArgs;
-    netPanelArgs << PlasmaApp::self()->mainView()->width();
-    c = addContainment("netpanel", netPanelArgs);
-    /*
-    loadDefaultApplet("systemtray", panel);
-
-    foreach (Plasma::Applet* applet, panel->applets()) {
-        applet->init();
-        applet->flushPendingConstraintsEvents();
-        applet->save(invalidConfig);
-    }
-    */
-
-    requestConfigSync();
-    /*
-    foreach (Plasma::Containment *c, containments()) {
-        kDebug() << "letting the world know about" << (QObject*)c;
-        emit containmentAdded(c);
-    }
-    */
 }
 
 Plasma::Applet *NetCorona::loadDefaultApplet(const QString &pluginName, Plasma::Containment *c)
