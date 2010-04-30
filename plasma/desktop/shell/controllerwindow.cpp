@@ -23,6 +23,7 @@
 
 #include <QApplication>
 #include <QBoxLayout>
+#include <QDesktopWidget>
 #include <QPainter>
 
 #include <kwindowsystem.h>
@@ -32,7 +33,7 @@
 #include <Plasma/Corona>
 #include <Plasma/Theme>
 #include <Plasma/FrameSvg>
-#include <Plasma/View>
+#include <Plasma/Dialog>
 #include <Plasma/WindowEffects>
 
 #include "widgetsexplorer/widgetexplorer.h"
@@ -87,8 +88,8 @@ ControllerWindow::~ControllerWindow()
         //FIXME the qt4.6 comment below applies here too
     }
     if (m_widgetExplorer) {
-        if (m_containment) {
-            m_widgetExplorer->corona()->removeOffscreenWidget(m_widgetExplorer);
+        if (m_corona) {
+            m_corona->removeOffscreenWidget(m_widgetExplorer);
         }
 
         if (m_widgetExplorer->scene()) {
@@ -112,19 +113,23 @@ void ControllerWindow::backgroundChanged()
 
 void ControllerWindow::setContainment(Plasma::Containment *containment)
 {
-    if (!containment) {
+    if (containment == m_containment) {
         return;
     }
+    m_containment = containment;
 
     if (m_containment) {
         disconnect(m_containment, 0, this, 0);
     }
 
-    m_containment = containment;
+    if (!containment) {
+        return;
+    }
     m_corona = m_containment->corona();
 
     if (m_view) {
-        m_view->setScreen(m_containment->screen(), m_containment->desktop());
+        //FIXME
+        //m_view->setScreen(m_containment->screen(), m_containment->desktop());
     }
 
     if (m_widgetExplorer) {
@@ -139,11 +144,12 @@ Plasma::Containment *ControllerWindow::containment() const
 
 QSize ControllerWindow::sizeHint() const
 {
-    if (!m_containment) {
+    if (!m_view) {
         return QWidget::sizeHint();
     }
-
-    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(m_containment->screen());
+    //FIXME is this right?
+    int screen = QApplication::desktop()->screenNumber(m_view);
+    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(screen);
 
     switch (m_location) {
     case Plasma::LeftEdge:
@@ -244,16 +250,11 @@ Qt::Orientation ControllerWindow::orientation() const
 void ControllerWindow::initView()
 {
     if (!m_view) {
-        m_view = new Plasma::View(0, this);
+        m_view = new Plasma::Dialog(0);
         m_view->setFocus();
-        m_view->setScene(m_containment->corona());
-        m_view->setScreen(m_containment->screen(), m_containment->desktop());
 
-        m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        m_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         m_view->setStyleSheet("background: transparent; border: none;");
 
-        m_view->installEventFilter(this);
         m_layout->addWidget(m_view);
     }
 }
@@ -265,25 +266,25 @@ void ControllerWindow::showWidgetExplorer()
     }
 
     initView();
+    //FIXME
+    //m_view->setScreen(m_containment->screen(), m_containment->desktop());
 
     if (!m_widgetExplorer) {
         m_widgetExplorer = new Plasma::WidgetExplorer(orientation());
         m_watchedWidget = m_widgetExplorer;
         m_widgetExplorer->setContainment(m_containment);
         m_widgetExplorer->populateWidgetList();
-        m_widgetExplorer->resize(m_view->size());
 
         m_containment->corona()->addOffscreenWidget(m_widgetExplorer);
-        m_view->setSceneRect(m_widgetExplorer->geometry());
+        m_view->setGraphicsWidget(m_widgetExplorer);
 
-        m_widgetExplorer->installEventFilter(this);
         m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
 
         connect(m_widgetExplorer, SIGNAL(closeClicked()), this, SLOT(close()));
     } else {
         m_widgetExplorer->setOrientation(orientation());
         m_watchedWidget = m_widgetExplorer;
-        m_view->setSceneRect(m_widgetExplorer->geometry());
+        m_view->setGraphicsWidget(m_widgetExplorer);
     }
 
     if (orientation() == Qt::Horizontal) {
@@ -297,27 +298,22 @@ void ControllerWindow::showWidgetExplorer()
 
 void ControllerWindow::showActivityManager()
 {
-    if (!m_containment) {
-        return;
-    }
     initView();
 
     if (!m_activityManager) {
         m_activityManager = new ActivityManager(orientation());
         m_watchedWidget = m_activityManager;
-        m_activityManager->resize(m_view->size());
 
-        m_containment->corona()->addOffscreenWidget(m_activityManager);
-        m_view->setSceneRect(m_activityManager->geometry());
+        m_corona->addOffscreenWidget(m_activityManager);
+        m_view->setGraphicsWidget(m_activityManager);
 
-        m_activityManager->installEventFilter(this);
         m_activityManager->setIconSize(KIconLoader::SizeHuge);
 
         connect(m_activityManager, SIGNAL(closeClicked()), this, SLOT(close()));
     } else {
         m_activityManager->setOrientation(orientation());
         m_watchedWidget = m_activityManager;
-        m_view->setSceneRect(m_activityManager->geometry());
+        m_view->setGraphicsWidget(m_activityManager);
     }
 
     if (orientation() == Qt::Horizontal) {
@@ -399,33 +395,6 @@ void ControllerWindow::resizeEvent(QResizeEvent * event)
                 break;
         }
     }
-}
-
-bool ControllerWindow::eventFilter(QObject *watched, QEvent *event)
-{
-    //if widgetsExplorer moves or resizes, then the view has to adjust
-    if ((watched == (QObject*)m_watchedWidget) && (event->type() == QEvent::GraphicsSceneResize || event->type() == QEvent::GraphicsSceneMove)) {
-        m_view->resize(m_watchedWidget->size().toSize());
-        m_view->setSceneRect(m_watchedWidget->geometry());
-        //kDebug() << "sizes are:" << m_widgetExplorer->size() << m_view->size() << size();
-    }
-
-    //if the view resizes, then the widgetexplorer has to be resized
-    if (watched == m_view && event->type() == QEvent::Resize) {
-        QResizeEvent *resizeEvent = static_cast<QResizeEvent *>(event);
-        m_watchedWidget->resize(resizeEvent->size());
-        m_view->setSceneRect(m_watchedWidget->geometry());
-
-        QSize borderSize = size() - m_layout->contentsRect().size();
-
-        if (orientation() == Qt::Horizontal) {
-            resize(width(), m_view->height() + borderSize.height());
-        } else {
-            resize(m_view->width() + borderSize.width(), height());
-        }
-    }
-
-    return false;
 }
 
 #include "controllerwindow.moc"

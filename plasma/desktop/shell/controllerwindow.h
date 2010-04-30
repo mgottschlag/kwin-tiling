@@ -33,7 +33,7 @@ namespace Plasma
     class Corona;
     class FrameSvg;
     class WidgetExplorer;
-    class View;
+    class Dialog;
 } // namespace Plasma
 
 class ActivityManager;
@@ -62,8 +62,6 @@ public:
 
     Plasma::FrameSvg *background() const;
 
-    bool eventFilter(QObject *watched, QEvent *event);
-
 protected:
     void resizeEvent(QResizeEvent *event);
     void paintEvent(QPaintEvent *event);
@@ -81,7 +79,7 @@ private:
     Plasma::FrameSvg *m_background;
     Plasma::Containment *m_containment;
     Plasma::Corona *m_corona;
-    Plasma::View *m_view;
+    Plasma::Dialog *m_view;
     QGraphicsWidget *m_watchedWidget;
     ActivityManager *m_activityManager;
     Plasma::WidgetExplorer *m_widgetExplorer;
