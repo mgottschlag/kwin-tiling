@@ -25,8 +25,6 @@ endif(X11_Xrender_FOUND)
 
 install(TARGETS kdeinit_plasma-netbook DESTINATION ${LIB_INSTALL_DIR})
 install(TARGETS plasma-netbook ${INSTALL_TARGETS_DEFAULT_ARGS})
-#install(FILES plasma-default-layoutrc DESTINATION ${DATA_INSTALL_DIR}/plasma-netbook/)
-#install(FILES plasma-netbook.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
 install(FILES data/layouts/00-defaultLayout.js DESTINATION ${DATA_INSTALL_DIR}/plasma-netbook/init)
 
 install(FILES data/layouts/org.kde.plasma-netbook.defaultPanel/metadata.desktop DESTINATION ${DATA_INSTALL_DIR}/plasma/layout-templates/org.kde.plasma-netbook.defaultPanel/)
