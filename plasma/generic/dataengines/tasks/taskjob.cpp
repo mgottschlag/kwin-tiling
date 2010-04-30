@@ -147,6 +147,11 @@ void TaskJob::start()
             setResult(true);
             return;
         }
+        else if (operation == "publishIconGeometry") {
+            m_source->getTask()->publishIconGeometry(parameters().value("geometry").toRect());
+            setResult(true);
+            return;
+        }
     }
     setResult(false);
 }

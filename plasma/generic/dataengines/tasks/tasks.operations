@@ -37,4 +37,7 @@
         <entry name="desktop" type="int" />
     </group>
     <group name="toCurrentDesktop" />
+    <group name="publishIconGeometry">
+        <entry name="geometry" type="QRect" />
+    </group>
 </kcfg>
