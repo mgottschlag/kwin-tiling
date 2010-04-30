@@ -78,11 +78,11 @@ public:
         /**
          * This is corresponding to NET::Property enum reported properties.
          */
-        unsigned int netWindowInfoProperties;
+        unsigned long netWindowInfoProperties;
         /**
          * This is corresponding to NET::Property2 enum reported properties.
          */
-        unsigned int netWindowInfoProperties2;
+        unsigned long netWindowInfoProperties2;
 
         WindowProperties(unsigned int netWinInfoProperties, unsigned int netWinInfoProperties2);
     };

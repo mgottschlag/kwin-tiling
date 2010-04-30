@@ -186,7 +186,7 @@ protected Q_SLOTS:
     //* @internal
     void windowRemoved(WId);
     //* @internal
-    void windowChanged(WId, unsigned int*);
+    void windowChanged(WId, const unsigned long*);
 
     //* @internal
     void activeWindowChanged(WId);

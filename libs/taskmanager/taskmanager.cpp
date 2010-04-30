@@ -116,8 +116,8 @@ TaskManager::TaskManager()
             this,       SLOT(activeWindowChanged(WId)));
     connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)),
             this,       SLOT(currentDesktopChanged(int)));
-    connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,unsigned int*)),
-            this,       SLOT(windowChanged(WId,unsigned int*)));
+    connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,const unsigned long*)),
+            this,       SLOT(windowChanged(WId,const unsigned long*)));
     if (QCoreApplication::instance()) {
         connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(onAppExitCleanup()));
     }
@@ -323,7 +323,7 @@ void TaskManager::windowRemoved(WId w)
     }
 }
 
-void TaskManager::windowChanged(WId w, unsigned int *dirty)
+void TaskManager::windowChanged(WId w, const unsigned long *dirty)
 {
 #ifdef Q_WS_X11
     if (dirty[NETWinInfo::PROTOCOLS] & NET::WMState) {
