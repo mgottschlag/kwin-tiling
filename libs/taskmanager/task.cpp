@@ -59,10 +59,11 @@ Task::~Task()
 
 void Task::timerEvent(QTimerEvent *)
 {
-    if (d->cachedChanges) {
+    if (d->cachedChanges.netWindowInfoProperties || d->cachedChanges.netWindowInfoProperties2) {
         d->lastUpdate = QTime();
         refresh(d->cachedChanges);
-        d->cachedChanges = 0;
+        d->cachedChanges.netWindowInfoProperties = 0;
+        d->cachedChanges.netWindowInfoProperties2 = 0;
     }
 
     killTimer(d->cachedChangesTimerId);
@@ -93,10 +94,11 @@ void Task::refreshIcon()
     emit changed(IconChanged);
 }
 
-::TaskManager::TaskChanges Task::refresh(unsigned int dirty)
+::TaskManager::TaskChanges Task::refresh(WindowProperties dirty)
 {
     if (!d->lastUpdate.isNull() && d->lastUpdate.elapsed() < 200) {
-        d->cachedChanges |= dirty;
+        d->cachedChanges.netWindowInfoProperties |= dirty.netWindowInfoProperties;
+        d->cachedChanges.netWindowInfoProperties2 |= dirty.netWindowInfoProperties2;
 
         if (!d->cachedChangesTimerId) {
             d->cachedChangesTimerId = startTimer(200 - d->lastUpdate.elapsed());
@@ -117,27 +119,27 @@ void Task::refreshIcon()
 
     d->info = info;
 
-    if (dirty & NET::WMState || dirty & NET::XAWMState) {
+    if (dirty.netWindowInfoProperties & NET::WMState || dirty.netWindowInfoProperties & NET::XAWMState) {
         changes |= StateChanged;
     }
 
-    if (dirty & NET::WMDesktop) {
+    if (dirty.netWindowInfoProperties & NET::WMDesktop) {
         changes |= DesktopChanged;
     }
 
-    if (dirty & NET::WMGeometry) {
+    if (dirty.netWindowInfoProperties & NET::WMGeometry) {
         changes |= GeometryChanged;
     }
 
-    if (dirty & NET::WMWindowType) {
+    if (dirty.netWindowInfoProperties & NET::WMWindowType) {
         changes |= WindowTypeChanged;
     }
 
-    if (dirty & NET::WM2AllowedActions) {
+    if (dirty.netWindowInfoProperties2 & NET::WM2AllowedActions) {
         changes |= ActionsChanged;
     }
 
-    if (dirty & NET::WMIcon) {
+    if (dirty.netWindowInfoProperties & NET::WMIcon) {
         refreshIcon();
     }
 
@@ -630,6 +632,11 @@ WId Task::idFromMimeData(const QMimeData *mimeData, bool *ok)
     }
 
     return id;
+}
+
+Task::WindowProperties::WindowProperties(unsigned int netWinInfoProperties, unsigned int netWinInfoProperties2)
+  : netWindowInfoProperties(netWinInfoProperties), netWindowInfoProperties2(netWinInfoProperties2)
+{
 }
 
 } // TaskManager namespace

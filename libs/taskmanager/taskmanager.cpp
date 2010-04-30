@@ -116,8 +116,8 @@ TaskManager::TaskManager()
             this,       SLOT(activeWindowChanged(WId)));
     connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)),
             this,       SLOT(currentDesktopChanged(int)));
-    connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,unsigned int)),
-            this,       SLOT(windowChanged(WId,unsigned int)));
+    connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,unsigned int*)),
+            this,       SLOT(windowChanged(WId,unsigned int*)));
     if (QCoreApplication::instance()) {
         connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(onAppExitCleanup()));
     }
@@ -323,10 +323,10 @@ void TaskManager::windowRemoved(WId w)
     }
 }
 
-void TaskManager::windowChanged(WId w, unsigned int dirty)
+void TaskManager::windowChanged(WId w, unsigned int *dirty)
 {
 #ifdef Q_WS_X11
-    if (dirty & NET::WMState) {
+    if (dirty[NETWinInfo::PROTOCOLS] & NET::WMState) {
         NETWinInfo info (QX11Info::display(), w, QX11Info::appRootWindow(),
                          NET::WMState | NET::XAWMState);
 
@@ -346,10 +346,10 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
 #endif
 
     // check if any state we are interested in is marked dirty
-    if (!(dirty & (NET::WMVisibleName | NET::WMName |
-                   NET::WMState | NET::WMIcon |
-                   NET::XAWMState | NET::WMDesktop) ||
-          (trackGeometry() && dirty & NET::WMGeometry))) {
+    if (!(dirty[NETWinInfo::PROTOCOLS] & (NET::WMVisibleName | NET::WMName |
+                                          NET::WMState | NET::WMIcon |
+                                          NET::XAWMState | NET::WMDesktop) ||
+          (trackGeometry() && dirty[NETWinInfo::PROTOCOLS] & NET::WMGeometry))) {
         return;
     }
 
@@ -361,14 +361,14 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
 
     //kDebug() << "TaskManager::windowChanged " << w << " " << dirty;
 
-    if (dirty & NET::WMState) {
+    if (dirty[NETWinInfo::PROTOCOLS] & NET::WMState) {
         t->updateDemandsAttentionState(w);
     }
 
     //kDebug() << "got changes, but will we refresh?" << dirty;
-    if (dirty) {
+    if (dirty[NETWinInfo::PROTOCOLS] || dirty[NETWinInfo::PROTOCOLS2]) {
         // only refresh this stuff if we have other changes besides icons
-        t->refresh(dirty);
+        t->refresh(Task::WindowProperties(dirty[NETWinInfo::PROTOCOLS], dirty[NETWinInfo::PROTOCOLS2]));
     }
 }
 

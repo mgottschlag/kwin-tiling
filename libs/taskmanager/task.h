@@ -70,6 +70,23 @@ class TASKMANAGER_EXPORT Task : public QObject, public KShared
     Q_PROPERTY( int desktop READ desktop )
 
 public:
+
+    /**
+     * Represents all the informations reported by KWindowSystem about the NET properties of the task
+     */
+    struct WindowProperties {
+        /**
+         * This is corresponding to NET::Property enum reported properties.
+         */
+        unsigned int netWindowInfoProperties;
+        /**
+         * This is corresponding to NET::Property2 enum reported properties.
+         */
+        unsigned int netWindowInfoProperties2;
+
+        WindowProperties(unsigned int netWinInfoProperties, unsigned int netWinInfoProperties2);
+    };
+
     Task(WId win, QObject *parent, const char *name = 0);
     virtual ~Task();
 
@@ -235,7 +252,7 @@ public:
     // internal
 
     //* @internal
-    ::TaskManager::TaskChanges refresh(unsigned int dirty);
+    ::TaskManager::TaskChanges refresh(WindowProperties dirty);
     //* @internal
 #ifdef Q_WS_X11
     void addTransient( WId w, const NETWinInfo& info );

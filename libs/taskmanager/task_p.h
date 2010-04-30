@@ -47,7 +47,7 @@ public:
        info(KWindowSystem::windowInfo(w, windowInfoFlags, windowInfoFlags2)),
        lastWidth(0),
        lastHeight(0),
-       cachedChanges(0),
+       cachedChanges(0, 0),
        cachedChangesTimerId(0),
        active(false),
        lastResize(false)
@@ -67,7 +67,7 @@ public:
     QRect iconGeometry;
 
     QTime lastUpdate;
-    unsigned int cachedChanges;
+    Task::WindowProperties cachedChanges;
     int cachedChangesTimerId;
     QPixmap pixmap;
     QPixmap lastIcon;
