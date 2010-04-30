@@ -98,6 +98,14 @@ void TaskSource::updateTask(::TaskManager::TaskChanges taskChanges)
             setData("onAllDesktops", m_task->isOnAllDesktops());
             setData("desktop", m_task->desktop());
             setData("icon", m_task->icon());
+            setData("actionMinimize", m_task->info().actionSupported(NET::ActionMinimize));
+            setData("actionMaximize", m_task->info().actionSupported(NET::ActionMax));
+            setData("actionShade", m_task->info().actionSupported(NET::ActionShade));
+            setData("actionResize", m_task->info().actionSupported(NET::ActionResize));
+            setData("actionMove", m_task->info().actionSupported(NET::ActionMove));
+            setData("actionClose", m_task->info().actionSupported(NET::ActionClose));
+            setData("actionChangeDesktop", m_task->info().actionSupported(NET::ActionChangeDesktop));
+            setData("actionFullScreen", m_task->info().actionSupported(NET::ActionFullScreen));
             break;
         case TaskManager::IconChanged:
             setData("icon", m_task->icon());
@@ -122,6 +130,16 @@ void TaskSource::updateTask(::TaskManager::TaskChanges taskChanges)
             setData("onCurrentDesktop", m_task->isOnCurrentDesktop());
             setData("onAllDesktops", m_task->isOnAllDesktops());
             setData("desktop", m_task->desktop());
+            break;
+        case TaskManager::ActionsChanged:
+            setData("actionMinimize", m_task->info().actionSupported(NET::ActionMinimize));
+            setData("actionMaximize", m_task->info().actionSupported(NET::ActionMax));
+            setData("actionShade", m_task->info().actionSupported(NET::ActionShade));
+            setData("actionResize", m_task->info().actionSupported(NET::ActionResize));
+            setData("actionMove", m_task->info().actionSupported(NET::ActionMove));
+            setData("actionClose", m_task->info().actionSupported(NET::ActionClose));
+            setData("actionChangeDesktop", m_task->info().actionSupported(NET::ActionChangeDesktop));
+            setData("actionFullScreen", m_task->info().actionSupported(NET::ActionFullScreen));
             break;
         default:
             break;
