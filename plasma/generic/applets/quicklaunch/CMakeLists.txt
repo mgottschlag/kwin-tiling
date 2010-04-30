@@ -6,14 +6,15 @@ if(NOT KDE4_FOUND)
 
    include_directories(
    ${CMAKE_CURRENT_BINARY_DIR}
-   ${KDE4_INCLUDES} 
+   ${KDE4_INCLUDES}
    )
 endif(NOT KDE4_FOUND)
 
 set(plasma_applet_quicklaunch_SRCS
-  quicklaunchApplet.cpp
-  quicklaunchIcon.cpp
-  QuicklaunchLayout.cpp
+  quicklaunch.cpp
+  quicklaunchicon.cpp
+  icongrid.cpp
+  icongridlayout.cpp
 )
 
 kde4_add_ui_files(plasma_applet_quicklaunch_SRCS quicklaunchConfig.ui)
