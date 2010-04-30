@@ -116,20 +116,6 @@ void SearchLaunch::init()
         m_toolBox->addTool(a);
     }
 
-    QString packageManagerName = config().readEntry("PackageManagerCommand", "kpackagekit");
-    if (!packageManagerName.isEmpty()) {
-        m_packageManagerService = KService::serviceByDesktopName(packageManagerName);
-
-        if (m_packageManagerService && !m_packageManagerService->exec().isEmpty()) {
-            KAction *addApplicationsAction = new KAction(this);
-            addAction("add applications", addApplicationsAction);
-            addApplicationsAction->setText(i18n("Add applications"));
-            addApplicationsAction->setIcon(KIcon("applications-other"));
-            m_toolBox->addTool(addApplicationsAction);
-
-            connect(addApplicationsAction, SIGNAL(triggered()), this, SLOT(launchPackageManager()));
-        }
-    }
 
     a = action("configure");
     if (a) {
@@ -168,11 +154,27 @@ void SearchLaunch::launchPackageManager()
 
 void SearchLaunch::configChanged()
 {
-    setOrientation((Qt::Orientation)config().readEntry("orientation", (int)Qt::Vertical));
+    setOrientation((Qt::Orientation)config().readEntry("Orientation", (int)Qt::Vertical));
 
     m_stripWidget->setIconSize(config().readEntry("FavouritesIconSize", (int)KIconLoader::SizeLarge));
 
     m_resultsView->setIconSize(config().readEntry("ResultsIconSize", (int)KIconLoader::SizeHuge));
+
+    QString packageManagerName = config().readEntry("PackageManager", "kpackagekit");
+
+    if (!packageManagerName.isEmpty()) {
+        m_packageManagerService = KService::serviceByDesktopName(packageManagerName);
+
+        if (!action("add applications") && m_packageManagerService && !m_packageManagerService->exec().isEmpty()) {
+            KAction *addApplicationsAction = new KAction(this);
+            addAction("add applications", addApplicationsAction);
+            addApplicationsAction->setText(i18n("Add applications"));
+            addApplicationsAction->setIcon(KIcon("applications-other"));
+            m_toolBox->addTool(addApplicationsAction);
+
+            connect(addApplicationsAction, SIGNAL(triggered()), this, SLOT(launchPackageManager()));
+        }
+    }
 }
 
 void SearchLaunch::availableScreenRegionChanged()

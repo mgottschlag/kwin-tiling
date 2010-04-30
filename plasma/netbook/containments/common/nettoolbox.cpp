@@ -295,6 +295,9 @@ void NetToolBox::addTool(QAction *action)
     } else if (action == m_containment->action("add page")) {
         m_toolContainerLayout->insertItem(m_newToolsPosition+1, button);
         --m_newToolsPosition;
+    } else if (action == m_containment->action("add applications")) {
+        m_toolContainerLayout->insertItem(1, button);
+        --m_newToolsPosition;
     } else {
         m_toolContainerLayout->insertItem(m_newToolsPosition, button);
     }
