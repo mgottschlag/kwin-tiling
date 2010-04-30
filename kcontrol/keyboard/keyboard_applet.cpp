@@ -18,6 +18,8 @@
 
 #include "keyboard_applet.h"
 
+#include <kglobalsettings.h>
+
 #include <QtGui/QPainter>
 #include <QtGui/QPixmap>
 #include <QtGui/QGraphicsSceneMouseEvent>
@@ -134,11 +136,14 @@ void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 		p->save();
 		p->setPen(Qt::black);
 		QFont font = p->font();
+		int height = contentsRect.height();
 		int fontSize = layoutText.length() == 2
-				? contentsRect.height() * 7 / 10
-						: contentsRect.height() * 5 / 10;
-		if( fontSize < 6 ) {
-			fontSize = 6;
+				? height * 7 / 10
+				: height * 5 / 10;
+
+		int smallestReadableSize = KGlobalSettings::smallestReadableFont().pixelSize();
+		if( fontSize < smallestReadableSize ) {
+			fontSize = smallestReadableSize;
 		}
 		font.setPixelSize(fontSize);
 		p->setFont(font);

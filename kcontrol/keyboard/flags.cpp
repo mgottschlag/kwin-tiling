@@ -21,6 +21,7 @@
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <kiconloader.h>
+#include <kglobalsettings.h>
 
 #include <QtCore/QStringList>
 #include <QtGui/QPixmap>
@@ -164,8 +165,9 @@ const QIcon Flags::getIconWithText(const QString& fullLayoutName, const Keyboard
 			? height * 7 / 10
 			: height * 5 / 10;
 
-	if( fontSize < 6 ) {
-		fontSize = 6;
+	int smallestReadableSize = KGlobalSettings::smallestReadableFont().pixelSize();
+	if( fontSize < smallestReadableSize ) {
+		fontSize = smallestReadableSize;
 	}
 
 	font.setPixelSize(fontSize);
