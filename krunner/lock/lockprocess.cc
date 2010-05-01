@@ -1532,10 +1532,15 @@ void LockProcess::stayOnTop()
             if( stack.contains( real[ i ] )) {
                 found_ours = true;
             } else if( found_ours ) {
-                kDebug() << "found foreign window above screensaver";
-                //QProcess::execute("xwininfo -all -id " + QString::number(real[i]));
-                needs_erase = true;
-                break;
+                XWindowAttributes winAttr;
+                if (XGetWindowAttributes(QX11Info::display(), real[ i ], &winAttr)
+                    && winAttr.map_state == IsViewable)
+                {
+                    kDebug() << "found foreign window above screensaver";
+                    //QProcess::execute("xwininfo -all -id " + QString::number(real[i]));
+                    needs_erase = true;
+                    break;
+                }
             }
         }
         XFree( real );
