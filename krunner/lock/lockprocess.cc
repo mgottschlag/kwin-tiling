@@ -1095,6 +1095,8 @@ void LockProcess::suspend()
         ::kill(mHackProc.pid(), SIGSTOP);
         QApplication::syncX();
         mSavedScreen = QPixmap::grabWindow( winId());
+        mSnapshotTimer.setSingleShot(true);
+        mSnapshotTimer.start(1000);
     }
     mSuspended = true;
 }
@@ -1106,10 +1108,13 @@ void LockProcess::resume( bool force )
     if( mSuspended && mHackProc.state() == QProcess::Running )
     {
         QPainter p( this );
-        p.drawPixmap( 0, 0, mSavedScreen );
+        if (!mSavedScreen.isNull())
+            p.drawPixmap( 0, 0, mSavedScreen );
+        else
+            p.fillRect( rect(), Qt::black );
         p.end();
-        mSavedScreen = QPixmap();
         QApplication::syncX();
+        mSavedScreen = QPixmap();
         ::kill(mHackProc.pid(), SIGCONT);
     }
     mSuspended = false;
@@ -1540,8 +1545,12 @@ void LockProcess::stayOnTop()
     if( count > 1 )
         XRestackWindows( x11Info().display(), stack.data(), count );
     if( needs_erase ) {
+        // if the snapshot was taken recently it is possible that the rogue
+        // window was snapshotted at well.
+        if (mSnapshotTimer.isActive())
+            mSavedScreen = QPixmap();
         QPainter p( this );
-        if (mSuspended)
+        if (!mSavedScreen.isNull())
             p.drawPixmap( 0, 0, mSavedScreen );
         else
             p.fillRect( rect(), Qt::black );

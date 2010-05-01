@@ -214,6 +214,7 @@ private:
     QString     mMethod;
     GreeterPluginHandle greetPlugin;
     QPixmap     mSavedScreen;
+    QTimer      mSnapshotTimer;
     int         mAutoLogoutTimerId;
     int         mAutoLogoutTimeout;
     QTimer      mSuppressUnlock;
