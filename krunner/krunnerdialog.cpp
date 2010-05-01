@@ -311,7 +311,9 @@ void KRunnerDialog::themeUpdated()
     // top" feel; best would be if we could tell exactly where the edge/shadow of the frame svg was
     // but this works nicely
     const int topHeight = m_floating ? qMax(0, int(m_background->marginSize(Plasma::TopMargin)))
-                                     : qMax(1, m_bottomBorderHeight - 2);
+                                     : Plasma::Theme::defaultTheme()->windowTranslucencyEnabled() ?
+                                         qMax(1, m_bottomBorderHeight / 2)
+                                       : qMax(1, m_bottomBorderHeight - 2);
 
     //kDebug() << m_leftBorderWidth<< topHeight<< m_rightBorderWidth<< m_bottomBorderHeight;
     // the +1 gives us the extra mouseMoveEvent needed to always reset the resize cursor
