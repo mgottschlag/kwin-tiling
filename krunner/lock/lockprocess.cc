@@ -1093,7 +1093,12 @@ void LockProcess::suspend()
     if( !mSuspended && mHackProc.state() == QProcess::Running )
     {
         ::kill(mHackProc.pid(), SIGSTOP);
-        QApplication::syncX();
+        // We actually want to wait for the stopped hack's X commands
+        // having been handled, but that would require a custom
+        // protocol which would cause the hack to call XSync() and
+        // freeze itself. So just go to sleep and hope that the X
+        // server will have enough time ...
+        usleep(100000);
         mSavedScreen = QPixmap::grabWindow( winId());
         mSnapshotTimer.setSingleShot(true);
         mSnapshotTimer.start(1000);
