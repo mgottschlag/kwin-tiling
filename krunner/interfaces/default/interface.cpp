@@ -474,7 +474,7 @@ void Interface::setStaticQueryMode(bool staticQuery)
 
 void Interface::hideEvent(QHideEvent *e)
 {
-        resetInterface();
+    resetInterface();
     KRunnerDialog::hideEvent(e);
 
         /*
