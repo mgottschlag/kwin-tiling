@@ -1544,7 +1544,10 @@ void LockProcess::stayOnTop()
     if( needs_erase ) {
         kDebug( 1024 ) << "Window above screensaver, raising, erasing";
         QPainter p( this );
-        p.fillRect( rect(), Qt::black );
+        if (mSuspended)
+            p.drawPixmap( 0, 0, mSavedScreen );
+        else
+            p.fillRect( rect(), Qt::black );
         p.end();
         QApplication::syncX();
     }
