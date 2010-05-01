@@ -1558,12 +1558,9 @@ void LockProcess::checkDPMSActive()
     DPMSInfo(QX11Info::display(), &state, &on);
     //kDebug() << "checkDPMSActive " << on << " " << state;
     if (state == DPMSModeStandby || state == DPMSModeSuspend || state == DPMSModeOff)
-    {
-       suspend();
-    } else if ( mSuspended )
-    {
-        resume( true );
-    }
+        suspend();
+    else
+        resume( false );
 #endif
 }
 
