@@ -139,7 +139,7 @@ void KCMKeyboardWidget::addLayout()
 		return;
 	}
 
-    AddLayoutDialog dialog(rules, flags, this);
+    AddLayoutDialog dialog(rules, keyboardConfig->showFlag ? flags : NULL, this);
     dialog.setModal(true);
     if( dialog.exec() == QDialog::Accepted ) {
     	keyboardConfig->layouts.append( dialog.getSelectedLayoutConfig() );
@@ -148,32 +148,23 @@ void KCMKeyboardWidget::addLayout()
     }
 }
 
-void KCMKeyboardWidget::removeLayout()
-{
-	QModelIndexList selected = uiWidget->layoutsTableView->selectionModel()->selectedIndexes();
-	foreach(const QModelIndex& idx, selected) {
-		if( idx.column() == 0 ) {
-			keyboardConfig->layouts.removeAt(idx.row());
-		}
-	}
-	layoutsTableModel->refresh();
-	uiChanged();
-}
-
-void KCMKeyboardWidget::layoutSelectionChanged()
-{
-	QModelIndexList selected = uiWidget->layoutsTableView->selectionModel()->selectedIndexes();
-	uiWidget->removeLayoutBtn->setEnabled( ! selected.isEmpty() );
-}
-
 void KCMKeyboardWidget::initializeLayoutsUI()
 {
 	layoutsTableModel = new LayoutsTableModel(rules, flags, keyboardConfig, uiWidget->layoutsTableView);
 	uiWidget->layoutsTableView->setModel(layoutsTableModel);
 	connect(layoutsTableModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(uiChanged()));
 
+#ifdef DRAG_ENABLED
+	uiWidget->layoutsTableView->setDragEnabled(true);
+	uiWidget->layoutsTableView->setAcceptDrops(true);
+#endif
 //	connect(layoutsTableModel, SIGNAL(), this, SLOT(uiChanged()));
 //    connect(uiWidget->layoutsTableView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(layoutCellClicked(const QModelIndex &)));
+
+    uiWidget->moveUpBtn->setIcon(KIcon("arrow-up"));
+    uiWidget->moveDownBtn->setIcon(KIcon("arrow-down"));
+//    uiWidget->moveUpBtn->setArrowType(Qt::UpArrow);
+//    uiWidget->moveUpBtn->setArrowType(Qt::UpDown);
 
     KIcon clearIcon = qApp->isLeftToRight() ? KIcon("edit-clear-locationbar-rtl") : KIcon("edit-clear-locationbar-ltr");
 	uiWidget->xkbGrpClearBtn->setIcon(clearIcon);
@@ -192,6 +183,11 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 
 	connect(uiWidget->showFlagChk, SIGNAL(clicked(bool)), this, SLOT(uiChanged()));
 
+//	connect(uiWidget->moveUpBtn, SIGNAL(triggered(QAction*)), this, SLOT(moveUp()));
+//	connect(uiWidget->moveDownBtn, SIGNAL(triggered(QAction*)), this, SLOT(moveDown()));
+	connect(uiWidget->moveUpBtn, SIGNAL(clicked(bool)), this, SLOT(moveUp()));
+	connect(uiWidget->moveDownBtn, SIGNAL(clicked(bool)), this, SLOT(moveDown()));
+
 	connect(uiWidget->xkbGrpClearBtn, SIGNAL(clicked(bool)), this, SLOT(clearGroupShortcuts()));
 	connect(uiWidget->xkb3rdLevelClearBtn, SIGNAL(clicked(bool)), this, SLOT(clear3rdLevelShortcuts()));
 
@@ -206,7 +202,112 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 	connect(uiWidget->configureLayoutsChk, SIGNAL(toggled(bool)), uiWidget->layoutsGroupBox, SLOT(setEnabled(bool)));
 	connect(uiWidget->configureLayoutsChk, SIGNAL(toggled(bool)), uiWidget->shortcutsGroupBox, SLOT(setEnabled(bool)));
 	connect(uiWidget->configureLayoutsChk, SIGNAL(toggled(bool)), uiWidget->switchingPolicyButtonGroup, SLOT(setEnabled(bool)));
-	connect(uiWidget->configureLayoutsChk, SIGNAL(toggled(bool)), this, SLOT(uiChanged()));
+	connect(uiWidget->configureLayoutsChk, SIGNAL(toggled(bool)), this, SLOT(configureLayoutsChanged()));
+}
+
+void KCMKeyboardWidget::configureLayoutsChanged()
+{
+	if( uiWidget->configureLayoutsChk->isChecked() && keyboardConfig->layouts.isEmpty() ) {
+		populateWithCurrentLayouts();
+	}
+	uiChanged();
+}
+
+static QPair<int, int> getSelectedRowRange(const QModelIndexList& selected)
+{
+	if( selected.isEmpty() ) {
+		return QPair<int, int>(-1, -1);
+	}
+
+	QList<int> rows;
+	foreach(const QModelIndex& index, selected) {
+		rows << index.row();
+	}
+	qSort(rows);
+	return QPair<int, int>(rows[0], rows[rows.size()-1]);
+}
+
+void KCMKeyboardWidget::layoutSelectionChanged()
+{
+	QModelIndexList selected = uiWidget->layoutsTableView->selectionModel()->selectedIndexes();
+	uiWidget->removeLayoutBtn->setEnabled( ! selected.isEmpty() );
+	QPair<int, int> rowsRange( getSelectedRowRange(selected) );
+	uiWidget->moveUpBtn->setEnabled( ! selected.isEmpty() && rowsRange.first > 0);
+	uiWidget->moveDownBtn->setEnabled( ! selected.isEmpty() && rowsRange.second < keyboardConfig->layouts.size()-1 );
+}
+
+void KCMKeyboardWidget::removeLayout()
+{
+	if( ! uiWidget->layoutsTableView->selectionModel()->hasSelection() )
+		return;
+
+	QModelIndexList selected = uiWidget->layoutsTableView->selectionModel()->selectedIndexes();
+	QPair<int, int> rowsRange( getSelectedRowRange(selected) );
+	foreach(const QModelIndex& idx, selected) {
+		if( idx.column() == 0 ) {
+			keyboardConfig->layouts.removeAt(rowsRange.first);
+		}
+	}
+	layoutsTableModel->refresh();
+	uiChanged();
+
+	if( keyboardConfig->layouts.size() > 0 ) {
+		int rowToSelect = rowsRange.first;
+		if( rowToSelect >= keyboardConfig->layouts.size() ) {
+			rowToSelect--;
+		}
+
+        QModelIndex topLeft = layoutsTableModel->index(rowToSelect, 0, QModelIndex());
+        QModelIndex bottomRight = layoutsTableModel->index(rowToSelect, layoutsTableModel->columnCount(topLeft)-1, QModelIndex());
+        QItemSelection selection(topLeft, bottomRight);
+        uiWidget->layoutsTableView->selectionModel()->select(selection, QItemSelectionModel::SelectCurrent);
+        uiWidget->layoutsTableView->setFocus();
+	}
+
+	layoutSelectionChanged();
+}
+
+void KCMKeyboardWidget::moveUp()
+{
+	moveSelectedLayouts(-1);
+}
+
+void KCMKeyboardWidget::moveDown()
+{
+	moveSelectedLayouts(1);
+}
+
+void KCMKeyboardWidget::moveSelectedLayouts(int shift)
+{
+    QItemSelectionModel* selectionModel = uiWidget->layoutsTableView->selectionModel();
+    if( selectionModel == NULL || !selectionModel->hasSelection() )
+        return;
+
+    QModelIndexList selected = selectionModel->selectedRows();
+    if( selected.count() < 1 )
+        return;
+
+    int newFirstRow = selected[0].row() + shift;
+    int newLastRow = selected[ selected.size()-1 ].row() + shift;
+
+    if( newFirstRow >= 0 && newLastRow <= keyboardConfig->layouts.size() - 1 ) {
+        QList<int> selectionRows;
+    	foreach(const QModelIndex& index, selected) {
+    		int newRowIndex = index.row() + shift;
+    		keyboardConfig->layouts.move(index.row(), newRowIndex);
+            selectionRows << newRowIndex;
+    	}
+    	uiChanged();
+
+    	QItemSelection selection;
+    	foreach(int row, selectionRows) {
+            QModelIndex topLeft = layoutsTableModel->index(row, 0, QModelIndex());
+            QModelIndex bottomRight = layoutsTableModel->index(row, layoutsTableModel->columnCount(topLeft)-1, QModelIndex());
+            selection << QItemSelectionRange(topLeft, bottomRight);
+    	}
+        uiWidget->layoutsTableView->selectionModel()->select(selection, QItemSelectionModel::SelectCurrent);
+        uiWidget->layoutsTableView->setFocus();
+    }
 }
 
 void KCMKeyboardWidget::scrollToGroupShortcut()
@@ -359,5 +460,14 @@ void KCMKeyboardWidget::updateHardwareUI()
 	int idx = uiWidget->keyboardModelComboBox->findData(keyboardConfig->keyboardModel);
 	if( idx != -1 ) {
 		uiWidget->keyboardModelComboBox->setCurrentIndex(idx);
+	}
+}
+
+void KCMKeyboardWidget::populateWithCurrentLayouts()
+{
+	QStringList layoutNames = X11Helper::getLayoutsList();
+	foreach(QString fullLayoutName, layoutNames) {
+		LayoutConfig layoutConfig( LayoutConfig::createLayoutConfig(fullLayoutName) );
+		keyboardConfig->layouts.append(layoutConfig);
 	}
 }

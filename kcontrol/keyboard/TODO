@@ -1,14 +1,12 @@
 Core:
 * better handling when layouts set manually and not present in config
 
-KCM UI
+KCM UI:
 * allow changing variant without re-adding layout
-* allow changing layout order
-* show nicer flag
-* show current layouts when "configure layouts" disabled
 * handle no layouts/1 layout nicer
 
 KCM UI cleanup:
+* show nicer flag in the table
 * layouts, sizes, alignment etc in kcm
 
 plasma applet:
@@ -30,4 +28,5 @@ Improvement:
 External improvements:
 * Change KStatusNotifierItem menu window to be real popup window
 * Add KSharedConfig::configChanged() signal
-* move iso-codes to kdesupport
+* make iso-codes external package 
+* make flags external package

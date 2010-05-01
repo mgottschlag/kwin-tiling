@@ -61,6 +61,9 @@ private Q_SLOTS:
     void clearGroupShortcuts();
     void clear3rdLevelShortcuts();
     void updateXkbShortcutsButtons();
+    void moveUp();
+    void moveDown();
+    void configureLayoutsChanged();
 
 private:
     Rules *rules;
@@ -83,6 +86,8 @@ private:
     void updateSwitcingPolicyUI();
     void updateXkbShortcutButton(const QString& groupName, QPushButton* button);
     void clearXkbGroup(const QString& groupName);
+    void moveSelectedLayouts(int shift);
+    void populateWithCurrentLayouts();
 };
 
 

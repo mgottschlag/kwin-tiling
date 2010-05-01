@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="currentIndex">
-   <number>1</number>
+   <number>0</number>
   </property>
   <widget class="QWidget" name="tabHardware">
    <attribute name="title">
@@ -21,9 +21,9 @@
     <property name="geometry">
      <rect>
       <x>4</x>
-      <y>51</y>
+      <y>33</y>
       <width>646</width>
-      <height>361</height>
+      <height>379</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -33,13 +33,13 @@
      </sizepolicy>
     </property>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
       <x>5</x>
       <y>5</y>
-      <width>641</width>
-      <height>27</height>
+      <width>331</width>
+      <height>25</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -119,6 +119,26 @@
            </property>
            <property name="text">
             <string>Remove Layout</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="moveUpBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="moveDownBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
            </property>
           </widget>
          </item>

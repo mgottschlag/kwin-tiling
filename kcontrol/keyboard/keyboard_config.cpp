@@ -25,7 +25,7 @@
 
 static const char* SWITCHING_POLICIES[] = {"Global", "Desktop", "WinClass", "Window", NULL };
 static const char* LIST_SEPARATOR = ",";
-static const char* DEFAULT_LAYOUT = "us";
+//static const char* DEFAULT_LAYOUT = "us";
 static const char* DEFAULT_MODEL = "pc104";
 
 static const QString CONFIG_FILENAME("kxkbrc");
@@ -73,7 +73,7 @@ void KeyboardConfig::setDefaults()
 	// init layouts options
 	configureLayouts = false;
 	layouts.clear();
-	layouts.append(LayoutConfig::createLayoutConfig(DEFAULT_LAYOUT));
+//	layouts.append(LayoutConfig::createLayoutConfig(DEFAULT_LAYOUT));
 
 	// switch cotrol options
 	switchingPolicy = SWITCH_POLICY_GLOBAL;
@@ -99,12 +99,15 @@ void KeyboardConfig::load()
     configureLayouts = config.readEntry("Use", false);
     QString layoutsString = config.readEntry("LayoutList", "");
     QStringList layoutStrings = layoutsString.split(LIST_SEPARATOR, QString::SkipEmptyParts);
-    if( layoutStrings.isEmpty() ) {
-    	layoutStrings.append(DEFAULT_LAYOUT);
-    }
+//    if( layoutStrings.isEmpty() ) {
+//    	layoutStrings.append(DEFAULT_LAYOUT);
+//    }
     layouts.clear();
     foreach(const QString& layoutString, layoutStrings) {
     	layouts.append(LayoutConfig::createLayoutConfig(layoutString));
+    }
+    if( layouts.isEmpty() ) {
+    	configureLayouts = false;
     }
 
 	QString layoutMode = config.readEntry("SwitchMode", "Global");

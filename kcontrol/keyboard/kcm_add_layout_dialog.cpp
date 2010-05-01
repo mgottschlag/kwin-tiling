@@ -20,8 +20,6 @@
 
 #include <klocalizedstring.h>
 
-#include <QtCore/QDebug>
-
 #include "xkb_rules.h"
 #include "flags.h"
 #include "iso_codes.h"
@@ -63,7 +61,6 @@ AddLayoutDialog::AddLayoutDialog(const Rules* rules_, Flags* flags_, QWidget* pa
 void AddLayoutDialog::languageChanged(int langIdx)
 {
 	QString lang = layoutDialogUi->languageComboBox->itemData(langIdx).toString();
-	qDebug() << "selected lang" << lang;
 
 	QPixmap emptyPixmap(layoutDialogUi->layoutComboBox->iconSize());
 	emptyPixmap.fill(Qt::transparent);
@@ -71,11 +68,16 @@ void AddLayoutDialog::languageChanged(int langIdx)
 	layoutDialogUi->layoutComboBox->clear();
     foreach(const LayoutInfo* layoutInfo, rules->layoutInfos) {
     	if( lang.isEmpty() || layoutInfo->languages.contains(lang) ) {
-    		QIcon icon(flags->getIcon(layoutInfo->name));
-    		if( icon.isNull() ) {
-    			icon = QIcon(emptyPixmap);	// align text with no icons
+    		if( flags ) {
+    			QIcon icon(flags->getIcon(layoutInfo->name));
+    			if( icon.isNull() ) {
+    				icon = QIcon(emptyPixmap);	// align text with no icons
+    			}
+    			layoutDialogUi->layoutComboBox->addItem(icon, layoutInfo->description, layoutInfo->name);
     		}
-    		layoutDialogUi->layoutComboBox->addItem(icon, layoutInfo->description, layoutInfo->name);
+    		else {
+    			layoutDialogUi->layoutComboBox->addItem(layoutInfo->description, layoutInfo->name);
+    		}
     	}
     }
 	layoutDialogUi->layoutComboBox->setCurrentIndex(0);

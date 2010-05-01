@@ -23,6 +23,10 @@
 #include <QtGui/QTreeView>
 #include <QtGui/QComboBox>
 
+#ifdef DRAG_ENABLED
+#include <QtCore/QMimeData>
+#endif
+
 #include "keyboard_config.h"
 #include "xkb_rules.h"
 #include "flags.h"
@@ -69,8 +73,43 @@ Qt::ItemFlags LayoutsTableModel::flags(const QModelIndex &index) const
 		flags |= Qt::ItemIsEditable;
 	}
 
+#ifdef DRAG_ENABLED
+	flags |= Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
+#endif
+
 	return flags;
 }
+
+#ifdef DRAG_ENABLED
+QStringList LayoutsTableModel::mimeTypes() const
+{
+    QStringList types;
+    types << "application/keyboard-layout-item";
+    return types;
+}
+
+QMimeData *LayoutsTableModel::mimeData(const QModelIndexList &indexes) const
+ {
+     QMimeData *mimeData = new QMimeData();
+     QByteArray encodedData;
+
+     QDataStream stream(&encodedData, QIODevice::WriteOnly);
+
+     QSet<int> rows;
+     foreach (QModelIndex index, indexes) {
+    	 if (index.isValid()) {
+    		 rows << index.row();
+    	 }
+     }
+     foreach (int row, rows) {
+    	 stream << row;
+    	 kDebug() << "idx: " << row;
+     }
+
+     mimeData->setData("application/keyboard-layout-item", encodedData);
+     return mimeData;
+}
+#endif
 
 QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
 {

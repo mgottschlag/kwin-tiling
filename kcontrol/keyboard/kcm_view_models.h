@@ -43,7 +43,13 @@ class LayoutsTableModel : public QAbstractTableModel
      int rowCount(const QModelIndex &parent = QModelIndex()) const;
      QVariant data(const QModelIndex &index, int role) const;
      bool setData(const QModelIndex &index, const QVariant &value, int role);
-
+#ifdef DRAG_ENABLED
+     Qt::DropActions supportedDropActions() const {
+         return Qt::MoveAction;
+     }
+     QStringList mimeTypes() const;
+     QMimeData *mimeData(const QModelIndexList &indexes) const;
+#endif
      void refresh();
 
  private:
