@@ -40,12 +40,14 @@
 #include <QStyledItemDelegate>
 
 
+#include <KAction>
 #include <KConfigDialog>
 #include <KComboBox>
 #include <KWindowSystem>
 #include <KCategorizedView>
 #include <KCategorizedSortFilterProxyModel>
 #include <KCategoryDrawer>
+#include <KKeySequenceWidget>
 
 #include <Solid/Device>
 
@@ -470,8 +472,8 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         m_visibleItemsSourceModel.data()->clear();
     }
 
-    QMultiMap<QString, const Task *> sortedTasks;
-    foreach (const Task *task, s_manager->tasks()) {
+    QMultiMap<QString, Task *> sortedTasks;
+    foreach (Task *task, s_manager->tasks()) {
         if (!m_shownCategories.contains(task->category())) {
              continue;
         }
@@ -483,7 +485,11 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         sortedTasks.insert(task->name(), task);
     }
 
-    foreach (const Task *task, sortedTasks) {
+    KConfigGroup gcg = globalConfig();
+    KConfigGroup cg = config();
+    KConfigGroup shortcutsConfig = KConfigGroup(&cg, "Shortcuts");
+
+    foreach (Task *task, sortedTasks) {
         QTreeWidgetItem *listItem = new QTreeWidgetItem(m_autoHideUi.icons);
         KComboBox *itemCombo = new KComboBox(m_autoHideUi.icons);
         listItem->setText(0, task->name());
@@ -504,12 +510,21 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         }
         m_autoHideUi.icons->setItemWidget(listItem, 1, itemCombo);
 
+        KKeySequenceWidget *button = new KKeySequenceWidget(m_autoHideUi.icons);
+
+        Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(task->widget(this));
+        Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(task->widget(this));
+
+        if (task && icon) {
+            QString shortcutText = shortcutsConfig.readEntryUntranslated(icon->action()->objectName(), QString());
+            button->setKeySequence(shortcutText);
+        } else if (task && applet) {
+            button->setKeySequence(applet->globalShortcut().primary());
+        }
+        m_autoHideUi.icons->setItemWidget(listItem, 2, button);
         m_autoHideUi.icons->addTopLevelItem(listItem);
     }
 
-
-    KConfigGroup gcg = globalConfig();
-    KConfigGroup cg = config();
 
     const QString itemCategories = i18nc("Categories of items in the systemtray that will be shown or hidden", "Shown item categories");
 
@@ -582,6 +597,9 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
 
 void Applet::configAccepted()
 {
+    KConfigGroup cg = config();
+    KConfigGroup shortcutsConfig = KConfigGroup(&cg, "Shortcuts");
+
     QStringList hiddenTypes;
     QStringList alwaysShownTypes;
     QTreeWidget *hiddenList = m_autoHideUi.icons;
@@ -589,16 +607,45 @@ void Applet::configAccepted()
         QTreeWidgetItem *item = hiddenList->topLevelItem(i);
         KComboBox *itemCombo = static_cast<KComboBox *>(hiddenList->itemWidget(item, 1));
         //kDebug() << (item->checkState() == Qt::Checked) << item->data(Qt::UserRole).toString();
+        const QString taskTypeId = item->data(0, Qt::UserRole).toString();
         //Always hidden
         if (itemCombo->currentIndex() == 1) {
-            hiddenTypes << item->data(0, Qt::UserRole).toString();
+            hiddenTypes << taskTypeId;
         //Always visible
         } else if (itemCombo->currentIndex() == 2) {
-            alwaysShownTypes << item->data(0, Qt::UserRole).toString();
+            alwaysShownTypes << taskTypeId;
+        }
+
+        KKeySequenceWidget *keySeq = static_cast<KKeySequenceWidget *>(hiddenList->itemWidget(item, 2));
+        QKeySequence seq = keySeq->keySequence();
+        Task *task = 0;
+        //FIXME: terribly inefficient
+        foreach (Task *candidateTask, s_manager->tasks()) {
+            if (candidateTask->typeId() == taskTypeId) {
+                task = candidateTask;
+                break;
+            }
+        }
+
+        if (task) {
+            QGraphicsWidget *widget = task->widget(this);
+
+            if (widget) {
+                Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(widget);
+                Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(widget);
+                if (applet) {
+                    applet->setGlobalShortcut(KShortcut(seq));
+                } else if (icon) {
+                    KAction *action = qobject_cast<KAction *>(icon->action());
+                    if (action) {
+                        action->setGlobalShortcut(KShortcut(seq));
+                        shortcutsConfig.writeEntry(action->objectName(), seq.toString());
+                    }
+                }
+            }
         }
     }
 
-    KConfigGroup cg = config();
     cg.writeEntry("hidden", hiddenTypes);
     cg.writeEntry("alwaysShown", alwaysShownTypes);
 

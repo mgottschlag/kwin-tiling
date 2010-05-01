@@ -19,26 +19,34 @@
      <property name="rootIsDecorated">
       <bool>false</bool>
      </property>
+     <property name="columnCount">
+      <number>3</number>
+     </property>
      <attribute name="headerVisible">
-      <bool>false</bool>
+      <bool>true</bool>
      </attribute>
      <attribute name="headerDefaultSectionSize">
-      <number>200</number>
+      <number>100</number>
      </attribute>
      <attribute name="headerDefaultSectionSize">
-      <number>200</number>
+      <number>100</number>
      </attribute>
      <attribute name="headerVisible">
-      <bool>false</bool>
+      <bool>true</bool>
      </attribute>
      <column>
       <property name="text">
-       <string>1</string>
+       <string>Item</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>2</string>
+       <string>Visibility</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Keyboard shortcut</string>
       </property>
      </column>
     </widget>

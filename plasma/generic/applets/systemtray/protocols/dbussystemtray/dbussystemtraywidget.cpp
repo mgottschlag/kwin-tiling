@@ -22,6 +22,8 @@
 #include <QDBusAbstractInterface>
 #include <QGraphicsSceneWheelEvent>
 
+#include <KAction>
+
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 #include <Plasma/Theme>
@@ -35,6 +37,10 @@ namespace SystemTray
       m_host(parent)
 {
     connect(this, SIGNAL(clicked()), this, SLOT(calculateShowPosition()));
+
+    KAction *action = new KAction(this);
+    setAction(action);
+    connect(action, SIGNAL(triggered()), this, SLOT(calculateShowPosition()));
 }
 
 void DBusSystemTrayWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)

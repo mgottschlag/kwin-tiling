@@ -20,6 +20,7 @@
 
 #include "dbussystemtraytask.h"
 
+#include <QAction>
 #include <QDir>
 #include <QGraphicsWidget>
 #include <QGraphicsSceneContextMenuEvent>
@@ -28,6 +29,7 @@
 #include <QTimer>
 #include <QMetaEnum>
 
+#include <KAction>
 #include <KIcon>
 #include <KIconLoader>
 #include <KStandardDirs>
@@ -120,6 +122,8 @@ void DBusSystemTrayTask::dataUpdated(const QString &taskName, const Plasma::Data
 {
     Q_UNUSED(taskName);
 
+    QString oldTypeId = m_typeId;
+
     QString cat = properties["Category"].toString();
     if (!cat.isEmpty()) {
         int index = metaObject()->indexOfEnumerator("Category");
@@ -178,6 +182,24 @@ void DBusSystemTrayTask::dataUpdated(const QString &taskName, const Plasma::Data
                 properties["ToolTipSubTitle"].toString(),
                 properties["ToolTipIcon"].value<QIcon>());
 
+
+    if (m_typeId != oldTypeId) {
+        QHash<Plasma::Applet *, QGraphicsWidget *>::const_iterator i = widgetsByHost().constBegin();
+        while (i != widgetsByHost().constEnd()) {
+            Plasma::IconWidget *icon = static_cast<Plasma::IconWidget *>(i.value());
+            icon->action()->setObjectName(QString("Systemtray-%1-%2").arg(m_typeId).arg(i.key()->id()));
+
+            KConfigGroup cg = i.key()->config();
+            KConfigGroup shortcutsConfig = KConfigGroup(&cg, "Shortcuts");
+            QString shortcutText = shortcutsConfig.readEntryUntranslated(icon->action()->objectName(), QString());
+            KAction *action = qobject_cast<KAction *>(icon->action());
+            if (action) {
+                action->setGlobalShortcut(KShortcut(shortcutText));
+            }
+
+            ++i;
+        }
+    }
 
     m_embeddable = true;
 
