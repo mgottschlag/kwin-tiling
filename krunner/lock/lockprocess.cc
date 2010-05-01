@@ -1519,20 +1519,18 @@ void LockProcess::stayOnTop()
     bool needs_erase = false;
     Window r, p;
     Window* real;
-    unsigned int nreal;
+    unsigned nreal;
     if( XQueryTree( x11Info().display(), x11Info().appRootWindow(), &r, &p, &real, &nreal )
         && real != NULL ) {
         bool found_ours = false;
-        for( unsigned int i = 0;
-             i < nreal;
-             ++i ) {
-            if( stack.contains( real[ i ] ))
+        for( unsigned i = 0; i < nreal; ++i ) {
+            if( stack.contains( real[ i ] )) {
                 found_ours = true;
-            else {
-                if( found_ours ) {
-                    needs_erase = true;
-                    break;
-                }
+            } else if( found_ours ) {
+                kDebug() << "found foreign window above screensaver";
+                //QProcess::execute("xwininfo -all -id " + QString::number(real[i]));
+                needs_erase = true;
+                break;
             }
         }
         XFree( real );
@@ -1542,7 +1540,6 @@ void LockProcess::stayOnTop()
     if( count > 1 )
         XRestackWindows( x11Info().display(), stack.data(), count );
     if( needs_erase ) {
-        kDebug( 1024 ) << "Window above screensaver, raising, erasing";
         QPainter p( this );
         if (mSuspended)
             p.drawPixmap( 0, 0, mSavedScreen );
