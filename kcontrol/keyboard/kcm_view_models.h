@@ -22,6 +22,7 @@
 
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QAbstractTableModel>
+#include <QtGui/QItemDelegate>
 
 class QTreeView;
 class KeyboardConfig;
@@ -52,10 +53,37 @@ class LayoutsTableModel : public QAbstractTableModel
 #endif
      void refresh();
 
+     static const int MAP_COLUMN;
+     static const int LAYOUT_COLUMN;
+     static const int VARIANT_COLUMN;
+     static const int DISPLAY_NAME_COLUMN;
+
  private:
      KeyboardConfig* keyboardConfig;
      Rules *rules;
      Flags *countryFlags;
+};
+
+class VariantComboDelegate : public QItemDelegate
+{
+	Q_OBJECT
+
+public:
+	VariantComboDelegate(const KeyboardConfig* keyboardConfig, const Rules* rules, QObject *parent = 0);
+
+	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+			const QModelIndex &index) const;
+
+	void setEditorData(QWidget *editor, const QModelIndex &index) const;
+	void setModelData(QWidget *editor, QAbstractItemModel *model,
+			const QModelIndex &index) const;
+
+	void updateEditorGeometry(QWidget *editor,
+			const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+private:
+	const KeyboardConfig* keyboardConfig;
+	const Rules* rules;
 };
 
 class XkbOptionsTreeModel: public QAbstractItemModel

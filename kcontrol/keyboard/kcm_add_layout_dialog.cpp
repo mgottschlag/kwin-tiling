@@ -100,6 +100,6 @@ void AddLayoutDialog::layoutChanged(int layoutIdx)
 void AddLayoutDialog::accept()
 {
 	selectedLayoutConfig.layout = layoutDialogUi->layoutComboBox->itemData(layoutDialogUi->layoutComboBox->currentIndex()).toString();
-	selectedLayoutConfig.variant = layoutDialogUi->variantComboBox->itemData(layoutDialogUi->variantComboBox->currentIndex()).toString();;
+	selectedLayoutConfig.variant = layoutDialogUi->variantComboBox->itemData(layoutDialogUi->variantComboBox->currentIndex()).toString();
 	QDialog::accept();
 }

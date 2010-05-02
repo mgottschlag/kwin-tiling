@@ -2,8 +2,7 @@ Core:
 * better handling when layouts set manually and not present in config
 
 KCM UI:
-* allow changing variant without re-adding layout
-* handle no layouts/1 layout nicer
+* handle 1 layout nicer
 
 KCM UI cleanup:
 * show nicer flag in the table
@@ -24,9 +23,11 @@ Improvement:
 * remove XInput libs from plasma applet and layout widget (find a nicer way)
 * optimize fetching groups and layouts (cache them) / fetch current group directly
 * refactor/optimize/clean the code
+* refactor users of D-BUS to use library instead?
 
 External improvements:
 * Change KStatusNotifierItem menu window to be real popup window
+* Icons in popup menu in KStatusNotifierItem don't seem to work
 * Add KSharedConfig::configChanged() signal
 * make iso-codes external package 
 * make flags external package

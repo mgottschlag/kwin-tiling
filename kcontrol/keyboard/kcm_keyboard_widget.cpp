@@ -152,14 +152,20 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 {
 	layoutsTableModel = new LayoutsTableModel(rules, flags, keyboardConfig, uiWidget->layoutsTableView);
 	uiWidget->layoutsTableView->setModel(layoutsTableModel);
+	//TODO: do we need to delete this delegate or parent will take care of it?
+	VariantComboDelegate* delegate = new VariantComboDelegate(keyboardConfig, rules, uiWidget->layoutsTableView);
+	uiWidget->layoutsTableView->setItemDelegateForColumn(LayoutsTableModel::VARIANT_COLUMN, delegate);
+	//TODO: is it ok to hardcode sizes? any better approach?
+	uiWidget->layoutsTableView->setColumnWidth(LayoutsTableModel::MAP_COLUMN, 70);
+	uiWidget->layoutsTableView->setColumnWidth(LayoutsTableModel::LAYOUT_COLUMN, 150);
+	uiWidget->layoutsTableView->setColumnWidth(LayoutsTableModel::VARIANT_COLUMN, 250);
+
 	connect(layoutsTableModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(uiChanged()));
 
 #ifdef DRAG_ENABLED
 	uiWidget->layoutsTableView->setDragEnabled(true);
 	uiWidget->layoutsTableView->setAcceptDrops(true);
 #endif
-//	connect(layoutsTableModel, SIGNAL(), this, SLOT(uiChanged()));
-//    connect(uiWidget->layoutsTableView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(layoutCellClicked(const QModelIndex &)));
 
     uiWidget->moveUpBtn->setIcon(KIcon("arrow-up"));
     uiWidget->moveDownBtn->setIcon(KIcon("arrow-down"));

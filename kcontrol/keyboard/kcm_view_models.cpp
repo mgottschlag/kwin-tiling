@@ -18,7 +18,6 @@
 
 #include "kcm_view_models.h"
 
-#include <kdebug.h>
 #include <klocalizedstring.h>
 #include <QtGui/QTreeView>
 #include <QtGui/QComboBox>
@@ -33,10 +32,10 @@
 #include "x11_helper.h"
 
 
-static const int MAP_COLUMN = 0;
-static const int LAYOUT_COLUMN = 1;
-static const int VARIANT_COLUMN = 2;
-static const int DISPLAY_NAME_COLUMN = 3;
+const int LayoutsTableModel::MAP_COLUMN = 0;
+const int LayoutsTableModel::LAYOUT_COLUMN = 1;
+const int LayoutsTableModel::VARIANT_COLUMN = 2;
+const int LayoutsTableModel::DISPLAY_NAME_COLUMN = 3;
 
 LayoutsTableModel::LayoutsTableModel(Rules* rules_, Flags *flags_, KeyboardConfig* keyboardConfig_, QObject* parent):
 	QAbstractTableModel(parent),
@@ -69,7 +68,7 @@ Qt::ItemFlags LayoutsTableModel::flags(const QModelIndex &index) const
 
 	Qt::ItemFlags flags = QAbstractTableModel::flags(index);
 
-	if( index.column() == DISPLAY_NAME_COLUMN ) {
+	if( index.column() == DISPLAY_NAME_COLUMN || index.column() == VARIANT_COLUMN ) {
 		flags |= Qt::ItemIsEditable;
 	}
 
@@ -162,6 +161,9 @@ QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
     	 case DISPLAY_NAME_COLUMN:
     		 return layoutConfig.getDisplayName();
     	 break;
+    	 case VARIANT_COLUMN:
+    		 return layoutConfig.variant;
+    	 break;
     	 default:;
     	 }
      }
@@ -183,27 +185,87 @@ QVariant LayoutsTableModel::headerData(int section, Qt::Orientation orientation,
 
 bool LayoutsTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (role != Qt::EditRole || index.column() != DISPLAY_NAME_COLUMN )
-        return false;
+	if (role != Qt::EditRole
+			|| (index.column() != DISPLAY_NAME_COLUMN && index.column() != VARIANT_COLUMN) )
+		return false;
 
-    if (index.row() >= keyboardConfig->layouts.size())
-        return false;
+	if (index.row() >= keyboardConfig->layouts.size())
+		return false;
 
-	 LayoutConfig& layoutConfig = keyboardConfig->layouts[index.row()];
-	 QString displayText = value.toString().left(3);
-	 layoutConfig.setDisplayName(displayText);
+	LayoutConfig& layoutConfig = keyboardConfig->layouts[index.row()];
 
-//    TreeItem *item = getItem(index);
-//    bool result = item->setData(index.column(), value);
-//
-//    if (result)
-	 kDebug() << "new display text" << displayText << layoutConfig.getDisplayName();
-        emit dataChanged(index, index);
+	switch( index.column() ) {
+	case DISPLAY_NAME_COLUMN: {
+		QString displayText = value.toString().left(3);
+		layoutConfig.setDisplayName(displayText);
+	}
+	break;
+	case VARIANT_COLUMN: {
+		QString variant = value.toString();
+		layoutConfig.variant = variant;
+	}
+	break;
+	}
+	emit dataChanged(index, index);
 
-    return true; //result;
+	return true;
 }
 
+//
+// VariantComboDelegate
+//
+//TODO: reuse this function in kcm_add_layout_dialog.cpp
+static void populateComboWithVariants(QComboBox* combo, const QString& layout, const Rules* rules)
+{
+	combo->clear();
+	const LayoutInfo* layoutInfo = rules->getLayoutInfo(layout);
+    foreach(const VariantInfo* variantInfo, layoutInfo->variantInfos) {
+    	combo->addItem(variantInfo->description, variantInfo->name);
+    }
+    combo->model()->sort(0);
+    combo->insertItem(0, i18nc("variant", "Default"), "");
+    combo->setCurrentIndex(0);
+}
 
+VariantComboDelegate::VariantComboDelegate(const KeyboardConfig* keyboardConfig_, const Rules* rules_, QObject *parent):
+	QItemDelegate(parent),
+	keyboardConfig(keyboardConfig_),
+	rules(rules_)
+{}
+
+QWidget *VariantComboDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/* option */,
+		const QModelIndex & index ) const
+{
+	QComboBox *editor = new QComboBox(parent);
+	LayoutConfig layoutConfig = keyboardConfig->layouts[index.row()];
+	populateComboWithVariants(editor, layoutConfig.layout, rules);
+	return editor;
+}
+
+void VariantComboDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+{
+	QComboBox *combo = static_cast<QComboBox*>(editor);
+	QString variant = index.model()->data(index, Qt::EditRole).toString();
+	int itemIndex = combo->findData(variant);
+	if( itemIndex == -1 ) {
+		itemIndex = 0;
+	}
+	combo->setCurrentIndex(itemIndex);
+}
+
+void VariantComboDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+		const QModelIndex &index) const
+{
+	QComboBox *combo = static_cast<QComboBox*>(editor);
+	QString variant = combo->itemData(combo->currentIndex()).toString();
+	model->setData(index, variant, Qt::EditRole);
+}
+
+void VariantComboDelegate::updateEditorGeometry(QWidget *editor,
+		const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
+{
+	editor->setGeometry(option.rect);
+}
 
 //
 // Xkb Options Tree View
