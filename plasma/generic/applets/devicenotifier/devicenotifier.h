@@ -87,10 +87,10 @@ class DeviceNotifier : public Plasma::PopupApplet
         QGraphicsWidget *graphicsWidget();
 
         /**
-        * Shows a message in a hoverlay
+        * Shows a message
         * @param message the text of the message
         **/
-        void showErrorMessage(const QString &message);
+        void showErrorMessage(const QString &message, const QString &details);
 
         QList<QAction *> contextualActions();
 

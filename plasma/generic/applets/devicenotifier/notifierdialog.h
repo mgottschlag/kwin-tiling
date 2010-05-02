@@ -43,6 +43,7 @@ namespace Plasma
 {
     class ItemBackground;
     class ScrollWidget;
+    class TextBrowser;
 }
 
 namespace Solid
@@ -178,7 +179,7 @@ namespace Notifier
 	   * Shows a message in the notifier status bar
 	   * @param message the message to show
 	   */
-	  void showStatusBarMessage(const QString & message);
+	  void showStatusBarMessage(const QString & message, const QString& details);
 
       signals:
           /**
@@ -314,6 +315,8 @@ namespace Notifier
 
 	  void dismissStatusBar();
 
+	  void triggerExpandStatusBar();
+	  
     private :
           /**
           * @internal build the dialog depending where it is
@@ -368,6 +371,8 @@ namespace Notifier
           DeviceItem* hoveredItem();
           Plasma::IconWidget* hoveredAction();
 
+	  void showStatusBarDetails(bool show);
+
     private:
           /// The graphics widget which displays the panel
           QGraphicsWidget *m_widget;
@@ -395,6 +400,11 @@ namespace Notifier
 
 	  // Status label
 	  Plasma::Label *m_statusText;
+
+	  Plasma::IconWidget *m_statusExpandButton;
+	  
+	  // Status detailed text
+	  Plasma::TextBrowser *m_statusDetailsText;
 
           ///The context menu action that allows to show all the devices
           QAction *m_showAll;

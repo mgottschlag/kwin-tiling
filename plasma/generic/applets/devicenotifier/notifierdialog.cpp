@@ -39,6 +39,7 @@
 #include <Plasma/ItemBackground>
 #include <Plasma/ScrollWidget>
 #include <Plasma/Separator>
+#include <Plasma/TextBrowser>
 
 //solid
 #include <solid/device.h>
@@ -519,6 +520,7 @@ void NotifierDialog::buildDialog()
     devicesWidget->setLayout(m_deviceLayout);
 
     m_mainLayout->addItem(m_devicesScrollWidget);
+    m_mainLayout->setStretchFactor(m_devicesScrollWidget, 100);
 
     m_itemBackground = new Plasma::ItemBackground(devicesWidget);
     m_selectedItemBackground = new Plasma::ItemBackground(devicesWidget);
@@ -545,7 +547,12 @@ void NotifierDialog::buildDialog()
     closeButton->setMaximumSize(closeButton->sizeFromIconSize(KIconLoader::SizeSmall/2));
     closeButton->setMinimumSize(closeButton->maximumSize());
 
+    m_statusExpandButton = new Plasma::IconWidget();
+    m_statusExpandButton->setMaximumSize(closeButton->sizeFromIconSize(KIconLoader::SizeSmall/2));
+    m_statusExpandButton->setMinimumSize(closeButton->maximumSize());
+
     connect(closeButton, SIGNAL(clicked()), this, SLOT(dismissStatusBar()));
+    connect(m_statusExpandButton, SIGNAL(clicked()), this, SLOT(triggerExpandStatusBar()));
 
     QGraphicsLinearLayout *labelLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     Plasma::IconWidget *infoIcon = new Plasma::IconWidget();
@@ -556,9 +563,21 @@ void NotifierDialog::buildDialog()
     labelLayout->addItem(infoIcon);
     labelLayout->setAlignment(infoIcon, Qt::AlignVCenter);
     labelLayout->addItem(m_statusText);
-    labelLayout->setAlignment(m_statusText, Qt::AlignVCenter);
+    labelLayout->setAlignment(m_statusText, Qt::AlignTop);
+    labelLayout->addItem(m_statusExpandButton);
+    labelLayout->setAlignment(m_statusExpandButton, Qt::AlignTop);
     labelLayout->addItem(closeButton);
-    labelLayout->setAlignment(closeButton, Qt::AlignVCenter);
+    labelLayout->setAlignment(closeButton, Qt::AlignTop);
+
+    m_statusDetailsText = new Plasma::TextBrowser();
+    m_statusDetailsText->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    m_statusDetailsText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_statusDetailsText->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_statusDetailsText->setMinimumSize(1, 1);
+    QFont font = m_statusDetailsText->font();
+    font.setPointSize(KGlobalSettings::smallestReadableFont().pointSize());
+    m_statusDetailsText->setFont(font);
+    m_statusDetailsText->hide();
 
     statusLayout->addItem(labelLayout);
 
@@ -575,13 +594,35 @@ void NotifierDialog::dismissStatusBar()
     m_mainLayout->removeItem(m_statusWidget);
 }
 
-void NotifierDialog::showStatusBarMessage(const QString & message)
+void NotifierDialog::showStatusBarMessage(const QString & message, const QString &details)
 {
     m_statusText->setText(message);
-    m_statusText->adjustSize();
-    m_statusWidget->adjustSize();
     m_mainLayout->addItem(m_statusWidget);
     m_statusWidget->show();
+    m_statusDetailsText->setText(details);
+    showStatusBarDetails(false);
+}
+
+void NotifierDialog::triggerExpandStatusBar()
+{
+    showStatusBarDetails(!m_statusDetailsText->isVisible());
+}
+
+void NotifierDialog::showStatusBarDetails(bool show)
+{
+    Plasma::Svg* svg = new Plasma::Svg();
+    svg->setImagePath("widgets/configuration-icons");
+    svg->resize();
+
+    if (show) {
+        m_statusDetailsText->show();
+        static_cast<QGraphicsLinearLayout*>(m_statusWidget->layout())->addItem(m_statusDetailsText);
+        m_statusExpandButton->setIcon(QIcon(svg->pixmap("collapse")));
+    } else {
+        m_statusDetailsText->hide();
+        static_cast<QGraphicsLinearLayout*>(m_statusWidget->layout())->removeItem(m_statusDetailsText);
+        m_statusExpandButton->setIcon(QIcon(svg->pixmap("restore")));
+    }
 }
 
 void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorData, const QString & udi)
@@ -591,9 +632,8 @@ void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorD
         return;
     }
 
-
     if (error && errorData.isValid()) {
-        m_notifier->showErrorMessage(i18n("Could not unmount device %1.\nOne or more files on this device are open within an application.", devItem->name()));
+        m_notifier->showErrorMessage(i18n("Could not unmount device %1.\nOne or more files on this device are open within an application.", devItem->name()), errorData.toString().simplified());
     } else {
         m_notifier->changeNotifierIcon("dialog-ok");
         m_notifier->update();
@@ -608,7 +648,7 @@ void NotifierDialog::storageEjectDone(Solid::ErrorType error, QVariant errorData
     Q_UNUSED(udi);
 
     if (error && errorData.isValid()) {
-        m_notifier->showErrorMessage(i18n("Cannot eject the disc.\nOne or more files on this disc are open within an application."));
+        m_notifier->showErrorMessage(i18n("Cannot eject the disc.\nOne or more files on this disc are open within an application."), errorData.toString().simplified());
     } else {
         m_notifier->changeNotifierIcon("dialog-ok");
         m_notifier->update();
@@ -624,13 +664,12 @@ void NotifierDialog::storageSetupDone(Solid::ErrorType error, QVariant errorData
     }
 
      if (error && errorData.isValid()) {
-        m_notifier->showErrorMessage(i18n("Could not mount device %1.", devItem->name()));
+        m_notifier->showErrorMessage(i18n("Could not mount device %1.", devItem->name()), errorData.toString().simplified());
     } else {
         m_notifier->changeNotifierIcon("dialog-ok");
         m_notifier->update();
         QTimer::singleShot(2000, this, SLOT(resetNotifierIcon()));
     }
-
     devItem->setState(DeviceItem::Idle);
 }
 
