@@ -133,7 +133,7 @@ void KCMKeyboardWidget::addLayout()
 {
 	if( keyboardConfig->layouts.count() >= X11Helper::MAX_GROUP_COUNT ) {
 		QMessageBox msgBox;
-		msgBox.setText(i18n("Only up to %1 keyboard layouts is supported", X11Helper::MAX_GROUP_COUNT));
+		msgBox.setText(i18np("Only up to %1 keyboard layout is supported", "Only up to %1 keyboard layouts are supported", X11Helper::MAX_GROUP_COUNT));
 		// more information https://bugs.freedesktop.org/show_bug.cgi?id=19501
 		msgBox.exec();
 		return;
@@ -384,7 +384,7 @@ void KCMKeyboardWidget::updateXkbShortcutButton(const QString& groupName, QPushB
 	QStringList grpOptions = keyboardConfig->xkbOptions.filter(QRegExp("^"+groupName+XKB_OPTION_GROUP_SEPARATOR));
 	switch( grpOptions.size() ) {
 	case 0:
-		button->setText(i18nc("no shourtcuts defined", "None"));
+		button->setText(i18nc("no shortcuts defined", "None"));
 	break;
 	case 1: {
 		const OptionGroupInfo* optionGroupInfo = rules->getOptionGroupInfo(groupName);
@@ -393,7 +393,7 @@ void KCMKeyboardWidget::updateXkbShortcutButton(const QString& groupName, QPushB
 	}
 	break;
 	default:
-		button->setText(i18n("%1 shortcuts", grpOptions.size()));
+		button->setText(i18np("%1 shortcut", "%1 shortcuts", grpOptions.size()));
 	}
 }
 
