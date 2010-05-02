@@ -193,8 +193,10 @@ void DBusSystemTrayTask::dataUpdated(const QString &taskName, const Plasma::Data
             KConfigGroup shortcutsConfig = KConfigGroup(&cg, "Shortcuts");
             QString shortcutText = shortcutsConfig.readEntryUntranslated(icon->action()->objectName(), QString());
             KAction *action = qobject_cast<KAction *>(icon->action());
-            if (action) {
-                action->setGlobalShortcut(KShortcut(shortcutText));
+            if (action && !shortcutText.isEmpty()) {
+                action->setGlobalShortcut(KShortcut(shortcutText),
+                            KAction::ShortcutTypes(KAction::ActiveShortcut | KAction::DefaultShortcut),
+                            KAction::NoAutoloading);
             }
 
             ++i;

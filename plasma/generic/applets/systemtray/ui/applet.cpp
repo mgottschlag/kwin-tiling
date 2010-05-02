@@ -637,9 +637,14 @@ void Applet::configAccepted()
                     applet->setGlobalShortcut(KShortcut(seq));
                 } else if (icon) {
                     KAction *action = qobject_cast<KAction *>(icon->action());
-                    if (action) {
-                        action->setGlobalShortcut(KShortcut(seq));
+                    if (action && !seq.isEmpty()) {
+                        action->setGlobalShortcut(KShortcut(seq),
+                            KAction::ShortcutTypes(KAction::ActiveShortcut | KAction::DefaultShortcut),
+                            KAction::NoAutoloading);
                         shortcutsConfig.writeEntry(action->objectName(), seq.toString());
+                    } else if (seq.isEmpty()) {
+                        action->forgetGlobalShortcut();
+                        shortcutsConfig.deleteEntry(action->objectName());
                     }
                 }
             }
