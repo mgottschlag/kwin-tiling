@@ -1,8 +1,16 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Page one
+Name[ia]=Pagina uno
+Name[pt]=Página um
+Name[sv]=Sida ett
+Name[uk]=Перша сторінка
 Name[x-test]=xxPage onexx
 Comment=Default Netbook Page
+Comment[ia]=Pagina de Netbook Predefinite
+Comment[pt]=Página Predefinida do Netbook
+Comment[sv]=Standardsida för nätdator
+Comment[uk]=Типова сторінка субноутбука
 Comment[x-test]=xxDefault Netbook Pagexx
 Type=Service
 ServiceTypes=Plasma/LayoutTemplate

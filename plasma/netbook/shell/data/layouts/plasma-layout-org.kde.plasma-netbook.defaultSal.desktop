@@ -1,6 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Search and launch
+Name[ia]=Cercar e Lancear
+Name[pt]=Pesquisa e lançamento
+Name[sv]=Sök och starta
+Name[uk]=Рушій пошуку і запуску
 Name[x-test]=xxSearch and launchxx
 
 Type=Service
