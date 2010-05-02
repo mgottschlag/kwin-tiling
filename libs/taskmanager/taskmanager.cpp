@@ -343,7 +343,6 @@ void TaskManager::windowChanged(WId w, const unsigned long *dirty)
             }
         }
     }
-#endif
 
     // check if any state we are interested in is marked dirty
     if (!(dirty[NETWinInfo::PROTOCOLS] & (NET::WMVisibleName | NET::WMName |
@@ -370,6 +369,7 @@ void TaskManager::windowChanged(WId w, const unsigned long *dirty)
         // only refresh this stuff if we have other changes besides icons
         t->refresh(Task::WindowProperties(dirty[NETWinInfo::PROTOCOLS], dirty[NETWinInfo::PROTOCOLS2]));
     }
+#endif
 }
 
 void TaskManager::taskChanged(::TaskManager::TaskChanges changes)
