@@ -34,6 +34,11 @@
 # endif
 #endif
 
+#if defined(kephal_NOT_EXPORTS)
+#undef KEPHAL_EXPORT
+#define KEPHAL_EXPORT
+#endif
+
 # ifndef KEPHAL_EXPORT_DEPRECATED
 #  define KEPHAL_EXPORT_DEPRECATED KDE_DEPRECATED KEPHAL_EXPORT
 # endif

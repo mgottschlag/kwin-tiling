@@ -4,7 +4,7 @@ configure_file (../kephal/config-kephal.h.cmake
 ${CMAKE_CURRENT_BINARY_DIR}/config-kephal.h )
 
 IF(WIN32)
-    ADD_DEFINITIONS(-Dkephal_EXPORTS)
+    ADD_DEFINITIONS(-Dkephal_NOT_EXPORTS)
 ENDIF(WIN32)
 
 SET (kephalshared_SRCS
