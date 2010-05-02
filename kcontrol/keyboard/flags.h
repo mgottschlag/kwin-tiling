@@ -22,11 +22,10 @@
 
 #include <QtCore/QString>
 #include <QtCore/QMap>
-#include <QtCore/QSize>
 
 class QPixmap;
 class QIcon;
-// for text handling
+class LayoutConfig;
 class KeyboardConfig;
 class Rules;
 
@@ -38,17 +37,18 @@ public:
 
 	const QIcon getIcon(const QString& layout);
 	const QIcon getIconWithText(const QString& fullLayoutName, const KeyboardConfig& keyboardConfig);
+	const QPixmap& getTransparentPixmap() { return *transparentPixmap; }
 
 	static QString getLongText(const QString& fullLayout, const Rules* rules);
-	static QString getDisplayText(const QString& layout, const KeyboardConfig& keyboardConfig);
-	const QPixmap& getTransparentPixmap() { return *transparentIcon; }
+	static QString getLongText(const LayoutConfig& layoutConfig, const Rules* rules);
+	static QString getShortText(const QString& layout, const KeyboardConfig& keyboardConfig);
 
 private:
 	QString getCountryFromLayoutName(const QString& fullLayoutName);
 
 	QMap<QString, QIcon> iconMap;
 	QMap<QString, QIcon> iconOrTextMap;
-	QPixmap* transparentIcon;
+	QPixmap* transparentPixmap;
 };
 
 #endif /* FLAGS_H_ */

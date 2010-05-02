@@ -19,6 +19,7 @@
 #include "keyboard_applet.h"
 
 #include <kglobalsettings.h>
+#include <plasma/tooltipmanager.h>
 
 #include <QtGui/QPainter>
 #include <QtGui/QPixmap>
@@ -99,6 +100,8 @@ void KeyboardApplet::init()
 	connect(&xEventNotifier, SIGNAL(layoutChanged()), this, SLOT(layoutChanged()));
 	connect(&xEventNotifier, SIGNAL(layoutMapChanged()), this, SLOT(layoutChanged()));
 	xEventNotifier.start();
+
+	layoutChanged();
 }
 
 void KeyboardApplet::destroy()
@@ -111,7 +114,16 @@ void KeyboardApplet::destroy()
 
 void KeyboardApplet::layoutChanged()
 {
+	updateTooltip();
 	update();
+}
+
+void KeyboardApplet::updateTooltip()
+{
+	QString layout = X11Helper::getCurrentLayout();
+	const QIcon icon(getFlag(layout));
+	Plasma::ToolTipContent data(name(), flags.getLongText(layout, rules), icon);
+	Plasma::ToolTipManager::self()->setContent(this, data);
 }
 
 const QIcon KeyboardApplet::getFlag(const QString& layout)
@@ -125,7 +137,7 @@ void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 	p->setRenderHint(QPainter::Antialiasing);
 
 	QString layout = X11Helper::getCurrentLayout();
-	QString layoutText = Flags::getDisplayText(layout, *keyboardConfig);
+	QString layoutText = Flags::getShortText(layout, *keyboardConfig);
 
 	const QIcon icon(getFlag(layout));
 	if( ! icon.isNull() ) {

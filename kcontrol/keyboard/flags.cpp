@@ -18,10 +18,11 @@
 
 #include "flags.h"
 
-#include <kdebug.h>
+//#include <kdebug.h>
 #include <kstandarddirs.h>
 #include <kiconloader.h>
 #include <kglobalsettings.h>
+#include <klocalizedstring.h>
 
 #include <QtCore/QStringList>
 #include <QtGui/QPixmap>
@@ -38,15 +39,15 @@ static const int FLAG_MAX_WIDTH = 21;
 static const int FLAG_MAX_HEIGHT = 14;
 static const QString flagTemplate("l10n/%1/flag.png");
 
-Flags::Flags():
-	transparentIcon(new QPixmap(FLAG_MAX_WIDTH, FLAG_MAX_HEIGHT))
+Flags::Flags()
 {
-	transparentIcon->fill(Qt::transparent);
+	transparentPixmap = new QPixmap(FLAG_MAX_WIDTH, FLAG_MAX_HEIGHT);
+	transparentPixmap->fill(Qt::transparent);
 }
 
 Flags::~Flags()
 {
-	delete transparentIcon;
+	delete transparentPixmap;
 }
 
 const QIcon Flags::getIcon(const QString& layout)
@@ -88,7 +89,7 @@ QString Flags::getCountryFromLayoutName(const QString& fullLayoutName)
 
 //TODO: move this to some other class?
 
-QString Flags::getDisplayText(const QString& fullLayoutName, const KeyboardConfig& keyboardConfig)
+QString Flags::getShortText(const QString& fullLayoutName, const KeyboardConfig& keyboardConfig)
 {
 	if( fullLayoutName.isEmpty() )
 		return QString("--");
@@ -133,6 +134,35 @@ QString Flags::getLongText(const QString& fullLayoutName, const Rules* rules)
 	return layoutText;
 }
 
+static QString getDisplayText(const QString& layout, const QString& variant)
+{
+	return variant.isEmpty()
+			? layout
+			: i18nc("layout - variant", "%1 - %2", layout, variant);
+}
+
+QString Flags::getLongText(const LayoutConfig& layoutConfig, const Rules* rules)
+{
+	if( rules == NULL ) {
+		return getDisplayText(layoutConfig.layout, layoutConfig.variant);
+	}
+
+	QString layoutText = layoutConfig.layout;
+	const LayoutInfo* layoutInfo = rules->getLayoutInfo(layoutConfig.layout);
+	if( layoutInfo != NULL ) {
+		layoutText = layoutInfo->description;
+
+		if( ! layoutConfig.variant.isEmpty() ) {
+			const VariantInfo* variantInfo = layoutInfo->getVariantInfo(layoutConfig.variant);
+			QString variantText = variantInfo != NULL ? variantInfo->description : layoutConfig.variant;
+
+			layoutText = getDisplayText(layoutText, variantText);
+		}
+	}
+
+	return layoutText;
+}
+
 const QIcon Flags::getIconWithText(const QString& fullLayoutName, const KeyboardConfig& keyboardConfig)
 {
 	QString keySuffix(keyboardConfig.showFlag ? "_wf" : "_nf");
@@ -157,7 +187,7 @@ const QIcon Flags::getIconWithText(const QString& fullLayoutName, const Keyboard
 	p.setRenderHint(QPainter::Antialiasing);
 
 	QFont font = p.font();
-	QString layoutText = Flags::getDisplayText(fullLayoutName, keyboardConfig);
+	QString layoutText = Flags::getShortText(fullLayoutName, keyboardConfig);
 
 	int height = pm.height();
 

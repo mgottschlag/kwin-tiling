@@ -22,7 +22,6 @@
 
 #include <QtCore/QVariant>
 #include <QtGui/QWidget>
-#include <QtGui/QPushButton>
 
 #include "flags.h"
 #include "x11_helper.h"
@@ -31,6 +30,9 @@ class QPushButton;
 class QPixmap;
 class KeyboardConfig;
 
+/**
+ * Note: does not listen to configuraton changes as currently we only use it in screen lock dialog
+ */
 class LayoutWidget : public QWidget
 {
 	Q_OBJECT
@@ -55,9 +57,9 @@ private:
 };
 
 
-/*
-    System tray icon to show layouts
-*/
+/**
+ *  System tray icon to show layouts
+ */
 class KStatusNotifierItem;
 class QActionGroup;
 class Rules;

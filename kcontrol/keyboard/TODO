@@ -13,7 +13,7 @@ plasma applet:
 * start applet from kxkb kcm (currently systray icon provided from kded)
 
 kxkb part
-* tooltip (will require loading xkb rules and translations - not sure if overhead is worth it)
+* tooltip (does not work k lockdlg?)
 
 Code cleanup:
 * rules, iso_codes:

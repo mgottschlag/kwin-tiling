@@ -65,6 +65,7 @@ private Q_SLOTS:
 private:
 	void readConfig();
 	const QIcon getFlag(const QString& layout);
+	void updateTooltip();
 
 //	bool drawFlag;
 	Flags flags;

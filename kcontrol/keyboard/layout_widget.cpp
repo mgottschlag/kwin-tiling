@@ -20,7 +20,6 @@
 #include "layout_widget.h"
 
 // for sys tray icon
-#include <kdebug.h>
 #include <kstatusnotifieritem.h>
 #include <klocalizedstring.h>
 #include <kmenu.h>
@@ -28,7 +27,7 @@
 #include <QtGui/QMenu>
 #include "xkb_rules.h"
 
-#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
 
 #include "x11_helper.h"
 #include "keyboard_config.h"
@@ -85,19 +84,23 @@ void LayoutWidget::toggleLayout()
 void LayoutWidget::layoutChanged()
 {
 	QString fullLayoutText = X11Helper::getCurrentLayout();
+	LayoutConfig layoutConfig = LayoutConfig::createLayoutConfig(fullLayoutText);
 	QIcon icon;
 	if( keyboardConfig->showFlag ) {
-		LayoutConfig layoutConfig = LayoutConfig::createLayoutConfig(fullLayoutText);
 		icon = flags->getIcon(layoutConfig.layout);
 	}
+
+	QString longText = Flags::getLongText(layoutConfig, NULL);
 	if( ! icon.isNull() ) {
 		widget->setIcon(icon);
 		widget->setText("");
+		widget->setToolTip(longText);
 	}
 	else {
-		QString layoutText = Flags::getDisplayText(fullLayoutText, *keyboardConfig);
+		QString shortText = Flags::getShortText(fullLayoutText, *keyboardConfig);
 		widget->setIcon(icon);
-		widget->setText(layoutText);
+		widget->setText(shortText);
+		widget->setToolTip(longText);
 //		widget->setShortcut(QKeySequence());
 	}
 }
@@ -167,7 +170,7 @@ void LayoutTrayIcon::layoutMapChanged()
 void LayoutTrayIcon::layoutChanged()
 {
 	QString fullLayoutText = X11Helper::getCurrentLayout();
-	QString layoutText = Flags::getDisplayText(fullLayoutText, *keyboardConfig);
+	QString layoutText = Flags::getShortText(fullLayoutText, *keyboardConfig);
 	QString longText = Flags::getLongText(fullLayoutText, rules);
 
 	m_notifierItem->setTitle(layoutText);
