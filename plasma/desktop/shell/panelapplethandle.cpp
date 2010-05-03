@@ -72,6 +72,7 @@ PanelAppletHandle::~PanelAppletHandle()
 void PanelAppletHandle::setApplet(Plasma::Applet *applet)
 {
     if (applet == m_applet.data()) {
+        show();
         return;
     }
 
