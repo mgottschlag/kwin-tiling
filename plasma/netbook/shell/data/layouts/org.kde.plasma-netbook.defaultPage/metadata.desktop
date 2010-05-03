@@ -1,14 +1,20 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Page one
+Name[en_GB]=Page one
 Name[ia]=Pagina uno
+Name[nl]=Pagina één
 Name[pt]=Página um
+Name[pt_BR]=Página um
 Name[sv]=Sida ett
 Name[uk]=Перша сторінка
 Name[x-test]=xxPage onexx
 Comment=Default Netbook Page
+Comment[en_GB]=Default Netbook Page
 Comment[ia]=Pagina de Netbook Predefinite
+Comment[nl]=Standaard netbook-pagina
 Comment[pt]=Página Predefinida do Netbook
+Comment[pt_BR]=Página padrão do Netbook
 Comment[sv]=Standardsida för nätdator
 Comment[uk]=Типова сторінка субноутбука
 Comment[x-test]=xxDefault Netbook Pagexx
