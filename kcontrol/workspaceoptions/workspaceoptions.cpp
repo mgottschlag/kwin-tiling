@@ -64,13 +64,6 @@ WorkspaceOptionsModule::WorkspaceOptionsModule(QWidget *parent, const QVariantLi
     if (KStandardDirs::findExe("plasma-desktop").isNull() || KStandardDirs::findExe("plasma-netbook").isNull()) {
         m_ui->formFactor->setEnabled(false);
     }
-
-    KConfigGroup ownButtonsCg(m_ownConfig, "TitleBarButtons");
-    m_desktopTitleBarButtonsLeft = ownButtonsCg.readEntry("DesktopLeft", "MS");
-    m_netbookTitleBarButtonsLeft = ownButtonsCg.readEntry("NetbookLeft", "MS");
-    m_desktopTitleBarButtonsRight = ownButtonsCg.readEntry("DesktopRight", "HIA__X");
-    m_netbookTitleBarButtonsRight = ownButtonsCg.readEntry("NetbookRight", "HA__X");
-
 }
 
 WorkspaceOptionsModule::~WorkspaceOptionsModule()
@@ -108,6 +101,14 @@ void WorkspaceOptionsModule::save()
     KConfigGroup kwinStyleCg(m_kwinConfig, "Style");
     KConfigGroup kwinPresentWindowsCg(m_ownConfig, "Effect-PresentWindows");
 
+
+    QString desktopTitleBarButtonsLeft("MS");
+    QString desktopTitleBarButtonsRight("HIA__X");
+
+    QString netbookTitleBarButtonsLeft("MS");
+    QString netbookTitleBarButtonsRight("HA__X");
+
+
     bool desktopPresentWindowsTabbox = false;
     bool desktopBoxSwitchTabbox = true;
     bool desktopCoverSwitchTabbox = false;
@@ -118,15 +119,16 @@ void WorkspaceOptionsModule::save()
     bool netbookCoverSwitchTabbox = false;
     bool netbookFlipSwitchTabbox = false;
 
+
     int desktopPresentWindowsLayoutMode = 0;
     int netbookPresentWindowsLayoutMode = 1;
 
     if (m_currentlyIsDesktop) {
         //save the user preferences on titlebar buttons
-        m_desktopTitleBarButtonsLeft = kwinStyleCg.readEntry("ButtonsOnLeft", "MS");
-        m_desktopTitleBarButtonsRight = kwinStyleCg.readEntry("ButtonsOnRight", "HIA__X");
-        ownButtonsCg.writeEntry("DesktopLeft", m_desktopTitleBarButtonsLeft);
-        ownButtonsCg.writeEntry("DesktopRight", m_desktopTitleBarButtonsRight);
+        desktopTitleBarButtonsLeft = kwinStyleCg.readEntry("ButtonsOnLeft", "MS");
+        desktopTitleBarButtonsRight = kwinStyleCg.readEntry("ButtonsOnRight", "HIA__X");
+        ownButtonsCg.writeEntry("DesktopLeft", desktopTitleBarButtonsLeft);
+        ownButtonsCg.writeEntry("DesktopRight", desktopTitleBarButtonsRight);
 
         //desktop grid effect
         desktopPresentWindowsLayoutMode = kwinPresentWindowsCg.readEntry("LayoutMode", 0);
@@ -156,10 +158,10 @@ void WorkspaceOptionsModule::save()
 
     } else {
         //save the user preferences on titlebar buttons
-        m_netbookTitleBarButtonsLeft = kwinStyleCg.readEntry("ButtonsOnLeft", "MS");
-        m_netbookTitleBarButtonsRight = kwinStyleCg.readEntry("ButtonsOnRight", "HA__X");
-        ownButtonsCg.writeEntry("NetbookLeft", m_netbookTitleBarButtonsLeft);
-        ownButtonsCg.writeEntry("NetbookRight", m_netbookTitleBarButtonsRight);
+        netbookTitleBarButtonsLeft = kwinStyleCg.readEntry("ButtonsOnLeft", "MS");
+        netbookTitleBarButtonsRight = kwinStyleCg.readEntry("ButtonsOnRight", "HA__X");
+        ownButtonsCg.writeEntry("NetbookLeft", netbookTitleBarButtonsLeft);
+        ownButtonsCg.writeEntry("NetbookRight", netbookTitleBarButtonsRight);
 
         //desktop grid effect
         desktopPresentWindowsLayoutMode = kwinPresentWindowsCg.readEntry("LayoutMode", 0);
@@ -194,8 +196,8 @@ void WorkspaceOptionsModule::save()
     kwinStyleCg.writeEntry("CustomButtonPositions", true);
     if (isDesktop) {
         //kill/enable the minimize button, unless configured differently
-        kwinStyleCg.writeEntry("ButtonsOnLeft", m_desktopTitleBarButtonsLeft);
-        kwinStyleCg.writeEntry("ButtonsOnRight", m_desktopTitleBarButtonsRight);
+        kwinStyleCg.writeEntry("ButtonsOnLeft", desktopTitleBarButtonsLeft);
+        kwinStyleCg.writeEntry("ButtonsOnRight", desktopTitleBarButtonsRight);
 
         //present windows mode
         kwinPresentWindowsCg.writeEntry("LayoutMode", desktopPresentWindowsLayoutMode);
@@ -216,8 +218,8 @@ void WorkspaceOptionsModule::save()
         kwinFlipSwitchCg.sync();
     } else {
         //kill/enable the minimize button, unless configured differently
-        kwinStyleCg.writeEntry("ButtonsOnLeft", m_netbookTitleBarButtonsLeft);
-        kwinStyleCg.writeEntry("ButtonsOnRight", m_netbookTitleBarButtonsRight);
+        kwinStyleCg.writeEntry("ButtonsOnLeft", netbookTitleBarButtonsLeft);
+        kwinStyleCg.writeEntry("ButtonsOnRight", netbookTitleBarButtonsRight);
 
         //present windows mode
         kwinPresentWindowsCg.writeEntry("LayoutMode", netbookPresentWindowsLayoutMode);

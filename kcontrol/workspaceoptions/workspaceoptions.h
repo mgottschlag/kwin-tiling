@@ -48,11 +48,6 @@ private:
     KAutostart m_plasmaNetbookAutostart;
     bool m_currentlyIsDesktop;
 
-    QString m_desktopTitleBarButtonsLeft;
-    QString m_desktopTitleBarButtonsRight;
-    QString m_netbookTitleBarButtonsLeft;
-    QString m_netbookTitleBarButtonsRight;
-
     Ui::MainPage *m_ui;
 };
 
