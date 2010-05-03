@@ -200,7 +200,6 @@ void Newspaper::toggleExpandAllApplets()
         }
     }
 
-    m_expandAll = !m_expandAll;
     m_container->setExpandAll(m_expandAll);
     m_scrollWidget->setFiltersChildEvents(m_expandAll || m_orientation == Qt::Horizontal);
     config().writeEntry("ExpandAllApplets", m_expandAll);
