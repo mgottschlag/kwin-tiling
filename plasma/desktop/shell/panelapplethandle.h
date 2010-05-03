@@ -20,8 +20,7 @@
 #ifndef PANELAPPLETHANDLE_H
 #define PANELAPPLETHANDLE_H
 
-#include <QtGui/QWidget>
-
+#include <Plasma/Dialog>
 #include <Plasma/Svg>
 
 class QBoxLayout;
@@ -35,7 +34,7 @@ namespace Plasma
 
 class ToolButton;
 
-class PanelAppletHandle : public QWidget
+class PanelAppletHandle : public Plasma::Dialog
 {
     Q_OBJECT
 public:

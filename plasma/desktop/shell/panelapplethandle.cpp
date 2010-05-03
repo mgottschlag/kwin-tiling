@@ -29,9 +29,10 @@
 #include <Plasma/Applet>
 #include <Plasma/Containment>
 #include <Plasma/Corona>
+#include <Plasma/Svg>
 
 PanelAppletHandle::PanelAppletHandle(QWidget *parent, Qt::WindowFlags f)
-    : QWidget(parent, f)
+    : Plasma::Dialog(parent, f)
 {
     m_icons = new Plasma::Svg(this);
     m_icons->setImagePath("widgets/configuration-icons");
@@ -118,5 +119,6 @@ void PanelAppletHandle::leaveEvent(QEvent *event)
 
     m_hideTimer->start(800);
 }
+
 
 #include "panelapplethandle.moc"
