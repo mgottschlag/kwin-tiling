@@ -520,6 +520,9 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
             button->setKeySequence(shortcutText);
         } else if (task && applet) {
             button->setKeySequence(applet->globalShortcut().primary());
+        //no way to have a shortcut for the fdo protocol
+        } else {
+            button->setEnabled(false);
         }
         m_autoHideUi.icons->setItemWidget(listItem, 2, button);
         m_autoHideUi.icons->addTopLevelItem(listItem);
