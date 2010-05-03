@@ -75,11 +75,15 @@ void AppletsContainer::syncColumnSizes()
         QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(i));
 
         if (m_orientation == Qt::Vertical) {
-            lay->setMaximumWidth(viewportSize.width()/m_mainLayout->count());
-            lay->setMaximumHeight(QWIDGETSIZE_MAX);
+            lay->setMaximumWidth(viewportSize.width()/m_mainLayout->count()-4);
+            lay->setMinimumWidth(viewportSize.width()/m_mainLayout->count()-4);
+            lay->setMaximumHeight(-1);
+            lay->setMinimumHeight(-1);
         } else {
-            lay->setMaximumHeight(viewportSize.height()/m_mainLayout->count());
-            lay->setMaximumWidth(QWIDGETSIZE_MAX);
+            lay->setMaximumHeight(viewportSize.height()/m_mainLayout->count()-4);
+            lay->setMinimumHeight(viewportSize.height()/m_mainLayout->count()-4);
+            lay->setMaximumWidth(-1);
+            lay->setMinimumWidth(-1);
         }
     }
 }
