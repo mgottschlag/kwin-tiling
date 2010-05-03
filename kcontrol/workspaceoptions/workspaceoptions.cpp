@@ -99,7 +99,7 @@ void WorkspaceOptionsModule::save()
     KConfigGroup ownButtonsCg(m_ownConfig, "TitleBarButtons");
     KConfigGroup ownPresentWindowsCg(m_ownConfig, "Effect-PresentWindows");
     KConfigGroup kwinStyleCg(m_kwinConfig, "Style");
-    KConfigGroup kwinPresentWindowsCg(m_ownConfig, "Effect-PresentWindows");
+    KConfigGroup kwinPresentWindowsCg(m_kwinConfig, "Effect-PresentWindows");
 
 
     QString desktopTitleBarButtonsLeft("MS");
