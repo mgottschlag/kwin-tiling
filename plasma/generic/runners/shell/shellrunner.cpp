@@ -23,9 +23,12 @@
 
 #include <KAuthorized>
 #include <KDebug>
+#include <KDEsuClient>
 #include <KIcon>
 #include <KLocale>
 #include <KRun>
+#include <KShell>
+#include <KStandardDirs>
 #include <KToolInvocation>
 
 #include <plasma/theme.h>
@@ -71,16 +74,63 @@ void ShellRunner::match(Plasma::RunnerContext &context)
     }
 }
 
+class MySuClient : public KDESu::KDEsuClient
+{
+public:
+    MySuClient() : KDESu::KDEsuClient() {}
+    ~MySuClient() { kDebug() << "buh bye"; }
+};
+
 void ShellRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
-    QMutexLocker lock(bigLock());
     Q_UNUSED(match);
 
     // filter match's id to remove runner's name
     // as this is the command we want to run
 
     if (m_enabled) {
-        if (m_inTerminal) {
+        //kDebug() << m_asOtherUser << m_username << m_password;
+        if (m_asOtherUser && !m_username.isEmpty()) {
+            QString exec;
+            QString args;
+            if (m_inTerminal) {
+                // we have to reimplement this from KToolInvocation because we need to use KDESu
+                KConfigGroup confGroup( KGlobal::config(), "General" );
+                exec = confGroup.readPathEntry("TerminalApplication", "konsole");
+
+                if (!exec.isEmpty()) {
+                    if (exec == "konsole") {
+                        args += " --noclose";
+                    } else if (exec == "xterm") {
+                        args += " -hold";
+                    }
+
+                    args += " -e " + context.query();
+                }
+            } else {
+                const QStringList commandLine = KShell::splitArgs(context.query(), KShell::TildeExpand);
+                if (!commandLine.isEmpty()) {
+                    exec = commandLine.at(0);
+                }
+
+                args = context.query().right(context.query().size() - commandLine.at(0).length());
+            }
+
+            if (!exec.isEmpty()) {
+                exec = KStandardDirs::findExe(exec);
+                if (!exec.isEmpty()) {
+                    KDESu::KDEsuClient client;
+                    client.startServer();
+                    //kDebug() << "executing" << exec << m_username << m_password << args;
+                    if (client.exec(exec.toLocal8Bit(), m_username.toLocal8Bit(), args.toLocal8Bit()) == -1) {
+                        if (!m_password.isEmpty()) {
+                            const QByteArray password = m_password.toLocal8Bit();
+                            client.exec(exec.toLocal8Bit(), m_username.toLocal8Bit(), args.toLocal8Bit());
+                        }
+                    }
+                }
+            }
+        } else if (m_inTerminal) {
             KToolInvocation::invokeTerminal(context.query());
         } else {
             KRun::runCommand(context.query(), NULL);
@@ -90,6 +140,8 @@ void ShellRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryM
     // reset for the next run!
     m_inTerminal = false;
     m_asOtherUser = false;
+    m_username.clear();
+    m_password.clear();
 }
 
 void ShellRunner::createRunOptions(QWidget *parent)
@@ -106,6 +158,8 @@ void ShellRunner::createRunOptions(QWidget *parent)
 
     connect(configWidget->m_ui.cbRunAsOther, SIGNAL(clicked(bool)), this, SLOT(setRunAsOtherUser(bool)));
     connect(configWidget->m_ui.cbRunInTerminal, SIGNAL(clicked(bool)), this, SLOT(setRunInTerminal(bool)));
+    connect(configWidget->m_ui.leUsername, SIGNAL(textChanged(QString)), this, SLOT(setUsername(QString)));
+    connect(configWidget->m_ui.lePassword, SIGNAL(textChanged(QString)), this, SLOT(setPassword(QString)));
 }
 
 void ShellRunner::setRunAsOtherUser(bool asOtherUser)
@@ -116,6 +170,16 @@ void ShellRunner::setRunAsOtherUser(bool asOtherUser)
 void ShellRunner::setRunInTerminal(bool runInTerminal)
 {
     m_inTerminal = runInTerminal;
+}
+
+void ShellRunner::setUsername(const QString &username)
+{
+    m_username = username;
+}
+
+void ShellRunner::setPassword(const QString &password)
+{
+    m_password = password;
 }
 
 #include "shellrunner.moc"

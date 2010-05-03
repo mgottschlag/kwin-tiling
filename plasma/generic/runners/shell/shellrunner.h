@@ -40,11 +40,15 @@ class ShellRunner : public Plasma::AbstractRunner
         void run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &action);
         void createRunOptions(QWidget *parent);
 
-    private slots:
+    private Q_SLOTS:
         void setRunAsOtherUser(bool asOtherUser);
         void setRunInTerminal(bool runInTerminal);
+        void setUsername(const QString &username);
+        void setPassword(const QString &password);
 
     private:
+        QString m_username;
+        QString m_password;
         bool m_enabled;
         bool m_inTerminal;
         bool m_asOtherUser;
