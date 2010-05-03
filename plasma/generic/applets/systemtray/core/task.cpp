@@ -167,7 +167,7 @@ void Task::setStatus(Status status)
     d->status = status;
 
     if (status == NeedsAttention) {
-        setOrder(Last);
+        setOrder(First);
         if (hidden() & AutoHidden) {
             setHidden(hidden() ^ AutoHidden);
         }
@@ -178,7 +178,7 @@ void Task::setStatus(Status status)
             setHidden(hidden() | AutoHidden);
         }
 
-        setOrder(Task::Normal);
+        setOrder(Normal);
     }
 
     emit changed(this);
