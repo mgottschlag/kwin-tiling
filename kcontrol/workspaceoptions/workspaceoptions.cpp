@@ -65,11 +65,15 @@ WorkspaceOptionsModule::WorkspaceOptionsModule(QWidget *parent, const QVariantLi
         m_ui->formFactor->setEnabled(false);
     }
 
-    KConfigGroup cg(m_ownConfig, "TitleBarButtons");
-    m_desktopTitleBarButtonsLeft = cg.readEntry("DesktopLeft", "MS");
-    m_netbookTitleBarButtonsLeft = cg.readEntry("NetbookLeft", "MS");
-    m_desktopTitleBarButtonsRight = cg.readEntry("DesktopRight", "HIA__X");
-    m_netbookTitleBarButtonsRight = cg.readEntry("NetbookRight", "HA__X");
+    KConfigGroup ownButtonsCg(m_ownConfig, "TitleBarButtons");
+    m_desktopTitleBarButtonsLeft = ownButtonsCg.readEntry("DesktopLeft", "MS");
+    m_netbookTitleBarButtonsLeft = ownButtonsCg.readEntry("NetbookLeft", "MS");
+    m_desktopTitleBarButtonsRight = ownButtonsCg.readEntry("DesktopRight", "HIA__X");
+    m_netbookTitleBarButtonsRight = ownButtonsCg.readEntry("NetbookRight", "HA__X");
+
+    KConfigGroup ownPresentWindowsCg(m_ownConfig, "Effect-PresentWindows");
+    m_desktopPresentWindowsLayoutMode = ownPresentWindowsCg.readEntry("DesktopLayoutMode", 0);
+    m_netbookPresentWindowsLayoutMode = ownPresentWindowsCg.readEntry("NetbookLayoutMode", 1);
 }
 
 WorkspaceOptionsModule::~WorkspaceOptionsModule()
@@ -102,34 +106,54 @@ void WorkspaceOptionsModule::save()
     }
     winCg.sync();
 
-    KConfigGroup ownCg(m_ownConfig, "TitleBarButtons");
-    KConfigGroup styleCg(m_kwinConfig, "Style");
+    KConfigGroup ownButtonsCg(m_ownConfig, "TitleBarButtons");
+    KConfigGroup ownPresentWindowsCg(m_ownConfig, "Effect-PresentWindows");
+    KConfigGroup kwinStyleCg(m_kwinConfig, "Style");
+    KConfigGroup kwinPresentWindowsCg(m_ownConfig, "Effect-PresentWindows");
 
-    //save the user preferences on titlebar buttons
     if (m_currentlyIsDesktop) {
-        m_desktopTitleBarButtonsLeft = styleCg.readEntry("ButtonsOnLeft", "MS");
-        m_desktopTitleBarButtonsRight = styleCg.readEntry("ButtonsOnRight", "HIA__X");
-        ownCg.writeEntry("DesktopLeft", m_desktopTitleBarButtonsLeft);
-        ownCg.writeEntry("DesktopRight", m_desktopTitleBarButtonsRight);
-    } else {
-        m_netbookTitleBarButtonsLeft = styleCg.readEntry("ButtonsOnLeft", "MS");
-        m_netbookTitleBarButtonsRight = styleCg.readEntry("ButtonsOnRight", "HA__X");
-        ownCg.writeEntry("NetbookLeft", m_netbookTitleBarButtonsLeft);
-        ownCg.writeEntry("NetbookRight", m_netbookTitleBarButtonsRight);
-    }
-    ownCg.sync();
+        //save the user preferences on titlebar buttons
+        m_desktopTitleBarButtonsLeft = kwinStyleCg.readEntry("ButtonsOnLeft", "MS");
+        m_desktopTitleBarButtonsRight = kwinStyleCg.readEntry("ButtonsOnRight", "HIA__X");
+        ownButtonsCg.writeEntry("DesktopLeft", m_desktopTitleBarButtonsLeft);
+        ownButtonsCg.writeEntry("DesktopRight", m_desktopTitleBarButtonsRight);
 
-    //kill/enable the minimize button, unless configured differently
-    styleCg.writeEntry("CustomButtonPositions", true);
+        //desktop grid effect
+        m_desktopPresentWindowsLayoutMode = kwinPresentWindowsCg.readEntry("LayoutMode", 0);
+        ownPresentWindowsCg.writeEntry("DesktopLayoutMode", m_desktopPresentWindowsLayoutMode);
+    } else {
+        //save the user preferences on titlebar buttons
+        m_netbookTitleBarButtonsLeft = kwinStyleCg.readEntry("ButtonsOnLeft", "MS");
+        m_netbookTitleBarButtonsRight = kwinStyleCg.readEntry("ButtonsOnRight", "HA__X");
+        ownButtonsCg.writeEntry("NetbookLeft", m_netbookTitleBarButtonsLeft);
+        ownButtonsCg.writeEntry("NetbookRight", m_netbookTitleBarButtonsRight);
+
+        //desktop grid effect
+        m_desktopPresentWindowsLayoutMode = kwinPresentWindowsCg.readEntry("LayoutMode", 0);
+        ownPresentWindowsCg.writeEntry("NetbookLayoutMode", m_desktopPresentWindowsLayoutMode);
+    }
+    ownButtonsCg.sync();
+    ownPresentWindowsCg.sync();
+
+    kwinStyleCg.writeEntry("CustomButtonPositions", true);
     if (isDesktop) {
-        styleCg.writeEntry("ButtonsOnLeft", m_desktopTitleBarButtonsLeft);
-        styleCg.writeEntry("ButtonsOnRight", m_desktopTitleBarButtonsRight);
+        //kill/enable the minimize button, unless configured differently
+        kwinStyleCg.writeEntry("ButtonsOnLeft", m_desktopTitleBarButtonsLeft);
+        kwinStyleCg.writeEntry("ButtonsOnRight", m_desktopTitleBarButtonsRight);
+
+        //present windows mode
+        kwinPresentWindowsCg.writeEntry("LayoutMode", m_desktopPresentWindowsLayoutMode);
     } else {
-        styleCg.writeEntry("ButtonsOnLeft", m_netbookTitleBarButtonsLeft);
-        styleCg.writeEntry("ButtonsOnRight", m_netbookTitleBarButtonsRight);
+        //kill/enable the minimize button, unless configured differently
+        kwinStyleCg.writeEntry("ButtonsOnLeft", m_netbookTitleBarButtonsLeft);
+        kwinStyleCg.writeEntry("ButtonsOnRight", m_netbookTitleBarButtonsRight);
+
+        //present windows mode
+        kwinPresentWindowsCg.writeEntry("LayoutMode", m_netbookPresentWindowsLayoutMode);
     }
 
-    styleCg.sync();
+    kwinStyleCg.sync();
+    kwinPresentWindowsCg.sync();
 
     // Reload KWin.
     QDBusMessage message = QDBusMessage::createSignal( "/KWin", "org.kde.KWin", "reloadConfig" );
