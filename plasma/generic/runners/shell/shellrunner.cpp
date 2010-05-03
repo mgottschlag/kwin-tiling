@@ -91,6 +91,7 @@ void ShellRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryM
     if (m_enabled) {
         //kDebug() << m_asOtherUser << m_username << m_password;
         if (m_asOtherUser && !m_username.isEmpty()) {
+            //TODO: provide some user feedback on failure
             QString exec;
             QString args;
             if (m_inTerminal) {
