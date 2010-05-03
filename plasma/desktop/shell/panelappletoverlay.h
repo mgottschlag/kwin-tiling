@@ -82,7 +82,8 @@ private:
     QPoint m_origin;
     QPoint m_lastGlobalPos;
     DragType m_dragAction;
-    PanelAppletHandle *m_appletHandle;
+    static PanelAppletHandle *s_appletHandle;
+    static int s_appletHandleCount;
     int m_offset;
     int m_index;
     bool m_clickDrag;

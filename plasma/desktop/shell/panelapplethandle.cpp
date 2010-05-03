@@ -72,6 +72,7 @@ void PanelAppletHandle::setApplet(Plasma::Applet *applet)
     }
 
     m_applet = applet;
+    m_hideTimer->stop();
 
     if (applet) {
         if (applet->formFactor() == Plasma::Vertical) {

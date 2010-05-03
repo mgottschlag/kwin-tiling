@@ -36,6 +36,10 @@
 #include <Plasma/Theme>
 #include <Plasma/View>
 
+
+PanelAppletHandle *PanelAppletOverlay::s_appletHandle = 0;
+int PanelAppletOverlay::s_appletHandleCount = 0;
+
 class AppletMoveSpacer : public QGraphicsWidget
 {
 public:
@@ -81,11 +85,16 @@ PanelAppletOverlay::PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent)
       m_index(0),
       m_clickDrag(false)
 {
+    if (!s_appletHandle) {
+        s_appletHandle = new PanelAppletHandle();
+    }
+
+    ++s_appletHandleCount;
+
     syncIndex();
     syncOrientation();
     syncGeometry();
     setMouseTracking(true);
-    m_appletHandle = new PanelAppletHandle();
 
 
     connect(m_applet, SIGNAL(destroyed(QObject*)), this, SLOT(appletDestroyed()));
@@ -112,7 +121,12 @@ PanelAppletOverlay::~PanelAppletOverlay()
         m_spacer = 0;
     }
 
-    delete m_appletHandle;
+    --s_appletHandleCount;
+    if (s_appletHandleCount < 1) {
+        delete s_appletHandle;
+        s_appletHandle = 0;
+        s_appletHandleCount = 0;
+    }
 }
 
 void PanelAppletOverlay::paintEvent(QPaintEvent *event)
@@ -425,15 +439,15 @@ void PanelAppletOverlay::enterEvent(QEvent *event)
 {
     Q_UNUSED(event)
     update();
-    m_appletHandle->setApplet(m_applet);
-    m_appletHandle->show();
+    s_appletHandle->setApplet(m_applet);
+    s_appletHandle->show();
 }
 
 void PanelAppletOverlay::leaveEvent(QEvent *event)
 {
     setCursor(Qt::ArrowCursor);
     Q_UNUSED(event)
-    m_appletHandle->startHideTimeout();
+    s_appletHandle->startHideTimeout();
     update();
 }
 
