@@ -203,18 +203,18 @@ void WorkspaceOptionsModule::save()
         kwinPresentWindowsCg.writeEntry("LayoutMode", desktopPresentWindowsLayoutMode);
 
         //what to use as tabbox
-        kwinPresentWindowsCg.writeEntry("Tabbox", desktopPresentWindowsTabbox);
+        kwinPresentWindowsCg.writeEntry("TabBox", desktopPresentWindowsTabbox);
 
         KConfigGroup kwinBoxSwitchCg( m_kwinConfig, "Effect-BoxSwitch" );
-        kwinBoxSwitchCg.writeEntry( "DesktopTabBox", desktopBoxSwitchTabbox );
+        kwinBoxSwitchCg.writeEntry( "TabBox", desktopBoxSwitchTabbox );
         kwinBoxSwitchCg.sync();
 
         KConfigGroup kwinCoverSwitchCg( m_kwinConfig, "Effect-CoverSwitch" );
-        kwinCoverSwitchCg.writeEntry( "DesktopTabBox", desktopCoverSwitchTabbox );
+        kwinCoverSwitchCg.writeEntry( "TabBox", desktopCoverSwitchTabbox );
         kwinCoverSwitchCg.sync();
 
         KConfigGroup kwinFlipSwitchCg( m_kwinConfig, "Effect-FlipSwitch" );
-        kwinFlipSwitchCg.writeEntry( "DesktopTabBox", desktopFlipSwitchTabbox );
+        kwinFlipSwitchCg.writeEntry( "TabBox", desktopFlipSwitchTabbox );
         kwinFlipSwitchCg.sync();
     } else {
         //kill/enable the minimize button, unless configured differently
@@ -225,18 +225,18 @@ void WorkspaceOptionsModule::save()
         kwinPresentWindowsCg.writeEntry("LayoutMode", netbookPresentWindowsLayoutMode);
 
         //what to use as tabbox
-        kwinPresentWindowsCg.writeEntry("Tabbox", netbookPresentWindowsTabbox);
-    
+        kwinPresentWindowsCg.writeEntry("TabBox", netbookPresentWindowsTabbox);
+
         KConfigGroup kwinBoxSwitchCg( m_kwinConfig, "Effect-BoxSwitch" );
-        kwinBoxSwitchCg.writeEntry( "NetbookTabBox", netbookBoxSwitchTabbox );
+        kwinBoxSwitchCg.writeEntry( "TabBox", netbookBoxSwitchTabbox );
         kwinBoxSwitchCg.sync();
 
         KConfigGroup kwinCoverSwitchCg( m_kwinConfig, "Effect-CoverSwitch" );
-        kwinCoverSwitchCg.writeEntry( "NetbookTabBox", netbookCoverSwitchTabbox );
+        kwinCoverSwitchCg.writeEntry( "TabBox", netbookCoverSwitchTabbox );
         kwinCoverSwitchCg.sync();
 
         KConfigGroup kwinFlipSwitchCg( m_kwinConfig, "Effect-FlipSwitch" );
-        kwinFlipSwitchCg.writeEntry( "NetbookTabBox", netbookFlipSwitchTabbox );
+        kwinFlipSwitchCg.writeEntry( "TabBox", netbookFlipSwitchTabbox );
         kwinFlipSwitchCg.sync();
     }
 
