@@ -24,6 +24,8 @@
 
 #include <KIcon>
 
+class Activity;
+
 class ActivityIcon : public Plasma::AbstractIcon
 {
     Q_OBJECT
@@ -36,15 +38,10 @@ class ActivityIcon : public Plasma::AbstractIcon
         QMimeData* mimeData();
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
-    signals:
-        void activated(const QString &);
-
-    private slots:
-        void activate();
-
     private:
         QString m_id;
         KIcon m_icon;
+        Activity *m_activity;
 };
 
 #endif //APPLETICON_H

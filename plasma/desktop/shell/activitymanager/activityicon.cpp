@@ -17,6 +17,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "activity.h"
 #include "activityicon.h"
 
 #include <KIconLoader>
@@ -25,12 +26,13 @@
 ActivityIcon::ActivityIcon(const QString &id)
     :AbstractIcon(0),
     m_id(id),
-    m_icon("plasma")
+    m_icon("plasma"),
+    m_activity(new Activity(id, this))
 {
     //FIXME this may interfere with drag when we implement that
     //and should be on mouse *release*
     //and the whole selection thing in AbstractIcon seems a tad odd.
-    connect(this, SIGNAL(selected(AbstractIcon*)), SLOT(activate()));
+    connect(this, SIGNAL(selected(AbstractIcon*)), m_activity, SLOT(activate()));
 }
 
 ActivityIcon::~ActivityIcon()
@@ -56,8 +58,4 @@ void ActivityIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     //but first try to use Plasma::Icon.
 }
 
-void ActivityIcon::activate()
-{
-    emit activated(name());
-}
 

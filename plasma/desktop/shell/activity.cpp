@@ -17,13 +17,22 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+
+#include "plasma-shell-desktop.h"
+
+
 #include <QPixmap>
 #include <QString>
 #include <QSize>
 
 #include <KIcon>
+#include <KWindowSystem>
+#include <kephal/screens.h>
 
 #include <Plasma/Containment>
+#include <Plasma/Corona>
+
+#include "plasmaapp.h"
 
 #include "activity.h"
 
@@ -75,7 +84,7 @@ bool Activity::isActive()
     return false;
 }
 
-bool isRunning()
+bool Activity::isRunning()
 {
     return ! m_containments.isEmpty();
 }

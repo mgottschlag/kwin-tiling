@@ -118,10 +118,6 @@ public Q_SLOTS:
 
     void showActivityManager();
     /**
-     * makes activity @p id the current one
-     */
-    void activateActivity(const QString &id);
-    /**
      * create a new activity based on the active one
      */
     void cloneCurrentActivity();

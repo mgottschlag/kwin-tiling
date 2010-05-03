@@ -1138,39 +1138,6 @@ QStringList PlasmaApp::listActivities()
     return list;
 }
 
-void PlasmaApp::activateActivity(const QString &id)
-{
-    //TODO: tell ivan's api
-    //and switch our desktopview(s) to the appropriate containment(s)
-    //FIXME this is a hack, using the old activity==containment meme
-    //TODO also load the activity if necessary
-
-    //find the right containment
-    Plasma::Containment *newCont = 0;
-    foreach (Plasma::Containment *cont, m_corona->containments()) {
-        if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
-            cont->containmentType() == Plasma::Containment::CustomContainment) &&
-                !m_corona->offscreenWidgets().contains(cont) && cont->activity() == id) {
-            newCont = cont;
-            break;
-        }
-    }
-    if (! newCont) {
-        kDebug() << "couldn't find activity" << id;
-        return;
-    }
-
-    //figure out where we are
-    int currentScreen = Kephal::ScreenUtils::screenId(QCursor::pos());
-    int currentDesktop = -1;
-    if (AppSettings::perVirtualDesktopViews()) {
-        currentDesktop = KWindowSystem::currentDesktop()-1;
-    }
-    //and bring the containment to where we are
-    newCont->setScreen(currentScreen, currentDesktop);
-
-}
-
 void PlasmaApp::cloneCurrentActivity()
 {
     //TODO

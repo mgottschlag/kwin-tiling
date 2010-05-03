@@ -64,7 +64,6 @@ ActivityIcon *ActivityList::createAppletIcon(const QString &id)
     applet->setName(id);
     addIcon(applet);
 
-    connect(applet, SIGNAL(activated(const QString &)), PlasmaApp::self(), SLOT(activateActivity(const QString &)));
     return applet;
 }
 /*

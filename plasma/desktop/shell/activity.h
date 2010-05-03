@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QList>
 
+class QSize;
 class QString;
 class QPixmap;
 namespace Plasma
@@ -45,7 +46,7 @@ public:
 
     QString id();
     QString name();
-    QPixmap thumbnail(); //FIXME do we want diff. sizes? updates?
+    QPixmap thumbnail(const QSize &size); //FIXME do we want diff. sizes? updates?
 
     /**
      * whether this is the currently active activity

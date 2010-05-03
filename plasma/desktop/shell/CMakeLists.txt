@@ -10,6 +10,7 @@ set(activitymanager_SRCS
 )
 
 set(plasma_SRCS
+    activity.cpp
     scripting/desktopscriptengine.cpp
     scripting/panel.cpp
     checkbox.cpp
