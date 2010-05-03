@@ -3,6 +3,7 @@ set(tasks_engine_SRCS
     tasksource.cpp
     taskservice.cpp
     taskjob.cpp
+    virtualdesktopssource.cpp
 )
 
 kde4_add_plugin(plasma_engine_tasks ${tasks_engine_SRCS})

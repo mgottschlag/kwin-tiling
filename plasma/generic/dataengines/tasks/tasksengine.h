@@ -56,6 +56,7 @@ class TasksEngine : public Plasma::DataEngine
         static const QString getStartupName(StartupPtr startup);
         static const QString getTaskName(TaskPtr task);
         virtual void init();
+        bool sourceRequestEvent(const QString &source);
 
     private slots:
         void startupAdded(StartupPtr startup);

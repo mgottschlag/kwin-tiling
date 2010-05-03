@@ -17,6 +17,7 @@
  */
 
 #include "tasksengine.h"
+#include "virtualdesktopssource.h"
 
 // own
 #include "tasksource.h"
@@ -107,6 +108,16 @@ void TasksEngine::addTask(TaskPtr task)
     connect(task.constData(), SIGNAL(changed(::TaskManager::TaskChanges)), taskSource, SLOT(updateTask(::TaskManager::TaskChanges)));
     connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)), taskSource, SLOT(updateDesktop(int)));
     addSource(taskSource);
+}
+
+bool TasksEngine::sourceRequestEvent(const QString &source)
+{
+    if (source == "virtualDesktops") {
+        addSource(new VirtualDesktopsSource);
+        return true;
+    } else {
+        return false;
+    }
 }
 
 K_EXPORT_PLASMA_DATAENGINE(tasks, TasksEngine)
