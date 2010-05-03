@@ -443,10 +443,10 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
         connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
-        parent->addPage(m_visibleItemsInterface.data(), i18n("Information"),
+        parent->addPage(m_visibleItemsInterface.data(), i18n("Display"),
                         "preferences-desktop-notification",
                         i18n("Choose which information to show"));
-        parent->addPage(m_autoHideInterface.data(), i18n("Auto Hide"), "window-suppressed");
+        parent->addPage(m_autoHideInterface.data(), i18n("Entries"), "configure-toolbars");
 
         bool visible = (immutability() == Plasma::UserImmutable);
         m_visibleItemsUi.visibleItemsView->setEnabled(immutability() == Plasma::Mutable);
