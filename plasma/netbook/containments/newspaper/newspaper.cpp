@@ -130,6 +130,11 @@ void Newspaper::init()
         m_toolBox->addTool(a);
     }
 
+    a = new QAction(KIcon("view-fullscreen"), i18n("Expand widgets"), this);
+    addAction("expand widgets", a);
+    m_toolBox->addTool(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(toggleExpandAllApplets()));
+
     a = new QAction(KIcon("view-pim-news"), i18n("Add page"), this);
     addAction("add page", a);
     m_toolBox->addTool(a);
@@ -177,6 +182,28 @@ void Newspaper::toggleImmutability()
     } else if (immutability() == Plasma::Mutable) {
         setImmutability(Plasma::UserImmutable);
     }
+}
+
+void Newspaper::toggleExpandAllApplets()
+{
+    m_expandAll = !m_expandAll;
+
+    QAction *a = action("expand widgets");
+
+    if (a) {
+        if (m_expandAll) {
+            a->setIcon(KIcon("view-restore"));
+            a->setText(i18n("Collapse widgets"));
+        } else {
+            a->setIcon(KIcon("view-fullscreen"));
+            a->setText(i18n("Expand widgets"));
+        }
+    }
+
+    m_expandAll = !m_expandAll;
+    m_container->setExpandAll(m_expandAll);
+    m_scrollWidget->setFiltersChildEvents(m_expandAll || m_orientation == Qt::Horizontal);
+    config().writeEntry("ExpandAllApplets", m_expandAll);
 }
 
 void Newspaper::refreshLayout()

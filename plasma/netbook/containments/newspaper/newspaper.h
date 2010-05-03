@@ -70,6 +70,7 @@ protected:
 
 private Q_SLOTS:
     void toggleImmutability();
+    void toggleExpandAllApplets();
     void updateSize();
     void appletSizeHintChanged();
     void updateConfigurationMode(bool config);
