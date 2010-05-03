@@ -15,9 +15,11 @@ X-KDE-Weight=50
 OnlyShowIn=KDE;
 
 Name=Keyboard
+Name[en_GB]=Keyboard
 Name[es]=Teclado
 Name[nds]=Tastatuur
 Name[pt]=Teclado
+Name[pt_BR]=Teclado
 Name[sv]=Tangentbord
 Name[tr]=Klavye
 Name[uk]=Клавіатура
@@ -25,8 +27,10 @@ Name[x-test]=xxKeyboardxx
 Name[zh_TW]=鍵盤
 
 Comment=Keyboard settings
+Comment[en_GB]=Keyboard settings
 Comment[es]=Configuración del teclado
 Comment[pt]=Configuração do teclado
+Comment[pt_BR]=Configurações do teclado
 Comment[sv]=Tangentbordsinställningar
 Comment[uk]=Параметри клавіатури
 Comment[x-test]=xxKeyboard settingsxx
