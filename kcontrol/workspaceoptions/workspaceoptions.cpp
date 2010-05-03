@@ -71,9 +71,6 @@ WorkspaceOptionsModule::WorkspaceOptionsModule(QWidget *parent, const QVariantLi
     m_desktopTitleBarButtonsRight = ownButtonsCg.readEntry("DesktopRight", "HIA__X");
     m_netbookTitleBarButtonsRight = ownButtonsCg.readEntry("NetbookRight", "HA__X");
 
-    KConfigGroup ownPresentWindowsCg(m_ownConfig, "Effect-PresentWindows");
-    m_desktopPresentWindowsLayoutMode = ownPresentWindowsCg.readEntry("DesktopLayoutMode", 0);
-    m_netbookPresentWindowsLayoutMode = ownPresentWindowsCg.readEntry("NetbookLayoutMode", 1);
 }
 
 WorkspaceOptionsModule::~WorkspaceOptionsModule()
@@ -121,6 +118,9 @@ void WorkspaceOptionsModule::save()
     bool netbookCoverSwitchTabbox = false;
     bool netbookFlipSwitchTabbox = false;
 
+    int desktopPresentWindowsLayoutMode = 0;
+    int netbookPresentWindowsLayoutMode = 1;
+
     if (m_currentlyIsDesktop) {
         //save the user preferences on titlebar buttons
         m_desktopTitleBarButtonsLeft = kwinStyleCg.readEntry("ButtonsOnLeft", "MS");
@@ -129,8 +129,8 @@ void WorkspaceOptionsModule::save()
         ownButtonsCg.writeEntry("DesktopRight", m_desktopTitleBarButtonsRight);
 
         //desktop grid effect
-        m_desktopPresentWindowsLayoutMode = kwinPresentWindowsCg.readEntry("LayoutMode", 0);
-        ownPresentWindowsCg.writeEntry("DesktopLayoutMode", m_desktopPresentWindowsLayoutMode);
+        desktopPresentWindowsLayoutMode = kwinPresentWindowsCg.readEntry("LayoutMode", 0);
+        ownPresentWindowsCg.writeEntry("DesktopLayoutMode", desktopPresentWindowsLayoutMode);
 
         //box switch effect
         desktopPresentWindowsTabbox = ownPresentWindowsCg.readEntry("DesktopTabbox", false);
@@ -162,8 +162,8 @@ void WorkspaceOptionsModule::save()
         ownButtonsCg.writeEntry("NetbookRight", m_netbookTitleBarButtonsRight);
 
         //desktop grid effect
-        m_desktopPresentWindowsLayoutMode = kwinPresentWindowsCg.readEntry("LayoutMode", 0);
-        ownPresentWindowsCg.writeEntry("NetbookLayoutMode", m_desktopPresentWindowsLayoutMode);
+        desktopPresentWindowsLayoutMode = kwinPresentWindowsCg.readEntry("LayoutMode", 0);
+        ownPresentWindowsCg.writeEntry("NetbookLayoutMode", desktopPresentWindowsLayoutMode);
 
 
         //box switch effect
@@ -198,7 +198,7 @@ void WorkspaceOptionsModule::save()
         kwinStyleCg.writeEntry("ButtonsOnRight", m_desktopTitleBarButtonsRight);
 
         //present windows mode
-        kwinPresentWindowsCg.writeEntry("LayoutMode", m_desktopPresentWindowsLayoutMode);
+        kwinPresentWindowsCg.writeEntry("LayoutMode", desktopPresentWindowsLayoutMode);
 
         //what to use as tabbox
         kwinPresentWindowsCg.writeEntry("Tabbox", desktopPresentWindowsTabbox);
@@ -220,7 +220,7 @@ void WorkspaceOptionsModule::save()
         kwinStyleCg.writeEntry("ButtonsOnRight", m_netbookTitleBarButtonsRight);
 
         //present windows mode
-        kwinPresentWindowsCg.writeEntry("LayoutMode", m_netbookPresentWindowsLayoutMode);
+        kwinPresentWindowsCg.writeEntry("LayoutMode", netbookPresentWindowsLayoutMode);
 
         //what to use as tabbox
         kwinPresentWindowsCg.writeEntry("Tabbox", netbookPresentWindowsTabbox);

@@ -53,9 +53,6 @@ private:
     QString m_netbookTitleBarButtonsLeft;
     QString m_netbookTitleBarButtonsRight;
 
-    int m_desktopPresentWindowsLayoutMode;
-    int m_netbookPresentWindowsLayoutMode;
-
     Ui::MainPage *m_ui;
 };
 
