@@ -22,6 +22,7 @@
 
 #include <QApplication>
 #include <QBoxLayout>
+#include <QPropertyAnimation>
 #include <QTimer>
 
 #include <KWindowSystem>
@@ -58,6 +59,8 @@ PanelAppletHandle::PanelAppletHandle(QWidget *parent, Qt::WindowFlags f)
     m_layout->addWidget(m_closeButton);
     connect(m_closeButton, SIGNAL(clicked()), this, SLOT(closeApplet()));
 
+    m_moveAnimation = new QPropertyAnimation(this, "pos", this);
+
     m_layout->activate();
     resize(sizeHint());
 }
@@ -83,7 +86,15 @@ void PanelAppletHandle::setApplet(Plasma::Applet *applet)
         } else {
             m_layout->setDirection(QBoxLayout::LeftToRight);
         }
-        move(applet->containment()->corona()->popupPosition(applet, size(), Qt::AlignCenter));
+        if (isVisible()) {
+            m_moveAnimation->setStartValue(pos());
+            m_moveAnimation->setEndValue(applet->containment()->corona()->popupPosition(applet, size(), Qt::AlignCenter));
+            m_moveAnimation->setDuration(250);
+            m_moveAnimation->start();
+        } else {
+            move(applet->containment()->corona()->popupPosition(applet, size(), Qt::AlignCenter));
+            show();
+        }
     }
 }
 

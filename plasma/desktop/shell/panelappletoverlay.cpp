@@ -440,7 +440,6 @@ void PanelAppletOverlay::enterEvent(QEvent *event)
     Q_UNUSED(event)
     update();
     s_appletHandle->setApplet(m_applet);
-    s_appletHandle->show();
 }
 
 void PanelAppletOverlay::leaveEvent(QEvent *event)

@@ -24,6 +24,7 @@
 #include <Plasma/Svg>
 
 class QBoxLayout;
+class QPropertyAnimation;
 class QTimer;
 
 namespace Plasma
@@ -59,6 +60,7 @@ private:
     Plasma::Svg *m_icons;
     QWeakPointer<Plasma::Applet> m_applet;
     QTimer *m_hideTimer;
+    QPropertyAnimation *m_moveAnimation;
 };
 
 #endif
