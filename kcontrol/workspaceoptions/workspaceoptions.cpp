@@ -135,8 +135,8 @@ void WorkspaceOptionsModule::save()
         ownPresentWindowsCg.writeEntry("DesktopLayoutMode", desktopPresentWindowsLayoutMode);
 
         //box switch effect
-        desktopPresentWindowsTabbox = ownPresentWindowsCg.readEntry("DesktopTabbox", false);
-        kwinPresentWindowsCg.writeEntry("TabBox", desktopPresentWindowsTabbox);
+        desktopPresentWindowsTabbox = kwinPresentWindowsCg.readEntry("TabBox", false);
+        ownPresentWindowsCg.writeEntry("DesktopTabBox", desktopPresentWindowsTabbox);
 
         KConfigGroup ownBoxSwitchCg( m_ownConfig, "Effect-BoxSwitch" );
         KConfigGroup kwinBoxSwitchCg( m_kwinConfig, "Effect-BoxSwitch" );
@@ -169,22 +169,22 @@ void WorkspaceOptionsModule::save()
 
 
         //box switch effect
-        netbookPresentWindowsTabbox = ownPresentWindowsCg.readEntry("DesktopTabbox", false);
-        kwinPresentWindowsCg.writeEntry("NetbookTabBox", netbookPresentWindowsTabbox);
+        netbookPresentWindowsTabbox = kwinPresentWindowsCg.readEntry("TabBox", false);
+        ownPresentWindowsCg.writeEntry("NetbookTabBox", netbookPresentWindowsTabbox);
 
-        KConfigGroup ownBoxSwitchCg( m_kwinConfig, "Effect-BoxSwitch" );
+        KConfigGroup ownBoxSwitchCg( m_ownConfig, "Effect-BoxSwitch" );
         KConfigGroup kwinBoxSwitchCg( m_kwinConfig, "Effect-BoxSwitch" );
         netbookBoxSwitchTabbox = kwinBoxSwitchCg.readEntry("TabBox", netbookBoxSwitchTabbox);
         ownBoxSwitchCg.writeEntry( "NetbookTabBox", netbookBoxSwitchTabbox );
         ownBoxSwitchCg.sync();
 
-        KConfigGroup ownCoverSwitchCg( m_kwinConfig, "Effect-CoverSwitch" );
+        KConfigGroup ownCoverSwitchCg( m_ownConfig, "Effect-CoverSwitch" );
         KConfigGroup kwinCoverSwitchCg( m_kwinConfig, "Effect-CoverSwitch" );
         netbookCoverSwitchTabbox = kwinCoverSwitchCg.readEntry("TabBox", netbookCoverSwitchTabbox);
         ownCoverSwitchCg.writeEntry( "NetbookTabBox", netbookCoverSwitchTabbox );
         ownCoverSwitchCg.sync();
 
-        KConfigGroup ownFlipSwitchCg( m_kwinConfig, "Effect-FlipSwitch" );
+        KConfigGroup ownFlipSwitchCg( m_ownConfig, "Effect-FlipSwitch" );
         KConfigGroup kwinFlipSwitchCg( m_kwinConfig, "Effect-FlipSwitch" );
         netbookFlipSwitchTabbox = kwinFlipSwitchCg.readEntry("TabBox", netbookFlipSwitchTabbox);
         ownFlipSwitchCg.writeEntry( "NetbookTabBox", netbookFlipSwitchTabbox );
