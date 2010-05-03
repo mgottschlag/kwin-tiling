@@ -175,7 +175,8 @@ This button opens khelpcenter with the current help page for the information mod
 </sect2>
 
 <sect2 id="info-center-menu-help">
-<title><guimenu>Help</guimenu> Menu button</title>&help.menu.documentation;
+<title><guimenu>Help</guimenu> Menu button</title>
+&help.menu.documentation;
 </sect2>
 
 </sect1>
