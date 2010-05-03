@@ -46,6 +46,7 @@ private:
     KSharedConfigPtr m_ownConfig;
     KAutostart m_plasmaDesktopAutostart;
     KAutostart m_plasmaNetbookAutostart;
+    KAutostart m_krunnerAutostart;
     bool m_currentlyIsDesktop;
 
     Ui::MainPage *m_ui;

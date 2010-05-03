@@ -41,6 +41,7 @@ WorkspaceOptionsModule::WorkspaceOptionsModule(QWidget *parent, const QVariantLi
     m_ownConfig( KSharedConfig::openConfig("workspaceoptionsrc")),
     m_plasmaDesktopAutostart("plasma-desktop"),
     m_plasmaNetbookAutostart("plasma-netbook"),
+    m_krunnerAutostart("krunner"),
     m_ui(new Ui::MainPage)
 {
     KAboutData *about =
@@ -85,6 +86,11 @@ void WorkspaceOptionsModule::save()
     m_plasmaNetbookAutostart.setStartPhase(KAutostart::BaseDesktop);
     m_plasmaNetbookAutostart.setCommand("plasma-netbook");
     m_plasmaNetbookAutostart.setAllowedEnvironments(QStringList()<<"KDE");
+
+    m_krunnerAutostart.setAutostarts(isDesktop);
+    m_krunnerAutostart.setStartPhase(KAutostart::BaseDesktop);
+    m_krunnerAutostart.setCommand("krunner");
+    m_krunnerAutostart.setAllowedEnvironments(QStringList()<<"KDE");
 
     KConfigGroup winCg(m_kwinConfig, "Windows");
 
@@ -252,11 +258,14 @@ void WorkspaceOptionsModule::save()
         if (KRun::run("plasma-desktop", KUrl::List(), 0)) {
             QDBusInterface interface("org.kde.plasma-netbook", "/MainApplication");
             interface.call("quit");
+            KRun::run("krunner", KUrl::List(), 0);
         }
     } else if (!isDesktop && m_currentlyIsDesktop) {
         if (KRun::run("plasma-netbook", KUrl::List(), 0)) {
             QDBusInterface interface("org.kde.plasma-desktop", "/MainApplication");
             interface.call("quit");
+            QDBusInterface krunnerInterface("org.kde.krunner", "/MainApplication");
+            krunnerInterface.call("quit");
         }
     }
     m_currentlyIsDesktop = isDesktop;
