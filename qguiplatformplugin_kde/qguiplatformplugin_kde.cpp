@@ -315,8 +315,16 @@ public: // ColorDialog
         if (!kdecd) {
             kdecd = new KColorDialogBridge(qcd);
             kdecd->setColor(qcd->currentColor());
+            if (qcd->options() & QColorDialog::NoButtons) {
+                kdecd->setButtons(KDialog::None);
+                kdecd->showButtonSeparator(false);
+            }
             kdecd->setModal(qcd->isModal());
             qcd->setProperty("_k_bridge", QVariant::fromValue(kdecd));
+        }
+        if (visible) {
+            kdecd->setCaption(qcd->windowTitle());
+            kdecd->setAlphaChannelEnabled(qcd->options() & QColorDialog::ShowAlphaChannel);
         }
         kdecd->setVisible(visible);
         return true;
