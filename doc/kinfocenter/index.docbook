@@ -144,7 +144,58 @@ FreeBSD system, Version 4.4-RELEASE, on a Pentium.
 
 </sect1>
 
-</chapter>
+
+
+<!--*****************************************************************-->
+
+
+<sect1 id="info-center-menus">
+<title>The &infocenter; Toolbar</title>
+
+<para>This next section gives you a brief description of what each toolbar item does. </para>
+<sect2 id="info-center-export-file">
+<title>
+<guimenu>Export</guimenu> button
+</title>
+<para>
+The export button allows you to export information from the current information module if the
+module allows this functionality. Clicking the export button will bring up a file dialog that will allow
+you to choose the location of the file
+</para>
+
+</sect2>
+
+<sect2 id="info-center-module-help">
+<title>
+<guimenu>Module help</guimenu> button
+</title>
+<para>
+This button opens khelpcenter with the current help page for the information module. 
+</para>
+</sect2>
+
+<sect2 id="info-center-menu-help">
+<title><guimenu>Help</guimenu> Menu button</title>&help.menu.documentation;
+</sect2>
+
+</sect1>
+<sect1 id="info-center-exiting">
+<title>Exiting The &kde; Information Centre</title>
+
+<para>You can exit the info centre one of three ways: </para>
+<itemizedlist>
+<listitem>
+<para>
+Type <keycombo action="simul">&Ctrl;<keycap>Q</keycap></keycombo> on the keyboard. 
+</para>
+</listitem>
+
+<listitem>
+<para>Click on the <guiicon>Close</guiicon> button on the frame surrounding the info centre.</para>
+</listitem>
+</itemizedlist>
+</sect1>
+</chapter> 
 
 <!--*****************************************************************-->
 
