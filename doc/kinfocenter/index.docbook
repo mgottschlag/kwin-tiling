@@ -103,19 +103,23 @@ All three of these methods are equivalent, and produce the same result.
 When you start the information center, you are presented with a window,
 which can be divided into 3 functional parts.
 </para>
+
 <screenshot>
-<screeninfo>The &infocenter; Screen.</screeninfo>
-<mediaobject>
-<imageobject>
-<imagedata fileref="kinfocenter.png" format="PNG"/></imageobject>
-<textobject><phrase>The &infocenter; Screen</phrase></textobject>
-</mediaobject>
+  <screeninfo>The &infocenter; Screen.</screeninfo>
+  <mediaobject>
+  <imageobject>
+    <imagedata fileref="kinfocenter.png" format="PNG"/>
+  </imageobject>
+  <textobject>
+    <phrase>The &infocenter; Screen</phrase>
+  </textobject>
+  </mediaobject>
 </screenshot>
 
 <para>
-Across the top is a menubar.  The menubar will provide you with quick
-access to most of &infocenter;'s features like quitting, configuring shortcuts
-and getting help.
+Across the top is a toolbar.  The toolbar will provide you with quick
+access to most of &infocenter;'s features like export, get help on the current
+module and a help menu.
 </para>
 
 <para>
@@ -152,64 +156,69 @@ FreeBSD system, Version 4.4-RELEASE, on a Pentium.
 
 <para>
 This is a list of the <emphasis>standard</emphasis> configuration
-modules (sorted by category) provided by the <application
-role="package">&kde; base</application> package. Please note that there
-may be many more modules on your system if you have installed additional
-software.
+modules provided by the <application role="package">&kde; base</application> package. 
+Please note that there may be many more modules on your system if you have installed 
+additional software.
 </para>
 
 <itemizedlist>
+
 <listitem>
-<para><ulink url="help:/kinfocenter/devices/index.html">Devices</ulink></para>
+<para><ulink url="help:/kinfocenter/infosummary/index.html">Summary</ulink></para>
 </listitem>
-<listitem>
-<para><ulink url="help:/kinfocenter/dma/index.html">DMA-Channels</ulink></para>
-</listitem>
-<listitem>
-<para><ulink url="help:/kinfocenter/view1394/index.html">IEEE 1394 Devices</ulink></para>
-</listitem>
-<listitem>
-<para><ulink url="help:/kinfocenter/interrupts/index.html">Interrupts</ulink></para>
-</listitem>
-<listitem>
-<para><ulink url="help:/kinfocenter/ioports/index.html">IO-Ports</ulink></para>
-</listitem>
+
 <listitem>
 <para><ulink url="help:/kinfocenter/memory/index.html">Memory</ulink></para>
 </listitem>
+
 <listitem>
-<para><ulink url="help:/kinfocenter/nics/index.html">Network Interfaces</ulink></para>
+<para><ulink url="help:/kinfocenter/devinfo/index.html">Device Information</ulink></para>
 </listitem>
+
 <listitem>
-<para><ulink url="help:/kinfocenter/opengl/index.html">OpenGL</ulink></para>
+<para><ulink url="help:/kinfocenter/interrupts/index.html">Interrupts</ulink></para>
 </listitem>
+
 <listitem>
-<para><ulink url="help:/kinfocenter/partitions/index.html">Partitions</ulink></para>
+<para><ulink url="help:/kinfocenter/dma/index.html">DMA-Channels</ulink></para>
 </listitem>
+
+<listitem>
+<para><ulink url="help:/kinfocenter/view1394/index.html">IEEE 1394 Devices</ulink></para>
+</listitem>
+
 <listitem>
 <para><ulink url="help:/kinfocenter/pci/index.html">PCI</ulink></para>
 </listitem>
+
 <listitem>
-<para><ulink url="help:/kinfocenter/processor/index.html">Processor</ulink></para>
+<para><ulink url="help:/kinfocenter/ioports/index.html">IO-Ports</ulink></para>
 </listitem>
-<listitem>
-<para><ulink url="help:/kinfocenter/protocols/index.html">Protocols</ulink></para>
-</listitem>
-<listitem>
-<para><ulink url="help:/kinfocenter/samba/index.html">Samba Status Information</ulink></para>
-</listitem>
+
 <listitem>
 <para><ulink url="help:/kinfocenter/scsi/index.html">SCSI</ulink></para>
 </listitem>
-<listitem>
-<para><ulink url="help:/kinfocenter/sound/index.html">Sound</ulink></para>
-</listitem>
+
 <listitem>
 <para><ulink url="help:/kinfocenter/usb/index.html">USB Devices</ulink></para>
 </listitem>
+
+<listitem>
+<para><ulink url="help:/kinfocenter/samba/index.html">Samba Status Information</ulink></para>
+</listitem>
+
+<listitem>
+<para><ulink url="help:/kinfocenter/nics/index.html">Network Interfaces</ulink></para>
+</listitem>
+
+<listitem>
+<para><ulink url="help:/kinfocenter/opengl/index.html">OpenGL</ulink></para>
+</listitem>
+
 <listitem>
 <para><ulink url="help:/kinfocenter/xserver/index.html">&X-Server;</ulink></para>
 </listitem>
+
 </itemizedlist>
 
 </sect1>
