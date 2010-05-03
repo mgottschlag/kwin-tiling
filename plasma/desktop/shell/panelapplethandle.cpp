@@ -20,6 +20,7 @@
 #include "panelapplethandle.h"
 #include "toolbutton.h"
 
+#include <QApplication>
 #include <QBoxLayout>
 #include <QTimer>
 
@@ -73,6 +74,13 @@ void PanelAppletHandle::setApplet(Plasma::Applet *applet)
     m_applet = applet;
 
     if (applet) {
+        if (applet->formFactor() == Plasma::Vertical) {
+            m_layout->setDirection(QBoxLayout::TopToBottom);
+        } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
+            m_layout->setDirection(QBoxLayout::RightToLeft);
+        } else {
+            m_layout->setDirection(QBoxLayout::LeftToRight);
+        }
         move(applet->containment()->corona()->popupPosition(applet, size(), Qt::AlignCenter));
     }
 }
