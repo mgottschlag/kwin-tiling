@@ -105,7 +105,7 @@ Comment[zh_CN]=一个可将部件分放到两栏的活动容器
 Comment[zh_TW]=將元件放到兩個欄位的活動
 
 
-Icon=
+Icon=knewsticker
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet,Plasma/Containment
 X-Plasma-ContainmentCategories=netbook,desktop
