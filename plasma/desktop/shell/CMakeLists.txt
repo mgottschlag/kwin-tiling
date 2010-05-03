@@ -21,6 +21,7 @@ set(plasma_SRCS
     main.cpp
     panelcontroller.cpp
     panelview.cpp
+    panelapplethandle.cpp
     panelappletoverlay.cpp
     plasmaapp.cpp
     positioningruler.cpp

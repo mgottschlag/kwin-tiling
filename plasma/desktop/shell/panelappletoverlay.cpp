@@ -18,7 +18,7 @@
  */
 
 #include "panelappletoverlay.h"
-
+#include "panelapplethandle.h"
 
 #include <QApplication>
 #include <QGraphicsLinearLayout>
@@ -85,6 +85,8 @@ PanelAppletOverlay::PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent)
     syncOrientation();
     syncGeometry();
     setMouseTracking(true);
+    m_appletHandle = new PanelAppletHandle();
+
 
     connect(m_applet, SIGNAL(destroyed(QObject*)), this, SLOT(appletDestroyed()));
     connect(m_applet, SIGNAL(geometryChanged()), this, SLOT(delaySyncGeometry()));
@@ -109,6 +111,8 @@ PanelAppletOverlay::~PanelAppletOverlay()
         m_spacer->deleteLater();
         m_spacer = 0;
     }
+
+    delete m_appletHandle;
 }
 
 void PanelAppletOverlay::paintEvent(QPaintEvent *event)
@@ -421,12 +425,15 @@ void PanelAppletOverlay::enterEvent(QEvent *event)
 {
     Q_UNUSED(event)
     update();
+    m_appletHandle->setApplet(m_applet);
+    m_appletHandle->show();
 }
 
 void PanelAppletOverlay::leaveEvent(QEvent *event)
 {
     setCursor(Qt::ArrowCursor);
     Q_UNUSED(event)
+    m_appletHandle->startHideTimeout();
     update();
 }
 

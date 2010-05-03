@@ -28,7 +28,10 @@ class QGraphicsWidget;
 namespace Plasma
 {
     class Applet;
+    class Dialog;
 }
+
+class PanelAppletHandle;
 
 class PanelAppletOverlay : public QWidget
 {
@@ -79,6 +82,7 @@ private:
     QPoint m_origin;
     QPoint m_lastGlobalPos;
     DragType m_dragAction;
+    PanelAppletHandle *m_appletHandle;
     int m_offset;
     int m_index;
     bool m_clickDrag;
