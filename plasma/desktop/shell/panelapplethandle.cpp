@@ -67,7 +67,7 @@ PanelAppletHandle::PanelAppletHandle(QWidget *parent, Qt::WindowFlags f)
     m_moveAnimation = new QPropertyAnimation(this, "pos", this);
 
     m_layout->activate();
-    resize(sizeHint());
+    resize(minimumSizeHint());
 }
 
 PanelAppletHandle::~PanelAppletHandle()
@@ -87,14 +87,17 @@ void PanelAppletHandle::setApplet(Plasma::Applet *applet)
     if (applet) {
         m_title->setText(applet->name());
         m_layout->activate();
-        resize(sizeHint());
+        resize(minimumSizeHint());
 
         if (applet->formFactor() == Plasma::Vertical) {
             m_layout->setDirection(QBoxLayout::TopToBottom);
+            m_title->hide();
         } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
             m_layout->setDirection(QBoxLayout::RightToLeft);
+            m_title->show();
         } else {
             m_layout->setDirection(QBoxLayout::LeftToRight);
+            m_title->show();
         }
         if (isVisible()) {
             m_moveAnimation->setStartValue(pos());
