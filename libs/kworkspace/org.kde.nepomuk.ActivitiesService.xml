@@ -1,0 +1,62 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.nepomuk.services.NepomukActivitiesService">
+    <method name="listAvailable">
+      <arg type="as" direction="out"/>
+    </method>
+    <method name="add">
+      <arg name="activityId" type="s" direction="in"/>
+      <arg name="activityName" type="s" direction="in"/>
+    </method>
+    <method name="remove">
+      <arg name="activityId" type="s" direction="in"/>
+    </method>
+    <method name="name">
+      <arg type="s" direction="out"/>
+      <arg name="activityId" type="s" direction="in"/>
+    </method>
+    <method name="setName">
+      <arg name="activityId" type="s" direction="in"/>
+      <arg name="name" type="s" direction="in"/>
+    </method>
+    <method name="resourceUri">
+      <arg type="s" direction="out"/>
+      <arg name="activityId" type="s" direction="in"/>
+    </method>
+    <method name="uri">
+      <arg type="s" direction="out"/>
+      <arg name="activityId" type="s" direction="in"/>
+    </method>
+    <method name="associateResource">
+      <arg name="activityID" type="s" direction="in"/>
+      <arg name="resourceUri" type="s" direction="in"/>
+      <arg name="typeUri" type="s" direction="in"/>
+    </method>
+    <method name="associateResource">
+      <arg name="activityID" type="s" direction="in"/>
+      <arg name="resourceUri" type="s" direction="in"/>
+    </method>
+    <method name="disassociateResource">
+      <arg name="activityID" type="s" direction="in"/>
+      <arg name="resourceUri" type="s" direction="in"/>
+    </method>
+    <method name="associatedResources">
+      <arg type="as" direction="out"/>
+      <arg name="activityId" type="s" direction="in"/>
+      <arg name="resourceType" type="s" direction="in"/>
+    </method>
+    <method name="associatedResources">
+      <arg type="as" direction="out"/>
+      <arg name="activityId" type="s" direction="in"/>
+    </method>
+    <method name="forResource">
+      <arg type="as" direction="out"/>
+      <arg name="uri" type="s" direction="in"/>
+    </method>
+    <method name="_deleteAll">
+    </method>
+    <method name="_serviceIteration">
+      <arg type="s" direction="out"/>
+    </method>
+  </interface>
+</node>

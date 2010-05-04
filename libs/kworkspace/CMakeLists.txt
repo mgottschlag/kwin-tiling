@@ -51,13 +51,13 @@ qt4_add_dbus_adaptor(
 
 qt4_add_dbus_interface(
     kworkspace_LIB_SRCS
-    ${KDEBASE_RUNTIME_SOURCE_DIR}/activitymanager/org.kde.ActivityManager.xml
+    org.kde.ActivityManager.xml
     activitymanager_interface
 )
 
 qt4_add_dbus_interface(
     kworkspace_LIB_SRCS
-    ${KDEBASE_RUNTIME_SOURCE_DIR}/nepomuk/services/activities/org.kde.nepomuk.ActivitiesService.xml
+    org.kde.nepomuk.ActivitiesService.xml
     nepomukactivitiesservice_interface
 )
 
