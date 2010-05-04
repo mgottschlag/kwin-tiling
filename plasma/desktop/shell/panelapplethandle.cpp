@@ -22,6 +22,7 @@
 
 #include <QApplication>
 #include <QBoxLayout>
+#include <QLabel>
 #include <QPropertyAnimation>
 #include <QTimer>
 
@@ -39,7 +40,6 @@ PanelAppletHandle::PanelAppletHandle(QWidget *parent, Qt::WindowFlags f)
     m_icons->setImagePath("widgets/configuration-icons");
     KWindowSystem::setType(winId(), NET::Dock);
     setWindowFlags(Qt::X11BypassWindowManagerHint);
-    //KWindowSystem::setState(winId(), NET::KeepAbove|NET::StaysOnTop);
     hide();
 
     m_hideTimer = new QTimer(this);
@@ -47,11 +47,15 @@ PanelAppletHandle::PanelAppletHandle(QWidget *parent, Qt::WindowFlags f)
     connect(m_hideTimer, SIGNAL(timeout()), this, SLOT(hide()));
 
     m_layout = new QBoxLayout(QBoxLayout::LeftToRight, this);
+    m_layout->setContentsMargins(0, 0, 0, 0);
     m_configureButton = new ToolButton(this);
     m_configureButton->setIcon(m_icons->pixmap("configure"));
     m_layout->addWidget(m_configureButton);
     connect(m_configureButton, SIGNAL(clicked()), this, SLOT(configureApplet()));
 
+    m_layout->addStretch();
+    m_title = new QLabel(this);
+    m_layout->addWidget(m_title);
     m_layout->addStretch();
 
     m_closeButton = new ToolButton(this);
@@ -80,6 +84,10 @@ void PanelAppletHandle::setApplet(Plasma::Applet *applet)
     m_hideTimer->stop();
 
     if (applet) {
+        m_title->setText(applet->name());
+        m_layout->activate();
+        resize(sizeHint());
+
         if (applet->formFactor() == Plasma::Vertical) {
             m_layout->setDirection(QBoxLayout::TopToBottom);
         } else if (QApplication::layoutDirection() == Qt::RightToLeft) {

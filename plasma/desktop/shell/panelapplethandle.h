@@ -25,6 +25,7 @@
 
 class QBoxLayout;
 class QPropertyAnimation;
+class QLabel;
 class QTimer;
 
 namespace Plasma
@@ -58,6 +59,7 @@ private:
     ToolButton *m_configureButton;
     ToolButton *m_closeButton;
     Plasma::Svg *m_icons;
+    QLabel *m_title;
     QWeakPointer<Plasma::Applet> m_applet;
     QTimer *m_hideTimer;
     QPropertyAnimation *m_moveAnimation;
