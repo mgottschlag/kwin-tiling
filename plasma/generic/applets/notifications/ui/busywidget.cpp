@@ -253,8 +253,7 @@ void BusyWidget::updateTask()
         setLabel(QString());
     } else if (runningJobs) {
         setState(BusyWidget::Running);
-        setLabel(QString("%1/%2").arg(QString::number(total - runningJobs))
-                                 .arg(QString::number(total)));
+        setLabel(QString("%1").arg(QString::number(total)));
     } else {
         setState(BusyWidget::Info);
         setLabel(QString::number(total));
