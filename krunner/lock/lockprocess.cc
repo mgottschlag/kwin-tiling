@@ -1208,25 +1208,8 @@ static void fakeFocusIn( WId window )
     XSendEvent( QX11Info::display(), window, False, NoEventMask, &ev );
 }
 
-bool LockProcess::eventFilter(QObject *o, QEvent *e)
-{
-    if (e->type() == QEvent::Resize) {
-        QWidget *w = static_cast<QWidget *>(o);
-        mFrames.value(w)->resize(w->size());
-    }
-    return false;
-}
-
 int LockProcess::execDialog( QDialog *dlg )
 {
-
-    QFrame *winFrame = new QFrame( dlg );
-    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
-    winFrame->setLineWidth( 2 );
-    winFrame->lower();
-    mFrames.insert(dlg, winFrame);
-    dlg->installEventFilter(this);
-
     dlg->adjustSize();
 
     int screen = Kephal::ScreenUtils::primaryScreenId();
@@ -1261,7 +1244,6 @@ int LockProcess::execDialog( QDialog *dlg )
     updateFocus();
 
     dlg->removeEventFilter(this);
-    mFrames.remove(dlg);
 
     return rt;
 }
