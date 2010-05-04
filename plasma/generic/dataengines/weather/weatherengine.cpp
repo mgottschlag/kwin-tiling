@@ -21,11 +21,12 @@
 #include "weatherengine.h"
 
 #include <QCoreApplication>
+#include <QTimer>
 
-#include <KServiceTypeTrader>
 #include <KDateTime>
 #include <KLocale>
-#include <QTimer>
+#include <KSycoca>
+#include <KServiceTypeTrader>
 
 #include <Plasma/DataEngineManager>
 
@@ -101,26 +102,6 @@ Plasma::DataEngine *WeatherEngine::loadIon(const QString& plugName)
 
 /* FIXME: Q_PROPERTY functions to update the list of available plugins */
 
-void WeatherEngine::setUpdate(bool update)
-{
-    Q_UNUSED(update)
-
-    removeSource("ions");
-    
-    // Get the list of available plugins but don't load them
-    foreach(const KPluginInfo &info, Plasma::DataEngineManager::listEngineInfo("weatherengine")) {
-        setData("ions", info.pluginName(),
-                QString("%1|%2").arg(info.property("Name").toString()).arg(info.pluginName()));
-        kDebug() << "FOUND PLUGINS: " << info.property("Name").toString();
-    }
-}
-
-/* This method is unused */
-bool WeatherEngine::update() const
-{
-   return true;
-}
-
 /**
  * Unload an Ion plugin given a Ion plugin name.
  */
@@ -133,18 +114,26 @@ void WeatherEngine::unloadIon(const QString &name)
 void WeatherEngine::init()
 {
     // Get the list of available plugins but don't load them
-    foreach(const KPluginInfo &info, Plasma::DataEngineManager::listEngineInfo("weatherengine")) {
-        setData("ions", info.pluginName(),
-                QString("%1|%2").arg(info.property("Name").toString()).arg(info.pluginName()));
-    }
-
     Solid::Networking::Status status = Solid::Networking::status();
     d->m_networkAvailable = (status == Solid::Networking::Connected ||
                              status == Solid::Networking::Unknown);
     connect(Solid::Networking::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
             this, SLOT(networkStatusChanged(Solid::Networking::Status)));
+    connect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)), this, SLOT(updateIonList()));
 
+    updateIonList();
     kDebug() << "init()";
+}
+
+void WeatherEngine::updateIonList(const QStringList &changedResources)
+{
+    if (changedResources.isEmpty() || changedResources.contains("services")) {
+        removeAllData("ions");
+        foreach (const KPluginInfo &info, Plasma::DataEngineManager::listEngineInfo("weatherengine")) {
+            setData("ions", info.pluginName(),
+                    QString("%1|%2").arg(info.property("Name").toString()).arg(info.pluginName()));
+        }
+    }
 }
 
 /**

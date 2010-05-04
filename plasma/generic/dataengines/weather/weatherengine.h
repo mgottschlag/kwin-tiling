@@ -39,7 +39,6 @@
 class WeatherEngine : public Plasma::DataEngine
 {
     Q_OBJECT
-    Q_PROPERTY(bool update READ update WRITE setUpdate)
 
 public:
     /** Constructor
@@ -50,10 +49,6 @@ public:
 
     // Destructor
     ~WeatherEngine();
-
-    // FIXME: Right now use a Q_PROPERTY to force the engine to update plugins installed with KNS, this isn't pretty at all :/
-    void setUpdate(bool update);
-    bool update(void) const;
 
     // initialization
     void init();
@@ -120,6 +115,11 @@ protected Q_SLOTS:
      * Cleans up the ions that are currently loaded
      */
     void unloadIons(void);
+
+    /**
+     * updates the list of ions whenever KSycoca changes (as well as on init
+     */
+    void updateIonList(const QStringList &changedResources = QStringList());
 
 private:
     class Private;
