@@ -39,7 +39,6 @@ PlasmoidTask::PlasmoidTask(const QString &appletname, int id, QObject *parent, P
     : Task(parent),
       m_name(appletname),
       m_typeId(appletname),
-      m_applet(0),
       m_host(host),
       m_takenByParent(false)
 {
@@ -66,7 +65,7 @@ bool PlasmoidTask::isValid() const
 QString PlasmoidTask::name() const
 {
     if (m_applet) {
-        return m_applet->name();
+        return m_applet.data()->name();
     }
 
     return m_name;
@@ -95,41 +94,44 @@ QGraphicsWidget* PlasmoidTask::createWidget(Plasma::Applet *host)
         return 0;
     }
 
+    Plasma::Applet *applet = m_applet.data();
     m_takenByParent = true;
-    m_applet->setParent(host);
-    m_applet->setParentItem(host);
-    m_applet->init();
-    m_applet->updateConstraints(Plasma::StartupCompletedConstraint);
-    m_applet->flushPendingConstraintsEvents();
-    m_applet->updateConstraints(Plasma::AllConstraints);
-    m_applet->flushPendingConstraintsEvents();
+    applet->setParent(host);
+    applet->setParentItem(host);
+    applet->init();
+    applet->updateConstraints(Plasma::StartupCompletedConstraint);
+    applet->flushPendingConstraintsEvents();
+    applet->updateConstraints(Plasma::AllConstraints);
+    applet->flushPendingConstraintsEvents();
 
     // make sure to record it in the configuration so that if we reload from the config,
     // this applet is remembered
     KConfigGroup dummy;
-    m_applet->save(dummy);
+    applet->save(dummy);
 
-    connect(m_applet, SIGNAL(newStatus(Plasma::ItemStatus)), this, SLOT(newAppletStatus(Plasma::ItemStatus)));
+    connect(applet, SIGNAL(newStatus(Plasma::ItemStatus)), this, SLOT(newAppletStatus(Plasma::ItemStatus)));
 
-    newAppletStatus(m_applet->status());
+    newAppletStatus(applet->status());
 
-    connect(m_applet, SIGNAL(configNeedsSaving()), host, SIGNAL(configNeedsSaving()));
-    connect(m_applet, SIGNAL(releaseVisualFocus()), host, SIGNAL(releaseVisualFocus()));
+    connect(applet, SIGNAL(configNeedsSaving()), host, SIGNAL(configNeedsSaving()));
+    connect(applet, SIGNAL(releaseVisualFocus()), host, SIGNAL(releaseVisualFocus()));
 
-    return static_cast<QGraphicsWidget*>(m_applet);
+    return static_cast<QGraphicsWidget*>(applet);
 }
 
 void PlasmoidTask::forwardConstraintsEvent(Plasma::Constraints constraints)
 {
-    if (m_applet) {
-        m_applet->updateConstraints(constraints);
-        m_applet->flushPendingConstraintsEvents();
+    Plasma::Applet *applet = m_applet.data();
+    if (applet) {
+        applet->updateConstraints(constraints);
+        applet->flushPendingConstraintsEvents();
     }
 }
 
 void PlasmoidTask::setupApplet(const QString &plugin, int id)
 {
-    m_applet = Plasma::Applet::load(plugin, id);
+    Plasma::Applet *applet = Plasma::Applet::load(plugin, id);
+    m_applet = applet;
 
     if (!m_applet) {
         kDebug() << "Could not load applet" << plugin;
@@ -137,36 +139,38 @@ void PlasmoidTask::setupApplet(const QString &plugin, int id)
     }
 
     //FIXME: System Information should be system services, but battery and devicenotifier are both there. we would need multiple categories
-    if (m_applet->category() == "System Information") {
+    if (applet->category() == "System Information") {
         setCategory(Hardware);
-    } else if (m_applet->category() == "Online Services") {
+    } else if (applet->category() == "Online Services") {
         setCategory(Communications);
     }
 
-    m_icon = KIcon(m_applet->icon());
+    m_icon = KIcon(applet->icon());
 
-    m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
+    applet->setFlag(QGraphicsItem::ItemIsMovable, false);
 
-    connect(m_applet, SIGNAL(destroyed(QObject*)), this, SLOT(appletDestroyed(QObject*)));
-    m_applet->setBackgroundHints(Plasma::Applet::NoBackground);
+    connect(applet, SIGNAL(destroyed(QObject*)), this, SLOT(appletDestroyed(QObject*)));
+    applet->setBackgroundHints(Plasma::Applet::NoBackground);
 
-    m_applet->setPreferredSize(KIconLoader::SizeSmallMedium+2, KIconLoader::SizeSmallMedium+2);
-    kDebug() << m_applet->name() << " Applet loaded";
+    applet->setPreferredSize(KIconLoader::SizeSmallMedium+2, KIconLoader::SizeSmallMedium+2);
+    kDebug() << applet->name() << " Applet loaded";
 }
 
-void PlasmoidTask::appletDestroyed(QObject *object)
+void PlasmoidTask::appletDestroyed(QObject *)
 {
-    if (object == m_applet) {
-        m_applet = 0;
-        deleteLater();
-    }
+    deleteLater();
 }
 
 void PlasmoidTask::newAppletStatus(Plasma::ItemStatus status)
 {
+    Plasma::Applet *applet = m_applet.data();
+    if (!applet) {
+        return;
+    }
+
     switch (status) {
     case Plasma::PassiveStatus:
-       if (Plasma::PopupApplet *popupApplet = qobject_cast<Plasma::PopupApplet *>(m_applet)) {
+       if (Plasma::PopupApplet *popupApplet = qobject_cast<Plasma::PopupApplet *>(applet)) {
            popupApplet->hidePopup();
        }
        setStatus(Task::Passive);

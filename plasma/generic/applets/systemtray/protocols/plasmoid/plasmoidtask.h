@@ -64,7 +64,7 @@ private:
     QString m_name;
     QString m_typeId;
     QIcon m_icon;
-    Plasma::Applet *m_applet;
+    QWeakPointer<Plasma::Applet> m_applet;
     Plasma::Applet *m_host;
     bool m_takenByParent;
 };
