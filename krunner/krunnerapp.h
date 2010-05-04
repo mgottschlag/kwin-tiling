@@ -59,11 +59,6 @@ public:
     bool hasCompositeManager() const;
 
 public Q_SLOTS:
-    void logout();
-    void logoutWithoutConfirmation();
-    void haltWithoutConfirmation();
-    void rebootWithoutConfirmation();
-
     // DBUS interface. if you change these methods, you MUST run:
     // qdbuscpp2xml -m krunnerapp.h -o dbus/org.kde.krunner.App.xml
     Q_SCRIPTABLE void initializeStartupNotification();

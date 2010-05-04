@@ -71,6 +71,6 @@ install(TARGETS kcheckrunning ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 ########### install files ###############
 
-install( FILES ksmserver.upd DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
+install( FILES ksmserver.upd ksmserver_shortcuts.upd DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
 install( PROGRAMS move_session_config.sh DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
 install( FILES org.kde.KSMServerInterface.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR})

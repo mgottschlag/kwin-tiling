@@ -1,0 +1,8 @@
+# Move the logout shortcuts from krunner to ksmserver
+Id=kde45
+File=kglobalshortcutsrc
+Group=krunner,ksmserver
+Key=Halt Without Confirmation
+Key=Log Out
+Key=Log Out Without Confirmation
+Key=Reboot Without Confirmation

@@ -140,6 +140,11 @@ private Q_SLOTS:
     void kcmPhase1Done();
     void kcmPhase2Done();
 
+    void defaultLogout();
+    void logoutWithoutConfirmation();
+    void haltWithoutConfirmation();
+    void rebootWithoutConfirmation();
+
 private:
     void handlePendingInteractions();
     void completeShutdownOrCheckpoint();
@@ -184,6 +189,7 @@ private:
     bool checkStartupSuspend();
     void finishStartup();
     void resumeStartupInternal();
+    void setupShortcuts();
 
     // public dcop interface
 

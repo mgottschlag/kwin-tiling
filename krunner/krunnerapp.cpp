@@ -161,28 +161,6 @@ void KRunnerApp::initialize()
     }
 #endif
 
-    if (KAuthorized::authorize("logout")) {
-        a = m_actionCollection->addAction("Log Out");
-        a->setText(i18n("Log Out"));
-        a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Delete));
-        connect(a, SIGNAL(triggered(bool)), SLOT(logout()));
-
-        a = m_actionCollection->addAction("Log Out Without Confirmation");
-        a->setText(i18n("Log Out Without Confirmation"));
-        a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::SHIFT+Qt::Key_Delete));
-        connect(a, SIGNAL(triggered(bool)), SLOT(logoutWithoutConfirmation()));
-
-        a = m_actionCollection->addAction("Halt Without Confirmation");
-        a->setText(i18n("Halt Without Confirmation"));
-        a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::SHIFT+Qt::Key_PageDown));
-        connect(a, SIGNAL(triggered(bool)), SLOT(haltWithoutConfirmation()));
-
-        a = m_actionCollection->addAction("Reboot Without Confirmation");
-        a->setText(i18n("Reboot Without Confirmation"));
-        a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::SHIFT+Qt::Key_PageUp));
-        connect(a, SIGNAL(triggered(bool)), SLOT(rebootWithoutConfirmation()));
-    }
-
     //Setup the interface after we have set up the actions
     //TODO: if !KAuthorized::authorize("run_comand") (and !"switch_user" i suppose?)
     //      then we probably don't need the interface at all. would be another place
@@ -366,39 +344,6 @@ void KRunnerApp::taskDialogFinished()
 #ifndef Q_WS_WIN
     m_tasks->deleteLater();
     m_tasks = 0;
-#endif
-}
-
-void KRunnerApp::logout()
-{
-    logout(KWorkSpace::ShutdownConfirmYes, KWorkSpace::ShutdownTypeDefault);
-}
-
-void KRunnerApp::logoutWithoutConfirmation()
-{
-    logout(KWorkSpace::ShutdownConfirmNo, KWorkSpace::ShutdownTypeNone);
-}
-
-void KRunnerApp::haltWithoutConfirmation()
-{
-    logout(KWorkSpace::ShutdownConfirmNo, KWorkSpace::ShutdownTypeHalt);
-}
-
-void KRunnerApp::rebootWithoutConfirmation()
-{
-    logout(KWorkSpace::ShutdownConfirmNo, KWorkSpace::ShutdownTypeReboot);
-}
-
-void KRunnerApp::logout(KWorkSpace::ShutdownConfirm confirm, KWorkSpace::ShutdownType sdtype)
-{
-#ifndef Q_WS_WIN
-    if (!KWorkSpace::requestShutDown(confirm, sdtype)) {
-        // TODO: should we show these errors in Interface?
-        KMessageBox::error( 0, i18n("Could not log out properly.\nThe session manager cannot "
-                                    "be contacted. You can try to force a shutdown by pressing "
-                                    "Ctrl+Alt+Backspace; note, however, that your current session "
-                                    "will not be saved with a forced shutdown." ) );
-    }
 #endif
 }
 

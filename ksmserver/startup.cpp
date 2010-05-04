@@ -287,6 +287,7 @@ void KSMServer::autoStart1Done()
     if( !checkStartupSuspend())
         return;
     kDebug( 1218 ) << "Autostart 1 done";
+    setupShortcuts(); // done only here, because it needs kglobalaccel :-/
     lastAppStarted = 0;
     lastIdStarted.clear();
     state = Restoring;
