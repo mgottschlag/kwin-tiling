@@ -208,8 +208,6 @@ void EngineExplorer::addSource(const QString& source)
     m_dataModel->appendRow(parent);
 
     //kDebug() << "getting data for source " << source;
-    Plasma::DataEngine::Data data = m_engine->query(source);
-    showData(parent, data);
 
     if (!m_requestingSource || m_sourceRequester->text() != source) {
         m_engine->connectSource(source, this);
