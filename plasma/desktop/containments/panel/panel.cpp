@@ -134,11 +134,10 @@ void Panel::init()
     //setFlag(ItemClipsChildrenToShape, true);
 
     m_layout = new QGraphicsLinearLayout(this);
-    m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->setSpacing(4);
     m_layout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
-    setLayout(m_layout);
     updateBorders(geometry().toRect());
+    setLayout(m_layout);
     m_layout->setMaximumSize(size());
 
     KConfigGroup cg = config("Configuration");
