@@ -32,6 +32,7 @@
 
 #include <Plasma/Applet>
 #include <Plasma/Containment>
+#include <Plasma/Corona>
 #include <Plasma/PaintUtils>
 #include <Plasma/Theme>
 #include <Plasma/View>
@@ -89,6 +90,13 @@ PanelAppletOverlay::PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent)
     }
 
     ++s_appletHandleCount;
+
+    connect(s_appletHandle, SIGNAL(mousePressed(Plasma::Applet *, QMouseEvent *)), 
+            this, SLOT(handleMousePressed(Plasma::Applet *, QMouseEvent *)));
+    connect(s_appletHandle, SIGNAL(mouseMoved(Plasma::Applet *, QMouseEvent *)), 
+            this, SLOT(handleMouseMoved(Plasma::Applet *, QMouseEvent *)));
+    connect(s_appletHandle, SIGNAL(mouseReleased(Plasma::Applet *, QMouseEvent *)), 
+            this, SLOT(handleMouseReleased(Plasma::Applet *, QMouseEvent *)));
 
     syncIndex();
     syncOrientation();
@@ -275,6 +283,10 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
         //kDebug() << "checking view" << view << m_applet->view();
 
         if (!view) {
+            view = dynamic_cast<Plasma::View*>(parent());
+        }
+
+        if (!view) {
             return;
         }
 
@@ -430,6 +442,30 @@ void PanelAppletOverlay::mouseReleaseEvent(QMouseEvent *event)
     m_applet->setZValue(m_applet->zValue() - 1);
 }
 
+void PanelAppletOverlay::handleMousePressed(Plasma::Applet *applet, QMouseEvent *event)
+{
+    if (applet == m_applet) {
+        QMouseEvent ownEvent(event->type(), mapFromGlobal(event->globalPos()), event->globalPos(), event->button(), event->buttons(), event->modifiers());
+        mousePressEvent(&ownEvent);
+    }
+}
+
+void PanelAppletOverlay::handleMouseMoved(Plasma::Applet *applet, QMouseEvent *event)
+{
+    if (applet == m_applet) {
+        QMouseEvent ownEvent(event->type(), mapFromGlobal(event->globalPos()), event->globalPos(), event->button(), event->buttons(), event->modifiers());
+        mouseMoveEvent(&ownEvent);
+    }
+}
+
+void PanelAppletOverlay::handleMouseReleased(Plasma::Applet *applet, QMouseEvent *event)
+{
+    if (applet == m_applet) {
+        QMouseEvent ownEvent(event->type(), mapFromGlobal(event->globalPos()), event->globalPos(), event->button(), event->buttons(), event->modifiers());
+        mouseReleaseEvent(&ownEvent);
+    }
+}
+
 void PanelAppletOverlay::enterEvent(QEvent *event)
 {
     Q_UNUSED(event)
@@ -525,6 +561,8 @@ void PanelAppletOverlay::syncGeometry()
     } else {
         m_nextGeom = QRectF();
     }
+
+    s_appletHandle->move(m_applet->containment()->corona()->popupPosition(m_applet, s_appletHandle->size(), Qt::AlignCenter));
 }
 
 void PanelAppletOverlay::syncIndex()

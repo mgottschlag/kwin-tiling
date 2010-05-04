@@ -49,10 +49,18 @@ public:
 protected:
     void enterEvent(QEvent *event);
     void leaveEvent(QEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 
 protected Q_SLOTS:
     void configureApplet();
     void closeApplet();
+
+Q_SIGNALS:
+    void mousePressed(Plasma::Applet *applet, QMouseEvent *event);
+    void mouseMoved(Plasma::Applet *applet, QMouseEvent *event);
+    void mouseReleased(Plasma::Applet *applet, QMouseEvent *event);
 
 private:
     QBoxLayout *m_layout;

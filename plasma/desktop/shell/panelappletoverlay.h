@@ -68,6 +68,10 @@ protected slots:
     void delaySyncGeometry();
     void syncGeometry();
 
+    void handleMousePressed(Plasma::Applet *applet, QMouseEvent *event);
+    void handleMouseMoved(Plasma::Applet *applet, QMouseEvent *event);
+    void handleMouseReleased(Plasma::Applet *applet, QMouseEvent *event);
+
 private:
     void swapWithPrevious();
     void swapWithNext();

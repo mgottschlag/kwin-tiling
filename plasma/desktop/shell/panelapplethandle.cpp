@@ -140,5 +140,20 @@ void PanelAppletHandle::leaveEvent(QEvent *event)
     m_hideTimer->start(800);
 }
 
+void PanelAppletHandle::mousePressEvent(QMouseEvent *event)
+{
+    emit mousePressed(m_applet.data(), event);
+}
+
+void PanelAppletHandle::mouseMoveEvent(QMouseEvent *event)
+{
+    emit mouseMoved(m_applet.data(), event);
+}
+
+void PanelAppletHandle::mouseReleaseEvent(QMouseEvent *event)
+{
+    emit mouseReleased(m_applet.data(), event);
+}
+
 
 #include "panelapplethandle.moc"
