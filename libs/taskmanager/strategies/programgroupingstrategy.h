@@ -65,9 +65,10 @@ private Q_SLOTS:
 private:
     QString className(AbstractGroupableItem *item);
     bool programGrouping(TaskItem* taskItem, TaskGroup* groupItem);
+    void untoggleGroupingOn(TaskGroup *group, const QString &name);
+
     class Private;
     Private * const d;
-
 };
 
 

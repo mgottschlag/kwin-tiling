@@ -72,9 +72,9 @@ QList<QAction*> ProgramGroupingStrategy::strategyActions(QObject *parent, Abstra
     QAction *a = new QAction(parent);
     QString name = className(item);
     if (d->blackList.contains(name)) {
-        a->setText(i18n("Allow This Program to Be Grouped"));
+        a->setText(i18n("Allow this program to be grouped"));
     } else {
-        a->setText(i18n("Do Not Allow This Program to Be Grouped"));
+        a->setText(i18n("Do not allow this program to be grouped"));
     }
     connect(a, SIGNAL(triggered()), this, SLOT(toggleGrouping()));
 
@@ -116,10 +116,19 @@ void ProgramGroupingStrategy::toggleGrouping()
         }
     } else {
         d->blackList.append(name);
+        GroupPtr root = rootGroup();
         if (tempItem->isGroupItem()) {
             closeGroup(qobject_cast<TaskGroup*>(tempItem));
-        } else if (rootGroup()) {
-            rootGroup()->add(tempItem);
+        } else if (root) {
+            root->add(tempItem);
+        }
+
+        if (root) {
+            foreach (AbstractGroupableItem *item, root->members()) {
+                if (item->isGroupItem()) {
+                    untoggleGroupingOn(static_cast<TaskGroup*>(item), name);
+                }
+            }
         }
     }
 
@@ -135,6 +144,31 @@ void ProgramGroupingStrategy::toggleGrouping()
     blackGroup.config()->sync();
 }
 
+void ProgramGroupingStrategy::untoggleGroupingOn(TaskGroup *group, const QString &name)
+{
+    if (!group->parentGroup()) {
+        return;
+    }
+
+    foreach (AbstractGroupableItem *item, group->members()) {
+        if (item->isGroupItem()) {
+            untoggleGroupingOn(static_cast<TaskGroup*>(item), name);
+        }
+    }
+
+    foreach (AbstractGroupableItem *item, group->members()) {
+        if (!item->isGroupItem() && name == static_cast<TaskItem *>(item)->task()->classClass())  {
+            if (group->parentGroup()) {
+                group->parentGroup()->add(item);
+            }
+        }
+    }
+
+    if (group->members().isEmpty()) {
+        closeGroup(group);
+    }
+}
+
 void ProgramGroupingStrategy::handleItem(AbstractGroupableItem *item)
 {
     GroupPtr root = rootGroup();
@@ -147,7 +181,7 @@ void ProgramGroupingStrategy::handleItem(AbstractGroupableItem *item)
         //kDebug() << "item is groupitem";
         root->add(item);
         return;
-    } else if (d->blackList.contains((qobject_cast<TaskItem*>(item))->task()->classClass())) {
+    } else if (d->blackList.contains((static_cast<TaskItem*>(item))->task()->classClass())) {
         //kDebug() << "item is in blacklist";
         root->add(item);
         return;
