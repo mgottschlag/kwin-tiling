@@ -45,7 +45,6 @@ Image::Image(QObject *parent, const QVariantList &args)
       m_model(0),
       m_dialog(0),
       m_randomize(true),
-      m_newStuffDialog(0),
       m_nextWallpaperAction(0),
       m_openImageAction(0)
 {
@@ -424,14 +423,14 @@ void Image::getNewWallpaper()
 {
     if (!m_newStuffDialog) {
         m_newStuffDialog = new KNS3::DownloadDialog( "wallpaper.knsrc", m_configWidget );
-        connect(m_newStuffDialog, SIGNAL(accepted()), SLOT(newStuffFinished()));
+        connect(m_newStuffDialog.data(), SIGNAL(accepted()), SLOT(newStuffFinished()));
     }
-    m_newStuffDialog->show();
+    m_newStuffDialog.data()->show();
 }
 
 void Image::newStuffFinished()
 {
-    if (m_model && m_newStuffDialog->changedEntries().size() > 0) {
+    if (m_model && (!m_newStuffDialog || m_newStuffDialog.data()->changedEntries().size() > 0)) {
         m_model->reload();
     }
 }

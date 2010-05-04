@@ -115,7 +115,7 @@ class Image : public Plasma::Wallpaper
         QString m_img;
         QDateTime m_previousModified;
         bool m_randomize;
-        KNS3::DownloadDialog* m_newStuffDialog;
+        QWeakPointer<KNS3::DownloadDialog> m_newStuffDialog;
 
         QAction* m_nextWallpaperAction;
         QAction* m_openImageAction;
