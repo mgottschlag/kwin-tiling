@@ -22,14 +22,10 @@
 // Qt
 #include <QtCore/QDir>
 #include <QtCore/QEvent>
-#include <QtCore/QHash>
 #include <QtCore/QMargins>
-#include <QtCore/QMimeData>
 #include <QtCore/QSize>
-#include <QtGui/QDrag>
 #include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QGraphicsSceneContextMenuEvent>
-#include <QtGui/QGraphicsSceneDragDropEvent>
 #include <QtGui/QGraphicsWidget>
 
 // KDE
