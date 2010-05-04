@@ -102,6 +102,7 @@ public Q_SLOTS:
 protected:
     virtual bool x11Event(XEvent *);
     virtual void timerEvent(QTimerEvent *);
+    virtual bool eventFilter(QObject *o, QEvent *e);
 
 private Q_SLOTS:
     void hackExited();
@@ -206,6 +207,7 @@ private:
     bool        mDPMSDepend;
     QTimer      mCheckDPMS;
     QStack< QWidget* > mDialogs;
+    QHash< QWidget*, QWidget* > mFrames;
     bool        mRestoreXF86Lock;
     bool        mForbidden;
     QStringList mPlugins, mPluginOptions;

@@ -28,11 +28,6 @@ class KPushButton;
 class QSocketNotifier;
 class QTreeWidget;
 
-namespace Plasma
-{
-    class FrameSvg;
-}
-
 //===========================================================================
 //
 // Simple dialog for entering a password.
@@ -60,9 +55,6 @@ public:
 protected:
     virtual void timerEvent(QTimerEvent *);
     virtual bool eventFilter(QObject *, QEvent *);
-    
-    virtual void paintEvent(QPaintEvent*);
-    virtual void resizeEvent(QResizeEvent*);
 
 private Q_SLOTS:
     void slotSwitchUser();
@@ -98,7 +90,6 @@ private:
     int         sPid, sFd;
     QSocketNotifier *sNot;
     QTreeWidget *lv;
-    Plasma::FrameSvg* svg;
 };
 
 #endif

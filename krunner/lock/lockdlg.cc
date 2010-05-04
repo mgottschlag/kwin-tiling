@@ -68,11 +68,6 @@
 #include <QX11Info>
 #include <kauthorized.h>
 
-#include <QPainter>
-#include <Plasma/FrameSvg>
-#include <Plasma/WindowEffects>
-#include <QResizeEvent>
-
 #include <KPluginLoader>
 #include <KPluginFactory>
 
@@ -93,11 +88,6 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, const
       mUnlockingFailed(false),
       sNot(0)
 {
-    Plasma::WindowEffects::overrideShadow(effectiveWinId(), true);
-    
-    setAttribute(Qt::WA_NoSystemBackground);
-    setAttribute(Qt::WA_TranslucentBackground);
-    
     QWidget* w = mainWidget();
 
     QLabel *pixLabel = new QLabel( w );
@@ -176,27 +166,12 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, const
     greet->start();
 
     capsLocked();
-
-    svg = new Plasma::FrameSvg(this);
-    svg->setImagePath("dialogs/background");
 }
 
 PasswordDlg::~PasswordDlg()
 {
     hide();
-    delete svg;
     delete greet;
-}
-
-void PasswordDlg::paintEvent(QPaintEvent*)
-{
-    QPainter p(this);
-    svg->paintFrame(&p);
-}
-
-void PasswordDlg::resizeEvent(QResizeEvent* re)
-{
-    svg->resizeFrame(re->size());
 }
 
 void PasswordDlg::updateLabel()
