@@ -32,6 +32,7 @@
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 #include <Plasma/Svg>
+#include <Plasma/WindowEffects>
 
 PanelAppletHandle::PanelAppletHandle(QWidget *parent, Qt::WindowFlags f)
     : Plasma::Dialog(parent, f)
@@ -102,6 +103,7 @@ void PanelAppletHandle::setApplet(Plasma::Applet *applet)
             m_moveAnimation->start();
         } else {
             move(applet->containment()->corona()->popupPosition(applet, size(), Qt::AlignCenter));
+            Plasma::WindowEffects::slideWindow(this, applet->location());
             show();
         }
     }
@@ -110,6 +112,9 @@ void PanelAppletHandle::setApplet(Plasma::Applet *applet)
 void PanelAppletHandle::startHideTimeout()
 {
     m_hideTimer->start(800);
+    if (m_applet) {
+        Plasma::WindowEffects::slideWindow(this, m_applet.data()->location());
+    }
 }
 
 void PanelAppletHandle::configureApplet()
