@@ -57,12 +57,11 @@ private slots:
     void batteryRemainingTimeChanged(int time);
 
 private:
-    Solid::AcAdapter* m_acadapter;
+    QStringList basicSourceNames() const;
+
     QStringList m_sources;
-    QDBusConnection m_dbus;
 
     QHash<QString, QString> m_batterySources;
-
 };
 
 K_EXPORT_PLASMA_DATAENGINE(powermanagement, PowermanagementEngine)
