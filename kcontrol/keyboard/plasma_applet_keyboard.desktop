@@ -1,5 +1,10 @@
 [Desktop Entry]
 Name=Keyboard Layout
+Name[en_GB]=Keyboard Layout
+Name[es]=Distribución del teclado
+Name[pt]=Disposição do Teclado
+Name[sv]=Tangentbordslayout
+Name[uk]=Розкладка клавіатури
 Name[x-test]=xxKeyboard Layoutxx
 Comment=Applet to display and switch layouts
 Comment[en_GB]=Applet to display and switch layouts
