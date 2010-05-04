@@ -1,0 +1,19 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.ActivityController">
+    <method name="ActivityAdded">
+      <arg name="id" type="s" direction="in"/>
+    </method>
+    <method name="ActivityRemoved">
+      <arg name="id" type="s" direction="in"/>
+    </method>
+    <method name="ResourceWindowRegistered">
+      <arg name="wid" type="u" direction="in"/>
+      <arg name="uri" type="s" direction="in"/>
+    </method>
+    <method name="ResourceWindowUnregistered">
+      <arg name="wid" type="u" direction="in"/>
+      <arg name="uri" type="s" direction="in"/>
+    </method>
+  </interface>
+</node>

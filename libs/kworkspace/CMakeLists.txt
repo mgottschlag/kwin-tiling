@@ -1,9 +1,36 @@
 
-
 set(kworkspace_LIB_SRCS kdisplaymanager.cpp
                         kwindowlistmenu.cpp
                         screenpreviewwidget.cpp
                         kworkspace.cpp
+                        kactivityconsumer.cpp
+                        kactivitycontroller.cpp
+                        kactivitycontrollerdbus_p.cpp
+                        kactivityinfo.cpp
+   )
+
+soprano_add_ontology(
+   kworkspace_LIB_SRCS
+   "${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nfo.trig"
+   "nfo"
+   "Ontologies"
+   "trig"
+   )
+
+soprano_add_ontology(
+   kworkspace_LIB_SRCS
+   "${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nco.trig"
+   "nco"
+   "Ontologies"
+   "trig"
+   )
+
+soprano_add_ontology(
+   kworkspace_LIB_SRCS
+   "${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/pimo/pimo.trig"
+   "pimo"
+   "Ontologies"
+   "trig"
    )
 
 set(ksmserver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
@@ -14,6 +41,26 @@ set(kwin_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/kwin/org.kde.KWin.xml)
 set_source_files_properties(${kwin_xml} PROPERTIES INCLUDE "interface_util.h")
 
 qt4_add_dbus_interface( kworkspace_LIB_SRCS ${kwin_xml} kwin_interface )
+
+qt4_add_dbus_adaptor(
+    kworkspace_LIB_SRCS
+    org.kde.ActivityController.xml
+    kactivitycontrollerdbus_p.h
+    KActivityControllerDbus
+)
+
+qt4_add_dbus_interface(
+    kworkspace_LIB_SRCS
+    ${KDEBASE_RUNTIME_SOURCE_DIR}/activitymanager/org.kde.ActivityManager.xml
+    activitymanager_interface
+)
+
+qt4_add_dbus_interface(
+    kworkspace_LIB_SRCS
+    ${KDEBASE_RUNTIME_SOURCE_DIR}/nepomuk/services/activities/org.kde.nepomuk.ActivitiesService.xml
+    nepomukactivitiesservice_interface
+)
+
 
 if(WIN32)
     set (LIB_MODE)
@@ -31,4 +78,7 @@ install(TARGETS kworkspace EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_D
 install( FILES kdisplaymanager.h
                kwindowlistmenu.h
                kworkspace.h
+               kactivityconsumer.h
+               kactivitycontroller.h
+               kactivityinfo.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kworkspace COMPONENT Devel )
