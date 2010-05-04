@@ -70,7 +70,7 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     KGlobal::locale()->insertCatalog("solid_qt");
 
     // let's initialize the widget
-    setMinimumSize(graphicsWidget()->minimumSize());
+    resize(graphicsWidget()->minimumSize());
 }
 
 DeviceNotifier::~DeviceNotifier()
@@ -81,7 +81,7 @@ DeviceNotifier::~DeviceNotifier()
 void DeviceNotifier::init()
 {
     configChanged();
-    
+
     m_solidEngine = dataEngine("hotplug");
     m_solidDeviceEngine = dataEngine("soliddevice");
 
