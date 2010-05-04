@@ -81,7 +81,6 @@ PanelAppletOverlay::PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent)
       m_applet(applet),
       m_spacer(0),
       m_layout(dynamic_cast<QGraphicsLinearLayout*>(applet->containment()->layout())), // ++assumptions;
-      m_menuButtonRect(2,2,10,10),
       m_index(0),
       m_clickDrag(false)
 {
@@ -148,9 +147,6 @@ void PanelAppletOverlay::paintEvent(QPaintEvent *event)
     QRect iconRect;
 
 
-    KIcon configIcon("arrow-up");
-    p.drawPixmap(m_menuButtonRect, configIcon.pixmap(m_menuButtonRect.size()));
-
     if (!m_applet) {
         return;
     }
@@ -179,8 +175,7 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
         return;
     }
 
-    if (event->button() != Qt::LeftButton ||
-        m_menuButtonRect.contains(event->pos())) {
+    if (event->button() != Qt::LeftButton) {
         //kDebug() << "sending even to" << (QWidget*)parent();
         Plasma::View *view = dynamic_cast<Plasma::View*>(parent());
 
