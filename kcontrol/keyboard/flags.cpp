@@ -72,10 +72,9 @@ const QIcon Flags::getIcon(const QString& layout)
 //static
 //const QStringList NON_COUNTRY_LAYOUTS = QString("ara,brai,epo,latam,mao").split(",");
 
-QString Flags::getCountryFromLayoutName(const QString& fullLayoutName)
+QString Flags::getCountryFromLayoutName(const QString& layout)
 {
-	LayoutConfig layoutConfig = LayoutConfig::createLayoutConfig(fullLayoutName);
-	QString countryCode = layoutConfig.layout;
+	QString countryCode = layout;
 
 	if( countryCode == "nec_vndr/jp" )
 		return "jp";
@@ -89,45 +88,17 @@ QString Flags::getCountryFromLayoutName(const QString& fullLayoutName)
 
 //TODO: move this to some other class?
 
-QString Flags::getShortText(const QString& fullLayoutName, const KeyboardConfig& keyboardConfig)
+QString Flags::getShortText(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig)
 {
-	if( fullLayoutName.isEmpty() )
+	if( layoutUnit.isEmpty() )
 		return QString("--");
 
-	LayoutConfig layoutConfig = LayoutConfig::createLayoutConfig(fullLayoutName);
-	QString layoutText = layoutConfig.layout;
+	QString layoutText = layoutUnit.layout;
 
-	foreach(const LayoutConfig& lc, keyboardConfig.layouts) {
-		if( layoutConfig.layout == lc.layout && layoutConfig.variant == lc.variant ) {
-			layoutText = lc.getDisplayName();
+	foreach(const LayoutUnit& lu, keyboardConfig.layouts) {
+		if( layoutUnit.layout == lu.layout && layoutUnit.variant == lu.variant ) {
+			layoutText = lu.getDisplayName();
 			break;
-		}
-	}
-
-	return layoutText;
-}
-
-QString Flags::getLongText(const QString& fullLayoutName, const Rules* rules)
-{
-	if( fullLayoutName.isEmpty() )
-		return "";
-
-	if( rules == NULL ) {
-		return fullLayoutName;
-	}
-
-	LayoutConfig layoutConfig = LayoutConfig::createLayoutConfig(fullLayoutName);
-	QString layoutText = fullLayoutName;
-
-	const LayoutInfo* layoutInfo = rules->getLayoutInfo(layoutConfig.layout);
-	if( layoutInfo != NULL ) {
-		layoutText = layoutInfo->description;
-
-		if( ! layoutConfig.variant.isEmpty() ) {
-			const VariantInfo* variantInfo = layoutInfo->getVariantInfo(layoutConfig.variant);
-			QString variantText = variantInfo != NULL ? variantInfo->description : layoutConfig.variant;
-
-			return QString("%1 - %2").arg(layoutText, variantText);
 		}
 	}
 
@@ -141,20 +112,20 @@ static QString getDisplayText(const QString& layout, const QString& variant)
 			: i18nc("layout - variant", "%1 - %2", layout, variant);
 }
 
-QString Flags::getLongText(const LayoutConfig& layoutConfig, const Rules* rules)
+QString Flags::getLongText(const LayoutUnit& layoutUnit, const Rules* rules)
 {
 	if( rules == NULL ) {
-		return getDisplayText(layoutConfig.layout, layoutConfig.variant);
+		return getDisplayText(layoutUnit.layout, layoutUnit.variant);
 	}
 
-	QString layoutText = layoutConfig.layout;
-	const LayoutInfo* layoutInfo = rules->getLayoutInfo(layoutConfig.layout);
+	QString layoutText = layoutUnit.layout;
+	const LayoutInfo* layoutInfo = rules->getLayoutInfo(layoutUnit.layout);
 	if( layoutInfo != NULL ) {
 		layoutText = layoutInfo->description;
 
-		if( ! layoutConfig.variant.isEmpty() ) {
-			const VariantInfo* variantInfo = layoutInfo->getVariantInfo(layoutConfig.variant);
-			QString variantText = variantInfo != NULL ? variantInfo->description : layoutConfig.variant;
+		if( ! layoutUnit.variant.isEmpty() ) {
+			const VariantInfo* variantInfo = layoutInfo->getVariantInfo(layoutUnit.variant);
+			QString variantText = variantInfo != NULL ? variantInfo->description : layoutUnit.variant;
 
 			layoutText = getDisplayText(layoutText, variantText);
 		}
@@ -163,16 +134,16 @@ QString Flags::getLongText(const LayoutConfig& layoutConfig, const Rules* rules)
 	return layoutText;
 }
 
-const QIcon Flags::getIconWithText(const QString& fullLayoutName, const KeyboardConfig& keyboardConfig)
+const QIcon Flags::getIconWithText(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig)
 {
 	QString keySuffix(keyboardConfig.showFlag ? "_wf" : "_nf");
-	QString key(fullLayoutName + keySuffix);
+	QString key(layoutUnit.layout + keySuffix);
 	if( iconOrTextMap.contains(key) ) {
 		return iconOrTextMap[ key ];
 	}
 
 	if( keyboardConfig.showFlag ) {
-		QIcon icon = getIcon(fullLayoutName);
+		QIcon icon = getIcon(layoutUnit.layout);
 		if( ! icon.isNull() ) {
 			iconOrTextMap[ key ] = icon;
 			return icon;
@@ -187,7 +158,7 @@ const QIcon Flags::getIconWithText(const QString& fullLayoutName, const Keyboard
 	p.setRenderHint(QPainter::Antialiasing);
 
 	QFont font = p.font();
-	QString layoutText = Flags::getShortText(fullLayoutName, keyboardConfig);
+	QString layoutText = Flags::getShortText(layoutUnit, keyboardConfig);
 
 	int height = pm.height();
 

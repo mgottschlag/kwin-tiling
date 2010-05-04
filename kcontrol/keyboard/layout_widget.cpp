@@ -19,6 +19,8 @@
 
 #include "layout_widget.h"
 
+//#include <kdebug.h>
+
 // for sys tray icon
 #include <kstatusnotifieritem.h>
 #include <klocalizedstring.h>
@@ -83,21 +85,23 @@ void LayoutWidget::toggleLayout()
 
 void LayoutWidget::layoutChanged()
 {
-	QString fullLayoutText = X11Helper::getCurrentLayout();
-	LayoutConfig layoutConfig = LayoutConfig::createLayoutConfig(fullLayoutText);
+	LayoutUnit layoutUnit = X11Helper::getCurrentLayout();
+	if( layoutUnit.isEmpty() )
+		return;
+
 	QIcon icon;
 	if( keyboardConfig->showFlag ) {
-		icon = flags->getIcon(layoutConfig.layout);
+		icon = flags->getIcon(layoutUnit.layout);
 	}
 
-	QString longText = Flags::getLongText(layoutConfig, NULL);
+	QString longText = Flags::getLongText(layoutUnit, NULL);
 	if( ! icon.isNull() ) {
 		widget->setIcon(icon);
 		widget->setText("");
 		widget->setToolTip(longText);
 	}
 	else {
-		QString shortText = Flags::getShortText(fullLayoutText, *keyboardConfig);
+		QString shortText = Flags::getShortText(layoutUnit, *keyboardConfig);
 		widget->setIcon(icon);
 		widget->setText(shortText);
 		widget->setToolTip(longText);
@@ -105,7 +109,9 @@ void LayoutWidget::layoutChanged()
 	}
 }
 
-
+//
+// Layout Tray Icon
+//
 LayoutTrayIcon::LayoutTrayIcon():
 	xEventNotifier(XEventNotifier::XKB),
 	keyboardConfig(new KeyboardConfig()),
@@ -118,13 +124,9 @@ LayoutTrayIcon::LayoutTrayIcon():
     m_notifierItem->setStatus(KStatusNotifierItem::Active);
     m_notifierItem->setToolTipTitle(i18nc("tooltip title", "Keyboard Layout"));
 
-    KMenu* menu = new KMenu("");
+	KMenu* menu = new KMenu("");
     m_notifierItem->setContextMenu(menu);
-//    m_notifierItem->contextMenu()->addTitle(i18nc("tooltip title", "Keyboard Layout"));
 	m_notifierItem->setStandardActionsEnabled(false);
-
-//    connect(m_notifierItem->contextMenu(), SIGNAL(triggered(QAction*)), SIGNAL(menuTriggered(QAction*)));
-    connect(m_notifierItem, SIGNAL(activateRequested(bool, QPoint)), SLOT(toggleLayout()));
 
 	rules = Rules::readRules();
 
@@ -142,7 +144,7 @@ LayoutTrayIcon::~LayoutTrayIcon()
 
 void LayoutTrayIcon::init()
 {
-//	connect(widget, SIGNAL(clicked(bool)), this, SLOT(toggleLayout()));
+    connect(m_notifierItem, SIGNAL(activateRequested(bool, QPoint)), this, SLOT(toggleLayout()));
 	connect(&xEventNotifier, SIGNAL(layoutChanged()), this, SLOT(layoutChanged()));
 	connect(&xEventNotifier, SIGNAL(layoutMapChanged()), this, SLOT(layoutMapChanged()));
 	xEventNotifier.start();
@@ -153,33 +155,37 @@ void LayoutTrayIcon::destroy()
 	xEventNotifier.stop();
 	disconnect(&xEventNotifier, SIGNAL(layoutMapChanged()), this, SLOT(layoutMapChanged()));
 	disconnect(&xEventNotifier, SIGNAL(layoutChanged()), this, SLOT(layoutChanged()));
+    disconnect(m_notifierItem, SIGNAL(activateRequested(bool, QPoint)), this, SLOT(toggleLayout()));
 }
 
 void LayoutTrayIcon::layoutMapChanged()
 {
 	keyboardConfig->load();
 
+	KMenu* menu = m_notifierItem->contextMenu();
+	menu->clear();
 	QList<QAction*> actions = contextualActions();
-	foreach(QAction* action, actions) {
-		m_notifierItem->contextMenu()->addAction(action);
-	}
+	menu->addActions(actions);
 
 	layoutChanged();
 }
 
 void LayoutTrayIcon::layoutChanged()
 {
-	QString fullLayoutText = X11Helper::getCurrentLayout();
-	QString layoutText = Flags::getShortText(fullLayoutText, *keyboardConfig);
-	QString longText = Flags::getLongText(fullLayoutText, rules);
+	LayoutUnit layoutUnit = X11Helper::getCurrentLayout();
+	if( layoutUnit.isEmpty() )
+		return;
+
+	QString layoutText = Flags::getShortText(layoutUnit, *keyboardConfig);
+	QString longText = Flags::getLongText(layoutUnit, rules);
 
 	m_notifierItem->setTitle(layoutText);
 	m_notifierItem->setToolTipSubTitle(longText);
 
-	const QIcon icon(flags->getIcon(fullLayoutText));
+	const QIcon icon(flags->getIcon(layoutUnit.layout));
 	m_notifierItem->setToolTipIconByPixmap(icon);
 
-	QIcon textOrIcon = flags->getIconWithText(fullLayoutText, *keyboardConfig);
+	QIcon textOrIcon = flags->getIconWithText(layoutUnit, *keyboardConfig);
 	m_notifierItem->setIconByPixmap( textOrIcon );
 }
 
@@ -190,7 +196,7 @@ void LayoutTrayIcon::toggleLayout()
 
 void LayoutTrayIcon::actionTriggered(QAction* action)
 {
-	X11Helper::setLayout(action->data().toString());
+	X11Helper::setLayout(LayoutUnit(action->data().toString()));
 }
 
 const QIcon LayoutTrayIcon::getFlag(const QString& layout) const
@@ -206,11 +212,11 @@ QList<QAction*> LayoutTrayIcon::contextualActions()
 	}
 	actionGroup = new QActionGroup(this);
 
-	QStringList layouts = X11Helper::getLayoutsList();
-	foreach(const QString& layout, layouts) {
-		QString menuText = Flags::getLongText(layout, rules);
-		QAction* action = new QAction(getFlag(layout), menuText, actionGroup);
-		action->setData(layout);
+	QList<LayoutUnit> layouts = X11Helper::getLayoutsList();
+	foreach(const LayoutUnit& layoutUnit, layouts) {
+		QString menuText = Flags::getLongText(layoutUnit, rules);
+		QAction* action = new QAction(getFlag(layoutUnit.layout), menuText, actionGroup);
+		action->setData(layoutUnit.toString());
 		actionGroup->addAction(action);
 	}
 	connect(actionGroup, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));

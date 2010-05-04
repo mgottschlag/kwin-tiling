@@ -151,15 +151,15 @@ void KeyboardDaemon::switchToNextLayout()
 
 bool KeyboardDaemon::setLayout(const QString& layout)
 {
-	return X11Helper::setLayout(layout);
+	return X11Helper::setLayout(LayoutUnit(layout));
 }
 
 QString KeyboardDaemon::getCurrentLayout()
 {
-	return X11Helper::getCurrentLayout();
+	return X11Helper::getCurrentLayout().toString();
 }
 
 QStringList KeyboardDaemon::getLayoutsList()
 {
-	return X11Helper::getLayoutsList();
+	return X11Helper::getLayoutsListAsString( X11Helper::getLayoutsList() );
 }

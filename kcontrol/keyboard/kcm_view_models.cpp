@@ -118,13 +118,13 @@ QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
      if (index.row() >= keyboardConfig->layouts.size())
          return QVariant();
 
-	 const LayoutConfig& layoutConfig = keyboardConfig->layouts.at(index.row());
+	 const LayoutUnit& layoutUnit = keyboardConfig->layouts.at(index.row());
 
      if (role == Qt::DecorationRole) {
     	 switch( index.column() ) {
     	 case MAP_COLUMN: {
     			if( keyboardConfig->showFlag ) {
-    				QIcon icon = countryFlags->getIcon(layoutConfig.layout);
+    				QIcon icon = countryFlags->getIcon(layoutUnit.layout);
     				return icon.isNull() ? countryFlags->getTransparentPixmap() : icon;
     			}
     	 }
@@ -135,34 +135,34 @@ QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
      if (role == Qt::DisplayRole) {
     	 switch( index.column() ) {
     	 case MAP_COLUMN:
-    		 return layoutConfig.layout;
+    		 return layoutUnit.layout;
     	 break;
     	 case LAYOUT_COLUMN: {
-    		 const LayoutInfo* layoutInfo = rules->getLayoutInfo(layoutConfig.layout);
-             return layoutInfo != NULL ? layoutInfo->description : layoutConfig.layout;
+    		 const LayoutInfo* layoutInfo = rules->getLayoutInfo(layoutUnit.layout);
+             return layoutInfo != NULL ? layoutInfo->description : layoutUnit.layout;
     	 }
     	 case VARIANT_COLUMN: {
-    		 if( layoutConfig.variant.isEmpty() )
+    		 if( layoutUnit.variant.isEmpty() )
     			 return QVariant();
-    		 const LayoutInfo* layoutInfo = rules->getLayoutInfo(layoutConfig.layout);
+    		 const LayoutInfo* layoutInfo = rules->getLayoutInfo(layoutUnit.layout);
     		 if( layoutInfo == NULL )
     			 return QVariant();
-    		 const VariantInfo* variantInfo = layoutInfo->getVariantInfo(layoutConfig.variant);
-    		 return variantInfo != NULL ? variantInfo->description : layoutConfig.variant;
+    		 const VariantInfo* variantInfo = layoutInfo->getVariantInfo(layoutUnit.variant);
+    		 return variantInfo != NULL ? variantInfo->description : layoutUnit.variant;
     	 }
          break;
     	 case DISPLAY_NAME_COLUMN:
-    		 return layoutConfig.getDisplayName();
+    		 return layoutUnit.getDisplayName();
     	 break;
     	 }
      }
      else if (role==Qt::EditRole ) {
     	 switch( index.column() ) {
     	 case DISPLAY_NAME_COLUMN:
-    		 return layoutConfig.getDisplayName();
+    		 return layoutUnit.getDisplayName();
     	 break;
     	 case VARIANT_COLUMN:
-    		 return layoutConfig.variant;
+    		 return layoutUnit.variant;
     	 break;
     	 default:;
     	 }
@@ -192,17 +192,17 @@ bool LayoutsTableModel::setData(const QModelIndex &index, const QVariant &value,
 	if (index.row() >= keyboardConfig->layouts.size())
 		return false;
 
-	LayoutConfig& layoutConfig = keyboardConfig->layouts[index.row()];
+	LayoutUnit& layoutUnit = keyboardConfig->layouts[index.row()];
 
 	switch( index.column() ) {
 	case DISPLAY_NAME_COLUMN: {
 		QString displayText = value.toString().left(3);
-		layoutConfig.setDisplayName(displayText);
+		layoutUnit.setDisplayName(displayText);
 	}
 	break;
 	case VARIANT_COLUMN: {
 		QString variant = value.toString();
-		layoutConfig.variant = variant;
+		layoutUnit.variant = variant;
 	}
 	break;
 	}
@@ -237,8 +237,8 @@ QWidget *VariantComboDelegate::createEditor(QWidget *parent, const QStyleOptionV
 		const QModelIndex & index ) const
 {
 	QComboBox *editor = new QComboBox(parent);
-	LayoutConfig layoutConfig = keyboardConfig->layouts[index.row()];
-	populateComboWithVariants(editor, layoutConfig.layout, rules);
+	LayoutUnit layoutUnit = keyboardConfig->layouts[index.row()];
+	populateComboWithVariants(editor, layoutUnit.layout, rules);
 	return editor;
 }
 

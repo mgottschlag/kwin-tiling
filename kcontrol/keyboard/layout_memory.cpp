@@ -127,15 +127,15 @@ void LayoutMemory::setCurrentLayoutFromMap()
 	if( layoutMapKey.isEmpty() )
 		return;
 
-	QString layoutFromMap = layoutMap[layoutMapKey];
-	kDebug() << "layout map item" << layoutFromMap << "for container key" << layoutMapKey;
+	LayoutUnit layoutFromMap = layoutMap[layoutMapKey];
+	kDebug() << "layout map item" << layoutFromMap.toString() << "for container key" << layoutMapKey;
 	if( layoutFromMap.isEmpty() ) {
 		if( ! X11Helper::isDefaultLayout() ) {
 //			kDebug() << "setting default layout for container key" << layoutMapKey;
 			X11Helper::setDefaultLayout();
 		}
 	}
-	else if( layoutFromMap != X11Helper::getCurrentLayout() ) {
+	else if( ! (layoutFromMap == X11Helper::getCurrentLayout()) ) {
 //		kDebug() << "setting layout" <<  layoutFromMap << "for container key" << layoutMapKey;
 		X11Helper::setLayout( layoutFromMap );
 	}

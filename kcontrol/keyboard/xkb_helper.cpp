@@ -94,9 +94,9 @@ bool XkbHelper::initializeKeyboardLayouts(KeyboardConfig& config)
 	if( config.configureLayouts ) {
 		QStringList layouts;
 		QStringList variants;
-		foreach (const LayoutConfig& layoutConfig, config.layouts) {
-			layouts.append(layoutConfig.layout);
-			variants.append(layoutConfig.variant);
+		foreach (const LayoutUnit& layoutUnit, config.layouts) {
+			layouts.append(layoutUnit.layout);
+			variants.append(layoutUnit.variant);
 		}
 
 		setxkbmapCommandArguments.append("-layout");

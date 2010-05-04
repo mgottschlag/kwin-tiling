@@ -120,9 +120,12 @@ void KeyboardApplet::layoutChanged()
 
 void KeyboardApplet::updateTooltip()
 {
-	QString layout = X11Helper::getCurrentLayout();
-	const QIcon icon(getFlag(layout));
-	Plasma::ToolTipContent data(name(), flags.getLongText(layout, rules), icon);
+	LayoutUnit layoutUnit = X11Helper::getCurrentLayout();
+	if( layoutUnit.isEmpty() )
+		return;
+
+	const QIcon icon(getFlag(layoutUnit.layout));
+	Plasma::ToolTipContent data(name(), flags.getLongText(layoutUnit, rules), icon);
 	Plasma::ToolTipManager::self()->setContent(this, data);
 }
 
@@ -136,15 +139,18 @@ void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 	p->setRenderHint(QPainter::SmoothPixmapTransform);
 	p->setRenderHint(QPainter::Antialiasing);
 
-	QString layout = X11Helper::getCurrentLayout();
-	QString layoutText = Flags::getShortText(layout, *keyboardConfig);
+	LayoutUnit layoutUnit = X11Helper::getCurrentLayout();
+	if( layoutUnit.isEmpty() )
+		return;
 
-	const QIcon icon(getFlag(layout));
+	const QIcon icon(getFlag(layoutUnit.layout));
 	if( ! icon.isNull() ) {
 		QPixmap pixmap = icon.pixmap(contentsRect.size());
 		p->drawPixmap(contentsRect, pixmap);
 	}
 	else {
+		QString layoutText = Flags::getShortText(layoutUnit, *keyboardConfig);
+
 		p->save();
 		p->setPen(Qt::black);
 		QFont font = p->font();
@@ -175,7 +181,7 @@ void KeyboardApplet::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 void KeyboardApplet::actionTriggered(QAction* action)
 {
 //	kDebug() << "actionTriggerd" << action->data().toString();
-	X11Helper::setLayout(action->data().toString());
+	X11Helper::setLayout(LayoutUnit(action->data().toString()));
 }
 
 QList<QAction*> KeyboardApplet::contextualActions()
@@ -185,12 +191,12 @@ QList<QAction*> KeyboardApplet::contextualActions()
 		delete actionGroup;
 	}
 	actionGroup = new QActionGroup(this);
-	QStringList layouts = X11Helper::getLayoutsList();
-	foreach(const QString& layout, layouts) {
+	QList<LayoutUnit> layouts = X11Helper::getLayoutsList();
+	foreach(const LayoutUnit& layout, layouts) {
 		QAction* action;
 		QString menuText = Flags::getLongText(layout, rules);
-		action = new QAction(getFlag(layout), menuText, actionGroup);
-		action->setData(layout);
+		action = new QAction(getFlag(layout.layout), menuText, actionGroup);
+		action->setData(layout.toString());
 		actionGroup->addAction(action);
 	}
 	connect(actionGroup, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));

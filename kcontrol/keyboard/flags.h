@@ -25,7 +25,7 @@
 
 class QPixmap;
 class QIcon;
-class LayoutConfig;
+class LayoutUnit;
 class KeyboardConfig;
 class Rules;
 
@@ -36,12 +36,11 @@ public:
 	virtual ~Flags();
 
 	const QIcon getIcon(const QString& layout);
-	const QIcon getIconWithText(const QString& fullLayoutName, const KeyboardConfig& keyboardConfig);
+	const QIcon getIconWithText(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig);
 	const QPixmap& getTransparentPixmap() { return *transparentPixmap; }
 
-	static QString getLongText(const QString& fullLayout, const Rules* rules);
-	static QString getLongText(const LayoutConfig& layoutConfig, const Rules* rules);
-	static QString getShortText(const QString& layout, const KeyboardConfig& keyboardConfig);
+	static QString getLongText(const LayoutUnit& layoutUnit, const Rules* rules);
+	static QString getShortText(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig);
 
 private:
 	QString getCountryFromLayoutName(const QString& fullLayoutName);

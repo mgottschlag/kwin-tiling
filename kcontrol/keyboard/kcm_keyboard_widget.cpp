@@ -142,7 +142,7 @@ void KCMKeyboardWidget::addLayout()
     AddLayoutDialog dialog(rules, keyboardConfig->showFlag ? flags : NULL, this);
     dialog.setModal(true);
     if( dialog.exec() == QDialog::Accepted ) {
-    	keyboardConfig->layouts.append( dialog.getSelectedLayoutConfig() );
+    	keyboardConfig->layouts.append( dialog.getSelectedLayoutUnit() );
     	layoutsTableModel->refresh();
     	uiChanged();
     }
@@ -425,40 +425,6 @@ void KCMKeyboardWidget::updateLayoutsUI()
 {
 	uiWidget->configureLayoutsChk->setChecked(keyboardConfig->configureLayouts);
 	uiWidget->showFlagChk->setChecked(keyboardConfig->showFlag);
-
-//    int i = 0;
-//    uiWidget->layoutsTable->setRowCount(keyboardConfig->layouts.size());
-//    foreach(QString layout, keyboardConfig->layouts) {
-//		qDebug() << "adding" << layout;
-//
-//		QStringList lv = layout.split(KeyboardConfig::LAYOUT_VARIANT_SEPARATOR, QString::SkipEmptyParts);
-//		QTableWidgetItem *item = new QTableWidgetItem(lv[0]);
-//		const QPixmap* pixmap = flags->getPixmap(lv[0]);
-//		if( pixmap != NULL ) {
-//			item->setIcon(*new QIcon(*pixmap));
-//		}
-//		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-//		uiWidget->layoutsTable->setItem(i, 0, item);
-//
-//		const LayoutInfo* layoutInfo = rules->getLayoutInfo(lv[0]);
-//		//TODO: if layoutInfo == NULL
-//		QTableWidgetItem *item2 = new QTableWidgetItem(layoutInfo->description);
-//		item2->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-//		uiWidget->layoutsTable->setItem(i, 1, item2);
-//
-//		QString variantText;
-//		if( lv.count() > 1 ) {
-//			//TODO: if variantInfo == NULL
-//			const VariantInfo* variantInfo = layoutInfo->getVariantInfo(lv[1]);
-//			variantText = variantInfo != NULL ? variantInfo->description : lv[1];
-//		}
-//		QTableWidgetItem *item3 = new QTableWidgetItem(variantText);
-//		item3->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-//		uiWidget->layoutsTable->setItem(i, 2, item3);
-//		i++;
-//	}
-//
-//    connect(uiWidget->layoutsTable, SIGNAL(cellClicked(int,int)), this, SLOT(layoutCellClicked(int,int)));
 }
 
 void KCMKeyboardWidget::updateHardwareUI()
@@ -471,9 +437,8 @@ void KCMKeyboardWidget::updateHardwareUI()
 
 void KCMKeyboardWidget::populateWithCurrentLayouts()
 {
-	QStringList layoutNames = X11Helper::getLayoutsList();
-	foreach(QString fullLayoutName, layoutNames) {
-		LayoutConfig layoutConfig( LayoutConfig::createLayoutConfig(fullLayoutName) );
-		keyboardConfig->layouts.append(layoutConfig);
+	QList<LayoutUnit> layouts = X11Helper::getLayoutsList();
+	foreach(LayoutUnit layoutUnit, layouts) {
+		keyboardConfig->layouts.append(layoutUnit);
 	}
 }

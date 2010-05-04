@@ -31,8 +31,6 @@ static const char* DEFAULT_MODEL = "pc104";
 static const QString CONFIG_FILENAME("kxkbrc");
 static const QString CONFIG_GROUPNAME("Layout");
 
-static const char* LAYOUT_VARIANT_SEPARATOR_PREFIX = "(";
-static const char* LAYOUT_VARIANT_SEPARATOR_SUFFIX = ")";
 
 
 static int findStringIndex(const char* strings[], const QString& toFind, int defaultIndex)
@@ -45,25 +43,6 @@ static int findStringIndex(const char* strings[], const QString& toFind, int def
 	return defaultIndex;
 }
 
-static QString& stripVariantName(QString& variant)
-{
-	if( variant.endsWith(LAYOUT_VARIANT_SEPARATOR_SUFFIX) ) {
-		int suffixLen = strlen(LAYOUT_VARIANT_SEPARATOR_SUFFIX);
-		return variant.remove(variant.length()-suffixLen, suffixLen);
-	}
-	return variant;
-}
-
-LayoutConfig LayoutConfig::createLayoutConfig(const QString& fullLayoutName)
-{
-	LayoutConfig layoutConfig;
-	QStringList lv = fullLayoutName.split(LAYOUT_VARIANT_SEPARATOR_PREFIX);
-	layoutConfig.layout = lv[0];
-	QString variant = lv.size() > 1 ? stripVariantName(lv[1]) : "";
-	layoutConfig.variant = variant;
-	return layoutConfig;
-}
-
 void KeyboardConfig::setDefaults()
 {
 	keyboardModel = DEFAULT_MODEL;
@@ -73,7 +52,7 @@ void KeyboardConfig::setDefaults()
 	// init layouts options
 	configureLayouts = false;
 	layouts.clear();
-//	layouts.append(LayoutConfig::createLayoutConfig(DEFAULT_LAYOUT));
+//	layouts.append(LayoutUnit(DEFAULT_LAYOUT));
 
 	// switch cotrol options
 	switchingPolicy = SWITCH_POLICY_GLOBAL;
@@ -104,7 +83,7 @@ void KeyboardConfig::load()
 //    }
     layouts.clear();
     foreach(const QString& layoutString, layoutStrings) {
-    	layouts.append(LayoutConfig::createLayoutConfig(layoutString));
+    	layouts.append(LayoutUnit(layoutString));
     }
     if( layouts.isEmpty() ) {
     	configureLayouts = false;
@@ -143,20 +122,14 @@ void KeyboardConfig::save()
     config.writeEntry("Use", configureLayouts);
 
     QStringList layoutStrings;
-    foreach(const LayoutConfig& layoutConfig, layouts) {
-    	QString string(layoutConfig.layout);
-    	if( ! layoutConfig.variant.isEmpty() ) {
-    		string += LAYOUT_VARIANT_SEPARATOR_PREFIX;
-    		string += layoutConfig.variant;
-    		string += LAYOUT_VARIANT_SEPARATOR_SUFFIX;
-    	}
-    	layoutStrings.append(string);
+    foreach(const LayoutUnit& layoutUnit, layouts) {
+    	layoutStrings.append(layoutUnit.toString());
     }
     config.writeEntry("LayoutList", layoutStrings.join(LIST_SEPARATOR));
 
     QStringList displayNames;
-    foreach(const LayoutConfig& layoutConfig, layouts) {
-    	displayNames << layoutConfig.getRawDisplayName();
+    foreach(const LayoutUnit& layoutUnit, layouts) {
+    	displayNames << layoutUnit.getRawDisplayName();
     }
     config.writeEntry("DisplayNames", displayNames.join(LIST_SEPARATOR));
 

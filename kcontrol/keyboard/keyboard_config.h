@@ -20,33 +20,13 @@
 #ifndef KEYBOARD_CONFIG_H_
 #define KEYBOARD_CONFIG_H_
 
+#include "x11_helper.h"
+
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QList>
 #include <QtCore/QMap>
 #include <QtCore/QPair>
-
-struct LayoutConfig {
-	//TODO: move these to private
-	QString layout;
-	QString variant;
-
-	LayoutConfig() {}
-	/*explicit*/ LayoutConfig(const LayoutConfig& layoutConfig) {
-		layout = layoutConfig.layout;
-		variant = layoutConfig.variant;
-		displayName = layoutConfig.displayName;
-	}
-
-	QString getRawDisplayName() const { return displayName; }
-	QString getDisplayName() const { return !displayName.isEmpty() ? displayName :  layout; }
-	void setDisplayName(const QString& name) { displayName = name; }
-
-	static LayoutConfig createLayoutConfig(const QString& fullLayoutName);
-
-private:
-	QString displayName;
-};
 
 /**
  * This class provides configuration options for keyboard module
@@ -69,7 +49,7 @@ public:
 
 	// init layouts options
 	bool configureLayouts;
-	QList<LayoutConfig> layouts;
+	QList<LayoutUnit> layouts;
 
 	// switch cotrol options
 	SwitchingPolicy switchingPolicy;

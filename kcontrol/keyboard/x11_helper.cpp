@@ -81,12 +81,22 @@ void X11Helper::switchToNextLayout()
 	X11Helper::setGroup(group);
 }
 
-bool X11Helper::setLayout(const QString& layout)
+QStringList X11Helper::getLayoutsListAsString(const QList<LayoutUnit>& layoutsList)
 {
-	QStringList currentLayouts = getLayoutsList();
+	QStringList stringList;
+	foreach(const LayoutUnit& layoutUnit, layoutsList) {
+		stringList << layoutUnit.toString();
+	}
+	return stringList;
+}
+
+bool X11Helper::setLayout(const LayoutUnit& layout)
+{
+	QList<LayoutUnit> currentLayouts = getLayoutsList();
 	int idx = currentLayouts.indexOf(layout);
 	if( idx == -1 || idx >= X11Helper::MAX_GROUP_COUNT ) {
-		qWarning() << "Layout" << layout << "is not found in current layout list" << currentLayouts;
+		qWarning() << "Layout" << layout.toString() << "is not found in current layout list"
+								<< getLayoutsListAsString(currentLayouts);
 		return false;
 	}
 
@@ -101,28 +111,30 @@ bool X11Helper::isDefaultLayout() {
 	return X11Helper::getGroup() == 0;
 }
 
-QString X11Helper::getCurrentLayout()
+LayoutUnit X11Helper::getCurrentLayout()
 {
-	QStringList currentLayouts = getLayoutsList();
+	QList<LayoutUnit> currentLayouts = getLayoutsList();
 	unsigned int group = X11Helper::getGroup();
 	if( group < (unsigned int)currentLayouts.size() )
 		return currentLayouts[group];
 
-	qWarning() << "Current group number" << group << "is outside of current layout list" << currentLayouts;
-	return "";
+	qWarning() << "Current group number" << group << "is outside of current layout list" <<
+						getLayoutsListAsString(currentLayouts);
+	return LayoutUnit();
 }
 
-QStringList X11Helper::getLayoutsList()
+QList<LayoutUnit> X11Helper::getLayoutsList()
 {
 	XkbConfig xkbConfig;
-	QStringList layouts;
+	QList<LayoutUnit> layouts;
 	if( X11Helper::getGroupNames(QX11Info::display(), &xkbConfig, LAYOUTS_ONLY) ) {
 		for(int i=0; i<xkbConfig.layouts.size(); i++) {
 			QString layout(xkbConfig.layouts[i]);
+			QString variant;
 			if( i<xkbConfig.variants.size() && ! xkbConfig.variants[i].isEmpty() ) {
-				layout += X11Helper::LEFT_VARIANT_STR + xkbConfig.variants[i] + X11Helper::RIGHT_VARIANT_STR;
+				variant = xkbConfig.variants[i];
 			}
-			layouts << layout;
+			layouts << LayoutUnit(layout, variant);
 		}
 	}
 	else {
@@ -312,3 +324,30 @@ int XEventNotifier::registerForXkbEvents(Display* display)
     return true;
 }
 
+
+static const char* LAYOUT_VARIANT_SEPARATOR_PREFIX = "(";
+static const char* LAYOUT_VARIANT_SEPARATOR_SUFFIX = ")";
+
+static QString& stripVariantName(QString& variant)
+{
+	if( variant.endsWith(LAYOUT_VARIANT_SEPARATOR_SUFFIX) ) {
+		int suffixLen = strlen(LAYOUT_VARIANT_SEPARATOR_SUFFIX);
+		return variant.remove(variant.length()-suffixLen, suffixLen);
+	}
+	return variant;
+}
+
+LayoutUnit::LayoutUnit(const QString& fullLayoutName)
+{
+	QStringList lv = fullLayoutName.split(LAYOUT_VARIANT_SEPARATOR_PREFIX);
+	layout = lv[0];
+	variant = lv.size() > 1 ? stripVariantName(lv[1]) : "";
+}
+
+QString LayoutUnit::toString() const
+{
+	if( variant.isEmpty() )
+		return layout;
+
+	return layout + LAYOUT_VARIANT_SEPARATOR_PREFIX+variant+LAYOUT_VARIANT_SEPARATOR_SUFFIX;
+}

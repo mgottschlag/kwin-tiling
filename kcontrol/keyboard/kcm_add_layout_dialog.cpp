@@ -30,7 +30,8 @@
 AddLayoutDialog::AddLayoutDialog(const Rules* rules_, Flags* flags_, QWidget* parent):
 		QDialog(parent),
 		rules(rules_),
-		flags(flags_)
+		flags(flags_),
+		selectedLanguage("no_language")
 {
     layoutDialogUi = new Ui_AddLayoutDialog();
     layoutDialogUi->setupUi(this);
@@ -61,6 +62,8 @@ AddLayoutDialog::AddLayoutDialog(const Rules* rules_, Flags* flags_, QWidget* pa
 void AddLayoutDialog::languageChanged(int langIdx)
 {
 	QString lang = layoutDialogUi->languageComboBox->itemData(langIdx).toString();
+	if( lang == selectedLanguage )
+		return;
 
 	QPixmap emptyPixmap(layoutDialogUi->layoutComboBox->iconSize());
 	emptyPixmap.fill(Qt::transparent);
@@ -82,12 +85,17 @@ void AddLayoutDialog::languageChanged(int langIdx)
     }
 	layoutDialogUi->layoutComboBox->setCurrentIndex(0);
 	layoutChanged(0);
+
+	selectedLanguage = lang;
 }
 
 void AddLayoutDialog::layoutChanged(int layoutIdx)
 {
-	layoutDialogUi->variantComboBox->clear();
 	QString layoutName = layoutDialogUi->layoutComboBox->itemData(layoutIdx).toString();
+	if( layoutName == selectedLayout )
+		return;
+
+	layoutDialogUi->variantComboBox->clear();
 	const LayoutInfo* layoutInfo = rules->getLayoutInfo(layoutName);
     foreach(const VariantInfo* variantInfo, layoutInfo->variantInfos) {
     	layoutDialogUi->variantComboBox->addItem(variantInfo->description, variantInfo->name);
@@ -95,11 +103,13 @@ void AddLayoutDialog::layoutChanged(int layoutIdx)
     layoutDialogUi->variantComboBox->model()->sort(0);
 	layoutDialogUi->variantComboBox->insertItem(0, i18nc("variant", "Default"), "");
 	layoutDialogUi->variantComboBox->setCurrentIndex(0);
+
+	selectedLayout = layoutName;
 }
 
 void AddLayoutDialog::accept()
 {
-	selectedLayoutConfig.layout = layoutDialogUi->layoutComboBox->itemData(layoutDialogUi->layoutComboBox->currentIndex()).toString();
-	selectedLayoutConfig.variant = layoutDialogUi->variantComboBox->itemData(layoutDialogUi->variantComboBox->currentIndex()).toString();
+	selectedLayoutUnit.layout = layoutDialogUi->layoutComboBox->itemData(layoutDialogUi->layoutComboBox->currentIndex()).toString();
+	selectedLayoutUnit.variant = layoutDialogUi->variantComboBox->itemData(layoutDialogUi->variantComboBox->currentIndex()).toString();
 	QDialog::accept();
 }

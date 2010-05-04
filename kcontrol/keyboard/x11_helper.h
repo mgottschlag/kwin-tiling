@@ -68,6 +68,37 @@ struct XkbConfig {
 	bool isValid() { return ! layouts.empty(); }
 };
 
+
+struct LayoutUnit {
+	//TODO: move these to private?
+	QString layout;
+	QString variant;
+
+	LayoutUnit() {}
+	explicit LayoutUnit(const QString& fullLayoutName);
+	LayoutUnit(const QString& layout_, const QString& variant_) {
+		layout = layout_;
+		variant = variant_;
+	}
+	/*explicit*/ LayoutUnit(const LayoutUnit& layoutUnit) {
+		layout = layoutUnit.layout;
+		variant = layoutUnit.variant;
+		displayName = layoutUnit.displayName;
+	}
+
+	QString getRawDisplayName() const { return displayName; }
+	QString getDisplayName() const { return !displayName.isEmpty() ? displayName :  layout; }
+	void setDisplayName(const QString& name) { displayName = name; }
+	bool isEmpty() const { return layout.isEmpty(); }
+	bool operator==(const LayoutUnit& layoutItem) const {
+		return layout==layoutItem.layout && variant==layoutItem.variant;
+	}
+	QString toString() const;
+
+private:
+	QString displayName;
+};
+
 class X11Helper
 {
 public:
@@ -80,9 +111,10 @@ public:
 	static void switchToNextLayout();
 	static bool isDefaultLayout();
 	static bool setDefaultLayout();
-	static bool setLayout(const QString& layout);
-	static QString getCurrentLayout();
-	static QStringList getLayoutsList();
+	static bool setLayout(const LayoutUnit& layout);
+	static LayoutUnit getCurrentLayout();
+	static QList<LayoutUnit> getLayoutsList();
+	static QStringList getLayoutsListAsString(const QList<LayoutUnit>& layoutsList);
 
 private:
 	enum FetchType { ALL, LAYOUTS_ONLY };
