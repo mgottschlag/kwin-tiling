@@ -181,11 +181,11 @@ void EngineExplorer::showEngine(const QString& name)
         return;
     }
 
-    const QStringList sources = m_engine->sources();
-
     //kDebug() << "showing engine " << m_engine->objectName();
     //kDebug() << "we have " << sources.count() << " data sources";
-    foreach (const QString& source, sources) {
+    connect(m_engine, SIGNAL(sourceAdded(QString)), this, SLOT(addSource(QString)));
+    connect(m_engine, SIGNAL(sourceRemoved(QString)), this, SLOT(removeSource(QString)));
+    foreach (const QString& source, m_engine->sources()) {
         //kDebug() << "adding " << source;
         addSource(source);
     }
@@ -194,13 +194,16 @@ void EngineExplorer::showEngine(const QString& name)
     m_updateInterval->setEnabled(true);
     m_sourceRequester->setEnabled(true);
     m_sourceRequester->setFocus();
-    connect(m_engine, SIGNAL(sourceAdded(QString)), this, SLOT(addSource(QString)));
-    connect(m_engine, SIGNAL(sourceRemoved(QString)), this, SLOT(removeSource(QString)));
     updateTitle();
 }
 
 void EngineExplorer::addSource(const QString& source)
 {
+    QList<QStandardItem*> items = m_dataModel->findItems(source, 0);
+    if (!items.isEmpty()) {
+        return;
+    }
+
     QStandardItem* parent = new QStandardItem(source);
     m_dataModel->appendRow(parent);
 
