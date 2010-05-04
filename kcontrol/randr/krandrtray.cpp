@@ -52,8 +52,6 @@ KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)
 {
 	setIconByName("preferences-desktop-display-randr");
 	setCategory(Hardware);
-	setToolTip("preferences-desktop-display-randr", i18n("Screen Settings"),
-		i18n("Resize, rotate and configure screens."));
 
 	m_menu = new KMenu(associatedWidget());
 	setContextMenu(m_menu);
@@ -62,6 +60,7 @@ KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)
 	//TODO: probably we need an about to show signal
 	connect(m_menu, SIGNAL(aboutToShow()), this, SLOT(slotPrepareMenu()));
 	m_display->refresh();
+	updateToolTip();
 }
 
 KRandRSystemTray::~KRandRSystemTray()
@@ -115,6 +114,7 @@ void KRandRSystemTray::slotPrepareMenu()
 		if (m_display->needsRefresh()) {
 			kDebug() << "Configuration dirty, reloading settings...";
 			m_display->refresh();
+			updateToolTip();
 		}
 
 		populateMenu(m_menu);
@@ -139,10 +139,98 @@ void KRandRSystemTray::slotScreenActivated()
 	m_display->setCurrentScreen(m_screenPopups.indexOf(static_cast<KMenu*>(sender())));
 }
 
+void KRandRSystemTray::updateToolTip()
+{
+	const QString icon = "preferences-desktop-display-randr";
+	QString title = i18n("Display");
+	QString subTitle = i18n("Resize, rotate and configure screens.");
+#ifdef HAS_RANDR_1_2
+	if (m_display->isValid())
+	{
+		OutputMap outputs = m_display->currentScreen()->outputs();
+		if (outputs.count() <= 0)
+			return;
+
+		RandRScreen *screen = m_display->currentScreen();
+		Q_ASSERT(screen);
+
+		if (screen->outputsUnified() && screen->connectedCount() > 1)
+		{
+			SizeList sizes = screen->unifiedSizes();
+			if (!sizes.isEmpty())
+			{
+				const QSize currentSize = screen->rect().size();
+				subTitle = i18n("Resolution: %1 x %2",
+						QString::number(currentSize.width()),
+						QString::number(currentSize.height()));
+				int rotations = screen->unifiedRotations();
+				if (rotations != RandR::Rotate0)
+				{
+					int rotation = RandR::Rotate0;
+					foreach (RandROutput *output, screen->outputs())
+						if (output->isActive())
+						{
+							rotation = output->rotation();
+							break;
+						}
+
+					if (rotation != RandR::Rotate0)
+						subTitle += "<br>" + i18n("Rotation: %1", RandR::rotationName(1 << rotation));
+				}
+			}
+		}
+		else
+		{
+			QString details = "<table>";
+			foreach(RandROutput *output, outputs)
+			{
+				if (output->isConnected()) 
+				{
+					details += "<tr><td colspan=\"2\">" + output->name()
+						+ "</td></tr>";
+
+					QSize currentSize = output->rect().size();
+					if (output->rotation() & (RandR::Rotate90 | RandR::Rotate270))
+						currentSize = QSize(currentSize.height(), currentSize.width());
+
+					details += i18n("<td align=\"right\">Resolution: </td><td>%1 x %2</td></tr>",
+							QString::number(currentSize.width()),
+							QString::number(currentSize.height()));
+					RateList rates = output->refreshRates();
+					if (rates.count())
+					{
+					    details += "<tr><td align=\"right\">" + i18n("Refresh: ") + "</td><td>"
+						    + ki18n("%1 Hz").subs(output->refreshRate(), 0, 'f', 1).toString()
+						    + "</td></tr>";
+					}
+
+					int rotations = output->rotations();
+					if (rotations != RandR::Rotate0 &&
+						output->rotation() != RandR::Rotate0)
+					{
+					        details += "<tr><td align=\"right\">" + i18n("Rotation: ") + "</td><td>"
+							+ RandR::rotationName(1 << output->rotation())
+							+ "</td></tr>";
+					}
+				}
+			}
+
+			if (details != "<table>")
+			{
+				title = details + "</table>";
+				subTitle.clear();
+			}
+		}
+	} 
+#endif
+
+	setToolTip(icon, title, subTitle);
+}
+
 void KRandRSystemTray::configChanged()
 {
 	m_display->refresh();
-
+	updateToolTip();
 	static bool first = true;
 
 	if (!first)

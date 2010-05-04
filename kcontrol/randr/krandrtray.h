@@ -55,6 +55,7 @@ protected Q_SLOTS:
 private:
 	void populateMenu(KMenu* menu);
 	void populateLegacyMenu(KMenu* menu);
+	void updateToolTip();
 
 	// helper functions
 	QActionGroup *populateRotations(KMenu *menu, int rotations, int rotation);
