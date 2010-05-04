@@ -631,7 +631,7 @@ void PanelController::mouseMoveFilter(QMouseEvent *event)
 void PanelController::focusOutEvent(QFocusEvent * event)
 {
     Q_UNUSED(event)
-    if (!m_optionsDialog->isActiveWindow() && !isControllerViewVisible()) {
+    if (!m_optionsDialog->isActiveWindow() && !isControllerViewVisible() && !isActiveWindow()) {
         m_optionsDialog->hide();
         close();
     }

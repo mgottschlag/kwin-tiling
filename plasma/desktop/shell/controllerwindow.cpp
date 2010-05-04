@@ -42,7 +42,7 @@
 #include <kephal/screens.h>
 
 ControllerWindow::ControllerWindow(QWidget* parent)
-   : QWidget(parent),
+   : Plasma::Dialog(parent),
      m_location(Plasma::Floating),
      m_layout(new QBoxLayout(QBoxLayout::TopToBottom, this)),
      m_background(new Plasma::FrameSvg(this)),
@@ -142,27 +142,6 @@ Plasma::Containment *ControllerWindow::containment() const
     return m_containment;
 }
 
-QSize ControllerWindow::sizeHint() const
-{
-    if (!m_view) {
-        return QWidget::sizeHint();
-    }
-    //FIXME is this right?
-    int screen = QApplication::desktop()->screenNumber(m_view);
-    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(screen);
-
-    switch (m_location) {
-    case Plasma::LeftEdge:
-    case Plasma::RightEdge:
-        return QSize(QWidget::sizeHint().width(), screenGeom.height());
-        break;
-    case Plasma::TopEdge:
-    case Plasma::BottomEdge:
-    default:
-        return QSize(screenGeom.width(), QWidget::sizeHint().height());
-        break;
-    }
-}
 
 void ControllerWindow::setLocation(const Plasma::Location &loc)
 {
@@ -247,17 +226,6 @@ Qt::Orientation ControllerWindow::orientation() const
     return Qt::Horizontal;
 }
 
-void ControllerWindow::initView()
-{
-    if (!m_view) {
-        m_view = new Plasma::Dialog(0);
-        m_view->setFocus();
-
-        m_view->setStyleSheet("background: transparent; border: none;");
-
-        m_layout->addWidget(m_view);
-    }
-}
 
 void ControllerWindow::showWidgetExplorer()
 {
@@ -265,7 +233,6 @@ void ControllerWindow::showWidgetExplorer()
         return;
     }
 
-    initView();
     //FIXME
     //m_view->setScreen(m_containment->screen(), m_containment->desktop());
 
@@ -274,17 +241,20 @@ void ControllerWindow::showWidgetExplorer()
         m_watchedWidget = m_widgetExplorer;
         m_widgetExplorer->setContainment(m_containment);
         m_widgetExplorer->populateWidgetList();
+        m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
 
         m_containment->corona()->addOffscreenWidget(m_widgetExplorer);
-        m_view->setGraphicsWidget(m_widgetExplorer);
+        m_widgetExplorer->show();
+        setGraphicsWidget(m_widgetExplorer);
 
         m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
 
         connect(m_widgetExplorer, SIGNAL(closeClicked()), this, SLOT(close()));
     } else {
         m_widgetExplorer->setOrientation(orientation());
+        m_widgetExplorer->show();
         m_watchedWidget = m_widgetExplorer;
-        m_view->setGraphicsWidget(m_widgetExplorer);
+        setGraphicsWidget(m_widgetExplorer);
     }
 
     if (orientation() == Qt::Horizontal) {
@@ -293,19 +263,17 @@ void ControllerWindow::showWidgetExplorer()
         resize(m_widgetExplorer->size().width(), height());
     }
 
-    m_widgetExplorer->show();
 }
 
 void ControllerWindow::showActivityManager()
 {
-    initView();
-
     if (!m_activityManager) {
         m_activityManager = new ActivityManager(orientation());
         m_watchedWidget = m_activityManager;
 
         m_corona->addOffscreenWidget(m_activityManager);
-        m_view->setGraphicsWidget(m_activityManager);
+        m_activityManager->show();
+        setGraphicsWidget(m_activityManager);
 
         m_activityManager->setIconSize(KIconLoader::SizeHuge);
 
@@ -313,7 +281,8 @@ void ControllerWindow::showActivityManager()
     } else {
         m_activityManager->setOrientation(orientation());
         m_watchedWidget = m_activityManager;
-        m_view->setGraphicsWidget(m_activityManager);
+        m_activityManager->show();
+        setGraphicsWidget(m_activityManager);
     }
 
     if (orientation() == Qt::Horizontal) {
@@ -321,8 +290,6 @@ void ControllerWindow::showActivityManager()
     } else {
         resize(m_activityManager->size().width(), height());
     }
-
-    m_activityManager->show();
 }
 
 bool ControllerWindow::isControllerViewVisible() const
@@ -343,7 +310,7 @@ void ControllerWindow::onActiveWindowChanged(WId id)
     //then close the panel controller
     if (QApplication::activeWindow() == 0 || (QApplication::activeWindow()->winId() != KWindowSystem::activeWindow())) {
         if (m_view && m_view->isVisible() && !isActiveWindow()) {
-            close();
+            //close();
         }
     }
 }
@@ -373,28 +340,7 @@ void ControllerWindow::resizeEvent(QResizeEvent * event)
 
     qDebug() << "ControllerWindow::resizeEvent" << event->oldSize();
 
-    // We want to stay aligned to the edge we are at
-    if (event->oldSize().isValid()) {
-        switch (m_location) {
-            case Plasma::BottomEdge:
-                move(
-                    x(),
-                    y() - event->size().height()
-                        + event->oldSize().height());
-                break;
-        // TODO: Enable this after fixing the behaviour
-        // of the vertical widget explorer
-        //     case Plasma::RightEdge:
-        //         move(
-        //             x() - event->size().width()
-        //                 + event->oldSize().width(),
-        //             y());
-        //         break;
-            default:
-                // do nothing
-                break;
-        }
-    }
+    Plasma::Dialog::resizeEvent(event);
 }
 
 #include "controllerwindow.moc"

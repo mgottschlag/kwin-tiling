@@ -600,6 +600,7 @@ void PanelView::updatePanelGeometry()
     if (m_panelController) {
         if (m_panelController->isVisible()) {
             m_panelController->resize(m_panelController->sizeHint());
+
             m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
         }
         m_panelController->setLocation(c->location());

@@ -23,6 +23,7 @@
 #include <QWidget>
 
 #include <Plasma/Plasma>
+#include <Plasma/Dialog>
 
 class QBoxLayout;
 class QGraphicsWidget;
@@ -38,7 +39,7 @@ namespace Plasma
 
 class ActivityManager;
 
-class ControllerWindow : public QWidget
+class ControllerWindow : public Plasma::Dialog
 {
     Q_OBJECT
 
@@ -48,8 +49,6 @@ public:
 
     virtual void setContainment(Plasma::Containment *containment);
     Plasma::Containment *containment() const;
-
-    QSize sizeHint() const;
 
     virtual void setLocation(const Plasma::Location &loc);
     Plasma::Location location() const;
@@ -72,7 +71,6 @@ private Q_SLOTS:
     void backgroundChanged();
 
 private:
-    void initView();
 
     Plasma::Location m_location;
     QBoxLayout *m_layout;
