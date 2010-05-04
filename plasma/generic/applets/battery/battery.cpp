@@ -144,7 +144,7 @@ void Battery::init()
     connect(KGlobalSettings::self(), SIGNAL(appearanceChanged()), SLOT(setupFonts()));
     connect(KGlobalSettings::self(), SIGNAL(appearanceChanged()), SLOT(setupFonts()));
 
-    const QStringList& battery_sources = dataEngine("powermanagement")->query("Battery")["sources"].toStringList();
+    const QStringList& battery_sources = dataEngine("powermanagement")->query("Battery")["Sources"].toStringList();
 
     connectSources();
 
@@ -304,15 +304,15 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
         m_acAdapterPlugged = data["Plugged in"].toBool();
         showAcAdapter(m_acAdapterPlugged);
     } else if (source == "PowerDevil") {
-        m_availableProfiles = data["availableProfiles"].toStringList();
-        m_currentProfile = data["currentProfile"].toString();
+        m_availableProfiles = data["Available Profiles"].toStringList();
+        m_currentProfile = data["Current Profile"].toString();
         //kDebug() << "PowerDevil profiles:" << m_availableProfiles << "[" << m_currentProfile << "]";
     } else {
         kDebug() << "Applet::Dunno what to do with " << source;
     }
 
     if (source == "Battery0") {
-        m_remainingMSecs  = data["Remaining msec"].toInt();
+        m_remainingMSecs = data["Remaining msec"].toInt();
         //kDebug() << "Remaining msecs on battery:" << m_remainingMSecs;
     }
 
@@ -994,7 +994,7 @@ void Battery::setShowBatteryLabel(bool show)
 
 void Battery::connectSources()
 {
-    const QStringList& battery_sources = dataEngine("powermanagement")->query("Battery")["sources"].toStringList();
+    const QStringList& battery_sources = dataEngine("powermanagement")->query("Battery")["Sources"].toStringList();
 
     foreach (const QString &battery_source, battery_sources) {
         dataEngine("powermanagement")->connectSource(battery_source, this);
@@ -1016,8 +1016,7 @@ void Battery::sourceAdded(const QString& source)
         m_numOfBattery++;
         constraintsEvent(Plasma::SizeConstraint);
         update();
-    }
-    if (source == "PowerDevil") {
+    } else if (source == "PowerDevil") {
         dataEngine("powermanagement")->connectSource(source, this);
     }
 }
@@ -1028,8 +1027,7 @@ void Battery::sourceRemoved(const QString& source)
         m_numOfBattery--;
         constraintsEvent(Plasma::SizeConstraint);
         update();
-    }
-    if (source == "PowerDevil") {
+    } else if (source == "PowerDevil") {
         dataEngine("powermanagement")->disconnectSource(source, this);
     }
 }
