@@ -216,6 +216,7 @@ PlasmaApp::PlasmaApp()
       m_mainView(0),
       m_isDesktop(false),
       m_autoHideControlBar(true),
+      m_raiseTimer(new QTimer(this)),
       m_unHideTimer(0),
       m_startupSuspendWaitCount(0)
 {
@@ -249,6 +250,10 @@ PlasmaApp::PlasmaApp()
 
     m_mainView = new NetView(0, NetView::mainViewId(), 0);
     m_mainView->hide();
+
+    m_raiseTimer->setSingleShot(true);
+    connect(m_raiseTimer, SIGNAL(timeout()), this, SLOT(raiseMainView()));
+
     connect(m_mainView, SIGNAL(containmentActivated()), this, SLOT(mainContainmentActivated()));
     connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SLOT(positionPanel()));
     m_mainView->installEventFilter(this);
@@ -257,10 +262,6 @@ PlasmaApp::PlasmaApp()
     m_mainView->setUseGL(useGL);
 
     connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(controlBarVisibilityUpdate()));
-
-    m_raiseTimer = new QTimer(this);
-    m_raiseTimer->setSingleShot(true);
-    connect(m_raiseTimer, SIGNAL(timeout()), this, SLOT(raiseMainView()));
 
     int width = 400;
     int height = 200;
