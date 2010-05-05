@@ -1,3 +1,5 @@
+#ifndef PANELVIEW_CPP
+#define PANELVIEW_CPP
 /*
 *   Copyright 2007 by Matt Broadstone <mbroadst@kde.org>
 *   Copyright 2007 by Robert Knight <robertknight@gmail.com>
@@ -198,7 +200,8 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_panelController(0),
       m_glowBar(0),
       m_mousePollTimer(0),
-      m_strutsTimer(0),
+      m_strutsTimer(new QTimer(this)),
+      m_delayedUnhideTimer(new QTimer(this)),
       m_spacer(0),
       m_spacerIndex(-1),
 #ifdef Q_WS_X11
@@ -211,8 +214,11 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_triggerEntered(false)
 {
     kDebug() << "Panel geometry is" << panel->geometry();
+    m_delayedUnhideTs.start();
+    m_delayedUnhideTimer->setSingleShot(true);
+    m_delayedUnhideTimer->setInterval();
+    connect(m_delayedUnhideTimer, SIGNAL(timeout()), this, SLOT(delayedUnhide()));
 
-    m_strutsTimer = new QTimer(this);
     m_strutsTimer->setSingleShot(true);
     connect(m_strutsTimer, SIGNAL(timeout()), this, SLOT(updateStruts()));
 
@@ -422,19 +428,24 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
     unhide();
 
     disconnect(containment(), SIGNAL(activate()), this, SLOT(unhide()));
+    disconnect(containment(), SIGNAL(newStatus(Plasma::ItemStatus)), this, SLOT(checkUnhide(Plasma::ItemStatus)));
     if (mode == NormalPanel || mode == WindowsGoBelow) {
         //remove the last remnants of hide/unhide
         delete m_mousePollTimer;
         m_mousePollTimer = 0;
     } else {
         connect(containment(), SIGNAL(activate()), this, SLOT(unhide()));
+        connect(containment(), SIGNAL(newStatus(Plasma::ItemStatus)), this, SLOT(checkUnhide(Plasma::ItemStatus)));
     }
 
     config().writeEntry("panelVisibility", (int)mode);
 
     //if the user didn't cause this, hide again in a bit
     if ((mode == AutoHide || mode == LetWindowsCover) && !m_editing) {
-        m_mousePollTimer->stop();
+        if (m_mousePollTimer) {
+            m_mousePollTimer->stop();
+        }
+
         QTimer::singleShot(2000, this, SLOT(startAutoHide()));
     }
 }
@@ -1033,16 +1044,18 @@ void PanelView::updateStruts()
     recreateUnhideTrigger();
 }
 
-/*
-// handy for debugging :)
 void PanelView::enterEvent(QEvent *event)
 {
+    // allow unhiding to happen again even if we were delay-unhidden
+    m_delayedUnhideTs.start();
+/*
+// handy for debugging :)
     if (containment()) {
         kDebug() << sceneRect() << containment()->geometry();
     }
+*/
     Plasma::View::enterEvent(event);
 }
-*/
 
 void PanelView::showWidgetExplorer()
 {
@@ -1089,9 +1102,9 @@ void PanelView::resizeEvent(QResizeEvent *event)
 
 void PanelView::hideIfNotInUse()
 {
-    QPoint mousePos = QCursor::pos();
-
-    if (!geometry().contains(mousePos) && !hasPopup()) {
+    //kDebug() << m_delayedUnhideTs.elapsed() << geometry().contains(QCursor::pos()) << hasPopup();
+    //TODO: is 5s too long? not long enough?
+    if (m_delayedUnhideTs.elapsed() > 5000 && !geometry().contains(QCursor::pos()) && !hasPopup()) {
         startAutoHide();
     }
 }
@@ -1194,13 +1207,14 @@ bool PanelView::hasPopup()
 void PanelView::unhide(bool destroyTrigger)
 {
     //kill the unhide stuff
+    m_delayedUnhideTimer->stop();
     hideHinter();
     if (destroyTrigger) {
         destroyUnhideTrigger();
     }
 
     //ensure it's visible
-    if (! isVisible()) {
+    if (!isVisible()) {
         Plasma::WindowEffects::slideWindow(this, location());
         show();
         KWindowSystem::setOnAllDesktops(winId(), true);
@@ -1218,8 +1232,7 @@ void PanelView::unhide(bool destroyTrigger)
     //FIXME investigate whether the mouse poll is really needed all the time or if leave events are
     //good enough
     //welll, if we didn't create it here something would have to when a popup dies
-    disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideIfNotInUse()));
-    connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideIfNotInUse()));
+    connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideIfNotInUse()), Qt::UniqueConnection);
     m_mousePollTimer->start(200);
 
     //avoid hide-show loops
@@ -1228,6 +1241,25 @@ void PanelView::unhide(bool destroyTrigger)
         KWindowSystem::raiseWindow(winId());
         QTimer::singleShot(0, this, SLOT(resetTriggerEnteredSuppression()));
     }
+}
+
+void PanelView::checkUnhide(Plasma::ItemStatus newStatus)
+{
+    //kDebug() << "================= got a new status: " << newStatus << Plasma::ActiveStatus;
+    if (newStatus > Plasma::ActiveStatus) {
+        if (!m_delayedUnhideTimer->isActive()) {
+            m_delayedUnhideTimer->start();
+        }
+    } else {
+        m_delayedUnhideTimer->stop();
+    }
+}
+
+void PanelView::delayedUnhide()
+{
+    m_delayedUnhideTs.start();
+    //kDebug() << "starting at:" << m_delayedUnhideTs << m_delayedUnhideTs.elapsed();
+    unhide(true);
 }
 
 void PanelView::unhide()
@@ -1271,8 +1303,7 @@ void PanelView::leaveEvent(QEvent *event)
             m_mousePollTimer = new QTimer(this);
         }
 
-        disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideIfNotInUse()));
-        connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideIfNotInUse()));
+        connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideIfNotInUse()), Qt::UniqueConnection);
         m_mousePollTimer->start(200);
     }
 
@@ -1559,3 +1590,4 @@ void PanelView::dropEvent(QDropEvent *event)
 
 #include "panelview.moc"
 
+#endif // PANELVIEW_CPP

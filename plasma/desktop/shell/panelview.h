@@ -132,6 +132,17 @@ public Q_SLOTS:
     void unhide();
 
     /**
+     * unhides the panel if it is hidden due to a delayed acdtions, such as a status change
+     * This always destroys the unhide trigger
+     */
+    void delayedUnhide();
+
+    /**
+     * Decides whether to hide or not based on the status of the containment
+     */
+    void checkUnhide(Plasma::ItemStatus newStatus);
+
+    /**
      * Pinches the min/max sizes of the containment to the current screen resolution
      */
     void pinchContainmentToCurrentScreen();
@@ -189,7 +200,7 @@ protected:
     bool event(QEvent *event);
     void dragLeaveEvent(QDragLeaveEvent *event);
     void dropEvent(QDropEvent *event);
-    //void enterEvent(QEvent *event);
+    void enterEvent(QEvent *event);
 
 private:
     void createUnhideTrigger();
@@ -241,8 +252,10 @@ private:
     PanelController *m_panelController;
     QSet<PanelAppletOverlay*> m_appletOverlays;
     GlowBar *m_glowBar;
+    QTime m_delayedUnhideTs;
     QTimer *m_mousePollTimer;
     QTimer *m_strutsTimer;
+    QTimer *m_delayedUnhideTimer;
     QTimeLine *m_timeLine;
     QGraphicsWidget *m_spacer;
     int m_spacerIndex;
