@@ -294,22 +294,8 @@ void Applet::checkSizes()
     } else if (f == Plasma::Vertical) {
         setMinimumSize(0, preferredSize.height());
         setMaximumSize(QWIDGETSIZE_MAX, preferredSize.height());
-    } else if (actualSize.width() < preferredSize.width() ||
-               actualSize.height() < preferredSize.height()) {
-        setMinimumSize(22, 22);
-
-        QSizeF constraint;
-        if (actualSize.width() > actualSize.height()) {
-            constraint = QSize(actualSize.width() - leftMargin - rightMargin, -1);
-        } else {
-            constraint = QSize(-1, actualSize.height() - topMargin - bottomMargin);
-        }
-
-        preferredSize = m_taskArea->effectiveSizeHint(Qt::PreferredSize, actualSize);
-        preferredSize.setWidth(qMax(actualSize.width(), preferredSize.width()));
-        preferredSize.setHeight(qMax(actualSize.height(), preferredSize.height()));
-
-        resize(preferredSize);
+    } else if (f == Plasma::Planar) {
+        setMinimumSize(preferredSize);
     }
 }
 
@@ -320,7 +306,7 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
     Q_UNUSED(contentsRect)
 
     QRect r = rect().toRect();
-    QRect normalRect = rect().toRect();
+    QRect normalRect = contentsRect;
     QRect lastRect(normalRect);
     m_background->setElementPrefix("lastelements");
 
@@ -342,7 +328,7 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
         lastRect.setWidth(rightEasementBorder);
     } else {
         const int rightEasementBorder = rightEasement + m_background->marginSize(Plasma::RightMargin);
-        normalRect.setX(leftEasement);
+        normalRect.setX(leftEasement + contentsRect.left());
         normalRect.setWidth(normalRect.width() - rightEasementBorder);
 
         lastRect.setX(normalRect.right() + 1);
