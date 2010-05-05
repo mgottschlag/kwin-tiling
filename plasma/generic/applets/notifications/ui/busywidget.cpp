@@ -140,8 +140,10 @@ void BusyWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
         Plasma::BusyWidget::paint(painter, option, widget);
 
-    } else if (m_state == Empty) {
+    } else if (m_state == Empty && m_manager->notifications().count() > 0) {
         m_svg->paint(painter, iconRect, "notification-inactive");
+    } else if (m_state == Empty && m_manager->notifications().count() == 0) {
+        m_svg->paint(painter, iconRect, "notification-disabled");
     } else {
         // m_state ==  Info
         m_svg->paint(painter, iconRect, "notification-empty");
