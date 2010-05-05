@@ -208,6 +208,7 @@ void NotificationsEngine::timerEvent(QTimerEvent *event)
 {
     const QString source = m_timeouts.value(event->timerId());
     if (!source.isEmpty()) {
+        killTimer(event->timerId());
         m_sourceTimers.remove(source);
         m_timeouts.remove(event->timerId());
         removeSource(source);
