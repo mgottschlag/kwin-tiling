@@ -403,7 +403,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
                     d->topLayout->insertItem(0, d->firstTasksLayout);
                 }
 
-                d->firstTasksLayout->addItem(widget);
+                d->firstTasksLayout->insertItem(0, widget);
             } else if (task->order() == SystemTray::Task::First) {
                 if (d->firstTasksLayout->count() == 0) {
                     d->topLayout->insertItem(0, d->firstTasksLayout);
@@ -476,6 +476,9 @@ void TaskArea::removeTask(Task *task)
         }
         d->normalTasksLayout->removeItem(widget);
         d->lastTasksLayout->removeItem(widget);
+        if (d->lastTasksLayout->count() == 0) {
+            d->topLayout->removeItem(d->lastTasksLayout);
+        }
         d->taskForWidget.remove(widget);
         d->taskCategories.remove(task);
     }
