@@ -22,6 +22,8 @@
 
 #include <Plasma/IconWidget>
 
+class KJob;
+
 namespace Plasma
 {
     class Applet;
@@ -49,6 +51,7 @@ protected:
 
 private Q_SLOTS:
     void calculateShowPosition();
+    void showContextMenu(KJob *job);
 
 private:
     Plasma::Service *m_service;

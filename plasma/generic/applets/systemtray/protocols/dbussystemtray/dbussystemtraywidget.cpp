@@ -19,19 +19,23 @@
 
 #include "dbussystemtraywidget.h"
 
+#include <QApplication>
 #include <QDBusAbstractInterface>
+#include <QDesktopWidget>
 #include <QGraphicsSceneWheelEvent>
+#include <QMenu>
 
 #include <KAction>
 
 #include <Plasma/Containment>
 #include <Plasma/Corona>
+#include <Plasma/ServiceJob>
 #include <Plasma/Theme>
 
 namespace SystemTray
 {
 
-    DBusSystemTrayWidget::DBusSystemTrayWidget(Plasma::Applet *parent, Plasma::Service *service)
+DBusSystemTrayWidget::DBusSystemTrayWidget(Plasma::Applet *parent, Plasma::Service *service)
     : Plasma::IconWidget(parent),
       m_service(service),
       m_host(parent)
@@ -77,7 +81,43 @@ void DBusSystemTrayWidget::contextMenuEvent(QGraphicsSceneContextMenuEvent *even
     KConfigGroup params = m_service->operationDescription("ContextMenu");
     params.writeEntry("x", event->screenPos().x());
     params.writeEntry("y", event->screenPos().y());
-    m_service->startOperationCall(params);
+    KJob *job = m_service->startOperationCall(params);
+    connect(job, SIGNAL(result(KJob*)), this, SLOT(showContextMenu(KJob*)));
+}
+
+void DBusSystemTrayWidget::showContextMenu(KJob *job)
+{
+    Plasma::ServiceJob *sjob = qobject_cast<Plasma::ServiceJob *>(job);
+    if (!sjob) {
+        return;
+    }
+
+    QMenu *menu = qobject_cast<QMenu *>(sjob->result().value<QObject *>());
+    if (menu) {
+        if (m_host->containment() && m_host->containment()->corona()) {
+            menu->adjustSize();
+            QPoint p = m_host->containment()->corona()->popupPosition(this, menu->size());
+            kDebug() << "execing at: " << p << menu->size();
+            menu->exec(p);
+        } else {
+            // Compute a reasonable position for the menu if we don't have a corona.
+            QPoint pos(sjob->parameters()["x"].toInt(), sjob->parameters()["y"].toInt());
+            QRect availableRect = QApplication::desktop()->availableGeometry(pos);
+            QRect menuRect = QRect(pos, menu->sizeHint());
+            if (menuRect.left() < availableRect.left()) {
+                menuRect.moveLeft(availableRect.left());
+            } else if (menuRect.right() > availableRect.right()) {
+                menuRect.moveRight(availableRect.right());
+            }
+            if (menuRect.top() < availableRect.top()) {
+                menuRect.moveTop(availableRect.top());
+            } else if (menuRect.bottom() > availableRect.bottom()) {
+                menuRect.moveBottom(availableRect.bottom());
+            }
+            kDebug() << "non-corona execing at: " << menuRect.topLeft();
+            menu->exec(menuRect.topLeft());
+        }
+    }
 }
 
 void DBusSystemTrayWidget::calculateShowPosition()
