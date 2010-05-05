@@ -31,18 +31,20 @@
  */
 class StatusNotifierItemJob : public Plasma::ServiceJob
 {
-
     Q_OBJECT
 
-    public:
-        StatusNotifierItemJob(StatusNotifierItemSource *source, const QString &operation, QMap<QString, QVariant> &parameters, QObject *parent = NULL);
-        ~StatusNotifierItemJob();
+public:
+    StatusNotifierItemJob(StatusNotifierItemSource *source, const QString &operation, QMap<QString, QVariant> &parameters, QObject *parent = NULL);
+    ~StatusNotifierItemJob();
 
-    protected:
-        void start();
+protected:
+    void start();
 
-    private:
-        StatusNotifierItemSource *m_source;
+private Q_SLOTS:
+    void contextMenuReady(QMenu *menu);
+
+private:
+    StatusNotifierItemSource *m_source;
 
 };
 

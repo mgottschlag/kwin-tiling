@@ -24,6 +24,7 @@ StatusNotifierItemJob::StatusNotifierItemJob(StatusNotifierItemSource *source, c
     ServiceJob(source->objectName(), operation, parameters, parent),
     m_source(source)
 {
+    connect(source, SIGNAL(contextMenuReady(QMenu*)), this, SLOT(contextMenuReady(QMenu*)));
 }
 
 StatusNotifierItemJob::~StatusNotifierItemJob()
@@ -34,15 +35,23 @@ void StatusNotifierItemJob::start()
 {
     if (operationName() == QString::fromLatin1("Activate")) {
         m_source->activate(parameters()["x"].toInt(), parameters()["y"].toInt());
+        setResult(0);
     } else if (operationName() == QString::fromLatin1("SecondaryActivate")) {
         m_source->secondaryActivate(parameters()["x"].toInt(), parameters()["y"].toInt());
+        setResult(0);
     } else if (operationName() == QString::fromLatin1("ContextMenu")) {
         m_source->contextMenu(parameters()["x"].toInt(), parameters()["y"].toInt());
     } else if (operationName() == QString::fromLatin1("Scroll")) {
         m_source->scroll(parameters()["delta"].toInt(), parameters()["direction"].toString());
+        setResult(0);
     }
+}
 
-    setResult(0);
+void StatusNotifierItemJob::contextMenuReady(QMenu *menu)
+{
+    if (operationName() == QString::fromLatin1("ContextMenu")) {
+        setResult(qVariantFromValue((QObject*)menu));
+    }
 }
 
 #include "statusnotifieritemjob.moc"

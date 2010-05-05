@@ -384,23 +384,7 @@ void StatusNotifierItemSource::contextMenu(int x, int y)
         // fly.
         QMetaObject::invokeMethod(menu, "aboutToShow");
 
-        // Compute a reasonable position for the menu. Unfortunately we can't
-        // use Plasma::Corona::popupPosition() from here.
-        QPoint pos(x, y);
-        QRect availableRect = QApplication::desktop()->availableGeometry(pos);
-        QRect menuRect = QRect(pos, menu->sizeHint());
-        if (menuRect.left() < availableRect.left()) {
-            menuRect.moveLeft(availableRect.left());
-        } else if (menuRect.right() > availableRect.right()) {
-            menuRect.moveRight(availableRect.right());
-        }
-        if (menuRect.top() < availableRect.top()) {
-            menuRect.moveTop(availableRect.top());
-        } else if (menuRect.bottom() > availableRect.bottom()) {
-            menuRect.moveBottom(availableRect.bottom());
-        }
-
-        menu->popup(menuRect.topLeft());
+        emit contextMenuReady(menu);
     } else {
         kWarning() << "Could not find DBusMenu interface, falling back to calling ContextMenu()";
         if (m_statusNotifierItemInterface && m_statusNotifierItemInterface->isValid()) {

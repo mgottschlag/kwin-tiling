@@ -47,8 +47,10 @@ public:
     void scroll(int delta, const QString &direction);
     void contextMenu(int x, int y);
 
-private slots:
+Q_SIGNALS:
+    void contextMenuReady(QMenu *menu);
 
+private slots:
     void refresh();
     void syncStatus(QString);
     void refreshCallback(QDBusPendingCallWatcher *);
