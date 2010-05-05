@@ -218,7 +218,7 @@ TaskArea::TaskArea(SystemTray::Applet *parent)
     d->topLayout->addItem(d->normalTasksLayout);
     d->topLayout->addItem(d->lastTasksLayout);
     d->topLayout->setContentsMargins(0, 0, 0, 0);
-    d->topLayout->setSpacing(0);
+    d->topLayout->setSpacing(5);
 
     d->hiddenTasksWidget = new QGraphicsWidget(this);
     d->hiddenTasksLayout = new QGraphicsGridLayout(d->hiddenTasksWidget);
@@ -563,16 +563,6 @@ void TaskArea::setOrientation(Qt::Orientation o)
     in order to make the background of the last items look "balanced"*/
     QGraphicsWidget *applet = dynamic_cast<QGraphicsWidget *>(parentItem());
 
-    if (applet) {
-        qreal left, top, right, bottom;
-        applet->getContentsMargins(&left, &top, &right, &bottom);
-
-        if (o == Qt::Horizontal) {
-            d->topLayout->setSpacing(qMax(2, int(right)) * 2);
-        } else {
-            d->topLayout->setSpacing(qMax(2, int(bottom)) * 2);
-        }
-    }
     syncTasks(d->host->manager()->tasks());
 }
 

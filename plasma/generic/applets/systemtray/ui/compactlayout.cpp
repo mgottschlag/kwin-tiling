@@ -144,6 +144,7 @@ int CompactLayout::count() const
 
 void CompactLayout::setGeometry(const QRectF &rect)
 {
+    QGraphicsLayout::setGeometry(rect);
     //kDebug() << rect;
     QHash<QGraphicsLayoutItem*, QRectF> geometries;
     geometries = d->calculateGeometries(rect, Qt::PreferredSize, rect.size());
