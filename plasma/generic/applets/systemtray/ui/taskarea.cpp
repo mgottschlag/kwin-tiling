@@ -515,7 +515,7 @@ int TaskArea::leftEasement() const
         QGraphicsLayoutItem *item = d->firstTasksLayout->itemAt(d->firstTasksLayout->count() - 1);
 
         if (d->topLayout->orientation() == Qt::Vertical) {
-            return size().height() - item->geometry().bottom() + d->topLayout->spacing()/2;
+            return item->geometry().bottom() + d->topLayout->spacing()/2;
         } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
             return size().width() - item->geometry().left() + d->topLayout->spacing()/2;
         } else {
