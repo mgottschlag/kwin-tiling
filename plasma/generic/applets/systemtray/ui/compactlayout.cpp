@@ -43,7 +43,7 @@ public:
                                                             Qt::SizeHint which,
                                                             const QSizeF &constraint) const;
     void addPadding(QHash<QGraphicsLayoutItem*, QRectF> &geometries,
-                    const QSizeF &constraint);
+                    const QRectF &constraint);
     QSizeF hackedConstraint(const QSizeF &constraint) const;
     void updateParentWidget(QGraphicsWidget *item);
     QRectF boundingRect(const QList<QRectF> &rects) const;
@@ -147,7 +147,8 @@ void CompactLayout::setGeometry(const QRectF &rect)
     //kDebug() << rect;
     QHash<QGraphicsLayoutItem*, QRectF> geometries;
     geometries = d->calculateGeometries(rect, Qt::PreferredSize, rect.size());
-    d->addPadding(geometries, rect.size());
+
+    d->addPadding(geometries, rect);
 
     QHashIterator<QGraphicsLayoutItem*, QRectF> i(geometries);
     while (i.hasNext()) {
@@ -158,12 +159,21 @@ void CompactLayout::setGeometry(const QRectF &rect)
 }
 
 
-void CompactLayout::Private::addPadding(QHash<QGraphicsLayoutItem*, QRectF> &geometries, const QSizeF &constraint)
+void CompactLayout::Private::addPadding(QHash<QGraphicsLayoutItem*, QRectF> &geometries, const QRectF &constraint)
 {
-    QSizeF size = boundingRect(geometries.values()).size();
+    QRectF bRect = boundingRect(geometries.values());
+    QSizeF size = bRect.size();
 
     qreal xAdjustment = (constraint.width() - size.width()) / 2.0;
     qreal yAdjustment = (constraint.height() - size.height()) / 2.0;
+
+    bRect.moveTopLeft(bRect.topLeft() + QPointF(xAdjustment, yAdjustment));
+    if (bRect.left() < constraint.left()) {
+        xAdjustment = 0;
+    }
+    if (bRect.top() < constraint.top()) {
+        yAdjustment = 0;
+    }
 
     if (xAdjustment || yAdjustment) {
         foreach (QGraphicsLayoutItem *item, items) {
