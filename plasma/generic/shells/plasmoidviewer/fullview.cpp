@@ -99,7 +99,6 @@ void FullView::addApplet(const QString &name, const QString &containment,
     m_containment->setLocation(m_location);
     m_containment->resize(size());
     setScene(m_containment->scene());
-    setSceneRect(m_containment->geometry());
 
     if (name.startsWith("plasma:") ||
         name.startsWith("zeroconf:")) {
@@ -129,9 +128,10 @@ void FullView::addApplet(const QString &name, const QString &containment,
 
     if (!m_applet) {
         kDebug() << "m_applet is 0????";
-	return;
+        return;
     }	
 
+    setSceneRect(m_applet->sceneBoundingRect());
     m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
     setWindowTitle(m_applet->name());
     setWindowIcon(SmallIcon(m_applet->icon()));
@@ -146,7 +146,7 @@ void FullView::plasmoidAccessFinished(Plasma::AccessAppletJob *job)
         m_applet = job->applet();
         m_containment->addApplet(m_applet, QPointF(-1, -1), false);
         m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
-        setSceneRect(m_containment->geometry());
+        setSceneRect(m_applet->sceneBoundingRect());
         setWindowTitle(m_applet->name());
         setWindowIcon(SmallIcon(m_applet->icon()));
     } else {
@@ -202,6 +202,7 @@ void FullView::resizeEvent(QResizeEvent *event)
     // up to infinity memory in exponential increments
     if (newSize.isValid()) {
         m_applet->resize(QSizeF(newWidth, newHeight));
+        setSceneRect(m_applet->sceneBoundingRect());
     }
 }
 
@@ -214,20 +215,14 @@ void FullView::closeEvent(QCloseEvent *event)
 void FullView::appletTransformedItself()
 {
     resize(m_applet->size().toSize());
+    setSceneRect(m_applet->sceneBoundingRect());
 }
 
 void FullView::sceneRectChanged(const QRectF &rect)
 {
     Q_UNUSED(rect)
     if (m_applet) {
-        setSceneRect(m_applet->geometry());
-    }
-    return;
-    if (m_containment && m_containment->layout()) {
-        setSceneRect(m_containment->geometry());
-    } else if (m_applet) {
-        //kDebug() << m_applet->geometry();
-        setSceneRect(m_applet->geometry());
+        setSceneRect(m_applet->sceneBoundingRect());
     }
 }
 
