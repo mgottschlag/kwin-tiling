@@ -40,6 +40,7 @@
 #include <KConfigDialog>
 #include <KComboBox>
 #include <KWindowSystem>
+#include <KIconLoader>
 
 #include <Solid/Device>
 
@@ -96,6 +97,7 @@ Notifications::Notifications(QObject *parent, const QVariantList &arguments)
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
     setBackgroundHints(NoBackground);
     setHasConfigurationInterface(true);
+    setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
 }
 
 Notifications::~Notifications()
