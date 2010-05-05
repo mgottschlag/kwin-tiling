@@ -403,9 +403,19 @@ bool Tasks::highlightWindows() const
     return m_highlightWindows;
 }
 
-void Tasks::needsVisualFocus()
+void Tasks::needsVisualFocus(bool focus)
 {
-    emit activate();
+    if (focus) {
+        setStatus(Plasma::NeedsAttentionStatus);
+    } else {
+        foreach (AbstractTaskItem *item, m_rootGroupItem->members()) {
+            if (item->taskFlags() & AbstractTaskItem::TaskWantsAttention) {
+                // not time to go passive yet! :)
+                return;
+            }
+        }
+        setStatus(Plasma::PassiveStatus);
+    }
 }
 
 TaskGroupItem* Tasks::rootGroupItem()

@@ -102,7 +102,7 @@ public:
         bool showToolTip() const;
         bool highlightWindows() const;
 
-        void needsVisualFocus();
+        void needsVisualFocus(bool focus);
         QWidget *popupDialog() const;
 signals:
     /**
