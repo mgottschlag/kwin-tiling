@@ -51,6 +51,7 @@ Q_SIGNALS:
     void contextMenuReady(QMenu *menu);
 
 private slots:
+    void contextMenuReady();
     void refresh();
     void syncStatus(QString);
     void refreshCallback(QDBusPendingCallWatcher *);

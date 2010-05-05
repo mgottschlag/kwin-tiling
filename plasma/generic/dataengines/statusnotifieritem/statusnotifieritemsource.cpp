@@ -270,6 +270,7 @@ void StatusNotifierItemSource::refreshCallback(QDBusPendingCallWatcher *call)
                     kWarning() << "DBusMenu disabled for this application";
                 } else {
                     m_menuImporter = new PlasmaDBusMenuImporter(m_statusNotifierItemInterface->service(), menuObjectPath, iconLoader(), this);
+                    connect(m_menuImporter, SIGNAL(menuReadyToBeShown()), this, SLOT(contextMenuReady()));
                 }
             }
         }
@@ -277,6 +278,11 @@ void StatusNotifierItemSource::refreshCallback(QDBusPendingCallWatcher *call)
 
     checkForUpdate();
     delete call;
+}
+
+void StatusNotifierItemSource::contextMenuReady()
+{
+    emit contextMenuReady(m_menuImporter->menu());
 }
 
 QPixmap StatusNotifierItemSource::KDbusImageStructToPixmap(const KDbusImageStruct &image) const
@@ -383,8 +389,6 @@ void StatusNotifierItemSource::contextMenu(int x, int y)
         // the menu may show up over the applet if new actions are added on the
         // fly.
         QMetaObject::invokeMethod(menu, "aboutToShow");
-
-        emit contextMenuReady(menu);
     } else {
         kWarning() << "Could not find DBusMenu interface, falling back to calling ContextMenu()";
         if (m_statusNotifierItemInterface && m_statusNotifierItemInterface->isValid()) {
