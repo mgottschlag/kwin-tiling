@@ -69,7 +69,7 @@ void AppSource::updateGroup()
     setData("display", !m_group->noDisplay());
 
     QStringList entries;
-    foreach (KSycocaEntry::Ptr p, m_group->entries(false, false, true)) {
+    foreach (KSycocaEntry::Ptr p, m_group->entries(true, false, true)) {
         if (p->isType(KST_KService)) {
             const KService::Ptr service = KService::Ptr::staticCast(p);
             entries << service->storageId();
