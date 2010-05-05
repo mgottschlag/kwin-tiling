@@ -92,10 +92,13 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
 
     ++s_managerUsage;
 
+    QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(this);
+    lay->setContentsMargins(0, 0, 0, 0);
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/systemtray");
     m_background->setCacheAllRenderedFrames(true);
     m_taskArea = new TaskArea(this);
+    lay->addItem(m_taskArea);
     connect(m_taskArea, SIGNAL(toggleHiddenItems()), this, SLOT(togglePopup()));
 
     m_icons = new Plasma::Svg(this);
@@ -104,7 +107,6 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
     setPopupIcon(QIcon());
     setPassivePopup(false);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
-    setBackgroundHints(NoBackground);
     setHasConfigurationInterface(true);
 }
 
@@ -194,7 +196,6 @@ void Applet::configChanged()
     s_manager->loadApplets(this);
     m_taskArea->syncTasks(s_manager->tasks());
     checkSizes();
-    setTaskAreaGeometry();
 }
 
 void Applet::popupEvent(bool show)
@@ -204,7 +205,6 @@ void Applet::popupEvent(bool show)
 
 void Applet::constraintsEvent(Plasma::Constraints constraints)
 {
-    setBackgroundHints(NoBackground);
     if (constraints & Plasma::FormFactorConstraint) {
         QSizePolicy policy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         policy.setHeightForWidth(true);
@@ -251,15 +251,6 @@ QSet<Task::Category> Applet::shownCategories() const
     return m_shownCategories;
 }
 
-void Applet::setGeometry(const QRectF &rect)
-{
-    Plasma::Applet::setGeometry(rect);
-
-    if (m_taskArea) {
-        setTaskAreaGeometry();
-    }
-}
-
 void Applet::checkSizes()
 {
     Plasma::FormFactor f = formFactor();
@@ -274,19 +265,19 @@ void Applet::checkSizes()
         m_background->setEnabledBorders(Plasma::FrameSvg::LeftBorder | Plasma::FrameSvg::RightBorder);
         m_background->setElementPrefix("lastelements");
         m_background->setEnabledBorders(Plasma::FrameSvg::LeftBorder | Plasma::FrameSvg::RightBorder);
-        setContentsMargins(leftMargin, 0, rightMargin, 0);
+        layout()->setContentsMargins(leftMargin, 0, rightMargin, 0);
     } else if (f == Plasma::Vertical && minSize.width() >= size().width() - leftMargin - rightMargin) {
         m_background->setElementPrefix(QString());
         m_background->setEnabledBorders(Plasma::FrameSvg::TopBorder | Plasma::FrameSvg::BottomBorder);
         m_background->setElementPrefix("lastelements");
         m_background->setEnabledBorders(Plasma::FrameSvg::TopBorder | Plasma::FrameSvg::BottomBorder);
-        setContentsMargins(0, topMargin, 0, bottomMargin);
+        layout()->setContentsMargins(0, topMargin, 0, bottomMargin);
     } else {
         m_background->setElementPrefix(QString());
         m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
         m_background->setElementPrefix("lastelements");
         m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
-        setContentsMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+        layout()->setContentsMargins(leftMargin, topMargin, rightMargin, bottomMargin);
     }
 
     QSizeF preferredSize = m_taskArea->effectiveSizeHint(Qt::PreferredSize);
@@ -322,20 +313,6 @@ void Applet::checkSizes()
     }
 }
 
-
-void Applet::setTaskAreaGeometry()
-{
-    qreal leftMargin, topMargin, rightMargin, bottomMargin;
-    getContentsMargins(&leftMargin, &topMargin, &rightMargin, &bottomMargin);
-
-    QRectF taskAreaRect(rect());
-    taskAreaRect.moveLeft(leftMargin);
-    taskAreaRect.moveTop(topMargin);
-    taskAreaRect.setWidth(taskAreaRect.width() - leftMargin - rightMargin);
-    taskAreaRect.setHeight(taskAreaRect.height() - topMargin - bottomMargin);
-
-    m_taskArea->setGeometry(taskAreaRect);
-}
 
 void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
@@ -706,7 +683,7 @@ void Applet::checkDefaultApplets()
         Plasma::DataEngineManager *engines = Plasma::DataEngineManager::self();
         Plasma::DataEngine *power = engines->loadEngine("powermanagement");
         if (power) {
-            const QStringList &batteries = power->query("Battery")["Sources"].toStringList();
+            const QStringList &batteries = power->query("Battery")["sources"].toStringList();
             if (!batteries.isEmpty()) {
                 s_manager->addApplet("battery", this);
             }

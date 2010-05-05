@@ -56,7 +56,6 @@ public:
     void init();
     QGraphicsWidget *graphicsWidget();
     void constraintsEvent(Plasma::Constraints constraints);
-    void setGeometry(const QRectF &rect);
     Manager *manager() const;
     QSet<Task::Category> shownCategories() const;
 
@@ -78,8 +77,6 @@ private slots:
     void checkDefaultApplets();
 
 private:
-    void setTaskAreaGeometry();
-
     static SystemTray::Manager *s_manager;
     static int s_managerUsage;
 
