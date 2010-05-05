@@ -528,6 +528,7 @@ void AbstractTaskItem::paint(QPainter *painter,
 
 void AbstractTaskItem::syncActiveRect()
 {
+    m_cachedShadow = QPixmap();
     Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
     itemBackground->setElementPrefix("normal");
 
@@ -552,7 +553,6 @@ void AbstractTaskItem::syncActiveRect()
 
 void AbstractTaskItem::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
-    m_cachedShadow = QPixmap();
     syncActiveRect();
     resizeBackground(event->newSize().toSize());
 }
