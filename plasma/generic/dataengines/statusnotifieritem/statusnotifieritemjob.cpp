@@ -34,19 +34,14 @@ void StatusNotifierItemJob::start()
 {
     if (operationName() == QString::fromLatin1("Activate")) {
         m_source->activate(parameters()["x"].toInt(), parameters()["y"].toInt());
-    } else {
-        if (operationName() == QString::fromLatin1("SecondaryActivate")) {
-            m_source->secondaryActivate(parameters()["x"].toInt(), parameters()["y"].toInt());
-        } else {
-            if (operationName() == QString::fromLatin1("ContextMenu")) {
-                m_source->contextMenu(parameters()["x"].toInt(), parameters()["y"].toInt());
-            } else {
-                if (operationName() == QString::fromLatin1("Scroll")) {
-                    m_source->scroll(parameters()["delta"].toInt(), parameters()["direction"].toString());
-                }
-            }
-        }
+    } else if (operationName() == QString::fromLatin1("SecondaryActivate")) {
+        m_source->secondaryActivate(parameters()["x"].toInt(), parameters()["y"].toInt());
+    } else if (operationName() == QString::fromLatin1("ContextMenu")) {
+        m_source->contextMenu(parameters()["x"].toInt(), parameters()["y"].toInt());
+    } else if (operationName() == QString::fromLatin1("Scroll")) {
+        m_source->scroll(parameters()["delta"].toInt(), parameters()["direction"].toString());
     }
+
     setResult(0);
 }
 
