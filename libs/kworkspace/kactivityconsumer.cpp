@@ -67,12 +67,12 @@ QStringList KActivityConsumer::availableActivities() const
 
 void KActivityConsumer::registerResourceWindow(WId wid, const KUrl & uri)
 {
-    d->manager()->RegisterResourceWindow(wid, uri.url());
+    d->manager()->RegisterResourceWindow((uint)wid, uri.url());
 }
 
 void KActivityConsumer::unregisterResourceWindow(WId wid, const KUrl & uri)
 {
-    d->manager()->UnregisterResourceWindow(wid, uri.url());
+    d->manager()->UnregisterResourceWindow((uint)wid, uri.url());
 }
 
 QStringList KActivityConsumer::activitiesForResource(const KUrl & uri)
