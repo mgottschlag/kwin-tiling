@@ -32,6 +32,8 @@
 #include <QWidget>
 #include <QTimer>
 
+#include <KIconLoader>
+
 #include <Plasma/Applet>
 #include <Plasma/ScrollWidget>
 #include <Plasma/Containment>
@@ -116,7 +118,9 @@ void AppletsContainer::setExpandAll(const bool expand)
 
     if (expand && m_orientation != Qt::Horizontal) {
         foreach (Plasma::Applet *applet, m_containment->applets()) {
-            applet->setPreferredHeight(-1);
+            if (applet->effectiveSizeHint(Qt::MinimumSize).height() > KIconLoader::SizeSmall) {
+                applet->setPreferredHeight(-1);
+            }
         }
 
     } else {
@@ -317,7 +321,9 @@ void AppletsContainer::createAppletTitle(Plasma::Applet *applet)
         m_containment = applet->containment();
     }
     if (m_expandAll || m_orientation == Qt::Horizontal) {
-        applet->setPreferredHeight(-1);
+        if (applet->effectiveSizeHint(Qt::MinimumSize).height() > KIconLoader::SizeSmall) {
+            applet->setPreferredHeight(-1);
+        }
     } else {
         applet->setPreferredHeight(optimalAppletSize(applet, false).height());
     }
@@ -341,16 +347,18 @@ QGraphicsLayoutItem *AppletsContainer::itemAt(int i)
 
 QSizeF AppletsContainer::optimalAppletSize(Plasma::Applet *applet, const bool maximized) const
 {
+    QSizeF normalAppletSize = QSizeF(applet->effectiveSizeHint(Qt::MinimumSize)).expandedTo(m_viewportSize/2) - QSizeF(8, 8);
+
     //FIXME: it was necessary to add hardcoded fixed qsizes to make things work, why?
     if (maximized) {
         //FIXME: this change of fixed preferred height could cause a relayout, unfortunately there is no other way
         int preferred = applet->preferredHeight();
         applet->setPreferredHeight(-1);
-        QSizeF size = QSizeF(applet->effectiveSizeHint(Qt::PreferredSize) + QSizeF(0, 32)).boundedTo(m_viewportSize - QSizeF(12, 12));
+        QSizeF size = QSizeF(applet->effectiveSizeHint(Qt::PreferredSize) + QSizeF(0, 32)).boundedTo(m_viewportSize - QSizeF(12, 12)).expandedTo(normalAppletSize);
         applet->setPreferredHeight(preferred);
         return size;
     } else {
-        return QSizeF(applet->effectiveSizeHint(Qt::MinimumSize)).expandedTo(m_viewportSize/2) - QSizeF(8, 8);
+        return normalAppletSize;
     }
 }
 
