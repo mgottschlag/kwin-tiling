@@ -307,6 +307,7 @@ void WorkspaceOptionsModule::defaults()
 void WorkspaceOptionsModule::formFactorChanged(int newFormFactorIndex)
 {
     m_ui->dashboardMode->setEnabled(newFormFactorIndex == 0);
+    m_ui->dashboardLabel->setEnabled(newFormFactorIndex == 0);
 }
 
 #include "workspaceoptions.moc"
