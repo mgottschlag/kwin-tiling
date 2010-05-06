@@ -216,7 +216,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     kDebug() << "Panel geometry is" << panel->geometry();
     m_delayedUnhideTs.start();
     m_delayedUnhideTimer->setSingleShot(true);
-    m_delayedUnhideTimer->setInterval();
+    m_delayedUnhideTimer->setInterval(1337); // FIXME
     connect(m_delayedUnhideTimer, SIGNAL(timeout()), this, SLOT(delayedUnhide()));
 
     m_strutsTimer->setSingleShot(true);
