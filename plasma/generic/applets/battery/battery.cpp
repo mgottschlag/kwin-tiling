@@ -304,8 +304,8 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
         m_acAdapterPlugged = data["Plugged in"].toBool();
         showAcAdapter(m_acAdapterPlugged);
     } else if (source == "PowerDevil") {
-        m_availableProfiles = data["Available Profiles"].toStringList();
-        m_currentProfile = data["Current Profile"].toString();
+        m_availableProfiles = data["Available profiles"].toStringList();
+        m_currentProfile = data["Current profile"].toString();
         //kDebug() << "PowerDevil profiles:" << m_availableProfiles << "[" << m_currentProfile << "]";
     } else {
         kDebug() << "Applet::Dunno what to do with " << source;
@@ -507,9 +507,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         row++;
 
         m_profileLabel = new Plasma::Label(m_controls);
-        m_profileLabel->setText(i18n("Power Profile"));
-        // FIXME: 4.5
-        //m_profileLabel->setText(i18n("Power Profile:"));
+        m_profileLabel->setText(i18n("Power Profile:"));
         m_profileLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
         m_controlsLayout->addItem(m_profileLabel, row, 0);
 
