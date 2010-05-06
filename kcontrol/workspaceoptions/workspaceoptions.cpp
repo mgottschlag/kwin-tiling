@@ -45,7 +45,7 @@ WorkspaceOptionsModule::WorkspaceOptionsModule(QWidget *parent, const QVariantLi
     m_ui(new Ui::MainPage)
 {
     KAboutData *about =
-    new KAboutData("kcmworkspaceoptions", 0, ki18n("Global options for the Plasma workspace"),
+    new KAboutData("kcmworkspaceoptions", 0, ki18n("Global options for the Plasma Workspace"),
                    0, KLocalizedString(), KAboutData::License_GPL,
                    ki18n("(c) 2009 Marco Martin"));
 
