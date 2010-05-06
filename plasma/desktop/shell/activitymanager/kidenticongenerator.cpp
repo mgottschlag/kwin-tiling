@@ -23,7 +23,12 @@
 #include <QPainter>
 #include <QDebug>
 #include <QCryptographicHash>
+
 #include <Plasma/Svg>
+#include <Plasma/Theme>
+
+#define VALUE_LIMIT_UP 192
+#define VALUE_LIMIT_DOWN 64
 
 KIdenticonGenerator * KIdenticonGenerator::m_instance = NULL;
 
@@ -109,10 +114,24 @@ QPixmap KIdenticonGenerator::generate(int size, quint32 hash)
     QPixmap pixmapResult(size, size);
 
     // Color is chosen according to hash
-    // TODO: use a color from the theme as a base (for value)
     QColor color;
 
-    color.setHsv(hash % 359 + 1, 250, 200);
+    // Getting the value from color theme, but we must restrain it to
+    // values in range from VALUE_LIMIT_DOWN to VALUE_LIMIT_UP
+
+    int value = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor).value();
+    if (value < VALUE_LIMIT_DOWN) {
+        value = VALUE_LIMIT_DOWN;
+    } else if (value > VALUE_LIMIT_UP) {
+        value = VALUE_LIMIT_UP;
+    }
+
+    color.setHsv(
+        hash % 359 + 1, // hue depending on hash
+        250,            // high saturation level
+        value
+    );
+
     pixmapResult.fill(color);
 
     QRadialGradient gradient(50, 50, 100);
