@@ -7,6 +7,7 @@ set(activitymanager_SRCS
     activitymanager/activityicon.cpp
     activitymanager/activitylist.cpp
     activitymanager/filterbar.cpp
+    activitymanager/kidenticongenerator.cpp
 )
 
 set(plasma_SRCS

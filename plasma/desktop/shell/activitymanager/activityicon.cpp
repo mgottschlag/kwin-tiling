@@ -19,6 +19,7 @@
 
 #include "activity.h"
 #include "activityicon.h"
+#include "kidenticongenerator.h"
 
 #include <KIconLoader>
 #include <KIcon>
@@ -41,7 +42,10 @@ ActivityIcon::~ActivityIcon()
 
 QPixmap ActivityIcon::pixmap(const QSize &size)
 {
-    return m_icon.pixmap(size);
+    // we need the icon customizable
+    // while the default one is an identicon
+    return KIdenticonGenerator::self()->generate(size.width(), m_id);
+    //return m_icon.pixmap(size);
 }
 
 QMimeData* ActivityIcon::mimeData()
