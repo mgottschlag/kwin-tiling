@@ -246,8 +246,9 @@ void AbstractIconList::hideIcon(AbstractIcon *icon)
 {
     if (icon) {
         icon->collapse();
-        m_currentAppearingAppletsOnList.removeAll(icon);
     }
+
+    m_currentAppearingAppletsOnList.removeAll(icon);
 }
 
 //a faster way, given that we still need the visible-list
@@ -440,7 +441,7 @@ void AbstractIconList::manageArrows()
     qreal list_size = listSize();
     qreal window_size = windowSize();
 
-    if (list_size <= window_size || m_currentAppearingAppletsOnList.count() == 0) {
+    if (list_size <= window_size || m_currentAppearingAppletsOnList.isEmpty()) {
         m_upLeftArrow->setEnabled(false);
         m_downRightArrow->setEnabled(false);
         m_upLeftArrow->setVisible(false);
@@ -498,7 +499,10 @@ qreal AbstractIconList::windowSize()
 
 qreal AbstractIconList::itemPosition(int i)
 {
-    AbstractIcon *applet = m_currentAppearingAppletsOnList.at(i);
+    AbstractIcon *applet = m_currentAppearingAppletsOnList.value(i);
+    if (!applet) {
+        return 0;
+    }
 
     if (m_orientation == Qt::Horizontal) {
         return applet->pos().x();
