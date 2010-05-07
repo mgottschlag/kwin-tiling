@@ -173,6 +173,9 @@ void PanelAppletOverlay::paintEvent(QPaintEvent *event)
 void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
 {
     Q_UNUSED(event)
+    if (!m_applet) {
+        return;
+    }
 
     m_lastGlobalPos = event->globalPos();
     //kDebug() << m_clickDrag;
@@ -246,7 +249,7 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
 
 void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
 {
-    if (!m_layout) {
+    if (!m_layout || !m_applet) {
         //kDebug() << "no layout";
         return;
     }
@@ -402,7 +405,7 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
 void PanelAppletOverlay::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_UNUSED(event)
-    if (!m_spacer) {
+    if (!m_spacer || !m_applet) {
         //kDebug() << "releasing as we don't have a spacer";
         releaseMouse();
         setMouseTracking(false);
@@ -542,7 +545,7 @@ void PanelAppletOverlay::delaySyncGeometry()
 
 void PanelAppletOverlay::syncGeometry()
 {
-    if (!m_layout) {
+    if (!m_layout || !m_applet) {
         return;
     }
 
@@ -583,6 +586,10 @@ void PanelAppletOverlay::syncIndex()
 
 void PanelAppletOverlay::syncOrientation()
 {
+    if (!m_applet) {
+        return;
+    }
+
     m_orientation = m_applet->formFactor() == Plasma::Horizontal ? Qt::Horizontal : Qt::Vertical;
 }
 
