@@ -347,10 +347,16 @@ void PanelView::setContainment(Plasma::Containment *containment)
     }
 
     KConfigGroup viewIds(KGlobal::config(), "ViewIds");
-    viewIds.deleteEntry(QString::number(oldContainment->id()));
-    viewIds.writeEntry(QString::number(containment->id()), id());
-    if (containment->corona()) {
-        containment->corona()->requestConfigSync();
+
+    if (oldContainment) {
+        viewIds.deleteEntry(QString::number(oldContainment->id()));
+    }
+
+    if (containment) {
+        viewIds.writeEntry(QString::number(containment->id()), id());
+        if (containment->corona()) {
+            containment->corona()->requestConfigSync();
+        }
     }
 
     View::setContainment(containment);

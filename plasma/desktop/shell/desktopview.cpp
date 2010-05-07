@@ -316,23 +316,22 @@ void DesktopView::setContainment(Plasma::Containment *containment)
         m_dashboard->setContainment(containment);
     }
 
+    KConfigGroup viewIds(KGlobal::config(), "ViewIds");
     if (oldContainment) {
         disconnect(oldContainment, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(toolBoxOpened(bool)));
         disconnect(oldContainment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
         disconnect(oldContainment, SIGNAL(showActivityManager()), this, SLOT(showActivityManager()));
+        viewIds.deleteEntry(QString::number(oldContainment->id()));
     }
 
     if (containment) {
         connect(containment, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(toolBoxOpened(bool)));
         connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
         connect(containment, SIGNAL(showActivityManager()), this, SLOT(showActivityManager()));
-    }
-
-    KConfigGroup viewIds(KGlobal::config(), "ViewIds");
-    viewIds.deleteEntry(QString::number(oldContainment->id()));
-    viewIds.writeEntry(QString::number(containment->id()), id());
-    if (containment->corona()) {
-        containment->corona()->requestConfigSync();
+        viewIds.writeEntry(QString::number(containment->id()), id());
+        if (containment->corona()) {
+            containment->corona()->requestConfigSync();
+        }
     }
 
     View::setContainment(containment);
