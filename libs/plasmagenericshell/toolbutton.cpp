@@ -178,6 +178,10 @@ void ToolButton::leaveEvent(QEvent *event)
     }
 
     QPropertyAnimation *animation = m_animation.data();
+    if (!animation) {
+        return;
+    }
+
     if (m_isAnimating) {
         animation->stop();
     }
