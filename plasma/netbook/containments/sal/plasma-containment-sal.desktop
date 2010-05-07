@@ -101,7 +101,7 @@ Icon=edit-find
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet,Plasma/Containment
 X-Plasma-ContainmentCategories=netbook,desktop
-NoDisplay=true
+NoDisplay=false
 
 X-KDE-Library=plasma_containment_sal
 X-KDE-PluginInfo-Author=The Plasma Team
