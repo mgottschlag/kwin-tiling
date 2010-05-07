@@ -56,6 +56,13 @@ public:
     void setActivityName(const QString & id, const QString & name);
 
     /**
+     * Sets the icon of the specified activity
+     * @param id id of the activity
+     * @param icon icon to be set - freedesktop.org name or file path
+     */
+    void setActivityIcon(const QString & id, const QString & icon);
+
+    /**
      * Sets the current activity
      * @param id id of the activity to make current
      * @returns true if successful

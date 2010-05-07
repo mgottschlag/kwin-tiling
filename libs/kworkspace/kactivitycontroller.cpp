@@ -47,6 +47,11 @@ void KActivityController::setActivityName(const QString & id, const QString & na
     d->manager->SetActivityName(id, name);
 }
 
+void KActivityController::setActivityIcon(const QString & id, const QString & icon)
+{
+    d->manager->SetActivityIcon(id, icon);
+}
+
 bool KActivityController::setCurrentActivity(const QString & id)
 {
     return d->manager->SetCurrentActivity(id);

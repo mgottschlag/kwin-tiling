@@ -126,6 +126,13 @@ public:
     QString name() const;
 
     /**
+     * @returns the icon of the activity. Icon can be a
+     * freedesktop.org name or a file path. Or empty if
+     * no icon is set.
+     */
+    QString icon() const;
+
+    /**
      * This function is provided for convenience.
      * @returns the name of the specified activity
      * @param id id of the activity

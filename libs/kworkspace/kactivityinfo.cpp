@@ -194,6 +194,11 @@ QString KActivityInfo::name() const
     return KActivityInfoStaticPrivate::self()->manager()->ActivityName(d->id);
 }
 
+QString KActivityInfo::icon() const
+{
+    return KActivityInfoStaticPrivate::self()->manager()->ActivityIcon(d->id);
+}
+
 QString KActivityInfo::name(const QString & id)
 {
     return KActivityInfoStaticPrivate::self()->manager()->ActivityName(id);

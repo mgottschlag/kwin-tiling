@@ -33,6 +33,14 @@
       <arg name="id" type="s" direction="in"/>
       <arg name="name" type="s" direction="in"/>
     </method>
+    <method name="ActivityIcon">
+      <arg type="s" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+    </method>
+    <method name="SetActivityIcon">
+      <arg name="id" type="s" direction="in"/>
+      <arg name="name" type="s" direction="in"/>
+    </method>
     <method name="RegisterResourceWindow">
       <arg name="wid" type="u" direction="in"/>
       <arg name="uri" type="s" direction="in"/>

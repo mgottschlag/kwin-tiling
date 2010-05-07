@@ -19,6 +19,14 @@
       <arg name="activityId" type="s" direction="in"/>
       <arg name="name" type="s" direction="in"/>
     </method>
+    <method name="icon">
+      <arg type="s" direction="out"/>
+      <arg name="activityId" type="s" direction="in"/>
+    </method>
+    <method name="setIcon">
+      <arg name="activityId" type="s" direction="in"/>
+      <arg name="name" type="s" direction="in"/>
+    </method>
     <method name="resourceUri">
       <arg type="s" direction="out"/>
       <arg name="activityId" type="s" direction="in"/>
