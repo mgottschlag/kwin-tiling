@@ -336,7 +336,24 @@ void PanelView::init()
     connect(screens, SIGNAL(screenRemoved(int)),
             this, SLOT(updateStruts()));
     connect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)),
-	    this, SLOT(showWidgetExplorer()));
+            this, SLOT(showWidgetExplorer()));
+}
+
+void PanelView::setContainment(Plasma::Containment *containment)
+{
+    Plasma::Containment *oldContainment = this->containment();
+    if (m_init && containment == oldContainment) {
+        return;
+    }
+
+    KConfigGroup viewIds(KGlobal::config(), "ViewIds");
+    viewIds.deleteEntry(QString::number(oldContainment->id()));
+    viewIds.writeEntry(QString::number(containment->id()), id());
+    if (containment->corona()) {
+        containment->corona()->requestConfigSync();
+    }
+
+    View::setContainment(containment);
 }
 
 void PanelView::setLocation(Plasma::Location location)

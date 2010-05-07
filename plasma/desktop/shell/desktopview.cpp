@@ -328,6 +328,13 @@ void DesktopView::setContainment(Plasma::Containment *containment)
         connect(containment, SIGNAL(showActivityManager()), this, SLOT(showActivityManager()));
     }
 
+    KConfigGroup viewIds(KGlobal::config(), "ViewIds");
+    viewIds.deleteEntry(QString::number(oldContainment->id()));
+    viewIds.writeEntry(QString::number(containment->id()), id());
+    if (containment->corona()) {
+        containment->corona()->requestConfigSync();
+    }
+
     View::setContainment(containment);
 }
 

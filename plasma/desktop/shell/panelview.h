@@ -188,6 +188,14 @@ public Q_SLOTS:
      */
     void appletAdded(Plasma::Applet *applet);
 
+    /**
+     * Sets the containment for this view, which will also cause the view
+     * to track the geometry of the containment.
+     *
+     * @arg containment the containment to center the view on
+     */
+    void setContainment(Plasma::Containment *containment);
+
 protected Q_SLOTS:
     void updateStruts();
 
