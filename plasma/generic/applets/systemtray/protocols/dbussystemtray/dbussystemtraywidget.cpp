@@ -40,8 +40,6 @@ DBusSystemTrayWidget::DBusSystemTrayWidget(Plasma::Applet *parent, Plasma::Servi
       m_service(service),
       m_host(parent)
 {
-    connect(this, SIGNAL(clicked()), this, SLOT(calculateShowPosition()));
-
     KAction *action = new KAction(this);
     setAction(action);
     connect(action, SIGNAL(triggered()), this, SLOT(calculateShowPosition()));
@@ -122,6 +120,7 @@ void DBusSystemTrayWidget::showContextMenu(KJob *job)
 
 void DBusSystemTrayWidget::calculateShowPosition()
 {
+    kDebug();
     Plasma::Corona *corona = m_host->containment()->corona();
     QSize s(1, 1);
     QPoint pos = corona->popupPosition(this, s);
