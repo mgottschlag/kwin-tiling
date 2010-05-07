@@ -165,9 +165,31 @@ CloseActionImpl::CloseActionImpl(QObject *parent, AbstractGroupableItem *item)
 }
 
 
+AbstractGroupableItemAction::AbstractGroupableItemAction(QObject *parent, AbstractGroupableItem *item)
+    : QAction(parent)
+{
+    TaskGroup *group = qobject_cast<TaskGroup *>(item);
+    if (group) {
+        addToTasks(group);
+    } else if (TaskItem *taskItem = qobject_cast<TaskItem *>(item)) {
+        m_tasks.append(taskItem->task());
+    } 
+}
+
+void AbstractGroupableItemAction::addToTasks(TaskGroup *group)
+{
+    foreach (AbstractGroupableItem *item, group->members()) {
+        TaskGroup *subGroup = qobject_cast<TaskGroup *>(item);
+        if (subGroup) {
+            addToTasks(subGroup);
+        } else if (TaskItem *taskItem = qobject_cast<TaskItem *>(item)) {
+            m_tasks.append(taskItem->task());
+        }
+    }
+}
+
 ToCurrentDesktopActionImpl::ToCurrentDesktopActionImpl(QObject *parent, AbstractGroupableItem *item)
-    : QAction(parent),
-      m_item(item)
+    : AbstractGroupableItemAction(parent, item)
 {
     connect(this, SIGNAL(triggered()), this, SLOT(slotToCurrentDesktop()));
     setText(i18n("&To Current Desktop"));
@@ -176,15 +198,17 @@ ToCurrentDesktopActionImpl::ToCurrentDesktopActionImpl(QObject *parent, Abstract
 
 void ToCurrentDesktopActionImpl::slotToCurrentDesktop() 
 {
-    m_item->toDesktop(KWindowSystem::currentDesktop());
+    const int desktop = KWindowSystem::currentDesktop();
+    foreach (TaskPtr task, m_tasks) {
+        task->toDesktop(desktop);
+    }
 }
 
 
 
 ToDesktopActionImpl::ToDesktopActionImpl(QObject *parent, AbstractGroupableItem *item, int desktop)
-    : QAction(parent),
-      m_desktop(desktop),
-      m_item(item)
+    : AbstractGroupableItemAction(parent, item),
+      m_desktop(desktop)
 {
     connect(this, SIGNAL(triggered()), this, SLOT(slotToDesktop()));
     setCheckable(true);
@@ -201,7 +225,9 @@ ToDesktopActionImpl::ToDesktopActionImpl(QObject *parent, AbstractGroupableItem 
 
 void ToDesktopActionImpl::slotToDesktop() 
 {
-    m_item->toDesktop(m_desktop);
+    foreach (TaskPtr task, m_tasks) {
+        task->toDesktop(m_desktop);
+    }
 }
 
 

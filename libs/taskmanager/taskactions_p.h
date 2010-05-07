@@ -24,6 +24,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef TASKACTIONS_P_H
 #define TASKACTIONS_P_H
 
+#include "taskmanager.h"
+
 namespace TaskManager
 {
 
@@ -42,18 +44,6 @@ class MinimizeActionImpl : public QAction
     Q_OBJECT
 public:
     MinimizeActionImpl(QObject *parent, AbstractGroupableItem *task);
-};
-
-/** Move window to current desktop*/
-class ToCurrentDesktopActionImpl : public QAction
-{
-    Q_OBJECT
-public:
-    ToCurrentDesktopActionImpl(QObject *parent, AbstractGroupableItem *task);
-private Q_SLOTS:
-    void slotToCurrentDesktop();
-private:
-    AbstractGroupableItem *m_item;
 };
 
 /** Shade a window or all windows in a group*/
@@ -88,8 +78,31 @@ public:
     CloseActionImpl(QObject *parent, AbstractGroupableItem *task);
 };
 
+class AbstractGroupableItemAction : public QAction
+{
+    Q_OBJECT
+public:
+    AbstractGroupableItemAction(QObject *parent, AbstractGroupableItem *item);
+
+protected:
+    QList<TaskPtr> m_tasks;
+
+private:
+    void addToTasks(TaskGroup *group);
+};
+
+/** Move window to current desktop*/
+class ToCurrentDesktopActionImpl : public AbstractGroupableItemAction
+{
+    Q_OBJECT
+public:
+    ToCurrentDesktopActionImpl(QObject *parent, AbstractGroupableItem *task);
+private Q_SLOTS:
+    void slotToCurrentDesktop();
+};
+
 /** Send a Task to a specific Desktop*/
-class ToDesktopActionImpl : public QAction
+class ToDesktopActionImpl : public AbstractGroupableItemAction
 {
     Q_OBJECT
 public:
@@ -98,7 +111,6 @@ private Q_SLOTS:
     void slotToDesktop();
 private:
     int m_desktop;
-    AbstractGroupableItem *m_item;
 };
 
 
