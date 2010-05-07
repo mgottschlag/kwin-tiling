@@ -291,6 +291,10 @@ void BackgroundDialog::reloadConfig()
     d->containmentModel->clear();
     int i = 0;
     foreach (const KPluginInfo& info, plugins) {
+        if (info.property("NoDisplay").toBool()) {
+            continue;
+        }
+
         QStandardItem* item = new QStandardItem(KIcon(info.icon()), info.name());
         item->setData(info.comment(), AppletDelegate::DescriptionRole);
         item->setData(info.pluginName(), AppletDelegate::PluginNameRole);
