@@ -199,13 +199,12 @@ void DesktopView::prepDashboard()
             return;
         }
 
-        m_dashboardFollowsDesktop = true;
         KConfigGroup cg = config();
         Plasma::Containment *dc = dashboardContainment();
+        m_dashboardFollowsDesktop = dc == 0;
         if (dc) {
             dc->resize(size());
             dc->enableAction("remove", false);
-            m_dashboardFollowsDesktop = false;
         } else {
             dc = containment();
         }
@@ -302,21 +301,6 @@ bool DesktopView::isDashboardVisible() const
 bool DesktopView::dashboardFollowsDesktop() const
 {
     return m_dashboardFollowsDesktop;
-}
-
-void DesktopView::setDashboardFollowsDesktop(bool follow)
-{
-    if (m_dashboardFollowsDesktop == follow) {
-        return;
-    }
-
-    m_dashboardFollowsDesktop = follow;
-
-    if (follow) {
-        config().writeEntry("DashboardContainment", containment()->id());
-    } else {
-        config().deleteEntry("DashboardContainment");
-    }
 }
 
 void DesktopView::setContainment(Plasma::Containment *containment)

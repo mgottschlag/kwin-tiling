@@ -1045,10 +1045,21 @@ void PlasmaApp::checkVirtualDesktopViews(int numDesktops)
 
 void PlasmaApp::setFixedDashboard(bool fixedDashboard)
 {
+    //TODO: should probably have one dashboard containment per screen
     Plasma::Containment *c = 0;
     if (fixedDashboard) {
-        //avoid the containmentAdded signal being emitted
-        c = m_corona->addContainment("desktop");
+        foreach (Plasma::Containment *possibility, m_corona->containments()) {
+            if (possibility->pluginName() == "desktopDashboard") {
+                c = possibility;
+                break;
+            }
+        }
+
+        if (!c) {
+            //avoid the containmentAdded signal being emitted
+            c = m_corona->addContainment("desktopDashboard");
+        }
+
         m_corona->addOffscreenWidget(c);
     }
 
@@ -1063,18 +1074,19 @@ void PlasmaApp::setFixedDashboard(bool fixedDashboard)
     if (fixedDashboard) {
         c->resize(maxViewSize);
     }
+
+    m_corona->requestConfigSync();
 }
 
 bool PlasmaApp::fixedDashboard() const
 {
-    bool dashboardFollowsDesktop = true;
     foreach (DesktopView *view, m_desktops) {
-        if (view->dashboardContainment()) {
-            dashboardFollowsDesktop = false;
-            break;
+        if (!view->dashboardFollowsDesktop()) {
+            return true;
         }
     }
-    return !dashboardFollowsDesktop;
+
+    return false;
 }
 
 void PlasmaApp::panelRemoved(QObject *panel)

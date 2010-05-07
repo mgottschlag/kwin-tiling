@@ -1,6 +1,6 @@
 [Desktop Entry]
 # ctxt: plasma containment
-Name=Desktop
+Name=Desktop Dashboard
 Name[ar]=سطح المكتب
 Name[bg]=Работен плот
 Name[ca]=Escriptori
@@ -133,12 +133,12 @@ Icon=user-desktop
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet,Plasma/Containment
 X-Plasma-ContainmentCategories=desktop
-NoDisplay=false
+NoDisplay=true
 
 X-KDE-Library=plasma_containment_desktop
 X-KDE-PluginInfo-Author=The Plasma Team
 X-KDE-PluginInfo-Email=panel-devel@kde.org
-X-KDE-PluginInfo-Name=desktop
+X-KDE-PluginInfo-Name=desktopDashboard
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Category=Containments
