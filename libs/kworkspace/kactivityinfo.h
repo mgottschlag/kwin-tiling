@@ -57,10 +57,10 @@ public:
      */
     enum ResourceType {
         UnspecifiedResource = 0,
-        DocumentResource    = 1, ///< @see nao:Document
-        FolderResource      = 2, ///< @see nao:Folder
-        ApplicationResource = 3, ///< @see nao:Application
-        ContactResource     = 4, ///< @see nao:Contact
+        DocumentResource    = 1, ///< @see nfo:Document
+        FolderResource      = 2, ///< @see nfo:Folder
+        ApplicationResource = 3, ///< @see nfo:Application
+        ContactResource     = 4, ///< @see nco:Contact
         LocationResource    = 5  ///< @see pimo:Location
 
     };
