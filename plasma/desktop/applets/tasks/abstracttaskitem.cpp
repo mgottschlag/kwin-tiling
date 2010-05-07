@@ -151,6 +151,7 @@ void AbstractTaskItem::setPreferredOnscreenSize()
 
 AbstractTaskItem::~AbstractTaskItem()
 {
+    stopWindowHoverEffect();
     emit destroyed(this);
     Plasma::ToolTipManager::self()->unregisterWidget(this);
 }
@@ -370,10 +371,6 @@ void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void AbstractTaskItem::stopWindowHoverEffect()
 {
-    if (!parentGroup()) {
-        return;
-    }
-
     if (m_hoverEffectTimerId) {
         killTimer(m_hoverEffectTimerId);
         m_hoverEffectTimerId = 0;
