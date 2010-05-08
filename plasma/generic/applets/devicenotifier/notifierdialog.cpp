@@ -76,6 +76,8 @@ NotifierDialog::NotifierDialog(DeviceNotifier * notifier, QObject *parent)
     m_clearItemBackgroundTargetTimer.setInterval(100);
     connect(&m_clearItemBackgroundTargetTimer, SIGNAL(timeout()), this, SLOT(clearItemBackgroundTarget()));
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColorsLater()));
+
+    setMenuActionsAt(QPointF(0, 0));
 }
 
 NotifierDialog::~NotifierDialog()
