@@ -33,6 +33,7 @@
 #include <KIcon>
 #include <KIconLoader>
 
+#include <Plasma/Containment>
 #include <Plasma/IconWidget>
 #include <Plasma/ItemBackground>
 #include <Plasma/Label>
@@ -50,16 +51,18 @@ namespace SystemTray
 class HiddenTaskLabel : public Plasma::Label
 {
 public:
-    HiddenTaskLabel(QGraphicsWidget *taskIcon, const QString &label, Plasma::ItemBackground *itemBackground, QGraphicsWidget *parent = 0)
+    HiddenTaskLabel(QGraphicsWidget *taskIcon, const QString &label, Plasma::ItemBackground *itemBackground, Plasma::Applet *applet, QGraphicsWidget *parent = 0)
         : Plasma::Label(parent),
           m_taskIcon(taskIcon),
-          m_itemBackground(itemBackground)
+          m_itemBackground(itemBackground),
+          m_applet(applet)
     {
         taskIcon->setMaximumHeight(48);
         taskIcon->setMinimumHeight(24);
         taskIcon->setMinimumWidth(24);
 
-        setContentsMargins(0, 0, 0, 0);
+        nativeWidget()->setIndent(6);
+        setContentsMargins(6, 0, 0, 0);
 
         setWordWrap(false);
         setText(label);
@@ -90,9 +93,18 @@ protected:
     template<class T> void forwardEvent(T *event)
     {
         if (m_taskIcon) {
-            QGraphicsItem *item = scene()->itemAt(m_taskIcon.data()->scenePos() + QPoint(3, 3));
-            if (item) {
-                event->setPos(item->boundingRect().topLeft());
+            QGraphicsWidget *item = m_taskIcon.data();
+            QPointF delta = item->sceneBoundingRect().center() - event->scenePos();
+            event->setScenePos(item->sceneBoundingRect().center());
+            event->setScreenPos((event->screenPos() + delta).toPoint());
+            if (dynamic_cast<QGraphicsSceneContextMenuEvent *>(event) &&
+                qobject_cast<Plasma::Applet*>(item) &&
+                m_applet->containment()) {
+                event->setPos(m_applet->containment()->mapFromScene(event->scenePos()));
+                scene()->sendEvent(m_applet->containment(), event);
+            } else {
+            if (dynamic_cast<QGraphicsSceneContextMenuEvent *>(event)) 
+                event->setPos(item->boundingRect().center());
                 scene()->sendEvent(item, event);
             }
         }
@@ -118,18 +130,18 @@ protected:
         forwardEvent(event);
     }
 
-    void hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
+    void hoverEnterEvent(QGraphicsSceneHoverEvent * event)
     {
         takeItemBackgroundOwnership();
         forwardEvent(event);
     }
 
-    void hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent * event)
     {
         forwardEvent(event);
     }
 
-    void hoverMoveEvent ( QGraphicsSceneHoverEvent * event)
+    void hoverMoveEvent(QGraphicsSceneHoverEvent * event)
     {
         forwardEvent(event);
     }
@@ -137,6 +149,7 @@ protected:
 private:
     QWeakPointer<QGraphicsWidget> m_taskIcon;
     Plasma::ItemBackground *m_itemBackground;
+    Plasma::Applet *m_applet;
 };
 
 
@@ -222,6 +235,7 @@ TaskArea::TaskArea(SystemTray::Applet *parent)
 
     d->hiddenTasksWidget = new QGraphicsWidget(this);
     d->hiddenTasksLayout = new QGraphicsGridLayout(d->hiddenTasksWidget);
+    d->hiddenTasksLayout->setHorizontalSpacing(0);
     d->hiddenRelayoutTimer = new QTimer(this);
     d->hiddenRelayoutTimer->setSingleShot(true);
     connect(d->hiddenRelayoutTimer, SIGNAL(timeout()), this, SLOT(relayoutHiddenTasks()));
@@ -360,7 +374,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
     // if the task appears in the hidden list, then we know there are hidden tasks
     if (task->hidden() == Task::NotHidden) {
         if (d->hiddenTasks.contains(task)) {
-            widget->setParentItem(d->host);
+            widget->setParentItem(this);
             for (int i = 0; i < d->hiddenTasksLayout->count(); ++i) {
                 if (d->hiddenTasksLayout->itemAt(i) == d->hiddenTasks.value(task)) {
                     d->hiddenTasksLayout->removeAt(i);
@@ -372,17 +386,17 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
             d->hiddenRelayoutTimer->start(250);
         }
     } else if (!d->hiddenTasks.contains(task)) {
-        HiddenTaskLabel *hiddenWidget = new HiddenTaskLabel(widget, task->name(), d->itemBackground, d->hiddenTasksWidget);
+        HiddenTaskLabel *hiddenWidget = new HiddenTaskLabel(widget, task->name(), d->itemBackground, d->host, d->hiddenTasksWidget);
         d->hiddenTasks.insert(task, hiddenWidget);
 
         if (widget) {
             const int row = d->hiddenTasksLayout->rowCount();
-            kDebug() << "putting" << task->name() << "into" << row;
+            widget->setParentItem(d->hiddenTasksWidget);
+            //kDebug() << "putting" << task->name() << "into" << row;
             d->hiddenTasksLayout->setRowMinimumHeight(row, 24);
             d->hiddenTasksLayout->addItem(widget, row, 0);
             d->hiddenTasksLayout->addItem(d->hiddenTasks.value(task), row, 1);
         }
-
     }
 
     d->hasTasksThatCanHide = !d->hiddenTasks.isEmpty();
@@ -397,6 +411,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
                 }
             }
 
+            widget->setParentItem(this);
             //not really pretty, but for consistency attempts to put the notifications applet always in the same position
             if (task->typeId() == "notifications") {
                 if (d->firstTasksLayout->count() == 0) {
@@ -558,10 +573,6 @@ void TaskArea::setOrientation(Qt::Orientation o)
         setUnhideToolIconSizes();
     }
     updateUnhideToolIcon();
-
-    /*on the first added "last" task add also a little separator: the size depends from the applet margins,
-    in order to make the background of the last items look "balanced"*/
-    QGraphicsWidget *applet = dynamic_cast<QGraphicsWidget *>(parentItem());
 
     syncTasks(d->host->manager()->tasks());
 }
