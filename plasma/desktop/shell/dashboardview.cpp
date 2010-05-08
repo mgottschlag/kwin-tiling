@@ -250,7 +250,6 @@ void DashboardView::showDashboard(bool showDashboard)
             return;
         }
 
-        KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
         setWindowFlags(Qt::FramelessWindowHint);
         setWindowState(Qt::WindowFullScreen);
 
@@ -270,6 +269,8 @@ void DashboardView::showDashboard(bool showDashboard)
         containment()->enableAction("zoom out", false);
         containment()->enableAction("zoom in", false);
 
+        // the order of the following lines is important; and mildly magical.
+        KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
         show();
         KWindowSystem::forceActiveWindow(winId());
         raise();
