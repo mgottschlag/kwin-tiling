@@ -20,6 +20,7 @@
 #include "panelapplethandle.h"
 #include "toolbutton.h"
 
+#include <QAction>
 #include <QApplication>
 #include <QBoxLayout>
 #include <QLabel>
@@ -51,13 +52,13 @@ PanelAppletHandle::PanelAppletHandle(QWidget *parent, Qt::WindowFlags f)
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_configureButton = new ToolButton(this);
     m_configureButton->setIcon(m_icons->pixmap("configure"));
-    m_layout->addWidget(m_configureButton);
     connect(m_configureButton, SIGNAL(clicked()), this, SLOT(configureApplet()));
 
-    m_layout->addStretch();
+    m_layout->addWidget(m_configureButton);
+    m_layout->addStretch(10);
     m_title = new QLabel(this);
     m_layout->addWidget(m_title);
-    m_layout->addStretch();
+    m_layout->addStretch(0);
 
     m_closeButton = new ToolButton(this);
     m_closeButton->setIcon(m_icons->pixmap("close"));
@@ -99,6 +100,10 @@ void PanelAppletHandle::setApplet(Plasma::Applet *applet)
             m_layout->setDirection(QBoxLayout::LeftToRight);
             m_title->show();
         }
+
+        QAction *configAction = applet->action("configure");
+        m_configureButton->setVisible(configAction && configAction->isEnabled());
+
         if (isVisible()) {
             m_moveAnimation->setStartValue(pos());
             m_moveAnimation->setEndValue(applet->containment()->corona()->popupPosition(applet, size(), Qt::AlignCenter));
