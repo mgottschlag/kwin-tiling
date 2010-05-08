@@ -143,6 +143,10 @@ void FilterBar::populateActivityMenu()
 
     KPluginInfo::List plugins = Plasma::Containment::listContainmentsOfType("desktop");
     foreach (const KPluginInfo& info, plugins) {
+        if (info.property("NoDisplay").toBool()) {
+            continue;
+        }
+
         action = m_newActivityMenu->addAction(KIcon(info.icon()), info.name());
         action->setData(info.pluginName());
     }
