@@ -649,7 +649,10 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
         const bool fadingBg = m_backgroundFadeAnim && m_backgroundFadeAnim->state() == QAbstractAnimation::Running;
         if ((!fadingBg && !(option->state & QStyle::State_MouseOver)) ||
             (m_oldBackgroundPrefix != "hover" && m_backgroundPrefix != "hover")) {
-            icon().paint(painter, iconR.toRect());
+            // QIcon::paint does some alignment work and can lead to funny
+            // things when icon().size() != iconR.toRect().size()
+            QPixmap result = icon().pixmap(iconR.toRect().size());
+            painter->drawPixmap(iconR.topLeft(), result);
         } else {
             KIconEffect *effect = KIconLoader::global()->iconEffect();
             QPixmap result = icon().pixmap(iconR.toRect().size());
