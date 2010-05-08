@@ -271,6 +271,7 @@ void DashboardView::showDashboard(bool showDashboard)
         containment()->enableAction("zoom in", false);
 
         show();
+        KWindowSystem::forceActiveWindow(winId());
         raise();
 
         m_suppressShow = true;
