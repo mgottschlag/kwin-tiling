@@ -111,7 +111,7 @@ void CalendarApplet::updateDate()
     QDateTime now = QDateTime::currentDateTime();
     int updateIn = (24 * 60 * 60) - (now.toTime_t() + KSystemTimeZones::local().currentOffset()) % (24 * 60 * 60);
     QTimer::singleShot(updateIn * 1000, this, SLOT(updateDate()));
-    constraintsEvent(Plasma::FormFactorConstraint);
+    paintIcon();
 }
 
 void CalendarApplet::createConfigurationInterface(KConfigDialog *parent)
