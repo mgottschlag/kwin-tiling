@@ -21,7 +21,9 @@
 #include "activityicon.h"
 #include "kidenticongenerator.h"
 
+#include <QGraphicsSceneMouseEvent>
 #include <QPainter>
+#include <QCursor>
 
 #include <KIconLoader>
 #include <KIcon>
@@ -74,4 +76,24 @@ void ActivityIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     //TODO: play/stop
 }
 
+void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    //check whether one of our corner icons was clicked
+    //FIXME this is duplicate code, should get cleaned up later
+    const QRectF rect = contentsRect();
+    QSize cornerIconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+    qreal iconX = rect.x() + qMax(0.0, (rect.width() / 2) - (iconSize() / 2));
+    qreal removeX = iconX + iconSize() - cornerIconSize.width();
+    qreal removeY = rect.y();
+
+    QRectF removeRect(QPointF(removeX, removeY), cornerIconSize);
+
+    if (removeRect.contains(event->pos())) {
+        setCursor(Qt::OpenHandCursor);
+        m_activity->destroy();
+        return;
+    }
+
+    AbstractIcon::mouseReleaseEvent(event);
+}
 

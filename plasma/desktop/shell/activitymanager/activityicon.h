@@ -38,6 +38,9 @@ class ActivityIcon : public Plasma::AbstractIcon
         QMimeData* mimeData();
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
+    protected:
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+
     private:
         QString m_id;
         KIcon m_removeIcon;

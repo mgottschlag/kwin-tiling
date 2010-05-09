@@ -94,6 +94,10 @@ void Activity::destroy()
     //TODO
     //-kill the activity in nepomuk
     //-destroy all our containments
+    if (m_containments.isEmpty()) {
+        return;
+    }
+    m_containments.first()->destroy();
 }
 
 void Activity::activate()
