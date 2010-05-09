@@ -1363,6 +1363,9 @@ Comment:
  This string is subject to word splitting.
 Description:
  The command line to start the &X-Server;, without display number and VT spec.
+ Note that with some &X-Server;s (in particular, OpenSolaris') it is necessary
+ to put most additional arguments into <option>ServerArgsLocal</option> and
+ <option>ServerArgsRemote</option> even if they are the same for both.
  This string is subject to word splitting.
  </para><para>
  The default is something reasonable for the system on which &kdm; was built,

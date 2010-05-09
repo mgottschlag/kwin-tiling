@@ -56,7 +56,6 @@ prepareServerArgv( struct display *d, const char *args )
 #endif
 
 	if (!(argv = parseArgs( 0, d->serverCmd )) ||
-	    !(argv = parseArgs( argv, args )) ||
 	    !(argv = addStrArr( argv, d->name, -1 )))
 		exit( 47 );
 #ifdef HAVE_VTS
@@ -65,6 +64,8 @@ prepareServerArgv( struct display *d, const char *args )
 	                        sprintf( vtstr, "vt%d", d->serverVT ) )))
 		exit( 47 );
 #endif
+	if (!(argv = parseArgs( argv, args )))
+		exit( 47 );
 
 	if (!changeUser( d->serverUID, d->authFile ))
 		exit( 49 );
