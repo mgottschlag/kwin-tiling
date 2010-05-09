@@ -26,6 +26,8 @@
 
 #include "ui_general.h"
 
+class QGraphicsLinearLayout;
+
 namespace Plasma
 {
     class IconWidget;
@@ -73,8 +75,10 @@ private:
 
     Plasma::Dialog *m_listDialog;
     QGraphicsWidget *m_listWidget;
+    QGraphicsLinearLayout *m_layout;
     bool m_showMaximize;
     bool m_alwaysUseDialog;
+    QList<Plasma::IconWidget *> m_oldIcons;
     QHash<Plasma::IconWidget *, WId> m_windowIcons;
 
     Ui::GeneralConfig m_generalUi;

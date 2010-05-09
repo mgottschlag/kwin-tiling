@@ -290,31 +290,47 @@ void CurrentAppControl::listWindows()
 
     if (!m_alwaysUseDialog && Plasma::WindowEffects::isEffectAvailable(Plasma::WindowEffects::PresentWindows)) {
         Plasma::WindowEffects::presentWindows(view()->winId() , KWindowSystem::currentDesktop());
-    } else if (!m_listDialog) {
-        m_listDialog = new Plasma::Dialog();
-        m_listWidget = new QGraphicsWidget(this);
-        m_listDialog->setGraphicsWidget(m_listWidget);
-        Plasma::Corona *corona = 0;
-        if (containment() && containment()->corona()) {
-            corona = containment()->corona();
-            corona->addOffscreenWidget(m_listWidget);
+    } else if (!m_listDialog || !m_listDialog->isVisible()) {
+         if (!m_listDialog) {
+            m_listDialog = new Plasma::Dialog();
+            m_listWidget = new QGraphicsWidget(this);
+            m_listDialog->setGraphicsWidget(m_listWidget);
+            Plasma::Corona *corona = 0;
+            if (containment() && containment()->corona()) {
+                corona = containment()->corona();
+                corona->addOffscreenWidget(m_listWidget);
+            }
+
+            m_listDialog->setWindowFlags(Qt::FramelessWindowHint|Qt::Dialog);
+            KWindowSystem::setType(m_listDialog->winId(), NET::PopupMenu);
+            KWindowSystem::setState(m_listDialog->winId(), NET::SkipTaskbar);
+            m_listDialog->installEventFilter(this);
+
+            connect(m_listDialog, SIGNAL(destroyed()), this, SLOT(closePopup()));
+
+            m_layout = new QGraphicsLinearLayout(m_listWidget);
+            m_layout->setOrientation(Qt::Vertical);
+        } else {
+            QHash<Plasma::IconWidget *, WId>::const_iterator i = m_windowIcons.constBegin();
+            while (i != m_windowIcons.constEnd()) {
+                i.key()->hide();
+                m_oldIcons << i.key();
+                ++i;
+            }
+            m_windowIcons.clear();
         }
-
-        m_listDialog->setWindowFlags(Qt::FramelessWindowHint|Qt::Dialog);
-        KWindowSystem::setType(m_listDialog->winId(), NET::PopupMenu);
-        KWindowSystem::setState(m_listDialog->winId(), NET::SkipTaskbar);
-        m_listDialog->setAttribute(Qt::WA_DeleteOnClose);
-        m_listDialog->installEventFilter(this);
-
-        connect(m_listDialog, SIGNAL(destroyed()), this, SLOT(closePopup()));
-
-        QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(m_listWidget);
-        lay->setOrientation(Qt::Vertical);
 
         foreach(WId window, KWindowSystem::stackingOrder()) {
             KWindowInfo info = KWindowSystem::windowInfo(window, NET::WMName|NET::WMState|NET::WMWindowType);
             if (!(info.state() & NET::SkipTaskbar) && info.windowType(NET::NormalMask) == NET::Normal) {
-                Plasma::IconWidget *icon = new Plasma::IconWidget(m_listWidget);
+                Plasma::IconWidget *icon;
+                if (m_oldIcons.isEmpty()) {
+                    icon = new Plasma::IconWidget(m_listWidget);
+                } else {
+                    icon = m_oldIcons.first();
+                    m_oldIcons.pop_front();
+                }
+
                 icon->setOrientation(Qt::Horizontal);
                 icon->setText(info.name());
                 icon->setIcon(KWindowSystem::icon(window, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium));
@@ -323,10 +339,11 @@ void CurrentAppControl::listWindows()
                 icon->setMinimumSize(icon->effectiveSizeHint(Qt::PreferredSize));
                 connect(icon, SIGNAL(clicked()), this, SLOT(windowItemClicked()));
                 m_windowIcons[icon] = window;
-                lay->addItem(icon);
+                m_layout->addItem(icon);
+                icon->show();
             }
         }
-        if (corona) {
+        if (containment() && containment()->corona()) {
             m_listDialog->move(containment()->corona()->popupPosition(this, m_listDialog->size()));
         }
         m_listDialog->show();
