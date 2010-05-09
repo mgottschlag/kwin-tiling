@@ -49,10 +49,16 @@ LayoutWidget::LayoutWidget(QWidget* parent, const QList<QVariant>& /*args*/):
 		return;
 	}
 
+	keyboardConfig->load();
+	bool show = keyboardConfig->showIndicator
+			&& ( keyboardConfig->showSingle || X11Helper::getLayoutsList().size() > 1 );
+	if( ! show ) {
+		hide();
+		return;
+	}
+
 	widget = new QPushButton(this);
 	widget->setFlat(true);
-
-	keyboardConfig->load();
 
 	layoutChanged();
 	init();
@@ -212,6 +218,7 @@ QList<QAction*> LayoutTrayIcon::contextualActions()
 	}
 	actionGroup = new QActionGroup(this);
 
+	X11Helper::getLayoutsList(); //UGLY: seems to be more reliable with extra call
 	QList<LayoutUnit> layouts = X11Helper::getLayoutsList();
 	foreach(const LayoutUnit& layoutUnit, layouts) {
 		QString menuText = Flags::getLongText(layoutUnit, rules);

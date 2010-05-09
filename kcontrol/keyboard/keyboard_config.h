@@ -44,6 +44,7 @@ public:
 	};
 
 	QString keyboardModel;
+	// resetOldXkbOptions is now also "set xkb options"
 	bool resetOldXkbOptions;
 	QStringList xkbOptions;
 
@@ -57,7 +58,9 @@ public:
 //	int stickySwitchingDepth;
 
 	// display options
+	bool showIndicator;
 	bool showFlag;
+	bool showSingle;
 
 	void setDefaults();
 	void load();

@@ -33,7 +33,7 @@
      </sizepolicy>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>5</x>
@@ -86,21 +86,190 @@
    <attribute name="title">
     <string>Layouts</string>
    </attribute>
-   <layout class="QGridLayout" name="gridLayout_3">
+   <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="KButtonGroup" name="kbuttongroup">
+        <property name="title">
+         <string>Layout Indicator</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="showIndicatorChk">
+           <property name="text">
+            <string>Show layout indicator</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="showSingleChk">
+           <property name="text">
+            <string>Show for single layout</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="showFlagChk">
+           <property name="text">
+            <string>Show flag</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="KButtonGroup" name="switchingPolicyButtonGroup">
+        <property name="whatsThis">
+         <string>If you select &quot;Application&quot; or &quot;Window&quot; switching policy, changing the keyboard layout will only affect the current application or window.</string>
+        </property>
+        <property name="title">
+         <string>Switching Policy</string>
+        </property>
+        <layout class="QGridLayout">
+         <item row="0" column="0">
+          <widget class="QRadioButton" name="switchByGlobalRadioBtn">
+           <property name="text">
+            <string>&amp;Global</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QRadioButton" name="switchByDesktopRadioBtn">
+           <property name="text">
+            <string>&amp;Desktop</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QRadioButton" name="switchByApplicationRadioBtn">
+           <property name="text">
+            <string>&amp;Application</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QRadioButton" name="switchByWindowRadioBtn">
+           <property name="text">
+            <string>&amp;Window</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="shortcutsGroupBox">
+        <property name="title">
+         <string>Shortcuts for Switching Layout</string>
+        </property>
+        <layout class="QGridLayout" name="_2">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Main shortcuts:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy">
+            <cstring>xkbGrpShortcutBtn</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QPushButton" name="xkbGrpShortcutBtn">
+           <property name="whatsThis">
+            <string>This is a shortcut for switching layouts which is handled by X.org. It allows modifier-only shortcuts.</string>
+           </property>
+           <property name="text">
+            <string comment="no shortcut defined">None</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QToolButton" name="xkbGrpClearBtn">
+           <property name="text">
+            <string>...</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>3rd level shortcuts:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy">
+            <cstring>xkb3rdLevelShortcutBtn</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QPushButton" name="xkb3rdLevelShortcutBtn">
+           <property name="whatsThis">
+            <string>This is a shortcut for switching to a third level of the active layout (if it has one) which is handled by X.org. It allows modifier-only shortcuts.</string>
+           </property>
+           <property name="text">
+            <string comment="no shortcut defined">None</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QToolButton" name="xkb3rdLevelClearBtn">
+           <property name="text">
+            <string>...</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Alternative shortcut:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy">
+            <cstring>kdeKeySequence</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" colspan="2">
+          <widget class="KKeySequenceWidget" name="kdeKeySequence">
+           <property name="whatsThis">
+            <string>This is a shortcut for switching layouts which is handled by KDE. It does not support modifier-only shortcuts and also may not work in some situations (e.g. if popup is active or from screensaver).</string>
+           </property>
+           <property name="multiKeyShortcutsAllowed">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
      <widget class="QCheckBox" name="configureLayoutsChk">
       <property name="text">
-       <string>Configure Layouts</string>
+       <string>Configure layouts</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="0" colspan="2">
+    <item row="2" column="0">
      <widget class="QGroupBox" name="layoutsGroupBox">
       <property name="enabled">
        <bool>false</bool>
       </property>
       <property name="title">
-       <string>Layouts</string>
+       <string/>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
@@ -171,148 +340,6 @@
          <attribute name="verticalHeaderVisible">
           <bool>false</bool>
          </attribute>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="showFlagChk">
-         <property name="text">
-          <string>Show Flag</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="KButtonGroup" name="switchingPolicyButtonGroup">
-      <property name="whatsThis">
-       <string>If you select &quot;Application&quot; or &quot;Window&quot; switching policy, changing the keyboard layout will only affect the current application or window.</string>
-      </property>
-      <property name="title">
-       <string>Switching Policy</string>
-      </property>
-      <layout class="QGridLayout">
-       <item row="0" column="0">
-        <widget class="QRadioButton" name="switchByGlobalRadioBtn">
-         <property name="text">
-          <string>&amp;Global</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QRadioButton" name="switchByDesktopRadioBtn">
-         <property name="text">
-          <string>&amp;Desktop</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QRadioButton" name="switchByApplicationRadioBtn">
-         <property name="text">
-          <string>&amp;Application</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QRadioButton" name="switchByWindowRadioBtn">
-         <property name="text">
-          <string>&amp;Window</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QGroupBox" name="shortcutsGroupBox">
-      <property name="title">
-       <string>Shortcuts for Switching Layout</string>
-      </property>
-      <layout class="QGridLayout" name="_2">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Main shortcuts:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy">
-          <cstring>xkbGrpShortcutBtn</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QPushButton" name="xkbGrpShortcutBtn">
-         <property name="whatsThis">
-          <string>This is a shortcut for switching layouts which is handled by X.org. It allows modifier-only shortcuts.</string>
-         </property>
-         <property name="text">
-          <string comment="no shortcut defined">None</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QToolButton" name="xkbGrpClearBtn">
-         <property name="text">
-          <string>...</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>3rd level shortcuts:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy">
-          <cstring>xkb3rdLevelShortcutBtn</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QPushButton" name="xkb3rdLevelShortcutBtn">
-         <property name="whatsThis">
-          <string>This is a shortcut for switching to a third level of the active layout (if it has one) which is handled by X.org. It allows modifier-only shortcuts.</string>
-         </property>
-         <property name="text">
-          <string comment="no shortcut defined">None</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="QToolButton" name="xkb3rdLevelClearBtn">
-         <property name="text">
-          <string>...</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Alternative shortcut:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy">
-          <cstring>kdeKeySequence</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" colspan="2">
-        <widget class="KKeySequenceWidget" name="kdeKeySequence">
-         <property name="whatsThis">
-          <string>This is a shortcut for switching layouts which is handled by KDE. It does not support modifier-only shortcuts and also may not work in some situations (e.g. if popup is active or from screensaver).</string>
-         </property>
-         <property name="multiKeyShortcutsAllowed">
-          <bool>false</bool>
-         </property>
         </widget>
        </item>
       </layout>

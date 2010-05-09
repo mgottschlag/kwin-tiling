@@ -72,7 +72,9 @@ struct OptionGroupInfo: public ConfigItem {
 };
 
 struct Rules {
-    QList<LayoutInfo*> layoutInfos;
+	static const char XKB_OPTION_GROUP_SEPARATOR;
+
+	QList<LayoutInfo*> layoutInfos;
     QList<ModelInfo*> modelInfos;
     QList<OptionGroupInfo*> optionGroupInfos;
 

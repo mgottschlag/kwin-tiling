@@ -296,12 +296,23 @@ QVariant XkbOptionsTreeModel::data(const QModelIndex& index, int role) const
             return xkbGroup->optionInfos[row]->description;
         }
     }
-    else if (role==Qt::CheckStateRole && index.parent().isValid()) {
-        int groupRow = index.parent().row();
-        const OptionGroupInfo* xkbGroup = rules->optionGroupInfos[groupRow];
-        const QString& xkbOptionName = xkbGroup->optionInfos[row]->name;
-        return keyboardConfig->xkbOptions.indexOf(xkbOptionName) == -1
-        		? Qt::Unchecked : Qt::Checked;
+    else if (role==Qt::CheckStateRole ) {
+    	if( index.parent().isValid() ) {
+    		int groupRow = index.parent().row();
+    		const OptionGroupInfo* xkbGroup = rules->optionGroupInfos[groupRow];
+    		const QString& xkbOptionName = xkbGroup->optionInfos[row]->name;
+    		return keyboardConfig->xkbOptions.indexOf(xkbOptionName) == -1
+    				? Qt::Unchecked : Qt::Checked;
+    	}
+    	else {
+    		int groupRow = index.row();
+    		const OptionGroupInfo* xkbGroup = rules->optionGroupInfos[groupRow];
+    		foreach(const QString& option, keyboardConfig->xkbOptions) {
+    			if( option.startsWith(xkbGroup->name + Rules::XKB_OPTION_GROUP_SEPARATOR) )
+    				return Qt::PartiallyChecked;
+    		}
+			return Qt::Unchecked;
+    	}
     }
     return QVariant();
 }
@@ -336,6 +347,7 @@ bool XkbOptionsTreeModel::setData(const QModelIndex & index, const QVariant & va
     }
 
     emit dataChanged(index, index);
+    emit dataChanged(index.parent(), index.parent());
     return true;
 }
 

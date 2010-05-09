@@ -2,7 +2,8 @@ Core:
 * better handling when layouts set manually and not present in config
 
 KCM UI:
-* handle 1 layout nicer
+* read current xkb options
+* use listboxes instead of combos in add layout dialog 
 
 KCM UI cleanup:
 * show nicer flag in the table
@@ -10,10 +11,10 @@ KCM UI cleanup:
 
 plasma applet:
 * make applet show nicely in taskbar (not just desktop)
-* start applet from kxkb kcm (currently systray icon provided from kded)
+* start applet from kxkb kcm ?? (currently systray icon provided from kded)
 
 kxkb part
-* tooltip (does not work k lockdlg?)
+* tooltip (currently does not work in lockdlg for some reason)
 
 Code cleanup:
 * rules, iso_codes:
@@ -31,3 +32,6 @@ External improvements:
 * Add KSharedConfig::configChanged() signal
 * make iso-codes external package 
 * make flags external package
+
+Documentation:
+* update documentation for keyboard module

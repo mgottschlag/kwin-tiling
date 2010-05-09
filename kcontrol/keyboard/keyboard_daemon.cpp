@@ -42,7 +42,9 @@ K_EXPORT_PLUGIN(KeyboardFactory("keyboard"))
 KeyboardDaemon::KeyboardDaemon(QObject *parent, const QList<QVariant>&)
 	: KDEDModule(parent),
 	  actionCollection(NULL),
-	  xEventNotifier(NULL)
+	  xEventNotifier(NULL),
+	  layoutTrayIcon(NULL),
+	  keyboardConfig(new KeyboardConfig())
 {
 	if( ! X11Helper::xkbSupported(NULL) )
 		return;		//TODO: shut down the daemon?
@@ -55,8 +57,6 @@ KeyboardDaemon::KeyboardDaemon(QObject *parent, const QList<QVariant>&)
 	configureKeyboard();
 	registerListeners();
 	registerShortcut();
-
-	layoutTrayIcon = new LayoutTrayIcon();
 }
 
 KeyboardDaemon::~KeyboardDaemon()
@@ -70,18 +70,30 @@ KeyboardDaemon::~KeyboardDaemon()
 	unregisterShortcut();
 
 	delete xEventNotifier;
-
-	if( layoutTrayIcon ) {
-		delete layoutTrayIcon;
-	}
+	delete layoutTrayIcon;
+	delete keyboardConfig;
 }
 
 void KeyboardDaemon::configureKeyboard()
 {
-	KeyboardConfig config;
-	config.load();
-	XkbHelper::initializeKeyboardLayouts(config);
-	layoutMemory.setSwitchingPolicy(config.switchingPolicy);
+	keyboardConfig->load();
+	XkbHelper::initializeKeyboardLayouts(*keyboardConfig);
+	layoutMemory.setSwitchingPolicy(keyboardConfig->switchingPolicy);
+	setupTrayIcon();
+}
+
+void KeyboardDaemon::setupTrayIcon()
+{
+	bool show = keyboardConfig->showIndicator
+			&& ( keyboardConfig->showSingle || X11Helper::getLayoutsList().size() > 1 );
+
+	if( show && ! layoutTrayIcon ) {
+		layoutTrayIcon = new LayoutTrayIcon();
+	}
+	else if( ! show && layoutTrayIcon ) {
+		delete layoutTrayIcon;
+		layoutTrayIcon = NULL;
+	}
 }
 
 void KeyboardDaemon::registerShortcut()

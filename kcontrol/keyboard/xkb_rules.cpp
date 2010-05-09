@@ -143,6 +143,9 @@ static QString findXkbRulesFile()
 	return rulesFile;
 }
 
+
+const char Rules::XKB_OPTION_GROUP_SEPARATOR = ':';
+
 Rules* Rules::readRules()
 {
 	QFile file(findXkbRulesFile());

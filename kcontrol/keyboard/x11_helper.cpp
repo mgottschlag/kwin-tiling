@@ -165,8 +165,6 @@ bool X11Helper::getGroupNames(Display* display, XkbConfig* xkbConfig, FetchType 
 	char *prop_data = NULL;
 	Status ret;
 
-	qDebug() << "Fetching layout groups from X server";
-
 	Atom rules_atom = XInternAtom(display, _XKB_RF_NAMES_PROP_ATOM, False);
 
 	/* no such atom! */
@@ -215,8 +213,9 @@ bool X11Helper::getGroupNames(Display* display, XkbConfig* xkbConfig, FetchType 
 		xkbConfig->layouts << (layouts[ii] != NULL ? layouts[ii] : "");
 		xkbConfig->variants << (ii < variants.count() && variants[ii] != NULL ? variants[ii] : "");
 	}
-	qDebug() << "\tlayouts:" << xkbConfig->layouts;
-	qDebug() << "\tvariants:" << xkbConfig->variants;
+	qDebug() << "Fetched layout groups from X server:"
+			<< "\tlayouts:" << xkbConfig->layouts
+			<< "\tvariants:" << xkbConfig->variants;
 
 	if( fetchType == ALL ) {
 		xkbConfig->keyboardModel = (names[1] != NULL ? names[1] : "");

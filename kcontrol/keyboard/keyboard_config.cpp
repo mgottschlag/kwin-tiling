@@ -60,8 +60,9 @@ void KeyboardConfig::setDefaults()
 //	stickySwitchingDepth = 2;
 
 	// display options
+	showIndicator = true;
 	showFlag = true;
-//	displayNames.clear();
+	showSingle = false;
 }
 
 
@@ -92,7 +93,9 @@ void KeyboardConfig::load()
 	QString layoutMode = config.readEntry("SwitchMode", "Global");
 	switchingPolicy = static_cast<SwitchingPolicy>(findStringIndex(SWITCHING_POLICIES, layoutMode, SWITCH_POLICY_GLOBAL));
 
+	showIndicator = config.readEntry("ShowLayoutIndicator", true);
 	showFlag = config.readEntry("ShowFlag", true);
+	showSingle = config.readEntry("ShowSingle", false);
 
     QString labelsStr = config.readEntry("DisplayNames", "");
     QStringList labels = labelsStr.split(LIST_SEPARATOR, QString::KeepEmptyParts);
@@ -135,7 +138,9 @@ void KeyboardConfig::save()
 
 	config.writeEntry("SwitchMode", SWITCHING_POLICIES[switchingPolicy]);
 
+	config.writeEntry("ShowLayoutIndicator", showIndicator);
 	config.writeEntry("ShowFlag", showFlag);
+	config.writeEntry("ShowSingle", showSingle);
 
 	config.sync();
 }

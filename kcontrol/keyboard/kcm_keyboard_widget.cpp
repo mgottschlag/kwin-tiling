@@ -44,7 +44,6 @@
 
 static const QString GROUP_SWITCH_GROUP_NAME("grp");
 static const QString LV3_SWITCH_GROUP_NAME("lv3");
-static const char XKB_OPTION_GROUP_SEPARATOR = ':';
 //static const QString RESET_XKB_OPTIONS("-option");
 
 static const int TAB_HARDWARE = 0;
@@ -94,9 +93,13 @@ void KCMKeyboardWidget::updateUI()
 void KCMKeyboardWidget::uiChanged()
 {
 	((LayoutsTableModel*)uiWidget->layoutsTableView->model())->refresh();
+//	((LayoutsTableModel*)uiWidget->xkbOptionsTreeView->model())->refresh();
 
 	if( uiUpdating )
 		return;
+
+	keyboardConfig->showIndicator = uiWidget->showIndicatorChk->isChecked();
+	keyboardConfig->showSingle = uiWidget->showSingleChk->isChecked();
 
 	keyboardConfig->configureLayouts = uiWidget->configureLayoutsChk->isChecked();
 	keyboardConfig->keyboardModel = uiWidget->keyboardModelComboBox->itemData(uiWidget->keyboardModelComboBox->currentIndex()).toString();
@@ -187,8 +190,6 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 //	connect(uiWidget->layoutsTable, SIGNAL(itemSelectionChanged ()), this, SLOT(layoutSelectionChanged()));
 	connect(uiWidget->layoutsTableView->selectionModel(), SIGNAL(selectionChanged ( const QItemSelection &, const QItemSelection &)), this, SLOT(layoutSelectionChanged()));
 
-	connect(uiWidget->showFlagChk, SIGNAL(clicked(bool)), this, SLOT(uiChanged()));
-
 //	connect(uiWidget->moveUpBtn, SIGNAL(triggered(QAction*)), this, SLOT(moveUp()));
 //	connect(uiWidget->moveDownBtn, SIGNAL(triggered(QAction*)), this, SLOT(moveDown()));
 	connect(uiWidget->moveUpBtn, SIGNAL(clicked(bool)), this, SLOT(moveUp()));
@@ -206,9 +207,12 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 	connect(uiWidget->xkb3rdLevelShortcutBtn, SIGNAL(clicked(bool)), this, SLOT(scrollTo3rdLevelShortcut()));
 
 	connect(uiWidget->configureLayoutsChk, SIGNAL(toggled(bool)), uiWidget->layoutsGroupBox, SLOT(setEnabled(bool)));
-	connect(uiWidget->configureLayoutsChk, SIGNAL(toggled(bool)), uiWidget->shortcutsGroupBox, SLOT(setEnabled(bool)));
-	connect(uiWidget->configureLayoutsChk, SIGNAL(toggled(bool)), uiWidget->switchingPolicyButtonGroup, SLOT(setEnabled(bool)));
 	connect(uiWidget->configureLayoutsChk, SIGNAL(toggled(bool)), this, SLOT(configureLayoutsChanged()));
+
+	connect(uiWidget->showIndicatorChk, SIGNAL(clicked(bool)), this, SLOT(uiChanged()));
+	connect(uiWidget->showIndicatorChk, SIGNAL(toggled(bool)), uiWidget->showSingleChk, SLOT(setEnabled(bool)));
+	connect(uiWidget->showFlagChk, SIGNAL(clicked(bool)), this, SLOT(uiChanged()));
+	connect(uiWidget->showSingleChk, SIGNAL(toggled(bool)), this, SLOT(uiChanged()));
 }
 
 void KCMKeyboardWidget::configureLayoutsChanged()
@@ -341,7 +345,7 @@ void KCMKeyboardWidget::clear3rdLevelShortcuts()
 void KCMKeyboardWidget::clearXkbGroup(const QString& groupName)
 {
 	for(int ii=keyboardConfig->xkbOptions.count()-1; ii>=0; ii--) {
-		if( keyboardConfig->xkbOptions[ii].startsWith(groupName+XKB_OPTION_GROUP_SEPARATOR) ) {
+		if( keyboardConfig->xkbOptions[ii].startsWith(groupName + Rules::XKB_OPTION_GROUP_SEPARATOR) ) {
 			keyboardConfig->xkbOptions.removeAt(ii);
 		}
 	}
@@ -381,7 +385,11 @@ void KCMKeyboardWidget::updateSwitcingPolicyUI()
 
 void KCMKeyboardWidget::updateXkbShortcutButton(const QString& groupName, QPushButton* button)
 {
-	QStringList grpOptions = keyboardConfig->xkbOptions.filter(QRegExp("^"+groupName+XKB_OPTION_GROUP_SEPARATOR));
+	QStringList grpOptions;
+	if( keyboardConfig->resetOldXkbOptions ) {
+		QRegExp regexp = QRegExp("^" + groupName + Rules::XKB_OPTION_GROUP_SEPARATOR);
+		grpOptions = keyboardConfig->xkbOptions.filter(regexp);
+	}
 	switch( grpOptions.size() ) {
 	case 0:
 		button->setText(i18nc("no shortcuts defined", "None"));
@@ -424,6 +432,8 @@ void KCMKeyboardWidget::updateXkbOptionsUI()
 void KCMKeyboardWidget::updateLayoutsUI()
 {
 	uiWidget->configureLayoutsChk->setChecked(keyboardConfig->configureLayouts);
+	uiWidget->showIndicatorChk->setChecked(keyboardConfig->showIndicator);
+	uiWidget->showSingleChk->setChecked(keyboardConfig->showSingle);
 	uiWidget->showFlagChk->setChecked(keyboardConfig->showFlag);
 }
 
