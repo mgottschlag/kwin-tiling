@@ -62,18 +62,16 @@ void ActivityIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 {
     AbstractIcon::paint(painter, option, widget);
 
-    //the Remove corner-button
     const QRectF rect = contentsRect();
-    const int width = rect.width();
     QSize cornerIconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
-    //FIXME these calculations are copy-pasted. need to replace them with something that I properly
-    //understand after I get this drawing.
-    QRect iconRect(rect.x() + qMax(0, (width / 2) - (iconSize() / 2)), rect.y(), iconSize(), iconSize());
+    qreal iconX = rect.x() + qMax(0.0, (rect.width() / 2) - (iconSize() / 2)); //FIXME does the rounding error matter?
 
-    painter->drawPixmap(iconRect.bottomLeft().x(), iconRect.bottomLeft().y() - cornerIconSize.height(),
-            m_removeIcon.pixmap(cornerIconSize));
+    //the Remove corner-button
+    qreal removeX = iconX + iconSize() - cornerIconSize.width();
+    qreal removeY = rect.y();
+    painter->drawPixmap(removeX, removeY, m_removeIcon.pixmap(cornerIconSize));
     //TODO make the little icon actually clickable
-    //TODO: play/stop, delete.
+    //TODO: play/stop
 }
 
 
