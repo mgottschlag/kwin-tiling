@@ -125,7 +125,7 @@ void AbstractIcon::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         drag->setMimeData(mimeData());
         drag->exec();
 
-        mouseReleaseEvent(event);
+        setCursor(Qt::OpenHandCursor);
         update(boundingRect());
     }
 }
@@ -134,6 +134,7 @@ void AbstractIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsWidget::mouseReleaseEvent(event);
     setCursor(Qt::OpenHandCursor);
+    emit(selected(this));
 }
 
 void AbstractIcon::resizeEvent(QGraphicsSceneResizeEvent *)
@@ -148,7 +149,6 @@ void AbstractIcon::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
     setCursor(Qt::ClosedHandCursor);
-    emit(selected(this));
 }
 
 void AbstractIcon::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
