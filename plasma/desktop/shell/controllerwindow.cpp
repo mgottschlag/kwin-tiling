@@ -245,9 +245,16 @@ void ControllerWindow::showWidgetExplorer()
 
         m_containment->corona()->addOffscreenWidget(m_widgetExplorer);
         m_widgetExplorer->show();
-        setGraphicsWidget(m_widgetExplorer);
 
         m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
+
+        if (orientation() == Qt::Horizontal) {
+            m_widgetExplorer->resize(width(), m_widgetExplorer->size().height());
+        } else {
+            m_widgetExplorer->resize(m_widgetExplorer->size().width(), height());
+        }
+
+        setGraphicsWidget(m_widgetExplorer);
 
         connect(m_widgetExplorer, SIGNAL(closeClicked()), this, SLOT(close()));
     } else {
@@ -255,12 +262,6 @@ void ControllerWindow::showWidgetExplorer()
         m_widgetExplorer->show();
         m_watchedWidget = m_widgetExplorer;
         setGraphicsWidget(m_widgetExplorer);
-    }
-
-    if (orientation() == Qt::Horizontal) {
-        resize(width(), m_widgetExplorer->size().height());
-    } else {
-        resize(m_widgetExplorer->size().width(), height());
     }
 
 }
@@ -273,9 +274,16 @@ void ControllerWindow::showActivityManager()
 
         m_corona->addOffscreenWidget(m_activityManager);
         m_activityManager->show();
-        setGraphicsWidget(m_activityManager);
+
+        if (orientation() == Qt::Horizontal) {
+            m_activityManager->resize(width(), m_activityManager->size().height());
+        } else {
+            m_activityManager->resize(m_activityManager->size().width(), height());
+        }
 
         m_activityManager->setIconSize(KIconLoader::SizeHuge);
+
+        setGraphicsWidget(m_activityManager);
 
         connect(m_activityManager, SIGNAL(closeClicked()), this, SLOT(close()));
     } else {
@@ -285,11 +293,6 @@ void ControllerWindow::showActivityManager()
         setGraphicsWidget(m_activityManager);
     }
 
-    if (orientation() == Qt::Horizontal) {
-        resize(width(), m_activityManager->size().height());
-    } else {
-        resize(m_activityManager->size().width(), height());
-    }
 }
 
 bool ControllerWindow::isControllerViewVisible() const
