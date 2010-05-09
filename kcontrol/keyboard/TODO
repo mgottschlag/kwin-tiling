@@ -2,7 +2,6 @@ Core:
 * better handling when layouts set manually and not present in config
 
 KCM UI:
-* read current xkb options
 * use listboxes instead of combos in add layout dialog 
 
 KCM UI cleanup:

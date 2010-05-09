@@ -116,9 +116,10 @@ public:
 	static QList<LayoutUnit> getLayoutsList();
 	static QStringList getLayoutsListAsString(const QList<LayoutUnit>& layoutsList);
 
-private:
 	enum FetchType { ALL, LAYOUTS_ONLY };
 	static bool getGroupNames(Display* dpy, XkbConfig* xkbConfig, FetchType fetchType);
+
+private:
 	static unsigned int getGroup();
 	static bool setGroup(unsigned int group);
 };

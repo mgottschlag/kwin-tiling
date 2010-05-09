@@ -29,6 +29,7 @@
 #include <QtGui/QCheckBox>
 #include <QtGui/QPixmap>
 #include <QtGui/QVBoxLayout>
+#include <QtGui/QX11Info>
 
 #include "keyboard_config.h"
 #include "xkb_rules.h"
@@ -93,6 +94,7 @@ void KCMKeyboardWidget::updateUI()
 void KCMKeyboardWidget::uiChanged()
 {
 	((LayoutsTableModel*)uiWidget->layoutsTableView->model())->refresh();
+// this collapses the tree so use more fine-grained updates
 //	((LayoutsTableModel*)uiWidget->xkbOptionsTreeView->model())->refresh();
 
 	if( uiUpdating )
@@ -361,8 +363,18 @@ void KCMKeyboardWidget::initializeXkbOptionsUI()
 	uiWidget->xkbOptionsTreeView->setModel(model);
 	connect(model, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(uiChanged()));
 
+	connect(uiWidget->configureKeyboardOptionsChk, SIGNAL(toggled(bool)), this, SLOT(configureXkbOptionsChanged()));
+	//	connect(uiWidget->configureKeyboardOptionsChk, SIGNAL(toggled(bool)), this, SLOT(uiChanged()));
 	connect(uiWidget->configureKeyboardOptionsChk, SIGNAL(toggled(bool)), uiWidget->xkbOptionsTreeView, SLOT(setEnabled(bool)));
-	connect(uiWidget->configureKeyboardOptionsChk, SIGNAL(toggled(bool)), this, SLOT(uiChanged()));
+}
+
+void KCMKeyboardWidget::configureXkbOptionsChanged()
+{
+	if( uiWidget->configureKeyboardOptionsChk->isChecked() && keyboardConfig->xkbOptions.isEmpty() ) {
+		populateWithCurrentXkbOptions();
+	}
+	((LayoutsTableModel*)uiWidget->xkbOptionsTreeView->model())->refresh();
+	uiChanged();
 }
 
 void KCMKeyboardWidget::updateSwitcingPolicyUI()
@@ -450,5 +462,15 @@ void KCMKeyboardWidget::populateWithCurrentLayouts()
 	QList<LayoutUnit> layouts = X11Helper::getLayoutsList();
 	foreach(LayoutUnit layoutUnit, layouts) {
 		keyboardConfig->layouts.append(layoutUnit);
+	}
+}
+
+void KCMKeyboardWidget::populateWithCurrentXkbOptions()
+{
+	XkbConfig xkbConfig;
+	if( X11Helper::getGroupNames(QX11Info::display(), &xkbConfig, X11Helper::ALL) ) {
+		foreach(QString xkbOption, xkbConfig.options) {
+			keyboardConfig->xkbOptions.append(xkbOption);
+		}
 	}
 }

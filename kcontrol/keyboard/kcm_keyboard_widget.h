@@ -64,6 +64,7 @@ private Q_SLOTS:
     void moveUp();
     void moveDown();
     void configureLayoutsChanged();
+    void configureXkbOptionsChanged();
 
 private:
     Rules *rules;
@@ -88,6 +89,7 @@ private:
     void clearXkbGroup(const QString& groupName);
     void moveSelectedLayouts(int shift);
     void populateWithCurrentLayouts();
+    void populateWithCurrentXkbOptions();
 };
 
 

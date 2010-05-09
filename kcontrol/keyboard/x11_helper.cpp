@@ -127,7 +127,7 @@ QList<LayoutUnit> X11Helper::getLayoutsList()
 {
 	XkbConfig xkbConfig;
 	QList<LayoutUnit> layouts;
-	if( X11Helper::getGroupNames(QX11Info::display(), &xkbConfig, LAYOUTS_ONLY) ) {
+	if( X11Helper::getGroupNames(QX11Info::display(), &xkbConfig, X11Helper::LAYOUTS_ONLY) ) {
 		for(int i=0; i<xkbConfig.layouts.size(); i++) {
 			QString layout(xkbConfig.layouts[i]);
 			QString variant;
@@ -219,12 +219,14 @@ bool X11Helper::getGroupNames(Display* display, XkbConfig* xkbConfig, FetchType 
 
 	if( fetchType == ALL ) {
 		xkbConfig->keyboardModel = (names[1] != NULL ? names[1] : "");
+		qDebug() << "Fetched keyboard model from X server:" << xkbConfig->keyboardModel;
 
 		if( names.count() >= 5 ) {
 			QString options = (names[4] != NULL ? names[4] : "");
 			xkbConfig->options = options.split(OPTIONS_SEPARATOR);
-			qDebug() << "\toptions:" << options;
+			qDebug() << "Fetched xkbOptions from X server:" << options;
 		}
+
 	}
 
 	XFree(prop_data);
