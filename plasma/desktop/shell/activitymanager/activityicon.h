@@ -40,7 +40,7 @@ class ActivityIcon : public Plasma::AbstractIcon
 
     private:
         QString m_id;
-        KIcon m_icon;
+        KIcon m_removeIcon;
         Activity *m_activity;
 };
 
