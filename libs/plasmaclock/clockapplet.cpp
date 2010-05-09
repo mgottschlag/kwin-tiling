@@ -464,7 +464,7 @@ QList<QAction *> ClockApplet::contextualActions()
         KService::List offers = KServiceTypeTrader::self()->query("KCModule", "Library == 'kcm_clock'");
         if (!offers.isEmpty() && hasAuthorization("LaunchApp")) {
             d->adjustSystemTimeAction = new QAction(this);
-            d->adjustSystemTimeAction->setText(i18n("Adjust Date and Time"));
+            d->adjustSystemTimeAction->setText(i18n("Adjust Date and Time..."));
             d->adjustSystemTimeAction->setIcon(KIcon(icon()));
             connect(d->adjustSystemTimeAction, SIGNAL(triggered()), this, SLOT(launchTimeControlPanel()));
         }

@@ -46,7 +46,7 @@
      </column>
      <column>
       <property name="text">
-       <string>Keyboard shortcut</string>
+       <string>Keyboard Shortcut</string>
       </property>
      </column>
     </widget>

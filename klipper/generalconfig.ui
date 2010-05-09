@@ -56,13 +56,13 @@
    <item>
     <widget class="QGroupBox" name="selection_group">
      <property name="title">
-      <string>Selection and clipboard</string>
+      <string>Selection and Clipboard</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QCheckBox" name="kcfg_IgnoreSelection">
         <property name="text">
-         <string>Ignore Selection</string>
+         <string>Ignore selection</string>
         </property>
        </widget>
       </item>

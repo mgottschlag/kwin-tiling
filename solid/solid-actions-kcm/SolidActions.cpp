@@ -152,7 +152,7 @@ void SolidActions::editAction()
 
     // We should error out here if we have to
     if( !selectedItem->predicate().isValid() ) {
-        KMessageBox::error(this, i18n("It appears that the predicate for this action is not valid."), i18n("Error parsing device conditions"));
+        KMessageBox::error(this, i18n("It appears that the predicate for this action is not valid."), i18n("Error Parsing Device Conditions"));
         return;
     }
 

@@ -62,7 +62,7 @@
       </size>
      </property>
      <property name="text">
-      <string>&amp;First Color:</string>
+      <string>&amp;First color:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -118,7 +118,7 @@
       </size>
      </property>
      <property name="text">
-      <string>&amp;Second Color:</string>
+      <string>&amp;Second color:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -171,7 +171,7 @@
    <item row="0" column="0">
     <widget class="QLabel" name="label_7">
      <property name="text">
-      <string>&amp;Background Mode</string>
+      <string>&amp;Background mode:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

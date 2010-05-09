@@ -210,11 +210,11 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
 
     // Cycle through history
     m_cycleNextAction = m_collection->addAction("cycleNextAction");
-    m_cycleNextAction->setText(i18n("Next history item"));
+    m_cycleNextAction->setText(i18n("Next History Item"));
     m_cycleNextAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Down), KAction::DefaultShortcut);
     connect(m_cycleNextAction, SIGNAL(triggered(bool)), SLOT(slotCycleNext()));
     m_cyclePrevAction = m_collection->addAction("cyclePrevAction");
-    m_cyclePrevAction->setText(i18n("Previous history item"));
+    m_cyclePrevAction->setText(i18n("Previous History Item"));
     m_cyclePrevAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Up), KAction::DefaultShortcut);
     connect(m_cyclePrevAction, SIGNAL(triggered(bool)), SLOT(slotCyclePrev()));
 

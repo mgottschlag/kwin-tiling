@@ -64,7 +64,7 @@
    <item row="2" column="1">
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Calendar System:</string>
+      <string>Calendar system:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

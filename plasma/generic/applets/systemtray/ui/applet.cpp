@@ -492,7 +492,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     }
 
 
-    const QString itemCategories = i18nc("Categories of items in the systemtray that will be shown or hidden", "Shown item categories");
+    const QString itemCategories = i18nc("Categories of items in the systemtray that will be shown or hidden", "Shown Item Categories");
 
     QStandardItem *applicationStatusItem = new QStandardItem();
     applicationStatusItem->setText(i18nc("Systemtray items that describe the status of a generic application", "Application status"));
@@ -554,7 +554,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
             item->setIcon(KIcon(service->icon()));
             item->setCheckable(true);
             item->setCheckState(ownApplets.contains(info.pluginName()) ? Qt::Checked : Qt::Unchecked);
-            item->setData(i18nc("Extra items to be manually added in the systray, such as little Plasma widgets", "Extra items"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
+            item->setData(i18nc("Extra items to be manually added in the systray, such as little Plasma widgets", "Extra Items"), KCategorizedSortFilterProxyModel::CategoryDisplayRole);
             item->setData(info.pluginName(), Qt::UserRole+2);
             m_visibleItemsSourceModel.data()->appendRow(item);
         }
