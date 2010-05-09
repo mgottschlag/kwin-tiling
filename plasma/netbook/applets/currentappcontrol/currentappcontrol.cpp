@@ -36,6 +36,7 @@
 
 //Plasma
 #include <Plasma/IconWidget>
+#include <Plasma/ItemBackground>
 #include <Plasma/View>
 #include <Plasma/Theme>
 #include <Plasma/Dialog>
@@ -294,6 +295,8 @@ void CurrentAppControl::listWindows()
          if (!m_listDialog) {
             m_listDialog = new Plasma::Dialog();
             m_listWidget = new QGraphicsWidget(this);
+            m_listWidget->installEventFilter(this);
+            m_listWidget->setAcceptHoverEvents(true);
             m_listDialog->setGraphicsWidget(m_listWidget);
             Plasma::Corona *corona = 0;
             if (containment() && containment()->corona()) {
@@ -310,6 +313,7 @@ void CurrentAppControl::listWindows()
 
             m_layout = new QGraphicsLinearLayout(m_listWidget);
             m_layout->setOrientation(Qt::Vertical);
+            m_itemBackground = new Plasma::ItemBackground(m_listWidget);
         } else {
             QHash<Plasma::IconWidget *, WId>::const_iterator i = m_windowIcons.constBegin();
             while (i != m_windowIcons.constEnd()) {
@@ -320,12 +324,22 @@ void CurrentAppControl::listWindows()
             m_windowIcons.clear();
         }
 
+        m_itemBackground->hide();
+
         foreach(WId window, KWindowSystem::stackingOrder()) {
             KWindowInfo info = KWindowSystem::windowInfo(window, NET::WMName|NET::WMState|NET::WMWindowType);
             if (!(info.state() & NET::SkipTaskbar) && info.windowType(NET::NormalMask) == NET::Normal) {
                 Plasma::IconWidget *icon;
                 if (m_oldIcons.isEmpty()) {
                     icon = new Plasma::IconWidget(m_listWidget);
+                    icon->setTextBackgroundColor(QColor());
+                    icon->setDrawBackground(false);
+                    icon->setPreferredIconSize(QSizeF(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium));
+
+                    qreal left, top, right, bottom;
+                    m_itemBackground->getContentsMargins(&left, &top, &right, &bottom);
+                    icon->setContentsMargins(left, top, right, bottom);
+                    icon->installEventFilter(this);
                 } else {
                     icon = m_oldIcons.first();
                     m_oldIcons.pop_front();
@@ -334,8 +348,6 @@ void CurrentAppControl::listWindows()
                 icon->setOrientation(Qt::Horizontal);
                 icon->setText(info.name());
                 icon->setIcon(KWindowSystem::icon(window, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium));
-                icon->setTextBackgroundColor(QColor());
-                icon->setDrawBackground(true);
                 icon->setMinimumSize(icon->effectiveSizeHint(Qt::PreferredSize));
                 connect(icon, SIGNAL(clicked()), this, SLOT(windowItemClicked()));
                 m_windowIcons[icon] = window;
@@ -343,9 +355,11 @@ void CurrentAppControl::listWindows()
                 icon->show();
             }
         }
+
         if (containment() && containment()->corona()) {
             m_listDialog->move(containment()->corona()->popupPosition(this, m_listDialog->size()));
         }
+
         m_listDialog->show();
     } else {
         closePopup();
@@ -402,9 +416,17 @@ void CurrentAppControl::closePopup()
 
 bool CurrentAppControl::eventFilter(QObject *watched, QEvent *event)
 {
+    Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
+
     if (watched == m_listDialog && event->type() == QEvent::WindowDeactivate) {
         closePopup();
+    } else if (icon && event->type() == QEvent::GraphicsSceneHoverEnter) {
+        m_itemBackground->show();
+        m_itemBackground->setTargetItem(icon);
+    } else if (watched == m_listWidget && event->type() == QEvent::GraphicsSceneHoverLeave) {
+        m_itemBackground->hide();
     }
+
     return false;
 }
 

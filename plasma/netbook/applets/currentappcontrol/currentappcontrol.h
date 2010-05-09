@@ -31,6 +31,7 @@ class QGraphicsLinearLayout;
 namespace Plasma
 {
     class IconWidget;
+    class ItemBackground;
     class Dialog;
 }
 
@@ -76,6 +77,7 @@ private:
     Plasma::Dialog *m_listDialog;
     QGraphicsWidget *m_listWidget;
     QGraphicsLinearLayout *m_layout;
+    Plasma::ItemBackground *m_itemBackground;
     bool m_showMaximize;
     bool m_alwaysUseDialog;
     QList<Plasma::IconWidget *> m_oldIcons;
