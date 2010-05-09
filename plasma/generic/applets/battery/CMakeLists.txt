@@ -1,7 +1,8 @@
 project(plasma-battery)
 
 set(battery_SRCS
-    battery.cpp)
+    battery.cpp
+    brightnessosdwidget.cpp)
 
 kde4_add_ui_files(battery_SRCS batteryConfig.ui )
 kde4_add_plugin(plasma_applet_battery ${battery_SRCS})

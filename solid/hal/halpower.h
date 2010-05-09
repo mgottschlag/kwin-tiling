@@ -59,6 +59,7 @@ public:
     virtual Solid::Control::PowerManager::BrightnessControlsList brightnessControlsAvailable();
     virtual float brightness(const QString &device);
     virtual bool setBrightness(float brightness, const QString &device);
+    virtual void brightnessKeyPressed(Solid::Control::PowerManager::BrightnessKeyType type);
 
 private:
     void computeAcAdapters();
@@ -86,6 +87,9 @@ private:
     int m_lowBatteryCharge;
     int m_criticalBatteryCharge;
     int m_estimatedBatteryTime;
+
+    bool m_brightnessInHardware;
+    float m_cachedBrightness;
 
     mutable QDBusInterface m_halComputer;
     mutable QDBusInterface m_halPowerManagement;

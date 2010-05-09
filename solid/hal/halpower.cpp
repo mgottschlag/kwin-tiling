@@ -34,6 +34,7 @@
 
 HalPower::HalPower(QObject *parent, const QVariantList  & /*args */)
     : PowerManager(parent),
+      m_brightnessInHardware(true),
       m_halComputer("org.freedesktop.Hal",
                      "/org/freedesktop/Hal/devices/computer",
                      "org.freedesktop.Hal.Device",
@@ -63,6 +64,23 @@ HalPower::HalPower(QObject *parent, const QVariantList  & /*args */)
     updateBatteryStats();
 
     computeButtons();
+
+    Solid::Control::PowerManager::BrightnessControlsList controls = brightnessControlsAvailable();
+    QList<QString> screenControls = controls.keys(Solid::Control::PowerManager::Screen);
+
+    if (!screenControls.isEmpty()) {
+        m_cachedBrightness = brightness(screenControls.at(0));
+
+        QDBusInterface deviceInterface("org.freedesktop.Hal",
+                                       screenControls.at(0),
+                                       "org.freedesktop.Hal.Device",
+                                       QDBusConnection::systemBus());
+        QDBusReply<bool> replyInHardware = deviceInterface.call("GetPropertyBoolean",
+                                                                "laptop_panel.brightness_in_hardware");
+        if (replyInHardware.isValid()) {
+            m_brightnessInHardware = replyInHardware;
+        }
+    }
 }
 
 HalPower::~HalPower()
@@ -382,7 +400,7 @@ float HalPower::brightness(const QString &device)
     return 0.0;
 }
 
-bool HalPower::setBrightness(float brightness, const QString &device)
+bool HalPower::setBrightness(float brightnessValue, const QString &device)
 {
     QDBusReply<QStringList> reply = m_halManager.call("FindDeviceByCapability", "laptop_panel");
     if(reply.isValid() && reply.value().contains(device))
@@ -390,10 +408,14 @@ bool HalPower::setBrightness(float brightness, const QString &device)
         QDBusInterface propertyInterface("org.freedesktop.Hal", device, "org.freedesktop.Hal.Device", QDBusConnection::systemBus());
         int levels = propertyInterface.call("GetProperty", "laptop_panel.num_levels").arguments().at(0).toInt();
         QDBusInterface deviceInterface("org.freedesktop.Hal", device, "org.freedesktop.Hal.Device.LaptopPanel", QDBusConnection::systemBus());
-        deviceInterface.call("SetBrightness", qRound((levels-1)*(brightness/100.0))); // .0? The right way? Feels hackish.
+        deviceInterface.call("SetBrightness", qRound((levels-1)*(brightnessValue/100.0))); // .0? The right way? Feels hackish.
         if(!deviceInterface.lastError().isValid())
         {
-            emit(brightnessChanged(brightness));
+            float newBrightness = brightness(device);
+            if (!qFuzzyCompare(newBrightness, m_cachedBrightness)) {
+                m_cachedBrightness = newBrightness;
+                emit(brightnessChanged(m_cachedBrightness));
+            }
             return true;
         }
     }
@@ -404,14 +426,39 @@ bool HalPower::setBrightness(float brightness, const QString &device)
         QDBusInterface propertyInterface("org.freedesktop.Hal", device, "org.freedesktop.Hal.Device", QDBusConnection::systemBus());
         int levels = propertyInterface.call("GetProperty", "keyboard_backlight.num_levels").arguments().at(0).toInt();
         QDBusInterface deviceInterface("org.freedesktop.Hal", device, "org.freedesktop.Hal.Device.KeyboardBacklight", QDBusConnection::systemBus()); //TODO - I do not have a backlight enabled keyboard, so I'm guessing a bit here. Could someone please check this.
-        deviceInterface.call("SetBrightness", qRound((levels-1)*(brightness/100.0)));
-        if(!deviceInterface.lastError().isValid())
-        {
-            emit(brightnessChanged(brightness));
+        deviceInterface.call("SetBrightness", qRound((levels-1)*(brightnessValue/100.0)));
+        if(!deviceInterface.lastError().isValid()) {
             return true;
         }
     }
     return false;
+}
+
+void HalPower::brightnessKeyPressed(Solid::Control::PowerManager::BrightnessKeyType type) {
+    Solid::Control::PowerManager::BrightnessControlsList controls = brightnessControlsAvailable();
+    QList<QString> screenControls = controls.keys(Solid::Control::PowerManager::Screen);
+
+    if (screenControls.isEmpty()) {
+        return; // ignore as we are not able to determine the brightness level
+    }
+
+    float currentBrightness = brightness(screenControls.at(0));
+
+    if (qFuzzyCompare(currentBrightness, m_cachedBrightness) && !m_brightnessInHardware)
+    {
+        float newBrightness;
+        if (type == Solid::Control::PowerManager::Increase) {
+            newBrightness = qMin(100.0f, currentBrightness + 10);
+        }
+        else {
+            newBrightness = qMax(0.0f, currentBrightness - 10);
+        }
+
+        setBrightness(newBrightness, screenControls.at(0));
+    }
+    else {
+        m_cachedBrightness = currentBrightness;
+    }
 }
 
 void HalPower::computeAcAdapters()

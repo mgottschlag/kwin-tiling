@@ -120,6 +120,14 @@ namespace Control
         typedef QHash<QString, BrightnessControlType> BrightnessControlsList;
 
         /**
+         * This enum defines the different types brightness keys.
+         *
+         * - Increase: Key to increase brightness (Qt::Key_MonBrightnessUp)
+         * - Decrease: Key to decrease brightness (Qt::Key_MonBrightnessDown)
+         */
+        enum BrightnessKeyType{ Increase, Decrease };
+
+        /**
          * Changes the current power management policy of the system
          *
          * @param true if powersaving should be enabled
@@ -243,6 +251,14 @@ namespace Control
          * @return true if the brightness change succeeded, false otherwise
          */
         SOLIDCONTROL_EXPORT bool setBrightness(float brightness, const QString &device = QString());
+
+        /**
+         * Should be called when the user presses a brightness key.
+         *
+         * @param type the type of the brightness key press
+         * @see Solid::Control::PowerManager::BrightnessKeyType
+         */
+        SOLIDCONTROL_EXPORT void brightnessKeyPressed(BrightnessKeyType type);
 
         class SOLIDCONTROL_EXPORT Notifier : public QObject
         {

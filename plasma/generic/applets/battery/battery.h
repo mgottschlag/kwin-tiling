@@ -39,6 +39,8 @@ namespace Plasma
     class Slider;
 }
 
+class BrightnessOSDWidget;
+
 class Battery : public Plasma::PopupApplet
 {
     Q_OBJECT
@@ -93,6 +95,7 @@ class Battery : public Plasma::PopupApplet
         void hibernate();
         void updateBattery();
         void setupFonts();
+        void showBrightnessOSD(int brightness, bool byKeyPress);
 
     private:
         void connectSources();
@@ -179,6 +182,9 @@ class Battery : public Plasma::PopupApplet
         QPropertyAnimation *m_labelAnimation;
         qreal m_acAlpha;
         QPropertyAnimation *m_acAnimation;
+
+        bool m_ignoreBrightnessChange;
+        BrightnessOSDWidget* m_brightnessOSD;
 };
 
 K_EXPORT_PLASMA_APPLET(battery, Battery)

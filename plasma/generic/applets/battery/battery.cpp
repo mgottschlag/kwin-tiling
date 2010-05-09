@@ -21,9 +21,12 @@
 
 #include "battery.h"
 
+#include "brightnessosdwidget.h"
+
 #include <QApplication>
 #include <QDBusConnection>
 #include <QDBusInterface>
+#include <QDesktopWidget>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QFont>
@@ -34,6 +37,7 @@
 #include <QLabel>
 #include <QPropertyAnimation>
 
+#include <KApplication>
 #include <KDebug>
 #include <KIcon>
 #include <KSharedConfig>
@@ -90,7 +94,9 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_labelAlpha(0),
       m_labelAnimation(0),
       m_acAlpha(0),
-      m_acAnimation(0)
+      m_acAnimation(0),
+      m_ignoreBrightnessChange(false),
+      m_brightnessOSD(0)
 {
     //kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
@@ -122,6 +128,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
 
 Battery::~Battery()
 {
+    delete m_brightnessOSD;
 }
 
 void Battery::init()
@@ -400,13 +407,17 @@ void Battery::hibernate()
 
 void Battery::brightnessChanged(const int brightness)
 {
-    Solid::Control::PowerManager::setBrightness(brightness);
+    if (!m_ignoreBrightnessChange) {
+        Solid::Control::PowerManager::setBrightness(brightness);
+    }
 }
 
 void Battery::updateSlider(const float brightness)
 {
     if (m_brightnessSlider->value() != (int)brightness) {
+        m_ignoreBrightnessChange = true;
         m_brightnessSlider->setValue((int) brightness);
+        m_ignoreBrightnessChange = false;
     }
 }
 
@@ -493,16 +504,12 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         m_brightnessSlider = new Plasma::Slider(m_controls);
         m_brightnessSlider->setRange(0, 100);
-        m_brightnessSlider->setValue(Solid::Control::PowerManager::brightness());
+        updateSlider(Solid::Control::PowerManager::brightness());
         m_brightnessSlider->nativeWidget()->setTickInterval(10);
         m_brightnessSlider->setOrientation(Qt::Horizontal);
         connect(m_brightnessSlider, SIGNAL(valueChanged(int)),
                 this, SLOT(brightnessChanged(int)));
 
-        Solid::Control::PowerManager::Notifier *notifier = Solid::Control::PowerManager::notifier();
-
-        connect(notifier, SIGNAL(brightnessChanged(float)),
-                this, SLOT(updateSlider(float)));
         m_controlsLayout->addItem(m_brightnessSlider, row, 1);
         row++;
 
@@ -586,6 +593,10 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         item->setTitle(i18n("Power Management"));
 
         setupFonts();
+
+        m_brightnessOSD = new BrightnessOSDWidget();
+        QDBusConnection::sessionBus().connect("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil",
+                                              "brightnessChanged", this, SLOT(showBrightnessOSD(int,bool)));
     }
 }
 
@@ -718,7 +729,7 @@ void Battery::updateStatus()
     }
 
     if (m_brightnessSlider) {
-        m_brightnessSlider->setValue(Solid::Control::PowerManager::brightness());
+        updateSlider(Solid::Control::PowerManager::brightness());
     }
 }
 
@@ -1050,6 +1061,27 @@ void Battery::setAcAlpha(qreal alpha)
 qreal Battery::acAlpha()
 {
     return m_acAlpha;
+}
+
+void Battery::showBrightnessOSD(int brightness, bool byKeyPress)
+{
+    if (byKeyPress) {
+        // code adapted from KMix
+        m_brightnessOSD->setCurrentBrightness(brightness);
+        m_brightnessOSD->show();
+        m_brightnessOSD->activateOSD(); //Enable the hide timer
+
+        //Center the OSD
+        QRect rect = KApplication::kApplication()->desktop()->screenGeometry(QCursor::pos());
+        QSize size = m_brightnessOSD->sizeHint();
+        int posX = rect.x() + (rect.width() - size.width()) / 2;
+        int posY = rect.y() + 4 * rect.height() / 5;
+        m_brightnessOSD->setGeometry(posX, posY, size.width(), size.height());
+
+        if (m_extenderVisible && m_brightnessSlider) {
+            updateSlider(brightness);
+        }
+    }
 }
 
 #include "battery.moc"

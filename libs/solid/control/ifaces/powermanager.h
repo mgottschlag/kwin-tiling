@@ -183,6 +183,14 @@ namespace Ifaces
          */
         virtual bool setBrightness(float brightness, const QString &panel = QString()) = 0;
 
+        /**
+         * Should be called when the user presses a brightness key.
+         *
+         * @param type the type of the brightness key press
+         * @see Solid::Control::PowerManager::BrightnessKeyType
+         */
+        virtual void brightnessKeyPressed(Solid::Control::PowerManager::BrightnessKeyType type) = 0;
+
     Q_SIGNALS:
         /**
          * This signal is emitted when the AC adapter is plugged or unplugged.

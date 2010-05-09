@@ -187,6 +187,12 @@ float Solid::Control::PowerManager::brightness(const QString &device)
     }
 }
 
+void Solid::Control::PowerManager::brightnessKeyPressed(Solid::Control::PowerManager::BrightnessKeyType type)
+{
+    SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
+               brightnessKeyPressed(type));
+}
+
 Solid::Control::PowerManager::Notifier *Solid::Control::PowerManager::notifier()
 {
     return globalPowerManager;
