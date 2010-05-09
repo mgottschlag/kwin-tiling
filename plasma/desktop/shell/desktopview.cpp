@@ -424,7 +424,8 @@ void DesktopView::nextContainment()
     //FIXME this is a *horrible* way of choosing a "next" containment.
     while (i != start) {
         if (!PlasmaApp::isPanelContainment(containments.at(i)) &&
-            containments.at(i)->screen() == -1) {
+            containments.at(i)->screen() == -1 &&
+            containments.at(i)->pluginName() != "desktopDashboard") {
             break;
         }
 
@@ -448,7 +449,8 @@ void DesktopView::previousContainment()
     //FIXME this is a *horrible* way of choosing a "previous" containment.
     while (i != start) {
         if (!PlasmaApp::isPanelContainment(containments.at(i)) &&
-            containments.at(i)->screen() == -1) {
+            containments.at(i)->screen() &&
+            containments.at(i)->pluginName() != "desktopDashboard") {
             break;
         }
 
