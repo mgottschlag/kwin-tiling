@@ -328,6 +328,8 @@ void CurrentAppControl::listWindows()
 
         m_itemBackground->hide();
 
+        Plasma::WindowEffects::slideWindow(m_listDialog, location());
+
         foreach(WId window, KWindowSystem::stackingOrder()) {
             KWindowInfo info = KWindowSystem::windowInfo(window, NET::WMName|NET::WMState|NET::WMWindowType);
             if (!(info.state() & NET::SkipTaskbar) && info.windowType(NET::NormalMask) == NET::Normal) {
