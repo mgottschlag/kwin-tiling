@@ -108,6 +108,7 @@ void CurrentAppControl::configChanged()
 {
     QGraphicsLinearLayout *lay = static_cast<QGraphicsLinearLayout *>(layout());
     m_showMaximize = config().readEntry("ShowMaximize", true);
+    m_alwaysUseDialog = config().readEntry("AlwaysUseDialog", false);
     if (m_showMaximize) {
         m_maximizeTask->show();
         lay->insertItem(lay->count()-1, m_maximizeTask);
@@ -383,6 +384,7 @@ void CurrentAppControl::createConfigurationInterface(KConfigDialog *parent)
 void CurrentAppControl::configAccepted()
 {
     m_alwaysUseDialog = m_generalUi.alwaysUseDialog->checkState() == Qt::Checked;
+    config().writeEntry("AlwaysUseDialog", m_alwaysUseDialog);
 }
 
 int CurrentAppControl::windowsCount() const
