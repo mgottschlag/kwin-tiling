@@ -24,6 +24,8 @@
 
 #include <Plasma/Applet>
 
+#include "ui_general.h"
+
 namespace Plasma
 {
     class IconWidget;
@@ -42,6 +44,8 @@ public:
     void configChanged();
     void constraintsEvent(Plasma::Constraints constraints);
 
+    void createConfigurationInterface(KConfigDialog *parent);
+
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
     int windowsCount() const;
@@ -57,6 +61,7 @@ protected Q_SLOTS:
     void listWindows();
     void windowItemClicked();
     void closePopup();
+    void configAccepted();
 
 private:
     Plasma::IconWidget *m_currentTask;
@@ -69,7 +74,10 @@ private:
     Plasma::Dialog *m_listDialog;
     QGraphicsWidget *m_listWidget;
     bool m_showMaximize;
+    bool m_alwaysUseDialog;
     QHash<Plasma::IconWidget *, WId> m_windowIcons;
+
+    Ui::GeneralConfig m_generalUi;
 };
 
 K_EXPORT_PLASMA_APPLET(currentappcontrol, CurrentAppControl)

@@ -28,6 +28,7 @@
 #include <QVarLengthArray>
 
 //KDE
+#include <KConfigDialog>
 #include <KWindowSystem>
 #include <KIconLoader>
 #include <KIcon>
@@ -57,7 +58,8 @@ CurrentAppControl::CurrentAppControl(QObject *parent, const QVariantList &args)
       m_pendingActiveWindow(0),
       m_listDialog(0),
       m_listWidget(0),
-      m_showMaximize(false)
+      m_showMaximize(false),
+      m_alwaysUseDialog(false)
 {
     m_currentTask = new Plasma::IconWidget(this);
     m_currentTask->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -286,7 +288,7 @@ void CurrentAppControl::listWindows()
         KWindowSystem::forceActiveWindow(v->winId());
     }
 
-    if (Plasma::WindowEffects::isEffectAvailable(Plasma::WindowEffects::PresentWindows)) {
+    if (!m_alwaysUseDialog && Plasma::WindowEffects::isEffectAvailable(Plasma::WindowEffects::PresentWindows)) {
         Plasma::WindowEffects::presentWindows(view()->winId() , KWindowSystem::currentDesktop());
     } else if (!m_listDialog) {
         m_listDialog = new Plasma::Dialog();
@@ -331,6 +333,23 @@ void CurrentAppControl::listWindows()
     } else {
         closePopup();
     }
+}
+
+void CurrentAppControl::createConfigurationInterface(KConfigDialog *parent)
+{
+    QWidget *widget = new QWidget();
+    m_generalUi.setupUi(widget);
+    parent->addPage(widget, i18nc("General configuration page", "General"), icon());
+
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+
+    m_generalUi.alwaysUseDialog->setChecked(m_alwaysUseDialog);
+}
+
+void CurrentAppControl::configAccepted()
+{
+    m_alwaysUseDialog = m_generalUi.alwaysUseDialog->checkState() == Qt::Checked;
 }
 
 int CurrentAppControl::windowsCount() const

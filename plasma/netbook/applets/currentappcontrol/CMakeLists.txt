@@ -3,6 +3,7 @@ project(plasma-currentappcontrol)
 
 set(currentappcontrol_SRCS currentappcontrol.cpp)
 
+kde4_add_ui_files(currentappcontrol_SRCS general.ui )
 
 kde4_add_plugin(plasma_applet_currentappcontrol ${currentappcontrol_SRCS})
 target_link_libraries(plasma_applet_currentappcontrol 
