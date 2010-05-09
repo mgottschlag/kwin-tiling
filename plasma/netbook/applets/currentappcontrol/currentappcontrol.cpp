@@ -65,6 +65,7 @@ CurrentAppControl::CurrentAppControl(QObject *parent, const QVariantList &args)
     m_currentTask = new Plasma::IconWidget(this);
     m_currentTask->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_currentTask->setTextBackgroundColor(QColor());
+    m_currentTask->setTextBackgroundColor(QColor(Qt::transparent));
     m_closeTask = new Plasma::IconWidget(this);
     m_closeTask->setSvg("widgets/configuration-icons", "close");
     m_closeTask->setMaximumWidth(KIconLoader::SizeSmallMedium);
@@ -333,6 +334,7 @@ void CurrentAppControl::listWindows()
                 if (m_oldIcons.isEmpty()) {
                     icon = new Plasma::IconWidget(m_listWidget);
                     icon->setTextBackgroundColor(QColor());
+                    icon->setTextBackgroundColor(QColor(Qt::transparent));
                     icon->setDrawBackground(false);
                     icon->setPreferredIconSize(QSizeF(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium));
 
