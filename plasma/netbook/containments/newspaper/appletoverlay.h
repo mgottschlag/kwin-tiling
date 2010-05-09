@@ -58,11 +58,10 @@ protected:
 
 protected Q_SLOTS:
     void scrollTimeout();
-    void appletDestroyed();
     void spacerRequestedDrop(QGraphicsSceneDragDropEvent *event);
 
 private:
-    Plasma::Applet *m_applet;
+    QWeakPointer<Plasma::Applet>m_applet;
     Newspaper *m_newspaper;
     AppletMoveSpacer *m_spacer;
     Plasma::Svg *m_icons;

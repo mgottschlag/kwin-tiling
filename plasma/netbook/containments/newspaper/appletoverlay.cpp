@@ -40,7 +40,6 @@
 
 AppletOverlay::AppletOverlay(QGraphicsWidget *parent, Newspaper *newspaper)
     : QGraphicsWidget(parent),
-      m_applet(0),
       m_newspaper(newspaper),
       m_spacer(0),
       m_spacerLayout(0),
@@ -76,11 +75,6 @@ AppletOverlay::~AppletOverlay()
     }
 }
 
-void AppletOverlay::appletDestroyed()
-{
-    m_applet = 0;
-}
-
 void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget)
@@ -91,8 +85,8 @@ void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     painter->fillRect(option->exposedRect, c);
 
     if (m_applet) {
-        QRectF geom = m_applet->contentsRect();
-        geom.translate(m_applet->pos());
+        QRectF geom = m_applet.data()->contentsRect();
+        geom.translate(m_applet.data()->pos());
         //FIXME: calculate the offset ONE time, mmkay?
         QPointF offset = m_newspaper->m_container->pos() + m_newspaper->m_scrollWidget->pos();
         geom.moveTopLeft(geom.topLeft() + offset);
@@ -132,11 +126,11 @@ void AppletOverlay::mousePressEvent(QGraphicsSceneMouseEvent *event)
         m_origin = event->pos();
         showSpacer(event->pos());
         if (m_spacerLayout) {
-            m_spacerLayout->removeItem(m_applet);
-            m_applet->raise();
+            m_spacerLayout->removeItem(m_applet.data());
+            m_applet.data()->raise();
         }
         if (m_spacer) {
-            m_spacer->setMinimumHeight(m_applet->size().height());
+            m_spacer->setMinimumHeight(m_applet.data()->size().height());
         }
     }
 }
@@ -152,11 +146,9 @@ void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
         return;
     }
 
-   Plasma::Applet *oldApplet = m_applet;
+    Plasma::Applet *oldApplet = m_applet.data();
 
     QPointF offset = m_newspaper->m_container->pos() + m_newspaper->m_scrollWidget->pos();
-    disconnect(m_applet, SIGNAL(destroyed()), this, SLOT(appletDestroyed()));
-    m_applet = 0;
 
 
     //FIXME: is there a way more efficient than this linear one? scene()itemAt() won't work because it would always be == this
@@ -167,16 +159,16 @@ void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
             break;
         }
     }
-    if (m_applet != oldApplet) {
+    if (m_applet.data() != oldApplet) {
         update();
 
         if (m_applet) {
-            m_applet->setGraphicsEffect(0);
+            m_applet.data()->setGraphicsEffect(0);
 
-            QGraphicsBlurEffect *newEffect = new QGraphicsBlurEffect(m_applet);
+            QGraphicsBlurEffect *newEffect = new QGraphicsBlurEffect(m_applet.data());
             newEffect->setBlurHints(QGraphicsBlurEffect::PerformanceHint);
             newEffect->setBlurRadius(0);
-            m_applet->setGraphicsEffect(newEffect);
+            m_applet.data()->setGraphicsEffect(newEffect);
 
             QPropertyAnimation *newAnimation = new QPropertyAnimation(newEffect, "blurRadius", newEffect);
             newAnimation->setEasingCurve(QEasingCurve::InOutQuad);
@@ -206,9 +198,13 @@ void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 
 void AppletOverlay::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
+    if (!m_applet) {
+        return;
+    }
+
     if (m_spacer) {
         QPointF delta = event->pos()-event->lastPos();
-        m_applet->moveBy(delta.x(), delta.y());
+        m_applet.data()->moveBy(delta.x(), delta.y());
         showSpacer(event->pos());
     }
 
@@ -251,7 +247,7 @@ void AppletOverlay::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     }
 
     if (m_spacer && m_spacerLayout) {
-        m_spacerLayout->insertItem(m_spacerIndex, m_applet);
+        m_spacerLayout->insertItem(m_spacerIndex, m_applet.data());
         m_spacerLayout->removeItem(m_spacer);
     }
 
@@ -425,24 +421,24 @@ void AppletOverlay::scrollTimeout()
         if (m_scrollDown) {
             if (m_newspaper->m_container->geometry().bottom() > m_newspaper->m_scrollWidget->geometry().bottom()) {
                 m_newspaper->m_container->moveBy(0, -10);
-                m_applet->moveBy(0, 10);
+                m_applet.data()->moveBy(0, 10);
             }
         } else {
             if (m_newspaper->m_container->pos().y() < 0) {
                 m_newspaper->m_container->moveBy(0, 10);
-                m_applet->moveBy(0, -10);
+                m_applet.data()->moveBy(0, -10);
             }
         }
     } else {
         if (m_scrollDown) {
             if (m_newspaper->m_container->geometry().right() > m_newspaper->m_scrollWidget->geometry().right()) {
                 m_newspaper->m_container->moveBy(-10, 0);
-                m_applet->moveBy(10, 0);
+                m_applet.data()->moveBy(10, 0);
             }
         } else {
             if (m_newspaper->m_container->pos().x() < 0) {
                 m_newspaper->m_container->moveBy(10, 0);
-                m_applet->moveBy(-10, 0);
+                m_applet.data()->moveBy(-10, 0);
             }
         }
     }
