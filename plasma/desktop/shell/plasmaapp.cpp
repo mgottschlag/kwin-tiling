@@ -68,6 +68,7 @@
 #include <Plasma/Dialog>
 #include <Plasma/Theme>
 #include <Plasma/Wallpaper>
+#include <Plasma/WindowEffects>
 
 #include <kephal/screens.h>
 
@@ -518,6 +519,7 @@ void PlasmaApp::showController(int screen, Plasma::Containment *containment, boo
     }
 
     controller->show();
+    Plasma::WindowEffects::slideWindow(controller, Plasma::BottomEdge);
     KWindowSystem::setOnAllDesktops(controller->winId(), true);
     KWindowSystem::activateWindow(controller->winId());
 }
