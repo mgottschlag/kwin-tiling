@@ -26,7 +26,7 @@
 
 #include <KUrl>
 
-#include <kactivityconsumer.h>
+#include <kworkspace/kactivityconsumer.h>
 
 #include <kdemacros.h>
 
