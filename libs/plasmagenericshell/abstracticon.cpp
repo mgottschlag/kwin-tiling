@@ -134,7 +134,9 @@ void AbstractIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsWidget::mouseReleaseEvent(event);
     setCursor(Qt::OpenHandCursor);
-    emit(selected(this));
+    if (boundingRect().contains(event->pos())) {
+        emit(selected(this));
+    }
 }
 
 void AbstractIcon::resizeEvent(QGraphicsSceneResizeEvent *)
