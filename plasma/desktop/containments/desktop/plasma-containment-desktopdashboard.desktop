@@ -2,7 +2,9 @@
 # ctxt: plasma containment
 Name=Desktop Dashboard
 Name[en_GB]=Desktop Dashboard
+Name[nl]=Dashboard van bureaublad
 Name[pt]=Painel do Ecrã
+Name[pt_BR]=Painel da área de trabalho
 Name[sv]=Skrivbordets instrumentpanel
 Name[uk]=Панель приладів стільниці
 Name[x-test]=xxDesktop Dashboardxx
