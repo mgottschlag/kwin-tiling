@@ -44,14 +44,14 @@ Activity::Activity(const QString &id, QObject *parent)
     m_id(id),
     m_info(KActivityInfo::forActivity(id))
 {
-    if (! m_info) {
-        //FIXME fail more nicely
-        kDebug() << "activity doesn't exist!!!!!";
-        return;
+    if (m_info) {
+        m_name = m_info->name();
+        connect(m_info, SIGNAL(nameChanged(QString)), this, SLOT(setName(QString)));
+    } else {
+        m_name = m_id;
+        kDebug() << "nepomuk is probably broken :(";
     }
 
-    m_name = m_info->name();
-    connect(m_info, SIGNAL(nameChanged(QString)), this, SLOT(setName(QString)));
 
     Plasma::Corona *corona = PlasmaApp::self()->corona();
 
