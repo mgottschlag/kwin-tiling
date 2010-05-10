@@ -126,7 +126,6 @@ void AbstractIcon::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         drag->exec();
 
         setCursor(Qt::OpenHandCursor);
-        update(boundingRect());
     }
 }
 
@@ -156,14 +155,12 @@ void AbstractIcon::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void AbstractIcon::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
-    update(boundingRect());
-    emit(doubleClicked(this));
+    emit doubleClicked(this);
 }
 
 void AbstractIcon::setSelected(bool selected)
 {
     m_selected = selected;
-    update(0,0,boundingRect().width(), boundingRect().height());
 }
 
 bool AbstractIcon::isSelected() const
