@@ -44,6 +44,7 @@ class ActivityIcon : public Plasma::AbstractIcon
     private:
         QString m_id;
         KIcon m_removeIcon;
+        KIcon m_stopIcon;
         Activity *m_activity;
 };
 

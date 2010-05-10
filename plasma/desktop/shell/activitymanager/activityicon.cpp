@@ -32,6 +32,7 @@ ActivityIcon::ActivityIcon(const QString &id)
     :AbstractIcon(0),
     m_id(id),
     m_removeIcon("edit-delete"),
+    m_stopIcon("media-playback-stop"),
     m_activity(new Activity(id, this))
 {
     //FIXME this may interfere with drag when we implement that
@@ -72,8 +73,14 @@ void ActivityIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     qreal removeX = iconX + iconSize() - cornerIconSize.width();
     qreal removeY = rect.y();
     painter->drawPixmap(removeX, removeY, m_removeIcon.pixmap(cornerIconSize));
-    //TODO make the little icon actually clickable
-    //TODO: play/stop
+
+    if (m_activity->isRunning()) {
+        qreal stopX = iconX;
+        qreal stopY = rect.y();
+        painter->drawPixmap(stopX, stopY, m_stopIcon.pixmap(cornerIconSize));
+    } else {
+        //TODO draw play icon, centered
+    }
 }
 
 void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -92,6 +99,16 @@ void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         setCursor(Qt::OpenHandCursor);
         m_activity->destroy();
         return;
+    }
+
+    if (m_activity->isRunning()) {
+        QRectF stopRect(QPointF(iconX, rect.y()), cornerIconSize);
+        if (stopRect.contains(event->pos())) {
+            setCursor(Qt::OpenHandCursor);
+            m_activity->close();
+            update();
+            return;
+        }
     }
 
     AbstractIcon::mouseReleaseEvent(event);

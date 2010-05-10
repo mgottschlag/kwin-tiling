@@ -24,6 +24,7 @@
 #include <QPixmap>
 #include <QString>
 #include <QSize>
+#include <QFile>
 
 #include <KIcon>
 #include <KWindowSystem>
@@ -103,9 +104,15 @@ void Activity::destroy()
 void Activity::activate()
 {
     if (m_containments.isEmpty()) {
-        //TODO load them
-        return;
+        open();
+        if (m_containments.isEmpty()) {
+            kDebug() << "open failed??";
+            return;
+        }
     }
+    //FIXME also ensure there's a containment for every screen. it's possible numscreens changed
+    //since we were opened.
+
     //figure out where we are
     int currentScreen = Kephal::ScreenUtils::screenId(QCursor::pos());
     int currentDesktop = -1;
@@ -128,6 +135,60 @@ void Activity::setName(const QString &name)
     emit nameChanged(name);
     //TODO libactivities stuff
     //propogate change to ctmts
+}
+
+void Activity::close()
+{
+    //FIXME activity id isn't guaranteed unique
+    //until we start using real activities
+    QString name = "activities/";
+    name += m_id;
+    KConfig external(name, KConfig::SimpleConfig, "appdata");
+    int i=0;
+    foreach (Plasma::Containment *c, m_containments) {
+        //FIXME if it's not active, the screen # is -1
+        //so I'm going by position in the list
+        //which is a horrible hack
+        QString groupName = QString("Containment%1").arg(i++);
+        KConfigGroup newConf(&external, groupName);
+        c->config().copyTo(&newConf);
+        c->destroy(false);
+    }
+    m_containments.clear();
+    kDebug() << "attempting to write to" << external.name();
+    external.sync();
+    //FIXME only destroy it if nothing went wrong
+
+    //TODO save a thumbnail to a file too
+}
+
+void Activity::open()
+{
+    QString fileName = "activities/";
+    fileName += m_id;
+    KConfig external(fileName, KConfig::SimpleConfig, "appdata");
+
+    //TODO iterate over all screens (kephal tells us how many exist, right?)
+    //unless we choose to be lazy and not load other screens until we're activated.
+    KConfigGroup config(&external, "Containment0");
+    QString plugin = config.readEntry("plugin", QString());
+    Plasma::Containment *newContainment = PlasmaApp::self()->corona()->addContainment(plugin, QVariantList());
+    // load the configuration of the old containment into the new one
+    // luckily some other part of libplasma seems to ensure the applet ID's are unique
+    KConfigGroup newCfg = newContainment->config();
+    config.copyTo(&newCfg);
+    newContainment->restore(newCfg);
+    foreach (Plasma::Applet *applet, newContainment->applets()) {
+        applet->init();
+        // We have to flush the applet constraints manually
+        applet->flushPendingConstraintsEvents();
+    }
+    newContainment->save(newCfg);
+    m_containments << newContainment;
+    config.deleteGroup();
+
+    PlasmaApp::self()->corona()->requireConfigSync();
+    external.sync();
 }
 
 

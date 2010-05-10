@@ -73,7 +73,15 @@ public slots:
      */
     void activate();
 
-    //TODO stop/start
+    /**
+     * save and remove all our containments
+     */
+    void close();
+
+    /**
+     * load the saved containment(s) for this activity
+     */
+    void open();
 
 private:
     QString m_id;
