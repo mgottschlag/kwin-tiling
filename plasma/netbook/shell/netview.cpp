@@ -46,7 +46,8 @@ NetView::NetView(Plasma::Containment *containment, int uid, QWidget *parent)
 
     connect(this, SIGNAL(lostContainment()), SLOT(grabContainment()));
     //setOptimizationFlags(QGraphicsView::DontSavePainterState);
-    setAttribute(Qt::WA_TranslucentBackground, false);
+
+    setAttribute(Qt::WA_TranslucentBackground, uid == controlBarId());
 
     m_containmentSwitchAnimation = new QPropertyAnimation(this, "sceneRect", this);
 }
@@ -163,7 +164,16 @@ void NetView::immutabilityChanged(Plasma::ImmutabilityType immutability)
 // CompositionMode_Source.
 void NetView::drawBackground(QPainter *painter, const QRectF &rect)
 {
-    painter->fillRect(rect.toAlignedRect(), Qt::black);
+    if (!testAttribute(Qt::WA_TranslucentBackground)) {
+        painter->fillRect(rect.toAlignedRect(), Qt::black);
+    } else {
+        if (KWindowSystem::compositingActive()) {
+            painter->setCompositionMode(QPainter::CompositionMode_Source);
+            painter->fillRect(rect.toAlignedRect(), Qt::transparent);
+        } else {
+            Plasma::View::drawBackground(painter, rect);
+        }
+    }
 }
 
 
