@@ -135,17 +135,12 @@ void ActivityBar::constraintsEvent(Plasma::Constraints constraints)
         } else {
             m_tabBar->nativeWidget()->setShape(QTabBar::RoundedNorth);
         }
+
+        m_tabBar->nativeWidget()->setDrawBase(formFactor() != Plasma::Vertical && formFactor() != Plasma::Horizontal);
+
         setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
         setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
         emit sizeHintChanged(Qt::PreferredSize);
-    }
-
-    if (constraints & Plasma::SizeConstraint ) {
-        Plasma::Containment *c = containment();
-        if (c) {
-            const bool drawBase = size().width() + 2 <= c->size().width() && size().height() + 2 <= c->size().height();
-            m_tabBar->nativeWidget()->setDrawBase(drawBase);
-        }
     }
 }
 
