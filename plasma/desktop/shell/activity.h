@@ -26,6 +26,7 @@
 class QSize;
 class QString;
 class QPixmap;
+class KActivityInfo;
 namespace Plasma
 {
     class Containment;
@@ -87,6 +88,7 @@ private:
     QString m_id;
     QString m_name;
     QList<Plasma::Containment*> m_containments;
+    KActivityInfo *m_info;
 
 };
 

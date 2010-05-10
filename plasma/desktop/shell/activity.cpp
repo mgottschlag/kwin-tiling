@@ -19,7 +19,8 @@
 
 
 #include "plasma-shell-desktop.h"
-
+#include "kactivitycontroller.h"
+#include "kactivityinfo.h"
 
 #include <QPixmap>
 #include <QString>
@@ -27,6 +28,7 @@
 #include <QFile>
 
 #include <KIcon>
+#include <KMessageBox>
 #include <KWindowSystem>
 #include <kephal/screens.h>
 
@@ -39,9 +41,17 @@
 
 Activity::Activity(const QString &id, QObject *parent)
     :QObject(parent),
-    m_id(id)
+    m_id(id),
+    m_info(KActivityInfo::forActivity(id))
 {
-    m_name = id; //TODO get it from libactivities
+    if (! m_info) {
+        //FIXME fail more nicely
+        kDebug() << "activity doesn't exist!!!!!";
+        return;
+    }
+
+    m_name = m_info->name();
+    connect(m_info, SIGNAL(nameChanged(QString)), this, SLOT(setName(QString)));
 
     Plasma::Corona *corona = PlasmaApp::self()->corona();
 
@@ -49,7 +59,7 @@ Activity::Activity(const QString &id, QObject *parent)
     foreach (Plasma::Containment *cont, corona->containments()) {
         if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
             cont->containmentType() == Plasma::Containment::CustomContainment) &&
-                !corona->offscreenWidgets().contains(cont) && cont->activity() == id) {
+                !corona->offscreenWidgets().contains(cont) && cont->activityId() == id) {
             m_containments << cont;
             break;
         }
@@ -81,8 +91,9 @@ QPixmap Activity::thumbnail(const QSize &size)
 
 bool Activity::isActive()
 {
-    //TODO
-    return false;
+    KActivityConsumer c;
+    return m_id == c.currentActivity();
+    //TODO maybe plasmaapp should cache the current activity to reduce dbus calls?
 }
 
 bool Activity::isRunning()
@@ -92,13 +103,16 @@ bool Activity::isRunning()
 
 void Activity::destroy()
 {
-    //TODO
-    //-kill the activity in nepomuk
-    //-destroy all our containments
-    if (m_containments.isEmpty()) {
-        return;
+    if (KMessageBox::warningContinueCancel(
+                0, //FIXME pass a view in
+                i18nc("%1 is the name of the activity", "Do you really want to remove this %1?", name()),
+                i18nc("@title:window %1 is the name of the activity", "Remove %1", name()), KStandardGuiItem::remove()) == KMessageBox::Continue) {
+        foreach (Plasma::Containment *c, m_containments) {
+            c->destroy(false);
+        }
+        KActivityController controller;
+        controller.removeActivity(m_id);
     }
-    m_containments.first()->destroy();
 }
 
 void Activity::activate()
@@ -123,7 +137,8 @@ void Activity::activate()
     m_containments.first()->setScreen(currentScreen, currentDesktop);
     //TODO handle other screens
 
-    //TODO libactivities stuff
+    KActivityController c;
+    c.setCurrentActivity(m_id);
 }
 
 void Activity::setName(const QString &name)
@@ -133,14 +148,14 @@ void Activity::setName(const QString &name)
     }
     m_name = name;
     emit nameChanged(name);
-    //TODO libactivities stuff
-    //propogate change to ctmts
+    //FIXME right now I'm assuming the name change came *from* nepomuk
+    //so I'm not trying to set the activity name in nepomuk.
+    //nor am I propogating the change to my containments; they need to be able to react to such
+    //things when this class isn't around anyways.
 }
 
 void Activity::close()
 {
-    //FIXME activity id isn't guaranteed unique
-    //until we start using real activities
     QString name = "activities/";
     name += m_id;
     KConfig external(name, KConfig::SimpleConfig, "appdata");

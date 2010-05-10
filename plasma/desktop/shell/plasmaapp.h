@@ -38,6 +38,7 @@ namespace Plasma
 {
     class AccessAppletJob;
     class Containment;
+    class Context;
     class Corona;
     class Dialog;
 } // namespace Plasma
@@ -125,6 +126,8 @@ public Q_SLOTS:
      * create a new blank activity with @p plugin containment type
      */
     void createActivity(const QString &plugin);
+
+    void updateActivityName(Plasma::Context *context);
 
 protected:
 #ifdef Q_WS_X11

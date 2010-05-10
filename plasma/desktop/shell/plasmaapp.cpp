@@ -65,6 +65,7 @@
 #include <Plasma/AccessManager>
 #include <Plasma/AuthorizationManager>
 #include <Plasma/Containment>
+#include <Plasma/Context>
 #include <Plasma/Dialog>
 #include <Plasma/Theme>
 #include <Plasma/Wallpaper>
@@ -73,6 +74,7 @@
 #include <kephal/screens.h>
 
 #include <plasmagenericshell/backgrounddialog.h>
+#include "kactivitycontroller.h"
 
 #include "appadaptor.h"
 #include "controllerwindow.h"
@@ -902,6 +904,15 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
     disconnect(containment, 0, this, 0);
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
+    QString id = containment->activityId();
+    if (! id.isEmpty()) {
+        kDebug() << "associating containment with activity" << id;
+        //connect to the activity
+        connect(containment, SIGNAL(activityNameChanged(Plasma::Context*)), this, SLOT(updateActivityName(Plasma::Context*)));
+        //FIXME need to be notified when the name changes
+        //can use KActivityInfo but need to keep an instance somewhere. perhaps a list of them in
+        //this class.
+    }
 
     if (containment->containmentType() == Plasma::Containment::DesktopContainment) {
         foreach (QAction *action, m_corona->actions()) {
@@ -981,6 +992,16 @@ void PlasmaApp::addContainment()
 
     QString plugin = fromContainment ? fromContainment->pluginName() : QString();
     Plasma::Containment *c = m_corona->addContainment(plugin);
+
+    //TODO: make it clone everything, not just the pluginname
+
+    //make a new activity to match it
+    KActivityController controller;
+    QString id = controller.addActivity(i18n("unnamed"));
+    c->setActivityId(id);
+    c->setActivity(i18n("unnamed"));
+    emit activityAdded(id);
+    controller.setCurrentActivity(id);
 
     if (c && fromContainment) {
         foreach (DesktopView *view, m_desktops) {
@@ -1139,38 +1160,52 @@ void PlasmaApp::plasmoidAccessFinished(Plasma::AccessAppletJob *job)
 
 QStringList PlasmaApp::listActivities()
 {
-    QStringList list;
-    //TODO get data from ivan's API
-    //this is just a temp. hack
-    foreach (Plasma::Containment *cont, m_corona->containments()) {
-        if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
-            cont->containmentType() == Plasma::Containment::CustomContainment) &&
-                !m_corona->offscreenWidgets().contains(cont)) {
-            list << cont->activity();
+    KActivityController controller;
+    QStringList list = controller.availableActivities();
+
+    if (list.isEmpty()) {
+        //probably an upgrade to 4.5; need to migrate their plasma activities to nepomuk.
+        kDebug() << "migrating activities to nepomuk";
+        foreach (Plasma::Containment *cont, m_corona->containments()) {
+            if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
+                        cont->containmentType() == Plasma::Containment::CustomContainment) &&
+                    !m_corona->offscreenWidgets().contains(cont)) {
+                //create a new activity for the containment
+                //FIXME what about multiple screens?
+                QString id = controller.addActivity(cont->activity());
+                cont->setActivityId(id);
+                list << id;
+            }
         }
+        m_corona->requestConfigSync();
+    } else {
+        kDebug() << list.count() << list.first();
     }
     return list;
 }
 
 void PlasmaApp::cloneCurrentActivity()
 {
-    //TODO
-    //-make a full activity
-    //-make it clone eeeverything
     addContainment();
-
-    emit activityAdded(QString());
 }
 
 void PlasmaApp::createActivity(const QString &plugin)
 {
-    //TODO
-    //-make a full activity
-    //-activate this new one
-    m_corona->addContainment(plugin);
+    Plasma::Containment *c = m_corona->addContainment(plugin);
 
-    emit activityAdded(QString());
+    KActivityController controller;
+    QString id = controller.addActivity(i18n("unnamed"));
+    c->setActivityId(id);
+    c->setActivity(i18n("unnamed"));
+
+    emit activityAdded(id);
+    controller.setCurrentActivity(id);
 }
 
+void PlasmaApp::updateActivityName(Plasma::Context *context)
+{
+    KActivityController controller;
+    controller.setActivityName(context->currentActivityId(), context->currentActivity());
+}
 
 #include "plasmaapp.moc"
