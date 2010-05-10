@@ -30,15 +30,13 @@
 
 ActivityIcon::ActivityIcon(const QString &id)
     :AbstractIcon(0),
-    m_id(id),
     m_removeIcon("edit-delete"),
     m_stopIcon("media-playback-stop"),
     m_activity(new Activity(id, this))
 {
-    //FIXME this may interfere with drag when we implement that
-    //and should be on mouse *release*
-    //and the whole selection thing in AbstractIcon seems a tad odd.
     connect(this, SIGNAL(selected(AbstractIcon*)), m_activity, SLOT(activate()));
+    connect(m_activity, SIGNAL(nameChanged(QString)), this, SLOT(setName(QString)));
+    setName(m_activity->name());
 }
 
 ActivityIcon::~ActivityIcon()
@@ -49,7 +47,7 @@ QPixmap ActivityIcon::pixmap(const QSize &size)
 {
     // we need the icon customizable
     // while the default one is an identicon
-    return KIdenticonGenerator::self()->generate(size.width(), m_id);
+    return KIdenticonGenerator::self()->generate(size.width(), m_activity->id());
     //return m_icon.pixmap(size);
     //FIXME use the activity thumbnail (once it's implemented).
     //no icons, no need to customize, just a little image of the *containment*

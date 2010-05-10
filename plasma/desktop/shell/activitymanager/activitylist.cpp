@@ -61,7 +61,6 @@ void ActivityList::setCorona(Plasma::Corona *corona)
 ActivityIcon *ActivityList::createAppletIcon(const QString &id)
 {
     ActivityIcon *applet = new ActivityIcon(id);
-    applet->setName(id);
     addIcon(applet);
 
     return applet;

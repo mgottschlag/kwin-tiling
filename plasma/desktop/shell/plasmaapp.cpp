@@ -1174,6 +1174,7 @@ QStringList PlasmaApp::listActivities()
                 //FIXME what about multiple screens?
                 QString id = controller.addActivity(cont->activity());
                 cont->setActivityId(id);
+                kDebug() << cont->activityId() << cont->activity();
                 list << id;
             }
         }
