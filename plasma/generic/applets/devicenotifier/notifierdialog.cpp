@@ -546,24 +546,18 @@ void NotifierDialog::buildDialog()
 
     Plasma::IconWidget *closeButton = new Plasma::IconWidget();
     closeButton->setSvg("widgets/configuration-icons", "close");
-    closeButton->setMaximumSize(closeButton->sizeFromIconSize(KIconLoader::SizeSmall/2));
+    closeButton->setMaximumSize(closeButton->sizeFromIconSize(KIconLoader::SizeSmall));
     closeButton->setMinimumSize(closeButton->maximumSize());
 
     m_statusExpandButton = new Plasma::IconWidget();
-    m_statusExpandButton->setMaximumSize(closeButton->sizeFromIconSize(KIconLoader::SizeSmall/2));
+    m_statusExpandButton->setMaximumSize(closeButton->sizeFromIconSize(KIconLoader::SizeSmall));
     m_statusExpandButton->setMinimumSize(closeButton->maximumSize());
 
     connect(closeButton, SIGNAL(clicked()), this, SLOT(dismissStatusBar()));
     connect(m_statusExpandButton, SIGNAL(clicked()), this, SLOT(triggerExpandStatusBar()));
 
     QGraphicsLinearLayout *labelLayout = new QGraphicsLinearLayout(Qt::Horizontal);
-    Plasma::IconWidget *infoIcon = new Plasma::IconWidget();
-    infoIcon->setIcon("preferences-desktop-notification");
-    infoIcon->setMaximumSize(infoIcon->sizeFromIconSize(KIconLoader::SizeSmall));
-    infoIcon->setMinimumSize(infoIcon->sizeFromIconSize(KIconLoader::SizeSmall));
 
-    labelLayout->addItem(infoIcon);
-    labelLayout->setAlignment(infoIcon, Qt::AlignVCenter);
     labelLayout->addItem(m_statusText);
     labelLayout->setAlignment(m_statusText, Qt::AlignTop);
     labelLayout->addItem(m_statusExpandButton);
