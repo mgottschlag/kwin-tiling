@@ -39,7 +39,6 @@ class PLASMAGENERICSHELL_EXPORT AbstractIcon : public QGraphicsWidget
         void setSelected(bool selected);
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
-        void setName(const QString &name);
         QString name() const;
 
         void expand();
@@ -61,6 +60,9 @@ class PLASMAGENERICSHELL_EXPORT AbstractIcon : public QGraphicsWidget
         void hoverLeave(AbstractIcon *applet);
         void selected(AbstractIcon *applet);
         void doubleClicked(AbstractIcon *applet);
+
+    public Q_SLOTS:
+        void setName(const QString &name);
 
     protected:
         //listen to events and emit signals
