@@ -634,14 +634,12 @@ void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorD
         return;
     }
 
-    if (error && errorData.isValid()) {
-        m_notifier->showErrorMessage(i18n("Could not unmount device %1.\nOne or more files on this device are open within an application.", devItem->name()), errorData.toString().simplified());
-    } else {
+    if (!error || !errorData.isValid()) {
         m_notifier->changeNotifierIcon("dialog-ok");
         m_notifier->update();
         QTimer::singleShot(5000, this, SLOT(resetNotifierIcon()));
     }
-
+    
     devItem->setState(DeviceItem::Idle);
 }
 
@@ -649,9 +647,7 @@ void NotifierDialog::storageEjectDone(Solid::ErrorType error, QVariant errorData
 {
     Q_UNUSED(udi);
 
-    if (error && errorData.isValid()) {
-        m_notifier->showErrorMessage(i18n("Cannot eject the disc.\nOne or more files on this disc are open within an application."), errorData.toString().simplified());
-    } else {
+    if (!error || !errorData.isValid()) {
         m_notifier->changeNotifierIcon("dialog-ok");
         m_notifier->update();
         QTimer::singleShot(2000, this, SLOT(resetNotifierIcon()));
@@ -665,9 +661,7 @@ void NotifierDialog::storageSetupDone(Solid::ErrorType error, QVariant errorData
         return;
     }
 
-     if (error && errorData.isValid()) {
-        m_notifier->showErrorMessage(i18n("Could not mount device %1.", devItem->name()), errorData.toString().simplified());
-    } else {
+     if (!error || !errorData.isValid()) {
         m_notifier->changeNotifierIcon("dialog-ok");
         m_notifier->update();
         QTimer::singleShot(2000, this, SLOT(resetNotifierIcon()));

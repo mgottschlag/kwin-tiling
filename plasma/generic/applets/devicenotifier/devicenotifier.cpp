@@ -57,6 +57,7 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
       m_solidEngine(0),
       m_solidDeviceEngine(0),
+      m_deviceNotificationsEngine(0),
       m_dialog(0),
       m_numberItems(0),
       m_itemsValidity(0),
@@ -84,6 +85,7 @@ void DeviceNotifier::init()
 
     m_solidEngine = dataEngine("hotplug");
     m_solidDeviceEngine = dataEngine("soliddevice");
+    m_deviceNotificationsEngine = dataEngine("devicenotifications");
 
     connect(m_dialog, SIGNAL(deviceSelected()), this, SLOT(showPopup()));
 
@@ -96,6 +98,8 @@ void DeviceNotifier::init()
             this, SLOT(onSourceAdded(const QString&)));
     connect(m_solidEngine, SIGNAL(sourceRemoved(const QString&)),
             this, SLOT(onSourceRemoved(const QString&)));
+    connect(m_deviceNotificationsEngine, SIGNAL(sourceAdded(const QString&)),
+            this, SLOT(newNotification(const QString&)));
 
     //feed the list with what is already reported by the engine
     fillPreviousDevices();
@@ -105,6 +109,13 @@ void DeviceNotifier::init()
     } else {
         setStatus(Plasma::ActiveStatus);
     }
+}
+
+void DeviceNotifier::newNotification(const QString &source)
+{
+    DataEngine::Data data = m_deviceNotificationsEngine->query(source);
+    //TODO Check if we are actually displaying the device in question
+    showErrorMessage(data["error"].toString(), data["errorDetails"].toString());
 }
 
 void DeviceNotifier::configChanged()

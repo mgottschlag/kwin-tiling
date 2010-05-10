@@ -86,12 +86,6 @@ class DeviceNotifier : public Plasma::PopupApplet
         */
         QGraphicsWidget *graphicsWidget();
 
-        /**
-        * Shows a message
-        * @param message the text of the message
-        **/
-        void showErrorMessage(const QString &message, const QString &details);
-
         QList<QAction *> contextualActions();
 
     protected:
@@ -139,6 +133,12 @@ class DeviceNotifier : public Plasma::PopupApplet
         **/
         void setGlobalVisibility(bool visibility);
 
+        /**
+        * Shows a message
+        * @param message the text of the message
+        **/
+        void showErrorMessage(const QString &message, const QString &details);
+
     protected slots:
         /**
         * slot called when a source/device is added in the hotplug engine
@@ -163,6 +163,8 @@ class DeviceNotifier : public Plasma::PopupApplet
         * Reimplemented from Plasma::Applet
         **/
         void configAccepted();
+
+        void newNotification(const QString &source);
 
     private slots:
         /**
@@ -196,6 +198,9 @@ class DeviceNotifier : public Plasma::PopupApplet
 
         ///The engine used to manage devices in the applet (unmount,...)
         Plasma::DataEngine *m_solidDeviceEngine;
+
+	///The engine used to retrieve device notifications
+        Plasma::DataEngine *m_deviceNotificationsEngine;
 
         ///The dialog where devices are displayed
         Notifier::NotifierDialog * m_dialog;
