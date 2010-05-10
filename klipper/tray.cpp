@@ -28,16 +28,22 @@
 
 #include "klipper.h"
 #include "history.h"
-#include <KPassivePopup>
+#include "klipperpopup.h"
+
+#include <KNotification>
 
 KlipperTray::KlipperTray()
-    : KSystemTrayIcon( "klipper" )
+    : KStatusNotifierItem()
 {
     m_klipper = new Klipper( this, KGlobal::config());
-    setContextMenu( NULL );
-    show();
-    connect( this, SIGNAL( activated( QSystemTrayIcon::ActivationReason )), m_klipper,
-        SLOT( slotPopupMenu()));
+    setTitle( i18n( "Klipper" ) );
+    setIconByName( "klipper" );
+    setToolTip( "klipper", i18n( "Clipboard Contents" ), i18n( "Clipboard is empty" ) );
+    setCategory( SystemServices );
+    setStatus( Active );
+    setStandardActionsEnabled( false );
+    setContextMenu( m_klipper->history()->popup() );
+    setAssociatedWidget( m_klipper->history()->popup() );
     connect( m_klipper->history(), SIGNAL(changed()), SLOT(slotSetToolTipFromHistory()));
     slotSetToolTipFromHistory();
     connect( m_klipper, SIGNAL(passivePopup(QString,QString)), SLOT(passive_popup(QString,QString)));
@@ -46,17 +52,22 @@ KlipperTray::KlipperTray()
 void KlipperTray::slotSetToolTipFromHistory()
 {
     if (m_klipper->history()->empty()) {
-      setToolTip( i18n("Clipboard is empty"));
+      setToolTipSubTitle( i18n("Clipboard is empty"));
     } else {
       const HistoryItem* top = m_klipper->history()->first();
-      setToolTip(top->text());
+      setToolTipSubTitle(top->text());
     }
-
 }
 
 void KlipperTray::passive_popup(const QString& caption, const QString& text)
 {
-    KPassivePopup::message(KPassivePopup::Boxed, caption, text, icon().pixmap(QSize(16,16)), this);
+    if (m_notification) {
+        m_notification->setTitle(caption);
+        m_notification->setText(text);
+    } else {
+        m_notification = KNotification::event(KNotification::Notification, caption, text,
+                                              KIcon("klipper").pixmap(QSize(16, 16)));
+    }
 }
 
 #include "tray.moc"

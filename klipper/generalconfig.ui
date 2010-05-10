@@ -12,13 +12,6 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QCheckBox" name="kcfg_PopupAtMousePosition">
-     <property name="text">
-      <string>Popup menu at mouse-cursor position</string>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QCheckBox" name="kcfg_KeepClipboardContents">
      <property name="text">
       <string>Save clipboard contents on exit</string>

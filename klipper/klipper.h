@@ -203,7 +203,6 @@ private:
     KAction* m_cycleNextAction;
     KAction* m_cyclePrevAction;
     QPixmap m_pixmap;
-    bool m_bPopupAtMouse :1;
     bool m_bKeepContents :1;
     bool m_bURLGrabber   :1;
     bool m_bReplayActionInHistory :1;

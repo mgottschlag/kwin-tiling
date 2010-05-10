@@ -8,10 +8,6 @@
     <entry name="Version" type="String">
       <label>Klipper version</label>
     </entry>
-    <entry name="PopupAtMousePosition" type="Bool">
-      <label>Popup at mouse position</label>
-      <default>false</default>
-    </entry>
     <entry name="KeepClipboardContents" type="Bool">
       <label>Keep clipboard contents</label>
       <default>true</default>

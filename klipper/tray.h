@@ -21,11 +21,13 @@
 #ifndef _TRAY_H_
 #define _TRAY_H_
 
-#include <ksystemtrayicon.h>
+#include <KStatusNotifierItem>
+#include <KNotification>
+#include <QPointer>
 
 class Klipper;
 
-class KlipperTray : public KSystemTrayIcon
+class KlipperTray : public KStatusNotifierItem
 {
     Q_OBJECT
 
@@ -36,6 +38,7 @@ public slots:
     void passive_popup(const QString& caption, const QString& text);
 private:
     Klipper* m_klipper;
+    QPointer<KNotification> m_notification;
 };
 
 #endif

@@ -191,11 +191,6 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     // if it's too old, drop it and just use load history
     readProperties(m_config.data());
 
-    KAction* a = m_collection->addAction("show_klipper_popup");
-    a->setText(i18n("Show Klipper Popup-Menu"));
-    a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_V));
-    connect(a, SIGNAL(triggered()), SLOT(slotPopupMenu()));
-
     m_repeatAction = m_collection->addAction("repeat_action");
     m_repeatAction->setText(i18n("Manually Invoke Action on Current Clipboard"));
     qobject_cast<KAction*>(m_repeatAction)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_R));
@@ -308,7 +303,6 @@ void Klipper::loadSettings()
         saveHistory(true);
     }
 
-    m_bPopupAtMouse = KlipperSettings::popupAtMousePosition();
     m_bKeepContents = KlipperSettings::keepClipboardContents();
     m_bReplayActionInHistory = KlipperSettings::replayActionInHistory();
     m_bNoNullClipboard = KlipperSettings::preventEmptyClipboard();
@@ -356,27 +350,14 @@ void Klipper::showPopupMenu( QMenu *menu )
     Q_ASSERT( menu != 0L );
 
     QSize size = menu->sizeHint(); // geometry is not valid until it's shown
-    if (m_bPopupAtMouse) {
-        QPoint g = QCursor::pos();
-        if ( size.height() < g.y() )
-            menu->popup(QPoint( g.x(), g.y() - size.height()));
-        else
-            menu->popup(QPoint(g.x(), g.y()));
-    } else {
-        if( KSystemTrayIcon* tray = dynamic_cast< KSystemTrayIcon* >( parent())) {
-            QRect g = tray->geometry();
-            QRect screen = KGlobalSettings::desktopGeometry(g.center());
+    QPoint pos = QCursor::pos();
+    // ### We can't know where the systray icon is (since it can be hidden or shown 
+    //     in several places), so the cursor position is the only option.
 
-            if ( g.x()-screen.x() > screen.width()/2 &&
-                 g.y()-screen.y() + size.height() > screen.height() )
-                menu->popup(QPoint( g.x(), g.y() - size.height()));
-            else
-                menu->popup(QPoint( g.x() + g.width(), g.y() + g.height()));
-        } else
-            abort();
+    if ( size.height() < pos.y() )
+        pos.ry() -= size.height();
 
-        //      menu->exec(mapToGlobal(QPoint( width()/2, height()/2 )));
-    }
+    menu->popup(pos);
 }
 
 bool Klipper::loadHistory() {
