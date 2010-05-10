@@ -166,6 +166,11 @@ void AbstractIcon::setSelected(bool selected)
     update(0,0,boundingRect().width(), boundingRect().height());
 }
 
+bool AbstractIcon::isSelected() const
+{
+    return m_selected;
+}
+
 void AbstractIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option)

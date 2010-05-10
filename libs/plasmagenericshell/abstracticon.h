@@ -36,6 +36,7 @@ class PLASMAGENERICSHELL_EXPORT AbstractIcon : public QGraphicsWidget
         void setIconSize(int height);
         int iconSize() const;
 
+        bool isSelected() const;
         void setSelected(bool selected);
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
