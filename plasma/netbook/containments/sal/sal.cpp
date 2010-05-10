@@ -406,6 +406,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             //TODO how to do the strip widget?
             m_stripWidget = new StripWidget(this);
             m_stripWidget->setImmutability(immutability());
+            connect(m_stripWidget, SIGNAL(saveNeeded()), this, SLOT(saveFavourites()));
 
             //load all config, only at this point we are sure it won't crash
             configChanged();
@@ -782,6 +783,12 @@ void SearchLaunch::createConfigurationInterface(KConfigDialog *parent)
 
     connect(parent, SIGNAL(applyClicked()), m_serviceModel, SLOT(saveConfig()));
     connect(parent, SIGNAL(okClicked()), m_serviceModel, SLOT(saveConfig()));
+}
+
+void SearchLaunch::saveFavourites()
+{
+    KConfigGroup cg = config();
+    m_stripWidget->save(cg);
 }
 
 K_EXPORT_PLASMA_APPLET(sal, SearchLaunch)

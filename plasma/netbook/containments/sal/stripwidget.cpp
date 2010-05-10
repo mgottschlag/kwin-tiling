@@ -184,6 +184,7 @@ void StripWidget::launchFavourite(const QModelIndex &index)
 void StripWidget::add(const QUrl &url)
 {
     m_favouritesModel->add(url);
+    emit saveNeeded();
 }
 
 void StripWidget::goRight()
@@ -277,11 +278,13 @@ void StripWidget::dropEvent(QGraphicsSceneDragDropEvent *event)
          QModelIndex index = m_favouritesModel->index(row, 0, QModelIndex());
          //TODO: proper index
          m_favouritesModel->add(url.toString(), index);
+         emit saveNeeded();
 
      } else if (event->mimeData()->urls().size() > 0) {
          int row = m_itemView->rowForPosition(event->pos());
          QModelIndex index = m_favouritesModel->index(row, 0, QModelIndex());
          m_favouritesModel->add(event->mimeData()->urls().first().path(), index);
+         emit saveNeeded();
      } else {
          event->ignore();
      }

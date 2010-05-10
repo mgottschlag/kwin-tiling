@@ -83,6 +83,9 @@ private Q_SLOTS:
     void reorderItem(const QModelIndex &index, const QPointF &point);
     void showDeleteTarget();
 
+Q_SIGNALS:
+    void saveNeeded();
+
 private:
     Plasma::ToolButton *m_leftArrow;
     Plasma::ToolButton *m_rightArrow;

@@ -97,6 +97,8 @@ private Q_SLOTS:
     void goRight();
     void goLeft();
 
+    void saveFavourites();
+
 private:
     /**
      * update the formfactor based on the location
