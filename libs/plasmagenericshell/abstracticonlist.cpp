@@ -305,7 +305,7 @@ void AbstractIconList::addIcon(AbstractIcon *icon)
     showIcon(icon);
 
     connect(icon, SIGNAL(hoverEnter(AbstractIcon*)), this, SLOT(iconHoverEnter(AbstractIcon*)));
-    connect(icon, SIGNAL(selected(AbstractIcon*)), this, SLOT(itemSelected(AbstractIcon*)));
+    connect(icon, SIGNAL(clicked(AbstractIcon*)), this, SLOT(itemSelected(AbstractIcon*)));
 }
 
 void AbstractIconList::itemSelected(AbstractIcon *icon)

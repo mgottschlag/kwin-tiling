@@ -135,7 +135,7 @@ void AbstractIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsWidget::mouseReleaseEvent(event);
     setCursor(Qt::OpenHandCursor);
     if (boundingRect().contains(event->pos())) {
-        emit(selected(this));
+        emit(clicked(this));
     }
 }
 
