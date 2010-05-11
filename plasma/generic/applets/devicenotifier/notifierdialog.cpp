@@ -401,6 +401,25 @@ DeviceItem* NotifierDialog::hoveredItem()
 void NotifierDialog::setMounted(bool mounted, const QString &udi)
 {
     DeviceItem *item = itemForUdi(udi);
+
+    if (mounted) {
+        QString parentUdi = Solid::Device(udi).parent().udi();
+        foreach (DeviceItem* sibling, itemsForParentUdi(parentUdi)) {
+            sibling->setSafelyRemovable(false);
+        }
+    } else {
+        bool safelyRemovable = true;
+        QString parentUdi = Solid::Device(udi).parent().udi();
+        foreach (DeviceItem* sibling, itemsForParentUdi(parentUdi)) {
+            if ((sibling->udi() != udi) && (sibling->isMounted())) {
+                safelyRemovable = false;
+            }
+        }
+        foreach (DeviceItem* sibling, itemsForParentUdi(parentUdi)) {
+                sibling->setSafelyRemovable(safelyRemovable);
+        }
+    }
+
     item->setMounted(mounted);
     updateFreeSpace(item);
 }

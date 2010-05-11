@@ -55,6 +55,7 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
       m_udi(udi),
       m_hovered(false),
       m_mounted(false),
+      m_safelyRemovable(true),
       m_state(DeviceItem::Idle),
       m_labelFade(0),
       m_barFade(0),
@@ -266,16 +267,40 @@ bool DeviceItem::allowsCapacityBar() const
     return !(data(NotifierDialog::IsOpticalMedia).toBool() || data(NotifierDialog::IsEncryptedContainer).toBool());
 }
 
+bool DeviceItem::safelyRemovable() const
+{
+    return m_safelyRemovable;
+}
+
+void DeviceItem::setSafelyRemovable(const bool safe)
+{
+    if (m_safelyRemovable == safe) {
+        return;
+    }
+    m_safelyRemovable = safe;
+    updateTooltip();
+}
+
+void DeviceItem::updateTooltip()
+{
+    if (m_mounted) {
+        m_leftActionIcon->setToolTip(i18n("Click to safely remove this device from the computer."));
+        m_deviceIcon->setToolTip(i18n("Device is plugged in and the volume can be accessed by applications. It is not safe to remove this device."));
+    } else {
+        m_leftActionIcon->setToolTip(i18n("Click to access this device from other applications."));
+        if (safelyRemovable()) {
+            m_deviceIcon->setToolTip(i18n("Device is plugged in and the volume is not mounted for access yet. The device can be safely removed."));
+        } else {
+            m_deviceIcon->setToolTip(i18n("Device is plugged in and the volume is not mounted for access yet. Another volume is accessible on the same device, which cannot be safely removed."));
+        }
+    }
+}
+
 void DeviceItem::setMounted(const bool mounted)
 {
     m_mounted = mounted;
-    if (m_mounted) {
-        m_leftActionIcon->setToolTip(i18n("Click to safely remove this device from the computer."));
-        m_deviceIcon->setToolTip(i18n("Device is plugged in and can be accessed by applications."));
-    } else {
-        m_leftActionIcon->setToolTip(i18n("Click to access this device from other applications."));
-        m_deviceIcon->setToolTip(i18n("Device is plugged in, but not mounted for access yet."));
-    }
+
+    updateTooltip();
 
     if (data(NotifierDialog::IsEncryptedContainer).toBool()) {
         if (m_mounted && m_leftAction != Lock) {

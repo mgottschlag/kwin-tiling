@@ -153,6 +153,18 @@ class DeviceItem : public QGraphicsWidget
         **/
         bool hovered() const;
 
+	/** 
+	 * Used to know if this item can be safely removed
+	 * @return true if it can be safely removed
+	 **/
+	bool safelyRemovable() const;
+
+	/** 
+	 * Indicates if this item can be safely removed
+	 * @param safe true if it can be safely removed
+	 **/
+	void setSafelyRemovable(const bool safe = true);
+
         /**
         * Indicates if the device is mounted
         * @param mounted true if it is mounted
@@ -262,6 +274,8 @@ class DeviceItem : public QGraphicsWidget
 
         bool allowsCapacityBar() const;
 
+	void updateTooltip();
+
         ///The icon of the device
         QIcon m_icon;
 
@@ -282,6 +296,9 @@ class DeviceItem : public QGraphicsWidget
 
         ///True if the device is mounted
         bool m_mounted;
+
+	///True if the device can be safely removed
+	bool m_safelyRemovable;
 
         ///The action the left icon will do if activated
         LeftActions m_leftAction;
