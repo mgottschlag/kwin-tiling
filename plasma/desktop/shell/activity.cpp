@@ -169,7 +169,7 @@ void Activity::close()
         //which is a horrible hack
         QString groupName = QString("Containment%1").arg(i++);
         KConfigGroup newConf(&external, groupName);
-        c->config().copyTo(&newConf);
+        c->save(newConf);
         c->destroy(false);
     }
     m_containments.clear();
