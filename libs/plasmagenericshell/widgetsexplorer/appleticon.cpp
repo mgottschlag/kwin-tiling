@@ -29,7 +29,7 @@ AppletIconWidget::AppletIconWidget(PlasmaAppletItem *appletItem)
       m_runningIcon("dialog-ok")
 {
     if (appletItem) {
-        setName(appletItem->name()); //widgets never change name, riight?
+        setName(appletItem->name());
     }
 }
 
