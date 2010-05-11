@@ -95,7 +95,10 @@ public Q_SLOTS:
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
     bool x11EventFilter(XEvent *event);
+    //true if the application has an active window
     bool hasForegroundWindows() const;
+    //more strict than hasForegroundWindows, the mainview has to be not only active, but also on top of other windows
+    bool mainViewOnTop() const;
 
 private:
     PlasmaApp();

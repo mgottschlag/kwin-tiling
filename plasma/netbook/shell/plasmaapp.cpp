@@ -611,6 +611,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
         setAutoHideControlBar(m_autoHideControlBar);
         emit controlBarChanged();
+        setControlBarVisible(true);
     } else {
         containment->setScreen(-1);
     }
@@ -821,33 +822,36 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
     KWindowSystem::activateWindow(configDialog->winId());
 }
 
+bool PlasmaApp::mainViewOnTop() const
+{
+    bool onTop = false;
+
+    QSet<WId> ownWindows;
+    foreach (QWidget *widget, QApplication::topLevelWidgets()) {
+        ownWindows.insert(widget->winId());
+    }
+
+    //search if the main view is actually one of the widgets on top, show the panel only in this case
+    QList<WId> windows = KWindowSystem::stackingOrder();
+    for (int i = windows.size() - 1; i >= 0; --i) {
+        WId window = windows.at(i);
+
+        if (window == m_mainView->winId()) {
+            onTop = true;
+            break;
+        } else if (!ownWindows.contains(window)) {
+            break;
+        }
+    }
+
+    return onTop;
+}
 
 bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
 {
     if (watched == m_mainView && event->type() == QEvent::WindowActivate) {
 
-        bool onTop = false;
-
-        QSet<WId> ownWindows;
-        foreach (QWidget *widget, QApplication::topLevelWidgets()) {
-            ownWindows.insert(widget->winId());
-        }
-
-        //search if the main view is actually one of the widgets on top, show the panel only in this case
-        QList<WId> windows = KWindowSystem::stackingOrder();
-        for (int i = windows.size() - 1; i >= 0; --i) {
-            WId window = windows.at(i);
-
-            if (window == m_mainView->winId()) {
-                onTop = true;
-                break;
-            } else if (!ownWindows.contains(window)) {
-                break;
-            }
-        }
-
-
-        if (onTop) {
+        if (mainViewOnTop()) {
             destroyUnHideTrigger();
 
             if (m_controlBar) {
@@ -943,7 +947,7 @@ void PlasmaApp::controlBarVisibilityUpdate()
             Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
             setControlBarVisible(true);
         }
-    } else if (!m_controlBar->geometry().contains(cursorPos)) {
+    } else if (!m_controlBar->geometry().contains(cursorPos) && !mainViewOnTop()) {
         Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
         m_controlBar->hide();
         createUnhideTrigger();
