@@ -7,6 +7,7 @@ add_subdirectory(recentdocuments)
 add_subdirectory(shell)
 add_subdirectory(solid)
 add_subdirectory(webshortcuts)
+add_subdirectory(windowedwidgets)
 
 if(Nepomuk_FOUND)
   add_subdirectory(nepomuksearch)
