@@ -115,14 +115,14 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, const
     cancel = new KPushButton( KStandardGuiItem::cancel(), w );
     mNewSessButton = new KPushButton( KGuiItem(i18n("Sw&itch User..."), "fork"), w );
 
-    // Using KXKB component
-    KPluginFactory *kxkbFactory = KPluginLoader("libkdeinit4_kxkb").factory();
+    // Using keyboard layout component
+    KPluginFactory *kxkbFactory = KPluginLoader("keyboard_layout_widget").factory();
     QWidget *kxkbComponent = NULL;
     if (kxkbFactory) {
         kxkbComponent = kxkbFactory->create<QWidget>(this);
     }
     else {
-        kDebug() << "can't load kxkb component library";
+        kDebug() << "can't load keyboard layout widget library";
     }
 
     QHBoxLayout *layStatus = new QHBoxLayout();
@@ -130,8 +130,11 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, const
     layStatus->addWidget( mStatusLabel );
     layStatus->addStretch();
 
-    if( kxkbComponent )
+    if( kxkbComponent ) {
+	//TODO: without this the widget is off the parent area, but we need something better here
+        kxkbComponent->setFixedSize(48, 24);
         layStatus->addWidget( kxkbComponent, 0, Qt::AlignRight );
+    }
 
     QHBoxLayout *layButtons = new QHBoxLayout();
     layButtons->addWidget( mNewSessButton );

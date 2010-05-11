@@ -27,13 +27,6 @@ QT4_ADD_DBUS_INTERFACE(kscreenlocker_SRCS ${ksmserver_xml} ksmserver_interface)
 set(kscreensaver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/dbus/org.kde.screensaver.xml)
 QT4_ADD_DBUS_INTERFACE(kscreenlocker_SRCS ${kscreensaver_xml} kscreensaver_interface)
 
-set(kxkb_adaptor ${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/kxkb/kxkb_adaptor.h)
-set(kxkb_xml ${CMAKE_CURRENT_BINARY_DIR}/org.kde.KXKB.xml)
-ADD_CUSTOM_COMMAND(OUTPUT ${kxkb_xml}
-       COMMAND ${QT_DBUSCPP2XML_EXECUTABLE} ${kxkb_adaptor} > ${kxkb_xml}
-       DEPENDS ${kxkb_adaptor})
-QT4_ADD_DBUS_INTERFACE( kscreenlocker_SRCS ${kxkb_xml} kxkb_interface )
-
 
 
 kde4_add_kcfg_files(kscreenlocker_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../kcfg/kscreensaversettings.kcfgc)
