@@ -825,12 +825,36 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
 bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
 {
     if (watched == m_mainView && event->type() == QEvent::WindowActivate) {
-        destroyUnHideTrigger();
 
-        if (m_controlBar) {
-            Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
-            setControlBarVisible(true);
-            reserveStruts();
+        bool onTop = false;
+
+        QSet<WId> ownWindows;
+        foreach (QWidget *widget, QApplication::topLevelWidgets()) {
+            ownWindows.insert(widget->winId());
+        }
+
+        //search if the main view is actually one of the widgets on top, show the panel only in this case
+        QList<WId> windows = KWindowSystem::stackingOrder();
+        for (int i = windows.size() - 1; i >= 0; --i) {
+            WId window = windows.at(i);
+
+            if (window == m_mainView->winId()) {
+                onTop = true;
+                break;
+            } else if (!ownWindows.contains(window)) {
+                break;
+            }
+        }
+
+
+        if (onTop) {
+            destroyUnHideTrigger();
+
+            if (m_controlBar) {
+                Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
+                setControlBarVisible(true);
+                reserveStruts();
+            }
         }
     } else if ((watched == m_mainView &&
                 event->type() == QEvent::WindowDeactivate &&
