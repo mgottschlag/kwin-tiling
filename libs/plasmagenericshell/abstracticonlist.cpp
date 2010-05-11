@@ -219,12 +219,16 @@ void AbstractIconList::setSearch()
     setSearch(m_searchString);
 }
 
-void AbstractIconList::iconHoverEnter(AbstractIcon *icon)
+void AbstractIconList::iconHoverEnter(Plasma::AbstractIcon *icon)
 {
-    m_hoverIndicator->setTargetItem(icon);
-    if (!m_hoverIndicator->isVisible()) {
-        m_hoverIndicator->setGeometry(icon->geometry());
-        m_hoverIndicator->show();
+    if (icon) {
+        m_hoverIndicator->setTargetItem(icon);
+        if (!m_hoverIndicator->isVisible()) {
+            m_hoverIndicator->setGeometry(icon->geometry());
+            m_hoverIndicator->show();
+        }
+    } else {
+        m_hoverIndicator->hide();
     }
 }
 
@@ -304,11 +308,11 @@ void AbstractIconList::addIcon(AbstractIcon *icon)
     m_appletListLinearLayout->setAlignment(icon, Qt::AlignHCenter);
     showIcon(icon);
 
-    connect(icon, SIGNAL(hoverEnter(AbstractIcon*)), this, SLOT(iconHoverEnter(AbstractIcon*)));
-    connect(icon, SIGNAL(clicked(AbstractIcon*)), this, SLOT(itemSelected(AbstractIcon*)));
+    connect(icon, SIGNAL(hoverEnter(Plasma::AbstractIcon*)), this, SLOT(iconHoverEnter(Plasma::AbstractIcon*)));
+    connect(icon, SIGNAL(clicked(Plasma::AbstractIcon*)), this, SLOT(itemSelected(Plasma::AbstractIcon*)));
 }
 
-void AbstractIconList::itemSelected(AbstractIcon *icon)
+void AbstractIconList::itemSelected(Plasma::AbstractIcon *icon)
 {
     if (m_selectedItem) {
         m_selectedItem->setSelected(false);
@@ -426,6 +430,11 @@ void AbstractIconList::scrollStepFinished()
         }
     } else if (m_downRightArrow->isEnabled() && m_downRightArrow->isDown()) {
         scrollDownRight();
+    }
+
+    if (m_hoverIndicator->isVisible()) {
+        AbstractIcon *icon = dynamic_cast<AbstractIcon *>(scene()->itemAt(m_hoverIndicator->sceneBoundingRect().center()));
+        iconHoverEnter(icon);
     }
 }
 

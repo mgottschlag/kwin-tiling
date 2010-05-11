@@ -123,8 +123,8 @@ private slots:
     //moves list to position 0,0
     void resetScroll();
 
-    void itemSelected(AbstractIcon *icon);
-    void iconHoverEnter(AbstractIcon *icon);
+    void itemSelected(Plasma::AbstractIcon *icon);
+    void iconHoverEnter(Plasma::AbstractIcon *icon);
 
     void setSearch();
 
