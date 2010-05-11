@@ -137,7 +137,6 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     d->bodyLayout->addItem(d->messageLayout);
     d->mainLayout->addItem(d->body);
 
-
     d->notification = notification;
 
     connect(d->signalMapper, SIGNAL(mapped(const QString &)),
@@ -279,9 +278,11 @@ void NotificationWidgetPrivate::updateNotification()
         return;
     }
 
+
     //set text fields and icon
     setTextFields(notification.data()->applicationName(), notification.data()->summary(), notification.data()->message());
     icon->setIcon(notification.data()->applicationIcon());
+    messageLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     //set the actions provided
     actions = notification.data()->actions();
