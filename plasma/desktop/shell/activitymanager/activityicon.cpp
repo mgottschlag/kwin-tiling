@@ -34,7 +34,7 @@ ActivityIcon::ActivityIcon(const QString &id)
     m_stopIcon("media-playback-stop"),
     m_activity(new Activity(id, this))
 {
-    connect(this, SIGNAL(selected(AbstractIcon*)), m_activity, SLOT(activate()));
+    connect(this, SIGNAL(clicked(Plasma::AbstractIcon*)), m_activity, SLOT(activate()));
     connect(m_activity, SIGNAL(nameChanged(QString)), this, SLOT(setName(QString)));
     setName(m_activity->name());
 }
