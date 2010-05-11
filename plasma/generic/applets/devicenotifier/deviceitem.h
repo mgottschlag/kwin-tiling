@@ -340,7 +340,6 @@ class DeviceItem : public QGraphicsWidget
 
         Plasma::Animation *m_labelFade;
         Plasma::Animation *m_barFade;
-        Plasma::Animation *m_iconFade;
 };
 
 }

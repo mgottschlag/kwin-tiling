@@ -58,8 +58,7 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
       m_safelyRemovable(true),
       m_state(DeviceItem::Idle),
       m_labelFade(0),
-      m_barFade(0),
-      m_iconFade(0)
+      m_barFade(0)
 {
     setAcceptHoverEvents(true);
     setCacheMode(DeviceCoordinateCache);
@@ -123,7 +122,6 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
     m_leftActionIcon = new Plasma::IconWidget(this);
     m_leftActionIcon->setMaximumSize(m_leftActionIcon->sizeFromIconSize(LEFTACTION_SIZE));
     m_leftActionIcon->setSizePolicy(QSizePolicy::Fixed,  QSizePolicy::Fixed);
-    m_leftActionIcon->setOpacity(0);
     connect(m_leftActionIcon, SIGNAL(clicked()), this, SLOT(leftActionClicked()));
 
     m_mainLayout->addItem(m_deviceIcon);
@@ -303,15 +301,15 @@ void DeviceItem::setMounted(const bool mounted)
     updateTooltip();
 
     if (data(NotifierDialog::IsEncryptedContainer).toBool()) {
-        if (m_mounted && m_leftAction != Lock) {
+        if (m_mounted) {
             setLeftAction(Lock);
-        } else if (!m_mounted && m_leftAction != Unlock) {
+        } else {
             setLeftAction(Unlock);
         }
     } else {
-        if (m_mounted && m_leftAction != Umount) {
+        if (m_mounted) {
             setLeftAction(Umount);
-        } else if (!m_mounted && m_leftAction != Mount) {
+        } else {
             setLeftAction(Mount);
         }
     }
@@ -326,6 +324,7 @@ void DeviceItem::setMounted(const bool mounted)
 
 void DeviceItem::setLeftAction(DeviceItem::LeftActions action)
 {
+    kDebug() << "setting to" << action;
     m_leftAction = action;
     if (m_leftAction == Umount) {
         m_leftActionIcon->setIcon("media-eject");
@@ -356,34 +355,27 @@ void DeviceItem::setHovered(const bool hovered)
         if (!m_labelFade) {
             m_labelFade = Plasma::Animator::create(Plasma::Animator::FadeAnimation, this);
             m_barFade = Plasma::Animator::create(Plasma::Animator::FadeAnimation, this);
-            m_iconFade = Plasma::Animator::create(Plasma::Animator::FadeAnimation, this);
 
             m_labelFade->setTargetWidget(m_descriptionLabel);
             m_barFade->setTargetWidget(m_capacityBar);
-            m_iconFade->setTargetWidget(m_leftActionIcon);
 
             m_labelFade->setProperty("targetOpacity", 0);
             m_barFade->setProperty("targetOpacity", 0);
-            m_iconFade->setProperty("targetOpacity", 0);
         }
         qreal currentOpacity = m_descriptionLabel->opacity();
 
         m_labelFade->setProperty("startOpacity", currentOpacity);
         m_barFade->setProperty("startOpacity", currentOpacity);
-        m_iconFade->setProperty("startOpacity", currentOpacity);
 
         m_labelFade->start();
         m_barFade->start();
-        m_iconFade->start();
     }
 }
 
 void DeviceItem::setHoverDisplayOpacity(qreal opacity)
 {
     m_descriptionLabel->setOpacity(opacity);
-    m_leftActionIcon->setOpacity(opacity);
     m_capacityBar->setOpacity(opacity);
-
 }
 
 void DeviceItem::setFreeSpace(qulonglong freeSpace, qulonglong size)
