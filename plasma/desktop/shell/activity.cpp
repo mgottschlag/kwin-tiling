@@ -33,6 +33,7 @@
 #include <kephal/screens.h>
 
 #include <Plasma/Containment>
+#include <Plasma/Context>
 #include <Plasma/Corona>
 
 #include "plasmaapp.h"
@@ -62,7 +63,7 @@ Activity::Activity(const QString &id, QObject *parent)
     foreach (Plasma::Containment *cont, corona->containments()) {
         if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
             cont->containmentType() == Plasma::Containment::CustomContainment) &&
-                !corona->offscreenWidgets().contains(cont) && cont->activityId() == id) {
+                !corona->offscreenWidgets().contains(cont) && cont->context()->currentActivityId() == id) {
             m_containments << cont;
             break;
         }

@@ -125,7 +125,7 @@ public Q_SLOTS:
     /**
      * create a new blank activity with @p plugin containment type
      */
-    void createActivity(const QString &plugin);
+    Plasma::Containment* createActivity(const QString &plugin);
 
     void updateActivityName(Plasma::Context *context);
 
@@ -150,7 +150,6 @@ private Q_SLOTS:
     void panelRemoved(QObject* panel);
     void screenRemoved(int id);
     void compositingChanged();
-    void addContainment();
     void configureContainment(Plasma::Containment*);
     void updateActions(Plasma::ImmutabilityType immutability);
     void checkVirtualDesktopViews(int numDesktops);

@@ -904,11 +904,12 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
     disconnect(containment, 0, this, 0);
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
-    QString id = containment->activityId();
+    QString id = containment->context()->currentActivityId();
+    kDebug();
     if (! id.isEmpty()) {
         kDebug() << "associating containment with activity" << id;
         //connect to the activity
-        connect(containment, SIGNAL(activityNameChanged(Plasma::Context*)), this, SLOT(updateActivityName(Plasma::Context*)));
+        connect(containment->context(), SIGNAL(activityChanged(Plasma::Context*)), this, SLOT(updateActivityName(Plasma::Context*)));
         //FIXME need to be notified when the name changes
         //can use KActivityInfo but need to keep an instance somewhere. perhaps a list of them in
         //this class.
@@ -980,7 +981,7 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
     KWindowSystem::activateWindow(configDialog->winId());
 }
 
-void PlasmaApp::addContainment()
+void PlasmaApp::cloneCurrentActivity()
 {
     //try to find the "active" containment to get a plugin name
     int currentScreen = Kephal::ScreenUtils::screenId(QCursor::pos());
@@ -991,18 +992,12 @@ void PlasmaApp::addContainment()
     Plasma::Containment *fromContainment=m_corona->containmentForScreen(currentScreen, currentDesktop);
 
     QString plugin = fromContainment ? fromContainment->pluginName() : QString();
-    Plasma::Containment *c = m_corona->addContainment(plugin);
+    Plasma::Containment *c = createActivity(plugin);
 
     //TODO: make it clone everything, not just the pluginname
 
-    //make a new activity to match it
-    KActivityController controller;
-    QString id = controller.addActivity(i18n("unnamed"));
-    c->setActivityId(id);
-    c->setActivity(i18n("unnamed"));
-    emit activityAdded(id);
-    controller.setCurrentActivity(id);
-
+    //FIXME actually what we should do is let the view react to the current-activity change
+    //which will ensure this guy gets seen
     if (c && fromContainment) {
         foreach (DesktopView *view, m_desktops) {
             if (view->containment() == fromContainment){
@@ -1176,9 +1171,10 @@ QStringList PlasmaApp::listActivities()
                     !m_corona->offscreenWidgets().contains(cont)) {
                 //create a new activity for the containment
                 //FIXME what about multiple screens?
-                QString id = controller.addActivity(cont->activity());
-                cont->setActivityId(id);
-                kDebug() << cont->activityId() << cont->activity();
+                Plasma::Context *context = cont->context();
+                QString id = controller.addActivity(context->currentActivity());
+                context->setCurrentActivityId(id);
+                kDebug() << context->currentActivityId() << context->currentActivity();
                 list << id;
             }
         }
@@ -1189,27 +1185,27 @@ QStringList PlasmaApp::listActivities()
     return list;
 }
 
-void PlasmaApp::cloneCurrentActivity()
-{
-    addContainment();
-}
-
-void PlasmaApp::createActivity(const QString &plugin)
+Plasma::Containment *PlasmaApp::createActivity(const QString &plugin)
 {
     Plasma::Containment *c = m_corona->addContainment(plugin);
-
+    //FIXME create the right number of containments for screens
     KActivityController controller;
     QString id = controller.addActivity(i18n("unnamed"));
-    c->setActivityId(id);
-    c->setActivity(i18n("unnamed"));
+    Plasma::Context *context = c->context();
+    context->setCurrentActivityId(id);
+    context->setCurrentActivity(i18n("unnamed"));
+    //ensure it's hooked up
+    connect(context, SIGNAL(activityChanged(Plasma::Context*)), this, SLOT(updateActivityName(Plasma::Context*)), Qt::UniqueConnection);
 
     emit activityAdded(id);
     controller.setCurrentActivity(id);
+    return c;
 }
 
 void PlasmaApp::updateActivityName(Plasma::Context *context)
 {
     KActivityController controller;
+    kDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!";
     controller.setActivityName(context->currentActivityId(), context->currentActivity());
 }
 
