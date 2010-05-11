@@ -31,6 +31,7 @@
 #include <KGlobalSettings>
 
 #include <Plasma/Theme>
+#include <QWidget>
 
 namespace Plasma
 {
@@ -43,7 +44,6 @@ AbstractIcon::AbstractIcon(QGraphicsItem *parent)
       m_hovered(false)
 {
     setCacheMode(DeviceCoordinateCache);
-    setFont(KGlobalSettings::smallestReadableFont());
     setAcceptHoverEvents(true);
     setCursor(Qt::OpenHandCursor);
 }
@@ -52,17 +52,24 @@ AbstractIcon::~AbstractIcon()
 {
 }
 
+QSizeF AbstractIcon::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
+{
+    if (which == Qt::MinimumSize || which == Qt::PreferredSize) {
+        qreal l, t, r, b;
+        getContentsMargins(&l, &t, &r, &b);
+        QFontMetrics fm(font());
+        const int minHeight = m_iconHeight + 2 + fm.height();
+        QSizeF s(qMax(m_iconHeight, fm.width(m_name)) + l + r, minHeight + t + b);
+        return s;
+    }
+
+    return QGraphicsWidget::sizeHint(which, constraint);
+}
+
 void AbstractIcon::setIconSize(int height)
 {
     m_iconHeight = height;
-
-    QFontMetrics fm(font());
-    const int minHeight = height + 2 + fm.height();
-    qreal l, t, r, b;
-    getContentsMargins(&l, &t, &r, &b);
-    setMinimumHeight(minHeight + t + b);
-
-//    kDebug() << height << minimumHeight();
+    updateGeometry();
     update();
 }
 
@@ -73,8 +80,9 @@ int AbstractIcon::iconSize() const
 
 void AbstractIcon::setName(const QString &name)
 {
-   m_name = name;
-   update();
+    m_name = name;
+    updateGeometry();
+    update();
 }
 
 QString AbstractIcon::name() const
@@ -87,14 +95,14 @@ void AbstractIcon::collapse()
     if (isVisible()) {
         setVisible(false);
         m_maxSize = maximumSize();
-        kDebug() << m_maxSize;
+        //kDebug() << m_maxSize;
         setMaximumSize(0, 0);
     }
 }
 
 void AbstractIcon::expand()
 {
-    if (! isVisible()) {
+    if (!isVisible()) {
         setVisible(true);
         setMaximumSize(m_maxSize);
     }
@@ -141,14 +149,6 @@ void AbstractIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
-void AbstractIcon::resizeEvent(QGraphicsSceneResizeEvent *)
-{
-    QFontMetrics fm(font());
-    qreal l, t, r, b;
-    getContentsMargins(&l, &t, &r, &b);
-    m_iconHeight = qBound(0, int(size().height() - fm.height() - t - b - 2), int(size().height()));
-}
-
 void AbstractIcon::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
@@ -191,6 +191,8 @@ void AbstractIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     if (fm.width(m_name) < textRect.width()) {
         flags |= Qt::AlignCenter;
     }
+
+    painter->setFont(font());
     painter->drawText(textRect, flags, m_name);
 }
 
