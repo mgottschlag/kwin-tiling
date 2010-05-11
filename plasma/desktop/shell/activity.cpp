@@ -108,7 +108,7 @@ void Activity::destroy()
 {
     if (KMessageBox::warningContinueCancel(
                 0, //FIXME pass a view in
-                i18nc("%1 is the name of the activity", "Do you really want to remove this %1?", name()),
+                i18nc("%1 is the name of the activity", "Do you really want to remove %1?", name()),
                 i18nc("@title:window %1 is the name of the activity", "Remove %1", name()), KStandardGuiItem::remove()) == KMessageBox::Continue) {
         foreach (Plasma::Containment *c, m_containments) {
             c->destroy(false);
