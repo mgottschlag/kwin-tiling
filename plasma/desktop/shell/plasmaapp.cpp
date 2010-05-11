@@ -1025,6 +1025,8 @@ void PlasmaApp::setPerVirtualDesktopViews(bool perDesktopViews)
     disconnect(KWindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)),
                this, SLOT(checkVirtualDesktopViews(int)));
 
+    bool dashboard = fixedDashboard();
+
     if (perDesktopViews) {
         connect(KWindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)),
                 this, SLOT(checkVirtualDesktopViews(int)));
@@ -1042,6 +1044,8 @@ void PlasmaApp::setPerVirtualDesktopViews(bool perDesktopViews)
         m_desktops.clear();
         m_corona->checkScreens(true);
     }
+
+    setFixedDashboard(dashboard);
 }
 
 bool PlasmaApp::perVirtualDesktopViews() const
