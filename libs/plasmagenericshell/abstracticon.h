@@ -57,10 +57,10 @@ class PLASMAGENERICSHELL_EXPORT AbstractIcon : public QGraphicsWidget
         static const int DEFAULT_ICON_SIZE = 16;
 
     Q_SIGNALS:
-        void hoverEnter(AbstractIcon *applet);
-        void hoverLeave(AbstractIcon *applet);
-        void clicked(AbstractIcon *applet);
-        void doubleClicked(AbstractIcon *applet);
+        void hoverEnter(Plasma::AbstractIcon *applet);
+        void hoverLeave(Plasma::AbstractIcon *applet);
+        void clicked(Plasma::AbstractIcon *applet);
+        void doubleClicked(Plasma::AbstractIcon *applet);
 
     public Q_SLOTS:
         void setName(const QString &name);
