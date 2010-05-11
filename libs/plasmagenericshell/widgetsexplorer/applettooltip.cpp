@@ -203,7 +203,7 @@ void AppletInfoWidget::updateInfo()
                        appletItem->license() + "</div>";
         description += "</body></html>";
         description = description.arg(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor).name());
-        kDebug() << description;
+        //kDebug() << description;
 
         m_aboutLabel->setText(description);
         m_uninstallButton->setVisible(appletItem->isLocal());
