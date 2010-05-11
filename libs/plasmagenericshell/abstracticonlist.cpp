@@ -24,6 +24,7 @@
 #include <cmath>
 
 #include <QGraphicsSceneWheelEvent>
+#include <QGraphicsView>
 #include <QHash>
 #include <QToolButton>
 
@@ -49,9 +50,9 @@ namespace Plasma
 AbstractIconList::AbstractIconList(Qt::Orientation orientation, QGraphicsItem *parent)
     : QGraphicsWidget(parent),
       m_arrowsSvg(new Plasma::Svg(this)),
-      m_hoverIndicator(new Plasma::ItemBackground(this)),
       m_searchDelayTimer(new QTimer(this)),
-      m_iconSize(16)
+      m_iconSize(16),
+      m_scrollingDueToWheel(false)
 {
     m_scrollStep = 0;
     m_firstItemIndex = 0;
@@ -144,6 +145,8 @@ void AbstractIconList::init()
     m_arrowsLayout->setAlignment(m_upLeftArrow, Qt::AlignVCenter | Qt::AlignHCenter);
     m_arrowsLayout->setAlignment(m_appletsListWindowWidget, Qt::AlignVCenter | Qt::AlignHCenter);
 
+    //m_hoverIndicator = new Plasma::ItemBackground(m_appletsListWindowWidget);
+    m_hoverIndicator = new Plasma::ItemBackground(m_appletsListWidget);
     setLayout(m_arrowsLayout);
 }
 
@@ -340,6 +343,7 @@ void AbstractIconList::updateList()
 void AbstractIconList::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
     bool isDownRight = event->delta() < 0;
+    m_scrollingDueToWheel = true;
 
     if (isDownRight) {
         if (m_downRightArrow->isEnabled()) {
@@ -421,6 +425,19 @@ void AbstractIconList::scrollTo(int index)
 void AbstractIconList::scrollStepFinished()
 {
     manageArrows();
+
+    if (m_scrollingDueToWheel && m_hoverIndicator->isVisible() && scene()) {
+        QGraphicsView *view = Plasma::viewFor(this);
+        if (view) {
+            AbstractIcon *icon = dynamic_cast<AbstractIcon *>(scene()->itemAt(view->mapToScene(view->mapFromGlobal(QCursor::pos()))));
+            if (icon) {
+            //    m_hoverIndicator->setGeometry(icon->geometry());
+            }
+            iconHoverEnter(icon);
+        }
+    }
+    m_scrollingDueToWheel = false;
+
     //keep scrolling if the button is held down
     bool movingLeftUp = m_slide->property("distance").value<qreal>() < 0;
     if (movingLeftUp) {
@@ -429,11 +446,6 @@ void AbstractIconList::scrollStepFinished()
         }
     } else if (m_downRightArrow->isEnabled() && m_downRightArrow->isDown()) {
         scrollDownRight();
-    }
-
-    if (m_hoverIndicator->isVisible()) {
-        AbstractIcon *icon = dynamic_cast<AbstractIcon *>(scene()->itemAt(m_hoverIndicator->sceneBoundingRect().center()));
-        iconHoverEnter(icon);
     }
 }
 

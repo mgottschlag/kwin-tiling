@@ -162,6 +162,7 @@ private:
 
     int m_scrollStep;
     int m_iconSize;
+    bool m_scrollingDueToWheel;
 
     Plasma::Animation *m_slide;
 };
