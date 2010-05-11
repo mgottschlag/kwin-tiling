@@ -1,0 +1,33 @@
+[Desktop Entry]
+Name=Windowed widgets
+Name[en_GB]=Windowed widgets
+Name[es]=Widgets en ventana
+Name[pt]=Elementos em janelas
+Name[pt_BR]=Widgets em janelas
+Name[sv]=Fönsterbaserade grafiska komponenter
+Name[uk]=Віджети-вікна
+Name[x-test]=xxWindowed widgetsxx
+
+
+Comment=Find Plasma widgets that can be run as standalone windows
+Comment[en_GB]=Find Plasma widgets that can be run as standalone windows
+Comment[es]=Encontrar widgets de Plasma que se puedan ejecutar como ventanas independientes
+Comment[pt]=Procurar elementos do Plasma que possam ser executados como janelas autónomas
+Comment[pt_BR]=Localizar widgets do Plasma que possam ser executados como janelas autônomas
+Comment[sv]=Hitta grafiska Plasma-komponenter som kan köras som fristående fönster
+Comment[uk]=Пошук віджетів Плазми, які можна запускати у окремих вікнах
+Comment[x-test]=xxFind Plasma widgets that can be run as standalone windowsxx
+
+
+X-KDE-ServiceTypes=Plasma/Runner
+Type=Service
+Icon=plasma
+X-KDE-Library=krunner_windowedwidgets
+X-Plasma-RunnerPhase=first
+X-KDE-PluginInfo-Author=Plasma Team
+X-KDE-PluginInfo-Email=plasma-devel@kde.org
+X-KDE-PluginInfo-Name=windowedwidgets
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-License=LGPL
+X-KDE-PluginInfo-EnabledByDefault=true
+X-Plasma-AdvertiseSingleRunnerQueryMode=true
