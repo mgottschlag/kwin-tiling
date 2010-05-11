@@ -292,7 +292,6 @@ int AbstractIconList::maximumAproxVisibleIconsOnList()
 void AbstractIconList::addIcon(AbstractIcon *icon)
 {
     icon->setParent(m_appletsListWidget); //FIXME redundant?
-    icon->setMinimumSize(100, 0);
     qreal l, t, r, b;
     m_hoverIndicator->getContentsMargins(&l, &t, &r, &b);
     icon->setContentsMargins(l, t, r, b);
