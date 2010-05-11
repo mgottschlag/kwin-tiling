@@ -125,10 +125,13 @@ KActivityInfo::~KActivityInfo()
 
 KActivityInfo * KActivityInfo::forActivity(const QString & id)
 {
-    if (!KActivityInfoStaticPrivate::self()->store() ||
+    if (!KActivityInfoStaticPrivate::self()->manager()->AvailableActivities().value().contains(id) &&
             !KActivityInfoStaticPrivate::self()->store()->listAvailable().value().contains(id)) {
-        kDebug() << (void *)KActivityInfoStaticPrivate::self()->store() << id << "not found in"
-            << KActivityInfoStaticPrivate::self()->store()->listAvailable().value();
+        kDebug() << (void *)KActivityInfoStaticPrivate::self()->store() << id << "not found in registered activities"
+            << " org.kde.ActivityManager: "
+                << KActivityInfoStaticPrivate::self()->manager()->AvailableActivities().value()
+            << " org.kde.nepomuk.services.nepomukactivitiesservice: "
+                << KActivityInfoStaticPrivate::self()->store()->listAvailable().value();
         return 0;
     }
 
