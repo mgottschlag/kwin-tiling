@@ -31,8 +31,11 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QResizeEvent>
+#include <QTimer>
 
+#include <KCmdLineArgs>
 #include <KIconLoader>
+
 #include <Plasma/AccessManager>
 #include <Plasma/AccessAppletJob>
 #include <Plasma/Package>
@@ -46,7 +49,8 @@ FullView::FullView(const QString &ff, const QString &loc, QWidget *parent)
       m_formfactor(Plasma::Planar),
       m_location(Plasma::Floating),
       m_containment(0),
-      m_applet(0)
+      m_applet(0),
+      m_appletShotTimer(0)
 {
     setFrameStyle(QFrame::NoFrame);
     QString formfactor = ff.toLower();
@@ -88,8 +92,10 @@ void FullView::addApplet(const QString &name, const QString &containment,
                          const QString& wallpaper, const QVariantList &args)
 {
     kDebug() << "adding applet" << name << "in" << containment;
-    m_containment = m_corona.addContainment(containment);
-    connect(m_containment, SIGNAL(appletRemoved(Plasma::Applet*)), this, SLOT(appletRemoved()));
+    if (!m_containment) {
+        m_containment = m_corona.addContainment(containment);
+        connect(m_containment, SIGNAL(appletRemoved(Plasma::Applet*)), this, SLOT(appletRemoved(Plasma::Applet*)));
+    }
 
     if (!wallpaper.isEmpty()) {
         m_containment->setWallpaper(wallpaper);
@@ -100,8 +106,7 @@ void FullView::addApplet(const QString &name, const QString &containment,
     m_containment->resize(size());
     setScene(m_containment->scene());
 
-    if (name.startsWith("plasma:") ||
-        name.startsWith("zeroconf:")) {
+    if (name.startsWith("plasma:") || name.startsWith("zeroconf:")) {
         kDebug() << "accessing remote: " << name;
         AccessManager::self()->accessRemoteApplet(KUrl(name));
         connect(AccessManager::self(), SIGNAL(finished(Plasma::AccessAppletJob*)),
@@ -127,7 +132,6 @@ void FullView::addApplet(const QString &name, const QString &containment,
     }
 
     if (!m_applet) {
-        kDebug() << "m_applet is 0????";
         return;
     }	
 
@@ -137,6 +141,84 @@ void FullView::addApplet(const QString &name, const QString &containment,
     setWindowIcon(SmallIcon(m_applet->icon()));
     resize(m_applet->size().toSize());
     connect(m_applet, SIGNAL(appletTransformedItself()), this, SLOT(appletTransformedItself()));
+
+    checkShotTimer();
+}
+
+void FullView::checkShotTimer()
+{
+    KCmdLineArgs *cliArgs = KCmdLineArgs::parsedArgs();
+    if (cliArgs->isSet("screenshot") || cliArgs->isSet("screenshot-all")) {
+        if (!m_appletShotTimer) {
+            m_appletShotTimer = new QTimer(this);
+            m_appletShotTimer->setSingleShot(true);
+            m_appletShotTimer->setInterval(3000);
+            connect(m_appletShotTimer, SIGNAL(timeout()), this, SLOT(screenshotPlasmoid()));
+        }
+
+        m_appletShotTimer->start();
+    }
+}
+
+void FullView::screenshotAll()
+{
+    KPluginInfo::List infoList = Plasma::Applet::listAppletInfo();
+    foreach (const KPluginInfo &info, infoList) {
+        m_appletsToShoot.append(info.pluginName());
+    }
+    shootNextPlasmoid();
+}
+
+void FullView::shootNextPlasmoid()
+{
+    if (m_appletsToShoot.isEmpty()) {
+        QApplication::quit();
+        return;
+    }
+
+    if (m_applet) {
+        m_applet->destroy();
+        m_applet = 0;
+    }
+
+    resize(512, 512);
+    QString next = m_appletsToShoot.takeFirst();
+    addApplet(next, "null", QString(), QVariantList());
+    if (!m_applet) {
+        shootNextPlasmoid();
+    } else if (m_applet->size().width() < 256 && m_applet->size().height() < 256) {
+        resize(512, 512);
+    }
+}
+
+void FullView::screenshotPlasmoid()
+{
+    if (!m_applet) {
+        shootNextPlasmoid();
+        return;
+    }
+
+    if (m_applet->hasFailedToLaunch()) {
+        m_applet->destroy();
+        return;
+    } else if (m_applet->configurationRequired()) {
+        QTimer::singleShot(3000, this, SLOT(screenshotPlasmoid()));
+        return;
+    }
+
+    QStyleOptionGraphicsItem opt;
+    opt.initFrom(this);
+    opt.exposedRect = m_applet->boundingRect();
+    QPixmap p(size());
+    p.fill(Qt::transparent);
+    {
+    QPainter painter(&p);
+    render(&painter);
+    //m_applet->paint(&painter, &opt, this);
+    }
+    p.save(m_applet->pluginName() + ".png");
+
+    shootNextPlasmoid();
 }
 
 void FullView::plasmoidAccessFinished(Plasma::AccessAppletJob *job)
@@ -155,14 +237,21 @@ void FullView::plasmoidAccessFinished(Plasma::AccessAppletJob *job)
     }
 }
 
-void FullView::appletRemoved()
+void FullView::appletRemoved(Plasma::Applet *applet)
 {
-    m_applet = 0;
+    if (m_applet == applet) {
+        m_applet = 0;
+        checkShotTimer();
+    }
 }
 
 void FullView::resizeEvent(QResizeEvent *event)
 {
     QGraphicsView::resizeEvent(event);
+
+    if (!m_containment) {
+        return;
+    }
 
     m_containment->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
     m_containment->setMinimumSize(size());
@@ -173,7 +262,6 @@ void FullView::resizeEvent(QResizeEvent *event)
     }
 
     if (!m_applet) {
-        kDebug() << "no applet";
         return;
     }
 

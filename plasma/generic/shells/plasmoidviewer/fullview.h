@@ -26,9 +26,15 @@
 #ifndef FULLVIEW_H
 #define FULLVIEW_H
 
+#define private public
+#include <Plasma/Applet>
+#undef private
+
 #include <Plasma/Corona>
 
 #include <QGraphicsView>
+
+class QTimer;
 
 namespace Plasma
 {
@@ -44,21 +50,28 @@ public:
 
     void addApplet(const QString &name, const QString& containment,
                    const QString& wallpaper, const QVariantList &args = QVariantList());
+    void screenshotAll();
 
-private slots:
+private Q_SLOTS:
     void appletTransformedItself();
     void sceneRectChanged(const QRectF &rect);
     void resizeEvent(QResizeEvent *event);
     void closeEvent(QCloseEvent *event);
-    void appletRemoved();
+    void appletRemoved(Plasma::Applet *applet);
     void plasmoidAccessFinished(Plasma::AccessAppletJob *job);
+    void screenshotPlasmoid();
 
 private:
+    void shootNextPlasmoid();
+    void checkShotTimer();
+
     Plasma::Corona m_corona;
     Plasma::FormFactor m_formfactor;
     Plasma::Location m_location;
     Plasma::Containment *m_containment;
     Plasma::Applet *m_applet;
+    QStringList m_appletsToShoot;
+    QTimer *m_appletShotTimer;
 };
 
 #endif

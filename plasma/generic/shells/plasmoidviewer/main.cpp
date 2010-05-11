@@ -136,6 +136,9 @@ int main(int argc, char **argv)
     options.add("location <name>", ki18nc("Do not translate floating, desktop, fullscreen, top, bottom, left nor right", "The location constraint to start the Containment with (floating, desktop, fullscreen, top, bottom, left, right)"), "floating");
     options.add("p");
     options.add("pixmapcache <size>", ki18n("The size in KB to set the pixmap cache to"));
+    options.add("s");
+    options.add("screenshot", ki18n("Takes a screenshot of the widget and saves it the working directory as <pluginname>.png"));
+    options.add("screenshot-all", ki18n("Takes a screenshot of each widget and saves it the working directory as <pluginname>.png"));
     options.add("t");
     options.add("theme <name>", ki18n("Desktop SVG theme to use"));
     options.add("w");
@@ -155,7 +158,7 @@ int main(int argc, char **argv)
         listPlugins(Plasma::Applet::listAppletInfo());
         return 0;
     }
-    
+
     if (args->isSet("list-wallpapers")) {
         listPlugins(Plasma::Wallpaper::listWallpaperInfo());
         return 0;
@@ -203,8 +206,7 @@ int main(int argc, char **argv)
         appletArgs << args->arg(i);
     }
     kDebug() << "setting auth policy";
-    Plasma::AuthorizationManager::self()->setAuthorizationPolicy(
-            Plasma::AuthorizationManager::PinPairing);
+    Plasma::AuthorizationManager::self()->setAuthorizationPolicy(Plasma::AuthorizationManager::PinPairing);
 
     FullView view(formfactor, location);
 
@@ -217,16 +219,18 @@ int main(int argc, char **argv)
         }
         */
         new RemotePlasmoidWatcher(AccessManager::self());
+    } else if (args->isSet("screenshot-all")) {
+        view.show();
+        view.screenshotAll();
     } else {
         kDebug() << "just load applet";
         view.addApplet(pluginName, containment, wallpaper, appletArgs);
         view.show();
-
-        QAction *action = KStandardAction::quit(&app, SLOT(quit()), &view);
-        view.addAction(action);
     }
 
-    args->clear();
+
+    QAction *action = KStandardAction::quit(&app, SLOT(quit()), &view);
+    view.addAction(action);
 
     return app.exec();
 }
