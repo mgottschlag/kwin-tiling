@@ -216,7 +216,6 @@ PlasmaApp::PlasmaApp()
       m_mainView(0),
       m_isDesktop(false),
       m_autoHideControlBar(true),
-      m_raiseTimer(new QTimer(this)),
       m_unHideTimer(0),
       m_startupSuspendWaitCount(0)
 {
@@ -250,9 +249,6 @@ PlasmaApp::PlasmaApp()
 
     m_mainView = new NetView(0, NetView::mainViewId(), 0);
     m_mainView->hide();
-
-    m_raiseTimer->setSingleShot(true);
-    connect(m_raiseTimer, SIGNAL(timeout()), this, SLOT(raiseMainView()));
 
     connect(m_mainView, SIGNAL(containmentActivated()), this, SLOT(mainContainmentActivated()));
     connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SLOT(positionPanel()));
@@ -379,7 +375,6 @@ void PlasmaApp::mainContainmentActivated()
     KWindowSystem::raiseWindow(id);
 
     if (activeWindow) {
-        KWindowSystem::clearState(m_mainView->winId(), NET::KeepBelow);
         KWindowSystem::raiseWindow(activeWindow->effectiveWinId());
         m_mainView->activateWindow();
         activeWindow->setFocus();
@@ -831,10 +826,10 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
 {
     if (watched == m_mainView && event->type() == QEvent::WindowActivate) {
         destroyUnHideTrigger();
+
         if (m_controlBar) {
             Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
             setControlBarVisible(true);
-            m_raiseTimer->start(100);
             reserveStruts();
         }
     } else if ((watched == m_mainView &&
@@ -886,8 +881,6 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
         }
     } else if ((event->xany.send_event != True && event->type == FocusOut)) {
         QTimer::singleShot(100, this, SLOT(lowerMainView()));
-    } else if ((event->xany.send_event != True && event->type == ButtonPress)) {
-        m_raiseTimer->stop();
     }
     return KUniqueApplication::x11EventFilter(event);
 }
@@ -901,15 +894,6 @@ void PlasmaApp::lowerMainView()
 {
     if (m_isDesktop && !hasForegroundWindows()) {
         KWindowSystem::lowerWindow(m_mainView->winId());
-        KWindowSystem::setState(m_mainView->winId(), NET::KeepBelow);
-    }
-}
-
-void PlasmaApp::raiseMainView()
-{
-    if (m_isDesktop) {
-        KWindowSystem::clearState(m_mainView->winId(), NET::KeepBelow);
-        KWindowSystem::raiseWindow(m_mainView->winId());
     }
 }
 
