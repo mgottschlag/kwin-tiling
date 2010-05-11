@@ -1,5 +1,10 @@
 [Desktop Entry]
 Name=Newspaper Activity
+Name[ia]=Activitate de jornal
+Name[pt]=Actividade de Jornal
+Name[pt_BR]=Atividade de jornal
+Name[sv]=Tidningsaktivitet
+Name[uk]=Газетний простір дій
 Name[x-test]=xxNewspaper Activityxx
 
 Comment=An activity that puts widgets on two columns

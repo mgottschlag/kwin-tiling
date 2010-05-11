@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Device Notifications
+Name[x-test]=xxDevice Notificationsxx
 Comment=Passive device notifications for the user.
+Comment[x-test]=xxPassive device notifications for the user.xx
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=notifier
