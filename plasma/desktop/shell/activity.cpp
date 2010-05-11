@@ -48,7 +48,10 @@ Activity::Activity(const QString &id, QObject *parent)
         m_name = m_info->name();
         connect(m_info, SIGNAL(nameChanged(QString)), this, SLOT(setName(QString)));
     } else {
-        m_name = m_id;
+        m_name = KActivityInfo::name(m_id);
+        if (m_name.isEmpty()) {
+            m_name = m_id;
+        }
         kDebug() << "nepomuk is probably broken :(";
     }
 
