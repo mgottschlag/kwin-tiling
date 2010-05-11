@@ -117,15 +117,18 @@ void AbstractIcon::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if (event->button() != Qt::LeftButton &&
         (event->pos() - event->buttonDownPos(Qt::LeftButton)).toPoint().manhattanLength() > QApplication::startDragDistance()) {
         event->accept();
-        qDebug() << "Start Dragging";
-        QDrag *drag = new QDrag(event->widget());
-        QPixmap p = pixmap(QSize(KIconLoader::SizeLarge, KIconLoader::SizeLarge));
-        drag->setPixmap(p);
+        QMimeData *data = mimeData();
+        if (data && !data->formats().isEmpty()) {
+            qDebug() << "Start Dragging";
+            QDrag *drag = new QDrag(event->widget());
+            QPixmap p = pixmap(QSize(KIconLoader::SizeLarge, KIconLoader::SizeLarge));
+            drag->setPixmap(p);
 
-        drag->setMimeData(mimeData());
-        drag->exec();
+            drag->setMimeData(mimeData());
+            drag->exec();
 
-        setCursor(Qt::OpenHandCursor);
+            setCursor(Qt::OpenHandCursor);
+        }
     }
 }
 
