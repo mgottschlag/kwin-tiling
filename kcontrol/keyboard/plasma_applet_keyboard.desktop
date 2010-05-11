@@ -1,0 +1,32 @@
+[Desktop Entry]
+Name=Keyboard Layout
+Name[en_GB]=Keyboard Layout
+Name[es]=Distribución del teclado
+Name[pt]=Disposição do Teclado
+Name[pt_BR]=Leiaute de teclado
+Name[sv]=Tangentbordslayout
+Name[uk]=Розкладка клавіатури
+Name[x-test]=xxKeyboard Layoutxx
+Comment=Applet to display and switch layouts
+Comment[en_GB]=Applet to display and switch layouts
+Comment[es]=Miniaplicación para mostrar y cambiar distribuciones
+Comment[pt]=Uma 'applet' para mostrar e mudar de disposições de teclado
+Comment[pt_BR]=Miniaplicativo para exibir e alternar leiautes
+Comment[sv]=Miniprogram för att visa och byta layout
+Comment[uk]=Аплет для показу та перемикання розкладок
+Comment[x-test]=xxApplet to display and switch layoutsxx
+
+Icon=preferences-desktop-keyboard
+Type=Service
+
+X-KDE-ServiceTypes=Plasma/Applet
+X-KDE-Library=plasma_applet_keyboard
+X-KDE-PluginInfo-Author=Andriy Rysin
+X-KDE-PluginInfo-Email=rysin@kde.org
+X-KDE-PluginInfo-Name=keyboard_applet
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=
+X-KDE-PluginInfo-Category=System Information
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true

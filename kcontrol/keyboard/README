@@ -1,0 +1,49 @@
+This is new project to replace keyboard (kcmmisc) and kxkb 
+to manage keyboard harware configuration and layouts.
+
+Components:
+
+kcm_init:
+* initializes keyboard hardware (kcmmisc)
+* starts keyboard daemon if needed (i.e. if layouts are configured)
+
+Keyboard daemon:
+* configures keyboard layouts on start
+* provides DBUS API "org.kde.KXKB/kxkb"
+* listens to window/desktop switching if layout switch mode is not global
+* listens to new keyboard devices and reinitializes keyboard layouts
+* listens to Global KDE Shortcut to switch layouts
+* listens to Global Shortcut settings change
+* listens to keyboard configuration changed
+* provides systray icon for layout (shall be replaced with applet?)
+
+Keyboard applet:
+* displays current layout with text and (optionally flag)
+
+Layout widget:
+* displays current layout with text embedded in another widget
+* dynamically loaded as a plugin
+* currently only short text (no flag or long text)
+
+KCM Module:
+* allows to configure keyboard hardware, layouts and xkb options (advanced)
+
+
+Advantages (over old code):
+* One UI module to configure keyboard layouts and hardware
+* Allows to configure keyboard model/xkb options without configuring layouts
+* Less cluttered layout configuration control (add layout is separate)
+* Layout control/DBus interface is separate from the indicator
+* Does not require libxklvier
+* Takes country/language names/translations from iso-codes project
+* Information about current layouts is always taken from X server, so should be more robust
+* Cleaner code (rewritten from scratch)
+* Due to many points above should start faster (though no benchmarks performed)
+
+New features:
+* Allow selection of keyboard layout by language
+
+Regressions:
+* can't configure layout short names displayed in applet (reading the previously configured names is fine)
+* applet does not start automatically when keyboard layouts are configured (first time)
+* kcm does not allow changing layout variant (need to remove and then re-add)
