@@ -28,6 +28,8 @@
 #include <KWindowSystem>
 
 #include <Plasma/Applet>
+#include <Plasma/Containment>
+#include <Plasma/Corona>
 #include <Plasma/WindowEffects>
 
 NetDialogManager::NetDialogManager(Plasma::Corona *parent)
@@ -56,6 +58,21 @@ void NetDialogManager::showDialog(QWidget *widget, Plasma::Applet *applet)
     palette.setColor(QPalette::WindowText, Qt::white);
     palette.setColor(QPalette::ToolTipText, Qt::white);
     widget->setPalette(palette);
+
+    Plasma::Containment *containment = applet->containment();
+    if (containment) {
+        Plasma::Corona *corona = containment->corona();
+        if (corona) {
+            QRect r = corona->availableScreenRegion(containment->screen()).boundingRect();
+            //assumption: the panel is 100% wide
+            QRect screenRect = corona->screenGeometry(containment->screen());
+
+            widget->setContentsMargins(r.left() - screenRect.left(),
+                                       r.top() - screenRect.top(),
+                                       screenRect.right() - r.right(),
+                                       screenRect.bottom() - r.bottom());
+        }
+    }
 
     widget->show();
 }

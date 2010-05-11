@@ -426,7 +426,7 @@ void PlasmaApp::adjustSize(Kephal::Screen *screen)
 
 void PlasmaApp::reserveStruts()
 {
-    if (!m_controlBar || !isDesktop()) {
+    if (!m_controlBar || m_autoHideControlBar || !isDesktop()) {
         return;
     }
 
