@@ -150,8 +150,10 @@ public:
             QStringList tzParts = timezonetranslated.split('/', QString::SkipEmptyParts);
             if (tzParts.count() == 1) {
                 prettyTimezone = timezonetranslated;
-            } else {
+            } else if (tzParts.count() > 0) {
                 prettyTimezone = tzParts.last();
+            } else {
+                prettyTimezone = timezonetranslated;
             }
         } else {
             prettyTimezone = localTimezone();
