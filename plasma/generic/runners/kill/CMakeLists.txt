@@ -11,7 +11,7 @@ kde4_add_plugin(kcm_krunner_kill ${kcm_krunner_kill_SRCS})
 target_link_libraries(kcm_krunner_kill
     ${KDE4_KDECORE_LIBS}
     ${KDE4_KDEUI_LIBS}
-    ${KDE4_KUTILS_LIBS} 
+    ${KDE4_KCMUTILS_LIBS} 
     ${QT_QTCORE_LIBRARY}
     ${QT_QTGUI_LIBRARY}
     )

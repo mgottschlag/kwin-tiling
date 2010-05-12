@@ -78,7 +78,7 @@ set(SimpleApplet_SRCS
     simpleapplet/simpleapplet.cpp
 )
 kde4_add_plugin(plasma_applet_simplelauncher ${SimpleApplet_SRCS})
-target_link_libraries(plasma_applet_simplelauncher ${KDE4_KUTILS_LIBS} ${KDE4_PLASMA_LIBS} solidcontrol ${Kickoff_LIBS} kickoff)
+target_link_libraries(plasma_applet_simplelauncher ${KDE4_KCMUTILS_LIBS} ${KDE4_PLASMA_LIBS} solidcontrol ${Kickoff_LIBS} kickoff)
 install(TARGETS plasma_applet_simplelauncher DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES simpleapplet/plasma-applet-simplelauncher.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 

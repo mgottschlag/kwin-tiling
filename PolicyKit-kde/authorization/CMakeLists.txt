@@ -51,7 +51,7 @@ set(pkk_authorization_SRCS
 )
 
 kde4_add_plugin(kcm_pkk_authorization ${pkk_authorization_SRCS})
-target_link_libraries(kcm_pkk_authorization polkitkdeprivate ${KDE4_KUTILS_LIBS} )
+target_link_libraries(kcm_pkk_authorization polkitkdeprivate ${KDE4_KCMUTILS_LIBS} )
 
 install( FILES kcm_pkk_authorization.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
 
