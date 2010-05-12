@@ -40,8 +40,6 @@ SingleView::SingleView(Plasma::Corona *corona, Plasma::Containment *containment,
       m_corona(corona)
 {
     setScene(m_corona);
-    m_containment->setFormFactor(Plasma::Planar);
-    m_containment->setLocation(Plasma::Floating);
     QFileInfo info(pluginName);
     if (!info.isAbsolute()) {
         info = QFileInfo(QDir::currentPath() + '/' + pluginName);
@@ -56,19 +54,16 @@ SingleView::SingleView(Plasma::Corona *corona, Plasma::Containment *containment,
     }
 
     if (!m_applet) {
+        kDebug() << "failed to load" << pluginName;
         return;
     }
 
     m_containment->addApplet(m_applet, QPointF(-1, -1), false);
+    m_containment->resize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 
-    QSizeF containmentSize(m_containment->size());
-    containmentSize.setHeight(qMax(containmentSize.height(), m_applet->size().height()));
-    containmentSize.setWidth(containmentSize.width() + QWIDGETSIZE_MAX);
-    m_containment->resize(containmentSize);
-    m_applet->setPos((m_applet->id()-1)*QWIDGETSIZE_MAX, 0);
-
+    m_applet->setPos(0, 0);
     m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
-    setSceneRect(m_applet->geometry());
+    setSceneRect(m_applet->sceneBoundingRect());
     setWindowTitle(m_applet->name());
     setWindowIcon(SmallIcon(m_applet->icon()));
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -85,7 +80,7 @@ SingleView::SingleView(Plasma::Corona *corona, Plasma::Containment *containment,
 
 SingleView::~SingleView()
 {
-    delete m_applet;
+    m_containment->destroy(false);
 }
 
 
@@ -111,7 +106,10 @@ void SingleView::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event)
     if (m_applet) {
+        KConfigGroup dummy;
+        m_containment->save(dummy);
         emit storeApplet(m_applet);
+        m_applet = 0;
     }
 
     deleteLater();
@@ -140,12 +138,12 @@ void SingleView::updateGeometry()
 
     //kDebug() << "New applet geometry is" << m_applet->geometry();
 
-    if (m_applet->size().toSize() != size()) {
+    if (m_applet && m_applet->size().toSize() != size()) {
         if (m_applet) {
             m_applet->resize(size());
         }
 
-        setSceneRect(m_applet->geometry());
+        setSceneRect(m_applet->sceneBoundingRect());
     }
 }
 

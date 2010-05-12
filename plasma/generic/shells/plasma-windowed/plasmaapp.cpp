@@ -32,6 +32,7 @@
 #include <KWindowSystem>
 
 #include <Plasma/Containment>
+#include <Plasma/ContainmentActions>
 #include <Plasma/Theme>
 #include <Plasma/Corona>
 #include <Plasma/Applet>
@@ -62,11 +63,8 @@ PlasmaApp::PlasmaApp()
     Plasma::Theme::defaultTheme()->setFont(cg.readEntry("desktopFont", font()));
 
     corona();
-    m_containment = m_corona->addContainment("null");
 
-    KConfigGroup containmentConfig = m_containment->config();
-    KConfigGroup applets(&containmentConfig, "Applets");
-
+    KConfigGroup applets = storedConfig(0);
     foreach (const QString &group, applets.groupList()) {
         KConfigGroup appletGroup(&applets, group);
 
@@ -80,10 +78,22 @@ PlasmaApp::PlasmaApp()
 
     //newInstance();
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
+    setQuitOnLastWindowClosed(true);
 }
 
 PlasmaApp::~PlasmaApp()
 {
+}
+
+KConfigGroup PlasmaApp::storedConfig(int appletId)
+{
+    KConfigGroup cg(m_corona->config(), "StoredApplets");
+
+    if (appletId > 0) {
+        cg = KConfigGroup(&cg, QString::number(appletId));
+    }
+
+    return cg;
 }
 
 int  PlasmaApp::newInstance()
@@ -106,21 +116,32 @@ int  PlasmaApp::newInstance()
     }
 
     int appletId;
+    Plasma::Containment *containment = m_corona->addContainment("null");
+    containment->setFormFactor(Plasma::Planar);
+    containment->setLocation(Plasma::Floating);
+    appletId = ++m_maxId;
+
     if (m_storedApplets.contains(pluginName)) {
-        appletId = m_storedApplets.values(pluginName).first();
-        m_storedApplets.remove(pluginName, appletId);
-    } else {
-        appletId = ++m_maxId;
+        int storedAppletId = m_storedApplets.values(pluginName).first();
+        KConfigGroup config = storedConfig(storedAppletId);
+
+        KConfigGroup actualConfig(containment->config());
+        actualConfig = KConfigGroup(&actualConfig, "Applets");
+        actualConfig = KConfigGroup(&actualConfig, QString::number(appletId));
+
+        config.copyTo(&actualConfig);
+        config.deleteGroup();
+        m_storedApplets.remove(pluginName, storedAppletId);
     }
 
-    SingleView *view = new SingleView(m_corona, m_containment, pluginName, appletId, appletArgs);
+    SingleView *view = new SingleView(m_corona, containment, pluginName, appletId, appletArgs);
 
     if (!view->applet()) {
         delete view;
         return 0;
     }
 
-    connect(view, SIGNAL(storeApplet(Applet*)), this, SLOT(storeApplet(Applet*)));
+    connect(view, SIGNAL(storeApplet(Plasma::Applet*)), this, SLOT(storeApplet(Plasma::Applet*)));
     connect(view, SIGNAL(destroyed(QObject*)), this, SLOT(viewDestroyed(QObject*)));
 
     if (args->isSet("border")) {
@@ -174,7 +195,7 @@ void PlasmaApp::syncConfig()
 
 void PlasmaApp::themeChanged()
 {
-    foreach(SingleView *view, m_views) {
+    foreach (SingleView *view, m_views) {
         if (view->autoFillBackground()) {
             view->setBackgroundBrush(KColorUtils::mix(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor), Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor), 0.15));
         }
@@ -186,7 +207,6 @@ Plasma::Corona* PlasmaApp::corona()
     if (!m_corona) {
         m_corona = new Plasma::Corona(this);
         connect(m_corona, SIGNAL(configSynced()), this, SLOT(syncConfig()));
-
 
         m_corona->setItemIndexMethod(QGraphicsScene::NoIndex);
         //m_corona->initializeLayout();
@@ -204,11 +224,21 @@ bool PlasmaApp::hasComposite()
 void PlasmaApp::storeApplet(Plasma::Applet *applet)
 {
     m_storedApplets.insert(applet->name(), applet->id());
+    KConfigGroup storage = storedConfig(0);
+    KConfigGroup cg(applet->containment()->config());
+    cg = KConfigGroup(&cg, "Applets");
+    cg = KConfigGroup(&cg, QString::number(applet->id()));
+    delete applet;
+//    kDebug() << "storing" << applet->name() << applet->id() << "to" << storage.name() << ", applet config is" << cg.name();
+    cg.reparent(&storage);
 }
 
 void PlasmaApp::viewDestroyed(QObject *view)
 {
     m_views.removeAll(static_cast<SingleView *>(view));
+    if (m_views.isEmpty()) {
+        quit();
+    }
 }
 
 #include "plasmaapp.moc"

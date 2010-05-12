@@ -24,6 +24,7 @@
 #include <QList>
 #include <QMultiHash>
 
+#include <KConfigGroup>
 #include <KUniqueApplication>
 
 #include <plasma/plasma.h>
@@ -35,7 +36,6 @@
 
 namespace Plasma
 {
-    class Containment;
     class Corona;
     class View;
     class Applet;
@@ -68,8 +68,9 @@ private Q_SLOTS:
     void viewDestroyed(QObject *view);
 
 private:
+    KConfigGroup storedConfig(int appletId);
+
     Plasma::Corona *m_corona;
-    Plasma::Containment *m_containment;
     QMultiHash<QString, int> m_storedApplets;
     int m_maxId;
 
