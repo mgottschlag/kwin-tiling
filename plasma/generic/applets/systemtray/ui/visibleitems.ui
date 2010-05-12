@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>331</width>
-    <height>418</height>
+    <width>333</width>
+    <height>375</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>360</height>
+   </size>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="margin">
