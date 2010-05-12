@@ -45,7 +45,7 @@ KeyboardApplet::KeyboardApplet(QObject *parent, const QVariantList &args):
 	keyboardConfig(new KeyboardConfig())
 {
 	if( ! X11Helper::xkbSupported(NULL) ) {
-		setFailedToLaunch(true, "XKB extension failed to initialize");
+		setFailedToLaunch(true, i18n("XKB extension failed to initialize"));
 		return;
 	}
 
