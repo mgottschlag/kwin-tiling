@@ -44,7 +44,7 @@ SingleView::SingleView(Plasma::Corona *corona, Plasma::Containment *containment,
     m_containment->setLocation(Plasma::Floating);
     QFileInfo info(pluginName);
     if (!info.isAbsolute()) {
-        info = QFileInfo(QDir::currentPath() + "/" + pluginName);
+        info = QFileInfo(QDir::currentPath() + '/' + pluginName);
     }
 
     if (info.exists()) {
