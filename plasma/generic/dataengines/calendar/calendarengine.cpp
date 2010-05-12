@@ -27,7 +27,6 @@
 #include <KHolidays/Holidays>
 
 #include <akonadi/changerecorder.h>
-#include <akonadi/control.h>
 #include <akonadi/entitydisplayattribute.h>
 #include <akonadi/itemfetchscope.h>
 #include <akonadi/kcal/incidencemimetypevisitor.h>
@@ -160,11 +159,6 @@ void CalendarEngine::initAkonadiCalendar()
         return;
     }
 
-    // try to start akonadi if necessary
-    if ( !Akonadi::Control::start() ) {
-        kDebug() << "could not start akonadi!";
-        return;
-    }
     // ask for akonadi events
     Akonadi::ChangeRecorder* monitor = new Akonadi::ChangeRecorder(this);
     Akonadi::ItemFetchScope scope;
