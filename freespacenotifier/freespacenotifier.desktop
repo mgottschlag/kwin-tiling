@@ -1,7 +1,17 @@
 [Desktop Entry]
 Name=Free Space Notifier
+Name[lt]=Laisvos vietos pranešėjas
+Name[pt]=Notificação de Espaço Livre
+Name[pt_BR]=Notificação de espaço livre
+Name[sv]=Information om ledigt utrymme
+Name[uk]=Сповіщення про вільне місце
 Name[x-test]=xxFree Space Notifierxx
 Comment=Warns when running out of space on your home folder
+Comment[lt]=Įspėja, kai namų aplanke baigiasi laisva vieta
+Comment[pt]=Avisa de estiver com falta de espaço na sua pasta pessoal
+Comment[pt_BR]=Avisa quando ficar sem espaço na sua pasta pessoal
+Comment[sv]=Varnar när utrymmet i hemkatalogen håller på att ta slut
+Comment[uk]=Попереджає, якщо у домашній теці залишається мало місця
 Comment[x-test]=xxWarns when running out of space on your home folderxx
 Type=Service
 X-KDE-ServiceTypes=KDEDModule

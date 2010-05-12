@@ -1,7 +1,17 @@
 [Desktop Entry]
 Name=Device Notifications
+Name[lt]=Pranešimai apie įrenginius
+Name[pt]=Notificações de Dispositivos
+Name[pt_BR]=Notificações de dispositivos
+Name[sv]=Enhetsunderrättelser
+Name[uk]=Сповіщення про пристрої
 Name[x-test]=xxDevice Notificationsxx
 Comment=Passive device notifications for the user.
+Comment[lt]=Pasyvūs pranešimai vartotojui apie įrenginius.
+Comment[pt]=Notificações passivas de dispositivos para o utilizador.
+Comment[pt_BR]=Notificações passivas de dispositivos para o usuário.
+Comment[sv]=Passiva enhetsunderrättelser för användaren.
+Comment[uk]=Пасивні сповіщення користувача щодо пристроїв.
 Comment[x-test]=xxPassive device notifications for the user.xx
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service

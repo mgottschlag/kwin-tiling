@@ -1,8 +1,18 @@
 [Global]
 IconName=drive-harddisk
 Comment=KDE Free Space Notifier Daemon
+Comment[lt]=KDE laisvos vietos pranešimų demonas
+Comment[pt]=Servidor de Notificação de Espaço Livre do KDE
+Comment[pt_BR]=Serviço de notificação de espaço livre do KDE
+Comment[sv]=KDE:s demon för information om ledigt utrymme
+Comment[uk]=Фонова служба сповіщення про переповнення диска KDE
 Comment[x-test]=xxKDE Free Space Notifier Daemonxx
 Name=Low Disk Space
+Name[lt]=Mažai vietos diske
+Name[pt]=Pouco Espaço em Disco
+Name[pt_BR]=Pouco espaço livre
+Name[sv]=Ont om diskutrymme
+Name[uk]=Замало місця на диску
 Name[x-test]=xxLow Disk Spacexx
 
 [Context/warningnot]
@@ -160,8 +170,18 @@ Comment[zh_TW]=用於警告通知
 
 [Event/freespacenotif]
 Name=Running low on disk space
+Name[lt]=Diske liko mažai vietos
+Name[pt]=Pouco espaço livre em disco
+Name[pt_BR]=Pouco espaço livre em disco
+Name[sv]=Diskutrymmet håller på att ta slut
+Name[uk]=Замало місця на диску
 Name[x-test]=xxRunning low on disk spacexx
 Comment=You are running low on disk space
+Comment[lt]=Jūsų diske liko mažai vietos
+Comment[pt]=Está a ficar com pouco espaço livre em disco
+Comment[pt_BR]=Você tem pouco espaço livre em disco
+Comment[sv]=Diskutrymmet håller på att ta slut
+Comment[uk]=На вашому диску залишилося замало місця
 Comment[x-test]=xxYou are running low on disk spacexx
 Contexts=warningnot
 Action=Popup

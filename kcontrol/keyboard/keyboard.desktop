@@ -10,4 +10,9 @@ X-KDE-Kded-phase=1
 OnlyShowIn=KDE;
 
 Name=Keyboard Daemon
+Name[lt]=Klaviatūros demonas
+Name[pt]=Servidor do Teclado
+Name[pt_BR]=Daemon de teclado
+Name[sv]=Tangentbordsdemon
+Name[uk]=Фонова служба клавіатури
 Name[x-test]=xxKeyboard Daemonxx

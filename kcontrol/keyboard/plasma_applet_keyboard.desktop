@@ -88,6 +88,11 @@ Name[x-test]=xxKeyboard Layoutxx
 Name[zh_CN]=键盘布局
 Name[zh_TW]=鍵盤配置
 Comment=Applet to display and switch layouts
+Comment[lt]=Įskiepis išdėliojimų rodymui ir perjungimui
+Comment[pt]='Applet' para mostrar e mudar de disposições
+Comment[pt_BR]=Miniaplicativo para exibir e alternar leiautes
+Comment[sv]=Miniprogram för att visa och byta layout
+Comment[uk]=Аплет для показу та перемикання розкладок
 Comment[x-test]=xxApplet to display and switch layoutsxx
 
 Icon=preferences-desktop-keyboard
