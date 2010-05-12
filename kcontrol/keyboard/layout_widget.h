@@ -27,7 +27,6 @@
 #include "x11_helper.h"
 
 class QPushButton;
-class QPixmap;
 class KeyboardConfig;
 
 /**
