@@ -699,6 +699,7 @@ Plasma::Corona* PlasmaApp::corona()
         activityAction->setData(Plasma::AbstractToolBox::ConfigureTool);
         activityAction->setShortcut(KShortcut("alt+d, alt+a"));
         activityAction->setShortcutContext(Qt::ApplicationShortcut);
+        activityAction->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_Q));
 
         c->updateShortcuts();
 
