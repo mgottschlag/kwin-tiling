@@ -70,7 +70,7 @@ void WindowedWidgetsRunner::match(Plasma::RunnerContext &context)
                 match.setRelevance(1);
             } else {
                 match.setType(Plasma::QueryMatch::PossibleMatch);
-                match.setRelevance(0.5);
+                match.setRelevance(0.7);
             }
             matches << match;
 
