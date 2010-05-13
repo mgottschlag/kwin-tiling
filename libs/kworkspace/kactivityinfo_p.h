@@ -23,38 +23,19 @@
 #include "nepomukactivitiesservice_interface.h"
 #include "kactivityinfo.h"
 
-class KActivityInfoStaticPrivate: public QObject {
-    Q_OBJECT
-
-public:
-    static KActivityInfoStaticPrivate * self();
-
-    QHash < QString , KActivityInfo * > infoObjects;
-
-    org::kde::ActivityManager * manager();
-    org::kde::nepomuk::services::NepomukActivitiesService * store();
-
-    KUrl urlForType(KActivityInfo::ResourceType resourceType);
-
-private Q_SLOTS:
-    void activityNameChanged(const QString & id, const QString & name);
-
-private:
-    KActivityInfoStaticPrivate();
-
-    static KActivityInfoStaticPrivate * m_instance;
-
-    org::kde::nepomuk::services::NepomukActivitiesService * m_store;
-    org::kde::ActivityManager * m_manager;
-
-};
-
 class KActivityInfo::Private {
 public:
+    Private(KActivityInfo *info, const QString &activityId);
+
+    KUrl urlForType(KActivityInfo::ResourceType resourceType) const;
+    void activityNameChanged(const QString &, const QString &) const;
+
+    KActivityInfo *q;
     QString id;
 
-    void emitActivityNameChanged();
-
+    //TODO: reference counted
+    static org::kde::nepomuk::services::NepomukActivitiesService * s_store;
+    static org::kde::ActivityManager * s_manager;
 };
 
 #endif // ACTIVITY_INFO_PH

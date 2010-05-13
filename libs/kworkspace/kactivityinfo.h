@@ -44,13 +44,13 @@ class KDE_EXPORT KActivityInfo: public QObject {
     Q_PROPERTY(QString name READ name)
 
 public:
+    explicit KActivityInfo(const QString & activityId, QObject *parent);
+    ~KActivityInfo();
+
     /**
-     * @param activityId Id of the activity
-     * @returns activity info object for the specified activity. If
-     * the activity with the specified ID doesn't exist, NULL is
-     * returned.
+     * @return true if the activity represented by this object exists and is valid
      */
-    static KActivityInfo * forActivity(const QString & activityId);
+    bool isValid() const;
 
     /**
      * Set of predefined resource types provided for convenience
@@ -147,11 +147,9 @@ Q_SIGNALS:
     void nameChanged(const QString & newName);
 
 private:
-    explicit KActivityInfo(const QString & activityId);
-    ~KActivityInfo();
-
     class Private;
     Private * const d;
+    Q_PRIVATE_SLOT(d, void activityNameChanged(const QString &, const QString &))
 };
 
 #endif // ACTIVITY_INFO_H

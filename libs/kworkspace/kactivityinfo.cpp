@@ -27,51 +27,31 @@
 
 // Private
 
-KActivityInfoStaticPrivate * KActivityInfoStaticPrivate::m_instance = NULL;
+org::kde::nepomuk::services::NepomukActivitiesService * KActivityInfo::Private::s_store = 0;
+org::kde::ActivityManager * KActivityInfo::Private::s_manager = 0;
 
-KActivityInfoStaticPrivate::KActivityInfoStaticPrivate()
-    : QObject(), m_store(NULL), m_manager(NULL)
+KActivityInfo::Private::Private(KActivityInfo *info, const QString &activityId)
+    : q(info),
+      id(activityId)
 {
-    connect(manager(), SIGNAL(ActivityNameChanged(const QString &, const QString &)),
-        this, SLOT(activityNameChanged(const QString &, const QString &)));
-}
-
-KActivityInfoStaticPrivate * KActivityInfoStaticPrivate::self()
-{
-    if (!m_instance) {
-        m_instance = new KActivityInfoStaticPrivate();
-    }
-
-    return m_instance;
-}
-
-org::kde::ActivityManager * KActivityInfoStaticPrivate::manager()
-{
-    if (!m_manager) {
-        m_manager = new org::kde::ActivityManager(
-                "org.kde.ActivityManager",
-                "/ActivityManager",
-                QDBusConnection::sessionBus()
-                );
-    }
-
-    return m_manager;
-}
-
-org::kde::nepomuk::services::NepomukActivitiesService * KActivityInfoStaticPrivate::store()
-{
-    if (!m_store) {
-        m_store = new org::kde::nepomuk::services::NepomukActivitiesService(
+    if (!s_store) {
+        s_store = new org::kde::nepomuk::services::NepomukActivitiesService(
                 "org.kde.nepomuk.services.nepomukactivitiesservice",
                 "/nepomukactivitiesservice",
                 QDBusConnection::sessionBus()
                 );
     }
 
-    return m_store;
+    if (!s_manager) {
+        s_manager = new org::kde::ActivityManager(
+                "org.kde.ActivityManager",
+                "/ActivityManager",
+                QDBusConnection::sessionBus()
+                );
+    }
 }
 
-KUrl KActivityInfoStaticPrivate::urlForType(KActivityInfo::ResourceType resourceType)
+KUrl KActivityInfo::Private::urlForType(KActivityInfo::ResourceType resourceType) const
 {
     switch (resourceType) {
         case KActivityInfo::DocumentResource:
@@ -94,28 +74,21 @@ KUrl KActivityInfoStaticPrivate::urlForType(KActivityInfo::ResourceType resource
     }
 }
 
-void KActivityInfoStaticPrivate::activityNameChanged(const QString & id, const QString & name)
+void KActivityInfo::Private::activityNameChanged(const QString &idChanged, const QString &toId) const
 {
-    if (!infoObjects.contains(id)) {
-        return;
+    if (idChanged == id) {
+        emit q->nameChanged(toId);
     }
-
-    kDebug() <<
-    KActivityInfo::staticMetaObject.invokeMethod(
-        infoObjects[id],
-        "nameChanged",
-        Qt::QueuedConnection,
-        Q_ARG(QString, name)
-    );
-
 }
 
 // KActivityInfo
-
-KActivityInfo::KActivityInfo(const QString & activityId)
-    : d(new Private())
+KActivityInfo::KActivityInfo(const QString &activityId, QObject *parent)
+    : QObject(parent),
+      d(new Private(this, activityId))
 {
     d->id = activityId;
+    connect(Private::s_manager, SIGNAL(ActivityNameChanged(const QString &, const QString &)),
+            this, SLOT(activityNameChanged(const QString &, const QString &)));
 }
 
 KActivityInfo::~KActivityInfo()
@@ -123,51 +96,38 @@ KActivityInfo::~KActivityInfo()
     delete d;
 }
 
-KActivityInfo * KActivityInfo::forActivity(const QString & id)
+bool KActivityInfo::isValid() const
 {
-    if (!KActivityInfoStaticPrivate::self()->manager()->AvailableActivities().value().contains(id) &&
-            !KActivityInfoStaticPrivate::self()->store()->listAvailable().value().contains(id)) {
-        kDebug() << (void *)KActivityInfoStaticPrivate::self()->store() << id << "not found in registered activities"
-            << " org.kde.ActivityManager: "
-                << KActivityInfoStaticPrivate::self()->manager()->AvailableActivities().value()
-            << " org.kde.nepomuk.services.nepomukactivitiesservice: "
-                << KActivityInfoStaticPrivate::self()->store()->listAvailable().value();
-        return 0;
-    }
-
-    if (!KActivityInfoStaticPrivate::self()->infoObjects[id]) {
-        KActivityInfoStaticPrivate::self()->infoObjects[id] = new KActivityInfo(id);
-    }
-
-    return KActivityInfoStaticPrivate::self()->infoObjects[id];
+    return Private::s_manager->AvailableActivities().value().contains(d->id) ||
+           Private::s_store->listAvailable().value().contains(d->id);
 }
 
 void KActivityInfo::associateResource(const KUrl & resource, ResourceType resourceType)
 {
-    associateResource(resource, KActivityInfoStaticPrivate::self()->urlForType(resourceType));
+    associateResource(resource, d->urlForType(resourceType));
 }
 
 void KActivityInfo::associateResource(const KUrl & resource, const KUrl & resourceType)
 {
-    KActivityInfoStaticPrivate::self()->store()
+    Private::s_store
         ->associateResource(d->id, resource.url(), resourceType.url());
 }
 
 void KActivityInfo::disassociateResource(const KUrl & resource)
 {
-    KActivityInfoStaticPrivate::self()->store()
+    Private::s_store
         ->disassociateResource(d->id, resource.url());
 }
 
 QList < KUrl > KActivityInfo::associatedResources(ResourceType resourceType) const
 {
-    return associatedResources(KActivityInfoStaticPrivate::self()->urlForType(resourceType));
+    return associatedResources(d->urlForType(resourceType));
 }
 
 QList < KUrl > KActivityInfo::associatedResources(const KUrl & resourceType) const
 {
     QList < KUrl > result;
-    QStringList associatedResources = KActivityInfoStaticPrivate::self()->store()
+    QStringList associatedResources = Private::s_store
         ->associatedResources(d->id, resourceType.url());
 
     foreach (const QString & uri, associatedResources) {
@@ -179,12 +139,12 @@ QList < KUrl > KActivityInfo::associatedResources(const KUrl & resourceType) con
 
 KUrl KActivityInfo::uri() const
 {
-    return KUrl(KActivityInfoStaticPrivate::self()->store()->uri(d->id));
+    return KUrl(Private::s_store->uri(d->id));
 }
 
 KUrl KActivityInfo::resourceUri() const
 {
-    return KUrl(KActivityInfoStaticPrivate::self()->store()->resourceUri(d->id));
+    return KUrl(Private::s_store->resourceUri(d->id));
 }
 
 QString KActivityInfo::id() const
@@ -194,16 +154,18 @@ QString KActivityInfo::id() const
 
 QString KActivityInfo::name() const
 {
-    return KActivityInfoStaticPrivate::self()->manager()->ActivityName(d->id);
+    return Private::s_manager->ActivityName(d->id);
 }
 
 QString KActivityInfo::icon() const
 {
-    return KActivityInfoStaticPrivate::self()->manager()->ActivityIcon(d->id);
+    return Private::s_manager->ActivityIcon(d->id);
 }
 
 QString KActivityInfo::name(const QString & id)
 {
-    return KActivityInfoStaticPrivate::self()->manager()->ActivityName(id);
+    return Private::s_manager->ActivityName(id);
 }
+
+#include "kactivityinfo.moc"
 
