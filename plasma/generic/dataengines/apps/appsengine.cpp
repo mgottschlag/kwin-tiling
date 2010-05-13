@@ -19,6 +19,8 @@
 #include "appsengine.h"
 #include "appsource.h"
 
+#include <KSycoca>
+
 AppsEngine::AppsEngine(QObject *parent, const QVariantList &args) :
     Plasma::DataEngine(parent, args)
 {
@@ -29,6 +31,20 @@ AppsEngine::~AppsEngine()
 {
 }
 
+void AppsEngine::init()
+{
+    addGroup(KServiceGroup::root());
+    connect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)), this, SLOT(sycocaChanged(QStringList)));
+}
+
+void AppsEngine::sycocaChanged(const QStringList &changes)
+{
+    if (changes.contains("apps") || changes.contains("xdgdata-apps")) {
+        removeAllSources();
+        init();
+    }
+}
+
 Plasma::Service *AppsEngine::serviceForSource(const QString &name)
 {
     AppSource *source = dynamic_cast<AppSource*>(containerForSource(name));
@@ -36,6 +52,7 @@ Plasma::Service *AppsEngine::serviceForSource(const QString &name)
     if (!source) {
         return Plasma::DataEngine::serviceForSource(name);
     }
+
     // if source represents a group or something, return null service
     if (!source->isApp()) {
         return Plasma::DataEngine::serviceForSource(name);
@@ -44,12 +61,6 @@ Plasma::Service *AppsEngine::serviceForSource(const QString &name)
     Plasma::Service *service = source->createService();
     service->setParent(this);
     return service;
-}
-
-void AppsEngine::init()
-{
-    addGroup(KServiceGroup::root());
-    //TODO find a way to listen for changes
 }
 
 void AppsEngine::addGroup(KServiceGroup::Ptr group)
