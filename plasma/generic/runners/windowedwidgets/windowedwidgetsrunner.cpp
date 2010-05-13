@@ -61,13 +61,15 @@ void WindowedWidgetsRunner::match(Plasma::RunnerContext &context)
         //TODO: distinguish between exact and partial
         if ((service->name().contains(term) ||
              service->genericName().contains(term) ||
-             service->comment().contains(term)) &&
+             service->comment().contains(term)) ||
              service->categories().contains(term)) {
             Plasma::QueryMatch match(this);
             match.setType(Plasma::QueryMatch::ExactMatch);
             setupMatch(service, match);
             match.setRelevance(1);
             matches << match;
+
+            kDebug() << service;
         }
     }
 
@@ -104,6 +106,22 @@ void WindowedWidgetsRunner::setupMatch(const KService::Ptr &service, Plasma::Que
         match.setIcon(KIcon(service->icon()));
     }
 }
+
+QMimeData * WindowedWidgetsRunner::mimeDataForMatch(const Plasma::QueryMatch *match)
+{
+    KService::Ptr service = KService::serviceByStorageId(match->data().toString());
+    if (service) {
+
+        QMimeData *data = new QMimeData();
+        data->setData("text/x-plasmoidservicename",
+                      service->property("X-KDE-PluginInfo-Name", QVariant::String).toString().toUtf8());
+        return data;
+
+    }
+
+    return 0;
+}
+
 
 #include "windowedwidgetsrunner.moc"
 
