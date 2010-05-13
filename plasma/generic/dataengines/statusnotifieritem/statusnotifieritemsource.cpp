@@ -137,12 +137,12 @@ void StatusNotifierItemSource::refresh()
 void StatusNotifierItemSource::refreshCallback(QDBusPendingCallWatcher *call)
 {
     QDBusPendingReply<QVariantMap> reply = *call;
-    QVariantMap properties = reply.argumentAt<0>();
     if (reply.isError()) {
         m_valid = false;
     } else {
         //IconThemePath (handle this one first, because it has an impact on
         //others)
+        QVariantMap properties = reply.argumentAt<0>();
         if (!m_customIconLoader) {
             QString path = properties["IconThemePath"].toString();
             if (!path.isEmpty()) {
