@@ -20,7 +20,7 @@ IntensityEffect=0
 
 [Colors:Button]
 BackgroundAlternate=224,223,222
-BackgroundNormal=211,205,202
+BackgroundNormal=207,204,201
 DecorationFocus=58,167,221
 DecorationHover=110,214,255
 ForegroundActive=255,128,224
@@ -48,7 +48,7 @@ ForegroundVisited=69,40,134
 
 [Colors:Tooltip]
 BackgroundAlternate=196,224,255
-BackgroundNormal=192,218,255
+BackgroundNormal=190,223,255
 DecorationFocus=58,167,221
 DecorationHover=110,214,255
 ForegroundActive=255,128,224
@@ -76,7 +76,7 @@ ForegroundVisited=100,74,155
 
 [Colors:Window]
 BackgroundAlternate=218,217,216
-BackgroundNormal=219,215,212
+BackgroundNormal=213,209,207
 DecorationFocus=58,167,221
 DecorationHover=110,214,255
 ForegroundActive=255,128,224
@@ -91,6 +91,9 @@ ForegroundVisited=100,74,155
 [General]
 Name=Oxygen
 shadeSortColumn=true
+
+[KDE]
+contrast=8
 
 [WM]
 activeBackground=48,174,232

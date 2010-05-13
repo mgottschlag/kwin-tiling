@@ -58,10 +58,10 @@ void KColorCm::WindecoColors::load(const KSharedConfigPtr &config)
 {
     // NOTE: keep this in sync with kdelibs/kdeui/kernel/kglobalsettings.cpp
     KConfigGroup group(config, "WM");
-    m_colors[ActiveBackground] = group.readEntry("activeBackground", QColor(96, 148, 207));
+    m_colors[ActiveBackground] = group.readEntry("activeBackground", QColor(48, 174, 232));
     m_colors[ActiveForeground] = group.readEntry("activeForeground", QColor(255, 255, 255));
     m_colors[InactiveBackground] = group.readEntry("inactiveBackground", QColor(224, 223, 222));
-    m_colors[InactiveForeground] = group.readEntry("inactiveForeground", QColor(20, 19, 18));
+    m_colors[InactiveForeground] = group.readEntry("inactiveForeground", QColor(75, 71, 67));
 }
 
 QColor KColorCm::WindecoColors::color(WindecoColors::Role role) const
@@ -184,7 +184,7 @@ void KColorCm::updateEffectsPage()
     {
         disabledColorSlider->setValue(int(groupD.readEntry("ColorAmount", 0.0) * 20.0) + 20);
     }
-    disabledColorButton->setColor(groupD.readEntry("Color", QColor(112, 111, 110)));
+    disabledColorButton->setColor(groupD.readEntry("Color", QColor(56, 56, 56)));
     disabledContrastBox->setCurrentIndex(groupD.readEntry("ContrastEffect", 1));
     disabledContrastSlider->setValue(int(groupD.readEntry("ContrastAmount", 0.65) * 20.0));
 
@@ -1169,7 +1169,7 @@ void KColorCm::loadInternal(bool loadOptions)
         useInactiveEffects->setCheckState(group.readEntry("Enable", false) ? Qt::Checked : Qt::Unchecked);
         // NOTE: keep this in sync with kdelibs/kdeui/colors/kcolorscheme.cpp
         // NOTE: remove extra logic from updateFromOptions and on_useInactiveEffects_stateChanged when this changes!
-        inactiveSelectionEffect->setCheckState(group.readEntry("ChangeSelectionColor", group.readEntry("Enable", false))
+        inactiveSelectionEffect->setCheckState(group.readEntry("ChangeSelectionColor", group.readEntry("Enable", true))
                                                ? Qt::Checked : Qt::Unchecked);
     }
 
