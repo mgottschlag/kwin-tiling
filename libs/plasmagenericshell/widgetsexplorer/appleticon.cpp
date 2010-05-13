@@ -30,6 +30,7 @@ AppletIconWidget::AppletIconWidget(PlasmaAppletItem *appletItem)
 {
     if (appletItem) {
         setName(appletItem->name());
+        setDraggable(true);
     }
 }
 

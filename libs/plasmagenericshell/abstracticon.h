@@ -75,6 +75,9 @@ class PLASMAGENERICSHELL_EXPORT AbstractIcon : public QGraphicsWidget
         void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
         QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const;
 
+        bool isDraggable() const;
+        void setDraggable(bool draggable);
+
     private:
         QString m_name;
         int m_iconHeight;

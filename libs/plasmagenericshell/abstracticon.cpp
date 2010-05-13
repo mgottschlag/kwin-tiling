@@ -45,7 +45,6 @@ AbstractIcon::AbstractIcon(QGraphicsItem *parent)
 {
     setCacheMode(DeviceCoordinateCache);
     setAcceptHoverEvents(true);
-    setCursor(Qt::OpenHandCursor);
 }
 
 AbstractIcon::~AbstractIcon()
@@ -112,6 +111,9 @@ void AbstractIcon::hoverEnterEvent(QGraphicsSceneHoverEvent *)
 {
     m_hovered = true;
     emit(hoverEnter(this));
+    QMimeData *data = mimeData();
+    if (data && !data->formats().isEmpty()) {
+    }
 }
 
 void AbstractIcon::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
@@ -136,6 +138,8 @@ void AbstractIcon::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             drag->exec();
 
             setCursor(Qt::OpenHandCursor);
+        } else {
+            delete data;
         }
     }
 }
@@ -143,7 +147,10 @@ void AbstractIcon::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void AbstractIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsWidget::mouseReleaseEvent(event);
-    setCursor(Qt::OpenHandCursor);
+    if (isDraggable()) {
+        setCursor(Qt::OpenHandCursor);
+    }
+
     if (boundingRect().contains(event->pos())) {
         emit(clicked(this));
     }
@@ -169,6 +176,21 @@ void AbstractIcon::setSelected(bool selected)
 bool AbstractIcon::isSelected() const
 {
     return m_selected;
+}
+
+bool AbstractIcon::isDraggable() const
+{
+    return cursor().shape() == Qt::OpenHandCursor ||
+           cursor().shape() == Qt::ClosedHandCursor;
+}
+
+void AbstractIcon::setDraggable(bool draggable)
+{
+    if (draggable) {
+        setCursor(Qt::OpenHandCursor);
+    } else {
+        unsetCursor();
+    }
 }
 
 void AbstractIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
