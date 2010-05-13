@@ -137,7 +137,7 @@ void AbstractSortingStrategy::check(AbstractGroupableItem *itemToCheck)
     }
 
     if (!item->parentGroup()) {
-        kDebug() << "No parent group";
+        //kDebug() << "No parent group";
         return;
     }
 
