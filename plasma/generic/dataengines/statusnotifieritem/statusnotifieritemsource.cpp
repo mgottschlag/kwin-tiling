@@ -89,6 +89,7 @@ StatusNotifierItemSource::StatusNotifierItemSource(const QString &notifierItemId
 
     m_valid = !service.isEmpty() && m_statusNotifierItemInterface->isValid();
     if (m_valid) {
+        connect(m_statusNotifierItemInterface, SIGNAL(NewTitle()), this, SLOT(refresh()));
         connect(m_statusNotifierItemInterface, SIGNAL(NewIcon()), this, SLOT(refresh()));
         connect(m_statusNotifierItemInterface, SIGNAL(NewAttentionIcon()), this, SLOT(refresh()));
         connect(m_statusNotifierItemInterface, SIGNAL(NewOverlayIcon()), this, SLOT(refresh()));
