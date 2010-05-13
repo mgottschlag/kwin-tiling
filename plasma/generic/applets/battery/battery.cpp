@@ -544,7 +544,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
                 Plasma::IconWidget *suspendButton = new Plasma::IconWidget(m_controls);
                 suspendButton->setPreferredIconSize(QSizeF(KIconLoader::SizeSmall, KIconLoader::SizeSmall));
                 suspendButton->setIcon("system-suspend");
-                suspendButton->setText(i18n("Sleep"));
+                suspendButton->setText(i18nc("Suspend the computer to RAM; translation should be short", "Sleep"));
                 suspendButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
                 suspendButton->setOrientation(Qt::Horizontal);
 
@@ -558,7 +558,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
                 Plasma::IconWidget *hibernateButton = new Plasma::IconWidget(m_controls);
                 hibernateButton->setPreferredIconSize(QSizeF(KIconLoader::SizeSmall, KIconLoader::SizeSmall));
                 hibernateButton->setIcon("system-suspend-hibernate");
-                hibernateButton->setText(i18n("Hibernate"));
+                hibernateButton->setText(i18nc("Suspend the computer to disk; translation should be short", "Hibernate"));
                 hibernateButton->setOrientation(Qt::Horizontal);
 
                 hibernateButton->setDrawBackground(true);
