@@ -1,5 +1,7 @@
 [Desktop Entry]
 Name=Device Notifications
+Name[ia]=Notificationes de dispositivo
+Name[km]=ការ​​ជូន​ដំណឹង​​ឧបករណ៍
 Name[lt]=Pranešimai apie įrenginius
 Name[pt]=Notificações de Dispositivos
 Name[pt_BR]=Notificações de dispositivos
@@ -7,6 +9,8 @@ Name[sv]=Enhetsunderrättelser
 Name[uk]=Сповіщення про пристрої
 Name[x-test]=xxDevice Notificationsxx
 Comment=Passive device notifications for the user.
+Comment[ia]=Notificationes de dispositivo passive pro le usator.
+Comment[km]=ការ​ជូនដំណឹង​ឧបករណ៍​សកម្ម​សម្រាប់​អ្នក​ប្រើ ។
 Comment[lt]=Pasyvūs pranešimai vartotojui apie įrenginius.
 Comment[pt]=Notificações passivas de dispositivos para o utilizador.
 Comment[pt_BR]=Notificações passivas de dispositivos para o usuário.

@@ -1,5 +1,7 @@
 [Desktop Entry]
 Name=Free Space Notifier
+Name[ia]=Notificator de Spatio libere
+Name[km]=កម្មវិធី​ជូនដំណឹង​​ទំហំ​ទំនេរ
 Name[lt]=Laisvos vietos pranešėjas
 Name[pt]=Notificação de Espaço Livre
 Name[pt_BR]=Notificação de espaço livre
@@ -7,6 +9,8 @@ Name[sv]=Information om ledigt utrymme
 Name[uk]=Сповіщення про вільне місце
 Name[x-test]=xxFree Space Notifierxx
 Comment=Warns when running out of space on your home folder
+Comment[ia]=Il avisa quando il termina le spatio su tu classificator domo
+Comment[km]=ព្រមាន នៅពេល​ដំណើរការ​អស់ទំហំ​នៅ​លើ​ក្នុង​​ផ្ទះ​របស់​អ្នក
 Comment[lt]=Įspėja, kai namų aplanke baigiasi laisva vieta
 Comment[pt]=Avisa de estiver com falta de espaço na sua pasta pessoal
 Comment[pt_BR]=Avisa quando ficar sem espaço na sua pasta pessoal
