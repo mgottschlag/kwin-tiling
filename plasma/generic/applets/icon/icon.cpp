@@ -317,13 +317,11 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
     }
 
     KUrl::List urls = KUrl::List::fromMimeData(event->mimeData());
-
-    if (!urls.isEmpty()) {
-        event->accept();
-    } else {
+    if (urls.isEmpty()) {
         return;
     }
 
+    event->accept();
 
     if (m_url.isEmpty()) {
         setUrl(urls.first());
@@ -338,9 +336,9 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
     KMimeType::Ptr mimetype = KMimeType::findByUrl(m_url);
 
     if (m_url.isLocalFile() &&
-        (mimetype && (mimetype->is("application/x-executable") ||
-                      mimetype->is("application/x-shellscript")) ||
-         KDesktopFile::isDesktopFile(m_url.toLocalFile()))) {
+        ((mimetype && (mimetype->is("application/x-executable") ||
+                       mimetype->is("application/x-shellscript"))) ||
+          KDesktopFile::isDesktopFile(m_url.toLocalFile()))) {
 
         //Parameters
         QString params;
@@ -356,26 +354,8 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
         QString commandStr;
         //Extract the command from the Desktop file
         if (KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
-            KDesktopFile f(m_url.toLocalFile());
-            KConfigGroup config = f.desktopGroup();
-            commandStr = config.readPathEntry( "Exec", QString() );
-
-            if (commandStr.isEmpty()) {
-                QString path = f.readUrl();
-                if (path.isEmpty()) {
-                    path = f.readPath();
-                }
-
-                if (path.isEmpty()) {
-                    return;
-                }
-
-                KUrl dest(path);
-                KMimeType::Ptr mime = KMimeType::findByUrl(dest);
-                if (mimetype->is("inode/directory")) {
-                    dropUrls(urls, dest, event->modifiers());
-                }
-            }
+            KService service(m_url.toLocalFile());
+            KRun::run(service, urls, 0);
         } else {
             //Else just exec the local executable
             commandStr = KShell::quoteArg(m_url.path());
