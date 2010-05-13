@@ -41,9 +41,9 @@
 #include "activity.h"
 
 Activity::Activity(const QString &id, QObject *parent)
-    :QObject(parent),
-    m_id(id),
-    m_info(KActivityInfo::forActivity(id))
+    : QObject(parent),
+      m_id(id),
+      m_info(new KActivityInfo(id, this))
 {
     if (m_info) {
         m_name = m_info->name();
@@ -210,5 +210,6 @@ void Activity::open()
     external.sync();
 }
 
+#include "activity.moc"
 
 // vim: sw=4 sts=4 et tw=100
