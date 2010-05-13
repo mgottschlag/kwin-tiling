@@ -1266,6 +1266,32 @@ void PanelView::unhide(bool destroyTrigger)
     }
 }
 
+void PanelView::mousePressEvent(QMouseEvent *event)
+{
+    Plasma::Containment *cont = containment();
+    if (cont) {
+        Plasma::Corona *c = cont->corona();
+        if (c) {
+            if (QGraphicsItem *item = c->itemAt(event->pos())) {
+                QPointF point = mapToScene(event->pos());
+                point = cont->mapFromScene(point);
+                Plasma::Applet *hoverApplet = 0;
+                foreach (Plasma::Applet *applet, cont->applets()) {
+                    if (applet->geometry().contains(point)) {
+                        hoverApplet = applet;
+                        break;
+                    }
+                }
+                if (hoverApplet && hoverApplet->status() == Plasma::AcceptingInputStatus) {
+                    KWindowSystem::forceActiveWindow(winId());
+                }
+            }
+        }
+    }
+
+    Plasma::View::mousePressEvent(event);
+}
+
 void PanelView::checkUnhide(Plasma::ItemStatus newStatus)
 {
     //kDebug() << "================= got a new status: " << newStatus << Plasma::ActiveStatus;

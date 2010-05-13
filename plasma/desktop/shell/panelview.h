@@ -209,6 +209,7 @@ protected:
     void dragLeaveEvent(QDragLeaveEvent *event);
     void dropEvent(QDropEvent *event);
     void enterEvent(QEvent *event);
+    void mousePressEvent(QMouseEvent *event);
 
 private:
     void createUnhideTrigger();
