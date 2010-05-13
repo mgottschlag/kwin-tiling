@@ -127,7 +127,7 @@ static const char* KEYBOARD_KDED_NAME = "keyboard";
 
 static void initializeKeyboardSettings()
 {
-	KCMiscKeyboardWidget::init_keyboard();
+	init_keyboard_hardware();
 
 	KeyboardConfig config;
 	config.load();

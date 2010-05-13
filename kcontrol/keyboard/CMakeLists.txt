@@ -101,6 +101,7 @@ set(kcm_keyboard_PART_SRCS
   flags.cpp
   iso_codes.cpp
   kcmmisc.cpp
+  keyboard_hardware.cpp
 )
 
 

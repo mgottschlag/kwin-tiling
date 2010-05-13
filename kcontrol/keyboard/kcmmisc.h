@@ -42,8 +42,6 @@ public:
 
   QString quickHelp() const;
 
-  static void init_keyboard();
-  
 private slots:
   void changed();
 
@@ -73,6 +71,7 @@ private:
 
 void numlockx_change_numlock_state( bool set_P );
 void set_repeatrate(int delay, double rate);
+void init_keyboard_hardware();
 
 #endif
 
