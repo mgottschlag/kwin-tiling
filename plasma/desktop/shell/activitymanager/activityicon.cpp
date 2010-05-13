@@ -32,6 +32,7 @@ ActivityIcon::ActivityIcon(const QString &id)
     :AbstractIcon(0),
     m_removeIcon("edit-delete"),
     m_stopIcon("media-playback-stop"),
+    m_playIcon("media-playback-start"),
     m_activity(new Activity(id, this))
 {
     connect(this, SIGNAL(clicked(Plasma::AbstractIcon*)), m_activity, SLOT(activate()));
@@ -49,8 +50,8 @@ QPixmap ActivityIcon::pixmap(const QSize &size)
     // while the default one is an identicon
     return KIdenticonGenerator::self()->generate(size.width(), m_activity->id());
     //return m_icon.pixmap(size);
-    //FIXME use the activity thumbnail (once it's implemented).
-    //no icons, no need to customize, just a little image of the *containment*
+    //FIXME check whether Activity returns an icon, when that's implemented?
+    //maybe move this code to Activity?
 }
 
 QMimeData* ActivityIcon::mimeData()
@@ -65,7 +66,7 @@ void ActivityIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
     const QRectF rect = contentsRect();
     QSize cornerIconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
-    qreal iconX = rect.x() + qMax(0.0, (rect.width() / 2) - (iconSize() / 2)); //FIXME does the rounding error matter?
+    qreal iconX = rect.x() + qMax(0.0, (rect.width() - iconSize()) / 2.0); //icon's centered
 
     //the Remove corner-button
     qreal removeX = iconX + iconSize() - cornerIconSize.width();
@@ -73,11 +74,17 @@ void ActivityIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     painter->drawPixmap(removeX, removeY, m_removeIcon.pixmap(cornerIconSize));
 
     if (m_activity->isRunning()) {
+        //draw stop icon
         qreal stopX = iconX;
         qreal stopY = rect.y();
         painter->drawPixmap(stopX, stopY, m_stopIcon.pixmap(cornerIconSize));
     } else {
-        //TODO draw play icon, centered
+        //draw play icon, centered
+        qreal playIconSize = KIconLoader::SizeMedium;
+        qreal offset = (iconSize() - playIconSize) / 2.0;
+        qreal playX = iconX + offset;
+        qreal playY = rect.y() + offset;
+        painter->drawPixmap(playX, playY, m_playIcon.pixmap(playIconSize));
     }
 }
 
