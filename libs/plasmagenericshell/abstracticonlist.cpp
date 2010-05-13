@@ -118,35 +118,35 @@ void AbstractIconList::init()
 
     //XXX rename later
     //init window that shows the applets of the list - it clips the appletsListWidget
-    m_appletsListWindowWidget = new QGraphicsWidget(this);
-    m_appletsListWindowWidget->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
-    m_appletsListWindowWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_appletListWindowWidget = new QGraphicsWidget(this);
+    m_appletListWindowWidget->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
+    m_appletListWindowWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     //init applets list
-    m_appletsListWidget = new QGraphicsWidget(m_appletsListWindowWidget);
-    m_appletsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_appletListLinearLayout = new QGraphicsLinearLayout(m_orientation, m_appletsListWidget);
+    m_appletListWidget = new QGraphicsWidget(m_appletListWindowWidget);
+    m_appletListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_appletListLinearLayout = new QGraphicsLinearLayout(m_orientation, m_appletListWidget);
     m_appletListLinearLayout->setSpacing(0);
 
-    m_slide->setTargetWidget(m_appletsListWidget);
+    m_slide->setTargetWidget(m_appletListWidget);
 
     //make its events pass through its parent
-    m_appletsListWidget->installEventFilter(this);
-    m_appletsListWindowWidget->installEventFilter(this);
+    m_appletListWidget->installEventFilter(this);
+    m_appletListWindowWidget->installEventFilter(this);
 
     //layouts
     m_arrowsLayout = new QGraphicsLinearLayout(m_orientation);
 
     m_arrowsLayout->addItem(m_upLeftArrow);
-    m_arrowsLayout->addItem(m_appletsListWindowWidget);
+    m_arrowsLayout->addItem(m_appletListWindowWidget);
     m_arrowsLayout->addItem(m_downRightArrow);
 
     m_arrowsLayout->setAlignment(m_downRightArrow, Qt::AlignVCenter | Qt::AlignHCenter);
     m_arrowsLayout->setAlignment(m_upLeftArrow, Qt::AlignVCenter | Qt::AlignHCenter);
-    m_arrowsLayout->setAlignment(m_appletsListWindowWidget, Qt::AlignVCenter | Qt::AlignHCenter);
+    m_arrowsLayout->setAlignment(m_appletListWindowWidget, Qt::AlignVCenter | Qt::AlignHCenter);
 
-    //m_hoverIndicator = new Plasma::ItemBackground(m_appletsListWindowWidget);
-    m_hoverIndicator = new Plasma::ItemBackground(m_appletsListWidget);
+    //m_hoverIndicator = new Plasma::ItemBackground(m_appletListWindowWidget);
+    m_hoverIndicator = new Plasma::ItemBackground(m_appletListWidget);
     setLayout(m_arrowsLayout);
 }
 
@@ -157,23 +157,23 @@ bool AbstractIconList::eventFilter(QObject *obj, QEvent *event)
     if (event->type() == QEvent::GraphicsSceneResize) {
         QGraphicsWidget *widget = dynamic_cast<QGraphicsWidget *>(obj);
 
-        if (widget == m_appletsListWidget) {
+        if (widget == m_appletListWidget) {
             //the resize occurred with the list widget
             if (m_orientation == Qt::Horizontal) {
-                m_appletsListWindowWidget->setMinimumSize(0, m_appletsListWidget->minimumHeight());
+                m_appletListWindowWidget->setMinimumSize(0, m_appletListWidget->minimumHeight());
             } else {
-                m_appletsListWindowWidget->setMinimumSize(m_appletsListWidget->minimumWidth(), 0);
+                m_appletListWindowWidget->setMinimumSize(m_appletListWidget->minimumWidth(), 0);
             }
 
             manageArrows();
             return false;
-        } else if (widget == m_appletsListWindowWidget) {
+        } else if (widget == m_appletListWindowWidget) {
             // the resize occurred with the window widget
             // FIXME rename this too, eew.
             int maxVisibleIconsOnList = maximumAproxVisibleIconsOnList();
             m_scrollStep = ceil((float)maxVisibleIconsOnList/2);
             if (m_orientation == Qt::Vertical) {
-                m_appletsListWidget->setMinimumSize(m_appletsListWindowWidget->size().width(), 0);
+                m_appletListWidget->setMinimumSize(m_appletListWindowWidget->size().width(), 0);
             }
             return false;
         }
@@ -276,10 +276,10 @@ int AbstractIconList::maximumAproxVisibleIconsOnList()
     qreal maxVisibleIconsOnList;
 
     if (m_orientation == Qt::Horizontal) {
-        windowSize = m_appletsListWindowWidget->geometry().width();
+        windowSize = m_appletListWindowWidget->geometry().width();
         listTotalSize = m_appletListLinearLayout->preferredSize().width();
     } else {
-        windowSize = m_appletsListWindowWidget->geometry().height();
+        windowSize = m_appletListWindowWidget->geometry().height();
         listTotalSize = m_appletListLinearLayout->preferredSize().height();
     }
 
@@ -294,7 +294,7 @@ int AbstractIconList::maximumAproxVisibleIconsOnList()
 
 void AbstractIconList::addIcon(AbstractIcon *icon)
 {
-    icon->setParent(m_appletsListWidget); //FIXME redundant?
+    icon->setParent(m_appletListWidget); //FIXME redundant?
     qreal l, t, r, b;
     m_hoverIndicator->getContentsMargins(&l, &t, &r, &b);
     icon->setContentsMargins(l, t, r, b);
@@ -333,7 +333,7 @@ void AbstractIconList::updateList()
     //pure virtual
     updateVisibleIcons();
 
-    m_appletsListWidget->adjustSize();
+    m_appletListWidget->adjustSize();
 
     updateGeometry();
     m_hoverIndicator->hide();
@@ -451,7 +451,7 @@ void AbstractIconList::scrollStepFinished()
 
 void AbstractIconList::resetScroll()
 {
-    m_appletsListWidget->setPos(0,0);
+    m_appletListWidget->setPos(0,0);
     m_firstItemIndex = 0;
     manageArrows();
 }
@@ -477,10 +477,10 @@ void AbstractIconList::manageArrows()
 
 QRectF AbstractIconList::visibleListRect()
 {
-    QRectF visibleRect = m_appletsListWindowWidget->
-                         mapRectToItem(m_appletsListWidget, 0, 0,
-                                          m_appletsListWindowWidget->geometry().width(),
-                                          m_appletsListWindowWidget->geometry().height());
+    QRectF visibleRect = m_appletListWindowWidget->
+                         mapRectToItem(m_appletListWidget, 0, 0,
+                                          m_appletListWindowWidget->geometry().width(),
+                                          m_appletListWindowWidget->geometry().height());
 
     return visibleRect;
 }
@@ -488,27 +488,27 @@ QRectF AbstractIconList::visibleListRect()
 qreal AbstractIconList::visibleStartPosition()
 {
     if (m_orientation == Qt::Horizontal) {
-        return m_appletsListWindowWidget->mapToItem(m_appletsListWidget, m_appletsListWindowWidget->boundingRect().left(), 0).x();
+        return m_appletListWindowWidget->mapToItem(m_appletListWidget, m_appletListWindowWidget->boundingRect().left(), 0).x();
     } else {
-        return m_appletsListWindowWidget->mapToItem(m_appletsListWidget, 0, m_appletsListWindowWidget->boundingRect().top()).y();
+        return m_appletListWindowWidget->mapToItem(m_appletListWidget, 0, m_appletListWindowWidget->boundingRect().top()).y();
     }
 }
 
 qreal AbstractIconList::visibleEndPosition()
 {
     if (m_orientation == Qt::Horizontal) {
-        return m_appletsListWindowWidget->mapToItem(m_appletsListWidget, m_appletsListWindowWidget->boundingRect().right(), 0).x();
+        return m_appletListWindowWidget->mapToItem(m_appletListWidget, m_appletListWindowWidget->boundingRect().right(), 0).x();
     } else {
-        return m_appletsListWindowWidget->mapToItem(m_appletsListWidget, 0, m_appletsListWindowWidget->boundingRect().bottom()).y();
+        return m_appletListWindowWidget->mapToItem(m_appletListWidget, 0, m_appletListWindowWidget->boundingRect().bottom()).y();
     }
 }
 
 qreal AbstractIconList::listSize()
 {
     if (m_orientation == Qt::Horizontal) {
-        return m_appletsListWidget->boundingRect().size().width();
+        return m_appletListWidget->boundingRect().size().width();
     } else {
-        return m_appletsListWidget->boundingRect().size().height();
+        return m_appletListWidget->boundingRect().size().height();
     }
 }
 

@@ -139,8 +139,8 @@ private:
     QList<AbstractIcon *> m_currentAppearingAppletsOnList;
 
     QGraphicsLinearLayout *m_appletListLinearLayout;
-    QGraphicsWidget *m_appletsListWidget;
-    QGraphicsWidget *m_appletsListWindowWidget;
+    QGraphicsWidget *m_appletListWidget;
+    QGraphicsWidget *m_appletListWindowWidget;
     QGraphicsLinearLayout *m_arrowsLayout;
 
     Plasma::ToolButton *m_downRightArrow;
@@ -154,7 +154,7 @@ private:
     //index of current first item
     //nothing to do with mvc indices.
     int m_firstItemIndex;
-    
+
     AbstractIcon *m_selectedItem;
 
     QTimer *m_searchDelayTimer;
