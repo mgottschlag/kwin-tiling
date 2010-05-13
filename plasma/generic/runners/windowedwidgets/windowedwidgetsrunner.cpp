@@ -62,8 +62,7 @@ void WindowedWidgetsRunner::match(Plasma::RunnerContext &context)
         if ((service->name().contains(term) ||
              service->genericName().contains(term) ||
              service->comment().contains(term)) &&
-             service->categories().contains(term) &&
-            service->property("X-Plasma-StandAlone", QVariant::Bool).toBool()) {
+             service->categories().contains(term)) {
             Plasma::QueryMatch match(this);
             match.setType(Plasma::QueryMatch::ExactMatch);
             setupMatch(service, match);
