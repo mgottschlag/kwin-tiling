@@ -565,7 +565,9 @@ void PanelAppletOverlay::syncGeometry()
         m_nextGeom = QRectF();
     }
 
-    s_appletHandle->move(m_applet->containment()->corona()->popupPosition(m_applet, s_appletHandle->size(), Qt::AlignCenter));
+    if (m_applet->containment() && m_applet->containment()->corona()) {
+        s_appletHandle->move(m_applet->containment()->corona()->popupPosition(m_applet, s_appletHandle->size(), Qt::AlignCenter));
+    }
 }
 
 void PanelAppletOverlay::syncIndex()
