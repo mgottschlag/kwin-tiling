@@ -58,15 +58,20 @@ void WindowedWidgetsRunner::match(Plasma::RunnerContext &context)
     foreach (const KPluginInfo &info, Plasma::Applet::listAppletInfo()) {
         KService::Ptr service = info.service();
 
-        //TODO: distinguish between exact and partial
-        if ((service->name().contains(term) ||
-             service->genericName().contains(term) ||
-             service->comment().contains(term)) ||
-             service->categories().contains(term)) {
+        if ((service->name().contains(term, Qt::CaseInsensitive) ||
+             service->genericName().contains(term, Qt::CaseInsensitive) ||
+             service->comment().contains(term, Qt::CaseInsensitive)) ||
+             service->categories().contains(term, Qt::CaseInsensitive)) {
+
             Plasma::QueryMatch match(this);
-            match.setType(Plasma::QueryMatch::ExactMatch);
             setupMatch(service, match);
-            match.setRelevance(1);
+            if (service->name().compare(term, Qt::CaseInsensitive) == 0) {
+                match.setType(Plasma::QueryMatch::ExactMatch);
+                match.setRelevance(1);
+            } else {
+                match.setType(Plasma::QueryMatch::PossibleMatch);
+                match.setRelevance(0.5);
+            }
             matches << match;
 
             kDebug() << service;
