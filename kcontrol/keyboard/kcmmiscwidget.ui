@@ -112,6 +112,9 @@
         <property name="whatsThis">
          <string>If supported, this option allows you to set the delay after which a pressed key will start generating keycodes. The 'Repeat rate' option controls the frequency of these keycodes.</string>
         </property>
+        <property name="suffix">
+         <string> ms</string>
+        </property>
        </widget>
       </item>
       <item row="2" column="0">
@@ -162,6 +165,9 @@
        <widget class="KDoubleNumInput" name="rate">
         <property name="whatsThis">
          <string>If supported, this option allows you to set the rate at which keycodes are generated while a key is pressed.</string>
+        </property>
+        <property name="suffix">
+         <string> repeats/s</string>
         </property>
        </widget>
       </item>

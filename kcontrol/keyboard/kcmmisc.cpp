@@ -49,7 +49,6 @@ KCMiscKeyboardWidget::KCMiscKeyboardWidget(QWidget *parent)
 	: QWidget(parent),
 	  ui(*new Ui_KeyboardConfigWidget)
 {
-  QString wtstr;
   ui.setupUi(this);
 
   ui.delay->setRange(100, 5000, 50);
@@ -83,7 +82,6 @@ KCMiscKeyboardWidget::KCMiscKeyboardWidget(QWidget *parent)
 //  delay->setDisabled( true );
 //  rate->setDisabled( true );
 #endif
-//  lay->addStretch();
 }
 
 KCMiscKeyboardWidget::~KCMiscKeyboardWidget()
@@ -102,6 +100,8 @@ void KCMiscKeyboardWidget::setRepeat(int r, int delay_, double rate_)
     ui.repeatBox->setChecked(r == AutoRepeatModeOn);
     ui.delay->setValue(delay_);
     ui.rate->setValue(rate_);
+    delaySpinboxChanged(delay_);
+    rateSpinboxChanged(rate_);
 }
 
 void KCMiscKeyboardWidget::setClick(int v)
@@ -136,8 +136,10 @@ void KCMiscKeyboardWidget::load()
 
   bool key = config.readEntry("KeyboardRepeating", true);
   keyboardRepeat = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
-  ui.delay->setValue(config.readEntry( "RepeatDelay", 660 ));
-  ui.rate->setValue(config.readEntry( "RepeatRate", 25. ));
+  float delay = config.readEntry( "RepeatDelay", 660 );
+  float rate = config.readEntry( "RepeatRate", 25. );
+  setRepeat(keyboardRepeat, delay, rate);
+
   clickVolume = config.readEntry("ClickVolume", kbd.key_click_percent);
   numlockState = config.readEntry( "NumLock", 2 );
 

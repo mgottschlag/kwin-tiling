@@ -28,7 +28,6 @@ Layout widget:
 KCM Module:
 * allows to configure keyboard hardware, layouts and xkb options (advanced)
 
-
 Advantages (over old code):
 * One UI module to configure keyboard layouts and hardware
 * Allows to configure keyboard model/xkb options without configuring layouts
@@ -42,8 +41,3 @@ Advantages (over old code):
 
 New features:
 * Allow selection of keyboard layout by language
-
-Regressions:
-* can't configure layout short names displayed in applet (reading the previously configured names is fine)
-* applet does not start automatically when keyboard layouts are configured (first time)
-* kcm does not allow changing layout variant (need to remove and then re-add)
