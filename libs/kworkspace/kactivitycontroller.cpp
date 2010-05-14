@@ -20,17 +20,20 @@
 #include "kactivitycontrollerdbus_p.h"
 #include "kactivityconsumer_p.h"
 
+#include <KDebug>
 class KActivityController::Private {
 public:
-    QSharedPointer<KActivityControllerDbus> dbusController;
-
-    QWeakPointer<KActivityControllerDbus> sharedDBusController(org::kde::ActivityManager *manager) {
-        if (!s_dbusController) {
-            s_dbusController = new KActivityControllerDbus(manager, 0);
+    Private()
+    {
+        if (s_dbusController) {
+            dbusController = s_dbusController;
+        } else {
+            dbusController = QSharedPointer<KActivityControllerDbus>(new KActivityControllerDbus(manager(), 0));
+            s_dbusController = dbusController;
         }
-
-        return s_dbusController;
     }
+
+    QSharedPointer<KActivityControllerDbus> dbusController;
 
     org::kde::ActivityManager *manager()
     {
@@ -45,7 +48,6 @@ QWeakPointer<KActivityControllerDbus> KActivityController::Private::s_dbusContro
 KActivityController::KActivityController(QObject * parent)
     : KActivityConsumer(parent), d(new Private())
 {
-    d->dbusController = d->sharedDBusController(d->manager());
     connect(d->dbusController.data(), SIGNAL(activityAdded(QString)), this, SIGNAL(activityAdded(QString)));
     connect(d->dbusController.data(), SIGNAL(activityAdded(QString)), this, SIGNAL(activityAdded(QString)));
     connect(d->dbusController.data(), SIGNAL(activityRemoved(QString)), this, SIGNAL(activityRemoved(QString)));
