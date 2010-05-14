@@ -60,6 +60,8 @@ public:
 
 signals:
     void nameChanged(const QString &name);
+    void opened();
+    void closed();
 //TODO signals for other changes
 
 public slots:

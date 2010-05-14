@@ -147,6 +147,7 @@ void Activity::setName(const QString &name)
     if (m_name == name) {
         return;
     }
+
     m_name = name;
     emit nameChanged(name);
     //FIXME right now I'm assuming the name change came *from* nepomuk
@@ -178,6 +179,7 @@ void Activity::close()
 
     external.sync();
     m_containments.clear();
+    emit closed();
     kDebug() << "attempting to write to" << external.name();
     //FIXME only destroy it if nothing went wrong
     //TODO save a thumbnail to a file too
@@ -198,6 +200,7 @@ void Activity::open()
 
     PlasmaApp::self()->corona()->requireConfigSync();
     external.sync();
+    emit opened();
 }
 
 #include "activity.moc"
