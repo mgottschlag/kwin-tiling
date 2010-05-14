@@ -374,6 +374,7 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
         QGraphicsWidget::contextMenuEvent(e);
         return;
     }
+
     Q_ASSERT(m_applet);
     //we are the master group item
     if (m_applet == parentWidget()) {
@@ -381,8 +382,9 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
         return;
     }
 
-    QAction *a;
+    QList <QAction*> actionList;
 
+    QAction *a;
     if (!collapsed()) {
         a = new QAction(i18n("Collapse Group"), this);
         connect(a, SIGNAL(triggered()), this, SLOT(collapse()));
@@ -390,9 +392,12 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
         a = new QAction(i18n("Expand Group"), this);
         connect(a, SIGNAL(triggered()), this, SLOT(expand()));
     }
-
-    QList <QAction*> actionList;
     actionList.append(a);
+
+    a = m_applet->action("configure");
+    if (a && a->isEnabled()) {
+        actionList.append(a);
+    }
 
     TaskManager::BasicMenu menu(qobject_cast<QWidget*>(this), m_group.data(), &m_applet->groupManager(), actionList);
     menu.adjustSize();

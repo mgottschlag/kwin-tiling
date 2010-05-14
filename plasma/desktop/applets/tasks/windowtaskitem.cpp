@@ -323,6 +323,11 @@ void WindowTaskItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
         connect(a, SIGNAL(triggered()), group, SLOT(collapse()));
     }
 
+    a = m_applet->action("configure");
+    if (a && a->isEnabled()) {
+        actionList.append(a);
+    }
+
     TaskManager::BasicMenu menu(0, m_task, &m_applet->groupManager(), actionList);
     menu.adjustSize();
 
