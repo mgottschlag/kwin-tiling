@@ -80,7 +80,7 @@ AbstractIconList::~AbstractIconList()
 {
 
     //FIXME: if the follow foreach looks silly, that's because it is.
-    //       but Qt 4.6 currently has a devistating bug that crashes
+    //       but Qt 4.6 currently has a devastating bug that crashes
     //       when we don't do precisely this
     foreach (QGraphicsWidget *item, m_allAppletsHash) {
         item->setParentItem(0);
@@ -131,8 +131,8 @@ void AbstractIconList::init()
     m_slide->setTargetWidget(m_appletListWidget);
 
     //make its events pass through its parent
-    m_appletListWidget->installEventFilter(this);
-    m_appletListWindowWidget->installEventFilter(this);
+//    m_appletListWidget->installEventFilter(this);
+//    m_appletListWindowWidget->installEventFilter(this);
 
     //layouts
     m_arrowsLayout = new QGraphicsLinearLayout(m_orientation);
@@ -220,6 +220,7 @@ void AbstractIconList::setSearch()
 {
     //pass it down to the subclass
     setSearch(m_searchString);
+    updateList();
 }
 
 void AbstractIconList::iconHoverEnter(Plasma::AbstractIcon *icon)
@@ -329,11 +330,10 @@ void AbstractIconList::itemSelected(Plasma::AbstractIcon *icon)
 //and we should split the orientation from the filtering.
 void AbstractIconList::updateList()
 {
-
     //pure virtual
     updateVisibleIcons();
 
-    m_appletListWidget->adjustSize();
+//    m_appletListWidget->adjustSize();
 
     updateGeometry();
     m_hoverIndicator->hide();

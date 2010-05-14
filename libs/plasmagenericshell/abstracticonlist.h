@@ -108,17 +108,25 @@ private:
 
     void wheelEvent(QGraphicsSceneWheelEvent *event);
 
-public slots:
+public Q_SLOTS:
     void searchTermChanged(const QString &text);
     void updateList();
 
-private slots:
+protected:
+    bool eventFilter(QObject *obj, QEvent *event);
+
+    //Hash containing all widgets that represents the applets
+    //FIXME the subclasses use this more than me so maybe they should store it?
+    QHash<QString, AbstractIcon *> m_allAppletsHash;
+
+protected Q_SLOTS:
+    //checks if arrows should be enabled or not
+    void manageArrows();
+
+private Q_SLOTS:
     void scrollDownRight();
     void scrollUpLeft();
     void scrollStepFinished();
-
-    //checks if arrows should be enabled or not
-    void manageArrows();
 
     //moves list to position 0,0
     void resetScroll();
@@ -128,12 +136,6 @@ private slots:
 
     void setSearch();
 
-protected:
-    bool eventFilter(QObject *obj, QEvent *event);
-
-    //Hash containing all widgets that represents the applets
-    //FIXME the subclasses use this more than me so maybe they should store it?
-    QHash<QString, AbstractIcon *> m_allAppletsHash;
 private:
     //list containing the applet icons of the filter proxy model
     QList<AbstractIcon *> m_currentAppearingAppletsOnList;
