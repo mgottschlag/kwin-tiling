@@ -111,6 +111,9 @@ int NotifierDialog::searchOrCreateDeviceCategory(const QString &categoryName)
         }
     }
 
+    //Poor man's category separator
+    //TODO: make own widget?
+
     Plasma::Separator *separator = new Plasma::Separator();
     separator->setOrientation(Qt::Horizontal);
     separator->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
@@ -118,7 +121,10 @@ int NotifierDialog::searchOrCreateDeviceCategory(const QString &categoryName)
 
     Plasma::Label *category = new Plasma::Label();
     category->setText(categoryName);
-    category->setAlignment(Qt::AlignRight);
+    category->setAlignment(Qt::AlignLeft);
+    // The margins here are needed in order to have the category label
+    // vertically aligned with device icons, which just looks better
+    category->nativeWidget()->setContentsMargins(4+4, 0, 0, 0);
     category->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     updateCategoryColors(category);
     m_deviceLayout->insertItem(1, category);
@@ -652,7 +658,7 @@ void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorD
         m_notifier->update();
         QTimer::singleShot(5000, this, SLOT(resetNotifierIcon()));
     }
-    
+
     devItem->setState(DeviceItem::Idle);
 }
 
