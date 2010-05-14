@@ -36,6 +36,7 @@ ActivityIcon::ActivityIcon(const QString &id)
     m_activity(new Activity(id, this))
 {
     connect(this, SIGNAL(clicked(Plasma::AbstractIcon*)), m_activity, SLOT(activate()));
+    connect(m_activity, SIGNAL(opened()), this, SLOT(repaint()));
     connect(m_activity, SIGNAL(nameChanged(QString)), this, SLOT(setName(QString)));
     setName(m_activity->name());
 }
@@ -115,5 +116,10 @@ void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     }
 
     AbstractIcon::mouseReleaseEvent(event);
+}
+
+void ActivityIcon::repaint()
+{
+    update();
 }
 

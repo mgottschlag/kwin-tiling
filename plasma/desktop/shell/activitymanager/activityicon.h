@@ -41,6 +41,9 @@ class ActivityIcon : public Plasma::AbstractIcon
     protected:
         void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
+    private Q_SLOTS:
+        void repaint();
+
     private:
         QString m_id;
         KIcon m_removeIcon;
