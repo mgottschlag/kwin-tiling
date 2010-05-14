@@ -19,6 +19,7 @@
 
 #include "activitylist.h"
 #include "plasmaapp.h"
+#include "kactivitycontroller.h"
 
 #include <QHash>
 
@@ -26,7 +27,8 @@
 #include <Plasma/Corona>
 
 ActivityList::ActivityList(Qt::Orientation orientation, QGraphicsItem *parent)
-    : AbstractIconList(orientation, parent)
+    : AbstractIconList(orientation, parent),
+    m_activityController(new KActivityController(this))
 {
     QStringList activities = PlasmaApp::self()->listActivities();
     foreach (const QString &activity, activities) {
@@ -37,6 +39,7 @@ ActivityList::ActivityList(Qt::Orientation orientation, QGraphicsItem *parent)
     //-listen to signals for remove, etc
 
     connect(PlasmaApp::self(), SIGNAL(activityAdded(const QString &)), this, SLOT(activityAdded(const QString &)));
+    connect(m_activityController, SIGNAL(activityRemoved(const QString &)), this, SLOT(activityRemoved(const QString &)));
 
     updateList();
 }
@@ -87,6 +90,13 @@ void ActivityList::setSearch(const QString &searchString)
 void ActivityList::activityAdded(const QString &id)
 {
     m_allAppletsHash.insert(id, createAppletIcon(id));
+    updateList();
+}
+
+void ActivityList::activityRemoved(const QString &id)
+{
+    Plasma::AbstractIcon* icon = m_allAppletsHash.take(id);
+    delete icon;
     updateList();
 }
 
