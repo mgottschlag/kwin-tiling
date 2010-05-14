@@ -59,7 +59,7 @@ bool PlasmoidTask::isEmbeddable() const
 
 bool PlasmoidTask::isValid() const
 {
-    return !m_name.isEmpty();
+    return !m_name.isEmpty() && m_applet;
 }
 
 QString PlasmoidTask::name() const
