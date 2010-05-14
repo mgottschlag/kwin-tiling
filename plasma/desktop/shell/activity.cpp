@@ -191,12 +191,28 @@ void Activity::open()
     fileName += m_id;
     KConfig external(fileName, KConfig::SimpleConfig, "appdata");
 
+    //TODO only load existing screens
     foreach (Plasma::Containment *newContainment, PlasmaApp::self()->corona()->importLayout(external)) {
         m_containments << newContainment;
+        //ensure it's hooked up (if something odd happened we don't want orphan containments)
+        Plasma::Context *context = newContainment->context();
+        context->setCurrentActivityId(m_id);
+        connect(context, SIGNAL(activityChanged(Plasma::Context*)), this, SLOT(updateActivityName(Plasma::Context*)), Qt::UniqueConnection);
     }
 
     KConfigGroup configs(&external, "Containments");
     configs.deleteGroup();
+
+    if (m_containments.isEmpty()) {
+        //TODO check if we need more for screens/desktops
+        kDebug() << "open failed (bad file?). creating new containment(s)";
+        Plasma::Containment *newContainment = PlasmaApp::self()->corona()->addContainment(QString());
+        m_containments << newContainment;
+        Plasma::Context *context = newContainment->context();
+        context->setCurrentActivityId(m_id);
+        context->setCurrentActivity(m_name);
+        connect(context, SIGNAL(activityChanged(Plasma::Context*)), this, SLOT(updateActivityName(Plasma::Context*)), Qt::UniqueConnection);
+    }
 
     PlasmaApp::self()->corona()->requireConfigSync();
     external.sync();

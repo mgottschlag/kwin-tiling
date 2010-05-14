@@ -910,7 +910,7 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
     if (! id.isEmpty()) {
         kDebug() << "associating containment with activity" << id;
         //connect to the activity
-        connect(containment->context(), SIGNAL(activityChanged(Plasma::Context*)), this, SLOT(updateActivityName(Plasma::Context*)));
+        connect(containment->context(), SIGNAL(activityChanged(Plasma::Context*)), this, SLOT(updateActivityName(Plasma::Context*)), Qt::UniqueConnection);
         //FIXME need to be notified when the name changes
         //can use KActivityInfo but need to keep an instance somewhere. perhaps a list of them in
         //this class.
