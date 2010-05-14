@@ -36,6 +36,8 @@ public:
     //TODO: reference counted
     static org::kde::nepomuk::services::NepomukActivitiesService * s_store;
     static org::kde::ActivityManager * s_manager;
+
+    static org::kde::ActivityManager * manager();
 };
 
 #endif // ACTIVITY_INFO_PH

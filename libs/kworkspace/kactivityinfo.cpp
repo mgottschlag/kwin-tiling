@@ -30,6 +30,18 @@
 org::kde::nepomuk::services::NepomukActivitiesService * KActivityInfo::Private::s_store = 0;
 org::kde::ActivityManager * KActivityInfo::Private::s_manager = 0;
 
+org::kde::ActivityManager * KActivityInfo::Private::manager() {
+    if (!s_manager) {
+        s_manager = new org::kde::ActivityManager(
+                "org.kde.ActivityManager",
+                "/ActivityManager",
+                QDBusConnection::sessionBus()
+                );
+    }
+
+    return s_manager;
+}
+
 KActivityInfo::Private::Private(KActivityInfo *info, const QString &activityId)
     : q(info),
       id(activityId)
@@ -42,13 +54,7 @@ KActivityInfo::Private::Private(KActivityInfo *info, const QString &activityId)
                 );
     }
 
-    if (!s_manager) {
-        s_manager = new org::kde::ActivityManager(
-                "org.kde.ActivityManager",
-                "/ActivityManager",
-                QDBusConnection::sessionBus()
-                );
-    }
+    manager();
 }
 
 KUrl KActivityInfo::Private::urlForType(KActivityInfo::ResourceType resourceType) const
@@ -87,7 +93,7 @@ KActivityInfo::KActivityInfo(const QString &activityId, QObject *parent)
       d(new Private(this, activityId))
 {
     d->id = activityId;
-    connect(Private::s_manager, SIGNAL(ActivityNameChanged(const QString &, const QString &)),
+    connect(Private::manager(), SIGNAL(ActivityNameChanged(const QString &, const QString &)),
             this, SLOT(activityNameChanged(const QString &, const QString &)));
 }
 
@@ -98,7 +104,7 @@ KActivityInfo::~KActivityInfo()
 
 bool KActivityInfo::isValid() const
 {
-    return Private::s_manager->AvailableActivities().value().contains(d->id) ||
+    return Private::manager()->AvailableActivities().value().contains(d->id) ||
            Private::s_store->listAvailable().value().contains(d->id);
 }
 
@@ -154,17 +160,17 @@ QString KActivityInfo::id() const
 
 QString KActivityInfo::name() const
 {
-    return Private::s_manager->ActivityName(d->id);
+    return Private::manager()->ActivityName(d->id);
 }
 
 QString KActivityInfo::icon() const
 {
-    return Private::s_manager->ActivityIcon(d->id);
+    return Private::manager()->ActivityIcon(d->id);
 }
 
 QString KActivityInfo::name(const QString & id)
 {
-    return Private::s_manager->ActivityName(id);
+    return Private::manager()->ActivityName(id);
 }
 
 #include "kactivityinfo.moc"
