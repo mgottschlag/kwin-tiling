@@ -11,11 +11,12 @@
 
 <authorgroup>
 <author>&Mike.McBride; &Mike.McBride.mail;</author>
+<author>&Anne-Marie.Mahfouf; &Anne-Marie.Mahfouf.mail;</author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2009-11-20</date>
-<releaseinfo>&kde; 4.4</releaseinfo>
+<date>2010-05-14</date>
+<releaseinfo>&kde; 4.5</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -26,6 +27,10 @@
 
 <para>This module allows you to choose how your keyboard works.</para>
 
+<para>There are three tabs in this module.</para>
+
+<sect1 id="hardware">
+<title>The <guilabel>Hardware</guilabel> tab</title>
 <para>The actual effect of setting these options depends upon the
 features provided by your keyboard hardware and the X server on which
 &kde; is running.  As an example, you may find that changing the key
@@ -33,6 +38,19 @@ click volume has no effect because that feature is not available on your
 system. </para>
 
 <variablelist>
+<varlistentry>
+<term><guilabel>Keyboard model:</guilabel></term>
+<listitem>
+<para>
+Here you can set your keyboard model. This setting is independent of your
+keyboard layout and refers to the &quot;hardware&quot; model, i.e. the way your
+keyboard is manufactured. Modern keyboards that come with your computer usually
+have two extra keys and are referred to as &quot;104-key&quot; models, which is
+probably what you want if you do not know what kind of keyboard you have.
+</para>
+</listitem>
+</varlistentry>
+
 <varlistentry>
 <term><guilabel>NumLock on KDE Startup</guilabel></term>
 <listitem>
@@ -92,5 +110,75 @@ warm sentimentality of days-gone-by.</para></tip>
 </varlistentry>
 
 </variablelist>
+</sect1>
 
+<sect1 id="layouts">
+<title>The <guilabel>Layouts</guilabel> tab</title>
+<para>This tab lets you choose what keyboard layouts you want to use, what
+indicator you want in the system tray, how you want to switch and which
+shortcuts you will use.</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Layout Indicator</guilabel></term>
+<listitem>
+<para>You can choose to <guilabel>Show layout indicator</guilabel>
+which will show the language iso name in the system tray. You can choose to
+<guilabel>Show the indicator</guilabel> even if you have a single layout enabled
+and you can show the language flag instead of only the ISO code by checking
+<guilabel>Show flag</guilabel>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Switching Policy</guilabel></term>
+<listitem>
+<para>If you select <guilabel>Application</guilabel> or
+<guilabel>Window</guilabel> switching policy, changing the keyboard layout will
+only affect the current application or window. <guilabel>Global</guilabel> will
+change the keyboard layout globally and <guilabel>Desktop</guilabel> will change
+it only for the current virtual desktop.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Shortcuts for Switching Layout</guilabel></term>
+<listitem>
+<para><guilabel>Main SHortcut</guilabel> is a shortcut for switching
+layouts which is handled by X.org. <guilabel>3rd level shortcuts</guilabel> is a
+shortcut for switching to a third level of the active layout (if it has one)
+which is handled by X.org. It allows modifier-only shortcuts.
+<guilabel>Alternative shortcut</guilabel> is a shortcut for switching layouts
+which is handled by &kde;. It does not support modifier-only shortcuts and also
+may not work in some situations (e.g. if popup is active or from screensaver).
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Configure layouts</guilabel></term>
+<listitem>
+<para>If you check <guilabel>Configure layouts</guilabel> you will be able to
+add and remove keyboard layouts in order to switch between them when you need.
+</para>
+<para>Clicking on <guilabel>Add layout</guilabel> will open a dialog where you
+will be able to choose the new keyboard layout you want to add as well as its
+variant.
+</para>
+<para>You can order the layouts with the up and down buttons, the top one being
+the default one.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="advanced">
+<title>The <guilabel>Advanced</guilabel> tab</title>
+<para>In this tab, if you check <guilabel>Configure keyboard options</guilabel>
+you will then be able to set a few options regarding some keys settings. You can
+expand these options by clicking on the &gt; symbol on the left of the option
+then you choose your setting in the expanded list.</para>
+</sect1>
 </article>
