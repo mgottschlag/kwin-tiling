@@ -159,7 +159,9 @@ void AbstractIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void AbstractIcon::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
-    setCursor(Qt::ClosedHandCursor);
+    if (isDraggable()) {
+        setCursor(Qt::ClosedHandCursor);
+    }
 }
 
 void AbstractIcon::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
