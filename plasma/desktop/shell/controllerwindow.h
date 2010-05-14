@@ -37,6 +37,11 @@ namespace Plasma
     class Dialog;
 } // namespace Plasma
 
+namespace Kephal
+{
+    class Screen;
+}
+
 class ActivityManager;
 
 class ControllerWindow : public Plasma::Dialog
@@ -69,6 +74,7 @@ protected:
 private Q_SLOTS:
     void onActiveWindowChanged(WId id);
     void backgroundChanged();
+    void adjustSize(Kephal::Screen *screen);
 
 private:
 

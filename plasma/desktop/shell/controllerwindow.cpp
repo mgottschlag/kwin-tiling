@@ -76,6 +76,10 @@ ControllerWindow::ControllerWindow(QWidget* parent)
 
     connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(onActiveWindowChanged(WId)));
     connect(m_background, SIGNAL(repaintNeeded()), SLOT(backgroundChanged()));
+    Kephal::Screens *screens = Kephal::Screens::self();
+    connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
+            this, SLOT(adjustSize(Kephal::Screen *)));
+    adjustSize(0);
 }
 
 ControllerWindow::~ControllerWindow()
@@ -101,6 +105,15 @@ ControllerWindow::~ControllerWindow()
     delete m_activityManager;
     delete m_widgetExplorer;
     delete m_view;
+}
+
+
+void ControllerWindow::adjustSize(Kephal::Screen *screen)
+{
+    Q_UNUSED(screen)
+
+    QSize screenSize = Kephal::ScreenUtils::screenGeometry(Kephal::ScreenUtils::screenId(pos())).size();
+    setMaximumSize(screenSize);
 }
 
 void ControllerWindow::backgroundChanged()
