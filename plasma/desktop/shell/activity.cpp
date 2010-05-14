@@ -165,7 +165,7 @@ void Activity::close()
         cg.deleteGroup();
     }
 
-    KConfigGroup dest(&external, "[Containments]");
+    KConfigGroup dest(&external, "Containments");
     KConfigGroup dummy;
     foreach (Plasma::Containment *c, m_containments) {
         c->save(dummy);
@@ -189,17 +189,24 @@ void Activity::open()
     //TODO iterate over all screens (kephal tells us how many exist, right?)
     //unless we choose to be lazy and not load other screens until we're activated.
     KConfigGroup configs(&external, "Containments");
-    KConfigGroup dummy;
     foreach (const QString &groupName, configs.groupList()) {
         KConfigGroup config(&configs, groupName);
         const QString plugin = config.readEntry("plugin", QString());
         Plasma::Containment *newContainment = PlasmaApp::self()->corona()->addContainment(plugin, QVariantList());
 
         // restore from the saved group
-        newContainment->restore(config);
+        //newContainment->restore(config);
+        KConfigGroup newCfg = newContainment->config();
+        config.copyTo(&newCfg);
+        newContainment->restore(newCfg);
+        foreach (Plasma::Applet *applet, newContainment->applets()) {
+            applet->init();
+            // We have to flush the applet constraints manually
+            applet->flushPendingConstraintsEvents();
+        }
 
         // save to the proper location
-        newContainment->save(dummy);
+        newContainment->save(newCfg);
         m_containments << newContainment;
     }
 
