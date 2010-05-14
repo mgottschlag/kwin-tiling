@@ -283,13 +283,13 @@ void DeviceItem::updateTooltip()
 {
     if (m_mounted) {
         m_leftActionIcon->setToolTip(i18n("Click to safely remove this device from the computer."));
-        m_deviceIcon->setToolTip(i18n("Device is plugged in and the volume can be accessed by applications. It is not safe to remove this device."));
+        m_deviceIcon->setToolTip(i18n("It is currently <b>not safe</b> to remove this device: applications may be accessing it. Click the eject button to safely remove this device."));
     } else {
         m_leftActionIcon->setToolTip(i18n("Click to access this device from other applications."));
         if (safelyRemovable()) {
-            m_deviceIcon->setToolTip(i18n("Device is plugged in and the volume is not mounted for access yet. The device can be safely removed."));
+            m_deviceIcon->setToolTip(i18n("It is currently safe to remove this device."));
         } else {
-            m_deviceIcon->setToolTip(i18n("Device is plugged in and the volume is not mounted for access yet. Another volume is accessible on the same device, which cannot be safely removed."));
+            m_deviceIcon->setToolTip(i18n("It is currently <b>not safe</b> to remove this device: applications may be accessing other volumes on this device. Click the eject button on these other volumes to safely remove this device."));
         }
     }
 }
