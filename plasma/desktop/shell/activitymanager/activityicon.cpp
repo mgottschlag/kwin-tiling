@@ -37,6 +37,7 @@ ActivityIcon::ActivityIcon(const QString &id)
 {
     connect(this, SIGNAL(clicked(Plasma::AbstractIcon*)), m_activity, SLOT(activate()));
     connect(m_activity, SIGNAL(opened()), this, SLOT(repaint()));
+    connect(m_activity, SIGNAL(closed()), this, SLOT(repaint()));
     connect(m_activity, SIGNAL(nameChanged(QString)), this, SLOT(setName(QString)));
     setName(m_activity->name());
 }
@@ -110,7 +111,6 @@ void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         QRectF stopRect(QPointF(iconX, rect.y()), cornerIconSize);
         if (stopRect.contains(event->pos())) {
             m_activity->close();
-            update();
             return;
         }
     }
