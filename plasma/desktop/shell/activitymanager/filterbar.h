@@ -57,7 +57,7 @@ protected:
 private:
 
     QGraphicsLinearLayout *m_linearLayout;
-    Plasma::TabBar *m_categoriesTabs;
+    //Plasma::TabBar *m_categoriesTabs;
     Plasma::LineEdit *m_textSearch;
     Qt::Orientation m_orientation;
     Plasma::PushButton *m_newActivityButton;

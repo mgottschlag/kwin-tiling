@@ -47,12 +47,14 @@ FilterBar::FilterBar(Qt::Orientation orientation, QGraphicsItem *parent)
     m_textSearch->setClearButtonShown(true);
     connect(m_textSearch, SIGNAL(textChanged(QString)), this, SIGNAL(searchTermChanged(QString)));
 
+    /*
     m_categoriesTabs = new Plasma::TabBar(this);
     connect(m_categoriesTabs, SIGNAL(currentChanged(int)), this, SIGNAL(filterChanged(int)));
     m_categoriesTabs->setAttribute(Qt::WA_NoSystemBackground);
     m_categoriesTabs->nativeWidget()->setUsesScrollButtons(true);
     m_categoriesTabs->addTab(i18n("Running"));
     m_categoriesTabs->addTab(i18n("Stopped"));
+    */
 
     m_newActivityButton = new Plasma::PushButton(this);
     m_newActivityButton->setText(i18n("New Activity..."));
@@ -66,7 +68,8 @@ FilterBar::FilterBar(Qt::Orientation orientation, QGraphicsItem *parent)
     //layout
     m_linearLayout = new QGraphicsLinearLayout(this);
     m_linearLayout->addItem(m_textSearch);
-    m_linearLayout->addItem(m_categoriesTabs);
+    //m_linearLayout->addItem(m_categoriesTabs);
+    m_linearLayout->addStretch(10);
     m_linearLayout->addItem(m_newActivityButton);
 
     setOrientation(orientation);
