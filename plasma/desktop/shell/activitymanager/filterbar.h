@@ -43,8 +43,8 @@ public:
     void setOrientation(Qt::Orientation orientation);
 
 Q_SIGNALS:
-    void filterChanged(int index);
-    void searchTermChanged(int index);
+    //void filterChanged(int index);
+    void searchTermChanged(const QString &text);
 
 protected Q_SLOTS:
     void setMenuPos();
