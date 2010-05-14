@@ -665,6 +665,8 @@ listSessions( int flags, struct display *d, void *ctx,
 		   )
 		{
 #endif
+			if (ut->ut_pid <= 0 || (kill (ut->ut_pid, 0) < 0 && errno == ESRCH))
+				continue; /* ignore stale utmp entries */
 			if (*ut->ut_host) { /* from remote or x */
 				if (!(flags & lstRemote))
 					continue;
