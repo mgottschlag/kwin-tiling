@@ -39,13 +39,13 @@ public:
     ActivityList(Qt::Orientation orientation = Qt::Horizontal, QGraphicsItem *parent = 0);
     ~ActivityList();
 
-public Q_SLOTS:
-    void activityAdded(const QString &id);
-    void activityRemoved(const QString &id);
-
 protected:
     void updateVisibleIcons();
     void setSearch(const QString &searchString);
+
+private Q_SLOTS:
+    void activityAdded(const QString &id);
+    void activityRemoved(const QString &id);
 
 private:
     //Creates a new applet icon and puts it into the hash

@@ -28,7 +28,7 @@
 
 ActivityList::ActivityList(Qt::Orientation orientation, QGraphicsItem *parent)
     : AbstractIconList(orientation, parent),
-    m_activityController(new KActivityController(this))
+      m_activityController(new KActivityController(this))
 {
     QStringList activities = PlasmaApp::self()->listActivities();
     foreach (const QString &activity, activities) {
@@ -48,18 +48,7 @@ ActivityList::~ActivityList()
 {
 }
 
-/*
-void ActivityList::setCorona(Plasma::Corona *corona)
-{
-    m_corona = corona;
-
-    //connect(m_modelFilterItems, SIGNAL(searchTermChanged(QString)), this, SLOT(updateList()));
-    //connect(m_modelFilterItems, SIGNAL(filterChanged()), this, SLOT(updateList()));
-
-}
-*/
 //TODO need function that scrolls to the start of stashed/open activities
-
 
 ActivityIcon *ActivityList::createAppletIcon(const QString &id)
 {
@@ -77,15 +66,15 @@ void AppletsListWidget::appletIconDoubleClicked(AbstractIcon *icon)
 
 void ActivityList::updateVisibleIcons()
 {
-    //TODO match against filter
 }
 
 void ActivityList::setSearch(const QString &searchString)
 {
-    //TODO filtery things
+    foreach (Plasma::AbstractIcon *icon, m_allAppletsHash) {
+        icon->setVisible(icon->name().contains(searchString, Qt::CaseInsensitive));
+    }
 }
 
-//TODO filterChanged slot
 
 void ActivityList::activityAdded(const QString &id)
 {
