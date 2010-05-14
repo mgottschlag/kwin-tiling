@@ -165,6 +165,9 @@ void Activity::close()
         cg.deleteGroup();
     }
 
+    //TODO: multi-screen saving/restoring, where each screen can be
+    // independently restored: put each screen's containments into a 
+    // different group, e.g. [Screens][0][Containments], [Screens][1][Containments], etc
     KConfigGroup dest(&external, "Containments");
     KConfigGroup dummy;
     foreach (Plasma::Containment *c, m_containments) {
