@@ -26,7 +26,7 @@ public:
 
     QWeakPointer<KActivityControllerDbus> sharedDBusController(org::kde::ActivityManager *manager) {
         if (!s_dbusController) {
-            s_dbusController = new KActivityControllerDbus(0, manager);
+            s_dbusController = new KActivityControllerDbus(manager, 0);
         }
 
         return s_dbusController;
