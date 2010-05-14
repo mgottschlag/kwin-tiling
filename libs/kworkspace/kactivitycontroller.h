@@ -38,7 +38,8 @@
  *
  * @since 4.5
  */
-class KDE_EXPORT KActivityController: public KActivityConsumer {
+class KDE_EXPORT KActivityController: public KActivityConsumer
+{
     Q_OBJECT
 
     Q_PROPERTY(QString currentActivity READ currentActivity WRITE setCurrentActivity)
@@ -116,8 +117,6 @@ Q_SIGNALS:
 private:
     class Private;
     Private * const d;
-
-    friend class KActivityControllerDbus;
 };
 
 #endif // ACTIVITY_CONTROLLER_H

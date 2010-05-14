@@ -23,7 +23,20 @@
 class KActivityController::Private {
 public:
     org::kde::ActivityManager * manager;
+    QSharedPointer<KActivityControllerDbus> dbusController;
+
+    QWeakPointer<KActivityControllerDbus> sharedDBusController() {
+        if (!s_dbusController) {
+            s_dbusController = new KActivityControllerDbus(0, manager);
+        }
+
+        return s_dbusController;
+    }
+
+    static QWeakPointer<KActivityControllerDbus> s_dbusController;
 };
+
+QWeakPointer<KActivityControllerDbus> KActivityController::Private::s_dbusController;
 
 KActivityController::KActivityController(QObject * parent)
     : KActivityConsumer(parent), d(new Private())
@@ -31,10 +44,16 @@ KActivityController::KActivityController(QObject * parent)
     d->manager = new org::kde::ActivityManager(
         "org.kde.ActivityManager",
         "/ActivityManager",
-        QDBusConnection::sessionBus()
+        QDBusConnection::sessionBus(),
+        this
     );
 
-    new KActivityControllerDbus(this, d->manager);
+    d->dbusController = d->sharedDBusController();
+    connect(d->dbusController.data(), SIGNAL(activityAdded(QString)), this, SIGNAL(activityAdded(QString)));
+    connect(d->dbusController.data(), SIGNAL(activityAdded(QString)), this, SIGNAL(activityAdded(QString)));
+    connect(d->dbusController.data(), SIGNAL(activityRemoved(QString)), this, SIGNAL(activityRemoved(QString)));
+    connect(d->dbusController.data(), SIGNAL(resourceWindowRegistered(uint,QString)), this, SIGNAL(resourceWindowRegistered(uint,QString)));
+    connect(d->dbusController.data(), SIGNAL(resourceWindowUnregistered(uint,QString)), this, SIGNAL(resourceWindowUnregistered(uint,QString)));
 }
 
 KActivityController::~KActivityController()

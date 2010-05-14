@@ -21,12 +21,11 @@
 
 #include <QCoreApplication>
 
-KActivityControllerDbus::KActivityControllerDbus(KActivityController * parent,
-        org::kde::ActivityManager * manager)
-    : QObject(parent), q(parent),
-    m_service(QString("org.kde.ActivityController-%1")
-                      .arg(QCoreApplication::applicationPid())),
-    m_dbus(QDBusConnection::connectToBus(QDBusConnection::SessionBus, m_service))
+KActivityControllerDbus::KActivityControllerDbus(org::kde::ActivityManager * manager, QObject *parent)
+    : QObject(parent),
+      m_service(QString("org.kde.ActivityController-%1")
+                       .arg(QCoreApplication::applicationPid())),
+      m_dbus(QDBusConnection::connectToBus(QDBusConnection::SessionBus, m_service))
 {
     new ActivityControllerAdaptor(this);
     m_dbus.registerService(m_service);
@@ -43,21 +42,21 @@ KActivityControllerDbus::~KActivityControllerDbus()
 
 void KActivityControllerDbus::ActivityAdded(const QString & id)
 {
-    emit q->activityAdded(id);
+    emit activityAdded(id);
 }
 
 void KActivityControllerDbus::ActivityRemoved(const QString & id)
 {
-    emit q->activityRemoved(id);
+    emit activityRemoved(id);
 }
 
 void KActivityControllerDbus::ResourceWindowRegistered(uint wid, const QString & uri)
 {
-    emit q->resourceWindowRegistered(wid, uri);
+    emit resourceWindowRegistered(wid, uri);
 }
 
 void KActivityControllerDbus::ResourceWindowUnregistered(uint wid, const QString & uri)
 {
-    emit q->resourceWindowUnregistered(wid, uri);
+    emit resourceWindowUnregistered(wid, uri);
 }
 

@@ -28,8 +28,7 @@ class KActivityControllerDbus: public QObject {
     Q_OBJECT
 
 public:
-    explicit KActivityControllerDbus(KActivityController * parent,
-            org::kde::ActivityManager * manager);
+    explicit KActivityControllerDbus(org::kde::ActivityManager * manager, QObject *parent = 0);
 
     ~KActivityControllerDbus();
 
@@ -40,12 +39,15 @@ public Q_SLOTS:
     void ResourceWindowRegistered(uint wid, const QString & uri);
     void ResourceWindowUnregistered(uint wid, const QString & uri);
 
-private:
-    KActivityController * const q;
+Q_SIGNALS:
+    void activityAdded(const QString & id);
+    void activityRemoved(const QString & id);
+    void resourceWindowRegistered(uint wid, const QString & uri);
+    void resourceWindowUnregistered(uint wid, const QString & uri);
 
+private:
     QString m_service;
     QDBusConnection m_dbus;
-
 };
 
 #endif // ACTIVITY_CONTROLLER_DBUS_P_H
