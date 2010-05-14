@@ -160,21 +160,23 @@ void Activity::close()
     QString name = "activities/";
     name += m_id;
     KConfig external(name, KConfig::SimpleConfig, "appdata");
-    int i=0;
+    foreach (const QString &group, external.groupList()) {
+        KConfigGroup cg(&external, group);
+        cg.deleteGroup();
+    }
+
+    KConfigGroup dest(&external, "[Containments]");
+    KConfigGroup dummy;
     foreach (Plasma::Containment *c, m_containments) {
-        //FIXME if it's not active, the screen # is -1
-        //so I'm going by position in the list
-        //which is a horrible hack
-        QString groupName = QString("Containment%1").arg(i++);
-        KConfigGroup newConf(&external, groupName);
-        c->save(newConf);
+        c->save(dummy);
+        c->config().reparent(&dest);
         c->destroy(false);
     }
+
+    external.sync();
     m_containments.clear();
     kDebug() << "attempting to write to" << external.name();
-    external.sync();
     //FIXME only destroy it if nothing went wrong
-
     //TODO save a thumbnail to a file too
 }
 
@@ -186,22 +188,22 @@ void Activity::open()
 
     //TODO iterate over all screens (kephal tells us how many exist, right?)
     //unless we choose to be lazy and not load other screens until we're activated.
-    KConfigGroup config(&external, "Containment0");
-    QString plugin = config.readEntry("plugin", QString());
-    Plasma::Containment *newContainment = PlasmaApp::self()->corona()->addContainment(plugin, QVariantList());
-    // load the configuration of the old containment into the new one
-    // luckily some other part of libplasma seems to ensure the applet ID's are unique
-    KConfigGroup newCfg = newContainment->config();
-    config.copyTo(&newCfg);
-    newContainment->restore(newCfg);
-    foreach (Plasma::Applet *applet, newContainment->applets()) {
-        applet->init();
-        // We have to flush the applet constraints manually
-        applet->flushPendingConstraintsEvents();
+    KConfigGroup configs(&external, "Containments");
+    KConfigGroup dummy;
+    foreach (const QString &groupName, configs.groupList()) {
+        KConfigGroup config(&configs, groupName);
+        const QString plugin = config.readEntry("plugin", QString());
+        Plasma::Containment *newContainment = PlasmaApp::self()->corona()->addContainment(plugin, QVariantList());
+
+        // restore from the saved group
+        newContainment->restore(config);
+
+        // save to the proper location
+        newContainment->save(dummy);
+        m_containments << newContainment;
     }
-    newContainment->save(newCfg);
-    m_containments << newContainment;
-    config.deleteGroup();
+
+    configs.deleteGroup();
 
     PlasmaApp::self()->corona()->requireConfigSync();
     external.sync();
