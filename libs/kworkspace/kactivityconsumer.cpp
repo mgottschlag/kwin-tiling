@@ -17,32 +17,14 @@
  */
 
 #include "kactivityconsumer.h"
+#include "kactivityconsumer_p.h"
 #include "activitymanager_interface.h"
 #include "nepomukactivitiesservice_interface.h"
 
-class KActivityConsumer::Private {
-private:
-    static org::kde::ActivityManager * managerService;
-
-public:
-    static org::kde::ActivityManager * manager()
-    {
-        if (!managerService) {
-            managerService = new org::kde::ActivityManager(
-                "org.kde.ActivityManager",
-                "/ActivityManager",
-                QDBusConnection::sessionBus()
-            );
-        }
-
-        return managerService;
-    }
-};
-
-org::kde::ActivityManager * KActivityConsumer::Private::managerService = 0;
+org::kde::ActivityManager * KActivityConsumerPrivate::managerService = 0;
 
 KActivityConsumer::KActivityConsumer(QObject * parent)
-    : QObject(parent), d(new Private())
+    : QObject(parent), d(new KActivityConsumerPrivate())
 {
     connect(
         d->manager(), SIGNAL(CurrentActivityChanged(const QString &)),

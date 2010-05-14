@@ -27,6 +27,7 @@
 
 #include <kdemacros.h>
 
+class KActivityConsumerPrivate;
 /**
  * Contextual information can be, from the user's point of view, divided
  * into three aspects - "who am I?", "where am I?" (what are my surroundings?)
@@ -111,9 +112,7 @@ public Q_SLOTS:
     void unregisterResourceWindow(WId wid, const KUrl & uri = KUrl());
 
 private:
-    class Private;
-    Private * const d;
-
+    KActivityConsumerPrivate * const d;
 };
 
 #endif // ACTIVITY_CONSUMER_H
