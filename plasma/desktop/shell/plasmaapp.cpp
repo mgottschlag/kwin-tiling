@@ -1173,6 +1173,10 @@ QStringList PlasmaApp::listActivities()
                 //create a new activity for the containment
                 //FIXME what about multiple screens?
                 Plasma::Context *context = cont->context();
+                //discorage blank names
+                if (context->currentActivity().isEmpty()) {
+                    context->setCurrentActivity(i18n("unnamed"));
+                }
                 QString id = controller.addActivity(context->currentActivity());
                 context->setCurrentActivityId(id);
                 kDebug() << context->currentActivityId() << context->currentActivity();
