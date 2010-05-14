@@ -657,6 +657,10 @@ void Applet::checkDefaultApplets()
 
 
     QStringList applets = s_manager->applets(this);
+    if (!applets.contains("org.kde.networkmanagement")) {
+        s_manager->addApplet("org.kde.networkmanagement", this);
+    }
+
     if (!applets.contains("notifier")) {
         s_manager->addApplet("notifier", this);
     }
