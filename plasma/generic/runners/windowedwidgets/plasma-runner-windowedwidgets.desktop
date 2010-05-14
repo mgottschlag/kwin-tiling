@@ -2,6 +2,7 @@
 Name=Windowed widgets
 Name[ia]=Widgets (Elemento Graphic) in le Fenestra
 Name[pt]=Elementos em janelas
+Name[pt_BR]=Widgets em janelas
 Name[sv]=Fönsterbaserade grafiska komponenter
 Name[uk]=Віджети-вікна
 Name[x-test]=xxWindowed widgetsxx
@@ -10,6 +11,7 @@ Name[x-test]=xxWindowed widgetsxx
 Comment=Find Plasma widgets that can be run as standalone windows
 Comment[ia]=Trovar widgets (elementos graphic) de plasma que on pote executar como fenestras sole
 Comment[pt]=Procurar elementos do Plasma que possam ser executados como janelas autónomas
+Comment[pt_BR]=Localiza widgets do Plasma que possam ser executados como janelas autônomas
 Comment[sv]=Hitta grafiska Plasma-komponenter som kan köras som fristående fönster
 Comment[uk]=Пошук віджетів Плазми, які можна запускати у окремих вікнах
 Comment[x-test]=xxFind Plasma widgets that can be run as standalone windowsxx
