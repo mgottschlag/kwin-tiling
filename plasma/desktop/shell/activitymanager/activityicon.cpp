@@ -101,7 +101,6 @@ void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     QRectF removeRect(QPointF(removeX, removeY), cornerIconSize);
 
     if (removeRect.contains(event->pos())) {
-        setCursor(Qt::OpenHandCursor);
         m_activity->destroy();
         return;
     }
@@ -109,7 +108,6 @@ void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if (m_activity->isRunning()) {
         QRectF stopRect(QPointF(iconX, rect.y()), cornerIconSize);
         if (stopRect.contains(event->pos())) {
-            setCursor(Qt::OpenHandCursor);
             m_activity->close();
             update();
             return;
