@@ -66,6 +66,7 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event);
     void focusOutEvent(QFocusEvent *event);
     void resizeEvent(QResizeEvent *event);
+    void moveEvent(QMoveEvent *event);
 
 Q_SIGNALS:
     /**
