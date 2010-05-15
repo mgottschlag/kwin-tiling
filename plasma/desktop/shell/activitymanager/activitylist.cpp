@@ -38,7 +38,7 @@ ActivityList::ActivityList(Qt::Orientation orientation, QGraphicsItem *parent)
     //-do something about sorting and filtering (most recent first?)
     //-listen to signals for remove, etc
 
-    connect(PlasmaApp::self(), SIGNAL(activityAdded(const QString &)), this, SLOT(activityAdded(const QString &)));
+    connect(m_activityController, SIGNAL(activityAdded(const QString &)), this, SLOT(activityAdded(const QString &)));
     connect(m_activityController, SIGNAL(activityRemoved(const QString &)), this, SLOT(activityRemoved(const QString &)));
 
     updateList();
@@ -78,6 +78,7 @@ void ActivityList::setSearch(const QString &searchString)
 
 void ActivityList::activityAdded(const QString &id)
 {
+    //kDebug() << id;
     m_allAppletsHash.insert(id, createAppletIcon(id));
     updateList();
 }

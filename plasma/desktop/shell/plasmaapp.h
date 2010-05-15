@@ -95,9 +95,6 @@ public:
     Atom m_XdndVersionAtom;
 #endif
 
-Q_SIGNALS:
-    void activityAdded(const QString &id);
-
 public Q_SLOTS:
     // DBUS interface. if you change these methods, you MUST run:
     // qdbuscpp2xml plasmaapp.h -o dbus/org.kde.plasma.App.xml

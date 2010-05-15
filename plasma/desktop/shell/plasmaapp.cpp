@@ -1202,7 +1202,6 @@ Plasma::Containment *PlasmaApp::createActivity(const QString &plugin)
     //ensure it's hooked up
     connect(context, SIGNAL(activityChanged(Plasma::Context*)), this, SLOT(updateActivityName(Plasma::Context*)), Qt::UniqueConnection);
 
-    emit activityAdded(id);
     controller.setCurrentActivity(id);
     return c;
 }
