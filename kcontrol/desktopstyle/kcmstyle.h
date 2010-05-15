@@ -36,7 +36,6 @@
 #include <kvbox.h>
 
 #include "ui_theme.h"
-#include "ui_finetuning.h"
 
 class KComboBox;
 class KConfig;
@@ -47,12 +46,7 @@ class QPushButton;
 class StylePreview;
 class QTabWidget;
 
-struct StyleEntry {
-	QString name;
-	QString desc;
-	QString configPage;
-	bool hidden;
-};
+class ThemeModel;
 
 class KCMStyle : public KCModule
 {
@@ -66,54 +60,27 @@ public:
 	virtual void save();
 	virtual void defaults();
 
-protected:
-	bool findStyle( const QString& str, int& combobox_item );
-	void switchStyle(const QString& styleName, bool force = false);
-	void setStyleRecursive(QWidget* w, QStyle* s);
-
-	void loadStyle( KConfig& config );
-	void loadEffects( KConfig& config );
-	void addWhatsThis();
-
-	virtual void changeEvent( QEvent *event );
-
 protected Q_SLOTS:
-	void styleSpecificConfig();
-	void updateConfigButton();
+	void loadDesktopTheme();
 
-	void setStyleDirty();
-	void setEffectsDirty();
-
-	void styleChanged();
+	void setDesktopThemeDirty();
 	
-private:
-	QString currentStyle();
-	static QString toolbarButtonText(int index);
-	static int toolbarButtonIndex(const QString &text);
+	void getNewThemes();
 
-	bool m_bStyleDirty, m_bEffectsDirty;
-	QHash <QString,StyleEntry*> styleEntries;
-	QMap  <QString,QString>     nameToStyleKey;
+	void tabChanged(int);
+
+private:
+	bool m_bDesktopThemeDirty;
 
 	QVBoxLayout* mainLayout;
 	QTabWidget* tabWidget;
-	QWidget *page1, *page2;
-	QVBoxLayout* page1Layout;
+	QWidget *page0;
 	
-	// Page1 widgets
-	QVBoxLayout* gbWidgetStyleLayout;
-	QHBoxLayout* hbLayout;
-	KComboBox* cbStyle;
-	QPushButton* pbConfigStyle;
-	QLabel* lblStyleDesc;
-	StylePreview* stylePreview;
-	QStyle* appliedStyle;
-	QPalette palette;
-	bool m_isNetbook;
-	bool m_workspaceThemeTabActivated;
-
-	// Page2 widgets
-	Ui::FineTuning fineTuningUi;
+	//Page0
+	Ui::theme themeUi;
+	ThemeModel* m_themeModel;
+        bool m_isNetbook;
+        bool m_workspaceThemeTabActivated;
 };
 
 #endif // __KCMSTYLE_H
