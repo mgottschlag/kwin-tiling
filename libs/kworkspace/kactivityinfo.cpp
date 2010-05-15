@@ -173,5 +173,20 @@ QString KActivityInfo::name(const QString & id)
     return Private::manager()->ActivityName(id);
 }
 
+KActivityInfo::Availability KActivityInfo::availability() const
+{
+    Availability result = Nothing;
+
+    if (Private::manager()->AvailableActivities().value().contains(d->id)) {
+        result = BasicInfo;
+
+        if (Private::s_store->listAvailable().value().contains(d->id)) {
+            result = Everything;
+        }
+    }
+
+    return result;
+}
+
 #include "kactivityinfo.moc"
 

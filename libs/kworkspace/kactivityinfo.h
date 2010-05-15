@@ -66,10 +66,25 @@ public:
     };
 
     /**
+     * Specifies which parts of this class are functional
+     */
+    enum Availability {
+        Nothing = 0,             ///< No activity info provided (isValid is false)
+        BasicInfo = 1,           ///< Basic info is provided
+        Everything = 2           ///< Everything is available
+    };
+
+    /**
+     * @returns what info is provided by this instance of KActivityInfo
+     */
+    Availability availability() const;
+
+    /**
      * Associates the resource with the activity represented by this
      * KActivityInfo object.
      * @param resourceUrl url of the resource
      * @param resourceType type of the resource
+     * @note Functional only when availability is Everything
      */
     void associateResource(const KUrl & resourceUrl, ResourceType resourceType = UnspecifiedResource);
 
@@ -78,6 +93,7 @@ public:
      * KActivityInfo object.
      * @param resourceUrl url of the resource
      * @param resourceType type of the resource
+     * @note Functional only when availability is Everything
      */
     void associateResource(const KUrl & resourceUrl, const KUrl & resourceType);
 
@@ -85,6 +101,7 @@ public:
      * Removes the association of this activity and the specified
      * resource.
      * @param resourceUrl url of the resource
+     * @note Functional only when availability is Everything
      */
     void disassociateResource(const KUrl & resourceUrl);
 
@@ -93,6 +110,7 @@ public:
      * @returns a list of resources of the specified type that are
      * associated with this activity. If the type is not specified,
      * all associated resources are returned,
+     * @note Functional only when availability is Everything
      */
     QList < KUrl > associatedResources(ResourceType resourceType = UnspecifiedResource) const;
 
@@ -101,17 +119,20 @@ public:
      * @returns a list of resources of the specified type that are
      * associated with this activity. If the type is not specified,
      * all associated resources are returned,
+     * @note Functional only when availability is Everything
      */
     QList < KUrl > associatedResources(const KUrl & resourceType) const;
 
     /**
      * @returns the URI of this activity. The same URI is used by
      * activities KIO slave.
+     * @note Functional only when availability is Everything
      */
     KUrl uri() const;
 
     /**
      * @returns the Nepomuk resource URI of this activity
+     * @note Functional only when availability is Everything
      */
     KUrl resourceUri() const;
 
@@ -122,6 +143,7 @@ public:
 
     /**
      * @returns the name of the activity
+     * @note Functional when availability is BasicInfo or Everything
      */
     QString name() const;
 
@@ -129,6 +151,7 @@ public:
      * @returns the icon of the activity. Icon can be a
      * freedesktop.org name or a file path. Or empty if
      * no icon is set.
+     * @note Functional only when availability is Everything
      */
     QString icon() const;
 
