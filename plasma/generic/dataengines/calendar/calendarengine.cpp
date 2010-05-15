@@ -176,7 +176,7 @@ void CalendarEngine::initAkonadiCalendar()
 
     // create the models that contain the data. they will be updated automatically from akonadi.
     m_calendarModel = new Akonadi::CalendarModel(monitor, this);
-    m_calendarModel->setCollectionFetchStrategy(Akonadi::EntityTreeModel::InvisibleFetch);
+    m_calendarModel->setCollectionFetchStrategy(Akonadi::EntityTreeModel::InvisibleCollectionFetch);
 }
 
 #include "calendarengine.moc"
