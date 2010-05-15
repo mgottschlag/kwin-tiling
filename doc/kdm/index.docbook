@@ -342,8 +342,8 @@ class="username">root</systemitem>).</para>
 <para>You can view the &kdmrc; file currently in use on your system, and you
 can configure &kdm; by editing this file. Alternatively, you can use the
 graphical configuration tool provided by the &systemsettings; (under
-<menuchoice><guisubmenu>System</guisubmenu><guimenuitem>Login
-Manager</guimenuitem></menuchoice> on the <guilabel>Advanced</guilabel> tab).
+<menuchoice><guisubmenu>Security</guisubmenu><guimenuitem>Login
+Screen</guimenuitem></menuchoice> in the <guilabel>System Administration</guilabel> group).
 </para>
 
 <para>The remainder of this chapter describes configuration of &kdm;
