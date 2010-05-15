@@ -47,7 +47,7 @@ public:
 
     QString id();
     QString name();
-    QPixmap thumbnail(const QSize &size); //FIXME do we want diff. sizes? updates?
+    QPixmap pixmap(const QSize &size); //FIXME do we want diff. sizes? updates?
 
     /**
      * whether this is the currently active activity

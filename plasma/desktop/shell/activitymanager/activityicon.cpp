@@ -19,7 +19,6 @@
 
 #include "activity.h"
 #include "activityicon.h"
-#include "kidenticongenerator.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -49,12 +48,7 @@ ActivityIcon::~ActivityIcon()
 
 QPixmap ActivityIcon::pixmap(const QSize &size)
 {
-    // we need the icon customizable
-    // while the default one is an identicon
-    return KIdenticonGenerator::self()->generate(size.width(), m_activity->id());
-    //return m_icon.pixmap(size);
-    //FIXME check whether Activity returns an icon, when that's implemented?
-    //maybe move this code to Activity?
+    return m_activity->pixmap(size);
 }
 
 QMimeData* ActivityIcon::mimeData()

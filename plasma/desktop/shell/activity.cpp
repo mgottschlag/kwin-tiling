@@ -21,6 +21,7 @@
 #include "plasma-shell-desktop.h"
 #include "kactivitycontroller.h"
 #include "kactivityinfo.h"
+#include "activitymanager/kidenticongenerator.h"
 
 #include <QPixmap>
 #include <QString>
@@ -84,10 +85,13 @@ QString Activity::name()
     return m_name;
 }
 
-QPixmap Activity::thumbnail(const QSize &size)
+QPixmap Activity::pixmap(const QSize &size)
 {
-    //TODO
-    return KIcon("plasma").pixmap(size);
+    if (m_info->isValid() && !m_info->icon().isEmpty()) {
+        return KIcon(m_info->icon()).pixmap(size);
+    } else {
+        return KIdenticonGenerator::self()->generate(size.width(), m_id);
+    }
 }
 
 bool Activity::isActive()
@@ -167,7 +171,7 @@ void Activity::close()
     }
 
     //TODO: multi-screen saving/restoring, where each screen can be
-    // independently restored: put each screen's containments into a 
+    // independently restored: put each screen's containments into a
     // different group, e.g. [Screens][0][Containments], [Screens][1][Containments], etc
     KConfigGroup dest(&external, "Containments");
     KConfigGroup dummy;
