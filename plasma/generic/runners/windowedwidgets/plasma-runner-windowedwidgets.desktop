@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Windowed widgets
 Name[ia]=Widgets (Elemento Graphic) in le Fenestra
+Name[nl]=Widgets weergegeven in vensters
 Name[pt]=Elementos em janelas
 Name[pt_BR]=Widgets em janelas
 Name[sv]=Fönsterbaserade grafiska komponenter
@@ -10,6 +11,7 @@ Name[x-test]=xxWindowed widgetsxx
 
 Comment=Find Plasma widgets that can be run as standalone windows
 Comment[ia]=Trovar widgets (elementos graphic) de plasma que on pote executar como fenestras sole
+Comment[nl]=Zoek Plasma widgets die als zelfstandige vensters kunnen draaien
 Comment[pt]=Procurar elementos do Plasma que possam ser executados como janelas autónomas
 Comment[pt_BR]=Localiza widgets do Plasma que possam ser executados como janelas autônomas
 Comment[sv]=Hitta grafiska Plasma-komponenter som kan köras som fristående fönster
