@@ -1,3 +1,2 @@
-add_subdirectory(desktopthemedetails)
 add_subdirectory(engineexplorer)
 add_subdirectory(wallpaperviewer)

@@ -1,5 +1,6 @@
 /*
   Copyright (c) 2008 Andrew Lake <jamboarder@yahoo.com>
+  Copyright (c) 2010 Jeremy Whiting <jpwhiting@kde.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -9,248 +10,21 @@
 
 #include "desktopthemedetails.h"
 
-#include <QPainter>
-#include <QFile>
-#include <QAbstractItemView>
-#include <QtGui/QHeaderView>
-#include <QComboBox>
+#include "thememodel.h"
 
-#include <KIcon>
-#include <KAboutData>
+#include <QtGui/QComboBox>
+#include <QtCore/QDir>
+#include <QtCore/QTextStream>
+
+#include <KDesktopFile>
 #include <KFileDialog>
 #include <KMessageBox>
 #include <KStandardDirs>
-#include <KDesktopFile>
-#include <KColorScheme>
-#include <KNS/Engine>
-#include <KUrl>
 #include <KZip>
-#include <KConfig>
 #include <kio/netaccess.h>
 #include <kio/copyjob.h>
 #include <kio/deletejob.h>
 #include <kio/job.h>
-#include <kgenericfactory.h>
-
-#include <Plasma/FrameSvg>
-#include <Plasma/Theme>
-
-//Theme selector code by Andre Duffeck (modified to add package description)
-class ThemeInfo
-{
-public:
-    QString package;
-    Plasma::FrameSvg *svg;
-    QString description;
-    QString author;
-    QString version;
-    QString themeRoot;
-};
-
-class ThemeModel : public QAbstractListModel
-{
-public:
-    enum { PackageNameRole = Qt::UserRole,
-           SvgRole = Qt::UserRole + 1,
-           PackageDescriptionRole = Qt::UserRole + 2,
-           PackageAuthorRole = Qt::UserRole + 3,
-           PackageVersionRole = Qt::UserRole + 4
-         };
-
-    ThemeModel(QObject *parent = 0);
-    virtual ~ThemeModel();
-
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    int indexOf(const QString &path) const;
-    void reload();
-    void clearThemeList();
-private:
-    QMap<QString, ThemeInfo> m_themes;
-};
-
-ThemeModel::ThemeModel( QObject *parent )
-: QAbstractListModel( parent )
-{
-    reload();
-}
-
-ThemeModel::~ThemeModel()
-{
-    clearThemeList();
-}
-
-void ThemeModel::clearThemeList()
-{
-    foreach (const ThemeInfo& themeInfo, m_themes) {
-        delete themeInfo.svg;
-    }
-    m_themes.clear();
-}
-
-void ThemeModel::reload()
-{
-    reset();
-    clearThemeList();
-
-    // get all desktop themes
-    KStandardDirs dirs;
-    const QStringList themes = dirs.findAllResources("data", "desktoptheme/*/metadata.desktop",
-                                               KStandardDirs::NoDuplicates);
-    foreach (const QString &theme, themes) {
-        int themeSepIndex = theme.lastIndexOf('/', -1);
-        QString themeRoot = theme.left(themeSepIndex);
-        int themeNameSepIndex = themeRoot.lastIndexOf('/', -1);
-        QString packageName = themeRoot.right(themeRoot.length() - themeNameSepIndex - 1);
-
-        KDesktopFile df(theme);
-        QString name = df.readName();
-        if (name.isEmpty()) {
-            name = packageName;
-        }
-        const QString comment = df.readComment();
-        const QString author = df.desktopGroup().readEntry("X-KDE-PluginInfo-Author",QString());
-        const QString version = df.desktopGroup().readEntry("X-KDE-PluginInfo-Version",QString());
-
-
-        Plasma::FrameSvg *svg = new Plasma::FrameSvg(this);
-        const QString svgFile = themeRoot + "/widgets/background.svg";
-        if (QFile::exists(svgFile)) {
-            svg->setImagePath(svgFile);
-        } else {
-            svg->setImagePath(svgFile + "z");
-        }
-        svg->setEnabledBorders(Plasma::FrameSvg::AllBorders);
-        ThemeInfo info;
-        info.package = packageName;
-        info.description = comment;
-        info.author = author;
-        info.version = version;
-        info.svg = svg;
-        info.themeRoot = themeRoot;
-        m_themes[name] = info;
-    }
-
-    beginInsertRows(QModelIndex(), 0, m_themes.size());
-    endInsertRows();
-}
-
-int ThemeModel::rowCount(const QModelIndex &) const
-{
-    return m_themes.size();
-}
-
-QVariant ThemeModel::data(const QModelIndex &index, int role) const
-{
-    if (!index.isValid()) {
-        return QVariant();
-    }
-
-    if (index.row() >= m_themes.size()) {
-        return QVariant();
-    }
-
-    QMap<QString, ThemeInfo>::const_iterator it = m_themes.constBegin();
-    for (int i = 0; i < index.row(); ++i) {
-        ++it;
-    }
-
-    switch (role) {
-        case Qt::DisplayRole:
-            return it.key();
-        case PackageNameRole:
-            return (*it).package;
-        case SvgRole:
-            return qVariantFromValue((void*)(*it).svg);
-        case PackageDescriptionRole:
-            return (*it).description;
-        case PackageAuthorRole:
-            return (*it).author;
-        case PackageVersionRole:
-            return (*it).version;
-        default:
-            return QVariant();
-    }
-}
-
-int ThemeModel::indexOf(const QString &name) const
-{
-    QMapIterator<QString, ThemeInfo> it(m_themes);
-    int i = -1;
-    while (it.hasNext()) {
-        ++i;
-        if (it.next().value().package == name) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-
-class ThemeDelegate : public QAbstractItemDelegate
-{
-public:
-    ThemeDelegate(QObject * parent = 0);
-
-    virtual void paint(QPainter *painter,
-                       const QStyleOptionViewItem &option,
-                       const QModelIndex &index) const;
-    virtual QSize sizeHint(const QStyleOptionViewItem &option,
-                           const QModelIndex &index) const;
-private:
-    static const int MARGIN = 10;
-};
-
-ThemeDelegate::ThemeDelegate(QObject* parent)
-: QAbstractItemDelegate(parent)
-{
-}
-
-void ThemeDelegate::paint(QPainter *painter,
-                          const QStyleOptionViewItem &option,
-                          const QModelIndex &index) const
-{
-    QString title = index.model()->data(index, Qt::DisplayRole).toString();
-    QString package = index.model()->data(index, ThemeModel::PackageNameRole).toString();
-
-    QStyleOptionViewItemV4 opt(option);
-    QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
-    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, opt.widget);    
-    
-    // draw image
-    Plasma::FrameSvg *svg = static_cast<Plasma::FrameSvg *>(
-            index.model()->data(index, ThemeModel::SvgRole).value<void *>());
-    svg->resizeFrame(QSize(option.rect.width() - (2 * MARGIN), 100 - (2 * MARGIN)));
-    QRect imgRect = QRect(option.rect.topLeft(),
-            QSize(option.rect.width() - (2 * MARGIN), 100 - (2 * MARGIN)))
-            .translated(MARGIN, MARGIN);
-    svg->paintFrame(painter, QPoint(option.rect.left() + MARGIN, option.rect.top() + MARGIN));
-
-    // draw text
-    painter->save();
-    QFont font = painter->font();
-    font.setWeight(QFont::Bold);
-    const QString colorFile = KStandardDirs::locate("data", "desktoptheme/" + package + "/colors");
-    if (!colorFile.isEmpty()) {
-        KSharedConfigPtr colors = KSharedConfig::openConfig(colorFile);
-        KColorScheme colorScheme(QPalette::Active, KColorScheme::Window, colors);
-        painter->setPen(colorScheme.foreground(KColorScheme::NormalText).color());
-    }
-    painter->setFont(font);
-    painter->drawText(option.rect, Qt::AlignCenter | Qt::TextWordWrap, title);
-    painter->restore();
-}
-
-QSize ThemeDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
-{
-    return QSize(152, 100);
-}
-
-K_PLUGIN_FACTORY(DesktopThemeDetailsFactory, registerPlugin<DesktopThemeDetails>();)
-K_EXPORT_PLUGIN(DesktopThemeDetailsFactory("desktopthemedetails", "kcm_desktopthemedetails"))
-
-
 
 struct ThemeItemNameType {
         const char* m_type;
@@ -277,14 +51,11 @@ const ThemeItemNameType themeCollectionName[] = {
 };
 
 
-DesktopThemeDetails::DesktopThemeDetails(QWidget* parent, const QVariantList &args)
-    : KCModule(DesktopThemeDetailsFactory::componentData(), parent, args),
+DesktopThemeDetails::DesktopThemeDetails(QWidget* parent)
+    : QWidget(parent),
       m_themeModel(0)
 
 {
-    KAboutData *about = new KAboutData("kcm_desktopthemedetails", 0, ki18n("Desktop Theme Details"), "1.0");
-    setAboutData(about);
-    setButtons(Apply | Help);
     setWindowIcon(KIcon("preferences-desktop"));
     setupUi(this);
 
@@ -292,10 +63,10 @@ DesktopThemeDetails::DesktopThemeDetails(QWidget* parent, const QVariantList &ar
     font.setBold(true);
     font.setPointSize(1.2*font.pointSize());
     m_themeInfoName->setFont(font);
-    
+
     m_enableAdvanced->setChecked(false);
     toggleAdvancedVisible();
-    
+
 
     m_themeModel = new ThemeModel(this);
     m_theme->setModel(m_themeModel);
@@ -304,7 +75,7 @@ DesktopThemeDetails::DesktopThemeDetails(QWidget* parent, const QVariantList &ar
     reloadConfig();
 
     connect(m_theme->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(themeSelectionChanged(const QItemSelection, const QItemSelection)));
-    
+
     connect(m_enableAdvanced, SIGNAL(toggled(bool)), this, SLOT(toggleAdvancedVisible()));
     connect(m_removeThemeButton, SIGNAL(clicked()), this, SLOT(removeTheme()));
     connect(m_exportThemeButton, SIGNAL(clicked()), this, SLOT(exportTheme()));
@@ -331,7 +102,7 @@ void DesktopThemeDetails::reloadConfig()
     // Theme
     KConfigGroup cfg = KConfigGroup(KSharedConfig::openConfig("plasmarc"), "Theme");
     const QString theme = cfg.readEntry("name", "default");
-    m_theme->setCurrentIndex(m_themeModel->index(m_themeModel->indexOf(theme)));
+    m_theme->setCurrentIndex(m_themeModel->indexOf(theme));
 
 }
 
@@ -354,7 +125,7 @@ void DesktopThemeDetails::save()
     bool customSettingsFileOpen = false;
 
     if (m_themeCustomized || !m_newThemeName->text().isEmpty()) {
-        
+
         clearCustomized(themeRoot);
 
         //Copy all files from the base theme
@@ -406,7 +177,7 @@ void DesktopThemeDetails::save()
                 KIO::DeleteJob *dj = KIO::del(KUrl(deleteFiles.at(j)), KIO::HideProgressInfo);
                 KIO::NetAccess::synchronousRun(dj, this);
             }
-            
+
             //Copy item(s)
             dest = dirs.locateLocal("data", dest, true);
             QStringList copyFiles;
@@ -419,7 +190,7 @@ void DesktopThemeDetails::save()
                 KIO::CopyJob *cj = KIO::copy(KUrl(copyFiles.at(j)), KUrl(dest), KIO::HideProgressInfo);
                 KIO::NetAccess::synchronousRun(cj, this);
             }
-            
+
             //Record settings file
             if (customSettingsFileOpen) {
                 QTextStream out(&customSettingsFile);
@@ -448,8 +219,8 @@ void DesktopThemeDetails::save()
     }
 
     m_themeModel->reload();
-    if (m_themeModel->indexOf(themeRoot) != -1) {
-        m_theme->setCurrentIndex(m_themeModel->index(m_themeModel->indexOf(themeRoot)));
+    if (m_themeModel->indexOf(themeRoot).isValid()) {
+        m_theme->setCurrentIndex(m_themeModel->indexOf(themeRoot));
         QString themeName = m_theme->currentIndex().data(Qt::DisplayRole).toString();
         setDesktopTheme(themeRoot);
     }
@@ -463,8 +234,8 @@ void DesktopThemeDetails::removeTheme()
     QString activeTheme = cfg.readEntry("name", "default");
     const QString theme = m_theme->currentIndex().data(ThemeModel::PackageNameRole).toString();
     const QString themeName = m_theme->currentIndex().data(Qt::DisplayRole).toString();
-    
-                                            
+
+
     if (m_themeCustomized) {
         if(KMessageBox::questionYesNo(this, i18n("Theme items have been changed.  Do you still wish remove the \"%1\" theme?", themeName), i18n("Remove Desktop Theme")) == KMessageBox::No) {
             removeTheme = false;
@@ -493,7 +264,7 @@ void DesktopThemeDetails::removeTheme()
     }
     m_themeModel->reload();
     reloadConfig();
-    m_theme->setCurrentIndex(m_themeModel->index(m_themeModel->indexOf(activeTheme)));
+    m_theme->setCurrentIndex(m_themeModel->indexOf(activeTheme));
 }
 
 void DesktopThemeDetails::exportTheme()
@@ -555,7 +326,7 @@ void DesktopThemeDetails::loadThemeItems()
         if (name.isEmpty()) {
             name = packageName;
         }
-        
+
         if (!isCustomized(packageName) && (m_themeRoots.key(packageName, -1) == -1)) {
             m_themes[name] = j;
             m_themeRoots[j] = packageName;
@@ -567,13 +338,13 @@ void DesktopThemeDetails::loadThemeItems()
     m_itemThemeReplacements.clear();
     m_itemFileReplacements.clear();
     QString currentTheme = m_theme->currentIndex().data(ThemeModel::PackageNameRole).toString();
-                                      
+
     if (!isCustomized(currentTheme)) {
         // Set default replacements to current theme
         QHashIterator<QString, int> i(m_items);
         while (i.hasNext()) {
             i.next();
-            m_itemThemeReplacements[i.value()] = m_themeRoots.key(currentTheme); 
+            m_itemThemeReplacements[i.value()] = m_themeRoots.key(currentTheme);
         }
         m_baseTheme = currentTheme;
     } else {
@@ -628,7 +399,7 @@ void DesktopThemeDetails::loadThemeItems()
 void DesktopThemeDetails::updateReplaceItemList(const int& item)
 {
     QString currentTheme = m_theme->currentIndex().data(ThemeModel::PackageNameRole).toString();
-    
+
 
     // Repopulate combobox droplist
     QComboBox *itemComboBox = static_cast<QComboBox*>(m_themeItemList->cellWidget(item,1));
@@ -704,11 +475,11 @@ void DesktopThemeDetails::newThemeInfoChanged()
 void DesktopThemeDetails::resetThemeDetails()
 {
     QString theme = m_theme->currentIndex().data(ThemeModel::PackageNameRole).toString();
-                                      
+
     m_themeInfoName->setText(m_theme->currentIndex().data(Qt::DisplayRole).toString());
     m_themeInfoDescription->setText(m_theme->currentIndex().data(ThemeModel::PackageDescriptionRole).toString());
     QString author = m_theme->currentIndex().data(ThemeModel::PackageAuthorRole).toString();
-                                                                                         
+
     if (!author.isEmpty()) {
         m_themeInfoAuthor->setText(i18n(" Author: %1",author));
     } else {
@@ -755,7 +526,7 @@ bool DesktopThemeDetails::isCustomized(const QString& theme) {
 
 void DesktopThemeDetails::clearCustomized(const QString& themeRoot) {
     KStandardDirs dirs;
-    
+
     if ((isCustomized(themeRoot))) {
         // Remove both possible unnamed customized directories
         if (QDir(dirs.locateLocal("data", "desktoptheme/.customized", false)).exists()) {
@@ -771,11 +542,11 @@ void DesktopThemeDetails::clearCustomized(const QString& themeRoot) {
             KIO::DeleteJob *clearCustom = KIO::del(KUrl(dirs.locateLocal("data", "desktoptheme/" + themeRoot, false)), KIO::HideProgressInfo);
             KIO::NetAccess::synchronousRun(clearCustom, this);
         }
-    }   
+    }
 }
 
 QString DesktopThemeDetails::displayedItemText(int item) {
-    QString displayedText = m_items.key(item);  
+    QString displayedText = m_items.key(item);
     for (int i = 0; themeCollectionName[i].m_type; ++i) {
         if (themeCollectionName[i].m_type == m_items.key(item)) {
             displayedText = i18nc("plasma name", themeCollectionName[i].m_displayItemName);

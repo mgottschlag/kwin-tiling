@@ -11,16 +11,17 @@
 #ifndef DESKTOPTHEMEDETAILS_H
 #define DESKTOPTHEMEDETAILS_H
 
-#include <kcmodule.h>
 #include "ui_DesktopThemeDetails.h"
+
+#include <QtGui/QWidget>
 
 class ThemeModel;
 
-class DesktopThemeDetails : public KCModule, public Ui::DesktopThemeItems
+class DesktopThemeDetails : public QWidget, public Ui::DesktopThemeItems
 {
     Q_OBJECT
 public:
-    DesktopThemeDetails(QWidget* parent, const QVariantList &args);
+    DesktopThemeDetails(QWidget* parent);
     ~DesktopThemeDetails();
 
     void reloadConfig();
@@ -33,6 +34,9 @@ public slots:
     void removeTheme();
     void exportTheme();
     void newThemeInfoChanged();
+
+Q_SIGNALS:
+    void changed();
 
 private:
     void updateReplaceItemList(const int& item);
@@ -54,8 +58,8 @@ private:
     QHash<int, QString> m_itemIcons; //theme item icons
     QHash<QString, int> m_themes; // installed themes
     QHash<int, QString> m_themeRoots; // installed themes root paths
-    QHash<int, int> m_itemThemeReplacements; // source theme for item replacements 
-    QHash<int, QString>m_itemFileReplacements; //non-theme source files for item replacements   
+    QHash<int, int> m_itemThemeReplacements; // source theme for item replacements
+    QHash<int, QString>m_itemFileReplacements; //non-theme source files for item replacements
 
     bool m_themeCustomized;
     QString m_baseTheme;

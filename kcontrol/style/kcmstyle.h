@@ -35,7 +35,6 @@
 #include <kcmodule.h>
 #include <kvbox.h>
 
-#include "ui_theme.h"
 #include "ui_finetuning.h"
 
 class KComboBox;
@@ -47,87 +46,71 @@ class QPushButton;
 class StylePreview;
 class QTabWidget;
 
-class ThemeModel;
-
 struct StyleEntry {
-	QString name;
-	QString desc;
-	QString configPage;
-	bool hidden;
+    QString name;
+    QString desc;
+    QString configPage;
+    bool hidden;
 };
 
 class KCMStyle : public KCModule
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	KCMStyle( QWidget* parent, const QVariantList& );
-	~KCMStyle();
+    KCMStyle( QWidget* parent, const QVariantList& );
+    ~KCMStyle();
 
-	virtual void load();
-	virtual void save();
-	virtual void defaults();
+    virtual void load();
+    virtual void save();
+    virtual void defaults();
 
 protected:
-	bool findStyle( const QString& str, int& combobox_item );
-	void switchStyle(const QString& styleName, bool force = false);
-	void setStyleRecursive(QWidget* w, QStyle* s);
+    bool findStyle( const QString& str, int& combobox_item );
+    void switchStyle(const QString& styleName, bool force = false);
+    void setStyleRecursive(QWidget* w, QStyle* s);
 
-	void loadStyle( KConfig& config );
-	void loadEffects( KConfig& config );
-	void addWhatsThis();
+    void loadStyle( KConfig& config );
+    void loadEffects( KConfig& config );
+    void addWhatsThis();
 
-	virtual void changeEvent( QEvent *event );
+    virtual void changeEvent( QEvent *event );
 
 protected Q_SLOTS:
-	void loadDesktopTheme();
+    void styleSpecificConfig();
+    void updateConfigButton();
 
-	void styleSpecificConfig();
-	void updateConfigButton();
+    void setStyleDirty();
+    void setEffectsDirty();
 
-	void setDesktopThemeDirty();
-	void setStyleDirty();
-	void setEffectsDirty();
-
-	void styleChanged();
-	
-	void getNewThemes();
-
-	void tabChanged(int);
+    void styleChanged();
 
 private:
-	QString currentStyle();
-	static QString toolbarButtonText(int index);
-	static int toolbarButtonIndex(const QString &text);
+    QString currentStyle();
+    static QString toolbarButtonText(int index);
+    static int toolbarButtonIndex(const QString &text);
 
-	bool m_bDesktopThemeDirty, m_bStyleDirty, m_bEffectsDirty;
-	QHash <QString,StyleEntry*> styleEntries;
-	QMap  <QString,QString>     nameToStyleKey;
+    bool m_bStyleDirty, m_bEffectsDirty;
+    QHash <QString,StyleEntry*> styleEntries;
+    QMap  <QString,QString>     nameToStyleKey;
 
-	QVBoxLayout* mainLayout;
-	QTabWidget* tabWidget;
-	QWidget *page0, *page1, *page2;
-	QVBoxLayout* page1Layout;
+    QVBoxLayout* mainLayout;
+    QTabWidget* tabWidget;
+    QWidget *page0, *page1, *page2;
+    QVBoxLayout* page1Layout;
 
-	//Page0
-	Ui::theme themeUi;
-	ThemeModel* m_themeModel;
+    // Page1 widgets
+    QVBoxLayout* gbWidgetStyleLayout;
+    QHBoxLayout* hbLayout;
+    KComboBox* cbStyle;
+    QPushButton* pbConfigStyle;
+    QLabel* lblStyleDesc;
+    StylePreview* stylePreview;
+    QStyle* appliedStyle;
+    QPalette palette;
 
-	
-	// Page1 widgets
-	QVBoxLayout* gbWidgetStyleLayout;
-	QHBoxLayout* hbLayout;
-	KComboBox* cbStyle;
-	QPushButton* pbConfigStyle;
-	QLabel* lblStyleDesc;
-	StylePreview* stylePreview;
-	QStyle* appliedStyle;
-	QPalette palette;
-	bool m_isNetbook;
-	bool m_workspaceThemeTabActivated;
-
-	// Page2 widgets
-	Ui::FineTuning fineTuningUi;
+    // Page2 widgets
+    Ui::FineTuning fineTuningUi;
 };
 
 #endif // __KCMSTYLE_H

@@ -1,15 +1,15 @@
 [Desktop Entry]
-Exec=kcmshell4 desktopthemedetails
+Exec=kcmshell4 desktoptheme
 Icon=preferences-desktop
 Type=Service
 
 X-KDE-ServiceTypes=KCModule
-X-KDE-Library=kcm_desktopthemedetails
+X-KDE-Library=kcm_desktoptheme
 X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=desktop-appearance
-X-DocPath=kcontrol/desktopthemedetails/index.html
+X-DocPath=kcontrol/desktoptheme/index.html
 
-Name=Desktop Theme Details
+Name=Desktop Theme
 Name[ar]=تفاصيل سمة سطح المكتب
 Name[be@latin]=Detali matyva dla rabočaha stała
 Name[bg]=Подробности за темата на работния плот
@@ -79,7 +79,7 @@ Name[wa]=Detays do tinme do scribanne
 Name[x-test]=xxDesktop Theme Detailsxx
 Name[zh_CN]=桌面主题细节
 Name[zh_TW]=桌面佈景主題詳細資料
-Comment=Customize individual desktop theme items
+Comment=Customize the desktop theme
 Comment[ar]=خصص عناصر السمة سطح المكتب بشكل منفرد
 Comment[be@latin]=Dapasuj asobnyja elementy matyva dla rabočaha stała
 Comment[bg]=Персонализиране на теми за работния плот
@@ -147,4 +147,4 @@ Comment[wa]=Mete a vosse môde les tinmes di tchaeke sicribanne a pårt
 Comment[x-test]=xxCustomize individual desktop theme itemsxx
 Comment[zh_CN]=定制个性化的桌面主题项目
 Comment[zh_TW]=自訂個別的桌面主題項目
-X-KDE-Keywords=Desktop Theme details
+X-KDE-Keywords=Desktop Theme
