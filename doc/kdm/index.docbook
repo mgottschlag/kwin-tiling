@@ -812,7 +812,7 @@ can add new patterns.</para>
 
 <para>To add a new pattern that is available to every user on your
 computer, simply place the file in <filename
-class="directory">$<envar>KDEDIR</envar>/share/apps/kdesktop/patterns/</filename>.</para>
+class="directory">$<envar>KDEDIR</envar>/share/apps/kdm/patterns/</filename>.</para>
 
 <para>Copy a <literal role="extension">.desktop</literal> file from
 this folder, and name it the same as your new pattern image file.
@@ -820,7 +820,7 @@ Modify the contents to suit your new pattern.</para>
 
 <para>To add a new pattern for a single user, add the files to
 <filename
-class="directory">$<envar>KDEHOME</envar>/share/apps/kdesktop/patterns/</filename>.</para>
+class="directory">$<envar>KDEHOME</envar>/share/apps/kdm/patterns/</filename>.</para>
 
 <para>For best results, the pattern should be a grayscale PNG file.</para>
 
