@@ -29,7 +29,6 @@
 #include <kcomponentdata.h>
 #include <kcmdlineargs.h>
 #include <klocale.h>
-#include <k3socketaddress.h>
 #include <kdebug.h>
 
 #include <solid/device.h>
