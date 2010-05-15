@@ -131,8 +131,8 @@ void AbstractIconList::init()
     m_slide->setTargetWidget(m_appletListWidget);
 
     //make its events pass through its parent
-//    m_appletListWidget->installEventFilter(this);
-//    m_appletListWindowWidget->installEventFilter(this);
+    m_appletListWidget->installEventFilter(this);
+    m_appletListWindowWidget->installEventFilter(this);
 
     //layouts
     m_arrowsLayout = new QGraphicsLinearLayout(m_orientation);
@@ -325,15 +325,12 @@ void AbstractIconList::itemSelected(Plasma::AbstractIcon *icon)
     m_selectedItem = icon;
 }
 
-//FIXME wow, do we really need to start from scratch?
-//this could still be cleaned up a lot.
-//and we should split the orientation from the filtering.
 void AbstractIconList::updateList()
 {
     //pure virtual
     updateVisibleIcons();
 
-//    m_appletListWidget->adjustSize();
+    m_appletListWidget->adjustSize();
 
     updateGeometry();
     m_hoverIndicator->hide();
