@@ -890,7 +890,7 @@ login window.</para>
 
 <para>Independently of the users you specify by name, you can use the
 <guilabel>System UIDs</guilabel> to specify a range of valid
-<acronym>UID</acronym>s that are not shown in the list.  By default user
+<acronym>UID</acronym>s that are shown in the list.  By default user
 id's under 1000, which are often system or daemon users, and user id's
 over 30000, are not shown.</para>
 
