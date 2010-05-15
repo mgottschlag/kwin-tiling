@@ -124,7 +124,7 @@ shortcuts you will use.</para>
 <listitem>
 <para>You can choose to <guilabel>Show layout indicator</guilabel>
 which will show the language iso name in the system tray. You can choose to
-<guilabel>Show the indicator</guilabel> even if you have a single layout enabled
+Show the indicator even if you have a single layout enabled
 and you can show the language flag instead of only the ISO code by checking
 <guilabel>Show flag</guilabel>.</para>
 </listitem>
@@ -145,7 +145,7 @@ it only for the current virtual desktop.
 <varlistentry>
 <term><guilabel>Shortcuts for Switching Layout</guilabel></term>
 <listitem>
-<para><guilabel>Main SHortcut</guilabel> is a shortcut for switching
+<para><guilabel>Main shortcuts</guilabel> is a shortcut for switching
 layouts which is handled by X.org. <guilabel>3rd level shortcuts</guilabel> is a
 shortcut for switching to a third level of the active layout (if it has one)
 which is handled by X.org. It allows modifier-only shortcuts.
