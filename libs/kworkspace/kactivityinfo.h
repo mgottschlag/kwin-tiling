@@ -44,7 +44,7 @@ class KDE_EXPORT KActivityInfo: public QObject {
     Q_PROPERTY(QString name READ name)
 
 public:
-    explicit KActivityInfo(const QString & activityId, QObject *parent);
+    explicit KActivityInfo(const QString & activityId, QObject *parent=0);
     ~KActivityInfo();
 
     /**
