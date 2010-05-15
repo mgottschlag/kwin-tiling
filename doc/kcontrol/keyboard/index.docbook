@@ -124,7 +124,7 @@ shortcuts you will use.</para>
 <listitem>
 <para>You can choose to <guilabel>Show layout indicator</guilabel>
 which will show the language iso name in the system tray. You can choose to
-Show the indicator even if you have a single layout enabled
+show the indicator even if you have a single layout enabled
 and you can show the language flag instead of only the ISO code by checking
 <guilabel>Show flag</guilabel>.</para>
 </listitem>
