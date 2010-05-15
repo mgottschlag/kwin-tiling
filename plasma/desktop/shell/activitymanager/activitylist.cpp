@@ -34,9 +34,14 @@ ActivityList::ActivityList(Qt::Orientation orientation, QGraphicsItem *parent)
     foreach (const QString &activity, activities) {
         m_allAppletsHash.insert(activity, createAppletIcon(activity));
     }
+    if (m_allAppletsHash.count() == 1) {
+        ActivityIcon *icon = qobject_cast<ActivityIcon*>(m_allAppletsHash.values().first());
+        if (icon) {
+            icon->setRemovable(false);
+        }
+    }
     //TODO:
     //-do something about sorting and filtering (most recent first?)
-    //-listen to signals for remove, etc
 
     connect(m_activityController, SIGNAL(activityAdded(const QString &)), this, SLOT(activityAdded(const QString &)));
     connect(m_activityController, SIGNAL(activityRemoved(const QString &)), this, SLOT(activityRemoved(const QString &)));
@@ -79,6 +84,12 @@ void ActivityList::setSearch(const QString &searchString)
 void ActivityList::activityAdded(const QString &id)
 {
     //kDebug() << id;
+    if (m_allAppletsHash.count() == 1) {
+        ActivityIcon *icon = qobject_cast<ActivityIcon*>(m_allAppletsHash.values().first());
+        if (icon) {
+            icon->setRemovable(true);
+        }
+    }
     m_allAppletsHash.insert(id, createAppletIcon(id));
     updateList();
 }
@@ -87,6 +98,14 @@ void ActivityList::activityRemoved(const QString &id)
 {
     Plasma::AbstractIcon* icon = m_allAppletsHash.take(id);
     delete icon;
+
+    if (m_allAppletsHash.count() == 1) {
+        ActivityIcon *icon = qobject_cast<ActivityIcon*>(m_allAppletsHash.values().first());
+        if (icon) {
+            icon->setRemovable(false);
+        }
+    }
+
     updateList();
 }
 

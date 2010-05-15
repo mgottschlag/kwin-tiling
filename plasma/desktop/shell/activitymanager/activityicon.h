@@ -34,6 +34,8 @@ class ActivityIcon : public Plasma::AbstractIcon
         explicit ActivityIcon(const QString &id);
         virtual ~ActivityIcon();
 
+        void setRemovable(bool removable);
+
         QPixmap pixmap(const QSize &size);
         QMimeData* mimeData();
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
@@ -49,6 +51,7 @@ class ActivityIcon : public Plasma::AbstractIcon
         KIcon m_removeIcon;
         KIcon m_stopIcon;
         KIcon m_playIcon;
+        bool m_removable : 1;
         Activity *m_activity;
 };
 

@@ -33,6 +33,7 @@ ActivityIcon::ActivityIcon(const QString &id)
     m_removeIcon("edit-delete"),
     m_stopIcon("media-playback-stop"),
     m_playIcon("media-playback-start"),
+    m_removable(true),
     m_activity(new Activity(id, this))
 {
     connect(this, SIGNAL(clicked(Plasma::AbstractIcon*)), m_activity, SLOT(activate()));
@@ -70,10 +71,12 @@ void ActivityIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     QSize cornerIconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
     qreal iconX = rect.x() + qMax(0.0, (rect.width() - iconSize()) / 2.0); //icon's centered
 
-    //the Remove corner-button
-    qreal removeX = iconX + iconSize() - cornerIconSize.width();
-    qreal removeY = rect.y();
-    painter->drawPixmap(removeX, removeY, m_removeIcon.pixmap(cornerIconSize));
+    if (m_removable) {
+        //the Remove corner-button
+        qreal removeX = iconX + iconSize() - cornerIconSize.width();
+        qreal removeY = rect.y();
+        painter->drawPixmap(removeX, removeY, m_removeIcon.pixmap(cornerIconSize));
+    }
 
     if (m_activity->isRunning()) {
         //draw stop icon
@@ -97,14 +100,16 @@ void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     const QRectF rect = contentsRect();
     QSize cornerIconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
     qreal iconX = rect.x() + qMax(0.0, (rect.width() / 2) - (iconSize() / 2));
-    qreal removeX = iconX + iconSize() - cornerIconSize.width();
-    qreal removeY = rect.y();
 
-    QRectF removeRect(QPointF(removeX, removeY), cornerIconSize);
+    if (m_removable) {
+        qreal removeX = iconX + iconSize() - cornerIconSize.width();
+        qreal removeY = rect.y();
+        QRectF removeRect(QPointF(removeX, removeY), cornerIconSize);
 
-    if (removeRect.contains(event->pos())) {
-        m_activity->destroy();
-        return;
+        if (removeRect.contains(event->pos())) {
+            m_activity->destroy();
+            return;
+        }
     }
 
     if (m_activity->isRunning()) {
@@ -120,6 +125,15 @@ void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void ActivityIcon::repaint()
 {
+    update();
+}
+
+void ActivityIcon::setRemovable(bool removable)
+{
+    if (removable == m_removable) {
+        return;
+    }
+    m_removable = removable;
     update();
 }
 
