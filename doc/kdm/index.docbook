@@ -424,7 +424,7 @@ linkend="option-colorscheme"><option>ColorScheme</option></link> in
 login window.  Only fonts available to all users are available here, not
 fonts you have installed on a per user basis.</para>
 
-<para>You can select three different font styles from the drop down box
+<para>You can select three different font styles in this section
 (<guilabel>General:</guilabel>, <guilabel>Failure:</guilabel>,
 <guilabel>Greeting:</guilabel>).  When you click on the
 <guibutton>Choose...</guibutton> button a dialog appears from which you can
@@ -668,43 +668,41 @@ color.</para></listitem>
 <varlistentry>
 <term><guilabel>Horizontal Gradient</guilabel></term>
 <listitem><para>By choosing this mode, you select two colors (using both color
-buttons).  &kde; will then start with the color selected by <guilabel>Primary
-Color</guilabel> on the left edge of the screen, and slowly transform into the
-color selected by <guilabel>Blend Color</guilabel> by the time it gets to the
+buttons).  &kde; will then start with the primary color selected with the left 
+button on the left edge of the screen, and slowly transform into the blend color
+selected with the right button by the time it gets to the
 right edge of the screen.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Vertical Gradient</guilabel></term>
 <listitem><para>By choosing this mode, you select two colors (using both color
-buttons).  &kde; will then start with the color selected by <guilabel>Primary
-Color</guilabel> on the top edge of the screen, and slowly transform into the
-color selected by <guilabel>Blend Color</guilabel> as it moves to the bottom of
+buttons).  &kde; will then start with the primary color selected with the left
+button on the top edge of the screen, and slowly transform into the blend color
+selected with the right button as it moves to the bottom of
 the screen.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Pyramid Gradient</guilabel></term>
 <listitem><para>By choosing this mode, you select two colors (using both color
-buttons).  &kde; will then start with the color selected by
-<guilabel>Primary Color</guilabel> in each
-corner of the screen, and slowly transform into the color selected by
-<guilabel>Blend Color</guilabel> as it moves to the center of the
+buttons).  &kde; will then start with the primary color selected with the left
+button in each corner of the screen, and slowly transform into the blend color
+selected with the right button as it moves to the center of the
 screen.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Pipecross Gradient</guilabel></term>
 <listitem><para>By choosing this mode, you select two colors (using both color
-buttons).  &kde; will then start with the color selected by
-<guilabel>Primary Color</guilabel> in each corner of the screen, and slowly
-transform into the color selected by <guilabel>Blend Color</guilabel>
-as it moves to the center of the screen. The shape of
-this gradient is different than the pyramid gradient.</para></listitem>
+buttons).  &kde; will then start with the primary color selected with the left
+button in each corner of the screen, and slowly transform into the blend color
+selected with the right button as it moves to the center of the screen. 
+The shape of this gradient is different than the pyramid gradient.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Elliptic Gradient</guilabel></term>
 <listitem><para>By choosing this mode, you select two colors (using both color
-buttons).  &kde; will then start with the color selected by
-<guilabel>Blend Color</guilabel> in the center of the screen, and slowly
-transform into the color selected by <guilabel>Primary Color</guilabel>
+buttons).  &kde; will then start with the blend color selected with the right
+button in the center of the screen, and slowly
+transform into the primary color selected by the left button 
 as it moves to the edges, in an elliptical pattern.</para></listitem>
 </varlistentry>
 
@@ -797,7 +795,7 @@ choice.</para>
 <sect3 id="bkgnd-patterns">
 <title>Adding, Removing and Modifying Wallpapers and Patterns</title>
 
-<para>There is a button under the preview monitor labelled <guibutton>Get
+<para>There is a button under the preview monitor labeled <guibutton>Get
 New Wallpapers</guibutton> that helps you fetch new wallpaper images from a
 selection of popular images from the <ulink
 url="http://www.kde-look.org">KDE-Look</ulink> website.  You can of course
@@ -892,7 +890,7 @@ login window.</para>
 
 <para>Independently of the users you specify by name, you can use the
 <guilabel>System UIDs</guilabel> to specify a range of valid
-<acronym>UID</acronym>s that are shown in the list.  By default user
+<acronym>UID</acronym>s that are not shown in the list.  By default user
 id's under 1000, which are often system or daemon users, and user id's
 over 30000, are not shown.</para>
 
