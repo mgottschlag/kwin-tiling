@@ -47,6 +47,8 @@ class QPushButton;
 class StylePreview;
 class QTabWidget;
 
+class ThemeModel;
+
 struct StyleEntry {
 	QString name;
 	QString desc;
@@ -78,27 +80,39 @@ protected:
 	virtual void changeEvent( QEvent *event );
 
 protected Q_SLOTS:
+	void loadDesktopTheme();
+
 	void styleSpecificConfig();
 	void updateConfigButton();
 
+	void setDesktopThemeDirty();
 	void setStyleDirty();
 	void setEffectsDirty();
 
 	void styleChanged();
 	
+	void getNewThemes();
+
+	void tabChanged(int);
+
 private:
 	QString currentStyle();
 	static QString toolbarButtonText(int index);
 	static int toolbarButtonIndex(const QString &text);
 
-	bool m_bStyleDirty, m_bEffectsDirty;
+	bool m_bDesktopThemeDirty, m_bStyleDirty, m_bEffectsDirty;
 	QHash <QString,StyleEntry*> styleEntries;
 	QMap  <QString,QString>     nameToStyleKey;
 
 	QVBoxLayout* mainLayout;
 	QTabWidget* tabWidget;
-	QWidget *page1, *page2;
+	QWidget *page0, *page1, *page2;
 	QVBoxLayout* page1Layout;
+
+	//Page0
+	Ui::theme themeUi;
+	ThemeModel* m_themeModel;
+
 	
 	// Page1 widgets
 	QVBoxLayout* gbWidgetStyleLayout;
