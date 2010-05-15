@@ -22,12 +22,15 @@
 #include <KColorScheme>
 
 #include <Plasma/Containment>
+#include <Plasma/Context>
 #include <Plasma/FrameSvg>
 #include <Plasma/Wallpaper>
 #include <Plasma/View>
 #include <Plasma/Corona>
 
 #include "kworkspace/screenpreviewwidget.h"
+#include "kworkspace/kactivityinfo.h"
+#include "kworkspace/kactivitycontroller.h"
 
 #include "ui_BackgroundDialog.h"
 #include "ui_ActivityConfiguration.h"
@@ -212,11 +215,11 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     QWidget *main= new QWidget(this);
     d->backgroundDialogUi.setupUi(main);
     d->appearanceItem = addPage(main, i18n("Wallpaper"), "preferences-desktop-wallpaper");
-    
+
     QWidget *activity = new QWidget(this);
     d->activityUi.setupUi(activity);
     d->activityItem = addPage(activity, i18n("Activity"), "plasma");
-    
+
     qreal previewRatio = (qreal)res.width() / (qreal)res.height();
     QSize monitorSize(200, int(200 * previewRatio));
 
@@ -255,7 +258,8 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     connect(d->activityUi.m_containmentComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(settingsModified()));
     connect(d->activityUi.m_activityName, SIGNAL(textChanged(const QString&)), this, SLOT(settingsModified()));
     connect(d->activityUi.m_activityName, SIGNAL(editingFinished()), this, SLOT(checkActivityName()));
-    
+    connect(d->activityUi.m_activityIcon, SIGNAL(iconChanged(const QString&)), this, SLOT(settingsModified()));
+
     connect(d->backgroundDialogUi.m_wallpaperMode, SIGNAL(currentIndexChanged(int)), this, SLOT(settingsModified()));
 
     settingsModified(false);
@@ -308,9 +312,25 @@ void BackgroundDialog::reloadConfig()
     }
 
     d->activityUi.m_containmentComboBox->setCurrentIndex(containmentIndex);
-    
+
     if (d->containment) {
         d->activityUi.m_activityName->setText(d->containment->activity());
+
+        bool iconEnabled = false;
+        Plasma::Context * context = d->containment->context();
+        if (context && !context->currentActivityId().isEmpty()) {
+            KActivityInfo info(context->currentActivityId());
+
+            // TODO: Is valid will have to change to test whether
+            // icon is availavle at all (is nepomuk running) once we
+            // get that API in KActivityInfo
+            if (info.isValid()) {
+                d->activityUi.m_activityIcon->setIcon(info.icon());
+                iconEnabled = true;
+            }
+        }
+
+        d->activityUi.m_activityIcon->setVisible(iconEnabled);
     }
 
     // Wallpaper
@@ -490,6 +510,14 @@ void BackgroundDialog::saveConfig()
         }
 
         d->containment->setActivity(d->activityUi.m_activityName->text());
+
+        Plasma::Context * context = d->containment->context();
+        if (context && !context->currentActivityId().isEmpty()) {
+            KActivityController().setActivityIcon(
+                context->currentActivityId(),
+                d->activityUi.m_activityIcon->icon()
+            );
+        }
 
         // Wallpaper
         Plasma::Wallpaper *currentWallpaper = d->containment->wallpaper();
