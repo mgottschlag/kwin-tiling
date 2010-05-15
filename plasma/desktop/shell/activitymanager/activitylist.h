@@ -48,8 +48,7 @@ private Q_SLOTS:
     void activityRemoved(const QString &id);
 
 private:
-    //Creates a new applet icon and puts it into the hash
-    ActivityIcon *createAppletIcon(const QString &id);
+    void createActivityIcon(const QString &id);
 
     KActivityController *m_activityController;
 

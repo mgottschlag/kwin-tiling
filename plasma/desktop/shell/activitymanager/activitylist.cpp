@@ -32,7 +32,7 @@ ActivityList::ActivityList(Qt::Orientation orientation, QGraphicsItem *parent)
 {
     QStringList activities = PlasmaApp::self()->listActivities();
     foreach (const QString &activity, activities) {
-        m_allAppletsHash.insert(activity, createAppletIcon(activity));
+        createActivityIcon(activity);
     }
     if (m_allAppletsHash.count() == 1) {
         ActivityIcon *icon = qobject_cast<ActivityIcon*>(m_allAppletsHash.values().first());
@@ -53,14 +53,11 @@ ActivityList::~ActivityList()
 {
 }
 
-//TODO need function that scrolls to the start of stashed/open activities
-
-ActivityIcon *ActivityList::createAppletIcon(const QString &id)
+void ActivityList::createActivityIcon(const QString &id)
 {
-    ActivityIcon *applet = new ActivityIcon(id);
-    addIcon(applet);
-
-    return applet;
+    ActivityIcon *icon = new ActivityIcon(id);
+    addIcon(icon);
+    m_allAppletsHash.insert(id, icon);
 }
 /*
 void AppletsListWidget::appletIconDoubleClicked(AbstractIcon *icon)
@@ -90,7 +87,7 @@ void ActivityList::activityAdded(const QString &id)
             icon->setRemovable(true);
         }
     }
-    m_allAppletsHash.insert(id, createAppletIcon(id));
+    createActivityIcon(id);
     updateList();
 }
 
