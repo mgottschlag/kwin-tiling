@@ -49,7 +49,6 @@ KActivityController::KActivityController(QObject * parent)
     : KActivityConsumer(parent), d(new Private())
 {
     connect(d->dbusController.data(), SIGNAL(activityAdded(QString)), this, SIGNAL(activityAdded(QString)));
-    connect(d->dbusController.data(), SIGNAL(activityAdded(QString)), this, SIGNAL(activityAdded(QString)));
     connect(d->dbusController.data(), SIGNAL(activityRemoved(QString)), this, SIGNAL(activityRemoved(QString)));
     connect(d->dbusController.data(), SIGNAL(resourceWindowRegistered(uint,QString)), this, SIGNAL(resourceWindowRegistered(uint,QString)));
     connect(d->dbusController.data(), SIGNAL(resourceWindowUnregistered(uint,QString)), this, SIGNAL(resourceWindowUnregistered(uint,QString)));
