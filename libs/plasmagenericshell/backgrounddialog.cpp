@@ -321,10 +321,7 @@ void BackgroundDialog::reloadConfig()
         if (context && !context->currentActivityId().isEmpty()) {
             KActivityInfo info(context->currentActivityId());
 
-            // TODO: Is valid will have to change to test whether
-            // icon is availavle at all (is nepomuk running) once we
-            // get that API in KActivityInfo
-            if (info.isValid()) {
+            if (info.availability() == KActivityInfo::Everything) {
                 d->activityUi.m_activityIcon->setIcon(info.icon());
                 iconEnabled = true;
             }
@@ -512,11 +509,14 @@ void BackgroundDialog::saveConfig()
         d->containment->setActivity(d->activityUi.m_activityName->text());
 
         Plasma::Context * context = d->containment->context();
-        if (context && !context->currentActivityId().isEmpty()) {
+        if (d->activityUi.m_activityIcon->isVisible() &&
+                context && !context->currentActivityId().isEmpty()) {
+
             KActivityController().setActivityIcon(
                 context->currentActivityId(),
                 d->activityUi.m_activityIcon->icon()
             );
+
         }
 
         // Wallpaper
