@@ -42,7 +42,7 @@ KDE_EXPORT int kdemain(int argc, char **argv)
 
     KCmdLineOptions options;
     options.add("b", ki18n("Show window decorations around the widget"));
-    options.add("noborder", ki18n("Show window decorations around the widget"));
+    options.add("noborder", ki18n("Do not show window decorations around the widget"));
     options.add("f");
     options.add("fullscreen", ki18n("Display the widget fullscreen"));
     options.add("+applet", ki18n("Name of applet to view; may refer to the plugin name or be a path "
