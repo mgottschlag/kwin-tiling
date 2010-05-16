@@ -443,7 +443,7 @@ void DeviceItem::setState(DeviceItem::State state)
             m_descriptionLabel->setText(i18nc("Accessing is a less technical word for Mounting; translation should be short and mean \'Currently mounting this device\'", "Accessing..."));
         } else {
             collapse();
-            m_descriptionLabel->setText(i18n("Removing is a less technical word for Unmounting; translation shoud be short and mean \'Currently unmounting this device\'", "Removing..."));
+            m_descriptionLabel->setText(i18nc("Removing is a less technical word for Unmounting; translation shoud be short and mean \'Currently unmounting this device\'", "Removing..."));
         }
     }
 }
