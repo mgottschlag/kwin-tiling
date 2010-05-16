@@ -32,6 +32,7 @@
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 #include <Plasma/PopupApplet>
+#include <Plasma/WindowEffects>
 
 SingleView::SingleView(Plasma::Corona *corona, Plasma::Containment *containment, const QString &pluginName, int appletId, const QVariantList &appletArgs, QWidget *parent)
     : QGraphicsView(parent),
@@ -144,6 +145,17 @@ void SingleView::updateGeometry()
         }
 
         setSceneRect(m_applet->sceneBoundingRect());
+
+    }
+
+    if ((windowFlags() & Qt::FramelessWindowHint) &&
+            applet()->backgroundHints() != Plasma::Applet::NoBackground) {
+
+        // TODO: Use the background's mask for blur
+        QRegion mask;
+        mask += QRect(QPoint(), size());
+
+        Plasma::WindowEffects::enableBlurBehind(winId(), true, mask);
     }
 }
 
