@@ -282,7 +282,11 @@ void DeviceItem::setSafelyRemovable(const bool safe)
 void DeviceItem::updateTooltip()
 {
     if (m_mounted) {
-        m_leftActionIcon->setToolTip(i18n("Click to safely remove this device from the computer."));
+        if (data(NotifierDialog::IsOpticalMedia).toBool()) {
+            m_leftActionIcon->setToolTip(i18n("Click to eject this disc."));
+        } else {
+            m_leftActionIcon->setToolTip(i18n("Click to safely remove this device."));
+        }
         m_deviceIcon->setToolTip(i18n("It is currently <b>not safe</b> to remove this device: applications may be accessing it. Click the eject button to safely remove this device."));
     } else {
         m_leftActionIcon->setToolTip(i18n("Click to access this device from other applications."));
@@ -436,10 +440,10 @@ void DeviceItem::setState(DeviceItem::State state)
         m_busyWidgetTimer.start(300);
 
         if (state == Mounting) {
-            m_descriptionLabel->setText(i18n("Mounting..."));
+            m_descriptionLabel->setText(i18nc("Accessing is a less technical word for Mounting; translation should be short and mean \'Currently mounting this device\'", "Accessing..."));
         } else {
             collapse();
-            m_descriptionLabel->setText(i18n("Unmounting..."));
+            m_descriptionLabel->setText(i18n("Removing is a less technical word for Unmounting; translation shoud be short and mean \'Currently unmounting this device\'", "Removing..."));
         }
     }
 }
