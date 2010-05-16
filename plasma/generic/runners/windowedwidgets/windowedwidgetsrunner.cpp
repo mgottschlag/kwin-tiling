@@ -48,7 +48,8 @@ WindowedWidgetsRunner::~WindowedWidgetsRunner()
 void WindowedWidgetsRunner::match(Plasma::RunnerContext &context)
 {
     const QString term = context.query();
-    if (term.length() <  3) {
+
+    if (!context.singleRunnerQueryMode() && term.length() <  3) {
         return;
     }
 
@@ -61,7 +62,8 @@ void WindowedWidgetsRunner::match(Plasma::RunnerContext &context)
         if ((service->name().contains(term, Qt::CaseInsensitive) ||
              service->genericName().contains(term, Qt::CaseInsensitive) ||
              service->comment().contains(term, Qt::CaseInsensitive)) ||
-             service->categories().contains(term, Qt::CaseInsensitive)) {
+             service->categories().contains(term, Qt::CaseInsensitive) ||
+             term.startsWith(i18nc("Note this is a KRunner keyword", "mobile applications"))) {
 
             Plasma::QueryMatch match(this);
             setupMatch(service, match);
