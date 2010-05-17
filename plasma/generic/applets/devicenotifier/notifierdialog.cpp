@@ -516,7 +516,7 @@ void NotifierDialog::buildDialog()
     m_mainLayout->setSpacing(0);
 
     Plasma::IconWidget *icon = new Plasma::IconWidget(m_widget);
-    icon->setIcon(KIcon("emblem-mounted"));
+    icon->setIcon(KIcon("device-notifier"));
     icon->setMaximumHeight(KIconLoader::SizeMedium);
     icon->setMinimumHeight(KIconLoader::SizeMedium);
     icon->setAcceptHoverEvents(false);
