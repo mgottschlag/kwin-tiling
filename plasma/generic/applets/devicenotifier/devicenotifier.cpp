@@ -387,7 +387,7 @@ void DeviceNotifier::createConfigurationInterface(KConfigDialog *parent)
     m_autoMountingWidget = new KCModuleProxy("device_automounter_kcm");
 
     parent->addPage(configurationWidget, i18n("Display"), icon());
-    parent->addPage(m_deviceActionsWidget, m_deviceActionsWidget->moduleInfo().moduleName(), 
+    parent->addPage(m_deviceActionsWidget, m_deviceActionsWidget->moduleInfo().moduleName(),
                     m_deviceActionsWidget->moduleInfo().icon());
     parent->addPage(m_autoMountingWidget, i18n("Automounting"),
                     m_autoMountingWidget->moduleInfo().icon());
