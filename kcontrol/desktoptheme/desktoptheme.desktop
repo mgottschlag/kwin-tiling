@@ -10,12 +10,14 @@ X-KDE-System-Settings-Parent-Category=desktop-appearance
 X-DocPath=kcontrol/desktoptheme/index.html
 
 Name=Desktop Theme
+Name[nl]=Bureaubladthema
 Name[pt]=Tema do Ambiente de Trabalho
 Name[pt_BR]=Tema da área de trabalho
 Name[sv]=Skrivbordstema
 Name[uk]=Тема стільниці
 Name[x-test]=xxDesktop Themexx
 Comment=Customize the desktop theme
+Comment[nl]=Pas het bureaubladthema aan
 Comment[pt]=Personalizar o tema do ambiente de trabalho
 Comment[pt_BR]=Personaliza o tema da área de trabalho
 Comment[sv]=Anpassa skrivbordstemat
