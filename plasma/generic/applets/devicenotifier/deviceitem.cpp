@@ -113,7 +113,6 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
     capacityBarWidget->setAttribute(Qt::WA_TranslucentBackground);
     capacityBarWidget->setContinuous(true);
     m_capacityBar->setAcceptHoverEvents(false);
-    m_capacityBar->setMaximumHeight(12);
     m_capacityBar->setOpacity(0);
     info_layout->addItem(m_nameLabel);
     info_layout->addItem(m_descriptionLabel);
