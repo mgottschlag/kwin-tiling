@@ -1037,22 +1037,24 @@ void PlasmaApp::createUnhideTrigger()
 
     switch (m_controlBar->location()) {
         case Plasma::TopEdge:
-            actualWidth = triggerWidth = m_controlBar->width();
+            actualWidth = triggerWidth = m_controlBar->width() - 2;
             actualHeight = 1;
+            triggerPoint += QPoint(1, 0);
 
             break;
         case Plasma::BottomEdge:
-            actualWidth = triggerWidth = m_controlBar->width();
-            actualTriggerPoint = triggerPoint = m_controlBar->geometry().bottomLeft();
+            actualWidth = triggerWidth = m_controlBar->width() - 2;
+            actualTriggerPoint = triggerPoint = m_controlBar->geometry().bottomLeft() + QPoint(1, 0);
 
             break;
         case Plasma::RightEdge:
-            actualHeight = triggerHeight = m_controlBar->height();
-            actualTriggerPoint = triggerPoint = m_controlBar->geometry().topRight();
+            actualHeight = triggerHeight = m_controlBar->height() - 2;
+            actualTriggerPoint = triggerPoint = m_controlBar->geometry().topRight() + QPoint(0, 1);
 
             break;
         case Plasma::LeftEdge:
-            actualHeight = triggerHeight = m_controlBar->height();
+            actualHeight = triggerHeight = m_controlBar->height() - 2;
+            triggerPoint += QPoint(0, -1);
 
             break;
         default:
