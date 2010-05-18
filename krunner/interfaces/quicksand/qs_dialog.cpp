@@ -151,7 +151,6 @@ void QsDialog::display(const QString &term)
     m_actionView->reset();
     m_actionView->hide();
     adjustSize();
-    show();
     m_matchView->setFocus();
 
     int screen = 0;
@@ -159,7 +158,7 @@ void QsDialog::display(const QString &term)
         screen = QApplication::desktop()->screenNumber(QCursor::pos());
     }
 
-    //KDialog::centerOnScreen(this, screen); // For some reason, this isn't working
+    //positionOnScreen will call QWidget::show anyways so we don't need to call it here
     positionOnScreen();
     KWindowSystem::forceActiveWindow(winId());
     if (term.isEmpty() && !m_runnerManager->singleMode()) {
