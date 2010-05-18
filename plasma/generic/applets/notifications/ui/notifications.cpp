@@ -405,7 +405,7 @@ void Notifications::createJobGroups()
         extenderGroup->setName("jobGroup");
         initExtenderItem(extenderGroup);
         extenderGroup->setAutoHide(true);
-    } else {
+    } else if (extender()->group("jobGroup")) {
         extender()->group("jobGroup")->setAutoHide(true);
     }
 }
