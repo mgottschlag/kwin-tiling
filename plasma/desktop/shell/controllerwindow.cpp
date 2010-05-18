@@ -140,11 +140,6 @@ void ControllerWindow::setContainment(Plasma::Containment *containment)
     }
     m_corona = m_containment->corona();
 
-    if (m_view) {
-        //FIXME
-        //m_view->setScreen(m_containment->screen(), m_containment->desktop());
-    }
-
     if (m_widgetExplorer) {
         m_widgetExplorer->setContainment(m_containment);
     }
@@ -245,9 +240,6 @@ void ControllerWindow::showWidgetExplorer()
     if (!m_containment) {
         return;
     }
-
-    //FIXME
-    //m_view->setScreen(m_containment->screen(), m_containment->desktop());
 
     if (!m_widgetExplorer) {
         m_widgetExplorer = new Plasma::WidgetExplorer(orientation());
