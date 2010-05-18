@@ -231,7 +231,6 @@ private:
 #endif
 
 private Q_SLOTS:
-    void init();
     void togglePanelController();
     void showWidgetExplorer();
     void editingComplete();
@@ -282,7 +281,6 @@ private:
     VisibilityMode m_visibilityMode;
     int m_lastSeenSize;
     bool m_lastHorizontal : 1;
-    bool m_init : 1;
 
     bool m_editing : 1;
     bool m_triggerEntered : 1;

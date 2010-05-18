@@ -1,5 +1,3 @@
-#ifndef PANELVIEW_CPP
-#define PANELVIEW_CPP
 /*
 *   Copyright 2007 by Matt Broadstone <mbroadst@kde.org>
 *   Copyright 2007 by Robert Knight <robertknight@gmail.com>
@@ -209,11 +207,14 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 #endif
       m_visibilityMode(NormalPanel),
       m_lastHorizontal(true),
-      m_init(false),
       m_editing(false),
       m_triggerEntered(false)
 {
-    kDebug() << "Panel geometry is" << panel->geometry();
+    // KWin setup
+    KWindowSystem::setOnAllDesktops(winId(), true);
+    KWindowSystem::setType(winId(), NET::Dock);
+    setWindowRole(QString("panel_%1").arg(id));
+
     m_delayedUnhideTs.start();
     m_delayedUnhideTimer->setSingleShot(true);
     m_delayedUnhideTimer->setInterval(200);
@@ -221,11 +222,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     m_strutsTimer->setSingleShot(true);
     connect(m_strutsTimer, SIGNAL(timeout()), this, SLOT(updateStruts()));
-
-    connect(panel, SIGNAL(destroyed(QObject*)), this, SLOT(panelDeleted()));
-    connect(panel, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
-    connect(panel, SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)), this, SLOT(appletAdded(Plasma::Applet *)));
-    connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
 
     // Graphics view setup
     setFrameStyle(QFrame::NoFrame);
@@ -247,20 +243,73 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     KConfigGroup viewConfig = config();
     KConfigGroup sizes = KConfigGroup(&viewConfig, "Sizes");
-    QRect screenRect = Kephal::ScreenUtils::screenGeometry(panel->screen());
     m_lastHorizontal = isHorizontal();
+    const QRect screenRect = Kephal::ScreenUtils::screenGeometry(panel->screen());
     m_lastSeenSize = sizes.readEntry("lastsize", m_lastHorizontal ? screenRect.width() : screenRect.height());
     m_alignment = alignmentFilter((Qt::Alignment)viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
     m_offset = viewConfig.readEntry("Offset", 0);
+    setVisibilityMode((VisibilityMode)viewConfig.readEntry("panelVisibility", (int)m_visibilityMode));
 
-    KWindowSystem::setType(winId(), NET::Dock);
-    setWindowRole(QString("panel_%1").arg(id));
+    connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
+
+    Kephal::Screens *screens = Kephal::Screens::self();
+    connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
+            this, SLOT(pinchContainmentToCurrentScreen()));
+    connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)),
+            this, SLOT(updatePanelGeometry()));
+    connect(screens, SIGNAL(screenAdded(Kephal::Screen *)),
+            this, SLOT(updateStruts()));
+    connect(screens, SIGNAL(screenRemoved(int)),
+            this, SLOT(updateStruts()));
+}
+
+PanelView::~PanelView()
+{
+    if (m_panelController) {
+        disconnect(m_panelController, 0, this, 0);
+        delete m_panelController;
+    }
+
+    delete m_glowBar;
+    destroyUnhideTrigger();
+#ifdef Q_WS_WIN
+    registerAccessBar(false);
+#endif
+}
+
+void PanelView::setContainment(Plasma::Containment *containment)
+{
+    kDebug() << "Panel geometry is" << containment->geometry();
+
+    Plasma::Containment *oldContainment = this->containment();
+    if (oldContainment) {
+        disconnect(oldContainment, 0, this, 0);
+    }
+
+    connect(containment, SIGNAL(destroyed(QObject*)), this, SLOT(panelDeleted()));
+    connect(containment, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
+    connect(containment, SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)), this, SLOT(appletAdded(Plasma::Applet *)));
+    connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
+
+    KConfigGroup viewIds(KGlobal::config(), "ViewIds");
+
+    if (oldContainment) {
+        viewIds.deleteEntry(QString::number(oldContainment->id()));
+    }
+
+    if (containment) {
+        viewIds.writeEntry(QString::number(containment->id()), id());
+        if (containment->corona()) {
+            containment->corona()->requestConfigSync();
+        }
+    }
 
     // ensure we aren't overlapping other panels
-    const QRegion availGeom = PlasmaApp::self()->corona()->availableScreenRegion(panel->screen());
-    const int w = panel->size().width();
-    const int h = panel->size().height();
-    const int length = panel->formFactor() == Plasma::Horizontal ? w : h;
+    const QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment->screen());
+    const QRegion availGeom = PlasmaApp::self()->corona()->availableScreenRegion(containment->screen());
+    const int w = containment->size().width();
+    const int h = containment->size().height();
+    const int length = containment->formFactor() == Plasma::Horizontal ? w : h;
 
     switch (location()) {
         case Plasma::LeftEdge: {
@@ -293,71 +342,12 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     // pinchContainment calls updatePanelGeometry for us
     pinchContainment(screenRect);
-    m_lastMin = panel->minimumSize();
-    m_lastMax = panel->maximumSize();
+    m_lastMin = containment->minimumSize();
+    m_lastMax = containment->maximumSize();
 
-    // KWin setup
-    KWindowSystem::setOnAllDesktops(winId(), true);
-    kDebug() << "about to set the containment" << (QObject*)panel;
-    setContainment(panel);
-    init();
-//    QTimer::singleShot(0, this, SLOT(init()));
-}
+    kDebug() << "about to set the containment" << (QObject*)containment;
 
-PanelView::~PanelView()
-{
-    if (m_panelController) {
-        disconnect(m_panelController, 0, this, 0);
-        delete m_panelController;
-    }
-
-    delete m_glowBar;
-    destroyUnhideTrigger();
-#ifdef Q_WS_WIN
-    registerAccessBar(false);
-#endif
-}
-
-void PanelView::init()
-{
-    KConfigGroup viewConfig = config();
-    setVisibilityMode((VisibilityMode)viewConfig.readEntry("panelVisibility", (int)m_visibilityMode));
-
-    m_init = true;
     updateStruts();
-
-    Kephal::Screens *screens = Kephal::Screens::self();
-    connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
-            this, SLOT(pinchContainmentToCurrentScreen()));
-    connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)),
-            this, SLOT(updatePanelGeometry()));
-    connect(screens, SIGNAL(screenAdded(Kephal::Screen *)),
-            this, SLOT(updateStruts()));
-    connect(screens, SIGNAL(screenRemoved(int)),
-            this, SLOT(updateStruts()));
-    connect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)),
-            this, SLOT(showWidgetExplorer()));
-}
-
-void PanelView::setContainment(Plasma::Containment *containment)
-{
-    Plasma::Containment *oldContainment = this->containment();
-    if (m_init && containment == oldContainment) {
-        return;
-    }
-
-    KConfigGroup viewIds(KGlobal::config(), "ViewIds");
-
-    if (oldContainment) {
-        viewIds.deleteEntry(QString::number(oldContainment->id()));
-    }
-
-    if (containment) {
-        viewIds.writeEntry(QString::number(containment->id()), id());
-        if (containment->corona()) {
-            containment->corona()->requestConfigSync();
-        }
-    }
 
     View::setContainment(containment);
 }
@@ -422,7 +412,7 @@ void PanelView::setLocation(Plasma::Location location)
 #ifdef Q_WS_WIN
     appBarPosChanged();
 #endif
-    QRect screenRect = Kephal::ScreenUtils::screenGeometry(c->screen());
+    const QRect screenRect = Kephal::ScreenUtils::screenGeometry(c->screen());
     pinchContainment(screenRect);
     KWindowSystem::setOnAllDesktops(winId(), true);
     //updatePanelGeometry();
@@ -652,7 +642,7 @@ bool PanelView::isHorizontal() const
 void PanelView::pinchContainmentToCurrentScreen()
 {
     kDebug() << "pinching to current screen";
-    QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment()->screen());
+    const QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment()->screen());
     pinchContainment(screenRect);
 }
 
@@ -949,7 +939,7 @@ Qt::Alignment PanelView::alignmentFilter(Qt::Alignment align) const
 
 void PanelView::updateStruts()
 {
-    if (!m_init || !containment()) {
+    if (!containment()) {
         return;
     }
 
@@ -1268,7 +1258,7 @@ void PanelView::mousePressEvent(QMouseEvent *event)
     if (cont) {
         Plasma::Corona *c = cont->corona();
         if (c) {
-            if (QGraphicsItem *item = c->itemAt(event->pos())) {
+            if (c->itemAt(event->pos())) {
                 QPointF point = mapToScene(event->pos());
                 point = cont->mapFromScene(point);
                 Plasma::Applet *hoverApplet = 0;
@@ -1632,7 +1622,5 @@ void PanelView::dropEvent(QDropEvent *event)
     }
 }
 
-
 #include "panelview.moc"
 
-#endif // PANELVIEW_CPP
