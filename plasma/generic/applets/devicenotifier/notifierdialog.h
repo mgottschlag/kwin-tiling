@@ -179,7 +179,7 @@ namespace Notifier
 	   * Shows a message in the notifier status bar
 	   * @param message the message to show
 	   */
-	  void showStatusBarMessage(const QString & message, const QString& details);
+	  void showStatusBarMessage(const QString & message, const QString& details, const QString& udi);
 
       signals:
           /**
@@ -373,6 +373,8 @@ namespace Notifier
 
 	  void showStatusBarDetails(bool show);
 
+	  void expireStatusBar(const QString& udi);
+
     private:
           /// The graphics widget which displays the panel
           QGraphicsWidget *m_widget;
@@ -405,6 +407,9 @@ namespace Notifier
 	  
 	  // Status detailed text
 	  Plasma::TextBrowser *m_statusDetailsText;
+
+	  // Udi relative to the error message
+	  QString m_errorUdi;
 
           ///The context menu action that allows to show all the devices
           QAction *m_showAll;

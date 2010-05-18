@@ -137,7 +137,7 @@ class DeviceNotifier : public Plasma::PopupApplet
         * Shows a message
         * @param message the text of the message
         **/
-        void showErrorMessage(const QString &message, const QString &details);
+        void showErrorMessage(const QString &message, const QString &details, const QString &udi);
 
     protected slots:
         /**

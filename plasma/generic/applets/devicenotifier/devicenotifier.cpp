@@ -115,7 +115,7 @@ void DeviceNotifier::newNotification(const QString &source)
 {
     DataEngine::Data data = m_deviceNotificationsEngine->query(source);
     //TODO Check if we are actually displaying the device in question
-    showErrorMessage(data["error"].toString(), data["errorDetails"].toString());
+    showErrorMessage(data["error"].toString(), data["errorDetails"].toString(), data["udi"].toString());
 }
 
 void DeviceNotifier::configChanged()
@@ -455,9 +455,9 @@ void DeviceNotifier::setGlobalVisibility(bool visibility)
     resetDevices();
 }
 
-void DeviceNotifier::showErrorMessage(const QString &message, const QString &details)
+void DeviceNotifier::showErrorMessage(const QString &message, const QString &details, const QString &udi)
 {
-    m_dialog->showStatusBarMessage(message, details);
+    m_dialog->showStatusBarMessage(message, details, udi);
     showPopup(NOTIFICATION_TIMEOUT);
     changeNotifierIcon("dialog-error");
     update();

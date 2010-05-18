@@ -463,6 +463,8 @@ void NotifierDialog::removeDevice(const QString &udi)
         return;
     }
 
+    expireStatusBar(udi);
+
     disconnect(item, 0, this, 0);
     item->removeEventFilter(this);
 
@@ -499,6 +501,7 @@ void NotifierDialog::removeDevice(const QString &udi)
     updateMainLabelText();
 
     m_devicesScrollWidget->widget()->adjustSize();
+
 }
 
 void NotifierDialog::removeAction(const QString &udi, const QString &action)
@@ -613,15 +616,24 @@ void NotifierDialog::dismissStatusBar()
 {
     m_statusWidget->hide();
     m_mainLayout->removeItem(m_statusWidget);
+    m_errorUdi = QString();
 }
 
-void NotifierDialog::showStatusBarMessage(const QString & message, const QString &details)
+void NotifierDialog::expireStatusBar(const QString& udi)
+{
+    if (udi == m_errorUdi) {
+        dismissStatusBar();
+    }
+}
+
+void NotifierDialog::showStatusBarMessage(const QString & message, const QString &details, const QString &udi)
 {
     m_statusText->setText(message);
     m_mainLayout->addItem(m_statusWidget);
     m_statusWidget->show();
     m_statusDetailsText->setText(details);
     showStatusBarDetails(false);
+    m_errorUdi = udi;
 }
 
 void NotifierDialog::triggerExpandStatusBar()
@@ -656,6 +668,7 @@ void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorD
     if (!error || !errorData.isValid()) {
         m_notifier->changeNotifierIcon("dialog-ok");
         m_notifier->update();
+        expireStatusBar(udi);
         QTimer::singleShot(5000, this, SLOT(resetNotifierIcon()));
     }
 
@@ -669,6 +682,7 @@ void NotifierDialog::storageEjectDone(Solid::ErrorType error, QVariant errorData
     if (!error || !errorData.isValid()) {
         m_notifier->changeNotifierIcon("dialog-ok");
         m_notifier->update();
+        expireStatusBar(udi);
         QTimer::singleShot(2000, this, SLOT(resetNotifierIcon()));
     }
 }
@@ -683,6 +697,7 @@ void NotifierDialog::storageSetupDone(Solid::ErrorType error, QVariant errorData
      if (!error || !errorData.isValid()) {
         m_notifier->changeNotifierIcon("dialog-ok");
         m_notifier->update();
+        expireStatusBar(udi);
         QTimer::singleShot(2000, this, SLOT(resetNotifierIcon()));
     }
     devItem->setState(DeviceItem::Idle);
