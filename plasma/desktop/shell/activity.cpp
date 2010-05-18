@@ -142,8 +142,8 @@ void Activity::activate()
     m_containments.first()->setScreen(currentScreen, currentDesktop);
     //TODO handle other screens
 
-    KActivityController c;
-    c.setCurrentActivity(m_id);
+    KActivityController controller;
+    controller.setCurrentActivity(m_id);
 }
 
 void Activity::setName(const QString &name)
