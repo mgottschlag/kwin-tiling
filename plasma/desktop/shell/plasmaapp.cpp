@@ -674,7 +674,7 @@ void PlasmaApp::screenRemoved(int id)
             }
 
             if (moveTo) {
-                panel->setScreen(moveTo->id());
+                panel->containment()->setScreen(moveTo->id());
                 panel->pinchContainmentToCurrentScreen();
             } else {
                 panel->setContainment(0);
@@ -688,7 +688,7 @@ void PlasmaApp::screenRemoved(int id)
 
 bool PlasmaApp::canRelocatePanel(PanelView * view, Kephal::Screen *screen)
 {
-    if (!screen) {
+    if (!screen || !view->containment()) {
         return false;
     }
 
