@@ -215,7 +215,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     KWindowSystem::setType(winId(), NET::Dock);
     setWindowRole(QString("panel_%1").arg(id));
 
-    m_delayedUnhideTs.start();
     m_delayedUnhideTimer->setSingleShot(true);
     m_delayedUnhideTimer->setInterval(200);
     connect(m_delayedUnhideTimer, SIGNAL(timeout()), this, SLOT(delayedUnhide()));
@@ -1056,7 +1055,7 @@ void PanelView::updateStruts()
 void PanelView::enterEvent(QEvent *event)
 {
     // allow unhiding to happen again even if we were delay-unhidden
-    m_delayedUnhideTs.start();
+    m_delayedUnhideTs = QTime();
 /*
 // handy for debugging :)
     if (containment()) {
@@ -1113,7 +1112,7 @@ void PanelView::hideIfNotInUse()
 {
     //kDebug() << m_delayedUnhideTs.elapsed() << geometry().contains(QCursor::pos()) << hasPopup();
     //TODO: is 5s too long? not long enough?
-    if (m_delayedUnhideTs.elapsed() > 5000 && !geometry().contains(QCursor::pos()) && !hasPopup()) {
+    if ((m_delayedUnhideTs.isNull() || m_delayedUnhideTs.elapsed() > 5000) && !geometry().contains(QCursor::pos()) && !hasPopup()) {
         startAutoHide();
     }
 }
@@ -1238,9 +1237,7 @@ void PanelView::unhide(bool destroyTrigger)
     if (!m_mousePollTimer) {
         m_mousePollTimer = new QTimer(this);
     }
-    //FIXME investigate whether the mouse poll is really needed all the time or if leave events are
-    //good enough
-    //welll, if we didn't create it here something would have to when a popup dies
+
     connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideIfNotInUse()), Qt::UniqueConnection);
     m_mousePollTimer->start(200);
 
