@@ -88,8 +88,6 @@ QsMatchView::QsMatchView(QWidget *parent)
     d->m_itemsRemoved = false;
     d->m_listVisible = true;
     d->m_selectionMade = false; //Prevent completion box from popping up once a user chooses a match
-    //FIXME: don't hardcode black
-    setStyleSheet("QListWidget {color: black} QLineEdit {color: black}");
 
     d->m_descRect = 0;
     d->m_descText = 0;
