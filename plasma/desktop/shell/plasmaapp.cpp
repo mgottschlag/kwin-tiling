@@ -675,6 +675,7 @@ void PlasmaApp::screenRemoved(int id)
 
             if (moveTo) {
                 panel->setScreen(moveTo->id());
+                panel->pinchContainmentToCurrentScreen();
             } else {
                 panel->setContainment(0);
                 pIt.remove();
