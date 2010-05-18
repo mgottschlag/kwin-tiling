@@ -152,6 +152,13 @@ void DesktopCorona::checkScreens(bool signalWhenExists)
 
 void DesktopCorona::checkScreen(int screen, bool signalWhenExists)
 {
+    // signalWhenExists is there to allow PlasmaApp to know when to create views
+    // it does this only on containment addition, but in the case of a screen being
+    // added and the containment already existing for that screen, no signal is emitted
+    // and so PlasmaApp does not know that it needs to create a view for it. to avoid
+    // taking care of that case in PlasmaApp (which would duplicate some of the code below,
+    // DesktopCorona will, when signalWhenExists is true, emit a containmentAdded signal
+    // even if the containment actually existed prior to this method being called.
     if (AppSettings::perVirtualDesktopViews()) {
         int numDesktops = KWindowSystem::numberOfDesktops();
 
