@@ -1112,7 +1112,8 @@ void PanelView::hideIfNotInUse()
 {
     //kDebug() << m_delayedUnhideTs.elapsed() << geometry().contains(QCursor::pos()) << hasPopup();
     //TODO: is 5s too long? not long enough?
-    if ((m_delayedUnhideTs.isNull() || m_delayedUnhideTs.elapsed() > 5000) && !geometry().contains(QCursor::pos()) && !hasPopup()) {
+    if ((m_delayedUnhideTs.isNull() || m_delayedUnhideTs.elapsed() > 5000) &&
+        !geometry().adjusted(-10, -10, 10, 10).contains(QCursor::pos()) && !hasPopup()) {
         startAutoHide();
     }
 }
