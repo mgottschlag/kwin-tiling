@@ -146,6 +146,7 @@ private Q_SLOTS:
     void syncConfig();
     void panelRemoved(QObject* panel);
     void screenRemoved(int id);
+    bool canRelocatePanel(PanelView * view, Kephal::Screen *screen);
     void compositingChanged();
     void configureContainment(Plasma::Containment*);
     void updateActions(Plasma::ImmutabilityType immutability);
@@ -172,6 +173,7 @@ private:
     QHash<int, QWeakPointer<ControllerWindow> > m_widgetExplorers;
     int m_startupSuspendWaitCount;
     bool m_ignoreDashboardClosures;
+    int m_primaryScreen;
 };
 
 #endif // multiple inclusion guard

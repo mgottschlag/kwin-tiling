@@ -274,6 +274,8 @@ void PlasmaApp::setupDesktop()
     m_XdndVersionAtom = (Atom)xdndversion;
 #endif
 
+    m_primaryScreen = Kephal::ScreenUtils::primaryScreenId();
+
     // intialize the default theme and set the font
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
     theme->setFont(AppSettings::desktopFont());
@@ -648,17 +650,83 @@ void PlasmaApp::screenRemoved(int id)
         }
     }
 
+    // Now we process panels: if there is room on another sreen for the panel,
+    // we migrate the panel there, otherwise the view is deleted. The primary
+    // screen is preferred in all cases.
     QMutableListIterator<PanelView*> pIt(m_panels);
+    m_primaryScreen = Kephal::ScreenUtils::primaryScreenId();
+    Kephal::Screen *primary = Kephal::Screens::self()->primaryScreen();
+    QList<Kephal::Screen *> screens = Kephal::Screens::self()->screens();
+    screens.removeAll(primary);
     while (pIt.hasNext()) {
         PanelView *panel = pIt.next();
         if (panel->screen() == id) {
-            kDebug() << "removing a panel for screen" << id;
-            panel->setContainment(0);
-            pIt.remove();
-            delete panel;
+            Kephal::Screen *moveTo = 0;
+            if (canRelocatePanel(panel, primary)) {
+                moveTo = primary;
+            } else {
+                foreach (Kephal::Screen *screen, screens) {
+                    if (canRelocatePanel(panel, screen)) {
+                        moveTo = screen;
+                        break;
+                    }
+                }
+            }
+
+            if (moveTo) {
+                panel->setScreen(moveTo->id());
+            } else {
+                panel->setContainment(0);
+                pIt.remove();
+                delete panel;
+            }
         }
     }
+
 }
+
+bool PlasmaApp::canRelocatePanel(PanelView * view, Kephal::Screen *screen)
+{
+    if (!screen) {
+        return false;
+    }
+
+    QRect newGeom = view->geometry();
+    switch (view->location()) {
+        case Plasma::TopEdge:
+            newGeom.setY(screen->geom().y());
+            newGeom.setX(view->offset());
+            break;
+        case Plasma::BottomEdge:
+            newGeom.setY(screen->geom().bottom() - newGeom.height());
+            newGeom.setX(view->offset());
+            break;
+        case Plasma::LeftEdge:
+            newGeom.setX(screen->geom().left());
+            newGeom.setY(view->offset());
+            break;
+        case Plasma::RightEdge:
+            newGeom.setX(screen->geom().right() - newGeom.width());
+            newGeom.setY(view->offset());
+            break;
+        default:
+            break;
+    }
+
+    bool ok = true;
+    foreach (PanelView *pv, m_panels) {
+        if (pv != view &&
+            pv->screen() == screen->id() &&
+            pv->location() == view->location() &&
+            pv->geometry().intersects(newGeom)) {
+            ok = false;
+            break;
+        }
+    }
+
+    return ok;
+}
+
 
 DesktopView* PlasmaApp::viewForScreen(int screen, int desktop) const
 {
