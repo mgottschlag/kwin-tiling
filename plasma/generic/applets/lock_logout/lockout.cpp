@@ -57,6 +57,7 @@ LockOut::LockOut(QObject *parent, const QVariantList &args)
 #ifndef Q_OS_WIN
     setHasConfigurationInterface(true);
 #endif
+    setAspectRatioMode(Plasma::IgnoreAspectRatio);
 }
 
 void LockOut::init()
@@ -134,52 +135,40 @@ void LockOut::checkLayout()
     getContentsMargins(&left,&top, &right, &bottom);
     int width = geometry().width() - left - right;
     int height = geometry().height() - top - bottom;
-    
-    Qt::Orientation direction;
-    qreal ratioToKeep = 2;
+
+    Qt::Orientation direction = Qt::Vertical;
 
     switch (formFactor()) {
         case Plasma::Vertical:
-            if (width < (MINBUTTONSIZE + MARGINSIZE)* m_visibleButtons ) {
-                direction = Qt::Vertical;
-                ratioToKeep = m_visibleButtons;
-            } else {
+            if (width >= (MINBUTTONSIZE + MARGINSIZE) * m_visibleButtons ) {
                 direction = Qt::Horizontal;
-                ratioToKeep = 0.5;
             }
+
+            setMinimumSize(0, 0);
             break;
         case Plasma::Horizontal:
-            if (height < (MINBUTTONSIZE + MARGINSIZE)* m_visibleButtons) {
+            if (height < (MINBUTTONSIZE + MARGINSIZE) * m_visibleButtons) {
                 direction = Qt::Horizontal;
-                ratioToKeep = m_visibleButtons;
-            } else {
-                direction = Qt::Vertical;
-                ratioToKeep = 0.5;
             }
+
+            setMinimumSize(0, 0);
             break;
         default:
-            direction = Qt::Vertical;
+            if (width > height) {
+                direction = Qt::Horizontal;
+                setMinimumSize(MINBUTTONSIZE * m_visibleButtons + left + right, MINBUTTONSIZE + top + bottom);
+            } else {
+                setMinimumSize(MINBUTTONSIZE + left + right, MINBUTTONSIZE * m_visibleButtons + top + bottom);
+            }
+            break;
     }
 
-    if (direction != m_layout->orientation()) {
-        m_layout->setOrientation(direction);
-    }
-
-    if (formFactor() == Plasma::Horizontal) {
-        setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding));
-        qreal wsize = size().height() * ratioToKeep;
-        setMaximumSize(wsize, QWIDGETSIZE_MAX);
-        setMinimumSize(0,0);
-    } else if (formFactor() == Plasma::Vertical) {
-        setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum));
-        qreal hsize = size().width() * ratioToKeep;
-        setMaximumSize(QWIDGETSIZE_MAX, hsize);
-        setMinimumSize(0,0);
+    m_layout->setOrientation(direction);
+    if (direction == Qt::Horizontal) {
+        setPreferredSize(height * m_visibleButtons + left + right, height + top + bottom);
     } else {
-        setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
-        setMinimumSize(40,40);
+        setPreferredSize(width + left + right, width * m_visibleButtons + top + bottom);
     }
-    
 }
 
 void LockOut::constraintsEvent(Plasma::Constraints constraints)
