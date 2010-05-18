@@ -99,7 +99,7 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
     m_newQuery = true;
     
-    new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(resetAndClose()));
+    new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(close()));
 }
 
 QsDialog::~QsDialog()
