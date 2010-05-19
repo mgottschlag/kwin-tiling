@@ -1,5 +1,17 @@
 project(plasma-ggl)
 
+if(NOT KDE4_FOUND)
+   find_package(KDE4 REQUIRED)
+   find_package(KDE4 REQUIRED)
+   find_package(Googlegadgets REQUIRED)
+
+   include(KDE4Defaults)
+
+   include_directories(
+     ${KDE4_INCLUDES}
+     )
+endif(NOT KDE4_FOUND)
+
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 add_definitions (${GOOGLEGADGETS_CFLAGS_OTHER})
 
