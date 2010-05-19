@@ -58,7 +58,7 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
 
     QList<Plasma::QueryMatch> matches;
 
-    QHash<QString, bool> seen;
+    QSet<QString> seen;
     if (!services.isEmpty()) {
         //kDebug() << service->name() << "is an exact match!" << service->storageId() << service->exec();
         foreach (const KService::Ptr &service, services) {
@@ -68,8 +68,8 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
                 setupMatch(service, match);
                 match.setRelevance(1);
                 matches << match;
-                seen[service->storageId()] = true;
-                seen[service->exec()] = true;
+                seen.insert(service->storageId());
+                seen.insert(service->exec());
             }
         }
     }
@@ -95,30 +95,7 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
         }
 
         if (service->noDisplay()) {
-            if (seen.contains(service->exec())) {
-                //kDebug() << service->name() << "failed, but we've already seen it";
-                continue;
-            }
-
-            // let's check to see if there are any matches for this executable which ARE visible
-            // this catches things like Okular which installs multiple .desktop files for each
-            // of its components, but only marks one of them as displayable; so our query will
-            // likely match correctly, but on a NoDisplay=true entry; so we check for a match
-            // for the exec on this item, which we may not catch in our previous query. fun!
-            //kDebug() << "got failed" << service->name();
-            const QString check = QString("Exec == '%1'").arg(service->exec());
-            const QString type = service->isApplication() ? "Application" : "KCModule";
-            bool fail = true;
-            foreach (const KService::Ptr &s, KServiceTypeTrader::self()->query(type, check)) {
-                if (!s->noDisplay()) {
-                    fail = false;
-                }
-            }
-
-            if (fail) {
-                //kDebug() << "fail";
-                continue;
-            }
+            continue;
         }
 
         const QString id = service->storageId();
@@ -129,8 +106,8 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
         }
 
         //kDebug() << "haven't seen" << id << "so processing now";
-        seen[id] = true;
-        seen[exec] = true;
+        seen.insert(id);
+        seen.insert(exec);
 
         Plasma::QueryMatch match(this);
         match.setType(Plasma::QueryMatch::PossibleMatch);
@@ -154,14 +131,14 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
         if (service->categories().contains("KDE") || service->serviceTypes().contains("KCModule")) {
             //kDebug() << "found a kde thing" << id << match.subtext() << relevance;
             if (id.startsWith("kde-")) {
-                // This is an older version, let's disambiguate it
-                QString subtext("KDE3");
-
                 //kDebug() << "old" << service->type();
-                if (service->type() == "KCModule") {
-                    // avoid showing old kcms
+                if (!service->isApplication()) {
+                    // avoid showing old kcms and what not
                     continue;
                 }
+
+                // This is an older version, let's disambiguate it
+                QString subtext("KDE3");
 
                 if (!match.subtext().isEmpty()) {
                     subtext.append(", " + match.subtext());
@@ -178,38 +155,39 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
         matches << match;
     }
 
-    QString termUpper = term.toUpper();
     //search for applications whose categories contains the query
     query = QString("exist Exec and (exist Categories and '%1' ~subin Categories)").arg(term);
     services = KServiceTypeTrader::self()->query("Application", query);
 
-    if (!services.isEmpty()) {
-        //kDebug() << service->name() << "is an exact match!" << service->storageId() << service->exec();
-        foreach (const KService::Ptr &service, services) {
-            if (!service->noDisplay()) {
-                QString id = service->storageId();
-                QString exec = service->exec();
-                if (seen.contains(id) || seen.contains(exec)) {
-                    //kDebug() << "already seen" << id << exec;
-                    continue;
-                }
-                Plasma::QueryMatch match(this);
-                match.setType(Plasma::QueryMatch::PossibleMatch);
-                setupMatch(service, match);
+    //kDebug() << service->name() << "is an exact match!" << service->storageId() << service->exec();
+    foreach (const KService::Ptr &service, services) {
+        if (!context.isValid()) {
+            return;
+        }
 
-                qreal relevance = 0.6;
-                if (service->categories().contains("X-KDE-More") ||
-                    !service->showInKDE()) {
-                    relevance = 0.5;
-                }
-
-                if (service->isApplication()) {
-                    relevance += .4;
-                }
-                match.setRelevance(relevance);
-
-                matches << match;
+        if (!service->noDisplay()) {
+            QString id = service->storageId();
+            QString exec = service->exec();
+            if (seen.contains(id) || seen.contains(exec)) {
+                //kDebug() << "already seen" << id << exec;
+                continue;
             }
+            Plasma::QueryMatch match(this);
+            match.setType(Plasma::QueryMatch::PossibleMatch);
+            setupMatch(service, match);
+
+            qreal relevance = 0.6;
+            if (service->categories().contains("X-KDE-More") ||
+                    !service->showInKDE()) {
+                relevance = 0.5;
+            }
+
+            if (service->isApplication()) {
+                relevance += .4;
+            }
+
+            match.setRelevance(relevance);
+            matches << match;
         }
     }
 
