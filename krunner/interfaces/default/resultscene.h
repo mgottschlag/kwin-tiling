@@ -75,8 +75,6 @@ class ResultScene : public QGraphicsScene
 
         ResultItem* currentlyFocusedItem() const;
 
-        ResultItem* addQueryMatch(const Plasma::QueryMatch &match, bool useAnyId);
-
         bool canMoveItemFocus() const;
         void arrangeItems(bool setFocusAndTabbing);
 
@@ -93,7 +91,6 @@ class ResultScene : public QGraphicsScene
         QTimer      m_arrangeTimer;
 
         QList<ResultItem *> m_items;
-        QMultiMap<QString, ResultItem *> m_itemsById;
         SelectionBar *m_selectionBar;
 
         int m_currentIndex;

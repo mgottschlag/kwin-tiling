@@ -85,7 +85,7 @@ QSize ResultScene::minimumSizeHint() const
 
 void ResultScene::resize(int width, int height)
 {
-    bool resizeItems = width != sceneRect().width();
+    const bool resizeItems = width != sceneRect().width();
 
     if (resizeItems) {
         foreach (ResultItem *item, m_items) {
@@ -98,13 +98,13 @@ void ResultScene::resize(int width, int height)
 
 void ResultScene::clearMatches()
 {
+    clearSelection();
+    Plasma::QueryMatch dummy(0);
     foreach (ResultItem *item, m_items) {
-        removeItem(item);
-        delete item;
+        item->hide();
+        item->setMatch(dummy);
     }
 
-    m_itemsById.clear();
-    m_items.clear();
     emit matchCountChanged(0);
 }
 
@@ -144,49 +144,57 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 
     if (m.isEmpty()) {
         //kDebug() << "clearing";
-        resize(width(), 0);
+        //resize(width(), 0);
         m_clearTimer.start();
         return;
     }
 
     m_clearTimer.stop();
-    m_items.clear();
+    const int maxItemsAllowed = 50;
+
+    if (m_items.isEmpty()) {
+        QGraphicsWidget *prevTabItem = 0;
+        Plasma::QueryMatch dummy(0);
+        for (int i = 0; i < maxItemsAllowed; ++i) {
+            ResultItem *item = new ResultItem(&m_resultData, dummy, m_runnerManager, 0);
+            item->setContentsMargins(m_itemMarginLeft, m_itemMarginTop,
+                                     m_itemMarginRight, m_itemMarginBottom);
+            item->hide();
+            item->setIndex(i);
+            connect(item, SIGNAL(ensureVisibility(QGraphicsItem*)), this, SIGNAL(ensureVisibility(QGraphicsItem*)));
+            connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
+            connect(item, SIGNAL(sizeChanged(ResultItem*)), this, SLOT(scheduleArrangeItems()));
+
+            m_items << item;
+            addItem(item);
+            prevTabItem = item->arrangeTabOrder(prevTabItem);
+        }
+
+        arrangeItems();
+    }
 
     QList<Plasma::QueryMatch> matches = m;
-    QMutableListIterator<Plasma::QueryMatch> newMatchIt(matches);
-
-    // first pass: we try and match up items with existing ids (match persisitence)
-    while (!m_itemsById.isEmpty() && newMatchIt.hasNext()) {
-        ResultItem *item = addQueryMatch(newMatchIt.next(), false);
-
-        if (item) {
-            m_items.append(item);
-            newMatchIt.remove();
-        }
+    qSort(matches.begin(), matches.end());
+    QListIterator<Plasma::QueryMatch> mit(matches);
+    mit.toBack();
+    QListIterator<ResultItem *> rit(m_items);
+    while (mit.hasPrevious() && rit.hasNext()) {
+        ResultItem * item = rit.next();
+        item->setMatch(mit.previous());
+        item->show();
     }
 
-    // second pass: now we just use any item that exists (item re-use)
-    newMatchIt.toFront();
-    while (newMatchIt.hasNext()) {
-        m_items.append(addQueryMatch(newMatchIt.next(), true));
+    while (rit.hasNext()) {
+        rit.next()->hide();
     }
 
-    // delete the stragglers
-    QMapIterator<QString, ResultItem *> it(m_itemsById);
-    while (it.hasNext()) {
-        ResultItem *item = it.next().value();
-        removeItem(item);
-        delete item;
+    if (matches.count() > 0) {
+        ResultItem *first = m_items.at(0);
+        setFocusItem(first);
+        emit ensureVisibility(first);
     }
 
-    // organize the remainders
-    m_itemsById.clear();
-
-    // this will leave them in *reverse* order
-    qSort(m_items.begin(), m_items.end(), ResultItem::compare);
-
-    arrangeItems(true);
-    emit matchCountChanged(m.count());
+    emit matchCountChanged(qMin(m.count(), maxItemsAllowed));
 }
 
 void ResultScene::scheduleArrangeItems()
@@ -198,75 +206,19 @@ void ResultScene::scheduleArrangeItems()
 
 void ResultScene::arrangeItems()
 {
-    arrangeItems(false);
-}
-
-void ResultScene::arrangeItems(bool setFocusAndTabbing)
-{
-    QListIterator<ResultItem*> matchIt(m_items);
-    QGraphicsWidget *tab = 0;
     int y = 0;
-    int i = 0;
+    QListIterator<ResultItem*> matchIt(m_items);
     while (matchIt.hasNext()) {
         ResultItem *item = matchIt.next();
         //kDebug()  << item->name() << item->id() << item->priority() << i;
 
-        if (setFocusAndTabbing) {
-            // first time set up
-            tab = item->arrangeTabOrder(tab);
-            m_itemsById.insert(item->id(), item);
-            item->setIndex(i);
-        }
-
         item->setPos(0, y);
-        item->show();
         //kDebug() << item->pos();
         y += item->geometry().height();
-
-        // it is vital that focus is set *after* the index
-        if (setFocusAndTabbing && i == 0 && canMoveItemFocus()) {
-            setFocusItem(item);
-            emit ensureVisibility(item);
-        }
-
-        ++i;
     }
 
     setSceneRect(itemsBoundingRect());
 }
-
-ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool useAnyId)
-{
-    QMap<QString, ResultItem*>::iterator it = useAnyId ? m_itemsById.begin() : m_itemsById.find(match.id());
-    ResultItem *item = 0;
-    //kDebug() << "attempting" << match.id();
-
-    if (it == m_itemsById.end()) {
-        //kDebug() << "did not find for" << match.id();
-        if (useAnyId) {
-            //kDebug() << "creating for" << match.id();
-            item = new ResultItem(&m_resultData, match, m_runnerManager, 0);
-            item->setContentsMargins(m_itemMarginLeft, m_itemMarginTop,
-                                     m_itemMarginRight, m_itemMarginBottom);
-            addItem(item);
-            item->hide();
-            connect(item, SIGNAL(ensureVisibility(QGraphicsItem*)), this, SIGNAL(ensureVisibility(QGraphicsItem*)));
-            connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
-            connect(item, SIGNAL(sizeChanged(ResultItem*)), this, SLOT(scheduleArrangeItems()));
-        } else {
-            //kDebug() << "returning failure for" << match.id();
-            return 0;
-        }
-    } else {
-        item = it.value();
-        //kDebug() << "reusing" << item->name() << "for" << match.id();
-        item->setMatch(match);
-        m_itemsById.erase(it);
-    }
-
-    return item;
-}
-
 
 void ResultScene::focusInEvent(QFocusEvent *focusEvent)
 {
@@ -299,12 +251,12 @@ void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
     switch (keyEvent->key()) {
         case Qt::Key_Up:
         case Qt::Key_Left:
-            selectNextItem();
+            selectPreviousItem();
             break;
 
         case Qt::Key_Down:
         case Qt::Key_Right:
-            selectPreviousItem();
+            selectNextItem();
         break;
 
         default:
@@ -332,35 +284,43 @@ ResultItem* ResultScene::currentlyFocusedItem() const
     return currentFocus;
 }
 
-void ResultScene::selectNextItem()
-{
-    ResultItem *currentFocus = currentlyFocusedItem();
-    int currentIndex = currentFocus ? currentFocus->index() : 0;
-
-    if (currentIndex > 0) {
-        --currentIndex;
-    } else {
-        currentIndex = m_items.size() - 1;
-    }
-
-    currentFocus = m_items.at(currentIndex);
-    setFocusItem(currentFocus);
-    emit ensureVisibility(currentFocus);
-}
-
 void ResultScene::selectPreviousItem()
 {
     ResultItem *currentFocus = currentlyFocusedItem();
     int currentIndex = currentFocus ? currentFocus->index() : 0;
 
-    ++currentIndex;
-    if (currentIndex >= m_items.size()) {
-        currentIndex = 0;
+    if (currentIndex > 0) {
+        currentFocus = m_items.at(currentIndex - 1);
+    } else {
+        currentIndex = m_items.size();
+        do {
+            currentFocus = m_items.at(--currentIndex);
+        } while (currentIndex > 0 && !currentFocus->isVisible());
     }
 
-    currentFocus = m_items.at(currentIndex);
-    setFocusItem(currentFocus);
-    emit ensureVisibility(currentFocus);
+    if (currentFocus->isVisible()) {
+        setFocusItem(currentFocus);
+        emit ensureVisibility(currentFocus);
+    }
+}
+
+void ResultScene::selectNextItem()
+{
+    ResultItem *currentFocus = currentlyFocusedItem();
+    int currentIndex = currentFocus ? currentFocus->index() : 0;
+
+    do {
+        ++currentIndex;
+        if (currentIndex >= m_items.size()) {
+            currentIndex = 0;
+        }
+        currentFocus = m_items.at(currentIndex);
+    } while (!currentFocus->isVisible() && currentIndex < m_items.size());
+
+    if (currentFocus->isVisible()) {
+        setFocusItem(currentFocus);
+        emit ensureVisibility(currentFocus);
+    }
 }
 
 bool ResultScene::launchQuery(const QString &term)

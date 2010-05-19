@@ -43,6 +43,10 @@ protected:
 
 private Q_SLOTS:
     void acquireTarget();
+    void actuallyHide();
+
+private:
+    QTimer *m_hideTimer;
 };
 
 #endif

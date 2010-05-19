@@ -31,20 +31,35 @@
 #include "resultitem.h"
 
 SelectionBar::SelectionBar(QGraphicsWidget *parent)
-    : Plasma::ItemBackground(parent)
+    : Plasma::ItemBackground(parent),
+      m_hideTimer(new QTimer(this))
 {
+    // the hide timer is necessary because when calling QGraphicsScene::setFocusItem, 
+    // the selection is cleared first, then set. this causes acquireTarget to get called
+    // multiple times, first with no selection. however, when the selection does go away
+    // permanently, we do want to hide.
+    m_hideTimer->setInterval(0);
+    m_hideTimer->setSingleShot(true);
+    connect(m_hideTimer, SIGNAL(timeout()), this, SLOT(actuallyHide()));
 }
 
 void SelectionBar::acquireTarget()
 {
     QList<QGraphicsItem *> selection = scene()->selectedItems();
     if (selection.isEmpty()) {
+        m_hideTimer->start();
         return;
     }
 
+    m_hideTimer->stop();
     //kDebug() << "showing an item!";
     setTargetItem(selection.first());
     setVisible(true);
+}
+
+void SelectionBar::actuallyHide()
+{
+    hide();
 }
 
 QVariant SelectionBar::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)

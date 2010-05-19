@@ -158,6 +158,11 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
 
     setupActions();
     calculateSize();
+
+    if (!m_match.isValid() && isSelected() && scene()) {
+        scene()->clearSelection();
+    }
+
     update();
 }
 
@@ -320,6 +325,10 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 {
     Q_UNUSED(widget);
 
+    if (!m_match.isValid()) {
+        return;
+    }
+
     bool oldClipping = painter->hasClipping();
     painter->setClipping(false);
 
@@ -441,7 +450,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
 void ResultItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 {
-    if (!m_sharedData->processHoverEvents) {
+    if (!m_sharedData->processHoverEvents || !m_match.isValid()) {
         return;
     }
 
