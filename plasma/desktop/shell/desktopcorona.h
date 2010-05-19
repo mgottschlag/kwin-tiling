@@ -60,7 +60,7 @@ public:
     void checkScreens(bool signalWhenExists = false);
 
     /**
-     * Ensures we have the necessary containments for the given screen screen
+     * Ensures we have the necessary containments for the given screen
      */
     void checkScreen(int screen, bool signalWhenExists = false);
 
@@ -70,7 +70,16 @@ public:
 
     bool loadDefaultLayoutScripts();
     void processUpdateScripts();
+
+    /**
+     * Creates a new containment for the given @p activity
+     */
     Plasma::Containment* addDesktopContainment(const QString &activity, const QString &plugin = QString());
+
+    /**
+     * Ensures activities exist for the containments
+     */
+    void checkActivities();
 
 public Q_SLOTS:
     QRect availableScreenRect(int id) const;

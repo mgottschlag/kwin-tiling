@@ -81,11 +81,6 @@ public:
 
     static bool isPanelContainment(Plasma::Containment *containment);
 
-    /**
-     * returns a list of all existing activities
-     */
-    QStringList listActivities();
-
 #ifdef Q_WS_X11
     Atom m_XdndAwareAtom;
     Atom m_XdndEnterAtom;

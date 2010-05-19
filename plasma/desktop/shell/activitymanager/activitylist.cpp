@@ -30,7 +30,7 @@ ActivityList::ActivityList(Qt::Orientation orientation, QGraphicsItem *parent)
     : AbstractIconList(orientation, parent),
       m_activityController(new KActivityController(this))
 {
-    QStringList activities = PlasmaApp::self()->listActivities();
+    QStringList activities = m_activityController->availableActivities();
     foreach (const QString &activity, activities) {
         createActivityIcon(activity);
     }

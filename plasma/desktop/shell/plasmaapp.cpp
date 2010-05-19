@@ -780,6 +780,7 @@ Plasma::Corona* PlasmaApp::corona()
         c->setItemIndexMethod(QGraphicsScene::NoIndex);
         c->initializeLayout();
         c->processUpdateScripts();
+        c->checkActivities();
         c->checkScreens();
         foreach (Plasma::Containment *containment, c->containments()) {
             if (containment->screen() != -1 && containment->wallpaper()) {
@@ -1224,38 +1225,6 @@ void PlasmaApp::plasmoidAccessFinished(Plasma::AccessAppletJob *job)
         kDebug() << "adding applet";
         c->addApplet(job->applet(), QPointF(-1, -1), false);
     }
-}
-
-QStringList PlasmaApp::listActivities()
-{
-    KActivityController controller;
-    QStringList list = controller.availableActivities();
-
-    if (list.isEmpty()) {
-        //probably an upgrade to 4.5; need to migrate their plasma activities to nepomuk.
-        kDebug() << "migrating activities to nepomuk";
-        foreach (Plasma::Containment *cont, m_corona->containments()) {
-            if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
-                        cont->containmentType() == Plasma::Containment::CustomContainment) &&
-                    !m_corona->offscreenWidgets().contains(cont)) {
-                //create a new activity for the containment
-                //FIXME what about multiple screens?
-                Plasma::Context *context = cont->context();
-                //discorage blank names
-                if (context->currentActivity().isEmpty()) {
-                    context->setCurrentActivity(i18n("unnamed"));
-                }
-                QString id = controller.addActivity(context->currentActivity());
-                context->setCurrentActivityId(id);
-                kDebug() << context->currentActivityId() << context->currentActivity();
-                list << id;
-            }
-        }
-        m_corona->requestConfigSync();
-    } else {
-        kDebug() << list.count() << list.first();
-    }
-    return list;
 }
 
 void PlasmaApp::createActivity(const QString &plugin)

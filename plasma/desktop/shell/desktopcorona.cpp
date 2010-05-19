@@ -48,7 +48,7 @@
 #include <scripting/layouttemplatepackagestructure.h>
 
 #include "activity.h"
-#include "kactivityconsumer.h"
+#include "kactivitycontroller.h"
 #include "kactivityinfo.h"
 #include "panelview.h"
 #include "plasmaapp.h"
@@ -517,6 +517,37 @@ void DesktopCorona::addPanel(const QString &plugin)
     panel->setMinimumSize(minW, minH);
     panel->setMaximumSize(w, h);
     panel->resize(w, h);
+}
+
+void DesktopCorona::checkActivities()
+{
+    KActivityController controller;
+    QStringList list = controller.availableActivities();
+
+    if (list.isEmpty()) {
+        //probably an upgrade to 4.5; need to migrate their plasma activities to nepomuk.
+        kDebug() << "migrating activities to nepomuk";
+        //TODO take all the containments that currently have a screen, and merge them into one
+        //activity?
+        foreach (Plasma::Containment *cont, containments()) {
+            if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
+                        cont->containmentType() == Plasma::Containment::CustomContainment) &&
+                    !offscreenWidgets().contains(cont)) {
+                Plasma::Context *context = cont->context();
+                //discorage blank names
+                if (context->currentActivity().isEmpty()) {
+                    context->setCurrentActivity(i18n("unnamed"));
+                }
+                //create a new activity for the containment
+                QString id = controller.addActivity(context->currentActivity());
+                context->setCurrentActivityId(id);
+                kDebug() << context->currentActivityId() << context->currentActivity();
+            }
+        }
+        requestConfigSync();
+    } else {
+        kDebug() << "we have" << list.count() << "activities";
+    }
 }
 
 #include "desktopcorona.moc"
