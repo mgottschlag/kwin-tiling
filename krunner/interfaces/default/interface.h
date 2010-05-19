@@ -67,7 +67,6 @@ class Interface : public KRunnerDialog
         void hideEvent(QHideEvent *e);
 
     private slots:
-        void setWidgetPalettes();
         void run(ResultItem *item);
         void runDefaultResultItem();
         void queryTextEdited(const QString &query);
@@ -94,7 +93,6 @@ class Interface : public KRunnerDialog
         QTimer m_hideResultsTimer;
 
         QWidget *m_buttonContainer;
-        QWidget *m_resultsContainer;
         QVBoxLayout* m_layout;
         QLabel *m_previousPage;
         QLabel *m_nextPage;

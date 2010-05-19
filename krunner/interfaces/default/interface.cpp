@@ -167,24 +167,17 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_singleRunnerSearchTerm = new KLineEdit(this);
     bottomLayout->insertWidget(4, m_singleRunnerSearchTerm, 10 );
 
-    m_resultsContainer = new QWidget(this);
-    QVBoxLayout* resultsLayout = new QVBoxLayout(m_resultsContainer);
-    resultsLayout->setMargin(0);
-
-    m_resultsView = new ResultsView(m_resultsContainer);
+    m_resultsView = new ResultsView(this);
 
     //kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize();
     m_resultsScene = new ResultScene(runnerManager, m_searchTerm, this);
     m_resultsView->setScene(m_resultsScene);
-    m_resultsView->setMinimumSize(m_resultsScene->minimumSizeHint());
 
     connect(m_resultsScene, SIGNAL(matchCountChanged(int)), this, SLOT(matchCountChanged(int)));
     connect(m_resultsScene, SIGNAL(itemActivated(ResultItem *)), this, SLOT(run(ResultItem *)));
     connect(m_resultsScene, SIGNAL(ensureVisibility(QGraphicsItem *)), this, SLOT(ensureVisibility(QGraphicsItem *)));
 
-    resultsLayout->addWidget(m_resultsView);
-
-    m_layout->addWidget(m_resultsContainer);
+    m_layout->addWidget(m_resultsView);
 
     connect(lineEdit, SIGNAL(userTextChanged(QString)), this, SLOT(queryTextEdited(QString)));
     connect(m_searchTerm, SIGNAL(returnPressed()), this, SLOT(runDefaultResultItem()));
@@ -227,7 +220,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     }
 
     m_defaultSize = size();
-    m_resultsContainer->hide();
+    m_resultsView->hide();
 
     m_delayedQueryTimer.setSingleShot(true);
     m_delayedQueryTimer.setInterval(100);
@@ -285,7 +278,7 @@ void Interface::setConfigWidget(QWidget *w)
     const int padding = top + bottom + m_activityButton->height();
     resize(width(), qMin(maxHeight, qMax(w->sizeHint().height() + padding, m_defaultSize.height())));
 
-    m_resultsContainer->hide();
+    m_resultsView->hide();
     m_searchTerm->setEnabled(false);
     m_layout->addWidget(w);
 
@@ -307,16 +300,17 @@ void Interface::cleanupAfterConfigWidget()
 void Interface::resizeEvent(QResizeEvent *event)
 {
     // We set m_defaultSize only when the event is spontaneous, i.e. when the user resizes the window
-    // We always update the width, but we update the height only if the resultsContainer is visible.
+    // We always update the width, but we update the height only if the resultsView is visible.
 
-    if (event->spontaneous() || isManualResizing()) {
+    if ((freeFloating() && event->spontaneous()) || isManualResizing()) {
         m_defaultSize.setWidth(width());
-        if (m_resultsContainer->isVisible()) {
+        if (m_resultsView->isVisible()) {
+            //kDebug() << "changing default size height to " << height();
             m_defaultSize.setHeight(height());
         }
     }
 
-    if (m_resultsContainer->isVisible()) {
+    if (m_resultsView->isVisible()) {
         m_resultsScene->resize(m_resultsView->width(), qMax(m_resultsView->height(), int(m_resultsScene->height())));
     }
 
@@ -386,18 +380,6 @@ void Interface::display(const QString &term)
     }
 }
 
-void Interface::setWidgetPalettes()
-{
-    // a nice palette to use with the widgets
-    QPalette widgetPalette = palette();
-    QColor bgColor = widgetPalette.color( QPalette::Active,
-                                                QPalette::Base );
-    bgColor.setAlpha( 200 );
-    widgetPalette.setColor( QPalette::Base, bgColor );
-
-    m_searchTerm->setPalette( widgetPalette );
-}
-
 void Interface::resetInterface()
 {
     setStaticQueryMode(false);
@@ -448,10 +430,9 @@ void Interface::showHelp()
 
 void Interface::ensureVisibility(QGraphicsItem* item)
 {
-    bool oldState = m_resultsScene->itemsAcceptHoverEvents();
     m_resultsScene->setItemsAcceptHoverEvents(false);
     m_resultsView->ensureVisible(item,0,0);
-    m_resultsScene->setItemsAcceptHoverEvents(oldState);
+    m_resultsScene->setItemsAcceptHoverEvents(true);
 }
 
 void Interface::setStaticQueryMode(bool staticQuery)
@@ -591,7 +572,7 @@ void Interface::matchCountChanged(int count)
         return;
     }
 
-    if (m_resultsContainer->isVisible() == show) {
+    if (m_resultsView->isVisible() == show) {
         return;
     }
 
@@ -604,9 +585,24 @@ void Interface::matchCountChanged(int count)
         QEvent event(QEvent::WindowActivate);
         QApplication::sendEvent(m_resultsView, &event);
 
+        /*
+        QSize s = m_defaultSize;
+        const int minHeight = minimumSizeHint().height();
+        const int resultsHeight = m_resultsScene->itemsBoundingRect().height();
+        //kDebug() << minHeight << resultsHeight << s.height();
+        if (minHeight + resultsHeight < s.height()) {
+            s.setHeight(minHeight + resultsHeight);
+            m_resultsScene->resize(m_resultsView->width(), resultsHeight);
+            m_resultsView->resize(m_resultsView->width(), resultsHeight + 2);
+        } else {
+            m_resultsScene->resize(m_resultsView->width(), qMax(m_resultsView->height(), int(m_resultsScene->height())));
+        }
+        resize(s);
+        */
         resize(m_defaultSize);
-        m_resultsContainer->show();
+        m_resultsView->show();
         m_resultsScene->resize(m_resultsView->width(), qMax(m_resultsView->height(), int(m_resultsScene->height())));
+        //kDebug() << s << size();
     } else {
         //kDebug() << "hiding ... eventually";
         m_delayedRun = false;
@@ -623,7 +619,7 @@ void Interface::hideResultsArea()
 
 void Interface::resetResultsArea()
 {
-    m_resultsContainer->hide();
+    m_resultsView->hide();
     setMinimumSize(QSize(MIN_WIDTH, 0));
     adjustSize();
 }
