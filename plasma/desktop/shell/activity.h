@@ -37,6 +37,8 @@ namespace Plasma
  * This class represents one activity.
  * an activity has an ID and a name, from nepomuk.
  * it also is associated with one or more containments.
+ *
+ * do NOT construct these yourself; use DesktopCorona::activity()
  */
 class Activity : public QObject
 {
@@ -44,7 +46,6 @@ class Activity : public QObject
 public:
     Activity(const QString &id, QObject *parent = 0);
     ~Activity();
-    //FIXME what's the Right Way to set up the initial data?
 
     QString id();
     QString name();

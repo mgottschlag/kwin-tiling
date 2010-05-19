@@ -21,6 +21,7 @@
 #define DESKTOPCORONA_H
 
 #include <QtGui/QGraphicsScene>
+#include <QHash>
 
 #include <Plasma/Corona>
 
@@ -82,6 +83,11 @@ public:
      */
     void checkActivities();
 
+    /**
+     * @return the Activity object for the given activity id
+     */
+    Activity* activity(const QString &id);
+
 public Q_SLOTS:
     QRect availableScreenRect(int id) const;
     void addPanel();
@@ -108,6 +114,7 @@ private:
     QAction *m_addPanelAction;
     QMenu *m_addPanelsMenu;
     KActivityController *m_activityController;
+    QHash<QString, Activity*> m_activities;
 };
 
 #endif

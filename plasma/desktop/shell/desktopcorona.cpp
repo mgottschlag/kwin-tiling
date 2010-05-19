@@ -171,16 +171,16 @@ void DesktopCorona::checkScreen(int screen, bool signalWhenExists)
     //desktop views are created in response to containment's screenChanged signal instead, which is
     //buggy (sometimes the containment thinks it's already on the screen, so no view is created)
 
-    Activity currentActivity(KActivityConsumer().currentActivity());
+    Activity *currentActivity = activity(m_activityController->currentActivity());
     //ensure the desktop(s) have a containment and view
     if (AppSettings::perVirtualDesktopViews()) {
         int numDesktops = KWindowSystem::numberOfDesktops();
 
         for (int j = 0; j < numDesktops; ++j) {
-            checkDesktop(&currentActivity, signalWhenExists, screen, j);
+            checkDesktop(currentActivity, signalWhenExists, screen, j);
         }
     } else {
-        checkDesktop(&currentActivity, signalWhenExists, screen);
+        checkDesktop(currentActivity, signalWhenExists, screen);
     }
 
     //ensure the panels get views too
@@ -543,6 +543,7 @@ void DesktopCorona::checkActivities()
                 //create a new activity for the containment
                 QString id = m_activityController->addActivity(context->currentActivity());
                 context->setCurrentActivityId(id);
+                list << id;
                 kDebug() << context->currentActivityId() << context->currentActivity();
             }
         }
@@ -550,14 +551,29 @@ void DesktopCorona::checkActivities()
     } else {
         kDebug() << "we have" << list.count() << "activities";
     }
+
+    //init our list
+    foreach (const QString &id, list) {
+        Activity *a = new Activity(id, this);
+        m_activities.insert(id, a);
+        //TODO ensure the current one is active?
+    }
 }
 
-void DesktopCorona::currentActivityChanged(const QString &activity)
+void DesktopCorona::currentActivityChanged(const QString &newActivity)
 {
-    kDebug() << activity;
-    Activity act(activity);
-    act.ensureActive();
+    kDebug() << newActivity;
+    Activity *act =activity(newActivity);
+    if (act) {
+        act->ensureActive();
+    }
 }
+
+Activity* DesktopCorona::activity(const QString &id)
+{
+    return m_activities.value(id);
+}
+
 
 #include "desktopcorona.moc"
 

@@ -17,8 +17,11 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "activity.h"
 #include "activityicon.h"
+
+#include "activity.h"
+#include "desktopcorona.h"
+#include "plasmaapp.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -32,9 +35,10 @@ ActivityIcon::ActivityIcon(const QString &id)
     m_removeIcon("edit-delete"),
     m_stopIcon("media-playback-stop"),
     m_playIcon("media-playback-start"),
-    m_removable(true),
-    m_activity(new Activity(id, this))
+    m_removable(true)
 {
+    DesktopCorona *c = qobject_cast<DesktopCorona*>(PlasmaApp::self()->corona());
+    m_activity = c->activity(id);
     connect(this, SIGNAL(clicked(Plasma::AbstractIcon*)), m_activity, SLOT(activate()));
     connect(m_activity, SIGNAL(opened()), this, SLOT(repaint()));
     connect(m_activity, SIGNAL(closed()), this, SLOT(repaint()));
