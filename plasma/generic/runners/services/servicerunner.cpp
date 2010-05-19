@@ -199,7 +199,7 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
 
                 qreal relevance = 0.6;
                 if (service->categories().contains("X-KDE-More") ||
-                    service->property("OnlyShownIn") != "KDE" ||
+                    service->property("OnlyShowIn") != "KDE" ||
                     !service->property("OnlyShowIn").isNull()) {
                     relevance = 0.5;
                 }
