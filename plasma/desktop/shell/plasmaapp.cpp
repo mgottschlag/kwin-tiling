@@ -1012,8 +1012,9 @@ void PlasmaApp::containmentScreenOwnerChanged(int wasScreen, int isScreen, Plasm
         return;
     }
 
+    bool pvd = AppSettings::perVirtualDesktopViews();
     foreach (DesktopView *view, m_desktops) {
-        if (view->screen() == isScreen) {
+        if (view->screen() == isScreen && (!pvd || view->desktop() == containment->desktop())) {
             kDebug() << "@@@@found view" << view;
             return;
         }
