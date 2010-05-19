@@ -628,7 +628,9 @@ void PanelController::mouseMoveFilter(QMouseEvent *event)
         int newY = mapToGlobal(event->pos()).y() - m_startDragPos.y();
         if ( newY + height() + MINIMUM_HEIGHT < screenGeom.bottom() &&
              newY + height() - screenGeom.top() >= 2*(screenGeom.height()/3)) {
+                kWarning()<<"AAA"<<pos();
             move(pos().x(), newY);
+        kWarning()<<"BBB"<<pos();
             resizeFrameHeight(screenGeom.bottom() - geometry().bottom());
         }
         break;

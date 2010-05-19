@@ -44,7 +44,7 @@ namespace Kephal
 
 class ActivityManager;
 
-class ControllerWindow : public Plasma::Dialog
+class ControllerWindow : public QWidget
 {
     Q_OBJECT
 
@@ -67,14 +67,18 @@ public:
     Plasma::FrameSvg *background() const;
 
 protected:
+    void setGraphicsWidget(QGraphicsWidget *widget);
+
     void resizeEvent(QResizeEvent *event);
     void paintEvent(QPaintEvent *event);
     void keyPressEvent(QKeyEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event);
 
 private Q_SLOTS:
     void onActiveWindowChanged(WId id);
     void backgroundChanged();
     void adjustSize(Kephal::Screen *screen);
+    void syncToGraphicsWidget();
 
 private:
 
@@ -83,10 +87,12 @@ private:
     Plasma::FrameSvg *m_background;
     Plasma::Containment *m_containment;
     Plasma::Corona *m_corona;
-    Plasma::Dialog *m_view;
+    QGraphicsView *m_view;
     QGraphicsWidget *m_watchedWidget;
     ActivityManager *m_activityManager;
     Plasma::WidgetExplorer *m_widgetExplorer;
+    QGraphicsWidget *m_graphicsWidget;
+    QTimer *m_adjustViewTimer;
 };
 
 #endif

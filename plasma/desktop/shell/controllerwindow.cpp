@@ -42,7 +42,7 @@
 #include <kephal/screens.h>
 
 ControllerWindow::ControllerWindow(QWidget* parent)
-   : Plasma::Dialog(parent),
+   : QWidget(parent),
      m_location(Plasma::Floating),
      m_layout(new QBoxLayout(QBoxLayout::TopToBottom, this)),
      m_background(new Plasma::FrameSvg(this)),
@@ -51,7 +51,8 @@ ControllerWindow::ControllerWindow(QWidget* parent)
      m_view(0),
      m_watchedWidget(0),
      m_activityManager(0),
-     m_widgetExplorer(0)
+     m_widgetExplorer(0),
+     m_graphicsWidget(0)
 {
     Q_UNUSED(parent)
 
@@ -79,6 +80,9 @@ ControllerWindow::ControllerWindow(QWidget* parent)
     Kephal::Screens *screens = Kephal::Screens::self();
     connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
             this, SLOT(adjustSize(Kephal::Screen *)));
+    m_adjustViewTimer = new QTimer(this);
+    m_adjustViewTimer->setSingleShot(true);
+    connect(m_adjustViewTimer, SIGNAL(timeout()), this, SLOT(syncToGraphicsWidget()));
     adjustSize(0);
 }
 
@@ -150,6 +154,107 @@ Plasma::Containment *ControllerWindow::containment() const
     return m_containment;
 }
 
+void ControllerWindow::setGraphicsWidget(QGraphicsWidget *widget)
+{
+    if (m_graphicsWidget) {
+        m_graphicsWidget->removeEventFilter(this);
+    }
+
+    m_graphicsWidget = widget;
+
+    if (widget) {
+        if (!layout()) {
+            QVBoxLayout *lay = new QVBoxLayout(this);
+            lay->setMargin(0);
+            lay->setSpacing(0);
+        }
+
+        if (!m_view) {
+            m_view = new QGraphicsView(this);
+            m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            m_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            m_view->setFrameShape(QFrame::NoFrame);
+            m_view->viewport()->setAutoFillBackground(false);
+            layout()->addWidget(m_view);
+        }
+
+        m_view->setScene(widget->scene());
+
+        //try to have the proper size -before- showing the dialog
+        m_view->centerOn(widget);
+        if (widget->layout()) {
+            widget->layout()->activate();
+        }
+        static_cast<QGraphicsLayoutItem *>(widget)->updateGeometry();
+        widget->resize(widget->size().expandedTo(widget->effectiveSizeHint(Qt::MinimumSize)));
+
+        syncToGraphicsWidget();
+
+        //adjustSizeTimer->start(150);
+
+        widget->installEventFilter(this);
+    } else {
+        delete m_view;
+        m_view = 0;
+    }
+}
+
+void ControllerWindow::syncToGraphicsWidget()
+{
+    m_adjustViewTimer->stop();
+    if (m_view && m_graphicsWidget) {
+        QSize prevSize = size();
+
+        //set the sizehints correctly:
+        int left, top, right, bottom;
+        getContentsMargins(&left, &top, &right, &bottom);
+
+        QDesktopWidget *desktop = QApplication::desktop();
+        QSize maxSize = Kephal::ScreenUtils::screenGeometry(desktop->screenNumber(this)).size();
+
+
+        QSize windowSize;
+        if (m_location == Plasma::LeftEdge || m_location == Plasma::RightEdge) {
+            windowSize = QSize(qMin(int(m_graphicsWidget->size().width()) + left + right, maxSize.width()), maxSize.height());
+            m_graphicsWidget->resize(m_graphicsWidget->size().width(), windowSize.height());
+        } else {
+            windowSize = QSize(maxSize.width(), qMin(int(m_graphicsWidget->size().height()) + top + bottom, maxSize.height()));
+            m_graphicsWidget->resize(windowSize.width(), m_graphicsWidget->size().height());
+        }
+
+        setMinimumSize(-1, -1);
+        setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+        resize(windowSize);
+
+        setMinimumSize(windowSize);
+
+
+        setMaximumSize(windowSize);
+
+        updateGeometry();
+
+        //reposition and resize the view.
+        //force a valid rect, otherwise it will take up the whole scene
+        QRectF sceneRect(m_graphicsWidget->sceneBoundingRect());
+
+        sceneRect.setWidth(qMax(qreal(1), sceneRect.width()));
+        sceneRect.setHeight(qMax(qreal(1), sceneRect.height()));
+        m_view->setSceneRect(sceneRect);
+
+        m_view->centerOn(m_graphicsWidget);
+
+    }
+}
+
+bool ControllerWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == m_graphicsWidget &&
+        (event->type() == QEvent::GraphicsSceneResize || event->type() == QEvent::GraphicsSceneMove)) {
+        m_adjustViewTimer->start(150);
+    }
+
+    return QWidget::eventFilter(watched, event);
+}
 
 void ControllerWindow::setLocation(const Plasma::Location &loc)
 {
@@ -348,7 +453,7 @@ void ControllerWindow::resizeEvent(QResizeEvent * event)
 
     qDebug() << "ControllerWindow::resizeEvent" << event->oldSize();
 
-    Plasma::Dialog::resizeEvent(event);
+    QWidget::resizeEvent(event);
 }
 
 #include "controllerwindow.moc"
