@@ -31,6 +31,7 @@
 #include <KGlobalSettings>
 
 #include <Plasma/Theme>
+#include <Plasma/PaintUtils>
 #include <QWidget>
 
 namespace Plasma
@@ -205,10 +206,10 @@ void AbstractIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     const int height = rect.height();
 
     QRect iconRect(rect.x() + qMax(0, (width / 2) - (m_iconHeight / 2)), rect.y(), m_iconHeight, m_iconHeight);
-    painter->drawPixmap(iconRect, pixmap(QSize(m_iconHeight, m_iconHeight)));
-
     QRectF textRect(rect.x(), iconRect.bottom() + 2, width, height - iconRect.height() - 2);
+
     painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+    painter->setFont(font());
 
     int flags = Qt::AlignTop;// | Qt::TextWordWrap;
     QFontMetrics fm(font());
@@ -216,7 +217,12 @@ void AbstractIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         flags |= Qt::AlignCenter;
     }
 
-    painter->setFont(font());
+    if (!m_name.isEmpty() && qGray(painter->pen().color().rgb()) < 192) {
+        const QRectF haloRect = fm.boundingRect(textRect.toAlignedRect(), flags, m_name);
+        PaintUtils::drawHalo(painter, haloRect);
+    }
+
+    painter->drawPixmap(iconRect, pixmap(QSize(m_iconHeight, m_iconHeight)));
     painter->drawText(textRect, flags, m_name);
 }
 
