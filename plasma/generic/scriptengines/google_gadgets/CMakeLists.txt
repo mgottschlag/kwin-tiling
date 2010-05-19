@@ -2,7 +2,6 @@ project(plasma-ggl)
 
 if(NOT KDE4_FOUND)
    find_package(KDE4 REQUIRED)
-   find_package(KDE4 REQUIRED)
    find_package(Googlegadgets REQUIRED)
 
    include(KDE4Defaults)
