@@ -65,16 +65,9 @@ void ActivityIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     QSize cornerIconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
     qreal iconX = rect.x() + qMax(0.0, (rect.width() - iconSize()) / 2.0); //icon's centered
 
-    if (m_removable) {
-        //the Remove corner-button
-        qreal removeX = iconX + iconSize() - cornerIconSize.width();
-        qreal removeY = rect.y();
-        painter->drawPixmap(removeX, removeY, m_removeIcon.pixmap(cornerIconSize));
-    }
-
     if (m_activity->isRunning()) {
         //draw stop icon
-        qreal stopX = iconX;
+        qreal stopX = iconX + iconSize() - cornerIconSize.width();
         qreal stopY = rect.y();
         painter->drawPixmap(stopX, stopY, m_stopIcon.pixmap(cornerIconSize));
     } else {
@@ -84,6 +77,13 @@ void ActivityIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         qreal playX = iconX + offset;
         qreal playY = rect.y() + offset;
         painter->drawPixmap(playX, playY, m_playIcon.pixmap(playIconSize));
+
+        if (m_removable) {
+            //the Remove corner-button
+            qreal removeX = iconX + iconSize() - cornerIconSize.width();
+            qreal removeY = rect.y();
+            painter->drawPixmap(removeX, removeY, m_removeIcon.pixmap(cornerIconSize));
+        }
     }
 }
 
@@ -95,21 +95,18 @@ void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     QSize cornerIconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
     qreal iconX = rect.x() + qMax(0.0, (rect.width() / 2) - (iconSize() / 2));
 
-    if (m_removable) {
-        qreal removeX = iconX + iconSize() - cornerIconSize.width();
-        qreal removeY = rect.y();
-        QRectF removeRect(QPointF(removeX, removeY), cornerIconSize);
+    qreal removeX = iconX + iconSize() - cornerIconSize.width();
+    qreal removeY = rect.y();
+    QRectF removeRect(QPointF(removeX, removeY), cornerIconSize);
+    if (m_activity->isRunning()) {
+        if (removeRect.contains(event->pos())) {
+            m_activity->close();
+            return;
+        }
+    } else if (m_removable) {
 
         if (removeRect.contains(event->pos())) {
             m_activity->destroy();
-            return;
-        }
-    }
-
-    if (m_activity->isRunning()) {
-        QRectF stopRect(QPointF(iconX, rect.y()), cornerIconSize);
-        if (stopRect.contains(event->pos())) {
-            m_activity->close();
             return;
         }
     }
