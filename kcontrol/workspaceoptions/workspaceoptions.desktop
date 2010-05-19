@@ -69,6 +69,7 @@ Name[zh_TW]=工作空間
 
 Comment=Global options for the Plasma Workspace
 Comment[en_GB]=Global options for the Plasma Workspace
+Comment[es]=Opciones globales del espacio de trabajo Plasma
 Comment[ia]=Optiones Global pro le spatio de labor de Plasma
 Comment[km]=ជម្រើស​សកល​សម្រាប់​​តំបន់ការងារ​ប្លាស្មា
 Comment[lt]=Plasma darbo erdvės globalūs nustatymai
@@ -79,6 +80,7 @@ Comment[pt_BR]=Opções globais para o espaço de trabalho do Plasma
 Comment[sv]=Globala alternativ för Plasmas arbetsyta
 Comment[uk]=Загальні параметри робочого простору Плазми
 Comment[x-test]=xxGlobal options for the Plasma Workspacexx
+Comment[zh_TW]=Plasma 工作空間的全域選項
 
 X-KDE-Keywords=plasma,workspace,shell,formfactor,dashboard
 

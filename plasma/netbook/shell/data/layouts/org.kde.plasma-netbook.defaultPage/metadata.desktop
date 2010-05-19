@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Page one
 Name[en_GB]=Page one
+Name[es]=Página uno
 Name[ia]=Pagina uno
 Name[ja]=ページワン
 Name[kk]=Бірінші парақ
@@ -14,8 +15,10 @@ Name[pt_BR]=Página um
 Name[sv]=Sida ett
 Name[uk]=Перша сторінка
 Name[x-test]=xxPage onexx
+Name[zh_TW]=第 1 頁
 Comment=Default Netbook Page
 Comment[en_GB]=Default Netbook Page
+Comment[es]=Página predeterminada para netbooks
 Comment[ia]=Pagina de Netbook Predefinite
 Comment[ja]=標準のネットブックのページ
 Comment[kk]=Нетбуктің әдетті парағы
@@ -28,6 +31,7 @@ Comment[pt_BR]=Página padrão do Netbook
 Comment[sv]=Standardsida för nätdator
 Comment[uk]=Типова сторінка субноутбука
 Comment[x-test]=xxDefault Netbook Pagexx
+Comment[zh_TW]=預設 Netbook 頁面
 
 Type=Service
 ServiceTypes=Plasma/LayoutTemplate

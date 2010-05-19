@@ -99,6 +99,7 @@ Comment[pt_BR]=Miniaplicativo para exibir e alternar leiautes
 Comment[sv]=Miniprogram för att visa och byta layout
 Comment[uk]=Аплет для показу та перемикання розкладок
 Comment[x-test]=xxApplet to display and switch layoutsxx
+Comment[zh_TW]=顯示或切換佈局的小程式
 
 Icon=preferences-desktop-keyboard
 Type=Service

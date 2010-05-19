@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Windowed widgets
+Name[es]=Componentes en ventana
 Name[ia]=Widgets (Elemento Graphic) in le Fenestra
 Name[ja]=ウィンドウ化されたウィジェット
 Name[km]=ធាតុក្រាហ្វិក​​វីនដូ
@@ -9,9 +10,11 @@ Name[pt_BR]=Widgets em janelas
 Name[sv]=Fönsterbaserade grafiska komponenter
 Name[uk]=Віджети-вікна
 Name[x-test]=xxWindowed widgetsxx
+Name[zh_TW]=視窗元件
 
 
 Comment=Find Plasma widgets that can be run as standalone windows
+Comment[es]=Busca componentes Plasma que se pueden ejecutar como ventanas independientes
 Comment[ia]=Trovar widgets (elementos graphic) de plasma que on pote executar como fenestras sole
 Comment[ja]=スタンドアローンのウィンドウとして起動できる Plasma ウィジェットを検索します
 Comment[km]=រក​ធាតុក្រាហ្វិក​ប្លាស្មា​ ដែល​អាច​ត្រូវ​បាន​​រត់​ជា​វីនដូ​តែ​ឯង
@@ -21,6 +24,7 @@ Comment[pt_BR]=Localiza widgets do Plasma que possam ser executados como janelas
 Comment[sv]=Hitta grafiska Plasma-komponenter som kan köras som fristående fönster
 Comment[uk]=Пошук віджетів Плазми, які можна запускати у окремих вікнах
 Comment[x-test]=xxFind Plasma widgets that can be run as standalone windowsxx
+Comment[zh_TW]=尋找可以以獨立視窗執行的 Plasma 元件
 
 
 X-KDE-ServiceTypes=Plasma/Runner

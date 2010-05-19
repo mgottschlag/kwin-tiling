@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Device Notifications
+Name[es]=Notificaciones de dispositivo
 Name[ia]=Notificationes de dispositivo
 Name[ja]=デバイスの通知
 Name[km]=ការ​​ជូន​ដំណឹង​​ឧបករណ៍
@@ -11,6 +12,7 @@ Name[pt_BR]=Notificações de dispositivos
 Name[sv]=Enhetsunderrättelser
 Name[uk]=Сповіщення про пристрої
 Name[x-test]=xxDevice Notificationsxx
+Name[zh_TW]=裝置通知
 Comment=Passive device notifications for the user.
 Comment[ia]=Notificationes de dispositivo passive pro le usator.
 Comment[km]=ការ​ជូនដំណឹង​ឧបករណ៍​សកម្ម​សម្រាប់​អ្នក​ប្រើ ។
@@ -22,6 +24,7 @@ Comment[pt_BR]=Notificações passivas de dispositivos para o usuário.
 Comment[sv]=Passiva enhetsunderrättelser för användaren.
 Comment[uk]=Пасивні сповіщення користувача щодо пристроїв.
 Comment[x-test]=xxPassive device notifications for the user.xx
+Comment[zh_TW]=給使用者的被動裝置通知。
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=notifier
