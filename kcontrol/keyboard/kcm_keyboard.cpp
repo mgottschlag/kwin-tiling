@@ -104,6 +104,7 @@ static void initializeKeyboardSettings();
 void KCMKeyboard::save()
 {
 	keyboardConfig->save();
+	widget->save();
 	widget->getKcmMiscWidget()->save();
 
 	QDBusMessage message = QDBusMessage::createSignal(KEYBOARD_DBUS_OBJECT_PATH, KEYBOARD_DBUS_SERVICE_NAME, KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE);

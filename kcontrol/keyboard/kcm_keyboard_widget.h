@@ -44,6 +44,7 @@ public:
 	virtual ~KCMKeyboardWidget();
 
 	void updateUI();
+	void save();
 
 	//temp hack
 	KCMiscKeyboardWidget* getKcmMiscWidget() const { return kcmMiscWidget; }

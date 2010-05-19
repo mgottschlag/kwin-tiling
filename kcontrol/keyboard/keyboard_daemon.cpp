@@ -99,12 +99,12 @@ void KeyboardDaemon::setupTrayIcon()
 void KeyboardDaemon::registerShortcut()
 {
 	if( actionCollection == NULL ) {
-         actionCollection = new KActionCollection( this );
+         actionCollection = new KActionCollection(this, KComponentData("Keyboard Daemon"));
          KAction* a = NULL;
 #include "bindings.cpp"
          connect(a, SIGNAL(triggered()), this, SLOT(switchToNextLayout()));
          connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), this, SLOT(globalSettingsChanged(int)));
-         kDebug() << "keyboard switching KDE shortcut" << a->globalShortcut().toString();
+         kDebug() << "Keyboard layout switching KDE shortcut" << a->globalShortcut().toString();
      }
 }
 

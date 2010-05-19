@@ -77,6 +77,13 @@ KCMKeyboardWidget::~KCMKeyboardWidget()
 	delete flags;
 }
 
+void KCMKeyboardWidget::save()
+{
+//TODO: save global shortcut properly
+//	kDebug() << "Saving keyboard layout switching KDE shortcut" << a->globalShortcut().toString();
+//	uiWidget->kdeKeySequence->commit();
+}
+
 void KCMKeyboardWidget::updateUI()
 {
 	uiWidget->layoutsTableView->setModel(uiWidget->layoutsTableView->model());
@@ -428,12 +435,12 @@ void KCMKeyboardWidget::updateShortcutsUI()
 	updateXkbShortcutsButtons();
 
 	delete actionCollection;
-    actionCollection = new KActionCollection(this, KComponentData("keyboard"));
+    actionCollection = new KActionCollection(this, KComponentData("Keyboard Daemon"));
     KAction *a = NULL;
 #include "bindings.cpp"
     a->setProperty("isConfigurationAction", true);
     uiWidget->kdeKeySequence->setKeySequence(a->globalShortcut().primary());
-    kDebug() << "getting shortcut" << a->globalShortcut().toString();
+    kDebug() << "Keyboard layout switching KDE shortcut" << a->globalShortcut().toString();
 }
 
 void KCMKeyboardWidget::updateXkbOptionsUI()
