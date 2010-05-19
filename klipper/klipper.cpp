@@ -22,6 +22,7 @@
    Boston, MA 02110-1301, USA.
 */
 
+#include <qglobal.h>
 #ifdef Q_WS_X11
 #include <config-X11.h>
 #endif
