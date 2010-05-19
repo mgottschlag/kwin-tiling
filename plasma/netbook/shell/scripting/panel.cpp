@@ -30,17 +30,19 @@
 #include <plasmagenericshell/scripting/scriptengine.h>
 #include <plasmagenericshell/scripting/widget.h>
 
+namespace WorkspaceScripting
+{
 
-Panel::Panel(Plasma::Containment *containment, QObject *parent)
+NetPanel::NetPanel(Plasma::Containment *containment, QObject *parent)
     : Containment(containment, parent)
 {
 }
 
-Panel::~Panel()
+NetPanel::~NetPanel()
 {
 }
 
-QString Panel::location() const
+QString NetPanel::location() const
 {
     Plasma::Containment *c = containment();
     if (!c) {
@@ -74,7 +76,7 @@ QString Panel::location() const
     return "floating";
 }
 
-void Panel::setLocation(const QString &locationString)
+void NetPanel::setLocation(const QString &locationString)
 {
     Plasma::Containment *c = containment();
     if (!c) {
@@ -100,7 +102,7 @@ void Panel::setLocation(const QString &locationString)
     c->setLocation(loc);
 }
 
-NetView *Panel::panel() const
+NetView *NetPanel::panel() const
 {
     Plasma::Containment *c = containment();
     if (!c) {
@@ -110,7 +112,7 @@ NetView *Panel::panel() const
     return PlasmaApp::self()->controlBar();
 }
 
-int Panel::height() const
+int NetPanel::height() const
 {
     Plasma::Containment *c = containment();
     if (!c) {
@@ -121,7 +123,7 @@ int Panel::height() const
                                                : c->size().height();
 }
 
-void Panel::setHeight(int height)
+void NetPanel::setHeight(int height)
 {
     Plasma::Containment *c = containment();
     if (height < 16 || !c) {
@@ -147,7 +149,7 @@ void Panel::setHeight(int height)
     }
 }
 
-bool Panel::autoHide() const
+bool NetPanel::autoHide() const
 {
     NetView *v = panel();
     if (v) {
@@ -157,12 +159,14 @@ bool Panel::autoHide() const
     return false;
 }
 
-void Panel::setAutoHide(const bool autoHide)
+void NetPanel::setAutoHide(const bool autoHide)
 {
     NetView *v = panel();
     if (v && autoHide != v->autoHide()) {
         v->setAutoHide(autoHide);
     }
+}
+
 }
 
 #include "panel.moc"

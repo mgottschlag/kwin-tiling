@@ -29,6 +29,8 @@
 #include <plasmagenericshell/scripting/scriptengine.h>
 #include <plasmagenericshell/scripting/widget.h>
 
+namespace WorkspaceScripting
+{
 
 Panel::Panel(Plasma::Containment *containment, QObject *parent)
     : Containment(containment, parent)
@@ -326,6 +328,8 @@ void Panel::setHiding(const QString &mode)
             v->setVisibilityMode(PanelView::NormalPanel);
         }
     }
+}
+
 }
 
 #include "panel.moc"

@@ -30,6 +30,8 @@
 #include <plasmagenericshell/scripting/scriptengine.h>
 #include <plasmagenericshell/scripting/widget.h>
 
+namespace WorkspaceScripting
+{
 
 Newspaper::Newspaper(Plasma::Containment *containment, QObject *parent)
     : Containment(containment, parent)
@@ -77,6 +79,8 @@ QScriptValue Newspaper::addWidgetAt(QScriptContext *context, QScriptEngine *engi
     }
 
     return engine->undefinedValue();
+}
+
 }
 
 #include "newspaper.moc"

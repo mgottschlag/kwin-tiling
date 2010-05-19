@@ -28,6 +28,9 @@
 #include "panel.h"
 #include "newspaper.h"
 
+namespace WorkspaceScripting
+{
+
 NetbookScriptEngine::NetbookScriptEngine(Plasma::Corona *corona, QObject *parent)
     : ScriptEngine(corona, parent)
 {
@@ -40,7 +43,7 @@ QScriptValue NetbookScriptEngine::wrap(Plasma::Containment *c)
     if (c->name() == "newspaper") {
         wrapper = new Newspaper(c);
     } else if (isPanel(c)) {
-        wrapper = new Panel(c);
+        wrapper = new NetPanel(c);
     } else {
         wrapper = new Containment(c);
     }
@@ -53,6 +56,8 @@ QScriptValue NetbookScriptEngine::wrap(Plasma::Containment *c)
 QScriptValue NetbookScriptEngine::wrap(Containment *c)
 {
     return ScriptEngine::wrap(c);
+}
+
 }
 
 #include "netbookscriptengine.moc"

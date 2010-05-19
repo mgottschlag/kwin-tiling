@@ -29,7 +29,10 @@
 
 class NetView;
 
-class Panel : public Containment
+namespace WorkspaceScripting
+{
+
+class NetPanel : public Containment
 {
     Q_OBJECT
     Q_PROPERTY(QStringList configKeys READ configKeys)
@@ -51,8 +54,8 @@ class Panel : public Containment
     Q_PROPERTY(bool autoHide READ autoHide WRITE setAutoHide)
 
 public:
-    Panel(Plasma::Containment *containment, QObject *parent = 0);
-    ~Panel();
+    NetPanel(Plasma::Containment *containment, QObject *parent = 0);
+    ~NetPanel();
 
     QString location() const;
     void setLocation(const QString &location);
@@ -75,6 +78,8 @@ public Q_SLOTS:
 private:
     NetView *panel() const;
 };
+
+}
 
 #endif
 

@@ -26,6 +26,9 @@
 
 #include <plasmagenericshell/scripting/containment.h>
 
+namespace WorkspaceScripting
+{
+
 class Panel : public Containment
 {
     Q_OBJECT
@@ -84,6 +87,8 @@ public Q_SLOTS:
 private:
     PanelView *panel() const;
 };
+
+}
 
 #endif
 

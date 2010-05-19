@@ -22,6 +22,9 @@
 
 #include <plasmagenericshell/scripting/scriptengine.h>
 
+namespace WorkspaceScripting
+{
+
 class DesktopScriptEngine : public ScriptEngine
 {
     Q_OBJECT
@@ -31,6 +34,8 @@ public:
     QScriptValue wrap(Plasma::Containment *c);
     QScriptValue wrap(Containment *c);
 };
+
+}
 
 #endif
 

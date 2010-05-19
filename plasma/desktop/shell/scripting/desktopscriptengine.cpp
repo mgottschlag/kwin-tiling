@@ -24,6 +24,9 @@
 
 #include "panel.h"
 
+namespace WorkspaceScripting
+{
+
 DesktopScriptEngine::DesktopScriptEngine(Plasma::Corona *corona, QObject *parent)
     : ScriptEngine(corona, parent)
 {
@@ -38,6 +41,8 @@ QScriptValue DesktopScriptEngine::wrap(Plasma::Containment *c)
 QScriptValue DesktopScriptEngine::wrap(Containment *c)
 {
     return ScriptEngine::wrap(c);
+}
+
 }
 
 #include "desktopscriptengine.moc"

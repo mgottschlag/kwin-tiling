@@ -71,7 +71,7 @@ void NetCorona::init()
 
 void NetCorona::loadDefaultLayout()
 {
-    evaluateScripts(NetbookScriptEngine::defaultLayoutScripts());
+    evaluateScripts(WorkspaceScripting::NetbookScriptEngine::defaultLayoutScripts());
     if (!containments().isEmpty()) {
         return;
     }
@@ -150,13 +150,13 @@ QRegion NetCorona::availableScreenRegion(int id) const
 
 void NetCorona::processUpdateScripts()
 {
-    evaluateScripts(NetbookScriptEngine::pendingUpdateScripts());
+    evaluateScripts(WorkspaceScripting::NetbookScriptEngine::pendingUpdateScripts());
 }
 
 void NetCorona::evaluateScripts(const QStringList &scripts)
 {
     foreach (const QString &script, scripts) {
-        NetbookScriptEngine scriptEngine(this);
+        WorkspaceScripting::NetbookScriptEngine scriptEngine(this);
         connect(&scriptEngine, SIGNAL(printError(QString)), this, SLOT(printScriptError(QString)));
         connect(&scriptEngine, SIGNAL(print(QString)), this, SLOT(printScriptMessage(QString)));
         connect(&scriptEngine, SIGNAL(createPendingPanelViews()), PlasmaApp::self(), SLOT(createWaitingPanels()));

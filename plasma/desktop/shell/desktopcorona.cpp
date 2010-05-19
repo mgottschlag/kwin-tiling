@@ -313,13 +313,13 @@ QRect DesktopCorona::availableScreenRect(int id) const
 
 void DesktopCorona::processUpdateScripts()
 {
-    evaluateScripts(ScriptEngine::pendingUpdateScripts());
+    evaluateScripts(WorkspaceScripting::ScriptEngine::pendingUpdateScripts());
 }
 
 void DesktopCorona::evaluateScripts(const QStringList &scripts)
 {
     foreach (const QString &script, scripts) {
-        DesktopScriptEngine scriptEngine(this);
+        WorkspaceScripting::DesktopScriptEngine scriptEngine(this);
         connect(&scriptEngine, SIGNAL(printError(QString)), this, SLOT(printScriptError(QString)));
         connect(&scriptEngine, SIGNAL(print(QString)), this, SLOT(printScriptMessage(QString)));
         connect(&scriptEngine, SIGNAL(createPendingPanelViews()), PlasmaApp::self(), SLOT(createWaitingPanels()));
@@ -345,7 +345,7 @@ void DesktopCorona::printScriptMessage(const QString &error)
 
 void DesktopCorona::loadDefaultLayout()
 {
-    evaluateScripts(ScriptEngine::defaultLayoutScripts());
+    evaluateScripts(WorkspaceScripting::ScriptEngine::defaultLayoutScripts());
     if (containments().isEmpty()) {
         QString defaultConfig = KStandardDirs::locate("appdata", "plasma-default-layoutrc");
         if (!defaultConfig.isEmpty()) {
@@ -413,7 +413,7 @@ void DesktopCorona::populateAddPanelsMenu()
     }
 
     QMapIterator<QString, QPair<KPluginInfo, KService::Ptr> > it(sorted);
-    Plasma::PackageStructure::Ptr templateStructure(new LayoutTemplatePackageStructure);
+    Plasma::PackageStructure::Ptr templateStructure(new WorkspaceScripting::LayoutTemplatePackageStructure);
     while (it.hasNext()) {
         it.next();
         QPair<KPluginInfo, KService::Ptr> pair = it.value();
@@ -428,7 +428,7 @@ void DesktopCorona::populateAddPanelsMenu()
         } else {
             //FIXME: proper names
             KPluginInfo info(pair.second);
-            Plasma::PackageStructure::Ptr structure(new LayoutTemplatePackageStructure);
+            Plasma::PackageStructure::Ptr structure(new WorkspaceScripting::LayoutTemplatePackageStructure);
             const QString path = KStandardDirs::locate("data", structure->defaultPackageRoot() + '/' + info.pluginName() + '/');
             if (!path.isEmpty()) {
                 Plasma::Package package(path, structure);

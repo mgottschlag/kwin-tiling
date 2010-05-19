@@ -27,6 +27,9 @@
 
 #include <plasmagenericshell/scripting/containment.h>
 
+namespace WorkspaceScripting
+{
+
 class Newspaper : public Containment
 {
     Q_OBJECT
@@ -58,6 +61,8 @@ public Q_SLOTS:
     void writeConfig(const QString &key, const QVariant &value) { Applet::writeConfig(key, value); }
     void reloadConfig() { Applet::reloadConfig(); }
 };
+
+}
 
 #endif
 
