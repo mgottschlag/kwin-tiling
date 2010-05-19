@@ -116,21 +116,27 @@ void Activity::destroy()
         foreach (Plasma::Containment *c, m_containments) {
             c->destroy(false);
         }
+        //FIXME delete your saved ones too
     }
 }
 
 Plasma::Containment* Activity::containmentForScreen(int screen, int desktop)
 {
-    return m_containments.value(QPair<int,int>(screen,desktop));
+    //desktop -1 and 0 should share the same containment (for when PVD is changed)
+    if (desktop == -1) {
+        desktop = 0;
+    }
+    return m_containments.value(QPair<int,int>(screen, desktop));
 }
 
 void Activity::activateContainment(int screen, int desktop)
 {
-    Plasma::Containment *c = m_containments.value(QPair<int,int>(screen, desktop));
+    Plasma::Containment *c = containmentForScreen(screen, desktop);
     if (!c) {
         //TODO check if there are saved containments once we start saving them
+        //kDebug() << "@@@@@adding containment for" << screen << desktop;
         c = PlasmaApp::self()->addContainment(m_id);
-        m_containments.insert(QPair<int,int>(screen, desktop), c);
+        m_containments.insert(QPair<int,int>(screen, desktop == -1 ? 0 : desktop), c);
     }
     c->setScreen(screen, desktop);
 }
@@ -242,6 +248,11 @@ void Activity::insertContainment(Plasma::Containment* cont)
 {
     int screen = cont->lastScreen();
     int desktop = cont->lastDesktop();
+    //desktop -1 and 0 should share the same containment (for when PVD is changed)
+    if (desktop == -1) {
+        desktop = 0;
+        kDebug() << "desktop was -1";
+    }
     kDebug() << screen << desktop;
     if (screen == -1) {
         //the migration can't set lastScreen, so maybe we need to assign the containment here
@@ -278,7 +289,7 @@ void Activity::open()
         //TODO check if we need more for screens/desktops
         kDebug() << "open failed (bad file?). creating new containment";
         Plasma::Containment *newContainment = PlasmaApp::self()->addContainment(m_id);
-        m_containments.insert(QPair<int,int>(0, -1), newContainment);
+        m_containments.insert(QPair<int,int>(0, 0), newContainment);
     }
 
     PlasmaApp::self()->corona()->requireConfigSync();
