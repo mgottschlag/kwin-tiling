@@ -66,10 +66,12 @@ void ActivityIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     qreal iconX = rect.x() + qMax(0.0, (rect.width() - iconSize()) / 2.0); //icon's centered
 
     if (m_activity->isRunning()) {
-        //draw stop icon
-        qreal stopX = iconX + iconSize() - cornerIconSize.width();
-        qreal stopY = rect.y();
-        painter->drawPixmap(stopX, stopY, m_stopIcon.pixmap(cornerIconSize));
+        if (m_removable) {
+            //draw stop icon
+            qreal stopX = iconX + iconSize() - cornerIconSize.width();
+            qreal stopY = rect.y();
+            painter->drawPixmap(stopX, stopY, m_stopIcon.pixmap(cornerIconSize));
+        }
     } else {
         //draw play icon, centered
         qreal playIconSize = KIconLoader::SizeMedium;
@@ -98,17 +100,13 @@ void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     qreal removeX = iconX + iconSize() - cornerIconSize.width();
     qreal removeY = rect.y();
     QRectF removeRect(QPointF(removeX, removeY), cornerIconSize);
-    if (m_activity->isRunning()) {
-        if (removeRect.contains(event->pos())) {
+    if (m_removable && removeRect.contains(event->pos())) {
+        if (m_activity->isRunning()) {
             m_activity->close();
-            return;
-        }
-    } else if (m_removable) {
-
-        if (removeRect.contains(event->pos())) {
+        } else {
             m_activity->destroy();
-            return;
         }
+        return;
     }
 
     AbstractIcon::mouseReleaseEvent(event);
@@ -126,5 +124,10 @@ void ActivityIcon::setRemovable(bool removable)
     }
     m_removable = removable;
     update();
+}
+
+Activity* ActivityIcon::activity()
+{
+    return m_activity;
 }
 

@@ -35,6 +35,7 @@ class ActivityIcon : public Plasma::AbstractIcon
         virtual ~ActivityIcon();
 
         void setRemovable(bool removable);
+        Activity* activity();
 
         QPixmap pixmap(const QSize &size);
         QMimeData* mimeData();

@@ -18,6 +18,8 @@
  */
 
 #include "activitylist.h"
+
+#include "activity.h"
 #include "plasmaapp.h"
 #include "kactivitycontroller.h"
 
@@ -34,12 +36,15 @@ ActivityList::ActivityList(Qt::Orientation orientation, QGraphicsItem *parent)
     foreach (const QString &activity, activities) {
         createActivityIcon(activity);
     }
+    //ensure the last open one can't be closed
+    activityClosed();
+    /*
     if (m_allAppletsHash.count() == 1) {
         ActivityIcon *icon = qobject_cast<ActivityIcon*>(m_allAppletsHash.values().first());
         if (icon) {
             icon->setRemovable(false);
         }
-    }
+    }*/
     //TODO:
     //-do something about sorting and filtering (most recent first?)
 
@@ -58,6 +63,8 @@ void ActivityList::createActivityIcon(const QString &id)
     ActivityIcon *icon = new ActivityIcon(id);
     addIcon(icon);
     m_allAppletsHash.insert(id, icon);
+    connect(icon->activity(), SIGNAL(opened()), this, SLOT(activityOpened()));
+    connect(icon->activity(), SIGNAL(closed()), this, SLOT(activityClosed()));
 }
 /*
 void AppletsListWidget::appletIconDoubleClicked(AbstractIcon *icon)
@@ -77,16 +84,17 @@ void ActivityList::setSearch(const QString &searchString)
     }
 }
 
-
 void ActivityList::activityAdded(const QString &id)
 {
     //kDebug() << id;
+    /*
     if (m_allAppletsHash.count() == 1) {
         ActivityIcon *icon = qobject_cast<ActivityIcon*>(m_allAppletsHash.values().first());
         if (icon) {
             icon->setRemovable(true);
         }
     }
+    */
     createActivityIcon(id);
     updateList();
 }
@@ -95,15 +103,45 @@ void ActivityList::activityRemoved(const QString &id)
 {
     Plasma::AbstractIcon* icon = m_allAppletsHash.take(id);
     delete icon;
-
+/*
     if (m_allAppletsHash.count() == 1) {
         ActivityIcon *icon = qobject_cast<ActivityIcon*>(m_allAppletsHash.values().first());
         if (icon) {
             icon->setRemovable(false);
         }
     }
-
+*/
     updateList();
+}
+
+void ActivityList::activityClosed()
+{
+    ActivityIcon *running = 0;
+    foreach (Plasma::AbstractIcon *i, m_allAppletsHash) {
+        ActivityIcon *icon = qobject_cast<ActivityIcon*>(i);
+        if (icon && icon->activity()->isRunning()) {
+            if (running) {
+                //found two, no worries
+                return;
+            } else {
+                running = icon;
+            }
+        }
+    }
+
+    if (running) {
+        running->setRemovable(false);
+    }
+}
+
+void ActivityList::activityOpened()
+{
+    foreach (Plasma::AbstractIcon *i, m_allAppletsHash) {
+        ActivityIcon *icon = qobject_cast<ActivityIcon*>(i);
+        if (icon && icon->activity()->isRunning()) {
+            icon->setRemovable(true);
+        }
+    }
 }
 
 

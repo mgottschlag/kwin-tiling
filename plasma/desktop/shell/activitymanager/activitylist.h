@@ -46,6 +46,8 @@ protected:
 private Q_SLOTS:
     void activityAdded(const QString &id);
     void activityRemoved(const QString &id);
+    void activityOpened();
+    void activityClosed();
 
 private:
     void createActivityIcon(const QString &id);
