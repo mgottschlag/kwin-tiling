@@ -23,6 +23,7 @@
 #include <kaboutdata.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <kglobalsettings.h>
 
 #include <QtGui/QMessageBox>
 #include <QtGui/QWidget>
@@ -79,9 +80,12 @@ KCMKeyboardWidget::~KCMKeyboardWidget()
 
 void KCMKeyboardWidget::save()
 {
-//TODO: save global shortcut properly
-//	kDebug() << "Saving keyboard layout switching KDE shortcut" << a->globalShortcut().toString();
-//	uiWidget->kdeKeySequence->commit();
+    KAction* action = static_cast<KAction*>(actionCollection->action(0));
+    KShortcut shortcut(uiWidget->kdeKeySequence->keySequence());
+    action->setGlobalShortcut(shortcut, KAction::ActiveShortcut, KAction::NoAutoloading);
+    kDebug() << "Saving keyboard layout KDE shortcut" << shortcut.toString();
+
+    KGlobalSettings::emitChange(KGlobalSettings::SettingsChanged, KGlobalSettings::SETTINGS_SHORTCUTS);
 }
 
 void KCMKeyboardWidget::updateUI()
