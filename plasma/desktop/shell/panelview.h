@@ -143,6 +143,11 @@ public Q_SLOTS:
     void checkUnhide(Plasma::ItemStatus newStatus);
 
     /**
+     * Decides whether give focus to the panel
+     */
+    void setStatus(Plasma::ItemStatus newStatus);
+
+    /**
      * Pinches the min/max sizes of the containment to the current screen resolution
      */
     void pinchContainmentToCurrentScreen();
@@ -209,7 +214,6 @@ protected:
     void dragLeaveEvent(QDragLeaveEvent *event);
     void dropEvent(QDropEvent *event);
     void enterEvent(QEvent *event);
-    void mousePressEvent(QMouseEvent *event);
 
 private:
     void createUnhideTrigger();
