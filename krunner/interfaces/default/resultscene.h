@@ -30,12 +30,13 @@
 
 #include <Plasma/QueryMatch>
 
+#include "resultitem.h"
+
 namespace Plasma
 {
     class RunnerManager;
 }
 
-class ResultItem;
 class SelectionBar;
 
 class ResultScene : public QGraphicsScene
@@ -51,9 +52,7 @@ class ResultScene : public QGraphicsScene
         void run(ResultItem* item) const;
         QSize minimumSizeHint() const;
         void setItemsAcceptHoverEvents(bool enable);
-        bool itemsAcceptHoverEvents();
-//        Plasma::RunnerManager* manager() const;
-
+        bool itemsAcceptHoverEvents() const;
 
     public slots:
         void setQueryMatches(const QList<Plasma::QueryMatch> &matches);
@@ -63,15 +62,12 @@ class ResultScene : public QGraphicsScene
 
     signals:
         void itemActivated(ResultItem *item);
-        void itemHoverEnter(ResultItem *item);
-        void itemHoverLeave(ResultItem *item);
         void matchCountChanged(int count);
         void ensureVisibility(QGraphicsItem *item);
 
     protected:
         void keyPressEvent(QKeyEvent * keyEvent);
         void focusInEvent(QFocusEvent *focusEvent);
-        void focusOutEvent(QFocusEvent *focusEvent);
 
     private:
         void selectPreviousItem();
@@ -82,22 +78,22 @@ class ResultScene : public QGraphicsScene
         ResultItem* addQueryMatch(const Plasma::QueryMatch &match, bool useAnyId);
 
         bool canMoveItemFocus() const;
+        void arrangeItems(bool setFocusAndTabbing);
 
     private slots:
         void clearMatches();
         void updateItemMargins();
-        void arrangeItems(ResultItem *);
-        void initItemsHoverEvents();
+        void scheduleArrangeItems();
+        void arrangeItems();
 
     private:
         Plasma::RunnerManager *m_runnerManager;
 
-        QSize       m_size;
         QTimer      m_clearTimer;
-        QTimer      m_hoverTimer;
+        QTimer      m_arrangeTimer;
 
-        QList<ResultItem *>  m_items;
-        QMultiMap<QString, ResultItem *>  m_itemsById;
+        QList<ResultItem *> m_items;
+        QMultiMap<QString, ResultItem *> m_itemsById;
         SelectionBar *m_selectionBar;
 
         int m_currentIndex;
@@ -108,6 +104,8 @@ class ResultScene : public QGraphicsScene
 
         QWidget *m_focusBase;
         bool m_itemsAcceptHoverEvents;
+
+        SharedResultData m_resultData;
 };
 
 #endif

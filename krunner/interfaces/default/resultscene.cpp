@@ -39,7 +39,6 @@
 #include <Plasma/AbstractRunner>
 #include <Plasma/RunnerManager>
 
-#include "resultitem.h"
 #include "selectionbar.h"
 
 ResultScene::ResultScene(Plasma::RunnerManager *manager, QWidget *focusBase, QObject *parent)
@@ -55,20 +54,21 @@ ResultScene::ResultScene(Plasma::RunnerManager *manager, QWidget *focusBase, QOb
             this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
 
     m_clearTimer.setSingleShot(true);
+    m_clearTimer.setInterval(200);
     connect(&m_clearTimer, SIGNAL(timeout()), this, SLOT(clearMatches()));
 
-    m_hoverTimer.setSingleShot(true);
-    connect(&m_hoverTimer, SIGNAL(timeout()), this, SLOT(initItemsHoverEvents()));
+    m_arrangeTimer.setSingleShot(true);
+    m_arrangeTimer.setInterval(50);
+    connect(&m_arrangeTimer, SIGNAL(timeout()), this, SLOT(arrangeItems()));
 
     m_selectionBar = new SelectionBar(0);
-    addItem(m_selectionBar);
-
+    connect(m_selectionBar, SIGNAL(appearanceChanged()), this, SLOT(updateItemMargins()));
     m_selectionBar->hide();
     updateItemMargins();
 
-    connect(m_selectionBar, SIGNAL(appearanceChanged()), this, SLOT(updateItemMargins()));
-    //QColor bg(255, 255, 255, 126);
-    //setBackgroundBrush(bg);
+    addItem(m_selectionBar);
+
+    m_resultData.processHoverEvents = true;
 }
 
 ResultScene::~ResultScene()
@@ -91,15 +91,16 @@ void ResultScene::resize(int width, int height)
         foreach (ResultItem *item, m_items) {
             item->calculateSize(width, height);
         }
+
+        setSceneRect(itemsBoundingRect());
     }
-    setSceneRect(itemsBoundingRect());
 }
 
 void ResultScene::clearMatches()
 {
     foreach (ResultItem *item, m_items) {
         removeItem(item);
-        item->deleteLater();
+        delete item;
     }
 
     m_itemsById.clear();
@@ -122,26 +123,14 @@ bool ResultScene::canMoveItemFocus() const
             (m_focusBase->hasFocus() && !focusedItem->mouseHovered()) ;
 }
 
-bool ResultScene::itemsAcceptHoverEvents()
+bool ResultScene::itemsAcceptHoverEvents() const
 {
-    return m_itemsAcceptHoverEvents;
+    return m_resultData.processHoverEvents;
 }
 
 void ResultScene::setItemsAcceptHoverEvents(bool enable)
 {
-    if (enable == m_itemsAcceptHoverEvents) {
-        return;
-    }
-
-    m_itemsAcceptHoverEvents = enable;
-    foreach (QGraphicsItem* tmpItem, items()) {
-        tmpItem->setAcceptHoverEvents(enable);
-    }
-}
-
-void ResultScene::initItemsHoverEvents()
-{
-    setItemsAcceptHoverEvents(true);
+    m_resultData.processHoverEvents = enable;
 }
 
 void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
@@ -156,15 +145,10 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     if (m.isEmpty()) {
         //kDebug() << "clearing";
         resize(width(), 0);
-        emit itemHoverEnter(0);
-        m_clearTimer.start(200);
+        m_clearTimer.start();
         return;
     }
 
-    m_hoverTimer.stop();
-    setItemsAcceptHoverEvents(false);
-
-    //resize(width(), m.count() * ResultItem::BOUNDING_HEIGHT);
     m_clearTimer.stop();
     m_items.clear();
 
@@ -190,8 +174,9 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     // delete the stragglers
     QMapIterator<QString, ResultItem *> it(m_itemsById);
     while (it.hasNext()) {
-        removeItem(it.next().value());
-        it.value()->deleteLater();
+        ResultItem *item = it.next().value();
+        removeItem(item);
+        delete item;
     }
 
     // organize the remainders
@@ -200,14 +185,23 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     // this will leave them in *reverse* order
     qSort(m_items.begin(), m_items.end(), ResultItem::compare);
 
+    arrangeItems(true);
     emit matchCountChanged(m.count());
-    arrangeItems(0);
-
-    m_hoverTimer.start(200);
-
 }
 
-void ResultScene::arrangeItems(ResultItem *itemChanged)
+void ResultScene::scheduleArrangeItems()
+{
+    if (!m_arrangeTimer.isActive()) {
+        m_arrangeTimer.start();
+    }
+}
+
+void ResultScene::arrangeItems()
+{
+    arrangeItems(false);
+}
+
+void ResultScene::arrangeItems(bool setFocusAndTabbing)
 {
     QListIterator<ResultItem*> matchIt(m_items);
     QGraphicsWidget *tab = 0;
@@ -217,7 +211,7 @@ void ResultScene::arrangeItems(ResultItem *itemChanged)
         ResultItem *item = matchIt.next();
         //kDebug()  << item->name() << item->id() << item->priority() << i;
 
-        if (!itemChanged) {
+        if (setFocusAndTabbing) {
             // first time set up
             tab = item->arrangeTabOrder(tab);
             m_itemsById.insert(item->id(), item);
@@ -230,7 +224,7 @@ void ResultScene::arrangeItems(ResultItem *itemChanged)
         y += item->geometry().height();
 
         // it is vital that focus is set *after* the index
-        if (!itemChanged && i == 0 && canMoveItemFocus()) {
+        if (setFocusAndTabbing && i == 0 && canMoveItemFocus()) {
             setFocusItem(item);
             emit ensureVisibility(item);
         }
@@ -238,9 +232,7 @@ void ResultScene::arrangeItems(ResultItem *itemChanged)
         ++i;
     }
 
-    // Here we cannot use itemsBoundingRect().height() because old items will be deleted on the next event cycle
-    // However we use itemsBoundingRect().width() to take care of width changes.
-    setSceneRect(QRect(0,0,itemsBoundingRect().width(),y));
+    setSceneRect(itemsBoundingRect());
 }
 
 ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool useAnyId)
@@ -253,16 +245,14 @@ ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool use
         //kDebug() << "did not find for" << match.id();
         if (useAnyId) {
             //kDebug() << "creating for" << match.id();
-            item = new ResultItem(match, m_runnerManager, 0);
+            item = new ResultItem(&m_resultData, match, m_runnerManager, 0);
             item->setContentsMargins(m_itemMarginLeft, m_itemMarginTop,
                                      m_itemMarginRight, m_itemMarginBottom);
             addItem(item);
             item->hide();
             connect(item, SIGNAL(ensureVisibility(QGraphicsItem*)), this, SIGNAL(ensureVisibility(QGraphicsItem*)));
-            connect(item, SIGNAL(sizeChanged(ResultItem*)), this, SLOT(arrangeItems(ResultItem*)));
             connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
-            connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SIGNAL(itemHoverEnter(ResultItem*)));
-            connect(item, SIGNAL(hoverLeave(ResultItem*)), this, SIGNAL(itemHoverLeave(ResultItem*)));
+            connect(item, SIGNAL(sizeChanged(ResultItem*)), this, SLOT(scheduleArrangeItems()));
         } else {
             //kDebug() << "returning failure for" << match.id();
             return 0;
@@ -300,14 +290,6 @@ void ResultScene::focusInEvent(QFocusEvent *focusEvent)
             setFocusItem(currentFocus);
         }
         break;
-    }
-}
-
-void ResultScene::focusOutEvent(QFocusEvent *focusEvent)
-{
-    QGraphicsScene::focusOutEvent(focusEvent);
-    if (!m_items.isEmpty()) {
-        emit itemHoverEnter(m_items.at(0));
     }
 }
 
@@ -397,7 +379,7 @@ bool ResultScene::launchQuery(const QString &term, const QString &runner)
 
 void ResultScene::clearQuery()
 {
-    m_selectionBar->setTargetItem(0);
+    //m_selectionBar->setTargetItem(0);
     setFocusItem(0);
     clearSelection();
     m_runnerManager->reset();
@@ -423,12 +405,6 @@ void ResultScene::run(ResultItem *item) const
     item->run(m_runnerManager);
 }
 
-/*
-Plasma::RunnerManager* ResultScene::manager() const
-{
-    return m_runnerManager;
-}
-*/
 void ResultScene::updateItemMargins()
 {
     m_selectionBar->getContentsMargins(&m_itemMarginLeft, &m_itemMarginTop,

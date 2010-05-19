@@ -36,6 +36,11 @@ namespace Plasma
     class RunnerManager;
 } // namespace Plasma
 
+struct SharedResultData
+{
+    bool processHoverEvents;
+};
+
 class ResultItemSignaller : public QObject
 {
     Q_OBJECT
@@ -61,7 +66,8 @@ class ResultItem : public QGraphicsWidget
     Q_OBJECT
 
 public:
-    ResultItem(const Plasma::QueryMatch &match, Plasma::RunnerManager *runnerManager, QGraphicsWidget *parent);
+    ResultItem(const SharedResultData *sharedData, const Plasma::QueryMatch &match, Plasma::RunnerManager *runnerManager, QGraphicsWidget *parent);
+    ~ResultItem();
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
     void setMatch(const Plasma::QueryMatch &match);
@@ -94,13 +100,10 @@ public:
 signals:
     void indexReleased(int index);
     void activated(ResultItem *item);
-    void hoverEnter(ResultItem *item);
-    void hoverLeave(ResultItem *item);
     void sizeChanged(ResultItem *item);
     void ensureVisibility(QGraphicsItem *item);
 
 protected:
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *e);
     void timerEvent(QTimerEvent *e);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
@@ -117,10 +120,6 @@ protected:
 
 protected slots:
     void showConfig();
-
-private:
-    // must always call remove()
-    ~ResultItem();
 
 private slots:
     void actionClicked();
@@ -140,6 +139,7 @@ private:
     QGraphicsWidget *m_actionsWidget;
     QGraphicsLinearLayout *m_actionsLayout;
     Plasma::RunnerManager *m_runnerManager;
+    const SharedResultData *m_sharedData;
 
     static int s_fontHeight;
 };

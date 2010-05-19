@@ -53,7 +53,7 @@ void shadowBlur(QImage &image, int radius, const QColor &color);
 
 int ResultItem::s_fontHeight = 0;
 
-ResultItem::ResultItem(const Plasma::QueryMatch &match, Plasma::RunnerManager *runnerManager, QGraphicsWidget *parent)
+ResultItem::ResultItem(const SharedResultData *sharedData, const Plasma::QueryMatch &match, Plasma::RunnerManager *runnerManager, QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
       m_match(0),
       m_configButton(0),
@@ -64,12 +64,12 @@ ResultItem::ResultItem(const Plasma::QueryMatch &match, Plasma::RunnerManager *r
       m_configWidget(0),
       m_actionsWidget(0),
       m_actionsLayout(0),
-      m_runnerManager(runnerManager)
+      m_runnerManager(runnerManager),
+      m_sharedData(sharedData)
 {
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIsSelectable);
-    // We will accept hover events later on;
-    setAcceptHoverEvents(false);
+    setAcceptHoverEvents(true);
     setFocusPolicy(Qt::TabFocus);
     setCacheMode(DeviceCoordinateCache);
     setZValue(0);
@@ -439,16 +439,12 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->setClipping(oldClipping);
 }
 
-void ResultItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *e)
-{
-    QGraphicsItem::hoverLeaveEvent(e);
-    //update();
-    //emit hoverLeave(this);
-    setFocus(Qt::MouseFocusReason);
-}
-
 void ResultItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 {
+    if (!m_sharedData->processHoverEvents) {
+        return;
+    }
+
     QGraphicsItem::hoverEnterEvent(e);
     setFocus(Qt::MouseFocusReason);
 
@@ -512,8 +508,6 @@ void ResultItem::focusInEvent(QFocusEvent * event)
     if (!m_highlightTimerId) {
         m_highlightTimerId = startTimer(TIMER_INTERVAL);
     }
-
-    emit hoverEnter(this);
 }
 
 void ResultItem::focusOutEvent(QFocusEvent * event)
@@ -524,8 +518,6 @@ void ResultItem::focusOutEvent(QFocusEvent * event)
     if (!m_highlightTimerId) {
         m_highlightTimerId = startTimer(TIMER_INTERVAL);
     }
-
-    emit hoverLeave(this);
 }
 
 void ResultItem::keyPressEvent(QKeyEvent *event)
