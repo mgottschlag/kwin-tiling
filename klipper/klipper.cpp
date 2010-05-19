@@ -1169,7 +1169,7 @@ QString Klipper::cycleText() const
 }
 
 // http://bugreports.qt.nokia.com/browse/QTBUG-8157
-#if KDE_IS_VERSION( 4, 4, 85 )
+#if KDE_IS_VERSION( 4, 5, 85 )
 #warning Check if this is still needed, hopefully not.
 #endif
 KlipperEmptyDetector::KlipperEmptyDetector()
