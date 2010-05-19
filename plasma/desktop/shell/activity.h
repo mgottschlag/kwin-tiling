@@ -70,6 +70,11 @@ public:
      */
      Plasma::Containment* containmentForScreen(int screen, int desktop = -1);
 
+    /**
+     * make this activity's containments the active ones, loading them if necessary
+     */
+    void ensureActive();
+
 signals:
     void nameChanged(const QString &name);
     void opened();
@@ -83,7 +88,7 @@ public slots:
      */
     void destroy();
     /**
-     * make this activity the active one, loading it if necessary
+     * make this activity the current activity
      */
     void activate();
 

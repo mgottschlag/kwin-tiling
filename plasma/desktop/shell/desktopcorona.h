@@ -28,6 +28,7 @@ class QMenu;
 class QAction;
 
 class Activity;
+class KActivityController;
 
 namespace Plasma
 {
@@ -96,6 +97,7 @@ protected Q_SLOTS:
     void printScriptMessage(const QString &error);
     void updateImmutability(Plasma::ImmutabilityType immutability);
     void checkAddPanelAction(const QStringList &sycocaChanges = QStringList());
+    void currentActivityChanged(const QString &activity);
 
 private:
     void init();
@@ -105,6 +107,7 @@ private:
 
     QAction *m_addPanelAction;
     QMenu *m_addPanelsMenu;
+    KActivityController *m_activityController;
 };
 
 #endif

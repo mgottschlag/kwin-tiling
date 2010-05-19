@@ -137,11 +137,14 @@ void Activity::activateContainment(int screen, int desktop)
 
 void Activity::activate()
 {
+    KActivityController().setCurrentActivity(m_id);
+}
+
+void Activity::ensureActive()
+{
     if (m_containments.isEmpty()) {
         open();
     }
-
-    KActivityController().setCurrentActivity(m_id);
 
     //ensure there's a containment for every screen & desktop.
     int numScreens = Kephal::ScreenUtils::numScreens();
@@ -219,9 +222,20 @@ void Activity::close()
     external.sync();
     m_containments.clear();
     emit closed();
-    kDebug() << "attempting to write to" << external.name();
     //FIXME only destroy it if nothing went wrong
     //TODO save a thumbnail to a file too
+
+    KActivityController controller;
+    if (controller.currentActivity() == m_id) {
+        //activate someone else
+        //TODO we could use a better strategy here
+        QStringList list = controller.availableActivities();
+        QString next = list.first();
+        if (next == m_id && list.count() > 1) {
+            next = list.at(1);
+        }
+        controller.setCurrentActivity(next);
+    }
 }
 
 void Activity::insertContainment(Plasma::Containment* cont)

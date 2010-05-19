@@ -60,7 +60,8 @@ static const QString s_panelTemplatesPath("plasma-layout-templates/panels/*");
 DesktopCorona::DesktopCorona(QObject *parent)
     : Plasma::Corona(parent),
       m_addPanelAction(0),
-      m_addPanelsMenu(0)
+      m_addPanelsMenu(0),
+      m_activityController(new KActivityController(this))
 {
     init();
 }
@@ -93,6 +94,8 @@ void DesktopCorona::init()
     connect(this, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)),
             this, SLOT(updateImmutability(Plasma::ImmutabilityType)));
     connect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)), this, SLOT(checkAddPanelAction(QStringList)));
+
+    connect(m_activityController, SIGNAL(currentActivityChanged(QString)), this, SLOT(currentActivityChanged(QString)));
 
     //FIXME: requires js anim support to work properly
     //mapAnimation(Plasma::Animator::AppearAnimation, Plasma::Animator::PulseAnimation);
@@ -521,8 +524,7 @@ void DesktopCorona::addPanel(const QString &plugin)
 
 void DesktopCorona::checkActivities()
 {
-    KActivityController controller;
-    QStringList list = controller.availableActivities();
+    QStringList list = m_activityController->availableActivities();
 
     if (list.isEmpty()) {
         //probably an upgrade to 4.5; need to migrate their plasma activities to nepomuk.
@@ -539,7 +541,7 @@ void DesktopCorona::checkActivities()
                     context->setCurrentActivity(i18n("unnamed"));
                 }
                 //create a new activity for the containment
-                QString id = controller.addActivity(context->currentActivity());
+                QString id = m_activityController->addActivity(context->currentActivity());
                 context->setCurrentActivityId(id);
                 kDebug() << context->currentActivityId() << context->currentActivity();
             }
@@ -548,6 +550,13 @@ void DesktopCorona::checkActivities()
     } else {
         kDebug() << "we have" << list.count() << "activities";
     }
+}
+
+void DesktopCorona::currentActivityChanged(const QString &activity)
+{
+    kDebug() << activity;
+    Activity act(activity);
+    act.ensureActive();
 }
 
 #include "desktopcorona.moc"
