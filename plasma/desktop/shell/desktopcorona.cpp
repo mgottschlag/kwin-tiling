@@ -39,6 +39,7 @@
 #include <Plasma/AbstractToolBox>
 #include <Plasma/Containment>
 #include <plasma/containmentactionspluginsconfig.h>
+#include <Plasma/Context>
 #include <Plasma/DataEngineManager>
 #include <Plasma/Package>
 
@@ -46,6 +47,9 @@
 
 #include <scripting/layouttemplatepackagestructure.h>
 
+#include "activity.h"
+#include "kactivityconsumer.h"
+#include "kactivityinfo.h"
 #include "panelview.h"
 #include "plasmaapp.h"
 #include "plasma-shell-desktop.h"
@@ -159,28 +163,24 @@ void DesktopCorona::checkScreen(int screen, bool signalWhenExists)
     // taking care of that case in PlasmaApp (which would duplicate some of the code below,
     // DesktopCorona will, when signalWhenExists is true, emit a containmentAdded signal
     // even if the containment actually existed prior to this method being called.
+    //
+    //note: hte signal actually triggers view creation only for panels, atm.
+    //desktop views are created in response to containment's screenChanged signal instead, which is
+    //buggy (sometimes the containment thinks it's already on the screen, so no view is created)
+
+    Activity currentActivity(KActivityConsumer().currentActivity());
+    //ensure the desktop(s) have a containment and view
     if (AppSettings::perVirtualDesktopViews()) {
         int numDesktops = KWindowSystem::numberOfDesktops();
 
         for (int j = 0; j < numDesktops; ++j) {
-            Plasma::Containment *c = containmentForScreen(screen, j);
-
-            kDebug() << screen << j << (QObject*)c;
-            if (!c) {
-                addDesktopContainment(screen, j);
-            } else if (signalWhenExists) {
-                emit containmentAdded(c);
-            }
+            checkDesktop(&currentActivity, signalWhenExists, screen, j);
         }
     } else {
-        Plasma::Containment *c = containmentForScreen(screen);
-        if (!containmentForScreen(screen)) {
-            addDesktopContainment(screen);
-        } else if (signalWhenExists) {
-            emit containmentAdded(c);
-        }
+        checkDesktop(&currentActivity, signalWhenExists, screen);
     }
 
+    //ensure the panels get views too
     if (signalWhenExists) {
         foreach (Plasma::Containment * c, containments()) {
             if (c->screen() != screen) {
@@ -196,29 +196,32 @@ void DesktopCorona::checkScreen(int screen, bool signalWhenExists)
     }
 }
 
-Plasma::Containment *DesktopCorona::findFreeContainment() const
+void DesktopCorona::checkDesktop(Activity *activity, bool signalWhenExists, int screen, int desktop)
 {
-    foreach (Plasma::Containment *cont, containments()) {
-        if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
-            cont->containmentType() == Plasma::Containment::CustomContainment) &&
-            cont->screen() == -1 && !offscreenWidgets().contains(cont)) {
-            return cont;
-        }
+    Plasma::Containment *c = activity->containmentForScreen(screen, desktop);
+
+    if (!c) {
+        //kDebug() << "@@@@@@@@@@creating a new containment";
+        c = addDesktopContainment(activity->id());
     }
 
-    return 0;
+    c->setScreen(screen, desktop);
+    c->setFormFactor(Plasma::Planar);
+    c->flushPendingConstraintsEvents();
+    requestConfigSync();
+
+    if (signalWhenExists) {
+        emit containmentAdded(c);
+    }
 }
 
-void DesktopCorona::addDesktopContainment(int screen, int desktop)
+Plasma::Containment* DesktopCorona::addDesktopContainment(const QString &activity, const QString &plugin)
 {
-    kDebug() << screen << desktop;
+    Plasma::Containment* c = addContainment(plugin);
 
-    Plasma::Containment* c = findFreeContainment();
-    if (!c) {
-        // first try for "desktop", if it doesn't exist then we try for any 
-        // desktopy containment
-        c = addContainment("desktop");
-
+    /*
+        // FIXME this code will never be used because addContainment never returns null, not even on
+        // failure
         if (!c) {
             KPluginInfo::List desktopPlugins = Plasma::Containment::listContainmentsOfType("desktop");
 
@@ -231,17 +234,16 @@ void DesktopCorona::addDesktopContainment(int screen, int desktop)
             kWarning() << "complete failure to load a desktop containment!";
             return;
         }
+    */
 
-        c->setActivity(i18n("Desktop"));
-    } else {
-        kDebug() << "found an existing containment:" << c->screen() << c->desktop();
-    }
+    //ensure it's hooked up
+    Plasma::Context *context = c->context();
+    context->setCurrentActivityId(activity);
+    context->setCurrentActivity(KActivityInfo::name(activity));
+    connect(context, SIGNAL(activityChanged(Plasma::Context*)), PlasmaApp::self(), SLOT(updateActivityName(Plasma::Context*)), Qt::UniqueConnection);
 
-    c->setScreen(screen, desktop);
-    c->setFormFactor(Plasma::Planar);
-    c->flushPendingConstraintsEvents();
-    emit containmentAdded(c);
-    requestConfigSync();
+    kDebug() << "created containment for" << activity;
+    return c;
 }
 
 int DesktopCorona::numScreens() const

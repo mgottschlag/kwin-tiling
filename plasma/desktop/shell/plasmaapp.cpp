@@ -76,12 +76,14 @@
 #include <plasmagenericshell/backgrounddialog.h>
 #include "kactivitycontroller.h"
 
+#include "activity.h"
 #include "appadaptor.h"
 #include "controllerwindow.h"
 #include "checkbox.h"
 #include "desktopcorona.h"
 #include "desktopview.h"
 #include "interactiveconsole.h"
+#include "kactivityinfo.h"
 #include "panelview.h"
 #include "plasma-shell-desktop.h"
 #include "toolbutton.h"
@@ -459,7 +461,6 @@ void PlasmaApp::showWidgetExplorer(int screen, Plasma::Containment *containment)
 }
 
 //FIXME it'd be easier if we knew which containment triggered this action
-//FIXME what if the dashboard is up?
 void PlasmaApp::showActivityManager()
 {
     //try to find the "active" containment
@@ -636,14 +637,14 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
 
 void PlasmaApp::screenRemoved(int id)
 {
-    kDebug() << id;
+    kDebug() << "@@@@" << id;
     QMutableListIterator<DesktopView *> it(m_desktops);
     while (it.hasNext()) {
         DesktopView *view = it.next();
         if (view->screen() == id) {
             // the screen was removed, so we'll destroy the
             // corresponding view
-            kDebug() << "removing the view for screen" << id;
+            kDebug() << "@@@@removing the view for screen" << id;
             view->setContainment(0);
             it.remove();
             delete view;
@@ -999,18 +1000,25 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
 void PlasmaApp::containmentScreenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment *containment)
 {
     Q_UNUSED(wasScreen)
-    //kDebug() << isScreen << wasScreen << (QObject*)containment;
+    kDebug() << "@@@was" << wasScreen << "is" << isScreen << (QObject*)containment;
 
-    if (isScreen < 0 || isPanelContainment(containment)) {
+    if (isScreen < 0) {
+        kDebug() << "@@@screen<0";
+        return;
+    }
+    if (isPanelContainment(containment)) {
+        kDebug() << "@@@isPanel";
         return;
     }
 
     foreach (DesktopView *view, m_desktops) {
         if (view->screen() == isScreen) {
+            kDebug() << "@@@@found view" << view;
             return;
         }
     }
 
+    kDebug() << "@@@@appending";
     m_desktopsWaiting.append(containment);
     m_desktopViewCreationTimer.start();
 }
@@ -1053,35 +1061,26 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
 
 void PlasmaApp::cloneCurrentActivity()
 {
-    //try to find the "active" containment to get a plugin name
-    int currentScreen = Kephal::ScreenUtils::screenId(QCursor::pos());
-    int currentDesktop = -1;
-    if (AppSettings::perVirtualDesktopViews()) {
-        currentDesktop = KWindowSystem::currentDesktop()-1;
-    }
-    Plasma::Containment *fromContainment=m_corona->containmentForScreen(currentScreen, currentDesktop);
+    KActivityController c;
+    //getting the current activity is *so* much easier than the current containment(s) :) :)
+    QString oldId = c.currentActivity();
+    Activity oldActivity(oldId);
+    QString newId = c.addActivity(i18nc("%1 is the activity name", "copy of %1", oldActivity.name()));
 
-    QString plugin = fromContainment ? fromContainment->pluginName() : QString();
-    Plasma::Containment *c = createActivity(plugin);
+    QString file = "activities/";
+    file += newId;
+    KConfig external(file, KConfig::SimpleConfig, "appdata");
 
-    //TODO: make it clone everything, not just the pluginname
+    //copy the old config to the new location
+    oldActivity.save(external);
+    //kDebug() << "saved to" << file;
 
-    //FIXME actually what we should do is let the view react to the current-activity change
-    //which will ensure this guy gets seen
-    if (c && fromContainment) {
-        foreach (DesktopView *view, m_desktops) {
-            if (view->containment() == fromContainment){
-                view->setContainment(c);
-                return;
-            }
-        }
-
-        // if we reach here, the containment isn't going to be taken over by the view,
-        // so we're going to resize it ourselves!
-        c->resize(fromContainment->size());
-    }
+    //load the new one
+    Activity newActivity(newId);
+    newActivity.activate();
 }
 
+//TODO accomodate activities
 void PlasmaApp::setPerVirtualDesktopViews(bool perDesktopViews)
 {
     AppSettings::setPerVirtualDesktopViews(perDesktopViews);
@@ -1259,26 +1258,41 @@ QStringList PlasmaApp::listActivities()
     return list;
 }
 
-Plasma::Containment *PlasmaApp::createActivity(const QString &plugin)
+void PlasmaApp::createActivity(const QString &plugin)
 {
-    Plasma::Containment *c = m_corona->addContainment(plugin);
-    //FIXME create the right number of containments for screens
     KActivityController controller;
     QString id = controller.addActivity(i18n("unnamed"));
-    Plasma::Context *context = c->context();
-    context->setCurrentActivityId(id);
-    context->setCurrentActivity(i18n("unnamed"));
-    //ensure it's hooked up
-    connect(context, SIGNAL(activityChanged(Plasma::Context*)), this, SLOT(updateActivityName(Plasma::Context*)), Qt::UniqueConnection);
 
+    //ensure there's a containment for every screen & desktop.
+    int numScreens = Kephal::ScreenUtils::numScreens();
+    int numDesktops = 0;
+    if (AppSettings::perVirtualDesktopViews()) {
+        numDesktops = KWindowSystem::numberOfDesktops();
+    }
+    for (int screen = 0; screen < numScreens; ++screen) {
+        if (numDesktops) {
+            for (int desktop = 0; desktop < numDesktops; ++desktop) {
+                Plasma::Containment *c = addContainment(id, plugin);
+                c->setScreen(screen, desktop);
+            }
+        } else {
+            Plasma::Containment *c = addContainment(id, plugin);
+            c->setScreen(screen, -1);
+        }
+    }
     controller.setCurrentActivity(id);
-    return c;
+}
+
+//this is here for Activity to be lazy. FIXME clean it up later.
+Plasma::Containment *PlasmaApp::addContainment(const QString &activity, const QString &plugin)
+{
+    return m_corona->addDesktopContainment(activity, plugin);
 }
 
 void PlasmaApp::updateActivityName(Plasma::Context *context)
 {
     KActivityController controller;
-    kDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!";
+    //kDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!";
     controller.setActivityName(context->currentActivityId(), context->currentActivity());
 }
 

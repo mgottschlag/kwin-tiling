@@ -27,6 +27,8 @@
 class QMenu;
 class QAction;
 
+class Activity;
+
 namespace Plasma
 {
     class Applet;
@@ -62,19 +64,13 @@ public:
      */
     void checkScreen(int screen, bool signalWhenExists = false);
 
-    /**
-     * @return an old containment that wasn't already associated with
-     *         a screen, if found
-     */
-    Plasma::Containment *findFreeContainment() const;
-
     int numScreens() const;
     QRect screenGeometry(int id) const;
     QRegion availableScreenRegion(int id) const;
 
     bool loadDefaultLayoutScripts();
     void processUpdateScripts();
-    void addDesktopContainment(int screen, int desktop = -1);
+    Plasma::Containment* addDesktopContainment(const QString &activity, const QString &plugin = QString());
 
 public Q_SLOTS:
     QRect availableScreenRect(int id) const;
@@ -96,6 +92,7 @@ private:
     void init();
 
     Plasma::Applet *loadDefaultApplet(const QString &pluginName, Plasma::Containment *c);
+    void checkDesktop(Activity *activity, bool signalWhenExists, int screen, int desktop = -1);
 
     QAction *m_addPanelAction;
     QMenu *m_addPanelsMenu;

@@ -108,7 +108,6 @@ public slots:
      * make sure we've always got a containment
      */
     void lostContainment();
-    void grabContainment();
 
 Q_SIGNALS:
     void dashboardClosed();

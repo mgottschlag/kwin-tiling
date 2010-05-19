@@ -28,6 +28,7 @@
 #include <QSize>
 #include <QFile>
 
+#include <KConfig>
 #include <KIcon>
 #include <KMessageBox>
 #include <KWindowSystem>
@@ -62,8 +63,7 @@ Activity::Activity(const QString &id, QObject *parent)
         if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
             cont->containmentType() == Plasma::Containment::CustomContainment) &&
                 !corona->offscreenWidgets().contains(cont) && cont->context()->currentActivityId() == id) {
-            m_containments << cont;
-            break;
+            insertContainment(cont);
         }
     }
     kDebug() << m_containments.size();
@@ -112,38 +112,52 @@ void Activity::destroy()
                 0, //FIXME pass a view in
                 i18nc("%1 is the name of the activity", "Do you really want to remove %1?", name()),
                 i18nc("@title:window %1 is the name of the activity", "Remove %1", name()), KStandardGuiItem::remove()) == KMessageBox::Continue) {
+        KActivityController().removeActivity(m_id);
         foreach (Plasma::Containment *c, m_containments) {
             c->destroy(false);
         }
-        KActivityController controller;
-        controller.removeActivity(m_id);
     }
+}
+
+Plasma::Containment* Activity::containmentForScreen(int screen, int desktop)
+{
+    return m_containments.value(QPair<int,int>(screen,desktop));
+}
+
+void Activity::activateContainment(int screen, int desktop)
+{
+    Plasma::Containment *c = m_containments.value(QPair<int,int>(screen, desktop));
+    if (!c) {
+        //TODO check if there are saved containments once we start saving them
+        c = PlasmaApp::self()->addContainment(m_id);
+        m_containments.insert(QPair<int,int>(screen, desktop), c);
+    }
+    c->setScreen(screen, desktop);
 }
 
 void Activity::activate()
 {
     if (m_containments.isEmpty()) {
         open();
-        if (m_containments.isEmpty()) {
-            kDebug() << "open failed??";
-            return;
+    }
+
+    KActivityController().setCurrentActivity(m_id);
+
+    //ensure there's a containment for every screen & desktop.
+    int numScreens = Kephal::ScreenUtils::numScreens();
+    int numDesktops = 0;
+    if (AppSettings::perVirtualDesktopViews()) {
+        numDesktops = KWindowSystem::numberOfDesktops();
+    }
+    for (int screen = 0; screen < numScreens; ++screen) {
+        if (numDesktops) {
+            for (int desktop = 0; desktop < numDesktops; ++desktop) {
+                activateContainment(screen, desktop);
+            }
+        } else {
+            activateContainment(screen, -1);
         }
     }
-    //FIXME also ensure there's a containment for every screen. it's possible numscreens changed
-    //since we were opened.
-
-    //figure out where we are
-    int currentScreen = Kephal::ScreenUtils::screenId(QCursor::pos());
-    int currentDesktop = -1;
-    if (AppSettings::perVirtualDesktopViews()) {
-        currentDesktop = KWindowSystem::currentDesktop()-1;
-    }
-    //and bring the containment to where we are
-    m_containments.first()->setScreen(currentScreen, currentDesktop);
-    //TODO handle other screens
-
-    KActivityController controller;
-    controller.setCurrentActivity(m_id);
 }
 
 void Activity::setName(const QString &name)
@@ -158,6 +172,27 @@ void Activity::setName(const QString &name)
     //so I'm not trying to set the activity name in nepomuk.
     //nor am I propogating the change to my containments; they need to be able to react to such
     //things when this class isn't around anyways.
+}
+
+void Activity::save(KConfig &external)
+{
+    foreach (const QString &group, external.groupList()) {
+        KConfigGroup cg(&external, group);
+        cg.deleteGroup();
+    }
+
+    //TODO: multi-screen saving/restoring, where each screen can be
+    // independently restored: put each screen's containments into a
+    // different group, e.g. [Screens][0][Containments], [Screens][1][Containments], etc
+    KConfigGroup dest(&external, "Containments");
+    KConfigGroup dummy;
+    foreach (Plasma::Containment *c, m_containments) {
+        c->save(dummy);
+        KConfigGroup group(&dest, QString::number(c->id()));
+        c->config().copyTo(&group);
+    }
+
+    external.sync();
 }
 
 void Activity::close()
@@ -189,6 +224,24 @@ void Activity::close()
     //TODO save a thumbnail to a file too
 }
 
+void Activity::insertContainment(Plasma::Containment* cont)
+{
+    int screen = cont->lastScreen();
+    int desktop = cont->lastDesktop();
+    kDebug() << screen << desktop;
+    if (screen == -1) {
+        //the migration can't set lastScreen, so maybe we need to assign the containment here
+        kDebug() << "found a lost one";
+        screen = 0;
+    }
+    QPair<int,int> key(screen, desktop);
+    if (m_containments.contains(key)) {
+        kDebug() << "@!@!@!@!@!@@@@rejecting containment!!!";
+        return;
+    }
+    m_containments.insert(key, cont);
+}
+
 void Activity::open()
 {
     QString fileName = "activities/";
@@ -197,7 +250,7 @@ void Activity::open()
 
     //TODO only load existing screens
     foreach (Plasma::Containment *newContainment, PlasmaApp::self()->corona()->importLayout(external)) {
-        m_containments << newContainment;
+        insertContainment(newContainment);
         //ensure it's hooked up (if something odd happened we don't want orphan containments)
         Plasma::Context *context = newContainment->context();
         context->setCurrentActivityId(m_id);
@@ -209,13 +262,9 @@ void Activity::open()
 
     if (m_containments.isEmpty()) {
         //TODO check if we need more for screens/desktops
-        kDebug() << "open failed (bad file?). creating new containment(s)";
-        Plasma::Containment *newContainment = PlasmaApp::self()->corona()->addContainment(QString());
-        m_containments << newContainment;
-        Plasma::Context *context = newContainment->context();
-        context->setCurrentActivityId(m_id);
-        context->setCurrentActivity(m_name);
-        connect(context, SIGNAL(activityChanged(Plasma::Context*)), this, SLOT(updateActivityName(Plasma::Context*)), Qt::UniqueConnection);
+        kDebug() << "open failed (bad file?). creating new containment";
+        Plasma::Containment *newContainment = PlasmaApp::self()->addContainment(m_id);
+        m_containments.insert(QPair<int,int>(0, -1), newContainment);
     }
 
     PlasmaApp::self()->corona()->requireConfigSync();

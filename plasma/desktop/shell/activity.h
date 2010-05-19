@@ -21,12 +21,13 @@
 #define ACTIVITY_H
 
 #include <QObject>
-#include <QList>
+#include <QHash>
 
 class QSize;
 class QString;
 class QPixmap;
 class KActivityInfo;
+class KConfig;
 namespace Plasma
 {
     class Containment;
@@ -58,6 +59,17 @@ public:
      */
     bool isRunning();
 
+    /**
+     * save (copy) the activity out to an @p external config
+     */
+    void save(KConfig &external);
+
+    /**
+     * return the containment that belongs on @p screen and @p desktop
+     * or null if none exists
+     */
+     Plasma::Containment* containmentForScreen(int screen, int desktop = -1);
+
 signals:
     void nameChanged(const QString &name);
     void opened();
@@ -68,7 +80,6 @@ public slots:
     void setName(const QString &name);
     /**
      * delete the activity forever
-     * TODO I wonder what this means for nepomuk...
      */
     void destroy();
     /**
@@ -87,9 +98,12 @@ public slots:
     void open();
 
 private:
+    void activateContainment(int screen, int desktop);
+    void insertContainment(Plasma::Containment* cont);
+
     QString m_id;
     QString m_name;
-    QList<Plasma::Containment*> m_containments;
+    QHash<QPair<int,int>, Plasma::Containment*> m_containments;
     KActivityInfo *m_info;
 
 };

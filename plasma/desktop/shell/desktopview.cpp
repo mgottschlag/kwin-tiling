@@ -465,21 +465,8 @@ void DesktopView::previousContainment()
 
 void DesktopView::lostContainment()
 {
-    QTimer::singleShot(0, this, SLOT(grabContainment()));
-}
-
-void DesktopView::grabContainment()
-{
-    kDebug() << "trying to find a containment @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@";
-
-    DesktopCorona *corona = qobject_cast<DesktopCorona*>(scene());
-    if (!corona) {
-        kDebug() << "no corona :(";
-        return;
-    }
-
-    corona->addDesktopContainment(screen(), desktop());
-    kDebug() << "success?" << (containment() != 0);
+    //QTimer::singleShot(0, this, SLOT(grabContainment()));
+    kDebug() << "lost our containment, waiting for someone to rescue us";
 }
 
 #include "desktopview.moc"
