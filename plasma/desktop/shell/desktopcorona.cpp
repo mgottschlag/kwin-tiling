@@ -96,6 +96,8 @@ void DesktopCorona::init()
     connect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)), this, SLOT(checkAddPanelAction(QStringList)));
 
     connect(m_activityController, SIGNAL(currentActivityChanged(QString)), this, SLOT(currentActivityChanged(QString)));
+    connect(m_activityController, SIGNAL(activityAdded(const QString &)), this, SLOT(activityAdded(const QString &)));
+    connect(m_activityController, SIGNAL(activityRemoved(const QString &)), this, SLOT(activityRemoved(const QString &)));
 
     //FIXME: requires js anim support to work properly
     //mapAnimation(Plasma::Animator::AppearAnimation, Plasma::Animator::PulseAnimation);
@@ -554,8 +556,7 @@ void DesktopCorona::checkActivities()
 
     //init our list
     foreach (const QString &id, list) {
-        Activity *a = new Activity(id, this);
-        m_activities.insert(id, a);
+        activityAdded(id);
         //TODO ensure the current one is active?
     }
 }
@@ -572,6 +573,18 @@ void DesktopCorona::currentActivityChanged(const QString &newActivity)
 Activity* DesktopCorona::activity(const QString &id)
 {
     return m_activities.value(id);
+}
+
+void DesktopCorona::activityAdded(const QString &id)
+{
+    Activity *a = new Activity(id, this);
+    m_activities.insert(id, a);
+}
+
+void DesktopCorona::activityRemoved(const QString &id)
+{
+    Activity *a = m_activities.take(id);
+    a->deleteLater();
 }
 
 

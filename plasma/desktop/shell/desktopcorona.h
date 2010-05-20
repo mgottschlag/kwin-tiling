@@ -104,6 +104,8 @@ protected Q_SLOTS:
     void updateImmutability(Plasma::ImmutabilityType immutability);
     void checkAddPanelAction(const QStringList &sycocaChanges = QStringList());
     void currentActivityChanged(const QString &activity);
+    void activityAdded(const QString &id);
+    void activityRemoved(const QString &id);
 
 private:
     void init();
