@@ -35,10 +35,10 @@ JobTotalsWidget::JobTotalsWidget(Job *job, QGraphicsWidget *parent)
 
     setSvg("widgets/bar_meter_horizontal");
     setMeterType(Plasma::Meter::BarMeterHorizontal);
-    if (m_extenderItem) {
-        setMaximumHeight(16);
-    }
+
     setMinimumWidth(350);
+    setMinimumHeight(16);
+    setMaximumHeight(16);
     setMaximum(100);
     setValue(0);
 
