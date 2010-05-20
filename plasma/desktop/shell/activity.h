@@ -32,6 +32,7 @@ class DesktopCorona;
 namespace Plasma
 {
     class Containment;
+    class Context;
 } // namespace Plasma
 
 /**
@@ -109,10 +110,14 @@ public slots:
      */
     void open();
 
+private slots:
+    void updateActivityName(Plasma::Context *context);
+
 private:
     void activateContainment(int screen, int desktop);
     void insertContainment(Plasma::Containment* cont);
-    Plasma::Containment* addContainment();
+    void insertContainment(Plasma::Containment* containment, int screen, int desktop);
+    Plasma::Containment* addContainment(int screen, int desktop);
 
     QString m_id;
     QString m_name;

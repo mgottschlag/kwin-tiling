@@ -220,37 +220,6 @@ void DesktopCorona::checkDesktop(Activity *activity, bool signalWhenExists, int 
     }
 }
 
-Plasma::Containment* DesktopCorona::addDesktopContainment(const QString &activity, const QString &plugin)
-{
-    Plasma::Containment* c = addContainment(plugin);
-
-    /*
-        // FIXME this code will never be used because addContainment never returns null, not even on
-        // failure
-        if (!c) {
-            KPluginInfo::List desktopPlugins = Plasma::Containment::listContainmentsOfType("desktop");
-
-            if (!desktopPlugins.isEmpty()) {
-                c = addContainment(desktopPlugins.first().pluginName());
-            }
-        }
-
-        if (!c) {
-            kWarning() << "complete failure to load a desktop containment!";
-            return;
-        }
-    */
-
-    //ensure it's hooked up
-    Plasma::Context *context = c->context();
-    context->setCurrentActivityId(activity);
-    context->setCurrentActivity(KActivityInfo::name(activity));
-    connect(context, SIGNAL(activityChanged(Plasma::Context*)), PlasmaApp::self(), SLOT(updateActivityName(Plasma::Context*)), Qt::UniqueConnection);
-
-    kDebug() << "created containment for" << activity;
-    return c;
-}
-
 int DesktopCorona::numScreens() const
 {
     return Kephal::ScreenUtils::numScreens();

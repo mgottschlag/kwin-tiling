@@ -74,11 +74,6 @@ public:
     void processUpdateScripts();
 
     /**
-     * Creates a new containment for the given @p activity
-     */
-    Plasma::Containment* addDesktopContainment(const QString &activity, const QString &plugin = QString());
-
-    /**
      * Ensures activities exist for the containments
      */
     void checkActivities();

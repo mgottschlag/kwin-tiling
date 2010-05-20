@@ -65,7 +65,6 @@
 #include <Plasma/AccessManager>
 #include <Plasma/AuthorizationManager>
 #include <Plasma/Containment>
-#include <Plasma/Context>
 #include <Plasma/Dialog>
 #include <Plasma/Theme>
 #include <Plasma/Wallpaper>
@@ -976,16 +975,6 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
     disconnect(containment, 0, this, 0);
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
-    QString id = containment->context()->currentActivityId();
-    kDebug();
-    if (! id.isEmpty()) {
-        kDebug() << "associating containment with activity" << id;
-        //connect to the activity
-        connect(containment->context(), SIGNAL(activityChanged(Plasma::Context*)), this, SLOT(updateActivityName(Plasma::Context*)), Qt::UniqueConnection);
-        //FIXME need to be notified when the name changes
-        //can use KActivityInfo but need to keep an instance somewhere. perhaps a list of them in
-        //this class.
-    }
 
     if (containment->containmentType() == Plasma::Containment::DesktopContainment) {
         foreach (QAction *action, m_corona->actions()) {
@@ -1239,13 +1228,6 @@ void PlasmaApp::createActivity(const QString &plugin)
     a->setDefaultPlugin(plugin);
 
     controller.setCurrentActivity(id);
-}
-
-void PlasmaApp::updateActivityName(Plasma::Context *context)
-{
-    KActivityController controller;
-    //kDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!";
-    controller.setActivityName(context->currentActivityId(), context->currentActivity());
 }
 
 #include "plasmaapp.moc"

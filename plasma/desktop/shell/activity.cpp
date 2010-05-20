@@ -130,16 +130,15 @@ Plasma::Containment* Activity::containmentForScreen(int screen, int desktop)
     if (!c) {
         //TODO check if there are saved containments once we start saving them
         //kDebug() << "@@@@@adding containment for" << screen << desktop;
-        c = addContainment();
-        m_containments.insert(QPair<int,int>(screen, desktop), c);
+        c = addContainment(screen, desktop);
     }
     return c;
 }
 
-Plasma::Containment* Activity::addContainment()
+Plasma::Containment* Activity::addContainment(int screen, int desktop)
 {
-    //TODO migrate this whole function into here.
-    Plasma::Containment* c = m_corona->addDesktopContainment(m_id, m_plugin);
+    Plasma::Containment* c = m_corona->addContainment(m_plugin);
+    insertContainment(c, screen, desktop);
     return c;
 }
 
@@ -184,11 +183,21 @@ void Activity::setName(const QString &name)
     }
 
     m_name = name;
+    KActivityController().setActivityName(m_id, name);
     emit nameChanged(name);
-    //FIXME right now I'm assuming the name change came *from* nepomuk
-    //so I'm not trying to set the activity name in nepomuk.
-    //nor am I propogating the change to my containments; they need to be able to react to such
-    //things when this class isn't around anyways.
+
+    foreach (Plasma::Containment *c, m_containments) {
+        c->context()->setCurrentActivity(name);
+    }
+}
+
+void Activity::updateActivityName(Plasma::Context *context)
+{
+    if (context->currentActivityId() != m_id) {
+        kDebug() << "can't happen!";
+        return;
+    }
+    setName(context->currentActivity());
 }
 
 void Activity::save(KConfig &external)
@@ -272,7 +281,19 @@ void Activity::insertContainment(Plasma::Containment* cont)
         kDebug() << "@!@!@!@!@!@@@@rejecting containment!!!";
         return;
     }
-    m_containments.insert(key, cont);
+    insertContainment(cont, screen, desktop);
+}
+
+void Activity::insertContainment(Plasma::Containment* containment, int screen, int desktop)
+{
+    //ensure it's hooked up
+    Plasma::Context *context = containment->context();
+    context->setCurrentActivityId(m_id);
+    context->setCurrentActivity(m_name);
+    //hack to keep the name in sync while KActivity* are in kdebase
+    connect(context, SIGNAL(activityChanged(Plasma::Context*)), this, SLOT(updateActivityName(Plasma::Context*)), Qt::UniqueConnection);
+
+    m_containments.insert(QPair<int,int>(screen, desktop), containment);
 }
 
 void Activity::open()
@@ -296,8 +317,7 @@ void Activity::open()
     if (m_containments.isEmpty()) {
         //TODO check if we need more for screens/desktops
         kDebug() << "open failed (bad file?). creating new containment";
-        Plasma::Containment *newContainment = addContainment();
-        m_containments.insert(QPair<int,int>(0, 0), newContainment);
+        addContainment(0, 0);
     }
 
     m_corona->requireConfigSync();
