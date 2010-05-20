@@ -28,6 +28,7 @@
 
 #include <KIcon>
 #include <KBookmarkManager>
+#include <KMimeType>
 #include <KToolInvocation>
 #include <KUrl>
 #include <KStandardDirs>
@@ -194,22 +195,13 @@ void BookmarksRunner::match(Plasma::RunnerContext &context)
 KIcon BookmarksRunner::favicon(const KUrl &url)
 {
     // query the favicons module
-    QDBusInterface favicon("org.kde.kded", "/modules/favicons", "org.kde.FavIcon");
-    QDBusReply<QString> reply = favicon.asyncCall("iconForUrl", url.url());
+    const QString iconFile = KMimeType::favIconForUrl(url);
 
-    if (!reply.isValid()) {
-        return KIcon();
+    if (iconFile.isEmpty()) {
+        return m_icon;
     }
 
-    // locate the favicon
-    const QString iconFile = KGlobal::dirs()->findResource("cache",reply.value()+".png");
-    if(iconFile.isNull()) {
-        return KIcon();
-    }
-
-    KIcon icon = KIcon(iconFile);
-
-    return icon;
+    return KIcon(iconFile);
 }
 
 void BookmarksRunner::matchOperaBookmarks(Plasma::RunnerContext& context, bool allBookmarks,
