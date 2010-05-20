@@ -252,7 +252,6 @@ PlasmaApp::PlasmaApp()
 
     connect(m_mainView, SIGNAL(containmentActivated()), this, SLOT(mainContainmentActivated()));
     connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SLOT(positionPanel()));
-    m_mainView->installEventFilter(this);
 
     bool useGL = args->isSet("opengl");
     m_mainView->setUseGL(useGL);
@@ -849,29 +848,7 @@ bool PlasmaApp::mainViewOnTop() const
 
 bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
 {
-    if (watched == m_mainView && event->type() == QEvent::WindowActivate) {
-
-        if (mainViewOnTop()) {
-            destroyUnHideTrigger();
-
-            if (m_controlBar) {
-                Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
-                setControlBarVisible(true);
-                reserveStruts();
-            }
-        }
-    } else if ((watched == m_mainView &&
-                event->type() == QEvent::WindowDeactivate &&
-                !hasForegroundWindows()) ||
-               (watched == m_controlBar &&
-                event->type() == QEvent::Leave &&
-                !hasForegroundWindows())) {
-        //delayed hide
-        if (m_unHideTimer) {
-            m_unHideTimer->start(400);
-            reserveStruts();
-        }
-    } else if (watched == m_widgetExplorerView && event->type() == QEvent::KeyPress) {
+    if (watched == m_widgetExplorerView && event->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         if (keyEvent->key() == Qt::Key_Escape) {
             closeWidgetExplorer();
@@ -938,16 +915,21 @@ void PlasmaApp::controlBarVisibilityUpdate()
         return;
     }
 
+    if (sender() != m_unHideTimer) {
+        m_unHideTimer->start(200);
+        return;
+    }
+
     //would be nice to avoid this
     QPoint cursorPos = QCursor::pos();
 
-    if (m_triggerZone.adjusted(-1, -1, 1, 1).contains(cursorPos)) { 
+    if (m_triggerZone.adjusted(-1, -1, 1, 1).contains(cursorPos) || hasForegroundWindows()) {
         if (!m_controlBar->isVisible()) {
             destroyUnHideTrigger();
             Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
             setControlBarVisible(true);
         }
-    } else if (!m_controlBar->geometry().contains(cursorPos) && !mainViewOnTop()) {
+    } else if (!m_controlBar->geometry().contains(cursorPos) && !mainViewOnTop() && !hasForegroundWindows()) {
         Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
         m_controlBar->hide();
         createUnhideTrigger();
