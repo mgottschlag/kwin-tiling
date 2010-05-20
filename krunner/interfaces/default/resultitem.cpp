@@ -25,18 +25,18 @@
 #include <math.h>
 
 #include <QAction>
-#include <QTimeLine>
-#include <QDebug>
-#include <QtGlobal>
-#include <QTimer>
 #include <QApplication>
-#include <QPainter>
-#include <QStyleOptionGraphicsItem>
+#include <QDebug>
 #include <QGraphicsItemAnimation>
 #include <QGraphicsLinearLayout>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
+#include <QPainter>
+#include <QPropertyAnimation>
+#include <QStyleOptionGraphicsItem>
+#include <QTimeLine>
+#include <QTimer>
 
 #include <KDebug>
 #include <KIcon>
@@ -59,14 +59,16 @@ ResultItem::ResultItem(const SharedResultData *sharedData, const Plasma::QueryMa
       m_configButton(0),
       m_highlight(0),
       m_index(-1),
-      m_highlightTimerId(0),
-      m_mouseHovered(false),
       m_configWidget(0),
       m_actionsWidget(0),
       m_actionsLayout(0),
       m_runnerManager(runnerManager),
-      m_sharedData(sharedData)
+      m_sharedData(sharedData),
+      m_mouseHovered(false)
 {
+    m_highlightCheckTimer.setInterval(0);
+    m_highlightCheckTimer.setSingleShot(true);
+    connect(&m_highlightCheckTimer, SIGNAL(timeout()), this, SLOT(checkHighlighting()));
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIsSelectable);
     setAcceptHoverEvents(true);
@@ -81,6 +83,11 @@ ResultItem::ResultItem(const SharedResultData *sharedData, const Plasma::QueryMa
         //kDebug() << "font height is: " << s_fontHeight;
     }
 
+    m_highlightAnim = new QPropertyAnimation(this, "highlightState", this);
+    m_highlightAnim->setStartValue(0);
+    m_highlightAnim->setEndValue(1);
+    m_highlightAnim->setDuration(150);
+    m_highlightAnim->setEasingCurve(QEasingCurve::OutCubic);
     setMatch(match);
 }
 
@@ -210,10 +217,8 @@ bool ResultItem::eventFilter(QObject *obj, QEvent *event)
         } else if (event->type() == QEvent::FocusIn) {
             focusInEvent(static_cast<QFocusEvent*>(event));
             actionButton->setAutoRaise(false);
-            update();
         } else if (event->type() == QEvent::GraphicsSceneHoverLeave || event->type() == QEvent::FocusOut) {
             actionButton->setAutoRaise(true);
-            update();
         } else if (event->type() == QEvent::KeyPress) {
             QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
             if (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return) {
@@ -336,50 +341,15 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     QRect iRect = QStyle::alignedRect(option->direction, Qt::AlignLeft, iconSize, contentsRect().toRect());
 
     painter->setRenderHint(QPainter::Antialiasing);
-    bool drawMixed = false;
 
-    if (hasFocus() || isSelected()) {
-        // here's what the next line means:
-        // we check to see if the scene has focus, but that's overridden by the mouse hovering an
-        // item ... or unless we are over 2 ticks into the higlight anim. complex but it works
-        if (((scene() && !scene()->views().isEmpty() && !scene()->views()[0]->hasFocus()) &&
-            !(option->state & QStyle::State_MouseOver)) || m_highlight > 2) {
-            drawIcon(painter, iRect, m_icon.pixmap(iconSize, QIcon::Active));
-        } else {
-            drawMixed = true;
-            ++m_highlight;
-
-            if (!m_highlightTimerId) {
-                m_highlightTimerId = startTimer(TIMER_INTERVAL);
-            }
-        }
-    } else if (m_highlight > 0) {
-        drawMixed = true;
-        --m_highlight;
-
-        if (!m_highlightTimerId) {
-            m_highlightTimerId = startTimer(TIMER_INTERVAL);
-        }
+    if (qFuzzyCompare(m_highlight + 1, 1)) {
+        drawIcon(painter, iRect, m_icon.pixmap(iconSize, QIcon::Disabled));
+    } else if (qFuzzyCompare(m_highlight, 1.0)) {
+        drawIcon(painter, iRect, m_icon.pixmap(iconSize, QIcon::Active));
     } else {
+        painter->setOpacity(painter->opacity() * (1 - m_highlight));
         drawIcon(painter, iRect, m_icon.pixmap(iconSize, QIcon::Disabled));
-    }
-
-    if (drawMixed) {
-        qreal factor = .2;
-
-        if (m_highlight == 1) {
-            factor = .4;
-        } else if (m_highlight == 2) {
-            factor = .6;
-        } else if (m_highlight > 2) {
-            factor = .8;
-        }
-
-        qreal activeOpacity = painter->opacity() * factor;
-
-        painter->setOpacity(painter->opacity() * (1 - factor));
-        drawIcon(painter, iRect, m_icon.pixmap(iconSize, QIcon::Disabled));
-        painter->setOpacity(activeOpacity);
+        painter->setOpacity(m_highlight);
         drawIcon(painter, iRect, m_icon.pixmap(iconSize, QIcon::Active));
         painter->setOpacity(1);
     }
@@ -456,22 +426,6 @@ void ResultItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 
     QGraphicsItem::hoverEnterEvent(e);
     setFocus(Qt::MouseFocusReason);
-
-    if (scene()) {
-        scene()->clearSelection();
-    }
-
-    setSelected(true);
-}
-
-void ResultItem::timerEvent(QTimerEvent *e)
-{
-    Q_UNUSED(e)
-
-    killTimer(m_highlightTimerId);
-    m_highlightTimerId = 0;
-
-    update();
 }
 
 void ResultItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -513,20 +467,30 @@ void ResultItem::focusInEvent(QFocusEvent * event)
 
     setSelected(true);
     emit ensureVisibility(this);
+}
 
-    if (!m_highlightTimerId) {
-        m_highlightTimerId = startTimer(TIMER_INTERVAL);
+void ResultItem::highlight(bool yes)
+{
+    if (yes) {
+        if (m_highlight < 1) {
+            m_highlightAnim->setDirection(QAbstractAnimation::Forward);
+            m_highlightAnim->start();
+        }
+    } else if (m_highlight > 0) {
+        m_highlightAnim->setDirection(QAbstractAnimation::Backward);
+        m_highlightAnim->start();
     }
 }
 
-void ResultItem::focusOutEvent(QFocusEvent * event)
+qreal ResultItem::highlightState() const
 {
-    QGraphicsWidget::focusOutEvent(event);
-    setZValue(0);
+    return m_highlight;
+}
 
-    if (!m_highlightTimerId) {
-        m_highlightTimerId = startTimer(TIMER_INTERVAL);
-    }
+void ResultItem::setHighlightState(qreal highlight)
+{
+    m_highlight = highlight;
+    update();
 }
 
 void ResultItem::keyPressEvent(QKeyEvent *event)
@@ -542,9 +506,18 @@ QVariant ResultItem::itemChange(GraphicsItemChange change, const QVariant &value
 {
     if (change == QGraphicsItem::ItemSceneHasChanged) {
         calculateSize();
+    } else if (change == QGraphicsItem::ItemSelectedHasChanged) {
+        if (!isSelected()) {
+            m_highlightCheckTimer.start();
+        }
     }
 
     return QGraphicsWidget::itemChange(change, value);
+}
+
+void ResultItem::checkHighlighting()
+{
+    highlight(isSelected());
 }
 
 void ResultItem::resizeEvent(QGraphicsSceneResizeEvent *)
@@ -588,13 +561,12 @@ void ResultItem::showConfig()
 void ResultItem::calculateSize()
 {
     if (scene()) {
-        calculateSize(scene()->width(), scene()->height());
+        calculateSize(scene()->width());
     }
 }
 
-void ResultItem::calculateSize(int sceneWidth, int sceneHeight)
+void ResultItem::calculateSize(int sceneWidth)
 {
-    Q_UNUSED(sceneHeight)
     QRect textBounds(contentsRect().toRect());
 
     textBounds.setWidth(sceneWidth);

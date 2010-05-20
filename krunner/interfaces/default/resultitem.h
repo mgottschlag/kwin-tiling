@@ -22,13 +22,15 @@
 #ifndef __ResultItem_h__
 #define __ResultItem_h__
 
-#include <QtGui/QGraphicsWidget>
-#include <QtGui/QIcon>
+#include <QGraphicsWidget>
+#include <QIcon>
+#include <QTimer>
 
 #include <Plasma/QueryMatch>
 
 class QGraphicsLinearLayout;
 class QGraphicsProxyWidget;
+class QPropertyAnimation;
 
 namespace Plasma
 {
@@ -39,6 +41,7 @@ namespace Plasma
 struct SharedResultData
 {
     bool processHoverEvents;
+    bool mouseHovering;
 };
 
 class ResultItemSignaller : public QObject
@@ -64,6 +67,7 @@ Q_SIGNALS:
 class ResultItem : public QGraphicsWidget
 {
     Q_OBJECT
+    Q_PROPERTY(qreal highlightState READ highlightState WRITE setHighlightState)
 
 public:
     ResultItem(const SharedResultData *sharedData, const Plasma::QueryMatch &match, Plasma::RunnerManager *runnerManager, QGraphicsWidget *parent);
@@ -88,8 +92,12 @@ public:
     bool isQueryPrototype() const;
     bool mouseHovered() const;
     void calculateSize();
-    void calculateSize(int sceneWidth, int sceneHeight);
+    void calculateSize(int sceneWidth);
     QGraphicsWidget* arrangeTabOrder(QGraphicsWidget* last);
+
+    void highlight(bool yes);
+    qreal highlightState() const;
+    void setHighlightState(qreal highlight);
 
     static bool compare(const ResultItem *one, const ResultItem *other);
     bool operator<(const ResultItem &other) const;
@@ -105,11 +113,9 @@ signals:
 
 protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *e);
-    void timerEvent(QTimerEvent *e);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *);
     void focusInEvent(QFocusEvent *event);
-    void focusOutEvent(QFocusEvent *event);
     void keyPressEvent(QKeyEvent *event);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     void changeEvent(QEvent *event);
@@ -123,6 +129,7 @@ protected slots:
 
 private slots:
     void actionClicked();
+    void checkHighlighting();
 
 private:
     Plasma::QueryMatch m_match;
@@ -131,15 +138,16 @@ private:
     QIcon m_icon;
     QBrush m_bgBrush;
     QPixmap m_fadeout;
-    int m_highlight;
+    QTimer m_highlightCheckTimer;
+    qreal m_highlight;
     int m_index;
-    int m_highlightTimerId;
-    bool m_mouseHovered;
     QGraphicsProxyWidget *m_configWidget;
     QGraphicsWidget *m_actionsWidget;
     QGraphicsLinearLayout *m_actionsLayout;
     Plasma::RunnerManager *m_runnerManager;
+    QPropertyAnimation *m_highlightAnim;
     const SharedResultData *m_sharedData;
+    bool m_mouseHovered;
 
     static int s_fontHeight;
 };
