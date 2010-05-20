@@ -36,7 +36,7 @@ class ResultsView : public QGraphicsView
     Q_OBJECT
 
 public:
-    explicit ResultsView ( QWidget *parent = 0);
+    explicit ResultsView(QWidget *parent = 0);
     ~ResultsView();
 
 protected:
