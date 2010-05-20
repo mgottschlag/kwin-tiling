@@ -28,6 +28,7 @@ class QString;
 class QPixmap;
 class KActivityInfo;
 class KConfig;
+class DesktopCorona;
 namespace Plasma
 {
     class Containment;
@@ -106,11 +107,13 @@ public slots:
 private:
     void activateContainment(int screen, int desktop);
     void insertContainment(Plasma::Containment* cont);
+    Plasma::Containment* addContainment();
 
     QString m_id;
     QString m_name;
     QHash<QPair<int,int>, Plasma::Containment*> m_containments;
     KActivityInfo *m_info;
+    DesktopCorona *m_corona;
 
 };
 

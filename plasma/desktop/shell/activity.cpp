@@ -17,7 +17,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
+#include "desktopcorona.h"
 #include "plasma-shell-desktop.h"
 #include "kactivitycontroller.h"
 #include "kactivityinfo.h"
@@ -56,13 +56,13 @@ Activity::Activity(const QString &id, QObject *parent)
         kDebug() << "nepomuk is probably broken :(";
     }
 
-    Plasma::Corona *corona = PlasmaApp::self()->corona();
+    m_corona = qobject_cast<DesktopCorona*>(PlasmaApp::self()->corona());
 
     //find your containments
-    foreach (Plasma::Containment *cont, corona->containments()) {
+    foreach (Plasma::Containment *cont, m_corona->containments()) {
         if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
             cont->containmentType() == Plasma::Containment::CustomContainment) &&
-                !corona->offscreenWidgets().contains(cont) && cont->context()->currentActivityId() == id) {
+                !m_corona->offscreenWidgets().contains(cont) && cont->context()->currentActivityId() == id) {
             insertContainment(cont);
         }
     }
@@ -126,18 +126,26 @@ Plasma::Containment* Activity::containmentForScreen(int screen, int desktop)
     if (desktop == -1) {
         desktop = 0;
     }
-    return m_containments.value(QPair<int,int>(screen, desktop));
+    Plasma::Containment *c = m_containments.value(QPair<int,int>(screen, desktop));
+    if (!c) {
+        //TODO check if there are saved containments once we start saving them
+        //kDebug() << "@@@@@adding containment for" << screen << desktop;
+        c = addContainment();
+        m_containments.insert(QPair<int,int>(screen, desktop), c);
+    }
+    return c;
+}
+
+Plasma::Containment* Activity::addContainment()
+{
+    //TODO migrate this whole function into here.
+    Plasma::Containment* c = m_corona->addDesktopContainment(m_id);
+    return c;
 }
 
 void Activity::activateContainment(int screen, int desktop)
 {
     Plasma::Containment *c = containmentForScreen(screen, desktop);
-    if (!c) {
-        //TODO check if there are saved containments once we start saving them
-        //kDebug() << "@@@@@adding containment for" << screen << desktop;
-        c = PlasmaApp::self()->addContainment(m_id);
-        m_containments.insert(QPair<int,int>(screen, desktop == -1 ? 0 : desktop), c);
-    }
     c->setScreen(screen, desktop);
 }
 
@@ -274,7 +282,7 @@ void Activity::open()
     KConfig external(fileName, KConfig::SimpleConfig, "appdata");
 
     //TODO only load existing screens
-    foreach (Plasma::Containment *newContainment, PlasmaApp::self()->corona()->importLayout(external)) {
+    foreach (Plasma::Containment *newContainment, m_corona->importLayout(external)) {
         insertContainment(newContainment);
         //ensure it's hooked up (if something odd happened we don't want orphan containments)
         Plasma::Context *context = newContainment->context();
@@ -288,11 +296,11 @@ void Activity::open()
     if (m_containments.isEmpty()) {
         //TODO check if we need more for screens/desktops
         kDebug() << "open failed (bad file?). creating new containment";
-        Plasma::Containment *newContainment = PlasmaApp::self()->addContainment(m_id);
+        Plasma::Containment *newContainment = addContainment();
         m_containments.insert(QPair<int,int>(0, 0), newContainment);
     }
 
-    PlasmaApp::self()->corona()->requireConfigSync();
+    m_corona->requireConfigSync();
     external.sync();
     emit opened();
 }

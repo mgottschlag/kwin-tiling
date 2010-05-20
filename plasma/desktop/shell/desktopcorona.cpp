@@ -204,8 +204,8 @@ void DesktopCorona::checkDesktop(Activity *activity, bool signalWhenExists, int 
     Plasma::Containment *c = activity->containmentForScreen(screen, desktop);
 
     if (!c) {
-        //kDebug() << "@@@@@@@@@@creating a new containment";
-        c = addDesktopContainment(activity->id());
+        kDebug() << "can't happen";
+        return;
     }
 
     c->setScreen(screen, desktop);
