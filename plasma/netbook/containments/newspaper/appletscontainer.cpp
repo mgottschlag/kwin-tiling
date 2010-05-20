@@ -32,6 +32,7 @@
 #include <QWidget>
 #include <QTimer>
 
+#include <KGlobalSettings>
 #include <KIconLoader>
 
 #include <Plasma/Applet>
@@ -54,6 +55,11 @@ AppletsContainer::AppletsContainer(Plasma::ScrollWidget *parent)
 
     connect(m_scrollWidget, SIGNAL(viewportGeometryChanged(const QRectF &)),
             this, SLOT(viewportGeometryChanged(const QRectF &)));
+
+    m_appletActivationTimer = new QTimer(this);
+    m_appletActivationTimer->setSingleShot(true);
+    connect(m_appletActivationTimer, SIGNAL(timeout()),
+            this, SLOT(delayedAppletActivation()));
 }
 
 AppletsContainer::~AppletsContainer()
@@ -397,9 +403,15 @@ bool AppletsContainer::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
                 }
                 m_currentApplet = applet;
                 applet->setPreferredHeight(optimalAppletSize(applet, true).height());
-                QTimer::singleShot(250, this, SLOT(delayedAppletActivation()));
+
+                m_appletActivationTimer->start(500);
                 break;
             }
+        }
+    } else if (event->type() == QEvent::GraphicsSceneMouseMove) {
+        QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
+        if (QPointF(me->pos() - me->buttonDownPos(me->button())).manhattanLength() > KGlobalSettings::dndEventDelay()) {
+            m_appletActivationTimer->stop();
         }
     }
     return false;

@@ -94,6 +94,7 @@ private:
     bool m_automaticAppletLayout;
     bool m_expandAll;
     QPropertyAnimation *m_preferredHeightAnimation;
+    QTimer *m_appletActivationTimer;
 };
 
 #endif
