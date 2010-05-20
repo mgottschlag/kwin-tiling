@@ -44,15 +44,14 @@ class ResultScene : public QGraphicsScene
     Q_OBJECT
 
     public:
-        explicit ResultScene(Plasma::RunnerManager *runnerManager, QWidget *focusBase, QObject *parent = 0);
+        explicit ResultScene(SharedResultData *resultData, Plasma::RunnerManager *runnerManager, QWidget *focusBase, QObject *parent = 0);
         ~ResultScene();
 
-        void resize(int width, int height);
+        void setWidth(int width);
         ResultItem* defaultResultItem() const;
         void run(ResultItem* item) const;
         QSize minimumSizeHint() const;
-        void setItemsAcceptHoverEvents(bool enable);
-        bool itemsAcceptHoverEvents() const;
+        int viewableHeight() const;
 
     public slots:
         void setQueryMatches(const QList<Plasma::QueryMatch> &matches);
@@ -83,6 +82,7 @@ class ResultScene : public QGraphicsScene
         void updateItemMargins();
         void scheduleArrangeItems();
         void arrangeItems();
+        void highlightItem(QGraphicsItem *item);
 
     private:
         Plasma::RunnerManager *m_runnerManager;
@@ -93,6 +93,7 @@ class ResultScene : public QGraphicsScene
         QList<ResultItem *> m_items;
         SelectionBar *m_selectionBar;
 
+        int m_viewableHeight;
         int m_currentIndex;
         qreal m_itemMarginLeft;
         qreal m_itemMarginTop;
@@ -100,9 +101,8 @@ class ResultScene : public QGraphicsScene
         qreal m_itemMarginBottom;
 
         QWidget *m_focusBase;
-        bool m_itemsAcceptHoverEvents;
 
-        SharedResultData m_resultData;
+        SharedResultData *m_resultData;
 };
 
 #endif

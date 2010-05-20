@@ -26,6 +26,7 @@
 
 // local includes
 #include "krunnerdialog.h"
+#include "resultitem.h"
 
 class QGraphicsView;
 class QGraphicsItem;
@@ -109,6 +110,7 @@ class Interface : public KRunnerDialog
         QLabel *m_singleRunnerDisplayName;
         KLineEdit *m_singleRunnerSearchTerm;
         QTimer m_delayedQueryTimer;
+        SharedResultData m_resultData;
         bool m_delayedRun : 1;
         bool m_running : 1;
         bool m_queryRunning : 1;

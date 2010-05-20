@@ -41,12 +41,13 @@
 
 #include "selectionbar.h"
 
-ResultScene::ResultScene(Plasma::RunnerManager *manager, QWidget *focusBase, QObject *parent)
+ResultScene::ResultScene(SharedResultData *resultData, Plasma::RunnerManager *manager, QWidget *focusBase, QObject *parent)
     : QGraphicsScene(parent),
       m_runnerManager(manager),
+      m_viewableHeight(0),
       m_currentIndex(0),
       m_focusBase(focusBase),
-      m_itemsAcceptHoverEvents(false)
+      m_resultData(resultData)
 {
     setItemIndexMethod(NoIndex);
 
@@ -63,12 +64,11 @@ ResultScene::ResultScene(Plasma::RunnerManager *manager, QWidget *focusBase, QOb
 
     m_selectionBar = new SelectionBar(0);
     connect(m_selectionBar, SIGNAL(appearanceChanged()), this, SLOT(updateItemMargins()));
+    connect(m_selectionBar, SIGNAL(targetItemReached(QGraphicsItem*)), this, SLOT(highlightItem(QGraphicsItem*)));
     m_selectionBar->hide();
     updateItemMargins();
 
     addItem(m_selectionBar);
-
-    m_resultData.processHoverEvents = true;
 }
 
 ResultScene::~ResultScene()
@@ -83,13 +83,13 @@ QSize ResultScene::minimumSizeHint() const
     return QSize(KIconLoader::SizeMedium * 4, (fm.height() * 5) * 3);
 }
 
-void ResultScene::resize(int width, int height)
+void ResultScene::setWidth(int width)
 {
     const bool resizeItems = width != sceneRect().width();
 
     if (resizeItems) {
         foreach (ResultItem *item, m_items) {
-            item->calculateSize(width, height);
+            item->calculateSize(width);
         }
 
         setSceneRect(itemsBoundingRect());
@@ -105,6 +105,7 @@ void ResultScene::clearMatches()
         item->setMatch(dummy);
     }
 
+    m_viewableHeight = 0;
     emit matchCountChanged(0);
 }
 
@@ -123,14 +124,9 @@ bool ResultScene::canMoveItemFocus() const
             (m_focusBase->hasFocus() && !focusedItem->mouseHovered()) ;
 }
 
-bool ResultScene::itemsAcceptHoverEvents() const
+int ResultScene::viewableHeight() const
 {
-    return m_resultData.processHoverEvents;
-}
-
-void ResultScene::setItemsAcceptHoverEvents(bool enable)
-{
-    m_resultData.processHoverEvents = enable;
+    return m_viewableHeight;
 }
 
 void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
@@ -153,10 +149,12 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     const int maxItemsAllowed = 50;
 
     if (m_items.isEmpty()) {
+        QTime t;
+        t.start();
         QGraphicsWidget *prevTabItem = 0;
         Plasma::QueryMatch dummy(0);
         for (int i = 0; i < maxItemsAllowed; ++i) {
-            ResultItem *item = new ResultItem(&m_resultData, dummy, m_runnerManager, 0);
+            ResultItem *item = new ResultItem(m_resultData, dummy, m_runnerManager, 0);
             item->setContentsMargins(m_itemMarginLeft, m_itemMarginTop,
                                      m_itemMarginRight, m_itemMarginBottom);
             item->hide();
@@ -171,6 +169,7 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         }
 
         arrangeItems();
+        kDebug() << "creating all items took" << t.elapsed();
     }
 
     QList<Plasma::QueryMatch> matches = m;
@@ -182,15 +181,19 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         ResultItem * item = rit.next();
         item->setMatch(mit.previous());
         item->show();
+        m_viewableHeight = item->sceneBoundingRect().bottom();
     }
 
     while (rit.hasNext()) {
         rit.next()->hide();
     }
 
+    clearSelection();
     if (matches.count() > 0) {
         ResultItem *first = m_items.at(0);
         setFocusItem(first);
+        first->setSelected(true);
+        first->highlight(true);
         emit ensureVisibility(first);
     }
 
@@ -215,9 +218,21 @@ void ResultScene::arrangeItems()
         item->setPos(0, y);
         //kDebug() << item->pos();
         y += item->geometry().height();
+        if (item->isVisible()) {
+            m_viewableHeight = item->sceneBoundingRect().bottom();
+        }
     }
 
+    //kDebug() << "setting scene rect to" << itemsBoundingRect();
     setSceneRect(itemsBoundingRect());
+}
+
+void ResultScene::highlightItem(QGraphicsItem *item)
+{
+    ResultItem *rItem = dynamic_cast<ResultItem *>(item);
+    if (rItem) {
+        rItem->highlight(true);
+    }
 }
 
 void ResultScene::focusInEvent(QFocusEvent *focusEvent)
@@ -289,6 +304,7 @@ void ResultScene::selectPreviousItem()
     ResultItem *currentFocus = currentlyFocusedItem();
     int currentIndex = currentFocus ? currentFocus->index() : 0;
 
+    bool wrapped = false;
     if (currentIndex > 0) {
         currentFocus = m_items.at(currentIndex - 1);
     } else {
@@ -296,9 +312,17 @@ void ResultScene::selectPreviousItem()
         do {
             currentFocus = m_items.at(--currentIndex);
         } while (currentIndex > 0 && !currentFocus->isVisible());
+        wrapped = currentIndex > 2;
     }
 
     if (currentFocus->isVisible()) {
+        if (wrapped) {
+            // with more than two items, having the selection zoom through the items between looks
+            // odd
+            m_selectionBar->setTargetItem(0);
+            currentFocus->highlight(true);
+        }
+
         setFocusItem(currentFocus);
         emit ensureVisibility(currentFocus);
     }
@@ -308,16 +332,25 @@ void ResultScene::selectNextItem()
 {
     ResultItem *currentFocus = currentlyFocusedItem();
     int currentIndex = currentFocus ? currentFocus->index() : 0;
+    const int wasIndex = currentIndex;
 
+    bool wrapped = false;
     do {
         ++currentIndex;
         if (currentIndex >= m_items.size()) {
+            // with more than two items, having the selection zoom through the items between looks
+            // odd
+            wrapped = wasIndex > 2;
             currentIndex = 0;
         }
         currentFocus = m_items.at(currentIndex);
     } while (!currentFocus->isVisible() && currentIndex < m_items.size());
 
     if (currentFocus->isVisible()) {
+        if (wrapped) {
+            m_selectionBar->setTargetItem(0);
+            currentFocus->highlight(true);
+        }
         setFocusItem(currentFocus);
         emit ensureVisibility(currentFocus);
     }

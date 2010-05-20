@@ -67,6 +67,9 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
       m_running(false),
       m_queryRunning(false)
 {
+    m_resultData.processHoverEvents = true;
+    m_resultData.mouseHovering = false;
+
     m_hideResultsTimer.setSingleShot(true);
     connect(&m_hideResultsTimer, SIGNAL(timeout()), this, SLOT(hideResultsArea()));
 
@@ -81,18 +84,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_configButton->setText(i18n("Settings"));
     m_configButton->setToolTip(i18n("Settings"));
     connect(m_configButton, SIGNAL(clicked()), SLOT(toggleConfigDialog()));
-    bottomLayout->addWidget( m_configButton );
-
-    /*
-    KPushButton *m_optionsButton = new KPushButton(KStandardGuiItem::configure(), m_buttonContainer);
-    m_optionsButton->setDefault(false);
-    m_optionsButton->setAutoDefault(false);
-    m_optionsButton->setText(i18n("Show Options"));
-    m_optionsButton->setEnabled(false);
-    m_optionsButton->setCheckable(true);
-    connect(m_optionsButton, SIGNAL(toggled(bool)), SLOT(showOptions(bool)));
-    bottomLayout->addWidget( m_optionsButton );
-    */
+    bottomLayout->addWidget(m_configButton);
 
     //Set up the system activity button, using the krunner global action, showing the global shortcut in the tooltip
     m_activityButton = new ToolButton(m_buttonContainer);
@@ -104,7 +96,6 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     connect(showSystemActivityAction, SIGNAL(globalShortcutChanged(const QKeySequence &)), this, SLOT(updateSystemActivityToolTip()));
     connect(showSystemActivityAction, SIGNAL(triggered(bool)), this, SLOT(resetAndClose()));
     bottomLayout->addWidget(m_activityButton);
-    //bottomLayout->addStretch(10);
 
     m_singleRunnerIcon = new QLabel();
     bottomLayout->addWidget(m_singleRunnerIcon);
@@ -125,8 +116,6 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     KGuiItem guiItem = KStandardGuiItem::close();
     m_closeButton->setText(guiItem.text());
     m_closeButton->setToolTip(guiItem.text().remove('&'));
-//    m_closeButton->setDefault(false);
-//    m_closeButton->setAutoDefault(false);
     connect(m_closeButton, SIGNAL(clicked(bool)), SLOT(resetAndClose()));
     bottomLayout->addWidget(m_closeButton);
 
@@ -140,11 +129,11 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     QAction *focusEdit = new QAction(this);
     focusEdit->setShortcut(Qt::Key_F6);
 
-    // in therory, the widget should detect the direction from the content
+    // in theory, the widget should detect the direction from the content
     // but this is not available in Qt4.4/KDE 4.2, so the best default for this widget
     // is LTR: as it's more or less a "command line interface"
     // FIXME remove this code when KLineEdit has automatic direction detection of the "paragraph"
-    m_searchTerm->setLayoutDirection( Qt::LeftToRight );
+    m_searchTerm->setLayoutDirection(Qt::LeftToRight);
 
     connect(focusEdit, SIGNAL(triggered(bool)), this, SLOT(searchTermSetFocus()));
     addAction(focusEdit);
@@ -168,16 +157,15 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     bottomLayout->insertWidget(4, m_singleRunnerSearchTerm, 10 );
 
     m_resultsView = new ResultsView(this);
+    m_layout->addWidget(m_resultsView);
 
     //kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize();
-    m_resultsScene = new ResultScene(runnerManager, m_searchTerm, this);
+    m_resultsScene = new ResultScene(&m_resultData, runnerManager, m_searchTerm, this);
     m_resultsView->setScene(m_resultsScene);
 
     connect(m_resultsScene, SIGNAL(matchCountChanged(int)), this, SLOT(matchCountChanged(int)));
     connect(m_resultsScene, SIGNAL(itemActivated(ResultItem *)), this, SLOT(run(ResultItem *)));
     connect(m_resultsScene, SIGNAL(ensureVisibility(QGraphicsItem *)), this, SLOT(ensureVisibility(QGraphicsItem *)));
-
-    m_layout->addWidget(m_resultsView);
 
     connect(lineEdit, SIGNAL(userTextChanged(QString)), this, SLOT(queryTextEdited(QString)));
     connect(m_searchTerm, SIGNAL(returnPressed()), this, SLOT(runDefaultResultItem()));
@@ -209,10 +197,10 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     // normal size, then we hide the results view and resize the dialog
 
     setMinimumSize(QSize(MIN_WIDTH , 0));
-    adjustSize();
 
     // we load the last used size; the saved value is the size of the dialog when the
     // results are visible;
+    adjustSize();
 
     if (KGlobal::config()->hasGroup("Interface")) {
         KConfigGroup interfaceConfig(KGlobal::config(), "Interface");
@@ -299,21 +287,14 @@ void Interface::cleanupAfterConfigWidget()
 
 void Interface::resizeEvent(QResizeEvent *event)
 {
-    // We set m_defaultSize only when the event is spontaneous, i.e. when the user resizes the window
-    // We always update the width, but we update the height only if the resultsView is visible.
-
+    // We set m_defaultSize only when the event is spontaneous, i.e. when the user resizes the
+    // window, or if they are manually resizing it
     if ((freeFloating() && event->spontaneous()) || isManualResizing()) {
-        m_defaultSize.setWidth(width());
-        if (m_resultsView->isVisible()) {
-            //kDebug() << "changing default size height to " << height();
-            m_defaultSize.setHeight(height());
-        }
+        m_defaultSize = size();
     }
 
-    if (m_resultsView->isVisible()) {
-        m_resultsScene->resize(m_resultsView->width(), qMax(m_resultsView->height(), int(m_resultsScene->height())));
-    }
-
+    m_resultsView->resize(m_buttonContainer->width(), m_resultsView->height());
+    m_resultsScene->setWidth(m_resultsView->width());
     KRunnerDialog::resizeEvent(event);
 }
 
@@ -430,9 +411,9 @@ void Interface::showHelp()
 
 void Interface::ensureVisibility(QGraphicsItem* item)
 {
-    m_resultsScene->setItemsAcceptHoverEvents(false);
+    m_resultData.processHoverEvents = false;
     m_resultsView->ensureVisible(item,0,0);
-    m_resultsScene->setItemsAcceptHoverEvents(true);
+    m_resultData.processHoverEvents = true;
 }
 
 void Interface::setStaticQueryMode(bool staticQuery)
@@ -457,15 +438,6 @@ void Interface::hideEvent(QHideEvent *e)
 {
     resetInterface();
     KRunnerDialog::hideEvent(e);
-
-        /*
-    if (m_running) {
-        m_delayedRun = false;
-        resetResultsArea();
-        adjustSize();
-    } else {
-        resetInterface();
-    }*/
 }
 
 void Interface::run(ResultItem *item)
@@ -572,36 +544,29 @@ void Interface::matchCountChanged(int count)
         return;
     }
 
-    if (m_resultsView->isVisible() == show) {
-        return;
-    }
-
     if (show) {
         //kDebug() << "showing!" << minimumSizeHint();
 
-        // Next 2 lines are a workaround to allow arrow
-        // keys navigation in krunner's result list.
-        // Patch submited in bugreport #211578
-        QEvent event(QEvent::WindowActivate);
-        QApplication::sendEvent(m_resultsView, &event);
-
-        /*
         QSize s = m_defaultSize;
         const int minHeight = minimumSizeHint().height();
-        const int resultsHeight = m_resultsScene->itemsBoundingRect().height();
+        const int resultsHeight = m_resultsScene->viewableHeight();
         //kDebug() << minHeight << resultsHeight << s.height();
         if (minHeight + resultsHeight < s.height()) {
             s.setHeight(minHeight + resultsHeight);
-            m_resultsScene->resize(m_resultsView->width(), resultsHeight);
             m_resultsView->resize(m_resultsView->width(), resultsHeight + 2);
-        } else {
-            m_resultsScene->resize(m_resultsView->width(), qMax(m_resultsView->height(), int(m_resultsScene->height())));
         }
         resize(s);
-        */
-        resize(m_defaultSize);
-        m_resultsView->show();
-        m_resultsScene->resize(m_resultsView->width(), qMax(m_resultsView->height(), int(m_resultsScene->height())));
+
+        if (!m_resultsView->isVisible()) {
+            // Next 2 lines are a workaround to allow arrow
+            // keys navigation in krunner's result list.
+            // Patch submited in bugreport #211578
+            QEvent event(QEvent::WindowActivate);
+            QApplication::sendEvent(m_resultsView, &event);
+
+            m_resultsView->show();
+        }
+        //m_resultsScene->resize(m_resultsView->width(), qMax(m_resultsView->height(), int(m_resultsScene->height())));
         //kDebug() << s << size();
     } else {
         //kDebug() << "hiding ... eventually";
