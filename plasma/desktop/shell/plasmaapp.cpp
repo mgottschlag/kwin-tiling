@@ -1063,23 +1063,22 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
 
 void PlasmaApp::cloneCurrentActivity()
 {
-    KActivityController c;
+    KActivityController controller;
     //getting the current activity is *so* much easier than the current containment(s) :) :)
-    QString oldId = c.currentActivity();
-    Activity oldActivity(oldId);
-    QString newId = c.addActivity(i18nc("%1 is the activity name", "copy of %1", oldActivity.name()));
+    QString oldId = controller.currentActivity();
+    Activity *oldActivity = m_corona->activity(oldId);
+    QString newId = controller.addActivity(i18nc("%1 is the activity name", "copy of %1", oldActivity->name()));
 
     QString file = "activities/";
     file += newId;
     KConfig external(file, KConfig::SimpleConfig, "appdata");
 
     //copy the old config to the new location
-    oldActivity.save(external);
+    oldActivity->save(external);
     //kDebug() << "saved to" << file;
 
     //load the new one
-    Activity newActivity(newId);
-    newActivity.activate();
+    controller.setCurrentActivity(newId);
 }
 
 //TODO accomodate activities
@@ -1233,30 +1232,13 @@ void PlasmaApp::createActivity(const QString &plugin)
     KActivityController controller;
     QString id = controller.addActivity(i18n("unnamed"));
 
-    //ensure there's a containment for every screen & desktop.
-    int numScreens = Kephal::ScreenUtils::numScreens();
-    int numDesktops = 0;
-    if (AppSettings::perVirtualDesktopViews()) {
-        numDesktops = KWindowSystem::numberOfDesktops();
+    Activity *a = m_corona->activity(id);
+    if (!a) {
+        kDebug() << "!*!*!*!*!*!*!*!*!*!**!*!*!*!!*!*!*!*!*!*";
     }
-    for (int screen = 0; screen < numScreens; ++screen) {
-        if (numDesktops) {
-            for (int desktop = 0; desktop < numDesktops; ++desktop) {
-                Plasma::Containment *c = addContainment(id, plugin);
-                c->setScreen(screen, desktop);
-            }
-        } else {
-            Plasma::Containment *c = addContainment(id, plugin);
-            c->setScreen(screen, -1);
-        }
-    }
-    controller.setCurrentActivity(id);
-}
+    a->setDefaultPlugin(plugin);
 
-//this is here for Activity to be lazy. FIXME clean it up later.
-Plasma::Containment *PlasmaApp::addContainment(const QString &activity, const QString &plugin)
-{
-    return m_corona->addDesktopContainment(activity, plugin);
+    controller.setCurrentActivity(id);
 }
 
 void PlasmaApp::updateActivityName(Plasma::Context *context)

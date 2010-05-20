@@ -139,7 +139,7 @@ Plasma::Containment* Activity::containmentForScreen(int screen, int desktop)
 Plasma::Containment* Activity::addContainment()
 {
     //TODO migrate this whole function into here.
-    Plasma::Containment* c = m_corona->addDesktopContainment(m_id);
+    Plasma::Containment* c = m_corona->addDesktopContainment(m_id, m_plugin);
     return c;
 }
 
@@ -303,6 +303,12 @@ void Activity::open()
     m_corona->requireConfigSync();
     external.sync();
     emit opened();
+}
+
+void Activity::setDefaultPlugin(const QString &plugin)
+{
+    m_plugin = plugin;
+    //FIXME save&restore this setting
 }
 
 #include "activity.moc"

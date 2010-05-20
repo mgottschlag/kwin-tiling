@@ -77,6 +77,11 @@ public:
      */
     void ensureActive();
 
+    /**
+     * set the plugin to use when creating new containments
+     */
+    void setDefaultPlugin(const QString &plugin);
+
 signals:
     void nameChanged(const QString &name);
     void opened();
@@ -111,6 +116,7 @@ private:
 
     QString m_id;
     QString m_name;
+    QString m_plugin;
     QHash<QPair<int,int>, Plasma::Containment*> m_containments;
     KActivityInfo *m_info;
     DesktopCorona *m_corona;

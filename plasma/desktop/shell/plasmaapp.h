@@ -118,12 +118,8 @@ public Q_SLOTS:
      * create a new blank activity with @p plugin containment type
      */
     void createActivity(const QString &plugin);
-    /**
-     * create a new containment of type @p plugin and associate it with @p activity
-     * FIXME maybe this belongs in desktopcorona
-     */
-    Plasma::Containment* addContainment(const QString &activity, const QString &plugin = QString());
 
+    //TODO move this to desktopcorona or activity
     void updateActivityName(Plasma::Context *context);
 
 protected:

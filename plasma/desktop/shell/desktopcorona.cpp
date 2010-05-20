@@ -572,11 +572,21 @@ void DesktopCorona::currentActivityChanged(const QString &newActivity)
 
 Activity* DesktopCorona::activity(const QString &id)
 {
+    if (!m_activities.contains(id)) {
+        //the add signal comes late sometimes
+        activityAdded(id);
+    }
     return m_activities.value(id);
 }
 
 void DesktopCorona::activityAdded(const QString &id)
 {
+    //TODO more sanity checks
+    if (m_activities.contains(id)) {
+        kDebug() << "you're late.";
+        return;
+    }
+
     Activity *a = new Activity(id, this);
     m_activities.insert(id, a);
 }
