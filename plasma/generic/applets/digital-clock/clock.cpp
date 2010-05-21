@@ -314,7 +314,7 @@ QRectF Clock::normalLayout(int subtitleWidth, int subtitleHeight, const QRect &c
 QRectF Clock::sideBySideLayout(int subtitleWidth, int subtitleHeight, const QRect &contentsRect)
 {
     QRectF myRect = QRectF(contentsRect.right()-subtitleWidth,
-                           (contentsRect.bottom()-subtitleHeight)/2,
+                           contentsRect.top() + (contentsRect.height()-subtitleHeight)/2,
                            subtitleWidth,
                            subtitleHeight);
     // kDebug(96669) << "myRect: " << myRect;
