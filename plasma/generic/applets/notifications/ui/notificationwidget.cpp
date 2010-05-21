@@ -154,22 +154,30 @@ NotificationWidget::~NotificationWidget()
     delete d;
 }
 
-void NotificationWidget::setCollapsed(bool collapse)
+void NotificationWidget::setCollapsed(bool collapse, bool animate)
 {
     if (collapse == d->collapsed) {
         return;
     }
 
     //use this weird way to make easy to animate
-    if (collapse) {
-        d->hideAnimation->setStartValue(size().height());
-        d->hideAnimation->setEndValue(d->titleLayout->geometry().bottom());
-        d->hideAnimation->start();
+    if (animate) {
+        if (collapse) {
+            d->hideAnimation->setStartValue(size().height());
+            d->hideAnimation->setEndValue(d->titleLayout->geometry().bottom());
+            d->hideAnimation->start();
+        } else {
+            d->body->setVisible(true);
+            d->hideAnimation->setStartValue(size().height());
+            d->hideAnimation->setEndValue(sizeHint(Qt::PreferredSize, QSizeF()).height());
+            d->hideAnimation->start();
+        }
     } else {
-        d->body->setVisible(true);
-        d->hideAnimation->setStartValue(size().height());
-        d->hideAnimation->setEndValue(sizeHint(Qt::PreferredSize, QSizeF()).height());
-        d->hideAnimation->start();
+        if (collapse) {
+            setMaximumHeight(d->titleLayout->geometry().bottom());
+        } else {
+            setMaximumHeight(sizeHint(Qt::PreferredSize, QSizeF()).height());
+        }
     }
 
     setFlag(QGraphicsItem::ItemClipsChildrenToShape);

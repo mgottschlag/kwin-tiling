@@ -43,7 +43,7 @@ public:
     NotificationWidget(Notification *notification, QGraphicsWidget *parent);
     ~NotificationWidget();
 
-    void setCollapsed(bool collapse);
+    void setCollapsed(bool collapse, bool animate = true);
     bool isCollapsed() const;
 
     void setBackgroundVisible(bool visible);

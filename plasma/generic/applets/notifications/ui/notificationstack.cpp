@@ -69,7 +69,7 @@ void NotificationStack::addNotification(Notification *notification)
     m_notifications.append(notification);
 
     if (m_notifications.size() > 1) {
-        notificationWidget->setCollapsed(true);
+        notificationWidget->setCollapsed(true, false);
     } else {
         m_currentNotificationWidget = notificationWidget;
     }
@@ -99,7 +99,7 @@ void NotificationStack::addNotification(Notification *notification)
     m_mainLayout->insertItem(0, notificationWidget);
     m_mainLayout->activate();
     updateGeometry();
-    resize(effectiveSizeHint(Qt::PreferredSize));
+    resize(effectiveSizeHint(Qt::MinimumSize));
 }
 
 void NotificationStack::notificationChanged(Notification *notification)
@@ -129,6 +129,7 @@ void NotificationStack::removeNotification(Notification *notification)
         emit stackEmpty();
     }
 
+    updateGeometry();
     resize(sizeHint(Qt::MinimumSize, QSizeF()));
 }
 
