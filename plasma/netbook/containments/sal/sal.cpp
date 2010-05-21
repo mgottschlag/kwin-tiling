@@ -139,10 +139,6 @@ void SearchLaunch::init()
 
     m_toolBox->addTool(lockAction);
 
-    //SAL doesn't want to be removed:
-    //FIXME: wise to do it here?
-    a = action("remove");
-    delete a;
 
     a = new QAction(i18n("Next activity"), this);
     addAction("next containment", a);
@@ -467,6 +463,10 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             setTabOrder(m_stripWidget, m_searchField);
             setTabOrder(m_searchField, m_resultsView);
             setFormFactorFromLocation(location());
+
+            if (action("remove")) {
+                m_toolBox->addTool(action("remove"));
+            }
         }
     }
 

@@ -395,6 +395,10 @@ bool AppletsContainer::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
         return false;
     }
 
+    if (!m_containment) {
+        return false;
+    }
+
     if (event->type() == QEvent::GraphicsSceneMousePress) {
         foreach (Plasma::Applet *applet, m_containment->applets()) {
             if (applet->isAncestorOf(watched)) {

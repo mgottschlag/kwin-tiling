@@ -20,6 +20,7 @@
 #include "netcorona.h"
 #include "netdialogmanager.h"
 
+#include <QAction>
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QDir>
@@ -53,6 +54,8 @@ void NetCorona::init()
     QDesktopWidget *desktop = QApplication::desktop();
     QObject::connect(desktop, SIGNAL(resized(int)), this, SLOT(screenResized(int)));
     connect(PlasmaApp::self(), SIGNAL(controlBarChanged()), this, SIGNAL(availableScreenRegionChanged()));
+
+    connect(this, SIGNAL(containmentAdded(Plasma::Containment*)), this, SLOT(containmentAdded(Plasma::Containment*)));
 
     Plasma::ContainmentActionsPluginsConfig desktopPlugins;
     desktopPlugins.addPlugin(Qt::NoModifier, Qt::MidButton, "paste");
@@ -95,6 +98,15 @@ Plasma::Applet *NetCorona::loadDefaultApplet(const QString &pluginName, Plasma::
     }
 
     return applet;
+}
+
+void NetCorona::containmentAdded(Plasma::Containment *cont)
+{
+    if (cont->pluginName() == "sal") {
+        QAction *a = cont->action("remove");
+        cont->removeAction(a);
+        delete a;
+    }
 }
 
 Plasma::Containment *NetCorona::findFreeContainment() const

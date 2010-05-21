@@ -58,6 +58,7 @@ protected Q_SLOTS:
     void evaluateScripts(const QStringList &scripts);
     void printScriptError(const QString &error);
     void printScriptMessage(const QString &error);
+    void containmentAdded(Plasma::Containment *cont);
 
 private:
     void init();
