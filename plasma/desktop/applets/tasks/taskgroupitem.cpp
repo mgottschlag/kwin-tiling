@@ -671,7 +671,10 @@ void TaskGroupItem::popupMenu()
     } else {
         m_tasksLayout->setOrientation(Plasma::Vertical);
         m_tasksLayout->setMaximumRows(1);
-        m_offscreenWidget->adjustSize();
+        m_offscreenWidget->layout()->activate();
+        m_offscreenWidget->resize(m_offscreenWidget->effectiveSizeHint(Qt::PreferredSize));
+        m_popupDialog->syncToGraphicsWidget();
+
         if (m_applet->containment() && m_applet->containment()->corona()) {
             m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size(), Qt::AlignCenter));
         }
@@ -681,10 +684,8 @@ void TaskGroupItem::popupMenu()
         } else {
             m_popupDialog->show();
         }
-        m_offscreenWidget->layout()->activate();
-        m_offscreenWidget->resize(m_offscreenWidget->effectiveSizeHint(Qt::PreferredSize));
+
         m_popupDialog->raise();
-        //kDebug() << m_popupDialog->size() << m_tasksLayout->size();
     }
 }
 
