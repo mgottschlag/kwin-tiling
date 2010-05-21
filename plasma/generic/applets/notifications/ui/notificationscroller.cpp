@@ -150,7 +150,20 @@ void NotificationScroller::filterNotificationsByOwner(const QString &owner)
 
     m_currentFilter = owner;
 
-    adjustSize();
+    m_mainWidgetLayout->invalidate();
+    static_cast<QGraphicsLayoutItem *>(m_mainWidget)->updateGeometry();
+    m_mainWidget->resize(m_mainWidget->effectiveSizeHint(Qt::PreferredSize));
+    static_cast<QGraphicsLayoutItem *>(m_scroll)->updateGeometry();
+    updateGeometry();
+
+    Plasma::ExtenderItem *ei = qobject_cast<Plasma::ExtenderItem *>(parentWidget());
+    if (ei && ei->extender()) {
+        static_cast<QGraphicsLayoutItem *>(ei)->updateGeometry();
+        static_cast<QGraphicsLayoutItem *>(ei->extender())->updateGeometry();
+
+        QSizeF hint = ei->extender()->effectiveSizeHint(Qt::PreferredSize);
+        ei->extender()->resize(hint);
+    }
 }
 
 void NotificationScroller::tabSwitched(int index)
@@ -169,7 +182,9 @@ void NotificationScroller::adjustSize()
 
     Plasma::ExtenderItem *ei = qobject_cast<Plasma::ExtenderItem *>(parentWidget());
     if (ei && ei->extender()) {
-        //FIXME: whi is necessary to add this?
+        static_cast<QGraphicsLayoutItem *>(ei)->updateGeometry();
+        static_cast<QGraphicsLayoutItem *>(ei->extender())->updateGeometry();
+
         QSizeF hint = ei->extender()->effectiveSizeHint(Qt::PreferredSize);
         ei->extender()->resize(hint);
     }
