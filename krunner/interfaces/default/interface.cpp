@@ -487,7 +487,7 @@ void Interface::run(ResultItem *item)
     m_resultsScene->run(item);
     m_running = false;
 
-    close();
+    resetAndClose();
 }
 
 void Interface::resetAndClose()
