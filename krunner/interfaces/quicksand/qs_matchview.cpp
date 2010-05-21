@@ -116,8 +116,15 @@ QsMatchView::QsMatchView(QWidget *parent)
     d->m_stack->addWidget(d->m_lineEdit);
     d->m_stack->setCurrentIndex(0);
 
+    const QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     d->m_titleLabel = new QLabel(this);
     d->m_itemCountLabel = new QLabel(this);
+
+    QPalette labelPallete =  d->m_itemCountLabel->palette();
+    labelPallete.setColor(QPalette::WindowText, textColor);
+    d->m_itemCountLabel->setPalette(labelPallete);
+    d->m_titleLabel->setPalette(labelPallete);
+
     d->m_itemCountSuffixItems = true;
 
     d->m_arrowButton = new QToolButton(this);
@@ -274,8 +281,8 @@ void QsMatchView::setCountingActions(bool actions)
 
 void QsMatchView::setDescriptionText(const QString &text)
 {
-    QColor color(Qt::white);
-    setDescriptionText(text, color);
+    const QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    setDescriptionText(text, textColor);
 }
 
 void QsMatchView::setDescriptionText(const QString &text, const QColor &color)
@@ -343,9 +350,9 @@ void QsMatchView::toggleView()
 void QsMatchView::showLoading()
 {
     clear(true);
-
+    const QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     d->m_descText = new QGraphicsTextItem(i18n("Loading..."), d->m_descRect);
-    d->m_descText->setDefaultTextColor(QColor(Qt::white));
+    d->m_descText->setDefaultTextColor(textColor);
     QFontMetrics fm(d->m_descText->font());
 
     //Center text
@@ -395,6 +402,7 @@ void QsMatchView::showSelected()
     d->m_stack->setCurrentIndex(0);
 
     QGraphicsPixmapItem *pixmap = new QGraphicsPixmapItem(it->icon().pixmap(64));
+
     pixmap->setPos(-WIDTH/2 + 5, LARGE_ICON_PADDING);
 
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
@@ -442,7 +450,7 @@ void QsMatchView::focusItem(int index)
         } else {
             description = QString("%1 (%2)").arg(it->name()).arg(it->description());
         }
-        setDescriptionText(description, it->backgroundColor());
+        setDescriptionText(description);
         emit selectionChanged(it);
     }
 }

@@ -54,14 +54,6 @@ namespace QuickSand
             {
                 return m_icon;
             }
-            QColor backgroundColor() const
-            {
-                return m_bgColor;
-            }
-            void setBackgroundColor(const QColor &color)
-            {
-                m_bgColor = color;
-            }
 
             /**
              * @param create delete the current animation and create a new one
@@ -80,7 +72,6 @@ namespace QuickSand
             QString m_id;
             QString m_name;
             QString m_desc;
-            QColor m_bgColor;
     };
 }
 

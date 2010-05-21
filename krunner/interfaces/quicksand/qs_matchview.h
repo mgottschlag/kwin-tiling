@@ -120,7 +120,7 @@ namespace QuickSand {
              */
             void setDescriptionText(const QString &text, const QColor &color);
             /**
-             * Convenience method. Calls setDescriptionText(text, QColor(Qt::white)
+             * Convenience method. Calls setDescriptionText(text, Plasma::Theme.color())
              */
             void setDescriptionText(const QString &text);
 

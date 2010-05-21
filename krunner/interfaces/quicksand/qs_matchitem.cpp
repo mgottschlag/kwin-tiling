@@ -43,7 +43,6 @@ MatchItem::MatchItem(const QIcon &icon, const QString &name, const QString &desc
     setFlag(QGraphicsItem::ItemIsSelectable);
     setAcceptHoverEvents(true);
     resize(ITEM_SIZE, ITEM_SIZE);
-    m_bgColor = QColor(Qt::white);
     setToolTip(QString("%1: %2").arg(name).arg(desc));
 }
 

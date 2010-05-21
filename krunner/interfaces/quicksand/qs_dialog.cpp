@@ -59,6 +59,11 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
     QLabel *label = new QLabel(this);
     label->setText("<b>QuickSand</b>");
+    
+    const QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    QPalette titlePallete =  label->palette();
+    titlePallete.setColor(QPalette::WindowText, textColor);
+    label->setPalette(titlePallete);
 
     QToolButton *m_closeButton = new ToolButton(this);
     KGuiItem guiItem = KStandardGuiItem::close();
@@ -241,7 +246,9 @@ void QsDialog::setMatches(const QList<Plasma::QueryMatch> &matches)
             }
         }
         MatchItem *m = new QuickSand::QueryMatchItem(match);
-        switch(match.type())
+
+//TODO: I'm leaving the switch because this feature has sence, but we have to find another way to implement it
+/*        switch(match.type())
         {
         case Plasma::QueryMatch::ExactMatch:
             m->setBackgroundColor(QColor(Qt::yellow));
@@ -251,9 +258,10 @@ void QsDialog::setMatches(const QList<Plasma::QueryMatch> &matches)
             m->setBackgroundColor(QColor(Qt::blue));
             break;
         default:
-            m->setBackgroundColor(QColor(Qt::white));
+            m->setBackgroundColor(QColor(Qt::green));
             break;
-        }
+        }*/
+
         items.append(m);
     }
     // kDebug() << "Add " << items.size() << " matches. Append?" << !m_newQuery << endl;
