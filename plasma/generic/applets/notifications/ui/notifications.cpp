@@ -187,7 +187,12 @@ void Notifications::syncNotificationBarNeeded()
             connect(m_notificationScroller, SIGNAL(scrollerEmpty()), extenderItem, SLOT(destroy()));
 
             extenderItem->setWidget(m_notificationScroller);
-            extenderItem->setExtender(extender());
+            //this forces the item to be at bottom for bottom panel or at top for top panels
+            if (location() == Plasma::TopEdge) {
+                extenderItem->setExtender(extender(), QPointF(0, 0));
+            } else {
+                extenderItem->setExtender(extender(), QPoint(0, extender()->size().height()));
+            }
         }
     } else if (extender()->item("notifications")) {
         //don't let him in the config file
