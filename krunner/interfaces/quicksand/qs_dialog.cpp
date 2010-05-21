@@ -48,8 +48,12 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
     : KRunnerDialog(runnerManager, parent)
 {
     QVBoxLayout *layout = new QVBoxLayout(this);
-
+    layout->setMargin(0);
+    layout->setSpacing(0);
+    
     QHBoxLayout *hLayout = new QHBoxLayout();
+    hLayout->setMargin(0);
+    hLayout->setSpacing(0);
 
     m_configButton = new ToolButton(this);
     m_configButton->setText(i18n("Settings"));

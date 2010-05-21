@@ -137,12 +137,16 @@ QsMatchView::QsMatchView(QWidget *parent)
     d->m_arrowButton->setStyleSheet(buttonStyleSheet);
 
     QHBoxLayout *topLayout = new QHBoxLayout();
+    topLayout->setSpacing(0);
+    topLayout->setMargin(0);
     topLayout->addWidget(d->m_titleLabel);
     topLayout->addStretch();
     topLayout->addWidget(d->m_itemCountLabel);
     topLayout->addWidget(d->m_arrowButton);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->setSpacing(0);
+    layout->setMargin(0);
     layout->addLayout(topLayout);
     layout->addWidget(d->m_stack);
 
