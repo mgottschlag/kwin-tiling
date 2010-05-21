@@ -1059,11 +1059,13 @@ void Pager::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 void Pager::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     bool ok;
-    WId id = TaskManager::Task::idFromMimeData(event->mimeData(), &ok);
+    QList<WId> ids = TaskManager::Task::idsFromMimeData(event->mimeData(), &ok);
     if (ok) {
         for (int i = 0; i < m_rects.count(); ++i) {
             if (m_rects[i].contains(event->pos().toPoint())) {
-                KWindowSystem::setOnDesktop(id, i + 1);
+                foreach (const WId &id, ids) {
+                    KWindowSystem::setOnDesktop(id, i + 1);
+                }
                 m_dragSwitchDesktop = -1;
                 break;
             }
