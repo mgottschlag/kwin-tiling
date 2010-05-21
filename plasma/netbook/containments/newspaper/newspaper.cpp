@@ -146,11 +146,19 @@ void Newspaper::init()
         m_toolBox->addTool(a);
     }
 
-    KAction *lockAction = new KAction(this);
-    addAction("lock page", lockAction);
-    lockAction->setText(i18n("Lock page"));
-    lockAction->setIcon(KIcon("object-locked"));
-    QObject::connect(lockAction, SIGNAL(triggered(bool)), this, SLOT(toggleImmutability()));
+
+    QAction *lockAction = 0;
+    if (corona()) {
+        lockAction = corona()->action("lock widgets");
+    }
+
+    if (!lockAction || !lockAction->isEnabled()) {
+        lockAction = new QAction(this);
+        addAction("lock page", lockAction);
+        lockAction->setText(i18n("Lock page"));
+        lockAction->setIcon(KIcon("object-locked"));
+        QObject::connect(lockAction, SIGNAL(triggered(bool)), this, SLOT(toggleImmutability()));
+    }
     m_toolBox->addTool(lockAction);
 
     a = action("remove");

@@ -123,11 +123,20 @@ void SearchLaunch::init()
         a->setText(i18n("Configure Search and Launch"));
     }
 
-    KAction *lockAction = new KAction(this);
-    addAction("lock page", lockAction);
-    lockAction->setText(i18n("Lock Page"));
-    lockAction->setIcon(KIcon("object-locked"));
-    QObject::connect(lockAction, SIGNAL(triggered(bool)), this, SLOT(toggleImmutability()));
+
+    QAction *lockAction = 0;
+    if (corona()) {
+        lockAction = corona()->action("lock widgets");
+    }
+
+    if (!lockAction || !lockAction->isEnabled()) {
+        lockAction = new QAction(this);
+        addAction("lock page", lockAction);
+        lockAction->setText(i18n("Lock Page"));
+        lockAction->setIcon(KIcon("object-locked"));
+        QObject::connect(lockAction, SIGNAL(triggered(bool)), this, SLOT(toggleImmutability()));
+    }
+
     m_toolBox->addTool(lockAction);
 
     //SAL doesn't want to be removed:
