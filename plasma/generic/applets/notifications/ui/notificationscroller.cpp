@@ -188,13 +188,15 @@ void NotificationScroller::setLocation(const Plasma::Location location)
     }
 
     m_location = location;
-    QGraphicsLinearLayout *lay = static_cast<QGraphicsLinearLayout *>(layout());
-    if (m_location == Plasma::TopEdge) {
-        lay->removeItem(m_tabsLayout);
-        lay->insertItem(0, m_tabsLayout);
-    } else {
-        lay->removeItem(m_tabsLayout);
-        lay->addItem(m_tabsLayout);
+    if (layout()) {
+        QGraphicsLinearLayout *lay = static_cast<QGraphicsLinearLayout *>(layout());
+        if (m_location == Plasma::TopEdge) {
+            lay->removeItem(m_tabsLayout);
+            lay->insertItem(0, m_tabsLayout);
+        } else {
+            lay->removeItem(m_tabsLayout);
+            lay->addItem(m_tabsLayout);
+        }
     }
 }
 
