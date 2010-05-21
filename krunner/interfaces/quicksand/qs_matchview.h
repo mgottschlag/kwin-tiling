@@ -98,6 +98,10 @@ namespace QuickSand {
              * Shows a scrolling list of icons for each match
              */
             void showList();
+            /**
+             * Paste the content of the clipboard to the lineedit
+             */
+            void pasteClipboard();
         signals:
             /**
              * Emitted when the user presser enter

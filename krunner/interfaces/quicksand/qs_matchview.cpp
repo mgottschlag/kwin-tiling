@@ -31,6 +31,9 @@
 #include <QTimeLine>
 #include <QTimer>
 #include <QToolButton>
+#include <QShortcut>
+#include <QClipboard>
+#include <QApplication>
 
 #include <KDebug>
 #include <KIcon>
@@ -108,6 +111,7 @@ QsMatchView::QsMatchView(QWidget *parent)
     d->m_currentItem = 0;
 
     d->m_lineEdit = new KLineEdit(this);
+    new QShortcut(QKeySequence("Ctrl+V"), this, SLOT(pasteClipboard()));
     d->m_compBox = new QuickSand::QsCompletionBox(this);
     d->m_compBox->setTabHandling(false);
 
@@ -599,6 +603,17 @@ void QsMatchView::focusOutEvent(QFocusEvent *event)
     }
     d->m_hasFocus = false;
     showSelected();
+}
+
+void QsMatchView::pasteClipboard()
+{
+    QClipboard *clip = qApp->clipboard();
+    QString text = clip->text();
+
+    if (!text.isEmpty()) {
+        d->m_lineEdit->setText(text);
+        d->m_searchTerm = text;
+    }
 }
 
 //TODO: Make it possible to disable text mode
