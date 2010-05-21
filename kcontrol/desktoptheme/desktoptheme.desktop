@@ -11,6 +11,7 @@ X-DocPath=kcontrol/desktoptheme/index.html
 
 Name=Desktop Theme
 Name[ia]=Thema de Scriptorio
+Name[kk]=Үстел нақышы
 Name[km]=ស្បែក​ផ្ទៃតុ
 Name[lt]=Darbastalio tema
 Name[nl]=Bureaubladthema
@@ -22,6 +23,7 @@ Name[x-test]=xxDesktop Themexx
 Name[zh_TW]=桌面主題
 Comment=Customize the desktop theme
 Comment[ia]=Personalisar le thema de scriptorio
+Comment[kk]=Үстел нақышын өзінше баптап алу
 Comment[km]=ប្ដូរ​ស្បែក​ផ្ទៃតុ​តាមបំណង
 Comment[lt]=Derinti darbastalio temą
 Comment[nl]=Pas het bureaubladthema aan

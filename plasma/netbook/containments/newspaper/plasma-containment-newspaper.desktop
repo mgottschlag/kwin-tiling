@@ -2,6 +2,7 @@
 Name=Newspaper Activity
 Name[ia]=Activitate de jornal
 Name[ja]=新聞のアクティビティ
+Name[kk]=Газета тәрізд
 Name[km]=សកម្មភាព​សារព័ត៌មាន
 Name[lt]=Laikraščio veikla
 Name[nds]=Blattstriepen-Aktiviteet
@@ -32,7 +33,7 @@ Comment[hr]=Aktivnost koja stavi spravice u dva stupca
 Comment[ia]=Un activitate que pone elementos graphicos (widget) in duo columnas
 Comment[id]=Sebuah aktivitas yang membagi widget menjadi dua kolom
 Comment[it]=Un'attività che mette gli oggetti su due colonne
-Comment[kk]=Екі бағанды өрісті виджет
+Comment[kk]=Екі бағанды виджеттер өрісі
 Comment[km]=សកម្មភាព​ដែល​ដាក់​ធាតុក្រាហ្វិក​នៅ​ក្នុង​ជួរឈរ​ពីរ
 Comment[kn]=ನಿಯಂತ್ರಣಾ ಸಂಪರ್ಕತಟಗಳನ್ನು ಎರಡು ಲಂಬ ಸಾಲುಗಳಲ್ಲಿ ಹಾಕುವ ಒಂದು ಕ್ರಿಯೆ
 Comment[ko]=두 단으로 위젯을 배열하는 활동
