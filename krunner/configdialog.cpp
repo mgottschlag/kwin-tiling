@@ -69,7 +69,12 @@ KRunnerConfigWidget::KRunnerConfigWidget(Plasma::RunnerManager *manager, QWidget
     connect(displayButtons, SIGNAL(buttonClicked(int)), this, SLOT(setInterface(int)));
     displayButtons->addButton(m_uiOptions.commandButton, KRunnerSettings::EnumInterface::CommandOriented);
     displayButtons->addButton(m_uiOptions.taskButton, KRunnerSettings::EnumInterface::TaskOriented);
-    m_uiOptions.commandButton->setChecked(m_interfaceType == KRunnerSettings::EnumInterface::CommandOriented);
+    
+    if (m_interfaceType == KRunnerSettings::EnumInterface::CommandOriented) {
+        m_uiOptions.commandButton->setChecked(true);
+    } else {
+        m_uiOptions.taskButton->setChecked(true);
+    }
 
     connect(m_uiOptions.previewButton, SIGNAL(clicked()), this, SLOT(previewInterface()));
 
