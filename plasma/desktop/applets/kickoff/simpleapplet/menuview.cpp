@@ -30,6 +30,7 @@
 #include <QtGui/QStandardItem>
 #include <QtGui/QStyleOptionMenuItem>
 #include <QtGui/QPainter>
+#include <QtGui/QToolTip>
 
 // KDE
 #include <KDebug>
@@ -170,9 +171,11 @@ void MenuView::updateAction(QAbstractItemModel *model, QAction *action, const QM
         switch (d->formattype) {
         case Name: {
             action->setText(name.isEmpty() ? text : name);
+            action->setToolTip(text);
         } break;
         case Description: {
             action->setText(name.contains(text, Qt::CaseInsensitive) ? name : text);
+            action->setToolTip(name);
         } break;
         case NameDescription: // fall through
         case NameDashDescription: // fall through
@@ -270,6 +273,30 @@ bool MenuView::eventFilter(QObject *watched, QEvent *event)
     case QEvent::Hide: {
         emit afterBeingHidden();
     } break;
+
+    case QEvent::ToolTip: {
+        bool hide = true;
+
+        if ((d->formattype == Name) || (d->formattype == Description)) {
+            QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+            QMenu *watchedMenu = qobject_cast<QMenu*>(watched);
+
+            if (watchedMenu && watchedMenu->activeAction()) {
+                QString toolTip = watchedMenu->activeAction()->toolTip();
+
+                if ((toolTip != watchedMenu->activeAction()->text()) && (watchedMenu->activeAction()->menu() == 0)) {
+                QToolTip::showText(helpEvent->globalPos(), toolTip);
+                hide = false ;
+		}
+	    }
+	} 
+
+   if (hide) {
+         QToolTip::hideText();
+         event->ignore();
+   }
+    } break;
+    
     default: break;
     }
 
