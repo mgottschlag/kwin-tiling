@@ -60,13 +60,15 @@ class QsDialog : public KRunnerDialog
         void setAction(MatchItem *item);
         void configWidgetDestroyed();
         void cleanupAfterConfigWidget();
-
+        //afiestas: We should move this to krunnerdialog imho (I just copyied it atm)
+        void updateSystemActivityToolTip();
     private:
         void adjustInterface();
 
         bool m_newQuery;
         QLabel *m_singleRunnerIcon;
         QToolButton *m_configButton;
+        QToolButton *m_activityButton;
 
         QMultiMap<QString, Plasma::QueryMatch> m_matches;
         QuickSand::QsMatchView *m_matchView;

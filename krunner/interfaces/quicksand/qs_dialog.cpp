@@ -26,6 +26,7 @@
 #include <QTimer>
 #include <QShortcut>
 #include <KAction>
+#include <KActionCollection>
 #include <KStandardGuiItem>
 #include <KWindowSystem>
 
@@ -37,6 +38,7 @@
 
 #include "toolbutton.h"
 
+#include "krunnerapp.h"
 #include "qs_dialog.h"
 #include "qs_matchview.h"
 #include "qs_querymatchitem.h"
@@ -55,6 +57,16 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_configButton->setIcon(m_iconSvg->pixmap("configure"));
     connect(m_configButton, SIGNAL(clicked()), SLOT(toggleConfigDialog()));
 
+    m_activityButton = new ToolButton(this);
+    KRunnerApp *krunnerApp = KRunnerApp::self();
+    QAction *showSystemActivityAction = krunnerApp->actionCollection()->action("Show System Activity");
+    m_activityButton->setDefaultAction(showSystemActivityAction);
+    m_activityButton->setIcon(m_iconSvg->pixmap("status"));
+    
+    updateSystemActivityToolTip();
+    connect(showSystemActivityAction, SIGNAL(globalShortcutChanged(const QKeySequence &)), this, SLOT(updateSystemActivityToolTip()));
+    connect(showSystemActivityAction, SIGNAL(triggered(bool)), this, SLOT(close()));
+    
     m_singleRunnerIcon = new QLabel(this);
 
     QLabel *label = new QLabel(this);
@@ -73,6 +85,7 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
     connect(m_closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
 
     hLayout->addWidget(m_configButton);
+    hLayout->addWidget(m_activityButton);
     hLayout->addWidget(m_singleRunnerIcon);
     hLayout->addStretch();
     hLayout->addWidget(label);
@@ -278,4 +291,18 @@ void QsDialog::setAction(MatchItem *item)
     }
 }
 
+void QsDialog::updateSystemActivityToolTip()
+{
+    /* Set the tooltip for the Show System Activity button to include the global shortcut */
+    KRunnerApp *krunnerApp = KRunnerApp::self();
+    KAction *showSystemActivityAction = dynamic_cast<KAction *>(krunnerApp->actionCollection()->action("Show System Activity"));
+    if (showSystemActivityAction) {
+        QString shortcut = showSystemActivityAction->globalShortcut().toString();
+        if (shortcut.isEmpty()) {
+            m_activityButton->setToolTip( showSystemActivityAction->toolTip() );
+        } else {
+            m_activityButton->setToolTip( i18nc("tooltip, shortcut", "%1 (%2)", showSystemActivityAction->toolTip(), shortcut));
+        }
+    }
+}
 #include "qs_dialog.moc"
