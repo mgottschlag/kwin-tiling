@@ -100,6 +100,7 @@ void NotificationStack::addNotification(Notification *notification)
     m_mainLayout->activate();
     updateGeometry();
     resize(effectiveSizeHint(Qt::MinimumSize));
+    emit updateRequested();
 }
 
 void NotificationStack::notificationChanged(Notification *notification)
@@ -131,6 +132,7 @@ void NotificationStack::removeNotification(Notification *notification)
 
     updateGeometry();
     resize(sizeHint(Qt::MinimumSize, QSizeF()));
+    emit updateRequested();
 }
 
 void NotificationStack::delayedRemoveNotification(Notification *notification)
