@@ -218,9 +218,12 @@ void WindowTaskItem::updateToolTip()
                                 Qt::KeepAspectRatio, Qt::SmoothTransformation);
         }
 
-        Plasma::ToolTipContent data(Qt::escape(m_task->name()),
-                                    i18nc("Which virtual desktop a window is currently on", "On %1",
-                                    KWindowSystem::desktopName(m_task->desktop())), p);
+        Plasma::ToolTipContent data(Qt::escape(m_task->name()), QString(), p);
+        if (m_task->desktop() != 0 && 
+            (!m_applet->groupManager().showOnlyCurrentDesktop() || !m_task->isOnCurrentDesktop())) {
+            data.setSubText(i18nc("Which virtual desktop a window is currently on", "On %1",
+                                  KWindowSystem::desktopName(m_task->desktop())));
+        }
         data.setWindowToPreview(m_task->task()->window());
         data.setClickable(true);
         data.setHighlightWindows(m_applet->highlightWindows());

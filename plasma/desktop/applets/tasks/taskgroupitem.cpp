@@ -266,9 +266,10 @@ void TaskGroupItem::updateToolTip()
 
     Plasma::ToolTipContent data(m_group.data()->name(), QString());
     int desktop = m_group.data()->desktop();
-    if (desktop != 0) {
+    if (desktop != 0 &&
+        (!m_applet->groupManager().showOnlyCurrentDesktop() || !m_group.data()->isOnCurrentDesktop())) {
         data.setSubText(i18nc("Which virtual desktop a window is currently on", "On %1",
-                        KWindowSystem::desktopName(m_group.data()->desktop())));
+                        KWindowSystem::desktopName(desktop)));
     }
 
     data.setImage(m_group.data()->icon());
