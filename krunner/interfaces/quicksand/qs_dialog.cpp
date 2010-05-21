@@ -133,10 +133,19 @@ void QsDialog::clearHistory()
 
 void QsDialog::setConfigWidget(QWidget *w)
 {
-    m_matchView->hide();
+    //Yet another code copy pasted from default interface, should we move this to a common place?
+    const int screenId = qApp->desktop()->screenNumber(this); //Kephal::ScreenUtils::screenId(geometry().center());
+    const int maxHeight = qApp->desktop()->availableGeometry(screenId).height(); //Kephal::Screens::self()->screen(screenId)->geometry().height();
+
+    int left, top, right, bottom;
+    getContentsMargins(&left, &top, &right, &bottom);
+    const int padding = top + bottom + m_activityButton->height();
+    resize(width(), qMin(maxHeight, qMax(w->sizeHint().height() + padding, size().height())));
+
     QVBoxLayout *layout = static_cast<QVBoxLayout*>(this->layout());
     layout->addWidget(w);
-    adjustSize();
+    m_matchView->hide();
+
     connect(w, SIGNAL(destroyed(QObject*)), this, SLOT(configWidgetDestroyed()));
 }
 
