@@ -77,7 +77,6 @@ public slots:
     void toolBoxOpened(bool);
     void showDesktopUntoggled(WId id);
     void showWidgetExplorer();
-    void showActivityManager();
 
     void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
 

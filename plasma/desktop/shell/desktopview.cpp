@@ -320,14 +320,12 @@ void DesktopView::setContainment(Plasma::Containment *containment)
     if (oldContainment) {
         disconnect(oldContainment, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(toolBoxOpened(bool)));
         disconnect(oldContainment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
-        disconnect(oldContainment, SIGNAL(showActivityManager()), this, SLOT(showActivityManager()));
         viewIds.deleteEntry(QString::number(oldContainment->id()));
     }
 
     if (containment) {
         connect(containment, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(toolBoxOpened(bool)));
         connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
-        connect(containment, SIGNAL(showActivityManager()), this, SLOT(showActivityManager()));
         viewIds.writeEntry(QString::number(containment->id()), id());
         if (containment->corona()) {
             containment->corona()->requestConfigSync();
@@ -370,18 +368,6 @@ void DesktopView::showWidgetExplorer()
     Plasma::Containment *c = containment();
     if (c) {
         PlasmaApp::self()->showWidgetExplorer(screen(), c);
-    }
-}
-
-void DesktopView::showActivityManager()
-{
-    if (isDashboardVisible()) {
-        return;
-    }
-
-    Plasma::Containment *c = containment();
-    if (c) {
-        PlasmaApp::self()->showActivityManager(screen(), c);
     }
 }
 
