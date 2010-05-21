@@ -616,19 +616,20 @@ bool EnvCanadaIon::readXMLSetup()
                 territory = m_xmlSetup.readElementText(); // Provinces/Territory list
             }
         }
-            if (m_xmlSetup.isEndElement() && m_xmlSetup.name() == "site") {
-                EnvCanadaIon::XMLMapInfo info;
-                QString tmp = cityName + ", " + territory; // Build the key name.
 
-                // Set the mappings
-                info.cityCode = code;
-                info.territoryName = territory;
-                info.cityName = cityName;
+        if (m_xmlSetup.isEndElement() && m_xmlSetup.name() == "site") {
+            EnvCanadaIon::XMLMapInfo info;
+            QString tmp = cityName + ", " + territory; // Build the key name.
 
-                // Set the string list, we will use for the applet to display the available cities.
-                m_places[tmp] = info;
-                success = true;
-            }
+            // Set the mappings
+            info.cityCode = code;
+            info.territoryName = territory;
+            info.cityName = cityName;
+
+            // Set the string list, we will use for the applet to display the available cities.
+            m_places[tmp] = info;
+            success = true;
+        }
 
     }
     return (success && !m_xmlSetup.error());
