@@ -202,8 +202,6 @@ void QsMatchView::setItems(const QList<MatchItem*> &items, bool popup, bool appe
 
     int pos = spacing;
 
-    d->m_currentItem = -1;
-
     if (!append) {
         clear(true);
         d->m_compBox->clear();
