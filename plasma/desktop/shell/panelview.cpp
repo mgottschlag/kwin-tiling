@@ -461,6 +461,8 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
 
         QTimer::singleShot(2000, this, SLOT(startAutoHide()));
     }
+
+    KWindowSystem::setOnAllDesktops(winId(), true);
 }
 
 PanelView::VisibilityMode PanelView::visibilityMode() const
