@@ -170,8 +170,8 @@ void NotificationScroller::adjustSize()
     Plasma::ExtenderItem *ei = qobject_cast<Plasma::ExtenderItem *>(parentWidget());
     if (ei && ei->extender()) {
         //FIXME: whi is necessary to add this?
-        QSizeF hint = ei->extender()->effectiveSizeHint(Qt::PreferredSize) + QSizeF(0, 100);
-        ei->extender()->resize(hint.width(), qMin(hint.height(), (qreal)500));
+        QSizeF hint = ei->extender()->effectiveSizeHint(Qt::PreferredSize);
+        ei->extender()->resize(hint);
     }
 }
 
