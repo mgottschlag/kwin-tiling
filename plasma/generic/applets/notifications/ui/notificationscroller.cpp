@@ -36,10 +36,11 @@
 
 
 NotificationScroller::NotificationScroller(QGraphicsItem *parent)
-   : QGraphicsWidget(parent)
+   : QGraphicsWidget(parent),
+     m_location(Plasma::BottomEdge)
 {
     QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(Qt::Vertical, this);
-    QGraphicsLinearLayout *tabsLayout = new QGraphicsLinearLayout(Qt::Horizontal);
+    m_tabsLayout = new QGraphicsLinearLayout(Qt::Horizontal);
 
     m_notificationBar = new Plasma::TabBar(this);
     m_notificationBar->nativeWidget()->setMaximumWidth(400);
@@ -50,12 +51,12 @@ NotificationScroller::NotificationScroller(QGraphicsItem *parent)
     m_scroll = new Plasma::ScrollWidget(this);
     m_scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    tabsLayout->addStretch();
-    tabsLayout->addItem(m_notificationBar);
-    tabsLayout->addStretch();
+    m_tabsLayout->addStretch();
+    m_tabsLayout->addItem(m_notificationBar);
+    m_tabsLayout->addStretch();
 
-    lay->addItem(tabsLayout);
     lay->addItem(m_scroll);
+    lay->addItem(m_tabsLayout);
 
     m_mainWidget = new QGraphicsWidget(m_scroll);
     m_mainWidgetLayout = new QGraphicsLinearLayout(Qt::Vertical, m_mainWidget);
@@ -172,6 +173,28 @@ void NotificationScroller::tabSwitched(int index)
         filterNotificationsByOwner(m_notificationBar->tabText(index));
     } else {
         filterNotificationsByOwner(QString());
+    }
+}
+
+Plasma::Location NotificationScroller::location() const
+{
+    return m_location;
+}
+
+void NotificationScroller::setLocation(const Plasma::Location location)
+{
+    if (location == m_location) {
+        return;
+    }
+
+    m_location = location;
+    QGraphicsLinearLayout *lay = static_cast<QGraphicsLinearLayout *>(layout());
+    if (m_location == Plasma::TopEdge) {
+        lay->removeItem(m_tabsLayout);
+        lay->insertItem(0, m_tabsLayout);
+    } else {
+        lay->removeItem(m_tabsLayout);
+        lay->addItem(m_tabsLayout);
     }
 }
 

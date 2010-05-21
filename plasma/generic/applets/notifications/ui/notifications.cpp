@@ -85,6 +85,7 @@ K_EXPORT_PLASMA_APPLET(notifications, Notifications)
 Notifications::Notifications(QObject *parent, const QVariantList &arguments)
     : Plasma::PopupApplet(parent, arguments),
       m_jobSummaryWidget(0),
+      m_notificationScroller(0),
       m_notificationStack(0),
       m_notificationStackDialog(0),
       m_standaloneJobSummaryWidget(0),
@@ -184,6 +185,7 @@ void Notifications::syncNotificationBarNeeded()
             extenderItem->showCloseButton();
 
             m_notificationScroller = new NotificationScroller(extenderItem);
+            m_notificationScroller->setLocation(location());
             connect(m_notificationScroller, SIGNAL(scrollerEmpty()), extenderItem, SLOT(destroy()));
 
             extenderItem->setWidget(m_notificationScroller);
@@ -206,6 +208,12 @@ Manager *Notifications::manager() const
     return m_manager;
 }
 
+void Notifications::constraintsEvent(Plasma::Constraints constraints)
+{
+    if (constraints & Plasma::LocationConstraint && m_notificationScroller) {
+        m_notificationScroller->setLocation(location());
+    }
+}
 
 void Notifications::createConfigurationInterface(KConfigDialog *parent)
 {

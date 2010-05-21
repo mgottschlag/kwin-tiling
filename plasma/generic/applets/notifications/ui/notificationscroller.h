@@ -23,6 +23,8 @@
 
 #include <QGraphicsWidget>
 
+#include <plasma/plasma.h>
+
 class QGraphicsLinearLayout;
 
 namespace Plasma
@@ -48,6 +50,9 @@ public:
 
     void filterNotificationsByOwner(const QString &owner);
 
+    Plasma::Location location() const;
+    void setLocation(const Plasma::Location location);
+
 public Q_SLOTS:
     void removeNotification(Notification *notification);
 
@@ -69,6 +74,8 @@ private:
     QHash<QString, QSet<Notification *> >m_notificationsForApp;
     QHash<Notification *, NotificationWidget *>m_notificationWidgets;
     QString m_currentFilter;
+    Plasma::Location m_location;
+    QGraphicsLinearLayout *m_tabsLayout;
 };
 
 
