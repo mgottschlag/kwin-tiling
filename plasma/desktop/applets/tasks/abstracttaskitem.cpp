@@ -977,7 +977,7 @@ void AbstractTaskItem::setGeometry(const QRectF& geometry)
     }
 }
 
-QRectF AbstractTaskItem::iconRect(const QRectF &b) const
+QRectF AbstractTaskItem::iconRect(const QRectF &b)
 {
     QRectF bounds(b);
     const int right = bounds.right();
@@ -1004,12 +1004,16 @@ QRectF AbstractTaskItem::iconRect(const QRectF &b) const
         }
     }
 
+    if (iconSize != m_lastIconSize) {
+        m_cachedShadow = QPixmap();
+    }
+    m_lastIconSize = iconSize;
     return QStyle::alignedRect(QApplication::layoutDirection(),
                                (m_showText ? Qt::AlignLeft : Qt::AlignCenter) | Qt::AlignVCenter,
                                iconSize, bounds.toRect());
 }
 
-QRectF AbstractTaskItem::expanderRect(const QRectF &bounds) const
+QRectF AbstractTaskItem::expanderRect(const QRectF &bounds)
 {
     const TaskGroupItem *groupItem = qobject_cast<const TaskGroupItem *>(this);
     if (!groupItem) {
@@ -1027,7 +1031,7 @@ QRectF AbstractTaskItem::expanderRect(const QRectF &bounds) const
                                expanderSize, bounds.toRect());
 }
 
-QRectF AbstractTaskItem::textRect(const QRectF &bounds) const
+QRectF AbstractTaskItem::textRect(const QRectF &bounds)
 {
     QSize size(bounds.size().toSize());
     QRectF effectiveBounds(bounds);

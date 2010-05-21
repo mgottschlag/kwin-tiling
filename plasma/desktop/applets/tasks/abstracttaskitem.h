@@ -206,11 +206,11 @@ protected Q_SLOTS:
 
 protected:
     // area of item occupied by task's icon
-    QRectF iconRect(const QRectF &bounds) const;
+    QRectF iconRect(const QRectF &bounds);
     // area for the expander arrow for group items
-    QRectF expanderRect(const QRectF &b) const;
+    QRectF expanderRect(const QRectF &b);
     // area of item occupied by task's text
-    QRectF textRect(const QRectF &bounds) const;
+    QRectF textRect(const QRectF &bounds);
     // start an animation to chnge the task background
     void fadeBackground(const QString &newBackground, int duration);
     // text color, use this because it could be animated
@@ -240,6 +240,7 @@ private:
 
     QTime m_lastGeometryUpdate;
     QTime m_lastUpdate;
+    QSize m_lastIconSize;
     int m_activateTimerId;
     int m_updateGeometryTimerId;
     int m_updateTimerId;
