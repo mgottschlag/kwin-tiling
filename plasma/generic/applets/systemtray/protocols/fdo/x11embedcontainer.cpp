@@ -27,8 +27,6 @@
 #include <KDebug>
 
 // Qt
-#include <QtCore/QTime>
-#include <QtCore/QTimer>
 #include <QtGui/QPainter>
 #include <QtGui/QPaintEngine>
 #include <QtGui/QX11Info>
