@@ -103,8 +103,7 @@ LauncherApplet::~LauncherApplet()
 
 void LauncherApplet::init()
 {
-    KConfigGroup cg = config();
-    setPopupIcon(cg.readEntry("icon", "start-here-kde"));
+    configChanged();
 
     if (KService::serviceByStorageId("kde4-kmenuedit.desktop")) {
         QAction* menueditor = new QAction(i18n("Menu Editor"), this);
@@ -179,6 +178,12 @@ void LauncherApplet::toolTipAboutToShow()
     }
 }
 
+void LauncherApplet::configChanged()
+{
+    KConfigGroup cg = config();
+    setPopupIcon(cg.readEntry("icon", "start-here-kde"));
+}
+
 void LauncherApplet::configAccepted()
 {
     bool switchTabsOnHover = d->ui.switchOnHoverCheckBox->isChecked();
@@ -196,7 +201,6 @@ void LauncherApplet::configAccepted()
 
         if (!iconname.isEmpty()) {
             setPopupIcon(iconname);
-            d->initToolTip();
         }
 
         emit configNeedsSaving();

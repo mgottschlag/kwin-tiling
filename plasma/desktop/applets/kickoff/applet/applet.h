@@ -53,6 +53,7 @@ public slots:
     void switchMenuStyle();
     void startMenuEditor();
     void toolTipAboutToShow();
+    void configChanged();
 
 protected slots:
     void configAccepted();
