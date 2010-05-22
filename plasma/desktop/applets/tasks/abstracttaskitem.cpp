@@ -589,14 +589,14 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     */
     Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
 
-    //since a single framesvg is shared between all tasks, we could have to resize it even if there wasn't a resizeevent
-    if (size().toSize() != itemBackground->frameSize()) {
-        resizeBackground(size().toSize());
-    }
-
     if (~option->state & QStyle::State_Sunken && 
         (!m_backgroundFadeAnim || m_backgroundFadeAnim->state() != QAbstractAnimation::Running)) {
         itemBackground->setElementPrefix(m_backgroundPrefix);
+        //since a single framesvg is shared between all tasks, we could have to resize it even if there wasn't a resizeevent
+        if (size().toSize() != itemBackground->frameSize()) {
+            resizeBackground(size().toSize());
+        }
+
         if (itemBackground->frameSize() == m_activeRect.size().toSize()) {
             itemBackground->paintFrame(painter, m_activeRect.topLeft());
         } else {
@@ -607,6 +607,11 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     }
 
     itemBackground->setElementPrefix(m_oldBackgroundPrefix);
+    //since a single framesvg is shared between all tasks, we could have to resize it even if there wasn't a resizeevent
+    if (size().toSize() != itemBackground->frameSize()) {
+        resizeBackground(size().toSize());
+    }
+
     QPixmap oldBackground;
 
     if (option->state & QStyle::State_Sunken) {
@@ -618,6 +623,11 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     }
 
     itemBackground->setElementPrefix(m_backgroundPrefix);
+    //since a single framesvg is shared between all tasks, we could have to resize it even if there wasn't a resizeevent
+    if (size().toSize() != itemBackground->frameSize()) {
+        resizeBackground(size().toSize());
+    }
+
     QPixmap result = Plasma::PaintUtils::transition(oldBackground, itemBackground->framePixmap(), m_alpha);
 
     if (result.size() == m_activeRect.size().toSize()) {
