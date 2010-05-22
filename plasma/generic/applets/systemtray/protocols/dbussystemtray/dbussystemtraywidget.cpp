@@ -31,7 +31,6 @@
 #include <Plasma/Corona>
 #include <Plasma/ServiceJob>
 #include <Plasma/Theme>
-#include <Plasma/Svg>
 
 namespace SystemTray
 {
@@ -39,8 +38,7 @@ namespace SystemTray
 DBusSystemTrayWidget::DBusSystemTrayWidget(Plasma::Applet *parent, Plasma::Service *service)
     : Plasma::IconWidget(parent),
       m_service(service),
-      m_host(parent),
-      m_svg(0)
+      m_host(parent)
 {
     KAction *action = new KAction(this);
     setAction(action);
@@ -138,14 +136,8 @@ void DBusSystemTrayWidget::setIcon(const QString &iconName, const QIcon &icon)
         if (Plasma::Theme::defaultTheme()->imagePath(name).isEmpty()) {
             Plasma::IconWidget::setIcon(icon);
         } else {
-            if (!m_svg) {
-                m_svg = new Plasma::Svg(this);
-            }
-            m_svg->setImagePath(name);
-            //The file exists: but does the id exist in the file?
-            if (m_svg->hasElement(iconName)) {
-                setSvg(name, iconName);
-            } else {
+            setSvg(name, iconName);
+            if (svg().isEmpty()) {
                 Plasma::IconWidget::setIcon(icon);
             }
         }
