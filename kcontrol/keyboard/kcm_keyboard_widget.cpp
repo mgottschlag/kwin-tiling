@@ -368,8 +368,24 @@ void KCMKeyboardWidget::clearXkbGroup(const QString& groupName)
     emit changed(true);
 }
 
+static
+bool xkbOptionGroupLessThan(const OptionGroupInfo* og1, const OptionGroupInfo* og2)
+{
+     return og1->description.toLower() < og2->description.toLower();
+}
+static
+bool xkbOptionLessThan(const OptionInfo* o1, const OptionInfo* o2)
+{
+     return o1->description.toLower() < o2->description.toLower();
+}
+
 void KCMKeyboardWidget::initializeXkbOptionsUI()
 {
+	qSort(rules->optionGroupInfos.begin(), rules->optionGroupInfos.end(), xkbOptionGroupLessThan);
+	foreach(OptionGroupInfo* optionGroupInfo, rules->optionGroupInfos) {
+		qSort(optionGroupInfo->optionInfos.begin(), optionGroupInfo->optionInfos.end(), xkbOptionLessThan);
+	}
+
 	XkbOptionsTreeModel* model = new XkbOptionsTreeModel(rules, keyboardConfig, uiWidget->xkbOptionsTreeView);
 	uiWidget->xkbOptionsTreeView->setModel(model);
 	connect(model, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(uiChanged()));
