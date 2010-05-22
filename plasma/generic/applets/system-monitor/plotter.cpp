@@ -102,6 +102,11 @@ void Plotter::setScale(qreal scale)
     m_plotter->scale(scale);
 }
 
+void Plotter::setStackPlots(bool stack)
+{
+    m_plotter->setStackPlots(stack);
+}
+
 void Plotter::setPlotCount(int count)
 {
     for (int i = 0; i < m_plotCount; ++i) {
@@ -113,6 +118,17 @@ void Plotter::setPlotCount(int count)
     QColor bg = theme->color(Plasma::Theme::BackgroundColor);
     for (int i = 0; i < m_plotCount; ++i) {
         QColor color = KColorUtils::tint(text, bg, 0.4 + ((double)i / 2.5));
+        m_plotter->addPlot(color);
+    }
+}
+
+void Plotter::setCustomPlots(const QList<QColor>& colors)
+{
+    for (int i = 0; i < m_plotCount; ++i) {
+        m_plotter->removePlot(0);
+    }
+    m_plotCount = colors.count();
+    foreach (QColor color, colors) {
         m_plotter->addPlot(color);
     }
 }

@@ -47,7 +47,9 @@ class SM_EXPORT Plotter : public QGraphicsWidget
         void setTitle(const QString& title);
         void setUnit(const QString& unit);
         void setPlotCount(int count);
+        void setCustomPlots(const QList<QColor>& colors);
         void setScale(qreal scale);
+        void setStackPlots(bool stack);
 
     protected slots:
         void themeChanged();

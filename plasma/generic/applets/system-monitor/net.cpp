@@ -93,7 +93,8 @@ bool SM::Net::addMeter(const QString& source)
     SM::Plotter *plotter = new SM::Plotter(this);
     plotter->setTitle(interface);
     plotter->setUnit("KiB/s");
-    plotter->setPlotCount(2);
+    plotter->setCustomPlots(QList<QColor>() << QColor("#0099ff") << QColor("#91ff00"));
+    //plotter->setStackPlots(false);
     appendPlotter(interface, plotter);
     connectSource("network/interfaces/" + interface + "/receiver/data");
     setPreferredItemHeight(80);
