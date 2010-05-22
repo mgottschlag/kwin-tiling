@@ -976,9 +976,16 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
 
-    if (containment->containmentType() == Plasma::Containment::DesktopContainment) {
-        foreach (QAction *action, m_corona->actions()) {
-            containment->addToolBoxAction(action);
+    if ((containment->containmentType() == Plasma::Containment::DesktopContainment ||
+                containment->containmentType() == Plasma::Containment::CustomContainment)) {
+        QAction *a = containment->action("remove");
+        if (a) {
+            delete a; //activities handle removal now
+        }
+        if (containment->containmentType() == Plasma::Containment::DesktopContainment) {
+            foreach (QAction *action, m_corona->actions()) {
+                containment->addToolBoxAction(action);
+            }
         }
     }
 
