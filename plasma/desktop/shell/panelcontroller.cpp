@@ -495,8 +495,10 @@ bool PanelController::eventFilter(QObject *watched, QEvent *event)
     } else if (watched == m_moveTool) {
         if (event->type() == QEvent::MouseButtonPress) {
             m_dragging = MoveButtonElement;
+            m_moveTool->grabMouse();
         } else if (event->type() == QEvent::MouseButtonRelease) {
             m_dragging = NoElement;
+            m_moveTool->releaseMouse();
         } else if (event->type() == QEvent::MouseMove) {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
             mouseMoveFilter(mouseEvent);
@@ -529,10 +531,6 @@ void PanelController::mouseMoveFilter(QMouseEvent *event)
     QRect screenGeom = Kephal::ScreenUtils::screenGeometry(containment()->screen());
 
     if (m_dragging == MoveButtonElement) {
-        //only move when the mouse cursor is out of the controller to avoid an endless reposition cycle
-        if (geometry().contains(event->globalPos())) {
-            return;
-        }
 
         if (!screenGeom.contains(event->globalPos())) {
             //move panel to new screen if dragged there
