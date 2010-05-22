@@ -27,6 +27,7 @@ class KJob;
 namespace Plasma
 {
     class Applet;
+    class Svg;
 }
 
 namespace SystemTray
@@ -56,6 +57,7 @@ private Q_SLOTS:
 private:
     Plasma::Service *m_service;
     Plasma::Applet *m_host;
+    Plasma::Svg *m_svg;
 };
 
 }
