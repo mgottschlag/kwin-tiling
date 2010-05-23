@@ -21,6 +21,7 @@ set( kded_keyboard_SRCS
     x11_helper_xinput.cpp
     xkb_helper.cpp
     keyboard_config.cpp
+    keyboard_hardware.cpp
 # next are temporary for sys tray UI
     layout_widget.cpp
     flags.cpp
@@ -38,6 +39,11 @@ target_link_libraries(kded_keyboard
 if(XiGetDevicePresence_FOUND)
   target_link_libraries(kded_keyboard ${X11_Xinput_LIB})
 endif(XiGetDevicePresence_FOUND)
+
+# for kcmmisc
+if(X11_XTest_FOUND)
+  target_link_libraries(kded_keyboard ${X11_XTest_LIB})
+endif(X11_XTest_FOUND)
 
 install( TARGETS kded_keyboard DESTINATION ${PLUGIN_INSTALL_DIR} )
 install( FILES keyboard.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kded )
@@ -101,7 +107,7 @@ set(kcm_keyboard_PART_SRCS
   flags.cpp
   iso_codes.cpp
   kcmmisc.cpp
-  keyboard_hardware.cpp
+#  keyboard_hardware.cpp
 )
 
 

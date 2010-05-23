@@ -69,9 +69,5 @@ private:
   Ui_KeyboardConfigWidget& ui;
 };
 
-void numlockx_change_numlock_state( bool set_P );
-void set_repeatrate(int delay, double rate);
-void init_keyboard_hardware();
-
 #endif
 

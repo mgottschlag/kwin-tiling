@@ -70,13 +70,14 @@ KCMiscKeyboardWidget::KCMiscKeyboardWidget(QWidget *parent)
   connect(ui.click, SIGNAL(valueChanged(int)), this, SLOT(changed()));
   connect(ui.numlockGroup, SIGNAL(released(int)), this, SLOT(changed()));
 
-#if !defined(HAVE_XTEST) && !defined(HAVE_XKB)
-  ui.numlockGroup->setDisabled( true );
-#endif
-#if !defined(HAVE_XKB) && !defined(HAVE_XF86MISC)
-//  delay->setDisabled( true );
-//  rate->setDisabled( true );
-#endif
+// Not sure why we need this - if XKB is not found the whole keyboard module won't be compiled
+//#if !defined(HAVE_XTEST) && !defined(HAVE_XKB)
+//  ui.numlockGroup->setDisabled( true );
+//#endif
+//#if !defined(HAVE_XKB) && !defined(HAVE_XF86MISC)
+//  ui.delay->setDisabled( true );
+//  ui.rate->setDisabled( true );
+//#endif
 }
 
 KCMiscKeyboardWidget::~KCMiscKeyboardWidget()
@@ -151,20 +152,9 @@ void KCMiscKeyboardWidget::save()
 {
   KConfigGroup config(KSharedConfig::openConfig("kcminputrc", KConfig::NoGlobals), "Keyboard");
 
-  XKeyboardControl kbd;
-
   clickVolume = getClick();
   keyboardRepeat = ui.repeatBox->isChecked() ? AutoRepeatModeOn : AutoRepeatModeOff;
   numlockState = getNumLockState();
-
-  kbd.key_click_percent = clickVolume;
-  kbd.auto_repeat_mode = keyboardRepeat;
-  XChangeKeyboardControl(QX11Info::display(),
-                           KBKeyClickPercent | KBAutoRepeatMode,
-                           &kbd);
-  if( keyboardRepeat ) {
-    set_repeatrate(ui.delay->value(), ui.rate->value());
-  }
 
   config.writeEntry("ClickVolume",clickVolume);
   config.writeEntry("KeyboardRepeating", (keyboardRepeat == AutoRepeatModeOn));

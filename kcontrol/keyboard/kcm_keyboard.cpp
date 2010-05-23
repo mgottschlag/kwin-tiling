@@ -26,7 +26,7 @@
 
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusConnection>
-#include <QtDBus/QDBusInterface>
+//#include <QtDBus/QDBusInterface>
 
 #include "kcm_keyboard_widget.h"
 #include "x11_helper.h"
@@ -100,7 +100,7 @@ void KCMKeyboard::load()
 	widget->getKcmMiscWidget()->load();
 }
 
-static void initializeKeyboardSettings();
+//static void initializeKeyboardSettings();
 void KCMKeyboard::save()
 {
 	keyboardConfig->save();
@@ -110,7 +110,7 @@ void KCMKeyboard::save()
 	QDBusMessage message = QDBusMessage::createSignal(KEYBOARD_DBUS_OBJECT_PATH, KEYBOARD_DBUS_SERVICE_NAME, KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE);
     QDBusConnection::sessionBus().send(message);
 
-    initializeKeyboardSettings();
+//    initializeKeyboardSettings();
 }
 
 //TODO: exclude XInput somehow nicer
@@ -124,27 +124,27 @@ bool XEventNotifier::isNewDeviceEvent(XEvent* /*event*/)
 	return false;
 }
 
-static const char* KEYBOARD_KDED_NAME = "keyboard";
-
-static void initializeKeyboardSettings()
-{
-	init_keyboard_hardware();
-
-	KeyboardConfig config;
-	config.load();
-
-	// start daemon if we're configured or there's more than one layout currently
-	QDBusInterface dbus_iface("org.kde.kded", "/kded");
-	if( config.configureLayouts || X11Helper::getLayoutsList().size() > 1 ) {
-		bool started = dbus_iface.call("loadModule", KEYBOARD_KDED_NAME).arguments().at(0).toBool();
-		if( ! started ) {
-			kError() << "Failed to start keyboard daemon";
-		}
-	}
-	else {
-		// initialize keyboard model and xkb options as daemon won't be there to do it
-		XkbHelper::initializeKeyboardLayouts();
-	}
+//static const char* KEYBOARD_KDED_NAME = "keyboard";
+//
+//static void initializeKeyboardSettings()
+//{
+//	init_keyboard_hardware();
+//
+//	KeyboardConfig config;
+//	config.load();
+//
+//	// start daemon if we're configured or there's more than one layout currently
+//	QDBusInterface dbus_iface("org.kde.kded", "/kded");
+//	if( config.configureLayouts || X11Helper::getLayoutsList().size() > 1 ) {
+//		bool started = dbus_iface.call("loadModule", KEYBOARD_KDED_NAME).arguments().at(0).toBool();
+//		if( ! started ) {
+//			kError() << "Failed to start keyboard daemon";
+//		}
+//	}
+//	else {
+//		// initialize keyboard model and xkb options as daemon won't be there to do it
+//		XkbHelper::initializeKeyboardLayouts();
+//	}
 
 	// daemon now always starts by itself
 	// start/stop kded_keyboard from here if needed
@@ -166,12 +166,12 @@ static void initializeKeyboardSettings()
 //    		kDebug() << "keyboard daemon stopped" << stopped;
 //    	}
 //    }
-}
-
-extern "C"
-{
-	KDE_EXPORT void kcminit_keyboard()
-	{
-		initializeKeyboardSettings();
-	}
-}
+//}
+//
+//extern "C"
+//{
+//	KDE_EXPORT void kcminit_keyboard()
+//	{
+//		initializeKeyboardSettings();
+//	}
+//}

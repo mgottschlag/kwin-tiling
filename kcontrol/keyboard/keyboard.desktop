@@ -4,8 +4,8 @@ Icon=preferences-desktop-keyboard
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=keyboard
 X-KDE-DBus-ModuleName=kxkb
-X-KDE-Kded-autoload=false
-X-KDE-Kded-load-on-demand=true
+X-KDE-Kded-autoload=true
+X-KDE-Kded-load-on-demand=false
 X-KDE-Kded-phase=1
 OnlyShowIn=KDE;
 

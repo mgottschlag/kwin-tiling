@@ -32,6 +32,8 @@
 #include "xkb_helper.h"
 #include "keyboard_dbus.h"
 
+#include "keyboard_hardware.h"
+
 // for sys tray icon
 #include "layout_widget.h"
 
@@ -76,6 +78,8 @@ KeyboardDaemon::~KeyboardDaemon()
 
 void KeyboardDaemon::configureKeyboard()
 {
+	init_keyboard_hardware();
+
 	keyboardConfig->load();
 	XkbHelper::initializeKeyboardLayouts(*keyboardConfig);
 	layoutMemory.setSwitchingPolicy(keyboardConfig->switchingPolicy);
