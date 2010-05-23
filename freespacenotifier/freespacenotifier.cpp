@@ -19,10 +19,6 @@
 
 #include "freespacenotifier.h"
 
-#include <sys/statvfs.h>
-#include <sys/types.h>
-#include <unistd.h>
-
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtGui/QLabel>
@@ -34,6 +30,7 @@
 #include <KLocale>
 #include <KRun>
 #include <KConfigDialog>
+#include <KDiskFreeSpaceInfo>
 
 #include "settings.h"
 #include "ui_freespacenotifier_prefs_base.h"
@@ -62,17 +59,12 @@ void FreeSpaceNotifier::checkFreeDiskSpace()
 {
     if ( notification || !FreeSpaceNotifierSettings::enableNotification() )
         return;
-    struct statvfs sfs;
-    if ( statvfs( QFile::encodeName( QDir::homePath() ), &sfs ) == 0 )
+    KDiskFreeSpaceInfo fsInfo = KDiskFreeSpaceInfo::freeSpaceInfo( QDir::homePath() );
+    if ( fsInfo.isValid() )
     {
-        long avail = ( getuid() ? sfs.f_bavail : sfs.f_bfree );
-
-        if (avail < 0 || sfs.f_blocks <= 0)
-            return; // we better not say anything about it
-
-        long limit = FreeSpaceNotifierSettings::minimumSpace(); // MiB
-        int availpct = int( 100 * avail / sfs.f_blocks );
-        avail = ((long long)avail) * sfs.f_frsize / ( 1024 * 1024 ); // to MiB
+        int limit = FreeSpaceNotifierSettings::minimumSpace(); // MiB
+        int availpct = int( 100 * fsInfo.available() / fsInfo.size() );
+        qint64 avail = fsInfo.available() / ( 1024 * 1024 ); // to MiB
         bool warn = false;
         if( avail < limit ) // avail disk space dropped under a limit
         {
@@ -83,7 +75,7 @@ void FreeSpaceNotifier::checkFreeDiskSpace()
             }
             else if( avail > lastAvail ) // the user freed some space
                 lastAvail = avail;       // so warn if it goes low again
-            else if( avail < lastAvail * 0.5 ) // available dropped to a half of previous one, warn again
+            else if( avail < lastAvail / 2 ) // available dropped to a half of previous one, warn again
             {
                 warn = true;
                 lastAvail = avail;

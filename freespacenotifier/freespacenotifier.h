@@ -43,7 +43,7 @@ class FreeSpaceNotifier
         QTimer timer;
         QTimer* lastAvailTimer;
         KNotification *notification;
-        long lastAvail; // used to suppress repeated warnings when available space hasn't changed
+        qint64 lastAvail; // used to suppress repeated warnings when available space hasn't changed
 
         void disableFSNotifier();
         bool dbusError( QDBusInterface &iface );
