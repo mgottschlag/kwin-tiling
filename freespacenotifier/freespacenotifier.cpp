@@ -19,7 +19,8 @@
 
 #include "freespacenotifier.h"
 
-#include <sys/vfs.h>
+#include <sys/statvfs.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 #include <QtCore/QDir>
@@ -61,8 +62,8 @@ void FreeSpaceNotifier::checkFreeDiskSpace()
 {
     if ( notification || !FreeSpaceNotifierSettings::enableNotification() )
         return;
-    struct statfs sfs;
-    if ( statfs( QFile::encodeName( QDir::homePath() ), &sfs ) == 0 )
+    struct statvfs sfs;
+    if ( statvfs( QFile::encodeName( QDir::homePath() ), &sfs ) == 0 )
     {
         long avail = ( getuid() ? sfs.f_bavail : sfs.f_bfree );
 
@@ -71,7 +72,7 @@ void FreeSpaceNotifier::checkFreeDiskSpace()
 
         long limit = FreeSpaceNotifierSettings::minimumSpace(); // MiB
         int availpct = int( 100 * avail / sfs.f_blocks );
-        avail = ((long long)avail) * sfs.f_bsize / ( 1024 * 1024 ); // to MiB
+        avail = ((long long)avail) * sfs.f_frsize / ( 1024 * 1024 ); // to MiB
         bool warn = false;
         if( avail < limit ) // avail disk space dropped under a limit
         {
