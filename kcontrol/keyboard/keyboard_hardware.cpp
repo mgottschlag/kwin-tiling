@@ -241,7 +241,7 @@ void set_repeatrate(int delay, double rate)
 #else
 void set_repeatrate(int delay, double rate)
 {
-#if HAVE_XKB
+#ifdef HAVE_XKB
   Display* dpy = QX11Info::display();
   int xkbmajor = XkbMajorVersion, xkbminor = XkbMinorVersion;
   int xkbopcode, xkbevent, xkberror;
