@@ -31,8 +31,8 @@
 
 extern KConfig *config;
 
-KBackground::KBackground(QWidget *parent)
-    : QWidget(parent)
+KBackground::KBackground(KSharedConfigPtr backgroundConfig, QWidget *parent)
+    : QWidget(parent), m_simpleConf(backgroundConfig)
 {
 
     // Enabling checkbox
@@ -42,9 +42,6 @@ KBackground::KBackground(QWidget *parent)
         " If it is disabled, you have to look after the background yourself."
         " This is done by running some program (possibly xsetroot) in the script"
         " specified in the Setup= option in kdmrc (usually Xsetup)."));
-    m_simpleConf = KSharedConfig::openConfig(
-        config->group("X-*-Greeter").readEntry(
-            "BackgroundCfg", KDE_CONFDIR "/kdm/backgroundrc"));
     m_background = new BGDialog(this, m_simpleConf);
 
     connect(m_background, SIGNAL(changed(bool)), SIGNAL(changed()));
@@ -68,12 +65,6 @@ void KBackground::slotEnableChanged()
     bool en = m_pCBEnable->isChecked();
     m_background->setEnabled(en);
     emit changed();
-}
-
-void KBackground::makeReadOnly()
-{
-    m_pCBEnable->setEnabled(false);
-    m_background->makeReadOnly();
 }
 
 void KBackground::load()

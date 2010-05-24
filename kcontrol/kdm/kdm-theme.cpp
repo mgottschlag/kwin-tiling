@@ -20,6 +20,8 @@
 
 #include "kdm-theme.h"
 
+#include "helper.h"
+
 #include <KDialog>
 #include <KLocale>
 #include <KMessageBox>
@@ -30,6 +32,7 @@
 #include <KTar>
 #include <KUrlRequester>
 #include <KUrlRequesterDialog>
+#include <KTempDir>
 #include <knewstuff3/downloaddialog.h>
 #include <KDebug>
 #include <KIO/Job>
@@ -60,6 +63,27 @@ class ThemeData : public QTreeWidgetItem {
     QString copyright;
     QString description;
 };
+
+extern int handleActionReply(QWidget *parent, const KAuth::ActionReply &reply);
+
+static int executeThemeAction(QWidget *parent,
+        const QVariantMap &helperargs, QVariantMap *returnedData = 0)
+{
+    parent->setEnabled(false);
+
+    KAuth::Action action("org.kde.kcontrol.kcmkdm.managethemes");
+    action.setHelperID("org.kde.kcontrol.kcmkdm");
+    action.setArguments(helperargs);
+
+    KAuth::ActionReply reply = action.execute();
+
+    parent->setEnabled(true);
+
+    if (returnedData)
+        *returnedData = reply.data();
+
+    return handleActionReply(parent, reply);
+}
 
 KDMThemeWidget::KDMThemeWidget(QWidget *parent)
     : QWidget(parent)
@@ -117,9 +141,6 @@ KDMThemeWidget::KDMThemeWidget(QWidget *parent)
 
     themeDir = KStandardDirs::installPath("data") + "kdm/themes/";
     defaultTheme = 0;
-    QDir testDir(themeDir);
-    if (!testDir.exists() && !testDir.mkdir(testDir.absolutePath()) && !geteuid())
-        KMessageBox::sorry(this, i18n("Unable to create folder %1", testDir.absolutePath()));
 
     foreach (const QString &ent,
              QDir(themeDir).entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Unsorted))
@@ -153,14 +174,6 @@ void KDMThemeWidget::defaults()
     selectTheme(themeDir + "oxygen");
 
     emit changed();
-}
-
-void KDMThemeWidget::makeReadOnly()
-{
-    themeWidget->setEnabled(false);
-    bInstallTheme->setEnabled(false);
-    bRemoveTheme->setEnabled(false);
-    bGetNewThemes->setEnabled(false);
 }
 
 void KDMThemeWidget::insertTheme(const QString &_theme)
@@ -208,6 +221,19 @@ void KDMThemeWidget::updateInfoView(ThemeData *theme)
         preview->setPixmap(theme->path + '/' + theme->screenShot);
         preview->setText(theme->screenShot.isEmpty() ?
             "Screenshot not available" : QString());
+    }
+}
+
+void KDMThemeWidget::checkThemesDir()
+{
+    QDir testDir(themeDir);
+    if (!testDir.exists()) {
+        QVariantMap helperargs;
+        helperargs["subaction"] = Helper::CreateThemesDir;
+
+        if (executeThemeAction(parentWidget(), helperargs))
+            KMessageBox::sorry(this,
+                    i18n("Unable to create folder %1", testDir.absolutePath()));
     }
 }
 
@@ -268,20 +294,43 @@ void KDMThemeWidget::installNewTheme()
         progressDiag.progressBar()->setMaximum(foundThemes.size());
         progressDiag.show();
 
+        KTempDir themesTempDir(KStandardDirs::locateLocal("tmp", "kdmthemes"));
+
+        QStringList themesTempDirs, themesDirs;
         foreach (const KArchiveDirectory *ard, foundThemes) {
             progressDiag.setLabelText(
                 i18nc("@info:progress",
-                      "<qt>Installing <strong>%1</strong> theme</qt>", ard->name()));
+                      "<qt>Unpacking <strong>%1</strong> theme</qt>", ard->name()));
 
-            QString path = themeDir + ard->name();
-            ard->copyTo(path, true);
-            if (QDir(path).exists())
-                insertTheme(path);
+            themesTempDirs.append(themesTempDir.name() + ard->name());
+            themesDirs.append(themeDir + ard->name());
+
+            ard->copyTo(themesTempDirs.last(), true);
 
             progressDiag.progressBar()->setValue(progressDiag.progressBar()->value() + 1);
             if (progressDiag.wasCancelled())
                 break;
         }
+
+        progressDiag.setLabelText(i18nc("@info:progress", "<qt>Installing the themes</qt>"));
+
+        QVariantMap helperargs;
+        QVariantMap returnedData;
+        helperargs["subaction"] = Helper::InstallThemes;
+        helperargs["themes"] = themesTempDirs;
+
+        if (executeThemeAction(parentWidget(), helperargs, &returnedData)) {
+            QString errorMessage =
+                i18n("There were errors while installing the following themes:\n");
+            QStringList failedThemes = returnedData["failedthemes"].toStringList();
+            foreach (const QString &path, failedThemes)
+                errorMessage += path + '\n';
+            KMessageBox::error(this, errorMessage);
+        }
+
+        foreach (const QString &dir, themesDirs)
+            if (QDir(dir).exists())
+                insertTheme(dir);
     }
 
     archive.close();
@@ -296,8 +345,7 @@ void KDMThemeWidget::themeSelected()
         updateInfoView((ThemeData *)(themeWidget->selectedItems().first()));
     else
         updateInfoView(0);
-    if (bInstallTheme->isEnabled()) // not read-only
-        bRemoveTheme->setEnabled(!themeWidget->selectedItems().isEmpty());
+    bRemoveTheme->setEnabled(!themeWidget->selectedItems().isEmpty());
     emit changed();
 }
 
@@ -315,10 +363,27 @@ void KDMThemeWidget::removeSelectedThemes()
             i18n("Are you sure you want to remove the following themes?"),
             nameList, i18nc("@title:window", "Remove themes?")) != KMessageBox::Yes)
         return;
-    KIO::del(KUrl::List(delList)); // XXX error check
 
-    foreach (QTreeWidgetItem *itm, themes)
-        themeWidget->takeTopLevelItem(themeWidget->indexOfTopLevelItem(itm));
+    QVariantMap helperargs;
+    QVariantMap returnedData;
+    helperargs["subaction"] = Helper::RemoveThemes;
+    helperargs["themes"] = delList;
+
+    int code = executeThemeAction(parentWidget(), helperargs, &returnedData);
+    delList = returnedData["themes"].toStringList();
+
+    if (code) {
+        QString errorMessage =
+            i18n("There were errors while deleting the following themes:\n");
+        foreach (const QString &path, delList)
+            if (!path.isNull())
+                errorMessage += path + '\n';
+        KMessageBox::error(this, errorMessage);
+    }
+
+    for (int i = 0; i < delList.size(); ++i)
+        if (delList.at(i).isEmpty())
+            themeWidget->takeTopLevelItem(themeWidget->indexOfTopLevelItem(themes.at(i)));
 }
 
 void KDMThemeWidget::getNewStuff()

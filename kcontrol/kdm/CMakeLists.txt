@@ -29,6 +29,14 @@ target_link_libraries(kcm_kdm ${KDE4_KIO_LIBS} ${QIMAGEBLITZ_LIBRARIES} ${KDE4_K
 
 install(TARGETS kcm_kdm  DESTINATION ${PLUGIN_INSTALL_DIR})
 
+#### KAuth helper and actions ####
+kde4_add_executable(kcmkdmhelper helper.cpp)
+target_link_libraries(kcmkdmhelper ${KDE4_KDECORE_LIBS})
+install(TARGETS kcmkdmhelper DESTINATION ${LIBEXEC_INSTALL_DIR})
+
+kde4_install_auth_helper_files(kcmkdmhelper org.kde.kcontrol.kcmkdm root)
+
+kde4_install_auth_actions(org.kde.kcontrol.kcmkdm kcmkdm_actions.actions)
 
 ########### install files ###############
 

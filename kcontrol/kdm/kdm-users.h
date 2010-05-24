@@ -42,7 +42,6 @@ class KDMUsersWidget : public QWidget {
     void load();
     void save();
     void defaults();
-    void makeReadOnly();
 
     bool eventFilter(QObject *o, QEvent *e);
 
@@ -69,6 +68,7 @@ class KDMUsersWidget : public QWidget {
     void updateOptList(QTreeWidgetItem *item, QStringList &list);
     void userButtonDropEvent(QDropEvent *e);
     void changeUserPix(const QString &);
+    void checkFacesDir();
 
     QGroupBox *minGroup; // top left
     QLineEdit *leminuid, *lemaxuid;
@@ -91,7 +91,6 @@ class KDMUsersWidget : public QWidget {
     QString m_defaultText;
     QStringList hiddenUsers, selectedUsers;
     QString defminuid, defmaxuid;
-    bool m_readOnly;
 };
 
 #endif

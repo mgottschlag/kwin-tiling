@@ -39,7 +39,6 @@ class KDMConvenienceWidget : public QWidget {
     void load();
     void save();
     void defaults();
-    void makeReadOnly();
 
   public Q_SLOTS:
     void slotClearUsers();

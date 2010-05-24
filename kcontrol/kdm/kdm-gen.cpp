@@ -128,18 +128,6 @@ KDMGeneralWidget::KDMGeneralWidget(QWidget *parent)
     ml->addStretch(1);
 }
 
-void KDMGeneralWidget::makeReadOnly()
-{
-    useThemeCheck->setEnabled(false);
-    guicombo->setEnabled(false);
-    colcombo->setEnabled(false);
-    langcombo->setEnabled(false);
-    stdFontChooser->button()->setEnabled(false);
-    failFontChooser->button()->setEnabled(false);
-    greetingFontChooser->button()->setEnabled(false);
-    aacb->setEnabled(false);
-}
-
 void KDMGeneralWidget::loadColorSchemes(KBackedComboBox *combo)
 {
     // XXX: Global + local schemes

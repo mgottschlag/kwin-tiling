@@ -25,6 +25,7 @@
 #define __kdm_main_h
 
 #include <kcmodule.h>
+#include <ksharedconfig.h>
 
 #include <QMap>
 
@@ -35,6 +36,8 @@ class KDMSessionsWidget;
 class KDMUsersWidget;
 class KDMConvenienceWidget;
 class KBackground;
+class KConfig;
+class KTemporaryFile;
 
 class QStackedWidget;
 class QTabWidget;
@@ -80,6 +83,11 @@ class KDModule : public KCModule {
 
     void propagateUsers();
 
+    KTemporaryFile *pTempConfigFile;
+    KTemporaryFile *pBackgroundTempConfigFile;
+
+    KConfig *createTempConfig();
+    KSharedConfigPtr createBackgroundTempConfig();
 };
 
 #endif

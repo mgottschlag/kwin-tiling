@@ -146,18 +146,6 @@ KDMDialogWidget::KDMDialogWidget(QWidget *parent)
 
 }
 
-void KDMDialogWidget::makeReadOnly()
-{
-    disconnect(logobutton, SIGNAL(clicked()),
-               this, SLOT(slotLogoButtonClicked()));
-    logobutton->setAcceptDrops(false);
-    greetstr_lined->setReadOnly(true);
-    noneRadio->setEnabled(false);
-    clockRadio->setEnabled(false);
-    logoRadio->setEnabled(false);
-    positioner->makeReadOnly();
-}
-
 bool KDMDialogWidget::setLogo(const QString &logo)
 {
     QString flogo = logo.isEmpty() ?
@@ -223,35 +211,23 @@ KUrl *decodeImgDrop(QDropEvent *e, QWidget *wdg);
 
 void KDMDialogWidget::iconLoaderDropEvent(QDropEvent *e)
 {
-    KUrl pixurl;
-    bool istmp;
+    // Installation of a logo from a non-local file is not
+    // such a prominent feature to introduce a new KAuth action
+    // for it. So let us just ignore these drops.
 
     KUrl *url = decodeImgDrop(e, this);
-    if (url) {
-
-        // we gotta check if it is a non-local file and make a tmp copy at the hd.
-        if (!url->isLocalFile()) {
-            pixurl.setPath(KStandardDirs::installPath("data") +
-                           "kdm/pics/" + url->fileName());
-            KIO::NetAccess::file_copy(*url, pixurl, parentWidget());
-            istmp = true;
-        } else {
-            pixurl = *url;
-            istmp = false;
-        }
-
-        // By now url should be "file:/..."
-        if (!setLogo(pixurl.path())) {
-            KIO::NetAccess::del(pixurl, parentWidget());
+    if (url && url->isLocalFile()) {
+        if (!setLogo(url->toLocalFile())) {
             QString msg = i18n("There was an error loading the image:\n"
                                "%1\n"
                                "It will not be saved.",
-                               pixurl.path());
+                               url->toLocalFile());
             KMessageBox::sorry(this, msg);
+        } else {
+            changed();
         }
-
-        delete url;
     }
+    delete url;
 }
 
 

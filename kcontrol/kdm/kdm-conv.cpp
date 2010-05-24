@@ -200,25 +200,8 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent)
 
 }
 
-void KDMConvenienceWidget::makeReadOnly()
-{
-    alGroup->setEnabled(false); // this sucks
-    //userlb->setEnabled(false);
-    //autoLockCheck->setEnabled(false);
-    npGroup->setEnabled(false); // this sucks, too
-    //npuserlv->setEnabled(false);
-    cbarlen->setEnabled(false);
-    npRadio->setEnabled(false);
-    ppRadio->setEnabled(false);
-    spRadio->setEnabled(false);
-    puserlb->setEnabled(false);
-    cbjumppw->setEnabled(false);
-}
-
 void KDMConvenienceWidget::slotPresChanged()
 {
-    if (!alGroup->isEnabled()) // read-only
-        return;
     puserlb->setEnabled(spRadio->isChecked());
     cbjumppw->setEnabled(!npRadio->isChecked());
 }

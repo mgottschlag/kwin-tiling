@@ -143,19 +143,6 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent)
 
 }
 
-void KDMSessionsWidget::makeReadOnly()
-{
-    sdlcombo->setEnabled(false);
-    sdrcombo->setEnabled(false);
-
-    restart_lined->lineEdit()->setReadOnly(true);
-    restart_lined->button()->setEnabled(false);
-    shutdown_lined->lineEdit()->setReadOnly(true);
-    shutdown_lined->button()->setEnabled(false);
-
-    bm_combo->setEnabled(false);
-}
-
 void KDMSessionsWidget::writeSD(KComboBox *combo, KConfigGroup group)
 {
     QString what;

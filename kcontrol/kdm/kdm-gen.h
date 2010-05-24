@@ -36,7 +36,6 @@ class KDMGeneralWidget : public QWidget {
     void load();
     void save();
     void defaults();
-    void makeReadOnly();
 
     void loadColorSchemes(KBackedComboBox *combo);
     void loadGuiStyles(KBackedComboBox *combo);

@@ -38,7 +38,6 @@ class KDMSessionsWidget : public QWidget {
     void load();
     void save();
     void defaults();
-    void makeReadOnly();
 
     enum SdModes { SdAll, SdRoot, SdNone };
 

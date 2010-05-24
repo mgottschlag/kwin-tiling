@@ -33,7 +33,6 @@ class Positioner : public ScreenPreviewWidget {
     void setPosition(int x, int y);
     int x() const { return m_x; }
     int y() const { return m_y; }
-    void makeReadOnly() { m_readOnly = true; }
 
   Q_SIGNALS:
     void positionChanged();
@@ -50,7 +49,6 @@ class Positioner : public ScreenPreviewWidget {
   private:
     void updateHandle();
 
-    bool m_readOnly;
     int m_x, m_y;
     QPoint m_delta;
     QFrame *m_frame;

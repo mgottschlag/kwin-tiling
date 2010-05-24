@@ -38,7 +38,6 @@ class KDMDialogWidget : public QWidget {
     void load();
     void save();
     void defaults();
-    void makeReadOnly();
     QString quickHelp() const;
 
     bool eventFilter(QObject *, QEvent *);

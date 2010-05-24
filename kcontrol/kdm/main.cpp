@@ -33,12 +33,15 @@
 #include "kdm-conv.h"
 #include "kdm-theme.h"
 
+#include "helper.h"
+
 #include <kaboutdata.h>
 #include <kimageio.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kdebug.h>
 #include <kmimetype.h>
+#include <ktemporaryfile.h>
 #include <kconfig.h>
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
@@ -59,6 +62,22 @@
 
 K_PLUGIN_FACTORY(KDMFactory, registerPlugin<KDModule>();)
 K_EXPORT_PLUGIN(KDMFactory("kdmconfig"))
+
+int handleActionReply(QWidget *parent, const KAuth::ActionReply &reply)
+{
+    int code = 0;
+
+    if (reply.failed()) {
+        if (reply.type() == ActionReply::KAuthError)
+            KMessageBox::error(parent,
+                i18n("Unable to authenticate/execute the action: %1 (code %2)",
+                     reply.errorDescription(), reply.errorCode()));
+        else
+            code = reply.errorCode();
+    }
+
+    return code;
+}
 
 KUrl *decodeImgDrop(QDropEvent *e, QWidget *wdg)
 {
@@ -95,13 +114,14 @@ KDModule::KDModule(QWidget *parent, const QVariantList &)
     KAboutData *about =
         new KAboutData("kcmkdm", "kdmconfig", ki18n("KDE Login Manager Config Module"),
                        QByteArray(), KLocalizedString(), KAboutData::License_GPL,
-                       ki18n("(c) 1996-2008 The KDM Authors"), KLocalizedString(),
+                       ki18n("(c) 1996-2010 The KDM Authors"), KLocalizedString(),
                        "http://developer.kde.org/~ossi/sw/kdm.html");
 
     about->addAuthor(ki18n("Thomas Tanghus"), ki18n("Original author"), "tanghus@earthling.net");
     about->addAuthor(ki18n("Steffen Hansen"), KLocalizedString(), "hansen@kde.org");
     about->addAuthor(ki18n("Oswald Buddenhagen"), ki18n("Current maintainer"), "ossi@kde.org");
     about->addAuthor(ki18n("Stephen Leaf"), KLocalizedString(), "smileaf@smileaf.org");
+    about->addAuthor(ki18n("Igor Krivenko"), KLocalizedString(), "igor@shg.ru");
 
     setQuickHelp(i18n(
         "<h1>Login Manager</h1> In this module you can configure the "
@@ -182,7 +202,7 @@ KDModule::KDModule(QWidget *parent, const QVariantList &)
         kWarning() << "user(s) '" << tgmapci.value().join(",")
                    << "' have unknown GID " << tgmapci.key() << endl;
 
-    config = new KConfig(QString::fromLatin1(KDE_CONFDIR "/kdm/kdmrc"), KConfig::SimpleConfig);
+    config = createTempConfig();
 
     QVBoxLayout *top = new QVBoxLayout(this);
     top->setMargin(0);
@@ -207,7 +227,7 @@ KDModule::KDModule(QWidget *parent, const QVariantList &)
 
     background_stack = new QStackedWidget(this);
     tab->addTab(background_stack, i18n("&Background"));
-    background = new KBackground(background_stack);
+    background = new KBackground(createBackgroundTempConfig(), background_stack);
     background_stack->addWidget(background);
     connect(background, SIGNAL(changed()), SLOT(changed()));
     lbl = new QLabel(
@@ -250,21 +270,55 @@ KDModule::KDModule(QWidget *parent, const QVariantList &)
             convenience, SLOT(slotDelUsers(const QMap<QString, int> &)));
     connect(this, SIGNAL(clearUsers()), convenience, SLOT(slotClearUsers()));
 
-    if (getuid() != 0 || !config->isConfigWritable(true)) {
-        general->makeReadOnly();
-        dialog->makeReadOnly();
-        background->makeReadOnly();
-        theme->makeReadOnly();
-        users->makeReadOnly();
-        sessions->makeReadOnly();
-        convenience->makeReadOnly();
-    }
     top->addWidget(tab);
+
+    setNeedsAuthorization(true);
+}
+
+KConfig *KDModule::createTempConfig()
+{
+    pTempConfigFile = new KTemporaryFile;
+    pTempConfigFile->open();
+    QString tempConfigName = pTempConfigFile->fileName();
+
+    KConfig *pSystemKDMConfig = new KConfig(
+        QString::fromLatin1(KDE_CONFDIR "/kdm/kdmrc"), KConfig::SimpleConfig);
+
+    KConfig *pTempConfig = pSystemKDMConfig->copyTo(tempConfigName);
+    pTempConfig->sync();
+
+    QFile::setPermissions(tempConfigName,
+                          pTempConfigFile->permissions() | QFile::ReadOther);
+
+    return pTempConfig;
+}
+
+KSharedConfigPtr KDModule::createBackgroundTempConfig()
+{
+    pBackgroundTempConfigFile = new KTemporaryFile;
+    pBackgroundTempConfigFile->open();
+    QString tempBackgroundConfigName = pBackgroundTempConfigFile->fileName();
+
+    QString systemBackgroundConfigName =
+        config->group("X-*-Greeter").readEntry(
+            "BackgroundCfg", KDE_CONFDIR "/kdm/backgroundrc");
+
+    KConfig systemBackgroundConfig(systemBackgroundConfigName);
+    KSharedConfigPtr pTempConfig = KSharedConfig::openConfig(tempBackgroundConfigName);
+    systemBackgroundConfig.copyTo(tempBackgroundConfigName, pTempConfig.data());
+    pTempConfig->sync();
+
+    QFile::setPermissions(tempBackgroundConfigName,
+                          pBackgroundTempConfigFile->permissions() | QFile::ReadOther);
+
+    return pTempConfig;
 }
 
 KDModule::~KDModule()
 {
     delete config;
+    delete pBackgroundTempConfigFile;
+    delete pTempConfigFile;
 }
 
 void KDModule::load()
@@ -293,21 +347,46 @@ void KDModule::save()
     convenience->save();
     config->sync();
 
+    QVariantMap helperargs;
+    helperargs["tempkdmrcfile"] = config->name();
+    helperargs["tempbackgroundrcfile"] = pBackgroundTempConfigFile->fileName();
+
+    KAuth::Action *pAction = authAction();
+    pAction->setArguments(helperargs);
+    KAuth::ActionReply reply = pAction->execute();
+
+    switch (handleActionReply(this, reply)) {
+    case Helper::KdmrcInstallError:
+        KMessageBox::error(this,
+            i18n("Unable to install new kdmrc file from\n%1",
+                 config->name()));
+        break;
+    case Helper::BackgroundrcInstallError:
+        KMessageBox::error(this,
+            i18n("Unable to install new backgroundrc file from\n%1",
+                 pBackgroundTempConfigFile->fileName()));
+        break;
+    case Helper::KdmrcInstallError | Helper::BackgroundrcInstallError:
+        KMessageBox::error(this,
+            i18n("Unable to install new kdmrc file from\n%1"
+                 "\nand new backgroundrc file from\n%2",
+                 config->name(), pBackgroundTempConfigFile->fileName()));
+        break;
+    }
+
     emit changed(false);
 }
 
 void KDModule::defaults()
 {
-    if (getuid() == 0) {
-        general->defaults();
-        dialog->defaults();
-        background->defaults();
-        theme->defaults();
-        users->defaults();
-        sessions->defaults();
-        convenience->defaults();
-        propagateUsers();
-    }
+    general->defaults();
+    dialog->defaults();
+    background->defaults();
+    theme->defaults();
+    users->defaults();
+    sessions->defaults();
+    convenience->defaults();
+    propagateUsers();
 }
 
 void KDModule::propagateUsers()

@@ -67,7 +67,6 @@ step(int &p, int d)
 
 Positioner::Positioner(QWidget *parent)
     : ScreenPreviewWidget(parent)
-    , m_readOnly(false)
     , m_x(50)
     , m_y(50)
 {
@@ -172,7 +171,7 @@ void
 Positioner::mousePressEvent(QMouseEvent *event)
 {
     QPoint cp = event->pos() - m_screen->pos();
-    if (!m_readOnly && m_ptr->geometry().contains(cp))
+    if (m_ptr->geometry().contains(cp))
         m_delta = m_ptr->geometry().center() - cp;
     else
         m_delta.setX(-1);

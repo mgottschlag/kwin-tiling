@@ -38,13 +38,13 @@ class KDMThemeWidget : public QWidget {
     void load();
     void save();
     void defaults();
-    void makeReadOnly();
 
   private:
     void selectTheme(const QString &);
     void insertTheme(const QString &);
     void removeTheme(const QString &);
     void updateInfoView(ThemeData *);
+    void checkThemesDir();
     QTreeWidget *themeWidget;
     QLabel *preview;
     QLabel *info;

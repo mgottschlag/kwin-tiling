@@ -19,12 +19,15 @@
 
 #include "kdm-users.h"
 
+#include "helper.h"
+
 #include <KUrl>
 #include <KComboBox>
 #include <KIconDialog>
 #include <KLineEdit>
 #include <KLocale>
 #include <KMessageBox>
+#include <KTemporaryFile>
 #include <KConfig>
 #include <KConfigGroup>
 #include <KStandardDirs>
@@ -57,8 +60,25 @@
 
 extern KConfig *config;
 
+extern int handleActionReply(QWidget *parent, const KAuth::ActionReply &reply);
+
+static int executeFaceAction(QWidget *parent, const QVariantMap &helperargs)
+{
+    parent->setEnabled(false);
+
+    KAuth::Action action("org.kde.kcontrol.kcmkdm.managefaces");
+    action.setHelperID("org.kde.kcontrol.kcmkdm");
+    action.setArguments(helperargs);
+
+    KAuth::ActionReply reply = action.execute();
+
+    parent->setEnabled(true);
+
+    return handleActionReply(parent, reply);
+}
+
 KDMUsersWidget::KDMUsersWidget(QWidget *parent)
-    : QWidget(parent), m_readOnly(false)
+    : QWidget(parent)
 {
 #ifdef __linux__
     struct stat st;
@@ -83,14 +103,10 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent)
     defmaxuid = "65000";
 #endif
 
-    // We assume that $kde_datadir/kdm exists, but better check for pics/ and pics/users,
-    // and create them if necessary.
     m_userPixDir = config->group("X-*-Greeter").readEntry("FaceDir",
             KStandardDirs::installPath("data") + "kdm/faces") + '/';
-    QDir testDir(m_userPixDir);
-    if (!testDir.exists() && !testDir.mkdir(testDir.absolutePath()) && !geteuid())
-        KMessageBox::sorry(this, i18n("Unable to create folder %1", testDir.absolutePath()));
-    if (!getpwnam("nobody") && !geteuid())
+
+    if (!getpwnam("nobody"))
         KMessageBox::sorry(this, i18n(
             "User 'nobody' does not exist. "
             "Displaying user images will not work in KDM."));
@@ -267,31 +283,11 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent)
     rLayout->addWidget(faceGroup);
     rLayout->addWidget(picGroup);
     rLayout->addStretch(1);
-
-}
-
-void KDMUsersWidget::makeReadOnly()
-{
-    m_readOnly = true;
-    leminuid->setReadOnly(true);
-    lemaxuid->setReadOnly(true);
-    cbshowlist->setEnabled(false);
-    cbcomplete->setEnabled(false);
-    cbinverted->setEnabled(false);
-    cbusrsrt->setEnabled(false);
-    rbadmonly->setEnabled(false);
-    rbprefadm->setEnabled(false);
-    rbprefusr->setEnabled(false);
-    rbusronly->setEnabled(false);
-    wstack->setEnabled(false);
-    disconnect(userbutton, SIGNAL(clicked()), this, SLOT(slotUserButtonClicked()));
-    userbutton->setAcceptDrops(false);
-    rstuserbutton->setEnabled(false);
 }
 
 void KDMUsersWidget::slotShowOpts()
 {
-    bool en = !m_readOnly && (cbshowlist->isChecked() || cbcomplete->isChecked());
+    bool en = cbshowlist->isChecked() || cbcomplete->isChecked();
     cbinverted->setEnabled(en);
     cbusrsrt->setEnabled(en);
     wstack->setEnabled(en);
@@ -308,7 +304,7 @@ void KDMUsersWidget::slotShowOpts()
 
 void KDMUsersWidget::slotFaceOpts()
 {
-    bool en = !m_readOnly && !rbusronly->isChecked();
+    bool en = !rbusronly->isChecked();
     usercombo->setEnabled(en);
     userbutton->setEnabled(en);
     if (en)
@@ -322,7 +318,7 @@ void KDMUsersWidget::slotUserSelected()
     QString user = usercombo->currentText();
     QImage p;
     if (user != m_defaultText && p.load(m_userPixDir + user + ".face.icon"))
-        rstuserbutton->setEnabled(!getuid());
+        rstuserbutton->setEnabled(true);
     else {
         p.load(m_userPixDir + ".default.face.icon");
         rstuserbutton->setEnabled(false);
@@ -331,9 +327,25 @@ void KDMUsersWidget::slotUserSelected()
 }
 
 
+void KDMUsersWidget::checkFacesDir()
+{
+    QDir testDir(m_userPixDir);
+    if (!testDir.exists()) {
+        QVariantMap helperargs;
+        helperargs["subaction"] = Helper::CreateFacesDir;
+
+        if (executeFaceAction(parentWidget(), helperargs))
+            KMessageBox::sorry(this,
+                i18n("Unable to create folder %1", testDir.absolutePath()));
+    }
+}
+
 void KDMUsersWidget::changeUserPix(const QString &pix)
 {
     QString user(usercombo->currentText());
+
+    checkFacesDir();
+
     if (user == m_defaultText) {
         user = ".default";
         if (KMessageBox::questionYesNo(this, i18n("Save image as default?"),
@@ -345,15 +357,27 @@ void KDMUsersWidget::changeUserPix(const QString &pix)
     QImage p(pix);
     if (p.isNull()) {
         KMessageBox::sorry(this,
-            i18n("There was an error loading the image\n%1", pix));
+            i18n("There was an error while loading the image\n%1", pix));
         return;
     }
 
     p = p.scaled(48, 48, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    QString userpix = m_userPixDir + user + ".face.icon";
-    if (!p.save(userpix, "PNG"))
-        KMessageBox::sorry(this,
-            i18n("There was an error saving the image:\n%1", userpix));
+
+    KTemporaryFile sourceFile;
+    sourceFile.open();
+    QString source = sourceFile.fileName();
+    p.save(source, "PNG");
+    QFile::setPermissions(source, sourceFile.permissions() | QFile::ReadOther);
+
+    QVariantMap helperargs;
+    helperargs["subaction"] = Helper::InstallFace;
+    helperargs["user"] = user;
+    helperargs["sourcefile"] = source;
+
+    if (executeFaceAction(parentWidget(), helperargs))
+        KMessageBox::error(this,
+            i18n("There was an error while saving the image:\n%1",
+                 m_userPixDir + user + ".face.icon"));
 
     slotUserSelected();
 }
@@ -371,7 +395,19 @@ void KDMUsersWidget::slotUserButtonClicked()
 
 void KDMUsersWidget::slotUnsetUserPix()
 {
-    QFile::remove(m_userPixDir + usercombo->currentText() + ".face.icon");
+    QString user(usercombo->currentText());
+
+    checkFacesDir();
+
+    QVariantMap helperargs;
+    helperargs["subaction"] = Helper::RemoveFace;
+    helperargs["user"] = user;
+
+    if (executeFaceAction(parentWidget(), helperargs))
+        KMessageBox::error(this,
+            i18n("There was an error while removing the image:\n%1",
+                 m_userPixDir + user + ".face.icon"));
+
     slotUserSelected();
 }
 

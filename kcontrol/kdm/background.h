@@ -20,13 +20,12 @@ class KBackground : public QWidget {
     Q_OBJECT
 
   public:
-    KBackground(QWidget *parent = 0);
+    KBackground(KSharedConfigPtr config, QWidget *parent = 0);
     ~KBackground();
 
     void load();
     void save();
     void defaults();
-    void makeReadOnly();
 
   Q_SIGNALS:
     void changed();
