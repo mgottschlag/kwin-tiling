@@ -68,7 +68,7 @@ prepareServerArgv( struct display *d, const char *args )
 		exit( 47 );
 
 	if (!changeUser( d->serverUID, d->authFile ))
-		exit( 49 );
+		exit( 47 );
 
 	return argv;
 }
