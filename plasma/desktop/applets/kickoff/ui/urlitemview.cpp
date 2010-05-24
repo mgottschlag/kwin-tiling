@@ -23,12 +23,14 @@
 // Qt
 #include <QtCore/QHash>
 #include <QtCore/QPersistentModelIndex>
+#include <QtCore/QUrl>
 
 #include <QtGui/QMouseEvent>
 #include <QtGui/QPainter>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QScrollBar>
 #include <QtGui/QToolTip>
+
 
 // KDE
 #include <KDebug>
@@ -675,6 +677,10 @@ void UrlItemView::dropEvent(QDropEvent *event)
         int row;
         QPoint pos = event->pos();
         QModelIndex parent = indexAt(pos);
+
+        if (!parent.isValid()) {
+            return;
+        }
         const QRect rect = visualRect(parent);
 
         row = parent.row();

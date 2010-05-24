@@ -29,6 +29,7 @@
 // KDE
 #include <KConfigGroup>
 #include <KService>
+#include <KDesktopFile>
 #include <kdebug.h>
 
 using namespace Kickoff;
@@ -265,9 +266,9 @@ bool FavoritesModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
     if (action == Qt::MoveAction) {
         QModelIndex modelIndex;
         QStandardItem *startItem;
-        int startRow = 0, destRow;
+        int startRow = -1;
 
-        destRow = row;
+        int destRow = row;
 
         // look for the favorite that was dragged
         for (int i = 0; i < d->headerItem->rowCount(); i++) {
@@ -277,6 +278,25 @@ bool FavoritesModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
                 startRow = i;
                 break;
             }
+        }
+
+        if (startRow < 0) {
+            bool dropped = false;
+            foreach (const QUrl &url, data->urls()) {
+                if (!url.isValid()) {
+                    continue;
+                }
+                const QString path = url.toLocalFile();
+                if (!KDesktopFile::isDesktopFile(path)) {
+                    continue;
+                }
+                KDesktopFile dFile(path);
+                if (dFile.hasApplicationType() && !dFile.noDisplay()) {
+                    FavoritesModel::add(path);
+                    dropped = true;
+                }
+            }
+            return dropped;
         }
 
         if (destRow < 0)
