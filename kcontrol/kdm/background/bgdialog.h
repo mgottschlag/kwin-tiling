@@ -31,80 +31,78 @@
 class BGMonitorArrangement;
 class KStandardDirs;
 
-class BGDialog_UI : public QWidget, public Ui::BGDialog_UI
-{
+class BGDialog_UI : public QWidget, public Ui::BGDialog_UI {
 public:
-  BGDialog_UI( QWidget *parent ) : QWidget( parent ) {
-    setupUi( this );
-  }
+    BGDialog_UI(QWidget *parent) : QWidget(parent) {
+        setupUi(this);
+    }
 };
 
-class BGDialog : public BGDialog_UI
-{
-   Q_OBJECT
+class BGDialog : public BGDialog_UI {
+    Q_OBJECT
 public:
-   BGDialog(QWidget* parent, const KSharedConfigPtr & _config);
-   ~BGDialog();
+    BGDialog(QWidget *parent, const KSharedConfigPtr &_config);
+    ~BGDialog();
 
-   void load();
-   void save();
-   void defaults();
+    void load();
+    void save();
+    void defaults();
 
-   void makeReadOnly();
+    void makeReadOnly();
 
-   QString quickHelp() const;
+    QString quickHelp() const;
 
 Q_SIGNALS:
-   void changed(bool);
+    void changed(bool);
 
 protected:
-   void initUI();
-   void updateUI();
-   KBackgroundRenderer * eRenderer();
+    void initUI();
+    void updateUI();
+    KBackgroundRenderer *eRenderer();
 
-   void setWallpaper(const QString &);
+    void setWallpaper(const QString &);
 
-   void loadWallpaperFilesList();
+    void loadWallpaperFilesList();
 
 protected Q_SLOTS:
-   void slotIdentifyScreens();
-   void slotSelectScreen(int screen);
-   void slotWallpaperTypeChanged(int i);
-   void slotWallpaper(int i);
-   void slotWallpaperPos(int);
-   void slotWallpaperSelection();
-   void slotSetupMulti();
-   void slotPrimaryColor(const QColor &color);
-   void slotSecondaryColor(const QColor &color);
-   void slotPattern(int pattern);
-   void slotImageDropped(const QString &uri);
-   void slotPreviewDone(int screen);
-   void slotAdvanced();
-   void slotGetNewStuff();
-   void slotBlendMode(int mode);
-   void slotBlendBalance(int value);
-   void slotBlendReverse(bool b);
-   void desktopResized();
-   void setBlendingEnabled(bool);
+    void slotIdentifyScreens();
+    void slotSelectScreen(int screen);
+    void slotWallpaperTypeChanged(int i);
+    void slotWallpaper(int i);
+    void slotWallpaperPos(int);
+    void slotWallpaperSelection();
+    void slotSetupMulti();
+    void slotPrimaryColor(const QColor &color);
+    void slotSecondaryColor(const QColor &color);
+    void slotPattern(int pattern);
+    void slotImageDropped(const QString &uri);
+    void slotPreviewDone(int screen);
+    void slotAdvanced();
+    void slotGetNewStuff();
+    void slotBlendMode(int mode);
+    void slotBlendBalance(int value);
+    void slotBlendReverse(bool b);
+    void desktopResized();
+    void setBlendingEnabled(bool);
 
 protected:
-   void getEScreen();
-   KGlobalBackgroundSettings *m_pGlobals;
-   KStandardDirs *m_pDirs;
+    void getEScreen();
+    KGlobalBackgroundSettings *m_pGlobals;
+    KStandardDirs *m_pDirs;
 
-   unsigned m_numScreens;
-   int m_screen;
-   int m_eScreen;
-   QVector<KBackgroundRenderer*> m_renderer; // m_renderer[screen]
-   QMap<QString,int> m_wallpaper;
-   QStringList m_patterns;
-   int m_slideShowRandom; // Remembers last Slide Show setting
-   int m_wallpaperPos; // Remembers last wallpaper pos
+    unsigned m_numScreens;
+    int m_screen;
+    int m_eScreen;
+    QVector<KBackgroundRenderer *> m_renderer; // m_renderer[screen]
+    QMap<QString, int> m_wallpaper;
+    QStringList m_patterns;
+    int m_slideShowRandom; // Remembers last Slide Show setting
+    int m_wallpaperPos; // Remembers last wallpaper pos
 
-   BGMonitorArrangement * m_pMonitorArrangement;
+    BGMonitorArrangement *m_pMonitorArrangement;
 
-   bool m_previewUpdates;
-   bool m_copyAllScreens;
+    bool m_previewUpdates;
+    bool m_copyAllScreens;
     bool m_readOnly;
 };
 

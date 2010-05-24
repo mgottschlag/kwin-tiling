@@ -32,12 +32,11 @@ class BGMonitor;
 class QPixmap;
 class ScreenPreviewWidget;
 
-  /**
+/**
  * This class arranges and resizes a set of monitor images according to the
  * monitor geometries.
  */
-class BGMonitorArrangement : public QWidget
-{
+class BGMonitorArrangement : public QWidget {
     Q_OBJECT
 public:
     BGMonitorArrangement(QWidget *parent);
@@ -46,27 +45,26 @@ public:
      * Splits up the pixmap according to monitor geometries and sets each
      * BGMonitor pixmap accordingly.
      */
-    void setPixmap( const QPixmap & pm );
+    void setPixmap(const QPixmap &pm);
     QSize combinedPreviewSize() const { return m_combinedPreviewSize; }
     QSize maxPreviewSize() const { return m_maxPreviewSize; }
     unsigned numMonitors() const { return m_pBGMonitor.size(); }
 
-    ScreenPreviewWidget * monitor( unsigned screen ) const;
+    ScreenPreviewWidget *monitor(unsigned screen) const;
     void updateArrangement();
 
 signals:
     void imageDropped(const QString &);
 
 protected:
-    virtual void resizeEvent( QResizeEvent * );
-    QRect expandToPreview( const QRect &r ) const;
-    QSize expandToPreview( const QSize &s ) const;
-    QPoint expandToPreview( const QPoint &p ) const;
+    virtual void resizeEvent(QResizeEvent *);
+    QRect expandToPreview(const QRect &r) const;
+    QSize expandToPreview(const QSize &s) const;
+    QPoint expandToPreview(const QPoint &p) const;
 
-    QVector<ScreenPreviewWidget*> m_pBGMonitor;
+    QVector<ScreenPreviewWidget *> m_pBGMonitor;
     QSize m_combinedPreviewSize;
     QSize m_maxPreviewSize;
 };
-
 
 #endif

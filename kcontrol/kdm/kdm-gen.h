@@ -28,40 +28,37 @@ class KLanguageButton;
 class QCheckBox;
 
 class KDMGeneralWidget : public QWidget {
-	Q_OBJECT
+    Q_OBJECT
 
   public:
-	KDMGeneralWidget( QWidget *parent = 0 );
+    KDMGeneralWidget(QWidget *parent = 0);
 
-	void load();
-	void save();
-	void defaults();
-	void makeReadOnly();
+    void load();
+    void save();
+    void defaults();
+    void makeReadOnly();
 
-	void loadColorSchemes( KBackedComboBox *combo );
-	void loadGuiStyles( KBackedComboBox *combo );
+    void loadColorSchemes(KBackedComboBox *combo);
+    void loadGuiStyles(KBackedComboBox *combo);
 
   Q_SIGNALS:
-	void changed();
-	void useThemeChanged( bool );
+    void changed();
+    void useThemeChanged(bool);
 
   protected Q_SLOTS:
-	void slotUseThemeChanged();
+    void slotUseThemeChanged();
 
   private:
-	void set_def();
+    void set_def();
 
-	QCheckBox *useThemeCheck;
-	KBackedComboBox *guicombo;
-	KBackedComboBox *colcombo;
-	KLanguageButton *langcombo;
-	QCheckBox *aacb;
-	KFontRequester *greetingFontChooser;
-	KFontRequester *failFontChooser;
-	KFontRequester *stdFontChooser;
+    QCheckBox *useThemeCheck;
+    KBackedComboBox *guicombo;
+    KBackedComboBox *colcombo;
+    KLanguageButton *langcombo;
+    QCheckBox *aacb;
+    KFontRequester *greetingFontChooser;
+    KFontRequester *failFontChooser;
+    KFontRequester *stdFontChooser;
 };
 
-
 #endif
-
-

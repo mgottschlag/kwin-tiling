@@ -40,47 +40,46 @@ class QStackedWidget;
 class QTabWidget;
 
 class KDModule : public KCModule {
-	Q_OBJECT
+    Q_OBJECT
 
   public:
-	KDModule( QWidget *parent, const QVariantList & );
-	~KDModule();
+    KDModule(QWidget *parent, const QVariantList &);
+    ~KDModule();
 
-	void load();
-	void save();
-	void defaults();
+    void load();
+    void save();
+    void defaults();
 
   public Q_SLOTS:
-	void slotMinMaxUID( int min, int max );
-	void slotUseThemeChanged( bool use );
+    void slotMinMaxUID(int min, int max);
+    void slotUseThemeChanged(bool use);
 
   Q_SIGNALS:
-	void clearUsers();
-	void addUsers( const QMap<QString,int> & );
-	void delUsers( const QMap<QString,int> & );
+    void clearUsers();
+    void addUsers(const QMap<QString, int> &);
+    void delUsers(const QMap<QString, int> &);
 
   private:
-	QTabWidget *tab;
+    QTabWidget *tab;
 
-	KDMGeneralWidget *general;
-	KDMDialogWidget *dialog;
-	KBackground *background;
-	KDMThemeWidget *theme;
-	KDMSessionsWidget *sessions;
-	KDMUsersWidget *users;
-	KDMConvenienceWidget *convenience;
-	QStackedWidget *dialog_stack;
-	QStackedWidget *background_stack;
-	QStackedWidget *theme_stack;
+    KDMGeneralWidget *general;
+    KDMDialogWidget *dialog;
+    KBackground *background;
+    KDMThemeWidget *theme;
+    KDMSessionsWidget *sessions;
+    KDMUsersWidget *users;
+    KDMConvenienceWidget *convenience;
+    QStackedWidget *dialog_stack;
+    QStackedWidget *background_stack;
+    QStackedWidget *theme_stack;
 
-	QMap<QString, QPair<int,QStringList> > usermap;
-	QMap<QString,int> groupmap;
-	int minshowuid, maxshowuid;
-	bool updateOK;
+    QMap<QString, QPair<int, QStringList> > usermap;
+    QMap<QString, int> groupmap;
+    int minshowuid, maxshowuid;
+    bool updateOK;
 
-	void propagateUsers();
+    void propagateUsers();
 
 };
 
 #endif
-

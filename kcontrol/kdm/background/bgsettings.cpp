@@ -40,7 +40,7 @@ static int BGHash(const QString &key)
 {
     int g, h = 0;
     const QChar *p = key.unicode();
-    for (int i=0; i < key.length(); i++) {
+    for (int i = 0; i < key.length(); i++) {
         h = (h << 4) + p[i].cell();
         if ((g = (h & 0xf0000000)))
             h ^= (g >> 24);
@@ -137,7 +137,7 @@ void KBackgroundPattern::readSettings()
     m_Pattern = group.readEntry("File");
     m_Comment = group.readEntry("Comment");
     if (m_Comment.isEmpty())
-       m_Comment = m_File.mid(m_File.lastIndexOf('/')+1);
+        m_Comment = m_File.mid(m_File.lastIndexOf('/') + 1);
 }
 
 
@@ -148,7 +148,7 @@ void KBackgroundPattern::writeSettings()
     if (m_bReadOnly)
         init(true);
 
-    if ( !m_pConfig )
+    if (!m_pConfig)
         return; // better safe than sorry
 
     KConfigGroup group = m_pConfig->group("KDE Desktop Pattern");
@@ -162,7 +162,7 @@ void KBackgroundPattern::writeSettings()
 bool KBackgroundPattern::isAvailable()
 {
     if (m_Pattern.isEmpty())
-       return false;
+        return false;
     QString file = m_Pattern;
     if (file.at(0) != '/')
         file = m_pDirs->findResource("dtop_pattern", file);
@@ -188,8 +188,8 @@ QString KBackgroundPattern::fingerprint()
 int KBackgroundPattern::hash()
 {
     if (hashdirty) {
-	m_Hash = BGHash(fingerprint());
-	hashdirty = false;
+        m_Hash = BGHash(fingerprint());
+        hashdirty = false;
     }
     return m_Hash;
 }
@@ -203,11 +203,11 @@ QStringList KBackgroundPattern::list()
     QStringList lst = dirs->findAllResources("dtop_pattern", "*.desktop",
                                              KStandardDirs::NoDuplicates);
     QStringList::Iterator it;
-    for (it=lst.begin(); it!=lst.end(); ++it) {
+    for (it = lst.begin(); it != lst.end(); ++it) {
         // Strip path and suffix
         int pos = (*it).lastIndexOf('/');
         if (pos != -1)
-            (*it) = (*it).mid(pos+1);
+            (*it) = (*it).mid(pos + 1);
         pos = (*it).lastIndexOf('.');
         if (pos != -1)
             (*it) = (*it).left(pos);
@@ -349,7 +349,7 @@ void KBackgroundProgram::writeSettings()
     if (m_bReadOnly)
         init(true);
 
-    if ( !m_pConfig )
+    if (!m_pConfig)
         return; // better safe than sorry
 
     KConfigGroup group = m_pConfig->group("KDE Desktop Program");
@@ -379,7 +379,7 @@ bool KBackgroundProgram::remove()
 
 bool KBackgroundProgram::needUpdate()
 {
-    return (m_LastChange + 60*m_Refresh <= time(0L));
+    return (m_LastChange + 60 * m_Refresh <= time(0L));
 }
 
 
@@ -398,8 +398,8 @@ QString KBackgroundProgram::fingerprint()
 int KBackgroundProgram::hash()
 {
     if (hashdirty) {
-	m_Hash = BGHash(fingerprint());
-	hashdirty = false;
+        m_Hash = BGHash(fingerprint());
+        hashdirty = false;
     }
     return m_Hash;
 }
@@ -413,11 +413,11 @@ QStringList KBackgroundProgram::list()
     QStringList lst = dirs->findAllResources("dtop_program", "*.desktop",
                                              KStandardDirs::NoDuplicates);
     QStringList::Iterator it;
-    for (it=lst.begin(); it!=lst.end(); ++it) {
+    for (it = lst.begin(); it != lst.end(); ++it) {
         // Strip path and suffix
         int pos = (*it).lastIndexOf('/');
         if (pos != -1)
-            (*it) = (*it).mid(pos+1);
+            (*it) = (*it).mid(pos + 1);
         pos = (*it).lastIndexOf('.');
         if (pos != -1)
             (*it) = (*it).left(pos);
@@ -433,8 +433,9 @@ KBackgroundSettings::KBackgroundSettings(int screen, bool drawBackgroundPerScree
     : KBackgroundPattern(),
       KBackgroundProgram()
 {
-    dirty = false; hashdirty = true;
-	m_bDrawBackgroundPerScreen = drawBackgroundPerScreen;
+    dirty = false;
+    hashdirty = true;
+    m_bDrawBackgroundPerScreen = drawBackgroundPerScreen;
     m_Screen = screen;
     m_bEnabled = true;
 
@@ -549,7 +550,7 @@ void KBackgroundSettings::load(int screen, bool drawBackgroundPerScreen, bool re
 }
 
 
-void KBackgroundSettings::setColorA(const QColor& color)
+void KBackgroundSettings::setColorA(const QColor &color)
 {
     if (m_ColorA == color)
         return;
@@ -558,7 +559,7 @@ void KBackgroundSettings::setColorA(const QColor& color)
 }
 
 
-void KBackgroundSettings::setColorB(const QColor& color)
+void KBackgroundSettings::setColorB(const QColor &color)
 {
     if (m_ColorB == color)
         return;
@@ -572,7 +573,7 @@ void KBackgroundSettings::setPatternName(const QString &name)
     int ohash = KBackgroundPattern::hash();
     KBackgroundPattern::load(name);
     if (ohash == KBackgroundPattern::hash())
-	return;
+        return;
 
     dirty = hashdirty = true;
     return;
@@ -584,7 +585,7 @@ void KBackgroundSettings::setProgram(const QString &name)
     int ohash = KBackgroundProgram::hash();
     KBackgroundProgram::load(name);
     if (ohash == KBackgroundProgram::hash())
-	return;
+        return;
 
     dirty = hashdirty = true;
     return;
@@ -594,7 +595,7 @@ void KBackgroundSettings::setProgram(const QString &name)
 void KBackgroundSettings::setBackgroundMode(int mode)
 {
     if (m_BackgroundMode == mode)
-	return;
+        return;
     dirty = hashdirty = true;
     m_BackgroundMode = mode;
 }
@@ -602,7 +603,7 @@ void KBackgroundSettings::setBackgroundMode(int mode)
 void KBackgroundSettings::setBlendMode(int mode)
 {
     if (m_BlendMode == mode)
-	return;
+        return;
     dirty = hashdirty = true;
     m_BlendMode = mode;
 }
@@ -610,7 +611,7 @@ void KBackgroundSettings::setBlendMode(int mode)
 void KBackgroundSettings::setBlendBalance(int value)
 {
     if (m_BlendBalance == value)
-	return;
+        return;
     dirty = hashdirty = true;
     m_BlendBalance = value;
 }
@@ -618,7 +619,7 @@ void KBackgroundSettings::setBlendBalance(int value)
 void KBackgroundSettings::setReverseBlending(bool value)
 {
     if (m_ReverseBlending == value)
-	return;
+        return;
     dirty = hashdirty = true;
     m_ReverseBlending = value;
 }
@@ -646,15 +647,14 @@ void KBackgroundSettings::setWallpaperList(const QStringList &list)
 {
     KStandardDirs *d = KGlobal::dirs();
     if (m_WallpaperList == list)
-	return;
+        return;
 
     dirty = hashdirty = true;
     m_WallpaperList.clear();
-    for(QStringList::ConstIterator it = list.begin();
-        it != list.end(); ++it)
-    {
-       QString rpath = d->relativeLocation("wallpaper", *it);
-       m_WallpaperList.append( !rpath.isEmpty() ? rpath : *it );
+    for (QStringList::ConstIterator it = list.begin();
+            it != list.end(); ++it) {
+        QString rpath = d->relativeLocation("wallpaper", *it);
+        m_WallpaperList.append(!rpath.isEmpty() ? rpath : *it);
     }
     updateWallpaperFiles();
     // Try to keep the current wallpaper (-1 to set position to one before it)
@@ -666,7 +666,7 @@ void KBackgroundSettings::setWallpaperList(const QStringList &list)
 void KBackgroundSettings::setWallpaperChangeInterval(int interval)
 {
     if (m_Interval == interval)
-	return;
+        return;
     dirty = hashdirty = true;
     m_Interval = interval;
 }
@@ -675,7 +675,7 @@ void KBackgroundSettings::setWallpaperChangeInterval(int interval)
 void KBackgroundSettings::setMultiWallpaperMode(int mode)
 {
     if (m_MultiMode == mode)
-	return;
+        return;
     dirty = hashdirty = true;
     m_MultiMode = mode;
     changeWallpaper(true);
@@ -685,31 +685,30 @@ void KBackgroundSettings::setMultiWallpaperMode(int mode)
 void KBackgroundSettings::setMinOptimizationDepth(int mode)
 {
     if (m_MinOptimizationDepth == mode)
-	return;
+        return;
     dirty = hashdirty = true;
     m_MinOptimizationDepth = mode;
 }
 
 bool KBackgroundSettings::optimize() const
 {
-    switch( m_MinOptimizationDepth )
-        {
-        case AlwaysOpt :
-            return true;
-        case Opt16bpp :
-            return QPixmap::defaultDepth() >= 16;
-        case Opt15bpp :
-            return QPixmap::defaultDepth() >= 15;
-        case NeverOpt :
-        default :
-            return false;
-        }
+    switch (m_MinOptimizationDepth) {
+    case AlwaysOpt :
+        return true;
+    case Opt16bpp :
+        return QPixmap::defaultDepth() >= 16;
+    case Opt15bpp :
+        return QPixmap::defaultDepth() >= 15;
+    case NeverOpt :
+    default :
+        return false;
+    }
 }
 
 void KBackgroundSettings::setUseShm(bool use)
 {
     if (m_bShm == use)
-	return;
+        return;
     dirty = hashdirty = true;
     m_bShm = use;
 }
@@ -747,25 +746,24 @@ void KBackgroundSettings::readSettings(bool reparse)
     if (m_BMMap.contains(s)) {
         int mode = m_BMMap[s];
         // consistency check
-        if  ( ((mode != Pattern) && (mode != Program)) ||
-              ((mode == Pattern) && !pattern().isEmpty()) ||
-              ((mode == Program) && !command().isEmpty())
-            )
+        if (((mode != Pattern) && (mode != Program)) ||
+                ((mode == Pattern) && !pattern().isEmpty()) ||
+                ((mode == Program) && !command().isEmpty()))
             m_BackgroundMode = mode;
     }
 
     m_BlendMode = defBlendMode;
     s = cg.readEntry("BlendMode", "invalid");
     if (m_BlMMap.contains(s)) {
-      m_BlendMode = m_BlMMap[s];
+        m_BlendMode = m_BlMMap[s];
     }
 
     m_BlendBalance = defBlendBalance;
-    int value = cg.readEntry( "BlendBalance", defBlendBalance);
+    int value = cg.readEntry("BlendBalance", defBlendBalance);
     if (value > -201 && value < 201)
-      m_BlendBalance = value;
+        m_BlendBalance = value;
 
-    m_ReverseBlending = cg.readEntry( "ReverseBlending", defReverseBlending );
+    m_ReverseBlending = cg.readEntry("ReverseBlending", defReverseBlending);
 
     // Multiple wallpaper config
     m_WallpaperList = cg.readPathEntry("WallpaperList", QStringList());
@@ -778,14 +776,14 @@ void KBackgroundSettings::readSettings(bool reparse)
     m_MultiMode = defMultiMode;
     s = cg.readEntry("MultiWallpaperMode");
     if (m_MMMap.contains(s)) {
-	int mode = m_MMMap[s];
-	m_MultiMode = mode;
+        int mode = m_MMMap[s];
+        m_MultiMode = mode;
     }
 
     updateWallpaperFiles();
-    if( !m_CurrentWallpaperName.isEmpty())
+    if (!m_CurrentWallpaperName.isEmpty())
         m_CurrentWallpaper = m_WallpaperFiles.indexOf(m_CurrentWallpaperName);
-    if(m_CurrentWallpaper < 0)
+    if (m_CurrentWallpaper < 0)
         m_CurrentWallpaper = 0;
 
     // Wallpaper mode (NoWallpaper, div. tilings)
@@ -799,11 +797,12 @@ void KBackgroundSettings::readSettings(bool reparse)
             m_WallpaperMode = mode;
     }
 
-    m_MinOptimizationDepth = cg.readEntry( "MinOptimizationDepth",
-        _defMinOptimizationDepth );
-    m_bShm = cg.readEntry( "UseSHM", _defShm );
+    m_MinOptimizationDepth = cg.readEntry("MinOptimizationDepth",
+                                          _defMinOptimizationDepth);
+    m_bShm = cg.readEntry("UseSHM", _defShm);
 
-    dirty = false; hashdirty = true;
+    dirty = false;
+    hashdirty = true;
 }
 
 
@@ -847,67 +846,65 @@ void KBackgroundSettings::updateWallpaperFiles()
 {
     QStringList::Iterator it;
     m_WallpaperFiles.clear();
-    for (it=m_WallpaperList.begin(); it!=m_WallpaperList.end(); ++it) {
+    for (it = m_WallpaperList.begin(); it != m_WallpaperList.end(); ++it) {
         QString file = KStandardDirs::locate("wallpaper", *it);
         if (file.isEmpty())
             continue;
-	QFileInfo fi(file);
-	if (!fi.exists())
-	    continue;
-	if (fi.isFile() && fi.isReadable())
-	    m_WallpaperFiles.append(file);
-	if (fi.isDir()) {
-	    QDir dir(file);
-	    QStringList lst = dir.entryList(QDir::Files | QDir::Readable);
-	    QStringList::Iterator it;
-	    for (it=lst.begin(); it!=lst.end(); ++it)
-	    {
-		file = dir.absoluteFilePath(*it);
-		QFileInfo fi(file);
-		if (fi.isFile() && fi.isReadable())
-		    m_WallpaperFiles.append(file);
-	    }
-	}
+        QFileInfo fi(file);
+        if (!fi.exists())
+            continue;
+        if (fi.isFile() && fi.isReadable())
+            m_WallpaperFiles.append(file);
+        if (fi.isDir()) {
+            QDir dir(file);
+            QStringList lst = dir.entryList(QDir::Files | QDir::Readable);
+            QStringList::Iterator it;
+            for (it = lst.begin(); it != lst.end(); ++it) {
+                file = dir.absoluteFilePath(*it);
+                QFileInfo fi(file);
+                if (fi.isFile() && fi.isReadable())
+                    m_WallpaperFiles.append(file);
+            }
+        }
     }
 
-   if (m_MultiMode == Random)
-       randomizeWallpaperFiles();
+    if (m_MultiMode == Random)
+        randomizeWallpaperFiles();
 }
 
 // Randomize the m_WallpaperFiles in a non-repeating method.
 void KBackgroundSettings::randomizeWallpaperFiles()
 {
-   if (m_WallpaperFiles.count() < 4)
-      return;
+    if (m_WallpaperFiles.count() < 4)
+        return;
 
-   KRandomSequence rseq;
-   QStringList tmpList = m_WallpaperFiles;
-   QStringList randomList;
-   randomList.append(tmpList.front());
-   tmpList.pop_front();
-   while(tmpList.count())
-   {
-      long t = rseq.getLong(randomList.count()+1);
-      randomList.insert(t, tmpList.front());
-      tmpList.pop_front();
-   }
-   m_WallpaperFiles = randomList;
+    KRandomSequence rseq;
+    QStringList tmpList = m_WallpaperFiles;
+    QStringList randomList;
+    randomList.append(tmpList.front());
+    tmpList.pop_front();
+    while (tmpList.count()) {
+        long t = rseq.getLong(randomList.count() + 1);
+        randomList.insert(t, tmpList.front());
+        tmpList.pop_front();
+    }
+    m_WallpaperFiles = randomList;
 }
 
 QStringList KBackgroundSettings::wallpaperList() const
 {
-    if ( m_WallpaperMode == NoWallpaper )
+    if (m_WallpaperMode == NoWallpaper)
         return QStringList();
-    if ( m_MultiMode == NoMulti || m_MultiMode == NoMultiRandom )
+    if (m_MultiMode == NoMulti || m_MultiMode == NoMultiRandom)
         return QStringList(m_Wallpaper);
     return m_WallpaperList;
 }
 
 QStringList KBackgroundSettings::wallpaperFiles() const
 {
-    if ( m_WallpaperMode == NoWallpaper )
+    if (m_WallpaperMode == NoWallpaper)
         return QStringList();
-    if ( m_MultiMode == NoMulti || m_MultiMode == NoMultiRandom )
+    if (m_MultiMode == NoMulti || m_MultiMode == NoMultiRandom)
         return QStringList(m_Wallpaper);
     return m_WallpaperFiles;
 }
@@ -918,8 +915,8 @@ QStringList KBackgroundSettings::wallpaperFiles() const
 void KBackgroundSettings::changeWallpaper(bool init)
 {
     if (m_WallpaperFiles.count() == 0) {
-        if( init ) {
-	    m_CurrentWallpaper = 0;
+        if (init) {
+            m_CurrentWallpaper = 0;
             m_CurrentWallpaperName = QString();
         }
         return;
@@ -927,22 +924,22 @@ void KBackgroundSettings::changeWallpaper(bool init)
 
     switch (m_MultiMode) {
     case InOrder:
-	m_CurrentWallpaper++;
-	if (init || (m_CurrentWallpaper >= (int) m_WallpaperFiles.count()))
-	    m_CurrentWallpaper = 0;
-	break;
+        m_CurrentWallpaper++;
+        if (init || (m_CurrentWallpaper >= (int) m_WallpaperFiles.count()))
+            m_CurrentWallpaper = 0;
+        break;
 
     case Random:
-      // Random: m_WallpaperFiles is randomized in a non-repeating
-      //  method.  Hence we just increment the index.
-      m_CurrentWallpaper++;
-      if (init || (m_CurrentWallpaper >= (int) m_WallpaperFiles.count())) {
-         m_CurrentWallpaper = 0;
-         randomizeWallpaperFiles(); // Get a new random-ordered list.
-      }
-	break;
+        // Random: m_WallpaperFiles is randomized in a non-repeating
+        //  method.  Hence we just increment the index.
+        m_CurrentWallpaper++;
+        if (init || (m_CurrentWallpaper >= (int) m_WallpaperFiles.count())) {
+            m_CurrentWallpaper = 0;
+            randomizeWallpaperFiles(); // Get a new random-ordered list.
+        }
+        break;
     default:
-	break;
+        break;
     }
 
     m_CurrentWallpaperName = m_WallpaperFiles[ m_CurrentWallpaper ];
@@ -959,20 +956,19 @@ void KBackgroundSettings::changeWallpaper(bool init)
 
 QString KBackgroundSettings::currentWallpaper() const
 {
-    if ( m_WallpaperMode == NoWallpaper )
-	return QString();
+    if (m_WallpaperMode == NoWallpaper)
+        return QString();
     if (m_MultiMode == NoMulti || m_MultiMode == NoMultiRandom)
-	return m_Wallpaper;
+        return m_Wallpaper;
     if (m_CurrentWallpaper >= 0 && m_CurrentWallpaper < (int) m_WallpaperFiles.count())
-	return m_WallpaperFiles[m_CurrentWallpaper];
+        return m_WallpaperFiles[m_CurrentWallpaper];
     return QString();
 }
 
 bool KBackgroundSettings::discardCurrentWallpaper()
 {
-    if (m_MultiMode == NoMulti || m_MultiMode == NoMultiRandom)
-    {
-       return false;
+    if (m_MultiMode == NoMulti || m_MultiMode == NoMultiRandom) {
+        return false;
     }
     m_WallpaperFiles.removeAll(m_WallpaperFiles.at(m_CurrentWallpaper));
     --m_CurrentWallpaper;
@@ -985,9 +981,9 @@ bool KBackgroundSettings::discardCurrentWallpaper()
 bool KBackgroundSettings::needWallpaperChange()
 {
     if (m_MultiMode == NoMulti || m_MultiMode == NoMultiRandom)
-	return false;
+        return false;
 
-    return ((m_LastChange + 60*m_Interval) <= time(0L));
+    return ((m_LastChange + 60 * m_Interval) <= time(0L));
 }
 
 
@@ -1008,7 +1004,7 @@ QString KBackgroundSettings::fingerprint()
         break;
     case Pattern:
         s += QString("ca:%1;cb:%2;pt:%3;").arg(m_ColorA.rgb())
-	     .arg(m_ColorB.rgb()).arg(KBackgroundPattern::hash());
+             .arg(m_ColorB.rgb()).arg(KBackgroundPattern::hash());
         break;
     default:
         s += QString("ca:%1;cb:%2;").arg(m_ColorA.rgb()).arg(m_ColorB.rgb());
@@ -1016,19 +1012,18 @@ QString KBackgroundSettings::fingerprint()
     }
 
     s += QString("wm:%1;").arg(m_WallpaperMode);
-    if (m_WallpaperMode != NoWallpaper)
-    {
+    if (m_WallpaperMode != NoWallpaper) {
         quint32 rh = KGlobal::dirs()->calcResourceHash("wallpaper", currentWallpaper(), false);
         s += QString("wp:%2:%1;").arg(rh).arg(currentWallpaper());
 
     }
     s += QString("blm:%1;").arg(m_BlendMode);
     if (m_BlendMode != NoBlending) {
-      s += QString("blb:%1;").arg(m_BlendBalance);
-      s += QString("rbl:%1;").arg(int(m_ReverseBlending));
+        s += QString("blb:%1;").arg(m_BlendBalance);
+        s += QString("rbl:%1;").arg(int(m_ReverseBlending));
     }
-    s += QString::number( m_bShm );
-    s += QString::number( m_MinOptimizationDepth );
+    s += QString::number(m_bShm);
+    s += QString::number(m_MinOptimizationDepth);
 
     return s;
 }
@@ -1038,18 +1033,18 @@ int KBackgroundSettings::hash()
 {
     if (hashdirty) {
         m_Hash = BGHash(fingerprint());
-	hashdirty = false;
+        hashdirty = false;
     }
     return m_Hash;
 }
 
 void KBackgroundSettings::setEnabled(const bool enable)
 {
-  if (m_bEnabled == enable)
-    return;
+    if (m_bEnabled == enable)
+        return;
 
-  m_bEnabled= enable;
-  hashdirty = true;
+    m_bEnabled = enable;
+    hashdirty = true;
 }
 
 /**** KGlobalBackgroundSettings ****/
@@ -1065,7 +1060,7 @@ KGlobalBackgroundSettings::KGlobalBackgroundSettings(const KSharedConfigPtr &_co
 void KGlobalBackgroundSettings::setCacheSize(int size)
 {
     if (size == m_CacheSize)
-	return;
+        return;
     dirty = true;
     m_CacheSize = size;
 }
@@ -1074,7 +1069,7 @@ void KGlobalBackgroundSettings::setCacheSize(int size)
 void KGlobalBackgroundSettings::setLimitCache(bool limit)
 {
     if (limit == m_bLimitCache)
-	return;
+        return;
     dirty = true;
     m_bLimitCache = limit;
 }
@@ -1088,7 +1083,7 @@ bool KGlobalBackgroundSettings::drawBackgroundPerScreen() const
 
 void KGlobalBackgroundSettings::setDrawBackgroundPerScreen(bool perScreen)
 {
-    if ( m_bDrawBackgroundPerScreen == perScreen )
+    if (m_bDrawBackgroundPerScreen == perScreen)
         return;
 
     dirty = true;
@@ -1099,14 +1094,14 @@ void KGlobalBackgroundSettings::setDrawBackgroundPerScreen(bool perScreen)
 void KGlobalBackgroundSettings::setCommonScreenBackground(bool common)
 {
     if (common == m_bCommonScreen)
-	return;
+        return;
     dirty = true;
     m_bCommonScreen = common;
 }
 
 void KGlobalBackgroundSettings::readSettings()
 {
-    const KConfigGroup common = m_pConfig->group( "Background Common");
+    const KConfigGroup common = m_pConfig->group("Background Common");
 
     m_bCommonScreen = common.readEntry("CommonScreen", _defCommonScreen);
     m_bLimitCache = common.readEntry("LimitCache", _defLimitCache);
@@ -1121,7 +1116,7 @@ void KGlobalBackgroundSettings::writeSettings()
     if (!dirty)
         return;
 
-    KConfigGroup common = m_pConfig->group( "Background Common");
+    KConfigGroup common = m_pConfig->group("Background Common");
     common.writeEntry("CommonScreen", m_bCommonScreen);
     common.writeEntry("LimitCache", m_bLimitCache);
     common.writeEntry("CacheSize", m_CacheSize);
@@ -1130,4 +1125,3 @@ void KGlobalBackgroundSettings::writeSettings()
     m_pConfig->sync();
     dirty = false;
 }
-

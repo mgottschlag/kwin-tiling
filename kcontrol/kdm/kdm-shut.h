@@ -30,32 +30,29 @@ class KUrlRequester;
 class QLabel;
 
 class KDMSessionsWidget : public QWidget {
-	Q_OBJECT
+    Q_OBJECT
 
   public:
-	KDMSessionsWidget(  QWidget *parent = 0 );
+    KDMSessionsWidget(QWidget *parent = 0);
 
-	void load();
-	void save();
-	void defaults();
-	void makeReadOnly();
+    void load();
+    void save();
+    void defaults();
+    void makeReadOnly();
 
-	enum SdModes { SdAll, SdRoot, SdNone };
+    enum SdModes { SdAll, SdRoot, SdNone };
 
   Q_SIGNALS:
-	void changed();
+    void changed();
 
   private:
-	void readSD( KComboBox *, const QString &, KConfigGroup group );
-	void writeSD( KComboBox *, KConfigGroup group );
+    void readSD(KComboBox *, const QString &, KConfigGroup group);
+    void writeSD(KComboBox *, KConfigGroup group);
 
-	KComboBox *sdlcombo, *sdrcombo;
-	QLabel *sdllabel, *sdrlabel;
-	KUrlRequester *restart_lined, *shutdown_lined;
-	KBackedComboBox *bm_combo;
+    KComboBox *sdlcombo, *sdrcombo;
+    QLabel *sdllabel, *sdrlabel;
+    KUrlRequester *restart_lined, *shutdown_lined;
+    KBackedComboBox *bm_combo;
 };
 
-
 #endif
-
-

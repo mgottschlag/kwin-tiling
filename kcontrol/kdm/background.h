@@ -17,32 +17,31 @@ class QCheckBox;
 class QLabel;
 
 class KBackground : public QWidget {
-	Q_OBJECT
+    Q_OBJECT
 
   public:
-	KBackground( QWidget *parent = 0 );
-	~KBackground();
+    KBackground(QWidget *parent = 0);
+    ~KBackground();
 
-	void load();
-	void save();
-	void defaults();
-	void makeReadOnly();
+    void load();
+    void save();
+    void defaults();
+    void makeReadOnly();
 
   Q_SIGNALS:
-	void changed();
+    void changed();
 
   private Q_SLOTS:
-	void slotEnableChanged();
+    void slotEnableChanged();
 
   private:
-	void init();
-	void apply();
+    void init();
+    void apply();
 
-	QCheckBox *m_pCBEnable;
-	QLabel *m_pMLabel;
-	KSharedConfigPtr m_simpleConf;
-	BGDialog *m_background;
+    QCheckBox *m_pCBEnable;
+    QLabel *m_pMLabel;
+    KSharedConfigPtr m_simpleConf;
+    BGDialog *m_background;
 };
-
 
 #endif // __Bgnd_h_Included__

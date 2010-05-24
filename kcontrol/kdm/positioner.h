@@ -26,38 +26,38 @@ class QFrame;
 class QLabel;
 
 class Positioner : public ScreenPreviewWidget {
-	Q_OBJECT
+    Q_OBJECT
 
   public:
-	Positioner( QWidget *parent );
-	void setPosition( int x, int y );
-	int x() const { return m_x; }
-	int y() const { return m_y; }
-	void makeReadOnly() { m_readOnly = true; }
+    Positioner(QWidget *parent);
+    void setPosition(int x, int y);
+    int x() const { return m_x; }
+    int y() const { return m_y; }
+    void makeReadOnly() { m_readOnly = true; }
 
   Q_SIGNALS:
-	void positionChanged();
+    void positionChanged();
 
   protected:
-	virtual void resizeEvent( QResizeEvent *event );
-	virtual void mousePressEvent( QMouseEvent *event );
-	virtual void mouseMoveEvent( QMouseEvent *event );
-	virtual void focusInEvent( QFocusEvent *event );
-	virtual void focusOutEvent( QFocusEvent *event );
-	virtual void keyPressEvent( QKeyEvent * event );
-	virtual int heightForWidth( int w ) const;
+    virtual void resizeEvent(QResizeEvent *event);
+    virtual void mousePressEvent(QMouseEvent *event);
+    virtual void mouseMoveEvent(QMouseEvent *event);
+    virtual void focusInEvent(QFocusEvent *event);
+    virtual void focusOutEvent(QFocusEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event);
+    virtual int heightForWidth(int w) const;
 
   private:
-	void updateHandle();
+    void updateHandle();
 
-	bool m_readOnly;
-	int m_x, m_y;
-	QPoint m_delta;
-	QFrame *m_frame;
-	QWidget *m_screen;
-	QFrame *m_dlg;
-	QLabel *m_ptr;
-	QPixmap m_anchor;
+    bool m_readOnly;
+    int m_x, m_y;
+    QPoint m_delta;
+    QFrame *m_frame;
+    QWidget *m_screen;
+    QFrame *m_dlg;
+    QLabel *m_ptr;
+    QPixmap m_anchor;
 
 };
 

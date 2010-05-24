@@ -40,54 +40,53 @@
 
 //BEGIN class BGMonitorArrangement
 BGMonitorArrangement::BGMonitorArrangement(QWidget *parent)
-  : QWidget(parent)
+    : QWidget(parent)
 {
-    m_pBGMonitor.resize( QApplication::desktop()->numScreens());
+    m_pBGMonitor.resize(QApplication::desktop()->numScreens());
 
     int numScreens = QApplication::desktop()->numScreens();
-    for (int screen = 0; screen < numScreens; ++screen)
-    {
+    for (int screen = 0; screen < numScreens; ++screen) {
         ScreenPreviewWidget *previewWidget = new ScreenPreviewWidget(this);
         m_pBGMonitor[screen] = previewWidget;
-        previewWidget->setWhatsThis( i18n("This picture of a monitor contains a preview of what the current settings will look like on your desktop.") );
+        previewWidget->setWhatsThis(i18n("This picture of a monitor contains a preview of what the current settings will look like on your desktop."));
 
-        connect( previewWidget, SIGNAL(imageDropped(const QString &)), this, SIGNAL(imageDropped(const QString &)) );
-        previewWidget->setFixedSize(180,180);
+        connect(previewWidget, SIGNAL(imageDropped(const QString &)), this, SIGNAL(imageDropped(const QString &)));
+        previewWidget->setFixedSize(180, 180);
     }
 
-    parent->setFixedSize(210*numScreens, 200);
-    setFixedSize(210*numScreens, 200);
+    parent->setFixedSize(210 * numScreens, 200);
+    setFixedSize(210 * numScreens, 200);
     updateArrangement();
 }
 
 
-ScreenPreviewWidget * BGMonitorArrangement::monitor( unsigned screen ) const
+ScreenPreviewWidget *BGMonitorArrangement::monitor(unsigned screen) const
 {
     return m_pBGMonitor[screen];
 }
 
 
-QRect BGMonitorArrangement::expandToPreview( const QRect &r ) const
+QRect BGMonitorArrangement::expandToPreview(const QRect &r) const
 {
     double scaleX = 200.0 / 151.0;
     double scaleY = 186.0 / 115.0;
-    return QRect( int(r.x()*scaleX), int(r.y()*scaleY), int(r.width()*scaleX), int(r.height()*scaleY) );
+    return QRect(int(r.x() * scaleX), int(r.y() * scaleY), int(r.width() * scaleX), int(r.height() * scaleY));
 }
 
 
-QSize BGMonitorArrangement::expandToPreview( const QSize &s ) const
+QSize BGMonitorArrangement::expandToPreview(const QSize &s) const
 {
     double scaleX = 200.0 / 151.0;
     double scaleY = 186.0 / 115.0;
-    return QSize( int(s.width()*scaleX), int(s.height()*scaleY) );
+    return QSize(int(s.width() * scaleX), int(s.height() * scaleY));
 }
 
 
-QPoint BGMonitorArrangement::expandToPreview( const QPoint &p ) const
+QPoint BGMonitorArrangement::expandToPreview(const QPoint &p) const
 {
     double scaleX = 200.0 / 151.0;
     double scaleY = 186.0 / 115.0;
-    return QPoint( int(p.x()*scaleX), int(p.y()*scaleY) );
+    return QPoint(int(p.x() * scaleX), int(p.y() * scaleY));
 }
 
 
@@ -105,51 +104,47 @@ void BGMonitorArrangement::updateArrangement()
     QRect expandedOverallGeometry = expandToPreview(overallGeometry);
 
     double scale = qMin(
-                double(width()) / double(expandedOverallGeometry.width()),
-                double(height()) / double(expandedOverallGeometry.height())
-                       );
+                       double(width()) / double(expandedOverallGeometry.width()),
+                       double(height()) / double(expandedOverallGeometry.height())
+                   );
 
     m_combinedPreviewSize = overallGeometry.size() * scale;
 
-    m_maxPreviewSize = QSize(0,0);
+    m_maxPreviewSize = QSize(0, 0);
     int previousMax = 0;
 
-    for (int screen = 0; screen < QApplication::desktop()->numScreens(); ++screen)
-    {
+    for (int screen = 0; screen < QApplication::desktop()->numScreens(); ++screen) {
         QPoint topLeft = (QApplication::desktop()->screenGeometry(screen).topLeft() - overallGeometry.topLeft()) * scale;
         QPoint expandedTopLeft = expandToPreview(topLeft);
 
         QSize previewSize = QApplication::desktop()->screenGeometry(screen).size() * scale;
         QSize expandedPreviewSize = expandToPreview(previewSize);
 
-        if ( (previewSize.width() * previewSize.height()) > previousMax )
-        {
+        if ((previewSize.width() * previewSize.height()) > previousMax) {
             previousMax = previewSize.width() * previewSize.height();
             m_maxPreviewSize = previewSize;
         }
 
 
-        m_pBGMonitor[screen]->setGeometry( QRect( expandedTopLeft, expandedPreviewSize ) );
+        m_pBGMonitor[screen]->setGeometry(QRect(expandedTopLeft, expandedPreviewSize));
         m_pBGMonitor[screen]->setRatio((qreal)previewSize.width() / (qreal)previewSize.height());
     }
 }
 
 
-void BGMonitorArrangement::resizeEvent( QResizeEvent * e )
+void BGMonitorArrangement::resizeEvent(QResizeEvent *e)
 {
     QWidget::resizeEvent(e);
     updateArrangement();
 }
 
 
-void BGMonitorArrangement::setPixmap( const QPixmap & pm )
+void BGMonitorArrangement::setPixmap(const QPixmap &pm)
 {
-    for (int screen = 0; screen < m_pBGMonitor.size(); ++screen)
-    {
+    for (int screen = 0; screen < m_pBGMonitor.size(); ++screen) {
         m_pBGMonitor[screen]->setPreview(pm);
     }
 }
 //END class BGMonitorArrangement
-
 
 #include "bgmonitor.moc"

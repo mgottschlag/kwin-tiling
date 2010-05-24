@@ -32,36 +32,34 @@ class BGMultiWallpaperBase;
 
 class KBackgroundSettings;
 
-class BGMultiWallpaperList : public QListWidget
-{
+class BGMultiWallpaperList : public QListWidget {
 public:
-   explicit BGMultiWallpaperList(QWidget *parent, const char *name = 0);
+    explicit BGMultiWallpaperList(QWidget *parent, const char *name = 0);
 
-   void dragEnterEvent(QDragEnterEvent *ev);
-   void dropEvent(QDropEvent *ev);
-   bool hasSelection();
-   void ensureSelectionVisible();
+    void dragEnterEvent(QDragEnterEvent *ev);
+    void dropEvent(QDropEvent *ev);
+    bool hasSelection();
+    void ensureSelectionVisible();
 };
 
-class BGMultiWallpaperDialog : public KDialog
-{
-   Q_OBJECT
+class BGMultiWallpaperDialog : public KDialog {
+    Q_OBJECT
 public:
-   BGMultiWallpaperDialog(KBackgroundSettings *settings, QWidget *parent, const char *name=0);
+    BGMultiWallpaperDialog(KBackgroundSettings *settings, QWidget *parent, const char *name = 0);
 
 public Q_SLOTS:
-   void slotAdd();
-   void slotRemove();
-   void slotMoveUp();
-   void slotMoveDown();
-   void slotOk();
-   void slotItemSelected( QListWidgetItem * );
+    void slotAdd();
+    void slotRemove();
+    void slotMoveUp();
+    void slotMoveDown();
+    void slotOk();
+    void slotItemSelected(QListWidgetItem *);
 private:
-   void setEnabledMoveButtons();
+    void setEnabledMoveButtons();
 
-   KBackgroundSettings *m_pSettings;
+    KBackgroundSettings *m_pSettings;
 
-   BGMultiWallpaperBase *dlg;
+    BGMultiWallpaperBase *dlg;
 };
 
 #endif

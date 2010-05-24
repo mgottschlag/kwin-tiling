@@ -31,32 +31,32 @@
 
 extern KConfig *config;
 
-KBackground::KBackground( QWidget *parent )
-	: QWidget( parent )
+KBackground::KBackground(QWidget *parent)
+    : QWidget(parent)
 {
 
-	// Enabling checkbox
-	m_pCBEnable = new QCheckBox( i18n("E&nable background"), this );
-	m_pCBEnable->setWhatsThis( i18n(
-		"If this is checked, KDM will use the settings below for the background."
-		" If it is disabled, you have to look after the background yourself."
-		" This is done by running some program (possibly xsetroot) in the script"
-		" specified in the Setup= option in kdmrc (usually Xsetup).") );
-	m_simpleConf = KSharedConfig::openConfig(
-		config->group( "X-*-Greeter" ).readEntry(
-			"BackgroundCfg", KDE_CONFDIR "/kdm/backgroundrc" ) );
-	m_background = new BGDialog( this, m_simpleConf );
+    // Enabling checkbox
+    m_pCBEnable = new QCheckBox(i18n("E&nable background"), this);
+    m_pCBEnable->setWhatsThis(i18n(
+        "If this is checked, KDM will use the settings below for the background."
+        " If it is disabled, you have to look after the background yourself."
+        " This is done by running some program (possibly xsetroot) in the script"
+        " specified in the Setup= option in kdmrc (usually Xsetup)."));
+    m_simpleConf = KSharedConfig::openConfig(
+        config->group("X-*-Greeter").readEntry(
+            "BackgroundCfg", KDE_CONFDIR "/kdm/backgroundrc"));
+    m_background = new BGDialog(this, m_simpleConf);
 
-	connect( m_background, SIGNAL(changed( bool )), SIGNAL(changed()) );
+    connect(m_background, SIGNAL(changed(bool)), SIGNAL(changed()));
 
-	// Top layout
-	QVBoxLayout *top = new QVBoxLayout( this );
-	top->setMargin( KDialog::marginHint() );
-	top->setSpacing( KDialog::spacingHint() );
-	top->addWidget( m_pCBEnable );
-	top->addWidget( m_background );
-	top->addStretch();
-	connect( m_pCBEnable, SIGNAL(toggled( bool )), SLOT(slotEnableChanged()) );
+    // Top layout
+    QVBoxLayout *top = new QVBoxLayout(this);
+    top->setMargin(KDialog::marginHint());
+    top->setSpacing(KDialog::spacingHint());
+    top->addWidget(m_pCBEnable);
+    top->addWidget(m_background);
+    top->addStretch();
+    connect(m_pCBEnable, SIGNAL(toggled(bool)), SLOT(slotEnableChanged()));
 }
 
 KBackground::~KBackground()
@@ -65,37 +65,36 @@ KBackground::~KBackground()
 
 void KBackground::slotEnableChanged()
 {
-	bool en = m_pCBEnable->isChecked();
-	m_background->setEnabled( en );
-	emit changed();
+    bool en = m_pCBEnable->isChecked();
+    m_background->setEnabled(en);
+    emit changed();
 }
 
 void KBackground::makeReadOnly()
 {
-	m_pCBEnable->setEnabled( false );
-	m_background->makeReadOnly();
+    m_pCBEnable->setEnabled(false);
+    m_background->makeReadOnly();
 }
 
 void KBackground::load()
 {
-	m_pCBEnable->setChecked( config->group( "X-*-Greeter" ).readEntry( "UseBackground", true ) );
-	m_background->load();
-	slotEnableChanged();
+    m_pCBEnable->setChecked(config->group("X-*-Greeter").readEntry("UseBackground", true));
+    m_background->load();
+    slotEnableChanged();
 }
 
 
 void KBackground::save()
 {
-	config->group( "X-*-Greeter" ).writeEntry( "UseBackground", m_pCBEnable->isChecked() );
-	m_background->save();
+    config->group("X-*-Greeter").writeEntry("UseBackground", m_pCBEnable->isChecked());
+    m_background->save();
 }
-
 
 void KBackground::defaults()
 {
-	m_pCBEnable->setChecked( true );
-	slotEnableChanged();
-	m_background->defaults();
+    m_pCBEnable->setChecked(true);
+    slotEnableChanged();
+    m_background->defaults();
 }
 
 #include "background.moc"

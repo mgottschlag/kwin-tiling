@@ -35,15 +35,14 @@ class KStandardDirs;
  */
 class KBackgroundRenderer:
     public QObject,
-    public KBackgroundSettings
-{
+    public KBackgroundSettings {
     Q_OBJECT
 
 public:
     KBackgroundRenderer(int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config);
     ~KBackgroundRenderer();
 
-    void load(int screen, bool drawBackgroundPerScreen, bool reparseConfig=true);
+    void load(int screen, bool drawBackgroundPerScreen, bool reparseConfig = true);
 
     void setPreview(const QSize &size);
     void setSize(const QSize &size);
@@ -53,7 +52,7 @@ public:
     bool isActive() { return m_State & Rendering; }
     void cleanup();
     void saveCacheFile();
-    void enableTiling( bool enable ) { m_TilingEnabled = enable; }
+    void enableTiling(bool enable) { m_TilingEnabled = enable; }
 
 public Q_SLOTS:
     void start(bool enableBusyCursor = false);
@@ -75,19 +74,20 @@ private:
     enum { Rendering = 1, InitCheck = 2,
            BackgroundStarted = 4, BackgroundDone = 8,
            WallpaperStarted = 0x10, WallpaperDone = 0x20,
-           AllDone = 0x40 };
+           AllDone = 0x40
+         };
 
     QString buildCommand();
     void createTempFile();
-    void tile(QImage& dst, const QRect &rect, const QImage& src);
-    void blend(QImage& dst, const QRect &dr, const QImage& src, const QPoint &soffs = QPoint(0, 0), int blendFactor=100);
+    void tile(QImage &dst, const QRect &rect, const QImage &src);
+    void blend(QImage &dst, const QRect &dr, const QImage &src, const QPoint &soffs = QPoint(0, 0), int blendFactor = 100);
 
     void wallpaperBlend();
     void fastWallpaperBlend();
     void fullWallpaperBlend();
 
-    int doBackground(bool quit=false);
-    int doWallpaper(bool quit=false);
+    int doBackground(bool quit = false);
+    int doWallpaper(bool quit = false);
     void setBusyCursor(bool isBusy);
     QString cacheFileName();
     bool useCacheFile() const;
@@ -100,7 +100,7 @@ private:
     bool m_Cached;
     bool m_TilingEnabled;
 
-    KTemporaryFile* m_Tempfile;
+    KTemporaryFile *m_Tempfile;
     QSize m_Size, m_rSize;
     QRect m_WallpaperRect;
     QImage m_Image, m_Background, m_Wallpaper;
@@ -111,6 +111,4 @@ private:
     KProcess *m_pProc;
 };
 
-
 #endif // BGRender_h_Included
-

@@ -36,73 +36,70 @@ class QTreeWidgetItem;
 class KBackgroundRenderer;
 class KBackgroundProgram;
 
-class BGAdvancedBase : public QWidget, public Ui::BGAdvancedBase
-{
+class BGAdvancedBase : public QWidget, public Ui::BGAdvancedBase {
 public:
-  BGAdvancedBase( QWidget *parent ) : QWidget( parent ) {
-    setupUi( this );
-  }
+    BGAdvancedBase(QWidget *parent) : QWidget(parent) {
+        setupUi(this);
+    }
 };
 
-class BGAdvancedDialog : public KDialog
-{
-   Q_OBJECT
+class BGAdvancedDialog : public KDialog {
+    Q_OBJECT
 public:
-   BGAdvancedDialog(KBackgroundRenderer *_r, QWidget *parent);
+    BGAdvancedDialog(KBackgroundRenderer *_r, QWidget *parent);
 
 #if 0
-   void setCacheSize(int s);
-   int cacheSize();
+    void setCacheSize(int s);
+    int cacheSize();
 #endif
 
-   void updateUI();
+    void updateUI();
 
-   void makeReadOnly();
+    void makeReadOnly();
 
 #if 0
 public Q_SLOTS:
-   void slotAdd();
-   void slotRemove();
-   void slotModify();
+    void slotAdd();
+    void slotRemove();
+    void slotModify();
 #endif
 
 protected:
-   void addProgram(const QString &name);
+    void addProgram(const QString &name);
 #if 0
-   void removeProgram(const QString &name);
+    void removeProgram(const QString &name);
 #endif
-   void selectProgram(const QString &name);
+    void selectProgram(const QString &name);
 
 protected Q_SLOTS:
-   void slotProgramItemClicked(QTreeWidgetItem *item);
+    void slotProgramItemClicked(QTreeWidgetItem *item);
 #if 0
-   void slotProgramItemDoubleClicked(QTreeWidgetItem *item);
+    void slotProgramItemDoubleClicked(QTreeWidgetItem *item);
 #endif
-   void slotProgramChanged();
-   void slotEnableProgram(bool b);
+    void slotProgramChanged();
+    void slotEnableProgram(bool b);
 
 private:
-   KBackgroundRenderer *r;
+    KBackgroundRenderer *r;
 
-   BGAdvancedBase *dlg;
+    BGAdvancedBase *dlg;
 
-   QWidget *m_pMonitor;
-   QHash<QString, QTreeWidgetItem *> m_programItems;
-   QString m_selectedProgram;
-   int m_oldBackgroundMode;
+    QWidget *m_pMonitor;
+    QHash<QString, QTreeWidgetItem *> m_programItems;
+    QString m_selectedProgram;
+    int m_oldBackgroundMode;
 };
 
 #if 0
 /**
  * Dialog to edit a background program.
  */
-class KProgramEditDialog: public KDialog
-{
+class KProgramEditDialog: public KDialog {
     Q_OBJECT
 
 public:
-    explicit KProgramEditDialog(const QString &program=QString(),
-                                QWidget *parent=0L, char *name=0L);
+    explicit KProgramEditDialog(const QString &program = QString(),
+                                QWidget *parent = 0L, char *name = 0L);
 
     /** The program name is here in case the user changed it */
     QString program()const;
@@ -121,4 +118,3 @@ private:
 #endif
 
 #endif
-

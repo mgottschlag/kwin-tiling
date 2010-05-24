@@ -31,41 +31,39 @@ class QGroupBox;
 class QRadioButton;
 
 class KDMConvenienceWidget : public QWidget {
-	Q_OBJECT
+    Q_OBJECT
 
   public:
-	KDMConvenienceWidget( QWidget *parent = 0 );
+    KDMConvenienceWidget(QWidget *parent = 0);
 
-	void load();
-	void save();
-	void defaults();
-	void makeReadOnly();
+    void load();
+    void save();
+    void defaults();
+    void makeReadOnly();
 
   public Q_SLOTS:
-	void slotClearUsers();
-	void slotAddUsers( const QMap<QString,int> & );
-	void slotDelUsers( const QMap<QString,int> & );
+    void slotClearUsers();
+    void slotAddUsers(const QMap<QString, int> &);
+    void slotDelUsers(const QMap<QString, int> &);
 
 
   Q_SIGNALS:
-	void changed();
+    void changed();
 
   private Q_SLOTS:
-	void slotPresChanged();
-	void slotSetAutoUser( const QString &user );
-	void slotSetPreselUser( const QString &user );
-	void slotUpdateNoPassUser( QListWidgetItem *item );
+    void slotPresChanged();
+    void slotSetAutoUser(const QString &user);
+    void slotSetPreselUser(const QString &user);
+    void slotUpdateNoPassUser(QListWidgetItem *item);
 
   private:
-	QGroupBox *alGroup, *puGroup, *npGroup, *btGroup;
-	QCheckBox *cbarlen, *cbjumppw, *autoLockCheck;
-	QRadioButton *npRadio, *ppRadio, *spRadio;
-	KComboBox *userlb, *puserlb;
-	QListWidget *npuserlv;
-	QString autoUser, preselUser;
-	QStringList noPassUsers;
+    QGroupBox *alGroup, *puGroup, *npGroup, *btGroup;
+    QCheckBox *cbarlen, *cbjumppw, *autoLockCheck;
+    QRadioButton *npRadio, *ppRadio, *spRadio;
+    KComboBox *userlb, *puserlb;
+    QListWidget *npuserlv;
+    QString autoUser, preselUser;
+    QStringList noPassUsers;
 };
 
 #endif
-
-

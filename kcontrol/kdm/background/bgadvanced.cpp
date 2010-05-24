@@ -45,63 +45,63 @@
 
 BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
                                    QWidget *parent)
-    : KDialog( parent ),
+    : KDialog(parent),
       r(_r)
 {
-   setObjectName( "BGAdvancedDialog" );
-   setModal( true );
-   setCaption( i18n("Advanced Background Settings") );
-   setButtons( Ok | Cancel );
-   showButtonSeparator( true );
-  
-   dlg = new BGAdvancedBase(this);
-   setMainWidget(dlg);
+    setObjectName("BGAdvancedDialog");
+    setModal(true);
+    setCaption(i18n("Advanced Background Settings"));
+    setButtons(Ok | Cancel);
+    showButtonSeparator(true);
 
-   dlg->m_listPrograms->header()->setResizeMode(1, QHeaderView::Stretch);
-   dlg->m_listPrograms->setRootIsDecorated(false);
-   dlg->m_listPrograms->setAllColumnsShowFocus(true);
+    dlg = new BGAdvancedBase(this);
+    setMainWidget(dlg);
 
-   connect(dlg->m_listPrograms, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
-         SLOT(slotProgramItemClicked(QTreeWidgetItem *)));
+    dlg->m_listPrograms->header()->setResizeMode(1, QHeaderView::Stretch);
+    dlg->m_listPrograms->setRootIsDecorated(false);
+    dlg->m_listPrograms->setAllColumnsShowFocus(true);
 
-   // Load programs
-   const QStringList lst = KBackgroundProgram::list();
-   QStringList::const_iterator it;
-   for (it=lst.constBegin(); it != lst.constEnd(); ++it)
-      addProgram(*it);
+    connect(dlg->m_listPrograms, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
+            SLOT(slotProgramItemClicked(QTreeWidgetItem *)));
+
+    // Load programs
+    const QStringList lst = KBackgroundProgram::list();
+    QStringList::const_iterator it;
+    for (it = lst.constBegin(); it != lst.constEnd(); ++it)
+        addProgram(*it);
 
     // FIXME: support it proper
-      dlg->m_buttonAdd->hide();
-      dlg->m_buttonRemove->hide();
-      dlg->m_buttonModify->hide();
-      dlg->m_groupCache->hide();
+    dlg->m_buttonAdd->hide();
+    dlg->m_buttonRemove->hide();
+    dlg->m_buttonModify->hide();
+    dlg->m_groupCache->hide();
 
-   connect( dlg->m_cbProgram, SIGNAL(toggled(bool)),
+    connect(dlg->m_cbProgram, SIGNAL(toggled(bool)),
             SLOT(slotEnableProgram(bool)));
 
-   m_oldBackgroundMode = r->backgroundMode();
-   if (m_oldBackgroundMode == KBackgroundSettings::Program)
-      m_oldBackgroundMode = KBackgroundSettings::Flat;
+    m_oldBackgroundMode = r->backgroundMode();
+    if (m_oldBackgroundMode == KBackgroundSettings::Program)
+        m_oldBackgroundMode = KBackgroundSettings::Flat;
 
-   dlg->adjustSize();
-   updateUI();
+    dlg->adjustSize();
+    updateUI();
 }
 
 void BGAdvancedDialog::makeReadOnly()
 {
-   dlg->m_cbProgram->setEnabled(false);
-   dlg->m_listPrograms->setEnabled(false);
+    dlg->m_cbProgram->setEnabled(false);
+    dlg->m_listPrograms->setEnabled(false);
 }
 
 #if 0
 void BGAdvancedDialog::setCacheSize(int s)
 {
-   dlg->m_spinCache->setValue(s);
+    dlg->m_spinCache->setValue(s);
 }
 
 int BGAdvancedDialog::cacheSize()
 {
-   return dlg->m_spinCache->value();
+    return dlg->m_spinCache->value();
 }
 
 QColor BGAdvancedDialog::textColor()
@@ -124,14 +124,11 @@ void BGAdvancedDialog::setTextBackgroundColor(const QColor &color)
 {
     dlg->m_colorTextBackground->blockSignals(true);
     dlg->m_cbSolidTextBackground->blockSignals(true);
-    if (color.isValid())
-    {
+    if (color.isValid()) {
         dlg->m_cbSolidTextBackground->setChecked(true);
         dlg->m_colorTextBackground->setColor(color);
         dlg->m_colorTextBackground->setEnabled(true);
-    }
-    else
-    {
+    } else {
         dlg->m_cbSolidTextBackground->setChecked(false);
         dlg->m_colorTextBackground->setColor(Qt::white);
         dlg->m_colorTextBackground->setEnabled(false);
@@ -177,17 +174,14 @@ void BGAdvancedDialog::updateUI()
 
     dlg->m_cbProgram->blockSignals(true);
     if ((r->backgroundMode() == KBackgroundSettings::Program)
-        && !prog.isEmpty())
-    {
+            && !prog.isEmpty()) {
         dlg->m_cbProgram->setChecked(true);
         dlg->m_listPrograms->setEnabled(true);
         dlg->m_buttonAdd->setEnabled(true);
         dlg->m_buttonRemove->setEnabled(true);
         dlg->m_buttonModify->setEnabled(true);
         selectProgram(prog);
-    }
-    else
-    {
+    } else {
         dlg->m_cbProgram->setChecked(false);
         dlg->m_listPrograms->setEnabled(false);
         dlg->m_buttonAdd->setEnabled(false);
@@ -207,68 +201,65 @@ void BGAdvancedDialog::removeProgram(const QString &name)
 void BGAdvancedDialog::addProgram(const QString &name)
 {
 #if 0
-   removeProgram(name);
+    removeProgram(name);
 #endif
 
-   KBackgroundProgram prog(name);
-   if (prog.command().isEmpty() || (prog.isGlobal() && !prog.isAvailable()))
-      return;
+    KBackgroundProgram prog(name);
+    if (prog.command().isEmpty() || (prog.isGlobal() && !prog.isAvailable()))
+        return;
 
-   QTreeWidgetItem *item = new QTreeWidgetItem(dlg->m_listPrograms);
-   item->setText(0, prog.name());
-   item->setText(1, prog.comment());
-   item->setText(2, i18n("%1 min.", prog.refresh()));
+    QTreeWidgetItem *item = new QTreeWidgetItem(dlg->m_listPrograms);
+    item->setText(0, prog.name());
+    item->setText(1, prog.comment());
+    item->setText(2, i18n("%1 min.", prog.refresh()));
 
-   m_programItems.insert(name, item);
+    m_programItems.insert(name, item);
 }
 
 void BGAdvancedDialog::selectProgram(const QString &name)
 {
-   if (QTreeWidgetItem *item = m_programItems[name])
-   {
-      dlg->m_listPrograms->scrollToItem(item);
-      item->setSelected(true);
-      m_selectedProgram = name;
-   }
+    if (QTreeWidgetItem *item = m_programItems[name]) {
+        dlg->m_listPrograms->scrollToItem(item);
+        item->setSelected(true);
+        m_selectedProgram = name;
+    }
 }
 
 #if 0
 void BGAdvancedDialog::slotAdd()
 {
-   KProgramEditDialog dlg(QString(), this);
-   dlg.exec();
-   if (dlg.result() == QDialog::Accepted)
-   {
-      QString program = dlg.program();
-      addProgram(program);
-      selectProgram(program);
-   }
+    KProgramEditDialog dlg(QString(), this);
+    dlg.exec();
+    if (dlg.result() == QDialog::Accepted) {
+        QString program = dlg.program();
+        addProgram(program);
+        selectProgram(program);
+    }
 }
 
 void BGAdvancedDialog::slotRemove()
 {
-   if (m_selectedProgram.isEmpty())
-      return;
+    if (m_selectedProgram.isEmpty())
+        return;
 
-   KBackgroundProgram prog(m_selectedProgram);
-   if (prog.isGlobal())
-   {
-      KMessageBox::sorry(this,
-		i18n("Unable to remove the program: the program is global "
-		"and can only be removed by the system administrator."),
-		i18n("Cannot Remove Program"));
-      return;
-   }
-   if (KMessageBox::warningContinueCancel(this,
-	    i18n("Are you sure you want to remove the program `%1'?",
-	     prog.name()),
-	    i18n("Remove Background Program"),
-	    KGuiItem(i18n("&Remove"))) != KMessageBox::Continue)
-      return;
+    KBackgroundProgram prog(m_selectedProgram);
+    if (prog.isGlobal()) {
+        KMessageBox::sorry(this,
+           i18n("Unable to remove the program: the program is global "
+                "and can only be removed by the system administrator."),
+           i18n("Cannot Remove Program"));
+        return;
+    }
+    if (KMessageBox::warningContinueCancel(this,
+           i18n("Are you sure you want to remove the program `%1'?",
+                prog.name()),
+           i18n("Remove Background Program"),
+           KGuiItem(i18n("&Remove"))) != KMessageBox::Continue)
+        return;
 
-   prog.remove();
-   removeProgram(m_selectedProgram);
-   m_selectedProgram.clear();
+    prog.remove();
+    removeProgram(m_selectedProgram);
+    m_selectedProgram.clear();
 }
 
 /*
@@ -276,38 +267,36 @@ void BGAdvancedDialog::slotRemove()
  */
 void BGAdvancedDialog::slotModify()
 {
-   if (m_selectedProgram.isEmpty())
-      return;
+    if (m_selectedProgram.isEmpty())
+        return;
 
-   KProgramEditDialog dlg(m_selectedProgram, this);
-   dlg.exec();
-   if (dlg.result() == QDialog::Accepted)
-   {
-      QString program = dlg.program();
-      if (program != m_selectedProgram)
-      {
-         KBackgroundProgram prog(m_selectedProgram);
-         prog.remove();
-	 removeProgram(m_selectedProgram);
-      }
-      addProgram(dlg.program());
-      selectProgram(dlg.program());
-   }
+    KProgramEditDialog dlg(m_selectedProgram, this);
+    dlg.exec();
+    if (dlg.result() == QDialog::Accepted) {
+        QString program = dlg.program();
+        if (program != m_selectedProgram) {
+            KBackgroundProgram prog(m_selectedProgram);
+            prog.remove();
+            removeProgram(m_selectedProgram);
+        }
+        addProgram(dlg.program());
+        selectProgram(dlg.program());
+    }
 }
 #endif
 
 void BGAdvancedDialog::slotProgramItemClicked(QTreeWidgetItem *item)
 {
-   if (item)
-      m_selectedProgram = item->text(0);
-   slotProgramChanged();
+    if (item)
+        m_selectedProgram = item->text(0);
+    slotProgramChanged();
 }
 
 #if 0
 void BGAdvancedDialog::slotProgramItemDoubleClicked(QTreeWidgetItem *item)
 {
-   slotProgramItemClicked(item);
-   slotModify();
+    slotProgramItemClicked(item);
+    slotModify();
 }
 #endif
 
@@ -315,11 +304,11 @@ void BGAdvancedDialog::slotProgramChanged()
 {
 //   r->stop();
 
-   r->setProgram(m_selectedProgram);
-   if (dlg->m_cbProgram->isChecked() && !m_selectedProgram.isEmpty())
-      r->setBackgroundMode(KBackgroundSettings::Program);
-   else
-      r->setBackgroundMode(m_oldBackgroundMode);
+    r->setProgram(m_selectedProgram);
+    if (dlg->m_cbProgram->isChecked() && !m_selectedProgram.isEmpty())
+        r->setBackgroundMode(KBackgroundSettings::Program);
+    else
+        r->setBackgroundMode(m_oldBackgroundMode);
 
 // We have no preview, no need to start the renderer
 //   r->start();
@@ -327,36 +316,33 @@ void BGAdvancedDialog::slotProgramChanged()
 
 void BGAdvancedDialog::slotEnableProgram(bool b)
 {
-   dlg->m_listPrograms->setEnabled(b);
-   if (b)
-   {
-      if (QTreeWidgetItem *cur = dlg->m_listPrograms->currentItem()) {
-        dlg->m_listPrograms->blockSignals(true);
-        cur->setSelected(true);
-        dlg->m_listPrograms->scrollToItem(cur);
-        dlg->m_listPrograms->blockSignals(false);
-        slotProgramItemClicked(cur);
-      }
-   }
-   else
-   {
-      slotProgramChanged();
-   }
+    dlg->m_listPrograms->setEnabled(b);
+    if (b) {
+        if (QTreeWidgetItem *cur = dlg->m_listPrograms->currentItem()) {
+            dlg->m_listPrograms->blockSignals(true);
+            cur->setSelected(true);
+            dlg->m_listPrograms->scrollToItem(cur);
+            dlg->m_listPrograms->blockSignals(false);
+            slotProgramItemClicked(cur);
+        }
+    } else {
+        slotProgramChanged();
+    }
 }
 
 /**** KProgramEditDialog ****/
 #if 0
 KProgramEditDialog::KProgramEditDialog(const QString &program, QWidget *parent, char *name)
-    : KDialog( parent )
+    : KDialog(parent)
 {
-    setObjectName( name );
-    setModal( true );
-    setCaption( i18n("Configure Background Program") );
-    setButtons( Ok | Cancel );
-    showButtonSeparator( true );
+    setObjectName(name);
+    setModal(true);
+    setCaption(i18n("Configure Background Program"));
+    setButtons(Ok | Cancel);
+    showButtonSeparator(true);
 
-    QFrame *frame = new QFrame( this );
-    setMainWidget( frame );
+    QFrame *frame = new QFrame(this);
+    setMainWidget(frame);
 
     QGridLayout *grid = new QGridLayout(frame);
     grid->setSpacing(spacingHint());
@@ -405,14 +391,14 @@ KProgramEditDialog::KProgramEditDialog(const QString &program, QWidget *parent, 
 
     m_Program = program;
     if (m_Program.isEmpty()) {
-	KBackgroundProgram prog(i18n("New Command"));
-	int i = 1;
-	while (!prog.command().isEmpty())
-	    prog.load(i18n("New Command <%1>", i++));
-	m_NameEdit->setText(prog.name());
-	m_NameEdit->setSelection(0, 100);
-	m_RefreshEdit->setValue(15);
-	return;
+        KBackgroundProgram prog(i18n("New Command"));
+        int i = 1;
+        while (!prog.command().isEmpty())
+            prog.load(i18n("New Command <%1>", i++));
+        m_NameEdit->setText(prog.name());
+        m_NameEdit->setSelection(0, 100);
+        m_RefreshEdit->setValue(15);
+        return;
     }
 
     // Fill in the fields
@@ -435,29 +421,29 @@ void KProgramEditDialog::accept()
 {
     QString s = m_NameEdit->text();
     if (s.isEmpty()) {
-	KMessageBox::sorry(this, i18n("You did not fill in the `Name' field.\n"
-		"This is a required field."));
-	return;
+        KMessageBox::sorry(this, i18n("You did not fill in the `Name' field.\n"
+                                      "This is a required field."));
+        return;
     }
 
     KBackgroundProgram prog(s);
     if ((s != m_Program) && !prog.command().isEmpty()) {
-	int ret = KMessageBox::warningContinueCancel(this,
-	    i18n("There is already a program with the name `%1'.\n"
-	    "Do you want to overwrite it?", s),QString(),KGuiItem(i18n("Overwrite")));
-	if (ret != KMessageBox::Continue)
-	    return;
+        int ret = KMessageBox::warningContinueCancel(this,
+                  i18n("There is already a program with the name `%1'.\n"
+                       "Do you want to overwrite it?", s), QString(), KGuiItem(i18n("Overwrite")));
+        if (ret != KMessageBox::Continue)
+            return;
     }
 
     if (m_ExecEdit->text().isEmpty()) {
-	KMessageBox::sorry(this, i18n("You did not fill in the `Executable' field.\n"
-		"This is a required field."));
-	return;
+        KMessageBox::sorry(this, i18n("You did not fill in the `Executable' field.\n"
+                                      "This is a required field."));
+        return;
     }
     if (m_CommandEdit->text().isEmpty()) {
-	KMessageBox::sorry(this, i18n("You did not fill in the `Command' field.\n"
-		"This is a required field."));
-	return;
+        KMessageBox::sorry(this, i18n("You did not fill in the `Command' field.\n"
+                                      "This is a required field."));
+        return;
     }
 
     prog.setComment(m_CommentEdit->text());

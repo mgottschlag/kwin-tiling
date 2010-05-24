@@ -25,13 +25,13 @@
 class KBackedComboBox : public KComboBox {
 
   public:
-	KBackedComboBox( QWidget *parent ) : KComboBox( false, parent ) {}
-	void insertItem( const QString &id, const QString &name );
-	void setCurrentId( const QString &id );
-	const QString currentId() const;
+    KBackedComboBox(QWidget *parent) : KComboBox(false, parent) {}
+    void insertItem(const QString &id, const QString &name);
+    void setCurrentId(const QString &id);
+    const QString currentId() const;
 
   private:
-	QMap<QString, QString> id2name, name2id;
+    QMap<QString, QString> id2name, name2id;
 
 };
 

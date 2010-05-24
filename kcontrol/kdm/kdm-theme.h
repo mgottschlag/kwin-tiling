@@ -30,39 +30,39 @@ class QPushButton;
 class QTreeWidget;
 
 class KDMThemeWidget : public QWidget {
-	Q_OBJECT
+    Q_OBJECT
 
   public:
-	KDMThemeWidget( QWidget *parent = 0 );
+    KDMThemeWidget(QWidget *parent = 0);
 
-	void load();
-	void save();
-	void defaults();
-	void makeReadOnly();
+    void load();
+    void save();
+    void defaults();
+    void makeReadOnly();
 
   private:
-	void selectTheme( const QString & );
-	void insertTheme( const QString & );
-	void removeTheme( const QString & );
-	void updateInfoView( ThemeData * );
-	QTreeWidget *themeWidget;
-	QLabel *preview;
-	QLabel *info;
-	QPushButton *bInstallTheme;
-	QPushButton *bRemoveTheme;
-	QPushButton *bGetNewThemes;
+    void selectTheme(const QString &);
+    void insertTheme(const QString &);
+    void removeTheme(const QString &);
+    void updateInfoView(ThemeData *);
+    QTreeWidget *themeWidget;
+    QLabel *preview;
+    QLabel *info;
+    QPushButton *bInstallTheme;
+    QPushButton *bRemoveTheme;
+    QPushButton *bGetNewThemes;
 
-	ThemeData *defaultTheme;
-	QString themeDir;
+    ThemeData *defaultTheme;
+    QString themeDir;
 
   Q_SIGNALS:
-	void changed();
+    void changed();
 
   protected Q_SLOTS:
-	void themeSelected();
-	void removeSelectedThemes();
-	void installNewTheme();
-	void getNewStuff();
+    void themeSelected();
+    void removeSelectedThemes();
+    void installNewTheme();
+    void getNewStuff();
 
 };
 

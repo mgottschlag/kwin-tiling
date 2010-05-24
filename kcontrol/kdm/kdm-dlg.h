@@ -30,41 +30,41 @@ class QPushButton;
 class QRadioButton;
 
 class KDMDialogWidget : public QWidget {
-	Q_OBJECT
+    Q_OBJECT
 
   public:
-	KDMDialogWidget( QWidget *parent );
+    KDMDialogWidget(QWidget *parent);
 
-	void load();
-	void save();
-	void defaults();
-	void makeReadOnly();
-	QString quickHelp() const;
+    void load();
+    void save();
+    void defaults();
+    void makeReadOnly();
+    QString quickHelp() const;
 
-	bool eventFilter( QObject *, QEvent * );
+    bool eventFilter(QObject *, QEvent *);
 
   Q_SIGNALS:
-	void changed();
+    void changed();
 
   protected:
-	void iconLoaderDragEnterEvent( QDragEnterEvent *event );
-	void iconLoaderDropEvent( QDropEvent *event );
-	bool setLogo( const QString &logo );
+    void iconLoaderDragEnterEvent(QDragEnterEvent *event);
+    void iconLoaderDropEvent(QDropEvent *event);
+    bool setLogo(const QString &logo);
 
   private Q_SLOTS:
-	void slotAreaRadioClicked( int id );
-	void slotLogoButtonClicked();
+    void slotAreaRadioClicked(int id);
+    void slotLogoButtonClicked();
 
   private:
-	enum { KdmNone, KdmClock, KdmLogo };
-	QLabel       *logoLabel;
-	QPushButton  *logobutton;
-	KLineEdit    *greetstr_lined;
-	QString      logopath;
-	QRadioButton *noneRadio;
-	QRadioButton *clockRadio;
-	QRadioButton *logoRadio;
-	Positioner   *positioner;
+    enum { KdmNone, KdmClock, KdmLogo };
+    QLabel       *logoLabel;
+    QPushButton  *logobutton;
+    KLineEdit    *greetstr_lined;
+    QString      logopath;
+    QRadioButton *noneRadio;
+    QRadioButton *clockRadio;
+    QRadioButton *logoRadio;
+    Positioner   *positioner;
 
 };
 

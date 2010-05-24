@@ -34,66 +34,64 @@ class QRadioButton;
 class QStackedWidget;
 
 class KDMUsersWidget : public QWidget {
-	Q_OBJECT
+    Q_OBJECT
 
   public:
-	KDMUsersWidget( QWidget *parent = 0 );
+    KDMUsersWidget(QWidget *parent = 0);
 
-	void load();
-	void save();
-	void defaults();
-	void makeReadOnly();
+    void load();
+    void save();
+    void defaults();
+    void makeReadOnly();
 
-	bool eventFilter( QObject *o, QEvent *e );
+    bool eventFilter(QObject *o, QEvent *e);
 
   public Q_SLOTS:
-	void slotClearUsers();
-	void slotAddUsers( const QMap<QString,int> & );
-	void slotDelUsers( const QMap<QString,int> & );
+    void slotClearUsers();
+    void slotAddUsers(const QMap<QString, int> &);
+    void slotDelUsers(const QMap<QString, int> &);
 
   Q_SIGNALS:
-	void changed();
-	void setMinMaxUID( int, int );
+    void changed();
+    void setMinMaxUID(int, int);
 
   private Q_SLOTS:
-	void slotMinMaxChanged();
-	void slotShowOpts();
-	void slotUpdateOptIn( QTreeWidgetItem *item );
-	void slotUpdateOptOut( QTreeWidgetItem *item );
-	void slotUserSelected();
-	void slotUnsetUserPix();
-	void slotFaceOpts();
-	void slotUserButtonClicked();
+    void slotMinMaxChanged();
+    void slotShowOpts();
+    void slotUpdateOptIn(QTreeWidgetItem *item);
+    void slotUpdateOptOut(QTreeWidgetItem *item);
+    void slotUserSelected();
+    void slotUnsetUserPix();
+    void slotFaceOpts();
+    void slotUserButtonClicked();
 
   private:
-	void updateOptList( QTreeWidgetItem *item, QStringList &list );
-	void userButtonDropEvent( QDropEvent *e );
-	void changeUserPix( const QString & );
+    void updateOptList(QTreeWidgetItem *item, QStringList &list);
+    void userButtonDropEvent(QDropEvent *e);
+    void changeUserPix(const QString &);
 
-	QGroupBox *minGroup; // top left
-	QLineEdit *leminuid, *lemaxuid;
+    QGroupBox *minGroup; // top left
+    QLineEdit *leminuid, *lemaxuid;
 
-	QGroupBox *usrGroup; // right below
-	QCheckBox *cbshowlist, *cbcomplete, *cbinverted, *cbusrsrt;
+    QGroupBox *usrGroup; // right below
+    QCheckBox *cbshowlist, *cbcomplete, *cbinverted, *cbusrsrt;
 
-	QLabel *s_label; // middle
-	QStackedWidget *wstack;
-	QTreeWidget *optoutlv, *optinlv;
+    QLabel *s_label; // middle
+    QStackedWidget *wstack;
+    QTreeWidget *optoutlv, *optinlv;
 
-	QGroupBox *faceGroup; // right
-	QRadioButton *rbadmonly, *rbprefadm, *rbprefusr, *rbusronly;
+    QGroupBox *faceGroup; // right
+    QRadioButton *rbadmonly, *rbprefadm, *rbprefusr, *rbusronly;
 
-	KComboBox *usercombo; // right below
-	QPushButton *userbutton;
-	QPushButton *rstuserbutton;
+    KComboBox *usercombo; // right below
+    QPushButton *userbutton;
+    QPushButton *rstuserbutton;
 
-	QString m_userPixDir;
-	QString m_defaultText;
-	QStringList hiddenUsers, selectedUsers;
-	QString defminuid, defmaxuid;
-	bool m_readOnly;
+    QString m_userPixDir;
+    QString m_defaultText;
+    QStringList hiddenUsers, selectedUsers;
+    QString defminuid, defmaxuid;
+    bool m_readOnly;
 };
 
 #endif
-
-

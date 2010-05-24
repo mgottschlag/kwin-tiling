@@ -27,13 +27,12 @@ class QString;
  * A pattern is a raster image. An entry for earch pattern is
  * stored as a .desktop file in $(datadir)/kdesktop/patterns.
  */
-class KBackgroundPattern
-{
+class KBackgroundPattern {
 public:
     explicit KBackgroundPattern(const QString &name = QString());
     ~KBackgroundPattern();
 
-    void copyConfig(const KBackgroundPattern*);
+    void copyConfig(const KBackgroundPattern *);
 
     QString name() const { return m_Name; }
     void load(const QString &name);
@@ -56,7 +55,7 @@ public:
     static QStringList list();
 
 private:
-    void init(bool force_rw=false);
+    void init(bool force_rw = false);
     QString fingerprint();
 
     bool dirty, hashdirty;
@@ -85,13 +84,12 @@ private:
  * An entry for each program is stored as a .desktop file in
  * $(datadir)/kdesktop/programs.
  */
-class KBackgroundProgram
-{
+class KBackgroundProgram {
 public:
     explicit KBackgroundProgram(const QString &name = QString());
     ~KBackgroundProgram();
 
-    void copyConfig(const KBackgroundProgram*);
+    void copyConfig(const KBackgroundProgram *);
 
     QString name()const { return m_Name; }
     void load(const QString & name);
@@ -126,7 +124,7 @@ public:
     static QStringList list();
 
 private:
-    void init(bool force_rw=false);
+    void init(bool force_rw = false);
     QString fingerprint();
 
     bool dirty, hashdirty;
@@ -146,8 +144,7 @@ private:
  */
 class KBackgroundSettings
     : public KBackgroundPattern,
-      public KBackgroundProgram
-{
+      public KBackgroundProgram {
 public:
     /**
      * @param drawBackgroundPerScreen if false, then all screens (in xinerama
@@ -157,7 +154,7 @@ public:
     KBackgroundSettings(int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config);
     ~KBackgroundSettings();
 
-    void copyConfig(const KBackgroundSettings*);
+    void copyConfig(const KBackgroundSettings *);
 
     bool drawBackgroundPerScreen() const { return m_bDrawBackgroundPerScreen; }
     void setDrawBackgroundPerScreen(bool draw);
@@ -174,19 +171,19 @@ public:
     void setPatternName(const QString &pattern);
 
     enum BackgroundMode {
-	Flat, Pattern, Program,
-	HorizontalGradient, VerticalGradient, PyramidGradient,
-	PipeCrossGradient, EllipticGradient, lastBackgroundMode
+        Flat, Pattern, Program,
+        HorizontalGradient, VerticalGradient, PyramidGradient,
+        PipeCrossGradient, EllipticGradient, lastBackgroundMode
     };
     void setBackgroundMode(int mode);
     int backgroundMode() const { return m_BackgroundMode; }
 
     enum BlendMode {
         NoBlending, FlatBlending,
-	HorizontalBlending, VerticalBlending, PyramidBlending,
-	PipeCrossBlending, EllipticBlending,
-	IntensityBlending, SaturateBlending, ContrastBlending,
-	HueShiftBlending, lastBlendMode
+        HorizontalBlending, VerticalBlending, PyramidBlending,
+        PipeCrossBlending, EllipticBlending,
+        IntensityBlending, SaturateBlending, ContrastBlending,
+        HueShiftBlending, lastBlendMode
     };
     void setBlendMode(int mode);
     int blendMode() const { return m_BlendMode; }
@@ -201,8 +198,8 @@ public:
     QString wallpaper() const { return m_Wallpaper; }
 
     enum WallpaperMode {
-	NoWallpaper, Centred, Tiled, CenterTiled, CentredMaxpect, TiledMaxpect,
-	Scaled, CentredAutoFit, ScaleAndCrop, lastWallpaperMode
+        NoWallpaper, Centred, Tiled, CenterTiled, CentredMaxpect, TiledMaxpect,
+        Scaled, CentredAutoFit, ScaleAndCrop, lastWallpaperMode
     };
     void setWallpaperMode(int mode);
     int wallpaperMode() const { return m_WallpaperMode; }
@@ -215,22 +212,23 @@ public:
     int wallpaperChangeInterval() const { return m_Interval; }
 
     enum MultiMode {
-	NoMulti, InOrder, Random, NoMultiRandom
+        NoMulti, InOrder, Random, NoMultiRandom
     };
     void setMultiWallpaperMode(int mode);
     int multiWallpaperMode() const { return m_MultiMode; }
 
     enum MinOptDepth {
-        AlwaysOpt, Opt16bpp, Opt15bpp, NeverOpt };
+        AlwaysOpt, Opt16bpp, Opt15bpp, NeverOpt
+    };
 
-    void setMinOptimizationDepth( int mode );
+    void setMinOptimizationDepth(int mode);
     int minOptimizationDepth() const { return m_MinOptimizationDepth; }
     bool optimize() const;
 
-    void setUseShm( bool use );
+    void setUseShm(bool use);
     bool useShm() const { return m_bShm; }
 
-    void changeWallpaper(bool init=false);
+    void changeWallpaper(bool init = false);
     void updateWallpaperFiles();
     void randomizeWallpaperFiles();
 
@@ -242,14 +240,14 @@ public:
     int lastWallpaperChange() const { return m_LastChange; }
     bool needWallpaperChange();
 
-    void readSettings(bool reparse=false);
+    void readSettings(bool reparse = false);
     void writeSettings();
     QString configGroupName() const;
 
     int hash();
     QString fingerprint();
 
-    void setEnabled( const bool enable );
+    void setEnabled(const bool enable);
     bool enabled() const { return m_bEnabled; }
 
 private:
@@ -284,10 +282,10 @@ private:
     bool m_bEnabled;
 
 public:
-    QMap<QString,int> m_BMMap;
-    QMap<QString,int> m_WMMap;
-    QMap<QString,int> m_MMMap;
-    QMap<QString,int> m_BlMMap;
+    QMap<QString, int> m_BMMap;
+    QMap<QString, int> m_WMMap;
+    QMap<QString, int> m_MMMap;
+    QMap<QString, int> m_BlMMap;
     char *m_BMRevMap[16];
     char *m_WMRevMap[16];
     char *m_MMRevMap[16];
@@ -298,8 +296,7 @@ public:
 /**
  * A class to read/modify the global desktop background settings.
  */
-class KGlobalBackgroundSettings
-{
+class KGlobalBackgroundSettings {
 public:
     KGlobalBackgroundSettings(const KSharedConfigPtr &config);
 
@@ -327,6 +324,5 @@ private:
     KSharedConfigPtr m_pConfig;
     bool m_bDrawBackgroundPerScreen;
 };
-
 
 #endif // __BGSettings_h_Included__
