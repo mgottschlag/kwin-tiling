@@ -56,7 +56,6 @@
         <property name="whatsThis" >
          <string>&lt;qt>
 &lt;p>Click here to modify the programs options. You usually can get the available options to a suitable program by typing in a terminal emulator the name of the executable file plus --help. (example: kwebdesktop --help).&lt;/p>
-&lt;p>One useful example is the program kwebdesktop. It draws a web page on the background of your desktop.  You can use this program by selecting it on the listbox on the right, but it will draw a predefined web page. To change the web page it renders, select the kwebdesktop program on the listbox, then click here. A dialog will appear, allowing you to change the web page by replacing the old address (URL) with a new one.&lt;/p>
 &lt;/qt></string>
         </property>
         <property name="text" >
@@ -97,7 +96,6 @@
 &lt;p>The &lt;b>Program&lt;/b> column shows the name of the program.&lt;br>
 The &lt;b>Comment&lt;/b> column brings a short description.&lt;br>
 The &lt;b>Refresh&lt;/b> column indicates the time interval between redraws of the desktop.&lt;/p>
-&lt;p>The &lt;b>K Web Desktop&lt;/b> program (kwebdesktop) is worth noting: it draws a specified page of the web in your desktop. You can modify it, and the webpage it draws by selecting it here, then clicking on the &lt;b>Modify&lt;/b> button.&lt;br>
 You can also add new compliant programs. To do that, click on the &lt;b>Add&lt;/b> button.&lt;br>
 You can also remove programs from this list clicking on the &lt;b>Remove&lt;/b> button. Please note that it does not remove the program from your system, it only removes it from the available options in this listbox.&lt;/p>
 &lt;/qt></string>
