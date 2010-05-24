@@ -486,8 +486,8 @@ void KDMUsersWidget::slotDelUsers(const QMap<QString, int> &users)
         int idx = usercombo->findText(*name);
         if (idx != -1)
             usercombo->removeItem(idx);
-        qDeleteAll(optinlv->findItems(*name, 0, Qt::MatchExactly | Qt::MatchCaseSensitive));
-        qDeleteAll(optoutlv->findItems(*name, 0, Qt::MatchExactly | Qt::MatchCaseSensitive));
+        qDeleteAll(optinlv->findItems(*name, Qt::MatchExactly | Qt::MatchCaseSensitive));
+        qDeleteAll(optoutlv->findItems(*name, Qt::MatchExactly | Qt::MatchCaseSensitive));
     }
 }
 
