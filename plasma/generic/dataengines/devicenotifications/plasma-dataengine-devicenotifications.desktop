@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Device Notifications
+Name[de]=Geräte-Benachrichtigungen
 Name[es]=Notificaciones de dispositivo
 Name[ia]=Notificationes de dispositivo
 Name[ja]=デバイスの通知
@@ -15,6 +16,7 @@ Name[uk]=Сповіщення про пристрої
 Name[x-test]=xxDevice Notificationsxx
 Name[zh_TW]=裝置通知
 Comment=Passive device notifications for the user.
+Comment[de]=Passive Benachrichtigungen für den Anwender.
 Comment[ia]=Notificationes de dispositivo passive pro le usator.
 Comment[kk]=Құрылғы пайдаланушысына құлақтандырулары
 Comment[km]=ការ​ជូនដំណឹង​ឧបករណ៍​សកម្ម​សម្រាប់​អ្នក​ប្រើ ។

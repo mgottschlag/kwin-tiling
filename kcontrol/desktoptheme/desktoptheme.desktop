@@ -10,6 +10,7 @@ X-KDE-System-Settings-Parent-Category=desktop-appearance
 X-DocPath=kcontrol/desktoptheme/index.html
 
 Name=Desktop Theme
+Name[de]=Arbeitsflächen-Design
 Name[ia]=Thema de Scriptorio
 Name[ja]=デスクトップテーマ
 Name[kk]=Үстел нақышы
@@ -23,6 +24,7 @@ Name[uk]=Тема стільниці
 Name[x-test]=xxDesktop Themexx
 Name[zh_TW]=桌面主題
 Comment=Customize the desktop theme
+Comment[de]=Arbeitsflächen-Design anpassen
 Comment[ia]=Personalisar le thema de scriptorio
 Comment[ja]=デスクトップテーマのカスタマイズ
 Comment[kk]=Үстел нақышын өзінше баптап алу

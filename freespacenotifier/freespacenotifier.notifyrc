@@ -1,6 +1,7 @@
 [Global]
 IconName=drive-harddisk
 Comment=KDE Free Space Notifier Daemon
+Comment[de]=KDE-Dienst für Speicherplatzbenachrichtigung
 Comment[es]=Demonio de notificaciones de espacio libre de KDE
 Comment[ia]=Demone de notification de spatio libere de KDE
 Comment[ja]=KDE 空き領域デーモン
@@ -17,6 +18,7 @@ Comment[x-test]=xxKDE Free Space Notifier Daemonxx
 Comment[zh_TW]=KDE 剩餘空間通知伺服程式
 Name=Low Disk Space
 Name[cs]=Málo místa na disku
+Name[de]=Wenig Speicherplatz
 Name[es]=Poco espacio en disco
 Name[ia]=Spatio de Disco Basse
 Name[ja]=ディスクの空き領域が少ないです
@@ -187,6 +189,7 @@ Comment[zh_TW]=用於警告通知
 
 [Event/freespacenotif]
 Name=Running low on disk space
+Name[de]=Speicherplatz wird knapp
 Name[ia]=Il curre super un spatio de disco basse
 Name[ja]=ディスクの空き領域が少ないです
 Name[kk]=Диск орын тапшылығы
@@ -201,6 +204,7 @@ Name[uk]=Замало місця на диску
 Name[x-test]=xxRunning low on disk spacexx
 Name[zh_TW]=磁碟空間快用完了
 Comment=You are running low on disk space
+Comment[de]=Ihr freier Speicherplatz wird knapp
 Comment[es]=Se está quedando sin espacio en disco
 Comment[ia]=Tu es currente super un spatio de disco basse
 Comment[ja]=ディスクの空き領域が少なくなりました
