@@ -57,6 +57,7 @@ class IconApplet : public Plasma::Applet
         void dropEvent(QGraphicsSceneDragDropEvent *event);
         void saveState(KConfigGroup &cg) const;
         void showConfigurationInterface();
+        QSizeF sizeHint(Qt::SizeHint which, const QSizeF & constraint = QSizeF()) const;
 
     private slots:
         void acceptedPropertiesDialog();
@@ -64,6 +65,7 @@ class IconApplet : public Plasma::Applet
         void delayedDestroy();
         void checkExistenceOfUrl();
         void checkService(const QStringList &service);
+        void iconSizeChanged(int group);
 
     private:
         //dropUrls from DolphinDropController

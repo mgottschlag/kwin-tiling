@@ -27,6 +27,7 @@
 
 #include <KDebug>
 #include <KDesktopFile>
+#include <KGlobalSettings>
 #include <KIconLoader>
 #include <KLocale>
 #include <KMenu>
@@ -85,6 +86,9 @@ void IconApplet::init()
     setDisplayLines(2);
     registerAsDragHandle(m_icon);
     setAspectRatioMode(Plasma::ConstrainedSquare);
+
+    connect(KGlobalSettings::self(), SIGNAL(iconChanged(int)),
+        this, SLOT(iconSizeChanged(int)));
 }
 
 IconApplet::~IconApplet()
@@ -115,6 +119,13 @@ void IconApplet::checkService(const QStringList &changedResources)
 {
     if (changedResources.contains("apps")) {
         setUrl(m_url);
+    }
+}
+
+void IconApplet::iconSizeChanged(int group)
+{
+    if (group == KIconLoader::Desktop || group == KIconLoader::Panel) {
+        updateGeometry();
     }
 }
 
@@ -275,6 +286,29 @@ void IconApplet::showConfigurationInterface()
         m_dialog->show();
         KWindowSystem::activateWindow(m_dialog->winId());
     }
+}
+
+QSizeF IconApplet::sizeHint(Qt::SizeHint which, const QSizeF & constraint) const
+{
+    if (which == Qt::PreferredSize) {
+        int iconSize;
+
+        switch (formFactor()) {
+            case Plasma::Planar:
+            case Plasma::MediaCenter:
+                iconSize = IconSize(KIconLoader::Desktop);
+                break;
+
+            case Plasma::Horizontal:
+            case Plasma::Vertical:
+                iconSize = IconSize(KIconLoader::Panel);
+                break;
+        }
+
+        return QSizeF(iconSize, iconSize);
+    }
+
+    return Plasma::Applet::sizeHint(which, constraint);
 }
 
 void IconApplet::setDisplayLines(int displayLines)
