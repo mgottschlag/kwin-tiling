@@ -21,30 +21,39 @@
 
 #include <QTcpSocket>
 
+#include <QTimerEvent>
+
 #include <KDebug>
 
 HddTemp::HddTemp(QObject* parent)
     : QObject(parent),
       m_failCount(0),
-      m_timer(0)
+      m_cacheValid(false)
 {
     updateData();
-    m_timer = new QTimer(this);
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(updateData()));
-    m_timer->start(10000);
 }
 
 HddTemp::~HddTemp()
 {
 }
 
-QStringList HddTemp::sources() const
+QStringList HddTemp::sources()
 {
+    updateData();
     return m_data.keys();
+}
+
+void HddTemp::timerEvent(QTimerEvent *event)
+{
+    killTimer(event->timerId());
+    m_cacheValid = false;
 }
 
 bool HddTemp::updateData()
 {
+    if (m_cacheValid) {
+	return true;
+    }
     if (m_failCount > 4) {
         return false;
     }
@@ -80,6 +89,9 @@ bool HddTemp::updateData()
         m_data[list[i]].append(list[i + 3]);
         i += 5;
     }
+    m_cacheValid = true;
+    startTimer(0);
+
     return true;
 }
 

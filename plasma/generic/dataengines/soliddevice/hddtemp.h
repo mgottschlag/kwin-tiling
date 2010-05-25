@@ -37,16 +37,17 @@ class HddTemp : public QObject
         
         HddTemp(QObject *parent=0);
         ~HddTemp();
-        QStringList sources() const;
+        QStringList sources();
         QVariant data(const QString source, const DataType type) const;
 
-    private Q_SLOTS:
-        bool updateData();
-        
+    protected:
+        void timerEvent(QTimerEvent *event);
+
     private:
         int m_failCount;
+        bool m_cacheValid;
         QMap<QString, QList<QVariant> > m_data;
-        QTimer *m_timer;
+        bool updateData();
 };
 
 
