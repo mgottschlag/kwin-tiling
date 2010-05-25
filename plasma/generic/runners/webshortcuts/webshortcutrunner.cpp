@@ -151,7 +151,7 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
 
     if (key != m_lastKey) {
         KService::Ptr matchingService;
-        foreach (KService::Ptr offer, m_searchEngines) {
+        foreach (const KService::Ptr &offer, m_searchEngines) {
             if (offer->property("Keys", QVariant::String).toString().split(",").contains(key)) {
                 matchingService = offer;
                 break;
