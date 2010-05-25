@@ -20,10 +20,9 @@
 #include <config-X11.h>
 
 #include <kconfiggroup.h>
-#include <kapplication.h>
-#include <kglobal.h>
-#include <kstandarddirs.h>
-#include <kprocess.h>
+#include <ksharedconfig.h>
+
+#include <QtGui/QX11Info>
 
 #include <X11/Xlib.h>
 
@@ -58,24 +57,10 @@ DEALINGS IN THE SOFTWARE.
 
 ****************************************************************************/
 
-//#include <X11/Xlib.h>
-
-#ifdef HAVE_XTEST
-#include <X11/extensions/XTest.h>
-#endif
-
-#ifdef HAVE_XKB
-#define explicit myexplicit
 #include <X11/XKBlib.h>
-#undef explicit
-#endif
-
 #include <X11/keysym.h>
 
-#if defined(HAVE_XTEST) || defined(HAVE_XKB)
-
 /* the XKB stuff is based on code created by Oswald Buddenhagen <ossi@kde.org> */
-#ifdef HAVE_XKB
 int xkb_init()
     {
     int xkb_opcode, xkb_event, xkb_error;
@@ -141,72 +126,17 @@ int xkb_set_off()
     XkbLockModifiers ( QX11Info::display(), XkbUseCoreKbd, mask, 0);
     return 1;
     }
-#endif
-
-#ifdef HAVE_XTEST
-int xtest_get_numlock_state()
-    {
-    int i;
-    int numlock_mask = 0;
-    Window dummy1, dummy2;
-    int dummy3, dummy4, dummy5, dummy6;
-    unsigned int mask;
-    KeyCode numlock_keycode = XKeysymToKeycode( QX11Info::display(), XK_Num_Lock );
-    if( numlock_keycode == NoSymbol )
-        return 0;
-    XModifierKeymap* map = XGetModifierMapping( QX11Info::display() );
-    for( i = 0;
-         i < 8;
-         ++i )
-        {
-	if( map->modifiermap[ map->max_keypermod * i ] == numlock_keycode )
-		numlock_mask = 1 << i;
-	}
-    XQueryPointer( QX11Info::display(), DefaultRootWindow( QX11Info::display() ), &dummy1, &dummy2,
-        &dummy3, &dummy4, &dummy5, &dummy6, &mask );
-    XFreeModifiermap( map );
-    return mask & numlock_mask;
-    }
-
-void xtest_change_numlock()
-    {
-    XTestFakeKeyEvent( QX11Info::display(), XKeysymToKeycode( QX11Info::display(), XK_Num_Lock ), True, CurrentTime );
-    XTestFakeKeyEvent( QX11Info::display(), XKeysymToKeycode( QX11Info::display(), XK_Num_Lock ), False, CurrentTime );
-    }
-
-void xtest_set_on()
-    {
-    if( !xtest_get_numlock_state())
-        xtest_change_numlock();
-    }
-
-void xtest_set_off()
-    {
-    if( xtest_get_numlock_state())
-        xtest_change_numlock();
-    }
-#endif
 
 void numlock_set_on()
     {
-#ifdef HAVE_XKB
     if( xkb_set_on())
         return;
-#endif
-#ifdef HAVE_XTEST
-    xtest_set_on();
-#endif
     }
 
 void numlock_set_off()
     {
-#ifdef HAVE_XKB
     if( xkb_set_off())
         return;
-#endif
-#ifdef HAVE_XTEST
-    xtest_set_off();
-#endif
     }
 
 void numlockx_change_numlock_state( bool set_P )
@@ -216,32 +146,11 @@ void numlockx_change_numlock_state( bool set_P )
     else
         numlock_set_off();
     }
-#else
-void numlockx_change_numlock_state( bool ) {} // dummy
-#endif // defined(HAVE_XTEST) || defined(HAVE_XKB)
-
 
 // This code is taken from xset utility from XFree 4.3 (http://www.xfree86.org/)
 
-
-#if 0
-//HAVE_XF86MISC
-#include <X11/extensions/xf86misc.h>
 void set_repeatrate(int delay, double rate)
 {
-  Display* dpy = QX11Info::display();
-  XF86MiscKbdSettings values;
-
-  XF86MiscGetKbdSettings(dpy, &values);
-  values.delay = delay;
-  values.rate = rate;
-  XF86MiscSetKbdSettings(dpy, &values);
-  return;
-}
-#else
-void set_repeatrate(int delay, double rate)
-{
-#ifdef HAVE_XKB
   Display* dpy = QX11Info::display();
   int xkbmajor = XkbMajorVersion, xkbminor = XkbMinorVersion;
   int xkbopcode, xkbevent, xkberror;
@@ -257,28 +166,7 @@ void set_repeatrate(int delay, double rate)
         return;
      }
   }
-#endif
-  // Fallback: use the xset utility.
-
-  // Unfortunately xset does only support int parameters, so
-  // really slow repeat rates cannot be supported this way.
-  // (the FSG Accessibility standard requires support for repeat rates
-  // of several seconds per character)
-  int r;
-  if (rate < 1)
-     r = 1;
-  else
-     r = (int)floor(rate + 0.5);
-
-  QString exe = KGlobal::dirs()->findExe("xset");
-  if (exe.isEmpty())
-    return;
-
-  KProcess p;
-  p << exe << "r" << "rate" << QString::number(delay) << QString::number(r);
-  p.execute();
 }
-#endif
 
 void init_keyboard_hardware()
 {
@@ -307,4 +195,3 @@ void init_keyboard_hardware()
 	if( numlockState != 2 )
 		numlockx_change_numlock_state( numlockState == 0 );
 }
-

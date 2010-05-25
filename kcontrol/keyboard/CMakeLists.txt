@@ -40,11 +40,6 @@ if(XiGetDevicePresence_FOUND)
   target_link_libraries(kded_keyboard ${X11_Xinput_LIB})
 endif(XiGetDevicePresence_FOUND)
 
-# for kcmmisc
-if(X11_XTest_FOUND)
-  target_link_libraries(kded_keyboard ${X11_XTest_LIB})
-endif(X11_XTest_FOUND)
-
 install( TARGETS kded_keyboard DESTINATION ${PLUGIN_INSTALL_DIR} )
 install( FILES keyboard.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kded )
 
@@ -120,11 +115,6 @@ set_target_properties(kcm_keyboard PROPERTIES COMPILE_DEFINITIONS DEFAULT_TAB=0)
 target_link_libraries(kcm_keyboard
     ${KDE4_KIO_LIBS} ${X11_Xkbfile_LIB} ${X11_LIBRARIES}
 )
-
-# for kcmmisc
-if(X11_XTest_FOUND)
-  target_link_libraries(kcm_keyboard ${X11_XTest_LIB})
-endif(X11_XTest_FOUND)
 
 install(TARGETS kcm_keyboard DESTINATION ${PLUGIN_INSTALL_DIR} )
 
