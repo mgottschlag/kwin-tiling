@@ -24,6 +24,7 @@
 #include <QList>
 #include <QVector>
 #include <QPointer>
+#include <QTimer>
 
 #include <KUniqueApplication>
 
@@ -96,12 +97,13 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void cleanup();
-    void createView(Plasma::Containment *containment);
     //void adjustSize(int screen);
     void dialogDestroyed(QObject *obj);
     void configureContainment(Plasma::Containment*);
     void syncConfig();
     void immutabilityChanged(Plasma::ImmutabilityType immutability);
+    void createWaitingViews();
+    void containmentScreenOwnerChanged(int, int, Plasma::Containment*);
 
 Q_SIGNALS:
     void showViews();
@@ -123,9 +125,12 @@ private:
     SaverView *viewForScreen(int screen);
 
     Plasma::Corona *m_corona;
-    QVector<SaverView*> m_views;
+    QList<SaverView*> m_views;
     QList<QWidget*> m_dialogs;
     QPointer<BackgroundDialog> m_configDialog;
+    
+    QList<QWeakPointer<Plasma::Containment> > m_viewsWaiting;
+    QTimer m_viewCreationTimer;
 
     qreal m_activeOpacity;
     qreal m_idleOpacity;

@@ -143,7 +143,6 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     int cacheSize = 0;
     QDesktopWidget *desktop = QApplication::desktop();
     int numScreens = desktop->numScreens();
-    m_views.resize(numScreens);
     for (int i = 0; i < numScreens; i++) {
         QRect geometry = desktop->screenGeometry(i);
         cacheSize += 4 * geometry.width() * geometry.height() / 1024;
@@ -215,6 +214,10 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
 
     setup(KCmdLineArgs::parsedArgs()->isSet("setup"));
+    
+    m_viewCreationTimer.setSingleShot(true);
+    m_viewCreationTimer.setInterval(0);
+    connect(&m_viewCreationTimer, SIGNAL(timeout()), this, SLOT(createWaitingViews()));
 }
 
 PlasmaApp::~PlasmaApp()
@@ -244,6 +247,58 @@ void PlasmaApp::setActiveOpacity(qreal opacity)
     KConfigGroup cg(KGlobal::config(), "General");
     cg.writeEntry("activeOpacity", opacity);
     m_corona->requestConfigSync();
+}
+
+void PlasmaApp::createWaitingViews()
+{
+    const QList<QWeakPointer<Plasma::Containment> > containments = m_viewsWaiting;
+    m_viewsWaiting.clear();
+    foreach(QWeakPointer<Plasma::Containment> weakContainment, containments) {
+        if (weakContainment) {
+            Plasma::Containment *containment = weakContainment.data();
+            
+            KConfigGroup viewIds(KGlobal::config(), "ViewIds");
+            
+            const int id = viewIds.readEntry(QString::number(containment->id()), 0);
+            // we have a new screen. neat.
+            SaverView *view = viewForScreen(containment->screen());
+            if (view) {
+                return;
+            }
+            
+            view = new SaverView(containment, 0);
+            if (m_corona) {
+                connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
+                        view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
+                connect(m_corona, SIGNAL(shortcutsChanged()), view, SLOT(updateShortcuts()));
+            }
+            view->setGeometry(QApplication::desktop()->screenGeometry(containment->screen()));
+
+            //FIXME why do I get BadWindow?
+            //unsigned char data = VIEW;
+            //XChangeProperty(QX11Info::display(), view->effectiveWinId(), tag, tag, 8, PropModeReplace, &data, 1);
+
+            connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
+                    this, SLOT(configureContainment(Plasma::Containment*)));
+
+            //a hack to make sure the keyboard shortcut works
+            view->addAction(corona()->action("unlock desktop"));
+            view->addAction(corona()->action("unlock widgets"));
+            m_views.append(view);
+            connect(view, SIGNAL(hidden()), SLOT(lock()));
+            connect(view, SIGNAL(hidden()), SIGNAL(hidden()));
+            connect(this, SIGNAL(showViews()), view, SLOT(show()));
+            connect(this, SIGNAL(hideViews()), view, SLOT(hide()));
+            connect(this, SIGNAL(setViewOpacity(qreal)), view, SLOT(setOpacity(qreal)));
+            connect(this, SIGNAL(enableSetupMode()), view, SLOT(disableSetupMode()));
+            connect(this, SIGNAL(disableSetupMode()), view, SLOT(disableSetupMode()));
+            connect(this, SIGNAL(openToolBox()), view, SLOT(openToolBox()));
+            connect(this, SIGNAL(closeToolBox()), view, SLOT(closeToolBox()));
+            connect(QApplication::desktop(), SIGNAL(resized(int)), view, SLOT(adjustSize(int)));
+            emit(openToolBox());
+            kDebug() << "view created";
+        }
+    }
 }
 
 void PlasmaApp::setIdleOpacity(qreal opacity)
@@ -296,8 +351,8 @@ Plasma::Corona* PlasmaApp::corona()
 {
     if (!m_corona) {
         m_corona = new SaverCorona(this);
-        connect(m_corona, SIGNAL(containmentAdded(Plasma::Containment*)),
-                this, SLOT(createView(Plasma::Containment*)));
+        connect(m_corona, SIGNAL(screenOwnerChanged(int, int, Plasma::Containment*)),
+                this, SLOT(containmentScreenOwnerChanged(int, int, Plasma::Containment*)));
         connect(m_corona, SIGNAL(configSynced()), SLOT(syncConfig()));
         //kDebug() << "connected to containmentAdded";
         /*
@@ -324,51 +379,13 @@ bool PlasmaApp::hasComposite()
     return composite;
 }
 
-//I think we need this for when the corona loads the default setup
-//but maybe something simpler would suffice
-void PlasmaApp::createView(Plasma::Containment *containment)
+void PlasmaApp::containmentScreenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment *containment)
 {
-    kDebug() << "Containment name:" << containment->name()
-             << "| type" << containment->containmentType()
-             <<  "| screen:" << containment->screen()
-             << "| geometry:" << containment->geometry()
-             << "| zValue:" << containment->zValue();
-    int screen = containment->screen();
-
-    kDebug() << "creating a view for" << screen << "and we have"
-        << QApplication::desktop()->numScreens() << "screens";
-
-    // we have a new screen. neat.
-    SaverView *view = new SaverView(containment, 0);
-                /*if (m_corona) {
-                    connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
-                            view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
-                }*/
-    view->setGeometry(QApplication::desktop()->screenGeometry(screen));
-
-    //FIXME why do I get BadWindow?
-    //unsigned char data = VIEW;
-    //XChangeProperty(QX11Info::display(), view->effectiveWinId(), tag, tag, 8, PropModeReplace, &data, 1);
-
-    connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
-            this, SLOT(configureContainment(Plasma::Containment*)));
-
-    //a hack to make sure the keyboard shortcut works
-    view->addAction(corona()->action("unlock desktop"));
-    view->addAction(corona()->action("unlock widgets"));
-    m_views.insert(screen, view);
-    connect(view, SIGNAL(hidden()), SLOT(lock()));
-    connect(view, SIGNAL(hidden()), SIGNAL(hidden()));
-    connect(this, SIGNAL(showViews()), view, SLOT(show()));
-    connect(this, SIGNAL(hideViews()), view, SLOT(hide()));
-    connect(this, SIGNAL(setViewOpacity(qreal)), view, SLOT(setOpacity(qreal)));
-    connect(this, SIGNAL(enableSetupMode()), view, SLOT(disableSetupMode()));
-    connect(this, SIGNAL(disableSetupMode()), view, SLOT(disableSetupMode()));
-    connect(this, SIGNAL(openToolBox()), view, SLOT(openToolBox()));
-    connect(this, SIGNAL(closeToolBox()), view, SLOT(closeToolBox()));
-    connect(QApplication::desktop(), SIGNAL(resized(int)), view, SLOT(adjustSize(int)));
-    emit(openToolBox());
-    kDebug() << "view created";
+    Q_UNUSED(wasScreen);
+    if (isScreen < 0)
+        return;
+    m_viewsWaiting.append(containment);
+    m_viewCreationTimer.start();
 }
 
 void PlasmaApp::setup(bool setupMode)
@@ -515,7 +532,11 @@ void PlasmaApp::immutabilityChanged(Plasma::ImmutabilityType immutability)
 
 SaverView *PlasmaApp::viewForScreen(int screen)
 {
-    return m_views.at(screen);
+    foreach(SaverView *view, m_views) {
+        if (view->screen() == screen)
+            return view;
+    }
+    return 0;
 }
 
 #include "plasmaapp.moc"
