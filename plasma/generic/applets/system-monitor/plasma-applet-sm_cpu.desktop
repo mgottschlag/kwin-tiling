@@ -24,6 +24,7 @@ Name[tg]=Монитори CPU
 Name[th]=ติดตามการใช้งานตัวประมวลผลกลาง
 Name[uk]=Використання процесора
 Name[x-test]=xxCPU Monitorxx
+Name[zh_CN]=CPU 监视器
 Name[zh_TW]=CPU 監視器
 Comment=A CPU usage monitor
 Comment[ar]=مراقب استعمال المعالج

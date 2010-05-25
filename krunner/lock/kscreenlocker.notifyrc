@@ -26,6 +26,7 @@ Comment[tg]=Пардаи экран
 Comment[th]=โปรแกรมรักษาจอภาพ
 Comment[uk]=Зберігач екрана
 Comment[x-test]=xxScreen Saverxx
+Comment[zh_CN]=屏幕保护程序
 Comment[zh_TW]=螢幕保護程式
 
 [Event/savingstarted]

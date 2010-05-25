@@ -23,6 +23,7 @@ Name[th]=ตัวจัดการการแจ้งสถานะให�
 Name[tr]=Durum Bildiricisi Yöneticisi
 Name[uk]=Керування сповіщенням про стан
 Name[x-test]=xxStatus Notifier Managerxx
+Name[zh_CN]=状态通知管理器
 Name[zh_TW]=狀態通知管理員
 Comment=Manages services that provide status notifier user interfaces
 Comment[el]=Διαχείριση υπηρεσιών που παρέχουν ειδοποιήσεις καταστάσεων περιβάλλοντος χρήστη

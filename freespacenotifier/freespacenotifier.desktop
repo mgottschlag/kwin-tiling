@@ -14,6 +14,7 @@ Name[pt_BR]=Notificação de espaço livre
 Name[sv]=Information om ledigt utrymme
 Name[uk]=Сповіщення про вільне місце
 Name[x-test]=xxFree Space Notifierxx
+Name[zh_CN]=空闲空间通知器
 Name[zh_TW]=剩餘空間通知
 Comment=Warns when running out of space on your home folder
 Comment[de]=Gibt eine Warnung aus, wenn der freie Speicherplatz in Ihrem Persönlichen Ordner knapp wird

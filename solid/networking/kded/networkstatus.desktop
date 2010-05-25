@@ -24,6 +24,7 @@ Name[th]=สถานะเครือข่าย
 Name[tr]=Ağ Durumu
 Name[uk]=Стан мережі
 Name[x-test]=xxNetwork Statusxx
+Name[zh_CN]=网络状态
 Name[zh_TW]=網路狀態
 Comment=Tracks status of network interfaces and provides notification to applications using the network.
 Comment[ar]=حالة مسارات واجهة الشبكة ومبلغ بالاجهزة التي تستخدم الشبكة

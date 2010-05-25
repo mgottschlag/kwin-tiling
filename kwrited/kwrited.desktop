@@ -23,6 +23,7 @@ Name[th]=ดีมอน Write
 Name[tr]=Write Hizmeti
 Name[uk]=Фонова служба запису
 Name[x-test]=xxWrite Daemonxx
+Name[zh_CN]=Write 守护程序
 Name[zh_TW]=Write 伺服程式
 Comment=Watch for messages from local users sent with write(1) or wall(1)
 Comment[af]=Kyk uit vir boodskappe vanaf plaaslike gebruikers wat met write(1) of wall(1) gestuur is

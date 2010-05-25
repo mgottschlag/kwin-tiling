@@ -1,20 +1,27 @@
 [Domain]
 Name=Login Manager Control Module
+Name[x-test]=xxLogin Manager Control Modulexx
 Icon=preferences-system-login
 
 [org.kde.kcontrol.kcmkdm.save]
 Name=Save the Login Manager settings
+Name[x-test]=xxSave the Login Manager settingsxx
 Description=Administrator authorization is required to change the Login Manager settings
+Description[x-test]=xxAdministrator authorization is required to change the Login Manager settingsxx
 Policy=auth_admin
 
 [org.kde.kcontrol.kcmkdm.managefaces]
 Name=Manage user images shown in the Login Manager
+Name[x-test]=xxManage user images shown in the Login Managerxx
 Description=Administrator authorization is required to manage user images for the Login Manager
+Description[x-test]=xxAdministrator authorization is required to manage user images for the Login Managerxx
 Policy=auth_admin
 Persistence=session
 
 [org.kde.kcontrol.kcmkdm.managethemes]
 Name=Manage themes for the Login Manager
+Name[x-test]=xxManage themes for the Login Managerxx
 Description=Administrator authorization is required to manage themes for the Login Manager
+Description[x-test]=xxAdministrator authorization is required to manage themes for the Login Managerxx
 Policy=auth_admin
 Persistence=session

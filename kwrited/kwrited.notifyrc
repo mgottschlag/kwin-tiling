@@ -24,6 +24,7 @@ Comment[th]=บริการรับส่งข้อความภาย�
 Comment[tr]=Yerel sistem iletisi hizmeti
 Comment[uk]=Служба повідомлень локальної системи
 Comment[x-test]=xxLocal system message servicexx
+Comment[zh_CN]=本地系统消息服务
 Comment[zh_TW]=本地端系統訊息服務
 
 [Event/NewMessage]
