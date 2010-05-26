@@ -243,8 +243,14 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     KConfigGroup viewConfig = config();
     KConfigGroup sizes = KConfigGroup(&viewConfig, "Sizes");
     m_lastHorizontal = isHorizontal();
-    const QRect screenRect = Kephal::ScreenUtils::screenGeometry(panel->screen());
+
+    const bool onScreen = panel->screen() < Kephal::ScreenUtils::numScreens();
+    const QRect screenRect = onScreen ?  Kephal::ScreenUtils::screenGeometry(panel->screen()) : QRect();
+    if (!onScreen) {
+        resize(panel->size().toSize());
+    }
     m_lastSeenSize = sizes.readEntry("lastsize", m_lastHorizontal ? screenRect.width() : screenRect.height());
+
     m_alignment = alignmentFilter((Qt::Alignment)viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
     m_offset = viewConfig.readEntry("Offset", 0);
     setVisibilityMode((VisibilityMode)viewConfig.readEntry("panelVisibility", (int)m_visibilityMode));
@@ -257,8 +263,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)),
             this, SLOT(updatePanelGeometry()));
     connect(screens, SIGNAL(screenAdded(Kephal::Screen *)),
-            this, SLOT(updateStruts()));
-    connect(screens, SIGNAL(screenRemoved(int)),
             this, SLOT(updateStruts()));
 }
 

@@ -201,7 +201,6 @@ public Q_SLOTS:
      */
     void setContainment(Plasma::Containment *containment);
 
-protected Q_SLOTS:
     void updateStruts();
 
 protected:
