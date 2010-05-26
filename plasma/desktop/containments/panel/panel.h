@@ -36,11 +36,15 @@ namespace Plasma
 class Panel : public Plasma::Containment
 {
     Q_OBJECT
+    Q_PROPERTY(QString shadowPath READ shadowPath)
+
 public:
     Panel(QObject *parent, const QVariantList &args);
     ~Panel();
     void init();
     QList<QAction*> contextualActions();
+
+    QString shadowPath() {return "widgets/panel-background";}
 
     void constraintsEvent(Plasma::Constraints constraints);
 

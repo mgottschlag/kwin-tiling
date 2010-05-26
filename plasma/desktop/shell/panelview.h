@@ -54,6 +54,8 @@ class PanelController;
 
 class PanelAppletOverlay;
 
+class ShadowWindow;
+
 class PanelView : public Plasma::View
 {
     Q_OBJECT
@@ -258,6 +260,11 @@ private Q_SLOTS:
      */
     void updatePanelGeometry();
 
+    /**
+     * a shadow is needed only if the containment supports it and composite is on
+     */
+    void checkShadow();
+
 private:
     Plasma::Svg *m_background;
     PanelController *m_panelController;
@@ -270,6 +277,7 @@ private:
     QTimeLine *m_timeLine;
     QGraphicsWidget *m_spacer;
     int m_spacerIndex;
+    ShadowWindow *m_shadowWindow;
 
     int m_offset;
     Qt::Alignment m_alignment;
