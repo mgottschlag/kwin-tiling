@@ -320,7 +320,7 @@ void WindowTaskItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
     QList <QAction*> actionList;
     QAction *a(0);
     if (m_task->isGrouped()) {
-        a = new QAction(i18n("Collapse Parent Group"), this);
+        a = new QAction(i18n("Collapse Parent Group"), 0);
         actionList.append(a);
         TaskGroupItem *group = qobject_cast<TaskGroupItem*>(m_applet->rootGroupItem()->abstractTaskItem(m_task->parentGroup()));
         connect(a, SIGNAL(triggered()), group, SLOT(collapse()));
