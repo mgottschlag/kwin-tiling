@@ -530,7 +530,8 @@ void NotifierDialog::buildDialog()
     QGraphicsWidget *devicesWidget = new QGraphicsWidget();
     m_devicesScrollWidget->setWidget(devicesWidget);
     m_devicesScrollWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_devicesScrollWidget->setMinimumWidth(240);
+    //These hardcoded sizes should die one day
+    m_devicesScrollWidget->setMinimumSize(240, 250);
     m_deviceLayout = new QGraphicsLinearLayout(Qt::Vertical);
     m_deviceLayout->setContentsMargins(0, 0, 0, 8);
     devicesWidget->setLayout(m_deviceLayout);
@@ -595,7 +596,6 @@ void NotifierDialog::buildDialog()
     updateMainLabelText();
 
     m_widget->setLayout(m_mainLayout);
-    m_widget->setMinimumWidth(300);
 }
 
 void NotifierDialog::dismissStatusBar()
