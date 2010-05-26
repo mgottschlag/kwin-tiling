@@ -33,6 +33,7 @@ class QPropertyAnimation;
 class KSelectionOwner;
 class KColorScheme;
 class KWindowInfo;
+class KCModuleProxy;
 
 namespace Plasma
 {
@@ -101,7 +102,6 @@ class Pager : public Plasma::Applet
         void stackingOrderChanged();
         void windowChanged(WId id, unsigned int properties);
         void showingDesktopChanged(bool showing);
-        void slotConfigureDesktop();
 #ifdef Q_WS_X11
         void slotAddDesktop();
         void slotRemoveDesktop();
@@ -179,6 +179,9 @@ class Pager : public Plasma::Applet
 
         static const int s_FadeInDuration = 50;
         static const int s_FadeOutDuration = 100;
+
+        //embedded KCM module in the configuratoin dialog
+        KCModuleProxy *m_configureDesktopsWidget;
     };
 
 K_EXPORT_PLASMA_APPLET(pager, Pager)

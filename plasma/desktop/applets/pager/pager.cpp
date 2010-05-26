@@ -35,9 +35,10 @@
 #include <KConfigDialog>
 #include <KGlobalSettings>
 #include <KSharedConfig>
+#include <KCModuleProxy>
+#include <KCModuleInfo>
 #include <KWindowSystem>
 #include <NETRootInfo>
-#include <KToolInvocation>
 #include <kmanagerselection.h>
 
 #include <Plasma/Svg>
@@ -104,7 +105,8 @@ Pager::Pager(QObject *parent, const QVariantList &args)
       m_dragStartDesktop(-1),
       m_dragHighlightedDesktop(-1),
       m_dragSwitchDesktop(-1),
-      m_ignoreNextSizeConstraint(false)
+      m_ignoreNextSizeConstraint(false),
+      m_configureDesktopsWidget(0)
 {
     setAcceptsHoverEvents(true);
     setAcceptDrops(true);
@@ -235,9 +237,6 @@ KColorScheme *Pager::colorScheme()
 
 void Pager::createMenu()
 {
-    QAction* configureDesktop = new QAction(SmallIcon("configure"),i18n("&Configure Virtual Desktops..."), this);
-    m_actions.append(configureDesktop);
-    connect(configureDesktop, SIGNAL(triggered(bool)), this , SLOT(slotConfigureDesktop()));
 #ifdef Q_WS_X11
     m_addDesktopAction = new QAction(SmallIcon("list-add"),i18n("&Add Virtual Desktop"), this);
     m_actions.append(m_addDesktopAction);
@@ -276,20 +275,17 @@ void Pager::slotRemoveDesktop()
 }
 #endif
 
-void Pager::slotConfigureDesktop()
-{
-  QString error;
-  KToolInvocation::startServiceByDesktopName("desktop", QStringList(), &error);
-}
-
 void Pager::createConfigurationInterface(KConfigDialog *parent)
 {
     QWidget *widget = new QWidget();
     ui.setupUi(widget);
+    m_configureDesktopsWidget = new KCModuleProxy("desktop");
+
     parent->addPage(widget, i18n("General"), icon());
-    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    parent->addPage(m_configureDesktopsWidget, m_configureDesktopsWidget->moduleInfo().moduleName(),
+                    m_configureDesktopsWidget->moduleInfo().icon());
+
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-    connect(ui.configureDesktopsButton, SIGNAL(clicked()), SLOT(slotConfigureDesktop()));
 
     switch (m_displayedText){
         case Number:
@@ -590,6 +586,11 @@ void Pager::configAccepted()
     if ((int)m_currentDesktopSelected != (int)currentDesktopSelected) {
         m_currentDesktopSelected = currentDesktopSelected;
         cg.writeEntry("currentDesktopSelected", (int)m_currentDesktopSelected);
+        changed = true;
+    }
+
+    if (m_configureDesktopsWidget->changed()) {
+        m_configureDesktopsWidget->save();
         changed = true;
     }
 
