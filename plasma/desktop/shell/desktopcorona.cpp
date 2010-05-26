@@ -495,20 +495,34 @@ void DesktopCorona::addPanel(const QString &plugin)
 
 void DesktopCorona::checkActivities()
 {
-    kDebug() << "activitiesa to start with" << containments().count();
-    foreach (const QString &id, m_activityController->availableActivities()) {
+    kDebug() << "containments to start with" << containments().count();
+    QStringList existingActivities = m_activityController->availableActivities();
+    foreach (const QString &id, existingActivities) {
         activityAdded(id);
     }
 
-    QStringList list;
+    QStringList newActivities;
+    QHash<QString,QString> invalidIds;
     bool migrated = false;
     //TODO take all the containments that currently have a screen, and merge them into one
     //activity?
     foreach (Plasma::Containment *cont, containments()) {
         if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
              cont->containmentType() == Plasma::Containment::CustomContainment) &&
-            !offscreenWidgets().contains(cont) && cont->context()->currentActivityId().isEmpty()) {
+            !offscreenWidgets().contains(cont)) {
             Plasma::Context *context = cont->context();
+            QString oldId = context->currentActivityId();
+            if (!oldId.isEmpty()) {
+                if (existingActivities.contains(oldId)) {
+                    continue;
+                }
+                kDebug() << "invalid id" << oldId;
+                if (invalidIds.contains(oldId)) {
+                    //it belongs with one of the already-rescued ones
+                    context->setCurrentActivityId(invalidIds.value(oldId));
+                    continue;
+                }
+            }
             //discourage blank names
             if (context->currentActivity().isEmpty()) {
                 context->setCurrentActivity(i18n("unnamed"));
@@ -516,7 +530,8 @@ void DesktopCorona::checkActivities()
             //create a new activity for the containment
             QString id = m_activityController->addActivity(context->currentActivity());
             context->setCurrentActivityId(id);
-            list << id;
+            invalidIds.insert(oldId, id);
+            newActivities << id;
             migrated = true;
             kDebug() << "migrated" << context->currentActivityId() << context->currentActivity();
         }
@@ -528,9 +543,8 @@ void DesktopCorona::checkActivities()
     }
 
     //init our list
-    foreach (const QString &id, list) {
+    foreach (const QString &id, newActivities) {
         activityAdded(id);
-        //TODO ensure the current one is active?
     }
 }
 
