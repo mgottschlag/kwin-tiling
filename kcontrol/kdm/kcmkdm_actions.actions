@@ -1,27 +1,55 @@
 [Domain]
 Name=Login Manager Control Module
+Name[ia]=Modulo de controlo de Gerente de Accessos de Identification
+Name[pt]=Módulo de Controlo do Gestor de Autenticação
+Name[sv]=Inställningsmodul för inloggningshanterare
+Name[uk]=Модуль керування менеджером реєстрації
 Name[x-test]=xxLogin Manager Control Modulexx
 Icon=preferences-system-login
 
 [org.kde.kcontrol.kcmkdm.save]
 Name=Save the Login Manager settings
+Name[ia]=Salvar le preferentias del gerente de accesso de identification
+Name[pt]=Gravar a configuração do Gestor de Autenticação
+Name[sv]=Spara inloggningshanterarens inställningar
+Name[uk]=Зберегти параметри менеджера реєстрації
 Name[x-test]=xxSave the Login Manager settingsxx
 Description=Administrator authorization is required to change the Login Manager settings
+Description[ia]=Autorisation de Administrator es requirite pro modificar le preferentias del Gerente de Accessos de Identification
+Description[pt]=É necessária a autorização do administrador para mudar a configuração do Gestor de Autenticação
+Description[sv]=Administratörsbehörighet krävs för att ändra inloggningshanterarens inställningar
+Description[uk]=Для отримання доступу до параметрів менеджера реєстрації слід набути прав доступу адміністратора
 Description[x-test]=xxAdministrator authorization is required to change the Login Manager settingsxx
 Policy=auth_admin
 
 [org.kde.kcontrol.kcmkdm.managefaces]
 Name=Manage user images shown in the Login Manager
+Name[ia]=Gerer images de usator monstrate in le Gerente de Accessos de Identification
+Name[pt]=Gerir as imagens dos utilizadores visíveis no Gestor de Autenticação
+Name[sv]=Hantera användarbilder visade i inloggningshanteraren
+Name[uk]=Керування зображеннями користувачів у менеджері реєстрації
 Name[x-test]=xxManage user images shown in the Login Managerxx
 Description=Administrator authorization is required to manage user images for the Login Manager
+Description[ia]=Autorisation de Administrator es requirite pro gerer  le images de usator pro le Gerente de Accessos de Identification
+Description[pt]=É necessária a autorização do administrador para gerir as imagens dos utilizadores no Gestor de Autenticação
+Description[sv]=Administratörsbehörighet krävs för att hantera användarbilder för inloggningshanteraren
+Description[uk]=Для отримання доступу до зміни зображень користувачів менеджера реєстрації слід набути прав доступу адміністратора
 Description[x-test]=xxAdministrator authorization is required to manage user images for the Login Managerxx
 Policy=auth_admin
 Persistence=session
 
 [org.kde.kcontrol.kcmkdm.managethemes]
 Name=Manage themes for the Login Manager
+Name[ia]=Gerer themas pro le Gerente de Accessos de Identification
+Name[pt]=Gerir os temas do Gestor de Autenticação
+Name[sv]=Hantera teman för inloggningshanteraren
+Name[uk]=Керування темами менеджера реєстрації
 Name[x-test]=xxManage themes for the Login Managerxx
 Description=Administrator authorization is required to manage themes for the Login Manager
+Description[ia]=Autorisation de Administrator es requirite pro modificar le themas pro le Gerente de Accessos de Identification
+Description[pt]=É necessária a autorização do administrador para gerir os temas no Gestor de Autenticação
+Description[sv]=Administratörsbehörighet krävs för att hantera teman för inloggningshanteraren
+Description[uk]=Для отримання доступу до зміни тем менеджера реєстрації слід набути прав доступу адміністратора
 Description[x-test]=xxAdministrator authorization is required to manage themes for the Login Managerxx
 Policy=auth_admin
 Persistence=session
