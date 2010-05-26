@@ -518,28 +518,14 @@ void NotifierDialog::buildDialog()
     m_mainLayout = new QGraphicsLinearLayout(Qt::Vertical, m_widget);
     m_mainLayout->setSpacing(0);
 
-    Plasma::IconWidget *icon = new Plasma::IconWidget(m_widget);
-    icon->setIcon(KIcon("device-notifier"));
-    icon->setMaximumHeight(KIconLoader::SizeMedium);
-    icon->setMinimumHeight(KIconLoader::SizeMedium);
-    icon->setAcceptHoverEvents(false);
     m_mainLabel = new Plasma::Label(m_widget);
     m_mainLabel->setMaximumHeight(KIconLoader::SizeMedium);
     m_mainLabel->nativeWidget()->setWordWrap(false);
-    m_mainLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    QGraphicsLinearLayout *l_layout2 = new QGraphicsLinearLayout;
-    l_layout2->setSpacing(0);
-    l_layout2->setOrientation(Qt::Horizontal);
+    m_mainLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_mainLabel->nativeWidget()->setContentsMargins(0, 0, 0, 4);
 
-    l_layout2->addStretch();
-    l_layout2->addItem(icon);
-    l_layout2->addItem(m_mainLabel);
-    l_layout2->addStretch();
-
-    QGraphicsWidget *titleWidget = new QGraphicsWidget();
-    titleWidget->setLayout(l_layout2);
-
-    m_mainLayout->addItem(titleWidget);
+    m_mainLayout->addItem(m_mainLabel);
+    m_mainLayout->setAlignment(m_mainLabel, Qt::AlignCenter);
 
     m_devicesScrollWidget = new Plasma::ScrollWidget(m_widget);
     QGraphicsWidget *devicesWidget = new QGraphicsWidget(m_devicesScrollWidget);
