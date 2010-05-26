@@ -912,7 +912,7 @@ void PanelView::editingComplete()
     updateStruts();
 
     if (m_visibilityMode == LetWindowsCover || m_visibilityMode == AutoHide) {
-         hideIfNotInUse();
+        hideIfNotInUse();
     }
 }
 
