@@ -61,13 +61,13 @@ Activity::Activity(const QString &id, QObject *parent)
     //find your containments
     foreach (Plasma::Containment *cont, m_corona->containments()) {
         if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
-            cont->containmentType() == Plasma::Containment::CustomContainment) &&
-                !m_corona->offscreenWidgets().contains(cont) && cont->context()->currentActivityId() == id) {
+             cont->containmentType() == Plasma::Containment::CustomContainment) &&
+            !m_corona->offscreenWidgets().contains(cont) && cont->context()->currentActivityId() == id) {
             insertContainment(cont);
         }
     }
-    kDebug() << m_containments.size();
 
+    kDebug() << m_containments.size();
 }
 
 Activity::~Activity()
@@ -126,20 +126,37 @@ Plasma::Containment* Activity::containmentForScreen(int screen, int desktop)
     if (desktop == -1) {
         desktop = 0;
     }
+
     Plasma::Containment *c = m_containments.value(QPair<int,int>(screen, desktop));
     if (!c) {
         //TODO check if there are saved containments once we start saving them
-        //kDebug() << "@@@@@adding containment for" << screen << desktop;
+        kDebug() << "@@@@@adding containment for" << screen << desktop;
         c = addContainment(screen, desktop);
     }
+
     return c;
 }
 
 Plasma::Containment* Activity::addContainment(int screen, int desktop)
 {
-    Plasma::Containment* c = m_corona->addContainment(m_plugin);
-    insertContainment(c, screen, desktop);
-    return c;
+    Plasma::Containment *containment = 0;
+    foreach (Plasma::Containment *c, m_corona->containments()) {
+        if ((c->containmentType() == Plasma::Containment::DesktopContainment ||
+             c->containmentType() == Plasma::Containment::CustomContainment) &&
+            !m_corona->offscreenWidgets().contains(c) &&
+            c->context()->currentActivityId().isEmpty()) {
+            containment = c;
+            containment->setScreen(screen, desktop);
+            break;
+        }
+    }
+
+    if (!containment) {
+        containment = m_corona->addContainment(m_plugin);
+    }
+
+    insertContainment(containment, screen, desktop);
+    return containment;
 }
 
 void Activity::activateContainment(int screen, int desktop)
