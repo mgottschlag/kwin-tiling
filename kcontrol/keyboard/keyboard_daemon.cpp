@@ -31,6 +31,7 @@
 #include "x11_helper.h"
 #include "xkb_helper.h"
 #include "keyboard_dbus.h"
+#include "bindings.h"
 
 #include "keyboard_hardware.h"
 
@@ -103,13 +104,12 @@ void KeyboardDaemon::setupTrayIcon()
 void KeyboardDaemon::registerShortcut()
 {
 	if( actionCollection == NULL ) {
-         actionCollection = new KActionCollection(this, KComponentData("Keyboard Daemon"));
-         KAction* a = NULL;
-#include "bindings.cpp"
-         connect(a, SIGNAL(triggered()), this, SLOT(switchToNextLayout()));
-         connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), this, SLOT(globalSettingsChanged(int)));
-         kDebug() << "Keyboard layout switching KDE shortcut" << a->globalShortcut().toString();
-     }
+		KAction* a;
+		actionCollection = createGlobalActionCollection(this, &a);
+		connect(a, SIGNAL(triggered()), this, SLOT(switchToNextLayout()));
+		connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), this, SLOT(globalSettingsChanged(int)));
+		kDebug() << "Keyboard layout switching KDE shortcut" << a->globalShortcut().toString();
+    }
 }
 
 void KeyboardDaemon::unregisterShortcut()

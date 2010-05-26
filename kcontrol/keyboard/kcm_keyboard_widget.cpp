@@ -38,6 +38,7 @@
 #include "x11_helper.h"
 #include "kcm_view_models.h"
 #include "kcm_add_layout_dialog.h"
+#include "bindings.h"
 
 #include "kcmmisc.h"
 
@@ -455,9 +456,8 @@ void KCMKeyboardWidget::updateShortcutsUI()
 	updateXkbShortcutsButtons();
 
 	delete actionCollection;
-    actionCollection = new KActionCollection(this, KComponentData("Keyboard Daemon"));
-    KAction *a = NULL;
-#include "bindings.cpp"
+	KAction* a;
+	actionCollection = createGlobalActionCollection(this, &a);
     a->setProperty("isConfigurationAction", true);
     uiWidget->kdeKeySequence->setKeySequence(a->globalShortcut().primary());
     kDebug() << "Keyboard layout switching KDE shortcut" << a->globalShortcut().toString();

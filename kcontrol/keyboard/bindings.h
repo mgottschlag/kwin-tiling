@@ -16,23 +16,14 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "bindings.h"
 
-#include <kactioncollection.h>
-#include <kaction.h>
-#include <klocalizedstring.h>
+#ifndef BINDINGS_H_
+#define BINDINGS_H_
 
+class QObject;
+class KAction;
+class KActionCollection;
 
-static const char* actionName = I18N_NOOP("Switch to Next Keyboard Layout");
-static const char* componentName = "KDE Keyboard Layout Switcher";
+KActionCollection* createGlobalActionCollection(QObject *parent, KAction** mainAction);
 
-KActionCollection* createGlobalActionCollection(QObject *parent, KAction** mainAction)
-{
-	KActionCollection* actionCollection = new KActionCollection(parent, KComponentData(componentName));
-	KAction* a = actionCollection->addAction( actionName );
-	a->setText( i18n(actionName) );
-	a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_K));
-	*mainAction = a;
-
-	return actionCollection;
-}
+#endif /* BINDINGS_H_ */

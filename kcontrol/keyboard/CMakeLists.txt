@@ -22,6 +22,7 @@ set( kded_keyboard_SRCS
     xkb_helper.cpp
     keyboard_config.cpp
     keyboard_hardware.cpp
+    bindings.cpp
 # next are temporary for sys tray UI
     layout_widget.cpp
     flags.cpp
@@ -102,6 +103,7 @@ set(kcm_keyboard_PART_SRCS
   flags.cpp
   iso_codes.cpp
   kcmmisc.cpp
+  bindings.cpp
 #  keyboard_hardware.cpp
 )
 
