@@ -515,10 +515,10 @@ void NotifierDialog::buildDialog()
     m_widget->installEventFilter(this);
     m_widget->setFocusPolicy(Qt::ClickFocus);
 
-    m_mainLayout = new QGraphicsLinearLayout(Qt::Vertical, m_widget);
+    m_mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
     m_mainLayout->setSpacing(0);
 
-    m_mainLabel = new Plasma::Label(m_widget);
+    m_mainLabel = new Plasma::Label();
     m_mainLabel->nativeWidget()->setWordWrap(false);
     m_mainLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_mainLabel->nativeWidget()->setContentsMargins(0, 0, 0, 4);
@@ -526,12 +526,12 @@ void NotifierDialog::buildDialog()
     m_mainLayout->addItem(m_mainLabel);
     m_mainLayout->setAlignment(m_mainLabel, Qt::AlignCenter);
 
-    m_devicesScrollWidget = new Plasma::ScrollWidget(m_widget);
-    QGraphicsWidget *devicesWidget = new QGraphicsWidget(m_devicesScrollWidget);
+    m_devicesScrollWidget = new Plasma::ScrollWidget();
+    QGraphicsWidget *devicesWidget = new QGraphicsWidget();
     m_devicesScrollWidget->setWidget(devicesWidget);
     m_devicesScrollWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_devicesScrollWidget->setMinimumWidth(240);
-    m_deviceLayout = new QGraphicsLinearLayout(Qt::Vertical, devicesWidget);
+    m_deviceLayout = new QGraphicsLinearLayout(Qt::Vertical);
     m_deviceLayout->setContentsMargins(0, 0, 0, 8);
     devicesWidget->setLayout(m_deviceLayout);
 
@@ -547,7 +547,7 @@ void NotifierDialog::buildDialog()
     connect(m_selectedItemBackground, SIGNAL(animationStep(qreal)), this, SLOT(itemBackgroundMoving(qreal)));
 
     m_statusWidget = new QGraphicsWidget();
-    QGraphicsLinearLayout *statusLayout = new QGraphicsLinearLayout(Qt::Vertical, m_statusWidget);
+    QGraphicsLinearLayout *statusLayout = new QGraphicsLinearLayout(Qt::Vertical);
 
     m_statusWidget->setLayout(statusLayout);
     Plasma::Separator *statusSeparator = new Plasma::Separator();
