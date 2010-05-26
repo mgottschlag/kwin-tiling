@@ -326,9 +326,9 @@ void WindowTaskItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
         connect(a, SIGNAL(triggered()), group, SLOT(collapse()));
     }
 
-    a = m_applet->action("configure");
-    if (a && a->isEnabled()) {
-        actionList.append(a);
+    QAction *configAction = m_applet->action("configure");
+    if (configAction && configAction->isEnabled()) {
+        actionList.append(configAction);
     }
 
     TaskManager::BasicMenu menu(0, m_task, &m_applet->groupManager(), actionList);
