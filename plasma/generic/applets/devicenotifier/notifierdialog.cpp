@@ -519,7 +519,6 @@ void NotifierDialog::buildDialog()
     m_mainLayout->setSpacing(0);
 
     m_mainLabel = new Plasma::Label(m_widget);
-    m_mainLabel->setMaximumHeight(KIconLoader::SizeMedium);
     m_mainLabel->nativeWidget()->setWordWrap(false);
     m_mainLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_mainLabel->nativeWidget()->setContentsMargins(0, 0, 0, 4);
