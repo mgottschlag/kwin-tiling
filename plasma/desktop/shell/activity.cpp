@@ -103,7 +103,7 @@ bool Activity::isActive()
 
 bool Activity::isRunning()
 {
-    return ! m_containments.isEmpty();
+    return !m_containments.isEmpty();
 }
 
 void Activity::destroy()
