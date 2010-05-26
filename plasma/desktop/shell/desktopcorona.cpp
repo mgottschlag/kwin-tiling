@@ -495,15 +495,19 @@ void DesktopCorona::addPanel(const QString &plugin)
 
 void DesktopCorona::checkActivities()
 {
-    QStringList list = m_activityController->availableActivities();
+    kDebug() << "activitiesa to start with" << containments().count();
+    foreach (const QString &id, m_activityController->availableActivities()) {
+        activityAdded(id);
+    }
 
+    QStringList list;
     bool migrated = false;
     //TODO take all the containments that currently have a screen, and merge them into one
     //activity?
     foreach (Plasma::Containment *cont, containments()) {
         if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
-                    cont->containmentType() == Plasma::Containment::CustomContainment) &&
-                !offscreenWidgets().contains(cont) && cont->context()->currentActivityId().isEmpty()) {
+             cont->containmentType() == Plasma::Containment::CustomContainment) &&
+            !offscreenWidgets().contains(cont) && cont->context()->currentActivityId().isEmpty()) {
             Plasma::Context *context = cont->context();
             //discourage blank names
             if (context->currentActivity().isEmpty()) {
@@ -517,6 +521,8 @@ void DesktopCorona::checkActivities()
             kDebug() << "migrated" << context->currentActivityId() << context->currentActivity();
         }
     }
+
+    kDebug() << "migrated?" << migrated << containments().count();
     if (migrated) {
         requestConfigSync();
     }
@@ -550,11 +556,14 @@ void DesktopCorona::activityAdded(const QString &id)
 {
     //TODO more sanity checks
     if (m_activities.contains(id)) {
-        kDebug() << "you're late.";
+        kDebug() << "you're late." << id;
         return;
     }
 
     Activity *a = new Activity(id, this);
+    if (a->isActive()) {
+        a->ensureActive();
+    }
     m_activities.insert(id, a);
 }
 
