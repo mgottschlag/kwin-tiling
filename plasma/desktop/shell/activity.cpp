@@ -156,6 +156,7 @@ Plasma::Containment* Activity::addContainment(int screen, int desktop)
     }
 
     insertContainment(containment, screen, desktop);
+    m_corona->requestConfigSync();
     return containment;
 }
 
