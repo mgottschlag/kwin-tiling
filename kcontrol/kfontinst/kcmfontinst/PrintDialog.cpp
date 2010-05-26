@@ -36,7 +36,6 @@ CPrintDialog::CPrintDialog(QWidget *parent)
     setModal(true);
     setCaption(i18n("Print Font Samples"));
     setButtons(Ok|Cancel);
-    showButtonSeparator(true);
 
     QFrame *page = new QFrame(this);
     setMainWidget(page);

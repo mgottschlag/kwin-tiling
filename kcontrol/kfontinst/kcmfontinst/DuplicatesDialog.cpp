@@ -76,7 +76,6 @@ CDuplicatesDialog::CDuplicatesDialog(QWidget *parent, CFontList *fl)
     setCaption(i18n("Duplicate Fonts"));
     setButtons(Cancel);
     setModal(true);
-    showButtonSeparator(true);
 
     QFrame *page = new QFrame(this);
     setMainWidget(page);

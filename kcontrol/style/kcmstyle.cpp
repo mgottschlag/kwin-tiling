@@ -312,7 +312,6 @@ void KCMStyle::styleSpecificConfig()
 
     //Create the container dialog
     StyleConfigDialog* dial = new StyleConfigDialog(this, styleEntries[currentStyle()]->name);
-    dial->showButtonSeparator(true);
 
     typedef QWidget*(* factoryRoutine)( QWidget* parent );
 

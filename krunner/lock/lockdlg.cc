@@ -517,7 +517,6 @@ void PasswordDlg::slotStartNewSession()
     KDialog *dialog = new KDialog( this, Qt::X11BypassWindowManagerHint );
     dialog->setModal( true );
     dialog->setButtons( KDialog::Yes | KDialog::No );
-    dialog->showButtonSeparator( true );
     dialog->setButtonGuiItem( KDialog::Yes, KGuiItem(i18n("&Start New Session"), "fork") );
     dialog->setButtonGuiItem( KDialog::No, KStandardGuiItem::cancel() );
     dialog->setDefaultButton( KDialog::Yes );

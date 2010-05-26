@@ -107,7 +107,6 @@ BGMultiWallpaperDialog::BGMultiWallpaperDialog(KBackgroundSettings *settings,
     setModal(true);
     setCaption(i18n("Setup Slide Show"));
     setButtons(Ok | Cancel);
-    showButtonSeparator(true);
 
     dlg = new BGMultiWallpaperBase(this);
     setMainWidget(dlg);

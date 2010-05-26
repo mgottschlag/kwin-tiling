@@ -589,7 +589,6 @@ void KAccessApp::createDialogContents() {
       dialog->setEscapeButton( KDialog::Close );
       dialog->setObjectName( "AccessXWarning" );
       dialog->setModal( true );
-      dialog->showButtonSeparator( true );
 
       KVBox *topcontents = new KVBox (dialog);
       topcontents->setSpacing(KDialog::spacingHint()*2);

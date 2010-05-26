@@ -43,7 +43,6 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, /*P
 {
     //setWindowIcon(KIcon("preferences-desktop-wallpaper"));
     setCaption(i18n("Background Settings"));
-    showButtonSeparator(true);
     setButtons(Ok | Cancel | Apply);
 
     QWidget * main = new QWidget(this);

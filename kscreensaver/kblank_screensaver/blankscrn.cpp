@@ -61,7 +61,6 @@ KBlankSetup::KBlankSetup( QWidget *parent, const char *name )
   setModal( true );
   setCaption( i18n( "Setup Blank Screen Saver" ) );
   setButtons( Ok | Cancel );
-  showButtonSeparator( true );
 
 	readSettings();
 

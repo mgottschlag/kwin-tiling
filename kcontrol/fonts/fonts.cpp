@@ -224,7 +224,6 @@ FontAASettings::FontAASettings(QWidget *parent)
   setModal( true );
   setCaption( i18n("Configure Anti-Alias Settings") );
   setButtons( Ok|Cancel );
-  showButtonSeparator( true );
 
   QWidget     *mw=new QWidget(this);
   QFormLayout *layout=new QFormLayout(mw);

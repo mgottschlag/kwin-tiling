@@ -124,7 +124,6 @@ CJobRunner::CJobRunner(QWidget *parent, int xid)
              itsLoop(0L)
 {
     setModal(true);
-    showButtonSeparator(true);
 
     if(NULL==parent && 0!=xid)
         XSetTransientForHint(QX11Info::display(), winId(), xid);

@@ -42,7 +42,6 @@ CalDialog::CalDialog(QWidget *parent, JoyDevice *joy)
   setButtons( Cancel | User1 );
   setDefaultButton( User1 );
   setButtonGuiItem( User1, KGuiItem( i18n("Next") ) );
-  showButtonSeparator( true );
 
   KVBox *main = new KVBox( this );
   setMainWidget( main );
