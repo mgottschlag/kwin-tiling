@@ -635,7 +635,6 @@ void KAccessApp::createDialogContents() {
       showModeCombobox->setCurrentIndex (1);
 
       dialog->setMainWidget(topcontents);
-      dialog->showButtonSeparator(false);
 
       connect (dialog, SIGNAL(yesClicked()), this, SLOT(yesClicked()));
       connect (dialog, SIGNAL(noClicked()), this, SLOT(noClicked()));

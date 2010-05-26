@@ -317,7 +317,6 @@ public: // ColorDialog
             kdecd->setColor(qcd->currentColor());
             if (qcd->options() & QColorDialog::NoButtons) {
                 kdecd->setButtons(KDialog::None);
-                kdecd->showButtonSeparator(false);
             }
             kdecd->setModal(qcd->isModal());
             qcd->setProperty("_k_bridge", QVariant::fromValue(kdecd));
