@@ -44,6 +44,7 @@
 
 #include "dashboardview.h"
 #include "desktopcorona.h"
+#include "kactivitycontroller.h"
 #include "plasmaapp.h"
 #include "plasma-shell-desktop.h"
 
@@ -402,51 +403,29 @@ void DesktopView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Contai
     }
 }
 
+//FIXME this totally doesn't belong in the view any more. should be plasma-wide.
 void DesktopView::nextContainment()
 {
-    QList<Plasma::Containment*> containments = PlasmaApp::self()->corona()->containments();
-    int start = containments.indexOf(containment());
-    int i = (start + 1) % containments.size();
-    //FIXME this is a *horrible* way of choosing a "next" containment.
-    while (i != start) {
-        if (!PlasmaApp::isPanelContainment(containments.at(i)) &&
-            containments.at(i)->screen() == -1 &&
-            containments.at(i)->pluginName() != "desktopDashboard") {
-            break;
-        }
+    KActivityController controller;
+    QStringList list = controller.availableActivities();
+    int start = list.indexOf(controller.currentActivity());
+    int i = (start + 1) % list.size();
 
-        i = (i + 1) % containments.size();
-    }
-
-    Plasma::Containment *c = containments.at(i);
-    setContainment(c);
+    controller.setCurrentActivity(list.at(i));
 }
 
 void DesktopView::previousContainment()
 {
-    QList<Plasma::Containment*> containments = PlasmaApp::self()->corona()->containments();
-    int start = containments.indexOf(containment());
+    KActivityController controller;
+    QStringList list = controller.availableActivities();
+    int start = list.indexOf(controller.currentActivity());
     //fun fact: in c++, (-1 % foo) == -1
     int i = start - 1;
     if (i < 0) {
-        i += containments.size();
+        i += list.size();
     }
 
-    //FIXME this is a *horrible* way of choosing a "previous" containment.
-    while (i != start) {
-        if (!PlasmaApp::isPanelContainment(containments.at(i)) &&
-            containments.at(i)->screen() &&
-            containments.at(i)->pluginName() != "desktopDashboard") {
-            break;
-        }
-
-        if (--i < 0) {
-            i += containments.size();
-        }
-    }
-
-    Plasma::Containment *c = containments.at(i);
-    setContainment(c);
+    controller.setCurrentActivity(list.at(i));
 }
 
 void DesktopView::lostContainment()
