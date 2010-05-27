@@ -139,7 +139,8 @@ void PlasmoidTask::setupApplet(const QString &plugin, int id)
     }
 
     //FIXME: System Information should be system services, but battery and devicenotifier are both there. we would need multiple categories
-    if (applet->category() == "System Information") {
+    if (applet->category() == "System Information" ||
+        applet->category() == "Network") {
         setCategory(Hardware);
     } else if (applet->category() == "Online Services") {
         setCategory(Communications);
