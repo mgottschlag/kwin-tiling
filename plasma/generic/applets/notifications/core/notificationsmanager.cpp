@@ -61,6 +61,7 @@ public:
     Protocol *jobProtocol;
     Protocol *notificationProtocol;
     QTimer *idleTimer;
+    static const int s_notificationLimit = 15;
 };
 
 
@@ -112,6 +113,10 @@ void Manager::addNotification(Notification* notification)
     connect(this, SIGNAL(idleTerminated()), notification, SLOT(startDeletionCountdown()));
 
     emit notificationAdded(notification);
+
+    if (d->notifications.count() > d->s_notificationLimit) {
+        notification->deleteLater();
+    }
 }
 
 void Manager::removeNotification(Notification *notification)
