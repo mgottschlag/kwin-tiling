@@ -1,0 +1,116 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"/usr/share/apps/ksgmltools2/customization/dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<title>Summary Information</title>
+<articleinfo>
+
+<authorgroup>
+<author>
+<personname>
+<firstname>David</firstname>
+<surname>Hubner</surname>
+</personname>
+</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2010-05-01</date>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KInfoCenter</keyword>
+<keyword>Device</keyword>
+<keyword>System Information</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="infosum">
+<title>Summary Information</title>
+
+<para> 
+The summary information <acronym>KCM</acronym> provides a quick way to display important information. 
+The module has three categories; <acronym>OS</acronym> Information, <acronym>CPU</acronym> Information and Hard Drive Information. 
+</para>
+<note><para>You may have more than one of these information boxes per category.</para></note>
+
+<sect2 id="osbox">
+<title><acronym>OS</acronym> Information Box</title>
+<para> 
+<screenshot>
+<screeninfo>Screenshot of <acronym>OS</acronym> Information box</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="os_block.png" format="PNG"/>
+    </imageobject>
+      <textobject>
+      <phrase><acronym>OS</acronym> Information Box</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para><para> 
+The <acronym>OS</acronym> information box has the following information:
+</para>
+<itemizedlist>
+<listitem><para><guilabel>OS Version</guilabel>: This is the version information of the Operating System KInfoCenter is present on.</para></listitem>
+<listitem><para><guilabel>KDE SC Version</guilabel>: This is the version of the KDE Software Collection KInfoCenter was compiled on.</para></listitem>
+<listitem><para><guilabel>Hostname</guilabel>: This is the hostname of the computer KInfoCenter is present on.</para></listitem>
+</itemizedlist>
+
+</sect2>
+<sect2 id="cpubox">
+
+<title><acronym>CPU</acronym> Information Box</title>
+<para> 
+<screenshot>
+<screeninfo>Screenshot of <acronym>CPU</acronym> Information box</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="pro_block.png" format="PNG"/>
+    </imageobject>
+      <textobject>
+      <phrase><acronym>CPU</acronym> Information Box</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para><para> 
+The <acronym>CPU</acronym> information box has the following information:
+</para>
+<itemizedlist>
+<listitem><para><guilabel>Processor</guilabel>: This is the vendors name for your CPU</para></listitem>
+<listitem><para><guilabel>Processor Number</guilabel>: This is the <acronym>ID</acronym> number of your <acronym>CPU</acronym>, starting from zero.</para></listitem>
+<listitem><para><guilabel>Processor Max Speed</guilabel>: This is the processors maximum speed.</para></listitem>
+</itemizedlist>
+
+</sect2>
+
+<sect2 id="hdbox">
+<title>Hard Drive Information Box</title>
+<para> 
+<screenshot>
+<screeninfo>Screenshot of Hard Drive Information box</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="sto_block.png" format="PNG"/>
+    </imageobject>
+      <textobject>
+      <phrase>Hard Drive Information Box</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para><para> 
+The Hard Drive information box has the following information:
+</para>
+<itemizedlist>
+<listitem><para><guilabel>Drive Title</guilabel>: This is the vendors name for the hard drive.</para></listitem>
+<listitem><para><guilabel>Storage Size</guilabel>: This is the current size of your hard drive. </para></listitem>
+<listitem><para><guilabel>Bus</guilabel>: This is the bus your hard drive uses.</para></listitem>
+</itemizedlist>
+</sect2>
+
+</sect1>
+</article>
