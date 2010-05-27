@@ -296,7 +296,10 @@ void Activity::insertContainment(Plasma::Containment* cont)
     }
     QPair<int,int> key(screen, desktop);
     if (m_containments.contains(key)) {
+        //this almost certainly means someone has been meddling where they shouldn't
+        //but we should protect them from harm anyways
         kDebug() << "@!@!@!@!@!@@@@rejecting containment!!!";
+        cont->context()->setCurrentActivityId(QString());
         return;
     }
     insertContainment(cont, screen, desktop);
