@@ -183,6 +183,13 @@ void DBusSystemTrayTask::dataUpdated(const QString &taskName, const Plasma::Data
                 properties["ToolTipIcon"].value<QIcon>());
 
 
+    foreach (QGraphicsWidget *widget, widgetsByHost()) {
+        DBusSystemTrayWidget *iconWidget = qobject_cast<DBusSystemTrayWidget *>(widget);
+        if (iconWidget) {
+            iconWidget->setItemIsMenu(properties["WindowId"].toInt() == 0);
+        }
+    }
+
     if (m_typeId != oldTypeId) {
         QHash<Plasma::Applet *, QGraphicsWidget *>::const_iterator i = widgetsByHost().constBegin();
         while (i != widgetsByHost().constEnd()) {

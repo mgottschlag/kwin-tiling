@@ -54,6 +54,16 @@ void DBusSystemTrayWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
+void DBusSystemTrayWidget::setItemIsMenu(bool itemIsMenu)
+{
+    m_itemIsMenu = itemIsMenu;
+}
+
+bool DBusSystemTrayWidget::itemIsMenu() const
+{
+    return m_itemIsMenu;
+}
+
 void DBusSystemTrayWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() == Qt::MidButton) {
@@ -61,6 +71,13 @@ void DBusSystemTrayWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         params.writeEntry("x", event->screenPos().x());
         params.writeEntry("y", event->screenPos().y());
         m_service->startOperationCall(params);
+    } else if (m_itemIsMenu) {
+        KConfigGroup params = m_service->operationDescription("ContextMenu");
+        params.writeEntry("x", event->screenPos().x());
+        params.writeEntry("y", event->screenPos().y());
+        KJob *job = m_service->startOperationCall(params);
+        connect(job, SIGNAL(result(KJob*)), this, SLOT(showContextMenu(KJob*)));
+        return;
     }
 
     Plasma::IconWidget::mouseReleaseEvent(event);

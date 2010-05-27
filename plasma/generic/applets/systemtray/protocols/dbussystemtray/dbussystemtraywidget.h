@@ -40,6 +40,9 @@ public:
     DBusSystemTrayWidget(Plasma::Applet *parent, Plasma::Service *service);
     void setIcon(const QString &iconName, const QIcon &icon);
 
+    void setItemIsMenu(bool itemIsMenu);
+    bool itemIsMenu() const;
+
 Q_SIGNALS:
     void clicked(const QPoint &pos);
 
@@ -56,6 +59,7 @@ private Q_SLOTS:
 private:
     Plasma::Service *m_service;
     Plasma::Applet *m_host;
+    bool m_itemIsMenu;
 };
 
 }
