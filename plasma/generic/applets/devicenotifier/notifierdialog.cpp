@@ -557,7 +557,7 @@ void NotifierDialog::buildDialog()
     statusLayout->addItem(statusSeparator);
 
     m_statusText = new Plasma::Label();
-    m_statusText->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
+    m_statusText->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
     Plasma::IconWidget *closeButton = new Plasma::IconWidget();
     closeButton->setSvg("widgets/configuration-icons", "close");
