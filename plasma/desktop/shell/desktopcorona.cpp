@@ -92,21 +92,19 @@ void DesktopCorona::init()
 
     checkAddPanelAction();
 
-    KAction *action = addAction("next activity");
+    //why do these actions belong to plasmaapp?
+    //because it makes the keyboard shortcuts work.
+    KAction *action = new KAction(PlasmaApp::self());
     action->setText(i18n("Next Activity"));
-    action->setShortcut(QKeySequence(Qt::ALT + Qt::Key_D, Qt::Key_Right));
-    action->setShortcutContext(Qt::ApplicationShortcut);
-    action->setVisible(false); //stay out of the toolbox
+    action->setObjectName("Next Activity"); // NO I18N
+    action->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_Tab));
     connect(action, SIGNAL(triggered()), this, SLOT(activateNextActivity()));
 
-    action = addAction("prev activity");
+    action = new KAction(PlasmaApp::self());
     action->setText(i18n("Previous Activity"));
-    action->setShortcut(QKeySequence(Qt::ALT + Qt::Key_D, Qt::Key_Left));
-    action->setShortcutContext(Qt::ApplicationShortcut);
-    action->setVisible(false); //stay out of the toolbox
+    action->setObjectName("Previous Activity"); // NO I18N
+    action->setGlobalShortcut(KShortcut(Qt::META + Qt::SHIFT + Qt::Key_Tab));
     connect(action, SIGNAL(triggered()), this, SLOT(activatePreviousActivity()));
-
-    //note: we don't call updateShortcuts here because plasmaapp will do it after it's added its own actions
 
     connect(this, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)),
             this, SLOT(updateImmutability(Plasma::ImmutabilityType)));
