@@ -30,8 +30,6 @@
 #include <KToggleAction>
 #include <KWindowSystem>
 #include <NETRootInfo>
-#include <KAction>
-#include <KActionCollection>
 
 #include <Plasma/Applet>
 #include <Plasma/Corona>
@@ -59,8 +57,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     : Plasma::View(containment, id, parent),
       m_dashboard(0),
       m_dashboardFollowsDesktop(true),
-      m_init(false),
-      m_actions(shortcutActions(this))
+      m_init(false)
 {
     setAttribute(Qt::WA_TranslucentBackground, false);
     //setCacheMode(QGraphicsView::CacheNone);
@@ -88,12 +85,6 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
 
     KWindowSystem::setType(winId(), NET::Desktop);
     lower();
-
-    m_actions->addAssociatedWidget(this);
-    QAction *action = m_actions->action("next");
-    connect(action, SIGNAL(triggered()), this, SLOT(nextContainment()));
-    action = m_actions->action("prev");
-    connect(action, SIGNAL(triggered()), this, SLOT(previousContainment()));
 
     /*
     const int w = 25;
@@ -145,29 +136,6 @@ void DesktopView::checkDesktopAffiliation()
         m_desktop = -1;
         KWindowSystem::setOnAllDesktops(winId(), true);
     }
-}
-
-KActionCollection* DesktopView::shortcutActions(QObject *parent)
-{
-    KActionCollection *actions = new KActionCollection(parent);
-    actions->setConfigGroup("Shortcuts-DesktopView");
-
-    //FIXME should we have next/prev or up/down/left/right or what?
-    KAction *action = actions->addAction("next");
-    action->setText(i18n("Next Activity"));
-    action->setShortcut(QKeySequence(Qt::ALT + Qt::Key_D, Qt::Key_Right));
-
-    action = actions->addAction("prev");
-    action->setText(i18n("Previous Activity"));
-    action->setShortcut(QKeySequence(Qt::ALT + Qt::Key_D, Qt::Key_Left));
-
-    actions->readSettings();
-    return actions;
-}
-
-void DesktopView::updateShortcuts()
-{
-    m_actions->readSettings();
 }
 
 void DesktopView::toggleDashboard()
@@ -401,31 +369,6 @@ void DesktopView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Contai
     if (isScreen > -1 && isScreen == screen() && (!AppSettings::perVirtualDesktopViews() || newContainment->desktop() == m_desktop - 1) ) {
         setContainment(newContainment);
     }
-}
-
-//FIXME this totally doesn't belong in the view any more. should be plasma-wide.
-void DesktopView::nextContainment()
-{
-    KActivityController controller;
-    QStringList list = controller.availableActivities();
-    int start = list.indexOf(controller.currentActivity());
-    int i = (start + 1) % list.size();
-
-    controller.setCurrentActivity(list.at(i));
-}
-
-void DesktopView::previousContainment()
-{
-    KActivityController controller;
-    QStringList list = controller.availableActivities();
-    int start = list.indexOf(controller.currentActivity());
-    //fun fact: in c++, (-1 % foo) == -1
-    int i = start - 1;
-    if (i < 0) {
-        i += list.size();
-    }
-
-    controller.setCurrentActivity(list.at(i));
 }
 
 void DesktopView::lostContainment()

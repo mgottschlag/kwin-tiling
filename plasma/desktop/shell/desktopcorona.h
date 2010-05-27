@@ -89,6 +89,8 @@ public Q_SLOTS:
     void addPanel(QAction *action);
     void addPanel(const QString &plugin);
     void populateAddPanelsMenu();
+    void activateNextActivity();
+    void activatePreviousActivity();
 
 protected Q_SLOTS:
     void evaluateScripts(const QStringList &scripts);

@@ -27,6 +27,7 @@
 #include <QMenu>
 #include <QSignalMapper>
 
+#include <KAction>
 #include <KDebug>
 #include <KDialog>
 #include <KGlobal>
@@ -90,6 +91,22 @@ void DesktopCorona::init()
     setContainmentActionsDefaults(Plasma::Containment::CustomPanelContainment, panelPlugins);
 
     checkAddPanelAction();
+
+    KAction *action = addAction("next activity");
+    action->setText(i18n("Next Activity"));
+    action->setShortcut(QKeySequence(Qt::ALT + Qt::Key_D, Qt::Key_Right));
+    action->setShortcutContext(Qt::ApplicationShortcut);
+    action->setVisible(false); //stay out of the toolbox
+    connect(action, SIGNAL(triggered()), this, SLOT(activateNextActivity()));
+
+    action = addAction("prev activity");
+    action->setText(i18n("Previous Activity"));
+    action->setShortcut(QKeySequence(Qt::ALT + Qt::Key_D, Qt::Key_Left));
+    action->setShortcutContext(Qt::ApplicationShortcut);
+    action->setVisible(false); //stay out of the toolbox
+    connect(action, SIGNAL(triggered()), this, SLOT(activatePreviousActivity()));
+
+    //note: we don't call updateShortcuts here because plasmaapp will do it after it's added its own actions
 
     connect(this, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)),
             this, SLOT(updateImmutability(Plasma::ImmutabilityType)));
@@ -585,6 +602,28 @@ void DesktopCorona::activityRemoved(const QString &id)
 {
     Activity *a = m_activities.take(id);
     a->deleteLater();
+}
+
+void DesktopCorona::activateNextActivity()
+{
+    QStringList list = m_activityController->availableActivities();
+    int start = list.indexOf(m_activityController->currentActivity());
+    int i = (start + 1) % list.size();
+
+    m_activityController->setCurrentActivity(list.at(i));
+}
+
+void DesktopCorona::activatePreviousActivity()
+{
+    QStringList list = m_activityController->availableActivities();
+    int start = list.indexOf(m_activityController->currentActivity());
+    //fun fact: in c++, (-1 % foo) == -1
+    int i = start - 1;
+    if (i < 0) {
+        i += list.size();
+    }
+
+    m_activityController->setCurrentActivity(list.at(i));
 }
 
 

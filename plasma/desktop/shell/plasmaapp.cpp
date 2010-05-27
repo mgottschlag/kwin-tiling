@@ -774,9 +774,6 @@ Plasma::Corona* PlasmaApp::corona()
 
         c->updateShortcuts();
 
-        //add stuff to shortcut config
-        c->addShortcuts(DesktopView::shortcutActions(this));
-
         m_corona = c;
         c->setItemIndexMethod(QGraphicsScene::NoIndex);
         c->initializeLayout();
@@ -981,8 +978,6 @@ void PlasmaApp::createWaitingDesktops()
             if (m_corona) {
                 connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
                         view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
-                connect(m_corona, SIGNAL(shortcutsChanged()),
-                        view, SLOT(updateShortcuts()));
             }
 
             m_desktops.append(view);

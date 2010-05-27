@@ -34,7 +34,6 @@ namespace Kephal
 } // namespace Kephal
 
 class DashboardView;
-class KActionCollection;
 
 class DesktopView : public Plasma::View
 {
@@ -62,11 +61,6 @@ public:
     Plasma::Containment *dashboardContainment() const;
     void setDashboardContainment(Plasma::Containment *containment);
 
-    /**
-     * all the actions with keyboard shortcuts
-     */
-    static KActionCollection* shortcutActions(QObject *parent);
-
 public slots:
     void toggleDashboard();
     void showDashboard(bool show);
@@ -81,27 +75,12 @@ public slots:
     void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
 
     /**
-     * switch to the "next" available containment on the corona.
-     */
-    void nextContainment();
-
-    /**
-     * switch to the "previous" available containment on the corona.
-     */
-    void previousContainment();
-
-    /**
      * Sets the containment for this view, which will also cause the view
      * to track the geometry of the containment.
      *
      * @arg containment the containment to center the view on
      */
     void setContainment(Plasma::Containment *containment);
-
-    /**
-     * reread shortcut config
-     */
-    void updateShortcuts();
 
     /**
      * make sure we've always got a containment
@@ -119,7 +98,6 @@ private:
     bool m_dashboardFollowsDesktop : 1;
     bool m_init : 1;
     int m_desktop;
-    KActionCollection *m_actions;
 
     //FIXME: duplicated from containment_p.h 
     //(but with a bigger margin to make room even for very big panels)
