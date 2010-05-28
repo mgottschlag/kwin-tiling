@@ -101,6 +101,7 @@ void NotificationScroller::addNotification(Notification *notification)
         m_notificationBar->addTab(notification->applicationIcon(), notification->applicationName());
     }
 
+    notificationWidget->layout()->activate();
     adjustSize();
 }
 
@@ -151,20 +152,7 @@ void NotificationScroller::filterNotificationsByOwner(const QString &owner)
 
     m_currentFilter = owner;
 
-    m_mainWidgetLayout->invalidate();
-    static_cast<QGraphicsLayoutItem *>(m_mainWidget)->updateGeometry();
-    m_mainWidget->resize(m_mainWidget->effectiveSizeHint(Qt::PreferredSize));
-    static_cast<QGraphicsLayoutItem *>(m_scroll)->updateGeometry();
-    updateGeometry();
-
-    Plasma::ExtenderItem *ei = qobject_cast<Plasma::ExtenderItem *>(parentWidget());
-    if (ei && ei->extender()) {
-        static_cast<QGraphicsLayoutItem *>(ei)->updateGeometry();
-        static_cast<QGraphicsLayoutItem *>(ei->extender())->updateGeometry();
-
-        QSizeF hint = ei->extender()->effectiveSizeHint(Qt::PreferredSize);
-        ei->extender()->resize(hint);
-    }
+    adjustSize();
 }
 
 void NotificationScroller::tabSwitched(int index)
@@ -203,7 +191,10 @@ void NotificationScroller::setLocation(const Plasma::Location location)
 void NotificationScroller::adjustSize()
 {
     m_mainWidgetLayout->invalidate();
-    m_mainWidget->resize(m_mainWidget->effectiveSizeHint(Qt::MinimumSize));
+    static_cast<QGraphicsLayoutItem *>(m_mainWidget)->updateGeometry();
+    m_mainWidget->resize(m_mainWidget->effectiveSizeHint(Qt::PreferredSize));
+    static_cast<QGraphicsLayoutItem *>(m_scroll)->updateGeometry();
+    updateGeometry();
 
     Plasma::ExtenderItem *ei = qobject_cast<Plasma::ExtenderItem *>(parentWidget());
     if (ei && ei->extender()) {
