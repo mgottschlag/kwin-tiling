@@ -734,8 +734,8 @@ bool PlasmaApp::canRelocatePanel(PanelView * view, Kephal::Screen *screen)
 DesktopView* PlasmaApp::viewForScreen(int screen, int desktop) const
 {
     foreach (DesktopView *view, m_desktops) {
-        //kDebug() << "comparing" << view->screen() << screen;
-        if (view->screen() == screen && (desktop < 0 || view->desktop() == desktop)) {
+        kDebug() << "comparing" << view->containment()->screen() << screen;
+        if (view->containment() && view->containment()->screen() == screen && (desktop < 0 || view->containment()->desktop() == desktop)) {
             return view;
         }
     }
@@ -773,6 +773,9 @@ Plasma::Corona* PlasmaApp::corona()
         activityAction->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_Q));
 
         c->updateShortcuts();
+
+        //add stuff to shortcut config
+        c->addShortcuts(DesktopView::shortcutActions(this));
 
         m_corona = c;
         c->setItemIndexMethod(QGraphicsScene::NoIndex);
@@ -904,7 +907,7 @@ void PlasmaApp::createWaitingPanels()
 
     foreach (QWeakPointer<Plasma::Containment> containmentPtr, containments) {
         Plasma::Containment *containment = containmentPtr.data();
-        if (!containment) {
+        if (!containment || (containment->formFactor() != Plasma::Horizontal && containment->formFactor() != Plasma::Vertical)) {
             continue;
         }
 
@@ -937,7 +940,8 @@ void PlasmaApp::createWaitingPanels()
             }
 
             if (moveTo) {
-                panelView->setScreen(moveTo->id());
+                containment->setScreen(moveTo->id(), -1);
+                panelView->setContainment(containment);
                 panelView->pinchContainmentToCurrentScreen();
             } else {
                 continue;
@@ -961,7 +965,7 @@ void PlasmaApp::createWaitingDesktops()
             Plasma::Containment *containment = weakContainment.data();
             KConfigGroup viewIds(KGlobal::config(), "ViewIds");
             const int id = viewIds.readEntry(QString::number(containment->id()), 0);
-            DesktopView *view = viewForScreen(containment->screen(),
+            DesktopView *view = viewForScreen(qMin(containment->screen(), Kephal::ScreenUtils::numScreens()-1),
                                             AppSettings::perVirtualDesktopViews() ? containment->desktop() : -1);
             if (view) {
                 kDebug() << "had a view for" << containment->screen() << containment->desktop();
@@ -978,6 +982,8 @@ void PlasmaApp::createWaitingDesktops()
             if (m_corona) {
                 connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
                         view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
+                connect(m_corona, SIGNAL(shortcutsChanged()),
+                        view, SLOT(updateShortcuts()));
             }
 
             m_desktops.append(view);

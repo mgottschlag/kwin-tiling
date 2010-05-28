@@ -401,6 +401,8 @@ void PanelView::setContainment(Plasma::Containment *containment)
     const int h = containment->size().height();
     const int length = containment->formFactor() == Plasma::Horizontal ? w : h;
 
+    View::setContainment(containment);
+
     switch (location()) {
         case Plasma::LeftEdge: {
             QRect r = availGeom.intersected(QRect(0, m_offset, w, length)).boundingRect();
@@ -439,7 +441,6 @@ void PanelView::setContainment(Plasma::Containment *containment)
 
     updateStruts();
 
-    View::setContainment(containment);
     checkShadow();
 }
 
