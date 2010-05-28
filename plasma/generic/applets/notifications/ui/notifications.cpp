@@ -60,7 +60,7 @@
 #include <Plasma/Dialog>
 #include <Plasma/WindowEffects>
 
-#include "config.h"
+#include "config-notifications.h"
 #ifdef HAVE_LIBXSS      // Idle detection.
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>

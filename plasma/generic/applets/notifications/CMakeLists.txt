@@ -33,7 +33,7 @@ kde4_add_ui_files(notifications_SRCS
 
 include (CheckLibraryExists)
 check_library_exists (Xss XScreenSaverQueryInfo "" HAVE_LIBXSS)
-configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config-notifications.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-notifications.h)
 IF (HAVE_LIBXSS)
    SET (IDLE_DETECTION_LIB "Xss")
 ENDIF (HAVE_LIBXSS)
