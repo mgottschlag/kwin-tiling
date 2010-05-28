@@ -228,6 +228,14 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
         processed = fm.elidedText(processed, Qt::ElideRight, totalWidth);
     }
 
+    //Step 2: elide too long words, like urls or whatever it can be here
+    /*the meaning of this ugly regular expression is: all long words not quoted
+      (like tag parameters) are cu at the first 28 characters. it would be better
+      to do it with font metrics but wouldn't be possible to do it with a single
+      regular expression. It would have to be tokenizen by hand, with some html
+      parsing too (like, are we in a tag?)*/
+    processed = processed.replace(QRegExp("([^\"])(\\w{28})(\\w{10,})([^\"])"), "\\1\\2...\\4");
+
     processed.replace('\n', "<br>");
     messageLabel->setText(processed);
 }
