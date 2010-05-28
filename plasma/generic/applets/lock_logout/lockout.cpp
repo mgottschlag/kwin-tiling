@@ -137,33 +137,42 @@ void LockOut::checkLayout()
     int height = geometry().height() - top - bottom;
 
     Qt::Orientation direction = Qt::Vertical;
+    int minWidth = 0;
+    int minHeight = 0;
 
     switch (formFactor()) {
         case Plasma::Vertical:
-            if (width >= (MINBUTTONSIZE + MARGINSIZE) * m_visibleButtons ) {
+            if (width >= (MINBUTTONSIZE + MARGINSIZE) * m_visibleButtons) {
                 direction = Qt::Horizontal;
+                minHeight = MINBUTTONSIZE;
+            } else {
+                minHeight = MINBUTTONSIZE * m_visibleButtons + top + bottom;
             }
-
-            setMinimumSize(0, 0);
             break;
+
         case Plasma::Horizontal:
             if (height < (MINBUTTONSIZE + MARGINSIZE) * m_visibleButtons) {
                 direction = Qt::Horizontal;
+                minWidth = MINBUTTONSIZE * m_visibleButtons + left + right;
+            } else {
+                minWidth = MINBUTTONSIZE;
             }
-
-            setMinimumSize(0, 0);
             break;
+
         default:
             if (width > height) {
                 direction = Qt::Horizontal;
-                setMinimumSize(MINBUTTONSIZE * m_visibleButtons + left + right, MINBUTTONSIZE + top + bottom);
+                minWidth = MINBUTTONSIZE * m_visibleButtons + left + right;
+                minHeight = MINBUTTONSIZE + top + bottom;
             } else {
-                setMinimumSize(MINBUTTONSIZE + left + right, MINBUTTONSIZE * m_visibleButtons + top + bottom);
+                minWidth = MINBUTTONSIZE + left + right;
+                minHeight = MINBUTTONSIZE * m_visibleButtons + top + bottom;
             }
             break;
     }
 
     m_layout->setOrientation(direction);
+    setMinimumSize(minWidth, minHeight);
     if (direction == Qt::Horizontal) {
         setPreferredSize(height * m_visibleButtons + left + right, height + top + bottom);
     } else {
