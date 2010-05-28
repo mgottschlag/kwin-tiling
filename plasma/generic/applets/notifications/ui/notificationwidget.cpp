@@ -128,6 +128,7 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     d->messageLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     d->messageLabel = new Plasma::Label(d->body);
     d->messageLabel->nativeWidget()->setTextInteractionFlags(Qt::LinksAccessibleByMouse);
+    d->messageLabel->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     connect(d->messageLabel, SIGNAL(linkActivated(const QString &)),
             notification, SLOT(linkActivated(const QString &)));
     d->messageLabel->nativeWidget()->setTextFormat(Qt::RichText);
