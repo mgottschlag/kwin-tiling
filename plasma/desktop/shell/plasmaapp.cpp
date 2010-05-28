@@ -775,7 +775,7 @@ Plasma::Corona* PlasmaApp::corona()
         c->updateShortcuts();
 
         //add stuff to shortcut config
-        c->addShortcuts(DesktopView::shortcutActions(this));
+        //c->addShortcuts(DesktopView::shortcutActions(this));
 
         m_corona = c;
         c->setItemIndexMethod(QGraphicsScene::NoIndex);
