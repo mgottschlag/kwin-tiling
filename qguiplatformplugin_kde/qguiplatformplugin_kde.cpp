@@ -353,7 +353,9 @@ private slots:
     void updateWidgetStyle()
     {
         if (qApp) {
-            qApp->setStyle(styleName());
+            if (qApp->style()->objectName() != styleName()) {
+                qApp->setStyle(styleName());
+            }
         }
     }
 };
