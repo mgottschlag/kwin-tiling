@@ -402,6 +402,10 @@ bool AppletsContainer::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
     if (event->type() == QEvent::GraphicsSceneMousePress) {
         foreach (Plasma::Applet *applet, m_containment->applets()) {
             if (applet->isAncestorOf(watched)) {
+                if (applet == m_currentApplet.data()) {
+                    return false;
+                }
+
                 if (m_currentApplet.data()) {
                     m_currentApplet.data()->setPreferredHeight(optimalAppletSize(applet, false).height());
                 }
@@ -409,7 +413,7 @@ bool AppletsContainer::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
                 applet->setPreferredHeight(optimalAppletSize(applet, true).height());
 
                 m_appletActivationTimer->start(500);
-                break;
+                return true;
             }
         }
     } else if (event->type() == QEvent::GraphicsSceneMouseMove) {
