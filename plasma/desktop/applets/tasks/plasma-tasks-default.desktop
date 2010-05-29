@@ -146,7 +146,7 @@ Comment[uk]=Перемкніть запущені програми
 Comment[x-test]=xxSwitch between running applicationsxx
 Comment[zh_CN]=在已运行的程序间切换
 Comment[zh_TW]=在執行中的應用程式間切換
-# Icon=taskbar //TODO: fix icon
+Icon=preferences-system-windows
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
 
