@@ -328,8 +328,8 @@ void KColorCm::on_schemeImportButton_clicked()
         if (config->groupList().contains("Color Scheme"))
         {
             if (KMessageBox::Continue != KMessageBox::warningContinueCancel(this,
-                i18n("The scheme you have selected appears to be a KDE3 scheme.\n\n"
-                     "KDE will attempt to import this scheme, however many color roles have been added since KDE3. "
+                i18n("The scheme you have selected appears to be an old scheme.\n\n"
+                     "KDE workspace will attempt to import this scheme, however many color roles have been added since then. "
                      "Some manual work will likely be required.\n\n"
                      "This scheme will not be saved automatically."),
                 i18n("Notice")))
