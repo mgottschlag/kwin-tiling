@@ -39,7 +39,7 @@ K_EXPORT_PLASMA_APPLET(keyboard, KeyboardApplet)
 
 KeyboardApplet::KeyboardApplet(QObject *parent, const QVariantList &args):
 	Plasma::Applet(parent, args),
-	xEventNotifier(XEventNotifier::XKB),
+	xEventNotifier(),
 	actionGroup(NULL),
 	rules(NULL),
 	keyboardConfig(new KeyboardConfig())
@@ -213,13 +213,3 @@ QList<QAction*> KeyboardApplet::contextualActions()
 //	//TODO: apply config
 //}
 
-//TODO: exclude XInput somehow nicer
-int XEventNotifier::registerForNewDeviceEvent(Display* /*display*/)
-{
-	return -1;
-}
-
-bool XEventNotifier::isNewDeviceEvent(XEvent* /*event*/)
-{
-	return false;
-}

@@ -113,17 +113,6 @@ void KCMKeyboard::save()
 //    initializeKeyboardSettings();
 }
 
-//TODO: exclude XInput somehow nicer
-int XEventNotifier::registerForNewDeviceEvent(Display* /*display*/)
-{
-	return -1;
-}
-
-bool XEventNotifier::isNewDeviceEvent(XEvent* /*event*/)
-{
-	return false;
-}
-
 //static const char* KEYBOARD_KDED_NAME = "keyboard";
 //
 //static void initializeKeyboardSettings()

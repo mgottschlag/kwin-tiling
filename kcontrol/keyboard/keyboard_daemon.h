@@ -28,7 +28,7 @@
 
 
 class KActionCollection;
-class XEventNotifier;
+class XInputEventNotifier;
 class LayoutTrayIcon;
 class KeyboardConfig;
 
@@ -38,7 +38,7 @@ class KDE_EXPORT KeyboardDaemon : public KDEDModule
     Q_CLASSINFO("D-Bus Interface", "org.kde.Keyboard")
 
     KActionCollection *actionCollection;
-    XEventNotifier* xEventNotifier;
+    XInputEventNotifier* xEventNotifier;
     LayoutMemory layoutMemory;
     LayoutTrayIcon* layoutTrayIcon;
 	KeyboardConfig* keyboardConfig;
@@ -53,6 +53,7 @@ private Q_SLOTS:
 	void switchToNextLayout();
 	void globalSettingsChanged(int category);
     void configureKeyboard();
+    void configureMouse();
 
 public Q_SLOTS:
 	Q_SCRIPTABLE bool setLayout(const QString& layout);

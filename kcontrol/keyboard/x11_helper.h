@@ -24,39 +24,33 @@
 #include <QtCore/QStringList>
 #include <QtGui/QWidget>
 
-//#include <X11/X.h>
-//#include <X11/Xlib.h>
 
-//TODO: can we catch events without QWidget?
 class XEventNotifier : public QWidget {
 	Q_OBJECT
 
 Q_SIGNALS:
-	void newDevice();
 	void layoutChanged();
 	void layoutMapChanged();
 
 public:
-	enum EventType { ALL, XKB, XINPUT };
+	XEventNotifier(QWidget* parent=NULL);
+	virtual ~XEventNotifier() {}
 
-	XEventNotifier(EventType eventType=ALL, QWidget* parent=NULL);
-	void start();
-	void stop();
+	virtual void start();
+	virtual void stop();
 
 protected:
     bool x11Event(XEvent * e);
+    virtual bool processOtherEvents(XEvent* e);
+    virtual bool processXkbEvents(XEvent* e);
 
 private:
-	bool isXkbEvent(XEvent* event);
-	bool isNewDeviceEvent(XEvent* event);
-	int registerForNewDeviceEvent(Display* dpy);
 	int registerForXkbEvents(Display* display);
+	bool isXkbEvent(XEvent* event);
 	bool isGroupSwitchEvent(XEvent* event);
 	bool isLayoutSwitchEvent(XEvent* event);
 
 	int xkbOpcode;
-	int xinputEventType;
-    const EventType eventType;
 };
 
 struct XkbConfig {

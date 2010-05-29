@@ -10,7 +10,6 @@ KCM UI cleanup:
 
 plasma applet:
 * make applet show nicely in taskbar (not just desktop)
-* start applet from kxkb kcm ?? (currently systray icon provided from kded)
 
 kxkb part
 * tooltip (currently does not work in lockdlg for some reason)
@@ -23,7 +22,7 @@ Improvement:
 * remove XInput libs from plasma applet and layout widget (find a nicer way)
 * optimize fetching groups and layouts (cache them) / fetch current group directly
 * refactor/optimize/clean the code
-* refactor users of D-BUS to use library instead?
+* refactor client code for D-BUS API to use library instead?
 
 External improvements:
 * Change KStatusNotifierItem menu window to be real popup window

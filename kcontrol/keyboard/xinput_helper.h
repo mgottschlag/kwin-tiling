@@ -16,10 +16,35 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <kpluginfactory.h>
 
-#include "layout_widget.h"
+#ifndef XINPUT_HELPER_H_
+#define XINPUT_HELPER_H_
 
-K_PLUGIN_FACTORY(LayoutWidgetFactory, registerPlugin<LayoutWidget>();)
-K_EXPORT_PLUGIN(LayoutWidgetFactory("keyboard_layout_widget"))
+#include "x11_helper.h"
 
+
+class XInputEventNotifier: public XEventNotifier {
+	Q_OBJECT
+
+public:
+	XInputEventNotifier(QWidget* parent=NULL);
+
+	void start();
+	void stop();
+
+	int registerForNewDeviceEvent(Display* dpy);
+
+Q_SIGNALS:
+	void newKeyboardDevice();
+	void newPointerDevice();
+
+protected:
+	bool processOtherEvents(XEvent* event);
+
+private:
+	int getNewDeviceEventType(XEvent* event);
+
+	int xinputEventType;
+};
+
+#endif /* XINPUT_HELPER_H_ */

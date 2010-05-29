@@ -19,7 +19,7 @@
 
 #include "layout_widget.h"
 
-//#include <kdebug.h>
+#include <kdebug.h>
 
 // for sys tray icon
 #include <kstatusnotifieritem.h>
@@ -39,7 +39,7 @@
 
 LayoutWidget::LayoutWidget(QWidget* parent, const QList<QVariant>& /*args*/):
 	QWidget(parent),
-	xEventNotifier(XEventNotifier::XKB),
+	xEventNotifier(),
 	keyboardConfig(new KeyboardConfig()),
 	flags(new Flags())
 {
@@ -119,7 +119,7 @@ void LayoutWidget::layoutChanged()
 // Layout Tray Icon
 //
 LayoutTrayIcon::LayoutTrayIcon():
-	xEventNotifier(XEventNotifier::XKB),
+	xEventNotifier(),
 	keyboardConfig(new KeyboardConfig()),
 	rules(NULL),
 	flags(new Flags()),
@@ -182,10 +182,11 @@ void LayoutTrayIcon::layoutChanged()
 	if( layoutUnit.isEmpty() )
 		return;
 
-	QString layoutText = Flags::getShortText(layoutUnit, *keyboardConfig);
+	QString shortText = Flags::getShortText(layoutUnit, *keyboardConfig);
+//	qDebug() << "LayoutChanged" << layoutUnit.toString() << shortText;
 	QString longText = Flags::getLongText(layoutUnit, rules);
 
-	m_notifierItem->setTitle(layoutText);
+	m_notifierItem->setTitle(shortText);
 	m_notifierItem->setToolTipSubTitle(longText);
 
 	const QIcon icon(flags->getIcon(layoutUnit.layout));
@@ -221,7 +222,10 @@ QList<QAction*> LayoutTrayIcon::contextualActions()
 	X11Helper::getLayoutsList(); //UGLY: seems to be more reliable with extra call
 	QList<LayoutUnit> layouts = X11Helper::getLayoutsList();
 	foreach(const LayoutUnit& layoutUnit, layouts) {
-		QString menuText = Flags::getLongText(layoutUnit, rules);
+		QString shortText = Flags::getShortText(layoutUnit, *keyboardConfig);
+		QString longText = Flags::getLongText(layoutUnit, rules);
+//		QString menuText = i18nc("map name - full layout text", "%1 - %2", shortText, longText);
+		QString menuText = longText;
 		QAction* action = new QAction(getFlag(layoutUnit.layout), menuText, actionGroup);
 		action->setData(layoutUnit.toString());
 		actionGroup->addAction(action);

@@ -28,10 +28,6 @@
 #include <X11/XKBlib.h>
 #include <X11/extensions/XKBrules.h>
 
-#ifdef HAVE_XINPUT
-#include <X11/extensions/XInput.h>
-#endif
-
 
 // more information about the limit https://bugs.freedesktop.org/show_bug.cgi?id=19501
 int X11Helper::MAX_GROUP_COUNT = 4;
@@ -123,6 +119,13 @@ LayoutUnit X11Helper::getCurrentLayout()
 	return LayoutUnit();
 }
 
+//static QString addNum(const QString& str, int n)
+//{
+//    QString format("%1%2");
+//    if( str.length() >= 3 ) return format.arg(str.left(2)).arg(n);
+//    return format.arg(str).arg(n);
+//}
+
 QList<LayoutUnit> X11Helper::getLayoutsList()
 {
 	XkbConfig xkbConfig;
@@ -136,6 +139,18 @@ QList<LayoutUnit> X11Helper::getLayoutsList()
 			}
 			layouts << LayoutUnit(layout, variant);
 		}
+		// if there are layouts with same map name add numbers to display name
+//		for(int i=0; i<layouts.length(); i++) {
+//			int n=1;
+//			for(int j=i+1; j<layouts.length(); j++) {
+//				if( layouts[i].layout == layouts[j].layout && layouts[i].getRawDisplayName().isEmpty() ) {
+//					layouts[i].setDisplayName( addNum(layouts[i].layout, 1) );
+//					layouts[j].setDisplayName( addNum(layouts[j].layout, ++n) );
+//					qDebug() << "Adding" << 1 << "to" << layouts[i].toString();
+//					qDebug() << "Adding" << n << "to" << layouts[j].toString();
+//				}
+//			}
+//		}
 	}
 	else {
 		qWarning() << "Failed to get layout groups from X server";
@@ -233,11 +248,9 @@ bool X11Helper::getGroupNames(Display* display, XkbConfig* xkbConfig, FetchType 
 	return true;
 }
 
-XEventNotifier::XEventNotifier(EventType eventType_, QWidget* parent):
+XEventNotifier::XEventNotifier(QWidget* parent):
 		QWidget(parent),
-		xkbOpcode(-1),
-		xinputEventType(-1),
-		eventType(eventType_)
+		xkbOpcode(-1)
 {
 	if( KApplication::kApplication() == NULL ) {
 		qWarning() << "Layout Widget won't work properly without KApplication instance";
@@ -247,12 +260,7 @@ XEventNotifier::XEventNotifier(EventType eventType_, QWidget* parent):
 void XEventNotifier::start()
 {
 	if( KApplication::kApplication() != NULL && X11Helper::xkbSupported(&xkbOpcode) ) {
-		if( eventType != XKB ) {
-			XEventNotifier::registerForNewDeviceEvent(QX11Info::display());
-		}
-		if( eventType != XINPUT ) {
-			XEventNotifier::registerForXkbEvents(QX11Info::display());
-		}
+		registerForXkbEvents(QX11Info::display());
 
 		// start the event loop
 		KApplication::kApplication()->installX11EventFilter(this);
@@ -263,12 +271,7 @@ void XEventNotifier::stop()
 {
 	if( KApplication::kApplication() != NULL ) {
 		//TODO: unregister
-		if( eventType != XKB ) {
-			//    XEventNotifier::unregisterForNewDeviceEvent(QX11Info::display());
-		}
-		if( eventType != XINPUT ) {
-			//    XEventNotifier::unregisterForXkbEvents(QX11Info::display());
-		}
+	//    XEventNotifier::unregisterForXkbEvents(QX11Info::display());
 
 		// stop the event loop
 		KApplication::kApplication()->removeX11EventFilter(this);
@@ -280,19 +283,30 @@ bool XEventNotifier::isXkbEvent(XEvent* event)
 	return event->type == xkbOpcode;
 }
 
+bool XEventNotifier::processOtherEvents(XEvent* /*event*/)
+{
+	return true;
+}
+
+bool XEventNotifier::processXkbEvents(XEvent* event)
+{
+	if( XEventNotifier::isGroupSwitchEvent(event) ) {
+		emit(layoutChanged());
+	}
+	else if( XEventNotifier::isLayoutSwitchEvent(event) ) {
+		emit(layoutMapChanged());
+	}
+	return true;
+}
+
 bool XEventNotifier::x11Event(XEvent * event)
 {
 	//    qApp->x11ProcessEvent ( event );
 	if( isXkbEvent(event) ) {
-		if( XEventNotifier::isGroupSwitchEvent(event) ) {
-			emit(layoutChanged());
-		}
-		else if( XEventNotifier::isLayoutSwitchEvent(event) ) {
-			emit(layoutMapChanged());
-		}
+		processXkbEvents(event);
 	}
-	else if( XEventNotifier::isNewDeviceEvent(event) ) {
-		emit(newDevice());
+	else {
+		processOtherEvents(event);
 	}
 	return QWidget::x11Event(event);
 }

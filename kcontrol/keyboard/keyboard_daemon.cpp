@@ -20,6 +20,7 @@
 
 #include <QtGui/QX11Info>
 #include <QtDBus/QtDBus>
+#include <QtCore/QProcess>
 
 #include <kdebug.h>
 #include <kpluginfactory.h>
@@ -29,6 +30,7 @@
 #include <klocale.h>
 
 #include "x11_helper.h"
+#include "xinput_helper.h"
 #include "xkb_helper.h"
 #include "keyboard_dbus.h"
 #include "bindings.h"
@@ -87,6 +89,13 @@ void KeyboardDaemon::configureKeyboard()
 	setupTrayIcon();
 }
 
+void KeyboardDaemon::configureMouse()
+{
+    QStringList modules;
+    modules << "mouse";
+    QProcess::startDetached("kcminit", modules);
+}
+
 void KeyboardDaemon::setupTrayIcon()
 {
 	bool show = keyboardConfig->showIndicator
@@ -132,9 +141,10 @@ void KeyboardDaemon::registerListeners()
 
 	//TODO: use solid ???
 	if( xEventNotifier == NULL ) {
-		xEventNotifier = new XEventNotifier(XEventNotifier::ALL);
+		xEventNotifier = new XInputEventNotifier();
 	}
-	connect(xEventNotifier, SIGNAL(newDevice()), this, SLOT(configureKeyboard()));
+	connect(xEventNotifier, SIGNAL(newPointerDevice()), this, SLOT(configureMouse()));
+	connect(xEventNotifier, SIGNAL(newKeyboardDevice()), this, SLOT(configureKeyboard()));
 	connect(xEventNotifier, SIGNAL(layoutChanged()), &layoutMemory, SLOT(layoutChanged()));
 	connect(xEventNotifier, SIGNAL(layoutMapChanged()), &layoutMemory, SLOT(clear()));
 	xEventNotifier->start();
@@ -146,7 +156,8 @@ void KeyboardDaemon::unregisterListeners()
 	// disconnect(SIGNAL(configChanges), SLOT(configureKeyboard));
 
 	xEventNotifier->stop();
-	disconnect(xEventNotifier, SIGNAL(newDevice()), this, SLOT(configureKeyboard()));
+	disconnect(xEventNotifier, SIGNAL(newPointerDevice()), this, SLOT(configureMouse()));
+	disconnect(xEventNotifier, SIGNAL(newKeyboardDevice()), this, SLOT(configureKeyboard()));
 	disconnect(xEventNotifier, SIGNAL(layoutChanged()), &layoutMemory, SLOT(layoutChanged()));
 	disconnect(xEventNotifier, SIGNAL(layoutMapChanged()), &layoutMemory, SLOT(clear()));
 }
