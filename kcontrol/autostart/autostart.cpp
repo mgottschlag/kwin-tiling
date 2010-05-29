@@ -55,7 +55,7 @@ K_PLUGIN_FACTORY(AutostartFactory, registerPlugin<Autostart>();)
     widget = new Ui_AutostartConfig();
     widget->setupUi(this);
     QStringList lstHeader;
-    lstHeader<<i18n( "Name" )<< i18n( "Command" )<< i18n( "Status" )<<i18nc("@title:column The name of the column that decides if the program is run on Plasma startup, on Plasma shutdown, etc", "Run On" );
+    lstHeader<<i18n( "Name" )<< i18n( "Command" )<< i18n( "Status" )<<i18nc("@title:column The name of the column that decides if the program is run on kde startup, on kde shutdown, etc", "Run On" );
     widget->listCMD->setHeaderLabels(lstHeader);
     setButtons(Help);
     connect( widget->btnAddScript, SIGNAL(clicked()), SLOT(slotAddCMD()) );
@@ -73,7 +73,7 @@ K_PLUGIN_FACTORY(AutostartFactory, registerPlugin<Autostart>();)
     KAboutData* about = new KAboutData("Autostart", 0, ki18n("KDE Autostart Manager"), "1.0",
                                        ki18n("KDE Autostart Manager Control Panel Module"),
                                        KAboutData::License_GPL,
-                                       ki18n("Copyright © 2006–2010 Autostart Manager authors"));
+                                       ki18n("(c) 2006-2007-2008 Autostart Manager team"));
     about->addAuthor(ki18n("Stephen Leaf"), KLocalizedString(), "smileaf@gmail.com");
     about->addAuthor(ki18n("Montel Laurent"), ki18n( "Maintainer" ), "montel@kde.org");
     setAboutData( about );
@@ -146,7 +146,7 @@ void Autostart::load()
     // share/autostart shouldn't be an option as this should be reserved for global autostart entries
     m_pathName << i18n("Startup")
              << i18n("Shutdown")
-             << i18n("Pre-Plasma Workspace startup")
+             << i18n("Pre-KDE startup")
         ;
     widget->listCMD->clear();
 
@@ -387,7 +387,7 @@ void Autostart::slotChangeStartup( int index )
     {
         entry->setPath(m_paths.value(index));
         if ( ( index != 0 ) && !entry->fileName().path().endsWith( ".sh" ))
-            KMessageBox::information( this, i18n( "KDE's Plasma Workspace only reads files with sh extensions for setting up the environment." ) );
+            KMessageBox::information( this, i18n( "KDE only reads files with sh extensions for setting up the environment." ) );
     }
 }
 
