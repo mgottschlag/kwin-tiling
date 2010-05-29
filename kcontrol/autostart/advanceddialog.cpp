@@ -29,7 +29,7 @@ AdvancedDialog::AdvancedDialog( QWidget *parent, bool status )
     setButtons( Cancel|Ok );
     QVBoxLayout *lay= new QVBoxLayout;
     w->setLayout( lay );
-    m_onlyInKde = new QCheckBox( i18n( "Autostart only in KDE" ), w );
+    m_onlyInKde = new QCheckBox( i18n( "Autostart only in KDE's Plasma Workspace" ), w );
     m_onlyInKde->setChecked( status );
     lay->addWidget( m_onlyInKde );
     setMainWidget( w );
