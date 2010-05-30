@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=StatusNotifierItem Informations
+Name=Status Notifier Information
 Name[es]=Información StatusNotifierItem
 Name[et]=Oleku märguandja teave
 Name[ia]=Informationes de StatusNotifierItem
@@ -16,7 +16,7 @@ Name[tg]=Иттилооти ҳолатҳои система
 Name[uk]=Відомості запису сповіщення про стан
 Name[x-test]=xxStatusNotifierItem Informationsxx
 Name[zh_TW]=狀態通知器項目資訊
-Comment=Engine for Applications status information based on the StatusNotifier protocol.
+Comment=Engine for applications' status information, based on the Status Notifier protocol.
 Comment[es]=Motor para informar del estado de aplicaciones basado en el protocolo StatusNotifier.
 Comment[et]=Rakenduse olekuteabe mootor StatusNotifieri protokolli alusel.
 Comment[ia]=Motor pro information de stato de Applicationes basate su le protocollo de StatusNotifier.
