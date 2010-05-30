@@ -31,10 +31,14 @@
 #include <Plasma/Containment>
 #include <Plasma/TabBar>
 
+#include <kactivitycontroller.h>
+#include <kactivityinfo.h>
+
 
 ActivityBar::ActivityBar(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
-      m_activeContainment(-1)
+      m_activeContainment(-1),
+      m_activityController(0)
 {
     resize(200, 60);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
@@ -55,36 +59,54 @@ void ActivityBar::init()
     layout->setContentsMargins(0,0,0,0);
     //layout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
 
-    if (containment()) {
-        Plasma::Corona *c = containment()->corona();
-
-        if (!c) {
-            kDebug() << "No corona, can't happen";
-            setFailedToLaunch(true);
-            return;
+    //This is an awful hack, but I need to keep the old behaviour for plasma-netbook
+    //while using the new activity API for plasma-desktop.
+    //TODO 4.6 convert netbook to the activity API so we won't need this
+    if (qApp->applicationName() == "plasma-desktop") {
+        m_activityController = new KActivityController(this);
+        QStringList activities = m_activityController->availableActivities();
+        foreach (const QString &id, activities) {
+            insertActivity(id);
         }
+        m_tabBar->setCurrentIndex(activities.indexOf(m_activityController->currentActivity()));
 
-        QList<Plasma::Containment*> containments = c->containments();
-        foreach (Plasma::Containment *cont, containments) {
-            if (cont->containmentType() == Plasma::Containment::PanelContainment || cont->containmentType() == Plasma::Containment::CustomPanelContainment || c->offscreenWidgets().contains(cont)) {
-                continue;
+        connect(m_activityController, SIGNAL(activityAdded(QString)), this, SLOT(activityAdded(QString)));
+        connect(m_activityController, SIGNAL(activityRemoved(QString)), this, SLOT(activityRemoved(QString)));
+        connect(m_activityController, SIGNAL(currentActivityChanged(QString)), this, SLOT(currentActivityChanged(QString)));
+
+        connect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(switchActivity(int)));
+    } else {
+        if (containment()) {
+            Plasma::Corona *c = containment()->corona();
+
+            if (!c) {
+                kDebug() << "No corona, can't happen";
+                setFailedToLaunch(true);
+                return;
             }
 
-            insertContainment(cont);
+            QList<Plasma::Containment*> containments = c->containments();
+            foreach (Plasma::Containment *cont, containments) {
+                if (cont->containmentType() == Plasma::Containment::PanelContainment || cont->containmentType() == Plasma::Containment::CustomPanelContainment || c->offscreenWidgets().contains(cont)) {
+                    continue;
+                }
 
-            connect(cont, SIGNAL(destroyed(QObject *)), this, SLOT(containmentDestroyed(QObject *)));
-            connect(cont, SIGNAL(screenChanged(int, int, Plasma::Containment *)), this, SLOT(screenChanged(int, int, Plasma::Containment *)));
-            connect(cont, SIGNAL(contextChanged(Plasma::Context *)), this, SLOT(contextChanged(Plasma::Context *)));
+                insertContainment(cont);
+
+                connect(cont, SIGNAL(destroyed(QObject *)), this, SLOT(containmentDestroyed(QObject *)));
+                connect(cont, SIGNAL(screenChanged(int, int, Plasma::Containment *)), this, SLOT(screenChanged(int, int, Plasma::Containment *)));
+                connect(cont, SIGNAL(contextChanged(Plasma::Context *)), this, SLOT(contextChanged(Plasma::Context *)));
+            }
+
+            connect(c, SIGNAL(containmentAdded(Plasma::Containment *)), this, SLOT(containmentAdded(Plasma::Containment *)));
         }
 
-        connect(c, SIGNAL(containmentAdded(Plasma::Containment *)), this, SLOT(containmentAdded(Plasma::Containment *)));
-    }
+        if (m_containments.count() > 1) {
+            connect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(switchContainment(int)));
+        }
 
-    if (m_containments.count() > 1) {
-        connect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(switchContainment(int)));
+        connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(currentDesktopChanged(int)));
     }
-
-    connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(currentDesktopChanged(int)));
 
     setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
     emit sizeHintChanged(Qt::PreferredSize);
@@ -125,6 +147,21 @@ void ActivityBar::insertContainment(Plasma::Containment *cont)
          m_activeContainment = index;
          m_tabBar->setCurrentIndex(m_activeContainment);
      }
+}
+
+void ActivityBar::insertActivity(const QString &id)
+{
+    //assumption: activities are always added at the end of the list
+    KActivityInfo *activity = new KActivityInfo(id, this);
+    m_activities.append(activity);
+    if (activity->isValid() && !activity->icon().isEmpty()) {
+        m_tabBar->addTab(KIcon(activity->icon()), activity->name());
+    } else {
+        m_tabBar->addTab(activity->name());
+    }
+
+    //FIXME
+    //connect(activity, SIGNAL(nameChanged(QString)), this, SLOT(setName(QString)));
 }
 
 void ActivityBar::constraintsEvent(Plasma::Constraints constraints)
@@ -176,6 +213,14 @@ void ActivityBar::switchContainment(int newActive)
     }
 }
 
+void ActivityBar::switchActivity(int newActive)
+{
+    if (newActive >= m_activities.count() || newActive < 0) {
+        return;
+    }
+    m_activityController->setCurrentActivity(m_activities.at(newActive)->id());
+}
+
 void ActivityBar::currentDesktopChanged(const int currentDesktop)
 {
     Plasma::Corona *c = containment()->corona();
@@ -195,6 +240,23 @@ void ActivityBar::currentDesktopChanged(const int currentDesktop)
     if (index != -1 &&
         index != m_activeContainment) {
         m_activeContainment = index;
+        m_tabBar->setCurrentIndex(index);
+    }
+}
+
+void ActivityBar::currentActivityChanged(const QString &newId)
+{
+    int index = 0;
+    bool found = false;
+    foreach (KActivityInfo *info, m_activities) {
+        if (info->id() == newId) {
+            found = true;
+            break;
+        }
+        ++index;
+    }
+
+    if (found) {
         m_tabBar->setCurrentIndex(index);
     }
 }
@@ -221,6 +283,14 @@ void ActivityBar::containmentAdded(Plasma::Containment *cont)
     emit sizeHintChanged(Qt::PreferredSize);
 }
 
+void ActivityBar::activityAdded(const QString &id)
+{
+    insertActivity(id);
+
+    setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
+    emit sizeHintChanged(Qt::PreferredSize);
+}
+
 void ActivityBar::containmentDestroyed(QObject *obj)
 {
     Plasma::Containment *containment = static_cast<Plasma::Containment *>(obj);
@@ -240,6 +310,31 @@ void ActivityBar::containmentDestroyed(QObject *obj)
         m_tabBar->removeTab(index);
         m_tabBar->blockSignals(false);
     }
+
+    setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
+    emit sizeHintChanged(Qt::PreferredSize);
+}
+
+void ActivityBar::activityRemoved(const QString &id)
+{
+    int index = 0;
+    bool found = false;
+    foreach (KActivityInfo *info, m_activities) {
+        if (info->id() == id) {
+            found = true;
+            m_activities.removeAt(index);
+            delete info;
+            break;
+        }
+        ++index;
+    }
+    if (!found) {
+        return;
+    }
+
+    m_tabBar->blockSignals(true);
+    m_tabBar->removeTab(index);
+    m_tabBar->blockSignals(false);
 
     setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
     emit sizeHintChanged(Qt::PreferredSize);

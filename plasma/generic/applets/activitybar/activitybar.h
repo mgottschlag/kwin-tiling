@@ -29,6 +29,8 @@ namespace Plasma
     class Containment;
 }
 
+class KActivityController;
+class KActivityInfo;
 
 class ActivityBar : public Plasma::Applet
 {
@@ -41,6 +43,7 @@ public:
     void constraintsEvent(Plasma::Constraints constraints);
     //insert in m_containments, keeping it ordered by id()
     void insertContainment(Plasma::Containment *cont);
+    void insertActivity(const QString &id);
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
@@ -53,10 +56,17 @@ private Q_SLOTS:
     void contextChanged(Plasma::Context *context);
     void currentDesktopChanged(const int currentDesktop);
 
+    void switchActivity(int newActive);
+    void activityAdded(const QString &id);
+    void activityRemoved(const QString &id);
+    void currentActivityChanged(const QString &newId);
+
 private:
     int m_activeContainment;
     Plasma::TabBar *m_tabBar;
     QList<Plasma::Containment*> m_containments;
+    QList<KActivityInfo*> m_activities;
+    KActivityController *m_activityController;
 };
 
 
