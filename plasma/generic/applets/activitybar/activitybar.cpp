@@ -54,7 +54,6 @@ void ActivityBar::init()
 {
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
     m_tabBar = new Plasma::TabBar(this);
-    m_tabBar->nativeWidget()->installEventFilter(this);
     layout->addItem(m_tabBar);
     layout->setContentsMargins(0,0,0,0);
     //layout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
@@ -76,6 +75,7 @@ void ActivityBar::init()
 
         connect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(switchActivity(int)));
     } else {
+        m_tabBar->nativeWidget()->installEventFilter(this);
         if (containment()) {
             Plasma::Corona *c = containment()->corona();
 
