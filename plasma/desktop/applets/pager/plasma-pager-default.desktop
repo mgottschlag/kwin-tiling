@@ -147,7 +147,7 @@ Comment[uk]=Перемкніть віртуальні стільниці
 Comment[x-test]=xxSwitch between virtual desktopsxx
 Comment[zh_CN]=在不同虚拟桌面间切换
 Comment[zh_TW]=在虛擬桌面間切換
-# Icon=pager //TODO: fix icon
+Icon=user-desktop
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
 
