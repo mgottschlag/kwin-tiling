@@ -37,7 +37,6 @@
 
 ActivityBar::ActivityBar(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
-      m_activeContainment(-1),
       m_activityController(0)
 {
     resize(200, 60);
@@ -142,8 +141,7 @@ void ActivityBar::insertContainment(Plasma::Containment *cont)
      if (cont->screen() != -1 &&
          cont->screen() == myScreen &&
          (cont->desktop() == -1 || cont->desktop() ==  KWindowSystem::currentDesktop()-1)) {
-         m_activeContainment = index;
-         m_tabBar->setCurrentIndex(m_activeContainment);
+         m_tabBar->setCurrentIndex(index);
      }
 }
 
@@ -202,7 +200,6 @@ void ActivityBar::switchContainment(int newActive)
 
     Plasma::Containment *oldCont = c->containmentForScreen(ownCont->screen(), KWindowSystem::currentDesktop() - 1);
 
-    m_activeContainment = newActive;
     if (oldCont) {
         m_containments[newActive]->setScreen(oldCont->screen(), oldCont->desktop());
     } else {
@@ -234,9 +231,7 @@ void ActivityBar::currentDesktopChanged(const int currentDesktop)
 
     int index = m_containments.indexOf(cont);
 
-    if (index != -1 &&
-        index != m_activeContainment) {
-        m_activeContainment = index;
+    if (index != -1) {
         m_tabBar->setCurrentIndex(index);
     }
 }
@@ -255,6 +250,8 @@ void ActivityBar::currentActivityChanged(const QString &newId)
 
     if (found) {
         m_tabBar->setCurrentIndex(index);
+    } else {
+        kDebug() << "can't find" << newId;
     }
 }
 
@@ -290,10 +287,6 @@ void ActivityBar::containmentDestroyed(QObject *obj)
 
     int index = m_containments.indexOf(containment);
     if (index != -1) {
-        if (index < m_activeContainment) {
-            --m_activeContainment;
-        }
-
         m_containments.removeAt(index);
         m_tabBar->blockSignals(true);
         m_tabBar->removeTab(index);
@@ -338,10 +331,8 @@ void ActivityBar::screenChanged(int wasScreen, int isScreen, Plasma::Containment
 
     //FIXME: how is supposed to work containment()->desktop() when the pervirtialthing is off?
     if (index != -1 &&
-        index != m_activeContainment &&
         containment()->screen() == isScreen &&
         (cont->desktop() == -1 || cont->desktop() == KWindowSystem::currentDesktop()-1)) {
-        m_activeContainment = index;
         m_tabBar->setCurrentIndex(index);
     }
 }

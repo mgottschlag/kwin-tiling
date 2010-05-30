@@ -63,7 +63,6 @@ private Q_SLOTS:
     void currentActivityChanged(const QString &newId);
 
 private:
-    int m_activeContainment;
     Plasma::TabBar *m_tabBar;
     QList<Plasma::Containment*> m_containments;
     QList<KActivityInfo*> m_activities;
