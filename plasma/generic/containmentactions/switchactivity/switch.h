@@ -38,6 +38,9 @@ class SwitchActivity : public Plasma::ContainmentActions
 
     public slots:
         void switchTo(QAction *action);
+
+    private:
+        bool m_useNepomuk;
 };
 
 K_EXPORT_PLASMA_CONTAINMENTACTIONS(switchactivity, SwitchActivity)

@@ -19,6 +19,7 @@
 
 #include "switch.h"
 
+#include <QApplication>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneWheelEvent>
 
@@ -28,11 +29,18 @@
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 
+#include <kactivitycontroller.h>
+#include <kactivityinfo.h>
+
 Q_DECLARE_METATYPE(QWeakPointer<Plasma::Containment>)
 
 SwitchActivity::SwitchActivity(QObject *parent, const QVariantList &args)
     : Plasma::ContainmentActions(parent, args)
 {
+    //This is an awful hack, but I need to keep the old behaviour for plasma-netbook
+    //while using the new activity API for plasma-desktop.
+    //TODO 4.6 convert netbook to the activity API so we won't need this
+    m_useNepomuk = (qApp->applicationName() == "plasma-desktop");
 }
 
 void SwitchActivity::contextEvent(QEvent *event)
@@ -51,33 +59,46 @@ void SwitchActivity::contextEvent(QEvent *event)
 
 void SwitchActivity::makeMenu(QMenu *menu)
 {
-    Plasma::Containment *myCtmt = containment();
-    if (!myCtmt) {
-        return;
-    }
-    Plasma::Corona *c = myCtmt->corona();
-    if (!c) {
-        return;
-    }
-
-    QList<Plasma::Containment*> containments = c->containments();
-    foreach (Plasma::Containment *ctmt, containments) {
-        if (ctmt->containmentType() == Plasma::Containment::PanelContainment ||
-                ctmt->containmentType() == Plasma::Containment::CustomPanelContainment ||
-                c->offscreenWidgets().contains(ctmt)) {
-            continue;
+    if (m_useNepomuk) {
+        KActivityController controller;
+        QString current = controller.currentActivity();
+        foreach (const QString id, controller.availableActivities()) {
+            QString name = KActivityInfo::name(id);
+            QAction *action = menu->addAction(name);
+            action->setData(QVariant(id));
+            if (id==current) {
+                action->setEnabled(false);
+            }
+        }
+    } else {
+        Plasma::Containment *myCtmt = containment();
+        if (!myCtmt) {
+            return;
+        }
+        Plasma::Corona *c = myCtmt->corona();
+        if (!c) {
+            return;
         }
 
-        QString name = ctmt->activity();
-        if (name.isEmpty()) {
-            name = ctmt->name();
-        }
-        QAction *action = menu->addAction(name);
-        action->setData(QVariant::fromValue<QWeakPointer<Plasma::Containment> >(QWeakPointer<Plasma::Containment>(ctmt)));
+        QList<Plasma::Containment*> containments = c->containments();
+        foreach (Plasma::Containment *ctmt, containments) {
+            if (ctmt->containmentType() == Plasma::Containment::PanelContainment ||
+                    ctmt->containmentType() == Plasma::Containment::CustomPanelContainment ||
+                    c->offscreenWidgets().contains(ctmt)) {
+                continue;
+            }
 
-        //WARNING this assumes the plugin will only ever be set on activities, not panels!
-        if (ctmt==myCtmt) {
-            action->setEnabled(false);
+            QString name = ctmt->activity();
+            if (name.isEmpty()) {
+                name = ctmt->name();
+            }
+            QAction *action = menu->addAction(name);
+            action->setData(QVariant::fromValue<QWeakPointer<Plasma::Containment> >(QWeakPointer<Plasma::Containment>(ctmt)));
+
+            //WARNING this assumes the plugin will only ever be set on activities, not panels!
+            if (ctmt==myCtmt) {
+                action->setEnabled(false);
+            }
         }
     }
     connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
@@ -109,20 +130,36 @@ QList<QAction*> SwitchActivity::contextualActions()
 
 void SwitchActivity::switchTo(QAction *action)
 {
-    QWeakPointer<Plasma::Containment> ctmt = action->data().value<QWeakPointer<Plasma::Containment> >();
-    if (!ctmt) {
-        return;
-    }
-    Plasma::Containment *myCtmt = containment();
-    if (!myCtmt) {
-        return;
-    }
+    if (m_useNepomuk) {
+        QString id = action->data().toString();
+        KActivityController().setCurrentActivity(id);
+    } else {
+        QWeakPointer<Plasma::Containment> ctmt = action->data().value<QWeakPointer<Plasma::Containment> >();
+        if (!ctmt) {
+            return;
+        }
+        Plasma::Containment *myCtmt = containment();
+        if (!myCtmt) {
+            return;
+        }
 
-    ctmt.data()->setScreen(myCtmt->screen(), myCtmt->desktop());
+        ctmt.data()->setScreen(myCtmt->screen(), myCtmt->desktop());
+    }
 }
 
 void SwitchActivity::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
+    int step = (event->delta() < 0) ? 1 : -1;
+
+    if (m_useNepomuk) {
+        KActivityController controller;
+        QStringList list = controller.availableActivities();
+        int start = list.indexOf(controller.currentActivity());
+        int next = (start + step + list.size()) % list.size();
+        controller.setCurrentActivity(list.at(next));
+        return;
+    }
+
     Plasma::Containment *myCtmt = containment();
     if (!myCtmt) {
         return;
@@ -134,7 +171,6 @@ void SwitchActivity::wheelEvent(QGraphicsSceneWheelEvent *event)
 
     QList<Plasma::Containment*> containments = c->containments();
     int start = containments.indexOf(myCtmt);
-    int step = (event->delta() < 0) ? 1 : -1;
     int i = (start + step + containments.size()) % containments.size();
 
     //FIXME we *really* need a proper way to cycle through activities
