@@ -277,6 +277,12 @@ void ActivityBar::activityAdded(const QString &id)
 {
     insertActivity(id);
 
+    kDebug() << id;
+    if (m_activityController->currentActivity() == id) {
+        kDebug() << "current";
+        m_tabBar->setCurrentIndex(m_activities.count() - 1);
+    }
+
     setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
     emit sizeHintChanged(Qt::PreferredSize);
 }
