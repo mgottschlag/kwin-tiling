@@ -101,9 +101,7 @@ void ActivityBar::init()
             connect(c, SIGNAL(containmentAdded(Plasma::Containment *)), this, SLOT(containmentAdded(Plasma::Containment *)));
         }
 
-        if (m_containments.count() > 1) {
-            connect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(switchContainment(int)));
-        }
+        connect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(switchContainment(int)));
 
         connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(currentDesktopChanged(int)));
     }
@@ -270,10 +268,6 @@ void ActivityBar::containmentAdded(Plasma::Containment *cont)
 
     insertContainment(cont);
 
-    if (m_containments.count() > 1) {
-        connect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(switchContainment(int)));
-    }
-
     connect(cont, SIGNAL(destroyed(QObject *)), this, SLOT(containmentDestroyed(QObject *)));
     connect(cont, SIGNAL(screenChanged(int, int, Plasma::Containment *)), this, SLOT(screenChanged(int, int, Plasma::Containment *)));
     connect(cont, SIGNAL(contextChanged(Plasma::Context *)), this, SLOT(contextChanged(Plasma::Context *)));
@@ -298,10 +292,6 @@ void ActivityBar::containmentDestroyed(QObject *obj)
     if (index != -1) {
         if (index < m_activeContainment) {
             --m_activeContainment;
-        }
-
-        if (m_containments.count() == 1) {
-            disconnect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(switchContainment(int)));
         }
 
         m_containments.removeAt(index);
