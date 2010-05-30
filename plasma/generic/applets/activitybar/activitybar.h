@@ -59,6 +59,7 @@ private Q_SLOTS:
     void switchActivity(int newActive);
     void activityAdded(const QString &id);
     void activityRemoved(const QString &id);
+    void activityNameChanged(const QString &newName);
     void currentActivityChanged(const QString &newId);
 
 private:

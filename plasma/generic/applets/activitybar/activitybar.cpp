@@ -160,8 +160,7 @@ void ActivityBar::insertActivity(const QString &id)
         m_tabBar->addTab(activity->name());
     }
 
-    //FIXME
-    //connect(activity, SIGNAL(nameChanged(QString)), this, SLOT(setName(QString)));
+    connect(activity, SIGNAL(nameChanged(QString)), this, SLOT(activityNameChanged(QString)));
 }
 
 void ActivityBar::constraintsEvent(Plasma::Constraints constraints)
@@ -368,6 +367,18 @@ void ActivityBar::contextChanged(Plasma::Context *context)
     int index = m_containments.indexOf(cont);
     if (index != -1) {
         m_tabBar->setTabText(index, context->currentActivity());
+    }
+}
+
+void ActivityBar::activityNameChanged(const QString &newName)
+{
+    KActivityInfo *info = qobject_cast<KActivityInfo*>(sender());
+    if (!info) {
+        return;
+    }
+    int index = m_activities.indexOf(info);
+    if (index != -1) {
+        m_tabBar->setTabText(index, newName);
     }
 }
 
