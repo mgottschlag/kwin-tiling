@@ -149,7 +149,7 @@ desktop only by checking <guimenuitem>Only show tasks from the
 current desktop</guimenuitem> when you right click on the task manager, between
 two windows. The size of the text on the taskbar items can be set
 in &systemsettings; under the
-<menuchoice><guimenu>Appearance</guimenu><guisubmenu>Fonts</guisubmenu>
+<menuchoice><guimenu>Application Appearance</guimenu><guisubmenu>Fonts</guisubmenu>
 <guimenuitem>Taskbar</guimenuitem></menuchoice>. Right-clicking on the taskbar
 brings the Settings dialog where you can choose several options to customize
 your taskbar.

@@ -7,7 +7,7 @@
 
 <article lang="&language;">
 <articleinfo>
-
+<title>Screen Saver</title>
 <authorgroup>
 <author>&Mike.McBride; &Mike.McBride.mail;</author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
@@ -76,11 +76,11 @@ saver.</para>
 <title>Setting the time, priority and passwords for screen
 savers.</title>
 
-<para>Below the screensaver list is a check box to have the screen saver <guilabel>Start automatically</guilabel> check box, and a spin box which determines the period of inactivity before the screen saver should be started.  You can enter any postive number of minutes in this box.</para>
+<para>Below the screensaver list is a check box to have the screen saver <guilabel>Start automatically</guilabel>, and a spin box which determines the period of inactivity before the screen saver should be started.  You can enter any postive number of minutes in this box.</para>
 
-<para>Below that is a check box labeled <guilabel>Require password to
-stop screen saver</guilabel>.  If it is checked, when you click a key
-or click a mouse button to end the screen saver and return to your
+<para>Below that is a check box labeled <guilabel>Require password 
+after</guilabel>.  If it is checked, when you click a key
+or click a mouse button to end the screen saver after the time in the spinbox and return to your
 work, you must enter a password.  The password used is the same
 password you used to login to your machine.  If there is no mark in
 the check box, no password is required to return to your

@@ -6,6 +6,7 @@
 ]>
 <article lang="&language;">
 <articleinfo>
+<title>Task Switcher</title>
 <authorgroup>
 <author>&Martin.Graesslin;&Martin.Graesslin.mail;</author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
@@ -26,17 +27,17 @@
 <sect1 id="windows-navigating">
 <title>Navigating through Windows</title>
 
-<para>This module offers the possibility to configure the behaviour for Navigating through windows often referred to as <keycombo>&Alt;&Tab;</keycombo>. There are two independent sets of effects which can have different settings. For each of this sets  there is an own tab (<guilabel>General</guilabel> and <guilabel>Alternative</guilabel>) in this module. 
+<para>This module offers the possibility to configure the behaviour for Navigating through windows often referred to as <keycombo>&Alt;&Tab;</keycombo>. There are two independent sets of effects which can have different settings. For each of this sets  there is an own tab (<guilabel>Main</guilabel> and <guilabel>Alternative</guilabel>) in this module. 
 </para>
 
 <note><para>
-The first set of effects on the <guilabel>General</guilabel> tab has predefined shortcuts. If you want to use the second set of effects on the <guilabel>Alternative</guilabel> tab, you have to set a shortcut for these effects in the Shortcut Editor manually.</para></note>
+The first set of effects on the <guilabel>Main</guilabel> tab has predefined shortcuts. If you want to use the second set of effects on the <guilabel>Alternative</guilabel> tab, you have to set a shortcut for these effects in the Shortcut Editor manually.</para></note>
 
 <para>The following documentation of options applies to the general settings and the alternative settings as well.</para>
 
 <sect2 id="sort-order">
 <title>List windows and Sort order</title>
-<para>You can configure which windows should be shown in the list initiated by pressing <keycombo>&Alt;&Tab;</keycombo> (predefined for the settings on the <guilabel>General</guilabel> tab) or the user defined shortcut for the alternative settings. So it is possible to only show windows on the current desktop or windows from all desktops. It is also possible to influence the sort order, you can either use a sort order based on the last usage of the windows or the stacking order of the windows.
+<para>You can configure which windows should be shown in the list initiated by pressing <keycombo>&Alt;&Tab;</keycombo> (predefined for the settings on the <guilabel>Main</guilabel> tab) or the user defined shortcut for the alternative settings. So it is possible to only show windows on the current desktop or windows from all desktops. It is also possible to influence the sort order, you can either use a sort order based on the last usage of the windows or the stacking order of the windows.
 </para>
 </sect2>
 
@@ -46,9 +47,8 @@ The first set of effects on the <guilabel>General</guilabel> tab has predefined 
 There are several effects which can be used instead of the normal window list when compositing is enabled. By default the <guilabel>Box Switch</guilabel> effect is used. This effect displays a small thumbnail of each window inside a box and the currently selected window is highlighted.
 </para>
 <para>
-The <guilabel>Present Windows</guilabel> effect arranges the windows in a regular grid and by that provides thumbnails in the best possible size. This effect can be used for navigating through windows without <keycombo>&Alt;&Tab;</keycombo> as well, if it is selected as screen edge action in the systemsettings module <menuchoice><guilabel>Look &amp; Feel</guilabel> <guilabel>Desktop
-</guilabel></menuchoice> on the <ulink url="help:/kcontrol/kwinscreenedges/index.html">
-<guilabel>Screen Edges</guilabel></ulink> page. This effect provides additional setting options and shortcuts in a dialog opened by clicking on the tools icon beside the drop down box.
+The <guilabel>Present Windows</guilabel> effect arranges the windows in a regular grid and by that provides thumbnails in the best possible size. This effect can be used for navigating through windows without <keycombo>&Alt;&Tab;</keycombo> as well, if it is selected as screen edge action in the &systemsettings; module <ulink url="help:/kcontrol/kwinscreenedges/index.html">
+<guilabel>Screen Edges</guilabel></ulink>. This effect provides additional setting options and shortcuts in a dialog opened by clicking on the tools icon beside the drop down box.
 </para>
 <para>
 <guilabel>Cover Switch</guilabel> and <guilabel>Flip Switch</guilabel> effect are more fancy effects which require OpenGL. <guilabel>Cover Switch</guilabel> displays the windows in a gallery with a large thumbnail of the currently selected window in the center of the screen while all other windows are rotated on the left and right. <guilabel>Flip Switch</guilabel> displays all windows on a 3D stack. The selected window is on top of the stack and navigating through the windows will move the stack so that the new selected window is on the top.

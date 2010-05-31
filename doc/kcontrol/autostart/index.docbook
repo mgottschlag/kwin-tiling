@@ -6,6 +6,7 @@
 ]>
 <article lang="&language;">
 <articleinfo>
+<title>Autostart</title>
 <authorgroup>
 <author>&Anne-Marie.Mahfouf;</author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
@@ -33,7 +34,10 @@
 <para>The program scans <filename>~/.config/autostart/</filename>, your <filename class="directory">KDE  Autostart</filename> folder (<filename class="directory">$KDEHOME/Autostart</filename> as default), <filename class="directory">$KDEHOME/env</filename> and <filename class="directory">$KDEHOME/shutdown</filename> folders to check what programs and scripts are already there and displays them. It allows you to manage them easily. 
 </para>
 
-<note><para>Note that you can change the location of the <filename class="directory">Autostart</filename> folder in the <guilabel>About Me</guilabel> tab in &systemsettings; and set a different folder than <filename class="directory">$KDEHOME/Autostart</filename>.</para></note>
+<note><para>Note that you can change the location of the <filename class="directory">Autostart</filename> 
+folder in <menuchoice><guimenu>Startup and Shutdown</guimenu> <guimenuitem>Autostart</guimenuitem></menuchoice> 
+in the <guilabel>System Administration</guilabel> category of the &systemsettings; and set a different folder 
+than <filename class="directory">$KDEHOME/Autostart</filename>.</para></note>
 
 <sect2 id="current">
 <title>Files display</title>

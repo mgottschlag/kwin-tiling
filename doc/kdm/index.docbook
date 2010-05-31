@@ -343,7 +343,7 @@ class="username">root</systemitem>).</para>
 can configure &kdm; by editing this file. Alternatively, you can use the
 graphical configuration tool provided by the &systemsettings; (under
 <menuchoice><guisubmenu>Security</guisubmenu><guimenuitem>Login
-Screen</guimenuitem></menuchoice> in the <guilabel>System Administration</guilabel> group).
+Screen</guimenuitem></menuchoice> in the <guilabel>System Administration</guilabel> category).
 </para>
 
 <para>The remainder of this chapter describes configuration of &kdm;

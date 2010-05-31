@@ -30,7 +30,7 @@ attempts to make good use of the available hardware. </para>
 <para>&kde; normally does not use the system bell; instead using its
 own system notifications, which could include log entries, message
 popups, or its own beep.  You can configure these in the
-<guilabel>System Notifications</guilabel> &systemsettings; module.</para>
+<guilabel>Mangage Notifications</guilabel> &systemsettings; module.</para>
 
 <note><para>It is not always possible for the X server to actually make
 a beep sound with exactly the parameters selected due to hardware
