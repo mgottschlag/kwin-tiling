@@ -155,7 +155,7 @@ de-select the &Shift; key, press it again.
 -->
 </listitem>
 </varlistentry>
-<!-- explain use case, purpose, designed for whom? etc
+<!-- explain use case etc
 <varlistentry>
 <term><guilabel>Use system bell whenever a locking key gets activated or deactivated</guilabel></term>
 <listitem><para></para></listitem>
