@@ -24,8 +24,8 @@
 </copyright>
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2009-05-13</date>
-<releaseinfo>1.01.00</releaseinfo>
+<date>2010-05-31</date>
+<releaseinfo>1.0 (&kde; 4.5)</releaseinfo>
 
 <abstract>
 <para>
@@ -67,10 +67,13 @@ individual &systemsettings; modules</link> for more information.
 </tip>
 
 <para>
-&systemsettings; groups all of the configuration modules into two basic categories:
+&systemsettings; groups all of the configuration modules into several categories:
 <itemizedlist>
-<listitem><para><link linkend="general">General</link></para></listitem>
-<listitem><para><link linkend="advanced">Advanced</link></para></listitem>
+<listitem><para><link linkend="application-appearance">Application Appearance and Behavior</link></para></listitem>
+<listitem><para><link linkend="workspace-appearance">Workspace Appearance and Behavior</link></para></listitem>
+<listitem><para><link linkend="network">Network and Connectivity</link></para></listitem>
+<listitem><para><link linkend="hardware">Hardware</link></para></listitem>
+<listitem><para><link linkend="system-administration">System Administration</link></para></listitem>
 </itemizedlist>
 </para>
 
@@ -125,90 +128,148 @@ When you start &systemsettings;, you are presented with a window, which is divid
 </para>
 
 <para>
-Across the top is a toolbar. The toolbar provides the user with the ability to go back into the main view from within a module, or to search for something within all of the modules.
-You can also find a <guiicon>Help</guiicon> menu as well as a <guiicon>Configure</guiicon> icon which provides you a dialog with alternate view settings.
+Across the top is a toolbar. The toolbar provides the user with the ability to go back into the main view from within a module using the <guibutton>Overview</guibutton>, or to search for something within all of the modules.
+You can also find a <guimenu>Help</guimenu> menu as well as a <guibutton>Configure</guibutton> button which provides you a dialog with alternate view settings.
 </para>
 
 <para>
-Underneath the toolbar are two tabs, <link linkend="general">General</link> and <link linkend="advanced">Advanced</link>.
-</para>
-
-<para>
-Underneath the tabs is an icon view of the individual modules that make up &systemsettings;. By default, if your mouse stays a few seconds 
-over an icon, a detailed tooltip appears, explaining the purpose of the module.
+Underneath the toolbar is an icon view of the individual modules that 
+make up &systemsettings; grouped by different categories. By default, 
+if your mouse stays a few seconds over an icon, a detailed tooltip 
+appears, explaining the purpose of the module.
 </para>
 </sect1>
 
 <sect1 id="general">
-<title>&systemsettings; General Tab</title>
-
-<para>
-The <guilabel>General</guilabel> tab consists of modules that allow you to make changes to typical &kde; settings. This section is divided into the following subsections:
-</para>
+<title>&systemsettings; Categories</title>
+<para>A brief overview of all categories und their modules:</para>
 
 <variablelist>
-<varlistentry>
-<term>Look &amp; Feel</term>
+<varlistentry id="application-appearance" >
+<term>Application Appearance and Behavior</term>
 <listitem>
-<para>
-This section covers the settings related to configuring the way you want your &kde; system to look and feel. Settings include the appearance, desktop, notification, and window behavior customizations.
+<para><itemizedlist>
+<listitem><para>
+Account Details (Password &amp; User Account, Paths, KDE Wallet, Social Desktop)
+</para></listitem>
+<listitem><para>
+Application Appearance (Style, Colors, Icons, Fonts, Emoticons)
+</para></listitem>
+<listitem><para>
+Application and System Notifications (Manage Notifications, System Bell, Launch Feedback)
+</para></listitem>
+<listitem><para>
+File Associations
+</para></listitem>
+<listitem><para>
+Locale (Country/Region &amp; Language, Spellchecker)
+</para></listitem>
+<listitem><para>
+Personal Information (KDE Resources)
+</para></listitem>
+<listitem><para>
+Shortcuts and Gestures (Custom Shortcuts, Standard Keyboard Shortcuts, Global Keyboard Shortcuts)
+</para></listitem>
+</itemizedlist>
 </para>
 </listitem>
 </varlistentry>
-<varlistentry>
-<term>Personal</term>
+
+<varlistentry id="workspace-appearance" >
+<term>Workspace Appearance and Behavior</term>
 <listitem>
-<para>
-This section covers the settings related to the user. Settings include personal information about the user, accessibility, default applications, as well as regional and language settings.
+<para><itemizedlist>
+<listitem><para>
+Desktop Effects
+</para></listitem>
+<listitem><para>
+Workspace Appearance (Window Decorations, Desktop Theme Details, Splash Screen, Workspace)
+</para></listitem>
+<listitem><para>
+Accessibility (Accessibility, Text to Speech)
+</para></listitem>
+<listitem><para>
+Default Applications
+</para></listitem>
+<listitem><para>
+Desktop Search
+</para></listitem>
+<listitem><para>
+Window Behavior (Task Switcher, Virtual Desktops, Screen Edges, Window Behavior, Window Rules)
+</para></listitem>
+</itemizedlist>
 </para>
 </listitem>
 </varlistentry>
-<varlistentry>
-<term>Network &amp; Connectivity</term>
+
+<varlistentry id="network" >
+<term>Network and Connectivity</term>
 <listitem>
-<para>
-This section covers the settings related to network and sharing configuration.
+<para><itemizedlist>
+<listitem><para>
+Network Settings ([Proxy, Connection Preferences, Service Discovery, Network Settings)
+</para></listitem>
+<listitem><para>
+Sharing (Windows Shares, Samba)
+</para></listitem>
+</itemizedlist>
 </para>
 </listitem>
 </varlistentry>
-<varlistentry>
-<term>Computer Administration</term>
+
+<varlistentry id="hardware" >
+<term>Hardware</term>
 <listitem>
-<para>
-This section covers the settings related to typical system administration. Settings include data and time, display, fonts, game controllers, keyboard and mouse, as well as system sound.
+<para><itemizedlist>
+<listitem><para>
+Device Actions
+</para></listitem>
+<listitem><para>
+Display and Monitor (Size &amp; Orientation, Screen Saver, Gamma, Multiple Monitors)
+</para></listitem>
+<listitem><para>
+Information Sources
+</para></listitem>
+<listitem><para>
+Input Devices (Keyboard, Mouse, Joystick, Remote Controls)
+</para></listitem>
+<listitem><para>
+Powermanagement
+</para></listitem>
+<listitem><para>
+Removable Devices
+</para></listitem>
+<listitem><para>
+Audio and Video (Audio CDs, CDDB Retrieval, Phonon)
+</para></listitem>
+</itemizedlist>
 </para>
 </listitem>
 </varlistentry>
+
+<varlistentry id="system-administration" >
+<term>System Administration</term>
+<listitem>
+<para><itemizedlist>
+<listitem><para>
+Printer Configuration
+</para></listitem>
+<listitem><para>
+Security (Login Screen, PolicyKit Authorization)
+</para></listitem>
+<listitem><para>
+Startup and Shutdown (Autostart, Service Manager, Session Management)
+</para></listitem>
+<listitem><para>
+Task Scheduler
+</para></listitem>
+</itemizedlist>
+</para>
+</listitem>
+</varlistentry>
+
 </variablelist>
 </sect1>
-
-<sect1 id="advanced">
-<title>&systemsettings; Advanced Tab</title>
-
-<para>
-The <guilabel>Advanced</guilabel> tab consists of modules that allow you to make changes to more advanced &kde; settings. This section is divided into the following subsections:
-</para>
-
-<variablelist>
-<varlistentry>
-<term>Advanced User Settings</term>
-<listitem>
-<para>
-This section covers the settings related to the more advanced system settings for the user. Settings include digital cameras, file associations, input actions, resources, services, sessions, and hardware management.
-</para>
-</listitem>
-</varlistentry>
-<varlistentry>
-<term>System</term>
-<listitem>
-<para>
-This sections covers the settings related to specific system settings such as configuration of the login manager.
-</para>
-</listitem>
-</varlistentry>
-</variablelist>
-</sect1>
-
 <sect1 id="exiting">
 <title>Exiting the &kde; &systemsettings;</title>
 
@@ -224,7 +285,7 @@ Press <keycombo>&Ctrl;<keycap>Q</keycap></keycombo> on the keyboard.
 </listitem>
 <listitem>
 <para>
-Click on the <guibutton>Close</guibutton> button located in the top right hand corner of the window.
+Click on the <guibutton>Close</guibutton> button located in the toolbar.
 </para>
 </listitem>
 </orderedlist>
@@ -257,7 +318,7 @@ Individual modules can be run without running &systemsettings; using the command
 <title>The &kde; &systemsettings; Modules</title>
 
 <para>
-In order to make it as easy as possible, the &kde; &systemsettings; has organized options into <link linkend="general">General</link> and <link linkend="advanced">Advanced</link> categories. In the main window, under each category, there are icons grouped together under subcategories. Each icon is called a module. When you click on a module icon, you will be presented with the options of the module in the main window.
+In order to make it as easy as possible, the &kde; &systemsettings; has organized options into five categories. Under each category, there are icons grouped together under subcategories. Each icon is called a module. When you click on a module icon, you will be presented with the options of the module in the main window.
 </para>
 
 <para>
