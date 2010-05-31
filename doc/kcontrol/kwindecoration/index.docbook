@@ -7,7 +7,7 @@
 
 <article lang="&language;">
 <articleinfo>
-
+<title>Window Decorations</title>
 <authorgroup>
 <author>&Rik.Hemsley; &Rik.Hemsley.mail;</author>
 <author>&Anne-Marie.Mahfouf; &Anne-Marie.Mahfouf.mail;</author>
@@ -34,7 +34,7 @@
 windows.</para>
 
 <sect2>
-<title>Window Decoration</title>
+<title>Window Decorations</title>
 
 <para>
 <screenshot>

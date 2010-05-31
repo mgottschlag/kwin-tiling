@@ -7,7 +7,7 @@
 
 <article lang="&language;">
 <articleinfo>
-
+<title>Session Management</title>
 <authorgroup>
 <author>&Jost.Schenck; &Jost.Schenck.mail;</author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
@@ -25,7 +25,7 @@
 </articleinfo>
 
 <sect1 id="sessions">
-<title>Session Manager</title>
+<title>Session Management</title>
 
 <sect2 id="sessions-use">
 <title>Use</title>
