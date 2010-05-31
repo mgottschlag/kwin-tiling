@@ -103,7 +103,9 @@ QVariant ResultWidget::itemChange(GraphicsItemChange change, const QVariant &val
     if (change == QGraphicsItem::ItemVisibleChange) {
         bool shouldBeVisible = m_shouldBeVisible;
         m_shouldBeVisible = value.toBool();
-        if (shouldBeVisible && !value.toBool()) {
+
+        //somebody asked to hide it, go away in an animated fashion
+        if (isVisible() && shouldBeVisible && !m_shouldBeVisible) {
             QGraphicsItem *parent = parentItem();
             if (parent) {
                 setGeometry(QRectF(QPointF(parent->boundingRect().center().x(), parent->boundingRect().bottom()), size()));
