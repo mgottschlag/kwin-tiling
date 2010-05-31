@@ -198,6 +198,7 @@ bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
             initAnimations();
 
             m_animations.data()->start();
+            m_animations.data()->setCurrentTime(0);
             connect(m_animations.data(), SIGNAL(finished()), this, SLOT(animationFinished()));
         } else {
             QParallelAnimationGroup *group = m_animations.data();
@@ -298,7 +299,7 @@ void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
-    if (m_background && (m_appletHasBackground || m_showButtons)) {
+    if (m_background && (!m_appletHasBackground || m_showButtons)) {
         m_background->paintFrame(painter);
     }
 
@@ -349,18 +350,16 @@ void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
         }
     }
 
-    if (m_appletHasBackground || m_showButtons) {
-        painter->save();
-        painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
-        painter->setFont(Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
-        painter->drawText(contentsRect(), Qt::AlignCenter, m_applet->name());
-        painter->restore();
+    painter->save();
+    painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+    painter->setFont(Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
+    painter->drawText(contentsRect(), Qt::AlignCenter, m_applet->name());
+    painter->restore();
 
-        if (m_separator) {
-            QRectF lineRect = contentsRect();
-            lineRect.setTop(lineRect.bottom() - m_separator->elementSize("horizontal-line").height());
-            m_separator->paint(painter, lineRect, "horizontal-line");
-        }
+    if (m_separator) {
+        QRectF lineRect = contentsRect();
+        lineRect.setTop(lineRect.bottom() - m_separator->elementSize("horizontal-line").height());
+        m_separator->paint(painter, lineRect, "horizontal-line");
     }
 }
 

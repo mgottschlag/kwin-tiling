@@ -37,11 +37,13 @@ namespace Plasma
 class QGraphicsLinearLayout;
 class QPropertyAnimation;
 
+class AppletsView;
+
 class AppletsContainer : public QGraphicsWidget
 {
     Q_OBJECT
 public:
-    AppletsContainer(Plasma::ScrollWidget *parent);
+    AppletsContainer(AppletsView *parent);
     ~AppletsContainer();
 
     void addApplet(Plasma::Applet* applet, const int row = -1, const int column = -1);
@@ -69,6 +71,7 @@ public:
 protected:
     QSizeF optimalAppletSize(Plasma::Applet *applet, const bool maximized) const;
 
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
     bool sceneEventFilter(QGraphicsItem *i, QEvent *e);
 
 public Q_SLOTS:
@@ -85,10 +88,11 @@ Q_SIGNALS:
     void appletActivated(Plasma::Applet *applet);
 
 private:
-    Plasma::ScrollWidget *m_scrollWidget;
+    AppletsView *m_scrollWidget;
     QGraphicsLinearLayout *m_mainLayout;
     Qt::Orientation m_orientation;
     QWeakPointer<Plasma::Applet>m_currentApplet;
+    Plasma::Applet *m_pendingCurrentApplet;
     QSizeF m_viewportSize;
     Plasma::Containment *m_containment;
     bool m_automaticAppletLayout;

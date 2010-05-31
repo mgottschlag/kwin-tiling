@@ -23,6 +23,7 @@
 #include "appletoverlay.h"
 #include "applettitlebar.h"
 #include "appletscontainer.h"
+#include "appletsview.h"
 #include "../common/nettoolbox.h"
 
 #include <limits>
@@ -50,7 +51,6 @@
 #include <Plasma/FrameSvg>
 #include <Plasma/Theme>
 #include <Plasma/View>
-#include <Plasma/ScrollWidget>
 #include <Plasma/PopupApplet>
 #include <Plasma/Frame>
 #include <Plasma/ToolButton>
@@ -86,7 +86,7 @@ void Newspaper::init()
 {
     m_externalLayout = new QGraphicsLinearLayout(this);
     m_externalLayout->setContentsMargins(0, 0, 0, 0);
-    m_scrollWidget = new Plasma::ScrollWidget(this);
+    m_scrollWidget = new AppletsView(this);
     m_externalLayout->addItem(m_scrollWidget);
     m_container = new AppletsContainer(m_scrollWidget);
     m_scrollWidget->setWidget(m_container);

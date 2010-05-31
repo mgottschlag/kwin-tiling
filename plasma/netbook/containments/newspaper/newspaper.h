@@ -29,6 +29,7 @@ class AppletTitleBar;
 class NetToolBox;
 class QGraphicsLinearLayout;
 class AppletsContainer;
+class AppletsView;
 
 namespace Plasma
 {
@@ -88,7 +89,7 @@ private Q_SLOTS:
     void appletActivated(Plasma::Applet *applet);
 
 private:
-    Plasma::ScrollWidget *m_scrollWidget;
+    AppletsView *m_scrollWidget;
     QGraphicsLinearLayout *m_externalLayout;
     Qt::Orientation m_orientation;
     bool m_expandAll;

@@ -6,6 +6,7 @@ set(newspaper_SRCS
     ../common/nettoolbox.cpp
     applettitlebar.cpp
     appletscontainer.cpp
+    appletsview.cpp
     )
 
 kde4_add_plugin(plasma_containment_newspaper ${newspaper_SRCS})

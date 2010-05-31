@@ -20,6 +20,7 @@
 #include "appletoverlay.h"
 #include "newspaper.h"
 #include "appletscontainer.h"
+#include "appletsview.h"
 #include "../common/appletmovespacer.h"
 
 #include <QGraphicsSceneMouseEvent>
