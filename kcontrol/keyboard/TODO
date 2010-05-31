@@ -26,7 +26,6 @@ Improvement:
 
 External improvements:
 * Change KStatusNotifierItem menu window to be real popup window
-* Icons in popup menu in KStatusNotifierItem don't seem to work
 * Add KSharedConfig::configChanged() signal
 * make iso-codes external package 
 * make flags external package
