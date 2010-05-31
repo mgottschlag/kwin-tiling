@@ -151,6 +151,7 @@ void Notifications::configChanged()
         connect(m_manager, SIGNAL(jobRemoved(Job*)),
                 this, SLOT(finishJob(Job*)), Qt::UniqueConnection);
     } else {
+        delete extender()->group("jobGroup");
         m_manager->unregisterJobProtocol();
         disconnect(m_manager, SIGNAL(jobAdded(Job*)),
                    this, SLOT(addJob(Job*)));
