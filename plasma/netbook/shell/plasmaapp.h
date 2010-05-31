@@ -45,6 +45,7 @@ class NetView;
 class NetCorona;
 class QTimer;
 class GlowBar;
+class ShadowWindow;
 
 namespace Kephal
 {
@@ -129,6 +130,7 @@ private Q_SLOTS:
     void unhideHintMousePoll();
     void wallpaperCheckedIn();
     void wallpaperCheckInTimeout();
+    void checkShadow();
 
 Q_SIGNALS:
     void controlBarChanged();
@@ -149,6 +151,7 @@ private:
     bool m_isDesktop;
     bool m_autoHideControlBar;
     QTimer *m_unHideTimer;
+    ShadowWindow *m_shadowWindow;
     int m_startupSuspendWaitCount;
 };
 
