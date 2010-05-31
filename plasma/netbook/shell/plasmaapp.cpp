@@ -886,7 +886,11 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
         }
     } else if ((event->xany.send_event != True && event->type == FocusOut)) {
         QTimer::singleShot(100, this, SLOT(lowerMainView()));
+    } else if (m_controlBar && m_autoHideControlBar && m_controlBar->isVisible() &&
+        (event->xany.send_event != True && event->type == LeaveNotify)) {
+        m_unHideTimer->start(200);
     }
+
     return KUniqueApplication::x11EventFilter(event);
 }
 
@@ -991,7 +995,7 @@ void PlasmaApp::unhideHintMousePoll()
         m_glowBar = 0;
         XMoveResizeWindow(QX11Info::display(), m_unhideTrigger, m_unhideTriggerGeom.x(), m_unhideTriggerGeom.y(), m_unhideTriggerGeom.width(), m_unhideTriggerGeom.height());
     } else {
-        controlBarVisibilityUpdate();
+        m_unHideTimer->start(0);
     }
 #endif
 }
@@ -1019,23 +1023,23 @@ void PlasmaApp::createUnhideTrigger()
 
     switch (m_controlBar->location()) {
         case Plasma::TopEdge:
-            actualWidth = triggerWidth = m_controlBar->width() - 2;
+            actualWidth = triggerWidth = m_controlBar->width() - 1;
             actualHeight = 1;
             triggerPoint += QPoint(1, 0);
 
             break;
         case Plasma::BottomEdge:
-            actualWidth = triggerWidth = m_controlBar->width() - 2;
+            actualWidth = triggerWidth = m_controlBar->width() - 1;
             actualTriggerPoint = triggerPoint = m_controlBar->geometry().bottomLeft() + QPoint(1, 0);
 
             break;
         case Plasma::RightEdge:
-            actualHeight = triggerHeight = m_controlBar->height() - 2;
+            actualHeight = triggerHeight = m_controlBar->height() - 1;
             actualTriggerPoint = triggerPoint = m_controlBar->geometry().topRight() + QPoint(0, 1);
 
             break;
         case Plasma::LeftEdge:
-            actualHeight = triggerHeight = m_controlBar->height() - 2;
+            actualHeight = triggerHeight = m_controlBar->height() - 1;
             triggerPoint += QPoint(0, -1);
 
             break;
