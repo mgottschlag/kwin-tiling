@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Windowed widgets
+Name[en_GB]=Windowed widgets
 Name[es]=Componentes en ventana
+Name[hr]=Widgeti u prozorima
 Name[ia]=Widgets (Elemento Graphic) in le Fenestra
 Name[id]=Widget jendela
 Name[ja]=ウィンドウ化されたウィジェット
@@ -18,6 +20,7 @@ Name[zh_TW]=視窗元件
 
 
 Comment=Find Plasma widgets that can be run as standalone windows
+Comment[en_GB]=Find Plasma widgets that can be run as standalone windows
 Comment[es]=Busca componentes Plasma que se pueden ejecutar como ventanas independientes
 Comment[ia]=Trovar widgets (elementos graphic) de plasma que on pote executar como fenestras sole
 Comment[id]=Cari widget Plasma yang dapat dijalankan sebagai jendela mandiri

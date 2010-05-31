@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Free Space Notifier
 Name[de]=Speicherplatzbenachrichtigung
+Name[en_GB]=Free Space Notifier
 Name[es]=Notificador de espacio libre
 Name[ia]=Notificator de Spatio libere
 Name[id]=Notifikasi Ruang Kosong
@@ -22,7 +23,9 @@ Name[zh_CN]=空闲空间通知器
 Name[zh_TW]=剩餘空間通知
 Comment=Warns when running out of space on your home folder
 Comment[de]=Gibt eine Warnung aus, wenn der freie Speicherplatz in Ihrem Persönlichen Ordner knapp wird
+Comment[en_GB]=Warns when running out of space on your home folder
 Comment[es]=Le avisa cuando se está quedando sin espacio en su carpeta personal
+Comment[hr]=Upozori kada nestaje prostora u mojoj korisničkoj mapi
 Comment[ia]=Il avisa quando il termina le spatio su tu classificator domo
 Comment[id]=Memperingatkan jika kehabisan ruang kosong di folder rumah anda
 Comment[ja]=ホームフォルダの空き領域が少なくなったとき警告します

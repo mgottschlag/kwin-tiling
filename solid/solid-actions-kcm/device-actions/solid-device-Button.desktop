@@ -127,6 +127,7 @@ Name[zh_TW]=狀態值
 Name=Type
 Name[ar]=النوع
 Name[bg]=Тип
+Name[bn]=ধরন
 Name[ca]=Tipus
 Name[ca@valencia]=Tipus
 Name[cs]=Typ
@@ -192,6 +193,7 @@ Name[zh_TW]=類型
 [Desktop Entry]
 Actions=hasState;stateValue;type;
 Name=Solid Device
+Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid
 Name[cs]=Solid zařízení

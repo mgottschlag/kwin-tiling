@@ -2,6 +2,7 @@
 Name=Plugged
 Name[ar]=موصول
 Name[bg]=Вкл.
+Name[bn]=লাগানো
 Name[ca]=Endollat
 Name[ca@valencia]=Endollat
 Name[cs]=Připojeno
@@ -66,6 +67,7 @@ Name[zh_TW]=已插入
 [Desktop Entry]
 Actions=plugged;
 Name=Solid Device
+Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid
 Name[cs]=Solid zařízení

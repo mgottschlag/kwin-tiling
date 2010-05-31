@@ -2,6 +2,7 @@
 Name=Supported Drivers
 Name[ar]=المشغلات المدعومة
 Name[bg]=Поддържани драйвери
+Name[bn]=সমর্থিত ড্রাইভার
 Name[ca]=Controladors acceptats
 Name[ca@valencia]=Controladors acceptats
 Name[cs]=Podporované ovladače
@@ -68,6 +69,7 @@ Name[zh_TW]=支援的驅動程式
 [Desktop Entry]
 Actions=supportedDrivers;
 Name=Solid Device
+Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid
 Name[cs]=Solid zařízení
