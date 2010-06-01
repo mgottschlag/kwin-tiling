@@ -278,43 +278,7 @@ class CalendarTablePrivate
 
         QString defaultHolidaysRegion()
         {
-            if (defaultHolidaysRegionName.isEmpty()) {
-                QString tmpRegion = KGlobal::locale()->country();
-                const QStringList lang = KGlobal::locale()->language().split('_');
-                if (tmpRegion == "C") {
-                    // we assume 'C' means USA, which isn't the best of assumptions, really
-                    // the user ought to set their region in system settings, however
-                    tmpRegion = "us";
-                }
-
-                //kDebug() << "checking for" << tmpRegion;
-                if (dataEngine) {
-                    const QStringList regions = dataEngine->query("holidaysRegions").value("holidaysRegions").toStringList();
-                    foreach (const QString &region, regions) {
-                        if (region == tmpRegion) {
-                            defaultHolidaysRegionName = region;
-                            break;
-                        }
-
-                        if (region.startsWith(tmpRegion)) {
-                            QString nonLocalePart = region.right(region.length() - tmpRegion.length());
-                            //kDebug() << "possible region" << region << nonLocalePart << tmpRegion << lang;
-                            foreach (const QString langBit, lang) {
-                                if (nonLocalePart.contains(langBit)) {
-                                    defaultHolidaysRegionName = region;
-                                    break;
-                                }
-                            }
-
-                            if (defaultHolidaysRegionName.isEmpty()) {
-                                defaultHolidaysRegionName = region;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return defaultHolidaysRegionName;
+            return dataEngine->query("holidaysDefaultRegion").value("holidaysDefaultRegion").toString();
         }
 
         CalendarTable *q;
@@ -332,10 +296,9 @@ class CalendarTablePrivate
         bool displayEvents;
         bool displayHolidays;
         QString holidaysRegion;
-        QString defaultHolidaysRegionName;
         Plasma::DataEngine *dataEngine;
         // Hash key: int = Julian Day number, QString = what's special
-        QHash<int, QString> holidays;
+        QMultiHash<int, QString> holidays;
         // Hash key: int = Julian Day number, QString = what's going on
         QHash<int, QStringList> events;
         QHash<int, QStringList> todos;
@@ -485,7 +448,8 @@ void CalendarTable::setDisplayHolidays(bool showHolidays)
             setHolidaysRegion(d->defaultHolidaysRegion());
         }
 
-        if (!dataEngine()->query("holidaysRegions").value("holidaysRegions").toStringList().contains(holidaysRegion())) {
+        QString queryString = "holidaysIsValidRegion:" + holidaysRegion();
+        if (!dataEngine()->query(queryString).value(queryString).toBool()) {
             return;
         }
     }
@@ -526,7 +490,8 @@ void CalendarTable::setDisplayEvents(bool display)
 
 void CalendarTable::setHolidaysRegion(const QString &region)
 {
-    if (!dataEngine()->query("holidaysRegions").value("holidaysRegions").toStringList().contains(region)) {
+    QString queryString = "holidaysIsValidRegion:" + region;
+    if (!dataEngine()->query(queryString).value(queryString).toBool()) {
         return;
     }
 
@@ -561,8 +526,9 @@ QString CalendarTable::dateDetails(const QDate &date) const
 {
     QString details;
     const int julian = date.toJulianDay();
-    if (d->holidays.contains(julian)) {
-        details += i18n("<i>Holiday</i>: %1", d->holidays.value(julian));
+
+    foreach (const QString &holiday, d->holidays.values(julian)) {
+        details += i18n("<i>Holiday</i>: %1", holiday);
     }
 
     if (d->events.contains(julian)) {
@@ -588,7 +554,6 @@ QString CalendarTable::dateDetails(const QDate &date) const
     return details;
 }
 
-//JPL Looks to work OK even though non-Gregorian months do not match up, probably due to fetching 3 months worth
 void CalendarTable::populateHolidays()
 {
     clearHolidays();
@@ -597,39 +562,17 @@ void CalendarTable::populateHolidays()
         return;
     }
 
-    QDate queryDate = date();
-    QString prevMonthString = queryDate.addMonths(-1).toString(Qt::ISODate);
-    QString nextMonthString = queryDate.addMonths(1).toString(Qt::ISODate);
+    // Just fetch the days displayed in the grid
+    QDate startDate = d->dateFromRowColumn(0, 0);
+    QDate endDate = d->dateFromRowColumn(DISPLAYED_WEEKS - 1, d->daysInWeek - 1);
+    Plasma::DataEngine::Data holidays = d->dataEngine->query("holidays:" + holidaysRegion() + ':'
+                                                             + startDate.toString(Qt::ISODate)+ ':'
+                                                             + endDate.toString(Qt::ISODate));
 
-    Plasma::DataEngine::Data prevMonth = d->dataEngine->query("holidaysInMonth:" + holidaysRegion() + ':' + prevMonthString);
-    for (int i = -10; i < 0; i++) {
-        QDate tempDate = queryDate.addDays(i);
-        QString reason = prevMonth.value(tempDate.toString(Qt::ISODate)).toString();
-        if (!reason.isEmpty()) {
-            addHoliday(tempDate, reason);
-        }
-    }
-
-    queryDate.setDate(queryDate.year(), queryDate.month(), 1);
-    Plasma::DataEngine::Data thisMonth = d->dataEngine->query("holidaysInMonth:" + holidaysRegion() +
-    ':' + queryDate.toString(Qt::ISODate));
-    int numDays = calendar()->daysInMonth(queryDate);
-    for (int i = 0; i < numDays; i++) {
-        QDate tempDate = queryDate.addDays(i);
-        QString reason = thisMonth.value(tempDate.toString(Qt::ISODate)).toString();
-        if (!reason.isEmpty()) {
-            addHoliday(tempDate, reason);
-        }
-    }
-
-    queryDate = queryDate.addMonths(1);
-    Plasma::DataEngine::Data nextMonth = d->dataEngine->query("holidaysInMonth:" + holidaysRegion() + ':' + nextMonthString);
-    for (int i = 0; i < 10; i++) {
-        QDate tempDate = queryDate.addDays(i);
-        QString reason = nextMonth.value(tempDate.toString(Qt::ISODate)).toString();
-        if (!reason.isEmpty()) {
-            addHoliday(tempDate, reason);
-        }
+    Plasma::DataEngine::DataIterator i(holidays);
+    while (i.hasNext()) {
+        i.next();
+        addHoliday(QDate::fromString(i.key(), Qt::ISODate), i.value().toString());
     }
 }
 
@@ -713,20 +656,30 @@ void CalendarTable::createConfigurationInterface(KConfigDialog *parent)
     }
     d->calendarConfigUi.calendarComboBox->setCurrentIndex( d->calendarConfigUi.calendarComboBox->findData( QVariant( d->calendarType ) ) );
 
-    QStringList regions = dataEngine()->query("holidaysRegions").value("holidaysRegions").toStringList();
-    QMap<QString, QString> regionMap;
-    foreach ( const QString &region, regions ) {
-        QString label = KGlobal::locale()->countryCodeToName( region );
-        if (label.isEmpty()) {
-            label = region;
-        }
-        regionMap.insert(label, region);
-    }
-    d->calendarConfigUi.regionComboBox->addItem(i18n("Do not show holidays"), QString());
-    QMapIterator<QString, QString> i(regionMap);
+    Plasma::DataEngine::Data regions = dataEngine()->query("holidaysRegions");
+    QMap<QString, QString> regionsMap;
+    Plasma::DataEngine::DataIterator i(regions);
     while (i.hasNext()) {
         i.next();
-        d->calendarConfigUi.regionComboBox->addItem( i.key(), QVariant( i.value() ) );
+        Plasma::DataEngine::Data regionData = i.value().toHash();
+        QString name = regionData.value("name").toString();
+        QString languageName = KGlobal::locale()->languageCodeToName(regionData.value("languageCode").toString());
+        QString label;
+        if (languageName.isEmpty()) {
+            label = name;
+        } else {
+            // Need to get permission to break string freeze, in the meantime don't translate!
+            //label = i18nc("Holday region, region language", "%1 (%2)", name, languageName);
+            label = QString("%1 (%2)").arg(name).arg(languageName);
+        }
+        regionsMap.insert(label, i.key());
+    }
+
+    d->calendarConfigUi.regionComboBox->addItem(i18n("Do not show holidays"), QString());
+    QMapIterator<QString, QString> j(regionsMap);
+    while ( j.hasNext() ) {
+        j.next();
+        d->calendarConfigUi.regionComboBox->addItem(j.key(), QVariant(j.value()));
     }
     d->calendarConfigUi.regionComboBox->setCurrentIndex( d->calendarConfigUi.regionComboBox->findData( QVariant( d->holidaysRegion ) ) );
 }

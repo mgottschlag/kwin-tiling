@@ -37,15 +37,35 @@ namespace KHolidays
 /**
     The calendar data engine delivers calendar events.
     It can be queried for holidays or the akonadi calendar.
-    Supported requests are:
-        holidaysRegions - list of regions for which holiday information is available
-        holidaysInMonth:region:YYYY-MM-DD
-        isHoliday:region:YYYY-MM-DD
-        description:region:YYYY-MM-DD
 
-        eventsInMonth:YYYY-MM-DD
-        events:YYYY-MM-DD:YYYY-MM-DD
-        events:YYYY-MM-DD
+    Supported Holiday requests are:
+
+        holidaysRegions
+            * Returns a list of available Holiday Regions
+              Each Holiday Region is a pair of a QString containing the regionCode and a Data
+              containing value pairs for "name", "description", "countryCode", "location", "languageCode"
+        holdaysIsValidRegion:[regionCode]
+            * Returns a bool if given Holiday Region is valid
+        holidaysDefaultRegion:[regionCode]
+            * Returns a QString of a sensible default Holiday Region
+        holidays:[regionCode]:[YYYY-MM-DD]:[YYYY-MM-DD]
+            * Returns a list of all holidays in a Holiday Region between two given dates
+              Each holiday is a pair of QString's, the first being the date in ISO format and the
+              second being the holiday name.
+        holidays:[regionCode]:[YYYY-MM-DD]
+            * Returns a list of all holidays  in a Holiday Region on a given day
+        holidaysInMonth:[regionCode]:[YYYY-MM-DD]
+            * Returns a list of all holidays in a Holiday Region in a given month
+        isHoliday:[regionCode]:[YYYY-MM-DD]
+            * Returns a bool if a given date is a Holiday in the given Holiday Region
+        description:[regionCode]:[YYYY-MM-DD]
+            * Returns a QString of all holiday names in a given Holiday Region on a given date
+
+    Supported Akonadi requests are:
+
+        eventsInMonth:[YYYY-MM-DD]
+        events:[YYYY-MM-DD]:[YYYY-MM-DD]
+        events:[YYYY-MM-DD]
 */
 class CalendarEngine : public Plasma::DataEngine
 {
@@ -60,9 +80,12 @@ class CalendarEngine : public Plasma::DataEngine
         bool sourceRequestEvent(const QString &name);
 
     private:
+        /// a request for holidays data
+        bool holidayCalendarSourceRequest(const QString& key, const QStringList& args, const QString& request);
+
         /// a request for data that comes from akonadi
         /// creates EventDataContainers as needed
-        bool akonadiCalendarSourceRequest(const QString& name, const QStringList& tokens);
+        bool akonadiCalendarSourceRequest(const QString& key, const QStringList& args, const QString& request);
 
         /// this will start akonadi if necessary and init m_calendarModel
         void initAkonadiCalendar();
@@ -72,6 +95,9 @@ class CalendarEngine : public Plasma::DataEngine
 
         /// holiday calendar
         QHash<QString, KHolidays::HolidayRegion *> m_regions;
+        QString m_defaultHolidayRegion; // Cached value of default holiday region
+        QString m_defaultHolidayRegionCountry; // The locale country when the cached default calculated
+        QString m_defaultHolidayRegionLanguage; // The locale language when the cached default calculated
 };
 
 K_EXPORT_PLASMA_DATAENGINE(calendar, CalendarEngine)
