@@ -356,8 +356,10 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
         m_spacer = new AppletMoveSpacer(m_applet);
         m_spacer->setMinimumSize(m_applet->geometry().size());
         m_spacer->setMaximumSize(m_applet->geometry().size());
-        m_layout->removeItem(m_applet);
-        m_layout->insertItem(m_index, m_spacer);
+        if (m_layout) {
+            m_layout->removeItem(m_applet);
+            m_layout->insertItem(m_index, m_spacer);
+	}
     }
 
     QPoint p = mapToParent(event->pos());
