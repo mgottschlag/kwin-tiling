@@ -204,7 +204,7 @@ Type <keycombo action="simul">&Ctrl;<keycap>Q</keycap></keycombo> on the keyboar
 
 <sect1 id="infosum">
 <title>Summary Information Module</title>
-<anchor id="kcm_infosummary.desktop" />
+<anchor id="kcm_infosummary" />
 
 <para> 
 The summary information <acronym>KCM</acronym> provides a quick way to display important information. 
@@ -291,7 +291,7 @@ The Hard Drive information box has the following information:
 
 <sect1>
 <title>Memory Information Module</title>
-<anchor id="kcm_memory.desktop" />
+<anchor id="kcm_memory" />
 
 <para>This module displays the current memory usage.  It is updated
 constantly, and can be very useful for pinpointing bottlenecks when certain
@@ -371,7 +371,7 @@ virtual memory.</para>
 
 <sect1 id="devinfo_kcm">
 <title>Device Information Module</title>
-<anchor id="devinfo.desktop" />
+<anchor id="devinfo" />
 
 <para>Device Information is a device viewer module. It shows all relevant devices that are present within your <acronym>PC</acronym>. It has three sections,
 a device viewer, a information panel and a <acronym>UDI</acronym> listing for the currently selected device.</para> 
@@ -436,7 +436,7 @@ The label has the ability to be selected and copied from.</para>
 
 <sect1>
 <title>Interrupt Request (<abbrev>IRQ</abbrev>) Information Module</title>
-<anchor id="interrupts.desktop" />
+<anchor id="interrupts" />
 
 <para>This page displays information about the Interrupt Request
 Lines in use, and the devices that use them.</para>
@@ -475,7 +475,7 @@ identifies the device assigned to that interrupt.</para>
 
 <sect1>
 <title><acronym>DMA</acronym> Channel Information Module</title>
-<anchor id="dma.desktop" />
+<anchor id="dma" />
 
 <para> This page displays information about the <acronym>DMA</acronym>
 (Direct Memory Access) Channels.  A <acronym>DMA</acronym> channel is a
@@ -511,7 +511,7 @@ The user cannot modify any settings on this page.
 
 <sect1 id="view1394">
 <title>IEEE 1394 Device Information Module</title>
-<anchor id="kcmview1394.desktop" />
+<anchor id="kcmview1394" />
 
 <para>The IEEE 1394 interface, also known as <trademark>FireWire</trademark>, 
 is a serial bus interface standard for high-speed 
@@ -541,7 +541,7 @@ button.</para>
 
 <sect1 id="pci">
 <title><acronym>PCI</acronym>-bus/Installed <acronym>PCI</acronym> Cards Information Module</title>
-<anchor id="kcm_pci.desktop" />
+<anchor id="kcm_pci" />
 
 <para>This page displays information about the
 <acronym>PCI</acronym>-bus and installed <acronym>PCI</acronym> cards,
@@ -567,7 +567,7 @@ shown.</para>
 
 <sect1>
 <title>Input/Output Port Information Module</title>
-<anchor id="ioports.desktop" />
+<anchor id="ioports" />
 
 <para>This page displays information about the I/O ports.</para>
 
@@ -602,7 +602,7 @@ second column identifies the device that uses these I/O ports.</para>
 
 <sect1 id="scsi">
 <title><acronym>SCSI</acronym> Interface Information Module</title>
-<anchor id="scsi.desktop" />
+<anchor id="scsi" />
 
 <para>This page displays information about Small Computer Systems
 Interface (<acronym>SCSI</acronym>) Interfaces and the attached
@@ -628,7 +628,7 @@ devices known to the kernel is shown.</para>
 
 <sect1 id="usb">
 <title><acronym>USB</acronym> Controller/<acronym>USB</acronym> Devices Information Module</title>
-<anchor id="kcmusb.desktop" />
+<anchor id="kcmusb" />
 
 <para>This module allows you to see the devices attached to your
 <acronym>USB</acronym> bus(es).</para>
@@ -641,7 +641,7 @@ information you see here.</para>
 
 <sect1 id="sambastatus">
 <title>Samba Status Information Module</title>
-<anchor id="smbstatus.desktop" />
+<anchor id="smbstatus" />
 
 <para>The Samba and <acronym>NFS</acronym> Status Monitor is a front end
 to the programs <command>smbstatus</command> and
@@ -820,7 +820,7 @@ fixed:</para>
 
 <sect1>
 <title>Network Interfaces Information Module</title>
-<anchor id="nic.desktop" />
+<anchor id="nic" />
 
 <para>
 This page displays information about the network interfaces
@@ -837,7 +837,7 @@ some systems, this information can not yet be displayed.</para></note>
 
 <sect1 id="opengl">
 <title>OpenGL Information Module</title>
-<anchor id="opengl.desktop" />
+<anchor id="opengl" />
 
 <para>This page displays information about installed <acronym>OpenGL</acronym> implementation.
 OpenGL (for "Open Graphics Library") is a cross-platform, 
@@ -856,7 +856,7 @@ You must have a videocard with 3D accelerator and properly installed driver for 
 
 <sect1>
 <title>X Server Information Module</title>
-<anchor id="xserver.desktop" />
+<anchor id="xserver" />
 
 <para>This screen is useful for getting specific information about your
 X server and the current session of X.</para>
