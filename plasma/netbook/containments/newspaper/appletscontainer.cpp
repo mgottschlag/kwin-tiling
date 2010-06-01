@@ -133,13 +133,26 @@ void AppletsContainer::setExpandAll(const bool expand)
 
     } else {
         foreach (Plasma::Applet *applet, m_containment->applets()) {
-            if (applet == m_currentApplet.data()) {
-                applet->setPreferredHeight(optimalAppletSize(applet, true).height());
+            if (m_orientation == Qt::Vertical) {
+                if (applet == m_currentApplet.data()) {
+                    applet->setPreferredHeight(optimalAppletSize(applet, true).height());
+                } else {
+                    applet->setPreferredHeight(optimalAppletSize(applet, false).height());
+                }
             } else {
-                applet->setPreferredHeight(optimalAppletSize(applet, false).height());
+                applet->setPreferredSize(-1, -1);
+                applet->setPreferredWidth((m_scrollWidget->viewportGeometry().size().width()/2)-8);
             }
         }
     }
+
+    if (m_orientation == Qt::Horizontal || (!m_expandAll && !m_currentApplet)) {
+        m_scrollWidget->setSnapSize(m_scrollWidget->viewportGeometry().size()/2);
+    } else {
+        m_scrollWidget->setSnapSize(QSizeF());
+    }
+
+    updateSize();
 }
 
 bool AppletsContainer::expandAll() const
@@ -328,7 +341,10 @@ void AppletsContainer::createAppletTitle(Plasma::Applet *applet)
     if (!m_containment) {
         m_containment = applet->containment();
     }
-    if (m_expandAll || m_orientation == Qt::Horizontal) {
+    if (m_orientation == Qt::Horizontal) {
+         applet->setPreferredSize(-1, -1);
+         applet->setPreferredWidth((m_scrollWidget->viewportGeometry().size().width()/2)-8);
+    } else if (m_expandAll) {
         if (applet->effectiveSizeHint(Qt::MinimumSize).height() > KIconLoader::SizeSmall) {
             applet->setPreferredHeight(-1);
         }
@@ -379,15 +395,26 @@ void AppletsContainer::viewportGeometryChanged(const QRectF &geometry)
 {
     m_viewportSize = geometry.size();
 
-    if (!m_containment || m_expandAll || m_orientation == Qt::Horizontal) {
+    if (!m_containment || (m_expandAll && m_orientation != Qt::Horizontal)) {
         return;
     }
     foreach (Plasma::Applet *applet, m_containment->applets()) {
-        if (applet == m_currentApplet.data()) {
-            applet->setPreferredHeight(optimalAppletSize(applet, true).height());
+        if (m_orientation == Qt::Vertical) {
+            if (applet == m_currentApplet.data()) {
+                applet->setPreferredHeight(optimalAppletSize(applet, true).height());
+            } else {
+                applet->setPreferredHeight(optimalAppletSize(applet, false).height());
+            }
         } else {
-            applet->setPreferredHeight(optimalAppletSize(applet, false).height());
+            applet->setPreferredSize(-1, -1);
+            applet->setPreferredWidth((m_scrollWidget->viewportGeometry().size().width()/2)-8);
         }
+    }
+
+    if (m_orientation == Qt::Horizontal || (!m_expandAll && !m_currentApplet)) {
+        m_scrollWidget->setSnapSize(geometry.size()/2);
+    } else {
+        m_scrollWidget->setSnapSize(QSizeF());
     }
 }
 
@@ -395,8 +422,18 @@ void AppletsContainer::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
 
+    if (m_orientation == Qt::Horizontal) {
+        return;
+    }
+
     if (m_currentApplet.data()) {
         m_currentApplet.data()->setPreferredHeight(optimalAppletSize(m_currentApplet.data(), false).height());
+    }
+
+    if (!m_expandAll) {
+        m_scrollWidget->setSnapSize(m_scrollWidget->viewportGeometry().size()/2);
+    } else {
+        m_scrollWidget->setSnapSize(QSizeF());
     }
 
     QGraphicsWidget::mousePressEvent(event);
@@ -471,6 +508,11 @@ void AppletsContainer::delayedAppletActivation()
 {
     m_currentApplet = m_pendingCurrentApplet;
     m_pendingCurrentApplet = 0;
+    if (m_orientation == Qt::Horizontal || (!m_expandAll && !m_currentApplet)) {
+        m_scrollWidget->setSnapSize(m_scrollWidget->viewportGeometry().size()/2);
+    } else {
+        m_scrollWidget->setSnapSize(QSizeF());
+    }
     emit appletActivated(m_currentApplet.data());
 }
 
