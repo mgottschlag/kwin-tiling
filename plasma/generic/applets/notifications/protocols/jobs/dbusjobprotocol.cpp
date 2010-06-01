@@ -23,10 +23,9 @@
 
 #include <KConfigGroup>
 
-#include <plasma/dataenginemanager.h>
-#include <plasma/service.h>
-
-
+#include <Plasma/DataEngineManager>
+#include <Plasma/Service>
+#include <Plasma/ServiceJob>
 
 static const char engineName[] = "applicationjobs";
 
@@ -150,22 +149,24 @@ void DBusJobProtocol::suspend(const QString &source)
 {
     Plasma::Service *service = m_engine->serviceForSource(source);
     KConfigGroup op = service->operationDescription("suspend");
-    service->startOperationCall(op);
+    KJob *job = service->startOperationCall(op);
+    connect(job, SIGNAL(finished(KJob*)), service, SLOT(deleteLater()));
 }
 
 void DBusJobProtocol::resume(const QString &source)
 {
     Plasma::Service *service = m_engine->serviceForSource(source);
     KConfigGroup op = service->operationDescription("resume");
-    service->startOperationCall(op);
+    KJob *job = service->startOperationCall(op);
+    connect(job, SIGNAL(finished(KJob*)), service, SLOT(deleteLater()));
 }
 
 void DBusJobProtocol::stop(const QString &source)
 {
     Plasma::Service *service = m_engine->serviceForSource(source);
     KConfigGroup op = service->operationDescription("stop");
-    service->startOperationCall(op);
+    KJob *job = service->startOperationCall(op);
+    connect(job, SIGNAL(finished(KJob*)), service, SLOT(deleteLater()));
 }
-
 
 #include "dbusjobprotocol.moc"

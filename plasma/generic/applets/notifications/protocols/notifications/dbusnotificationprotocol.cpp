@@ -25,8 +25,9 @@
 #include <KConfigGroup>
 #include <KIcon>
 
-#include <plasma/dataenginemanager.h>
-#include <plasma/service.h>
+#include <Plasma/DataEngineManager>
+#include <Plasma/Service>
+#include <Plasma/ServiceJob>
 
 
 static const char engineName[] = "notifications";
@@ -130,8 +131,10 @@ void DBusNotificationProtocol::relayAction(const QString &source, const QString 
 
     if (op.isValid()) {
         op.writeEntry("actionId", actionId);
-        service->startOperationCall(op);
+        KJob *job = service->startOperationCall(op);
+        connect(job, SIGNAL(finished(KJob*)), service, SLOT(deleteLater()));
     } else {
+        delete service;
         kDebug() << "invalid operation";
     }
 }
@@ -140,7 +143,8 @@ void DBusNotificationProtocol::unregisterNotification(const QString &source)
 {
     Plasma::Service *service = m_engine->serviceForSource(source);
     KConfigGroup op = service->operationDescription("userClosed");
-    service->startOperationCall(op);
+    KJob *job = service->startOperationCall(op);
+    connect(job, SIGNAL(finished(KJob*)), service, SLOT(deleteLater()));
 }
 
 void DBusNotificationProtocol::hideNotification(const QString &source)
@@ -161,7 +165,8 @@ void DBusNotificationProtocol::notificationDeleted(const QString &source)
 {
     Plasma::Service *service = m_engine->serviceForSource(source);
     KConfigGroup op = service->operationDescription("userClosed");
-    service->startOperationCall(op);
+    KJob *job = service->startOperationCall(op);
+    connect(job, SIGNAL(finished(KJob*)), service, SLOT(deleteLater()));
 
     m_notifications.remove(source);
 }
