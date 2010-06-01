@@ -408,6 +408,7 @@ void FdoSelectionManagerPrivate::createNotification(WId winId)
         KJob *job = service->startOperationCall(op);
         QObject::connect(job, SIGNAL(finished(KJob*)), service, SLOT(deleteLater()));
     } else {
+        delete service;
         kDebug() << "invalid operation";
     }
 }

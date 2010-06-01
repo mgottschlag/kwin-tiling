@@ -54,6 +54,7 @@ void DBusNotificationProtocol::init()
 
     if (!m_engine->isValid()) {
         m_engine = 0;
+        Plasma::DataEngineManager::self()->unloadEngine(engineName);
         return;
     }
 
@@ -66,7 +67,9 @@ void DBusNotificationProtocol::init()
 
 void DBusNotificationProtocol::prepareNotification(const QString &source)
 {
-    m_engine->connectSource(source, this);
+    if (m_engine) {
+        m_engine->connectSource(source, this);
+    }
 }
 
 
@@ -126,6 +129,10 @@ void DBusNotificationProtocol::dataUpdated(const QString &source, const Plasma::
 
 void DBusNotificationProtocol::relayAction(const QString &source, const QString &actionId)
 {
+    if (!m_engine) {
+        return;
+    }
+
     Plasma::Service *service = m_engine->serviceForSource(source);
     KConfigGroup op = service->operationDescription("invokeAction");
 
@@ -141,6 +148,10 @@ void DBusNotificationProtocol::relayAction(const QString &source, const QString 
 
 void DBusNotificationProtocol::unregisterNotification(const QString &source)
 {
+    if (!m_engine) {
+        return;
+    }
+
     Plasma::Service *service = m_engine->serviceForSource(source);
     KConfigGroup op = service->operationDescription("userClosed");
     KJob *job = service->startOperationCall(op);
@@ -163,6 +174,10 @@ void DBusNotificationProtocol::removeNotification(const QString &source)
 
 void DBusNotificationProtocol::notificationDeleted(const QString &source)
 {
+    if (!m_engine) {
+        return;
+    }
+
     Plasma::Service *service = m_engine->serviceForSource(source);
     KConfigGroup op = service->operationDescription("userClosed");
     KJob *job = service->startOperationCall(op);
