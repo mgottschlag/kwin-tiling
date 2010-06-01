@@ -76,7 +76,7 @@ saver.</para>
 <title>Setting the time, priority and passwords for screen
 savers.</title>
 
-<para>Below the screensaver list is a check box to have the screen saver <guilabel>Start automatically</guilabel>, and a spin box which determines the period of inactivity before the screen saver should be started.  You can enter any postive number of minutes in this box.</para>
+<para>Below the screensaver list is a check box to have the screen saver <guilabel>Start automatically</guilabel>, and a spin box which determines the period of inactivity before the screen saver should be started.  You can enter any positive number of minutes in this box.</para>
 
 <para>Below that is a check box labeled <guilabel>Require password 
 after</guilabel>.  If it is checked, when you click a key

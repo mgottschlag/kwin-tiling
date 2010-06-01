@@ -142,7 +142,7 @@ appears, explaining the purpose of the module.
 
 <sect1 id="general">
 <title>&systemsettings; Categories</title>
-<para>A brief overview of all categories und their modules:</para>
+<para>A brief overview of all categories and their modules:</para>
 
 <variablelist>
 <varlistentry id="application-appearance" >
@@ -207,7 +207,7 @@ Window Behavior (Task Switcher, Virtual Desktops, Screen Edges, Window Behavior,
 <listitem>
 <para><itemizedlist>
 <listitem><para>
-Network Settings ([Proxy, Connection Preferences, Service Discovery, Network Settings)
+Network Settings (Proxy, Connection Preferences, Service Discovery, Network Settings)
 </para></listitem>
 <listitem><para>
 Sharing (Windows Shares, Samba)
@@ -234,7 +234,7 @@ Information Sources
 Input Devices (Keyboard, Mouse, Joystick, Remote Controls)
 </para></listitem>
 <listitem><para>
-Powermanagement
+Power Management
 </para></listitem>
 <listitem><para>
 Removable Devices
