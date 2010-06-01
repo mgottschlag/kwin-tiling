@@ -1,7 +1,9 @@
 [Domain]
 Name=Login Manager Control Module
+Name[da]=Kontrolmodul til login-håndtering
 Name[de]=Kontrollmodul für Anmeldebildschirm
 Name[en_GB]=Login Manager Control Module
+Name[et]=Sisselogimishalduri juhtimismoodul
 Name[ia]=Modulo de controlo de Gerente de Accessos de Identification
 Name[id]=Modul Kontrol Manajer Log Masuk
 Name[is]=Stjórneining fyrir innskráningu
@@ -21,8 +23,10 @@ Icon=preferences-system-login
 
 [org.kde.kcontrol.kcmkdm.save]
 Name=Save the Login Manager settings
+Name[da]=Gem indstillinger for login-håndtering
 Name[de]=Einstellungen für Anmeldebildschirm speichern
 Name[en_GB]=Save the Login Manager settings
+Name[et]=Sisselogimishalduri seadistuste salvestamine
 Name[hr]=Spremi postavke Upravitelja prijavom
 Name[ia]=Salvar le preferentias del gerente de accesso de identification
 Name[id]=Simpan pengaturan Manajer Log Masuk
@@ -40,8 +44,10 @@ Name[uk]=Зберегти параметри менеджера реєстрац
 Name[x-test]=xxSave the Login Manager settingsxx
 Name[zh_TW]=儲存登入管理設定值
 Description=Administrator authorization is required to change the Login Manager settings
+Description[da]=Administrator-godkendelse kræves for at ændre indstillinger for login-håndtering
 Description[de]=Zur Änderung der Einstellungen des Anmeldebildschirms sind Administratorrechte erforderlich
 Description[en_GB]=Administrator authorisation is required to change the Login Manager settings
+Description[et]=Sisselogimishalduri seadistuste muutmiseks on vajalik autentimine administraatorina
 Description[ia]=Autorisation de Administrator es requirite pro modificar le preferentias del Gerente de Accessos de Identification
 Description[id]=Otorisasi administrator diperlukan untuk mengubah pengaturan Manajer Log Masuk
 Description[kk]=Жүйеге кіру менеджерінің параметрлерін өзгерту үшін әкімшінің құқықтары керек
@@ -59,8 +65,10 @@ Policy=auth_admin
 
 [org.kde.kcontrol.kcmkdm.managefaces]
 Name=Manage user images shown in the Login Manager
+Name[da]=Håndtér brugerbileder som vises i login-håndteringen
 Name[de]=Benutzerbilder des Anmeldebildschirms verwalten
 Name[en_GB]=Manage user images shown in the Login Manager
+Name[et]=Sisselogimishalduris näidatavate kasutajapiltide haldamine
 Name[hr]=Uredi korisničke slike prikazane u Upravitelju prijavom
 Name[ia]=Gerer images de usator monstrate in le Gerente de Accessos de Identification
 Name[id]=Atur gambar pengguna yang ditampilkan di Manajer Log Masuk
@@ -77,8 +85,10 @@ Name[uk]=Керування зображеннями користувачів у
 Name[x-test]=xxManage user images shown in the Login Managerxx
 Name[zh_TW]=管理在登入管理員中顯示的使用者圖像
 Description=Administrator authorization is required to manage user images for the Login Manager
+Description[da]=Administrator-godkendelse kræves for at håndtere brugerbilleder for login-håndtering
 Description[de]=Zum Verwalten der Benutzerbilder des Anmeldebildschirms sind Administratorrechte erforderlich
 Description[en_GB]=Administrator authorisation is required to manage user images for the Login Manager
+Description[et]=Sisselogimishalduri kasutajapiltide haldamiseks on vajalik autentimine administraatorina
 Description[hr]=Potrebna je administratorska autorizacija kako bi ste uredili korisničke slike u Upravitelju prijavom
 Description[ia]=Autorisation de Administrator es requirite pro gerer  le images de usator pro le Gerente de Accessos de Identification
 Description[id]=Otorisasi administrator diperlukan untuk mengatur gambar pengguna untuk Manajer Log Masuk
@@ -98,8 +108,10 @@ Persistence=session
 
 [org.kde.kcontrol.kcmkdm.managethemes]
 Name=Manage themes for the Login Manager
+Name[da]=Håndtér temaer for login-håndteringen
 Name[de]=Designs des Anmeldebildschirms verwalten
 Name[en_GB]=Manage themes for the Login Manager
+Name[et]=Sisselogimishalduri teemade haldamine
 Name[ia]=Gerer themas pro le Gerente de Accessos de Identification
 Name[id]=Atur tema untuk Manajer Log Masuk
 Name[kk]=Жүйеге кіру менеджерінің нақышын басқару
@@ -115,8 +127,10 @@ Name[uk]=Керування темами менеджера реєстрації
 Name[x-test]=xxManage themes for the Login Managerxx
 Name[zh_TW]=管理在登入管理員中顯示的主題
 Description=Administrator authorization is required to manage themes for the Login Manager
+Description[da]=Administrator-godkendelse kræves for at håndtere temaer for login-håndtering
 Description[de]=Zum Verwalten der Designs für den Anmeldebildschirm sind Administratorrechte erforderlich
 Description[en_GB]=Administrator authorisation is required to manage themes for the Login Manager
+Description[et]=Sisselogimishalduri teemade haldamiseks on vajalik autentimine administraatorina
 Description[hr]=Potrebna je administratorska autorizacija kako bi ste uredili teme Upravitelja prijave
 Description[ia]=Autorisation de Administrator es requirite pro modificar le themas pro le Gerente de Accessos de Identification
 Description[id]=Otorisasi administrator diperlukan untuk mengatur tema untuk Manajer Log Masuk

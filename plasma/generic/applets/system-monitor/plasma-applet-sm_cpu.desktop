@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=CPU Monitor
 Name[cs]=Monitor CPU
+Name[da]=CPU-overvågning
 Name[de]=Überwachungsmonitor für Prozessoren
 Name[el]=Επόπτης ΚΜΕ
 Name[en_GB]=CPU Monitor
@@ -10,6 +11,7 @@ Name[et]=Protsessori jälgija
 Name[hr]=Nadzornik CPU-a
 Name[ia]=Monitor de CPU
 Name[id]=Monitor CPU
+Name[is]=Eftirlit með notkun örgjörva
 Name[ja]=CPU モニタ
 Name[kk]=Процссорды бақылау
 Name[km]=ត្រួតពិនិត្យ​ស៊ីភីយូ

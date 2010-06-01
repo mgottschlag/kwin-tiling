@@ -1,9 +1,11 @@
 [Global]
 IconName=drive-harddisk
 Comment=KDE Free Space Notifier Daemon
+Comment[da]=KDE dæmon til bekendtgørelse om ledig plads
 Comment[de]=KDE-Dienst für Speicherplatzbenachrichtigung
 Comment[en_GB]=KDE Free Space Notifier Dæmon
 Comment[es]=Demonio de notificaciones de espacio libre de KDE
+Comment[et]=KDE vaba ruumi teavitamise deemon
 Comment[ia]=Demone de notification de spatio libere de KDE
 Comment[id]=Jurik Notifikasi RUang Kosong KDE
 Comment[is]=KDE tilkynningaþjónn fyrir laust pláss
@@ -24,9 +26,11 @@ Comment[zh_CN]=KDE 空闲空间通知守护程序
 Comment[zh_TW]=KDE 剩餘空間通知伺服程式
 Name=Low Disk Space
 Name[cs]=Málo místa na disku
+Name[da]=Lav diskplads
 Name[de]=Wenig Speicherplatz
 Name[en_GB]=Low Disk Space
 Name[es]=Poco espacio en disco
+Name[et]=Kettaruumi napib
 Name[hr]=Malo prostora na disku
 Name[ia]=Spatio de Disco Basse
 Name[id]=Ruang Kosong Tinggal Sedikit
@@ -200,8 +204,10 @@ Comment[zh_TW]=用於警告通知
 
 [Event/freespacenotif]
 Name=Running low on disk space
+Name[da]=Ved at løbe tør for diskplads
 Name[de]=Speicherplatz wird knapp
 Name[en_GB]=Running low on disk space
+Name[et]=Kettaruumi napib
 Name[ia]=Il curre super un spatio de disco basse
 Name[id]=Berjalan pada ruang kosong yang tinggal sedikit
 Name[ja]=ディスクの空き領域が少ないです
@@ -219,9 +225,11 @@ Name[uk]=Замало місця на диску
 Name[x-test]=xxRunning low on disk spacexx
 Name[zh_TW]=磁碟空間快用完了
 Comment=You are running low on disk space
+Comment[da]=Du er ved at løbe tør for diskplads
 Comment[de]=Ihr freier Speicherplatz wird knapp
 Comment[en_GB]=You are running low on disk space
 Comment[es]=Se está quedando sin espacio en disco
+Comment[et]=Kettaruumi on vähe järele jäänud
 Comment[ia]=Tu es currente super un spatio de disco basse
 Comment[id]=Anda berjalan pada ruang kosong yang tinggal sedikit
 Comment[ja]=ディスクの空き領域が少なくなりました

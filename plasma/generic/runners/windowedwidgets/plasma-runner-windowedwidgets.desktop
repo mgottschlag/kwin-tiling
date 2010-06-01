@@ -1,10 +1,13 @@
 [Desktop Entry]
 Name=Windowed widgets
+Name[da]=Widgets som vinduer
 Name[en_GB]=Windowed widgets
 Name[es]=Componentes en ventana
+Name[et]=Akendesse paigutatavad vidinad
 Name[hr]=Widgeti u prozorima
 Name[ia]=Widgets (Elemento Graphic) in le Fenestra
 Name[id]=Widget jendela
+Name[is]=Græjur í gluggum
 Name[ja]=ウィンドウ化されたウィジェット
 Name[kk]=Терезелерлі виджеттер
 Name[km]=ធាតុក្រាហ្វិក​​វីនដូ
@@ -20,10 +23,13 @@ Name[zh_TW]=視窗元件
 
 
 Comment=Find Plasma widgets that can be run as standalone windows
+Comment[da]=Find Plasma-widgets der kan køres som selvstændige vinduer
 Comment[en_GB]=Find Plasma widgets that can be run as standalone windows
 Comment[es]=Busca componentes Plasma que se pueden ejecutar como ventanas independientes
+Comment[et]=Plasma vidinate otsimine, mida saab panna tööle autonoomsetes akendes
 Comment[ia]=Trovar widgets (elementos graphic) de plasma que on pote executar como fenestras sole
 Comment[id]=Cari widget Plasma yang dapat dijalankan sebagai jendela mandiri
+Comment[is]=Finnur Plasmagræjur sem hægt er að keyra sem sjálfstæð forrit
 Comment[ja]=スタンドアローンのウィンドウとして起動できる Plasma ウィジェットを検索します
 Comment[kk]=Бөлек терезелі Plasma виджеттерін табу
 Comment[km]=រក​ធាតុក្រាហ្វិក​ប្លាស្មា​ ដែល​អាច​ត្រូវ​បាន​​រត់​ជា​វីនដូ​តែ​ឯង

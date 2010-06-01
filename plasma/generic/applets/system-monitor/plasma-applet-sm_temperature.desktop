@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Hardware Temperature
 Name[cs]=Teplota hardwaru
+Name[da]=Hardwaretemperatur
 Name[de]=Hardwaretemperatur
 Name[el]=Θερμοκρασία Υλικού
 Name[en_GB]=Hardware Temperature
@@ -11,6 +12,7 @@ Name[he]=טמפרטורת חומרה
 Name[hr]=Temperatura hardvera
 Name[ia]=Temperatura Hardware
 Name[id]=Temperatur Peranti Keras
+Name[is]=Hitastig vélbúnaðar
 Name[ja]=ハードウェアの温度
 Name[kk]=Жабдықтың температурасы
 Name[km]=សីតុណ្ហភាព​ផ្នែក​រឹង

@@ -84,6 +84,7 @@ Name[x-test]=xxInput Actionsxx
 Name[zh_CN]=输入动作
 Name[zh_TW]=輸入動作
 Comment=Input Actions service performing configured actions on key presses
+Comment[da]=Input-handlinger-tjeneste som udfører konfigurerede handlinger ved tastetryk
 Comment[el]=Υπηρεσία ενεργειών εισόδου εκτελεί ρυθμισμένες ενέργειες με το πάτημα πλήκτρων
 Comment[en_GB]=Input Actions service performing configured actions on key presses
 Comment[et]=Sisestustoimingute teenus, mis võimaldab klahve vajutades ette võtta teatavaid määratud toiminguid

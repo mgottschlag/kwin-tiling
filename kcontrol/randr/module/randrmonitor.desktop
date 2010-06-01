@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Display Management change monitor
 Name[cs]=Monitor změn správy zobrazení
+Name[da]=Ændringsovervågning for håndtering af skærme
 Name[el]=Εμφάνιση διαχείρισης αλλαγής οθόνης
 Name[en_GB]=Display Management change monitor
 Name[et]=Monitori kuvahaldus
@@ -22,6 +23,7 @@ Name[uk]=Зміна монітора керування показом
 Name[x-test]=xxDisplay Management change monitorxx
 Name[zh_TW]=顯示管理變更監控器
 Comment=Is this required when kephal has its own kded module?
+Comment[da]=Er dette påkrævet når kephal har sit eget kded-modul?
 Comment[el]=Είναι αυτό απαραίτητο όταν το kephal έχει το δικό του άρθρωμα kded;
 Comment[en_GB]=Is this required when kephal has its own kded module?
 Comment[es]=¿Es necesario cuando kephal tiene su propio módulo de kded?

@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Hard Disk Status
 Name[cs]=Stav pevného disku
+Name[da]=Harddisk-status
 Name[de]=Festplattenstatus
 Name[el]=Κατάσταση σκληρού δίσκου
 Name[en_GB]=Hard Disk Status
@@ -10,6 +11,7 @@ Name[et]=Kõvaketta olek
 Name[hr]=Stanje čvrsti diska
 Name[ia]=Stato del Disco Dur
 Name[id]=Status Cakram Keras
+Name[is]=Staða harðra diska
 Name[ja]=ハードディスクの状態
 Name[kk]=Қатқыл дискі күй-жайы
 Name[km]=ស្ថានភាព​ថាស​រឹង

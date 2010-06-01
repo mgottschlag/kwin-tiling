@@ -12,9 +12,11 @@ X-KDE-System-Settings-Parent-Category=startup-and-shutdown
 
 Name=Session Management
 Name[cs]=Správa relací
+Name[da]=Sessionshåndtering
 Name[de]=Sitzungsverwaltung
 Name[en_GB]=Session Management
 Name[es]=Gestión de sesiones
+Name[et]=Seansihaldus
 Name[hr]=Upravljanje sesijama
 Name[ia]=Gestion de Session
 Name[id]=Manajemen Sesi

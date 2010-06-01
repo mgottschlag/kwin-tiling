@@ -10,9 +10,11 @@ X-KDE-Kded-phase=1
 OnlyShowIn=KDE;
 
 Name=Keyboard Daemon
+Name[da]=Tastatur-dæmon
 Name[de]=Tastatur-Dienst
 Name[en_GB]=Keyboard Dæmon
 Name[es]=Demonio de teclado
+Name[et]=Klaviatuurideemon
 Name[ia]=Demone de Claviero
 Name[id]=Jurik Papan Ketik
 Name[is]=Lyklaborðspúki

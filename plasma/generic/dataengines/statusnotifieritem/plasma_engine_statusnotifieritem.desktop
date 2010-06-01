@@ -1,8 +1,29 @@
 [Desktop Entry]
 Name=Status Notifier Information
+Name[da]=Information om statusbekendtgørelse
+Name[en_GB]=Status Notifier Information
+Name[et]=Oleku märguandja teave
+Name[ia]=Informationes de Notificator de Status
+Name[is]=Stöðutilkynningaþjónn
+Name[kk]=Күй-жайы туралы құлақтандыру мәліметі
+Name[nl]=Melding van statusinformatie
+Name[pt]=Informações do Item de Notificação do Estado
+Name[sv]=Information från statusunderrättelser
+Name[uk]=Відомості сповіщення про стан
 Name[x-test]=xxStatus Notifier Informationxx
+Name[zh_TW]=狀態通知器資訊
 Comment=Engine for applications' status information, based on the Status Notifier protocol.
+Comment[da]=Motor til programmers statusinformation, baseret på protokollen til statusbekendtgørelser.
+Comment[en_GB]=Engine for applications' status information, based on the Status Notifier protocol.
+Comment[et]=Rakenduse olekuteabe mootor Status Notifieri protokolli alusel.
+Comment[ia]=Motor pro information de stato de Applicationes basate su le protocollo de Notificator de Stato
+Comment[kk]=Күй-жайы туралы құлақтандыру (Status Notifier) протоколын негіздеген қолданбаларға арналған тетік.
+Comment[nl]=Engine voor statusinformatie van toepassingen gebaseerde op het statusnotificatieprotocol.
+Comment[pt]=Motor para a informação do estado das aplicações, baseado no protocolo do Item de Notificação do Estado.
+Comment[sv]=Gränssnitt för statusinformation om program baserat på protokollet för statusunderrättelser.
+Comment[uk]=Рушій даних щодо стану програм, заснований на протоколі сповіщення про стан.
 Comment[x-test]=xxEngine for applications' status information, based on the Status Notifier protocol.xx
+Comment[zh_TW]=基於狀態通知器協定的應用程式狀態資訊引擎。
 Icon=
 
 X-KDE-ServiceTypes=Plasma/DataEngine

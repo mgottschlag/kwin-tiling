@@ -69,9 +69,12 @@ Name[zh_CN]=工作空间
 Name[zh_TW]=工作空間
 
 Comment=Global options for the Plasma Workspace
+Comment[cs]=Globální možnosti pro pracovní plochu Plasma
+Comment[da]=Globale indstillinger for Plasma arbejdsområde
 Comment[de]=Globale Einstellungen für die Plasma-Arbeitsfläche
 Comment[en_GB]=Global options for the Plasma Workspace
 Comment[es]=Opciones globales del espacio de trabajo Plasma
+Comment[et]=Plasma töötsooni globaalsed valikud
 Comment[ia]=Optiones Global pro le spatio de labor de Plasma
 Comment[id]=Opsi global untuk Ruang Kerja Plasma
 Comment[is]=Almennar stillingar Plasma vinnurýmisins
