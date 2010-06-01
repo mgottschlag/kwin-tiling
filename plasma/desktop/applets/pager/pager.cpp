@@ -425,15 +425,19 @@ void Pager::recalculateGeometry()
 
     m_hoverRect = QRectF();
     m_rects.clear();
-    while (!m_animations.isEmpty()) {
-        delete m_animations.takeLast();
-    }
+    qDeleteAll(m_animations);
+    m_animations.clear();
+
     QRectF itemRect(QPoint(leftMargin, topMargin) , QSize(floor(itemWidth), floor(itemHeight)));
     for (int i = 0; i < m_desktopCount; i++) {
         itemRect.moveLeft(leftMargin + floor(i % columns  * (itemWidth + padding)));
         itemRect.moveTop(topMargin + floor(i / columns * (itemHeight + padding)));
         m_rects.append(itemRect);
         m_animations.append(new DesktopRectangle(this));
+    }
+
+    if (m_hoverIndex >= m_animations.count()) {
+        m_hoverIndex = -1;
     }
 
     //Resize background svgs as needed
