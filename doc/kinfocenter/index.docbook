@@ -202,7 +202,7 @@ Type <keycombo action="simul">&Ctrl;<keycap>Q</keycap></keycombo> on the keyboar
 
 <!--****************************************-->
 
-<sect1 id="infosum">
+<sect1 id="infosumsect">
 <title>Summary Information Module</title>
 <anchor id="kcm_infosummary" />
 
@@ -289,7 +289,7 @@ The Hard Drive information box has the following information:
 
 <!--****************************************-->
 
-<sect1>
+<sect1 id="kcm_memorysect">
 <title>Memory Information Module</title>
 <anchor id="kcm_memory" />
 
@@ -369,7 +369,7 @@ virtual memory.</para>
 
 <!--****************************************-->
 
-<sect1 id="devinfo_kcm">
+<sect1 id="devinfo_kcmsect">
 <title>Device Information Module</title>
 <anchor id="devinfo" />
 
@@ -434,7 +434,7 @@ The label has the ability to be selected and copied from.</para>
 
 <!--****************************************-->
 
-<sect1>
+<sect1 id="interruptssect">
 <title>Interrupt Request (<abbrev>IRQ</abbrev>) Information Module</title>
 <anchor id="interrupts" />
 
@@ -473,7 +473,7 @@ identifies the device assigned to that interrupt.</para>
 
 <!--****************************************-->
 
-<sect1>
+<sect1 id="dmasect">
 <title><acronym>DMA</acronym> Channel Information Module</title>
 <anchor id="dma" />
 
@@ -509,7 +509,7 @@ The user cannot modify any settings on this page.
 
 <!--****************************************-->
 
-<sect1 id="view1394">
+<sect1 id="view1394sect">
 <title>IEEE 1394 Device Information Module</title>
 <anchor id="kcmview1394" />
 
@@ -539,7 +539,7 @@ button.</para>
 
 <!--****************************************-->
 
-<sect1 id="pci">
+<sect1 id="pcisect">
 <title><acronym>PCI</acronym>-bus/Installed <acronym>PCI</acronym> Cards Information Module</title>
 <anchor id="kcm_pci" />
 
@@ -565,7 +565,7 @@ shown.</para>
 
 <!--****************************************-->
 
-<sect1>
+<sect1 id="ioportssect">
 <title>Input/Output Port Information Module</title>
 <anchor id="ioports" />
 
@@ -600,7 +600,7 @@ second column identifies the device that uses these I/O ports.</para>
 
 <!--****************************************-->
 
-<sect1 id="scsi">
+<sect1 id="scsisect">
 <title><acronym>SCSI</acronym> Interface Information Module</title>
 <anchor id="scsi" />
 
@@ -626,7 +626,7 @@ devices known to the kernel is shown.</para>
 
 <!--****************************************-->
 
-<sect1 id="usb">
+<sect1 id="usbsect">
 <title><acronym>USB</acronym> Controller/<acronym>USB</acronym> Devices Information Module</title>
 <anchor id="kcmusb" />
 
@@ -639,7 +639,7 @@ information you see here.</para>
 
 <!--****************************************-->
 
-<sect1 id="sambastatus">
+<sect1 id="sambastatussect">
 <title>Samba Status Information Module</title>
 <anchor id="smbstatus" />
 
@@ -818,7 +818,7 @@ fixed:</para>
 
 <!--****************************************-->
 
-<sect1>
+<sect1 id="nicsect">
 <title>Network Interfaces Information Module</title>
 <anchor id="nic" />
 
@@ -835,7 +835,7 @@ some systems, this information can not yet be displayed.</para></note>
 
 <!--****************************************-->
 
-<sect1 id="opengl">
+<sect1 id="openglsect">
 <title>OpenGL Information Module</title>
 <anchor id="opengl" />
 
@@ -854,7 +854,7 @@ You must have a videocard with 3D accelerator and properly installed driver for 
 
 <!--****************************************-->
 
-<sect1>
+<sect1 id="xserversect">
 <title>X Server Information Module</title>
 <anchor id="xserver" />
 
