@@ -190,14 +190,15 @@ void SearchLaunch::availableScreenRegionChanged()
 
     QRect maxRect;
     int maxArea = 0;
-    //we don't want the bounding rect (that could include panels too), but the maximumone representing the desktop
+    //we don't want the bounding rect (that could include panels too), but the maximum one representing the desktop
     foreach (QRect rect, corona()->availableScreenRegion(screen()).rects()) {
-        int area = rect.width() * rect.height();
+        const int area = rect.width() * rect.height();
         if (area > maxArea) {
             maxRect = rect;
             maxArea = area;
         }
     }
+
     setContentsMargins(maxRect.left(), maxRect.top(), qMax((qreal)0.0, size().width() - maxRect.right()), qMax((qreal)0.0, size().height() - maxRect.bottom()));
 }
 
@@ -367,9 +368,14 @@ void SearchLaunch::updateSize()
 }
 
 
+void SearchLaunch::resizeEvent(QGraphicsSceneResizeEvent *)
+{
+    availableScreenRegionChanged();
+}
+
 void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 {
-    kDebug() << "constraints updated with" << constraints << "!!!!!!";
+    //kDebug() << "constraints updated with" << constraints << "!!!!!!";
 
     if (constraints & Plasma::FormFactorConstraint ||
         constraints & Plasma::StartupCompletedConstraint) {
