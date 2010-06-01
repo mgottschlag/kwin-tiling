@@ -887,6 +887,9 @@ void PlasmaApp::showWidgetExplorer(Plasma::Containment *containment)
         m_widgetExplorer = new Plasma::WidgetExplorer(m_controlBar->containment());
         connect(m_widgetExplorer, SIGNAL(closeClicked()), this, SLOT(closeWidgetExplorer()));
         m_widgetExplorer->setContainment(m_mainView->containment());
+        const bool vert = m_controlBar->location() == Plasma::LeftEdge ||
+                          m_controlBar->location() == Plasma::RightEdge;
+        m_widgetExplorer->setOrientation(vert ? Qt::Vertical : Qt::Horizontal);
         m_widgetExplorer->populateWidgetList();
 
         m_corona->addOffscreenWidget(m_widgetExplorer);
