@@ -36,6 +36,7 @@
 
 #include <Plasma/DataEngine>
 #include <Plasma/DataEngineManager>
+#include <Plasma/ServiceJob>
 
 #include <config-X11.h>
 
@@ -404,7 +405,8 @@ void FdoSelectionManagerPrivate::createNotification(WId winId)
         //op.writeEntry("summary", task->name());
         op.writeEntry("body", message);
         op.writeEntry("timeout", (int)request.timeout);
-        service->startOperationCall(op);
+        KJob *job = service->startOperationCall(op);
+        QObject::connect(job, SIGNAL(finished(KJob*)), service, SLOT(deleteLater()));
     } else {
         kDebug() << "invalid operation";
     }

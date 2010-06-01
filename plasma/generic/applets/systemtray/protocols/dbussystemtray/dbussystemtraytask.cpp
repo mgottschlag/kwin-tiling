@@ -62,6 +62,7 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service, Plasma::Service *
     kDebug();
     m_typeId = service;
     m_name = service;
+    m_service->setParent(this);
 
     //TODO: how to behave if its not m_valid?
     m_valid = !service.isEmpty();
