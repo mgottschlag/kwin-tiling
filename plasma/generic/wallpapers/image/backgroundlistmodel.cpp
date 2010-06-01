@@ -43,8 +43,7 @@ BackgroundListModel::BackgroundListModel(Plasma::Wallpaper *listener, QObject *p
     : QAbstractListModel(parent),
       m_structureParent(listener),
       m_size(0,0),
-      m_resizeMethod(Plasma::Wallpaper::ScaledResize),
-      m_previewUnavailablePix(BackgroundDelegate::SCREENSHOT_SIZE, BackgroundDelegate::SCREENSHOT_SIZE)
+      m_resizeMethod(Plasma::Wallpaper::ScaledResize)
 {
     connect(&m_dirwatch, SIGNAL(deleted(QString)), this, SLOT(removeBackground(QString)));
     m_previewUnavailablePix.fill(Qt::transparent);
