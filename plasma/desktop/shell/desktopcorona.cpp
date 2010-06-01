@@ -87,6 +87,7 @@ void DesktopCorona::init()
     panelPlugins.addPlugin(Qt::NoModifier, Qt::RightButton, "contextmenu");
 
     setContainmentActionsDefaults(Plasma::Containment::DesktopContainment, desktopPlugins);
+    setContainmentActionsDefaults(Plasma::Containment::CustomContainment, desktopPlugins);
     setContainmentActionsDefaults(Plasma::Containment::PanelContainment, panelPlugins);
     setContainmentActionsDefaults(Plasma::Containment::CustomPanelContainment, panelPlugins);
 
