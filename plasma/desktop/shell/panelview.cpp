@@ -203,6 +203,7 @@ public:
     {
         setAttribute(Qt::WA_TranslucentBackground);
         setAttribute(Qt::WA_NoSystemBackground, false);
+        setAutoFillBackground(false);
 #ifdef Q_WS_X11
         QRegion region(QRect(0,0,1,1));
         XShapeCombineRegion(QX11Info::display(), winId(), ShapeInput, 0, 0,

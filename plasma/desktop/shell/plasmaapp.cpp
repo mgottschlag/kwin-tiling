@@ -904,7 +904,7 @@ void PlasmaApp::createWaitingPanels()
 
     foreach (QWeakPointer<Plasma::Containment> containmentPtr, containments) {
         Plasma::Containment *containment = containmentPtr.data();
-        if (!containment || (containment->formFactor() != Plasma::Horizontal && containment->formFactor() != Plasma::Vertical)) {
+        if (!containment) {
             continue;
         }
 
