@@ -37,6 +37,7 @@ namespace Plasma
 class Panel : public Plasma::Containment
 {
     Q_OBJECT
+    Q_PROPERTY(QString shadowPath READ shadowPath)
 
 public:
     Panel(QObject *parent, const QVariantList &args);
@@ -50,6 +51,8 @@ public:
                         const QRect &contentsRect);
     void paintBackground(QPainter *painter, const QRect &contentsRect);
     QList<QAction *> contextualActions();
+
+    QString shadowPath() {return "widgets/panel-background";}
 
 protected:
     void saveState(KConfigGroup &config) const;

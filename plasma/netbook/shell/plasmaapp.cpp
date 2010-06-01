@@ -251,6 +251,8 @@ protected:
 
     void paintEvent(QPaintEvent* e)
     {
+        Q_UNUSED(e)
+
         QPainter p(this);
         //p.setCompositionMode(QPainter::CompositionMode_Source);
         m_shadow->paintFrame(&p);
@@ -476,9 +478,6 @@ void PlasmaApp::mainContainmentActivated()
 {
     m_mainView->setWindowTitle(m_mainView->containment()->activity());
 
-    if (!m_isDesktop) {
-        return;
-    }
 
     const WId id = m_mainView->effectiveWinId();
 
@@ -489,6 +488,10 @@ void PlasmaApp::mainContainmentActivated()
         KWindowSystem::raiseWindow(activeWindow->effectiveWinId());
         m_mainView->activateWindow();
         activeWindow->setFocus();
+        if (m_shadowWindow) {
+            KWindowSystem::clearState(m_shadowWindow->winId(), NET::KeepBelow);
+            KWindowSystem::setState(m_shadowWindow->winId(), NET::KeepAbove);
+        }
     } else {
         m_mainView->activateWindow();
     }
@@ -538,6 +541,11 @@ void PlasmaApp::adjustSize(Kephal::Screen *screen)
 void PlasmaApp::reserveStruts()
 {
     if (!m_controlBar || m_autoHideControlBar || !isDesktop()) {
+        KWindowSystem::setExtendedStrut(m_controlBar->winId(),
+                                    0, 0, 0,
+                                    0, 0, 0,
+                                    0, 0, 0,
+                                    0, 0, 0);
         return;
     }
 
@@ -1016,6 +1024,10 @@ void PlasmaApp::lowerMainView()
     if (m_isDesktop && !hasForegroundWindows()) {
         KWindowSystem::lowerWindow(m_mainView->winId());
     }
+    if (m_shadowWindow) {
+        KWindowSystem::clearState(m_shadowWindow->winId(), NET::KeepAbove);
+        KWindowSystem::setState(m_shadowWindow->winId(), NET::KeepBelow);
+    }
 }
 
 void PlasmaApp::controlBarVisibilityUpdate()
@@ -1026,6 +1038,20 @@ void PlasmaApp::controlBarVisibilityUpdate()
 
     if (!m_autoHideControlBar) {
         setControlBarVisible(true);
+
+        if (m_shadowWindow) {
+            Plasma::WindowEffects::slideWindow(m_shadowWindow, m_controlBar->location());
+            m_shadowWindow->show();
+            if (hasForegroundWindows()) {
+                KWindowSystem::clearState(m_shadowWindow->winId(), NET::KeepBelow);
+                KWindowSystem::setState(m_shadowWindow->winId(), NET::KeepAbove);
+            } else {
+                KWindowSystem::clearState(m_shadowWindow->winId(), NET::KeepAbove);
+                KWindowSystem::setState(m_shadowWindow->winId(), NET::KeepBelow);
+            }
+            KWindowSystem::setOnAllDesktops(m_shadowWindow->winId(), true);
+        }
+
         return;
     } else if (m_autoHideControlBar && hasForegroundWindows() && m_controlBar->isVisible()) {
         return;
@@ -1045,9 +1071,25 @@ void PlasmaApp::controlBarVisibilityUpdate()
             Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
             setControlBarVisible(true);
         }
+
+        if (m_shadowWindow) {
+            Plasma::WindowEffects::slideWindow(m_shadowWindow, m_controlBar->location());
+            if (hasForegroundWindows()) {
+                KWindowSystem::clearState(m_shadowWindow->winId(), NET::KeepBelow);
+                KWindowSystem::setState(m_shadowWindow->winId(), NET::KeepAbove);
+            }
+            m_shadowWindow->show();
+            KWindowSystem::setOnAllDesktops(m_shadowWindow->winId(), true);
+        }
     } else if (!m_controlBar->geometry().contains(cursorPos) && !mainViewOnTop() && !hasForegroundWindows()) {
         Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
         m_controlBar->hide();
+
+        if (m_shadowWindow) {
+            Plasma::WindowEffects::slideWindow(m_shadowWindow, m_controlBar->location());
+            m_shadowWindow->hide();
+        }
+
         createUnhideTrigger();
     }
 }
@@ -1078,10 +1120,24 @@ void PlasmaApp::setControlBarVisible(bool visible)
         unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
         KWindowSystem::setState(m_controlBar->effectiveWinId(), state);
         KWindowSystem::setType(m_controlBar->effectiveWinId(), NET::Dock);
+
+        if (m_shadowWindow) {
+            Plasma::WindowEffects::slideWindow(m_shadowWindow, m_controlBar->location());
+            m_shadowWindow->show();
+            if (!m_autoHideControlBar) {
+                KWindowSystem::setState(m_shadowWindow->winId(), NET::KeepBelow);
+            }
+            KWindowSystem::setOnAllDesktops(m_shadowWindow->winId(), true);
+        }
     } else if (!m_autoHideControlBar) {
         Plasma::WindowEffects::slideWindow(m_controlBar, m_controlBar->location());
         m_controlBar->hide();
         createUnhideTrigger();
+
+        if (m_shadowWindow) {
+            Plasma::WindowEffects::slideWindow(m_shadowWindow, m_controlBar->location());
+            m_shadowWindow->hide();
+        }
     }
 }
 
