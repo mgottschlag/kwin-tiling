@@ -26,6 +26,7 @@
 #include <Plasma/ToolTipManager>
 #include <Plasma/Containment>
 #include <Plasma/Service>
+#include <Plasma/ServiceJob>
 
 #include <KDebug>
 #include <KIcon>
@@ -145,7 +146,8 @@ void SearchBox::query()
     Plasma::Service *service = dataEngine("searchlaunch")->serviceForSource("query");
     KConfigGroup ops = service->operationDescription("query");
     ops.writeEntry("query", m_search->text());
-    service->startOperationCall(ops);
+    KJob *job = service->startOperationCall(ops);
+    connect(job, SIGNAL(finished(KJob*)), service, SLOT(deleteLater()));
 }
 
 #include "searchbox.moc"
