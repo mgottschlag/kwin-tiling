@@ -129,7 +129,7 @@ void NetPanelController::updateFormFactor()
     case Plasma::RightEdge:
         m_layout->setOrientation(Qt::Vertical);
         m_resizeButton->setIcon(m_iconSvg->pixmap("size-horizontal"));
-    m_resizeButton->setText(i18n("Width"));
+        m_resizeButton->setText(i18n("Width"));
         m_resizeButton->setCursor(Qt::SizeHorCursor);
         break;
     case Plasma::TopEdge:
