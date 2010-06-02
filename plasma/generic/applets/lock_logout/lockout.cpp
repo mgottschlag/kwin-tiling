@@ -144,6 +144,7 @@ void LockOut::checkLayout()
         case Plasma::Vertical:
             if (width >= (MINBUTTONSIZE + MARGINSIZE) * m_visibleButtons) {
                 direction = Qt::Horizontal;
+                height = qMax(width / m_visibleButtons, MINBUTTONSIZE);
                 minHeight = MINBUTTONSIZE;
             } else {
                 minHeight = MINBUTTONSIZE * m_visibleButtons + top + bottom;
@@ -155,6 +156,7 @@ void LockOut::checkLayout()
                 direction = Qt::Horizontal;
                 minWidth = MINBUTTONSIZE * m_visibleButtons + left + right;
             } else {
+                width = qMax(height / m_visibleButtons, MINBUTTONSIZE);
                 minWidth = MINBUTTONSIZE;
             }
             break;
