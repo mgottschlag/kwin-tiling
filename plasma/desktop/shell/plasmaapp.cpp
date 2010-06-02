@@ -594,6 +594,8 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
                 const unsigned long *l = (const unsigned long *)event->xclient.data.l;
                 if (dndPosition) {
                     p = QPoint((l[2] & 0xffff0000) >> 16, l[2] & 0x0000ffff);
+                } else {
+                    p = QCursor::pos();
                 }
 
                 XClientMessageEvent response;
