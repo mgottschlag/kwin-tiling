@@ -135,11 +135,11 @@ public:
               iconButton(0),
               formatComboBox(0),
               showMenuTitlesCheckBox(0),
-              switcher(0), 
-              contextMenuFactory(0) 
+              switcher(0),
+              contextMenuFactory(0)
     {}
 
-    ~Private() 
+    ~Private()
     {
         delete bookmarkmenu;
         delete bookmarkowner;
@@ -331,7 +331,7 @@ void MenuLauncherApplet::init()
     } else {
         d->viewtypes = viewtypes;
     }
-    
+
     QMetaEnum fte = metaObject()->enumerator(metaObject()->indexOfEnumerator("FormatType"));
     QByteArray ftb = cg.readEntry("format", QByteArray(fte.valueToKey(d->formattype)));
     d->formattype = (MenuLauncherApplet::FormatType) fte.keyToValue(ftb);
@@ -371,6 +371,9 @@ void MenuLauncherApplet::init()
     }
 
     constraintsEvent(Plasma::ImmutableConstraint);
+
+    connect(KGlobalSettings::self(), SIGNAL(iconChanged(int)),
+        this, SLOT(iconSizeChanged(int)));
 }
 
 void MenuLauncherApplet::constraintsEvent(Plasma::Constraints constraints)
@@ -393,7 +396,7 @@ void MenuLauncherApplet::constraintsEvent(Plasma::Constraints constraints)
 void MenuLauncherApplet::switchMenuStyle()
 {
     if (containment()) {
-        Plasma::Applet * launcher = 
+        Plasma::Applet * launcher =
                                 containment()->addApplet("launcher", QVariantList(), geometry());
         //Switch shortcuts with the new launcher to avoid losing it
         KShortcut currentShortcut = globalShortcut();
@@ -516,7 +519,7 @@ void MenuLauncherApplet::configAccepted()
             if(item->checkState() == Qt::Checked)
                 viewtypes << vtname;
             if( !needssaving && ((item->checkState() == Qt::Checked && ! d->viewtypes.contains(vtname)) || (item->checkState() == Qt::Unchecked && d->viewtypes.contains(vtname))) )
-                needssaving = true;    
+                needssaving = true;
         }
         if(needssaving) {
             d->viewtypes = viewtypes;
@@ -786,5 +789,36 @@ QList<QAction*> MenuLauncherApplet::contextualActions()
 {
     return d->actions;
 }
+
+void MenuLauncherApplet::iconSizeChanged(int group)
+{
+    if (group == KIconLoader::Desktop || group == KIconLoader::Panel) {
+        updateGeometry();
+    }
+}
+
+QSizeF MenuLauncherApplet::sizeHint(Qt::SizeHint which, const QSizeF & constraint)
+{
+    if (which == Qt::PreferredSize) {
+        int iconSize;
+
+        switch (formFactor()) {
+            case Plasma::Planar:
+            case Plasma::MediaCenter:
+                iconSize = IconSize(KIconLoader::Desktop);
+                break;
+
+            case Plasma::Horizontal:
+            case Plasma::Vertical:
+                iconSize = IconSize(KIconLoader::Panel);
+                break;
+        }
+
+        return QSizeF(iconSize, iconSize);
+    }
+
+    return Plasma::Applet::sizeHint(which, constraint);
+}
+
 
 #include "simpleapplet.moc"

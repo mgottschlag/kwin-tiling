@@ -126,13 +126,17 @@ protected:
      */
     void createConfigurationInterface(KConfigDialog *parent);
 
+    QSizeF sizeHint(Qt::SizeHint which, const QSizeF & constraint = QSizeF());
+
 private Q_SLOTS:
-	/// Configuration-dialog accepted.
+    /// Configuration-dialog accepted.
     void configAccepted();
     /// The menu got toggled or activated.
     void toggleMenu(bool pressed = true);
     /// An action within the menu got triggered.
     void actionTriggered(QAction *action);
+    /// Icon size setting changed
+    void iconSizeChanged(int group);
 
 private:
     class Private;
