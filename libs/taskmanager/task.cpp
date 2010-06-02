@@ -479,14 +479,27 @@ void Task::lower()
 
 void Task::activate()
 {
-//    kDebug(1210) << "Task::activate():" << name();
     WId w = d->win;
     if (!d->transientsDemandingAttention.isEmpty()) {
         WindowList::const_iterator it = d->transientsDemandingAttention.end();
         --it;
         w = *it;
+    } else if (!d->transients.isEmpty()) {
+        WindowList::const_iterator it = d->transients.end();
+        --it;
+        KWindowInfo info = KWindowSystem::windowInfo(*it, NET::WMState | NET::XAWMState | NET::WMDesktop);
+        //this is a work around for (at least?) kwin where a shaded transient will prevent the main
+        //window from being brought forward unless the transient is actually pulled forward, most
+        //easily reproduced by opening a modal file open/save dialog on an app then shading the file
+        //dialog and trying to bring the window forward by clicking on it in a tasks widget
+        //TODO: do we need to check all the transients for shaded?
+        if (info.valid(true) && (info.state() & NET::Shaded)) {
+            w = *it;
+        }
     }
 
+
+    //kDebug(1210) << "Task::activate():" << name() << d->win << w;
     KWindowSystem::forceActiveWindow(w);
 }
 
