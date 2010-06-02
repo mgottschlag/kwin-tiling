@@ -164,29 +164,33 @@ void Task::setStatus(Status status)
     if (d->status == status) {
         return;
     }
+
     d->status = status;
-
-    if (status == NeedsAttention) {
-        setOrder(First);
-        if (hidden() & AutoHidden) {
-            setHidden(hidden() ^ AutoHidden);
-        }
-    } else {
-        if (status == Active && (hidden() & AutoHidden)) {
-            setHidden(hidden() ^ AutoHidden);
-        } else if (status == Passive) {
-            setHidden(hidden() | AutoHidden);
-        }
-
-        setOrder(Normal);
-    }
-
+    resetHiddenStatus();
     emit changed(this);
 }
 
 Task::Status Task::status() const
 {
     return d->status;
+}
+
+void Task::resetHiddenStatus()
+{
+    if (d->status == NeedsAttention) {
+        setOrder(First);
+        if (hidden() & AutoHidden) {
+            setHidden(hidden() ^ AutoHidden);
+        }
+    } else {
+        if (d->status == Active && (hidden() & AutoHidden)) {
+            setHidden(hidden() ^ AutoHidden);
+        } else if (d->status == Passive) {
+            setHidden(hidden() | AutoHidden);
+        }
+
+        setOrder(Normal);
+    }
 }
 
 }

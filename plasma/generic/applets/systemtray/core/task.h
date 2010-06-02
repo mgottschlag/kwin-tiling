@@ -174,6 +174,11 @@ public:
      */
     Status status() const;
 
+    /**
+     * Resets the hidden state based purely on the status. Will not emit a changed signal.
+     */
+    void resetHiddenStatus();
+
 Q_SIGNALS:
     /**
      * Emitted when something about the task has changed

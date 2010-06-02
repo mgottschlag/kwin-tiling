@@ -207,6 +207,8 @@ void TaskArea::checkVisibility(Task *task)
         task->setHidden(task->hidden() & ~Task::AutoHidden);
     } else if (task->hidden() & Task::UserHidden) {
         task->setHidden(task->hidden() & ~Task::UserHidden);
+    } else {
+        task->resetHiddenStatus();
     }
 }
 
