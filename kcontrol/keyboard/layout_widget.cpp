@@ -19,7 +19,7 @@
 
 #include "layout_widget.h"
 
-#include <kdebug.h>
+//#include <kdebug.h>
 
 // for sys tray icon
 #include <kstatusnotifieritem.h>
@@ -129,6 +129,7 @@ LayoutTrayIcon::LayoutTrayIcon():
     m_notifierItem->setCategory(KStatusNotifierItem::SystemServices);
     m_notifierItem->setStatus(KStatusNotifierItem::Active);
     m_notifierItem->setToolTipTitle(i18nc("tooltip title", "Keyboard Layout"));
+    m_notifierItem->setTitle(i18nc("tooltip title", "Keyboard Layout"));
 
 	KMenu* menu = new KMenu("");
     m_notifierItem->setContextMenu(menu);
@@ -183,10 +184,9 @@ void LayoutTrayIcon::layoutChanged()
 		return;
 
 	QString shortText = Flags::getShortText(layoutUnit, *keyboardConfig);
-//	qDebug() << "LayoutChanged" << layoutUnit.toString() << shortText;
+//	kDebug() << "systray: LayoutChanged" << layoutUnit.toString() << shortText;
 	QString longText = Flags::getLongText(layoutUnit, rules);
 
-	m_notifierItem->setTitle(shortText);
 	m_notifierItem->setToolTipSubTitle(longText);
 
 	const QIcon icon(flags->getIcon(layoutUnit.layout));
