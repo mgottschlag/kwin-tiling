@@ -55,7 +55,6 @@ public:
     }
 
 public slots:
-  
     void taskChanged(SystemTray::Task *task)
     {
         setText(task->name());

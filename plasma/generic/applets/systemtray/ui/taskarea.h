@@ -51,7 +51,6 @@ public:
     void setShowFdoTasks(bool show);
     bool showFdoTasks() const;
     void syncTasks(const QList<SystemTray::Task*> &tasks);
-    bool hasHiddenTasks() const;
     int leftEasement() const;
     int rightEasement() const;
     void setOrientation(Qt::Orientation);
@@ -78,6 +77,7 @@ private:
     void updateUnhideToolIcon();
     void initUnhideTool();
     void checkUnhideTool();
+    void checkVisibility(Task *task);
 
     class Private;
     Private* const d;

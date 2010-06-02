@@ -61,7 +61,6 @@ public:
           lastTasksLayout(new CompactLayout()),
           location(Plasma::BottomEdge),
           showingHidden(false),
-          hasHiddenTasks(false),
           hasTasksThatCanHide(false)
     {
     }
@@ -112,7 +111,6 @@ public:
     QSet<QString> alwaysShownTypes;
     QHash<SystemTray::Task*, HiddenTaskLabel *> hiddenTasks;
     bool showingHidden : 1;
-    bool hasHiddenTasks : 1;
     bool hasTasksThatCanHide : 1;
 };
 
@@ -183,20 +181,8 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
     //TODO: this is completely brute force; we shouldn't be redoing the
     //      layout or re-adding widgets unless there's actual change imho
     d->hasTasksThatCanHide = false;
-    d->hasHiddenTasks = false;
     foreach (Task *task, tasks) {
-        //kDebug() << "checking" << task->name() << d->showingHidden;
-        if (d->hiddenTypes.contains(task->typeId())) {
-            task->setHidden(task->hidden()|Task::UserHidden);
-            d->hasHiddenTasks = true;
-        } else if (d->alwaysShownTypes.contains(task->typeId())) {
-            task->setHidden(task->hidden() & ~Task::UserHidden);
-            task->setHidden(task->hidden() & ~Task::AutoHidden);
-        } else if (task->hidden() & Task::UserHidden) {
-            task->setHidden(task->hidden() & ~Task::UserHidden);
-            d->hasHiddenTasks = true;
-        }
-
+        //kDebug() << "checking" << task->name() << task->typeId() << d->alwaysShownTypes;
         addWidgetForTask(task);
     }
 
@@ -207,14 +193,21 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 
 void TaskArea::addTask(Task *task)
 {
-    if (d->hiddenTypes.contains(task->typeId())) {
-        task->setHidden(task->hidden() | Task::UserHidden);
-    }
-
     addWidgetForTask(task);
-
     checkUnhideTool();
     emit sizeHintChanged(Qt::PreferredSize);
+}
+
+void TaskArea::checkVisibility(Task *task)
+{
+    if (d->hiddenTypes.contains(task->typeId())) {
+        task->setHidden(task->hidden() | Task::UserHidden);
+    } else if (d->alwaysShownTypes.contains(task->typeId())) {
+        task->setHidden(task->hidden() & ~Task::UserHidden);
+        task->setHidden(task->hidden() & ~Task::AutoHidden);
+    } else if (task->hidden() & Task::UserHidden) {
+        task->setHidden(task->hidden() & ~Task::UserHidden);
+    }
 }
 
 void TaskArea::addWidgetForTask(SystemTray::Task *task)
@@ -224,6 +217,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
         return;
     }
 
+    checkVisibility(task);
     QGraphicsWidget *widget = task->widget(d->host);
 
     if (!widget) {
@@ -456,11 +450,6 @@ int TaskArea::rightEasement() const
     } else {
         return 0;
     }
-}
-
-bool TaskArea::hasHiddenTasks() const
-{
-    return d->hasHiddenTasks;
 }
 
 void TaskArea::setOrientation(Qt::Orientation o)
