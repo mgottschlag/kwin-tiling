@@ -420,11 +420,10 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         m_visibleItemsUi.visibleItemsView->setMouseTracking(true);
         m_visibleItemsUi.visibleItemsView->setVerticalScrollMode(QListView::ScrollPerPixel);
 
-        KCategorizedSortFilterProxyModel *visibleItemsModel = new KCategorizedSortFilterProxyModel();
-
+        KCategorizedSortFilterProxyModel *visibleItemsModel = new KCategorizedSortFilterProxyModel(m_visibleItemsUi.visibleItemsView);
         visibleItemsModel->setCategorizedModel(true);
 
-        m_visibleItemsSourceModel = new QStandardItemModel();
+        m_visibleItemsSourceModel = new QStandardItemModel(m_visibleItemsUi.visibleItemsView);
         visibleItemsModel->setSourceModel(m_visibleItemsSourceModel.data());
 
         m_visibleItemsUi.visibleItemsView->setModel(visibleItemsModel);
