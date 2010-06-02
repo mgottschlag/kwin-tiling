@@ -478,7 +478,7 @@ int TaskItemLayout::insertionIndexAt(const QPointF &pos)
                     break;
                 }
 
-            } else {
+            } else if (itemAt(0, i)) {
                 siblingGeometry = itemAt(0, i)->geometry();//set geometry of single item
                 qreal horizMiddle = (siblingGeometry.left() + siblingGeometry.right()) / 2.0;
                 //kDebug() << "pos middle " << pos.x() << horizMiddle;
