@@ -7,8 +7,11 @@ macro_log_feature(BLUEZ_FOUND "BlueZ" "BlueZ is the Linux Bluetooth protocol sta
 add_subdirectory(kcm)
 add_subdirectory(solid-actions-kcm)
 
-IF("${CMAKE_SYSTEM}" MATCHES "Linux")
+IF("${CMAKE_SYSTEM}" MATCHES "Linux" OR "${CMAKE_SYSTEM}" MATCHES "FreeBSD")
   add_subdirectory(hal)
+ENDIF("${CMAKE_SYSTEM}" MATCHES "Linux" OR "${CMAKE_SYSTEM}" MATCHES "FreeBSD")
+
+IF("${CMAKE_SYSTEM}" MATCHES "Linux")
   add_subdirectory(networking)
   add_subdirectory(solidshell)
 ENDIF("${CMAKE_SYSTEM}" MATCHES "Linux")
