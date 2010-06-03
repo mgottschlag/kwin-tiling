@@ -47,6 +47,7 @@ Name[pt_BR]=Pouco espaço livre
 Name[sv]=Ont om diskutrymme
 Name[uk]=Замало місця на диску
 Name[x-test]=xxLow Disk Spacexx
+Name[zh_CN]=低磁盘空间
 Name[zh_TW]=磁碟空間過低
 
 [Context/warningnot]
@@ -223,6 +224,7 @@ Name[pt_BR]=Pouco espaço livre em disco
 Name[sv]=Diskutrymmet håller på att ta slut
 Name[uk]=Замало місця на диску
 Name[x-test]=xxRunning low on disk spacexx
+Name[zh_CN]=磁盘空间过低
 Name[zh_TW]=磁碟空間快用完了
 Comment=You are running low on disk space
 Comment[da]=Du er ved at løbe tør for diskplads
@@ -245,6 +247,7 @@ Comment[pt_BR]=Você tem pouco espaço livre em disco
 Comment[sv]=Diskutrymmet håller på att ta slut
 Comment[uk]=На вашому диску залишилося замало місця
 Comment[x-test]=xxYou are running low on disk spacexx
+Comment[zh_CN]=您现在的磁盘空间过低
 Comment[zh_TW]=您的磁碟空間快用完了
 Contexts=warningnot
 Action=Popup

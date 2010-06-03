@@ -19,6 +19,7 @@ Name[pt_BR]=Widgets em janelas
 Name[sv]=Fönsterbaserade grafiska komponenter
 Name[uk]=Віджети-вікна
 Name[x-test]=xxWindowed widgetsxx
+Name[zh_CN]=窗口化部件
 Name[zh_TW]=視窗元件
 
 
@@ -42,6 +43,7 @@ Comment[pt_BR]=Localiza widgets do Plasma que possam ser executados como janelas
 Comment[sv]=Hitta grafiska Plasma-komponenter som kan köras som fristående fönster
 Comment[uk]=Пошук віджетів Плазми, які можна запускати у окремих вікнах
 Comment[x-test]=xxFind Plasma widgets that can be run as standalone windowsxx
+Comment[zh_CN]=查找可以独立窗口形式运行的 Plasma 部件
 Comment[zh_TW]=尋找可以以獨立視窗執行的 Plasma 元件
 
 
