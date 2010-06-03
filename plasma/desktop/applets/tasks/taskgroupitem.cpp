@@ -611,11 +611,15 @@ void TaskGroupItem::handleActiveWindowChanged(WId id)
     if (!m_popupDialog) {
         return;
     }
+
     if (id == m_popupDialog->winId()) {
         return;
     }
 
     m_popupDialog->hide();
+
+    QRect rect = iconGeometry();
+    publishIconGeometry(rect);
 }
 
 void TaskGroupItem::popupMenu()
@@ -668,6 +672,9 @@ void TaskGroupItem::popupMenu()
         } else {
             m_popupDialog->hide();
         }
+
+        QRect rect = iconGeometry();
+        publishIconGeometry(rect);
     } else {
         m_tasksLayout->setOrientation(Plasma::Vertical);
         m_tasksLayout->setMaximumRows(1);
@@ -699,6 +706,9 @@ bool TaskGroupItem::eventFilter(QObject *watched, QEvent *event)
         } else {
             m_popupDialog->hide();
         }
+
+        QRect rect = iconGeometry();
+        publishIconGeometry(rect);
         QTimer::singleShot(100, this, SLOT(clearPopupLostFocus()));
     }
 
