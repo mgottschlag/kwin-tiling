@@ -104,9 +104,9 @@ void AppletsContainer::updateSize()
 
     //FIXME: it appears to work only with hardcoded values
     if (m_orientation == Qt::Horizontal) {
-        resize(qMax((int)hint.width(), 300), size().height());
+        resize(qMax((int)hint.width(), 300), qMin(size().height(), m_scrollWidget->viewportGeometry().height()));
     } else {
-        resize(size().width(), qMax((int)hint.height(), 300));
+        resize(qMin(size().width(), m_scrollWidget->viewportGeometry().width()), qMax((int)hint.height(), 300));
     }
 }
 
