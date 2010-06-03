@@ -63,9 +63,7 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
       m_orientation(Qt::Vertical),
       m_expandAll(false),
       m_appletOverlay(0),
-      m_dragging(0),
-      m_leftArrow(0),
-      m_rightArrow(0)
+      m_dragging(0)
 {
     setContainmentType(Containment::CustomContainment);
 
@@ -228,34 +226,8 @@ void Newspaper::setOrientation(Qt::Orientation orientation)
 
     if (m_orientation == Qt::Vertical) {
         m_container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-        if (m_leftArrow) {
-            m_leftArrow->deleteLater();
-            m_rightArrow->deleteLater();
-        }
     } else {
         m_container->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-        if (!m_leftArrow) {
-            m_leftArrow = new Plasma::ToolButton(this);
-            m_leftArrow->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-            m_leftArrow->setPreferredWidth(KIconLoader::SizeMedium);
-            m_leftArrow->setImage("widgets/arrows", "left-arrow");
-            connect(m_leftArrow, SIGNAL(clicked()), this, SLOT(goLeft()));
-            connect(m_leftArrow, SIGNAL(pressed()), this, SLOT(scrollTimeout()));
-
-            m_rightArrow = new Plasma::ToolButton(this);
-            m_rightArrow->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-            m_rightArrow->setPreferredWidth(KIconLoader::SizeMedium);
-            m_rightArrow->setImage("widgets/arrows", "right-arrow");
-            connect(m_rightArrow, SIGNAL(clicked()), this, SLOT(goRight()));
-            connect(m_rightArrow, SIGNAL(pressed()), this, SLOT(scrollTimeout()));
-
-            m_externalLayout->insertItem(0, m_leftArrow);
-            m_externalLayout->addItem(m_rightArrow);
-
-            m_scrollTimer = new QTimer(this);
-            m_scrollTimer->setSingleShot(false);
-            connect(m_scrollTimer, SIGNAL(timeout()), this, SLOT(scrollTimeout()));
-        }
     }
 
     for (int i = 0; i < m_container->count(); ++i) {
@@ -285,41 +257,6 @@ Plasma::Applet *Newspaper::addApplet(Plasma::Applet *applet, const int row, cons
     m_container->addApplet(applet, row, column);
     m_container->setAutomaticAppletLayout(true);
     return applet;
-}
-
-void Newspaper::goRight()
-{
-    QGraphicsSceneWheelEvent ev(QEvent::GraphicsSceneWheel);
-    ev.setDelta(-120);
-    scene()->sendEvent(m_scrollWidget, &ev);
-
-    if (m_container->geometry().right()-2 <= m_scrollWidget->viewportGeometry().right() && sender() == m_rightArrow) {
-        action("next containment")->trigger();
-    }
-}
-
-void Newspaper::goLeft()
-{
-    QGraphicsSceneWheelEvent ev(QEvent::GraphicsSceneWheel);
-    ev.setDelta(120);
-    scene()->sendEvent(m_scrollWidget, &ev);
-
-    if (m_container->geometry().left() >= -2 && sender() == m_leftArrow) {
-        action("previous containment")->trigger();
-    }
-}
-
-void Newspaper::scrollTimeout()
-{
-    if (!m_scrollTimer->isActive()) {
-        m_scrollTimer->start(250);
-    } else if (m_leftArrow->isDown()) {
-        goLeft();
-    } else if (m_rightArrow->isDown()) {
-        goRight();
-    } else {
-        m_scrollTimer->stop();
-    }
 }
 
 Qt::Orientation Newspaper::orientation() const

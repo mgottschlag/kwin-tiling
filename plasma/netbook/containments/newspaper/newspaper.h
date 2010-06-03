@@ -78,10 +78,6 @@ private Q_SLOTS:
     void addNewsPaper();
     void refreshLayout();
 
-    void goLeft();
-    void goRight();
-    void scrollTimeout();
-
     void updateRemoveActionVisibility();
     void containmentAdded(Plasma::Containment *containment);
     void containmentRemoved(QObject *containment);
@@ -97,9 +93,6 @@ private:
     AppletOverlay *m_appletOverlay;
     NetToolBox *m_toolBox;
     bool m_dragging;
-    Plasma::ToolButton *m_leftArrow;
-    Plasma::ToolButton *m_rightArrow;
-    QTimer *m_scrollTimer;
     QTimer *m_updateSizeTimer;
     QTimer *m_relayoutTimer;
     AppletsContainer *m_container;

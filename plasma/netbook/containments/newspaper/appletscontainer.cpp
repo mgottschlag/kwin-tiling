@@ -445,7 +445,7 @@ void AppletsContainer::mousePressEvent(QGraphicsSceneMouseEvent *event)
 }
 
 bool AppletsContainer::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
-{
+{setFiltersChildEvents(false);
     if (m_expandAll || m_orientation == Qt::Horizontal) {
         m_scrollWidget->sceneEventFilter(watched, event);
         return false;
