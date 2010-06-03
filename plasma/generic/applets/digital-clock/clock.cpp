@@ -157,15 +157,14 @@ void Clock::updateSize()
 void Clock::clockConfigChanged()
 {
     KConfigGroup cg = config();
-    
     m_showTimezone = cg.readEntry("showTimezone", !isLocalTimezone());
-    
+
     kDebug() << "showTimezone:" << m_showTimezone;
-    
+
     m_showDate = cg.readEntry("showDate", false);
     m_showYear = cg.readEntry("showYear", false);
     m_showDay = cg.readEntry("showDay", true);
-    
+
     m_showSeconds = cg.readEntry("showSeconds", false);
     if (m_showSeconds) {
         //We don't need to cache the applet if it update every seconds
@@ -173,15 +172,15 @@ void Clock::clockConfigChanged()
     } else {
         setCacheMode(QGraphicsItem::DeviceCoordinateCache);
     }
-    
+
     m_plainClockFont = cg.readEntry("plainClockFont", m_plainClockFont);
     m_useCustomColor = cg.readEntry("useCustomColor", false);
     if (m_useCustomColor) {
         m_plainClockColor = cg.readEntry("plainClockColor", m_plainClockColor);
     } else {
-        m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme()).foreground().color();
+        updateColors();
     }
-    
+
     const QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
     const QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
     setMinimumSize(metrics.size(Qt::TextSingleLine, timeString));
@@ -268,7 +267,7 @@ void Clock::clockConfigAccepted()
     if (m_useCustomColor) {
         m_plainClockColor = ui.plainClockColor->color();
     } else {
-        m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme()).foreground().color();
+        updateColors();
     }
 
     m_plainClockFont.setBold(ui.plainClockFontBold->checkState() == Qt::Checked);
@@ -553,7 +552,7 @@ Plasma::IntervalAlignment Clock::intervalAlignment() const
 void Clock::updateColors()
 {
     if (!m_useCustomColor) {
-        m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme()).foreground().color();
+        m_plainClockColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
         update();
     }
 }
