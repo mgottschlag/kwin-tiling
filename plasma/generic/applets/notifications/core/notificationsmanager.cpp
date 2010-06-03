@@ -115,6 +115,8 @@ void Manager::addNotification(Notification* notification)
     emit notificationAdded(notification);
 
     if (d->notifications.count() > d->s_notificationLimit) {
+        Notification *notification = d->notifications.first();
+        d->notifications.pop_front();
         notification->deleteLater();
     }
 }
