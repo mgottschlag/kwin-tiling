@@ -53,6 +53,7 @@ AppletsContainer::AppletsContainer(AppletsView *parent)
    m_expandAll(false)
 {
     m_mainLayout = new QGraphicsLinearLayout(this);
+    m_mainLayout->setContentsMargins(0,0,0,0);
     setFiltersChildEvents(!m_expandAll);
 
     connect(m_scrollWidget, SIGNAL(viewportGeometryChanged(const QRectF &)),
@@ -80,18 +81,20 @@ bool AppletsContainer::automaticAppletLayout() const
 
 void AppletsContainer::syncColumnSizes()
 {
-    QSizeF viewportSize = parentWidget()->size();
+    const int margin = 4 + (m_mainLayout->count() - 1) * m_mainLayout->spacing();
+
+    QSizeF viewportSize = m_scrollWidget->viewportGeometry().size();
     for (int i = 0; i < m_mainLayout->count(); ++i) {
         QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(i));
 
         if (m_orientation == Qt::Vertical) {
-            lay->setMaximumWidth(viewportSize.width()/m_mainLayout->count()-4);
-            lay->setMinimumWidth(viewportSize.width()/m_mainLayout->count()-4);
+            lay->setMaximumWidth(viewportSize.width()/m_mainLayout->count()-margin);
+            lay->setMinimumWidth(viewportSize.width()/m_mainLayout->count()-margin);
             lay->setMaximumHeight(-1);
             lay->setMinimumHeight(-1);
         } else {
-            lay->setMaximumHeight(viewportSize.height()/m_mainLayout->count()-4);
-            lay->setMinimumHeight(viewportSize.height()/m_mainLayout->count()-4);
+            lay->setMaximumHeight(viewportSize.height()/m_mainLayout->count()-margin);
+            lay->setMinimumHeight(viewportSize.height()/m_mainLayout->count()-margin);
             lay->setMaximumWidth(-1);
             lay->setMinimumWidth(-1);
         }
@@ -163,6 +166,7 @@ bool AppletsContainer::expandAll() const
 QGraphicsLinearLayout *AppletsContainer::addColumn()
 {
     QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(m_orientation);
+    lay->setContentsMargins(0,0,0,0);
     m_mainLayout->addItem(lay);
 
     QGraphicsWidget *spacer = new QGraphicsWidget(this);
@@ -416,6 +420,7 @@ void AppletsContainer::viewportGeometryChanged(const QRectF &geometry)
     } else {
         m_scrollWidget->setSnapSize(QSizeF());
     }
+    syncColumnSizes();
 }
 
 void AppletsContainer::mousePressEvent(QGraphicsSceneMouseEvent *event)
