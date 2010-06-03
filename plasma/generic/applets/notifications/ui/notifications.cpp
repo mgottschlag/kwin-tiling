@@ -369,11 +369,12 @@ void Notifications::popupEvent(bool show)
     //decide about showing the tiny progressbar or not
     if (m_standaloneJobSummaryDialog) {
         if (show || !m_manager->jobs().isEmpty()) {
-            m_standaloneJobSummaryDialog->setVisible(!show);
             if (!show) {
                 KWindowSystem::raiseWindow(m_standaloneJobSummaryDialog->winId());
                 KWindowSystem::setState(m_standaloneJobSummaryDialog->winId(), NET::SkipTaskbar|NET::SkipPager);
                 KWindowSystem::setState(m_standaloneJobSummaryDialog->winId(), NET::KeepBelow);
+            } else {
+                m_standaloneJobSummaryDialog->hide();
             }
         }
     }
