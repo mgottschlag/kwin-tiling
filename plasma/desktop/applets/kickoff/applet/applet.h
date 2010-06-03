@@ -55,6 +55,12 @@ public slots:
     void toolTipAboutToShow();
     void configChanged();
 
+    /**
+     * Save config values stored on SimpleLauncher after a menu switch
+     */
+    void saveConfigurationFromSimpleLauncher(const KConfigGroup & configGroup,
+                                             const KConfigGroup & globalConfigGroup);
+
 protected slots:
     void configAccepted();
     //void toggleMenu();

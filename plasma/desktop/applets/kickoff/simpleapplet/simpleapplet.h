@@ -120,6 +120,18 @@ public Q_SLOTS:
      */
     void customContextMenuRequested(QMenu* menu, const QPoint& pos);
 
+    /**
+     * Save config values stored on Kickoff after a menu switch
+     */
+    void saveConfigurationFromKickoff(const KConfigGroup & configGroup,
+                                      const KConfigGroup & globalConfigGroup);
+
+    /**
+     * Reload configuration values
+     * Useful to load previously stored configurations after a menu switch
+     */
+    void configChanged();
+
 protected:
     /**
      * Create a configuration dialog.

@@ -125,6 +125,8 @@ public:
     QAction* switcher;
     Kickoff::ContextMenuFactory *contextMenuFactory;
 
+    bool delayedConfigLoad;
+
     explicit Private(MenuLauncherApplet *q)
             : q(q),
               icon(0),
@@ -284,17 +286,27 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
     connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(showMenu(bool)));
     connect(this, SIGNAL(activate()), this, SLOT(toggleMenu()));
 
-    if (args.count() < 2) { // assuming args is only used for passing in submenu paths
-        d->viewtypes << "RecentlyUsedApplications" << "Applications" << "Favorites";
-        if (KAuthorized::authorize("run_command")) {
-            d->viewtypes << "RunCommand";
+    d->delayedConfigLoad = false;
+    switch(args.count()) {
+        case 2: { //Use submenu paths
+            d->viewtypes << "Applications";
+            d->relativePath = args.value(0).toString();
+            d->iconname = args.value(1).toString();
+            break;
         }
-        d->viewtypes << "Leave";
-        d->iconname = "start-here-kde";
-    } else {
-        d->viewtypes << "Applications";
-        d->relativePath = args.value(0).toString();
-        d->iconname = args.value(1).toString();
+        case 1: { //Check for delayed config (switch from Kickoff)
+            d->delayedConfigLoad = true;
+            //Do not "break;", as we may need the default views configuration
+            //(if SimpleLauncher was never used before)
+        }
+        default: { //Default configuration
+            d->viewtypes << "RecentlyUsedApplications" << "Applications" << "Favorites";
+            if (KAuthorized::authorize("run_command")) {
+                d->viewtypes << "RunCommand";
+            }
+            d->viewtypes << "Leave";
+            d->iconname = "start-here-kde";
+        }
     }
     d->formattype = NameDescription;
 
@@ -319,33 +331,12 @@ void MenuLauncherApplet::init()
         receivedArgs = true;
     }
 
-    KConfigGroup cg = config();
+    Q_ASSERT(! d->switcher);
+    d->switcher = new QAction(i18n("Switch to Kickoff Menu Style"), this);
+    d->actions.append(d->switcher);
+    connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
 
-    const QStringList viewtypes = cg.readEntry("views", QStringList());
-    if(viewtypes.isEmpty()) { // backward-compatibility to <KDE4.3
-        QByteArray oldview = cg.readEntry("view", QByteArray());
-        if (!oldview.isEmpty() && oldview != "Combined") {
-            d->viewtypes = QStringList() << oldview;
-            d->iconname = d->viewIcon(d->viewType(oldview));
-        } // else we use the default d->viewtypes
-    } else {
-        d->viewtypes = viewtypes;
-    }
-
-    QMetaEnum fte = metaObject()->enumerator(metaObject()->indexOfEnumerator("FormatType"));
-    QByteArray ftb = cg.readEntry("format", QByteArray(fte.valueToKey(d->formattype)));
-    d->formattype = (MenuLauncherApplet::FormatType) fte.keyToValue(ftb);
-
-    d->setMaxRecentApps(cg.readEntry("maxRecentApps", qMin(5, Kickoff::RecentApplications::self()->maximum())));
-    d->showMenuTitles = cg.readEntry("showMenuTitles", false);
-
-    d->icon->setIcon(KIcon(cg.readEntry("icon", d->iconname)));
-
-    d->relativePath = cg.readEntry("relativePath", d->relativePath);
-    if (!d->relativePath.isEmpty()) {
-        d->viewtypes.clear();
-        d->viewtypes << "Applications";
-    }
+    configChanged();
 
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ExtensionHandler, "desktop", new Kickoff::ServiceItemHandler);
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ProtocolHandler, "leave", new Kickoff::LeaveItemHandler);
@@ -356,21 +347,12 @@ void MenuLauncherApplet::init()
         connect(menueditor, SIGNAL(triggered(bool)), this, SLOT(startMenuEditor()));
     }
 
-    Q_ASSERT(! d->switcher);
-    d->switcher = new QAction(i18n("Switch to Kickoff Menu Style"), this);
-    d->actions.append(d->switcher);
-    connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
-
-    Plasma::ToolTipManager::self()->registerWidget(this);
-    d->updateTooltip();
-
     if (receivedArgs) {
+        KConfigGroup cg = config();
         cg.writeEntry("relativePath", d->relativePath);
         cg.writeEntry("icon", d->iconname);
         emit configNeedsSaving();
     }
-
-    constraintsEvent(Plasma::ImmutableConstraint);
 
     connect(KGlobalSettings::self(), SIGNAL(iconChanged(int)),
         this, SLOT(iconSizeChanged(int)));
@@ -396,8 +378,12 @@ void MenuLauncherApplet::constraintsEvent(Plasma::Constraints constraints)
 void MenuLauncherApplet::switchMenuStyle()
 {
     if (containment()) {
-        Plasma::Applet * launcher =
-                                containment()->addApplet("launcher", QVariantList(), geometry());
+        Plasma::Applet *launcher = containment()->addApplet("launcher", QVariantList(), geometry());
+        //Copy all the config items to the simple launcher
+        QMetaObject::invokeMethod(launcher, "saveConfigurationFromSimpleLauncher",
+                                  Qt::DirectConnection, Q_ARG(KConfigGroup, config()),
+                                  Q_ARG(KConfigGroup, globalConfig()));
+
         //Switch shortcuts with the new launcher to avoid losing it
         KShortcut currentShortcut = globalShortcut();
         setGlobalShortcut(KShortcut());
@@ -826,5 +812,53 @@ QSizeF MenuLauncherApplet::sizeHint(Qt::SizeHint which, const QSizeF & constrain
     return Plasma::Applet::sizeHint(which, constraint);
 }
 
+
+void MenuLauncherApplet::saveConfigurationFromKickoff(const KConfigGroup & configGroup, const KConfigGroup & globalConfigGroup)
+{
+    //Copy configuration values
+    KConfigGroup cg = config();
+    configGroup.copyTo(&cg);
+
+    KConfigGroup gcg = globalConfig();
+    globalConfigGroup.copyTo(&gcg);
+
+    configChanged();
+    emit configNeedsSaving();
+}
+
+void MenuLauncherApplet::configChanged()
+{
+    KConfigGroup cg = config();
+
+    const QStringList viewtypes = cg.readEntry("views", QStringList());
+    if(viewtypes.isEmpty()) { // backward-compatibility to <KDE4.3
+        QByteArray oldview = cg.readEntry("view", QByteArray());
+        if (!oldview.isEmpty() && oldview != "Combined") {
+            d->viewtypes = QStringList() << oldview;
+            d->iconname = d->viewIcon(d->viewType(oldview));
+        } // else we use the default d->viewtypes
+    } else {
+        d->viewtypes = viewtypes;
+    }
+
+    QMetaEnum fte = metaObject()->enumerator(metaObject()->indexOfEnumerator("FormatType"));
+    QByteArray ftb = cg.readEntry("format", QByteArray(fte.valueToKey(d->formattype)));
+    d->formattype = (MenuLauncherApplet::FormatType) fte.keyToValue(ftb);
+
+    d->setMaxRecentApps(cg.readEntry("maxRecentApps", qMin(5, Kickoff::RecentApplications::self()->maximum())));
+    d->showMenuTitles = cg.readEntry("showMenuTitles", false);
+
+    d->icon->setIcon(KIcon(cg.readEntry("icon", d->iconname)));
+
+    d->relativePath = cg.readEntry("relativePath", d->relativePath);
+    if (!d->relativePath.isEmpty()) {
+        d->viewtypes.clear();
+        d->viewtypes << "Applications";
+    }
+
+    d->updateTooltip();
+
+    constraintsEvent(Plasma::ImmutableConstraint);
+}
 
 #include "simpleapplet.moc"

@@ -103,8 +103,6 @@ LauncherApplet::~LauncherApplet()
 
 void LauncherApplet::init()
 {
-    configChanged();
-
     if (KService::serviceByStorageId("kde4-kmenuedit.desktop")) {
         QAction* menueditor = new QAction(i18n("Menu Editor"), this);
         d->actions.append(menueditor);
@@ -116,7 +114,7 @@ void LauncherApplet::init()
     d->actions.append(d->switcher);
     connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
 
-    constraintsEvent(Plasma::ImmutableConstraint);
+    configChanged();
     Plasma::ToolTipManager::self()->registerWidget(this);
 }
 
@@ -130,12 +128,20 @@ void LauncherApplet::constraintsEvent(Plasma::Constraints constraints)
 void LauncherApplet::switchMenuStyle()
 {
     if (containment()) {
-        Plasma::Applet * simpleLauncher = 
-                            containment()->addApplet("simplelauncher", QVariantList(), geometry());
+        Plasma::Applet * simpleLauncher =
+                            containment()->addApplet("simplelauncher", QVariantList() << true, geometry());
+
+        //Copy all the config items to the simple launcher
+        QMetaObject::invokeMethod(simpleLauncher, "saveConfigurationFromKickoff",
+                                  Qt::DirectConnection, Q_ARG(KConfigGroup, config()),
+                                  Q_ARG(KConfigGroup, globalConfig()));
+
         //Switch shortcuts with the new launcher to avoid losing it
         KShortcut currentShortcut = globalShortcut();
         setGlobalShortcut(KShortcut());
         simpleLauncher->setGlobalShortcut(currentShortcut);
+
+        //Destroy this widget
         destroy();
     }
 }
@@ -182,6 +188,7 @@ void LauncherApplet::configChanged()
 {
     KConfigGroup cg = config();
     setPopupIcon(cg.readEntry("icon", "start-here-kde"));
+    constraintsEvent(Plasma::ImmutableConstraint);
 }
 
 void LauncherApplet::configAccepted()
@@ -219,6 +226,19 @@ QWidget *LauncherApplet::widget()
 {
     d->createLauncher();
     return d->launcher;
+}
+
+void LauncherApplet::saveConfigurationFromSimpleLauncher(const KConfigGroup & configGroup, const KConfigGroup & globalConfigGroup)
+{
+    //Copy configuration values
+    KConfigGroup cg = config();
+    configGroup.copyTo(&cg);
+
+    KConfigGroup gcg = globalConfig();
+    globalConfigGroup.copyTo(&gcg);
+
+    configChanged();
+    emit configNeedsSaving();
 }
 
 #include "applet.moc"
