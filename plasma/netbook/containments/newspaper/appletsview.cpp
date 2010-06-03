@@ -48,7 +48,7 @@ AppletsContainer *AppletsView::appletsContainer() const
 
 bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
 {
-    if (m_appletsContainer->expandAll()) {
+    if (m_appletsContainer->expandAll() && m_appletsContainer->orientation() == Qt::Vertical) {
         return Plasma::ScrollWidget::sceneEventFilter(watched, event);
     }
 
