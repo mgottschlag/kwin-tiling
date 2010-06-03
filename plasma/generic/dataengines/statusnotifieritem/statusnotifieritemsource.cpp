@@ -328,7 +328,7 @@ void StatusNotifierItemSource::overlayIcon(QIcon *icon, QIcon *overlay)
     //if an m_icon exactly that size wasn't found don't add it to the vector
     m_iconPixmap = icon->pixmap(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
     if (m_iconPixmap.width() == KIconLoader::SizeSmallMedium) {
-        const int size = KIconLoader::SizeSmall;
+        const int size = KIconLoader::SizeSmall/2;
         QPainter p(&m_iconPixmap);
         p.drawPixmap(QRect(m_iconPixmap.width()-size, m_iconPixmap.height()-size, size, size), overlay->pixmap(size, size), QRect(0,0,size,size));
         p.end();
@@ -337,7 +337,7 @@ void StatusNotifierItemSource::overlayIcon(QIcon *icon, QIcon *overlay)
 
     m_iconPixmap = icon->pixmap(KIconLoader::SizeMedium, KIconLoader::SizeMedium);
     if (m_iconPixmap.width() == KIconLoader::SizeMedium) {
-        const int size = KIconLoader::SizeSmall;
+        const int size = KIconLoader::SizeSmall/2;
         QPainter p(&m_iconPixmap);
         p.drawPixmap(QRect(m_iconPixmap.width()-size, m_iconPixmap.height()-size, size, size), overlay->pixmap(size, size), QRect(0,0,size,size));
         p.end();
@@ -346,7 +346,7 @@ void StatusNotifierItemSource::overlayIcon(QIcon *icon, QIcon *overlay)
 
     m_iconPixmap = icon->pixmap(KIconLoader::SizeLarge, KIconLoader::SizeLarge);
     if (m_iconPixmap.width() == KIconLoader::SizeLarge) {
-        const int size = KIconLoader::SizeSmallMedium;
+        const int size = KIconLoader::SizeSmall;
         QPainter p(&m_iconPixmap);
         p.drawPixmap(QRect(m_iconPixmap.width()-size, m_iconPixmap.height()-size, size, size), overlay->pixmap(size, size), QRect(0,0,size,size));
         p.end();
