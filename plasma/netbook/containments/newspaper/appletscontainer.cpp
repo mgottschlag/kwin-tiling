@@ -54,7 +54,6 @@ AppletsContainer::AppletsContainer(AppletsView *parent)
 {
     m_mainLayout = new QGraphicsLinearLayout(this);
     m_mainLayout->setContentsMargins(0,0,0,0);
-    setFiltersChildEvents(!m_expandAll);
 
     connect(m_scrollWidget, SIGNAL(viewportGeometryChanged(const QRectF &)),
             this, SLOT(viewportGeometryChanged(const QRectF &)));
@@ -121,8 +120,6 @@ void AppletsContainer::setExpandAll(const bool expand)
 
     m_expandAll = expand;
 
-    setFiltersChildEvents(!m_expandAll);
-
     if (!m_containment) {
         return;
     }
@@ -161,6 +158,16 @@ void AppletsContainer::setExpandAll(const bool expand)
 bool AppletsContainer::expandAll() const
 {
     return m_expandAll;
+}
+
+Qt::Orientation AppletsContainer::orientation() const
+{
+    return m_orientation;
+}
+
+Plasma::Containment *AppletsContainer::containment() const
+{
+    return m_containment;
 }
 
 QGraphicsLinearLayout *AppletsContainer::addColumn()
@@ -441,72 +448,10 @@ void AppletsContainer::mousePressEvent(QGraphicsSceneMouseEvent *event)
         m_scrollWidget->setSnapSize(QSizeF());
     }
 
+    m_pendingCurrentApplet = 0;
+    m_currentApplet.clear();
+
     QGraphicsWidget::mousePressEvent(event);
-}
-
-bool AppletsContainer::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
-{
-    if (m_expandAll || m_orientation == Qt::Horizontal) {
-        m_scrollWidget->sceneEventFilter(watched, event);
-        return false;
-    }
-
-    if (!m_containment) {
-        m_scrollWidget->sceneEventFilter(watched, event);
-        return false;
-    }
-
-    if (event->type() == QEvent::GraphicsSceneMousePress) {
-        m_appletActivationTimer->stop();
-        foreach (Plasma::Applet *applet, m_containment->applets()) {
-            if (applet->isAncestorOf(watched)) {
-                if (applet == m_currentApplet.data() || applet == m_pendingCurrentApplet) {
-                    return m_scrollWidget->sceneEventFilter(watched, event);
-                }
-
-                return m_scrollWidget->sceneEventFilter(watched, event);
-            }
-        }
-    } else if (event->type() == QEvent::GraphicsSceneMouseMove) {
-        QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
-        if (QPointF(me->pos() - me->buttonDownPos(me->button())).manhattanLength() > KGlobalSettings::dndEventDelay()) {
-            m_appletActivationTimer->stop();
-        }
-
-        if (!m_currentApplet || !m_currentApplet.data()->isAncestorOf(watched)) {
-            m_scrollWidget->sceneEventFilter(watched, event);
-            return true;
-        }
-    } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
-        foreach (Plasma::Applet *applet, m_containment->applets()) {
-            if (applet->isAncestorOf(watched)) {
-
-                QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
-
-                if (QPointF(me->pos() - me->buttonDownPos(me->button())).manhattanLength() > KGlobalSettings::dndEventDelay()) {
-                    m_appletActivationTimer->stop();
-                    return m_scrollWidget->sceneEventFilter(watched, event);
-                }
-
-                if (m_currentApplet.data()) {
-                    m_currentApplet.data()->setPreferredHeight(optimalAppletSize(m_currentApplet.data(), false).height());
-                }
-                m_pendingCurrentApplet = applet;
-                m_currentApplet.clear();
-                applet->setPreferredHeight(optimalAppletSize(applet, true).height());
-
-                m_appletActivationTimer->start(500);
-
-                return m_scrollWidget->sceneEventFilter(watched, event);
-            }
-        }
-
-        if (!m_currentApplet || !m_currentApplet.data()->isAncestorOf(watched)) {
-            return m_scrollWidget->sceneEventFilter(watched, event);
-        }
-    }
-
-    return false;
 }
 
 void AppletsContainer::delayedAppletActivation()

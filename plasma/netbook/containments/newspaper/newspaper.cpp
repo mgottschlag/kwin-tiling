@@ -87,7 +87,7 @@ void Newspaper::init()
     m_scrollWidget = new AppletsView(this);
     m_externalLayout->addItem(m_scrollWidget);
     m_container = new AppletsContainer(m_scrollWidget);
-    m_scrollWidget->setWidget(m_container);
+    m_scrollWidget->setAppletsContainer(m_container);
     connect(m_container, SIGNAL(appletActivated(Plasma::Applet *)), this, SLOT(appletActivated(Plasma::Applet *)));
 
     m_updateSizeTimer = new QTimer(this);
@@ -105,8 +105,6 @@ void Newspaper::init()
 
     m_expandAll = config().readEntry("ExpandAllApplets", false);
     m_container->setExpandAll(m_expandAll);
-    m_scrollWidget->setFiltersChildEvents(m_expandAll || m_orientation == Qt::Horizontal);
-
 
     m_container->addColumn();
     setOrientation(m_orientation);
@@ -207,7 +205,6 @@ void Newspaper::toggleExpandAllApplets()
     }
 
     m_container->setExpandAll(m_expandAll);
-    m_scrollWidget->setFiltersChildEvents(m_expandAll || m_orientation == Qt::Horizontal);
     config().writeEntry("ExpandAllApplets", m_expandAll);
 }
 

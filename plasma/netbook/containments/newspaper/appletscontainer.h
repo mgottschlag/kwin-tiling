@@ -42,6 +42,8 @@ class AppletsView;
 class AppletsContainer : public QGraphicsWidget
 {
     Q_OBJECT
+    friend class AppletsView;
+
 public:
     AppletsContainer(AppletsView *parent);
     ~AppletsContainer();
@@ -68,11 +70,14 @@ public:
     void setAutomaticAppletLayout(const bool automatic);
     bool automaticAppletLayout() const;
 
+    Qt::Orientation orientation() const;
+
+    Plasma::Containment *containment() const;
+
 protected:
     QSizeF optimalAppletSize(Plasma::Applet *applet, const bool maximized) const;
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    bool sceneEventFilter(QGraphicsItem *i, QEvent *e);
 
 public Q_SLOTS:
     void layoutApplet(Plasma::Applet *applet, const QPointF &post);

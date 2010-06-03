@@ -33,6 +33,14 @@ public:
     AppletsView(QGraphicsItem *parent = 0);
     ~AppletsView();
 
+    void setAppletsContainer(AppletsContainer *appletsContainer);
+    AppletsContainer *appletsContainer() const;
+
+protected:
+    bool sceneEventFilter(QGraphicsItem *watched, QEvent *event);
+
+private:
+    AppletsContainer *m_appletsContainer;
 };
 
 #endif
