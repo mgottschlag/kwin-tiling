@@ -132,7 +132,9 @@ private Q_SLOTS:
     /// Configuration-dialog accepted.
     void configAccepted();
     /// The menu got toggled or activated.
-    void toggleMenu(bool pressed = true);
+    void toggleMenu();
+    /// Shows the menu due to being toggled / activated.
+    void showMenu(bool pressed);
     /// An action within the menu got triggered.
     void actionTriggered(QAction *action);
     /// Icon size setting changed

@@ -281,7 +281,7 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
 
     d->icon = new Plasma::IconWidget(QString(), this);
     d->icon->setFlag(ItemIsMovable, false);
-    connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
+    connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(showMenu(bool)));
     connect(this, SIGNAL(activate()), this, SLOT(toggleMenu()));
 
     if (args.count() < 2) { // assuming args is only used for passing in submenu paths
@@ -585,11 +585,17 @@ KService::List sortServices(KService::List list)
     return list;
 }
 
-void MenuLauncherApplet::toggleMenu(bool pressed)
+void MenuLauncherApplet::toggleMenu()
+{
+    showMenu(!d->menuview || !d->menuview.data()->isVisible());
+}
+
+void MenuLauncherApplet::showMenu(bool pressed)
 {
     if (!pressed || d->viewtypes.count()<=0) {
         if (d->menuview) {
             d->menuview.data()->deleteLater();
+            d->menuview.clear();
         }
 
         return;
