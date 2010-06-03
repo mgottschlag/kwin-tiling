@@ -65,6 +65,7 @@
 #include <Plasma/AccessManager>
 #include <Plasma/AuthorizationManager>
 #include <Plasma/Containment>
+#include <Plasma/Context>
 #include <Plasma/Dialog>
 #include <Plasma/Theme>
 #include <Plasma/Wallpaper>
@@ -1082,6 +1083,10 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
         configDialog = new BackgroundDialog(resolution, containment, view, 0, id, nullManager);
         configDialog->setAttribute(Qt::WA_DeleteOnClose);
 
+        Activity *activity = m_corona->activity(containment->context()->currentActivityId());
+        Q_ASSERT(activity);
+        connect(configDialog, SIGNAL(containmentPluginChanged(Plasma::Containment*)),
+                activity, SLOT(insertContainment(Plasma::Containment*)));
         connect(configDialog, SIGNAL(destroyed(QObject*)), nullManager, SLOT(deleteLater()));
     }
 
