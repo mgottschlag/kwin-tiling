@@ -789,7 +789,7 @@ void MenuLauncherApplet::iconSizeChanged(int group)
     }
 }
 
-QSizeF MenuLauncherApplet::sizeHint(Qt::SizeHint which, const QSizeF & constraint)
+QSizeF MenuLauncherApplet::sizeHint(Qt::SizeHint which, const QSizeF & constraint) const
 {
     if (which == Qt::PreferredSize) {
         int iconSize;

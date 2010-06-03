@@ -138,7 +138,7 @@ protected:
      */
     void createConfigurationInterface(KConfigDialog *parent);
 
-    QSizeF sizeHint(Qt::SizeHint which, const QSizeF & constraint = QSizeF());
+    QSizeF sizeHint(Qt::SizeHint which, const QSizeF & constraint = QSizeF()) const;
 
 private Q_SLOTS:
     /// Configuration-dialog accepted.
