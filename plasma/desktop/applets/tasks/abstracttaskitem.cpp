@@ -383,7 +383,7 @@ void AbstractTaskItem::stopWindowHoverEffect()
 
 void AbstractTaskItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (event->button() == Qt::LeftButton) {
+    if (event->button() == Qt::LeftButton && boundingRect().contains(event->pos())) {
         activate();
     }
 }
