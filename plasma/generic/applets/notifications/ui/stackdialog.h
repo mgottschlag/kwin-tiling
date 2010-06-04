@@ -53,6 +53,9 @@ public:
     void setWindowToTile(QWidget *widget);
     QWidget *windowToTile() const;
 
+    void setAutoHide(const bool autoHide);
+    bool autoHide() const;
+
 protected:
     void adjustWindowToTilePos();
 
@@ -76,6 +79,7 @@ private:
     QTimer *m_hideTimer;
     bool m_drawLeft;
     bool m_drawRight;
+    bool m_autoHide;
 };
 
 #endif

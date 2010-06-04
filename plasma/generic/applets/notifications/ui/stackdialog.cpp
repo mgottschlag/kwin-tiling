@@ -39,7 +39,8 @@ StackDialog::StackDialog(QWidget *parent, Qt::WindowFlags f)
         m_windowToTile(0),
         m_notificationStack(0),
         m_drawLeft(true),
-        m_drawRight(true)
+        m_drawRight(true),
+        m_autoHide(true)
 {
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/extender-background");
@@ -99,6 +100,16 @@ void StackDialog::setWindowToTile(QWidget *widget)
 QWidget *StackDialog::windowToTile() const
 {
     return m_windowToTile;
+}
+
+void StackDialog::setAutoHide(const bool autoHide)
+{
+    m_autoHide = autoHide;
+}
+
+bool StackDialog::autoHide() const
+{
+    return m_autoHide;
 }
 
 void StackDialog::adjustWindowToTilePos()
@@ -180,7 +191,9 @@ void StackDialog::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)
 
-    m_hideTimer->start(hideTimeout);
+    if (m_autoHide) {
+        m_hideTimer->start(hideTimeout);
+    }
 
     adjustWindowToTilePos();
     Plasma::Dialog::showEvent(event);
@@ -223,7 +236,9 @@ void StackDialog::leaveEvent(QEvent *event)
 {
     Q_UNUSED(event)
 
-    m_hideTimer->start(hideTimeout);
+    if (m_autoHide) {
+        m_hideTimer->start(hideTimeout);
+    }
     Plasma::Dialog::leaveEvent(event);
 }
 

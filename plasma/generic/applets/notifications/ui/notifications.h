@@ -85,7 +85,7 @@ private:
     QDateTime m_lastActivity;
 
     JobTotalsWidget *m_jobSummaryWidget;
-    int m_autoHideTimeout;
+    bool m_autoHidePopup;
 
     NotificationScroller *m_notificationScroller;
     NotificationStack *m_notificationStack;

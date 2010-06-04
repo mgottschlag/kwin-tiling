@@ -85,6 +85,7 @@ K_EXPORT_PLASMA_APPLET(notifications, Notifications)
 Notifications::Notifications(QObject *parent, const QVariantList &arguments)
     : Plasma::PopupApplet(parent, arguments),
       m_jobSummaryWidget(0),
+      m_autoHidePopup(true),
       m_notificationScroller(0),
       m_notificationStack(0),
       m_notificationStackDialog(0),
@@ -136,10 +137,9 @@ void Notifications::configChanged()
 {
     KConfigGroup cg = config();
 
-    if (cg.readEntry("AutoHidePopup", true)) {
-        m_autoHideTimeout = 6000;
-    } else {
-        m_autoHideTimeout = 0;
+    m_autoHidePopup = cg.readEntry("AutoHidePopup", true);
+    if (m_notificationStackDialog) {
+        m_notificationStackDialog->setAutoHide(m_autoHidePopup);
     }
 
     if (cg.readEntry("ShowJobs", true)) {
@@ -272,6 +272,7 @@ void Notifications::addNotification(Notification *notification)
         m_notificationStackDialog->setNotificationStack(m_notificationStack);
         connect(m_notificationStack, SIGNAL(stackEmpty()), m_notificationStackDialog, SLOT(hide()));
         connect(m_notificationStack, SIGNAL(showRequested()), m_notificationStackDialog, SLOT(show()));
+        m_notificationStackDialog->setAutoHide(m_autoHidePopup);
 
         if (m_standaloneJobSummaryDialog) {
             m_notificationStackDialog->setWindowToTile(m_standaloneJobSummaryDialog);
