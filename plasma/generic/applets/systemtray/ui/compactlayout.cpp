@@ -396,20 +396,22 @@ QSizeF CompactLayout::Private::hackedConstraint(const QSizeF &constraint) const
     QSizeF parentSize;
     qreal xMargins = 0.0, yMargins = 0.0;
 
-    while (widget->parentWidget()) {
-        widget = widget->parentWidget();
+    while (widget) {
         parentSize = widget->size();
 
         qreal left, top, right, bottom;
 
         if (widget->layout()) {
             widget->layout()->getContentsMargins(&left, &top, &right, &bottom);
-        } else {
-            widget->getContentsMargins(&left, &top, &right, &bottom);
+            xMargins += left + right;
+            yMargins += top + bottom;
         }
 
+        widget->getContentsMargins(&left, &top, &right, &bottom);
         xMargins += left + right;
         yMargins += top + bottom;
+
+        widget = widget->parentWidget();
     }
 
     return parentSize - QSizeF(xMargins, yMargins);

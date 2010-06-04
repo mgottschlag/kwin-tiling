@@ -280,7 +280,10 @@ void Applet::checkSizes()
         layout()->setContentsMargins(leftMargin, topMargin, rightMargin, bottomMargin);
     }
 
+    static_cast<QGraphicsLayoutItem*>(m_taskArea)->updateGeometry();
+
     QSizeF preferredSize = m_taskArea->effectiveSizeHint(Qt::PreferredSize);
+
     preferredSize.setWidth(preferredSize.width() + leftMargin + rightMargin);
     preferredSize.setHeight(preferredSize.height() + topMargin + bottomMargin);
     setPreferredSize(preferredSize);
