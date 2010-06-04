@@ -635,7 +635,6 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     } else {
         painter->drawPixmap(QPoint(0,0), result);
     }
-
 }
 
 void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)

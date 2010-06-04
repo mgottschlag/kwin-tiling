@@ -105,7 +105,7 @@ void TaskItemLayout::addTaskItem(AbstractTaskItem * item)
     //kDebug() << "end";
 }
 
-void TaskItemLayout::removeTaskItem(AbstractTaskItem * item)
+void TaskItemLayout::removeTaskItem(AbstractTaskItem *item)
 {
     if (!remove(item)) {
         return;
@@ -122,7 +122,7 @@ void TaskItemLayout::removeTaskItem(AbstractTaskItem * item)
     //kDebug() << "done";
 }
 
-bool TaskItemLayout::insert(int index, AbstractTaskItem* item)
+bool TaskItemLayout::insert(int index, AbstractTaskItem *item)
 {
     //kDebug() << item->text() << index;
     if (!item) {
@@ -151,6 +151,8 @@ bool TaskItemLayout::remove(AbstractTaskItem* item)
 {
     if (!item) {
         kDebug() << "null Item";
+        layoutItems();
+        return false;
     }
 
     disconnect(item, 0, this, 0);
@@ -214,6 +216,7 @@ int TaskItemLayout::maximumRows()
     } else {
         maxRows = qMin(qMax(1, int(m_groupItem->geometry().height() / itemSize.height())), m_maxRows);
     }
+
     //kDebug() << "maximum rows: " << maxRows << m_maxRows << m_groupItem->geometry().height() << itemSize.height();
     return maxRows;
 }
@@ -240,6 +243,7 @@ int TaskItemLayout::preferredColumns()
     //kDebug() << "preferred columns: " << qMax(1, m_rowSize);
     return qMax(1, m_rowSize);
 }
+
 // <columns,rows>
 QPair<int, int> TaskItemLayout::gridLayoutSize()
 {
@@ -280,11 +284,12 @@ void TaskItemLayout::layoutItems()
     //kDebug() << "column width set to " << columnWidth;
 
     //FIXME: resetting column preferred sizesthey shouldn't be taken into account for inexistent ones but they are, probably upstream issue
-    for (int i = 0; i<columnCount(); ++i) {
+    for (int i = 0; i < columnCount(); ++i) {
         setColumnMaximumWidth(i, 0);
         setColumnPreferredWidth(i, 0);
     }
-    for (int i = 0; i<rowCount(); ++i) {
+
+    for (int i = 0; i < rowCount(); ++i) {
         setRowMaximumHeight(i, 0);
         setRowPreferredHeight(i, 0);
     }
@@ -299,10 +304,8 @@ void TaskItemLayout::layoutItems()
         maximumCellSize = m_itemPositions.first()->basicPreferredSize() * 1.8;
     }
 
-
     setHorizontalSpacing(0);
     setVerticalSpacing(0);
-
 
     //go through all items of this layoutwidget and populate the layout with items
     int numberOfItems = 0;
