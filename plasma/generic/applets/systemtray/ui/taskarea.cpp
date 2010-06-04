@@ -287,7 +287,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
             const int row = d->hiddenTasksLayout->rowCount();
             widget->setParentItem(d->hiddenTasksWidget);
             //kDebug() << "putting" << task->name() << "into" << row;
-            d->hiddenTasksLayout->setRowMinimumHeight(row, 24);
+            d->hiddenTasksLayout->setRowFixedHeight(row, 24);
             d->hiddenTasksLayout->addItem(widget, row, 0);
             d->hiddenTasksLayout->addItem(d->hiddenTasks.value(task), row, 1);
         }
@@ -402,18 +402,27 @@ void TaskArea::relayout()
 
 void TaskArea::relayoutHiddenTasks()
 {
+    for (int i = 0; i < (d->hiddenTasksLayout->count()/2) + 1; ++i) {
+        d->hiddenTasksLayout->setRowFixedHeight(i, 0);
+    }
+
     for (int i = 0; i < d->hiddenTasksLayout->count(); ++i) {
          d->hiddenTasksLayout->removeAt(i);
     }
+
 
     QHash<SystemTray::Task*, HiddenTaskLabel *>::const_iterator i = d->hiddenTasks.constBegin();
     int row = 0;
     while (i != d->hiddenTasks.constEnd()) {
         d->hiddenTasksLayout->addItem(i.key()->widget(d->host), row, 0);
         d->hiddenTasksLayout->addItem(i.value(), row, 1);
+        d->hiddenTasksLayout->setRowFixedHeight(row, 24);
         ++i;
         ++row;
     }
+
+    d->hiddenTasksLayout->invalidate();
+    d->hiddenTasksWidget->resize(d->hiddenTasksWidget->effectiveSizeHint(Qt::PreferredSize));
 }
 
 int TaskArea::leftEasement() const
