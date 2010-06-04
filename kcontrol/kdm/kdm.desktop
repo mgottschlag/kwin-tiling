@@ -11,7 +11,7 @@ X-KDE-Library=kcm_kdm
 X-KDE-RootOnly=true
 X-KDE-ParentApp=kcontrol
 
-X-KDE-System-Settings-Parent-Category=security
+X-KDE-System-Settings-Parent-Category=system-administration
 
 Name=Login Screen
 Name[cs]=Přihlašovací obrazovka
