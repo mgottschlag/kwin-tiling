@@ -133,6 +133,9 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
         }
 
         KService::Ptr service = KService::serviceByStorageId(url);
+        if(!service) {
+            return;
+        }
 
         url = service->entryPath();
 
