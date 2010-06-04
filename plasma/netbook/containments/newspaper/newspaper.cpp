@@ -67,6 +67,9 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
 {
     setContainmentType(Containment::CustomContainment);
 
+    m_scrollWidget = new AppletsView(this);
+    m_container = new AppletsContainer(m_scrollWidget);
+
     connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
             this, SLOT(refreshLayout()));
 
@@ -84,9 +87,7 @@ void Newspaper::init()
 {
     m_externalLayout = new QGraphicsLinearLayout(this);
     m_externalLayout->setContentsMargins(0, 0, 0, 0);
-    m_scrollWidget = new AppletsView(this);
     m_externalLayout->addItem(m_scrollWidget);
-    m_container = new AppletsContainer(m_scrollWidget);
     m_scrollWidget->setAppletsContainer(m_container);
     connect(m_container, SIGNAL(appletActivated(Plasma::Applet *)), this, SLOT(appletActivated(Plasma::Applet *)));
 
