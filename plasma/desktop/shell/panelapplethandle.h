@@ -63,6 +63,8 @@ Q_SIGNALS:
     void mouseReleased(Plasma::Applet *applet, QMouseEvent *event);
 
 private:
+    void moveToApplet();
+
     QBoxLayout *m_layout;
     ToolButton *m_configureButton;
     ToolButton *m_closeButton;

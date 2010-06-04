@@ -78,7 +78,7 @@ PanelAppletHandle::~PanelAppletHandle()
 void PanelAppletHandle::setApplet(Plasma::Applet *applet)
 {
     if (applet == m_applet.data()) {
-        show();
+        moveToApplet();
         return;
     }
 
@@ -104,16 +104,26 @@ void PanelAppletHandle::setApplet(Plasma::Applet *applet)
         QAction *configAction = applet->action("configure");
         m_configureButton->setVisible(configAction && configAction->isEnabled());
 
-        if (isVisible()) {
-            m_moveAnimation->setStartValue(pos());
-            m_moveAnimation->setEndValue(applet->containment()->corona()->popupPosition(applet, size(), Qt::AlignCenter));
-            m_moveAnimation->setDuration(250);
-            m_moveAnimation->start();
-        } else {
-            move(applet->containment()->corona()->popupPosition(applet, size(), Qt::AlignCenter));
-            Plasma::WindowEffects::slideWindow(this, applet->location());
-            show();
-        }
+        moveToApplet();
+    }
+}
+
+void PanelAppletHandle::moveToApplet()
+{
+    Plasma::Applet *applet = m_applet.data();
+    if (!applet) {
+        return;
+    }
+
+    if (isVisible()) {
+        m_moveAnimation->setStartValue(pos());
+        m_moveAnimation->setEndValue(applet->containment()->corona()->popupPosition(applet, size(), Qt::AlignCenter));
+        m_moveAnimation->setDuration(250);
+        m_moveAnimation->start();
+    } else {
+        move(applet->containment()->corona()->popupPosition(applet, size(), Qt::AlignCenter));
+        Plasma::WindowEffects::slideWindow(this, applet->location());
+        show();
     }
 }
 
