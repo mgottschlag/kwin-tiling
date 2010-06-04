@@ -25,6 +25,7 @@
 #include <QTimer>
 #include <QGraphicsWidget>
 #include <QGraphicsLinearLayout>
+#include <QWeakPointer>
 
 #include <Plasma/Svg>
 #include <plasma/widgets/toolbutton.h>
@@ -138,7 +139,7 @@ private Q_SLOTS:
 
 private:
     //list containing the applet icons of the filter proxy model
-    QList<AbstractIcon *> m_currentAppearingAppletsOnList;
+    QList<QWeakPointer<AbstractIcon > > m_currentAppearingAppletsOnList;
 
     QGraphicsLinearLayout *m_appletListLinearLayout;
     QGraphicsWidget *m_appletListWidget;

@@ -262,7 +262,11 @@ void AbstractIconList::hideIcon(AbstractIcon *icon)
 //a faster way, given that we still need the visible-list
 void AbstractIconList::hideAllIcons()
 {
-    foreach (AbstractIcon *icon, m_currentAppearingAppletsOnList) {
+    foreach (QWeakPointer<AbstractIcon> pIcon, m_currentAppearingAppletsOnList) {
+        if (pIcon.isNull()) {
+            continue;
+        }
+        AbstractIcon *icon = pIcon.data();
         icon->collapse();
     }
     m_currentAppearingAppletsOnList.clear();
@@ -516,7 +520,7 @@ qreal AbstractIconList::windowSize()
 
 qreal AbstractIconList::itemPosition(int i)
 {
-    AbstractIcon *applet = m_currentAppearingAppletsOnList.value(i);
+    AbstractIcon *applet = m_currentAppearingAppletsOnList.value(i).data(); 
     if (!applet) {
         return 0;
     }
