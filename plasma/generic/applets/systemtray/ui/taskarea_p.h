@@ -86,8 +86,10 @@ protected:
                 m_applet->containment()) {
                 event->setPos(m_applet->containment()->mapFromScene(event->scenePos()));
                 scene()->sendEvent(m_applet->containment(), event);
+            } else if (qobject_cast<Plasma::Applet*>(item)) {
+                event->setPos(scene()->itemAt(event->scenePos())->mapFromScene(event->scenePos()));
+                scene()->sendEvent(scene()->itemAt(event->scenePos()), event);
             } else {
-            if (dynamic_cast<QGraphicsSceneContextMenuEvent *>(event)) 
                 event->setPos(item->boundingRect().center());
                 scene()->sendEvent(item, event);
             }
