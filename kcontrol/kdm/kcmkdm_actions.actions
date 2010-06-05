@@ -1,5 +1,6 @@
 [Domain]
 Name=Login Manager Control Module
+Name[ca]=Mòdul de control del gestor d'accés
 Name[da]=Kontrolmodul til login-håndtering
 Name[de]=Kontrollmodul für Anmeldebildschirm
 Name[en_GB]=Login Manager Control Module
@@ -50,6 +51,8 @@ Name[x-test]=xxSave the Login Manager settingsxx
 Name[zh_CN]=保存登录管理器设置
 Name[zh_TW]=儲存登入管理設定值
 Description=Administrator authorization is required to change the Login Manager settings
+Description[ca]=Es requereix autorització de l'administrador per canviar l'arranjament del gestor d'accés
+Description[cs]=Pro změnu správce přihlášení je potřeba oprávnění administrátora
 Description[da]=Administrator-godkendelse kræves for at ændre indstillinger for login-håndtering
 Description[de]=Zur Änderung der Einstellungen des Anmeldebildschirms sind Administratorrechte erforderlich
 Description[en_GB]=Administrator authorisation is required to change the Login Manager settings
@@ -74,6 +77,7 @@ Policy=auth_admin
 
 [org.kde.kcontrol.kcmkdm.managefaces]
 Name=Manage user images shown in the Login Manager
+Name[ca]=Gestiona les imatges dels usuaris en el gestor d'accés
 Name[da]=Håndtér brugerbileder som vises i login-håndteringen
 Name[de]=Benutzerbilder des Anmeldebildschirms verwalten
 Name[en_GB]=Manage user images shown in the Login Manager
@@ -97,6 +101,8 @@ Name[x-test]=xxManage user images shown in the Login Managerxx
 Name[zh_CN]=管理登录管理器中的用户头像
 Name[zh_TW]=管理在登入管理員中顯示的使用者圖像
 Description=Administrator authorization is required to manage user images for the Login Manager
+Description[ca]=Es requereix autorització de l'administrador per gestionar les imatges dels usuaris del gestor d'accés
+Description[cs]=Pro správu uživatelských obrázků správce přihlášení je potřeba oprávnění administrátora
 Description[da]=Administrator-godkendelse kræves for at håndtere brugerbilleder for login-håndtering
 Description[de]=Zum Verwalten der Benutzerbilder des Anmeldebildschirms sind Administratorrechte erforderlich
 Description[en_GB]=Administrator authorisation is required to manage user images for the Login Manager
@@ -145,6 +151,7 @@ Name[x-test]=xxManage themes for the Login Managerxx
 Name[zh_CN]=管理登录管理器主题
 Name[zh_TW]=管理在登入管理員中顯示的主題
 Description=Administrator authorization is required to manage themes for the Login Manager
+Description[cs]=Pro správu motivů správce přihlášení je potřeba oprávnění administrátora
 Description[da]=Administrator-godkendelse kræves for at håndtere temaer for login-håndtering
 Description[de]=Zum Verwalten der Designs für den Anmeldebildschirm sind Administratorrechte erforderlich
 Description[en_GB]=Administrator authorisation is required to manage themes for the Login Manager

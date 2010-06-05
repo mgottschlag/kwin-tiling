@@ -10,6 +10,7 @@ X-KDE-System-Settings-Parent-Category=desktop-appearance
 X-DocPath=kcontrol/desktoptheme/index.html
 
 Name=Desktop Theme
+Name[ca]=Tema d'escriptori
 Name[cs]=Motiv plochy
 Name[da]=Skrivebordstema
 Name[de]=Arbeitsflächen-Design
@@ -37,6 +38,8 @@ Name[x-test]=xxDesktop Themexx
 Name[zh_CN]=桌面主题
 Name[zh_TW]=桌面主題
 Comment=Customize the desktop theme
+Comment[ca]=Personalitza el tema d'escriptori
+Comment[cs]=Upravit vzhled plochy
 Comment[da]=Tilpas skrivebordstemaet
 Comment[de]=Arbeitsflächen-Design anpassen
 Comment[en_GB]=Customise the desktop theme
