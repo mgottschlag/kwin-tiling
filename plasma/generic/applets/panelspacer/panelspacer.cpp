@@ -66,6 +66,9 @@ void PanelSpacer::toggleFixed(bool flexible)
         setMaximumHeight(size().height());
         setMinimumHeight(size().height());
     }
+
+    config().writeEntry("FixedSize", m_fixedSize);
+    emit configNeedsSaving();
 }
 
 void PanelSpacer::init()
