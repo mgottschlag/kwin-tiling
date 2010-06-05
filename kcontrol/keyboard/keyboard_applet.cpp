@@ -149,13 +149,14 @@ void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 		p->drawPixmap(contentsRect, pixmap);
 	}
 	else {
-		QString layoutText = Flags::getShortText(layoutUnit, *keyboardConfig);
+		QString shortText = Flags::getShortText(layoutUnit, *keyboardConfig);
+		kDebug() << "applet: LayoutChanged" << layoutUnit.toString() << shortText;
 
 		p->save();
-		p->setPen(Qt::black);
+//		p->setPen(Qt::black);
 		QFont font = p->font();
 		int height = contentsRect.height();
-		int fontSize = layoutText.length() == 2
+		int fontSize = shortText.length() == 2
 				? height * 7 / 10
 				: height * 5 / 10;
 
@@ -165,7 +166,7 @@ void KeyboardApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 		}
 		font.setPixelSize(fontSize);
 		p->setFont(font);
-		p->drawText(contentsRect, Qt::AlignCenter | Qt::AlignHCenter, layoutText);
+		p->drawText(contentsRect, Qt::AlignCenter | Qt::AlignHCenter, shortText);
 		p->restore();
 	}
 }

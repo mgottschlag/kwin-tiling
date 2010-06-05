@@ -23,6 +23,7 @@ set( kded_keyboard_SRCS
     keyboard_config.cpp
     keyboard_hardware.cpp
     bindings.cpp
+    utils.cpp
 # next are temporary for sys tray UI
     layout_widget.cpp
     flags.cpp
@@ -53,6 +54,7 @@ set( plasma_applet_keyboard_SRCS
     keyboard_config.cpp
     xkb_rules.cpp
     x11_helper.cpp
+    utils.cpp
 )
 
 kde4_add_plugin(plasma_applet_keyboard ${plasma_applet_keyboard_SRCS})
@@ -75,6 +77,7 @@ set( keyboard_layout_widget_SRCS
     x11_helper.cpp
     # for sys tray ui
     xkb_rules.cpp
+    utils.cpp
 )
 
 # MODULE?
@@ -104,6 +107,7 @@ set(kcm_keyboard_PART_SRCS
   iso_codes.cpp
   kcmmisc.cpp
   bindings.cpp
+  utils.cpp
 #  keyboard_hardware.cpp
 )
 

@@ -18,7 +18,7 @@
 
 #include "flags.h"
 
-//#include <kdebug.h>
+#include <kdebug.h>
 #include <kstandarddirs.h>
 #include <kiconloader.h>
 #include <kglobalsettings.h>
@@ -34,6 +34,8 @@
 //for text handling
 #include "keyboard_config.h"
 #include "xkb_rules.h"
+#include "utils.h"
+
 
 static const int FLAG_MAX_WIDTH = 21;
 static const int FLAG_MAX_HEIGHT = 14;
@@ -102,6 +104,11 @@ QString Flags::getShortText(const LayoutUnit& layoutUnit, const KeyboardConfig& 
 		}
 	}
 
+//TODO: good autolabel
+//	if( layoutText == layoutUnit.layout && layoutUnit.getDisplayName() != layoutUnit.layout ) {
+//		layoutText = layoutUnit.getDisplayName();
+//	}
+
 	return layoutText;
 }
 
@@ -137,7 +144,7 @@ QString Flags::getLongText(const LayoutUnit& layoutUnit, const Rules* rules)
 const QIcon Flags::getIconWithText(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig)
 {
 	QString keySuffix(keyboardConfig.showFlag ? "_wf" : "_nf");
-	QString key(layoutUnit.layout + keySuffix);
+	QString key(layoutUnit.toString() + keySuffix);
 	if( iconOrTextMap.contains(key) ) {
 		return iconOrTextMap[ key ];
 	}
@@ -150,18 +157,18 @@ const QIcon Flags::getIconWithText(const LayoutUnit& layoutUnit, const KeyboardC
 		}
 	}
 
-	QPixmap pm = QPixmap(KIconLoader::SizeLarge, KIconLoader::SizeLarge);
-	pm.fill(Qt::transparent);
-
-	QPainter p(&pm);
-	p.setRenderHint(QPainter::SmoothPixmapTransform);
-	p.setRenderHint(QPainter::Antialiasing);
-
-	QFont font = p.font();
 	QString layoutText = Flags::getShortText(layoutUnit, keyboardConfig);
 
-	int height = pm.height();
+	QPixmap pm = QPixmap(KIconLoader::SizeLarge, KIconLoader::SizeLarge);
+//	pm.fill(Qt::transparent);
 
+	QPainter p(&pm);
+//	p.setRenderHint(QPainter::SmoothPixmapTransform);
+//	p.setRenderHint(QPainter::Antialiasing);
+
+	QFont font = p.font();
+
+	int height = pm.height();
 	int fontSize = layoutText.length() == 2
 			? height * 7 / 10
 			: height * 5 / 10;
@@ -170,13 +177,21 @@ const QIcon Flags::getIconWithText(const LayoutUnit& layoutUnit, const KeyboardC
 	if( fontSize < smallestReadableSize ) {
 		fontSize = smallestReadableSize;
 	}
-
 	font.setPixelSize(fontSize);
-	p.setFont(font);
-	p.drawText(pm.rect(), Qt::AlignCenter | Qt::AlignHCenter, layoutText);
+	
+//	p.setFont(font);
+//	p.setPen(Qt::black);
+//	p.drawText(pm.rect(), Qt::AlignCenter | Qt::AlignHCenter, layoutText);
+//	QIcon icon(pm);
 
-	QIcon icon(pm);
+	QPixmap pixmap = Utils::shadowText(layoutText, font, Qt::black, Qt::white, QPoint(), 2);
+	QIcon icon(pixmap);
 	iconOrTextMap[ key ] = icon;
 
 	return icon;
+}
+
+void Flags::clearCache()
+{
+	iconOrTextMap.clear();
 }

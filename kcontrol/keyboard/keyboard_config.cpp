@@ -94,7 +94,7 @@ void KeyboardConfig::load()
 	switchingPolicy = static_cast<SwitchingPolicy>(findStringIndex(SWITCHING_POLICIES, layoutMode, SWITCH_POLICY_GLOBAL));
 
 	showIndicator = config.readEntry("ShowLayoutIndicator", true);
-	showFlag = config.readEntry("ShowFlag", true);
+	showFlag = config.readEntry("ShowFlag", false);
 	showSingle = config.readEntry("ShowSingle", false);
 
     QString labelsStr = config.readEntry("DisplayNames", "");

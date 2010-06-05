@@ -168,6 +168,7 @@ void LayoutTrayIcon::destroy()
 void LayoutTrayIcon::layoutMapChanged()
 {
 	keyboardConfig->load();
+	flags->clearCache();
 
 	KMenu* menu = m_notifierItem->contextMenu();
 	menu->clear();

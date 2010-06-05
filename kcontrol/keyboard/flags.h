@@ -38,6 +38,7 @@ public:
 	const QIcon getIcon(const QString& layout);
 	const QIcon getIconWithText(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig);
 	const QPixmap& getTransparentPixmap() { return *transparentPixmap; }
+	void clearCache();
 
 	static QString getLongText(const LayoutUnit& layoutUnit, const Rules* rules);
 	static QString getShortText(const LayoutUnit& layoutUnit, const KeyboardConfig& keyboardConfig);
