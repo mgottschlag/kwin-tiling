@@ -128,7 +128,7 @@ void Calendar::init(CalendarTable *calendarTable)
     d->calendarTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated(const QDate &)));
     connect(d->calendarTable, SIGNAL(dateHovered(const QDate &)), this, SIGNAL(dateHovered(const QDate &)));
-    connect(this, SIGNAL(dateSelected(const QDate &)), this, SLOT(showTip(const QDate &)));
+    connect(d->calendarTable, SIGNAL(dateSelected(const QDate &)), this, SLOT(showTip(const QDate &)));
     connect(this, SIGNAL(dateHovered(const QDate &)), this, SLOT(showTip(const QDate &)));
 
     d->back = new Plasma::ToolButton(this);
