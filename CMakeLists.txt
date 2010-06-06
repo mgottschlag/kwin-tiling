@@ -136,9 +136,9 @@ if(NOT WIN32)
   endif(POLKITQT_FOUND)
 endif(NOT WIN32)
 
-if (Q_WS_X11 AND ${QT_QT3SUPPORT_FOUND})
-  add_subdirectory(kinfocenter)
-endif (Q_WS_X11 AND ${QT_QT3SUPPORT_FOUND})
+if (Q_WS_X11)
+  macro_optional_add_subdirectory( kinfocenter )
+endif (Q_WS_X11)
 
 macro_optional_add_subdirectory( klipper )
 macro_optional_add_subdirectory( krunner )
