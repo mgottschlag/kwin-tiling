@@ -127,7 +127,7 @@ void LinearAppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     disconnect(m_applet, SIGNAL(destroyed()), this, SLOT(appletDestroyed()));
     m_applet = 0;
 
-    Plasma::Applet *oldApplet;
+    Plasma::Applet *oldApplet = 0;
 
     //FIXME: is there a way more efficient than this linear one? scene()itemAt() won't work because it would always be == this
     foreach (Plasma::Applet *applet, m_containment->applets()) {
