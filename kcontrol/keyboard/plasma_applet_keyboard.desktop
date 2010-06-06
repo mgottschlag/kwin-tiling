@@ -88,6 +88,7 @@ Name[x-test]=xxKeyboard Layoutxx
 Name[zh_CN]=键盘布局
 Name[zh_TW]=鍵盤配置
 Comment=Applet to display and switch layouts
+Comment[ca]=Miniaplicació per mostrar i commutar disposicions
 Comment[cs]=Applet pro zobrazení a přepínání rozložení
 Comment[da]=Applet til at vise og skifte layouts
 Comment[de]=Miniprogramm zum Anzeichen und Wechseln des Layouts

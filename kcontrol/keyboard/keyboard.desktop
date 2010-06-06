@@ -10,6 +10,7 @@ X-KDE-Kded-phase=1
 OnlyShowIn=KDE;
 
 Name=Keyboard Daemon
+Name[ca]=Dimoni del teclat
 Name[da]=Tastatur-dæmon
 Name[de]=Tastatur-Dienst
 Name[en_GB]=Keyboard Dæmon
