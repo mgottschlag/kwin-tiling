@@ -66,6 +66,7 @@ KCMKeyboardWidget::KCMKeyboardWidget(Rules* rules_, KeyboardConfig* keyboardConf
 	uiWidget->setupUi(this);
 
 	kcmMiscWidget = new KCMiscKeyboardWidget(uiWidget->lowerHardwareWidget);
+	uiWidget->lowerHardwareWidget->layout()->addWidget( kcmMiscWidget );
 	connect(kcmMiscWidget, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)));
 	//TODO: connect save/load
 
