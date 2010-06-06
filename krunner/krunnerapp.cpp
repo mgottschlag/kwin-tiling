@@ -90,8 +90,10 @@ void KRunnerApp::cleanUp()
     m_interface = 0;
     delete m_runnerManager;
     m_runnerManager = 0;
+#ifndef Q_WS_WIN
     delete m_tasks;
     m_tasks = 0;
+#endif
     KGlobal::config()->sync();
 }
 
