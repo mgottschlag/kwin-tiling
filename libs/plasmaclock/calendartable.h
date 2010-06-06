@@ -49,7 +49,8 @@ public:
                     Holiday = 8,
                     NotInCurrentMonth = 16,
                     InvalidDate = 32,
-                    Event = 64};
+                    Event = 64,
+                    PublicHoliday = 128};
     Q_DECLARE_FLAGS(CellTypes, CellType)
 
     explicit CalendarTable(QGraphicsWidget *parent = 0);
@@ -76,7 +77,7 @@ public:
     QString holidaysRegion() const;
 
     void clearHolidays();
-    void addHoliday(const QDate &date, const QString &reason);
+    void addHoliday(const QDate &date, Plasma::DataEngine::Data holidayData);
     bool dateHasDetails(const QDate &date) const;
     QString dateDetails(const QDate &date) const;
 

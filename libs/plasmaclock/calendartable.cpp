@@ -297,8 +297,8 @@ class CalendarTablePrivate
         bool displayHolidays;
         QString holidaysRegion;
         Plasma::DataEngine *dataEngine;
-        // Hash key: int = Julian Day number, QString = what's special
-        QMultiHash<int, QString> holidays;
+        // Hash key: int = Julian Day number of holiday, Data = details of holiday
+        QMultiHash<int, Plasma::DataEngine::Data> holidays;
         // Hash key: int = Julian Day number, QString = what's going on
         QHash<int, QStringList> events;
         QHash<int, QStringList> todos;
@@ -511,9 +511,9 @@ void CalendarTable::clearHolidays()
     d->holidays.clear();
 }
 
-void CalendarTable::addHoliday(const QDate &date, const QString &description)
+void CalendarTable::addHoliday(const QDate &date,  Plasma::DataEngine::Data holidayData)
 {
-    d->holidays.insert(date.toJulianDay(), description);
+    d->holidays.insertMulti(date.toJulianDay(), holidayData);
 }
 
 bool CalendarTable::dateHasDetails(const QDate &date) const
@@ -527,8 +527,22 @@ QString CalendarTable::dateDetails(const QDate &date) const
     QString details;
     const int julian = date.toJulianDay();
 
-    foreach (const QString &holiday, d->holidays.values(julian)) {
-        details += i18n("<i>Holiday</i>: %1", holiday);
+    foreach (Plasma::DataEngine::Data holidayData, d->holidays.values(julian)) {
+        if (holidayData.value("observanceType").toString() == "PublicHoliday") {
+            if (!details.isEmpty()) {
+                details += "<br>";
+            }
+            details += i18n("<i>Holiday</i>: %1", holidayData.value("name").toString());
+        }
+    }
+
+    foreach (Plasma::DataEngine::Data holidayData, d->holidays.values(julian)) {
+        if (holidayData.value("observanceType").toString() == "Other") {
+            if (!details.isEmpty()) {
+                details += "<br>";
+            }
+            details += holidayData.value("name").toString();
+        }
     }
 
     if (d->events.contains(julian)) {
@@ -566,13 +580,13 @@ void CalendarTable::populateHolidays()
     QDate startDate = d->dateFromRowColumn(0, 0);
     QDate endDate = d->dateFromRowColumn(DISPLAYED_WEEKS - 1, d->daysInWeek - 1);
     Plasma::DataEngine::Data holidays = d->dataEngine->query("holidays:" + holidaysRegion() + ':'
-                                                             + startDate.toString(Qt::ISODate)+ ':'
+                                                             + startDate.toString(Qt::ISODate) + ':'
                                                              + endDate.toString(Qt::ISODate));
 
     Plasma::DataEngine::DataIterator i(holidays);
     while (i.hasNext()) {
         i.next();
-        addHoliday(QDate::fromString(i.key(), Qt::ISODate), i.value().toString());
+        addHoliday(QDate::fromString(i.key(), Qt::ISODate), i.value().toHash());
     }
 }
 
@@ -783,7 +797,9 @@ void CalendarTable::paintCell(QPainter *p, int cell, int weekRow, int weekdayCol
 
     p->setPen(numberColor);
     QFont font = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
-    font.setBold(true);
+    if (type & Event) {
+        font.setBold(true);
+    }
     font.setPixelSize(cellArea.height() * 0.7);
     p->setFont(font);
     if (!(type & InvalidDate)) {
@@ -807,10 +823,10 @@ void CalendarTable::paintBorder(QPainter *p, int cell, int weekRow, int weekdayC
         elementId = "today";
     } else if (type & Selected) {
         elementId = "selected";
-    } else if (type & Event) {
-        elementId = "green";
-    } else if (type & Holiday) {
+    } else if (type & PublicHoliday) {
         elementId = "red";
+    } else if (type & Holiday) {
+        elementId = "green";
     } else {
         return;
     }
@@ -871,8 +887,12 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
                 type |= CalendarTable::Selected;
             }
 
-            if (d->holidays.contains(julian)) {
-                type |= CalendarTable::Holiday;
+            foreach (Plasma::DataEngine::Data holidayData, d->holidays.values(julian)) {
+                if (holidayData.value("observanceType").toString() == "PublicHoliday") {
+                    type |= CalendarTable::PublicHoliday;
+                } else {
+                    type |= CalendarTable::Holiday;
+                }
             }
 
             if (d->events.contains(julian) || d->events.contains(julian)) {

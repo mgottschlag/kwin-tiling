@@ -50,8 +50,9 @@ namespace KHolidays
             * Returns a QString of a sensible default Holiday Region
         holidays:[regionCode]:[YYYY-MM-DD]:[YYYY-MM-DD]
             * Returns a list of all holidays in a Holiday Region between two given dates
-              Each holiday is a pair of QString's, the first being the date in ISO format and the
-              second being the holiday name.
+              Note that multiple holidays can be returned for each date
+              Each holiday is a pair of a QString containing the date in ISO format and a Data
+              containing value pairs for "name" and "observanceType"
         holidays:[regionCode]:[YYYY-MM-DD]
             * Returns a list of all holidays  in a Holiday Region on a given day
         holidaysInMonth:[regionCode]:[YYYY-MM-DD]

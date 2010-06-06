@@ -260,8 +260,16 @@ bool CalendarEngine::holidayCalendarSourceRequest(const QString& key, const QStr
 
         Plasma::DataEngine::Data data;
         foreach (const KHolidays::Holiday &holiday, holidays) {
-            if (holiday.dayType() == KHolidays::Holiday::NonWorkday && !holiday.text().isEmpty()) {
-                data.insertMulti(holiday.date().toString(Qt::ISODate), holiday.text());
+            if (!holiday.text().isEmpty()) {
+                Plasma::DataEngine::Data holidayData;
+                holidayData.insert("name", holiday.text());
+                // It's a blunt tool for now, we only know if it's a full public holiday or not
+                if ( holiday.dayType() == KHolidays::Holiday::NonWorkday ) {
+                    holidayData.insert("observanceType", "PublicHoliday");
+                } else {
+                    holidayData.insert("observanceType", "Other");
+                }
+                data.insertMulti(holiday.date().toString(Qt::ISODate), holidayData);
             }
         }
 
