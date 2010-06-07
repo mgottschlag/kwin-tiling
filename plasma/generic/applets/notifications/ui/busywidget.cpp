@@ -153,15 +153,20 @@ void BusyWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
         painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
 
+        const QFontMetrics fm(font);
+        const QSize textSize = fm.boundingRect(label()).size();
+        const bool textFits = textSize.width() <= r.width() && textSize.height() <= r.height();
         if (m_svg && m_svg->hasElement(expanderElement())) {
-            QFontMetrics fm(font);
             QSizeF arrowSize(m_svg->elementSize(expanderElement()));
             QRectF arrowRect(r.center() - QPointF(arrowSize.width() / 2, arrowSize.height() + fm.xHeight() / 2), arrowSize);
             m_svg->paint(painter, arrowRect, expanderElement());
 
             r.setTop(arrowRect.bottom());
-            painter->drawText(r, Qt::AlignHCenter|Qt::AlignTop, label());
-        } else {
+
+            if (textFits) {
+                painter->drawText(r, Qt::AlignHCenter|Qt::AlignTop, label());
+            }
+        } else if (textFits) {
             painter->drawText(r, Qt::AlignCenter, label());
         }
     }
@@ -175,7 +180,7 @@ void BusyWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     }
 }
 
-void BusyWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
+void BusyWidget::resizeEvent(QGraphicsSceneResizeEvent *)
 {
     //regenerate pixmaps
     m_svg->resize(contentsRect().size());
