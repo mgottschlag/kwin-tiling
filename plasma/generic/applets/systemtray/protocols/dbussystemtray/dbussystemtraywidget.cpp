@@ -38,7 +38,8 @@ namespace SystemTray
 DBusSystemTrayWidget::DBusSystemTrayWidget(Plasma::Applet *parent, Plasma::Service *service)
     : Plasma::IconWidget(parent),
       m_service(service),
-      m_host(parent)
+      m_host(parent),
+      m_waitingOnContextMenu(false)
 {
     KAction *action = new KAction(this);
     setAction(action);
@@ -71,7 +72,8 @@ void DBusSystemTrayWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         params.writeEntry("x", event->screenPos().x());
         params.writeEntry("y", event->screenPos().y());
         m_service->startOperationCall(params);
-    } else if (m_itemIsMenu) {
+    } else if (m_itemIsMenu && !m_waitingOnContextMenu) {
+        m_waitingOnContextMenu = true;
         KConfigGroup params = m_service->operationDescription("ContextMenu");
         params.writeEntry("x", event->screenPos().x());
         params.writeEntry("y", event->screenPos().y());
@@ -93,6 +95,11 @@ void DBusSystemTrayWidget::wheelEvent(QGraphicsSceneWheelEvent *event)
 
 void DBusSystemTrayWidget::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
+    if (m_waitingOnContextMenu) {
+        return;
+    }
+
+    m_waitingOnContextMenu = true;
     KConfigGroup params = m_service->operationDescription("ContextMenu");
     params.writeEntry("x", event->screenPos().x());
     params.writeEntry("y", event->screenPos().y());
@@ -102,6 +109,7 @@ void DBusSystemTrayWidget::contextMenuEvent(QGraphicsSceneContextMenuEvent *even
 
 void DBusSystemTrayWidget::showContextMenu(KJob *job)
 {
+    m_waitingOnContextMenu = false;
     Plasma::ServiceJob *sjob = qobject_cast<Plasma::ServiceJob *>(job);
     if (!sjob) {
         return;

@@ -60,6 +60,7 @@ private:
     Plasma::Service *m_service;
     Plasma::Applet *m_host;
     bool m_itemIsMenu;
+    bool m_waitingOnContextMenu;
 };
 
 }
