@@ -18,35 +18,11 @@
 
 #include "soliddeviceengine.h"
 
-#include <config-workspace.h>
-
 #include <KDebug>
+#include <KDiskFreeSpaceInfo>
 #include <KLocale>
 
 #include <Plasma/DataContainer>
-
-// The pattern here is:
-//	FreeBSD: param + mount
-//	Linux: stat + vfs
-#ifdef HAVE_SYS_PARAM_H
-#include <sys/param.h>
-#endif
-
-#ifdef HAVE_SYS_MOUNT_H
-#include <sys/mount.h>
-#endif
-
-#include <sys/stat.h>
-#ifdef HAVE_SYS_STATFS_H
-#include <sys/statfs.h>
-#endif
-#ifdef HAVE_SYS_STATVFS_H
-#include <sys/statvfs.h>
-#endif
-
-#ifdef HAVE_SYS_VFS_H
-#include <sys/vfs.h>
-#endif
 
 SolidDeviceEngine::SolidDeviceEngine(QObject* parent, const QVariantList& args)
         : Plasma::DataEngine(parent, args),
@@ -532,31 +508,10 @@ void SolidDeviceEngine::deviceAdded(const QString& udi)
 
 qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
 {
-    //determine the free space available on the device
-    const QByteArray pathBa=mountPoint.toAscii();
-    // path is only valid as long as pathBa exists
-    const char *path=pathBa.constData();
-
-#ifdef HAVE_STATVFS
-    struct statvfs fs_obj;
-    if (statvfs(path,&fs_obj) < 0) {
-        return -1;
-    } else {
-        return (qlonglong)fs_obj.f_bavail*(qlonglong)fs_obj.f_frsize;
+    KDiskFreeSpaceInfo info = KDiskFreeSpaceInfo::freeSpaceInfo(mountPoint);
+    if (info.isValid()) {
+        return info.available();
     }
-#elif defined(HAVE_STATFS) && !defined(USE_SOLARIS)
-    struct statfs fs_obj;
-    if (statfs(path,&fs_obj) < 0){
-        return -1;
-    }
-    else{
-        return (qlonglong)fs_obj.f_bfree*(qlonglong)fs_obj.f_bsize;
-    }
-#else
-#ifdef __GNUC__
-#warning "This system does not support statfs or statvfs - freeDiskSpace() will return -1"
-#endif
-#endif
     return -1;
 }
 
