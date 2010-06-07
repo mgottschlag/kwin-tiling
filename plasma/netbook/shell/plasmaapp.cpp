@@ -467,7 +467,10 @@ void PlasmaApp::checkShadow()
         m_shadowWindow->setSvg(m_controlBar->containment()->property("shadowPath").toString());
         int left, right, top, bottom;
         m_shadowWindow->getContentsMargins(&left, &right, &top, &bottom);
+        m_shadowWindow->setMinimumSize(-1, -1);
+        m_shadowWindow->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
         m_shadowWindow->setGeometry(m_controlBar->geometry().adjusted(-left, -top, right, bottom));
+        m_shadowWindow->setFixedSize(m_shadowWindow->size());
         m_shadowWindow->show();
     } else {
         m_shadowWindow->deleteLater();
