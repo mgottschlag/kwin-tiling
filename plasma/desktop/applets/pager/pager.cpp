@@ -111,6 +111,7 @@ Pager::Pager(QObject *parent, const QVariantList &args)
     setAcceptsHoverEvents(true);
     setAcceptDrops(true);
     setHasConfigurationInterface(true);
+    setAspectRatioMode(Plasma::IgnoreAspectRatio);
 
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/pager");
