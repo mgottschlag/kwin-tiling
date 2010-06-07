@@ -23,7 +23,9 @@
 
 #include <KAuthorized>
 #include <KDebug>
+#ifdef Q_OS_UNIX
 #include <KDEsuClient>
+#endif
 #include <KIcon>
 #include <KLocale>
 #include <KRun>
@@ -74,12 +76,14 @@ void ShellRunner::match(Plasma::RunnerContext &context)
     }
 }
 
+#ifdef Q_OS_UNIX
 class MySuClient : public KDESu::KDEsuClient
 {
 public:
     MySuClient() : KDESu::KDEsuClient() {}
     ~MySuClient() { kDebug() << "buh bye"; }
 };
+#endif
 
 void ShellRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
@@ -89,6 +93,7 @@ void ShellRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryM
     // as this is the command we want to run
 
     if (m_enabled) {
+#ifdef Q_OS_UNIX
         //kDebug() << m_asOtherUser << m_username << m_password;
         if (m_asOtherUser && !m_username.isEmpty()) {
             //TODO: provide some user feedback on failure
@@ -131,7 +136,9 @@ void ShellRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryM
                     }
                 }
             }
-        } else if (m_inTerminal) {
+        } else
+#endif
+        if (m_inTerminal) {
             KToolInvocation::invokeTerminal(context.query());
         } else {
             KRun::runCommand(context.query(), NULL);
