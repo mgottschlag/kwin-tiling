@@ -737,7 +737,9 @@ bool PlasmaApp::canRelocatePanel(PanelView * view, Kephal::Screen *screen)
 DesktopView* PlasmaApp::viewForScreen(int screen, int desktop) const
 {
     foreach (DesktopView *view, m_desktops) {
-        kDebug() << "comparing" << view->containment()->screen() << screen;
+        if (view->containment()) {
+            kDebug() << "comparing" << view->containment()->screen() << screen;
+        }
         if (view->containment() && view->containment()->screen() == screen && (desktop < 0 || view->containment()->desktop() == desktop)) {
             return view;
         }
