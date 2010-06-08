@@ -29,8 +29,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace TaskManager
 {
 
-void Task::updateDemandsAttentionState( WId w )
+bool Task::updateDemandsAttentionState( WId w )
 {
+    const bool empty = d->transientsDemandingAttention.isEmpty();
     if (window() != w) {
         // 'w' is a transient for this task
         NETWinInfo i( QX11Info::display(), w, QX11Info::appRootWindow(), NET::WMState );
@@ -42,6 +43,8 @@ void Task::updateDemandsAttentionState( WId w )
             d->transientsDemandingAttention.remove(w);
         }
     }
+
+    return empty != d->transientsDemandingAttention.isEmpty();
 }
 
 void Task::addTransient( WId w, const NETWinInfo& info )
@@ -49,7 +52,7 @@ void Task::addTransient( WId w, const NETWinInfo& info )
     d->transients.insert(w);
     if (info.state() & NET::DemandsAttention) {
         d->transientsDemandingAttention.insert(w);
-        emit changed(TransientsChanged);
+        emit changed(TransientsChanged | StateChanged);
     }
 }
 

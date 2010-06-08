@@ -29,8 +29,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace TaskManager
 {
 
-void Task::updateDemandsAttentionState( WId w )
+bool Task::updateDemandsAttentionState( WId w )
 {
+    return false;
 }
 
 QString Task::className() const

@@ -358,16 +358,17 @@ void TaskManager::windowChanged(WId w, const unsigned long *dirty)
         return;
     }
 
-    //kDebug() << "TaskManager::windowChanged " << w << " " << dirty;
+    //kDebug() << "TaskManager::windowChanged " << w << " " << dirty[NETWinInfo::PROTOCOLS] << dirty[NETWinInfo::PROTOCOLS2];
 
-    if (dirty[NETWinInfo::PROTOCOLS] & NET::WMState) {
-        t->updateDemandsAttentionState(w);
+    unsigned long propagatedChanges = 0;
+    if ((dirty[NETWinInfo::PROTOCOLS] & NET::WMState) && t->updateDemandsAttentionState(w)) {
+        propagatedChanges = NET::WMState;
     }
 
-    //kDebug() << "got changes, but will we refresh?" << dirty;
+    //kDebug() << "got changes, but will we refresh?" << dirty[NETWinInfo::PROTOCOLS] << dirty[NETWinInfo::PROTOCOLS2];
     if (dirty[NETWinInfo::PROTOCOLS] || dirty[NETWinInfo::PROTOCOLS2]) {
         // only refresh this stuff if we have other changes besides icons
-        t->refresh(Task::WindowProperties(dirty[NETWinInfo::PROTOCOLS], dirty[NETWinInfo::PROTOCOLS2]));
+        t->refresh(Task::WindowProperties(dirty[NETWinInfo::PROTOCOLS] | propagatedChanges, dirty[NETWinInfo::PROTOCOLS2]));
     }
 #endif
 }

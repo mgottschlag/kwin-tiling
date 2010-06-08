@@ -262,7 +262,7 @@ public:
     //* @internal
     bool hasTransient(WId w) const;
     //* @internal
-    void updateDemandsAttentionState( WId w );
+    bool updateDemandsAttentionState( WId w );
     //* @internal
     void setActive(bool a);
 
