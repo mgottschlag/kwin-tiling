@@ -187,8 +187,10 @@ void TaskGroup::add(AbstractGroupableItem *item)
 
     connect(item, SIGNAL(destroyed(AbstractGroupableItem*)),
             this, SLOT(itemDestroyed(AbstractGroupableItem*)));
-    connect(item, SIGNAL(changed(::TaskManager::TaskChanges)),
-            this, SLOT(itemChanged(::TaskManager::TaskChanges)));
+    if (!isRootGroup()) {
+        connect(item, SIGNAL(changed(::TaskManager::TaskChanges)),
+                this, SLOT(itemChanged(::TaskManager::TaskChanges)));
+    }
     //For debug
    /* foreach (AbstractGroupableItem *item, d->members) {
         if (item->isGroupItem()) {
@@ -211,6 +213,7 @@ void TaskGroup::itemChanged(::TaskManager::TaskChanges changes)
     if (changes & ::TaskManager::IconChanged) {
         emit checkIcon(this);
     }
+
     if (changes & StateChanged) {
         emit changed(StateChanged);
     }
