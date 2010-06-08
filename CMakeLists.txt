@@ -61,12 +61,8 @@ if(PYQT4_FOUND AND PYQT4_VERSION STRLESS "040400")
 endif(PYQT4_FOUND AND PYQT4_VERSION STRLESS "040400")
 
 macro_optional_find_package(PyKDE4)
-set(PythonSupport_FOUND FALSE)
-if(PYTHONLIBRARY_FOUND AND SIP_FOUND AND PYQT4_FOUND AND PYKDE4_FOUND)
-  set(PythonSupport_FOUND TRUE)
-endif(PYTHONLIBRARY_FOUND AND SIP_FOUND AND PYQT4_FOUND AND PYKDE4_FOUND)
+set(PythonSupport_FOUND TRUE)
 
-macro_log_feature(PythonSupport_FOUND "Python" "KDE Python support" "http://techbase.kde.org/Development/Languages/Python" FALSE "" "Needed to build plasma scriptengine for Python")
 #### End Python support ####
 
 include(MacroLibrary)
