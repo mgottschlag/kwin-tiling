@@ -210,7 +210,8 @@ class ShadowWindow : public QWidget
 public:
     ShadowWindow(NetView *panel)
        : QWidget(0),
-         m_panel(panel)
+         m_panel(panel),
+         m_valid(false)
     {
         setAttribute(Qt::WA_TranslucentBackground);
         setAttribute(Qt::WA_NoSystemBackground, false);
@@ -226,15 +227,29 @@ public:
 
     void setSvg(const QString &path)
     {
+        if (!m_shadow->hasElementPrefix("shadow")) {
+            hide();
+            m_valid = false;
+        } else {
+            m_valid = true;
+        }
+
         m_shadow->setImagePath(path);
         m_shadow->setElementPrefix("shadow");
 
         adjustMargins();
     }
 
+    bool isValid() const
+    {
+        return m_valid;
+    }
+
 protected:
     bool event(QEvent *event)
     {
+        Q_UNUSED(event)
+
         if (event->type() == QEvent::Paint) {
             QPainter p(this);
             p.setCompositionMode(QPainter::CompositionMode_Source);
@@ -288,8 +303,8 @@ protected:
 private:
     Plasma::FrameSvg *m_shadow;
     NetView *m_panel;
+    bool m_valid;
 };
-
 
 PlasmaApp::PlasmaApp()
     : KUniqueApplication(),
@@ -471,7 +486,9 @@ void PlasmaApp::checkShadow()
         m_shadowWindow->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
         m_shadowWindow->setGeometry(m_controlBar->geometry().adjusted(-left, -top, right, bottom));
         m_shadowWindow->setFixedSize(m_shadowWindow->size());
-        m_shadowWindow->show();
+        if (m_shadowWindow->isValid()) {
+            m_shadowWindow->show();
+        }
     } else {
         m_shadowWindow->deleteLater();
         m_shadowWindow = 0;
@@ -1045,7 +1062,7 @@ void PlasmaApp::controlBarVisibilityUpdate()
     if (!m_autoHideControlBar) {
         setControlBarVisible(true);
 
-        if (m_shadowWindow) {
+        if (m_shadowWindow && m_shadowWindow->isValid()) {
             Plasma::WindowEffects::slideWindow(m_shadowWindow, m_controlBar->location());
             m_shadowWindow->show();
             if (hasForegroundWindows()) {
@@ -1078,7 +1095,7 @@ void PlasmaApp::controlBarVisibilityUpdate()
             setControlBarVisible(true);
         }
 
-        if (m_shadowWindow) {
+        if (m_shadowWindow && m_shadowWindow->isValid()) {
             Plasma::WindowEffects::slideWindow(m_shadowWindow, m_controlBar->location());
             if (hasForegroundWindows()) {
                 KWindowSystem::clearState(m_shadowWindow->winId(), NET::KeepBelow);
@@ -1127,7 +1144,7 @@ void PlasmaApp::setControlBarVisible(bool visible)
         KWindowSystem::setState(m_controlBar->effectiveWinId(), state);
         KWindowSystem::setType(m_controlBar->effectiveWinId(), NET::Dock);
 
-        if (m_shadowWindow) {
+        if (m_shadowWindow && m_shadowWindow->isValid()) {
             Plasma::WindowEffects::slideWindow(m_shadowWindow, m_controlBar->location());
             m_shadowWindow->show();
             if (!m_autoHideControlBar) {
