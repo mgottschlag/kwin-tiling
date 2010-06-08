@@ -316,23 +316,26 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
     const int leftEasement = m_taskArea->leftEasement();
     const int rightEasement = m_taskArea->rightEasement();
     if (formFactor() == Plasma::Vertical) {
-        normalRect.setY(leftEasement + contentsRect.top());
+        int margin = m_background->marginSize(Plasma::BottomMargin);
+        normalRect.setY(leftEasement + contentsRect.top() + margin);
         normalRect.setHeight(normalRect.height() - rightEasement);
 
-        lastRect.setY(normalRect.bottom() + 1);
-        lastRect.setHeight(rightEasement);
+        lastRect.setY(normalRect.bottom() + 1 - margin);
+        lastRect.setHeight(rightEasement - margin *2);
     } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
-        normalRect.setWidth(normalRect.width() - leftEasement);
-        normalRect.setLeft(rightEasement);
+        int margin = m_background->marginSize(Plasma::RightMargin);
+        normalRect.setWidth(normalRect.width() - leftEasement - margin*2);
+        normalRect.setLeft(rightEasement + margin);
 
         lastRect.setX(0);
-        lastRect.setWidth(rightEasement);
+        lastRect.setWidth(rightEasement - margin*2);
     } else {
-        normalRect.setX(leftEasement + contentsRect.left());
-        normalRect.setWidth(normalRect.width() - rightEasement);
+        int margin = m_background->marginSize(Plasma::LeftMargin);
+        normalRect.setX(leftEasement + contentsRect.left() + margin);
+        normalRect.setWidth(normalRect.width() - rightEasement - margin*2);
 
-        lastRect.setX(normalRect.right() + 1);
-        lastRect.setWidth(rightEasement);
+        lastRect.setX(normalRect.right() + 1 - margin);
+        lastRect.setWidth(rightEasement - margin);
     }
 
     painter->save();
