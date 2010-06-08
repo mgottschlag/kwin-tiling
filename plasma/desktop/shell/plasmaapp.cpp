@@ -527,6 +527,7 @@ void PlasmaApp::showController(int screen, Plasma::Containment *containment, boo
     Plasma::WindowEffects::slideWindow(controller, Plasma::BottomEdge);
     KWindowSystem::setOnAllDesktops(controller->winId(), true);
     KWindowSystem::activateWindow(controller->winId());
+    KWindowSystem::setState(controller->winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky | NET::KeepAbove);
 }
 
 void PlasmaApp::hideController(int screen)
