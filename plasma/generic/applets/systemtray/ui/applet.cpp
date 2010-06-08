@@ -316,19 +316,17 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
     const int leftEasement = m_taskArea->leftEasement();
     const int rightEasement = m_taskArea->rightEasement();
     if (formFactor() == Plasma::Vertical) {
-        const int rightEasementBorder = rightEasement + m_background->marginSize(Plasma::BottomMargin);
-        normalRect.setY(leftEasement);
-        normalRect.setBottom(normalRect.bottom() - rightEasementBorder);
+        normalRect.setY(leftEasement + contentsRect.top());
+        normalRect.setHeight(normalRect.height() - rightEasement);
 
         lastRect.setY(normalRect.bottom() + 1);
-        lastRect.setHeight(rightEasementBorder);
+        lastRect.setHeight(rightEasement);
     } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
-        const int rightEasementBorder = rightEasement + m_background->marginSize(Plasma::LeftMargin);
         normalRect.setWidth(normalRect.width() - leftEasement);
-        normalRect.setLeft(rightEasementBorder);
+        normalRect.setLeft(rightEasement);
 
         lastRect.setX(0);
-        lastRect.setWidth(rightEasementBorder);
+        lastRect.setWidth(rightEasement);
     } else {
         normalRect.setX(leftEasement + contentsRect.left());
         normalRect.setWidth(normalRect.width() - rightEasement);
