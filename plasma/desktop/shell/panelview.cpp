@@ -199,7 +199,8 @@ class ShadowWindow : public QWidget
 public:
     ShadowWindow(PanelView *panel)
        : QWidget(0),
-         m_panel(panel)
+         m_panel(panel),
+         m_valid(false)
     {
         setAttribute(Qt::WA_TranslucentBackground);
         setAttribute(Qt::WA_NoSystemBackground, false);
@@ -215,10 +216,22 @@ public:
 
     void setSvg(const QString &path)
     {
+        if (!m_shadow->hasElementPrefix("shadow")) {
+            hide();
+            m_valid = false;
+        } else {
+            m_valid = true;
+        }
+
         m_shadow->setImagePath(path);
         m_shadow->setElementPrefix("shadow");
 
         adjustMargins();
+    }
+
+    bool isValid() const
+    {
+        return m_valid;
     }
 
 protected:
@@ -275,6 +288,7 @@ protected:
 private:
     Plasma::FrameSvg *m_shadow;
     PanelView *m_panel;
+    bool m_valid;
 };
 
 PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
@@ -459,7 +473,9 @@ void PanelView::checkShadow()
         int left, right, top, bottom;
         m_shadowWindow->getContentsMargins(&left, &right, &top, &bottom);
         m_shadowWindow->setGeometry(geometry().adjusted(-left, -top, right, bottom));
-        m_shadowWindow->show();
+        if (m_shadowWindow->isValid()) {
+            m_shadowWindow->show();
+        }
     } else {
         m_shadowWindow->deleteLater();
         m_shadowWindow = 0;
@@ -1350,7 +1366,7 @@ void PanelView::unhide(bool destroyTrigger)
         show();
         KWindowSystem::setOnAllDesktops(winId(), true);
 
-        if (m_shadowWindow) {
+        if (m_shadowWindow && m_shadowWindow->isValid()) {
             Plasma::WindowEffects::slideWindow(m_shadowWindow, location());
             m_shadowWindow->show();
             KWindowSystem::setState(m_shadowWindow->winId(), NET::KeepBelow);
