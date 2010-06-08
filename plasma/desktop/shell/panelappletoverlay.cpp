@@ -375,29 +375,31 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
     m_applet->setGeometry(g);
 
     //FIXME: assumption on how panel containment works, presence of a non applet spacer in last position (if they were swapped would be impossible to save and restore)
-    const bool prevIsApplet = dynamic_cast<Plasma::Applet*>(m_layout->itemAt(m_index - 1)) != 0;
-    const bool nextIsApplet = dynamic_cast<Plasma::Applet*>(m_layout->itemAt(m_index + 1)) != 0;
+    if (m_index > 0 && m_layout->itemAt(m_index - 1)) {
+        const bool prevIsApplet = dynamic_cast<Plasma::Applet*>(m_layout->itemAt(m_index - 1)) != 0;
+        const bool nextIsApplet = dynamic_cast<Plasma::Applet*>(m_layout->itemAt(m_index + 1)) != 0;
 
 
-    // swap items if we pass completely over the next/previous item or cross
-    // more than halfway across it, whichever comes first
-    if (m_orientation == Qt::Horizontal) {
-        //kDebug() << prevIsApplet << m_prevGeom << g << nextIsApplet << m_nextGeom;
-        if (QApplication::layoutDirection() == Qt::RightToLeft) {
-            if (prevIsApplet && m_prevGeom.isValid() && g.right() >= m_prevGeom.right()) {
+        // swap items if we pass completely over the next/previous item or cross
+        // more than halfway across it, whichever comes first
+        if (m_orientation == Qt::Horizontal) {
+            //kDebug() << prevIsApplet << m_prevGeom << g << nextIsApplet << m_nextGeom;
+            if (QApplication::layoutDirection() == Qt::RightToLeft) {
+                if (prevIsApplet && m_prevGeom.isValid() && g.right() >= m_prevGeom.right()) {
+                    swapWithPrevious();
+                } else if (nextIsApplet && m_nextGeom.isValid() && g.left() <= m_nextGeom.left()) {
+                    swapWithNext();
+                }
+            } else if (prevIsApplet && m_prevGeom.isValid() && g.left() <= m_prevGeom.left()) {
                 swapWithPrevious();
-            } else if (nextIsApplet && m_nextGeom.isValid() && g.left() <= m_nextGeom.left()) {
+            } else if (nextIsApplet && m_nextGeom.isValid() && g.right() >= m_nextGeom.right()) {
                 swapWithNext();
             }
-        } else if (prevIsApplet && m_prevGeom.isValid() && g.left() <= m_prevGeom.left()) {
+        } else if (prevIsApplet && m_prevGeom.isValid() && g.top() <= m_prevGeom.top()) {
             swapWithPrevious();
-        } else if (nextIsApplet && m_nextGeom.isValid() && g.right() >= m_nextGeom.right()) {
+        } else if (nextIsApplet && m_nextGeom.isValid() && g.bottom() >= m_nextGeom.bottom()) {
             swapWithNext();
         }
-    } else if (prevIsApplet && m_prevGeom.isValid() && g.top() <= m_prevGeom.top()) {
-        swapWithPrevious();
-    } else if (nextIsApplet && m_nextGeom.isValid() && g.bottom() >= m_nextGeom.bottom()) {
-        swapWithNext();
     }
 
     m_lastGlobalPos = event->globalPos();
