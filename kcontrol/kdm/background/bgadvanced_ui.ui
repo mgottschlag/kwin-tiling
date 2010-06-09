@@ -96,7 +96,7 @@
 &lt;p>The &lt;b>Program&lt;/b> column shows the name of the program.&lt;br>
 The &lt;b>Comment&lt;/b> column brings a short description.&lt;br>
 The &lt;b>Refresh&lt;/b> column indicates the time interval between redraws of the desktop.&lt;/p>
-You can also add new compliant programs. To do that, click on the &lt;b>Add&lt;/b> button.&lt;br>
+&lt;p>You can also add new compliant programs. To do that, click on the &lt;b>Add&lt;/b> button.&lt;br>
 You can also remove programs from this list clicking on the &lt;b>Remove&lt;/b> button. Please note that it does not remove the program from your system, it only removes it from the available options in this listbox.&lt;/p>
 &lt;/qt></string>
         </property>
