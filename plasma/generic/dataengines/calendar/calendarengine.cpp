@@ -224,6 +224,7 @@ bool CalendarEngine::holidayCalendarSourceRequest(const QString& key, const QStr
         if (region->isValid()) {
             m_regions.insert(regionCode, region);
         } else {
+            delete region;
             return false;
         }
     }
