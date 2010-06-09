@@ -566,6 +566,10 @@ void DesktopCorona::checkActivities()
     foreach (const QString &id, newActivities) {
         activityAdded(id);
     }
+    if (existingActivities.isEmpty()) {
+        //ensure the current activity is initialized
+        m_activityController->setCurrentActivity(newActivities.first());
+    }
 }
 
 void DesktopCorona::currentActivityChanged(const QString &newActivity)
