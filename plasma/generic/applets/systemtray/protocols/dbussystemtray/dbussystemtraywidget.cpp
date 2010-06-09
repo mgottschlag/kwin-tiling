@@ -171,6 +171,31 @@ void DBusSystemTrayWidget::setIcon(const QString &iconName, const QIcon &icon)
     }
 }
 
+void DBusSystemTrayWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    Plasma::IconWidget::paint(painter, option, widget);
+    if (!svg().isEmpty()) {
+        int size = 0;
+        if (iconSize().width() <= KIconLoader::SizeSmallMedium) {
+            size = KIconLoader::SizeSmall/2;
+        } else if (iconSize().width() <= KIconLoader::SizeMedium) {
+            size = KIconLoader::SizeSmall/2;
+        } else {
+            size = KIconLoader::SizeSmall;
+        }
+        m_overlayIcon.paint(painter, QRect(option->rect.bottomRight() - QPoint(size, size), QSize(size, size)));
+    }
+}
+
+void DBusSystemTrayWidget::setOverlayIcon(const QIcon &icon)
+{
+    m_overlayIcon = icon;
+}
+
+QIcon DBusSystemTrayWidget::overlayIcon() const
+{
+    return m_overlayIcon;
+}
 
 }
 

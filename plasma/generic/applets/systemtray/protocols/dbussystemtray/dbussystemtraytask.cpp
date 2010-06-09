@@ -183,11 +183,19 @@ void DBusSystemTrayTask::dataUpdated(const QString &taskName, const Plasma::Data
                 properties["ToolTipSubTitle"].toString(),
                 properties["ToolTipIcon"].value<QIcon>());
 
+    //FIXME: this is used only on the monochrome ones, the third place where the overlay painting is implemented
+    QIcon overlayIcon = properties["OverlayIcon"].value<QIcon>();
+    if (overlayIcon.isNull() && !properties["OverlayIconName"].value<QString>().isEmpty()) {
+        overlayIcon = KIcon(properties["OverlayIconName"].value<QString>());
+    }
 
     foreach (QGraphicsWidget *widget, widgetsByHost()) {
         DBusSystemTrayWidget *iconWidget = qobject_cast<DBusSystemTrayWidget *>(widget);
         if (iconWidget) {
             iconWidget->setItemIsMenu(properties["WindowId"].toInt() == 0);
+            if (!overlayIcon.isNull()) {
+                iconWidget->setOverlayIcon(overlayIcon);
+            }
         }
     }
 

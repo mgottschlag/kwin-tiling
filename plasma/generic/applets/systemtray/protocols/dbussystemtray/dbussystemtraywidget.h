@@ -43,6 +43,9 @@ public:
     void setItemIsMenu(bool itemIsMenu);
     bool itemIsMenu() const;
 
+    void setOverlayIcon(const QIcon &icon);
+    QIcon overlayIcon() const;
+
 Q_SIGNALS:
     void clicked(const QPoint &pos);
 
@@ -51,6 +54,7 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void wheelEvent(QGraphicsSceneWheelEvent *event);
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private Q_SLOTS:
     void calculateShowPosition();
@@ -59,6 +63,7 @@ private Q_SLOTS:
 private:
     Plasma::Service *m_service;
     Plasma::Applet *m_host;
+    QIcon m_overlayIcon;
     bool m_itemIsMenu;
     bool m_waitingOnContextMenu;
 };
