@@ -1181,6 +1181,7 @@ void PanelView::updateStruts()
         if (m_panelController->isVisible()) {
             m_panelController->resize(m_panelController->sizeHint());
             m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
+            Plasma::WindowEffects::slideWindow(m_panelController, location());
         }
 
         foreach (PanelAppletOverlay *o, m_appletOverlays) {
