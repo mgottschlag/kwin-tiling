@@ -227,6 +227,8 @@ public:
 
     void setSvg(const QString &path)
     {
+        m_shadow->setImagePath(path);
+
         if (!m_shadow->hasElementPrefix("shadow")) {
             hide();
             m_valid = false;
@@ -234,7 +236,6 @@ public:
             m_valid = true;
         }
 
-        m_shadow->setImagePath(path);
         m_shadow->setElementPrefix("shadow");
 
         adjustMargins();
