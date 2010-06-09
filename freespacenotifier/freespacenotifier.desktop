@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Free Space Notifier
 Name[ca]=Notificador d'espai lliure
+Name[ca@valencia]=Notificador d'espai lliure
 Name[cs]=Oznamování volného místa
 Name[da]=Bekendtgørelse om ledig plads
 Name[de]=Speicherplatzbenachrichtigung
@@ -28,6 +29,7 @@ Name[zh_CN]=空闲空间通知器
 Name[zh_TW]=剩餘空間通知
 Comment=Warns when running out of space on your home folder
 Comment[ca]=Avisa quan s'exhaureix l'espai de la carpeta personal
+Comment[ca@valencia]=Avisa quan s'exhaureix l'espai de la carpeta personal
 Comment[da]=Advarer når du er ved at løbe tør for plads i din hjemmemappe
 Comment[de]=Gibt eine Warnung aus, wenn der freie Speicherplatz in Ihrem Persönlichen Ordner knapp wird
 Comment[en_GB]=Warns when running out of space on your home folder

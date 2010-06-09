@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Hard Disk Status
 Name[ca]=Estat del disc dur
+Name[ca@valencia]=Estat del disc dur
 Name[cs]=Stav pevného disku
 Name[da]=Harddisk-status
 Name[de]=Festplattenstatus

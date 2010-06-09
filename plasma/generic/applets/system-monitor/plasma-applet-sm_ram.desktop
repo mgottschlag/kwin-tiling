@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Memory Status
 Name[ca]=Estat de la memòria
+Name[ca@valencia]=Estat de la memòria
 Name[cs]=Stav paměti
 Name[da]=Hukommelsesstatus
 Name[de]=Speicherstatus

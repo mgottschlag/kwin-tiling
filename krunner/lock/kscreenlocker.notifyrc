@@ -2,6 +2,7 @@
 IconName=system-lock-screen
 Comment=Screen Saver
 Comment[ca]=Estalvi de pantalla
+Comment[ca@valencia]=Estalvi de pantalla
 Comment[cs]=Šetřič obrazovky
 Comment[da]=Pauseskærm
 Comment[de]=Bildschirmschoner

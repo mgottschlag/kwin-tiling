@@ -84,6 +84,7 @@ Name[zh_CN]=通知
 Name[zh_TW]=通知
 Comment=Display notifications and jobs
 Comment[ca]=Mostra les notificacions i els treballs
+Comment[ca@valencia]=Mostra les notificacions i els treballs
 Comment[cs]=Oznámení a úlohy
 Comment[da]=Vis bekendtgørelser og job
 Comment[de]=Benachrichtigungen und Aktionen anzeigen

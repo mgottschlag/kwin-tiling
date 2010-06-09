@@ -11,6 +11,7 @@ X-KDE-ParentApp=kcontrol
 
 Name=Custom Shortcuts
 Name[ca]=Dreceres personalitzades
+Name[ca@valencia]=Dreceres personalitzades
 Name[cs]=Vlastní zkratky
 Name[da]=Brugervalgte genveje
 Name[de]=Eigene Kurzbefehle
