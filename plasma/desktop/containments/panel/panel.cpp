@@ -303,7 +303,7 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 void Panel::delayedUpdateSize()
 {
     m_lastResizedApplet = qobject_cast<Plasma::Applet *>(sender());
-    QTimer::singleShot(800, this, SLOT(updateSize()));
+    QTimer::singleShot(0, this, SLOT(updateSize()));
 }
 
 void Panel::appletRemoved(Plasma::Applet* applet)
