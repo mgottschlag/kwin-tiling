@@ -62,7 +62,7 @@ Center Modules</link>
 <title>Starting the &infocenter;</title>
 
 <para>
-The &infocenter; can be started 3 ways:
+The &infocenter; can be started in 3 ways:
 </para>
 
 <orderedlist> 
@@ -178,9 +178,9 @@ This button opens khelpcenter with the current help page for the information mod
 
 </sect1>
 <sect1 id="info-center-exiting">
-<title>Exiting The &kde; Information Centre</title>
+<title>Exiting The &kde; Information Center</title>
 
-<para>You can exit the info centre one of three ways: </para>
+<para>You can exit the info center one of two ways: </para>
 <itemizedlist>
 <listitem>
 <para>
@@ -189,7 +189,7 @@ Type <keycombo action="simul">&Ctrl;<keycap>Q</keycap></keycombo> on the keyboar
 </listitem>
 
 <listitem>
-<para>Click on the <guiicon>Close</guiicon> button on the frame surrounding the info centre.</para>
+<para>Click on the <guiicon>Close</guiicon> button on the frame surrounding the info center.</para>
 </listitem>
 </itemizedlist>
 </sect1>
