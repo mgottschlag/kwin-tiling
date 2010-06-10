@@ -497,6 +497,13 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         }
         m_autoHideUi.icons->setItemWidget(listItem, 2, button);
         m_autoHideUi.icons->addTopLevelItem(listItem);
+
+        // try to make sure we have enough width!
+        int totalWidth = 0;
+        for (int i = 0; i < m_autoHideUi.icons->header()->count(); ++i) {
+            totalWidth += m_autoHideUi.icons->columnWidth(i);
+        }
+        m_autoHideUi.icons->setMinimumWidth(totalWidth + style()->pixelMetric(QStyle::PM_ScrollBarExtent));
     }
 
 
