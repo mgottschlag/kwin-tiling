@@ -102,15 +102,22 @@ void DefaultDesktop::onAppletRemoved(Plasma::Applet *applet)
     }
 }
 
+void DefaultDesktop::delayedPositionsAdjust()
+{
+    m_layout->adjustPhysicalPositions();
+}
+
 void DefaultDesktop::onAppletTransformedByUser()
 {
     m_layout->itemTransformed((Applet *)sender(), DesktopLayout::ItemTransformUser);
+    QTimer::singleShot(1000, this, SLOT(delayedPositionsAdjust()));
     m_layout->adjustPhysicalPositions();
 }
 
 void DefaultDesktop::onAppletTransformedItself()
 {
     m_layout->itemTransformed((Applet *)sender(), DesktopLayout::ItemTransformSelf);
+    QTimer::singleShot(1000, this, SLOT(delayedPositionsAdjust()));
     m_layout->adjustPhysicalPositions();
 }
 
@@ -124,7 +131,7 @@ void DefaultDesktop::refreshWorkingArea()
     }
 
     QRectF workingGeom;
-    if (screen() != -1 && screen() < c->numScreens()) {
+    if (1||(screen() != -1 && screen() < c->numScreens())) {
         // we are associated with a screen, make sure not to overlap panels
         workingGeom = c->availableScreenRegion(screen()).boundingRect();
         //kDebug() << "got" << workingGeom;
