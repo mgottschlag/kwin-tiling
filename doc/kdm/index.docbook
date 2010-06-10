@@ -941,7 +941,7 @@ and they are granted access.</para>
 <para>If you permit a user image, then you can configure the <guilabel>
 User Image Source</guilabel>:</para>
 
-<para>"Here you can specify where &kdm; will obtain the images that represent users. 
+<para>Here you can specify where &kdm; will obtain the images that represent users. 
 <guilabel>System</guilabel> represents the global folder; these are the pictures you can set 
 below. <guilabel>User</guilabel> means that &kdm; should read the user's 
 <filename>$<envar>HOME</envar>/.face.icon</filename> file. 
