@@ -297,7 +297,13 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     //FIXME: there must be some beter way to do this rather than this rather error prone arbitrary wait
     m_lastSpaceTimer->start(2000);
 
-    connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
+    connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(delayedUpdateSize()));
+}
+
+void Panel::delayedUpdateSize()
+{
+    m_lastResizedApplet = qobject_cast<Plasma::Applet *>(sender());
+    QTimer::singleShot(800, this, SLOT(updateSize()));
 }
 
 void Panel::appletRemoved(Plasma::Applet* applet)
@@ -306,7 +312,7 @@ void Panel::appletRemoved(Plasma::Applet* applet)
         return;
     }
 
-    connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
+    connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(delayedUpdateSize()));
 
     m_layout->removeItem(applet);
 
@@ -324,6 +330,7 @@ void Panel::appletRemoved(Plasma::Applet* applet)
 void Panel::updateSize()
 {
     Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(sender());
+    applet = m_lastResizedApplet.data();
 
     if (m_canResize && applet) {
         if (formFactor() == Plasma::Horizontal) {
@@ -681,7 +688,7 @@ void Panel::restore(KConfigGroup &group)
             unoderedApplets.append(applet);
         }
 
-        connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
+        connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(delayedUpdateSize()));
     }
 
     foreach (Applet *applet, oderedApplets) {
