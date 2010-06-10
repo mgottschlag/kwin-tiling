@@ -22,6 +22,7 @@
 
 //Qt
 #include <QtCore/QDate>
+#include <QtCore/QListIterator>
 #include <QtGui/QPainter>
 #include <QtGui/QWidget>
 #include <QtGui/QGraphicsSceneWheelEvent>
@@ -579,14 +580,15 @@ void CalendarTable::populateHolidays()
     // Just fetch the days displayed in the grid
     QDate startDate = d->dateFromRowColumn(0, 0);
     QDate endDate = d->dateFromRowColumn(DISPLAYED_WEEKS - 1, d->daysInWeek - 1);
-    Plasma::DataEngine::Data holidays = d->dataEngine->query("holidays:" + holidaysRegion() + ':'
-                                                             + startDate.toString(Qt::ISODate) + ':'
-                                                             + endDate.toString(Qt::ISODate));
+    QString queryString = "holidays:" + holidaysRegion() + ':' + startDate.toString(Qt::ISODate)
+                          + ':' + endDate.toString(Qt::ISODate);
+    QList<QVariant> holidays = d->dataEngine->query(queryString).value(queryString).toList();
 
-    Plasma::DataEngine::DataIterator i(holidays);
+    QMutableListIterator<QVariant> i(holidays);
     while (i.hasNext()) {
-        i.next();
-        addHoliday(QDate::fromString(i.key(), Qt::ISODate), i.value().toHash());
+        Plasma::DataEngine::Data holidayData = i.next().toHash();
+        QDate holidayDate = QDate::fromString(holidayData.take("date").toString(), Qt::ISODate);
+        addHoliday(holidayDate, holidayData);
     }
 }
 
