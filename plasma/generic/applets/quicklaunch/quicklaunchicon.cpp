@@ -68,26 +68,31 @@ void QuicklaunchIcon::clear()
 
 void QuicklaunchIcon::setUrl(const KUrl &url)
 {
-    if (url == m_appUrl) {
+    // Takes care of improperly escaped characters and resolves paths
+    // into file:/// URLs
+    KUrl newUrl(url.url());
+
+    if (newUrl == m_appUrl) {
         return;
     }
 
-    m_appUrl = url;
+    m_appUrl = newUrl;
 
     KIcon icon;
 
-    if (url.isLocalFile() && KDesktopFile::isDesktopFile(url.toLocalFile())) {
-        KDesktopFile f(url.toLocalFile());
+    if (m_appUrl.isLocalFile() &&
+        KDesktopFile::isDesktopFile(m_appUrl.toLocalFile())) {
+        KDesktopFile f(m_appUrl.toLocalFile());
 
         icon = KIcon(f.readIcon());
         m_appName = f.readName();
         m_appGenericName = f.readGenericName();
     } else {
-        icon = KIcon(KMimeType::iconNameForUrl(url));
+        icon = KIcon(KMimeType::iconNameForUrl(m_appUrl));
     }
 
     if (m_appName.isNull()) {
-        m_appName = url.fileName();
+        m_appName = m_appUrl.fileName();
     }
 
     if (icon.isNull()) {

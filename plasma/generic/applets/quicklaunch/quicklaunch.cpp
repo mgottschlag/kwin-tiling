@@ -324,6 +324,15 @@ void Quicklaunch::onDialogArrowClicked()
     }
 }
 
+void Quicklaunch::onDialogIconClicked()
+{
+    Q_ASSERT(m_dialog);
+
+    if (m_dialog->isVisible()) {
+        m_dialog->hide();
+    }
+}
+
 void Quicklaunch::onRemoveIconAction()
 {
     Q_ASSERT(m_currentIconGrid);
@@ -448,6 +457,7 @@ void Quicklaunch::initDialog()
     m_dialogIconGrid->installEventFilter(this);
     connect(m_dialogIconGrid, SIGNAL(iconsChanged()), SLOT(onIconsChanged()));
     connect(m_dialogIconGrid, SIGNAL(displayedItemCountChanged()), SLOT(onDisplayedItemsChanged()));
+    connect(m_dialogIconGrid, SIGNAL(iconClicked()), this, SLOT(onDialogIconClicked()));
 
     m_dialog->setGraphicsWidget(m_dialogIconGrid);
 

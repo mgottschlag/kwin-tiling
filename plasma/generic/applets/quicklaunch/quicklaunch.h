@@ -67,6 +67,7 @@ private Q_SLOTS:
     void onIconsChanged();
     void onDisplayedItemsChanged();
     void onDialogArrowClicked();
+    void onDialogIconClicked();
     void onAddIconAction();
     void onRemoveIconAction();
 

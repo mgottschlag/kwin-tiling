@@ -92,6 +92,11 @@ Q_SIGNALS:
      */
     void iconsChanged();
 
+    /**
+     * Indicates that one of the launcher items was clicked.
+     */
+    void iconClicked();
+
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
     void dragMoveEvent(QGraphicsSceneDragDropEvent *event);

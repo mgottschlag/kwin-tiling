@@ -201,6 +201,7 @@ void IconGrid::insert(int index, const KUrl &url)
 
     QuicklaunchIcon *icon = new QuicklaunchIcon(url, this);
     icon->installEventFilter(this);
+    connect(icon, SIGNAL(clicked()), this, SIGNAL(iconClicked()));
 
     if (m_iconNamesVisible)
         icon->setText(icon->appName());
@@ -361,6 +362,7 @@ void IconGrid::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
             event->setDropAction(Qt::MoveAction);
 
             QList<QUrl> urls = mimeData->urls();
+            Q_ASSERT(urls.size() > 0);
 
             m_dropMarker->setUrl(urls.at(0));
             if (m_iconNamesVisible) {
