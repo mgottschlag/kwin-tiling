@@ -123,7 +123,7 @@ void DBusSystemTrayTask::dataUpdated(const QString &taskName, const Plasma::Data
 {
     Q_UNUSED(taskName);
 
-    QString oldTypeId = m_typeId;
+    const QString oldTypeId = m_typeId;
 
     QString cat = properties["Category"].toString();
     if (!cat.isEmpty()) {
@@ -135,20 +135,79 @@ void DBusSystemTrayTask::dataUpdated(const QString &taskName, const Plasma::Data
         }
     }
 
-    QString m_title = properties["Title"].toString();
-    if (!m_title.isEmpty()) {
-        m_name = m_title;
+    if (properties["TitleChanged"].toBool()) {
+        QString m_title = properties["Title"].toString();
+        if (!m_title.isEmpty()) {
+            m_name = m_title;
 
-        if (m_typeId.isEmpty()) {
-            m_typeId = m_title;
+            if (m_typeId.isEmpty()) {
+                m_typeId = m_title;
+            }
         }
     }
+
+    /*
+    kDebug() << m_name
+    << "status:" << properties["StatusChanged"].toBool() << "title:" <<  properties["TitleChanged"].toBool()
+    << "icons:" << properties["IconsChanged"].toBool() << "tooltip:" << properties["ToolTipChanged"].toBool();
+    */
 
     QString id = properties["Id"].toString();
     if (!id.isEmpty()) {
         m_typeId = id;
     }
 
+    if (properties["IconsChanged"].toBool()) {
+        syncIcons(properties);
+    }
+
+    if (properties["StatusChanged"].toBool()) {
+        syncStatus(properties["Status"].toString());
+    }
+
+    if (properties["ToolTipChanged"].toBool()) {
+        syncToolTip(properties["ToolTipTitle"].toString(),
+                    properties["ToolTipSubTitle"].toString(),
+                    properties["ToolTipIcon"].value<QIcon>());
+    }
+
+    foreach (QGraphicsWidget *widget, widgetsByHost()) {
+        DBusSystemTrayWidget *iconWidget = qobject_cast<DBusSystemTrayWidget *>(widget);
+        if (iconWidget) {
+            iconWidget->setItemIsMenu(properties["WindowId"].toInt() == 0);
+        }
+    }
+
+    if (m_typeId != oldTypeId) {
+        QHash<Plasma::Applet *, QGraphicsWidget *>::const_iterator i = widgetsByHost().constBegin();
+        while (i != widgetsByHost().constEnd()) {
+            Plasma::IconWidget *icon = static_cast<Plasma::IconWidget *>(i.value());
+            icon->action()->setObjectName(QString("Systemtray-%1-%2").arg(m_typeId).arg(i.key()->id()));
+
+            KConfigGroup cg = i.key()->config();
+            KConfigGroup shortcutsConfig = KConfigGroup(&cg, "Shortcuts");
+            QString shortcutText = shortcutsConfig.readEntryUntranslated(icon->action()->objectName(), QString());
+            KAction *action = qobject_cast<KAction *>(icon->action());
+            if (action && !shortcutText.isEmpty()) {
+                action->setGlobalShortcut(KShortcut(shortcutText),
+                            KAction::ShortcutTypes(KAction::ActiveShortcut | KAction::DefaultShortcut),
+                            KAction::NoAutoloading);
+            }
+
+            ++i;
+        }
+    }
+
+    m_embeddable = true;
+
+    if (oldTypeId != m_typeId || properties["StatusChanged"].toBool() || properties["TitleChanged"].toBool()) {
+        //kDebug() << "signaling a change";
+        emit changed(this);
+    }
+}
+
+void DBusSystemTrayTask::syncIcons(const Plasma::DataEngine::Data &properties)
+{
     m_icon = properties["Icon"].value<QIcon>();
     m_iconName = properties["IconName"].toString();
 
@@ -177,51 +236,20 @@ void DBusSystemTrayTask::dataUpdated(const QString &taskName, const Plasma::Data
     QString m_movieName = properties["AttentionMovieName"].toString();
     syncMovie(m_movieName);
 
-    syncStatus(properties["Status"].toString());
-
-    syncToolTip(properties["ToolTipTitle"].toString(),
-                properties["ToolTipSubTitle"].toString(),
-                properties["ToolTipIcon"].value<QIcon>());
-
     //FIXME: this is used only on the monochrome ones, the third place where the overlay painting is implemented
     QIcon overlayIcon = properties["OverlayIcon"].value<QIcon>();
     if (overlayIcon.isNull() && !properties["OverlayIconName"].value<QString>().isEmpty()) {
         overlayIcon = KIcon(properties["OverlayIconName"].value<QString>());
     }
 
-    foreach (QGraphicsWidget *widget, widgetsByHost()) {
-        DBusSystemTrayWidget *iconWidget = qobject_cast<DBusSystemTrayWidget *>(widget);
-        if (iconWidget) {
-            iconWidget->setItemIsMenu(properties["WindowId"].toInt() == 0);
-            if (!overlayIcon.isNull()) {
+    if (!overlayIcon.isNull()) {
+        foreach (QGraphicsWidget *widget, widgetsByHost()) {
+            DBusSystemTrayWidget *iconWidget = qobject_cast<DBusSystemTrayWidget *>(widget);
+            if (iconWidget) {
                 iconWidget->setOverlayIcon(overlayIcon);
             }
         }
     }
-
-    if (m_typeId != oldTypeId) {
-        QHash<Plasma::Applet *, QGraphicsWidget *>::const_iterator i = widgetsByHost().constBegin();
-        while (i != widgetsByHost().constEnd()) {
-            Plasma::IconWidget *icon = static_cast<Plasma::IconWidget *>(i.value());
-            icon->action()->setObjectName(QString("Systemtray-%1-%2").arg(m_typeId).arg(i.key()->id()));
-
-            KConfigGroup cg = i.key()->config();
-            KConfigGroup shortcutsConfig = KConfigGroup(&cg, "Shortcuts");
-            QString shortcutText = shortcutsConfig.readEntryUntranslated(icon->action()->objectName(), QString());
-            KAction *action = qobject_cast<KAction *>(icon->action());
-            if (action && !shortcutText.isEmpty()) {
-                action->setGlobalShortcut(KShortcut(shortcutText),
-                            KAction::ShortcutTypes(KAction::ActiveShortcut | KAction::DefaultShortcut),
-                            KAction::NoAutoloading);
-            }
-
-            ++i;
-        }
-    }
-
-    m_embeddable = true;
-
-    emit changed(this);
 }
 
 void DBusSystemTrayTask::blinkAttention()
