@@ -195,6 +195,7 @@ NetToolBox::NetToolBox(Plasma::Containment *parent)
     containmentGeometryChanged();
 
     slideAnim = Plasma::Animator::create(Plasma::Animator::SlideAnimation, this);
+    slideAnim->setProperty("movementDirection", Plasma::Animation::MoveAny);
     connect(slideAnim, SIGNAL(stateChanged(QAbstractAnimation::State,
                         QAbstractAnimation::State)),
                 this, SLOT(onMovement(QAbstractAnimation::State, QAbstractAnimation::State)));
@@ -228,20 +229,20 @@ void NetToolBox::setShowing(const bool show)
         switch (m_location) {
         case Plasma::TopEdge:
             m_toolContainer->setPos(boundingRect().topLeft() - QPoint(0, m_toolContainer->size().height()));
-            slideAnim->setProperty("distancePointF", QPointF(-m_toolContainer->size().height(), 0));
+            slideAnim->setProperty("distancePointF", QPointF(0, m_toolContainer->size().height()));
             break;
         case Plasma::LeftEdge:
             m_toolContainer->setPos(boundingRect().topLeft() - QPoint(m_toolContainer->size().width(), 0));
-            slideAnim->setProperty("distancePointF", QPointF(0, -m_toolContainer->size().height()));
+            slideAnim->setProperty("distancePointF", QPointF(m_toolContainer->size().width(), 0));
             break;
         case Plasma::RightEdge:
             m_toolContainer->setPos(boundingRect().topRight());
-            slideAnim->setProperty("distancePointF", QPointF(0, -m_toolContainer->size().height()));
+            slideAnim->setProperty("distancePointF", QPointF(-m_toolContainer->size().width(), 0));
             break;
         case Plasma::BottomEdge:
         default:
             m_toolContainer->setPos(boundingRect().bottomLeft());
-            slideAnim->setProperty("distancePointF", QPointF(m_toolContainer->size().height(), 0));
+            slideAnim->setProperty("distancePointF", QPointF(0, m_toolContainer->size().height()));
             break;
         }
 
