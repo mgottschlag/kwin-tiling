@@ -130,6 +130,21 @@ void KCMKeyboardWidget::uiChanged()
 //    	keyboardConfig->xkbOptions.removeAll(RESET_XKB_OPTIONS);
 //    }
 
+	if( uiWidget->switchByDesktopRadioBtn->isChecked() ) {
+		keyboardConfig->switchingPolicy = KeyboardConfig::SWITCH_POLICY_DESKTOP;
+	}
+	else
+	if( uiWidget->switchByApplicationRadioBtn->isChecked() ) {
+		keyboardConfig->switchingPolicy = KeyboardConfig::SWITCH_POLICY_APPLICATION;
+	}
+	else
+	if( uiWidget->switchByWindowRadioBtn->isChecked() ) {
+		keyboardConfig->switchingPolicy = KeyboardConfig::SWITCH_POLICY_WINDOW;
+	}
+	else {
+		keyboardConfig->switchingPolicy = KeyboardConfig::SWITCH_POLICY_GLOBAL;
+	}
+
 	updateXkbShortcutsButtons();
 	emit changed(true);
 }
