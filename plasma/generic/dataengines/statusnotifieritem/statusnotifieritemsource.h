@@ -53,6 +53,7 @@ Q_SIGNALS:
 private slots:
     void contextMenuReady();
     void refresh();
+    void performRefresh();
     void syncStatus(QString);
     void refreshCallback(QDBusPendingCallWatcher *);
 
@@ -66,9 +67,12 @@ private:
     bool m_valid;
     QString m_typeId;
     QString m_name;
+    QTimer m_refreshTimer;
     KIconLoader *m_customIconLoader;
     DBusMenuImporter *m_menuImporter;
     org::kde::StatusNotifierItem *m_statusNotifierItemInterface;
+    bool m_refreshing;
+    bool m_needsReRefreshing;
 };
 
 #endif // STATUSNOTIFIERITEMSOURCE_H

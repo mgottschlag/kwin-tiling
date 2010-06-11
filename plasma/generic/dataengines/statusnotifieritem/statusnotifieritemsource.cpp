@@ -64,7 +64,9 @@ private:
 StatusNotifierItemSource::StatusNotifierItemSource(const QString &notifierItemId, QObject *parent)
     : Plasma::DataContainer(parent),
       m_customIconLoader(0),
-      m_menuImporter(0)
+      m_menuImporter(0),
+      m_refreshing(false),
+      m_needsReRefreshing(false)
 {
     setObjectName(notifierItemId);
     qDBusRegisterMetaType<KDbusImageStruct>();
@@ -86,6 +88,10 @@ StatusNotifierItemSource::StatusNotifierItemSource(const QString &notifierItemId
 
     m_statusNotifierItemInterface = new org::kde::StatusNotifierItem(service, path,
                                                                      QDBusConnection::sessionBus(), this);
+
+    m_refreshTimer.setSingleShot(true);
+    m_refreshTimer.setInterval(10);
+    connect(&m_refreshTimer, SIGNAL(timeout()), this, SLOT(performRefresh()));
 
     m_valid = !service.isEmpty() && m_statusNotifierItemInterface->isValid();
     if (m_valid) {
@@ -122,6 +128,17 @@ void StatusNotifierItemSource::syncStatus(QString status)
 
 void StatusNotifierItemSource::refresh()
 {
+    m_refreshTimer.start();
+}
+
+void StatusNotifierItemSource::performRefresh()
+{
+    if (m_refreshing) {
+        m_needsReRefreshing = true;
+        return;
+    }
+
+    m_refreshing = true;
     QDBusMessage message = QDBusMessage::createMethodCall(m_statusNotifierItemInterface->service(),
                                                           m_statusNotifierItemInterface->path(), "org.freedesktop.DBus.Properties", "GetAll");
 
@@ -136,6 +153,13 @@ void StatusNotifierItemSource::refresh()
   */
 void StatusNotifierItemSource::refreshCallback(QDBusPendingCallWatcher *call)
 {
+    m_refreshing = false;
+    if (m_needsReRefreshing) {
+        m_needsReRefreshing = false;
+        performRefresh();
+        return;
+    }
+
     QDBusPendingReply<QVariantMap> reply = *call;
     if (reply.isError()) {
         m_valid = false;
