@@ -60,7 +60,7 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
         m_appletsContainer->m_appletActivationTimer->stop();
         foreach (Plasma::Applet *applet, m_appletsContainer->containment()->applets()) {
             if (applet->isAncestorOf(watched)) {
-                if (applet == m_appletsContainer->m_currentApplet.data() || applet == m_appletsContainer->m_pendingCurrentApplet) {
+                if (applet == m_appletsContainer->m_currentApplet.data() || applet == m_appletsContainer->m_pendingCurrentApplet.data()) {
                     return Plasma::ScrollWidget::sceneEventFilter(watched, event);
                 }
 

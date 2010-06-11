@@ -46,7 +46,6 @@ AppletsContainer::AppletsContainer(AppletsView *parent)
  : QGraphicsWidget(parent),
    m_scrollWidget(parent),
    m_orientation(Qt::Vertical),
-   m_pendingCurrentApplet(0),
    m_viewportSize(size()),
    m_containment(0),
    m_automaticAppletLayout(true),
@@ -448,7 +447,7 @@ void AppletsContainer::mousePressEvent(QGraphicsSceneMouseEvent *event)
         m_scrollWidget->setSnapSize(QSizeF());
     }
 
-    m_pendingCurrentApplet = 0;
+    m_pendingCurrentApplet.clear();
     m_currentApplet.clear();
 
     QGraphicsWidget::mousePressEvent(event);
@@ -456,8 +455,13 @@ void AppletsContainer::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void AppletsContainer::delayedAppletActivation()
 {
-    m_currentApplet = m_pendingCurrentApplet;
-    m_pendingCurrentApplet = 0;
+    if (!m_pendingCurrentApplet) {
+        m_currentApplet.clear();
+        return;
+    }
+
+    m_currentApplet = m_pendingCurrentApplet.data();
+
     if (m_orientation == Qt::Horizontal || (!m_expandAll && !m_currentApplet)) {
         m_scrollWidget->setSnapSize(m_scrollWidget->viewportGeometry().size()/2);
     } else {

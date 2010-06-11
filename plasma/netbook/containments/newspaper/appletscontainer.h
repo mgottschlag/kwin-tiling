@@ -97,7 +97,7 @@ private:
     QGraphicsLinearLayout *m_mainLayout;
     Qt::Orientation m_orientation;
     QWeakPointer<Plasma::Applet>m_currentApplet;
-    Plasma::Applet *m_pendingCurrentApplet;
+    QWeakPointer<Plasma::Applet>m_pendingCurrentApplet;
     QSizeF m_viewportSize;
     Plasma::Containment *m_containment;
     bool m_automaticAppletLayout;
