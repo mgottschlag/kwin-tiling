@@ -245,7 +245,7 @@ void UKMETIon::getXMLData(const QString& source)
 void UKMETIon::findPlace(const QString& place, const QString& source)
 {
     KUrl url;
-    url = "http://news.bbc.co.uk/weather/util/search/SearchResultsNode.xhtml?&search=" + place +"&region=world&startIndex=1&count=500";
+    url = "http://news.bbc.co.uk/weather/util/search/SearchResultsNode.xhtml?&search=" + place + "&region=world&startIndex=0&count=500";
 
     m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
     m_job->addMetaData("cookies", "none"); // Disable displaying cookies
