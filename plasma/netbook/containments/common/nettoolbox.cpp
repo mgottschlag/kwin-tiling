@@ -247,24 +247,11 @@ void NetToolBox::setShowing(const bool show)
         }
 
         slideAnim->setTargetWidget(m_toolContainer);
+        slideAnim->setDirection(QAbstractAnimation::Forward);
         slideAnim->start();
 
     } else {
-        switch (m_location) {
-        case Plasma::TopEdge:
-            m_toolContainer->setPos(0, 0);
-            break;
-        case Plasma::LeftEdge:
-            m_toolContainer->setPos(size().width()-m_toolContainer->size().width(), 0);
-            break;
-        case Plasma::RightEdge:
-            m_toolContainer->setPos(0, 0);
-            break;
-        case Plasma::BottomEdge:
-        default:
-            m_toolContainer->setPos(0, size().height()-m_toolContainer->size().height());
-            break;
-        }
+        slideAnim->setDirection(QAbstractAnimation::Backward);
         slideAnim->start();
     }
 }
