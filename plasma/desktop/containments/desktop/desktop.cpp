@@ -131,7 +131,7 @@ void DefaultDesktop::refreshWorkingArea()
     }
 
     QRectF workingGeom;
-    if (1||(screen() != -1 && screen() < c->numScreens())) {
+    if (screen() != -1 && screen() < c->numScreens()) {
         // we are associated with a screen, make sure not to overlap panels
         workingGeom = c->availableScreenRegion(screen()).boundingRect();
         //kDebug() << "got" << workingGeom;
