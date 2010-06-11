@@ -169,11 +169,15 @@ PlasmaAppletItemModel::PlasmaAppletItemModel(QObject * parent)
     KConfig config("plasmarc");
     m_configGroup = KConfigGroup(&config, "Applet Browser");
     m_favorites = m_configGroup.readEntry("favorites").split(',');
-    connect(KSycoca::self(), SIGNAL(databaseChanged()), this, SLOT(populateModel()));
+    connect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)), this, SLOT(populateModel(QStringList)));
 }
 
-void PlasmaAppletItemModel::populateModel()
+void PlasmaAppletItemModel::populateModel(const QStringList &whatChanged)
 {
+    if (!whatChanged.isEmpty() && !whatChanged.contains("services")) {
+        return;
+    }
+
     clear();
     //kDebug() << "populating model, our application is" << m_application;
 

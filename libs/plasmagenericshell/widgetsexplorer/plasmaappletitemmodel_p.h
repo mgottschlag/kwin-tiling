@@ -94,7 +94,7 @@ private:
     KConfigGroup m_configGroup;
 
 private slots:
-    void populateModel();
+    void populateModel(const QStringList &whatChanged = QStringList());
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(PlasmaAppletItem::FilterFlags)
