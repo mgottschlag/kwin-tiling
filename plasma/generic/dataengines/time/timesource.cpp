@@ -46,28 +46,22 @@ TimeSource::TimeSource(const QString &name, QObject *parent)
       m_sun(0),
       m_moon(0),
       m_moonPosition(false),
-      m_solarPosition(false)
+      m_solarPosition(false),
+      m_local(false)
 {
     setObjectName(name);
     setTimeZone(parseName(name));
-    updateTime();
 }
 
 void TimeSource::setTimeZone(const QString &tz)
 {
-    QString timezone = tz;
-    if (timezone == I18N_NOOP("Local")) {
-        m_tz = KSystemTimeZones::local();
-        timezone = m_tz.name();
-    } else {
-        m_tz = KSystemTimeZones::zone(timezone);
-
-        if (!m_tz.isValid()) {
-            m_tz = KSystemTimeZones::local();
-        }
+    m_tzName = tz;
+    m_local = m_tzName == I18N_NOOP("Local");
+    if (m_local) {
+        m_tzName = KSystemTimeZones::local().name();
     }
 
-    const QString trTimezone = i18n(timezone.toUtf8());
+    const QString trTimezone = i18n(m_tzName.toUtf8());
     setData(I18N_NOOP("Timezone"), trTimezone);
 
     const QStringList tzParts = trTimezone.split('/', QString::SkipEmptyParts);
@@ -78,6 +72,8 @@ void TimeSource::setTimeZone(const QString &tz)
         setData(I18N_NOOP("Timezone Continent"), tzParts.value(0));
         setData(I18N_NOOP("Timezone City"), tzParts.value(1));
     }
+
+    updateTime();
 }
 
 TimeSource::~TimeSource()
@@ -88,8 +84,18 @@ TimeSource::~TimeSource()
 
 void TimeSource::updateTime()
 {
+    KTimeZone tz;
+    if (m_local) {
+        tz = KSystemTimeZones::local();
+    } else {
+        tz = KSystemTimeZones::zone(m_tzName);
+        if (!tz.isValid()) {
+            tz = KSystemTimeZones::local();
+        }
+    }
+
     bool updateDailies = false;
-    QDateTime dt = KDateTime::currentDateTime(m_tz).dateTime();
+    QDateTime dt = KDateTime::currentDateTime(tz).dateTime();
 
     if (m_solarPosition || m_moonPosition) {
         QDate prev = data()["Date"].toDate();
@@ -103,7 +109,7 @@ void TimeSource::updateTime()
         dt = QDateTime(data()["Date"].toDate(), data()["Time"].toTime());
     }
 
-    int offset = m_tz.currentOffset();
+    int offset = tz.currentOffset();
     if (m_offset != offset) {
         m_offset = offset;
         setData(I18N_NOOP("Offset"), m_offset);

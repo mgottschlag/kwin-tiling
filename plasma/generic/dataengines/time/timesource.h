@@ -47,7 +47,6 @@ private:
     Moon* moon();
 
     QString m_tzName;
-    KTimeZone m_tz;
     int m_offset;
     double m_latitude;
     double m_longitude;
@@ -56,6 +55,7 @@ private:
     bool m_moonPosition : 1;
     bool m_solarPosition : 1;
     bool m_userDateTime : 1;
+    bool m_local : 1;
 };
 
 #endif
