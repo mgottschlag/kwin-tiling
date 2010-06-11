@@ -242,7 +242,7 @@ void NetToolBox::setShowing(const bool show)
         case Plasma::BottomEdge:
         default:
             m_toolContainer->setPos(boundingRect().bottomLeft());
-            slideAnim->setProperty("distancePointF", QPointF(0, m_toolContainer->size().height()));
+            slideAnim->setProperty("distancePointF", QPointF(0, -m_toolContainer->size().height()));
             break;
         }
 
