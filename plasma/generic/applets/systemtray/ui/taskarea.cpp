@@ -178,8 +178,6 @@ QStringList TaskArea::alwaysShownTypes() const
 
 void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 {
-    //TODO: this is completely brute force; we shouldn't be redoing the
-    //      layout or re-adding widgets unless there's actual change imho
     d->hasTasksThatCanHide = false;
     foreach (Task *task, tasks) {
         //kDebug() << "checking" << task->name() << task->typeId() << d->alwaysShownTypes;
@@ -193,9 +191,11 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 
 void TaskArea::addTask(Task *task)
 {
-    addWidgetForTask(task);
-    checkUnhideTool();
-    emit sizeHintChanged(Qt::PreferredSize);
+    bool changedPositioning = addWidgetForTask(task);
+    changedPositioning = checkUnhideTool() || changedPositioning;
+    if (changedPositioning) {
+        emit sizeHintChanged(Qt::PreferredSize);
+    }
 }
 
 void TaskArea::checkVisibility(Task *task)
@@ -212,11 +212,11 @@ void TaskArea::checkVisibility(Task *task)
     }
 }
 
-void TaskArea::addWidgetForTask(SystemTray::Task *task)
+bool TaskArea::addWidgetForTask(SystemTray::Task *task)
 {
     if (!task->isEmbeddable(d->host)) {
         //kDebug() << "task is not embeddable, so FAIL" << task->name();
-        return;
+        return false;
     }
 
     checkVisibility(task);
@@ -224,12 +224,12 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
 
     if (!widget) {
         //kDebug() << "embeddable, but we received no widget?!";
-        return;
+        return false;
     }
 
     //check if it's not necessary to move the icon
     if (d->isTaskProperlyPlaced(task)) {
-        return;
+        return false;
     }
 
     if (widget) {
@@ -248,7 +248,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
         if (widget) {
             widget->deleteLater();
         }
-        return;
+        return true;
     }
 
     if (!widget) {
@@ -349,6 +349,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
 
     //the applet could have to be repainted due to easement change
     QTimer::singleShot(0, this, SLOT(delayedAppletUpdate()));
+    return true;
 }
 
 void TaskArea::delayedAppletUpdate()
@@ -546,18 +547,22 @@ void TaskArea::updateUnhideToolIcon()
     }
 }
 
-void TaskArea::checkUnhideTool()
+bool TaskArea::checkUnhideTool()
 {
     if (d->hasTasksThatCanHide) {
-        initUnhideTool();
-    } else {
+        if (!d->unhider) {
+            initUnhideTool();
+            return true;
+        }
+    } else if (d->unhider) {
         // hide the show tool
         d->topLayout->removeItem(d->unhider);
-        if (d->unhider) {
-            d->unhider->deleteLater();
-            d->unhider = 0;
-        }
+        d->unhider->deleteLater();
+        d->unhider = 0;
+        return true;
     }
+
+    return false;
 }
 
 void TaskArea::setShowHiddenItems(bool show)

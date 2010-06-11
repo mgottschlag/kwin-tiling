@@ -72,11 +72,11 @@ private slots:
 
 private:
     void setUnhideToolIconSizes();
-    void addWidgetForTask(SystemTray::Task *task);
+    bool addWidgetForTask(SystemTray::Task *task);
     QGraphicsWidget* findWidget(Task *task);
     void updateUnhideToolIcon();
     void initUnhideTool();
-    void checkUnhideTool();
+    bool checkUnhideTool();
     void checkVisibility(Task *task);
 
     class Private;
