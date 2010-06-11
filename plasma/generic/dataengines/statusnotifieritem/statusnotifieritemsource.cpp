@@ -66,7 +66,11 @@ StatusNotifierItemSource::StatusNotifierItemSource(const QString &notifierItemId
       m_customIconLoader(0),
       m_menuImporter(0),
       m_refreshing(false),
-      m_needsReRefreshing(false)
+      m_needsReRefreshing(false),
+      m_titleUpdate(true),
+      m_iconUpdate(true),
+      m_tooltipUpdate(true),
+      m_statusUpdate(true)
 {
     setObjectName(notifierItemId);
     qDBusRegisterMetaType<KDbusImageStruct>();
@@ -95,11 +99,11 @@ StatusNotifierItemSource::StatusNotifierItemSource(const QString &notifierItemId
 
     m_valid = !service.isEmpty() && m_statusNotifierItemInterface->isValid();
     if (m_valid) {
-        connect(m_statusNotifierItemInterface, SIGNAL(NewTitle()), this, SLOT(refresh()));
-        connect(m_statusNotifierItemInterface, SIGNAL(NewIcon()), this, SLOT(refresh()));
-        connect(m_statusNotifierItemInterface, SIGNAL(NewAttentionIcon()), this, SLOT(refresh()));
-        connect(m_statusNotifierItemInterface, SIGNAL(NewOverlayIcon()), this, SLOT(refresh()));
-        connect(m_statusNotifierItemInterface, SIGNAL(NewToolTip()), this, SLOT(refresh()));
+        connect(m_statusNotifierItemInterface, SIGNAL(NewTitle()), this, SLOT(refreshTitle()));
+        connect(m_statusNotifierItemInterface, SIGNAL(NewIcon()), this, SLOT(refreshIcons()));
+        connect(m_statusNotifierItemInterface, SIGNAL(NewAttentionIcon()), this, SLOT(refreshIcons()));
+        connect(m_statusNotifierItemInterface, SIGNAL(NewOverlayIcon()), this, SLOT(refreshIcons()));
+        connect(m_statusNotifierItemInterface, SIGNAL(NewToolTip()), this, SLOT(refreshToolTip()));
         connect(m_statusNotifierItemInterface, SIGNAL(NewStatus(QString)), this, SLOT(syncStatus(QString)));
         refresh();
     }
@@ -122,13 +126,37 @@ Plasma::Service *StatusNotifierItemSource::createService()
 
 void StatusNotifierItemSource::syncStatus(QString status)
 {
+    setData("TitleChanged", false);
+    setData("IconsChanged", false);
+    setData("TooltipChanged", false);
+    setData("StatusChanged", true);
     setData("Status", status);
     checkForUpdate();
 }
 
+void StatusNotifierItemSource::refreshTitle()
+{
+    m_titleUpdate = true;
+    refresh();
+}
+
+void StatusNotifierItemSource::refreshIcons()
+{
+    m_iconUpdate = true;
+    refresh();
+}
+
+void StatusNotifierItemSource::refreshToolTip()
+{
+    m_tooltipUpdate = true;
+    refresh();
+}
+
 void StatusNotifierItemSource::refresh()
 {
-    m_refreshTimer.start();
+    if (!m_refreshTimer.isActive()) {
+        m_refreshTimer.start();
+    }
 }
 
 void StatusNotifierItemSource::performRefresh()
@@ -164,6 +192,16 @@ void StatusNotifierItemSource::refreshCallback(QDBusPendingCallWatcher *call)
     if (reply.isError()) {
         m_valid = false;
     } else {
+        // record what has changed
+        setData("TitleChanged", m_titleUpdate);
+        m_titleUpdate = false;
+        setData("IconsChanged", m_iconUpdate);
+        m_iconUpdate = false;
+        setData("ToolTipChanged", m_tooltipUpdate);
+        m_tooltipUpdate = false;
+        setData("StatusChanged", m_statusUpdate);
+        m_statusUpdate = false;
+
         //IconThemePath (handle this one first, because it has an impact on
         //others)
         QVariantMap properties = reply.argumentAt<0>();
@@ -302,7 +340,7 @@ void StatusNotifierItemSource::refreshCallback(QDBusPendingCallWatcher *call)
     }
 
     checkForUpdate();
-    delete call;
+    call->deleteLater();
 }
 
 void StatusNotifierItemSource::contextMenuReady()

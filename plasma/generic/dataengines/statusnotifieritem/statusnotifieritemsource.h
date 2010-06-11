@@ -52,6 +52,9 @@ Q_SIGNALS:
 
 private slots:
     void contextMenuReady();
+    void refreshTitle();
+    void refreshIcons();
+    void refreshToolTip();
     void refresh();
     void performRefresh();
     void syncStatus(QString);
@@ -71,8 +74,12 @@ private:
     KIconLoader *m_customIconLoader;
     DBusMenuImporter *m_menuImporter;
     org::kde::StatusNotifierItem *m_statusNotifierItemInterface;
-    bool m_refreshing;
-    bool m_needsReRefreshing;
+    bool m_refreshing : 1;
+    bool m_needsReRefreshing : 1;
+    bool m_titleUpdate : 1;
+    bool m_iconUpdate : 1;
+    bool m_tooltipUpdate : 1;
+    bool m_statusUpdate : 1;
 };
 
 #endif // STATUSNOTIFIERITEMSOURCE_H
