@@ -169,6 +169,7 @@ private:
      */
     void updateFocus();
     void stayOnTop();
+    int findWindowInfo( Window window ); // returns index in windowInfo or -1
     void lockXF86();
     void unlockXF86();
     void resume( bool force );
@@ -221,6 +222,12 @@ private:
     int         mSuppressUnlockTimeout;
     QList<WId>  mForeignWindows;
     QList<WId>  mForeignInputWindows;
+    struct WindowInfo
+    {
+        Window window;
+        bool viewable;
+    };
+    QList<WindowInfo> windowInfo;
 };
 
 #endif

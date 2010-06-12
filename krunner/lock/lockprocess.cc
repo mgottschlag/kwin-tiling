@@ -209,6 +209,25 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
 
     mSuppressUnlock.setSingleShot(true);
     connect(&mSuppressUnlock, SIGNAL(timeout()), SLOT(deactivatePlasma()));
+
+    // read the initial information about all toplevel windows
+    Window r, p;
+    Window* real;
+    unsigned nreal;
+    if( XQueryTree( x11Info().display(), x11Info().appRootWindow(), &r, &p, &real, &nreal )
+        && real != NULL ) {
+        KXErrorHandler err; // ignore X errors here
+        for( unsigned i = 0; i < nreal; ++i ) {
+            XWindowAttributes winAttr;
+            if (XGetWindowAttributes(QX11Info::display(), real[ i ], &winAttr)) {
+                WindowInfo info;
+                info.window = real[ i ];
+                info.viewable = ( winAttr.map_state == IsViewable );
+                windowInfo.append( info ); // ordered bottom to top
+            }
+        }
+        XFree( real );
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -1359,14 +1378,31 @@ bool LockProcess::x11Event(XEvent *event)
 
         case ConfigureNotify: // from SubstructureNotifyMask on the root window
             if(event->xconfigure.event == QX11Info::appRootWindow()) {
+                int index = findWindowInfo( event->xconfigure.window );
+                if( index >= 0 ) {
+                    int index2 = event->xconfigure.above ? findWindowInfo( event->xconfigure.above ) : 0;
+                    if( index2 < 0 )
+                        kDebug(1204) << "Unknown above for ConfigureNotify";
+                    else { // move just above the other window
+                        if( index2 < index )
+                            ++index2;
+                        windowInfo.move( index, index2 );
+                    }
+                } else
+                    kDebug(1204) << "Unknown toplevel for ConfigureNotify";
                 //kDebug() << "ConfigureNotify:";
-                //the stacking order changed, so let's change the stacking order!
+                //the stacking order changed, so let's change the stacking order again to what we want
                 stayOnTop();
             }
             break;
         case MapNotify: // from SubstructureNotifyMask on the root window
             if( event->xmap.event == QX11Info::appRootWindow()) {
                 kDebug(1204) << "MapNotify:" << event->xmap.window;
+                int index = findWindowInfo( event->xmap.window );
+                if( index >= 0 )
+                    windowInfo[ index ].viewable = true;
+                else
+                    kDebug(1204) << "Unknown toplevel for MapNotify";
                 KXErrorHandler err; // ignore X errors here
                 WindowType type = windowType(event->xmap.window);
                 if (type != IgnoreWindow) {
@@ -1392,13 +1428,70 @@ bool LockProcess::x11Event(XEvent *event)
             }
             break;
         case UnmapNotify:
-            if (event->xmap.event == QX11Info::appRootWindow()) {
+            if (event->xunmap.event == QX11Info::appRootWindow()) {
                 kDebug(1204) << "UnmapNotify:" << event->xunmap.window;
+                int index = findWindowInfo( event->xunmap.window );
+                if( index >= 0 )
+                    windowInfo[ index ].viewable = false;
+                else
+                    kDebug(1204) << "Unknown toplevel for MapNotify";
                 mForeignWindows.removeAll(event->xunmap.window);
                 if (mForeignInputWindows.removeAll(event->xunmap.window)) {
                     updateFocus();
                 }
             }
+            break;
+        case CreateNotify:
+            if (event->xcreatewindow.parent == QX11Info::appRootWindow()) {
+                kDebug(1204) << "CreateNotify:" << event->xcreatewindow.window;
+                int index = findWindowInfo( event->xcreatewindow.window );
+                if( index >= 0 )
+                    kDebug(1204) << "Already existing toplevel for CreateNotify";
+                else {
+                    WindowInfo info;
+                    info.window = event->xcreatewindow.window;
+                    info.viewable = false;
+                    windowInfo.append( info );
+                }
+            }
+            break;
+        case DestroyNotify:
+            if (event->xdestroywindow.event == QX11Info::appRootWindow()) {
+                int index = findWindowInfo( event->xdestroywindow.window );
+                if( index >= 0 )
+                    windowInfo.removeAt( index );
+                else
+                    kDebug(1204) << "Unknown toplevel for DestroyNotify";
+            }
+            break;
+        case ReparentNotify:
+            if (event->xreparent.event == QX11Info::appRootWindow() && event->xreparent.parent != QX11Info::appRootWindow()) {
+                int index = findWindowInfo( event->xreparent.window );
+                if( index >= 0 )
+                    windowInfo.removeAt( index );
+                else
+                    kDebug(1204) << "Unknown toplevel for ReparentNotify away";
+            } else if (event->xreparent.parent == QX11Info::appRootWindow()) {
+                int index = findWindowInfo( event->xreparent.window );
+                if( index >= 0 )
+                    kDebug(1204) << "Already existing toplevel for ReparentNotify";
+                else {
+                    WindowInfo info;
+                    info.window = event->xreparent.window;
+                    info.viewable = false;
+                    windowInfo.append( info );
+                }
+            }
+            break;
+        case CirculateNotify:
+            if (event->xcirculate.event == QX11Info::appRootWindow()) {
+                int index = findWindowInfo( event->xcirculate.window );
+                if( index >= 0 ) {
+                    windowInfo.move( index, event->xcirculate.place == PlaceOnTop ? windowInfo.size() - 1 : 0 );
+                } else
+                    kDebug(1204) << "Unknown toplevel for CirculateNotify";
+            }
+            break;
     }
 
     // We have grab with the grab window being the root window.
@@ -1530,30 +1623,21 @@ void LockProcess::stayOnTop()
     // related to screenlocking, I don't see any better possibility than to completely
     // erase the screenlocker window.
     // It is important to first detect, then restack and then erase.
+    // Another catch here is that only viewable windows matter, but checking here whether
+    // a window is viewable is a race condition, since a window may map, paint and unmap
+    // before we reach this point, thus making this code fail to detect the need to do
+    // a repaint. Therefore we track all relevant X events about mapping state of toplevel
+    // windows (which ensures proper ordering) and here just consult the information.
     bool needs_erase = false;
-    Window r, p;
-    Window* real;
-    unsigned nreal;
-    if( XQueryTree( x11Info().display(), x11Info().appRootWindow(), &r, &p, &real, &nreal )
-        && real != NULL ) {
-        bool found_ours = false;
-        KXErrorHandler err; // ignore X errors here
-        for( unsigned i = 0; i < nreal; ++i ) {
-            if( stack.contains( real[ i ] )) {
-                found_ours = true;
-            } else if( found_ours ) {
-                XWindowAttributes winAttr;
-                if (XGetWindowAttributes(QX11Info::display(), real[ i ], &winAttr)
-                    && winAttr.map_state == IsViewable)
-                {
-                    kDebug(1204) << "found foreign window above screensaver";
-                    //QProcess::execute("xwininfo -all -id " + QString::number(real[i]));
-                    needs_erase = true;
-                    break;
-                }
-            }
+    bool found_ours = false;
+    foreach( const WindowInfo& info, windowInfo ) {
+        if( stack.contains( info.window )) {
+            found_ours = true;
+        } else if( found_ours && info.viewable ) {
+            kDebug(1204) << "found foreign window above screensaver";
+            needs_erase = true;
+            break;
         }
-        XFree( real );
     }
     // do the actual restacking if needed
     XRaiseWindow( x11Info().display(), stack[ 0 ] );
@@ -1653,6 +1737,16 @@ void LockProcess::msgBox( QWidget *parent, QMessageBox::Icon type, const QString
     grid->addWidget( button, 1, 0, 1, 2, Qt::AlignCenter );
 
     execDialog( &box );
+}
+
+int LockProcess::findWindowInfo( Window w )
+{
+    for( int i = 0;
+         i < windowInfo.size();
+         ++i )
+        if( windowInfo[ i ].window == w )
+            return i;
+    return -1;
 }
 
 #include "lockprocess.moc"
