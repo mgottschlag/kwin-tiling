@@ -45,6 +45,7 @@
 #include <kservicetypetrader.h>
 #include <kmacroexpander.h>
 #include <kshell.h>
+#include <kxerrorhandler.h>
 
 #include <QtGui/QFrame>
 #include <QLabel>
@@ -1366,6 +1367,7 @@ bool LockProcess::x11Event(XEvent *event)
         case MapNotify: // from SubstructureNotifyMask on the root window
             if( event->xmap.event == QX11Info::appRootWindow()) {
                 kDebug() << "MapNotify:" << event->xmap.window;
+                KXErrorHandler err; // ignore X errors here
                 WindowType type = windowType(event->xmap.window);
                 if (type != IgnoreWindow) {
                     if (mForeignWindows.contains(event->xmap.window)) {
@@ -1433,13 +1435,15 @@ bool LockProcess::x11Event(XEvent *event)
                 WId targetWindow = 0;
                 //kDebug() << "root is" << winId();
                 //kDebug() << "search window under pointer with" << mForeignInputWindows.size() << "windows";
+                KXErrorHandler err; // ignore X errors
                 foreach(WId window, mForeignInputWindows)
                 {
-                    XGetGeometry(QX11Info::display(), window, &root_return,
+                    if( XGetGeometry(QX11Info::display(), window, &root_return,
                                 &x_return, &y_return,
                                 &width_return, &height_return,
-                                &border_width_return, &depth_return);
-                    if( (event->xkey.x>=x_return && event->xkey.x<=x_return+(int)width_return)
+                                &border_width_return, &depth_return)
+                        &&
+                        (event->xkey.x>=x_return && event->xkey.x<=x_return+(int)width_return)
                         &&
                         (event->xkey.y>=y_return && event->xkey.y<=y_return+(int)height_return) )
                     {
@@ -1533,6 +1537,7 @@ void LockProcess::stayOnTop()
     if( XQueryTree( x11Info().display(), x11Info().appRootWindow(), &r, &p, &real, &nreal )
         && real != NULL ) {
         bool found_ours = false;
+        KXErrorHandler err; // ignore X errors here
         for( unsigned i = 0; i < nreal; ++i ) {
             if( stack.contains( real[ i ] )) {
                 found_ours = true;
