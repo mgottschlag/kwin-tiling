@@ -26,6 +26,8 @@
 #include <QPropertyAnimation>
 #include <QTimer>
 
+#include <KWindowSystem>
+
 #include <Plasma/Applet>
 #include <Plasma/Containment>
 #include <Plasma/Corona>
@@ -44,7 +46,8 @@ StackDialog::StackDialog(QWidget *parent, Qt::WindowFlags f)
 {
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/extender-background");
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    KWindowSystem::setType(winId(), NET::Dock);
 
     m_hideTimer = new QTimer(this);
     m_hideTimer->setSingleShot(true);

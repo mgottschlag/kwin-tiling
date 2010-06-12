@@ -290,6 +290,7 @@ void Notifications::addNotification(Notification *notification)
             m_notificationStack->setCurrentNotification(notification);
         }
 
+        KWindowSystem::setOnAllDesktops(m_notificationStackDialog->winId(), true);
         m_notificationStackDialog->show();
         Plasma::WindowEffects::slideWindow(m_notificationStackDialog, location());
     }
