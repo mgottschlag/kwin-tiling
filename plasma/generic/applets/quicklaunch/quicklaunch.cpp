@@ -317,10 +317,9 @@ void Quicklaunch::onDialogArrowClicked()
     if (m_dialog->isVisible()) {
         m_dialog->hide();
     } else {
-        syncDialogSize();
-
         KWindowSystem::setState(m_dialog->winId(), NET::SkipTaskbar);
         m_dialog->show();
+        syncDialogSize();
     }
 }
 
