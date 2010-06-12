@@ -917,7 +917,7 @@ void LockProcess::hackExited()
 {
     // Hack exited while we're supposed to be saving the screen.
     // Make sure the saver window is black.
-    XSetWindowBackground(QX11Info::display(), winId(), 0);
+    XSetWindowBackground(QX11Info::display(), winId(), BlackPixel( QX11Info::display(), QX11Info::appScreen()));
     XClearWindow(QX11Info::display(), winId());
 }
 
@@ -1170,7 +1170,7 @@ bool LockProcess::checkPass(const QString &reason)
     }
     PasswordDlg passDlg(this, &greetPlugin, reason);
     const int ret = execDialog( &passDlg );
-    kDebug() << ret;
+//    kDebug() << ret;
 
     //FIXME do we need to copy&paste that SubstructureNotifyMask code above?
     if (ret == QDialog::Accepted) {
@@ -1338,21 +1338,21 @@ bool LockProcess::x11Event(XEvent *event)
                 mVisibility = !(event->xvisibility.state == VisibilityFullyObscured);
                 if (!mVisibility) {
                     mSuspendTimer.start(2000);
-                    kDebug() << "fully obscured";
+                    kDebug(1204) << "fully obscured";
                 } else {
-                    kDebug() << "not fully obscured";
+                    kDebug(1204) << "not fully obscured";
                     mSuspendTimer.stop();
                     resume( false );
                 }
                 if (mForeignWindows.isEmpty() && event->xvisibility.state != VisibilityUnobscured) {
-                    kDebug() << "no plasma; saver obscured";
+                    kDebug(1204) << "no plasma; saver obscured";
                     stayOnTop();
                 }
             } else if (!mForeignWindows.isEmpty() && event->xvisibility.window == mForeignWindows.last() &&
                     event->xvisibility.state != VisibilityUnobscured) {
                 //FIXME now that we have several plasma winids this doesn't feel valid
                 //but I don't know what to do about it!
-                kDebug() << "plasma obscured!";
+                kDebug(1204) << "plasma obscured!";
                 stayOnTop();
             }
             break;
@@ -1366,20 +1366,20 @@ bool LockProcess::x11Event(XEvent *event)
             break;
         case MapNotify: // from SubstructureNotifyMask on the root window
             if( event->xmap.event == QX11Info::appRootWindow()) {
-                kDebug() << "MapNotify:" << event->xmap.window;
+                kDebug(1204) << "MapNotify:" << event->xmap.window;
                 KXErrorHandler err; // ignore X errors here
                 WindowType type = windowType(event->xmap.window);
                 if (type != IgnoreWindow) {
                     if (mForeignWindows.contains(event->xmap.window)) {
-                        kDebug() << "uhoh! duplicate!";
+                        kDebug(1204) << "uhoh! duplicate!";
                     } else {
                         //ordered youngest-on-top
                         mForeignWindows.prepend(event->xmap.window);
                     }
                     if (type & InputWindow) {
-                        kDebug() << "input window";
+                        kDebug(1204) << "input window";
                         if (mForeignInputWindows.contains(event->xmap.window)) {
-                            kDebug() << "uhoh! duplicate again"; //never happens
+                            kDebug(1204) << "uhoh! duplicate again"; //never happens
                         } else {
                             //ordered youngest-on-top
                             mForeignInputWindows.prepend(event->xmap.window);
@@ -1393,7 +1393,7 @@ bool LockProcess::x11Event(XEvent *event)
             break;
         case UnmapNotify:
             if (event->xmap.event == QX11Info::appRootWindow()) {
-                kDebug() << "UnmapNotify:" << event->xunmap.window;
+                kDebug(1204) << "UnmapNotify:" << event->xunmap.window;
                 mForeignWindows.removeAll(event->xunmap.window);
                 if (mForeignInputWindows.removeAll(event->xunmap.window)) {
                     updateFocus();
@@ -1482,9 +1482,9 @@ LockProcess::WindowType LockProcess::windowType(WId id)
     WindowType type = IgnoreWindow;
     if (result == Success && actualType == tag) {
         if (nitems != 1 || actualFormat != 8) {
-            kDebug() << "malformed property";
+            kDebug(1204) << "malformed property";
         } else {
-            kDebug() << "i can haz plasma window?" << data[0];
+            kDebug(1204) << "i can haz plasma window?" << data[0];
             switch (data[0]) {
                 case 0: //FIXME magic numbers
                     type = SimpleWindow;
@@ -1529,7 +1529,7 @@ void LockProcess::stayOnTop()
     // don't repaint as necessary. Therefore, if a window is detected above any of the windows
     // related to screenlocking, I don't see any better possibility than to completely
     // erase the screenlocker window.
-    // It is important to first detect, than restack and then erase.
+    // It is important to first detect, then restack and then erase.
     bool needs_erase = false;
     Window r, p;
     Window* real;
@@ -1546,7 +1546,7 @@ void LockProcess::stayOnTop()
                 if (XGetWindowAttributes(QX11Info::display(), real[ i ], &winAttr)
                     && winAttr.map_state == IsViewable)
                 {
-                    kDebug() << "found foreign window above screensaver";
+                    kDebug(1204) << "found foreign window above screensaver";
                     //QProcess::execute("xwininfo -all -id " + QString::number(real[i]));
                     needs_erase = true;
                     break;
