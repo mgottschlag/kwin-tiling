@@ -269,6 +269,9 @@ void DashboardView::showDashboard(bool showDashboard)
         containment()->enableAction("zoom out", false);
         containment()->enableAction("zoom in", false);
 
+	// dashboard is fullscreen and should never draw a shadow
+        Plasma::WindowEffects::overrideShadow(winId(), true);
+
         // the order of the following lines is important; and mildly magical.
         KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
         show();
