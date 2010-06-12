@@ -659,7 +659,7 @@ void UrlItemView::startDrag(Qt::DropActions supportedActions)
     drag->setPixmap(icon.pixmap(IconSize(KIconLoader::Desktop)));
 
     d->dropRect = QRect();
-    drag->exec();
+    drag->exec(Qt::CopyAction|Qt::MoveAction|Qt::LinkAction);
 }
 
 void UrlItemView::dropEvent(QDropEvent *event)
