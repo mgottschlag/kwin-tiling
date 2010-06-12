@@ -194,6 +194,8 @@ void Pager::constraintsEvent(Plasma::Constraints constraints)
             }
             globalcg.writeEntry("rows", m_rows);
             configNeedsSaving();
+            m_columns = 0;
+            m_size = QSizeF(-1, -1);
             // no need to recalculate everything twice
             if (!(constraints & Plasma::SizeConstraint)) {
                 recalculateGeometry();
