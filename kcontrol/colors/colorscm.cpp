@@ -1147,7 +1147,20 @@ void KColorCm::load()
     applyToAlien->blockSignals(false);
 }
 
-void KColorCm::loadInternal(bool loadOptions)
+void KColorCm::loadOptions()
+{
+    contrastSlider->setValue(KGlobalSettings::contrast());
+    shadeSortedColumn->setCheckState(KGlobalSettings::shadeSortColumn() ? Qt::Checked : Qt::Unchecked);
+
+    KConfigGroup group(m_config, "ColorEffects:Inactive");
+    useInactiveEffects->setCheckState(group.readEntry("Enable", false) ? Qt::Checked : Qt::Unchecked);
+    // NOTE: keep this in sync with kdelibs/kdeui/colors/kcolorscheme.cpp
+    // NOTE: remove extra logic from updateFromOptions and on_useInactiveEffects_stateChanged when this changes!
+    inactiveSelectionEffect->setCheckState(group.readEntry("ChangeSelectionColor", group.readEntry("Enable", true))
+                                           ? Qt::Checked : Qt::Unchecked);
+}
+
+void KColorCm::loadInternal(bool loadOptions_)
 {
     // clean the config, in case we have changed the in-memory kconfig
     m_config->markAsClean();
@@ -1160,18 +1173,8 @@ void KColorCm::loadInternal(bool loadOptions)
     // fill in the color scheme list
     populateSchemeList();
 
-    if (loadOptions)
-    {
-        contrastSlider->setValue(KGlobalSettings::contrast());
-        shadeSortedColumn->setCheckState(KGlobalSettings::shadeSortColumn() ? Qt::Checked : Qt::Unchecked);
-
-        KConfigGroup group(m_config, "ColorEffects:Inactive");
-        useInactiveEffects->setCheckState(group.readEntry("Enable", false) ? Qt::Checked : Qt::Unchecked);
-        // NOTE: keep this in sync with kdelibs/kdeui/colors/kcolorscheme.cpp
-        // NOTE: remove extra logic from updateFromOptions and on_useInactiveEffects_stateChanged when this changes!
-        inactiveSelectionEffect->setCheckState(group.readEntry("ChangeSelectionColor", group.readEntry("Enable", true))
-                                               ? Qt::Checked : Qt::Unchecked);
-    }
+    if (loadOptions_)
+        loadOptions();
 
     updateEffectsPage();
 
@@ -1219,12 +1222,25 @@ void KColorCm::save()
 
 void KColorCm::defaults()
 {
+    // Switch to default scheme
     for(int i = 0; i < schemeList->count(); ++i) {
-        if(schemeList->item(i)->text() == i18nc("Default color scheme", "Default")) {
-            schemeList->setCurrentItem(schemeList->item(i));
+        QListWidgetItem *item = schemeList->item(i);
+        if(item->text() == i18nc("Default color scheme", "Default")) {
+            // If editing the default scheme, force a reload, else select the default scheme
+            if(schemeList->currentItem() == item)
+                loadScheme(item, item);
+            else
+                schemeList->setCurrentItem(item);
             break;
         }
     }
+
+    // Reset options (not part of scheme)
+    m_config->setReadDefaults(true);
+    loadOptions();
+    m_config->setReadDefaults(false);
+    applyToAlien->setChecked(Qt::Checked);
+
     KCModule::defaults();
     emit changed(true);
 }
