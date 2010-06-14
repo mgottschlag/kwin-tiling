@@ -226,36 +226,24 @@ bool NetPanelController::eventFilter(QObject *watched, QEvent *event)
 
         switch (m_containment->location()) {
         case Plasma::LeftEdge:
-            if ((deltaPos.x() > 0 && m_containment->size().width() >= KIconLoader::SizeEnormous) || (deltaPos.x() < 0 && m_containment->size().width() <= KIconLoader::SizeSmall)) {
-                break;
-            }
 
-            m_containment->setMinimumWidth(m_containment->size().width() + deltaPos.x());
+            m_containment->setMinimumWidth(qBound((qreal)KIconLoader::SizeSmall, m_containment->size().width() + deltaPos.x(), (qreal)(KIconLoader::SizeEnormous*2)));
             m_containment->setMaximumWidth(m_containment->minimumWidth());
 
             break;
         case Plasma::RightEdge:
-            if ((deltaPos.x() < 0 && m_containment->size().width() >= KIconLoader::SizeEnormous) || (deltaPos.x() > 0 && m_containment->size().width() <= KIconLoader::SizeSmall)) {
-                break;
-            }
 
-            m_containment->setMinimumWidth(m_containment->size().width() - deltaPos.x());
+            m_containment->setMinimumWidth(qBound((qreal)KIconLoader::SizeSmall, m_containment->size().width() - deltaPos.x(), (qreal)(KIconLoader::SizeEnormous*2)));
             m_containment->setMaximumWidth(m_containment->minimumWidth());
             break;
         case Plasma::TopEdge:
-            if ((deltaPos.y() > 0 && m_containment->size().height() >= KIconLoader::SizeEnormous) || (deltaPos.y() < 0 && m_containment->size().height() <= KIconLoader::SizeSmall)) {
-                break;
-            }
 
-            m_containment->setMinimumHeight(m_containment->size().height() + deltaPos.y());
+            m_containment->setMinimumHeight(qBound((qreal)KIconLoader::SizeSmall, m_containment->size().height() + deltaPos.y(), (qreal)(KIconLoader::SizeEnormous*2)));
             m_containment->setMaximumHeight(m_containment->minimumHeight());
             break;
         case Plasma::BottomEdge:
-            if ((deltaPos.y() < 0 && m_containment->size().height() >= KIconLoader::SizeEnormous) || (deltaPos.y() > 0 && m_containment->size().height() <= KIconLoader::SizeSmall)) {
-                break;
-            }
 
-            m_containment->setMinimumHeight(m_containment->size().height() - deltaPos.y());
+            m_containment->setMinimumHeight(qBound((qreal)KIconLoader::SizeSmall, m_containment->size().height() - deltaPos.y(), (qreal)(KIconLoader::SizeEnormous*2)));
             m_containment->setMaximumHeight(m_containment->minimumHeight());
             break;
         default:
