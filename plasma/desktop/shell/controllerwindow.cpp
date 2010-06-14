@@ -46,7 +46,6 @@ ControllerWindow::ControllerWindow(QWidget* parent)
      m_location(Plasma::Floating),
      m_layout(new QBoxLayout(QBoxLayout::TopToBottom, this)),
      m_background(new Plasma::FrameSvg(this)),
-     m_containment(0),
      m_corona(0),
      m_view(0),
      m_watchedWidget(0),
@@ -130,28 +129,28 @@ void ControllerWindow::backgroundChanged()
 
 void ControllerWindow::setContainment(Plasma::Containment *containment)
 {
-    if (containment == m_containment) {
+    if (containment == m_containment.data()) {
         return;
     }
     m_containment = containment;
 
     if (m_containment) {
-        disconnect(m_containment, 0, this, 0);
+        disconnect(m_containment.data(), 0, this, 0);
     }
 
     if (!containment) {
         return;
     }
-    m_corona = m_containment->corona();
+    m_corona = m_containment.data()->corona();
 
     if (m_widgetExplorer) {
-        m_widgetExplorer->setContainment(m_containment);
+        m_widgetExplorer->setContainment(m_containment.data());
     }
 }
 
 Plasma::Containment *ControllerWindow::containment() const
 {
-    return m_containment;
+    return m_containment.data();
 }
 
 void ControllerWindow::setGraphicsWidget(QGraphicsWidget *widget)
@@ -349,11 +348,11 @@ void ControllerWindow::showWidgetExplorer()
     if (!m_widgetExplorer) {
         m_widgetExplorer = new Plasma::WidgetExplorer(orientation());
         m_watchedWidget = m_widgetExplorer;
-        m_widgetExplorer->setContainment(m_containment);
+        m_widgetExplorer->setContainment(m_containment.data());
         m_widgetExplorer->populateWidgetList();
         m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
 
-        m_containment->corona()->addOffscreenWidget(m_widgetExplorer);
+        m_containment.data()->corona()->addOffscreenWidget(m_widgetExplorer);
         m_widgetExplorer->show();
 
         m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);

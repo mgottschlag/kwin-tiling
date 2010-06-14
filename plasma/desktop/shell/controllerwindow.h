@@ -85,7 +85,7 @@ private:
     Plasma::Location m_location;
     QBoxLayout *m_layout;
     Plasma::FrameSvg *m_background;
-    Plasma::Containment *m_containment;
+    QWeakPointer<Plasma::Containment> m_containment;
     Plasma::Corona *m_corona;
     QGraphicsView *m_view;
     QGraphicsWidget *m_watchedWidget;
