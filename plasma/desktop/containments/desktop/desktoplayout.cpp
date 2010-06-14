@@ -309,6 +309,8 @@ void DesktopLayout::adjustPhysicalPositions()
             QRectF absoluteGeom = geometryRelativeToAbsolute(spaceItem.user.toInt(), effectiveGeom);
 
             if (desktopItem.item->geometry() != absoluteGeom) {
+#if 0
+// FIXME
                 if (spaceItem.animateMovement)  {
                     if (m_animatingItems.contains(desktopItem.item)) {
                         Plasma::Animation *anim = m_animatingItems.value(desktopItem.item).data();
@@ -329,8 +331,11 @@ void DesktopLayout::adjustPhysicalPositions()
 
                     spaceItem.animateMovement = false;
                 } else {
+#endif
                     desktopItem.item->setGeometry(absoluteGeom);
+#if 0
                 }
+#endif
             }
         }
     }

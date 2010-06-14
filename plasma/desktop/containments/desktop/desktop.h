@@ -69,7 +69,6 @@ protected Q_SLOTS:
     void onAppletTransformedByUser();
     void onAppletTransformedItself();
     void refreshWorkingArea();
-    void delayedPositionsAdjust();
 
 private:
     DesktopLayout *m_layout;

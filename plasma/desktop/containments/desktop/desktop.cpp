@@ -102,22 +102,15 @@ void DefaultDesktop::onAppletRemoved(Plasma::Applet *applet)
     }
 }
 
-void DefaultDesktop::delayedPositionsAdjust()
-{
-    m_layout->adjustPhysicalPositions();
-}
-
 void DefaultDesktop::onAppletTransformedByUser()
 {
     m_layout->itemTransformed((Applet *)sender(), DesktopLayout::ItemTransformUser);
-    QTimer::singleShot(1000, this, SLOT(delayedPositionsAdjust()));
     m_layout->adjustPhysicalPositions();
 }
 
 void DefaultDesktop::onAppletTransformedItself()
 {
     m_layout->itemTransformed((Applet *)sender(), DesktopLayout::ItemTransformSelf);
-    QTimer::singleShot(1000, this, SLOT(delayedPositionsAdjust()));
     m_layout->adjustPhysicalPositions();
 }
 
