@@ -615,6 +615,8 @@ void CalendarTable::dataUpdated(const QString &source, const Plasma::DataEngine:
     //kDebug() << "***************" << source << data.count() << data;
     //QVariantList list
     KLocale *loc = KGlobal::locale();
+    d->events.clear();
+    d->todos.clear();
     foreach (const QVariant &v, data) {
         const QVariantMap map = v.toMap();
 
