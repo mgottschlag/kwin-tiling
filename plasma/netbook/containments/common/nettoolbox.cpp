@@ -346,7 +346,7 @@ void NetToolBox::containmentGeometryChanged()
 {
     m_toolContainerLayout->invalidate();
     m_toolContainerLayout->activate();
-
+kWarning()<<"AAAAAAAAAAAAAA"<<m_containment->contentsRect();
     switch (m_location) {
     case Plasma::TopEdge:
         m_toolContainer->resize(m_containment->size().width(), m_toolContainer->effectiveSizeHint(Qt::PreferredSize).height());
@@ -356,7 +356,7 @@ void NetToolBox::containmentGeometryChanged()
     case Plasma::BottomEdge:
         m_toolContainer->resize(m_containment->size().width(), m_toolContainer->effectiveSizeHint(Qt::PreferredSize).height());
         m_toolContainer->setPos(0, size().height()-m_toolContainer->size().height());
-        setPos(0, m_containment->size().height()-size().height());
+        setPos(m_containment->contentsRect().left(), m_containment->contentsRect().bottom()-size().height()+1);
         break;
     case Plasma::LeftEdge:
         m_toolContainer->resize(m_toolContainer->effectiveSizeHint(Qt::PreferredSize).width(), m_containment->size().height());
@@ -366,11 +366,11 @@ void NetToolBox::containmentGeometryChanged()
     case Plasma::RightEdge:
         m_toolContainer->resize(m_toolContainer->effectiveSizeHint(Qt::PreferredSize).width(), m_containment->size().height());
         m_toolContainer->setPos(size().width()-m_toolContainer->size().width(), 0);
-        setPos(m_containment->contentsRect().right()-size().width(), m_containment->contentsRect().top());
+        setPos(m_containment->contentsRect().right()-size().width()+1, m_containment->contentsRect().top());
         break;
     default:
         m_toolContainer->resize(m_toolContainer->effectiveSizeHint(Qt::PreferredSize));
-        m_toolContainer->setPos(0, size().height()-m_toolContainer->size().height());
+        m_toolContainer->setPos(m_containment->contentsRect().left(), size().height()-m_toolContainer->size().height());
         break;
     }
 }
