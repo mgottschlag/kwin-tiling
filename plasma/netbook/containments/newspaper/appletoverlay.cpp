@@ -160,41 +160,6 @@ void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
             break;
         }
     }
-    if (m_applet.data() != oldApplet) {
-        update();
-
-        if (m_applet) {
-            m_applet.data()->setGraphicsEffect(0);
-
-            QGraphicsBlurEffect *newEffect = new QGraphicsBlurEffect(m_applet.data());
-            newEffect->setBlurHints(QGraphicsBlurEffect::PerformanceHint);
-            newEffect->setBlurRadius(0);
-            m_applet.data()->setGraphicsEffect(newEffect);
-
-            QPropertyAnimation *newAnimation = new QPropertyAnimation(newEffect, "blurRadius", newEffect);
-            newAnimation->setEasingCurve(QEasingCurve::InOutQuad);
-            newAnimation->setDuration(250);
-            newAnimation->setStartValue(0);
-            newAnimation->setEndValue(4);
-            newAnimation->start(QAbstractAnimation::DeleteWhenStopped);
-        }
-
-        if (oldApplet) {
-            oldApplet->setGraphicsEffect(0);
-
-            QGraphicsBlurEffect *oldEffect = new QGraphicsBlurEffect(oldApplet);
-            oldEffect->setBlurHints(QGraphicsBlurEffect::PerformanceHint);
-            oldEffect->setBlurRadius(4);
-            oldApplet->setGraphicsEffect(oldEffect);
-
-            QPropertyAnimation *oldAnimation = new QPropertyAnimation(oldEffect, "blurRadius", oldEffect);
-            oldAnimation->setEasingCurve(QEasingCurve::InOutQuad);
-            oldAnimation->setDuration(250);
-            oldAnimation->setStartValue(4);
-            oldAnimation->setEndValue(0);
-            oldAnimation->start(QAbstractAnimation::DeleteWhenStopped);
-        }
-    }
 }
 
 void AppletOverlay::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
