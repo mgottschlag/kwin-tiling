@@ -346,7 +346,7 @@ void NetToolBox::containmentGeometryChanged()
 {
     m_toolContainerLayout->invalidate();
     m_toolContainerLayout->activate();
-kWarning()<<"AAAAAAAAAAAAAA"<<m_containment->contentsRect();
+
     switch (m_location) {
     case Plasma::TopEdge:
         m_toolContainer->resize(m_containment->size().width(), m_toolContainer->effectiveSizeHint(Qt::PreferredSize).height());
