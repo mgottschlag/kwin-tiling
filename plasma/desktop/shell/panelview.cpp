@@ -249,15 +249,14 @@ protected:
     void resizeEvent(QResizeEvent *event)
     {
         m_shadow->resizeFrame(event->size());
-
         adjustMargins();
     }
 
-    void paintEvent(QPaintEvent* e)
+    void paintEvent(QPaintEvent *e)
     {
         QPainter p(this);
         //p.setCompositionMode(QPainter::CompositionMode_Source);
-        m_shadow->paintFrame(&p);
+        m_shadow->paintFrame(&p, e->rect(), e->rect());
     }
 
     void adjustMargins()
