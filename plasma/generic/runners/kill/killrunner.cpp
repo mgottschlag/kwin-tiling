@@ -80,7 +80,7 @@ void KillRunner::cleanup()
 
     if (m_prepLock.tryLockForWrite()) {
         if (m_processes) {
-            KSysGuard::Processes::returnInstance();
+            delete m_processes;
             m_processes = 0;
         }
 
@@ -103,7 +103,7 @@ void KillRunner::match(Plasma::RunnerContext &context)
         m_prepLock.unlock();
         m_prepLock.lockForWrite();
         if (!m_processes) {
-            m_processes = KSysGuard::Processes::getInstance();
+            m_processes = new KSysGuard::Processes();
         }
     }
     m_prepLock.unlock();
