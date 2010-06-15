@@ -16,9 +16,6 @@
 
 #include <KDebug>
 
-#include <Plasma/Animation>
-#include <Plasma/Animator>
-
 #include "desktoplayout.h"
 
 DesktopLayout::DesktopLayout()
@@ -309,21 +306,22 @@ void DesktopLayout::adjustPhysicalPositions()
             QRectF absoluteGeom = geometryRelativeToAbsolute(spaceItem.user.toInt(), effectiveGeom);
 
             if (desktopItem.item->geometry() != absoluteGeom) {
-#if 0
-// FIXME
                 if (spaceItem.animateMovement)  {
                     if (m_animatingItems.contains(desktopItem.item)) {
-                        Plasma::Animation *anim = m_animatingItems.value(desktopItem.item).data();
-                        if (anim) {
-                            anim->stop();
-                        }
+                        QPropertyAnimation *anim = m_animatingItems.value(desktopItem.item).data();
                         m_animatingItems.remove(desktopItem.item);
+                        if (anim) {
+                            anim->disconnect(this);
+                            anim->stop();
+                            delete anim;
+                        }
                     }
 
-                    Plasma::Animation *anim = Plasma::Animator::create(Plasma::Animator::SlideAnimation);
-                    anim->setProperty("startValue", desktopItem.item->pos());
-                    anim->setProperty("endValue", absoluteGeom.topLeft().toPoint());
-                    anim->setTargetWidget(desktopItem.item);
+                    QPropertyAnimation *anim = new QPropertyAnimation(this);
+                    anim->setStartValue(desktopItem.item->pos());
+                    anim->setEndValue(absoluteGeom.topLeft().toPoint());
+                    anim->setPropertyName("pos");
+                    anim->setTargetObject(desktopItem.item);
                     anim->start(QAbstractAnimation::DeleteWhenStopped);
 
                     m_animatingItems.insert(desktopItem.item, anim);
@@ -331,11 +329,8 @@ void DesktopLayout::adjustPhysicalPositions()
 
                     spaceItem.animateMovement = false;
                 } else {
-#endif
                     desktopItem.item->setGeometry(absoluteGeom);
-#if 0
                 }
-#endif
             }
         }
     }
@@ -379,9 +374,9 @@ void DesktopLayout::itemTransformed(QGraphicsWidget *layoutItem, ItemTransformTy
 
 void DesktopLayout::movementFinished()
 {
-    Plasma::Animation *anim = qobject_cast<Plasma::Animation *>(sender());
+    QPropertyAnimation *anim = qobject_cast<QPropertyAnimation *>(sender());
     if (anim) {
-        m_animatingItems.remove(anim->targetWidget());
+        m_animatingItems.remove(anim->targetObject());
     }
 }
 

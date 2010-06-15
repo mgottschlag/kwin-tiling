@@ -14,6 +14,7 @@
 #include <QMap>
 #include <QList>
 #include <QObject>
+#include <QPropertyAnimation>
 #include <QTransform>
 
 #include "itemspace.h"
@@ -159,7 +160,7 @@ private:
      **/
     QMap<int, DesktopLayoutItem> items;
 
-    QHash<QGraphicsItem*, QWeakPointer<Plasma::Animation> > m_animatingItems;
+    QHash<QObject*, QWeakPointer<QPropertyAnimation> > m_animatingItems;
     QPointF workingStart;
 
     // layout configuration
