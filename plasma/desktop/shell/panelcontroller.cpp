@@ -277,8 +277,8 @@ void PanelController::setContainment(Plasma::Containment *c)
     action = containment()->action("lock widgets");
     if (action && action->isEnabled()) {
         ToolButton *lockWidgetsTool = addTool(action, this);
-        m_layout->insertWidget(insertIndex, lockWidgetsTool);
-        ++insertIndex;
+        m_optDialogLayout->addWidget(lockWidgetsTool, m_optDialogLayout->count() - 2);
+        connect(lockWidgetsTool, SIGNAL(clicked()), m_optionsDialog, SLOT(hide()));
         connect(lockWidgetsTool, SIGNAL(clicked()), this, SLOT(hide()));
     }
 
