@@ -63,15 +63,6 @@ class DeviceWrapper : public QObject
     **/
     void dataUpdated(const QString &source, Plasma::DataEngine::Data data);
 
-    private slots:
-
-    void storageEjectDone(Solid::ErrorType error, QVariant errorData);
-    void storageTeardownDone(Solid::ErrorType error, QVariant errorData);
-    void storageSetupDone(Solid::ErrorType error, QVariant errorData);
-    void showTeardownError();
-    void showEjectError();
-    void showSetupError();
-
     private:
     
     Solid::Device m_device;

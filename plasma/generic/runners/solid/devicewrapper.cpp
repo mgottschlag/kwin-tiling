@@ -156,10 +156,8 @@ void DeviceWrapper::runAction(QAction * action)
             Solid::StorageAccess *access = m_device.as<Solid::StorageAccess>();
             if (access) {
                 if (access->isAccessible()) {
-                    connect(access, SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant)));
                     access->teardown();
                 } else {
-                    connect(access, SIGNAL(setupDone(Solid::ErrorType, QVariant, const QString &)),this, SLOT(storageSetupDone(Solid::ErrorType, QVariant)));
                     access->setup();
                 }
                 return;
@@ -168,7 +166,6 @@ void DeviceWrapper::runAction(QAction * action)
         if (m_device.is<Solid::OpticalDisc>()) {
             Solid::OpticalDrive *drive = m_device.parent().as<Solid::OpticalDrive>();
             if (drive) {
-                connect(drive, SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)), this, SLOT(storageEjectDone(Solid::ErrorType, QVariant)));
                 drive->eject();
             }
         }
@@ -179,54 +176,5 @@ QStringList DeviceWrapper::actionIds() const
 {
     return m_actionIds;
 }
-
-void DeviceWrapper::storageTeardownDone(Solid::ErrorType error, QVariant errorData)
-{
-    if (error && errorData.isValid()) {
-        QTimer::singleShot(0, this, SLOT(showTeardownError()));
-    }
-
-    //show the message only one time
-    disconnect(sender(), SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
-               this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant)));
-}
-
-void DeviceWrapper::storageEjectDone(Solid::ErrorType error, QVariant errorData)
-{
-    if (error && errorData.isValid()) {
-        QTimer::singleShot(0, this, SLOT(showEjectError()));
-    }
-
-    //show the message only one time
-    disconnect(sender(), SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
-               this, SLOT(storageEjectDone(Solid::ErrorType, QVariant)));
-}
-
-void DeviceWrapper::storageSetupDone(Solid::ErrorType error, QVariant errorData)
-{
-     if (error && errorData.isValid()) {
-         QTimer::singleShot(0, this, SLOT(showSetupError()));
-     }
-
-    //show the message only one time
-    disconnect(sender(), SIGNAL(setupDone(Solid::ErrorType, QVariant, const QString &)),
-               this, SLOT(storageSetupDone(Solid::ErrorType, QVariant)));
-}
-
-void DeviceWrapper::showTeardownError()
-{
-    KMessageBox::error(0, i18n("Could not unmount the device.\nOne or more files on this device are open within an application."), QString());
-}
-
-void DeviceWrapper::showEjectError()
-{
-    KMessageBox::error(0, i18n("Could not eject the disc.\nOne or more files on this disc are open within an application."), QString());
-}
-
-void DeviceWrapper::showSetupError()
-{
-    KMessageBox::error(0, i18n("Could not mount the disc."), QString());
-}
-
 
 #include "devicewrapper.moc"
