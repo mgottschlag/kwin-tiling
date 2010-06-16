@@ -288,6 +288,7 @@ void PlasmaApp::setupDesktop()
 
     Kephal::Screens *screens = Kephal::Screens::self();
     connect(screens, SIGNAL(screenRemoved(int)), SLOT(screenRemoved(int)));
+    connect(screens, SIGNAL(screenAdded(int)), SLOT(screenAdded(int)));
 
     if (AppSettings::perVirtualDesktopViews()) {
         connect(KWindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)),
@@ -681,14 +682,28 @@ void PlasmaApp::screenRemoved(int id)
                 panel->containment()->setScreen(moveTo->id());
                 panel->pinchContainmentToCurrentScreen();
             } else {
+                /*
+                TODO: to delete the view, we also need to handle re-creating it later on,
+                      complete with proper offset, etc.
                 panel->setContainment(0);
                 pIt.remove();
                 delete panel;
+                */
                 continue;
             }
         }
 
         panel->updateStruts();
+    }
+}
+
+void PlasmaApp::screenAdded(int screen)
+{
+    foreach (Plasma::Containment *containment, corona()->containments()) {
+        if (isPanelContainment(containment) && containment->screen() == screen) {
+            m_panelsWaiting << containment;
+            m_panelViewCreationTimer.start();
+        }
     }
 }
 
@@ -720,18 +735,19 @@ bool PlasmaApp::canRelocatePanel(PanelView * view, Kephal::Screen *screen)
             break;
     }
 
-    bool ok = true;
+    kDebug() << "testing:" << screen->id() << view << view->geometry() << view->location() << newGeom;
     foreach (PanelView *pv, m_panels) {
+        kDebug() << pv << pv->screen() << pv->screen() << pv->location() << pv->geometry();
         if (pv != view &&
             pv->screen() == screen->id() &&
             pv->location() == view->location() &&
             !pv->geometry().intersects(newGeom)) {
-            ok = false;
+            return false;
             break;
         }
     }
 
-    return ok;
+    return true;
 }
 
 

@@ -138,6 +138,7 @@ private Q_SLOTS:
     void syncConfig();
     void panelRemoved(QObject* panel);
     void screenRemoved(int id);
+    void screenAdded(int id);
     bool canRelocatePanel(PanelView * view, Kephal::Screen *screen);
     void compositingChanged();
     void configureContainment(Plasma::Containment*);
