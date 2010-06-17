@@ -237,6 +237,9 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
       parsing too (like, are we in a tag?)*/
     processed = processed.replace(QRegExp("([^\"])(\\w{28})(\\w{10,})([^\"])"), "\\1\\2...\\4");
 
+    /*if there is a < that is not closed as a tag, replace it with an entity*/
+    processed = processed.replace(QRegExp("<([^>]*($|<))"), "&lt;\\1");
+
     processed.replace('\n', "<br>");
     messageLabel->setText(processed);
 }
