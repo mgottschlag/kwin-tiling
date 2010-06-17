@@ -431,6 +431,11 @@ void AppletsContainer::viewportGeometryChanged(const QRectF &geometry)
 
 void AppletsContainer::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    event->accept();
+}
+
+void AppletsContainer::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
     Q_UNUSED(event)
 
     if (m_orientation == Qt::Horizontal) {
@@ -450,8 +455,10 @@ void AppletsContainer::mousePressEvent(QGraphicsSceneMouseEvent *event)
     m_pendingCurrentApplet.clear();
     m_currentApplet.clear();
 
-    QGraphicsWidget::mousePressEvent(event);
+    QGraphicsWidget::mouseReleaseEvent(event);
 }
+
+
 
 void AppletsContainer::delayedAppletActivation()
 {

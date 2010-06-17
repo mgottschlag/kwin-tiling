@@ -78,6 +78,7 @@ protected:
     QSizeF optimalAppletSize(Plasma::Applet *applet, const bool maximized) const;
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 public Q_SLOTS:
     void layoutApplet(Plasma::Applet *applet, const QPointF &post);

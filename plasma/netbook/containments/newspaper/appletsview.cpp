@@ -106,7 +106,7 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
         }
     }
 
-    return false;
+    return Plasma::ScrollWidget::sceneEventFilter(watched, event);
 }
 
 #include "appletsview.moc"
