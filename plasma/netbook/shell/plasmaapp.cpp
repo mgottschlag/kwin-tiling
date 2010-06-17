@@ -939,7 +939,9 @@ void PlasmaApp::widgetExplorerDestroyed()
     m_widgetExplorer = 0;
     m_widgetExplorerView = 0;
     positionPanel();
-    m_mainView->containment()->setToolBoxOpen(false);
+    if (m_mainView->containment()) {
+        m_mainView->containment()->setToolBoxOpen(false);
+    }
 }
 
 
