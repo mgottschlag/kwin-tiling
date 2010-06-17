@@ -47,6 +47,7 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
          m_showButtons(false),
          m_appletHasBackground(false)
 {
+    setObjectName("TitleBar");
     m_pulse =
     Plasma::Animator::create(Plasma::Animator::PulseAnimation);
     m_pulse->setTargetWidget(applet);

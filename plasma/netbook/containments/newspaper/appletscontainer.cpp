@@ -345,7 +345,14 @@ void AppletsContainer::addApplet(Plasma::Applet* applet, const int row, const in
 
 void AppletsContainer::createAppletTitle(Plasma::Applet *applet)
 {
+    QList<AppletTitleBar *> titles = applet->findChildren<AppletTitleBar *>("TitleBar");
+
+    if (!titles.isEmpty()) {
+        return;
+    }
+
     AppletTitleBar *appletTitleBar = new AppletTitleBar(applet);
+    appletTitleBar->setParent(applet);
     appletTitleBar->show();
 
     if (!m_containment) {
