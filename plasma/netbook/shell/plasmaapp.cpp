@@ -769,7 +769,7 @@ void PlasmaApp::closeWidgetExplorer()
 
 void PlasmaApp::updateToolBoxVisibility(bool visible)
 {
-    const bool hadToolBoxOpen = m_mainView->containment()->isToolBoxOpen();
+    const bool hadToolBoxOpen = (m_mainView->containment() && m_mainView->containment()->isToolBoxOpen());
 
     foreach (Plasma::Containment *cont, m_corona->containments()) {
          cont->setToolBoxOpen(visible);
