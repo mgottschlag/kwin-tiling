@@ -56,6 +56,7 @@ CurrentAppControl::CurrentAppControl(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_syncDelay(false),
       m_activeWindow(0),
+      m_lastActiveWindow(0),
       m_pendingActiveWindow(0),
       m_listDialog(0),
       m_listWidget(0),
@@ -209,6 +210,7 @@ void CurrentAppControl::syncActiveWindow()
         toolTipData.setImage(KWindowSystem::icon(m_activeWindow, KIconLoader::SizeHuge, KIconLoader::SizeHuge));
     } else {
         m_activeWindow = m_pendingActiveWindow;
+        m_lastActiveWindow = m_pendingActiveWindow;
         KWindowInfo info = KWindowSystem::windowInfo(m_activeWindow, NET::WMName|NET::WMState);
         m_currentTask->setIcon(KWindowSystem::icon(m_activeWindow, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium));
         m_currentTask->setText(info.name());
@@ -368,6 +370,7 @@ void CurrentAppControl::listWindows()
         m_listDialog->show();
     } else {
         closePopup();
+        KWindowSystem::forceActiveWindow(m_lastActiveWindow);
     }
 }
 

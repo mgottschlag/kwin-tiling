@@ -72,6 +72,7 @@ private:
     Plasma::IconWidget *m_maximizeTask;
     bool m_syncDelay;
     WId m_activeWindow;
+    WId m_lastActiveWindow;
     WId m_pendingActiveWindow;
 
     Plasma::Dialog *m_listDialog;
