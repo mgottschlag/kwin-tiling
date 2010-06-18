@@ -404,12 +404,12 @@ void ClockApplet::configAccepted()
 
     if (d->ui.clockDefaultsTo->currentIndex() == 0) {
         //The first position in ui.clockDefaultsTo is "Local"
-        cg.writeEntry("defaultTimezone", localTimezoneUntranslated());
+        d->defaultTimezone = localTimezoneUntranslated();
     } else {
-        cg.writeEntry("defaultTimezone",
-                      d->ui.clockDefaultsTo->itemData(d->ui.clockDefaultsTo->currentIndex()).toString());
+        d->defaultTimezone = d->ui.clockDefaultsTo->itemData(d->ui.clockDefaultsTo->currentIndex()).toString();
     }
 
+    cg.writeEntry("defaultTimezone", d->defaultTimezone);
     QString cur = currentTimezone();
     setCurrentTimezone(d->defaultTimezone);
     changeEngineTimezone(cur, d->defaultTimezone);
