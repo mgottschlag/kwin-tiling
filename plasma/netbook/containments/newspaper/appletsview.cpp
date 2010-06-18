@@ -106,7 +106,11 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
         }
     }
 
-    return Plasma::ScrollWidget::sceneEventFilter(watched, event);
+    if (watched == m_appletsContainer->m_currentApplet.data()) {
+        return false;
+    } else {
+        return Plasma::ScrollWidget::sceneEventFilter(watched, event);
+    }
 }
 
 #include "appletsview.moc"
