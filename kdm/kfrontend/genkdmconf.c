@@ -773,7 +773,7 @@ static const char def_background[] =
 "Program=\n"
 "ReverseBlending=false\n"
 "UseSHM=false\n"
-"Wallpaper=default_blue.jpg\n"
+"Wallpaper=stripes.png\n"
 "WallpaperList=\n"
 "WallpaperMode=Scaled\n";
 
