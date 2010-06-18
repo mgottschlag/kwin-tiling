@@ -312,6 +312,15 @@ void BackgroundDialog::reloadConfig()
 
     d->activityUi.m_containmentComboBox->setCurrentIndex(containmentIndex);
 
+    //TODO: after string freeze an unlock button similar to the systray one should be provided
+    if (d->activityUi.m_containmentComboBox->parentWidget()) {
+        bool enabled = false;
+        if (d->containment) {
+            enabled = (d->containment.data()->immutability()==Plasma::Mutable);
+        }
+        d->activityUi.m_containmentComboBox->parentWidget()->setEnabled(enabled);
+    }
+
     if (d->containment) {
         d->activityUi.m_activityName->setText(d->containment.data()->activity());
 
