@@ -203,6 +203,7 @@ void ActivityManager::setContainment(Plasma::Containment *containment)
         if (d->containment) {
             connect(d->containment, SIGNAL(destroyed(QObject*)), this, SLOT(containmentDestroyed()));
             connect(d->containment, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)), this, SLOT(immutabilityChanged(Plasma::ImmutabilityType)));
+            d->filteringWidget->coronaImmutabilityChanged(d->containment->immutability());
         }
     }
 }
@@ -222,6 +223,7 @@ void ActivityManager::immutabilityChanged(Plasma::ImmutabilityType type)
     if (type != Plasma::Mutable) {
         emit closeClicked();
     }
+    d->filteringWidget->coronaImmutabilityChanged(type);
 }
 
 #include "activitymanager.moc"

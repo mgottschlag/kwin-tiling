@@ -196,4 +196,9 @@ void FilterBar::createActivity(QAction *action)
     }
 }
 
+void FilterBar::coronaImmutabilityChanged(Plasma::ImmutabilityType immutability)
+{
+    m_newActivityButton->setVisible(immutability == Plasma::Mutable);
+}
 
+#include "filterbar.moc"

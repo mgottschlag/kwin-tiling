@@ -23,6 +23,8 @@
 
 #include <QGraphicsWidget>
 
+#include <Plasma/Plasma>
+
 class QGraphicsLinearLayout;
 class KMenu;
 namespace Plasma {
@@ -45,6 +47,9 @@ public:
 Q_SIGNALS:
     //void filterChanged(int index);
     void searchTermChanged(const QString &text);
+
+public Q_SLOTS:
+    void coronaImmutabilityChanged(Plasma::ImmutabilityType immutability);
 
 protected Q_SLOTS:
     void setMenuPos();
