@@ -1,6 +1,7 @@
 [Wallpaper]
 File=stripes.png
 Name=Stripes
+Name[x-test]=xxStripesxx
 
 ImageType=pixmap
 Author=Ivan Čukić
