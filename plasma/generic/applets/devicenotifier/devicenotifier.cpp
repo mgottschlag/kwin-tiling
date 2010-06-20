@@ -151,7 +151,9 @@ void DeviceNotifier::fillPreviousDevices()
         // discard swap and partition tables
         Solid::Device parentDevice = device.parent();
         Solid::StorageDrive *drive = parentDevice.as<Solid::StorageDrive>();
-        if (drive && (!drive->isHotpluggable() && !drive->isRemovable())) {
+        const Solid::StorageVolume *volume = device.as<Solid::StorageVolume>();
+        if (drive && (!drive->isHotpluggable() && !drive->isRemovable()) &&
+            (volume->usage() == Solid::StorageVolume::FileSystem) || (volume->usage() == Solid::StorageVolume::Encrypted)) {
             deviceAdded(device, false);
         }
     }
