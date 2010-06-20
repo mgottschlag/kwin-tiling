@@ -669,6 +669,16 @@ void NotifierDialog::storageEjectDone(Solid::ErrorType error, QVariant errorData
         m_notifier->update();
         expireStatusBar(udi);
     }
+
+    QList<DeviceItem*> deviceList = itemsForParentUdi(udi);
+    if (deviceList.isEmpty()) {
+        kDebug() << "This should just not happen";
+        return;
+    }
+
+    foreach (DeviceItem* item, deviceList) {
+        item->setState(DeviceItem::Idle);
+    }
 }
 
 void NotifierDialog::storageSetupDone(Solid::ErrorType error, QVariant errorData, const QString &udi)
@@ -750,7 +760,7 @@ void NotifierDialog::ejectRequested(const QString& udi)
     if (deviceList.isEmpty()) {
         kDebug() << "This should just not happen";
         return;
-    }
+   }
 
     foreach (DeviceItem* item, deviceList) {
         item->setState(DeviceItem::Umounting);
