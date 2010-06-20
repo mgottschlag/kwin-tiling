@@ -447,7 +447,7 @@ void DeviceItem::setState(DeviceItem::State state)
     }
 }
 
-DeviceItem::State DeviceItem::state()
+DeviceItem::State DeviceItem::state() const
 {
     return m_state;
 }

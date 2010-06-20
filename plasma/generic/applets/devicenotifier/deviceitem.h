@@ -203,7 +203,7 @@ class DeviceItem : public QGraphicsWidget
         /**
         * Gets the state of the device
         **/
-        State state();
+        State state() const;
 
         /**
         * Update colors on a theme change
