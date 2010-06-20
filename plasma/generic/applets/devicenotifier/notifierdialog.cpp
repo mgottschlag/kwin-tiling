@@ -652,10 +652,9 @@ void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorD
     }
 
     if (!error || !errorData.isValid()) {
-        m_notifier->changeNotifierIcon("dialog-ok");
+        m_notifier->changeNotifierIcon("dialog-ok", 5000);
         m_notifier->update();
         expireStatusBar(udi);
-        QTimer::singleShot(5000, this, SLOT(resetNotifierIcon()));
     }
 
     devItem->setState(DeviceItem::Idle);
@@ -666,10 +665,9 @@ void NotifierDialog::storageEjectDone(Solid::ErrorType error, QVariant errorData
     Q_UNUSED(udi);
 
     if (!error || !errorData.isValid()) {
-        m_notifier->changeNotifierIcon("dialog-ok");
+        m_notifier->changeNotifierIcon("dialog-ok", 2000);
         m_notifier->update();
         expireStatusBar(udi);
-        QTimer::singleShot(2000, this, SLOT(resetNotifierIcon()));
     }
 }
 
@@ -681,10 +679,9 @@ void NotifierDialog::storageSetupDone(Solid::ErrorType error, QVariant errorData
     }
 
      if (!error || !errorData.isValid()) {
-        m_notifier->changeNotifierIcon("dialog-ok");
+        m_notifier->changeNotifierIcon("dialog-ok", 2000);
         m_notifier->update();
         expireStatusBar(udi);
-        QTimer::singleShot(2000, this, SLOT(resetNotifierIcon()));
     }
     devItem->setState(DeviceItem::Idle);
 }
@@ -876,12 +873,6 @@ QString NotifierDialog::getCategoryNameOfDevice(const Solid::Device &device)
     }
 
     return 0;
-}
-
-void NotifierDialog::resetNotifierIcon()
-{
-    m_notifier->changeNotifierIcon();
-    m_notifier->update();
 }
 
 void NotifierDialog::resetSelection()

@@ -109,6 +109,10 @@ void DeviceNotifier::init()
     } else {
         setStatus(Plasma::ActiveStatus);
     }
+
+    m_iconTimer = new QTimer(this);
+    m_iconTimer->setSingleShot(true);
+    connect(m_iconTimer, SIGNAL(timeout()), this, SLOT(resetNotifierIcon()));
 }
 
 void DeviceNotifier::newNotification(const QString &source)
@@ -155,9 +159,20 @@ void DeviceNotifier::fillPreviousDevices()
     m_fillingPreviousDevices = false;
 }
 
-void DeviceNotifier::changeNotifierIcon(const QString& name)
+void DeviceNotifier::changeNotifierIcon(const QString& name, uint timeout)
 {
+    m_iconTimer->stop();
     setPopupIcon(name.isNull() ? DEFAULT_ICON_NAME : name);
+    if (timeout) {
+        m_iconTimer->setInterval(timeout);
+        m_iconTimer->start();
+    }
+}
+
+void DeviceNotifier::resetNotifierIcon()
+{
+    changeNotifierIcon();
+    update();
 }
 
 void DeviceNotifier::popupEvent(bool show)
@@ -268,9 +283,8 @@ void DeviceNotifier::notifyDevice(const QString &udi)
     if (!m_fillingPreviousDevices) {
         emit activate();
         showPopup(NOTIFICATION_TIMEOUT);
-        changeNotifierIcon("preferences-desktop-notification");
+        changeNotifierIcon("preferences-desktop-notification", NOTIFICATION_TIMEOUT);
         update();
-        QTimer::singleShot(NOTIFICATION_TIMEOUT, m_dialog, SLOT(resetNotifierIcon()));
     } else {
         setStatus(Plasma::ActiveStatus);
     }
@@ -459,9 +473,8 @@ void DeviceNotifier::showErrorMessage(const QString &message, const QString &det
 {
     m_dialog->showStatusBarMessage(message, details, udi);
     showPopup(NOTIFICATION_TIMEOUT);
-    changeNotifierIcon("dialog-error");
+    changeNotifierIcon("dialog-error", NOTIFICATION_TIMEOUT);
     update();
-    QTimer::singleShot(NOTIFICATION_TIMEOUT, m_dialog, SLOT(resetNotifierIcon()));
 }
 
 bool DeviceNotifier::areThereHiddenDevices()

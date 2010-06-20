@@ -78,8 +78,10 @@ class DeviceNotifier : public Plasma::PopupApplet
 
         /**
         *  allow to change the icon of the notifier if this applet is in icon mode
+        *  @param name icon name
+        *  @param timeout if not 0, time to wait before resetting the icon (in msecs)
         **/
-        void changeNotifierIcon(const QString &udi = QString());
+        void changeNotifierIcon(const QString &name = QString(), uint timeout = 0);
 
         /**
         * The graphics widget that displays the list of devices.
@@ -172,6 +174,11 @@ class DeviceNotifier : public Plasma::PopupApplet
         */
         void resetDevices();
 
+        /**
+        * @internal slot called to restore to the notifier his icon
+        **/
+        void resetNotifierIcon();
+
     private:
         /**
          * @internal used to register a new device that has appeared to us
@@ -216,6 +223,9 @@ class DeviceNotifier : public Plasma::PopupApplet
 
         ///the timer for different use cases
         QTimer *m_timer;
+
+        //Timer to reset the icon
+        QTimer *m_iconTimer;
 
         QList<QString> m_lastPlugged;
 

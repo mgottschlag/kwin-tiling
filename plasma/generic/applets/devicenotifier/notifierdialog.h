@@ -285,11 +285,6 @@ namespace Notifier
 	   **/
 	  void ejectRequested(const QString &udi);
 
-          /**
-          * @internal slot called to restore to the notifier his icon
-          **/
-          void resetNotifierIcon();
-
           void itemBackgroundMoving(qreal step);
 
           /**
