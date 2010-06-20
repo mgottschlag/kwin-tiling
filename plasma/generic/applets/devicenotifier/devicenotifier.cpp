@@ -153,7 +153,7 @@ void DeviceNotifier::fillPreviousDevices()
         Solid::StorageDrive *drive = parentDevice.as<Solid::StorageDrive>();
         const Solid::StorageVolume *volume = device.as<Solid::StorageVolume>();
         if (drive && (!drive->isHotpluggable() && !drive->isRemovable()) &&
-            (volume->usage() == Solid::StorageVolume::FileSystem) || (volume->usage() == Solid::StorageVolume::Encrypted)) {
+            (volume->usage() == Solid::StorageVolume::FileSystem)) {
             deviceAdded(device, false);
         }
     }
