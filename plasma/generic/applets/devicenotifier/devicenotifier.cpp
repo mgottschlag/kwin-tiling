@@ -147,7 +147,11 @@ void DeviceNotifier::fillPreviousDevices()
 
     QList<Solid::Device> list = Solid::Device::listFromType(Solid::DeviceInterface::StorageVolume);
     foreach (const Solid::Device &device, list) {
-        if (device.as<Solid::StorageVolume>()->isIgnored()) {
+        // We manually add non-removable devices that are a priori ignored
+        // discard swap and partition tables
+        Solid::Device parentDevice = device.parent();
+        Solid::StorageDrive *drive = parentDevice.as<Solid::StorageDrive>();
+        if (drive && (!drive->isHotpluggable() && !drive->isRemovable())) {
             deviceAdded(device, false);
         }
     }
