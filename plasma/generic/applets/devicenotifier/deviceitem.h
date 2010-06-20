@@ -201,6 +201,11 @@ class DeviceItem : public QGraphicsWidget
         void setState(State state);
 
         /**
+        * Gets the state of the device
+        **/
+        State state();
+
+        /**
         * Update colors on a theme change
         **/
         void updateColors();
