@@ -74,7 +74,6 @@
 #define QT_NO_IMAGEIO_XBM
 #define QT_NO_IMAGEIO_XPM
 #define QT_NO_IMAGEIO_MNG
-#define QT_NO_IMAGEIO_JPEG
 #define QT_NO_ASYNC_IMAGE_IO
 
 #define QT_STATIC_CONST static const

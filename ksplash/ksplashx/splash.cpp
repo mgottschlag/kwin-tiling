@@ -170,6 +170,7 @@ static const char* findFileHelper( const char* name, int* w, int* h, bool locolo
                         {
                         best_w = w;
                         best_h = h;
+                        best_distance = distance;
                         strcpy( best, tmp );
                         }
                     }
@@ -346,6 +347,17 @@ static void pregeneratePixmap( const char* file, const char* real_file, int widt
         }
     }
 
+static QImage readImage( FILE* f )
+    {
+    const char jpeg[ 3 + 1 ] = "\377\330\377";
+    char buf[ 3 ] = "";
+    fread( buf, 1, 3, f );
+    rewind( f );
+    if( memcmp( buf, jpeg, 3 ) == 0 )
+        return splash_read_jpeg_image( f );
+    return splash_read_png_image( f );
+    }
+
 static QImage loadImage( const char* file, QRect geom )
     {
     int w, h;
@@ -354,7 +366,7 @@ static QImage loadImage( const char* file, QRect geom )
     FILE* f = fopen( real_file, "r" );
     if( f == NULL )
         return QImage();
-    QImage img = splash_read_png_image( f );
+    QImage img = readImage( f );
     if( img.depth() != 32 )
         img = img.convertDepth( 32 );
     fclose( f );
@@ -407,7 +419,7 @@ static QImage loadAnimImage( const char* file, int frames )
         fprintf( stderr, "Bad anim file: %s\n", file );
         exit( 3 );
         }
-    QImage img = splash_read_png_image( f );
+    QImage img = readImage( f );
     if( img.depth() != 32 )
         img = img.convertDepth( 32 );
     fclose( f );

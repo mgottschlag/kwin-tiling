@@ -1,4 +1,4 @@
-This is a splashscreen which basically depends only on libX11 and libpng.
+This is a splashscreen which basically depends only on libX11, libpng and libjpeg.
 It includes few sources from Qt which have been modified to work without
 QApplication. Due to almost no link dependencies and no QApplication
 initialization this splashscreen has a very fast startup.

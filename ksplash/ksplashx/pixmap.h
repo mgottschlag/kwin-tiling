@@ -77,5 +77,6 @@ PixmapData imageToPixmap( const QImage& im )
     }
 
 QImage splash_read_png_image(FILE* f);
+QImage splash_read_jpeg_image(FILE* f);
 
 #endif

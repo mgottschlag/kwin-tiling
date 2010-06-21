@@ -5,6 +5,7 @@ add_subdirectory( utils )
 add_subdirectory( themes )
 
 include( FindPNG )
+include( FindJPEG )
 
 include_directories(${PNG_PNG_INCLUDE_DIR})
 
@@ -19,6 +20,7 @@ CHECK_CXX_SOURCE_COMPILES("	#ifdef __SUNPRO_CC
 set( ksplashx_SRCS
     main.cpp
     qglobal.cpp
+    qjpegio.cpp
     qpngio.cpp
     qimage.cpp
     qsize.cpp
@@ -46,7 +48,7 @@ if( X86_MMX_FOUND2 )
 endif( X86_MMX_FOUND2 )
 
 add_executable( ksplashx ${ksplashx_SRCS} ${ksplashx_EXTRA_SRCS} )
-target_link_libraries( ksplashx ${X11_LIBRARIES} ${PNG_LIBRARIES})
+target_link_libraries( ksplashx ${X11_LIBRARIES} ${PNG_LIBRARIES} ${JPEG_LIBRARIES})
 if( X11_Xinerama_FOUND )
     target_link_libraries( ksplashx ${X11_Xinerama_LIB} )
 endif( X11_Xinerama_FOUND )
