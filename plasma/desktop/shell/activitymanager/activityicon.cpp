@@ -67,7 +67,7 @@ void ActivityIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
     const QRectF rect = contentsRect();
     QSize cornerIconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
-    qreal iconX = rect.x() + qMax(0.0, (rect.width() - iconSize()) / 2.0); //icon's centered
+    qreal iconX = rect.x() + qMax<double>(0.0, (rect.width() - iconSize()) / 2.0); //icon's centered
 
     if (m_activity->isRunning()) {
         if (m_removable) {
@@ -99,7 +99,7 @@ void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     //FIXME this is duplicate code, should get cleaned up later
     const QRectF rect = contentsRect();
     QSize cornerIconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
-    qreal iconX = rect.x() + qMax(0.0, (rect.width() / 2) - (iconSize() / 2));
+    qreal iconX = rect.x() + qMax<double>(0.0, (rect.width() / 2) - (iconSize() / 2));
 
     qreal removeX = iconX + iconSize() - cornerIconSize.width();
     qreal removeY = rect.y();

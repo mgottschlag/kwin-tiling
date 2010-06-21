@@ -219,10 +219,10 @@ void IconGridLayout::setGeometry(const QRectF &rect)
     updateGridParameters();
 
     qreal offsetLeft =
-        qMax(0.0, (geometry().width() - preferredWidth()) / 2);
+        qMax<qreal>(0.0, (geometry().width() - preferredWidth()) / 2);
 
     qreal offsetTop =
-        qMax(0.0, (geometry().height() - preferredHeight()) / 2);
+        qMax<qreal>(0.0, (geometry().height() - preferredHeight()) / 2);
 
     int itemCount = m_items.size();
 
