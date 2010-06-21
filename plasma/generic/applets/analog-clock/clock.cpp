@@ -86,11 +86,11 @@ void Clock::init()
 void Clock::connectToEngine()
 {
     m_lastTimeSeen = QTime();
-    
+
     Plasma::DataEngine* timeEngine = dataEngine("time");
     timeEngine->disconnectSource(m_oldTimezone, this);
     m_oldTimezone = currentTimezone();
-    
+
     if (m_showSecondHand) {
         timeEngine->connectSource(currentTimezone(), this, 500);
     } else {
@@ -333,11 +333,11 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                 m_secondHandUpdateTimer = new QTimer(this);
                 connect(m_secondHandUpdateTimer, SIGNAL(timeout()), this, SLOT(moveSecondHand()));
             }
-            
+
             if (m_animationStart != seconds && !m_secondHandUpdateTimer->isActive()) {
                 m_secondHandUpdateTimer->start(50);
                 m_animationStart = seconds; //we don't want to have a second animation if there is a external update (wallpaper etc).
-                seconds += 1;                
+                seconds += 1;
             } else {
                 m_secondHandUpdateTimer->stop();
             }
@@ -407,25 +407,35 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         QString time = prettyTimezone();
 
         if (!time.isEmpty()) {
-            QRect textRect = tzRect();
+            QRect textRect = tzRect(time);
             tzFrame()->paintFrame(p, textRect, QRect(QPoint(0, 0), textRect.size()));
+
+            qreal left, top, right, bottom;
+            tzFrame()->getMargins(left, top, right, bottom);
 
             p->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
             p->setFont(Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
-            p->drawText(textRect, Qt::AlignCenter, time);
+            p->drawText(textRect.adjusted(left, 0, -right, 0), Qt::AlignCenter, time);
         }
     }
 }
 
-QRect Clock::tzRect()
+QRect Clock::tzRect(const QString &text)
 {
     QRect rect = contentsRect().toRect();
+
     QFont font = Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
-    QFontMetrics fm(font);
+    QFontMetrics fontMetrics(font);
+
     qreal left, top, right, bottom;
     tzFrame()->getMargins(left, top, right, bottom);
-    int height = top + bottom + fm.height();
-    return QRect(0, rect.bottom() - height, rect.width(), height);
+
+    int width = left + right + fontMetrics.width(text) + fontMetrics.averageCharWidth() * 2;
+    int height = top + bottom + fontMetrics.height();
+    width = qMin(width, rect.width());
+    height = qMin(height, rect.height());
+
+    return QRect((rect.width() - width) / 2, rect.bottom() - height, width, height);
 }
 
 Plasma::FrameSvg *Clock::tzFrame()
@@ -445,7 +455,7 @@ void Clock::invalidateCache()
     QSize pixmapSize = contentsRect().size().toSize();
 
     if (m_showingTimezone) {
-        QRect tzArea = tzRect();
+        QRect tzArea = tzRect(prettyTimezone());
         pixmapSize.setHeight(qMax(10, pixmapSize.height() - tzArea.height()));
         tzFrame()->resizeFrame(tzArea.size());
     }

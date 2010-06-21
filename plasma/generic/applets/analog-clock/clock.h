@@ -70,7 +70,7 @@ class Clock : public ClockApplet
     private:
         void connectToEngine();
         void drawHand(QPainter *p, const QRect &rect, const qreal verticalTranslation, const qreal rotation, const QString &handName);
-        QRect tzRect();
+        QRect tzRect(const QString &text);
         Plasma::FrameSvg *tzFrame();
         void invalidateCache();
 
