@@ -333,7 +333,6 @@ void StatusNotifierItemSource::refreshCallback(QDBusPendingCallWatcher *call)
                     kWarning() << "DBusMenu disabled for this application";
                 } else {
                     m_menuImporter = new PlasmaDBusMenuImporter(m_statusNotifierItemInterface->service(), menuObjectPath, iconLoader(), this);
-                    connect(m_menuImporter, SIGNAL(menuReadyToBeShown()), this, SLOT(contextMenuReady()));
                 }
             }
         }
@@ -345,6 +344,10 @@ void StatusNotifierItemSource::refreshCallback(QDBusPendingCallWatcher *call)
 
 void StatusNotifierItemSource::contextMenuReady()
 {
+    // Work around to avoid infinite recursion because menuReadyToBeShown() is emitted
+    // by DBusMenuImporter at the end of its slot connected to aboutToShow()
+    // (dbusmenu-qt 0.3.5)
+    disconnect(m_menuImporter, SIGNAL(menuReadyToBeShown()), this, SLOT(contextMenuReady()));
     emit contextMenuReady(m_menuImporter->menu());
 }
 
@@ -451,6 +454,7 @@ void StatusNotifierItemSource::contextMenu(int x, int y)
         // Simulate an "aboutToShow" so that menu->sizeHint() is correct. Otherwise
         // the menu may show up over the applet if new actions are added on the
         // fly.
+        connect(m_menuImporter, SIGNAL(menuReadyToBeShown()), this, SLOT(contextMenuReady()));
         QMetaObject::invokeMethod(menu, "aboutToShow");
     } else {
         kWarning() << "Could not find DBusMenu interface, falling back to calling ContextMenu()";
