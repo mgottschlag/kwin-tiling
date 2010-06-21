@@ -42,6 +42,8 @@
 
 #include "ui_calendarConfig.h"
 
+#include <cmath>
+
 namespace Plasma
 {
 
@@ -914,6 +916,9 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
 
             paintCell(p, cellDay, weekRow, weekdayColumn, type, cellDate);
 
+            // FIXME: modify svg to allow for a wider week number cell
+            // a temporary workaround is to paint only one week number (weekString) when the cell is small
+            // and both week numbers (accurateWeekString) when there is enough room
             if (weekdayColumn == 0) {
                 QRectF cellRect(r.x() + d->centeringSpace, y, d->cellW, d->cellH);
                 p->setPen(Theme::defaultTheme()->color(Plasma::Theme::TextColor));
@@ -922,20 +927,35 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
                 p->setFont(font);
                 p->setOpacity(d->opacity);
                 QString weekString;
+                QString accurateWeekString;
                 if (calendar()->isValid(cellDate)) {
                     weekString = calendar()->weekNumberString(cellDate);
+                    accurateWeekString = weekString;
                     if (calendar()->dayOfWeek(cellDate) != Qt::Monday) {
                         QDate nextWeekDate = calendar()->addDays(cellDate, d->daysInWeek);
                         if (calendar()->isValid(nextWeekDate)) {
                             if (layoutDirection() == Qt::RightToLeft) {
-                                weekString.prepend("/").prepend(calendar()->weekNumberString(nextWeekDate));
+                                accurateWeekString.prepend("/").prepend(calendar()->weekNumberString(nextWeekDate));
                             } else {
-                                weekString.append("/").append(calendar()->weekNumberString(nextWeekDate));
+                                accurateWeekString.append("/").append(calendar()->weekNumberString(nextWeekDate));
+                            }
+                        }
+                        // ensure that weekString is the week number that has the most amout of days in the row
+                        QDate middleWeekDate = calendar()->addDays(cellDate, floor(d->daysInWeek / 2));
+                        if (calendar()->isValid(middleWeekDate)) {
+                            QString middleWeekString = calendar()->weekNumberString(middleWeekDate);
+                            if (weekString != middleWeekString) {
+                                weekString = middleWeekString;
                             }
                         }
                     }
                 }
-                p->drawText(cellRect, Qt::AlignCenter, weekString); //draw number
+                QFontMetrics fontMetrics(font);
+                if (fontMetrics.width(accurateWeekString) > d->cellW) {
+                    p->drawText(cellRect, Qt::AlignCenter, weekString); //draw number
+                } else {
+                    p->drawText(cellRect, Qt::AlignCenter, accurateWeekString); //draw number
+                }
                 p->setOpacity(1.0);
             }
         }
