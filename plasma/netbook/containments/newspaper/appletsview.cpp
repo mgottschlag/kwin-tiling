@@ -64,6 +64,7 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
                     return Plasma::ScrollWidget::sceneEventFilter(watched, event);
                 }
 
+                event->ignore();
                 return Plasma::ScrollWidget::sceneEventFilter(watched, event);
             }
         }
@@ -75,7 +76,10 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
 
         if (!m_appletsContainer->m_currentApplet || !m_appletsContainer->m_currentApplet.data()->isAncestorOf(watched)) {
             Plasma::ScrollWidget::sceneEventFilter(watched, event);
+            event->ignore();
             return true;
+        } else if (m_appletsContainer->m_currentApplet.data()->isAncestorOf(watched)) {
+            return false;
         }
     } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
         foreach (Plasma::Applet *applet, m_appletsContainer->containment()->applets()) {
