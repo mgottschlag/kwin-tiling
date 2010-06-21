@@ -300,11 +300,10 @@ class CalendarTablePrivate
         bool displayHolidays;
         QString holidaysRegion;
         Plasma::DataEngine *dataEngine;
-        // Hash key: int = Julian Day number of holiday, Data = details of holiday
+        // Hash key: int = Julian Day number of holiday/event/todo, Data = details of holiday/event/todo
         QMultiHash<int, Plasma::DataEngine::Data> holidays;
-        // Hash key: int = Julian Day number, QString = what's going on
-        QHash<int, QStringList> events;
-        QHash<int, QStringList> todos;
+        QMultiHash<int, Plasma::DataEngine::Data> events;
+        QMultiHash<int, Plasma::DataEngine::Data> todos;
         QString eventsQuery;
 
         Ui::calendarConfig calendarConfigUi;
@@ -530,41 +529,57 @@ QString CalendarTable::dateDetails(const QDate &date) const
     QString details;
     const int julian = date.toJulianDay();
 
-    foreach (Plasma::DataEngine::Data holidayData, d->holidays.values(julian)) {
-        if (holidayData.value("observanceType").toString() == "PublicHoliday") {
-            if (!details.isEmpty()) {
-                details += "<br>";
-            }
-            details += i18n("<i>Holiday</i>: %1", holidayData.value("name").toString());
-        }
-    }
+    if (d->holidays.contains(julian)) {
+        details += "<br>";
 
-    foreach (Plasma::DataEngine::Data holidayData, d->holidays.values(julian)) {
-        if (holidayData.value("observanceType").toString() == "Other") {
-            if (!details.isEmpty()) {
+        foreach (Plasma::DataEngine::Data holidayData, d->holidays.values(julian)) {
+            if (holidayData.value("observanceType").toString() == "PublicHoliday") {
+                details += i18n("<i>Holiday</i>: %1", holidayData.value("name").toString());
                 details += "<br>";
             }
-            details += holidayData.value("name").toString();
+        }
+
+        foreach (Plasma::DataEngine::Data holidayData, d->holidays.values(julian)) {
+            if (holidayData.value("observanceType").toString() == "Other") {
+                //TODO add a type when strings not frozen
+                details += holidayData.value("name").toString();
+                details += "<br>";
+            }
         }
     }
 
     if (d->events.contains(julian)) {
-        if (!details.isEmpty()) {
-            details += "<p>";
-        }
+        details += "<br>";
 
-        foreach (const QString &event, d->events.value(julian)) {
-            details += i18n("<i>Event</i>: %1<br>", event);
+        foreach (Plasma::DataEngine::Data eventData, d->events.values(julian)) {
+            KDateTime startDate = KDateTime(eventData.value("StartDate").toDateTime());
+            KDateTime endDate = KDateTime(eventData.value("EndDate").toDateTime());
+            QTime startTime, endTime;
+            if (startDate.date() < date) {
+                startTime.setHMS(0, 0, 0);
+            } else {
+                startTime = startDate.time();
+            }
+            if (endDate.date() > date) {
+                endTime.setHMS(23, 59, 59);
+            } else {
+                endTime = endDate.time();
+            }
+            //TODO translate this layout once strings not frozen
+            QString description = QString("%1 - %2<br>%3").arg(KGlobal::locale()->formatTime(startTime))
+                                                          .arg(KGlobal::locale()->formatTime(endTime))
+                                                          .arg(eventData.value("Summary").toString());
+            details += i18n("<i>Event</i>: %1<br>", description);
         }
     }
 
     if (d->todos.contains(julian)) {
-        if (!details.isEmpty()) {
-            details += "<p>";
-        }
+        details += "<br>";
 
-        foreach (const QString &event, d->todos.value(julian)) {
-            details += i18n("<i>Todo</i>: %1<br>", event);
+        foreach (Plasma::DataEngine::Data todoData, d->todos.values(julian)) {
+            //TODO add Priority and Percentage Complete when strings not frozen
+            QString description = QString("%1").arg(todoData.value("Summary").toString());
+            details += i18n("<i>Todo</i>: %1<br>", description);
         }
     }
 
@@ -614,37 +629,16 @@ void CalendarTable::populateEvents()
 void CalendarTable::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
 {
     Q_UNUSED(source)
-    //kDebug() << "***************" << source << data.count() << data;
-    //QVariantList list
-    KLocale *loc = KGlobal::locale();
     d->events.clear();
     d->todos.clear();
     foreach (const QVariant &v, data) {
-        const QVariantMap map = v.toMap();
-
-        if (map["Type"].toString() == "Journal") {
-            continue;
-        }
-
-        QString description = QString("%1 - %2\n%3")
-                                .arg(loc->formatDateTime(KDateTime(map["StartDate"].toDateTime())))
-                                .arg(loc->formatDateTime(KDateTime(map["EndDate"].toDateTime())))
-                                .arg(map["Summary"].toString());
-        int julian = map["StartDate"].toDateTime().date().toJulianDay();
-        //kDebug() << "inserting" << julian << map["Type"].toString() << description;
-        if (map["Type"].toString() == "Todo") {
-            if (d->todos.contains(julian)) {
-                d->todos[julian].append(description);
-            } else {
-                d->todos.insert(julian, QStringList() << description);
-            }
-        } else {
-            if (d->events.contains(julian)) {
-                d->events[julian].append(description);
-            } else {
-                d->events.insert(julian, QStringList() << description);
-            }
-        }
+        Plasma::DataEngine::Data pimData = v.toHash();
+        QString type = pimData.take("Type").toString();
+        if (type == "Todo") {
+            d->todos.insert(pimData.value("TodoDueDate").toDateTime().date().toJulianDay(), pimData);
+        } else if (type == "Event") {
+            d->events.insert(pimData.value("StartDate").toDateTime().date().toJulianDay(), pimData);
+        } // Ignore Journals
     }
     update();
 }

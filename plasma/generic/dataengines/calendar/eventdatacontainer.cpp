@@ -78,13 +78,20 @@ void EventDataContainer::rowsRemoved(const QModelIndex& parent, int, int)
 void EventDataContainer::updateData(Akonadi::DateRangeFilterProxyModel* model, const QModelIndex& parent)
 {
     for(int row = 0; row < model->rowCount(parent); ++row) {
-        QVariantMap eventData;
+        Plasma::DataEngine::Data eventData;
         eventData["Type"] = model->index(row, Akonadi::CalendarModel::Type).data();
         eventData["StartDate"] = model->index(row, Akonadi::CalendarModel::DateTimeStart).data(Akonadi::CalendarModel::SortRole).toDateTime();
         eventData["EndDate"] = model->index(row, Akonadi::CalendarModel::DateTimeEnd).data(Akonadi::CalendarModel::SortRole).toDateTime();
+        eventData["PrimaryDate"] = model->index(row, Akonadi::CalendarModel::PrimaryDate).data(Akonadi::CalendarModel::SortRole).toDateTime();
         eventData["Summary"] = model->index(row, Akonadi::CalendarModel::Summary).data().toString();
         QVariant collection = model->index(row, Akonadi::CalendarModel::Type).data(Akonadi::EntityTreeModel::ParentCollectionRole);
         eventData["Source"] = collection.value<Akonadi::Collection>().name();
+        eventData["RecursRole"] = model->index(row, Akonadi::CalendarModel::RecursRole).data();
+        if ( eventData["Type"] == "Todo" ) {
+            eventData["TodoDueDate"] = model->index(row, Akonadi::CalendarModel::DateTimeDue).data(Akonadi::CalendarModel::SortRole).toDateTime();
+            eventData["TodoPriority"] = model->index(row, Akonadi::CalendarModel::Priority).data(Akonadi::CalendarModel::SortRole);
+            eventData["TodoPercentComplete"] = model->index(row, Akonadi::CalendarModel::PercentComplete).data(Akonadi::CalendarModel::SortRole);
+        }
         setData(model->index(row, Akonadi::CalendarModel::Uid).data().toString(), eventData);
     }
     checkForUpdate();
