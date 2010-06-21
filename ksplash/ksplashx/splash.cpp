@@ -231,10 +231,14 @@ static const char* findFileWithDepth( const char* name, int* w, int* h, bool loc
         }
     if( w == NULL || h == NULL ) // no scaling possible
         return "";
+#if 0 // disable for now in order to match plasma's selection mechanism
     const char* ret = findFileHelper( name, w, h, locolor, false, geom );
     if( ret == NULL || *ret == '\0' )
         ret = findFileHelper( name, w, h, locolor, true, geom );
     return ret;
+#else
+    return findFileHelper( name, w, h, locolor, true, geom );
+#endif
     }
 
 // returns a pointer to a static !
