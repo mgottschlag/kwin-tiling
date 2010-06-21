@@ -140,6 +140,7 @@ static const char* findFileHelper( const char* name, int* w, int* h, bool locolo
     char best[ 1024 ];
     int best_w = -1;
     int best_h = -1;
+    float best_distance = 10E30;
     DIR* dir = opendir( theme_dir );
     if( dir != NULL )
         {
@@ -150,7 +151,13 @@ static const char* findFileHelper( const char* name, int* w, int* h, bool locolo
                 ? sscanf( file->d_name, "%dx%d-locolor", &w, &h ) == 2
                 : sscanf( file->d_name, "%dx%d", &w, &h ) == 2 )
                 {
-                if( w > best_w
+                // compute difference of areas
+                float delta = w * h - geom.width() * geom.height();
+                // scale down to about 1.0
+                delta /= ((geom.width() * geom.height())+(w * h))/2;
+                // Difference of areas, slight preference to scale down
+                float distance = delta >= 0.0 ? delta : -delta + 2.0;
+                if( distance < best_distance
                     // only derive from themes with the same ratio if lame resolutions are not allowed, damn 1280x1024
                     && ( lame || w * geom.height() == h * geom.width())
                     )
