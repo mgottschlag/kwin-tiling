@@ -3196,7 +3196,7 @@ Name[uk]=Перейти до веб-сторінки KDE
 Name[vi]=Tới nơi Mạng KDE
 Name[wa]=Potchî al waibe di KDE
 Name[x-test]=xxGo to KDE Websitexx
-Name[zh_CN]=转到 KDE 网站
+Name[zh_CN]=访问 KDE 网站
 Name[zh_TW]=跳到 KDE 網站
 Type=COMMAND_URL_SHORTCUT_ACTION_DATA
 
