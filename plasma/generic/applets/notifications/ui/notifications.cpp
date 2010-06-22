@@ -120,7 +120,6 @@ Notifications::~Notifications()
 void Notifications::init()
 {
     extender()->setEmptyExtenderMessage(i18n("No notifications and no jobs"));
-    extender()->setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     m_busyWidget = new BusyWidget(this, m_manager);
     connect(m_busyWidget, SIGNAL(clicked()), this, SLOT(togglePopup()));
