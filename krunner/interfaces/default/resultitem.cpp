@@ -119,6 +119,11 @@ QGraphicsWidget* ResultItem::arrangeTabOrder(QGraphicsWidget* last)
     return currentWidget;
 }
 
+bool ResultItem::isValid() const
+{
+    return m_match.isValid();
+}
+
 void ResultItem::setMatch(const Plasma::QueryMatch &match)
 {
     m_match = match;

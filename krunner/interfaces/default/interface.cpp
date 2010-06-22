@@ -442,7 +442,7 @@ void Interface::hideEvent(QHideEvent *e)
 
 void Interface::run(ResultItem *item)
 {
-    if (!item || item->group() < Plasma::QueryMatch::PossibleMatch) {
+    if (!item || !item->isValid() || item->group() < Plasma::QueryMatch::PossibleMatch) {
         m_delayedRun = true;
         return;
     }

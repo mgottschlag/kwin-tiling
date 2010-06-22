@@ -184,8 +184,13 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         m_viewableHeight = item->sceneBoundingRect().bottom();
     }
 
+    Plasma::QueryMatch dummy(0);
     while (rit.hasNext()) {
-        rit.next()->hide();
+        ResultItem *item = rit.next();
+        item->hide();
+        if (item->isValid()) {
+            item->setMatch(dummy);
+        }
     }
 
     clearSelection();

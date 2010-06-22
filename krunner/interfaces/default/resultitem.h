@@ -77,6 +77,7 @@ public:
     void setMatch(const Plasma::QueryMatch &match);
 
     // getters
+    bool isValid() const;
     QString id() const;
     QString name() const;
     QString description() const;
