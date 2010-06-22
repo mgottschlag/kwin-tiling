@@ -62,6 +62,7 @@ private slots:
     void appletIconDoubleClicked(Plasma::AbstractIcon *icon);
     void appletIconHoverLeave(Plasma::AbstractIcon *icon);
     void appletIconHoverEnter(Plasma::AbstractIcon *icon);
+    void appletIconDragging(Plasma::AbstractIcon *icon);
     void onToolTipEnter();
     void onToolTipLeave();
 

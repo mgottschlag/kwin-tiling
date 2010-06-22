@@ -111,7 +111,7 @@ void AbstractIcon::expand()
 void AbstractIcon::hoverEnterEvent(QGraphicsSceneHoverEvent *)
 {
     m_hovered = true;
-    emit(hoverEnter(this));
+    emit hoverEnter(this);
     QMimeData *data = mimeData();
     if (data && !data->formats().isEmpty()) {
     }
@@ -120,7 +120,7 @@ void AbstractIcon::hoverEnterEvent(QGraphicsSceneHoverEvent *)
 void AbstractIcon::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
 {
     m_hovered = false;
-    emit(hoverLeave(this));
+    emit hoverLeave(this);
 }
 
 void AbstractIcon::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -131,6 +131,7 @@ void AbstractIcon::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         QMimeData *data = mimeData();
         if (data && !data->formats().isEmpty()) {
             qDebug() << "Start Dragging";
+            emit dragging(this);
             QDrag *drag = new QDrag(event->widget());
             QPixmap p = pixmap(QSize(KIconLoader::SizeLarge, KIconLoader::SizeLarge));
             drag->setPixmap(p);

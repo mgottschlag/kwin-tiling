@@ -162,6 +162,14 @@ void AppletsListWidget::appletIconHoverLeave(Plasma::AbstractIcon *icon)
     }
 }
 
+void AppletsListWidget::appletIconDragging(Plasma::AbstractIcon *icon)
+{
+    Q_UNUSED(icon)
+    m_toolTip->hide();
+    m_toolTipAppearTimer.stop();
+    m_toolTipDisappearTimer.stop();
+}
+
 void AppletsListWidget::onToolTipEnter()
 {
     m_toolTipDisappearTimer.stop();
@@ -211,6 +219,7 @@ AppletIconWidget *AppletsListWidget::createAppletIcon(PlasmaAppletItem *appletIt
 
     connect(applet, SIGNAL(hoverEnter(Plasma::AbstractIcon*)), this, SLOT(appletIconHoverEnter(Plasma::AbstractIcon*)));
     connect(applet, SIGNAL(hoverLeave(Plasma::AbstractIcon*)), this, SLOT(appletIconHoverLeave(Plasma::AbstractIcon*)));
+    connect(applet, SIGNAL(dragging(Plasma::AbstractIcon*)), this, SLOT(appletIconDragging(Plasma::AbstractIcon*)));
     connect(applet, SIGNAL(doubleClicked(Plasma::AbstractIcon*)), this, SLOT(appletIconDoubleClicked(Plasma::AbstractIcon*)));
     //FIXME no such signal, needs implementing?
     //connect(applet, SIGNAL(dragStarted(AbstractIcon*)), m_toolTip, SLOT(hide()));

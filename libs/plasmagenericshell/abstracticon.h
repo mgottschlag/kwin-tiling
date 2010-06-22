@@ -59,6 +59,7 @@ class PLASMAGENERICSHELL_EXPORT AbstractIcon : public QGraphicsWidget
     Q_SIGNALS:
         void hoverEnter(Plasma::AbstractIcon *applet);
         void hoverLeave(Plasma::AbstractIcon *applet);
+        void dragging(Plasma::AbstractIcon *applet);
         void clicked(Plasma::AbstractIcon *applet);
         void doubleClicked(Plasma::AbstractIcon *applet);
 
