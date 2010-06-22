@@ -133,24 +133,44 @@ QList < KUrl > KActivityInfo::associatedResources(ResourceType resourceType) con
 QList < KUrl > KActivityInfo::associatedResources(const KUrl & resourceType) const
 {
     QList < KUrl > result;
-    QStringList associatedResources = Private::s_store
+
+    QDBusReply < QStringList > reply = Private::s_store
         ->associatedResources(d->id, resourceType.url());
 
-    foreach (const QString & uri, associatedResources) {
-        result << KUrl(uri);
+    if (reply.isValid()) {
+        QStringList associatedResources = reply.value();
+
+        foreach (const QString & uri, associatedResources) {
+            result << KUrl(uri);
+        }
     }
 
     return result;
 }
 
+// macro defines a shorthand for validating and returning a d-bus result
+// @param REPLY_TYPE type of the d-bus result
+// @param CAST_TYPE type to which to cast the result
+// @param METHOD invocation of the d-bus method
+#define KACTIVITYINFO_DBUS_CAST_RETURN(REPLY_TYPE, CAST_TYPE, METHOD)  \
+    QDBusReply < REPLY_TYPE > dbusReply = METHOD;                      \
+    if (dbusReply.isValid()) {                                         \
+        return CAST_TYPE(dbusReply.value());                               \
+    } else {                                                           \
+        return CAST_TYPE();                                            \
+    }
+
+
 KUrl KActivityInfo::uri() const
 {
-    return KUrl(Private::s_store->uri(d->id));
+    KACTIVITYINFO_DBUS_CAST_RETURN(
+        QString, KUrl, Private::s_store->uri(d->id));
 }
 
 KUrl KActivityInfo::resourceUri() const
 {
-    return KUrl(Private::s_store->resourceUri(d->id));
+    KACTIVITYINFO_DBUS_CAST_RETURN(
+        QString, KUrl, Private::s_store->resourceUri(d->id));
 }
 
 QString KActivityInfo::id() const
@@ -160,18 +180,23 @@ QString KActivityInfo::id() const
 
 QString KActivityInfo::name() const
 {
-    return Private::manager()->ActivityName(d->id);
+    KACTIVITYINFO_DBUS_CAST_RETURN(
+        QString, QString, Private::manager()->ActivityName(d->id));
 }
 
 QString KActivityInfo::icon() const
 {
-    return Private::manager()->ActivityIcon(d->id);
+    KACTIVITYINFO_DBUS_CAST_RETURN(
+        QString, QString, Private::manager()->ActivityIcon(d->id));
 }
 
 QString KActivityInfo::name(const QString & id)
 {
-    return Private::manager()->ActivityName(id);
+    KACTIVITYINFO_DBUS_CAST_RETURN(
+        QString, QString, Private::manager()->ActivityName(id));
 }
+
+#undef KACTIVITYINFO_DBUS_CAST_RETURN
 
 KActivityInfo::Availability KActivityInfo::availability() const
 {

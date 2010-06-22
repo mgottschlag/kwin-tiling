@@ -21,6 +21,8 @@
 #include "activitymanager_interface.h"
 #include "nepomukactivitiesservice_interface.h"
 
+#include <KDebug>
+
 org::kde::ActivityManager * KActivityConsumerPrivate::managerService = 0;
 
 KActivityConsumer::KActivityConsumer(QObject * parent)
@@ -37,15 +39,40 @@ KActivityConsumer::~KActivityConsumer()
     delete d;
 }
 
+// macro defines a shorthand for validating and returning a d-bus result
+// @param TYPE type of the result
+// @param METHOD invocation of the d-bus method
+// @param DEFAULT value to be used if the reply was not valid
+#define KACTIVITYCONSUMER_DBUS_RETURN(TYPE, METHOD, DEFAULT)  \
+    QDBusReply < TYPE > dbusReply = METHOD;          \
+    if (dbusReply.isValid()) {                       \
+        return dbusReply.value();                    \
+    } else {                                                  \
+        kDebug() << "d-bus reply was invalid"                 \
+                 << dbusReply.value()                \
+                 << dbusReply.error();               \
+        return DEFAULT;                                       \
+    }
+
 QString KActivityConsumer::currentActivity() const
 {
-    return d->manager()->CurrentActivity();
+    KACTIVITYCONSUMER_DBUS_RETURN(
+        QString, d->manager()->CurrentActivity(), QString() );
 }
 
 QStringList KActivityConsumer::availableActivities() const
 {
-    return d->manager()->AvailableActivities();
+    KACTIVITYCONSUMER_DBUS_RETURN(
+        QStringList, d->manager()->AvailableActivities(), QStringList() );
 }
+
+QStringList KActivityConsumer::activitiesForResource(const KUrl & uri)
+{
+    KACTIVITYCONSUMER_DBUS_RETURN(
+        QStringList, d->manager()->ActivitiesForResource(uri.url()), QStringList() );
+}
+
+#undef KACTIVITYCONSUMER_DBUS_RETURN
 
 void KActivityConsumer::registerResourceWindow(WId wid, const KUrl & uri)
 {
@@ -55,10 +82,5 @@ void KActivityConsumer::registerResourceWindow(WId wid, const KUrl & uri)
 void KActivityConsumer::unregisterResourceWindow(WId wid, const KUrl & uri)
 {
     d->manager()->UnregisterResourceWindow((uint)wid, uri.url());
-}
-
-QStringList KActivityConsumer::activitiesForResource(const KUrl & uri)
-{
-    return d->manager()->ActivitiesForResource(uri.url());
 }
 
