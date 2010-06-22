@@ -312,7 +312,7 @@ void Panel::appletRemoved(Plasma::Applet* applet)
         return;
     }
 
-    connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(delayedUpdateSize()));
+    disconnect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(delayedUpdateSize()));
 
     m_layout->removeItem(applet);
 
