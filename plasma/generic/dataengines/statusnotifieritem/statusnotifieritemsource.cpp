@@ -189,6 +189,7 @@ void StatusNotifierItemSource::refreshCallback(QDBusPendingCallWatcher *call)
     if (m_needsReRefreshing) {
         m_needsReRefreshing = false;
         performRefresh();
+        call->deleteLater();
         return;
     }
 
