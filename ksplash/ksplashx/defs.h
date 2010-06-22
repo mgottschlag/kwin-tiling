@@ -163,10 +163,4 @@ bool freadline( char* buf, int bufsize, FILE* datafile );
 void strip_whitespace( char* line );
 bool begins_with( const char* line, const char* str );
 
-inline
-int round( double num )
-    {
-    return num >= 0 ? int( num + 0.5 ) : int( num - 0.5 );
-    }
-
 #endif

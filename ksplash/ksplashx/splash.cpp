@@ -45,6 +45,7 @@ const int LAST_STATE = 6;
 #include <assert.h>
 #include <dirent.h>
 #include <libgen.h>
+#include <math.h>
 
 #include <X11/Xutil.h>
 
@@ -155,8 +156,14 @@ static const char* findFileHelper( const char* name, int* w, int* h, bool locolo
                 float delta = w * h - geom.width() * geom.height();
                 // scale down to about 1.0
                 delta /= ((geom.width() * geom.height())+(w * h))/2;
-                // Difference of areas, slight preference to scale down
-                float distance = delta >= 0.0 ? delta : -delta + 2.0;
+                // Consider first the difference in aspect ratio,
+                // then in areas. Prefer scaling down.
+                float deltaRatio = 1.0;
+                if (h > 0 && geom.height() > 0) {
+                    deltaRatio = float(w) / float(h) -
+                                 float(geom.width()) / float(geom.height());
+                }
+                float distance = fabs(deltaRatio) * 3.0 + (delta >= 0.0 ? delta : -delta + 5.0);
                 if( distance < best_distance
                     // only derive from themes with the same ratio if lame resolutions are not allowed, damn 1280x1024
                     && ( lame || w * geom.height() == h * geom.width())
