@@ -7,7 +7,7 @@ X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_desktoptheme
 X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=desktop-appearance
-X-DocPath=kcontrol/desktoptheme/index.html
+X-DocPath=kcontrol/desktopthemedetails/index.html
 
 Name=Desktop Theme
 Name[ca]=Tema d'escriptori
