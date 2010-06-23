@@ -121,7 +121,7 @@ QGraphicsWidget* ResultItem::arrangeTabOrder(QGraphicsWidget* last)
 
 bool ResultItem::isValid() const
 {
-    return m_match.isValid();
+    return m_match.isValid() || m_match.type() == Plasma::QueryMatch::InformationalMatch;
 }
 
 void ResultItem::setMatch(const Plasma::QueryMatch &match)
@@ -335,7 +335,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 {
     Q_UNUSED(widget);
 
-    if (!m_match.isValid()) {
+    if (!m_match.isValid() && m_match.type() != Plasma::QueryMatch::InformationalMatch) {
         return;
     }
 
