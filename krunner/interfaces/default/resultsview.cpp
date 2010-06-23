@@ -29,13 +29,15 @@
 #include <Plasma/Svg>
 
 
+#include "resultscene.h"
 #include "resultsview.h"
 #include "resultitem.h"
 
-ResultsView::ResultsView(QWidget * parent)
-    : QGraphicsView(parent)
+ResultsView::ResultsView(ResultScene *scene, SharedResultData *resultData, QWidget *parent)
+    : QGraphicsView(scene, parent),
+      m_resultScene(scene),
+      m_resultData(resultData)
 {
-
     setFrameStyle(QFrame::NoFrame);
     viewport()->setAutoFillBackground(false);
     setInteractive(true);
@@ -65,20 +67,29 @@ ResultsView::ResultsView(QWidget * parent)
 
     connect(verticalScrollBar(), SIGNAL(rangeChanged(int, int)), this, SLOT(updateArrowsVisibility()));
     connect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(updateArrowsVisibility()));
+    connect(m_resultScene, SIGNAL(ensureVisibility(QGraphicsItem *)), this, SLOT(ensureVisibility(QGraphicsItem *)));
 }
 
 ResultsView::~ResultsView()
 {
 }
 
+void ResultsView::ensureVisibility(QGraphicsItem* item)
+{
+    m_resultData->processHoverEvents = false;
+    ensureVisible(item, 0, 0);
+    m_resultData->processHoverEvents = true;
+}
+
 void ResultsView::previousPage()
 {
-    QGraphicsItem * currentItem = scene()->selectedItems().first();
-    QGraphicsItem * item = itemAt(0,-height()*0.4);
+    QGraphicsItem *currentItem = scene()->selectedItems().first();
+    QGraphicsItem *item = itemAt(0, -height()*0.4);
 
     if (!item) {
         item = scene()->itemAt(0,0);
     }
+
     if (item && (item != currentItem)) {
         scene()->setFocusItem(item);
     } else {
@@ -89,11 +100,12 @@ void ResultsView::previousPage()
 
 void ResultsView::nextPage()
 {
-    QGraphicsItem * currentItem = scene()->selectedItems().first();
-    QGraphicsItem * item = itemAt(0,height()*1.4);
+    QGraphicsItem *currentItem = scene()->selectedItems().first();
+    QGraphicsItem *item = itemAt(0, height()*1.4);
     if (!item) {
         item = scene()->itemAt(0,sceneRect().height()-1);
     }
+
     if (item && (item != currentItem)) {
         scene()->setFocusItem(item);
     } else {
@@ -114,7 +126,7 @@ void ResultsView::updateArrowsVisibility()
 
     if (scene()) {
         m_previousPage->setVisible(mapFromScene(QPointF(0,0)).y()<0);
-        m_nextPage->setVisible(mapFromScene(QPointF(0,sceneRect().height())).y()>height());
+        m_nextPage->setVisible(mapFromScene(QPointF(0,sceneRect().height())).y() > height());
     }
 }
 

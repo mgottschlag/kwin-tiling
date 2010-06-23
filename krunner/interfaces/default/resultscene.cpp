@@ -27,7 +27,6 @@
 #include <QtCore/QMutexLocker>
 #include <QtGui/QPainter>
 #include <QtCore/QTimeLine>
-#include <QtGui/QGraphicsSceneWheelEvent>
 #include <QtGui/QGraphicsGridLayout>
 #include <QtGui/QGraphicsWidget>
 #include <QtGui/QGraphicsProxyWidget>

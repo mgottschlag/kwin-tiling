@@ -156,16 +156,13 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_singleRunnerSearchTerm = new KLineEdit(this);
     bottomLayout->insertWidget(4, m_singleRunnerSearchTerm, 10 );
 
-    m_resultsView = new ResultsView(this);
-    m_layout->addWidget(m_resultsView);
-
     //kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize();
     m_resultsScene = new ResultScene(&m_resultData, runnerManager, m_searchTerm, this);
-    m_resultsView->setScene(m_resultsScene);
+    m_resultsView = new ResultsView(m_resultsScene, &m_resultData, this);
+    m_layout->addWidget(m_resultsView);
 
     connect(m_resultsScene, SIGNAL(matchCountChanged(int)), this, SLOT(matchCountChanged(int)));
     connect(m_resultsScene, SIGNAL(itemActivated(ResultItem *)), this, SLOT(run(ResultItem *)));
-    connect(m_resultsScene, SIGNAL(ensureVisibility(QGraphicsItem *)), this, SLOT(ensureVisibility(QGraphicsItem *)));
 
     connect(lineEdit, SIGNAL(userTextChanged(QString)), this, SLOT(queryTextEdited(QString)));
     connect(m_searchTerm, SIGNAL(returnPressed()), this, SLOT(runDefaultResultItem()));
@@ -409,13 +406,6 @@ void Interface::showHelp()
     m_resultsScene->setQueryMatches(matches.values());
 }
 
-void Interface::ensureVisibility(QGraphicsItem* item)
-{
-    m_resultData.processHoverEvents = false;
-    m_resultsView->ensureVisible(item,0,0);
-    m_resultData.processHoverEvents = true;
-}
-
 void Interface::setStaticQueryMode(bool staticQuery)
 {
     // don't show the search and other control buttons in the case of a static querymatch
@@ -427,7 +417,7 @@ void Interface::setStaticQueryMode(bool staticQuery)
     m_searchTerm->setVisible(visible && !singleRunner);
     m_singleRunnerSearchTerm->setVisible(visible && singleRunner);
     if (singleRunner) {
-        m_singleRunnerIcon->setPixmap(singleRunner->icon().pixmap( QSize( 22, 22 )));
+        m_singleRunnerIcon->setPixmap(singleRunner->icon().pixmap(QSize(22, 22)));
         m_singleRunnerDisplayName->setText(singleRunner->name());
     }
     m_singleRunnerIcon->setVisible(singleRunner);

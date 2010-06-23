@@ -27,25 +27,26 @@ namespace Plasma
 {
     class Svg;
 }
-class ResultScene;
+
 class QGraphicsView;
 class QToolButton;
+class ResultScene;
+class SharedResultData;
 
 class ResultsView : public QGraphicsView
 {
     Q_OBJECT
 
 public:
-    explicit ResultsView(QWidget *parent = 0);
+    explicit ResultsView(ResultScene *scene, SharedResultData *resultData, QWidget *parent = 0);
     ~ResultsView();
 
 protected:
     void resizeEvent(QResizeEvent *);
     void paintEvent(QPaintEvent *);
 
-    Plasma::Svg *m_arrowSvg;
-
-    private slots:
+private Q_SLOTS:
+    void ensureVisibility(QGraphicsItem *item);
     void updateArrowsVisibility();
     void previousPage();
     void nextPage();
@@ -53,8 +54,11 @@ protected:
 private:
     void resetArrowsPosition();
 
+    ResultScene *m_resultScene;
+    SharedResultData *m_resultData;
     QToolButton *m_previousPage;
     QToolButton *m_nextPage;
+    Plasma::Svg *m_arrowSvg;
     QPixmap m_previousFadeout;
     QPixmap m_nextFadeout;
 };

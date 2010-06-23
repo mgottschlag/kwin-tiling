@@ -76,7 +76,6 @@ class Interface : public KRunnerDialog
         void themeUpdated();
         void resetInterface();
         void showHelp();
-        void ensureVisibility(QGraphicsItem *item);
         void cleanupAfterConfigWidget();
         void configWidgetDestroyed();
         void searchTermSetFocus();
