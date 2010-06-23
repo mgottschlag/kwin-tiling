@@ -209,7 +209,7 @@ void ControllerWindow::syncToGraphicsWidget()
         getContentsMargins(&left, &top, &right, &bottom);
 
         QDesktopWidget *desktop = QApplication::desktop();
-        QSize maxSize = Kephal::ScreenUtils::screenGeometry(desktop->screenNumber(this)).size();
+        QSize maxSize = KWindowSystem::workArea().size();
 
 
         QSize windowSize;
