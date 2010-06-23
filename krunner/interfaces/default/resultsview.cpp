@@ -50,20 +50,17 @@ ResultsView::ResultsView(ResultScene *scene, SharedResultData *resultData, QWidg
     m_arrowSvg->setImagePath("widgets/arrows");
 
     m_previousPage = new QToolButton(this);
-    m_previousPage->setIcon(m_arrowSvg->pixmap("up-arrow"));
     m_previousPage->setAutoRaise(true);
     m_previousPage->setVisible(false);
-    m_previousPage->adjustSize();
     connect(m_previousPage, SIGNAL(clicked(bool)), SLOT(previousPage()));
 
     m_nextPage = new QToolButton(this);
-    m_nextPage->setIcon(m_arrowSvg->pixmap("down-arrow"));
     m_nextPage->setAutoRaise(true);
     m_nextPage->setVisible(false);
-    m_nextPage->adjustSize();
     connect(m_nextPage, SIGNAL(clicked(bool)), SLOT(nextPage()));
 
-    updateArrowsVisibility();
+    connect(m_arrowSvg, SIGNAL(repaintNeeded()), this, SLOT(updateArrowIcons()));
+    updateArrowsIcons();
 
     connect(verticalScrollBar(), SIGNAL(rangeChanged(int, int)), this, SLOT(updateArrowsVisibility()));
     connect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(updateArrowsVisibility()));
@@ -117,6 +114,17 @@ void ResultsView::resizeEvent( QResizeEvent * event)
 {
     updateArrowsVisibility();
     QGraphicsView::resizeEvent(event);
+}
+
+void ResultsView::updateArrowsIcons()
+{
+    m_previousPage->setIcon(m_arrowSvg->pixmap("up-arrow"));
+    m_previousPage->adjustSize();
+
+    m_nextPage->setIcon(m_arrowSvg->pixmap("down-arrow"));
+    m_nextPage->adjustSize();
+
+    updateArrowsVisibility();
 }
 
 void ResultsView::updateArrowsVisibility()

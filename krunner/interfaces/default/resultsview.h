@@ -47,6 +47,7 @@ protected:
 
 private Q_SLOTS:
     void ensureVisibility(QGraphicsItem *item);
+    void updateArrowsIcons();
     void updateArrowsVisibility();
     void previousPage();
     void nextPage();
