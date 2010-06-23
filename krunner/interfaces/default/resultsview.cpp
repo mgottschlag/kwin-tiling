@@ -80,15 +80,15 @@ void ResultsView::ensureVisibility(QGraphicsItem* item)
 
 void ResultsView::previousPage()
 {
-    QGraphicsItem *currentItem = scene()->selectedItems().first();
+    QGraphicsItem *currentItem = m_resultScene->selectedItems().first();
     QGraphicsItem *item = itemAt(0, -height()*0.4);
 
     if (!item) {
-        item = scene()->itemAt(0,0);
+        item = m_resultScene->itemAt(0,0);
     }
 
     if (item && (item != currentItem)) {
-        scene()->setFocusItem(item);
+        m_resultScene->setFocusItem(item);
     } else {
         verticalScrollBar()->setValue(verticalScrollBar()->value()-height()*0.4);
     }
@@ -97,20 +97,26 @@ void ResultsView::previousPage()
 
 void ResultsView::nextPage()
 {
-    QGraphicsItem *currentItem = scene()->selectedItems().first();
+    QGraphicsItem *currentItem = m_resultScene->selectedItems().first();
     QGraphicsItem *item = itemAt(0, height()*1.4);
     if (!item) {
-        item = scene()->itemAt(0,sceneRect().height()-1);
+        item = m_resultScene->itemAt(0,sceneRect().height()-1);
+    }
+
+    ResultItem *rItem = dynamic_cast<ResultItem *>(item);
+    if (rItem && !rItem->isValid()) {
+        item = m_resultScene->itemAt(0, m_resultScene->viewableHeight() - 1);
     }
 
     if (item && (item != currentItem)) {
-        scene()->setFocusItem(item);
+        m_resultScene->setFocusItem(item);
     } else {
-        verticalScrollBar()->setValue(verticalScrollBar()->value()+height()*0.4);
+        verticalScrollBar()->setValue(qMin(m_resultScene->viewableHeight(),
+                                           int(verticalScrollBar()->value()+ (height() * 0.4))));
     }
 }
 
-void ResultsView::resizeEvent( QResizeEvent * event)
+void ResultsView::resizeEvent(QResizeEvent * event)
 {
     updateArrowsVisibility();
     QGraphicsView::resizeEvent(event);
@@ -132,10 +138,17 @@ void ResultsView::updateArrowsVisibility()
     m_previousPage->move(width()/2-m_previousPage->width()/2,0);
     m_nextPage->move(width()/2-m_nextPage->width()/2,height()-m_nextPage->height());
 
-    if (scene()) {
-        m_previousPage->setVisible(mapFromScene(QPointF(0,0)).y()<0);
-        m_nextPage->setVisible(mapFromScene(QPointF(0,sceneRect().height())).y() > height());
+    m_previousPage->setVisible(mapFromScene(QPointF(0,0)).y()<0);
+    m_nextPage->setVisible(mapFromScene(QPointF(0, m_resultScene->viewableHeight())).y() > height());
+}
+
+void ResultsView::wheelEvent(QWheelEvent *e)
+{
+    if (e->delta() < 0 && !m_nextPage->isVisible()) {
+        return;
     }
+
+    QGraphicsView::wheelEvent(e);
 }
 
 void ResultsView::paintEvent(QPaintEvent *event)
@@ -181,6 +194,7 @@ void ResultsView::paintEvent(QPaintEvent *event)
     if (m_previousPage->isVisible()) {
         backBufferPainter.drawPixmap(QPoint(0,0), m_previousFadeout);
     }
+
     if (m_nextPage->isVisible()) {
         backBufferPainter.drawPixmap(QPoint(0,height()-m_nextFadeout.height()), m_nextFadeout);
     }

@@ -44,6 +44,7 @@ public:
 protected:
     void resizeEvent(QResizeEvent *);
     void paintEvent(QPaintEvent *);
+    void wheelEvent(QWheelEvent *);
 
 private Q_SLOTS:
     void ensureVisibility(QGraphicsItem *item);
