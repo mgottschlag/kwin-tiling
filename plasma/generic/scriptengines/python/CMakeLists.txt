@@ -1,13 +1,13 @@
 project(plasma-python)
 
-INCLUDE(PythonMacros)
+include(PythonMacros)
 
 # install the library, .desktop, and plasma.py
-PYTHON_INSTALL(pyappletscript.py ${DATA_INSTALL_DIR}/plasma_scriptengine_python)
-PYTHON_INSTALL(plasma_importer.py ${DATA_INSTALL_DIR}/plasma_scriptengine_python)
-PYTHON_INSTALL(pydataengine.py ${DATA_INSTALL_DIR}/plasma_scriptengine_python)
-PYTHON_INSTALL(pyrunner.py ${DATA_INSTALL_DIR}/plasma_scriptengine_python)
-PYTHON_INSTALL(pywallpaper.py ${DATA_INSTALL_DIR}/plasma_scriptengine_python)
+python_install(pyappletscript.py ${DATA_INSTALL_DIR}/plasma_scriptengine_python)
+python_install(plasma_importer.py ${DATA_INSTALL_DIR}/plasma_scriptengine_python)
+python_install(pydataengine.py ${DATA_INSTALL_DIR}/plasma_scriptengine_python)
+python_install(pyrunner.py ${DATA_INSTALL_DIR}/plasma_scriptengine_python)
+python_install(pywallpaper.py ${DATA_INSTALL_DIR}/plasma_scriptengine_python)
 
 # remove the following three lines once we branch 4.5, they are only necessary as long
 # as people update kdebase but not yet kdelibs (PYTHON_SITE_PACKAGES_INSTALL_DIR has just
@@ -16,7 +16,7 @@ if(NOT PYTHON_SITE_PACKAGES_INSTALL_DIR)
   set(PYTHON_SITE_PACKAGES_INSTALL_DIR ${PYTHON_SITE_PACKAGES_DIR} )
 endif(NOT PYTHON_SITE_PACKAGES_INSTALL_DIR)
 
-PYTHON_INSTALL(plasmascript.py ${PYTHON_SITE_PACKAGES_INSTALL_DIR}/PyKDE4)
+python_install(plasmascript.py ${PYTHON_SITE_PACKAGES_INSTALL_DIR}/PyKDE4)
 
 install(FILES plasma-scriptengine-applet-python.desktop
         DESTINATION ${SERVICES_INSTALL_DIR})
@@ -29,7 +29,7 @@ install(FILES plasma-scriptengine-wallpaper-python.desktop
 
 ###########################################################################
 # Test plasmoids
-OPTION(INSTALL_PYTHON_TEST_PLASMA "Install test python applet" OFF)
+option(INSTALL_PYTHON_TEST_PLASMA "Install test python applet" OFF)
 
 if(INSTALL_PYTHON_TEST_PLASMA )
 
