@@ -14,8 +14,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2009-11-18</date>
-<releaseinfo>&kde; 4.4</releaseinfo>
+<date>2010-06-22</date>
+<releaseinfo>&kde; 4.5</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -43,8 +43,8 @@ but to change the color of the widgets, you should refer to the
 section entitled <ulink
 url="help:/kcontrol/colors/index.html">Colors</ulink>.</para>
 
-<para>This panel is divided into three tabs:  <guilabel>Applications</guilabel>, 
-<guilabel>Workspace</guilabel> and <guilabel>Fine Tuning</guilabel>.</para>
+<para>This panel is divided into two tabs:  <guilabel>Applications</guilabel> 
+and <guilabel>Fine Tuning</guilabel>.</para>
 
 <sect3 id="style-applications">
 <title><guilabel>Applications</guilabel> tab</title>
@@ -144,16 +144,7 @@ transparency in menus.  A preview is visible on the right side of this section.<
 
 </sect3>
 -->
-<sect3 id="style-workspace">
-<title><guilabel>Workspace</guilabel> tab</title>
 
-<para>A list of available themes is displayed on this tab. Select a theme by clicking on an item in the list.</para>
-
-<para>Use the <guibutton>Get New Themes</guibutton> button to launch the <guilabel>Get Hot New Stuff</guilabel> dialog and 
-download additional themes from the Internet.</para>
-
-
-</sect3>
 <sect3 id="style-misc">
 <title><guilabel>Fine Tuning</guilabel> tab</title>
 

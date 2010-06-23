@@ -170,7 +170,7 @@ windows are not raised at all.
 
 </sect3>
 
-
+<!-- not in 4.5
 <sect3 id="action-focus-keyboard">
 <title><guilabel>Navigation</guilabel></title>
 
@@ -192,7 +192,7 @@ application while you are still holding down the &Alt; key. In
 </para>
 
 <para>
-<!-- <guilabel>Show window list while switching windows</guilabel> missing-->
+<guilabel>Show window list while switching windows</guilabel> missing
 Next there is an option where you can choose to <guilabel>Traverse
 windows on all desktops</guilabel> or not.  With this enabled, switching
 windows with <keycombo action="simul">
@@ -214,9 +214,8 @@ select the first desktop again.</para>
 purpose or some other naming scheme.  You may find it convenient to
 select the <guilabel>Popup desktop name on desktop switch</guilabel>,
 so you can quickly tell that you have switched to the right one.</para>
-
-
 </sect3>
+-->
 </sect2>
 
 <sect2 id="titlebar-actions">

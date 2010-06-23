@@ -86,7 +86,7 @@ The main display is a list of the installed fonts, grouped via the fonts' family
 </itemizedlist>
 </para>
 
-<para>To install a font, press the <guibutton>Add...</guibutton> button, and select the desired fonts from within the file dialog. The setting within the above mentioned combo-box will control where the fonts will be installed.</para>
+<para>To install a font, press the <guibutton>Add...</guibutton> button, and select the desired fonts from within the file dialog. The selected font group will control where the fonts will be installed.</para>
 <para>To un-install fonts, select the appropriate fonts from the list, and press the <guibutton>Delete...</guibutton> button.</para>
 
 </sect2>

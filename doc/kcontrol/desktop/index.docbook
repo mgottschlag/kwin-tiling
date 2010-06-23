@@ -6,7 +6,7 @@
 ]>
 
 <article lang="&language;">
-<title>Multiple Desktops</title>
+<title>Virtual Desktops</title>
 <articleinfo>
 
 <authorgroup>
@@ -67,7 +67,7 @@ Desktop.</para></listitem>
 -->
 <sect1 id="desktop">
 
-<title>Multiple Desktop</title>
+<title>Virtual Desktops</title>
 
 <sect2 id="desktop-number">
 <title><guilabel>Desktops</guilabel></title>

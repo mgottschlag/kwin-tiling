@@ -6,7 +6,7 @@
 ]>
 <article lang="&language;">
 <articleinfo>
-<title>Desktop Theme Details</title>
+<title>Desktop Theme</title>
 <authorgroup>
 <author>
 <firstname>Andrew</firstname>
@@ -14,8 +14,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2010-01-20</date>
-<releaseinfo>1.0</releaseinfo>
+<date>2010-06-22</date>
+<releaseinfo>&kde; 4.5</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -26,8 +26,18 @@
 </keywordset>
 </articleinfo>
 
+<sect1 id="kcm_desktoptheme">
+<title><guilabel>Theme</guilabel> tab</title>
+ 
+<para>A list of available themes is displayed on this tab. Select a theme by clicking on an item in the list.</para>
+
+<para>Use the <guibutton>Get New Themes</guibutton> button to launch the <guilabel>Get Hot New Stuff</guilabel> dialog and 
+download additional themes from the Internet.</para>
+
+</sect1>
+
 <sect1 id="kcm_desktopthemedetails">
-<title><guilabel>Desktop Theme Details</guilabel></title>
+<title><guilabel>Details</guilabel> tab</title>
 
 <para>A &kde; plasma desktop theme is made up of several components or items,
 consisting mostly in svg backgrounds and colors schemes. This module allows you
@@ -40,16 +50,14 @@ analog clock, ...</para>
 
 <note><para>
 If you want to change your current theme for a full new theme (for example from
-Air to Glassified) then you can do so in <interface>System Settings -&gt;
-General -&gt; Appearance -&gt; Style -&gt; Workspace tab</interface>.
+Air to Glassified) then you can do so in the <guilabel>Details</guilabel> tab.
 </para></note>
 
 <sect2 id="start">
 <title>Quick start</title>
 <para>First download one or several themes you want to use to customize your 
 desktop items by clicking the <guibutton>Get New Theme...</guibutton>
-button in <interface>System Settings -&gt;
-General -&gt; Appearance -&gt; Style -&gt; Workspace tab</interface>.</para>
+button in the <guilabel>Details</guilabel> tab..</para>
 
 <para>All the available themes will be displayed on top, the current one being highlighted.</para>
 

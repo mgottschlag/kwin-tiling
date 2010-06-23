@@ -24,7 +24,7 @@
 </copyright>
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2010-05-31</date>
+<date>2010-06-23</date>
 <releaseinfo>1.0 (&kde; 4.5)</releaseinfo>
 
 <abstract>
@@ -69,7 +69,7 @@ individual &systemsettings; modules</link> for more information.
 <para>
 &systemsettings; groups all of the configuration modules into several categories:
 <itemizedlist>
-<listitem><para><link linkend="application-appearance">Application Appearance and Behavior</link></para></listitem>
+<listitem><para><link linkend="application-appearance">Common Appearance and Behaviour</link></para></listitem>
 <listitem><para><link linkend="workspace-appearance">Workspace Appearance and Behavior</link></para></listitem>
 <listitem><para><link linkend="network">Network and Connectivity</link></para></listitem>
 <listitem><para><link linkend="hardware">Hardware</link></para></listitem>
@@ -146,7 +146,7 @@ appears, explaining the purpose of the module.
 
 <variablelist>
 <varlistentry id="application-appearance" >
-<term>Application Appearance and Behavior</term>
+<term>Common Appearance and Behavior</term>
 <listitem>
 <para><itemizedlist>
 <listitem><para>
@@ -162,10 +162,10 @@ Application and System Notifications (Manage Notifications, System Bell, Launch 
 File Associations
 </para></listitem>
 <listitem><para>
-Locale (Country/Region &amp; Language, Spellchecker)
+Locale (Country/Region &amp; Language, Spell Checker)
 </para></listitem>
 <listitem><para>
-Personal Information (KDE Resources)
+Personal Information (Akonadi Resources Configuration, KDE Resources)
 </para></listitem>
 <listitem><para>
 Shortcuts and Gestures (Custom Shortcuts, Standard Keyboard Shortcuts, Global Keyboard Shortcuts)
@@ -183,10 +183,10 @@ Shortcuts and Gestures (Custom Shortcuts, Standard Keyboard Shortcuts, Global Ke
 Desktop Effects
 </para></listitem>
 <listitem><para>
-Workspace Appearance (Window Decorations, Desktop Theme Details, Splash Screen, Workspace)
+Workspace Appearance (Window Decorations, Desktop Theme, Splash Screen)
 </para></listitem>
 <listitem><para>
-Accessibility (Accessibility, Text to Speech)
+Accessibility (Accessibility, Text-to-Speech)
 </para></listitem>
 <listitem><para>
 Default Applications
@@ -196,6 +196,9 @@ Desktop Search
 </para></listitem>
 <listitem><para>
 Window Behavior (Task Switcher, Virtual Desktops, Screen Edges, Window Behavior, Window Rules)
+</para></listitem>
+<listitem><para>
+Workspace
 </para></listitem>
 </itemizedlist>
 </para>
@@ -223,6 +226,9 @@ Sharing (Windows Shares, Samba)
 <para><itemizedlist>
 <listitem><para>
 Device Actions
+</para></listitem>
+<listitem><para>
+Digital Camera
 </para></listitem>
 <listitem><para>
 Display and Monitor (Size &amp; Orientation, Screen Saver, Gamma, Multiple Monitors)
@@ -255,7 +261,16 @@ Multimedia (Audio CDs, CDDB Retrieval, Phonon)
 Printer Configuration
 </para></listitem>
 <listitem><para>
-Security (Login Screen, PolicyKit Authorization)
+Date &amp; Time
+</para></listitem>
+<listitem><para>
+Font Installer
+</para></listitem>
+<listitem><para>
+Login Screen
+</para></listitem>
+<listitem><para>
+Permissions (PolicyKit Authorization)
 </para></listitem>
 <listitem><para>
 Startup and Shutdown (Autostart, Service Manager, Session Management)
