@@ -39,7 +39,7 @@ NotificationScroller::NotificationScroller(QGraphicsItem *parent)
    : QGraphicsWidget(parent),
      m_location(Plasma::BottomEdge)
 {
-    QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(Qt::Vertical, this);
+    m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
     m_tabsLayout = new QGraphicsLinearLayout(Qt::Horizontal);
 
     m_notificationBar = new Plasma::TabBar(this);
@@ -55,8 +55,8 @@ NotificationScroller::NotificationScroller(QGraphicsItem *parent)
     m_tabsLayout->addItem(m_notificationBar);
     m_tabsLayout->addStretch();
 
-    lay->addItem(m_scroll);
-    lay->addItem(m_tabsLayout);
+    m_layout->addItem(m_scroll);
+    m_layout->addItem(m_tabsLayout);
 
     m_mainWidget = new QGraphicsWidget(m_scroll);
     m_mainWidgetLayout = new QGraphicsLinearLayout(Qt::Vertical, m_mainWidget);
@@ -176,16 +176,15 @@ void NotificationScroller::setLocation(const Plasma::Location location)
     }
 
     m_location = location;
-    if (layout()) {
-        QGraphicsLinearLayout *lay = static_cast<QGraphicsLinearLayout *>(layout());
-        if (m_location == Plasma::TopEdge) {
-            lay->removeItem(m_tabsLayout);
-            lay->insertItem(0, m_tabsLayout);
-        } else {
-            lay->removeItem(m_tabsLayout);
-            lay->addItem(m_tabsLayout);
-        }
+
+    if (m_location == Plasma::TopEdge) {
+        m_layout->removeItem(m_tabsLayout);
+        m_layout->insertItem(0, m_tabsLayout);
+    } else {
+        m_layout->removeItem(m_tabsLayout);
+        m_layout->addItem(m_tabsLayout);
     }
+
 }
 
 void NotificationScroller::adjustSize()

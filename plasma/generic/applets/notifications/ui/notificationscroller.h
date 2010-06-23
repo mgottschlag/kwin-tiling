@@ -76,6 +76,7 @@ private:
     QString m_currentFilter;
     Plasma::Location m_location;
     QGraphicsLinearLayout *m_tabsLayout;
+    QGraphicsLinearLayout *m_layout;
 };
 
 
