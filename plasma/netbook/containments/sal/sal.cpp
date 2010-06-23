@@ -368,9 +368,10 @@ void SearchLaunch::updateSize()
 }
 
 
-void SearchLaunch::resizeEvent(QGraphicsSceneResizeEvent *)
+void SearchLaunch::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     availableScreenRegionChanged();
+    Containment::resizeEvent(event);
 }
 
 void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
