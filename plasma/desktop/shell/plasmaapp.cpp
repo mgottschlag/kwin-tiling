@@ -288,7 +288,7 @@ void PlasmaApp::setupDesktop()
 
     Kephal::Screens *screens = Kephal::Screens::self();
     connect(screens, SIGNAL(screenRemoved(int)), SLOT(screenRemoved(int)));
-    connect(screens, SIGNAL(screenAdded(int)), SLOT(screenAdded(int)));
+    connect(screens, SIGNAL(screenAdded(Kephal::Screen*)), SLOT(screenAdded(Kephal::Screen*)));
 
     if (AppSettings::perVirtualDesktopViews()) {
         connect(KWindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)),
@@ -697,10 +697,10 @@ void PlasmaApp::screenRemoved(int id)
     }
 }
 
-void PlasmaApp::screenAdded(int screen)
+void PlasmaApp::screenAdded(Kephal::Screen *screen)
 {
     foreach (Plasma::Containment *containment, corona()->containments()) {
-        if (isPanelContainment(containment) && containment->screen() == screen) {
+        if (isPanelContainment(containment) && containment->screen() == screen->id()) {
             m_panelsWaiting << containment;
             m_panelViewCreationTimer.start();
         }
