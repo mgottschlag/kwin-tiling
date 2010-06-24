@@ -984,16 +984,29 @@ void PlasmaApp::createWaitingDesktops()
             Plasma::Containment *containment = weakContainment.data();
             KConfigGroup viewIds(KGlobal::config(), "ViewIds");
             const int id = viewIds.readEntry(QString::number(containment->id()), 0);
-            DesktopView *view = viewForScreen(qMin(containment->screen(), Kephal::ScreenUtils::numScreens()-1),
-                                            AppSettings::perVirtualDesktopViews() ? containment->desktop() : -1);
+
+            const int desktop = AppSettings::perVirtualDesktopViews() ? containment->desktop() : -1;
+            if (desktop >= KWindowSystem::numberOfDesktops()) {
+                kDebug() << "not creating a view on desktop" << desktop << " as it does not exist";
+                continue;
+            }
+
+            const int screen = containment->screen();
+            if (screen >= Kephal::ScreenUtils::numScreens()) {
+                kDebug() << "not creating a view on screen" << screen << "as it does not exist";
+                continue;
+            }
+
+            DesktopView *view = viewForScreen(screen, desktop);
+
             if (view) {
-                kDebug() << "had a view for" << containment->screen() << containment->desktop();
+                kDebug() << "already had a view for" << containment->screen() << containment->desktop();
                 // we already have a view for this screen
-                return;
+                continue;
             }
 
             kDebug() << "creating a new view for" << containment->screen() << containment->desktop()
-                << "and we have" << Kephal::ScreenUtils::numScreens() << "screens";
+                     << "and we have" << Kephal::ScreenUtils::numScreens() << "screens";
 
             // we have a new screen. neat.
             view = new DesktopView(containment, id, 0);
