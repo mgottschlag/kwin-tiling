@@ -421,6 +421,15 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         parent->addPage(m_autoHideInterface.data(), i18n("Entries"), "configure-toolbars");
 
         bool visible = (immutability() == Plasma::UserImmutable);
+        //FIXME: always showing the scrollbar is due to a bug somewhere in QAbstractScrollArea,
+        //QListView and/or KCategorizedView; without it, under certain circumstances it will
+        //go into an infinite loop. too many people are running into this problem, so we are
+        //working around the problem rather than waiting for an upstream fix, which is against
+        //our usual policy.
+        //to determine if this line is no longer needed in the future, comment it out, lock
+        //widgets, then call up the configuration dialog for a system tray applet and click
+        //on the "unlock widgets" button.
+        m_visibleItemsUi.visibleItemsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
         m_visibleItemsUi.visibleItemsView->setEnabled(immutability() == Plasma::Mutable);
         m_visibleItemsUi.unlockLabel->setVisible(visible);
         m_visibleItemsUi.unlockButton->setVisible(visible);
