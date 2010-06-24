@@ -395,6 +395,7 @@ void PanelView::setContainment(Plasma::Containment *containment)
     connect(containment, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
     connect(containment, SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)), this, SLOT(appletAdded(Plasma::Applet *)));
     connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
+    connect(containment, SIGNAL(screenChanged(int,int,Plasma::Containment*)), this, SLOT(pinchContainmentToCurrentScreen()));
 
     KConfigGroup viewIds(KGlobal::config(), "ViewIds");
 
