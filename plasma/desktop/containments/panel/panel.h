@@ -64,7 +64,7 @@ private slots:
     void themeUpdated();
     void backgroundChanged();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
-    void appletRemoved(Plasma::Applet* applet);
+    void appletWasRemoved(Plasma::Applet* applet);
     void delayedUpdateSize();
     void updateSize();
     void adjustLastSpace();

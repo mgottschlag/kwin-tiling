@@ -119,7 +119,7 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
 
     connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
-            this, SLOT(appletRemoved(Plasma::Applet*)));
+            this, SLOT(appletWasRemoved(Plasma::Applet*)));
     setContainmentType(Containment::PanelContainment);
 }
 
@@ -306,13 +306,13 @@ void Panel::delayedUpdateSize()
     QTimer::singleShot(0, this, SLOT(updateSize()));
 }
 
-void Panel::appletRemoved(Plasma::Applet* applet)
+void Panel::appletWasRemoved(Plasma::Applet* applet)
 {
+    disconnect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(delayedUpdateSize()));
+
     if (!m_layout) {
         return;
     }
-
-    disconnect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(delayedUpdateSize()));
 
     m_layout->removeItem(applet);
 
@@ -322,8 +322,8 @@ void Panel::appletRemoved(Plasma::Applet* applet)
     } else {
         resize(size().width(), size().height() - applet->size().height());
     }
-    m_layout->setMaximumSize(size());
 
+    m_layout->setMaximumSize(size());
     m_lastSpaceTimer->start(200);
 }
 
