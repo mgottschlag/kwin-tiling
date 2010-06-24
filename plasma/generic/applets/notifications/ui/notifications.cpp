@@ -86,7 +86,6 @@ Notifications::Notifications(QObject *parent, const QVariantList &arguments)
     : Plasma::PopupApplet(parent, arguments),
       m_jobSummaryWidget(0),
       m_autoHidePopup(true),
-      m_notificationScroller(0),
       m_notificationStack(0),
       m_notificationStackDialog(0),
       m_standaloneJobSummaryWidget(0),
@@ -185,10 +184,10 @@ void Notifications::syncNotificationBarNeeded()
             extenderItem->showCloseButton();
 
             m_notificationScroller = new NotificationScroller(extenderItem);
-            m_notificationScroller->setLocation(location());
-            connect(m_notificationScroller, SIGNAL(scrollerEmpty()), extenderItem, SLOT(destroy()));
+            m_notificationScroller.data()->setLocation(location());
+            connect(m_notificationScroller.data(), SIGNAL(scrollerEmpty()), extenderItem, SLOT(destroy()));
 
-            extenderItem->setWidget(m_notificationScroller);
+            extenderItem->setWidget(m_notificationScroller.data());
             //this forces the item to be at bottom for bottom panel or at top for top panels
             if (location() == Plasma::TopEdge) {
                 extenderItem->setExtender(extender(), QPointF(0, 0));
@@ -211,7 +210,7 @@ Manager *Notifications::manager() const
 void Notifications::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::LocationConstraint && m_notificationScroller) {
-        m_notificationScroller->setLocation(location());
+        m_notificationScroller.data()->setLocation(location());
     }
 }
 
@@ -255,7 +254,7 @@ void Notifications::addNotification(Notification *notification)
     syncNotificationBarNeeded();
 
     //At this point we are sure the pointer is valid
-    m_notificationScroller->addNotification(notification);
+    m_notificationScroller.data()->addNotification(notification);
 
     if (isPopupShowing()) {
         return;

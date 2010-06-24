@@ -87,7 +87,7 @@ private:
     JobTotalsWidget *m_jobSummaryWidget;
     bool m_autoHidePopup;
 
-    NotificationScroller *m_notificationScroller;
+    QWeakPointer<NotificationScroller> m_notificationScroller;
     NotificationStack *m_notificationStack;
     StackDialog *m_notificationStackDialog;
     JobTotalsWidget *m_standaloneJobSummaryWidget;
