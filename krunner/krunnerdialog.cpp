@@ -86,9 +86,7 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
             this, SLOT(screenChanged(Kephal::Screen*)));
     connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SLOT(resetScreenPos()));
 
-    connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(update()));
-
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
+    connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(themeUpdated()));
     themeUpdated();
 }
 
@@ -327,6 +325,7 @@ void KRunnerDialog::themeUpdated()
     //kDebug() << m_leftBorderWidth<< topHeight<< m_rightBorderWidth<< m_bottomBorderHeight;
     // the +1 gives us the extra mouseMoveEvent needed to always reset the resize cursor
     setContentsMargins(m_leftBorderWidth + 1, topHeight, m_rightBorderWidth + 1, m_bottomBorderHeight + 1);
+    update();
 }
 
 void KRunnerDialog::paintEvent(QPaintEvent *e)
