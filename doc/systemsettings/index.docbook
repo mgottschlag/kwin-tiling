@@ -69,7 +69,7 @@ individual &systemsettings; modules</link> for more information.
 <para>
 &systemsettings; groups all of the configuration modules into several categories:
 <itemizedlist>
-<listitem><para><link linkend="application-appearance">Common Appearance and Behaviour</link></para></listitem>
+<listitem><para><link linkend="application-appearance">Common Appearance and Behavior</link></para></listitem>
 <listitem><para><link linkend="workspace-appearance">Workspace Appearance and Behavior</link></para></listitem>
 <listitem><para><link linkend="network">Network and Connectivity</link></para></listitem>
 <listitem><para><link linkend="hardware">Hardware</link></para></listitem>
