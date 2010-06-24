@@ -680,15 +680,9 @@ void PlasmaApp::screenRemoved(int id)
 
             if (moveTo) {
                 panel->containment()->setScreen(moveTo->id());
-                panel->pinchContainmentToCurrentScreen();
             } else {
-                /*
-                TODO: to delete the view, we also need to handle re-creating it later on,
-                      complete with proper offset, etc.
-                panel->setContainment(0);
                 pIt.remove();
                 delete panel;
-                */
                 continue;
             }
         }
@@ -924,6 +918,7 @@ void PlasmaApp::createWaitingPanels()
     QList<Kephal::Screen *> screens = Kephal::Screens::self()->screens();
     screens.removeAll(primary);
 
+    QList<Plasma::Containment *> relocationCandidates;
     foreach (QWeakPointer<Plasma::Containment> containmentPtr, containments) {
         Plasma::Containment *containment = containmentPtr.data();
         if (!containment) {
@@ -940,38 +935,51 @@ void PlasmaApp::createWaitingPanels()
             continue;
         }
 
-        KConfigGroup viewIds(KGlobal::config(), "ViewIds");
-        const int id = viewIds.readEntry(QString::number(containment->id()), 0);
-        PanelView *panelView = new PanelView(containment, id);
-
         // try to relocate the panel if it is on a now-non-existent screen
         if (containment->screen() >= Kephal::ScreenUtils::numScreens()) {
-            Kephal::Screen *moveTo = 0;
-            if (canRelocatePanel(panelView, primary)) {
-                moveTo = primary;
-            } else {
-                foreach (Kephal::Screen *screen, screens) {
-                    if (canRelocatePanel(panelView, screen)) {
-                        moveTo = screen;
-                        break;
-                    }
-                }
-            }
+            relocationCandidates << containment;
+            continue;
+        }
 
-            if (moveTo) {
-                containment->setScreen(moveTo->id(), -1);
-                panelView->setContainment(containment);
-                panelView->pinchContainmentToCurrentScreen();
-            } else {
-                continue;
+        createPanelView(containment);
+    }
+
+    // we go through relocatables last so that all other panels can be set up first,
+    // preventing panel creation ordering to trip up the canRelocatePanel algorithm
+    foreach (Plasma::Containment *containment, relocationCandidates) {
+        Kephal::Screen *moveTo = 0;
+        PanelView *panelView = createPanelView(containment);
+        if (canRelocatePanel(panelView, primary)) {
+            moveTo = primary;
+        } else {
+            foreach (Kephal::Screen *screen, screens) {
+                if (canRelocatePanel(panelView, screen)) {
+                    moveTo = screen;
+                    break;
+                }
             }
         }
 
-        connect(panelView, SIGNAL(destroyed(QObject*)), this, SLOT(panelRemoved(QObject*)));
-        m_panels << panelView;
-        panelView->show();
-        setWmClass(panelView->winId());
+        if (moveTo) {
+            containment->setScreen(moveTo->id(), -1);
+        } else {
+            m_panels.removeAll(panelView);
+            delete panelView;
+        }
     }
+}
+
+PanelView *PlasmaApp::createPanelView(Plasma::Containment *containment)
+{
+    KConfigGroup viewIds(KGlobal::config(), "ViewIds");
+    const int id = viewIds.readEntry(QString::number(containment->id()), 0);
+    PanelView *panelView = new PanelView(containment, id);
+
+    connect(panelView, SIGNAL(destroyed(QObject*)), this, SLOT(panelRemoved(QObject*)));
+    m_panels << panelView;
+    panelView->show();
+    setWmClass(panelView->winId());
+    return panelView;
 }
 
 void PlasmaApp::createWaitingDesktops()

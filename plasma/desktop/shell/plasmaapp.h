@@ -129,6 +129,8 @@ private:
     PlasmaApp();
     DesktopView* viewForScreen(int screen, int desktop) const;
     void showController(int screen, Plasma::Containment *c, bool widgetExplorerMode);
+    bool canRelocatePanel(PanelView * view, Kephal::Screen *screen);
+    PanelView *createPanelView(Plasma::Containment *containment);
 
 private Q_SLOTS:
     void setupDesktop();
@@ -139,7 +141,6 @@ private Q_SLOTS:
     void panelRemoved(QObject* panel);
     void screenRemoved(int id);
     void screenAdded(Kephal::Screen *screen);
-    bool canRelocatePanel(PanelView * view, Kephal::Screen *screen);
     void compositingChanged();
     void configureContainment(Plasma::Containment*);
     void updateActions(Plasma::ImmutabilityType immutability);
