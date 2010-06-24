@@ -287,10 +287,15 @@ void KRunnerDialog::toggleConfigDialog()
     if (m_configWidget) {
         delete m_configWidget;
         m_configWidget = 0;
+
+        if (!m_floating) {
+            KWindowSystem::setType(winId(), NET::Dock);
+        }
     } else {
         m_configWidget = new KRunnerConfigWidget(m_runnerManager, this);
         connect(m_configWidget, SIGNAL(finished()), this, SLOT(configCompleted()));
         setConfigWidget(m_configWidget);
+        KWindowSystem::setType(winId(), NET::Normal);
     }
 }
 
@@ -299,6 +304,10 @@ void KRunnerDialog::configCompleted()
     if (m_configWidget) {
         m_configWidget->deleteLater();
         m_configWidget = 0;
+    }
+
+    if (!m_floating) {
+        KWindowSystem::setType(winId(), NET::Dock);
     }
 }
 
