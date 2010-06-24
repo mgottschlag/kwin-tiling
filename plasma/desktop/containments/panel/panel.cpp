@@ -297,7 +297,7 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     //FIXME: there must be some beter way to do this rather than this rather error prone arbitrary wait
     m_lastSpaceTimer->start(2000);
 
-    connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(delayedUpdateSize()));
+    connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(delayedUpdateSize()), Qt::UniqueConnection);
 }
 
 void Panel::delayedUpdateSize()
@@ -688,7 +688,7 @@ void Panel::restore(KConfigGroup &group)
             unoderedApplets.append(applet);
         }
 
-        connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(delayedUpdateSize()));
+        connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(delayedUpdateSize()), Qt::UniqueConnection);
     }
 
     foreach (Applet *applet, oderedApplets) {
