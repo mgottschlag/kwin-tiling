@@ -229,14 +229,17 @@ void AppletTitleBar::mousePressEvent(QGraphicsSceneMouseEvent *event)
         m_pressedButton = MaximizeButton;
         m_maximizeButtonRect.translate(1, 1);
         update(m_maximizeButtonRect);
+        event->accept();
     } else if (m_configureButtonRect.contains(event->pos())) {
         m_configureButtonRect.translate(1, 1);
         m_pressedButton = ConfigureButton;
         update(m_configureButtonRect);
+        event->accept();
     } else if (m_closeButtonRect.contains(event->pos())) {
         m_closeButtonRect.translate(1, 1);
         m_pressedButton = CloseButton;
         update(m_closeButtonRect);
+        event->accept();
     } else {
         event->ignore();
     }
