@@ -935,7 +935,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
                             }
                         }
                         // ensure that weekString is the week number that has the most amout of days in the row
-                        QDate middleWeekDate = calendar()->addDays(cellDate, floor(d->daysInWeek / 2));
+                        QDate middleWeekDate = calendar()->addDays(cellDate, floor(static_cast<float>(d->daysInWeek / 2)));
                         if (calendar()->isValid(middleWeekDate)) {
                             QString middleWeekString = calendar()->weekNumberString(middleWeekDate);
                             if (weekString != middleWeekString) {
