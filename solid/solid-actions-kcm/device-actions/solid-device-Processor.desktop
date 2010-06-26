@@ -2,6 +2,7 @@
 Name=Can Change Frequency
 Name[ar]=يمكن تغير التردد
 Name[bg]=Може да променя честотата
+Name[bn]=কম্পাঙ্ক বদলাতে পারে
 Name[ca]=Pot canviar la freqüència
 Name[ca@valencia]=Pot canviar la freqüència
 Name[cs]=Může měnit frekvenci
@@ -64,6 +65,7 @@ Name[zh_TW]=可變更頻率
 Name=Instruction Sets
 Name[ar]=مجموعة الأوامر
 Name[bg]=Инструкции
+Name[bn]=ইনস্ট্রাকশন সেট
 Name[ca]=Jocs d'instruccions
 Name[ca@valencia]=Jocs d'instruccions
 Name[cs]=Instrukční sady

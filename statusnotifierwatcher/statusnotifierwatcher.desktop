@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Status Notifier Manager
+Name[bn]=স্ট্যাটাস বিজ্ঞপ্তি ম্যানেজার
 Name[ca]=Gestor del notificador d'estat
 Name[ca@valencia]=Gestor del notificador d'estat
 Name[cs]=Správce oznamování stavu

@@ -7,6 +7,7 @@ Name[da]=Striber
 Name[en_GB]=Stripes
 Name[fr]=Bandes
 Name[ia]=Listas
+Name[id]=Belang
 Name[it]=Strisce
 Name[kk]=Жолақтар
 Name[km]=ឆ្នូត​
@@ -16,6 +17,7 @@ Name[pt_BR]=Riscas
 Name[uk]=Смуги
 Name[x-test]=xxStripesxx
 Name[zh_CN]=Stripes
+Name[zh_TW]=條紋
 
 ImageType=pixmap
 Author=Ivan Čukić

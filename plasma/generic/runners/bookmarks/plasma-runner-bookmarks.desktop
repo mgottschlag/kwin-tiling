@@ -3,6 +3,7 @@
 Name=Bookmarks
 Name[ar]=العلامات
 Name[bg]=Отметки
+Name[bn]=বুকমার্ক
 Name[ca]=Adreces d'interès
 Name[ca@valencia]=Adreces d'interés
 Name[cs]=Záložky
@@ -66,6 +67,7 @@ Comment=Find and open bookmarks
 Comment[ar]=اعثر وافتح العلامة
 Comment[be@latin]=Pošuk i adčynieńnie zakładak.
 Comment[bg]=Отваряне на отметки
+Comment[bn]=বুকমার্ক খোঁজো এবং খোলো
 Comment[bn_IN]=বুকমার্ক অনুসন্ধান করুন ও খুলুন
 Comment[ca]=Cerca i obre adreces d'interès
 Comment[ca@valencia]=Cerca i obri adreces d'interés
