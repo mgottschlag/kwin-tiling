@@ -56,6 +56,7 @@ JobView::JobView(QObject* parent)
 
 JobView::~JobView()
 {
+    QDBusConnection::sessionBus().unregisterObject(m_objectPath.path(), QDBusConnection::UnregisterTree);
 }
 
 uint JobView::jobId() const
