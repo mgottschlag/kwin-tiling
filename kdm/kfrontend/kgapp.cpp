@@ -246,6 +246,8 @@ goodLocale( const char *var )
 	return False;
 }
 
+} // extern "C"
+
 static uint
 qHash(const QSize &sz)
 {
@@ -503,7 +505,5 @@ main( int argc ATTR_UNUSED, char **argv )
 
 	return EX_NORMAL;
 }
-
-} // extern "C"
 
 #include "kgapp.moc"
