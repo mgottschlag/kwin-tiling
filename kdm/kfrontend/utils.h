@@ -27,20 +27,20 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QList>
 #include <QString>
 
-QString qString( char *str );
-QStringList qStringList( char **strList );
+QString qString(char *str);
+QStringList qStringList(char **strList);
 
 struct DpySpec {
-	QString display, from, user, session;
+    QString display, from, user, session;
 #ifdef HAVE_VTS
-	int vt;
+    int vt;
 #endif
-	int flags;
-	int count;
+    int flags;
+    int count;
 };
 
-QList<DpySpec> fetchSessions( int flags );
+QList<DpySpec> fetchSessions(int flags);
 
-void decodeSession( const DpySpec &sess, QString &user, QString &loc );
+void decodeSession(const DpySpec &sess, QString &user, QString &loc);
 
 #endif /* UTILS_H */

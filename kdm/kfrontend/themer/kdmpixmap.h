@@ -35,59 +35,59 @@ class KSvgRenderer;
  */
 
 class KdmPixmap : public KdmItem {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	KdmPixmap( QObject *parent, const QDomNode &node );
+    KdmPixmap(QObject *parent, const QDomNode &node);
 
 protected:
-	// reimplemented; returns the size of loaded pixmap
-	virtual QSize sizeHint();
+    // reimplemented; returns the size of loaded pixmap
+    virtual QSize sizeHint();
 
-	// draw the pixmap
-	virtual void drawContents( QPainter *p, const QRect &r );
+    // draw the pixmap
+    virtual void drawContents(QPainter *p, const QRect &r);
 
-	// handle switching between normal / active / prelight configurations
-	virtual void statusChanged( bool descend );
+    // handle switching between normal / active / prelight configurations
+    virtual void statusChanged(bool descend);
 
-	virtual void setGeometry( QStack<QSize> &parentSizes, const QRect &newGeometry, bool force );
+    virtual void setGeometry(QStack<QSize> &parentSizes, const QRect &newGeometry, bool force);
 
-	struct PixmapStruct {
-		struct PixmapClass {
-			PixmapClass()
-				: svgRenderer(0), present(false), svgImage(false), package(false),
-				  aspectMode(Qt::IgnoreAspectRatio) {}
-			QString fullpath;
-			QImage image;
-			KSvgRenderer *svgRenderer;
-			QPixmap readyPixmap;
-			QRect targetArea;
-			QColor tint;
-			bool present;
-			bool svgImage;
-			bool package;
-			QString svgElement;
-			QSize svgSizeHint;
-			Qt::AspectRatioMode aspectMode;
-		} normal, active, prelight;
-	} pixmap;
+    struct PixmapStruct {
+        struct PixmapClass {
+            PixmapClass()
+                : svgRenderer(0), present(false), svgImage(false), package(false),
+                  aspectMode(Qt::IgnoreAspectRatio) {}
+            QString fullpath;
+            QImage image;
+            KSvgRenderer *svgRenderer;
+            QPixmap readyPixmap;
+            QRect targetArea;
+            QColor tint;
+            bool present;
+            bool svgImage;
+            bool package;
+            QString svgElement;
+            QSize svgSizeHint;
+            Qt::AspectRatioMode aspectMode;
+        } normal, active, prelight;
+    } pixmap;
 
-	QSignalMapper *qsm;
+    QSignalMapper *qsm;
 
 private:
-	// Method to load the image given by the theme
-	void definePixmap( const QDomElement &el, PixmapStruct::PixmapClass &pc );
-	QString findBestPixmap( const QString &dir, const QString &pat,
-	                        const QRect &area, Qt::AspectRatioMode aspectMode );
-	bool loadPixmap( PixmapStruct::PixmapClass &pc );
-	bool loadSvg( PixmapStruct::PixmapClass &pc );
-	bool calcTargetArea( PixmapStruct::PixmapClass &pClass, const QSize &sh );
-	void applyTint( PixmapStruct::PixmapClass &pClass, QImage &img );
-	PixmapStruct::PixmapClass &getClass( ItemState sts );
-	PixmapStruct::PixmapClass &getCurClass() { return getClass( state ); }
+    // Method to load the image given by the theme
+    void definePixmap(const QDomElement &el, PixmapStruct::PixmapClass &pc);
+    QString findBestPixmap(const QString &dir, const QString &pat,
+                           const QRect &area, Qt::AspectRatioMode aspectMode);
+    bool loadPixmap(PixmapStruct::PixmapClass &pc);
+    bool loadSvg(PixmapStruct::PixmapClass &pc);
+    bool calcTargetArea(PixmapStruct::PixmapClass &pClass, const QSize &sh);
+    void applyTint(PixmapStruct::PixmapClass &pClass, QImage &img);
+    PixmapStruct::PixmapClass &getClass(ItemState sts);
+    PixmapStruct::PixmapClass &getCurClass() { return getClass(state); }
 
 private Q_SLOTS:
-	void slotAnimate( int sts );
+    void slotAnimate(int sts);
 };
 
 #endif

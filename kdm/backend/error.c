@@ -50,60 +50,60 @@ from the copyright holder.
 #include "printf.c"
 
 void
-gDebug( const char *fmt, ... )
+gDebug(const char *fmt, ...)
 {
-	va_list args;
+    va_list args;
 
-	if (debugLevel & DEBUG_HLPCON) {
-		va_start( args, fmt );
-		logger( DM_DEBUG, fmt, args );
-		va_end( args );
-	}
+    if (debugLevel & DEBUG_HLPCON) {
+        va_start(args, fmt);
+        logger(DM_DEBUG, fmt, args);
+        va_end(args);
+    }
 }
 
 void
-panic( const char *mesg )
+panic(const char *mesg)
 {
-	int fd = open( "/dev/console", O_WRONLY );
-	write( fd, "xdm panic: ", 11 );
-	write( fd, mesg, strlen( mesg ) );
-	write( fd, "\n", 1 );
+    int fd = open("/dev/console", O_WRONLY);
+    write(fd, "xdm panic: ", 11);
+    write(fd, mesg, strlen(mesg));
+    write(fd, "\n", 1);
 #ifdef USE_SYSLOG
-	reInitErrorLog();
-	syslog( LOG_ALERT, "%s", mesg );
+    reInitErrorLog();
+    syslog(LOG_ALERT, "%s", mesg);
 #endif
-	exit( 1 );
+    exit(1);
 }
 
 #ifdef USE_SYSLOG
 void
 reInitErrorLog()
 {
-	if (!(debugLevel & DEBUG_NOSYSLOG))
-		InitLog();
+    if (!(debugLevel & DEBUG_NOSYSLOG))
+        InitLog();
 }
 #endif
 
 void
-initErrorLog( const char *errorLogFile )
+initErrorLog(const char *errorLogFile)
 {
-	int fd;
-	char buf[128];
+    int fd;
+    char buf[128];
 
 #ifdef USE_SYSLOG
-	reInitErrorLog();
+    reInitErrorLog();
 #endif
-	/* We do this independently of using syslog, as we cannot redirect
-	 * the output of external programs to syslog.
-	 */
-	if (!errorLogFile || strcmp( errorLogFile, "-" )) {
-		if (!errorLogFile) {
-			sprintf( buf, "/var/log/%s.log", prog );
-			errorLogFile = buf;
-		}
-		if ((fd = open( errorLogFile, O_CREAT | O_APPEND | O_WRONLY, 0666 )) < 0)
-			logError( "Cannot open log file %s\n", errorLogFile );
-		else {
+    /* We do this independently of using syslog, as we cannot redirect
+     * the output of external programs to syslog.
+     */
+    if (!errorLogFile || strcmp(errorLogFile, "-")) {
+        if (!errorLogFile) {
+            sprintf(buf, "/var/log/%s.log", prog);
+            errorLogFile = buf;
+        }
+        if ((fd = open(errorLogFile, O_CREAT | O_APPEND | O_WRONLY, 0666)) < 0) {
+            logError("Cannot open log file %s\n", errorLogFile);
+        } else {
 #ifdef USE_SYSLOG
 # ifdef USE_PAM
 #  define PAMLOG " PAM logs messages related to authentication to authpriv.*."
@@ -117,13 +117,13 @@ initErrorLog( const char *errorLogFile )
   "daemon.* syslog facility; check your syslog configuration to find out to which\n" \
   "file(s) it is logged." PAMLOG "\n" \
   "********************************************************************************\n\n"
-			if (!lseek( fd, 0, SEEK_END ))
-				write( fd, WARNMSG, sizeof(WARNMSG) - 1 );
+            if (!lseek(fd, 0, SEEK_END))
+                write(fd, WARNMSG, sizeof(WARNMSG) - 1);
 #endif
-			dup2( fd, 1 );
-			close( fd );
-			dup2( 1, 2 );
-		}
-	}
+            dup2(fd, 1);
+            close(fd);
+            dup2(1, 2);
+        }
+    }
 }
 

@@ -48,80 +48,80 @@ from the copyright holder.
 static int xdmcpFd = -1, currentRequestPort;
 
 void
-updateListenSockets( void )
+updateListenSockets(void)
 {
-	struct t_bind bind_addr;
-	struct netconfig *nconf;
-	struct nd_hostserv service;
-	struct nd_addrlist *servaddrs;
-	char bindbuf[15];
-	int it;
+    struct t_bind bind_addr;
+    struct netconfig *nconf;
+    struct nd_hostserv service;
+    struct nd_addrlist *servaddrs;
+    char bindbuf[15];
+    int it;
 
-	if (currentRequestPort == requestPort)
-		return;
-	currentRequestPort = requestPort;
+    if (currentRequestPort == requestPort)
+        return;
+    currentRequestPort = requestPort;
 
-	if (xdmcpFd != -1) {
-		closeNclearCloseOnFork( xdmcpFd );
-		unregisterInput( xdmcpFd );
-		xdmcpFd = -1;
-	}
+    if (xdmcpFd != -1) {
+        closeNclearCloseOnFork(xdmcpFd);
+        unregisterInput(xdmcpFd);
+        xdmcpFd = -1;
+    }
 
-	if (!requestPort)
-		return;
+    if (!requestPort)
+        return;
 
-	debug( "creating UDP stream %d\n", requestPort );
+    debug("creating UDP stream %d\n", requestPort);
 
-	nconf = getnetconfigent( "udp" );
-	if (!nconf) {
-		t_error( "getnetconfigent udp" );
-		return;
-	}
+    nconf = getnetconfigent("udp");
+    if (!nconf) {
+        t_error("getnetconfigent udp");
+        return;
+    }
 
-	xdmcpFd = t_open( nconf->nc_device, O_RDWR, 0 );
-	if (xdmcpFd == -1) {
-		logError( "XDMCP stream creation failed\n" );
-		t_error( "CreateWellKnownSockets(xdmcpFd): t_open failed" );
-		return;
-	}
+    xdmcpFd = t_open(nconf->nc_device, O_RDWR, 0);
+    if (xdmcpFd == -1) {
+        logError("XDMCP stream creation failed\n");
+        t_error("CreateWellKnownSockets(xdmcpFd): t_open failed");
+        return;
+    }
 
-	service.h_host = HOST_SELF;
-	sprintf( bindbuf, "%d", requestPort );
-	service.h_serv = bindbuf;
-	netdir_getbyname( nconf, &service, &servaddrs );
-	freenetconfigent( nconf );
+    service.h_host = HOST_SELF;
+    sprintf(bindbuf, "%d", requestPort);
+    service.h_serv = bindbuf;
+    netdir_getbyname(nconf, &service, &servaddrs);
+    freenetconfigent(nconf);
 
-	bind_addr.qlen = 5;
-	bind_addr.addr.buf = servaddrs->n_addrs[0].buf;
-	bind_addr.addr.len = servaddrs->n_addrs[0].len;
-	bind_addr.addr.maxlen = servaddrs->n_addrs[0].len;
-	it = t_bind( xdmcpFd, &bind_addr, &bind_addr );
-	netdir_free( (char *)servaddrs, ND_ADDRLIST );
-	if (it < 0) {
-		logError( "Error binding UDP port %d\n", requestPort );
-		t_error( "CreateWellKnownSockets(xdmcpFd): t_bind failed" );
-		t_close( xdmcpFd );
-		xdmcpFd = -1;
-		return;
-	}
-	registerCloseOnFork( xdmcpFd );
-	registerInput( xdmcpFd );
+    bind_addr.qlen = 5;
+    bind_addr.addr.buf = servaddrs->n_addrs[0].buf;
+    bind_addr.addr.len = servaddrs->n_addrs[0].len;
+    bind_addr.addr.maxlen = servaddrs->n_addrs[0].len;
+    it = t_bind(xdmcpFd, &bind_addr, &bind_addr);
+    netdir_free((char *)servaddrs, ND_ADDRLIST);
+    if (it < 0) {
+        logError("Error binding UDP port %d\n", requestPort);
+        t_error("CreateWellKnownSockets(xdmcpFd): t_bind failed");
+        t_close(xdmcpFd);
+        xdmcpFd = -1;
+        return;
+    }
+    registerCloseOnFork(xdmcpFd);
+    registerInput(xdmcpFd);
 }
 
 int
-anyListenSockets( void )
+anyListenSockets(void)
 {
-	return xdmcpFd != -1;
+    return xdmcpFd != -1;
 }
 
 int
-processListenSockets( fd_set *reads )
+processListenSockets(fd_set *reads)
 {
-	if (xdmcpFd >= 0 && FD_ISSET( xdmcpFd, reads )) {
-		processRequestSocket( xdmcpFd );
-		return True;
-	}
-	return False;
+    if (xdmcpFd >= 0 && FD_ISSET(xdmcpFd, reads)) {
+        processRequestSocket(xdmcpFd);
+        return True;
+    }
+    return False;
 }
 
 #endif /* STREAMSCONN && XDMCP */

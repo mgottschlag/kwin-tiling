@@ -43,29 +43,29 @@ from the copyright holder.
 #include <ctype.h>
 
 static int
-getNull( char ***opts ATTR_UNUSED, int *def ATTR_UNUSED, int *cur ATTR_UNUSED )
+getNull(char ***opts ATTR_UNUSED, int *def ATTR_UNUSED, int *cur ATTR_UNUSED)
 {
-	return BO_NOMAN;
+    return BO_NOMAN;
 }
 
 static int
-setNull( const char *opt ATTR_UNUSED, SdRec *sdr ATTR_UNUSED )
+setNull(const char *opt ATTR_UNUSED, SdRec *sdr ATTR_UNUSED)
 {
-	return BO_NOMAN;
+    return BO_NOMAN;
 }
 
 static char *
-match( char *obuf, int *blen, const char *key, int klen )
+match(char *obuf, int *blen, const char *key, int klen)
 {
-	char *buf = obuf;
-	if (memcmp( buf, key, klen ) || !isspace( buf[klen] ))
-		return 0;
-	buf += klen + 1;
-	for (; isspace( *buf ); buf++);
-	if (!*buf)
-		return 0;
-	*blen -= buf - obuf;
-	return buf;
+    char *buf = obuf;
+    if (memcmp(buf, key, klen) || !isspace(buf[klen]))
+        return 0;
+    buf += klen + 1;
+    for (; isspace(*buf); buf++);
+    if (!*buf)
+        return 0;
+    *blen -= buf - obuf;
+    return buf;
 }
 
 #define GRUB_MENU "/boot/grub/menu.lst"
@@ -74,220 +74,220 @@ static char *grubSetDefault;
 static char *grub;
 
 static int
-getGrub( char ***opts, int *def, int *cur )
+getGrub(char ***opts, int *def, int *cur)
 {
-	FILE *f;
-	char *ptr, *linp;
-	int len;
-	char line[1000];
+    FILE *f;
+    char *ptr, *linp;
+    int len;
+    char line[1000];
 
-	if (!grubSetDefault && !grub &&
-	    !(grubSetDefault = locate( "grub-set-default" )) &&
-	    !(grub = locate( "grub" )))
-		return BO_NOMAN;
+    if (!grubSetDefault && !grub &&
+        !(grubSetDefault = locate("grub-set-default")) &&
+        !(grub = locate("grub")))
+        return BO_NOMAN;
 
-	*def = 0;
-	*cur = -1;
-	*opts = initStrArr( 0 );
+    *def = 0;
+    *cur = -1;
+    *opts = initStrArr(0);
 
-	if (!(f = fopen( GRUB_MENU, "r" )))
-		return errno == ENOENT ? BO_NOMAN : BO_IO;
-	while ((len = fGets( line, sizeof(line), f )) != -1) {
-		for (linp = line; isspace( *linp ); linp++, len--);
-		if ((ptr = match( linp, &len, "default", 7 )))
-			*def = atoi( ptr );
-		else if ((ptr = match( linp, &len, "title", 5 ))) {
-			for (; isspace( ptr[len - 1] ); len--);
-			*opts = addStrArr( *opts, ptr, len );
-		}
-	}
-	fclose( f );
+    if (!(f = fopen(GRUB_MENU, "r")))
+        return errno == ENOENT ? BO_NOMAN : BO_IO;
+    while ((len = fGets(line, sizeof(line), f)) != -1) {
+        for (linp = line; isspace(*linp); linp++, len--);
+        if ((ptr = match(linp, &len, "default", 7))) {
+            *def = atoi(ptr);
+        } else if ((ptr = match(linp, &len, "title", 5))) {
+            for (; isspace(ptr[len - 1]); len--);
+            *opts = addStrArr(*opts, ptr, len);
+        }
+    }
+    fclose(f);
 
-	return BO_OK;
+    return BO_OK;
 }
 
 static int
-setGrub( const char *opt, SdRec *sdr )
+setGrub(const char *opt, SdRec *sdr)
 {
-	FILE *f;
-	char *ptr;
-	int len, i;
-	char line[1000];
+    FILE *f;
+    char *ptr;
+    int len, i;
+    char line[1000];
 
-	if (!(f = fopen( GRUB_MENU, "r" )))
-		return errno == ENOENT ? BO_NOMAN : BO_IO;
-	for (i = 0; (len = fGets( line, sizeof(line), f )) != -1; )
-		if ((ptr = match( line, &len, "title", 5 ))) {
-			if (!strcmp( ptr, opt )) {
-				fclose( f );
-				sdr->osindex = i;
-				sdr->bmstamp = mTime( GRUB_MENU );
-				return BO_OK;
-			}
-			i++;
-		}
-	fclose( f );
-	return BO_NOENT;
+    if (!(f = fopen(GRUB_MENU, "r")))
+        return errno == ENOENT ? BO_NOMAN : BO_IO;
+    for (i = 0; (len = fGets(line, sizeof(line), f)) != -1;)
+        if ((ptr = match(line, &len, "title", 5))) {
+            if (!strcmp(ptr, opt)) {
+                fclose(f);
+                sdr->osindex = i;
+                sdr->bmstamp = mTime(GRUB_MENU);
+                return BO_OK;
+            }
+            i++;
+        }
+    fclose(f);
+    return BO_NOENT;
 }
 
 static void
-commitGrub( void )
+commitGrub(void)
 {
-	if (sdRec.bmstamp != mTime( GRUB_MENU ) &&
-	    setGrub( sdRec.osname, &sdRec ) != BO_OK)
-		return;
+    if (sdRec.bmstamp != mTime(GRUB_MENU) &&
+            setGrub(sdRec.osname, &sdRec) != BO_OK)
+        return;
 
-	if (grubSetDefault) {
-		/* The grub-set-default command must be used, which is
-		 * not so good because there is no way of setting an
-		 * entry for the next boot only. */
-		char index[16];
-		const char *args[] = { grubSetDefault, index, 0 };
-		sprintf( index, "%d", sdRec.osindex );
-		runAndWait( (char **)args, environ );
-	} else {
-		/* The grub shell can be used with `savedefault'.
-		 * That requires a (widely distributed) patch to grub, e.g.
-		 * grub-0.97-once.patch. It won't work with a vanilla grub.*/
-		FILE *f;
-		int pid;
-		static const char *args[] = { 0, "--batch", "--no-floppy", 0 };
-		args[0] = grub;
-		if ((f = pOpen( (char **)args, 'w', &pid ))) {
-			fprintf( f, "savedefault --default=%d --once\n", sdRec.osindex );
-			pClose( f, &pid );
-		}
-	}
+    if (grubSetDefault) {
+        /* The grub-set-default command must be used, which is
+         * not so good because there is no way of setting an
+         * entry for the next boot only. */
+        char index[16];
+        const char *args[] = { grubSetDefault, index, 0 };
+        sprintf(index, "%d", sdRec.osindex);
+        runAndWait((char **)args, environ);
+    } else {
+        /* The grub shell can be used with `savedefault'.
+         * That requires a (widely distributed) patch to grub, e.g.
+         * grub-0.97-once.patch. It won't work with a vanilla grub.*/
+        FILE *f;
+        int pid;
+        static const char *args[] = { 0, "--batch", "--no-floppy", 0 };
+        args[0] = grub;
+        if ((f = pOpen((char **)args, 'w', &pid))) {
+            fprintf(f, "savedefault --default=%d --once\n", sdRec.osindex);
+            pClose(f, &pid);
+        }
+    }
 }
 
 static char *lilo;
 
 static int
-getLilo( char ***opts, int *def, int *cur )
+getLilo(char ***opts, int *def, int *cur)
 {
-	FILE *f;
-	int cdef, pid, len, ret = BO_OK;
-	static const char *args[5] = { 0, "-w", "-v", "-q", 0 };
-	char buf[256], next[256];
+    FILE *f;
+    int cdef, pid, len, ret = BO_OK;
+    static const char *args[5] = { 0, "-w", "-v", "-q", 0 };
+    char buf[256], next[256];
 
-	if (!lilo && !(lilo = locate( "lilo" )))
-		return BO_NOMAN;
+    if (!lilo && !(lilo = locate("lilo")))
+        return BO_NOMAN;
 
-	args[0] = lilo;
-	if (!(f = pOpen( (char **)args, 'r', &pid )))
-		return BO_IO;
-	*opts = 0;
-	next[0] = 0;
-	for (;;) {
-		if ((len = fGets( buf, sizeof(buf), f )) == -1) {
-			ret = BO_NOMAN;
-			goto out;
-		}
-		if (!memcmp( buf, "Images:", 7 ))
-			break;
+    args[0] = lilo;
+    if (!(f = pOpen((char **)args, 'r', &pid)))
+        return BO_IO;
+    *opts = 0;
+    next[0] = 0;
+    for (;;) {
+        if ((len = fGets(buf, sizeof(buf), f)) == -1) {
+            ret = BO_NOMAN;
+            goto out;
+        }
+        if (!memcmp(buf, "Images:", 7))
+            break;
 #define Ldeflin "  Default boot command line:"
-		if (!memcmp( buf, Ldeflin, strlen(Ldeflin) )) {
-			memcpy( next, buf + strlen(Ldeflin) + 2, len - strlen(Ldeflin) - 3 );
-			next[len - strlen(Ldeflin) - 3] = 0;
-		}
-	}
-	cdef = *def = 0;
-	*cur = -1;
-	*opts = initStrArr( 0 );
-	while ((len = fGets( buf, sizeof(buf), f )) != -1)
-		if (buf[0] == ' ' && buf[1] == ' ' && buf[2] != ' ') {
-			if (buf[len - 1] == '*') {
-				*def = cdef;
-				len--;
-			}
-			for (; buf[len - 1] == ' '; len--);
-			*opts = addStrArr( *opts, buf + 2, len - 2 );
-			if (!strcmp( (*opts)[cdef], next ))
-				*cur = cdef;
-			cdef++;
-		}
+        if (!memcmp(buf, Ldeflin, strlen(Ldeflin))) {
+            memcpy(next, buf + strlen(Ldeflin) + 2, len - strlen(Ldeflin) - 3);
+            next[len - strlen(Ldeflin) - 3] = 0;
+        }
+    }
+    cdef = *def = 0;
+    *cur = -1;
+    *opts = initStrArr(0);
+    while ((len = fGets(buf, sizeof(buf), f)) != -1)
+        if (buf[0] == ' ' && buf[1] == ' ' && buf[2] != ' ') {
+            if (buf[len - 1] == '*') {
+                *def = cdef;
+                len--;
+            }
+            for (; buf[len - 1] == ' '; len--);
+            *opts = addStrArr(*opts, buf + 2, len - 2);
+            if (!strcmp((*opts)[cdef], next))
+                *cur = cdef;
+            cdef++;
+        }
   out:
-	if (pClose( f, &pid )) {
-		if (*opts)
-			freeStrArr( *opts );
-		return BO_IO;
-	}
-	return ret;
+    if (pClose(f, &pid)) {
+        if (*opts)
+            freeStrArr(*opts);
+        return BO_IO;
+    }
+    return ret;
 }
 
 static int
-setLilo( const char *opt, SdRec *sdr ATTR_UNUSED )
+setLilo(const char *opt, SdRec *sdr ATTR_UNUSED)
 {
-	char **opts;
-	int def, cur, ret, i;
+    char **opts;
+    int def, cur, ret, i;
 
-	if ((ret = getLilo( &opts, &def, &cur )) != BO_OK)
-		return ret;
-	if (!*opt)
-		opt = 0;
-	else {
-		for (i = 0; opts[i]; i++)
-			if (!strcmp( opts[i], opt ))
-				goto oke;
-		freeStrArr( opts );
-		return BO_NOENT;
-	}
+    if ((ret = getLilo(&opts, &def, &cur)) != BO_OK)
+        return ret;
+    if (!*opt) {
+        opt = 0;
+    } else {
+        for (i = 0; opts[i]; i++)
+            if (!strcmp(opts[i], opt))
+                goto oke;
+        freeStrArr(opts);
+        return BO_NOENT;
+    }
   oke:
-	freeStrArr( opts );
-	return BO_OK;
+    freeStrArr(opts);
+    return BO_OK;
 }
 
 static void
-commitLilo( void )
+commitLilo(void)
 {
-	static const char *args[5] = { 0, "-w", "-R", 0, 0 };
+    static const char *args[5] = { 0, "-w", "-R", 0, 0 };
 
-	args[0] = lilo;
-	args[3] = sdRec.osname;
-	runAndWait( (char **)args, environ );
+    args[0] = lilo;
+    args[3] = sdRec.osname;
+    runAndWait((char **)args, environ);
 }
 
 static const struct {
-	int (*get)( char ***, int *, int * );
-	int (*set)( const char *, SdRec * );
-	void (*commit)( void );
+    int (*get)(char ***, int *, int *);
+    int (*set)(const char *, SdRec *);
+    void (*commit)(void);
 } bootOpts[] = {
-  { getNull, setNull, 0 },
-  { getGrub, setGrub, commitGrub },
-  { getLilo, setLilo, commitLilo },
+    { getNull, setNull, 0 },
+    { getGrub, setGrub, commitGrub },
+    { getLilo, setLilo, commitLilo },
 };
 
 int
-getBootOptions( char ***opts, int *def, int *cur )
+getBootOptions(char ***opts, int *def, int *cur)
 {
-	return bootOpts[bootManager].get( opts, def, cur );
+    return bootOpts[bootManager].get(opts, def, cur);
 }
 
 int
-setBootOption( const char *opt, SdRec *sdr )
+setBootOption(const char *opt, SdRec *sdr)
 {
-	int ret;
+    int ret;
 
-	free( sdr->osname );
-	sdr->osname = 0;
-	if (opt) {
-		if ((ret = bootOpts[bootManager].set( opt, sdr )) != BO_OK)
-			return ret;
-		if (!strDup( &sdr->osname, opt ))
-			return BO_IO; /* BO_NOMEM */
-	}
-	return BO_OK;
+    free(sdr->osname);
+    sdr->osname = 0;
+    if (opt) {
+        if ((ret = bootOpts[bootManager].set(opt, sdr)) != BO_OK)
+            return ret;
+        if (!strDup(&sdr->osname, opt))
+            return BO_IO; /* BO_NOMEM */
+    }
+    return BO_OK;
 }
 
 void
-commitBootOption( void )
+commitBootOption(void)
 {
-	if (sdRec.osname) {
-		bootOpts[bootManager].commit();
+    if (sdRec.osname) {
+        bootOpts[bootManager].commit();
 /*
-		free( sdRec.osname );
-		sdRec.osname = 0;
+        free(sdRec.osname);
+        sdRec.osname = 0;
 */
-	}
+    }
 }
 

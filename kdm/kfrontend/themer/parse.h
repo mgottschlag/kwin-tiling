@@ -34,40 +34,40 @@ class QDomElement;
 
 enum DataType { DTnone, DTpixel, DTnpixel, DTpercent, DTbox, DTscale };
 struct DataPoint {
-	int val, levels;
-	DataType type;
+    int val, levels;
+    DataType type;
 };
 
 struct FontType {
-	QFont font;
-	bool present;
+    QFont font;
+    bool present;
 
-	FontType() : present( false )
-	{
-	}
+    FontType() : present(false)
+    {
+    }
 };
 
 struct StyleType {
-	QStyle *guistyle;
-	QPalette palette;
-	FontType font, editfont;
-	bool frame;
+    QStyle *guistyle;
+    QPalette palette;
+    FontType font, editfont;
+    bool frame;
 };
 
-void parseSize( const QString &, DataPoint & );
-void parseFont( const QString &, FontType & );
-void parseFont( const QDomElement &, FontType & );
-bool parseColor( const QString &color, const QString &alpha, QColor & );
-void parseColor( const QDomElement &, QColor & );
-void parseStyle( const QDomElement &, StyleType & );
+void parseSize(const QString &, DataPoint &);
+void parseFont(const QString &, FontType &);
+void parseFont(const QDomElement &, FontType &);
+bool parseColor(const QString &color, const QString &alpha, QColor &);
+void parseColor(const QDomElement &, QColor &);
+void parseStyle(const QDomElement &, StyleType &);
 
-void setWidgetAttribs( QWidget *widget, const StyleType &style, bool frame );
+void setWidgetAttribs(QWidget *widget, const StyleType &style, bool frame);
 
 enum NoSpaceDebug { NoSpace };
 enum SpaceDebug { Space };
 static inline QDebug operator<<(QDebug ds, NoSpaceDebug) { return ds.nospace(); }
 static inline QDebug operator<<(QDebug ds, SpaceDebug) { return ds.space(); }
-QDebug enter( const char *fct );
+QDebug enter(const char *fct);
 QDebug debug();
 QDebug leave();
 

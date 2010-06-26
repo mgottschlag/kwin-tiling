@@ -24,62 +24,62 @@
 
 #include <QPainter>
 
-KdmRect::KdmRect( QObject *parent, const QDomNode &node )
-	: KdmItem( parent, node )
+KdmRect::KdmRect(QObject *parent, const QDomNode &node)
+    : KdmItem(parent, node)
 {
-	itemType = "rect";
-	if (!isVisible())
-		return;
+    itemType = "rect";
+    if (!isVisible())
+        return;
 
-	// Set default values for rect (note: strings are already Null)
-	rect.active.present = false;
-	rect.prelight.present = false;
+    // Set default values for rect (note: strings are already Null)
+    rect.active.present = false;
+    rect.prelight.present = false;
 
-	// Read RECT TAGS
-	QDomNodeList childList = node.childNodes();
-	for (int nod = 0; nod < childList.count(); nod++) {
-		QDomNode child = childList.item( nod );
-		QDomElement el = child.toElement();
-		QString tagName = el.tagName();
+    // Read RECT TAGS
+    QDomNodeList childList = node.childNodes();
+    for (int nod = 0; nod < childList.count(); nod++) {
+        QDomNode child = childList.item(nod);
+        QDomElement el = child.toElement();
+        QString tagName = el.tagName();
 
-		if (tagName == "normal") {
-			parseColor( el, rect.normal.color );
-		} else if (tagName == "active") {
-			rect.active.present = true;
-			parseColor( el, rect.active.color );
-		} else if (tagName == "prelight") {
-			rect.prelight.present = true;
-			parseColor( el, rect.prelight.color );
-		}
-	}
+        if (tagName == "normal") {
+            parseColor(el, rect.normal.color);
+        } else if (tagName == "active") {
+            rect.active.present = true;
+            parseColor(el, rect.active.color);
+        } else if (tagName == "prelight") {
+            rect.prelight.present = true;
+            parseColor(el, rect.prelight.color);
+        }
+    }
 }
 
 void
-KdmRect::drawContents( QPainter *p, const QRect &r )
+KdmRect::drawContents(QPainter *p, const QRect &r)
 {
-	// choose the correct rect class
-	RectStruct::RectClass *rClass = &rect.normal;
-	if (state == Sactive && rect.active.present)
-		rClass = &rect.active;
-	if (state == Sprelight && rect.prelight.present)
-		rClass = &rect.prelight;
+    // choose the correct rect class
+    RectStruct::RectClass *rClass = &rect.normal;
+    if (state == Sactive && rect.active.present)
+        rClass = &rect.active;
+    if (state == Sprelight && rect.prelight.present)
+        rClass = &rect.prelight;
 
-	if (!rClass->color.isValid())
-		return;
+    if (!rClass->color.isValid())
+        return;
 
-	p->fillRect( r, QBrush( rClass->color ) );
+    p->fillRect(r, QBrush(rClass->color));
 }
 
 void
-KdmRect::statusChanged( bool descend )
+KdmRect::statusChanged(bool descend)
 {
-	KdmItem::statusChanged( descend );
-	if (!rect.active.present && !rect.prelight.present)
-		return;
-	if ((state == Sprelight && !rect.prelight.present) ||
-	    (state == Sactive && !rect.active.present))
-		return;
-	needUpdate();
+    KdmItem::statusChanged(descend);
+    if (!rect.active.present && !rect.prelight.present)
+        return;
+    if ((state == Sprelight && !rect.prelight.present) ||
+        (state == Sactive && !rect.active.present))
+        return;
+    needUpdate();
 }
 
 #include "kdmrect.moc"

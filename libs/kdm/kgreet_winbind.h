@@ -38,57 +38,57 @@ class QLabel;
 class KProcess;
 
 class KWinbindGreeter : public QObject, public KGreeterPlugin {
-	Q_OBJECT
+    Q_OBJECT
 
   public:
-	KWinbindGreeter( KGreeterPluginHandler *handler,
-	                 QWidget *parent,
-	                 const QString &fixedEntitiy,
-	                 Function func, Context ctx );
-	~KWinbindGreeter();
-	virtual void loadUsers( const QStringList &users );
-	virtual void presetEntity( const QString &entity, int field );
-	virtual QString getEntity() const;
-	virtual void setUser( const QString &user );
-	virtual void setEnabled( bool on );
-	virtual bool textMessage( const char *message, bool error );
-	virtual void textPrompt( const char *prompt, bool echo, bool nonBlocking );
-	virtual bool binaryPrompt( const char *prompt, bool nonBlocking );
-	virtual void start();
-	virtual void suspend();
-	virtual void resume();
-	virtual void next();
-	virtual void abort();
-	virtual void succeeded();
-	virtual void failed();
-	virtual void revive();
-	virtual void clear();
+    KWinbindGreeter(KGreeterPluginHandler *handler,
+                    QWidget *parent,
+                    const QString &fixedEntitiy,
+                    Function func, Context ctx);
+    ~KWinbindGreeter();
+    virtual void loadUsers(const QStringList &users);
+    virtual void presetEntity(const QString &entity, int field);
+    virtual QString getEntity() const;
+    virtual void setUser(const QString &user);
+    virtual void setEnabled(bool on);
+    virtual bool textMessage(const char *message, bool error);
+    virtual void textPrompt(const char *prompt, bool echo, bool nonBlocking);
+    virtual bool binaryPrompt(const char *prompt, bool nonBlocking);
+    virtual void start();
+    virtual void suspend();
+    virtual void resume();
+    virtual void next();
+    virtual void abort();
+    virtual void succeeded();
+    virtual void failed();
+    virtual void revive();
+    virtual void clear();
 
   public Q_SLOTS:
-	void slotLoginLostFocus();
-	void slotChangedDomain( const QString &dom );
-	void slotChanged();
-	void slotStartDomainList();
-	void slotEndDomainList();
+    void slotLoginLostFocus();
+    void slotChangedDomain(const QString &dom);
+    void slotChanged();
+    void slotStartDomainList();
+    void slotEndDomainList();
 
   private:
-	void setActive( bool enable );
-	void setActive2( bool enable );
-	void returnData();
+    void setActive(bool enable);
+    void setActive2(bool enable);
+    void returnData();
 
-	QLabel *domainLabel, *loginLabel, *passwdLabel, *passwd1Label, *passwd2Label;
-	KComboBox *domainCombo;
-	KLineEdit *loginEdit;
-	KLineEdit *passwdEdit, *passwd1Edit, *passwd2Edit;
-	KSimpleConfig *stsFile;
-	QString fixedDomain, fixedUser, curUser;
-	QStringList allUsers;
-	KProcess* m_domainLister;
+    QLabel *domainLabel, *loginLabel, *passwdLabel, *passwd1Label, *passwd2Label;
+    KComboBox *domainCombo;
+    KLineEdit *loginEdit;
+    KLineEdit *passwdEdit, *passwd1Edit, *passwd2Edit;
+    KSimpleConfig *stsFile;
+    QString fixedDomain, fixedUser, curUser;
+    QStringList allUsers;
+    KProcess* m_domainLister;
 
-	Function func;
-	Context ctx;
-	int exp, pExp, has;
-	bool running, authTok;
+    Function func;
+    Context ctx;
+    int exp, pExp, has;
+    bool running, authTok;
 };
 
 #endif /* KGREET_WINBIND_H */

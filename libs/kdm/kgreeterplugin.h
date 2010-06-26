@@ -33,7 +33,7 @@ class QWidget;
 class KGreeterPluginHandler {
 public:
     virtual ~KGreeterPluginHandler() {}
-	/* keep in sync with V_IS_* */
+    /* keep in sync with V_IS_* */
     enum { IsSecret = 1, IsUser = 2, IsPassword = 4, IsOldPassword = 8,
            IsNewPassword = 16 };
     /**
@@ -41,13 +41,13 @@ public:
      * @param text text to return to core; null to abort auth cycle
      * @param tag zero or one of Is*
      */
-    virtual void gplugReturnText( const char *text, int tag ) = 0;
+    virtual void gplugReturnText(const char *text, int tag) = 0;
     /**
      * Reply to binaryPrompt().
      * @param data data in pam_client format to return to the core;
      *  null to abort auth cycle
      */
-    virtual void gplugReturnBinary( const char *data ) = 0;
+    virtual void gplugReturnBinary(const char *data) = 0;
     /**
      * Tell the greeter who is logging in.
      * Call this preferably before gplugStart, as otherwise the .dmrc
@@ -56,7 +56,7 @@ public:
      * user changes.
      * @param user the user logging in
      */
-    virtual void gplugSetUser( const QString &user ) = 0;
+    virtual void gplugSetUser(const QString &user) = 0;
     /**
      * Start processing.
      */
@@ -80,12 +80,12 @@ public:
      * @param type message severity
      * @param text message text
      */
-    virtual void gplugMsgBox( QMessageBox::Icon type, const QString &text ) = 0;
+    virtual void gplugMsgBox(QMessageBox::Icon type, const QString &text) = 0;
     /**
      * Determine if the named widget is welcomed.
      * @param id the widget name
      */
-    virtual bool gplugHasNode( const QString &id ) = 0;
+    virtual bool gplugHasNode(const QString &id) = 0;
 };
 
 /**
@@ -97,7 +97,7 @@ public:
  */
 class KGreeterPlugin {
 public:
-    KGreeterPlugin( KGreeterPluginHandler *h ) : handler( h ) {}
+    KGreeterPlugin(KGreeterPluginHandler *h) : handler(h) {}
     virtual ~KGreeterPlugin() {}
 
     /**
@@ -131,7 +131,7 @@ public:
      * Will be called only when not running.
      * @param users the users to load.
      */
-    virtual void loadUsers( const QStringList &users ) = 0;
+    virtual void loadUsers(const QStringList &users) = 0;
 
     /**
      * Preload the talker with an (opaque to the greeter) entity.
@@ -143,7 +143,7 @@ public:
      *  the password field with anything, disabling it, and placing the
      *  cursor in the user name field.
      */
-    virtual void presetEntity( const QString &entity, int field ) = 0;
+    virtual void presetEntity(const QString &entity, int field) = 0;
 
     /**
      * Obtain the actually logged in entity.
@@ -158,14 +158,14 @@ public:
      * @param user the user to set. Note that this is a UNIX login, not a
      *  canonical entity
      */
-    virtual void setUser( const QString &user ) = 0;
+    virtual void setUser(const QString &user) = 0;
 
     /**
      * En-/disable any widgets contained in the talker.
      * Will be called only when not running.
      * @param on the state to set
      */
-    virtual void setEnabled( bool on ) = 0;
+    virtual void setEnabled(bool on) = 0;
 
     /**
      * Called when a message from the authentication backend arrives.
@@ -182,7 +182,7 @@ public:
      * within the backend is unclear (PAM won't like simply longjmp()ing
      * out of it).
      */
-    virtual bool textMessage( const char *message, bool error ) = 0;
+    virtual bool textMessage(const char *message, bool error) = 0;
 
     /**
      * Prompt the user for data. Reply by calling handler->gplugReturnText().
@@ -194,7 +194,7 @@ public:
      * @param nonBlocking if true, report whatever is already available,
      *  otherwise wait for user input.
      */
-    virtual void textPrompt( const char *prompt, bool echo, bool nonBlocking ) = 0;
+    virtual void textPrompt(const char *prompt, bool echo, bool nonBlocking) = 0;
 
     /**
      * Request binary authentication data from the talker. Reply by calling
@@ -211,7 +211,7 @@ public:
      *  gplugReturn()ing a null array. When the data was obtained, another
      *  binaryPrompt with a null prompt will be issued.
      */
-    virtual bool binaryPrompt( const char *prompt, bool nonBlocking ) = 0;
+    virtual bool binaryPrompt(const char *prompt, bool nonBlocking) = 0;
 
     /**
      * This can either
@@ -356,16 +356,16 @@ struct KDE_EXPORT KGreeterPluginInfo {
      * @param ctx context pointer for @p getConf
      * @return if false, unload the plugin again (don't call done() first)
      */
-    bool (*init)( const QString &method,
-                  QVariant (*getConf)( void *ctx, const char *key,
-                                       const QVariant &dflt ),
-                  void *ctx );
+    bool (*init)(const QString &method,
+                 QVariant(*getConf)(void *ctx, const char *key,
+                                    const QVariant &dflt),
+                 void *ctx);
 
     /**
      * Call before unloading the plugin.
      * This pointer can be null.
      */
-    void (*done)( void );
+    void (*done)(void);
 
     /**
      * Factory method to create an instance of the plugin.
@@ -401,11 +401,11 @@ struct KDE_EXPORT KGreeterPluginInfo {
      * that the backend is already in a cycle of the method the plugin was
      * initialized with (it does not hurt if gplugStart is still called).
      */
-    KGreeterPlugin *(*create)( KGreeterPluginHandler *handler,
-                               QWidget *parent,
-                               const QString &fixedEntity,
-                               KGreeterPlugin::Function func,
-                               KGreeterPlugin::Context ctx );
+    KGreeterPlugin *(*create)(KGreeterPluginHandler *handler,
+                              QWidget *parent,
+                              const QString &fixedEntity,
+                              KGreeterPlugin::Function func,
+                              KGreeterPlugin::Context ctx);
 };
 
 #endif

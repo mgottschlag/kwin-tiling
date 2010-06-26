@@ -25,87 +25,87 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <stdlib.h>
 
-QString qString( char *str )
+QString qString(char *str)
 {
-	if (!str)
-		return QString();
-	QString qs = QString::fromUtf8( str );
-	free( str );
-	return qs;
+    if (!str)
+        return QString();
+    QString qs = QString::fromUtf8(str);
+    free(str);
+    return qs;
 }
 
-QStringList qStringList( char **strList )
+QStringList qStringList(char **strList)
 {
-	QStringList qsl;
-	for (int i = 0; strList[i]; i++) {
-		qsl.append( QString::fromUtf8( strList[i] ) );
-		free( strList[i] );
-	}
-	free( strList );
-	return qsl;
+    QStringList qsl;
+    for (int i = 0; strList[i]; i++) {
+        qsl.append(QString::fromUtf8(strList[i]));
+        free(strList[i]);
+    }
+    free(strList);
+    return qsl;
 }
 
 QList<DpySpec>
-fetchSessions( int flags )
+fetchSessions(int flags)
 {
-	QList<DpySpec> sessions;
-	DpySpec tsess;
+    QList<DpySpec> sessions;
+    DpySpec tsess;
 
-	gSet( 1 );
-	gSendInt( G_List );
-	gSendInt( flags );
+    gSet(1);
+    gSendInt(G_List);
+    gSendInt(flags);
   next:
-	while (!(tsess.display = qString( gRecvStr() )).isEmpty()) {
-		tsess.from = qString( gRecvStr() );
+    while (!(tsess.display = qString(gRecvStr())).isEmpty()) {
+        tsess.from = qString(gRecvStr());
 #ifdef HAVE_VTS
-		tsess.vt = gRecvInt();
+        tsess.vt = gRecvInt();
 #endif
-		tsess.user = qString( gRecvStr() );
-		tsess.session = qString( gRecvStr() );
-		tsess.flags = gRecvInt();
-		if ((tsess.flags & isTTY) && !tsess.from.isEmpty())
-			for (int i = 0; i < sessions.size(); i++)
-				if (!sessions[i].user.isEmpty() &&
-				    sessions[i].user == tsess.user &&
-				    sessions[i].from == tsess.from)
-				{
-					sessions[i].count++;
-					goto next;
-				}
-		tsess.count = 1;
-		sessions.append( tsess );
-	}
-	gSet( 0 );
-	return sessions;
+        tsess.user = qString(gRecvStr());
+        tsess.session = qString(gRecvStr());
+        tsess.flags = gRecvInt();
+        if ((tsess.flags & isTTY) && !tsess.from.isEmpty())
+            for (int i = 0; i < sessions.size(); i++)
+                if (!sessions[i].user.isEmpty() &&
+                    sessions[i].user == tsess.user &&
+                    sessions[i].from == tsess.from)
+                {
+                    sessions[i].count++;
+                    goto next;
+                }
+        tsess.count = 1;
+        sessions.append(tsess);
+    }
+    gSet(0);
+    return sessions;
 }
 
 void
-decodeSession( const DpySpec &sess, QString &user, QString &loc )
+decodeSession(const DpySpec &sess, QString &user, QString &loc)
 {
-	if (sess.flags & isTTY) {
-		user =
-			i18ncp( "user: ...", "%2: TTY login", "%2: %1 TTY logins",
-			        sess.count, sess.user );
-		loc =
+    if (sess.flags & isTTY) {
+        user =
+            i18ncp("user: ...", "%2: TTY login", "%2: %1 TTY logins",
+                   sess.count, sess.user);
+        loc =
 #ifdef HAVE_VTS
-			sess.vt ?
-				QString("vt%1").arg( sess.vt ) :
+            sess.vt ?
+                QString("vt%1").arg(sess.vt) :
 #endif
-				!sess.from.isEmpty() ?
-					sess.from : sess.display;
-	} else {
-		user =
-			sess.session.isEmpty() ?
-				i18nc("... session", "Unused") :
-				!sess.user.isEmpty() ?
-					i18nc( "user: session type", "%1: %2",
-					       sess.user, sess.session ) :
-					i18nc( "... host", "X login on %1", sess.session );
-		loc =
+                !sess.from.isEmpty() ?
+                    sess.from : sess.display;
+    } else {
+        user =
+            sess.session.isEmpty() ?
+                i18nc("... session", "Unused") :
+                !sess.user.isEmpty() ?
+                    i18nc("user: session type", "%1: %2",
+                          sess.user, sess.session) :
+                    i18nc("... host", "X login on %1", sess.session);
+        loc =
 #ifdef HAVE_VTS
-			sess.vt ?
-				QString("%1, vt%2").arg( sess.display ).arg( sess.vt ) :
+            sess.vt ?
+                QString("%1, vt%2").arg(sess.display).arg(sess.vt) :
 #endif
-				sess.display;
-	}
+                sess.display;
+    }
 }

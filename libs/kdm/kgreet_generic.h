@@ -38,47 +38,47 @@ class QWidget;
 class KLineEdit;
 
 class KGenericGreeter : public QObject, public KGreeterPlugin {
-	Q_OBJECT
+    Q_OBJECT
 
   public:
-	KGenericGreeter( KGreeterPluginHandler *handler,
-	                 QWidget *parent, const QString &fixedEntitiy,
-	                 Function func, Context ctx );
-	~KGenericGreeter();
-	virtual void loadUsers( const QStringList &users );
-	virtual void presetEntity( const QString &entity, int field );
-	virtual QString getEntity() const;
-	virtual void setUser( const QString &user );
-	virtual void setEnabled( bool on );
-	virtual bool textMessage( const char *message, bool error );
-	virtual void textPrompt( const char *prompt, bool echo, bool nonBlocking );
-	virtual bool binaryPrompt( const char *prompt, bool nonBlocking );
-	virtual void start();
-	virtual void suspend();
-	virtual void resume();
-	virtual void next();
-	virtual void abort();
-	virtual void succeeded();
-	virtual void failed();
-	virtual void revive();
-	virtual void clear();
+    KGenericGreeter(KGreeterPluginHandler *handler,
+                    QWidget *parent, const QString &fixedEntitiy,
+                    Function func, Context ctx);
+    ~KGenericGreeter();
+    virtual void loadUsers(const QStringList &users);
+    virtual void presetEntity(const QString &entity, int field);
+    virtual QString getEntity() const;
+    virtual void setUser(const QString &user);
+    virtual void setEnabled(bool on);
+    virtual bool textMessage(const char *message, bool error);
+    virtual void textPrompt(const char *prompt, bool echo, bool nonBlocking);
+    virtual bool binaryPrompt(const char *prompt, bool nonBlocking);
+    virtual void start();
+    virtual void suspend();
+    virtual void resume();
+    virtual void next();
+    virtual void abort();
+    virtual void succeeded();
+    virtual void failed();
+    virtual void revive();
+    virtual void clear();
 
   public slots:
-	void slotLoginLostFocus();
-	void slotChanged();
+    void slotLoginLostFocus();
+    void slotChanged();
 
   private:
-	QGridLayout *m_grid;
-	QList<QWidget *> m_children;
-	KLineEdit *m_lineEdit;
-	QWidget *m_parentWidget;
-	QList<QString> m_infoMsgs;
-	QString fixedUser, curUser;
-	QStringList m_users;
-	Function func;
-	Context ctx;
-	int exp, m_line;
-	bool running, m_echo;
+    QGridLayout *m_grid;
+    QList<QWidget *> m_children;
+    KLineEdit *m_lineEdit;
+    QWidget *m_parentWidget;
+    QList<QString> m_infoMsgs;
+    QString fixedUser, curUser;
+    QStringList m_users;
+    Function func;
+    Context ctx;
+    int exp, m_line;
+    bool running, m_echo;
 };
 
 #endif /* KGREET_GENERIC_H */

@@ -42,13 +42,13 @@ from the copyright holder.
    e.g., AF_INET */
 
 int
-netaddrFamily( char *netaddrp )
+netaddrFamily(char *netaddrp)
 {
 #ifdef STREAMSCONN
-	short family = *(short *)netaddrp;
-	return family;
+    short family = *(short *)netaddrp;
+    return family;
 #else
-	return ((struct sockaddr *)netaddrp)->sa_family;
+    return ((struct sockaddr *)netaddrp)->sa_family;
 #endif
 }
 
@@ -58,26 +58,25 @@ netaddrFamily( char *netaddrp )
    or 0 if not using TCP or UDP. */
 
 CARD8 *
-netaddrPort( char *netaddrp, int *lenp )
+netaddrPort(char *netaddrp, int *lenp)
 {
 #ifdef STREAMSCONN
-	*lenp = 2;
-	return netaddrp+2;
+    *lenp = 2;
+    return netaddrp + 2;
 #else
-	switch (netaddrFamily( netaddrp ))
-	{
-	case AF_INET:
-		*lenp = 2;
-		return (CARD8 *)&(((struct sockaddr_in *)netaddrp)->sin_port);
+    switch (netaddrFamily(netaddrp)) {
+    case AF_INET:
+        *lenp = 2;
+        return (CARD8 *)&(((struct sockaddr_in *)netaddrp)->sin_port);
 #if defined(IPv6) && defined(AF_INET6)
-	case AF_INET6:
-		*lenp = 2;
-		return (CARD8 *)&(((struct sockaddr_in6 *)netaddrp)->sin6_port);
+    case AF_INET6:
+        *lenp = 2;
+        return (CARD8 *)&(((struct sockaddr_in6 *)netaddrp)->sin6_port);
 #endif
-	default:
-		*lenp = 0;
-		return 0;
-	}
+    default:
+        *lenp = 0;
+        return 0;
+    }
 #endif
 }
 
@@ -86,48 +85,47 @@ netaddrPort( char *netaddrp, int *lenp )
    and sets *lenp to the length of the address */
 
 CARD8 *
-netaddrAddress( char *netaddrp, int *lenp )
+netaddrAddress(char *netaddrp, int *lenp)
 {
 #ifdef STREAMSCONN
-	*lenp = 4;
-	return netaddrp+4;
+    *lenp = 4;
+    return netaddrp + 4;
 #else
-	switch (netaddrFamily( netaddrp )) {
+    switch (netaddrFamily(netaddrp)) {
 #ifdef UNIXCONN
-	case AF_UNIX:
-		*lenp = strlen( ((struct sockaddr_un *)netaddrp)->sun_path );
-		return (CARD8 *)(((struct sockaddr_un *)netaddrp)->sun_path);
+    case AF_UNIX:
+        *lenp = strlen(((struct sockaddr_un *)netaddrp)->sun_path);
+        return (CARD8 *)(((struct sockaddr_un *)netaddrp)->sun_path);
 #endif
 #ifdef TCPCONN
-	case AF_INET:
-		*lenp = sizeof(struct in_addr);
-		return (CARD8 *)&(((struct sockaddr_in *)netaddrp)->sin_addr);
+    case AF_INET:
+        *lenp = sizeof(struct in_addr);
+        return (CARD8 *)&(((struct sockaddr_in *)netaddrp)->sin_addr);
 #if defined(IPv6) && defined(AF_INET6)
-	case AF_INET6:
-	{
-		struct in6_addr *a = &(((struct sockaddr_in6 *)netaddrp)->sin6_addr);
-		if (IN6_IS_ADDR_V4MAPPED( a )) {
-			*lenp = sizeof(struct in_addr);
-			return ((CARD8 *)&(a->s6_addr))+12;
-		} else {
-			*lenp = sizeof(struct in6_addr);
-			return (CARD8 *)&(a->s6_addr);
-		}
-	}
+    case AF_INET6: {
+        struct in6_addr *a = &(((struct sockaddr_in6 *)netaddrp)->sin6_addr);
+        if (IN6_IS_ADDR_V4MAPPED(a)) {
+            *lenp = sizeof(struct in_addr);
+            return ((CARD8 *)&(a->s6_addr))+12;
+        } else {
+            *lenp = sizeof(struct in6_addr);
+            return (CARD8 *)&(a->s6_addr);
+        }
+    }
 #endif
 #endif
 #ifdef DNETCONN
-	case AF_DECnet:
-		*lenp = sizeof(struct dn_naddr);
-		return (CARD8 *)&(((struct sockaddr_dn *)netaddrp)->sdn_add);
+    case AF_DECnet:
+        *lenp = sizeof(struct dn_naddr);
+        return (CARD8 *)&(((struct sockaddr_dn *)netaddrp)->sdn_add);
 #endif
 #ifdef AF_CHAOS
-	case AF_CHAOS:
+    case AF_CHAOS:
 #endif
-	default:
-		*lenp = 0;
-		return 0;
-	}
+    default:
+        *lenp = 0;
+        return 0;
+    }
 #endif /* STREAMSCONN else */
 }
 
@@ -137,83 +135,83 @@ netaddrAddress( char *netaddrp, int *lenp )
    Returns the X protocol family used, e.g., FamilyInternet */
 
 int
-convertAddr( char *saddr, int *len, CARD8 **addr )
+convertAddr(char *saddr, int *len, CARD8 **addr)
 {
-	int retval;
+    int retval;
 
-	if (!len)
-		return -1;
-	*addr = netaddrAddress( saddr, len );
+    if (!len)
+        return -1;
+    *addr = netaddrAddress(saddr, len);
 #ifdef STREAMSCONN
-	/* kludge */
-	if (netaddrFamily( saddr ) == 2)
-		retval = FamilyInternet;
+    /* kludge */
+    if (netaddrFamily(saddr) == 2)
+        retval = FamilyInternet;
 #else
-	switch (netaddrFamily( saddr )) {
+    switch (netaddrFamily(saddr)) {
 #ifdef AF_UNSPEC
-	case AF_UNSPEC:
-		retval = FamilyLocal;
-		break;
+    case AF_UNSPEC:
+        retval = FamilyLocal;
+        break;
 #endif
 #ifdef AF_UNIX
 #ifndef __hpux
-	case AF_UNIX:
-		retval = FamilyLocal;
-		break;
+    case AF_UNIX:
+        retval = FamilyLocal;
+        break;
 #endif
 #endif
 #ifdef TCPCONN
-	case AF_INET:
-		retval = FamilyInternet;
-		break;
+    case AF_INET:
+        retval = FamilyInternet;
+        break;
 #if defined(IPv6) && defined(AF_INET6)
-	case AF_INET6:
-		if (*len == sizeof(struct in_addr))
-			retval = FamilyInternet;
-		else
-			retval = FamilyInternet6;
-		break;
+    case AF_INET6:
+        if (*len == sizeof(struct in_addr))
+            retval = FamilyInternet;
+        else
+            retval = FamilyInternet6;
+        break;
 #endif
 #endif
 #ifdef DNETCONN
-	case AF_DECnet:
-		retval = FamilyDECnet;
-		break;
+    case AF_DECnet:
+        retval = FamilyDECnet;
+        break;
 #endif
 #ifdef AF_CHAOS
-	case AF_CHAOS:
-		retval = FamilyChaos;
-		break;
+    case AF_CHAOS:
+        retval = FamilyChaos;
+        break;
 #endif
-	default:
-		retval = -1;
-		break;
-	}
+    default:
+        retval = -1;
+        break;
+    }
 #endif /* STREAMSCONN else */
-	debug( "convertAddr returning %d for family %d\n", retval,
-	       netaddrFamily( saddr ) );
-	return retval;
+    debug("convertAddr returning %d for family %d\n", retval,
+          netaddrFamily(saddr));
+    return retval;
 }
 
 #ifdef XDMCP
 int
-addressEqual( char *a1, int len1, char *a2, int len2 )
+addressEqual(char *a1, int len1, char *a2, int len2)
 {
-	int partlen1, partlen2;
-	CARD8 *part1, *part2;
+    int partlen1, partlen2;
+    CARD8 *part1, *part2;
 
-	if (len1 != len2)
-		return False;
-	if (netaddrFamily( a1 ) != netaddrFamily( a2 ))
-		return False;
-	part1 = netaddrPort( a1, &partlen1 );
-	part2 = netaddrPort( a2, &partlen2 );
-	if (partlen1 != partlen2 || memcmp( part1, part2, partlen1 ) != 0)
-		return False;
-	part1 = netaddrAddress( a1, &partlen1 );
-	part2 = netaddrAddress( a2, &partlen2 );
-	if (partlen1 != partlen2 || memcmp( part1, part2, partlen1 ) != 0)
-		return False;
-	return True;
+    if (len1 != len2)
+        return False;
+    if (netaddrFamily(a1) != netaddrFamily(a2))
+        return False;
+    part1 = netaddrPort(a1, &partlen1);
+    part2 = netaddrPort(a2, &partlen2);
+    if (partlen1 != partlen2 || memcmp(part1, part2, partlen1) != 0)
+        return False;
+    part1 = netaddrAddress(a1, &partlen1);
+    part2 = netaddrAddress(a2, &partlen2);
+    if (partlen1 != partlen2 || memcmp(part1, part2, partlen1) != 0)
+        return False;
+    return True;
 }
 #endif

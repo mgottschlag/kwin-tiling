@@ -41,151 +41,152 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <stdio.h>
 
-FDialog::FDialog( QWidget *parent, bool framed )
-	: inherited( parent/*, framed ? 0 : WStyle_NoBorder*/ )
-	, readyEmitted( false )
+FDialog::FDialog(QWidget *parent, bool framed)
+    : inherited(parent/*, framed ? 0 : WStyle_NoBorder*/)
+    , readyEmitted(false)
 {
-	setModal( true );
-	if (framed) {
-		winFrame = new QFrame( this );
-		winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
-		winFrame->setLineWidth( 2 );
-	} else
-		winFrame = 0;
+    setModal(true);
+    if (framed) {
+        winFrame = new QFrame(this);
+        winFrame->setFrameStyle(QFrame::WinPanel | QFrame::Raised);
+        winFrame->setLineWidth(2);
+    } else {
+        winFrame = 0;
+    }
 }
 
 void
-FDialog::resizeEvent( QResizeEvent *e )
+FDialog::resizeEvent(QResizeEvent *e)
 {
-	inherited::resizeEvent( e );
-	if (winFrame)
-		winFrame->resize( size() );
+    inherited::resizeEvent(e);
+    if (winFrame)
+        winFrame->resize(size());
 }
 
 void
-FDialog::paintEvent( QPaintEvent *e )
+FDialog::paintEvent(QPaintEvent *e)
 {
-	inherited::paintEvent( e );
-	if (!readyEmitted) {
-		readyEmitted = true;
-		emit ready();
-	}
+    inherited::paintEvent(e);
+    if (!readyEmitted) {
+        readyEmitted = true;
+        emit ready();
+    }
 }
 
 void
-FDialog::fitInto( const QRect &scr, QRect &grt )
+FDialog::fitInto(const QRect &scr, QRect &grt)
 {
-	int di;
-	if ((di = scr.right() - grt.right()) < 0)
-		grt.translate( di, 0 );
-	if ((di = scr.left() - grt.left()) > 0)
-		grt.translate( di, 0 );
-	if ((di = scr.bottom() - grt.bottom()) < 0)
-		grt.translate( 0, di );
-	if ((di = scr.top() - grt.top()) > 0)
-		grt.translate( 0, di );
+    int di;
+    if ((di = scr.right() - grt.right()) < 0)
+        grt.translate(di, 0);
+    if ((di = scr.left() - grt.left()) > 0)
+        grt.translate(di, 0);
+    if ((di = scr.bottom() - grt.bottom()) < 0)
+        grt.translate(0, di);
+    if ((di = scr.top() - grt.top()) > 0)
+        grt.translate(0, di);
 }
 
 void
 FDialog::adjustGeometry()
 {
-	QDesktopWidget *dsk = qApp->desktop();
+    QDesktopWidget *dsk = qApp->desktop();
 
-	QRect scr = dsk->screenGeometry( _greeterScreen );
-	if (!winFrame)
-		setGeometry( scr );
-	else {
-		setMaximumSize( scr.size() * .9 );
-		setMinimumSize( 0, 0 );
-		adjustSize();
-	}
+    QRect scr = dsk->screenGeometry(_greeterScreen);
+    if (!winFrame) {
+        setGeometry(scr);
+    } else {
+        setMaximumSize(scr.size() * .9);
+        setMinimumSize(0, 0);
+        adjustSize();
+    }
 
-	if (parentWidget())
-		return;
+    if (parentWidget())
+        return;
 
-	QRect grt( rect() );
-	if (winFrame) {
-		unsigned x = 50, y = 50;
-		sscanf( _greeterPos, "%u,%u", &x, &y );
-		grt.moveCenter( QPoint( scr.x() + scr.width() * x / 100,
-		                        scr.y() + scr.height() * y / 100 ) );
-		fitInto( scr, grt );
-		setGeometry( grt );
-	}
+    QRect grt(rect());
+    if (winFrame) {
+        unsigned x = 50, y = 50;
+        sscanf(_greeterPos, "%u,%u", &x, &y);
+        grt.moveCenter(QPoint(scr.x() + scr.width() * x / 100,
+                              scr.y() + scr.height() * y / 100));
+        fitInto(scr, grt);
+        setGeometry(grt);
+    }
 
-	if (dsk->screenNumber( QCursor::pos() ) != _greeterScreen)
-		QCursor::setPos( grt.center() );
+    if (dsk->screenNumber(QCursor::pos()) != _greeterScreen)
+        QCursor::setPos(grt.center());
 }
 
 static void
-fakeFocusIn( WId window )
+fakeFocusIn(WId window)
 {
-	// We have keyboard grab, so this application will
-	// get keyboard events even without having focus.
-	// Fake FocusIn to make Qt realize it has the active
-	// window, so that it will correctly show cursor in the dialog.
-	XEvent ev;
-	memset( &ev, 0, sizeof(ev) );
-	ev.xfocus.display = QX11Info::display();
-	ev.xfocus.type = FocusIn;
-	ev.xfocus.window = window;
-	ev.xfocus.mode = NotifyNormal;
-	ev.xfocus.detail = NotifyAncestor;
-	XSendEvent( QX11Info::display(), window, False, NoEventMask, &ev );
+    // We have keyboard grab, so this application will
+    // get keyboard events even without having focus.
+    // Fake FocusIn to make Qt realize it has the active
+    // window, so that it will correctly show cursor in the dialog.
+    XEvent ev;
+    memset(&ev, 0, sizeof(ev));
+    ev.xfocus.display = QX11Info::display();
+    ev.xfocus.type = FocusIn;
+    ev.xfocus.window = window;
+    ev.xfocus.mode = NotifyNormal;
+    ev.xfocus.detail = NotifyAncestor;
+    XSendEvent(QX11Info::display(), window, False, NoEventMask, &ev);
 }
 
 int
 FDialog::exec()
 {
-	static QWidget *current;
+    static QWidget *current;
 
-	adjustGeometry();
-	if (_grabInput && !current)
-		secureInputs( QX11Info::display() );
-	show();
-	qApp->processEvents();
-	if (_grabInput)
-		fakeFocusIn( winId() );
-	else
-		activateWindow();
-	QWidget *previous = current;
-	current = this;
-	inherited::exec();
-	current = previous;
-	if (current) {
-		if (_grabInput)
-			fakeFocusIn( current->winId() );
-		else
-			current->activateWindow();
-	} else {
-		if (_grabInput)
-			unsecureInputs( QX11Info::display() );
-	}
-	return result();
+    adjustGeometry();
+    if (_grabInput && !current)
+        secureInputs(QX11Info::display());
+    show();
+    qApp->processEvents();
+    if (_grabInput)
+        fakeFocusIn(winId());
+    else
+        activateWindow();
+    QWidget *previous = current;
+    current = this;
+    inherited::exec();
+    current = previous;
+    if (current) {
+        if (_grabInput)
+            fakeFocusIn(current->winId());
+        else
+            current->activateWindow();
+    } else {
+        if (_grabInput)
+            unsecureInputs(QX11Info::display());
+    }
+    return result();
 }
 
-KFMsgBox::KFMsgBox( QWidget *parent, QMessageBox::Icon type, const QString &text )
-	: inherited( parent )
+KFMsgBox::KFMsgBox(QWidget *parent, QMessageBox::Icon type, const QString &text)
+    : inherited(parent)
 {
-	QLabel *label1 = new QLabel( this );
-	label1->setPixmap( QMessageBox::standardIcon( type ) );
-	QLabel *label2 = new QLabel( text, this );
-	KPushButton *button = new KPushButton( KStandardGuiItem::ok(), this );
-	button->setDefault( true );
-	button->setSizePolicy( QSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred ) );
-	connect( button, SIGNAL(clicked()), SLOT(accept()) );
+    QLabel *label1 = new QLabel(this);
+    label1->setPixmap(QMessageBox::standardIcon(type));
+    QLabel *label2 = new QLabel(text, this);
+    KPushButton *button = new KPushButton(KStandardGuiItem::ok(), this);
+    button->setDefault(true);
+    button->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred));
+    connect(button, SIGNAL(clicked()), SLOT(accept()));
 
-	QGridLayout *grid = new QGridLayout( this );
-	grid->addWidget( label1, 0, 0, Qt::AlignCenter );
-	grid->addWidget( label2, 0, 1, Qt::AlignCenter );
-	grid->addWidget( button, 1, 0, 1, 2, Qt::AlignCenter );
+    QGridLayout *grid = new QGridLayout(this);
+    grid->addWidget(label1, 0, 0, Qt::AlignCenter);
+    grid->addWidget(label2, 0, 1, Qt::AlignCenter);
+    grid->addWidget(button, 1, 0, 1, 2, Qt::AlignCenter);
 }
 
 void
-KFMsgBox::box( QWidget *parent, QMessageBox::Icon type, const QString &text )
+KFMsgBox::box(QWidget *parent, QMessageBox::Icon type, const QString &text)
 {
-	KFMsgBox dlg( parent, type, text.trimmed() );
-	dlg.exec();
+    KFMsgBox dlg(parent, type, text.trimmed());
+    dlg.exec();
 }
 
 #include "kfdialog.moc"

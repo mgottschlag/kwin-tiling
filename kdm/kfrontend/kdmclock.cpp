@@ -28,121 +28,121 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QTime>
 #include <QTimer>
 
-KdmClock::KdmClock( QWidget *parent )
-	: inherited( parent )
+KdmClock::KdmClock(QWidget *parent)
+    : inherited(parent)
 {
-	QTimer *timer = new QTimer( this );
-	connect( timer, SIGNAL(timeout()), SLOT(timeout()) );
-	timer->start( 1000 );
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), SLOT(timeout()));
+    timer->start(1000);
 
 #ifdef MORE
-	mDate = false;//config->readEntry( "date", false );
-	mSecond = true;//config->readEntry( "second", true );
-	mDigital = false;//config->readEntry( "digital", false );
-	mBorder = true;//config->readEntry( "border", false );
+    mDate = false;//config->readEntry("date", false);
+    mSecond = true;//config->readEntry("second", true);
+    mDigital = false;//config->readEntry("digital", false);
+    mBorder = true;//config->readEntry("border", false);
 
-	//config->setGroup( "Font" );
-	mFont.setFamily( QString::fromLatin1("Utopia")/*config->readEntry( "Family", "Utopia" )*/ );
-	mFont.setPointSize( 51/*config->readEntry( "Point Size", 51 )*/ );
-	mFont.setWeight( 75/*config->readEntry( "Weight", 75 )*/ );
-	mFont.setItalic( true/*config->readEntry( "Italic", true )*/ );
-	mFont.setBold( true/*config->readEntry( "Bold", false )*/ );
+    //config->setGroup("Font");
+    mFont.setFamily(QString::fromLatin1("Utopia")/*config->readEntry("Family", "Utopia")*/);
+    mFont.setPointSize(51/*config->readEntry("Point Size", 51)*/);
+    mFont.setWeight(75/*config->readEntry("Weight", 75)*/);
+    mFont.setItalic(true/*config->readEntry("Italic", true)*/);
+    mFont.setBold(true/*config->readEntry("Bold", false)*/);
 
-	if (mBorder)
-		setFrameStyle( WinPanel|Sunken );
+    if (mBorder)
+        setFrameStyle(WinPanel | Sunken);
 #endif
 
-	setFixedSize( 100, 100 );
+    setFixedSize(100, 100);
 
-	repaint();
+    repaint();
 }
 
 
-void KdmClock::showEvent( QShowEvent * )
+void KdmClock::showEvent(QShowEvent *)
 {
-	repaint();
+    repaint();
 }
 
 
 void KdmClock::timeout()
 {
-	repaint();
+    repaint();
 }
 
-void KdmClock::paintEvent( QPaintEvent * )
+void KdmClock::paintEvent(QPaintEvent *)
 {
-	QPainter p( this );
+    QPainter p(this);
 #ifdef MORE
-	drawFrame( &p );
+    drawFrame(&p);
 #endif
 
-	p.setPen( palette().foreground().color() );
-	p.setBrush( palette().foreground() );
+    p.setPen(palette().foreground().color());
+    p.setBrush(palette().foreground());
 
-	QTime time = QTime::currentTime();
+    QTime time = QTime::currentTime();
 
 #ifdef MORE
-	if (mDigital) {
-		QString buf;
-		if (mSecond)
-			buf.sprintf( "%02d:%02d:%02d", time.hour(), time.minute(),
-			             time.second() );
-		else
-			buf.sprintf( "%02d:%02d", time.hour(), time.minute() );
-		mFont.setPointSize( qMin( (int)(width() / buf.length() * 1.5), height() ) );
-		p.setFont( mFont );
-		p.drawText( contentsRect(), Qt::AlignCenter, buf );
-	} else
+    if (mDigital) {
+        QString buf;
+        if (mSecond)
+            buf.sprintf("%02d:%02d:%02d", time.hour(), time.minute(),
+                        time.second());
+        else
+            buf.sprintf("%02d:%02d", time.hour(), time.minute());
+        mFont.setPointSize(qMin((int)(width() / buf.length() * 1.5), height()));
+        p.setFont(mFont);
+        p.drawText(contentsRect(), Qt::AlignCenter, buf);
+    } else
 #endif
-	{
-		QTransform matrix;
-		QPoint cp = contentsRect().center();
-		matrix.translate( cp.x(), cp.y() );
-		int d = qMin( contentsRect().width() - 15, contentsRect().height() - 15 );
-		matrix.scale( d/1000.0F, d/1000.0F );
+    {
+        QTransform matrix;
+        QPoint cp = contentsRect().center();
+        matrix.translate(cp.x(), cp.y());
+        int d = qMin(contentsRect().width() - 15, contentsRect().height() - 15);
+        matrix.scale(d / 1000.0F, d / 1000.0F);
 
-		QPolygon pts;
+        QPolygon pts;
 
-		// Hour
-		float h_angle = 30*(time.hour()%12-3) + time.minute()/2;
-		matrix.rotate( h_angle );
-		p.setWorldTransform( matrix );
-		pts.setPoints( 4, -20,0, 0,-20, 300,0, 0,20 );
-		p.drawPolygon( pts );
-		matrix.rotate( -h_angle );
+        // Hour
+        float h_angle = 30 * (time.hour() % 12 - 3) + time.minute() / 2;
+        matrix.rotate(h_angle);
+        p.setWorldTransform(matrix);
+        pts.setPoints(4, -20, 0, 0, -20, 300, 0, 0, 20);
+        p.drawPolygon(pts);
+        matrix.rotate(-h_angle);
 
-		// Minute
-		float m_angle = (time.minute()-15)*6;
-		matrix.rotate( m_angle );
-		p.setWorldTransform( matrix );
-		pts.setPoints( 4, -10,0, 0,-10, 400,0, 0,10 );
-		p.drawPolygon( pts );
-		matrix.rotate( -m_angle );
+        // Minute
+        float m_angle = (time.minute() - 15) * 6;
+        matrix.rotate(m_angle);
+        p.setWorldTransform(matrix);
+        pts.setPoints(4, -10, 0, 0, -10, 400, 0, 0, 10);
+        p.drawPolygon(pts);
+        matrix.rotate(-m_angle);
 
-		// Second
+        // Second
 #ifdef MORE
-		if (mSecond)
+        if (mSecond)
 #endif
-		{
-			float s_angle = (time.second()-15)*6;
-			matrix.rotate( s_angle );
-			p.setWorldTransform( matrix );
-			pts.setPoints( 4,0,0,0,0,400,0,0,0 );
-			p.drawPolygon( pts );
-			matrix.rotate( -s_angle );
-		}
+        {
+            float s_angle = (time.second() - 15) * 6;
+            matrix.rotate(s_angle);
+            p.setWorldTransform(matrix);
+            pts.setPoints(4, 0, 0, 0, 0, 400, 0, 0, 0);
+            p.drawPolygon(pts);
+            matrix.rotate(-s_angle);
+        }
 
-		// quadrante
-		for (int i = 0; i < 60; i++) {
-			p.setWorldTransform( matrix );
-			if ((i % 5) == 0)
-				p.drawLine( 450,0, 500,0 ); // draw hour lines
-			else
-				p.drawPoint( 480,0 ); // draw second lines
-			matrix.rotate( 6 );
-		}
+        // quadrante
+        for (int i = 0; i < 60; i++) {
+            p.setWorldTransform(matrix);
+            if ((i % 5) == 0)
+                p.drawLine(450, 0, 500, 0); // draw hour lines
+            else
+                p.drawPoint(480, 0); // draw second lines
+            matrix.rotate(6);
+        }
 
-	} // if (mDigital)
+    } // if (mDigital)
 }
 
 #include "kdmclock.moc"

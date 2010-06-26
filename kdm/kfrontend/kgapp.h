@@ -31,28 +31,28 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class QTimerEvent;
 
 class GreeterApp : public QApplication {
-	Q_OBJECT
-	typedef QApplication inherited;
+    Q_OBJECT
+    typedef QApplication inherited;
 
   public:
-	GreeterApp(int &argc, char **argv);
-	void markBusy();
-	virtual bool x11EventFilter( XEvent * );
+    GreeterApp(int &argc, char **argv);
+    void markBusy();
+    virtual bool x11EventFilter(XEvent *);
 
   public Q_SLOTS:
-	void markReady();
+    void markReady();
 
   protected:
-	virtual void timerEvent( QTimerEvent * );
+    virtual void timerEvent(QTimerEvent *);
 
   Q_SIGNALS:
-	void activity();
+    void activity();
 
   private:
-	int pingInterval, pingTimerId;
-	bool regrabPtr, regrabKbd, initalBusy;
-	QPoint mouseStartPos, dialogStartPos;
-	QWidget *dragWidget;
+    int pingInterval, pingTimerId;
+    bool regrabPtr, regrabKbd, initalBusy;
+    QPoint mouseStartPos, dialogStartPos;
+    QWidget *dragWidget;
 };
 
 #endif /* KGAPP_H */

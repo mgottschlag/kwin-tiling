@@ -47,7 +47,7 @@ void initQAppConfig();
 
 extern "C"
 #endif
-void initConfig( void );
+void initConfig(void);
 
 extern int _grabInput;
 

@@ -40,313 +40,315 @@ Boston, MA 02110-1301, USA.
 
 #include <stdlib.h>
 
-KVirtualBGRenderer::KVirtualBGRenderer( const KSharedConfigPtr &config )
+KVirtualBGRenderer::KVirtualBGRenderer(const KSharedConfigPtr &config)
 {
-	m_pPixmap = 0;
-	m_numRenderers = 0;
-	m_scaleX = 1;
-	m_scaleY = 1;
+    m_pPixmap = 0;
+    m_numRenderers = 0;
+    m_scaleX = 1;
+    m_scaleY = 1;
 
-	m_pConfig = config;
+    m_pConfig = config;
 
-	initRenderers();
-	m_size = QApplication::desktop()->size();
+    initRenderers();
+    m_size = QApplication::desktop()->size();
 }
 
 KVirtualBGRenderer::~KVirtualBGRenderer()
 {
-	for (int i=0; i<m_numRenderers; ++i)
-		delete m_renderer[i];
+    for (int i = 0; i < m_numRenderers; ++i)
+        delete m_renderer[i];
 
-	delete m_pPixmap;
+    delete m_pPixmap;
 }
 
 KBackgroundRenderer *
-KVirtualBGRenderer::renderer( unsigned screen )
+KVirtualBGRenderer::renderer(unsigned screen)
 {
-	return m_renderer[screen];
+    return m_renderer[screen];
 }
 
 QPixmap
 KVirtualBGRenderer::pixmap()
 {
-	if (m_numRenderers == 1)
-		return m_renderer[0]->pixmap();
+    if (m_numRenderers == 1)
+        return m_renderer[0]->pixmap();
 
-	return *m_pPixmap;
+    return *m_pPixmap;
 }
 
 bool
 KVirtualBGRenderer::needProgramUpdate()
 {
-	for (int i = 0; i < m_numRenderers; i++)
-		if (m_renderer[i]->backgroundMode() == KBackgroundSettings::Program &&
-		    m_renderer[i]->KBackgroundProgram::needUpdate())
-			return true;
-	return false;
+    for (int i = 0; i < m_numRenderers; i++)
+        if (m_renderer[i]->backgroundMode() == KBackgroundSettings::Program &&
+            m_renderer[i]->KBackgroundProgram::needUpdate())
+            return true;
+    return false;
 }
 
 void
 KVirtualBGRenderer::programUpdate()
 {
-	for (int i = 0; i < m_numRenderers; i++)
-		if (m_renderer[i]->backgroundMode() == KBackgroundSettings::Program &&
-		    m_renderer[i]->KBackgroundProgram::needUpdate())
-			m_renderer[i]->KBackgroundProgram::update();
+    for (int i = 0; i < m_numRenderers; i++)
+        if (m_renderer[i]->backgroundMode() == KBackgroundSettings::Program &&
+            m_renderer[i]->KBackgroundProgram::needUpdate())
+        {
+            m_renderer[i]->KBackgroundProgram::update();
+        }
 }
 
 bool
 KVirtualBGRenderer::needWallpaperChange()
 {
-	for (int i = 0; i < m_numRenderers; i++)
-		if (m_renderer[i]->needWallpaperChange())
-			return true;
-	return false;
+    for (int i = 0; i < m_numRenderers; i++)
+        if (m_renderer[i]->needWallpaperChange())
+            return true;
+    return false;
 }
 
 void
 KVirtualBGRenderer::changeWallpaper()
 {
-	for (int i = 0; i < m_numRenderers; i++)
-		m_renderer[i]->changeWallpaper();
+    for (int i = 0; i < m_numRenderers; i++)
+        m_renderer[i]->changeWallpaper();
 }
 
 void
 KVirtualBGRenderer::desktopResized()
 {
-	m_size = QApplication::desktop()->size();
+    m_size = QApplication::desktop()->size();
 
-	if (m_pPixmap) {
-		delete m_pPixmap;
-		m_pPixmap = new QPixmap( m_size );
-		m_pPixmap->fill( Qt::black );
-	}
+    if (m_pPixmap) {
+        delete m_pPixmap;
+        m_pPixmap = new QPixmap(m_size);
+        m_pPixmap->fill(Qt::black);
+    }
 
-	for (int i = 0; i < m_numRenderers; i++)
-		m_renderer[i]->desktopResized();
+    for (int i = 0; i < m_numRenderers; i++)
+        m_renderer[i]->desktopResized();
 }
 
 
 QSize
-KVirtualBGRenderer::renderSize( int screen )
+KVirtualBGRenderer::renderSize(int screen)
 {
-	return m_bDrawBackgroundPerScreen ?
-			QApplication::desktop()->screenGeometry( screen ).size() :
-			QApplication::desktop()->size();
+    return m_bDrawBackgroundPerScreen ?
+           QApplication::desktop()->screenGeometry(screen).size() :
+           QApplication::desktop()->size();
 }
 
 
 void
 KVirtualBGRenderer::initRenderers()
 {
-	KConfigGroup cg( m_pConfig, "Background Common" );
-	// Same config for each screen?
-	// FIXME: Could use same renderer for identically-sized screens.
-	m_bCommonScreen = cg.readEntry( "CommonScreen", _defCommonScreen );
-	// Do not split one big image over all screens?
-	m_bDrawBackgroundPerScreen =
-		cg.readEntry( "DrawBackgroundPerScreen_0", _defDrawBackgroundPerScreen );
+    KConfigGroup cg(m_pConfig, "Background Common");
+    // Same config for each screen?
+    // FIXME: Could use same renderer for identically-sized screens.
+    m_bCommonScreen = cg.readEntry("CommonScreen", _defCommonScreen);
+    // Do not split one big image over all screens?
+    m_bDrawBackgroundPerScreen =
+        cg.readEntry("DrawBackgroundPerScreen_0", _defDrawBackgroundPerScreen);
 
-	m_numRenderers = m_bDrawBackgroundPerScreen ? QApplication::desktop()->numScreens() : 1;
+    m_numRenderers = m_bDrawBackgroundPerScreen ? QApplication::desktop()->numScreens() : 1;
 
-	m_bFinished.resize( m_numRenderers );
-	m_bFinished.fill( false );
+    m_bFinished.resize(m_numRenderers);
+    m_bFinished.fill(false);
 
-	if (m_numRenderers == m_renderer.size())
-		return;
+    if (m_numRenderers == m_renderer.size())
+        return;
 
-	qDeleteAll(m_renderer);
-	m_renderer.resize( m_numRenderers );
-	for (int i = 0; i < m_numRenderers; i++) {
-		int eScreen = m_bCommonScreen ? 0 : i;
-		KBackgroundRenderer *r = new KBackgroundRenderer( eScreen, m_bDrawBackgroundPerScreen, m_pConfig );
-		m_renderer.insert( i, r );
-		r->setSize( renderSize( i ) );
-		connect( r, SIGNAL(imageDone( int )), SLOT(screenDone( int )) );
-	}
+    qDeleteAll(m_renderer);
+    m_renderer.resize(m_numRenderers);
+    for (int i = 0; i < m_numRenderers; i++) {
+        int eScreen = m_bCommonScreen ? 0 : i;
+        KBackgroundRenderer *r = new KBackgroundRenderer(eScreen, m_bDrawBackgroundPerScreen, m_pConfig);
+        m_renderer.insert(i, r);
+        r->setSize(renderSize(i));
+        connect(r, SIGNAL(imageDone(int)), SLOT(screenDone(int)));
+    }
 }
 
 void
-KVirtualBGRenderer::load( bool reparseConfig )
+KVirtualBGRenderer::load(bool reparseConfig)
 {
-	initRenderers();
+    initRenderers();
 
-	for (int i = 0; i < m_numRenderers; i++) {
-		int eScreen = m_bCommonScreen ? 0 : i;
-		m_renderer[i]->load( eScreen, m_bDrawBackgroundPerScreen, reparseConfig );
-	}
+    for (int i = 0; i < m_numRenderers; i++) {
+        int eScreen = m_bCommonScreen ? 0 : i;
+        m_renderer[i]->load(eScreen, m_bDrawBackgroundPerScreen, reparseConfig);
+    }
 }
 
 void
-KVirtualBGRenderer::screenDone( int screen )
+KVirtualBGRenderer::screenDone(int screen)
 {
-	m_bFinished[screen] = true;
+    m_bFinished[screen] = true;
 
-	if (m_pPixmap) {
-		// There's more than one renderer, so we are drawing each output to our own pixmap
+    if (m_pPixmap) {
+        // There's more than one renderer, so we are drawing each output to our own pixmap
 
-		QRect overallGeometry;
-		for (int i = 0; i < QApplication::desktop()->numScreens(); i++)
-			overallGeometry |= QApplication::desktop()->screenGeometry( i );
+        QRect overallGeometry;
+        for (int i = 0; i < QApplication::desktop()->numScreens(); i++)
+            overallGeometry |= QApplication::desktop()->screenGeometry(i);
 
-		QPoint drawPos =
-			QApplication::desktop()->screenGeometry( screen ).topLeft() -
-			overallGeometry.topLeft();
-		drawPos.setX( int(drawPos.x() * m_scaleX) );
-		drawPos.setY( int(drawPos.y() * m_scaleY) );
+        QPoint drawPos =
+            QApplication::desktop()->screenGeometry(screen).topLeft() -
+            overallGeometry.topLeft();
+        drawPos.setX(int(drawPos.x() * m_scaleX));
+        drawPos.setY(int(drawPos.y() * m_scaleY));
 
-		QPixmap source = m_renderer[screen]->pixmap();
-		QSize renderSize = this->renderSize( screen );
-		renderSize.setWidth( int(renderSize.width() * m_scaleX) );
-		renderSize.setHeight( int(renderSize.height() * m_scaleY) );
+        QPixmap source = m_renderer[screen]->pixmap();
+        QSize renderSize = this->renderSize(screen);
+        renderSize.setWidth(int(renderSize.width() * m_scaleX));
+        renderSize.setHeight(int(renderSize.height() * m_scaleY));
 
-		QPainter p( m_pPixmap );
+        QPainter p(m_pPixmap);
 
-		if (renderSize == source.size())
-			p.drawPixmap( drawPos, source );
-		else
-			p.drawTiledPixmap( drawPos.x(), drawPos.y(),
-			                   renderSize.width(), renderSize.height(), source );
+        if (renderSize == source.size())
+            p.drawPixmap(drawPos, source);
+        else
+            p.drawTiledPixmap(drawPos.x(), drawPos.y(),
+                              renderSize.width(), renderSize.height(), source);
 
-		p.end();
-	}
+        p.end();
+    }
 
-	for (int i = 0; i < m_bFinished.size(); i++)
-		if (!m_bFinished[i])
-			return;
+    for (int i = 0; i < m_bFinished.size(); i++)
+        if (!m_bFinished[i])
+            return;
 
-	emit imageDone();
+    emit imageDone();
 }
 
 void
 KVirtualBGRenderer::start()
 {
-	delete m_pPixmap;
-	m_pPixmap = 0;
+    delete m_pPixmap;
+    m_pPixmap = 0;
 
-	if (m_numRenderers > 1) {
-		m_pPixmap = new QPixmap( m_size );
-		// If are screen sizes do not properly tile the overall virtual screen
-		// size, then we want the untiled parts to be black for use in desktop
-		// previews, etc
-		m_pPixmap->fill( Qt::black );
-	}
+    if (m_numRenderers > 1) {
+        m_pPixmap = new QPixmap(m_size);
+        // If are screen sizes do not properly tile the overall virtual screen
+        // size, then we want the untiled parts to be black for use in desktop
+        // previews, etc
+        m_pPixmap->fill(Qt::black);
+    }
 
-	m_bFinished.fill( false );
-	for (int i = 0; i < m_numRenderers; i++)
-		m_renderer[i]->start();
+    m_bFinished.fill(false);
+    for (int i = 0; i < m_numRenderers; i++)
+        m_renderer[i]->start();
 }
 
 
 void KVirtualBGRenderer::stop()
 {
-	for (int i = 0; i < m_numRenderers; i++)
-		m_renderer[i]->stop();
+    for (int i = 0; i < m_numRenderers; i++)
+        m_renderer[i]->stop();
 }
 
 
 void KVirtualBGRenderer::cleanup()
 {
-	m_bFinished.fill( false );
+    m_bFinished.fill(false);
 
-	for (int i = 0; i < m_numRenderers; i++)
-		m_renderer[i]->cleanup();
+    for (int i = 0; i < m_numRenderers; i++)
+        m_renderer[i]->cleanup();
 
-	delete m_pPixmap;
-	m_pPixmap = 0l;
+    delete m_pPixmap;
+    m_pPixmap = 0l;
 }
 
 void KVirtualBGRenderer::saveCacheFile()
 {
-	for (int i = 0; i < m_numRenderers; i++)
-		m_renderer[i]->saveCacheFile();
+    for (int i = 0; i < m_numRenderers; i++)
+        m_renderer[i]->saveCacheFile();
 }
 
-void KVirtualBGRenderer::enableTiling( bool enable )
+void KVirtualBGRenderer::enableTiling(bool enable)
 {
-	for (int i = 0; i < m_numRenderers; i++)
-		m_renderer[i]->enableTiling( enable );
+    for (int i = 0; i < m_numRenderers; i++)
+        m_renderer[i]->enableTiling(enable);
 }
 
 
-MyApplication::MyApplication( const char *conf, int argc, char **argv )
-	: QApplication( argc, argv )
-	, renderer( KSharedConfig::openConfig( QFile::decodeName( conf ) ) )
+MyApplication::MyApplication(const char *conf, int argc, char **argv)
+    : QApplication(argc, argv)
+    , renderer(KSharedConfig::openConfig(QFile::decodeName(conf)))
 {
-	connect( &timer, SIGNAL(timeout()), SLOT(slotTimeout()) );
-	connect( &renderer, SIGNAL(imageDone()), this, SLOT(renderDone()) );
-	renderer.enableTiling( true ); // optimize
-	renderer.changeWallpaper(); // cannot do it when we're killed, so do it now
-	timer.start( 60000 );
-	renderer.start();
+    connect(&timer, SIGNAL(timeout()), SLOT(slotTimeout()));
+    connect(&renderer, SIGNAL(imageDone()), this, SLOT(renderDone()));
+    renderer.enableTiling(true); // optimize
+    renderer.changeWallpaper(); // cannot do it when we're killed, so do it now
+    timer.start(60000);
+    renderer.start();
 }
 
 
 void
 MyApplication::renderDone()
 {
-	QPalette palette;
-	palette.setBrush( desktop()->backgroundRole(), QBrush( renderer.pixmap() ) );
-	desktop()->setPalette( palette );
-	XClearWindow( QX11Info::display(), desktop()->winId() );
+    QPalette palette;
+    palette.setBrush(desktop()->backgroundRole(), QBrush(renderer.pixmap()));
+    desktop()->setPalette(palette);
+    XClearWindow(QX11Info::display(), desktop()->winId());
 
-	renderer.saveCacheFile();
-	renderer.cleanup();
-	for (unsigned i = 0; i < renderer.numRenderers(); ++i) {
-		KBackgroundRenderer *r = renderer.renderer( i );
-		if (r->backgroundMode() == KBackgroundSettings::Program ||
-		    (r->multiWallpaperMode() != KBackgroundSettings::NoMulti &&
-		     r->multiWallpaperMode() != KBackgroundSettings::NoMultiRandom))
-			return;
-	}
-	quit();
+    renderer.saveCacheFile();
+    renderer.cleanup();
+    for (unsigned i = 0; i < renderer.numRenderers(); ++i) {
+        KBackgroundRenderer *r = renderer.renderer(i);
+        if (r->backgroundMode() == KBackgroundSettings::Program ||
+            (r->multiWallpaperMode() != KBackgroundSettings::NoMulti &&
+             r->multiWallpaperMode() != KBackgroundSettings::NoMultiRandom))
+            return;
+    }
+    quit();
 }
 
 void
 MyApplication::slotTimeout()
 {
-	bool change = false;
+    bool change = false;
 
-	if (renderer.needProgramUpdate()) {
-		renderer.programUpdate();
-		change = true;
-	}
+    if (renderer.needProgramUpdate()) {
+        renderer.programUpdate();
+        change = true;
+    }
 
-	if (renderer.needWallpaperChange()) {
-		renderer.changeWallpaper();
-		change = true;
-	}
+    if (renderer.needWallpaperChange()) {
+        renderer.changeWallpaper();
+        change = true;
+    }
 
-	if (change)
-		renderer.start();
+    if (change)
+        renderer.start();
 }
 
 int
-main( int argc, char *argv[] )
+main(int argc, char *argv[])
 {
-	KCmdLineArgs::init( argc, argv, "krootimage", "kdmgreet",
-	                    ki18n("KRootImage"), QByteArray(),
-	                    ki18n("Fancy desktop background for kdm") );
+    KCmdLineArgs::init(argc, argv, "krootimage", "kdmgreet",
+                       ki18n("KRootImage"), QByteArray(),
+                       ki18n("Fancy desktop background for kdm"));
 
-	KCmdLineOptions options;
-	options.add( "+config", ki18n("Name of the configuration file") );
-	KCmdLineArgs::addCmdLineOptions( options );
+    KCmdLineOptions options;
+    options.add("+config", ki18n("Name of the configuration file"));
+    KCmdLineArgs::addCmdLineOptions(options);
 
-	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-	if (!args->count())
-		args->usage();
-	KComponentData inst( KCmdLineArgs::aboutData() );
-	MyApplication app( args->arg( 0 ).toLocal8Bit(),
-	                   KCmdLineArgs::qtArgc(), KCmdLineArgs::qtArgv() );
-	args->clear();
+    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+    if (!args->count())
+        args->usage();
+    KComponentData inst(KCmdLineArgs::aboutData());
+    MyApplication app(args->arg(0).toLocal8Bit(),
+                      KCmdLineArgs::qtArgc(), KCmdLineArgs::qtArgv());
+    args->clear();
 
-	app.exec();
-	app.flush();
+    app.exec();
+    app.flush();
 
-	// Keep color resources after termination
-	XSetCloseDownMode( QX11Info::display(), RetainTemporary );
+    // Keep color resources after termination
+    XSetCloseDownMode(QX11Info::display(), RetainTemporary);
 
-	return 0;
+    return 0;
 }
 
 #include "krootimage.moc"

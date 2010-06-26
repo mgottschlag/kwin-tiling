@@ -32,25 +32,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class QFrame;
 
 class FDialog : public QDialog {
-	Q_OBJECT
-	typedef QDialog inherited;
+    Q_OBJECT
+    typedef QDialog inherited;
 
   public:
-	FDialog( QWidget *parent = 0, bool framed = true );
-	virtual int exec();
-	static void fitInto( const QRect &scr, QRect &grt );
+    FDialog(QWidget *parent = 0, bool framed = true);
+    virtual int exec();
+    static void fitInto(const QRect &scr, QRect &grt);
 
   signals:
     void ready();
 
   protected:
-	virtual void resizeEvent( QResizeEvent *e );
-	virtual void paintEvent( QPaintEvent *e );
-	void adjustGeometry();
+    virtual void resizeEvent(QResizeEvent *e);
+    virtual void paintEvent(QPaintEvent *e);
+    void adjustGeometry();
 
   private:
-	QFrame *winFrame;
-	bool readyEmitted;
+    QFrame *winFrame;
+    bool readyEmitted;
 };
 
 #define errorbox QMessageBox::Critical
@@ -58,14 +58,14 @@ class FDialog : public QDialog {
 #define infobox QMessageBox::Information
 
 class KFMsgBox : public FDialog {
-	typedef FDialog inherited;
+    typedef FDialog inherited;
 
   private:
-	KFMsgBox( QWidget *parent, QMessageBox::Icon type, const QString &text );
+    KFMsgBox(QWidget *parent, QMessageBox::Icon type, const QString &text);
 
   public:
-	static void box( QWidget *parent, QMessageBox::Icon type,
-	                 const QString &text );
+    static void box(QWidget *parent, QMessageBox::Icon type,
+                    const QString &text);
 };
 
 #endif /* FDIALOG_H */

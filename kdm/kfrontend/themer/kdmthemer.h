@@ -44,70 +44,70 @@ class QRect;
 
 
 class KdmThemer : public QObject {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	/*
-	 * Construct and destruct the interface
-	 */
+    /*
+     * Construct and destruct the interface
+     */
 
-	KdmThemer( const QString &path,
-	           const QMap<QString, bool> &types, QWidget *w );
-	~KdmThemer();
+    KdmThemer(const QString &path,
+              const QMap<QString, bool> &types, QWidget *w);
+    ~KdmThemer();
 
-	bool isOK() { return rootItem != 0; }
+    bool isOK() { return rootItem != 0; }
 
-	const QString &baseDir() const { return basedir; }
+    const QString &baseDir() const { return basedir; }
 
-	KdmItem *findNode( const QString & ) const;
+    KdmItem *findNode(const QString &) const;
 
-	// must be called by parent widget
-	void widgetEvent( QEvent *e );
+    // must be called by parent widget
+    void widgetEvent(QEvent *e);
 
-	void setWidget( QWidget *w );
-	QWidget *widget() { return m_widget; }
+    void setWidget(QWidget *w);
+    QWidget *widget() { return m_widget; }
 
-	void setTypeVisible( const QString &t, bool show );
-	bool typeVisible( const QString &t ) { return m_showTypes.value( t, false ); }
+    void setTypeVisible(const QString &t, bool show);
+    bool typeVisible(const QString &t) { return m_showTypes.value(t, false); }
 
-	void paintBackground( QPaintDevice *dev, const QRect &rect, bool primaryScreen );
+    void paintBackground(QPaintDevice *dev, const QRect &rect, bool primaryScreen);
 
 public Q_SLOTS:
-	void slotNeedPlacement();
+    void slotNeedPlacement();
 
 Q_SIGNALS:
-	void activated( const QString &id );
+    void activated(const QString &id);
 
 private:
-	QMap<QString, bool> m_showTypes;
+    QMap<QString, bool> m_showTypes;
 
-	// defines the directory the theme is in
-	QString basedir;
+    // defines the directory the theme is in
+    QString basedir;
 
-	/*
-	 * Stores the root of the theme
-	 */
-	KdmItem *rootItem;
+    /*
+     * Stores the root of the theme
+     */
+    KdmItem *rootItem;
 
-	bool m_geometryOutdated;
-	bool m_geometryInvalid;
+    bool m_geometryOutdated;
+    bool m_geometryInvalid;
 
-	QWidget *m_widget;
+    QWidget *m_widget;
 
-	// methods
+    // methods
 
-	/*
-	 * Parses the XML file looking for the
-	 * item list and adds those to the themer
-	 */
-	void generateItems( KdmItem *parent, const QDomNode &node );
-	void generateLayouts( KdmItem *parent, const QDomNode &node );
+    /*
+     * Parses the XML file looking for the
+     * item list and adds those to the themer
+     */
+    void generateItems(KdmItem *parent, const QDomNode &node);
+    void generateLayouts(KdmItem *parent, const QDomNode &node);
 
-	void showStructure();
+    void showStructure();
 
 private Q_SLOTS:
-	void update( int x, int y, int w, int h );
-	void slotNeedPlugging();
+    void update(int x, int y, int w, int h);
+    void slotNeedPlugging();
 
 };
 

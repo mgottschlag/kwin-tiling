@@ -29,16 +29,16 @@
  */
 
 class KdmList : public KdmItem {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	KdmList( QObject *parent, const QDomNode &node );
+    KdmList(QObject *parent, const QDomNode &node);
 
 protected:
-	// no-op
-	virtual void drawContents( QPainter *p, const QRect &r );
+    // no-op
+    virtual void drawContents(QPainter *p, const QRect &r);
 
-	virtual void setWidget( QWidget *widget );
+    virtual void setWidget(QWidget *widget);
 };
 
 #endif

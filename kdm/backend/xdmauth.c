@@ -48,75 +48,75 @@ from the copyright holder.
  */
 
 static Xauth *
-xdmGetAuthHelper( unsigned short namelen, const char *name, int nbytes )
+xdmGetAuthHelper(unsigned short namelen, const char *name, int nbytes)
 {
-	Xauth *new;
+    Xauth *new;
 
-	if (!(new = generateAuthHelper( namelen, name, nbytes )))
-		return 0;
+    if (!(new = generateAuthHelper(namelen, name, nbytes)))
+        return 0;
 
-	/*
-	 * set the first byte of the session key to zero as it
-	 * is a DES key and only uses 56 bits
-	 */
-	((char *)new->data)[new->data_length - 8] = '\0';
-	debug( "local server auth %02[*hhx\n", new->data_length, new->data );
-	return new;
+    /*
+     * set the first byte of the session key to zero as it
+     * is a DES key and only uses 56 bits
+     */
+    ((char *)new->data)[new->data_length - 8] = '\0';
+    debug("local server auth %02[*hhx\n", new->data_length, new->data);
+    return new;
 }
 
 Xauth *
-xdmGetAuth( unsigned short namelen, const char *name )
+xdmGetAuth(unsigned short namelen, const char *name)
 {
-	return xdmGetAuthHelper( namelen, name, 16 );
+    return xdmGetAuthHelper(namelen, name, 16);
 }
 
 #ifdef XDMCP
 
 void
-xdmGetXdmcpAuth( struct protoDisplay *pdpy,
-                 unsigned short authorizationNameLen,
-                 const char *authorizationName )
+xdmGetXdmcpAuth(struct protoDisplay *pdpy,
+                unsigned short authorizationNameLen,
+                const char *authorizationName)
 {
-	Xauth *fileauth, *xdmcpauth;
+    Xauth *fileauth, *xdmcpauth;
 
-	if (pdpy->fileAuthorization && pdpy->xdmcpAuthorization)
-		return;
-	xdmcpauth = xdmGetAuthHelper( authorizationNameLen, authorizationName, 8 );
-	if (!xdmcpauth)
-		return;
-	fileauth = Malloc( sizeof(Xauth) );
-	if (!fileauth) {
-		XauDisposeAuth( xdmcpauth );
-		return;
-	}
-	/* build the file auth from the XDMCP auth */
-	*fileauth = *xdmcpauth;
-	fileauth->name = Malloc( xdmcpauth->name_length );
-	fileauth->data = Malloc( 16 );
-	fileauth->data_length = 16;
-	if (!fileauth->name || !fileauth->data) {
-		XauDisposeAuth( xdmcpauth );
-		free( fileauth->name );
-		free( fileauth->data );
-		free( fileauth );
-		return;
-	}
-	/*
-	 * for the file authorization, prepend the random number (rho)
-	 * which is simply the number we've been passing back and
-	 * forth via XDMCP
-	 */
-	memmove( fileauth->name, xdmcpauth->name, xdmcpauth->name_length );
-	memmove( fileauth->data, pdpy->authenticationData.data, 8 );
-	memmove( fileauth->data + 8, xdmcpauth->data, 8 );
-	debug( "accept packet auth %02[*hhx\nauth file auth %02[*hhx\n",
-	       xdmcpauth->data_length, xdmcpauth->data,
-	       fileauth->data_length, fileauth->data );
-	/* encrypt the session key for its trip back to the server */
-	XdmcpWrap( (unsigned char *)xdmcpauth->data, (unsigned char *)&pdpy->key,
-	           (unsigned char *)xdmcpauth->data, 8 );
-	pdpy->fileAuthorization = fileauth;
-	pdpy->xdmcpAuthorization = xdmcpauth;
+    if (pdpy->fileAuthorization && pdpy->xdmcpAuthorization)
+        return;
+    xdmcpauth = xdmGetAuthHelper(authorizationNameLen, authorizationName, 8);
+    if (!xdmcpauth)
+        return;
+    fileauth = Malloc(sizeof(Xauth));
+    if (!fileauth) {
+        XauDisposeAuth(xdmcpauth);
+        return;
+    }
+    /* build the file auth from the XDMCP auth */
+    *fileauth = *xdmcpauth;
+    fileauth->name = Malloc(xdmcpauth->name_length);
+    fileauth->data = Malloc(16);
+    fileauth->data_length = 16;
+    if (!fileauth->name || !fileauth->data) {
+        XauDisposeAuth(xdmcpauth);
+        free(fileauth->name);
+        free(fileauth->data);
+        free(fileauth);
+        return;
+    }
+    /*
+     * for the file authorization, prepend the random number (rho)
+     * which is simply the number we've been passing back and
+     * forth via XDMCP
+     */
+    memmove(fileauth->name, xdmcpauth->name, xdmcpauth->name_length);
+    memmove(fileauth->data, pdpy->authenticationData.data, 8);
+    memmove(fileauth->data + 8, xdmcpauth->data, 8);
+    debug("accept packet auth %02[*hhx\nauth file auth %02[*hhx\n",
+          xdmcpauth->data_length, xdmcpauth->data,
+          fileauth->data_length, fileauth->data);
+    /* encrypt the session key for its trip back to the server */
+    XdmcpWrap((unsigned char *)xdmcpauth->data, (unsigned char *)&pdpy->key,
+              (unsigned char *)xdmcpauth->data, 8);
+    pdpy->fileAuthorization = fileauth;
+    pdpy->xdmcpAuthorization = xdmcpauth;
 }
 
 /*
@@ -125,69 +125,69 @@ xdmGetXdmcpAuth( struct protoDisplay *pdpy,
  */
 
 static int
-xdmGetKey( struct protoDisplay *pdpy, ARRAY8Ptr displayID )
+xdmGetKey(struct protoDisplay *pdpy, ARRAY8Ptr displayID)
 {
-	FILE *keys;
-	char line[1024], id[1024], key[1024];
-	int keylen;
+    FILE *keys;
+    char line[1024], id[1024], key[1024];
+    int keylen;
 
-	debug( "lookup key for %.*s\n", displayID->length, displayID->data );
-	keys = fopen( keyFile, "r" );
-	if (!keys)
-		return False;
-	while (fgets( line, sizeof(line), keys )) {
-		if (line[0] == '#' || sscanf( line, "%s %s", id, key ) != 2)
-			continue;
-		bzero( line, sizeof(line) );
-		debug( "key entry for %\"s %d bytes\n", id, strlen( key ) );
-		if (strlen( id ) == displayID->length &&
-		    !strncmp( id, (char *)displayID->data, displayID->length ))
-		{
-			if (!strncmp( key, "0x", 2 ) || !strncmp( key, "0X", 2 )) {
-				if (!(keylen = hexToBinary( key, key + 2 )))
-					break;
-			} else {
-				keylen = strlen( key );
-			}
-			while (keylen < 7)
-				key[keylen++] = '\0';
-			pdpy->key.data[0] = '\0';
-			memmove( pdpy->key.data + 1, key, 7 );
-			bzero( key, sizeof(key) );
-			fclose( keys );
-			return True;
-		}
-	}
-	bzero( line, sizeof(line) );
-	bzero( key, sizeof(key) );
-	fclose( keys );
-	return False;
+    debug("lookup key for %.*s\n", displayID->length, displayID->data);
+    keys = fopen(keyFile, "r");
+    if (!keys)
+        return False;
+    while (fgets(line, sizeof(line), keys)) {
+        if (line[0] == '#' || sscanf(line, "%s %s", id, key) != 2)
+            continue;
+        bzero(line, sizeof(line));
+        debug("key entry for %\"s %d bytes\n", id, strlen(key));
+        if (strlen(id) == displayID->length &&
+            !strncmp(id, (char *)displayID->data, displayID->length))
+        {
+            if (!strncmp(key, "0x", 2) || !strncmp(key, "0X", 2)) {
+                if (!(keylen = hexToBinary(key, key + 2)))
+                    break;
+            } else {
+                keylen = strlen(key);
+            }
+            while (keylen < 7)
+                key[keylen++] = '\0';
+            pdpy->key.data[0] = '\0';
+            memmove(pdpy->key.data + 1, key, 7);
+            bzero(key, sizeof(key));
+            fclose(keys);
+            return True;
+        }
+    }
+    bzero(line, sizeof(line));
+    bzero(key, sizeof(key));
+    fclose(keys);
+    return False;
 }
 
 /*ARGSUSED*/
 int
-xdmcheckAuthentication( struct protoDisplay *pdpy,
-                        ARRAY8Ptr displayID,
-                        ARRAY8Ptr authenticationName ATTR_UNUSED,
-                        ARRAY8Ptr authenticationData )
+xdmcheckAuthentication(struct protoDisplay *pdpy,
+                       ARRAY8Ptr displayID,
+                       ARRAY8Ptr authenticationName ATTR_UNUSED,
+                       ARRAY8Ptr authenticationData)
 {
-	XdmAuthKeyPtr incoming;
+    XdmAuthKeyPtr incoming;
 
-	if (!xdmGetKey( pdpy, displayID ))
-		return False;
-	if (authenticationData->length != 8)
-		return False;
-	XdmcpUnwrap( authenticationData->data, (unsigned char *)&pdpy->key,
-	             authenticationData->data, 8 );
-	debug( "request packet auth %02[*hhx\n",
-	       authenticationData->length, authenticationData->data );
-	if (!XdmcpCopyARRAY8( authenticationData, &pdpy->authenticationData ))
-		return False;
-	incoming = (XdmAuthKeyPtr)authenticationData->data;
-	XdmcpIncrementKey( incoming );
-	XdmcpWrap( authenticationData->data, (unsigned char *)&pdpy->key,
-	           authenticationData->data, 8 );
-	return True;
+    if (!xdmGetKey(pdpy, displayID))
+        return False;
+    if (authenticationData->length != 8)
+        return False;
+    XdmcpUnwrap(authenticationData->data, (unsigned char *)&pdpy->key,
+                authenticationData->data, 8);
+    debug("request packet auth %02[*hhx\n",
+          authenticationData->length, authenticationData->data);
+    if (!XdmcpCopyARRAY8(authenticationData, &pdpy->authenticationData))
+        return False;
+    incoming = (XdmAuthKeyPtr)authenticationData->data;
+    XdmcpIncrementKey(incoming);
+    XdmcpWrap(authenticationData->data, (unsigned char *)&pdpy->key,
+              authenticationData->data, 8);
+    return True;
 }
 
 #endif /* XDMCP */

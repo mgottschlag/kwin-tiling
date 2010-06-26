@@ -41,22 +41,22 @@ from the copyright holder.
 #include <rpc/key_prot.h>
 
 Xauth *
-secureRPCGetAuth( unsigned short namelen, const char *name )
+secureRPCGetAuth(unsigned short namelen, const char *name)
 {
-	Xauth *new;
-	char key[MAXNETNAMELEN+1];
+    Xauth *new;
+    char key[MAXNETNAMELEN+1];
 
-	if (!(new = getAuthHelper( namelen, name )))
-		return 0;
+    if (!(new = getAuthHelper(namelen, name)))
+        return 0;
 
-	getnetname( key );
-	debug( "system netname %s\n", key );
-	new->data_length = strlen( key );
-	if (!(new->data = Malloc( new->data_length ))) {
-		free( new->name );
-		free( new );
-		return 0;
-	}
-	memmove( new->data, key, new->data_length );
-	return new;
+    getnetname(key);
+    debug("system netname %s\n", key);
+    new->data_length = strlen(key);
+    if (!(new->data = Malloc(new->data_length))) {
+        free(new->name);
+        free(new);
+        return 0;
+    }
+    memmove(new->data, key, new->data_length);
+    return new;
 }

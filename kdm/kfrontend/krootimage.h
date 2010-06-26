@@ -34,70 +34,68 @@ Boston, MA 02110-1301, USA.
  * images. Usage is similar to KBackgroundRenderer: connect to the imageDone
  * signal.
  */
-class KVirtualBGRenderer : public QObject
-{
-	Q_OBJECT
+class KVirtualBGRenderer : public QObject {
+    Q_OBJECT
   public:
-	explicit KVirtualBGRenderer(const KSharedConfigPtr &config);
-	~KVirtualBGRenderer();
+    explicit KVirtualBGRenderer(const KSharedConfigPtr &config);
+    ~KVirtualBGRenderer();
 
-	KBackgroundRenderer * renderer( unsigned screen );
-	unsigned numRenderers() const { return m_numRenderers; }
+    KBackgroundRenderer * renderer(unsigned screen);
+    unsigned numRenderers() const { return m_numRenderers; }
 
-	QPixmap pixmap();
+    QPixmap pixmap();
 
-	bool needProgramUpdate();
-	void programUpdate();
+    bool needProgramUpdate();
+    void programUpdate();
 
-	bool needWallpaperChange();
-	void changeWallpaper();
+    bool needWallpaperChange();
+    void changeWallpaper();
 
-	void desktopResized();
+    void desktopResized();
 
-	void load( bool reparseConfig = true );
-	void start();
-	void stop();
-	void cleanup();
-	void saveCacheFile();
-	void enableTiling( bool enable );
+    void load(bool reparseConfig = true);
+    void start();
+    void stop();
+    void cleanup();
+    void saveCacheFile();
+    void enableTiling(bool enable);
 
   signals:
-	void imageDone();
+    void imageDone();
 
   private slots:
-	void screenDone( int screen );
+    void screenDone(int screen);
 
   private:
-	QSize renderSize( int screen ); // the size the renderer should be
-	void initRenderers();
+    QSize renderSize(int screen); // the size the renderer should be
+    void initRenderers();
 
-	KSharedConfigPtr m_pConfig;
-	float m_scaleX;
-	float m_scaleY;
-	int m_numRenderers;
-	bool m_bDrawBackgroundPerScreen;
-	bool m_bCommonScreen;
-	QSize m_size;
+    KSharedConfigPtr m_pConfig;
+    float m_scaleX;
+    float m_scaleY;
+    int m_numRenderers;
+    bool m_bDrawBackgroundPerScreen;
+    bool m_bCommonScreen;
+    QSize m_size;
 
-	QVector<bool> m_bFinished;
-	QVector<KBackgroundRenderer *> m_renderer;
-	QPixmap *m_pPixmap;
+    QVector<bool> m_bFinished;
+    QVector<KBackgroundRenderer *> m_renderer;
+    QPixmap *m_pPixmap;
 };
 
-class MyApplication : public QApplication
-{
-	Q_OBJECT
+class MyApplication : public QApplication {
+    Q_OBJECT
 
   public:
-	MyApplication( const char *conf, int argc, char **argv );
+    MyApplication(const char *conf, int argc, char **argv);
 
   private Q_SLOTS:
-	void renderDone();
-	void slotTimeout();
+    void renderDone();
+    void slotTimeout();
 
   private:
-	KVirtualBGRenderer renderer;
-	QTimer timer;
+    KVirtualBGRenderer renderer;
+    QTimer timer;
 };
 
 #endif // __KDM_KROOTIMAGE_H__

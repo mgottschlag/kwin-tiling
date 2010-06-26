@@ -41,93 +41,90 @@ from the copyright holder.
 static struct protoDisplay *protoDisplays;
 
 struct protoDisplay *
-findProtoDisplay( XdmcpNetaddr address,
-                  int addrlen,
-                  CARD16 displayNumber )
+findProtoDisplay(XdmcpNetaddr address,
+                 int addrlen,
+                 CARD16 displayNumber)
 {
-	struct protoDisplay *pdpy;
+    struct protoDisplay *pdpy;
 
-	debug( "findProtoDisplay\n" );
-	for (pdpy = protoDisplays; pdpy; pdpy=pdpy->next) {
-		if (pdpy->displayNumber == displayNumber &&
-		    addressEqual( address, addrlen, pdpy->address, pdpy->addrlen ))
-		{
-			return pdpy;
-		}
-	}
-	return 0;
+    debug("findProtoDisplay\n");
+    for (pdpy = protoDisplays; pdpy; pdpy = pdpy->next)
+        if (pdpy->displayNumber == displayNumber &&
+                addressEqual(address, addrlen, pdpy->address, pdpy->addrlen))
+            return pdpy;
+    return 0;
 }
 
 static void
-timeoutProtoDisplays( void )
+timeoutProtoDisplays(void)
 {
-	struct protoDisplay *pdpy, *next;
+    struct protoDisplay *pdpy, *next;
 
-	for (pdpy = protoDisplays; pdpy; pdpy = next) {
-		next = pdpy->next;
-		if (pdpy->date < (unsigned long)(now - PROTO_TIMEOUT))
-			disposeProtoDisplay( pdpy );
-	}
+    for (pdpy = protoDisplays; pdpy; pdpy = next) {
+        next = pdpy->next;
+        if (pdpy->date < (unsigned long)(now - PROTO_TIMEOUT))
+            disposeProtoDisplay(pdpy);
+    }
 }
 
 struct protoDisplay *
-newProtoDisplay( XdmcpNetaddr address, int addrlen, CARD16 displayNumber,
-                 CARD16 connectionType, ARRAY8Ptr connectionAddress,
-                 CARD32 sessionID )
+newProtoDisplay(XdmcpNetaddr address, int addrlen, CARD16 displayNumber,
+                CARD16 connectionType, ARRAY8Ptr connectionAddress,
+                CARD32 sessionID)
 {
-	struct protoDisplay *pdpy;
+    struct protoDisplay *pdpy;
 
-	debug( "newProtoDisplay\n" );
-	timeoutProtoDisplays();
-	pdpy = Malloc( sizeof(*pdpy) );
-	if (!pdpy)
-		return 0;
-	pdpy->address = Malloc( addrlen );
-	if (!pdpy->address) {
-		free( pdpy );
-		return 0;
-	}
-	pdpy->addrlen = addrlen;
-	memmove( pdpy->address, address, addrlen );
-	pdpy->displayNumber = displayNumber;
-	pdpy->connectionType = connectionType;
-	pdpy->date = now;
-	if (!XdmcpCopyARRAY8( connectionAddress, &pdpy->connectionAddress )) {
-		free( pdpy->address );
-		free( pdpy );
-		return 0;
-	}
-	pdpy->sessionID = sessionID;
-	pdpy->fileAuthorization = 0;
-	pdpy->xdmcpAuthorization = 0;
-	pdpy->next = protoDisplays;
-	protoDisplays = pdpy;
-	return pdpy;
+    debug("newProtoDisplay\n");
+    timeoutProtoDisplays();
+    pdpy = Malloc(sizeof(*pdpy));
+    if (!pdpy)
+        return 0;
+    pdpy->address = Malloc(addrlen);
+    if (!pdpy->address) {
+        free(pdpy);
+        return 0;
+    }
+    pdpy->addrlen = addrlen;
+    memmove(pdpy->address, address, addrlen);
+    pdpy->displayNumber = displayNumber;
+    pdpy->connectionType = connectionType;
+    pdpy->date = now;
+    if (!XdmcpCopyARRAY8(connectionAddress, &pdpy->connectionAddress)) {
+        free(pdpy->address);
+        free(pdpy);
+        return 0;
+    }
+    pdpy->sessionID = sessionID;
+    pdpy->fileAuthorization = 0;
+    pdpy->xdmcpAuthorization = 0;
+    pdpy->next = protoDisplays;
+    protoDisplays = pdpy;
+    return pdpy;
 }
 
 void
-disposeProtoDisplay( struct protoDisplay *pdpy )
+disposeProtoDisplay(struct protoDisplay *pdpy)
 {
-	struct protoDisplay *p, *prev;
+    struct protoDisplay *p, *prev;
 
-	prev = False;
-	for (p = protoDisplays; p; p=p->next) {
-		if (p == pdpy)
-			break;
-		prev = p;
-	}
-	if (!p)
-		return;
-	if (prev)
-		prev->next = pdpy->next;
-	else
-		protoDisplays = pdpy->next;
-	bzero( &pdpy->key, sizeof(pdpy->key) );
-	if (pdpy->fileAuthorization)
-		XauDisposeAuth( pdpy->fileAuthorization );
-	if (pdpy->xdmcpAuthorization)
-		XauDisposeAuth( pdpy->xdmcpAuthorization );
-	XdmcpDisposeARRAY8( &pdpy->connectionAddress );
-	free( pdpy->address );
-	free( pdpy );
+    prev = False;
+    for (p = protoDisplays; p; p = p->next) {
+        if (p == pdpy)
+            break;
+        prev = p;
+    }
+    if (!p)
+        return;
+    if (prev)
+        prev->next = pdpy->next;
+    else
+        protoDisplays = pdpy->next;
+    bzero(&pdpy->key, sizeof(pdpy->key));
+    if (pdpy->fileAuthorization)
+        XauDisposeAuth(pdpy->fileAuthorization);
+    if (pdpy->xdmcpAuthorization)
+        XauDisposeAuth(pdpy->xdmcpAuthorization);
+    XdmcpDisposeARRAY8(&pdpy->connectionAddress);
+    free(pdpy->address);
+    free(pdpy);
 }

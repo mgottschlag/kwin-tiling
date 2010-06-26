@@ -25,45 +25,45 @@
 #include <QColor>
 #include <QListWidget>
 
-KdmList::KdmList( QObject *parent, const QDomNode &node )
-	: KdmItem( parent, node )
+KdmList::KdmList(QObject *parent, const QDomNode &node)
+    : KdmItem(parent, node)
 {
-	itemType = "list";
-	if (!isVisible())
-		return;
+    itemType = "list";
+    if (!isVisible())
+        return;
 
-	// Read RECT TAGS
-	QDomNodeList childList = node.childNodes();
-	for (int nod = 0; nod < childList.count(); nod++) {
-		QDomNode child = childList.item( nod );
-		QDomElement el = child.toElement();
-		QString tagName = el.tagName();
+    // Read RECT TAGS
+    QDomNodeList childList = node.childNodes();
+    for (int nod = 0; nod < childList.count(); nod++) {
+        QDomNode child = childList.item(nod);
+        QDomElement el = child.toElement();
+        QString tagName = el.tagName();
 
-		if (tagName == "color") {
-			QColor col1 = style.palette.color( QPalette::Base );
-			QColor col2 = style.palette.color( QPalette::AlternateBase );
-			if (parseColor( el.attribute( "labelcolor" ), QString(), col1 )) {
-				style.palette.setColor( QPalette::Base, col1 );
-				style.palette.setColor( QPalette::AlternateBase, col1 );
-			}
-			if (parseColor( el.attribute( "altlabelcolor" ), QString(), col2 ))
-				style.palette.setColor( QPalette::AlternateBase, col2 );
-			//parseColor( el.attribute( "iconcolor", QString() ), QString(), list.iconBg );
-		}
-	}
+        if (tagName == "color") {
+            QColor col1 = style.palette.color(QPalette::Base);
+            QColor col2 = style.palette.color(QPalette::AlternateBase);
+            if (parseColor(el.attribute("labelcolor"), QString(), col1)) {
+                style.palette.setColor(QPalette::Base, col1);
+                style.palette.setColor(QPalette::AlternateBase, col1);
+            }
+            if (parseColor(el.attribute("altlabelcolor"), QString(), col2))
+                style.palette.setColor(QPalette::AlternateBase, col2);
+            //parseColor(el.attribute("iconcolor", QString()), QString(), list.iconBg);
+        }
+    }
 }
 
 void
-KdmList::drawContents( QPainter *, const QRect & )
+KdmList::drawContents(QPainter *, const QRect &)
 {
 }
 
 void
-KdmList::setWidget( QWidget *widget )
+KdmList::setWidget(QWidget *widget)
 {
-	KdmItem::setWidget( widget );
-	if (QListWidget *lw = qobject_cast<QListWidget *>( widget ))
-		setWidgetAttribs( lw->viewport() );
+    KdmItem::setWidget(widget);
+    if (QListWidget *lw = qobject_cast<QListWidget *>(widget))
+        setWidgetAttribs(lw->viewport());
 }
 
 #include "kdmlist.moc"

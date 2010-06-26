@@ -58,7 +58,7 @@ authorization.
 
 #if (defined(__svr4__) && !defined(__sun__)) && defined(SIOCGIFCONF)
 # define SYSV_SIOCGIFCONF
-int ifioctl( int fd, int cmd, char *arg );
+int ifioctl(int fd, int cmd, char *arg);
 #else
 # define ifioctl ioctl
 #endif

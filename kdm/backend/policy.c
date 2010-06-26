@@ -41,8 +41,8 @@ from the copyright holder.
 static ARRAY8 noAuthentication = { (CARD16)0, (CARD8Ptr) 0 };
 
 typedef struct _XdmAuth {
-	ARRAY8 authentication;
-	ARRAY8 authorization;
+    ARRAY8 authentication;
+    ARRAY8 authorization;
 } XdmAuthRec, *XdmAuthPtr;
 
 static XdmAuthRec auth[] = {
@@ -59,51 +59,51 @@ static XdmAuthRec auth[] = {
 #define NumAuth as(auth)
 
 ARRAY8Ptr
-chooseAuthentication( ARRAYofARRAY8Ptr authenticationNames )
+chooseAuthentication(ARRAYofARRAY8Ptr authenticationNames)
 {
-	int i, j;
+    int i, j;
 
-	for (i = 0; i < (int)authenticationNames->length; i++)
-		for (j = 0; j < NumAuth; j++)
-			if (XdmcpARRAY8Equal( &authenticationNames->data[i],
-			                      &auth[j].authentication ))
-				return &authenticationNames->data[i];
-	return &noAuthentication;
+    for (i = 0; i < (int)authenticationNames->length; i++)
+        for (j = 0; j < NumAuth; j++)
+            if (XdmcpARRAY8Equal(&authenticationNames->data[i],
+                                 &auth[j].authentication))
+                return &authenticationNames->data[i];
+    return &noAuthentication;
 }
 
 int
-checkAuthentication( struct protoDisplay *pdpy ATTR_UNUSED,
-                     ARRAY8Ptr displayID ATTR_UNUSED,
-                     ARRAY8Ptr name ATTR_UNUSED,
-                     ARRAY8Ptr data ATTR_UNUSED )
+checkAuthentication(struct protoDisplay *pdpy ATTR_UNUSED,
+                    ARRAY8Ptr displayID ATTR_UNUSED,
+                    ARRAY8Ptr name ATTR_UNUSED,
+                    ARRAY8Ptr data ATTR_UNUSED)
 {
 #ifdef HASXDMAUTH
-	if (name->length && !memcmp( name->data, "XDM-AUTHENTICATION-1", 20 ))
-		return xdmcheckAuthentication( pdpy, displayID, name, data );
+    if (name->length && !memcmp(name->data, "XDM-AUTHENTICATION-1", 20))
+        return xdmcheckAuthentication(pdpy, displayID, name, data);
 #endif
-	return True;
+    return True;
 }
 
 int
-selectAuthorizationTypeIndex( ARRAY8Ptr authenticationName,
-                              ARRAYofARRAY8Ptr authorizationNames )
+selectAuthorizationTypeIndex(ARRAY8Ptr authenticationName,
+                             ARRAYofARRAY8Ptr authorizationNames)
 {
-	int i, j;
+    int i, j;
 
-	for (j = 0; j < NumAuth; j++)
-		if (XdmcpARRAY8Equal( authenticationName,
-		                      &auth[j].authentication ))
-			break;
-	if (j < NumAuth)
-		for (i = 0; i < (int)authorizationNames->length; i++)
-			if (XdmcpARRAY8Equal( &authorizationNames->data[i],
-			                      &auth[j].authorization ))
-				return i;
-	for (i = 0; i < (int)authorizationNames->length; i++)
-		if (validAuthorization( authorizationNames->data[i].length,
-		                        (char *)authorizationNames->data[i].data ))
-			return i;
-	return -1;
+    for (j = 0; j < NumAuth; j++)
+        if (XdmcpARRAY8Equal(authenticationName,
+                             &auth[j].authentication))
+            break;
+    if (j < NumAuth)
+        for (i = 0; i < (int)authorizationNames->length; i++)
+            if (XdmcpARRAY8Equal(&authorizationNames->data[i],
+                                 &auth[j].authorization))
+                return i;
+    for (i = 0; i < (int)authorizationNames->length; i++)
+        if (validAuthorization(authorizationNames->data[i].length,
+                               (char *)authorizationNames->data[i].data))
+            return i;
+    return -1;
 }
 
 
@@ -115,157 +115,157 @@ selectAuthorizationTypeIndex( ARRAY8Ptr authenticationName,
  * Wed Mar 10 1999 -- Steffen Hansen
  */
 static void
-willingMsg( char *mbuf )
+willingMsg(char *mbuf)
 {
 #ifdef __linux__
-	int fd;
-	int numcpu;
-	const char *fail_msg = "Willing to manage";
-	FILE *f;
-	float load[3];
-	float mhz = 0.0;
-	char buf[1024];
+    int fd;
+    int numcpu;
+    const char *fail_msg = "Willing to manage";
+    FILE *f;
+    float load[3];
+    float mhz = 0.0;
+    char buf[1024];
 
-	fd = open( "/proc/loadavg", O_RDONLY );
-	if (fd == -1) {
-		sprintf( mbuf, fail_msg );
-		return;
-	} else if (read( fd, buf, 100 ) < 4) {
-		close( fd );
-		sprintf( mbuf, fail_msg );
-		return;
-	}
-	close( fd );
+    fd = open("/proc/loadavg", O_RDONLY);
+    if (fd == -1) {
+        sprintf(mbuf, fail_msg);
+        return;
+    } else if (read(fd, buf, 100) < 4) {
+        close(fd);
+        sprintf(mbuf, fail_msg);
+        return;
+    }
+    close(fd);
 
-	sscanf( buf, "%f %f %f", &load[0], &load[1], &load[2] );
-	sprintf( mbuf, "Available (load: %0.2f, %0.2f, %0.2f)",
-	         load[0], load[1], load[2] );
+    sscanf(buf, "%f %f %f", &load[0], &load[1], &load[2]);
+    sprintf(mbuf, "Available (load: %0.2f, %0.2f, %0.2f)",
+            load[0], load[1], load[2]);
 
-	numcpu = 0;
+    numcpu = 0;
 
-	if (!(f = fopen( "/proc/cpuinfo", "r" )))
-		return;
+    if (!(f = fopen("/proc/cpuinfo", "r")))
+        return;
 
-	while (fGets( buf, sizeof(buf), f ) != -1) {
-		float m;
-		if (sscanf( buf, "cpu MHz : %f", &m )) {
-			numcpu++;
-			mhz = m;
-		}
-	}
+    while (fGets(buf, sizeof(buf), f) != -1) {
+        float m;
+        if (sscanf(buf, "cpu MHz : %f", &m)) {
+            numcpu++;
+            mhz = m;
+        }
+    }
 
-	fclose( f );
+    fclose(f);
 
-	if (numcpu) {
-		if (numcpu > 1)
-			sprintf( buf, " %d*%0.0f MHz", numcpu, mhz );
-		else
-			sprintf( buf, " %0.0f MHz", mhz );
+    if (numcpu) {
+        if (numcpu > 1)
+            sprintf(buf, " %d*%0.0f MHz", numcpu, mhz);
+        else
+            sprintf(buf, " %0.0f MHz", mhz);
 
-		strncat( mbuf, buf, 256 );
+        strncat(mbuf, buf, 256);
 
-		mbuf[255] = 0;
-	}
-#elif HAVE_GETLOADAVG	/* !__linux__ */
+        mbuf[255] = 0;
+    }
+#elif HAVE_GETLOADAVG /* !__linux__ */
 #ifdef __GNUC__
 # warning This code is untested...
 #endif
-	double load[3];
-	getloadavg( load, 3 );
-	sprintf( mbuf, "Available (load: %0.2f, %0.2f, %0.2f)", load[0],
-	         load[1], load[2] );
-#else	/* !__linux__ && !GETLOADAVG */
-	strcpy( mbuf, "Willing to manage" );
+    double load[3];
+    getloadavg(load, 3);
+    sprintf(mbuf, "Available (load: %0.2f, %0.2f, %0.2f)", load[0],
+            load[1], load[2]);
+#else /* !__linux__ && !GETLOADAVG */
+    strcpy(mbuf, "Willing to manage");
 #endif
 }
 #endif
 
 /*ARGSUSED*/
 int
-isWilling( ARRAY8Ptr addr, CARD16 connectionType,
-           ARRAY8Ptr authenticationName ATTR_UNUSED,
-           ARRAY8Ptr status, xdmOpCode type )
+isWilling(ARRAY8Ptr addr, CARD16 connectionType,
+          ARRAY8Ptr authenticationName ATTR_UNUSED,
+          ARRAY8Ptr status, xdmOpCode type)
 {
-	int ret;
-	char statusBuf[256];
-	static time_t lastscan;
+    int ret;
+    char statusBuf[256];
+    static time_t lastscan;
 
-	if (autoRescan && lastscan + 15 < now) {
-		lastscan = now;
-		scanAccessDatabase( False );
-	}
-	ret = acceptableDisplayAddress( addr, connectionType, type );
-	if (!ret)
-		sprintf( statusBuf, "Display not authorized to connect" );
-	else {
-		if (*willing) {
-			FILE *fd;
-			int len, ok = False;
-			if ((fd = popen( willing, "r" ))) {
-				for (;;) {
-					if ((len = fGets( statusBuf, sizeof(statusBuf), fd )) != -1) {
-						if (len) {
-							ok = True;
-							break;
-						}
-					}
-					if (feof( fd ) || errno != EINTR)
-						break;
-				}
-				pclose( fd );
-			}
-			if (!ok)
-				sprintf( statusBuf, "Willing, but %.*s failed",
-				         (int)(sizeof(statusBuf) - 21), willing );
-		} else
+    if (autoRescan && lastscan + 15 < now) {
+        lastscan = now;
+        scanAccessDatabase(False);
+    }
+    ret = acceptableDisplayAddress(addr, connectionType, type);
+    if (!ret) {
+        sprintf(statusBuf, "Display not authorized to connect");
+    } else {
+        if (*willing) {
+            FILE *fd;
+            int len, ok = False;
+            if ((fd = popen(willing, "r"))) {
+                for (;;) {
+                    if ((len = fGets(statusBuf, sizeof(statusBuf), fd)) != -1) {
+                        if (len) {
+                            ok = True;
+                            break;
+                        }
+                    }
+                    if (feof(fd) || errno != EINTR)
+                        break;
+                }
+                pclose(fd);
+            }
+            if (!ok)
+                sprintf(statusBuf, "Willing, but %.*s failed",
+                        (int)(sizeof(statusBuf) - 21), willing);
+        } else
 #ifdef WILLING_INTERNAL
-			willingMsg( statusBuf );
+            willingMsg(statusBuf);
 #else
-			strcpy( statusBuf, "Willing to manage" );
+            strcpy(statusBuf, "Willing to manage");
 #endif
-	}
-	status->length = strlen( statusBuf );
-	status->data = Malloc( status->length );
-	if (!status->data)
-		status->length = 0;
-	else
-		memmove( status->data, statusBuf, status->length );
-	return ret;
+    }
+    status->length = strlen(statusBuf);
+    status->data = Malloc(status->length);
+    if (!status->data)
+        status->length = 0;
+    else
+        memmove(status->data, statusBuf, status->length);
+    return ret;
 }
 
 /*ARGSUSED*/
 ARRAY8Ptr
-isAccepting( struct sockaddr *from ATTR_UNUSED, int fromlen ATTR_UNUSED,
-             CARD16 displayNumber ATTR_UNUSED )
+isAccepting(struct sockaddr *from ATTR_UNUSED, int fromlen ATTR_UNUSED,
+            CARD16 displayNumber ATTR_UNUSED)
 {
-	return 0;
+    return 0;
 }
 
 /*ARGSUSED*/
 int
-selectConnectionTypeIndex( ARRAY16Ptr  connectionTypes,
-                           ARRAYofARRAY8Ptr connectionAddresses ATTR_UNUSED )
+selectConnectionTypeIndex(ARRAY16Ptr  connectionTypes,
+                          ARRAYofARRAY8Ptr connectionAddresses ATTR_UNUSED)
 {
-	int i;
+    int i;
 
-	/*
-	 * Select one supported connection type
-	 */
+    /*
+     * Select one supported connection type
+     */
 
-	for (i = 0; i < connectionTypes->length; i++) {
-		switch (connectionTypes->data[i]) {
-		  case FamilyLocal:
+    for (i = 0; i < connectionTypes->length; i++) {
+        switch (connectionTypes->data[i]) {
+        case FamilyLocal:
 #if defined(TCPCONN)
-		  case FamilyInternet:
+        case FamilyInternet:
 # if defined(IPv6) && defined(AF_INET6)
-		  case FamilyInternet6:
+        case FamilyInternet6:
 # endif /* IPv6 */
 #endif /* TCPCONN */
 #if defined(DNETCONN)
-		  case FamilyDECnet:
+        case FamilyDECnet:
 #endif /* DNETCONN */
-			return i;
-		}
-	} /* for */
-	return -1;
+            return i;
+        }
+    } /* for */
+    return -1;
 }

@@ -33,30 +33,30 @@ class QRect;
 class KdmLayout {
 
 public:
-//	virtual ~KdmLayout() {};
+//    virtual ~KdmLayout() {};
 
-	// Adds an item that will be managed
-	void addItem( KdmItem *item ) { m_children.append( item ); }
+    // Adds an item that will be managed
+    void addItem(KdmItem *item) { m_children.append(item); }
 
-	// Return false if any item are managed by this layouter
-	bool isEmpty() { return m_children.isEmpty(); }
+    // Return false if any item are managed by this layouter
+    bool isEmpty() { return m_children.isEmpty(); }
 
-	// Updates the layout of all items knowing that the parent
-	// has the @p parentGeometry geometry
-//	virtual void update( QStack<QRect> &parentGeometries ) = 0;
+    // Updates the layout of all items knowing that the parent
+    // has the @p parentGeometry geometry
+//    virtual void update(QStack<QRect> &parentGeometries) = 0;
 
 protected:
-	QList<KdmItem *> m_children;
+    QList<KdmItem *> m_children;
 };
 
 class KdmLayoutFixed : public KdmLayout {
 
 public:
-	KdmLayoutFixed( const QDomNode &node );
+    KdmLayoutFixed(const QDomNode &node);
 
-	// Updates the layout of all boxed items knowing that the parent
-	// has the @p parentGeometry geometry
-	void update( QStack<QSize> &parentSizes, const QRect &parentGeometry, bool force );
+    // Updates the layout of all boxed items knowing that the parent
+    // has the @p parentGeometry geometry
+    void update(QStack<QSize> &parentSizes, const QRect &parentGeometry, bool force);
 };
 
 /**
@@ -67,27 +67,27 @@ public:
 class KdmLayoutBox : public KdmLayout {
 
 public:
-	KdmLayoutBox( const QDomNode &node );
+    KdmLayoutBox(const QDomNode &node);
 
-	// Updates the layout of all boxed items knowing that they
-	// should fit into @p parentGeometry container
-	void update( QStack<QSize> &parentSizes, const QRect &parentGeometry, bool force );
+    // Updates the layout of all boxed items knowing that they
+    // should fit into @p parentGeometry container
+    void update(QStack<QSize> &parentSizes, const QRect &parentGeometry, bool force);
 
-	// Computes the size hint of the box, telling which is the
-	// smallest size inside which boxed items will fit
-	QSize sizeHint( QStack<QSize> &parentSizes );
+    // Computes the size hint of the box, telling which is the
+    // smallest size inside which boxed items will fit
+    QSize sizeHint(QStack<QSize> &parentSizes);
 
 private:
-	struct {
-		bool isVertical;
-		int spacing;
-		int xpadding;
-		int ypadding;
-		int minwidth;
-		int minheight;
-		bool homogeneous;
-	} box;
-//	QSize hintedSize;
+    struct {
+        bool isVertical;
+        int spacing;
+        int xpadding;
+        int ypadding;
+        int minwidth;
+        int minheight;
+        bool homogeneous;
+    } box;
+//    QSize hintedSize;
 };
 
 #endif

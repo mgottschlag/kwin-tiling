@@ -33,27 +33,27 @@ class QSocketNotifier;
 class QTreeWidget;
 
 class ChooserDlg : public KGDialog {
-	Q_OBJECT
-	typedef KGDialog inherited;
+    Q_OBJECT
+    typedef KGDialog inherited;
 
   public:
-	ChooserDlg();
+    ChooserDlg();
 
   public Q_SLOTS:
-	void slotReadPipe();
-	void addHostname();
-//	void slotHelp();
-	void pingHosts();
-	void accept();
-	void reject();
+    void slotReadPipe();
+    void addHostname();
+//    void slotHelp();
+    void pingHosts();
+    void accept();
+    void reject();
 
   private:
-	QString recvStr();
-	ChooserListViewItem *findItem( int id );
+    QString recvStr();
+    ChooserListViewItem *findItem(int id);
 
-	QTreeWidget *host_view;
-	QLineEdit *iline;
-	QSocketNotifier *sn;
+    QTreeWidget *host_view;
+    QLineEdit *iline;
+    QSocketNotifier *sn;
 };
 
 #endif /* KCHOOSER_H */

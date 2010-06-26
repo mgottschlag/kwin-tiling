@@ -98,15 +98,15 @@ from the copyright holder.
 /*
  * Exit codes for fork()ed session process, greeter, and config reader
  */
-#define EX_NORMAL           30	/* do whatever seems appropriate */
-#define EX_REMANAGE_DPY     31	/* force remanage; same as EX_NORMAL, but cannot return to reserve mode immediately */
-#define EX_UNMANAGE_DPY     32	/* force deletion */
-#define EX_RESERVER_DPY     33	/* force server termination */
-#define EX_AL_RESERVER_DPY  34	/* reserver; maybe, auto-(re-)login */
-#define EX_OPENFAILED_DPY   35	/* XOpenDisplay failed, retry */
-#define EX_RESERVE          37	/* put in reserve mode */
+#define EX_NORMAL           30  /* do whatever seems appropriate */
+#define EX_REMANAGE_DPY     31  /* force remanage; same as EX_NORMAL, but cannot return to reserve mode immediately */
+#define EX_UNMANAGE_DPY     32  /* force deletion */
+#define EX_RESERVER_DPY     33  /* force server termination */
+#define EX_AL_RESERVER_DPY  34  /* reserver; maybe, auto-(re-)login */
+#define EX_OPENFAILED_DPY   35  /* XOpenDisplay failed, retry */
+#define EX_RESERVE          37  /* put in reserve mode */
 #ifdef XDMCP
-#define EX_REMOTE           38	/* start -query-ing X-server */
+#define EX_REMOTE           38  /* start -query-ing X-server */
 #define EX_MAX EX_REMOTE
 #else
 #define EX_MAX EX_RESERVE
@@ -115,45 +115,45 @@ from the copyright holder.
 /*
  * Command codes core -> greeter
  */
-#define G_Greet             1	/* get login; bidi */
-#define G_ErrorGreet        2	/* print failed auto-login */
+#define G_Greet             1   /* get login; bidi */
+#define G_ErrorGreet        2   /* print failed auto-login */
 #ifdef XDMCP
-#define G_Choose            3	/* run chooser; bidi */
+#define G_Choose            3   /* run chooser; bidi */
 # define G_Ch_AddHost         301
 # define G_Ch_ChangeHost      302
 # define G_Ch_RemoveHost      303
 # define G_Ch_BadHost         304
 # define G_Ch_Exit            305
 #endif
-#define G_SessMan           4	/* start "session manager" */
-#define G_ConfShutdown      5	/* confirm forced shutdown */
-#define G_GreetTimed        6	/* get login; timed login permitted */
+#define G_SessMan           4   /* start "session manager" */
+#define G_ConfShutdown      5   /* confirm forced shutdown */
+#define G_GreetTimed        6   /* get login; timed login permitted */
 
 #ifdef XDMCP
-#define G_Ch_Refresh       10	/* XXX change */
-#define G_Ch_RegisterHost  11	/* str name	 XXX change */
-#define G_Ch_DirectChoice  12	/* str name	 XXX change */
+#define G_Ch_Refresh       10   /* XXX change */
+#define G_Ch_RegisterHost  11   /* str name      XXX change */
+#define G_Ch_DirectChoice  12   /* str name      XXX change */
 #endif
 
 /*
  * Status/command codes greeter -> core
  */
-#define G_Ready	   0	/* nop */
-#define G_Cancel   1	/* abort login, etc. */
+#define G_Ready    0    /* nop */
+#define G_Cancel   1    /* abort login, etc. */
 
-#define G_DGreet   2	/* get login */
+#define G_DGreet   2    /* get login */
 #ifdef XDMCP
-#define G_DChoose  3	/* run chooser */
+#define G_DChoose  3    /* run chooser */
 #endif
 
 #define G_Shutdown      101 /* 5*int, string; async */
-# define SHUT_REBOOT      1	/* how */
+# define SHUT_REBOOT      1     /* how */
 # define SHUT_HALT        2
 # define SHUT_CONSOLE     -1 /* pseudo-code */
-# define SHUT_SCHEDULE    0	/* when; config only */
+# define SHUT_SCHEDULE    0     /* when; config only */
 # define SHUT_TRYNOW      1
 # define SHUT_FORCENOW    2
-# define SHUT_CANCEL      0	/* force */
+# define SHUT_CANCEL      0     /* force */
 # define SHUT_FORCEMY     1
 # define SHUT_FORCE       2
 # define SHUT_ASK         3
@@ -187,27 +187,27 @@ from the copyright holder.
 /*
  * Command codes core -> config reader
  */
-#define GC_Files        1	/* get file list */
-#define GC_GetConf      2	/* get a config group */
-# define GC_gGlobal       1	/* get global config array */
+#define GC_Files        1       /* get file list */
+#define GC_GetConf      2       /* get a config group */
+# define GC_gGlobal       1     /* get global config array */
 #ifdef XDMCP
-# define GC_gXaccess      3	/* get Xaccess equivalent */
+# define GC_gXaccess      3     /* get Xaccess equivalent */
 #endif
-# define GC_gDisplay      4	/* get per-display config array */
+# define GC_gDisplay      4     /* get per-display config array */
 
 /*
  * Error code core -> greeter
  */
 #define GE_Ok       0
-#define GE_NoFkt    1	/* no such function (only for extensions!) */
-#define GE_Error    2	/* internal error, like OOM */
+#define GE_NoFkt    1   /* no such function (only for extensions!) */
+#define GE_Error    2   /* internal error, like OOM */
 /* for config reading */
-#define GE_NoEnt   10	/* no such config entry */
-#define GE_BadType 11	/* unknown config entry type */
+#define GE_NoEnt   10   /* no such config entry */
+#define GE_BadType 11   /* unknown config entry type */
 /* for dmrc reading */
-#define GE_NoUser  20	/* no such user */
-#define GE_NoFile  21	/* no such file */
-#define GE_Denied  22	/* permission denied */
+#define GE_NoUser  20   /* no such user */
+#define GE_NoFile  21   /* no such file */
+#define GE_Denied  22   /* permission denied */
 
 /*
  * Log levels.
@@ -224,8 +224,8 @@ from the copyright holder.
  */
 /* terminal status codes */
 #define V_OK              0
-#define V_FAIL           10	/* whatever, already reported with V_MSG_* */
-#define V_AUTH           11	/* authentication failed */
+#define V_FAIL           10     /* whatever, already reported with V_MSG_* */
+#define V_AUTH           11     /* authentication failed */
 /* non-terminal status codes */
 #define V_MSG_INFO      110 /* info message attached; 0 return */
 #define V_MSG_ERR       111 /* error message attached (null for generic); 0 return */
@@ -246,13 +246,13 @@ from the copyright holder.
 /*
  * Config/Runtime data keys
  */
-#define C_WHO_MASK    0x00ff0000	/* Non-zero for proprietary extensions (see manufacturer table [to be written]) */
-#define C_TYPE_MASK   0x0f000000	/* Type of the value */
-# define C_TYPE_INT      0x00000000	/*   Integer */
-# define C_TYPE_STR      0x01000000	/*   String */
-# define C_TYPE_ARGV     0x02000000	/*   0-terminated Array of Strings */
-# define C_TYPE_ARR      0x03000000	/*   Array (only when XDCMP is enabled) */
-#define C_PRIVATE     0xf0000000	/* Private, don't make it visible to interfaces! */
+#define C_WHO_MASK    0x00ff0000        /* Non-zero for proprietary extensions (see manufacturer table [to be written]) */
+#define C_TYPE_MASK   0x0f000000        /* Type of the value */
+# define C_TYPE_INT      0x00000000     /*   Integer */
+# define C_TYPE_STR      0x01000000     /*   String */
+# define C_TYPE_ARGV     0x02000000     /*   0-terminated Array of Strings */
+# define C_TYPE_ARR      0x03000000     /*   Array (only when XDCMP is enabled) */
+#define C_PRIVATE     0xf0000000        /* Private, don't make it visible to interfaces! */
 
 /* display variables */
 #define C_isLocal       (C_TYPE_INT | 0x200)
@@ -268,9 +268,9 @@ from the copyright holder.
 /*
  * flags in acl entries
  */
-#define a_notAllowed    1	/* both direct and indirect */
-#define a_notBroadcast  2	/* only direct */
-#define a_useChooser    2	/* only indirect */
+#define a_notAllowed    1       /* both direct and indirect */
+#define a_notBroadcast  2       /* only direct */
+#define a_useChooser    2       /* only indirect */
 
 /*
  * type of host entries

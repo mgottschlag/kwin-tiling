@@ -57,117 +57,119 @@ extern "C" {
 #include <bsdtty.h>
 #endif
 
-KConsole::KConsole( QWidget *_parent )
-	: inherited( _parent )
-	, pty( 0 )
-	, notifier( 0 )
-	, fd( -1 )
+KConsole::KConsole(QWidget *_parent)
+    : inherited(_parent)
+    , pty(0)
+    , notifier(0)
+    , fd(-1)
 {
-	setReadOnly( true );
-	setLineWrapMode( NoWrap );
+    setReadOnly(true);
+    setLineWrapMode(NoWrap);
 
-	if (!openConsole())
-		append( i18n("*** Cannot connect to console log ***") );
+    if (!openConsole())
+        append(i18n("*** Cannot connect to console log ***"));
 }
 
 KConsole::~KConsole()
 {
-	closeConsole();
+    closeConsole();
 }
 
 int
 KConsole::openConsole()
 {
 #ifdef TIOCCONS
-	static const char on = 1;
+    static const char on = 1;
 #endif
 
-	if (*_logSource) {
-		if ((fd = open( _logSource, O_RDONLY | O_NONBLOCK )) >= 0)
-			goto gotcon;
-		logError( "Cannot open log source %s, "
-		          "falling back to /dev/console.\n", _logSource );
-	}
+    if (*_logSource) {
+        if ((fd = open(_logSource, O_RDONLY | O_NONBLOCK)) >= 0)
+            goto gotcon;
+        logError("Cannot open log source %s, "
+                 "falling back to /dev/console.\n", _logSource);
+    }
 
-	pty = new KPty;
-	if (!pty->open()) {
-		delete pty;
-		pty = 0;
-		return 0;
-	}
+    pty = new KPty;
+    if (!pty->open()) {
+        delete pty;
+        pty = 0;
+        return 0;
+    }
 
 #ifdef TIOCCONS
-	if (ioctl( pty->slaveFd(), TIOCCONS, &on ) < 0) {
-		perror( "ioctl TIOCCONS" );
-		delete pty;
-		pty = 0;
-		return 0;
-	}
+    if (ioctl(pty->slaveFd(), TIOCCONS, &on) < 0) {
+        perror("ioctl TIOCCONS");
+        delete pty;
+        pty = 0;
+        return 0;
+    }
 #else
-	int consfd;
-	if ((consfd = open( "/dev/console", O_RDONLY )) < 0) {
-		perror( "opening /dev/console" );
-		delete pty;
-		pty = 0;
-		return 0;
-	}
-	if (ioctl( consfd, SRIOCSREDIR, pty->slaveFd() ) < 0) {
-		perror( "ioctl SRIOCSREDIR" );
-		::close( consfd );
-		delete pty;
-		pty = 0;
-		return 0;
-	}
-	::close( consfd );
+    int consfd;
+    if ((consfd = open("/dev/console", O_RDONLY)) < 0) {
+        perror("opening /dev/console");
+        delete pty;
+        pty = 0;
+        return 0;
+    }
+    if (ioctl(consfd, SRIOCSREDIR, pty->slaveFd()) < 0) {
+        perror("ioctl SRIOCSREDIR");
+        ::close(consfd);
+        delete pty;
+        pty = 0;
+        return 0;
+    }
+    ::close(consfd);
 #endif
-	fd = pty->masterFd();
+    fd = pty->masterFd();
 
   gotcon:
-	notifier = new QSocketNotifier( fd, QSocketNotifier::Read, this );
-	connect( notifier, SIGNAL(activated( int )), SLOT(slotData()) );
-	return 1;
+    notifier = new QSocketNotifier(fd, QSocketNotifier::Read, this);
+    connect(notifier, SIGNAL(activated(int)), SLOT(slotData()));
+    return 1;
 }
 
 void
 KConsole::closeConsole()
 {
-	delete notifier;
-	notifier = 0;
-	if (pty) {
-		delete pty;
-		pty = 0;
-	} else
-		::close( fd );
-	fd = -1;
+    delete notifier;
+    notifier = 0;
+    if (pty) {
+        delete pty;
+        pty = 0;
+    } else {
+        ::close(fd);
+    }
+    fd = -1;
 }
 
 void
 KConsole::slotData()
 {
-	int n;
-	char buffer[1024];
+    int n;
+    char buffer[1024];
 
-	if ((n = read( fd, buffer, sizeof(buffer) )) <= 0) {
-		closeConsole();
-		if (n || !openConsole())
-			append( i18n("\n*** Lost connection with console log ***") );
-	} else {
-		QString str( QString::fromLocal8Bit( buffer, n ).remove( '\r' ) );
-		int pos, opos;
-		for (opos = 0; (pos = str.indexOf( '\n', opos )) >= 0; opos = pos + 1) {
-			if (document()->blockCount() == 100) {
-				QTextCursor cur( document() );
-				cur.movePosition( QTextCursor::NextBlock, QTextCursor::KeepAnchor );
-				cur.removeSelectedText();
-			}
-			if (!leftover.isEmpty()) {
-				append( leftover + str.mid( opos, pos - opos ) );
-				leftover.clear();
-			} else
-				append( str.mid( opos, pos - opos ) );
-		}
-		leftover += str.mid( opos );
-	}
+    if ((n = read(fd, buffer, sizeof(buffer))) <= 0) {
+        closeConsole();
+        if (n || !openConsole())
+            append(i18n("\n*** Lost connection with console log ***"));
+    } else {
+        QString str(QString::fromLocal8Bit(buffer, n).remove('\r'));
+        int pos, opos;
+        for (opos = 0; (pos = str.indexOf('\n', opos)) >= 0; opos = pos + 1) {
+            if (document()->blockCount() == 100) {
+                QTextCursor cur(document());
+                cur.movePosition(QTextCursor::NextBlock, QTextCursor::KeepAnchor);
+                cur.removeSelectedText();
+            }
+            if (!leftover.isEmpty()) {
+                append(leftover + str.mid(opos, pos - opos));
+                leftover.clear();
+            } else {
+                append(str.mid(opos, pos - opos));
+            }
+        }
+        leftover += str.mid(opos);
+    }
 }
 
 #include "kconsole.moc"

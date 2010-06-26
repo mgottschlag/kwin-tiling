@@ -31,139 +31,139 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <sys/un.h>
 
 static int
-openCtl( int fd, int err, const char *ctl, const char *dpy )
+openCtl(int fd, int err, const char *ctl, const char *dpy)
 {
-	struct sockaddr_un sa;
+    struct sockaddr_un sa;
 
-	sa.sun_family = AF_UNIX;
-	if (dpy)
-		snprintf( sa.sun_path, sizeof(sa.sun_path),
-		          "%s/dmctl-%s/socket", ctl, dpy );
-	else
-		snprintf( sa.sun_path, sizeof(sa.sun_path),
-		          "%s/dmctl/socket", ctl );
-	if (!connect( fd, (struct sockaddr *)&sa, sizeof(sa) ))
-		return 1;
-	if (err)
-		fprintf( stderr, "Cannot connect socket '%s'.\n", sa.sun_path );
-	return 0;
+    sa.sun_family = AF_UNIX;
+    if (dpy)
+        snprintf(sa.sun_path, sizeof(sa.sun_path),
+                 "%s/dmctl-%s/socket", ctl, dpy);
+    else
+        snprintf(sa.sun_path, sizeof(sa.sun_path),
+                 "%s/dmctl/socket", ctl);
+    if (!connect(fd, (struct sockaddr *)&sa, sizeof(sa)))
+        return 1;
+    if (err)
+        fprintf(stderr, "Cannot connect socket '%s'.\n", sa.sun_path);
+    return 0;
 }
 
 static const char *
-readConfig( const char *cfg )
+readConfig(const char *cfg)
 {
-	FILE *fp;
-	const char *ctl;
-	char *ptr, *ptr2;
-	char buf[1024];
+    FILE *fp;
+    const char *ctl;
+    char *ptr, *ptr2;
+    char buf[1024];
 
-	if (!(fp = fopen( cfg, "r" ))) {
-		fprintf( stderr,
-		         "Cannot open kdm config file '%s'.\n",
-		         cfg );
-		return 0;
-	}
-	ctl = "/var/run/xdmctl";
-	while (fgets( buf, sizeof(buf), fp ))
-		if (!strncmp( buf, "FifoDir", 7 )) {
-			ptr = buf + 7;
-			while (*ptr && isspace( *ptr ))
-				ptr++;
-			if (*ptr++ != '=')
-				continue;
-			while (*ptr && isspace( *ptr ))
-				ptr++;
-			for (ptr2 = buf + strlen( buf );
-			     ptr2 > ptr && isspace( *(ptr2 - 1) );
-			     ptr2--);
-			*ptr2 = 0;
-			ctl = strdup( ptr );
-			break;
-		}
-	fclose( fp );
-	return ctl;
+    if (!(fp = fopen(cfg, "r"))) {
+        fprintf(stderr,
+                "Cannot open kdm config file '%s'.\n",
+                cfg);
+        return 0;
+    }
+    ctl = "/var/run/xdmctl";
+    while (fgets(buf, sizeof(buf), fp))
+        if (!strncmp(buf, "FifoDir", 7)) {
+            ptr = buf + 7;
+            while (*ptr && isspace(*ptr))
+                ptr++;
+            if (*ptr++ != '=')
+                continue;
+            while (*ptr && isspace(*ptr))
+                ptr++;
+            for (ptr2 = buf + strlen(buf);
+                 ptr2 > ptr && isspace(*(ptr2 - 1));
+                 ptr2--);
+            *ptr2 = 0;
+            ctl = strdup(ptr);
+            break;
+        }
+    fclose(fp);
+    return ctl;
 }
 
 static int
-exe( int fd, const char *in, int len )
+exe(int fd, const char *in, int len)
 {
-	char buf[4096];
+    char buf[4096];
 
-	if (write( fd, in, len ) != len) {
-		fprintf( stderr, "Cannot send command\n" );
-		return 1;
-	}
-	if ((len = read( fd, buf, sizeof(buf) )) <= 0) {
-		fprintf( stderr, "Cannot receive reply\n" );
-		return 1;
-	}
-	if (len == sizeof(buf) && buf[sizeof(buf) - 1] != '\n')
-		fprintf( stderr, "Warning: reply is too long\n" );
-	fwrite( buf, 1, len, stdout );
-	if (len == sizeof(buf) && buf[sizeof(buf) - 1] != '\n')
-		puts( "[...]" );
-	return 0;
+    if (write(fd, in, len) != len) {
+        fprintf(stderr, "Cannot send command\n");
+        return 1;
+    }
+    if ((len = read(fd, buf, sizeof(buf))) <= 0) {
+        fprintf(stderr, "Cannot receive reply\n");
+        return 1;
+    }
+    if (len == sizeof(buf) && buf[sizeof(buf) - 1] != '\n')
+        fprintf(stderr, "Warning: reply is too long\n");
+    fwrite(buf, 1, len, stdout);
+    if (len == sizeof(buf) && buf[sizeof(buf) - 1] != '\n')
+        puts("[...]");
+    return 0;
 }
 
 static int
-run( int fd, char **argv )
+run(int fd, char **argv)
 {
-	unsigned len, l;
-	char buf[1024];
+    unsigned len, l;
+    char buf[1024];
 
-	if (!*argv)
-		return exe( fd, "caps\n", 5 );
-	if (!strcmp( *argv, "-" )) {
-		for (;;) {
-			if (isatty( 0 )) {
-				fputs( "> ", stdout );
-				fflush( stdout );
-			}
-			if (!fgets( buf, sizeof(buf), stdin ))
-				return 0;
-			if (exe( fd, buf, strlen( buf ) ))
-				return 1;
-		}
-	} else {
-		len = strlen( *argv );
-		if (len >= sizeof(buf))
-			goto bad;
-		memcpy( buf, *argv, len );
-		while (*++argv) {
-			l = strlen( *argv );
-			if (len + l + 1 >= sizeof(buf))
-				goto bad;
-			buf[len++] = '\t';
-			memcpy( buf + len, *argv, l );
-			len += l;
-		}
-		buf[len++] = '\n';
-		return exe( fd, buf, len );
-	  bad:
-		fprintf( stderr, "Command too long\n" );
-		return 1;
-	}
+    if (!*argv)
+        return exe(fd, "caps\n", 5);
+    if (!strcmp(*argv, "-")) {
+        for (;;) {
+            if (isatty(0)) {
+                fputs("> ", stdout);
+                fflush(stdout);
+            }
+            if (!fgets(buf, sizeof(buf), stdin))
+                return 0;
+            if (exe(fd, buf, strlen(buf)))
+                return 1;
+        }
+    } else {
+        len = strlen(*argv);
+        if (len >= sizeof(buf))
+            goto bad;
+        memcpy(buf, *argv, len);
+        while (*++argv) {
+            l = strlen(*argv);
+            if (len + l + 1 >= sizeof(buf))
+                goto bad;
+            buf[len++] = '\t';
+            memcpy(buf + len, *argv, l);
+            len += l;
+        }
+        buf[len++] = '\n';
+        return exe(fd, buf, len);
+      bad:
+        fprintf(stderr, "Command too long\n");
+        return 1;
+    }
 }
 
 int
-main( int argc, char **argv )
+main(int argc, char **argv)
 {
-	char *dpy = getenv( "DISPLAY" );
-	const char *ctl = getenv( "DM_CONTROL" );
-	const char *cfg = KDE_CONFDIR "/kdm/kdmrc";
-	char *ptr;
-	int fd;
+    char *dpy = getenv("DISPLAY");
+    const char *ctl = getenv("DM_CONTROL");
+    const char *cfg = KDE_CONFDIR "/kdm/kdmrc";
+    char *ptr;
+    int fd;
 
-	(void)argc;
-	while (*++argv) {
-		ptr = *argv;
-		if (*ptr != '-' || !*(ptr + 1))
-			break;
-		ptr++;
-		if (*ptr == '-')
-			ptr++;
-		if (!strcmp( ptr, "h" ) || !strcmp( ptr, "help" )) {
-			puts(
+    (void)argc;
+    while (*++argv) {
+        ptr = *argv;
+        if (*ptr != '-' || !*(ptr + 1))
+            break;
+        ptr++;
+        if (*ptr == '-')
+            ptr++;
+        if (!strcmp(ptr, "h") || !strcmp(ptr, "help")) {
+            puts(
 "Usage: kdmctl [options] [command [command arguments]]\n"
 "\n"
 "Options are:\n"
@@ -188,49 +188,48 @@ main( int argc, char **argv )
 "\n"
 "If the command is '-', kdmctl reads commands from stdin.\n"
 "The default command is 'caps'.\n"
-			);
-			return 0;
-		} else if (!strcmp( ptr, "g" ) || !strcmp( ptr, "global" ))
-			dpy = 0;
-		else if (!strcmp( ptr, "d" ) || !strcmp( ptr, "display" )) {
-			if (!argv[1])
-				goto needarg;
-			dpy = *++argv;
-		} else if (!strcmp( ptr, "s" ) || !strcmp( ptr, "sockets" )) {
-			if (!argv[1])
-				goto needarg;
-			ctl = *++argv;
-		} else if (!strcmp( ptr, "c" ) || !strcmp( ptr, "config" )) {
-			if (!argv[1]) {
-			  needarg:
-				fprintf( stderr, "Option '%s' needs argument.\n",
-				         ptr );
-				return 1;
-			}
-			cfg = *++argv;
-		} else {
-			fprintf( stderr, "Unknown option '%s'.\n", ptr );
-			return 1;
-		}
-	}
-	if ((!ctl || !*ctl) && *cfg)
-		ctl = readConfig( cfg );
-	if ((fd = socket( PF_UNIX, SOCK_STREAM, 0 )) < 0) {
-		fprintf( stderr, "Cannot create UNIX socket\n" );
-		return 1;
-	}
-	if (dpy && (ptr = strchr( dpy, ':' )) && (ptr = strchr( ptr, '.' )))
-		*ptr = 0;
-	if (ctl && *ctl) {
-		if (!openCtl( fd, 1, ctl, dpy ))
-			return 1;
-	} else {
-		if (!openCtl( fd, 0, "/var/run/xdmctl", dpy ) &&
-		    !openCtl( fd, 0, "/var/run", dpy ))
-		{
-			fprintf( stderr, "No command socket found.\n" );
-			return 1;
-		}
-	}
-	return run( fd, argv );
+           );
+            return 0;
+        } else if (!strcmp(ptr, "g") || !strcmp(ptr, "global")) {
+            dpy = 0;
+        } else if (!strcmp(ptr, "d") || !strcmp(ptr, "display")) {
+            if (!argv[1])
+                goto needarg;
+            dpy = *++argv;
+        } else if (!strcmp(ptr, "s") || !strcmp(ptr, "sockets")) {
+            if (!argv[1])
+                goto needarg;
+            ctl = *++argv;
+        } else if (!strcmp(ptr, "c") || !strcmp(ptr, "config")) {
+            if (!argv[1]) {
+              needarg:
+                fprintf(stderr, "Option '%s' needs argument.\n", ptr);
+                return 1;
+            }
+            cfg = *++argv;
+        } else {
+            fprintf(stderr, "Unknown option '%s'.\n", ptr);
+            return 1;
+        }
+    }
+    if ((!ctl || !*ctl) && *cfg)
+        ctl = readConfig(cfg);
+    if ((fd = socket(PF_UNIX, SOCK_STREAM, 0)) < 0) {
+        fprintf(stderr, "Cannot create UNIX socket\n");
+        return 1;
+    }
+    if (dpy && (ptr = strchr(dpy, ':')) && (ptr = strchr(ptr, '.')))
+        *ptr = 0;
+    if (ctl && *ctl) {
+        if (!openCtl(fd, 1, ctl, dpy))
+            return 1;
+    } else {
+        if (!openCtl(fd, 0, "/var/run/xdmctl", dpy) &&
+            !openCtl(fd, 0, "/var/run", dpy))
+        {
+            fprintf(stderr, "No command socket found.\n");
+            return 1;
+        }
+    }
+    return run(fd, argv);
 }

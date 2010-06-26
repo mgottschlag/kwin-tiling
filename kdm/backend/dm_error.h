@@ -37,21 +37,21 @@ authorization.
 #include "greet.h"
 #include <stdarg.h>
 
-void gDebug( const char *fmt, ... );
-void debug( const char *fmt, ... );
-void logInfo( const char *fmt, ... );
-void logWarn( const char *fmt, ... );
-void logError( const char *fmt, ... );
-void logPanic( const char *fmt, ... ) ATTR_NORETURN;
-void logOutOfMem( void );
-void panic( const char *mesg ) ATTR_NORETURN;
-void initErrorLog( const char *errorLogFile );
+void gDebug(const char *fmt, ...);
+void debug(const char *fmt, ...);
+void logInfo(const char *fmt, ...);
+void logWarn(const char *fmt, ...);
+void logError(const char *fmt, ...);
+void logPanic(const char *fmt, ...) ATTR_NORETURN;
+void logOutOfMem(void);
+void panic(const char *mesg) ATTR_NORETURN;
+void initErrorLog(const char *errorLogFile);
 #ifdef USE_SYSLOG
-void reInitErrorLog( void );
+void reInitErrorLog(void);
 #else
 # define reInitErrorLog() while(0)
 #endif
-int ASPrintf( char **strp, const char *fmt, ... );
-int VASPrintf( char **strp, const char *fmt, va_list args );
+int ASPrintf(char **strp, const char *fmt, ...);
+int VASPrintf(char **strp, const char *fmt, va_list args);
 
 #endif /* _DM_ERROR_H_ */

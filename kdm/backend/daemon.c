@@ -36,43 +36,43 @@ from the copyright holder.
 #include "dm_error.h"
 
 void
-becomeDaemon( void )
+becomeDaemon(void)
 {
-	int pfd[2];
+    int pfd[2];
 
-	/*
-	 * fork so that the process goes into the background automatically. Also
-	 * has a nice side effect of having the child process get inherited by
-	 * init (pid 1).
-	 * Create a pipe and block on it, so the parent knows when the child is
-	 * done with detaching. This eliminates the possibility that the child
-	 * might get killed when the init script that's running xdm exits.
-	 */
+    /*
+     * fork so that the process goes into the background automatically. Also
+     * has a nice side effect of having the child process get inherited by
+     * init (pid 1).
+     * Create a pipe and block on it, so the parent knows when the child is
+     * done with detaching. This eliminates the possibility that the child
+     * might get killed when the init script that's running xdm exits.
+     */
 
-	if (pipe( pfd ))
-		pfd[0] = pfd[1] = -1; /* so what ...? */
-	switch (fork ()) {
-	case 0:
-		/* child */
-		break;
-	case -1:
-		/* error */
-		logError( "Daemon fork failed: %m\n" );
-		break;
+    if (pipe(pfd))
+        pfd[0] = pfd[1] = -1; /* so what ...? */
+    switch (fork()) {
+    case 0:
+        /* child */
+        break;
+    case -1:
+        /* error */
+        logError("Daemon fork failed: %m\n");
+        break;
 
-	default:
-		/* parent */
-		close( pfd[1] );
-		read( pfd[0], &pfd[1] /* dummy */, 1 );
-		exit( 0 );
-	}
+    default:
+        /* parent */
+        close(pfd[1]);
+        read(pfd[0], &pfd[1] /* dummy */, 1);
+        exit(0);
+    }
 
-	/* don't use daemon() - it doesn't buy us anything but an additional fork */
+    /* don't use daemon() - it doesn't buy us anything but an additional fork */
 
-	setsid();
+    setsid();
 
-	close( pfd[0] );
-	close( pfd[1] ); /* tell parent that we're done with detaching */
+    close(pfd[0]);
+    close(pfd[1]); /* tell parent that we're done with detaching */
 
-	chdir( "/" );
+    chdir("/");
 }

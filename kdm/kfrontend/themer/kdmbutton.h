@@ -29,21 +29,21 @@
  */
 
 class KdmButton : public KdmItem {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	KdmButton( QObject *parent, const QDomNode &node );
+    KdmButton(QObject *parent, const QDomNode &node);
 
 protected:
-	virtual void drawContents( QPainter *p, const QRect &r );
+    virtual void drawContents(QPainter *p, const QRect &r);
 
-	virtual void doPlugActions( bool plug );
+    virtual void doPlugActions(bool plug);
 
-	QString text;
+    QString text;
 
 private Q_SLOTS:
-	void activate();
-	void widgetGone();
+    void activate();
+    void widgetGone();
 };
 
 #endif // KDMBUTTON_H

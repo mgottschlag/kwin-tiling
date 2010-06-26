@@ -27,75 +27,75 @@
 
 #include <QPushButton>
 
-KdmButton::KdmButton( QObject *parent, const QDomNode &node )
-	: KdmItem( parent, node )
+KdmButton::KdmButton(QObject *parent, const QDomNode &node)
+    : KdmItem(parent, node)
 {
-	itemType = "button";
-	if (!isVisible())
-		return;
+    itemType = "button";
+    if (!isVisible())
+        return;
 
-	const QString locale = KGlobal::locale()->language();
+    const QString locale = KGlobal::locale()->language();
 
-	// Read LABEL TAGS
-	QDomNodeList childList = node.childNodes();
-	bool stockUsed = false;
-	for (int nod = 0; nod < childList.count(); nod++) {
-		QDomNode child = childList.item( nod );
-		QDomElement el = child.toElement();
-		QString tagName = el.tagName();
+    // Read LABEL TAGS
+    QDomNodeList childList = node.childNodes();
+    bool stockUsed = false;
+    for (int nod = 0; nod < childList.count(); nod++) {
+        QDomNode child = childList.item(nod);
+        QDomElement el = child.toElement();
+        QString tagName = el.tagName();
 
-		if (tagName == "text" && el.attributes().count() == 0 && !stockUsed) {
-			text = el.text();
-		} else if (tagName == "text" && !stockUsed) {
-			QString lang = el.attribute( "xml:lang", "" );
-			if (lang == locale)
-				text = el.text();
-		} else if (tagName == "stock") {
-			text = KdmLabel::lookupStock( el.attribute( "type", "" ) );
-			stockUsed = true;
-		}
-	}
+        if (tagName == "text" && el.attributes().count() == 0 && !stockUsed) {
+            text = el.text();
+        } else if (tagName == "text" && !stockUsed) {
+            QString lang = el.attribute("xml:lang", "");
+            if (lang == locale)
+                text = el.text();
+        } else if (tagName == "stock") {
+            text = KdmLabel::lookupStock(el.attribute("type", ""));
+            stockUsed = true;
+        }
+    }
 
-	text.replace( '\n', ' ' ).replace( '_', '&' );
+    text.replace('\n', ' ').replace('_', '&');
 }
 
 void
-KdmButton::doPlugActions( bool )
+KdmButton::doPlugActions(bool)
 {
-	QWidget *w = themer()->widget();
-	if (w) {
-		if (!myWidget) {
-			QPushButton *btn = new QPushButton( text, w );
-			btn->setAutoDefault( false );
-			myWidget = btn;
-			myWidget->hide(); // yes, really
-			setWidgetAttribs( myWidget );
-			connect( myWidget, SIGNAL(destroyed()), SLOT(widgetGone()) );
-			connect( myWidget, SIGNAL(clicked()), SLOT(activate()) );
-			emit needPlacement();
-		}
-	} else {
-		if (myWidget)
-			delete myWidget;
-	}
+    QWidget *w = themer()->widget();
+    if (w) {
+        if (!myWidget) {
+            QPushButton *btn = new QPushButton(text, w);
+            btn->setAutoDefault(false);
+            myWidget = btn;
+            myWidget->hide(); // yes, really
+            setWidgetAttribs(myWidget);
+            connect(myWidget, SIGNAL(destroyed()), SLOT(widgetGone()));
+            connect(myWidget, SIGNAL(clicked()), SLOT(activate()));
+            emit needPlacement();
+        }
+    } else {
+        if (myWidget)
+            delete myWidget;
+    }
 }
 
 void
 KdmButton::widgetGone()
 {
-	myWidget = 0;
+    myWidget = 0;
 
-	emit needPlacement();
+    emit needPlacement();
 }
 
 void
 KdmButton::activate()
 {
-	emit activated( objectName() );
+    emit activated(objectName());
 }
 
 void
-KdmButton::drawContents( QPainter *, const QRect & )
+KdmButton::drawContents(QPainter *, const QRect &)
 {
 }
 

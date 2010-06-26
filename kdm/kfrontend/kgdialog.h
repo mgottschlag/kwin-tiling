@@ -43,48 +43,48 @@ class QMenu;
 #define ex_login   4
 
 class KGDialog : public FDialog {
-	Q_OBJECT
-	typedef FDialog inherited;
+    Q_OBJECT
+    typedef FDialog inherited;
 
   public:
-	KGDialog( bool themed = false );
+    KGDialog(bool themed = false);
 
   public Q_SLOTS:
-	void slotActivateMenu( QAction * );
-	void slotActivateMenu( bool );
-	void slotExit();
-	void slotSwitch();
-	void slotConsole();
-	void slotShutdown();
+    void slotActivateMenu(QAction *);
+    void slotActivateMenu(bool);
+    void slotExit();
+    void slotSwitch();
+    void slotConsole();
+    void slotShutdown();
 
   protected:
 #ifdef XDMCP
-	void completeMenu( int _switchIf, int _switchCode, const QString &_switchMsg, int _switchAccel );
+    void completeMenu(int _switchIf, int _switchCode, const QString &_switchMsg, int _switchAccel);
 #else
-	void completeMenu();
+    void completeMenu();
 #endif
-	void inserten( const QKeySequence &shortcut, const char *member, int data = -1 );
-	void inserten( const QString &txt, const QKeySequence &shortcut, const char *member );
-	void inserten( const QString &txt, const QKeySequence &shortcut, QMenu *cmnu );
+    void inserten(const QKeySequence &shortcut, const char *member, int data = -1);
+    void inserten(const QString &txt, const QKeySequence &shortcut, const char *member);
+    void inserten(const QString &txt, const QKeySequence &shortcut, QMenu *cmnu);
 
-	bool needSep;
-	QMenu *optMenu;
-	KGVerify *verify;
+    bool needSep;
+    QMenu *optMenu;
+    KGVerify *verify;
 #ifdef WITH_KDM_XCONSOLE
-	KConsole *consoleView;
+    KConsole *consoleView;
 #endif
 
   private Q_SLOTS:
-	void slotDisplaySelected( QAction * );
-	void slotPopulateDisplays();
+    void slotDisplaySelected(QAction *);
+    void slotPopulateDisplays();
 
   private:
-	void ensureMenu();
+    void ensureMenu();
 
 #ifdef HAVE_VTS
-	QMenu *dpyMenu;
+    QMenu *dpyMenu;
 #endif
-	int switchCode;
+    int switchCode;
 };
 
 #endif /* KGDIALOG_H */

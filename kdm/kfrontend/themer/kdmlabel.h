@@ -37,68 +37,68 @@ class QTimer;
  */
 
 class KdmLabel : public KdmItem, private KCharMacroExpander {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	KdmLabel( QObject *parent, const QDomNode &node );
-	void setText( const QString &txt );
+    KdmLabel(QObject *parent, const QDomNode &node);
+    void setText(const QString &txt);
 
-	static QString timedUser;
-	static int timedDelay;
+    static QString timedUser;
+    static int timedDelay;
 
-	/* Method to lookup the caption associated with an item */
-	static QString lookupStock( const QString &stock );
+    /* Method to lookup the caption associated with an item */
+    static QString lookupStock(const QString &stock);
 
 protected:
-	// reimplemented; returns the minimum size of rendered text
-	virtual QSize sizeHint();
+    // reimplemented; returns the minimum size of rendered text
+    virtual QSize sizeHint();
 
-	// draw the label
-	virtual void drawContents( QPainter *p, const QRect &r );
+    // draw the label
+    virtual void drawContents(QPainter *p, const QRect &r);
 
-	// handle switching between normal / active / prelight configurations
-	virtual void statusChanged( bool descend );
+    // handle switching between normal / active / prelight configurations
+    virtual void statusChanged(bool descend);
 
-	virtual void doPlugActions( bool plug );
+    virtual void doPlugActions(bool plug);
 
-	virtual void setWidget( QWidget *widget );
+    virtual void setWidget(QWidget *widget);
 
-	struct LabelStruct {
-		QString text;
-		bool isTimer;
-		struct LabelClass {
-			QColor color;
-			FontType font;
-			bool present;
-		} normal, active, prelight;
-	} label;
+    struct LabelStruct {
+        QString text;
+        bool isTimer;
+        struct LabelClass {
+            QColor color;
+            FontType font;
+            bool present;
+        } normal, active, prelight;
+    } label;
 
-	QTimer *timer;
-	QAction *action;
+    QTimer *timer;
+    QAction *action;
 
 public Q_SLOTS:
-	void update();
+    void update();
 
 protected:
-	virtual bool expandMacro( QChar chr, QStringList &ret );
+    virtual bool expandMacro(QChar chr, QStringList &ret);
 
 private:
-	/* Lookup variables in the text */
-	QString lookupText( const QString &t );
+    /* Lookup variables in the text */
+    QString lookupText(const QString &t);
 
-	void setCText( const QString &txt );
+    void setCText(const QString &txt);
 
-	void updateWidgetAttribs();
+    void updateWidgetAttribs();
 
-	QString cText, pText;
-	QSize pTextSize;
-	int pAccelOff, pTextIndent, zeroWidth;
+    QString cText, pText;
+    QSize pTextSize;
+    int pAccelOff, pTextIndent, zeroWidth;
 
-	static QHash<QChar,QString> expandoMap;
-	static bool dateFormatSet;
+    static QHash<QChar, QString> expandoMap;
+    static bool dateFormatSet;
 
 private Q_SLOTS:
-	void activate();
+    void activate();
 };
 
 #endif // KDMLABEL_H
