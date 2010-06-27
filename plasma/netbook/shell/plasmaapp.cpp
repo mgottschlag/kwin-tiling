@@ -941,6 +941,7 @@ void PlasmaApp::showWidgetExplorer(Plasma::Containment *containment)
     m_widgetExplorer->show();
     Plasma::WindowEffects::slideWindow(m_widgetExplorerView, m_controlBar->location());
     m_widgetExplorerView->show();
+    emit controlBarChanged();
 }
 
 void PlasmaApp::widgetExplorerDestroyed()
