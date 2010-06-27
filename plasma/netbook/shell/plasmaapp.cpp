@@ -918,7 +918,13 @@ void PlasmaApp::showWidgetExplorer(Plasma::Containment *containment)
         m_widgetExplorerView->setGraphicsWidget(m_widgetExplorer);
 
         m_widgetExplorer->setIconSize(KIconLoader::SizeLarge);
-        m_widgetExplorer->resize(m_widgetExplorerView->size());
+        if (m_widgetExplorer->size().width() > m_widgetExplorer->size().height()) {
+            m_widgetExplorer->setMinimumWidth(m_mainView->size().width());
+            m_widgetExplorer->setMinimumHeight(-1);
+        } else {
+            m_widgetExplorer->setMinimumWidth(-1);
+            m_widgetExplorer->setMinimumHeight(m_mainView->size().height());
+        }
         m_widgetExplorerView->setFixedSize(viewSize);
         m_widgetExplorerView->installEventFilter(this);
     }
