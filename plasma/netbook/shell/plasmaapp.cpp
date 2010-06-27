@@ -921,20 +921,20 @@ void PlasmaApp::showWidgetExplorer(Plasma::Containment *containment)
         m_widgetExplorerView->setGraphicsWidget(m_widgetExplorer);
 
         m_widgetExplorer->setIconSize(KIconLoader::SizeLarge);
-        if (m_widgetExplorer->size().width() > m_widgetExplorer->size().height()) {
-            m_widgetExplorer->setMinimumWidth(m_mainView->size().width());
-            m_widgetExplorer->setMinimumHeight(-1);
-        } else {
-            m_widgetExplorer->setMinimumWidth(-1);
-            m_widgetExplorer->setMinimumHeight(m_mainView->size().height());
-        }
-        m_widgetExplorerView->setFixedSize(viewSize);
         m_widgetExplorerView->installEventFilter(this);
     }
 
     const bool vert = m_controlBar->location() == Plasma::LeftEdge ||
                       m_controlBar->location() == Plasma::RightEdge;
     m_widgetExplorer->setOrientation(vert ? Qt::Vertical : Qt::Horizontal);
+
+    if (m_widgetExplorer->orientation() == Qt::Horizontal) {
+        m_widgetExplorer->setMinimumWidth(m_mainView->size().width());
+        m_widgetExplorer->setMinimumHeight(-1);
+    } else {
+        m_widgetExplorer->setMinimumWidth(-1);
+        m_widgetExplorer->setMinimumHeight(m_mainView->size().height());
+    }
 
     positionPanel();
 
