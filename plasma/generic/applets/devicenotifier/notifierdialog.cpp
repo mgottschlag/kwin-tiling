@@ -549,6 +549,7 @@ void NotifierDialog::buildDialog()
 
     m_statusWidget = new QGraphicsWidget();
     QGraphicsLinearLayout *statusLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    m_statusWidget->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
     m_statusWidget->setLayout(statusLayout);
     Plasma::Separator *statusSeparator = new Plasma::Separator();
@@ -571,6 +572,14 @@ void NotifierDialog::buildDialog()
     connect(closeButton, SIGNAL(clicked()), this, SLOT(dismissStatusBar()));
     connect(m_statusExpandButton, SIGNAL(clicked()), this, SLOT(triggerExpandStatusBar()));
 
+    //WORKAROUND: We need to wrap our label layout in a QGW before adding it to our
+    //            main layout to avoid issues with Qt not properly dealing with
+    //            wordwrap enabled labels
+
+    QGraphicsWidget *labelWidget = new QGraphicsWidget();
+    labelWidget->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    labelWidget->setContentsMargins(0, 0, 0, 0);
+
     QGraphicsLinearLayout *labelLayout = new QGraphicsLinearLayout(Qt::Horizontal);
 
     labelLayout->addItem(m_statusText);
@@ -579,18 +588,18 @@ void NotifierDialog::buildDialog()
     labelLayout->setAlignment(m_statusExpandButton, Qt::AlignTop);
     labelLayout->addItem(closeButton);
     labelLayout->setAlignment(closeButton, Qt::AlignTop);
+    labelWidget->setLayout(labelLayout);
 
     m_statusDetailsText = new Plasma::TextBrowser();
     m_statusDetailsText->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     m_statusDetailsText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_statusDetailsText->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_statusDetailsText->setMinimumSize(1, 1);
     QFont font = m_statusDetailsText->font();
     font.setPointSize(KGlobalSettings::smallestReadableFont().pointSize());
     m_statusDetailsText->setFont(font);
     m_statusDetailsText->hide();
 
-    statusLayout->addItem(labelLayout);
+    statusLayout->addItem(labelWidget);
 
     devicesWidget->adjustSize();
     updateMainLabelText();
