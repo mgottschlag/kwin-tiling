@@ -45,7 +45,7 @@ QStandardItem* LeaveModel::createStandardItem(const QString& url)
     QStandardItem *item = new QStandardItem();
     const QString basename = QFileInfo(url).baseName();
     if (basename == "logoutonly") {
-        item->setText(i18n("Logout"));
+        item->setText(i18n("Log out"));
         item->setIcon(KIcon("system-log-out"));
         item->setData(i18n("End session"), Kickoff::SubTitleRole);
     } else if (basename == "lock") {
@@ -57,7 +57,7 @@ QStandardItem* LeaveModel::createStandardItem(const QString& url)
         item->setIcon(KIcon("system-switch-user"));
         item->setData(i18n("Start a parallel session as a different user"), Kickoff::SubTitleRole);
     } else if (basename == "shutdown") {
-        item->setText(i18n("Shutdown"));
+        item->setText(i18n("Shut down"));
         item->setIcon(KIcon("system-shutdown"));
         item->setData(i18n("Turn off computer"), Kickoff::SubTitleRole);
     } else if (basename == "restart") {

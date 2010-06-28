@@ -206,8 +206,8 @@ public:
             case SuspendDisk:              return i18n("Hibernate");
             case SuspendRAM:               return i18n("Sleep");
             case Restart:                  return i18nc("Restart Computer", "Restart");
-            case Shutdown:                 return i18n("Shutdown");
-            case Logout:                   return i18n("Logout");
+            case Shutdown:                 return i18n("Shut down");
+            case Logout:                   return i18n("Log out");
             case Leave:                    return i18n("Leave");
         }
         return QString();
@@ -332,7 +332,7 @@ void MenuLauncherApplet::init()
     }
 
     Q_ASSERT(! d->switcher);
-    d->switcher = new QAction(i18n("Switch to Kickoff Menu Style"), this);
+    d->switcher = new QAction(i18n("Switch to Application Launcher Style"), this);
     d->actions.append(d->switcher);
     connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
 
@@ -342,7 +342,7 @@ void MenuLauncherApplet::init()
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ProtocolHandler, "leave", new Kickoff::LeaveItemHandler);
 
     if (KService::serviceByStorageId("kde4-kmenuedit.desktop")) {
-        QAction* menueditor = new QAction(i18n("Menu Editor"), this);
+        QAction* menueditor = new QAction(i18n("Edit Applications..."), this);
         d->actions.append(menueditor);
         connect(menueditor, SIGNAL(triggered(bool)), this, SLOT(startMenuEditor()));
     }
