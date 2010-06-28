@@ -855,16 +855,16 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             // don't move windows to negative positions
             dest = QPointF(qMax(dest.x(), qreal(0.0)), qMax(dest.y(), qreal(0.0)));
             if (!KWindowSystem::mapViewport()) {
-                KWindowInfo info = KWindowSystem::windowInfo(m_dragId, NET::WMDesktop);
+                KWindowInfo info = KWindowSystem::windowInfo(m_dragId, NET::WMDesktop | NET::WMState);
 
                 if (!info.onAllDesktops()) {
                     KWindowSystem::setOnDesktop(m_dragId, m_dragHighlightedDesktop+1);
                 }
 
-                // only move the window if it is kept within the same desktop
-                // moving when dropping between desktop is too annoying due to
-                // the small drop area.
-                if (m_dragHighlightedDesktop == m_dragStartDesktop || info.onAllDesktops()) {
+                // only move the window if it is not full screen and if it is kept within the same desktop
+                // moving when dropping between desktop is too annoying due to the small drop area.
+                if (!(info.state() & NET::FullScreen) &&
+                    (m_dragHighlightedDesktop == m_dragStartDesktop || info.onAllDesktops())) {
                     // use _NET_MOVERESIZE_WINDOW rather than plain move, so that the WM knows this is a pager request
                     NETRootInfo i( QX11Info::display(), 0 );
                     int flags = ( 0x20 << 12 ) | ( 0x03 << 8 ) | 1; // from tool, x/y, northwest gravity
