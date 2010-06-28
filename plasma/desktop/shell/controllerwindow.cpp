@@ -209,8 +209,8 @@ void ControllerWindow::syncToGraphicsWidget()
         getContentsMargins(&left, &top, &right, &bottom);
 
         QDesktopWidget *desktop = QApplication::desktop();
-        QSize maxSize = KWindowSystem::workArea().size();
-
+        QRect screenRect = Kephal::ScreenUtils::screenGeometry(Kephal::ScreenUtils::screenId(pos()));
+        QSize maxSize = KWindowSystem::workArea().intersect(screenRect).size();
 
         QSize windowSize;
         if (m_location == Plasma::LeftEdge || m_location == Plasma::RightEdge) {
