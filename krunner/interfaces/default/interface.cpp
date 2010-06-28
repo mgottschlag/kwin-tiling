@@ -474,10 +474,11 @@ void Interface::run(ResultItem *item)
     // must run the result first before clearing the interface
     // in a way that will cause the results scene to be cleared and
     // the RunnerManager to be cleared of context as a result
+    close();
     m_resultsScene->run(item);
     m_running = false;
 
-    resetAndClose();
+    resetInterface();
 }
 
 void Interface::resetAndClose()
