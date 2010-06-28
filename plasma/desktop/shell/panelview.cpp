@@ -927,13 +927,12 @@ void PanelView::pinchContainment(const QRect &screenGeom)
     updatePanelGeometry();
 
     if (m_panelController) {
-        m_panelController->setContainment(c);
         m_panelController->setOffset(m_offset);
     }
 
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
     recreateUnhideTrigger();
-    kDebug() << "Done pinching, containement's geom" << c->geometry() << "own geom" << geometry();
+    kDebug() << "Done pinching, containment's geom" << c->geometry() << "own geom" << geometry();
 }
 
 void PanelView::setOffset(int newOffset)

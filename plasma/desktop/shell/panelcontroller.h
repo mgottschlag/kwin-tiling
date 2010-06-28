@@ -103,7 +103,8 @@ private:
     QLabel *m_alignLabel;
     QLabel *m_modeLabel;
     DragElement m_dragging;
-    QPoint m_startDragPos;
+    QPoint m_startDragControllerPos;
+    QPoint m_startDragMousePos;
     Plasma::Dialog *m_optionsDialog;
     QBoxLayout *m_optDialogLayout;
     ToolButton *m_settingsTool;

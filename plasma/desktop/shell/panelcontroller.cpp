@@ -85,7 +85,8 @@ PanelController::PanelController(QWidget* parent)
      m_extLayout(0),
      m_layout(0),
      m_dragging(NoElement),
-     m_startDragPos(0,0),
+     m_startDragControllerPos(0,0),
+     m_startDragMousePos(0,0),
      m_optionsDialog(0),
      m_leftAlignTool(0),
      m_centerAlignTool(0),
@@ -389,6 +390,8 @@ void PanelController::setLocation(const Plasma::Location &loc)
     m_ruler->setMinimumSize(m_ruler->sizeHint());
     m_ruler->setMaximumSize(m_ruler->sizeHint());
     syncRuler();
+
+    resize(sizeHint());
 }
 
 void PanelController::setOffset(int newOffset)
@@ -506,11 +509,13 @@ bool PanelController::eventFilter(QObject *watched, QEvent *event)
     } else if (watched == m_sizeTool) {
         if (event->type() == QEvent::MouseButtonPress) {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-            m_startDragPos = mouseEvent->pos();
+            m_startDragMousePos = mouseEvent->globalPos();
+            m_startDragControllerPos = pos(); // the global position of the controller window
             m_dragging = ResizeButtonElement;
         } else if (event->type() == QEvent::MouseButtonRelease) {
             //resets properties saved during the drag
-            m_startDragPos = QPoint(0, 0);
+            m_startDragMousePos = QPoint(0, 0);
+            m_startDragControllerPos = QPoint(0, 0);
             m_dragging = NoElement;
             setCursor(Qt::ArrowCursor);
         } else if (event->type() == QEvent::MouseMove) {
@@ -595,42 +600,36 @@ void PanelController::mouseMoveFilter(QMouseEvent *event)
     //Resize handle moved
     switch (location()) {
     case Plasma::LeftEdge: {
-        int newX = mapToGlobal(event->pos()).x() - m_startDragPos.x();
-        if (newX - MINIMUM_HEIGHT > screenGeom.left() &&
-            newX - screenGeom.left() <= screenGeom.width()/3) {
-            move(newX, pos().y());
-            resizeFrameHeight(geometry().left() - screenGeom.left());
-        }
+        int newX = m_startDragControllerPos.x() + event->globalX() - m_startDragMousePos.x();
+        newX = qMax(newX, screenGeom.left() + MINIMUM_HEIGHT);
+        newX = qMin(newX, screenGeom.left() + screenGeom.width()/3);
+        move(newX, pos().y());
+        resizeFrameHeight(geometry().left() - screenGeom.left());
         break;
     }
     case Plasma::RightEdge: {
-        int newX = mapToGlobal(event->pos()).x() - m_startDragPos.x();
-        if (newX + width() + MINIMUM_HEIGHT < screenGeom.right() &&
-            newX + width() - screenGeom.left() >= 2*(screenGeom.width()/3)) {
-            move(newX, pos().y());
-            resizeFrameHeight(screenGeom.right() - geometry().right());
-        }
+        int newX = m_startDragControllerPos.x() + event->globalX() - m_startDragMousePos.x();
+        newX = qMin(newX, screenGeom.right() - MINIMUM_HEIGHT - width());
+        newX = qMax(newX, screenGeom.left() + 2*(screenGeom.width()/3) - width());
+        move(newX, pos().y());
+        resizeFrameHeight(screenGeom.right() - geometry().right());
         break;
     }
     case Plasma::TopEdge: {
-        int newY = mapToGlobal(event->pos()).y() - m_startDragPos.y();
-        if ( newY - MINIMUM_HEIGHT > screenGeom.top() &&
-             newY - screenGeom.top()<= screenGeom.height()/3) {
-            move(pos().x(), newY);
-            resizeFrameHeight(geometry().top() - screenGeom.top());
-        }
+        int newY = m_startDragControllerPos.y() + event->globalY() - m_startDragMousePos.y();
+        newY = qMax(newY, screenGeom.top() + MINIMUM_HEIGHT);
+        newY = qMin(newY, screenGeom.top() + screenGeom.height()/3);
+        move(pos().x(), newY);
+        resizeFrameHeight(geometry().top() - screenGeom.top());
         break;
     }
     case Plasma::BottomEdge:
     default: {
-        int newY = mapToGlobal(event->pos()).y() - m_startDragPos.y();
-        if ( newY + height() + MINIMUM_HEIGHT < screenGeom.bottom() &&
-             newY + height() - screenGeom.top() >= 2*(screenGeom.height()/3)) {
-                kWarning()<<"AAA"<<pos();
-            move(pos().x(), newY);
-        kWarning()<<"BBB"<<pos();
-            resizeFrameHeight(screenGeom.bottom() - geometry().bottom());
-        }
+        int newY = m_startDragControllerPos.y() + event->globalY() - m_startDragMousePos.y();
+        newY = qMin(newY, screenGeom.bottom() - MINIMUM_HEIGHT - height());
+        newY = qMax(newY, screenGeom.top() + 2*(screenGeom.height()/3) - height());
+        move(pos().x(), newY);
+        resizeFrameHeight(screenGeom.bottom() - geometry().bottom());
         break;
     }
     }
