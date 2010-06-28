@@ -244,6 +244,7 @@ void SearchLaunch::launch(QModelIndex index)
 
     if (m_resultsView->model() == m_runnerModel) {
         KRunnerItemHandler::openUrl(url);
+        reset();
     } else {
         QString id = url.path();
         if (id.startsWith(QLatin1String("/"))) {
