@@ -112,6 +112,7 @@ public slots:
 
 private slots:
     void updateActivityName(Plasma::Context *context);
+    void containmentDestroyed(QObject *object);
 
 private:
     void activateContainment(int screen, int desktop);
