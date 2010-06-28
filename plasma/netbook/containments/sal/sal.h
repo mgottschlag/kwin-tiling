@@ -95,9 +95,6 @@ private Q_SLOTS:
     void addFavourite(const QModelIndex &index);
     void reset();
 
-    void goRight();
-    void goLeft();
-
     void saveFavourites();
 
 private:
@@ -123,8 +120,6 @@ private:
     StripWidget *m_stripWidget;
 
     Qt::Orientation m_orientation;
-    Plasma::ToolButton *m_leftArrow;
-    Plasma::ToolButton *m_rightArrow;
     QString m_lastQuery;
     Plasma::IconWidget *m_firstItem;
 

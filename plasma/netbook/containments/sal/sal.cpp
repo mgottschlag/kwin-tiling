@@ -69,8 +69,6 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
       m_searchField(0),
       m_resultsView(0),
       m_orientation(Qt::Vertical),
-      m_leftArrow(0),
-      m_rightArrow(0),
       m_firstItem(0),
       m_appletsLayout(0),
       m_appletOverlay(0),
@@ -554,32 +552,6 @@ void SearchLaunch::setOrientation(Qt::Orientation orientation)
 
     m_orientation = orientation;
     m_resultsView->setOrientation(orientation);
-    if (m_orientation == Qt::Vertical) {
-        if (m_leftArrow) {
-            m_leftArrow->deleteLater();
-            m_rightArrow->deleteLater();
-            m_leftArrow=0;
-            m_rightArrow=0;
-        }
-    } else {
-        if (!m_leftArrow) {
-            m_leftArrow = new Plasma::ToolButton(this);
-            m_leftArrow->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-            m_leftArrow->setPreferredWidth(KIconLoader::SizeMedium);
-            m_leftArrow->setImage("widgets/arrows", "left-arrow");
-            connect(m_leftArrow, SIGNAL(clicked()), this, SLOT(goLeft()));
-            connect(m_leftArrow, SIGNAL(pressed()), this, SLOT(scrollTimeout()));
-
-            m_rightArrow = new Plasma::ToolButton(this);
-            m_rightArrow->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-            m_rightArrow->setPreferredWidth(KIconLoader::SizeMedium);
-            m_rightArrow->setImage("widgets/arrows", "right-arrow");
-            connect(m_rightArrow, SIGNAL(clicked()), this, SLOT(goRight()));
-            connect(m_rightArrow, SIGNAL(pressed()), this, SLOT(scrollTimeout()));
-            m_resultsLayout->insertItem(0, m_leftArrow);
-            m_resultsLayout->addItem(m_rightArrow);
-        }
-    }
 }
 
 void SearchLaunch::setFormFactorFromLocation(Plasma::Location loc)
@@ -707,28 +679,6 @@ void SearchLaunch::searchReturnPressed()
     } else {
         doSearch(query);
         m_lastQuery = query;
-    }
-}
-
-void SearchLaunch::goRight()
-{
-    QGraphicsSceneWheelEvent ev(QEvent::GraphicsSceneWheel);
-    ev.setDelta(-120);
-    scene()->sendEvent(m_resultsView, &ev);
-
-    if (m_resultsView->widget()->geometry().right()-2 <= m_resultsView->viewportGeometry().right() && sender() == m_rightArrow) {
-        action("next containment")->trigger();
-    }
-}
-
-void SearchLaunch::goLeft()
-{
-    QGraphicsSceneWheelEvent ev(QEvent::GraphicsSceneWheel);
-    ev.setDelta(120);
-    scene()->sendEvent(m_resultsView, &ev);
-
-    if (m_resultsView->widget()->geometry().left() >= -2 && sender() == m_leftArrow) {
-        action("previous containment")->trigger();
     }
 }
 
