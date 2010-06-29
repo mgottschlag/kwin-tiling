@@ -343,7 +343,7 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
     m_background->setElementPrefix(QString());
     m_background->resizeFrame(r.size());
     if (leftEasement > 0 || m_taskArea->rightEasement() > 0) {
-        painter->setClipRect(normalRect);
+        painter->setClipRect(normalRect, Qt::IntersectClip);
     }
 
     m_background->paintFrame(painter, r, QRectF(QPointF(0, 0), r.size()));
@@ -356,9 +356,11 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
         }
         m_background->resizeFrame(r.size());
         QRect firstRect = QRegion(r).subtracted(normalRect).boundingRect();
-        painter->setClipRect(firstRect);
+        painter->setClipRect(firstRect, Qt::IntersectClip);
 
         m_background->paintFrame(painter, r, QRectF(QPointF(0, 0), r.size()));
+
+        painter->setClipRect(boundingRect(), Qt::IntersectClip);
 
         if (formFactor() == Plasma::Vertical && m_background->hasElement("horizontal-separator")) {
             QSize s = m_background->elementRect("horizontal-separator").size().toSize();
