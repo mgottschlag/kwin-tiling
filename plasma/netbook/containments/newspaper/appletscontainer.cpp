@@ -82,6 +82,7 @@ void AppletsContainer::syncColumnSizes()
     const int margin = 4 + (m_mainLayout->count() - 1) * m_mainLayout->spacing();
 
     QSizeF viewportSize = m_scrollWidget->viewportGeometry().size();
+
     for (int i = 0; i < m_mainLayout->count(); ++i) {
         QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(i));
 
@@ -413,6 +414,7 @@ void AppletsContainer::viewportGeometryChanged(const QRectF &geometry)
     m_viewportSize = geometry.size();
 
     if (!m_containment || (m_expandAll && m_orientation != Qt::Horizontal)) {
+        syncColumnSizes();
         return;
     }
     foreach (Plasma::Applet *applet, m_containment->applets()) {
