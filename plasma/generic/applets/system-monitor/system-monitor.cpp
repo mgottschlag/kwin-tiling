@@ -109,7 +109,6 @@ void SystemMonitor::init()
     m_widget->setLayout(m_layout);
     checkGeometry();
 
-    m_widget->setMinimumSize(QSize(234 + 20 + 23, 32 + 20 + 25));
     setPopupIcon("utilities-system-monitor");
 }
 
@@ -209,19 +208,8 @@ void SystemMonitor::checkGeometry()
         //         << applet->metaObject()->className() << applet->size() - applet->contentsRect().size();
         minHeight += applet->preferredSize().height() + m_layout->spacing();
     }
-    m_widget->setMinimumSize(PREFERRED, minHeight);
 
-    QSizeF s(m_widget->size().width(), minHeight);
-    if (m_applets.count() == 0) {
-        // I want to be sure...
-        s.setHeight(minHeight);
-    }
 
-    if (formFactor() != Plasma::Horizontal && formFactor() != Plasma::Vertical) {
-        setMinimumSize(m_widget->minimumSize() + margins);
-        resize(s + margins);
-    }
-    m_widget->resize(s);
     update();
     /*
     kDebug() << m_widget->size().height() << m_layout->geometry().height();
