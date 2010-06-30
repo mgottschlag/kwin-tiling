@@ -27,6 +27,7 @@
 #include <KSycoca>
 #include <KToolInvocation>
 #include <KUrl>
+#include <KUriFilter>
 
 WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
     : Plasma::AbstractRunner(parent, args),
@@ -192,16 +193,10 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
 
 QString WebshortcutRunner::searchQuery(const QString &query, const QString &term)
 {
-    const QString searchWord = term.right(term.length() - term.indexOf(m_delimiter) - 1);
-    if (searchWord.isEmpty()) {
-        return QString();
-    }
-
-    QString finalQuery(query);
-    // FIXME? currently only basic searches are supported
-    finalQuery.replace("\\{@}", searchWord);
-    KUrl url(finalQuery);
-    return url.url();
+    QString q(term);
+    KUriFilter::self()->filterUri(q, QStringList("kurisearchfilter"));
+    //kDebug() << "term" << term << "filtered to" << q;
+    return q;
 }
 
 KIcon WebshortcutRunner::iconForUrl(const KUrl &url)
