@@ -227,7 +227,7 @@ public:
 
         m_shadow->setElementPrefix("shadow");
 
-        adjustMargins();
+        adjustMargins(geometry());
     }
 
     bool isValid() const
@@ -235,34 +235,9 @@ public:
         return m_valid;
     }
 
-protected:
-    bool event(QEvent *event)
-    {
-        if (event->type() == QEvent::Paint) {
-            QPainter p(this);
-            p.setCompositionMode(QPainter::CompositionMode_Source);
-            p.fillRect(rect(), Qt::transparent);
-        }
-        return QWidget::event(event);
-    }
-
-    void resizeEvent(QResizeEvent *event)
-    {
-        m_shadow->resizeFrame(event->size());
-        adjustMargins();
-    }
-
-    void paintEvent(QPaintEvent *e)
-    {
-        QPainter p(this);
-        //p.setCompositionMode(QPainter::CompositionMode_Source);
-        m_shadow->paintFrame(&p, e->rect(), e->rect());
-    }
-
-    void adjustMargins()
+    void adjustMargins(const QRect &geo)
     {
         QRect screenRect = Kephal::ScreenUtils::screenGeometry(m_panel->screen());
-        QRect geo = geometry();
 
         Plasma::FrameSvg::EnabledBorders enabledBorders = Plasma::FrameSvg::AllBorders;
 
@@ -279,11 +254,38 @@ protected:
             enabledBorders ^= Plasma::FrameSvg::RightBorder;
         }
 
+        m_shadow->setEnabledBorders(enabledBorders);
+
         qreal left, top, right, bottom;
 
         m_shadow->getMargins(left, top, right, bottom);
         setContentsMargins(left, top, right, bottom);
     }
+
+protected:
+    bool event(QEvent *event)
+    {
+        if (event->type() == QEvent::Paint) {
+            QPainter p(this);
+            p.setCompositionMode(QPainter::CompositionMode_Source);
+            p.fillRect(rect(), Qt::transparent);
+        }
+        return QWidget::event(event);
+    }
+
+    void resizeEvent(QResizeEvent *event)
+    {
+        m_shadow->resizeFrame(event->size());
+        adjustMargins(geometry());
+    }
+
+    void paintEvent(QPaintEvent *e)
+    {
+        QPainter p(this);
+        //p.setCompositionMode(QPainter::CompositionMode_Source);
+        m_shadow->paintFrame(&p, e->rect(), e->rect());
+    }
+
 
 private:
     Plasma::FrameSvg *m_shadow;
@@ -472,7 +474,8 @@ void PanelView::checkShadow()
         KWindowSystem::setOnAllDesktops(m_shadowWindow->winId(), true);
         m_shadowWindow->setSvg(containment()->property("shadowPath").toString());
         int left, right, top, bottom;
-        m_shadowWindow->getContentsMargins(&left, &right, &top, &bottom);
+        m_shadowWindow->adjustMargins(geometry());
+        m_shadowWindow->getContentsMargins(&left, &top, &right, &bottom);
         m_shadowWindow->setGeometry(geometry().adjusted(-left, -top, right, bottom));
         if (m_shadowWindow->isValid()) {
             m_shadowWindow->show();
@@ -750,7 +753,8 @@ void PanelView::updatePanelGeometry()
         setGeometry(geom);
         if (m_shadowWindow) {
             int left, right, top, bottom;
-            m_shadowWindow->getContentsMargins(&left, &right, &top, &bottom);
+            m_shadowWindow->adjustMargins(geometry());
+            m_shadowWindow->getContentsMargins(&left, &top, &right, &bottom);
             m_shadowWindow->setGeometry(geometry().adjusted(-left, -top, right, bottom));
         }
     }
