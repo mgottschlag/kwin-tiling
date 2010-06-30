@@ -238,12 +238,39 @@ public:
 
         m_shadow->setElementPrefix("shadow");
 
-        adjustMargins();
+        adjustMargins(geometry());
     }
 
     bool isValid() const
     {
         return m_valid;
+    }
+
+    void adjustMargins(const QRect &geo)
+    {
+        QRect screenRect = Kephal::ScreenUtils::screenGeometry(m_panel->screen());
+
+        Plasma::FrameSvg::EnabledBorders enabledBorders = Plasma::FrameSvg::AllBorders;
+
+        if (geo.left() <= screenRect.left()) {
+            enabledBorders ^= Plasma::FrameSvg::LeftBorder;
+        }
+        if (geo.top() <= screenRect.top()) {
+            enabledBorders ^= Plasma::FrameSvg::TopBorder;
+        }
+        if (geo.bottom() >= screenRect.bottom()) {
+            enabledBorders ^= Plasma::FrameSvg::BottomBorder;
+        }
+        if (geo.right() >= screenRect.right()) {
+            enabledBorders ^= Plasma::FrameSvg::RightBorder;
+        }
+
+        m_shadow->setEnabledBorders(enabledBorders);
+
+        qreal left, top, right, bottom;
+
+        m_shadow->getMargins(left, top, right, bottom);
+        setContentsMargins(left, top, right, bottom);
     }
 
 protected:
@@ -263,7 +290,7 @@ protected:
     {
         m_shadow->resizeFrame(event->size());
 
-        adjustMargins();
+        adjustMargins(geometry());
     }
 
     void paintEvent(QPaintEvent* e)
@@ -273,32 +300,6 @@ protected:
         QPainter p(this);
         //p.setCompositionMode(QPainter::CompositionMode_Source);
         m_shadow->paintFrame(&p);
-    }
-
-    void adjustMargins()
-    {
-        QRect screenRect = Kephal::ScreenUtils::screenGeometry(m_panel->screen());
-        QRect geo = geometry();
-
-        Plasma::FrameSvg::EnabledBorders enabledBorders = Plasma::FrameSvg::AllBorders;
-
-        if (geo.left() <= screenRect.left()) {
-            enabledBorders ^= Plasma::FrameSvg::LeftBorder;
-        }
-        if (geo.top() <= screenRect.top()) {
-            enabledBorders ^= Plasma::FrameSvg::TopBorder;
-        }
-        if (geo.bottom() >= screenRect.bottom()) {
-            enabledBorders ^= Plasma::FrameSvg::BottomBorder;
-        }
-        if (geo.right() >= screenRect.right()) {
-            enabledBorders ^= Plasma::FrameSvg::RightBorder;
-        }
-
-        qreal left, top, right, bottom;
-
-        m_shadow->getMargins(left, top, right, bottom);
-        setContentsMargins(left, top, right, bottom);
     }
 
 private:
@@ -482,7 +483,8 @@ void PlasmaApp::checkShadow()
         KWindowSystem::setOnAllDesktops(m_shadowWindow->winId(), true);
         m_shadowWindow->setSvg(m_controlBar->containment()->property("shadowPath").toString());
         int left, right, top, bottom;
-        m_shadowWindow->getContentsMargins(&left, &right, &top, &bottom);
+        m_shadowWindow->adjustMargins(m_controlBar->geometry());
+        m_shadowWindow->getContentsMargins(&left, &top, &right, &bottom);
         m_shadowWindow->setMinimumSize(-1, -1);
         m_shadowWindow->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
         m_shadowWindow->setGeometry(m_controlBar->geometry().adjusted(-left, -top, right, bottom));
