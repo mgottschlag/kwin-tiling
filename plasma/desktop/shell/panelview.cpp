@@ -211,6 +211,7 @@ public:
                             region.handle(), ShapeSet);
 #endif
 
+        connect(m_shadow, SIGNAL(repaintNeeded()), m_panel, SLOT(checkShadow()));
         m_shadow = new Plasma::FrameSvg(this);
     }
 
@@ -365,7 +366,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
             this, SLOT(updatePanelGeometry()));
     connect(screens, SIGNAL(screenAdded(Kephal::Screen *)),
             this, SLOT(updateStruts()));
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(checkShadow()));
 }
 
 PanelView::~PanelView()
@@ -477,7 +477,7 @@ void PanelView::checkShadow()
         m_shadowWindow->adjustMargins(geometry());
         m_shadowWindow->getContentsMargins(&left, &top, &right, &bottom);
         m_shadowWindow->setGeometry(geometry().adjusted(-left, -top, right, bottom));
-        if (m_shadowWindow->isValid()) {
+        if (m_shadowWindow->isValid() && isVisible()) {
             m_shadowWindow->show();
         }
     } else {
