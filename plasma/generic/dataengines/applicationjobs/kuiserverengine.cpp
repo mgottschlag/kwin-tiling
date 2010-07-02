@@ -346,7 +346,7 @@ void KuiserverEngine::attemptRegister()
 {
   QDBusInterface interface("org.kde.kuiserver", "/JobViewServer"/* object to connect to */,
                            ""/* use the default interface */, QDBusConnection::sessionBus(), this);
-    interface.asyncCall("registerService", "org.kde.plasma-desktop", "/DataEngine/applicationjobs/JobWatcher");
+  interface.asyncCall(QLatin1String("registerService"), "org.kde.plasma-desktop", "/DataEngine/applicationjobs/JobWatcher");
 }
 
 void KuiserverEngine::init()
