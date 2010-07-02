@@ -314,7 +314,8 @@ bool IconGrid::eventFilter(QObject *watched, QEvent *event)
 
                 removeAt(iconIndex);
 
-                Qt::DropAction dropAction = drag->exec();
+                Qt::DropAction dropAction = drag->exec(
+                    Qt::MoveAction | Qt::CopyAction);
 
                 if (dropAction != Qt::MoveAction) {
                     // Restore the icon.
@@ -357,19 +358,20 @@ void IconGrid::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
         // Initialize drop marker
         const QMimeData *mimeData = event->mimeData();
 
-        if (mimeData->hasUrls()) {
-            event->setAccepted(true);
-            event->setDropAction(Qt::MoveAction);
-
-            QList<QUrl> urls = mimeData->urls();
-            Q_ASSERT(urls.size() > 0);
-
-            m_dropMarker->setUrl(urls.at(0));
-            if (m_iconNamesVisible) {
-                m_dropMarker->setText(m_dropMarker->appName());
-            }
-            dropMarkerAdded = true;
+        if (!mimeData->hasUrls() || mimeData->urls().size() == 0) {
+            event->setAccepted(false);
+            return;
         }
+
+        QList<QUrl> urls = mimeData->urls();
+
+        m_dropMarker->setUrl(urls.at(0));
+        if (m_iconNamesVisible) {
+            m_dropMarker->setText(m_dropMarker->appName());
+        }
+
+        dropMarkerAdded = true;
+        event->accept();
     }
 
     int newDropMarkerIndex;
