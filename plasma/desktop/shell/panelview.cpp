@@ -211,8 +211,8 @@ public:
                             region.handle(), ShapeSet);
 #endif
 
-        connect(m_shadow, SIGNAL(repaintNeeded()), m_panel, SLOT(checkShadow()));
         m_shadow = new Plasma::FrameSvg(this);
+        connect(m_shadow, SIGNAL(repaintNeeded()), m_panel, SLOT(checkShadow()));
     }
 
     void setSvg(const QString &path)
