@@ -522,10 +522,14 @@ void DesktopCorona::checkActivities()
     }
 
     QStringList newActivities;
+    QString newCurrentActivity;
     QHash<QString,QString> invalidIds;
-    bool migrated = false;
-    //TODO take all the containments that currently have a screen, and merge them into one
-    //activity?
+    //migration checks:
+    //-containments with an invalid id are given a new one and kept together.
+    //-containments that claim they were on a screen are kept together, and are preferred if we
+    //need to initialize the current activity.
+    //-containments that don't know where they were or who they were with just get made into their
+    //own activity.
     foreach (Plasma::Containment *cont, containments()) {
         if ((cont->containmentType() == Plasma::Containment::DesktopContainment ||
              cont->containmentType() == Plasma::Containment::CustomContainment) &&
@@ -543,6 +547,13 @@ void DesktopCorona::checkActivities()
                     continue;
                 }
             }
+            if (cont->screen() > -1) {
+                //it belongs on the current activity
+                if (!newCurrentActivity.isEmpty()) {
+                    context->setCurrentActivityId(newCurrentActivity);
+                    continue;
+                }
+            }
             //discourage blank names
             if (context->currentActivity().isEmpty()) {
                 context->setCurrentActivity(i18n("unnamed"));
@@ -550,25 +561,43 @@ void DesktopCorona::checkActivities()
             //create a new activity for the containment
             QString id = m_activityController->addActivity(context->currentActivity());
             context->setCurrentActivityId(id);
-            invalidIds.insert(oldId, id);
             newActivities << id;
-            migrated = true;
+            if (!oldId.isEmpty()) {
+                invalidIds.insert(oldId, id);
+            }
+            if (cont->screen() > -1) {
+                newCurrentActivity = id;
+            }
             kDebug() << "migrated" << context->currentActivityId() << context->currentActivity();
         }
     }
 
-    kDebug() << "migrated?" << migrated << containments().count();
-    if (migrated) {
+    kDebug() << "migrated?" << !newActivities.isEmpty() << containments().count();
+    if (!newActivities.isEmpty()) {
         requestConfigSync();
     }
 
-    //init our list
+    //init the newbies
     foreach (const QString &id, newActivities) {
         activityAdded(id);
     }
-    if (existingActivities.isEmpty()) {
-        //ensure the current activity is initialized
-        m_activityController->setCurrentActivity(newActivities.first());
+
+    //ensure the current activity is initialized
+    if (m_activityController->currentActivity().isEmpty()) {
+        kDebug() << "guessing at current activity";
+        if (existingActivities.isEmpty()) {
+            if (newCurrentActivity.isEmpty()) {
+                if (newActivities.isEmpty()) {
+                    kDebug() << "no activities!?! can't happen!!!";
+                } else {
+                    m_activityController->setCurrentActivity(newActivities.first());
+                }
+            } else {
+                m_activityController->setCurrentActivity(newCurrentActivity);
+            }
+        } else {
+            m_activityController->setCurrentActivity(existingActivities.first());
+        }
     }
 }
 
