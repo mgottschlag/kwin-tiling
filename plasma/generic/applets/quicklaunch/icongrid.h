@@ -30,6 +30,9 @@
 // Plasma
 #include <Plasma/Plasma>
 
+// Own
+#include "itemdata.h"
+
 class QAction;
 class QEvent;
 class QGraphicsItem;
@@ -43,9 +46,9 @@ namespace Plasma {
 
 namespace Quicklaunch {
 
-class QuicklaunchIcon;
-class IconGridLayout;
 class DropMarker;
+class IconGridLayout;
+class QuicklaunchIcon;
 
 class IconGrid : public QGraphicsWidget
 {
@@ -71,12 +74,11 @@ public:
     int iconCount() const;
     int displayedItemCount() const;
 
-    void insert(int index, const KUrl &url);
+    void insert(int index, const ItemData &itemData);
+    void insert(int index, const QList<ItemData> &itemDataList);
     void removeAt(int index);
-    int indexOf(const KUrl &url, int from = 0) const;
-    KUrl iconAt(int index) const;
+    ItemData iconAt(int index) const;
     int iconIndexAtPosition(const QPointF& pos) const;
-    QList<KUrl> urls() const;
 
     bool eventFilter(QObject *watched, QEvent *event);
 
@@ -109,6 +111,7 @@ private Q_SLOTS:
 private:
     void initPlaceHolder();
     void deletePlaceHolder();
+    int determineDropMarkerIndex(const QPointF &localPos) const;
 
     QList<QuicklaunchIcon*> m_icons;
     bool m_iconNamesVisible;

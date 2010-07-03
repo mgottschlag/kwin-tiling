@@ -41,6 +41,8 @@ class QGraphicsLinearLayout;
 class QGraphicsSceneContextMenuEvent;
 class QPoint;
 
+class KConfigGroup;
+
 namespace Quicklaunch {
 
 class IconGrid;
@@ -83,7 +85,8 @@ private:
     void initDialog();
     void deleteDialog();
 
-    void migrateConfig();
+    void readConfig();
+    void migrateConfig(KConfigGroup &config);
 
     Ui::quicklaunchConfig uiConfig;
 

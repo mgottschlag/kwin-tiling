@@ -1,5 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Lukas Appelhans <l.appelhans@gmx.de>            *
+ *   Copyright (C) 2010 by Ingomar Wesp <ingomar@wesp.name>                *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -20,13 +21,14 @@
 #define QUICKLAUNCH_QUICKLAUNCHICON_H
 
 // KDE
-#include <KIcon>
 #include <KUrl>
 
 // Plasma
 #include <Plasma/IconWidget>
 
-class QAction;
+// Own
+#include "itemdata.h"
+
 class QGraphicsItem;
 
 namespace Quicklaunch {
@@ -36,14 +38,18 @@ class QuicklaunchIcon : public Plasma::IconWidget
     Q_OBJECT
 
 public:
-    QuicklaunchIcon(const KUrl &url, QGraphicsItem *parent = 0);
+    QuicklaunchIcon(const ItemData &data, QGraphicsItem *parent = 0);
 
     ~QuicklaunchIcon();
 
-    void clear();
-    void setUrl(const KUrl &url);
+    void setIconNameVisible(bool enable);
+    bool isIconNameVisible();
+
+    void setItemData(const ItemData &data);
+
+    ItemData itemData() const;
     KUrl url() const;
-    QString appName() const;
+
 
 public Q_SLOTS:
     void execute();
@@ -51,9 +57,8 @@ public Q_SLOTS:
     void toolTipHidden();
 
 private:
-    KUrl m_appUrl;
-    QString m_appName;
-    QString m_appGenericName;
+    ItemData m_itemData;
+    bool m_iconNameVisible;
 };
 }
 

@@ -50,6 +50,7 @@
 
 // Own
 #include "icongrid.h"
+#include "itemdata.h"
 
 using Plasma::Corona;
 
@@ -82,19 +83,6 @@ Quicklaunch::~Quicklaunch()
 
 void Quicklaunch::init()
 {
-    migrateConfig();
-
-    // Read config
-    KConfigGroup config = this->config();
-
-    const bool maxRowsOrColumnsForced = config.readEntry("maxRowsOrColumnsForced", false);
-    const int maxRowsOrColumns = config.readEntry("maxRowsOrColumns", 0);
-    const bool iconNamesVisible = config.readEntry("iconNamesVisible", false);
-    const bool dialogEnabled = config.readEntry("dialogEnabled", false);
-
-    QStringList icons = config.readEntry("icons", QStringList());
-    QStringList dialogIcons = config.readEntry("dialogIcons", QStringList());
-
     // Initialize outer layout
     m_layout = new QGraphicsLinearLayout();
     m_layout->setContentsMargins(2, 2, 2, 2);
@@ -102,47 +90,18 @@ void Quicklaunch::init()
 
     // Initialize icon grid
     m_primaryIconGrid = new IconGrid(formFactor());
-
-    m_primaryIconGrid->setMaxRowsOrColumnsForced(maxRowsOrColumnsForced);
-    m_primaryIconGrid->setMaxRowsOrColumns(maxRowsOrColumns);
-    m_primaryIconGrid->setIconNamesVisible(iconNamesVisible);
     m_primaryIconGrid->installEventFilter(this);
-    connect(m_primaryIconGrid, SIGNAL(iconsChanged()), SLOT(onIconsChanged()));
-    connect(m_primaryIconGrid, SIGNAL(displayedItemCountChanged()), SLOT(onDisplayedItemsChanged()));
 
     m_layout->addItem(m_primaryIconGrid);
     m_layout->setStretchFactor(m_primaryIconGrid, 1);
 
+    // Read config
+    readConfig();
+
+    connect(m_primaryIconGrid, SIGNAL(iconsChanged()), SLOT(onIconsChanged()));
+    connect(m_primaryIconGrid, SIGNAL(displayedItemCountChanged()), SLOT(onDisplayedItemsChanged()));
+
     setLayout(m_layout);
-
-    if (icons.isEmpty() && dialogIcons.isEmpty()) {
-        QStringList defaultApps;
-        defaultApps << "konqbrowser" << "dolphin" << "kopete";
-
-        Q_FOREACH (const QString &defaultApp, defaultApps) {
-            KService::Ptr service = KService::serviceByStorageId(defaultApp);
-            if (service && service->isValid()) {
-                QString path = service->entryPath();
-
-                if (!path.isEmpty() && QDir::isAbsolutePath(path)) {
-                    icons.append(path);
-                }
-            }
-        }
-    }
-
-
-    Q_FOREACH(QString icon, icons) {
-        m_primaryIconGrid->insert(-1, icon);
-    }
-
-    if (!dialogIcons.isEmpty() || dialogEnabled) {
-        initDialog();
-
-        Q_FOREACH(QString icon, dialogIcons) {
-            m_dialogIconGrid->insert(-1, icon);
-        }
-    }
 }
 
 void Quicklaunch::createConfigurationInterface(KConfigDialog *parent)
@@ -283,12 +242,12 @@ void Quicklaunch::onIconsChanged()
     QStringList dialogIcons;
 
     for (int i = 0; i < m_primaryIconGrid->iconCount(); i++) {
-        icons.append(m_primaryIconGrid->iconAt(i).prettyUrl());
+        icons.append(m_primaryIconGrid->iconAt(i).url().prettyUrl());
     }
 
     if (m_dialog) {
         for (int i = 0; i < m_dialogIconGrid->iconCount(); i++) {
-            dialogIcons.append(m_dialogIconGrid->iconAt(i).prettyUrl());
+            dialogIcons.append(m_dialogIconGrid->iconAt(i).url().prettyUrl());
         }
 
         if (m_dialog->isVisible()) {
@@ -456,7 +415,7 @@ void Quicklaunch::initDialog()
     m_dialogIconGrid->installEventFilter(this);
     connect(m_dialogIconGrid, SIGNAL(iconsChanged()), SLOT(onIconsChanged()));
     connect(m_dialogIconGrid, SIGNAL(displayedItemCountChanged()), SLOT(onDisplayedItemsChanged()));
-    connect(m_dialogIconGrid, SIGNAL(iconClicked()), this, SLOT(onDialogIconClicked()));
+    connect(m_dialogIconGrid, SIGNAL(iconClicked()), SLOT(onDialogIconClicked()));
 
     m_dialog->setGraphicsWidget(m_dialogIconGrid);
 
@@ -491,17 +450,71 @@ void Quicklaunch::deleteDialog()
     m_dialogArrow = 0;
 }
 
-void Quicklaunch::migrateConfig()
+void Quicklaunch::readConfig()
 {
     KConfigGroup config = this->config();
 
+    migrateConfig(config);
+
+    const bool maxRowsOrColumnsForced = config.readEntry("maxRowsOrColumnsForced", false);
+    const int maxRowsOrColumns = config.readEntry("maxRowsOrColumns", 0);
+    const bool iconNamesVisible = config.readEntry("iconNamesVisible", false);
+    const bool dialogEnabled = config.readEntry("dialogEnabled", false);
+
+    QList<ItemData> primaryItems;
+    QList<ItemData> dialogItems;
+
+    { // Read item lists
+        QStringList icons = config.readEntry("icons", QStringList());
+        QStringList dialogIcons = config.readEntry("dialogIcons", QStringList());
+
+        if (icons.isEmpty() && dialogIcons.isEmpty()) {
+            QStringList defaultApps;
+            defaultApps << "konqbrowser" << "dolphin" << "kopete";
+
+            Q_FOREACH (const QString &defaultApp, defaultApps) {
+                KService::Ptr service = KService::serviceByStorageId(defaultApp);
+                if (service && service->isValid()) {
+                    QString path = service->entryPath();
+
+                    if (!path.isEmpty() && QDir::isAbsolutePath(path)) {
+                        icons.append(path);
+                    }
+                }
+            }
+        }
+
+        Q_FOREACH(QString icon, icons) {
+            primaryItems.append(ItemData(icon));
+        }
+
+
+        Q_FOREACH(QString icon, dialogIcons) {
+            dialogItems.append(ItemData(icon));
+        }
+    }
+
+    m_primaryIconGrid->setMaxRowsOrColumnsForced(maxRowsOrColumnsForced);
+    m_primaryIconGrid->setMaxRowsOrColumns(maxRowsOrColumns);
+    m_primaryIconGrid->setIconNamesVisible(iconNamesVisible);
+
+    m_primaryIconGrid->insert(-1, primaryItems);
+
+    if (!dialogItems.isEmpty() || dialogEnabled) {
+        initDialog();
+        m_dialogIconGrid->insert(-1, dialogItems);
+    }
+}
+
+void Quicklaunch::migrateConfig(KConfigGroup &config)
+{
     if (config.hasKey("dialogIconSize") ||
         config.hasKey("iconSize") ||
         config.hasKey("iconUrls") ||
         config.hasKey("showIconNames") ||
         config.hasKey("visibleIcons")) {
 
-        // Migrate from KDE SC 4.4 config format
+        // Migrate from Quicklaunch 0.1 config format to 0.2 config format
         QStringList iconUrls = config.readEntry("iconUrls", QStringList());
 
         int visibleIcons =
@@ -532,7 +545,6 @@ void Quicklaunch::migrateConfig()
         config.writeEntry("iconNamesVisible", showIconNames);
     }
 }
-
 }
 
 #include "quicklaunch.moc"

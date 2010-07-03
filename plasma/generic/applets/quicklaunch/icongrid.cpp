@@ -54,8 +54,9 @@
 #include <math.h>
 
 // Own
-#include "quicklaunchicon.h"
 #include "icongridlayout.h"
+#include "itemdata.h"
+#include "quicklaunchicon.h"
 
 using Plasma::Theme;
 
@@ -65,9 +66,8 @@ class DropMarker : public QuicklaunchIcon {
 
 public:
     DropMarker(IconGrid *parent)
-        : QuicklaunchIcon(KUrl(), parent)
+        : QuicklaunchIcon(ItemData(), parent)
     {
-        setIcon(QIcon());
         setOwnedByLayout(false);
         hide();
     }
@@ -121,15 +121,10 @@ void IconGrid::setIconNamesVisible(bool enable)
         return;
     }
 
-    if (enable) {
-        Q_FOREACH (QuicklaunchIcon *icon, m_icons) {
-            icon->setText(icon->appName());
-        }
-    } else {
-        Q_FOREACH (QuicklaunchIcon *icon, m_icons) {
-            icon->setText(QString());
-        }
+    Q_FOREACH (QuicklaunchIcon *icon, m_icons) {
+        icon->setIconNameVisible(enable);
     }
+    m_dropMarker->setIconNameVisible(enable);
 
     m_iconNamesVisible = enable;
 }
@@ -189,8 +184,19 @@ int IconGrid::displayedItemCount() const
     return m_layout->count();
 }
 
-void IconGrid::insert(int index, const KUrl &url)
+void IconGrid::insert(int index, const ItemData &itemData)
 {
+    QList<ItemData> itemDataList;
+    itemDataList.append(itemData);
+    insert(index, itemDataList);
+}
+
+void IconGrid::insert(int index, const QList<ItemData> &itemDataList)
+{
+    if (itemDataList.size() == 0) {
+        return;
+    }
+
     if (m_icons.size() == 0 && m_placeHolder) {
         deletePlaceHolder();
         index = 0;
@@ -199,20 +205,23 @@ void IconGrid::insert(int index, const KUrl &url)
         index = m_icons.size();
     }
 
-    QuicklaunchIcon *icon = new QuicklaunchIcon(url, this);
-    icon->installEventFilter(this);
-    connect(icon, SIGNAL(clicked()), this, SIGNAL(iconClicked()));
+    Q_FOREACH(ItemData itemData, itemDataList) {
 
-    if (m_iconNamesVisible)
-        icon->setText(icon->appName());
+        QuicklaunchIcon *icon = new QuicklaunchIcon(itemData);
+        icon->setIconNameVisible(m_iconNamesVisible);
+        icon->installEventFilter(this);
+        connect(icon, SIGNAL(clicked()), this, SIGNAL(iconClicked()));
 
-    m_icons.insert(index, icon);
+        m_icons.insert(index, icon);
 
-    if (m_dropMarkerIndex != -1 && m_dropMarkerIndex <= index) {
-        m_layout->insertItem(index+1, icon);
-    }
-    else {
-        m_layout->insertItem(index, icon);
+        if (m_dropMarkerIndex != -1 && m_dropMarkerIndex <= index) {
+            m_layout->insertItem(index+1, icon);
+        }
+        else {
+            m_layout->insertItem(index, icon);
+        }
+
+        index++;
     }
 
     Q_EMIT iconsChanged();
@@ -238,23 +247,9 @@ void IconGrid::removeAt(int index)
     Q_EMIT displayedItemCountChanged();
 }
 
-int IconGrid::indexOf(const KUrl &url, int from) const
+ItemData IconGrid::iconAt(int index) const
 {
-    int index = -1;
-
-    for (int i = from; i < m_icons.size(); i++) {
-        if (m_icons.at(i)->url() == url) {
-            index = i;
-            break;
-        }
-    }
-
-    return index;
-}
-
-KUrl IconGrid::iconAt(int index) const
-{
-    return m_icons.at(index)->url();
+    return m_icons.at(index)->itemData();
 }
 
 int IconGrid::iconIndexAtPosition(const QPointF& pos) const
@@ -265,17 +260,6 @@ int IconGrid::iconIndexAtPosition(const QPointF& pos) const
         }
     }
     return -1;
-}
-
-QList<KUrl> IconGrid::urls() const
-{
-    QList<KUrl> urls;
-
-    Q_FOREACH(QuicklaunchIcon *icon, m_icons) {
-        urls.append(icon->url());
-    }
-
-    return urls;
 }
 
 bool IconGrid::eventFilter(QObject *watched, QEvent *event)
@@ -299,27 +283,24 @@ bool IconGrid::eventFilter(QObject *watched, QEvent *event)
             if ((m_mousePressedPos - mouseEvent->pos()).manhattanLength() >=
                     QApplication::startDragDistance()) {
 
-                QMimeData *mimeData = new QMimeData();
+                ItemData sourceData = quicklaunchIconSource->itemData();
 
-                QList<QUrl> urls;
-                urls.append(quicklaunchIconSource->url());
-                mimeData->setUrls(urls);
+                QMimeData *mimeData = new QMimeData();
+                sourceData.populateMimeData(mimeData);
 
                 QDrag *drag = new QDrag(mouseEvent->widget());
                 drag->setMimeData(mimeData);
                 drag->setPixmap(quicklaunchIconSource->icon().pixmap(16, 16));
 
-                KUrl iconUrl = quicklaunchIconSource->url();
                 int iconIndex = m_icons.indexOf(quicklaunchIconSource);
 
                 removeAt(iconIndex);
 
-                Qt::DropAction dropAction = drag->exec(
-                    Qt::MoveAction | Qt::CopyAction);
+                Qt::DropAction dropAction = drag->exec();
 
                 if (dropAction != Qt::MoveAction) {
                     // Restore the icon.
-                    insert(iconIndex, iconUrl);
+                    insert(iconIndex, sourceData);
                 }
                 return true;
             }
@@ -331,74 +312,81 @@ bool IconGrid::eventFilter(QObject *watched, QEvent *event)
 
 void IconGrid::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
-    dragMoveEvent(event);
+    Qt::DropAction proposedAction = event->proposedAction();
+
+    if (proposedAction != Qt::CopyAction && proposedAction != Qt::MoveAction) {
+
+        Qt::DropActions possibleActions = event->possibleActions();
+
+        if (possibleActions & Qt::CopyAction) {
+            event->setProposedAction(Qt::CopyAction);
+        }
+        else if (possibleActions & Qt::MoveAction) {
+            event->setProposedAction(Qt::MoveAction);
+        } else {
+            event->setAccepted(false);
+            return;
+        }
+    }
+
+    // Initialize drop marker
+    const QMimeData *mimeData = event->mimeData();
+
+    if (ItemData::canDecode(mimeData)) {
+        QList<ItemData> data = ItemData::fromMimeData(mimeData);
+
+        if (data.size() > 0) {
+
+            if (data.size() == 1) {
+                m_dropMarker->setItemData(data.at(0));
+            } else {
+                m_dropMarker->setItemData(ItemData());
+                m_dropMarker->setIcon("document-multiple");
+
+                if (m_iconNamesVisible) {
+                    m_dropMarker->setText(i18n("Multiple items"));
+                } else {
+                    m_dropMarker->setText(QString::null);
+                }
+            }
+
+            if (m_icons.size() != 0) {
+
+                m_dropMarkerIndex = determineDropMarkerIndex(
+                    mapFromScene(event->scenePos()));
+
+            } else {
+                deletePlaceHolder();
+                m_dropMarkerIndex = 0;
+            }
+
+            m_layout->insertItem(m_dropMarkerIndex, m_dropMarker);
+            m_dropMarker->show();
+
+            if (m_icons.size() != 0)
+                Q_EMIT displayedItemCountChanged();
+
+            event->accept();
+        } else {
+            event->setAccepted(false);
+            return;
+        }
+    } else {
+        event->setAccepted(false);
+        return;
+    }
 }
 
 void IconGrid::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 {
-    // Determine the new index of the drop marker.
-    const QPointF point = mapFromScene(event->scenePos());
+    Q_ASSERT(m_dropMarkerIndex != -1);
 
-    const int rowCount = m_layout->rowCount();
-    const int columnCount = m_layout->columnCount();
-
-    int row = 0;
-    while ((row + 1) < rowCount && point.y() > m_layout->itemAt(row + 1, 0)->geometry().top()) {
-        row++;
-    }
-
-    int col = 0;
-    while ((col + 1) < columnCount && point.x() > m_layout->itemAt(0, col + 1)->geometry().left()) {
-        col++;
-    }
-
-    bool dropMarkerAdded = false;
-
-    if (m_dropMarkerIndex == -1) {
-        // Initialize drop marker
-        const QMimeData *mimeData = event->mimeData();
-
-        if (!mimeData->hasUrls() || mimeData->urls().size() == 0) {
-            event->setAccepted(false);
-            return;
-        }
-
-        QList<QUrl> urls = mimeData->urls();
-
-        m_dropMarker->setUrl(urls.at(0));
-        if (m_iconNamesVisible) {
-            m_dropMarker->setText(m_dropMarker->appName());
-        }
-
-        dropMarkerAdded = true;
-        event->accept();
-    }
-
-    int newDropMarkerIndex;
-
-    if (dropMarkerAdded && m_icons.size() == 0) {
-        deletePlaceHolder();
-        newDropMarkerIndex = 0;
-    }
-    else {
-        newDropMarkerIndex = row * columnCount + col;
-
-        if (newDropMarkerIndex > m_icons.size())
-            newDropMarkerIndex = m_icons.size();
-    }
+    int newDropMarkerIndex =
+        determineDropMarkerIndex(mapFromScene(event->scenePos()));
 
     if (newDropMarkerIndex != m_dropMarkerIndex) {
-        if (dropMarkerAdded) {
-            m_layout->insertItem(newDropMarkerIndex, m_dropMarker);
-        } else {
-            m_layout->moveItem(m_dropMarkerIndex, newDropMarkerIndex);
-        }
-        m_dropMarker->show();
+        m_layout->moveItem(m_dropMarkerIndex, newDropMarkerIndex);
         m_dropMarkerIndex = newDropMarkerIndex;
-    }
-
-    if (dropMarkerAdded) {
-        Q_EMIT displayedItemCountChanged();
     }
 }
 
@@ -408,9 +396,9 @@ void IconGrid::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 
     if (m_dropMarkerIndex != -1) {
 
-        m_layout->removeAt(m_dropMarkerIndex);
         m_dropMarker->hide();
-        m_dropMarker->clear();
+        m_layout->removeAt(m_dropMarkerIndex);
+        m_dropMarker->setItemData(ItemData());
         m_dropMarkerIndex = -1;
 
         if (m_icons.size() == 0) {
@@ -427,17 +415,17 @@ void IconGrid::dropEvent(QGraphicsSceneDragDropEvent *event)
 
     if (dropIndex != -1) {
         m_dropMarker->hide();
-        m_dropMarker->clear();
         m_layout->removeAt(m_dropMarkerIndex);
+        m_dropMarker->setItemData(ItemData());
         m_dropMarkerIndex = -1;
     }
 
-    if (event->mimeData()->hasUrls()) {
+    const QMimeData *mimeData = event->mimeData();
 
-        QList<QUrl> urls = event->mimeData()->urls();
-        Q_ASSERT(urls.size() > 0);
+    if (ItemData::canDecode(mimeData)) {
 
-        insert(dropIndex, urls.at(0));
+        QList<ItemData> data = ItemData::fromMimeData(mimeData);
+        insert(dropIndex, data);
     }
 
     event->accept();
@@ -473,6 +461,34 @@ void IconGrid::deletePlaceHolder() {
 
     delete m_placeHolder;
     m_placeHolder = 0;
+}
+
+int IconGrid::determineDropMarkerIndex(const QPointF &localPos) const
+{
+    if (m_placeHolder) {
+        return 0;
+    }
+
+    // Determine the new index of the drop marker.
+    const int rowCount = m_layout->rowCount();
+    const int columnCount = m_layout->columnCount();
+
+    int row = 0;
+    while (row + 1 < rowCount && localPos.y() > m_layout->itemAt(row + 1, 0)->geometry().top()) {
+        row++;
+    }
+
+    int col = 0;
+    while (col + 1 < columnCount && localPos.x() > m_layout->itemAt(0, col + 1)->geometry().left()) {
+        col++;
+    }
+
+    int newDropMarkerIndex = row * columnCount + col;
+
+    if (newDropMarkerIndex > m_icons.size())
+        newDropMarkerIndex = m_icons.size();
+
+    return newDropMarkerIndex;
 }
 }
 

@@ -190,8 +190,6 @@ QGraphicsLayoutItem *IconGridLayout::itemAt(int index) const
 
 QGraphicsLayoutItem *IconGridLayout::itemAt(int row, int column) const
 {
-    // kDebug() << "Requested:" << row << column << ",rows" << m_rowCount << ",cols" << m_columnCount;
-    // kDebug() << "Item count " << count();
     return m_items[row * m_columnCount + column];
 }
 
@@ -242,7 +240,11 @@ void IconGridLayout::setGeometry(const QRectF &rect)
 QSizeF IconGridLayout::sizeHint(
     Qt::SizeHint which, const QSizeF &constraint) const
 {
-    return QSizeF();
+    if (which == Qt::PreferredSize) {
+        return m_preferredSize;
+    } else {
+        return QSizeF();
+    }
 }
 
 void IconGridLayout::updateGridParameters()
@@ -324,14 +326,12 @@ void IconGridLayout::updateGridParameters()
     int preferredHeight =
         m_rowCount * (qMax(minCellHeight, availableCellWidth) + m_cellSpacing) - m_cellSpacing;
 
-    setPreferredSize(QSizeF(preferredWidth, preferredHeight));
-}
+    // setPreferredSize(QSizeF(preferredWidth, preferredHeight));
+    if (preferredWidth != int(m_preferredSize.width()) ||
+        preferredHeight != int(m_preferredSize.height())) {
 
-void IconGridLayout::widgetEvent(QEvent *event)
-{
-    // kDebug() << event;
-    // invalidate();
-    QGraphicsLayout::widgetEvent(event);
+        m_preferredSize = QSizeF(preferredWidth, preferredHeight);
+        updateGeometry();
+    }
 }
 }
-

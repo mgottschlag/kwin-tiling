@@ -89,8 +89,6 @@ public:
     void setGeometry(const QRectF &rect);
     QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint = QSizeF()) const;
 
-    void widgetEvent(QEvent *event);
-
     static const int DEFAULT_CELL_SPACING;
 
     static const int MIN_CELL_SIZE_HINT;
@@ -111,6 +109,7 @@ private:
     int m_columnCount;
     int m_cellWidth;
     int m_cellHeight;
+    QSizeF m_preferredSize;
 };
 }
 

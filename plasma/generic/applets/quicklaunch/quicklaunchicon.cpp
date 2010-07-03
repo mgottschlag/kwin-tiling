@@ -1,5 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Lukas Appelhans <l.appelhans@gmx.de>            *
+ *   Copyright (C) 2010 by Ingomar Wesp <ingomar@wesp.name>                *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -23,29 +24,23 @@
 #include <QtGui/QGraphicsSceneDragDropEvent>
 
 // KDE
-#include <KDesktopFile>
-#include <KIcon>
-#include <KMimeType>
 #include <KRun>
-#include <KUrl>
 
 // Plasma
 #include <Plasma/ToolTipContent>
 #include <Plasma/ToolTipManager>
 
+// Own
+#include "itemdata.h"
+
 namespace Quicklaunch {
 
-QuicklaunchIcon::QuicklaunchIcon(const KUrl &url, QGraphicsItem *parent)
+QuicklaunchIcon::QuicklaunchIcon(const ItemData &data, QGraphicsItem *parent)
   : Plasma::IconWidget(parent),
-    m_appUrl(),
-    m_appName(),
-    m_appGenericName()
+    m_itemData(data),
+    m_iconNameVisible(false)
 {
-    if (!url.isEmpty()) {
-        setUrl(url);
-    } else {
-        setIcon(KIcon("unknown"));
-    }
+    setIcon(data.icon());
 
     Plasma::ToolTipManager::self()->registerWidget(this);
     connect(this, SIGNAL(clicked()), SLOT(execute()));
@@ -57,72 +52,53 @@ QuicklaunchIcon::~QuicklaunchIcon()
     Plasma::ToolTipManager::self()->unregisterWidget(this);
 }
 
-void QuicklaunchIcon::clear()
+void QuicklaunchIcon::setIconNameVisible(bool enable)
 {
-    m_appUrl.clear();
-    m_appName.clear();
-    m_appGenericName.clear();
-    setIcon(QIcon());
-    setText(QString());
+    if (enable) {
+        setText(m_itemData.name());
+    } else {
+        setText(QString::null);
+    }
 }
 
-void QuicklaunchIcon::setUrl(const KUrl &url)
+bool QuicklaunchIcon::isIconNameVisible()
 {
-    // Takes care of improperly escaped characters and resolves paths
-    // into file:/// URLs
-    KUrl newUrl(url.url());
+    return m_iconNameVisible;
+}
 
-    if (newUrl == m_appUrl) {
-        return;
+void QuicklaunchIcon::setItemData(const ItemData &data)
+{
+    setIcon(data.icon());
+    if (m_iconNameVisible) {
+        setText(data.name());
     }
 
-    m_appUrl = newUrl;
+    // TODO: Refresh tooltip content if currently visible
 
-    KIcon icon;
+    m_itemData = data;
+}
 
-    if (m_appUrl.isLocalFile() &&
-        KDesktopFile::isDesktopFile(m_appUrl.toLocalFile())) {
-        KDesktopFile f(m_appUrl.toLocalFile());
-
-        icon = KIcon(f.readIcon());
-        m_appName = f.readName();
-        m_appGenericName = f.readGenericName();
-    } else {
-        icon = KIcon(KMimeType::iconNameForUrl(m_appUrl));
-    }
-
-    if (m_appName.isNull()) {
-        m_appName = m_appUrl.fileName();
-    }
-
-    if (icon.isNull()) {
-        icon = KIcon("unknown");
-    }
-
-    setIcon(icon);
+ItemData QuicklaunchIcon::itemData() const
+{
+    return m_itemData;
 }
 
 KUrl QuicklaunchIcon::url() const
 {
-    return m_appUrl;
-}
-
-QString QuicklaunchIcon::appName() const
-{
-    return m_appName;
+    return m_itemData.url();
 }
 
 void QuicklaunchIcon::execute()
 {
-    new KRun(m_appUrl, 0);
+    new KRun(m_itemData.url(), 0);
 }
 
 void QuicklaunchIcon::toolTipAboutToShow()
 {
   Plasma::ToolTipContent toolTipContent;
-  toolTipContent.setMainText(m_appName);
-  toolTipContent.setSubText(m_appGenericName);
-  toolTipContent.setImage(icon());
+  toolTipContent.setMainText(m_itemData.name());
+  toolTipContent.setSubText(m_itemData.description());
+  toolTipContent.setImage(m_itemData.icon());
 
   Plasma::ToolTipManager::self()->setContent(this, toolTipContent);
 }
