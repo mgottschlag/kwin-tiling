@@ -7,6 +7,8 @@ add_definitions(-DQT_PLUGIN)
 
 include_directories( ${QIMAGEBLITZ_INCLUDES} )
 
+add_subdirectory(config)
+
 ########### next target ###############
 
 set(genembed_SRCS genembed.cpp )

@@ -1,5 +1,4 @@
 KDE4_NO_ENABLE_FINAL(styles)
-add_subdirectory( keramik )
 
 include_directories( ${QIMAGEBLITZ_INCLUDES} )
 
