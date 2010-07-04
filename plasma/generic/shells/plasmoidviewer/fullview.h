@@ -26,9 +26,9 @@
 #ifndef FULLVIEW_H
 #define FULLVIEW_H
 
-#define private public
+//#define private public
 #include <Plasma/Applet>
-#undef private
+//#undef private
 
 #include <Plasma/Corona>
 
