@@ -25,13 +25,13 @@
 #include <QDBusArgument>
 #include <QtDBus/QtDBus>
 
-#include "libs/solid/control/modemmanager.h"
-#include "libs/solid/control/modemmanagerinterface.h"
-#include "libs/solid/control/modemlocationinterface.h"
-#include "libs/solid/control/modemcdmainterface.h"
-#include "libs/solid/control/modemgsmcontactsinterface.h"
-#include "libs/solid/control/modemgsmnetworkinterface.h"
-#include "libs/solid/control/networkipv4config.h"
+#include <solid/control/modemmanager.h>
+#include <solid/control/modemmanagerinterface.h>
+#include <solid/control/modemlocationinterface.h>
+#include <solid/control/modemcdmainterface.h>
+#include <solid/control/modemgsmcontactsinterface.h>
+#include <solid/control/modemgsmnetworkinterface.h>
+#include <solid/control/networkipv4config.h>
 
 typedef Solid::Control::ModemLocationInterface::LocationInformationMap LocationInformationMap;
 typedef Solid::Control::ModemCdmaInterface::ServingSystemType ServingSystemType;

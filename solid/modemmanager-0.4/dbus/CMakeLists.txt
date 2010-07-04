@@ -12,6 +12,9 @@
 #      headers have already been included
 # Run do-hand-edits to update the diff of the interfaces vs what is generated; this speeds up regenerating them since you just have to apply the diff to make them compile
 
+include_directories(
+   ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs
+)
 
 set( INTERFACE_INTROSPECTION_XML_FILES
    introspection/mm-manager-client.xml
