@@ -115,6 +115,14 @@ QString WicdNetworkInterface::uni() const
     return d->name;
 }
 
+QString WicdNetworkInterface::udi() const
+{
+#ifdef __GNUC__
+#warning WicdNetworkInterface::udi() was found to not be implemented, this is just a make-it-compile implementation
+#endif
+    return QString::fromLatin1("SomeMadeupWicdUdi");
+}
+
 int WicdNetworkInterface::designSpeed() const
 {
     return 0;
