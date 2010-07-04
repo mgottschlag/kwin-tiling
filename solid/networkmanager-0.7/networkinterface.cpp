@@ -48,6 +48,7 @@ NMNetworkInterfacePrivate::NMNetworkInterfacePrivate( const QString & path, QObj
     interfaceName = deviceIface.interface();
     ipV4Address = deviceIface.ip4Address();    
     managed = deviceIface.managed();
+    udi = deviceIface.udi();
 
     //TODO set active connections based on active connection list on the manager; find out if
     //signal needed
@@ -119,6 +120,12 @@ void NMNetworkInterface::setDriver(const QVariant & driver)
 {
     Q_D(NMNetworkInterface);
     d->driver = driver.toString();
+}
+
+QString NMNetworkInterface::udi() const
+{
+    Q_D(const NMNetworkInterface);
+    return d->udi;
 }
 
 int NMNetworkInterface::ipV4Address() const

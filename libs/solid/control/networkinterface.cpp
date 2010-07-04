@@ -27,7 +27,9 @@
 Solid::Control::NetworkInterface::NetworkInterface(QObject *backendObject)
     : QObject(), d_ptr(new NetworkInterfacePrivate(this))
 {
-    Q_D(NetworkInterface); d->setBackendObject(backendObject); } 
+    Q_D(NetworkInterface); d->setBackendObject(backendObject);
+}
+
 Solid::Control::NetworkInterface::NetworkInterface(const NetworkInterface &other)
     : QObject(), d_ptr(new NetworkInterfacePrivate(this))
 {
@@ -61,6 +63,12 @@ QString Solid::Control::NetworkInterface::uni() const
 {
     Q_D(const NetworkInterface);
     return_SOLID_CALL(Ifaces::NetworkInterface *, d->backendObject(), QString(), uni());
+}
+
+QString Solid::Control::NetworkInterface::udi() const
+{
+    Q_D(const NetworkInterface);
+    return_SOLID_CALL(Ifaces::NetworkInterface *, d->backendObject(), QString(), udi());
 }
 
 QString Solid::Control::NetworkInterface::interfaceName() const

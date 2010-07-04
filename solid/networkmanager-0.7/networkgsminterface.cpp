@@ -25,13 +25,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkgsminterface_p.h"
 #include "manager.h"
 
+#include "solid/control/modemmanager.h"
+
 NMGsmNetworkInterfacePrivate::NMGsmNetworkInterfacePrivate(const QString & path, QObject * owner)
     : NMSerialNetworkInterfacePrivate(path, owner), gsmIface(NMNetworkManager::DBUS_SERVICE, path, QDBusConnection::systemBus())
 {
 }
 
 NMGsmNetworkInterface::NMGsmNetworkInterface(const QString & path, NMNetworkManager * manager, QObject * parent)
-    : NMSerialNetworkInterface(*new NMGsmNetworkInterfacePrivate(path, this), manager, parent)
+    : NMSerialNetworkInterface(*new NMGsmNetworkInterfacePrivate(path, this), manager, parent),
+      modemGsmCardIface(0), modemGsmNetworkIface(0)
 {
     Q_D(NMGsmNetworkInterface);
     connect( &d->gsmIface, SIGNAL(PropertiesChanged(const QVariantMap &)),
@@ -46,6 +49,44 @@ NMGsmNetworkInterface::~NMGsmNetworkInterface()
 void NMGsmNetworkInterface::gsmPropertiesChanged(const QVariantMap & changedProperties)
 {
     kDebug(1441) << changedProperties.keys();
+}
+
+Solid::Control::ModemGsmCardInterface * NMGsmNetworkInterface::getModemCardIface()
+{
+    if (modemGsmCardIface == 0) {
+        modemGsmCardIface = qobject_cast<Solid::Control::ModemGsmCardInterface*> (Solid::Control::ModemManager::findModemInterface(udi(), Solid::Control::ModemInterface::GsmCard));
+        connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(const QString &)), this, SLOT(modemRemoved(const QString &)));
+    }
+
+    return modemGsmCardIface;
+}
+
+Solid::Control::ModemGsmNetworkInterface * NMGsmNetworkInterface::getModemNetworkIface()
+{
+    if (modemGsmNetworkIface == 0) {
+        modemGsmNetworkIface = qobject_cast<Solid::Control::ModemGsmNetworkInterface*> (Solid::Control::ModemManager::findModemInterface(udi(), Solid::Control::ModemInterface::GsmNetwork));
+        connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(const QString &)), this, SLOT(modemRemoved(const QString &)));
+    }
+
+    return modemGsmNetworkIface;
+}
+
+void NMGsmNetworkInterface::modemRemoved(const QString & modemUdi)
+{
+    if (modemUdi == udi()) {
+        modemGsmNetworkIface = 0;
+        modemGsmCardIface = 0;
+    }
+}
+
+void NMGsmNetworkInterface::setModemCardIface(Solid::Control::ModemGsmCardInterface * iface)
+{
+    modemGsmCardIface = iface;
+}
+
+void NMGsmNetworkInterface::setModemNetworkIface(Solid::Control::ModemGsmNetworkInterface * iface)
+{
+    modemGsmNetworkIface = iface;
 }
 
 #include "networkgsminterface.moc"

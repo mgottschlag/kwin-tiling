@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=ServiceType
+X-KDE-ServiceType=SolidModemManager
+
+Comment=Modem Management Backend
+Comment[pt_BR]=Infraestrutura de gerenciamento de modem
+
+[PropertyDef::X-KDE-SolidBackendInfo-Version]
+Type=QString
+

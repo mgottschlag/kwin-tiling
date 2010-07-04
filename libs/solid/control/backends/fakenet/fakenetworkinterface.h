@@ -40,6 +40,7 @@ public:
                           QObject *parent = 0);
         virtual ~FakeNetworkInterface();
         QString uni() const;
+        QString udi() const;
         QString interfaceName() const;
         QString driver() const;
         bool isActive() const;

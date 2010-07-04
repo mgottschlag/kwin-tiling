@@ -45,8 +45,23 @@ namespace Ifaces
          * Destroys a GsmNetworkInterface object
          */
         virtual ~GsmNetworkInterface();
+
+        virtual Solid::Control::ModemGsmCardInterface * getModemCardIface() = 0;
+
+        virtual void setModemCardIface(Solid::Control::ModemGsmCardInterface * iface) = 0;
+
+        virtual Solid::Control::ModemGsmNetworkInterface * getModemNetworkIface() = 0;
+
+        virtual void setModemNetworkIface(Solid::Control::ModemGsmNetworkInterface * iface) = 0;
+
     protected:
     //Q_SIGNALS:
+        /**
+         * This signal is emitted when the network name of this network changes
+         *
+         * @param networkName the new network name
+         */
+        void networkNameChanged(const QString & networkName);
     };
 } //Ifaces
 } //Control

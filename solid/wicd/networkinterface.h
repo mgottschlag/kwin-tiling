@@ -40,6 +40,7 @@ public:
     virtual QString driver() const = 0;
     Solid::Control::IPv4Config ipV4Config() const;
     QString uni() const;
+    QString udi() const;
     virtual bool isActive() const = 0;
     virtual Solid::Control::NetworkInterface::Type type() const = 0;
     virtual Solid::Control::NetworkInterface::ConnectionState connectionState() const = 0;

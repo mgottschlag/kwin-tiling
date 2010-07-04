@@ -1,0 +1,35 @@
+--- mm-manager-clientinterface.h	2010-05-14 14:34:04.973155819 -0300
++++ ../mm-manager-clientinterface.h	2010-05-12 21:44:48.195535874 -0300
+@@ -8,8 +8,8 @@
+  * Do not edit! All changes made to it will be lost.
+  */
+ 
+-#ifndef MM-MANAGER-CLIENTINTERFACE_H_1273858444
+-#define MM-MANAGER-CLIENTINTERFACE_H_1273858444
++#ifndef MM_MANAGER_CLIENTINTERFACE_H
++#define MM_MANAGER_CLIENTINTERFACE_H
+ 
+ #include <QtCore/QObject>
+ #include <QtCore/QByteArray>
+--- mm-gsm-networkinterface.h	2010-05-14 14:33:50.903149393 -0300
++++ ../mm-gsm-networkinterface.h	2010-05-13 23:26:37.103659238 -0300
+@@ -8,8 +8,8 @@
+  * Do not edit! All changes made to it will be lost.
+  */
+ 
+-#ifndef MM-GSM-NETWORKINTERFACE_H_1273858430
+-#define MM-GSM-NETWORKINTERFACE_H_1273858430
++#ifndef MM_GSM_NETWORKINTERFACE_H
++#define MM_GSM_NETWORKINTERFACE_H
+ 
+ #include <QtCore/QObject>
+ #include <QtCore/QByteArray>
+@@ -20,6 +20,8 @@
+ #include <QtCore/QVariant>
+ #include <QtDBus/QtDBus>
+ 
++#include "generic-types.h"
++
+ /*
+  * Proxy class for interface org.freedesktop.ModemManager.Modem.Gsm.Network
+  */

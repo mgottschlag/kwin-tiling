@@ -34,6 +34,10 @@ if(NETWORKMANAGER_FOUND)
 endif (NETWORKMANAGER_FOUND)
 macro_log_feature(HAVE_NETWORKMANAGER "NetworkManager" "A daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager" FALSE "0.6.5" "Needed for building Network Management support in Solid.")
 
+message(STATUS "Will build modemmanager-0.4")
+set(HAVE_MODEMMANAGER TRUE)
+add_subdirectory(modemmanager-0.4)
+
 if(NOT WIN32)
   macro_optional_add_subdirectory(wicd)
   add_subdirectory(lirc)

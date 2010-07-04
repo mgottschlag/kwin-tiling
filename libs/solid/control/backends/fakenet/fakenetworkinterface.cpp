@@ -38,6 +38,11 @@ QString FakeNetworkInterface::uni() const
     return mPropertyMap["uni"].toString();
 }
 
+QString FakeNetworkInterface::udi() const
+{
+    return mPropertyMap["udi"].toString();
+}
+
 
 QString FakeNetworkInterface::interfaceName() const
 {

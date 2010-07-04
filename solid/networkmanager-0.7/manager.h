@@ -72,7 +72,6 @@ protected Q_SLOTS:
     void nameOwnerChanged(QString, QString, QString);
 private:
     static Solid::Networking::Status convertNMState(uint state);
-private:
     NMNetworkManagerPrivate * d_ptr;
 };
 

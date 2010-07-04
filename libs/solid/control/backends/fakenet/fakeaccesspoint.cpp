@@ -37,6 +37,10 @@ QString FakeAccessPoint::uni() const
     return mPropertyMap["uni"].toString();
 }
 
+QString FakeAccessPoint::udi() const
+{
+    return mPropertyMap["udi"].toString();
+}
 
 QString FakeAccessPoint::ssid() const
 {

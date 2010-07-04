@@ -130,6 +130,14 @@ namespace Control
         QString uni() const;
 
         /**
+         * Retrieves the Unique Device Identifier (UDI).
+         * This is needed for ModemManager support.
+         *
+         * @returns the Unique Device Identifier of the current device
+         */
+        QString udi() const;
+
+        /**
          * The system name for the network interface
          */
         QString interfaceName() const;

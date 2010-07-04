@@ -30,6 +30,17 @@ set(solidcontrol_LIB_SRCS
    remotecontrolbutton.cpp
    remotecontrol.cpp
    remotecontrolmanager.cpp
+   modemmanager.cpp
+   modemmanagerinterface.cpp
+   modeminterface.cpp
+   modemlocationinterface.cpp
+   modemcdmainterface.cpp
+   modemgsmcardinterface.cpp
+   modemgsmcontactsinterface.cpp
+   modemgsmnetworkinterface.cpp
+   modemgsmsmsinterface.cpp
+   modemgsmhsointerface.cpp
+   modemgsmussdinterface.cpp
 )
 
 # FIXME: this should be XRANDR_FOUND instead
@@ -53,13 +64,18 @@ configure_file(config-randr.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-randr.h )
 
 ########### install files ###############
 
-install( FILES solidpowermanager.desktop solidnetworkmanager.desktop solidbluetoothmanager.desktop solidremotecontrolmanager.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR}  )
+install( FILES solidpowermanager.desktop solidnetworkmanager.desktop solidbluetoothmanager.desktop solidremotecontrolmanager.desktop solidmodemmanager.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR}  )
 install( FILES powermanager.h networkmanager.h networkinterface.h remotecontrolmanager.h 
     remotecontrol.h remotecontrolbutton.h wirednetworkinterface.h wirelessnetworkinterface.h
     wirelessaccesspoint.h bluetoothmanager.h bluetoothinterface.h
     bluetoothremotedevice.h bluetoothinputdevice.h bluetoothsecurity.h
     singletondefs.h networking.h networkipv4config.h solid_control_export.h 
     networkcdmainterface.h networkgsminterface.h networkserialinterface.h
+    modemmanager.h modemmanagerinterface.h
+    modeminterface.h modemlocationinterface.h modemcdmainterface.h
+    modemgsmcardinterface.h modemgsmcontactsinterface.h
+    modemgsmnetworkinterface.h modemgsmsmsinterface.h
+    modemgsmhsointerface.h modemgsmussdinterface.h
     DESTINATION
 ${INCLUDE_INSTALL_DIR}/solid/control COMPONENT Devel)
 

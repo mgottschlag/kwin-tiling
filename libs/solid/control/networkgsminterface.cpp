@@ -18,12 +18,15 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <KLocale>
+
 #include "networkgsminterface.h"
 #include "networkgsminterface_p.h"
 
 #include "frontendobject_p.h"
 #include "soliddefs_p.h"
-#include "ifaces/wirelessaccesspoint.h"
+#include "ifaces/networkgsminterface.h"
+#include "ifaces/modemgsmnetworkinterface.h"
 
 Solid::Control::GsmNetworkInterface::GsmNetworkInterface(QObject *backendObject)
     : SerialNetworkInterface(*new GsmNetworkInterfacePrivate(this), backendObject)
@@ -60,6 +63,38 @@ Solid::Control::GsmNetworkInterface::~GsmNetworkInterface()
 Solid::Control::NetworkInterface::Type Solid::Control::GsmNetworkInterface::type() const
 {
     return Gsm;
+}
+
+Solid::Control::ModemGsmNetworkInterface * Solid::Control::GsmNetworkInterface::getModemNetworkIface()
+{
+    Q_D(const GsmNetworkInterface);
+    Ifaces::GsmNetworkInterface *t = qobject_cast<Ifaces::GsmNetworkInterface *>(d->backendObject());
+    if (t != 0)
+    {
+        return t->getModemNetworkIface();
+    }
+    return 0;
+}
+
+Solid::Control::ModemGsmCardInterface * Solid::Control::GsmNetworkInterface::getModemCardIface()
+{
+    Q_D(const GsmNetworkInterface);
+    Ifaces::GsmNetworkInterface *t = qobject_cast<Ifaces::GsmNetworkInterface *>(d->backendObject());
+    if (t != 0)
+    {
+        return t->getModemCardIface();
+    }
+    return 0;
+}
+
+void Solid::Control::GsmNetworkInterface::setModemNetworkIface(Solid::Control::ModemGsmNetworkInterface * iface)
+{
+    Q_D(const GsmNetworkInterface);
+    Ifaces::GsmNetworkInterface *t = qobject_cast<Ifaces::GsmNetworkInterface *>(d->backendObject());
+    if (t != 0)
+    {
+        t->setModemNetworkIface(iface);
+    }
 }
 
 void Solid::Control::GsmNetworkInterface::makeConnections(QObject * source)

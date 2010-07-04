@@ -36,6 +36,7 @@ public:
     FakeAccessPoint(const QMap<QString,QVariant> & propsMap, QObject * parent = 0 );
     ~FakeAccessPoint();
     QString uni() const;
+    QString udi() const;
     Solid::Control::AccessPoint::Capabilities capabilities() const;
     Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
     Solid::Control::AccessPoint::WpaFlags rsnFlags() const;

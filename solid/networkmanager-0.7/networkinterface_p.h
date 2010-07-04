@@ -34,6 +34,7 @@ public:
     Solid::Control::NetworkInterface::Capabilities capabilities;
     //bool isLinkUp;
     QString uni;
+    QString udi;
     int designSpeed;
     Solid::Control::NetworkInterface::ConnectionState connectionState;
     bool managed;

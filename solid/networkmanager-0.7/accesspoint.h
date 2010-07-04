@@ -37,6 +37,7 @@ public:
     virtual ~NMAccessPoint();
 
     QString uni() const;
+    QString udi() const;
     Solid::Control::AccessPoint::Capabilities capabilities() const;
     Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
     Solid::Control::AccessPoint::WpaFlags rsnFlags() const;

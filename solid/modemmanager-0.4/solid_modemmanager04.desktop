@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Service
+X-KDE-ServiceTypes=SolidModemManager
+X-KDE-Library=solid_modemmanager04
+InitialPreference=100
+Name=ModemManager 0.4
+Name[pt_BR]=ModemManager 0.4
+Comment=Network management using the ModemManager daemon, version 0.4
+Comment[pt_BR]=Gerenciamento de rede usando a versão 0.4 do serviço ModemManager
+Icon=phone

@@ -40,6 +40,7 @@ Q_PROPERTY(QString driver READ driver WRITE setDriver)
 Q_PROPERTY(QVariant genericCapabilities READ capabilitiesV WRITE setCapabilitiesV)
 Q_PROPERTY(int ipV4Address READ ipV4Address)
 Q_PROPERTY(bool managed READ managed WRITE setManaged)
+Q_PROPERTY(QString udi READ udi)
 
 //Q_PROPERTY(Solid::Control::IPv4Config ipV4Config READ ipV4Config WRITE setIpV4Config)
 Q_PROPERTY(Solid::Control::NetworkInterface::ConnectionState connectionState READ connectionState WRITE setConnectionState)
@@ -68,6 +69,7 @@ public:
     void setCapabilitiesV(const QVariant&);
     bool managed() const;
     void setManaged(const QVariant&);
+    QString udi() const;
 
 Q_SIGNALS:
     void ipDetailsChanged();

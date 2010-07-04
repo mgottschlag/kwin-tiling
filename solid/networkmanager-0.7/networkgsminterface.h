@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "networkserialinterface.h"
 #include "solid/control/ifaces/networkgsminterface.h"
+#include "solid/control/modemgsmnetworkinterface.h"
 
 #include "dbus/generic-types.h"
 
@@ -37,8 +38,16 @@ Q_INTERFACES(Solid::Control::Ifaces::GsmNetworkInterface)
 public:
     NMGsmNetworkInterface(const QString & path, NMNetworkManager * manager, QObject * parent);
     virtual ~NMGsmNetworkInterface();
+    Solid::Control::ModemGsmCardInterface * getModemCardIface();
+    void setModemCardIface(Solid::Control::ModemGsmCardInterface * iface);
+    Solid::Control::ModemGsmNetworkInterface * getModemNetworkIface();
+    void setModemNetworkIface(Solid::Control::ModemGsmNetworkInterface * iface);
 public Q_SLOTS:
     void gsmPropertiesChanged(const QVariantMap & changedProperties);
+    void modemRemoved(const QString & modemUdi);
+private:
+    Solid::Control::ModemGsmCardInterface *modemGsmCardIface;
+    Solid::Control::ModemGsmNetworkInterface *modemGsmNetworkIface;
 };
 
 #endif

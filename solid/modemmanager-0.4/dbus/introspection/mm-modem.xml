@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node name="/" xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
+
+  <interface name="org.freedesktop.ModemManager.Modem">
+    <method name="Enable">
+      <tp:docstring>
+        Enable the device. Initializes the modem.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_modem_enable"/>
+      <arg name="enable" type="b" direction="in">
+        <tp:docstring>
+          True to enable the device, False to disable.
+        </tp:docstring>
+      </arg>
+    </method>
+
+    <method name="Connect">
+      <tp:docstring>
+        Dial in.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_modem_connect"/>
+      <arg name="number" type="s" direction="in">
+        <tp:docstring>
+          The number to use for dialing.
+      </tp:docstring>
+      </arg>
+    </method>
+
+    <method name="Disconnect">
+      <tp:docstring>
+        Disconnect modem.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_modem_disconnect"/>
+    </method>
+
+    <method name="GetIP4Config">
+      <tp:docstring>
+        Request the IP4 configuration from the device.
+        Note that it'll only be supported for IPMethod Static.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_modem_get_ip4_config"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Ip4ConfigType"/>
+      <arg name="address" type="(uuuu)" direction="out" tp:type="Ip4ConfigType">
+        Structure containing IP4 address, DNS1, DNS2, DNS3.
+        The DNS list is padded with 0's if there's less than 3 DNS servers.
+      </arg>
+    </method>
+
+    <method name="GetInfo">
+      <tp:docstring>
+        Get the card information (manufacturer, modem, version).
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_modem_get_info"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="InfoType"/>
+      <arg name="info" type="(sss)" direction="out">
+        <tp:docstring>
+          Structure containing manufacturer, model, and version (revision) of the card.
+        </tp:docstring>
+      </arg>
+    </method>
+
+    <property name="Device" type="s" access="read">
+      <tp:docstring>
+        The modem port to use for IP configuration and traffic.
+      </tp:docstring>
+    </property>
+
+    <property name="MasterDevice" type="s" access="read">
+      <tp:docstring>
+        The physical modem device reference (ie, USB, PCI, PCMCIA device), which
+        may be dependent upon the operating system.  In Linux for example, this
+        points to a sysfs path of the usb_device object.
+      </tp:docstring>
+    </property>
+
+    <property name="Driver" type="s" access="read">
+      <tp:docstring>
+        The driver handling the device.
+      </tp:docstring>
+    </property>
+
+    <property name="Type" type="u" access="read" tp:type="Type">
+      <tp:docstring>
+        The modem type.
+      </tp:docstring>
+    </property>
+
+    <property name="Enabled" type="b" access="read">
+      <tp:docstring>
+        TRUE if the modem is enabled (ie, powered and usable), FALSE if it is disabled.
+      </tp:docstring>
+    </property>
+
+    <property name="UnlockRequired" type="s" access="read">
+      <tp:docstring>
+        Empty if the device is usable without an unlock code or has already
+        been unlocked. If the device needs to be unlocked before becoming usable this
+        property contains the specific unlock code required.  Valid unlock code values
+        are "" (blank), "sim-pin", "sim-puk", "ph-sim-pin", "ph-fsim-pin",
+        "ph-fsim-puk", "sim-pin2", "sim-puk2", "ph-net-pin", "ph-net-puk",
+        "ph-netsub-pin", "ph-netsub-puk", "ph-sp-pin", "ph-sp-puk", "ph-corp-pin", and
+        "ph-corp-puk".
+      </tp:docstring>
+    </property>
+
+    <property name="IpMethod" type="u" access="read" tp:type="Method">
+      <tp:docstring>
+        The IP configuration method.
+      </tp:docstring>
+    </property>
+
+    <tp:enum name="Type" type="u">
+      <tp:enumvalue suffix="GSM" value="1">
+        <tp:docstring>
+          A GSM device.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="CDMA" value="2">
+        <tp:docstring>
+          A CDMA device.
+        </tp:docstring>
+      </tp:enumvalue>
+    </tp:enum>
+
+    <tp:enum name="Method" type="u">
+      <tp:enumvalue suffix="PPP" value="0">
+        <tp:docstring>
+          Use PPP to get the address.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="STATIC" value="1">
+        <tp:docstring>
+          Static configuration, the modem will provide IP information.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="DHCP" value="2">
+        <tp:docstring>
+          Use DHCP
+        </tp:docstring>
+      </tp:enumvalue>
+    </tp:enum>
+
+  </interface>
+</node>

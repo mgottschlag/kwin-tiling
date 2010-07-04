@@ -53,6 +53,13 @@ namespace Ifaces
          */
         virtual QString uni() const = 0;
         /**
+         * Retrieves the Unique Device Identifier (UDI).
+         * This is needed for ModemManager support.
+         *
+         * @returns the Unique Device Identifier of the current device
+         */
+        virtual QString udi() const = 0;
+        /**
          * The system name for the network interface
          */
         virtual QString interfaceName() const = 0;

@@ -22,6 +22,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define SOLID_CONTROL_GSMNETWORKINTERFACE_H
 
 #include "networkserialinterface.h"
+#include "modemgsmcardinterface.h"
+#include "modemgsmnetworkinterface.h"
 
 namespace Solid
 {
@@ -63,7 +65,13 @@ namespace Control
          */
         virtual NetworkInterface::Type type() const;
 
-    Q_SIGNALS:
+        ModemGsmCardInterface * getModemCardIface();
+
+        void setModemCardIface(Solid::Control::ModemGsmCardInterface * iface);
+
+        ModemGsmNetworkInterface * getModemNetworkIface();
+
+        void setModemNetworkIface(Solid::Control::ModemGsmNetworkInterface * iface);
     protected:
         /**
          * @internal

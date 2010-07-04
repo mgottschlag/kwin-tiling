@@ -18,10 +18,22 @@ set(solidcontrolifaces_LIB_SRCS
    bluetoothmanager.cpp
    bluetoothsecurity.cpp
    remotecontrol.cpp
-   remotecontrolmanager.cpp )
+   remotecontrolmanager.cpp
+   modemmanager.cpp
+   modemmanagerinterface.cpp
+   modeminterface.cpp
+   modemlocationinterface.cpp
+   modemcdmainterface.cpp
+   modemgsmcardinterface.cpp
+   modemgsmcontactsinterface.cpp
+   modemgsmnetworkinterface.cpp
+   modemgsmsmsinterface.cpp
+   modemgsmhsointerface.cpp
+   modemgsmussdinterface.cpp )
 
 set(unused
    networkmanager.cpp
+   modemmanager.cpp
    network.cpp
    wirelessnetwork.cpp
    authentication.cpp
@@ -38,5 +50,5 @@ install(TARGETS solidcontrolifaces EXPORT kdeworkspaceLibraryTargets ${INSTALL_T
 
 ########### install files ###############
 
-install( FILES powermanager.h networkmanager.h networkinterface.h networkcdmainterface.h networkgsminterface.h networkserialinterface.h wirednetworkinterface.h wirelessnetworkinterface.h wirelessaccesspoint.h bluetoothremotedevice.h bluetoothinputdevice.h bluetoothinterface.h bluetoothmanager.h remotecontrol.h remotecontrolmanager.h DESTINATION ${INCLUDE_INSTALL_DIR}/solid/control/ifaces COMPONENT Devel)
+install( FILES powermanager.h networkmanager.h networkinterface.h networkcdmainterface.h networkgsminterface.h networkserialinterface.h wirednetworkinterface.h wirelessnetworkinterface.h wirelessaccesspoint.h bluetoothremotedevice.h bluetoothinputdevice.h bluetoothinterface.h bluetoothmanager.h remotecontrol.h remotecontrolmanager.h modemmanager.h modeminterface.h modemlocationinterface.h modemcdmainterface.h modemgsmcardinterface.h modemgsmcontactsinterface.h modemgsmnetworkinterface.h modemgsmsmsinterface.h modemgsmhsointerface.h modemgsmussdinterface.h DESTINATION ${INCLUDE_INSTALL_DIR}/solid/control/ifaces COMPONENT Devel)
 
