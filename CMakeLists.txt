@@ -28,6 +28,16 @@ if(Q_WS_X11)
   if(NOT X11_XTest_FOUND)
     macro_log_feature(X11_XTest_FOUND "libXtst" "X11 Testing Resource extension library" "http://xorg.freedesktop.org" FALSE "" "useful for automated testing of X clients.")
   endif(NOT X11_XTest_FOUND)
+  # Other X11 libraries that are used unconditionally elsewhere
+  # without testing if they are found. With these log messages
+  # you get a nice complaint about missing required packages
+  # before the CMake error list of unused variables.
+  if(NOT X11_Xkbfile_FOUND)
+    macro_log_feature(X11_Xkbfile_FOUND "libXkbfile" "X11 keyboard layout library" "http://xorg.freedesktop.org" TRUE "" "Needed for keyboard modules.")
+  endif(NOT X11_Xkbfile_FOUND)
+  if(NOT X11_Xcomposite_FOUND)
+    macro_log_feature(X11_Xcomposite_FOUND "libXcomposite" "X11 composite library" "http://xorg.freedesktop.org" TRUE "" "Needed for plasma tray and notifications.")
+  endif(NOT X11_Xcomposite_FOUND)
 endif(Q_WS_X11)
 
 macro_optional_find_package(GLIB2)
