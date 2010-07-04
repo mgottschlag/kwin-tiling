@@ -212,7 +212,7 @@ public:
 #endif
 
         m_shadow = new Plasma::FrameSvg(this);
-        connect(m_shadow, SIGNAL(repaintNeeded()), m_panel, SLOT(checkShadow()));
+        connect(m_shadow, SIGNAL(repaintNeeded()), m_panel, SLOT(checkShadow()), Qt::QueuedConnection);
     }
 
     void setSvg(const QString &path)
