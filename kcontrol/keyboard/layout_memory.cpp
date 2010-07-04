@@ -72,11 +72,11 @@ QString LayoutMemory::getCurrentMapKey() {
 		KWindowInfo winInfo = KWindowSystem::windowInfo(wid, NET::WMWindowType);
 		NET::WindowType windowType = winInfo.windowType( NET::NormalMask | NET::DesktopMask | NET::DialogMask );
 		kDebug() << "window type" << windowType;
-		// WTF? why the heck is our own popup menu has Unknown window type
-		if( windowType == NET::Unknown || windowType == NET::Desktop )
-			// these two types are know to be able to change layout: our popup from tray icon and applet on desktop
+
+		// we ignore desktop type so that our keybaord layout applet on desktop could change layout properly
+		if( windowType == NET::Desktop )
 			return previousLayoutMapKey;
-		if( windowType != NET::Normal && windowType != NET::Dialog )
+		if( windowType != NET::Unknown && windowType != NET::Normal && windowType != NET::Dialog )
 			return QString();
 
 		return QString::number(wid);
@@ -86,11 +86,11 @@ QString LayoutMemory::getCurrentMapKey() {
 		KWindowInfo winInfo = KWindowSystem::windowInfo(wid, NET::WMWindowType);
 		NET::WindowType windowType = winInfo.windowType( NET::NormalMask | NET::DesktopMask | NET::DialogMask );
 		kDebug() << "window type" << windowType;
-		// WTF? why the heck is our own popup menu has Unknown window type
-		if( windowType == NET::Unknown || windowType == NET::Desktop )
-			// these two types are know to be able to change layout: our popup from tray icon and applet on desktop
+
+		// we ignore desktop type so that our keybaord layout applet on desktop could change layout properly
+		if( windowType == NET::Desktop )
 			return previousLayoutMapKey;
-		if( windowType != NET::Normal && windowType != NET::Dialog )
+		if( windowType != NET::Unknown && windowType != NET::Normal && windowType != NET::Dialog )
 			return QString();
 
 //		KWindowInfo winInfo = KWindowSystem::windowInfo(wid, NET::WM2WindowClass);
