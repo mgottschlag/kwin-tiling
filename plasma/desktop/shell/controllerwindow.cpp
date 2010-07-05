@@ -305,10 +305,15 @@ void ControllerWindow::setLocation(const Plasma::Location &loc)
 
 QPoint ControllerWindow::positionForPanelGeometry(const QRect &panelGeom) const
 {
-    if (!m_containment) {
-        return QPoint(0,0);
+    int screen;
+    if (m_containment) {
+        screen = m_containment.data()->screen();
+    } else {
+        //guess
+        screen = Kephal::ScreenUtils::screenId(QCursor::pos());
     }
-    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(containment()->screen());
+
+    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(screen);
 
     switch (m_location) {
     case Plasma::LeftEdge:
