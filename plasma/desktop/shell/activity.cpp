@@ -279,7 +279,12 @@ void Activity::close()
     }
 }
 
-void Activity::insertContainment(Plasma::Containment* cont)
+void Activity::replaceContainment(Plasma::Containment* containment)
+{
+    insertContainment(containment, true);
+}
+
+void Activity::insertContainment(Plasma::Containment* cont, bool force)
 {
     int screen = cont->lastScreen();
     int desktop = cont->lastDesktop();
@@ -294,8 +299,7 @@ void Activity::insertContainment(Plasma::Containment* cont)
         kDebug() << "found a lost one";
         screen = 0;
     }
-    QPair<int,int> key(screen, desktop);
-    if (m_containments.contains(key)) {
+    if (!force && m_containments.contains(QPair<int,int>(screen, desktop))) {
         //this almost certainly means someone has been meddling where they shouldn't
         //but we should protect them from harm anyways
         kDebug() << "@!@!@!@!@!@@@@rejecting containment!!!";

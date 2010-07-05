@@ -1125,7 +1125,7 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
         Activity *activity = m_corona->activity(containment->context()->currentActivityId());
         Q_ASSERT(activity);
         connect(configDialog, SIGNAL(containmentPluginChanged(Plasma::Containment*)),
-                activity, SLOT(insertContainment(Plasma::Containment*)));
+                activity, SLOT(replaceContainment(Plasma::Containment*)));
         connect(configDialog, SIGNAL(destroyed(QObject*)), nullManager, SLOT(deleteLater()));
     }
 

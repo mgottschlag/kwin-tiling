@@ -110,13 +110,18 @@ public slots:
      */
     void open();
 
+    /**
+     * forcibly insert a containment, replacing the one on its screen/desktop
+     */
+    void replaceContainment(Plasma::Containment* containment);
+
 private slots:
     void updateActivityName(Plasma::Context *context);
     void containmentDestroyed(QObject *object);
 
 private:
     void activateContainment(int screen, int desktop);
-    void insertContainment(Plasma::Containment* cont);
+    void insertContainment(Plasma::Containment* cont, bool force=false);
     void insertContainment(Plasma::Containment* containment, int screen, int desktop);
     Plasma::Containment* addContainment(int screen, int desktop);
 
