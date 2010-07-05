@@ -3,7 +3,7 @@ Type=ServiceType
 X-KDE-ServiceType=SolidModemManager
 
 Comment=Modem Management Backend
-Comment[pt_BR]=Infraestrutura de gerenciamento de modem
+Comment[x-test]=xxModem Management Backendxx
 
 [PropertyDef::X-KDE-SolidBackendInfo-Version]
 Type=QString
