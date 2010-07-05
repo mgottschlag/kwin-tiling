@@ -782,7 +782,7 @@ Plasma::Corona* PlasmaApp::corona()
         KAction *activityAction = c->addAction("manage activities");
         connect(activityAction, SIGNAL(triggered()), this, SLOT(showActivityManager()));
         activityAction->setText(i18n("Activities..."));
-        activityAction->setIcon(KIcon("FIXME"));
+        activityAction->setIcon(KIcon("preferences-activities"));
         activityAction->setData(Plasma::AbstractToolBox::ConfigureTool);
         activityAction->setShortcut(KShortcut("alt+d, alt+a"));
         activityAction->setShortcutContext(Qt::ApplicationShortcut);
