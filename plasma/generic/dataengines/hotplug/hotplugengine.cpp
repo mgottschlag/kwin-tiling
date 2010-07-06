@@ -126,10 +126,14 @@ void HotplugEngine::updatePredicates(const QString &path)
 
         QStringList predicates = predicatesForDevice(device);
         if (!predicates.isEmpty()) {
-            Plasma::DataEngine::Data data;
-            data.insert("predicateFiles", predicates);
+            if (sources().contains(udi)) {
+                Plasma::DataEngine::Data data;
+                data.insert("predicateFiles", predicates);
 
-            setData(udi, data);
+                setData(udi, data);
+            } else {
+                onDeviceAdded(device, false);
+            }
         } else if (!m_encryptedPredicate.matches(device) && sources().contains(udi)) {
             removeSource(udi);
             scheduleSourcesUpdated();
