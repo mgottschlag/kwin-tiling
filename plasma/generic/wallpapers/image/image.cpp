@@ -31,6 +31,7 @@
 #include <Plasma/Theme>
 #include "backgroundlistmodel.h"
 #include "backgrounddelegate.h"
+#include "removebuttonmanager.h"
 #include "ksmserver_interface.h"
 
 K_EXPORT_PLASMA_WALLPAPER(image, Image)
@@ -147,6 +148,9 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
                                            QApplication::style()->pixelMetric(QStyle::PM_ScrollBarExtent) +
                                            QApplication::style()->pixelMetric(QStyle::PM_DefaultFrameWidth) * 2 + 7);
         m_uiImage.m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+
+        RemoveButtonManager *rmManager = new RemoveButtonManager(m_uiImage.m_view, &m_usersWallpapers);
+        connect(rmManager, SIGNAL(removeClicked(QString)), this, SLOT(removeWallpaper(QString)));
 
         m_uiImage.m_pictureUrlButton->setIcon(KIcon("document-open"));
         connect(m_uiImage.m_pictureUrlButton, SIGNAL(clicked()), this, SLOT(showFileDialog()));
@@ -657,6 +661,16 @@ void Image::setFadeValue(qreal value)
     p.end();
 
     emit update(boundingRect());
+}
+
+void Image::removeWallpaper(QString name)
+{
+    int wallpaperIndex = m_usersWallpapers.indexOf(name);
+    if (wallpaperIndex >= 0){
+        m_usersWallpapers.removeAt(wallpaperIndex);
+        m_model->reload(m_usersWallpapers);
+        emit settingsChanged(true);
+    }
 }
 
 #include "image.moc"

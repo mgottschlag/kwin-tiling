@@ -51,6 +51,7 @@ class Image : public Plasma::Wallpaper
         void settingsChanged(bool);
 
     protected slots:
+        void removeWallpaper(QString name);
         void timeChanged(const QTime& time);
         void positioningChanged(int index);
         void slotAddDir();
