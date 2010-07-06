@@ -118,7 +118,14 @@ namespace Kephal {
     }
 
     QRect ScreenUtils::desktopGeometry() {
-        return QApplication::desktop()->geometry();
+        //QApplication::desktop()->geometry() was used before, 
+        //but returns the wrong size just after a screen has been added
+        QRect desktopRect;
+        for(int i = 0; i < numScreens(); i++){
+            desktopRect |= screenGeometry(i);
+        }
+
+        return desktopRect;
     }
 
     int ScreenUtils::distance(const QRect & r, const QPoint & p) {
