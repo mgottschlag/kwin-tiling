@@ -130,7 +130,7 @@ void HotplugEngine::updatePredicates(const QString &path)
             data.insert("predicateFiles", predicates);
 
             setData(udi, data);
-        } else if (sources().contains(udi)) {
+        } else if (!m_encryptedPredicate.matches(device) && sources().contains(udi)) {
             removeSource(udi);
             scheduleSourcesUpdated();
         }
