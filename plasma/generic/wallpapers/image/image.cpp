@@ -663,14 +663,15 @@ void Image::setFadeValue(qreal value)
     emit update(boundingRect());
 }
 
-//FIXME: we have to save the configuration also when cancel is clicked.
+//FIXME: we have to save the configuration also when the dialog cancel button is clicked.
 void Image::removeWallpaper(QString name)
 {
     int wallpaperIndex = m_usersWallpapers.indexOf(name);
     if (wallpaperIndex >= 0){
         m_usersWallpapers.removeAt(wallpaperIndex);
         m_model->reload(m_usersWallpapers);
-        //TODO: save the configuration
+        //TODO: save the configuration in the right way
+	emit settingsChanged(true);
     }
 }
 
