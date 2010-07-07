@@ -144,7 +144,8 @@ Plasma::Containment* Activity::addContainment(int screen, int desktop)
         if ((c->containmentType() == Plasma::Containment::DesktopContainment ||
              c->containmentType() == Plasma::Containment::CustomContainment) &&
             !m_corona->offscreenWidgets().contains(c) &&
-            c->context()->currentActivityId().isEmpty()) {
+            c->context()->currentActivityId().isEmpty() &&
+            m_containments.key(c,QPair<int,int>(-2,-2)) == QPair<int,int>(-2,-2)) {
             containment = c;
             containment->setScreen(screen, desktop);
             break;
