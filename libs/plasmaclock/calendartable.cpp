@@ -397,7 +397,8 @@ void CalendarTable::setDate(const QDate &newDate)
     d->setDate(newDate);
 
     d->updateHoveredPainting(QPointF());
-
+    update(); //TODO: we have to redraw a smaller area
+    
     if (oldYear != d->selectedYear || oldMonth != d->selectedMonth) {
         populateHolidays();
         populateEvents();
