@@ -306,6 +306,8 @@ class CalendarTablePrivate
         QMultiHash<int, Plasma::DataEngine::Data> todos;
         QString eventsQuery;
 
+        QPointF lastSeenMousePos;
+
         Ui::calendarConfig calendarConfigUi;
 
         Plasma::Svg *svg;
@@ -396,8 +398,7 @@ void CalendarTable::setDate(const QDate &newDate)
     // now change the date
     d->setDate(newDate);
 
-    d->updateHoveredPainting(QPointF());
-    update(); //TODO: we have to redraw a smaller area
+    d->updateHoveredPainting(d->lastSeenMousePos);
     
     if (oldYear != d->selectedYear || oldMonth != d->selectedMonth) {
         populateHolidays();
@@ -738,6 +739,8 @@ void CalendarTable::wheelEvent(QGraphicsSceneWheelEvent * event)
 
 void CalendarTable::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    d->lastSeenMousePos = event->pos();
+  
     event->accept();
     QDate date = d->dateFromPoint(event->pos());
     setDate(date);
@@ -753,11 +756,15 @@ void CalendarTable::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
 
+    d->lastSeenMousePos = event->pos();
+    
     emit tableClicked();
 }
 
 void CalendarTable::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
+    d->lastSeenMousePos = event->pos();
+  
     d->updateHoveredPainting(event->pos());
 }
 
