@@ -182,7 +182,7 @@ void FilterBar::populateActivityMenu()
 
     //and finally, clone
     m_newActivityMenu->addSeparator();
-    QAction *action = new QAction(i18n("Clone current activity"), this);
+    QAction *action = new QAction(KIcon("edit-copy"), i18n("Clone current activity"), this);
     m_newActivityMenu->addAction(action);
 
     //TODO: add GHNS/local-install option
