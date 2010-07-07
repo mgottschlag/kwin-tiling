@@ -91,9 +91,9 @@ public Q_SLOTS:
     void populateAddPanelsMenu();
     void activateNextActivity();
     void activatePreviousActivity();
+    void evaluateScripts(const QStringList &scripts);
 
 protected Q_SLOTS:
-    void evaluateScripts(const QStringList &scripts);
     void screenAdded(Kephal::Screen *s);
     void saveDefaultSetup();
     void printScriptError(const QString &error);

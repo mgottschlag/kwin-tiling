@@ -19,6 +19,7 @@
  */
 
 #include "filterbar.h"
+#include "desktopcorona.h"
 #include "plasmaapp.h"
 
 #include <QGraphicsLinearLayout>
@@ -27,12 +28,18 @@
 #include <klineedit.h>
 #include <kmenu.h>
 #include <kpushbutton.h>
+#include <KServiceTypeTrader>
+#include <KStandardDirs>
 
 #include <plasma/theme.h>
 #include <plasma/corona.h>
 #include <plasma/widgets/lineedit.h>
 #include <plasma/widgets/pushbutton.h>
 #include <Plasma/TabBar>
+#include <Plasma/Package>
+
+#include <scripting/layouttemplatepackagestructure.h>
+#include "scripting/desktopscriptengine.h"
 
 FilterBar::FilterBar(Qt::Orientation orientation, QGraphicsItem *parent)
     : QGraphicsWidget(parent)
@@ -141,49 +148,44 @@ void FilterBar::populateActivityMenu()
         return;
     }
 
-    QAction *action = new QAction(i18n("Clone current activity"), this);
-    m_newActivityMenu->addAction(action);
+    //TODO sort alphabetically. see DesktopCorona::populateAddPanelsMenu
+    //except we can probably improve that by switching to kplugininfo beforehand
 
+    //regular plugins
     KPluginInfo::List plugins = Plasma::Containment::listContainmentsOfType("desktop");
     foreach (const KPluginInfo& info, plugins) {
         if (info.property("NoDisplay").toBool()) {
             continue;
         }
 
-        action = m_newActivityMenu->addAction(KIcon(info.icon()), info.name());
+        QAction *action = m_newActivityMenu->addAction(KIcon(info.icon()), info.name());
         action->setData(info.pluginName());
     }
 
-    /*TODO: populate with containment types + clone option
-    QSignalMapper *mapper = new QSignalMapper(this);
-    QObject::connect(mapper, SIGNAL(mapped(QString)), this, SLOT(createActivity(QString)));
-
-    QAction *action = new QAction(KIcon("applications-internet"),
-                                  i18n("Download New Plasma Widgets"), this);
-    QObject::connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
-    mapper->setMapping(action, QString());
-    m_newWidgetsMenu->addAction(action);
-
-    KService::List offers = KServiceTypeTrader::self()->query("Plasma/PackageStructure");
-    foreach (const KService::Ptr &service, offers) {
-        //kDebug() << service->property("X-Plasma-ProvidesWidgetBrowser");
-        if (service->property("X-Plasma-ProvidesWidgetBrowser").toBool()) {
-            QAction *action = new QAction(KIcon("applications-internet"),
-                                          i18nc("%1 is a type of widgets, as defined by "
-                                                "e.g. some plasma-packagestructure-*.desktop files",
-                                                "Download New %1", service->name()), this);
-            QObject::connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
-            mapper->setMapping(action, service->property("X-KDE-PluginInfo-Name").toString());
-            m_newWidgetsMenu->addAction(action);
+    //templates
+    const QString constraint = QString("[X-Plasma-Shell] == '%1' and 'desktop' ~in [X-Plasma-ContainmentCategories]")
+                                      .arg(KGlobal::mainComponent().componentName());
+    KService::List templates = KServiceTypeTrader::self()->query("Plasma/LayoutTemplate", constraint);
+    foreach (const KService::Ptr &service, templates) {
+        KPluginInfo info(service);
+        Plasma::PackageStructure::Ptr structure(new WorkspaceScripting::LayoutTemplatePackageStructure);
+        const QString path = KStandardDirs::locate("data", structure->defaultPackageRoot() + '/' + info.pluginName() + '/');
+        if (!path.isEmpty()) {
+            Plasma::Package package(path, structure);
+            const QString scriptFile = package.filePath("mainscript");
+            if (!scriptFile.isEmpty()) {
+                QAction *action = m_newActivityMenu->addAction(KIcon(info.icon()), info.name());
+                action->setData("plasma-desktop-template:" + scriptFile);
+            }
         }
     }
 
-    m_newWidgetsMenu->addSeparator();
+    //and finally, clone
+    m_newActivityMenu->addSeparator();
+    QAction *action = new QAction(i18n("Clone current activity"), this);
+    m_newActivityMenu->addAction(action);
 
-    action = new QAction(KIcon("package-x-generic"),
-                         i18n("Install Widget From Local File..."), this);
-    QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(openWidgetFile()));
-    */
+    //TODO: add GHNS/local-install option
 }
 
 void FilterBar::createActivity(QAction *action)
@@ -191,6 +193,13 @@ void FilterBar::createActivity(QAction *action)
     QString type = action->data().toString();
     if (type.isEmpty()) {
         PlasmaApp::self()->cloneCurrentActivity();
+    } else if (type.startsWith("plasma-desktop-template:")) {
+        DesktopCorona *corona = qobject_cast<DesktopCorona*>(scene());
+        if (corona) {
+            corona->evaluateScripts(QStringList() << type.right(type.length() - qstrlen("plasma-desktop-template:")));
+            //FIXME how are those scripts going to correctly create an activity and not just a
+            //containment?
+        }
     } else {
         PlasmaApp::self()->createActivity(type);
     }
