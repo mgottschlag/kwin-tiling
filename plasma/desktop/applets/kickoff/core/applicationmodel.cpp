@@ -112,6 +112,9 @@ public:
               allowSeparators(_allowSeparators)
     {
         systemApplications = Kickoff::systemApplicationList();
+        reloadTimer = new QTimer(qq);
+        reloadTimer->setSingleShot(true);
+        QObject::connect(reloadTimer, SIGNAL(timeout()), qq, SLOT(delayedReloadMenu()));
     }
 
     ~ApplicationModelPrivate()
@@ -130,6 +133,7 @@ public:
     QStringList systemApplications;
     DisplayOrder displayOrder;
     bool allowSeparators;
+    QTimer *reloadTimer;
 };
 
 void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
@@ -279,7 +283,6 @@ ApplicationModel::ApplicationModel(QObject *parent, bool allowSeparators)
     QDBusConnection::sessionBus().registerObject("/kickoff", this);
     dbus.connect(QString(), "/kickoff", "org.kde.plasma", "reloadMenu", this, SLOT(reloadMenu()));
     connect(KSycoca::self(), SIGNAL(databaseChanged(QStringList)), this, SLOT(checkSycocaChange(QStringList)));
-    d->fillNode(QString(), d->root);
 }
 
 ApplicationModel::~ApplicationModel()
@@ -496,6 +499,13 @@ void ApplicationModel::setPrimaryNamePolicy(PrimaryNamePolicy policy)
 ApplicationModel::PrimaryNamePolicy ApplicationModel::primaryNamePolicy() const
 {
     return d->primaryNamePolicy;
+}
+
+void ApplicationModel::delayedReloadMenu()
+{
+    if (!d->reloadTimer->isActive()) {
+        d->reloadTimer->start(200);
+    }
 }
 
 void ApplicationModel::reloadMenu()
