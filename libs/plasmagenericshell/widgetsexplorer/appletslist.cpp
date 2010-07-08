@@ -37,8 +37,8 @@ const int TOOLTIP_DISAPPEAR_DELAY = 300;
 
 using namespace KCategorizedItemsViewModels;
 
-AppletsListWidget::AppletsListWidget(Qt::Orientation orientation, QGraphicsItem *parent)
-    : AbstractIconList(orientation, parent)
+AppletsListWidget::AppletsListWidget(Plasma::Location location, QGraphicsItem *parent)
+    : AbstractIconList(location, parent)
 {
     toolTipMoveTimeLine.setFrameRange(0, 100);
     toolTipMoveTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
@@ -197,10 +197,10 @@ void AppletsListWidget::setToolTipPosition()
         toolTipMoveTo = QPoint(appletPosition.x(), appletPosition.y());
     }
 
-    if (orientation() == Qt::Horizontal) {
-        toolTipMoveFrom.setY(toolTipMoveTo.y());
-    } else {
+    if (location() == Plasma::LeftEdge || location() == Plasma::RightEdge) {
         toolTipMoveFrom.setX(toolTipMoveTo.x());
+    } else {
+        toolTipMoveFrom.setY(toolTipMoveTo.y());
     }
 
     m_toolTip->move(toolTipMoveTo);

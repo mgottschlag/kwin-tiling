@@ -27,6 +27,7 @@
 #include <QGraphicsLinearLayout>
 #include <QWeakPointer>
 
+#include <Plasma/Plasma>
 #include <Plasma/Svg>
 #include <plasma/widgets/toolbutton.h>
 
@@ -45,11 +46,11 @@ class PLASMAGENERICSHELL_EXPORT AbstractIconList : public QGraphicsWidget
     Q_OBJECT
 
 public:
-    AbstractIconList(Qt::Orientation orientation = Qt::Horizontal, QGraphicsItem *parent = 0);
+    AbstractIconList(Plasma::Location location = Plasma::BottomEdge, QGraphicsItem *parent = 0);
     ~AbstractIconList();
 
-    void setOrientation(Qt::Orientation orientation);
-    Qt::Orientation orientation();
+    void setLocation(Plasma::Location location);
+    Plasma::Location location();
 
     // default size of the icons
     void setIconSize(int size);
@@ -151,6 +152,7 @@ private:
     Plasma::Svg *m_arrowsSvg;
 
     Qt::Orientation m_orientation;
+    Plasma::Location m_location;
 
     Plasma::ItemBackground *m_hoverIndicator;
 

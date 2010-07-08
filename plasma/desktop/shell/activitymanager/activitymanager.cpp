@@ -81,7 +81,7 @@ void ActivityManagerPrivate::init(Qt::Orientation orient)
     mainLayout->setSpacing(0);
     filteringLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     filteringWidget = new FilterBar(orientation, q);
-    activityList = new ActivityList(orientation);
+    activityList = new ActivityList(containment->location());
     close = new Plasma::ToolButton;
     close->setIcon(KIcon("dialog-close"));
 
@@ -126,7 +126,7 @@ void ActivityManagerPrivate::setOrientation(Qt::Orientation orient)
 //FIXME bet I could make this more efficient
     orientation = orient;
     filteringWidget->setOrientation(orientation);
-    activityList->setOrientation(orientation);
+    activityList->setLocation(containment->location());
     if (orientation == Qt::Horizontal) {
         mainLayout->removeItem(filteringWidget);
         mainLayout->removeItem(close);

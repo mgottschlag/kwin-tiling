@@ -926,16 +926,14 @@ void PlasmaApp::showWidgetExplorer(Plasma::Containment *containment)
         m_widgetExplorerView->installEventFilter(this);
     }
 
-    const bool vert = m_controlBar->location() == Plasma::LeftEdge ||
-                      m_controlBar->location() == Plasma::RightEdge;
-    m_widgetExplorer->setOrientation(vert ? Qt::Vertical : Qt::Horizontal);
+    m_widgetExplorer->setLocation(m_controlBar->location());
 
-    if (m_widgetExplorer->orientation() == Qt::Horizontal) {
-        m_widgetExplorer->setMinimumWidth(m_mainView->size().width());
-        m_widgetExplorer->setMinimumHeight(-1);
-    } else {
+    if (m_widgetExplorer->location() == Plasma::LeftEdge || m_widgetExplorer->location() == Plasma::RightEdge) {
         m_widgetExplorer->setMinimumWidth(-1);
         m_widgetExplorer->setMinimumHeight(m_mainView->size().height());
+    } else {
+        m_widgetExplorer->setMinimumWidth(m_mainView->size().width());
+        m_widgetExplorer->setMinimumHeight(-1);
     }
 
     positionPanel();

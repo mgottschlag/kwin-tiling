@@ -134,7 +134,7 @@ void SaverView::showWidgetExplorer()
         ScreenSaverWidgetExplorer *widgetExplorer = new ScreenSaverWidgetExplorer(c);
         widgetExplorer->installEventFilter(this);
         widgetExplorer->setContainment(c);
-        widgetExplorer->setOrientation(Qt::Horizontal);
+        widgetExplorer->setLocation(Plasma::BottomEdge);
         widgetExplorer->setIconSize(KIconLoader::SizeHuge);
         widgetExplorer->populateWidgetList();
         widgetExplorer->setMaximumWidth(width());

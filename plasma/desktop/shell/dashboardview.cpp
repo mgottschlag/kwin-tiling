@@ -201,7 +201,7 @@ void DashboardView::showWidgetExplorer()
         m_widgetExplorer = widgetExplorer;
         widgetExplorer->installEventFilter(this);
         widgetExplorer->setContainment(c);
-        widgetExplorer->setOrientation(Qt::Horizontal);
+        widgetExplorer->setLocation(Plasma::BottomEdge);
         widgetExplorer->setIconSize(KIconLoader::SizeHuge);
         widgetExplorer->populateWidgetList();
         widgetExplorer->setMaximumWidth(width());

@@ -296,7 +296,7 @@ void ControllerWindow::setLocation(const Plasma::Location &loc)
         //FIXME maybe I should make these two inherit from something
         //or make orientation a slot.
         if (m_watchedWidget == (QGraphicsWidget*)m_widgetExplorer) {
-            m_widgetExplorer->setOrientation(orientation());
+            m_widgetExplorer->setLocation(location());
         } else {
             m_activityManager->setOrientation(orientation());
         }
@@ -354,7 +354,7 @@ void ControllerWindow::showWidgetExplorer()
     }
 
     if (!m_widgetExplorer) {
-        m_widgetExplorer = new Plasma::WidgetExplorer(orientation());
+        m_widgetExplorer = new Plasma::WidgetExplorer(location());
         m_watchedWidget = m_widgetExplorer;
         m_widgetExplorer->setContainment(m_containment.data());
         m_widgetExplorer->populateWidgetList();
@@ -375,7 +375,7 @@ void ControllerWindow::showWidgetExplorer()
 
         connect(m_widgetExplorer, SIGNAL(closeClicked()), this, SLOT(close()));
     } else {
-        m_widgetExplorer->setOrientation(orientation());
+        m_widgetExplorer->setLocation(location());
         m_widgetExplorer->show();
         m_watchedWidget = m_widgetExplorer;
         setGraphicsWidget(m_widgetExplorer);

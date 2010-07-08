@@ -68,10 +68,10 @@ public:
     }
 
     void initFilters();
-    void init(Qt::Orientation orientation);
+    void init(Plasma::Location loc);
     void initRunningApplets();
     void containmentDestroyed();
-    void setOrientation(Qt::Orientation orientation);
+    void setLocation(Plasma::Location loc);
 
     /**
      * Tracks a new running applet
@@ -83,7 +83,9 @@ public:
      */
     void appletRemoved(Plasma::Applet *applet);
 
+    //this orientation is just for convenience, is the location that is important
     Qt::Orientation orientation;
+    Plasma::Location location;
     WidgetExplorer *q;
     Plasma::ToolButton *close;
     QString application;
@@ -142,15 +144,16 @@ void WidgetExplorerPrivate::initFilters()
     appletsListWidget->setFilterModel(&filterModel);
 }
 
-void WidgetExplorerPrivate::init(Qt::Orientation orient)
+void WidgetExplorerPrivate::init(Plasma::Location loc)
 {
     //init widgets
-    orientation = orient;
+    location = loc;
+    orientation = ((location == Plasma::LeftEdge || location == Plasma::RightEdge)?Qt::Vertical:Qt::Horizontal);
     mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
     mainLayout->setSpacing(0);
     filteringLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     filteringWidget = new FilteringWidget(orientation, q);
-    appletsListWidget = new AppletsListWidget(orientation);
+    appletsListWidget = new AppletsListWidget(location);
     close = new Plasma::ToolButton;
     close->setIcon(KIcon("dialog-close"));
 
@@ -188,15 +191,16 @@ void WidgetExplorerPrivate::init(Qt::Orientation orient)
     q->setLayout(mainLayout);
 }
 
-void WidgetExplorerPrivate::setOrientation(Qt::Orientation orient)
+void WidgetExplorerPrivate::setLocation(Plasma::Location loc)
 {
-    if (orientation == orient) {
+    if (location == loc) {
         return;
     }
 
-    orientation = orient;
+    location = loc;
+    orientation = ((location == Plasma::LeftEdge || location == Plasma::RightEdge)?Qt::Vertical:Qt::Horizontal);
     filteringWidget->setListOrientation(orientation);
-    appletsListWidget->setOrientation(orientation);
+    appletsListWidget->setLocation(loc);
     if (orientation == Qt::Horizontal) {
         mainLayout->removeItem(filteringWidget);
         mainLayout->removeItem(close);
@@ -281,18 +285,18 @@ void WidgetExplorerPrivate::appletRemoved(Plasma::Applet *applet)
 
 //WidgetExplorer
 
-WidgetExplorer::WidgetExplorer(Qt::Orientation orientation, QGraphicsItem *parent)
+WidgetExplorer::WidgetExplorer(Plasma::Location loc, QGraphicsItem *parent)
         :QGraphicsWidget(parent),
         d(new WidgetExplorerPrivate(this))
 {
-    d->init(orientation);
+    d->init(loc);
 }
 
 WidgetExplorer::WidgetExplorer(QGraphicsItem *parent)
         :QGraphicsWidget(parent),
         d(new WidgetExplorerPrivate(this))
 {
-    d->init(Qt::Horizontal);
+    d->init(Plasma::BottomEdge);
 }
 
 WidgetExplorer::~WidgetExplorer()
@@ -300,15 +304,15 @@ WidgetExplorer::~WidgetExplorer()
      delete d;
 }
 
-void WidgetExplorer::setOrientation(Qt::Orientation orientation)
+void WidgetExplorer::setLocation(Plasma::Location loc)
 {
-    d->setOrientation(orientation);
-    emit(orientationChanged(orientation));
+    d->setLocation(loc);
+    emit(locationChanged(loc));
 }
 
-Qt::Orientation WidgetExplorer::orientation()
+Plasma::Location WidgetExplorer::location()
 {
-    return d->orientation;
+    return d->location;
 }
 
 void WidgetExplorer::setIconSize(int size)
@@ -352,6 +356,8 @@ void WidgetExplorer::setContainment(Plasma::Containment *containment)
         if (d->containment) {
             connect(d->containment, SIGNAL(destroyed(QObject*)), this, SLOT(containmentDestroyed()));
             connect(d->containment, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)), this, SLOT(immutabilityChanged(Plasma::ImmutabilityType)));
+
+            setLocation(containment->location());
         }
 
         d->initRunningApplets();

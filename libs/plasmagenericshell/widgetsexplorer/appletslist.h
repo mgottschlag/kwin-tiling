@@ -37,7 +37,7 @@ class AppletsListWidget : public Plasma::AbstractIconList
     Q_OBJECT
 
 public:
-    AppletsListWidget(Qt::Orientation orientation = Qt::Horizontal, QGraphicsItem *parent = 0);
+    AppletsListWidget(Plasma::Location location = Plasma::BottomEdge, QGraphicsItem *parent = 0);
     ~AppletsListWidget();
 
     //not used yet and probably never will be

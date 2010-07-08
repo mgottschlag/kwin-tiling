@@ -36,7 +36,7 @@ class ActivityList : public Plasma::AbstractIconList
     Q_OBJECT
 
 public:
-    ActivityList(Qt::Orientation orientation = Qt::Horizontal, QGraphicsItem *parent = 0);
+    ActivityList(Plasma::Location location = Plasma::BottomEdge, QGraphicsItem *parent = 0);
     ~ActivityList();
 
 protected:

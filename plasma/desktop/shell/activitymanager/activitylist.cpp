@@ -28,8 +28,8 @@
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 
-ActivityList::ActivityList(Qt::Orientation orientation, QGraphicsItem *parent)
-    : AbstractIconList(orientation, parent),
+ActivityList::ActivityList(Plasma::Location location, QGraphicsItem *parent)
+    : AbstractIconList(location, parent),
       m_activityController(new KActivityController(this))
 {
     QStringList activities = m_activityController->availableActivities();

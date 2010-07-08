@@ -47,7 +47,7 @@ class PLASMAGENERICSHELL_EXPORT WidgetExplorer : public QGraphicsWidget
     Q_OBJECT
 
 public:
-    explicit WidgetExplorer(Qt::Orientation orientation, QGraphicsItem *parent = 0);
+    explicit WidgetExplorer(Plasma::Location loc, QGraphicsItem *parent = 0);
     explicit WidgetExplorer(QGraphicsItem *parent = 0);
     ~WidgetExplorer();
 
@@ -79,16 +79,16 @@ public:
     Plasma::Corona *corona() const;
 
     /**
-     * Set the orientation of the widget explorer
+     * Set the location of the widget explorer
      *
-     * @arg the new orientation
+     * @arg the new location
      */
-    void setOrientation(Qt::Orientation orientation);
+    void setLocation(Plasma::Location loc);
 
     /**
-     * @return the orientation of the widget explorer
+     * @return the location of the widget explorer
      */
-    Qt::Orientation orientation();
+    Plasma::Location location();
 
     /**
      * Sets the icon size for the widget explorer
@@ -101,7 +101,7 @@ public:
     int iconSize() const;
 
 Q_SIGNALS:
-    void orientationChanged(Qt::Orientation orientation);
+    void locationChanged(Plasma::Location loc);
     void closeClicked();
 
 public Q_SLOTS:

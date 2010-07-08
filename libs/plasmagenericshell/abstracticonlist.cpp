@@ -47,7 +47,7 @@ const int SCROLL_STEP_DURATION = 300;
 namespace Plasma
 {
 
-AbstractIconList::AbstractIconList(Qt::Orientation orientation, QGraphicsItem *parent)
+AbstractIconList::AbstractIconList(Plasma::Location loc, QGraphicsItem *parent)
     : QGraphicsWidget(parent),
       m_arrowsSvg(new Plasma::Svg(this)),
       m_searchDelayTimer(new QTimer(this)),
@@ -57,7 +57,8 @@ AbstractIconList::AbstractIconList(Qt::Orientation orientation, QGraphicsItem *p
     m_scrollStep = 0;
     m_firstItemIndex = 0;
     m_selectedItem = 0;
-    m_orientation = orientation;
+    m_location = loc;
+    m_orientation = ((loc == Plasma::LeftEdge || loc == Plasma::RightEdge)?Qt::Vertical:Qt::Horizontal);
 
     //timer stuff
     m_searchDelayTimer->setSingleShot(true);
@@ -182,14 +183,18 @@ bool AbstractIconList::eventFilter(QObject *obj, QEvent *event)
     return QObject::eventFilter(obj, event);
 }
 
-Qt::Orientation AbstractIconList::orientation()
+Plasma::Location AbstractIconList::location()
 {
-    return m_orientation;
+    return m_location;
 }
 
-void AbstractIconList::setOrientation(Qt::Orientation orientation)
+void AbstractIconList::setLocation(Plasma::Location location)
 {
-    m_orientation = orientation;
+    if (m_location == location) {
+        return;
+    }
+
+    m_orientation = ((location == Plasma::LeftEdge || location == Plasma::RightEdge)?Qt::Vertical:Qt::Horizontal);
 
     m_appletListLinearLayout->invalidate();
     m_appletListLinearLayout->setOrientation(m_orientation);
