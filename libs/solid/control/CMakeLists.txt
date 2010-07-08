@@ -22,11 +22,6 @@ set(solidcontrol_LIB_SRCS
    wirednetworkinterface.cpp
    wirelessaccesspoint.cpp
    wirelessnetworkinterface.cpp
-   bluetoothinterface.cpp
-   bluetoothmanager.cpp
-   bluetoothremotedevice.cpp
-   bluetoothinputdevice.cpp
-   bluetoothsecurity.cpp
    remotecontrolbutton.cpp
    remotecontrol.cpp
    remotecontrolmanager.cpp
@@ -64,12 +59,10 @@ configure_file(config-randr.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-randr.h )
 
 ########### install files ###############
 
-install( FILES solidpowermanager.desktop solidnetworkmanager.desktop solidbluetoothmanager.desktop solidremotecontrolmanager.desktop solidmodemmanager.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR}  )
+install( FILES solidpowermanager.desktop solidnetworkmanager.desktop solidremotecontrolmanager.desktop solidmodemmanager.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR}  )
 install( FILES powermanager.h networkmanager.h networkinterface.h remotecontrolmanager.h 
     remotecontrol.h remotecontrolbutton.h wirednetworkinterface.h wirelessnetworkinterface.h
-    wirelessaccesspoint.h bluetoothmanager.h bluetoothinterface.h
-    bluetoothremotedevice.h bluetoothinputdevice.h bluetoothsecurity.h
-    singletondefs.h networking.h networkipv4config.h solid_control_export.h 
+    wirelessaccesspoint.h singletondefs.h networking.h networkipv4config.h solid_control_export.h 
     networkcdmainterface.h networkgsminterface.h networkserialinterface.h
     modemmanager.h modemmanagerinterface.h
     modeminterface.h modemlocationinterface.h modemcdmainterface.h
