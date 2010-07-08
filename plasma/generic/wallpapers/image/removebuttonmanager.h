@@ -43,7 +43,7 @@ class RemoveButtonManager : public QObject
 public:
     RemoveButtonManager(QAbstractItemView* parent, QStringList *list);
     virtual ~RemoveButtonManager();
-    
+
 signals:
     /** Is emitted if the selection has been changed by the removeButton button. */
     void selectionChanged();
@@ -54,7 +54,7 @@ private slots:
     void slotViewportEntered();
     void slotRowsRemoved(const QModelIndex& parent, int start, int end);
     void removeButtonClicked();
-    
+
 private:
     const QModelIndex indexForUrl(const KUrl& url) const;
 
