@@ -137,8 +137,8 @@ void AbstractIconList::init()
     //layouts
     m_arrowsLayout = new QGraphicsLinearLayout(m_orientation);
 
-    m_arrowsLayout->addItem(m_upLeftArrow);
     m_arrowsLayout->addItem(m_appletListWindowWidget);
+    m_arrowsLayout->addItem(m_upLeftArrow);
     m_arrowsLayout->addItem(m_downRightArrow);
 
     m_arrowsLayout->setAlignment(m_downRightArrow, Qt::AlignVCenter | Qt::AlignHCenter);

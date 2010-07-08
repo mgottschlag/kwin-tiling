@@ -25,6 +25,9 @@
 #include "plasmagenericshell_export.h"
 
 namespace Plasma {
+
+class FrameSvg;
+
 class PLASMAGENERICSHELL_EXPORT AbstractIcon : public QGraphicsWidget
 {
     Q_OBJECT
@@ -74,12 +77,14 @@ class PLASMAGENERICSHELL_EXPORT AbstractIcon : public QGraphicsWidget
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
         void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
         void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+        void resizeEvent(QGraphicsSceneResizeEvent *);
         QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const;
 
         bool isDraggable() const;
         void setDraggable(bool draggable);
 
     private:
+        Plasma::FrameSvg *m_background;
         QString m_name;
         int m_iconHeight;
         QSizeF m_maxSize;

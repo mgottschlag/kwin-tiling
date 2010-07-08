@@ -24,12 +24,14 @@
 #include <QCursor>
 #include <QFontMetrics>
 #include <QGraphicsSceneMouseEvent>
+#include <QStyleOptionGraphicsItem>
 #include <QPainter>
 
 #include <KIconLoader>
 #include <KIcon>
 #include <KGlobalSettings>
 
+#include <Plasma/FrameSvg>
 #include <Plasma/Theme>
 #include <Plasma/PaintUtils>
 #include <QWidget>
@@ -46,10 +48,20 @@ AbstractIcon::AbstractIcon(QGraphicsItem *parent)
 {
     setCacheMode(DeviceCoordinateCache);
     setAcceptHoverEvents(true);
+    m_background = new Plasma::FrameSvg(this);
+    m_background->setImagePath("widgets/background");
 }
 
 AbstractIcon::~AbstractIcon()
 {
+}
+
+void AbstractIcon::resizeEvent(QGraphicsSceneResizeEvent *)
+{
+    m_background->resizeFrame(size());
+    qreal l, t, r, b;
+    m_background->getMargins(l, t, r, b);
+    setContentsMargins(l, t, r, b);
 }
 
 QSizeF AbstractIcon::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
@@ -202,12 +214,14 @@ void AbstractIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
+    m_background->paintFrame(painter, option->rect, option->rect);
     const QRectF rect = contentsRect();
     const int width = rect.width();
     const int height = rect.height();
 
-    QRect iconRect(rect.x() + qMax(0, (width / 2) - (m_iconHeight / 2)), rect.y(), m_iconHeight, m_iconHeight);
-    QRectF textRect(rect.x(), iconRect.bottom() + 2, width, height - iconRect.height() - 2);
+    QRectF textRect(rect.x(), rect.y(), width, height - m_iconHeight - 2);
+    QRect iconRect(rect.x() + qMax(0, (width / 2) - (m_iconHeight / 2)), textRect.bottom() + 2, m_iconHeight, m_iconHeight);
+    //QRectF textRect(rect.x(), iconRect.bottom() + 2, width, height - iconRect.height() - 2);
 
     painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
     painter->setFont(font());

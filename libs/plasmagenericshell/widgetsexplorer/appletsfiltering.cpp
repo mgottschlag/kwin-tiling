@@ -19,6 +19,8 @@
 
 #include "appletsfiltering.h"
 
+#include <QMenu>
+
 #include <kglobalsettings.h>
 #include <klineedit.h>
 #include <kmenu.h>
@@ -90,25 +92,45 @@ void FilteringTreeView::filterChanged(const QModelIndex & index)
 //FilteringTabs
 
 FilteringTabs::FilteringTabs(QGraphicsWidget *parent)
-    : Plasma::TabBar(parent),
+    : Plasma::PushButton(parent),
       m_model(0)
 {
-    setAttribute(Qt::WA_NoSystemBackground);
-    nativeWidget()->setUsesScrollButtons(true);
-    connect(this, SIGNAL(currentChanged(int)), this, SIGNAL(filterChanged(int)));
+//    setAttribute(Qt::WA_NoSystemBackground);
+//    nativeWidget()->setUsesScrollButtons(true);
+//    connect(this, SIGNAL(currentChanged(int)), this, SIGNAL(filterChanged(int)));
+    m_menu = new QMenu();
+    m_menu->setTitle(i18n("Categories"));
+    connect(m_menu, SIGNAL(triggered(QAction*)), this, SLOT(menuItemTriggered(QAction*)));
+    setAction(m_menu->menuAction());
 }
 
 FilteringTabs::~FilteringTabs()
 {
+    delete m_menu;
+}
 
+void FilteringTabs::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    Plasma::PushButton::mouseReleaseEvent(event);
+    m_menu->popup(event->screenPos());
+}
+
+void FilteringTabs::menuItemTriggered(QAction *action)
+{
+    setText(action->text());
+    setIcon(action->icon());
+    emit filterChanged(action->data().toInt());
 }
 
 void FilteringTabs::populateList()
 {
+    /*
     while (count() > 0) {
         removeTab(0);
     }
+    */
 
+    m_menu->clear();
     if (!m_model) {
         return;
     }
@@ -116,8 +138,9 @@ void FilteringTabs::populateList()
     for (int i = 0; i < m_model->rowCount(); i++){
         QStandardItem *item = getItemByProxyIndex(m_model->index(i, 0));
         if (item) {
-            addTab(item->icon(), item->text());
-            nativeWidget()->setTabEnabled(i, item->isEnabled());
+            QAction *action = m_menu->addAction(item->icon(), item->text());
+            action->setData(i);
+            action->setEnabled(item->isEnabled());
         }
     }
 }
@@ -258,6 +281,7 @@ void FilteringWidget::setListOrientation(Qt::Orientation orientation)
         m_textSearch->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
         m_textSearch->setPreferredHeight(-1);
         m_linearLayout->addItem(m_categoriesTabs);
+        m_linearLayout->addStretch();
         m_linearLayout->addItem(m_newWidgetsButton);
         m_categoriesTabs->setVisible(true);
     } else {

@@ -20,7 +20,7 @@
 #ifndef APPLETSFILTERING_H
 #define APPLETSFILTERING_H
 
-#include <Plasma/TabBar>
+#include <Plasma/PushButton>
 #include <Plasma/TreeView>
 
 #include "kcategorizeditemsviewmodels_p.h"
@@ -52,7 +52,7 @@ private:
     void init();
 };
 
-class FilteringTabs : public Plasma::TabBar
+class FilteringTabs : public Plasma::PushButton
 {
     Q_OBJECT
 
@@ -65,12 +65,20 @@ public:
 Q_SIGNALS:
     void filterChanged(int index);
 
+protected:
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+
 private:
     //uses model to populate the tabs
     void populateList();
-
     QStandardItem *getItemByProxyIndex(const QModelIndex &index) const;
+
+private Q_SLOTS:
+    void menuItemTriggered(QAction *);
+
+private:
     QStandardItemModel *m_model;
+    QMenu *m_menu;
 };
 
 class FilteringWidget : public QGraphicsWidget
