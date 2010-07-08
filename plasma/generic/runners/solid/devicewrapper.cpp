@@ -48,7 +48,6 @@ DeviceWrapper::DeviceWrapper(const QString& udi)
     m_isEncryptedContainer(false)
 {
     m_udi = m_device.udi();
-    return;
 }
 
 DeviceWrapper::~DeviceWrapper()
