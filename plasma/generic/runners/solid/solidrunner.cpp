@@ -78,9 +78,9 @@ void SolidRunner::init()
 
 void SolidRunner::cleanActionsForDevice(DeviceWrapper * dev)
 {
-    QStringList actionIds = dev->actionIds();
+    const QStringList actionIds = dev->actionIds();
     if (!actionIds.isEmpty()) {
-        foreach (QString id, actionIds) {
+        foreach (const QString& id, actionIds) {
             removeAction(id);
         }
     }
@@ -95,7 +95,7 @@ QList<QAction*> SolidRunner::actionsForMatch(const Plasma::QueryMatch &match)
         QStringList actionIds = dev->actionIds();
         kDebug() << actionIds;
         if (!actionIds.isEmpty()) {
-            foreach (QString id, actionIds) {
+            foreach (const QString& id, actionIds) {
                 actions << action(id);
             }
         }
@@ -149,7 +149,7 @@ void SolidRunner::createOrUpdateMatches(const QStringList &udiList)
         deviceDescription = keywords[0];
     }
 
-    foreach (QString udi,  udiList) {
+    foreach (const QString& udi,  udiList) {
         DeviceWrapper * dev = m_deviceList.value(udi);
         if ((deviceDescription.isEmpty() && showDevices) || dev->description().contains(deviceDescription, Qt::CaseInsensitive)) {
             if ((onlyMounted && dev->isAccessible()) ||

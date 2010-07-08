@@ -89,7 +89,6 @@ void DeviceWrapper::dataUpdated(const QString &source, Plasma::DataEngine::Data 
 
     emit refreshMatch(m_udi);
 
-    return;
 }
 
 QString DeviceWrapper::id() const {
