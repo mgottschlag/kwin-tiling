@@ -426,7 +426,7 @@ void BookmarksRunner::matchFirefoxBookmarks(Plasma::RunnerContext& context, bool
 BookmarksRunner::Browser BookmarksRunner::whichBrowser()
 {
     KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), QLatin1String("General") );
-    QString exec = config.readPathEntry( QLatin1String("BrowserApplication"), QString("") );
+    const QString exec = config.readPathEntry( QLatin1String("BrowserApplication"), QString("") );
     //kDebug() << exec;
     if (exec.contains("firefox", Qt::CaseInsensitive)) {
         return Firefox;
