@@ -400,7 +400,7 @@ void BackgroundFinder::start()
     emit finished();
 }
 
-void BackgroundListModel::setWallpaperSize(QSize size)
+void BackgroundListModel::setWallpaperSize(const QSize& size)
 {
     m_size = size;
 }
