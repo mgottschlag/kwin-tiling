@@ -62,7 +62,7 @@ void SwitchActivity::makeMenu(QMenu *menu)
     if (m_useNepomuk) {
         KActivityController controller;
         QString current = controller.currentActivity();
-        foreach (const QString id, controller.availableActivities()) {
+        foreach (const QString& id, controller.availableActivities()) {
             QString name = KActivityInfo::name(id);
             QAction *action = menu->addAction(name);
             action->setData(QVariant(id));
