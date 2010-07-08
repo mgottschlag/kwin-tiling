@@ -399,6 +399,7 @@ void CalendarTable::setDate(const QDate &newDate)
     d->setDate(newDate);
 
     d->updateHoveredPainting(d->lastSeenMousePos);
+    update(); //FIXME: we shouldn't need this update here, but something in Qt is broken (but with plasmoidviewer everything work)
     
     if (oldYear != d->selectedYear || oldMonth != d->selectedMonth) {
         populateHolidays();
