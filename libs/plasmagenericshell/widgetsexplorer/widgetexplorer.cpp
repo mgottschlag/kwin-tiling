@@ -163,11 +163,11 @@ void WidgetExplorerPrivate::init(Qt::Orientation orient)
     //adding to layout
     if (orientation == Qt::Horizontal) {
         filteringLayout->addItem(filteringWidget);
+        mainLayout->addItem(filteringLayout);
     } else {
         mainLayout->addItem(filteringWidget);
     }
 
-    mainLayout->addItem(filteringLayout);
     mainLayout->addItem(appletsListWidget);
     appletsListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mainLayout->setAlignment(appletsListWidget, Qt::AlignTop | Qt::AlignHCenter);
