@@ -50,8 +50,8 @@ public:
      * visually invisible for at least one second after it is shown again.
      */
     void reset();
-    void setItemName(QString name);
-    QString itemName();
+    void setItemName(const QString& name);
+    QString itemName() const;
 
 public slots:
     virtual void setVisible(bool visible);

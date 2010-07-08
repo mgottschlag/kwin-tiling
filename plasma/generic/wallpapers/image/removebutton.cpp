@@ -217,12 +217,12 @@ void RemoveButton::stopFading()
     m_fadingValue = 0;
 }
 
-void RemoveButton::setItemName(QString name)
+void RemoveButton::setItemName(const QString& name)
 {
    m_itemName = name;
 }
 
-QString RemoveButton::itemName()
+QString RemoveButton::itemName() const
 {
    return m_itemName;
 }
