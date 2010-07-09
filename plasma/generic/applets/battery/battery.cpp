@@ -491,8 +491,9 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         row++;
 
         m_remainingTimeLabel = createBuddyLabel(m_controls);
-        // FIXME: 4.5
-        //m_remainingTimeLabel->setText(i18nc("Label for remaining time", "Time Remaining:"));
+#if KDE_IS_VERSION(4, 5, 60)
+        m_remainingTimeLabel->setText(i18nc("Label for remaining time", "Time Remaining:"));
+#endif
         m_remainingInfoLabel = createInfoLabel(m_controls);
         m_controlsLayout->addItem(m_remainingTimeLabel, row, 0);
         m_controlsLayout->addItem(m_remainingInfoLabel, row, 1);
@@ -511,9 +512,11 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         m_controlsLayout->addItem(m_extenderApplet, 1, 2, 2, 1);
 
         m_brightnessLabel = createBuddyLabel(m_controls);
-        m_brightnessLabel->setText(i18n("Screen Brightness"));
-        // FIXME: 4.5
-        //m_brightnessLabel->setText(i18n("Screen Brightness:"));
+#if KDE_IS_VERSION(4, 5, 60)
+        m_brightnessLabel->setText(i18n("Screen Brightness:"));
+#else
+        m_brightnessLabel->setText(i18n("Screen Brightness") + ':');
+#endif
 
         m_controlsLayout->addItem(m_brightnessLabel, row, 0);
 
