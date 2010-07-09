@@ -432,6 +432,33 @@ void Battery::setEmbedded(const bool embedded)
     m_isEmbedded = embedded;
 }
 
+static Plasma::Label *createBuddyLabel(QGraphicsWidget *parent)
+{
+    Plasma::Label *label = new Plasma::Label(parent);
+    label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    label->nativeWidget()->setWordWrap(false);
+    return label;
+}
+
+static Plasma::Label *createInfoLabel(QGraphicsWidget *parent)
+{
+    Plasma::Label *label = new Plasma::Label(parent);
+    label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    label->nativeWidget()->setWordWrap(false);
+    return label;
+}
+
+static Plasma::IconWidget *createButton(QGraphicsWidget *parent)
+{
+    Plasma::IconWidget *button = new Plasma::IconWidget(parent);
+    button->setPreferredIconSize(QSizeF(KIconLoader::SizeSmall, KIconLoader::SizeSmall));
+    button->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    button->setOrientation(Qt::Horizontal);
+    button->setDrawBackground(true);
+    button->setTextBackgroundColor(QColor(Qt::transparent));
+    return button;
+}
+
 void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 {
     // We only show the extender for applets that are not embedded, as
@@ -452,53 +479,41 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         m_controlsLayout->addItem(spacer0, row, 0);
         row++;
 
-        m_batteryLabelLabel = new Plasma::Label(m_controls);
-        m_batteryLabelLabel->setAlignment(Qt::AlignRight);
-        m_batteryInfoLabel = new Plasma::Label(m_controls);
+        m_batteryLabelLabel = createBuddyLabel(m_controls);
+        m_batteryInfoLabel = createInfoLabel(m_controls);
         m_controlsLayout->addItem(m_batteryLabelLabel, row, 0);
         m_controlsLayout->addItem(m_batteryInfoLabel, row, 1);
         row++;
-        m_acLabelLabel = new Plasma::Label(m_controls);
-        m_acLabelLabel->setAlignment(Qt::AlignRight);
-        m_acInfoLabel = new Plasma::Label(m_controls);
-        m_acInfoLabel->nativeWidget()->setWordWrap(false);
+        m_acLabelLabel = createBuddyLabel(m_controls);
+        m_acInfoLabel = createInfoLabel(m_controls);
         m_controlsLayout->addItem(m_acLabelLabel, row, 0);
         m_controlsLayout->addItem(m_acInfoLabel, row, 1);
         row++;
 
-        m_remainingTimeLabel = new Plasma::Label(m_controls);
-        m_remainingTimeLabel->setAlignment(Qt::AlignRight);
+        m_remainingTimeLabel = createBuddyLabel(m_controls);
         // FIXME: 4.5
         //m_remainingTimeLabel->setText(i18nc("Label for remaining time", "Time Remaining:"));
-        m_remainingInfoLabel = new Plasma::Label(m_controls);
-        m_remainingInfoLabel->nativeWidget()->setWordWrap(false);
+        m_remainingInfoLabel = createInfoLabel(m_controls);
         m_controlsLayout->addItem(m_remainingTimeLabel, row, 0);
         m_controlsLayout->addItem(m_remainingInfoLabel, row, 1);
         row++;
 
         Battery *m_extenderApplet = static_cast<Battery*>(Plasma::Applet::load("battery"));
-        int s = 64;
-        if (m_extenderApplet) {
-            m_extenderApplet->setParent(m_controls);
-            m_extenderApplet->setAcceptsHoverEvents(false);
-            m_extenderApplet->setParentItem(m_controls);
-            m_extenderApplet->setEmbedded(true);
-            m_extenderApplet->resize(s, s);
-            m_extenderApplet->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-            m_extenderApplet->setBackgroundHints(NoBackground);
-            m_extenderApplet->setFlag(QGraphicsItem::ItemIsMovable, false);
-            m_extenderApplet->init();
-            m_extenderApplet->setShowBatteryLabel(false);
-            m_extenderApplet->setGeometry(QRectF(QPoint(m_controls->geometry().width()-s, 0), QSizeF(s, s)));
-            m_extenderApplet->updateConstraints(Plasma::StartupCompletedConstraint);
-        }
+        m_extenderApplet->setParent(m_controls);
+        m_extenderApplet->setAcceptsHoverEvents(false);
+        m_extenderApplet->setParentItem(m_controls);
+        m_extenderApplet->setEmbedded(true);
+        m_extenderApplet->setBackgroundHints(NoBackground);
+        m_extenderApplet->setFlag(QGraphicsItem::ItemIsMovable, false);
+        m_extenderApplet->init();
+        m_extenderApplet->setShowBatteryLabel(false);
+        m_extenderApplet->updateConstraints(Plasma::StartupCompletedConstraint);
+        m_controlsLayout->addItem(m_extenderApplet, 1, 2, 2, 1);
 
-        m_brightnessLabel = new Plasma::Label(m_controls);
+        m_brightnessLabel = createBuddyLabel(m_controls);
         m_brightnessLabel->setText(i18n("Screen Brightness"));
         // FIXME: 4.5
         //m_brightnessLabel->setText(i18n("Screen Brightness:"));
-        m_brightnessLabel->nativeWidget()->setWordWrap(false);
-        m_brightnessLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
         m_controlsLayout->addItem(m_brightnessLabel, row, 0);
 
@@ -510,12 +525,11 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         connect(m_brightnessSlider, SIGNAL(valueChanged(int)),
                 this, SLOT(brightnessChanged(int)));
 
-        m_controlsLayout->addItem(m_brightnessSlider, row, 1);
+        m_controlsLayout->addItem(m_brightnessSlider, row, 1, 1, 2);
         row++;
 
-        m_profileLabel = new Plasma::Label(m_controls);
+        m_profileLabel = createBuddyLabel(m_controls);
         m_profileLabel->setText(i18n("Power Profile:"));
-        m_profileLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
         m_controlsLayout->addItem(m_profileLabel, row, 0);
 
 
@@ -525,13 +539,13 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         connect(m_profileCombo, SIGNAL(activated(QString)),
                 this, SLOT(setProfile(QString)));
 
-        m_controlsLayout->addItem(m_profileCombo, row, 1);
+        m_controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
 
         row++;
 
-        QGraphicsWidget *buttonWidget = new QGraphicsWidget(m_controls);
-        QGraphicsLinearLayout *buttonLayout = new QGraphicsLinearLayout(buttonWidget);
+        QGraphicsLinearLayout *buttonLayout = new QGraphicsLinearLayout;
         buttonLayout->setSpacing(0.0);
+        buttonLayout->addStretch();
         //buttonLayout->addItem(m_profileCombo);
 
         // Sleep and Hibernate buttons
@@ -541,42 +555,24 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
                 // Not interesting at this point ...
 
             } else if (sleepstate == Solid::PowerManagement::SuspendState) {
-                Plasma::IconWidget *suspendButton = new Plasma::IconWidget(m_controls);
-                suspendButton->setPreferredIconSize(QSizeF(KIconLoader::SizeSmall, KIconLoader::SizeSmall));
+                Plasma::IconWidget *suspendButton = createButton(m_controls);
                 suspendButton->setIcon("system-suspend");
                 suspendButton->setText(i18nc("Suspend the computer to RAM; translation should be short", "Sleep"));
-                suspendButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-                suspendButton->setOrientation(Qt::Horizontal);
-
-                suspendButton->setDrawBackground(true);
-                suspendButton->setTextBackgroundColor(QColor(Qt::transparent));
-                //suspendButton->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-                m_controlsLayout->addItem(suspendButton, row, 0, Qt::AlignRight|Qt::AlignVCenter);
+                buttonLayout->addItem(suspendButton);
                 //row++;
                 connect(suspendButton, SIGNAL(clicked()), this, SLOT(suspend()));
             } else if (sleepstate == Solid::PowerManagement::HibernateState) {
-                Plasma::IconWidget *hibernateButton = new Plasma::IconWidget(m_controls);
-                hibernateButton->setPreferredIconSize(QSizeF(KIconLoader::SizeSmall, KIconLoader::SizeSmall));
+                Plasma::IconWidget *hibernateButton = createButton(m_controls);
                 hibernateButton->setIcon("system-suspend-hibernate");
                 hibernateButton->setText(i18nc("Suspend the computer to disk; translation should be short", "Hibernate"));
-                hibernateButton->setOrientation(Qt::Horizontal);
-
-                hibernateButton->setDrawBackground(true);
-                hibernateButton->setTextBackgroundColor(QColor(Qt::transparent));
-                hibernateButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
                 buttonLayout->addItem(hibernateButton);
-                buttonLayout->setAlignment(hibernateButton, Qt::AlignLeft|Qt::AlignVCenter);
                 connect(hibernateButton, SIGNAL(clicked()), this, SLOT(hibernate()));
             }
         }
         // Configure button
-        Plasma::IconWidget *configButton = new Plasma::IconWidget(buttonWidget);
+        Plasma::IconWidget *configButton = createButton(m_controls);
         configButton->setToolTip(i18nc("tooltip on the config button in the popup", "Configure Power Management..."));
-        configButton->setOrientation(Qt::Horizontal);
-        configButton->setPreferredIconSize(QSizeF(KIconLoader::SizeSmall, KIconLoader::SizeSmall));
-        configButton->setDrawBackground(true);
-        configButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        configButton->setTextBackgroundColor(QColor(Qt::transparent));
+        configButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
         configButton->setIcon("configure");
         connect(configButton, SIGNAL(clicked()), this, SLOT(openConfig()));
         configButton->setEnabled(hasAuthorization("LaunchApp"));
@@ -586,8 +582,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         buttonLayout->setItemSpacing(1, 0.0);
         buttonLayout->setAlignment(configButton, Qt::AlignRight|Qt::AlignVCenter);
 
-        buttonWidget->setLayout(buttonLayout);
-        m_controlsLayout->addItem(buttonWidget, row, 1);
+        m_controlsLayout->addItem(buttonLayout, row, 0, 1, 3);
         m_controls->setLayout(m_controlsLayout);
         item->setWidget(m_controls);
         item->setTitle(i18n("Power Management"));
