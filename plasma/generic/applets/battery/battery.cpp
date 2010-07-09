@@ -612,7 +612,6 @@ void Battery::setupFonts()
         m_brightnessLabel->setFont(infoFont);
         m_profileLabel->setFont(infoFont);
 
-        infoFont.setPointSize(infoFont.pointSize()+1);
         QFont boldFont = infoFont;
         boldFont.setBold(true);
 
