@@ -137,6 +137,14 @@ void SearchLaunch::init()
 
     m_toolBox->addTool(lockAction);
 
+    //FIXME: two different use cases for the desktop and the newspaper, another reason to move the toolbox management out of here
+    QAction *activityAction = 0;
+    if (corona()) {
+        activityAction = corona()->action("manage activities");
+    }
+    if (activityAction) {
+        m_toolBox->addTool(activityAction);
+    }
 
     a = new QAction(i18n("Next activity"), this);
     addAction("next containment", a);
