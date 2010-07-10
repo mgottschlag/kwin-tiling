@@ -297,6 +297,7 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::SizeConstraint) {
+        availableScreenRegionChanged();
         m_container->syncColumnSizes();
     }
 
@@ -574,6 +575,7 @@ void Newspaper::availableScreenRegionChanged()
             maxArea = area;
         }
     }
+
     setContentsMargins(maxRect.left(), maxRect.top(), qMax((qreal)0.0, size().width() - maxRect.right()), qMax((qreal)0.0, size().height() - maxRect.bottom()));
 }
 
