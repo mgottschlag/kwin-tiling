@@ -171,7 +171,7 @@ Plasma::Location NotificationScroller::location() const
 
 void NotificationScroller::setLocation(const Plasma::Location location)
 {
-    if (location == m_location) {
+    if (!m_layout || (location == m_location)) {
         return;
     }
 
