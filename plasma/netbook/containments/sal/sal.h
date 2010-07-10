@@ -66,7 +66,6 @@ public:
     void createConfigurationInterface(KConfigDialog *parent);
 
 protected:
-    void resizeEvent(QGraphicsSceneResizeEvent *);
     void focusInEvent(QFocusEvent *event);
     void paintInterface(QPainter *, const QStyleOptionGraphicsItem *, const QRect &);
     void changeEvent(QEvent *event);

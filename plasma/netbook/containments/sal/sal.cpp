@@ -367,12 +367,6 @@ void SearchLaunch::updateSize()
 }
 
 
-void SearchLaunch::resizeEvent(QGraphicsSceneResizeEvent *event)
-{
-    availableScreenRegionChanged();
-    Containment::resizeEvent(event);
-}
-
 void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 {
     //kDebug() << "constraints updated with" << constraints << "!!!!!!";
@@ -481,6 +475,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::SizeConstraint) {
+        availableScreenRegionChanged();
         if (m_appletsLayout) {
             m_appletsLayout->setMaximumHeight(size().height()/4);
         }
