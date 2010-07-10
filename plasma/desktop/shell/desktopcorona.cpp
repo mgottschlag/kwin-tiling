@@ -115,8 +115,7 @@ void DesktopCorona::init()
     connect(m_activityController, SIGNAL(activityAdded(const QString &)), this, SLOT(activityAdded(const QString &)));
     connect(m_activityController, SIGNAL(activityRemoved(const QString &)), this, SLOT(activityRemoved(const QString &)));
 
-    //FIXME: requires js anim support to work properly
-    //mapAnimation(Plasma::Animator::AppearAnimation, Plasma::Animator::PulseAnimation);
+    mapAnimation(Plasma::Animator::AppearAnimation, Plasma::Animator::ZoomAnimation);
     mapAnimation(Plasma::Animator::DisappearAnimation, Plasma::Animator::ZoomAnimation);
     kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "DesktopCorona init end" << "(line:" << __LINE__ << ")";
 }
