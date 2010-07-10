@@ -104,12 +104,6 @@ void DeviceNotifier::init()
     //feed the list with what is already reported by the engine
     fillPreviousDevices();
 
-    if (m_lastPlugged.count() == 0) {
-        setStatus(Plasma::PassiveStatus);
-    } else {
-        setStatus(Plasma::ActiveStatus);
-    }
-
     m_iconTimer = new QTimer(this);
     m_iconTimer->setSingleShot(true);
     connect(m_iconTimer, SIGNAL(timeout()), this, SLOT(resetNotifierIcon()));
@@ -284,13 +278,12 @@ void DeviceNotifier::notifyDevice(const QString &udi)
 {
     m_lastPlugged << udi;
 
-    setStatus(Plasma::NeedsAttentionStatus);
-
     if (!m_fillingPreviousDevices) {
         emit activate();
         showPopup(NOTIFICATION_TIMEOUT);
         changeNotifierIcon("preferences-desktop-notification", NOTIFICATION_TIMEOUT);
         update();
+        setStatus(Plasma::NeedsAttentionStatus);
     } else {
         setStatus(Plasma::ActiveStatus);
     }
