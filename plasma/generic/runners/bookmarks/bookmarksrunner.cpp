@@ -70,7 +70,8 @@ void BookmarksRunner::reloadConfiguration()
             KConfigGroup grp = config();
             /* This allows the user to specify a profile database */
             m_dbFile = grp.readEntry<QString>("dbfile", "");
-            if (m_dbFile.isEmpty()) {//Try to get the right database file, the default profile is used
+            if (m_dbFile.isEmpty() || QFile::exists(m_dbFile)) {
+                //Try to get the right database file, the default profile is used
                 KConfig firefoxProfile(QDir::homePath() + "/.mozilla/firefox/profiles.ini",
                                        KConfig::SimpleConfig);
                 QStringList profilesList = firefoxProfile.groupList();
@@ -378,10 +379,7 @@ void BookmarksRunner::matchFirefoxBookmarks(Plasma::RunnerContext& context, bool
         return;
     }
 
-    QList<int> fks;
-    QHash<int, QString> titles; //index (fk), title
-    QHash<int, QUrl> urls; //index, url (QUrl in order to go with QVariant)
-    QHash<int, KIcon> icons; //index, icon
+    QList<Plasma::QueryMatch> matches;
     QString tmpTerm = term;
     QSqlQuery query;
     if (allBookmarks) {
@@ -396,28 +394,46 @@ void BookmarksRunner::matchFirefoxBookmarks(Plasma::RunnerContext& context, bool
                         "(moz_bookmarks.title LIKE  '%" + escapedTerm + "%' or moz_places.url LIKE '%"
                         + escapedTerm + "%')");
     }
-    while (query.next()) {
+
+    while (query.next() && context.isValid()) {
         const QString title = query.value(1).toString();
         const QUrl url = query.value(2).toString();
         //const int favicon_id = query.value(3).toInt();
 
-        int fk = query.value(0).toInt();
-        fks << fk;
-        titles.insert(fk, title);
-        urls.insert(fk, url);
-        icons.insert(fk, m_icon); //could be changed to use favicon
-    }
+        if (title.isEmpty() || url.isEmpty() || url.scheme().contains("place")) {
+            //Don't use bookmarks with empty title, url or Firefox intern url
+            kDebug() << "element was not added";
+            continue;
+        }
 
-    if (!context.isValid()) {
-        return;
-    }
+        Plasma::QueryMatch::Type type = Plasma::QueryMatch::NoMatch;
+        qreal relevance = 0;
 
-    QList<Plasma::QueryMatch> matches;
-    foreach (const int& fk, fks) {
+        if (title.compare(term, Qt::CaseInsensitive) == 0) {
+            type = Plasma::QueryMatch::ExactMatch;
+            relevance = 1.0;
+        } else if (title.contains(term, Qt::CaseInsensitive)) {
+            type = Plasma::QueryMatch::PossibleMatch;
+            relevance = 0.45;
+        } else if (url.toString().contains(term, Qt::CaseInsensitive)) {
+            type = Plasma::QueryMatch::PossibleMatch;
+            relevance = 0.2;
+        } else if (allBookmarks) {
+            type = Plasma::QueryMatch::PossibleMatch;
+            relevance = 0.18;
+        }
+
         Plasma::QueryMatch match(this);
-        match.setIcon(icons[fk]);
-        match.setText(titles[fk]);
-        match.setData(urls[fk]);
+        QIcon icon = favicon(url);
+        if (icon.isNull()) {
+            match.setIcon(m_icon);
+        } else {
+            match.setIcon(icon);
+        }
+        match.setText(title);
+        match.setData(url);
+        match.setType(type);
+        match.setRelevance(relevance);
         matches << match;
     }
     context.addMatches(term, matches);
