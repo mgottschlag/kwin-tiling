@@ -101,6 +101,7 @@ void DeviceNotifier::init()
     connect(m_deviceNotificationsEngine, SIGNAL(sourceAdded(const QString&)),
             this, SLOT(newNotification(const QString&)));
 
+    setStatus(Plasma::PassiveStatus);
     //feed the list with what is already reported by the engine
     fillPreviousDevices();
 
@@ -360,6 +361,10 @@ void DeviceNotifier::deviceAdded(const Solid::Device &device, bool hotplugged)
 
     if (!visibility) {
         m_hiddenDevices << udi;
+    }
+
+    if (visibility) {
+        setStatus(Plasma::ActiveStatus);
     }
 }
 
