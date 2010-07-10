@@ -132,10 +132,6 @@ void Newspaper::init()
     m_toolBox->addTool(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleExpandAllApplets()));
 
-    a = new QAction(KIcon("view-pim-news"), i18n("Add page"), this);
-    addAction("add page", a);
-    m_toolBox->addTool(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(addNewsPaper()));
 
     a = action("configure");
     if (a) {
@@ -158,10 +154,25 @@ void Newspaper::init()
     }
     m_toolBox->addTool(lockAction);
 
-    a = action("remove");
-    if (a) {
-        a->setText(i18n("Remove page"));
+
+    //FIXME: two different use cases for the desktop and the newspaper, another reason to move the toolbox management out of here
+    QAction *activityAction = 0;
+    if (corona()) {
+        activityAction = corona()->action("manage activities");
+    }
+    if (activityAction) {
+        m_toolBox->addTool(activityAction);
+    } else {
+        a = new QAction(KIcon("view-pim-news"), i18n("Add page"), this);
+        addAction("add page", a);
         m_toolBox->addTool(a);
+        connect(a, SIGNAL(triggered()), this, SLOT(addNewsPaper()));
+
+        a = action("remove");
+        if (a) {
+            a->setText(i18n("Remove page"));
+            m_toolBox->addTool(a);
+        }
     }
 
     a = new QAction(i18n("Next activity"), this);
