@@ -232,27 +232,19 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
         return false;
     }
 
-    if (widget) {
-        //kDebug() << "widget already exists, trying to reposition it";
-        d->firstTasksLayout->removeItem(widget);
-        d->normalTasksLayout->removeItem(widget);
-        d->lastTasksLayout->removeItem(widget);
-        if (d->firstTasksLayout->count() == 0) {
-            d->topLayout->removeItem(d->firstTasksLayout);
-        }
+    //kDebug() << "widget already exists, trying to reposition it";
+    d->firstTasksLayout->removeItem(widget);
+    d->normalTasksLayout->removeItem(widget);
+    d->lastTasksLayout->removeItem(widget);
+    if (d->firstTasksLayout->count() == 0) {
+        d->topLayout->removeItem(d->firstTasksLayout);
     }
 
     //If the applet doesn't want to show FDO tasks, remove (not just hide) any of them
     //if the dbus icon has a category that the applet doesn't want to show remove it
     if (!d->host->shownCategories().contains(task->category()) && !qobject_cast<Plasma::Applet *>(widget)) {
-        if (widget) {
-            widget->deleteLater();
-        }
+        widget->deleteLater();
         return true;
-    }
-
-    if (!widget) {
-        widget = task->widget(d->host);
     }
 
     if (!d->taskForWidget.contains(widget)) {
@@ -283,69 +275,65 @@ bool TaskArea::addWidgetForTask(SystemTray::Task *task)
         connect(task, SIGNAL(changed(SystemTray::Task*)), hiddenWidget, SLOT(taskChanged(SystemTray::Task*)));
         d->hiddenTasks.insert(task, hiddenWidget);
 
-        if (widget) {
-            const int row = d->hiddenTasksLayout->rowCount();
-            widget->setParentItem(d->hiddenTasksWidget);
-            //kDebug() << "putting" << task->name() << "into" << row;
-            d->hiddenTasksLayout->setRowFixedHeight(row, 24);
-            d->hiddenTasksLayout->addItem(widget, row, 0);
-            d->hiddenTasksLayout->addItem(d->hiddenTasks.value(task), row, 1);
-        }
+        const int row = d->hiddenTasksLayout->rowCount();
+        widget->setParentItem(d->hiddenTasksWidget);
+        //kDebug() << "putting" << task->name() << "into" << row;
+        d->hiddenTasksLayout->setRowFixedHeight(row, 24);
+        d->hiddenTasksLayout->addItem(widget, row, 0);
+        d->hiddenTasksLayout->addItem(d->hiddenTasks.value(task), row, 1);
     }
 
     d->hasTasksThatCanHide = !d->hiddenTasks.isEmpty();
 
-    if (widget) {
-        if (task->hidden() == Task::NotHidden) {
-            for (int i = 0; i < d->hiddenTasksLayout->count(); ++i) {
-                if (d->hiddenTasksLayout->itemAt(i) == widget) {
-                    d->hiddenTasksLayout->removeAt(i);
-                    d->hiddenRelayoutTimer->start(250);
+    if (task->hidden() == Task::NotHidden) {
+        for (int i = 0; i < d->hiddenTasksLayout->count(); ++i) {
+            if (d->hiddenTasksLayout->itemAt(i) == widget) {
+                d->hiddenTasksLayout->removeAt(i);
+                d->hiddenRelayoutTimer->start(250);
+                break;
+            }
+        }
+
+        widget->setParentItem(this);
+        //not really pretty, but for consistency attempts to put the notifications applet always in the same position
+        if (task->typeId() == "notifications") {
+            if (d->firstTasksLayout->count() == 0) {
+                d->topLayout->insertItem(0, d->firstTasksLayout);
+            }
+
+            d->firstTasksLayout->insertItem(0, widget);
+        } else if (task->order() == SystemTray::Task::First) {
+            if (d->firstTasksLayout->count() == 0) {
+                d->topLayout->insertItem(0, d->firstTasksLayout);
+            }
+
+            d->firstTasksLayout->addItem(widget);
+        } else if (task->order() == SystemTray::Task::Normal) {
+            int insertIndex = -1;
+            for (int i = 0; i < d->normalTasksLayout->count(); ++i) {
+                QGraphicsWidget *widget = static_cast<QGraphicsWidget *>(d->normalTasksLayout->itemAt(i));
+                Task *otherTask = d->taskForWidget.value(widget);
+
+                if (task->category() == Task::UnknownCategory) {
+                    insertIndex = i;
+                    break;
+                } else if (otherTask && task->category() <= otherTask->category()) {
+                    insertIndex = i;
                     break;
                 }
             }
 
-            widget->setParentItem(this);
-            //not really pretty, but for consistency attempts to put the notifications applet always in the same position
-            if (task->typeId() == "notifications") {
-                if (d->firstTasksLayout->count() == 0) {
-                    d->topLayout->insertItem(0, d->firstTasksLayout);
-                }
-
-                d->firstTasksLayout->insertItem(0, widget);
-            } else if (task->order() == SystemTray::Task::First) {
-                if (d->firstTasksLayout->count() == 0) {
-                    d->topLayout->insertItem(0, d->firstTasksLayout);
-                }
-
-                d->firstTasksLayout->addItem(widget);
-            } else if (task->order() == SystemTray::Task::Normal) {
-                int insertIndex = -1;
-                for (int i = 0; i < d->normalTasksLayout->count(); ++i) {
-                    QGraphicsWidget *widget = static_cast<QGraphicsWidget *>(d->normalTasksLayout->itemAt(i));
-                    Task *otherTask = d->taskForWidget.value(widget);
-
-                    if (task->category() == Task::UnknownCategory) {
-                        insertIndex = i;
-                        break;
-                    } else if (otherTask && task->category() <= otherTask->category()) {
-                        insertIndex = i;
-                        break;
-                    }
-                }
-
-                if (insertIndex == -1) {
-                    insertIndex = d->normalTasksLayout->count();
-                }
-
-                d->normalTasksLayout->insertItem(insertIndex, widget);
-            } else {
-                d->lastTasksLayout->insertItem(0, widget);
+            if (insertIndex == -1) {
+                insertIndex = d->normalTasksLayout->count();
             }
-        }
 
-        widget->show();
+            d->normalTasksLayout->insertItem(insertIndex, widget);
+        } else {
+            d->lastTasksLayout->insertItem(0, widget);
+        }
     }
+
+    widget->show();
 
     //the applet could have to be repainted due to easement change
     QTimer::singleShot(0, this, SLOT(delayedAppletUpdate()));
