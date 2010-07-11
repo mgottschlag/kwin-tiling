@@ -194,6 +194,7 @@ void SearchLaunch::availableScreenRegionChanged()
         return;
     }
 
+
     QRect maxRect;
     int maxArea = 0;
     //we don't want the bounding rect (that could include panels too), but the maximum one representing the desktop
@@ -339,7 +340,6 @@ void SearchLaunch::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     }
 
     applet->setBackgroundHints(NoBackground);
-    connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
 }
 
 void SearchLaunch::appletRemoved(Plasma::Applet* applet)
@@ -350,30 +350,6 @@ void SearchLaunch::appletRemoved(Plasma::Applet* applet)
         m_mainLayout->removeItem(m_appletsLayout);
     }
 }
-
-void SearchLaunch::updateSize()
-{
-    Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(sender());
-
-    if (applet) {
-        if (formFactor() == Plasma::Horizontal) {
-            const int delta = applet->preferredWidth() - applet->size().width();
-            //setting the preferred width when delta = 0 and preferredWidth() < minimumWidth()
-            // leads to the same thing as setPreferredWidth(minimumWidth())
-            if (delta != 0) {
-                setPreferredWidth(preferredWidth() + delta);
-            }
-        } else if (formFactor() == Plasma::Vertical) {
-            const int delta = applet->preferredHeight() - applet->size().height();
-            if (delta != 0) {
-                setPreferredHeight(preferredHeight() + delta);
-            }
-        }
-
-        resize(preferredSize());
-    }
-}
-
 
 void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 {
@@ -476,6 +452,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
                 m_toolBox->addTool(action("remove"));
             }
         }
+        resize(corona()->screenGeometry(screen()).size());
     }
 
     if (constraints & Plasma::LocationConstraint) {
@@ -736,6 +713,7 @@ void SearchLaunch::changeEvent(QEvent *event)
             updateConfigurationMode(true);
         }
     }
+    Plasma::Containment::changeEvent(event);
 }
 
 void SearchLaunch::createConfigurationInterface(KConfigDialog *parent)

@@ -77,7 +77,6 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void toggleImmutability();
-    void updateSize();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
     void appletRemoved(Plasma::Applet* applet);
     void restoreStrip();
