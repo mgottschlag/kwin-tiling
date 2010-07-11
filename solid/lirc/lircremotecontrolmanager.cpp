@@ -69,16 +69,16 @@ LircRemoteControlManager::LircRemoteControlManager(QObject * parent, const QVari
         : RemoteControlManager(parent), d(new LircRemoteControlManagerPrivate())
 {
 
-    m_refreshTimer.setInterval(10000);
-    connect(&m_refreshTimer, SIGNAL(timeout()), this, SLOT(reconnect()));
+    m_dirWatch.addFile("/var/run/lirc/lircd");
+    m_dirWatch.addFile("/dev/lircd");
+    m_dirWatch.addFile("/tmp/.lircd");
+    connect(&m_dirWatch, SIGNAL(created(QString)), this, SLOT(reconnect()));
+    
     if(d->recacheState()){
       readRemotes();
-    } else {
-        m_refreshTimer.start();
     }
 
     connect(d->m_client, SIGNAL(connectionClosed()), this, SLOT(connectionClosed()));
-//    connect(d->m_client, SIGNAL(remotesRead()), this, SLOT(reconnect())()));
 }
 
 LircRemoteControlManager::~LircRemoteControlManager()
@@ -95,7 +95,6 @@ void LircRemoteControlManager::reconnect()
             foreach(const QString &remote, m_remotes){
                 emit remoteControlAdded(remote);
             }
-            m_refreshTimer.stop();
             emit statusChanged(true);
         }
     }
@@ -109,7 +108,6 @@ void LircRemoteControlManager::connectionClosed(){
         emit remoteControlRemoved(remote);
     }
     readRemotes();
-    m_refreshTimer.start();
     emit statusChanged(false);    
 }
 

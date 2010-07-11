@@ -26,6 +26,7 @@
 
 #include <QVariantList>
 #include <QTimer>
+#include <KDirWatch>
 
 class LircRemoteControlManagerPrivate;
 class KDE_EXPORT LircRemoteControlManager : public Solid::Control::Ifaces::RemoteControlManager
@@ -48,7 +49,7 @@ private Q_SLOTS:
 private:
     LircRemoteControlManagerPrivate * d;
     QStringList m_remotes;
-    QTimer m_refreshTimer;
+    KDirWatch m_dirWatch;
     
     void readRemotes();
 };
