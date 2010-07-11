@@ -81,7 +81,7 @@ void ActivityManagerPrivate::init(Qt::Orientation orient)
     mainLayout->setSpacing(0);
     filteringLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     filteringWidget = new FilterBar(orientation, q);
-    activityList = new ActivityList(containment->location());
+    activityList = new ActivityList(Plasma::BottomEdge);
     close = new Plasma::ToolButton;
     close->setIcon(KIcon("dialog-close"));
 
