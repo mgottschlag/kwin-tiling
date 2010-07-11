@@ -166,6 +166,7 @@ void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &d
     if (Plasma::ToolTipManager::self()->isVisible(this)) {
         updateTipContent();
     }
+    updateClockApplet();
 
     if (m_secondHandUpdateTimer) {
         m_secondHandUpdateTimer->stop();
