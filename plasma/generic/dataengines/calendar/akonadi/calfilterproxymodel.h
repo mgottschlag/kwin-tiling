@@ -17,38 +17,32 @@
     Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
     02110-1301, USA.
 */
-#ifndef AKONADI_KCAL_DATERANGEFILTERPROXYMODEL_H
-#define AKONADI_KCAL_DATERANGEFILTERPROXYMODEL_H
+#ifndef AKONADI_KCAL_CALFILTERPROXYMODEL_H
+#define AKONADI_KCAL_CALFILTERPROXYMODEL_H
 
 #include <QtGui/QSortFilterProxyModel>
 
-class KDateTime;
+namespace KCal {
+  class CalFilter;
+}
+
 namespace Akonadi {
-  class DateRangeFilterProxyModel : public QSortFilterProxyModel {
+  class CalFilterProxyModel : public QSortFilterProxyModel {
     Q_OBJECT
   public:
-    explicit DateRangeFilterProxyModel( QObject* parent=0 );
-    ~DateRangeFilterProxyModel();
-    
-    KDateTime startDate() const;
-    void setStartDate( const KDateTime& date );
+    explicit CalFilterProxyModel( QObject* parent=0 );
+    ~CalFilterProxyModel();
 
-    KDateTime endDate() const;
-    void setEndDate( const KDateTime& date );
-    
-    int startDateColumn() const;
-    void setStartDateColumn( int column );
-
-    int endDateColumn() const;
-    void setEndDateColumn( int column );
+    KCal::CalFilter* filter() const;
+    void setFilter( KCal::CalFilter* filter );
 
   protected:
     /* reimp */ bool filterAcceptsRow( int source_row, const QModelIndex& source_parent ) const;
-    
+
   private:
     class Private;
     Private* const d;
   };
 }
 
-#endif // AKONADI_KCAL_DATERANGEFILTERPROXYMODEL_H
+#endif // AKONADI_KCAL_CALFILTERPROXYMODEL_H

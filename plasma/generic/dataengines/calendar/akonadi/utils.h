@@ -33,6 +33,7 @@
 #include <KCal/Todo>
 
 #include <KDateTime>
+
 #include <QModelIndex>
 
 namespace KCal {
@@ -52,54 +53,64 @@ namespace Akonadi
   /**
    * returns the incidence from an akonadi item, or a null pointer if the item has no such payload
    */
-   KCal::Incidence::Ptr incidence( const Akonadi::Item &item );
+  KCal::Incidence::Ptr incidence( const Akonadi::Item &item );
 
   /**
    * returns the event from an akonadi item, or a null pointer if the item has no such payload
    */
-   KCal::Event::Ptr event( const Akonadi::Item &item );
+  KCal::Event::Ptr event( const Akonadi::Item &item );
 
   /**
    * returns event pointers from an akonadi item, or a null pointer if the item has no such payload
    */
-   QList<KCal::Event::Ptr> eventsFromItems( const Akonadi::Item::List &items );
+  QList<KCal::Event::Ptr> eventsFromItems( const Akonadi::Item::List &items );
 
   /**
   * returns the todo from an akonadi item, or a null pointer if the item has no such payload
   */
-   KCal::Todo::Ptr todo( const Akonadi::Item &item );
+  KCal::Todo::Ptr todo( const Akonadi::Item &item );
 
   /**
   * returns the journal from an akonadi item, or a null pointer if the item has no such payload
   */
-   KCal::Journal::Ptr journal( const Akonadi::Item &item );
+  KCal::Journal::Ptr journal( const Akonadi::Item &item );
 
   /**
    * returns whether an Akonadi item contains an incidence
    */
-   bool hasIncidence( const Akonadi::Item &item );
+  bool hasIncidence( const Akonadi::Item &item );
 
   /**
    * returns whether an Akonadi item contains an event
    */
-   bool hasEvent( const Akonadi::Item &item );
+  bool hasEvent( const Akonadi::Item &item );
 
   /**
    * returns whether an Akonadi item contains a todo
    */
-   bool hasTodo( const Akonadi::Item &item );
+  bool hasTodo( const Akonadi::Item &item );
 
   /**
    * returns whether an Akonadi item contains a journal
    */
-   bool hasJournal( const Akonadi::Item &item );
+  bool hasJournal( const Akonadi::Item &item );
+
+  /**
+   * returns whether this item can be deleted
+   */
+  bool hasDeleteRights( const Akonadi::Item &item );
+
+  /**
+   * returns whether this item can be changed
+   */
+  bool hasChangeRights( const Akonadi::Item &item );
 
   /**
   * returns @p true if the URL represents an Akonadi item and has one of the given mimetypes.
   */
-   bool isValidIncidenceItemUrl( const KUrl &url, const QStringList &supportedMimeTypes );
+  bool isValidIncidenceItemUrl( const KUrl &url, const QStringList &supportedMimeTypes );
 
-   bool isValidIncidenceItemUrl( const KUrl &url );
+  bool isValidIncidenceItemUrl( const KUrl &url );
 
   /**
   * returns @p true if the mime data object contains any of the following:
@@ -108,40 +119,40 @@ namespace Akonadi
   * * an iCalendar
   * * a VCard
   */
-   bool canDecode( const QMimeData* mimeData );
+  bool canDecode( const QMimeData* mimeData );
 
-   QList<KUrl> incidenceItemUrls( const QMimeData* mimeData );
+  QList<KUrl> incidenceItemUrls( const QMimeData* mimeData );
 
-   QList<KUrl> todoItemUrls( const QMimeData* mimeData );
+  QList<KUrl> todoItemUrls( const QMimeData* mimeData );
 
-   bool mimeDataHasTodo( const QMimeData* mimeData );
+  bool mimeDataHasTodo( const QMimeData* mimeData );
 
-   QList<KCal::Todo::Ptr> todos( const QMimeData* mimeData, const KDateTime::Spec &timeSpec );
+  QList<KCal::Todo::Ptr> todos( const QMimeData* mimeData, const KDateTime::Spec &timeSpec );
 
   /**
   * returns @p true if the URL represents an Akonadi item and has one of the given mimetypes.
   */
-   bool isValidTodoItemUrl( const KUrl &url );
+  bool isValidTodoItemUrl( const KUrl &url );
 
   /**
   * creates mime data object for dragging an akonadi item containing an incidence
   */
-   QMimeData* createMimeData( const Akonadi::Item &item, const KDateTime::Spec &timeSpec );
+  QMimeData* createMimeData( const Akonadi::Item &item, const KDateTime::Spec &timeSpec );
 
   /**
   * creates mime data object for dragging akonadi items containing an incidence
   */
-   QMimeData* createMimeData( const Akonadi::Item::List &items, const KDateTime::Spec &timeSpec );
+  QMimeData* createMimeData( const Akonadi::Item::List &items, const KDateTime::Spec &timeSpec );
 
   /**
   * creates a drag object for dragging an akonadi item containing an incidence
   */
-   QDrag* createDrag( const Akonadi::Item &item, const KDateTime::Spec &timeSpec, QWidget* parent );
+  QDrag* createDrag( const Akonadi::Item &item, const KDateTime::Spec &timeSpec, QWidget* parent );
 
   /**
   * creates a drag object for dragging akonadi items containing an incidence
   */
-   QDrag* createDrag( const Akonadi::Item::List &items, const KDateTime::Spec &timeSpec, QWidget* parent );
+  QDrag* createDrag( const Akonadi::Item::List &items, const KDateTime::Spec &timeSpec, QWidget* parent );
 
   /**
   * applies a filter to a list of items containing incidences. Items not containing incidences or not matching the filter are removed.
@@ -151,31 +162,43 @@ namespace Akonadi
   * @param filter the filter to apply to the list of items
   * @return the filtered list of items
   */
-   Akonadi::Item::List applyCalFilter( const Akonadi::Item::List &items, const KCal::CalFilter* filter );
+  Akonadi::Item::List applyCalFilter( const Akonadi::Item::List &items, const KCal::CalFilter* filter );
 
   /**
   * Shows a modal dialog that allows to select a collection.
   *
+  * @param will contain the dialogCode, QDialog::Accepted if the user pressed Ok,
+  *        QDialog::Rejected otherwise
   * @param parent The optional parent of the modal dialog.
   * @return The select collection or an invalid collection if
   * there was no collection selected.
   */
-   Akonadi::Collection selectCollection( QWidget *parent, const Akonadi::Collection& defaultCollection = Akonadi::Collection());
 
-   Akonadi::Item itemFromIndex( const QModelIndex &index );
+  Akonadi::Collection selectCollection( QWidget *parent, int dialogCode,
+                                                                 const QStringList &mimeTypes,
+                                                                 const Akonadi::Collection& defaultCollection = Akonadi::Collection() );
 
-   Akonadi::Item::List itemsFromModel( const QAbstractItemModel *model,
+  Akonadi::Item itemFromIndex( const QModelIndex &index );
+
+  Akonadi::Item::List itemsFromModel( const QAbstractItemModel *model,
                                                                const QModelIndex &parentIndex = QModelIndex(),
                                                                int start = 0,
                                                                int end = -1 );
 
-   Collection collectionFromIndex( const QModelIndex &index );
+  Akonadi::Collection::List collectionsFromModel( const QAbstractItemModel *model,
+                                                                           const QModelIndex &parentIndex = QModelIndex(),
+                                                                           int start = 0,
+                                                                           int end = -1 );
 
-   Collection::Id collectionIdFromIndex( const QModelIndex &index );
+  Collection collectionFromIndex( const QModelIndex &index );
 
-   Collection::List collectionsFromIndexes( const QModelIndexList &indexes );
+  Collection::Id collectionIdFromIndex( const QModelIndex &index );
 
-   QString displayName( const Akonadi::Collection &coll );
+  Collection::List collectionsFromIndexes( const QModelIndexList &indexes );
+
+  QString displayName( const Akonadi::Collection &coll );
+
+  QString subMimeTypeForIncidence( KCal::Incidence *incidence );
 
 }
 

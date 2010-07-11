@@ -21,13 +21,13 @@
 #ifndef AKONADI_CALENDARMODEL_H
 #define AKONADI_CALENDARMODEL_H
 
-//#include "akonadi-kcal_next_export.h"
 #include <akonadi/entitytreemodel.h>
 
 namespace Akonadi {
 
-class  CalendarModel : public EntityTreeModel
+class CalendarModel : public EntityTreeModel
 {
+    Q_OBJECT
   public:
     enum ItemColumn {
       Summary=0,
@@ -38,7 +38,6 @@ class  CalendarModel : public EntityTreeModel
       PrimaryDate,
       Priority,
       PercentComplete,
-      Uid,
       ItemColumnCount
     };
 

@@ -117,8 +117,6 @@ QVariant CalendarModel::entityData( const Item& item, int column, int role ) con
         return todo->percentComplete();
       else
         return QVariant();
-    case Uid:
-      return incidence->uid();
     case PrimaryDate:
       return primaryDateForIncidence( item ).toString();
     case Type:
@@ -183,19 +181,19 @@ QVariant CalendarModel::entityHeaderData( int section, Qt::Orientation orientati
   if ( headerSet == EntityTreeModel::ItemListHeaders ) {
     switch( section ) {
     case Summary:
-      return i18nc( "@title:column, calendar event summary", "Summary" );
+      return i18nc( "@title:column calendar event summary", "Summary" );
     case DateTimeStart:
-      return i18nc( "@title:column, calendar event start date and time", "Start Date and Time" );
+      return i18nc( "@title:column calendar event start date and time", "Start Date and Time" );
     case DateTimeEnd:
-      return i18nc( "@title:column, calendar event end date and time", "End Date and Time" );
+      return i18nc( "@title:column calendar event end date and time", "End Date and Time" );
     case Type:
-      return i18nc( "@title:column, calendar event type", "Type" );
+      return i18nc( "@title:column calendar event type", "Type" );
     case DateTimeDue:
-      return i18nc( "@title:column, todo item due date and time", "Due Date and Time" );
+      return i18nc( "@title:column todo item due date and time", "Due Date and Time" );
     case Priority:
-      return i18nc( "@title:column, todo item priority", "Priority" );
+      return i18nc( "@title:column todo item priority", "Priority" );
     case PercentComplete:
-      return i18nc( "@title:column, todo item completion in percent", "Complete" );
+      return i18nc( "@title:column todo item completion in percent", "Complete" );
     default:
       return QVariant();
     }
@@ -203,7 +201,7 @@ QVariant CalendarModel::entityHeaderData( int section, Qt::Orientation orientati
   if ( headerSet == EntityTreeModel::CollectionTreeHeaders ) {
     switch ( section ) {
       case CollectionTitle:
-        return i18nc( "@title:column, calendar title", "Calendar" );
+        return i18nc( "@title:column calendar title", "Calendar" );
       default:
         return QVariant();
     }

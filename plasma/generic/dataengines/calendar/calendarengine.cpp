@@ -24,19 +24,24 @@
 #include <QtCore/QDate>
 
 #include <KCalendarSystem>
+#include <KDateTime>
+#include <KSystemTimeZones>
 #include <KHolidays/Holidays>
 
-#include <akonadi/changerecorder.h>
-#include <akonadi/entitydisplayattribute.h>
-#include <akonadi/itemfetchscope.h>
-#include <akonadi/kcal/incidencemimetypevisitor.h>
+#include <Akonadi/ChangeRecorder>
+#include <Akonadi/Session>
+#include <Akonadi/Collection>
+#include <Akonadi/ItemFetchScope>
+#include <Akonadi/EntityDisplayAttribute>
+#include <Akonadi/KCal/IncidenceMimeTypeVisitor>
 
-#include "calendarmodel.h"
+#include "akonadi/calendar.h"
+#include "akonadi/calendarmodel.h"
 #include "eventdatacontainer.h"
 
 CalendarEngine::CalendarEngine(QObject* parent, const QVariantList& args)
-: Plasma::DataEngine(parent)
-, m_calendarModel(0)
+              : Plasma::DataEngine(parent),
+                m_calendar(0)
 {
     Q_UNUSED(args);
 }
@@ -335,38 +340,39 @@ bool CalendarEngine::akonadiCalendarSourceRequest(const QString& key, const QStr
 
     // start akonadi etc if needed
     initAkonadiCalendar();
-    kDebug( )<< "Calendar source for" << KDateTime(start) << KDateTime(end);
 
     // create the corresponding EventDataContainer
-    addSource(new EventDataContainer(m_calendarModel, request, KDateTime(start), KDateTime(end)));
+    addSource(new EventDataContainer(m_calendar, request, KDateTime(start, QTime(0, 0, 0)), KDateTime(end, QTime(23, 59, 59))));
     return true;
 }
 
 void CalendarEngine::initAkonadiCalendar()
 {
-    if (m_calendarModel != 0) {
+    if (m_calendar != 0) {
         // we have been initialized already
         return;
     }
 
     // ask for akonadi events
+    Akonadi::Session *session = new Akonadi::Session("PlasmaCalendarEngine", this);
     Akonadi::ChangeRecorder* monitor = new Akonadi::ChangeRecorder(this);
     Akonadi::ItemFetchScope scope;
-    scope.fetchFullPayload( true );
+    scope.fetchFullPayload(true);
     scope.fetchAttribute<Akonadi::EntityDisplayAttribute>();
 
     // setup what part of akonadi data we want (calendar incidences)
-    monitor->setCollectionMonitored( Akonadi::Collection::root() );
-    monitor->fetchCollection( true );
-    monitor->setItemFetchScope( scope );
-    monitor->setMimeTypeMonitored( QLatin1String("text/calendar"), true );// FIXME: this one should not be needed, in fact it might cause the inclusion of free/busy, notes or other unwanted stuff
-    monitor->setMimeTypeMonitored( Akonadi::IncidenceMimeTypeVisitor::eventMimeType(), true );
-    monitor->setMimeTypeMonitored( Akonadi::IncidenceMimeTypeVisitor::todoMimeType(), true );
-    monitor->setMimeTypeMonitored( Akonadi::IncidenceMimeTypeVisitor::journalMimeType(), true );
+    monitor->setSession(session);
+    monitor->setCollectionMonitored(Akonadi::Collection::root());
+    monitor->fetchCollection(true);
+    monitor->setItemFetchScope(scope);
+    monitor->setMimeTypeMonitored(Akonadi::IncidenceMimeTypeVisitor::eventMimeType(), true);
+    monitor->setMimeTypeMonitored(Akonadi::IncidenceMimeTypeVisitor::todoMimeType(), true);
+    monitor->setMimeTypeMonitored(Akonadi::IncidenceMimeTypeVisitor::journalMimeType(), true);
 
     // create the models that contain the data. they will be updated automatically from akonadi.
-    m_calendarModel = new Akonadi::CalendarModel(monitor, this);
-    m_calendarModel->setCollectionFetchStrategy(Akonadi::EntityTreeModel::InvisibleCollectionFetch);
+    Akonadi::CalendarModel *calendarModel = new Akonadi::CalendarModel(monitor, this);
+    calendarModel->setCollectionFetchStrategy(Akonadi::EntityTreeModel::InvisibleCollectionFetch);
+    m_calendar = new Akonadi::Calendar(calendarModel, calendarModel, KSystemTimeZones::local());
 }
 
 #include "calendarengine.moc"

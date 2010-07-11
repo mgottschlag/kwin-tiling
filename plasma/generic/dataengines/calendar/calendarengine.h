@@ -24,9 +24,8 @@
 
 #include <Plasma/DataEngine>
 
-
 namespace Akonadi {
-    class CalendarModel;
+    class Calendar;
 }
 
 namespace KHolidays
@@ -68,6 +67,65 @@ namespace KHolidays
         eventsInMonth:[YYYY-MM-DD]
         events:[YYYY-MM-DD]:[YYYY-MM-DD]
         events:[YYYY-MM-DD]
+
+        The returned data contains (not all fields guaranteed to be populated):
+
+            "UID"                     QString
+            "Type"                    QString        "Event", "Todo", Journal"
+            "Summary"                 QString
+            "Comments"                QStringList
+            "Location"                QString
+            "OrganizerName"           QString
+            "OrganizerEmail"          QString
+            "Priority"                int
+            "StartDate"               KDateTime
+            "EndDate"                 KDateTime
+            "RecurrenceDates"         QList(QVariant(KDateTime))
+            "Recurs"                  bool
+            "AllDay"                  bool
+            "Categories"              QStringList
+            "Resources"               QStringList
+            "DurationDays"            int
+            "DurationSeconds"         int
+            "Status"                  QString         "None", "Tentative", "Confirmed", "Draft",
+                                                      "Final", "Completed", "InProcess",
+                                                      "Cancelled", "NeedsAction", "NonStandard",
+                                                      "Unknown"
+            "StatusName"              QString         translated Status
+            "Secrecy"                 QString         "Public", "Private", "Confidential", "Unknown"
+            "SecrecyName"             QString         translated Secrecy
+            "Occurrences"             QList(QVariant(Plasma::DataEngine::Data))
+                where each Data contains details of an occurence of the event:
+                    "OccurrenceUid"          QString      for convenience, same as UID
+                    "OccurrenceStartDate"    KDateTime
+                    "OccurrenceEndDate"      KDateTime
+
+        Event type specific data keys:
+            "EventMultiDay"           bool
+            "EventHasEndDate"         bool
+            "EventTransparency"       QString         "Opaque", "Transparent", "Unknown"
+
+        Todo type specific data keys:
+            "TodoHasStartDate"        bool
+            "TodoIsOpenEnded"         bool
+            "TodoHasDueDate"          bool
+            "TodoDueDate"             KDateTime
+            "TodoIsCompleted"         bool
+            "TodoIsInProgress"        bool
+            "TodoIsNotStarted"        bool
+            "TodoPercentComplete"     int
+            "TodoHasCompletedDate"    bool
+            "TodoCompletedDate"       bool
+
+        Fields still to be done:
+            Attendees
+            Attachments
+            Relations
+            Alarms
+            Custom Properties
+            Lat/Lon
+            Collection/Source
+
 */
 class CalendarEngine : public Plasma::DataEngine
 {
@@ -93,7 +151,7 @@ class CalendarEngine : public Plasma::DataEngine
         void initAkonadiCalendar();
 
         /// this is the representation of the root calendar itself. it contains everything (calendars, incidences)
-        Akonadi::CalendarModel* m_calendarModel;
+        Akonadi::Calendar *m_calendar;
 
         /// holiday calendar
         QHash<QString, KHolidays::HolidayRegion *> m_regions;

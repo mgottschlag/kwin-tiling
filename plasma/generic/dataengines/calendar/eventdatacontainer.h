@@ -20,35 +20,36 @@
 #ifndef EVENTDATACONTAINER_H
 #define EVENTDATACONTAINER_H
 
+#include <KDateTime>
+
+#include <KCal/Incidence>
+
 #include <plasma/datacontainer.h>
 
-class QAbstractItemModel;
-class QModelIndex;
-class QString;
-
 namespace Akonadi {
-    class DateRangeFilterProxyModel;
+    class Calendar;
 }
 
 class EventDataContainer :public Plasma::DataContainer
 {
     Q_OBJECT
 public:
-    EventDataContainer(QAbstractItemModel* sourceModel, const QString& name, const KDateTime& start, const KDateTime& end, QObject* parent = 0);
+    EventDataContainer(Akonadi::Calendar* calendar, const QString& name, const KDateTime& start, const KDateTime& end, QObject* parent = 0);
 
-private Q_SLOTS:
-    // when the model changes, we want to update the data for the applets,
-    // therefor these are connected to the model:
-    void calendarDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
-    void rowsInserted(const QModelIndex &parent, int first, int last);
-    void rowsRemoved(const QModelIndex &parent, int first, int last);
+public Q_SLOTS:
+    // update the list of incidents
+    void updateData();
 
 private:
-    // update the list of incidents
-    void updateData(Akonadi::DateRangeFilterProxyModel* model, const QModelIndex &parent);
+    void updateEventData();
+    void updateTodoData();
+    void updateJournalData();
+    void populateIncidenceData(KCal::Incidence::Ptr incidence, Plasma::DataEngine::Data &incidenceData);
 
-    Akonadi::DateRangeFilterProxyModel* m_calendarDateRangeProxy;
+    Akonadi::Calendar *m_calendar;
     QString m_name;
+    KDateTime m_startDate;
+    KDateTime m_endDate;
 };
 
 #endif

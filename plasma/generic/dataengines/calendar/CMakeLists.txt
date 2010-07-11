@@ -16,9 +16,10 @@ set(calendar_engine_srcs
     calendarengine.cpp
     eventdatacontainer.cpp
 # taken from kdepim/akonadi/kcal as long as it's not yet exported:
-    daterangefilterproxymodel.cpp
-    calendarmodel.cpp
-    utils.cpp
+    akonadi/calendar.cpp
+    akonadi/calendarmodel.cpp
+    akonadi/calfilterproxymodel.cpp
+    akonadi/utils.cpp
 )
 
 kde4_add_plugin(plasma_engine_calendar ${calendar_engine_srcs})
