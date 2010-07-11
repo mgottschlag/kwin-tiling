@@ -24,9 +24,11 @@
 
 #include <QHash>
 
+#include <Plasma/Plasma>
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 #include <Plasma/Theme>
+#include <Plasma/View>
 
 #include "widgetexplorer.h" //FIXME really? :/
 
@@ -182,28 +184,99 @@ void AppletsListWidget::onToolTipLeave()
 
 void AppletsListWidget::setToolTipPosition()
 {
+    QGraphicsWidget *item = m_toolTip->appletIconWidget();
     QPointF appletPosition = m_toolTip->appletIconWidget()->mapToItem(this, 0, 0);
     QRectF appletRect = m_toolTip->appletIconWidget()->
-                        mapRectToItem(this, m_toolTip->appletIconWidget()->boundingRect());
+                        mapRectToItem(this, item->boundingRect());
 
     toolTipMoveFrom = m_toolTip->pos();
 
     Plasma::Corona *corona = static_cast<Plasma::WidgetExplorer*>(parentItem())->corona();
-    if (corona) {
-        toolTipMoveTo = corona->popupPosition(m_toolTip->appletIconWidget(),
-                                              m_toolTip->geometry().size(),
-                                              Qt::AlignCenter);
-    } else {
-        toolTipMoveTo = QPoint(appletPosition.x(), appletPosition.y());
+
+    QGraphicsView *v = Plasma::viewFor(item);
+
+
+    QPoint pos;
+
+    QSize s = m_toolTip->size();
+
+    pos = v->mapFromScene(item->scenePos());
+    pos = v->mapToGlobal(pos);
+
+    QRect viewGeometry = v->geometry();
+    viewGeometry.moveTopLeft(v->mapToGlobal(viewGeometry.topLeft()));
+
+
+    switch (location()) {
+    case Plasma::BottomEdge:
+    case Plasma::TopEdge: {
+        pos.setX(pos.x() + item->boundingRect().width()/2 - s.width()/2);
+
+        if (pos.x() + s.width() > viewGeometry.right()) {
+            pos.setX(viewGeometry.right() - s.width());
+        } else {
+            pos.setX(qMax(pos.x(), viewGeometry.left()));
+        }
+        break;
+    }
+    case Plasma::LeftEdge:
+    case Plasma::RightEdge: {
+        pos.setY(pos.y() + item->boundingRect().height()/2 - s.height()/2);
+
+        if (pos.y() + s.height() > viewGeometry.bottom()) {
+            pos.setY(viewGeometry.bottom() - s.height());
+        } else {
+            pos.setY(qMax(pos.y(), viewGeometry.top()));
+        }
+        break;
+    }
+    default:
+        pos.setX(pos.x() + item->boundingRect().width()/2 - s.width()/2);
+
+        break;
     }
 
-    if (location() == Plasma::LeftEdge || location() == Plasma::RightEdge) {
-        toolTipMoveFrom.setX(toolTipMoveTo.x());
-    } else {
-        toolTipMoveFrom.setY(toolTipMoveTo.y());
+    switch (location()) {
+    case Plasma::BottomEdge:
+        pos.setY(viewGeometry.y() - s.height() + v->mapFromScene(item->mapToScene(0,0)).y());
+        break;
+    case Plasma::TopEdge:
+        pos.setY(viewGeometry.bottom());
+        break;
+    case Plasma::LeftEdge:
+        pos.setX(viewGeometry.right());
+        break;
+    case Plasma::RightEdge:
+        pos.setX(viewGeometry.x() - s.width());
+        break;
+    default:
+        if (pos.y() - s.height() > 0) {
+             pos.ry() = pos.y() - s.height();
+        } else {
+             pos.ry() = pos.y() + (int)item->boundingRect().size().height() + 1;
+        }
     }
 
-    m_toolTip->move(toolTipMoveTo);
+
+    //are we out of screen?
+    int screen = QApplication::desktop()->screenNumber(v);
+
+
+    QRect screenRect = corona->screenGeometry(screen);
+    //kDebug() << "==> rect for" << screen << "is" << screenRect;
+
+    if (location() != Plasma::LeftEdge && pos.x() + s.width() > screenRect.right()) {
+        pos.rx() -= ((pos.x() + s.width()) - screenRect.right());
+    }
+
+    if (location() != Plasma::TopEdge && pos.y() + s.height() > screenRect.bottom()) {
+        pos.ry() -= ((pos.y() + s.height()) - screenRect.bottom());
+    }
+
+    pos.rx() = qMax(0, pos.x());
+
+
+    toolTipMoveTo = pos;
 
     if (m_toolTip->isVisible()) {
         animateToolTipMove();
