@@ -136,6 +136,8 @@ class CalendarTablePrivate
             if (daysShownInPrevMonth < 1) {
                 daysShownInPrevMonth += daysInWeek;
             }
+            viewStartDate = dateFromRowColumn(0, 0);
+            viewEndDate = dateFromRowColumn(DISPLAYED_WEEKS - 1, daysInWeek - 1);
         }
 
         //Returns the x co-ordinate of a given column to LTR order, column is 0 to (daysInWeek-1)
@@ -285,6 +287,19 @@ class CalendarTablePrivate
             return dataEngine->query("holidaysDefaultRegion").value("holidaysDefaultRegion").toString();
         }
 
+        void insertPimOccurence(const QString &type, const QDate &date, Plasma::DataEngine::Data occurrence) {
+            if (date >= viewStartDate && date <= viewEndDate) {
+                int julian = date.toJulianDay();
+                if (type == "Event" && !events.contains(julian, occurrence)) {
+                    events.insert(julian, occurrence);
+                } else if (type == "Todo" && !todos.contains(julian, occurrence)) {
+                    todos.insert(julian, occurrence);
+                } else if (type == "Journal" && !journals.contains(julian, occurrence)) {
+                    journals.insert(julian, occurrence);
+                }
+            }
+        }
+
         CalendarTable *q;
         QString calendarType;
         const KCalendarSystem *calendar;
@@ -297,15 +312,23 @@ class CalendarTablePrivate
         int daysInWeek;
         int daysInSelectedMonth;
         int daysShownInPrevMonth;
+        QDate viewStartDate;
+        QDate viewEndDate;
 
         bool displayEvents;
         bool displayHolidays;
         QString holidaysRegion;
         Plasma::DataEngine *dataEngine;
-        // Hash key: int = Julian Day number of holiday/event/todo, Data = details of holiday/event/todo
+        // Hash key: int = Julian Day number of holiday, Data = details of holiday
         QMultiHash<int, Plasma::DataEngine::Data> holidays;
+        // Index to Events/Todos/Journals that occur on a given date.
+        // Hash key: int = Julian Day number of event/todo occurrence, Data = occurence details including start date, end date and Akonadi incidence UID
         QMultiHash<int, Plasma::DataEngine::Data> events;
         QMultiHash<int, Plasma::DataEngine::Data> todos;
+        QMultiHash<int, Plasma::DataEngine::Data> journals;
+        // Event/Todo/Journal details.  An event may recur on multiple dates.
+        // Hask key: QString = Akonadi UID of event/todo/journal, Data = details of event/todo/journal
+        QHash<QString, Plasma::DataEngine::Data> pimEvents;
         QString eventsQuery;
 
         bool automaticUpdates;
@@ -494,6 +517,8 @@ void CalendarTable::setDisplayEvents(bool display)
         }
         d->events.clear();
         d->todos.clear();
+        d->journals.clear();
+        d->pimEvents.clear();
     }
 }
 
@@ -527,8 +552,11 @@ void CalendarTable::addHoliday(const QDate &date,  Plasma::DataEngine::Data holi
 
 bool CalendarTable::dateHasDetails(const QDate &date) const
 {
-    const int julian = date.toJulianDay();
-    return d->holidays.contains(julian) || d->events.contains(julian) || d->todos.contains(julian);
+    int julian = date.toJulianDay();
+    return d->holidays.contains(julian) ||
+           d->events.contains(julian) ||
+           d->todos.contains(julian) ||
+           d->journals.contains(julian);
 }
 
 QString CalendarTable::dateDetails(const QDate &date) const
@@ -558,24 +586,24 @@ QString CalendarTable::dateDetails(const QDate &date) const
     if (d->events.contains(julian)) {
         details += "<br>";
 
-        foreach (Plasma::DataEngine::Data eventData, d->events.values(julian)) {
-            KDateTime startDate = KDateTime(eventData.value("StartDate").toDateTime());
-            KDateTime endDate = KDateTime(eventData.value("EndDate").toDateTime());
-            QTime startTime, endTime;
-            if (startDate.date() < date) {
-                startTime.setHMS(0, 0, 0);
-            } else {
-                startTime = startDate.time();
-            }
-            if (endDate.date() > date) {
-                endTime.setHMS(23, 59, 59);
-            } else {
-                endTime = endDate.time();
-            }
+        foreach (const Plasma::DataEngine::Data &occurrence, d->events.values(julian)) {
+            QString eventUid = occurrence.value("OccurrenceUid").toString();
+            KDateTime occStartDate = occurrence.value("OccurrenceStartDate").value<KDateTime>();
+            KDateTime occEndDate = occurrence.value("OccurrenceEndDate").value<KDateTime>();
+            Plasma::DataEngine::Data eventData = d->pimEvents.value(eventUid);
+
             //TODO translate this layout once strings not frozen
-            QString description = QString("%1 - %2<br>%3").arg(KGlobal::locale()->formatTime(startTime))
-                                                          .arg(KGlobal::locale()->formatTime(endTime))
-                                                          .arg(eventData.value("Summary").toString());
+            QString description;
+            if (eventData.value("AllDay").toBool()) {
+                description = QString("<br>%1").arg(eventData.value("Summary").toString());
+            } else if (!occEndDate.isValid() || occStartDate == occEndDate) {
+                description = QString("%1<br>%2").arg(KGlobal::locale()->formatTime(occStartDate.time()))
+                                                 .arg(eventData.value("Summary").toString());
+            } else {
+                description = QString("%1 - %2<br>%3").arg(KGlobal::locale()->formatTime(occStartDate.time()))
+                                                      .arg(KGlobal::locale()->formatTime(occEndDate.time()))
+                                                      .arg(eventData.value("Summary").toString());
+            }
             details += i18n("<i>Event</i>: %1<br>", description);
         }
     }
@@ -583,9 +611,25 @@ QString CalendarTable::dateDetails(const QDate &date) const
     if (d->todos.contains(julian)) {
         details += "<br>";
 
-        foreach (Plasma::DataEngine::Data todoData, d->todos.values(julian)) {
-            //TODO add Priority and Percentage Complete when strings not frozen
-            QString description = QString("%1").arg(todoData.value("Summary").toString());
+        foreach (const Plasma::DataEngine::Data &occurrence, d->todos.values(julian)) {
+            QString todoUid = occurrence.value("OccurrenceUid").toString();
+            KDateTime occStartDate = occurrence.value("OccurrenceStartDate").value<KDateTime>();
+            KDateTime occEndDate = occurrence.value("OccurrenceEndDate").value<KDateTime>();
+            Plasma::DataEngine::Data todoData = d->pimEvents.value(todoUid);
+
+            //TODO translate this layout once strings not frozen
+            QString description;
+            if (todoData.value("AllDay").toBool()) {
+                description = QString("<br>%1").arg(todoData.value("Summary").toString());
+            } else if (!occEndDate.isValid() || occStartDate == occEndDate) {
+                description = QString("%1<br>%2").arg(KGlobal::locale()->formatTime(occStartDate.time()))
+                                                 .arg(todoData.value("Summary").toString());
+            } else {
+                description = QString("%1 - %2<br>%3").arg(KGlobal::locale()->formatTime(occStartDate.time()))
+                                                      .arg(KGlobal::locale()->formatTime(occEndDate.time()))
+                                                      .arg(todoData.value("Summary").toString());
+            }
+            //TODO add Status and Percentage Complete when strings not frozen
             details += i18n("<i>Todo</i>: %1<br>", description);
         }
     }
@@ -622,10 +666,8 @@ void CalendarTable::populateHolidays()
     }
 
     // Just fetch the days displayed in the grid
-    QDate startDate = d->dateFromRowColumn(0, 0);
-    QDate endDate = d->dateFromRowColumn(DISPLAYED_WEEKS - 1, d->daysInWeek - 1);
-    QString queryString = "holidays:" + holidaysRegion() + ':' + startDate.toString(Qt::ISODate)
-                          + ':' + endDate.toString(Qt::ISODate);
+    QString queryString = "holidays:" + holidaysRegion() + ':' + d->viewStartDate.toString(Qt::ISODate)
+                          + ':' + d->viewEndDate.toString(Qt::ISODate);
     QList<QVariant> holidays = d->dataEngine->query(queryString).value(queryString).toList();
 
     QMutableListIterator<QVariant> i(holidays);
@@ -640,16 +682,16 @@ void CalendarTable::populateEvents()
 {
     d->events.clear();
     d->todos.clear();
+    d->journals.clear();
+    d->pimEvents.clear();
 
     if (!d->displayEvents || !d->dataEngine) {
         return;
     }
 
-    //kDebug() << "WOOOHOOOO!";
-    QDate queryDate = date();
-    queryDate.setDate(queryDate.year(), queryDate.month(), 1);
+    // Just fetch the days displayed in the grid
     d->dataEngine->disconnectSource(d->eventsQuery, this);
-    d->eventsQuery = "eventsInMonth:" + queryDate.toString(Qt::ISODate);
+    d->eventsQuery = "events:" + d->viewStartDate.toString(Qt::ISODate) + ':' + d->viewEndDate.toString(Qt::ISODate);
     d->dataEngine->connectSource(d->eventsQuery, this);
 }
 
@@ -658,14 +700,30 @@ void CalendarTable::dataUpdated(const QString &source, const Plasma::DataEngine:
     Q_UNUSED(source)
     d->events.clear();
     d->todos.clear();
+    d->journals.clear();
+    d->pimEvents.clear();
     foreach (const QVariant &v, data) {
         Plasma::DataEngine::Data pimData = v.toHash();
-        QString type = pimData.take("Type").toString();
-        if (type == "Todo") {
-            d->todos.insert(pimData.value("TodoDueDate").toDateTime().date().toJulianDay(), pimData);
-        } else if (type == "Event") {
-            d->events.insert(pimData.value("StartDate").toDateTime().date().toJulianDay(), pimData);
-        } // Ignore Journals
+        QString type = pimData.value("Type").toString();
+        QString uid = pimData.value("UID").toString();
+        QDate startDate = pimData.value("StartDate").value<KDateTime>().date();
+
+        d->pimEvents.insert(uid, pimData);
+
+        QList<QVariant> occurrenceList = pimData.value("Occurrences").toList();
+        foreach (QVariant occurrence, occurrenceList) {
+            QDate occStartDate = occurrence.toHash().value("OccurrenceStartDate").value<KDateTime>().date();
+            if (pimData.value("EventMultiDay").toBool() == true) {
+                QDate occEndDate = occurrence.toHash().value("OccurrenceEndDate").value<KDateTime>().date();
+                QDate multiDate = occStartDate;
+                while (multiDate <= occEndDate) {
+                    d->insertPimOccurence(type, multiDate, occurrence.toHash());
+                    multiDate = multiDate.addDays(1);
+                }
+            } else {
+                d->insertPimOccurence(type, occStartDate, occurrence.toHash());
+            }
+        }
     }
     update();
 }
@@ -765,7 +823,7 @@ void CalendarTable::wheelEvent(QGraphicsSceneWheelEvent * event)
 void CalendarTable::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     d->lastSeenMousePos = event->pos();
-  
+
     event->accept();
     QDate date = d->dateFromPoint(event->pos());
     setDate(date);
@@ -782,14 +840,14 @@ void CalendarTable::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     Q_UNUSED(event);
 
     d->lastSeenMousePos = event->pos();
-    
+
     emit tableClicked();
 }
 
 void CalendarTable::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
     d->lastSeenMousePos = event->pos();
-  
+
     d->updateHoveredPainting(event->pos());
 }
 
@@ -930,7 +988,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
                 }
             }
 
-            if (d->events.contains(julian) || d->events.contains(julian)) {
+            if (d->events.contains(julian) || d->todos.contains(julian)) {
                 type |= CalendarTable::Event;
             }
 
