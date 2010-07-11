@@ -314,6 +314,18 @@ void ClockApplet::updateTipContent()
     Plasma::ToolTipManager::self()->setContent(this, tipData);
 }
 
+void ClockApplet::updateClockApplet()
+{
+    bool updateSelectedDate = (d->calendarWidget->currentDate() == d->calendarWidget->date());
+
+    Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
+    d->calendarWidget->setCurrentDate(data["Date"].toDate());
+    
+    if (updateSelectedDate){
+        d->calendarWidget->setDate(d->calendarWidget->currentDate());
+    }
+}
+
 Plasma::ToolTipContent ClockApplet::toolTipContent()
 {
     return Plasma::ToolTipContent();
@@ -553,6 +565,7 @@ void ClockApplet::init()
     Plasma::ToolTipManager::self()->registerWidget(this);
 
     d->calendarWidget = new Plasma::Calendar();
+    d->calendarWidget->setAutomaticUpdateEnabled(false);
     d->calendarWidget->setMinimumSize(QSize(230, 220));
     d->calendarWidget->setDataEngine(dataEngine("calendar"));
     d->createCalendarExtender();
