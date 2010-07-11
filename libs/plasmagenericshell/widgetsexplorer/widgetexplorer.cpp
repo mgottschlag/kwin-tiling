@@ -191,7 +191,7 @@ void WidgetExplorerPrivate::init(Plasma::Location loc)
     q->setLayout(mainLayout);
 }
 
-void WidgetExplorerPrivate::setLocation(Plasma::Location loc)
+void WidgetExplorerPrivate::setLocation(const Plasma::Location loc)
 {
     if (location == loc) {
         return;
@@ -310,7 +310,7 @@ void WidgetExplorer::setLocation(Plasma::Location loc)
     emit(locationChanged(loc));
 }
 
-Plasma::Location WidgetExplorer::location()
+Plasma::Location WidgetExplorer::location() const
 {
     return d->location;
 }

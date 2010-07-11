@@ -83,12 +83,12 @@ public:
      *
      * @arg the new location
      */
-    void setLocation(Plasma::Location loc);
+    void setLocation(const Plasma::Location loc);
 
     /**
      * @return the location of the widget explorer
      */
-    Plasma::Location location();
+    Plasma::Location location() const;
 
     /**
      * Sets the icon size for the widget explorer
