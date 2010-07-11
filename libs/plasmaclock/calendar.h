@@ -69,6 +69,12 @@ public:
     bool dateHasDetails(const QDate &date) const;
     QString dateDetails(const QDate &date) const;
 
+    void setAutomaticUpdateEnabled(bool automatic);
+    bool isAutomaticUpdateEnabled() const;
+    
+    void setCurrentDate(const QDate &date);
+    const QDate& currentDate() const;
+    
     void applyConfiguration(KConfigGroup cg);
     void writeConfiguration(KConfigGroup cg);
     void createConfigurationInterface(KConfigDialog *parent);
