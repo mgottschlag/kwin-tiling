@@ -92,13 +92,10 @@ void PanelAppletHandle::setApplet(Plasma::Applet *applet)
 
         if (applet->formFactor() == Plasma::Vertical) {
             m_layout->setDirection(QBoxLayout::TopToBottom);
-            m_title->hide();
         } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
             m_layout->setDirection(QBoxLayout::RightToLeft);
-            m_title->show();
         } else {
             m_layout->setDirection(QBoxLayout::LeftToRight);
-            m_title->show();
         }
 
         QAction *configAction = applet->action("configure");
