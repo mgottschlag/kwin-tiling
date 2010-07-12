@@ -225,6 +225,11 @@ void Applet::deleteMeters()
     if (!m_mainLayout) {
         return;
     }
+    foreach (QString item, m_plotters.keys()) {
+        if (m_plotters.contains(item)) {
+            m_plotters.value(item)->deleteLater();
+        }
+    }
     m_plotters.clear();
     m_toolTips.clear();
     m_header = 0;
