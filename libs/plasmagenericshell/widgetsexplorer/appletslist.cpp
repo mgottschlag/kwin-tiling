@@ -195,6 +195,9 @@ void AppletsListWidget::setToolTipPosition()
 
     QGraphicsView *v = Plasma::viewFor(item);
 
+    if (!v) {
+        return;
+    }
 
     QPoint pos;
 
