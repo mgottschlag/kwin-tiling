@@ -225,7 +225,7 @@ void Applet::deleteMeters()
     if (!m_mainLayout) {
         return;
     }
-    foreach (SM::Plotter* item, m_plotters.values()) {
+    foreach (SM::Plotter* item, m_plotters) {
         item->deleteLater();
     }
     m_plotters.clear();
