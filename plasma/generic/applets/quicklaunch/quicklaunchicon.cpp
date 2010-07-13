@@ -33,6 +33,9 @@
 // Own
 #include "itemdata.h"
 
+using Plasma::ToolTipManager;
+using Plasma::ToolTipContent;
+
 namespace Quicklaunch {
 
 QuicklaunchIcon::QuicklaunchIcon(const ItemData &data, QGraphicsItem *parent)
@@ -42,18 +45,19 @@ QuicklaunchIcon::QuicklaunchIcon(const ItemData &data, QGraphicsItem *parent)
 {
     setIcon(data.icon());
 
-    Plasma::ToolTipManager::self()->registerWidget(this);
+    ToolTipManager::self()->registerWidget(this);
     connect(this, SIGNAL(clicked()), SLOT(execute()));
     setOwnedByLayout(true);
 }
 
-QuicklaunchIcon::~QuicklaunchIcon()
-{
-    Plasma::ToolTipManager::self()->unregisterWidget(this);
-}
-
 void QuicklaunchIcon::setIconNameVisible(bool enable)
 {
+    if (enable == m_iconNameVisible) {
+        return;
+    }
+
+    m_iconNameVisible = enable;
+
     if (enable) {
         setText(m_itemData.name());
     } else {
@@ -73,7 +77,9 @@ void QuicklaunchIcon::setItemData(const ItemData &data)
         setText(data.name());
     }
 
-    // TODO: Refresh tooltip content if currently visible
+    if (ToolTipManager::self()->isVisible(this)) {
+        updateToolTipContent();
+    }
 
     m_itemData = data;
 }
@@ -95,16 +101,22 @@ void QuicklaunchIcon::execute()
 
 void QuicklaunchIcon::toolTipAboutToShow()
 {
-  Plasma::ToolTipContent toolTipContent;
-  toolTipContent.setMainText(m_itemData.name());
-  toolTipContent.setSubText(m_itemData.description());
-  toolTipContent.setImage(m_itemData.icon());
-
-  Plasma::ToolTipManager::self()->setContent(this, toolTipContent);
+    updateToolTipContent();
 }
 
 void QuicklaunchIcon::toolTipHidden()
 {
-    Plasma::ToolTipManager::self()->clearContent(this);
+    ToolTipManager::self()->clearContent(this);
 }
+
+void QuicklaunchIcon::updateToolTipContent()
+{
+    ToolTipContent toolTipContent;
+    toolTipContent.setMainText(m_itemData.name());
+    toolTipContent.setSubText(m_itemData.description());
+    toolTipContent.setImage(icon());
+
+    ToolTipManager::self()->setContent(this, toolTipContent);
+}
+
 }

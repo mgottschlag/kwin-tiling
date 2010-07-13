@@ -1,5 +1,4 @@
 /***************************************************************************
- *   Copyright (C) 2008 by Lukas Appelhans <l.appelhans@gmx.de>            *
  *   Copyright (C) 2010 by Ingomar Wesp <ingomar@wesp.name>                *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -17,49 +16,44 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  ***************************************************************************/
-#ifndef QUICKLAUNCH_QUICKLAUNCHICON_H
-#define QUICKLAUNCH_QUICKLAUNCHICON_H
+#ifndef QUICKLAUNCH_POPUP_H
+#define QUICKLAUNCH_POPUP_H
+
+// Qt
+#include <Qt>
 
 // KDE
-#include <KUrl>
+#include <Plasma/Dialog>
 
-// Plasma
-#include <Plasma/IconWidget>
-
-// Own
-#include "itemdata.h"
-
-class QGraphicsItem;
+using Plasma::Dialog;
 
 namespace Quicklaunch {
 
-class QuicklaunchIcon : public Plasma::IconWidget
-{
+class IconGrid;
+class Quicklaunch;
+
+class Popup : public Dialog {
+
     Q_OBJECT
 
 public:
-    QuicklaunchIcon(const ItemData &data, QGraphicsItem *parent = 0);
+    Popup(Quicklaunch *applet);
+    ~Popup();
 
-    void setIconNameVisible(bool enable);
-    bool isIconNameVisible();
+    IconGrid *iconGrid();
+    void show();
 
-    void setItemData(const ItemData &data);
-
-    ItemData itemData() const;
-    KUrl url() const;
-
-
-public Q_SLOTS:
-    void execute();
-    void toolTipAboutToShow();
-    void toolTipHidden();
+private Q_SLOTS:
+    void onAppletGeometryChanged();
+    void onDisplayedItemCountChanged();
+    void onIconClicked();
 
 private:
-    void updateToolTipContent();
+    void syncSizeAndPosition();
 
-    ItemData m_itemData;
-    bool m_iconNameVisible;
+    Quicklaunch *m_applet;
+    IconGrid *m_iconGrid;
 };
 }
 
-#endif /* QUICKLAUNCH_QUICKLAUNCHICON_H */
+#endif /* QUICKLAUNCH_POPUP_H */

@@ -24,6 +24,9 @@
 
 // Qt
 #include <QtCore/QObject>
+#include <QtCore/QPoint>
+#include <QtCore/QPointF>
+#include <QtCore/QSize>
 
 // Plasma
 #include <Plasma/Applet>
@@ -43,9 +46,12 @@ class QPoint;
 
 class KConfigGroup;
 
+using Plasma::Constraints;
+
 namespace Quicklaunch {
 
 class IconGrid;
+class Popup;
 
 class Quicklaunch : public Plasma::Applet
 {
@@ -61,15 +67,13 @@ public:
     bool eventFilter(QObject *watched, QEvent *event);
 
 protected:
-    void constraintsEvent(Plasma::Constraints constraints);
+    void constraintsEvent(Constraints constraints);
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 
 private Q_SLOTS:
     void onConfigAccepted();
     void onIconsChanged();
-    void onDisplayedItemsChanged();
-    void onDialogArrowClicked();
-    void onDialogIconClicked();
+    void onPopupTriggerClicked();
     void onAddIconAction();
     void onRemoveIconAction();
 
@@ -79,23 +83,21 @@ private:
         IconGrid *component,
         int iconIndex);
 
-    void syncDialogSize();
-
     void initActions();
-    void initDialog();
-    void deleteDialog();
+    void initPopup();
+    void updatePopupTrigger();
+    void deletePopup();
 
     void readConfig();
     void migrateConfig(KConfigGroup &config);
 
     Ui::quicklaunchConfig uiConfig;
 
-    IconGrid *m_primaryIconGrid;
+    IconGrid *m_iconGrid;
 
     QGraphicsLinearLayout *m_layout;
-    Plasma::IconWidget *m_dialogArrow;
-    Plasma::Dialog *m_dialog;
-    IconGrid *m_dialogIconGrid;
+    Plasma::IconWidget *m_popupTrigger;
+    Popup *m_popup;
 
     QAction* m_addIconAction;
     QAction* m_removeIconAction;

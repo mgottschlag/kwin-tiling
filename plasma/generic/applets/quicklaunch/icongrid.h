@@ -20,6 +20,7 @@
 #define QUICKLAUNCH_ICONGRID_H
 
 // Qt
+#include <Qt>
 #include <QtCore/QList>
 #include <QtCore/QPointF>
 #include <QtGui/QGraphicsWidget>
@@ -55,24 +56,14 @@ class IconGrid : public QGraphicsWidget
     Q_OBJECT
 
 public:
-    IconGrid(
-        Plasma::FormFactor formFactor,
-        QGraphicsItem *parent = 0);
+    IconGrid(QGraphicsItem *parent = 0);
 
     bool iconNamesVisible();
     void setIconNamesVisible(bool enable);
 
-    int cellSpacing() const;
-    void setCellSpacing(int cellSpacing);
-    int maxRowsOrColumns() const;
-    void setMaxRowsOrColumns(int maxRowsOrColumns);
-    bool maxRowsOrColumnsForced() const;
-    void setMaxRowsOrColumnsForced(bool enable);
-
-    void setFormFactor(Plasma::FormFactor formFactor);
+    IconGridLayout *layout();
 
     int iconCount() const;
-    int displayedItemCount() const;
 
     void insert(int index, const ItemData &itemData);
     void insert(int index, const QList<ItemData> &itemDataList);
@@ -90,7 +81,7 @@ Q_SIGNALS:
     void displayedItemCountChanged();
 
     /**
-     * Indicates a change to the displayed quicklaunch icons.
+     * Indicates a change to one or more of the displayed quicklaunch icons.
      */
     void iconsChanged();
 

@@ -20,6 +20,7 @@
 #include "itemdata.h"
 
 // Qt
+#include <Qt>
 #include <QtCore/QList>
 #include <QtCore/QString>
 #include <QtXml/QDomDocument>
@@ -27,7 +28,6 @@
 // KDE
 #include <KBookmark>
 #include <KBookmarkGroup>
-#include <KDebug>
 #include <KDesktopFile>
 #include <KMimeType>
 #include <KUrl>

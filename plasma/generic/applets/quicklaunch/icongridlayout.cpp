@@ -24,9 +24,9 @@
 #include <QtCore/QRectF>
 #include <QtGui/QGraphicsLayout>
 #include <QtGui/QGraphicsLayoutItem>
+#include <QtGui/QSizePolicy>
 
 // KDE
-#include <KDebug>
 #include <KIconLoader>
 
 // stdlib
@@ -54,6 +54,13 @@ IconGridLayout::IconGridLayout(QGraphicsLayoutItem *parent)
       m_cellHeight(0)
 {
     setContentsMargins(0, 0, 0, 0);
+
+    QSizePolicy sizePolicy(
+        QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    sizePolicy.setHeightForWidth(true);
+    sizePolicy.setHorizontalStretch(1);
+    sizePolicy.setVerticalStretch(1);
+    setSizePolicy(sizePolicy);
 }
 
 IconGridLayout::~IconGridLayout()
@@ -78,6 +85,7 @@ void IconGridLayout::setMode(Mode mode)
     }
 
     m_mode = mode;
+    updateGridParameters();
     invalidate();
 }
 
@@ -96,6 +104,7 @@ void IconGridLayout::setCellSizeHint(int cellSizeHint)
     }
 
     m_cellSizeHint = cellSizeHint;
+    updateGridParameters();
     invalidate();
 }
 
@@ -113,6 +122,7 @@ void IconGridLayout::setCellSpacing(int cellSpacing)
     }
 
     m_cellSpacing = cellSpacing;
+    updateGridParameters();
     invalidate();
 }
 
@@ -128,6 +138,7 @@ void IconGridLayout::setMaxRowsOrColumns(int maxRowsOrColumns)
     }
 
     m_maxRowsOrColumns = maxRowsOrColumns;
+    updateGridParameters();
     invalidate();
 }
 
@@ -143,6 +154,7 @@ void IconGridLayout::setMaxRowsOrColumnsForced(bool enable)
     }
 
     m_maxRowsOrColumnsForced = enable;
+    updateGridParameters();
     invalidate();
 }
 
@@ -151,6 +163,7 @@ void IconGridLayout::addItem(QGraphicsLayoutItem *item)
     m_items.append(item);
     addChildLayoutItem(item);
     item->setParentLayoutItem(this);
+    updateGridParameters();
     invalidate();
 }
 
@@ -159,6 +172,7 @@ void IconGridLayout::insertItem(int index, QGraphicsLayoutItem *item)
     m_items.insert(index, item);
     addChildLayoutItem(item);
     item->setParentLayoutItem(this);
+    updateGridParameters();
     invalidate();
 }
 
@@ -202,25 +216,25 @@ void IconGridLayout::removeAt(int index)
         delete item;
     }
 
-    invalidate();
-}
-
-void IconGridLayout::invalidate()
-{
     updateGridParameters();
-    QGraphicsLayout::invalidate();
+    invalidate();
 }
 
 void IconGridLayout::setGeometry(const QRectF &rect)
 {
     QGraphicsLayout::setGeometry(rect);
+
     updateGridParameters();
 
     qreal offsetLeft =
-        qMax<qreal>(0.0, (geometry().width() - preferredWidth()) / 2);
+        qMax<qreal>(
+            contentsRect().left(),
+            (contentsRect().width() - preferredWidth()) / 2);
 
     qreal offsetTop =
-        qMax<qreal>(0.0, (geometry().height() - preferredHeight()) / 2);
+        qMax<qreal>(
+            contentsRect().top(),
+            (contentsRect().height() - preferredHeight()) / 2);
 
     int itemCount = m_items.size();
 
@@ -231,19 +245,22 @@ void IconGridLayout::setGeometry(const QRectF &rect)
 
         m_items[i]->setGeometry(
             QRectF(
-            offsetLeft + column * (m_cellWidth + m_cellSpacing),
-            offsetTop + row * (m_cellHeight + m_cellSpacing),
-            m_cellWidth, m_cellHeight));
+                offsetLeft + column * (m_cellWidth + m_cellSpacing),
+                offsetTop + row * (m_cellHeight + m_cellSpacing),
+                m_cellWidth, m_cellHeight));
     }
 }
 
 QSizeF IconGridLayout::sizeHint(
     Qt::SizeHint which, const QSizeF &constraint) const
 {
-    if (which == Qt::PreferredSize) {
-        return m_preferredSize;
-    } else {
-        return QSizeF();
+    Q_UNUSED(constraint);
+
+    switch(which) {
+        case Qt::PreferredSize: return m_preferredSizeHint;
+
+        default:
+            return QSizeF();
     }
 }
 
@@ -262,13 +279,19 @@ void IconGridLayout::updateGridParameters()
     const int width = int(contentsRect().width());
     const int height = int(contentsRect().height());
 
-    // Determine the minimum cell size according to widget constraints.
+    // Determine the minimum and preferred cell size according to the
+    // children's constraints.
     int minCellWidth = 0;
     int minCellHeight = 0;
+    int preferredCellWidth = 0;
+    int preferredCellHeight = 0;
 
     Q_FOREACH(QGraphicsLayoutItem *item, m_items) {
         minCellWidth = qMax(minCellWidth, (int)item->minimumWidth());
         minCellHeight = qMax(minCellHeight, (int)item->minimumHeight());
+
+        preferredCellWidth = qMax(preferredCellWidth, (int)item->preferredWidth());
+        preferredCellHeight = qMax(preferredCellHeight, (int)item->preferredHeight());
     }
 
     if (m_mode == PreferRows) {
@@ -286,7 +309,7 @@ void IconGridLayout::updateGridParameters()
             }
         }
         m_columnCount = ceil(double(itemCount) / m_rowCount);
-    } else {
+    } else { // m_mode == PreferColumns
 
         if (m_maxRowsOrColumns > 0 && m_maxRowsOrColumnsForced) {
             m_columnCount = qMin(itemCount, m_maxRowsOrColumns);
@@ -326,11 +349,10 @@ void IconGridLayout::updateGridParameters()
     int preferredHeight =
         m_rowCount * (qMax(minCellHeight, availableCellWidth) + m_cellSpacing) - m_cellSpacing;
 
-    // setPreferredSize(QSizeF(preferredWidth, preferredHeight));
-    if (preferredWidth != int(m_preferredSize.width()) ||
-        preferredHeight != int(m_preferredSize.height())) {
+    if (preferredWidth != int(m_preferredSizeHint.width()) ||
+        preferredHeight != int(m_preferredSizeHint.height())) {
 
-        m_preferredSize = QSizeF(preferredWidth, preferredHeight);
+        m_preferredSizeHint = QSizeF(preferredWidth, preferredHeight);
         updateGeometry();
     }
 }

@@ -19,6 +19,7 @@
 #include "icongrid.h"
 
 // Qt
+#include <Qt>
 #include <QtCore/QEvent>
 #include <QtCore/QMimeData>
 #include <QtCore/QPointF>
@@ -73,7 +74,10 @@ public:
     }
 
 protected:
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+    void paint(
+        QPainter *painter,
+        const QStyleOptionGraphicsItem *option,
+        QWidget *widget)
     {
         // This mirrors the behavior of the panel spacer committed by mart
         // workspace/plasma/desktop/containments/panel/panel.cpp R875513)
@@ -89,22 +93,20 @@ protected:
     }
 };
 
-IconGrid::IconGrid(
-    Plasma::FormFactor formFactor,
-    QGraphicsItem *parent)
-    : QGraphicsWidget(parent),
-      m_icons(),
-      m_iconNamesVisible(false),
-      m_layout(new IconGridLayout()),
-      m_mousePressedPos(),
-      m_dropMarker(0),
-      m_dropMarkerIndex(-1),
-      m_placeHolder(0)
+IconGrid::IconGrid(QGraphicsItem *parent)
+:
+    QGraphicsWidget(parent),
+    m_icons(),
+    m_iconNamesVisible(false),
+    m_layout(new IconGridLayout()),
+    m_mousePressedPos(),
+    m_dropMarker(0),
+    m_dropMarkerIndex(-1),
+    m_placeHolder(0)
 {
     m_dropMarker = new DropMarker(this);
 
     setLayout(m_layout);
-    setFormFactor(formFactor);
     initPlaceHolder();
 
     setAcceptDrops(true);
@@ -125,63 +127,17 @@ void IconGrid::setIconNamesVisible(bool enable)
         icon->setIconNameVisible(enable);
     }
     m_dropMarker->setIconNameVisible(enable);
-
     m_iconNamesVisible = enable;
 }
 
-int IconGrid::cellSpacing() const
+IconGridLayout * IconGrid::layout()
 {
-    return m_layout->cellSpacing();
-}
-
-void IconGrid::setCellSpacing(int cellSpacing)
-{
-    m_layout->setCellSpacing(cellSpacing);
-}
-
-int IconGrid::maxRowsOrColumns() const
-{
-    return m_layout->maxRowsOrColumns();
-}
-
-void IconGrid::setMaxRowsOrColumns(int maxRowsOrColumns)
-{
-    m_layout->setMaxRowsOrColumns(maxRowsOrColumns);
-}
-
-bool IconGrid::maxRowsOrColumnsForced() const
-{
-    return m_layout->maxRowsOrColumnsForced();
-}
-
-void IconGrid::setMaxRowsOrColumnsForced(bool enable)
-{
-    m_layout->setMaxRowsOrColumnsForced(enable);
-}
-
-void IconGrid::setFormFactor(Plasma::FormFactor formFactor) {
-
-    m_layout->setMode(
-        formFactor == Plasma::Horizontal ?
-            IconGridLayout::PreferRows :
-            IconGridLayout::PreferColumns);
-
-    // Ignore maxRowsOrColumns / maxRowsOrColumnsForced when in planar
-    // form factor.
-    if (formFactor == Plasma::Planar) {
-        setMaxRowsOrColumns(0);
-        setMaxRowsOrColumnsForced(false);
-    }
+    return m_layout;
 }
 
 int IconGrid::iconCount() const
 {
     return m_icons.size();
-}
-
-int IconGrid::displayedItemCount() const
-{
-    return m_layout->count();
 }
 
 void IconGrid::insert(int index, const ItemData &itemData)
@@ -209,6 +165,7 @@ void IconGrid::insert(int index, const QList<ItemData> &itemDataList)
 
         QuicklaunchIcon *icon = new QuicklaunchIcon(itemData);
         icon->setIconNameVisible(m_iconNamesVisible);
+        icon->setOrientation(Qt::Vertical);
         icon->installEventFilter(this);
         connect(icon, SIGNAL(clicked()), this, SIGNAL(iconClicked()));
 

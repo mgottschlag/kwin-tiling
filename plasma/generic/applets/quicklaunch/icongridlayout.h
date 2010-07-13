@@ -85,7 +85,6 @@ public:
     void moveItem(int from, int to);
     void removeAt(int index);
 
-    void invalidate();
     void setGeometry(const QRectF &rect);
     QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint = QSizeF()) const;
 
@@ -109,7 +108,7 @@ private:
     int m_columnCount;
     int m_cellWidth;
     int m_cellHeight;
-    QSizeF m_preferredSize;
+    QSizeF m_preferredSizeHint;
 };
 }
 

@@ -14,6 +14,7 @@ set(plasma_applet_quicklaunch_SRCS
   icongrid.cpp
   icongridlayout.cpp  
   itemdata.cpp
+  popup.cpp
   quicklaunch.cpp
   quicklaunchicon.cpp
 )

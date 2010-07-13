@@ -20,6 +20,7 @@
 #define QUICKLAUNCH_ITEMDATA_H
 
 // Qt
+#include <Qt>
 #include <QtCore/QMimeData>
 #include <QtCore/QList>
 #include <QtCore/QString>
@@ -89,7 +90,6 @@ private:
 
     static QList<KUrl> extractUrls(const QList<KBookmark> &bookmarkList);
     static QList<KUrl> extractUrls(const KBookmarkGroup &bookmarkGroup);
-
 };
 }
 
