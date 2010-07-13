@@ -48,9 +48,6 @@ macro_optional_find_package(Fontconfig)
 macro_optional_find_package(Googlegadgets)
 macro_log_feature(GOOGLEGADGETS_FOUND "GoogleGadgets" "Google Gadgets library" "http://code.google.com/p/google-gadgets-for-linux/" FALSE "0.11.0" "Needed to build plasma scriptengine for google gadgets")
 
-macro_optional_find_package(QEdje)
-macro_log_feature(QEDJE_FOUND "QEdje" "QEdje library" "http://code.openbossa.org/projects/qedje/pages/Home" FALSE "" "Needed to build plasma scriptengine for edje files")
-
 macro_optional_find_package(OpenGL)
 
 #### Python support ####
