@@ -97,6 +97,7 @@ Name[zh_CN]=自动启动
 Name[zh_TW]=自動啟動
 
 Comment=A configuration tool for managing which programs start up.
+Comment[ia]=Un instrumento de configuration pro gerer qual programma il initia.
 Comment[kk]=Бастағанда жегілетін бағдарламаларды тағайындайтын құрал.
 Comment[ko]=시작할 프로그램을 관리합니다.
 Comment[lt]=Programų, paleidžiamų kartu su KDE, konfigūravimo įrankis.
