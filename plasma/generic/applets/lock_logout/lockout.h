@@ -47,6 +47,7 @@ class LockOut : public Plasma::Applet
     public slots:
         void configChanged();
         void clickLogout();
+        void clickSwitchUser();
         void clickLock();
         void clickSleep();
         void clickHibernate();
@@ -63,18 +64,20 @@ class LockOut : public Plasma::Applet
         Ui::lockoutConfig ui;
 #endif
         bool m_showLockButton;
+        bool m_showSwitchUserButton;
         bool m_showLogoutButton;
         bool m_showSleepButton;
         bool m_showHibernateButton;
 
         Plasma::IconWidget *m_iconLock;
+        Plasma::IconWidget *m_iconSwitchUser;
         Plasma::IconWidget *m_iconLogout;
         Plasma::IconWidget *m_iconSleep;
         Plasma::IconWidget *m_iconHibernate;
         QGraphicsLinearLayout *m_layout;
         void checkLayout();
         void showButtons();
-        
+
         int m_visibleButtons;
 };
 

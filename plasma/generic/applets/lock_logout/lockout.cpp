@@ -38,6 +38,7 @@
 #include <KConfigDialog>
 #include <KSharedConfig>
 #include <kworkspace/kworkspace.h>
+#include <krunner_interface.h>
 #include <screensaver_interface.h>
 #endif
 
@@ -72,6 +73,11 @@ void LockOut::init()
     Plasma::ToolTipContent lockToolTip(i18n("Lock"),i18n("Lock the screen"),m_iconLock->icon());
     Plasma::ToolTipManager::self()->setContent(m_iconLock, lockToolTip);
 
+    m_iconSwitchUser = new Plasma::IconWidget(KIcon("system-switch-user"), "", this);
+    connect(m_iconSwitchUser, SIGNAL(clicked()), this, SLOT(clickSwitchUser()));
+    Plasma::ToolTipContent switchUserToolTip(i18n("Switch user"),i18n("Start a parallel session as a different user"),m_iconSwitchUser->icon());
+    Plasma::ToolTipManager::self()->setContent(m_iconSwitchUser, switchUserToolTip);
+
     m_iconLogout = new Plasma::IconWidget(KIcon("system-shutdown"), "", this);
     connect(m_iconLogout, SIGNAL(clicked()), this, SLOT(clickLogout()));
     Plasma::ToolTipContent logoutToolTip(i18n("Leave..."),i18n("Logout, turn off or restart the computer"),m_iconLogout->icon());
@@ -81,12 +87,12 @@ void LockOut::init()
     connect(m_iconSleep, SIGNAL(clicked()), this, SLOT(clickSleep()));
     Plasma::ToolTipContent sleepToolTip(i18n("Suspend"),i18n("Sleep (suspend to RAM)"),m_iconSleep->icon());
     Plasma::ToolTipManager::self()->setContent(m_iconSleep, sleepToolTip);
-    
+
     m_iconHibernate = new Plasma::IconWidget(KIcon("system-suspend-hibernate"), "", this);
     connect(m_iconHibernate, SIGNAL(clicked()), this, SLOT(clickHibernate()));
     Plasma::ToolTipContent hibernateToolTip(i18n("Hibernate"),i18n("Hibernate (suspend to disk)"),m_iconHibernate->icon());
     Plasma::ToolTipManager::self()->setContent(m_iconHibernate, hibernateToolTip);
-   
+
     configChanged();
 }
 
@@ -95,11 +101,12 @@ void LockOut::configChanged()
     #ifndef Q_OS_WIN
         KConfigGroup cg = config();
         m_showLockButton = cg.readEntry("showLockButton", true);
+        m_showSwitchUserButton = cg.readEntry("showSwitchUserButton", false);
         m_showLogoutButton = cg.readEntry("showLogoutButton", true);
         m_showSleepButton = cg.readEntry("showSleepButton", false);
         m_showHibernateButton = cg.readEntry("showHibernateButton", false);
     #endif
-    
+
     countButtons();
     showButtons();
 }
@@ -107,19 +114,23 @@ void LockOut::configChanged()
 void LockOut::countButtons()
 {
     m_visibleButtons = 0;
-  
+
     if (m_showLockButton){
         m_visibleButtons++;
     }
-    
+
+    if (m_showSwitchUserButton) {
+        m_visibleButtons++;
+    }
+
     if ( m_showLogoutButton){
         m_visibleButtons++;
     }
-    
+
     if (m_showSleepButton){
         m_visibleButtons++;
     }
-    
+
     if (m_showHibernateButton){
         m_visibleButtons++;
     }
@@ -211,12 +222,22 @@ void LockOut::clickLogout()
     if (!KAuthorized::authorizeKAction("logout")) {
         return;
     }
-    
+
     kDebug()<<"LockOut:: logout clicked ";
 #ifndef Q_OS_WIN
     KWorkSpace::requestShutDown( KWorkSpace::ShutdownConfirmDefault,
                                  KWorkSpace::ShutdownTypeDefault,
                                  KWorkSpace::ShutdownModeDefault);
+#endif
+}
+
+void LockOut::clickSwitchUser()
+{
+#ifndef Q_OS_WIN
+    // Taken from kickoff/core/itemhandlers.cpp
+    QString interface("org.kde.krunner");
+    org::kde::krunner::App krunner(interface, "/App", QDBusConnection::sessionBus());
+    krunner.switchUser();
 #endif
 }
 
@@ -284,6 +305,12 @@ void LockOut::configAccepted()
         changed = true;
     }
 
+    if (m_showSwitchUserButton != ui.checkBox_switchUser->isChecked()) {
+        m_showSwitchUserButton = !m_showSwitchUserButton;
+        cg.writeEntry("showSwitchUserButton", m_showSwitchUserButton);
+        changed = true;
+    }
+
     if (m_showLogoutButton != ui.checkBox_logout->isChecked()) {
         m_showLogoutButton = !m_showLogoutButton;
         cg.writeEntry("showLogoutButton", m_showLogoutButton);
@@ -324,6 +351,7 @@ void LockOut::createConfigurationInterface(KConfigDialog *parent)
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
     ui.checkBox_lock->setChecked(m_showLockButton);
+    ui.checkBox_switchUser->setChecked(m_showSwitchUserButton);
     ui.checkBox_logout->setChecked(m_showLogoutButton);
     ui.checkBox_sleep->setChecked(m_showSleepButton);
     ui.checkBox_hibernate->setChecked(m_showHibernateButton);
@@ -338,14 +366,19 @@ void LockOut::showButtons()
     //make sure we don't add a button twice in the layout
     //definitely not the best workaround...
     m_layout->removeItem(m_iconLock);
+    m_layout->removeItem(m_iconSwitchUser);
     m_layout->removeItem(m_iconLogout);
     m_layout->removeItem(m_iconSleep);
     m_layout->removeItem(m_iconHibernate);
 
     m_iconLock->setVisible(m_showLockButton);
-
-    if (m_showLockButton) { 
+    if (m_showLockButton) {
         m_layout->addItem(m_iconLock);
+    }
+
+    m_iconSwitchUser->setVisible(m_showSwitchUserButton);
+    if (m_showSwitchUserButton) {
+        m_layout->addItem(m_iconSwitchUser);
     }
 
     m_iconLogout->setVisible(m_showLogoutButton);
@@ -363,7 +396,7 @@ void LockOut::showButtons()
         m_layout->addItem(m_iconHibernate);
     }
 
-    setConfigurationRequired(!m_showLockButton && !m_showLogoutButton && !m_showSleepButton && !m_showHibernateButton);
+    setConfigurationRequired(!m_showLockButton && !m_showSwitchUserButton && !m_showLogoutButton && !m_showSleepButton && !m_showHibernateButton);
     checkLayout();
 #endif // !Q_OS_WIN
 }
