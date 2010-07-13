@@ -104,7 +104,7 @@ Q_SIGNALS:
      * @param wid window id
      * @param uri uri of the resource
      */
-    void resourceWindowRegistered(uint wid, const QString & uri);
+    void resourceWindowRegistered(const QString & application, uint wid, const QString & uri);
 
     /**
      * This signal is emitted when a client unregisters

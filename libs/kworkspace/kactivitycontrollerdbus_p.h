@@ -36,13 +36,13 @@ public Q_SLOTS:
     void ActivityAdded(const QString & id);
     void ActivityRemoved(const QString & id);
 
-    void ResourceWindowRegistered(uint wid, const QString & uri);
+    void ResourceWindowRegistered(const QString & application, uint wid, const QString & uri);
     void ResourceWindowUnregistered(uint wid, const QString & uri);
 
 Q_SIGNALS:
     void activityAdded(const QString & id);
     void activityRemoved(const QString & id);
-    void resourceWindowRegistered(uint wid, const QString & uri);
+    void resourceWindowRegistered(const QString & application, uint wid, const QString & uri);
     void resourceWindowUnregistered(uint wid, const QString & uri);
 
 private:

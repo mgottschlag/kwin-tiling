@@ -8,6 +8,7 @@
       <arg name="id" type="s" direction="in"/>
     </method>
     <method name="ResourceWindowRegistered">
+      <arg name="application" type="s" direction="in"/>
       <arg name="wid" type="u" direction="in"/>
       <arg name="uri" type="s" direction="in"/>
     </method>

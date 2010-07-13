@@ -76,7 +76,11 @@ QStringList KActivityConsumer::activitiesForResource(const KUrl & uri)
 
 void KActivityConsumer::registerResourceWindow(WId wid, const KUrl & uri)
 {
-    d->manager()->RegisterResourceWindow((uint)wid, uri.url());
+    d->manager()->RegisterResourceWindow(
+        QCoreApplication::instance()->applicationName(),
+        (uint)wid,
+        uri.url()
+    );
 }
 
 void KActivityConsumer::unregisterResourceWindow(WId wid, const KUrl & uri)

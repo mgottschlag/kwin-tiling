@@ -45,6 +45,11 @@
       <arg name="wid" type="u" direction="in"/>
       <arg name="uri" type="s" direction="in"/>
     </method>
+    <method name="RegisterResourceWindow">
+      <arg name="application" type="s" direction="in"/>
+      <arg name="wid" type="u" direction="in"/>
+      <arg name="uri" type="s" direction="in"/>
+    </method>
     <method name="UnregisterResourceWindow">
       <arg name="wid" type="u" direction="in"/>
       <arg name="uri" type="s" direction="in"/>

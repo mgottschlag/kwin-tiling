@@ -50,9 +50,9 @@ void KActivityControllerDbus::ActivityRemoved(const QString & id)
     emit activityRemoved(id);
 }
 
-void KActivityControllerDbus::ResourceWindowRegistered(uint wid, const QString & uri)
+void KActivityControllerDbus::ResourceWindowRegistered(const QString & application, uint wid, const QString & uri)
 {
-    emit resourceWindowRegistered(wid, uri);
+    emit resourceWindowRegistered(application, wid, uri);
 }
 
 void KActivityControllerDbus::ResourceWindowUnregistered(uint wid, const QString & uri)
