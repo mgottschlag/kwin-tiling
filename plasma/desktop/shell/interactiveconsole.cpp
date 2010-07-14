@@ -24,6 +24,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QSplitter>
+#include <QToolButton>
 #include <QVBoxLayout>
 
 #include <KFileDialog>
@@ -31,6 +32,7 @@
 #include <KAction>
 #include <KShell>
 #include <KMessageBox>
+#include <KMenu>
 #include <KServiceTypeTrader>
 #include <KStandardAction>
 #include <KStandardDirs>
@@ -42,9 +44,11 @@
 #include <KToolBar>
 
 #include <Plasma/Corona>
+#include <Plasma/Package>
 
 #include "plasmaapp.h"
 #include "scripting/desktopscriptengine.h"
+#include "scripting/layouttemplatepackagestructure.h"
 
 //TODO:
 // use text editor KPart for syntax highlighting?
@@ -61,6 +65,7 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
       m_saveAction(KStandardAction::saveAs(this, SLOT(saveScript()), this)),
       m_clearAction(KStandardAction::clear(this, SLOT(clearEditor()), this)),
       m_executeAction(new KAction(KIcon("system-run"), i18n("&Execute"), this)),
+      m_snippetsMenu(new KMenu(i18n("Snippets"), this)),
       m_fileDialog(0)
 {
     addAction(KStandardAction::close(this, SLOT(close()), this));
@@ -80,12 +85,21 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     label->setFont(f);
     editorLayout->addWidget(label);
 
+    QToolButton *snippetsButton = new QToolButton(this);
+    snippetsButton->setPopupMode(QToolButton::InstantPopup);
+    snippetsButton->setMenu(m_snippetsMenu);
+    snippetsButton->setText(i18n("Snippets"));
+    connect(m_snippetsMenu, SIGNAL(aboutToShow()), this, SLOT(populateSnippetsMenu()));
+    connect(m_snippetsMenu, SIGNAL(triggered(QAction*)), this, SLOT(loadSnippet(QAction*)));
+
     KToolBar *toolBar = new KToolBar(this, true, false);
     toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toolBar->addAction(m_loadAction);
     toolBar->addAction(m_saveAction);
     toolBar->addAction(m_clearAction);
     toolBar->addAction(m_executeAction);
+    toolBar->addWidget(snippetsButton);
+
     editorLayout->addWidget(toolBar);
 
     KService::List offers = KServiceTypeTrader::self()->query("KTextEditor/Document");
@@ -253,6 +267,11 @@ void InteractiveConsole::openScriptUrlSelected()
         return;
     }
 
+    loadScriptFromUrl(url);
+}
+
+void InteractiveConsole::loadScriptFromUrl(const KUrl &url)
+{
     if (m_editorPart) {
         m_editorPart->closeUrl(false);
         m_editorPart->openUrl(url);
@@ -269,6 +288,40 @@ void InteractiveConsole::openScriptUrlSelected()
         connect(m_job.data(), SIGNAL(data(KIO::Job*,QByteArray)), this, SLOT(scriptFileDataRecvd(KIO::Job*,QByteArray)));
         connect(m_job.data(), SIGNAL(result(KJob*)), this, SLOT(reenableEditor(KJob*)));
     }
+}
+
+void InteractiveConsole::populateSnippetsMenu()
+{
+    m_snippetsMenu->clear();
+
+    QMap<QString, KService::Ptr> sorted;
+    const QString constraint = QString("[X-Plasma-Shell] == '%1'")
+                                      .arg(KGlobal::mainComponent().componentName());
+    KService::List templates = KServiceTypeTrader::self()->query("Plasma/LayoutTemplate", constraint);
+    foreach (const KService::Ptr &service, templates) {
+        sorted.insert(service->name(), service);
+    }
+
+    QMapIterator<QString, KService::Ptr> it(sorted);
+    Plasma::PackageStructure::Ptr templateStructure(new WorkspaceScripting::LayoutTemplatePackageStructure);
+    while (it.hasNext()) {
+        it.next();
+        KPluginInfo info(it.value());
+        const QString path = KStandardDirs::locate("data", templateStructure->defaultPackageRoot() + '/' + info.pluginName() + '/');
+        if (!path.isEmpty()) {
+            Plasma::Package package(path, templateStructure);
+            const QString scriptFile = package.filePath("mainscript");
+            if (!scriptFile.isEmpty()) {
+                QAction *action = m_snippetsMenu->addAction(info.name());
+                action->setData(scriptFile);
+            }
+        }
+    }
+}
+
+void InteractiveConsole::loadSnippet(QAction *action)
+{
+    loadScriptFromUrl(KUrl(action->data().toString()));
 }
 
 void InteractiveConsole::scriptFileDataRecvd(KIO::Job *job, const QByteArray &data)

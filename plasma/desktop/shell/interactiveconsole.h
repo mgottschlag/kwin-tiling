@@ -31,6 +31,7 @@ class QSplitter;
 
 class KAction;
 class KFileDialog;
+class KMenu;
 class KTextEdit;
 class KTextBrowser;
 
@@ -75,6 +76,9 @@ private Q_SLOTS:
     void reenableEditor(KJob *job);
     void saveScriptUrlSelected();
     void openScriptUrlSelected();
+    void loadScriptFromUrl(const KUrl &url);
+    void populateSnippetsMenu();
+    void loadSnippet(QAction *);
 
 private:
     void onClose();
@@ -89,6 +93,7 @@ private:
     KAction *m_saveAction;
     KAction *m_clearAction;
     KAction *m_executeAction;
+    KMenu *m_snippetsMenu;
 
     KFileDialog *m_fileDialog;
     QWeakPointer<KIO::Job> m_job;
