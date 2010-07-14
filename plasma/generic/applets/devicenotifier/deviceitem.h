@@ -33,6 +33,7 @@ namespace Plasma
     class IconWidget;
     class BusyWidget;
     class Label;
+    class Meter;
 }
 
 namespace Notifier
@@ -332,8 +333,8 @@ class DeviceItem : public QGraphicsWidget
         ///The label that draws the description of the device
         Plasma::Label *m_descriptionLabel;
 
-        ///The proxy hosting the capacity bar
-        QGraphicsProxyWidget *m_capacityBar;
+        ///The meter that draws free space for the device
+        Plasma::Meter *m_freeSpaceBar;
 
         ///The busy widget
         Plasma::BusyWidget *m_busyWidget;

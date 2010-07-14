@@ -33,7 +33,6 @@
 #include <KStandardDirs>
 #include <KDesktopFile>
 #include <KGlobalSettings>
-#include <kcapacitybar.h>
 #include <kdesktopfileactions.h>
 
 //Plasma
@@ -42,6 +41,7 @@
 #include <Plasma/BusyWidget>
 #include <Plasma/ItemBackground>
 #include <Plasma/Label>
+#include <Plasma/Meter>
 #include <Plasma/Animator>
 #include <Plasma/Animation>
 
@@ -107,16 +107,16 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
     m_descriptionLabel->setOpacity(0);
     updateColors();
 
-    KCapacityBar *capacityBarWidget = new KCapacityBar(KCapacityBar::DrawTextInline);
-    m_capacityBar = new QGraphicsProxyWidget(this);
-    m_capacityBar->setWidget(capacityBarWidget);
-    capacityBarWidget->setAttribute(Qt::WA_TranslucentBackground);
-    capacityBarWidget->setContinuous(true);
-    m_capacityBar->setAcceptHoverEvents(false);
-    m_capacityBar->setOpacity(0);
+
+    m_freeSpaceBar = new Plasma::Meter();
+    m_freeSpaceBar->setMeterType(Plasma::Meter::BarMeterHorizontal);
+    m_freeSpaceBar->setLabelAlignment(0, Qt::AlignCenter);
+    m_freeSpaceBar->setOpacity(0);
+    m_freeSpaceBar->setMaximumHeight(12);
+
     info_layout->addItem(m_nameLabel);
     info_layout->addItem(m_descriptionLabel);
-    info_layout->addItem(m_capacityBar);
+    info_layout->addItem(m_freeSpaceBar);
 
     m_leftActionIcon = new Plasma::IconWidget(this);
     m_leftActionIcon->setMaximumSize(m_leftActionIcon->sizeFromIconSize(LEFTACTION_SIZE));
@@ -317,9 +317,9 @@ void DeviceItem::setMounted(const bool mounted)
         }
     }
 
-    const bool barVisible = m_capacityBar->isVisible();
-    m_capacityBar->setVisible(m_mounted && allowsCapacityBar());
-    if (!barVisible && m_capacityBar->isVisible()) {
+    const bool barVisible = m_freeSpaceBar->isVisible();
+    m_freeSpaceBar->setVisible(m_mounted && allowsCapacityBar());
+    if (!barVisible && m_freeSpaceBar->isVisible()) {
         // work around for a QGraphicsLayout bug when used with proxy widgets
         m_mainLayout->invalidate();
     }
@@ -360,7 +360,7 @@ void DeviceItem::setHovered(const bool hovered)
             m_barFade = Plasma::Animator::create(Plasma::Animator::FadeAnimation, this);
 
             m_labelFade->setTargetWidget(m_descriptionLabel);
-            m_barFade->setTargetWidget(m_capacityBar);
+            m_barFade->setTargetWidget(m_freeSpaceBar);
 
             m_labelFade->setProperty("targetOpacity", 0);
             m_barFade->setProperty("targetOpacity", 0);
@@ -378,15 +378,15 @@ void DeviceItem::setHovered(const bool hovered)
 void DeviceItem::setHoverDisplayOpacity(qreal opacity)
 {
     m_descriptionLabel->setOpacity(opacity);
-    m_capacityBar->setOpacity(opacity);
+    m_freeSpaceBar->setOpacity(opacity);
 }
 
 void DeviceItem::setFreeSpace(qulonglong freeSpace, qulonglong size)
 {
     qulonglong usedSpace = size - freeSpace;
-    KCapacityBar *capacityBarWidget = static_cast<KCapacityBar*>(m_capacityBar->widget());
-    capacityBarWidget->setText(i18nc("@info:status Free disk space", "%1 free", KGlobal::locale()->formatByteSize(freeSpace)));
-    capacityBarWidget->setValue(size > 0 ? (usedSpace * 100) / size : 0);
+
+    m_freeSpaceBar->setToolTip(i18nc("@info:status Free disk space", "%1 free", KGlobal::locale()->formatByteSize(freeSpace)));
+    m_freeSpaceBar->setValue(size > 0 ? (usedSpace * 100) / size : 0);
 }
 
 void DeviceItem::leftActionClicked()
