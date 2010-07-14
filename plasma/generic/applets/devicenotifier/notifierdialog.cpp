@@ -909,7 +909,7 @@ void NotifierDialog::resetSelection()
 
 void NotifierDialog::updateFreeSpace(DeviceItem *item)
 {
-    if (item->isMounted() && (item->state() == DeviceItem::Idle)) {
+    if (item->isMounted() && (item->state() != DeviceItem::Umounting)) {
         Solid::Device device(item->udi());
         Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
         if (access) {
