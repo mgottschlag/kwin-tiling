@@ -103,7 +103,7 @@ org.freedesktop.ModemManager.Modem.Gsm.Ussd
 
 Pending Problems
 ================
-1. Only tested with Sony Ericsson MD300 modem, which does not support all methods/signal from the specification.
+1. Needs more testing with other modems/cell phones.
 
 2. When I hook up a second 3G modem (my cell phone actually) in my notebook
 sometimes ModemManager disconnects the first modem from Internet. This is not a
@@ -142,3 +142,19 @@ org.freedesktop.ModemManager.Modem.Gsm.Network
 org.freedesktop.ModemManager.Modem.Gsm.SMS
 org.freedesktop.ModemManager.Modem.Gsm.Hso
 org.freedesktop.ModemManager.Modem.Gsm.Ussd
+
+Devices Known to Work
+=====================
+
+. Sony Ericsson MD300 modem
+    - connects to the Internet.
+    - Signal Quality indication only in Edge mode. When in 3G mode the modem only reports the number of bars (zero to five), but Modem Manager does not report that either. We can change Modem Manager to report an approximation of the signal quality based on the number of bars.
+
+. Samsung Omnia HD i8910
+    - connects to the Internet.
+    - Select "Any" in Plasma NM -> Manage Connections -> Mobile Broadband -> <connection name> -> Edit -> Type or it will not connect
+    - Access technology not reported by Modem Manager.
+
+. Nokia N95
+    - connects to the Internet.
+    - Access technology not reported by Modem Manager.
