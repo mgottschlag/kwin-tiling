@@ -156,14 +156,28 @@ void KRunnerDialog::positionOnScreen()
     if (m_oldScreen != screen) {
         //kDebug() << "old screen be the new screen" << m_oldScreen << screen;
         if (m_oldScreen != -1) {
-            m_screenPos.insert(m_oldScreen, pos());
+            QRect oldRect = Kephal::ScreenUtils::screenGeometry(m_oldScreen);
+            // Store the position relative to the screen topLeft corner.
+            // Since the geometry of screens might change between sessions
+            // storing the absolute position might lead to issues such as bug #243898
+            m_screenPos.insert(m_oldScreen, pos() - oldRect.topLeft());
         }
 
         m_oldScreen = screen;
         if (m_screenPos.contains(screen)) {
             //kDebug() << "moving to" << m_screenPos[screen];
-            move(m_screenPos[screen]);
-        } else {
+
+            // Checks that the stored position is still a valid position on screen
+            // if not, remove the stored position so that it is reset later
+            if (r.contains(m_screenPos[screen] + r.topLeft()) &&
+                r.contains(m_screenPos[screen] + r.topLeft() + QPoint(width()-1, 0))) {
+                move(m_screenPos[screen] + r.topLeft());
+            } else {
+                m_screenPos.remove(screen);
+            }
+        }
+
+        if (!m_screenPos.contains(screen)) {
             const int w = width();
             const int dx = r.left() + (r.width() / 2) - (w / 2);
             int dy = r.top();
@@ -194,7 +208,7 @@ void KRunnerDialog::positionOnScreen()
 
 void KRunnerDialog::moveEvent(QMoveEvent *)
 {
-    m_screenPos.insert(m_oldScreen, pos());
+    m_screenPos.insert(m_oldScreen, pos() - Kephal::ScreenUtils::screenGeometry(m_oldScreen).topLeft());
 }
 
 void KRunnerDialog::setFreeFloating(bool floating)
@@ -399,7 +413,7 @@ void KRunnerDialog::resizeEvent(QResizeEvent *e)
             const int dx = x() + (e->oldSize().width() / 2) - (width() / 2);
             int dy = r.top();
             move(qBound(r.left(), dx, r.right() - width() + 1), dy);
-            m_screenPos.insert(m_oldScreen, pos());
+            m_screenPos.insert(m_oldScreen, pos() - Kephal::ScreenUtils::screenGeometry(m_oldScreen).topLeft());
             if (!checkBorders(r)) {
                 updateMask();
             }
