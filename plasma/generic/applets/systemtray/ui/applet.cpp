@@ -306,22 +306,19 @@ void Applet::checkSizes()
 void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
     Q_UNUSED(option)
-    Q_UNUSED(contentsRect)
 
-    QRect r = contentsRect;
     QRect normalRect = contentsRect;
-    QRect firstRect(normalRect);
-    QRect lastRect(normalRect);
-    m_background->setElementPrefix("lastelements");
+    m_background->setElementPrefix(QString());
 
     const int leftEasement = m_taskArea->leftEasement();
-    const int rightEasement = m_taskArea->rightEasement();
     if(leftEasement > 0)
     {
+        QRect firstRect(normalRect);
+
         if (formFactor() == Plasma::Vertical) {
             int margin = m_background->marginSize(Plasma::TopMargin);
             firstRect.setHeight(leftEasement + margin);
-            normalRect.setY(leftEasement + contentsRect.top() + margin);
+            normalRect.setY(firstRect.bottom() + 1);
         } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
             int margin = m_background->marginSize(Plasma::RightMargin);
             normalRect.setWidth(normalRect.width() - leftEasement - margin);
@@ -329,76 +326,76 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
         } else {
             int margin = m_background->marginSize(Plasma::LeftMargin);
             firstRect.setWidth(leftEasement + margin);
-            normalRect.setX(leftEasement + contentsRect.left() + margin);
+            normalRect.setX(firstRect.right() + 1);
         }
-    }
-    if(rightEasement > 0)
-    {
-        if (formFactor() == Plasma::Vertical) {
-            int margin = m_background->marginSize(Plasma::BottomMargin);
-            normalRect.setHeight(normalRect.height() - rightEasement - margin);
-            lastRect.setY(normalRect.bottom() + 1);
-        } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
-            int margin = m_background->marginSize(Plasma::RightMargin);
-            normalRect.setWidth(normalRect.width() - leftEasement - margin);
-        } else {
-            int margin = m_background->marginSize(Plasma::RightMargin);
-            normalRect.setWidth(normalRect.width() - rightEasement - margin);
-            lastRect.setX(normalRect.right() + 1);
-        }
-    }
 
-    painter->save();
-
-    m_background->setElementPrefix(QString());
-    m_background->resizeFrame(r.size());
-    if (leftEasement > 0 || rightEasement > 0) {
-        painter->setClipRect(normalRect, Qt::IntersectClip);
-    }
-
-    m_background->paintFrame(painter, r, QRectF(QPointF(0, 0), r.size()));
-
-    if (leftEasement > 0) {
         if (m_background->hasElementPrefix("firstelements")) {
             m_background->setElementPrefix("firstelements");
         } else {
             m_background->setElementPrefix("lastelements");
         }
-        m_background->resizeFrame(r.size());
-        painter->restore();
+        m_background->resizeFrame(contentsRect.size());
+
         painter->save();
         painter->setClipRect(firstRect, Qt::IntersectClip);
-
-        m_background->paintFrame(painter, r, QRectF(QPointF(0, 0), r.size()));
-
+        m_background->paintFrame(painter, contentsRect, QRectF(QPointF(0, 0), contentsRect.size()));
         painter->restore();
-        painter->save();
-
-        if (formFactor() == Plasma::Vertical && m_background->hasElement("horizontal-separator")) {
-            QSize s = m_background->elementRect("horizontal-separator").size().toSize();
-            m_background->paint(painter, QRect(normalRect.topLeft() - QPoint(0, s.height() / 2),
-                                                QSize(firstRect.width(), s.height())), "horizontal-separator");
-        } else if (QApplication::layoutDirection() == Qt::RightToLeft && m_background->hasElement("vertical-separator")) {
-            QSize s = m_background->elementRect("vertical-separator").size().toSize();
-            m_background->paint(painter, QRect(normalRect.topRight() - QPoint(s.width() / 2, 0),
-                                                QSize(s.width(), firstRect.height())), "vertical-separator");
-        } else if (m_background->hasElement("vertical-separator")) {
-            QSize s = m_background->elementRect("vertical-separator").size().toSize();
-            m_background->paint(painter, QRect(normalRect.topLeft() - QPoint(s.width() / 2, 0),
-                                               QSize(s.width(), firstRect.height())), "vertical-separator");
-        }
     }
 
-    if (rightEasement > 0) {
+    const int rightEasement = m_taskArea->rightEasement();
+    if(rightEasement > 0)
+    {
+        QRect lastRect(normalRect);
+
+        if (formFactor() == Plasma::Vertical) {
+            int margin = m_background->marginSize(Plasma::BottomMargin);
+            normalRect.setHeight(normalRect.height() - rightEasement - margin);
+            lastRect.setY(normalRect.bottom() + 1);
+        } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
+            int margin = m_background->marginSize(Plasma::LeftMargin);
+            lastRect.setWidth(rightEasement + margin);
+            normalRect.setX(lastRect.right() + 1);
+        } else {
+            int margin = m_background->marginSize(Plasma::RightMargin);
+            normalRect.setWidth(normalRect.width() - rightEasement - margin);
+            lastRect.setX(normalRect.right() + 1);
+        }
+
         m_background->setElementPrefix("lastelements");
-        m_background->resizeFrame(r.size());
-        painter->restore();
+        m_background->resizeFrame(contentsRect.size());
+
         painter->save();
         painter->setClipRect(lastRect, Qt::IntersectClip);
-        m_background->paintFrame(painter, r, QRectF(QPointF(0, 0), r.size()));
+        m_background->paintFrame(painter, contentsRect, QRectF(QPointF(0, 0), contentsRect.size()));
+        painter->restore();
     }
 
+    m_background->setElementPrefix(QString());
+    m_background->resizeFrame(contentsRect.size());
+
+    painter->save();
+    painter->setClipRect(normalRect, Qt::IntersectClip);
+    m_background->paintFrame(painter, contentsRect, QRectF(QPointF(0, 0), contentsRect.size()));
     painter->restore();
+
+    if (leftEasement > 0) {
+        if (formFactor() == Plasma::Vertical) {
+            if (m_background->hasElement("horizontal-separator")) {
+                QSize s = m_background->elementRect("horizontal-separator").size().toSize();
+                m_background->paint(painter, QRect(normalRect.topLeft() - QPoint(0, s.height() / 2),
+                                    QSize(normalRect.width(), s.height())), "horizontal-separator");
+            }
+        } else if (m_background->hasElement("vertical-separator")) {
+            QSize s = m_background->elementRect("vertical-separator").size().toSize();
+            if (QApplication::layoutDirection() == Qt::RightToLeft) {
+                m_background->paint(painter, QRect(normalRect.topRight() - QPoint(s.width() / 2, 0),
+                                    QSize(s.width(), normalRect.height())), "vertical-separator");
+            } else {
+                m_background->paint(painter, QRect(normalRect.topLeft() - QPoint(s.width() / 2, 0),
+                                    QSize(s.width(), normalRect.height())), "vertical-separator");
+            }
+        }
+    }
 }
 
 
