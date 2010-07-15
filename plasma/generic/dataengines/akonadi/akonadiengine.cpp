@@ -297,7 +297,10 @@ void AkonadiEngine::emailItemAdded(const Akonadi::Item &item, const QString &col
         setData( source, "Flag-Answered", item.hasFlag("\\Answered") );
         setData( source, "Flag-Deleted", item.hasFlag("\\Deleted") );
         setData( source, "Flag-Flagged", item.hasFlag("\\Flagged") );
-
+        
+        if (!collection.isEmpty()) {
+            setData( collection, source, msg->subject()->asUnicodeString());
+        }
         //printMessage(msg);
         scheduleSourcesUpdated();
     }
