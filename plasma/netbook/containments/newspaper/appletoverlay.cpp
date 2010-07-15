@@ -92,13 +92,7 @@ void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
         QPointF offset = m_newspaper->m_container->pos() + m_newspaper->m_scrollWidget->pos();
         geom.moveTopLeft(geom.topLeft() + offset);
         geom = geom.intersected(m_newspaper->m_scrollWidget->geometry());
-        c = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-        c.setAlphaF(0.30);
-        QPainterPath p = Plasma::PaintUtils::roundedRectangle(geom, 4);
-        painter->save();
-        painter->setRenderHint(QPainter::Antialiasing, true);
-        painter->fillPath(p, c);
-        painter->restore();
+
         QRect iconRect(0, 0, KIconLoader::SizeLarge, KIconLoader::SizeLarge);
         iconRect.moveCenter(geom.center().toPoint());
         m_icons->paint(painter, iconRect, "move");
