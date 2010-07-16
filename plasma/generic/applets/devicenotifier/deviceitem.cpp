@@ -129,6 +129,7 @@ DeviceItem::DeviceItem(const QString &udi, QGraphicsWidget *parent)
     m_mainLayout->setAlignment(info_layout, Qt::AlignVCenter);
     m_mainLayout->addItem(m_leftActionIcon);
     m_mainLayout->setAlignment(m_leftActionIcon, Qt::AlignVCenter);
+    m_mainLayout->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
     m_busyWidget = new Plasma::BusyWidget(this);
     m_busyWidget->setMaximumSize(LEFTACTION_SIZE, LEFTACTION_SIZE);
