@@ -349,7 +349,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     if (qFuzzyCompare(m_highlight + 1, 1)) {
         drawIcon(painter, iRect, m_icon.pixmap(iconSize, QIcon::Disabled));
-    } else if (qFuzzyCompare(m_highlight, 1.0)) {
+    } else if (qFuzzyCompare(m_highlight, qreal(1.0))) {
         drawIcon(painter, iRect, m_icon.pixmap(iconSize, QIcon::Active));
     } else {
         painter->setOpacity(painter->opacity() * (1 - m_highlight));
