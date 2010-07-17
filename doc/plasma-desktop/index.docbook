@@ -22,14 +22,14 @@
 </authorgroup>
 
 <copyright>
-<year>2008</year>
+<year>2008&ndash;2010</year>
 <holder>Sebastian Kügler</holder>
 </copyright>
 
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2008-06-03</date>
-<releaseinfo>1.01.00</releaseinfo>
+<date>2010-07-17</date>
+<releaseinfo>1.10.00</releaseinfo>
 
 <abstract>
 <para>
@@ -41,6 +41,7 @@
 <keyword>KDE</keyword>
 <keyword>Plasma</keyword>
 <keyword>Plasmoid</keyword>
+<keyword>Widget</keyword>
 <keyword>Containments</keyword>
 <keyword>Desktop</keyword>
 <keyword>Runner</keyword>
@@ -53,7 +54,7 @@
 <title>Introduction</title>
 
 <para>
-&plasma; is one of the key technologies of &kde; 4 (also known as the
+&plasma; is one of the key technologies of &kde; Software Compilation 4 (also known as the
 &quot;Pillars of &kde;&quot;), and one of the most visible to users. As &plasma;
 treats the user interface differently than a traditional desktop, there may be
 confusion on what &plasma; is, what it does, and how to perform common tasks.
@@ -69,7 +70,7 @@ most common questions.
 <title>Using &plasma;</title>
 
 <sect1 id="plasmoids-and-containments">
-<title>&plasmoids; and Containments</title>
+<title>&plasma; Widgets and Containments</title>
 
 <para>
 The essence of Plasma revolves around two basic concepts:
@@ -77,7 +78,7 @@ The essence of Plasma revolves around two basic concepts:
 
 <variablelist>
 <varlistentry>
-<term>&plasmoids;</term>
+<term>&plasma; Widgets</term>
 <listitem>
 <para>
 Applets, or small applications that live on the desktop.
@@ -88,7 +89,7 @@ Applets, or small applications that live on the desktop.
 <term>Containments</term>
 <listitem>
 <para>
-Applets that act as the container for the &plasmoids;
+Applets that act as the container for the &plasma; widgets
 </para>
 </listitem>
 </varlistentry>
@@ -104,39 +105,39 @@ itself. Both are containments in the &plasma; sense.
 <title>The Panel</title>
 
 <para>
-The default panel holds a few &plasmoids;: starting from the left, there's the
-&kickoff; application launcher. You can use it to start applications, open recently 
+The default panel holds a few &plasma; widgets: starting from the left, there's the
+&kickoff; application launcher. You can use it to start applications, open recently
 opened files and the usual logout/shutdown options. There's also a structure
 that allows you to browse through your applications. The layout has been
 optimized for the use case that is most common: starting an application. The
 default tab is the <guilabel>Favorites</guilabel> tab that holds the most-used
 entries. In the beginning, you'll probably find yourself using the
-<guilabel>Applications</guilabel> tab more often. 
-Once you have found out what your most frequently started applications are, 
+<guilabel>Applications</guilabel> tab more often.
+Once you have found out what your most frequently started applications are,
 <mousebutton>right</mousebutton> click on the items and select the
 <guimenuitem>Add to Favorites</guimenuitem> to add them to your
 <guilabel>Favorites</guilabel> (or directly into the panel or on the desktop.
 Note that you need to &quot;unlock&quot; Plasma by means of
 <mousebutton>right</mousebutton> clicking on the desktop for any kind of
-modification). If you prefer &kde;&apos;s traditional menu-style application
+modification). If you prefer the traditional menu-style application
 launcher, change it by <mousebutton>right</mousebutton> clicking on the menu
 button and selecting <guimenuitem>Switch to Classic Menu Style</guimenuitem>.
 </para>
 
 <para>
 The next icon (looking like either a desktop computer or a laptop, depending on
-the type of machine) is the <application>Device Notifier</application>. 
+the type of machine) is the <application>Device Notifier</application>.
 Plug in a <acronym>USB</acronym> disk and a dialog will open that allows you to
 open the device in &dolphin;.
 </para>
 
 <para>
-The next item on your panel is the <application>Pager</application>. 
-It allows you to switch between your virtual desktops. 
-If you change the layout of the <application>Pager</application> 
-through the <guimenuitem>Number of rows</guimenuitem> option, 
+The next item on your panel is the <application>Pager</application>.
+It allows you to switch between your virtual desktops.
+If you change the layout of the <application>Pager</application>
+through the <guimenuitem>Number of rows</guimenuitem> option,
 which will also affect the layout and animations that are shown in &kwin;&apos;s
-<guimenuitem>Desktop Grid</guimenuitem> effect -- (Switch on desktop effect,
+<guimenuitem>Desktop Grid</guimenuitem> effect &ndash; (Switch on desktop effect,
 press <keycombo action="simul">&Ctrl;<keycap>F8</keycap></keycombo> to see it.)
 For larger pagers, selecting <guimenuitem>Display windows icons</guimenuitem>
 typically makes sense.
@@ -173,7 +174,7 @@ is used by traditional applications as a dock. Right clicking on the
 </para>
 
 <para>
-The right-most &plasmoid; in the default panel holds the <application>Digital
+The right-most &plasma; widget in the default panel holds the <application>Digital
 Clock</application>.
 This clock can display the time in different timezones as well as have its size
 changed. The clock will adjust its font size to the area it is given by the
@@ -199,8 +200,8 @@ action="simul">&Ctrl;<keycap>L</keycap></keycombo>),a small &plasma;
 logo will appear in the bottom right corner (it's commonly named the
 &quot;cashew&quot;). Click on this cashew, and the panel controller opens. The
 panel controller allows you to reposition, resize and realign the panel. The
-&plasmoids; living in this panel will adjust their size automatically.
-&plasmoids; have basic knowledge about sizing, provided by the containment. They
+&plasma; widgets living in this panel will adjust their size automatically.
+&plasma; widgets have basic knowledge about sizing, provided by the containment. They
 are programmed to take advantage of that size, and inform the applet about how
 much space they possibly need. In the end, the containment gives a possible size
 to the applets, the applets obey.
@@ -212,27 +213,25 @@ to the applets, the applets obey.
 <title>Adding Applets</title>
 
 <para>
-Unlock the desktop and you'll be able to add and remove &plasmoids; from panel
-or desktop. You add &plasmoids; by simply dragging them where you want them.
-<mousebutton>Right</mousebutton> click on an applet to remove it. The
-<guilabel>Add Applets</guilabel> dialog also allows you to mark certain applets
-as <guilabel>Favorite</guilabel> so you can find them back more easily.
+Unlock the desktop and you'll be able to add and remove &plasma; widgets from panel
+or desktop. You add &plasma; widgets by simply dragging them where you want them.
+<mousebutton>Right</mousebutton> click on an widget to remove it.
 
 <screenshot>
-<screeninfo>Favorite Widgets</screeninfo>
+<screeninfo>Add Widgets</screeninfo>
   <mediaobject>
     <imageobject>
-      <imagedata fileref="favorite-widgets.png" format="PNG"/>
+      <imagedata fileref="add-widgets.png" format="PNG"/>
     </imageobject>
       <textobject>
-      <phrase>Favorite Widgets</phrase>
+      <phrase>Add Widgets</phrase>
     </textobject>
   </mediaobject>
 </screenshot>
 
 The <guibutton>Install new widgets</guibutton> button allows you to add widgets
 you've previously downloaded. Currently it supports native &plasmagik; packages
-and &Mac; OSX dashboard widgets. Widgets you install this way can then be
+and some &Mac; OS&nbsp;X dashboard widgets. Widgets you install this way can then be
 accessed just like regular, preinstalled widgets.
 </para>
 </sect1>
@@ -243,11 +242,11 @@ accessed just like regular, preinstalled widgets.
 <para>
 The desktop is in fact another containment. One that doesn't put size
 constraints on the applets. Applets can be moved and sized freely. On the
-unlocked desktop, &plasmoids; will show a frame when you move the mouse over
+unlocked desktop, &plasma; widgets will show a frame when you move the mouse over
 them. This applet handle allows you to move, resize, relocate and realign the
-panel. It also allows you to drag Plasmoids on the desktop. The buttons in the
+panel. It also allows you to drag &plasma; widgets on the desktop. The buttons in the
 corner are used to resize, rotate configure and remove the applet. When
-rotated, a &plasmoid; will act magnetic towards 12 o'clock, so it's easy to get
+rotated, a &plasma; widget will act magnetic towards 12 o'clock, so it's easy to get
 them back into sensible position. By default, most applets keep their aspect
 ratio when they are being resized. If you want to freely resize an applet,
 hold the &Ctrl; key pressed while resizing.
@@ -260,8 +259,8 @@ wallpapers and themes through &knewstuff;.
 </para>
 
 <para>
-With open applications, it quickly gets hard to see the &plasmoids; on your
-desktop. The <emphasis role="bold">Dashboard</emphasis> gets those &plasmoids;
+With open applications, it quickly gets hard to see the &plasma; widgets on your
+desktop. The <emphasis role="bold">Dashboard</emphasis> gets those &plasma; widgets
 in front of you, much like the <guilabel>Show desktop</guilabel> functionality
 you are used to from traditional desktops.
 </para>
@@ -291,11 +290,10 @@ and processes, with options to monitor their output and kill processes.
 </sect1>
 
 <sect1 id="zooming-user-interface">
-<title>&quot;Activities&quot; or the &zui; (ZUI)</title>
+<title>Activities</title>
 
 <para>
-The desktop toolbox, accessed via the top right corner has a button for zooming
-out. &plasma; allows you to have more than one activity. Basically, that is multiple desktop containments hosting multiple sets of &plasmoids;. Zoom out from your current activity, choose <guilabel>Add activity</guilabel> to create a new containment, zoom in to your new containment and customize suiting your taste. &plasma;&apos;s zooming and &kwin;&apos;s desktop grid are similar in that respect, but there is a fundamental difference. While virtual desktop are used to group and organize windows, &plasma;&apos;s activities are used to group and organize plasmoids. This way, you can switch between activities and have relevant &plasmoids; supporting the task you're currently trying to accomplish. You can create a &quot;Free time&quot; activity, with comic strips, a puzzle and other &plasmoids;, and a work activity, with relevant <acronym>RSS</acronym> feeds, calculator and calendar, for example.
+The desktop toolbox, accessed via the top right corner has a button for displaying your activities, of which. &plasma; allows you to have more than one. Basically, that is multiple desktop containments hosting multiple sets of &plasma; widgets. Display the &quot;Activities&quot; bar, choose <guilabel>Add activity</guilabel> to create a new containment, select your new containment and customize suiting your taste. &plasma;&apos;s activities and &kwin;&apos;s desktop grid are similar in that respect, but there is a fundamental difference. While virtual desktop are used to group and organize windows, &plasma;&apos;s activities are used to group and organize &plasma; widgets. This way, you can switch between activities and have relevant &plasma; widgets supporting the task you're currently trying to accomplish. You can create a &quot;Free time&quot; activity, with comic strips, a puzzle and other &plasma; widgets, and a work activity, with relevant <acronym>RSS</acronym> feeds, calculator and calendar, for example.
 </para>
 
 </sect1>
@@ -397,7 +395,7 @@ Contributors:
 -->
 
 <para>
-Documentation Copyright &copy; 2008 Sebastian Kügler <email>sebas@kde.org</email>
+Documentation Copyright &copy; 2008&ndash;2010 Sebastian Kügler <email>sebas@kde.org</email>
 </para>
 
 <!-- TRANS:CREDIT_FOR_TRANSLATORS -->
