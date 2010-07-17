@@ -73,6 +73,7 @@ protected Q_SLOTS:
 private:
     DesktopLayout *m_layout;
     bool dropping;
+    bool m_startupCompleted;
 };
 
 #endif // PLASMA_PANEL_H

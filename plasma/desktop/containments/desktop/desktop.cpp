@@ -28,7 +28,8 @@ using namespace Plasma;
 
 DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
-      dropping(false)
+      dropping(false),
+      m_startupCompleted(false)
 {
     qRegisterMetaType<QImage>("QImage");
     qRegisterMetaType<QPersistentModelIndex>("QPersistentModelIndex");
@@ -54,6 +55,12 @@ DefaultDesktop::~DefaultDesktop()
 void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::StartupCompletedConstraint) {
+        if (m_startupCompleted) {
+            return;
+        }
+        
+        m_startupCompleted = true;
+        
         connect(corona(), SIGNAL(availableScreenRegionChanged()),
                 this, SLOT(refreshWorkingArea()));
         refreshWorkingArea();
