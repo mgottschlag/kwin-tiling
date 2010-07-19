@@ -260,23 +260,13 @@ void Applet::checkSizes()
     m_background->getMargins(leftMargin, topMargin, rightMargin, bottomMargin);
 
     QSizeF minSize = m_taskArea->effectiveSizeHint(Qt::MinimumSize);
-    if (f == Plasma::Horizontal && minSize.height() >= size().height() - topMargin - bottomMargin) {
-        m_background->setElementPrefix(QString());
-        m_background->setEnabledBorders(Plasma::FrameSvg::LeftBorder | Plasma::FrameSvg::RightBorder);
-        m_background->setElementPrefix("lastelements");
+    if (f == Plasma::Horizontal && minSize.height() > size().height() - topMargin - bottomMargin) {
         m_background->setEnabledBorders(Plasma::FrameSvg::LeftBorder | Plasma::FrameSvg::RightBorder);
         layout()->setContentsMargins(leftMargin, 0, rightMargin, 0);
-    } else if (f == Plasma::Vertical && minSize.width() >= size().width() - leftMargin - rightMargin) {
-        m_background->setElementPrefix(QString());
-        m_background->setEnabledBorders(Plasma::FrameSvg::TopBorder | Plasma::FrameSvg::BottomBorder);
-        m_background->setElementPrefix("lastelements");
+    } else if (f == Plasma::Vertical && minSize.width() > size().width() - leftMargin - rightMargin) {
         m_background->setEnabledBorders(Plasma::FrameSvg::TopBorder | Plasma::FrameSvg::BottomBorder);
         layout()->setContentsMargins(0, topMargin, 0, bottomMargin);
     } else {
-        m_background->setElementPrefix(QString());
-        m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
-        m_background->setElementPrefix("lastelements");
-        m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
         layout()->setContentsMargins(leftMargin, topMargin, rightMargin, bottomMargin);
     }
 
