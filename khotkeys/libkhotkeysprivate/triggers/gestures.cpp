@@ -28,8 +28,9 @@
 
 #include "windows_helper/window_selection_list.h"
 
-//#include <QX11Info>
-//#include <X11/Xlib.h>
+// only necessary for circumventing bug #173606, see below
+#include <QX11Info>
+#include <X11/Xlib.h>
 //#include <fixx11h.h>
 
 // #include "voices.h"
@@ -231,6 +232,11 @@ void Gesture::stroke_timeout()
     XAllowEvents( QX11Info::display(), AsyncPointer, CurrentTime );
     XUngrabPointer( QX11Info::display(), CurrentTime );
     mouse_replay( false );
+    
+    // for xorg-server 1.7 to 1.9 RC4: disable drag'n'drop support to evade bug #173606
+    if( VendorRelease( QX11Info::display() ) < 10899905 &&  VendorRelease( QX11Info::display() ) >= 10700000 )
+        mouse_replay( true );
+      
     recording = false;
     }
 
