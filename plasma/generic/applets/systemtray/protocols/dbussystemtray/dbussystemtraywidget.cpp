@@ -145,12 +145,12 @@ void DBusSystemTrayWidget::showContextMenu(KJob *job)
 
 void DBusSystemTrayWidget::calculateShowPosition()
 {
-    m_waitingOnContextMenu = true;
     Plasma::Corona *corona = m_host->containment()->corona();
     QSize s(1, 1);
     QPoint pos = corona->popupPosition(this, s);
     KConfigGroup params;
     if (m_itemIsMenu) {
+        m_waitingOnContextMenu = true;
         params = m_service->operationDescription("ContextMenu");
     } else {
         params = m_service->operationDescription("Activate");
