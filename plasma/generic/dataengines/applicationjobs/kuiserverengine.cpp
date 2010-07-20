@@ -101,6 +101,11 @@ void JobView::finished()
     }
 }
 
+JobView::State JobView::state()
+{
+    return m_state;
+}
+
 void JobView::setSuspended(bool suspended)
 {
     if (suspended) {
@@ -308,14 +313,16 @@ KuiserverEngine::KuiserverEngine(QObject* parent, const QVariantList& args)
 
     setMinimumPollingInterval(500);
 
-    //ready, attempt to sign up for updates from kuiserver
-    attemptRegister();
+    m_pendingJobsTimer.setSingleShot(true);
+    m_pendingJobsTimer.setInterval(500);
+    connect(&m_pendingJobsTimer, SIGNAL(timeout()), this, SLOT(processPendingJobs()));
 }
 
 KuiserverEngine::~KuiserverEngine()
 {
     QDBusConnection::sessionBus()
     .unregisterObject(QLatin1String("/DataEngine/applicationjobs/JobWatcher"), QDBusConnection::UnregisterTree);
+    qDeleteAll(m_pendingJobs);
 }
 
 QDBusObjectPath KuiserverEngine::requestView(const QString &appName,
@@ -325,11 +332,25 @@ QDBusObjectPath KuiserverEngine::requestView(const QString &appName,
     jobView->setAppName(appName);
     jobView->setAppIconName(appIconName);
     jobView->setCapabilities(capabilities);
-
-    addSource(jobView);
     connect(jobView, SIGNAL(becameUnused(QString)), this, SLOT(removeSource(QString)));
 
+    m_pendingJobs << jobView;
+    m_pendingJobsTimer.start();
+
     return jobView->objectPath();
+}
+
+void KuiserverEngine::processPendingJobs()
+{
+    foreach (JobView *jobView, m_pendingJobs) {
+        if (jobView->state() == JobView::Stopped) {
+            delete jobView;
+        } else {
+            addSource(jobView);
+        }
+    }
+
+    m_pendingJobs.clear();
 }
 
 Plasma::Service* KuiserverEngine::serviceForSource(const QString& source)
@@ -342,15 +363,12 @@ Plasma::Service* KuiserverEngine::serviceForSource(const QString& source)
     }
 }
 
-void KuiserverEngine::attemptRegister()
-{
-  QDBusInterface interface("org.kde.kuiserver", "/JobViewServer"/* object to connect to */,
-                           ""/* use the default interface */, QDBusConnection::sessionBus(), this);
-  interface.asyncCall(QLatin1String("registerService"), "org.kde.plasma-desktop", "/DataEngine/applicationjobs/JobWatcher");
-}
-
 void KuiserverEngine::init()
 {
+    // register with the Job UI Serer to receive notifications of jobs becoming available
+    QDBusInterface interface("org.kde.kuiserver", "/JobViewServer"/* object to connect to */,
+                              ""/* use the default interface */, QDBusConnection::sessionBus(), this);
+    interface.asyncCall(QLatin1String("registerService"), QDBusConnection::sessionBus().baseService(), "/DataEngine/applicationjobs/JobWatcher");
 }
 
 K_EXPORT_PLASMA_DATAENGINE(kuiserver, KuiserverEngine)

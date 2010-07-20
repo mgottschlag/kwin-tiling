@@ -21,6 +21,7 @@
 
 #include <QDBusObjectPath>
 #include <QBasicTimer>
+#include <QTimer>
 
 #include <Plasma/DataContainer>
 #include <Plasma/DataEngine>
@@ -41,17 +42,20 @@ public:
     KuiserverEngine(QObject* parent, const QVariantList& args);
     ~KuiserverEngine();
 
+    void init();
+
     QDBusObjectPath requestView(const QString &appName, const QString &appIconName,
                                 int capabilities);
     Plasma::Service* serviceForSource(const QString& source);
 
     static uint s_jobId;
 
-protected:
-    void init();
+private Q_SLOTS:
+    void processPendingJobs();
 
 private:
-    void attemptRegister();
+    QTimer m_pendingJobsTimer;
+    QList<JobView *> m_pendingJobs;
 };
 
 class JobView : public Plasma::DataContainer
@@ -71,6 +75,7 @@ public:
     ~JobView();
 
     uint jobId() const;
+    JobView::State state();
 
     void setTotalAmount(qlonglong amount, const QString &unit);
     QString totalAmountSize() const;
