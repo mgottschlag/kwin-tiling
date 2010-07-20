@@ -190,7 +190,24 @@ void DBusSystemTrayTask::dataUpdated(const QString &taskName, const Plasma::Data
             //FIXME: quite ugly, checks if the applet is klipper and if is less than 2 widgets have been created. if so, assign a default global shortcut
             QString shortcutText;
             if (i.key()->property("firstRun").toBool() == true  && name() == "Klipper" && widgetsByHost().count() < 2) {
-                shortcutText = "Ctrl+Alt+V";
+
+                QString file = KStandardDirs::locateLocal("config", "kglobalshortcutsrc");
+                KConfig config(file);
+                KConfigGroup cg(&config, "klipper");
+                QStringList shortcutTextList = cg.readEntry("show_klipper_popup", QStringList());
+
+                if (shortcutTextList.size() >= 2) {
+                    shortcutText = shortcutTextList.first();
+                    if (shortcutText.isEmpty()) {
+                        shortcutText = shortcutTextList[1];
+                    }
+
+                    if (shortcutText.isEmpty()) {
+                        shortcutText = "Ctrl+Alt+V";
+                    }
+                } else {
+                    shortcutText = "Ctrl+Alt+V";
+                }
             }
             shortcutText = shortcutsConfig.readEntryUntranslated(icon->action()->objectName(), shortcutText);
             KAction *action = qobject_cast<KAction *>(icon->action());
