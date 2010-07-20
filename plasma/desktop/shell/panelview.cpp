@@ -995,7 +995,8 @@ void PanelView::togglePanelController()
         connect(m_panelController, SIGNAL(locationChanged(Plasma::Location)), this, SLOT(setLocation(Plasma::Location)));
         connect(m_panelController, SIGNAL(panelVisibilityModeChanged(PanelView::VisibilityMode)), this, SLOT(setVisibilityMode(PanelView::VisibilityMode)));
 
-        if (dynamic_cast<QGraphicsLinearLayout*>(containment()->layout())) {
+        if (containment()->containmentType() == Plasma::Containment::PanelContainment && 
+	    dynamic_cast<QGraphicsLinearLayout*>(containment()->layout())) {
             setTabOrder(0, m_panelController);
             QWidget *prior = m_panelController;
 
@@ -1508,7 +1509,7 @@ bool PanelView::event(QEvent *event)
 
 void PanelView::appletAdded(Plasma::Applet *applet)
 {
-    if (m_panelController) {
+    if (m_panelController && containment()->containmentType() == Plasma::Containment::PanelContainment) {
         QColor overlayColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
         QBrush overlayBrush(overlayColor);
         QPalette p(palette());
