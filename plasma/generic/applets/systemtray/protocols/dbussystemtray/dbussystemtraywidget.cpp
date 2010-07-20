@@ -145,13 +145,20 @@ void DBusSystemTrayWidget::showContextMenu(KJob *job)
 
 void DBusSystemTrayWidget::calculateShowPosition()
 {
+    m_waitingOnContextMenu = true;
     Plasma::Corona *corona = m_host->containment()->corona();
     QSize s(1, 1);
     QPoint pos = corona->popupPosition(this, s);
-    KConfigGroup params = m_service->operationDescription("Activate");
+    KConfigGroup params;
+    if (m_itemIsMenu) {
+        params = m_service->operationDescription("ContextMenu");
+    } else {
+        params = m_service->operationDescription("Activate");
+    }
     params.writeEntry("x", pos.x());
     params.writeEntry("y", pos.y());
-    m_service->startOperationCall(params);
+    KJob *job = m_service->startOperationCall(params);
+    connect(job, SIGNAL(result(KJob*)), this, SLOT(showContextMenu(KJob*)));
 }
 
 void DBusSystemTrayWidget::setIcon(const QString &iconName, const QIcon &icon)
