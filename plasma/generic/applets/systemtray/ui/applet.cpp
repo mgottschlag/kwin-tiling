@@ -84,7 +84,8 @@ int Applet::s_managerUsage = 0;
 Applet::Applet(QObject *parent, const QVariantList &arguments)
     : Plasma::PopupApplet(parent, arguments),
       m_taskArea(0),
-      m_background(0)
+      m_background(0),
+      m_firstRun(true)
 {
     if (!s_manager) {
         s_manager = new SystemTray::Manager();
@@ -154,6 +155,11 @@ void Applet::init()
 
     QTimer::singleShot(0, this, SLOT(checkDefaultApplets()));
     configChanged();
+}
+
+bool Applet::isFirstRun()
+{
+    return m_firstRun;
 }
 
 QGraphicsWidget *Applet::graphicsWidget()
@@ -679,6 +685,7 @@ void Applet::configAccepted()
 void Applet::checkDefaultApplets()
 {
     if (config().readEntry("DefaultAppletsAdded", false)) {
+        m_firstRun = false;
         return;
     }
 

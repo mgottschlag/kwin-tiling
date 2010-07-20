@@ -48,6 +48,7 @@ class TaskArea;
 class Applet : public Plasma::PopupApplet
 {
     Q_OBJECT
+    Q_PROPERTY(bool firstRun READ isFirstRun)
 
 public:
     explicit Applet(QObject *parent, const QVariantList &arguments = QVariantList());
@@ -58,6 +59,7 @@ public:
     void constraintsEvent(Plasma::Constraints constraints);
     Manager *manager() const;
     QSet<Task::Category> shownCategories() const;
+    bool isFirstRun();
 
 protected:
     void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
@@ -94,6 +96,8 @@ private:
     Ui::VisibleItemsConfig m_visibleItemsUi;
 
     QWeakPointer<QStandardItemModel> m_visibleItemsSourceModel;
+
+    bool m_firstRun;
 };
 
 }
