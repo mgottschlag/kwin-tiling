@@ -89,6 +89,8 @@ The main display is a list of the installed fonts, grouped via the fonts' family
 <para>To install a font, press the <guibutton>Add...</guibutton> button, and select the desired fonts from within the file dialog. The selected font group will control where the fonts will be installed.</para>
 <para>To un-install fonts, select the appropriate fonts from the list, and press the <guibutton>Delete...</guibutton> button.</para>
 
+<para>Click with the &RMB; to open a context menu with some additional actions like <guilabel>Enable</guilabel>, <guilabel>Disable</guilabel>, <guilabel>Print</guilabel>, <ulink url="help:/kfontviewer/index.html"><guilabel>Open in Font Viewer</guilabel></ulink> and <guilabel>Reload</guilabel>.</para>
+
 </sect2>
 
 <sect2 id="font-preview">
