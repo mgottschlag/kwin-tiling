@@ -116,12 +116,14 @@ void BusyWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         activePixmap.fill(Qt::transparent);
         QPixmap inActivePixmap(iconRect.size().toSize());
         inActivePixmap.fill(Qt::transparent);
+        QRect pieRect(QPoint(0, 0), activePixmap.size()*2);
+        pieRect.moveCenter(activePixmap.rect().center());
 
         QPainter p(&activePixmap);
         p.setPen(Qt::NoPen);
         p.setBrush(Qt::black);
         p.setCompositionMode(QPainter::CompositionMode_Source);
-        p.drawPie(QRectF(QPointF(0, 0), iconRect.size()), arcStart, arcEnd);
+        p.drawPie(pieRect, arcStart, arcEnd);
         p.setCompositionMode(QPainter::CompositionMode_SourceIn);
         m_svg->paint(&p, QRectF(QPointF(0, 0), iconRect.size()), "notification-progress-active");
         p.end();
@@ -130,7 +132,7 @@ void BusyWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         p.setPen(Qt::NoPen);
         p.setBrush(Qt::black);
         p.setCompositionMode(QPainter::CompositionMode_Source);
-        p.drawPie(QRectF(QPointF(0, 0), iconRect.size()), arcStart, (360*16)+arcEnd);
+        p.drawPie(pieRect, arcStart, (360*16)+arcEnd);
         p.setCompositionMode(QPainter::CompositionMode_SourceIn);
         m_svg->paint(&p, QRectF(QPointF(0, 0), iconRect.size()), "notification-progress-inactive");
         p.end();
