@@ -54,7 +54,7 @@ KCMDisplay::KCMDisplay( QWidget *parent, const QVariantList & )
   top->setSpacing( KDialog::spacingHint() );
   top->addWidget( m_tabs );
 
-  setButtons( Apply|Help );
+  setButtons( Apply );
   load();
 }
 
