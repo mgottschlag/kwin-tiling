@@ -81,6 +81,9 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
         } else if (m_appletsContainer->m_currentApplet.data()->isAncestorOf(watched)) {
             return false;
         }
+    //don't manage wheel events over the current applet
+    } else if (event->type() == QEvent::GraphicsSceneWheel && m_appletsContainer->m_currentApplet && m_appletsContainer->m_currentApplet.data()->isAncestorOf(watched)) {
+        return false;
     } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
         foreach (Plasma::Applet *applet, m_appletsContainer->containment()->applets()) {
             if (applet->isAncestorOf(watched)) {
