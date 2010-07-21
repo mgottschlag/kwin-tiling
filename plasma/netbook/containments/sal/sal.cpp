@@ -63,6 +63,7 @@
 
 SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
+      m_runnerModel(0),
       m_backButton(0),
       m_queryCounter(0),
       m_maxColumnWidth(0),
@@ -154,6 +155,93 @@ void SearchLaunch::init()
     if (corona()) {
         connect(corona(), SIGNAL(availableScreenRegionChanged()), this, SLOT(availableScreenRegionChanged()));
         availableScreenRegionChanged();
+    }
+
+    Plasma::FormFactor form = formFactor();
+    Qt::Orientation layoutOtherDirection = form == Plasma::Vertical ? \
+            Qt::Horizontal : Qt::Vertical;
+
+    // create main layout
+    m_mainLayout = new QGraphicsLinearLayout();
+    m_mainLayout->setOrientation(layoutOtherDirection);
+    m_mainLayout->setContentsMargins(0, 0, 0, 0);
+    m_mainLayout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
+                                            QSizePolicy::Expanding));
+    setLayout(m_mainLayout);
+
+    // create launch grid and make it centered
+    m_resultsLayout = new QGraphicsLinearLayout;
+
+
+    m_resultsView = new ItemView(this);
+
+    m_resultsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_resultsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    m_resultsLayout->addItem(m_resultsView);
+
+    connect(m_resultsView, SIGNAL(dragStartRequested(QModelIndex)), this, SLOT(resultsViewRequestedDrag(QModelIndex)));
+    connect(m_resultsView, SIGNAL(itemActivated(QModelIndex)), this, SLOT(launch(QModelIndex)));
+    connect(m_resultsView, SIGNAL(addActionTriggered(const QModelIndex &)), this, SLOT(addFavourite(const QModelIndex &)));
+
+
+    //TODO how to do the strip widget?
+    m_stripWidget = new StripWidget(this);
+    m_stripWidget->setImmutability(immutability());
+    connect(m_stripWidget, SIGNAL(saveNeeded()), this, SLOT(saveFavourites()));
+
+    //load all config, only at this point we are sure it won't crash
+    configChanged();
+
+    m_appletsLayout = new QGraphicsLinearLayout(Qt::Horizontal);
+    m_appletsLayout->setPreferredHeight(KIconLoader::SizeMedium);
+    m_appletsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    QGraphicsWidget *leftSpacer = new QGraphicsWidget(this);
+    QGraphicsWidget *rightSpacer = new QGraphicsWidget(this);
+    m_appletsLayout->addItem(leftSpacer);
+    m_appletsLayout->addItem(rightSpacer);
+
+    m_backButton = new Plasma::IconWidget(this);
+    m_backButton->setIcon(KIcon("go-previous"));
+    m_backButton->setText(i18n("Back"));
+    m_backButton->setOrientation(Qt::Horizontal);
+    m_backButton->setPreferredSize(m_backButton->sizeFromIconSize(KIconLoader::SizeSmallMedium));
+    connect(m_backButton, SIGNAL(clicked()), this, SLOT(reset()));
+    connect(m_resultsView, SIGNAL(resetRequested()), this, SLOT(reset()));
+
+    QGraphicsAnchorLayout *searchLayout = new QGraphicsAnchorLayout();
+    searchLayout->setSpacing(10);
+
+    m_searchField = new Plasma::LineEdit(this);
+    m_searchField->setPreferredWidth(200);
+    m_searchField->nativeWidget()->setClearButtonShown(true);
+    m_searchField->nativeWidget()->setClickMessage(i18n("Search..."));
+    connect(m_searchField, SIGNAL(returnPressed()), this, SLOT(searchReturnPressed()));
+    connect(m_searchField->nativeWidget(), SIGNAL(textEdited(const QString &)), this, SLOT(delayedQuery()));
+    m_searchTimer = new QTimer(this);
+    m_searchTimer->setSingleShot(true);
+    connect(m_searchTimer, SIGNAL(timeout()), this, SLOT(query()));
+    searchLayout->addAnchor(m_searchField, Qt::AnchorHorizontalCenter, searchLayout, Qt::AnchorHorizontalCenter);
+    searchLayout->addAnchors(m_searchField, searchLayout, Qt::Vertical);
+    searchLayout->addAnchors(m_backButton, searchLayout, Qt::Vertical);
+    searchLayout->addAnchor(m_backButton, Qt::AnchorRight, m_searchField, Qt::AnchorLeft);
+
+
+    // add our layouts to main vertical layout
+    m_mainLayout->addItem(m_stripWidget);
+    m_mainLayout->addItem(searchLayout);
+    m_mainLayout->addItem(m_resultsLayout);
+
+
+    // correctly set margins
+    m_mainLayout->activate();
+    m_mainLayout->updateGeometry();
+
+    setTabOrder(m_stripWidget, m_searchField);
+    setTabOrder(m_searchField, m_resultsView);
+    setFormFactorFromLocation(location());
+
+    if (action("remove")) {
+        m_toolBox->addTool(action("remove"));
     }
 }
 
@@ -358,100 +446,13 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint ||
         constraints & Plasma::StartupCompletedConstraint) {
 
-        Plasma::FormFactor form = formFactor();
-
-        Qt::Orientation layoutOtherDirection = form == Plasma::Vertical ? \
-            Qt::Horizontal : Qt::Vertical;
-
-
-        // create our layout!
-        if (!layout()) {
-            // create main layout
-            m_mainLayout = new QGraphicsLinearLayout();
-            m_mainLayout->setOrientation(layoutOtherDirection);
-            m_mainLayout->setContentsMargins(0, 0, 0, 0);
-            m_mainLayout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
-                                                    QSizePolicy::Expanding));
-            setLayout(m_mainLayout);
-
-            // create launch grid and make it centered
-            m_resultsLayout = new QGraphicsLinearLayout;
-
-
-            m_resultsView = new ItemView(this);
-
-            m_resultsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-            m_resultsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-            m_resultsLayout->addItem(m_resultsView);
-
-            connect(m_resultsView, SIGNAL(dragStartRequested(QModelIndex)), this, SLOT(resultsViewRequestedDrag(QModelIndex)));
-            connect(m_resultsView, SIGNAL(itemActivated(QModelIndex)), this, SLOT(launch(QModelIndex)));
-            connect(m_resultsView, SIGNAL(addActionTriggered(const QModelIndex &)), this, SLOT(addFavourite(const QModelIndex &)));
-
+         // create the models
+        if (!m_runnerModel) {
             m_runnerModel = new KRunnerModel(this);
             m_serviceModel = new KServiceModel(config(), this);
             m_resultsView->setModel(m_serviceModel);
-
-            //TODO how to do the strip widget?
-            m_stripWidget = new StripWidget(this);
-            m_stripWidget->setImmutability(immutability());
-            connect(m_stripWidget, SIGNAL(saveNeeded()), this, SLOT(saveFavourites()));
-
-            //load all config, only at this point we are sure it won't crash
-            configChanged();
-
-            m_appletsLayout = new QGraphicsLinearLayout(Qt::Horizontal);
-            m_appletsLayout->setPreferredHeight(KIconLoader::SizeMedium);
-            m_appletsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-            QGraphicsWidget *leftSpacer = new QGraphicsWidget(this);
-            QGraphicsWidget *rightSpacer = new QGraphicsWidget(this);
-            m_appletsLayout->addItem(leftSpacer);
-            m_appletsLayout->addItem(rightSpacer);
-
-            m_backButton = new Plasma::IconWidget(this);
-            m_backButton->setIcon(KIcon("go-previous"));
-            m_backButton->setText(i18n("Back"));
-            m_backButton->setOrientation(Qt::Horizontal);
-            m_backButton->setPreferredSize(m_backButton->sizeFromIconSize(KIconLoader::SizeSmallMedium));
-            connect(m_backButton, SIGNAL(clicked()), this, SLOT(reset()));
-            connect(m_resultsView, SIGNAL(resetRequested()), this, SLOT(reset()));
-
-            QGraphicsAnchorLayout *searchLayout = new QGraphicsAnchorLayout();
-            searchLayout->setSpacing(10);
-
-            m_searchField = new Plasma::LineEdit(this);
-            m_searchField->setPreferredWidth(200);
-            m_searchField->nativeWidget()->setClearButtonShown(true);
-            m_searchField->nativeWidget()->setClickMessage(i18n("Search..."));
-            connect(m_searchField, SIGNAL(returnPressed()), this, SLOT(searchReturnPressed()));
-            connect(m_searchField->nativeWidget(), SIGNAL(textEdited(const QString &)), this, SLOT(delayedQuery()));
-            m_searchTimer = new QTimer(this);
-            m_searchTimer->setSingleShot(true);
-            connect(m_searchTimer, SIGNAL(timeout()), this, SLOT(query()));
-            searchLayout->addAnchor(m_searchField, Qt::AnchorHorizontalCenter, searchLayout, Qt::AnchorHorizontalCenter);
-            searchLayout->addAnchors(m_searchField, searchLayout, Qt::Vertical);
-            searchLayout->addAnchors(m_backButton, searchLayout, Qt::Vertical);
-            searchLayout->addAnchor(m_backButton, Qt::AnchorRight, m_searchField, Qt::AnchorLeft);
-
-
-            // add our layouts to main vertical layout
-            m_mainLayout->addItem(m_stripWidget);
-            m_mainLayout->addItem(searchLayout);
-            m_mainLayout->addItem(m_resultsLayout);
-
-
-            // correctly set margins
-            m_mainLayout->activate();
-            m_mainLayout->updateGeometry();
-
-            setTabOrder(m_stripWidget, m_searchField);
-            setTabOrder(m_searchField, m_resultsView);
-            setFormFactorFromLocation(location());
-
-            if (action("remove")) {
-                m_toolBox->addTool(action("remove"));
-            }
         }
+        
         resize(corona()->screenGeometry(screen()).size());
     }
 
