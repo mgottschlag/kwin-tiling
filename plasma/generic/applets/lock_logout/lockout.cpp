@@ -272,7 +272,7 @@ void LockOut::clickHibernate()
 {
     if (KMessageBox::questionYesNo(0,
                                    i18n("Do you want to suspend to disk (hibernate)?"),
-                                   i18n("Suspend"))
+                                   i18n("Hibernate"))
             != KMessageBox::Yes) {
         return;
     }
