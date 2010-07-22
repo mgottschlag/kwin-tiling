@@ -53,7 +53,7 @@
 #include "historystringitem.h"
 #include "klipperpopup.h"
 
-#if HAVE_DMTX
+#ifdef HAVE_DMTX
 #include "mobilebarcode.h"
 #endif
 
@@ -208,7 +208,7 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     qobject_cast<KAction*>(m_editAction)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_E), KAction::DefaultShortcut);
     connect(m_editAction, SIGNAL(triggered()), SLOT(slotEditData()));
 
-#if HAVE_DMTX
+#ifdef HAVE_DMTX
     // add barcode for mobile phones
     m_showBarcodeAction = m_collection->addAction("show_barcode");
     m_showBarcodeAction->setText(i18n("&Show barcode..."));
