@@ -226,7 +226,6 @@ void DesktopCorona::checkDesktop(Activity *activity, bool signalWhenExists, int 
     }
 
     c->setScreen(screen, desktop);
-    c->setFormFactor(Plasma::Planar);
     c->flushPendingConstraintsEvents();
     requestConfigSync();
 
