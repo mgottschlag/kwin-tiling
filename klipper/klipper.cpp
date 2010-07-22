@@ -53,6 +53,10 @@
 #include "historystringitem.h"
 #include "klipperpopup.h"
 
+#if HAVE_DMTX
+#include "mobilebarcode.h"
+#endif
+
 #include <zlib.h>
 
 #ifdef Q_WS_X11
@@ -204,6 +208,13 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     qobject_cast<KAction*>(m_editAction)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_E), KAction::DefaultShortcut);
     connect(m_editAction, SIGNAL(triggered()), SLOT(slotEditData()));
 
+#if HAVE_DMTX
+    // add barcode for mobile phones
+    m_showBarcodeAction = m_collection->addAction("show_barcode");
+    m_showBarcodeAction->setText(i18n("&Show barcode..."));
+    connect(m_showBarcodeAction, SIGNAL(triggered()), SLOT(slotShowBarcode()));
+#endif
+
     // Cycle through history
     m_cycleNextAction = m_collection->addAction("cycleNextAction");
     m_cycleNextAction->setText(i18n("Next History Item"));
@@ -231,6 +242,9 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     popup->plugAction( m_configureAction );
     popup->plugAction( m_repeatAction );
     popup->plugAction( m_editAction );
+#ifdef HAVE_DMTX
+    popup->plugAction( m_showBarcodeAction );
+#endif
     if ( !isApplet() ) {
         popup->plugAction( m_quitAction );
     }
@@ -710,7 +724,7 @@ bool Klipper::blockFetchingNewData()
         return true;
     }
     m_pendingContentsCheck = false;
-    if ( m_overflowCounter == 0 ) 
+    if ( m_overflowCounter == 0 )
         m_overflowClearTimer.start( 1000 );
     if( ++m_overflowCounter > MAX_CLIPBOARD_CHANGES )
         return true;
@@ -1109,11 +1123,33 @@ void Klipper::slotEditData()
 
 }
 
+#ifdef HAVE_DMTX
+void Klipper::slotShowBarcode()
+{
+    const HistoryStringItem* item = dynamic_cast<const HistoryStringItem*>(m_history->first());
+
+    KDialog dlg;
+    dlg.setModal( true );
+    dlg.setCaption( i18n("Mobile barcode") );
+    dlg.setButtons( KDialog::Ok );
+
+    MobileBarcode::DataMatrixWidget* barcode = new MobileBarcode::DataMatrixWidget( &dlg );
+    if (item) {
+        barcode->setData( item->text() );
+    }
+    barcode->setFocus();
+    dlg.setMainWidget( barcode );
+    dlg.adjustSize();
+
+    dlg.exec();
+}
+#endif //HAVE_DMTX
+
 void Klipper::slotAskClearHistory()
 {
-    int clearHist = KMessageBox::questionYesNo(0, 
+    int clearHist = KMessageBox::questionYesNo(0,
                                                i18n("Really delete entire clipboard history?"),
-                                               i18n("Delete clipboard history?"), 
+                                               i18n("Delete clipboard history?"),
                                                KStandardGuiItem::yes(),
                                                KStandardGuiItem::no(),
                                                QString::fromUtf8("really_clear_history"),
