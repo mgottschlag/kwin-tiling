@@ -49,7 +49,7 @@ the &systemsettings; module <ulink url="help:/kcontrol/fonts/index.html">
 of &kfontview;.</para>
 <para>To use &kfontview; in &konqueror; select <guilabel>Services</guilabel> in
 the sidebar and go to the folders <filename class="directory">Fonts/Personal
-</filename> or <filename class="directory">Fonts/Personal</filename>.
+</filename> or <filename class="directory">Fonts/System</filename>.
 Then open the context menu with a &RMB; click on a font and start &kfontview; 
 by selecting it from the context menu.</para>
 <!-- used by others as well? -->
@@ -86,10 +86,10 @@ This feature enables you to check that a font supports the characters you need.
 </itemizedlist></para>
 
 <para>In <guilabel>Unicode Block</guilabel> and <guilabel>Unicode Script</guilabel> 
-preview mode additional tooltip info's are displayed hoovering a character with the 
+preview mode additional tooltip info's are displayed hovering a character with the 
 mouse pointer: 
 The character's Unicode <guilabel>Category</guilabel> and the value in <guilabel>
-UCS-4</guilabel>, <guilabel>UTF-18</guilabel>, <guilabel>UTF-8 </guilabel>and 
+UCS-4</guilabel>, <guilabel>UTF-18</guilabel>, <guilabel>UTF-8</guilabel> and 
 as <guilabel>XML Decimal Entity</guilabel>.</para>
 
 <para>
