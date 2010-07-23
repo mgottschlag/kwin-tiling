@@ -134,7 +134,13 @@ void DashboardView::drawBackground(QPainter * painter, const QRectF & rect)
     if (PlasmaApp::hasComposite()) {
         setWallpaperEnabled(false);
         painter->setCompositionMode(QPainter::CompositionMode_Source);
-        painter->fillRect(rect, QColor(0, 0, 0, 180));
+ 
+	// KWin dahsboard plugin draws its own background for the dashboard
+        if (!Plasma::WindowEffects::isEffectAvailable(Plasma::WindowEffects::Dashboard)) {
+            painter->fillRect(rect, QColor(0, 0, 0, 180));
+        } else {
+            painter->fillRect(rect, QColor(0, 0, 0, 0));
+	}
     } else {
         setWallpaperEnabled(true);
         Plasma::View::drawBackground(painter, rect);
@@ -252,6 +258,9 @@ void DashboardView::showDashboard(bool showDashboard)
 
         setWindowFlags(Qt::FramelessWindowHint);
         setWindowState(Qt::WindowFullScreen);
+
+        // mark as dashboard
+        Plasma::WindowEffects::markAsDashboard(winId());
 
         if (AppSettings::perVirtualDesktopViews()) {
             //kDebug() << "pvdv dashboard, setting" << winId() << "on desktop" << m_view->desktop() + 1;
