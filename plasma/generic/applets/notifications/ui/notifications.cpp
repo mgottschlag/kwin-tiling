@@ -177,6 +177,7 @@ void Notifications::syncNotificationBarNeeded()
     if (m_manager->notifications().count() > 0) {
         if (!extender()->item("notifications")) {
             Plasma::ExtenderItem *extenderItem = new Plasma::ExtenderItem(extender());
+            extenderItem->setTransient(true);
             extenderItem->config().writeEntry("type", "notification");
             extenderItem->setName("notifications");
             extenderItem->setTitle(i18n("Notifications"));
@@ -301,6 +302,7 @@ void Notifications::addNotification(Notification *notification)
 void Notifications::addJob(Job *job)
 {
     Plasma::ExtenderItem *extenderItem = new Plasma::ExtenderItem(extender());
+    extenderItem->setTransient(true);
     extenderItem->config().writeEntry("type", "job");
     extenderItem->setWidget(new JobWidget(job, extenderItem));
 
