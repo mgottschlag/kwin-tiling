@@ -1,7 +1,5 @@
 kde4_no_enable_final(klipper)
 
-find_package(Dmtx)
-
 set(libklipper_common_SRCS
     klipper.cpp
     urlgrabber.cpp
@@ -19,15 +17,13 @@ set(libklipper_common_SRCS
     clipcommandprocess.cpp
 )
 
-if(DMTX_FOUND)
-    MESSAGE(STATUS "Found Datamatrix library, will use it to give possibility to show mobile barcodes of clipboard data")
+macro_optional_find_package(Dmtx)
+macro_log_feature(DMTX_FOUND "Dmtx" "Datamatrix library" "http://www.libdmtx.org" FALSE "" "Needed to create mobile barcodes from clipboard data")
+if (DMTX_FOUND)
     set(libklipper_common_SRCS ${libklipper_common_SRCS} mobilebarcode.cpp)
     add_definitions(-DHAVE_DMTX)
-else(DMTX_FOUND)
-    MESSAGE(STATUS "Datamatrix library not found. Consider installing it to create mobile barcodes from clipboard data. See http://wwwlibdmtx.org")
-endif(DMTX_FOUND)
+endif (DMTX_FOUND)
 
-macro_log_feature(DMTX_FOUND "Dmtx" "Datamatrix library" "http://www.libdmtx.org" FALSE "" "Needed to provide create mobile barcodes from clipboard data")
 include_directories(${QNTRACK_INCLUDE_DIR})
 
 
