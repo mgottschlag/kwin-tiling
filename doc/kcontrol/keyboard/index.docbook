@@ -94,9 +94,8 @@ generated while a key is pressed.</para>
 your computer's speakers when you press the keys on your keyboard. In
 essence, this simulates the <quote>click</quote> of a mechanical
 type-writer. You can change the loudness of the key click feedback by
-dragging the slider button or by clicking the up/down arrows on the
-spin-button. Setting the volume to 0% turns off the key
-click.</para>
+dragging the slider button. Setting the volume to 0% by moving the slider 
+to the left turns off the key click.</para>
 <para>Many computers won't support this function.</para>
 <tip><para>Very few people would choose to enable this option, since it
 generally annoys everyone else in the room. However, if your heart
