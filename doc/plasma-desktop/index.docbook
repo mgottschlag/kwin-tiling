@@ -55,7 +55,7 @@
 
 <para>
 &plasma; is one of the key technologies of &kde; Software Compilation 4 (also known as the
-&quot;Pillars of &kde;&quot;), and one of the most visible to users. As &plasma;
+“Pillars of &kde;”), and one of the most visible to users. As &plasma;
 treats the user interface differently than a traditional desktop, there may be
 confusion on what &plasma; is, what it does, and how to perform common tasks.
 </para>
@@ -105,9 +105,9 @@ itself. Both are containments in the &plasma; sense.
 <title>The Panel</title>
 
 <para>
-The default panel holds a few &plasma; widgets: starting from the left, there's the
+The default panel holds a few &plasma; widgets: starting from the left, there is the
 &kickoff; application launcher. You can use it to start applications, open recently
-opened files and the usual logout/shutdown options. There's also a structure
+opened files and the usual logout/shutdown options. There is also a structure
 that allows you to browse through your applications. The layout has been
 optimized for the use case that is most common: starting an application. The
 default tab is the <guilabel>Favorites</guilabel> tab that holds the most-used
@@ -117,11 +117,11 @@ Once you have found out what your most frequently started applications are,
 <mousebutton>right</mousebutton> click on the items and select the
 <guimenuitem>Add to Favorites</guimenuitem> to add them to your
 <guilabel>Favorites</guilabel> (or directly into the panel or on the desktop.
-Note that you need to &quot;unlock&quot; Plasma by means of
-<mousebutton>right</mousebutton> clicking on the desktop for any kind of
-modification). If you prefer the traditional menu-style application
-launcher, change it by <mousebutton>right</mousebutton> clicking on the menu
-button and selecting <guimenuitem>Switch to Classic Menu Style</guimenuitem>.
+Note that you need to “unlock” Plasma by means of <mousebutton>right</mousebutton>
+clicking on the desktop for any kind of modification). If you prefer the
+traditional menu-style application launcher, change it by
+<mousebutton>right</mousebutton> clicking on the menu button and selecting
+<guimenuitem>Switch to Classic Menu Style</guimenuitem>.
 </para>
 
 <para>
@@ -136,7 +136,7 @@ The next item on your panel is the <application>Pager</application>.
 It allows you to switch between your virtual desktops.
 If you change the layout of the <application>Pager</application>
 through the <guimenuitem>Number of rows</guimenuitem> option,
-which will also affect the layout and animations that are shown in &kwin;&apos;s
+which will also affect the layout and animations that are shown in &kwin;’s
 <guimenuitem>Desktop Grid</guimenuitem> effect &ndash; (Switch on desktop effect,
 press <keycombo action="simul">&Ctrl;<keycap>F8</keycap></keycombo> to see it.)
 For larger pagers, selecting <guimenuitem>Display windows icons</guimenuitem>
@@ -155,7 +155,7 @@ in &systemsettings; under the
 brings the Settings dialog where you can choose several options to customize
 your taskbar.
 <screenshot>
-<screeninfo>Here's a screenshot of the taskbar settings dialog</screeninfo>
+<screeninfo>Here is a screenshot of the taskbar settings dialog</screeninfo>
   <mediaobject>
     <imageobject>
       <imagedata fileref="taskbar-settings.png" format="PNG"/>
@@ -196,9 +196,9 @@ where it can grow freely.
 If your desktop is unlocked (you can do that by
 <mousebutton>right</mousebutton> clicking on the desktop, or when no
 application has the focus, with <keycombo
-action="simul">&Ctrl;<keycap>L</keycap></keycombo>),a small &plasma;
-logo will appear in the bottom right corner (it's commonly named the
-&quot;cashew&quot;). Click on this cashew, and the panel controller opens. The
+action="simul">&Ctrl;<keycap>L</keycap></keycombo>), a small &plasma;
+logo will appear in the bottom right corner (it is commonly named the
+“cashew”). Click on this cashew, and the panel controller opens. The
 panel controller allows you to reposition, resize and realign the panel. The
 &plasma; widgets living in this panel will adjust their size automatically.
 &plasma; widgets have basic knowledge about sizing, provided by the containment. They
@@ -240,13 +240,13 @@ accessed just like regular, preinstalled widgets.
 <title>The Desktop</title>
 
 <para>
-The desktop is in fact another containment. One that doesn't put size
+The desktop is in fact another containment. One that does not put size
 constraints on the applets. Applets can be moved and sized freely. On the
 unlocked desktop, &plasma; widgets will show a frame when you move the mouse over
 them. This applet handle allows you to move, resize, relocate and realign the
 panel. It also allows you to drag &plasma; widgets on the desktop. The buttons in the
 corner are used to resize, rotate configure and remove the applet. When
-rotated, a &plasma; widget will act magnetic towards 12 o'clock, so it's easy to get
+rotated, a &plasma; widget will act magnetic towards 12 o'clock, so it is easy to get
 them back into sensible position. By default, most applets keep their aspect
 ratio when they are being resized. If you want to freely resize an applet,
 hold the &Ctrl; key pressed while resizing.
@@ -277,12 +277,12 @@ short equations, and many more.Pressing <keycombo
 action="simul">&Alt;<keycap>F2</keycap></keycombo> opens the &krunner; dialog.
 You just start typing and &krunner; will start searching matches as soon as
 you've entered more than two characters. You can open the settings dialog to
-learn about &krunner;&apos;s functionality, provided by plugins. You can
+learn about &krunner;’s functionality, provided by plugins. You can
 navigate through the matches using the tab and arrow keys.
 </para>
 
 <para>
-If you want to know what's going on on your system, there's the <guibutton>Show
+If you want to know what is going on on your system, there is the <guibutton>Show
 System Activity</guibutton> button, giving you quick access to a list of windows
 and processes, with options to monitor their output and kill processes.
 </para>
@@ -293,7 +293,7 @@ and processes, with options to monitor their output and kill processes.
 <title>Activities</title>
 
 <para>
-The desktop toolbox, accessed via the top right corner has a button for displaying your activities, of which &plasma; allows you to have more than one. Basically, that is multiple desktop containments hosting multiple sets of &plasma; widgets. Display the &quot;Activities&quot; bar, choose <guilabel>Add activity</guilabel> to create a new containment, select your new containment and customize suiting your taste. &plasma;&apos;s activities and &kwin;&apos;s desktop grid are similar in that respect, but there is a fundamental difference. While virtual desktop are used to group and organize windows, &plasma;&apos;s activities are used to group and organize &plasma; widgets. This way, you can switch between activities and have relevant &plasma; widgets supporting the task you're currently trying to accomplish. You can create a &quot;Free time&quot; activity, with comic strips, a puzzle and other &plasma; widgets, and a work activity, with relevant <acronym>RSS</acronym> feeds, calculator and calendar, for example.
+The desktop toolbox, accessed via the top right corner has a button for displaying your activities, of which &plasma; allows you to have more than one. Basically, that is multiple desktop containments hosting multiple sets of &plasma; widgets. Display the “Activities” bar, choose <guilabel>Add activity</guilabel> to create a new containment, select your new containment and customize suiting your taste. &plasma;’s activities and &kwin;’s desktop grid are similar in that respect, but there is a fundamental difference. While virtual desktop are used to group and organize windows, &plasma;’s activities are used to group and organize &plasma; widgets. This way, you can switch between activities and have relevant &plasma; widgets supporting the task you're currently trying to accomplish. You can create a “Free time” activity, with comic strips, a puzzle and other &plasma; widgets, and a work activity, with relevant <acronym>RSS</acronym> feeds, calculator and calendar, for example.
 </para>
 
 </sect1>
@@ -302,7 +302,7 @@ The desktop toolbox, accessed via the top right corner has a button for displayi
 <title>Shortcuts</title>
 
 <para>
-Most of &plasma;&apos;s functionality is also accessible through keyboard
+Most of &plasma;’s functionality is also accessible through keyboard
 shortcuts. Currently, the following default shortcuts can be used:
 </para>
 
