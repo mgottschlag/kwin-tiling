@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" 
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
 "dtd/kdex.dtd" [
 <!ENTITY kappname "&kinfocenter;">
 <!ENTITY % addindex "IGNORE">
@@ -21,10 +21,10 @@
 
 
 <date>2010-01-08</date>
-<releaseinfo>&kde; 4.4</releaseinfo>
+<releaseinfo>&kde; SC 4.4</releaseinfo>
 
 <abstract>
-<para>This documentation describes &kde;'s information center.</para>
+<para>This documentation describes &kde;’s information center.</para>
 </abstract>
 
 <keywordset>
@@ -61,10 +61,10 @@ Center Modules</link>.
 <title>Starting the &infocenter;</title>
 
 <para>
-The &infocenter; can be started in 3 ways:
+The &infocenter; can be started in three ways:
 </para>
 
-<orderedlist> 
+<orderedlist>
 <listitem>
 <para>
 By selecting <menuchoice><guimenu>Applications
@@ -86,8 +86,8 @@ This will bring up &krunner;.  Type
 <para>
 You can type <command>kinfocenter &amp;</command> at any command prompt.
 </para>
-</listitem> 
-</orderedlist> 
+</listitem>
+</orderedlist>
 
 <para>
 All three of these methods are equivalent, and produce the same result.
@@ -95,12 +95,12 @@ All three of these methods are equivalent, and produce the same result.
 
 </sect1>
 
-<sect1 id="information-center-screen"> 
+<sect1 id="information-center-screen">
 <title>The &infocenter; Screen</title>
 
 <para>
 When you start the information center, you are presented with a window,
-which can be divided into 3 functional parts.
+which can be divided into three functional parts.
 </para>
 
 <screenshot>
@@ -117,17 +117,17 @@ which can be divided into 3 functional parts.
 
 <para>
 Across the top is a toolbar.  The toolbar will provide you with quick
-access to most of &infocenter;'s features like export, get help on the current
+access to most of &infocenter;’s features like export, get help on the current
 module and a help menu.
 </para>
 
 <para>
-Along the left hand side, is a column with a filter field at the top.  
-This is a where you choose which module to investigate. To navigate through the various <acronym>KCM</acronym> modules, left click on 
+Along the left hand side, is a column with a filter field at the top.
+This is a where you choose which module to investigate. To navigate through the various <acronym>KCM</acronym> modules, left click on
 the module in the tree view. You can also use the arrow keys to scroll though the <acronym>KCM</acronym>'s and pressing <keycap>Enter</keycap> will select the module. The module will
-now appear of the main panel of the &infocenter; window. Some items within the tree view are categories, you can left click or again press enter to expand and collapsed these items. This 
+now appear of the main panel of the &infocenter; window. Some items within the tree view are categories, you can left click or again press enter to expand and collapsed these items. This
 will show the modules under the category.
-You can right click on the module listing to show the following options: 
+You can right click on the module listing to show the following options:
 <itemizedlist>
   <listitem><para><guimenuitem>Collapse All</guimenuitem>: Collapses the tree to show only top level modules and categories.</para></listitem>
   <listitem><para><guimenuitem>Expand All</guimenuitem>: Expands the tree to show modules.</para></listitem>
@@ -139,7 +139,7 @@ You can right click on the module listing to show the following options:
 The main panel shows you the system information about the selected module.
 </para>
 
-<!-- 
+<!--
 <para>
 In this example, we are running &kde; 2.99, we started &infocenter;
 as user <systemitem class="username">adridg</systemitem>, the computer is
@@ -173,7 +173,7 @@ you to choose the location of the file.
 <guimenu>Module help</guimenu> button
 </title>
 <para>
-This button opens khelpcenter with the current help page for the information module. 
+This button opens khelpcenter with the current help page for the information module.
 </para>
 </sect2>
 
@@ -190,7 +190,7 @@ This button opens khelpcenter with the current help page for the information mod
 <itemizedlist>
 <listitem>
 <para>
-Type <keycombo action="simul">&Ctrl;<keycap>Q</keycap></keycombo> on the keyboard. 
+Type <keycombo action="simul">&Ctrl;<keycap>Q</keycap></keycombo> on the keyboard.
 </para>
 </listitem>
 
@@ -199,7 +199,7 @@ Type <keycombo action="simul">&Ctrl;<keycap>Q</keycap></keycombo> on the keyboar
 </listitem>
 </itemizedlist>
 </sect1>
-</chapter> 
+</chapter>
 
 <!--*****************************************************************-->
 
@@ -212,15 +212,15 @@ Type <keycombo action="simul">&Ctrl;<keycap>Q</keycap></keycombo> on the keyboar
 <title>Summary Information Module</title>
 <anchor id="kcm_infosummary" />
 
-<para> 
-The summary information <acronym>KCM</acronym> provides a quick way to display important information. 
-The module has three categories; <acronym>OS</acronym> Information, <acronym>CPU</acronym> Information and Hard Drive Information. 
+<para>
+The summary information <acronym>KCM</acronym> provides a quick way to display important information.
+The module has three categories; <acronym>OS</acronym> Information, <acronym>CPU</acronym> Information and Hard Drive Information.
 </para>
 <note><para>You may have more than one of these information boxes per category.</para></note>
 
 <sect2 id="osbox">
 <title><acronym>OS</acronym> Information Box</title>
-<para> 
+<para>
 <screenshot>
 <screeninfo>Screenshot of <acronym>OS</acronym> Information box</screeninfo>
   <mediaobject>
@@ -232,7 +232,7 @@ The module has three categories; <acronym>OS</acronym> Information, <acronym>CPU
     </textobject>
   </mediaobject>
 </screenshot>
-</para><para> 
+</para><para>
 The <acronym>OS</acronym> information box has the following information:
 </para>
 <itemizedlist>
@@ -245,7 +245,7 @@ The <acronym>OS</acronym> information box has the following information:
 <sect2 id="cpubox">
 
 <title><acronym>CPU</acronym> Information Box</title>
-<para> 
+<para>
 <screenshot>
 <screeninfo>Screenshot of <acronym>CPU</acronym> Information box</screeninfo>
   <mediaobject>
@@ -257,7 +257,7 @@ The <acronym>OS</acronym> information box has the following information:
     </textobject>
   </mediaobject>
 </screenshot>
-</para><para> 
+</para><para>
 The <acronym>CPU</acronym> information box has the following information:
 </para>
 <itemizedlist>
@@ -270,7 +270,7 @@ The <acronym>CPU</acronym> information box has the following information:
 
 <sect2 id="hdbox">
 <title>Hard Drive Information Box</title>
-<para> 
+<para>
 <screenshot>
 <screeninfo>Screenshot of Hard Drive Information box</screeninfo>
   <mediaobject>
@@ -282,7 +282,7 @@ The <acronym>CPU</acronym> information box has the following information:
     </textobject>
   </mediaobject>
 </screenshot>
-</para><para> 
+</para><para>
 The Hard Drive information box has the following information:
 </para>
 <itemizedlist>
@@ -380,11 +380,11 @@ virtual memory.</para>
 <anchor id="devinfo" />
 
 <para>Device Information is a device viewer module. It shows all relevant devices that are present within your <acronym>PC</acronym>. It has three sections,
-a device viewer, a information panel and a <acronym>UDI</acronym> listing for the currently selected device.</para> 
+a device viewer, a information panel and a <acronym>UDI</acronym> listing for the currently selected device.</para>
 <sect2 id="devlist">
 <title>Device Listing</title>
-<para>The device viewer displays all the current devices detected on your <acronym>PC</acronym> in a tree. The main topics at the beginning of the tree 
-are the device categories, left click on a collapsed category to expand it and vice versa to collapse it. 
+<para>The device viewer displays all the current devices detected on your <acronym>PC</acronym> in a tree. The main topics at the beginning of the tree
+are the device categories, left click on a collapsed category to expand it and vice versa to collapse it.
 To display information about a device, left click on the device in the viewer, the information will display on the right side information panel.
 You can right click on the device viewer to show the following options: </para>
 <itemizedlist>
@@ -399,7 +399,7 @@ in the device listing are not all devices within your PC, they are just devices 
 <itemizedlist>
 <listitem><para>Processors: These are your computers <acronym>CPU</acronym>s ( Central Processing Units ).</para></listitem>
 <listitem><para>Storage Drives: Devices that are used to store your <acronym>PC</acronym>s files and data.</para></listitem>
-<listitem><para>Network Interfaces: Devices that allow you to connect to a network or to another <acronym>PC</acronym>.</para></listitem> 
+<listitem><para>Network Interfaces: Devices that allow you to connect to a network or to another <acronym>PC</acronym>.</para></listitem>
 <listitem><para>Audio Interfaces: Devices that allow your <acronym>PC</acronym> to play Sound. They are split into 2 categories, <acronym>ALSA</acronym> and <acronym>OSS</acronym> sound architectures.</para></listitem>
 <listitem><para>Video Devices: Devices that allow you to stream live video. </para></listitem>
 <listitem><para>Serial Devices: Devices that are connected to your serial port in your PC.</para></listitem>
@@ -422,13 +422,13 @@ in the device listing are not all devices within your PC, they are just devices 
 <listitem><para><guilabel>Product</guilabel>: The name of the device.</para></listitem>
 <listitem><para><guilabel>Vendor</guilabel>: The vendors name of the device.</para></listitem>
 </itemizedlist>
-<para>The following information topics are dependent on the device chosen. They are labeled with easy to understand names. 
+<para>The following information topics are dependent on the device chosen. They are labeled with easy to understand names.
 The information labels have the ability to be selected and copied from.</para>
 <note>
-<para>Processor <quote>Max Speed</quote> and <quote>Supported Instruction sets</quote> topics are usual not set by solid.</para>  
+<para>Processor <quote>Max Speed</quote> and <quote>Supported Instruction sets</quote> topics are usual not set by solid.</para>
 </note>
 <note>
-<para>Top categories in the device listing do not show any information.</para>  
+<para>Top categories in the device listing do not show any information.</para>
 </note>
 </sect2>
 <sect2 id="udilabel">
@@ -519,12 +519,12 @@ The user cannot modify any settings on this page.
 <title>IEEE 1394 Device Information Module</title>
 <anchor id="kcmview1394" />
 
-<para>The IEEE 1394 interface, also known as <trademark>FireWire</trademark>, 
-is a serial bus interface standard for high-speed 
+<para>The IEEE 1394 interface, also known as <trademark>FireWire</trademark>,
+is a serial bus interface standard for high-speed
 communications and isochronous real-time data transfer.</para>
 
 <para>The list in this module displays all devices attached to IEEE 1394 bus and
-allows you to reset the bus by clicking the <guibutton>Generate 1394 Bus Reset</guibutton> 
+allows you to reset the bus by clicking the <guibutton>Generate 1394 Bus Reset</guibutton>
 button.</para>
 
 <para>The meaning of the columns in this list:</para>
@@ -714,8 +714,8 @@ mounted.</para>
 
 </sect2>
 
-<sect2 id="smb-log"> 
-<title>Log</title> 
+<sect2 id="smb-log">
+<title>Log</title>
 
 <para>This page presents the contents of your local samba log file in a
 nice way. If you open this page, the list will be empty.  You have to
@@ -846,12 +846,12 @@ some systems, this information can not yet be displayed.</para></note>
 <anchor id="opengl" />
 
 <para>This page displays information about installed <acronym>OpenGL</acronym> implementation.
-OpenGL (for "Open Graphics Library") is a cross-platform, 
+OpenGL (for "Open Graphics Library") is a cross-platform,
 hardware independent interface for 3D graphics. </para>
 
 <para><acronym>GLX</acronym> is the binding for OpenGL to X Window system.</para>
 
-<para> <acronym>DRI</acronym> (Direct Rendering Infrastucture) provides hardware acceleration for OpenGL. 
+<para> <acronym>DRI</acronym> (Direct Rendering Infrastucture) provides hardware acceleration for OpenGL.
 You must have a videocard with 3D accelerator and properly installed driver for this.</para>
 <para> </para>
 
@@ -899,7 +899,7 @@ information only.</para>
 <para>Contributors:</para>
 
 <itemizedlist>
-<listitem><para>Matthias Hoelzer-Kluepfel 
+<listitem><para>Matthias Hoelzer-Kluepfel
 &Matthias.Hoelzer-Kluepfel.mail;</para></listitem>
 <listitem><para>&Matthias.Elter; &Matthias.Elter.mail;</para></listitem>
 </itemizedlist>
