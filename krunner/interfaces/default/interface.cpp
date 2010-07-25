@@ -184,7 +184,8 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     setTabOrder(0, m_configButton);
     setTabOrder(m_configButton, m_activityButton);
     setTabOrder(m_activityButton, m_searchTerm);
-    setTabOrder(m_searchTerm, m_resultsView);
+    setTabOrder(m_searchTerm, m_singleRunnerSearchTerm);
+    setTabOrder(m_singleRunnerSearchTerm, m_resultsView);
     setTabOrder(m_resultsView, m_helpButton);
     setTabOrder(m_helpButton, m_closeButton);
 

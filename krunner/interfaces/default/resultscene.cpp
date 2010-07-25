@@ -150,7 +150,6 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     if (m_items.isEmpty()) {
         QTime t;
         t.start();
-        QGraphicsWidget *prevTabItem = 0;
         Plasma::QueryMatch dummy(0);
         for (int i = 0; i < maxItemsAllowed; ++i) {
             ResultItem *item = new ResultItem(m_resultData, dummy, m_runnerManager, 0);
@@ -164,7 +163,6 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 
             m_items << item;
             addItem(item);
-            prevTabItem = item->arrangeTabOrder(prevTabItem);
         }
 
         arrangeItems();
@@ -176,9 +174,12 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     QListIterator<Plasma::QueryMatch> mit(matches);
     mit.toBack();
     QListIterator<ResultItem *> rit(m_items);
+    QGraphicsWidget *prevTabItem = 0;
+
     while (mit.hasPrevious() && rit.hasNext()) {
         ResultItem * item = rit.next();
         item->setMatch(mit.previous());
+        prevTabItem = item->arrangeTabOrder(prevTabItem);
         item->show();
         m_viewableHeight = item->sceneBoundingRect().bottom();
     }
