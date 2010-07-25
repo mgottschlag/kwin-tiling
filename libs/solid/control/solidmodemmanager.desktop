@@ -13,6 +13,7 @@ Comment[pt_BR]=Infraestrutura de gerenciamento de modem
 Comment[sv]=Gränssnitt för modemhantering
 Comment[uk]=Сервер керування модемами
 Comment[x-test]=xxModem Management Backendxx
+Comment[zh_CN]=调制解调器管理后端
 Comment[zh_TW]=數據機管理後端介面
 
 [PropertyDef::X-KDE-SolidBackendInfo-Version]
