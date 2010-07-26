@@ -5,5 +5,6 @@ add_subdirectory(dataengines)
 add_subdirectory(runners)
 add_subdirectory(scriptengines)
 add_subdirectory(shells)
+add_subdirectory(tools)
 add_subdirectory(wallpapers)
 
