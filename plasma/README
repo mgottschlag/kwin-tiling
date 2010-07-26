@@ -1,7 +1,7 @@
 PLASMA
 ======
 
-This is the application that provides the panels and desktop work area in KDE SC 4.
+This is the application that provides the panels and desktop work area in KDE4.
 Much of the functionality that the code here is based on resides in
 workspace/libs/plasma/.
 

@@ -100,7 +100,7 @@ QStringList StatusNotifierWatcher::RegisteredStatusNotifierItems() const
 
 void StatusNotifierWatcher::serviceUnregistered(const QString& name)
 {
-    //kDebug()<<"Service "<< name << "unregistered";
+    kDebug()<<"Service "<< name << "unregistered";
     m_serviceWatcher->removeWatchedService(name);
 
     QString match = name + '/';
