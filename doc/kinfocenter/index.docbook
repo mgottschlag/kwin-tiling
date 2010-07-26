@@ -124,8 +124,8 @@ module and a help menu.
 <para>
 Along the left hand side, is a column with a filter field at the top.
 This is a where you choose which module to investigate. To navigate through the various <acronym>KCM</acronym> modules, left click on
-the module in the tree view. You can also use the arrow keys to scroll though the <acronym>KCM</acronym>'s and pressing <keycap>Enter</keycap> will select the module. The module will
-now appear of the main panel of the &infocenter; window. Some items within the tree view are categories, you can left click or again press enter to expand and collapsed these items. This
+the module in the tree view. You can also use the arrow keys to scroll though the <acronym>KCM</acronym>'s and pressing &Enter; will select the module. The module will
+now appear of the main panel of the &infocenter; window. Some items within the tree view are categories, you can left click or again press &Enter; to expand and collapsed these items. This
 will show the modules under the category.
 You can right click on the module listing to show the following options:
 <itemizedlist>
