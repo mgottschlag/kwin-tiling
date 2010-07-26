@@ -48,8 +48,6 @@ public:
                                 int capabilities);
     Plasma::Service* serviceForSource(const QString& source);
 
-    static uint s_jobId;
-
 private Q_SLOTS:
     void processPendingJobs();
 
@@ -140,6 +138,8 @@ private:
     QMap<QString, int> m_unitMap;
     int m_bytesUnitId;
     int m_unitId;
+
+    static uint s_jobId;
 };
 
 #endif

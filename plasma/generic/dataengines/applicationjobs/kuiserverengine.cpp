@@ -28,7 +28,7 @@
 #include <Plasma/DataEngine>
 
 
-uint KuiserverEngine::s_jobId = 0;
+uint JobView::s_jobId = 0;
 
 static const int UPDATE_INTERVAL = 100;
 
@@ -43,8 +43,8 @@ JobView::JobView(QObject* parent)
       m_bytesUnitId(-1),
       m_unitId(0)
 {
-    m_jobId = ++KuiserverEngine::s_jobId;
-    setObjectName(QString("Job %1").arg(KuiserverEngine::s_jobId));
+    m_jobId = ++s_jobId;
+    setObjectName(QString("Job %1").arg(s_jobId));
 
     new JobViewV2Adaptor(this);
 
