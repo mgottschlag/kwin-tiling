@@ -219,7 +219,7 @@ void InteractiveConsole::onClose()
     // need to save first!
     const QString path = KStandardDirs::locateLocal("appdata", s_autosaveFileName);
     m_closeWhenCompleted = true;
-    saveScript(path);
+    saveScript(path, true);
 }
 
 void InteractiveConsole::print(const QString &string)
@@ -336,8 +336,7 @@ void InteractiveConsole::scriptFileDataRecvd(KIO::Job *job, const QByteArray &da
 void InteractiveConsole::saveScript()
 {
     if (m_editorPart) {
-        const bool success = m_editorPart->documentSaveAs();
-        m_saveAction->setEnabled(!success);
+        m_editorPart->documentSaveAs();
         return;
     }
 
@@ -371,10 +370,10 @@ void InteractiveConsole::saveScriptUrlSelected()
     saveScript(url);
 }
 
-void InteractiveConsole::saveScript(const KUrl &url)
+void InteractiveConsole::saveScript(const KUrl &url, bool autosave)
 {
     if (m_editorPart) {
-        m_saveAction->setEnabled(!m_editorPart->saveAs(url));
+        m_editorPart->saveAs(url);
     } else {
         m_editor->setEnabled(false);
 
@@ -408,7 +407,6 @@ void InteractiveConsole::reenableEditor(KJob* job)
     }
 
     m_closeWhenCompleted = false;
-    m_saveAction->setEnabled(job->error() != 0);
     m_editor->setEnabled(true);
 }
 
@@ -416,7 +414,7 @@ void InteractiveConsole::evaluateScript()
 {
     //kDebug() << "evaluating" << m_editor->toPlainText();
     const QString path = KStandardDirs::locateLocal("appdata", s_autosaveFileName);
-    saveScript(path);
+    saveScript(path, true);
 
     m_output->moveCursor(QTextCursor::End);
     QTextCursor cursor = m_output->textCursor();
