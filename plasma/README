@@ -1,41 +1,63 @@
 PLASMA
 ======
 
-This is the application that provides the panels and desktop work area in KDE4.
-Much of the functionality that the code here is based on resides in
-workspace/libs/plasma/.
+The applications and plugins that provide the panels/desktop/dashboard parts of
+the primary user interface for the KDE Plasma workspaces (Plasma Desktop, Netbook, etc).
+Much of the functionality is provided by libplasma, which is found in kdelibs/plasma/.
 
 For more information, please visit the Plasma website at http://plasma.kde.org.
 
 Directory Structure
 ===================
 
-There are a number of subdirectories here. The purpose of each is explained:
+Each top level directory denotes which workspace (desktop, netbook, screensaver, etc.)
+the components within it apply to. There is a directory named "generic" for components
+that do not apply to a specific workspace.
 
-design: documentation on various aspects of the plasma and krunner code base
+Within each of these top level directories, the following hierarchy exists:
 
-plugins:
-    animators:     Plugins of type Animator, which provides standard animation
-                   support to Plasma objects
-    applets:       Applets considered absolutely core to the desktop
-    containments:  Standard containment objects that are not meant to be
-                   used as stand-alone applets
-    desktoptheme:  A collection of SVG elements for use in Plasma, Applets and
-                   libplasma
-    dataengines:   DataEngines considered generally useful for desktop components
-    runners:       Provides matches to queries
-    scriptengines: Glue between libplasma and APIs provided via dynamic languages or
-                   3rd party systems
-    wallpapers:    Background rendering for containments
+               applets: Applets (aka "plasmoids" or "widgets") that are considered central
+                        to the workspace in question
 
-shells, applications that provide plasma viewing environments:
-    desktop: A traditional desktop experience with panels and full screen backgrounds
-    mid: A simplified shell designed for Mobile Internet Devices (MIDs) featuring full
-         screen launcher and navigation
-    plasmoidviewer: A viewer for individual plasma applets
-    screensaver: A Plasma overlay for screensavers that works in concert with krunner_lock
+          containments: Standard containment objects that provide management for the
+                        Plasma contents shown on panels, desktops, screensavers, etc.
 
-tools:
-    engineexplorer: A small graphical utility to examine engines
-    plasmapkg: Installs, removes and lists plasma packages
+           dataengines: DataEngines considered generally useful; more specific/niche
+                        DataEngines can be found in kdeplasma-addons or extragear/plasma/
 
+               runners: Provides matches to queries; used by KRunner, Kickoff, others
+
+              shell(s): The application(s) that provide the Plasma viewing environment
+                        for a given workspace / formfactor. They also provide
+                        implementations of dialog placement, screen geometry, remote
+                        widget notifications, access request UI, containment
+                        management UI, etc. Essentially all the framework pieces needed
+                        to provide appropriate rendering of an environment for a given
+                        form factor or target device.
+
+    containmentactions: Plugins that provide actions for context menus and other input
+                        triggered action sets
+
+
+In addition to the above, the generic directory also contains:
+
+            wallpapers: Background rendering plugins for containments
+         scriptengines: Glue between libplasma and APIs provided via dynamic languages or
+                        3rd party systems; note that the Javascript scriptengines
+                 tools: useful applications for working with Plasma apps, including:
+                            * engineexplorer: a graphical utility to examine engines
+                            * wallpaperviewer: a tool to view Plasma wallpaper plugins
+                            * plasmoidviewer: a viewer for individual Plasma applets,
+                              particularly useful for edevel and debugging
+
+KDE Base Runtime
+================
+A number of important components live in the kdebase-runtime package in the plasma/
+directory, including:
+
+* The javascript ScriptEngines for Plasmoids, DataEngines and Runners
+* plasmapkg: Installs, removes and lists plasma packages
+* remotewidgetshelper: a small help tool for Plasma applets that are remoted over
+  the network
+
+The default SVG themes also exist in kdebase-runtime under desktopthemes/
