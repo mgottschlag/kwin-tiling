@@ -26,7 +26,6 @@
 #include <KMenu>
 #include <KLocale>
 #include <KIconLoader>
-#include <NETRootInfo>
 #include <KWindowSystem>
 
 #include <Plasma/IconWidget>
