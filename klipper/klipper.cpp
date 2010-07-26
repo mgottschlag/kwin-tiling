@@ -366,7 +366,7 @@ void Klipper::showPopupMenu( QMenu *menu )
 
     QSize size = menu->sizeHint(); // geometry is not valid until it's shown
     QPoint pos = QCursor::pos();
-    // ### We can't know where the systray icon is (since it can be hidden or shown
+    // ### We can't know where the systray icon is (since it can be hidden or shown 
     //     in several places), so the cursor position is the only option.
 
     if ( size.height() < pos.y() )
@@ -1042,11 +1042,9 @@ void Klipper::createAboutData()
 {
   m_about_data = new KAboutData("klipper", 0, ki18n("Klipper"),
     klipper_version, ki18n(description), KAboutData::License_GPL,
-		       ki18n("Copyright © 1998, Andrew Stanley-Jones\n"
-		       "Copyright © 1998–2002, Carsten Pfeiffer\n"
-		       "Copyright © 2001, Patrick Dubroy\n"
-		       "Copyright © 1998–2010 various other Klipper authors"
-		      ));
+		       ki18n("(c) 1998, Andrew Stanley-Jones\n"
+		       "1998-2002, Carsten Pfeiffer\n"
+		       "2001, Patrick Dubroy"));
 
   m_about_data->addAuthor(ki18n("Carsten Pfeiffer"),
                       ki18n("Author"),
