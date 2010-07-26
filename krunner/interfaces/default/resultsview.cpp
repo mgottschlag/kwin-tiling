@@ -59,7 +59,7 @@ ResultsView::ResultsView(ResultScene *scene, SharedResultData *resultData, QWidg
     m_nextPage->setVisible(false);
     connect(m_nextPage, SIGNAL(clicked(bool)), SLOT(nextPage()));
 
-    connect(m_arrowSvg, SIGNAL(repaintNeeded()), this, SLOT(updateArrowIcons()));
+    connect(m_arrowSvg, SIGNAL(repaintNeeded()), this, SLOT(updateArrowsIcons()));
     updateArrowsIcons();
 
     connect(verticalScrollBar(), SIGNAL(rangeChanged(int, int)), this, SLOT(updateArrowsVisibility()));
