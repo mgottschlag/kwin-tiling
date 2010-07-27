@@ -345,21 +345,44 @@ void DeviceNotifier::deviceAdded(const Solid::Device &device, bool hotplugged)
     bool visibility = cg.readEntry(udi, true);
 
     if (visibility || m_globalVisibility) {
-        m_dialog->insertDevice(udi);
+        // WORKAROUND: Some distributions do not set the HAL flag volume.ignore = true
+        // on partitions belonging to fixed devices; this causes issues since so far
+        // the code assumed this behavior. In particular some fixed devices might
+        // be added to the notifier twice: once as fixed devices (by fillPreviousDevices)
+        // and once as hotplugged devices (by onSourceAdded). The first time, however
+        // the dataengine might not be ready with the required data, so we need to
+        // make sure that the second time we reconnect the notifier to both engines in order to
+        // receive data through dataUpdated.
+        //
+        // Please note this is by no means a correct fix; it just avoids
+        // showing duplicate entries; mount/unmount actions typically will not
+        // work for such devices. A real fix seems to require a good amount of
+        // new code and would need to be throughoutly tested.
+        //
+        // TODO: Handling of fixed devices needs to be rethought for 4.6
 
-        if (hotplugged) {
-            notifyDevice(udi);
+        if (!m_lastPlugged.contains(udi)) {
+            m_dialog->insertDevice(udi);
+
+            if (hotplugged) {
+                notifyDevice(udi);
+            }
+
+            m_dialog->setDeviceData(udi, visibility, NotifierDialog::VisibilityRole);
+
+            m_lastPlugged << udi;
+        } else {
+            // Reconnect to both engines since now we can possibly
+            // correctly connect to the updates.
+            m_solidEngine->disconnectSource(udi, this);
+            m_solidDeviceEngine->disconnectSource(udi, this);
         }
-
-        m_dialog->setDeviceData(udi, visibility, NotifierDialog::VisibilityRole);
 
         m_solidEngine->connectSource(udi, this);
         m_solidDeviceEngine->connectSource(udi, this);
-
-        m_lastPlugged << udi;
     }
 
-    if (!visibility) {
+    if (!visibility && !m_hiddenDevices.contains(udi)) {
         m_hiddenDevices << udi;
     }
 
