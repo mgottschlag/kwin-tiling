@@ -283,7 +283,7 @@ QRectF DesktopLayout::predictNewItemGeometry(const QRectF &logicalGeom)
     return tempItemSpace.m_groups[tempGroup].m_groupItems[tempItem].lastGeometry;
 }
 
-void DesktopLayout::adjustPhysicalPositions()
+void DesktopLayout::adjustPhysicalPositions(QGraphicsWidget *item)
 {
     for (int groupId = 0; groupId < itemSpace.m_groups.size(); groupId++) {
         ItemSpace::ItemGroup &group = itemSpace.m_groups[groupId];
@@ -292,44 +292,46 @@ void DesktopLayout::adjustPhysicalPositions()
             ItemSpace::ItemSpaceItem &spaceItem = group.m_groupItems[itemId];
             DesktopLayoutItem &desktopItem = items[spaceItem.user.toInt()];
 
-            // Temporarily place the item if it could not be pushed inside the working area.
-            // Put it back if it fits again.
-            if (itemSpace.positionVisibility(spaceItem.lastGeometry) < visibilityTolerance) {
-                performTemporaryPlacement(groupId, itemId);
-            } else if (desktopItem.temporaryGeometry.isValid()) {
-                revertTemporaryPlacement(groupId, itemId);
-            }
+            if (item == 0 || item == desktopItem.item) {
+                // Temporarily place the item if it could not be pushed inside the working area.
+                // Put it back if it fits again.
+                if (itemSpace.positionVisibility(spaceItem.lastGeometry) < visibilityTolerance) {
+                    performTemporaryPlacement(groupId, itemId);
+                } else if (desktopItem.temporaryGeometry.isValid()) {
+                    revertTemporaryPlacement(groupId, itemId);
+                }
 
-            // Reset the absolute position if needed
+                // Reset the absolute position if needed
 
-            QRectF effectiveGeom = (desktopItem.temporaryGeometry.isValid() ? desktopItem.temporaryGeometry : spaceItem.lastGeometry);
-            QRectF absoluteGeom = geometryRelativeToAbsolute(spaceItem.user.toInt(), effectiveGeom);
+                QRectF effectiveGeom = (desktopItem.temporaryGeometry.isValid() ? desktopItem.temporaryGeometry : spaceItem.lastGeometry);
+                QRectF absoluteGeom = geometryRelativeToAbsolute(spaceItem.user.toInt(), effectiveGeom);
 
-            if (desktopItem.item->geometry() != absoluteGeom) {
-                if (spaceItem.animateMovement)  {
-                    if (m_animatingItems.contains(desktopItem.item)) {
-                        QPropertyAnimation *anim = m_animatingItems.value(desktopItem.item).data();
-                        m_animatingItems.remove(desktopItem.item);
-                        if (anim) {
-                            anim->disconnect(this);
-                            anim->stop();
-                            delete anim;
+                if (desktopItem.item->geometry() != absoluteGeom) {
+                    if (spaceItem.animateMovement)  {
+                        if (m_animatingItems.contains(desktopItem.item)) {
+                            QPropertyAnimation *anim = m_animatingItems.value(desktopItem.item).data();
+                            m_animatingItems.remove(desktopItem.item);
+                            if (anim) {
+                                anim->disconnect(this);
+                                anim->stop();
+                                delete anim;
+                            }
                         }
+
+                        QPropertyAnimation *anim = new QPropertyAnimation(this);
+                        anim->setStartValue(desktopItem.item->pos());
+                        anim->setEndValue(absoluteGeom.topLeft().toPoint());
+                        anim->setPropertyName("pos");
+                        anim->setTargetObject(desktopItem.item);
+                        anim->start(QAbstractAnimation::DeleteWhenStopped);
+
+                        m_animatingItems.insert(desktopItem.item, anim);
+                        connect(anim, SIGNAL(finished()), this, SLOT(movementFinished()));
+
+                        spaceItem.animateMovement = false;
+                    } else {
+                        desktopItem.item->setGeometry(absoluteGeom);
                     }
-
-                    QPropertyAnimation *anim = new QPropertyAnimation(this);
-                    anim->setStartValue(desktopItem.item->pos());
-                    anim->setEndValue(absoluteGeom.topLeft().toPoint());
-                    anim->setPropertyName("pos");
-                    anim->setTargetObject(desktopItem.item);
-                    anim->start(QAbstractAnimation::DeleteWhenStopped);
-
-                    m_animatingItems.insert(desktopItem.item, anim);
-                    connect(anim, SIGNAL(finished()), this, SLOT(movementFinished()));
-
-                    spaceItem.animateMovement = false;
-                } else {
-                    desktopItem.item->setGeometry(absoluteGeom);
                 }
             }
         }

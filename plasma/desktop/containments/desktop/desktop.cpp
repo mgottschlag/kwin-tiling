@@ -58,9 +58,9 @@ void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
         if (m_startupCompleted) {
             return;
         }
-        
+
         m_startupCompleted = true;
-        
+
         connect(corona(), SIGNAL(availableScreenRegionChanged()),
                 this, SLOT(refreshWorkingArea()));
         refreshWorkingArea();
@@ -111,14 +111,16 @@ void DefaultDesktop::onAppletRemoved(Plasma::Applet *applet)
 
 void DefaultDesktop::onAppletTransformedByUser()
 {
-    m_layout->itemTransformed((Applet *)sender(), DesktopLayout::ItemTransformUser);
-    m_layout->adjustPhysicalPositions();
+    Plasma::Applet *applet = static_cast<Plasma::Applet *>(sender());
+    m_layout->itemTransformed(applet, DesktopLayout::ItemTransformUser);
+    m_layout->adjustPhysicalPositions(applet);
 }
 
 void DefaultDesktop::onAppletTransformedItself()
 {
-    m_layout->itemTransformed((Applet *)sender(), DesktopLayout::ItemTransformSelf);
-    m_layout->adjustPhysicalPositions();
+    Plasma::Applet *applet = static_cast<Plasma::Applet *>(sender());
+    m_layout->itemTransformed(applet, DesktopLayout::ItemTransformUser);
+    m_layout->adjustPhysicalPositions(applet);
 }
 
 void DefaultDesktop::refreshWorkingArea()
