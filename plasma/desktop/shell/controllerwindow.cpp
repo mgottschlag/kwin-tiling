@@ -221,14 +221,10 @@ void ControllerWindow::syncToGraphicsWidget()
             m_graphicsWidget->resize(windowSize.width(), m_graphicsWidget->size().height());
         }
 
-        setMinimumSize(-1, -1);
-        setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
         resize(windowSize);
 
         setMinimumSize(windowSize);
 
-
-        setMaximumSize(windowSize);
 
         updateGeometry();
 
