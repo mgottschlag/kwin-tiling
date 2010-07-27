@@ -44,7 +44,7 @@ has all characters you need.
 </para>
 <para>
 Additionally &kfontview; can be launched from 
-the &systemsettings; module <ulink url="help:/kcontrol/fonts/index.html">
+the &systemsettings; module <ulink url="help:/kcontrol/fontinst/index.html">
 <guilabel>Font Installer</guilabel></ulink> to use the extended preview capabilities
 of &kfontview;.</para>
 <para>To use &kfontview; in &konqueror; select <guilabel>Services</guilabel> in
