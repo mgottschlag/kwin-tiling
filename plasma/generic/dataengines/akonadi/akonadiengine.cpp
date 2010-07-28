@@ -38,21 +38,21 @@
 using namespace Akonadi;
 
 AkonadiEngine::AkonadiEngine(QObject* parent, const QVariantList& args)
-    : Plasma::DataEngine(parent)
+    : Plasma::DataEngine(parent),
+    m_microBlogMonitor(0),
+    m_contactMonitor(0),
+    m_emailMonitor(0)
 {
     Q_UNUSED(args);
     setMaxSourceCount( 512 ); // Guard against loading thousands of emails
-    initEmailMonitor();
-    initMicroBlogMonitor();
-    initContactMonitor();
-    // TODO: monitoring for contacts
+    // TODO: monitoring for new microblog collections
 }
 
 void AkonadiEngine::initEmailMonitor()
 {
     m_emailMonitor = new Monitor( this );
     m_emailMonitor->setMimeTypeMonitored("message/rfc822");
-    m_emailMonitor->setCollectionMonitored(Collection::root(), false);
+    //m_emailMonitor->setCollectionMonitored(Collection::root(), false);
     m_emailMonitor->itemFetchScope().fetchPayloadPart( MessagePart::Envelope );
     connect(m_emailMonitor, SIGNAL(itemAdded(Akonadi::Item, Akonadi::Collection)),
             SLOT(emailItemAdded(Akonadi::Item)) );
@@ -70,12 +70,10 @@ void AkonadiEngine::initContactMonitor()
     m_contactMonitor->itemFetchScope().fetchFullPayload();
     connect(m_contactMonitor, SIGNAL(itemAdded(Akonadi::Item, Akonadi::Collection)),
             SLOT(contactItemAdded(Akonadi::Item)) );
-    connect(m_emailMonitor, SIGNAL(itemChanged(Akonadi::Item, QSet<QByteArray>)),
+    connect(m_contactMonitor, SIGNAL(itemChanged(Akonadi::Item, QSet<QByteArray>)),
             SLOT(contactItemAdded(Akonadi::Item)) );
     // remove the monitor on a source that's not used
     connect(this, SIGNAL(sourceRemoved(QString)), SLOT(stopMonitor(QString)));
-
-
 }
 
 void AkonadiEngine::initMicroBlogMonitor()
@@ -178,6 +176,9 @@ bool AkonadiEngine::sourceRequestEvent(const QString &name)
     } else if (name.startsWith(QString("EmailCollection-"))) {
         qlonglong id = name.split('-')[1].toLongLong();
         ItemFetchJob* fetch = new ItemFetchJob( Collection( id ), this );
+        if (!m_emailMonitor) {
+            initEmailMonitor();
+        }
         m_emailMonitor->setCollectionMonitored(Collection( id ), true);
         fetch->fetchScope().fetchPayloadPart( MessagePart::Envelope );
         connect( fetch, SIGNAL(result(KJob*)), SLOT(fetchEmailCollectionDone(KJob*)) );
@@ -189,6 +190,9 @@ bool AkonadiEngine::sourceRequestEvent(const QString &name)
     } else if (name.startsWith(QString("Email-"))) {
         qlonglong id = name.split('-')[1].toLongLong();
         ItemFetchJob* fetch = new ItemFetchJob( Item( id ), this );
+        if (!m_emailMonitor) {
+            initEmailMonitor();
+        }
         m_emailMonitor->setItemMonitored(Item( id ), true);
         fetch->fetchScope().fetchPayloadPart( MessagePart::Envelope );
         connect( fetch, SIGNAL(result(KJob*)), SLOT(fetchEmailCollectionDone(KJob*)) );
@@ -209,7 +213,10 @@ bool AkonadiEngine::sourceRequestEvent(const QString &name)
     } else if (name.startsWith(QString("ContactCollection-"))) {
         qlonglong id = name.split('-')[1].toLongLong();
         ItemFetchJob *fetch = new ItemFetchJob( Collection( id ), this );
-        m_emailMonitor->setCollectionMonitored(Collection( id ), true); // FIXME: should be contacts monitor
+        if (!m_contactMonitor) {
+            initContactMonitor();
+        }
+        m_contactMonitor->setCollectionMonitored(Collection( id ), true); // FIXME: should be contacts monitor
         fetch->fetchScope().fetchFullPayload();
         connect( fetch, SIGNAL(result(KJob*)), SLOT(fetchContactCollectionDone(KJob*)) );
         setData(name, DataEngine::Data());
@@ -219,7 +226,10 @@ bool AkonadiEngine::sourceRequestEvent(const QString &name)
         kDebug() << "Fetching contact" << name;
         qlonglong id = name.split('-')[1].toLongLong();
         ItemFetchJob *fetch = new ItemFetchJob( Item( id ), this );
-        m_emailMonitor->setItemMonitored(Item( id ), true); // FIXME: should be contacts monitor
+        if (!m_contactMonitor) {
+            initContactMonitor();
+        }
+        m_contactMonitor->setItemMonitored(Item( id ), true); // FIXME: should be contacts monitor
         fetch->fetchScope().fetchFullPayload();
         connect( fetch, SIGNAL(result(KJob*)), SLOT(fetchContactCollectionDone(KJob*)) );
         setData(name, DataEngine::Data());
@@ -237,6 +247,9 @@ bool AkonadiEngine::sourceRequestEvent(const QString &name)
         qlonglong id = name.split('-')[1].toLongLong();
         kDebug() << "MicroBlog ID" << id << " requested" << name;
         ItemFetchJob *fetch = new ItemFetchJob( Akonadi::Collection( id ));
+        if (!m_microBlogMonitor) {
+            initMicroBlogMonitor();
+        }
         m_microBlogMonitor->setItemMonitored(Item( id ), true);
         fetch->fetchScope().fetchFullPayload();
         connect( fetch, SIGNAL(result(KJob*)), SLOT(fetchMicroBlogDone(KJob*)) );
@@ -297,7 +310,7 @@ void AkonadiEngine::emailItemAdded(const Akonadi::Item &item, const QString &col
         setData( source, "Flag-Answered", item.hasFlag("\\Answered") );
         setData( source, "Flag-Deleted", item.hasFlag("\\Deleted") );
         setData( source, "Flag-Flagged", item.hasFlag("\\Flagged") );
-        
+
         if (!collection.isEmpty()) {
             setData( collection, source, msg->subject()->asUnicodeString());
         }
