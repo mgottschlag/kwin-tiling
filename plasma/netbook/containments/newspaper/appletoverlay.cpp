@@ -150,7 +150,6 @@ void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     foreach (Plasma::Applet *applet, m_newspaper->applets()) {
         if (applet->geometry().contains(event->pos()-offset)) {
             m_applet = applet;
-            connect(applet, SIGNAL(destroyed()), this, SLOT(appletDestroyed()));
             break;
         }
     }
