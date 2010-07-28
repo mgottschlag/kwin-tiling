@@ -203,9 +203,11 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     if (KGlobal::config()->hasGroup("Interface")) {
         KConfigGroup interfaceConfig(KGlobal::config(), "Interface");
         restoreDialogSize(interfaceConfig);
+        m_defaultSize = size();
+    } else {
+        m_defaultSize = QSize(size().width(), 500);
     }
 
-    m_defaultSize = size();
     m_resultsView->hide();
 
     m_delayedQueryTimer.setSingleShot(true);
@@ -541,12 +543,14 @@ void Interface::matchCountChanged(int count)
 
         QSize s = m_defaultSize;
         const int minHeight = minimumSizeHint().height();
-        const int resultsHeight = m_resultsScene->viewableHeight();
+        const int resultsHeight = m_resultsScene->viewableHeight() + 2;
         //kDebug() << minHeight << resultsHeight << s.height();
-        if (minHeight + resultsHeight < s.height()) {
-            s.setHeight(minHeight + resultsHeight);
-            m_resultsView->resize(m_resultsView->width(), resultsHeight + 2);
+
+        if (minHeight + resultsHeight + m_layout->spacing() < s.height()) {
+            s.setHeight(minHeight + resultsHeight + m_layout->spacing());
+            m_resultsView->setMinimumHeight(resultsHeight);
         }
+
         resize(s);
 
         if (!m_resultsView->isVisible()) {
