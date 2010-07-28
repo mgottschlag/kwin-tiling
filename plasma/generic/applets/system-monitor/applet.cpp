@@ -118,7 +118,7 @@ void Applet::connectToEngine()
     disconnectSources();
 
     mainLayout()->setOrientation(m_orientation);
-    if (m_mode != Panel) {
+    if (m_mode != Panel && !m_header) {
         m_header = new Plasma::Frame(this);
         m_header->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
         m_header->setText(m_title);
@@ -230,6 +230,7 @@ void Applet::deleteMeters()
     }
     m_plotters.clear();
     m_toolTips.clear();
+    delete m_header;
     m_header = 0;
 }
 
