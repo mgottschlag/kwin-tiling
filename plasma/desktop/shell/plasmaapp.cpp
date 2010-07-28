@@ -158,11 +158,9 @@ PlasmaApp::PlasmaApp()
 
     m_panelViewCreationTimer.setSingleShot(true);
     m_panelViewCreationTimer.setInterval(0);
-    connect(&m_panelViewCreationTimer, SIGNAL(timeout()), this, SLOT(createWaitingPanels()));
 
     m_desktopViewCreationTimer.setSingleShot(true);
     m_desktopViewCreationTimer.setInterval(0);
-    connect(&m_desktopViewCreationTimer, SIGNAL(timeout()), this, SLOT(createWaitingDesktops()));
 
     new PlasmaAppAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/App", this);
@@ -303,6 +301,12 @@ void PlasmaApp::setupDesktop()
 
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
     kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "Plasma App SetupDesktop()" << "(line:" << __LINE__ << ")";
+
+    // now connect up the creation timers and start them to get the views created
+    connect(&m_panelViewCreationTimer, SIGNAL(timeout()), this, SLOT(createWaitingPanels()));
+    connect(&m_desktopViewCreationTimer, SIGNAL(timeout()), this, SLOT(createWaitingDesktops()));
+    m_panelViewCreationTimer.start();
+    m_desktopViewCreationTimer.start();
 }
 
 void PlasmaApp::quit()
