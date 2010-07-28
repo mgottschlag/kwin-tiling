@@ -189,7 +189,7 @@ void Calendar::Private::updateItem( const Item &item, UpdateMode mode )
 
   kDebug()<<"id="<<item.id()<<"version="<<item.revision()<<"alreadyExisted="
           << alreadyExisted << "; calendar = " << q;
-  Q_ASSERT( mode == DontCare || alreadyExisted == ( mode == AssertExists ) );
+  //Q_ASSERT( mode == DontCare || alreadyExisted == ( mode == AssertExists ) );
 
   const KCal::Incidence::Ptr incidence = Akonadi::incidence( item );
   Q_ASSERT( incidence );
