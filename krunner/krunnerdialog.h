@@ -51,8 +51,6 @@ class KRunnerDialog : public QWidget
         virtual void display(const QString &term = QString()) = 0;
         virtual void clearHistory() = 0;
 
-        void switchUser();
-
     protected:
         void paintEvent(QPaintEvent *event);
         void resizeEvent(QResizeEvent *event);

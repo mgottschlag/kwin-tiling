@@ -264,36 +264,6 @@ void KRunnerDialog::setStaticQueryMode(bool staticQuery)
     Q_UNUSED(staticQuery)
 }
 
-void KRunnerDialog::switchUser()
-{
-    const KService::Ptr service = KService::serviceByStorageId("plasma-runner-sessions.desktop");
-    KPluginInfo info(service);
-
-    if (info.isValid()) {
-        SessList sessions;
-        KDisplayManager dm;
-        dm.localSessions(sessions);
-
-        if (sessions.isEmpty()) {
-            // no sessions to switch between, let's just start up another session directly
-            Plasma::AbstractRunner *sessionRunner = m_runnerManager->runner(info.pluginName());
-            if (sessionRunner) {
-                Plasma::QueryMatch switcher(sessionRunner);
-                sessionRunner->run(*m_runnerManager->searchContext(), switcher);
-            }
-        } else {
-            display(QString());
-            //TODO: create a "single runner" mode
-            //m_header->setText(i18n("Switch users"));
-            //m_header->setPixmap("system-switch-user");
-
-            //TODO: ugh, magic strings. See sessions/sessionrunner.cpp
-            setStaticQueryMode(true);
-            m_runnerManager->launchQuery("SESSIONS", info.pluginName());
-        }
-    }
-}
-
 void KRunnerDialog::toggleConfigDialog()
 {
     if (m_configWidget) {
