@@ -24,6 +24,7 @@
 #include <KIO/Job>
 #include <KUnitConversion/Converter>
 #include <Solid/Networking>
+#include <Plasma/DataContainer>
 
 
 // ctor, dtor
@@ -54,7 +55,8 @@ void EnvCanadaIon::reset()
     deleteForecasts();
     setInitialized(false);
     emitWhenSetup = true;
-    redoXMLSetup();
+    m_sourcesToReset = sources();
+    getXMLSetup();
 }
 
 EnvCanadaIon::~EnvCanadaIon()
@@ -444,8 +446,7 @@ QStringList EnvCanadaIon::validate(const QString& source) const
 // Get a specific Ion's data
 bool EnvCanadaIon::updateIonSource(const QString& source)
 {
-
-    kDebug() << "updateIonSource()";
+    //kDebug() << "updateIonSource()" << source;
 
     // We expect the applet to send the source in the following tokenization:
     // ionname|validate|place_name - Triggers validation of place
@@ -483,41 +484,40 @@ bool EnvCanadaIon::updateIonSource(const QString& source)
     return false;
 }
 
-void EnvCanadaIon::redoXMLSetup() const
-{
-    getXMLSetup();
-}
-
 // Parses city list and gets the correct city based on ID number
-void EnvCanadaIon::getXMLSetup() const
+void EnvCanadaIon::getXMLSetup()
 {
-    kDebug() << "getXMLSetup()";
+    //kDebug() << "getXMLSetup()";
 
     // If network is down, we need to spin and wait
 
     KIO::TransferJob *job = KIO::get(KUrl("http://dd.weatheroffice.ec.gc.ca/citypage_weather/xml/siteList.xml"), KIO::NoReload, KIO::HideProgressInfo);
 
-    if (job) {
-        connect(job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(setup_slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(job, SIGNAL(result(KJob *)), this, SLOT(setup_slotJobFinished(KJob *)));
-    }
+    m_xmlSetup.clear();
+    connect(job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
+            SLOT(setup_slotDataArrived(KIO::Job *, const QByteArray &)));
+    connect(job, SIGNAL(result(KJob *)), this, SLOT(setup_slotJobFinished(KJob *)));
 }
 
 // Gets specific city XML data
 void EnvCanadaIon::getXMLData(const QString& source)
 {
-    KUrl url;
+    foreach (const QString &fetching, m_jobList) {
+        if (fetching == source) {
+            // already getting this source and awaiting the data
+            return;
+        }
+    }
 
-    kDebug() << "getXMLData()";
+    //kDebug() << source;
 
     // Demunge source name for key only.
     QString dataKey = source;
     dataKey.remove("envcan|weather|");
 
-    url = "http://dd.weatheroffice.ec.gc.ca/citypage_weather/xml/" + m_places[dataKey].territoryName + "/" + m_places[dataKey].cityCode + "_e.xml";
+    KUrl url = "http://dd.weatheroffice.ec.gc.ca/citypage_weather/xml/" + m_places[dataKey].territoryName + "/" + m_places[dataKey].cityCode + "_e.xml";
     //url="file:///home/spstarr/Desktop/s0000649_e.xml";
-    kDebug() << "Will Try URL: " << url;
+    //kDebug() << "Will Try URL: " << url;
 
     if (m_places[dataKey].territoryName.isEmpty() && m_places[dataKey].cityCode.isEmpty()) {
         setData(source, "validate", QString("envcan|malformed"));
@@ -529,11 +529,9 @@ void EnvCanadaIon::getXMLData(const QString& source)
     m_jobXml.insert(newJob, new QXmlStreamReader);
     m_jobList.insert(newJob, source);
 
-    if (newJob) {
-        connect(newJob, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(newJob, SIGNAL(result(KJob *)), this, SLOT(slotJobFinished(KJob *)));
-    }
+    connect(newJob, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
+            SLOT(slotDataArrived(KIO::Job *, const QByteArray &)));
+    connect(newJob, SIGNAL(result(KJob *)), this, SLOT(slotJobFinished(KJob *)));
 }
 
 void EnvCanadaIon::setup_slotDataArrived(KIO::Job *job, const QByteArray &data)
@@ -541,10 +539,12 @@ void EnvCanadaIon::setup_slotDataArrived(KIO::Job *job, const QByteArray &data)
     Q_UNUSED(job)
 
     if (data.isEmpty()) {
+        //kDebug() << "done!";
         return;
     }
 
     // Send to xml.
+    //kDebug() << data;
     m_xmlSetup.addData(data);
 }
 
@@ -562,7 +562,9 @@ void EnvCanadaIon::slotDataArrived(KIO::Job *job, const QByteArray &data)
 void EnvCanadaIon::slotJobFinished(KJob *job)
 {
     // Dual use method, if we're fetching location data to parse we need to do this first
-    setData(m_jobList[job], Data());
+    const QString source = m_jobList.value(job);
+    //kDebug() << source << m_sourcesToReset.contains(source);
+    setData(source, Data());
     QXmlStreamReader *reader = m_jobXml.value(job);
     if (reader) {
         readXMLData(m_jobList[job], *reader);
@@ -571,21 +573,20 @@ void EnvCanadaIon::slotJobFinished(KJob *job)
     m_jobList.remove(job);
     delete m_jobXml[job];
     m_jobXml.remove(job);
+
+    if (m_sourcesToReset.contains(source)) {
+        m_sourcesToReset.removeAll(source);
+        emit forceUpdate(this, source);
+    }
 }
 
 void EnvCanadaIon::setup_slotJobFinished(KJob *job)
 {
     Q_UNUSED(job)
     const bool success = readXMLSetup();
+    m_xmlSetup.clear();
+    //kDebug() << success << m_sourcesToReset;
     setInitialized(success);
-    if (emitWhenSetup) {
-        emitWhenSetup = false;
-        emit(resetCompleted(this, success));
-    } else if (success) {
-        foreach(const QString &source, sources()) {
-            updateIonSource(source);
-        }
-    }
 }
 
 // Parse the city list and store into a QMap
@@ -596,7 +597,7 @@ bool EnvCanadaIon::readXMLSetup()
     QString code;
     QString cityName;
 
-    kDebug() << "readXMLSetup()";
+    //kDebug() << "readXMLSetup()";
 
     while (!m_xmlSetup.atEnd()) {
         m_xmlSetup.readNext();
@@ -632,6 +633,7 @@ bool EnvCanadaIon::readXMLSetup()
         }
 
     }
+
     return (success && !m_xmlSetup.error());
 }
 
@@ -677,7 +679,7 @@ bool EnvCanadaIon::readXMLData(const QString& source, QXmlStreamReader& xml)
     data.recordHigh = 0.0;
     data.recordLow = 0.0;
 
-    kDebug() << "readXMLData()";
+    //kDebug() << "readXMLData()";
 
     QString dataKey = source;
     dataKey.remove("envcan|weather|");
@@ -1293,7 +1295,7 @@ void EnvCanadaIon::parseUnknownElement(QXmlStreamReader& xml) const
 
 void EnvCanadaIon::updateWeather(const QString& source)
 {
-    kDebug() << "updateWeather()";
+    //kDebug() << "updateWeather()";
 
     QMap<QString, QString> dataFields;
     Plasma::DataEngine::Data data;
@@ -1312,7 +1314,7 @@ void EnvCanadaIon::updateWeather(const QString& source)
     // Real weather - Current conditions
     data.insert("Observation Period", observationTime(source));
     data.insert("Current Conditions", i18nc("weather condition", condition(source).toUtf8()));
-    kDebug() << "i18n condition string: " << qPrintable(condition(source));
+    //kDebug() << "i18n condition string: " << qPrintable(condition(source));
 
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
     QMap<QString, ConditionIcons> conditionList;
@@ -1704,7 +1706,7 @@ QVector<QString> EnvCanadaIon::forecasts(const QString& source)
                             .arg(m_weatherData[source].forecasts[i]->forecastTempHigh) \
                             .arg(m_weatherData[source].forecasts[i]->forecastTempLow) \
                             .arg(m_weatherData[source].forecasts[i]->popPrecent));
-        kDebug() << "i18n summary string: " << qPrintable(i18n(m_weatherData[source].forecasts[i]->shortForecast.toUtf8()));
+        //kDebug() << "i18n summary string: " << qPrintable(i18n(m_weatherData[source].forecasts[i]->shortForecast.toUtf8()));
     }
     return forecastData;
 }

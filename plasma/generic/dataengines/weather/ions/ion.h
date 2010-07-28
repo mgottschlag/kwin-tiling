@@ -97,11 +97,7 @@ public Q_SLOTS:
     virtual void reset() = 0;
 
 Q_SIGNALS:
-   
-    /**
-     * Triggered when we get initial setup data for ions that provide a list of places
-     */ 
-    void resetCompleted(IonInterface *, bool);
+    void forceUpdate(IonInterface *ion, const QString &source);
 
 protected:
 

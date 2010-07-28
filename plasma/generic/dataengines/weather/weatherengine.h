@@ -20,6 +20,8 @@
 #ifndef WEATHERENGINE_H
 #define WEATHERENGINE_H
 
+#include <QTimer>
+
 #include <KService>
 #include <KGenericFactory>
 
@@ -81,14 +83,7 @@ protected Q_SLOTS:
      */
     void dataUpdated(const QString& source, Plasma::DataEngine::Data data);
 
-    /**
-    * Reimplemented from Plasma::DataEngine.
-    * @param source The datasource to be updated.
-    * @param data The new data updated.
-    */
-    void resetCompleted(IonInterface *, bool) const;
-
-    void triggerReset(void) const;
+    void forceUpdate(IonInterface *ion, const QString &source);
 
     /**
      * Notify WeatherEngine a new ion has data sources.
@@ -110,6 +105,7 @@ protected Q_SLOTS:
      * Whenever networking changes, take action
      */
     void networkStatusChanged(Solid::Networking::Status);
+    void startReconnect();
 
     /**
      * Cleans up the ions that are currently loaded
@@ -122,8 +118,21 @@ protected Q_SLOTS:
     void updateIonList(const QStringList &changedResources = QStringList());
 
 private:
-    class Private;
-    Private *const d;
+    /**
+     * Get instance of a loaded ion.
+     * @returns a IonInterface instance of a loaded plugin.
+     */
+    IonInterface* ionForSource(const QString& name) const;
+
+    /**
+     * Get plugin name from datasource.
+     * @returns The plugin name given a datasource.
+     */
+    QString ionNameForSource(const QString& source) const;
+
+    QStringList m_ions;
+    bool m_networkAvailable;
+    QTimer m_reconnectTimer;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(weather, WeatherEngine)

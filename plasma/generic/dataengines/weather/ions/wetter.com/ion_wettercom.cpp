@@ -64,7 +64,8 @@ void WetterComIon::cleanup()
 void WetterComIon::reset()
 {
     cleanup();
-    emit resetCompleted(this, true);
+    m_sourcesToReset = sources();
+    updateAllSources();
 }
 
 void WetterComIon::init()
@@ -469,6 +470,13 @@ void WetterComIon::validate(const QString& source, bool parseError)
 
 void WetterComIon::fetchForecast(const QString& source)
 {
+    foreach (const QString &fetching, m_forecastJobList) {
+        if (fetching == source) {
+            // already fetching!
+            return;
+        }
+    }
+
     QCryptographicHash md5(QCryptographicHash::Md5);
     md5.addData(QString::fromLatin1(PROJECTNAME).toUtf8());
     md5.addData(QString::fromLatin1(APIKEY).toUtf8());
@@ -503,17 +511,23 @@ void WetterComIon::forecast_slotDataArrived(KIO::Job *job, const QByteArray &dat
 
 void WetterComIon::forecast_slotJobFinished(KJob *job)
 {
-    setData(m_forecastJobList[job], Data());
+    const QString source(m_forecastJobList.value(job));
+    setData(source, Data());
     QXmlStreamReader *reader = m_forecastJobXml.value(job);
 
     if (reader) {
-        parseWeatherForecast(m_forecastJobList[job], *reader);
+        parseWeatherForecast(source, *reader);
     }
 
     m_forecastJobList.remove(job);
 
     delete m_forecastJobXml[job];
     m_forecastJobXml.remove(job);
+
+    if (m_sourcesToReset.contains(source)) {
+        m_sourcesToReset.removeAll(source);
+        emit forceUpdate(this, source);
+    }
 }
 
 void WetterComIon::parseWeatherForecast(const QString& source, QXmlStreamReader& xml)

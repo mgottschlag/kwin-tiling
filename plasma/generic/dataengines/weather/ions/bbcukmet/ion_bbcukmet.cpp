@@ -40,9 +40,9 @@ UKMETIon::~UKMETIon()
 void UKMETIon::reset()
 {
     deleteForecasts();
-    emit(resetCompleted(this, true));
+    m_sourcesToReset = sources();
+    updateAllSources();
 }
-
 
 void UKMETIon::deleteForecasts()
 {
@@ -226,6 +226,13 @@ bool UKMETIon::updateIonSource(const QString& source)
 // Gets specific city XML data
 void UKMETIon::getXMLData(const QString& source)
 {
+    foreach (const QString &fetching, m_obsJobList) {
+        if (fetching == source) {
+            // already getting this source and awaiting the data
+            return;
+        }
+    }
+
     KUrl url;
     url = m_place[source].XMLurl;
 
@@ -407,7 +414,8 @@ void UKMETIon::observation_slotDataArrived(KIO::Job *job, const QByteArray &data
 
 void UKMETIon::observation_slotJobFinished(KJob *job)
 {
-    setData(m_obsJobList[job], Data());
+    const QString source = m_obsJobList.value(job);
+    setData(source, Data());
 
     QXmlStreamReader *reader = m_obsJobXml.value(job);
     if (reader) {
@@ -417,6 +425,11 @@ void UKMETIon::observation_slotJobFinished(KJob *job)
     m_obsJobList.remove(job);
     delete m_obsJobXml[job];
     m_obsJobXml.remove(job);
+
+    if (m_sourcesToReset.contains(source)) {
+        m_sourcesToReset.removeAll(source);
+        emit forceUpdate(this, source);
+    }
 }
 
 void UKMETIon::forecast_slotDataArrived(KIO::Job *job, const QByteArray &data)

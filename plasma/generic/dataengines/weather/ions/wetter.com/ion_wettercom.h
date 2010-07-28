@@ -164,6 +164,7 @@ private:
     QMap<KJob *, QString> m_forecastJobList;
 
     KIO::TransferJob *m_job;
+    QStringList m_sourcesToReset;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(wettercom, WetterComIon)

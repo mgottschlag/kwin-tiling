@@ -68,8 +68,8 @@ NOAAIon::NOAAIon(QObject *parent, const QVariantList &args)
 
 void NOAAIon::reset()
 {
-    emitWhenSetup = true;
     setInitialized(false);
+    m_sourcesToReset = sources();
     getXMLSetup();
 }
 
@@ -145,7 +145,6 @@ bool NOAAIon::updateIonSource(const QString& source)
             setData(source, "validate", QString("noaa|invalid|single|").append(sourceAction[2]));
             return true;
         }
-
     } else if (sourceAction[1] == "weather" && sourceAction.size() > 2) {
         getXMLData(source);
         return true;
@@ -174,11 +173,16 @@ void NOAAIon::getXMLSetup() const
 // Gets specific city XML data
 void NOAAIon::getXMLData(const QString& source)
 {
-    KUrl url;
+    foreach (const QString &fetching, m_jobList) {
+        if (fetching == source) {
+            // already getting this source and awaiting the data
+            return;
+        }
+    }
 
     QString dataKey = source;
     dataKey.remove("noaa|weather|");
-    url = m_places[dataKey].XMLurl;
+    KUrl url = m_places[dataKey].XMLurl;
 
     // If this is empty we have no valid data, send out an error and abort.
     if (url.url().isEmpty()) {
@@ -192,7 +196,7 @@ void NOAAIon::getXMLData(const QString& source)
 
     if (m_job) {
         connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-             SLOT(slotDataArrived(KIO::Job *, const QByteArray &)));
+                SLOT(slotDataArrived(KIO::Job *, const QByteArray &)));
         connect(m_job, SIGNAL(result(KJob *)), this, SLOT(slotJobFinished(KJob *)));
     }
 }
@@ -222,7 +226,8 @@ void NOAAIon::slotDataArrived(KIO::Job *job, const QByteArray &data)
 void NOAAIon::slotJobFinished(KJob *job)
 {
     // Dual use method, if we're fetching location data to parse we need to do this first
-    removeAllData(m_jobList[job]);
+    const QString source(m_jobList.value(job));
+    removeAllData(source);
     QXmlStreamReader *reader = m_jobXml.value(job);
     if (reader) {
         readXMLData(m_jobList[job], *reader);
@@ -241,9 +246,9 @@ void NOAAIon::setup_slotJobFinished(KJob *job)
     Q_UNUSED(job)
     const bool success = readXMLSetup();
     setInitialized(success);
-    if (emitWhenSetup) {
-        emitWhenSetup = false;
-        emit(resetCompleted(this, success));
+
+    foreach (const QString &source, m_sourcesToReset) {
+        updateSourceEvent(source);
     }
 }
 
@@ -840,8 +845,9 @@ void NOAAIon::forecast_slotDataArrived(KIO::Job *job, const QByteArray &data)
 void NOAAIon::forecast_slotJobFinished(KJob *job)
 {
     QXmlStreamReader *reader = m_jobXml.value(job);
+    const QString source = m_jobList.value(job);
+
     if (reader) {
-        QString source = m_jobList[job];
         readForecast(source, *reader);
         updateWeather(source);
     }
@@ -849,6 +855,11 @@ void NOAAIon::forecast_slotJobFinished(KJob *job)
     m_jobList.remove(job);
     delete m_jobXml[job];
     m_jobXml.remove(job);
+
+    if (m_sourcesToReset.contains(source)) {
+        m_sourcesToReset.removeAll(source);
+        emit forceUpdate(this, source);
+    }
 }
 
 void NOAAIon::readForecast(const QString& source, QXmlStreamReader& xml)

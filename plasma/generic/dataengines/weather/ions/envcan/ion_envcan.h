@@ -159,8 +159,6 @@ protected Q_SLOTS:
     void slotDataArrived(KIO::Job *, const QByteArray &);
     void slotJobFinished(KJob *);
 
-    void redoXMLSetup(void) const;
-
 private:
     /* Environment Canada Methods - Internal for Ion */
     void deleteForecasts();
@@ -202,7 +200,7 @@ private:
     QMap<QString, QString> weatherRecords(const QString& source) const;
 
     // Load and Parse the place XML listing
-    void getXMLSetup(void) const;
+    void getXMLSetup(void);
     bool readXMLSetup(void);
 
     // Load and parse the specific place(s)
@@ -248,8 +246,9 @@ private:
     QHash<QString, WeatherData> m_weatherData;
 
     // Store KIO jobs
-    QMap<KJob *, QXmlStreamReader*> m_jobXml;
-    QMap<KJob *, QString> m_jobList;
+    QHash<KJob *, QXmlStreamReader*> m_jobXml;
+    QHash<KJob *, QString> m_jobList;
+    QStringList m_sourcesToReset;
     QXmlStreamReader m_xmlSetup;
     Plasma::DataEngine *m_timeEngine;
 

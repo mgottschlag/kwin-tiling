@@ -79,9 +79,7 @@ void IonInterface::setInitialized(bool initialized)
     d->initialized = initialized;
 
     if (d->initialized) {
-        foreach(const QString &source, sources()) {
-            updateSourceEvent(source);
-        }
+        updateAllSources();
     }
 }
 

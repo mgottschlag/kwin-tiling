@@ -141,6 +141,8 @@ private:
     void parseWeatherForecast(const QString& source, QXmlStreamReader& xml);
     void parseUnknownElement(QXmlStreamReader& xml) const;
 
+    void deleteForecasts();
+
     struct XMLMapInfo {
         QString place;
         QString XMLurl;
@@ -169,8 +171,7 @@ private:
     Plasma::DataEngine *m_timeEngine;
 
     QDateTime m_dateFormat;
-
-    void deleteForecasts();
+    QStringList m_sourcesToReset;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(bbcukmet, UKMETIon)
