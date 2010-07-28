@@ -127,6 +127,10 @@ void NetCorona::containmentAdded(Plasma::Containment *cont)
         cont->removeAction(a);
         delete a;
     }
+
+    foreach (QAction *action, actions()) {
+        cont->addToolBoxAction(action);
+    }
 }
 
 Plasma::Containment *NetCorona::findFreeContainment() const

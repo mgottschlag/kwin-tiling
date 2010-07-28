@@ -702,9 +702,6 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     connect(containment, SIGNAL(toolBoxVisibilityChanged(bool)),
             this, SLOT(updateToolBoxVisibility(bool)));
 
-    foreach (QAction *action, m_corona->actions()) {
-        containment->addToolBoxAction(action);
-    }
 
     KConfigGroup viewIds(KGlobal::config(), "ViewIds");
     int defaultId = 0;
