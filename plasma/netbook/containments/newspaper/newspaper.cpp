@@ -587,6 +587,13 @@ void Newspaper::availableScreenRegionChanged()
         }
     }
 
+    QGraphicsView *ownView = view();
+    
+    if (ownView) {
+        kWarning()<<"AAAA"<<ownView->pos()<<maxRect;
+        maxRect.moveTopLeft(maxRect.topLeft() - ownView->mapToGlobal(QPoint(0,0)));
+    }
+kWarning()<<"FFFF"<<maxRect;
     setContentsMargins(maxRect.left(), maxRect.top(), qMax((qreal)0.0, size().width() - maxRect.right()), qMax((qreal)0.0, size().height() - maxRect.bottom()));
 }
 
