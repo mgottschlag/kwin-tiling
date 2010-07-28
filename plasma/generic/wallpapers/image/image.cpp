@@ -52,10 +52,6 @@ Image::Image(QObject *parent, const QVariantList &args)
     connect(this, SIGNAL(renderCompleted(QImage)), this, SLOT(updateBackground(QImage)));
     connect(this, SIGNAL(urlDropped(KUrl)), this, SLOT(setWallpaper(KUrl)));
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(nextSlide()));
-    m_nextWallpaperAction = new QAction(KIcon("user-desktop"), i18n("Next Wallpaper Image"), NULL);
-    connect(m_nextWallpaperAction, SIGNAL(triggered(bool)), this, SLOT(nextSlide()));
-    m_openImageAction = new QAction(KIcon("document-open"), i18n("Open Wallpaper Image"), NULL);
-    connect(m_openImageAction, SIGNAL(triggered(bool)), this, SLOT(openSlide()));
 }
 
 Image::~Image()
@@ -94,6 +90,10 @@ void Image::init(const KConfigGroup &config)
         setSingleImage();
         setContextualActions(QList<QAction*>());
     } else {
+        m_nextWallpaperAction = new QAction(KIcon("user-desktop"), i18n("Next Wallpaper Image"), this);
+        connect(m_nextWallpaperAction, SIGNAL(triggered(bool)), this, SLOT(nextSlide()));
+        m_openImageAction = new QAction(KIcon("document-open"), i18n("Open Wallpaper Image"), this);
+        connect(m_openImageAction, SIGNAL(triggered(bool)), this, SLOT(openSlide()));
         QTimer::singleShot(200, this, SLOT(startSlideshow()));
         QList<QAction*> actions;
         actions.push_back(m_nextWallpaperAction);
