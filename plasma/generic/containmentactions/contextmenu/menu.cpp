@@ -77,8 +77,8 @@ void ContextMenu::init(const KConfigGroup &config)
         defaultEnabled << true << true << true << true << true;
     } else {
         //FIXME ugly code!
-        m_allActions << "_context" << "_run_command" << "add widgets" << "_add panel" << "add sibling containment" << "remove" << "lock widgets" << "zoom in" << "zoom out" << "_sep1" << "_lock_screen" << "_logout" << "_sep2" << "configure" << "configure shortcuts" << "_sep3" << "_wallpaper";
-        defaultEnabled << true << true << true << true << false << true << true << false << false << true << true << true << true << true << false << true << true;
+        m_allActions << "_context" << "_run_command" << "add widgets" << "_add panel" << "add sibling containment" << "manage activities" << "remove" << "lock widgets" << "_sep1" << "_lock_screen" << "_logout" << "_sep2" << "configure" << "configure shortcuts" << "_sep3" << "_wallpaper";
+        defaultEnabled << true << true << true << true << false << true << true << true << true << true << true << true << true << false << true << true;
     }
 
     for (int i = 0; i < m_allActions.count(); ++i) {
@@ -190,6 +190,10 @@ QAction *ContextMenu::action(const QString &name)
     } else if (name == "_logout") {
         if (KAuthorized::authorizeKAction("logout")) {
             return m_logoutAction;
+        }
+    } else if (name == "manage activities") {
+        if (c->corona()) {
+            return c->corona()->action("manage activities");
         }
     } else {
         //FIXME: remove action: make removal of current activity possible
