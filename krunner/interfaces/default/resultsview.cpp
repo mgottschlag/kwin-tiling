@@ -135,11 +135,12 @@ void ResultsView::updateArrowsIcons()
 
 void ResultsView::updateArrowsVisibility()
 {
-    m_previousPage->move(width()/2-m_previousPage->width()/2,0);
-    m_nextPage->move(width()/2-m_nextPage->width()/2,height()-m_nextPage->height());
+    m_previousPage->move((width() / 2) - (m_previousPage->width() / 2), 0);
+    m_nextPage->move((width() / 2) - (m_nextPage->width() / 2), height() - m_nextPage->height());
 
-    m_previousPage->setVisible(mapFromScene(QPointF(0,0)).y()<0);
+    m_previousPage->setVisible(mapFromScene(QPointF(0,0)).y() < 0);
     m_nextPage->setVisible(mapFromScene(QPointF(0, m_resultScene->viewableHeight())).y() > height());
+    //kDebug() << m_resultScene->viewableHeight() << height() << mapFromScene(QPointF(0, m_resultScene->viewableHeight()));
 }
 
 void ResultsView::wheelEvent(QWheelEvent *e)
