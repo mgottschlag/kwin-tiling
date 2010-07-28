@@ -56,6 +56,7 @@ protected:
 protected Q_SLOTS:
     void configureApplet();
     void closeApplet();
+    void updatePalette();
 
 Q_SIGNALS:
     void mousePressed(Plasma::Applet *applet, QMouseEvent *event);

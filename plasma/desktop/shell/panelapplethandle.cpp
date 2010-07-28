@@ -33,6 +33,7 @@
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 #include <Plasma/Svg>
+#include <Plasma/Theme>
 #include <Plasma/WindowEffects>
 
 PanelAppletHandle::PanelAppletHandle(QWidget *parent, Qt::WindowFlags f)
@@ -69,10 +70,20 @@ PanelAppletHandle::PanelAppletHandle(QWidget *parent, Qt::WindowFlags f)
 
     m_layout->activate();
     resize(minimumSizeHint());
+
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updatePalette()));
+    updatePalette();
 }
 
 PanelAppletHandle::~PanelAppletHandle()
 {
+}
+
+void PanelAppletHandle::updatePalette()
+{
+    QPalette p = m_title->palette();
+    p.setColor(QPalette::WindowText, Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+    m_title->setPalette(p);
 }
 
 void PanelAppletHandle::setApplet(Plasma::Applet *applet)
