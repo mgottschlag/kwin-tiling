@@ -282,16 +282,22 @@ void SearchLaunch::availableScreenRegionChanged()
         return;
     }
 
-
     QRect maxRect;
     int maxArea = 0;
-    //we don't want the bounding rect (that could include panels too), but the maximum one representing the desktop
+    //we don't want the bounding rect (that could include panels too), but the maximumone representing the desktop
     foreach (QRect rect, corona()->availableScreenRegion(screen()).rects()) {
-        const int area = rect.width() * rect.height();
+        int area = rect.width() * rect.height();
         if (area > maxArea) {
             maxRect = rect;
             maxArea = area;
         }
+    }
+
+    QGraphicsView *ownView = view();
+    
+    //FIXME: the second check is a workaround to a qt bug: when a qwidget has just been created, maptoglobal and mapfromglobal aren't symmetryc. remove as soon as the bug is fixed
+    if (ownView && (ownView->mapFromGlobal(QPoint(0,0)) == -ownView->mapToGlobal(QPoint(0,0)))) {
+        maxRect.moveTopLeft(ownView->mapFromGlobal(maxRect.topLeft()));
     }
 
     setContentsMargins(maxRect.left(), maxRect.top(), qMax((qreal)0.0, size().width() - maxRect.right()), qMax((qreal)0.0, size().height() - maxRect.bottom()));
