@@ -85,7 +85,7 @@ WindowDefinitionWidget::WindowDefinitionWidget(KHotKeys::Windowdef_simple *windo
 
 
 WindowDefinitionWidget::~WindowDefinitionWidget()
-    {}
+    { delete ui; }
 
 
 void WindowDefinitionWidget::doCopyFromObject()
