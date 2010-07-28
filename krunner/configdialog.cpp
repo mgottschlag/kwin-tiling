@@ -69,7 +69,7 @@ KRunnerConfigWidget::KRunnerConfigWidget(Plasma::RunnerManager *manager, QWidget
     connect(displayButtons, SIGNAL(buttonClicked(int)), this, SLOT(setInterface(int)));
     displayButtons->addButton(m_uiOptions.commandButton, KRunnerSettings::EnumInterface::CommandOriented);
     displayButtons->addButton(m_uiOptions.taskButton, KRunnerSettings::EnumInterface::TaskOriented);
-    
+
     if (m_interfaceType == KRunnerSettings::EnumInterface::CommandOriented) {
         m_uiOptions.commandButton->setChecked(true);
     } else {
@@ -82,9 +82,10 @@ KRunnerConfigWidget::KRunnerConfigWidget(Plasma::RunnerManager *manager, QWidget
 
     connect(m_sel, SIGNAL(configCommitted(const QByteArray&)), this, SLOT(updateRunner(const QByteArray&)));
 
-    KService::List offers = KServiceTypeTrader::self()->query("Plasma/Runner");
-    QList<KPluginInfo> runnerInfo = KPluginInfo::fromServices(offers);
-    m_sel->addPlugins(runnerInfo, KPluginSelector::ReadConfigFile, i18n("Available Features"), QString(), KSharedConfig::openConfig("krunnerrc"));
+    m_sel->addPlugins(Plasma::RunnerManager::listRunnerInfo(),
+                      KPluginSelector::ReadConfigFile,
+                      i18n("Available Features"), QString(),
+                      KSharedConfig::openConfig("krunnerrc"));
 
     m_buttons = new QDialogButtonBox(this);
     m_buttons->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel);
