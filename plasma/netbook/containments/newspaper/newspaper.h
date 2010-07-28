@@ -75,7 +75,6 @@ private Q_SLOTS:
     void updateSize();
     void appletSizeHintChanged();
     void updateConfigurationMode(bool config);
-    void addNewsPaper();
     void refreshLayout();
 
     void updateRemoveActionVisibility();

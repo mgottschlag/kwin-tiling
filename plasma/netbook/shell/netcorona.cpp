@@ -70,6 +70,10 @@ void NetCorona::init()
 
     enableAction("lock widgets", false);
     setDialogManager(new NetDialogManager(this));
+
+    QAction *a = new QAction(KIcon("view-pim-news"), i18n("Add page"), this);
+    addAction("add page", a);
+    connect(a, SIGNAL(triggered()), this, SLOT(addPage()));
 }
 
 void NetCorona::loadDefaultLayout()
@@ -98,6 +102,22 @@ Plasma::Applet *NetCorona::loadDefaultApplet(const QString &pluginName, Plasma::
     }
 
     return applet;
+}
+
+void NetCorona::addPage()
+{
+    //count the pages
+    int numPages = 0;
+    foreach (Plasma::Containment *containment, containments()) {
+        if (containment->location() == Plasma::Floating) {
+            ++numPages;
+        }
+    }
+
+    Plasma::Containment *cont = addContainment("newspaper");
+    cont->setActivity(i18nc("Page number", "Page %1", numPages));
+    cont->setScreen(0);
+    cont->setToolBoxOpen(true);
 }
 
 void NetCorona::containmentAdded(Plasma::Containment *cont)

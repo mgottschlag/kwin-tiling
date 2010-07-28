@@ -163,11 +163,6 @@ void Newspaper::init()
     if (activityAction) {
         m_toolBox->addTool(activityAction);
     } else {
-        a = new QAction(KIcon("view-pim-news"), i18n("Add page"), this);
-        addAction("add page", a);
-        m_toolBox->addTool(a);
-        connect(a, SIGNAL(triggered()), this, SLOT(addNewsPaper()));
-
         a = action("remove");
         if (a) {
             a->setText(i18n("Remove page"));
@@ -421,29 +416,6 @@ void Newspaper::changeEvent(QEvent *event)
             updateConfigurationMode(true);
         }
     }
-}
-
-void Newspaper::addNewsPaper()
-{
-    Plasma::Corona *c = corona();
-    if (!c) {
-        return;
-    }
-
-    //count the pages
-    int numNewsPapers = 0;
-    if (corona()) {
-        foreach (Plasma::Containment *containment, corona()->containments()) {
-            if (qobject_cast<Newspaper *>(containment)) {
-                ++numNewsPapers;
-            }
-        }
-    }
-
-    Plasma::Containment *cont = c->addContainment("newspaper");
-    cont->setActivity(i18nc("Page number", "Page %1", numNewsPapers+1));
-    cont->setScreen(0);
-    cont->setToolBoxOpen(true);
 }
 
 void Newspaper::restore(KConfigGroup &group)
