@@ -640,6 +640,10 @@ void DesktopCorona::activityRemoved(const QString &id)
 void DesktopCorona::activateNextActivity()
 {
     QStringList list = m_activityController->availableActivities();
+    if (list.isEmpty()) {
+        return;
+    }
+
     int start = list.indexOf(m_activityController->currentActivity());
     int i = (start + 1) % list.size();
 
@@ -649,6 +653,10 @@ void DesktopCorona::activateNextActivity()
 void DesktopCorona::activatePreviousActivity()
 {
     QStringList list = m_activityController->availableActivities();
+    if (list.isEmpty()) {
+        return;
+    }
+
     int start = list.indexOf(m_activityController->currentActivity());
     //fun fact: in c++, (-1 % foo) == -1
     int i = start - 1;
