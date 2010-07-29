@@ -26,7 +26,6 @@
 
 class AppletOverlay;
 class AppletTitleBar;
-class NetToolBox;
 class QGraphicsLinearLayout;
 class AppletsContainer;
 class AppletsView;
@@ -90,7 +89,6 @@ private:
     bool m_expandAll;
     Plasma::FrameSvg *m_background;
     AppletOverlay *m_appletOverlay;
-    Plasma::AbstractToolBox *m_toolBox;
     bool m_dragging;
     QTimer *m_updateSizeTimer;
     QTimer *m_relayoutTimer;

@@ -116,27 +116,28 @@ void Newspaper::init()
     Containment::init();
     setHasConfigurationInterface(true);
 
-    m_toolBox = new NetToolBox(this);
-    setToolBox(m_toolBox);
-    connect(m_toolBox, SIGNAL(toggled()), this, SIGNAL(toolBoxToggled()));
-    connect(m_toolBox, SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));
-    m_toolBox->show();
+
+    setToolBox(new NetToolBox(this));
 
     QAction *a = action("add widgets");
     if (a) {
-        m_toolBox->addTool(a);
+        addToolBoxAction(a);
     }
+
+    connect(toolBox(), SIGNAL(toggled()), this, SIGNAL(toolBoxToggled()));
+    connect(toolBox(), SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));
+    toolBox()->show();
 
     a = new QAction(KIcon("view-fullscreen"), i18n("Expand widgets"), this);
     addAction("expand widgets", a);
-    m_toolBox->addTool(a);
+    addToolBoxAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleExpandAllApplets()));
 
 
     a = action("configure");
     if (a) {
         a->setText(i18n("Configure page"));
-        m_toolBox->addTool(a);
+        addToolBoxAction(a);
     }
 
 
@@ -152,7 +153,7 @@ void Newspaper::init()
         lockAction->setIcon(KIcon("object-locked"));
         QObject::connect(lockAction, SIGNAL(triggered(bool)), this, SLOT(toggleImmutability()));
     }
-    m_toolBox->addTool(lockAction);
+    addToolBoxAction(lockAction);
 
 
     //FIXME: two different use cases for the desktop and the newspaper, another reason to move the toolbox management out of here
@@ -161,12 +162,12 @@ void Newspaper::init()
         activityAction = corona()->action("manage activities");
     }
     if (activityAction) {
-        m_toolBox->addTool(activityAction);
+        addToolBoxAction(activityAction);
     } else {
         a = action("remove");
         if (a) {
             a->setText(i18n("Remove page"));
-            m_toolBox->addTool(a);
+            addToolBoxAction(a);
         }
     }
 
@@ -343,10 +344,10 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
             }
         }
 
-        if (immutability() == Plasma::Mutable && !m_appletOverlay && m_toolBox->isShowing()) {
+        if (immutability() == Plasma::Mutable && !m_appletOverlay && toolBox()->isShowing()) {
             m_appletOverlay = new AppletOverlay(this, this);
             m_appletOverlay->resize(size());
-        } else if (immutability() != Plasma::Mutable && m_appletOverlay && m_toolBox->isShowing()) {
+        } else if (immutability() != Plasma::Mutable && m_appletOverlay && toolBox()->isShowing()) {
             m_appletOverlay->deleteLater();
             m_appletOverlay = 0;
         }
@@ -375,7 +376,7 @@ void Newspaper::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::ContentsRectChange) {
 
-        if (m_toolBox->isShowing()) {
+        if (toolBox()->isShowing()) {
             updateConfigurationMode(true);
         }
     }
