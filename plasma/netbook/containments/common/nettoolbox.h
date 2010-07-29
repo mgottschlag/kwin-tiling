@@ -73,6 +73,7 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event);
 
 private Q_SLOTS:
     void containmentGeometryChanged();

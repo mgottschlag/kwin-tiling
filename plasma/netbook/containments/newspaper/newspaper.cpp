@@ -397,20 +397,6 @@ void Newspaper::updateConfigurationMode(bool config)
 void Newspaper::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::ContentsRectChange) {
-        qreal left, top, right, bottom;
-        getContentsMargins(&left, &top, &right, &bottom);
-
-        //left preferred over right
-        if (left > top && left > right && left > bottom) {
-            m_toolBox->setLocation(Plasma::RightEdge);
-        } else if (right > top && right >= left && right > bottom) {
-            m_toolBox->setLocation(Plasma::LeftEdge);
-        } else if (bottom > top && bottom > left && bottom > right) {
-            m_toolBox->setLocation(Plasma::TopEdge);
-        //bottom is the default
-        } else {
-            m_toolBox->setLocation(Plasma::BottomEdge);
-        }
 
         if (m_toolBox->isShowing()) {
             updateConfigurationMode(true);

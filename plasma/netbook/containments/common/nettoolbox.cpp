@@ -191,6 +191,7 @@ NetToolBox::NetToolBox(Plasma::Containment *parent)
     m_background->setContainsMultipleImages(true);
     setLocation(Plasma::BottomEdge);
 
+    m_containment->installEventFilter(this);
     connect(m_containment, SIGNAL(geometryChanged()), this, SLOT(containmentGeometryChanged()));
     containmentGeometryChanged();
 
@@ -425,6 +426,28 @@ void NetToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
             m_icon.pixmap(m_iconSize), m_animHighlightFrame);
         painter->drawPixmap(QRect(iconPos, m_iconSize), result);
     }
+}
+
+bool NetToolBox::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == m_containment && event->type() == QEvent::ContentsRectChange) {
+        qreal left, top, right, bottom;
+        m_containment->getContentsMargins(&left, &top, &right, &bottom);
+
+        //left preferred over right
+        if (left > top && left > right && left > bottom) {
+            setLocation(Plasma::RightEdge);
+        } else if (right > top && right >= left && right > bottom) {
+            setLocation(Plasma::LeftEdge);
+        } else if (bottom > top && bottom > left && bottom > right) {
+            setLocation(Plasma::TopEdge);
+        //bottom is the default
+        } else {
+            setLocation(Plasma::BottomEdge);
+        }
+    }
+
+    return AbstractToolBox::eventFilter(watched, event);
 }
 
 void NetToolBox::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
