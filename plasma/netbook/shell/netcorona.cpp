@@ -166,7 +166,7 @@ int NetCorona::numScreens() const
 
 QRect NetCorona::screenGeometry(int id) const
 {
-    return Kephal::ScreenUtils::screenGeometry(id);
+    return PlasmaApp::self()->mainView()->geometry();
 }
 
 QRegion NetCorona::availableScreenRegion(int id) const
