@@ -70,6 +70,7 @@ TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet)
       m_popupLostFocus(false)
 {
     setAcceptDrops(true);
+    setFlag(ItemClipsChildrenToShape, true);
 }
 
 
