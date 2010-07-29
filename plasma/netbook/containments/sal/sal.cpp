@@ -569,27 +569,6 @@ void SearchLaunch::restoreStrip()
 
 void SearchLaunch::updateConfigurationMode(bool config)
 {
-    qreal extraLeft = 0;
-    qreal extraTop = 0;
-    qreal extraRight = 0;
-    qreal extraBottom = 0;
-
-    if (config) {
-        switch (m_toolBox->location()) {
-            case Plasma::LeftEdge:
-            extraLeft= m_toolBox->expandedGeometry().width();
-            break;
-        case Plasma::RightEdge:
-            extraRight = m_toolBox->expandedGeometry().width();
-            break;
-        case Plasma::TopEdge:
-            extraTop = m_toolBox->expandedGeometry().height();
-            break;
-        case Plasma::BottomEdge:
-        default:
-            extraBottom = m_toolBox->expandedGeometry().height();
-        }
-    }
 
     if (config && !m_appletOverlay && immutability() == Plasma::Mutable) {
         if (m_appletsLayout->count() == 2) {
@@ -606,8 +585,6 @@ void SearchLaunch::updateConfigurationMode(bool config)
             m_mainLayout->removeItem(m_appletsLayout);
         }
     }
-
-    m_mainLayout->setContentsMargins(extraLeft, extraTop, extraRight, extraBottom);
 }
 
 void SearchLaunch::overlayRequestedDrop(QGraphicsSceneDragDropEvent *event)

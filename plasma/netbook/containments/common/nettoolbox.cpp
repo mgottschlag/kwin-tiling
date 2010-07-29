@@ -227,23 +227,29 @@ void NetToolBox::setShowing(const bool show)
     }
 
     if (show) {
+        qreal left, top, right, bottom = 0;
+
         switch (m_location) {
         case Plasma::TopEdge:
             m_toolContainer->setPos(boundingRect().topLeft() - QPoint(0, m_toolContainer->size().height()));
             slideAnim->setProperty("distancePointF", QPointF(0, m_toolContainer->size().height()));
+            top = m_toolContainer->size().height();
             break;
         case Plasma::LeftEdge:
             m_toolContainer->setPos(boundingRect().topLeft() - QPoint(m_toolContainer->size().width(), 0));
             slideAnim->setProperty("distancePointF", QPointF(m_toolContainer->size().width(), 0));
+            left = m_toolContainer->size().width();
             break;
         case Plasma::RightEdge:
             m_toolContainer->setPos(boundingRect().topRight());
             slideAnim->setProperty("distancePointF", QPointF(-m_toolContainer->size().width(), 0));
+            right = m_toolContainer->size().width();
             break;
         case Plasma::BottomEdge:
         default:
             m_toolContainer->setPos(boundingRect().bottomLeft());
             slideAnim->setProperty("distancePointF", QPointF(0, -m_toolContainer->size().height()));
+            bottom = m_toolContainer->size().height();
             break;
         }
 
@@ -251,9 +257,17 @@ void NetToolBox::setShowing(const bool show)
         slideAnim->setDirection(QAbstractAnimation::Forward);
         slideAnim->start();
 
+        if (m_containment->layout()) {
+            m_containment->layout()->setContentsMargins(left, top, right, bottom);
+        }
+
     } else {
         slideAnim->setDirection(QAbstractAnimation::Backward);
         slideAnim->start();
+
+        if (m_containment->layout()) {
+            m_containment->layout()->setContentsMargins(0, 0, 0, 0);
+        }
     }
 }
 

@@ -90,7 +90,7 @@ private:
     bool m_expandAll;
     Plasma::FrameSvg *m_background;
     AppletOverlay *m_appletOverlay;
-    NetToolBox *m_toolBox;
+    Plasma::AbstractToolBox *m_toolBox;
     bool m_dragging;
     QTimer *m_updateSizeTimer;
     QTimer *m_relayoutTimer;

@@ -131,7 +131,7 @@ private:
     QPointF m_buttonDownMousePos;
     LinearAppletOverlay *m_appletOverlay;
 
-    NetToolBox *m_toolBox;
+    Plasma::AbstractToolBox *m_toolBox;
     IconActionCollection *m_iconActionCollection;
 
     bool m_stripUninitialized;

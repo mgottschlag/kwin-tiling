@@ -356,27 +356,6 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
 
 void Newspaper::updateConfigurationMode(bool config)
 {
-    qreal extraLeft = 0;
-    qreal extraTop = 0;
-    qreal extraRight = 0;
-    qreal extraBottom = 0;
-
-    if (config) {
-        switch (m_toolBox->location()) {
-            case Plasma::LeftEdge:
-            extraLeft= m_toolBox->expandedGeometry().width();
-            break;
-        case Plasma::RightEdge:
-            extraRight = m_toolBox->expandedGeometry().width();
-            break;
-        case Plasma::TopEdge:
-            extraTop = m_toolBox->expandedGeometry().height();
-            break;
-        case Plasma::BottomEdge:
-        default:
-            extraBottom = m_toolBox->expandedGeometry().height();
-        }
-    }
 
     if (config && !m_appletOverlay && immutability() == Plasma::Mutable) {
         m_appletOverlay = new AppletOverlay(this, this);
@@ -385,8 +364,6 @@ void Newspaper::updateConfigurationMode(bool config)
         delete m_appletOverlay;
         m_appletOverlay = 0;
     }
-
-    m_externalLayout->setContentsMargins(extraLeft, extraTop, extraRight, extraBottom);
 
     if (!config) {
         m_container->cleanupColumns();
