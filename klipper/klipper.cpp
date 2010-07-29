@@ -211,7 +211,7 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
 #ifdef HAVE_DMTX
     // add barcode for mobile phones
     m_showBarcodeAction = m_collection->addAction("show_barcode");
-    m_showBarcodeAction->setText(i18n("&Show barcode..."));
+    m_showBarcodeAction->setText(i18n("&Show Barcode..."));
     connect(m_showBarcodeAction, SIGNAL(triggered()), SLOT(slotShowBarcode()));
 #endif
 
@@ -1130,7 +1130,7 @@ void Klipper::slotShowBarcode()
 
     KDialog dlg;
     dlg.setModal( true );
-    dlg.setCaption( i18n("Mobile barcode") );
+    dlg.setCaption( i18n("Mobile Barcode") );
     dlg.setButtons( KDialog::Ok );
 
     MobileBarcode::DataMatrixWidget* barcode = new MobileBarcode::DataMatrixWidget( &dlg );
