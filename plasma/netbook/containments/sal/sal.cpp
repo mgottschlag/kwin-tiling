@@ -24,7 +24,6 @@
 #include "runnersconfig.h"
 #include "../common/linearappletoverlay.h"
 #include "../common/appletmovespacer.h"
-#include "../common/nettoolbox.h"
 #include "iconactioncollection.h"
 #include "models/commonmodel.h"
 #include "models/kservicemodel.h"
@@ -50,6 +49,7 @@
 #include <KDesktopFile>
 #include <KRun>
 
+#include <Plasma/AbstractToolBox>
 #include <Plasma/Theme>
 #include <Plasma/Frame>
 #include <Plasma/Corona>
@@ -104,16 +104,20 @@ void SearchLaunch::init()
 
     connect(this, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
 
-    setToolBox(new NetToolBox(this));
-    connect(toolBox(), SIGNAL(toggled()), this, SIGNAL(toolBoxToggled()));
-    connect(toolBox(), SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));
-    toolBox()->show();
+    setToolBox(Plasma::AbstractToolBox::load("org.kde.nettoolbox", QVariantList(), this));
 
     QAction *a = action("add widgets");
     if (a) {
         addToolBoxAction(a);
     }
 
+    //FIXME: just temporary, we won't be able to make this assert in the future.
+    //if the plugin loading failed, addToolBoxAction should have created the default one.
+    Q_ASSERT(toolBox());
+
+    connect(toolBox(), SIGNAL(toggled()), this, SIGNAL(toolBoxToggled()));
+    connect(toolBox(), SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));
+    toolBox()->show();
 
     a = action("configure");
     if (a) {

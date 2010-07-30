@@ -3,7 +3,6 @@ set(newspaper_SRCS
     newspaper.cpp
     appletoverlay.cpp
     ../common/appletmovespacer.cpp
-    ../common/nettoolbox.cpp
     applettitlebar.cpp
     appletscontainer.cpp
     appletsview.cpp

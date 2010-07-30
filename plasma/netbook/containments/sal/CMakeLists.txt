@@ -5,7 +5,6 @@ set(sal_SRCS
     itemview.cpp
     ../common/linearappletoverlay.cpp
     ../common/appletmovespacer.cpp
-    ../common/nettoolbox.cpp
     stripwidget.cpp
     resultwidget.cpp
     runnersconfig.cpp

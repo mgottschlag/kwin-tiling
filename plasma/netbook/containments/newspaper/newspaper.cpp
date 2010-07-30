@@ -24,7 +24,6 @@
 #include "applettitlebar.h"
 #include "appletscontainer.h"
 #include "appletsview.h"
-#include "../common/nettoolbox.h"
 
 #include <limits>
 
@@ -47,6 +46,7 @@
 #include <KIntNumInput>
 #include <KMessageBox>
 
+#include <Plasma/AbstractToolBox>
 #include <Plasma/Corona>
 #include <Plasma/FrameSvg>
 #include <Plasma/Theme>
@@ -117,12 +117,16 @@ void Newspaper::init()
     setHasConfigurationInterface(true);
 
 
-    setToolBox(new NetToolBox(this));
+    setToolBox(Plasma::AbstractToolBox::load("org.kde.nettoolbox", QVariantList(), this));
 
     QAction *a = action("add widgets");
     if (a) {
         addToolBoxAction(a);
     }
+
+    //FIXME: just temporary, we won't be able to make this assert in the future.
+    //if the plugin loading failed, addToolBoxAction should have created the default one.
+    Q_ASSERT(toolBox());
 
     connect(toolBox(), SIGNAL(toggled()), this, SIGNAL(toolBoxToggled()));
     connect(toolBox(), SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));

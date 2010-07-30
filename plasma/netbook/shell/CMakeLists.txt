@@ -1,5 +1,6 @@
 include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/plasmagenericshell ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/netbook/shell/scripting/ ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kworkspace)
 
+add_subdirectory(nettoolbox)
 
 set(plasma-netbook_SRCS
     scripting/netbookscriptengine.cpp

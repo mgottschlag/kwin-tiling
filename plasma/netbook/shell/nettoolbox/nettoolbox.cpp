@@ -166,16 +166,34 @@ private:
 };
 
 NetToolBox::NetToolBox(Plasma::Containment *parent)
-   : Plasma::AbstractToolBox(parent),
-     m_containment(parent),
-     m_icon("plasma"),
-     m_iconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall),
-     m_animHighlightFrame(0),
-     m_hovering(false),
-     m_showing(false),
-     m_location(Plasma::BottomEdge),
-     m_newToolsPosition(0)
+   : Plasma::AbstractToolBox(parent)
 {
+    init();
+}
+
+NetToolBox::NetToolBox(QObject *parent, const QVariantList &args)
+    : AbstractToolBox(parent, args)
+{
+    init();
+}
+
+NetToolBox::~NetToolBox()
+{
+}
+
+void NetToolBox::init()
+{
+    m_containment = containment();
+    Q_ASSERT(m_containment);
+
+    m_icon = KIcon("plasma");
+    m_iconSize = QSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+    m_animHighlightFrame = 0;
+    m_hovering = false;
+    m_showing = false;
+    m_location = Plasma::BottomEdge;
+    m_newToolsPosition = 0;
+
     setZValue(9000);
     resize(KIconLoader::SizeMedium, KIconLoader::SizeMedium);
     setAcceptHoverEvents(true);
@@ -206,11 +224,6 @@ NetToolBox::NetToolBox(Plasma::Containment *parent)
     anim->setDuration(250);
     anim->setStartValue(0);
     anim->setEndValue(1);
-
-}
-
-NetToolBox::~NetToolBox()
-{
 }
 
 bool NetToolBox::isShowing() const

@@ -45,7 +45,8 @@ class NetToolBox : public Plasma::AbstractToolBox
     Q_PROPERTY(bool showing READ isShowing WRITE setShowing )
     Q_PROPERTY(qreal highlight READ highlight WRITE setHighlight)
 public:
-    NetToolBox(Plasma::Containment *parent = 0);
+    explicit NetToolBox(Plasma::Containment *parent = 0);
+    explicit NetToolBox(QObject *parent, const QVariantList &args);
     ~NetToolBox();
 
     bool isShowing() const;
@@ -69,6 +70,8 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
 protected:
+    void init();
+
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
@@ -99,5 +102,7 @@ private:
     Plasma::Location m_location;
     int m_newToolsPosition;
 };
+
+K_EXPORT_PLASMA_TOOLBOX(nettoolbox, NetToolBox)
 
 #endif
