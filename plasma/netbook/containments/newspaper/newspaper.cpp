@@ -117,20 +117,19 @@ void Newspaper::init()
     setHasConfigurationInterface(true);
 
 
-    setToolBox(Plasma::AbstractToolBox::load("org.kde.nettoolbox", QVariantList(), this));
+    setToolBox(Plasma::AbstractToolBox::load(corona()->preferredToolBoxPlugin(Plasma::Containment::DesktopContainment), QVariantList(), this));
 
     QAction *a = action("add widgets");
     if (a) {
         addToolBoxAction(a);
     }
 
-    //FIXME: just temporary, we won't be able to make this assert in the future.
-    //if the plugin loading failed, addToolBoxAction should have created the default one.
-    Q_ASSERT(toolBox());
 
-    connect(toolBox(), SIGNAL(toggled()), this, SIGNAL(toolBoxToggled()));
-    connect(toolBox(), SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));
-    toolBox()->show();
+    if (toolBox()) {
+        connect(toolBox(), SIGNAL(toggled()), this, SIGNAL(toolBoxToggled()));
+        connect(toolBox(), SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));
+        toolBox()->show();
+    }
 
     a = new QAction(KIcon("view-fullscreen"), i18n("Expand widgets"), this);
     addAction("expand widgets", a);
@@ -348,10 +347,10 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
             }
         }
 
-        if (immutability() == Plasma::Mutable && !m_appletOverlay && toolBox()->isShowing()) {
+        if (immutability() == Plasma::Mutable && !m_appletOverlay && toolBox() && toolBox()->isShowing()) {
             m_appletOverlay = new AppletOverlay(this, this);
             m_appletOverlay->resize(size());
-        } else if (immutability() != Plasma::Mutable && m_appletOverlay && toolBox()->isShowing()) {
+        } else if (immutability() != Plasma::Mutable && m_appletOverlay && toolBox() && toolBox()->isShowing()) {
             m_appletOverlay->deleteLater();
             m_appletOverlay = 0;
         }
@@ -380,7 +379,7 @@ void Newspaper::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::ContentsRectChange) {
 
-        if (toolBox()->isShowing()) {
+        if (toolBox() && toolBox()->isShowing()) {
             updateConfigurationMode(true);
         }
     }

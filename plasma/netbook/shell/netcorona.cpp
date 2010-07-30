@@ -51,6 +51,7 @@ NetCorona::NetCorona(QObject *parent)
 
 void NetCorona::init()
 {
+    setPreferredToolBoxPlugin(Plasma::Containment::DesktopContainment, "org.kde.nettoolbox");
     QDesktopWidget *desktop = QApplication::desktop();
     QObject::connect(desktop, SIGNAL(resized(int)), this, SLOT(screenResized(int)));
     connect(PlasmaApp::self(), SIGNAL(controlBarChanged()), this, SIGNAL(availableScreenRegionChanged()));

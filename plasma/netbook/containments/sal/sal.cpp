@@ -104,20 +104,20 @@ void SearchLaunch::init()
 
     connect(this, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
 
-    setToolBox(Plasma::AbstractToolBox::load("org.kde.nettoolbox", QVariantList(), this));
+
+    setToolBox(Plasma::AbstractToolBox::load(corona()->preferredToolBoxPlugin(Plasma::Containment::DesktopContainment), QVariantList(), this));
 
     QAction *a = action("add widgets");
     if (a) {
         addToolBoxAction(a);
     }
 
-    //FIXME: just temporary, we won't be able to make this assert in the future.
-    //if the plugin loading failed, addToolBoxAction should have created the default one.
-    Q_ASSERT(toolBox());
 
-    connect(toolBox(), SIGNAL(toggled()), this, SIGNAL(toolBoxToggled()));
-    connect(toolBox(), SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));
-    toolBox()->show();
+    if (toolBox()) {
+        connect(toolBox(), SIGNAL(toggled()), this, SIGNAL(toolBoxToggled()));
+        connect(toolBox(), SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));
+        toolBox()->show();
+    }
 
     a = action("configure");
     if (a) {
@@ -250,7 +250,9 @@ void SearchLaunch::init()
 
 void SearchLaunch::launchPackageManager()
 {
-    toolBox()->setShowing(false);
+    if (toolBox()) {
+        toolBox()->setShowing(false);
+    }
     KRun::run(*m_packageManagerService.data(), KUrl::List(), 0);
 }
 
@@ -517,10 +519,10 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
         }
 
         //kill or create the config overlay if needed
-        if (immutability() == Plasma::Mutable && !m_appletOverlay && toolBox()->isShowing()) {
+        if (immutability() == Plasma::Mutable && !m_appletOverlay && toolBox() && toolBox()->isShowing()) {
             m_appletOverlay = new LinearAppletOverlay(this, m_appletsLayout);
             m_appletOverlay->resize(size());
-        } else if (immutability() != Plasma::Mutable && m_appletOverlay && toolBox()->isShowing()) {
+        } else if (immutability() != Plasma::Mutable && m_appletOverlay && toolBox() && toolBox()->isShowing()) {
             m_appletOverlay->deleteLater();
             m_appletOverlay = 0;
         }
@@ -682,7 +684,7 @@ void SearchLaunch::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::ContentsRectChange) {
 
-        if (toolBox()->isShowing()) {
+        if (toolBox() && toolBox()->isShowing()) {
             updateConfigurationMode(true);
         }
     }
