@@ -88,6 +88,9 @@ Name[x-test]=xxKeyboard Layoutxx
 Name[zh_CN]=键盘布局
 Name[zh_TW]=鍵盤配置
 Comment=View and switch between active keyboard layouts
+Comment[pt]=Ver e mudar a disposição de teclado activa
+Comment[sv]=Visa och byt mellan aktiva tangentbordslayouter
+Comment[uk]=Перегляд і перемикання між активними розкладками клавіатури
 Comment[x-test]=xxView and switch between active keyboard layoutsxx
 
 Icon=preferences-desktop-keyboard
