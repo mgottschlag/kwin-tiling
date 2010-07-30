@@ -34,7 +34,6 @@ class QTimer;
 class StripWidget;
 class ItemView;
 class LinearAppletOverlay;
-class NetToolBox;
 class IconActionCollection;
 class KRunnerModel;
 class KServiceModel;
@@ -131,7 +130,6 @@ private:
     QPointF m_buttonDownMousePos;
     LinearAppletOverlay *m_appletOverlay;
 
-    Plasma::AbstractToolBox *m_toolBox;
     IconActionCollection *m_iconActionCollection;
 
     bool m_stripUninitialized;

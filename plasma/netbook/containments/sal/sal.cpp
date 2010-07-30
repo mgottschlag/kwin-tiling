@@ -104,21 +104,20 @@ void SearchLaunch::init()
 
     connect(this, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
 
-    m_toolBox = new NetToolBox(this);
-    setToolBox(m_toolBox);
-    connect(m_toolBox, SIGNAL(toggled()), this, SIGNAL(toolBoxToggled()));
-    connect(m_toolBox, SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));
-    m_toolBox->show();
+    setToolBox(new NetToolBox(this));
+    connect(toolBox(), SIGNAL(toggled()), this, SIGNAL(toolBoxToggled()));
+    connect(toolBox(), SIGNAL(visibilityChanged(bool)), this, SIGNAL(toolBoxVisibilityChanged(bool)));
+    toolBox()->show();
 
     QAction *a = action("add widgets");
     if (a) {
-        m_toolBox->addTool(a);
+        addToolBoxAction(a);
     }
 
 
     a = action("configure");
     if (a) {
-        m_toolBox->addTool(a);
+        addToolBoxAction(a);
         a->setText(i18n("Configure Search and Launch"));
     }
 
@@ -136,7 +135,7 @@ void SearchLaunch::init()
         QObject::connect(lockAction, SIGNAL(triggered(bool)), this, SLOT(toggleImmutability()));
     }
 
-    m_toolBox->addTool(lockAction);
+    addToolBoxAction(lockAction);
 
     //FIXME: two different use cases for the desktop and the newspaper, another reason to move the toolbox management out of here
     QAction *activityAction = 0;
@@ -144,7 +143,7 @@ void SearchLaunch::init()
         activityAction = corona()->action("manage activities");
     }
     if (activityAction) {
-        m_toolBox->addTool(activityAction);
+        addToolBoxAction(activityAction);
     }
 
     a = new QAction(i18n("Next activity"), this);
@@ -241,13 +240,13 @@ void SearchLaunch::init()
     setFormFactorFromLocation(location());
 
     if (action("remove")) {
-        m_toolBox->addTool(action("remove"));
+        addToolBoxAction(action("remove"));
     }
 }
 
 void SearchLaunch::launchPackageManager()
 {
-    m_toolBox->setShowing(false);
+    toolBox()->setShowing(false);
     KRun::run(*m_packageManagerService.data(), KUrl::List(), 0);
 }
 
@@ -269,7 +268,7 @@ void SearchLaunch::configChanged()
             addAction("add applications", addApplicationsAction);
             addApplicationsAction->setText(i18n("Add applications"));
             addApplicationsAction->setIcon(KIcon("applications-other"));
-            m_toolBox->addTool(addApplicationsAction);
+            addToolBoxAction(addApplicationsAction);
 
             connect(addApplicationsAction, SIGNAL(triggered()), this, SLOT(launchPackageManager()));
         }
@@ -514,10 +513,10 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
         }
 
         //kill or create the config overlay if needed
-        if (immutability() == Plasma::Mutable && !m_appletOverlay && m_toolBox->isShowing()) {
+        if (immutability() == Plasma::Mutable && !m_appletOverlay && toolBox()->isShowing()) {
             m_appletOverlay = new LinearAppletOverlay(this, m_appletsLayout);
             m_appletOverlay->resize(size());
-        } else if (immutability() != Plasma::Mutable && m_appletOverlay && m_toolBox->isShowing()) {
+        } else if (immutability() != Plasma::Mutable && m_appletOverlay && toolBox()->isShowing()) {
             m_appletOverlay->deleteLater();
             m_appletOverlay = 0;
         }
@@ -679,7 +678,7 @@ void SearchLaunch::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::ContentsRectChange) {
 
-        if (m_toolBox->isShowing()) {
+        if (toolBox()->isShowing()) {
             updateConfigurationMode(true);
         }
     }
