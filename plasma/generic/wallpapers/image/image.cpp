@@ -62,7 +62,13 @@ Image::~Image()
 void Image::init(const KConfigGroup &config)
 {
     m_timer.stop();
-    m_mode = renderingMode().name();
+
+    if (renderingMode().name().isEmpty()) {
+        m_mode = "SingleImage";
+    } else {
+        m_mode = renderingMode().name();
+    }
+
     calculateGeometry();
 
     m_delay = config.readEntry("slideTimer", 10);
