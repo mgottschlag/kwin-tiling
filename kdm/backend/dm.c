@@ -1464,6 +1464,8 @@ startDisplayP2(struct display *d)
         waitForServer(d);
         if ((d->displayType & d_location) == dLocal) {
             gSet(&mstrtalk);
+            if (Setjmp(mstrtalk.errjmp))
+                exit(EX_UNMANAGE_DPY);
             gSendInt(D_XConnOk);
         }
         manageSession();

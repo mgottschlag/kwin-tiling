@@ -230,7 +230,7 @@ conv_interact(int what, const char *prompt)
 GProc grtproc;
 GTalk grttalk;
 
-GTalk mstrtalk; /* make static; see dm.c */
+GTalk mstrtalk;
 
 int
 ctrlGreeterWait(int wreply)
@@ -241,11 +241,6 @@ ctrlGreeterWait(int wreply)
 #ifdef XDMCP
     ARRAY8Ptr aptr;
 #endif
-
-    if (Setjmp(mstrtalk.errjmp)) {
-        closeGreeter(True);
-        sessionExit(EX_UNMANAGE_DPY);
-    }
 
     while (gRecvCmd(&cmd)) {
         switch (cmd) {
@@ -579,6 +574,10 @@ manageSession(void)
 
     (void)Signal(SIGHUP, SIG_IGN);
 
+    if (Setjmp(mstrtalk.errjmp)) {
+        closeGreeter(True);
+        sessionExit(EX_UNMANAGE_DPY);
+    }
     if (Setjmp(grttalk.errjmp))
         Longjmp(abortSession, EX_RESERVER_DPY); /* EX_RETRY_ONCE */
 

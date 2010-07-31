@@ -791,7 +791,6 @@ chooseHost(int hid)
 
     for (h = hostNamedb; h; h = h->next)
         if ((int)(long)h == hid) {
-            /* XXX error handling */
             gSet(&mstrtalk);
             if ((td->displayType & d_location) == dLocal) {
                 gSendInt(D_RemoteHost);
@@ -832,7 +831,6 @@ directChooseHost(const char *name)
     if (!makeSockAddrs(name, &hosts))
         return;
     gSendInt(G_Ch_Exit);
-    /* XXX error handling */
     gSet(&mstrtalk);
     if ((td->displayType & d_location) == dLocal) {
         gSendInt(D_RemoteHost);
