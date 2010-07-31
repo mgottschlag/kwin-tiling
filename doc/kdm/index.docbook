@@ -1518,12 +1518,11 @@ reqeusting socket.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><command>reserve</command> [<parameter>timeout in
-seconds</parameter>]</term>
+<term><command>reserve</command></term>
 <listitem>
-<para>Start a reserve login screen. If nobody logs in within the specified
-amount of time (one minute by default), the display is removed again. When
-the session on the display exits, the display is removed, too.</para>
+<para>Start a reserve login screen. If nobody logs in within some
+time, the display is removed again. When the session on the display
+exits, the display is removed, too.</para>
 <para>Permitted only on sockets of local displays and the global
 socket.</para> 
 </listitem>

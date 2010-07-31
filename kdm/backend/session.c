@@ -502,15 +502,6 @@ finishGreet()
     }
 }
 
-static Jmp_buf idleTOJmp;
-
-/* ARGSUSED */
-static void
-IdleTimeout(int n ATTR_UNUSED)
-{
-    Longjmp(idleTOJmp, 1);
-}
-
 
 static Jmp_buf abortSession;
 
@@ -594,12 +585,6 @@ manageSession(void)
     } else {
       regreet:
         openGreeter();
-        if (Setjmp(idleTOJmp)) {
-            closeGreeter(True);
-            sessionExit(EX_NORMAL);
-        }
-        Signal(SIGALRM, IdleTimeout);
-        alarm(td->idleTimeout);
 #ifdef XDMCP
         if (((td->displayType & d_location) == dLocal) &&
                 td->loginMode >= LOGIN_DEFAULT_REMOTE)
@@ -622,7 +607,6 @@ manageSession(void)
             if (cmd == G_DGreet)
                 continue;
 #endif
-            alarm(0);
             if (cmd == G_Ready)
                 break;
             if (cmd == -2) {

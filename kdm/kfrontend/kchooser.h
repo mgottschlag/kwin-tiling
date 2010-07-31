@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "kgdialog.h"
 
+#include <QTimer>
+
 class ChooserListViewItem;
 
 class QLineEdit;
@@ -47,10 +49,15 @@ class ChooserDlg : public KGDialog {
     void accept();
     void reject();
 
+  private Q_SLOTS:
+    void slotTimeout();
+    void slotActivity();
+
   private:
     QString recvStr();
     ChooserListViewItem *findItem(int id);
 
+    QTimer timer;
     QTreeWidget *host_view;
     QLineEdit *iline;
     QSocketNotifier *sn;

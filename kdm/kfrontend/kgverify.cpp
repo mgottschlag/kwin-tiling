@@ -312,6 +312,8 @@ KGVerify::start()
         } else {
             applyPreset();
         }
+        if (_isReserve)
+            timer.start(FULL_GREET_TO * SECONDS);
     }
     sockNot->setEnabled(true);
     running = true;
@@ -439,6 +441,10 @@ KGVerify::slotTimeout()
         else
             timer.start(1000);
         updateStatus();
+    } else if (_isReserve) {
+        // assert(ctx == Login && running);
+        abort();
+        ::exit(EX_RESERVE);
     } else {
         // assert(ctx == Login);
         isClear = true;
@@ -463,6 +469,8 @@ KGVerify::slotActivity()
     } else if (timeable) {
         // timed login is possible and thus scheduled. reschedule it.
         timer.start(TIMED_GREET_TO * SECONDS);
+    } else if (_isReserve) {
+        timer.start(FULL_GREET_TO * SECONDS);
     }
 }
 

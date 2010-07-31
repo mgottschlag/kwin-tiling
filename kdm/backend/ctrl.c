@@ -537,13 +537,7 @@ processCtrl(const char *string, int len, int fd, struct display *d)
             Reply("\n");
             goto bust;
         } else if (!strcmp(ar[0], "reserve")) {
-            int lt = 60; /* XXX make default timeout configurable? */
-            if (ar[1]) {
-                lt = strtol(ar[1], &bp, 10);
-                if (lt < 15 || *bp) {
-                    fLog(d, fd, "bad", "invalid timeout %\"s", ar[1]);
-                    goto bust;
-                }
+            if (ar[1]) { /* Formerly the timeout. Just ignore it. */
                 if (ar[2])
                     goto exce;
             }
@@ -551,7 +545,7 @@ processCtrl(const char *string, int len, int fd, struct display *d)
                 fLog(d, fd, "perm", "display is not local");
                 goto bust;
             }
-            if (!startReserveDisplay(lt)) {
+            if (!startReserveDisplay()) {
                 fLog(d, fd, "noent", "no reserve display available");
                 goto bust;
             }

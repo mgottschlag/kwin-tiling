@@ -1288,9 +1288,6 @@ checkDisplayStatus(struct display *d)
 {
     if ((d->displayType & d_origin) == dFromFile && !d->stillThere)
         stopDisplay(d);
-    else if ((d->displayType & d_lifetime) == dReserve &&
-             d->status == running && d->userSess < 0 && !d->idleTimeout)
-        rStopDisplay(d, DS_RESERVE);
     else if (d->status == notRunning)
         if (loadDisplayResources(d) < 0) {
             logError("Unable to read configuration for display %s; "
@@ -1498,7 +1495,6 @@ rStopDisplay(struct display *d, int endState)
 {
     debug("stopping display %s to state %d\n", d->name, endState);
     abortStartServer(d);
-    d->idleTimeout = 0;
     if (d->serverPid != -1 || d->pid != -1) {
         if (d->pid != -1)
             terminateProcess(d->pid, SIGTERM);

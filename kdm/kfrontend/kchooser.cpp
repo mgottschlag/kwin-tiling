@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <klocale.h>
 
+#include <QApplication>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -38,6 +39,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QVBoxLayout>
 
 #include <stdlib.h> // for free()
+
+#define CHOOSE_TO 20 // inactivity timeout for reserve displays
+#define SECONDS 1000 // reduce to 100 to speed up testing
+
 
 class ChooserListViewItem : public QTreeWidgetItem {
   public:
@@ -118,6 +123,24 @@ ChooserDlg::ChooserDlg()
     connect(acceptButton, SIGNAL(clicked()), SLOT(accept()));
 //    connect(helpButton, SIGNAL(clicked()), SLOT(slotHelp()));
     connect(host_view, SIGNAL(itemActivated(QTreeWidgetItem *, int)), SLOT(accept()));
+
+    if (_isReserve) {
+        connect(&timer, SIGNAL(timeout()), SLOT(slotTimeout()));
+        connect(qApp, SIGNAL(activity()), SLOT(slotActivity()));
+        slotActivity();
+    }
+}
+
+void
+ChooserDlg::slotTimeout()
+{
+    ::exit(EX_RESERVE);
+}
+
+void
+ChooserDlg::slotActivity()
+{
+    timer.start(CHOOSE_TO * SECONDS);
 }
 
 /*

@@ -87,7 +87,7 @@ idleReserveDisplays(void)
 }
 
 int
-startReserveDisplay(int lt)
+startReserveDisplay(void)
 {
     struct display *d, *rd;
 
@@ -95,7 +95,6 @@ startReserveDisplay(int lt)
         if (d->status == reserve)
             rd = d;
     if (rd) {
-        rd->idleTimeout = lt;
         rd->status = notRunning;
         return True;
     }

@@ -285,8 +285,6 @@ struct display {
 
     CONF_CORE_LOCAL_DEFS
 
-    int idleTimeout;            /* abort login after that time */
-
     /* information potentially derived from resources */
     Xauth **authorizations;     /* authorization data */
     int authNum;                /* number of authorizations */
@@ -418,7 +416,7 @@ struct display
 int anyRunningDisplays(void);
 int anyReserveDisplays(void);
 int idleReserveDisplays(void);
-int startReserveDisplay(int lt);
+int startReserveDisplay(void);
 const char *displayName(struct display *);
 
 /* in reset.c */
