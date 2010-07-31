@@ -241,9 +241,9 @@ getRemoteAddress(struct display *d, int fd)
 #endif /* XDMCP */
 
 static int
-openErrorHandler(Display *dspl ATTR_UNUSED)
+openErrorHandler(Display *dspl)
 {
-    logError("IO Error in XOpenDisplay\n");
+    logError("IO Error in XOpenDisplay(%s)\n", DisplayString(dspl));
     exit(EX_OPENFAILED_DPY);
     /*NOTREACHED*/
     return (0);
