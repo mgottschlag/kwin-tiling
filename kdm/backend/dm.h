@@ -483,6 +483,8 @@ FILE *pOpen(char **what, char m, volatile int *pid);
 int pClose(FILE *f, volatile int *pid);
 char *locate(const char *exe);
 void terminateProcess(int pid, int sig);
+void blockTerm(void);
+void unblockTerm(void);
 
 void gSet(GTalk *talk); /* call before gOpen! */
 void gCloseOnExec(GPipe *pajp);

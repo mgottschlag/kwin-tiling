@@ -68,6 +68,25 @@ SIGFUNC Signal(int sig, SIGFUNC handler)
 #endif
 }
 
+void
+blockTerm(void)
+{
+    sigset_t ss;
+
+    sigemptyset(&ss);
+    sigaddset(&ss, SIGTERM);
+    sigprocmask(SIG_BLOCK, &ss, 0);
+}
+
+void
+unblockTerm(void)
+{
+    sigset_t ss;
+
+    sigemptyset(&ss);
+    sigaddset(&ss, SIGTERM);
+    sigprocmask(SIG_UNBLOCK, &ss, 0);
+}
 
 void
 terminateProcess(int pid, int sig)

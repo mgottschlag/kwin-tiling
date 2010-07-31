@@ -1958,7 +1958,7 @@ clientExited(void)
 void
 sessionExit(int status)
 {
-    Signal(SIGTERM, SIG_IGN);
+    blockTerm();
 
     clientExited();
 

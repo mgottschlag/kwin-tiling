@@ -622,11 +622,13 @@ manageSession(void)
     if (td_setup)
         setupDisplay(td_setup);
 
+    blockTerm();
     if (!startClient(&clientPid)) {
         logError("Client start failed\n");
         sessionExit(EX_NORMAL); /* XXX maybe EX_REMANAGE_DPY? -- enable in dm.c! */
     }
     debug("client Started\n");
+    unblockTerm();
 
     /*
      * Wait for session to end,
@@ -656,11 +658,9 @@ manageSession(void)
         sessionExit(EX_AL_RESERVER_DPY);
     }
 
-    sigemptyset(&ss);
-    sigaddset(&ss, SIGTERM);
-    sigprocmask(SIG_BLOCK, &ss, 0);
+    blockTerm();
     clientExited();
-    sigprocmask(SIG_UNBLOCK, &ss, 0);
+    unblockTerm();
 
     gSet(&mstrtalk);
     gSendInt(D_UnUser);
