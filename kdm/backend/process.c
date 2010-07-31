@@ -558,6 +558,8 @@ gOpen(GProc *proc, char **argv, const char *what, char **env, char *cname,
 static void
 _gClosen(GPipe *pajp)
 {
+    if (pajp->fd.r == -1)
+        return;
     closeNclearCloseOnFork(pajp->fd.r);
 #ifndef SINGLE_PIPE
     closeNclearCloseOnFork(pajp->fd.w);
@@ -602,6 +604,7 @@ gClose(GProc *proc, GPipe *gp, int force)
 static void ATTR_NORETURN
 gErr(void)
 {
+    gClosen(curtalk->pipe);
     Longjmp(curtalk->errjmp, 1);
 }
 
