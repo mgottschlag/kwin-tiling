@@ -1,7 +1,9 @@
 [Desktop Entry]
 Comment=Default toolbox for the netbook shell
+Comment[x-test]=xxDefault toolbox for the netbook shellxx
 Icon=plasma
 Name=Net toolbox
+Name[x-test]=xxNet toolboxxx
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/ToolBox
