@@ -182,11 +182,25 @@ typedef struct GProc {
     int pid;
 } GProc;
 
-typedef enum displayStatus { notRunning = 0, running, zombie, phoenix, raiser,
-                             textMode, reserve, remoteLogin } DisplayStatus;
+typedef enum displayStatus {
+    notRunning = 0, /* waiting for being started */
+    running,        /* was started */
+    zombie,         /* manager and server killed, remove/suspend when both are gone */
+    phoenix,        /* server killed, restart when it dies */
+    raiser,         /* manager killed, restart when it dies */
+    textMode,       /* suspended, console mode */
+    reserve,        /* suspended, reserve display */
+    remoteLogin     /* running X -query */
+} DisplayStatus;
 
-typedef enum serverStatus { ignore = 0, awaiting, starting,
-                            terminated, killed, pausing } ServerStatus;
+typedef enum serverStatus {
+    ignore = 0,     /* error in this state is no error */
+    awaiting,       /* waking for being started */
+    starting,       /* process launched, wait max serverTimeout secs */
+    terminated,     /* process SIGTERMed, wait max serverTimeout secs */
+    killed,         /* process SIGKILLed, wait max 10 secs */
+    pausing         /* startup failed, wait openDelay secs */
+} ServerStatus;
 
 typedef struct {
     unsigned how:2,    /* 0=none 1=reboot 2=halt (SHUT_*) */
