@@ -1,6 +1,7 @@
 include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/plasmagenericshell ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/shells/common ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/desktop/shell/scripting/ ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal)
 
 add_subdirectory(configupdates)
+add_subdirectory(toolbox)
 
 set(activitymanager_SRCS
     activitymanager/activitymanager.cpp
