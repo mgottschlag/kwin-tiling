@@ -2,6 +2,10 @@ This change log contains only changes relevant to the KDM configuration,
 startup and packaging. Bug fixes are not listed, and feature changes only
 if they affect the configuration.
 
+2010-06-06  Oswald Buddenhagen <ossi@kde.org>
+
+	* Removed the ResetSignal and TermSignal options.
+
 2010-02-28  Oswald Buddenhagen <ossi@kde.org>
 
 	* Made it possible to run X server and greeter as non-root.

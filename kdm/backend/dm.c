@@ -1422,8 +1422,8 @@ startDisplay(struct display *d)
              * servers which read auth file only on reset instead of
              * at first connection)
              */
-            if (d->serverPid != -1 && d->resetForAuth && d->resetSignal)
-                kill(d->serverPid, d->resetSignal);
+            if (d->serverPid != -1 && d->resetForAuth)
+                kill(d->serverPid, SIGHUP);
         }
         if (d->serverPid == -1) {
             d->serverStatus = awaiting;
@@ -1503,7 +1503,7 @@ rStopDisplay(struct display *d, int endState)
         if (d->pid != -1)
             terminateProcess(d->pid, SIGTERM);
         if (d->serverPid != -1)
-            terminateProcess(d->serverPid, d->termSignal);
+            terminateProcess(d->serverPid, SIGTERM);
         d->status = zombie;
         d->zstatus = endState & DS_MASK;
         debug(" zombiefied\n");
@@ -1591,7 +1591,7 @@ exitDisplay(struct display *d, int endState, int serverCmd, int goodExit)
                 (serverCmd != XS_KEEP || d->terminateServer))
             {
                 debug("killing X server for %s\n", d->name);
-                terminateProcess(d->serverPid, d->termSignal);
+                terminateProcess(d->serverPid, SIGTERM);
                 d->status = phoenix;
             } else {
                 d->status = notRunning;

@@ -1966,8 +1966,8 @@ sessionExit(int status)
 
     /* make sure the server gets reset after the session is over */
     if (td->serverPid >= 2) {
-        if (!td->terminateServer && td->resetSignal)
-            terminateProcess(td->serverPid, td->resetSignal);
+        if (!td->terminateServer)
+            terminateProcess(td->serverPid, SIGHUP);
     } else {
         resetServer(td);
     }

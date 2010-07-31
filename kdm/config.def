@@ -1483,30 +1483,6 @@ Description:
  of resetting it. Use this if the &X-Server; leaks memory or crashes the system
  on reset attempts.
 
-Key: ResetSignal
-Type: int
-Default: 1
-CDefault: 1 (SIGHUP)
-User: core
-Instance: #:*/
-Merge: xdm
-Comment:
- The signal needed to reset the local &X-Server;.
-Description:
- The signal number to use to reset the local &X-Server;.
-
-Key: TermSignal
-Type: int
-Default: 15
-CDefault: 15 (SIGTERM)
-User: core
-Instance: #:*/
-Merge: xdm
-Comment:
- The signal needed to terminate the local &X-Server;.
-Description:
- The signal number to use to terminate the local &X-Server;.
-
 Key: Authorize
 Type: bool
 Default: true

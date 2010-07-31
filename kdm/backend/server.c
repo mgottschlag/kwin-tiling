@@ -168,8 +168,8 @@ startServerTimeout()
         break; /* cannot happen */
     case starting:
         logError("X server startup timeout, terminating\n");
-        kill(d->serverPid, d->termSignal);
-        d->serverStatus = d->termSignal == SIGKILL ? killed : terminated;
+        kill(d->serverPid, SIGTERM);
+        d->serverStatus = terminated;
         serverTimeout = d->serverTimeout + now;
         break;
     case terminated:
