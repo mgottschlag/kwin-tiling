@@ -1,5 +1,3 @@
-kde4_no_enable_final(kdm)
-
 include(MacroAddFileDependencies)
 
 add_subdirectory( themes )
