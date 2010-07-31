@@ -421,12 +421,6 @@ void Battery::updateSlider(const float brightness)
     }
 }
 
-void Battery::setFullBrightness()
-{
-    brightnessChanged(100);
-    updateSlider(100);
-}
-
 void Battery::setEmbedded(const bool embedded)
 {
     m_isEmbedded = embedded;
