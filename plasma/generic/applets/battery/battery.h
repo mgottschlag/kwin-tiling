@@ -39,6 +39,12 @@ namespace Plasma
     class Slider;
 }
 
+struct BrightnessSet {
+    QString device;
+    Plasma::Label *label;
+    Plasma::Slider *slider;
+};
+
 class BrightnessOSDWidget;
 
 class Battery : public Plasma::PopupApplet
@@ -87,7 +93,7 @@ class Battery : public Plasma::PopupApplet
         void sourceAdded(const QString &source);
         void sourceRemoved(const QString &source);
         void brightnessChanged(const int brightness);
-        void updateSlider(const float brightness);
+        void updateSliders();
         void openConfig();
         void setProfile(const QString &profile);
         void suspend();
@@ -135,10 +141,9 @@ class Battery : public Plasma::PopupApplet
         //QGraphicsGridLayout *m_brightnessLayout;
         Plasma::Label *m_statusLabel;
         //Plasma::Label *m_batteryLabel;
-        Plasma::Label *m_brightnessLabel;
+        QList<struct BrightnessSet> *m_brightnessSliders;
         Plasma::Label *m_profileLabel;
         Plasma::ComboBox *m_profileCombo;
-        Plasma::Slider *m_brightnessSlider;
         int m_inhibitCookie;
 
         /* Show multiple batteries with individual icons and charge info? */

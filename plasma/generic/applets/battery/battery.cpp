@@ -81,9 +81,9 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_batteryInfoLabel(0),
       m_acLabelLabel(0),
       m_acInfoLabel(0),
+      m_brightnessSliders(0),
       m_profileLabel(0),
       m_profileCombo(0),
-      m_brightnessSlider(0),
       m_minutes(0),
       m_hours(0),
       m_theme(0),
@@ -408,15 +408,24 @@ void Battery::hibernate()
 void Battery::brightnessChanged(const int brightness)
 {
     if (!m_ignoreBrightnessChange) {
-        Solid::Control::PowerManager::setBrightness(brightness);
+        for (int i = 0; i < m_brightnessSliders->size(); ++i) {
+            const struct BrightnessSet *bs = &m_brightnessSliders->at(i);
+            if (bs->slider == sender()) {
+                Solid::Control::PowerManager::setBrightness(brightness, bs->device);
+                return;
+            }
+        }
+        kDebug() << "Received signal from not stored slider";
     }
 }
 
-void Battery::updateSlider(const float brightness)
+void Battery::updateSliders()
 {
-    if (m_brightnessSlider->value() != (int)brightness) {
+    for (int i = 0; i < m_brightnessSliders->size(); ++i) {
+        const struct BrightnessSet *bs = &m_brightnessSliders->at(i);
+        float value = Solid::Control::PowerManager::brightness(bs->device);
         m_ignoreBrightnessChange = true;
-        m_brightnessSlider->setValue((int) brightness);
+        bs->slider->setValue(value);
         m_ignoreBrightnessChange = false;
     }
 }
@@ -505,25 +514,39 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         m_extenderApplet->updateConstraints(Plasma::StartupCompletedConstraint);
         m_controlsLayout->addItem(m_extenderApplet, 1, 2, 2, 1);
 
-        m_brightnessLabel = createBuddyLabel(m_controls);
+
+
+        m_brightnessSliders = new QList<BrightnessSet>;
+        Solid::Control::PowerManager::BrightnessControlsList controls = Solid::Control::PowerManager::brightnessControlsAvailable();
+        foreach (const QString &device, controls.keys()) {
+            struct BrightnessSet brightnessSet;
+
+            /* Device name */
+            brightnessSet.device = device;
+
+            /* Label */
+            brightnessSet.label = new Plasma::Label(m_controls);
+            brightnessSet.label = createBuddyLabel(m_controls);
 #if KDE_IS_VERSION(4, 5, 60)
-        m_brightnessLabel->setText(i18n("Screen Brightness:"));
+            brightnessSet.label->setText(i18n("Screen Brightness:"));
 #else
-        m_brightnessLabel->setText(i18n("Screen Brightness") + ':');
+            brightnessSet.label->setText(i18n("Screen Brightness") + ':');
 #endif
+            m_controlsLayout->addItem(brightnessSet.label, row, 0);
 
-        m_controlsLayout->addItem(m_brightnessLabel, row, 0);
+            /* Slider */
+            brightnessSet.slider = new Plasma::Slider(m_controls);
+            brightnessSet.slider->setRange(0, 100);
+            brightnessSet.slider->nativeWidget()->setTickInterval(10);
+            brightnessSet.slider->setOrientation(Qt::Horizontal);
+            connect(brightnessSet.slider, SIGNAL(valueChanged(int)),
+                    this, SLOT(brightnessChanged(int)));
+            m_controlsLayout->addItem(brightnessSet.slider, row, 1, 1, 2);
 
-        m_brightnessSlider = new Plasma::Slider(m_controls);
-        m_brightnessSlider->setRange(0, 100);
-        updateSlider(Solid::Control::PowerManager::brightness());
-        m_brightnessSlider->nativeWidget()->setTickInterval(10);
-        m_brightnessSlider->setOrientation(Qt::Horizontal);
-        connect(m_brightnessSlider, SIGNAL(valueChanged(int)),
-                this, SLOT(brightnessChanged(int)));
-
-        m_controlsLayout->addItem(m_brightnessSlider, row, 1, 1, 2);
-        row++;
+            m_brightnessSliders->append(brightnessSet);
+            row++;
+        }
+        updateSliders();
 
         m_profileLabel = createBuddyLabel(m_controls);
         m_profileLabel->setText(i18n("Power Profile:"));
@@ -606,7 +629,9 @@ void Battery::setupFonts()
 {
     if (m_batteryLabelLabel) {
         QFont infoFont = KGlobalSettings::generalFont();
-        m_brightnessLabel->setFont(infoFont);
+        for (int i = 0; i < m_brightnessSliders->size(); ++i) {
+            m_brightnessSliders->at(i).label->setFont(infoFont);
+        }
         m_profileLabel->setFont(infoFont);
 
         QFont boldFont = infoFont;
@@ -719,9 +744,7 @@ void Battery::updateStatus()
         }
     }
 
-    if (m_brightnessSlider) {
-        updateSlider(Solid::Control::PowerManager::brightness());
-    }
+    updateSliders();
 }
 
 void Battery::openConfig()
@@ -1069,8 +1092,8 @@ void Battery::showBrightnessOSD(int brightness, bool byKeyPress)
         int posY = rect.y() + 4 * rect.height() / 5;
         m_brightnessOSD->setGeometry(posX, posY, size.width(), size.height());
 
-        if (m_extenderVisible && m_brightnessSlider) {
-            updateSlider(brightness);
+        if (m_extenderVisible) {
+            updateSliders();
         }
     }
 }
