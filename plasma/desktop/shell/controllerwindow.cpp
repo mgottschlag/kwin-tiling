@@ -209,7 +209,17 @@ void ControllerWindow::syncToGraphicsWidget()
         getContentsMargins(&left, &top, &right, &bottom);
 
         QDesktopWidget *desktop = QApplication::desktop();
-        QRect screenRect = Kephal::ScreenUtils::screenGeometry(Kephal::ScreenUtils::screenId(pos()));
+
+        QRect screenRect;
+        //Try to use the screenId directly from the containment, because it won't fail.
+        //If we dont' have containment. try to get the screen by using QWidget::pos(), but it
+        //may fail if syncToGraphicsWidget is called before a real position is set (so pos() will
+        //just return 0x0, which may lead to the wrong screen
+        if (m_containment) {
+            screenRect = Kephal::ScreenUtils::screenGeometry(m_containment.data()->screen());
+        } else {
+            screenRect = Kephal::ScreenUtils::screenGeometry(Kephal::ScreenUtils::screenId(pos()));
+        }
         QSize maxSize = KWindowSystem::workArea().intersect(screenRect).size();
 
         QSize windowSize;

@@ -523,7 +523,7 @@ void PlasmaApp::showController(int screen, Plasma::Containment *containment, boo
 
     if (!moved) {
         // set it to the bottom of the screen as we have no better hints to go by
-        QRect geom = KWindowSystem::workArea();
+        QRect geom = Kephal::Screens::self()->screen(screen)->geom();
         controller->resize(controller->sizeHint());
         controller->setGeometry(geom.x(), geom.bottom() - controller->height(), geom.width(), controller->height());
     }
