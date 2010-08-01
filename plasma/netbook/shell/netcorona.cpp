@@ -87,7 +87,12 @@ void NetCorona::loadDefaultLayout()
     QString defaultConfig = KStandardDirs::locate("appdata", "plasma-default-layoutrc");
     if (!defaultConfig.isEmpty()) {
         kDebug() << "attempting to load the default layout from:" << defaultConfig;
-        importLayout(KConfig(defaultConfig));
+
+        // gcc bug 36490: KConfig's copy constructor is private, so passing it as a
+        // temporary to importLayout, ie importLayout(KConfig(defaultConfig)) fails
+        // on gcc < 4.3.0
+        KConfig c(defaultConfig);
+        importLayout(c);
 
         return;
     }
