@@ -707,7 +707,7 @@ void Applet::checkDefaultApplets()
         Plasma::DataEngineManager *engines = Plasma::DataEngineManager::self();
         Plasma::DataEngine *power = engines->loadEngine("powermanagement");
         if (power) {
-            const QStringList &batteries = power->query("Battery")["sources"].toStringList();
+            const QStringList &batteries = power->query("Battery")["Sources"].toStringList();
             if (!batteries.isEmpty()) {
                 s_manager->addApplet("battery", this);
             }
