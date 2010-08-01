@@ -1,8 +1,14 @@
 [Desktop Entry]
 Comment=Default toolbox for the netbook shell
+Comment[en_GB]=Default toolbox for the netbook shell
+Comment[sv]=Standardverktyg för nätdatorskalet
+Comment[uk]=Типовий набір інструментів для оболонки субноутбуків
 Comment[x-test]=xxDefault toolbox for the netbook shellxx
 Icon=plasma
 Name=Net toolbox
+Name[en_GB]=Net toolbox
+Name[sv]=Nätverksverktyg
+Name[uk]=Набір інструментів для субноутбуків
 Name[x-test]=xxNet toolboxxx
 Type=Service
 

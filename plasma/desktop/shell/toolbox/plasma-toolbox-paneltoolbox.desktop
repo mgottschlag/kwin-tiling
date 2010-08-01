@@ -1,7 +1,9 @@
 [Desktop Entry]
 Comment=Default panel toolbox for the Plasma desktop shell
+Comment[x-test]=xxDefault panel toolbox for the Plasma desktop shellxx
 Icon=plasma
 Name=Panel toolbox
+Name[x-test]=xxPanel toolboxxx
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/ToolBox
