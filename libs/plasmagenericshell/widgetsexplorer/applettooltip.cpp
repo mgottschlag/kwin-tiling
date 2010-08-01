@@ -145,7 +145,7 @@ void AppletInfoWidget::init()
 
     // header init
     m_iconWidget->setAcceptHoverEvents(false);
-    m_iconWidget->setAcceptedMouseButtons(false);
+    m_iconWidget->setAcceptedMouseButtons(Qt::NoButton);
     m_iconWidget->setMinimumSize(IconSize(KIconLoader::Desktop), IconSize(KIconLoader::Desktop));
     m_iconWidget->setMaximumSize(IconSize(KIconLoader::Desktop), IconSize(KIconLoader::Desktop));
 
