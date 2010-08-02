@@ -77,6 +77,9 @@ class PythonAppletScript(Plasma.AppletScript):
 
     def __dtor__(self):
         #print("~PythonAppletScript()")
+        if not self.initialized:
+            return
+
         PythonAppletScript.importer.unregister_top_level(self.pluginName)
         self.pyapplet = None
 
@@ -122,7 +125,7 @@ class PythonAppletScript(Plasma.AppletScript):
 
     def shape(self):
         if not self.initialized:
-            return
+            return QPainterPath()
         return self.pyapplet.shape()
 
     def eventFilter(self, obj, event):
