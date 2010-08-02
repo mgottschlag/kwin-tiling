@@ -40,13 +40,13 @@ class ItemSpace
   public:
     ItemSpace();
 
-    void setWorkingArea(QSizeF area);
+    void setWorkingArea(const QSizeF& area);
 
     /**
      * Returns the visibility of an item at a given position.
      * This is the part of the item inside the working area.
      **/
-    qreal positionVisibility(QRectF geom);
+    qreal positionVisibility(const QRectF& geom);
 
     class ItemSpaceItem
     {
@@ -109,7 +109,7 @@ class ItemSpace
      * @param itemInGroup the index of the item in its group
      * @param newGeom the new geometry of the item
      **/
-    void moveItem(int groupIndex, int itemInGroup, QRectF newGeom);
+    void moveItem(int groupIndex, int itemInGroup, const QRectF& newGeom);
 
     /**
      * Resize an item. The item's alignment corner will be the center of resizing.
@@ -118,7 +118,7 @@ class ItemSpace
      * @param direction in which direction pushing will be done
      * @param newSize the item's new size
      **/
-    void resizeItem(int groupId, int itemInGroup, QSizeF newSize);
+    void resizeItem(int groupId, int itemInGroup, const QSizeF& newSize);
 
     /**
      * Offset the positions of all items.
@@ -164,7 +164,7 @@ class ItemSpace
         bool findAll
     ) const;
 
-    bool positionedProperly(QRectF itemGeom);
+    bool positionedProperly(const QRectF& itemGeom);
 
     /**
      * Represents a group of overlapping items.

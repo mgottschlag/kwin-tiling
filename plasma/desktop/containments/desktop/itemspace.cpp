@@ -36,7 +36,7 @@ ItemSpace::ItemSpace()
 {
 }
 
-void ItemSpace::setWorkingArea(QSizeF area)
+void ItemSpace::setWorkingArea(const QSizeF& area)
 {
     if (workingGeom.isValid()) {
         // if the working area size changed and alignment includes right or bottom,
@@ -160,7 +160,7 @@ void ItemSpace::checkPreferredPositions()
     }
 }
 
-qreal ItemSpace::positionVisibility (QRectF geom)
+qreal ItemSpace::positionVisibility (const QRectF& geom)
 {
     QRectF visibleArea = QRectF(QPointF(), workingGeom);
     QRectF visibleItemPart = visibleArea.intersected(geom);
@@ -193,7 +193,7 @@ qreal ItemSpace::performPush(int groupId, Direction direction, qreal amount, Pus
     return group.m_pushAvailable;
 }
 
-bool ItemSpace::positionedProperly(QRectF itemGeom)
+bool ItemSpace::positionedProperly(const QRectF& itemGeom)
 {
     QRectF fullGeom = itemGeom.adjusted(-placementSpacing, -placementSpacing, placementSpacing, placementSpacing);
     return (QRectF(QPointF(), workingGeom).contains(fullGeom));
@@ -698,7 +698,7 @@ void ItemSpace::removeItem(int removeGroup, int removeItemInGroup)
 }
 
 // TODO: optimize
-void ItemSpace::moveItem(int groupIndex, int itemInGroup, QRectF newGeom)
+void ItemSpace::moveItem(int groupIndex, int itemInGroup, const QRectF& newGeom)
 {
     ItemSpaceItem copy = m_groups[groupIndex].m_groupItems[itemInGroup];
 
@@ -712,7 +712,7 @@ void ItemSpace::moveItem(int groupIndex, int itemInGroup, QRectF newGeom)
     checkPreferredPositions();
 }
 
-void ItemSpace::resizeItem(int resizeGroupId, int resizeItemInGroup, QSizeF newSize)
+void ItemSpace::resizeItem(int resizeGroupId, int resizeItemInGroup, const QSizeF& newSize)
 {
     ItemSpaceItem &resizeItem = m_groups[resizeGroupId].m_groupItems[resizeItemInGroup];
     QRectF oldGeom = resizeItem.lastGeometry;
