@@ -22,13 +22,9 @@
 #define PLASMA_DESKTOP_H
 
 #include <QGraphicsItem>
-#include <QList>
 #include <QObject>
 #include <QStyleOptionGraphicsItem>
-#include <QTimer>
 
-#include <KDialog>
-#include <KIcon>
 
 #include <Plasma/Containment>
 #include <Plasma/Animator>

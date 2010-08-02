@@ -12,7 +12,6 @@
 
 #include <QHash>
 #include <QMap>
-#include <QList>
 #include <QObject>
 #include <QPropertyAnimation>
 #include <QTransform>

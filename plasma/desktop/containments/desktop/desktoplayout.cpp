@@ -9,10 +9,8 @@
 
 #include <limits>
 
-#include <QCoreApplication>
 #include <QGraphicsWidget>
 #include <QGraphicsProxyWidget>
-#include <QWaitCondition>
 
 #include <KDebug>
 

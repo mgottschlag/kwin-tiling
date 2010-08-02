@@ -24,6 +24,8 @@
 
 #include <Plasma/Corona>
 
+#include <QTimer>
+
 using namespace Plasma;
 
 DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
