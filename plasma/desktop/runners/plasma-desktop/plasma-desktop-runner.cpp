@@ -19,15 +19,13 @@
 #include "plasma-desktop-runner.h"
 
 #include <QDBusConnection>
-#include <QDBusConnectionInterface>
-#include <QDBusInterface>
 #include <QDBusServiceWatcher>
+#include <QDBusConnectionInterface>
 
 #include <KDebug>
 #include <KIcon>
 #include <KLocale>
 #include <KRun>
-#include <KToolInvocation>
 
 #include <plasma/theme.h>
 
