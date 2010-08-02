@@ -23,24 +23,15 @@
 
 #include <QAction>
 #include <QApplication>
-#include <QBitmap>
-#include <QComboBox>
-#include <QDesktopWidget>
 #include <QGraphicsLinearLayout>
-#include <QGridLayout>
 #include <QGraphicsLayout>
 #include <QGraphicsSceneDragDropEvent>
-#include <QLabel>
-#include <QMenu>
 #include <QTimer>
 #include <QPainter>
-#include <QSignalMapper>
 
 #include <KDebug>
 #include <KIcon>
-#include <KDialog>
-#include <KIntNumInput>
-#include <KMessageBox>
+#include <KIconLoader>
 
 #include <Plasma/Corona>
 #include <Plasma/FrameSvg>
