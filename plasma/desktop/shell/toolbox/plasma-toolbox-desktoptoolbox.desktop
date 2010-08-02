@@ -1,8 +1,12 @@
 [Desktop Entry]
 Comment=Default desktop toolbox for the Plasma desktop shell
+Comment[sv]=Standardskrivbordsverktyg för Plasma skrivbordsskalet
+Comment[uk]=Типовий набір інструментів стільниці для оболонки Плазми стаціонарних комп’ютерів
 Comment[x-test]=xxDefault desktop toolbox for the Plasma desktop shellxx
 Icon=plasma
 Name=Desktop toolbox
+Name[sv]=Skrivbordsverktygslåda
+Name[uk]=Набір інструментів для стаціонарних комп’ютерів
 Name[x-test]=xxDesktop toolboxxx
 Type=Service
 
