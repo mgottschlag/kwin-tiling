@@ -1,2 +1,2 @@
 #! /usr/bin/env bash
-$XGETTEXT *.cpp -o $podir/plasma-netbook.pot
+$XGETTEXT *.cpp scripting/*.cpp -o $podir/plasma-netbook.pot
