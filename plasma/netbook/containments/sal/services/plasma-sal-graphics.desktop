@@ -90,6 +90,7 @@ Name[x-test]=xxGraphicsxx
 Name[zh_CN]=图像
 Name[zh_TW]=圖形
 Comment=Graphics applications, such as paint programs and image viewers
+Comment[ar]=تطبيقات رسومية مثل تطبيق الرسم و مستعرضات الصور
 Comment[bn]=গ্রাফিক্স অ্যাপলিকেশন, যেমন আঁকার প্রোগ্রাম এবং ছবি প্রদর্শক
 Comment[ca]=Aplicacions gràfiques, com programes de pintura i visors d'imatges
 Comment[ca@valencia]=Aplicacions gràfiques, com programes de pintura i visors d'imatges

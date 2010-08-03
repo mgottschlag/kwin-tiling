@@ -90,6 +90,7 @@ Name[x-test]=xxSystemxx
 Name[zh_CN]=系统
 Name[zh_TW]=系統
 Comment=System preferences and setup programs
+Comment[ar]=برامج تفضيلات النظام و الإعدادات
 Comment[ca]=Preferències del sistema i programes de configuració
 Comment[ca@valencia]=Preferències del sistema i programes de configuració
 Comment[csb]=Nastôwë systemë ë ùstôwë programów

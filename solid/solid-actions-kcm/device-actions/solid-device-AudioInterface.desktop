@@ -332,6 +332,7 @@ Name[zh_TW]=音效卡類型
 [Desktop Entry]
 Actions=deviceType;driver;driverHandle;name;soundcardType;
 Name=Solid Device
+Name[ar]=جهاز سولد
 Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid

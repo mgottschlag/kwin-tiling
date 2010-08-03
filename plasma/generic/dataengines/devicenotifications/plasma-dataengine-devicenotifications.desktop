@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Device Notifications
+Name[ar]=تنبيهات الأجهزة
 Name[bn]=ডিভাইস বিজ্ঞপ্তি
 Name[ca]=Notificacions dels dispositius
 Name[ca@valencia]=Notificacions dels dispositius
@@ -39,6 +40,7 @@ Name[x-test]=xxDevice Notificationsxx
 Name[zh_CN]=设备通知
 Name[zh_TW]=裝置通知
 Comment=Passive device notifications for the user.
+Comment[ar]=تنبيهات غير متفاعلة للمستخدم.
 Comment[ca]=Notificacions passives de dispositius per a l'usuari.
 Comment[ca@valencia]=Notificacions passives de dispositius per a l'usuari.
 Comment[cs]=Pasivní upozornění zařízení pro uživatele.

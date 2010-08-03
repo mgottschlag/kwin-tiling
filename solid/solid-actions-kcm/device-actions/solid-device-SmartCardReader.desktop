@@ -1,5 +1,6 @@
 [Desktop Action readerType]
 Name=Reader Type
+Name[ar]=نوع القارئ
 Name[bg]=Вид четец
 Name[bn]=রিডার ধরন
 Name[ca]=Tipus de lector
@@ -65,6 +66,7 @@ Name[zh_TW]=讀取器型態
 [Desktop Entry]
 Actions=readerType;
 Name=Solid Device
+Name[ar]=جهاز سولد
 Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid

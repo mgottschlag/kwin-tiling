@@ -1,6 +1,7 @@
 [Global]
 IconName=plasma
 Comment=Plasma Desktop Shell
+Comment[ar]=صدفة سطح مكتب بلازما
 Comment[ca]=Intèrpret d'ordres de l'escriptori Plasma
 Comment[ca@valencia]=Intèrpret d'ordes de l'escriptori Plasma
 Comment[cs]=Pracovní plocha Plasma
@@ -57,6 +58,7 @@ Comment[x-test]=xxPlasma Desktop Shellxx
 Comment[zh_CN]=Plasma 桌面外壳
 Comment[zh_TW]=Plasma 桌面 shell
 Name=Workspace
+Name[ar]=مساحة العمل
 Name[ca]=Espai de treball
 Name[ca@valencia]=Espai de treball
 Name[cs]=Pracovní plocha
@@ -118,6 +120,7 @@ Name[zh_TW]=工作空間
 
 [Event/newplasmoid]
 Name=New widget published
+Name[ar]=نشرت ودجة جديدة
 Name[ca]=S'ha publicat un estri nou
 Name[ca@valencia]=S'ha publicat un estri nou
 Name[da]=Ny widget annonceret
@@ -173,6 +176,7 @@ Name[x-test]=xxNew widget publishedxx
 Name[zh_CN]=新部件已发布
 Name[zh_TW]=已發布新的元件
 Comment=A new widget has become available on the network.
+Comment[ar]=ودجة جديدة أصبحت متوفرة على الشبكة.
 Comment[ca]=Un estri nou ha esdevingut disponible a la xarxa.
 Comment[ca@valencia]=Un estri nou ha esdevingut disponible a la xarxa.
 Comment[cs]=Na síti byl zpřístupněn nový widget.

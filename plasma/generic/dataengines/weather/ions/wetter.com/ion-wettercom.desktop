@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=wetter.com
+Name[ar]=wetter.com
 Name[bn]=wetter.com
 Name[ca]=wetter.com
 Name[ca@valencia]=wetter.com
@@ -59,6 +60,7 @@ Name[x-test]=xxwetter.comxx
 Name[zh_CN]=wetter.com
 Name[zh_TW]=wetter.com
 Comment=Weather forecast by wetter.com
+Comment[ar]=تنبؤات الطقس من wetter.com
 Comment[ca]=Previsió meteorològica per wetter.com
 Comment[ca@valencia]=Previsió meteorològica per wetter.com
 Comment[cs]=Předpověď počasí od wetter.com

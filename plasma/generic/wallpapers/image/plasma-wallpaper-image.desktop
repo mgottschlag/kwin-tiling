@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Image
-Name[ar]=الصور
+Name[ar]=صور
 Name[be@latin]=Vyjava
 Name[bg]=Изображение
 Name[bn]=ছবি
@@ -90,7 +90,7 @@ X-Plasma-DropMimeTypes=image/jpeg,image/png,image/svg+xml,image/svg+xml-compress
 
 [Desktop Action SingleImage]
 Name=Image
-Name[ar]=الصور
+Name[ar]=صور
 Name[be@latin]=Vyjava
 Name[bg]=Изображение
 Name[bn]=ছবি

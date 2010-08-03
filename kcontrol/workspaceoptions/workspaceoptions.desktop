@@ -11,6 +11,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=workspace-appearance-and-behavior
 
 Name=Workspace
+Name[ar]=مساحة العمل
 Name[ca]=Espai de treball
 Name[ca@valencia]=Espai de treball
 Name[cs]=Pracovní plocha
@@ -71,6 +72,7 @@ Name[zh_CN]=工作空间
 Name[zh_TW]=工作空間
 
 Comment=Global options for the Plasma Workspace
+Comment[ar]=خيارات عامة لمكان عمل بلازما
 Comment[ca]=Opcions globals per a l'espai de treball del Plasma
 Comment[ca@valencia]=Opcions globals per a l'espai de treball del Plasma
 Comment[cs]=Globální možnosti pro pracovní plochu Plasma

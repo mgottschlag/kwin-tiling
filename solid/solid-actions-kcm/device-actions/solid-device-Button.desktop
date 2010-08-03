@@ -197,6 +197,7 @@ Name[zh_TW]=類型
 [Desktop Entry]
 Actions=hasState;stateValue;type;
 Name=Solid Device
+Name[ar]=جهاز سولد
 Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid

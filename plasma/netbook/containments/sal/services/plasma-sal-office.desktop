@@ -90,6 +90,7 @@ Name[x-test]=xxOfficexx
 Name[zh_CN]=办公
 Name[zh_TW]=辦公軟體
 Comment=Office related applications, such as wordprocessing and spreadsheets
+Comment[ar]=تطبيقات تتعلق بالمكتب ،  مثل معالجات الكلمات و برامج الجداول
 Comment[bn]=অফিস সংক্রান্ত অ্যাপলিকেশন, যেমন ওয়ার্ড-প্রসেসর এবং স্প্রেডশীট
 Comment[ca]=Aplicacions relacionades amb una oficina, com processament de textos i fulls de càlcul
 Comment[ca@valencia]=Aplicacions relacionades amb una oficina, com processament de textos i fulls de càlcul

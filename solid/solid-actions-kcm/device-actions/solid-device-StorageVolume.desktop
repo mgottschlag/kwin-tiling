@@ -398,6 +398,7 @@ Name[zh_TW]=UUID
 [Desktop Entry]
 Actions=fsType;ignored;label;size;usage;uuid;
 Name=Solid Device
+Name[ar]=جهاز سولد
 Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid

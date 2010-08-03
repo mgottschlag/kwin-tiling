@@ -90,6 +90,7 @@ Name[x-test]=xxDevelopmentxx
 Name[zh_CN]=开发
 Name[zh_TW]=程式開發
 Comment=Applications targeted to software development
+Comment[ar]=تطبيقات تستهدف تطوير البرامج
 Comment[bn]=সফটওয়্যার ডেভেলপমেন্ট সংক্রান্ত অ্যাপলিকেশন
 Comment[ca]=Aplicacions enfocades al desenvolupament de programari
 Comment[ca@valencia]=Aplicacions enfocades al desenvolupament de programari

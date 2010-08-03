@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Window List
+Name[ar]=قائمة النوافذ
 Name[ca]=Llista de finestres
 Name[ca@valencia]=Llista de finestres
 Name[cs]=Seznam oken
@@ -59,6 +60,7 @@ Name[zh_CN]=窗口列表
 Name[zh_TW]=視窗列表
 
 Comment=Plasmoid to show list of opened windows.
+Comment[ar]=بلازمويد لعرض قائمة النوافذ المفتوحة
 Comment[ca]=Plasmoide que mostra una llista de les finestres obertes.
 Comment[ca@valencia]=Plasmoide que mostra una llista de les finestres obertes.
 Comment[cs]=Zobrazit seznam otevřených oken.

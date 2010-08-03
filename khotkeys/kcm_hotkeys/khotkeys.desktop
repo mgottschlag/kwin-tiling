@@ -10,6 +10,7 @@ X-KDE-System-Settings-Parent-Category=shortcuts-and-gestures
 X-KDE-ParentApp=kcontrol
 
 Name=Custom Shortcuts
+Name[ar]=اختصارات مخصصة
 Name[ca]=Dreceres personalitzades
 Name[ca@valencia]=Dreceres personalitzades
 Name[cs]=Vlastní zkratky

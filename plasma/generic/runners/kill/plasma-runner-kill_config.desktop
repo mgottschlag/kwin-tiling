@@ -7,6 +7,7 @@ X-KDE-ParentComponents=kill
 X-KDE-PluginKeyword=kcm_krunner_kill
 
 Name=Kill Applications
+Name[ar]=اقتل التطبيقات
 Name[bn]=অ্যাপলিকেশন বন্ধ করো
 Name[ca]=Mata aplicacions
 Name[ca@valencia]=Mata aplicacions

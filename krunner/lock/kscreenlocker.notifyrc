@@ -1,6 +1,7 @@
 [Global]
 IconName=system-lock-screen
 Comment=Screen Saver
+Comment[ar]=حافظة الشاشة
 Comment[ca]=Estalvi de pantalla
 Comment[ca@valencia]=Estalvi de pantalla
 Comment[cs]=Šetřič obrazovky
@@ -48,6 +49,7 @@ Comment[zh_TW]=螢幕保護程式
 
 [Event/savingstarted]
 Name=Screen saver started
+Name[ar]=بدأ حافظة الشاشة
 Name[ca]=S'ha iniciat l'estalvi de pantalla
 Name[ca@valencia]=S'ha iniciat l'estalvi de pantalla
 Name[cs]=Šetřič obrazovky spuštěn
@@ -108,6 +110,7 @@ Name[x-test]=xxScreen saver startedxx
 Name[zh_CN]=屏幕保护程序已启动
 Name[zh_TW]=螢幕保護程式已啟動
 Comment=The screen saver has been started
+Comment[ar]=بدأ حافظة شاشة
 Comment[ca]=S'ha iniciat l'estalvi de pantalla
 Comment[ca@valencia]=S'ha iniciat l'estalvi de pantalla
 Comment[cs]=Šetřič obrazovky byl spuštěn
@@ -170,6 +173,7 @@ Action=None
 
 [Event/locked]
 Name=Screen locked
+Name[ar]=الشاشة مقفلة
 Name[bg]=Екранът е заключен
 Name[ca]=S'ha bloquejat la pantalla
 Name[ca@valencia]=S'ha bloquejat la pantalla
@@ -231,6 +235,7 @@ Name[x-test]=xxScreen lockedxx
 Name[zh_CN]=屏幕已锁定
 Name[zh_TW]=螢幕已鎖定
 Comment=The screen has been locked
+Comment[ar]=أقفلت الشاشة
 Comment[bg]=Екранът е заключен
 Comment[ca]=S'ha bloquejat la pantalla
 Comment[ca@valencia]=S'ha bloquejat la pantalla
@@ -295,6 +300,7 @@ Action=None
 
 [Event/savingstopped]
 Name=Screen saver exited
+Name[ar]=انتهت حافظة الشاشة
 Name[ca]=S'ha sortit de l'estalvi de pantalla
 Name[ca@valencia]=S'ha eixit de l'estalvi de pantalla
 Name[cs]=Šetřič obrazovky ukončen
@@ -353,6 +359,7 @@ Name[x-test]=xxScreen saver exitedxx
 Name[zh_CN]=屏幕保护程序已退出
 Name[zh_TW]=螢幕保護程式已離開
 Comment=The screen saver has finished
+Comment[ar]=انتهت حافظة الشاشة
 Comment[ca]=L'estalvi de pantalla ha finalitzat
 Comment[ca@valencia]=L'estalvi de pantalla ha finalitzat
 Comment[cs]=Šetřič obrazovky byl ukončen
@@ -415,6 +422,7 @@ Action=None
 
 [Event/unlocked]
 Name=Screen unlocked
+Name[ar]=الشاشة مفتوحة
 Name[bg]=Екранът е отключен
 Name[ca]=Pantalla desbloquejada
 Name[ca@valencia]=Pantalla desbloquejada
@@ -476,6 +484,7 @@ Name[x-test]=xxScreen unlockedxx
 Name[zh_CN]=屏幕已解锁
 Name[zh_TW]=螢幕已解除鎖定
 Comment=The screen has been unlocked
+Comment[ar]=فتحت الشاشة
 Comment[bg]=Екранът е отключен
 Comment[ca]=S'ha desbloquejat la pantalla
 Comment[ca@valencia]=S'ha desbloquejat la pantalla
@@ -538,6 +547,7 @@ Action=None
 
 [Event/unlockfailed]
 Name=Screen unlock failed
+Name[ar]=فشل فتح الشاشة
 Name[bg]=Грешка при отключване на екрана
 Name[ca]=Ha fallat el desbloqueig de la pantalla
 Name[ca@valencia]=Ha fallat el desbloqueig de la pantalla
@@ -599,6 +609,7 @@ Name[x-test]=xxScreen unlock failedxx
 Name[zh_CN]=屏幕解锁失败 
 Name[zh_TW]=螢幕解除鎖定失敗
 Comment=Failed attempt to unlock the screen
+Comment[ar]=محاولة فاشلة لفتح الشاشة
 Comment[bg]=Грешка при отключване на екрана
 Comment[ca]=L'intent de desbloquejar la pantalla ha fallat
 Comment[ca@valencia]=L'intent de desbloquejar la pantalla ha fallat

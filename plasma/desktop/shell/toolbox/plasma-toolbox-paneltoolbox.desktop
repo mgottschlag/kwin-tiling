@@ -1,10 +1,14 @@
 [Desktop Entry]
 Comment=Default panel toolbox for the Plasma desktop shell
+Comment[ia]=cassetta de utilitate de pannello pro le shell de scriptorio de Plasma
+Comment[pt]=A barra do painel predefinida para a área de trabalho do Plasma
 Comment[sv]=Standardpanelverktyg för Plasma skrivbordsskalet
 Comment[uk]=Типовий набір інструментів панелі для оболонки Плазми стаціонарних комп’ютерів
 Comment[x-test]=xxDefault panel toolbox for the Plasma desktop shellxx
 Icon=plasma
 Name=Panel toolbox
+Name[ia]=Cassetta de utilitate de pannello
+Name[pt]=Barra do Painel
 Name[sv]=Panelverktygslåda
 Name[uk]=Набір інструментів панелі
 Name[x-test]=xxPanel toolboxxx

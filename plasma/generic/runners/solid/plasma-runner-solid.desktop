@@ -1,6 +1,7 @@
 [Desktop Entry]
 # ctxt: plasma runner
 Name=Devices
+Name[ar]=الأجهزة
 Name[bn]=ডিভাইস
 Name[ca]=Dispositius
 Name[ca@valencia]=Dispositius
@@ -60,6 +61,7 @@ Name[x-test]=xxDevicesxx
 Name[zh_CN]=设备
 Name[zh_TW]=裝置
 Comment=Manage removable devices
+Comment[ar]=إدارة الأجهزة القابلة للإزالة
 Comment[bn]=অপসারণযোগ্য ডিভাইস ব্যবস্থাপনা
 Comment[ca]=Gestiona dispositius extraïbles
 Comment[ca@valencia]=Gestiona dispositius extraïbles

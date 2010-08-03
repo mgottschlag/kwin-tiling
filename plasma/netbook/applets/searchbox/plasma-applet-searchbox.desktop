@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Search Box
+Name[ar]=مربع بحث
 Name[bn]=অনুসন্ধান বাক্স
 Name[ca]=Caixa de cerca
 Name[ca@valencia]=Caixa de cerca
@@ -59,6 +60,7 @@ Name[x-test]=xxSearch Boxxx
 Name[zh_CN]=搜索框
 Name[zh_TW]=搜尋盒
 Comment=Search Box for a given RunnerManager
+Comment[ar]=مربع بحث لRunnerManager المعطى 
 Comment[ca]=Caixa de cerca per a un gestor d'execució indicat
 Comment[ca@valencia]=Caixa de cerca per a un gestor d'execució indicat
 Comment[da]=Søgfelt til en given RunnerManager

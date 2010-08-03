@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Notifications
-Name[ar]=تنبيهات
+Name[ar]=التنبيهات
 Name[be]=Абвяшчэнні
 Name[be@latin]=Infarmavańnie
 Name[bg]=Уведомяване
@@ -83,6 +83,7 @@ Name[x-test]=xxNotificationsxx
 Name[zh_CN]=通知
 Name[zh_TW]=通知
 Comment=Display notifications and jobs
+Comment[ar]=تعرض تنبيهات و الوظائف
 Comment[ca]=Mostra les notificacions i els treballs
 Comment[ca@valencia]=Mostra les notificacions i els treballs
 Comment[cs]=Oznámení a úlohy

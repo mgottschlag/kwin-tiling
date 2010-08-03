@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Python wallpaper
+Name[ar]=خلفيات بايثون
 Name[bn]=পাইথন ওয়ালপেপার
 Name[ca]=Paper pintat en Python
 Name[ca@valencia]=Paper pintat en Python
@@ -55,6 +56,7 @@ Name[x-test]=xxPython wallpaperxx
 Name[zh_CN]=Python 壁纸
 Name[zh_TW]=Python 桌布
 Comment=Plasma wallpaper support for Python
+Comment[ar]=دعم خلفيات بلازما لبايثون
 Comment[ca]=Implementació de paper pintat del Plasma per al Python
 Comment[ca@valencia]=Implementació de paper pintat del Plasma per al Python
 Comment[da]=Understøttelse af Plasma wallpaper til Python

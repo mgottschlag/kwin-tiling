@@ -89,6 +89,7 @@ Name[x-test]=xxInternetxx
 Name[zh_CN]=互联网
 Name[zh_TW]=網際網路
 Comment=Internet related applications, such as Web browser, Email and chat
+Comment[ar]=تطبيقات تتعلق الإنترنت مثل متصفح الويب و البريد الإلكتروني و الدردشة
 Comment[bn]=ইন্টারনেট সংক্রান্ত অ্যাপলিকেশন, যেমন ওয়েব-ব্রাউসার, ই-মেইল এবং চ্যাট
 Comment[ca]=Aplicacions relacionades amb Internet, com navegador Web, correu electrònic i xat
 Comment[ca@valencia]=Aplicacions relacionades amb Internet, com navegador Web, correu electrònic i xat

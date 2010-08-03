@@ -1,5 +1,6 @@
 [Misc]
 Name=MS Windows XP
+Name[ar]=مايكروسوفت وندوز اكس بي
 Name[ca]=MS Windows XP
 Name[ca@valencia]=MS Windows XP
 Name[cs]=MS Windows XP
@@ -62,6 +63,7 @@ Name[x-test]=xxMS Windows XPxx
 Name[zh_CN]=微软 Windows XP
 Name[zh_TW]=MS Windows XP
 Comment=Style that uses the Windows XP style engine
+Comment[ar]=أسلوب يستخدم محرك أسلوب ويندوز اكس بي
 Comment[ca]=Estil que utilitza el motor d'estils del Windows XP
 Comment[ca@valencia]=Estil que utilitza el motor d'estils del Windows XP
 Comment[csb]=Sztél brëkùjący mòtóra sztélu Windowsa XP
