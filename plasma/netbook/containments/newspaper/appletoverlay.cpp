@@ -26,7 +26,6 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsLinearLayout>
 #include <QGraphicsBlurEffect>
-#include <QPropertyAnimation>
 #include <QPainter>
 #include <QTimer>
 

@@ -20,7 +20,6 @@
 #ifndef APPLETTITLEBAR_H
 #define APPLETTITLEBAR_H
 
-#include <QAbstractAnimation>
 #include <QGraphicsWidget>
 #include <QParallelAnimationGroup>
 #include <QWeakPointer>

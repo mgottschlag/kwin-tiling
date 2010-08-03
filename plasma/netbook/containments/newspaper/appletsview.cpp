@@ -19,8 +19,8 @@
 
 #include "appletsview.h"
 
-#include <QTimer>
 #include <QGraphicsSceneMouseEvent>
+#include <QTimer>
 
 #include <KGlobalSettings>
 

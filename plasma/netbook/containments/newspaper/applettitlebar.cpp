@@ -23,7 +23,6 @@
 #include <QGraphicsGridLayout>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneResizeEvent>
-#include <QLabel>
 #include <QPainter>
 #include <QParallelAnimationGroup>
 #include <QTimer>

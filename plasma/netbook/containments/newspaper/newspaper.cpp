@@ -27,24 +27,13 @@
 
 #include <limits>
 
-#include <QApplication>
-#include <QPainter>
-#include <QBitmap>
-#include <QDesktopWidget>
-#include <QGridLayout>
-#include <QLabel>
-#include <QComboBox>
 #include <QAction>
 #include <QGraphicsLinearLayout>
 #include <QTimer>
 #include <QGraphicsSceneWheelEvent>
 
-#include <KAction>
 #include <KDebug>
 #include <KIcon>
-#include <KDialog>
-#include <KIntNumInput>
-#include <KMessageBox>
 
 #include <Plasma/AbstractToolBox>
 #include <Plasma/Corona>

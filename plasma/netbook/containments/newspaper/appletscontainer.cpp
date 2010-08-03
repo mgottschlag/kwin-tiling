@@ -29,11 +29,8 @@
 
 #include <QGraphicsLinearLayout>
 #include <QGraphicsSceneMouseEvent>
-#include <QPropertyAnimation>
-#include <QWidget>
 #include <QTimer>
 
-#include <KGlobalSettings>
 #include <KIconLoader>
 
 #include <Plasma/Applet>
