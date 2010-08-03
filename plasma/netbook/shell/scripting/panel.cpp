@@ -20,7 +20,6 @@
 
 #include "panel.h"
 
-#include <QAction>
 
 #include <Plasma/Corona>
 #include <Plasma/Containment>

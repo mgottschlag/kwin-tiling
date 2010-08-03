@@ -21,7 +21,6 @@
 #ifndef PLASMA_APP_H
 #define PLASMA_APP_H
 
-#include <QList>
 
 #include <KUniqueApplication>
 

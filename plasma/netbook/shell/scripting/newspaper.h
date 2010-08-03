@@ -23,7 +23,6 @@
 
 #include <QScriptContext>
 #include <QScriptValue>
-#include <QWeakPointer>
 
 #include <plasmagenericshell/scripting/containment.h>
 

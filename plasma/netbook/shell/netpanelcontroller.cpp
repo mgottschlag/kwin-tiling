@@ -24,7 +24,6 @@
 #include <QGraphicsWidget>
 #include <QToolButton>
 #include <QLayout>
-#include <QTimer>
 
 #include <KIcon>
 #include <KIconLoader>

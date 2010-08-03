@@ -21,9 +21,6 @@
 #ifndef PANEL_NETBOOK
 #define PANEL_NETBOOK
 
-#include <QScriptContext>
-#include <QScriptValue>
-#include <QWeakPointer>
 
 #include <plasmagenericshell/scripting/containment.h>
 

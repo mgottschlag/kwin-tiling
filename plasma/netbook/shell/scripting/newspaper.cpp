@@ -20,7 +20,6 @@
 
 #include "newspaper.h"
 
-#include <QAction>
 
 #include <Plasma/Corona>
 #include <Plasma/Containment>

@@ -23,15 +23,12 @@
 #include <QAction>
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QDir>
 #include <QGraphicsLayout>
+#include <QFile>
 
-#include <KCmdLineArgs>
 #include <KDebug>
-#include <KDialog>
-#include <KGlobalSettings>
 #include <KStandardDirs>
-#include <KWindowSystem>
+#include <KIcon>
 
 #include <kephal/screens.h>
 

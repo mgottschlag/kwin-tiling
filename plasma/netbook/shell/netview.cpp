@@ -21,7 +21,6 @@
 #include "netpanelcontroller.h"
 
 #include <QAction>
-#include <QCoreApplication>
 #include <QPropertyAnimation>
 
 #ifndef QT_NO_OPENGL

@@ -25,15 +25,14 @@
 #include <QApplication>
 #include <QPixmapCache>
 #include <QTimer>
-#include <QVBoxLayout>
 #include <QtDBus/QtDBus>
 
-#include <KAction>
 #include <KCrash>
 #include <KDebug>
 #include <KCmdLineArgs>
 #include <KStandardAction>
 #include <KWindowSystem>
+#include <KAction>
 
 #include <ksmserver_interface.h>
 
