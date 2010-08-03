@@ -24,13 +24,10 @@
 
 #include <QtCore/QHash>
 
-class WidgetProxy;
-class ProxyScroller;
 
 namespace Plasma
 {
     class Corona;
-    class ScrollWidget;
 }
 
 class NetDialogManager : public Plasma::AbstractDialogManager

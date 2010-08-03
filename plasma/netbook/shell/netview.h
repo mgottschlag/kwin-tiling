@@ -23,7 +23,6 @@
 #include <Plasma/Plasma>
 #include <Plasma/View>
 
-class BackgroundDialog;
 class NetPanelController;
 class QPropertyAnimation;
 
