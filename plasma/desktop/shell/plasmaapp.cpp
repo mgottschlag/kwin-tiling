@@ -108,7 +108,8 @@ PlasmaApp::PlasmaApp()
       m_panelHidden(0),
       m_mapper(new QSignalMapper(this)),
       m_startupSuspendWaitCount(0),
-      m_ignoreDashboardClosures(false)
+      m_ignoreDashboardClosures(false),
+      m_pendingFixedDashboard(false)
 {
     kDebug() << "!!{} STARTUP TIME" << QTime().msecsTo(QTime::currentTime()) << "plasma app ctor start" << "(line:" << __LINE__ << ")";
     PlasmaApp::suspendStartup(true);
@@ -1033,6 +1034,7 @@ void PlasmaApp::createWaitingDesktops()
             setWmClass(view->winId());
         }
     }
+    setFixedDashboard(fixedDashboard());
 }
 
 void PlasmaApp::containmentAdded(Plasma::Containment *containment)
@@ -1167,12 +1169,13 @@ void PlasmaApp::setPerVirtualDesktopViews(bool perDesktopViews)
     disconnect(KWindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)),
                this, SLOT(checkVirtualDesktopViews(int)));
 
-    bool dashboard = fixedDashboard();
+    m_pendingFixedDashboard = fixedDashboard();
 
     if (perDesktopViews) {
         connect(KWindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)),
                 this, SLOT(checkVirtualDesktopViews(int)));
         checkVirtualDesktopViews(KWindowSystem::numberOfDesktops());
+        setFixedDashboard(m_pendingFixedDashboard);
     } else {
         QList<DesktopView *> perScreenViews;
         foreach (DesktopView *view, m_desktops) {
@@ -1186,8 +1189,6 @@ void PlasmaApp::setPerVirtualDesktopViews(bool perDesktopViews)
         m_desktops.clear();
         m_corona->checkScreens(true);
     }
-
-    setFixedDashboard(dashboard);
 }
 
 bool PlasmaApp::perVirtualDesktopViews() const
@@ -1216,6 +1217,7 @@ void PlasmaApp::setFixedDashboard(bool fixedDashboard)
 {
     //TODO: should probably have one dashboard containment per screen
     Plasma::Containment *c = 0;
+    m_pendingFixedDashboard = fixedDashboard;
     if (fixedDashboard) {
         foreach (Plasma::Containment *possibility, m_corona->containments()) {
             if (possibility->pluginName() == "desktopDashboard") {
@@ -1249,6 +1251,10 @@ void PlasmaApp::setFixedDashboard(bool fixedDashboard)
 
 bool PlasmaApp::fixedDashboard() const
 {
+    if (m_desktops.isEmpty()) {
+        return m_pendingFixedDashboard;
+    }
+
     foreach (DesktopView *view, m_desktops) {
         if (!view->dashboardFollowsDesktop()) {
             return true;

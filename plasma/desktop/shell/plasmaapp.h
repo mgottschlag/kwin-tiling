@@ -168,6 +168,7 @@ private:
     int m_startupSuspendWaitCount;
     bool m_ignoreDashboardClosures;
     int m_primaryScreen;
+    bool m_pendingFixedDashboard;
 };
 
 #endif // multiple inclusion guard
