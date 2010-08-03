@@ -38,6 +38,9 @@ public:
     ~KrunnerHistoryComboBox();
     void setLineEdit(QLineEdit* edit);
 
+public slots:
+    void addToHistory(const QString& item);
+
 signals:
     void queryTextEdited(QString);
 
@@ -46,8 +49,13 @@ protected:
     virtual void focusOutEvent(QFocusEvent *);
     virtual void wheelEvent(QWheelEvent *);
 
+private slots:
+    void slotCurrentIndexChanged(QString);
+
 private:
     void discardCompletion();
+
+    bool m_addingToHistory;
 };
 
 #endif

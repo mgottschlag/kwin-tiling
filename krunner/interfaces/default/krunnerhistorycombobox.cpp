@@ -26,7 +26,8 @@
 #include "krunnerhistorycombobox.h"
 
 KrunnerHistoryComboBox::KrunnerHistoryComboBox(bool useCompletion, QWidget * parent)
-    : KHistoryComboBox(useCompletion,  parent)
+    : KHistoryComboBox(useCompletion,  parent),
+      m_addingToHistory(false)
 {
     setPalette(QApplication::palette());
     setDuplicatesEnabled(false);
@@ -38,12 +39,19 @@ KrunnerHistoryComboBox::KrunnerHistoryComboBox(bool useCompletion, QWidget * par
     // FIXME remove this code when KLineEdit has automatic direction detection of the "paragraph"
     setLayoutDirection(Qt::LeftToRight);
 
-    connect(this, SIGNAL(currentIndexChanged(QString)), this, SIGNAL(queryTextEdited(QString)));
+    connect(this, SIGNAL(currentIndexChanged(QString)), this, SLOT(slotCurrentIndexChanged(QString)));
     connect(lineEdit(), SIGNAL(textEdited(QString)), this, SIGNAL(queryTextEdited(QString)));
 }
 
 KrunnerHistoryComboBox::~KrunnerHistoryComboBox()
 {
+}
+
+void KrunnerHistoryComboBox::addToHistory(const QString & item)
+{
+    m_addingToHistory = true;
+    KHistoryComboBox::addToHistory(item);
+    m_addingToHistory = false;
 }
 
 void KrunnerHistoryComboBox::setLineEdit(QLineEdit* e)
@@ -98,6 +106,13 @@ void KrunnerHistoryComboBox::discardCompletion()
         // We hit TAB with a non-empty scene and a suggested completion:
         // Assume the user wants to switch input to the results scene and discard the completion
         edit->setText(edit->userText());
+    }
+}
+
+void KrunnerHistoryComboBox::slotCurrentIndexChanged(QString item)
+{
+    if (!m_addingToHistory) {
+        emit queryTextEdited(item);
     }
 }
 
