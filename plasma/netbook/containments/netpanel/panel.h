@@ -24,8 +24,6 @@
 #include <Plasma/Containment>
 
 class QAction;
-class KDialog;
-class KIntNumInput;
 class QGraphicsLinearLayout;
 class LinearAppletOverlay;
 

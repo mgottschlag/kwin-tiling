@@ -27,11 +27,7 @@
 #include <QApplication>
 #include <QGraphicsLinearLayout>
 #include <QPainter>
-#include <QBitmap>
 #include <QDesktopWidget>
-#include <QGridLayout>
-#include <QLabel>
-#include <QComboBox>
 #include <QAction>
 #include <QGraphicsLayout>
 
@@ -39,9 +35,6 @@
 #include <KAction>
 #include <KDebug>
 #include <KIcon>
-#include <KDialog>
-#include <KIntNumInput>
-#include <KMessageBox>
 
 #include <Plasma/Corona>
 #include <Plasma/FrameSvg>
