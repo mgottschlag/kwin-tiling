@@ -19,7 +19,6 @@
 
 #include "resultwidget.h"
 
-#include <QApplication>
 #include <QGraphicsSceneMouseEvent>
 #include <QPropertyAnimation>
 

@@ -25,11 +25,7 @@
 
 #include <QGraphicsGridLayout>
 #include <QGraphicsScene>
-#include <QToolButton>
-#include <QAction>
 #include <QTimer>
-#include <QFile>
-#include <QDir>
 
 #include <KIcon>
 #include <KIconLoader>

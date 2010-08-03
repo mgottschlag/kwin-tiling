@@ -20,7 +20,6 @@
 #ifndef PLASMA_RESULTWIDGET_H
 #define PLASMA_RESULTWIDGET_H
 
-#include <QTimer>
 
 #include <Plasma/IconWidget>
 

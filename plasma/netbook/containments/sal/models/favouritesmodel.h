@@ -23,7 +23,6 @@
 
 #include <QStandardItemModel>
 
-#include <KUrl>
 #include <KConfigGroup>
 
 #include <Plasma/QueryMatch>

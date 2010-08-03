@@ -33,21 +33,16 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsAnchorLayout>
 #include <QGraphicsView>
-#include <QApplication>
-#include <QFileInfo>
 #include <QListView>
 
 #include <KAction>
 #include <KDebug>
 #include <KIcon>
 #include <KIconLoader>
-#include <KLineEdit>
-#include <KStandardDirs>
 #include <KService>
-#include <KServiceTypeTrader>
 #include <KConfigDialog>
-#include <KDesktopFile>
 #include <KRun>
+#include <KLineEdit>
 
 #include <Plasma/AbstractToolBox>
 #include <Plasma/Theme>

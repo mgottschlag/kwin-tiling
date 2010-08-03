@@ -21,10 +21,9 @@
 #ifndef STANDARDITEMFACTORY_H
 #define STANDARDITEMFACTORY_H
 
-#include <QStandardItemModel>
 
 #include <KUrl>
-
+#include <QStandardItem>
 /**
  * Factory for creating QStandardItems with appropriate text, icons, URL
  * and other information for a given URL or Service.

@@ -20,15 +20,8 @@
 
 #include "runnersconfig.h"
 
-#include <QButtonGroup>
-#include <QGroupBox>
-#include <QDialogButtonBox>
 #include <QPushButton>
-#include <QRadioButton>
-#include <QTabWidget>
-#include <QVBoxLayout>
 
-#include <KConfigGroup>
 #include <KDebug>
 #include <KGlobal>
 #include <KPluginInfo>

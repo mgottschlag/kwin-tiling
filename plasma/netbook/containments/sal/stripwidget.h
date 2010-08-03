@@ -24,7 +24,6 @@
 #include <KConfigGroup>
 #include <KService>
 
-#include <QPair>
 #include <QGraphicsLinearLayout>
 #include <QGraphicsSceneResizeEvent>
 #include <QGraphicsWidget>

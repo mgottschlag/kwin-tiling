@@ -28,7 +28,6 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include <QTimer>
-#include <QWidget>
 #include <QWeakPointer>
 #include <QAbstractItemModel>
 #include <QPropertyAnimation>

@@ -24,7 +24,6 @@
 
 // Qt
 #include <QBasicTimer>
-#include <QDebug>
 #include <QList>
 #include <QMimeData>
 #include <QString>
@@ -32,7 +31,6 @@
 
 // KDE
 #include <KService>
-#include <KStandardDirs>
 #include <KDebug>
 #include <Plasma/AbstractRunner>
 #include <Plasma/RunnerManager>
