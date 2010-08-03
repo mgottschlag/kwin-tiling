@@ -24,7 +24,6 @@
 #include <KPluginSelector>
 
 
-class KRunnerDialog;
 
 class KPluginSelector;
 

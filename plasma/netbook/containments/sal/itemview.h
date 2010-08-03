@@ -27,12 +27,10 @@
 
 #include "itemcontainer.h"
 
-class QGraphicsGridLayout;
 
 namespace Plasma
 {
     class IconWidget;
-    class ItemBackground;
 }
 
 class QTimer;

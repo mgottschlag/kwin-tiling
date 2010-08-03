@@ -39,11 +39,8 @@ namespace Plasma
     class IconWidget;
     class ToolButton;
     class QueryMatch;
-    class RunnerManager;
-    class ScrollWidget;
 }
 
-class QGraphicsGridLayout;
 class QTimer;
 class IconActionCollection;
 

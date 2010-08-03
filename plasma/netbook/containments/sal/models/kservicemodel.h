@@ -29,7 +29,6 @@
 #include "standarditemfactory.h"
 
 namespace Plasma {
-    class RunnerManager;
 }
 
 namespace KServiceItemHandler {

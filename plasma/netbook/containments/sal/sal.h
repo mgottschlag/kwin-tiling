@@ -42,12 +42,9 @@ namespace Plasma
 {
     class IconWidget;
     class LineEdit;
-    class RunnerManager;
     class QueryMatch;
-    class ScrollWidget;
     class Frame;
     class FrameSvg;
-    class ToolButton;
 }
 
 class SearchLaunch : public Plasma::Containment
