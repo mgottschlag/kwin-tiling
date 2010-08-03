@@ -18,30 +18,36 @@
  ***************************************************************************/
 
 
-#ifndef KrunnerTabFilter_H
-#define KrunnerTabFilter_H
+#ifndef KRUNNERHISTORYCOMBOBOX_H
+#define KRUNNERHISTORYCOMBOBOX_H
+
 
 #include <KDebug>
 
-#include <QEvent>
+#include <QKeyEvent>
+#include <QFocusEvent>
 
-class KLineEdit;
-class ResultScene;
+#include <KHistoryComboBox>
 
-class KrunnerTabFilter : public QObject
+class KrunnerHistoryComboBox : public KHistoryComboBox
 {
     Q_OBJECT
 
-    public: 
-        explicit KrunnerTabFilter(ResultScene *scene, KLineEdit *edit, QWidget *parent = 0);
-        ~KrunnerTabFilter();
+public: 
+    explicit KrunnerHistoryComboBox(bool useCompletion, QWidget *parent = 0);
+    ~KrunnerHistoryComboBox();
+    void setLineEdit(QLineEdit* edit);
 
-    protected:
-        bool eventFilter(QObject *obj, QEvent *event);
+signals:
+    void queryTextEdited(QString);
 
-    private:
-        ResultScene *m_resultScene;
-        KLineEdit *m_lineEdit;
+protected:
+    virtual void keyPressEvent(QKeyEvent *);
+    virtual void focusOutEvent(QFocusEvent *);
+    virtual void wheelEvent(QWheelEvent *);
+
+private:
+    void discardCompletion();
 };
 
 #endif

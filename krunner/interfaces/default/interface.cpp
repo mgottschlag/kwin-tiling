@@ -55,7 +55,7 @@
 #include "krunnersettings.h"
 #include "interfaces/default/resultscene.h"
 #include "interfaces/default/resultitem.h"
-#include "interfaces/default/krunnertabfilter.h"
+#include "interfaces/default/krunnerhistorycombobox.h"
 #include "interfaces/default/resultsview.h"
 #include "toolbutton.h"
 
@@ -121,19 +121,11 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
     m_layout->addWidget(m_buttonContainer);
 
-    m_searchTerm = new KHistoryComboBox(false, this);
-    m_searchTerm->setPalette(QApplication::palette());
-    m_searchTerm->setDuplicatesEnabled(false);
+    m_searchTerm = new KrunnerHistoryComboBox(false, this);
 
     KLineEdit *lineEdit = new KLineEdit(m_searchTerm);
     QAction *focusEdit = new QAction(this);
     focusEdit->setShortcut(Qt::Key_F6);
-
-    // in theory, the widget should detect the direction from the content
-    // but this is not available in Qt4.4/KDE 4.2, so the best default for this widget
-    // is LTR: as it's more or less a "command line interface"
-    // FIXME remove this code when KLineEdit has automatic direction detection of the "paragraph"
-    m_searchTerm->setLayoutDirection(Qt::LeftToRight);
 
     connect(focusEdit, SIGNAL(triggered(bool)), this, SLOT(searchTermSetFocus()));
     addAction(focusEdit);
@@ -149,7 +141,6 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     lineEdit->setClearButtonShown(true);
     QStringList pastQueryItems = KRunnerSettings::pastQueries();
     m_searchTerm->setHistoryItems(pastQueryItems);
-    m_searchTerm->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
     m_completion->insertItems(pastQueryItems);
     bottomLayout->insertWidget(4, m_searchTerm, 10);
 
@@ -164,14 +155,11 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     connect(m_resultsScene, SIGNAL(matchCountChanged(int)), this, SLOT(matchCountChanged(int)));
     connect(m_resultsScene, SIGNAL(itemActivated(ResultItem *)), this, SLOT(run(ResultItem *)));
 
-    connect(lineEdit, SIGNAL(userTextChanged(QString)), this, SLOT(queryTextEdited(QString)));
+    connect(m_searchTerm, SIGNAL(queryTextEdited(QString)), this, SLOT(queryTextEdited(QString)));
     connect(m_searchTerm, SIGNAL(returnPressed()), this, SLOT(runDefaultResultItem()));
     connect(m_singleRunnerSearchTerm, SIGNAL(textChanged(QString)), this, SLOT(queryTextEdited(QString)));
     connect(m_singleRunnerSearchTerm, SIGNAL(returnPressed()),  this, SLOT(runDefaultResultItem()));
 
-    KrunnerTabFilter *krunnerTabFilter = new KrunnerTabFilter(m_resultsScene, lineEdit, this);
-    m_searchTerm->installEventFilter(krunnerTabFilter);
-    m_singleRunnerSearchTerm->installEventFilter(krunnerTabFilter);
     lineEdit->installEventFilter(this);
 
     themeUpdated();
@@ -470,9 +458,6 @@ void Interface::run(ResultItem *item)
         return;
     }
 
-    //TODO: check if run is succesful before adding the term to history
-    m_searchTerm->addToHistory(m_searchTerm->currentText().trimmed());
-
     m_running = true;
     // must run the result first before clearing the interface
     // in a way that will cause the results scene to be cleared and
@@ -480,6 +465,9 @@ void Interface::run(ResultItem *item)
     close();
     m_resultsScene->run(item);
     m_running = false;
+
+    //TODO: check if run is succesful before adding the term to history
+    m_searchTerm->addToHistory(m_searchTerm->currentText().trimmed());
 
     resetInterface();
 }

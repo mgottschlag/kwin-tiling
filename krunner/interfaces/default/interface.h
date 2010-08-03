@@ -36,7 +36,7 @@ class QHBoxLayout;
 class QVBoxLayout;
 
 class KCompletion;
-class KHistoryComboBox;
+class KrunnerHistoryComboBox;
 class KLineEdit;
 
 class ResultItem;
@@ -100,7 +100,7 @@ class Interface : public KRunnerDialog
         QToolButton *m_activityButton;
         QToolButton *m_helpButton;
         QToolButton *m_closeButton;
-        KHistoryComboBox* m_searchTerm;
+        KrunnerHistoryComboBox* m_searchTerm;
         KCompletion *m_completion;
         QGraphicsView *m_resultsView;
         ResultScene *m_resultsScene;

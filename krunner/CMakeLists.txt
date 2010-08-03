@@ -25,7 +25,7 @@ set(default_interface_SRCS
     interfaces/default/resultitem.cpp
     interfaces/default/resultscene.cpp
     interfaces/default/selectionbar.cpp
-    interfaces/default/krunnertabfilter.cpp
+    interfaces/default/krunnerhistorycombobox.cpp
     interfaces/default/resultsview.cpp
 )
 
