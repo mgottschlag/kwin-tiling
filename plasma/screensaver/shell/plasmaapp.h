@@ -22,7 +22,6 @@
 #define PLASMA_APP_H
 
 #include <QList>
-#include <QVector>
 #include <QPointer>
 #include <QTimer>
 
