@@ -31,7 +31,6 @@ namespace Plasma
 {
     class Applet;
     class FrameSvg;
-    class IconWidget;
     class Svg;
     class AbstractAnimation;
 }

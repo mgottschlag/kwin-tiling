@@ -25,7 +25,6 @@
 #include <Plasma/Containment>
 
 class AppletOverlay;
-class AppletTitleBar;
 class QGraphicsLinearLayout;
 class AppletsContainer;
 class AppletsView;
@@ -33,9 +32,6 @@ class AppletsView;
 namespace Plasma
 {
     class FrameSvg;
-    class ScrollWidget;
-    class SvgWidget;
-    class ToolButton;
 }
 
 class Newspaper : public Plasma::Containment

@@ -30,7 +30,6 @@
 namespace Plasma
 {
     class Applet;
-    class ScrollWidget;
     class Containment;
 }
 
