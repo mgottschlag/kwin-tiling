@@ -26,7 +26,6 @@ namespace Plasma
 {
     class IconWidget;
     class LineEdit;
-    class RunnerManager;
 }
 
 class QTimer;
