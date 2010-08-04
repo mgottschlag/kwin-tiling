@@ -47,7 +47,7 @@ DBusJobProtocol::~DBusJobProtocol()
 
 void DBusJobProtocol::init()
 {
-    m_engine = m_manager->applet()->dataEngine(engineName);
+    m_engine = Plasma::DataEngineManager::self()->loadEngine(engineName);
 
     if (!m_engine->isValid()) {
         Plasma::DataEngineManager::self()->unloadEngine(engineName);
