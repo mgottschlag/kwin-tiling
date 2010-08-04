@@ -134,8 +134,13 @@ void ContextMenu::contextEvent(QEvent *event)
             return;
     }
 
+    QList<QAction *> actions = contextualActions();
+    if (actions.isEmpty()) {
+        return;
+    }
+
     KMenu desktopMenu;
-    desktopMenu.addActions(contextualActions());
+    desktopMenu.addActions(actions);
     desktopMenu.exec(screenPos);
 }
 
