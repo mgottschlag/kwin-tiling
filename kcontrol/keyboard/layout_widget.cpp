@@ -190,7 +190,7 @@ void LayoutTrayIcon::layoutChanged()
 
 	m_notifierItem->setToolTipSubTitle(longText);
 
-	const QIcon icon(flags->getIcon(layoutUnit.layout));
+	const QIcon icon(getFlag(layoutUnit.layout));
 	m_notifierItem->setToolTipIconByPixmap(icon);
 
 	QIcon textOrIcon = flags->getIconWithText(layoutUnit, *keyboardConfig);
