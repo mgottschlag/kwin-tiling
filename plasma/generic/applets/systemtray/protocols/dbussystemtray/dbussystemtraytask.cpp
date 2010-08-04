@@ -174,7 +174,7 @@ void DBusSystemTrayTask::dataUpdated(const QString &taskName, const Plasma::Data
     foreach (QGraphicsWidget *widget, widgetsByHost()) {
         DBusSystemTrayWidget *iconWidget = qobject_cast<DBusSystemTrayWidget *>(widget);
         if (iconWidget) {
-            iconWidget->setItemIsMenu(properties["WindowId"].toInt() == 0);
+            iconWidget->setItemIsMenu(properties["ItemIsMenu"].toBool());
         }
     }
 
