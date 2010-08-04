@@ -89,7 +89,8 @@ Notifications::Notifications(QObject *parent, const QVariantList &arguments)
       m_notificationStack(0),
       m_notificationStackDialog(0),
       m_standaloneJobSummaryWidget(0),
-      m_standaloneJobSummaryDialog(0)
+      m_standaloneJobSummaryDialog(0),
+      m_busyWidget(0)
 {
     m_manager = new Manager(this);
 
@@ -114,6 +115,7 @@ Notifications::~Notifications()
     //has to be deleted before the manager because it will access it
     delete m_busyWidget;
     delete m_notificationStackDialog;
+    delete m_standaloneJobSummaryDialog;
 }
 
 void Notifications::init()
