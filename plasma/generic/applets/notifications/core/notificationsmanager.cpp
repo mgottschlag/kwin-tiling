@@ -90,10 +90,8 @@ void Manager::registerNotificationProtocol()
 
 void Manager::unregisterNotificationProtocol()
 {
-    if (d->notificationProtocol) {
-        delete d->notificationProtocol;
-        d->notificationProtocol = 0;
-    }
+    delete d->notificationProtocol;
+    d->notificationProtocol = 0;
 }
 
 void Manager::addNotification(Notification* notification)
@@ -155,10 +153,8 @@ void Manager::registerJobProtocol()
 
 void Manager::unregisterJobProtocol()
 {
-    if (d->jobProtocol) {
-        delete d->jobProtocol;
-        d->jobProtocol = 0;
-    }
+    delete d->jobProtocol;
+    d->jobProtocol = 0;
 }
 
 void Manager::addJob(Job *job)
