@@ -3,13 +3,10 @@ CHECK_FUNCTION_EXISTS(_XiGetDevicePresenceNotifyEvent XiGetDevicePresenceNotifyE
 
 if( X11_Xinput_FOUND AND XiGetDevicePresenceNotifyEvent_EXISTS )
     set(XiGetDevicePresence_FOUND 1)
+    ADD_DEFINITIONS(-DHAVE_XINPUT_AND_DEVICE_NOTIFY=1)
 else( X11_Xinput_FOUND AND XiGetDevicePresenceNotifyEvent_EXISTS )
     MESSAGE(STATUS "_XiGetDevicePresenceNotifyEvent is not found, libXi version 1.2.0 or later is required to keep layouts with keyboard hotplugging")
 endif( X11_Xinput_FOUND AND XiGetDevicePresenceNotifyEvent_EXISTS )
-
-macro_bool_to_01(XiGetDevicePresence_FOUND HAVE_XINPUT)
-ADD_DEFINITIONS(-DHAVE_XINPUT=${HAVE_XINPUT})
-
 
 
 ### kded daemon ###

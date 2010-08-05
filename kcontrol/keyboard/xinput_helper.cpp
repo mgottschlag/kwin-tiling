@@ -27,7 +27,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 
-#if HAVE_XINPUT==1
+#ifdef HAVE_XINPUT_AND_DEVICE_NOTIFY
 #include <X11/extensions/XInput.h>
 #endif
 
@@ -75,7 +75,7 @@ bool XInputEventNotifier::processOtherEvents(XEvent* event)
 }
 
 
-#if HAVE_XINPUT==1
+#ifdef HAVE_XINPUT_AND_DEVICE_NOTIFY
 
 extern "C" {
     extern int _XiGetDevicePresenceNotifyEvent(Display *);
