@@ -104,6 +104,7 @@ class Interface : public KRunnerDialog
         KCompletion *m_completion;
         QGraphicsView *m_resultsView;
         ResultScene *m_resultsScene;
+        int m_minimumHeight;
         QSize m_defaultSize;
         QLabel *m_singleRunnerIcon;
         QLabel *m_singleRunnerDisplayName;

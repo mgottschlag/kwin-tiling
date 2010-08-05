@@ -43,6 +43,7 @@
 #include <KLocale>
 #include <KGlobalSettings>
 #include <KPushButton>
+#include <KStyle>
 #include <KTitleWidget>
 #include <KWindowSystem>
 
@@ -360,6 +361,7 @@ void Interface::resetInterface()
     }
     resetResultsArea();
     resize(qMax(minimumSizeHint().width(), m_defaultSize.width()), minimumSizeHint().height());
+    m_minimumHeight = height();
 }
 
 void Interface::showHelp()
@@ -530,13 +532,26 @@ void Interface::matchCountChanged(int count)
         //kDebug() << "showing!" << minimumSizeHint();
 
         QSize s = m_defaultSize;
-        const int minHeight = minimumSizeHint().height();
         const int resultsHeight = m_resultsScene->viewableHeight() + 2;
-        //kDebug() << minHeight << resultsHeight << s.height();
+        int spacing = m_layout->spacing();
+        if (spacing < 0) {
+            // KStyles allow for variable spacing via the layoutSpacingImplementation() method;
+            // in this case m_layout->spacing() returns -1 and we should ask for the
+            // spacing by ourselves.
+            // This is quite ugly, but at least gives the right guess, so that we avoid
+            // multiple resize events
+            spacing = style()->layoutSpacing(QSizePolicy::DefaultType, QSizePolicy::DefaultType, Qt::Vertical);
+        }
 
-        if (minHeight + resultsHeight + m_layout->spacing() < s.height()) {
-            s.setHeight(minHeight + resultsHeight + m_layout->spacing());
+        //kDebug() << m_minimumHeight << resultsHeight << spacing << s.height();
+
+        if (m_minimumHeight + resultsHeight + spacing < s.height()) {
+            s.setHeight(m_minimumHeight + resultsHeight + spacing);
             m_resultsView->setMinimumHeight(resultsHeight);
+            // The layout will activate on the next event cycle, but
+            // we need to update the minimum size now, as we are going to
+            // resize the krunner window right away.
+            m_layout->activate();
         }
 
         resize(s);
