@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 // appletscontainer.cpp                                                //
 //                                                                     //
 // Copyright 2007 by Alex Merry <alex.merry@kdemail.net>               //
@@ -387,6 +387,10 @@ QGraphicsLayoutItem *AppletsContainer::itemAt(int i)
 
 QSizeF AppletsContainer::optimalAppletSize(Plasma::Applet *applet, const bool maximized) const
 {
+    if (!applet) {
+        return QSizeF();
+    }
+
     QSizeF normalAppletSize = QSizeF(applet->effectiveSizeHint(Qt::MinimumSize)).expandedTo(m_viewportSize/2) - QSizeF(8, 8);
 
     //FIXME: it was necessary to add hardcoded fixed qsizes to make things work, why?
@@ -449,23 +453,44 @@ void AppletsContainer::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         return;
     }
 
-    if (m_currentApplet.data()) {
-        m_currentApplet.data()->setPreferredHeight(optimalAppletSize(m_currentApplet.data(), false).height());
-    }
-
-    if (!m_expandAll) {
-        m_scrollWidget->setSnapSize(m_scrollWidget->viewportGeometry().size()/2);
-    } else {
-        m_scrollWidget->setSnapSize(QSizeF());
-    }
+    setCurrentApplet(0);
 
     m_pendingCurrentApplet.clear();
-    m_currentApplet.clear();
 
     QGraphicsWidget::mouseReleaseEvent(event);
 }
 
+void AppletsContainer::setCurrentApplet(Plasma::Applet *applet)
+{
+    if (m_currentApplet.data() == applet) {
+        return;
+    }
 
+    if (m_currentApplet) {
+        m_currentApplet.data()->setPreferredHeight(optimalAppletSize(m_currentApplet.data(), false).height());
+    }
+
+    m_currentApplet = applet;
+
+    if (applet) {
+        applet->setPreferredHeight(optimalAppletSize(applet, true).height());
+
+        m_scrollWidget->ensureRectVisible(QRectF(applet->pos(), QSizeF(applet->size().width(), applet->preferredHeight())));
+    }
+
+    m_currentApplet = m_pendingCurrentApplet.data();
+
+    if (m_orientation == Qt::Horizontal || (!m_expandAll && !m_currentApplet)) {
+        m_scrollWidget->setSnapSize(m_scrollWidget->viewportGeometry().size()/2);
+    } else {
+        m_scrollWidget->setSnapSize(QSizeF());
+    }
+}
+
+Plasma::Applet *AppletsContainer::currentApplet() const
+{
+    return m_currentApplet.data();
+}
 
 void AppletsContainer::delayedAppletActivation()
 {

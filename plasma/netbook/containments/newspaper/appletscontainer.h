@@ -69,6 +69,9 @@ public:
     void setAutomaticAppletLayout(const bool automatic);
     bool automaticAppletLayout() const;
 
+    void setCurrentApplet(Plasma::Applet *applet);
+    Plasma::Applet *currentApplet() const;
+
     Qt::Orientation orientation() const;
 
     Plasma::Containment *containment() const;
