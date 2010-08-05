@@ -21,9 +21,11 @@
 #include "kactivityinfo.h"
 #include "kactivityinfo_p.h"
 
+#ifdef HAVE_SOPRANO_PLUGIN_RAPTORPARSER
 #include "nfo.h"
 #include "nco.h"
 #include "pimo.h"
+#endif
 
 // Private
 
@@ -60,6 +62,7 @@ KActivityInfo::Private::Private(KActivityInfo *info, const QString &activityId)
 KUrl KActivityInfo::Private::urlForType(KActivityInfo::ResourceType resourceType) const
 {
     switch (resourceType) {
+#ifdef HAVE_SOPRANO_PLUGIN_RAPTORPARSER
         case KActivityInfo::DocumentResource:
             return Ontologies::nfo::Document();
 
@@ -74,7 +77,7 @@ KUrl KActivityInfo::Private::urlForType(KActivityInfo::ResourceType resourceType
 
         case KActivityInfo::LocationResource:
             return Ontologies::pimo::Location();
-
+#endif
         default:
             return KUrl(QString());
     }

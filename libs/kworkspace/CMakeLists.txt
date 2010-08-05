@@ -9,6 +9,8 @@ set(kworkspace_LIB_SRCS kdisplaymanager.cpp
                         kactivityinfo.cpp
    )
 
+if(SOPRANO_PLUGIN_RAPTORPARSER_FOUND)
+
 soprano_add_ontology(
    kworkspace_LIB_SRCS
    "${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nfo.trig"
@@ -32,6 +34,12 @@ soprano_add_ontology(
    "Ontologies"
    "trig"
    )
+
+ADD_DEFINITIONS(-DHAVE_SOPRANO_PLUGIN_RAPTORPARSER=1)
+
+endif(SOPRANO_PLUGIN_RAPTORPARSER_FOUND)
+
+
 
 set(ksmserver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
 qt4_add_dbus_interface( kworkspace_LIB_SRCS ${ksmserver_xml} ksmserver_interface )
