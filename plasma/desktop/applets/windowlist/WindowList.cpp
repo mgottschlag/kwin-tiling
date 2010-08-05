@@ -128,7 +128,7 @@ bool WindowList::eventFilter(QObject *object, QEvent *event)
         if (menu && menu->activeAction() && menu->activeAction()->data().type() == QVariant::ULongLong) {
             QContextMenuEvent *cmEvent = static_cast<QContextMenuEvent *>(event);
             QList<QAction*> actionList;
-            TaskManager::TaskItem item(this, TaskManager::TaskManager::self()->findTask(menu->activeAction()->data().toULongLong()));
+            TaskManager::TaskItem item(this, TaskManager::TaskManager::self()->findTask((WId)menu->activeAction()->data().toULongLong()));
             TaskManager::GroupManager groupManager(this);
             TaskManager::BasicMenu taskMenu(NULL, &item, &groupManager, actionList);
             if (taskMenu.exec(cmEvent->globalPos())) {
@@ -161,7 +161,7 @@ bool WindowList::eventFilter(QObject *object, QEvent *event)
             QDrag *drag = new QDrag(menu);
             QMimeData *mimeData = new QMimeData;
             QByteArray data;
-            WId window = menu->activeAction()->data().toULongLong();
+            WId window = (WId)menu->activeAction()->data().toULongLong();
 
             data.resize(sizeof(WId));
 
@@ -299,10 +299,10 @@ void WindowList::showMenu(bool onlyCurrentDesktop)
 void WindowList::triggered(QAction *action)
 {
     if (action->data().type() == QVariant::ULongLong) {
-        if (KWindowSystem::activeWindow() == action->data().toULongLong()) {
-            KWindowSystem::minimizeWindow(action->data().toULongLong());
+        if (KWindowSystem::activeWindow() == (WId)action->data().toULongLong()) {
+            KWindowSystem::minimizeWindow((WId)action->data().toULongLong());
         } else {
-            KWindowSystem::activateWindow(action->data().toULongLong());
+            KWindowSystem::activateWindow((WId)action->data().toULongLong());
         }
     }
 }
