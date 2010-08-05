@@ -18,8 +18,11 @@
 
 #include "queryclientwrapper.h"
 #include "nepomuksearchrunner.h"
+#include "nie.h"
+#include "nfo.h"
 
 #include <Nepomuk/Resource>
+#include <Nepomuk/Variant>
 #include <Nepomuk/Types/Class>
 #include <Nepomuk/Query/QueryServiceClient>
 #include <Nepomuk/Query/Result>
@@ -39,10 +42,6 @@
 #include <QtCore/QTimer>
 #include <QtCore/QMutex>
 
-
-#ifndef KDE_USE_FINAL
-Q_DECLARE_METATYPE(Nepomuk::Resource)
-#endif
 
 static const int s_maxResults = 10;
 
@@ -101,21 +100,29 @@ void Nepomuk::QueryClientWrapper::slotNewEntries(const QList<Nepomuk::Query::Res
         Nepomuk::Resource res = result.resource();
 
         QString type;
-        if (res.hasType(Soprano::Vocabulary::Xesam::File()) ||
-            res.resourceUri().scheme() == "file") {
-            type = KMimeType::findByUrl(res.resourceUri())->comment();
-        } else {
+        QString iconName;
+
+        if (res.hasType(Nepomuk::Vocabulary::NFO::FileDataObject()) &&
+            KUrl(res.property(Nepomuk::Vocabulary::NIE::url()).toUrl()).isLocalFile()) {
+            const KUrl url = res.property(Nepomuk::Vocabulary::NIE::url()).toUrl();
+            KMimeType::Ptr mimetype = KMimeType::findByUrl(url);
+            if (mimetype) {
+                type = mimetype->comment();
+                iconName = mimetype->iconName(url);
+            }
+        }
+
+        if (type.isEmpty() ) {
             type = Nepomuk::Types::Class(res.resourceType()).label();
+            iconName = res.genericIcon();
         }
 
         match.setText(res.genericLabel());
         match.setSubtext(type);
-
-        QString s = res.genericIcon();
-        match.setIcon(KIcon(s.isEmpty() ? QString("nepomuk") : s));
+        match.setIcon(KIcon(iconName.isEmpty() ? QString::fromLatin1("nepomuk") : iconName));
 
         match.setData(qVariantFromValue(res));
-        match.setId(res.resourceUri().toString());
+        match.setId(KUrl(res.resourceUri()).url());
         matches << match;
     }
     m_runnerContext->addMatches(m_runnerContext->query(), matches);

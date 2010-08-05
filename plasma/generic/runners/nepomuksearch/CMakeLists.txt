@@ -12,6 +12,17 @@ SET(nepomuksearchrunner_SRCS
     queryclientwrapper.cpp
 )
 
+soprano_add_ontology(nepomuksearchrunner_SRCS
+  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nfo.trig
+  "NFO"
+  "Nepomuk::Vocabulary"
+  "trig")
+soprano_add_ontology(nepomuksearchrunner_SRCS
+  ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig
+  "NIE"
+  "Nepomuk::Vocabulary"
+  "trig")
+
 kde4_add_plugin(krunner_nepomuksearchrunner ${nepomuksearchrunner_SRCS})
 
 target_link_libraries(krunner_nepomuksearchrunner

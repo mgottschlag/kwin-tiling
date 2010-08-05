@@ -18,6 +18,8 @@
 
 #include "nepomuksearchrunner.h"
 #include "queryclientwrapper.h"
+#include "nie.h"
+#include "nfo.h"
 
 #include <QMenu>
 
@@ -27,6 +29,7 @@
 #include <KUrl>
 
 #include <Nepomuk/Resource>
+#include <Nepomuk/Variant>
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Query/QueryServiceClient>
 
@@ -35,7 +38,6 @@
 #include <KFileItemListProperties>
 #include <KIO/NetAccess>
 
-Q_DECLARE_METATYPE(Nepomuk::Resource)
 
 namespace {
     /**
@@ -123,8 +125,13 @@ void Nepomuk::SearchRunner::run( const Plasma::RunnerContext&, const Plasma::Que
             return;
         }
     }
+
     Nepomuk::Resource res = match.data().value<Nepomuk::Resource>();
     KUrl url = res.resourceUri();
+    if (res.hasType(Nepomuk::Vocabulary::NFO::FileDataObject()) &&
+        KUrl(res.property(Nepomuk::Vocabulary::NIE::url()).toUrl()).isLocalFile()) {
+        url = res.property(Nepomuk::Vocabulary::NIE::url()).toUrl();
+    }
 
     (void)new KRun(url, 0);
 }
