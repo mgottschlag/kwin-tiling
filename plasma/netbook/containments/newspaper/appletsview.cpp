@@ -57,10 +57,10 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
     }
 
     if (event->type() == QEvent::GraphicsSceneMousePress) {
-        m_appletsContainer->m_appletActivationTimer->stop();
+
         foreach (Plasma::Applet *applet, m_appletsContainer->containment()->applets()) {
             if (applet->isAncestorOf(watched)) {
-                if (applet == m_appletsContainer->m_currentApplet.data() || applet == m_appletsContainer->m_pendingCurrentApplet.data()) {
+                if (applet == m_appletsContainer->currentApplet()) {
                     return Plasma::ScrollWidget::sceneEventFilter(watched, event);
                 }
 
@@ -70,19 +70,16 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
         }
     } else if (event->type() == QEvent::GraphicsSceneMouseMove) {
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
-        if (QPointF(me->pos() - me->buttonDownPos(me->button())).manhattanLength() > KGlobalSettings::dndEventDelay()) {
-            m_appletsContainer->m_appletActivationTimer->stop();
-        }
 
-        if (!m_appletsContainer->m_currentApplet || !m_appletsContainer->m_currentApplet.data()->isAncestorOf(watched)) {
+        if (!m_appletsContainer->currentApplet() || !m_appletsContainer->currentApplet()->isAncestorOf(watched)) {
             Plasma::ScrollWidget::sceneEventFilter(watched, event);
             event->ignore();
             return true;
-        } else if (m_appletsContainer->m_currentApplet.data()->isAncestorOf(watched)) {
+        } else if (m_appletsContainer->currentApplet()->isAncestorOf(watched)) {
             return false;
         }
     //don't manage wheel events over the current applet
-    } else if (event->type() == QEvent::GraphicsSceneWheel && m_appletsContainer->m_currentApplet && m_appletsContainer->m_currentApplet.data()->isAncestorOf(watched)) {
+    } else if (event->type() == QEvent::GraphicsSceneWheel && m_appletsContainer->currentApplet() && m_appletsContainer->currentApplet()->isAncestorOf(watched)) {
         return false;
     } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
         foreach (Plasma::Applet *applet, m_appletsContainer->containment()->applets()) {
@@ -91,29 +88,21 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
                 QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
 
                 if (QPointF(me->pos() - me->buttonDownPos(me->button())).manhattanLength() > KGlobalSettings::dndEventDelay()) {
-                    m_appletsContainer->m_appletActivationTimer->stop();
                     return Plasma::ScrollWidget::sceneEventFilter(watched, event);
                 }
 
-                if (m_appletsContainer->m_currentApplet.data()) {
-                    m_appletsContainer->m_currentApplet.data()->setPreferredHeight(m_appletsContainer->optimalAppletSize(m_appletsContainer->m_currentApplet.data(), false).height());
-                }
-                m_appletsContainer->m_pendingCurrentApplet = applet;
-                m_appletsContainer->m_currentApplet.clear();
-                applet->setPreferredHeight(m_appletsContainer->optimalAppletSize(applet, true).height());
-
-                m_appletsContainer->m_appletActivationTimer->start(500);
+                m_appletsContainer->setCurrentApplet(applet);
 
                 return Plasma::ScrollWidget::sceneEventFilter(watched, event);
             }
         }
 
-        if (!m_appletsContainer->m_currentApplet || !m_appletsContainer->m_currentApplet.data()->isAncestorOf(watched)) {
+        if (!m_appletsContainer->currentApplet() || !m_appletsContainer->currentApplet()->isAncestorOf(watched)) {
             return Plasma::ScrollWidget::sceneEventFilter(watched, event);
         }
     }
 
-    if (watched == m_appletsContainer->m_currentApplet.data()) {
+    if (watched == m_appletsContainer->currentApplet()) {
         return false;
     } else {
         return Plasma::ScrollWidget::sceneEventFilter(watched, event);

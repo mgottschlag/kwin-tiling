@@ -41,7 +41,6 @@ class AppletsView;
 class AppletsContainer : public QGraphicsWidget
 {
     Q_OBJECT
-    friend class AppletsView;
 
 public:
     AppletsContainer(AppletsView *parent);
@@ -88,7 +87,6 @@ public Q_SLOTS:
     void cleanupColumns();
 
 private Q_SLOTS:
-    void delayedAppletActivation();
     void viewportGeometryChanged(const QRectF &geometry);
 
 Q_SIGNALS:
@@ -100,13 +98,11 @@ private:
     QGraphicsLinearLayout *m_mainLayout;
     Qt::Orientation m_orientation;
     QWeakPointer<Plasma::Applet>m_currentApplet;
-    QWeakPointer<Plasma::Applet>m_pendingCurrentApplet;
     QSizeF m_viewportSize;
     Plasma::Containment *m_containment;
     bool m_automaticAppletLayout;
     bool m_expandAll;
     QPropertyAnimation *m_preferredHeightAnimation;
-    QTimer *m_appletActivationTimer;
 };
 
 #endif

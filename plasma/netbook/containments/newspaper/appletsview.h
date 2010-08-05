@@ -27,7 +27,6 @@
 class AppletsView : public Plasma::ScrollWidget
 {
     Q_OBJECT
-    friend class AppletsContainer;
 
 public:
     AppletsView(QGraphicsItem *parent = 0);

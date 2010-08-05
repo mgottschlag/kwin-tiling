@@ -29,7 +29,6 @@
 
 #include <QGraphicsLinearLayout>
 #include <QGraphicsSceneMouseEvent>
-#include <QTimer>
 
 #include <KIconLoader>
 
@@ -55,10 +54,6 @@ AppletsContainer::AppletsContainer(AppletsView *parent)
     connect(m_scrollWidget, SIGNAL(viewportGeometryChanged(const QRectF &)),
             this, SLOT(viewportGeometryChanged(const QRectF &)));
 
-    m_appletActivationTimer = new QTimer(this);
-    m_appletActivationTimer->setSingleShot(true);
-    connect(m_appletActivationTimer, SIGNAL(timeout()),
-            this, SLOT(delayedAppletActivation()));
 }
 
 AppletsContainer::~AppletsContainer()
@@ -455,14 +450,13 @@ void AppletsContainer::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
     setCurrentApplet(0);
 
-    m_pendingCurrentApplet.clear();
-
     QGraphicsWidget::mouseReleaseEvent(event);
 }
 
 void AppletsContainer::setCurrentApplet(Plasma::Applet *applet)
 {
     if (m_currentApplet.data() == applet) {
+        m_scrollWidget->ensureRectVisible(QRectF(applet->pos(), QSizeF(applet->size().width(), applet->preferredHeight())));
         return;
     }
 
@@ -478,29 +472,6 @@ void AppletsContainer::setCurrentApplet(Plasma::Applet *applet)
         m_scrollWidget->ensureRectVisible(QRectF(applet->pos(), QSizeF(applet->size().width(), applet->preferredHeight())));
     }
 
-    m_currentApplet = m_pendingCurrentApplet.data();
-
-    if (m_orientation == Qt::Horizontal || (!m_expandAll && !m_currentApplet)) {
-        m_scrollWidget->setSnapSize(m_scrollWidget->viewportGeometry().size()/2);
-    } else {
-        m_scrollWidget->setSnapSize(QSizeF());
-    }
-}
-
-Plasma::Applet *AppletsContainer::currentApplet() const
-{
-    return m_currentApplet.data();
-}
-
-void AppletsContainer::delayedAppletActivation()
-{
-    if (!m_pendingCurrentApplet) {
-        m_currentApplet.clear();
-        return;
-    }
-
-    m_currentApplet = m_pendingCurrentApplet.data();
-
     if (m_orientation == Qt::Horizontal || (!m_expandAll && !m_currentApplet)) {
         m_scrollWidget->setSnapSize(m_scrollWidget->viewportGeometry().size()/2);
     } else {
@@ -508,6 +479,12 @@ void AppletsContainer::delayedAppletActivation()
     }
     emit appletActivated(m_currentApplet.data());
 }
+
+Plasma::Applet *AppletsContainer::currentApplet() const
+{
+    return m_currentApplet.data();
+}
+
 
 #include "appletscontainer.moc"
 
