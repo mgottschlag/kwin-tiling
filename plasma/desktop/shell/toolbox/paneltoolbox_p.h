@@ -64,6 +64,7 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
 protected slots:
+    void immutabilityChanged(Plasma::ImmutabilityType immutability);
     void setHighlightValue(qreal progress);
     qreal highlightValue() const;
     void toggle();

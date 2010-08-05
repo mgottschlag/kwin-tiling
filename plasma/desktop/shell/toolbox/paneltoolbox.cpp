@@ -98,6 +98,11 @@ void PanelToolBox::init()
     d->background->setContainsMultipleImages(true);
 
     Plasma::ToolTipManager::self()->registerWidget(this);
+
+    if (containment()) {
+        QObject::connect(containment(), SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)),
+                         this, SLOT(immutabilityChanged(Plasma::ImmutabilityType)));
+    }
 }
 
 void PanelToolBox::assignColors()
@@ -132,6 +137,11 @@ QRectF PanelToolBox::boundingRect() const
     }
 
     return r;
+}
+
+void PanelToolBox::immutabilityChanged(Plasma::ImmutabilityType immutability)
+{
+    setVisible(immutability == Plasma::Mutable);
 }
 
 void PanelToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
