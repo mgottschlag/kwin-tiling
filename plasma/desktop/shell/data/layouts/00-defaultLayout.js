@@ -21,7 +21,6 @@ for (var i = 0; i < screenCount; ++i) {
     if (i == topLeftScreen) {
         var folderview = desktop.addWidget("folderview")
         folderview.writeConfig("url", "desktop:/")
-        folderview.reloadConfig()
     }
 }
 
