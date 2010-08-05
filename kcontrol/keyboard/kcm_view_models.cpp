@@ -307,8 +307,8 @@ QVariant XkbOptionsTreeModel::data(const QModelIndex& index, int role) const
     	else {
     		int groupRow = index.row();
     		const OptionGroupInfo* xkbGroup = rules->optionGroupInfos[groupRow];
-    		foreach(const QString& option, keyboardConfig->xkbOptions) {
-    			if( option.startsWith(xkbGroup->name + Rules::XKB_OPTION_GROUP_SEPARATOR) )
+    		foreach(const OptionInfo* optionInfo, xkbGroup->optionInfos) {
+    			if( keyboardConfig->xkbOptions.indexOf(optionInfo->name) != -1 )
     				return Qt::PartiallyChecked;
     		}
 			return Qt::Unchecked;
