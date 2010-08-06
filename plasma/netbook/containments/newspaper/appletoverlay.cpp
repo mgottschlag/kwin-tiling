@@ -139,8 +139,6 @@ void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
         return;
     }
 
-    Plasma::Applet *oldApplet = m_applet.data();
-
     QPointF offset = m_newspaper->m_container->pos() + m_newspaper->m_scrollWidget->pos();
 
 
