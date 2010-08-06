@@ -406,9 +406,9 @@ QSizeF AppletsContainer::optimalAppletSize(Plasma::Applet *applet, const bool ma
         return QSizeF();
     }
 
-    //each applet with an optimal of 40 columns, 20 lines of text
+    //each applet with an optimal of 40 columns, 18 lines of text
     const int appletsPerColumn = m_viewportSize.width() / (m_mSize.width()*40);
-    const int appletsPerRow = m_viewportSize.height() / (m_mSize.height()*15);
+    const int appletsPerRow = m_viewportSize.height() / (m_mSize.height()*18);
 
     const QSizeF minNormalAppletSize(m_viewportSize.width() / appletsPerColumn,
                                      m_viewportSize.height() / appletsPerRow);
