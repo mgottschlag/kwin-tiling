@@ -124,6 +124,12 @@ void Newspaper::init()
     addAction("expand widgets", a);
     addToolBoxAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleExpandAllApplets()));
+    if (m_expandAll) {
+        a->setIcon(KIcon("view-restore"));
+        a->setText(i18n("Collapse widgets"));
+    }
+    a->setEnabled(m_orientation == Qt::Vertical);
+    a->setVisible(m_orientation == Qt::Vertical);
 
 
     a = action("configure");
@@ -220,6 +226,11 @@ void Newspaper::setOrientation(Qt::Orientation orientation)
     m_orientation = orientation;
     m_container->setOrientation(m_orientation);
     m_externalLayout->setOrientation(m_orientation);
+    QAction *expandAction = action("expand widgets");
+    if (expandAction) {
+        expandAction->setEnabled(orientation == Qt::Vertical);
+        expandAction->setVisible(orientation == Qt::Vertical);
+    }
 
     if (m_orientation == Qt::Vertical) {
         m_container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
