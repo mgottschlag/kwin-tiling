@@ -31,6 +31,7 @@
 #include <QFontMetrics>
 #include <QGraphicsLinearLayout>
 #include <QGraphicsSceneMouseEvent>
+#include <QTimer>
 
 #include <KIconLoader>
 
@@ -53,6 +54,10 @@ AppletsContainer::AppletsContainer(AppletsView *parent)
     setFlag(QGraphicsItem::ItemHasNoContents);
     m_mainLayout = new QGraphicsLinearLayout(this);
     m_mainLayout->setContentsMargins(0,0,0,0);
+
+    m_viewportGeometryUpdateTimer = new QTimer(this);
+    m_viewportGeometryUpdateTimer->setSingleShot(true);
+    connect(m_viewportGeometryUpdateTimer, SIGNAL(timeout()), this, SLOT(updateViewportGeometry()));
 
     connect(m_scrollWidget, SIGNAL(viewportGeometryChanged(const QRectF &)),
             this, SLOT(viewportGeometryChanged(const QRectF &)));
@@ -81,6 +86,7 @@ void AppletsContainer::themeChanged()
 
     QFontMetrics fm(font);
     m_mSize = fm.boundingRect("M").size();
+    updateViewportGeometry();
 }
 
 void AppletsContainer::syncColumnSizes()
@@ -407,8 +413,8 @@ QSizeF AppletsContainer::optimalAppletSize(Plasma::Applet *applet, const bool ma
     }
 
     //each applet with an optimal of 40 columns, 18 lines of text
-    const int appletsPerColumn = m_viewportSize.width() / (m_mSize.width()*40);
-    const int appletsPerRow = m_viewportSize.height() / (m_mSize.height()*18);
+    const int appletsPerColumn = qMax((qreal)1, m_viewportSize.width() / (m_mSize.width()*40));
+    const int appletsPerRow = qMax((qreal)1, m_viewportSize.height() / (m_mSize.height()*18));
 
     const QSizeF minNormalAppletSize(m_viewportSize.width() / appletsPerColumn,
                                      m_viewportSize.height() / appletsPerRow);
@@ -438,7 +444,12 @@ QSizeF AppletsContainer::viewportSize() const
 
 void AppletsContainer::viewportGeometryChanged(const QRectF &geometry)
 {
-    m_viewportSize = geometry.size();
+    m_viewportGeometryUpdateTimer->start(250);
+}
+
+void AppletsContainer::updateViewportGeometry()
+{
+    m_viewportSize = m_scrollWidget->viewportGeometry().size();
 
     if (!m_containment || (m_expandAll && m_orientation != Qt::Horizontal)) {
         syncColumnSizes();
@@ -458,7 +469,9 @@ void AppletsContainer::viewportGeometryChanged(const QRectF &geometry)
     }
 
     if (m_orientation == Qt::Horizontal || (!m_expandAll && !m_currentApplet)) {
-        m_scrollWidget->setSnapSize(geometry.size()/2);
+        const int appletsPerColumn = m_viewportSize.width() / (m_mSize.width()*40);
+        const int appletsPerRow = m_viewportSize.height() / (m_mSize.height()*18);
+        m_scrollWidget->setSnapSize(m_viewportSize/2);
     } else {
         m_scrollWidget->setSnapSize(QSizeF());
     }

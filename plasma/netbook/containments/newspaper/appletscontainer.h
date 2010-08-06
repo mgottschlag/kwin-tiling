@@ -89,6 +89,7 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void viewportGeometryChanged(const QRectF &geometry);
+    void updateViewportGeometry();
 
 Q_SIGNALS:
     void appletSizeHintChanged();
@@ -107,6 +108,7 @@ private:
     //the size of a M in the current font. the font size is used to decide
     //how many row/columns
     QSize m_mSize;
+    QTimer *m_viewportGeometryUpdateTimer;
 };
 
 #endif
