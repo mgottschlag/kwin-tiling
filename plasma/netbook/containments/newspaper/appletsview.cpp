@@ -83,7 +83,7 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
         return false;
     } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
         foreach (Plasma::Applet *applet, m_appletsContainer->containment()->applets()) {
-            if (applet->isAncestorOf(watched)) {
+            if (applet->isAncestorOf(watched) || applet == watched) {
 
                 QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
 
