@@ -49,7 +49,9 @@ AppletsContainer::AppletsContainer(AppletsView *parent)
    m_viewportSize(size()),
    m_containment(0),
    m_automaticAppletLayout(true),
-   m_expandAll(false)
+   m_expandAll(false),
+   m_appletsPerColumn(1),
+   m_appletsPerRow(1)
 {
     setFlag(QGraphicsItem::ItemHasNoContents);
     m_mainLayout = new QGraphicsLinearLayout(this);
@@ -86,6 +88,7 @@ void AppletsContainer::themeChanged()
 
     QFontMetrics fm(font);
     m_mSize = fm.boundingRect("M").size();
+    
     updateViewportGeometry();
 }
 
@@ -412,24 +415,19 @@ QSizeF AppletsContainer::optimalAppletSize(Plasma::Applet *applet, const bool ma
         return QSizeF();
     }
 
-    //each applet with an optimal of 40 columns, 18 lines of text
-    const int appletsPerColumn = qMax((qreal)1, m_viewportSize.width() / (m_mSize.width()*40));
-    const int appletsPerRow = qMax((qreal)1, m_viewportSize.height() / (m_mSize.height()*18));
-
-    const QSizeF minNormalAppletSize(m_viewportSize.width() / appletsPerColumn,
-                                     m_viewportSize.height() / appletsPerRow);
+    const QSizeF minNormalAppletSize(m_viewportSize.width() / m_appletsPerColumn,
+                                     m_viewportSize.height() / m_appletsPerRow);
 
     //4,4 is the size of the margins of the scroll view
     QSizeF normalAppletSize = QSizeF(applet->effectiveSizeHint(Qt::MinimumSize)).expandedTo(minNormalAppletSize);
 
-    normalAppletSize -= QSize(4/appletsPerColumn, 4/appletsPerRow);
+    normalAppletSize -= QSize(4/m_appletsPerColumn, 4/m_appletsPerRow);
 
     if (maximized) {
         //FIXME: this change of fixed preferred height could cause a relayout, unfortunately there is no other way
         int preferred = applet->preferredHeight();
         applet->setPreferredHeight(-1);
         QSizeF size = QSizeF(applet->effectiveSizeHint(Qt::PreferredSize)).boundedTo(m_viewportSize).expandedTo(normalAppletSize);
-        if (preferred%appletsPerRow)
         applet->setPreferredHeight(preferred-4);
         return size;
     } else {
@@ -444,6 +442,8 @@ QSizeF AppletsContainer::viewportSize() const
 
 void AppletsContainer::viewportGeometryChanged(const QRectF &geometry)
 {
+    Q_UNUSED(geometry)
+
     m_viewportGeometryUpdateTimer->start(250);
 }
 
@@ -451,10 +451,15 @@ void AppletsContainer::updateViewportGeometry()
 {
     m_viewportSize = m_scrollWidget->viewportGeometry().size();
 
+    //each applet with an optimal of 40 columns, 18 lines of text
+    m_appletsPerColumn = qMax((qreal)1, m_viewportSize.width() / (m_mSize.width()*40));
+    m_appletsPerRow = qMax((qreal)1, m_viewportSize.height() / (m_mSize.height()*18));
+
     if (!m_containment || (m_expandAll && m_orientation != Qt::Horizontal)) {
         syncColumnSizes();
         return;
     }
+
     foreach (Plasma::Applet *applet, m_containment->applets()) {
         if (m_orientation == Qt::Vertical) {
             if (applet == m_currentApplet.data()) {
@@ -469,9 +474,7 @@ void AppletsContainer::updateViewportGeometry()
     }
 
     if (m_orientation == Qt::Horizontal || (!m_expandAll && !m_currentApplet)) {
-        const int appletsPerColumn = m_viewportSize.width() / (m_mSize.width()*40);
-        const int appletsPerRow = m_viewportSize.height() / (m_mSize.height()*18);
-        m_scrollWidget->setSnapSize(m_viewportSize/2);
+        m_scrollWidget->setSnapSize(QSize(m_viewportSize.width()/m_appletsPerColumn, m_viewportSize.height()/m_appletsPerRow));
     } else {
         m_scrollWidget->setSnapSize(QSizeF());
     }

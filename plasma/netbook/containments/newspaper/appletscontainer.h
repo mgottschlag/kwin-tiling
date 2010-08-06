@@ -109,6 +109,8 @@ private:
     //how many row/columns
     QSize m_mSize;
     QTimer *m_viewportGeometryUpdateTimer;
+    int m_appletsPerColumn;
+    int m_appletsPerRow;
 };
 
 #endif
