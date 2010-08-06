@@ -79,8 +79,7 @@ void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 {
     Q_UNUSED(widget)
 
-    QColor c = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-    c.setAlphaF(0.15);
+    QColor c = QColor(0, 0, 0, 98);
 
     painter->fillRect(option->exposedRect, c);
 
