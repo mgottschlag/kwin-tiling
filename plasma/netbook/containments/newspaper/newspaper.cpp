@@ -479,11 +479,6 @@ void Newspaper::updateRemoveActionVisibility()
     }
 }
 
-void Newspaper::appletActivated(Plasma::Applet *applet)
-{
-    m_scrollWidget->ensureItemVisible(applet);
-}
-
 void Newspaper::containmentAdded(Plasma::Containment *containment)
 {
     //we now are sure there are at least two pages

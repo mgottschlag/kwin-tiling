@@ -76,7 +76,6 @@ private Q_SLOTS:
     void containmentAdded(Plasma::Containment *containment);
     void containmentRemoved(QObject *containment);
     void availableScreenRegionChanged();
-    void appletActivated(Plasma::Applet *applet);
 
 private:
     AppletsView *m_scrollWidget;

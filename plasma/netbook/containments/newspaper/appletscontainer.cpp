@@ -95,13 +95,19 @@ void AppletsContainer::syncColumnSizes()
 
 void AppletsContainer::updateSize()
 {
-    QSizeF hint = effectiveSizeHint(Qt::PreferredSize);
+    //Layouts are to happy to cache their hints, invalidate everything
+    for (int i = 0; i < m_mainLayout->count(); ++i) {
+        QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(i));
+        lay->invalidate();
+    }
+    m_mainLayout->invalidate();
 
-    //FIXME: it appears to work only with hardcoded values
+    QSizeF hint = sizeHint(Qt::PreferredSize, QSize());
+    
     if (m_orientation == Qt::Horizontal) {
-        resize(qMax((int)hint.width(), 300), qMin(size().height(), m_scrollWidget->viewportGeometry().height()));
+        resize(hint.width(), qMin(size().height(), m_scrollWidget->viewportGeometry().height()));
     } else {
-        resize(qMin(size().width(), m_scrollWidget->viewportGeometry().width()), qMax((int)hint.height(), 300));
+        resize(qMin(size().width(), m_scrollWidget->viewportGeometry().width()), hint.height());
     }
 }
 
@@ -456,7 +462,9 @@ void AppletsContainer::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void AppletsContainer::setCurrentApplet(Plasma::Applet *applet)
 {
     if (m_currentApplet.data() == applet) {
-        m_scrollWidget->ensureRectVisible(QRectF(applet->pos(), QSizeF(applet->size().width(), applet->preferredHeight())));
+        if (applet) {
+            m_scrollWidget->ensureRectVisible(QRectF(applet->pos(), QSizeF(applet->size().width(), applet->preferredHeight())));
+        }
         return;
     }
 
@@ -468,6 +476,8 @@ void AppletsContainer::setCurrentApplet(Plasma::Applet *applet)
 
     if (applet) {
         applet->setPreferredHeight(optimalAppletSize(applet, true).height());
+
+        updateSize();
 
         m_scrollWidget->ensureRectVisible(QRectF(applet->pos(), QSizeF(applet->size().width(), applet->preferredHeight())));
     }
