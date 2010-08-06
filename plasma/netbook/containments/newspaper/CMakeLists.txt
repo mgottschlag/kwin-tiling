@@ -2,7 +2,7 @@
 set(newspaper_SRCS
     newspaper.cpp
     appletoverlay.cpp
-    ../common/appletmovespacer.cpp
+    appletmovespacer.cpp
     applettitlebar.cpp
     appletscontainer.cpp
     appletsview.cpp
