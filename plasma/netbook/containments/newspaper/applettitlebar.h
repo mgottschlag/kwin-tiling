@@ -65,7 +65,6 @@ protected Q_SLOTS:
     void syncMargins();
     void appletRemoved(Plasma::Applet *applet);
     void themeChanged();
-    void animationFinished();
 
 private:
     enum PressedButton{

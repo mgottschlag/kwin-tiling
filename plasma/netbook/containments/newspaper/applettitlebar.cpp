@@ -102,7 +102,6 @@ void AppletTitleBar::setButtonsVisible(bool visible)
 
             m_animations.data()->start();
             m_animations.data()->setCurrentTime(0);
-            connect(m_animations.data(), SIGNAL(finished()), this, SLOT(animationFinished()));
         } else {
             QParallelAnimationGroup *group = m_animations.data();
 
@@ -422,12 +421,5 @@ void AppletTitleBar::themeChanged()
     QTimer::singleShot(0, this, SLOT(syncMargins()));
 }
 
-void AppletTitleBar::animationFinished()
-{
-    if (!m_underMouse) {
-     //   m_buttonsVisible = false;
-    }
-
-}
 
 #include <applettitlebar.moc>
