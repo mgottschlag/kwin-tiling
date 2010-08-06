@@ -42,6 +42,12 @@ public:
     explicit AppletTitleBar(Plasma::Applet *parent = 0);
     ~AppletTitleBar();
 
+    void setButtonsVisible(bool force);
+    bool buttonsVisible() const;
+
+    void setForcedButtonsVisible(bool force);
+    bool forcedButtonsVisible() const;
+
 protected:
     void syncSize();
     void syncIconRects();
@@ -54,8 +60,6 @@ protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void initAnimations();
-    /*void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);*/
 
 protected Q_SLOTS:
     void syncMargins();
@@ -87,8 +91,9 @@ private:
 
     qreal m_savedAppletTopMargin;
     bool m_underMouse;
-    bool m_showButtons;
+    bool m_buttonsVisible;
     bool m_appletHasBackground;
+    bool m_forcedButtonsVisible;
 };
 
 #endif

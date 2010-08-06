@@ -43,8 +43,9 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
          m_background(0),
          m_savedAppletTopMargin(0),
          m_underMouse(false),
-         m_showButtons(false),
-         m_appletHasBackground(false)
+         m_buttonsVisible(false),
+         m_appletHasBackground(false),
+         m_forcedButtonsVisible(false)
 {
     setObjectName("TitleBar");
     m_pulse =
@@ -87,6 +88,56 @@ AppletTitleBar::~AppletTitleBar()
     delete m_animations.data();
 }
 
+void AppletTitleBar::setButtonsVisible(bool visible)
+{
+    if (visible == m_buttonsVisible) {
+        return;
+    }
+
+    m_buttonsVisible = visible;
+
+    if (visible) {
+        if (!m_animations) {
+            initAnimations();
+
+            m_animations.data()->start();
+            m_animations.data()->setCurrentTime(0);
+            connect(m_animations.data(), SIGNAL(finished()), this, SLOT(animationFinished()));
+        } else {
+            QParallelAnimationGroup *group = m_animations.data();
+
+            group->stop();
+            group->setCurrentTime(0);
+
+            group->start();
+        }
+    } else {
+        initAnimations();
+        QParallelAnimationGroup *group = m_animations.data();
+        group->setDirection(QAbstractAnimation::Backward);
+        group->start(QAbstractAnimation::DeleteWhenStopped);
+    }
+}
+
+bool AppletTitleBar::buttonsVisible() const
+{
+    return m_buttonsVisible;
+}
+
+void AppletTitleBar::setForcedButtonsVisible(bool visible)
+{
+    if (visible == m_forcedButtonsVisible) {
+        return;
+    }
+
+    setButtonsVisible(visible);
+    m_forcedButtonsVisible = visible;
+}
+
+bool AppletTitleBar::forcedButtonsVisible() const
+{
+    return m_forcedButtonsVisible;
+}
 
 void AppletTitleBar::initAnimations()
 {
@@ -194,28 +245,15 @@ bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
         m_underMouse = true;
         syncIconRects();
 
-        if (!m_animations) {
-            initAnimations();
-
-            m_animations.data()->start();
-            m_animations.data()->setCurrentTime(0);
-            connect(m_animations.data(), SIGNAL(finished()), this, SLOT(animationFinished()));
-        } else {
-            QParallelAnimationGroup *group = m_animations.data();
-
-            group->stop();
-            group->setCurrentTime(0);
-
-            group->start();
+        if (!m_forcedButtonsVisible) {
+            setButtonsVisible(true);
         }
-
-        m_showButtons = true;
     } else if (event->type() == QEvent::GraphicsSceneHoverLeave) {
         m_underMouse = false;
-        initAnimations();
-        QParallelAnimationGroup *group = m_animations.data();
-        group->setDirection(QAbstractAnimation::Backward);
-        group->start(QAbstractAnimation::DeleteWhenStopped);
+
+        if (!m_forcedButtonsVisible) {
+            setButtonsVisible(false);
+        }
     }
 
     return false;
@@ -302,11 +340,11 @@ void AppletTitleBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
-    if (m_background && (!m_appletHasBackground || m_showButtons)) {
+    if (m_background && (!m_appletHasBackground || m_buttonsVisible)) {
         m_background->paintFrame(painter);
     }
 
-    if (m_showButtons) {
+    if (m_buttonsVisible) {
         QParallelAnimationGroup *group = m_animations.data();
 
         int i = 0;
@@ -386,7 +424,7 @@ void AppletTitleBar::themeChanged()
 void AppletTitleBar::animationFinished()
 {
     if (!m_underMouse) {
-        m_showButtons = false;
+     //   m_buttonsVisible = false;
     }
 
 }
