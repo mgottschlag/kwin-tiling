@@ -85,6 +85,7 @@ public Q_SLOTS:
     void layoutApplet(Plasma::Applet *applet, const QPointF &post);
     void updateSize();
     void cleanupColumns();
+    void themeChanged();
 
 private Q_SLOTS:
     void viewportGeometryChanged(const QRectF &geometry);
@@ -103,6 +104,9 @@ private:
     bool m_automaticAppletLayout;
     bool m_expandAll;
     QPropertyAnimation *m_preferredHeightAnimation;
+    //the size of a M in the current font. the font size is used to decide
+    //how many row/columns
+    QSize m_mSize;
 };
 
 #endif

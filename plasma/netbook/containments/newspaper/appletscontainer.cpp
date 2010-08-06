@@ -27,14 +27,17 @@
 #include "applettitlebar.h"
 #include "appletsview.h"
 
+#include <QFont>
+#include <QFontMetrics>
 #include <QGraphicsLinearLayout>
 #include <QGraphicsSceneMouseEvent>
 
 #include <KIconLoader>
 
 #include <Plasma/Applet>
-#include <Plasma/ScrollWidget>
 #include <Plasma/Containment>
+#include <Plasma/ScrollWidget>
+#include <Plasma/Theme>
 
 using namespace Plasma;
 
@@ -54,6 +57,8 @@ AppletsContainer::AppletsContainer(AppletsView *parent)
     connect(m_scrollWidget, SIGNAL(viewportGeometryChanged(const QRectF &)),
             this, SLOT(viewportGeometryChanged(const QRectF &)));
 
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
+    themeChanged();
 }
 
 AppletsContainer::~AppletsContainer()
@@ -68,6 +73,14 @@ void AppletsContainer::setAutomaticAppletLayout(const bool automatic)
 bool AppletsContainer::automaticAppletLayout() const
 {
     return m_automaticAppletLayout;
+}
+
+void AppletsContainer::themeChanged()
+{
+    QFont font = Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
+
+    QFontMetrics fm(font);
+    m_mSize = fm.boundingRect("M").size();
 }
 
 void AppletsContainer::syncColumnSizes()
@@ -392,7 +405,13 @@ QSizeF AppletsContainer::optimalAppletSize(Plasma::Applet *applet, const bool ma
         return QSizeF();
     }
 
-    QSizeF normalAppletSize = QSizeF(applet->effectiveSizeHint(Qt::MinimumSize)).expandedTo(m_viewportSize/2) - QSizeF(8, 8);
+    const int appletsPerColumn = m_viewportSize.width() / (m_mSize.width()*40);
+    const int appletsPerRow = m_viewportSize.height() / (m_mSize.height()*15);
+
+    const QSizeF minNormalAppletSize(m_viewportSize.width() / appletsPerColumn,
+                                     m_viewportSize.height() / appletsPerRow);
+
+    QSizeF normalAppletSize = QSizeF(applet->effectiveSizeHint(Qt::MinimumSize)).expandedTo(minNormalAppletSize) - QSizeF(8, 8);
 
     //FIXME: it was necessary to add hardcoded fixed qsizes to make things work, why?
     if (maximized) {
@@ -429,7 +448,7 @@ void AppletsContainer::viewportGeometryChanged(const QRectF &geometry)
             }
         } else {
             applet->setPreferredSize(-1, -1);
-            applet->setPreferredWidth((m_scrollWidget->viewportGeometry().size().width()/2)-8);
+            applet->setPreferredWidth(optimalAppletSize(applet, false).width());
         }
     }
 
