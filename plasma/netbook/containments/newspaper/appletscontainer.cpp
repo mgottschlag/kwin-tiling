@@ -186,6 +186,7 @@ QGraphicsLinearLayout *AppletsContainer::addColumn()
 {
     QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(m_orientation);
     lay->setContentsMargins(0,0,0,0);
+    lay->setSpacing(0);
     m_mainLayout->addItem(lay);
 
     QGraphicsWidget *spacer = new QGraphicsWidget(this);
@@ -405,21 +406,25 @@ QSizeF AppletsContainer::optimalAppletSize(Plasma::Applet *applet, const bool ma
         return QSizeF();
     }
 
+    //each applet with an optimal of 40 columns, 20 lines of text
     const int appletsPerColumn = m_viewportSize.width() / (m_mSize.width()*40);
     const int appletsPerRow = m_viewportSize.height() / (m_mSize.height()*15);
 
     const QSizeF minNormalAppletSize(m_viewportSize.width() / appletsPerColumn,
                                      m_viewportSize.height() / appletsPerRow);
 
-    QSizeF normalAppletSize = QSizeF(applet->effectiveSizeHint(Qt::MinimumSize)).expandedTo(minNormalAppletSize) - QSizeF(8, 8);
+    //4,4 is the size of the margins of the scroll view
+    QSizeF normalAppletSize = QSizeF(applet->effectiveSizeHint(Qt::MinimumSize)).expandedTo(minNormalAppletSize);
 
-    //FIXME: it was necessary to add hardcoded fixed qsizes to make things work, why?
+    normalAppletSize -= QSize(4/appletsPerColumn, 4/appletsPerRow);
+
     if (maximized) {
         //FIXME: this change of fixed preferred height could cause a relayout, unfortunately there is no other way
         int preferred = applet->preferredHeight();
         applet->setPreferredHeight(-1);
-        QSizeF size = QSizeF(applet->effectiveSizeHint(Qt::PreferredSize) + QSizeF(0, 32)).boundedTo(m_viewportSize - QSizeF(12, 12)).expandedTo(normalAppletSize);
-        applet->setPreferredHeight(preferred);
+        QSizeF size = QSizeF(applet->effectiveSizeHint(Qt::PreferredSize)).boundedTo(m_viewportSize).expandedTo(normalAppletSize);
+        if (preferred%appletsPerRow)
+        applet->setPreferredHeight(preferred-4);
         return size;
     } else {
         return normalAppletSize;
