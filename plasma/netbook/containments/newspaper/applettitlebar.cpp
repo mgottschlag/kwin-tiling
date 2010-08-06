@@ -108,6 +108,7 @@ void AppletTitleBar::setButtonsVisible(bool visible)
 
             group->stop();
             group->setCurrentTime(0);
+            group->setDirection(QAbstractAnimation::Forward);
 
             group->start();
         }

@@ -470,6 +470,12 @@ void AppletsContainer::setCurrentApplet(Plasma::Applet *applet)
 
     if (m_currentApplet) {
         m_currentApplet.data()->setPreferredHeight(optimalAppletSize(m_currentApplet.data(), false).height());
+
+        QList<AppletTitleBar *> titles = m_currentApplet.data()->findChildren<AppletTitleBar *>("TitleBar");
+
+        if (!titles.isEmpty()) {
+            titles.first()->setForcedButtonsVisible(false);
+        }
     }
 
     m_currentApplet = applet;
@@ -480,6 +486,12 @@ void AppletsContainer::setCurrentApplet(Plasma::Applet *applet)
         updateSize();
 
         m_scrollWidget->ensureRectVisible(QRectF(applet->pos(), QSizeF(applet->size().width(), applet->preferredHeight())));
+
+        QList<AppletTitleBar *> titles = applet->findChildren<AppletTitleBar *>("TitleBar");
+
+        if (!titles.isEmpty()) {
+            titles.first()->setForcedButtonsVisible(true);
+        }
     }
 
     if (m_orientation == Qt::Horizontal || (!m_expandAll && !m_currentApplet)) {
