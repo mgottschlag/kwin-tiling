@@ -1,1 +1,5 @@
-SKIP /kcheckpass/
+#kcheckpass is mostly C, so let's not check there.
+IGNORESUBS kcheckpass
+
+#no code in these
+IGNORESUBS cursors
