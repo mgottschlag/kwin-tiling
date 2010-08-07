@@ -491,6 +491,23 @@ void RandROutput::slotEnable()
 		setCrtc(crtc);
 }
 
+void RandROutput::slotSetAsPrimary(bool primary)
+{
+	if (!primary)
+	{
+		if (m_screen->primaryOutput() == this)
+		{
+			kDebug() << "Removing" << m_name << "as primary output";
+			m_screen->setPrimaryOutput(0);
+		}
+	}
+	else if (m_connected)
+	{
+		kDebug() << "Setting" << m_name << "as primary output";
+		m_screen->setPrimaryOutput(this);
+	}
+}
+
 RandRCrtc *RandROutput::findEmptyCrtc()
 {
 	RandRCrtc *crtc = 0;
@@ -653,3 +670,4 @@ void RandROutput::slotCrtcChanged(RRCrtc c, int changes)
 #include "randroutput.moc"
 
 
+// vim:noet:sts=8:sw=8:

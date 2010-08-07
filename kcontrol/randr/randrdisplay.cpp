@@ -51,9 +51,12 @@ RandRDisplay::RandRDisplay()
 
 	// check if we have the new version of the XRandR extension
 	RandR::has_1_2 = (major_version > 1 || (major_version == 1 && minor_version >= 2));
+	RandR::has_1_3 = (major_version > 1 || (major_version == 1 && minor_version >= 3));
 	
-	if(RandR::has_1_2)
-		kDebug() << "Using XRANDR extension 1.2 or greater.";
+	if(RandR::has_1_3)
+		kDebug() << "Using XRANDR extension 1.3 or greater.";
+        else if(RandR::has_1_2)
+		kDebug() << "Using XRANDR extension 1.2.";
 	else kDebug() << "Using legacy XRANDR extension (1.1 or earlier).";
 	
 	kDebug() << "XRANDR error base: " << m_errorBase;
@@ -332,3 +335,4 @@ void RandRDisplay::applyProposed(bool confirm)
 	}
 }
 
+// vim:noet:sts=8:sw=8:

@@ -26,7 +26,9 @@
 #include <QAction>
 
 RandRScreen::RandRScreen(int screenIndex)
-: m_resources(0L)
+: m_originalPrimaryOutput(0),
+  m_proposedPrimaryOutput(0),
+  m_resources(0)
 {
 	m_index = screenIndex;
 	m_rect = QRect(0, 0, XDisplayWidth(QX11Info::display(), m_index),
@@ -37,6 +39,8 @@ RandRScreen::RandRScreen(int screenIndex)
 
 	loadSettings();
 	load();
+
+	m_originalPrimaryOutput = primaryOutput();
 
 	// select for randr input events
 	int mask = RRScreenChangeNotifyMask | 
@@ -233,6 +237,33 @@ RandROutput* RandRScreen::output(RROutput id) const
 
 	return 0;
 }
+
+#ifdef HAS_RANDR_1_3
+void RandRScreen::setPrimaryOutput(RandROutput* output)
+{
+	if (RandR::has_1_3)
+	{
+		RROutput id = None;
+		if (output)
+			id = output->id();
+		XRRSetOutputPrimary(QX11Info::display(), rootWindow(), id);
+	}
+}
+
+void RandRScreen::proposePrimaryOutput(RandROutput* output)
+{
+	m_proposedPrimaryOutput = output;
+}
+
+RandROutput* RandRScreen::primaryOutput()
+{
+	if (RandR::has_1_3)
+	{
+		return output(XRRGetOutputPrimary(QX11Info::display(), rootWindow()));
+	}
+	return 0;
+}
+#endif
 
 ModeMap RandRScreen::modes() const
 {
@@ -483,6 +514,12 @@ bool RandRScreen::applyProposed(bool confirm)
 			break;
 		}
 	}*/
+#ifdef HAS_RANDR_1_3
+	if (succeed)
+	{
+		setPrimaryOutput(m_proposedPrimaryOutput);
+	}
+#endif //HAS_RANDR_1_3
 
 	kDebug() << "Changes have been applied to all outputs.";
 
@@ -506,6 +543,11 @@ bool RandRScreen::applyProposed(bool confirm)
 			o->applyProposed();
 		}
 	}
+
+#ifdef HAS_RANDR_1_3
+	m_proposedPrimaryOutput = m_originalPrimaryOutput;
+	setPrimaryOutput(m_proposedPrimaryOutput);
+#endif //HAS_RANDR_1_3
 	return false;
 }
 
@@ -633,3 +675,4 @@ void RandRScreen::slotOutputChanged(RROutput id, int changes)
 #include "randrscreen.moc"
 
 
+// vim:noet:sts=8:sw=8:

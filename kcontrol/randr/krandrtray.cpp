@@ -307,6 +307,10 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 			if (screen->connectedCount() != 1)
 				menu->addTitle(SmallIcon("view-fullscreen"), i18n("Outputs"));
 
+#ifdef HAS_RANDR_1_3
+			RandROutput *primary = screen->primaryOutput();
+#endif //HAS_RANDR_1_3
+
 			foreach(RandROutput *output, outputs)
 			{
 				if (output->isConnected()) 
@@ -365,6 +369,20 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 						connect(actionGroup, SIGNAL(triggered(QAction*)), 
 							output, SLOT(slotChangeRefreshRate(QAction*)));
 					}
+
+#ifdef HAS_RANDR_1_3
+					if (RandR::has_1_3 && screen->connectedCount() != 1)
+					{
+						outputMenu->addSeparator();
+						action = outputMenu->addAction(
+								i18nc("(checkbox) designate this output as the primary output", "Primary output"),
+								output,
+								SLOT(slotSetAsPrimary(bool)) );
+						action->setCheckable(true);
+						action->setChecked(primary == output);
+					}
+#endif //HAS_RANDR_1_3
+
 					
 					if (screen->connectedCount() != 1)
 						menu->addMenu(outputMenu);
@@ -573,3 +591,4 @@ void KRandRSystemTray::slotPrefs()
 	m_kcm.data()->show();
 	m_kcm.data()->raise();
 }
+// vim:noet:sts=8:sw=8:

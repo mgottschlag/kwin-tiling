@@ -69,6 +69,7 @@ class RandR
 {
 public:
 	static bool has_1_2;
+	static bool has_1_3;
 	static Time timestamp;
 	
 	static const int OrientationCount = 6;

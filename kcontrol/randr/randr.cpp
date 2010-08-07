@@ -21,6 +21,7 @@
 #include <KIconLoader>
 
 bool RandR::has_1_2 = false;
+bool RandR::has_1_3 = false;
 Time RandR::timestamp = 0;
 
 QString RandR::rotationName(int rotation, bool pastTense, bool capitalised)

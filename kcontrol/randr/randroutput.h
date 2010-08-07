@@ -125,6 +125,7 @@ public slots:
 	void slotChangeRefreshRate(QAction *action);
 	void slotDisable();
 	void slotEnable();
+	void slotSetAsPrimary(bool primary);
 
 private slots:
 	void slotCrtcChanged(RRCrtc c, int changes);
@@ -177,3 +178,4 @@ private:
 	bool m_connected;
 };
 #endif
+// vim:noet:sts=8:sw=8:

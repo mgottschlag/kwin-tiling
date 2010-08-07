@@ -56,6 +56,13 @@ public:
 	OutputMap outputs() const;
 	RandROutput *output(RROutput id) const;
 
+#ifdef HAS_RANDR_1_3
+	void setPrimaryOutput(RandROutput* output);
+	RandROutput* primaryOutput();
+
+	void proposePrimaryOutput(RandROutput* output);
+#endif
+
 	ModeMap modes() const;
 	RandRMode mode(RRMode id) const;
 
@@ -114,6 +121,11 @@ private:
 	int m_connectedCount;
 	int m_activeCount;
 
+#ifdef HAS_RANDR_1_3
+	RandROutput* m_originalPrimaryOutput;
+	RandROutput* m_proposedPrimaryOutput;
+#endif //HAS_RANDR_1_3
+
 	XRRScreenResources* m_resources;
 
 	CrtcMap m_crtcs;
@@ -123,3 +135,4 @@ private:
 };
 
 #endif
+// vim:noet:sts=8:sw=8:

@@ -63,6 +63,17 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 						  QSizePolicy::Minimum);
 	layout->addWidget(m_container);
 
+#ifdef HAS_RANDR_1_3
+        if (RandR::has_1_3)
+        {
+            primaryDisplaySelector->setVisible(true);
+        }
+        else
+#endif //HAS_RANDR_1_3
+        {
+            primaryDisplaySelector->setVisible(false);
+        }
+
 	// create the scene
 	m_scene = new QGraphicsScene(m_display->currentScreen()->rect());	
 	screenView->setScene(m_scene);
@@ -90,6 +101,16 @@ void RandRConfig::load(void)
 	m_configs.clear(); // objects deleted above
 	
 	OutputMap outputs = m_display->currentScreen()->outputs();
+#ifdef HAS_RANDR_1_3
+	RandROutput *primary = m_display->currentScreen()->primaryOutput();
+	if (RandR::has_1_3)
+	{
+		// disconnect while we repopulate the combo box
+		disconnect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SLOT(slotChanged()));
+		primaryDisplayBox->clear();
+		primaryDisplayBox->addItem(i18nc("No display selected", "None"));
+	}
+#endif //HAS_RANDR_1_3
 
 	// FIXME: adjust it to run on a multi screen system
 	CollapsibleWidget *w;
@@ -119,7 +140,24 @@ void RandRConfig::load(void)
 
 		connect(config, SIGNAL(updateView()), this, SLOT(slotUpdateView()));
 		connect(config, SIGNAL(optionChanged()), this, SLOT(slotChanged()));
-	}		    
+
+#ifdef HAS_RANDR_1_3
+		if (RandR::has_1_3 && output->isConnected())
+		{
+			primaryDisplayBox->addItem(output->name(), QVariant::fromValue(output->id()));
+			if (primary == output)
+			{
+				primaryDisplayBox->setCurrentIndex(primaryDisplayBox->count()-1);
+			}
+		}
+#endif //HAS_RANDR_1_3
+	}
+#ifdef HAS_RANDR_1_3
+	if (RandR::has_1_3)
+	{
+		connect(primaryDisplayBox, SIGNAL(currentIndexChanged(int)), this, SLOT(slotChanged()));
+	}
+#endif //HAS_RANDR_1_3
 	slotUpdateView();
 }
 
@@ -196,6 +234,21 @@ void RandRConfig::apply()
 			output->slotDisable();
 		}
 	}
+#ifdef HAS_RANDR_1_3
+	{
+		int primaryOutputIndex = primaryDisplayBox->currentIndex();
+		RandRScreen *screen = m_display->currentScreen();
+		if (primaryOutputIndex > 0)
+		{
+			QVariant output = primaryDisplayBox->itemData(primaryOutputIndex);
+			screen->proposePrimaryOutput(screen->output(output.value<RROutput>()));
+		}
+		else
+		{
+			screen->proposePrimaryOutput(0);
+		}
+	}
+#endif //HAS_RANDR_1_3
 	m_display->applyProposed();
 	update();
 }
@@ -337,3 +390,4 @@ void RandRConfig::insufficientVirtualSize()
 
 #include "randrconfig.moc"
 
+// vim:noet:sts=8:sw=8:
