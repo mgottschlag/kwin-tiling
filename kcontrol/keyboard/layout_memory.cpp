@@ -22,7 +22,7 @@
 
 #include <kdebug.h>
 #include <kwindowsystem.h>
-#include <netwm.h>
+//#include <netwm.h>
 
 #include "x11_helper.h"
 
@@ -83,7 +83,7 @@ QString LayoutMemory::getCurrentMapKey() {
 	}
 	case KeyboardConfig::SWITCH_POLICY_APPLICATION: {
 		WId wid = KWindowSystem::self()->activeWindow();
-		KWindowInfo winInfo = KWindowSystem::windowInfo(wid, NET::WMWindowType);
+		KWindowInfo winInfo = KWindowSystem::windowInfo(wid, NET::WMWindowType, NET::WM2WindowClass);
 		NET::WindowType windowType = winInfo.windowType( NET::NormalMask | NET::DesktopMask | NET::DialogMask );
 		kDebug() << "window type" << windowType;
 
@@ -93,12 +93,12 @@ QString LayoutMemory::getCurrentMapKey() {
 		if( windowType != NET::Unknown && windowType != NET::Normal && windowType != NET::Dialog )
 			return QString();
 
-//		KWindowInfo winInfo = KWindowSystem::windowInfo(wid, NET::WM2WindowClass);
-//		return QString(winInfo.windowClassName());
-		//TODO: shall we use pid or window class ???
-		NETWinInfo winInfoForPid( QX11Info::display(), wid, QX11Info::appRootWindow(), NET::WMPid | NET::WM2WindowClass);
-//		return QString(winInfo.windowClassClass());
-		return QString::number(winInfoForPid.pid());
+		// shall we use pid or window class ??? - class seems better (see e.g. https://bugs.kde.org/show_bug.cgi?id=245507)
+		// for window class shall we use class.class or class.name? (seem class.class is a bit better - more app-oriented)
+//		kDebug() << "window class.class: " << winInfo.windowClassClass();
+		return QString(winInfo.windowClassClass());
+//		NETWinInfo winInfoForPid( QX11Info::display(), wid, QX11Info::appRootWindow(), NET::WMPid);
+//		return QString::number(winInfoForPid.pid());
 	}
 	case KeyboardConfig::SWITCH_POLICY_DESKTOP:
 		return QString::number(KWindowSystem::self()->currentDesktop());
