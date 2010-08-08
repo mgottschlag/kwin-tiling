@@ -294,11 +294,13 @@ void SearchLaunch::availableScreenRegionChanged()
     }
 
     QGraphicsView *ownView = view();
-    
+
     //FIXME: the second check is a workaround to a qt bug: when a qwidget has just been created, maptoglobal and mapfromglobal aren't symmetryc. remove as soon as the bug is fixed
     if (ownView && (ownView->mapFromGlobal(QPoint(0,0)) == -ownView->mapToGlobal(QPoint(0,0)))) {
         maxRect.moveTopLeft(ownView->mapFromGlobal(maxRect.topLeft()));
     }
+
+    maxRect.moveTopLeft(QPoint(qMax(0, maxRect.left()), qMax(0, maxRect.top())));
 
     setContentsMargins(maxRect.left(), maxRect.top(), qMax((qreal)0.0, size().width() - maxRect.right()), qMax((qreal)0.0, size().height() - maxRect.bottom()));
 }
