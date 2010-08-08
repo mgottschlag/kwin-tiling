@@ -360,7 +360,6 @@ void Interface::resetInterface()
         m_resultsScene->clearQuery();
     }
     resetResultsArea();
-    resize(qMax(minimumSizeHint().width(), m_defaultSize.width()), minimumSizeHint().height());
     m_minimumHeight = height();
 }
 
@@ -578,14 +577,13 @@ void Interface::hideResultsArea()
 {
     searchTermSetFocus();
     resetResultsArea();
-    resize(qMax(minimumSizeHint().width(), m_defaultSize.width()), minimumSizeHint().height());
 }
 
 void Interface::resetResultsArea()
 {
     m_resultsView->hide();
     setMinimumSize(QSize(MIN_WIDTH, 0));
-    adjustSize();
+    resize(qMax(minimumSizeHint().width(), m_defaultSize.width()), minimumSizeHint().height());
 }
 
 #include "interface.moc"
