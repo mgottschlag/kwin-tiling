@@ -353,12 +353,18 @@ void KCMKeyboardWidget::moveSelectedLayouts(int shift)
 void KCMKeyboardWidget::scrollToGroupShortcut()
 {
     this->setCurrentIndex(TAB_ADVANCED);
+    if( ! uiWidget->configureKeyboardOptionsChk->isChecked() ) {
+    	uiWidget->configureKeyboardOptionsChk->setChecked(true);
+    }
 	((XkbOptionsTreeModel*)uiWidget->xkbOptionsTreeView->model())->gotoGroup(GROUP_SWITCH_GROUP_NAME, uiWidget->xkbOptionsTreeView);
 }
 
 void KCMKeyboardWidget::scrollTo3rdLevelShortcut()
 {
 	this->setCurrentIndex(TAB_ADVANCED);
+    if( ! uiWidget->configureKeyboardOptionsChk->isChecked() ) {
+    	uiWidget->configureKeyboardOptionsChk->setChecked(true);
+    }
 	((XkbOptionsTreeModel*)uiWidget->xkbOptionsTreeView->model())->gotoGroup(LV3_SWITCH_GROUP_NAME, uiWidget->xkbOptionsTreeView);
 }
 
