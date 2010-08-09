@@ -16,4 +16,7 @@ The architecture features features 2 main components:
     dbus client stubs that access kded_kephal, and if this is not available, queries
     QDesktopWidget directly.
 
+kephalapp and kephald are intended for development/testing.
+They are not installed.
+
 Some more infos are in READMEs in the subdirs or as API-Docs.
