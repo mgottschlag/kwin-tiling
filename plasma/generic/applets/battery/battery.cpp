@@ -505,26 +505,6 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         m_extenderApplet->updateConstraints(Plasma::StartupCompletedConstraint);
         m_controlsLayout->addItem(m_extenderApplet, 1, 2, 2, 1);
 
-        m_brightnessLabel = createBuddyLabel(m_controls);
-#if KDE_IS_VERSION(4, 5, 60)
-        m_brightnessLabel->setText(i18n("Screen Brightness:"));
-#else
-        m_brightnessLabel->setText(i18n("Screen Brightness") + ':');
-#endif
-
-        m_controlsLayout->addItem(m_brightnessLabel, row, 0);
-
-        m_brightnessSlider = new Plasma::Slider(m_controls);
-        m_brightnessSlider->setRange(0, 100);
-        updateSlider(Solid::Control::PowerManager::brightness());
-        m_brightnessSlider->nativeWidget()->setTickInterval(10);
-        m_brightnessSlider->setOrientation(Qt::Horizontal);
-        connect(m_brightnessSlider, SIGNAL(valueChanged(int)),
-                this, SLOT(brightnessChanged(int)));
-
-        m_controlsLayout->addItem(m_brightnessSlider, row, 1, 1, 2);
-        row++;
-
         m_profileLabel = createBuddyLabel(m_controls);
         m_profileLabel->setText(i18n("Power Profile:"));
         m_controlsLayout->addItem(m_profileLabel, row, 0);
@@ -535,9 +515,21 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         m_profileCombo->setZValue(110);
         connect(m_profileCombo, SIGNAL(activated(QString)),
                 this, SLOT(setProfile(QString)));
-
         m_controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
+        row++;
 
+        m_brightnessLabel = createBuddyLabel(m_controls);
+        m_brightnessLabel->setText(i18n("Screen Brightness:"));
+        m_controlsLayout->addItem(m_brightnessLabel, row, 0);
+
+        m_brightnessSlider = new Plasma::Slider(m_controls);
+        m_brightnessSlider->setRange(0, 100);
+        updateSlider(Solid::Control::PowerManager::brightness());
+        m_brightnessSlider->nativeWidget()->setTickInterval(10);
+        m_brightnessSlider->setOrientation(Qt::Horizontal);
+        connect(m_brightnessSlider, SIGNAL(valueChanged(int)),
+                this, SLOT(brightnessChanged(int)));
+        m_controlsLayout->addItem(m_brightnessSlider, row, 1, 1, 2);
         row++;
 
         QGraphicsLinearLayout *buttonLayout = new QGraphicsLinearLayout;
