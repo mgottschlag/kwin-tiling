@@ -11,6 +11,7 @@ Comment[x-test]=xxDefault panel toolbox for the Plasma desktop shellxx
 Icon=plasma
 Name=Panel toolbox
 Name[en_GB]=Panel toolbox
+Name[es]=Caja de herramientas del panel
 Name[ia]=Cassetta de utilitate de pannello
 Name[lt]=Panelės įrankinė
 Name[nds]=Warktüüch för Paneels
