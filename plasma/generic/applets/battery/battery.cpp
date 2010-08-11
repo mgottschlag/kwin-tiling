@@ -46,6 +46,7 @@
 #include <KConfigDialog>
 #include <KGlobalSettings>
 #include <KPushButton>
+#include <KComboBox>
 
 #include <kworkspace/kworkspace.h>
 
@@ -511,6 +512,8 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
 
         m_profileCombo = new Plasma::ComboBox(m_controls);
+        // Workaround for bug 219873
+	m_profileCombo->nativeWidget()->setMaxVisibleItems(4);
         // This is necessary until Qt task #217874 is fixed
         m_profileCombo->setZValue(110);
         connect(m_profileCombo, SIGNAL(activated(QString)),
