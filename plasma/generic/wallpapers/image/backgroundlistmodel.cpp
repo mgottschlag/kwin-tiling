@@ -238,7 +238,7 @@ QVariant BackgroundListModel::data(const QModelIndex &index, int role) const
         if (!m_previewJobs.contains(file) && file.isValid()) {
             KIO::PreviewJob* job = KIO::filePreview(KUrl::List() << file,
                                                     BackgroundDelegate::SCREENSHOT_SIZE,
-                                                    BackgroundDelegate::SCREENSHOT_SIZE);
+                                                    BackgroundDelegate::SCREENSHOT_SIZE/1.6);
             job->setIgnoreMaximumSize(true);
             connect(job, SIGNAL(gotPreview(const KFileItem&, const QPixmap&)),
                     this, SLOT(showPreview(const KFileItem&, const QPixmap&)));

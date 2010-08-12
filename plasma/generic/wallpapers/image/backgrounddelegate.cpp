@@ -26,7 +26,7 @@ static const int BLUR_PAD = 6;
 BackgroundDelegate::BackgroundDelegate(QObject *parent)
     : QAbstractItemDelegate(parent)
 {
-    m_maxHeight = SCREENSHOT_SIZE + BLUR_INCREMENT;
+    m_maxHeight = SCREENSHOT_SIZE/1.6 + BLUR_INCREMENT;
     m_maxWidth = SCREENSHOT_SIZE + BLUR_INCREMENT;
 }
 
