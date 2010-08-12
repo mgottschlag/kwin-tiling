@@ -28,24 +28,14 @@
 #include <Plasma/View>
 #include <Plasma/Corona>
 
+#include "kworkspace/screenpreviewwidget.h"
 #include "kworkspace/kactivityinfo.h"
 #include "kworkspace/kactivitycontroller.h"
 
 #include "ui_BackgroundDialog.h"
 #include "ui_ActivityConfiguration.h"
 
-struct WallpaperInfo
-{
-    WallpaperInfo() {}
-
-    WallpaperInfo(const QString &p, const QString &m)
-        : plugin(p),
-          mode(m)
-    {}
-
-    QString plugin;
-    QString mode;
-};
+typedef QPair<QString, QString> WallpaperInfo;
 Q_DECLARE_METATYPE(WallpaperInfo)
 
 // From kcategorizeditemsviewdelegate by Ivan Cukic
@@ -189,6 +179,7 @@ public:
        wallpaper(0),
        view(v),
        containment(c),
+       preview(0),
        modified(false)
     {
     }
@@ -204,13 +195,14 @@ public:
     Plasma::Wallpaper* wallpaper;
     Plasma::View* view;
     QWeakPointer<Plasma::Containment> containment;
+    ScreenPreviewWidget* preview;
     KPageWidgetItem *activityItem;
     KPageWidgetItem *appearanceItem;
     KPageWidgetItem *mouseItem;
     bool modified;
 };
 
-BackgroundDialog::BackgroundDialog(const QSize& /* res */, Plasma::Containment *c, Plasma::View* view,
+BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Plasma::View* view,
                                    QWidget* parent, const QString &id, KConfigSkeleton *s)
     : KConfigDialog(parent, id, s),
       d(new BackgroundDialogPrivate(c, view))
@@ -226,6 +218,18 @@ BackgroundDialog::BackgroundDialog(const QSize& /* res */, Plasma::Containment *
     QWidget *activity = new QWidget(this);
     d->activityUi.setupUi(activity);
     d->activityItem = addPage(activity, i18n("Activity"), "plasma");
+
+    qreal previewRatio = (qreal)res.width() / (qreal)res.height();
+    QSize monitorSize(200, int(200 * previewRatio));
+
+    d->backgroundDialogUi.m_monitor->setFixedSize(200, 200);
+    d->backgroundDialogUi.m_monitor->setText(QString());
+    d->backgroundDialogUi.m_monitor->setWhatsThis(i18n(
+        "This picture of a monitor contains a preview of "
+        "what the current settings will look like on your desktop."));
+    d->preview = new ScreenPreviewWidget(d->backgroundDialogUi.m_monitor);
+    d->preview->setRatio(previewRatio);
+    d->preview->resize(200, 200);
 
     connect(this, SIGNAL(finished(int)), this, SLOT(cleanup()));
     connect(this, SIGNAL(okClicked()), this, SLOT(saveConfig()));
@@ -339,7 +343,11 @@ void BackgroundDialog::reloadConfig()
     #if 0
     d->wallpaperLabel->setVisible(doWallpaper);
     #endif
+
     d->backgroundDialogUi.m_wallpaperGroup->setVisible(doWallpaper);
+    d->backgroundDialogUi.m_monitor->setVisible(doWallpaper);
+    d->preview->setVisible(doWallpaper);
+
     //kDebug() << "do wallpapers?!" << doWallpaper;
     if (doWallpaper) {
         // Load wallpaper plugins
@@ -394,6 +402,7 @@ void BackgroundDialog::reloadConfig()
         changeBackgroundMode(wallpaperIndex);
     }
 
+
     connect(d->backgroundDialogUi.m_wallpaperMode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
     settingsModified(false);
 }
@@ -411,20 +420,21 @@ void BackgroundDialog::changeBackgroundMode(int mode)
         delete widget;
     }
 
-    if (d->wallpaper && d->wallpaper->pluginName() != wallpaperInfo.plugin) {
+    if (d->wallpaper && d->wallpaper->pluginName() != wallpaperInfo.first) {
         delete d->wallpaper;
         d->wallpaper = 0;
     }
 
     if (!d->wallpaper) {
-        d->wallpaper = Plasma::Wallpaper::load(wallpaperInfo.plugin);
+        d->wallpaper = Plasma::Wallpaper::load(wallpaperInfo.first);
     }
 
     if (d->wallpaper) {
         d->wallpaper->setPreviewing(true);
-        d->wallpaper->setRenderingMode(wallpaperInfo.mode);
-        KConfigGroup cfg = wallpaperConfig(wallpaperInfo.plugin);
-        //kDebug() << "making a" << wallpaperInfo.plugin << "in mode" << wallpaperInfo.mode;
+        d->preview->setPreview(d->wallpaper);
+        d->wallpaper->setRenderingMode(wallpaperInfo.second);
+        KConfigGroup cfg = wallpaperConfig(wallpaperInfo.first);
+        //kDebug() << "making a" << wallpaperInfo.first << "in mode" << wallpaperInfo.second;
         if (d->containment) {
             d->wallpaper->setTargetSizeHint(d->containment.data()->size());
         }
@@ -433,6 +443,10 @@ void BackgroundDialog::changeBackgroundMode(int mode)
         WallpaperWidget *wallpaperWidget = new WallpaperWidget(d->backgroundDialogUi.m_wallpaperGroup);
         w = d->wallpaper->createConfigurationInterface(wallpaperWidget);
         connect(wallpaperWidget, SIGNAL(modified(bool)), this, SLOT(settingsModified(bool)));
+
+        const bool needsPreviewDuringConfiguration = d->wallpaper->needsPreviewDuringConfiguration();
+        d->backgroundDialogUi.m_monitorWidget->setVisible(needsPreviewDuringConfiguration);
+        d->preview->setVisible(needsPreviewDuringConfiguration);
     }
 
     if (!w) {
@@ -461,6 +475,8 @@ KConfigGroup BackgroundDialog::wallpaperConfig(const QString &plugin)
 
 void BackgroundDialog::saveConfig()
 {
+    QString wallpaperPlugin = d->backgroundDialogUi.m_wallpaperMode->itemData(d->backgroundDialogUi.m_wallpaperMode->currentIndex()).value<WallpaperInfo>().first;
+    QString wallpaperMode = d->backgroundDialogUi.m_wallpaperMode->itemData(d->backgroundDialogUi.m_wallpaperMode->currentIndex()).value<WallpaperInfo>().second;
     QString containment = d->activityUi.m_containmentComboBox->itemData(d->activityUi.m_containmentComboBox->currentIndex(),
                                                           AppletDelegate::PluginNameRole).toString();
 
@@ -532,9 +548,7 @@ void BackgroundDialog::saveConfig()
     }
 
     if (d->containment) {
-        const int index = d->backgroundDialogUi.m_wallpaperMode->currentIndex();
-        WallpaperInfo wallpaperInfo = d->backgroundDialogUi.m_wallpaperMode->itemData(index).value<WallpaperInfo>();
-        d->containment.data()->setWallpaper(wallpaperInfo.plugin, wallpaperInfo.mode);
+        d->containment.data()->setWallpaper(wallpaperPlugin, wallpaperMode);
     }
 
     settingsModified(false);
