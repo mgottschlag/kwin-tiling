@@ -187,6 +187,7 @@ void NetToolBox::init()
     Q_ASSERT(m_containment);
 
     m_icon = KIcon("plasma");
+    m_closeIcon = KIcon("dialog-close");
     m_iconSize = QSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
     m_animHighlightFrame = 0;
     m_hovering = false;
@@ -440,17 +441,24 @@ void NetToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     m_background->paint(painter, boundingRect(), svgElement);
 
+    KIcon icon;
+    if (isShowing()) {
+        icon = m_closeIcon;
+    } else {
+        icon = m_icon;
+    }
+
     if (qFuzzyCompare(qreal(1.0), m_animHighlightFrame)) {
-        m_icon.paint(painter, QRect(iconPos, m_iconSize));
+       icon.paint(painter, QRect(iconPos, m_iconSize));
     } else if (qFuzzyCompare(qreal(1.0), 1 + m_animHighlightFrame)) {
-        m_icon.paint(painter, QRect(iconPos, m_iconSize),
+        icon.paint(painter, QRect(iconPos, m_iconSize),
                       Qt::AlignCenter, QIcon::Disabled, QIcon::Off);
     } else {
-        QPixmap disabled = m_icon.pixmap(m_iconSize, QIcon::Disabled, QIcon::Off);
-        QPixmap enabled = m_icon.pixmap(m_iconSize);
+        QPixmap disabled = icon.pixmap(m_iconSize, QIcon::Disabled, QIcon::Off);
+        QPixmap enabled = icon.pixmap(m_iconSize);
         QPixmap result = Plasma::PaintUtils::transition(
-            m_icon.pixmap(m_iconSize, QIcon::Disabled, QIcon::Off),
-            m_icon.pixmap(m_iconSize), m_animHighlightFrame);
+            icon.pixmap(m_iconSize, QIcon::Disabled, QIcon::Off),
+            icon.pixmap(m_iconSize), m_animHighlightFrame);
         painter->drawPixmap(QRect(iconPos, m_iconSize), result);
     }
 }

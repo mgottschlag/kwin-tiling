@@ -93,6 +93,7 @@ private:
     Plasma::Containment *m_containment;
     Plasma::Svg *m_background;
     KIcon m_icon;
+    KIcon m_closeIcon;
     QSize m_iconSize;
     Plasma::Animation *slideAnim;
     QPropertyAnimation *anim;
