@@ -45,6 +45,11 @@ SaverCorona::SaverCorona(QObject *parent)
 
 void SaverCorona::init()
 {
+    setPreferredToolBoxPlugin(Plasma::Containment::DesktopContainment, "org.kde.desktoptoolbox");
+    setPreferredToolBoxPlugin(Plasma::Containment::CustomContainment, "org.kde.desktoptoolbox");
+    setPreferredToolBoxPlugin(Plasma::Containment::PanelContainment, "org.kde.paneltoolbox");
+    setPreferredToolBoxPlugin(Plasma::Containment::CustomPanelContainment, "org.kde.paneltoolbox");
+
     QDesktopWidget *desktop = QApplication::desktop();
     connect(desktop,SIGNAL(screenCountChanged(int)), SLOT(numScreensUpdated(int)));
     m_numScreens = desktop->numScreens();
