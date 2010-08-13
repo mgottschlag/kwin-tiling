@@ -105,6 +105,13 @@ void X11EmbedContainer::embedSystemTrayClient(WId clientId)
     Window winId = XCreateWindow(display, parentId, 0, 0, d->attr.width, d->attr.height,
                                  0, d->attr.depth, InputOutput, d->attr.visual,
                                  CWBackPixel | CWBorderPixel | CWColormap, &sAttr);
+
+    XWindowAttributes attr;
+    if (!XGetWindowAttributes(display, winId, &attr)) {
+        emit error(QX11EmbedContainer::Unknown);
+        return;
+    }
+
     create(winId);
 
 #if defined(HAVE_XCOMPOSITE) && defined(HAVE_XFIXES) && defined(HAVE_XDAMAGE)
