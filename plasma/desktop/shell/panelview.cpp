@@ -263,6 +263,14 @@ public:
         setContentsMargins(left, top, right, bottom);
     }
 
+    void adjustGeometry()
+    {
+        int left, right, top, bottom;
+        adjustMargins(m_panel->geometry());
+        getContentsMargins(&left, &top, &right, &bottom);
+        setGeometry(m_panel->geometry().adjusted(-left, -top, right, bottom));
+    }
+
 protected:
     bool event(QEvent *event)
     {
@@ -473,10 +481,8 @@ void PanelView::checkShadow()
         KWindowSystem::setState(m_shadowWindow->winId(), NET::KeepBelow);
         KWindowSystem::setOnAllDesktops(m_shadowWindow->winId(), true);
         m_shadowWindow->setSvg(containment()->property("shadowPath").toString());
-        int left, right, top, bottom;
-        m_shadowWindow->adjustMargins(geometry());
-        m_shadowWindow->getContentsMargins(&left, &top, &right, &bottom);
-        m_shadowWindow->setGeometry(geometry().adjusted(-left, -top, right, bottom));
+
+        m_shadowWindow->adjustGeometry();
         if (m_shadowWindow->isValid() && isVisible()) {
             m_shadowWindow->show();
         }
@@ -752,10 +758,7 @@ void PanelView::updatePanelGeometry()
     } else {
         setGeometry(geom);
         if (m_shadowWindow) {
-            int left, right, top, bottom;
-            m_shadowWindow->adjustMargins(geometry());
-            m_shadowWindow->getContentsMargins(&left, &top, &right, &bottom);
-            m_shadowWindow->setGeometry(geometry().adjusted(-left, -top, right, bottom));
+            m_shadowWindow->adjustGeometry();
         }
     }
 
