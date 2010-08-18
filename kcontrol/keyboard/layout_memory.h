@@ -36,6 +36,7 @@ class LayoutMemory : public QObject
     // if there's some transient windows coming up we'll need to either ignore it
     // or in case of layout switcher popup menu to apply new layout to previous key
     QString previousLayoutMapKey;
+    QList<LayoutUnit> layoutList;
 
     void registerListeners();
     void unregisterListeners();
@@ -43,7 +44,7 @@ class LayoutMemory : public QObject
     void setCurrentLayoutFromMap();
 
 public Q_SLOTS:
-	void clear();
+	void layoutMapChanged();
 	void layoutChanged();
 	void windowChanged(WId wId);
 	void desktopChanged(int desktop);

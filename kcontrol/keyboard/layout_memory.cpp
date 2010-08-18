@@ -28,7 +28,8 @@
 
 
 LayoutMemory::LayoutMemory():
-	switchingPolicy(KeyboardConfig::SWITCH_POLICY_GLOBAL)
+	switchingPolicy(KeyboardConfig::SWITCH_POLICY_GLOBAL),
+	layoutList(X11Helper::getLayoutsList())
 {
 	registerListeners();
 }
@@ -95,7 +96,7 @@ QString LayoutMemory::getCurrentMapKey() {
 
 		// shall we use pid or window class ??? - class seems better (see e.g. https://bugs.kde.org/show_bug.cgi?id=245507)
 		// for window class shall we use class.class or class.name? (seem class.class is a bit better - more app-oriented)
-//		kDebug() << "window class.class: " << winInfo.windowClassClass();
+		kDebug() << "New active window with class.class: " << winInfo.windowClassClass();
 		return QString(winInfo.windowClassClass());
 //		NETWinInfo winInfoForPid( QX11Info::display(), wid, QX11Info::appRootWindow(), NET::WMPid);
 //		return QString::number(winInfoForPid.pid());
@@ -107,9 +108,12 @@ QString LayoutMemory::getCurrentMapKey() {
 	}
 }
 
-void LayoutMemory::clear()
+void LayoutMemory::layoutMapChanged()
 {
-	layoutMap.clear();
+	if( layoutList != X11Helper::getLayoutsList() ) {
+		kDebug() << "Clearing layout memory as layout map has changed";
+		layoutMap.clear();
+	}
 }
 
 void LayoutMemory::layoutChanged()

@@ -146,7 +146,7 @@ void KeyboardDaemon::registerListeners()
 	connect(xEventNotifier, SIGNAL(newPointerDevice()), this, SLOT(configureMouse()));
 	connect(xEventNotifier, SIGNAL(newKeyboardDevice()), this, SLOT(configureKeyboard()));
 	connect(xEventNotifier, SIGNAL(layoutChanged()), &layoutMemory, SLOT(layoutChanged()));
-	connect(xEventNotifier, SIGNAL(layoutMapChanged()), &layoutMemory, SLOT(clear()));
+	connect(xEventNotifier, SIGNAL(layoutMapChanged()), &layoutMemory, SLOT(layoutMapChanged()));
 	xEventNotifier->start();
 }
 
@@ -159,7 +159,7 @@ void KeyboardDaemon::unregisterListeners()
 	disconnect(xEventNotifier, SIGNAL(newPointerDevice()), this, SLOT(configureMouse()));
 	disconnect(xEventNotifier, SIGNAL(newKeyboardDevice()), this, SLOT(configureKeyboard()));
 	disconnect(xEventNotifier, SIGNAL(layoutChanged()), &layoutMemory, SLOT(layoutChanged()));
-	disconnect(xEventNotifier, SIGNAL(layoutMapChanged()), &layoutMemory, SLOT(clear()));
+	disconnect(xEventNotifier, SIGNAL(layoutMapChanged()), &layoutMemory, SLOT(layoutMapChanged()));
 }
 
 void KeyboardDaemon::globalSettingsChanged(int category)
