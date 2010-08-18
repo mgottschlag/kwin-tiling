@@ -228,6 +228,10 @@ void WindowTaskItem::updateToolTip()
         data.setClickable(true);
         data.setHighlightWindows(m_applet->highlightWindows());
 
+        if (group) {
+            data.setGraphicsWidget(parentWidget());
+        }
+
         Plasma::ToolTipManager::self()->setContent(this, data);
     } else {
         Plasma::ToolTipManager::self()->clearContent(this);
