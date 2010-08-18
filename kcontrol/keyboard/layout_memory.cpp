@@ -110,7 +110,9 @@ QString LayoutMemory::getCurrentMapKey() {
 
 void LayoutMemory::layoutMapChanged()
 {
-	if( layoutList != X11Helper::getLayoutsList() ) {
+	QList<LayoutUnit> newLayoutList(X11Helper::getLayoutsList());
+	if( newLayoutList != layoutList ) {
+		layoutList = newLayoutList;
 		kDebug() << "Clearing layout memory as layout map has changed";
 		layoutMap.clear();
 	}
