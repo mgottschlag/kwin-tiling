@@ -298,7 +298,12 @@ void PanelController::moveEvent(QMoveEvent *event)
 {
     //FIXME: this is a glorious hack: it causes the window to be positioned correctly after kwin positions it incorrectly.
     //TODO: the proper way to do is to give a window type specific to the panel controller, that gets positioned correctly
-    emit offsetChanged(m_ruler->offset());
+    if (((location() == Plasma::BottomEdge || location() == Plasma::TopEdge) &&
+         event->oldPos().x() != event->pos().x()) ||
+        ((location() == Plasma::LeftEdge || location() == Plasma::RightEdge) &&
+         event->oldPos().y() != event->pos().y())) {
+        emit offsetChanged(m_ruler->offset());
+    }
     ControllerWindow::moveEvent(event);
 }
 

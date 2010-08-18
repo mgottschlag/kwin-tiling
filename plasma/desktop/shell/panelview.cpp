@@ -22,6 +22,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QGraphicsLinearLayout>
+#include <QPropertyAnimation>
 #include <QTimer>
 #ifdef Q_WS_X11
 #include <X11/Xatom.h>
@@ -756,7 +757,26 @@ void PanelView::updatePanelGeometry()
         m_strutsTimer->stop();
         m_strutsTimer->start(STRUTSTIMERDELAY);
     } else {
-        setGeometry(geom);
+
+        if (m_panelController && QPoint(pos() - geom.topLeft()).manhattanLength() > 100) {
+            resize(geom.size());
+            QPropertyAnimation *panelAnimation = new QPropertyAnimation(this, "pos", this);
+            panelAnimation->setEasingCurve(QEasingCurve::InOutQuad);
+            panelAnimation->setDuration(300);
+            panelAnimation->setStartValue(pos());
+            panelAnimation->setEndValue(geom.topLeft());
+            panelAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+
+            QPropertyAnimation *controllerAnimation = new QPropertyAnimation(m_panelController, "pos", m_panelController);
+            controllerAnimation->setEasingCurve(QEasingCurve::InOutQuad);
+            controllerAnimation->setDuration(300);
+            controllerAnimation->setStartValue(m_panelController->pos());
+            controllerAnimation->setEndValue(m_panelController->positionForPanelGeometry(geom));
+            controllerAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+        } else {
+            setGeometry(geom);
+        }
+
         if (m_shadowWindow) {
             m_shadowWindow->adjustGeometry();
         }
@@ -1229,6 +1249,10 @@ void PanelView::moveEvent(QMoveEvent *event)
     m_strutsTimer->stop();
     m_strutsTimer->start(STRUTSTIMERDELAY);
     recreateUnhideTrigger();
+
+    if (m_shadowWindow) {
+        m_shadowWindow->adjustGeometry();
+    }
 
     if (containment()) {
         foreach (Plasma::Applet *applet, containment()->applets()) {
