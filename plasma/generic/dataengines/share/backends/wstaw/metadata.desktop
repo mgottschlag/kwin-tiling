@@ -1,0 +1,30 @@
+[Desktop Entry]
+Name=wstaw.org
+Name[da]=wstaw.org
+Name[en_GB]=wstaw.org
+Name[es]=wstaw.org
+Name[pt]=wstaw.org
+Name[pt_BR]=wstaw.org
+Name[sv]=wstaw.org
+Name[uk]=wstaw.org
+Name[x-test]=xxwstaw.orgxx
+Comment=Enables the share of images using the wstaw.org service
+Comment[da]=Muliggør deling af billeder med tjenesten wstaw.org
+Comment[es]=Habilita la compartición de imágenes usando el servicio de Wstaw.org
+Comment[pt]=Activa a partilha de imagens com o serviço do 'wstaw.org'
+Comment[pt_BR]=Habilita o compartilhamento de imagens com o uso do serviço Wstaw.org
+Comment[sv]=Aktiverar att dela bilder med tjänsten wstaw.org
+Comment[uk]=Уможливлює оприлюднення зображень за допомогою служби wstaw.org
+Comment[x-test]=xxEnables the share of images using the wstaw.org servicexx
+Type=Service
+
+X-KDE-ServiceTypes=Plasma/ShareProvider
+X-KDE-Library=plasma_engine_share
+X-KDE-PlasmaShareProvider-MimeType=image/*
+
+X-KDE-PluginInfo-Name=wstaw
+X-KDE-PluginInfo-Author=Artur de Souza
+X-KDE-PluginInfo-Email=asouza@kde.org
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+

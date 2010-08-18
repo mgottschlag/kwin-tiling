@@ -1,0 +1,32 @@
+[Desktop Entry]
+Name=Share Services
+Name[da]=Delingstjenester
+Name[en_GB]=Share Services
+Name[es]=Servicios de compartición
+Name[pt]=Serviços de Partilha
+Name[pt_BR]=Serviços de Compartilhamento
+Name[sv]=Delningstjänster
+Name[uk]=Служби оприлюднення
+Name[x-test]=xxShare Servicesxx
+Comment=Engine to share content using different services
+Comment[da]=Motor til at dele indhold ved brug af forskellige tjenester
+Comment[en_GB]=Engine to share content using different services
+Comment[es]=Motor para compartir contenido usando diferentes servicios
+Comment[pt]=Um motor para partilhar conteúdos através de vários serviços
+Comment[pt_BR]=Um mecanismo para compartilhar conteúdos usando diferentes serviços
+Comment[sv]=Gränssnitt för att dela innehåll genom att använda olika tjänster
+Comment[uk]=Рушій спільного використання даних різними службами
+Comment[x-test]=xxEngine to share content using different servicesxx
+Type=Service
+X-KDE-ServiceTypes=Plasma/DataEngine
+
+X-KDE-Library=plasma_engine_share
+X-KDE-PluginInfo-Author=Artur de Souza
+X-KDE-PluginInfo-Email=asouza@kde.org
+X-KDE-PluginInfo-Name=org.kde.plasma.dataengine.share
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=Utilities
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=LGPL
+X-KDE-PluginInfo-EnabledByDefault=true
