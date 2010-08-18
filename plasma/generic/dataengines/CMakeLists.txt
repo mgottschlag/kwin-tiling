@@ -17,6 +17,7 @@ add_subdirectory(soliddevice)
 add_subdirectory(time)
 add_subdirectory(weather)
 add_subdirectory(statusnotifieritem)
+add_subdirectory(share)
 
 if (NEPOMUK_FOUND)
     add_subdirectory(metadata)
