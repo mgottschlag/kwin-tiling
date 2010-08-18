@@ -75,7 +75,8 @@ Q_SIGNALS:
      void offsetChanged(int offset);
      void alignmentChanged(Qt::Alignment);
      void locationChanged(Plasma::Location);
-    void panelVisibilityModeChanged(PanelView::VisibilityMode mode);
+     void panelVisibilityModeChanged(PanelView::VisibilityMode mode);
+     void partialMove(const QPoint &delta);
 
 private:
     void mouseMoveFilter(QMouseEvent *event);
@@ -132,6 +133,8 @@ private:
     PositioningRuler *m_ruler;
 
     bool m_drawMoveHint;
+
+    QPoint m_lastPos;
 
     ToolButton *m_expandTool;
 };

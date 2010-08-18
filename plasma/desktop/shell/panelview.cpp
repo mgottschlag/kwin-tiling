@@ -493,6 +493,19 @@ void PanelView::checkShadow()
     }
 }
 
+void PanelView::setPanelDragPosition(const QPoint &point)
+{
+    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(containment()->screen());
+    QRect geom = geometry();
+    geom.translate(-point);
+    if (screenGeom.contains(geom)) {
+        move(pos() - point);
+        if (m_panelController) {
+            m_panelController->move(m_panelController->pos() - point);
+        }
+    }
+}
+
 void PanelView::setLocation(Plasma::Location location)
 {
     Plasma::Containment *c = containment();
@@ -1014,6 +1027,7 @@ void PanelView::togglePanelController()
 
         connect(m_panelController, SIGNAL(destroyed(QObject*)), this, SLOT(editingComplete()));
         connect(m_panelController, SIGNAL(offsetChanged(int)), this, SLOT(setOffset(int)));
+        connect(m_panelController, SIGNAL(partialMove(const QPoint&)), this, SLOT(setPanelDragPosition(const QPoint&)));
         connect(m_panelController, SIGNAL(alignmentChanged(Qt::Alignment)), this, SLOT(setAlignment(Qt::Alignment)));
         connect(m_panelController, SIGNAL(locationChanged(Plasma::Location)), this, SLOT(setLocation(Plasma::Location)));
         connect(m_panelController, SIGNAL(panelVisibilityModeChanged(PanelView::VisibilityMode)), this, SLOT(setVisibilityMode(PanelView::VisibilityMode)));

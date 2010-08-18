@@ -491,6 +491,11 @@ bool PanelController::eventFilter(QObject *watched, QEvent *event)
 {
     ControllerWindow::eventFilter(watched, event);
 
+    if (event->type() == QEvent::MouseButtonPress) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        m_lastPos = mouseEvent->globalPos();
+    }
+
     if (watched == m_optionsDialog && event->type() == QEvent::WindowDeactivate && (!isControllerViewVisible())) {
         if (!m_settingsTool->underMouse()) {
             m_optionsDialog->hide();
@@ -507,6 +512,7 @@ bool PanelController::eventFilter(QObject *watched, QEvent *event)
         } else if (event->type() == QEvent::MouseButtonRelease) {
             m_dragging = NoElement;
             m_moveTool->releaseMouse();
+            emit locationChanged(location());
         } else if (event->type() == QEvent::MouseMove) {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
             mouseMoveFilter(mouseEvent);
@@ -549,6 +555,13 @@ void PanelController::mouseMoveFilter(QMouseEvent *event)
             containment()->setScreen(targetScreen);
             return;
         }
+
+        if (location() == Plasma::BottomEdge || location() == Plasma::TopEdge) {
+            emit partialMove(QPoint(0, m_lastPos.y() - event->globalY()));
+        } else if (location() == Plasma::LeftEdge || location() == Plasma::RightEdge) {
+            emit partialMove(QPoint(m_lastPos.x() - event->globalX(), 0));
+        }
+        m_lastPos = event->globalPos();
 
         //create a dead zone so you can go across the middle without having it hop to one side
         float dzFactor = 0.35;

@@ -265,6 +265,8 @@ private Q_SLOTS:
      */
     void checkShadow();
 
+    void setPanelDragPosition(const QPoint &point);
+
 private:
     Plasma::Svg *m_background;
     PanelController *m_panelController;
