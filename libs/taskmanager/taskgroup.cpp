@@ -180,6 +180,14 @@ void TaskGroup::add(AbstractGroupableItem *item)
 
     if (item->parentGroup()) {
         item->parentGroup()->remove(item);
+    } else if (item->isGroupItem()) {
+        TaskGroup *group = qobject_cast<TaskGroup*>(item);
+        if (group) {
+            foreach (AbstractGroupableItem *subItem, group->members()) {
+                connect(subItem, SIGNAL(changed(::TaskManager::TaskChanges)),
+                        item, SLOT(itemChanged(::TaskManager::TaskChanges)), Qt::UniqueConnection);
+            }
+        }
     }
 
     d->members.append(item);
@@ -187,10 +195,12 @@ void TaskGroup::add(AbstractGroupableItem *item)
 
     connect(item, SIGNAL(destroyed(AbstractGroupableItem*)),
             this, SLOT(itemDestroyed(AbstractGroupableItem*)));
+    //if the item will gain a parent those connections will be added by the if up there
     if (!isRootGroup()) {
         connect(item, SIGNAL(changed(::TaskManager::TaskChanges)),
                 this, SLOT(itemChanged(::TaskManager::TaskChanges)));
     }
+
     //For debug
    /* foreach (AbstractGroupableItem *item, d->members) {
         if (item->isGroupItem()) {
