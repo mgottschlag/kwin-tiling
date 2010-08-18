@@ -150,7 +150,7 @@ Rules* Rules::readRules()
 {
 	QFile file(findXkbRulesFile());
 	if( !file.open(QFile::ReadOnly | QFile::Text) ) {
-		qWarning() << "Cant' open the rules file" << file.fileName();
+		qWarning() << "Cannot open the rules file" << file.fileName();
 		return NULL;
 	}
 
