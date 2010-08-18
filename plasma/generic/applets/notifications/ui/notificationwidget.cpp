@@ -261,7 +261,7 @@ void NotificationWidgetPrivate::updateActions()
 
     actionsWidget = new QGraphicsWidget(body);
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(actionsWidget);
-    layout->setOrientation(Qt::Horizontal);
+    layout->setOrientation(Qt::Vertical);
     layout->addStretch();
     actionsWidget->setContentsMargins(0, 0, 0, 0);
 
@@ -280,7 +280,7 @@ void NotificationWidgetPrivate::updateActions()
         layout->addItem(button);
     }
 
-    bodyLayout->addItem(actionsWidget);
+    messageLayout->addItem(actionsWidget);
 }
 
 void NotificationWidgetPrivate::buttonClicked()
