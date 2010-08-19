@@ -1,19 +1,8 @@
 [Desktop Entry]
 Name=Imgur
-Name[da]=Imgur
-Name[en_GB]=Imgur
-Name[es]=Imgur
-Name[pt]=Imgur
-Name[pt_BR]=Imgur
-Name[sv]=Imgur
 Name[uk]=Imgur
 Name[x-test]=xxImgurxx
 Comment=Enables the share of images using the imgur service
-Comment[da]=Muliggør deling af billeder med tjenesten imgur
-Comment[es]=Habilita la compartición de imágenes usando el servicio Imgur
-Comment[pt]=Activa a partilha de imagens com o serviço do 'imgur'
-Comment[pt_BR]=Habilita o compartilhamento de imagens com o uso do serviço Imgur
-Comment[sv]=Aktiverar att dela bilder med tjänsten imgur
 Comment[uk]=Уможливлює оприлюднення зображень за допомогою служби imgur
 Comment[x-test]=xxEnables the share of images using the imgur servicexx
 Type=Service

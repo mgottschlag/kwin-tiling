@@ -1,19 +1,8 @@
 [Desktop Entry]
 Name=wklej.org
-Name[da]=wklej.org
-Name[en_GB]=wklej.org
-Name[es]=wklej.org
-Name[pt]=wklej.org
-Name[pt_BR]=wklej.org
-Name[sv]=wklej.org
 Name[uk]=wklej.org
 Name[x-test]=xxwklej.orgxx
 Comment=Enables the share of text using wklej.org service
-Comment[da]=Muliggør deling af tekst med tjenesten wklej.org
-Comment[es]=Habilita la compartición de texto usando el servicio de Wklej.org
-Comment[pt]=Activa a partilha de texto com o serviço do 'wklej.org'
-Comment[pt_BR]=Habilita o compartilhamento de texto com o uso do serviço Wklej.org
-Comment[sv]=Aktiverar att dela text med tjänsten wklej.org
 Comment[uk]=Уможливлює оприлюднення фрагментів тексту за допомогою служби wklej.org
 Comment[x-test]=xxEnables the share of text using wklej.org servicexx
 Type=Service
