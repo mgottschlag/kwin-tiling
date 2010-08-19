@@ -228,7 +228,7 @@ void WindowTaskItem::updateToolTip()
         data.setClickable(true);
         data.setHighlightWindows(m_applet->highlightWindows());
 
-        if (group) {
+        if (group && group->collapsed()) {
             data.setGraphicsWidget(parentWidget());
         }
 
