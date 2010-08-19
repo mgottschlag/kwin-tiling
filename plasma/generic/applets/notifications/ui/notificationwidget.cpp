@@ -215,9 +215,9 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
                                                 const QString &summary, const QString &message)
 {
     if (!summary.isEmpty()) {
-        title->setText(QString("<b>")+summary+QString("</b>"));
+        title->setText(summary);
     } else {
-        title->setText(QString("<b>")+i18n("Notification from %1", applicationName)+QString("</b>"));
+        title->setText(i18n("Notification from %1", applicationName));
     }
 
     //Don't show more than 8 lines
