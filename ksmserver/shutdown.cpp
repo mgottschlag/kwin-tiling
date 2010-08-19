@@ -572,7 +572,7 @@ void KSMServer::createLogoutEffectWidget()
     class_hint.res_name = appName.data(); // application name
     class_hint.res_class = const_cast<char *>(QX11Info::appClass());   // application class
     XSetWMProperties( QX11Info::display(), logoutEffectWidget->winId(),
-        NULL, NULL, NULL, NULL, NULL, NULL, &class_hint );
+        NULL, NULL, NULL, 0, NULL, NULL, &class_hint );
     XChangeProperty( QX11Info::display(), logoutEffectWidget->winId(),
         XInternAtom( QX11Info::display(), "WM_WINDOW_ROLE", False ), XA_STRING, 8, PropModeReplace,
         (unsigned char *)"logouteffect", strlen( "logouteffect" ));

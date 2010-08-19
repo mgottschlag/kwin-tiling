@@ -374,7 +374,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     XClassHint class_hint;
     class_hint.res_name = appName.data(); // application name
     class_hint.res_class = const_cast<char *>(QX11Info::appClass());   // application class
-    XSetWMProperties( QX11Info::display(), winId(), NULL, NULL, NULL, NULL, NULL, NULL, &class_hint );
+    XSetWMProperties( QX11Info::display(), winId(), NULL, NULL, NULL, 0, NULL, NULL, &class_hint );
     XChangeProperty( QX11Info::display(), winId(),
         XInternAtom( QX11Info::display(), "WM_WINDOW_ROLE", False ), XA_STRING, 8, PropModeReplace,
         (unsigned char *)"logoutdialog", strlen( "logoutdialog" ));
