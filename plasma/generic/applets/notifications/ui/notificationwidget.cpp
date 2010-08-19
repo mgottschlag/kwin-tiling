@@ -80,7 +80,7 @@ public:
 
     QString message;
     Plasma::Label *messageLabel;
-    Plasma::Label *image;
+    Plasma::IconWidget *image;
     Plasma::Label *title;
     Plasma::IconWidget *icon;
     QGraphicsLinearLayout *titleLayout;
@@ -311,10 +311,11 @@ void NotificationWidgetPrivate::updateNotification()
 
     if (!notification.data()->image().isNull()) {
         if (!image) {
-            image = new Plasma::Label(body);
-            image->setScaledContents(true);
+            image = new Plasma::IconWidget(body);
+            image->setAcceptHoverEvents(false);
+            image->setAcceptedMouseButtons(Qt::NoButton);
         }
-        image->nativeWidget()->setPixmap(QPixmap::fromImage(notification.data()->image()));
+        image->setIcon(QPixmap::fromImage(notification.data()->image()));
 
         QSize imageSize = notification.data()->image().size();
 
@@ -322,8 +323,9 @@ void NotificationWidgetPrivate::updateNotification()
             imageSize.scale(KIconLoader::SizeHuge, KIconLoader::SizeHuge, Qt::KeepAspectRatio);
         }
 
-        image->setMinimumSize(imageSize);
-        image->setMaximumSize(imageSize);
+        image->setMaximumIconSize(imageSize);
+        image->setMinimumWidth(imageSize.width());
+        image->setMaximumWidth(imageSize.width());
         messageLayout->insertItem(0, image);
     } else {
         messageLayout->setContentsMargins(0, 0, 0, 0);
