@@ -22,6 +22,7 @@
 #include <klocale.h>
 
 #include <QtCore/QDebug>
+#include <QtCore/QDir>
 #include <QtGui/QTextDocument> // for Qt::escape
 #include <QtXml/QXmlAttributes>
 
@@ -120,24 +121,40 @@ void postProcess(Rules* rules)
 }
 
 
-static QString findXkbRulesFile()
+QString Rules::getRulesName()
 {
-	QString rulesFile;
 	XkbRF_VarDefsRec vd;
 	char *tmp = NULL;
 
 	if (XkbRF_GetNamesProp(QX11Info::display(), &tmp, &vd) && tmp != NULL ) {
 		// 			qDebug() << "namesprop" << tmp ;
-		QString base;
-		if( QString("/usr/lib/X11") == XLIBDIR ) {
-			base = "/usr/share/X11";
+		return QString(tmp);
+	}
+
+	return QString::null;
+}
+
+static QString findXkbRulesFile()
+{
+	QString rulesFile;
+	QString rulesName = Rules::getRulesName();
+
+	if ( ! rulesName.isNull() ) {
+		QString xkbParentDir;
+
+		QString base(XLIBDIR);
+		if( base.count('/') >= 3 ) {
+			QDir baseDir(base + "/../../share/X11");
+			if( baseDir.exists() ) {
+				xkbParentDir = baseDir.absolutePath();
+			}
 		}
-		else {
-			//TODO: is it good enough?
-			base = XLIBDIR;
-			base += "/..";
+
+		if( xkbParentDir.isEmpty() ) {
+			xkbParentDir = "/usr/share/X11";
 		}
-		rulesFile = base + QString("/xkb/rules/%1.xml").arg(tmp);
+
+		rulesFile = QString("%1/xkb/rules/%2.xml").arg(xkbParentDir, rulesName);
 	}
 
 	return rulesFile;

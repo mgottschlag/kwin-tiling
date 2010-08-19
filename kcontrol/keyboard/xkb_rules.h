@@ -93,6 +93,7 @@ struct Rules {
     }
 
     static Rules* readRules();
+    static QString getRulesName();
 };
 
 #endif /* XKB_RULES_H_ */
