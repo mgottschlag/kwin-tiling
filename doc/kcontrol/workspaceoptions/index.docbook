@@ -27,7 +27,7 @@
 <sect1 id="workspace">
 <title>Workspace</title>
 
-<para>This is a module to configure the behaviour of the Plasma workspace.
+<para>This is a module to configure the behavior of the Plasma workspace.
 </para>
 
 <sect2 id="form-factor">
@@ -57,7 +57,7 @@ a smaller screen resolution.</para>
 <sect2 id="dashboard">
 <title>Dashboard</title>
 <para>
-In the dashboard section you can configure the behaviour of the Plasma dashboard. 
+In the dashboard section you can configure the behavior of the Plasma dashboard. 
 Right now there are two options:
 </para>
 
@@ -80,6 +80,17 @@ set of widget that is different from the ones in the desktop.</para>
 
 </sect2>
 
+<sect2 id="informational-tips">
+<title>Informational Tips</title>
+<para>
+<guilabel>Informational Tips</guilabel> are displayed hoovering items in the 
+plasma panel or on the desktop by default after 0.7 seconds.</para>
+<para>
+Clicking the up and down arrows or pressing the up or down cursor keys on the keyboard
+increases/decreases the delay before informational tips are shown. The number
+can also be entered with the keyboard. The minimum value of -0.1 also means 
+<guilabel>Do not show</guilabel>.</para>
+</sect2>
 </sect1>
 </article>
 
