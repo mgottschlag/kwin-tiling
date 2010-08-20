@@ -114,9 +114,16 @@
           </widget>
          </item>
          <item row="2" column="0">
-          <widget class="QCheckBox" name="showFlagChk">
+          <widget class="QRadioButton" name="showFlagRadioBtn">
            <property name="text">
             <string>Show flag</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QRadioButton" name="showLabelRadioBtn">
+           <property name="text">
+            <string>Show label</string>
            </property>
           </widget>
          </item>

@@ -54,12 +54,12 @@ static const int TAB_HARDWARE = 0;
 static const int TAB_ADVANCED = 2;
 
 KCMKeyboardWidget::KCMKeyboardWidget(Rules* rules_, KeyboardConfig* keyboardConfig_, const KComponentData componentData_, QWidget* /*parent*/):
+	rules(rules_),
 	componentData(componentData_),
 	actionCollection(NULL),
 	uiUpdating(false)
 {
 	flags = new Flags();
-	rules = rules_;
 	keyboardConfig = keyboardConfig_;
 
 	uiWidget = new Ui::TabWidget;
@@ -118,7 +118,7 @@ void KCMKeyboardWidget::uiChanged()
 
 	keyboardConfig->configureLayouts = uiWidget->configureLayoutsChk->isChecked();
 	keyboardConfig->keyboardModel = uiWidget->keyboardModelComboBox->itemData(uiWidget->keyboardModelComboBox->currentIndex()).toString();
-	keyboardConfig->showFlag = uiWidget->showFlagChk->isChecked();
+	keyboardConfig->showFlag = uiWidget->showFlagRadioBtn->isChecked();
 
 	keyboardConfig->resetOldXkbOptions = uiWidget->configureKeyboardOptionsChk->isChecked();
 //    if( keyboardConfig->resetOldXkbOptions ) {
@@ -241,7 +241,8 @@ void KCMKeyboardWidget::initializeLayoutsUI()
 
 	connect(uiWidget->showIndicatorChk, SIGNAL(clicked(bool)), this, SLOT(uiChanged()));
 	connect(uiWidget->showIndicatorChk, SIGNAL(toggled(bool)), uiWidget->showSingleChk, SLOT(setEnabled(bool)));
-	connect(uiWidget->showFlagChk, SIGNAL(clicked(bool)), this, SLOT(uiChanged()));
+	connect(uiWidget->showFlagRadioBtn, SIGNAL(clicked(bool)), this, SLOT(uiChanged()));
+	connect(uiWidget->showLabelRadioBtn, SIGNAL(clicked(bool)), this, SLOT(uiChanged()));
 	connect(uiWidget->showSingleChk, SIGNAL(toggled(bool)), this, SLOT(uiChanged()));
 }
 
@@ -495,7 +496,8 @@ void KCMKeyboardWidget::updateLayoutsUI()
 	uiWidget->configureLayoutsChk->setChecked(keyboardConfig->configureLayouts);
 	uiWidget->showIndicatorChk->setChecked(keyboardConfig->showIndicator);
 	uiWidget->showSingleChk->setChecked(keyboardConfig->showSingle);
-	uiWidget->showFlagChk->setChecked(keyboardConfig->showFlag);
+	uiWidget->showFlagRadioBtn->setChecked(keyboardConfig->showFlag);
+	uiWidget->showLabelRadioBtn->setChecked(!keyboardConfig->showFlag);
 }
 
 void KCMKeyboardWidget::updateHardwareUI()
