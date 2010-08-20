@@ -1,8 +1,12 @@
 [Desktop Entry]
 Name=Simplest Image Hosting
+Name[pt]=Simplest Image Hosting
+Name[pt_BR]=Simplest Image Hosting
 Name[uk]=Simplest Image Hosting
 Name[x-test]=xxSimplest Image Hostingxx
 Comment=Enables the share of images using the Simplest Image Hosting service
+Comment[pt]=Activa a partilha de imagens com o serviço do Simplest Image Hosting
+Comment[pt_BR]=Habilita o compartilhamento de imagens com o uso do serviço Simplest Image Hosting
 Comment[uk]=Уможливлює оприлюднення зображень за допомогою служби Simplest Image Hosting
 Comment[x-test]=xxEnables the share of images using the Simplest Image Hosting servicexx
 Type=Service

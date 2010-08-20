@@ -1,8 +1,12 @@
 [Desktop Entry]
 Name=Share
+Name[pt]=Partilhar
+Name[pt_BR]=Compartilhar
 Name[uk]=Спільний ресурс
 Name[x-test]=xxSharexx
 Comment=Share Package Structure
+Comment[pt]=Estrutura do Pacote da Partilha
+Comment[pt_BR]=Estrutura do pacote de compartilhamento
 Comment[uk]=Структура спільних пакунків
 Comment[x-test]=xxShare Package Structurexx
 Type=Service
