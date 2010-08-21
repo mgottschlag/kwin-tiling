@@ -397,7 +397,7 @@ void ItemContainer::keyPressEvent(QKeyEvent *event)
         m_currentIcon.clear();
         while (!m_currentIcon.data()) {
             m_currentIconIndexX = (nColumns + m_currentIconIndexX - 1) % nColumns;
-            m_currentIcon = m_items.value(m_model->index(nColumns*(m_currentIconIndexY-1)+m_currentIconIndexX, 0, m_rootIndex));
+            m_currentIcon = m_items.value(m_model->index(nColumns*(m_currentIconIndexY)+m_currentIconIndexX, 0, m_rootIndex));
         }
         m_hoverIndicator->setTargetItem(m_currentIcon.data());
         emit itemSelected(m_currentIcon.data());
@@ -407,7 +407,7 @@ void ItemContainer::keyPressEvent(QKeyEvent *event)
         m_currentIcon.clear();
         while (!m_currentIcon.data()) {
             m_currentIconIndexX = (m_currentIconIndexX + 1) % nColumns;
-            m_currentIcon = m_items.value(m_model->index(nColumns*(m_currentIconIndexY-1)+m_currentIconIndexX, 0, m_rootIndex));
+            m_currentIcon = m_items.value(m_model->index(nColumns*(m_currentIconIndexY)+m_currentIconIndexX, 0, m_rootIndex));
         }
         m_hoverIndicator->setTargetItem(m_currentIcon.data());
         emit itemSelected(m_currentIcon.data());
@@ -417,7 +417,7 @@ void ItemContainer::keyPressEvent(QKeyEvent *event)
         m_currentIcon.clear();
         while (!m_currentIcon) {
             m_currentIconIndexY = (nRows + m_currentIconIndexY - 1) % nRows;
-            m_currentIcon = m_items.value(m_model->index(nColumns*(m_currentIconIndexY-1)+m_currentIconIndexX, 0, m_rootIndex));
+            m_currentIcon = m_items.value(m_model->index(nColumns*(m_currentIconIndexY)+m_currentIconIndexX, 0, m_rootIndex));
         }
         m_hoverIndicator->setTargetItem(m_currentIcon.data());
         emit itemSelected(m_currentIcon.data());
@@ -427,7 +427,7 @@ void ItemContainer::keyPressEvent(QKeyEvent *event)
         m_currentIcon.clear();
         while (!m_currentIcon.data()) {
             m_currentIconIndexY = (m_currentIconIndexY + 1) % nRows;
-            m_currentIcon = m_items.value(m_model->index(nColumns*(m_currentIconIndexY-1)+m_currentIconIndexX, 0, m_rootIndex));
+            m_currentIcon = m_items.value(m_model->index(nColumns*(m_currentIconIndexY)+m_currentIconIndexX, 0, m_rootIndex));
         }
         m_hoverIndicator->setTargetItem(m_currentIcon.data());
         emit itemSelected(m_currentIcon.data());
