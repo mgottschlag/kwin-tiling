@@ -107,16 +107,20 @@ void ItemContainer::setCurrentItem(ResultWidget *currentIcon)
     QWeakPointer<ResultWidget> currentWeakIcon = currentIcon;
     //m_currentIcon.clear();
 
-    for (int x = 0; x < m_layout->columnCount(); ++x) {
-        for (int y = 0; y < m_layout->rowCount(); ++y) {
-            if (m_currentIcon.data() == currentIcon) {
-                break;
-            } if (m_layout->itemAt(y, x) == currentIcon) {
-                m_currentIcon = currentIcon;
-                m_currentIconIndexX = x;
-                m_currentIconIndexY = y;
-                emit itemSelected(m_currentIcon.data());
-                break;
+    if (m_currentIcon.data() != currentIcon) {
+        const int nColumns = size().width() / m_cellSize.width();
+        const int nRows = size().height() / m_cellSize.height();
+
+        if (nColumns > 0 && nRows > 0) {
+            for (int i = 0; i < m_model->rowCount(); ++i) {
+                QModelIndex index = m_model->index(i, 0, m_rootIndex);
+                ResultWidget *item = m_items.value(index);
+
+                if (item == currentIcon) {
+                    m_currentIconIndexX = i % nColumns;
+                    m_currentIconIndexY = i / nColumns;
+                    break;
+                }
             }
         }
     }
