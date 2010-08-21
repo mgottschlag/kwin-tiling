@@ -2,11 +2,13 @@
 Name=paste.opensuse.org
 Name[pt]=paste.opensuse.org
 Name[pt_BR]=paste.opensuse.org
+Name[sv]=paste.opensuse.org
 Name[uk]=paste.opensuse.org
 Name[x-test]=xxpaste.opensuse.orgxx
 Comment=Paste text with openSUSE
 Comment[pt]=Colar texto com o openSUSE
 Comment[pt_BR]=Colar texto com o openSUSE
+Comment[sv]=Klistra in text med openSUSE
 Comment[uk]=Вставити фрагмент тексту з openSUSE
 Comment[x-test]=xxPaste text with openSUSExx
 Type=Service

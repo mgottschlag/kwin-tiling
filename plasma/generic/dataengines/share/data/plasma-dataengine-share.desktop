@@ -2,11 +2,13 @@
 Name=Share Services
 Name[pt]=Serviços de Partilha
 Name[pt_BR]=Serviços de compartilhamento
+Name[sv]=Delningstjänster
 Name[uk]=Служби оприлюднення
 Name[x-test]=xxShare Servicesxx
 Comment=Engine to share content using different services
 Comment[pt]=Um motor para partilhar conteúdos através de vários serviços
 Comment[pt_BR]=Um mecanismo para compartilhar conteúdos usando diferentes serviços
+Comment[sv]=Gränssnitt för att dela innehåll genom att använda olika tjänster
 Comment[uk]=Рушій спільного використання даних різними службами
 Comment[x-test]=xxEngine to share content using different servicesxx
 Type=Service

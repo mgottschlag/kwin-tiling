@@ -2,11 +2,13 @@
 Name=Imgur
 Name[pt]=Imgur
 Name[pt_BR]=Imgur
+Name[sv]=Imgur
 Name[uk]=Imgur
 Name[x-test]=xxImgurxx
 Comment=Enables the share of images using the imgur service
 Comment[pt]=Activa a partilha de imagens com o serviço do 'imgur'
 Comment[pt_BR]=Habilita o compartilhamento de imagens com o uso do serviço Imgur
+Comment[sv]=Aktiverar att dela bilder med tjänsten imgur
 Comment[uk]=Уможливлює оприлюднення зображень за допомогою служби imgur
 Comment[x-test]=xxEnables the share of images using the imgur servicexx
 Type=Service

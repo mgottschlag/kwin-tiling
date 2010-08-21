@@ -2,11 +2,13 @@
 Name=Pastebin
 Name[pt]=Colagem
 Name[pt_BR]=Pastebin
+Name[sv]=Pastebin
 Name[uk]=Pastebin
 Name[x-test]=xxPastebinxx
 Comment=Enables the share of text using pastebin.ca service
 Comment[pt]=Activa a partilha de texto com o serviço do 'pastebin.ca'
 Comment[pt_BR]=Habilita o compartilhamento de texto com o uso do serviço pastebin.ca
+Comment[sv]=Aktiverar att dela text med tjänsten pastebin.ca
 Comment[uk]=Уможливлює оприлюднення фрагментів тексту за допомогою служби pastebin.ca
 Comment[x-test]=xxEnables the share of text using pastebin.ca servicexx
 Type=Service
