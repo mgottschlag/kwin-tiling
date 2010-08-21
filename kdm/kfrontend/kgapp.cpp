@@ -344,7 +344,7 @@ main(int argc ATTR_UNUSED, char **argv)
         QCoreApplication::addLibraryPath(dir);
     GreeterApp app(fakeArgc, fakeArgv);
     initQAppConfig();
-    KGlobalSettings::self()->activate();
+    KGlobalSettings::self()->activate(KGlobalSettings::ApplySettings);
 
     Display *dpy = QX11Info::display();
     QDesktopWidget *dw = app.desktop();
