@@ -270,14 +270,14 @@ void StripWidget::dropEvent(QGraphicsSceneDragDropEvent *event)
 
          dataStream >>url;
 
-         int row = m_itemView->rowForPosition(m_itemView->mapFromParent(event->pos()));
+         int row = m_itemView->rowForPosition(m_itemView->widget()->mapFromScene(event->scenePos()));
          QModelIndex index = m_favouritesModel->index(row, 0, QModelIndex());
          //TODO: proper index
          m_favouritesModel->add(url.toString(), index);
          emit saveNeeded();
 
      } else if (event->mimeData()->urls().size() > 0) {
-         int row = m_itemView->rowForPosition(m_itemView->mapFromParent(event->pos()));
+         int row = m_itemView->rowForPosition(m_itemView->widget()->mapFromScene(event->scenePos()));
          QModelIndex index = m_favouritesModel->index(row, 0, QModelIndex());
          m_favouritesModel->add(event->mimeData()->urls().first().path(), index);
          emit saveNeeded();
