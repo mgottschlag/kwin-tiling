@@ -123,12 +123,14 @@ private:
     int m_currentIconIndexX;
     int m_currentIconIndexY;
     int m_iconSize;
+    int m_spacerIndex;
     QSize m_cellSize;
     bool m_firstRelayout;
     DragAndDropMode m_dragAndDropMode;
     bool m_dragging;
     QAbstractItemModel *m_model;
     QModelIndex m_rootIndex;
+    QModelIndex m_draggingIndex;
     ItemView *m_itemView;
     IconActionCollection *m_iconActionCollection;
 };

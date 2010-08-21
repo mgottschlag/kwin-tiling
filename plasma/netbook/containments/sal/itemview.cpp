@@ -202,7 +202,7 @@ QModelIndex ItemView::rootIndex() const
 
 int ItemView::rowForPosition(const QPointF &point)
 {
-    return m_itemContainer->rowForPosition(m_itemContainer->mapFromParent(point));
+    return m_itemContainer->rowForPosition(point);
 }
 
 #include <itemview.moc>

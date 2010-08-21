@@ -50,6 +50,7 @@ ItemContainer::ItemContainer(ItemView *parent)
       m_currentIconIndexX(-1),
       m_currentIconIndexY(-1),
       m_iconSize(-1),
+      m_spacerIndex(-1),
       m_firstRelayout(true),
       m_dragAndDropMode(ItemContainer::NoDragAndDrop),
       m_dragging(false),
@@ -272,7 +273,9 @@ ItemContainer::DragAndDropMode ItemContainer::dragAndDropMode() const
 
 void ItemContainer::askRelayout()
 {
-    m_relayoutTimer->start(500);
+    if (!m_relayoutTimer->isActive()) {
+        m_relayoutTimer->start(200);
+    }
 }
 
 void ItemContainer::relayout()
@@ -297,10 +300,25 @@ void ItemContainer::relayout()
     if (m_orientation == Qt::Vertical) {
         nRows = qMax(1, (int)ceil((qreal)m_model->rowCount() / nColumns));
         for (int i = 0; i <= m_model->rowCount() - 1; i++) {
-            const int row = i / nColumns;
-            const int column = i % nColumns;
+
+            int actualIndex = i;
+            if (m_spacerIndex > -1) {
+                if (i >= m_spacerIndex) {
+                    actualIndex = i+1;
+                }
+                if (i >= m_draggingIndex.row()) {
+                    --actualIndex;
+                }
+            }
+
+            const int row = actualIndex / nColumns;
+            const int column = actualIndex % nColumns;
 
             QModelIndex index = m_model->index(i, 0, m_rootIndex);
+            if (index == m_draggingIndex) {
+                continue;
+            }
+
             ResultWidget *icon = m_items.value(index);
             if (icon) {
                 icon->animatePos(QPoint(column*m_cellSize.width(), row*m_cellSize.height()));
@@ -310,10 +328,24 @@ void ItemContainer::relayout()
     } else {
         nColumns = qMax(1, (int)ceil((qreal)m_model->rowCount() / nRows));
         for (int i = 0; i <= m_model->rowCount() - 1; i++) {
-            const int row = i % nRows;
-            const int column = i / nRows;
+
+            int actualIndex = i;
+            if (m_spacerIndex > -1) {
+                if (i >= m_spacerIndex) {
+                    actualIndex = i+1;
+                }
+                if (i >= m_draggingIndex.row()) {
+                    --actualIndex;
+                }
+            }
+
+            const int row = actualIndex % nRows;
+            const int column = actualIndex / nRows;
 
             QModelIndex index = m_model->index(i, 0, m_rootIndex);
+            if (index == m_draggingIndex) {
+                continue;
+            }
             ResultWidget *icon = m_items.value(index);
             if (icon) {
                 icon->animatePos(QPoint(column*m_cellSize.width(), row*m_cellSize.height()));
@@ -344,6 +376,7 @@ void ItemContainer::itemRequestedDrag(ResultWidget *icon)
         m_dragging = true;
         icon->setZValue(900);
         icon->installEventFilter(this);
+        m_draggingIndex = m_itemToIndex.value(icon);
         //ugly but necessary to don't make it clipped
         icon->setParentItem(0);
     }
@@ -443,7 +476,11 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
         m_itemView->setScrollPositionFromDragPosition(icon->mapToParent(me->pos()));
         m_dragging = true;
 
+        m_spacerIndex = m_itemView->rowForPosition(mapFromScene(me->scenePos()));
+
+        askRelayout();
     } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
+        QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
         m_dragging = false;
         icon->setZValue(10);
         icon->removeEventFilter(this);
@@ -452,9 +489,11 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
 
         QModelIndex index = m_itemToIndex.value(icon);
         if (index.isValid()) {
-            emit itemAskedReorder(index, icon->geometry().center());
+            emit itemAskedReorder(index, mapFromScene(me->scenePos()));
         }
 
+        m_spacerIndex = -1;
+        m_draggingIndex = QModelIndex();
         askRelayout();
     }
 
@@ -467,12 +506,12 @@ int ItemContainer::rowForPosition(const QPointF &point)
     const int nColumns = qMax(1, (int)ceil(size().width() / m_cellSize.width()));
     const int nRows = qMax(1, (int)ceil(size().height() / m_cellSize.height()));
 
-    int row = qMin(nRows, (int)point.y()/m_cellSize.height());
-    int column = qMin(nColumns, (int)point.x()/m_cellSize.width());
+    int row = qMin(nRows-1, (int)round(point.y()/m_cellSize.height()));
+    int column = qMin(nColumns-1, (int)round(point.x()/m_cellSize.width()));
 
     kDebug() << "The item will be put at" << row;
 
-    int modelRow = row*nColumns + qBound(0, column, nColumns);
+    int modelRow = qMin(m_model->rowCount(), row*nColumns + qBound(0, column, nColumns));
 
     kDebug() << "Corresponding to the model row" << modelRow;
 

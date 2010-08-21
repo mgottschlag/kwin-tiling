@@ -149,7 +149,7 @@ void StripWidget::reorderItem(const QModelIndex &index, const QPointF &pos)
         m_favouritesModel->removeRow(index.row());
     } else {
         QList<QStandardItem *>items = m_favouritesModel->takeRow(index.row());
-        int row = m_itemView->rowForPosition(m_itemView->mapFromParent(pos));
+        int row = m_itemView->rowForPosition(pos);
 
         m_favouritesModel->insertRow(row, items);
     }
