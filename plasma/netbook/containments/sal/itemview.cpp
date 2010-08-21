@@ -156,7 +156,6 @@ bool ItemView::eventFilter(QObject *watched, QEvent *event)
             m_itemContainer->setCurrentItem(icon);
         }
     } else if (watched == m_itemContainer && event->type() == QEvent::GraphicsSceneResize) {
-        QGraphicsSceneResizeEvent *re = static_cast<QGraphicsSceneResizeEvent *>(event);
 
         ScrollBarFlags scrollBars = NoScrollBar;
         if (m_itemContainer->pos().x() < 0 || m_itemContainer->geometry().right() > size().width()) {

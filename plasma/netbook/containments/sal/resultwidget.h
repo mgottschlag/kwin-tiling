@@ -28,17 +28,13 @@ class QPropertyAnimation;
 class ResultWidget : public Plasma::IconWidget
 {
     Q_OBJECT
-    Q_PROPERTY(QPointF animationPos READ animationPos WRITE setAnimationPos)
 public:
     ResultWidget(QGraphicsItem *parent);
     ~ResultWidget();
 
     void animateHide();
+    void animatePos(const QPointF &point);
 
-    void setGeometry(const QRectF &rect);
-
-    QPointF animationPos() const;
-    void setAnimationPos(const QPointF &pos);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -54,7 +50,6 @@ Q_SIGNALS:
 
 private:
     QPropertyAnimation *m_animation;
-    bool m_animationLock;
     bool m_shouldBeVisible;
 };
 

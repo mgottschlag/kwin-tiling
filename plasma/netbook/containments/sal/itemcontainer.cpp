@@ -303,7 +303,7 @@ void ItemContainer::relayout()
             QModelIndex index = m_model->index(i, 0, m_rootIndex);
             ResultWidget *icon = m_items.value(index);
             if (icon) {
-                icon->setPos(column*m_cellSize.width(), row*m_cellSize.height());
+                icon->animatePos(QPoint(column*m_cellSize.width(), row*m_cellSize.height()));
                 icon->show();
             }
         }
@@ -316,7 +316,7 @@ void ItemContainer::relayout()
             QModelIndex index = m_model->index(i, 0, m_rootIndex);
             ResultWidget *icon = m_items.value(index);
             if (icon) {
-                icon->setPos(column*m_cellSize.width(), row*m_cellSize.height());
+                icon->animatePos(QPoint(column*m_cellSize.width(), row*m_cellSize.height()));
                 icon->show();
             }
         }
@@ -513,8 +513,6 @@ void ItemContainer::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void ItemContainer::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
-    Q_UNUSED(event)
-
     QGraphicsWidget *pw = parentWidget();
     if (pw) {
         QRectF parentRect = pw->boundingRect();
