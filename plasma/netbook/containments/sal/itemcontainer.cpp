@@ -476,7 +476,12 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
         m_itemView->setScrollPositionFromDragPosition(icon->mapToParent(me->pos()));
         m_dragging = true;
 
-        m_spacerIndex = m_itemView->rowForPosition(mapFromScene(me->scenePos()));
+        m_spacerIndex = rowForPosition(mapFromScene(me->scenePos()));
+        //FIXME: this is not pretty, but rowForPosition should never return a number bigger than the model rows
+        if ((m_orientation == Qt::Horizontal && mapFromScene(me->scenePos()).x() > size().width()-m_cellSize.width()/2) ||
+            (m_orientation == Qt::Vertical && mapFromScene(me->scenePos()).y() > size().height()-m_cellSize.height()/2)) {
+            m_spacerIndex++;
+        }
 
         askRelayout();
     } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
