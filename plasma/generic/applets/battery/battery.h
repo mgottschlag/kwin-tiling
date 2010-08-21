@@ -44,7 +44,7 @@ class BrightnessOSDWidget;
 class Battery : public Plasma::PopupApplet
 {
     Q_OBJECT
-    Q_PROPERTY(qreal labelAlpha READ labelAlpha WRITE setLabelAlpha NOTIFY labelAlphaChanged)
+    Q_PROPERTY(qreal labelAlpha READ labelAlpha WRITE setLabelAlpha )
     Q_PROPERTY(qreal acAlpha READ acAlpha WRITE setAcAlpha)
 
     public:
