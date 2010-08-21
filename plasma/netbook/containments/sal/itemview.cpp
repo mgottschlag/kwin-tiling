@@ -180,6 +180,11 @@ bool ItemView::eventFilter(QObject *watched, QEvent *event)
     return Plasma::ScrollWidget::eventFilter(watched, event);
 }
 
+void ItemView::showSpacer(const QPointF &pos)
+{
+    m_itemContainer->showSpacer(pos);
+}
+
 void ItemView::setModel(QAbstractItemModel *model)
 {
     m_itemContainer->setModel(model);

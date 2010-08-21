@@ -57,6 +57,8 @@ public:
     void setOrientation(Qt::Orientation orientation);
     Qt::Orientation orientation() const;
 
+    void showSpacer(const QPointF &pos);
+
     void setIconSize(int size);
     int iconSize() const;
 

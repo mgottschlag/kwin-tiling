@@ -64,6 +64,8 @@ public:
     void setIconSize(int size);
     int iconSize() const;
 
+    void showSpacer(const QPointF &pos);
+
     void setDragAndDropMode(DragAndDropMode mode);
     DragAndDropMode dragAndDropMode() const;
 

@@ -258,10 +258,19 @@ void StripWidget::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 void StripWidget::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 {
     m_itemView->setScrollPositionFromDragPosition(event->pos());
+    m_itemView->showSpacer(m_itemView->widget()->mapFromScene(event->scenePos()));
+}
+
+void StripWidget::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    Q_UNUSED(event)
+
+    m_itemView->showSpacer(QPointF());
 }
 
 void StripWidget::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
+    m_itemView->showSpacer(QPointF());
     if (event->mimeData()->hasFormat("application/x-plasma-salquerymatch")) {
          QByteArray itemData = event->mimeData()->data("application/x-plasma-salquerymatch");
          QDataStream dataStream(&itemData, QIODevice::ReadOnly);
