@@ -83,8 +83,8 @@ set of widget that is different from the ones in the desktop.</para>
 <sect2 id="informational-tips">
 <title>Informational Tips</title>
 <para>
-<guilabel>Informational Tips</guilabel> are displayed hoovering items in the 
-plasma panel or on the desktop by default after 0.7 seconds.</para>
+<guilabel>Informational Tips</guilabel> are displayed hovering items in the 
+Plasma panel or on the desktop by default after 0.7 seconds.</para>
 <para>
 Clicking the up and down arrows or pressing the up or down cursor keys on the keyboard
 increases/decreases the delay before informational tips are shown. The number
