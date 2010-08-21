@@ -108,7 +108,6 @@ Q_SIGNALS:
     void addActionTriggered(const QModelIndex &index);
 
 private:
-    QGraphicsGridLayout *m_layout;
     QWeakPointer<ResultWidget> m_currentIcon;
     ResultWidget *m_ghostIcon;
     Plasma::ItemBackground *m_hoverIndicator;

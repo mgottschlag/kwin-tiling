@@ -23,6 +23,8 @@
 #include "models/commonmodel.h"
 #include "iconactioncollection.h"
 
+#include <cmath>
+
 #include <QGraphicsGridLayout>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
@@ -57,7 +59,6 @@ ItemContainer::ItemContainer(ItemView *parent)
     m_positionAnimation = new QPropertyAnimation(this, "pos", this);
     m_positionAnimation->setEasingCurve(QEasingCurve::InOutQuad);
     m_positionAnimation->setDuration(250);
-    m_layout = new QGraphicsGridLayout(this);
 
     setIconSize(KIconLoader::SizeHuge);
 
@@ -108,19 +109,16 @@ void ItemContainer::setCurrentItem(ResultWidget *currentIcon)
     //m_currentIcon.clear();
 
     if (m_currentIcon.data() != currentIcon) {
-        const int nColumns = size().width() / m_cellSize.width();
-        const int nRows = size().height() / m_cellSize.height();
+        const int nColumns = qMax(1, (int)ceil(size().width() / m_cellSize.width()));
 
-        if (nColumns > 0 && nRows > 0) {
-            for (int i = 0; i < m_model->rowCount(); ++i) {
-                QModelIndex index = m_model->index(i, 0, m_rootIndex);
-                ResultWidget *item = m_items.value(index);
+        for (int i = 0; i < m_model->rowCount(); ++i) {
+            QModelIndex index = m_model->index(i, 0, m_rootIndex);
+            ResultWidget *item = m_items.value(index);
 
-                if (item == currentIcon) {
-                    m_currentIconIndexX = i % nColumns;
-                    m_currentIconIndexY = i / nColumns;
-                    break;
-                }
+            if (item == currentIcon) {
+                m_currentIconIndexX = i % nColumns;
+                m_currentIconIndexY = i / nColumns;
+                break;
             }
         }
     }
@@ -283,126 +281,52 @@ void ItemContainer::relayout()
         return;
     }
 
-    //Relayout the grid
-    int validRow = 0;
-    int validColumn = 0;
 
     //FIXME: reserve a random fixed size for the scrollbars, regardless they're present or not
     QSizeF availableSize(m_itemView->size() - QSizeF(30, 30));
 
 
-    if (m_layout->rowCount() > 0) {
-        for (int i = 0; i <= m_model->rowCount() - 1; i++) {
-            QModelIndex index = m_model->index(i, 0, m_rootIndex);
-            ResultWidget *icon = m_items.value(index);
-            const int row = i / m_layout->columnCount();
-            const int column = i % m_layout->columnCount();
+    int nColumns = qMax(1, (int)availableSize.width() / m_cellSize.width());
+    int nRows = qMax(1, (int)availableSize.height() / m_cellSize.height());
 
-            if (m_layout->itemAt(row, column) == icon) {
-                validRow = row;
-                validColumn = column;
-                if (row > 0 && (qAbs(size().width() - availableSize.width()) > m_iconSize)) {
-                    validRow = 0;
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
-    }
-    const int nRows = m_layout->rowCount();
-    const int nColumns = m_layout->columnCount();
-
-    for (int i = 0; i < nRows; ++i) {
-        m_layout->setRowFixedHeight(i, 0);
-    }
-    for (int i = 0; i < nColumns; ++i) {
-        m_layout->setColumnFixedWidth(i, 0);
-    }
-
-    for (int row = validRow; row < nRows; ++row) {
-        for (int column = validColumn; column < nColumns; ++column) {
-            QGraphicsLayoutItem * item = m_layout->itemAt(row, column);
-            //FIXME: no other way to remove a specific item in a grid layout
-            // this s really, really horrible
-            for (int i = 0; i < m_layout->count(); ++i) {
-                if (m_layout->itemAt(i) == item) {
-                    m_layout->removeAt(i);
-                    break;
-                }
-            }
-        }
-    }
+    nColumns = qMin(m_model->rowCount(), nColumns);
+    nRows = qMin(m_model->rowCount(), nRows);
 
     setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 
     if (m_orientation == Qt::Vertical) {
-
-        int nColumns;
-        // if we already decided how many columns are going to be don't decide again
-        if (validColumn > 0 && m_layout->columnCount() > 0 &&  m_layout->rowCount() > 0) {
-            nColumns = m_layout->columnCount();
-        } else {
-            nColumns = qMax(1, int(availableSize.width() / m_cellSize.width()));
-        }
-
+        nRows = qMax(1, (int)ceil((qreal)m_model->rowCount() / nColumns));
         for (int i = 0; i <= m_model->rowCount() - 1; i++) {
             const int row = i / nColumns;
             const int column = i % nColumns;
-            if (m_layout->itemAt(row, column) != 0) {
-                continue;
-            }
 
             QModelIndex index = m_model->index(i, 0, m_rootIndex);
             ResultWidget *icon = m_items.value(index);
             if (icon) {
-                m_layout->addItem(icon, row, column);
-                m_layout->setAlignment(icon, Qt::AlignHCenter);
+                icon->setPos(column*m_cellSize.width(), row*m_cellSize.height());
                 icon->show();
             }
         }
     } else {
-
-        int nRows;
-        // if we already decided how many rows are going to be don't decide again
-        if (validRow > 0 && m_layout->columnCount() > 0 &&  m_layout->rowCount() > 0) {
-            nRows = m_layout->rowCount();
-        } else {
-            nRows = qMax(1, int(availableSize.height() / m_cellSize.height()));
-        }
-
+        nColumns = qMax(1, (int)ceil((qreal)m_model->rowCount() / nRows));
         for (int i = 0; i <= m_model->rowCount() - 1; i++) {
             const int row = i % nRows;
             const int column = i / nRows;
-            if (m_layout->itemAt(row, column) != 0) {
-                continue;
-            }
 
             QModelIndex index = m_model->index(i, 0, m_rootIndex);
             ResultWidget *icon = m_items.value(index);
             if (icon) {
-                m_layout->addItem(icon, row, column);
-                m_layout->setAlignment(icon, Qt::AlignCenter);
+                icon->setPos(column*m_cellSize.width(), row*m_cellSize.height());
                 icon->show();
             }
         }
     }
 
-    for (int i = 0; i < m_layout->rowCount(); ++i) {
-        m_layout->setRowFixedHeight(i, m_cellSize.height());
-    }
-    for (int i = 0; i < m_layout->columnCount(); ++i) {
-        m_layout->setColumnFixedWidth(i, m_cellSize.width());
-        m_layout->setColumnAlignment(i, Qt::AlignCenter);
-    }
 
-    m_itemView->setSnapSize(QSizeF(m_cellSize.width(), m_cellSize.height()) + QSizeF(qMax(m_layout->horizontalSpacing(), (qreal)0), qMax(m_layout->verticalSpacing(), (qreal)0)));
+    m_itemView->setSnapSize(QSizeF(m_cellSize.width(), m_cellSize.height()) + QSizeF(0,0)); //TODO: items spacing?
 
-    if (!isVisible()) {
-        m_layout->activate();
-    }
-
-    const QSizeF newSize = sizeHint(Qt::MinimumSize, QSizeF());
+    QSizeF newSize = sizeHint(Qt::MinimumSize, QSizeF());
+    newSize = QSizeF(nColumns*m_cellSize.width(), nRows*m_cellSize.height());
 
     setMaximumSize(newSize);
     resize(newSize);
@@ -416,34 +340,31 @@ void ItemContainer::itemRequestedDrag(ResultWidget *icon)
         return;
     }
 
-    for (int i = 0; i < m_layout->count(); ++i) {
-        if (m_layout->itemAt(i) == icon) {
-            if (dragAndDropMode() == MoveDragAndDrop) {
-                m_layout->removeAt(i);
-                m_dragging = true;
-                icon->setZValue(900);
-                icon->installEventFilter(this);
-                //ugly but necessary to don't make it clipped
-                icon->setParentItem(0);
-            }
+    if (dragAndDropMode() == MoveDragAndDrop) {
+        m_dragging = true;
+        icon->setZValue(900);
+        icon->installEventFilter(this);
+        //ugly but necessary to don't make it clipped
+        icon->setParentItem(0);
+    }
 
-            QModelIndex index = m_model->index(i, 0, m_rootIndex);
-            if (index.isValid()) {
-                emit dragStartRequested(index);
-            }
-            return;
-        }
+    QModelIndex index = m_itemToIndex.value(icon);
+    if (index.isValid()) {
+        emit dragStartRequested(index);
     }
 }
 
 void ItemContainer::keyPressEvent(QKeyEvent *event)
 {
+    const int nColumns = qMax(1, (int)ceil(size().width() / m_cellSize.width()));
+    const int nRows = qMax(1, (int)ceil(size().height() / m_cellSize.height()));
+
     switch (event->key()) {
     case Qt::Key_Left: {
         m_currentIcon.clear();
         while (!m_currentIcon.data()) {
-            m_currentIconIndexX = (m_layout->columnCount() + m_currentIconIndexX - 1) % m_layout->columnCount();
-            m_currentIcon = static_cast<ResultWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
+            m_currentIconIndexX = (nColumns + m_currentIconIndexX - 1) % nColumns;
+            m_currentIcon = m_items.value(m_model->index(nColumns*(m_currentIconIndexY-1)+m_currentIconIndexX, 0, m_rootIndex));
         }
         m_hoverIndicator->setTargetItem(m_currentIcon.data());
         emit itemSelected(m_currentIcon.data());
@@ -452,8 +373,8 @@ void ItemContainer::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Right: {
         m_currentIcon.clear();
         while (!m_currentIcon.data()) {
-            m_currentIconIndexX = (m_currentIconIndexX + 1) % m_layout->columnCount();
-            m_currentIcon = static_cast<ResultWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
+            m_currentIconIndexX = (m_currentIconIndexX + 1) % nColumns;
+            m_currentIcon = m_items.value(m_model->index(nColumns*(m_currentIconIndexY-1)+m_currentIconIndexX, 0, m_rootIndex));
         }
         m_hoverIndicator->setTargetItem(m_currentIcon.data());
         emit itemSelected(m_currentIcon.data());
@@ -462,8 +383,8 @@ void ItemContainer::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Up: {
         m_currentIcon.clear();
         while (!m_currentIcon) {
-            m_currentIconIndexY = (m_layout->rowCount() + m_currentIconIndexY - 1) % m_layout->rowCount();
-            m_currentIcon = static_cast<ResultWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
+            m_currentIconIndexY = (nRows + m_currentIconIndexY - 1) % nRows;
+            m_currentIcon = m_items.value(m_model->index(nColumns*(m_currentIconIndexY-1)+m_currentIconIndexX, 0, m_rootIndex));
         }
         m_hoverIndicator->setTargetItem(m_currentIcon.data());
         emit itemSelected(m_currentIcon.data());
@@ -472,8 +393,8 @@ void ItemContainer::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Down: {
         m_currentIcon.clear();
         while (!m_currentIcon.data()) {
-            m_currentIconIndexY = (m_currentIconIndexY + 1) % m_layout->rowCount();
-            m_currentIcon = static_cast<ResultWidget *>(m_layout->itemAt(m_currentIconIndexY, m_currentIconIndexX));
+            m_currentIconIndexY = (m_currentIconIndexY + 1) % nRows;
+            m_currentIcon = m_items.value(m_model->index(nColumns*(m_currentIconIndexY-1)+m_currentIconIndexX, 0, m_rootIndex));
         }
         m_hoverIndicator->setTargetItem(m_currentIcon.data());
         emit itemSelected(m_currentIcon.data());
@@ -543,41 +464,15 @@ bool ItemContainer::eventFilter(QObject *watched, QEvent *event)
 
 int ItemContainer::rowForPosition(const QPointF &point)
 {
-    //FIXME: this code is ugly as sin and inefficient as well
-    //find the two items that will be neighbours
-    int row = -1;
-    int column = -1;
+    const int nColumns = qMax(1, (int)ceil(size().width() / m_cellSize.width()));
+    const int nRows = qMax(1, (int)ceil(size().height() / m_cellSize.height()));
 
-    QGraphicsLayoutItem *item = 0;
-    for (int y = 0; y < m_layout->rowCount(); ++y) {
-        item = m_layout->itemAt(y, 0);
+    int row = qMin(nRows, (int)point.y()/m_cellSize.height());
+    int column = qMin(nColumns, (int)point.x()/m_cellSize.width());
 
-        if (item && item->geometry().center().y() > point.y()) {
-            row = y;
-            break;
-        }
-    }
-    if (row == -1 && point.y() > m_layout->geometry().center().y()) {
-        row = m_layout->rowCount();
-    }
+    kDebug() << "The item will be put at" << row;
 
-    for (int x = 0; x < m_layout->columnCount(); ++x) {
-        item = m_layout->itemAt(0, x);
-
-        if (item && item->geometry().center().x() > point.x()) {
-            column = x;
-            break;
-        }
-    }
-    if (column == -1 && point.x() > m_layout->geometry().center().x()) {
-        column = m_layout->columnCount();
-    }
-
-    row = qBound(0, row, m_layout->rowCount()-1);
-
-    kDebug() << "The item will be put at" << row << column;
-
-    int modelRow = row*m_layout->columnCount() + qBound(0, column, m_layout->columnCount());
+    int modelRow = row*nColumns + qBound(0, column, nColumns);
 
     kDebug() << "Corresponding to the model row" << modelRow;
 
@@ -588,12 +483,13 @@ void ItemContainer::focusInEvent(QFocusEvent *event)
 {
     Q_UNUSED(event)
 
-    if (m_layout && m_layout->count() > 0 && m_currentIconIndexX == -1) {
+    if (m_model->rowCount() > 0 && m_currentIconIndexX == -1) {
         m_currentIconIndexX = 0;
         m_currentIconIndexY = 0;
-        ResultWidget *icon = static_cast<ResultWidget*>(m_layout->itemAt(0, 0));
-        emit itemSelected(icon);
-        setCurrentItem(icon);
+        QModelIndex index = m_model->index(0, 0, m_rootIndex);
+        ResultWidget *item = m_items.value(index);
+        emit itemSelected(item);
+        setCurrentItem(item);
     } else {
         setCurrentItem(m_currentIcon.data());
     }
@@ -644,7 +540,10 @@ void ItemContainer::resizeEvent(QGraphicsSceneResizeEvent *event)
         }
     }
 
-    m_relayoutTimer->start(300);
+    if ((m_orientation == Qt::Vertical && !qFuzzyCompare(event->newSize().width(), event->oldSize().width())) ||
+        (m_orientation == Qt::Horizontal && !qFuzzyCompare(event->newSize().height(), event->oldSize().height()))) {
+        m_relayoutTimer->start(300);
+    }
 }
 
 void ItemContainer::setModel(QAbstractItemModel *model)
@@ -669,21 +568,8 @@ QAbstractItemModel *ItemContainer::model() const
 
 void ItemContainer::reset()
 {
-    const int nRows = m_layout->rowCount();
-    const int nColumns = m_layout->columnCount();
-
-    for (int i = 0; i < nRows; ++i) {
-        m_layout->setRowFixedHeight(i, 0);
-    }
-    for (int i = 0; i < nColumns; ++i) {
-        m_layout->setColumnFixedWidth(i, 0);
-    }
-
-    const int count = m_layout->count();
     m_hoverIndicator->setTargetItem(0);
-    for (int i = 0; i < count; ++i) {
-        m_layout->removeAt(0);
-    }
+
 
     foreach (ResultWidget *icon, m_items) {
         disposeItem(icon);
