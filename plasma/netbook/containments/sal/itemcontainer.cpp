@@ -768,7 +768,7 @@ void ItemContainer::hideUsedItems()
     while (i.hasNext()) {
         i.next();
         foreach (ResultWidget *icon, m_usedItems.values(i.key())) {
-            icon->hide();
+            icon->animateHide();
         }
     }
 }

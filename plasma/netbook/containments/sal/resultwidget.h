@@ -33,6 +33,8 @@ public:
     ResultWidget(QGraphicsItem *parent);
     ~ResultWidget();
 
+    void animateHide();
+
     void setGeometry(const QRectF &rect);
 
     QPointF animationPos() const;
@@ -43,7 +45,6 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-
 
 protected Q_SLOTS:
     void animationFinished();

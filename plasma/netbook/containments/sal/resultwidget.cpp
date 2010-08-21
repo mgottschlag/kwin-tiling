@@ -37,6 +37,15 @@ ResultWidget::~ResultWidget()
 {
 }
 
+void ResultWidget::animateHide()
+{
+    m_shouldBeVisible = false;
+    QGraphicsItem *parent = parentItem();
+    if (parent) {
+        setGeometry(QRectF(QPointF(parent->boundingRect().center().x(), parent->boundingRect().bottom()), size()));
+    }
+}
+
 void ResultWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Plasma::IconWidget::mousePressEvent(event);
@@ -100,18 +109,11 @@ void ResultWidget::setGeometry(const QRectF &rect)
 QVariant ResultWidget::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == QGraphicsItem::ItemVisibleChange) {
-        bool shouldBeVisible = m_shouldBeVisible;
         m_shouldBeVisible = value.toBool();
-
-        //somebody asked to hide it, go away in an animated fashion
-        if (isVisible() && shouldBeVisible && !m_shouldBeVisible) {
-            QGraphicsItem *parent = parentItem();
-            if (parent) {
-                setGeometry(QRectF(QPointF(parent->boundingRect().center().x(), parent->boundingRect().bottom()), size()));
-                return true;
-            }
-        }
     }
 
     return QGraphicsWidget::itemChange(change, value);
 }
+
+
+#include "resultwidget.moc"
