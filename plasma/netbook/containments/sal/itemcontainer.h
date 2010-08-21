@@ -34,12 +34,12 @@ class QAbstractItemModel;
 
 namespace Plasma
 {
-    class IconWidget;
     class ItemBackground;
 }
 
 class ItemView;
 class IconActionCollection;
+class ResultWidget;
 
 class ItemContainer : public QGraphicsWidget
 {
@@ -55,8 +55,8 @@ public:
     ItemContainer(ItemView *parent);
     ~ItemContainer();
 
-    void setCurrentItem(Plasma::IconWidget *currentItem);
-    Plasma::IconWidget *currentItem() const;
+    void setCurrentItem(ResultWidget *currentItem);
+    ResultWidget *currentItem() const;
 
     void setOrientation(Qt::Orientation orientation);
     Qt::Orientation orientation() const;
@@ -67,7 +67,7 @@ public:
     void setDragAndDropMode(DragAndDropMode mode);
     DragAndDropMode dragAndDropMode() const;
 
-    QList<Plasma::IconWidget *>items() const;
+    QList<ResultWidget *>items() const;
 
     void askRelayout();
 
@@ -85,13 +85,13 @@ protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-    Plasma::IconWidget *createItem(QModelIndex index);
-    void disposeItem(Plasma::IconWidget *icon);
+    ResultWidget *createItem(QModelIndex index);
+    void disposeItem(ResultWidget *icon);
 
 private Q_SLOTS:
     void relayout();
     void syncCurrentItem();
-    void itemRequestedDrag(Plasma::IconWidget *);
+    void itemRequestedDrag(ResultWidget *);
     void reset();
     void generateItems(const QModelIndex &parent, int start, int end);
     void removeItems(const QModelIndex &parent, int start, int end);
@@ -100,7 +100,7 @@ private Q_SLOTS:
     void hideUsedItems();
 
 Q_SIGNALS:
-    void itemSelected(Plasma::IconWidget *);
+    void itemSelected(ResultWidget *);
     void itemActivated(const QModelIndex &);
     void resetRequested();
     void itemAskedReorder(const QModelIndex &index, const QPointF &point);
@@ -109,16 +109,16 @@ Q_SIGNALS:
 
 private:
     QGraphicsGridLayout *m_layout;
-    QWeakPointer<Plasma::IconWidget> m_currentIcon;
-    Plasma::IconWidget *m_ghostIcon;
+    QWeakPointer<ResultWidget> m_currentIcon;
+    ResultWidget *m_ghostIcon;
     Plasma::ItemBackground *m_hoverIndicator;
     QTimer *m_relayoutTimer;
     QTimer *m_setCurrentTimer;
     QTimer *m_hideUsedItemsTimer;
-    QHash<QPersistentModelIndex, Plasma::IconWidget*> m_items;
-    QHash<Plasma::IconWidget*, QPersistentModelIndex> m_itemToIndex;
+    QHash<QPersistentModelIndex, ResultWidget*> m_items;
+    QHash<ResultWidget*, QPersistentModelIndex> m_itemToIndex;
     //we store the old row to sort them, necessary to do a good animation
-    QMultiMap<int, Plasma::IconWidget*> m_usedItems;
+    QMultiMap<int, ResultWidget*> m_usedItems;
     Qt::Orientation m_orientation;
     QPropertyAnimation *m_positionAnimation;
     int m_currentIconIndexX;

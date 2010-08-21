@@ -51,8 +51,8 @@ public:
     ItemView(QGraphicsWidget *parent);
     ~ItemView();
 
-    void setCurrentItem(Plasma::IconWidget *currentItem);
-    Plasma::IconWidget *currentItem() const;
+    void setCurrentItem(ResultWidget *currentItem);
+    ResultWidget *currentItem() const;
 
     void setOrientation(Qt::Orientation orientation);
     Qt::Orientation orientation() const;
@@ -60,7 +60,7 @@ public:
     void setIconSize(int size);
     int iconSize() const;
 
-    QList<Plasma::IconWidget *>items() const;
+    QList<ResultWidget *>items() const;
 
     void setDragAndDropMode(ItemContainer::DragAndDropMode mode);
     ItemContainer::DragAndDropMode dragAndDropMode() const;
@@ -81,10 +81,10 @@ protected:
     void focusInEvent(QFocusEvent *event);
 
 protected Q_SLOTS:
-    void selectItem(Plasma::IconWidget *icon);
+    void selectItem(ResultWidget *icon);
 
 Q_SIGNALS:
-    void itemSelected(Plasma::IconWidget *);
+    void itemSelected(ResultWidget *);
     void itemActivated(const QModelIndex &index);
     void resetRequested();
     void scrollBarsNeededChanged(ItemView::ScrollBarFlags);

@@ -19,12 +19,12 @@
 
 #include "itemview.h"
 #include "itemcontainer.h"
+#include "resultwidget.h"
 
 #include <QGraphicsSceneResizeEvent>
 #include <QGraphicsScene>
 #include <QTimer>
 
-#include <Plasma/IconWidget>
 
 ItemView::ItemView(QGraphicsWidget *parent)
     : Plasma::ScrollWidget(parent)
@@ -38,10 +38,10 @@ ItemView::ItemView(QGraphicsWidget *parent)
     m_noActivateTimer->setSingleShot(true);
     m_itemContainer->installEventFilter(this);
 
-    connect(m_itemContainer, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SIGNAL(itemSelected(Plasma::IconWidget *)));
+    connect(m_itemContainer, SIGNAL(itemSelected(ResultWidget *)), this, SIGNAL(itemSelected(ResultWidget *)));
     connect(m_itemContainer, SIGNAL(itemActivated(const QModelIndex &)), this, SIGNAL(itemActivated(const QModelIndex &)));
     connect(m_itemContainer, SIGNAL(resetRequested()), this, SIGNAL(resetRequested()));
-    connect(m_itemContainer, SIGNAL(itemSelected(Plasma::IconWidget *)), this, SLOT(selectItem(Plasma::IconWidget *)));
+    connect(m_itemContainer, SIGNAL(itemSelected(ResultWidget *)), this, SLOT(selectItem(ResultWidget *)));
     connect(m_itemContainer, SIGNAL(itemAskedReorder(const QModelIndex &, const QPointF &)), this, SIGNAL(itemAskedReorder(const QModelIndex &, const QPointF &)));
     connect(m_itemContainer, SIGNAL(dragStartRequested(const QModelIndex &)), this, SIGNAL(dragStartRequested(const QModelIndex&)));
 
@@ -51,19 +51,19 @@ ItemView::ItemView(QGraphicsWidget *parent)
 ItemView::~ItemView()
 {}
 
-void ItemView::selectItem(Plasma::IconWidget *icon)
+void ItemView::selectItem(ResultWidget *icon)
 {
     if (!m_noActivateTimer->isActive()) {
         ensureItemVisible(icon);
     }
 }
 
-void ItemView::setCurrentItem(Plasma::IconWidget *currentIcon)
+void ItemView::setCurrentItem(ResultWidget *currentIcon)
 {
     m_itemContainer->setCurrentItem(currentIcon);
 }
 
-Plasma::IconWidget *ItemView::currentItem() const
+ResultWidget *ItemView::currentItem() const
 {
     return m_itemContainer->currentItem();
 }
@@ -90,7 +90,7 @@ void ItemView::setIconSize(int size)
     m_itemContainer->setIconSize(size);
 }
 
-QList<Plasma::IconWidget *> ItemView::items() const
+QList<ResultWidget *> ItemView::items() const
 {
     return m_itemContainer->items();
 }
@@ -150,7 +150,7 @@ void ItemView::resizeEvent(QGraphicsSceneResizeEvent *event)
 
 bool ItemView::eventFilter(QObject *watched, QEvent *event)
 {
-    Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
+    ResultWidget *icon = qobject_cast<ResultWidget *>(watched);
     if (icon && event->type() == QEvent::GraphicsSceneHoverEnter) {
         if (icon) {
             m_itemContainer->setCurrentItem(icon);

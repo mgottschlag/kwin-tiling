@@ -49,7 +49,7 @@ protected Q_SLOTS:
     void animationFinished();
 
 Q_SIGNALS:
-    void dragStartRequested(Plasma::IconWidget *);
+    void dragStartRequested(ResultWidget *);
 
 private:
     QPropertyAnimation *m_animation;
