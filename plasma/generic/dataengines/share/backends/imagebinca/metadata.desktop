@@ -1,11 +1,13 @@
 [Desktop Entry]
 Name=imagebin.ca
+Name[es]=imagebin.ca
 Name[pt]=imagebin.ca
 Name[pt_BR]=imagebin.ca
 Name[sv]=imagebin.ca
 Name[uk]=imagebin.ca
 Name[x-test]=xximagebin.caxx
 Comment=Enables the share of images using the imagebin.ca service
+Comment[es]=Permite compartir imágenes a través del servicio de imagebin.ca
 Comment[pt]=Activa a partilha de imagens com o serviço do 'imagebin.ca'
 Comment[pt_BR]=Habilita o compartilhamento de imagens com o uso do serviço imagebin.ca
 Comment[sv]=Aktiverar att dela bilder med tjänsten imagebin.ca
