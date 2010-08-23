@@ -6,6 +6,7 @@ Name[pt_BR]=wklej.org
 Name[sv]=wklej.org
 Name[uk]=wklej.org
 Name[x-test]=xxwklej.orgxx
+Name[zh_TW]=wklej.org
 Comment=Enables the share of text using wklej.org service
 Comment[es]=Permite compartir texto a través del servicio de wklej.org
 Comment[pt]=Activa a partilha de texto com o serviço do 'wklej.org'
@@ -13,6 +14,7 @@ Comment[pt_BR]=Habilita o compartilhamento de texto com o uso do serviço wklej.
 Comment[sv]=Aktiverar att dela text med tjänsten wklej.org
 Comment[uk]=Уможливлює оприлюднення фрагментів тексту за допомогою служби wklej.org
 Comment[x-test]=xxEnables the share of text using wklej.org servicexx
+Comment[zh_TW]=用 wklej.org 服務開啟文字分享
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/ShareProvider

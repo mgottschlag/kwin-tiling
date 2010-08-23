@@ -6,12 +6,14 @@ Name[pt_BR]=Compartilhar
 Name[sv]=Dela
 Name[uk]=Спільний ресурс
 Name[x-test]=xxSharexx
+Name[zh_TW]=分享
 Comment=Share Package Structure
 Comment[pt]=Estrutura do Pacote da Partilha
 Comment[pt_BR]=Estrutura do pacote de compartilhamento
 Comment[sv]=Dela paketstruktur
 Comment[uk]=Структура спільних пакунків
 Comment[x-test]=xxShare Package Structurexx
+Comment[zh_TW]=分享套件結構
 Type=Service
 X-KDE-ServiceTypes=Plasma/PackageStructure
 

@@ -6,6 +6,7 @@ Name[pt_BR]=paste.opensuse.org
 Name[sv]=paste.opensuse.org
 Name[uk]=paste.opensuse.org
 Name[x-test]=xxpaste.opensuse.orgxx
+Name[zh_TW]=paste.opensuse.org
 Comment=Paste text with openSUSE
 Comment[es]=Pegar texto con openSUSE
 Comment[pt]=Colar texto com o openSUSE
@@ -13,6 +14,7 @@ Comment[pt_BR]=Colar texto com o openSUSE
 Comment[sv]=Klistra in text med openSUSE
 Comment[uk]=Вставити фрагмент тексту з openSUSE
 Comment[x-test]=xxPaste text with openSUSExx
+Comment[zh_TW]=用 openSUSE 貼上文字
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/ShareProvider

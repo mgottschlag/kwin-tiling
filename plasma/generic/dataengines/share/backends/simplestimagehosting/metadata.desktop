@@ -6,6 +6,7 @@ Name[pt_BR]=Simplest Image Hosting
 Name[sv]=Simplest Image Hosting
 Name[uk]=Simplest Image Hosting
 Name[x-test]=xxSimplest Image Hostingxx
+Name[zh_TW]=Simplest Image Hosting
 Comment=Enables the share of images using the Simplest Image Hosting service
 Comment[es]=Permite compartir imágenes a través del servicio de Simplest Image Hosting
 Comment[pt]=Activa a partilha de imagens com o serviço do Simplest Image Hosting
@@ -13,6 +14,7 @@ Comment[pt_BR]=Habilita o compartilhamento de imagens com o uso do serviço Simp
 Comment[sv]=Aktiverar att dela bilder med tjänsten Simplest Image Hosting
 Comment[uk]=Уможливлює оприлюднення зображень за допомогою служби Simplest Image Hosting
 Comment[x-test]=xxEnables the share of images using the Simplest Image Hosting servicexx
+Comment[zh_TW]=用 Simplest Image Hosting 服務開啟影像分享
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/ShareProvider

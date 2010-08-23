@@ -6,6 +6,7 @@ Name[pt_BR]=Pastebin
 Name[sv]=Pastebin
 Name[uk]=Pastebin
 Name[x-test]=xxPastebinxx
+Name[zh_TW]=Pastebin
 Comment=Enables the share of text using pastebin.ca service
 Comment[es]=Permite compartir texto a través del servicio de pastebin.ca
 Comment[pt]=Activa a partilha de texto com o serviço do 'pastebin.ca'
@@ -13,6 +14,7 @@ Comment[pt_BR]=Habilita o compartilhamento de texto com o uso do serviço pasteb
 Comment[sv]=Aktiverar att dela text med tjänsten pastebin.ca
 Comment[uk]=Уможливлює оприлюднення фрагментів тексту за допомогою служби pastebin.ca
 Comment[x-test]=xxEnables the share of text using pastebin.ca servicexx
+Comment[zh_TW]=用 pastebin.ca 服務開啟文字分享
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/ShareProvider

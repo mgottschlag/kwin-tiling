@@ -94,12 +94,14 @@ Comment[eu]=Ikusi eta aldatu teklatu diseinu aktiboen artean
 Comment[hr]=Prikaži i prebaci između aktivnih tipkovničkih rasporeda
 Comment[ia]=Monstrar e commutar inter dispositiones de claviero active
 Comment[lt]=Peržiūrėti ir persijungti tarp aktyvių klaviatūros maketų
+Comment[nb]=Vis aktive tastaturutforminger og bytt mellom dem
 Comment[nn]=Vis og byt mellom aktive tastaturoppsett
 Comment[pt]=Ver e mudar a disposição de teclado activa
 Comment[pt_BR]=Exibir e trocar o leiaute de teclado ativo
 Comment[sv]=Visa och byt mellan aktiva tangentbordslayouter
 Comment[uk]=Перегляд і перемикання між активними розкладками клавіатури
 Comment[x-test]=xxView and switch between active keyboard layoutsxx
+Comment[zh_TW]=檢視並在可用的鍵盤佈局中切換
 
 Icon=preferences-desktop-keyboard
 Type=Service

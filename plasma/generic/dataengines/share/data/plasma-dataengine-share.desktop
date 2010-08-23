@@ -5,6 +5,7 @@ Name[pt_BR]=Serviços de compartilhamento
 Name[sv]=Delningstjänster
 Name[uk]=Служби оприлюднення
 Name[x-test]=xxShare Servicesxx
+Name[zh_TW]=分享服務
 Comment=Engine to share content using different services
 Comment[es]=Motor para compartir contenidos a través de diferentes servicios
 Comment[pt]=Um motor para partilhar conteúdos através de vários serviços
@@ -12,6 +13,7 @@ Comment[pt_BR]=Um mecanismo para compartilhar conteúdos usando diferentes servi
 Comment[sv]=Gränssnitt för att dela innehåll genom att använda olika tjänster
 Comment[uk]=Рушій спільного використання даних різними службами
 Comment[x-test]=xxEngine to share content using different servicesxx
+Comment[zh_TW]=用不同的服務來分享內容的引擎
 Type=Service
 X-KDE-ServiceTypes=Plasma/DataEngine
 
