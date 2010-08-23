@@ -27,7 +27,7 @@ class ShareService;
 
 class ShareEngine : public Plasma::DataEngine
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     ShareEngine(QObject *parent, const QVariantList &args);

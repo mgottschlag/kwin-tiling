@@ -31,7 +31,7 @@
 
 class ShareProvider : public QObject
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     ShareProvider(QObject *parent =0);
