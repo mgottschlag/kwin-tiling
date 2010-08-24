@@ -209,6 +209,7 @@ void FilteringWidget::init()
 
     //layout
     m_linearLayout = new QGraphicsLinearLayout();
+    m_linearLayout->setContentsMargins(0, 0, 0, 0);
     m_linearLayout->addItem(m_textSearch);
     setLayout(m_linearLayout);
 }
