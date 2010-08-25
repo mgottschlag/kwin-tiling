@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=paste.opensuse.org
 Name[es]=paste.opensuse.org
+Name[ia]=paste.opensuse.org
+Name[nds]=paste.opensuse.org
 Name[pt]=paste.opensuse.org
 Name[pt_BR]=paste.opensuse.org
 Name[sv]=paste.opensuse.org
@@ -9,6 +11,7 @@ Name[x-test]=xxpaste.opensuse.orgxx
 Name[zh_TW]=paste.opensuse.org
 Comment=Paste text with openSUSE
 Comment[es]=Pegar texto con openSUSE
+Comment[ia]=Collar texto con openSUSE
 Comment[pt]=Colar texto com o openSUSE
 Comment[pt_BR]=Colar texto com o openSUSE
 Comment[sv]=Klistra in text med openSUSE

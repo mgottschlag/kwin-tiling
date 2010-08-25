@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Pastebin
 Name[es]=Pastebin
+Name[ia]=Pastebin
+Name[nds]=pastebin
 Name[pt]=Colagem
 Name[pt_BR]=Pastebin
 Name[sv]=Pastebin
@@ -9,6 +11,7 @@ Name[x-test]=xxPastebinxx
 Name[zh_TW]=Pastebin
 Comment=Enables the share of text using pastebin.ca service
 Comment[es]=Permite compartir texto a través del servicio de pastebin.ca
+Comment[ia]=Il habilita le uso commun de texto per usar le servicio pastebin.ca
 Comment[pt]=Activa a partilha de texto com o serviço do 'pastebin.ca'
 Comment[pt_BR]=Habilita o compartilhamento de texto com o uso do serviço pastebin.ca
 Comment[sv]=Aktiverar att dela text med tjänsten pastebin.ca

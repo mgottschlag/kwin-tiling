@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Share
 Name[es]=Compartir
+Name[ia]=Compartir
 Name[pt]=Partilhar
 Name[pt_BR]=Compartilhar
 Name[sv]=Dela
@@ -8,6 +9,7 @@ Name[uk]=Спільний ресурс
 Name[x-test]=xxSharexx
 Name[zh_TW]=分享
 Comment=Share Package Structure
+Comment[ia]=Share Package Structure (Structura de uso commun de Pacchetto)
 Comment[pt]=Estrutura do Pacote da Partilha
 Comment[pt_BR]=Estrutura do pacote de compartilhamento
 Comment[sv]=Dela paketstruktur

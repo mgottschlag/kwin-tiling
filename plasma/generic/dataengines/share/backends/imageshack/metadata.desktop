@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=imageshack.us
 Name[es]=imageshack.us
+Name[ia]=imageshack.us
+Name[nds]=imageshack.us
 Name[pt]=imageshack.us
 Name[pt_BR]=imageshack.us
 Name[sv]=imageshack.us
@@ -9,6 +11,7 @@ Name[x-test]=xximageshack.usxx
 Name[zh_TW]=imageshack.us
 Comment=Enables the share of images using the imageshack.us service
 Comment[es]=Permite compartir imágenes a través del servicio de imageshack.us
+Comment[ia]=Il habilita le uso commun de images per usar le servicio imageshack.us
 Comment[pt]=Activa a partilha de imagens com o serviço do 'imageshack.us'
 Comment[pt_BR]=Habilita o compartilhamento de imagens com o uso do serviço imageshack.us
 Comment[sv]=Aktiverar att dela bilder med tjänsten imageshack.us
