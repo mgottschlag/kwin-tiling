@@ -36,6 +36,8 @@
 #include <plasma/widgets/treeview.h>
 #include <plasma/widgets/pushbutton.h>
 
+#include <kephal/screens.h>
+
 #include "widgetexplorer.h"
 #include "openwidgetassistant_p.h"
 //FilteringTreeView
@@ -112,7 +114,21 @@ FilteringTabs::~FilteringTabs()
 void FilteringTabs::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Plasma::PushButton::mouseReleaseEvent(event);
-    m_menu->popup(event->screenPos());
+    QGraphicsView *view = Plasma::viewFor(this);
+    if (view) {
+        m_menu->adjustSize();
+        QPoint pos = view->mapToGlobal(view->mapFromScene(scenePos()));
+        const QSize msize = m_menu->size();
+        const QRect screen = Kephal::ScreenUtils::screenGeometry(Kephal::ScreenUtils::screenId(view->rect().center()));
+        if (pos.y() - msize.height() > screen.y()) {
+            pos.setY(pos.y() - msize.height());
+        } else {
+            pos = view->mapToGlobal(view->mapFromScene(sceneBoundingRect().bottomLeft()));
+        }
+        m_menu->popup(pos);
+    } else {
+        m_menu->popup(event->screenPos());
+    }
 }
 
 void FilteringTabs::menuItemTriggered(QAction *action)
