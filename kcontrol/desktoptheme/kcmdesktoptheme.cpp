@@ -44,7 +44,7 @@
 #include <KLibLoader>
 
 K_PLUGIN_FACTORY(KCMDesktopThemeFactory, registerPlugin<KCMDesktopTheme>();)
-K_EXPORT_PLUGIN(KCMDesktopThemeFactory("kcmdesktoptheme"))
+K_EXPORT_PLUGIN(KCMDesktopThemeFactory("kcmdesktoptheme","kcm_desktopthemedetails"))
 
 
 KCMDesktopTheme::KCMDesktopTheme( QWidget* parent, const QVariantList& )
