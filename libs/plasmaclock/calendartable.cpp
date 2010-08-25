@@ -284,6 +284,10 @@ class CalendarTablePrivate
 
         QString defaultHolidaysRegion()
         {
+            if (!dataEngine) {
+                return QString();
+            }
+
             return dataEngine->query("holidaysDefaultRegion").value("holidaysDefaultRegion").toString();
         }
 
@@ -455,7 +459,6 @@ const QDate& CalendarTable::date() const
 
 void CalendarTable::setDataEngine(Plasma::DataEngine *dataEngine)
 {
-    // JPL What happens to the old data engine, who cleans it up, do we need to delete first?
     if (d->dataEngine != dataEngine) {
         d->dataEngine = dataEngine;
         populateHolidays();
@@ -471,7 +474,7 @@ const Plasma::DataEngine *CalendarTable::dataEngine() const
 void CalendarTable::setDisplayHolidays(bool showHolidays)
 {
     if (showHolidays) {
-        if (!dataEngine()) {
+        if (!d->dataEngine) {
             clearHolidays();
             return;
         }
@@ -525,7 +528,7 @@ void CalendarTable::setDisplayEvents(bool display)
 void CalendarTable::setHolidaysRegion(const QString &region)
 {
     QString queryString = "holidaysIsValidRegion:" + region;
-    if (!dataEngine()->query(queryString).value(queryString).toBool()) {
+    if (!d->dataEngine || !d->dataEngine->query(queryString).value(queryString).toBool()) {
         return;
     }
 
@@ -661,7 +664,7 @@ void CalendarTable::populateHolidays()
 {
     clearHolidays();
 
-    if (!displayHolidays() || !dataEngine() || holidaysRegion().isEmpty()) {
+    if (!displayHolidays() || !d->dataEngine || holidaysRegion().isEmpty()) {
         return;
     }
 
@@ -755,7 +758,10 @@ void CalendarTable::createConfigurationInterface(KConfigDialog *parent)
     }
     d->calendarConfigUi.calendarComboBox->setCurrentIndex( d->calendarConfigUi.calendarComboBox->findData( QVariant( d->calendarType ) ) );
 
-    Plasma::DataEngine::Data regions = dataEngine()->query("holidaysRegions");
+    Plasma::DataEngine::Data regions;
+    if (d->dataEngine) {
+        regions = d->dataEngine->query("holidaysRegions");
+    }
     QMap<QString, QString> regionsMap;
     Plasma::DataEngine::DataIterator i(regions);
     while (i.hasNext()) {
