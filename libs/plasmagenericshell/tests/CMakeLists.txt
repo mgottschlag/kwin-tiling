@@ -19,7 +19,7 @@ set(appletexplorer_SRCS
    main.cpp
    )
 kde4_add_executable(plasmaappletexplorer ${appletexplorer_SRCS})
-target_link_libraries(plasmaappletexplorer ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_KFILE_LIBRARY})
+target_link_libraries(plasmaappletexplorer ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_KFILE_LIBRARY} kephal)
 
 set(backgrounddialog_SRCS
     background.cpp
