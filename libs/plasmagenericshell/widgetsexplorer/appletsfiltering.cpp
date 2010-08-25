@@ -36,7 +36,7 @@
 #include <plasma/widgets/treeview.h>
 #include <plasma/widgets/pushbutton.h>
 
-#include <kephal/screens.h>
+#include <kephal/kephal/screens.h>
 
 #include "widgetexplorer.h"
 #include "openwidgetassistant_p.h"
