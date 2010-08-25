@@ -84,12 +84,12 @@ bool CalendarEngine::holidayCalendarSourceRequest(const QString& key, const QStr
         Plasma::DataEngine::Data data;
         foreach (const QString &regionCode, regionList) {
             Plasma::DataEngine::Data regionData;
-            regionData.insert("name", KHolidays::HolidayRegion::name(regionCode));
-            regionData.insert("description", KHolidays::HolidayRegion::description(regionCode));
-            QString countryCode = KHolidays::HolidayRegion::countryCode(regionCode);
-            regionData.insert("countryCode", countryCode);
-            regionData.insert("location", countryCode.left(2));
-            regionData.insert("languageCode", KHolidays::HolidayRegion::languageCode(regionCode));
+            KHolidays::HolidayRegion region(regionCode);
+            regionData.insert("name", region.name());
+            regionData.insert("description", region.description());
+            regionData.insert("countryCode", region.countryCode());
+            regionData.insert("location", region.location());
+            regionData.insert("languageCode", region.languageCode());
             data.insert(regionCode, regionData);
         }
         setData(request, data);
