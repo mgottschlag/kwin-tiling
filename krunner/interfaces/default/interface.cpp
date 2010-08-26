@@ -162,6 +162,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     connect(m_singleRunnerSearchTerm, SIGNAL(returnPressed()),  this, SLOT(runDefaultResultItem()));
 
     lineEdit->installEventFilter(this);
+    m_searchTerm->installEventFilter(this);
 
     themeUpdated();
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
@@ -208,11 +209,26 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
 bool Interface::eventFilter(QObject *obj, QEvent *event)
 {
-    if (event->type() == QEvent::MouseButtonPress) {
+    if (obj == m_searchTerm->lineEdit() && event->type() == QEvent::MouseButtonPress) {
         if (KWindowSystem::activeWindow() != winId()) {
             // this overcomes problems with click-to-focus and being a Dock window
             KWindowSystem::forceActiveWindow(winId());
             searchTermSetFocus();
+        }
+    } else if (obj == m_searchTerm && event->type() == QEvent::KeyPress) {
+        QKeyEvent *ke = static_cast<QKeyEvent *>(event);
+        // the comparision between itemText(1) and the currentText is an artifact
+        // of KHistoryComboBox: it sets the combobox to index 1 when using arrow-down
+        // through entries after having arrow-up'd through them and hitting the
+        // last item ... which one would expect to be index 0. index 1 is _also_
+        // the first item in the history at other times, however, so we need to
+        // check if index 1 is indeed the actual item or if item 1 is not the same
+        // the current text. very, very odd. but it works. - aseigo.
+        if (ke->key() == Qt::Key_Down &&
+            (m_searchTerm->currentIndex() < 1 ||
+             (m_searchTerm->currentIndex() == 1 &&
+              m_searchTerm->itemText(1) != m_searchTerm->currentText()))) {
+            m_resultsView->setFocus();
         }
     }
 

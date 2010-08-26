@@ -309,25 +309,14 @@ void ResultScene::selectPreviousItem()
     ResultItem *currentFocus = currentlyFocusedItem();
     int currentIndex = currentFocus ? currentFocus->index() : 0;
 
-    bool wrapped = false;
-    if (currentIndex > 0) {
-        currentFocus = m_items.at(currentIndex - 1);
-    } else {
-        currentIndex = m_items.size();
-        do {
-            currentFocus = m_items.at(--currentIndex);
-        } while (currentIndex > 0 && !currentFocus->isVisible());
-        wrapped = currentIndex > 2;
+    if (currentIndex == 0) {
+        m_focusBase->setFocus();
+        return;
     }
 
-    if (currentFocus->isVisible()) {
-        if (wrapped) {
-            // with more than two items, having the selection zoom through the items between looks
-            // odd
-            m_selectionBar->setTargetItem(0);
-            currentFocus->highlight(true);
-        }
+    currentFocus = m_items.at(currentIndex - 1);
 
+    if (currentFocus->isVisible()) {
         setFocusItem(currentFocus);
         emit ensureVisibility(currentFocus);
     }
@@ -337,25 +326,16 @@ void ResultScene::selectNextItem()
 {
     ResultItem *currentFocus = currentlyFocusedItem();
     int currentIndex = currentFocus ? currentFocus->index() : 0;
-    const int wasIndex = currentIndex;
 
-    bool wrapped = false;
     do {
         ++currentIndex;
         if (currentIndex >= m_items.size()) {
-            // with more than two items, having the selection zoom through the items between looks
-            // odd
-            wrapped = wasIndex > 2;
-            currentIndex = 0;
+            return;
         }
         currentFocus = m_items.at(currentIndex);
     } while (!currentFocus->isVisible() && currentIndex < m_items.size());
 
     if (currentFocus->isVisible()) {
-        if (wrapped) {
-            m_selectionBar->setTargetItem(0);
-            currentFocus->highlight(true);
-        }
         setFocusItem(currentFocus);
         emit ensureVisibility(currentFocus);
     }
