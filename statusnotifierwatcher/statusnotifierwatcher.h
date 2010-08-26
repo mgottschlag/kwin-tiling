@@ -59,6 +59,7 @@ Q_SIGNALS:
     //TODO: decide if this makes sense, the systray itself could notice the vanishing of items, but looks complete putting it here
     void StatusNotifierItemUnregistered(const QString &service);
     void StatusNotifierHostRegistered();
+    void StatusNotifierHostUnregistered();
 
 private:
     QDBusServiceWatcher *m_serviceWatcher;

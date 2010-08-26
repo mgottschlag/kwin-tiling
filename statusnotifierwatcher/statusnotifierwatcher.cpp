@@ -117,6 +117,7 @@ void StatusNotifierWatcher::serviceUnregistered(const QString& name)
 
     if (m_statusNotifierHostServices.contains(name)) {
         m_statusNotifierHostServices.remove(name);
+        emit StatusNotifierHostUnregistered();
     }
 }
 
