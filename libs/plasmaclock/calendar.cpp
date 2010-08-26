@@ -95,21 +95,21 @@ class CalendarPrivate
 Calendar::Calendar(const QDate &date, QGraphicsWidget *parent)
     : QGraphicsWidget(parent), d(new CalendarPrivate())
 {
-    init(new CalendarTable(date));
+    init(new CalendarTable(date, this));
     setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 }
 
 Calendar::Calendar(QGraphicsWidget *parent)
     : QGraphicsWidget(parent), d(new CalendarPrivate())
 {
-    init(new CalendarTable());
+    init(new CalendarTable(this));
     setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 }
 
 Calendar::Calendar(CalendarTable *calendarTable, QGraphicsWidget *parent)
     : QGraphicsWidget(parent), d(new CalendarPrivate())
 {
-    init(calendarTable);
+    init(calendarTable ? calendarTable : new CalendarTable(this));
 }
 
 Calendar::~Calendar()
