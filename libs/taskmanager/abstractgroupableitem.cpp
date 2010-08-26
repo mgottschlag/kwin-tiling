@@ -132,6 +132,9 @@ bool AbstractGroupableItem::isStartupItem() const
     return false;
 }
 
+void AbstractGroupableItem::execute()
+{
+}
 
 } // TaskManager namespace
 

@@ -383,7 +383,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
     setTitle(group->name());
     setIcon(group->icon());
     foreach (AbstractGroupableItem *item, group->members()) {
-        if (item->isGroupItem()) {
+        if (item->itemType() == GroupItemType) {
             addMenu(new BasicMenu(this, dynamic_cast<TaskGroup*>(item), strategy));
         } else {
             addMenu(new BasicMenu(this, dynamic_cast<TaskItem*>(item), strategy));
@@ -431,7 +431,7 @@ GroupPopupMenu::GroupPopupMenu(QWidget *parent, TaskGroup *group, GroupManager *
             continue;
         }
 
-        if (item->isGroupItem()) {
+        if (item->itemType() == GroupItemType) {
             QMenu* menu = new GroupPopupMenu (this, qobject_cast<TaskGroup*>(item), groupManager);
             addMenu(menu);
         } else {

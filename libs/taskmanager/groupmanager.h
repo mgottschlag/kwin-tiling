@@ -30,6 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <taskmanager/task.h>
 #include <taskmanager/taskitem.h>
 #include <taskmanager/taskmanager_export.h>
+#include <KDE/KUrl>
 
 namespace TaskManager
 {
@@ -122,6 +123,8 @@ public:
      * Reconnect all neccessary signals to the taskmanger, and clear the per desktop stored rootGroups
      */
     void reconnect();
+
+    void addLauncher(const KUrl &url);
 
 Q_SIGNALS:
     /** Signal that the rootGroup has to be reloaded in the visualization */

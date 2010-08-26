@@ -81,7 +81,7 @@ QList<QAction*> ManualGroupingStrategy::strategyActions(QObject *parent, Abstrac
         d->tempItem = item;
     }
 
-    if (item->isGroupItem()) {
+    if (item->itemType() == GroupItemType) {
         QAction *a = new QAction(i18n("Remove Group"), parent);
         connect(a, SIGNAL(triggered()), this, SLOT(removeGroup()));
         actionList.append(a);

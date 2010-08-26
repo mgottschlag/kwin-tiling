@@ -1,6 +1,6 @@
 /*****************************************************************
 
-Copyright 2008 Christian Mollekopf <chrigi_1@hotmail.com>
+Copyright 2010 Anton Kreuzkamp <akreuzkamp@web.de>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,51 +20,45 @@ AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
+#ifndef LAUNCHERITEM_H
+#define LAUNCHERITEM_H
 
-#ifndef TASKITEM_H
-#define TASKITEM_H
-
-#include <taskmanager/abstractgroupableitem.h>
-#include <taskmanager/startup.h>
-#include <taskmanager/task.h>
-#include <taskmanager/taskmanager_export.h>
+#include "abstractgroupableitem.h"
+#include "taskmanager_export.h"
 
 #include <QtGui/QIcon>
+
+// KDE
+#include <KDE/KIcon>
+#include <KDE/KUrl>
+
 
 namespace TaskManager
 {
 
-
-/**
- * Wrapper class so we do not have to use the Task class directly and the TaskPtr remains guarded
- */
-class TASKMANAGER_EXPORT TaskItem : public AbstractGroupableItem
+class TASKMANAGER_EXPORT LauncherItem : public AbstractGroupableItem
 {
     Q_OBJECT
 public:
-    /** Creates a taskitem for a task*/
-    TaskItem(QObject *parent, TaskPtr item);
-    /** Creates a taskitem for a startuptask*/
-    TaskItem(QObject *parent, StartupPtr item);
-    ~TaskItem();
-    /** Sets the taskpointer after the startup pointer */
-    void setTaskPointer(TaskPtr);
-    /** Returns the shared pointer to the  Task */
-    TaskPtr task() const;
+    /** Creates a LauncherItem for a executable*/
+    LauncherItem(QObject *parent, const KUrl &url);
+    ~LauncherItem();
 
-    WindowList winIds() const;
-
-    StartupPtr startup() const;
-    ItemType itemType() const;
     /**
     * @deprecated: use itemType() instead
     **/
     KDE_DEPRECATED virtual bool isGroupItem() const;
+    ItemType itemType() const;
+    bool isVisible() const;
 
     QIcon icon() const;
     QString name() const;
 
-    bool isStartupItem() const;
+    void setUrl(const KUrl &url);
+    void addWindowInstance();
+    void removeWindowInstance();
+
+    //reimplemented pure virtual methods from abstractgroupableitem
     bool isOnCurrentDesktop() const;
     bool isOnAllDesktops() const;
     int desktop() const;
@@ -74,10 +68,10 @@ public:
     bool isFullScreen() const;
     bool isKeptBelowOthers() const;
     bool isAlwaysOnTop() const;
+    bool isActionSupported(NET::Action) const;
     bool isActive() const;
     bool demandsAttention() const;
-    bool isActionSupported(NET::Action) const;
-    void addMimeData(QMimeData *mimeData) const;
+    void addMimeData(QMimeData *) const;
 
 public Q_SLOTS:
     void toDesktop(int);
@@ -101,15 +95,13 @@ public Q_SLOTS:
     void toggleAlwaysOnTop();
 
     void close();
-    void taskDestroyed();
 
-Q_SIGNALS:
-    /** Indicates that the startup task now is a normal task */
-    void gotTaskPointer();
+    void execute();
 
 private:
     class Private;
     Private * const d;
+
 };
 
 } // TaskManager namespace

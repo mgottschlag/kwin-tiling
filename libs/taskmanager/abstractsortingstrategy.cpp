@@ -26,6 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "taskitem.h"
 #include "taskgroup.h"
 #include "taskmanager.h"
+#include "abstractgroupableitem.h"
 
 #include <QtAlgorithms>
 #include <QList>
@@ -105,9 +106,9 @@ void AbstractSortingStrategy::removeGroup()
 void AbstractSortingStrategy::handleItem(AbstractGroupableItem *item)
 {
     //kDebug() << item->name();
-    if (item->isGroupItem()) {
+    if (item->itemType() == GroupItemType) {
         handleGroup(qobject_cast<TaskGroup*>(item));
-    } else if (!(qobject_cast<TaskItem*>(item))->task()) { //ignore startup tasks
+    } else if (item->itemType() == LauncherItemType || !(qobject_cast<TaskItem*>(item))->task()) { //ignore startup tasks
         connect(item, SIGNAL(gotTaskPointer()), this, SLOT(check())); //sort the task as soon as it is a real one
         return;
     }
@@ -130,7 +131,7 @@ void AbstractSortingStrategy::check(AbstractGroupableItem *itemToCheck)
     }
     //kDebug() << item->name();
 
-    if (!item->isGroupItem()) {
+    if (!item->itemType() == GroupItemType) {
         if (!(qobject_cast<TaskItem*>(item))->task()) { //ignore startup tasks
             return;
         }

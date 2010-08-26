@@ -88,7 +88,7 @@ void KustodianGroupingStrategy::handleItem(AbstractGroupableItem *item)
         return;
     }
 
-    if (item->isGroupItem()) {
+    if (item->itemType() == GroupItemType) {
         rootGroup()->add(item);
         return;
     }
@@ -117,7 +117,7 @@ bool KustodianGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* g
     QHash <QString,AbstractGroupableItem *> itemMap;
 
     foreach (AbstractGroupableItem *item, groupItem->members()) { //search for an existing group
-        if (item->isGroupItem() && programGrouping(taskItem, static_cast<TaskGroup*>(item))) {
+        if (item->itemType() == GroupItemType && programGrouping(taskItem, static_cast<TaskGroup*>(item))) {
             //maybe add the condition that the subgroup was created by programGrouping
             //kDebug() << "joined subGroup";
             return true;

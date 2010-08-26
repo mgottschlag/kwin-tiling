@@ -9,6 +9,7 @@ set(taskmanager_LIB_SRCS
    abstractgroupingstrategy.cpp
    abstractsortingstrategy.cpp
    groupmanager.cpp
+   launcheritem.cpp
    startup.cpp
    strategies/alphasortingstrategy.cpp
    strategies/desktopsortingstrategy.cpp
@@ -52,6 +53,7 @@ install(FILES
    abstractgroupingstrategy.h
    abstractsortingstrategy.h
    groupmanager.h
+   launcheritem.h
    startup.h
    task.h
    taskactions.h

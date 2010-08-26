@@ -50,7 +50,7 @@ void AlphaSortingStrategy::sortItems(ItemList &items)
     QMap<QString, AbstractGroupableItem*> map;
 
     foreach (AbstractGroupableItem *groupable, items) {
-        if (groupable->isGroupItem()) {
+        if (groupable->itemType() == GroupItemType) {
             TaskGroup *group = qobject_cast<TaskGroup*>(groupable);
             if (!group) {
                 continue;

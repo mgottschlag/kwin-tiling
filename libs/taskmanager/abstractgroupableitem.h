@@ -29,14 +29,21 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <KDE/KWindowSystem>
 
-#include <taskmanager/taskmanager.h>
-#include <taskmanager/taskmanager_export.h>
+#include "taskmanager.h"
+#include "taskmanager_export.h"
 
 namespace TaskManager
 {
 
 class TaskGroup;
 class AbstractGroupableItem;
+
+enum ItemType
+{
+  GroupItemType,
+  LauncherItemType,
+  TaskItemType
+};
 
 typedef TaskGroup* GroupPtr;
 
@@ -75,7 +82,11 @@ public:
     bool isGrouped() const;
 
     bool isGroupMember(const GroupPtr group) const;
-    virtual bool isGroupItem() const = 0;
+    virtual ItemType itemType() const = 0;
+    /**
+    * @deprecated: use itemType() instead
+    **/
+    KDE_DEPRECATED virtual bool isGroupItem() const = 0;
 
     virtual bool isStartupItem() const;
 
@@ -116,6 +127,8 @@ public Q_SLOTS:
     virtual void toggleAlwaysOnTop() = 0;
 
     virtual void close() = 0;
+
+    virtual void execute();
 
     void setParentGroup(const GroupPtr group);
     /*void removedFromGroup();

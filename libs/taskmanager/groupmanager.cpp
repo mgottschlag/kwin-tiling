@@ -23,10 +23,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "groupmanager.h"
 
-#include <QList>
-#include <KDebug>
-#include <QTimer>
-#include <QUuid>
+#include <QtCore/QList>
+#include <QtCore/QTimer>
+#include <QtCore/QUuid>
+#include <KDE/KDebug>
 
 #include "abstractsortingstrategy.h"
 #include "startup.h"
@@ -40,6 +40,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "strategies/manualgroupingstrategy.h"
 #include "strategies/kustodiangroupingstrategy.h"
 #include "strategies/manualsortingstrategy.h"
+#include "launcheritem.h"
 
 namespace TaskManager
 {
@@ -285,6 +286,13 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
             item = new TaskItem(q, task);
         }
 
+        const QString taskClass = item->task()->classClass();
+        foreach (LauncherItem* launcher, currentRootGroup()->Launchers()) {
+            if (taskClass.compare(launcher->name(), Qt::CaseInsensitive) == 0) {
+                launcher->addWindowInstance();
+            }
+        }
+
         QObject::connect(task.data(), SIGNAL(destroyed(QObject*)),
                          q, SLOT(taskDestroyed(QObject*)));
     }
@@ -313,6 +321,13 @@ void GroupManagerPrivate::removeTask(TaskPtr task)
         // of it it is an ignored type such as a NET::Utility type window
         //kDebug() << "invalid item";
         return;
+    }
+
+    const QString taskClass =  task->classClass();
+    foreach (LauncherItem* launcher, currentRootGroup()->Launchers()) {
+        if (taskClass.compare(launcher->name(), Qt::CaseInsensitive) == 0) {
+            launcher->removeWindowInstance();
+        }
     }
 
     if (item->parentGroup()) {
@@ -497,6 +512,11 @@ void GroupManager::reconnect()
     d->reloadTasks();
 }
 
+void GroupManager::addLauncher(const KUrl &url)
+{
+    LauncherItem *launcher = new LauncherItem(d->currentRootGroup(), url);
+    d->currentRootGroup()->add(launcher);
+}
 
 bool GroupManager::onlyGroupWhenFull() const
 {
@@ -713,4 +733,3 @@ void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
 } // TaskManager namespace
 
 #include "groupmanager.moc"
-

@@ -76,7 +76,7 @@ void AbstractGroupingStrategy::destroy()
         }
 
         foreach (AbstractGroupableItem *item, group->members()) {
-            if (!item->isGroupItem()) {
+            if (item->itemType()!= GroupItemType) {
                 parentGroup->add(item);
             }
         }

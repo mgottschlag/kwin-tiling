@@ -26,8 +26,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QtGui/QIcon>
 
-#include <taskmanager/abstractgroupableitem.h>
-#include <taskmanager/taskmanager_export.h>
+#include "abstractgroupableitem.h"
+#include "taskmanager_export.h"
+#include "launcheritem.h"
 
 namespace TaskManager
 {
@@ -45,6 +46,7 @@ public:
     ~TaskGroup();
 
     ItemList members() const;
+    QList<LauncherItem*> Launchers() const;
     WindowList winIds() const;
     WindowList directMemberwinIds() const;
 
@@ -61,7 +63,11 @@ public:
     QString name() const;
     void setName(const QString &newName);
 
-    virtual bool isGroupItem() const { return true; }
+    ItemType itemType() const;
+    /**
+    * @deprecated: use itemType() instead
+    **/
+    KDE_DEPRECATED virtual bool isGroupItem() const;
     bool isRootGroup() const;
 
     bool isPinned() const;
@@ -89,6 +95,7 @@ public:
     bool isOnAllDesktops() const;
     bool isOnCurrentDesktop() const;
     void addMimeData(QMimeData *mimeData) const;
+    void launcherStatusChanged(LauncherItem* launcher);
 
     /**
      * Sorting strategies may use this to move items around

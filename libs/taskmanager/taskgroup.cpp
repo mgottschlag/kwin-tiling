@@ -28,12 +28,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "groupmanager.h"
 
 // Qt
-#include <QColor>
-#include <QMimeData>
+#include <QtGui/QColor>
+#include <QtCore/QMimeData>
 
 // KDE
-#include <KDebug>
-#include <KIcon>
+#include <KDE/KDebug>
+#include <KDE/KIcon>
 #include <ksharedptr.h>
 
 
@@ -50,6 +50,7 @@ public:
     }
 
     ItemList members;
+    QList<LauncherItem*> invisibleLaunchers;
     QString groupName;
     QColor groupColor;
     QIcon groupIcon;
@@ -110,7 +111,7 @@ WindowList TaskGroup::directMemberwinIds() const
 {
     WindowList ids;
     foreach (AbstractGroupableItem *groupable, d->members) {
-        if (!groupable->isGroupItem()) {
+        if (!groupable->itemType() == GroupItemType) {
             ids+=groupable->winIds();
         }
     }
@@ -120,7 +121,7 @@ WindowList TaskGroup::directMemberwinIds() const
 AbstractGroupableItem *TaskGroup::getMemberByWId(WId id)
 {
     foreach (AbstractGroupableItem *groupable, d->members) {
-        if (groupable->isGroupItem()) {
+        if (groupable->itemType() == GroupItemType) {
             AbstractGroupableItem *item = static_cast<TaskGroup*>(groupable)->getMemberByWId(id);
             if (item) {
                 return item;
@@ -143,7 +144,7 @@ int TaskGroup::totalSize()
 {
     int size = 0;
     foreach (AbstractGroupableItem *groupable, d->members) {
-        if (groupable->isGroupItem()) {
+        if (groupable->itemType() == GroupItemType) {
             size += static_cast<TaskGroup*>(groupable)->totalSize();
         } else {
             size++;
@@ -154,7 +155,7 @@ int TaskGroup::totalSize()
 
 void TaskGroup::add(AbstractGroupableItem *item)
 {
-/*    if (!item->isGroupItem()) {
+/*    if (!item->itemType() == GroupItemType) {
         if ((dynamic_cast<TaskItem*>(item))->task()) {
             kDebug() << "Add item" << (dynamic_cast<TaskItem*>(item))->task()->visibleName();
         }
@@ -180,8 +181,8 @@ void TaskGroup::add(AbstractGroupableItem *item)
 
     if (item->parentGroup()) {
         item->parentGroup()->remove(item);
-    } else if (item->isGroupItem()) {
-        TaskGroup *group = qobject_cast<TaskGroup*>(item);
+    } else if (item->itemType() == GroupItemType) {
+        TaskGroup *group = static_cast<TaskGroup*>(item);
         if (group) {
             foreach (AbstractGroupableItem *subItem, group->members()) {
                 connect(subItem, SIGNAL(changed(::TaskManager::TaskChanges)),
@@ -203,7 +204,7 @@ void TaskGroup::add(AbstractGroupableItem *item)
 
     //For debug
    /* foreach (AbstractGroupableItem *item, d->members) {
-        if (item->isGroupItem()) {
+        if (item->itemType() == GroupItemType) {
             kDebug() << (dynamic_cast<TaskGroup*>(item))->name();
         } else {
             kDebug() << (dynamic_cast<TaskItem*>(item))->task()->visibleName();
@@ -229,12 +230,25 @@ void TaskGroup::itemChanged(::TaskManager::TaskChanges changes)
     }
 }
 
+void TaskGroup::launcherStatusChanged(LauncherItem* launcher)
+{
+    if (launcher->isVisible()) {
+        d->members.append(launcher);
+        d->invisibleLaunchers.removeAll(launcher);
+    }
+    else
+    {
+        d->members.removeAll(launcher);
+        d->invisibleLaunchers.append(launcher);
+    }
+}
+
 void TaskGroup::remove(AbstractGroupableItem *item)
 {
     Q_ASSERT(item);
 
     /*
-    if (item->isGroupItem()) {
+    if (item->itemType() == GroupItemType) {
         kDebug() << "Remove group" << (dynamic_cast<TaskGroup*>(item))->name();
     } else if ((dynamic_cast<TaskItem*>(item))->task()) {
         kDebug() << "Remove item" << (dynamic_cast<TaskItem*>(item))->task()->visibleName();
@@ -244,7 +258,7 @@ void TaskGroup::remove(AbstractGroupableItem *item)
 
    /* kDebug() << "GroupMembers: ";
     foreach (AbstractGroupableItem *item, d->members) {
-        if (item->isGroupItem()) {
+        if (item->itemType() == GroupItemType) {
             kDebug() << (dynamic_cast<TaskGroup*>(item))->name();
         } else {
             kDebug() << (dynamic_cast<TaskItem*>(item))->task()->visibleName();
@@ -270,6 +284,19 @@ void TaskGroup::remove(AbstractGroupableItem *item)
 ItemList TaskGroup::members() const
 {
     return d->members;
+}
+
+QList<LauncherItem*> TaskGroup::Launchers() const
+{
+    QList<LauncherItem*> list;
+    foreach (AbstractGroupableItem *item, d->members) {
+        if (item->itemType() == LauncherItemType) {
+            LauncherItem *launcher = static_cast<LauncherItem*>(item);
+            list.append(launcher);
+        }
+    }
+    list.append(d->invisibleLaunchers);
+    return list;
 }
 
 void TaskGroup::setColor(const QColor &color)
@@ -303,6 +330,16 @@ void TaskGroup::setIcon(const QIcon &newIcon)
 {
     d->groupIcon = newIcon;
     emit changed(IconChanged);
+}
+
+ItemType TaskGroup::itemType() const
+{
+    return GroupItemType;
+}
+
+bool TaskGroup::isGroupItem() const
+{
+    return true;
 }
 
 bool TaskGroup::isPinned() const

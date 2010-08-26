@@ -160,6 +160,16 @@ QString TaskItem::name() const
     return QString();
 }
 
+ItemType TaskItem::itemType() const
+{
+    return TaskItemType;
+}
+
+bool TaskItem::isGroupItem() const
+{
+    return false;
+}
+
 void TaskItem::setShaded(bool state)
 {
     if (!d->task) {

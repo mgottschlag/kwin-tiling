@@ -1,7 +1,4 @@
-/*****************************************************************
-
-Copyright 2008 Christian Mollekopf <chrigi_1@hotmail.com>
-
+/***************************************************************** Copyright 2008 Christian Mollekopf <chrigi_1@hotmail.com>
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -87,14 +84,15 @@ QList<QAction*> ProgramGroupingStrategy::strategyActions(QObject *parent, Abstra
 QString ProgramGroupingStrategy::className(AbstractGroupableItem *item)
 {
     QString name;
-    if (item->isGroupItem()) { //maybe add the condition that the subgroup was created by programGrouping
+    if (item->itemType() == GroupItemType) { //maybe add the condition that the subgroup was created by programGrouping
         TaskGroup *group = qobject_cast<TaskGroup*>(item);
         TaskItem *task = qobject_cast<TaskItem*>(group->members().first()); //There are only TaskItems in programGrouping groups
         return task->task()->classClass();
     }
 
-    return (qobject_cast<TaskItem*>(item))->task()->classClass();
+        return (qobject_cast<TaskItem*>(item))->task()->classClass();
 }
+
 
 void ProgramGroupingStrategy::toggleGrouping()
 {
@@ -107,7 +105,7 @@ void ProgramGroupingStrategy::toggleGrouping()
 
     if (d->blackList.contains(name)) {
         d->blackList.removeAll(name);
-        if (tempItem->isGroupItem()) {
+        if (tempItem->itemType() == GroupItemType) {
             foreach (AbstractGroupableItem *item, (qobject_cast<TaskGroup*>(tempItem))->members()) {
                 handleItem(item);
             }
@@ -117,7 +115,7 @@ void ProgramGroupingStrategy::toggleGrouping()
     } else {
         d->blackList.append(name);
         GroupPtr root = rootGroup();
-        if (tempItem->isGroupItem()) {
+        if (tempItem->itemType() == GroupItemType) {
             closeGroup(qobject_cast<TaskGroup*>(tempItem));
         } else if (root) {
             root->add(tempItem);
@@ -125,7 +123,7 @@ void ProgramGroupingStrategy::toggleGrouping()
 
         if (root) {
             foreach (AbstractGroupableItem *item, root->members()) {
-                if (item->isGroupItem()) {
+                if (item->itemType() == GroupItemType) {
                     untoggleGroupingOn(static_cast<TaskGroup*>(item), name);
                 }
             }
@@ -151,13 +149,13 @@ void ProgramGroupingStrategy::untoggleGroupingOn(TaskGroup *group, const QString
     }
 
     foreach (AbstractGroupableItem *item, group->members()) {
-        if (item->isGroupItem()) {
+        if (item->itemType() == GroupItemType) {
             untoggleGroupingOn(static_cast<TaskGroup*>(item), name);
         }
     }
 
     foreach (AbstractGroupableItem *item, group->members()) {
-        if (!item->isGroupItem() && name == static_cast<TaskItem *>(item)->task()->classClass())  {
+        if (!item->itemType() == GroupItemType && name == static_cast<TaskItem *>(item)->task()->classClass())  {
             if (group->parentGroup()) {
                 group->parentGroup()->add(item);
             }
@@ -177,7 +175,7 @@ void ProgramGroupingStrategy::handleItem(AbstractGroupableItem *item)
         return;
     }
 
-    if (item->isGroupItem()) {
+    if (item->itemType() == GroupItemType) {
         //kDebug() << "item is groupitem";
         root->add(item);
         return;
@@ -198,11 +196,11 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
 {
     //kDebug();
     QList<AbstractGroupableItem *> list;
-    const QString name = taskItem->task()->classClass();
+    QString name = taskItem->task()->classClass();
 
     //search for an existing group
     foreach (AbstractGroupableItem *item, groupItem->members()) {
-        if (item->isGroupItem()) {
+        if (item->itemType() == GroupItemType) {
             //TODO: maybe add the condition that the subgroup was created by programGrouping?
             if (programGrouping(taskItem, static_cast<TaskGroup*>(item))) {
                 //kDebug() << "joined subGroup";
@@ -219,7 +217,7 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
     if (!list.isEmpty()) {
         if (groupItem->isRootGroup()) {
             //kDebug() << "create Group root group";
-            QIcon icon = taskItem->task()->icon();
+            QIcon icon = taskItem->icon();
             list.append(taskItem);
             TaskGroup* group = createGroup(list);
             group->setName(name);

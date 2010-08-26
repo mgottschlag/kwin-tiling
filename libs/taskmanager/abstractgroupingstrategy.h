@@ -26,10 +26,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QtCore/QObject>
 
-#include <taskmanager/abstractgroupableitem.h>
-#include <taskmanager/groupmanager.h>
-#include <taskmanager/taskgroup.h>
-#include <taskmanager/taskmanager_export.h>
+#include "abstractgroupableitem.h"
+#include "groupmanager.h"
+#include "taskgroup.h"
+#include "taskmanager_export.h"
 
 class QAction;
 
