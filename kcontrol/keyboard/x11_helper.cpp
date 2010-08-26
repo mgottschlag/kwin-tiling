@@ -366,3 +366,5 @@ QString LayoutUnit::toString() const
 
 	return layout + LAYOUT_VARIANT_SEPARATOR_PREFIX+variant+LAYOUT_VARIANT_SEPARATOR_SUFFIX;
 }
+
+const int LayoutUnit::MAX_LABEL_LENGTH = 3;

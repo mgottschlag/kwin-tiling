@@ -64,6 +64,8 @@ struct XkbConfig {
 
 
 struct LayoutUnit {
+	static const int MAX_LABEL_LENGTH;
+
 	//TODO: move these to private?
 	QString layout;
 	QString variant;

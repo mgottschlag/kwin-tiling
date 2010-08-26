@@ -22,7 +22,7 @@
 
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QAbstractTableModel>
-#include <QtGui/QItemDelegate>
+#include <QtGui/QStyledItemDelegate>
 
 class QTreeView;
 class KeyboardConfig;
@@ -64,7 +64,23 @@ class LayoutsTableModel : public QAbstractTableModel
      Flags *countryFlags;
 };
 
-class VariantComboDelegate : public QItemDelegate
+class LabelEditDelegate : public QStyledItemDelegate
+{
+	Q_OBJECT
+
+public:
+	LabelEditDelegate(const KeyboardConfig* keyboardConfig, QObject *parent = 0);
+
+	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+			const QModelIndex &index) const;
+
+//    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+private:
+    const KeyboardConfig* keyboardConfig;
+};
+
+class VariantComboDelegate : public QStyledItemDelegate
 {
 	Q_OBJECT
 

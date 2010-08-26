@@ -53,6 +53,16 @@ AddLayoutDialog::AddLayoutDialog(const Rules* rules_, Flags* flags_, QWidget* pa
     layoutDialogUi->languageComboBox->model()->sort(0);
 	layoutDialogUi->languageComboBox->insertItem(0, i18n("Any language"), "");
 	layoutDialogUi->languageComboBox->setCurrentIndex(0);
+
+	bool noLabel = flags != NULL;
+	if( noLabel ) {
+		layoutDialogUi->labelLabel->setVisible(false);
+		layoutDialogUi->labelEdit->setVisible(false);
+	}
+	else {
+		layoutDialogUi->labelEdit->setMaxLength(LayoutUnit::MAX_LABEL_LENGTH);
+	}
+
     languageChanged(0);
 
 	connect(layoutDialogUi->languageComboBox, SIGNAL(activated(int)), this, SLOT(languageChanged(int)));
@@ -104,6 +114,8 @@ void AddLayoutDialog::layoutChanged(int layoutIdx)
 	layoutDialogUi->variantComboBox->insertItem(0, i18nc("variant", "Default"), "");
 	layoutDialogUi->variantComboBox->setCurrentIndex(0);
 
+	layoutDialogUi->labelEdit->setText(layoutName);
+
 	selectedLayout = layoutName;
 }
 
@@ -111,5 +123,10 @@ void AddLayoutDialog::accept()
 {
 	selectedLayoutUnit.layout = layoutDialogUi->layoutComboBox->itemData(layoutDialogUi->layoutComboBox->currentIndex()).toString();
 	selectedLayoutUnit.variant = layoutDialogUi->variantComboBox->itemData(layoutDialogUi->variantComboBox->currentIndex()).toString();
+	QString label = layoutDialogUi->labelEdit->text();
+	if( label == selectedLayoutUnit.layout ) {
+		label = "";
+	}
+	selectedLayoutUnit.setDisplayName( label );
 	QDialog::accept();
 }

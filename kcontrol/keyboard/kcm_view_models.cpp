@@ -21,6 +21,8 @@
 #include <klocalizedstring.h>
 #include <QtGui/QTreeView>
 #include <QtGui/QComboBox>
+#include <QtGui/QLineEdit>
+#include <QtGui/QPainter>
 
 #ifdef DRAG_ENABLED
 #include <QtCore/QMimeData>
@@ -122,12 +124,23 @@ QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
 
      if (role == Qt::DecorationRole) {
     	 switch( index.column() ) {
-    	 case MAP_COLUMN: {
+    	 case DISPLAY_NAME_COLUMN: {
     			if( keyboardConfig->showFlag ) {
     				QIcon icon = countryFlags->getIcon(layoutUnit.layout);
     				return icon.isNull() ? countryFlags->getTransparentPixmap() : icon;
     			}
     	 }
+//TODO: show the cells are editable
+//    	 case VARIANT_COLUMN: {
+//    	 case DISPLAY_NAME_COLUMN: {
+//    		 int sz = 5;
+//    		 QPixmap pm = QPixmap(sz, sz+5);
+//    		 pm.fill(Qt::transparent);
+//    		 QPainter p(&pm);
+//    		 QPoint points[] = { QPoint(0, 0), QPoint(0, sz), QPoint(sz, 0) };
+//    		 p.drawPolygon(points, 3);
+//    		 return pm;
+//    	 }
     	 break;
     	 }
      }
@@ -152,7 +165,9 @@ QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
     	 }
          break;
     	 case DISPLAY_NAME_COLUMN:
-    		 return layoutUnit.getDisplayName();
+ 			if( ! keyboardConfig->showFlag ) {
+ 				return layoutUnit.getDisplayName();
+ 			}
     	 break;
     	 }
      }
@@ -163,6 +178,15 @@ QVariant LayoutsTableModel::data(const QModelIndex &index, int role) const
     	 break;
     	 case VARIANT_COLUMN:
     		 return layoutUnit.variant;
+    	 break;
+    	 default:;
+    	 }
+     }
+     else if( role == Qt::TextAlignmentRole ) {
+    	 switch( index.column() ) {
+    	 case MAP_COLUMN:
+    	 case DISPLAY_NAME_COLUMN:
+    		 return Qt::AlignCenter;
     	 break;
     	 default:;
     	 }
@@ -212,6 +236,37 @@ bool LayoutsTableModel::setData(const QModelIndex &index, const QVariant &value,
 }
 
 //
+// LabelEditDelegate
+//
+LabelEditDelegate::LabelEditDelegate(const KeyboardConfig* keyboardConfig_, QObject *parent):
+	QStyledItemDelegate(parent),
+	keyboardConfig(keyboardConfig_)
+{}
+
+QWidget *LabelEditDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem & option ,
+		const QModelIndex & index ) const
+{
+	if( keyboardConfig->showFlag )
+		return NULL;
+
+	QWidget* widget = QStyledItemDelegate::createEditor(parent, option, index);
+	QLineEdit* lineEdit = static_cast<QLineEdit*>(widget);
+	if( lineEdit != NULL ) {
+		lineEdit->setMaxLength(LayoutUnit::MAX_LABEL_LENGTH);
+	}
+	return widget;
+}
+
+//void LabelEditDelegate::paint( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
+//{
+//	QStyleOptionViewItem option2(option);
+////	option2.decorationPosition =  QStyleOptionViewItem::Right;
+//	option2.decorationAlignment = Qt::AlignHCenter | Qt::AlignVCenter;
+//	QStyledItemDelegate::paint(painter, option2, index);
+//}
+
+
+//
 // VariantComboDelegate
 //
 //TODO: reuse this function in kcm_add_layout_dialog.cpp
@@ -228,7 +283,7 @@ static void populateComboWithVariants(QComboBox* combo, const QString& layout, c
 }
 
 VariantComboDelegate::VariantComboDelegate(const KeyboardConfig* keyboardConfig_, const Rules* rules_, QObject *parent):
-	QItemDelegate(parent),
+	QStyledItemDelegate(parent),
 	keyboardConfig(keyboardConfig_),
 	rules(rules_)
 {}

@@ -184,13 +184,20 @@ void KCMKeyboardWidget::addLayout()
 void KCMKeyboardWidget::initializeLayoutsUI()
 {
 	layoutsTableModel = new LayoutsTableModel(rules, flags, keyboardConfig, uiWidget->layoutsTableView);
+	uiWidget->layoutsTableView->setEditTriggers(QAbstractItemView::SelectedClicked | QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed | QAbstractItemView::AnyKeyPressed);
 	uiWidget->layoutsTableView->setModel(layoutsTableModel);
+	uiWidget->layoutsTableView->setIconSize( flags->getTransparentPixmap().size() );
+
 	//TODO: do we need to delete this delegate or parent will take care of it?
-	VariantComboDelegate* delegate = new VariantComboDelegate(keyboardConfig, rules, uiWidget->layoutsTableView);
-	uiWidget->layoutsTableView->setItemDelegateForColumn(LayoutsTableModel::VARIANT_COLUMN, delegate);
+	VariantComboDelegate* variantDelegate = new VariantComboDelegate(keyboardConfig, rules, uiWidget->layoutsTableView);
+	uiWidget->layoutsTableView->setItemDelegateForColumn(LayoutsTableModel::VARIANT_COLUMN, variantDelegate);
+
+	LabelEditDelegate* labelDelegate = new LabelEditDelegate(keyboardConfig, uiWidget->layoutsTableView);
+	uiWidget->layoutsTableView->setItemDelegateForColumn(LayoutsTableModel::DISPLAY_NAME_COLUMN, labelDelegate);
+
 	//TODO: is it ok to hardcode sizes? any better approach?
 	uiWidget->layoutsTableView->setColumnWidth(LayoutsTableModel::MAP_COLUMN, 70);
-	uiWidget->layoutsTableView->setColumnWidth(LayoutsTableModel::LAYOUT_COLUMN, 150);
+	uiWidget->layoutsTableView->setColumnWidth(LayoutsTableModel::LAYOUT_COLUMN, 200);
 	uiWidget->layoutsTableView->setColumnWidth(LayoutsTableModel::VARIANT_COLUMN, 250);
 
 	connect(layoutsTableModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(uiChanged()));
