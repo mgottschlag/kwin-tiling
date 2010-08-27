@@ -361,6 +361,7 @@ void ItemContainer::relayout()
     newSize = QSizeF(nColumns*m_cellSize.width(), nRows*m_cellSize.height());
 
     setMaximumSize(newSize);
+    setPreferredSize(newSize);
     resize(newSize);
     m_relayoutTimer->stop();
     m_firstRelayout = false;
