@@ -185,7 +185,6 @@ bool WeatherEngine::sourceRequestEvent(const QString &source)
 
     // we should connect to the ion anyway, even if the network
     // is down. when it comes up again, then it will be refreshed
-    QByteArray str = source.toLocal8Bit();
     ion->connectSource(source, this);
 
     kDebug() << "sourceRequestEvent(): Network is: " << m_networkAvailable;
@@ -207,8 +206,6 @@ bool WeatherEngine::sourceRequestEvent(const QString &source)
 bool WeatherEngine::updateSourceEvent(const QString& source)
 {
     IonInterface *ion = ionForSource(source);
-
-    QByteArray str = source.toLocal8Bit();
     if (!ion) {
         return false;
     }
