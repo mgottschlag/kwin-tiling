@@ -454,6 +454,7 @@ void Clock::invalidateCache()
     m_repaintCache = RepaintAll;
 
     QSize pixmapSize = contentsRect().size().toSize();
+    const int squareEdge = qMin(pixmapSize.width(), pixmapSize.height());
 
     if (m_showingTimezone) {
         QRect tzArea = tzRect(prettyTimezone());
@@ -461,7 +462,7 @@ void Clock::invalidateCache()
         tzFrame()->resizeFrame(tzArea.size());
     }
 
-    pixmapSize.setWidth(pixmapSize.height());
+    pixmapSize = QSize(squareEdge, qMin(squareEdge, pixmapSize.height()));
     m_faceCache = QPixmap(pixmapSize);
     m_handsCache = QPixmap(pixmapSize);
     m_glassCache = QPixmap(pixmapSize);
