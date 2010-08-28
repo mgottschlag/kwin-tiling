@@ -183,15 +183,17 @@ bool WeatherEngine::sourceRequestEvent(const QString &source)
         }
     }
 
+    // we should connect to the ion anyway, even if the network
+    // is down. when it comes up again, then it will be refreshed
+    QByteArray str = source.toLocal8Bit();
+    ion->connectSource(source, this);
+
     kDebug() << "sourceRequestEvent(): Network is: " << m_networkAvailable;
     if (!m_networkAvailable) {
         setData(source, Data());
         return true;
     }
 
-    QByteArray str = source.toLocal8Bit();
-
-    ion->connectSource(source, this);
     if (!containerForSource(source)) {
         // it is an async reply, we need to set up the data anyways
         setData(source, Data());
@@ -207,7 +209,6 @@ bool WeatherEngine::updateSourceEvent(const QString& source)
     IonInterface *ion = ionForSource(source);
 
     QByteArray str = source.toLocal8Bit();
-
     if (!ion) {
         return false;
     }
