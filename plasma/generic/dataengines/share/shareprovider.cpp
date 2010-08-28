@@ -144,7 +144,6 @@ void ShareProvider::addPostFile(const QString &contentKey, const QString &conten
     // If it's not plain text then we should handle it later
     if (m_mimetype != "text/plain") {
         m_isBlob = true;
-        kDebug() << "----------------> ITS NOT TEXT !!!!!!";
     }
 
     // try to open the file
@@ -255,12 +254,9 @@ void ShareProvider::publish()
     // Multipart is used to upload files
     KIO::TransferJob *tf;
     if (m_isBlob) {
-        kDebug() << "-----> Using multipart: " << m_service;
-        kDebug() << "-----> m_buffer: " << m_buffer;
         tf = KIO::http_post(m_service, m_buffer, KIO::HideProgressInfo);
         tf->addMetaData("content-type","Content-Type: multipart/form-data; boundary=" + m_boundary);
     } else {
-        kDebug() << "----> Using form: " << m_service;
         tf = KIO::http_post(m_service,
                             m_url.encodedQuery(), KIO::HideProgressInfo);
         tf->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");

@@ -146,14 +146,12 @@ void ShareJob::start()
 
 void ShareJob::publish()
 {
-    kDebug() << "--------> READY TO PUBLISH! PUBLISHING NOW!!!";
     m_provider->publish();
 }
 
 void ShareJob::showResult(const QString &url)
 {
     setResult(url);
-    kDebug() << "---> RESULT OK: " << url;
 }
 
 void ShareJob::showError(const QString &message)
@@ -166,7 +164,6 @@ void ShareJob::showError(const QString &message)
     setError(1);
     setErrorText(message);
     emitResult();
-    kDebug() << "---> RESULT ERROR: " << message;
 }
 
 #include "shareservice.moc"
