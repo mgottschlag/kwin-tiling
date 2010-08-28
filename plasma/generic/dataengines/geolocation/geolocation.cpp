@@ -109,8 +109,10 @@ bool Geolocation::sourceRequestEvent(const QString &name)
 
 void Geolocation::networkStatusChanged()
 {
+    kDebug() << "network status changed";
     m_networkStatus = Solid::Networking::status();
-    if (m_networkStatus == (Solid::Networking::Connected || Solid::Networking::Unknown)) {
+    if ((m_networkStatus == Solid::Networking::Connected) ||
+        (m_networkStatus == Solid::Networking::Unknown)) {
         updatePlugins(GeolocationProvider::NetworkConnected);
     }
 }
