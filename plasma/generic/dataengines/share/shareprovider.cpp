@@ -17,11 +17,13 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#include <krandom.h>
-#include <KDebug>
-
 #include <QFile>
 #include <QXmlStreamReader>
+
+#include <krandom.h>
+#include <KDebug>
+#include <KDE/KIO/MimetypeJob>
+#include <KDE/KIO/FileJob>
 
 #include "shareprovider.h"
 #include "share_package.h"
@@ -271,6 +273,7 @@ void ShareProvider::publish()
 
 void ShareProvider::redirected(KIO::Job *job, const KUrl &to)
 {
+    Q_UNUSED(job)
     const QUrl toUrl(to);
     const QUrl serviceUrl(m_service);
 

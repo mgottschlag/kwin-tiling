@@ -22,8 +22,6 @@
 
 #include <QObject>
 #include <kio/global.h>
-#include <KDE/KIO/MimetypeJob>
-#include <KDE/KIO/FileJob>
 #include <KDE/KIO/Job>
 
 #include <Plasma/PackageStructure>
