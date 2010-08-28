@@ -103,17 +103,18 @@ public:
     {
         Plasma::DataEngine::Data data = q->dataEngine("time")->query(tz);
 
+        subText.append("<tr><td align=\"right\">");
         if (tz == "UTC")  {
-            subText.append("<br><b>UTC</b>&nbsp;");
+            subText.append("UTC");
         } else {
-            subText.append("<br><b>")
-                   .append(data["Timezone City"].toString().replace('_', "&nbsp;"))
-                   .append("</b> ");
+            subText.append(data["Timezone City"].toString().replace('_', "&nbsp;"));
         }
+        subText.append(":</td><td>");
 
         subText.append(KGlobal::locale()->formatTime(data["Time"].toTime(), false).replace(' ', "&nbsp;"))
                .append(",&nbsp;")
-               .append(q->calendar()->formatDate(data["Date"].toDate()).replace(' ', "&nbsp;"));
+               .append(q->calendar()->formatDate(data["Date"].toDate()).replace(' ', "&nbsp;"))
+               .append("</td></tr>");
     }
 
     void createCalendarExtender()
@@ -267,7 +268,7 @@ void ClockApplet::updateTipContent()
     mainText += calendar()->formatDate(tipDate);
     tipData.setMainText(mainText);
 
-    QString subText;
+    QString subText("<table>");
     if (!isLocalTimezone()) {
         d->addTzToTipText(subText, localTimezone());
     }
@@ -278,6 +279,11 @@ void ClockApplet::updateTipContent()
         }
 
         d->addTzToTipText(subText, tz);
+    }
+
+    if (!subText.isEmpty()) {
+        subText.prepend("<table>");
+        subText.append("</table>");
     }
 
     if (d->calendarWidget->dateHasDetails(tipDate)) {
@@ -320,7 +326,7 @@ void ClockApplet::updateClockApplet()
 
     Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
     d->calendarWidget->setCurrentDate(data["Date"].toDate());
-    
+
     if (updateSelectedDate){
         d->calendarWidget->setDate(d->calendarWidget->currentDate());
     }
