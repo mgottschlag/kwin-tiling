@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name=privatepaste.com
+Comment=Paste text with the PrivatePaste.com service
+Type=Service
+
+X-KDE-ServiceTypes=Plasma/ShareProvider
+X-KDE-Library=plasma_engine_share
+X-KDE-PlasmaShareProvider-MimeType=text/*
+
+X-KDE-PluginInfo-Name=privatepastecom
+X-KDE-PluginInfo-Author=Artur Souza
+X-KDE-PluginInfo-Email=asouza@kde.org
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+
