@@ -53,7 +53,6 @@ void EnvCanadaIon::deleteForecasts()
 void EnvCanadaIon::reset()
 {
     deleteForecasts();
-    setInitialized(false);
     emitWhenSetup = true;
     m_sourcesToReset = sources();
     getXMLSetup();
@@ -576,6 +575,11 @@ void EnvCanadaIon::slotJobFinished(KJob *job)
 
     if (m_sourcesToReset.contains(source)) {
         m_sourcesToReset.removeAll(source);
+
+        // so the weather engine updates it's data
+        forceImmediateUpdateOfAllVisualizations();
+
+        // update the clients of our engine
         emit forceUpdate(this, source);
     }
 }

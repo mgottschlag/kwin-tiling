@@ -526,7 +526,15 @@ void WetterComIon::forecast_slotJobFinished(KJob *job)
 
     if (m_sourcesToReset.contains(source)) {
         m_sourcesToReset.removeAll(source);
-        emit forceUpdate(this, source);
+        const QString weatherSource = QString::fromLatin1("wettercom|weather|%1|%2;%3") \
+            .arg(source).arg(m_place[source].placeCode)                 \
+            .arg(m_place[source].displayName);
+
+        // so the weather engine updates it's data
+        forceImmediateUpdateOfAllVisualizations();
+
+        // update the clients of our engine
+        emit forceUpdate(this, weatherSource);
     }
 }
 

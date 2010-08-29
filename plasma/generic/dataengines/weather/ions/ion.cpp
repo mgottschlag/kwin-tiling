@@ -47,11 +47,17 @@ IonInterface::~IonInterface()
  */
 bool IonInterface::sourceRequestEvent(const QString &source)
 {
-    kDebug() << "sourceRequested()";
+    kDebug() << "sourceRequested(): " << source;
+
+    // init anyway the data as it's going to be used
+    // sooner or later (doesnt depend upon initialization
+    // this will avoid problems if updateIonSource() fails for any reason
+    // but later it's able to retrieve the data
+    setData(source, Plasma::DataEngine::Data());
+
+    // if initialized, then we can try to grab the data
     if (d->initialized) {
         return updateIonSource(source);
-    } else {
-        setData(source, Plasma::DataEngine::Data());
     }
 
     return true;
