@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=privatepaste.com
+Name[x-test]=xxprivatepaste.comxx
 Comment=Paste text with the PrivatePaste.com service
+Comment[x-test]=xxPaste text with the PrivatePaste.com servicexx
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/ShareProvider
