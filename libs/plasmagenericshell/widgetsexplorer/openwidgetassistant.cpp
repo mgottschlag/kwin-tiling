@@ -137,8 +137,9 @@ void OpenWidgetAssistant::prepPage(KPageWidgetItem *current, KPageWidgetItem *be
             m_fileDialog->setMimeFilter(mimes);
         } else {
             QString filter = m_packageStructureService->property("X-Plasma-PackageFileFilter").toString();
+
             if (!filter.isEmpty()) {
-                m_fileDialog->setFilter(+ '|' + m_packageStructureService->name());
+                m_fileDialog->setFilter(filter + '|' + m_packageStructureService->name());
             }
         }
     } else {
