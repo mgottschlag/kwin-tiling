@@ -104,6 +104,7 @@ void KillRunner::match(Plasma::RunnerContext &context)
         m_prepLock.lockForWrite();
         if (!m_processes) {
             m_processes = new KSysGuard::Processes();
+            m_processes->updateAllProcesses();
         }
     }
     m_prepLock.unlock();
