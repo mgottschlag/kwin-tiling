@@ -132,7 +132,7 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
 
     KUriFilterData filterData(term);
     QStringList filters;
-    filters << "kuriikwsfilter";
+    filters << "kurisearchfilter";//"kuriikwsfilter";
 
     if (!KUriFilter::self()->filterUri(filterData, filters)) {
         m_lastFailedKey = key;
