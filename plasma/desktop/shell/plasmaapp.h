@@ -152,13 +152,18 @@ private Q_SLOTS:
     void wallpaperCheckedIn();
     void wallpaperCheckInTimeout();
     void dashboardClosed();
+    void relocatePanels();
 
 private:
     DesktopCorona *m_corona;
+
     QList<PanelView*> m_panels;
     QList<QWeakPointer<Plasma::Containment> > m_panelsWaiting;
-    QList<QWeakPointer<Plasma::Containment> > m_desktopsWaiting;
+    QList<QWeakPointer<Plasma::Containment> > m_panelRelocationCandidates;
+
     QList<DesktopView*> m_desktops;
+    QList<QWeakPointer<Plasma::Containment> > m_desktopsWaiting;
+
     QTimer m_panelViewCreationTimer;
     QTimer m_desktopViewCreationTimer;
     QWeakPointer<InteractiveConsole> m_console;

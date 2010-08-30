@@ -664,7 +664,7 @@ void PlasmaApp::screenRemoved(int id)
     QList<Kephal::Screen *> screens = Kephal::Screens::self()->screens();
     screens.removeAll(primary);
 
-    // Now we process panels: if there is room on another sreen for the panel,
+    // Now we process panels: if there is room on another screen for the panel,
     // we migrate the panel there, otherwise the view is deleted. The primary
     // screen is preferred in all cases.
     QMutableListIterator<PanelView*> pIt(m_panels);
@@ -919,11 +919,6 @@ void PlasmaApp::createWaitingPanels()
     const QList<QWeakPointer<Plasma::Containment> > containments = m_panelsWaiting;
     m_panelsWaiting.clear();
 
-    Kephal::Screen *primary = Kephal::Screens::self()->primaryScreen();
-    QList<Kephal::Screen *> screens = Kephal::Screens::self()->screens();
-    screens.removeAll(primary);
-
-    QList<Plasma::Containment *> relocationCandidates;
     foreach (QWeakPointer<Plasma::Containment> containmentPtr, containments) {
         Plasma::Containment *containment = containmentPtr.data();
         if (!containment) {
@@ -942,16 +937,31 @@ void PlasmaApp::createWaitingPanels()
 
         // try to relocate the panel if it is on a now-non-existent screen
         if (containment->screen() >= Kephal::ScreenUtils::numScreens()) {
-            relocationCandidates << containment;
+            m_panelRelocationCandidates << containment;
             continue;
         }
 
         createPanelView(containment);
     }
 
+    if (!m_panelRelocationCandidates.isEmpty()) {
+        QTimer::singleShot(0, this, SLOT(relocatePanels()));
+    }
+}
+
+void PlasmaApp::relocatePanels()
+{
     // we go through relocatables last so that all other panels can be set up first,
     // preventing panel creation ordering to trip up the canRelocatePanel algorithm
-    foreach (Plasma::Containment *containment, relocationCandidates) {
+    Kephal::Screen *primary = Kephal::Screens::self()->primaryScreen();
+    QList<Kephal::Screen *> screens = Kephal::Screens::self()->screens();
+    screens.removeAll(primary);
+
+    foreach (QWeakPointer<Plasma::Containment> c, m_panelRelocationCandidates) {
+        Plasma::Containment *containment = c.data();
+        if (!containment) {
+            continue;
+        }
         Kephal::Screen *moveTo = 0;
         PanelView *panelView = createPanelView(containment);
         if (canRelocatePanel(panelView, primary)) {
@@ -972,6 +982,8 @@ void PlasmaApp::createWaitingPanels()
             delete panelView;
         }
     }
+
+    m_panelRelocationCandidates.clear();
 }
 
 PanelView *PlasmaApp::createPanelView(Plasma::Containment *containment)
