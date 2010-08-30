@@ -1233,6 +1233,31 @@ void PanelView::updateStruts()
     recreateUnhideTrigger();
 }
 
+bool PanelView:: migratedFrom(int screenId) const
+{
+    KConfigGroup cg = config();
+    QList<int> migrations;
+    migrations = cg.readEntry("Migrations", migrations);
+    return migrations.contains(screenId);
+}
+
+void PanelView::migrateTo(int screenId)
+{
+    KConfigGroup cg = config();
+    QList<int> migrations;
+    migrations = cg.readEntry("Migrations", migrations);
+
+    const int index = migrations.indexOf(screenId);
+    if (index == -1) {
+        migrations.append(screenId);
+    } else {
+        migrations = migrations.mid(0, migrations.length() - index - 1);
+    }
+
+    cg.writeEntry("Migrations", migrations);
+    setScreen(screenId);
+}
+
 void PanelView::enterEvent(QEvent *event)
 {
     // allow unhiding to happen again even if we were delay-unhidden

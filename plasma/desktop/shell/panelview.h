@@ -205,6 +205,9 @@ public Q_SLOTS:
 
     void updateStruts();
 
+    bool migratedFrom(int screenId) const;
+    void migrateTo(int screenId);
+
 protected:
     void moveEvent(QMoveEvent *event);
     void resizeEvent(QResizeEvent *event);

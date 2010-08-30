@@ -684,7 +684,7 @@ void PlasmaApp::screenRemoved(int id)
             }
 
             if (moveTo) {
-                panel->containment()->setScreen(moveTo->id());
+                panel->migrateTo(moveTo->id());
             } else {
                 pIt.remove();
                 delete panel;
@@ -702,6 +702,12 @@ void PlasmaApp::screenAdded(Kephal::Screen *screen)
         if (isPanelContainment(containment) && containment->screen() == screen->id()) {
             m_panelsWaiting << containment;
             m_panelViewCreationTimer.start();
+        }
+    }
+
+    foreach (PanelView *view, m_panels) {
+        if (view->migratedFrom(screen->id())) {
+            view->migrateTo(screen->id());
         }
     }
 }
@@ -962,6 +968,7 @@ void PlasmaApp::relocatePanels()
         if (!containment) {
             continue;
         }
+
         Kephal::Screen *moveTo = 0;
         PanelView *panelView = createPanelView(containment);
         if (canRelocatePanel(panelView, primary)) {
@@ -976,7 +983,7 @@ void PlasmaApp::relocatePanels()
         }
 
         if (moveTo) {
-            containment->setScreen(moveTo->id(), -1);
+            panelView->migrateTo(moveTo->id());
         } else {
             m_panels.removeAll(panelView);
             delete panelView;
