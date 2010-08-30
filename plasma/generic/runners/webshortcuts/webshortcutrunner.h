@@ -36,8 +36,6 @@ class WebshortcutRunner : public Plasma::AbstractRunner {
         void run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match);
 
     private:
-        QString searchQuery(const QString &query, const QString &searchWord);
-        KIcon iconForUrl(const KUrl& url);
         void loadSyntaxes();
 
     private Q_SLOTS:
@@ -53,7 +51,6 @@ class WebshortcutRunner : public Plasma::AbstractRunner {
         QString m_lastKey;
         QString m_lastServiceName;
         KDirWatch m_watch;
-        KService::List m_searchEngines; // Contains all currently enabled search engines.
 };
 
 K_EXPORT_PLASMA_RUNNER(webshortcuts, WebshortcutRunner)
