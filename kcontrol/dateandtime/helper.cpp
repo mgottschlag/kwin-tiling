@@ -58,7 +58,7 @@ int ClockHelper::ntp( const QStringList& ntpServers, bool ntpEnabled,
   if(!config_file.exists()) {
     config_file.open(QIODevice::WriteOnly);
     config_file.close();
-    config_file.setPermissions(QFile::ReadOther);
+    config_file.setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup | QFile::ReadOther);
   }
   KConfig _config(config_file.fileName(), KConfig::SimpleConfig);
   KConfigGroup config(&_config, "NTP");
