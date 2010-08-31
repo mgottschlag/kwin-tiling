@@ -19,6 +19,7 @@
 #include "locationrunner.h"
 
 #include <QDir>
+#include <QMimeData>
 
 #include <KDebug>
 #include <KRun>
@@ -76,6 +77,7 @@ void LocationsRunner::match(Plasma::RunnerContext &context)
         match.setText(i18n("Open %1", term));
         match.setIcon(KIcon("system-file-manager"));
         match.setRelevance(1);
+        match.setData(term);
         match.setType(Plasma::QueryMatch::ExactMatch);
 
         if (type == Plasma::RunnerContext::Directory) {
@@ -163,5 +165,22 @@ void LocationsRunner::run(const Plasma::RunnerContext &context, const Plasma::Qu
 
     new KRun(urlToRun, 0);
 }
+
+QMimeData * LocationsRunner::mimeDataForMatch(const Plasma::QueryMatch *match)
+{
+    const QString data = match->data().toString();
+    if (!data.isEmpty()) {
+        KUrl url(data);
+        QList<QUrl> list;
+        list << url;
+        QMimeData *result = new QMimeData();
+        result->setUrls(list);
+        result->setText(data);
+        return result;
+    }
+
+    return 0;
+}
+
 
 #include "locationrunner.moc"
