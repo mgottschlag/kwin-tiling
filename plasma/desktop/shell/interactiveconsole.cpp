@@ -219,7 +219,7 @@ void InteractiveConsole::onClose()
     // need to save first!
     const QString path = KStandardDirs::locateLocal("appdata", s_autosaveFileName);
     m_closeWhenCompleted = true;
-    saveScript(path, true);
+    saveScript(path);
 }
 
 void InteractiveConsole::print(const QString &string)
@@ -370,7 +370,7 @@ void InteractiveConsole::saveScriptUrlSelected()
     saveScript(url);
 }
 
-void InteractiveConsole::saveScript(const KUrl &url, bool autosave)
+void InteractiveConsole::saveScript(const KUrl &url)
 {
     if (m_editorPart) {
         m_editorPart->saveAs(url);
@@ -414,7 +414,7 @@ void InteractiveConsole::evaluateScript()
 {
     //kDebug() << "evaluating" << m_editor->toPlainText();
     const QString path = KStandardDirs::locateLocal("appdata", s_autosaveFileName);
-    saveScript(path, true);
+    saveScript(path);
 
     m_output->moveCursor(QTextCursor::End);
     QTextCursor cursor = m_output->textCursor();
