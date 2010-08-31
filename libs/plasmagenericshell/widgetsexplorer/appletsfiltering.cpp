@@ -111,9 +111,9 @@ FilteringTabs::~FilteringTabs()
     delete m_menu;
 }
 
-void FilteringTabs::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void FilteringTabs::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    Plasma::PushButton::mouseReleaseEvent(event);
+    Plasma::PushButton::mousePressEvent(event);
     QGraphicsView *view = Plasma::viewFor(this);
     if (view) {
         m_menu->adjustSize();

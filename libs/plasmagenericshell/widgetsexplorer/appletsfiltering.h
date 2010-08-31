@@ -66,7 +66,7 @@ Q_SIGNALS:
     void filterChanged(int index);
 
 protected:
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 private:
     //uses model to populate the tabs
