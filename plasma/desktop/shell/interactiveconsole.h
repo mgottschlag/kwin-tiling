@@ -82,7 +82,7 @@ private Q_SLOTS:
 
 private:
     void onClose();
-    void saveScript(const KUrl &url, bool autosave = false);
+    void saveScript(const KUrl &url);
 
     Plasma::Corona *m_corona;
     QSplitter *m_splitter;
