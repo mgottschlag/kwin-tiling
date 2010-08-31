@@ -77,8 +77,8 @@ private Q_SLOTS:
     void saveScriptUrlSelected();
     void openScriptUrlSelected();
     void loadScriptFromUrl(const KUrl &url);
-    void populateSnippetsMenu();
-    void loadSnippet(QAction *);
+    void populateTemplatesMenu();
+    void loadTemplate(QAction *);
 
 private:
     void onClose();

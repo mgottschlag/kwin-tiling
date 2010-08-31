@@ -65,7 +65,7 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
       m_saveAction(KStandardAction::saveAs(this, SLOT(saveScript()), this)),
       m_clearAction(KStandardAction::clear(this, SLOT(clearEditor()), this)),
       m_executeAction(new KAction(KIcon("system-run"), i18n("&Execute"), this)),
-      m_snippetsMenu(new KMenu(i18n("Snippets"), this)),
+      m_snippetsMenu(new KMenu(i18n("Templates"), this)),
       m_fileDialog(0)
 {
     addAction(KStandardAction::close(this, SLOT(close()), this));
@@ -88,9 +88,9 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     QToolButton *snippetsButton = new QToolButton(this);
     snippetsButton->setPopupMode(QToolButton::InstantPopup);
     snippetsButton->setMenu(m_snippetsMenu);
-    snippetsButton->setText(i18n("Snippets"));
-    connect(m_snippetsMenu, SIGNAL(aboutToShow()), this, SLOT(populateSnippetsMenu()));
-    connect(m_snippetsMenu, SIGNAL(triggered(QAction*)), this, SLOT(loadSnippet(QAction*)));
+    snippetsButton->setText(i18n("Templates"));
+    connect(m_snippetsMenu, SIGNAL(aboutToShow()), this, SLOT(populateTemplatesMenu()));
+    connect(m_snippetsMenu, SIGNAL(triggered(QAction*)), this, SLOT(loadTemplate(QAction*)));
 
     KToolBar *toolBar = new KToolBar(this, true, false);
     toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -290,7 +290,7 @@ void InteractiveConsole::loadScriptFromUrl(const KUrl &url)
     }
 }
 
-void InteractiveConsole::populateSnippetsMenu()
+void InteractiveConsole::populateTemplatesMenu()
 {
     m_snippetsMenu->clear();
 
@@ -320,7 +320,7 @@ void InteractiveConsole::populateSnippetsMenu()
     }
 }
 
-void InteractiveConsole::loadSnippet(QAction *action)
+void InteractiveConsole::loadTemplate(QAction *action)
 {
     loadScriptFromUrl(KUrl(action->data().toString()));
 }
