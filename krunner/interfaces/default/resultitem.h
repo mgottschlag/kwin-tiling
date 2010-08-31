@@ -148,7 +148,8 @@ private:
     Plasma::RunnerManager *m_runnerManager;
     QPropertyAnimation *m_highlightAnim;
     const SharedResultData *m_sharedData;
-    bool m_mouseHovered;
+    bool m_mouseHovered : 1;
+    bool m_mimeDataFailed : 1;
 
     static int s_fontHeight;
 };

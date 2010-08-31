@@ -39,6 +39,7 @@
 #include <QTimer>
 
 #include <KDebug>
+#include <KGlobalSettings>
 #include <KIcon>
 #include <KIconLoader>
 
@@ -64,7 +65,8 @@ ResultItem::ResultItem(const SharedResultData *sharedData, const Plasma::QueryMa
       m_actionsLayout(0),
       m_runnerManager(runnerManager),
       m_sharedData(sharedData),
-      m_mouseHovered(false)
+      m_mouseHovered(false),
+      m_mimeDataFailed(false)
 {
     m_highlightCheckTimer.setInterval(0);
     m_highlightCheckTimer.setSingleShot(true);
@@ -126,6 +128,7 @@ bool ResultItem::isValid() const
 
 void ResultItem::setMatch(const Plasma::QueryMatch &match)
 {
+    m_mimeDataFailed = false;
     m_match = match;
     m_icon = KIcon(match.icon());
 
@@ -442,14 +445,18 @@ void ResultItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void ResultItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    kDebug() << event->button() << Qt::LeftButton;
+    if (!m_mimeDataFailed &&
+        event->buttons() == Qt::LeftButton &&
+        (event->pos() - event->buttonDownPos(Qt::LeftButton)).manhattanLength() >= KGlobalSettings::dndEventDelay()) {
+        QMimeData *mime = m_runnerManager->mimeDataForMatch(m_match);
+        //kDebug() << mime << m_match.text() << m_match.id() << m_match.data();
+        if (mime) {
+            QDrag *drag = new QDrag(event->widget());
+            drag->setMimeData(mime);
+            drag->exec();
+        }
 
-    QMimeData * mime = m_runnerManager->mimeDataForMatch(m_match);
-
-    if (mime) {
-        QDrag * drag = new QDrag(event->widget());
-        drag->setMimeData(mime);
-        drag->exec();
+        m_mimeDataFailed = !mime;
     }
 }
 
