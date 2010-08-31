@@ -91,16 +91,18 @@ int XInputEventNotifier::getNewDeviceEventType(XEvent* event)
 			int ndevices;
 			XDeviceInfo	*devices = XListInputDevices(xdpne->display, &ndevices);
 			if( devices != NULL ) {
-				kDebug() << "New device id:" << xdpne->deviceid;
+//				kDebug() << "New device id:" << xdpne->deviceid;
 				for(int i=0; i<ndevices; i++) {
-					kDebug() << "id:" << devices[i].id << "name:" << devices[i].name << "used as:" << devices[i].use;
+//					kDebug() << "id:" << devices[i].id << "name:" << devices[i].name << "used as:" << devices[i].use;
 					if( devices[i].id == xdpne->deviceid ) {
 						if( devices[i].use == IsXKeyboard || devices[i].use == IsXExtensionKeyboard ) {
 							newDeviceType = DEVICE_KEYBOARD;
+							kDebug() << "new keyboard device, id:" << devices[i].id << "name:" << devices[i].name << "used as:" << devices[i].use;
 							break;
 						}
 						if( devices[i].use == IsXPointer || devices[i].use == IsXExtensionPointer ) {
 							newDeviceType = DEVICE_POINTER;
+							kDebug() << "new pointer device, id:" << devices[i].id << "name:" << devices[i].name << "used as:" << devices[i].use;
 							break;
 						}
 					}

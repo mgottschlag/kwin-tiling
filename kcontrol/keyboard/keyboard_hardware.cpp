@@ -16,17 +16,18 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <config-workspace.h>
-#include <config-X11.h>
-
+#include <kdebug.h>
 #include <kconfiggroup.h>
 #include <ksharedconfig.h>
 
 #include <QtGui/QX11Info>
+#include <QtGui/QCursor>	// WTF? - otherwise compiler complains
 
 #include <X11/Xlib.h>
 
 #include <math.h>
+
+#include "x11_helper.h"
 
 
 /*
@@ -60,131 +61,114 @@ DEALINGS IN THE SOFTWARE.
 #include <X11/XKBlib.h>
 #include <X11/keysym.h>
 
-/* the XKB stuff is based on code created by Oswald Buddenhagen <ossi@kde.org> */
-int xkb_init()
-    {
-    int xkb_opcode, xkb_event, xkb_error;
-    int xkb_lmaj = XkbMajorVersion;
-    int xkb_lmin = XkbMinorVersion;
-    return XkbLibraryVersion( &xkb_lmaj, &xkb_lmin )
-			&& XkbQueryExtension( QX11Info::display(), &xkb_opcode, &xkb_event, &xkb_error,
-			       &xkb_lmaj, &xkb_lmin );
-    }
 
+static
 unsigned int xkb_mask_modifier( XkbDescPtr xkb, const char *name )
-    {
-    int i;
-    if( !xkb || !xkb->names )
-	return 0;
-    for( i = 0;
-         i < XkbNumVirtualMods;
-	 i++ )
-	{
-	char* modStr = XGetAtomName( xkb->dpy, xkb->names->vmods[i] );
-	if( modStr != NULL && strcmp(name, modStr) == 0 )
-	    {
-	    unsigned int mask;
-	    XkbVirtualModsToReal( xkb, 1 << i, &mask );
-	    return mask;
-	    }
+{
+	if( !xkb || !xkb->names )
+		return 0;
+
+	for(int i = 0; i < XkbNumVirtualMods; i++ ) {
+		char* modStr = XGetAtomName( xkb->dpy, xkb->names->vmods[i] );
+		if( modStr != NULL && strcmp(name, modStr) == 0 ) {
+			unsigned int mask;
+			XkbVirtualModsToReal( xkb, 1 << i, &mask );
+			return mask;
+		}
 	}
-    return 0;
-    }
+	return 0;
+}
 
+static
 unsigned int xkb_numlock_mask()
-    {
-    XkbDescPtr xkb;
-    if(( xkb = XkbGetKeyboard( QX11Info::display(), XkbAllComponentsMask, XkbUseCoreKbd )) != NULL )
-	{
-        unsigned int mask = xkb_mask_modifier( xkb, "NumLock" );
-        XkbFreeKeyboard( xkb, 0, True );
-        return mask;
-        }
-    return 0;
-    }
+{
+	XkbDescPtr xkb;
+	if(( xkb = XkbGetKeyboard( QX11Info::display(), XkbAllComponentsMask, XkbUseCoreKbd )) != NULL ) {
+		unsigned int mask = xkb_mask_modifier( xkb, "NumLock" );
+		XkbFreeKeyboard( xkb, 0, True );
+		return mask;
+	}
+	else {
+		kError() << "Failed to set numlock: failed to get keyboard";
+	}
+	return 0;
+}
 
-int xkb_set_on()
-    {
-    unsigned int mask;
-    if( !xkb_init())
+static
+int xkb_set_numlock(int set)
+{
+    unsigned int mask = xkb_numlock_mask();
+    if( mask == 0 ) {
+    	kError() << "Failed to set numlock: numlock mask is 0";
         return 0;
-    mask = xkb_numlock_mask();
-    if( mask == 0 )
-        return 0;
-    XkbLockModifiers ( QX11Info::display(), XkbUseCoreKbd, mask, mask);
-    return 1;
     }
 
-int xkb_set_off()
-    {
-    unsigned int mask;
-    if( !xkb_init())
-        return 0;
-    mask = xkb_numlock_mask();
-    if( mask == 0 )
-        return 0;
-    XkbLockModifiers ( QX11Info::display(), XkbUseCoreKbd, mask, 0);
-    return 1;
-    }
+    unsigned int values = set ? mask : 0;
+    return XkbLockModifiers ( QX11Info::display(), XkbUseCoreKbd, mask, values);
+}
 
-void numlock_set_on()
-    {
-    if( xkb_set_on())
-        return;
-    }
+static
+void numlockx_change_numlock_state( bool set )
+{
+	if( !X11Helper::xkbSupported(NULL) ) {
+    	kError() << "Failed to set numlock: xkb is not supported";
+    	return;
+	}
 
-void numlock_set_off()
-    {
-    if( xkb_set_off())
-        return;
-    }
-
-void numlockx_change_numlock_state( bool set_P )
-    {
-    if( set_P )
-        numlock_set_on();
-    else
-        numlock_set_off();
-    }
+	if( ! xkb_set_numlock(set) ) {
+    	kError() << "Failed to set numlock: XkbLockModifiers request hasn't been sent";
+	}
+}
 
 // This code is taken from xset utility from XFree 4.3 (http://www.xfree86.org/)
 
+static
 void set_repeatrate(int delay, double rate)
 {
-  Display* dpy = QX11Info::display();
-  int xkbmajor = XkbMajorVersion, xkbminor = XkbMinorVersion;
-  int xkbopcode, xkbevent, xkberror;
+	if( !X11Helper::xkbSupported(NULL) ) {
+		kError() << "Failed to set keyboard repeat rate: xkb is not supported";
+		return;
+	}
 
-  if (XkbQueryExtension(dpy, &xkbopcode, &xkbevent, &xkberror, &xkbmajor,
-				&xkbminor)) {
-     XkbDescPtr xkb = XkbAllocKeyboard();
-     if (xkb) {
-        int res = XkbGetControls(dpy, XkbRepeatKeysMask, xkb);
-        xkb->ctrls->repeat_delay = delay;
-        xkb->ctrls->repeat_interval = (int)floor(1000/rate + 0.5);
-        res = XkbSetControls(dpy, XkbRepeatKeysMask, xkb);
-        return;
-     }
-  }
+	XkbDescPtr xkb = XkbAllocKeyboard();
+	if (xkb) {
+		Display* dpy = QX11Info::display();
+		int res = XkbGetControls(dpy, XkbRepeatKeysMask, xkb);
+		xkb->ctrls->repeat_delay = delay;
+		xkb->ctrls->repeat_interval = (int)floor(1000/rate + 0.5);
+		res = XkbSetControls(dpy, XkbRepeatKeysMask, xkb);
+		return;
+	}
+}
+
+static
+void set_volume(int click_percent, bool auto_repeat_mode)
+{
+	XKeyboardState   kbd;
+	XKeyboardControl kbdc;
+
+	XGetKeyboardControl(QX11Info::display(), &kbd);
+
+	if( click_percent != -1 ) {
+		kbdc.key_click_percent = click_percent;
+	}
+	kbdc.auto_repeat_mode = (auto_repeat_mode ? AutoRepeatModeOn : AutoRepeatModeOff);
+
+	XChangeKeyboardControl(QX11Info::display(),
+						   KBKeyClickPercent | KBAutoRepeatMode,
+						   &kbdc);
 }
 
 void init_keyboard_hardware()
 {
     KConfigGroup config(KSharedConfig::openConfig( "kcminputrc" ), "Keyboard");
 
-	XKeyboardState   kbd;
-	XKeyboardControl kbdc;
+	bool key_repeat = config.readEntry("KeyboardRepeating", true);
+	int click_percent = config.readEntry("ClickVolume", -1);
 
-	XGetKeyboardControl(QX11Info::display(), &kbd);
-	bool key = config.readEntry("KeyboardRepeating", true);
-	kbdc.key_click_percent = config.readEntry("ClickVolume", kbd.key_click_percent);
-	kbdc.auto_repeat_mode = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
+	set_volume(click_percent, key_repeat);
 
-	XChangeKeyboardControl(QX11Info::display(),
-						   KBKeyClickPercent | KBAutoRepeatMode,
-						   &kbdc);
-
-	if( key ) {
+	if( key_repeat ) {
 		int delay_ = config.readEntry("RepeatDelay", 250);
 		double rate_ = config.readEntry("RepeatRate", 30.);
 		set_repeatrate(delay_, rate_);
@@ -192,6 +176,7 @@ void init_keyboard_hardware()
 
 
 	int numlockState = config.readEntry( "NumLock", 2 );
-	if( numlockState != 2 )
+	if( numlockState != 2 ) {
 		numlockx_change_numlock_state( numlockState == 0 );
+	}
 }
