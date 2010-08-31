@@ -312,7 +312,8 @@ void InteractiveConsole::populateSnippetsMenu()
             Plasma::Package package(path, templateStructure);
             const QString scriptFile = package.filePath("mainscript");
             if (!scriptFile.isEmpty()) {
-                QAction *action = m_snippetsMenu->addAction(info.name());
+                QAction *action = m_snippetsMenu->addAction(i18nc("A script template name and the internal plugin name for use in the user's scripts",
+                                                                  "%1 (%2)", info.name(), info.pluginName()));
                 action->setData(scriptFile);
             }
         }
