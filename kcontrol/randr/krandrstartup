@@ -1,0 +1,57 @@
+#!/bin/sh
+#
+# A script that is called from startkde. Does early setup of a configuration
+# saved by krandr.
+
+if test "$krandrrc_display_applyonstartup" = "true"; then
+    if test -n "$krandrrc_display_startupcommands"; then
+        # new way of simply storing the commands
+        echo -e "$krandrrc_display_startupcommands" | \
+        while read command; do
+            eval "$command"
+        done
+    else
+        # backwards compatibility
+        # 4 screens is hopefully enough
+        for scrn in 0 1 2 3; do
+            args=
+            width="\$krandrrc_screen${scrn}_width" ; eval "width=$width"
+            height="\$krandrrc_screen${scrn}_height" ; eval "height=$height"
+            if test -n "${width}" -a -n "${height}"; then
+                args="$args -s ${width}x${height}"
+            fi
+            refresh="\$krandrrc_screen${scrn}_refresh" ; eval "refresh=$refresh"
+            if test -n "${refresh}"; then
+                args="$args -r ${refresh}"
+            fi
+            rotation="\$krandrrc_screen${scrn}_rotation" ; eval "rotation=$rotation"
+            if test -n "${rotation}"; then
+                case "${rotation}" in
+                    0)
+                        args="$args -o 0"
+                        ;;
+                    90)
+                        args="$args -o 1"
+                        ;;
+                    180)
+                        args="$args -o 2"
+                        ;;
+                    270)
+                        args="$args -o 3"
+                        ;;
+                esac
+            fi
+            reflectx="\$krandrrc_screen${scrn}_reflectx" ; eval "reflectx=$reflectx"
+            if test "${refrectx}" = "true"; then
+                args="$args -x"
+            fi
+            reflecty="\$krandrrc_screen${scrn}_reflecty" ; eval "reflecty=$reflecty"
+            if test "${refrecty}" = "true"; then
+                args="$args -y"
+            fi
+            if test -n "$args"; then
+                xrandr $args
+            fi
+        done
+    fi
+fi

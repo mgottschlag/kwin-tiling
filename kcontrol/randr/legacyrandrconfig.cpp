@@ -92,7 +92,11 @@ void LegacyRandRConfig::save()
 	m_oldApply = applyOnStartup->isChecked();
 	m_oldSyncTrayApp = syncTrayApp->isChecked();
 	KConfig config("krandrrc");
-	m_display->saveDisplay(config, m_oldApply, m_oldSyncTrayApp);
+	m_display->saveDisplay(config, m_oldSyncTrayApp);
+	if(m_oldApply)
+		m_display->saveStartup(config);
+	else
+		m_display->disableStartup(config);
 
 	setChanged();
 }

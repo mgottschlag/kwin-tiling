@@ -388,6 +388,28 @@ void LegacyRandRScreen::save(KConfig& config) const
 	group.writeEntry("reflectY", (bool)(rotation() & RandR::ReflectMask) == RandR::ReflectY);
 }
 
+QStringList LegacyRandRScreen::startupCommands() const
+{
+	QString command = QString("xrandr -s %1x%2 -r %3 ").arg( currentPixelSize().width(),
+	    currentPixelSize().height(), refreshRateIndexToHz(size(), refreshRate()));
+	switch( rotation()) {
+		case RR_Rotate_90:
+			command += " -o 1 ";
+			break;
+		case RR_Rotate_180:
+			command += " -o 2 ";
+			break;
+		case RR_Rotate_270:
+			command += " -o 3 ";
+			break;
+	}
+	if((rotation() & RandR::ReflectMask) == RandR::ReflectX)
+		command += " -x ";
+	if((bool)(rotation() & RandR::ReflectMask) == RandR::ReflectY)
+		command += " -y ";
+	return QStringList() << command;
+}
+
 int LegacyRandRScreen::pixelCount( int index ) const
 {
 	QSize sz = pixelSize(index);

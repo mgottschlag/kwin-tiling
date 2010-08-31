@@ -63,7 +63,9 @@ public:
 	 * @retuns true if the settings should be applied on KDE startup.
 	 */
 	bool loadDisplay(KConfig& config, bool loadScreens = true);
-	void saveDisplay(KConfig& config, bool applyOnStartup, bool syncTrayApp);
+	void saveDisplay(KConfig& config, bool syncTrayApp);
+	void saveStartup(KConfig& config);
+	void disableStartup(KConfig& config);
 
 	static bool applyOnStartup(KConfig& config);
 	static bool syncTrayApp(KConfig& config);

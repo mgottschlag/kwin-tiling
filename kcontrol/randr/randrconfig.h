@@ -57,6 +57,8 @@ protected slots:
 	void slotAdjustOutput(OutputGraphicsItem *o);
 	void identifyOutputs();
 	void clearIndicators();
+	void saveStartup();
+	void disableStartup();
 
 signals:
 	void changed(bool change);

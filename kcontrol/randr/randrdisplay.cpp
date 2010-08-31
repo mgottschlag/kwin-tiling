@@ -293,10 +293,9 @@ bool RandRDisplay::syncTrayApp(KConfig& config)
 	return config.group("Display").readEntry("SyncTrayApp", false);
 }
 
-void RandRDisplay::saveDisplay(KConfig& config, bool applyOnStartup, bool syncTrayApp)
+void RandRDisplay::saveDisplay(KConfig& config, bool syncTrayApp)
 {
 	KConfigGroup group = config.group("Display");
-	group.writeEntry("ApplyOnStartup", applyOnStartup);
 	group.writeEntry("SyncTrayApp", syncTrayApp);
 
 #ifdef HAS_RANDR_1_2
@@ -311,6 +310,36 @@ void RandRDisplay::saveDisplay(KConfig& config, bool applyOnStartup, bool syncTr
 		foreach(LegacyRandRScreen *s, m_legacyScreens)
 			s->save(config);
 	}
+}
+
+// to be used during desktop startup, make all screens provide the shell commands
+// (using xrandr cli tool), save them here and a script will perform these commands
+// early during desktop startup
+void RandRDisplay::saveStartup(KConfig& config)
+{
+	KConfigGroup group = config.group("Display");
+	group.writeEntry("ApplyOnStartup", true);
+	QStringList commands;
+#ifdef HAS_RANDR_1_2
+	if (RandR::has_1_2)
+	{
+		foreach(RandRScreen *s, m_screens)
+			commands += s->startupCommands();
+	}
+	else
+#endif
+	{
+		foreach(LegacyRandRScreen *s, m_legacyScreens)
+			commands += s->startupCommands();
+	}
+	group.writeEntry( "StartupCommands", commands.join( "\n" ));
+}
+
+void RandRDisplay::disableStartup(KConfig& config)
+{
+	KConfigGroup group = config.group("Display");
+	group.writeEntry("ApplyOnStartup", false);
+	group.deleteEntry( "StartupCommands" );
 }
 
 void RandRDisplay::applyProposed(bool confirm)

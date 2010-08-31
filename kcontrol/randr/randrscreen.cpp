@@ -455,6 +455,17 @@ void RandRScreen::save()
 	save(cfg);
 }
 
+QStringList RandRScreen::startupCommands() const
+{
+	QStringList commands;
+	foreach(RandROutput *output, m_outputs)
+	{
+		if (output->isConnected())
+			commands += output->startupCommands();
+	}
+	return commands;
+}
+
 void RandRScreen::load()
 {
 	KConfig cfg("krandrrc");

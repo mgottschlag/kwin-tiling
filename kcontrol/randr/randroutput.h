@@ -118,6 +118,7 @@ public:
 
 	void load(KConfig &config);
 	void save(KConfig &config);
+	QStringList startupCommands() const;
 
 public slots:
 	void slotChangeSize(QAction *action);

@@ -24,6 +24,7 @@
 
 #include <KConfig>
 #include <KConfigGroup>
+#include <KShell>
 #include <QX11Info>
 #include <QAction>
 
@@ -422,6 +423,36 @@ void RandROutput::save(KConfig &config)
 		cg.writeEntry("Rotation", m_crtc->rotation());
 	}
 	cg.writeEntry("RefreshRate", (double)m_crtc->refreshRate());
+}
+
+QStringList RandROutput::startupCommands() const
+{
+	if (!m_connected)
+		return QStringList();
+	if (m_crtc->id() == None)
+	     return QStringList();	
+	QString command = QString( "xrandr --output \"%1\"" ).arg( KShell::quoteArg( m_name ));
+	// if the outputs are unified, do not save size and rotation
+	// this allow us to set back the size and rotation being used
+	// when the outputs are not unified.
+	if (!m_screen->outputsUnified() || m_screen->connectedCount() <=1)
+	{
+		command += QString( " --pos %1x%2 --mode %3x%4" ).arg( m_crtc->rect().x())
+		    .arg( m_crtc->rect().y()).arg( m_crtc->rect().width()).arg( m_crtc->rect().height());
+		switch( m_crtc->rotation()) {
+			case RandR::Rotate90:
+				command += " --rotate right";
+				break;
+			case RandR::Rotate180:
+				command += " --rotate inverted";
+				break;
+			case RandR::Rotate270:
+				command += " --rotate left";
+				break;
+		}
+	}
+	command += QString(" --refresh %1").arg( m_crtc->refreshRate());
+	return QStringList() << command;
 }
 
 void RandROutput::proposeRefreshRate(float rate)

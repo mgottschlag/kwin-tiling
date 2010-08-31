@@ -130,6 +130,7 @@ public:
 	 */
 	void load(KConfig& config);
 	void save(KConfig& config) const;
+	QStringList startupCommands() const;
 
 private:
 	XRRScreenConfiguration*	m_config;

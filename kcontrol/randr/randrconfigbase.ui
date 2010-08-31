@@ -51,7 +51,7 @@
            <height>25</height>
           </size>
          </property>
-         <widget class="QWidget" name="">
+         <widget class="QWidget" name="layoutWidget">
           <property name="geometry">
            <rect>
             <x>0</x>
@@ -85,6 +85,13 @@
         <widget class="QPushButton" name="identifyOutputsButton">
          <property name="text">
           <string>Identify Outputs</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="saveAsDefaultButton">
+         <property name="text">
+          <string>Save as Default</string>
          </property>
         </widget>
        </item>

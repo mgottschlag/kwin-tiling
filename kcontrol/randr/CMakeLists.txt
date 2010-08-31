@@ -59,6 +59,11 @@ target_link_libraries(krandrtray ${KDE4_KCMUTILS_LIBS} ${X11_Xrandr_LIB} ${X11_L
 install(TARGETS krandrtray ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 
+########### next target ###############
+
+install(PROGRAMS krandrstartup DESTINATION ${BIN_INSTALL_DIR})
+
+
 ########### install files ###############
 
 install( FILES krandrtray.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )

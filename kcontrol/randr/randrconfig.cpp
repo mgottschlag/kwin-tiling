@@ -31,6 +31,8 @@
 #include <kglobalsettings.h>
 #include <kmessagebox.h>
 #include <kprocess.h>
+#include <kshell.h>
+#include <qmenu.h>
 
 RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	: QWidget(parent), Ui::RandRConfigBase()
@@ -53,6 +55,12 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	connect( &compressUpdateViewTimer, SIGNAL( timeout()), SLOT( slotDelayedUpdateView()));
 	identifyTimer.setSingleShot( true );
 	compressUpdateViewTimer.setSingleShot( true );
+
+	connect( saveAsDefaultButton, SIGNAL( clicked()), SLOT( saveStartup()));
+	QMenu* saveMenu = new QMenu(saveAsDefaultButton);
+	saveMenu->addAction(i18n("Save as Default"),this, SLOT(saveStartup()));
+	saveMenu->addAction(i18n("Reset"),this, SLOT(disableStartup()));
+	saveAsDefaultButton->setMenu(saveMenu);
 
 	// create the container for the settings widget
 	QHBoxLayout *layout = new QHBoxLayout(outputList);
@@ -235,6 +243,7 @@ void RandRConfig::apply()
 		}
 	}
 #ifdef HAS_RANDR_1_3
+	if (RandR::has_1_3)
 	{
 		int primaryOutputIndex = primaryDisplayBox->currentIndex();
 		RandRScreen *screen = m_display->currentScreen();
@@ -266,6 +275,43 @@ void RandRConfig::update()
 	m_changed = false;
 	emit changed(false);
 }
+
+void RandRConfig::saveStartup()
+{
+	if (!m_display->isValid())
+		return;
+	KConfig config("krandrrc");
+	m_display->saveStartup(config);
+#ifdef HAS_RANDR_1_3
+	if (RandR::has_1_3)
+	{
+		// Add setting the primary screen to the list of commands
+		KConfigGroup group = config.group("Display");
+		QStringList commands = group.readEntry("StartupCommands").split("\n");
+		int primaryOutputIndex = primaryDisplayBox->currentIndex();
+		if (primaryOutputIndex > 0)
+		{
+			QString primaryOutput = primaryDisplayBox->itemText(primaryOutputIndex);
+			commands += QString("xrandr --output %1 --primary")
+			    .arg( KShell::quoteArg( primaryOutput ));
+		}
+		else
+			commands += "xrandr --noprimary";
+		group.writeEntry("StartupCommands",commands.join("\n"));
+	}
+#endif //HAS_RANDR_1_3
+	KMessageBox::information( window(), i18n( "Configuration has been set as the desktop default." ));
+}
+
+void RandRConfig::disableStartup()
+{
+	if (!m_display->isValid())
+		return;
+	KConfig config("krandrrc");
+	m_display->disableStartup(config);
+	KMessageBox::information( window(), i18n( "Default desktop setup has been reset." ));
+}
+
 
 bool RandRConfig::eventFilter(QObject *obj, QEvent *event)
 {

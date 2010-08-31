@@ -91,6 +91,7 @@ public:
 
 	void load(KConfig &config);
 	void save(KConfig &config);
+	QStringList startupCommands() const;
 
 public slots:
 	void slotUnifyOutputs(bool unify);

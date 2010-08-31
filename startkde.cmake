@@ -93,11 +93,12 @@ kcminputrc Mouse cursorTheme 'Oxygen_Black'
 kcminputrc Mouse cursorSize ''
 ksplashrc KSplash Theme Default
 ksplashrc KSplash Engine KSplashX
-kcmrandrrc Display ApplyOnStartup false
-kcmrandrrc [Screen0]
-kcmrandrrc [Screen1]
-kcmrandrrc [Screen2]
-kcmrandrrc [Screen3]
+krandrrc Display ApplyOnStartup false
+krandrrc Display StartupCommands ''
+krandrrc [Screen0]
+krandrrc [Screen1]
+krandrrc [Screen2]
+krandrrc [Screen3]
 kcmfonts General forceFontDPI 0
 kdeglobals Locale Language '' # trigger requesting languages from KLocale
 EOF
@@ -127,49 +128,7 @@ if test -n "$kcminputrc_mouse_cursortheme" -o -n "$kcminputrc_mouse_cursorsize" 
     fi
 fi
 
-if test "$kcmrandrrc_display_applyonstartup" = "true"; then
-    # 4 screens is hopefully enough
-    for scrn in 0 1 2 3; do
-        args=
-        width="\$kcmrandrrc_screen${scrn}_width" ; eval "width=$width"
-        height="\$kcmrandrrc_screen${scrn}_height" ; eval "height=$height"
-        if test -n "${width}" -a -n "${height}"; then
-            args="$args -s ${width}x${height}"
-        fi
-        refresh="\$kcmrandrrc_screen${scrn}_refresh" ; eval "refresh=$refresh"
-        if test -n "${refresh}"; then
-            args="$args -r ${refresh}"
-        fi
-        rotation="\$kcmrandrrc_screen${scrn}_rotation" ; eval "rotation=$rotation"
-        if test -n "${rotation}"; then
-            case "${rotation}" in
-                0)
-                    args="$args -o 0"
-                    ;;
-                90)
-                    args="$args -o 1"
-                    ;;
-                180)
-                    args="$args -o 2"
-                    ;;
-                270)
-                    args="$args -o 3"
-                    ;;
-            esac
-        fi
-        reflectx="\$kcmrandrrc_screen${scrn}_reflectx" ; eval "reflectx=$reflectx"
-        if test "${refrectx}" = "true"; then
-            args="$args -x"
-        fi
-        reflecty="\$kcmrandrrc_screen${scrn}_reflecty" ; eval "reflecty=$reflecty"
-        if test "${refrecty}" = "true"; then
-            args="$args -y"
-        fi
-        if test -n "$args"; then
-            xrandr $args
-        fi
-    done
-fi
+. krandrstartup 2>/dev/null
 
 if test "$kcmfonts_general_forcefontdpi" -eq 120; then
     xrdb -quiet -merge -nocpp <<EOF
