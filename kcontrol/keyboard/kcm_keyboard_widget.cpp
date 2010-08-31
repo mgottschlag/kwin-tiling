@@ -481,9 +481,16 @@ void KCMKeyboardWidget::updateXkbShortcutButton(const QString& groupName, QPushB
 		button->setText(i18nc("no shortcuts defined", "None"));
 	break;
 	case 1: {
+		const QString& option = grpOptions.first();
 		const OptionGroupInfo* optionGroupInfo = rules->getOptionGroupInfo(groupName);
-		const OptionInfo* optionInfo = optionGroupInfo->getOptionInfo(grpOptions.first());
-		button->setText(optionInfo->description);
+		const OptionInfo* optionInfo = optionGroupInfo->getOptionInfo(option);
+		if( optionInfo == NULL || optionInfo->description == NULL ) {
+			kError() << "Could not find option info for " << option;
+			button->setText(grpOptions.first());
+		}
+		else {
+			button->setText(optionInfo->description);
+		}
 	}
 	break;
 	default:
