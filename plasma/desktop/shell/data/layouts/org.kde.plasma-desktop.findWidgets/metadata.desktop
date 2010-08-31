@@ -1,0 +1,15 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Find Widgets
+Type=Service
+ServiceTypes=Plasma/LayoutTemplate
+X-Plasma-Shell=plasma-desktop
+X-KDE-PluginInfo-Author=Aaron Seigo
+X-KDE-PluginInfo-Email=aseigo@kde.org
+X-KDE-PluginInfo-Name=org.kde.plasma-desktop.findWidgets
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true

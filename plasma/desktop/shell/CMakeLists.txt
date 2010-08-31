@@ -72,6 +72,14 @@ install(FILES data/plasma-themes.knsrc DESTINATION  ${CONFIG_INSTALL_DIR})
 install(FILES data/plasma-desktop.notifyrc DESTINATION ${DATA_INSTALL_DIR}/plasma-desktop)
 install(FILES data/layouts/00-defaultLayout.js DESTINATION ${DATA_INSTALL_DIR}/plasma-desktop/init)
 install(FILES data/plasma-desktop-js.xml DESTINATION ${DATA_INSTALL_DIR}/katepart/syntax/)
-install(FILES data/layouts/org.kde.plasma-desktop.defaultPanel/metadata.desktop DESTINATION ${DATA_INSTALL_DIR}/plasma/layout-templates/org.kde.plasma-desktop.defaultPanel/)
-install(FILES data/layouts/org.kde.plasma-desktop.defaultPanel/contents/layout.js DESTINATION ${DATA_INSTALL_DIR}/plasma/layout-templates/org.kde.plasma-desktop.defaultPanel/contents/)
-install(FILES data/layouts/plasma-layout-org.kde.plasma-desktop.defaultPanel.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+
+MACRO(INSTALL_PLASMA_JAVASCRIPT_TEMPLATE dir addonPrefix)
+   configure_file(${dir}/metadata.desktop plasma-layout-${addonPrefix}.desktop COPYONLY)
+   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plasma-layout-${addonPrefix}.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+   install(FILES ${dir}/metadata.desktop DESTINATION ${DATA_INSTALL_DIR}/plasma/layout-templates/${addonPrefix}/)
+   install(FILES ${dir}/contents/layout.js DESTINATION ${DATA_INSTALL_DIR}/plasma/layout-templates/${addonPrefix}/contents/)
+ENDMACRO(INSTALL_PLASMA_JAVASCRIPT_TEMPLATE)
+
+INSTALL_PLASMA_JAVASCRIPT_TEMPLATE(data/layouts/org.kde.plasma-desktop.defaultPanel org.kde.plasma-desktop.defaultPanel)
+INSTALL_PLASMA_JAVASCRIPT_TEMPLATE(data/layouts/org.kde.plasma-desktop.findWidgets org.kde.plasma-desktop.findWidgets)
+
