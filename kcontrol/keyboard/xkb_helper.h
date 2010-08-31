@@ -24,7 +24,6 @@ class KeyboardConfig;
 
 class XkbHelper {
 public:
-	static bool initializeKeyboardLayouts();
 	static bool initializeKeyboardLayouts(KeyboardConfig& config);
 
 //private:

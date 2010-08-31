@@ -70,9 +70,16 @@ KCMKeyboardWidget::KCMKeyboardWidget(Rules* rules_, KeyboardConfig* keyboardConf
 	connect(kcmMiscWidget, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)));
 	//TODO: connect save/load
 
-    initializeKeyboardModelUI();
-    initializeXkbOptionsUI();
-    initializeLayoutsUI();
+    if( rules != NULL ) {
+        initializeKeyboardModelUI();
+    	initializeXkbOptionsUI();
+    	initializeLayoutsUI();
+    }
+    else {
+		uiWidget->tabLayouts->setEnabled(false);
+		uiWidget->tabAdvanced->setEnabled(false);
+		uiWidget->keyboardModelComboBox->setEnabled(false);
+    }
 }
 
 KCMKeyboardWidget::~KCMKeyboardWidget()
@@ -82,7 +89,10 @@ KCMKeyboardWidget::~KCMKeyboardWidget()
 
 void KCMKeyboardWidget::save()
 {
-    KAction* action = static_cast<KAction*>(actionCollection->action(0));
+	if( rules == NULL )
+		return;
+
+	KAction* action = static_cast<KAction*>(actionCollection->action(0));
     KShortcut shortcut(uiWidget->kdeKeySequence->keySequence());
     action->setGlobalShortcut(shortcut, KAction::ActiveShortcut, KAction::NoAutoloading);
     kDebug() << "Saving keyboard layout KDE shortcut" << shortcut.toString();
@@ -92,6 +102,9 @@ void KCMKeyboardWidget::save()
 
 void KCMKeyboardWidget::updateUI()
 {
+	if( rules == NULL )
+		return;
+
 	uiWidget->layoutsTableView->setModel(uiWidget->layoutsTableView->model());
 	((LayoutsTableModel*)uiWidget->layoutsTableView->model())->refresh();
 
@@ -106,6 +119,9 @@ void KCMKeyboardWidget::updateUI()
 
 void KCMKeyboardWidget::uiChanged()
 {
+	if( rules == NULL )
+		return;
+
 	((LayoutsTableModel*)uiWidget->layoutsTableView->model())->refresh();
 // this collapses the tree so use more fine-grained updates
 //	((LayoutsTableModel*)uiWidget->xkbOptionsTreeView->model())->refresh();

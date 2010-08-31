@@ -30,6 +30,7 @@
 
 #include "keyboard_config.h"
 
+
 static const char* SETXKBMAP_EXEC = "setxkbmap";
 
 static bool setxkbmapNotFound = false;
@@ -71,18 +72,18 @@ void executeXmodmap(const QString& configFileName)
     }
 }
 
-bool XkbHelper::initializeKeyboardLayouts()
-{
-	getSetxkbmapExe();
-	if( ! setxkbmapNotFound ) {
-
-		KeyboardConfig config;
-		config.load();
-
-		return XkbHelper::initializeKeyboardLayouts(config);
-	}
-	return false;
-}
+//bool XkbHelper::initializeKeyboardLayouts()
+//{
+//	getSetxkbmapExe();
+//	if( ! setxkbmapNotFound ) {
+//
+//		KeyboardConfig config;
+//		config.load();
+//
+//		return XkbHelper::initializeKeyboardLayouts(config);
+//	}
+//	return false;
+//}
 
 bool XkbHelper::initializeKeyboardLayouts(KeyboardConfig& config)
 {
