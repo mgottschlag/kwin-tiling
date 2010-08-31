@@ -398,7 +398,7 @@ void PanelView::setContainment(Plasma::Containment *containment)
 
     Plasma::Containment *oldContainment = this->containment();
     if (oldContainment) {
-        disconnect(oldContainment, 0, this, 0);
+        disconnect(oldContainment);
     }
 
     connect(containment, SIGNAL(newStatus(Plasma::ItemStatus)), this, SLOT(setStatus(Plasma::ItemStatus)));
@@ -407,6 +407,7 @@ void PanelView::setContainment(Plasma::Containment *containment)
     connect(containment, SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)), this, SLOT(appletAdded(Plasma::Applet *)));
     connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showWidgetExplorer()));
     connect(containment, SIGNAL(screenChanged(int,int,Plasma::Containment*)), this, SLOT(pinchContainmentToCurrentScreen()));
+    connect(containment, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)), this, SLOT(immutabilityChanged(Plasma::ImmutabilityType)));
 
     KConfigGroup viewIds(KGlobal::config(), "ViewIds");
 
@@ -1005,6 +1006,14 @@ void PanelView::setAlignment(Qt::Alignment align)
 Qt::Alignment PanelView::alignment() const
 {
     return m_alignment;
+}
+
+void PanelView::immutabilityChanged(Plasma::ImmutabilityType immutability)
+{
+    if (immutability != Plasma::Mutable) {
+        delete m_panelController;
+        m_panelController = 0;
+    }
 }
 
 void PanelView::togglePanelController()

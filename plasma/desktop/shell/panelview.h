@@ -239,6 +239,7 @@ private:
 #endif
 
 private Q_SLOTS:
+    void immutabilityChanged(Plasma::ImmutabilityType immutability);
     void togglePanelController();
     void showWidgetExplorer();
     void editingComplete();
