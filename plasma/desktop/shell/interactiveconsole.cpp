@@ -85,12 +85,19 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     label->setFont(f);
     editorLayout->addWidget(label);
 
-    QToolButton *snippetsButton = new QToolButton(this);
-    snippetsButton->setPopupMode(QToolButton::InstantPopup);
-    snippetsButton->setMenu(m_snippetsMenu);
-    snippetsButton->setText(i18n("Templates"));
     connect(m_snippetsMenu, SIGNAL(aboutToShow()), this, SLOT(populateTemplatesMenu()));
-    connect(m_snippetsMenu, SIGNAL(triggered(QAction*)), this, SLOT(loadTemplate(QAction*)));
+
+    QToolButton *loadTemplateButton = new QToolButton(this);
+    loadTemplateButton->setPopupMode(QToolButton::InstantPopup);
+    loadTemplateButton->setMenu(m_snippetsMenu);
+    loadTemplateButton->setText(i18n("Load"));
+    connect(loadTemplateButton, SIGNAL(triggered(QAction*)), this, SLOT(loadTemplate(QAction*)));
+
+    QToolButton *useTemplateButton = new QToolButton(this);
+    useTemplateButton->setPopupMode(QToolButton::InstantPopup);
+    useTemplateButton->setMenu(m_snippetsMenu);
+    useTemplateButton->setText(i18n("Use"));
+    connect(useTemplateButton, SIGNAL(triggered(QAction*)), this, SLOT(useTemplate(QAction*)));
 
     KToolBar *toolBar = new KToolBar(this, true, false);
     toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -98,7 +105,8 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     toolBar->addAction(m_saveAction);
     toolBar->addAction(m_clearAction);
     toolBar->addAction(m_executeAction);
-    toolBar->addWidget(snippetsButton);
+    toolBar->addWidget(loadTemplateButton);
+    toolBar->addWidget(useTemplateButton);
 
     editorLayout->addWidget(toolBar);
 
@@ -312,9 +320,8 @@ void InteractiveConsole::populateTemplatesMenu()
             Plasma::Package package(path, templateStructure);
             const QString scriptFile = package.filePath("mainscript");
             if (!scriptFile.isEmpty()) {
-                QAction *action = m_snippetsMenu->addAction(i18nc("A script template name and the internal plugin name for use in the user's scripts",
-                                                                  "%1 (%2)", info.name(), info.pluginName()));
-                action->setData(scriptFile);
+                QAction *action = m_snippetsMenu->addAction(info.name());
+                action->setData(info.pluginName());
             }
         }
     }
@@ -322,7 +329,34 @@ void InteractiveConsole::populateTemplatesMenu()
 
 void InteractiveConsole::loadTemplate(QAction *action)
 {
-    loadScriptFromUrl(KUrl(action->data().toString()));
+    Plasma::PackageStructure::Ptr templateStructure(new WorkspaceScripting::LayoutTemplatePackageStructure);
+    const QString pluginName = action->data().toString();
+    const QString path = KStandardDirs::locate("data", templateStructure->defaultPackageRoot() + '/' + pluginName + '/');
+    if (!path.isEmpty()) {
+        Plasma::Package package(path, templateStructure);
+        const QString scriptFile = package.filePath("mainscript");
+        if (!scriptFile.isEmpty()) {
+            loadScriptFromUrl(KUrl(scriptFile));
+        }
+    }
+}
+
+void InteractiveConsole::useTemplate(QAction *action)
+{
+    QString code("var template = loadTemplate('" + action->data().toString() + "')");
+    if (m_editorPart) {
+        const QList<KTextEditor::View *> views = m_editorPart->views();
+        if (views.isEmpty()) {
+            m_editorPart->insertLines(m_editorPart->lines(), QStringList() << code);
+        } else {
+            KTextEditor::Cursor cursor = views.at(0)->cursorPosition();
+            m_editorPart->insertLines(cursor.line(), QStringList() << code);
+            cursor.setLine(cursor.line() + 1);
+            views.at(0)->setCursorPosition(cursor);
+        }
+    } else {
+        m_editor->insertPlainText(code);
+    }
 }
 
 void InteractiveConsole::scriptFileDataRecvd(KIO::Job *job, const QByteArray &data)

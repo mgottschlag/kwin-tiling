@@ -79,6 +79,7 @@ private Q_SLOTS:
     void loadScriptFromUrl(const KUrl &url);
     void populateTemplatesMenu();
     void loadTemplate(QAction *);
+    void useTemplate(QAction *);
 
 private:
     void onClose();
