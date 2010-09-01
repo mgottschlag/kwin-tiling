@@ -71,6 +71,7 @@ private Q_SLOTS:
     void scriptTextChanged();
     void evaluateScript();
     void clearEditor();
+    void clearOutput();
     void scriptFileDataRecvd(KIO::Job *job, const QByteArray &data);
     void scriptFileDataReq(KIO::Job *job, QByteArray &data);
     void reenableEditor(KJob *job);

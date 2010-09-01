@@ -149,6 +149,12 @@ InteractiveConsole::InteractiveConsole(Plasma::Corona *corona, QWidget *parent)
     label->setFont(f);
     outputLayout->addWidget(label);
 
+    KToolBar *outputToolBar = new KToolBar(widget, true, false);
+    outputToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    QAction *clearOutputAction = KStandardAction::clear(this, SLOT(clearOutput()), this);
+    outputToolBar->addAction(clearOutputAction);
+    outputLayout->addWidget(outputToolBar);
+
     m_output = new KTextBrowser(widget);
     outputLayout->addWidget(m_output);
     m_splitter->addWidget(widget);
@@ -498,6 +504,11 @@ void InteractiveConsole::clearEditor()
     } else {
         m_editor->clear();
     }
+}
+
+void InteractiveConsole::clearOutput()
+{
+    m_output->clear();
 }
 
 #include "interactiveconsole.moc"
