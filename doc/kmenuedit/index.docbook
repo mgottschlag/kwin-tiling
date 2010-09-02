@@ -35,8 +35,8 @@
 
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2008-09-15</date>
-<releaseinfo>0.8</releaseinfo>
+<date>2010-09-02</date>
+<releaseinfo>0.8 (&kde; 4.5)</releaseinfo>
 
 <abstract><para>&kmenuedit; allows editing one of the &kde; application launchers: &kickoff;, the classic &kmenu; or Lancelot Launcher. 
 </para></abstract>
@@ -83,9 +83,9 @@ and <guimenuitem>Paste</guimenuitem> menu items</para></listitem>
 <author>&Virgil.J.Nisly; &Virgil.J.Nisly.mail;</author>
 </authorgroup>
 </chapterinfo>
-<title>A Quick Start Guide to Adding an Entry to the application launcher</title>
+<title>Adding a Menu Entry</title>
 
-  <para>In this example, we will add &firefox; to the <guisubmenu>Internet</guisubmenu> submenu. <note><para>Most applications can be added with &kappfinder;, &firefox; can usually be added that way, but was used for lack of a better example.</para></note></para>
+  <para>In this example, we will add &firefox; to the <guisubmenu>Internet</guisubmenu> submenu.</para>
   <para>To start off, we need to open &kmenuedit;, so &RMB; on the application launcher menu, click <guimenuitem>Menu Editor</guimenuitem> to start &kmenuedit;. After &kmenuedit; has started, select <guisubmenu>Internet</guisubmenu> as shown in picture below. 
 <screenshot>
 <screeninfo>Select <guisubmenu>Internet</guisubmenu></screeninfo>
@@ -141,6 +141,8 @@ Press return, and you should see something like the picture below in the main wi
 <member>%c - the caption</member>
 </simplelist></para>
 <informalexample><para>For example: if you want to firefox to start your web browsing at www.kde.org - instead of <command>firefox</command> you would type <command>firefox %u www.kde.org</command>.</para></informalexample></note>
+<para>Most applications accept additional options &eg; the name of a defined profile like &konqueror; or &konsole;.
+To see all options for an application launch <userinput><command>kcmshell4</command> <option>--help</option></userinput> in &konsole;.</para> 
 <para>We would like to have a more creative icon, so we will click the generic icon sitting beside <guilabel>Name:</guilabel>. It will bring the <guilabel>Select Icon</guilabel> dialog which will let us choose the new icon, as shown below.
 <screenshot>
 <screeninfo><guilabel>Select Icon</guilabel> dialog</screeninfo>
@@ -374,7 +376,7 @@ selected place in the <guimenu>Main</guimenu> menu. You must first use
 
 <varlistentry id="edit-delete">
 <term><menuchoice>
-<shortcut><keycap>Delete</keycap></shortcut>
+<shortcut><keycap>Del</keycap></shortcut>
 <guimenu>Edit</guimenu> <guimenuitem>Delete</guimenuitem>
 </menuchoice></term>
 <listitem><para><action>Deletes currently selected menu
@@ -383,7 +385,7 @@ item.</action></para></listitem>
 
 <varlistentry id="edit-restore">
 <term><menuchoice>
-<guimenu>Edit</guimenu> <guimenuitem>Restore to system menu</guimenuitem>
+<guimenu>Edit</guimenu> <guimenuitem>Restore to System Menu</guimenuitem>
 </menuchoice></term>
 <listitem><para><action>This will restore the application launcher as it was as default and remove all your custom settings. A message box will ask you if you really want to do that.</action></para></listitem>
 </varlistentry>
