@@ -103,8 +103,10 @@ void KillRunner::match(Plasma::RunnerContext &context)
         m_prepLock.unlock();
         m_prepLock.lockForWrite();
         if (!m_processes) {
+            suspendMatching(true);
             m_processes = new KSysGuard::Processes();
             m_processes->updateAllProcesses();
+            suspendMatching(false);
         }
     }
     m_prepLock.unlock();
