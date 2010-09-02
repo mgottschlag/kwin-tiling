@@ -108,25 +108,14 @@ void KColorCm::populateSchemeList()
 {
     // clear the list in case this is being called from reset button click
     schemeList->clear();
-    // add current scheme entry
-    QIcon icon = createSchemePreviewIcon(m_config);
-    QListWidgetItem *currentitem = new QListWidgetItem(icon, i18nc("Current color scheme", "Current"));
-    schemeList->addItem(currentitem);
-    schemeList->blockSignals(true); // don't emit changed signals
-    schemeList->setCurrentItem(currentitem);
-    schemeList->blockSignals(false);
 
-    // add default entry
-    m_config->setReadDefaults(true);
-    icon = createSchemePreviewIcon(m_config);
-    schemeList->addItem(new QListWidgetItem(icon, i18nc("Default color scheme", "Default")));
-    m_config->setReadDefaults(false);
-
+    // add entries
+	QIcon icon;
     const QStringList schemeFiles = KGlobal::dirs()->findAllResources("data", "color-schemes/*.colors", KStandardDirs::NoDuplicates);
     for (int i = 0; i < schemeFiles.size(); ++i)
     {
         // get the file name
-        const QString filename = schemeFiles[i];
+        const QString filename = schemeFiles.at(i);
         const QFileInfo info(filename);
 
         // add the entry
@@ -139,6 +128,21 @@ void KColorCm::populateSchemeList()
         newItem->setData(Qt::UserRole, info.baseName());
         schemeList->addItem(newItem);
     }
+    schemeList->sortItems();
+
+    // add default entry (do this here so that the current and default entry appear at the top)
+    m_config->setReadDefaults(true);
+    icon = createSchemePreviewIcon(m_config);
+    schemeList->insertItem(0, new QListWidgetItem(icon, i18nc("Default color scheme", "Default")));
+    m_config->setReadDefaults(false);
+
+    // add current scheme entry
+    icon = createSchemePreviewIcon(m_config);
+    QListWidgetItem *currentitem = new QListWidgetItem(icon, i18nc("Current color scheme", "Current"));
+    schemeList->insertItem(0, currentitem);
+    schemeList->blockSignals(true); // don't emit changed signals
+    schemeList->setCurrentItem(currentitem);
+    schemeList->blockSignals(false);
 }
 
 void KColorCm::updatePreviews()
@@ -255,6 +259,7 @@ void KColorCm::loadScheme(QListWidgetItem *currentItem, QListWidgetItem *previou
         // load it
 
         const QString name = currentItem->text();
+        m_currentColorScheme = name;
         const QString fileBaseName = currentItem->data(Qt::UserRole).toString();
         if (name == i18nc("Default color scheme", "Default"))
         {
@@ -496,12 +501,10 @@ void KColorCm::saveScheme(const QString &name)
         if (foundItems.size() < 1)
         {
             // add it to the list since it's not in there already
-            QListWidgetItem * newItem = new QListWidgetItem(icon, name);
-            newItem->setData(Qt::UserRole, filename);
-            schemeList->addItem(newItem);
+            populateSchemeList();
 
             // then select the new item
-            schemeList->setCurrentRow(schemeList->count() - 1);
+            schemeList->setCurrentItem(schemeList->findItems(name, Qt::MatchExactly).at(0));
         }
         else
         {
@@ -512,6 +515,11 @@ void KColorCm::saveScheme(const QString &name)
 
         // set m_config back to the system one
         m_config = temp;
+
+        // store colorscheme name in global settings
+        m_currentColorScheme = name;
+        group = KConfigGroup(m_config, "General");
+        group.writeEntry("ColorScheme", m_currentColorScheme);
 
         emit changed(true);
     }
@@ -606,6 +614,10 @@ void KColorCm::updateColorSchemes()
 
 void KColorCm::updateFromColorSchemes()
 {
+    // store colorscheme name in global settings
+    KConfigGroup group(m_config, "General");
+    group.writeEntry("ColorScheme", m_currentColorScheme);
+
     for (int i = KColorScheme::View; i <= KColorScheme::Tooltip; ++i)
     {
         KConfigGroup group(m_config, colorSetGroupKey(i));
@@ -1063,6 +1075,10 @@ void KColorCm::changeColor(int row, const QColor &newColor)
     updatePreviews();
 
     m_loadedSchemeHasUnsavedChanges = true;
+    m_currentColorScheme = i18nc("Current color scheme", "Current");
+    schemeList->blockSignals(true); // don't emit changed signals
+    schemeList->setCurrentRow(0);
+    schemeList->blockSignals(false);
 
     emit changed(true);
 }
@@ -1139,8 +1155,15 @@ void KColorCm::load()
 {
     loadInternal(true);
 
+    // get colorscheme name from global settings
+    KConfigGroup group(m_config, "General");
+    m_currentColorScheme = group.readEntry("ColorScheme");
+    QList<QListWidgetItem*> itemList = schemeList->findItems(m_currentColorScheme, Qt::MatchExactly);
+    if(!itemList.isEmpty()) // "Current" is already selected, so don't handle the case that itemList is empty
+        schemeList->setCurrentItem(itemList.at(0));
+
     KConfig      cfg("kcmdisplayrc", KConfig::NoGlobals);
-    KConfigGroup group(&cfg, "X11");
+    group = KConfigGroup(&cfg, "X11");
 
     applyToAlien->blockSignals(true); // don't emit SIGNAL(toggled(bool)) which would call SLOT(emitChanged())
     applyToAlien->setChecked(group.readEntry("exportKDEColors", true));
@@ -1231,6 +1254,7 @@ void KColorCm::defaults()
                 loadScheme(item, item);
             else
                 schemeList->setCurrentItem(item);
+            m_currentColorScheme = item->text();
             break;
         }
     }

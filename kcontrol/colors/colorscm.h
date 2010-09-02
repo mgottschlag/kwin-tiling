@@ -198,6 +198,7 @@ private:
 
     QList<KColorScheme> m_colorSchemes;
     WindecoColors m_wmColors;
+    QString m_currentColorScheme;
 
     KSharedConfigPtr m_config;
 
