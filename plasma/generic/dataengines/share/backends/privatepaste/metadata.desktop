@@ -6,6 +6,7 @@ Name[pt_BR]=privatepaste.com
 Name[sv]=privatepaste.com
 Name[uk]=privatepaste.com
 Name[x-test]=xxprivatepaste.comxx
+Name[zh_TW]=privatepaste.com
 Comment=Paste text with the PrivatePaste.com service
 Comment[ia]=Collar texto con le servicio PrivatePaste.com
 Comment[pt]=Colar texto com o serviço PrivatePaste.com
@@ -13,6 +14,7 @@ Comment[pt_BR]=Colar texto com o serviço PrivatePaste.com
 Comment[sv]=Klistra in text med tjänsten PrivatePaste.com
 Comment[uk]=Вставка фрагментів тексту за допомогою служби PrivatePaste.com
 Comment[x-test]=xxPaste text with the PrivatePaste.com servicexx
+Comment[zh_TW]=用 PrivatePaste.com 服務貼上文字
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/ShareProvider
