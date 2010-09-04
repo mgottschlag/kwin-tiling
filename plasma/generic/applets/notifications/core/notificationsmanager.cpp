@@ -163,7 +163,6 @@ void Manager::addJob(Job *job)
     connect(job, SIGNAL(changed(Job*)), this, SIGNAL(jobChanged(Job*)));
     connect(job, SIGNAL(stateChanged(Job*)), this, SIGNAL(jobStateChanged(Job*)));
     connect(job, SIGNAL(changed(Job*)), this, SLOT(updateTotals()));
-    connect(job, SIGNAL(destroyed(Job*)), this, SLOT(updateTotals()));
 
     d->jobs.append(job);
     emit jobAdded(job);
@@ -172,7 +171,8 @@ void Manager::addJob(Job *job)
 void Manager::removeJob(Job *job)
 {
     d->jobs.removeAll(job);
-    disconnect(job, 0, this, 0);
+    disconnect(job);
+    updateTotals();
     emit jobRemoved(job);
 }
 
