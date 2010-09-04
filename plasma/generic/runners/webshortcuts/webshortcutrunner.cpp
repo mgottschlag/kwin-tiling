@@ -146,7 +146,7 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
 
     m_lastFailedKey.clear();
 
-    m_match.setData(filterData.uri());
+    m_match.setData(filterData.uri().url());
     m_match.setId("WebShortcut:" + key);
 
     m_match.setIcon(KIcon(filterData.iconName()));
