@@ -42,6 +42,13 @@ DBusJobProtocol::~DBusJobProtocol()
     if (m_engine) {
         Plasma::DataEngineManager::self()->unloadEngine(engineName);
     }
+
+    foreach (DBusJob *job, m_jobs) {
+        disconnect(job);
+        job->destroy();
+    }
+
+    m_jobs.clear();
 }
 
 
