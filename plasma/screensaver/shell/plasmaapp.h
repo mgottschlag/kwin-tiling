@@ -133,6 +133,7 @@ private:
 
     qreal m_activeOpacity;
     qreal m_idleOpacity;
+    bool m_active;
 };
 
 #endif // multiple inclusion guard

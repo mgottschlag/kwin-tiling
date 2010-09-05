@@ -299,6 +299,8 @@ void PlasmaApp::createWaitingViews()
             kDebug() << "view created";
         }
     }
+    //activate the new views (yes, this is a lazy way to do it)
+    setActive(m_active);
 }
 
 void PlasmaApp::setIdleOpacity(qreal opacity)
@@ -325,6 +327,9 @@ qreal PlasmaApp::idleOpacity() const
 
 void PlasmaApp::setActive(bool activate)
 {
+    m_active = activate;
+    //note: allow this to run even if the value isn't changed,
+    //because some views may need updating.
     if (activate) {
         emit setViewOpacity(m_activeOpacity);
         emit showViews();
