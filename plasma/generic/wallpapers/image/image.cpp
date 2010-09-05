@@ -69,8 +69,6 @@ void Image::init(const KConfigGroup &config)
         m_mode = renderingMode().name();
     }
 
-    setPreviewDuringConfiguration(m_mode != "SingleImage");
-
     calculateGeometry();
 
     m_delay = config.readEntry("slideTimer", 10);
