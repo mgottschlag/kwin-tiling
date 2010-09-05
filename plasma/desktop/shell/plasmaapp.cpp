@@ -1154,10 +1154,6 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
         connect(configDialog, SIGNAL(destroyed(QObject*)), nullManager, SLOT(deleteLater()));
     }
 
-    configDialog->layout()->activate();
-    QSize dialogSize(qMax(configDialog->size().width(), 650), qMax(configDialog->size().height(), 720));
-    configDialog->resize(dialogSize.boundedTo(m_corona->availableScreenRect(containment->screen()).size()));
-    
     configDialog->show();
     KWindowSystem::setOnDesktop(configDialog->winId(), KWindowSystem::currentDesktop());
     KWindowSystem::activateWindow(configDialog->winId());
