@@ -13,6 +13,8 @@
 
 #include <KConfigDialog>
 
+#include <Plasma/Plasma>
+
 #include "plasmagenericshell_export.h"
 
 namespace Plasma {
@@ -66,8 +68,8 @@ private:
 private slots:
     void changeBackgroundMode(int mode);
     void cleanup();
-    void checkActivityName();
     void settingsModified(bool modified = true);
+    void containmentImmutabilityChanged(Plasma::ImmutabilityType type);
 
 private:
     BackgroundDialogPrivate *d;

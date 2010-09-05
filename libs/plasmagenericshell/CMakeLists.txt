@@ -34,7 +34,7 @@ set(plasmagenericshell_LIB_SRCS
     ${appletbrowserdialog_SRCS}
 )
 
-kde4_add_ui_files(plasmagenericshell_LIB_SRCS ActivityConfiguration.ui BackgroundDialog.ui MousePlugins.ui)
+kde4_add_ui_files(plasmagenericshell_LIB_SRCS BackgroundDialog.ui MousePlugins.ui)
 
 kde4_add_library(plasmagenericshell SHARED ${plasmagenericshell_LIB_SRCS})
 
