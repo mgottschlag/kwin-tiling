@@ -34,7 +34,6 @@
 #include "kworkspace/kactivitycontroller.h"
 
 #include "ui_BackgroundDialog.h"
-#include "ui_ActivityConfiguration.h"
 
 typedef QPair<QString, QString> WallpaperInfo;
 Q_DECLARE_METATYPE(WallpaperInfo)
