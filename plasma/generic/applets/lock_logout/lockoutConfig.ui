@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>206</width>
-    <height>148</height>
+    <width>121</width>
+    <height>143</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,23 +15,100 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QCheckBox" name="checkBox_lock">
+    <widget class="QLabel" name="label">
      <property name="text">
-      <string>Show lock button</string>
+      <string>Leave</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QCheckBox" name="checkBox_switchUser">
+   <item row="0" column="1">
+    <widget class="QCheckBox" name="checkBox_logout">
      <property name="text">
-      <string>Show &quot;switch user&quot; button</string>
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2" rowspan="5">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>3</width>
+       <height>118</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Lock</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QCheckBox" name="checkBox_lock">
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QCheckBox" name="checkBox_logout">
+    <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Show logout button</string>
+      <string>Switch user</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QCheckBox" name="checkBox_switchUser">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Hibernate</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QCheckBox" name="checkBox_hibernate">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Sleep</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QCheckBox" name="checkBox_sleep">
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>
@@ -48,29 +125,8 @@
      </property>
     </spacer>
    </item>
-   <item row="4" column="0">
-    <widget class="QCheckBox" name="checkBox_hibernate">
-     <property name="text">
-      <string>Show hibernate button</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QCheckBox" name="checkBox_sleep">
-     <property name="text">
-      <string>Show sleep button</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
- <tabstops>
-  <tabstop>checkBox_lock</tabstop>
-  <tabstop>checkBox_switchUser</tabstop>
-  <tabstop>checkBox_logout</tabstop>
-  <tabstop>checkBox_sleep</tabstop>
-  <tabstop>checkBox_hibernate</tabstop>
- </tabstops>
  <resources/>
  <connections/>
 </ui>
