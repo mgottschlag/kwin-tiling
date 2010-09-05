@@ -25,119 +25,115 @@
 PlasmaAppletItem::PlasmaAppletItem(PlasmaAppletItemModel *model,
                                    const KPluginInfo& info,
                                    FilterFlags flags)
-    : QObject(model), m_model(model)
+    : QObject(model),
+      m_model(model),
+      m_info(info),
+      m_runningCount(0),
+      m_favorite(flags & Favorite),
+      m_local(false)
 {
-    QMap<QString, QVariant> attrs;
-    attrs.insert("name", info.name());
-    attrs.insert("pluginName", info.pluginName());
-    attrs.insert("description", info.comment());
-    attrs.insert("category", info.category().toLower());
-    attrs.insert("license", info.fullLicense().name(KAboutData::FullName));
-    attrs.insert("website", info.website());
-    attrs.insert("version", info.version());
-    attrs.insert("author", info.author());
-    attrs.insert("email", info.email());
-    attrs.insert("favorite", flags & Favorite ? true : false);
-
-    const QString api(info.property("X-Plasma-API").toString());
-    bool local = false;
+    const QString api(m_info.property("X-Plasma-API").toString());
     if (!api.isEmpty()) {
         QDir dir(KStandardDirs::locateLocal("data", "plasma/plasmoids/" + info.pluginName() + '/'));
-        local = dir.exists();
+        m_local = dir.exists();
     }
-    attrs.insert("local", local);
 
     //attrs.insert("recommended", flags & Recommended ? true : false);
-    setText(info.name() + " - "+ info.category().toLower());
+    setText(m_info.name() + " - "+ m_info.category().toLower());
 
-    const QString iconName = info.icon().isEmpty() ? "application-x-plasma" : info.icon();
+    const QString iconName = m_info.icon().isEmpty() ? "application-x-plasma" : info.icon();
     KIcon icon(iconName);
-    attrs.insert("icon", static_cast<QIcon>(icon));
     setIcon(icon);
-    setData(attrs);
 }
 
 QString PlasmaAppletItem::pluginName() const
 {
-    return data().toMap()["pluginName"].toString();
+    return m_info.pluginName();
 }
 
 QString PlasmaAppletItem::name() const
 {
-    return data().toMap()["name"].toString();
+    return m_info.name();
 }
 
 QString PlasmaAppletItem::description() const
 {
-    return data().toMap()["description"].toString();
+    return m_info.comment();
 }
 
 QString PlasmaAppletItem::license() const
 {
-    return data().toMap()["license"].toString();
+    return m_info.license();
 }
 
 QString PlasmaAppletItem::category() const
 {
-    return data().toMap()["category"].toString();
+    return m_info.category();
 }
 
 QString PlasmaAppletItem::website() const
 {
-    return data().toMap()["website"].toString();
+    return m_info.website();
 }
 
 QString PlasmaAppletItem::version() const
 {
-    return data().toMap()["version"].toString();
+    return m_info.version();
 }
 
 QString PlasmaAppletItem::author() const
 {
-    return data().toMap()["author"].toString();
+    return m_info.author();
 }
 
 QString PlasmaAppletItem::email() const
 {
-    return data().toMap()["email"].toString();
+    return m_info.email();
 }
 
 int PlasmaAppletItem::running() const
 {
-    return data().toMap()["runningCount"].toInt();
-}
-
-void PlasmaAppletItem::setFavorite(bool favorite)
-{
-    QMap<QString, QVariant> attrs = data().toMap();
-    attrs.insert("favorite", favorite ? true : false);
-    setData(QVariant(attrs));
-
-    QString pluginName = attrs["pluginName"].toString();
-    m_model->setFavorite(pluginName, favorite);
-}
-
-bool PlasmaAppletItem::isLocal() const
-{
-    return data().toMap()["local"].toBool();
+    return m_runningCount;
 }
 
 void PlasmaAppletItem::setRunning(int count)
 {
-    QMap<QString, QVariant> attrs = data().toMap();
-    attrs.insert("running", count > 0); //bool for the filter
-    attrs.insert("runningCount", count);
-    setData(QVariant(attrs));
+    m_runningCount = count;
 }
 
-bool PlasmaAppletItem::passesFiltering(const KCategorizedItemsViewModels::Filter & filter) const
+bool PlasmaAppletItem::matches(const QString &pattern) const
 {
-    return data().toMap()[filter.first] == filter.second;
+    if (m_info.service()) {
+        const QStringList keywords = m_info.service()->keywords();
+        foreach (const QString &keyword, keywords) {
+            if (keyword.startsWith(pattern, Qt::CaseInsensitive)) {
+                return true;
+            }
+        }
+    }
+
+    return AbstractItem::matches(pattern);
 }
 
-QVariantList PlasmaAppletItem::arguments() const
+bool PlasmaAppletItem::isFavorite() const
 {
-    return qvariant_cast<QVariantList>(data().toMap()["arguments"]);
+    return m_favorite;
+}
+
+void PlasmaAppletItem::setFavorite(bool favorite)
+{
+    m_favorite = favorite;
+    m_model->setFavorite(m_info.pluginName(), favorite);
+}
+
+bool PlasmaAppletItem::isLocal() const
+{
+    return m_local;
+}
+
+bool PlasmaAppletItem::passesFiltering(const KCategorizedItemsViewModels::Filter &) const
+{
+    return false;//m_attrs[filter.first] == filter.second;
 }
 
 QMimeData *PlasmaAppletItem::mimeData() const

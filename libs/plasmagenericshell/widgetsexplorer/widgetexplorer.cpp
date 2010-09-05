@@ -159,7 +159,7 @@ void WidgetExplorerPrivate::init(Plasma::Location loc)
 
     //connect
     QObject::connect(appletsListWidget, SIGNAL(appletDoubleClicked(PlasmaAppletItem*)), q, SLOT(addApplet(PlasmaAppletItem*)));
-    QObject::connect(filteringWidget->textSearch()->nativeWidget(), SIGNAL(textChanged(QString)), appletsListWidget, SLOT(searchTermChanged(QString)));
+    QObject::connect(filteringWidget->textSearch(), SIGNAL(textChanged(QString)), appletsListWidget, SLOT(searchTermChanged(QString)));
     QObject::connect(filteringWidget, SIGNAL(filterChanged(int)), appletsListWidget, SLOT(filterChanged(int)));
     QObject::connect(close, SIGNAL(clicked()), q, SIGNAL(closeClicked()));
 
@@ -387,7 +387,7 @@ void WidgetExplorer::addApplet()
     foreach (AbstractItem *item, d->appletsListWidget->selectedItems()) {
         PlasmaAppletItem *selectedItem = (PlasmaAppletItem *) item;
         kDebug() << "Adding applet " << selectedItem->name() << "to containment";
-        d->containment->addApplet(selectedItem->pluginName(), selectedItem->arguments());
+        d->containment->addApplet(selectedItem->pluginName());
     }
 }
 
@@ -397,8 +397,8 @@ void WidgetExplorer::addApplet(PlasmaAppletItem *appletItem)
         return;
     }
 
-    kDebug() << appletItem->pluginName() << appletItem->arguments();
-    d->containment->addApplet(appletItem->pluginName(), appletItem->arguments());
+    kDebug() << appletItem->pluginName();
+    d->containment->addApplet(appletItem->pluginName());
 }
 
 void WidgetExplorer::showEvent(QShowEvent *e)

@@ -55,18 +55,23 @@ public:
 
     int running() const;
     bool isLocal() const;
+    bool isFavorite() const;
     void setFavorite(bool favorite);
     PlasmaAppletItemModel* appletItemModel();
+    bool matches(const QString &pattern) const;
 
     //set how many instances of this applet are running
     void setRunning(int count);
     bool passesFiltering(const KCategorizedItemsViewModels::Filter & filter) const;
-    QVariantList arguments() const;
     QMimeData *mimeData() const;
     QStringList mimeTypes() const;
 
 private:
     PlasmaAppletItemModel * m_model;
+    KPluginInfo m_info;
+    int m_runningCount;
+    bool m_favorite;
+    bool m_local;
 };
 
 class PlasmaAppletItemModel : public QStandardItemModel
