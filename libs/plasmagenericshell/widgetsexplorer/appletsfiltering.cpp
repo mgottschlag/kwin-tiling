@@ -206,8 +206,6 @@ FilteringWidget::~FilteringWidget()
 
 void FilteringWidget::init()
 {
-    setFocusPolicy(Qt::StrongFocus);
-
     //init text search
     m_textSearch = new Plasma::LineEdit();
 
@@ -342,13 +340,6 @@ void FilteringWidget::setMenuPos()
     }
     m_newWidgetsMenu->move(position);
 }
-
-void FilteringWidget::setFocus()
-{
-    QGraphicsWidget::setFocus();
-    m_textSearch->setFocus();
-    m_textSearch->nativeWidget()->setFocus();
- }
 
 void FilteringWidget::populateWidgetsMenu()
 {

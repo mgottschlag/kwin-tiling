@@ -146,6 +146,8 @@ void WidgetExplorerPrivate::initFilters()
 
 void WidgetExplorerPrivate::init(Plasma::Location loc)
 {
+    q->setFocusPolicy(Qt::StrongFocus);
+
     //init widgets
     location = loc;
     orientation = ((location == Plasma::LeftEdge || location == Plasma::RightEdge)?Qt::Vertical:Qt::Horizontal);
@@ -401,16 +403,29 @@ void WidgetExplorer::addApplet(PlasmaAppletItem *appletItem)
     d->containment->addApplet(appletItem->pluginName());
 }
 
-void WidgetExplorer::showEvent(QShowEvent *e)
-{
-    d->filteringWidget->setFocus();
-    QGraphicsWidget::showEvent(e);
-}
-
 void WidgetExplorer::immutabilityChanged(Plasma::ImmutabilityType type)
 {
     if (type != Plasma::Mutable) {
         emit closeClicked();
+    }
+}
+
+void WidgetExplorer::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        // have to treat escape specially, as it makes text() return " "
+        QGraphicsWidget::keyPressEvent(event);
+        return;
+    }
+
+    Plasma::LineEdit *lineEdit = d->filteringWidget->textSearch();
+    const QString newText = event->text();
+    if (newText.isEmpty()) {
+        QGraphicsWidget::keyPressEvent(event);
+    } else {
+        lineEdit->setText(lineEdit->text() + event->text());
+        lineEdit->nativeWidget()->setCursorPosition(lineEdit->text().length());
+        lineEdit->setFocus();
     }
 }
 

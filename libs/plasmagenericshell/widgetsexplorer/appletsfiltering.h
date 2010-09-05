@@ -93,7 +93,6 @@ public:
                              Qt::WindowFlags wFlags = 0);
     virtual ~FilteringWidget();
 
-    void setFocus();
     void setModel(QStandardItemModel *model);
     void setListOrientation(Qt::Orientation orientation);
     Plasma::LineEdit *textSearch();

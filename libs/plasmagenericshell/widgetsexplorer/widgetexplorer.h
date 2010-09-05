@@ -119,7 +119,7 @@ protected Q_SLOTS:
     void immutabilityChanged(Plasma::ImmutabilityType);
 
 protected:
-    void showEvent(QShowEvent *e);
+    void keyPressEvent(QKeyEvent *e);
 
 private:
     Q_PRIVATE_SLOT(d, void appletAdded(Plasma::Applet*))
