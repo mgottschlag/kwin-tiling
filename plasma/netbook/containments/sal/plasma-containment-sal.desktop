@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Search and Launch Containment
+Name=Search and Launch
 Name[ar]=حاوي ابحث و شغل
 Name[ca]=Contenidor de cerca i llançament
 Name[ca@valencia]=Contenidor de cerca i llançament
@@ -52,7 +52,7 @@ Name[uk]=Контейнер пошуку і запуску
 Name[x-test]=xxSearch and Launch Containmentxx
 Name[zh_CN]=搜索与启动容器
 Name[zh_TW]=搜尋與啟動容器
-Comment=Special Containment with Launcher
+Comment=Full screen application launcher with search interface
 Comment[ar]=حاوي خاص بمشغل تطبيقات
 Comment[ca]=Contenidor especial amb llançador
 Comment[ca@valencia]=Contenidor especial amb llançador
