@@ -35,6 +35,7 @@ SaverDesktop::SaverDesktop(QObject *parent, const QVariantList &args)
 {
         setContainmentType(CustomContainment);
         connect(this, SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)), SLOT(newApplet(Plasma::Applet *, const QPointF &)));
+        setHasConfigurationInterface(true);
 }
 
 SaverDesktop::~SaverDesktop()
