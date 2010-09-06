@@ -398,29 +398,38 @@ void KRunnerDialog::resizeEvent(QResizeEvent *e)
 void KRunnerDialog::mousePressEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton) {
-        m_vertResize = e->y() > height() - qMax(5, m_bottomBorderHeight);
-        m_rightResize = e->x() > width() - qMax(5, m_rightBorderWidth);
-        const bool leftResize = e->x() < qMax(5, m_leftBorderWidth);
-        if (!m_floating && (leftResize || m_rightResize || m_vertResize)) {
-            // let's do a resize! :)
-            m_lastPressPos = m_vertResize ? e->globalY() : e->globalX();
-            grabMouse();
-            m_resizing = true;
-        } else if (m_floating) {
+        m_lastPressPos = -1;
+
+        if (m_floating) {
+            m_vertResize = e->y() > height() - qMax(5, m_bottomBorderHeight);
+            kDebug() << m_vertResize << e->y() << height() << qMax(5, m_bottomBorderHeight);
+            if (m_vertResize) {
+                m_lastPressPos = e->globalY();
+                m_resizing = true;
+                grabMouse();
+            } else {
 #ifdef Q_WS_X11
-            // We have to release the mouse grab before initiating the move operation.
-            // Ideally we would call releaseMouse() to do this, but when we only have an
-            // implicit passive grab, Qt is unaware of it, and will refuse to release it.
-            XUngrabPointer(x11Info().display(), CurrentTime);
+                // We have to release the mouse grab before initiating the move operation.
+                // Ideally we would call releaseMouse() to do this, but when we only have an
+                // implicit passive grab, Qt is unaware of it, and will refuse to release it.
+                XUngrabPointer(x11Info().display(), CurrentTime);
 
-            // Ask the window manager to start an interactive move operation.
-            NETRootInfo rootInfo(x11Info().display(), NET::WMMoveResize);
-            rootInfo.moveResizeRequest(winId(), e->globalX(), e->globalY(), NET::Move);
-
+                // Ask the window manager to start an interactive move operation.
+                NETRootInfo rootInfo(x11Info().display(), NET::WMMoveResize);
+                rootInfo.moveResizeRequest(winId(), e->globalX(), e->globalY(), NET::Move);
 #endif
+            }
         } else {
-            grabMouse();
-            m_lastPressPos = e->globalX();
+            m_vertResize = e->y() > height() - qMax(5, m_bottomBorderHeight);
+            m_rightResize = e->x() > width() - qMax(5, m_rightBorderWidth);
+            const bool leftResize = e->x() < qMax(5, m_leftBorderWidth);
+            m_lastPressPos = m_vertResize ? e->globalY() : e->globalX();
+
+            if (leftResize || m_rightResize || m_vertResize) {
+                // let's do a resize! :)
+                grabMouse();
+                m_resizing = true;
+            }
         }
 
         e->accept();
@@ -429,7 +438,7 @@ void KRunnerDialog::mousePressEvent(QMouseEvent *e)
 
 void KRunnerDialog::mouseReleaseEvent(QMouseEvent *)
 {
-    if (!m_floating) {
+    if (m_lastPressPos != -1) {
         releaseMouse();
         unsetCursor();
         m_lastPressPos = -1;
@@ -469,11 +478,9 @@ void KRunnerDialog::leaveEvent(QEvent *)
 void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
 {
     //kDebug() << e->x() << m_leftBorderWidth << width() << m_rightBorderWidth;
-    if (m_floating) {
-        return;
-    }
-
-    if (m_lastPressPos != -1) {
+    if (m_lastPressPos == -1) {
+        checkCursor(e->pos());
+    } else {
         if (m_resizing) {
             if (m_vertResize) {
                 const int deltaY = e->globalY() - m_lastPressPos;
@@ -511,8 +518,6 @@ void KRunnerDialog::mouseMoveEvent(QMouseEvent *e)
             move(newX, y());
             checkBorders(r);
         }
-    } else {
-        checkCursor(e->pos());
     }
 }
 
