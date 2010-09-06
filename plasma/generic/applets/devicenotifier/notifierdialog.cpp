@@ -648,6 +648,7 @@ void NotifierDialog::showStatusBarDetails(bool show)
         static_cast<QGraphicsLinearLayout*>(m_statusWidget->layout())->removeItem(m_statusDetailsText);
         m_statusExpandButton->setIcon(QIcon(svg->pixmap("restore")));
     }
+    delete svg;
 }
 
 void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorData, const QString & udi)
