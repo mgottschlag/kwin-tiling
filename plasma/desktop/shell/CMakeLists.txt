@@ -74,7 +74,7 @@ install(FILES data/layouts/00-defaultLayout.js DESTINATION ${DATA_INSTALL_DIR}/p
 install(FILES data/plasma-desktop-js.xml DESTINATION ${DATA_INSTALL_DIR}/katepart/syntax/)
 
 MACRO(INSTALL_PLASMA_JAVASCRIPT_TEMPLATE dir addonPrefix)
-   configure_file(${dir}/metadata.desktop plasma-layout-${addonPrefix}.desktop COPYONLY)
+   configure_file(${dir}/metadata.desktop ${CMAKE_CURRENT_BINARY_DIR}/plasma-layout-${addonPrefix}.desktop COPYONLY)
    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plasma-layout-${addonPrefix}.desktop DESTINATION ${SERVICES_INSTALL_DIR})
    install(FILES ${dir}/metadata.desktop DESTINATION ${DATA_INSTALL_DIR}/plasma/layout-templates/${addonPrefix}/)
    install(FILES ${dir}/contents/layout.js DESTINATION ${DATA_INSTALL_DIR}/plasma/layout-templates/${addonPrefix}/contents/)
