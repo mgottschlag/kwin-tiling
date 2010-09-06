@@ -55,7 +55,7 @@ LauncherItem::LauncherItem(QObject *parent, const KUrl &url)
 
 LauncherItem::~LauncherItem()
 {
-
+    delete d;
 }
 
 QIcon LauncherItem::icon() const
