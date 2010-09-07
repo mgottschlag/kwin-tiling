@@ -2,7 +2,9 @@
 Name=Share
 Name[cs]=Sdílet
 Name[es]=Compartir
+Name[hr]=Dijeli
 Name[ia]=Compartir
+Name[nb]=Dele
 Name[pt]=Partilhar
 Name[pt_BR]=Compartilhar
 Name[sv]=Dela
@@ -12,6 +14,7 @@ Name[x-test]=xxSharexx
 Name[zh_TW]=分享
 Comment=Share Package Structure
 Comment[ia]=Share Package Structure (Structura de uso commun de Pacchetto)
+Comment[nb]=Del pakkestruktur
 Comment[pt]=Estrutura do Pacote da Partilha
 Comment[pt_BR]=Estrutura do pacote de compartilhamento
 Comment[sv]=Dela paketstruktur

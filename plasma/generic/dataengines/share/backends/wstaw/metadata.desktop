@@ -1,18 +1,24 @@
 [Desktop Entry]
 Name=wstaw.org
 Name[es]=wstaw.org
+Name[hr]=wstaw.org
 Name[ia]=wstaw.org
+Name[nb]=wstaw.org
 Name[nds]=wstaw.org
 Name[pt]=wstaw.org
 Name[pt_BR]=wstaw.org
 Name[sv]=wstaw.org
 Name[tg]=wstaw.org
+Name[tr]=wstaw.org
 Name[uk]=wstaw.org
 Name[x-test]=xxwstaw.orgxx
 Name[zh_TW]=wstaw.org
 Comment=Enables the share of images using the wstaw.org service
 Comment[es]=Permite compartir imágenes a través del servicio de wstaw.org
+Comment[hr]=Omogućuje dijeljenje slika koristeći servis wstaw.org
 Comment[ia]=Il habilita le uso commun de images per usar le servicio wstaw.org
+Comment[nb]=Gjør det mulig å dele bilder via tjenesten wstaw.org
+Comment[nds]=Biller op wstaw.org praatstellen
 Comment[pt]=Activa a partilha de imagens com o serviço do 'wstaw.org'
 Comment[pt_BR]=Habilita o compartilhamento de imagens com o uso do serviço wstaw.org
 Comment[sv]=Aktiverar att dela bilder med tjänsten wstaw.org

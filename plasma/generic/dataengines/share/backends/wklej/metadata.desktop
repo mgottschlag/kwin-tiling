@@ -1,18 +1,24 @@
 [Desktop Entry]
 Name=wklej.org
 Name[es]=wklej.org
+Name[hr]=wklej.org
 Name[ia]=wklej.org
+Name[nb]=wklej.org
 Name[nds]=wklej.org
 Name[pt]=wklej.org
 Name[pt_BR]=wklej.org
 Name[sv]=wklej.org
 Name[tg]=wklej.org
+Name[tr]=wklej.org
 Name[uk]=wklej.org
 Name[x-test]=xxwklej.orgxx
 Name[zh_TW]=wklej.org
 Comment=Enables the share of text using wklej.org service
 Comment[es]=Permite compartir texto a través del servicio de wklej.org
+Comment[hr]=Omogućuje dijeljenje teksta koristeći servis wklej.org
 Comment[ia]=Il habilita le uso commun de texto per usar le servicio wklej.org
+Comment[nb]=Gjør det mulig å dele tekst via tjenesten wklej.org
+Comment[nds]=Text op wklej.org praatstellen
 Comment[pt]=Activa a partilha de texto com o serviço do 'wklej.org'
 Comment[pt_BR]=Habilita o compartilhamento de texto com o uso do serviço wklej.org
 Comment[sv]=Aktiverar att dela text med tjänsten wklej.org

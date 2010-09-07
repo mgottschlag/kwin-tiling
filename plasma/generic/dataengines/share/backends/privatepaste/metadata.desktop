@@ -1,14 +1,19 @@
 [Desktop Entry]
 Name=privatepaste.com
+Name[hr]=privatepaste.com
 Name[ia]=privatepastebin.com
+Name[nds]=privatepaste.com
 Name[pt]=privatepaste.com
 Name[pt_BR]=privatepaste.com
 Name[sv]=privatepaste.com
+Name[tr]=privatepaste.com
 Name[uk]=privatepaste.com
 Name[x-test]=xxprivatepaste.comxx
 Name[zh_TW]=privatepaste.com
 Comment=Paste text with the PrivatePaste.com service
+Comment[hr]=Zalijepi tekst pomoću servisa PrivatePaste.com
 Comment[ia]=Collar texto con le servicio PrivatePaste.com
+Comment[nds]=Text op PrivatePaste.com praatstellen
 Comment[pt]=Colar texto com o serviço PrivatePaste.com
 Comment[pt_BR]=Colar texto com o serviço PrivatePaste.com
 Comment[sv]=Klistra in text med tjänsten PrivatePaste.com
