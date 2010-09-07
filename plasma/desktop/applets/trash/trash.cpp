@@ -36,6 +36,7 @@
 #include <KProcess>
 #include <KStandardDirs>
 #include <KNotification>
+#include <KGlobalSettings>
 
 #include <kfileplacesmodel.h>
 
@@ -110,6 +111,9 @@ void Trash::init()
     m_dirLister->openUrl(KUrl("trash:/"));
 
     connect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
+    
+    connect(KGlobalSettings::self(), SIGNAL(iconChanged(int)),
+        this, SLOT(iconSizeChanged(int)));
 }
 
 void Trash::createConfigurationInterface(KConfigDialog *parent)
@@ -383,6 +387,36 @@ void Trash::dropEvent(QGraphicsSceneDragDropEvent *event)
                 job->ui()->setAutoErrorHandlingEnabled(true);
             }
         }
+    }
+}
+
+QSizeF Trash::sizeHint(Qt::SizeHint which, const QSizeF & constraint) const
+{
+    if (which == Qt::PreferredSize) {
+        int iconSize;
+
+        switch (formFactor()) {
+            case Plasma::Planar:
+            case Plasma::MediaCenter:
+                iconSize = IconSize(KIconLoader::Desktop);
+                break;
+
+            case Plasma::Horizontal:
+            case Plasma::Vertical:
+                iconSize = IconSize(KIconLoader::Panel);
+                break;
+        }
+
+        return QSizeF(iconSize, iconSize);
+    }
+
+    return Plasma::Applet::sizeHint(which, constraint);
+}
+
+void Trash::iconSizeChanged(int group)
+{
+    if (group == KIconLoader::Desktop || group == KIconLoader::Panel) {
+        updateGeometry();
     }
 }
 

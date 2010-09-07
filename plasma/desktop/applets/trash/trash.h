@@ -62,6 +62,7 @@ class Trash : public Plasma::Applet
         void createConfigurationInterface(KConfigDialog *parent);
         void createMenu();
         void updateIcon();
+        QSizeF sizeHint(Qt::SizeHint which, const QSizeF & constraint = QSizeF()) const;
 
     protected slots:
         void popup();
@@ -70,6 +71,9 @@ class Trash : public Plasma::Applet
         void slotDeleteItem(const KFileItem &);
         void slotApplyConfig();
         void emptyFinished(int exitCode, QProcess::ExitStatus exitStatus);
+        
+    private slots:
+        void iconSizeChanged(int group);
 
     private:
         Plasma::IconWidget* m_icon;
