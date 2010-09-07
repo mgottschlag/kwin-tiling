@@ -45,19 +45,21 @@ NetDialogManager::~NetDialogManager()
 void NetDialogManager::showDialog(QWidget *widget, Plasma::Applet *applet)
 {
     Q_UNUSED(applet)
-    widget->setAttribute(Qt::WA_WindowPropagation, false);
-    widget->setAttribute(Qt::WA_TranslucentBackground);
-    widget->setAttribute(Qt::WA_NoSystemBackground, false);
-    widget->setWindowFlags(Qt::FramelessWindowHint);
-    KWindowSystem::setState(widget->effectiveWinId(), NET::MaxVert|NET::MaxHoriz);
-    Plasma::WindowEffects::enableBlurBehind(widget->effectiveWinId(), true);
+    if (KWindowSystem::compositingActive()) {
+        widget->setAttribute(Qt::WA_WindowPropagation, false);
+        widget->setAttribute(Qt::WA_TranslucentBackground);
+        widget->setAttribute(Qt::WA_NoSystemBackground, false);
+        widget->setWindowFlags(Qt::FramelessWindowHint);
+        KWindowSystem::setState(widget->effectiveWinId(), NET::MaxVert|NET::MaxHoriz);
+        Plasma::WindowEffects::enableBlurBehind(widget->effectiveWinId(), true);
 
-    QPalette palette = widget->palette();
-    palette.setColor(QPalette::Window, QColor(0,0,0,100));
-    widget->setAttribute(Qt::WA_WindowPropagation);
-    palette.setColor(QPalette::WindowText, Qt::white);
-    palette.setColor(QPalette::ToolTipText, Qt::white);
-    widget->setPalette(palette);
+        QPalette palette = widget->palette();
+        palette.setColor(QPalette::Window, QColor(0,0,0,100));
+        widget->setAttribute(Qt::WA_WindowPropagation);
+        palette.setColor(QPalette::WindowText, Qt::white);
+        palette.setColor(QPalette::ToolTipText, Qt::white);
+        widget->setPalette(palette);
+    }
 
     Plasma::Containment *containment = applet->containment();
     if (containment) {
