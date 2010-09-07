@@ -196,14 +196,14 @@ void Battery::toolTipAboutToShow()
     int batteryCount = 0;
     foreach (const VariantDict &batteryData, m_batteriesData) {
         if (m_numOfBattery == 1) {
-            subText.append(i18n("Battery:"));
+            subText.append(i18n("<b>Battery:</b>"));
         } else {
             //kDebug() << "More batteries ...";
             if (!subText.isEmpty()) {
                 subText.append("<br/>");
             }
 
-            subText.append(i18nc("Placeholder is the battery ID", "Battery %1:", batteryCount));
+            subText.append(i18nc("tooltip: placeholder is the battery ID", "<b>Battery %1:</b>", batteryCount));
         }
 
         subText.append(' ').append(stringForState(batteryData));
@@ -214,8 +214,8 @@ void Battery::toolTipAboutToShow()
         subText.append("<br/>");
     }
 
-    subText.append(i18n("AC Adapter:")).append(' ');
-    subText.append(m_acAdapterPlugged ? i18n("Plugged in") : i18n("Not plugged in"));
+    subText.append(i18nc("tooltip", "<b>AC Adapter:</b>")).append(' ');
+    subText.append(m_acAdapterPlugged ? i18nc("tooltip", "Plugged in") : i18nc("tooltip", "Not plugged in"));
 
     Plasma::ToolTipContent c(mainText, subText, KIcon("battery"));
     Plasma::ToolTipManager::self()->setContent(this, c);
