@@ -99,7 +99,7 @@ KDE_EXPORT int kdemain(int argc, char **argv)
         appName.append("-screen-").append(associatedScreen);
     }
 
-    KAboutData aboutData(appName, 0, ki18n("Plasma Workspace"),
+    KAboutData aboutData(appName, 0, ki18n("Plasma Desktop Shell"),
                          version, ki18n(description), KAboutData::License_GPL,
                          ki18n("Copyright 2006-2009, The KDE Team"));
     aboutData.addAuthor(ki18n("Aaron J. Seigo"),
