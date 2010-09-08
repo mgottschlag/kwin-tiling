@@ -40,7 +40,6 @@ K_EXPORT_PLASMA_APPLET(windowlist, WindowList)
 
 WindowList::WindowList(QObject *parent, const QVariantList &args) : Plasma::Applet(parent, args)
 {
-    KGlobal::locale()->insertCatalog("windowlist");
     setAspectRatioMode(Plasma::ConstrainedSquare);
 
     const int iconSize = IconSize(KIconLoader::Desktop);
