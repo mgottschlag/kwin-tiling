@@ -58,7 +58,7 @@ class IconGrid : public QGraphicsWidget
 public:
     IconGrid(QGraphicsItem *parent = 0);
 
-    bool iconNamesVisible();
+    bool iconNamesVisible() const;
     void setIconNamesVisible(bool enable);
 
     IconGridLayout *layout();

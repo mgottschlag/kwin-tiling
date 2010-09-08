@@ -112,7 +112,7 @@ IconGrid::IconGrid(QGraphicsItem *parent)
     setAcceptDrops(true);
 }
 
-bool IconGrid::iconNamesVisible()
+bool IconGrid::iconNamesVisible() const
 {
     return m_iconNamesVisible;
 }

@@ -65,7 +65,7 @@ void QuicklaunchIcon::setIconNameVisible(bool enable)
     }
 }
 
-bool QuicklaunchIcon::isIconNameVisible()
+bool QuicklaunchIcon::isIconNameVisible() const
 {
     return m_iconNameVisible;
 }

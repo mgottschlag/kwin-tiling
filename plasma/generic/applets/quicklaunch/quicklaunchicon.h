@@ -41,7 +41,7 @@ public:
     QuicklaunchIcon(const ItemData &data, QGraphicsItem *parent = 0);
 
     void setIconNameVisible(bool enable);
-    bool isIconNameVisible();
+    bool isIconNameVisible() const;
 
     void setItemData(const ItemData &data);
 
