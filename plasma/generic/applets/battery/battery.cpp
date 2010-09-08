@@ -628,15 +628,15 @@ QString Battery::stringForState(const QHash<QString, QVariant> &batteryData, boo
     if (batteryData["Plugged in"].toBool()) {
         const QString state = batteryData["State"].toString();
         if (state == "NoCharge") {
-            return i18n("%1% (charged)", batteryData["Percent"].toString());
             if (chargeChanging) {
                 *chargeChanging = true;
             }
+	    return i18n("%1% (charged)", batteryData["Percent"].toString());
         } else if (state == "Discharging") {
-            return i18n("%1% (discharging)", batteryData["Percent"].toString());
             if (chargeChanging) {
                 *chargeChanging = true;
             }
+            return i18n("%1% (discharging)", batteryData["Percent"].toString());
         }
 
         return i18n("%1% (charging)", batteryData["Percent"].toString());
