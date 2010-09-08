@@ -110,8 +110,8 @@ void SwitchActivity::contextEvent(QGraphicsSceneMouseEvent *event)
 
     desktopMenu.addTitle(i18n("Activities"));
     makeMenu(&desktopMenu);
-
-    desktopMenu.exec(event->screenPos());
+    desktopMenu.adjustSize();
+    desktopMenu.exec(popupPosition(desktopMenu.size(), event));
 }
 
 QList<QAction*> SwitchActivity::contextualActions()

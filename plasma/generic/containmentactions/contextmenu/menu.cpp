@@ -118,22 +118,6 @@ void ContextMenu::init(const KConfigGroup &config)
 
 void ContextMenu::contextEvent(QEvent *event)
 {
-    QPoint screenPos;
-    switch (event->type()) {
-        case QEvent::GraphicsSceneMousePress: {
-            QGraphicsSceneMouseEvent *e = static_cast<QGraphicsSceneMouseEvent*>(event);
-            screenPos = e->screenPos();
-            break;
-        }
-        case QEvent::GraphicsSceneWheel: {
-            QGraphicsSceneWheelEvent *e = static_cast<QGraphicsSceneWheelEvent*>(event);
-            screenPos = e->screenPos();
-            break;
-        }
-        default:
-            return;
-    }
-
     QList<QAction *> actions = contextualActions();
     if (actions.isEmpty()) {
         return;
@@ -141,7 +125,8 @@ void ContextMenu::contextEvent(QEvent *event)
 
     KMenu desktopMenu;
     desktopMenu.addActions(actions);
-    desktopMenu.exec(screenPos);
+    desktopMenu.adjustSize();
+    desktopMenu.exec(popupPosition(desktopMenu.size(), event));
 }
 
 QList<QAction*> ContextMenu::contextualActions()

@@ -41,20 +41,6 @@ void AppLauncher::init(const KConfigGroup &)
 
 void AppLauncher::contextEvent(QEvent *event)
 {
-    QPoint screenPos;
-    switch (event->type()) {
-        case QEvent::GraphicsSceneMousePress:
-            screenPos = (static_cast<QGraphicsSceneMouseEvent*>(event))->screenPos();
-            break;
-        case QEvent::GraphicsSceneWheel:
-            screenPos = (static_cast<QGraphicsSceneWheelEvent*>(event))->screenPos();
-            break;
-        default:
-            kDebug() << "unexpected event type" << event->type();
-            return;
-    }
-
-
     Plasma::DataEngine *apps = dataEngine("apps");
     if (!apps->isValid()) {
         return;
@@ -71,6 +57,8 @@ void AppLauncher::contextEvent(QEvent *event)
 
     connect(&desktopMenu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
     desktopMenu.exec(screenPos);
+    desktopMenu.adjustSize();
+    desktopMenu.exec(popupPosition(desktopMenu.size(), event));
 }
 
 bool AppLauncher::addApp(QMenu *menu, const QString &source)

@@ -68,7 +68,8 @@ void SwitchDesktop::contextEvent(QGraphicsSceneMouseEvent *event)
     desktopMenu.addTitle(i18n("Virtual Desktops"));
     makeMenu(&desktopMenu);
 
-    desktopMenu.exec(event->screenPos());
+    desktopMenu.adjustSize();
+    desktopMenu.exec(popupPosition(desktopMenu.size(), event));
 }
 
 QList<QAction*> SwitchDesktop::contextualActions()

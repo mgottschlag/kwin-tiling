@@ -165,7 +165,8 @@ void SwitchWindow::contextEvent(QGraphicsSceneMouseEvent *event)
 {
     QMenu *desktopMenu = makeMenu();
     if (desktopMenu) {
-        desktopMenu->exec(event->screenPos());
+        desktopMenu->adjustSize();
+        desktopMenu->exec(popupPosition(desktopMenu.size(), event));
     }
 }
 
