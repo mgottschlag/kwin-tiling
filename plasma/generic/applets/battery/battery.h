@@ -60,9 +60,9 @@ class Battery : public Plasma::PopupApplet
         void popupEvent(bool show);
         void setShowBatteryLabel(bool show);
 
-        qreal labelAlpha();
+        qreal labelAlpha() const;
         void setLabelAlpha(qreal alpha);
-        qreal acAlpha();
+        qreal acAlpha() const;
         void setAcAlpha(qreal alpha);
 
     public Q_SLOTS:

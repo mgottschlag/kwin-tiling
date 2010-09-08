@@ -1038,7 +1038,7 @@ void Battery::setLabelAlpha(qreal alpha)
     update();
 }
 
-qreal Battery::labelAlpha()
+qreal Battery::labelAlpha() const
 {
     return m_labelAlpha;
 }
@@ -1049,7 +1049,7 @@ void Battery::setAcAlpha(qreal alpha)
     update();
 }
 
-qreal Battery::acAlpha()
+qreal Battery::acAlpha() const
 {
     return m_acAlpha;
 }
