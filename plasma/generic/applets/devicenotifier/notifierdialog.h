@@ -173,7 +173,7 @@ namespace Notifier
           * Sets the visibility for the context menu actions
           * @param scenePos the position of the moude pointer in scene coordinates
           **/
-          void setMenuActionsAt(QPointF scenePos);
+          void setMenuActionsAt(const QPointF& scenePos);
 
 	  /**
 	   * Shows a message in the notifier status bar

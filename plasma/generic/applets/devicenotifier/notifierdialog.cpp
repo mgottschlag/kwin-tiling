@@ -919,7 +919,7 @@ void NotifierDialog::updateFreeSpace(DeviceItem *item)
     }
 }
 
-void NotifierDialog::setMenuActionsAt(QPointF scenePos)
+void NotifierDialog::setMenuActionsAt(const QPointF& scenePos)
 {
     m_showAll->setVisible(m_notifier->areThereHiddenDevices());
 
