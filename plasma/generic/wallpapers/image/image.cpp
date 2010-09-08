@@ -507,7 +507,12 @@ void Image::positioningChanged(int index)
 void Image::showFileDialog()
 {
     if (!m_dialog) {
-        m_dialog = new KFileDialog(KUrl(), "*.png *.jpeg *.jpg *.xcf *.svg *.svgz *.bmp", m_configWidget);
+        KUrl baseUrl;
+        if(m_wallpaper.indexOf(QDir::homePath()) > -1){
+            baseUrl = KUrl(m_wallpaper);
+        }
+      
+        m_dialog = new KFileDialog(baseUrl, "*.png *.jpeg *.jpg *.xcf *.svg *.svgz *.bmp", m_configWidget);
         m_dialog->setOperationMode(KFileDialog::Opening);
         m_dialog->setInlinePreviewShown(true);
         m_dialog->setCaption(i18n("Select Wallpaper Image File"));
