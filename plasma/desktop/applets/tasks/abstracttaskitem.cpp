@@ -1,5 +1,3 @@
-#ifndef ABSTRACTTASKITEM_CPP
-#define ABSTRACTTASKITEM_CPP
 /***************************************************************************
  *   Copyright (C) 2007 by Robert Knight <robertknight@gmail.com>          *
  *   Copyright (C) 2008 by Alexis Ménard <darktears31@gmail.com>           *
@@ -1160,4 +1158,3 @@ TaskManager::AbstractGroupableItem * AbstractTaskItem::abstractItem()
 }
 
 #include "abstracttaskitem.moc"
-#endif // ABSTRACTTASKITEM_CPP
