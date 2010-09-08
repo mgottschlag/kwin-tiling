@@ -60,6 +60,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
+    void contextMenuEvent(QContextMenuEvent *event);
     void enterEvent(QEvent *event);
     void leaveEvent(QEvent *event);
 

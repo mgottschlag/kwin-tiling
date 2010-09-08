@@ -22,6 +22,7 @@
 
 #include <QApplication>
 #include <QGraphicsLinearLayout>
+#include <QGraphicsSceneContextMenuEvent>
 #include <QPainter>
 #include <QTimer>
 #include <QAction>
@@ -172,11 +173,6 @@ void PanelAppletOverlay::paintEvent(QPaintEvent *event)
 
 void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
 {
-    Q_UNUSED(event)
-    if (!m_applet) {
-        return;
-    }
-
     m_lastGlobalPos = event->globalPos();
     //kDebug() << m_clickDrag;
     if (m_clickDrag) {
@@ -186,22 +182,7 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
         return;
     }
 
-    if (event->button() != Qt::LeftButton) {
-        //kDebug() << "sending even to" << (QWidget*)parent();
-        Plasma::View *view = dynamic_cast<Plasma::View*>(parent());
-
-        if (m_applet->inherits("PanelSpacer")) {
-            QMenu menu;
-            QAction *toggleFixed = m_applet->action("toggle fixed");
-            if (toggleFixed) {
-                menu.addAction(toggleFixed);
-            }
-            menu.addAction(m_applet->action("remove"));
-            menu.exec(event->globalPos());
-        } else if (view && view->containment()) {
-            view->containment()->showContextMenu(mapToParent(event->pos()), event->globalPos());
-        }
-
+    if (!m_applet || event->button() != Qt::LeftButton) {
         return;
     }
 
@@ -472,6 +453,16 @@ void PanelAppletOverlay::handleMouseReleased(Plasma::Applet *applet, QMouseEvent
     if (applet == m_applet) {
         QMouseEvent ownEvent(event->type(), mapFromGlobal(event->globalPos()), event->globalPos(), event->button(), event->buttons(), event->modifiers());
         mouseReleaseEvent(&ownEvent);
+    }
+}
+
+void PanelAppletOverlay::contextMenuEvent(QContextMenuEvent *event)
+{
+    if (m_applet) {
+        Plasma::Containment *c = m_applet->containment();
+        if (c) {
+            c->showContextMenu(mapToParent(event->pos()), event->globalPos());
+        }
     }
 }
 
