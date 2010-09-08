@@ -1,7 +1,17 @@
 [Desktop Entry]
 Name=Search and Launch
+Name[ia]=Cercar e Lancear
+Name[pt]=Pesquisa e Lançamento
+Name[pt_BR]=Pesquisar e executar
+Name[sv]=Sök och starta
+Name[uk]=Пошук і запуск
 Name[x-test]=xxSearch and Launchxx
 Comment=Full screen application launcher with search interface
+Comment[ia]=Lanceator de application a schermo plen con interfacie de cerca
+Comment[pt]=Um lançador de aplicações de ecrã completo, com interface de pesquisa
+Comment[pt_BR]=Um lançador de aplicativos de tela cheia completo, com interface de pesquisa
+Comment[sv]=Startprogram med fullskärm och sökgränssnitt
+Comment[uk]=Повноекранний інструмент запуску програм з інтерфейсом пошуку
 Comment[x-test]=xxFull screen application launcher with search interfacexx
 
 Icon=edit-find
