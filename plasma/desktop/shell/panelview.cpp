@@ -801,7 +801,6 @@ void PanelView::updatePanelGeometry()
 
     //update the panel controller location position and size
     if (m_panelController) {
-
         m_panelController->setLocation(c->location());
 
         foreach (PanelAppletOverlay *o, m_appletOverlays) {
