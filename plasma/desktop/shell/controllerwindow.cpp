@@ -35,6 +35,7 @@
 #include <Plasma/FrameSvg>
 #include <Plasma/Dialog>
 #include <Plasma/WindowEffects>
+#include <Plasma/View>
 
 #include "widgetsexplorer/widgetexplorer.h"
 #include "activitymanager/activitymanager.h"
@@ -157,6 +158,13 @@ void ControllerWindow::setGraphicsWidget(QGraphicsWidget *widget)
 {
     if (m_graphicsWidget) {
         m_graphicsWidget->removeEventFilter(this);
+        if (m_graphicsWidget == m_widgetExplorer) {
+            m_widgetExplorer->deleteLater();
+            m_widgetExplorer = 0;
+        } else if (m_graphicsWidget == m_activityManager) {
+            m_activityManager->deleteLater();
+            m_activityManager = 0;
+        }
     }
 
     m_graphicsWidget = widget;
@@ -207,8 +215,6 @@ void ControllerWindow::syncToGraphicsWidget()
         //set the sizehints correctly:
         int left, top, right, bottom;
         getContentsMargins(&left, &top, &right, &bottom);
-
-        QDesktopWidget *desktop = QApplication::desktop();
 
         QRect screenRect;
         //Try to use the screenId directly from the containment, because it won't fail.
@@ -386,7 +392,6 @@ void ControllerWindow::showWidgetExplorer()
         m_watchedWidget = m_widgetExplorer;
         setGraphicsWidget(m_widgetExplorer);
     }
-
 }
 
 void ControllerWindow::showActivityManager()
@@ -415,7 +420,6 @@ void ControllerWindow::showActivityManager()
         m_activityManager->show();
         setGraphicsWidget(m_activityManager);
     }
-
 }
 
 bool ControllerWindow::isControllerViewVisible() const
@@ -432,12 +436,13 @@ void ControllerWindow::onActiveWindowChanged(WId id)
 {
     Q_UNUSED(id)
 
-    //if the active window isn't the plasma desktop and the widgets explorer is visible,
-    //then close the panel controller
-    if (QApplication::activeWindow() == 0 || (QApplication::activeWindow()->winId() != KWindowSystem::activeWindow())) {
-        if (m_view && m_view->isVisible() && !isActiveWindow()) {
-            //close();
-        }
+    // if the active window isn't a Plasma::View and the widgets explorer is visible,
+    // or the activityManager is visible, and we are no longer the active window but still
+    // visible on-screen, then close up shop
+    if ((m_activityManager ||
+         (m_widgetExplorer && !qobject_cast<Plasma::View *>(QApplication::activeWindow()))) &&
+        isControllerViewVisible() && !isActiveWindow()) {
+        close();
     }
 }
 
