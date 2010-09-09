@@ -149,6 +149,7 @@ void EventDataContainer::populateIncidenceData(KCal::Incidence::Ptr incidence, P
     incidenceData["UID"] = incidence->uid();
     incidenceData["Type"] = incidence->type();
     incidenceData["Summary"] = incidence->summary();
+    incidenceData["Description"] = incidence->description();
     incidenceData["Comments"] = incidence->comments();
     incidenceData["Location"] = incidence->location();
     incidenceData["OrganizerName"] = incidence->organizer().name();
