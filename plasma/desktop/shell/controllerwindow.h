@@ -81,7 +81,6 @@ private Q_SLOTS:
     void syncToGraphicsWidget();
 
 private:
-
     Plasma::Location m_location;
     QBoxLayout *m_layout;
     Plasma::FrameSvg *m_background;
