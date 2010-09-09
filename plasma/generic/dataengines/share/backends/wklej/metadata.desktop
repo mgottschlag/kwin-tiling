@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=wklej.org
+Name[en_GB]=wklej.org
 Name[es]=wklej.org
 Name[hr]=wklej.org
 Name[ia]=wklej.org
@@ -14,6 +15,7 @@ Name[uk]=wklej.org
 Name[x-test]=xxwklej.orgxx
 Name[zh_TW]=wklej.org
 Comment=Enables the share of text using wklej.org service
+Comment[en_GB]=Enables the share of text using wklej.org service
 Comment[es]=Permite compartir texto a través del servicio de wklej.org
 Comment[hr]=Omogućuje dijeljenje teksta koristeći servis wklej.org
 Comment[ia]=Il habilita le uso commun de texto per usar le servicio wklej.org

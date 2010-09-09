@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Pastebin
+Name[en_GB]=Pastebin
 Name[es]=Pastebin
 Name[hr]=Pastebin
 Name[ia]=Pastebin
@@ -12,6 +13,7 @@ Name[uk]=Pastebin
 Name[x-test]=xxPastebinxx
 Name[zh_TW]=Pastebin
 Comment=Enables the share of text using pastebin.ca service
+Comment[en_GB]=Enables the share of text using pastebin.ca service
 Comment[es]=Permite compartir texto a través del servicio de pastebin.ca
 Comment[hr]=Omogućuje dijeljenje teksta koristeći servis pastebin.ca
 Comment[ia]=Il habilita le uso commun de texto per usar le servicio pastebin.ca

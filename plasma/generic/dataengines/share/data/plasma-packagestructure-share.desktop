@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Share
 Name[cs]=Sdílet
+Name[en_GB]=Share
 Name[es]=Compartir
 Name[hr]=Dijeli
 Name[ia]=Compartir
@@ -13,6 +14,7 @@ Name[uk]=Спільний ресурс
 Name[x-test]=xxSharexx
 Name[zh_TW]=分享
 Comment=Share Package Structure
+Comment[en_GB]=Share Package Structure
 Comment[ia]=Share Package Structure (Structura de uso commun de Pacchetto)
 Comment[nb]=Del pakkestruktur
 Comment[pt]=Estrutura do Pacote da Partilha

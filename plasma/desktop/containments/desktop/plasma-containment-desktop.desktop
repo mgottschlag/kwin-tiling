@@ -64,6 +64,7 @@ Name[x-test]=xxDesktopxx
 Name[zh_CN]=桌面
 Name[zh_TW]=桌面
 Comment=Default desktop
+Comment[en_GB]=Default desktop
 Comment[ia]=Scriptorio predefinite
 Comment[pt]=Ecrã por omissão
 Comment[pt_BR]=Área de trabalho padrão
