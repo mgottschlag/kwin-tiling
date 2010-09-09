@@ -56,7 +56,6 @@ void AppLauncher::contextEvent(QEvent *event)
     }
 
     connect(&desktopMenu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
-    desktopMenu.exec(screenPos);
     desktopMenu.adjustSize();
     desktopMenu.exec(popupPosition(desktopMenu.size(), event));
 }
