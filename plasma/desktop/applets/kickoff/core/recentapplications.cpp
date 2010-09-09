@@ -73,6 +73,7 @@ public:
         }
 
         recentGroup.writeEntry("Applications", recentApplications);
+        recentGroup.config()->sync();
     }
     void addEntry(const QString& id, ServiceInfo& info) {
         // if this service is already in the list then remove the existing
