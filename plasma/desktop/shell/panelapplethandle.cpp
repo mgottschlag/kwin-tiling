@@ -101,9 +101,7 @@ void PanelAppletHandle::setApplet(Plasma::Applet *applet)
         m_layout->activate();
         resize(minimumSizeHint());
 
-        if (applet->formFactor() == Plasma::Vertical) {
-            m_layout->setDirection(QBoxLayout::TopToBottom);
-        } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
+        if (QApplication::layoutDirection() == Qt::RightToLeft) {
             m_layout->setDirection(QBoxLayout::RightToLeft);
         } else {
             m_layout->setDirection(QBoxLayout::LeftToRight);
