@@ -52,13 +52,13 @@ private:
     void init();
 };
 
-class FilteringTabs : public Plasma::PushButton
+class CategoriesWidget : public Plasma::PushButton
 {
     Q_OBJECT
 
 public:
-    explicit FilteringTabs(QGraphicsWidget *parent = 0);
-    virtual ~FilteringTabs();
+    explicit CategoriesWidget(QGraphicsWidget *parent = 0);
+    virtual ~CategoriesWidget();
 
     void setModel(QStandardItemModel *model);
 
@@ -127,7 +127,7 @@ private:
     QStandardItemModel *m_model;
     QGraphicsLinearLayout *m_linearLayout;
     FilteringTreeView *m_categoriesTreeView;
-    FilteringTabs *m_categoriesTabs;
+    CategoriesWidget *m_categories;
     Plasma::LineEdit *m_textSearch;
     Qt::Orientation m_orientation;
     Plasma::PushButton *m_newWidgetsButton;

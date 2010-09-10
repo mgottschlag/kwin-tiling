@@ -91,9 +91,9 @@ void FilteringTreeView::filterChanged(const QModelIndex & index)
     emit(filterChanged(index.row()));
 }
 
-//FilteringTabs
+//CategoriesWidget
 
-FilteringTabs::FilteringTabs(QGraphicsWidget *parent)
+CategoriesWidget::CategoriesWidget(QGraphicsWidget *parent)
     : Plasma::PushButton(parent),
       m_model(0)
 {
@@ -106,12 +106,12 @@ FilteringTabs::FilteringTabs(QGraphicsWidget *parent)
     setAction(m_menu->menuAction());
 }
 
-FilteringTabs::~FilteringTabs()
+CategoriesWidget::~CategoriesWidget()
 {
     delete m_menu;
 }
 
-void FilteringTabs::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void CategoriesWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Plasma::PushButton::mousePressEvent(event);
     QGraphicsView *view = Plasma::viewFor(this);
@@ -131,14 +131,14 @@ void FilteringTabs::mousePressEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
-void FilteringTabs::menuItemTriggered(QAction *action)
+void CategoriesWidget::menuItemTriggered(QAction *action)
 {
     setText(action->text());
     setIcon(action->icon());
     emit filterChanged(action->data().toInt());
 }
 
-void FilteringTabs::populateList()
+void CategoriesWidget::populateList()
 {
     /*
     while (count() > 0) {
@@ -161,12 +161,12 @@ void FilteringTabs::populateList()
     }
 }
 
-QStandardItem *FilteringTabs::getItemByProxyIndex(const QModelIndex &index) const
+QStandardItem *CategoriesWidget::getItemByProxyIndex(const QModelIndex &index) const
 {
     return m_model->itemFromIndex(index);
 }
 
-void FilteringTabs::setModel(QStandardItemModel *model)
+void CategoriesWidget::setModel(QStandardItemModel *model)
 {
     m_model = model;
     populateList();
@@ -178,7 +178,7 @@ FilteringWidget::FilteringWidget(QGraphicsItem * parent, Qt::WindowFlags wFlags)
     : QGraphicsWidget(parent, wFlags),
       m_model(0),
       m_categoriesTreeView(0),
-      m_categoriesTabs(0),
+      m_categories(0),
       m_widgetExplorer(0)
 {
     init();
@@ -192,7 +192,7 @@ FilteringWidget::FilteringWidget(Qt::Orientation orientation,
     : QGraphicsWidget(parent, wFlags),
       m_model(0),
       m_categoriesTreeView(0),
-      m_categoriesTabs(0),
+      m_categories(0),
       m_widgetExplorer(widgetExplorer)
 {
     init();
@@ -263,8 +263,8 @@ void FilteringWidget::setModel(QStandardItemModel *model)
         }
     }
 
-    if (m_categoriesTabs) {
-        m_categoriesTabs->setModel(model);
+    if (m_categories) {
+        m_categories->setModel(model);
     }
 }
 
@@ -272,7 +272,7 @@ void FilteringWidget::setListOrientation(Qt::Orientation orientation)
 {
     if (m_orientation == orientation) {
         if ((orientation == Qt::Vertical && m_categoriesTreeView) || 
-            (orientation == Qt::Horizontal && m_categoriesTabs)) {
+            (orientation == Qt::Horizontal && m_categories)) {
             return;
         }
     }
@@ -286,23 +286,23 @@ void FilteringWidget::setListOrientation(Qt::Orientation orientation)
             m_categoriesTreeView = 0;
         }
 
-        if (!m_categoriesTabs) {
-            m_categoriesTabs = new FilteringTabs(this);
-            connect(m_categoriesTabs, SIGNAL(filterChanged(int)), this, SIGNAL(filterChanged(int)));
-            m_categoriesTabs->setModel(m_model);
+        if (!m_categories) {
+            m_categories = new CategoriesWidget(this);
+            connect(m_categories, SIGNAL(filterChanged(int)), this, SIGNAL(filterChanged(int)));
+            m_categories->setModel(m_model);
         }
 
         m_textSearch->setPreferredWidth(200);
         m_textSearch->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
         m_textSearch->setPreferredHeight(-1);
-        m_linearLayout->addItem(m_categoriesTabs);
+        m_linearLayout->addItem(m_categories);
         m_linearLayout->addStretch();
         m_linearLayout->addItem(m_newWidgetsButton);
-        m_categoriesTabs->setVisible(true);
+        m_categories->setVisible(true);
     } else {
-        if (m_categoriesTabs) {
-            m_categoriesTabs->deleteLater();
-            m_categoriesTabs = 0;
+        if (m_categories) {
+            m_categories->deleteLater();
+            m_categories = 0;
         }
 
         if (!m_categoriesTreeView) {
