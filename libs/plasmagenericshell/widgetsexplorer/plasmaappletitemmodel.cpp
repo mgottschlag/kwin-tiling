@@ -238,7 +238,7 @@ QSet<QString> PlasmaAppletItemModel::categories() const
         QStandardItem *i = item(r);
         PlasmaAppletItem *p = dynamic_cast<PlasmaAppletItem *>(i);
         if (p) {
-            cats.insert(p->category());
+            cats.insert(p->category().toLower());
         }
     }
 
