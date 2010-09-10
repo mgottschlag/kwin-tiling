@@ -47,6 +47,7 @@ public:
 Q_SIGNALS:
     //void filterChanged(int index);
     void searchTermChanged(const QString &text);
+    void addWidgetsRequested();
 
 public Q_SLOTS:
     void coronaImmutabilityChanged(Plasma::ImmutabilityType immutability);

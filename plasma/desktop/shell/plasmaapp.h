@@ -143,7 +143,6 @@ private Q_SLOTS:
     void screenAdded(Kephal::Screen *screen);
     void compositingChanged();
     void configureContainment(Plasma::Containment*);
-    void updateActions(Plasma::ImmutabilityType immutability);
     void checkVirtualDesktopViews(int numDesktops);
     void setWmClass(WId id);
     void remotePlasmoidAdded(Plasma::PackageMetadata metadata);

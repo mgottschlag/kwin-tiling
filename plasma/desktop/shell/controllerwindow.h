@@ -60,11 +60,16 @@ public:
     Qt::Orientation orientation() const;
     QPoint positionForPanelGeometry(const QRect &panelGeom) const;
 
-    void showWidgetExplorer();
-    void showActivityManager();
     bool isControllerViewVisible() const;
 
     Plasma::FrameSvg *background() const;
+
+    int screen() const;
+    void setScreen(int screen);
+
+public Q_SLOTS:
+    void showWidgetExplorer();
+    void showActivityManager();
 
 protected:
     void setGraphicsWidget(QGraphicsWidget *widget);
@@ -77,7 +82,7 @@ protected:
 private Q_SLOTS:
     void onActiveWindowChanged(WId id);
     void backgroundChanged();
-    void adjustSize(Kephal::Screen *screen);
+    void adjustAndSetMaxSize();
     void syncToGraphicsWidget();
 
 private:
@@ -85,6 +90,7 @@ private:
     QBoxLayout *m_layout;
     Plasma::FrameSvg *m_background;
     QWeakPointer<Plasma::Containment> m_containment;
+    int m_screen;
     Plasma::Corona *m_corona;
     QGraphicsView *m_view;
     QGraphicsWidget *m_watchedWidget;

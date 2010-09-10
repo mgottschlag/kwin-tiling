@@ -63,8 +63,13 @@ FilterBar::FilterBar(Qt::Orientation orientation, QGraphicsItem *parent)
     m_categoriesTabs->addTab(i18n("Stopped"));
     */
 
+    Plasma::PushButton *addWidgetsButton = new Plasma::PushButton(this);
+    addWidgetsButton->setText(i18n("Add Widgets"));
+    addWidgetsButton->setIcon(KIcon("plasma"));
+    connect(addWidgetsButton, SIGNAL(clicked()), this, SIGNAL(addWidgetsRequested()));
+
     m_newActivityButton = new Plasma::PushButton(this);
-    m_newActivityButton->setText(i18n("New Activity..."));
+    m_newActivityButton->setText(i18n("New Activity"));
     m_newActivityButton->setIcon(KIcon("list-add"));
     m_newActivityMenu = new KMenu();
     connect(m_newActivityMenu, SIGNAL(aboutToShow()), this, SLOT(populateActivityMenu()));
@@ -77,6 +82,7 @@ FilterBar::FilterBar(Qt::Orientation orientation, QGraphicsItem *parent)
     m_linearLayout->addItem(m_textSearch);
     //m_linearLayout->addItem(m_categoriesTabs);
     m_linearLayout->addStretch(10);
+    m_linearLayout->addItem(addWidgetsButton);
     m_linearLayout->addItem(m_newActivityButton);
 
     setOrientation(orientation);

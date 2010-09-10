@@ -502,31 +502,14 @@ void PlasmaApp::showController(int screen, Plasma::Containment *containment, boo
     }
 
     controller->setContainment(containment);
+    if (!containment || containment->screen() != screen) {
+        controller->setScreen(screen);
+    }
     controller->setLocation(containment->location());
     if (widgetExplorerMode) {
         controller->showWidgetExplorer();
     } else {
         controller->showActivityManager();
-    }
-    controller->resize(controller->sizeHint());
-
-    bool moved = false;
-    if (isPanelContainment(containment)) {
-        // try to align it with the appropriate panel view
-        foreach (PanelView * panel, m_panels) {
-            if (panel->containment() == containment) {
-                controller->move(controller->positionForPanelGeometry(panel->geometry()));
-                moved = true;
-                break;
-            }
-        }
-    }
-
-    if (!moved) {
-        // set it to the bottom of the screen as we have no better hints to go by
-        QRect geom = Kephal::Screens::self()->screen(screen)->geom();
-        controller->resize(controller->sizeHint());
-        controller->setGeometry(geom.x(), geom.bottom() - controller->height(), geom.width(), controller->height());
     }
 
     controller->show();
@@ -779,8 +762,6 @@ Plasma::Corona* PlasmaApp::corona()
         connect(c, SIGNAL(containmentAdded(Plasma::Containment*)),
                 this, SLOT(containmentAdded(Plasma::Containment*)));
         connect(c, SIGNAL(configSynced()), this, SLOT(syncConfig()));
-        connect(c, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)),
-                this, SLOT(updateActions(Plasma::ImmutabilityType)));
         connect(c, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
                 this, SLOT(containmentScreenOwnerChanged(int,int,Plasma::Containment*)));
 
@@ -866,6 +847,10 @@ void PlasmaApp::suspendStartup(bool suspend)
 
 bool PlasmaApp::isPanelContainment(Plasma::Containment *containment)
 {
+    if (!containment) {
+        return false;
+    }
+
     Plasma::Containment::Type t = containment->containmentType();
 
     return t == Plasma::Containment::PanelContainment ||
@@ -1286,10 +1271,6 @@ bool PlasmaApp::fixedDashboard() const
 void PlasmaApp::panelRemoved(QObject *panel)
 {
     m_panels.removeAll((PanelView *)panel);
-}
-
-void PlasmaApp::updateActions(Plasma::ImmutabilityType immutability)
-{
 }
 
 void PlasmaApp::remotePlasmoidAdded(Plasma::PackageMetadata metadata)

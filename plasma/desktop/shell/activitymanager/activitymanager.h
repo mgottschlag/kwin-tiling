@@ -70,6 +70,7 @@ public:
 Q_SIGNALS:
     void orientationChanged(Qt::Orientation orientation);
     void closeClicked();
+    void addWidgetsRequested();
 
 public Q_SLOTS:
     void immutabilityChanged(Plasma::ImmutabilityType type);

@@ -35,10 +35,11 @@
 #include <Plasma/FrameSvg>
 #include <Plasma/Dialog>
 #include <Plasma/WindowEffects>
-#include <Plasma/View>
 
-#include "widgetsexplorer/widgetexplorer.h"
 #include "activitymanager/activitymanager.h"
+#include "panelview.h"
+#include "plasmaapp.h"
+#include "widgetsexplorer/widgetexplorer.h"
 
 #include <kephal/screens.h>
 
@@ -47,6 +48,7 @@ ControllerWindow::ControllerWindow(QWidget* parent)
      m_location(Plasma::Floating),
      m_layout(new QBoxLayout(QBoxLayout::TopToBottom, this)),
      m_background(new Plasma::FrameSvg(this)),
+     m_screen(-1),
      m_corona(0),
      m_view(0),
      m_watchedWidget(0),
@@ -79,11 +81,11 @@ ControllerWindow::ControllerWindow(QWidget* parent)
     connect(m_background, SIGNAL(repaintNeeded()), SLOT(backgroundChanged()));
     Kephal::Screens *screens = Kephal::Screens::self();
     connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
-            this, SLOT(adjustSize(Kephal::Screen *)));
+            this, SLOT(adjustAndSetMaxSize()));
     m_adjustViewTimer = new QTimer(this);
     m_adjustViewTimer->setSingleShot(true);
     connect(m_adjustViewTimer, SIGNAL(timeout()), this, SLOT(syncToGraphicsWidget()));
-    adjustSize(0);
+    adjustAndSetMaxSize();
 }
 
 ControllerWindow::~ControllerWindow()
@@ -112,12 +114,11 @@ ControllerWindow::~ControllerWindow()
 }
 
 
-void ControllerWindow::adjustSize(Kephal::Screen *screen)
+void ControllerWindow::adjustAndSetMaxSize()
 {
-    Q_UNUSED(screen)
-
     QSize screenSize = Kephal::ScreenUtils::screenGeometry(Kephal::ScreenUtils::screenId(pos())).size();
     setMaximumSize(screenSize);
+    adjustSize();
 }
 
 void ControllerWindow::backgroundChanged()
@@ -133,19 +134,22 @@ void ControllerWindow::setContainment(Plasma::Containment *containment)
     if (containment == m_containment.data()) {
         return;
     }
-    m_containment = containment;
 
     if (m_containment) {
         disconnect(m_containment.data(), 0, this, 0);
     }
 
+    m_containment = containment;
+
     if (!containment) {
         return;
     }
-    m_corona = m_containment.data()->corona();
+
+    m_corona = containment->corona();
+    m_screen = containment->screen();
 
     if (m_widgetExplorer) {
-        m_widgetExplorer->setContainment(m_containment.data());
+        m_widgetExplorer->setContainment(containment);
     }
 }
 
@@ -200,6 +204,25 @@ void ControllerWindow::setGraphicsWidget(QGraphicsWidget *widget)
         //adjustSizeTimer->start(150);
 
         widget->installEventFilter(this);
+        adjustSize();
+
+        bool moved = false;
+        if (PlasmaApp::isPanelContainment(containment())) {
+            // try to align it with the appropriate panel view
+            foreach (PanelView * panel, PlasmaApp::self()->panelViews()) {
+                if (panel->containment() == containment()) {
+                    move(positionForPanelGeometry(panel->geometry()));
+                    moved = true;
+                    break;
+                }
+            }
+        }
+
+        if (!moved) {
+            // set it to the bottom of the screen as we have no better hints to go by
+            QRect geom = QApplication::desktop()->availableGeometry(screen());
+            setGeometry(geom.x(), geom.bottom() - height(), geom.width(), height());
+        }
     } else {
         delete m_view;
         m_view = 0;
@@ -413,6 +436,7 @@ void ControllerWindow::showActivityManager()
 
         setGraphicsWidget(m_activityManager);
 
+        connect(m_activityManager, SIGNAL(addWidgetsRequested()), this, SLOT(showWidgetExplorer()));
         connect(m_activityManager, SIGNAL(closeClicked()), this, SLOT(close()));
     } else {
         m_activityManager->setOrientation(orientation());
@@ -430,6 +454,16 @@ bool ControllerWindow::isControllerViewVisible() const
 Plasma::FrameSvg *ControllerWindow::background() const
 {
     return m_background;
+}
+
+int ControllerWindow::screen() const
+{
+    return m_screen;
+}
+
+void ControllerWindow::setScreen(int screen)
+{
+    m_screen = screen;
 }
 
 void ControllerWindow::onActiveWindowChanged(WId id)

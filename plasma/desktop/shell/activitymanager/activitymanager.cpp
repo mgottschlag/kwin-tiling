@@ -88,6 +88,7 @@ void ActivityManagerPrivate::init(Qt::Orientation orient)
     //connect
     //QObject::connect(appletsListWidget, SIGNAL(appletDoubleClicked(PlasmaAppletItem*)), q, SLOT(addApplet(PlasmaAppletItem*)));
     QObject::connect(filteringWidget, SIGNAL(searchTermChanged(QString)), activityList, SLOT(searchTermChanged(QString)));
+    QObject::connect(filteringWidget, SIGNAL(addWidgetsRequested()), q, SIGNAL(addWidgetsRequested()));
     //QObject::connect(filteringWidget, SIGNAL(filterChanged(int)), activityList, SLOT(filterChanged(int)));
     QObject::connect(close, SIGNAL(clicked()), q, SIGNAL(closeClicked()));
 
