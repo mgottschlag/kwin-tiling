@@ -632,10 +632,10 @@ void WetterComIon::parseWeatherForecast(const QString& source, QXmlStreamReader&
             } else if (xml.name() == "time") {
                 time = xml.attributes().value("value").toString();
             } else if (xml.name() == "tx") {
-                tempMax = xml.readElementText().toInt();
+                tempMax = qRound(xml.readElementText().toDouble());
                 kDebug() << "parsed t_max:" << tempMax;
             } else if (xml.name() == "tn") {
-                tempMin = xml.readElementText().toInt();
+                tempMin = qRound(xml.readElementText().toDouble());
                 kDebug() << "parsed t_min:" << tempMin;
             } else if (xml.name() == "w") {
                 int tmp = xml.readElementText().toInt();
