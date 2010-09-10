@@ -972,6 +972,7 @@ void CGroupListView::dropEvent(QDropEvent *event)
         ds >> families;
         // Are we mvoeing/copying, removing a font from the current group?
         if(to.isValid() && from.isValid())
+        {
             if( ((static_cast<CGroupListItem *>(from.internalPointer()))->isSystem() &&
                  (static_cast<CGroupListItem *>(to.internalPointer()))->isPersonal()) ||
                 ((static_cast<CGroupListItem *>(from.internalPointer()))->isPersonal() &&
@@ -982,6 +983,7 @@ void CGroupListView::dropEvent(QDropEvent *event)
                 emit removeFamilies(from, families);
             else
                 emit addFamilies(to, families);
+        }
 
         if(isUnclassified())
             emit unclassifiedChanged();

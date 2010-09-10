@@ -561,6 +561,7 @@ QMimeData * CFontList::mimeData(const QModelIndexList &indexes) const
 
     for(; it!=end; ++it)
         if((*it).isValid())
+        {
             if((static_cast<CFontModelItem *>((*it).internalPointer()))->isFont())
             {
                 CFontItem *font=static_cast<CFontItem *>((*it).internalPointer());
@@ -573,6 +574,7 @@ QMimeData * CFontList::mimeData(const QModelIndexList &indexes) const
 
                 families.insert(fam->name());
             }
+        }
 
     ds << families;
     mimeData->setData(KFI_FONT_DRAG_MIME, encodedData);
@@ -998,6 +1000,7 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
         case Qt::ToolTipRole:
             if(CFontFilter::CRIT_FILENAME==itsFilterCriteria || CFontFilter::CRIT_LOCATION==itsFilterCriteria ||
                CFontFilter::CRIT_FONTCONFIG==itsFilterCriteria)
+            {
                 if(mi->isFamily())
                 {
                     CFamilyItem                  *fam=static_cast<CFamilyItem *>(index.internalPointer());
@@ -1050,6 +1053,7 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
                     tip+="</table></p>";
                     return tip;
                 }
+            }
             break;
         case Qt::FontRole:
             if(COL_FONT==index.column() && mi->isSystem())
@@ -1067,6 +1071,7 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
             break;
         case Qt::DisplayRole:
             if(COL_FONT==index.column())
+            {
                 if(mi->isFamily())
                 {
                     CFamilyItem *fam=static_cast<CFamilyItem *>(index.internalPointer());
@@ -1075,6 +1080,7 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
                 }
                 else
                     return (static_cast<CFontItem *>(index.internalPointer()))->style();
+            }
             break;
         case Qt::DecorationRole:
             if(mi->isFamily())
@@ -1098,10 +1104,9 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
                         break;
                 }
             }
-            else
-                if(COL_STATUS==index.column())
-                    return SmallIcon( (static_cast<CFontItem *>(index.internalPointer()))->isEnabled()
-                                      ? "dialog-ok" : "dialog-cancel", 10);
+            else if(COL_STATUS==index.column())
+                return SmallIcon( (static_cast<CFontItem *>(index.internalPointer()))->isEnabled()
+                                  ? "dialog-ok" : "dialog-cancel", 10);
             break;
         case Qt::SizeHintRole:
             if(mi->isFamily())
@@ -1413,6 +1418,7 @@ void CFontListView::getFonts(CJobRunner::ItemList &urls, QStringList &fontNames,
             QModelIndex realIndex(itsProxy->mapToSource(index));
 
             if(realIndex.isValid())
+            {
                 if((static_cast<CFontModelItem *>(realIndex.internalPointer()))->isFont())
                 {
                     CFontItem *font=static_cast<CFontItem *>(realIndex.internalPointer());
@@ -1438,6 +1444,7 @@ void CFontListView::getFonts(CJobRunner::ItemList &urls, QStringList &fontNames,
                         }
                     }
                 }
+            }
         }
 
     fontNames=CFontList::compact(fontNames);
@@ -1495,6 +1502,7 @@ void CFontListView::getPrintableFonts(QSet<Misc::TFont> &items, bool selected)
             QModelIndex realIndex(itsProxy->mapToSource(index));
 
             if(realIndex.isValid())
+            {
                 if((static_cast<CFontModelItem *>(realIndex.internalPointer()))->isFont())
                     font=static_cast<CFontItem *>(realIndex.internalPointer());
                 else
@@ -1502,6 +1510,7 @@ void CFontListView::getPrintableFonts(QSet<Misc::TFont> &items, bool selected)
                     CFamilyItem *fam=static_cast<CFamilyItem *>(realIndex.internalPointer());
                     font=fam->regularFont();
                 }
+            }
         }
 
         if(font && !font->isBitmap() && font->isEnabled())
@@ -1612,7 +1621,9 @@ void CFontListView::selectedStatus(bool &enabled, bool &disabled)
         QModelIndex realIndex(itsProxy->mapToSource(index));
 
         if(realIndex.isValid())
+        {
             if((static_cast<CFontModelItem *>(realIndex.internalPointer()))->isFamily())
+            {
                 switch((static_cast<CFamilyItem *>(realIndex.internalPointer()))->status())
                 {
                     case CFamilyItem::ENABLED:
@@ -1626,11 +1637,15 @@ void CFontListView::selectedStatus(bool &enabled, bool &disabled)
                         disabled=true;
                         break;
                 }
+            }
             else
+            {
                 if((static_cast<CFontItem *>(realIndex.internalPointer()))->isEnabled())
                     enabled=true;
                 else
                     disabled=true;
+            }
+        }
         if(enabled && disabled)
             break;
     }
@@ -1700,6 +1715,7 @@ void CFontListView::selectionChanged(const QItemSelection &selected,
             QModelIndex realIndex(itsProxy->mapToSource(index));
 
             if(realIndex.isValid())
+            {
                 if((static_cast<CFontModelItem *>(realIndex.internalPointer()))->isFont())
                 {
                     CFontItem *font=static_cast<CFontItem *>(realIndex.internalPointer());
@@ -1719,6 +1735,7 @@ void CFontListView::selectionChanged(const QItemSelection &selected,
                     }
                 }
                 else
+                {
                     switch((static_cast<CFamilyItem *>(realIndex.internalPointer()))->status())
                     {
                         case CFamilyItem::ENABLED:
@@ -1731,6 +1748,8 @@ void CFontListView::selectionChanged(const QItemSelection &selected,
                             en=dis=true;
                             break;
                     }
+                }
+            }
         }
 
     if(deselectList.count())
@@ -1797,6 +1816,7 @@ void CFontListView::view()
         QModelIndex realIndex(itsProxy->mapToSource(index));
 
         if(realIndex.isValid())
+        {
             if((static_cast<CFontModelItem *>(realIndex.internalPointer()))->isFont())
             {
                 CFontItem *font(static_cast<CFontItem *>(realIndex.internalPointer()));
@@ -1810,6 +1830,7 @@ void CFontListView::view()
                 if(font)
                     fonts.insert(font);
             }
+        }
     }
 
     if(fonts.count() &&
@@ -1966,6 +1987,7 @@ void CFontListView::contextMenuEvent(QContextMenuEvent *ev)
         QModelIndex realIndex(itsProxy->mapToSource(index));
 
         if(realIndex.isValid())
+        {
             if((static_cast<CFontModelItem *>(realIndex.internalPointer()))->isFont())
             {
                 if((static_cast<CFontItem *>(realIndex.internalPointer())->isEnabled()))
@@ -1974,6 +1996,7 @@ void CFontListView::contextMenuEvent(QContextMenuEvent *ev)
                     dis=true;
             }
             else
+            {
                 switch((static_cast<CFamilyItem *>(realIndex.internalPointer()))->status())
                 {
                     case CFamilyItem::ENABLED:
@@ -1986,6 +2009,8 @@ void CFontListView::contextMenuEvent(QContextMenuEvent *ev)
                         en=dis=true;
                         break;
                 }
+            }
+        }
         if(en && dis)
             break;
     }

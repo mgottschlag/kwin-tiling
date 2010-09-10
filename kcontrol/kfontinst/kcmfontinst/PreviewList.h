@@ -68,8 +68,8 @@ class CPreviewList : public QAbstractItemModel
     QModelIndex     index(int row, int column,
                           const QModelIndex &parent = QModelIndex()) const;
     QModelIndex     parent(const QModelIndex &index) const;
-    int             rowCount(const QModelIndex &parent = QModelIndex()) const { return itsItems.count(); }
-    int             columnCount(const QModelIndex &parent = QModelIndex()) const { return 1; }
+    int             rowCount(const QModelIndex &parent = QModelIndex()) const { Q_UNUSED(parent) return itsItems.count(); }
+    int             columnCount(const QModelIndex &parent = QModelIndex()) const { Q_UNUSED(parent) return 1; }
     void            clear();
     void            showFonts(const QModelIndexList &font);
 

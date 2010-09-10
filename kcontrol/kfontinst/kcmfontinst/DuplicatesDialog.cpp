@@ -175,7 +175,7 @@ void CDuplicatesDialog::scanFinished()
             }
 
             QTreeWidgetItem *item=0L;
-            for(int i=0; item=itsView->topLevelItem(i); ++i)
+            for(int i=0; (item=itsView->topLevelItem(i)); ++i)
                 item->setExpanded(true);
 
             itsView->setSortingEnabled(true);
@@ -617,7 +617,7 @@ void CFontFileListView::contextMenuEvent(QContextMenuEvent *ev)
             item->setSelected(true);
 
         bool haveUnmarked(false),
-             haveMaked(false);
+             haveMarked(false);
 
         QList<QTreeWidgetItem *> items(selectedItems());
         QTreeWidgetItem          *item;
@@ -625,18 +625,20 @@ void CFontFileListView::contextMenuEvent(QContextMenuEvent *ev)
         foreach(item, items)
         {
             if(item->parent() && item->isSelected())
+            {
                 if(isMarked(item))
-                    haveMaked=true;
+                    haveMarked=true;
                 else
                     haveUnmarked=true;
+            }
 
-            if(haveUnmarked && haveMaked)
+            if(haveUnmarked && haveMarked)
                 break;
 
         }
 
         itsMarkAct->setEnabled(haveUnmarked);
-        itsUnMarkAct->setEnabled(haveMaked);
+        itsUnMarkAct->setEnabled(haveMarked);
         itsMenu->popup(ev->globalPos());
     }
 }
