@@ -75,6 +75,7 @@ private:
 
 private Q_SLOTS:
     void menuItemTriggered(QAction *);
+    void unpressButton();
 
 private:
     QStandardItemModel *m_model;
@@ -96,6 +97,7 @@ public:
     void setModel(QStandardItemModel *model);
     void setListOrientation(Qt::Orientation orientation);
     Plasma::LineEdit *textSearch();
+    void updateActions(const QList<QAction *> actions);
 
 Q_SIGNALS:
     void filterChanged(int index);
@@ -133,6 +135,7 @@ private:
     Plasma::PushButton *m_newWidgetsButton;
     KMenu *m_newWidgetsMenu;
     Plasma::WidgetExplorer *m_widgetExplorer;
+    QList<QWeakPointer<Plasma::PushButton> > m_actionButtons;
 };
 
 #endif // APPLETSFILTERING_H

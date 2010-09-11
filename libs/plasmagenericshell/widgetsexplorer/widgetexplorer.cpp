@@ -429,6 +429,21 @@ void WidgetExplorer::keyPressEvent(QKeyEvent *event)
     }
 }
 
+bool WidgetExplorer::event(QEvent *event)
+{
+    switch (event->type()) {
+        case QEvent::ActionAdded:
+        case QEvent::ActionChanged:
+        case QEvent::ActionRemoved:
+            d->filteringWidget->updateActions(actions());
+            break;
+        default:
+            break;
+    }
+
+    return QGraphicsWidget::event(event);
+}
+
 } // namespace Plasma
 
 #include "widgetexplorer.moc"

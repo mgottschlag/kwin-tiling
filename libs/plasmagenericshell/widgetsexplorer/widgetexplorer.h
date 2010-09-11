@@ -120,6 +120,7 @@ protected Q_SLOTS:
 
 protected:
     void keyPressEvent(QKeyEvent *e);
+    bool event(QEvent *e);
 
 private:
     Q_PRIVATE_SLOT(d, void appletAdded(Plasma::Applet*))

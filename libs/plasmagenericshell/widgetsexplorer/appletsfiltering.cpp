@@ -129,6 +129,12 @@ void CategoriesWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
     } else {
         m_menu->popup(event->screenPos());
     }
+    QTimer::singleShot(0, this, SLOT(unpressButton()));
+}
+
+void CategoriesWidget::unpressButton()
+{
+    nativeWidget()->setDown(false);
 }
 
 void CategoriesWidget::menuItemTriggered(QAction *action)
@@ -140,12 +146,6 @@ void CategoriesWidget::menuItemTriggered(QAction *action)
 
 void CategoriesWidget::populateList()
 {
-    /*
-    while (count() > 0) {
-        removeTab(0);
-    }
-    */
-
     m_menu->clear();
     if (!m_model) {
         return;
@@ -250,6 +250,22 @@ void FilteringWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 Plasma::LineEdit *FilteringWidget::textSearch()
 {
     return m_textSearch;
+}
+
+void FilteringWidget::updateActions(const QList<QAction *> actions)
+{
+    foreach (QWeakPointer<Plasma::PushButton> button, m_actionButtons) {
+        delete button.data();
+    }
+    m_actionButtons.clear();
+
+    foreach (QAction *action, actions) {
+        Plasma::PushButton *button = new Plasma::PushButton(this);
+        button->setAction(action);
+        int index = qMax(0, m_linearLayout->count());
+        m_linearLayout->insertItem(index, button);
+        m_actionButtons.append(button);
+    }
 }
 
 void FilteringWidget::setModel(QStandardItemModel *model)
