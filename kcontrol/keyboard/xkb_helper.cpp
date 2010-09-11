@@ -22,6 +22,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
+#include <QtGui/QX11Info>
 
 #include <kglobal.h>
 #include <kstandarddirs.h>
@@ -72,25 +73,16 @@ void executeXmodmap(const QString& configFileName)
     }
 }
 
-//bool XkbHelper::initializeKeyboardLayouts()
-//{
-//	getSetxkbmapExe();
-//	if( ! setxkbmapNotFound ) {
-//
-//		KeyboardConfig config;
-//		config.load();
-//
-//		return XkbHelper::initializeKeyboardLayouts(config);
-//	}
-//	return false;
-//}
-
 bool XkbHelper::initializeKeyboardLayouts(KeyboardConfig& config)
 {
 	QStringList setxkbmapCommandArguments;
 	if( ! config.keyboardModel.isEmpty() ) {
-		setxkbmapCommandArguments.append("-model");
-		setxkbmapCommandArguments.append(config.keyboardModel);
+		XkbConfig xkbConfig;
+		X11Helper::getGroupNames(QX11Info::display(), &xkbConfig, X11Helper::MODEL_ONLY);
+		if( xkbConfig.keyboardModel != config.keyboardModel ) {
+			setxkbmapCommandArguments.append("-model");
+			setxkbmapCommandArguments.append(config.keyboardModel);
+		}
 	}
 	if( config.configureLayouts ) {
 		QStringList layouts;
@@ -136,37 +128,3 @@ bool XkbHelper::initializeKeyboardLayouts(KeyboardConfig& config)
 	}
 	return false;
 }
-
-//bool XkbHelper::initializeKeyboardHardware(KeyboardConfig& config)
-//{
-//	int numlockState = config.numlockState;
-//	if( config.numlockState != KeyboardConfig::NO_CHANGE ) {
-//		//TODO:
-////		numlockx_change_numlock_state( numlockState == 0 );
-//	}
-//
-//	if( config.keyboardRepeat ) {
-//		//TODO:
-////		set_repeatrate(config.repeatDelay, config.repeatRate);
-//	}
-//
-//	//TODO:
-////	clickVolume
-//}
-//
-//extern "C"
-//{
-//	KDE_EXPORT void kcminit_keyboard()
-//	{
-//		//TODO: better check if xkb is supported?
-//		getSetxkbmapExe();
-//		if( ! setxkbmapNotFound ) {
-//
-//			KeyboardConfig config;
-//			config.load();
-//
-//			KCMInit::initializeKeyboardHardware(config);
-//			KCMInit::initializeKeyboardLayouts(config);
-//		}
-//	}
-//}
