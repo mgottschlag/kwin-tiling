@@ -77,10 +77,10 @@ class Image : public Plasma::Wallpaper
         void wallpaperRetrieved(KJob *job);
         void newStuffFinished();
         void setConfigurationInterfaceModel();
+        void updateDirs();
 
     protected:
         void init(const KConfigGroup &config);
-        void updateDirs();
         void renderWallpaper(const QString& image = QString());
         void suspendStartup(bool suspend); // for ksmserver
         void calculateGeometry();
