@@ -174,7 +174,7 @@ int TaskItemLayout::size()
             continue;
         }
 
-        if (item->abstractItem()->isGroupItem()) {
+        if (item->abstractItem()->itemType() == TaskManager::GroupItemType) {
             TaskGroupItem *group = static_cast<TaskGroupItem*>(item);
             if (!group->collapsed()) {
                 TaskItemLayout *layout = dynamic_cast<TaskItemLayout*>(group->tasksLayout());
@@ -346,7 +346,9 @@ void TaskItemLayout::layoutItems()
             setColumnPreferredWidth(col, maximumCellSize.width());
         }
 
-        if (item->abstractItem() && item->abstractItem()->isGroupItem()) {
+        if (item->abstractItem() &&
+            item->abstractItem()->itemType() == TaskManager::GroupItemType) {
+
             TaskGroupItem *group = static_cast<TaskGroupItem*>(item);
             if (group->collapsed()) {
                 group->unsplitGroup();

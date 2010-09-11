@@ -93,7 +93,6 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet)
     setFocusPolicy(Qt::StrongFocus);
     setFlag(QGraphicsItem::ItemIsFocusable);
 
-    Plasma::ToolTipManager::self()->registerWidget(this);
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(syncActiveRect()));
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(queueUpdate()));
     connect(applet, SIGNAL(settingsChanged()), this, SLOT(checkSettings()));
@@ -462,7 +461,7 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
 #ifdef Q_WS_X11
         QList<WId> windows;
 
-        if (m_abstractItem && m_abstractItem->isGroupItem()) {
+        if (m_abstractItem && m_abstractItem->itemType() == TaskManager::GroupItemType) {
             TaskManager::TaskGroup *group = qobject_cast<TaskManager::TaskGroup *>(m_abstractItem);
 
             if (group) {
@@ -473,7 +472,7 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
                 }
 
                 foreach (AbstractGroupableItem *item, group->members()) {
-                    if (item->isGroupItem()) {
+                    if (item->itemType() == TaskManager::GroupItemType) {
                         //TODO: recurse through sub-groups?
                     } else {
                         TaskManager::TaskItem *taskItem = qobject_cast<TaskManager::TaskItem *>(item);

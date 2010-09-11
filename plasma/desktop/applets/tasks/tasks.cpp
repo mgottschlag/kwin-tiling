@@ -74,13 +74,6 @@ Tasks::~Tasks()
 
 void Tasks::init()
 {
-    //kDebug();
-
-    KConfigGroup cg = config();
-    //TODO: for 4.5, make this option visible
-    m_showTooltip = cg.readEntry("showTooltip", true);
-    m_highlightWindows = cg.readEntry("highlightWindows", false);
-
     m_groupManager = new TaskManager::GroupManager(this);
     Plasma::Containment* appletContainment = containment();
     if (appletContainment) {
@@ -119,21 +112,89 @@ void Tasks::init()
     layout->setOrientation(Qt::Vertical);
     layout->addItem(m_rootGroupItem);
 
-
     setLayout(layout);
 
-    m_groupManager->setShowOnlyCurrentDesktop( cg.readEntry("showOnlyCurrentDesktop", false));
-    m_groupManager->setShowOnlyCurrentScreen( cg.readEntry("showOnlyCurrentScreen", false));
-    m_groupManager->setShowOnlyMinimized( cg.readEntry("showOnlyMinimized", false));
-    m_groupManager->setOnlyGroupWhenFull(cg.readEntry("groupWhenFull", true));
+    configChanged();
+}
 
-    m_groupManager->setGroupingStrategy( static_cast<TaskManager::GroupManager::TaskGroupingStrategy>(cg.readEntry("groupingStrategy", static_cast<int>(TaskManager::GroupManager::ProgramGrouping))));
+void Tasks::configChanged()
+{
+    KConfigGroup cg = config();
+    bool changed = false;
 
-    m_groupManager->setSortingStrategy( static_cast<TaskManager::GroupManager::TaskSortingStrategy>(cg.readEntry("sortingStrategy", static_cast<int>(TaskManager::GroupManager::AlphaSorting))));
-    m_rootGroupItem->setMaxRows( cg.readEntry("maxRows", 2));
-    m_rootGroupItem->setForceRows( cg.readEntry("forceRows", false));
+    // only update these if they have actually changed, because they make the
+    // group manager reload its tasks list
+    bool showOnlyCurrentDesktop = cg.readEntry("showOnlyCurrentDesktop", false);
+    if (showOnlyCurrentDesktop != m_groupManager->showOnlyCurrentDesktop()) {
+        m_groupManager->setShowOnlyCurrentDesktop(showOnlyCurrentDesktop);
+        changed = true;
+    }
+    bool showOnlyCurrentScreen = cg.readEntry("showOnlyCurrentScreen", false);
+    if (showOnlyCurrentScreen != m_groupManager->showOnlyCurrentScreen()) {
+        m_groupManager->setShowOnlyCurrentScreen(showOnlyCurrentScreen);
+        changed = true;
+    }
+    bool showOnlyMinimized = cg.readEntry("showOnlyMinimized", false);
+    if (showOnlyMinimized != m_groupManager->showOnlyMinimized()) {
+        m_groupManager->setShowOnlyMinimized(showOnlyMinimized);
+        changed = true;
+    }
 
-    emit settingsChanged();
+    TaskManager::GroupManager::TaskGroupingStrategy groupingStrategy =
+        static_cast<TaskManager::GroupManager::TaskGroupingStrategy>(
+            cg.readEntry("groupingStrategy",
+                         static_cast<int>(TaskManager::GroupManager::ProgramGrouping))
+        );
+    if (groupingStrategy != m_groupManager->groupingStrategy()) {
+        m_groupManager->setGroupingStrategy(groupingStrategy);
+        changed = true;
+    }
+
+    bool onlyGroupWhenFull = cg.readEntry("groupWhenFull", true);
+    if (onlyGroupWhenFull != m_groupManager->onlyGroupWhenFull()) {
+        adjustGroupingStrategy();
+        m_groupManager->setOnlyGroupWhenFull(onlyGroupWhenFull);
+        changed = true;
+    }
+
+    TaskManager::GroupManager::TaskSortingStrategy sortingStrategy =
+        static_cast<TaskManager::GroupManager::TaskSortingStrategy>(
+            cg.readEntry("sortingStrategy",
+                         static_cast<int>(TaskManager::GroupManager::AlphaSorting))
+        );
+    if (sortingStrategy != m_groupManager->sortingStrategy()) {
+        m_groupManager->setSortingStrategy(sortingStrategy);
+        changed = true;
+    }
+
+    int maxRows = cg.readEntry("maxRows", 2);
+    if (maxRows != m_rootGroupItem->maxRows()) {
+        m_rootGroupItem->setMaxRows(maxRows);
+        changed = true;
+    }
+
+    bool forceRows = cg.readEntry("forceRows", false);
+    if (forceRows != m_rootGroupItem->forceRows()) {
+        m_rootGroupItem->setForceRows(forceRows);
+        changed = true;
+    }
+
+    bool showTooltip = cg.readEntry("showTooltip", true);
+    if (showTooltip != m_showTooltip) {
+        m_showTooltip = showTooltip;
+        changed = true;
+    }
+
+    bool highlightWindows = cg.readEntry("highlightWindows", false);
+    if (highlightWindows != m_highlightWindows) {
+        m_highlightWindows = highlightWindows;
+        changed = true;
+    }
+
+    if (changed) {
+        emit settingsChanged();
+        update();
+    }
 }
 
 void Tasks::reload()
@@ -314,83 +375,26 @@ void Tasks::dialogGroupingChanged(int index)
 
 void Tasks::configAccepted()
 {
-    kDebug();
-    bool changed = false;
+    // just write the config here, and it will get applied in configChanged(),
+    // which is called after this when the config dialog is accepted
+    KConfigGroup cg = config();
 
-    if (m_groupManager->showOnlyCurrentDesktop() != (m_ui.showOnlyCurrentDesktop->isChecked())) {
-        m_groupManager->setShowOnlyCurrentDesktop(!m_groupManager->showOnlyCurrentDesktop());
-        KConfigGroup cg = config();
-        cg.writeEntry("showOnlyCurrentDesktop", m_groupManager->showOnlyCurrentDesktop());
-        changed = true;
-    }
-    if (m_groupManager->showOnlyCurrentScreen() != (m_ui.showOnlyCurrentScreen->isChecked())) {
-        m_groupManager->setShowOnlyCurrentScreen(!m_groupManager->showOnlyCurrentScreen());
-        KConfigGroup cg = config();
-        cg.writeEntry("showOnlyCurrentScreen", m_groupManager->showOnlyCurrentScreen());
-        changed = true;
-    }
-    if (m_groupManager->showOnlyMinimized() != (m_ui.showOnlyMinimized->isChecked())) {
-        m_groupManager->setShowOnlyMinimized(!m_groupManager->showOnlyMinimized());
-        KConfigGroup cg = config();
-        cg.writeEntry("showOnlyMinimized", m_groupManager->showOnlyMinimized());
-        changed = true;
-    }
+    cg.writeEntry("showOnlyCurrentDesktop", m_ui.showOnlyCurrentDesktop->isChecked());
+    cg.writeEntry("showOnlyCurrentScreen", m_ui.showOnlyCurrentScreen->isChecked());
+    cg.writeEntry("showOnlyMinimized", m_ui.showOnlyMinimized->isChecked());
 
-    if (m_groupManager->groupingStrategy() != (m_ui.groupingStrategy->currentIndex())) {
-        m_groupManager->setGroupingStrategy(static_cast<TaskManager::GroupManager::TaskGroupingStrategy>(m_ui.groupingStrategy->itemData(m_ui.groupingStrategy->currentIndex()).toInt()));
-        KConfigGroup cg = config();
-        cg.writeEntry("groupingStrategy", static_cast<int>(m_groupManager->groupingStrategy()));
-        changed = true;
-    }
+    cg.writeEntry("groupingStrategy", m_ui.groupingStrategy->itemData(m_ui.groupingStrategy->currentIndex()).toInt());
+    cg.writeEntry("groupWhenFull", m_ui.groupWhenFull->isChecked());
 
-    if (m_groupManager->onlyGroupWhenFull() != m_ui.groupWhenFull->isChecked()) {
-        adjustGroupingStrategy();
-        m_groupManager->setOnlyGroupWhenFull(m_ui.groupWhenFull->isChecked());
-        KConfigGroup cg = config();
-        cg.writeEntry("groupWhenFull", m_groupManager->onlyGroupWhenFull());
-        changed = true;
-    }
+    cg.writeEntry("sortingStrategy", m_ui.sortingStrategy->itemData(m_ui.sortingStrategy->currentIndex()).toInt());
 
-    if (m_groupManager->sortingStrategy() != (m_ui.sortingStrategy->currentIndex())) {
-        m_groupManager->setSortingStrategy(static_cast<TaskManager::GroupManager::TaskSortingStrategy>(m_ui.sortingStrategy->itemData(m_ui.sortingStrategy->currentIndex()).toInt()));
-        KConfigGroup cg = config();
-        cg.writeEntry("sortingStrategy", static_cast<int>(m_groupManager->sortingStrategy()));
-        changed = true;
-    }
+    cg.writeEntry("maxRows", m_ui.maxRows->value());
+    cg.writeEntry("forceRows", m_ui.fillRows->isChecked());
 
-    if (m_rootGroupItem->maxRows() != (m_ui.maxRows->value())) {
-        m_rootGroupItem->setMaxRows(m_ui.maxRows->value());
-        KConfigGroup cg = config();
-        cg.writeEntry("maxRows", m_rootGroupItem->maxRows());
-        changed = true;
-    }
+    cg.writeEntry("showTooltip", m_ui.showTooltip->checkState() == Qt::Checked);
+    cg.writeEntry("highlightWindows", m_ui.highlightWindows->checkState() == Qt::Checked);
 
-    if (m_rootGroupItem->forceRows() != m_ui.fillRows->isChecked()) {
-        m_rootGroupItem->setForceRows(m_ui.fillRows->isChecked());
-        KConfigGroup cg = config();
-        cg.writeEntry("forceRows", m_rootGroupItem->forceRows());
-        changed = true;
-    }
-
-    if (m_showTooltip != (m_ui.showTooltip->checkState() == Qt::Checked)) {
-        m_showTooltip = !m_showTooltip;
-        KConfigGroup cg = config();
-        cg.writeEntry("showTooltip", m_showTooltip);
-        changed = true;
-    }
-
-    if (m_highlightWindows != (m_ui.highlightWindows->checkState() == Qt::Checked)) {
-        m_highlightWindows = !m_highlightWindows;
-        KConfigGroup cg = config();
-        cg.writeEntry("highlightWindows", m_highlightWindows);
-        changed = true;
-    }
-
-    if (changed) {
-        emit settingsChanged();
-        emit configNeedsSaving();
-        update();
-    }
+    emit configNeedsSaving();
 }
 
 bool Tasks::showToolTip() const

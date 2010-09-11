@@ -307,7 +307,7 @@ void TaskGroupItem::reload()
         itemsToRemove.removeAll(item);
         itemAdded(item);
 
-        if (item->isGroupItem()) {
+        if (item->itemType() == TaskManager::GroupItemType) {
             TaskGroupItem *group = qobject_cast<TaskGroupItem *>(abstractTaskItem(item));
             if (group) {
                 group->reload();
@@ -429,7 +429,7 @@ AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractGroupab
     //kDebug() << "item to create" << groupableItem << endl;
     AbstractTaskItem *item = 0;
 
-    if (groupableItem->isGroupItem()) {
+    if (groupableItem->itemType() == TaskManager::GroupItemType) {
         TaskGroupItem *groupItem = new TaskGroupItem(this, m_applet);
         groupItem->setGroup(static_cast<TaskManager::TaskGroup*>(groupableItem));
         item = groupItem;
@@ -562,7 +562,7 @@ void TaskGroupItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if ((event->buttons() & Qt::LeftButton) && (event->modifiers() & Qt::ControlModifier)) {
         QList<WId> ids;
         foreach (AbstractGroupableItem *groupable, m_group.data()->members()) {
-            if (groupable->isGroupItem()) {
+            if (groupable->itemType() == TaskManager::GroupItemType) {
                 //TODO: recurse through sub-groups?
             } else {
                 TaskItem * item = dynamic_cast<TaskItem*>(groupable);
@@ -991,7 +991,7 @@ void  TaskGroupItem::itemPositionChanged(AbstractGroupableItem * item)
 
     Q_ASSERT(item);
 
-    if (item->isGroupItem()) {
+    if (item->itemType() == TaskManager::GroupItemType) {
         TaskGroupItem *groupItem = static_cast<TaskGroupItem*>(abstractTaskItem(item));
         if (groupItem) {
             groupItem->unsplitGroup();

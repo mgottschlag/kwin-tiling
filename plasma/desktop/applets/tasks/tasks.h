@@ -104,12 +104,16 @@ public:
 
         void needsVisualFocus(bool focus);
         QWidget *popupDialog() const;
+
 signals:
-    /**
-    * emitted whenever we receive a constraintsEvent
-    */
-    void constraintsChanged(Plasma::Constraints);
-    void settingsChanged();
+        /**
+         * emitted whenever we receive a constraintsEvent
+         */
+        void constraintsChanged(Plasma::Constraints);
+        void settingsChanged();
+
+public slots:
+        void configChanged();
 
 protected slots:
         void configAccepted();
