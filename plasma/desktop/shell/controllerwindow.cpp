@@ -394,6 +394,9 @@ void ControllerWindow::showWidgetExplorer()
         m_widgetExplorer->setContainment(m_containment.data());
         m_widgetExplorer->populateWidgetList();
         m_widgetExplorer->setIconSize(KIconLoader::SizeHuge);
+        QAction *activityAction = new QAction(KIcon("preferences-activities"), i18n("Activities"), m_widgetExplorer);
+        connect(activityAction, SIGNAL(triggered()), this, SLOT(showActivityManager()));
+        m_widgetExplorer->addAction(activityAction);
 
         m_containment.data()->corona()->addOffscreenWidget(m_widgetExplorer);
         m_widgetExplorer->show();
