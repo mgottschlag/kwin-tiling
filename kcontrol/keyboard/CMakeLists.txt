@@ -19,6 +19,7 @@ set( kded_keyboard_SRCS
     xkb_helper.cpp
     keyboard_config.cpp
     keyboard_hardware.cpp
+    numlockx.c
     bindings.cpp
     utils.cpp
 # next are temporary for sys tray UI
@@ -34,6 +35,10 @@ target_link_libraries(kded_keyboard
 	# next are temporary for sys tray UI
  	${QT_QTXML_LIBRARY} ${X11_Xkbfile_LIB}
  )
+
+if(X11_XTest_FOUND)
+  target_link_libraries(kded_keyboard ${X11_XTest_LIB})
+endif(X11_XTest_FOUND)
 
 if(XiGetDevicePresence_FOUND)
   target_link_libraries(kded_keyboard ${X11_Xinput_LIB})

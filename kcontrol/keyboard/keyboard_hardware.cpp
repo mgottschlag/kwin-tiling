@@ -29,6 +29,8 @@
 
 #include "x11_helper.h"
 
+// from numlockx.c
+extern "C" void numlockx_change_numlock_state(Display* dpy, int state);
 
 /*
  Originally comes from NumLockX http://dforce.sh.cvut.cz/~seli/en/numlockx
@@ -61,64 +63,6 @@ DEALINGS IN THE SOFTWARE.
 #include <X11/XKBlib.h>
 #include <X11/keysym.h>
 
-
-static
-unsigned int xkb_mask_modifier( XkbDescPtr xkb, const char *name )
-{
-	if( !xkb || !xkb->names )
-		return 0;
-
-	for(int i = 0; i < XkbNumVirtualMods; i++ ) {
-		char* modStr = XGetAtomName( xkb->dpy, xkb->names->vmods[i] );
-		if( modStr != NULL && strcmp(name, modStr) == 0 ) {
-			unsigned int mask;
-			XkbVirtualModsToReal( xkb, 1 << i, &mask );
-			return mask;
-		}
-	}
-	return 0;
-}
-
-static
-unsigned int xkb_numlock_mask()
-{
-	XkbDescPtr xkb;
-	if(( xkb = XkbGetKeyboard( QX11Info::display(), XkbAllComponentsMask, XkbUseCoreKbd )) != NULL ) {
-		unsigned int mask = xkb_mask_modifier( xkb, "NumLock" );
-		XkbFreeKeyboard( xkb, 0, True );
-		return mask;
-	}
-	else {
-		kError() << "Failed to set numlock: failed to get keyboard";
-	}
-	return 0;
-}
-
-static
-int xkb_set_numlock(int set)
-{
-    unsigned int mask = xkb_numlock_mask();
-    if( mask == 0 ) {
-    	kError() << "Failed to set numlock: numlock mask is 0";
-        return 0;
-    }
-
-    unsigned int values = set ? mask : 0;
-    return XkbLockModifiers ( QX11Info::display(), XkbUseCoreKbd, mask, values);
-}
-
-static
-void numlockx_change_numlock_state( bool set )
-{
-	if( !X11Helper::xkbSupported(NULL) ) {
-    	kError() << "Failed to set numlock: xkb is not supported";
-    	return;
-	}
-
-	if( ! xkb_set_numlock(set) ) {
-    	kError() << "Failed to set numlock: XkbLockModifiers request hasn't been sent";
-	}
-}
 
 // This code is taken from xset utility from XFree 4.3 (http://www.xfree86.org/)
 
@@ -177,6 +121,6 @@ void init_keyboard_hardware()
 
 	int numlockState = config.readEntry( "NumLock", 2 );
 	if( numlockState != 2 ) {
-		numlockx_change_numlock_state( numlockState == 0 );
+		numlockx_change_numlock_state(QX11Info::display(), numlockState == 0 );
 	}
 }
