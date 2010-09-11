@@ -52,7 +52,7 @@ ActivityIcon::~ActivityIcon()
 
 QPixmap ActivityIcon::pixmap(const QSize &size)
 {
-    return m_activity->pixmap(size);
+    return m_activity ? m_activity->pixmap(size) : QPixmap();
 }
 
 QMimeData* ActivityIcon::mimeData()
@@ -64,6 +64,10 @@ QMimeData* ActivityIcon::mimeData()
 void ActivityIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     AbstractIcon::paint(painter, option, widget);
+
+    if (!m_activity) {
+        return;
+    }
 
     const QRectF rect = contentsRect();
     QSize cornerIconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
@@ -95,6 +99,10 @@ void ActivityIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
 void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+    if (!m_activity) {
+        return;
+    }
+
     //check whether one of our corner icons was clicked
     //FIXME this is duplicate code, should get cleaned up later
     const QRectF rect = contentsRect();
@@ -108,7 +116,7 @@ void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         if (m_activity->isRunning()) {
             m_activity->close();
         } else {
-            m_activity->destroy();
+            QTimer::singleShot(0, m_activity, SLOT(destroy()));
         }
         return;
     }
@@ -126,6 +134,7 @@ void ActivityIcon::setRemovable(bool removable)
     if (removable == m_removable) {
         return;
     }
+
     m_removable = removable;
     update();
 }
@@ -134,4 +143,12 @@ Activity* ActivityIcon::activity()
 {
     return m_activity;
 }
+
+void ActivityIcon::activityRemoved()
+{
+    m_activity = 0;
+    deleteLater();
+}
+
+#include "activityicon.moc"
 

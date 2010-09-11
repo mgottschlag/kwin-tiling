@@ -101,8 +101,11 @@ void ActivityList::activityAdded(const QString &id)
 
 void ActivityList::activityRemoved(const QString &id)
 {
-    Plasma::AbstractIcon* icon = m_allAppletsHash.take(id);
-    delete icon;
+    ActivityIcon *icon = qobject_cast<ActivityIcon *>(m_allAppletsHash.take(id));
+
+    if (icon) {
+        icon->activityRemoved();
+    }
 /*
     if (m_allAppletsHash.count() == 1) {
         ActivityIcon *icon = qobject_cast<ActivityIcon*>(m_allAppletsHash.values().first());
