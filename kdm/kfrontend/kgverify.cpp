@@ -279,6 +279,7 @@ KGVerify::performAutoLogin()
 //    timer.stop();
     gSendInt(G_AutoLogin);
     coreState = CoreBusy;
+    sockNot->setEnabled(true);
 }
 
 QString // public
