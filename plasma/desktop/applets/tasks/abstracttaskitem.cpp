@@ -93,6 +93,7 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet)
     setFocusPolicy(Qt::StrongFocus);
     setFlag(QGraphicsItem::ItemIsFocusable);
 
+    checkSettings();
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(syncActiveRect()));
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(queueUpdate()));
     connect(applet, SIGNAL(settingsChanged()), this, SLOT(checkSettings()));
