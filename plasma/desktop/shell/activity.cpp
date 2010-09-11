@@ -31,6 +31,7 @@
 #include <KConfig>
 #include <KIcon>
 #include <KMessageBox>
+#include <KStandardDirs>
 #include <KWindowSystem>
 #include <kephal/screens.h>
 
@@ -116,7 +117,9 @@ void Activity::destroy()
         foreach (Plasma::Containment *c, m_containments) {
             c->destroy(false);
         }
-        //FIXME delete your saved ones too
+
+        const QString name = "activities/" + m_id;
+        QFile::remove(KStandardDirs::locateLocal("appdata", name));
     }
 }
 
@@ -242,8 +245,7 @@ void Activity::save(KConfig &external)
 
 void Activity::close()
 {
-    QString name = "activities/";
-    name += m_id;
+    const QString name = "activities/" + m_id;
     KConfig external(name, KConfig::SimpleConfig, "appdata");
     foreach (const QString &group, external.groupList()) {
         KConfigGroup cg(&external, group);
