@@ -352,7 +352,7 @@ void SearchLaunch::launch(QModelIndex index)
         reset();
     } else {
         QString id = url.path();
-        if (id.startsWith(QLatin1String("/"))) {
+        if (id.startsWith(QLatin1Char('/'))) {
             id = id.remove(0, 1);
         }
         if (url.protocol() == "kservicegroup") {

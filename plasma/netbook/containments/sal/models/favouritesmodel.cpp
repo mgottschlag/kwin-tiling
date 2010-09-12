@@ -121,7 +121,7 @@ void FavouritesModel::add(const QUrl &url, const QModelIndex &before)
         QString query = url.path();
         QString runnerId = url.host();
         QString matchId = url.fragment();
-        if (matchId.startsWith(QLatin1String("/"))) {
+        if (matchId.startsWith(QLatin1Char('/'))) {
             matchId = matchId.remove(0, 1);
         }
 
