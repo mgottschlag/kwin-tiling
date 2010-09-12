@@ -369,7 +369,6 @@ void Interface::display(const QString &term)
 void Interface::resetInterface()
 {
     setStaticQueryMode(false);
-    kDebug() << "resetting delayed run";
     m_delayedRun = false;
     m_searchTerm->setCurrentItem(QString(), true, 0);
     m_singleRunnerSearchTerm->clear();
@@ -442,13 +441,11 @@ void Interface::hideEvent(QHideEvent *e)
 void Interface::run(ResultItem *item)
 {
     if (!item || !item->isValid() || item->group() < Plasma::QueryMatch::PossibleMatch) {
-        kDebug() << "delaying run";
         m_delayedRun = true;
         return;
     }
 
     kDebug() << item->name() << item->id();
-    kDebug() << "resetting delayed run";
     m_delayedRun = false;
 
     if (item->group() == Plasma::QueryMatch::InformationalMatch) {
@@ -502,17 +499,14 @@ void Interface::resetAndClose()
 void Interface::runDefaultResultItem()
 {
     if (m_queryRunning || m_delayedQueryTimer.isActive()) {
-        kDebug() << "delaying run here" << m_queryRunning << m_delayedQueryTimer.isActive();
         m_delayedRun = true;
     } else {
-        kDebug() << "fall through";
         run(m_resultsScene->defaultResultItem());
     }
 }
 
 void Interface::queryTextEdited(const QString &query)
 {
-    kDebug() << "resetting delayed run";
     m_delayedRun = false;
 
     if (query.isEmpty() && !m_runnerManager->singleMode()) {
@@ -595,7 +589,6 @@ void Interface::matchCountChanged(int count)
         //kDebug() << s << size();
     } else {
         //kDebug() << "hiding ... eventually";
-    kDebug() << "resetting delayed run";
         m_delayedRun = false;
         m_hideResultsTimer.start(1000);
     }
