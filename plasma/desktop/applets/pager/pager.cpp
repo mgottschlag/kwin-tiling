@@ -127,16 +127,7 @@ void Pager::init()
 {
     createMenu();
 
-    KConfigGroup cg = config();
-    m_displayedText = (DisplayedText)cg.readEntry("displayedText", (int)m_displayedText);
-    m_showWindowIcons = cg.readEntry("showWindowIcons", m_showWindowIcons);
-    m_rows = globalConfig().readEntry("rows", m_rows);
-    m_verticalFormFactor = (formFactor() == Plasma::Vertical);
-    m_currentDesktopSelected = (CurrentDesktopSelected)cg.readEntry("currentDesktopSelected", (int)m_currentDesktopSelected);
-
-    if (m_rows < 1) {
-        m_rows = 1;
-    }
+    configChanged();
 
     m_timer = new QTimer(this);
     m_timer->setSingleShot(true);
@@ -176,6 +167,24 @@ void Pager::init()
 Pager::~Pager()
 {
     delete m_colorScheme;
+}
+
+void Pager::configChanged()
+{
+    KConfigGroup cg = config();
+    m_displayedText = (DisplayedText)cg.readEntry("displayedText", (int)m_displayedText);
+    m_showWindowIcons = cg.readEntry("showWindowIcons", m_showWindowIcons);
+    m_rows = globalConfig().readEntry("rows", m_rows);
+    m_verticalFormFactor = (formFactor() == Plasma::Vertical);
+    m_currentDesktopSelected = (CurrentDesktopSelected)cg.readEntry("currentDesktopSelected", (int)m_currentDesktopSelected);
+
+    if (m_rows < 1) {
+        m_rows = 1;
+    }
+
+    recalculateGeometry();
+    recalculateWindowRects();
+    update();
 }
 
 void Pager::constraintsEvent(Plasma::Constraints constraints)

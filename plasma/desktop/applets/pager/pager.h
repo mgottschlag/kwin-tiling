@@ -77,6 +77,7 @@ class Pager : public Plasma::Applet
         void recalculateGeometry();
         void recalculateWindowRects();
         void themeRefresh();
+        void configChanged();
 
     protected slots:
         virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
