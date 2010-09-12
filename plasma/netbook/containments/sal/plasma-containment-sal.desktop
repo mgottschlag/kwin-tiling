@@ -2,6 +2,7 @@
 Name=Search and Launch
 Name[en_GB]=Search and Launch
 Name[ia]=Cercar e Lancear
+Name[nl]=Zoeken en starten
 Name[pt]=Pesquisa e Lançamento
 Name[pt_BR]=Pesquisar e executar
 Name[sv]=Sök och starta
@@ -10,6 +11,7 @@ Name[x-test]=xxSearch and Launchxx
 Comment=Full screen application launcher with search interface
 Comment[en_GB]=Full screen application launcher with search interface
 Comment[ia]=Lanceator de application a schermo plen con interfacie de cerca
+Comment[nl]=Programmastarter op volledig scherm met zoekinterface
 Comment[pt]=Um lançador de aplicações de ecrã completo, com interface de pesquisa
 Comment[pt_BR]=Um lançador de aplicativos de tela cheia completo, com interface de pesquisa
 Comment[sv]=Startprogram med fullskärm och sökgränssnitt
