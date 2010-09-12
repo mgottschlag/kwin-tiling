@@ -189,6 +189,10 @@ void LauncherApplet::configChanged()
     KConfigGroup cg = config();
     setPopupIcon(cg.readEntry("icon", "start-here-kde"));
     constraintsEvent(Plasma::ImmutableConstraint);
+
+    if (d->launcher) {
+        d->launcher->setApplet(this);
+    }
 }
 
 void LauncherApplet::configAccepted()
