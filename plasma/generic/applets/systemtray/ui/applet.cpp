@@ -107,6 +107,7 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
 
     setPopupIcon(QIcon());
     setPassivePopup(false);
+    setPopupAlignment(Qt::AlignRight);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
     setHasConfigurationInterface(true);
 }
