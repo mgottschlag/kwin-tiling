@@ -94,7 +94,7 @@ KService::Ptr serviceForUrl(const KUrl & url)
     QString runner = url.host();
     QString id = url.path();
 
-    if (id.startsWith(QLatin1String("/"))) {
+    if (id.startsWith(QLatin1Char('/'))) {
         id = id.remove(0, 1);
     }
 
@@ -133,7 +133,7 @@ bool KRunnerItemHandler::openUrl(const KUrl& url)
 {
     QString runner = url.host();
     QString id = url.path();
-    if (id.startsWith(QLatin1String("/"))) {
+    if (id.startsWith(QLatin1Char('/'))) {
         id = id.remove(0, 1);
     }
 
