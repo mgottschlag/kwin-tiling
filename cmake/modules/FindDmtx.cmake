@@ -19,9 +19,8 @@ else (DMTX_INCLUDE_DIR AND DMTX_LIBRARIES)
 
   find_library(DMTX_LIBRARIES NAMES dmtx)
 
-  if (DMTX_INCLUDE_DIR AND DMTX_LIBRARIES)
-     set(DMTX_FOUND TRUE)
-  endif (DMTX_INCLUDE_DIR AND DMTX_LIBRARIES)
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(Dmtx DEFAULT_MSG DMTX_LIBRARIES DMTX_INCLUDE_DIR)
 
   mark_as_advanced(DMTX_INCLUDE_DIR DMTX_LIBRARIES)
 
