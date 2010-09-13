@@ -39,9 +39,9 @@ using namespace Akonadi;
 
 AkonadiEngine::AkonadiEngine(QObject* parent, const QVariantList& args)
     : Plasma::DataEngine(parent),
-    m_microBlogMonitor(0),
+    m_emailMonitor(0),
     m_contactMonitor(0),
-    m_emailMonitor(0)
+    m_microBlogMonitor(0)
 {
     Q_UNUSED(args);
     setMaxSourceCount( 512 ); // Guard against loading thousands of emails
