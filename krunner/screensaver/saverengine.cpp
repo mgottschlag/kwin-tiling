@@ -40,10 +40,10 @@ SaverEngine::SaverEngine()
     : QWidget()
 {
     (void) new ScreenSaverAdaptor( this );
-    QDBusConnection::sessionBus().registerService( "org.freedesktop.ScreenSaver" ) ;
+    QDBusConnection::sessionBus().registerService( QLatin1String( "org.freedesktop.ScreenSaver" ) ) ;
     (void) new KScreenSaverAdaptor( this );
-    QDBusConnection::sessionBus().registerService( "org.kde.screensaver" ) ;
-    QDBusConnection::sessionBus().registerObject( "/ScreenSaver", this );
+    QDBusConnection::sessionBus().registerService( QLatin1String( "org.kde.screensaver" ) ) ;
+    QDBusConnection::sessionBus().registerObject( QLatin1String( "/ScreenSaver" ), this );
 
     // Save X screensaver parameters
     XGetScreenSaver(QX11Info::display(), &mXTimeout, &mXInterval,
@@ -71,8 +71,8 @@ SaverEngine::SaverEngine()
 
     // Also receive updates triggered through the DBus (from powerdevil) see Bug #177123
     QStringList modules;
-    QDBusInterface kdedInterface("org.kde.kded", "/kded", "org.kde.kded");
-    QDBusReply<QStringList> reply = kdedInterface.call("loadedModules");
+    QDBusInterface kdedInterface(QLatin1String( "org.kde.kded" ), QLatin1String( "/kded" ), QLatin1String( "org.kde.kded" ));
+    QDBusReply<QStringList> reply = kdedInterface.call(QLatin1String( "loadedModules" ));
 
     if (!reply.isValid()) {
         return;
@@ -80,9 +80,9 @@ SaverEngine::SaverEngine()
 
     modules = reply.value();
 
-    if (modules.contains("powerdevil")) {
-      if (!QDBusConnection::sessionBus().connect("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil",
-                          "DPMSconfigUpdated", this, SLOT(configure()))) {
+    if (modules.contains(QLatin1String( "powerdevil" ))) {
+      if (!QDBusConnection::sessionBus().connect(QLatin1String( "org.kde.kded" ), QLatin1String( "/modules/powerdevil" ), QLatin1String( "org.kde.PowerDevil" ),
+                          QLatin1String( "DPMSconfigUpdated" ), this, SLOT(configure()))) {
             kDebug() << "error!";
         }
     }
@@ -263,7 +263,7 @@ bool SaverEngine::startLockProcess( LockType lock_type )
 
     kDebug() << "SaverEngine: starting saver";
 
-    QString path = KStandardDirs::findExe( "kscreenlocker" );
+    QString path = KStandardDirs::findExe( QLatin1String( "kscreenlocker" ) );
     if( path.isEmpty())
     {
         kDebug() << "Can't find kscreenlocker!";
@@ -276,13 +276,13 @@ bool SaverEngine::startLockProcess( LockType lock_type )
     switch( lock_type )
     {
     case ForceLock:
-        *mLockProcess << QString( "--forcelock" );
+        *mLockProcess << QLatin1String( "--forcelock" );
         break;
     case DontLock:
-        *mLockProcess << QString( "--dontlock" );
+        *mLockProcess << QLatin1String( "--dontlock" );
         break;
     case PlasmaSetup:
-        *mLockProcess << "--plasmasetup";
+        *mLockProcess << QLatin1String( "--plasmasetup" );
         break;
     default:
         break;

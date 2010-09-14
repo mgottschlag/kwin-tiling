@@ -140,7 +140,7 @@ int main( int argc, char **argv )
     kDebug() << "app " << kdesktop_screen_number << " " << starting_screen << " " << child << " " << child_sockets.count() << " " << parent_connection;
     app.disableSessionManagement();
     app.setQuitOnLastWindowClosed( false );
-    KGlobal::locale()->insertCatalog("libkworkspace");
+    KGlobal::locale()->insertCatalog(QLatin1String( "libkworkspace" ));
 
     LockProcess process(child, args->isSet("blank"));
     if (!child)
@@ -166,7 +166,7 @@ int main( int argc, char **argv )
 
     if( sig )
     {
-        org::kde::screensaver kscreensaver("org.kde.screensaver", "/ScreenSaver", QDBusConnection::sessionBus());
+        org::kde::screensaver kscreensaver(QLatin1String( "org.kde.screensaver" ), QLatin1String( "/ScreenSaver" ), QDBusConnection::sessionBus());
         kscreensaver.saverLockReady();
     }
     args->clear();

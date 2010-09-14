@@ -38,7 +38,7 @@
 #include <X11/Xatom.h>
 #include <X11/extensions/shape.h>
 
-#define KDE_STARTUP_ICON "kmenu"
+#define KDE_STARTUP_ICON QLatin1String( "kmenu" )
 
 #ifdef HAVE_XCURSOR
 #include <X11/Xcursor/Xcursor.h>
@@ -55,7 +55,7 @@ StartupId::StartupId( QWidget* parent, const char* name )
         blinking( true ),
         bouncing( false )
     {
-    setObjectName( name );
+        setObjectName( QLatin1String( name ) );
     hide(); // is QWidget only because of x11Event()
     if( kde_startup_status == StartupPre )
         {
@@ -205,7 +205,7 @@ void StartupId::start_startupid( const QString& icon_P )
     QPixmap icon_pixmap = KIconLoader::global()->loadIcon( icon_P, KIconLoader::Small, 0,
         KIconLoader::DefaultState, QStringList(), 0, true ); // return null pixmap if not found
     if( icon_pixmap.isNull())
-        icon_pixmap = SmallIcon( "system-run" );
+        icon_pixmap = SmallIcon( QLatin1String( "system-run" ) );
     if( startup_window == None )
         {
         XSetWindowAttributes attrs;

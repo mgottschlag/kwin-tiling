@@ -91,7 +91,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, const
     QWidget* w = mainWidget();
 
     QLabel *pixLabel = new QLabel( w );
-    pixLabel->setPixmap(DesktopIcon("system-lock-screen"));
+    pixLabel->setPixmap(DesktopIcon(QLatin1String( "system-lock-screen" )));
 
     KUser user; QString fullName=user.property(KUser::FullName).toString();
     QString greetString = text;
@@ -102,7 +102,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, const
     }
     QLabel *greetLabel = new QLabel(greetString, w);
 
-    mStatusLabel = new QLabel( "<b> </b>", w );
+    mStatusLabel = new QLabel( QLatin1String( "<b> </b>" ), w );
     mStatusLabel->setAlignment( Qt::AlignCenter );
 
     greet = plugin->info->create(this, w, QString(),
@@ -113,10 +113,10 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, const
 
     ok = new KPushButton( i18n("Unl&ock"), w );
     cancel = new KPushButton( KStandardGuiItem::cancel(), w );
-    mNewSessButton = new KPushButton( KGuiItem(i18n("Sw&itch User..."), "fork"), w );
+    mNewSessButton = new KPushButton( KGuiItem(i18n("Sw&itch User..."), QLatin1String( "fork" )), w );
 
     // Using keyboard layout component
-    KPluginFactory *kxkbFactory = KPluginLoader("keyboard_layout_widget").factory();
+    KPluginFactory *kxkbFactory = KPluginLoader(QLatin1String( "keyboard_layout_widget" )).factory();
     QWidget *kxkbComponent = NULL;
     if (kxkbFactory) {
         kxkbComponent = kxkbFactory->create<QWidget>(this);
@@ -157,7 +157,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, const
     connect(ok, SIGNAL(clicked()), SLOT(slotOK()));
     connect(mNewSessButton, SIGNAL(clicked()), SLOT(slotSwitchUser()));
 
-    if (!text.isEmpty() || !KDisplayManager().isSwitchable() || !KAuthorized::authorizeKAction("switch_user"))
+    if (!text.isEmpty() || !KDisplayManager().isSwitchable() || !KAuthorized::authorizeKAction(QLatin1String( "switch_user" )))
         mNewSessButton->hide();
 
     installEventFilter(this);
@@ -196,7 +196,7 @@ void PasswordDlg::updateLabel()
     }
     else
     {
-        mStatusLabel->setText("<b> </b>");
+        mStatusLabel->setText(QLatin1String( "<b> </b>" ));
     }
 }
 
@@ -343,7 +343,7 @@ void PasswordDlg::reapVerify()
             ok->setEnabled(false);
             cancel->setEnabled(false);
             mNewSessButton->setEnabled( false );
-            KNotification::event( "unlockfailed" );
+            KNotification::event( QLatin1String( "unlockfailed" ) );
             return;
         case AuthAbort:
             return;
@@ -458,7 +458,7 @@ void PasswordDlg::gplugStart()
     if (!sPid) {
         ::close(sfd[0]);
         sprintf(fdbuf, "%d", sfd[1]);
-        execlp(QFile::encodeName(KStandardDirs::findExe("kcheckpass")).data(),
+        execlp(QFile::encodeName(KStandardDirs::findExe(QLatin1String( "kcheckpass" ))).data(),
                "kcheckpass",
                "-m", mPlugin->info->method,
                "-S", fdbuf,
@@ -506,7 +506,7 @@ void PasswordDlg::setVisible( bool visible )
 
 void PasswordDlg::slotStartNewSession()
 {
-    if (!KMessageBox::shouldBeShownContinue( ":confirmNewSession" )) {
+    if (!KMessageBox::shouldBeShownContinue( QLatin1String( ":confirmNewSession" ) )) {
         KDisplayManager().startReserve();
         return;
     }
@@ -517,7 +517,7 @@ void PasswordDlg::slotStartNewSession()
     KDialog *dialog = new KDialog( this, Qt::X11BypassWindowManagerHint );
     dialog->setModal( true );
     dialog->setButtons( KDialog::Yes | KDialog::No );
-    dialog->setButtonGuiItem( KDialog::Yes, KGuiItem(i18n("&Start New Session"), "fork") );
+    dialog->setButtonGuiItem( KDialog::Yes, KGuiItem(i18n("&Start New Session"), QLatin1String( "fork" )) );
     dialog->setButtonGuiItem( KDialog::No, KStandardGuiItem::cancel() );
     dialog->setDefaultButton( KDialog::Yes );
     dialog->setEscapeButton( KDialog::No );
@@ -547,7 +547,7 @@ void PasswordDlg::slotStartNewSession()
 
     if (ret == KDialog::Yes) {
         if (dontAskAgain)
-            KMessageBox::saveDontShowAgainContinue( ":confirmNewSession" );
+            KMessageBox::saveDontShowAgainContinue( QLatin1String( ":confirmNewSession" ) );
         KDisplayManager().startReserve();
     }
 
@@ -622,16 +622,16 @@ void PasswordDlg::slotSwitchUser()
         lv->header()->adjustSize();
         vbox1->addWidget( lv );
 
-        btn = new KPushButton( KGuiItem(i18nc("session", "&Activate"), "fork"), &dialog );
+        btn = new KPushButton( KGuiItem(i18nc("session", "&Activate"), QLatin1String( "fork" )), &dialog );
         connect( btn, SIGNAL(clicked()), SLOT(slotSessionActivated()) );
         connect( btn, SIGNAL(clicked()), &dialog, SLOT(reject()) );
         vbox2->addWidget( btn );
         vbox2->addStretch( 2 );
     }
 
-    if (KAuthorized::authorizeKAction("start_new_session") && (p = dm.numReserve()) >= 0)
+    if (KAuthorized::authorizeKAction(QLatin1String( "start_new_session" )) && (p = dm.numReserve()) >= 0)
     {
-        btn = new KPushButton( KGuiItem(i18n("Start &New Session"), "fork"), &dialog );
+        btn = new KPushButton( KGuiItem(i18n("Start &New Session"), QLatin1String( "fork" )), &dialog );
         connect( btn, SIGNAL(clicked()), SLOT(slotStartNewSession()) );
         connect( btn, SIGNAL(clicked()), &dialog, SLOT(reject()) );
         if (!p)

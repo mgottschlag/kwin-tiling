@@ -47,7 +47,7 @@ ResultsView::ResultsView(ResultScene *scene, SharedResultData *resultData, QWidg
     setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
     m_arrowSvg = new Plasma::Svg(this);
-    m_arrowSvg->setImagePath("widgets/arrows");
+    m_arrowSvg->setImagePath(QLatin1String( "widgets/arrows" ));
 
     m_previousPage = new QToolButton(this);
     m_previousPage->setAutoRaise(true);
@@ -124,10 +124,10 @@ void ResultsView::resizeEvent(QResizeEvent * event)
 
 void ResultsView::updateArrowsIcons()
 {
-    m_previousPage->setIcon(m_arrowSvg->pixmap("up-arrow"));
+    m_previousPage->setIcon(m_arrowSvg->pixmap(QLatin1String( "up-arrow" )));
     m_previousPage->adjustSize();
 
-    m_nextPage->setIcon(m_arrowSvg->pixmap("down-arrow"));
+    m_nextPage->setIcon(m_arrowSvg->pixmap(QLatin1String( "down-arrow" )));
     m_nextPage->adjustSize();
 
     updateArrowsVisibility();

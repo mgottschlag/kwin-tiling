@@ -85,7 +85,7 @@ KRunnerConfigWidget::KRunnerConfigWidget(Plasma::RunnerManager *manager, QWidget
     m_sel->addPlugins(Plasma::RunnerManager::listRunnerInfo(),
                       KPluginSelector::ReadConfigFile,
                       i18n("Available Features"), QString(),
-                      KSharedConfig::openConfig("krunnerrc"));
+                      KSharedConfig::openConfig(QLatin1String( "krunnerrc" )));
 
     m_buttons = new QDialogButtonBox(this);
     m_buttons->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel);
@@ -138,7 +138,7 @@ void KRunnerConfigWidget::setInterface(int type)
 
 void KRunnerConfigWidget::updateRunner(const QByteArray &name)
 {
-    Plasma::AbstractRunner *runner = m_manager->runner(name);
+    Plasma::AbstractRunner *runner = m_manager->runner(QString::fromLatin1( name ));
     //Update runner if runner is loaded
     if (runner) {
         runner->reloadConfiguration();

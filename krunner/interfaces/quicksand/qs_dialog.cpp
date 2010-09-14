@@ -50,7 +50,7 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setMargin(0);
     layout->setSpacing(0);
-    
+
     QHBoxLayout *hLayout = new QHBoxLayout();
     hLayout->setMargin(0);
     hLayout->setSpacing(0);
@@ -58,24 +58,24 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_configButton = new ToolButton(this);
     m_configButton->setText(i18n("Settings"));
     m_configButton->setToolTip(i18n("Settings"));
-    m_configButton->setIcon(m_iconSvg->pixmap("configure"));
+    m_configButton->setIcon(m_iconSvg->pixmap(QLatin1String( "configure" )));
     connect(m_configButton, SIGNAL(clicked()), SLOT(toggleConfigDialog()));
 
     m_activityButton = new ToolButton(this);
     KRunnerApp *krunnerApp = KRunnerApp::self();
-    QAction *showSystemActivityAction = krunnerApp->actionCollection()->action("Show System Activity");
+    QAction *showSystemActivityAction = krunnerApp->actionCollection()->action(QLatin1String( "Show System Activity" ));
     m_activityButton->setDefaultAction(showSystemActivityAction);
-    m_activityButton->setIcon(m_iconSvg->pixmap("status"));
-    
+    m_activityButton->setIcon(m_iconSvg->pixmap(QLatin1String( "status" )));
+
     updateSystemActivityToolTip();
     connect(showSystemActivityAction, SIGNAL(globalShortcutChanged(const QKeySequence &)), this, SLOT(updateSystemActivityToolTip()));
     connect(showSystemActivityAction, SIGNAL(triggered(bool)), this, SLOT(close()));
-    
+
     m_singleRunnerIcon = new QLabel(this);
 
     QLabel *label = new QLabel(this);
-    label->setText("<b>QuickSand</b>");
-    
+    label->setText(QLatin1String( "<b>QuickSand</b>" ));
+
     const QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     QPalette titlePallete =  label->palette();
     titlePallete.setColor(QPalette::WindowText, textColor);
@@ -84,8 +84,8 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
     QToolButton *m_closeButton = new ToolButton(this);
     KGuiItem guiItem = KStandardGuiItem::close();
     m_closeButton->setText(guiItem.text());
-    m_closeButton->setToolTip(guiItem.text().remove('&'));
-    m_closeButton->setIcon(m_iconSvg->pixmap("close"));
+    m_closeButton->setToolTip(guiItem.text().remove(QLatin1Char( '&' )));
+    m_closeButton->setIcon(m_iconSvg->pixmap(QLatin1String( "close" )));
     connect(m_closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
 
     hLayout->addWidget(m_configButton);
@@ -120,7 +120,7 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_matchView->setFocus();
 
     m_newQuery = true;
-    
+
     new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(close()));
 }
 
@@ -308,7 +308,7 @@ void QsDialog::updateSystemActivityToolTip()
 {
     /* Set the tooltip for the Show System Activity button to include the global shortcut */
     KRunnerApp *krunnerApp = KRunnerApp::self();
-    KAction *showSystemActivityAction = dynamic_cast<KAction *>(krunnerApp->actionCollection()->action("Show System Activity"));
+    KAction *showSystemActivityAction = dynamic_cast<KAction *>(krunnerApp->actionCollection()->action(QLatin1String( "Show System Activity" )));
     if (showSystemActivityAction) {
         QString shortcut = showSystemActivityAction->globalShortcut().toString();
         if (shortcut.isEmpty()) {

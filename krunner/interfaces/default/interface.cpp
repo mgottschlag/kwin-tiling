@@ -90,7 +90,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     //Set up the system activity button, using the krunner global action, showing the global shortcut in the tooltip
     m_activityButton = new ToolButton(m_buttonContainer);
     KRunnerApp *krunnerApp = KRunnerApp::self();
-    QAction *showSystemActivityAction = krunnerApp->actionCollection()->action("Show System Activity");
+    QAction *showSystemActivityAction = krunnerApp->actionCollection()->action(QLatin1String( "Show System Activity" ));
     m_activityButton->setDefaultAction(showSystemActivityAction);
 
     updateSystemActivityToolTip();
@@ -116,7 +116,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_closeButton = new ToolButton(m_buttonContainer);
     KGuiItem guiItem = KStandardGuiItem::close();
     m_closeButton->setText(guiItem.text());
-    m_closeButton->setToolTip(guiItem.text().remove('&'));
+    m_closeButton->setToolTip(guiItem.text().remove(QLatin1Char( '&' )));
     connect(m_closeButton, SIGNAL(clicked(bool)), SLOT(resetAndClose()));
     bottomLayout->addWidget(m_closeButton);
 
@@ -249,7 +249,7 @@ void Interface::updateSystemActivityToolTip()
 {
     /* Set the tooltip for the Show System Activity button to include the global shortcut */
     KRunnerApp *krunnerApp = KRunnerApp::self();
-    KAction *showSystemActivityAction = dynamic_cast<KAction *>(krunnerApp->actionCollection()->action("Show System Activity"));
+    KAction *showSystemActivityAction = dynamic_cast<KAction *>(krunnerApp->actionCollection()->action(QLatin1String( "Show System Activity" )));
     if (showSystemActivityAction) {
         QString shortcut = showSystemActivityAction->globalShortcut().toString();
         if (shortcut.isEmpty()) {
@@ -330,10 +330,10 @@ void Interface::searchTermSetFocus()
 void Interface::themeUpdated()
 {
     //reset the icons
-    m_helpButton->setIcon(m_iconSvg->pixmap("help"));
-    m_configButton->setIcon(m_iconSvg->pixmap("configure"));
-    m_activityButton->setIcon(m_iconSvg->pixmap("status"));
-    m_closeButton->setIcon(m_iconSvg->pixmap("close"));
+    m_helpButton->setIcon(m_iconSvg->pixmap(QLatin1String( "help" )));
+    m_configButton->setIcon(m_iconSvg->pixmap(QLatin1String( "configure" )));
+    m_activityButton->setIcon(m_iconSvg->pixmap(QLatin1String( "status" )));
+    m_closeButton->setIcon(m_iconSvg->pixmap(QLatin1String( "close" )));
 }
 
 void Interface::clearHistory()
@@ -396,15 +396,15 @@ void Interface::showHelp()
         int count = 0;
         QIcon icon(runner->icon());
         if (icon.isNull()) {
-            icon = KIcon("system-run");
+            icon = KIcon(QLatin1String( "system-run" ));
         }
 
         foreach (const Plasma::RunnerSyntax &syntax, runner->syntaxes()) {
             Plasma::QueryMatch match(0);
             match.setType(Plasma::QueryMatch::InformationalMatch);
             match.setIcon(icon);
-            match.setText(syntax.exampleQueriesWithTermDescription().join(", "));
-            match.setSubtext(syntax.description() + "\n" +
+            match.setText(syntax.exampleQueriesWithTermDescription().join(QLatin1String( ", " )));
+            match.setSubtext(syntax.description() + QLatin1Char( '\n' ) +
                              i18n("(From %1, %2)", runner->name(), runner->description()));
             match.setData(syntax.exampleQueries().first());
             matches.insert(runner->name() + QString::number(++count), match);
@@ -455,11 +455,11 @@ void Interface::run(ResultItem *item)
         if (!info.isEmpty()) {
             if (item->isQueryPrototype()) {
                 // lame way of checking to see if this is a Help Button generated match!
-                int index = info.indexOf(":q:");
+                int index = info.indexOf(QLatin1String( ":q:" ));
 
                 if (index != -1) {
                     editPos = index;
-                    info.replace(":q:", "");
+                    info.replace(QLatin1String( ":q:" ), QLatin1String( "" ));
                 }
             }
 

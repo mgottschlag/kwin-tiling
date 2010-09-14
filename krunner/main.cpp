@@ -44,7 +44,7 @@ KDE_EXPORT int kdemain(int argc, char* argv[])
 #ifdef Q_WS_X11
     // krunner only works properly with Qt's native X11 backend; override any compile-time
     // or command line settings to raster or OpenGL.
-    QApplication::setGraphicsSystem("native");
+    QApplication::setGraphicsSystem(QLatin1String( "native" ));
 #endif
 
     KAboutData aboutData( "krunner", 0, ki18n( "Run Command Interface" ),
@@ -60,7 +60,7 @@ KDE_EXPORT int kdemain(int argc, char* argv[])
     }
 
     KRunnerApp *app = KRunnerApp::self();
-    KGlobal::locale()->insertCatalog("processui");
+    KGlobal::locale()->insertCatalog(QLatin1String( "processui" ));
     app->disableSessionManagement(); // autostarted
     int rc = app->exec();
     delete app;

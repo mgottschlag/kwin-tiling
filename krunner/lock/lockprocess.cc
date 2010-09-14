@@ -63,6 +63,8 @@
 #include <QDBusInterface>
 #include <QDBusServiceWatcher>
 
+#include <QtCore/QStringBuilder> // % operator for QString
+
 #include <QDateTime>
 
 #include <stdlib.h>
@@ -126,7 +128,7 @@ int XSelectInput( Display* dpy, Window w, long e )
 }
 #endif
 
-static QString s_overlayServiceName("org.kde.plasma-overlay");
+static QLatin1String s_overlayServiceName("org.kde.plasma-overlay");
 
 //===========================================================================
 //
@@ -150,12 +152,12 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
       mForbidden(false),
       mAutoLogoutTimerId(0)
 {
-    setObjectName("save window");
+    setObjectName(QLatin1String( "save window" ));
     setupSignals();
 
     new LockProcessAdaptor(this);
-    QDBusConnection::sessionBus().registerService("org.kde.screenlocker");
-    QDBusConnection::sessionBus().registerObject("/LockProcess", this);
+    QDBusConnection::sessionBus().registerService(QLatin1String( "org.kde.screenlocker" ));
+    QDBusConnection::sessionBus().registerObject(QLatin1String( "/LockProcess" ), this);
 
     kapp->installX11EventFilter(this);
 
@@ -183,9 +185,9 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     connect(&mSuspendTimer, SIGNAL(timeout()), SLOT(suspend()));
 
     const QStringList dmopt =
-        QString::fromLatin1( ::getenv( "XDM_MANAGED" )).split(QChar(','), QString::SkipEmptyParts);
+        QString::fromLatin1( ::getenv( "XDM_MANAGED" )).split(QLatin1Char(','), QString::SkipEmptyParts);
     for (QStringList::ConstIterator it = dmopt.constBegin(); it != dmopt.constEnd(); ++it)
-        if ((*it).startsWith("method="))
+        if ((*it).startsWith(QLatin1String( "method=" )))
             mMethod = (*it).mid(7);
 
     configure();
@@ -392,7 +394,7 @@ void LockProcess::configure()
 
     mSaver = KScreenSaverSettings::saver();
     if (mSaver.isEmpty() || mUseBlankOnly) {
-        mSaver = "kblank.desktop";
+        mSaver = QLatin1String( "kblank.desktop" );
     }
 
     readSaver();
@@ -404,7 +406,7 @@ void LockProcess::configure()
 
     mPlugins = KScreenSaverSettings::pluginsUnlock();
     if (mPlugins.isEmpty()) {
-        mPlugins << "classic" << "generic";
+        mPlugins << QLatin1String( "classic" ) << QLatin1String( "generic" );
     }
     mPluginOptions = KScreenSaverSettings::pluginOptions();
 }
@@ -418,10 +420,10 @@ void LockProcess::readSaver()
     if (!mSaver.isEmpty())
     {
         QString entryName = mSaver;
-        if( entryName.endsWith( ".desktop" ))
+        if( entryName.endsWith( QLatin1String( ".desktop" ) ))
             entryName = entryName.left( entryName.length() - 8 ); // strip it
-        const KService::List offers = KServiceTypeTrader::self()->query( "ScreenSaver",
-            "DesktopEntryName == '" + entryName.toLower() + '\'' );
+        const KService::List offers = KServiceTypeTrader::self()->query( QLatin1String( "ScreenSaver" ),
+            QLatin1String( "DesktopEntryName == '" ) + entryName.toLower() + QLatin1Char( '\'' ) );
         if( offers.isEmpty() )
         {
             kDebug(1204) << "Cannot find screesaver: " << mSaver;
@@ -429,28 +431,28 @@ void LockProcess::readSaver()
         }
         const QString file = KStandardDirs::locate("services", offers.first()->entryPath());
 
-        const bool opengl = KAuthorized::authorizeKAction("opengl_screensavers");
-        const bool manipulatescreen = KAuthorized::authorizeKAction("manipulatescreen_screensavers");
+        const bool opengl = KAuthorized::authorizeKAction(QLatin1String( "opengl_screensavers" ));
+        const bool manipulatescreen = KAuthorized::authorizeKAction(QLatin1String( "manipulatescreen_screensavers" ));
         KDesktopFile config( file );
         KConfigGroup desktopGroup = config.desktopGroup();
-        if (!desktopGroup.readEntry("X-KDE-Type").toUtf8().isEmpty())
+        if (!desktopGroup.readEntry("X-KDE-Type").isEmpty())
         {
-            const QString saverType = desktopGroup.readEntry("X-KDE-Type").toUtf8();
-            const QStringList saverTypes = saverType.split( ";");
+            const QString saverType = desktopGroup.readEntry("X-KDE-Type");
+            const QStringList saverTypes = saverType.split( QLatin1Char( ';' ));
             const int nbSaverTypes = saverTypes.count();
             for (int i = 0; i < nbSaverTypes ; ++i)
             {
-                if ((saverTypes[i] == "ManipulateScreen") && !manipulatescreen)
+                if ((saverTypes[i] == QLatin1String( "ManipulateScreen" )) && !manipulatescreen)
                 {
                     kDebug(1204) << "Screensaver is type ManipulateScreen and ManipulateScreen is forbidden";
                     mForbidden = true;
                 }
-                if ((saverTypes[i] == "OpenGL") && !opengl)
+                if ((saverTypes[i] == QLatin1String( "OpenGL" )) && !opengl)
                 {
                     kDebug(1204) << "Screensaver is type OpenGL and OpenGL is forbidden";
                     mForbidden = true;
                 }
-                if (saverTypes[i] == "OpenGL")
+                if (saverTypes[i] == QLatin1String( "OpenGL" ))
                 {
                     mOpenGLVisual = true;
                 }
@@ -459,9 +461,9 @@ void LockProcess::readSaver()
 
         kDebug(1204) << "mForbidden: " << (mForbidden ? "true" : "false");
 
-        if (config.hasActionGroup("Root"))
+        if (config.hasActionGroup(QLatin1String( "Root" )))
         {
-            mSaverExec = config.actionGroup("Root").readPathEntry("Exec", QString());
+            mSaverExec = config.actionGroup(QLatin1String( "Root" )).readPathEntry("Exec", QString());
         }
     }
 }
@@ -769,7 +771,7 @@ bool LockProcess::startSaver()
     setVRoot( winId(), winId() );
     startHack();
     startPlasma();
-    KNotification::event( "savingstarted" );
+    KNotification::event( QLatin1String( "savingstarted" ) );
     return true;
 }
 
@@ -789,21 +791,21 @@ void LockProcess::stopSaver()
         if (mLocked) {
             KDisplayManager().setLock( false );
             mLocked = false;
-            KNotification::event( "unlocked" );
+            KNotification::event( QLatin1String( "unlocked" ) );
         }
         ungrabInput();
         const char *out = "GOAWAY!";
         for (QList<int>::ConstIterator it = child_sockets.constBegin(); it != child_sockets.constEnd(); ++it)
             write(*it, out, sizeof(out));
     }
-    KNotification::event( "savingstopped" );
+    KNotification::event( QLatin1String( "savingstopped" ) );
 }
 
 // private static
 QVariant LockProcess::getConf(void *ctx, const char *key, const QVariant &dflt)
 {
     LockProcess *that = (LockProcess *)ctx;
-    QString fkey = QLatin1String( key ) + '=';
+    QString fkey = QLatin1String( key ) % QLatin1Char( '=' );
     for (QStringList::ConstIterator it = that->mPluginOptions.constBegin();
          it != that->mPluginOptions.constEnd(); ++it)
         if ((*it).startsWith( fkey ))
@@ -831,7 +833,7 @@ bool LockProcess::startLock()
         mLocked = true;
         KDisplayManager().setLock(true);
         lockPlasma();
-        KNotification::event( "locked" );
+        KNotification::event( QLatin1String( "locked" ) );
         return true;
     }
     return false;
@@ -846,7 +848,7 @@ bool LockProcess::loadGreetPlugin()
     }
     for (QStringList::ConstIterator it = mPlugins.constBegin(); it != mPlugins.constEnd(); ++it) {
         GreeterPluginHandle plugin;
-        KLibrary *lib = new KLibrary( (*it)[0] == '/' ? *it : "kgreet_" + *it );
+        KLibrary *lib = new KLibrary( (*it)[0] == QLatin1Char( '/' ) ? *it : QLatin1String( "kgreet_" ) + *it );
         if (lib->fileName().isEmpty()) {
             kWarning(1204) << "GreeterPlugin " << *it << " does not exist" ;
             delete lib;
@@ -865,7 +867,7 @@ bool LockProcess::loadGreetPlugin()
             delete lib;
             continue;
         }
-        if (plugin.info->method && !mMethod.isEmpty() && mMethod != plugin.info->method) {
+        if (plugin.info->method && !mMethod.isEmpty() && mMethod != QLatin1String(  plugin.info->method )) {
             kDebug(1204) << "GreeterPlugin " << *it << " (" << lib->fileName() << ") serves " << plugin.info->method << ", not " << mMethod;
             lib->unload();
             delete lib;
@@ -900,7 +902,7 @@ bool LockProcess::startHack()
     }
 
     QHash<QChar, QString> keyMap;
-    keyMap.insert('w', QString::number(winId()));
+    keyMap.insert(QLatin1Char( 'w' ), QString::number(winId()));
     mHackProc << KShell::splitArgs(KMacroExpander::expandMacrosShellQuote(mSaverExec, keyMap));
 
     mHackProc.start();
@@ -956,14 +958,14 @@ bool LockProcess::startPlasma()
     if (!mPlasmaDBus) {
         //try to get it, in case it's already running somehow
         //mPlasmaDBus = new QDBusInterface(s_overlayServiceName, "/MainApplication", QString(),
-        mPlasmaDBus = new org::kde::plasmaoverlay::App(s_overlayServiceName, "/App",
+        mPlasmaDBus = new org::kde::plasmaoverlay::App(s_overlayServiceName, QLatin1String( "/App" ),
                                                        QDBusConnection::sessionBus(), this);
         //FIXME this might-already-be-running stuff seems really really Wrong.
     }
 
     if (mPlasmaDBus->isValid()) {
         kDebug() << "weird, plasma-overlay is already running";
-        mPlasmaDBus->call(QDBus::NoBlock, "setup", mSetupMode);
+        mPlasmaDBus->call(QDBus::NoBlock, QLatin1String( "setup" ), mSetupMode);
         return true;
     }
 
@@ -979,9 +981,9 @@ bool LockProcess::startPlasma()
     }
 
     KProcess *plasmaProc = new KProcess;
-    plasmaProc->setProgram("plasma-overlay");
+    plasmaProc->setProgram(QLatin1String( "plasma-overlay" ));
     if (mSetupMode) {
-        *plasmaProc << "--setup";
+        *plasmaProc << QLatin1String( "--setup" );
     }
 
     //make sure it goes away when it's done (and not before)
@@ -1043,7 +1045,7 @@ void LockProcess::disablePlasma()
 void LockProcess::stopPlasma()
 {
     if (mPlasmaDBus && mPlasmaDBus->isValid()) {
-        mPlasmaDBus->call(QDBus::NoBlock, "quit");
+        mPlasmaDBus->call(QDBus::NoBlock, QLatin1String( "quit" ));
     } else {
         kDebug() << "cannot stop plasma-overlay";
     }
@@ -1065,21 +1067,21 @@ void LockProcess::newService(QString name, QString oldOwner, QString newOwner)
     }
 
     kDebug() << "plasma! yaay!";
-    mPlasmaDBus = new org::kde::plasmaoverlay::App(s_overlayServiceName, "/App", QDBusConnection::sessionBus(), this);
+    mPlasmaDBus = new org::kde::plasmaoverlay::App(s_overlayServiceName, QLatin1String( "/App" ), QDBusConnection::sessionBus(), this);
 
     //XXX this isn't actually used any more iirc
     connect(mPlasmaDBus, SIGNAL(hidden()), SLOT(unSuppressUnlock()));
 
     if (!mDialogs.isEmpty()) {
         //whoops, activation probably failed earlier
-        mPlasmaDBus->call(QDBus::NoBlock, "setActive", true);
+        mPlasmaDBus->call(QDBus::NoBlock, QLatin1String( "setActive" ), true);
     }
 }
 
 void LockProcess::deactivatePlasma()
 {
     if (isPlasmaValid()) {
-        mPlasmaDBus->call(QDBus::NoBlock, "setActive", false);
+        mPlasmaDBus->call(QDBus::NoBlock, QLatin1String( "setActive" ), false);
     }
     if (!mLocked && mLockGrace >=0) {
         QTimer::singleShot(mLockGrace, this, SLOT(startLock())); //this is only ok because any activity will quit
@@ -1089,7 +1091,7 @@ void LockProcess::deactivatePlasma()
 void LockProcess::lockPlasma()
 {
     if (isPlasmaValid()) {
-        mPlasmaDBus->call(QDBus::NoBlock, "lock");
+        mPlasmaDBus->call(QDBus::NoBlock, QLatin1String( "lock" ));
     }
 }
 
@@ -1153,7 +1155,7 @@ void LockProcess::resume( bool force )
 bool LockProcess::checkPass()
 {
     if (isPlasmaValid()) {
-        mPlasmaDBus->call(QDBus::NoBlock, "setActive", true);
+        mPlasmaDBus->call(QDBus::NoBlock, QLatin1String( "setActive" ), true);
     }
 
     PasswordDlg passDlg( this, &greetPlugin);
@@ -1163,7 +1165,7 @@ bool LockProcess::checkPass()
         if (ret == QDialog::Rejected) {
             mSuppressUnlock.start(mSuppressUnlockTimeout);
         } else if (ret == TIMEOUT_CODE) {
-            mPlasmaDBus->call(QDBus::NoBlock, "setActive", false);
+            mPlasmaDBus->call(QDBus::NoBlock, QLatin1String( "setActive" ), false);
         }
     }
 
@@ -1197,7 +1199,7 @@ bool LockProcess::checkPass(const QString &reason)
         //so that the user doesn't have to type their password twice
         mLocked = false;
         KDisplayManager().setLock(false);
-        KNotification::event( "unlocked" );
+        KNotification::event( QLatin1String( "unlocked" ) );
         //FIXME while suppressUnlock *should* always be running, if it isn't
         //(say if someone's doing things they shouldn't with dbus) then it won't get started by this
         //which means that a successful unlock will never re-lock

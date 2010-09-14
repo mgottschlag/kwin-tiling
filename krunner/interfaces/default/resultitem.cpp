@@ -154,7 +154,7 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
     if (match.hasConfigurationInterface()) {
         if (!m_configButton) {
             m_configButton = new Plasma::ToolButton(this);
-            m_configButton->setIcon(KIcon("configure"));
+            m_configButton->setIcon(KIcon(QLatin1String( "configure" )));
             m_configButton->show();
             m_configButton->resize(m_configButton->effectiveSizeHint(Qt::MinimumSize,
                                                                      QSize(KIconLoader::SizeSmall,
@@ -586,7 +586,7 @@ void ResultItem::calculateSize(int sceneWidth)
     QString text = name();
 
     if (!description().isEmpty()) {
-        text.append("\n").append(description());
+        text.append(QLatin1Char( '\n' )).append(description());
     }
 
     QFontMetrics fm(font());

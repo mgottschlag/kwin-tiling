@@ -32,13 +32,13 @@
 AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, Qt::X11BypassWindowManagerHint)
 {
     QLabel *pixLabel = new QLabel( this );
-    pixLabel->setObjectName( "pixlabel" );
-    pixLabel->setPixmap(DesktopIcon("application-exit"));
+    pixLabel->setObjectName( QLatin1String( "pixlabel" ) );
+    pixLabel->setPixmap(DesktopIcon(QLatin1String( "application-exit" )));
 
     QLabel *greetLabel = new QLabel(i18n("<qt><nobr><b>Automatic Log Out</b></nobr></qt>"), this);
     QLabel *infoLabel = new QLabel(i18n("<qt>To prevent being logged out, resume using this session by moving the mouse or pressing a key.</qt>"), this);
 
-    mStatusLabel = new QLabel("<b> </b>", this);
+    mStatusLabel = new QLabel(QLatin1String( "<b> </b>" ), this);
     mStatusLabel->setAlignment(Qt::AlignCenter);
 
     QLabel *mProgressLabel = new QLabel(i18n("Time Remaining:"), this);
@@ -103,7 +103,7 @@ void AutoLogout::slotActivity()
 void AutoLogout::logout()
 {
     QAbstractEventDispatcher::instance()->unregisterTimers(this);
-    org::kde::KSMServerInterface ksmserver("org.kde.ksmserver", "/KSMServer", QDBusConnection::sessionBus());
+    org::kde::KSMServerInterface ksmserver(QLatin1String( "org.kde.ksmserver" ), QLatin1String( "/KSMServer" ), QDBusConnection::sessionBus());
     ksmserver.logout( 0, 0, 0 );
 }
 

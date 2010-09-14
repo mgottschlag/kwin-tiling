@@ -37,7 +37,7 @@ KSystemActivityDialog::KSystemActivityDialog(QWidget *parent)
     : KDialog(parent), m_processList(0)
 {
     setWindowTitle(i18n("System Activity"));
-    setWindowIcon(KIcon("utilities-system-monitor"));
+    setWindowIcon(KIcon(QLatin1String( "utilities-system-monitor" )));
     setButtons(0);
     setMainWidget(&m_processList);
     m_processList.setScriptingEnabled(true);

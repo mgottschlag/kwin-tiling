@@ -35,7 +35,7 @@ MatchItem::MatchItem(const QIcon &icon, const QString &name, const QString &desc
       m_desc(desc)
 {
     if (icon.isNull()) {
-        m_icon = KIcon("unknown");
+        m_icon = KIcon(QLatin1String( "unknown" ));
     } else {
         m_icon = icon;
     }
@@ -43,7 +43,7 @@ MatchItem::MatchItem(const QIcon &icon, const QString &name, const QString &desc
     setFlag(QGraphicsItem::ItemIsSelectable);
     setAcceptHoverEvents(true);
     resize(ITEM_SIZE, ITEM_SIZE);
-    setToolTip(QString("%1: %2").arg(name).arg(desc));
+    setToolTip(QString(QLatin1String( "%1: %2" )).arg(name).arg(desc));
 }
 
 MatchItem::~MatchItem()

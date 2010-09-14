@@ -34,6 +34,8 @@
 #include <NETRootInfo>
 #endif
 
+#include <QtCore/QStringBuilder> // % operator for QString
+
 #include "kworkspace/kdisplaymanager.h"
 
 #include <Plasma/AbstractRunner>
@@ -65,17 +67,17 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
     setMouseTracking(true);
     //setButtons(0);
     setWindowTitle(i18n("Run Command"));
-    setWindowIcon(KIcon("system-run"));
+    setWindowIcon(KIcon(QLatin1String( "system-run" )));
 
     QPalette pal = palette();
     pal.setColor(backgroundRole(), Qt::transparent);
     setPalette(pal);
 
     m_iconSvg = new Plasma::Svg(this);
-    m_iconSvg->setImagePath("widgets/configuration-icons");
+    m_iconSvg->setImagePath(QLatin1String( "widgets/configuration-icons" ));
 
     m_background = new Plasma::FrameSvg(this);
-    m_background->setImagePath("dialogs/krunner");
+    m_background->setImagePath(QLatin1String( "dialogs/krunner" ));
     setFreeFloating(KRunnerSettings::freeFloating());
 
     connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)),
@@ -99,7 +101,7 @@ KRunnerDialog::~KRunnerDialog()
         while (it.hasNext()) {
             it.next();
             //kDebug() << "saving" << "Screen" + QString::number(it.key()) << it.value();
-            cg.writeEntry("Screen" + QString::number(it.key()), it.value());
+            cg.writeEntry(QLatin1String( "Screen" ) % QString::number(it.key()), it.value());
         }
     }
 }
@@ -230,7 +232,7 @@ void KRunnerDialog::setFreeFloating(bool floating)
         const int numScreens = Kephal::ScreenUtils::numScreens();
         KConfigGroup cg(KGlobal::config(), "EdgePositions");
         for (int i = 0; i < numScreens; ++i) {
-            QPoint p = cg.readEntry("Screen" + QString::number(i), QPoint());
+            QPoint p = cg.readEntry(QLatin1String( "Screen" ) % QString::number(i), QPoint());
             if (!p.isNull()) {
                 QRect r = Kephal::ScreenUtils::screenGeometry(i);
                 m_screenPos.insert(i, QPoint(p.x(), r.top()));

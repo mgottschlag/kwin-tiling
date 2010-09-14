@@ -111,7 +111,7 @@ QsMatchView::QsMatchView(QWidget *parent)
     d->m_currentItem = 0;
 
     d->m_lineEdit = new KLineEdit(this);
-    new QShortcut(QKeySequence("Ctrl+V"), this, SLOT(pasteClipboard()));
+    new QShortcut(QKeySequence(QLatin1String( "Ctrl+V" )), this, SLOT(pasteClipboard()));
     d->m_compBox = new QuickSand::QsCompletionBox(this);
     d->m_compBox->setTabHandling(false);
 
@@ -135,8 +135,8 @@ QsMatchView::QsMatchView(QWidget *parent)
     d->m_arrowButton->setFocusPolicy(Qt::NoFocus);
     d->m_arrowButton->setArrowType(Qt::RightArrow);
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
-    QString buttonStyleSheet = QString("QToolButton { border-radius: 4px; border: 0px; background-color: transparent }");
-    buttonStyleSheet += QString("QToolButton:hover { border: 1px solid %1; }")
+    QString buttonStyleSheet = QLatin1String( "QToolButton { border-radius: 4px; border: 0px; background-color: transparent }");
+    buttonStyleSheet += QString(QLatin1String( "QToolButton:hover { border: 1px solid %1; }" ))
                             .arg(theme->color(Plasma::Theme::HighlightColor).name());
     d->m_arrowButton->setStyleSheet(buttonStyleSheet);
 
@@ -183,7 +183,7 @@ void QsMatchView::reset()
     d->m_compBox->hide();
     d->m_itemCountLabel->setText(QString());
 
-    QGraphicsPixmapItem *p = new QGraphicsPixmapItem(KIcon("edit-find").pixmap(MatchItem::ITEM_SIZE));
+    QGraphicsPixmapItem *p = new QGraphicsPixmapItem(KIcon(QLatin1String( "edit-find" )).pixmap(MatchItem::ITEM_SIZE));
     p->setPos(-MatchItem::ITEM_SIZE/2, LARGE_ICON_PADDING);
     d->m_scene->addItem(p);
     //Replace with a suitable message
@@ -231,7 +231,7 @@ void QsMatchView::setItems(const QList<MatchItem*> &items, bool popup, bool appe
             if (item->description().isEmpty()) {
                 description = item->name();
             } else {
-                description = QString("%1 (%2)").arg(item->name()).arg(item->description());
+                description = QString(QLatin1String( "%1 (%2)" )).arg(item->name()).arg(item->description());
             }
             QListWidgetItem *wi = new QListWidgetItem(item->icon(), description, d->m_compBox);
             d->m_compBox->addItem(wi);
@@ -416,7 +416,7 @@ void QsMatchView::showSelected()
 
     QGraphicsTextItem *name = new QGraphicsTextItem();
     //TODO: Modify QFont instead of using setHtml?
-    name->setHtml(QString("<b>%1</b>").arg(it->name()));
+    name->setHtml(QString(QLatin1String( "<b>%1</b>" )).arg(it->name()));
     name->setDefaultTextColor(c);
     QFontMetrics fm(name->font());
 
@@ -454,7 +454,7 @@ void QsMatchView::focusItem(int index)
         if (it->description().isEmpty()) {
             description = it->name();
         } else {
-            description = QString("%1 (%2)").arg(it->name()).arg(it->description());
+            description = QString(QLatin1String( "%1 (%2)" )).arg(it->name()).arg(it->description());
         }
         setDescriptionText(description);
         emit selectionChanged(it);
