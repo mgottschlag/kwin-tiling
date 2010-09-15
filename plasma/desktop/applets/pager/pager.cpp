@@ -668,8 +668,6 @@ void Pager::windowRemoved(WId id)
 {
     Q_UNUSED(id)
 
-    KWindowInfo info = KWindowSystem::windowInfo(id, NET::WMGeometry | NET::WMFrameExtents | NET::WMWindowType | NET::WMDesktop | NET::WMState | NET::XAWMState);
-
     if (!m_timer->isActive()) {
         m_timer->start(FAST_UPDATE_DELAY);
     }
@@ -678,8 +676,6 @@ void Pager::windowRemoved(WId id)
 void Pager::activeWindowChanged(WId id)
 {
     Q_UNUSED(id)
-
-    KWindowInfo info = KWindowSystem::windowInfo(id, NET::WMGeometry | NET::WMFrameExtents | NET::WMWindowType | NET::WMDesktop | NET::WMState | NET::XAWMState);
 
     if (!m_timer->isActive()) {
         m_timer->start(FAST_UPDATE_DELAY);
