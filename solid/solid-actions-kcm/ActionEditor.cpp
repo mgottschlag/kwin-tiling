@@ -30,7 +30,7 @@ ActionEditor::ActionEditor(QWidget *parent) : KDialog(parent)
     rootModel = new PredicateModel( topItem, this );
     // Prepare the dialog
     setInitialSize( QSize(600, 600) ); // Set a decent initial size
-    setModal( true );
+    // setModal( true );
     // Set up the interface
     ui.setupUi( mainWidget() );
     ui.TvPredicateTree->setHeaderHidden( true );
