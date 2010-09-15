@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=paste.ubuntu.com
+Type=Service
+
+X-KDE-ServiceTypes=Plasma/ShareProvider
+X-KDE-Library=plasma_engine_share
+X-KDE-PlasmaShareProvider-MimeType=text/*
+
+X-KDE-PluginInfo-Name=pasteubuntucom
+X-KDE-PluginInfo-Author=Harald Sitter
+X-KDE-PluginInfo-Email=apachelogger@ubuntu.com
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-Website=http://www.ubuntu.com
