@@ -14,8 +14,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2009-11-30</date>
-<releaseinfo>&kde; 4.4</releaseinfo>
+<date>2010-09-15</date>
+<releaseinfo>&kde; 4.5</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -47,6 +47,13 @@ action with a key or a combination of keys.</para>
 
 </sect2>
 
+<!-- missing
+<sect2 id="custom-shortcuts">
+<title>Custom Shortcuts</title>
+
+</sect2>
+-->
+
 <sect2 id="key-bindings-use-globapp">
 <title>Standard Shortcuts and Global Shortcuts</title>
 
@@ -74,8 +81,8 @@ key bindings dialog.</para>
 <sect3 id="key-bindings-standard">
 <title><guilabel>Standard Keyboard Shortcuts</guilabel> tab</title>
 <para>At the top of this dialog you see an input box, where you can
-search interactively for shortcut names (&eg; <quote>Copy</quote>) or combination of keys 
-(&eg; <quote><literal>Ctrl+C</literal></quote>) by typing them here.</para>
+search interactively for shortcut names (&eg; Copy) or combination of keys 
+(&eg; <quote><userinput>Ctrl+C</userinput></quote>) by typing them literally here.</para>
 <para>Below the search box you can see a list of key bindings, &ie; associations between actions 
 (&eg; Copy) shown in the <guilabel>Actions</guilabel> column and keys or combination of keys 
 (&eg; <keycombo action="simul">&Ctrl;<keycap>C</keycap> </keycombo>) shown in the 
@@ -87,9 +94,9 @@ search interactively for shortcut names (&eg; <quote>Copy</quote>) or combinatio
 <sect3 id="key-bindings-global">
 <title><guilabel>Global Keyboard Shortcuts</guilabel> tab</title>
 <para>At the top of this page is a drop down box which allows you
-to select a <guilabel>KDE component</guilabel> like KWin, Plasma Workspace &etc;
+to select a <guilabel>KDE component</guilabel> like KWin, Plasma Desktop &etc;
 The defined shortcuts for the selected component are displayed in the 
-<guilabel>Actions</guilabel> and <guilabel>Global</guilabel> column in the list view. 
+<guilabel>Action</guilabel> and <guilabel>Global</guilabel> column in the list view. 
 Click the <guilabel>File</guilabel> drop down box at the right to import/export a 
 Scheme, set all shortcuts to none and remove a component.</para>
 <para>This page has the same search box as the <guilabel>Standard Keyboard 
