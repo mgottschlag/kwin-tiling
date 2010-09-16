@@ -6,8 +6,8 @@
 ]>
 
 <article lang="&language;">
-<articleinfo>
 <title>Shortcuts</title>
+<articleinfo>
 <authorgroup>
 <author>&Mike.McBride; &Mike.McBride.mail;</author>
 <author>&Jost.Schenck; &Jost.Schenck.mail;</author>
@@ -86,7 +86,7 @@ search interactively for shortcut names (&eg; Copy) or combination of keys
 
 <sect3 id="key-bindings-global">
 <title><guilabel>Global Keyboard Shortcuts</guilabel> tab</title>
-<para>At the bottom of this page is a drop down box which allows you
+<para>At the top of this page is a drop down box which allows you
 to select a <guilabel>KDE component</guilabel> like KWin, Plasma Workspace &etc;
 The defined shortcuts for the selected component are displayed in the 
 <guilabel>Actions</guilabel> and <guilabel>Global</guilabel> column in the list view. 
