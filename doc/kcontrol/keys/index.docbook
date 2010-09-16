@@ -74,8 +74,8 @@ key bindings dialog.</para>
 <sect3 id="key-bindings-standard">
 <title><guilabel>Standard Keyboard Shortcuts</guilabel> tab</title>
 <para>At the top of this dialog you see an input box, where you can
-search interactively for shortcut names (&eg; Copy) or combination of keys 
-(&eg; <keycombo action="simul">&Ctrl;<keycap>C</keycap> </keycombo>) by typing them here.</para>
+search interactively for shortcut names (&eg; <quote>Copy</quote>) or combination of keys 
+(&eg; <quote><literal>Ctrl+C</literal></quote>) by typing them here.</para>
 <para>Below the search box you can see a list of key bindings, &ie; associations between actions 
 (&eg; Copy) shown in the <guilabel>Actions</guilabel> column and keys or combination of keys 
 (&eg; <keycombo action="simul">&Ctrl;<keycap>C</keycap> </keycombo>) shown in the 
