@@ -73,6 +73,7 @@ Comment[pt_BR]=Área de trabalho padrão
 Comment[sv]=Standardskrivbord
 Comment[uk]=Типова стільниця
 Comment[x-test]=xxDefault desktopxx
+Comment[zh_TW]=預設桌面
 Icon=user-desktop
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet,Plasma/Containment

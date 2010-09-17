@@ -55,6 +55,7 @@ Comment[pt_BR]=Um painel simples e linear
 Comment[sv]=En enkel linjär panel
 Comment[uk]=Проста лінійна панель
 Comment[x-test]=xxA simple linear panelxx
+Comment[zh_TW]=簡單的線性面板
 Icon=
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet,Plasma/Containment

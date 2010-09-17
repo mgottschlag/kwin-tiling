@@ -11,6 +11,7 @@ Name[pt_BR]=Localizar widgets
 Name[sv]=Sök efter grafiska komponenter
 Name[uk]=Пошук віджетів
 Name[x-test]=xxFind Widgetsxx
+Name[zh_TW]=尋找元件
 Type=Service
 ServiceTypes=Plasma/LayoutTemplate
 X-Plasma-Shell=plasma-desktop

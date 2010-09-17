@@ -8,6 +8,7 @@ Name[pt_BR]=Pesquisar e executar
 Name[sv]=Sök och starta
 Name[uk]=Пошук і запуск
 Name[x-test]=xxSearch and Launchxx
+Name[zh_TW]=搜尋並啟動
 Comment=Full screen application launcher with search interface
 Comment[en_GB]=Full screen application launcher with search interface
 Comment[ia]=Lanceator de application a schermo plen con interfacie de cerca
@@ -17,6 +18,7 @@ Comment[pt_BR]=Um lançador de aplicativos de tela cheia completo, com interface
 Comment[sv]=Startprogram med fullskärm och sökgränssnitt
 Comment[uk]=Повноекранний інструмент запуску програм з інтерфейсом пошуку
 Comment[x-test]=xxFull screen application launcher with search interfacexx
+Comment[zh_TW]=全畫面應用程式啟動器，有搜尋介面
 
 Icon=edit-find
 Type=Service

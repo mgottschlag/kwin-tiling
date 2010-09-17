@@ -1,6 +1,12 @@
 [Desktop Entry]
 Name=paste.ubuntu.com
+Name[en_GB]=paste.ubuntu.com
+Name[ia]=paste.ubuntu.com
+Name[pt]=paste.ubuntu.com
+Name[sv]=paste.ubuntu.com
+Name[uk]=paste.ubuntu.com
 Name[x-test]=xxpaste.ubuntu.comxx
+Name[zh_TW]=paste.ubuntu.com
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/ShareProvider

@@ -56,6 +56,7 @@ Comment[pt_BR]=Painel de widgets
 Comment[sv]=Grafisk instrumentpanelkomponent
 Comment[uk]=Панель приладів віджетів
 Comment[x-test]=xxWidget Dashboardxx
+Comment[zh_TW]=元件資訊看板
 Icon=user-desktop
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet,Plasma/Containment
