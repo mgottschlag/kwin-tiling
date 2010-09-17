@@ -34,6 +34,7 @@
 #include <QAction>
 #include <QLabel>
 #include <QPropertyAnimation>
+#include <QParallelAnimationGroup>
 
 #include <KColorScheme>
 #include <KPushButton>
@@ -56,7 +57,6 @@ public:
           autoDelete(false),
           collapsed(false),
           backgroundVisible(true),
-          image(0),
           actionsWidget(0),
           signalMapper(new QSignalMapper(q))
     {
@@ -80,17 +80,20 @@ public:
 
     QString message;
     Plasma::Label *messageLabel;
-    Plasma::IconWidget *image;
     Plasma::Label *title;
     Plasma::IconWidget *icon;
     QGraphicsLinearLayout *titleLayout;
     QGraphicsLinearLayout *mainLayout;
     QGraphicsLinearLayout *bodyLayout;
     QGraphicsWidget *body;
+    QGraphicsWidget *iconPlaceSmall;
+    QGraphicsWidget *iconPlaceBig;
     QGraphicsWidget *actionsWidget;
     QHash<QString, QString> actions;
     QStringList actionOrder;
     QPropertyAnimation *hideAnimation;
+    QPropertyAnimation *iconAnimation;
+    QParallelAnimationGroup *animationGroup;
 
     QSignalMapper *signalMapper;
 };
@@ -104,14 +107,16 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
 
-    QGraphicsWidget *iconPlace = new QGraphicsWidget(this);
-    iconPlace->setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
-    iconPlace->setMaximumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
-    d->icon = new Plasma::IconWidget(iconPlace);
-    d->icon->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+    d->iconPlaceSmall = new QGraphicsWidget(this);
+    d->iconPlaceSmall->setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+    d->iconPlaceSmall->setMaximumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+    d->icon = new Plasma::IconWidget(this);
+    d->icon->setAcceptHoverEvents(false);
+    d->icon->setAcceptedMouseButtons(Qt::NoButton);
 
     d->title = new Plasma::Label(this);
     d->title->setWordWrap(false);
+    d->title->setAlignment(Qt::AlignCenter);
 
     Plasma::IconWidget *closeButton = new Plasma::IconWidget(this);
     closeButton->setSvg("widgets/configuration-icons", "close");
@@ -121,15 +126,17 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
 
     d->titleLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     d->titleLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    d->titleLayout->addItem(iconPlace);
+    d->titleLayout->addItem(d->iconPlaceSmall);
     d->titleLayout->addItem(d->title);
     d->titleLayout->addItem(closeButton);
 
 
 
     d->body = new QGraphicsWidget(this);
+    d->body->setContentsMargins(0,0,0,0);
     d->body->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     d->bodyLayout = new QGraphicsLinearLayout(Qt::Horizontal, d->body);
+    d->bodyLayout->setContentsMargins(0,0,0,0);
 
     d->messageLabel = new Plasma::Label(d->body);
     d->messageLabel->nativeWidget()->setTextInteractionFlags(Qt::LinksAccessibleByMouse);
@@ -138,9 +145,15 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
             notification, SLOT(linkActivated(const QString &)));
     d->messageLabel->nativeWidget()->setTextFormat(Qt::RichText);
 
+    d->iconPlaceBig = new QGraphicsWidget(this);
+    d->iconPlaceBig->setMaximumWidth(KIconLoader::SizeHuge);
+    d->iconPlaceBig->setMinimumWidth(KIconLoader::SizeHuge);
+    d->iconPlaceBig->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    d->bodyLayout->addItem(d->iconPlaceBig);
     d->bodyLayout->addItem(d->messageLabel);
 
     d->mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
+    d->mainLayout->setSpacing(0);
     d->mainLayout->addItem(d->titleLayout);
     d->mainLayout->addItem(d->body);
 
@@ -158,7 +171,17 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     d->hideAnimation->setDuration(250);
     connect(d->hideAnimation, SIGNAL(finished()), this, SLOT(hideFinished()));
 
+    d->iconAnimation = new QPropertyAnimation(d->icon, "geometry", d->icon);
+    d->iconAnimation->setDuration(250);
+
+    d->animationGroup = new QParallelAnimationGroup(this);
+    d->animationGroup->addAnimation(d->hideAnimation);
+    d->animationGroup->addAnimation(d->iconAnimation);
+
     d->updateNotification();
+
+    d->mainLayout->activate();
+    updateGeometry();
 }
 
 NotificationWidget::~NotificationWidget()
@@ -178,13 +201,19 @@ void NotificationWidget::setCollapsed(bool collapse, bool animate)
         if (collapse) {
             d->hideAnimation->setStartValue(d->body->size().height());
             d->hideAnimation->setEndValue(0);
-            d->hideAnimation->start();
+
+            d->iconAnimation->setStartValue(d->icon->geometry());
+            d->iconAnimation->setEndValue(d->iconPlaceSmall->geometry());
+            d->animationGroup->start();
         } else {
             d->body->setVisible(true);
             d->hideAnimation->setStartValue(d->body->size().height());
             d->body->setMaximumHeight(-1);
             d->hideAnimation->setEndValue(d->body->effectiveSizeHint(Qt::PreferredSize).height());
-            d->hideAnimation->start();
+
+            d->iconAnimation->setStartValue(d->icon->geometry());
+            d->iconAnimation->setEndValue(d->iconPlaceSmall->geometry().united(d->iconPlaceBig->geometry()));
+            d->animationGroup->start();
         }
     } else {
         if (collapse) {
@@ -193,6 +222,7 @@ void NotificationWidget::setCollapsed(bool collapse, bool animate)
             d->body->setMaximumHeight(0);
             d->body->hide();
             setMinimumHeight(-1);
+            d->icon->setGeometry(d->iconPlaceSmall->geometry());
         } else {
             d->body->show();
             d->body->setMaximumHeight(-1);
@@ -202,6 +232,8 @@ void NotificationWidget::setCollapsed(bool collapse, bool animate)
             updateGeometry();
             d->mainLayout->invalidate();
             setMinimumHeight(sizeHint(Qt::PreferredSize, QSizeF()).height());
+
+            d->icon->setGeometry(d->iconPlaceSmall->geometry().united(d->iconPlaceBig->geometry()));
         }
     }
 
@@ -280,6 +312,10 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
 
     processed.replace('\n', "<br>");
     messageLabel->setText(processed);
+
+    if (!collapsed) {
+        icon->setGeometry(iconPlaceSmall->geometry().united(iconPlaceBig->geometry()));
+    }
 }
 
 void NotificationWidgetPrivate::completeDetach()
@@ -348,12 +384,8 @@ void NotificationWidgetPrivate::updateNotification()
     updateActions();
 
     if (!notification.data()->image().isNull()) {
-        if (!image) {
-            image = new Plasma::IconWidget(body);
-            image->setAcceptHoverEvents(false);
-            image->setAcceptedMouseButtons(Qt::NoButton);
-        }
-        image->setIcon(QPixmap::fromImage(notification.data()->image()));
+
+        icon->setIcon(QPixmap::fromImage(notification.data()->image()));
 
         QSize imageSize = notification.data()->image().size();
 
@@ -361,16 +393,8 @@ void NotificationWidgetPrivate::updateNotification()
             imageSize.scale(KIconLoader::SizeHuge, KIconLoader::SizeHuge, Qt::KeepAspectRatio);
         }
 
-        image->setMaximumIconSize(imageSize);
-        image->setMinimumWidth(imageSize.width());
-        image->setMaximumWidth(imageSize.width());
-        bodyLayout->insertItem(0, image);
-    } else {
-        bodyLayout->setContentsMargins(0, 0, 0, 0);
-        if (image) {
-            image->deleteLater();
-            image = 0;
-        }
+        icon->setMaximumIconSize(QSizeF(qMin((int)KIconLoader::SizeHuge, imageSize.width()),
+                                  qMin((int)KIconLoader::SizeHuge, imageSize.height())));
     }
 
 
