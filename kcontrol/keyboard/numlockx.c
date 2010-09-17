@@ -119,6 +119,7 @@ int xkb_set_off()
     return 1;
     }
 
+#ifdef NUMLOCKX_STANDALONE
 static
 int xkb_toggle()
     {
@@ -138,6 +139,7 @@ int xkb_toggle()
         XkbLockModifiers ( dpy, XkbUseCoreKbd, mask, mask);
     return 1;
     }
+#endif
 
 #endif
 
@@ -188,11 +190,14 @@ void xtest_set_off()
         xtest_change_numlock();
     }
 
+#ifdef NUMLOCKX_STANDALONE
 static
 void xtest_toggle()
     {
     xtest_change_numlock();
     }
+#endif
+
 #endif
 
 static
