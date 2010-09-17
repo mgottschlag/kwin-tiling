@@ -85,7 +85,6 @@ public:
     Plasma::IconWidget *icon;
     QGraphicsLinearLayout *titleLayout;
     QGraphicsLinearLayout *mainLayout;
-    QGraphicsLinearLayout *messageLayout;
     QGraphicsLinearLayout *bodyLayout;
     QGraphicsWidget *body;
     QGraphicsWidget *actionsWidget;
@@ -104,25 +103,34 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     setPreferredWidth(400);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
-    d->titleLayout = new QGraphicsLinearLayout(Qt::Horizontal);
-    d->titleLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    d->icon = new Plasma::IconWidget(this);
-    d->icon->setMaximumSize(d->icon->sizeFromIconSize(KIconLoader::SizeSmall));
-    d->icon->setMinimumSize(d->icon->maximumSize());
+
+    QGraphicsWidget *iconPlace = new QGraphicsWidget(this);
+    iconPlace->setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+    iconPlace->setMaximumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+    d->icon = new Plasma::IconWidget(iconPlace);
+    d->icon->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+
     d->title = new Plasma::Label(this);
+    d->title->setWordWrap(false);
+
     Plasma::IconWidget *closeButton = new Plasma::IconWidget(this);
-    d->titleLayout->addItem(d->icon);
-    d->titleLayout->addItem(d->title);
-    d->titleLayout->addItem(closeButton);
     closeButton->setSvg("widgets/configuration-icons", "close");
     closeButton->setMaximumSize(closeButton->sizeFromIconSize(KIconLoader::SizeSmall));
     closeButton->setMinimumSize(closeButton->maximumSize());
     connect(closeButton, SIGNAL(clicked()), notification, SLOT(deleteLater()));
 
+    d->titleLayout = new QGraphicsLinearLayout(Qt::Horizontal);
+    d->titleLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    d->titleLayout->addItem(iconPlace);
+    d->titleLayout->addItem(d->title);
+    d->titleLayout->addItem(closeButton);
+
+
+
     d->body = new QGraphicsWidget(this);
-    d->bodyLayout = new QGraphicsLinearLayout(Qt::Vertical, d->body);
-    d->mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
-    d->messageLayout = new QGraphicsLinearLayout(Qt::Horizontal);
+    d->body->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    d->bodyLayout = new QGraphicsLinearLayout(Qt::Horizontal, d->body);
+
     d->messageLabel = new Plasma::Label(d->body);
     d->messageLabel->nativeWidget()->setTextInteractionFlags(Qt::LinksAccessibleByMouse);
     d->messageLabel->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
@@ -130,10 +138,12 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
             notification, SLOT(linkActivated(const QString &)));
     d->messageLabel->nativeWidget()->setTextFormat(Qt::RichText);
 
+    d->bodyLayout->addItem(d->messageLabel);
+
+    d->mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
     d->mainLayout->addItem(d->titleLayout);
-    d->messageLayout->addItem(d->messageLabel);
-    d->bodyLayout->addItem(d->messageLayout);
     d->mainLayout->addItem(d->body);
+
 
     d->notification = notification;
 
@@ -164,6 +174,7 @@ void NotificationWidget::setCollapsed(bool collapse, bool animate)
 
     //use this weird way to make easy to animate
     if (animate) {
+        setMinimumHeight(-1);
         if (collapse) {
             d->hideAnimation->setStartValue(d->body->size().height());
             d->hideAnimation->setEndValue(0);
@@ -178,14 +189,23 @@ void NotificationWidget::setCollapsed(bool collapse, bool animate)
     } else {
         if (collapse) {
             //setMaximumHeight(d->titleLayout->geometry().bottom());
+            d->body->setMinimumHeight(0);
             d->body->setMaximumHeight(0);
+            d->body->hide();
+            setMinimumHeight(-1);
         } else {
+            d->body->show();
             d->body->setMaximumHeight(-1);
+            d->body->setMinimumHeight(-1);
             d->body->setMaximumHeight(d->body->effectiveSizeHint(Qt::PreferredSize).height());
+            d->body->setMinimumHeight(d->body->maximumHeight());
+            updateGeometry();
+            d->mainLayout->invalidate();
+            setMinimumHeight(sizeHint(Qt::PreferredSize, QSizeF()).height());
         }
     }
 
-    setFlag(QGraphicsItem::ItemClipsChildrenToShape);
+    d->body->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
 
     d->collapsed = collapse;
 }
@@ -198,6 +218,10 @@ qreal NotificationWidget::bodyHeight() const
 void NotificationWidget::setBodyHeight(const qreal height)
 {
     d->body->setMaximumHeight(height);
+    d->body->setMinimumHeight(height);
+    updateGeometry();
+    d->mainLayout->invalidate();
+    setMinimumHeight(sizeHint(Qt::PreferredSize, QSizeF()).height());
 }
 
 bool NotificationWidget::isCollapsed() const
@@ -294,7 +318,7 @@ void NotificationWidgetPrivate::updateActions()
         layout->addItem(button);
     }
 
-    messageLayout->addItem(actionsWidget);
+    bodyLayout->addItem(actionsWidget);
 }
 
 void NotificationWidgetPrivate::buttonClicked()
@@ -340,9 +364,9 @@ void NotificationWidgetPrivate::updateNotification()
         image->setMaximumIconSize(imageSize);
         image->setMinimumWidth(imageSize.width());
         image->setMaximumWidth(imageSize.width());
-        messageLayout->insertItem(0, image);
+        bodyLayout->insertItem(0, image);
     } else {
-        messageLayout->setContentsMargins(0, 0, 0, 0);
+        bodyLayout->setContentsMargins(0, 0, 0, 0);
         if (image) {
             image->deleteLater();
             image = 0;
