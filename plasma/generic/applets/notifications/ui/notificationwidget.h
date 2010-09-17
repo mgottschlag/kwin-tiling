@@ -37,7 +37,7 @@ class NotificationWidgetPrivate;
 class NotificationWidget : public Plasma::Frame
 {
     Q_OBJECT
-    Q_PROPERTY(qreal maximumHeight READ maximumHeight WRITE setMaximumHeight)
+    Q_PROPERTY(qreal bodyHeight READ bodyHeight WRITE setBodyHeight)
 
 public:
     NotificationWidget(Notification *notification, QGraphicsWidget *parent);
@@ -48,6 +48,9 @@ public:
 
     void setBackgroundVisible(bool visible);
     bool isBackgroundVisible() const;
+
+    qreal bodyHeight() const;
+    void setBodyHeight(const qreal height);
 
 protected:
     void paint(QPainter *painter,

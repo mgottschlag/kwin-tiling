@@ -104,11 +104,8 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     setPreferredWidth(400);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    d->hideAnimation = new QPropertyAnimation(this, "maximumHeight", this);
-    d->hideAnimation->setDuration(250);
-    connect(d->hideAnimation, SIGNAL(finished()), this, SLOT(hideFinished()));
-
     d->titleLayout = new QGraphicsLinearLayout(Qt::Horizontal);
+    d->titleLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     d->icon = new Plasma::IconWidget(this);
     d->icon->setMaximumSize(d->icon->sizeFromIconSize(KIconLoader::SizeSmall));
     d->icon->setMinimumSize(d->icon->maximumSize());
@@ -147,6 +144,10 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
     connect(notification, SIGNAL(destroyed()),
             this, SLOT(destroy()));
 
+    d->hideAnimation = new QPropertyAnimation(this, "bodyHeight", this);
+    d->hideAnimation->setDuration(250);
+    connect(d->hideAnimation, SIGNAL(finished()), this, SLOT(hideFinished()));
+
     d->updateNotification();
 }
 
@@ -164,26 +165,39 @@ void NotificationWidget::setCollapsed(bool collapse, bool animate)
     //use this weird way to make easy to animate
     if (animate) {
         if (collapse) {
-            d->hideAnimation->setStartValue(size().height());
-            d->hideAnimation->setEndValue(d->titleLayout->geometry().bottom());
+            d->hideAnimation->setStartValue(d->body->size().height());
+            d->hideAnimation->setEndValue(0);
             d->hideAnimation->start();
         } else {
             d->body->setVisible(true);
-            d->hideAnimation->setStartValue(size().height());
-            d->hideAnimation->setEndValue(sizeHint(Qt::PreferredSize, QSizeF()).height());
+            d->hideAnimation->setStartValue(d->body->size().height());
+            d->body->setMaximumHeight(-1);
+            d->hideAnimation->setEndValue(d->body->effectiveSizeHint(Qt::PreferredSize).height());
             d->hideAnimation->start();
         }
     } else {
         if (collapse) {
-            setMaximumHeight(d->titleLayout->geometry().bottom());
+            //setMaximumHeight(d->titleLayout->geometry().bottom());
+            d->body->setMaximumHeight(0);
         } else {
-            setMaximumHeight(sizeHint(Qt::PreferredSize, QSizeF()).height());
+            d->body->setMaximumHeight(-1);
+            d->body->setMaximumHeight(d->body->effectiveSizeHint(Qt::PreferredSize).height());
         }
     }
 
     setFlag(QGraphicsItem::ItemClipsChildrenToShape);
 
     d->collapsed = collapse;
+}
+
+qreal NotificationWidget::bodyHeight() const
+{
+    return d->body->maximumHeight();
+}
+
+void NotificationWidget::setBodyHeight(const qreal height)
+{
+    d->body->setMaximumHeight(height);
 }
 
 bool NotificationWidget::isCollapsed() const
