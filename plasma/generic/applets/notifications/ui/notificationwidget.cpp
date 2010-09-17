@@ -102,7 +102,7 @@ NotificationWidget::NotificationWidget(Notification *notification, QGraphicsWidg
 {
     setMinimumWidth(300);
     setPreferredWidth(400);
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     d->titleLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     d->titleLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
