@@ -67,6 +67,8 @@ TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet)
       m_collapsed(true),
       m_mainLayout(0),
       m_popupDialog(0),
+      m_updateTimer(0),
+      m_changes(TaskManager::TaskUnchanged),
       m_popupLostFocus(false)
 {
     setAcceptDrops(true);
@@ -202,12 +204,28 @@ void TaskGroupItem::updateTask(::TaskManager::TaskChanges changes)
         return;
     }
 
+    m_changes |= changes;
+
+    if (!m_updateTimer)  {
+        m_updateTimer = new QTimer(this);
+        m_updateTimer->setInterval(10);
+        m_updateTimer->setSingleShot(true);
+        connect(m_updateTimer, SIGNAL(timeout()), this, SLOT(checkUpdates()));
+    }
+
+    m_updateTimer->start();
+}
+
+void TaskGroupItem::checkUpdates()
+{
     bool needsUpdate = false;
     // task flags
     TaskFlags flags = m_flags;
     if (m_group.data()->isActive()) {
         flags |= TaskHasFocus;
-        emit activated(this);
+        if (!(m_flags & TaskHasFocus)) {
+            emit activated(this);
+        }
     } else {
         flags &= ~TaskHasFocus;
     }
@@ -230,22 +248,23 @@ void TaskGroupItem::updateTask(::TaskManager::TaskChanges changes)
     }
 
     // basic title and icon
-    if (changes & TaskManager::IconChanged) {
+    if (m_changes & TaskManager::IconChanged) {
         needsUpdate = true;
     }
 
-    if (changes & TaskManager::NameChanged) {
+    if (m_changes & TaskManager::NameChanged) {
         needsUpdate = true;
         textChanged();
     }
 
     if (Plasma::ToolTipManager::self()->isVisible(this) &&
-        (changes & TaskManager::IconChanged ||
-        changes & TaskManager::NameChanged ||
-        changes & TaskManager::DesktopChanged)) {
+        (m_changes & TaskManager::IconChanged ||
+         m_changes & TaskManager::NameChanged ||
+         m_changes & TaskManager::DesktopChanged)) {
         updateToolTip();
     }
 
+    m_changes = TaskManager::TaskUnchanged;
     if (needsUpdate) {
         //redraw
         queueUpdate();
@@ -293,18 +312,20 @@ void TaskGroupItem::updateToolTip()
 
 void TaskGroupItem::reload()
 {
-    QList <AbstractGroupableItem *> itemsToRemove = m_groupMembers.keys();
     if (!group()) {
         return;
     }
 
+    QHash<AbstractGroupableItem *, AbstractTaskItem*> itemsToRemove = m_groupMembers;
     foreach (AbstractGroupableItem *item, group()->members()) {
         if (!item) {
             kDebug() << "invalid Item";
             continue;
         }
 
-        itemsToRemove.removeAll(item);
+        if (itemsToRemove.contains(item)) {
+            itemsToRemove.insert(item, 0);
+        }
         itemAdded(item);
 
         if (item->itemType() == TaskManager::GroupItemType) {
@@ -315,12 +336,12 @@ void TaskGroupItem::reload()
         }
     }
 
-    foreach (AbstractGroupableItem * item, itemsToRemove) { //remove unused items
-        if (!item) {
-            kDebug() << "invalid Item";
-            continue;
+    QHashIterator<AbstractGroupableItem *, AbstractTaskItem*> it(itemsToRemove);
+    while (it.hasNext()) {
+        it.next();
+        if (it.key() && it.value()) {
+            itemRemoved(it.key());
         }
-        itemRemoved(item);
     }
 }
 
@@ -1204,38 +1225,40 @@ int TaskGroupItem::indexOf(AbstractTaskItem *task, bool descendGroups)
 
     foreach (AbstractGroupableItem *item, m_group.data()->members()) {
         AbstractTaskItem *taskItem = abstractTaskItem(item);
-        if (taskItem) {
-            if (task == taskItem) {
-                if (descendGroups) {
-                    TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
-                    if (groupItem) {
-                        int subIndex = groupItem->indexOf(groupItem->activeSubTask());
-                        if (subIndex == -1) {
-                            index += groupItem->count();
-                        } else {
-                            return index + subIndex;
-                        }
-                    }
-                }
+        if (!taskItem) {
+            continue;
+        }
 
-                return index;
-            }
-
+        if (task == taskItem) {
             if (descendGroups) {
                 TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
                 if (groupItem) {
-                    int subIndex = groupItem->indexOf(task);
+                    int subIndex = groupItem->indexOf(groupItem->activeSubTask());
                     if (subIndex == -1) {
                         index += groupItem->count();
                     } else {
-                        return index+subIndex;
+                        return index + subIndex;
                     }
+                }
+            }
+
+            return index;
+        }
+
+        if (descendGroups) {
+            TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
+            if (groupItem) {
+                int subIndex = groupItem->indexOf(task);
+                if (subIndex == -1) {
+                    index += groupItem->count();
                 } else {
-                    ++index;
+                    return index+subIndex;
                 }
             } else {
                 ++index;
             }
+        } else {
+            ++index;
         }
     }
     return -1;
@@ -1249,14 +1272,12 @@ AbstractTaskItem * TaskGroupItem::activeSubTask()
 
     foreach (AbstractGroupableItem *item, m_group.data()->members()) {
         AbstractTaskItem *taskItem = abstractTaskItem(item);
-        if (taskItem) {
-            if(taskItem->isActive()) {
-                TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
-                if (groupItem) {
-                    return groupItem->activeSubTask();
-                }
-                return taskItem;
+        if (taskItem && taskItem->isActive()) {
+            TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
+            if (groupItem) {
+                return groupItem->activeSubTask();
             }
+            return taskItem;
         }
     }
 
@@ -1346,17 +1367,16 @@ int TaskGroupItem::optimumCapacity()
 
 AbstractTaskItem* TaskGroupItem::abstractTaskItem(AbstractGroupableItem * item)
 {
-    AbstractTaskItem *abstractTaskItem = 0; 
-    if (m_groupMembers.contains(item)) {
-        abstractTaskItem = m_groupMembers.value(item);
-    } else {
-        foreach(AbstractTaskItem *taskItem, m_groupMembers) {
+    AbstractTaskItem *abstractTaskItem = m_groupMembers.value(item); 
+    if (!abstractTaskItem) {
+        foreach (AbstractTaskItem *taskItem, m_groupMembers) {
             TaskGroupItem *group = qobject_cast<TaskGroupItem*>(taskItem);
             if (group) {
                 abstractTaskItem = group->abstractTaskItem(item);
             }
         }
     }
+
     //kDebug() << "item not found";
     return abstractTaskItem;
 }

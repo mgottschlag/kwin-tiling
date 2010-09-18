@@ -156,6 +156,7 @@ protected slots:
     virtual void wheelEvent(QGraphicsSceneWheelEvent *event);
 
 private Q_SLOTS:
+    void checkUpdates();
     void constraintsChanged(Plasma::Constraints);
     void clearPopupLostFocus();
     void handleActiveWindowChanged(WId id);
@@ -211,6 +212,8 @@ private:
     bool m_collapsed;
     QGraphicsLinearLayout *m_mainLayout;
     Plasma::Dialog *m_popupDialog;
+    QTimer *m_updateTimer;
+    TaskManager::TaskChanges m_changes;
     bool m_popupLostFocus;
 };
 
