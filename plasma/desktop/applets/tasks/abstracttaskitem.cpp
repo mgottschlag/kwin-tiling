@@ -258,7 +258,6 @@ void AbstractTaskItem::fadeBackground(const QString &newBackground, int duration
     }
 }
 
-
 AbstractTaskItem::TaskFlags AbstractTaskItem::taskFlags() const
 {
     return m_flags;
@@ -302,8 +301,8 @@ void AbstractTaskItem::queueUpdate()
         return;
     }
 
-    if (m_lastUpdate.elapsed() < 200) {
-        m_updateTimerId = startTimer(200);
+    if (m_lastUpdate.elapsed() < 100) {
+        m_updateTimerId = startTimer(100);
         return;
     }
 
