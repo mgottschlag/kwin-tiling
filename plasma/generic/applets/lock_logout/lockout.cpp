@@ -301,37 +301,43 @@ void LockOut::configAccepted()
 
     if (m_showLockButton != ui.checkBox_lock->isChecked()) {
         m_showLockButton = !m_showLockButton;
-        cg.writeEntry("showLockButton", m_showLockButton);
         changed = true;
     }
 
     if (m_showSwitchUserButton != ui.checkBox_switchUser->isChecked()) {
         m_showSwitchUserButton = !m_showSwitchUserButton;
-        cg.writeEntry("showSwitchUserButton", m_showSwitchUserButton);
         changed = true;
     }
 
     if (m_showLogoutButton != ui.checkBox_logout->isChecked()) {
         m_showLogoutButton = !m_showLogoutButton;
-        cg.writeEntry("showLogoutButton", m_showLogoutButton);
         changed = true;
     }
 
     if (m_showSleepButton != ui.checkBox_sleep->isChecked()) {
         m_showSleepButton = !m_showSleepButton;
-        cg.writeEntry("showSleepButton", m_showSleepButton);
         changed = true;
     }
 
     if (m_showHibernateButton != ui.checkBox_hibernate->isChecked()) {
-        m_showHibernateButton = !m_showHibernateButton;
-        cg.writeEntry("showHibernateButton", m_showHibernateButton);
+        m_showHibernateButton = !m_showHibernateButton;     
         changed = true;
     }
 
     if (changed) {
         int oldButtonCount = m_visibleButtons;
         countButtons();
+	if(m_visibleButtons == 0) {
+	    configChanged(); // if no button was selected, reject configuration and reload previous
+	    return;
+	}
+	
+	cg.writeEntry("showHibernateButton", m_showHibernateButton);
+	cg.writeEntry("showSleepButton", m_showSleepButton);
+	cg.writeEntry("showLogoutButton", m_showLogoutButton);
+	cg.writeEntry("showSwitchUserButton", m_showSwitchUserButton);
+	cg.writeEntry("showLockButton", m_showLockButton);
+	
         showButtons();
         if (formFactor() != Plasma::Horizontal && formFactor() != Plasma::Vertical) {
             resize(size().width(), (size().height() / oldButtonCount) * m_visibleButtons);
