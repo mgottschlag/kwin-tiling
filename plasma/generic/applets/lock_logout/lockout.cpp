@@ -53,7 +53,7 @@ static const int MINBUTTONSIZE = 16;
 static const int MARGINSIZE = 1;
 
 LockOut::LockOut(QObject *parent, const QVariantList &args)
-    : Plasma::Applet(parent, args)
+    : Plasma::Applet(parent, args), m_iconLock(0), m_iconSwitchUser(0), m_iconLogout(0), m_iconSleep(0), m_iconHibernate(0)
 {
 #ifndef Q_OS_WIN
     setHasConfigurationInterface(true);
@@ -66,32 +66,6 @@ void LockOut::init()
     m_layout = new QGraphicsLinearLayout(this);
     m_layout->setContentsMargins(0,0,0,0);
     m_layout->setSpacing(0);
-
-    //Tooltip strings maybe should be different (eg. "Leave..."->"Logout")?
-    m_iconLock = new Plasma::IconWidget(KIcon("system-lock-screen"), "", this);
-    connect(m_iconLock, SIGNAL(clicked()), this, SLOT(clickLock()));
-    Plasma::ToolTipContent lockToolTip(i18n("Lock"),i18n("Lock the screen"),m_iconLock->icon());
-    Plasma::ToolTipManager::self()->setContent(m_iconLock, lockToolTip);
-
-    m_iconSwitchUser = new Plasma::IconWidget(KIcon("system-switch-user"), "", this);
-    connect(m_iconSwitchUser, SIGNAL(clicked()), this, SLOT(clickSwitchUser()));
-    Plasma::ToolTipContent switchUserToolTip(i18n("Switch user"),i18n("Start a parallel session as a different user"),m_iconSwitchUser->icon());
-    Plasma::ToolTipManager::self()->setContent(m_iconSwitchUser, switchUserToolTip);
-
-    m_iconLogout = new Plasma::IconWidget(KIcon("system-shutdown"), "", this);
-    connect(m_iconLogout, SIGNAL(clicked()), this, SLOT(clickLogout()));
-    Plasma::ToolTipContent logoutToolTip(i18n("Leave..."),i18n("Logout, turn off or restart the computer"),m_iconLogout->icon());
-    Plasma::ToolTipManager::self()->setContent(m_iconLogout, logoutToolTip);
-
-    m_iconSleep = new Plasma::IconWidget(KIcon("system-suspend"), "", this);
-    connect(m_iconSleep, SIGNAL(clicked()), this, SLOT(clickSleep()));
-    Plasma::ToolTipContent sleepToolTip(i18n("Suspend"),i18n("Sleep (suspend to RAM)"),m_iconSleep->icon());
-    Plasma::ToolTipManager::self()->setContent(m_iconSleep, sleepToolTip);
-
-    m_iconHibernate = new Plasma::IconWidget(KIcon("system-suspend-hibernate"), "", this);
-    connect(m_iconHibernate, SIGNAL(clicked()), this, SLOT(clickHibernate()));
-    Plasma::ToolTipContent hibernateToolTip(i18n("Hibernate"),i18n("Hibernate (suspend to disk)"),m_iconHibernate->icon());
-    Plasma::ToolTipManager::self()->setContent(m_iconHibernate, hibernateToolTip);
 
     configChanged();
 }
@@ -366,39 +340,79 @@ void LockOut::createConfigurationInterface(KConfigDialog *parent)
 
 void LockOut::showButtons()
 {
+    while(m_layout->count() > 0) {
+	m_layout->removeAt(0);
+    }
+    
+    // can this be done more beautiful?
+    if(m_iconLock){
+	delete m_iconLock;
+	m_iconLock = 0;
+    }
+    if(m_iconSwitchUser) {
+	delete m_iconSwitchUser;
+	m_iconSwitchUser = 0;
+    }
+    if(m_iconLogout) {
+	delete m_iconLogout;
+	m_iconLogout = 0;
+    }
+    if(m_iconSleep) { 
+	delete m_iconSleep;
+	m_iconSleep = 0;
+    }
+    if(m_iconHibernate) {
+	delete m_iconHibernate;
+	m_iconHibernate = 0;
+    }
+    
 #ifdef Q_OS_WIN
+    //Tooltip strings maybe should be different (eg. "Leave..."->"Logout")?
+    m_iconLock = new Plasma::IconWidget(KIcon("system-lock-screen"), "", this);
+    connect(m_iconLock, SIGNAL(clicked()), this, SLOT(clickLock()));
+    Plasma::ToolTipContent lockToolTip(i18n("Lock"),i18n("Lock the screen"),m_iconLock->icon());
+    Plasma::ToolTipManager::self()->setContent(m_iconLock, lockToolTip);
     m_layout->addItem(m_iconLock);
 #else
-    //make sure we don't add a button twice in the layout
-    //definitely not the best workaround...
-    m_layout->removeItem(m_iconLock);
-    m_layout->removeItem(m_iconSwitchUser);
-    m_layout->removeItem(m_iconLogout);
-    m_layout->removeItem(m_iconSleep);
-    m_layout->removeItem(m_iconHibernate);
 
-    m_iconLock->setVisible(m_showLockButton);
     if (m_showLockButton) {
+	//Tooltip strings maybe should be different (eg. "Leave..."->"Logout")?
+	m_iconLock = new Plasma::IconWidget(KIcon("system-lock-screen"), "", this);
+	connect(m_iconLock, SIGNAL(clicked()), this, SLOT(clickLock()));
+	Plasma::ToolTipContent lockToolTip(i18n("Lock"),i18n("Lock the screen"),m_iconLock->icon());
+	Plasma::ToolTipManager::self()->setContent(m_iconLock, lockToolTip);
         m_layout->addItem(m_iconLock);
     }
 
-    m_iconSwitchUser->setVisible(m_showSwitchUserButton);
     if (m_showSwitchUserButton) {
+	m_iconSwitchUser = new Plasma::IconWidget(KIcon("system-switch-user"), "", this);
+	connect(m_iconSwitchUser, SIGNAL(clicked()), this, SLOT(clickSwitchUser()));
+	Plasma::ToolTipContent switchUserToolTip(i18n("Switch user"),i18n("Start a parallel session as a different user"),m_iconSwitchUser->icon());
+	Plasma::ToolTipManager::self()->setContent(m_iconSwitchUser, switchUserToolTip);
         m_layout->addItem(m_iconSwitchUser);
     }
 
-    m_iconLogout->setVisible(m_showLogoutButton);
     if (m_showLogoutButton) {
+	m_iconLogout = new Plasma::IconWidget(KIcon("system-shutdown"), "", this);
+	connect(m_iconLogout, SIGNAL(clicked()), this, SLOT(clickLogout()));
+	Plasma::ToolTipContent logoutToolTip(i18n("Leave..."),i18n("Logout, turn off or restart the computer"),m_iconLogout->icon());
+	Plasma::ToolTipManager::self()->setContent(m_iconLogout, logoutToolTip);
         m_layout->addItem(m_iconLogout);
     }
 
-    m_iconSleep->setVisible(m_showSleepButton);
     if (m_showSleepButton) {
+	m_iconSleep = new Plasma::IconWidget(KIcon("system-suspend"), "", this);
+	connect(m_iconSleep, SIGNAL(clicked()), this, SLOT(clickSleep()));
+	Plasma::ToolTipContent sleepToolTip(i18n("Suspend"),i18n("Sleep (suspend to RAM)"),m_iconSleep->icon());
+	Plasma::ToolTipManager::self()->setContent(m_iconSleep, sleepToolTip);	
         m_layout->addItem(m_iconSleep);
     }
 
-    m_iconHibernate->setVisible(m_showHibernateButton);
     if (m_showHibernateButton) {
+	m_iconHibernate = new Plasma::IconWidget(KIcon("system-suspend-hibernate"), "", this);
+	connect(m_iconHibernate, SIGNAL(clicked()), this, SLOT(clickHibernate()));
+	Plasma::ToolTipContent hibernateToolTip(i18n("Hibernate"),i18n("Hibernate (suspend to disk)"),m_iconHibernate->icon());
+	Plasma::ToolTipManager::self()->setContent(m_iconHibernate, hibernateToolTip);
         m_layout->addItem(m_iconHibernate);
     }
 
