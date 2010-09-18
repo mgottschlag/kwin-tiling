@@ -69,6 +69,7 @@ public:
     void destroy();
     void buttonClicked();
     void hideFinished();
+    QRectF bigIconRect() const;
 
     NotificationWidget *q;
 
@@ -212,7 +213,7 @@ void NotificationWidget::setCollapsed(bool collapse, bool animate)
             d->hideAnimation->setEndValue(d->body->effectiveSizeHint(Qt::PreferredSize).height());
 
             d->iconAnimation->setStartValue(d->icon->geometry());
-            d->iconAnimation->setEndValue(d->iconPlaceSmall->geometry().united(d->iconPlaceBig->geometry()));
+            d->iconAnimation->setEndValue(d->bigIconRect());
             d->animationGroup->start();
         }
     } else {
@@ -233,7 +234,7 @@ void NotificationWidget::setCollapsed(bool collapse, bool animate)
             d->mainLayout->invalidate();
             setMinimumHeight(sizeHint(Qt::PreferredSize, QSizeF()).height());
 
-            d->icon->setGeometry(d->iconPlaceSmall->geometry().united(d->iconPlaceBig->geometry()));
+            d->icon->setGeometry(d->bigIconRect());
         }
     }
 
@@ -281,6 +282,13 @@ void NotificationWidget::paint(QPainter *painter,
     }
 }
 
+QRectF NotificationWidgetPrivate::bigIconRect() const
+{
+    QRectF rect = q->mapFromScene(iconPlaceSmall->mapToScene(iconPlaceSmall->boundingRect())).boundingRect();
+
+    return rect.united(q->mapFromScene(iconPlaceBig->mapToScene(iconPlaceBig->boundingRect())).boundingRect());
+}
+
 void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
                                                 const QString &summary, const QString &message)
 {
@@ -314,7 +322,7 @@ void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
     messageLabel->setText(processed);
 
     if (!collapsed) {
-        icon->setGeometry(iconPlaceSmall->geometry().united(iconPlaceBig->geometry()));
+        icon->setGeometry(bigIconRect());
     }
 }
 
