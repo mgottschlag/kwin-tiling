@@ -49,6 +49,14 @@ NMNetworkManager::NMNetworkManager(QObject * parent, const QVariantList &)
     d->nmState = d->iface.state();
     d->isWirelessHardwareEnabled = d->iface.wirelessHardwareEnabled();
     d->isWirelessEnabled = d->iface.wirelessEnabled();
+    QVariant netEnabled = d->iface.property("NetworkingEnabled");
+    if (!netEnabled.isNull()) {
+        d->isNetworkingEnabled = netEnabled.toBool();
+        d->NetworkingEnabledPropertyAvailable = true;
+    } else {
+        d->isNetworkingEnabled = !(NM_STATE_UNKNOWN == d->nmState || NM_STATE_ASLEEP == d->nmState);
+        d->NetworkingEnabledPropertyAvailable = false;
+    }
     connect( &d->iface, SIGNAL(DeviceAdded(const QDBusObjectPath &)),
                 this, SLOT(deviceAdded(const QDBusObjectPath &)));
     connect( &d->iface, SIGNAL(DeviceRemoved(const QDBusObjectPath &)),
@@ -138,7 +146,7 @@ QObject *NMNetworkManager::createNetworkInterface(const QString &uni)
 bool NMNetworkManager::isNetworkingEnabled() const
 {
     Q_D(const NMNetworkManager);
-    return !(NM_STATE_UNKNOWN == d->nmState || NM_STATE_ASLEEP == d->nmState);
+    return d->isNetworkingEnabled;
 }
 
 bool NMNetworkManager::isWirelessEnabled() const
@@ -182,7 +190,14 @@ void NMNetworkManager::deactivateConnection( const QString & activeConnectionPat
 void NMNetworkManager::setNetworkingEnabled(bool enabled)
 {
     Q_D(NMNetworkManager);
-    d->iface.Sleep(!enabled);
+
+    QDBusPendingReply<> reply = d->iface.Enable(enabled);
+    reply.waitForFinished();
+    if (reply.isError()) {
+        kDebug(1441) << "Enable() D-Bus method not available:" << reply.error();
+        kDebug(1441) << "Calling Sleep() instead";
+        d->iface.Sleep(!enabled);
+    }
 }
 
 void NMNetworkManager::setWirelessEnabled(bool enabled)
@@ -211,9 +226,19 @@ void NMNetworkManager::stateChanged(uint state)
 {
     Q_D(NMNetworkManager);
     if ( d->nmState != state ) {
+
+        // When "NetworkingEnabled" property is not available, set isNetworkingEnabled flag and emit signal here.
+        // It has to be done before emitting statusChanged(), else it would cause infinite status switching.
+        if (!d->NetworkingEnabledPropertyAvailable) {
+            d->isNetworkingEnabled = !(NM_STATE_UNKNOWN == state || NM_STATE_ASLEEP == state);
+            emit networkingEnabledChanged(d->isNetworkingEnabled);
+        }
+
+        // set new state
         d->nmState = state;
         emit statusChanged( convertNMState( state ) );
     }
+
 }
 
 void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
@@ -221,6 +246,7 @@ void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
     Q_D(NMNetworkManager);
     kDebug(1441) << properties.keys();
     QLatin1String activeConnKey("ActiveConnections");
+    QLatin1String netEnabledKey("NetworkingEnabled");
     QLatin1String wifiHwKey("WirelessHardwareEnabled");
     QLatin1String wifiEnabledKey("WirelessEnabled");
     QVariantMap::const_iterator it = properties.find(activeConnKey);
@@ -247,6 +273,12 @@ void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
         d->isWirelessEnabled = it->toBool();
         kDebug(1441) << wifiEnabledKey << d->isWirelessEnabled;
         emit wirelessEnabledChanged(d->isWirelessEnabled);
+    }
+    it = properties.find(netEnabledKey);
+    if ( it != properties.end()) {
+        d->isNetworkingEnabled = it->toBool();
+        kDebug(1441) << netEnabledKey << d->isNetworkingEnabled;
+        emit networkingEnabledChanged(d->isNetworkingEnabled);
     }
 }
 

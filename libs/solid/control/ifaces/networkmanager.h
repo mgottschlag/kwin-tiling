@@ -164,6 +164,11 @@ namespace Ifaces
         void wirelessHardwareEnabledChanged(bool enabled);
 
         /**
+         * This signal is emitted when the status of overall networking changed
+         */
+        void networkingEnabledChanged(bool enabled);
+
+        /**
          * This signal is emitted when the set of active connections changes
          */
         void activeConnectionsChanged();

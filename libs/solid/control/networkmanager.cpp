@@ -56,6 +56,8 @@ Solid::Control::NetworkManagerPrivate::NetworkManagerPrivate() : m_invalidDevice
                 this, SIGNAL(wirelessEnabledChanged(bool)));
         connect(managerBackend(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
                 this, SIGNAL(wirelessHardwareEnabledChanged(bool)));
+        connect(managerBackend(), SIGNAL(networkingEnabledChanged(bool)),
+                this, SIGNAL(networkingEnabledChanged(bool)));
         connect(managerBackend(), SIGNAL(activeConnectionsChanged()),
                 this, SIGNAL(activeConnectionsChanged()));
     }
