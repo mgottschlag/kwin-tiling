@@ -35,7 +35,7 @@ class KeyboardConfig;
 class KDE_EXPORT KeyboardDaemon : public KDEDModule
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.kde.Keyboard")
+    Q_CLASSINFO("D-Bus Interface", "org.kde.KeyboardLayouts")
 
     KActionCollection *actionCollection;
     XInputEventNotifier* xEventNotifier;

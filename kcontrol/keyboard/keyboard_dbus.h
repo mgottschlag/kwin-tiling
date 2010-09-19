@@ -20,8 +20,8 @@
 #ifndef KEYBOARD_DBUS_H_
 #define KEYBOARD_DBUS_H_
 
-#define KEYBOARD_DBUS_SERVICE_NAME "org.kde.KXKB"
-#define KEYBOARD_DBUS_OBJECT_PATH "/kxkb"
+#define KEYBOARD_DBUS_SERVICE_NAME "org.kde.keyboard"
+#define KEYBOARD_DBUS_OBJECT_PATH "/Layouts"
 #define KEYBOARD_DBUS_CONFIG_RELOAD_MESSAGE "reloadConfig"
 
 #endif /* KEYBOARD_DBUS_H_ */
