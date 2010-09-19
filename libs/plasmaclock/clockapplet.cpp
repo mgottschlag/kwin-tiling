@@ -192,7 +192,7 @@ void ClockApplet::speakTime(const QTime &time)
         if (!QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.kttsd")) {
             QString error;
             if (KToolInvocation::startServiceByDesktopName("kttsd", QStringList(), &error)) {
-                KPassivePopup::message(i18n("Starting KTTSD Failed"), error, static_cast<QWidget *>(0));
+                KPassivePopup::message(i18n("Starting Jovie Text-to-Speech Service Failed"), error, static_cast<QWidget *>(0));
                 return;
             }
         }
