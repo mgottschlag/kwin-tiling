@@ -59,9 +59,11 @@ AbstractIcon::~AbstractIcon()
 void AbstractIcon::resizeEvent(QGraphicsSceneResizeEvent *)
 {
     m_background->resizeFrame(size());
+    qreal ml, mt, mr, mb;
+    m_background->getMargins(ml, mt, mr, mb);
     qreal l, t, r, b;
-    m_background->getMargins(l, t, r, b);
-    setContentsMargins(l, t, r, b);
+    getContentsMargins(&l, &t, &r, &b);
+    setContentsMargins(qMax(l, ml), qMax(t, mt), qMax(r, mr), qMax(b, mb));
 }
 
 QSizeF AbstractIcon::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
@@ -221,7 +223,6 @@ void AbstractIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
     QRectF textRect(rect.x(), rect.y(), width, height - m_iconHeight - 2);
     QRect iconRect(rect.x() + qMax(0, (width / 2) - (m_iconHeight / 2)), textRect.bottom() + 2, m_iconHeight, m_iconHeight);
-    //QRectF textRect(rect.x(), iconRect.bottom() + 2, width, height - iconRect.height() - 2);
 
     painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
     painter->setFont(font());
