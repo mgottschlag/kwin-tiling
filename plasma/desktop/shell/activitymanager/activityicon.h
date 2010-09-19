@@ -24,6 +24,7 @@
 
 #include <KIcon>
 
+class QAbstractAnimation;
 class Activity;
 
 class ActivityIcon : public Plasma::AbstractIcon
@@ -47,6 +48,10 @@ class ActivityIcon : public Plasma::AbstractIcon
 
     private Q_SLOTS:
         void repaint();
+        void showRemovalConfirmation();
+        void makeInlineWidgetVisible();
+        void cancelRemoval();
+        void startInlineAnim();
 
     private:
         QString m_id;
@@ -55,6 +60,8 @@ class ActivityIcon : public Plasma::AbstractIcon
         KIcon m_playIcon;
         bool m_removable : 1;
         Activity *m_activity;
+        QWeakPointer<QGraphicsWidget> m_inlineWidget;
+        QAbstractAnimation *m_inlineWidgetAnim;
 };
 
 #endif //APPLETICON_H

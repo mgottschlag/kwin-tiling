@@ -30,7 +30,6 @@
 
 #include <KConfig>
 #include <KIcon>
-#include <KMessageBox>
 #include <KStandardDirs>
 #include <KWindowSystem>
 #include <kephal/screens.h>
@@ -109,18 +108,13 @@ bool Activity::isRunning()
 
 void Activity::destroy()
 {
-    if (KMessageBox::warningContinueCancel(
-                0, //FIXME pass a view in
-                i18nc("%1 is the name of the activity", "Do you really want to remove %1?", name()),
-                i18nc("@title:window %1 is the name of the activity", "Remove %1", name()), KStandardGuiItem::remove()) == KMessageBox::Continue) {
-        KActivityController().removeActivity(m_id);
-        foreach (Plasma::Containment *c, m_containments) {
-            c->destroy(false);
-        }
-
-        const QString name = "activities/" + m_id;
-        QFile::remove(KStandardDirs::locateLocal("appdata", name));
+    KActivityController().removeActivity(m_id);
+    foreach (Plasma::Containment *c, m_containments) {
+        c->destroy(false);
     }
+
+    const QString name = "activities/" + m_id;
+    QFile::remove(KStandardDirs::locateLocal("appdata", name));
 }
 
 Plasma::Containment* Activity::containmentForScreen(int screen, int desktop)

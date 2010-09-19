@@ -23,6 +23,7 @@
 #include "desktopcorona.h"
 #include "plasmaapp.h"
 
+#include <QGraphicsLinearLayout>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QCursor>
@@ -30,12 +31,16 @@
 #include <KIconLoader>
 #include <KIcon>
 
+#include <Plasma/Label>
+#include <Plasma/PushButton>
+
 ActivityIcon::ActivityIcon(const QString &id)
     :AbstractIcon(0),
     m_removeIcon("edit-delete"),
     m_stopIcon("media-playback-stop"),
     m_playIcon("media-playback-start"),
-    m_removable(true)
+    m_removable(true),
+    m_inlineWidgetAnim(0)
 {
     DesktopCorona *c = qobject_cast<DesktopCorona*>(PlasmaApp::self()->corona());
     m_activity = c->activity(id);
@@ -69,6 +74,9 @@ void ActivityIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         return;
     }
 
+    qreal l, t, r, b;
+    getContentsMargins(&l, &t, &r, &b);
+    //kDebug() << preferredSize() << geometry() << contentsRect() << l << t << r << b;
     const QRectF rect = contentsRect();
     QSize cornerIconSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
     qreal iconX = rect.x() + qMax<double>(0.0, (rect.width() - iconSize()) / 2.0); //icon's centered
@@ -116,12 +124,130 @@ void ActivityIcon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         if (m_activity->isRunning()) {
             m_activity->close();
         } else {
-            QTimer::singleShot(0, m_activity, SLOT(destroy()));
+            showRemovalConfirmation();
         }
         return;
     }
 
     AbstractIcon::mouseReleaseEvent(event);
+}
+
+class MakeRoomAnimation : public QAbstractAnimation
+{
+public:
+    MakeRoomAnimation(ActivityIcon *icon, qreal addedWidth, QObject *parent)
+        : QAbstractAnimation(parent),
+          m_icon(icon),
+          m_addWidth(addedWidth)
+    {
+        qreal l, t, b;
+        m_icon->getContentsMargins(&l, &t, &m_startRMargin, &b);
+        m_startWidth = icon->contentsRect().width();
+    }
+
+    int duration() const
+    {
+        return 100;
+    }
+
+    void updateCurrentTime(int currentTime)
+    {
+        qreal delta = m_addWidth * (currentTime / 100.0);
+        qreal l, t, r, b;
+        m_icon->getContentsMargins(&l, &t, &r, &b);
+        if (currentTime == 0 && direction() == Backward) {
+            m_icon->setContentsMargins(l, t, m_startRMargin, b);
+            m_icon->setMinimumSize(0, 0);
+            m_icon->setPreferredSize(l + m_startRMargin + m_startWidth, m_icon->size().height());
+            m_icon->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+        } else {
+            QSize s(m_startWidth + l + m_startRMargin + delta, m_icon->size().height());
+            m_icon->setContentsMargins(l, t, m_startRMargin + delta, b);
+            m_icon->setMaximumSize(s);
+            m_icon->setMinimumSize(s);
+            m_icon->setPreferredSize(s);
+        }
+
+        m_icon->getContentsMargins(&l, &t, &r, &b);
+        //kDebug() << currentTime << m_startWidth << m_addWidth << delta << m_icon->size() << l << t << r << b;
+    }
+
+private:
+    ActivityIcon *m_icon;
+    qreal m_startWidth;
+    qreal m_startRMargin;
+    qreal m_addWidth;
+};
+
+void ActivityIcon::showRemovalConfirmation()
+{
+    QGraphicsWidget *w = new QGraphicsWidget(this);
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(w);
+    layout->setOrientation(Qt::Vertical);
+    layout->setContentsMargins(0, 0, 0, 0);
+    w->setLayout(layout);
+
+    Plasma::Label *l = new Plasma::Label(w);
+    l->setText(i18n("Remove activity?"));
+    l->setAlignment(Qt::AlignCenter);
+    layout->addItem(l);
+
+    Plasma::PushButton *p = new Plasma::PushButton(w);
+    p->setText(i18n("Confirm Removal"));
+    layout->addItem(p);
+    connect(p, SIGNAL(clicked()), m_activity, SLOT(destroy()));
+
+    p = new Plasma::PushButton(w);
+    p->setText(i18n("Cancel Removal"));
+    layout->addItem(p);
+    connect(p, SIGNAL(clicked()), this, SLOT(cancelRemoval()));
+
+    w->setMaximumSize(QSize(0, size().height()));
+    w->adjustSize();
+    w->setPos(contentsRect().topRight() + QPoint(4, 0));
+
+    m_inlineWidget = w;
+    QTimer::singleShot(0, this, SLOT(startInlineAnim()));
+}
+
+void ActivityIcon::startInlineAnim()
+{
+    QGraphicsWidget * w = m_inlineWidget.data();
+    //kDebug() << "Booh yah!" << w;
+    if (!w) {
+        return;
+    }
+
+    //kDebug() << w->preferredSize() << w->layout()->preferredSize();
+    if (!m_inlineWidgetAnim) {
+        m_inlineWidgetAnim = new MakeRoomAnimation(this, w->layout()->preferredSize().width() + 4, this);
+        connect(m_inlineWidgetAnim, SIGNAL(finished()), this, SLOT(makeInlineWidgetVisible()));
+    }
+
+    m_inlineWidgetAnim->start();
+}
+
+void ActivityIcon::cancelRemoval()
+{
+    if (m_inlineWidget) {
+        m_inlineWidget.data()->deleteLater();
+        m_inlineWidget.data()->hide();
+    }
+
+    if (m_inlineWidgetAnim) {
+        m_inlineWidgetAnim->setDirection(QAbstractAnimation::Backward);
+        if (m_inlineWidgetAnim->state() != QAbstractAnimation::Running) {
+            m_inlineWidgetAnim->start(QAbstractAnimation::DeleteWhenStopped);
+            m_inlineWidgetAnim = 0;
+        }
+    }
+}
+
+void ActivityIcon::makeInlineWidgetVisible()
+{
+    if (m_inlineWidget) {
+        m_inlineWidget.data()->show();
+    }
 }
 
 void ActivityIcon::repaint()
