@@ -56,6 +56,9 @@ QStringList SystemMonitorEngine::sources() const
 
 bool SystemMonitorEngine::sourceRequestEvent(const QString &name)
 {
+    // NB: do not follow this example in your own data engines!
+    // This is kept for backwards compatilibility.
+    // Visualizations should instead listen to sourceAdded()
     if (m_sensors.isEmpty()) {
         // we don't have our first data yet, so let's trust the requester, at least fo rnow
         // when we get our list of sensors later, then we'll know for sure and remove
@@ -151,6 +154,15 @@ void SystemMonitorEngine::answerReceived(int id, const QList<QByteArray> &answer
             const QString newSensor = newSensorInfo[0];
             sensors.insert(newSensor);
             m_sensors.append(newSensor);
+            {
+                // HACK: for backwards compability
+                // in case this source was created in sourceRequestEvent, stop it being
+                // automagically removed when disconnected from
+                Plasma::DataContainer *s = containerForSource( newSensor );
+                if ( s ) {
+                    disconnect( s, SIGNAL(becameUnused(QString)), this, SLOT(removeSource(QString)) );
+                }
+            }
             DataEngine::Data d;
             d.insert("value", QVariant());
             d.insert("type", newSensorInfo[1]);
