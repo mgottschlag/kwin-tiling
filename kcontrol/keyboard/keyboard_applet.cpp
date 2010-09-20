@@ -20,6 +20,7 @@
 
 #include <kglobalsettings.h>
 #include <plasma/tooltipmanager.h>
+#include <ktoolinvocation.h>
 
 #include <QtGui/QPainter>
 #include <QtGui/QPixmap>
@@ -181,8 +182,15 @@ void KeyboardApplet::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 
 void KeyboardApplet::actionTriggered(QAction* action)
 {
-//	kDebug() << "actionTriggerd" << action->data().toString();
-	X11Helper::setLayout(LayoutUnit(action->data().toString()));
+	QString data = action->data().toString();
+	if( data == "config" ) {
+		QStringList args;
+		args << "kcm_keyboard";
+		KToolInvocation::kdeinitExec("kcmshell4", args);
+	}
+	else {
+		X11Helper::setLayout(LayoutUnit(action->data().toString()));
+	}
 }
 
 QList<QAction*> KeyboardApplet::contextualActions()
@@ -192,14 +200,24 @@ QList<QAction*> KeyboardApplet::contextualActions()
 		delete actionGroup;
 	}
 	actionGroup = new QActionGroup(this);
+
+	X11Helper::getLayoutsList(); //UGLY: seems to be more reliable with extra call
 	QList<LayoutUnit> layouts = X11Helper::getLayoutsList();
-	foreach(const LayoutUnit& layout, layouts) {
-		QAction* action;
-		QString menuText = Flags::getLongText(layout, rules);
-		action = new QAction(getFlag(layout.layout), menuText, actionGroup);
-		action->setData(layout.toString());
+	foreach(const LayoutUnit& layoutUnit, layouts) {
+		QString shortText = Flags::getShortText(layoutUnit, *keyboardConfig);
+		QString longText = Flags::getLongText(layoutUnit, rules);
+		QString menuText = i18nc("short layout label - full layout name", "%1 - %2", shortText, longText);
+//		QString menuText = longText;
+		QAction* action = new QAction(getFlag(layoutUnit.layout), menuText, actionGroup);
+		action->setData(layoutUnit.toString());
 		actionGroup->addAction(action);
 	}
+	QAction* separator = new QAction(actionGroup);
+	separator->setSeparator(true);
+	actionGroup->addAction(separator);
+	QAction* configAction = new QAction(i18n("Configure..."), actionGroup);
+	actionGroup->addAction(configAction);
+	configAction->setData("config");
 	connect(actionGroup, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
 	return actionGroup->actions();
 }

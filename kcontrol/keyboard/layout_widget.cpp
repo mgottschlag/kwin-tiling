@@ -204,11 +204,16 @@ void LayoutTrayIcon::toggleLayout()
 	X11Helper::switchToNextLayout();
 }
 
+const QIcon LayoutTrayIcon::getFlag(const QString& layout) const
+{
+	return keyboardConfig->showFlag ? flags->getIcon(layout) : QIcon();
+}
+
+// TODO: next two methods duplicated in keyboard_applet.cpp
 void LayoutTrayIcon::actionTriggered(QAction* action)
 {
 	QString data = action->data().toString();
 	if( data == "config" ) {
-//		KRun::runCommand("kcmshell4 kcm_keyboard")
 		QStringList args;
 		args << "kcm_keyboard";
 		KToolInvocation::kdeinitExec("kcmshell4", args);
@@ -216,11 +221,6 @@ void LayoutTrayIcon::actionTriggered(QAction* action)
 	else {
 		X11Helper::setLayout(LayoutUnit(action->data().toString()));
 	}
-}
-
-const QIcon LayoutTrayIcon::getFlag(const QString& layout) const
-{
-	return keyboardConfig->showFlag ? flags->getIcon(layout) : QIcon();
 }
 
 QList<QAction*> LayoutTrayIcon::contextualActions()
