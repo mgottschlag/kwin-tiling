@@ -25,6 +25,8 @@
 #include <kstatusnotifieritem.h>
 #include <klocalizedstring.h>
 #include <kmenu.h>
+#include <ktoolinvocation.h>
+
 #include <QtGui/QAction>
 #include <QtGui/QMenu>
 #include "xkb_rules.h"
@@ -204,7 +206,16 @@ void LayoutTrayIcon::toggleLayout()
 
 void LayoutTrayIcon::actionTriggered(QAction* action)
 {
-	X11Helper::setLayout(LayoutUnit(action->data().toString()));
+	QString data = action->data().toString();
+	if( data == "config" ) {
+//		KRun::runCommand("kcmshell4 kcm_keyboard")
+		QStringList args;
+		args << "kcm_keyboard";
+		KToolInvocation::kdeinitExec("kcmshell4", args);
+	}
+	else {
+		X11Helper::setLayout(LayoutUnit(action->data().toString()));
+	}
 }
 
 const QIcon LayoutTrayIcon::getFlag(const QString& layout) const
@@ -225,12 +236,18 @@ QList<QAction*> LayoutTrayIcon::contextualActions()
 	foreach(const LayoutUnit& layoutUnit, layouts) {
 		QString shortText = Flags::getShortText(layoutUnit, *keyboardConfig);
 		QString longText = Flags::getLongText(layoutUnit, rules);
-//		QString menuText = i18nc("map name - full layout text", "%1 - %2", shortText, longText);
-		QString menuText = longText;
+		QString menuText = i18nc("short layout label - full layout name", "%1 - %2", shortText, longText);
+//		QString menuText = longText;
 		QAction* action = new QAction(getFlag(layoutUnit.layout), menuText, actionGroup);
 		action->setData(layoutUnit.toString());
 		actionGroup->addAction(action);
 	}
+	QAction* separator = new QAction(actionGroup);
+	separator->setSeparator(true);
+	actionGroup->addAction(separator);
+	QAction* configAction = new QAction(i18n("Configure..."), actionGroup);
+	actionGroup->addAction(configAction);
+	configAction->setData("config");
 	connect(actionGroup, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
 	return actionGroup->actions();
 }
