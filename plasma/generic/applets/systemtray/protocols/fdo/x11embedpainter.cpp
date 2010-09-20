@@ -122,8 +122,10 @@ void X11EmbedPainter::performUpdates()
         containersByParent.remove(parent);
 
         QRegion paintRegion;
+        QHash<X11EmbedContainer *, QRect> containerRects;
         foreach (X11EmbedContainer *container, containers) {
             QRect rect = QRect(container->mapTo(parent, QPoint(0, 0)), container->size());
+            containerRects.insert(container, rect);
             paintRegion = paintRegion.united(rect);
         }
 
@@ -131,8 +133,7 @@ void X11EmbedPainter::performUpdates()
         parent->render(&background, paintRegion.boundingRect().topLeft(), paintRegion);
 
         foreach (X11EmbedContainer *container, containers) {
-            QRect rect = QRect(container->mapTo(parent, QPoint(0, 0)), container->size());
-            container->setBackgroundPixmap(background.copy(rect));
+            container->setBackgroundPixmap(background.copy(containerRects.value(container)));
         }
     }
 
