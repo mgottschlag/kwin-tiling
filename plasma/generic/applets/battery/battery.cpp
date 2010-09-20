@@ -124,6 +124,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     m_acAnimation->setStartValue((qreal)(0.0));
     m_acAnimation->setEndValue((qreal)(1.0));
     m_acAnimation->setEasingCurve(QEasingCurve::OutBack);
+    m_acAnimation->setDirection(QAbstractAnimation::Backward);
     connect(m_acAnimation, SIGNAL(finished()), this, SLOT(updateBattery()));
 }
 
@@ -160,6 +161,9 @@ void Battery::init()
         dataUpdated(battery_source, dataEngine("powermanagement")->query(battery_source));
     }
     m_numOfBattery = battery_sources.size();
+    if (m_numOfBattery == 0) {
+        m_acAlpha = 1;
+    }
 
     dataUpdated("AC Adapter", dataEngine("powermanagement")->query("AC Adapter"));
 
@@ -248,7 +252,7 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
         }
     }
 
-    if (constraints & (Plasma::FormFactorConstraint | Plasma::SizeConstraint)) {
+    if (constraints & Plasma::FormFactorConstraint || constraints & Plasma::SizeConstraint) {
         int minWidth = KIconLoader::SizeSmall;
         int minHeight = KIconLoader::SizeSmall;
         bool showToolTips = false;
@@ -753,8 +757,16 @@ void Battery::showLabel(bool show)
 
 void Battery::showAcAdapter(bool show)
 {
-    m_acAnimation->setDirection(show ? QAbstractAnimation::Forward
-                                     : QAbstractAnimation::Backward);
+    if (m_numOfBattery == 0) {
+        return;
+    }
+
+    QAbstractAnimation::Direction d = show ? QAbstractAnimation::Forward : QAbstractAnimation::Backward;
+    if (d == m_acAnimation->direction()) {
+        return;
+    }
+
+    m_acAnimation->setDirection(d);
     if (m_acAnimation->state() != QAbstractAnimation::Running) {
         m_acAnimation->start();
     }
@@ -843,7 +855,7 @@ void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int bat
 {
     int minSize = qMin(contentsRect.height(), contentsRect.width());
     QRect contentsSquare = QRect(contentsRect.x() + (contentsRect.width() - minSize) / 2, contentsRect.y() + (contentsRect.height() - minSize) / 2, minSize, minSize);
-  
+
     if (m_theme->hasElement("Battery")) {
         m_theme->paint(p, contentsSquare, "Battery");
     }
@@ -875,7 +887,9 @@ void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int bat
         }
     }
 
-    m_theme->paint(p, scaleRectF(m_acAlpha, contentsSquare), "AcAdapter");
+    if (!qFuzzyCompare(1, m_acAlpha + 1)) {
+        m_theme->paint(p, scaleRectF(m_acAlpha, contentsSquare), "AcAdapter");
+    }
 
     if (plugState && m_theme->hasElement("Overlay")) {
         m_theme->paint(p, contentsSquare, "Overlay");
@@ -890,10 +904,6 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
     p->setRenderHint(QPainter::Antialiasing);
 
     if (m_numOfBattery == 0) {
-        QRectF ac_contentsRect(contentsRect.topLeft(), QSizeF(qMax(qreal(0.0), contentsRect.width() * m_acAlpha), qMax(qreal(0.0), contentsRect.height() * m_acAlpha)));
-        if (m_acAdapterPlugged) {
-            m_theme->paint(p, ac_contentsRect, "AcAdapter");
-        }
         paintBattery(p, contentsRect, 0, false);
         return;
     }
