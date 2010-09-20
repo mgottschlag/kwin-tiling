@@ -98,107 +98,27 @@ bool CalendarEngine::holidayCalendarSourceRequest(const QString& key, const QStr
 
     if (key == "holidaysDefaultRegion") {
         // If not set or the locale has changed since last set, then try determine a default region.
-        // Try to match against the users country and language, or failing that the language country.
-        // Scan through all the regions finding the first match for each possible default
-        // Holiday Region Country Code can be a country subdivision or the country itself,
-        // e.g. US or US-CA for California, so we can try match on both but an exact match has priority
-        // The Holiday Region file is in one language only, so give priority to any file in the
-        // users language, e.g. bilingual countries with a separate file for each language
-        // Locale language can have a country code embedded in it e.g. en_GB, which we can try use if
-        // no country set, but a lot of countries use en_GB so it's a lower priority option
-        // Finally, default to US if available, but I don't think that's a great idea.
         if(m_defaultHolidayRegion.isEmpty() ||
-            m_defaultHolidayRegionCountry != KGlobal::locale()->country() ||
-            m_defaultHolidayRegionLanguage != KGlobal::locale()->language()) {
+           m_defaultHolidayRegionCountry != KGlobal::locale()->country() ||
+           m_defaultHolidayRegionLanguage != KGlobal::locale()->language()) {
 
             m_defaultHolidayRegion = QString();
             m_defaultHolidayRegionCountry = KGlobal::locale()->country();
             m_defaultHolidayRegionLanguage = KGlobal::locale()->language();
 
-            QString localeCountry = m_defaultHolidayRegionCountry.toLower();
-            QString localeLanguage = m_defaultHolidayRegionLanguage.toLower();
-            QString localeLanguageCountry;
-            if (localeLanguage.split('_').count() > 1) {
-                localeLanguageCountry = localeLanguage.split('_').at(1);
+            m_defaultHolidayRegion = KHolidays::HolidayRegion::defaultRegionCode(
+                                                        m_defaultHolidayRegionCountry.toLower(),
+                                                        m_defaultHolidayRegionLanguage.toLower() );
+            if (m_defaultHolidayRegion.isEmpty()) {
+                m_defaultHolidayRegion == "NoDefault";
             }
-
-            QString countryAndLanguageMatch, countryOnlyMatch, subdivisionAndLanguageMatch,
-                    subdivisionOnlyMatch, languageCountryAndLanguageMatch, languageCountryOnlyMatch,
-                    languageSubdivisionAndLanguageMatch, languageSubdivisionOnlyMatch, usaMatch;
-
-             QStringList regionList = KHolidays::HolidayRegion::regionCodes();
-
-            foreach (const QString &regionCode, regionList) {
-                QString regionCountry = KHolidays::HolidayRegion::countryCode(regionCode).toLower();
-                QString regionSubdivisionCountry;
-                if (regionCountry.split('-').count() > 1) {
-                    regionSubdivisionCountry = regionCountry.split('-').at(0);
-                }
-                QString regionLanguage = KHolidays::HolidayRegion::languageCode(regionCode).toLower();
-
-                if (regionCountry == localeCountry && regionLanguage == localeLanguage) {
-                    countryAndLanguageMatch = regionCode;
-                    break; // exact match so don't look further
-                } else if (regionCountry == localeCountry) {
-                    if (countryOnlyMatch.isEmpty()) {
-                        countryOnlyMatch = regionCode;
-                    }
-                } else if (!regionSubdivisionCountry.isEmpty() && regionSubdivisionCountry == localeCountry && regionLanguage == localeLanguage) {
-                    if (subdivisionAndLanguageMatch.isEmpty()) {
-                        subdivisionAndLanguageMatch = regionCode;
-                    }
-                } else if (!regionSubdivisionCountry.isEmpty() && regionSubdivisionCountry == localeCountry) {
-                    if (subdivisionOnlyMatch.isEmpty()) {
-                        subdivisionOnlyMatch = regionCode;
-                    }
-                } else if (!localeLanguageCountry.isEmpty() && regionCountry == localeLanguageCountry && regionLanguage == localeLanguage) {
-                    if (languageCountryAndLanguageMatch.isEmpty()) {
-                        languageCountryAndLanguageMatch = regionCode;
-                    }
-                } else if (!localeLanguageCountry.isEmpty() && regionCountry == localeLanguageCountry) {
-                    if (languageCountryOnlyMatch.isEmpty()) {
-                        languageCountryOnlyMatch = regionCode;
-                    }
-                } else if (!regionSubdivisionCountry.isEmpty() && !localeLanguageCountry.isEmpty() &&
-                           regionSubdivisionCountry == localeLanguageCountry && regionLanguage == localeLanguage) {
-                    if (languageSubdivisionAndLanguageMatch.isEmpty()) {
-                        languageSubdivisionAndLanguageMatch = regionCode;
-                    }
-                } else if (!regionSubdivisionCountry.isEmpty() && !localeLanguageCountry.isEmpty() &&
-                           regionSubdivisionCountry == localeLanguageCountry) {
-                    if (languageSubdivisionOnlyMatch.isEmpty()) {
-                        languageSubdivisionOnlyMatch = regionCode;
-                    }
-                }
-
-                if (regionCountry == "us" && usaMatch.isEmpty()) {
-                    usaMatch = regionCode;
-                }
-            }
-
-            if (!countryAndLanguageMatch.isEmpty()) {
-                m_defaultHolidayRegion = countryAndLanguageMatch;
-            } else if (!countryOnlyMatch.isEmpty()) {
-                m_defaultHolidayRegion = countryOnlyMatch;
-            } else if (!subdivisionAndLanguageMatch.isEmpty()) {
-                m_defaultHolidayRegion = subdivisionAndLanguageMatch;
-            } else if (!subdivisionOnlyMatch.isEmpty()) {
-                m_defaultHolidayRegion = subdivisionOnlyMatch;
-            } else if (!languageCountryAndLanguageMatch.isEmpty()) {
-                m_defaultHolidayRegion = languageCountryAndLanguageMatch;
-            } else if (!languageCountryOnlyMatch.isEmpty()) {
-                m_defaultHolidayRegion = languageCountryOnlyMatch;
-            } else if (!languageSubdivisionAndLanguageMatch.isEmpty()) {
-                m_defaultHolidayRegion = languageSubdivisionAndLanguageMatch;
-            } else if (!languageSubdivisionOnlyMatch.isEmpty()) {
-                m_defaultHolidayRegion = languageSubdivisionOnlyMatch;
-            } else if (!usaMatch.isEmpty()) {
-                m_defaultHolidayRegion = usaMatch;
-            }
-
         }
 
-        setData(request, m_defaultHolidayRegion);
+        if (m_defaultHolidayRegion == "NoDefault") {
+            setData(request, QString());
+        } else {
+            setData(request, m_defaultHolidayRegion);
+        }
         return true;
     }
 
