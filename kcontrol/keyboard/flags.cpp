@@ -184,7 +184,7 @@ const QIcon Flags::getIconWithText(const LayoutUnit& layoutUnit, const KeyboardC
 //	p.drawText(pm.rect(), Qt::AlignCenter | Qt::AlignHCenter, layoutText);
 //	QIcon icon(pm);
 
-	QPixmap pixmap = Utils::shadowText(layoutText, font, Qt::black, Qt::white, QPoint(), 2);
+	QPixmap pixmap = Utils::shadowText(layoutText, font, Qt::black, Qt::white, QPoint(), 4);
 	QIcon icon(pixmap);
 	iconOrTextMap[ key ] = icon;
 
