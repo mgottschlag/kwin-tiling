@@ -347,7 +347,7 @@ void KColorCm::on_schemeImportButton_clicked()
 
             colorSet->setCurrentIndex(0);
             contrastSlider->setValue(g.readEntry("contrast", KGlobalSettings::contrast()));
-            shadeSortedColumn->setCheckState(g.readEntry("shadeSortColumn", KGlobalSettings::shadeSortColumn()) ? Qt::Checked : Qt::Unchecked);
+            shadeSortedColumn->setChecked(g.readEntry("shadeSortColumn", KGlobalSettings::shadeSortColumn()));
 
             m_commonColorButtons[0]->setColor(g.readEntry("windowBackground", m_colorSchemes[KColorScheme::View].background().color()));
             m_commonColorButtons[1]->setColor(g.readEntry("windowForeground", m_colorSchemes[KColorScheme::View].foreground().color()));
@@ -648,13 +648,13 @@ void KColorCm::updateFromOptions()
     groupK.writeEntry("contrast", contrastSlider->value());
 
     KConfigGroup groupG(m_config, "General");
-    groupG.writeEntry("shadeSortColumn", bool(shadeSortedColumn->checkState() != Qt::Unchecked));
+    groupG.writeEntry("shadeSortColumn", shadeSortedColumn->isChecked());
 
     KConfigGroup groupI(m_config, "ColorEffects:Inactive");
-    groupI.writeEntry("Enable", bool(useInactiveEffects->checkState() != Qt::Unchecked));
+    groupI.writeEntry("Enable", useInactiveEffects->isChecked());
     // only write this setting if it is not the default; this way we can change the default more easily in later KDE
     // the setting will still written by explicitly checking/unchecking the box
-    if (inactiveSelectionEffect->checkState() != Qt::Unchecked)
+    if (inactiveSelectionEffect->isChecked())
     {
         groupI.writeEntry("ChangeSelectionColor", true);
     }
@@ -1130,8 +1130,7 @@ void KColorCm::on_useInactiveEffects_stateChanged(int state)
 
     m_disableUpdates = true;
     printf("re-init\n");
-    inactiveSelectionEffect->setCheckState(group.readEntry("ChangeSelectionColor", bool(state != Qt::Unchecked))
-                                           ? Qt::Checked : Qt::Unchecked);
+    inactiveSelectionEffect->setChecked(group.readEntry("ChangeSelectionColor", bool(state != Qt::Unchecked)));
     m_disableUpdates = false;
 
     emit changed(true);
@@ -1173,14 +1172,13 @@ void KColorCm::load()
 void KColorCm::loadOptions()
 {
     contrastSlider->setValue(KGlobalSettings::contrast());
-    shadeSortedColumn->setCheckState(KGlobalSettings::shadeSortColumn() ? Qt::Checked : Qt::Unchecked);
+    shadeSortedColumn->setChecked(KGlobalSettings::shadeSortColumn());
 
     KConfigGroup group(m_config, "ColorEffects:Inactive");
-    useInactiveEffects->setCheckState(group.readEntry("Enable", false) ? Qt::Checked : Qt::Unchecked);
+    useInactiveEffects->setChecked(group.readEntry("Enable", false));
     // NOTE: keep this in sync with kdelibs/kdeui/colors/kcolorscheme.cpp
     // NOTE: remove extra logic from updateFromOptions and on_useInactiveEffects_stateChanged when this changes!
-    inactiveSelectionEffect->setCheckState(group.readEntry("ChangeSelectionColor", group.readEntry("Enable", true))
-                                           ? Qt::Checked : Qt::Unchecked);
+    inactiveSelectionEffect->setChecked(group.readEntry("ChangeSelectionColor", group.readEntry("Enable", true)));
 }
 
 void KColorCm::loadInternal(bool loadOptions_)
@@ -1212,11 +1210,10 @@ void KColorCm::save()
 {
     KConfigGroup groupI(m_config, "ColorEffects:Inactive");
 
-    // disable (inactive) effects if that is requested
-    int a = (useInactiveEffects->checkState() == Qt::Unchecked ? -1 : 1);
-    groupI.writeEntry("IntensityEffect", a*inactiveIntensityBox->currentIndex());
-    groupI.writeEntry("ColorEffect", a*inactiveColorBox->currentIndex());
-    groupI.writeEntry("ContrastEffect", a*inactiveContrastBox->currentIndex());
+    groupI.writeEntry("Enable", useInactiveEffects->isChecked());
+    groupI.writeEntry("IntensityEffect", inactiveIntensityBox->currentIndex());
+    groupI.writeEntry("ColorEffect", inactiveColorBox->currentIndex());
+    groupI.writeEntry("ContrastEffect", inactiveContrastBox->currentIndex());
 
     m_config->sync();
     KGlobalSettings::self()->emitChange(KGlobalSettings::PaletteChanged);
@@ -1234,11 +1231,6 @@ void KColorCm::save()
     cfg.sync();
 
     runRdb(KRdbExportQtColors | ( applyToAlien->isChecked() ? KRdbExportColors : 0 ) );
-
-    // now restore the normalized effect values
-    groupI.writeEntry("IntensityEffect", inactiveIntensityBox->currentIndex());
-    groupI.writeEntry("ColorEffect", inactiveColorBox->currentIndex());
-    groupI.writeEntry("ContrastEffect", inactiveContrastBox->currentIndex());
 
     emit changed(false);
 }
