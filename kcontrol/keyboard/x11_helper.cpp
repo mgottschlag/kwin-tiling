@@ -69,11 +69,16 @@ bool X11Helper::xkbSupported(int* xkbOpcode)
 void X11Helper::switchToNextLayout()
 {
 	int size = getLayoutsList().size();	//TODO: could optimize a bit as we don't need the layouts - just count
-	int group = X11Helper::getGroup() + 1;
+	int group = (X11Helper::getGroup() + 1) % size;
+	X11Helper::setGroup(group);
+}
 
-	if( group >= size ) {
-		group = 0;
-	}
+void X11Helper::scrollLayouts(int delta)
+{
+	int size = getLayoutsList().size();	//TODO: could optimize a bit as we don't need the layouts - just count
+	int group = X11Helper::getGroup() + delta;
+	group = group < 0 ? size - ((-group) % size) : group % size;
+
 	X11Helper::setGroup(group);
 }
 

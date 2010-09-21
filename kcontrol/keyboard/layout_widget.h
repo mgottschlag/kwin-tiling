@@ -76,6 +76,7 @@ private Q_SLOTS:
     void layoutChanged();
     void layoutMapChanged();
     void actionTriggered(QAction* action);
+    void scrollRequested(int, Qt::Orientation);
 
 private:
 	void init();

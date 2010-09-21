@@ -105,6 +105,7 @@ public:
 	static bool xkbSupported(int* xkbOpcode);
 
 	static void switchToNextLayout();
+	static void scrollLayouts(int delta);
 	static bool isDefaultLayout();
 	static bool setDefaultLayout();
 	static bool setLayout(const LayoutUnit& layout);

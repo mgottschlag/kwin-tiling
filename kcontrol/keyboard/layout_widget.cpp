@@ -154,6 +154,7 @@ LayoutTrayIcon::~LayoutTrayIcon()
 void LayoutTrayIcon::init()
 {
     connect(m_notifierItem, SIGNAL(activateRequested(bool, QPoint)), this, SLOT(toggleLayout()));
+    connect(m_notifierItem, SIGNAL(scrollRequested(int, Qt::Orientation)), this, SLOT(scrollRequested(int, Qt::Orientation)));
 	connect(&xEventNotifier, SIGNAL(layoutChanged()), this, SLOT(layoutChanged()));
 	connect(&xEventNotifier, SIGNAL(layoutMapChanged()), this, SLOT(layoutMapChanged()));
 	xEventNotifier.start();
@@ -164,6 +165,7 @@ void LayoutTrayIcon::destroy()
 	xEventNotifier.stop();
 	disconnect(&xEventNotifier, SIGNAL(layoutMapChanged()), this, SLOT(layoutMapChanged()));
 	disconnect(&xEventNotifier, SIGNAL(layoutChanged()), this, SLOT(layoutChanged()));
+    disconnect(m_notifierItem, SIGNAL(scrollRequested(int, Qt::Orientation)), this, SLOT(scrollRequested(int, Qt::Orientation)));
     disconnect(m_notifierItem, SIGNAL(activateRequested(bool, QPoint)), this, SLOT(toggleLayout()));
 }
 
@@ -202,6 +204,11 @@ void LayoutTrayIcon::layoutChanged()
 void LayoutTrayIcon::toggleLayout()
 {
 	X11Helper::switchToNextLayout();
+}
+
+void LayoutTrayIcon::scrollRequested(int delta, Qt::Orientation /*orientation*/)
+{
+	X11Helper::scrollLayouts(delta > 0 ? 1 : -1);
 }
 
 const QIcon LayoutTrayIcon::getFlag(const QString& layout) const
