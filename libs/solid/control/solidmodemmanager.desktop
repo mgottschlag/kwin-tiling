@@ -3,7 +3,7 @@ Type=ServiceType
 X-KDE-ServiceType=SolidModemManager
 
 Comment=Modem Management Backend
-Comment[ar]=خلفية إدارة المودم
+Comment[ar]=المنتهى الخلفي لإدارة المودم
 Comment[de]=Modem-Verwaltungsmodul
 Comment[en_GB]=Modem Management Backend
 Comment[es]=Motor de gestión del módem

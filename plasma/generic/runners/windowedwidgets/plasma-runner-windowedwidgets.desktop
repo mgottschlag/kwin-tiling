@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Windowed widgets
-Name[ar]=ودجات بنوافذ
+Name[ar]=ودجات مُنوفذة
 Name[ca]=Estris en finestres
 Name[ca@valencia]=Estris en finestres
 Name[da]=Widgets som vinduer
@@ -45,7 +45,7 @@ Name[zh_TW]=視窗元件
 
 
 Comment=Find Plasma widgets that can be run as standalone windows
-Comment[ar]=تجد وجدات بلازما التي يمكن أن تعمل كنوافذ مستقلة
+Comment[ar]=ابحث عن ودجات بلازما التي يمكن تشغيلها كنوافذ مستقلة
 Comment[ca]=Cerca estris del Plasma que es poden executar en finestres autònomes
 Comment[ca@valencia]=Cerca estris del Plasma que es poden executar en finestres autònomes
 Comment[cs]=Najít Plasma widgety, které mohou být spuštěny ve vlastních oknech

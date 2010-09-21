@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Plasma Desktop Shell
-Name[ar]=صدفة سطح مكتب بلازما
+Name[ar]=قشرة سطح المكتب بلازما
 Name[ca]=Intèrpret d'ordres de l'escriptori Plasma
 Name[ca@valencia]=Intèrpret d'ordes de l'escriptori Plasma
 Name[cs]=Pracovní plocha Plasma
@@ -58,7 +58,7 @@ Name[x-test]=xxPlasma Desktop Shellxx
 Name[zh_CN]=Plasma 桌面外壳
 Name[zh_TW]=Plasma 桌面 shell
 Comment=Interact with the Plasma desktop shell
-Comment[ar]=تتفاعل مع صدفة سطح مكتب بلازما
+Comment[ar]=تفاعل مع قشرة سطح المكتب بلازما
 Comment[ca]=Interactua amb l'intèrpret d'ordres de l'escriptori Plasma
 Comment[ca@valencia]=Interactua amb l'intèrpret d'ordes de l'escriptori Plasma
 Comment[da]=Interaktion med Plasma-skrivebordsskal

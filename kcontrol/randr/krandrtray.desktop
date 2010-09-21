@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=KRandRTray
 Name[af]=KRandRTray
-Name[ar]=ضبط شاشة كدي
+Name[ar]=ضبط شاشة كيدي
 Name[be]=Змена параметраў манітора
 Name[be@latin]=KRandRTray
 Name[bg]=KRandRTray
@@ -87,7 +87,7 @@ Name[zh_CN]=KRandRTray
 Name[zh_TW]=KRandRTray
 GenericName=Screen Resize & Rotate
 GenericName[af]=Skerm Hervergroot & Roteer
-GenericName[ar]=إعادة تحجيم ودوران الشاشة
+GenericName[ar]=إعادة تحجيم وتدوير الشاشة
 GenericName[be]=Змена памераў экрана і перагортванне
 GenericName[be@latin]=Aplet dla źmieny pamieraŭ i pavarotu ekrana
 GenericName[bg]=Големина и въртене на екрана
@@ -172,7 +172,7 @@ GenericName[x-test]=xxScreen Resize & Rotatexx
 GenericName[zh_CN]=屏幕缩放和旋转
 GenericName[zh_TW]=螢幕調整大小及旋轉
 Comment=A panel applet for resizing and reorientating X screens.
-Comment[ar]=لوحة تحكم لتغيير مقاس ودقة الشاشة
+Comment[ar]=لوحة تحكم لتغيير حجم واتجاه شاشات X
 Comment[be@latin]=Aplet dla paneli, jaki absłuhoŭvaje źmienu pamieraŭ i pavarot ekranaŭ systemy X.
 Comment[bg]=Аплет за преоразмеряване и ориентация на X.
 Comment[ca]=Una miniaplicació del plafó per a redimensionar i reorientar les pantalles d'X.

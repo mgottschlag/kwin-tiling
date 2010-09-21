@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Panel for Netbooks
-Name[ar]=لوحة لنتبوك
+Name[ar]=لوحة للحاسب المحمول الشبكي
 Name[bn]=নেটবুক-এর জন্য প্যানেল
 Name[ca]=Plafó per a Netbooks
 Name[ca@valencia]=Plafó per a Netbooks
@@ -59,7 +59,7 @@ Name[zh_CN]=笔记本面板
 Name[zh_TW]=Netbooks 的面板
 Comment=A containment for a panel
 Comment[af]='n Plekhouer vir 'n paneel
-Comment[ar]=لوحة حاوية
+Comment[ar]=حاوية للوحة
 Comment[be@latin]=Jomišča dla paneli
 Comment[ca]=Un contenidor per un plafó
 Comment[ca@valencia]=Un contenidor per un plafó

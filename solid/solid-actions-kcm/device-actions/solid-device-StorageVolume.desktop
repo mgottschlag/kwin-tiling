@@ -67,7 +67,7 @@ Name[zh_TW]=檔案系統型態
 
 [Desktop Action ignored]
 Name=Ignored
-Name[ar]=متجاهل
+Name[ar]=متجاهَل
 Name[bg]=Игнориран
 Name[bn]=উপেক্ষিত
 Name[ca]=Ignorat
@@ -133,7 +133,7 @@ Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
-Name[ar]=المسمى
+Name[ar]=التسمية
 Name[bg]=Етикет
 Name[bn]=লেবেল
 Name[ca]=Etiqueta
@@ -333,7 +333,7 @@ Name[zh_TW]=使用量
 
 [Desktop Action uuid]
 Name=Uuid
-Name[ar]=Uuid
+Name[ar]=المعرف الفريد عالمياً (Uuid)
 Name[bg]=Uuid
 Name[bn]=Uuid
 Name[ca]=UUID
@@ -401,7 +401,7 @@ Name[zh_TW]=UUID
 [Desktop Entry]
 Actions=fsType;ignored;label;size;usage;uuid;
 Name=Solid Device
-Name[ar]=جهاز سولد
+Name[ar]=جهاز في سوليد
 Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid

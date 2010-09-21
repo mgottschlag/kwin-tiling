@@ -1,7 +1,7 @@
 [Global]
 IconName=drive-harddisk
 Comment=KDE Free Space Notifier Daemon
-Comment[ar]=مراقب تنبيهات كدي للمساحة الحرة
+Comment[ar]=مراقب كدي لمنبه المساحة الفارغة
 Comment[ca]=Dimoni de notificacions d'espai lliure del KDE
 Comment[ca@valencia]=Dimoni de notificacions d'espai lliure del KDE
 Comment[da]=KDE dæmon til bekendtgørelse om ledig plads
@@ -177,7 +177,7 @@ Name[x-test]=xxWarningxx
 Name[zh_CN]=警告
 Name[zh_TW]=警告
 Comment=Used for warning notifications
-Comment[ar]=يستخدم للتنبيهات التحذيرية
+Comment[ar]=يُستخدم للتنبيهات التحذيرية
 Comment[be@latin]=Dla aścierahalnych paviedamleńniaŭ
 Comment[bg]=Предупреждения
 Comment[ca]=S'usa per a les notificacions d'avís
@@ -290,7 +290,7 @@ Name[x-test]=xxRunning low on disk spacexx
 Name[zh_CN]=磁盘空间过低
 Name[zh_TW]=磁碟空間快用完了
 Comment=You are running low on disk space
-Comment[ar]=أنت تعمل على مساحة قرص منخفضة
+Comment[ar]=إن مساحة التخزين المتوفرة على القرص توشك على النفاذ
 Comment[ca]=L'espai del disc s'està exhaurint
 Comment[ca@valencia]=L'espai del disc s'està exhaurint
 Comment[da]=Du er ved at løbe tør for diskplads

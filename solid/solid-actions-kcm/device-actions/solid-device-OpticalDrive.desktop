@@ -1,6 +1,6 @@
 [Desktop Action bus]
 Name=Bus
-Name[ar]=النقال
+Name[ar]=الناقل
 Name[bg]=Шина
 Name[bn]=বাস
 Name[ca]=Bus
@@ -607,7 +607,7 @@ Name[zh_TW]=寫入速度
 [Desktop Entry]
 Actions=bus;driveType;hotpluggable;readSpeed;removable;size;supportedMedia;writeSpeed;writeSpeeds;
 Name=Solid Device
-Name[ar]=جهاز سولد
+Name[ar]=جهاز في سوليد
 Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid

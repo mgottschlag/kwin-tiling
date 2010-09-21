@@ -1,6 +1,6 @@
 [Desktop Action canChangeFrequency]
 Name=Can Change Frequency
-Name[ar]=يمكن تغير التردد
+Name[ar]=يمكنه تغير التردد
 Name[bg]=Може да променя честотата
 Name[bn]=কম্পাঙ্ক বদলাতে পারে
 Name[ca]=Pot canviar la freqüència
@@ -262,7 +262,7 @@ Name[zh_TW]=數字
 [Desktop Entry]
 Actions=canChangeFrequency;instructionSets;maxSpeed;number;
 Name=Solid Device
-Name[ar]=جهاز سولد
+Name[ar]=جهاز في سوليد
 Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid

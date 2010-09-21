@@ -2,7 +2,7 @@
 Exec=krunner
 X-DBUS-StartupType=none
 Name=Command Runner
-Name[ar]=منفذ الأمر
+Name[ar]=منفّذ الأوامر
 Name[be@latin]=Vykanańnie zahadaŭ
 Name[bg]=Команда
 Name[bn]=কমান্ড চালক

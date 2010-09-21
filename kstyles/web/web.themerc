@@ -1,7 +1,7 @@
 [Misc]
 Name=Web style
 Name[af]=Webstyl
-Name[ar]=أسلوب الويب
+Name[ar]=أسلوب الوِب
 Name[be]=Стыль Сеціва
 Name[be@latin]=Web
 Name[bg]=Уеб стил
@@ -80,7 +80,7 @@ Name[x-test]=xxWeb stylexx
 Name[zh_CN]=网页风格
 Name[zh_TW]=網頁樣式
 Comment=Web widget style
-Comment[ar]=أسلوب ودجات الإنترنت
+Comment[ar]=نمط ودجات الوِب
 Comment[be]=Стыль Сеціва
 Comment[be@latin]=Styl widžetaŭ „Web”
 Comment[bg]=Стил "уеб"

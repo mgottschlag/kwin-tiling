@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Networking
-Name[ar]=التشبيك
+Name[ar]=ربط الشبكات
 Name[be@latin]=Sietka
 Name[bg]=Мрежа
 Name[bn]=নেটওয়ার্কিং
@@ -74,7 +74,7 @@ Name[zh_CN]=网络
 Name[zh_TW]=網路
 Comment=Network interface information
 Comment[af]=Netwerk koppelvlak informasie
-Comment[ar]=معلومات حول واجهة الشبكة
+Comment[ar]=معلومات عن واجهات الشبكة
 Comment[as]=নে'টৱৰ্ক সংযোগমাধ্যমৰ তথ্য
 Comment[be]=Звесткі пра сеткавы інтэрфейс
 Comment[be@latin]=Źviestki pra sietkavyja interfejsy

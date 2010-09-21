@@ -1,6 +1,6 @@
 [Desktop Action bus]
 Name=Bus
-Name[ar]=النقال
+Name[ar]=الناقل
 Name[bg]=Шина
 Name[bn]=বাস
 Name[ca]=Bus
@@ -335,7 +335,7 @@ Name[zh_TW]=大小
 [Desktop Entry]
 Actions=bus;driveType;hotpluggable;removable;size;
 Name=Solid Device
-Name[ar]=جهاز سولد
+Name[ar]=جهاز في سوليد
 Name[bn]=সলিড ডিভাইস
 Name[ca]=Dispositiu del Solid
 Name[ca@valencia]=Dispositiu del Solid

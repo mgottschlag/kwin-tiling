@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Environment Canada
-Name[ar]=البيئة الكندية
+Name[ar]=وزارة البيئة الكندية
 Name[be@latin]=Environment Canada
 Name[bg]=Времето в Канада
 Name[ca]=Medi ambient del Canadà
@@ -70,7 +70,7 @@ Name[x-test]=xxEnvironment Canadaxx
 Name[zh_CN]=加拿大环境
 Name[zh_TW]=Environment Canada
 Comment=XML Data from Environment Canada
-Comment[ar]=بيانات XML من البيئة الكندية
+Comment[ar]=بيانات XML من وزارة البيئة الكندية
 Comment[be@latin]=Źviestki ŭ farmacie „XML” ad „Environment Canada”
 Comment[bg]=XML данни от Environment Canada
 Comment[ca]=Dades XML des de Medi ambient del Canadà
