@@ -185,7 +185,7 @@ void Notifications::syncNotificationBarNeeded()
             QAction *switchAction = new QAction(extenderItem);
             connect(switchAction, SIGNAL(triggered()), extender(), SLOT(showJobs()));
             switchAction->setText(i18n("Show jobs"));
-            switchAction->setVisible(false);
+            switchAction->setVisible(!m_manager->jobs().isEmpty());
             extenderItem->addAction("show jobs", switchAction);
             extenderItem->config().writeEntry("type", "notification");
             extenderItem->setName("notifications");
@@ -456,7 +456,7 @@ void Notifications::createJobGroups()
     if (!extender()->hasItem("jobGroup")) {
         Plasma::ExtenderGroup *extenderGroup = new Plasma::ExtenderGroup(extender());
         QAction *switchAction = new QAction(extenderGroup);
-        switchAction->setVisible(false);
+        switchAction->setVisible(m_manager->notifications().count() > 0);
         connect(switchAction, SIGNAL(triggered()), extender(), SLOT(showNotifications()));
         switchAction->setText(i18n("Show notifications"));
         extenderGroup->addAction("show notifications", switchAction);
