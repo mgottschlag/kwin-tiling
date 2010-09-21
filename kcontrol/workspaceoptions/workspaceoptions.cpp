@@ -59,7 +59,7 @@ WorkspaceOptionsModule::WorkspaceOptionsModule(QWidget *parent, const QVariantLi
 
     connect(m_ui->formFactor, SIGNAL(currentIndexChanged(int)), this, SLOT(changed()));
     connect(m_ui->dashboardMode, SIGNAL(currentIndexChanged(int)), this, SLOT(changed()));
-    connect(m_ui->toolTipDelay, SIGNAL(valueChanged(double)), this, SLOT(changed()));
+    connect(m_ui->showToolTips, SIGNAL(toggled(bool)), this, SLOT(changed()));
     connect(m_ui->formFactor, SIGNAL(currentIndexChanged(int)), this, SLOT(formFactorChanged(int)));
 
     //enable the combobox if both plasma-desktop and plasma-netbook are present
@@ -79,7 +79,7 @@ void WorkspaceOptionsModule::save()
     {
         KConfig config("plasmarc");
         KConfigGroup cg(&config, "PlasmaToolTips");
-        cg.writeEntry("Delay", m_ui->toolTipDelay->value());
+        cg.writeEntry("Delay", m_ui->showToolTips->isChecked() ? 0.7 : -1);
     }
 
     const bool isDesktop = m_ui->formFactor->currentIndex() == 0;
@@ -306,7 +306,7 @@ void WorkspaceOptionsModule::load()
 
     KConfig config("plasmarc");
     KConfigGroup cg(&config, "PlasmaToolTips");
-    m_ui->toolTipDelay->setValue(cg.readEntry("Delay", 0.7));
+    m_ui->showToolTips->setChecked(cg.readEntry("Delay", 0.7) > 0);
 }
 
 void WorkspaceOptionsModule::defaults()

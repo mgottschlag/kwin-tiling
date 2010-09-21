@@ -6,11 +6,11 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>335</width>
-    <height>92</height>
+    <width>415</width>
+    <height>110</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QFormLayout" name="formLayout">
    <item row="0" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
@@ -22,35 +22,18 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <widget class="QComboBox" name="formFactor">
      <item>
-      <widget class="QComboBox" name="formFactor">
-       <item>
-        <property name="text">
-         <string comment="Form factor: desktop computer">Desktop</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string comment="Form factor: netbook computer">Netbook</string>
-        </property>
-       </item>
-      </widget>
+      <property name="text">
+       <string comment="Form factor: desktop computer">Desktop</string>
+      </property>
      </item>
      <item>
-      <spacer name="horizontalSpacer_4">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
+      <property name="text">
+       <string comment="Form factor: netbook computer">Netbook</string>
+      </property>
      </item>
-    </layout>
+    </widget>
    </item>
    <item row="1" column="0">
     <widget class="QLabel" name="dashboardLabel">
@@ -63,53 +46,23 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <widget class="QComboBox" name="dashboardMode">
      <item>
-      <widget class="QComboBox" name="dashboardMode">
-       <item>
-        <property name="text">
-         <string>Show Desktop Widgets</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Show an Independent Widget Set</string>
-        </property>
-       </item>
-      </widget>
+      <property name="text">
+       <string>Show Desktop Widgets</string>
+      </property>
      </item>
      <item>
-      <spacer name="horizontalSpacer_3">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
+      <property name="text">
+       <string>Show an Independent Widget Set</string>
+      </property>
      </item>
-    </layout>
-   </item>
-   <item row="1" column="2">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
+    </widget>
    </item>
    <item row="2" column="0">
     <widget class="QLabel" name="tooltipDelayLabel">
      <property name="text">
-      <string>Informational Tips:</string>
+      <string>Show Informational Tips:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -117,52 +70,14 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QDoubleSpinBox" name="toolTipDelay">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>10</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="specialValueText">
-        <string>Do not show</string>
-       </property>
-       <property name="prefix">
-        <string>Show after </string>
-       </property>
-       <property name="suffix">
-        <string> seconds</string>
-       </property>
-       <property name="decimals">
-        <number>1</number>
-       </property>
-       <property name="minimum">
-        <double>-0.100000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.700000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>58</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+    <widget class="QCheckBox" name="showToolTips">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item row="3" column="1">
     <spacer name="verticalSpacer">
