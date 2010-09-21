@@ -12,8 +12,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2009-01-25</date>
-<releaseinfo>1.4</releaseinfo>
+<date>2010-09-21</date>
+<releaseinfo>&kde; 4.5</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -25,7 +25,7 @@
 </articleinfo>
 
 <sect1 id="kcm_powerdevilconfig">
-<title><guilabel>PowerDevil, a Power Management Daemon</guilabel></title>
+<title>PowerDevil, a Power Management Daemon</title>
 
 <para>This module is a configuration tool for managing Power Management in &kde;. It is a configurator for the PowerDevil daemon, that you can start or stop from the <guilabel>Service Manager</guilabel> module. </para>
 
@@ -55,11 +55,10 @@ When this box is checked, every time the PC gets suspended, the screen will be l
 <varlistentry><term><guilabel>Let PowerDevil manage screen powersaving</guilabel></term>
 <listitem>
 <para>
-If checked, PowerDevil will handle Screen powersaving through DPMS. If you want to have different timeouts for your screen powersaving features when your profile changes, you probably want to have this enabled. Otherwise, you can have constants timeouts in the <guilabel>Display</guilabel> module
-</para>
+If checked, PowerDevil will handle Screen powersaving through DPMS. If you want to have different timeouts for your screen powersaving features when your profile changes, you probably want to have this enabled. Otherwise, you can have constants timeouts in the <guilabel>Screen</guilabel> tab on the <guilabel>Edit Profiles</guilabel> page.</para>
 </listitem>
 </varlistentry>
-
+<!--
 <varlistentry><term><guilabel>Enable notifications</guilabel></term>
 <listitem>
 <para>
@@ -75,15 +74,7 @@ If checked, you will be notified through a passive popup whenever PowerDevil tri
 </para>
 </listitem>
 </varlistentry>
-
-<varlistentry><term><guibutton>Configure Notifications</guibutton></term>
-<listitem>
-<para>
-If you want a deeper control over your notifications, you can refine them by clicking this button
-</para>
-</listitem>
-</varlistentry>
-
+-->
 <varlistentry><term><guilabel>Before doing a suspend action, wait</guilabel></term>
 <listitem>
 <para>
@@ -99,6 +90,16 @@ In this section you have to assign your profiles to the specified situations. Yo
 </para>
 </listitem>
 </varlistentry>
+
+<varlistentry><term><guibutton>Configure Notifications</guibutton></term>
+<listitem>
+<para>
+If you want a deeper control over your notifications, you can refine them by clicking this button
+</para>
+</listitem>
+</varlistentry>
+
+
 </variablelist>
 </sect3>
 
@@ -106,6 +107,13 @@ In this section you have to assign your profiles to the specified situations. Yo
 <title>Advanced Battery Settings</title>
 
 <variablelist>
+<varlistentry><term><guilabel>When battery remaining is critical</guilabel></term>
+<listitem>
+<para>
+Defines the action that will be done when battery reaches the critical level.
+</para>
+</listitem>
+</varlistentry>
 <varlistentry><term><guilabel>Battery is at low level at</guilabel></term>
 <listitem>
 <para>
@@ -127,13 +135,6 @@ Here you can set the percentage after which the battery will be considered at cr
 </para>
 </listitem>
 </varlistentry>
-<varlistentry><term><guilabel>When battery remaining is critical</guilabel></term>
-<listitem>
-<para>
-Defines the action that will be done when battery reaches the critical level.
-</para>
-</listitem>
-</varlistentry>
 </variablelist>
 </sect3>
 </sect2>
@@ -150,17 +151,10 @@ There are a lot of options you can configure for each profile, splitted in 3 mai
 <sect3 id="screenandaction">
 <title>Actions</title>
 <variablelist>
-<varlistentry><term><guibutton>Disable KWin compositing, if active</guibutton></term>
+<varlistentry><term><guibutton>Disable desktop effects, if active</guibutton></term>
 <listitem>
 <para>
-&kwin; compositing will be disabled, if active. It will be re-enabled when a profile that does not have this option gets loaded
-</para>
-</listitem>
-</varlistentry>
-<varlistentry><term><guilabel>Dim display when idle for more than</guilabel></term>
-<listitem>
-<para>
-If checked, the display will be progressively dimmed, until reaching brightness 0, in the amount of time you specify in the spin box.
+&kwin; compositing will be disabled, if active. It will be re-enabled when a profile that does not have this option gets loaded.
 </para>
 </listitem>
 </varlistentry>
@@ -200,14 +194,21 @@ Defines the action that will be done when the sleep button gets pressed.
 <varlistentry><term><guilabel>Brightness</guilabel></term>
 <listitem>
 <para>
-Sets the screen's brightness
+Sets the screen's brightness using a slider.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guilabel>Dim display when idle for more than</guilabel></term>
+<listitem>
+<para>
+If checked, the display will be progressively dimmed, until reaching brightness 0, in the amount of time you specify in the spin box.
 </para>
 </listitem>
 </varlistentry>
 <varlistentry><term><guilabel>Enable display power management</guilabel></term>
 <listitem>
 <para>
-Here you can define power saving for your monitor. This section needs DPMS support available, you can check if your system supports them in the Capabilities page
+Here you can define power saving for your monitor. This section needs DPMS support available, you can check if your system supports them in the Capabilities page.
 </para>
 <para>
 The check box defines if DPMS support should be enabled or disabled. If you choose to activate it, set the timeouts in the spin boxes below. You can also prevent the monitor entering a certain status by unchecking the corresponding box.
@@ -222,24 +223,10 @@ The check box defines if DPMS support should be enabled or disabled. If you choo
 Here you can define preferences for CPU management and system settings
 </para>
 <variablelist>
-<varlistentry><term><guilabel>Turn off the following CPU(s)</guilabel></term>
+<varlistentry><term><guilabel>Enable system power saving</guilabel></term>
 <listitem>
 <para>
-You'll see a list of available CPUs here. If one of these check boxes is enabled, it means that that CPU supports being turned off. Check the CPUs you don't want to be enabled.
-</para>
-</listitem>
-</varlistentry>
-<varlistentry><term><guilabel>CPU frequency scaling policy</guilabel></term>
-<listitem>
-<para>
-Here you can set which CPU governor will be used. Ondemand is advised for general use.
-</para>
-</listitem>
-</varlistentry>
-<varlistentry><term><guilabel>System powersaving scheme</guilabel></term>
-<listitem>
-<para>
-This defines the powersaving scheme the system will use.
+Check this option set system power management on or off.
 </para>
 </listitem>
 </varlistentry>
