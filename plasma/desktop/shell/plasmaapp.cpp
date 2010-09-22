@@ -233,7 +233,7 @@ PlasmaApp::PlasmaApp()
 
     KAction *showAction = new KAction(this);
     showAction->setText(i18n("Show Dashboard"));
-    showAction->setObjectName("Show Dashboard"); // NO I18N
+    showAction->setObjectName( QLatin1String("Show Dashboard" )); // NO I18N
     showAction->setGlobalShortcut(KShortcut(Qt::CTRL + Qt::Key_F12));
     connect(showAction, SIGNAL(triggered()), this, SLOT(toggleDashboard()));
 

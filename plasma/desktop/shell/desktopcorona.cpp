@@ -102,13 +102,13 @@ void DesktopCorona::init()
     //because it makes the keyboard shortcuts work.
     KAction *action = new KAction(PlasmaApp::self());
     action->setText(i18n("Next Activity"));
-    action->setObjectName("Next Activity"); // NO I18N
+    action->setObjectName( QLatin1String("Next Activity" )); // NO I18N
     action->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_Tab));
     connect(action, SIGNAL(triggered()), this, SLOT(activateNextActivity()));
 
     action = new KAction(PlasmaApp::self());
     action->setText(i18n("Previous Activity"));
-    action->setObjectName("Previous Activity"); // NO I18N
+    action->setObjectName( QLatin1String("Previous Activity" )); // NO I18N
     action->setGlobalShortcut(KShortcut(Qt::META + Qt::SHIFT + Qt::Key_Tab));
     connect(action, SIGNAL(triggered()), this, SLOT(activatePreviousActivity()));
 
