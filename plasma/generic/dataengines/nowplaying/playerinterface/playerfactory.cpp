@@ -3,19 +3,19 @@
 PlayerFactory::PlayerFactory(QObject* parent)
     : QObject(parent)
 {
-    setObjectName("PlayerFactory");
+    setObjectName( QLatin1String("PlayerFactory" ));
 }
 
 PollingPlayerFactory::PollingPlayerFactory(QObject* parent)
     : PlayerFactory(parent)
 {
-    setObjectName("PollingPlayerFactory");
+    setObjectName( QLatin1String("PollingPlayerFactory" ));
 }
 
 DBusPlayerFactory::DBusPlayerFactory(QObject* parent)
     : PlayerFactory(parent)
 {
-    setObjectName("DBusPlayerFactory");
+    setObjectName( QLatin1String("DBusPlayerFactory" ));
 }
 
 Player::Ptr DBusPlayerFactory::create(const QString& serviceName)

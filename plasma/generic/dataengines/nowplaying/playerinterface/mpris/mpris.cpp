@@ -31,7 +31,7 @@
 MprisFactory::MprisFactory(QObject* parent)
     : DBusPlayerFactory(parent)
 {
-    setObjectName("MprisFactory");
+    setObjectName( QLatin1String("MprisFactory" ));
     qDBusRegisterMetaType<MprisDBusVersion>();
     qDBusRegisterMetaType<MprisDBusStatus>();
 }

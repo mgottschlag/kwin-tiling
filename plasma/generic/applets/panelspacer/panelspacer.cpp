@@ -38,7 +38,7 @@ PanelSpacer::PanelSpacer(QObject *parent, const QVariantList &args)
     QAction *toggleFixed = new QAction(i18n("Set Flexible Size"), this);
     toggleFixed->setCheckable(true);
     m_actions.append(toggleFixed);
-    addAction("toggle fixed", toggleFixed);
+    addAction(QLatin1String("toggle fixed"), toggleFixed);
     connect(toggleFixed, SIGNAL(toggled(bool)), this, SLOT(toggleFixed(bool)));
     setCacheMode(DeviceCoordinateCache);
 }
@@ -84,7 +84,7 @@ void PanelSpacer::configChanged()
 {
     m_fixedSize = config().readEntry("FixedSize", false);
     toggleFixed(!m_fixedSize);
-    QAction *fixedAction = action("toggle fixed");
+    QAction *fixedAction = action(QLatin1String("toggle fixed"));
     if (fixedAction) {
         fixedAction->setChecked(!m_fixedSize);
     }
@@ -123,7 +123,7 @@ void PanelSpacer::constraintsEvent(Plasma::Constraints constraints)
         m_fixedSize = ((formFactor() == Plasma::Horizontal && maximumWidth() == minimumWidth()) || (formFactor() == Plasma::Vertical && maximumHeight() == minimumHeight()));
         config().writeEntry("FixedSize", m_fixedSize);
 
-        QAction *fixedAction = action("toggle fixed");
+        QAction *fixedAction = action(QLatin1String("toggle fixed"));
         if (fixedAction) {
             fixedAction->setChecked(!m_fixedSize);
         }

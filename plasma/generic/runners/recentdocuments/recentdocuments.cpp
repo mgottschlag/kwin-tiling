@@ -34,7 +34,7 @@ RecentDocuments::RecentDocuments(QObject *parent, const QVariantList& args)
     : Plasma::AbstractRunner(parent, args)
 {
     Q_UNUSED(args);
-    setObjectName("Recent Documents");
+    setObjectName( QLatin1String("Recent Documents" ));
     m_icon = KIcon("document-open-recent");
     loadRecentDocuments();
     // listen for changes to the list of recent documents

@@ -36,7 +36,7 @@ KillRunner::KillRunner(QObject *parent, const QVariantList& args)
           m_processes(0)
 {
     Q_UNUSED(args);
-    setObjectName("Kill Runner");
+    setObjectName( QLatin1String("Kill Runner" ));
     reloadConfiguration();
 
     connect(this, SIGNAL(prepare()), this, SLOT(prep()));

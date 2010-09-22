@@ -39,7 +39,7 @@ PowerDevilRunner::PowerDevilRunner(QObject *parent, const QVariantList &args)
 {
     Q_UNUSED(args)
 
-    setObjectName("PowerDevil");
+    setObjectName( QLatin1String("PowerDevil" ));
     setIgnoredTypes(Plasma::RunnerContext::Directory | Plasma::RunnerContext::File |
                     Plasma::RunnerContext::NetworkLocation | Plasma::RunnerContext::Help);
     updateStatus();

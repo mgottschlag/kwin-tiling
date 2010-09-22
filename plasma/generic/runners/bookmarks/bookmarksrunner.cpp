@@ -39,7 +39,7 @@ BookmarksRunner::BookmarksRunner( QObject* parent, const QVariantList &args )
     : Plasma::AbstractRunner(parent, args)
 {
     Q_UNUSED(args)
-    setObjectName("Bookmarks");
+    setObjectName( QLatin1String("Bookmarks" ));
     m_icon = KIcon("bookmarks");
     m_bookmarkManager = KBookmarkManager::userBookmarksManager();
     m_browser = whichBrowser();

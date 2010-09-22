@@ -22,7 +22,7 @@
 
 VirtualDesktopsSource::VirtualDesktopsSource() : Plasma::DataContainer()
 {
-    setObjectName("virtualDesktops");
+    setObjectName( QLatin1String("virtualDesktops" ));
     connect(KWindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)), this, SLOT(updateDesktopNumber(int)));
     connect(KWindowSystem::self(), SIGNAL(desktopNamesChanged()), this, SLOT(updateDesktopNames()));
     updateDesktopNumber(KWindowSystem::self()->numberOfDesktops());

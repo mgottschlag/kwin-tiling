@@ -42,7 +42,7 @@ ShellRunner::ShellRunner(QObject *parent, const QVariantList &args)
       m_inTerminal(false),
       m_asOtherUser(false)
 {
-    setObjectName("Command");
+    setObjectName( QLatin1String("Command" ));
     setPriority(AbstractRunner::HighestPriority);
     setHasRunOptions(true);
     m_enabled = KAuthorized::authorizeKAction("run_command") && KAuthorized::authorizeKAction("shell_access");

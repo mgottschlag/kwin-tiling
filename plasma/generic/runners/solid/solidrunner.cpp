@@ -41,7 +41,7 @@ SolidRunner::SolidRunner(QObject* parent, const QVariantList& args)
       m_deviceList()
 {
     Q_UNUSED(args)
-    setObjectName("Solid");
+    setObjectName( QLatin1String("Solid" ));
 
     m_engineManager = Plasma::DataEngineManager::self();
 

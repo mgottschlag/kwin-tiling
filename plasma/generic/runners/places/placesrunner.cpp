@@ -34,7 +34,7 @@ PlacesRunner::PlacesRunner(QObject* parent, const QVariantList &args)
 {
 //    qRegisterMetaType
     Q_UNUSED(args)
-    setObjectName("Places");
+    setObjectName( QLatin1String("Places" ));
     addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds file manager locations that match :q:")));
     addSyntax(Plasma::RunnerSyntax(i18n("places"), i18n("Lists all file manager locations")));
 

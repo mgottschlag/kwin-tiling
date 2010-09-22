@@ -42,7 +42,7 @@ CalculatorRunner::CalculatorRunner( QObject* parent, const QVariantList &args )
     setSpeed(SlowSpeed);
     #endif
 
-    setObjectName("Calculator");
+    setObjectName( QLatin1String("Calculator" ));
     setIgnoredTypes(Plasma::RunnerContext::Directory | Plasma::RunnerContext::File |
                          Plasma::RunnerContext::NetworkLocation | Plasma::RunnerContext::Executable |
                          Plasma::RunnerContext::ShellCommand);

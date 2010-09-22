@@ -35,7 +35,7 @@ WindowsRunner::WindowsRunner(QObject* parent, const QVariantList& args)
       m_ready(false)
 {
     Q_UNUSED(args)
-    setObjectName("Windows");
+    setObjectName( QLatin1String("Windows" ));
 
     addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds windows whose name, window class or window role match :q:. "
                                    "It is possible to interact with the windows by using one of the following keywords: "

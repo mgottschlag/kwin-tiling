@@ -29,7 +29,7 @@
 XmmsFactory::XmmsFactory(QObject* parent)
     : PollingPlayerFactory(parent)
 {
-    setObjectName("XmmsFactory");
+    setObjectName( QLatin1String("XmmsFactory" ));
 }
 
 Player::Ptr XmmsFactory::create(const QVariantList& args)

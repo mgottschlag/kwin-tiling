@@ -33,7 +33,7 @@ SessionRunner::SessionRunner(QObject *parent, const QVariantList &args)
 {
     Q_UNUSED(args)
 
-    setObjectName("Sessions");
+    setObjectName( QLatin1String("Sessions" ));
     setPriority(LowPriority);
     setIgnoredTypes(Plasma::RunnerContext::Directory | Plasma::RunnerContext::File | 
                     Plasma::RunnerContext::NetworkLocation);

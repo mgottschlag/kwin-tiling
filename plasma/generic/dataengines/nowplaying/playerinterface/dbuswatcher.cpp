@@ -26,7 +26,7 @@ DBusWatcher::DBusWatcher(QObject* parent)
     : QObject(parent),
       m_bus(0)
 {
-    setObjectName("DBusWatcher");
+    setObjectName( QLatin1String("DBusWatcher" ));
     QDBusConnection sessionCon = QDBusConnection::sessionBus();
     if (sessionCon.isConnected()) {
         m_bus = sessionCon.interface();

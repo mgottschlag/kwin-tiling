@@ -33,7 +33,7 @@ ServiceRunner::ServiceRunner(QObject *parent, const QVariantList &args)
 {
     Q_UNUSED(args)
 
-    setObjectName("Application");
+    setObjectName( QLatin1String("Application" ));
     setPriority(AbstractRunner::HighestPriority);
 
     addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds applications whose name or description match :q:")));

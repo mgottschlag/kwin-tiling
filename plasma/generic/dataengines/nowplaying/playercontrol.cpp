@@ -26,11 +26,11 @@ PlayerControl::PlayerControl(QObject* parent, Player::Ptr player)
     : Plasma::Service(parent),
       m_player(player)
 {
-    setObjectName("nowplaying controller");
+    setObjectName( QLatin1String("nowplaying controller" ));
     setName("nowplaying");
     if (m_player) {
         setDestination(m_player->name());
-        setObjectName("nowplaying controller for" + m_player->name());
+        setObjectName( QLatin1String("nowplaying controller for" ) + m_player->name());
         kDebug() << "Created a player control for" << m_player->name();
     } else {
         kDebug() << "Created a dead player control";

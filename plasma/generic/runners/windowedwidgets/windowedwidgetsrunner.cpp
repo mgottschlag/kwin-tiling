@@ -34,7 +34,7 @@ WindowedWidgetsRunner::WindowedWidgetsRunner(QObject *parent, const QVariantList
 {
     Q_UNUSED(args)
 
-    setObjectName("WindowedWidgets");
+    setObjectName( QLatin1String("WindowedWidgets" ));
     setPriority(AbstractRunner::HighestPriority);
 
     addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds Plasma widgets whose name or description match :q:")));
