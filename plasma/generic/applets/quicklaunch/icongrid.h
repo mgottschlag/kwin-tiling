@@ -70,7 +70,7 @@ public:
     /**
      * Locks or unlocks this IconGrid.
      *
-     * @param enable whether this IconGrid should be locked thereby
+     * @param enable whether this IconGrid should be locked, thereby
      * disabling adding, removing or reordering icons by drag & drop.
      */
     void setLocked(bool enable);

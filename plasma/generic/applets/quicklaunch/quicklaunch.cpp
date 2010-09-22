@@ -46,6 +46,8 @@
 #include <Plasma/Applet>
 #include <Plasma/IconWidget>
 #include <Plasma/Svg>
+#include <Plasma/ToolTipContent>
+#include <Plasma/ToolTipManager>
 
 // Own
 #include "icongrid.h"
@@ -59,6 +61,8 @@ using Plasma::FormFactor;
 using Plasma::IconWidget;
 using Plasma::Location;
 using Plasma::Svg;
+using Plasma::ToolTipContent;
+using Plasma::ToolTipManager;
 
 namespace Quicklaunch {
 
@@ -215,17 +219,11 @@ void Quicklaunch::constraintsEvent(Constraints constraints)
 
     if (constraints & Plasma::ImmutableConstraint) {
 
-        if (immutability() == Plasma::Mutable) {
-            m_iconGrid->setLocked(false);
-            if (m_popup) {
-                m_popup->iconGrid()->setLocked(false);
-            }
+        bool lock = immutability() != Plasma::Mutable;
 
-        } else {
-            m_iconGrid->setLocked(true);
-            if (m_popup) {
-                m_popup->iconGrid()->setLocked(true);
-            }
+        m_iconGrid->setLocked(lock);
+        if (m_popup) {
+            m_popup->iconGrid()->setLocked(lock);
         }
     }
 }
@@ -430,6 +428,7 @@ void Quicklaunch::initPopup()
     m_popupTrigger->setPreferredHeight(KIconLoader::SizeSmall);
     m_popupTrigger->setAcceptDrops(true);
     m_popupTrigger->installEventFilter(this);
+    ToolTipManager::self()->registerWidget(m_popupTrigger);
     updatePopupTrigger();
 
     m_layout->addItem(m_popupTrigger);
@@ -444,35 +443,32 @@ void Quicklaunch::updatePopupTrigger()
     Q_ASSERT(m_popupTrigger);
     Q_ASSERT(m_popup);
 
+    bool popupHidden = m_popup->isHidden();
+
+    // Set icon
     switch (location()) {
         case Plasma::TopEdge:
-            if (m_popup->isHidden()) {
-                m_popupTrigger->setSvg("widgets/arrows", "down-arrow");
-            } else {
-                m_popupTrigger->setSvg("widgets/arrows", "up-arrow");
-            }
+            m_popupTrigger->setSvg(
+                "widgets/arrows", popupHidden ? "down-arrow" : "up-arrow");
             break;
         case Plasma::LeftEdge:
-            if (m_popup->isHidden()) {
-                m_popupTrigger->setSvg("widgets/arrows", "right-arrow");
-            } else {
-                m_popupTrigger->setSvg("widgets/arrows", "left-arrow");
-            }
+            m_popupTrigger->setSvg(
+                "widgets/arrows", popupHidden ? "right-arrow" : "left-arrow");
             break;
         case Plasma::RightEdge:
-            if (m_popup->isHidden()) {
-                m_popupTrigger->setSvg("widgets/arrows", "left-arrow");
-            } else {
-                m_popupTrigger->setSvg("widgets/arrows", "right-arrow");
-            }
+            m_popupTrigger->setSvg(
+                "widgets/arrows", popupHidden ? "left-arrow" : "right-arrow");
             break;
         default:
-            if (m_popup->isHidden()) {
-                m_popupTrigger->setSvg("widgets/arrows", "up-arrow");
-            } else {
-                m_popupTrigger->setSvg("widgets/arrows", "down-arrow");
-            }
+            m_popupTrigger->setSvg(
+                "widgets/arrows", popupHidden ? "up-arrow" : "down-arrow");
     }
+
+    // Set tooltip
+    ToolTipContent toolTipContent;
+    toolTipContent.setSubText(
+        popupHidden ? i18n("Show hidden icons") : i18n("Hide icons"));
+    ToolTipManager::self()->setContent(m_popupTrigger, toolTipContent);
 }
 
 void Quicklaunch::deletePopup()
