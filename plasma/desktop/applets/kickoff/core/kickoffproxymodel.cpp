@@ -74,7 +74,7 @@ QMimeData *KickoffProxyModel::mimeData(const QModelIndexList &indexes) const
 QStringList KickoffProxyModel::mimeTypes() const
 {
     QStringList types;
-    types << "text/uri-list";
+    types << QLatin1String("text/uri-list");
     return types;
 }
 

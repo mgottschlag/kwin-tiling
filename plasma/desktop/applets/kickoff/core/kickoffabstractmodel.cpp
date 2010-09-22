@@ -74,7 +74,7 @@ QMimeData *KickoffAbstractModel::mimeData(const QModelIndexList &indexes) const
 QStringList KickoffAbstractModel::mimeTypes() const
 {
     QStringList types;
-    types << "text/uri-list";
+    types << QLatin1String("text/uri-list");
     return types;
 }
 
