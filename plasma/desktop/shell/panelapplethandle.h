@@ -56,6 +56,7 @@ protected:
 protected Q_SLOTS:
     void configureApplet();
     void closeApplet();
+    void appletDestroyed();
     void updatePalette();
 
 Q_SIGNALS:
