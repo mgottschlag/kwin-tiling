@@ -11,8 +11,8 @@ if(NOT KDE4_FOUND)
 endif(NOT KDE4_FOUND)
 
 set(plasma_applet_quicklaunch_SRCS
-  icongrid.cpp
-  icongridlayout.cpp  
+  iconarea.cpp
+  icongridlayout.cpp
   itemdata.cpp
   popup.cpp
   quicklaunch.cpp

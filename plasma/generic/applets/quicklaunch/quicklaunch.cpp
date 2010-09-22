@@ -50,7 +50,7 @@
 #include <Plasma/ToolTipManager>
 
 // Own
-#include "icongrid.h"
+#include "iconarea.h"
 #include "icongridlayout.h"
 #include "itemdata.h"
 #include "popup.h"
@@ -70,13 +70,13 @@ K_EXPORT_PLASMA_APPLET(quicklaunch, Quicklaunch)
 
 Quicklaunch::Quicklaunch(QObject *parent, const QVariantList &args)
   : Applet(parent, args),
-    m_iconGrid(0),
+    m_iconArea(0),
     m_layout(0),
     m_popupTrigger(0),
     m_popup(0),
     m_addIconAction(0),
     m_removeIconAction(0),
-    m_currentIconGrid(0),
+    m_currentIconArea(0),
     m_currentIconIndex(-1)
 {
     setHasConfigurationInterface(true);
@@ -98,17 +98,17 @@ void Quicklaunch::init()
     m_layout->setContentsMargins(2, 2, 2, 2);
     m_layout->setSpacing(4);
 
-    // Initialize icon grid
-    m_iconGrid = new IconGrid();
-    m_iconGrid->installEventFilter(this);
+    // Initialize icon area
+    m_iconArea = new IconArea();
+    m_iconArea->installEventFilter(this);
 
-    m_layout->addItem(m_iconGrid);
-    m_layout->setStretchFactor(m_iconGrid, 1);
+    m_layout->addItem(m_iconArea);
+    m_layout->setStretchFactor(m_iconArea, 1);
 
     // Read config
     readConfig();
 
-    connect(m_iconGrid, SIGNAL(iconsChanged()), SLOT(onIconsChanged()));
+    connect(m_iconArea, SIGNAL(iconsChanged()), SLOT(onIconsChanged()));
 
     setLayout(m_layout);
 }
@@ -137,13 +137,13 @@ void Quicklaunch::createConfigurationInterface(KConfigDialog *parent)
     }
 
     uiConfig.forceMaxRowsOrColumnsCheckBox->setChecked(
-        m_iconGrid->layout()->maxRowsOrColumnsForced());
+        m_iconArea->layout()->maxRowsOrColumnsForced());
 
     uiConfig.maxRowsOrColumnsSpinBox->setValue(
-        m_iconGrid->layout()->maxRowsOrColumns());
+        m_iconArea->layout()->maxRowsOrColumns());
 
     uiConfig.iconNamesVisibleCheckBox->setChecked(
-        m_iconGrid->iconNamesVisible());
+        m_iconArea->iconNamesVisible());
 
     uiConfig.dialogEnabledCheckBox->setChecked(m_popup != 0);
 
@@ -156,7 +156,7 @@ bool Quicklaunch::eventFilter(QObject *watched, QEvent *event)
 
     if (eventType == QEvent::GraphicsSceneContextMenu) {
 
-        IconGrid *source = qobject_cast<IconGrid*>(watched);
+        IconArea *source = qobject_cast<IconArea*>(watched);
 
         if (source) {
             QGraphicsSceneContextMenuEvent *contextMenuEvent =
@@ -194,7 +194,7 @@ void Quicklaunch::constraintsEvent(Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint) {
         FormFactor newFormFactor = formFactor();
 
-        m_iconGrid->layout()->setMode(
+        m_iconArea->layout()->setMode(
             newFormFactor == Plasma::Horizontal
                 ? IconGridLayout::PreferRows
                 : IconGridLayout::PreferColumns);
@@ -202,8 +202,8 @@ void Quicklaunch::constraintsEvent(Constraints constraints)
         // Ignore maxRowsOrColumns / maxRowsOrColumnsForced when in planar
         // form factor.
         if (newFormFactor == Plasma::Planar) {
-            m_iconGrid->layout()->setMaxRowsOrColumns(0);
-            m_iconGrid->layout()->setMaxRowsOrColumnsForced(false);
+            m_iconArea->layout()->setMaxRowsOrColumns(0);
+            m_iconArea->layout()->setMaxRowsOrColumnsForced(false);
         }
 
         m_layout->setOrientation(
@@ -221,9 +221,9 @@ void Quicklaunch::constraintsEvent(Constraints constraints)
 
         bool lock = immutability() != Plasma::Mutable;
 
-        m_iconGrid->setLocked(lock);
+        m_iconArea->setLocked(lock);
         if (m_popup) {
-            m_popup->iconGrid()->setLocked(lock);
+            m_popup->iconArea()->setLocked(lock);
         }
     }
 }
@@ -243,24 +243,24 @@ void Quicklaunch::onConfigAccepted()
     KConfigGroup config = this->config();
     bool changed = false;
 
-    if (maxRowsOrColumnsForced != m_iconGrid->layout()->maxRowsOrColumnsForced()) {
-        m_iconGrid->layout()->setMaxRowsOrColumnsForced(maxRowsOrColumnsForced);
+    if (maxRowsOrColumnsForced != m_iconArea->layout()->maxRowsOrColumnsForced()) {
+        m_iconArea->layout()->setMaxRowsOrColumnsForced(maxRowsOrColumnsForced);
         config.writeEntry("maxRowsOrColumnsForced", maxRowsOrColumnsForced);
         changed = true;
     }
 
-    if (maxRowsOrColumns != m_iconGrid->layout()->maxRowsOrColumns()) {
-        m_iconGrid->layout()->setMaxRowsOrColumns(maxRowsOrColumns);
+    if (maxRowsOrColumns != m_iconArea->layout()->maxRowsOrColumns()) {
+        m_iconArea->layout()->setMaxRowsOrColumns(maxRowsOrColumns);
         config.writeEntry("maxRowsOrColumns", maxRowsOrColumns);
         changed = true;
     }
 
-    if (iconNamesVisible != m_iconGrid->iconNamesVisible()) {
+    if (iconNamesVisible != m_iconArea->iconNamesVisible()) {
 
-        m_iconGrid->setIconNamesVisible(iconNamesVisible);
+        m_iconArea->setIconNamesVisible(iconNamesVisible);
 
         if (m_popup != 0) {
-            m_popup->iconGrid()->setIconNamesVisible(iconNamesVisible);
+            m_popup->iconArea()->setIconNamesVisible(iconNamesVisible);
             // syncDialogSize();
         }
 
@@ -273,10 +273,10 @@ void Quicklaunch::onConfigAccepted()
         if (!m_popup) {
             initPopup();
         } else {
-            // Move all icons from the popup into the our own icon grid.
-            while(m_popup->iconGrid()->iconCount() > 0) {
-                m_iconGrid->insert(-1, m_popup->iconGrid()->iconAt(0));
-                m_popup->iconGrid()->removeAt(0);
+            // Move all icons from the popup into the our own icon area.
+            while(m_popup->iconArea()->iconCount() > 0) {
+                m_iconArea->insert(-1, m_popup->iconArea()->iconAt(0));
+                m_popup->iconArea()->removeAt(0);
             }
 
             deletePopup();
@@ -297,14 +297,14 @@ void Quicklaunch::onIconsChanged()
     QStringList icons;
     QStringList dialogIcons;
 
-    for (int i = 0; i < m_iconGrid->iconCount(); i++) {
-        icons.append(m_iconGrid->iconAt(i).url().prettyUrl());
+    for (int i = 0; i < m_iconArea->iconCount(); i++) {
+        icons.append(m_iconArea->iconAt(i).url().prettyUrl());
     }
 
     if (m_popup) {
-        for (int i = 0; i < m_popup->iconGrid()->iconCount(); i++) {
+        for (int i = 0; i < m_popup->iconArea()->iconCount(); i++) {
             // XXX: Is prettyUrl() really needed?
-            dialogIcons.append(m_popup->iconGrid()->iconAt(i).url().prettyUrl());
+            dialogIcons.append(m_popup->iconArea()->iconAt(i).url().prettyUrl());
         }
     }
 
@@ -328,10 +328,10 @@ void Quicklaunch::onPopupTriggerClicked()
 
 void Quicklaunch::onRemoveIconAction()
 {
-    Q_ASSERT(m_currentIconGrid);
+    Q_ASSERT(m_currentIconArea);
     Q_ASSERT(m_currentIconIndex != -1);
 
-    m_currentIconGrid->removeAt(m_currentIconIndex);
+    m_currentIconArea->removeAt(m_currentIconIndex);
 }
 
 void Quicklaunch::onAddIconAction()
@@ -361,12 +361,12 @@ void Quicklaunch::onAddIconAction()
             programPath = propertiesDialog.kurl().path();
         }
 
-        if (m_currentIconGrid) {
-            m_currentIconGrid->insert(
+        if (m_currentIconArea) {
+            m_currentIconArea->insert(
                 m_currentIconIndex, KUrl::fromPath(programPath));
         }
         else {
-            m_iconGrid->insert(
+            m_iconArea->insert(
                 -1, KUrl::fromPath(programPath));
         }
     }
@@ -374,14 +374,14 @@ void Quicklaunch::onAddIconAction()
 
 void Quicklaunch::showContextMenu(
     const QPoint& screenPos,
-    IconGrid *component,
+    IconArea *component,
     int iconIndex)
 {
     if (m_addIconAction == 0) {
         initActions();
     }
 
-    m_currentIconGrid = component;
+    m_currentIconArea = component;
     m_currentIconIndex = iconIndex;
 
     KMenu m;
@@ -395,7 +395,7 @@ void Quicklaunch::showContextMenu(
     m.addAction(action("remove"));
     m.exec(screenPos);
 
-    m_currentIconGrid = 0;
+    m_currentIconArea = 0;
     m_currentIconIndex = -1;
 }
 
@@ -418,8 +418,8 @@ void Quicklaunch::initPopup()
     m_popup = new Popup(this);
 
     m_popup->installEventFilter(this);
-    m_popup->iconGrid()->installEventFilter(this);
-    connect(m_popup->iconGrid(), SIGNAL(iconsChanged()), SLOT(onIconsChanged()));
+    m_popup->iconArea()->installEventFilter(this);
+    connect(m_popup->iconArea(), SIGNAL(iconsChanged()), SLOT(onIconsChanged()));
 
     // Initialize popup trigger
     m_popupTrigger = new IconWidget(this);
@@ -527,15 +527,15 @@ void Quicklaunch::readConfig()
         }
     }
 
-    m_iconGrid->layout()->setMaxRowsOrColumnsForced(maxRowsOrColumnsForced);
-    m_iconGrid->layout()->setMaxRowsOrColumns(maxRowsOrColumns);
-    m_iconGrid->setIconNamesVisible(iconNamesVisible);
+    m_iconArea->layout()->setMaxRowsOrColumnsForced(maxRowsOrColumnsForced);
+    m_iconArea->layout()->setMaxRowsOrColumns(maxRowsOrColumns);
+    m_iconArea->setIconNamesVisible(iconNamesVisible);
 
-    m_iconGrid->insert(-1, primaryItems);
+    m_iconArea->insert(-1, primaryItems);
 
     if (!dialogItems.isEmpty() || dialogEnabled) {
         initPopup();
-        m_popup->iconGrid()->insert(-1, dialogItems);
+        m_popup->iconArea()->insert(-1, dialogItems);
     }
 }
 

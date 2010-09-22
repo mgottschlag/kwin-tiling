@@ -29,7 +29,7 @@ using Plasma::Dialog;
 
 namespace Quicklaunch {
 
-class IconGrid;
+class IconArea;
 class Quicklaunch;
 
 class Popup : public Dialog {
@@ -40,7 +40,7 @@ public:
     Popup(Quicklaunch *applet);
     ~Popup();
 
-    IconGrid *iconGrid();
+    IconArea *iconArea();
     void show();
 
 private Q_SLOTS:
@@ -52,7 +52,7 @@ private:
     void syncSizeAndPosition();
 
     Quicklaunch *m_applet;
-    IconGrid *m_iconGrid;
+    IconArea *m_iconArea;
 };
 }
 

@@ -50,7 +50,7 @@ using Plasma::Constraints;
 
 namespace Quicklaunch {
 
-class IconGrid;
+class IconArea;
 class Popup;
 
 class Quicklaunch : public Plasma::Applet
@@ -80,7 +80,7 @@ private Q_SLOTS:
 private:
     void showContextMenu(
         const QPoint& screenPos,
-        IconGrid *component,
+        IconArea *component,
         int iconIndex);
 
     void initActions();
@@ -93,7 +93,7 @@ private:
 
     Ui::quicklaunchConfig uiConfig;
 
-    IconGrid *m_iconGrid;
+    IconArea *m_iconArea;
 
     QGraphicsLinearLayout *m_layout;
     Plasma::IconWidget *m_popupTrigger;
@@ -102,7 +102,7 @@ private:
     QAction* m_addIconAction;
     QAction* m_removeIconAction;
 
-    IconGrid *m_currentIconGrid;
+    IconArea *m_currentIconArea;
     int m_currentIconIndex;
 };
 }

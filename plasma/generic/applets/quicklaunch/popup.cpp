@@ -33,7 +33,7 @@
 #include <Plasma/Dialog>
 
 // Own
-#include "icongrid.h"
+#include "iconarea.h"
 #include "icongridlayout.h"
 #include "quicklaunch.h"
 
@@ -47,31 +47,31 @@ Popup::Popup(Quicklaunch *applet)
 :
     Dialog(0, Qt::X11BypassWindowManagerHint),
     m_applet(applet),
-    m_iconGrid(new IconGrid())
+    m_iconArea(new IconArea())
 {
-    m_applet->containment()->corona()->addItem(m_iconGrid);
-    m_applet->containment()->corona()->addOffscreenWidget(m_iconGrid);
+    m_applet->containment()->corona()->addItem(m_iconArea);
+    m_applet->containment()->corona()->addOffscreenWidget(m_iconArea);
 
-    m_iconGrid->setIconNamesVisible(false);
+    m_iconArea->setIconNamesVisible(false);
 
-    m_iconGrid->layout()->setCellSizeHint(KIconLoader::SizeMedium);
+    m_iconArea->layout()->setCellSizeHint(KIconLoader::SizeMedium);
 
-    setGraphicsWidget(m_iconGrid);
+    setGraphicsWidget(m_iconArea);
 
     connect(m_applet, SIGNAL(geometryChanged()), SLOT(onAppletGeometryChanged()));
-    connect(m_iconGrid, SIGNAL(iconClicked()), SLOT(onIconClicked()));
-    connect(m_iconGrid, SIGNAL(displayedItemCountChanged()), SLOT(onDisplayedItemCountChanged()));
+    connect(m_iconArea, SIGNAL(iconClicked()), SLOT(onIconClicked()));
+    connect(m_iconArea, SIGNAL(displayedItemCountChanged()), SLOT(onDisplayedItemCountChanged()));
 }
 
 Popup::~Popup()
 {
     Dialog::close();
-    delete m_iconGrid;
+    delete m_iconArea;
 }
 
-IconGrid * Popup::iconGrid()
+IconArea * Popup::iconArea()
 {
-    return m_iconGrid;
+    return m_iconArea;
 }
 
 void Popup::show()
@@ -101,19 +101,19 @@ void Popup::syncSizeAndPosition()
         return;
     }
 
-    int displayedItemCount = m_iconGrid->layout()->count();
+    int displayedItemCount = m_iconArea->layout()->count();
 
-    const int iconGridWidth = displayedItemCount *
-        (KIconLoader::SizeMedium + m_iconGrid->layout()->cellSpacing()) -
-        m_iconGrid->layout()->cellSpacing();
+    const int iconAreaWidth = displayedItemCount *
+        (KIconLoader::SizeMedium + m_iconArea->layout()->cellSpacing()) -
+        m_iconArea->layout()->cellSpacing();
 
-    const int iconGridHeight = KIconLoader::SizeMedium;
+    const int iconAreaHeight = KIconLoader::SizeMedium;
 
     QMargins margins = contentsMargins();
 
     QSize newSize(
-        iconGridWidth + margins.left() + margins.right(),
-        iconGridHeight + margins.top() + margins.bottom());
+        iconAreaWidth + margins.left() + margins.right(),
+        iconAreaHeight + margins.top() + margins.bottom());
 
     move(m_applet->popupPosition(newSize, Qt::AlignRight));
     resize(newSize);
