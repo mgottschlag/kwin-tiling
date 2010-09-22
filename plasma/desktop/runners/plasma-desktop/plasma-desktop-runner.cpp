@@ -36,7 +36,7 @@ PlasmaDesktopRunner::PlasmaDesktopRunner(QObject *parent, const QVariantList &ar
       m_desktopConsoleKeyword(i18nc("Note this is a KRunner keyword", "desktop console")),
       m_enabled(false)
 {
-    setObjectName("Plasma-Desktop");
+    setObjectName( QLatin1String("Plasma-Desktop" ));
     setIgnoredTypes(Plasma::RunnerContext::FileSystem |
                     Plasma::RunnerContext::NetworkLocation |
                     Plasma::RunnerContext::Help);
