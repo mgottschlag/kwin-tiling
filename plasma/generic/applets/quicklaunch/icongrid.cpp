@@ -98,6 +98,7 @@ IconGrid::IconGrid(QGraphicsItem *parent)
     QGraphicsWidget(parent),
     m_icons(),
     m_iconNamesVisible(false),
+    m_locked(false),
     m_layout(new IconGridLayout()),
     m_mousePressedPos(),
     m_dropMarker(0),
@@ -109,7 +110,7 @@ IconGrid::IconGrid(QGraphicsItem *parent)
     setLayout(m_layout);
     initPlaceHolder();
 
-    setAcceptDrops(true);
+    setLocked(false);
 }
 
 bool IconGrid::iconNamesVisible() const
@@ -128,6 +129,17 @@ void IconGrid::setIconNamesVisible(bool enable)
     }
     m_dropMarker->setIconNameVisible(enable);
     m_iconNamesVisible = enable;
+}
+
+bool IconGrid::locked() const
+{
+    return m_locked;
+}
+
+void IconGrid::setLocked(bool enable)
+{
+    m_locked = enable;
+    setAcceptDrops(!enable);
 }
 
 IconGridLayout * IconGrid::layout()
@@ -224,7 +236,8 @@ bool IconGrid::eventFilter(QObject *watched, QEvent *event)
     QuicklaunchIcon *quicklaunchIconSource =
         qobject_cast<QuicklaunchIcon*>(watched);
 
-    if (quicklaunchIconSource) {
+    // Start of Drag & Drop operations
+    if (quicklaunchIconSource && !m_locked) {
 
         if (event->type() == QEvent::GraphicsSceneMousePress) {
             m_mousePressedPos =
@@ -269,6 +282,8 @@ bool IconGrid::eventFilter(QObject *watched, QEvent *event)
 
 void IconGrid::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
+    Q_ASSERT(!m_locked);
+
     Qt::DropAction proposedAction = event->proposedAction();
 
     if (proposedAction != Qt::CopyAction && proposedAction != Qt::MoveAction) {
@@ -336,6 +351,7 @@ void IconGrid::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 
 void IconGrid::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 {
+    // DragMoveEvents are always preceded by DragEnterEvents
     Q_ASSERT(m_dropMarkerIndex != -1);
 
     int newDropMarkerIndex =

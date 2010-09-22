@@ -61,6 +61,20 @@ public:
     bool iconNamesVisible() const;
     void setIconNamesVisible(bool enable);
 
+    /**
+     * Indicates whether this IconGrid is locked and thus does not allow
+     * adding, removing or reordering icons by drag & drop.
+     */
+    bool locked() const;
+
+    /**
+     * Locks or unlocks this IconGrid.
+     *
+     * @param enable whether this IconGrid should be locked thereby
+     * disabling adding, removing or reordering icons by drag & drop.
+     */
+    void setLocked(bool enable);
+
     IconGridLayout *layout();
 
     int iconCount() const;
@@ -106,6 +120,7 @@ private:
 
     QList<QuicklaunchIcon*> m_icons;
     bool m_iconNamesVisible;
+    bool m_locked;
 
     IconGridLayout *m_layout;
 

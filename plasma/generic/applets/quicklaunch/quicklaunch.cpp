@@ -212,6 +212,22 @@ void Quicklaunch::constraintsEvent(Constraints constraints)
             updatePopupTrigger();
         }
     }
+
+    if (constraints & Plasma::ImmutableConstraint) {
+
+        if (immutability() == Plasma::Mutable) {
+            m_iconGrid->setLocked(false);
+            if (m_popup) {
+                m_popup->iconGrid()->setLocked(false);
+            }
+
+        } else {
+            m_iconGrid->setLocked(true);
+            if (m_popup) {
+                m_popup->iconGrid()->setLocked(true);
+            }
+        }
+    }
 }
 
 void Quicklaunch::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)

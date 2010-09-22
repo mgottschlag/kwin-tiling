@@ -34,6 +34,12 @@ class KBookmarkGroup;
 
 namespace Quicklaunch {
 
+/**
+ * The ItemData class encapsulates all the data necessary to display an
+ * item in quicklaunch (url, name, description and an icon). It also
+ * provides methods to read / write ItemData objects from / to QMimeData
+ * objects or KBookmarks.
+ */
 class ItemData {
 
 public:
