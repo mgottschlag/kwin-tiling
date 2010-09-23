@@ -12,8 +12,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2010-02-04</date>
-<releaseinfo>&kde; 4.4</releaseinfo>
+<date>2010-09-23</date>
+<releaseinfo>&kde; 4.5</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -61,9 +61,9 @@ When compositing is not active or gets suspended the normal window list will be 
 </sect2>
 
 <sect2 id="lists">
-<title>Displays list</title>
+<title>Display list</title>
 <para>
-When no effect is used an outline illustrating position and size of the selected window can be shown. The list can be combined with the <guilabel>Highlight selected windows</guilabel> effect when compositing is active. This effect will highlight the currently selected window by fading out all other windows.
+When no effect is used an outline illustrating position and size of the selected window can be shown while switching. The list can be combined with the <guilabel>Highlight selected windows</guilabel> effect when compositing is active. This effect will highlight the currently selected window by fading out all other windows.
 </para>
 <para>
 If you want to configure the layout of one item you can use the dialog which opens by clicking <guibutton>Configure Layout</guibutton>. There are several predefined layouts which provide an informative or compact view, small or large icons and window title only. You can change the way the items are laid out: horizontal, vertical or in a tabular layout. At the bottom of the dialog there is a live preview for the current settings.

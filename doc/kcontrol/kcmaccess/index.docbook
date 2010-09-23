@@ -156,6 +156,7 @@ de-select the &Shift; key, press it again.
 </listitem>
 </varlistentry>
 <!-- explain use case etc
+<guilabel>Locking Keys</guilabel> what is that?
 <varlistentry>
 <term><guilabel>Use system bell whenever a locking key gets activated or deactivated</guilabel></term>
 <listitem><para></para></listitem>
@@ -187,7 +188,9 @@ keystroke will be accepted. This helps prevent accidental key strokes.
 </para>
 </listitem>
 </varlistentry>
-
+<!-- Acceptance delay slider 500 ms default
+Use system bell whenever a key is pressed/accepted/rejected
+-->
 <varlistentry>
 <term><guilabel>Use bounce keys</guilabel></term>
 <listitem>
@@ -198,6 +201,10 @@ accepted. This prevents accidental multiple key strokes.
 </para>
 </listitem>
 </varlistentry>
+<!-- Debounce time slider 500 ms default
+Use system bell whenever a key is rejected
+-->
+
 </variablelist>
 
 </sect3>
