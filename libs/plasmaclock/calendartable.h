@@ -73,20 +73,21 @@ public:
     void setDisplayHolidays(bool showHolidays);
     bool displayHolidays();
 
-    void setHolidaysRegion(const QString &region);
-    QString holidaysRegion() const;
+    void setHolidaysRegions(const QStringList &regionCodeList);
+    void addHolidaysRegion(const QString &regionCode);
+    QStringList holidaysRegions() const;
 
     void clearHolidays();
-    void addHoliday(const QDate &date, Plasma::DataEngine::Data holidayData);
+    void addHoliday(Plasma::DataEngine::Data holidayData);
     bool dateHasDetails(const QDate &date) const;
     QString dateDetails(const QDate &date) const;
 
     void setAutomaticUpdateEnabled(bool enabled);
     bool isAutomaticUpdateEnabled() const;
-    
+
     void setCurrentDate(const QDate &date);
     const QDate& currentDate() const;
-    
+
     void applyConfiguration(KConfigGroup cg);
     void writeConfiguration(KConfigGroup cg);
     void createConfigurationInterface(KConfigDialog *parent);

@@ -128,7 +128,8 @@ public:
 
     void createToday()
     {
-        QString tmpStr = "isHoliday:" + calendarWidget->holidaysRegion() + ':' + QDate::currentDate().toString(Qt::ISODate);
+        QString tmpStr = "isHoliday" + QString(':') + calendarWidget->holidaysRegions().join(QString(','))
+                                     + QString(':') + QDate::currentDate().toString(Qt::ISODate);
         bool isHoliday = q->dataEngine("calendar")->query(tmpStr).value(tmpStr).toBool();
 
         Plasma::ExtenderItem *todayExtender = q->extender()->item("today");
@@ -287,13 +288,7 @@ void ClockApplet::updateTipContent()
     }
 
     if (d->calendarWidget->dateHasDetails(tipDate)) {
-        QString property = d->calendarWidget->dateDetails(tipDate);
-        QString countryString = KGlobal::locale()->countryCodeToName(d->calendarWidget->holidaysRegion());
-        if (countryString.isEmpty()) {
-            subText.append("<br>").append(property);
-        } else {
-            subText.append("<br><b>").append(countryString).append("</b> ").append(property);
-        }
+        subText.append("<br>").append(d->calendarWidget->dateDetails(tipDate));
     }
 
     tipData.setSubText(subText);

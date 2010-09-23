@@ -263,14 +263,19 @@ bool Calendar::displayHolidays()
     return calendarTable()->displayHolidays();
 }
 
-void Calendar::setHolidaysRegion(const QString &region)
+void Calendar::setHolidaysRegions(const QStringList &regionList)
 {
-    calendarTable()->setHolidaysRegion(region);
+    calendarTable()->setHolidaysRegions(regionList);
 }
 
-QString Calendar::holidaysRegion() const
+void Calendar::addHolidaysRegion(const QString &region)
 {
-    return calendarTable()->holidaysRegion();
+    calendarTable()->addHolidaysRegion(region);
+}
+
+QStringList Calendar::holidaysRegions() const
+{
+    return calendarTable()->holidaysRegions();
 }
 
 bool Calendar::dateHasDetails(const QDate &date) const

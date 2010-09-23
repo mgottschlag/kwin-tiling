@@ -63,6 +63,7 @@ bool CalendarEngine::sourceRequestEvent(const QString &request)
     QString requestKey = requestTokens.takeFirst();
 
     if (requestKey == "holidaysRegions" ||
+        requestKey == "holidaysRegion" ||
         requestKey == "holidaysDefaultRegion" ||
         requestKey == "holidaysIsValidRegion" ||
         requestKey == "holidays" ||
@@ -85,15 +86,15 @@ bool CalendarEngine::holidayCalendarSourceRequest(const QString& key, const QStr
         foreach (const QString &regionCode, regionList) {
             Plasma::DataEngine::Data regionData;
             KHolidays::HolidayRegion region(regionCode);
-            regionData.insert("name", region.name());
-            regionData.insert("description", region.description());
-            regionData.insert("countryCode", region.countryCode());
-            regionData.insert("location", region.location());
-            regionData.insert("languageCode", region.languageCode());
+            regionData.insert("Name", region.name());
+            regionData.insert("Description", region.description());
+            regionData.insert("CountryCode", region.countryCode());
+            regionData.insert("Location", region.location());
+            regionData.insert("LanguageCode", region.languageCode());
             data.insert(regionCode, regionData);
         }
         setData(request, data);
-        return true;
+       return true;
     }
 
     if (key == "holidaysDefaultRegion") {
@@ -128,9 +129,29 @@ bool CalendarEngine::holidayCalendarSourceRequest(const QString& key, const QStr
         return false;
     }
 
-    const QString regionCode = args.at(0);
+    const QStringList regionCodeList = args.at(0).split(',');
+    if (regionCodeList.count() < 1) {
+        return false;
+    }
+
+    foreach ( const QString &regionCode, regionCodeList ) {
+        KHolidays::HolidayRegion *region = m_regions.value(regionCode);
+        if (!region || !region->isValid()) {
+            region = new KHolidays::HolidayRegion(regionCode);
+            if (region->isValid()) {
+                m_regions.insert(regionCode, region);
+            } else {
+                delete region;
+                return false;
+            }
+        }
+    }
 
     if (key == "holidaysIsValidRegion") {
+        if (regionCodeList.count() > 1) {
+            return false;
+        }
+        QString regionCode = regionCodeList.at(0);
         if (m_regions.contains(regionCode)) {
             setData(request, m_regions.value(regionCode)->isValid());
         } else {
@@ -139,19 +160,24 @@ bool CalendarEngine::holidayCalendarSourceRequest(const QString& key, const QStr
         return true;
     }
 
-    if (argsCount < 2) {
-        return false;
+    if (key == "holidaysRegion") {
+        Plasma::DataEngine::Data data;
+        foreach (const QString &regionCode, regionCodeList) {
+            Plasma::DataEngine::Data regionData;
+            KHolidays::HolidayRegion *region = m_regions.value(regionCode);
+            regionData.insert("Name", region->name());
+            regionData.insert("Description", region->description());
+            regionData.insert("CountryCode", region->countryCode());
+            regionData.insert("Location", region->location());
+            regionData.insert("LanguageCode", region->languageCode());
+            data.insert(regionCode, regionData);
+        }
+        setData(request, data);
+        return true;
     }
 
-    KHolidays::HolidayRegion *region = m_regions.value(regionCode);
-    if (!region || !region->isValid()) {
-        region = new KHolidays::HolidayRegion(regionCode);
-        if (region->isValid()) {
-            m_regions.insert(regionCode, region);
-        } else {
-            delete region;
-            return false;
-        }
+    if (argsCount < 2) {
+        return false;
     }
 
     QDate dateArg = QDate::fromString(args.at(1), Qt::ISODate);
@@ -160,43 +186,49 @@ bool CalendarEngine::holidayCalendarSourceRequest(const QString& key, const QStr
     }
 
     if (key == "holidaysInMonth" || key == "holidays") {
-        KHolidays::Holiday::List holidays;
-        if (key == "holidays" && argsCount == 2) {
-            holidays = region->holidays(dateArg);
+        QDate startDate, endDate;
+        if (key == "holidaysInMonth") {
+            int requestYear, requestMonth;
+            KGlobal::locale()->calendar()->getDate(dateArg, &requestYear, &requestMonth, 0);
+            int lastDay = KGlobal::locale()->calendar()->daysInMonth(dateArg);
+            KGlobal::locale()->calendar()->setDate(startDate, requestYear, requestMonth, 1);
+            KGlobal::locale()->calendar()->setDate(endDate, requestYear, requestMonth, lastDay);
+        } else if (argsCount == 2) {
+            startDate = dateArg;
+            endDate = dateArg;
+        } else if (argsCount < 3) {
+            return false;
         } else {
-            QDate startDate, endDate;
-            if (key == "holidaysInMonth") {
-                int requestYear, requestMonth;
-                KGlobal::locale()->calendar()->getDate(dateArg, &requestYear, &requestMonth, 0);
-                int lastDay = KGlobal::locale()->calendar()->daysInMonth(dateArg);
-                KGlobal::locale()->calendar()->setDate(startDate, requestYear, requestMonth, 1);
-                KGlobal::locale()->calendar()->setDate(endDate, requestYear, requestMonth, lastDay);
-            } else { // holidays
-                if (argsCount < 3) {
-                    return false;
-                }
-                startDate = dateArg;
-                endDate = QDate::fromString(args.at(2), Qt::ISODate);
-            }
-            if (!startDate.isValid() || !endDate.isValid()) {
-                return false;
-            }
-            holidays = region->holidays(startDate, endDate);
+            startDate = dateArg;
+            endDate = QDate::fromString(args.at(2), Qt::ISODate);
+        }
+
+        if (!startDate.isValid() || !endDate.isValid()) {
+            return false;
         }
 
         QList<QVariant> holidayList;
-        foreach (const KHolidays::Holiday &holiday, holidays) {
-            if (!holiday.text().isEmpty()) {
-                Plasma::DataEngine::Data holidayData;
-                holidayData.insert("date", holiday.date().toString(Qt::ISODate));
-                holidayData.insert("name", holiday.text());
-                // It's a blunt tool for now, we only know if it's a full public holiday or not
-                if ( holiday.dayType() == KHolidays::Holiday::NonWorkday ) {
-                    holidayData.insert("observanceType", "PublicHoliday");
-                } else {
-                    holidayData.insert("observanceType", "Other");
+        foreach ( const QString &regionCode, regionCodeList ) {
+            KHolidays::HolidayRegion *region = m_regions.value(regionCode);
+            KHolidays::Holiday::List holidays;
+            holidays = region->holidays(startDate, endDate, KHolidays::Holiday::MultidayHolidaysAsSingleEvents);
+
+            foreach (const KHolidays::Holiday &holiday, holidays) {
+                if (!holiday.text().isEmpty()) {
+                    Plasma::DataEngine::Data holidayData;
+                    holidayData.insert("Name", holiday.text());
+                    holidayData.insert("RegionCode", regionCode);
+                    holidayData.insert("ObservanceStartDate", holiday.observedStartDate().toString(Qt::ISODate));
+                    holidayData.insert("ObservanceEndDate", holiday.observedEndDate().toString(Qt::ISODate));
+                    holidayData.insert("ObservanceDuration", holiday.duration());
+                    // It's a blunt tool for now, we only know if it's a full public holiday or not
+                    if ( holiday.dayType() == KHolidays::Holiday::NonWorkday ) {
+                        holidayData.insert("ObservanceType", "PublicHoliday");
+                    } else {
+                        holidayData.insert("ObservanceType", "Other");
+                    }
+                    holidayList.append(QVariant(holidayData));
                 }
-                holidayList.append(QVariant(holidayData));
             }
         }
 
@@ -205,19 +237,29 @@ bool CalendarEngine::holidayCalendarSourceRequest(const QString& key, const QStr
     }
 
     if (key == "isHoliday") {
-        setData(request, region->isHoliday(dateArg));
+        bool isHoliday = false;
+        foreach ( const QString &regionCode, regionCodeList ) {
+            KHolidays::HolidayRegion *region = m_regions.value(regionCode);
+            if (region->isHoliday(dateArg)) {
+                isHoliday = true;
+            }
+        }
+        setData(request, isHoliday);
         return true;
     }
 
     if (key == "description") {
-        KHolidays::Holiday::List holidays = region->holidays(dateArg);
         QString summary;
-        foreach (const KHolidays::Holiday &holiday, holidays) {
-            if (!summary.isEmpty()) {
-                summary.append("\n");
+        foreach ( const QString &regionCode, regionCodeList ) {
+            KHolidays::HolidayRegion *region = m_regions.value(regionCode);
+            KHolidays::Holiday::List holidays;
+            holidays = region->holidays(dateArg, KHolidays::Holiday::MultidayHolidaysAsSingleEvents);
+            foreach (const KHolidays::Holiday &holiday, holidays) {
+                if (!summary.isEmpty()) {
+                    summary.append("\n");
+                }
+                summary.append(holiday.text());
             }
-
-            summary.append(holiday.text());
         }
 
         setData(request, summary);

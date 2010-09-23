@@ -40,27 +40,43 @@ namespace KHolidays
     Supported Holiday requests are:
 
         holidaysRegions
-            * Returns a list of available Holiday Regions
-              Each Holiday Region is a pair of a QString containing the regionCode and a Data
-              containing value pairs for "name", "description", "countryCode", "location", "languageCode"
+            * Returns a list of available Holiday Region Codes
+        holidaysDefaultRegion
+            * Returns a QString of a sensible default Holiday Region
         holdaysIsValidRegion:[regionCode]
             * Returns a bool if given Holiday Region is valid
-        holidaysDefaultRegion:[regionCode]
-            * Returns a QString of a sensible default Holiday Region
-        holidays:[regionCode]:[YYYY-MM-DD]:[YYYY-MM-DD]
-            * Returns a QList of all holidays in a Holiday Region between two given dates.
-              Note that multiple holidays can be returned for each date.
-              Each holiday is a Data containing string value pairs for "date", "name" and
-              "observanceType".  The date is Gregorian in ISO format. The "observanceType"
-              is either "PublicHoliday" or "Other".
-        holidays:[regionCode]:[YYYY-MM-DD]
-            * Returns a QList of all holidays  in a Holiday Region on a given day
-        holidaysInMonth:[regionCode]:[YYYY-MM-DD]
-            * Returns a QList of all holidays in a Holiday Region in a given month
-        isHoliday:[regionCode]:[YYYY-MM-DD]
-            * Returns a bool if a given date is a Holiday in the given Holiday Region
-        description:[regionCode]:[YYYY-MM-DD]
-            * Returns a QString of all holiday names in a given Holiday Region on a given date
+        holdaysRegion:[regionCode(s)]
+            * Returns the details of the Holiday Regions
+        holidays:[regionCode(s)]:[YYYY-MM-DD]:[YYYY-MM-DD]
+            * Returns a QList of all holidays in a Holiday Region(s) between two given dates.
+        holidays:[regionCode(s)]:[YYYY-MM-DD]
+            * Returns a QList of all holidays  in a Holiday Region(s) on a given day
+        holidaysInMonth:[regionCode(s)]:[YYYY-MM-DD]
+            * Returns a QList of all holidays in a Holiday Region(s) in a given month
+        isHoliday:[regionCode(s)]:[YYYY-MM-DD]
+            * Returns a bool if a given date is a Holiday in the given Holiday Region(s)
+        description:[regionCode(s)]:[YYYY-MM-DD]
+            * Returns a QString of all holiday names in a given Holiday Region(s) on a given date
+
+    Where valid, regionCode(s) are a comma separated list of one or more valid Holiday Regions
+
+    Each Holiday Region is a pair of a QString containing the regionCode and a Data containing value
+    pairs for:
+        "Name"                      Name of the Holiday Region          String
+        "Description"               The description  of the Region      String
+        "CountryCode"               The country code of the Region      String, ISO 3166-2 format
+        "Location"                  The location of the Region          String, ISO 3166-1 format
+        "LanguageCode"              The language of the Region          String, ISO 639-1 format
+
+    Each Holiday is a Data containing QString value pairs for:
+        "Name"                      Name of holiday                     String
+        "RegionCode"                The Holiday Region code             String
+        "ObservanceStartDate"       The start date of the holiday       ISO format Gregorian date
+        "ObservanceEndDate"         The end date of the holiday         ISO format Gregorian date
+        "ObservanceDuration"        How many days the holiday lasts     Integer
+        "ObservanceType"            If the holiday is a day off         "PublicHoliday", "Other"
+
+    Note that multiple holidays can be returned for each date.
 
     Supported Akonadi requests are:
 

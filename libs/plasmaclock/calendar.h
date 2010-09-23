@@ -63,18 +63,19 @@ public:
     void setDisplayHolidays(bool showHolidays);
     bool displayHolidays();
 
-    void setHolidaysRegion(const QString &region);
-    QString holidaysRegion() const;
+    void setHolidaysRegions(const QStringList &regionList);
+    void addHolidaysRegion(const QString &region);
+    QStringList holidaysRegions() const;
 
     bool dateHasDetails(const QDate &date) const;
     QString dateDetails(const QDate &date) const;
 
     void setAutomaticUpdateEnabled(bool automatic);
     bool isAutomaticUpdateEnabled() const;
-    
+
     void setCurrentDate(const QDate &date);
     const QDate& currentDate() const;
-    
+
     void applyConfiguration(KConfigGroup cg);
     void writeConfiguration(KConfigGroup cg);
     void createConfigurationInterface(KConfigDialog *parent);
