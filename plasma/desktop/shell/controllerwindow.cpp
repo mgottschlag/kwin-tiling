@@ -160,6 +160,10 @@ Plasma::Containment *ControllerWindow::containment() const
 
 void ControllerWindow::setGraphicsWidget(QGraphicsWidget *widget)
 {
+    if (m_graphicsWidget == widget) {
+        return;
+    }
+
     if (m_graphicsWidget) {
         m_graphicsWidget->removeEventFilter(this);
         if (m_graphicsWidget == m_widgetExplorer) {
