@@ -2,6 +2,7 @@
 Comment=Default toolbox for the netbook shell
 Comment[en_GB]=Default toolbox for the netbook shell
 Comment[ia]=Cassetta de utilitate predefinite pro le shell del netbook
+Comment[ko]=넷북 셸을 위한 기본 도구 상자
 Comment[lt]=Numatytoji netbook apvalkalo įrankinė
 Comment[nb]=Standard verktøykasse for netbook-skallet
 Comment[nl]=Standaard hulpmiddelen voor de netbook-shell
@@ -15,6 +16,7 @@ Icon=plasma
 Name=Net toolbox
 Name[en_GB]=Net toolbox
 Name[ia]=Cassetta de utilitate de rete
+Name[ko]=넷북 도구 상자
 Name[lt]=Tinklo įrankinė
 Name[nb]=Nettverksverktøykasse
 Name[nds]=Warktüüch för't Nettwark
