@@ -13,8 +13,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2009-04-09</date>
-<releaseinfo>4.3</releaseinfo>
+<date>2010-09-25</date>
+<releaseinfo>&kde; 4.5</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -57,18 +57,13 @@ current settings.</para>
 will erase any changes you made in this dialog box, and return you to the
 screen saver module.</para>
 
-<para>Clicking the <guibutton>About</guibutton> button will give you
-the Copyright and Author information if you are interested.</para>
+<para>For most screen savers a description, Copyright and Author information
+is shown directly in the dialog, for others you need to click the 
+<guibutton>About</guibutton> button so read this information.</para>
 
 <para>When you think you have all the options set the way you want,
 simply click on <guibutton>Test</guibutton> to immediately start the
 screen saver <emphasis>exactly</emphasis> as it will appear.</para>
-
-<para>In the <guilabel>Settings</guilabel> box is a check box
-labeled <guilabel>Start automatically</guilabel>.  This
-box must have a mark in it, or &kde; will not launch any screen saver
-and it will not allow you to adjust the settings of your screen
-saver.</para>
 
 </sect2>
 
@@ -76,7 +71,7 @@ saver.</para>
 <title>Setting the time, priority and passwords for screen
 savers.</title>
 
-<para>Below the screensaver list is a check box to have the screen saver <guilabel>Start automatically</guilabel>, and a spin box which determines the period of inactivity before the screen saver should be started.  You can enter any positive number of minutes in this box.</para>
+<para>Below the screensaver list is a check box to have the screen saver <guilabel>Start automatically after</guilabel>, and a spin box which determines the period of inactivity before the screen saver should be started.  You can enter any positive number of minutes in this box.</para>
 
 <para>Below that is a check box labeled <guilabel>Require password 
 after</guilabel>.  If it is checked, when you click a key
@@ -85,6 +80,12 @@ work, you must enter a password.  The password used is the same
 password you used to login to your machine.  If there is no mark in
 the check box, no password is required to return to your
 desktop.</para>
+
+<para>If you would like to have some interactive widgets like notes or a player 
+on the locked screen saver, enable <guilabel>Allow widgets on screen saver</guilabel> 
+and click the <guibutton>Configure Widgets...</guibutton> button to select your 
+favorite widgets.
+</para>
 
 </sect2>
 
@@ -134,7 +135,7 @@ $KDEDIR/share/kde4/services/ScreenSavers</command>
 <prompt>bash$</prompt> <command>mv krandom.desktop krandom.backup</command>
 </screen> 
 
-<para>Will remove Space (GL) from the list</para>
+<para>Will remove the <quote>Random</quote> screen saver from the list</para>
 
 <note><para>You must close the &systemsettings; entirely and restart it before 
 the changes will be seen.</para></note>
