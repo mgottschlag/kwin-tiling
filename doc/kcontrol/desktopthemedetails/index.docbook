@@ -50,14 +50,14 @@ analog clock, ...</para>
 
 <note><para>
 If you want to change your current theme for a full new theme (for example from
-Air to Glassified) then you can do so in the <guilabel>Details</guilabel> tab.
+Air to Glassified) then you can do so in the <guilabel>Theme</guilabel> tab.
 </para></note>
 
 <sect2 id="start">
 <title>Quick start</title>
 <para>First download one or several themes you want to use to customize your 
 desktop items by clicking the <guibutton>Get New Themes...</guibutton>
-button in the <guilabel>Details</guilabel> tab.</para>
+button in the <guilabel>Theme</guilabel> tab.</para>
 
 <para>All the available themes will be displayed on top, the current one being highlighted.</para>
 
