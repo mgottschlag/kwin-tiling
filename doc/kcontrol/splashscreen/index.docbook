@@ -5,8 +5,8 @@
   <!ENTITY % English "INCLUDE">
 ]>
 <article lang="&language;">
-<articleinfo>
 <title>Splash Screen</title>
+<articleinfo>
 <authorgroup>
 <author>
 <firstname>Anne-Marie</firstname>
@@ -18,8 +18,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2008-05-23</date>
-<releaseinfo>1.0</releaseinfo>
+<date>2010-09-25</date>
+<releaseinfo>&kde; 4.5</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -29,9 +29,9 @@
 </keywordset>
 </articleinfo>
 
-<sect1 id="kcm_splashscreen">
-<title><guilabel>Splash Screen Theme Manager</guilabel></title>
-
+<!--sect1 id="kcm_splashscreen">
+<title>Splash Screen Theme Manager</title>
+-->
 <para>This module provides an interface to install and view splash screen themes.</para>
 
 <para>
@@ -100,7 +100,7 @@ This shows you the theme and the associated icons as they will be displayed as s
 </listitem>
 </varlistentry>
 </variablelist>
-</sect1>
+<!--/sect1-->
 </article>
 
 <!--
