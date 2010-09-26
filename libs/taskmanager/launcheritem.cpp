@@ -55,6 +55,7 @@ LauncherItem::LauncherItem(QObject *parent, const KUrl &url)
 
 LauncherItem::~LauncherItem()
 {
+    emit destroyed(this);
     delete d;
 }
 

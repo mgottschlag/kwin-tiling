@@ -66,6 +66,7 @@ TaskItem::TaskItem(QObject *parent, StartupPtr task)
 
 TaskItem::~TaskItem()
 {
+    emit destroyed(this);
     //kDebug();
   /*  if (parentGroup()){
         parentGroup()->remove(this);

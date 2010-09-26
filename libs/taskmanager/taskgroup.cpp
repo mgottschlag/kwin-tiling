@@ -96,6 +96,7 @@ TaskGroup::TaskGroup(GroupManager *parent)
 
 TaskGroup::~TaskGroup()
 {
+    emit destroyed(this);
     //kDebug() << name();
     delete d;
 }
